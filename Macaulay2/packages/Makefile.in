@@ -1,3 +1,12 @@
+TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = $(srcdir)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
 DOC=cache/doc
 TEST=cache/tests
 
@@ -20,4 +29,10 @@ initialize :: $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif \
 		$(DOC)/index.gif $(DOC)/null.gif 
 $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif $(DOC)/index.gif $(DOC)/null.gif :
 	ln -s ../../../html/$(shell basename $@) $(DOC)
+
+install ::
+	rm -rf $(datadir)/Macaulay2/packages
+	$(INSTALL) -d $(datadir)/Macaulay2/packages $(datadir)/Macaulay2/packages/cache/doc
+	$(INSTALL_DATA) *.m2 $(datadir)/Macaulay2/packages
+	$(INSTALL_DATA) cache/doc/* $(datadir)/Macaulay2/packages/cache/doc
 

@@ -54,7 +54,8 @@ fix := s -> format concatenate s
        << "if [ -f \"$DATA\" ]" << endl
        << "then exec " << fix "$EXE"
 		 << " " << fix "-e loaddata \"$DATA\""
-		 << " -- " << fix "-e runStartFunctions()" << " " << fix "$@" << endl
+		 << " -- "
+		 << fix "-e runStartFunctions()" << " " << fix "$@" << endl
        << "else exec " << fix "$EXE"
 		 << " -ephase=1 \"$SETUP\" -ephase=0 "
 		 << fix "-e runStartFunctions()" << " " << fix "$@" << endl

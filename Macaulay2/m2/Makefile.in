@@ -21,32 +21,32 @@ emacs html: all; $(MAKE) -C ../$@
 DUMPSEQUENCE = $(shell cat dumpseq)
 DOCSEQUENCE = $(shell cat docseq)
 
-MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
+MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
 	sed -f mpcodes.sed $< > $@
 all:: mpcodes.m2
-MADEGFILES += mpcodes.m2
+MADEM2FILES += mpcodes.m2
 endif
 
 cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
-DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 $(MADEGFILES)
+DUMPEDM2FILES := $(DUMPSEQUENCE) setup.m2 $(MADEM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
-DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
+DUMPEDM2FILES := $(DUMPEDM2FILES) dumpdata.m2
 endif
 
-NONDOCGFILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
+NONDOCM2FILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
 
 wc:
 	wc -l $(DOCSEQUENCE)
-	wc -l $(NONDOCGFILES)
+	wc -l $(NONDOCM2FILES)
 
-GFILES = $(NONDOCGFILES) $(DOCSEQUENCE)
+M2FILES = $(NONDOCM2FILES) $(DOCSEQUENCE)
 SCRIPTS = ../bin/M2
 
 ifeq "$(OS)" "MS-DOS"
@@ -93,7 +93,7 @@ clean::; rm -f TAGS
 TAGS: Makefile dumpseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, \
-			      $(GFILES) $(MADEGFILES) \
+			      $(M2FILES) $(MADEM2FILES) \
 			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
 				../basictests/*.m2 \
 				../emacs/makehlp.m2 \
@@ -115,20 +115,20 @@ TAGS: Makefile dumpseq
 				../CHANGES), \
 			       $(i),0)
 
-phase1 :: $(DUMPEDGFILES)
+phase1 :: $(DUMPEDM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
 phase1 :: ../$(DUMPDATAFILE)
-../$(DUMPDATAFILE) : $(DUMPEDGFILES) ../libexec/Macaulay2
-	rm -f ../libexex/Macaulay2-$(ARCH)-data
+../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
+	rm -f ../libexec/Macaulay2-$(ARCH)-data
 	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDGFILES) ../libexec/Macaulay2
+../cache/Macaulay2-made : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	touch $@
 
 phase1 :: $(SCRIPTS)
@@ -145,7 +145,7 @@ phase2 :: initialize
 phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre
 
-../cache/Macaulay2-pre : $(DUMPEDGFILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
+../cache/Macaulay2-pre : $(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
 	 # phase 2 makes the example and test files
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
@@ -163,7 +163,7 @@ all:: .gdbinit
 	cp .gdbinit.dan $@
 
 backup : CVS/Entries
-CVS/Entries : $(GFILES)
+CVS/Entries : $(M2FILES)
 	mount /a.ext2
 	tar cfv - $? | (cd /a.ext2; mkdir -p m2; cd m2; tar xf -)
 	umount /a.ext2
@@ -183,7 +183,7 @@ phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
-		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
+		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
 	../libexec/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
@@ -216,6 +216,11 @@ clean::; rm -f test4
 endif
 
 gdb :; gdb ../libexec/Macaulay2
+
+install::
+	rm -rf $(datadir)/Macaulay2/m2
+	$(INSTALL) -d $(datadir)/Macaulay2/m2
+	$(INSTALL_DATA) $(DUMPEDM2FILES) $(datadir)/Macaulay2/m2
 
 clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \

@@ -5,10 +5,8 @@
 if phase > 1 then load "docloads.m2"
 
 addStartFunction(
-     () -> path = (
-     	  if getenv "M2HOME" === "" 
-     	  then { "." }
-     	  else { "." , getenv "M2HOME" | "/packages" } ))
+     () -> path = append(path, getenv "M2HOME" | "/packages")
+     )
 
 addStartFunction(
      () -> documentationPath = (

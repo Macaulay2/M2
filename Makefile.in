@@ -432,7 +432,7 @@ clean::
 justM2 all doc::
 	@echo "--------------------- done making '$@' --------------------"
 ################################# tar manufactured files
-manufactured.tgz : Makefile
+distributions/manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files
 	make -C Macaulay2/tutorial
 	tar cfz $@ \

@@ -70,14 +70,12 @@ progname := commandLine#0
 -- quotation marks are needed because the path may contain spaces
 if substring(progname,0,1) === "\"" then progname = substring(progname,1)
 
-dir := splice(apply(separate(progname, "/"), i -> toSequence separate(i, "\\")))-- ???
+path = {concatenate(currentFileDirectory,".")}
 
+dir := splice(apply(separate(progname, "/"), i -> toSequence separate(i, "\\")))-- ???
 if #dir > 1
 then (
-     sourcedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "m2");
      packagedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "packages");
-     -- << "source dir = " << sourcedir << endl;		    -- debugging
-     path = {sourcedir};
      )
 
 isAbsolutePath := (
@@ -258,11 +256,8 @@ if not version#"mp" then (
 load "loads.m2"
 
 path = savepath
-if packagedir =!= null then path = prepend(packagedir,path)
-
 notify = true
 lastSystemSymbol = local privateSymbol
-
 if OLDENGINE then (
      erase symbol ZZZ;
      erase symbol NewMonomialOrder;
