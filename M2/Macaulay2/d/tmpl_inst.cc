@@ -6,5 +6,3 @@
 #include <templates/ftmpl_matrix.cc>
 
 template class Array<REvaluation>;
-template class List<MapPair>;
-template class Array<CanonicalForm>;
