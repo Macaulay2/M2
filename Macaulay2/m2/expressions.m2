@@ -726,12 +726,12 @@ net Sum := v -> (
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->"+"));
+	  seps := newClass(MutableList, apply(n+1, i->" + "));
 	  seps#0 = seps#n = "";
 	  v = apply(n, i -> (
 		    if class v#i === Minus 
 		    then (
-			 seps#i = if i == 0 then "-" else "-"; 
+			 seps#i = if i == 0 then "- " else " - "; 
 			 v#i#0)
 		    else v#i));
 	  horizontalJoin splice mingle(seps, 

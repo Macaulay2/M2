@@ -1,5 +1,7 @@
 --		Copyright 1997 by Daniel R. Grayson
 
+asciiLineWidth = 80
+
 nodeTable = new MutableHashTable
 nodeTable2 = new MutableHashTable
 fileNumberTable = new MutableHashTable
@@ -204,17 +206,60 @@ shorten := s -> (
      while #s > 0 and s#0 == "" do s = drop(s,1);
      s)
 
+booktex H1 := x -> concatenate (
+     ///\medskip\noindent\begingroup\headerFontOne%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+booktex H2 := x -> concatenate (
+     ///\medskip\noindent\begingroup\headerFontTwo%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+booktex H3 := x -> concatenate (
+     ///\medskip\noindent\begingroup\headerFontThree%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+booktex H4 := x -> concatenate (
+     ///\medskip\noindent\begingroup\headerFontFour%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+booktex H5 := x -> concatenate (
+     ///\medskip\noindent\begingroup\headerFontFive%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+booktex H6 := x -> concatenate (
+     ///\medskip\noindent\begingroup\headerFontSix%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+
 booktex CODE :=
 booktex PRE := x -> concatenate (
      ///\par
-\vskip 4 pt
 \beginverbatim%
+\penalty-500
 ///,
      between(newline, 
 	  shorten lines concatenate x
 	  / (line ->
-	       if #line <= 71 then line
-	       else concatenate(substring(line,0,71), " ..."))
+	       if #line <= asciiLineWidth then line
+	       else concatenate(substring(line,0,asciiLineWidth), " ..."))
 	  / ttLiteral
 	  / (line -> if line === "" then ///\penalty-500/// else line)
 	  ),
