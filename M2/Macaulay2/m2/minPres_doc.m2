@@ -32,7 +32,7 @@ document{(minPres,Ring),
 
 -- I commented this out because minPres doesn't actually accept this option (drg)
 
--- document{ minPres => VarName,
+-- document { (minPres,VarName),
 --      Headline=> "Rename the variables in the ring given so that the minimal 
 --      presentation variables are named differently than those in the original 
 --      ring."
@@ -71,7 +71,7 @@ document{(minPresIdeal,Ideal),
 
 -- I commented this out because minPres doesn't actually accept this option (drg)
 
--- document{ minPresIdeal => VarName,
+-- document { (minPresIdeal,VarName),
 --      Headline=> "Rename the variables in the ring of the ideal given so 
 --      that the variables for the minimal presentation are named differently 
 --      than the variables in the original ring."

@@ -963,9 +963,15 @@ document { isModule,
 
 document { isFreeModule,
      Headline => "whether something is a free module",
-     Usage =>
-       {TT "isFreeModule M", " -- is the module ", TT "M", " evidently a 
-     free module."}
+     Synopsis => {
+	  Usage => "isFreeModule M",
+	  Inputs => {
+	       "M" => Module => ""
+	       },
+	  Outputs => {
+	       Boolean => "whether the module ", TT "M", " is evidently a free module"
+	       }
+	  }
      }
 
 document { (isFreeModule,Module),

@@ -73,7 +73,7 @@ document { (integralClosure,Ring),
      by Amelia Taylor, ", TT "ataylor@math.rutgers.edu", "."
      }
     
-document{ integralClosure => Variable,
+document { (integralClosure,Variable),
      Headline=> "Sets the name of the indexed variables introduced in computing 
      the integral closure of a reduced ring."
      }

@@ -494,7 +494,9 @@ installPackage Package := o -> pkg -> (
 	       inf := infn nodename;
 	       val := concatenate apply(inputs, s -> s|"\n");
 	       if fileExists inf and get inf === val
-	       then stderr << "--leaving example input file for " << nodename << endl
+	       then (
+		    -- stderr << "--leaving example input file for " << nodename << endl;
+		    )
 	       else (
 		    stderr << "--making example input file for " << nodename << endl;
 		    inf << val << close;

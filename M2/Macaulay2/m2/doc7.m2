@@ -85,32 +85,33 @@ document { (diff,ProjectiveHilbertPolynomial,ZZ),
 
 document { (diff,Matrix,Matrix),
      Headline => "differentiate a matrix by a matrix",
-     Usage => {
-	  TT "diff(m,n)", " -- differentiate ", TT "n", " with respect to ", TT "m"
-	  },
-     OldSynopsis => {
-	  "h = diff(m,n)",
-	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
-	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."},
-	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
-	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
-	       is the result of differentiating ", TT { "n", SUB "j,l" }, "
-	       by the differential operator corresponding to ", TT {"m", SUB "i,k", "."}
+     Synopsis => {
+	  Usage => "h = diff(m,n)",
+	  Inputs => {
+	       "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	       "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
 	       },
+	  Outputs => {
+	       "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+		    whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+		    is the result of differentiating ", TT { "n", SUB "j,l" }, "
+		    by the differential operator corresponding to ", TT {"m", SUB "i,k", "."}
+		    }
+	       }
 	  },
-     PARA,
-     "If ", TT "m", " or ", TT "n", " is a ring element, then it is interpreted
-     as a one-by-one matrix.  If ", TT "m", " is a vector, it is interpreted as
-     a matrix with one column, and if ", TT "n", " is a vector, it is interpreted
-     as a matrix with one row.  If both ", TT "m", " and ", TT "n", " are ring
-     elements, then the result will be a ring element rather than a one-by-one
-     matrix.  If ", TT "m", " is a vector and ", TT "n", " is a ring element,
-     then the result will be a vector rather than a matrix with one column.",
-     PARA,
-     "The most common usage is when ", TT "m", " has one column and ", TT "n", "
-     has one row.  In this case the result ", TT "h", " is a matrix whose
-     ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, "
-     by the differential operator corresponding to ", TT {"m", SUB "i"}, ".",
+     PARA {
+	  "If ", TT "m", " or ", TT "n", " is a ring element, then it is interpreted
+	  as a one-by-one matrix.  If ", TT "m", " is a vector, it is interpreted as
+	  a matrix with one column, and if ", TT "n", " is a vector, it is interpreted
+	  as a matrix with one row.  If both ", TT "m", " and ", TT "n", " are ring
+	  elements, then the result will be a ring element rather than a one-by-one
+	  matrix.  If ", TT "m", " is a vector and ", TT "n", " is a ring element,
+	  then the result will be a vector rather than a matrix with one column."},
+     PARA {
+	  "The most common usage is when ", TT "m", " has one column and ", TT "n", "
+	  has one row.  In this case the result ", TT "h", " is a matrix whose
+	  ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, "
+	  by the differential operator corresponding to ", TT {"m", SUB "i"}, "."},
      SEEALSO "diff and contract"
      }
 
@@ -128,19 +129,17 @@ document { contract,
 
 document { (contract,Matrix,Matrix),
      Headline => "contract a matrix by a matrix",
-     Usage => {
-	  TT "contract(m,n)", " -- contract ", TT "n", " with respect to ", TT "m"
-	  },
-     OldSynopsis => {
-	  "h = contract(m,n)",
-	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
-	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."},
-	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
-	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
-	       is the result of contracting ", TT { "n", SUB "j,l" }, "
-	       by ", TT {"m", SUB "i,k", "."}
+     Synopsis => {
+	  Usage => "h = contract(m,n)",
+	  Inputs => {
+	       "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	       "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
 	       },
-	  },
+	  Outputs => {
+	       "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+		    whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+		    is the result of contracting ", TT { "n", SUB "j,l" }, "
+		    by ", TT {"m", SUB "i,k", "."}}}},
      PARA,
      "This function is identical to ", TO (diff,Matrix,Matrix), ", except that 
      the multiplication by integers that occurs during differentiation is
@@ -235,7 +234,7 @@ document { inducedMap,
      SEEALSO "inducesWellDefinedMap"
      }
 
-document { (inducedMap => Degree),
+document { (inducedMap,Degree),
      Headline => "specify the degree of a map",
      TT "Degree => n", " -- an option to ", TO "inducedMap", " that provides the
      degree of the map produced."
@@ -247,11 +246,11 @@ document { Verify,
      that a map is well defined.",
      PARA,
      UL {
-	  TO (inducedMap => Verify)
+	  TO (inducedMap,Verify)
 	  }
      }
 
-document { (inducedMap => Verify),
+document { (inducedMap,Verify),
      TT "Verify => true", " -- an option for ", TO "inducedMap", " which
      requests verification that the induced map produced is well defined."
      }
@@ -466,7 +465,7 @@ document { Degree,
       	  "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
       	  "isHomogeneous q",
 	  },
-     SEEALSO {"map", "matrix", (inducedMap => Degree)}
+     SEEALSO {"map", "matrix", (inducedMap,Degree)}
      }
 
 document { (map,Module,ZZ,Function),
@@ -587,26 +586,21 @@ document { (flip,Module,Module),
      TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
      }
 
-document { subquotient,
+document { (subquotient,Matrix,Matrix),
      Headline => "make a subquotient module",
-     Usage => {
-	  TT "subquotient(g,r)", " -- the image of ", TT "g", " in the cokernel of ", TT "r", "."
+     Synopsis => {
+	  Usage => "subquotient(g,r)",
+	  Inputs => {
+	       "g" => "the matrix of generators",
+	       "r" => {"the matrix of relations, with the same target as ", TT "g", ""}
+	       },
+	  Outputs => {
+	       {"the image of ", TT "g", " in the cokernel of ", TT "r"}
+	       }
 	  },
-     TT "subquotient(g,r)", " -- given matrices ", TT "g", " and ", TT "r", " with the same target, 
-     produces a new module representing the image of ", TT "g", " in the cokernel
-     of ", TT "r", ".",
-     PARA,
-     "The columns of ", TT "g", " are called the generators, and the columns of
-     ", TT "r", " are the relations.",
-     PARA,
-     "Functions:",
-     UL {
-	  TO "generators",
-	  TO "relations",
-	  TO "prune"
-	  },
-     "This is the general form in which modules are represented, and
-     subquotient modules are often returned as values of computations.",
+     PARA {
+     	  "The general form in which modules are represented in Macaulay 2 is as subquotients,
+	  and subquotient modules are often returned as values of computations."},
      EXAMPLE {
 	  "R = ZZ/101[a..d]",
       	  "M = kernel vars R ++ cokernel vars R",
@@ -614,7 +608,7 @@ document { subquotient,
       	  "relations M",
       	  "prune M",
 	  },
-     SEEALSO {"generators", "relations"}
+     SEEALSO {"generators", "relations", "prune"}
      }
 
 document { (symbol **, Matrix, Matrix),
@@ -737,9 +731,7 @@ document { kernel,
      TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",
      PARA,
      "If ", TT "f", " is a ring element, it will be interpreted as a one by one
-     matrix.",
-     PARA,
-     "For an abbreviation, use ", TT "ker", "."
+     matrix."
      }
 
 document { SubringLimit,
@@ -751,7 +743,7 @@ document { SubringLimit,
      }
 
 
-document { kernel => SubringLimit,
+document { (kernel,SubringLimit),
      TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
      causes the computation of the kernel of a ring map to stop after ", TT "n", "
      elements have been discovered."
@@ -979,33 +971,26 @@ document { (symbol /, Ring, Ideal),
 	  }
      }
 
-document { koszul,
-     Headline => "a differential in a Koszul complex"
-     }
-
+document { koszul, Headline => "a differential in a Koszul complex" }
 document { (koszul,ZZ,Matrix),
-     Usage => { TT "koszul(i,f)", " -- provides the ", TT "i", "-th symmetric 
-	  power of the matrix ", TT "f", "."},
-     OldSynopsis => {
-	  "g = koszul(i,f)",
-	  "i" => null,
-	  "f" => null,
-	  "g" => { "the ", TT "i", "-th differential in the Koszul complex of the
-	       map ", TT "f", "."}
-	  },
-     PARA,
-     "Here ", TT "f", " should be a ", TT "1", " by ", TT "n", " matrix."
+     Synopsis => {
+	  Usage => "g = koszul(i,f)",
+	  Inputs => {
+	       "i" => "",
+	       "f" => {"a ", TT "1", " by ", TT "n", " matrix."},
+	       },
+	  Outputs => {
+	       "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
+	       }
+	  }
      }
 
-document { symmetricPower,
-     Headline => "symmetric power"
-     }
-
+document { symmetricPower, Headline => "symmetric power" }
 document { (symmetricPower,ZZ,Matrix),
      Usage => { TT "symmetricPower(i,f)", " -- provides the ", TT "i", "-th symmetric 
 	  power of the matrix ", TT "f", "."},
-     OldSynopsis => {
-	  "g = symmetricPower(i,f)",
+     Synopsis => {
+	  Usage => "g = symmetricPower(i,f)",
 	  "i" => null,
 	  "f" => null,
 	  "g" => { "the ", TT "i", "-th symmetric power of the matrix ", TT "f", "."}
@@ -1040,19 +1025,24 @@ document { (exteriorPower,ZZ,Matrix),
 
 document { (symbol _,Function,Thing),
      Headline => "attach the first argument to a function of two or more arguments",
-     OldSynopsis => {
-	  "g = f_x",
-	  "f" => "a function of two or more arguments",
-	  "x" => "anything",
-	  "g" => {
-	       "a new function with the property that ", TT "g(y)", "
-	       returns the value of  ", TT "f(x,y)", ", that
-	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
-	       so on."
+     Synopsis => {
+	  Usage => "g = f_x",
+	  Inputs => {
+	       "f" => Function => "a function of two or more arguments",
+	       "x" => Thing => ""
+	       },
+	  Outputs => {
+	       "g" => Function => {
+		    "a new function with the property that ", TT "g(y)", "
+		    returns the value of  ", TT "f(x,y)", ", that
+		    ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
+		    so on."
+		    }
 	       }
 	  },
-     "This abbreviation allows us to save a bit of typing, and in some
-     cases, agrees with standard mathematical notation.",
+     PARA {
+     	  "This abbreviation allows us to save a bit of typing, and in some
+     	  cases, agrees with standard mathematical notation."},
      EXAMPLE {
 	  "R = ZZ[a .. i];",
 	  "f = genericMatrix(R,a,3,3)",
@@ -1060,8 +1050,7 @@ document { (symbol _,Function,Thing),
 	  "exteriorPower_2 f",
 	  "p = prepend_7",
 	  "p {8,9,10}"
-	  },
-     SEEALSO { "splice" }
+	  }
      }
 
 document { MinorsComputation,
@@ -1146,7 +1135,7 @@ document { (minors,ZZ,Matrix),
 	  },
      "The order is {{0,1},{0,1}}, {{0,2},{0,1}}, {{1,2},{0,1}}, and so on.",
      PARA,
-     "If the ", TO (minors=>First), " option is not given, the minors are stashed 
+     "If the ", TO (minors,First), " option is not given, the minors are stashed 
      in the matrix under the key ", TT "m.cache#MinorsComputation{j}", ".  The class of
      this stashed object is the internal class ", TO "MinorsComputation", "."
      }
@@ -1159,24 +1148,24 @@ document { symbol Cofactor,
      "A keyword used by ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "."
      }
 
-apply({minors => Strategy, det => Strategy, exteriorPower => Strategy}, node -> 
-  document { node,
-     Headline => "choose between Bareiss and Cofactor algorithms",
-     TT "Strategy => Bareiss", " -- use Bareiss' fraction free determinant algorithm",
-     BR,
-     TT "Strategy => Cofactor", " -- use cofactor expansion to compute determinants",
-     PARA,
-     "The base ring determines the default strategy.  If the base ring is not a quotient
-     polynomial ring, the ", TO "Bareiss", " algorithm is used.  If the polynomial ring is
-     a quotient, and the ring has not been declared to be a field, (see ", TO "toField", "), then
-     the ", TO "Cofactor", " algorithm is used.",
-     CAVEAT "The Bareiss algorithm only returns
-     a ring element which differs from the actual determinant by a zero divisor in the ring.  Thus, 
-     an INCORRECT answer may be computed if the ring contains zero divisors."
-     }
+apply({ (minors, Strategy), (det,Strategy), (exteriorPower,Strategy) }, 
+     node -> document { node,
+	  Headline => "choose between Bareiss and Cofactor algorithms",
+	  TT "Strategy => Bareiss", " -- use Bareiss' fraction free determinant algorithm",
+	  BR,
+	  TT "Strategy => Cofactor", " -- use cofactor expansion to compute determinants",
+	  PARA,
+	  "The base ring determines the default strategy.  If the base ring is not a quotient
+	  polynomial ring, the ", TO "Bareiss", " algorithm is used.  If the polynomial ring is
+	  a quotient, and the ring has not been declared to be a field, (see ", TO "toField", "), then
+	  the ", TO "Cofactor", " algorithm is used.",
+	  CAVEAT "The Bareiss algorithm only returns
+	  a ring element which differs from the actual determinant by a zero divisor in the ring.  Thus, 
+	  an INCORRECT answer may be computed if the ring contains zero divisors."
+	  }
   )
 
-document { minors => First,
+document { (minors,First),
      Headline => "set the first minor to compute",
      TT "First => {rows, columns}", " -- set the first minor to compute",
      PARA,
@@ -1188,12 +1177,12 @@ document { minors => First,
 	  "minors(2,M,First=>{{0,1},{0,2}})",
 	  "minors(2,M,First=>{{0,1},{0,2}},Limit=>1)",
 	  },
-     SEEALSO {minors, (minors=>Limit)}
+     SEEALSO {minors, (minors,Limit)}
      }
 
-document { minors => Limit,
+document { (minors,Limit),
      TT "Limit => n", " -- the number of minors to compute",
-     SEEALSO (minors=>First)
+     SEEALSO (minors,First)
      }
 
 TEST "

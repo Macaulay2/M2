@@ -11,7 +11,7 @@ document { pushForward,
      "Currently, ", TT "R", " and ", TT "S", " must both be polynomial rings over the same base field."
      }
 
-document { pushForward => StopBeforeComputation,
+document { (pushForward,StopBeforeComputation),
      TT "StopBeforeComputation => false", " -- an optional argument used with
      ", TO "pushForward", ".",
      PARA,
@@ -19,17 +19,17 @@ document { pushForward => StopBeforeComputation,
      being ", TT "true", "."
      }
 
-document { pushForward => StopWithMinimalGenerators,
+document { (pushForward,StopWithMinimalGenerators),
      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward", "
      that specifies that the computation should stop as soon as a
      complete list of minimal generators for the submodule or ideal has been
      determined.",
      PARA,
      "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb => StopWithMinimalGenerators), " for details."
+     ", TO (gb,StopWithMinimalGenerators), " for details."
      }
 
-document { pushForward => Strategy,
+document { (pushForward,Strategy),
      TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
      which can be used to specify the strategy to be used in the computation.",
      PARA,
@@ -750,7 +750,7 @@ document { quotient,
      This will be changed in a later version."
      }
 
-document { quotient => Strategy,
+document { (quotient,Strategy),
      TT "quotient(I,J,Strategy => v)", " -- an option which can
      be used to specify the strategy to be used in the computation.",
      PARA,
@@ -1085,21 +1085,21 @@ document { MinimalGenerators,
      which specifies whether to compute minimal generators for the result.",
      PARA,
      UL {
-	  TO (quotient => MinimalGenerators),
-	  TO (saturate => MinimalGenerators),
+	  TO (quotient,MinimalGenerators),
+	  TO (saturate,MinimalGenerators),
 	  },
      PARA,
      "The default value is ", TT "true", "."
      }
 
-document { quotient => MinimalGenerators,
+document { (quotient,MinimalGenerators),
      TT "MinimalGenerators => true", " -- an option for ", TO "quotient", "
      which specifies whether to compute minimal generators for the result.",
      PARA,
      "The default value is ", TT "true", "."
      }
 
-document { saturate => MinimalGenerators,
+document { (saturate,MinimalGenerators),
      TT "MinimalGenerators => true", " -- an option for ", TO "saturate", "
      which specifies whether to compute minimal generators for the result.",
      PARA,

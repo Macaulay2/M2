@@ -38,9 +38,7 @@ document { symbol ann,
 document { symbol annihilator,
      Headline => "the annihilator ideal",
      TT "annihilator M", " -- produce the annihilator ideal of a 
-     module, ideal, ring element, or coherent sheaf.",
-     PARA,
-     "For an abbreviation, use ", TT "ann", "."
+     module, ideal, ring element, or coherent sheaf."
      }
 
 document { (annihilator, Module),
@@ -316,7 +314,7 @@ document { StopBeforeComputation,
      the computation to be initialized but not begun."
      }
 
-document { gb => StopBeforeComputation,
+document { (gb,StopBeforeComputation),
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
@@ -333,7 +331,7 @@ document { DegreeLimit,
      with degree n."
      }
 
-document { gb => DegreeLimit, 
+document { (gb,DegreeLimit), 
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should halt after 
      dealing S-polynomials up to degree ", TT "n", ".",
@@ -359,7 +357,7 @@ document { SyzygyLimit,
      have computed.",
      }
 
-document { gb => SyzygyLimit, 
+document { (gb,SyzygyLimit), 
      Headline => "stop when this number of syzygies is obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop
@@ -388,7 +386,7 @@ document { PairLimit,
      have been reduced."
      }
 
-document { gb => PairLimit, 
+document { (gb,PairLimit), 
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the
@@ -416,12 +414,12 @@ document { CodimensionLimit,
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      UL {
-	  TO (gb => CodimensionLimit),
-	  TO (syz => CodimensionLimit),
+	  TO (gb,CodimensionLimit),
+	  TO (syz,CodimensionLimit),
 	  }
      }
 
-document { gb => CodimensionLimit, 
+document { (gb,CodimensionLimit), 
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop when
@@ -443,14 +441,14 @@ document { StopWithMinimalGenerators,
      determined.",
      PARA,
      UL {
-	  TO (gb => StopWithMinimalGenerators),
-	  TO (pushForward => StopWithMinimalGenerators),
-	  TO (pushForward1 => StopWithMinimalGenerators),
-	  TO (syz => StopWithMinimalGenerators),
+	  TO (gb,StopWithMinimalGenerators),
+	  TO (pushForward,StopWithMinimalGenerators),
+	  TO (pushForward1,StopWithMinimalGenerators),
+	  TO (syz,StopWithMinimalGenerators),
 	  }
      }
 
-document { gb => StopWithMinimalGenerators, 
+document { (gb,StopWithMinimalGenerators), 
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
      with ", TO "gb", ", which, if the value provided is ", TT "true", "
@@ -473,7 +471,7 @@ document { Strategy,
      to suggest a strategy for efficient computation."
      }
 
-document { gb => Strategy, 
+document { (gb,Strategy), 
      Headline => "specify the strategy used to compute Groebner bases",
      TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
      be used to specify the strategy to be used in the computation.",
@@ -544,7 +542,7 @@ document { ChangeMatrix,
      which concern a change of basis matrix."
      }
 
-document { gb => ChangeMatrix, 
+document { (gb,ChangeMatrix), 
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
      specifies whether to compute the change of basis matrix from the basis to
@@ -582,7 +580,7 @@ document { forceGB,
      ", TO "gb", " somehow."
      }
 
-document { forceGB => ChangeMatrix,
+document { (forceGB,ChangeMatrix),
      Headline => "set the change of basis matrix",
      TT "ChangeMatrix => p", " -- an optional argument for ", TO "forceGB", " which
      which specifies that the change of basis matrix is ", TT "p", "."
@@ -667,7 +665,7 @@ M = subquotient(h,f)
 assert( generators trim M == matrix (R, {{1},{0}}))
 "
 
-document { syz => StopWithMinimalGenerators,
+document { (syz,StopWithMinimalGenerators),
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators => true", " -- an optional argument used 
      with ", TO "syz", " that specifies that the computation should stop as soon as a
@@ -675,10 +673,10 @@ document { syz => StopWithMinimalGenerators,
      determined.",
      PARA,
      "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb => StopWithMinimalGenerators), " for details."
+     ", TO (gb,StopWithMinimalGenerators), " for details."
      }
 
-document { syz => Strategy,
+document { (syz,Strategy),
      Headline => "specify the strategy used to compute the Groebner basis",
      TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
      be used to specify the strategy to be used in the computation.",
@@ -687,7 +685,7 @@ document { syz => Strategy,
      documentation there for details."
      }
 
-document { syz => CodimensionLimit,
+document { (syz,CodimensionLimit),
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "syz", " which specifies that the computation should stop when
@@ -727,7 +725,7 @@ document { (syz, Matrix),
 	  }
      }
 
-document { syz => StopBeforeComputation,
+document { (syz,StopBeforeComputation),
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
@@ -737,7 +735,7 @@ document { syz => StopBeforeComputation,
      computation."
      }
 
-document { syz => ChangeMatrix,
+document { (syz,ChangeMatrix),
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "syz", " which
      specifies whether to compute the change of basis matrix."
@@ -939,7 +937,7 @@ document { DegreeOrder,
      functions, used to specify sort order."
      }
 
-document { (sortColumns => DegreeOrder),
+document { (sortColumns,DegreeOrder),
      Headline => "sort primarily by degree",
      TT "DegreeOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",
@@ -948,7 +946,7 @@ document { (sortColumns => DegreeOrder),
      ", TO "Descending", ", and ", TO "null", "."
      }
 
-document { (sortColumns => MonomialOrder),
+document { (sortColumns,MonomialOrder),
      Headline => "specify Ascending or Descending sort order",
      TT "MonomialOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",
@@ -1069,7 +1067,8 @@ document { FindOne,
      }
 
 document { Variable,
-     Headline => "specify a name for the generator of a Galois field",
+     Headline => "specify a name for a variable",
+     -- it is also used with integralClosure, but we should automate that
      TT "Variable => x", " -- an option used with ", TO "GF", ", to specify
      a symbol to be used as a name for the generator of the Galois field."
      }
@@ -1246,10 +1245,10 @@ document { (symbol " ", RingMap, Module),
 document { DegreeMap,
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map.",
-     SEEALSO { map => DegreeMap }
+     SEEALSO { (map, DegreeMap) }
      }
 
-document { map => DegreeMap,
+document { (map,DegreeMap),
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map, to specify a function that transforms degrees
      of elements in the source ring to degrees of elements in the
@@ -1420,7 +1419,7 @@ document { NonLinear,
      option to ", TO "pushForward1", "."
      }
 
-document { pushForward1 => StopBeforeComputation,
+document { (pushForward1,StopBeforeComputation),
      Headline => "initialize but do not begin the computation",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "pushForward1", ".",
@@ -1429,7 +1428,7 @@ document { pushForward1 => StopBeforeComputation,
      being ", TT "true", "."
      }
 
-document { pushForward1 => DegreeLimit,
+document { (pushForward1,DegreeLimit),
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "pushForward1", " which specifies that the computation should halt after dealing 
@@ -1486,7 +1485,7 @@ document { pushForward1,
      "The type ", TO "PushforwardComputation", " is used internally by our current implementation.",
      }
 
-document { pushForward1 => StopWithMinimalGenerators,
+document { (pushForward1,StopWithMinimalGenerators),
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward1", "
      that specifies that the computation should stop as soon as a
@@ -1494,17 +1493,17 @@ document { pushForward1 => StopWithMinimalGenerators,
      determined.",
      PARA,
      "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb => StopWithMinimalGenerators), " for details."
+     ", TO (gb,StopWithMinimalGenerators), " for details."
      }
 
-document { pushForward1 => PairLimit,
+document { (pushForward1,PairLimit),
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit => n", " -- keyword for an optional argument used with
      ", TO "pushForward1", ", which specifies that the computation should
      be stopped after a certain number of S-pairs have been reduced."
      }
 
-document { pushForward1 => MonomialOrder,
+document { (pushForward1,MonomialOrder),
      Headline => "specify the elimination order to use in pushForward1",
      TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
      which tells which monomial order to use for the Groebner basis computation
@@ -1519,7 +1518,7 @@ document { pushForward1 => MonomialOrder,
      SEEALSO "EliminationOrder"
      }
 
-document { pushForward1 => UseHilbertFunction,
+document { (pushForward1,UseHilbertFunction),
      Headline => "whether to use knowledge of the Hilbert function",
      TT "UseHilbertFunction => true", " -- a keyword for an optional argument to
      ", TO "pushForward1", " which specifies whether to use the Hilbert function,
@@ -1528,7 +1527,7 @@ document { pushForward1 => UseHilbertFunction,
      "The default is to use it if possible."
      }
 
-document { pushForward1 => Strategy,
+document { (pushForward1,Strategy),
      Headline => "specify which algorithm to use in the computation",
      TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
      which can be used to specify the strategy to be used in the computation.",

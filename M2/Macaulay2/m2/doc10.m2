@@ -21,7 +21,7 @@ document { Resolution,
      store the resolution it comes from."
      }
 
-document { symbol resolution,
+document { resolution,
      Headline => "make a projective resolution",
      Usage => { 
 	  TT "resolution M", " -- make a projective resolution of M.", BR,
@@ -49,7 +49,7 @@ document { symbol resolution,
 	  }
      }
 
-document { resolution => DegreeLimit,
+document { (resolution,DegreeLimit),
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "resolution", " which specifies that the computation should halt
@@ -66,7 +66,7 @@ document { resolution => DegreeLimit,
 	  },
      }
 
-document { resolution => SyzygyLimit,
+document { (resolution,SyzygyLimit),
      Headline => "stop when this number of syzygies are obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
@@ -81,7 +81,7 @@ document { resolution => SyzygyLimit,
 	  }
      }
 
-document { resolution => PairLimit,
+document { (resolution,PairLimit),
      Headline => "stop when this number of pairs are handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
@@ -95,7 +95,7 @@ document { resolution => PairLimit,
 	  }
      }
 
-document { resolution => StopBeforeComputation,
+document { (resolution,StopBeforeComputation),
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
@@ -109,7 +109,7 @@ document { LengthLimit,
      Headline => "stop when the resolution reaches this length",
      }
 
-document { resolution => LengthLimit,
+document { (resolution,LengthLimit),
      Headline => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
@@ -133,7 +133,7 @@ document { HardDegreeLimit,
      that information above a specified degree is to be discarded."
      }
 
-document { resolution => HardDegreeLimit,
+document { (resolution,HardDegreeLimit),
      TT "HardDegreeLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -142,7 +142,7 @@ document { resolution => HardDegreeLimit,
      "Information above the specified degree is discarded."
      }
 
-document { resolution => Strategy,
+document { (resolution,Strategy),
      TT "Strategy => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
@@ -168,7 +168,7 @@ document { SortStrategy,
      specifies the strategy to be used for sorting S-pairs."
      }
 
-document { resolution => SortStrategy,
+document { (resolution,SortStrategy),
      TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
      specifies the strategy to be used for sorting S-pairs.",
      PARA,
@@ -197,7 +197,6 @@ document { (resolution, Module),
 	       {"a free resolution of ", TT "M"}
 	       }
 	  },
-     "For an abbreviation, use ", TT "res", ".",
      EXAMPLE {
 	  "R = ZZ/32003[a..d]/(a^2+b^2+c^2+d^2);",
 	  "M = coker vars R",

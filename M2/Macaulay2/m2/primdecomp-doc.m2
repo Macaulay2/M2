@@ -36,7 +36,7 @@ document { (ass, Ideal),
 	       removeLowestDimension}
      }
 
-document { ass => Strategy,
+document { (ass,Strategy),
      "The strategy option value should be one of the following.",
      SHIELD UL{
 	  ("1", " -- The assasinator is found using Ext modules."),
@@ -56,7 +56,7 @@ document { ass => Strategy,
      TT "I", " by ", TT "I:(top I)", "."
      }
 
-document { ass => PrintLevel,
+document { (ass,PrintLevel),
      "The PrintLevel should be one of the following.",
      SHIELD UL {
 	  ("0", " -- (default) Returns the list of associated primes."),
@@ -109,7 +109,7 @@ document { (localize,Ideal,Ideal),
 	  removeLowestDimension}
      }
 ///
-document { localize => Strategy,
+document { (localize,Strategy),
 	  "The strategy option value should be one of the following.",
 	  SHIELD UL{
 	       ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
@@ -126,7 +126,7 @@ document { localize => Strategy,
 	  "This strategy uses a separator polynomial - a polynomial in all of 
 	  the associated primes of ", TT "I", " but ", TT "P", " and those 
 	  contained in ", TT "P", ".  In this strategy, the assasinator of the 
-	  ideal will be recalled, or recomputed using ", TO (ass => Strategy) ,
+	  ideal will be recalled, or recomputed using ", TO (ass,Strategy) ,
 	  " = 1, if unknown.  The separator 
 	  polynomial method is described in  
 	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
@@ -136,7 +136,7 @@ document { localize => Strategy,
 	  " = 2."
 	   }
 ///
-document { localize => PrintLevel,
+document { (localize,PrintLevel),
 	  "The PrintLevel option value should be one of the following.",
 	  SHIELD UL{
 	       ("0", " -- default"),
@@ -179,7 +179,7 @@ document { (primaryComponent, Ideal, Ideal),
 	 removeLowestDimension}
     }
 
-document{ primaryComponent => Strategy,
+document { (primaryComponent,Strategy),
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
      SHIELD UL{
@@ -188,7 +188,7 @@ document{ primaryComponent => Strategy,
 	  ("2", " -- Uses ", TT "localize", " Strategy 2")}
      }
 
-document{ primaryComponent => Increment,
+document { (primaryComponent,Increment),
       "The Increment option value should be an integer.  As explained in ",
       TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
       Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992),
@@ -198,7 +198,7 @@ document{ primaryComponent => Increment,
       sufficiently large.  The default value is 1." 
      }
 
-document{ primaryComponent => PrintLevel,     
+document { (primaryComponent,PrintLevel),     
       "The Strategy option value should be one of the following.",
      SHIELD UL{
 	  ("0", " -- default"),
@@ -237,7 +237,7 @@ document { (primaryDecomposition, Ideal),
 	  removeLowestDimension}
      }
 
-document { primaryDecomposition => Strategy,
+document { (primaryDecomposition,Strategy),
      "The strategy option value should be one of the following.",
      SHIELD UL {
           ("Monomial", " -- uses Alexander duality of a monomial ideal"),
