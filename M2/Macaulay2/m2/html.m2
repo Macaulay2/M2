@@ -302,8 +302,8 @@ makeMasterIndex := keylist -> (
      )
 
 installPackage = method(Options => { 
-	  Prefix => "/tmp/", 
-	  Encapsulate => false,
+	  Prefix => "./tmp/", 
+	  Encapsulate => true,
 	  IgnoreExampleErrors => true
 	  })
 
@@ -415,6 +415,8 @@ installPackage Package := o -> pkg -> (
 
      -- make master.html with master index of all the html files
      makeMasterIndex nodes;
+
+     stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      )
 
 check = method()

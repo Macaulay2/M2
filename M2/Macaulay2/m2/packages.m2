@@ -16,12 +16,50 @@ Package.synonym = "package"
 
 toString Dictionary := d -> if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
 
-installMethod(GlobalAssignHook,Package,globalAssignFunction)
-installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
-
 hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
      )
+
+reverseDictionary = x -> scan(packages, pkg -> (
+	  d := pkg#"reverse dictionary";
+	  if d#?x then break d#x))
+reverseDictionaryRecord = (X,x) -> if X =!= x then (
+     s := toString X;
+     scan(packages, 
+     	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x then (	-- too bad a symbol doesn't know what dictionary it's in...
+	       pkg#"reverse dictionary"#x = X; 
+	       break)))
+reverseDictionaryRemove = (X,x) -> (
+     s := toString X;
+     scan(packages, 
+     	  pkg -> if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X then (
+	       remove(pkg#"reverse dictionary",x); 
+	       break)))
+
+globalAssignFunction = (X,x) -> (
+     reverseDictionaryRecord (X,x);
+     if not x#?(symbol name) then (			    -- phase this out
+	  x.Symbol = X;
+	  x.name = toString X;
+	  );
+     use x;
+     )
+
+globalReleaseFunction = (X,x) -> (
+     reverseDictionaryRemove (X,x);
+     if x.?Symbol and X === x.Symbol
+     then (
+	  remove(x,symbol name);
+	  remove(x,symbol symbol);
+	  )
+     )
+
+Type.GlobalAssignHook = globalAssignFunction
+Type.GlobalReleaseHook = globalReleaseFunction
+ScriptedFunctor.GlobalAssignHook = globalAssignFunction
+ScriptedFunctor.GlobalReleaseHook = globalReleaseFunction
+installMethod(GlobalAssignHook,Package,globalAssignFunction)
+installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
 removePackage = method()
 removePackage Package := p -> (
@@ -58,6 +96,7 @@ newPackage(String) := opts -> (title) -> (
 	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
+	  "raw documentation" => new MutableHashTable,
 	  "documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
 	  "example results" => new MutableHashTable,
@@ -88,21 +127,6 @@ newPackage("Main",
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  })
-reverseDictionary = x -> scan(packages, pkg -> (
-	  d := pkg#"reverse dictionary";
-	  if d#?x then break d#x))
-reverseDictionaryRecord = (X,x) -> if X =!= x then (
-     s := toString X;
-     scan(packages, 
-     	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x then (	-- too bad a symbol doesn't know what dictionary it's in...
-	       pkg#"reverse dictionary"#x = X; 
-	       break)))
-reverseDictionaryRemove = (X,x) -> (
-     s := toString X;
-     scan(packages, 
-     	  pkg -> if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X then (
-	       remove(pkg#"reverse dictionary",x); 
-	       break)))
 
 Command.GlobalAssignHook = 
 Function.GlobalAssignHook = 

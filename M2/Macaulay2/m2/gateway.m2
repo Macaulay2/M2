@@ -2,8 +2,6 @@
 
 ScriptedFunctor = new Type of MutableHashTable
 ScriptedFunctor.synonym = "scripted functor"
-ScriptedFunctor.GlobalAssignHook = globalAssignFunction
-ScriptedFunctor.GlobalReleaseHook = globalReleaseFunction
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i
