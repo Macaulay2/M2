@@ -696,33 +696,11 @@ export rawRingVar(e:Expr):Expr := (
      when a.0 is R:RawRing do
      when a.1 is v:Integer do
      if !isInt(v) then WrongArgSmallInteger(2) else
-     toExpr(Ccode(RawRingElementOrNull,
-	       "(engine_RawRingElementOrNull)IM2_RingElement_make_var(",
-	       "(Ring *)", R, ",",
-	       toInt(v), ",",
-	       1,
-	       ")"
-	       ))
+     toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_make_var(", "(Ring *)", R, ",", toInt(v), ")" ))
      else WrongArgInteger(2)
      else WrongArg(1,"a raw ring")
-     else if length(a) == 3 then
-     when a.0 is R:RawRing do
-     when a.1 is v:Integer do
-     if !isInt(v) then WrongArgSmallInteger(2) else
-     when a.2 is e:Integer do
-     if !isInt(e) then WrongArgSmallInteger(3) else
-     toExpr(Ccode(RawRingElementOrNull,
-	       "(engine_RawRingElementOrNull)IM2_RingElement_make_var(",
-	       "(Ring *)", R, ",",
-	       toInt(v), ",",
-	       toInt(e),
-	       ")"
-	       ))
-     else WrongArgInteger(3)
-     else WrongArgInteger(2)
-     else WrongArg(1,"a raw ring")
-     else WrongNumArgs(2,3)
-     else WrongNumArgs(2,3));
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
 setupfun("rawRingVar",rawRingVar);
 
 export rawFromNumber(e:Expr):Expr := (

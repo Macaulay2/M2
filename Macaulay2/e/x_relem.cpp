@@ -399,8 +399,9 @@ const RingElementOrNull *rawRRRFromString(const M2_string s)
 }
 
 
-const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v, int e)
+const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
 {
+  int e = 1;
   ring_elem a = R->var(v,e);
   if (error()) return 0;
   return RingElement::make_raw(R, a);

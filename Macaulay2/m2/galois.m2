@@ -111,11 +111,9 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.degreeLength = degreeLength R;
      F.char = p;
      F.frac = F;
-     F.generatorSymbols = {var};
-     F.generatorExpressions = apply( F.generatorSymbols,
-	  x -> if instance(x, Symbol) then x else expression x
-	  );
-     F.generators = {F_0};
+     F.generators = {};
+     F.generatorSymbols = {};
+     F.generatorExpressions = {};
      baseName F := y -> (
 	  if F_0 == y then var else error "expected a generator"
 	  );
@@ -125,7 +123,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 
 random GaloisField := F -> (
      i := random F.order;
-     if i === 0 then 0_F else F.generators#0^i
+     if i === 0 then 0_F else F_0^i
      )
 
 dim GaloisField := R -> 0

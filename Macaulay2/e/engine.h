@@ -436,9 +436,7 @@ extern "C" {
        Otherwise NULL is returned. */
 
 
-  const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, 
-						    int v, 
-						    int e); /* drg: connected rawRingVar*/
+  const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v); /* drg: connected rawRingVar*/
 
   M2_bool IM2_RingElement_is_zero(const RingElement *a); /* drg: connected rawIsZero*/
 
