@@ -197,98 +197,34 @@ export netcmp(s:Net, t:Net):int := (
      tlen := length(tbody);
      si := 0;
      ti := 0;
-     sj := 0;
-     tj := 0;
-     c := 0;
-     d := 0;
-     while c != -1 || d != -1 do (
-	  if si < slen then (
-	       if sj < length(sbody.si) then (
-	       	    c = int(uchar(sbody.si.sj));
-		    sj = sj + 1)
-	       else (
-	       	    si = si+1;
-	       	    sj = 0;
-	       	    c = if si == slen then -1 else int('\n');
-		    ))
-	  else c = -1;
-	  if ti < tlen then (
-	       if tj < length(tbody.ti) then (
-	       	    d = int(uchar(tbody.ti.tj));
-		    tj = tj + 1)
-	       else (
-	       	    ti = ti+1;
-	       	    tj = 0;
-	       	    d = if ti == tlen then -1 else int('\n');
-		    ))
-	  else d = -1;
-	  if c > d then return 1;
-	  if c < d then return -1;
+     while si<slen && ti<tlen do (
+	  r := strnumcmp(sbody.si,tbody.ti);
+	  if r != 0 then return r;
 	  );
+     if slen > tlen then return 1;
+     if slen < tlen then return -1;
      0);
+
 export netcmp(s:Net, t:string):int := (
      if s.height > 1 then return 1;
      if s.height < 1 then return -1;
      sbody := s.body;
      slen := length(sbody);
-     si := 0;
-     srow := sbody.si;
-     swid := length(srow);
-     twid := length(t);
-     sj := 0;
-     tj := 0;
-     c := 0;
-     d := 0;
-     while c != -1 || d != -1 do (
-	  if si < slen then (
-	       if sj < length(sbody.si) then (
-	       	    c = int(uchar(sbody.si.sj));
-		    sj = sj + 1)
-	       else (
-	       	    si = si+1;
-	       	    sj = 0;
-	       	    c = if si == slen then -1 else int('\n');
-		    ))
-	  else c = -1;
-	  if tj < twid then (
-	       d = int(uchar(t.tj));
-	       tj = tj + 1)
-	  else d = -1;
-	  if c > d then return 1;
-	  if c < d then return -1;
-	  );
+     if slen == 0 then return -1;
+     r := strnumcmp(sbody.0,t);
+     if r != 0 then return r;
+     if slen > 1 then return 1;
      0);
+     
 export netcmp(s:string, t:Net):int := (
      if 1 > t.height then return 1;
      if 1 < t.height then return -1;
      tbody := t.body;
      tlen := length(tbody);
-     ti := 0;
-     trow := tbody.ti;
-     swid := length(s);
-     twid := length(trow);
-     sj := 0;
-     tj := 0;
-     c := 0;
-     d := 0;
-     while c != -1 || d != -1 do (
-	  if sj < swid then (
-	       c = int(uchar(s.sj));
-	       sj = sj + 1)
-	  else c = -1;
-	  if ti < tlen then (
-	       if tj < length(tbody.ti) then (
-	       	    d = int(uchar(tbody.ti.tj));
-		    tj = tj + 1)
-	       else (
-	       	    ti = ti+1;
-	       	    tj = 0;
-	       	    d = if ti == tlen then -1 else int('\n');
-		    ))
-	  else d = -1;
-	  if c > d then return 1;
-	  if c < d then return -1;
-	  );
+     if tlen == 0 then return 1;
+     r := strnumcmp(s,tbody.0);
+     if r != 0 then return r;
+     if tlen > 1 then return -1;
      0);
 
 use vararray;

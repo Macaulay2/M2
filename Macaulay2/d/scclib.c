@@ -250,6 +250,52 @@ M2_string s,t;
   return 0;
 }
 
+int system_strnumcmp(s,t)
+M2_string s,t;
+{
+  int slen = s->len, tlen = t->len, i;
+  int ret = 0;
+  int len = slen < tlen ? slen : tlen;
+  int innumber = FALSE;
+  for (i=0; i<len; i++) {
+    unsigned char c = s->array[i];
+    unsigned char d = t->array[i];
+    if (isdigit(c) && isdigit(d)) {
+      int sn = 0, tn = 0;
+      if (!innumber) {
+	int j;
+	j=i+1; while(j<slen && isdigit(s->array[j])) sn++, j++;
+	j=i+1; while(j<tlen && isdigit(t->array[j])) tn++, j++;
+	if (sn > tn) return  1;
+	if (sn < tn) return -1;
+	innumber = TRUE;
+      }
+      if (c > d) return  1;
+      if (c < d) return -1;
+    }
+    else if (isalnum(c) && isalnum(d)) {
+      unsigned char C = toupper(c), D = toupper(d);
+      innumber = FALSE;
+      if (C < D) return -1;
+      if (C > D) return 1;
+      if (ret == 0) {
+	if (c < d) ret = -1;
+	if (c > d) ret = 1;
+      }
+    }
+    else {
+      innumber = FALSE;
+      if (c < d) return -1;
+      if (c > d) return 1;
+    }
+  }
+  if (ret != 0) return ret;
+  if (slen > tlen) return 1;
+  if (slen < tlen) return -1;
+  return 0;
+}
+
+
 int system_wait(pid)
 int pid;
 {

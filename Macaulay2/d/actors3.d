@@ -240,7 +240,7 @@ compare(left:Expr,right:Expr):Expr := (
      is x:string do (
 	  when right
 	  is y:string do (
-	       c := strcmp(x,y);
+	       c := strnumcmp(x,y);
 	       if c == 1 then GreaterE
 	       else if c == -1 then LessE
      	       else EqualEqualE
