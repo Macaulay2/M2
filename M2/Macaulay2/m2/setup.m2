@@ -70,7 +70,7 @@ Thing.Print = x -> (
 		    global debugError <- x -> net y;
 		    stderr << "--error in conversion of output to net: type 'debugError()' to see it; will try conversion to string" << endl << endl ;
 		    try toString y else (
-		    	 stderr << "--error in converstion of output to string" << endl << endl;
+		    	 stderr << "--error in conversion of output to string" << endl << endl;
 			 try simpleToString y else "--something unprintable--"))) << endl;
 	  );
      applyMethod(AfterPrint,x);

@@ -443,13 +443,14 @@ document Sequence := args -> (
      opts := new MutableHashTable;
      scan(args, arg -> if class arg === Option then (
 	       key := arg#0;
-	       val := arg#1;
-	       if not documentOptions#key then error("unknown option ",key);
+	       if not documentOptions#?key then error("--warning: ignoring unknown documentation option '", key, "'");
 	       if opts#?key then error("option ",key," encountered twice");
-	       opts#key = val;
-	       ));
+	       opts#key = arg#1));
      args = select(args, arg -> class arg =!= Option);
-     if not opts.?Key then error "missing Key";
+     if not opts.?Key then if args#?0 then (
+	  opts.Key = args#0;
+	  args = drop(args,1);
+	  ) else error "missing Key";
      opts.DocumentTag = tag := makeDocumentTag(opts.Key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
      currentNodeName = DocumentTag.FormattedKey tag;
      pkg := DocumentTag.Package tag;
