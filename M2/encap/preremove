@@ -1,3 +1,0 @@
-#! /bin/sh -x
-rm -f "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/lib/Macaulay2-*/cache/Macaulay2-*-data
-
