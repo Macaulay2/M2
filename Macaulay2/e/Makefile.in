@@ -186,8 +186,10 @@ geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 # this target is used by the Makefile in the parent directory
 initialize :: $(addsuffix .hpp, $(GENERATED_H))
 
+TAGFILES = @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c
 all tags:: TAGS
-TAGS: Makefile $(HHFILES) $(CCFILES); etags $^
+TAGS: Makefile $(TAGFILES); etags $(TAGFILES)
+
 clean::; rm -f *.lo *.o $(LIBGB) TAGS $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
