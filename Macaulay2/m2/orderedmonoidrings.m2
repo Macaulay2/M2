@@ -4,7 +4,7 @@ terms := quote terms
 PolynomialRing = new Type of EngineRing
 options PolynomialRing := R -> options monoid R
 
-isPolynomialRing = method()
+isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
 
@@ -24,7 +24,7 @@ degreesRing2 := memoize(
      	  use ZZn
 	  ))
 
-degreesRing ZZ := n -> degreesRing2 n
+degreesRing ZZ := PolynomialRing => n -> degreesRing2 n
 
 newDegreesRing2 := memoize(
      (n) -> (
@@ -37,13 +37,13 @@ newDegreesRing2 := memoize(
 
 newDegreesRing ZZ := n -> newDegreesRing2 n
 
-degreesRing PolynomialRing := R -> (
+degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else degreesRing degreeLength R)
 
 generators PolynomialRing := R -> R.generators
 isHomogeneous PolynomialRing := R -> true
-coefficientRing PolynomialRing := R -> R.baseRings#-1
+coefficientRing PolynomialRing := Ring => R -> R.baseRings#-1
 
 standardForm = method()
 standardForm RingElement := (f) -> (
@@ -82,7 +82,7 @@ indices := (M,vars) -> apply(vars, x -> (
 	  if M.index#?x then M.index#x
 	  else error "expected a variable of the ring"))
 
-Ring OrderedMonoid := (			  -- no memoize
+Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
 	  if not (M.?Engine and M.Engine) 
 	  then error "expected ordered monoid handled by the engine";
@@ -294,7 +294,7 @@ samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
      )
 
-Ring Array := (R,variables) -> use R monoid variables
+Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
 
 PolynomialRing _ List := (RM,v) -> (
      k := coefficientRing RM;
@@ -302,7 +302,7 @@ PolynomialRing _ List := (RM,v) -> (
      1_k * M_v
      )
 
-Ring _ List := (R,w) -> product(#w, i -> (R_i)^(w_i))
+Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 
 dim PolynomialRing := R -> dim R.baseRings#-1 + # generators R
 

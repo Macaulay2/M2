@@ -5,14 +5,6 @@ noapp := (f,x) -> error(
      " to item of class ", toString class x
      )
 
---Symbol Thing := (f,x) -> (
---     m := lookup(f,class x);
---     if m =!= null then (
---	  if class m === Function then m x
---	  else noapp(f,x)
---	  )
---     else noapp(f,x))
-
 -----------------------------------------------------------------------------
 
 protect Options
@@ -28,6 +20,7 @@ noMethod := args -> (
 methodDefaults := new OptionTable from {
      SingleArgumentDispatch => false,
      Associative => false,
+     TypicalValue => Thing,
      Options => null
      }
 
@@ -63,7 +56,8 @@ method = args -> processArgs(
 	    args -> (
 	      -- Common code for methods that dispatch on first argument
 	      -- and receive a sequence of arguments.
-	      -- Using browse?  Try looking at the METHODS.
+	      -- Using 'code f'?  Try 'code methods f'.
+	      -- Using 'browse'?  Try looking at the METHODS.
 	      f := lookup(methodFunction, class args#0);
 	      if f === null then noMethod args else f args
 	      )
@@ -76,7 +70,8 @@ method = args -> processArgs(
 	methodFunction = 
 	args -> processArgs(args,opts,
 	  -- Common code for every method with options.
-	  -- Using browse?  Try looking at the METHODS.
+	  -- Using 'code f'?  Try 'code methods f'.
+	  -- Using 'browse'?  Try looking at the METHODS.
 	  options -> args -> (
 	    f := lookup(methodFunction, class args);
 	    if f === null then noMethod args
@@ -105,6 +100,7 @@ method = args -> processArgs(
 	  else error "wrong number of arguments"
 	  )
 	);
+      if options.TypicalValue =!= Thing then typicalValues#methodFunction = options.TypicalValue;
       methodFunction
       )
   )
@@ -122,7 +118,7 @@ scan({
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,
 	  isIsomorphism, exponents, height, depth, width, regularity, nullhomotopy,
-	  hilbertFunction, content, isUnit, monoid, isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
+	  hilbertFunction, content, monoid, isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
 	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
 	  frac, betti, det, ring, presentation, quote use, degreesMonoid, newDegreesMonoid, submatrix,
@@ -148,9 +144,10 @@ radical = method( Options=>{
 	  }
      )
 
+isUnit = method(TypicalValue => Boolean)
 sum = method()
 product = method()
-toString = method(SingleArgumentDispatch => true)
+toString = method(SingleArgumentDispatch => true); typicalValues#toString = String
 toExternalString = method(SingleArgumentDispatch => true)
 max = method(SingleArgumentDispatch=>true)
 min = method(SingleArgumentDispatch=>true)
@@ -189,7 +186,8 @@ depth String := s -> 0
 oldflatten := flatten
 erase quote flatten
 flatten = method(SingleArgumentDispatch=>true)
-flatten List := flatten Sequence := oldflatten
+flatten List     := List     => oldflatten
+flatten Sequence := Sequence => oldflatten
 coker = cokernel
 
 source = (h) -> (
@@ -231,11 +229,11 @@ erase quote newmethod123c
 
 emptyOptionTable := new OptionTable
 options Thing := X -> emptyOptionTable
-options Function := function -> (
+options Function := OptionTable => function -> (
      if OptionsRegistry#?function then OptionsRegistry#function
      else emptyOptionTable
      )
-options Symbol := s -> select(apply(pairs OptionsRegistry, (f,o) -> if o#?s then f), i -> i =!= null)
+options Symbol := OptionTable => s -> select(apply(pairs OptionsRegistry, (f,o) -> if o#?s then f), i -> i =!= null)
 
 computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      if not M#?Name or not goodEnough(M#Name#0,options) 

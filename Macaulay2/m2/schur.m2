@@ -98,7 +98,7 @@ SchurRing _ List := (S,a) -> (
 
 Schur = method ( Options => { } )
 
-Schur(ZZ) := options -> n -> (
+Schur(ZZ) := SchurRing => options -> n -> (
      R := ZZ;
      x := quote x;
      prune := v -> drop(v, - # select(v,i -> i === 0));

@@ -2,7 +2,7 @@
 
 complement = method()
 
-mingens Module := options -> (M) -> if M.?mingens then M.mingens else M.mingens = (
+mingens Module := Matrix => options -> (M) -> if M.?mingens then M.mingens else M.mingens = (
      if M.?generators then (
 	  if M.?relations then (
 	       c := mingens gb (M.generators|M.relations,
@@ -19,12 +19,12 @@ mingens Module := options -> (M) -> if M.?mingens then M.mingens else M.mingens 
 	  )
      )
 
-trim Ring := options -> (R) -> R
+trim Ring := Ring => options -> (R) -> R
 trim QuotientRing := options -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,options)))
-trim Module := options -> (M) -> if M.?trim then M.trim else M.trim = (
+trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = (
      if isFreeModule M then M
      else if isHomogeneous M then (
 	  g := mingens(M,options);
@@ -40,7 +40,7 @@ trim Module := options -> (M) -> if M.?trim then M.trim else M.trim = (
      else M
      )
 
-syz Matrix := options -> (f) -> (
+syz Matrix := Matrix => options -> (f) -> (
      if not isFreeModule target f or not isFreeModule source f
      then error "expected map between free modules";
      if ring f === ZZ or not isHomogeneous f
@@ -52,7 +52,7 @@ syz Matrix := options -> (f) -> (
 modulo = method()
 modulo(Matrix,Nothing) := (m,null) -> syz m
 modulo(Nothing,Matrix) := (null,n) -> n
-modulo(Matrix,Matrix) := (m,n) -> (
+modulo(Matrix,Matrix) := Matrix => (m,n) -> (
      P := target m;
      Q := target n;
      if P != Q then error "expected maps with the same target";
@@ -62,7 +62,7 @@ modulo(Matrix,Matrix) := (m,n) -> (
      syz(m|n, SyzygyRows => numgens source m)
      )
 
-Matrix // Matrix := (f,g) -> (
+Matrix // Matrix := Matrix => (f,g) -> (
      -- if ring g =!= ring f then error "expected maps over the same ring";
      M := target f;
      if M != target g then error "expected maps with the same target";
@@ -86,7 +86,7 @@ Matrix // RingElement := (f,r) -> f // (r * id_(target f))
 
 Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
 
-Matrix % Matrix := (n,m) -> (
+Matrix % Matrix := Matrix => (n,m) -> (
      R := ring n;
      if R =!= ring m then error "expected matrices over the same ring";
      if not isFreeModule source n or not isFreeModule source m
@@ -94,7 +94,7 @@ Matrix % Matrix := (n,m) -> (
      then error "expected maps between free modules";
      n % gb m)
 
-Matrix % Module := (f,M) -> f % gb M
+Matrix % Module := Matrix => (f,M) -> f % gb M
 
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
 RingElement % Ideal := (r,I) -> r % gb I
@@ -102,8 +102,7 @@ ZZ % Ideal := (r,I) -> r_(ring I) % gb I
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))
 
-
-complement Matrix := (m) -> (
+complement Matrix := Matrix => (m) -> (
      if not isHomogeneous m then error "expected homogeneous matrix";
      n := transpose syz transpose substitute(m,0);
      id_(target n) // n)
@@ -132,49 +131,49 @@ homogCheck := (f, v, wts) -> (
     if # wts != numgens ring f 
        then error "homogenization weight vector has incorrect length";)
 
-homogenize(RingElement, RingElement, List) := (f,v,wts) -> (
+homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
     wts = flatten wts;
     homogCheck(f,v,wts);
     sendgg(ggPush f, ggPush index v, ggPush wts, gghomogenize);
     new ring f)
 
-homogenize(Vector, RingElement, List) := (f,v,wts) -> (
+homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
     wts = flatten wts;
     homogCheck(f,v,wts);
     sendgg(ggPush f, ggPush index v, ggPush wts, gghomogenize);
     new class f)
 
-homogenize(Matrix, RingElement, List) := (f,v,wts) -> (
+homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
     wts = flatten wts;
     homogCheck(f,v,wts);
     sendgg(ggPush f, ggPush index v, ggPush wts, gghomogenize);
     getMatrix ring f)
 
-homogenize(Matrix, RingElement) := (f,n) -> (
+homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
     wts := (transpose (monoid ring f).Options.Degrees)#0;
     homogenize(f,n,wts)
     )
 
-homogenize(Module,RingElement) := (M,z) -> (
+homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M
      else subquotient(
 	  if M.?generators then homogenize(M.generators,z),
 	  if M.?relations then homogenize(M.relations,z)))
 
-homogenize(Ideal,RingElement) := (I,z) -> ideal homogenize(module I, z)
+homogenize(Ideal,RingElement) := Ideal => (I,z) -> ideal homogenize(module I, z)
 
-homogenize(Module,RingElement,List) := (M,z,wts) -> (
+homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      if isFreeModule M then M
      else subquotient(
 	  if M.?generators then homogenize(M.generators,z,wts),
 	  if M.?relations then homogenize(M.relations,z,wts)))
 
-homogenize(RingElement, RingElement) := (f,n) -> (
+homogenize(RingElement, RingElement) := RingElement => (f,n) -> (
     wts := (transpose (monoid ring f).Options.Degrees)#0;
     homogenize(f,n,wts)
     )
 
-homogenize(Vector, RingElement) := (f,n) -> (
+homogenize(Vector, RingElement) := Vector => (f,n) -> (
     wts := (transpose (monoid ring f).Options.Degrees)#0;
     homogenize(f,n,wts)
     )
@@ -226,19 +225,19 @@ sortColumns Matrix := options -> (f) -> (
 
 selectInSubring = method()
 
-selectInSubring(ZZ, Matrix) := (i,m) -> (
+selectInSubring(ZZ, Matrix) := Matrix => (i,m) -> (
      sendgg(ggPush m, ggdup, ggPush i, ggelim, ggsubmatrix);
      getMatrix ring m)
 
 divideByVariable = method()
 
-divideByVariable(Matrix, RingElement) := (m,v) -> (
+divideByVariable(Matrix, RingElement) := Matrix => (m,v) -> (
      if ring v =!= ring m then 
          error("must divide by a variable in the ring ", ring m);
      sendgg(ggPush m, ggPush index v, ggPush (-1), ggsat);
      getMatrix ring m)
 
-divideByVariable(Matrix, RingElement, ZZ) := (m,v,d) -> (
+divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
      if ring v =!= ring m then 
          error("must divide by a variable in the ring ", ring m);
      sendgg(ggPush m, ggPush index v, ggPush d, ggsat);
@@ -249,7 +248,7 @@ compress = method()
 --     R := ring m;
 --     sendgg( ggPush m, ggcompress );
 --     getMatrix R)
-compress Matrix := (m) -> (
+compress Matrix := Matrix => (m) -> (
      R := ring m;
      submatrix(m, select(toList(0..numgens source m-1), i -> m_i != 0)))
 
@@ -270,7 +269,7 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
   { map(S,R,vars S * substitute(n, S)), map(R,S,vars R * n^(-1))}
   )
 
-lift(Matrix,Ring) := (f,S) -> (
+lift(Matrix,Ring) := Matrix => (f,S) -> (
      -- this will be pretty slow and stupid
      if ring target f === S then f
      else if isQuotientOf(ring f,S) and
@@ -281,7 +280,7 @@ lift(Matrix,Ring) := (f,S) -> (
      else matrix(S, applyTable(entries f, r -> lift(r,S)))
      )
 
-lift(Ideal,Ring) := (I,S) -> (
+lift(Ideal,Ring) := Ideal => (I,S) -> (
      -- provisional, just for quotient rings
      T := ring I;
      if T === S then I

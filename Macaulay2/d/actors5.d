@@ -346,8 +346,15 @@ loaddatafun(e:Expr):Expr := (
      );
 setupfun("loaddata",loaddatafun);
 
-doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
-setup(DoubleArrowS,doublePointerfun);
+-- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
+optionFun(lhs:Code,rhs:Code):Expr := (
+     l := eval(lhs);
+     when l is Error do l
+     else (
+     	  r := eval(rhs);
+     	  when r is Error do r
+	  else list(optionClass,Sequence(l,r))));
+setup(DoubleArrowS,optionFun);
 
 prependfun(e:Expr):Expr := (
      when e 
@@ -1308,3 +1315,5 @@ kill(e:Expr):Expr := (
 	  )
      else WrongArg("a file"));
 setupfun("kill",kill);
+
+setupconst("typicalValues", Expr(typicalValues));

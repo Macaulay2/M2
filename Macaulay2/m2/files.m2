@@ -2,6 +2,6 @@
 
 tmpname = (x) -> "/tmp/" | string processID() | x
 
-String << Thing := (filename,x) -> openOut filename << x
+String << Thing := File => (filename,x) -> openOut filename << x
 
 

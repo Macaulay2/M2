@@ -1,13 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-Ring _ String := (x,s) -> x#s		  -- gets variable from its name
+Ring _ String := RingElement => (x,s) -> x#s		  -- gets variable from its name
 
-random Ring := (R) -> (
+random Ring := RingElement => (R) -> (
      if R.?random then R.random()
      else error "no method found for item of class Ring"
      )
 
-ZZ _ Ring := (i,R) -> (
+ZZ _ Ring := RingElement => (i,R) -> (
      if i === 1 then R#1
      else if i === 0 then R#0
      else i * R#1
@@ -26,30 +26,30 @@ char Ring := R -> (
 
 generators Ring := R -> {}
 
-vars Ring := R -> (
+vars Ring := Matrix => R -> (
      g := generators R;
      if R.?vars then R.vars else R.vars =
      map(R^1,,{g}))
 
 numgens Ring := R -> #generators R
 
-ring Thing := x -> (
+ring Thing := Ring => x -> (
      if x.?ring then x.ring 
      else if instance(class x,Ring) then class x
      else error "no ring")
 ring Type := T -> if T.?ring then T.ring else error "no ring"
 
-ambient Ring := R -> error "no ambient ring present"
-coefficientRing Ring := R -> error "no coefficient ring present"
+ambient Ring := Ring => R -> error "no ambient ring present"
+coefficientRing Ring := Ring => R -> error "no coefficient ring present"
 
-isCommutative = method()
+isCommutative = method(TypicalValue => Boolean)
 isCommutative Ring := R -> R.isCommutative
 
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
 
-isRing = method()
+isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false
 isRing Ring := R -> true
 

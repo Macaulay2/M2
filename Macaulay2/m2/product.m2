@@ -4,7 +4,7 @@ ProductRing = new Type of Ring
 
 toString ProductRing := RS -> if RS.?name then RS.name else toString RS.baseRings#0 | " * " | toString RS.baseRings#1
 net ProductRing := (RS) -> net RS.baseRings#0 | " * " | net RS.baseRings#1
-Ring * Ring := (R,S) -> (
+Ring * Ring := ProductRing => (R,S) -> (
      RS := new ProductRing of BasicList;
      RS.baseRings = {R,S};
      RS#0 = new RS from {R#0,S#0};

@@ -623,6 +623,7 @@ setupconst("Symbol",Expr(symbolClass));
 setupconst("Error",Expr(errorClass));
 setupconst("Handle",Expr(handleClass));
 setupconst("Time",Expr(timeClass));
+setupconst("Option",Expr(optionClass));
 setupconst("Net",Expr(netClass));
 setupconst("true",True);
 setupconst("false",False);
@@ -718,12 +719,21 @@ export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      if method == nullE then MissingMethod(methodkey)
      else apply(method,right));
 -----------------------------------------------------------------------------
+export typicalValues := newHashTable(mutableHashTableClass,nothingClass);
+messx := "expected a function or option as method";
 installIt(h:HashTable,key:Expr,value:Expr):Expr := (
-     when value is Error do value
+     when value
+     is Error do value
      is FunctionClosure do storeInHashTable(h,key,value)
      is CompiledFunction do storeInHashTable(h,key,value)
      is CompiledFunctionClosure do storeInHashTable(h,key,value)
-     else errorExpr("expected a function as method"));
+     is x:List do (
+	  if x.class == optionClass && length(x.v) == 2 then (
+	       storeInHashTable(typicalValues,key,x.v.0);
+	       installIt(h,key,x.v.1);
+	       value)
+	  else errorExpr(messx))
+     else errorExpr(messx));
 -----------------------------------------------------------------------------
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
@@ -731,6 +741,12 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(s,meth,value)
      is CompiledFunction do storeInHashTable(s,meth,value)
      is CompiledFunctionClosure do storeInHashTable(s,meth,value)
+     is x:List do (
+	  if x.class == optionClass && length(x.v) == 2 then (
+	       storeInHashTable(typicalValues,Expr(Sequence(meth,Expr(s))),x.v.0);
+	       installMethod(meth,s,x.v.1);
+	       value)
+	  else errorExpr(messx))
      else errorExpr("expected a function"));
 key1 := Sequence(nullE,nullE);
 key1E := Expr(key1);

@@ -3,13 +3,13 @@
 
 QuotientRing = new Type of EngineRing
 
-isQuotientRing = method()
+isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 coefficientRing QuotientRing := R -> coefficientRing R.baseRings#-1
 options QuotientRing := R -> options R.baseRings#-1
 
-isQuotientOf = method()
+isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (S,R) -> S === R
 isQuotientOf(QuotientRing,Ring) := (S,R) -> (
      S === R or isQuotientOf(S.baseRings#-1,R)
@@ -47,7 +47,7 @@ net QuotientRing := S -> net expression S
 dim QuotientRing := S -> if S.?dim then S.dim else S.dim = dim S^1
 
 ambient PolynomialRing := R -> R
-ambient QuotientRing := R -> R.baseRings#-1
+ambient QuotientRing := Ring => R -> R.baseRings#-1
 
 isHomogeneous QuotientRing := R -> (
      if R.?isHomogeneous then R.isHomogeneous 
@@ -58,7 +58,7 @@ isHomogeneous QuotientRing := R -> (
 	  )
      )
 
-Ring / Module := (R,I) -> (
+Ring / Module := QuotientRing => (R,I) -> (
      if ambient I != R^1 or I.?relations
      then error ("expected ", toString I, " to be an ideal of ", toString R);
      R / ideal I)
@@ -128,7 +128,7 @@ ZZquotient := (R,I) -> (
 	  savedQuotients#n = S;
 	  S))
 
-Ring / Ideal := (R,I) -> if I == 0 then R else (
+Ring / Ideal := QuotientRing => (R,I) -> if I == 0 then R else (
      if R === ZZZ then ZZZquotient(R,I)
      else if R === ZZ then ZZquotient(R,I)
      else (
@@ -182,9 +182,9 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotie
 
 Ring / ZZ := (R,f) -> R / ideal f_R
 
-Ring / RingElement := Ring / List := Ring / Sequence := (R,f) -> R / ideal f
+Ring / RingElement := Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / ideal f
 
-presentation QuotientRing := R -> (
+presentation QuotientRing := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
 	  sendgg (ggPush R, gggetideal);
 	  getMatrix ultimate(ambient,R)

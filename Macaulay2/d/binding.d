@@ -477,7 +477,8 @@ bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 opsWithBinaryMethod := array(Symbol)(
-     DoubleArrowS.symbol, LessLessS.symbol, GreaterGreaterS.symbol,
+     -- DoubleArrowS.symbol,
+     LessLessS.symbol, GreaterGreaterS.symbol,
      EqualEqualS.symbol, QuestionS.symbol, BarBarS.symbol,
      AmpersandAmpersandS.symbol, ColonS.symbol, 
      -- ColonColonS.symbol,

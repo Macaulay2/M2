@@ -1,7 +1,9 @@
 --		Copyright 1994-1999 by Daniel R. Grayson
 
-Function \ Sequence := Function \ List := (f,v) -> apply(v,f)
-Sequence / Function := List / Function := (v,f) -> apply(v,f)
+Function \ Sequence := Sequence => (f,v) -> apply(v,f)
+Function \ List     := List     => (f,v) -> apply(v,f)
+Sequence / Function := Sequence => (v,f) -> apply(v,f)
+    List / Function := List     => (v,f) -> apply(v,f)
 
 use = identity				  -- just temporary, until methods.m2
 

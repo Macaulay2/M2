@@ -68,7 +68,7 @@ BinaryMatrixOperationSame := (operation) -> (m,n) -> (
      reduce T;
      newMatrix(T, source m))
 
-Matrix _ Sequence := (m,ind) -> (
+Matrix _ Sequence := RingElement => (m,ind) -> (
      if # ind === 2
      then (
      	  R := ring m;
@@ -87,7 +87,7 @@ Matrix _ Sequence := (m,ind) -> (
      else error "expected a sequence of length two"
      )
 
-Matrix _ ZZ := (m,i) -> (
+Matrix _ ZZ := Vector => (m,i) -> (
      if 0 <= i and i < numgens source m then (
      	  sendgg (ggPush m, ggPush i, ggelem);
      	  new m.target)
@@ -114,19 +114,19 @@ Matrix == ZZ := (m,i) -> (
      )
 ZZ == Matrix := (i,m) -> m == i
 
-Matrix + Matrix := BinaryMatrixOperationSame ggadd
+Matrix + Matrix := Matrix => BinaryMatrixOperationSame ggadd
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
 ZZ + Matrix := (i,f) -> if i === 0 then f else i*1_(ring f) + f
 Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*1_(ring f)
 
-Matrix - Matrix := BinaryMatrixOperationSame ggsubtract
+Matrix - Matrix := Matrix => BinaryMatrixOperationSame ggsubtract
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
 ZZ - Matrix := (i,f) -> if i === 0 then -f else i*1_(ring f) - f
 Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*1_(ring f)
 
-- Matrix := f -> (
+- Matrix := Matrix => f -> (
      h := new Matrix;
      h.source = source f;
      h.target = target f;
@@ -142,7 +142,7 @@ setdegree := (M,N,type,degree) -> (
      	  )
      )
 
-Matrix * Matrix := (m,n) -> (
+Matrix * Matrix := Matrix => (m,n) -> (
      if source m == target n then (
 	  if ring target m =!= ring target n then (
 	       n = matrix n ** ring target m;
@@ -176,11 +176,11 @@ Matrix * Matrix := (m,n) -> (
 	  reduce M;
 	  newMatrix(M,N)))
 
-Matrix ^ ZZ := (f,n) -> (
+Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
      else SimplePowerMethod (f,n))
 
-transpose Matrix :=  (m) -> (
+transpose Matrix := Matrix => (m) -> (
      if not (isFreeModule source m and isFreeModule target m) 
      then error "expected a map between free modules";
      sendgg (ggPush m, ggtranspose);
@@ -192,7 +192,7 @@ ring(Matrix) := m -> (
      then error "expected map to have source and target over same ring";
      R)
 
-Matrix * Vector := (m,v) -> (
+Matrix * Vector := Vector => (m,v) -> (
      if class v =!= source m then error "map not applicable to vector";
      if not isFreeModule source m then notImplemented();
      sendgg(ggPush m, ggPush v, ggmult);
@@ -333,21 +333,21 @@ Option.directSum = args -> (
      	  keys := S.indices = toList args/first;
      	  S.indexComponents = new HashTable from toList apply(#keys, i -> keys#i => i);
 	  S))
-Matrix ++ Matrix := directSum
-Module ++ Module := directSum
+Matrix ++ Matrix := Matrix => directSum
+Module ++ Module := Module => directSum
 
-Matrix ++ ZZ :=
-Matrix ++ RingElement := (f,r) -> f ++ matrix {{r}}
+Matrix ++ RingElement := Matrix => 
+Matrix ++ ZZ := (f,r) -> f ++ matrix {{r}}
 
-ZZ ++ Matrix :=
-RingElement ++ Matrix := (r,f) -> matrix {{r}} ++ f
+RingElement ++ Matrix := Matrix => 
+ZZ ++ Matrix := (r,f) -> matrix {{r}} ++ f
 
+RingElement ++ RingElement := Matrix => 
 ZZ ++ RingElement :=
-RingElement ++ ZZ :=
-RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
+RingElement ++ ZZ := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
-RingElement  | RingElement := (r,s) -> matrix {{r}}  | matrix {{s}}
-RingElement || RingElement := (r,s) -> matrix {{r}} || matrix {{s}}
+RingElement  | RingElement := Matrix => (r,s) -> matrix {{r}}  | matrix {{s}}
+RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 
 concatCols = mats -> (					    -- we erase this later
      mats = select(toList mats,m -> m =!= null);
@@ -375,13 +375,13 @@ concatRows = mats -> (					    -- we erase this later
 	  then error "unequal sources";
 	  ggConcatRows(Module.directSum apply(mats,target), sources#0, mats)))
 
-Matrix | Matrix := (f,g) -> concatCols(f,g)
+Matrix | Matrix := Matrix => (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
 Matrix | RingElement := (f,g) -> concatCols(f,g**id_(target f))
 ZZ | Matrix := (f,g) -> concatCols(f*id_(target g),g)
 Matrix | ZZ := (f,g) -> concatCols(f,g*id_(target f))
 
-Matrix || Matrix := (f,g) -> concatRows(f,g)
+Matrix || Matrix := Matrix => (f,g) -> concatRows(f,g)
 RingElement || Matrix := (f,g) -> concatRows(f**id_(source g),g)
      -- we would prefer for f**id_(source g) to have the exact same source as g does
 Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
@@ -392,13 +392,13 @@ listZ := v -> (
      if not all(v,i -> class i === ZZ) then error "expected list of integers";
      )
 
-Matrix _ List := (f,v) -> (
+Matrix _ List := Matrix => (f,v) -> (
      v = splice v;
      listZ v;
      submatrix(f,v)
      )
 
-Matrix ^ List := (f,v) -> (
+Matrix ^ List := Matrix => (f,v) -> (
      v = splice v;
      listZ v;
      submatrix(f,v,)
@@ -415,7 +415,7 @@ submatrix(Matrix,Nothing,List) := (m,rows,cols) -> (
 submatrix(Matrix,Sequence,Sequence) := 
 submatrix(Matrix,Sequence,List) := 
 submatrix(Matrix,List,Sequence) := 
-submatrix(Matrix,List,List) := (m,rows,cols) -> (
+submatrix(Matrix,List,List) := Matrix => (m,rows,cols) -> (
      if not isFreeModule source m or not isFreeModule target m
      then error "expected a homomorphism between free modules";
      rows = toList splice rows;
@@ -426,7 +426,7 @@ submatrix(Matrix,List,List) := (m,rows,cols) -> (
 	  ggINTARRAY, gg rows, ggINTARRAY, gg cols, ggsubmatrix);
      getMatrix ring m)
 
-submatrix(Matrix,List) := (m,cols) -> (
+submatrix(Matrix,List) := Matrix => (m,cols) -> (
      cols = toList splice cols;
      listZ cols;
      sendgg(ggPush m, 
@@ -434,8 +434,8 @@ submatrix(Matrix,List) := (m,cols) -> (
 	  ggsubmatrix);
      getMatrix ring m)
 
-diff(Matrix, Matrix) := BinaryMatrixOperation ggdiff
-diff(RingElement, RingElement) := (f,g) -> (
+diff(Matrix, Matrix) := Matrix => BinaryMatrixOperation ggdiff
+diff(RingElement, RingElement) := RingElement => (f,g) -> (
      (diff(matrix{{f}},matrix{{g}}))_(0,0)
      )
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
@@ -446,8 +446,8 @@ diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 
-contract(Matrix, Matrix) := BinaryMatrixOperation ggcontract
-contract(RingElement, RingElement) := (f,g) -> (
+contract(Matrix, Matrix) := Matrix => BinaryMatrixOperation ggcontract
+contract(RingElement, RingElement) := RingElement => (f,g) -> (
      (contract(matrix{{f}},matrix{{g}}))#(0,0)
      )
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
@@ -459,18 +459,18 @@ contract(Matrix, Vector) := (m,w) -> contract(m,transpose matrix {w})
 contract(Vector, Matrix) := (v,m) -> contract(matrix {v}, m)
 
 jacobian = method()
-jacobian Matrix := (m) -> diff(transpose vars ring m, m)
+jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
 
-jacobian Ring := (R) -> jacobian presentation R ** R
+jacobian Ring := Matrix => (R) -> jacobian presentation R ** R
 
-leadTerm(ZZ, Matrix) := (i,m) -> (
+leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
      sendgg(ggPush m, ggINT, gg i, gginitial);
      getMatrix ring m)
-leadTerm(Matrix) := m -> (
+leadTerm(Matrix) := Matrix => m -> (
      sendgg(ggPush m, gginitial);
      getMatrix ring m)
 
-borel Matrix := m -> (
+borel Matrix := Matrix => m -> (
      sendgg (
 	  ggPush m, ggINT, gg 0, ggmonideal,  -- get monomial lead ideal
 	  ggborel,                            -- monomial borel now on stack
@@ -488,7 +488,7 @@ mopts := Options => {
 matrix = method mopts
 map = method mopts
 
-map(Module,Module) := options -> (M,N) -> (
+map(Module,Module) := Matrix => options -> (M,N) -> (
      F := ambient N;
      if F == ambient M
      then map(M,N,
@@ -499,7 +499,7 @@ map(Module,Module) := options -> (M,N) -> (
      else error "expected modules to have the same ambient free module"
      )
 
-map(Module,Module,RingElement) := options -> (M,N,r) -> (
+map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      R := ring M;
      if r == 0 then (
 	  f := new Matrix;
@@ -511,7 +511,7 @@ map(Module,Module,RingElement) := options -> (M,N,r) -> (
      else if numgens cover M == numgens cover N then map(M,N,r * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
-map(Module,Module,ZZ) := options -> (M,N,i) -> (
+map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
      if i === 0 then (
 	  R := ring M;
 	  f := new Matrix;
@@ -524,7 +524,7 @@ map(Module,Module,ZZ) := options -> (M,N,i) -> (
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
-map(Module,RingElement) := options -> (M,r) -> (
+map(Module,RingElement) := Matrix => options -> (M,r) -> (
      R := ring M;
      try r = r + R#0
      else error "encountered scalar of unrelated ring";
@@ -532,7 +532,7 @@ map(Module,RingElement) := options -> (M,r) -> (
      else if r == 1 then map(M,1)
      else r * (map(M,1)))
 
-map(Module) := options -> (M) -> (
+map(Module) := Matrix => options -> (M) -> (
      R := ring M;
      f := new Matrix;
      sendgg(ggPush cover M, ggiden);
@@ -542,12 +542,12 @@ map(Module) := options -> (M) -> (
      f.source = f.target = M;
      f)
 
-map(Module,ZZ) := options -> (M,i) -> (
+map(Module,ZZ) := Matrix => options -> (M,i) -> (
      if i === 0 then map(M,M,0)
      else if i === 1 then map(M,options)
      else i * map M)
 
-map(Module,Matrix) := options -> (M,f) -> (
+map(Module,Matrix) := Matrix => options -> (M,f) -> (
      R := ring M;
      if R =!= ring f then error "expected the same ring";
      if # degrees M =!= # degrees target f then (
@@ -565,7 +565,7 @@ inducedMap = method (
 	  Verify => true,
 	  Degree => null 
 	  })
-inducedMap(Module,Module,Matrix) := options -> (M,N,f) -> (
+inducedMap(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      sM := target f;
      sN := source f;
      if ambient M != sM
@@ -586,12 +586,12 @@ inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
 
-inducedMap(Module,Module) := o -> (M,N) -> (
+inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
      if ambient M != ambient N 
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
-inducesWellDefinedMap = method()
+inducesWellDefinedMap = method(TypicalValue => Boolean)
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;
      sN := source f;

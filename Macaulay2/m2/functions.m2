@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-Function @@ Function := (f,g) -> x -> f g x
+Function @@ Function := Function => (f,g) -> x -> f g x
 
 ultimate = method()
 ultimate(Function,Thing) := (f,x) -> (

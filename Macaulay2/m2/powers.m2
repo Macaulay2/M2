@@ -4,7 +4,7 @@
 --     n -> accumulate((x,j) -> (x * (n-j+1))//j, 1, toList (1 .. n)) 
 --     )
 --binomial ZZ := n -> binomialRow n
-binomial(ZZ,ZZ) := memoize (
+binomial(ZZ,ZZ) := ZZ => memoize (
      (n,i) -> (
 	  if i < 0 then 0
 	  else if i === 0 then 1

@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 -- this stuff should get into the kernel
 
@@ -16,4 +16,4 @@ Sequence == Sequence := (x,y) -> (
      and
      all( 0 .. # x - 1, i -> x#i == y#i ))
 
-Thing == Thing := (x,y) -> x === y			    -- this is a bit experimental, installed 7/15/99
+Thing == Thing := Boolean => (x,y) -> x === y			    -- this is a bit experimental, installed 7/15/99

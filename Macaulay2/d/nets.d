@@ -21,10 +21,18 @@ lengthUntabified(s:string):int := (
      n);
 untabify(s:string):string := (
      if anytabs(s) then (
+	  n := 0;
 	  new string len lengthUntabified(s) do
-	  foreach c at n in s do if c == '\t' 
-	  then for ((n+8)/8)*8-n do provide ' '
-	  else provide c
+	  foreach c in s do if c == '\t' 
+	  then (
+	       i := ((n+8)/8)*8-n;
+	       for i do provide ' ';
+	       n = n+i;
+	       )
+	  else (
+	       provide c;
+	       n = n+1;
+	       )
 	  )
      else s);
 export toNet(s:string):Net := (
