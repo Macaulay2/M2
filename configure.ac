@@ -120,6 +120,15 @@ AC_ARG_ENABLE(profile,
     PROFILE="$enableval",
     PROFILE=no)
 
+AC_SUBST(FACTORY)
+AC_ARG_ENABLE(factory,
+    AC_HELP_STRING(--disable-factory,disable the use of the 'factory' library),
+    FACTORY="$enableval",
+    FACTORY=yes)
+if test "$FACTORY" = yes
+then AC_DEFINE(FACTORY,,whether to use the 'factory' library)
+fi
+
 AC_SUBST(STRIP)
 AC_ARG_ENABLE(strip,
     AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary),
@@ -199,7 +208,7 @@ AC_CHECK_DECLS(sys_nerr)
 SAVELIBS="$LIBS"
 
 AC_MSG_CHECKING([whether gc library is installed])
-LIBS="-lgc $SAVELIBS"
+LIBS="-lgc -ldl $SAVELIBS"
 AC_TRY_LINK(
     [#include <gc.h>],
     [GC_malloc(1);],
@@ -208,7 +217,7 @@ AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
 AC_SUBST(HAVE_LIBGC_PG)
-LIBS="-lgc-pg $SAVELIBS"
+LIBS="-lgc-pg -ldl $SAVELIBS"
 AC_TRY_LINK(
     [#include <gc.h>],
     [GC_malloc(1);],

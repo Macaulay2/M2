@@ -310,7 +310,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE ENCAP XCODE ALTIVEC LAPACK LAPACKLIBS HAVE_LIBGC_PG HAVE_LIBGMP_PG HAVE_LIBNTL_PG HAVE_LIBCF_PG HAVE_LIBFAC_PG CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE FACTORY STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE ENCAP XCODE ALTIVEC LAPACK LAPACKLIBS HAVE_LIBGC_PG HAVE_LIBGMP_PG HAVE_LIBNTL_PG HAVE_LIBCF_PG HAVE_LIBFAC_PG CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -870,6 +870,7 @@ Optional Features:
   --disable-dumpdata      do not cache data with dumpdata
   --enable-dumpdata=old   cache data with the old version of dumpdata
   --enable-profile        enable profiling (and disable stripping)
+  --disable-factory       disable the use of the 'factory' library
   --disable-strip         do not strip the Macaulay 2 binary
   --enable-debug          enable debugging (and disable stripping)
   --enable-verbose        enable verbose memory allocation
@@ -3721,6 +3722,22 @@ else
 fi;
 
 
+# Check whether --enable-factory or --disable-factory was given.
+if test "${enable_factory+set}" = set; then
+  enableval="$enable_factory"
+  FACTORY="$enableval"
+else
+  FACTORY=yes
+fi;
+if test "$FACTORY" = yes
+then
+cat >>confdefs.h <<\_ACEOF
+#define FACTORY
+_ACEOF
+
+fi
+
+
 # Check whether --enable-strip or --disable-strip was given.
 if test "${enable_strip+set}" = set; then
   enableval="$enable_strip"
@@ -4345,7 +4362,7 @@ SAVELIBS="$LIBS"
 
 echo "$as_me:$LINENO: checking whether gc library is installed" >&5
 echo $ECHO_N "checking whether gc library is installed... $ECHO_C" >&6
-LIBS="-lgc $SAVELIBS"
+LIBS="-lgc -ldl $SAVELIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -4401,7 +4418,7 @@ echo "${ECHO_T}yes" >&6
 echo "$as_me:$LINENO: checking whether gc library, profiling version, is installed (-lgc-pg)" >&5
 echo $ECHO_N "checking whether gc library, profiling version, is installed (-lgc-pg)... $ECHO_C" >&6
 
-LIBS="-lgc-pg $SAVELIBS"
+LIBS="-lgc-pg -ldl $SAVELIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -6627,6 +6644,7 @@ s,@CPP@,$CPP,;t t
 s,@EGREP@,$EGREP,;t t
 s,@DUMPDATA@,$DUMPDATA,;t t
 s,@PROFILE@,$PROFILE,;t t
+s,@FACTORY@,$FACTORY,;t t
 s,@STRIP@,$STRIP,;t t
 s,@DEBUG@,$DEBUG,;t t
 s,@VERBOSE@,$VERBOSE,;t t
