@@ -332,7 +332,7 @@ export rawMonomialOrdering(e:Expr):Expr := (
      -- This routine gets an expression like this:
      -- { GRevLexSmallS => {1,2,3}, PositionS, LexTinyS => 4, LexS => 5, WeightsS => {1,2,3} }
      -- For GRevLexS, the weights are already provided by top level code.
-     -- Each member of the sequence results in one monomial ordering, and they sequence
+     -- Each member of the sequence results in one monomial ordering, and the sequence
      -- is then "joined".
      -- The weights for grevlex have to be > 0.
      -- Limit the total number of variables to 2^15-1.
