@@ -61,7 +61,6 @@ MACAULAY2:; $(MAKE) -C Macaulay2 all tests
 justM2 distclean::; $(MAKE) -C Macaulay2 $@
 DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/CHANGES \
-		Macaulay2/licenses \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/packages/*.m2 \
@@ -101,7 +100,6 @@ PORTING := CVS \
 	Macaulay2/e/misc \
 	Macaulay2/emacs \
 	Macaulay2/html \
-	Macaulay2/licenses \
 	Macaulay2/m2 \
 	Macaulay2/msdos \
 	Macaulay2/packages \
