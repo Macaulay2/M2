@@ -269,12 +269,6 @@ document {
      "Description, example, reference", TO (localize,Ideal,Ideal)
      }
 
-
-
-
-
-
-
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:

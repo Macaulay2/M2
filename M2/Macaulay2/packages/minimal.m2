@@ -32,3 +32,7 @@ document { Key => "f",
 	  "f()"
 	  }
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages minimal.installed"
+-- End:

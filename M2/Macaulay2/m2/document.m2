@@ -545,8 +545,7 @@ getExampleInputs Thing        := t -> {}
 getExampleInputs ExampleTABLE := t -> apply(toList t, first)
 getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
-examples = x -> getExampleInputs documentation x
-printExamples = f -> scan(examples f, i -> << i << endl)
+examples = x -> stack getExampleInputs documentation x
 topics = Command (() -> pager columnate(if printWidth != 0 then printWidth else 80, format \ topicList()))
 apropos = (pattern) -> sort unique (toString \ getGlobalSymbol \ select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i)))
 -----------------------------------------------------------------------------

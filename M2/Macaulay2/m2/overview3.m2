@@ -202,7 +202,7 @@ document {
      "Functions for accessing the documentation:",
      UL {
 	  TOH "apropos",
-	  TOH "printExamples",
+	  TOH "examples",
 	  TOH "help", 
 	  TOH "topics"
 	  }

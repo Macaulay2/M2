@@ -875,26 +875,36 @@ userMacaulay2Directory := () -> (
 
 /// << close;	  
 	  -- make README file
-	  dir|"README" << ///This directory is used to contain data and code specific to Macaulay2.  For example, your initialization
-file, init.m2, is in this directory, and is automatically loaded upon startup of Macaulay2, unless you use
-the "-q" option.  You may edit it to meet your needs.
+	  dir|"README" << ///Welcome to Macaulay2!
+			     
+This directory is used to contain data and code specific to Macaulay2.  For
+example, your initialization file, init.m2, is in this directory, and is
+automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
+You may edit it to meet your needs.
 
-The file "index.html" in this directory contains a list of installed packages, and is updated every time
-you start Macaulay2, unless you use the "-q" option.  To update it manually, use "makePackageIndex()".
-Point your web browser at that file and bookmark it.
+The web browser file "index.html" in this directory contains a list of links to
+the documentation of Macaulay2 and its installed packages and is updated every
+time you start Macaulay2 (unless you use the "-q" option).  To update it
+manually, use "makePackageIndex()".  Point your web browser at that file and
+bookmark it.
 
-You may place Macaulay 2 source files in the subdirectory "code/".  It's on your "path", so Macaulay2's
-"load" and "input" commands will automatically look there for your files.
+You may place Macaulay 2 source files in the subdirectory "code/".  It's on
+your "path", so Macaulay2's "load" and "input" commands will automatically look
+there for your files.
 
-You may obtain source code for Macaulay 2 packages and install them yourself with the function
-"installPackage".  Behind the scenes, Macaulay 2 will use the subdirectory "encap/" to house the code for
-those packages in separate subdirectories.  The subdirectory "local/" will hold a single merged directory
+You may obtain source code for Macaulay 2 packages and install them yourself
+with the function "installPackage".  Behind the scenes, Macaulay 2 will use the
+subdirectory "encap/" to house the code for those packages in separate
+subdirectories.  The subdirectory "local/" will hold a single merged directory
 tree for those packages, with symbolic links to the files of the packages.
 
 Good luck!
 
+http://www.math.uiuc.edu/Macaulay2/
+
 Daniel R. Grayson <dan@math.uiuc.edu>,
-Michael R. Stillman <mike@math.cornell.edu>/// << close;
+Michael R. Stillman <mike@math.cornell.edu>
+/// << close;
 	  );
      dir)
 

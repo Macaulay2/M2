@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The function 'printExamples' has been removed, and 'examples' has been
+modified to yield a net.
+
 The function 'currentDirectory' has been replaced by a variable whose
 value is the current working directory.  During a session, it doesn't
 change, because there is no M2 command to change the working directory.
