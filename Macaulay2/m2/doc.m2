@@ -2146,7 +2146,7 @@ document { "operators",
           (TO ":", " -- ideal quotient, repetitions"),
           (TO quote "\\", " -- applying a function to elements of a list"),
           (TO "/", " -- applying a function to elements of a list"),
-          (TO "@", " -- "),
+          (TO "@", " -- attaching options to a function"),
           (TO "@@", " -- composing functions"),
           -- (TO "::", " -- "),
           (TO "&&", " -- "),
@@ -2737,6 +2737,10 @@ document { quote @,
      PRE "         X @ Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
+     SEEALSO {
+	  (quote @, List, Function),
+	  (quote @, OptionTable, Function),
+	  }
      }
 
 document { quote \,

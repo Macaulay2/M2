@@ -17,8 +17,8 @@ new HashTable from List := (O,v) -> hashTable v
 
 OptionsRegistry = new MutableHashTable
 OptionTable = new Type of HashTable
-Function @ OptionTable := (f,o) -> x -> processArgs(x,o,f);
-Function @ List := (f,o) -> f @ new OptionTable from o
+OptionTable @ Function := (o,f) -> x -> processArgs(x,o,f);
+List @ Function := (o,f) -> (new OptionTable from o) @ f
 
 processArgs = (args,defaults,function) -> (
      defaults = new MutableHashTable from defaults;
