@@ -654,7 +654,7 @@ document { input,
      loaded, if any, and then along the ", TO "path", ", unless the name of
      the file begins with a slash (/).",
      PARA,
-     "If one of the expressions in the file evaluates to the symbol ", TO "end", "
+     "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
      PARA,
      "If an error occurs while evaluating the expressions in the file,
@@ -666,7 +666,6 @@ document { input,
 document { end,
      Headline => "stop loading a file",
      TT "end", " -- a symbol which causes loading of a file to be stopped.",
-     PARA,
      SEEALSO{ "needs", "load", "input" }
      }
 
@@ -680,6 +679,8 @@ document { load,
      the file begins with a slash (/). The file is read without echoing the
      input, printing the values, or incrementing the line number.",
      PARA,
+     "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
+     the reading of the file is stopped at that point.",
      SEEALSO{ "path", "needs", "input"}
      }
 

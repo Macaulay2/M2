@@ -1,29 +1,29 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-peek2 = method(TypicalValue => Net)
+peek' = method(TypicalValue => Net)
 
-peek2(ZZ,ZZ) := (depth,n) -> toString n
-peek2(ZZ,Nothing) := (depth,s) -> "null"
-peek2(ZZ,Symbol) := (depth,s) -> if depth === 0 then toString s else toExternalString s
-peek2(ZZ,Thing) := (depth,s) -> net s
+peek'(ZZ,ZZ) := (depth,n) -> toString n
+peek'(ZZ,Nothing) := (depth,s) -> "null"
+peek'(ZZ,Symbol) := (depth,s) -> if depth === 0 then toString s else toExternalString s
+peek'(ZZ,Thing) := (depth,s) -> net s
 
-peek2(ZZ,BasicList) := (depth,s) -> (
+peek'(ZZ,BasicList) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
-	  "{", horizontalJoin between (",", apply(toList s, value -> peek2(depth-1,value))), "}" ) )
+	  "{", horizontalJoin between (",", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
 
-peek2(ZZ,MarkUpList) := (depth,s) -> (
+peek'(ZZ,MarkUpList) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
-	  "{", horizontalJoin between (",", apply(toList s, value -> peek2(if instance(value,MarkUpList) or instance(value,String) then depth else depth-1, value))), "}" ) )
+	  "{", horizontalJoin between (",", apply(toList s, value -> peek'(if instance(value,MarkUpList) or instance(value,String) then depth else depth-1, value))), "}" ) )
 
-peek2(ZZ,List) := (depth,s) -> (
+peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
-	  "{", horizontalJoin between (",", apply(s, value -> peek2(depth,value))), "}" ) )
-peek2(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
+	  "{", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), "}" ) )
+peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
 boxNets = method(SingleArgumentDispatch => true)
 boxNets List := boxNets Sequence := nets -> (
@@ -48,19 +48,19 @@ boxNets List := boxNets Sequence := nets -> (
 -- 	  )
 --      )
 
-peek2(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxNets {s}
-peek2(ZZ,Sequence) := (depth,s) -> (
+peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxNets {s}
+peek'(ZZ,Sequence) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  if #s === 0
 	  then "()"
 	  else if #s === 1 
-	  then ("singleton (", peek2(depth,s#0), ")")
-	  else ("(", horizontalJoin between (",", apply(s, value -> peek2(depth,value))), ")" )))
+	  then ("singleton (", peek'(depth,s#0), ")")
+	  else ("(", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), ")" )))
 
 precOption := precedence ( 1 => 2 )
 
-peek2(ZZ,HashTable) := (depth,s) -> (
+peek'(ZZ,HashTable) := (depth,s) -> (
      if depth === 0 
      then net s
      else horizontalJoin(
@@ -73,23 +73,23 @@ peek2(ZZ,HashTable) := (depth,s) -> (
 	       pairs s,
 	       (key,value) -> horizontalJoin splice (
 		    if precedence key < precOption
-		    then ("(",peek2(depth-1,key),")")
-		    else peek2(depth-1,key),
+		    then ("(",peek'(depth-1,key),")")
+		    else peek'(depth-1,key),
 		    " => ",
 		    if precedence value < precOption
-		    then ("(",peek2(depth-1,value),")")
-		    else peek2(depth-1,value))),
+		    then ("(",peek'(depth-1,value),")")
+		    else peek'(depth-1,value))),
 	  "}"
 	  ))
 
-peek2(ZZ,Dictionary) := (depth,d) -> (
+peek'(ZZ,Dictionary) := (depth,d) -> (
      if depth === 0 then net d
      else horizontalJoin(
 	  "Dictionary{", 
-	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek2(depth-1,rhs))),
+	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek'(depth-1,rhs))),
 	  "}"))
 
-peek = s -> peek2(1,s)
+peek = s -> peek'(1,s)
 typicalValues#peek = Net
 
 seeParsing = args -> (
