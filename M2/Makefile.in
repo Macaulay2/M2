@@ -45,8 +45,6 @@ DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2r
 install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
-distribution :
-	tar cf - -C $(encap) $(package) | gzip > "Macaulay2-$(DESC).tar.gz"
 
 Makefile : Makefile.in; ./config.status Makefile
 

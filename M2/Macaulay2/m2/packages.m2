@@ -1,6 +1,11 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-addStartFunction( () -> path = join({"./", sourceHomeDirectory|"packages/"},path) )
+addStartFunction(
+     () -> (
+	  path = prepend("./",path);
+	  if sourceHomeDirectory =!= null then path = prepend(sourceHomeDirectory|"packages/",path);
+	  if prefixDirectory =!= null then path = prepend(prefixDirectory|LAYOUT#"packages",path);
+	  ))
 
 currentPackage = null
 
@@ -71,7 +76,7 @@ newPackage(M2title,
      WritableSymbols => {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
-	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
+	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, 
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber

@@ -2,7 +2,7 @@
 justM2 default :: initialize phase1
 quick-install : justM2 install
 include ../../include/config.Makefile
-VPATH = @srcdir@
+VPATH = @srcdir@:../tutorial/final
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
@@ -12,11 +12,12 @@ emacs html: all; $(MAKE) -C ../$@
 .SUFFIXES: .m2
 .PHONY: clean all install html distclean check default initialize prep always
 
-LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
-DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
+LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
+DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
+TUTORIALS = Fano canEmbed divisors elementary
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := loads.m2 tutorials.m2
+MADEM2FILES := loads.m2 Macaulay2-doc.m2
 
 initialize:: srcdir
 srcdir:; ln -s @srcdir@ srcdir
@@ -28,8 +29,6 @@ all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
 
-TUTORIALS := $(wildcard ../tutorial/final/*.out)
-
 DUMPEDM2FILES := $(LOADSEQUENCE) @srcdir@/setup.m2 @srcdir@/startup.m2 $(MADEM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
@@ -40,8 +39,6 @@ OTHERM2FILES = $(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2)
 
 NONDOCM2FILES = @srcdir@/startup.m2 @srcdir@/setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
-M2FILES = $(NONDOCM2FILES) $(DOCSEQUENCE)
-
 loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
@@ -49,10 +46,6 @@ loads.m2 : loads.awk loadsequence
 Macaulay2-doc.m2 : loads.awk docseq 
 	@echo making $@
 	@awk -f $^ >$@
-
-tutorials.m2 : $(TUTORIALS)
-	@ echo making tutorials.m2
-	@ ls $^ |awk '{printf "load \"%s\"\n", $$0}' >$@
 
 ################################# cache
 cache cache/doc ../tutorial/final/cache/doc :; mkdir -p $@
@@ -74,7 +67,7 @@ clean::; rm -f TAGS
 TAGS: loadsequence
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, \
-			      $(M2FILES) \
+			      $(NONDOCM2FILES) $(DOCSEQUENCE) \
 			      $(wildcard \
 				@srcdir@/*.awk \
 				@srcdir@/../basictests/*.m2 \
@@ -116,8 +109,7 @@ phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre cache/doc/.made 
 	touch $@
 
-../cache/Macaulay2-pre cache/doc/.made : \
-		$(DUMPEDM2FILES) ../bin/M2 $(DOCSEQUENCE) $(TUTORIALS) docseq Macaulay2-doc.m2
+../cache/Macaulay2-pre cache/doc/.made : $(DUMPEDM2FILES) ../bin/M2 $(DOCSEQUENCE) $(TUTORIALS:=.out) docseq Macaulay2-doc.m2
 	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
@@ -145,13 +137,6 @@ clean :: ; rm -f .gdb-files
 	echo 'echo \n' >>$@
 	echo 'run -q --no-loaddata --debug' >>$@
 clean :: ; rm -f .gdb-run-it
-##
-backup : CVS/Entries
-CVS/Entries : $(M2FILES)
-	mount /a.ext2
-	tar cfv - $? | (cd /a.ext2; mkdir -p m2; cd m2; tar xf -)
-	umount /a.ext2
-
 profile : gmon.out
 	gprof ../bin/M2 >profile
 clean ::; rm -f profile
@@ -172,8 +157,7 @@ phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
-../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
-		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS:=.out)
 	 #------ phase 4: making $@
 	rm -f ../cache/Macaulay2-tmp
 	../bin/M2 -q --silent --stop \
@@ -239,16 +223,13 @@ install:: $(datam2dir)
 $(datam2dir) :
 	$(INSTALL) -d $(datam2dir)
 
-install:: $(DUMPEDM2FILES) $(DOCSEQUENCE)
+install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS:=.out)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
 clean::
-	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
-		cache *.obj *.exe runexample \
-		temp.data distfiles \
-		loads.m2 docloads.m2 tutorials.m2 \
-		mpcodes.m2 tutorials.m2 version.m2 core
+	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc cache *.obj *.exe runexample \
+		temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
 distclean : clean
 	rm -f Makefile
 

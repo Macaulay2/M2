@@ -32,10 +32,17 @@ document { "Invoking the program",
      ", TO "end", ", or the end of file character."
      }
 
-document { "Macaulay2/COPYING",
+document { "COPYING",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA,
-     PRE get (currentFileDirectory | "../COPYING")
+     PRE (
+	  if sourceHomeDirectory =!= null then get(sourceHomeDirectory | "COPYING")
+	  else if prefixDirectory =!= null then get(prefixDirectory | LAYOUT#"docm2rel" | "COPYING")
+	  else (
+	       stderr << "--warning: can't locate file \"COPYING\"" << endl;
+	       "see the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at http://www.gnu.org/licenses/gpl.txt"
+	       )
+	  )
      }
 
 document { "Copyright and license",
@@ -43,7 +50,7 @@ document { "Copyright and license",
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
      you to use it under the terms of the GNU General Public License, version
      2, as published by the Free Software Foundation; see the file
-     ", TO "Macaulay2/COPYING", ".",
+     ", TO "COPYING", ".",
      PARA,
      "Various free libraries have been compiled into Macaulay 2.",
      SHIELD MENU {
@@ -168,8 +175,6 @@ document { "Acknowledgements",
      geometry and the predecessor of this program."
      }
 
-load "tutorials.m2"
-
 document { "Miscellaneous Topics",
      "Some of these topics will have to be merged with sections above.",
      MENU {
@@ -277,6 +282,11 @@ document { "Mathematical Tutorials",
 	  TO "Tutorial: Divisors",
 	  }
      }
+
+load "Fano.out"
+load "canEmbed.out"
+load "divisors.out"
+load "elementary.out"
 
 document { "Reference Manual",
      "This section is intended to offer detailed documentation on
