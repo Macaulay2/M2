@@ -204,8 +204,8 @@ STRIP := no
 endif
 
 ifeq "$(GCC)" "yes"
-CFLAGS   += -Wall -Wshadow -Wcast-qual -Wno-parentheses
-CXXFLAGS += -Wall -Wshadow -Wcast-qual -Wno-parentheses
+CFLAGS   += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
+CXXFLAGS += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
 ifeq "$(OPTIMIZE)" "yes"
 CFLAGS   += -O3 -fexpensive-optimizations
 CXXFLAGS += -O3 -fexpensive-optimizations
