@@ -40,24 +40,36 @@ indexTable := memoize(
 	       )
 	  else new HashTable;
 	  if tb#?LAST then next = value tb#LAST + 1;
+	  store := (key,val) -> (
+	       if not mutable tb then error (
+		    if class tb === HashTable 
+	       	    then ("failed to create database file ", fn)
+	       	    else ("database file ", fn, " is read-only")
+		    );
+	       tb#key = val
+	       );
 	  new HashTable from {
 	       queryFun => key -> tb#?key,
 	       getFun => key -> prefix | if tb#?key then tb#key else (
-		    if mutable tb
-		    then (
-			 val = tb#key = fourDigits next;
-			 next = next+1;
-			 val)
-		    else if class tb === HashTable 
-		    then error ("failed to created database file ", fn)
-		    else error ("database file ", fn, " is read-only")
+		    val := fourDigits next;
+		    next = next+1;
+		    store(key,val)
+		    ),
+	       setFun => (key,val) -> prefix | (
+		    if tb#?key then error("key ",key," already has a value");
+		    store(key,val)
 		    )
 	       }
 	  )
      )
 
 cacheFileName = method()
-cacheFileName(String,Thing) := (prefix,key) -> (indexTable prefix)#getFun toExternalString key
+cacheFileName(String,Thing) := (prefix,key) -> (
+     (indexTable prefix)#getFun toExternalString key
+     )
+cacheFileName(String,Thing,String) := (prefix,key,val) -> (
+     (indexTable prefix)#setFun(toExternalString key,val)
+     )
 cacheFileName(List,Thing) := (path,key) -> (
      key = toExternalString key;
      apply(
