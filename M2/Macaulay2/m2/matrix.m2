@@ -513,6 +513,9 @@ ambient Matrix := Matrix => f -> (
 
 degrees Ring := R -> degree \ generators R
 
+leadComponent Matrix := m -> apply(entries transpose m, col -> last positions (col, x -> x != 0))
+leadComponent Vector := m -> first apply(entries transpose m, col -> last positions (col, x -> x != 0))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

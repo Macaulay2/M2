@@ -100,13 +100,13 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
 RingMap QQ := RingMap ZZ := (p,m) -> fff(p, promote(m,source p))
 
 RingMap Vector := Vector => (p,m) -> (
-     M := class m;
+     M := target m;
      R := source p;
      S := target p;
      if R =!= ring m 
      then error "expected source of ring map to be the same as ring of matrix";
      F := p M;
-     new F from rawRingMapEval(raw p, raw F, raw m))
+     new Vector from map(F,,rawRingMapEval(raw p, raw F, raw m), Degree => p.DegreeMap degree m))
 
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
