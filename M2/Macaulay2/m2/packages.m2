@@ -14,22 +14,29 @@ hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
      )
 
-reverseDictionary = x -> scan(values PackagesDictionary, 
-     pkg -> (
+reverseDictionary = x -> scan(values PackageDictionary, 
+     p -> (
+	  pkg := value p;
 	  d := pkg#"reverse dictionary";
 	  if d#?x then break d#x))
 reverseDictionaryRecord = (X,x) -> if X =!= x then (
      s := toString X;
-     scan(values PackagesDictionary, 
-     	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x then (	-- too bad a symbol doesn't know what dictionary it's in...
-	       pkg#"reverse dictionary"#x = X; 
-	       break)))
+     scan(values PackageDictionary, 
+     	  p -> (
+	       pkg := value p;
+	       if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x 
+	       then (	-- too bad a symbol doesn't know what dictionary it's in...
+	       	    pkg#"reverse dictionary"#x = X; 
+	       	    break))))
 reverseDictionaryRemove = (X,x) -> (
      s := toString X;
-     scan(values PackagesDictionary, 
-     	  pkg -> if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X then (
-	       remove(pkg#"reverse dictionary",x); 
-	       break)))
+     scan(values PackageDictionary, 
+     	  p -> (
+	       pkg := value p;
+	       if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X 
+	       then (
+	       	    remove(pkg#"reverse dictionary",x); 
+	       	    break))))
 
 toString Dictionary := d -> (
      if ReverseDictionary#?d then return toString ReverseDictionary#d;
@@ -62,9 +69,9 @@ removePackage Package := p -> (
      hide p.Dictionary;
      stderr << "--previous definitions removed for package " << p << endl;
      )
-removePackage String := n -> if PackagesDictionary#?n and class value PackagesDictionary#n === Package then removePackage value PackagesDictionary#n
+removePackage String := n -> if PackageDictionary#?n and class value PackageDictionary#n === Package then removePackage value PackageDictionary#n
 
-currentPackageS := getGlobalSymbol(PackagesDictionary,"currentPackage")
+currentPackageS := getGlobalSymbol(PackageDictionary,"currentPackage")
 
 newPackage = method( Options => { Using => {}, Version => "0.0", WritableSymbols => {}, DebuggingMode => false } )
 newPackage(Package) := opts -> p -> (
@@ -81,7 +88,7 @@ newPackage(String) := opts -> (title) -> (
 	  else (
 	       d := new Dictionary;
 	       fileExitHooks = prepend(hook, fileExitHooks);
-	       globalDictionaries = {d,Main.Dictionary,PackagesDictionary};    -- implement Using, too
+	       globalDictionaries = {d,Main.Dictionary,PackageDictionary};    -- implement Using, too
 	       d));
      if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
      if not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
@@ -143,7 +150,7 @@ closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage.name then error ("package not current: ",title);
      p := currentPackage;
-     sym := getGlobalSymbol(PackagesDictionary,title);
+     sym := getGlobalSymbol(PackageDictionary,title);
      p.Symbol = sym;
      globalAssignFunction(sym,p);
      sym <- p;
@@ -183,7 +190,7 @@ dictionary Symbol := s -> (				    -- eventually every symbol will know what dic
 dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
 package = method ()
-package Dictionary := d -> scan(values PackagesDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
+package Dictionary := d -> scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
 package Thing := x -> (
      d := dictionary x;
      if d =!= null then package d)
@@ -198,7 +205,7 @@ package TO := x -> (
      key := normalizeDocumentTag x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
-     p := select(values PackagesDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
+     p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
      if #p == 1 then (
 	  p = p#0;
 	  if pkg =!= p then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
@@ -210,6 +217,16 @@ package TO := x -> (
 	  if not warned#?key then stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << pkg << " eventually" << endl;
 	  warned#key = true;
      	  pkg))
+
+use Package := pkg -> (
+     if not member(pkg.Dictionary,globalDictionaries) then globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
+     )
+
+needsPackage = method()
+needsPackage String := s -> (
+     if PackageDictionary#?s then use value PackageDictionary#s
+     else load (s | ".m2")
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

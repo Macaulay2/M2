@@ -1,8 +1,8 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-PackagesDictionary = new Dictionary
-globalDictionaries = append(globalDictionaries,PackagesDictionary)
-getGlobalSymbol(PackagesDictionary,"Main")
+PackageDictionary = new Dictionary
+globalDictionaries = append(globalDictionaries,PackageDictionary)
+getGlobalSymbol(PackageDictionary,"Main")
 
 -----------
 
