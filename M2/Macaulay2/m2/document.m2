@@ -80,7 +80,7 @@ makeDocumentTag Thing := opts -> key -> (
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
      pkg := if opts#Package =!= null then opts#Package else packageKey nkey;
      -- figure out to avoid this warning message for f = method ( Options => { a => 4 } )
-     stderr << "warning: can't determine correct package for document tag '" << nkey << "'" << endl;
+     if pkg === null then stderr << "warning: can't determine correct package for document tag '" << nkey << "'" << endl;
      title := if pkg === null then "" else pkg#"title";
      new DocumentTag from {nkey,fkey,pkg,title})
 -- a bit of experimentation...
