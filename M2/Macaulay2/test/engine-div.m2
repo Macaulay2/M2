@@ -1,5 +1,3 @@
--- if getenv "USER" == "dan" then exit 0
-
 -- Test of division in various rings
 -- ggdiv, ggmod, ggdivmod.
 -- For the purposes of this test, we define:

@@ -24,7 +24,7 @@ ifeq "$(CC)" "cl"
 LOADLIBES := ../../lib/gc.lib
 scc1 : ../../lib/gc.lib
 else
-LOADLIBES := -lm -L../../lib -lgc
+LOADLIBES := -lm -L../../lib -L$(prefix)/lib -lgc
 endif
 
 ##############################

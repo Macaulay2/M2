@@ -1,5 +1,3 @@
--- if getenv "USER" == "dan" then exit 0
-
 kk=ZZ/101
 R=kk[a,b,c,d]
 i=ideal{c*a-b^2,d^2-a*b+c*b}
