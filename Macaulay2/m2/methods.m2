@@ -629,7 +629,8 @@ document { quote GlobalAssignHook,
      "The method should be a function of two variables: the symbol to which
      a value is being assigned, and the value being assigned.  The method
      should be stored under then name ", TT "GlobalAssignHook", " in the
-     class of the value.",
+     class of the value.  It will be executed just before the assignment
+     occurs.",
      PARA,
      "This method is used for instances of ", TO "Type", " and ", TO "Ring", "
      to arrange for the name of the type or ring to be set to the name
@@ -645,12 +646,13 @@ document { quote GlobalAssignHook,
 
 document { quote GlobalReleaseHook,
      TT "GlobalReleaseHook", " -- a method name which is consulted when an
-     assignment to a global variable occurs.",
+     assignment to a global variable is about to occur.",
      PARA,
      "The method should be a function of two variables: the symbol to which
      a value is being assigned, and the old value about to be overwritten.  
-     The method should be stored under then name ", TT "GlobalReleaseHook", " in the
-     class of the old value.",
+     The method should be stored under the name ", TT "GlobalReleaseHook", " in the
+     class of the old value.  It is executed before the assignment occurs,
+     and before the execution of ", TO "GlobalAssignHook", ".",
      PARA,
      EXAMPLE "GlobalReleaseHook RR := (sym,val) -> << concatenate (
      	  \"assigning \", name val, \" to \", name sym

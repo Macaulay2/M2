@@ -518,6 +518,7 @@ bool TermIdeal::search(const int *coeff, const int *m, vec &result_gsyz, vec &re
   // set (possibly to zero), and have the effect of reducing the coefficient
   // mod the gcd of the elements in the termideal of monomial 'm'.
 {
+#if 0
   // Method:
   // Step 1: Find all of the possible terms, which divide 'm'.
   // Step 2: Compute the gcd of all of these terms, and the gsyz,rsyz which will
@@ -543,5 +544,8 @@ bool TermIdeal::search(const int *coeff, const int *m, vec &result_gsyz, vec &re
   p->rsyz = NULL;
   delete_mon_term(p);
   return divides_completely;
+#else
+  return false;
+#endif
 }
 

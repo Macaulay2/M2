@@ -157,8 +157,9 @@ ifdef NOSTRIP
 STRIPFLAG :=
 STRIPCMD := :
 else
-export CFLAGS += -fomit-frame-pointer
-export CXXFLAGS += -fomit-frame-pointer
+# don't omit frame pointers, because it adds 1MB to the executable size!
+# export CFLAGS += -fomit-frame-pointer
+# export CXXFLAGS += -fomit-frame-pointer
 export LDFLAGS += -s
 # we should be able to do away with these:
 STRIPFLAG := -s
