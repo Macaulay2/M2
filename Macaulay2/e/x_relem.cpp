@@ -313,33 +313,20 @@ const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
      Otherwise, NULL is returned, and an error is given */
 {
-  if (!a->get_ring()->is_ZZ())
-    {
-      ERROR("expected an element of ZZ");
-      return 0;
-    }
-  void *f = a->get_value().poly_val;
-  return static_cast<M2_Integer>(f);
-#if 0
   const Ring *R = a->get_ring();
-  if (R == globalZZ)
+  if (R->is_ZZ())
     {
-      ring_elem f = a->get_value();
-      return MPZ_VAL(f);
+      void *f = a->get_value().poly_val;
+      return static_cast<M2_Integer>(f);
     }
-  else if (R->cast_to_Z_mod() != 0)
+  if (R->cast_to_Z_mod() != 0)
     {
-      // Translate the value to an integer
       M2_Integer result = newitem(__mpz_struct);
       mpz_init_set_si(result, R->coerce_to_int(a->get_value()));
       return result;
     }
-  else
-    {
-      ERROR("Expected ZZ or ZZ/p as base ring");
-      return 0;
-    }
-#endif
+  ERROR("Expected ZZ or ZZ/p as base ring");
+  return 0;
 }
 
 const M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
