@@ -792,7 +792,7 @@ setupfun("rawToReal",rawToReal);
 export rawToComplex(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
-	  Ccode( ComplexOrNull, "(M2_CCOrNull)IM2_RingElement_to_complex(", "(RingElement*)",x, ")" ))
+	  Ccode( ComplexOrNull, "(tokens_ComplexOrNull)IM2_RingElement_to_complex(", "(RingElement*)",x, ")" ))
      else WrongArg("a raw ring element")
      );
 setupfun("rawToComplex",rawToComplex);

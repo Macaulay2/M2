@@ -201,6 +201,8 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
      if prev =!= null then setPrefixFromBindir dir prev)
 
+packagePrefixPath = { prefixDirectory }
+
 phase := 1
 
 silence := arg -> null

@@ -719,8 +719,9 @@ check Package := pkg -> (
 relativizeFilename2 = on relativizeFilename
 
 makePackageIndex = method(SingleArgumentDispatch => true)
-makePackageIndex Sequence := () -> makePackageIndex prefixDirectory
-makePackageIndex String := prefixDirectory -> (
+makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
+makePackageIndex String := packagePrefixPath -> (
+     -- this code is still experimental
      htmlDirectory = LAYOUT#"docm2";
      p := prefixDirectory | htmlDirectory;
      setupButtons();
@@ -730,7 +731,7 @@ makePackageIndex String := prefixDirectory -> (
      r = sort r;
      key := "package index";
      -- tag := makeDocumentTag key;
-     p | "index.html"
+     -- p | "index.html"
      << html HTML { 
 	  HEAD {
 	       TITLE {key, commentize headline key},
