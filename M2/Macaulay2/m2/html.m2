@@ -333,12 +333,15 @@ makeHTML = (builddir,finaldir) -> (
 
 assemble = method(Options => { 
 	  TemporaryDirectory => "tmp/", 
-	  FinalDirectory => "tmp/"
+	  FinalDirectory => "tmp/",
+	  Encapsulate => true
 	  })
 assemble Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
-     buildDirectory = minimizeFilename(o.TemporaryDirectory | "/");
+     buildDirectory = o.TemporaryDirectory | "/";
+     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg#"package version"|"/";
+     buildPackage = minimizeFilename buildPackage;
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
      stderr << "--assembling package " << pkg#"package title" << " in " << buildDirectory << endl;
 
@@ -348,28 +351,28 @@ assemble Package := o -> pkg -> (
      -- copy source file
      pkgDirectory := LAYOUT#"packages";
      makeDirectory (buildDirectory|pkgDirectory);
-     bn := pkg.name | ".m2";
+     bn := buildPackage | ".m2";
      fn := currentSourceDir|bn;
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
 
      -- copy source subdirectory
-     srcDirectory := LAYOUT#"packagesrc" pkg.name;
+     srcDirectory := LAYOUT#"packagesrc" buildPackage;
      makeDirectory (buildDirectory|srcDirectory);
-     dn := currentSourceDir|pkg.name;
+     dn := currentSourceDir|buildPackage;
      stderr << "--copying auxiliary source files from " << dn << endl;
      if fileExists dn
      then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
 
      -- make html files
-     htmlDirectory = LAYOUT#"packagehtml" pkg.name;
+     htmlDirectory = LAYOUT#"packagehtml" buildPackage;
      makeDirectory (buildDirectory|htmlDirectory);     
      nodes := unique join(keys pkg#"dictionary",keys pkg#"raw documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
 
      -- make example input files
-     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg.name;
+     exampleDir := buildDirectory|LAYOUT#"packageexamples" buildPackage;
      infn := nodename -> exampleDir|toFilename nodename|".m2";
      outfn := nodename -> exampleDir|toFilename nodename|".out";
      stderr << "--making example files in " << exampleDir << endl;
@@ -394,7 +397,7 @@ assemble Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    -- later we'll figure out how to start *this* version of M2!!!
-		    cmd := "M2 -silent -q -x -e'errorDepth 0' -e'load \""|pkg.name|".m2\"' <"|inf|" >"|outf;
+		    cmd := "M2 -silent -q -s -x -e'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
@@ -403,3 +406,14 @@ assemble Package := o -> pkg -> (
 			 ))));
      if haderror then error "error occurred running example files";
      )
+
+check = method()
+check Package := pkg -> (
+     scan(values pkg#"test inputs", t -> (
+	       stderr << "--testing " << net t << endl;
+	       -- later we'll figure out how to start *this* version of M2!!!
+	       cmd := "M2 -silent -q -s -e'load \""|pkg.name|".m2\"'";
+	       stderr << cmd << endl;
+	       "!" | cmd << t << endl << close;
+	       << endl;
+	       )))
