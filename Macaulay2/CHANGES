@@ -59,9 +59,10 @@ The function 'loadDepth' has been replaced by a writable variable of
 the same name.  Just set it to change it, and the new value will be
 communicated to the internal code of the interpreter by a global
 assignment hook, described above.  Similarly, the function
-'errorDepth' has been replaced by a variable of the same name, and the
+'errorDepth' has been replaced by a variable of the same name, the
 function 'setrecursionlimit' has been replaced by a variable called
-'recursionLimit'.
+'recursionLimit', and the function 'lineNumber' has been replaced by a
+variable.
 
 'getGlobalSymbol' now may take two arugments, (DICT,NAME), in which
 case it will make a new global symbol called NAME in the global

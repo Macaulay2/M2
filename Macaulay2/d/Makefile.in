@@ -272,15 +272,13 @@ UTIL := ../util/
 tmp_init.o : tmp_init.c
 MADEFILES += tmp_init.c
 tmp_init.c : $(PROJECT)
-	 $(UTIL)timestmp >tmp
-	@ echo "echoout '>>tmp' ..."
-	@ $(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
-	 $(UTIL)echoout '>>tmp' 'char current_date[] = __DATE__;'
-	 $(UTIL)echoout '>>tmp' 'char current_time[] = __TIME__;'
-	 $(UTIL)echoout '>>tmp' 'int main_inits() {'
-	@ echo "echoout '>>tmp' ..."
-	@ $(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), '   $(f)__prepare();')
-	 $(UTIL)echoout '>>tmp' '   return 0;}'
+	$(UTIL)timestmp >tmp
+	for i in $(PROJECT:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
+	echo 'char current_date[] = __DATE__;' >>tmp
+	echo 'char current_time[] = __TIME__;' >>tmp
+	echo 'int main_inits() {' >>tmp
+	for i in $(PROJECT:.d=) ; do echo "   $${i}__prepare();" ; done >>tmp
+	echo '   return 0;}' >>tmp
 	mv tmp tmp_init.c
 
 .._c_compat.c: ../c/compat.c; cp $^ $@

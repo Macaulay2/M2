@@ -327,7 +327,6 @@ outstringfun(e:Expr):Expr := (
 	  if length(a) == 2 then (
 	       when a.0 
 	       is x:file do (
-		    if x.outfd == -1 then return WrongArg("an open output file");
 		    when a.1 
 		    is y:string do Expr(x << y)
 		    is Nothing do Expr(x)

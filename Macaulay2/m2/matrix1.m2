@@ -389,7 +389,7 @@ RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 Matrix.AfterPrint = 
 Matrix.AfterNoPrint = f -> (
      << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber() << " : Matrix";
+     << concatenate(interpreterDepth:"o") << lineNumber << " : Matrix";
      if isFreeModule target f and isFreeModule source f
      then << " " << target f << " <--- " << source f;
      << endl;
@@ -465,7 +465,7 @@ Module / Ideal := Module => (M,J) -> M / (J * M)
 
 Ideal.AfterPrint = Ideal.AfterNoPrint = (I) -> (
      << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber() << " : Ideal of " << ring I << endl;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : Ideal of " << ring I << endl;
      )
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)

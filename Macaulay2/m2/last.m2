@@ -22,7 +22,7 @@ writableGlobals := set (
      symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
      symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, 
      symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
-     symbol stopIfError, symbol debugLevel
+     symbol stopIfError, symbol debugLevel, symbol lineNumber
      )
 
 scan(pairs Macaulay2.Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)
@@ -31,7 +31,7 @@ scan(pairs Macaulay2.Dictionary, (name,sym) -> if not writableGlobals#?sym then 
 Matrix.BeforePrint =
 RingElement.BeforePrint =
 List.BeforePrint = 
-Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack lines ZZ.InputPrompt lineNumber() + width stdio, net x)
+Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack lines ZZ.InputPrompt lineNumber + width stdio, net x)
 
 -- make sure this is after all global symbols are defined or erased
 closePackage Macaulay2

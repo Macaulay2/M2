@@ -1338,6 +1338,7 @@ export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameind
 export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 
 export stopIfError := false;
+export lineNumber := 0;
 
 debuggingModeS := setupvar("debuggingMode",toExpr(debuggingMode));
 debugLevelS := setupvar("debugLevel",toExpr(debugLevel));
@@ -1345,7 +1346,8 @@ loadDepthS := setupvar("loadDepth",toExpr(loadDepth));
 recursionLimitS := setupvar("recursionLimit",toExpr(recursionlimit));
 errorDepthS := setupvar("errorDepth",toExpr(errorDepth));
 stopIfErrorS := setupvar("stopIfError",toExpr(stopIfError));
-syms := SymbolSequence(debuggingModeS,loadDepthS,errorDepthS,recursionLimitS,stopIfErrorS,debugLevelS);
+lineNumberS := setupvar("lineNumber",toExpr(lineNumber));
+syms := SymbolSequence(debuggingModeS,loadDepthS,errorDepthS,recursionLimitS,stopIfErrorS,debugLevelS,lineNumberS);
 
 export setDebuggingMode(b:bool):void := (
      debuggingMode = b;
@@ -1354,6 +1356,10 @@ export setDebuggingMode(b:bool):void := (
 export setloadDepth(b:int):void := (
      loadDepth = b;
      setGlobalVariable(loadDepthS,toExpr(b));
+     );
+export setLineNumber(b:int):void := (
+     lineNumber = b;
+     setGlobalVariable(lineNumberS,toExpr(b));
      );
 export setstopIfError(b:bool):void := (
      stopIfError = b;
@@ -1378,6 +1384,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === errorDepthS then (errorDepth = n; e)
 	       else if sym === debugLevelS then (debugLevel = n; e)
 	       else if sym === recursionLimitS then (recursionlimit = n; e)
+	       else if sym === lineNumberS then (lineNumber = n; e)
 	       else buildErrorPacket(msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));

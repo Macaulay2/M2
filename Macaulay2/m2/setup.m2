@@ -40,15 +40,12 @@ applyMethod := (m,x) -> if x === null then x else (
      if method === null then x else method x
      )
 
-outputLabel := ""
-
 OutputDictionary = newDictionary()
 
 commonProcessing := x -> (
-     outputLabel = concatenate(interpreterDepth:"o",toString lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
-     	  s := getGlobalSymbol(OutputDictionary,outputLabel);
+     	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",toString lineNumber));
      	  s <- x;
 	  );
      rot x;
@@ -62,7 +59,7 @@ Thing.Print = x -> (
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
 	  << endl;			  -- double space
-	  << outputLabel << " = " << (try net y else try toString y else try simpleToString y else "--something--") << endl;
+	  << concatenate(interpreterDepth:"o") << lineNumber << " = " << (try net y else try toString y else try simpleToString y else "--something--") << endl;
 	  );
      applyMethod(AfterPrint,x);
      )

@@ -251,27 +251,43 @@ export flushinput(o:file):void := (
      o.bol = true;
      );
 
-simpleflush(o:file):int := (
+simpleflush(o:file):int := (				    -- write to file or enlarge the buffer
      o.outbol = 0;
      if o.outindex == 0 then return 0;
-     r := write(o.outfd,o.outbuffer,o.outindex);
-     o.outindex = 0;
-     if r == ERROR then (
-	  fileErrorMessage(o,"writing");
-	  return r;
+     if o.outfd != -1 then (
+	  if write(o.outfd,o.outbuffer,o.outindex) == -1 then (
+	       fileErrorMessage(o,"writing");
+	       return -1;
+	       );
+	  o.outindex = 0;
+     	  o.bytesWritten = o.bytesWritten + o.outindex;
+	  )
+     else if o.outindex == length(o.outbuffer) then (
+	  o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
 	  );
-     o.bytesWritten = o.bytesWritten + r;
      0);
 simpleout(o:file,c:char):int := (
-     if o.outindex == length(o.outbuffer) then (
-	  r := simpleflush(o);
-	  if r == ERROR then return ERROR;
-	  );
+     if o.outindex == length(o.outbuffer) && simpleflush(o) == ERROR then return ERROR;
      o.outbuffer.(o.outindex) = c;
      o.outindex = o.outindex + 1;
      0);
 simpleout(o:file,x:string):int := (
-     foreach c in x do if ERROR == simpleout(o,c) then return ERROR;
+     i := 0;						    -- bytes of x transferred so far
+     m := length(x);
+     j := o.outindex;
+     n := length(o.outbuffer);
+     while i < m do (
+	  if j == n then (
+	       if simpleflush(o) == ERROR then return ERROR;
+	       j = o.outindex;
+	       );
+	  b := m-i;					    -- number of bytes to transfer this time
+	  if b > n-j then b = n-j;
+	  for k from 0 to b-1 do o.outbuffer.(j+k) = x.(i+k);
+	  i = i + b;
+	  j = j + b;
+	  o.outindex = j;
+	  );
      0);
 flushnets(o:file):int := (
      if o.hadNet then (
@@ -705,5 +721,5 @@ export Flush := Manipulator(flush);
 
 export fileLength(o:file):int := (
      if o.input then fileLength(o.infd)
-     else if o.output then o.bytesWritten
+     else if o.output then o.bytesWritten + o.outindex
      else -1);

@@ -38,35 +38,11 @@ update(err:Error,prefix:string,f:Code):Expr := (
      then printErrorMessage(f,prefix + ": " + err.message)
      else printErrorMessage(f,prefix + ": --backtrace update-- ")
      );
-stmtno := 0;
-linefun(e:Expr):Expr := (
-     when e
-     is n:Integer do (
-	  if isInt(n) then (
-	       old := Expr(toInteger(stmtno));
-	       nn := toInt(n);
-	       if nn >= 0 then (
-		    stmtno = nn;
-	       	    old)
-	       else WrongArg(1,"a non-negative integer"))
-	  else WrongArgSmallInteger(1)
-	  )
-     is a:Sequence do (
-	  if length(a) == 0
-     	  then Expr(toInteger(stmtno))
-     	  else WrongNumArgs(0))
-     else WrongNumArgs(0)
-     );
-setupfun("lineNumber",linefun);
-laststmtno := -1;
--- PrimaryPrompt := makeProtectedSymbolClosure("PrimaryPrompt");
--- SecondaryPrompt := makeProtectedSymbolClosure("SecondaryPrompt");
+previousLineNumber := -1;
 Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
 endInput := makeProtectedSymbolClosure("end");
-(x:Position) === (y:Position) : bool := (
-     x == y || x.filename === y.filename && x.line == y.line && x.column == y.column
-     );
+(x:Position) === (y:Position) : bool := x == y || x.filename === y.filename && x.line == y.line && x.column == y.column ;
 PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
      method := lookup(Class(g),methodname);
@@ -93,11 +69,11 @@ toExpr(x:CodeClosureList):Expr := Expr(list(
 readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
      lastvalue := nullE;
      while true do (
-     	  if printout then stmtno = stmtno + 1;
+     	  if printout then setLineNumber(lineNumber + 1);
 	  interrupted = false;
 	  interruptPending = false;
 	  while peektoken(file,true).word == newlineW do (
-	       -- laststmtno = -1; -- so there will be a new prompt after a blank line
+	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
 	       -- but now we don't like so many extra prompts
 	       interrupted = false;
 	       interruptPending = false;
@@ -163,9 +139,9 @@ InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
 topLevelPrompt():string := (
-     method := lookup(integerClass,if stmtno == laststmtno then InputContinuationPrompt else (laststmtno = stmtno; InputPrompt));
+     method := lookup(integerClass,if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt));
      if method == nullE then ""
-     else when apply(method,toExpr(stmtno)) is s:string do s
+     else when apply(method,toExpr(lineNumber)) is s:string do s
      is n:Integer do if isInt(n) then blanks(toInt(n)) else ""
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
@@ -225,7 +201,7 @@ input(e:Expr):Expr := (
      is s:string do (
 	  -- we should have a way of setting normal prompts while inputting
 	  ret := loadprint(s,true,newStaticLocalDictionaryClosure());
-	  laststmtno = -1;
+	  previousLineNumber = -1;
 	  ret)
      else buildErrorPacket("expected string as file name"));
 setupfun("input",input).protected = false;
@@ -329,8 +305,39 @@ value(e:Expr):Expr := (
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value",value).protected = false;
 
+tmpbuf := new string len 100 do provide ' ' ;
+
+capture(e:Expr):Expr := (
+     when e
+     is s:string do (
+     	  flush(stdIO);
+	  oldfd := stdIO.outfd;
+	  stdIO.outfd = NOFD;
+	  oldbuf := stdIO.outbuffer;
+	  stdIO.outbuffer = tmpbuf;
+	  stringFile := stringTokenFile("a string", s+newline);
+	  stringFile.posFile.file.echo = true;
+	  oldLineNumber := lineNumber;
+	  previousLineNumber = -1;
+	  setLineNumber(0);
+	  setprompt(stringFile,topLevelPrompt);
+	  r := readeval3(stringFile,true,true,newStaticLocalDictionaryClosure(),false);;
+	  out := substr(stdIO.outbuffer,0,stdIO.outindex);
+	  stdIO.outfd = oldfd;
+	  stdIO.outbuffer = oldbuf;
+	  stdIO.outindex = 0;
+	  setLineNumber(oldLineNumber);
+	  previousLineNumber = -1;
+	  when r 
+	  is err:Error do (
+	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value 
+	       else r)
+	  else Expr(out))
+     else WrongArg(1,"a string"));
+setupfun("capture",capture);
+
 export process():void := (
-     laststmtno = -1;			  -- might have done dumpdata()
+     previousLineNumber = -1;			  -- might have done dumpdata()
      localFrame = globalFrame;
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));
