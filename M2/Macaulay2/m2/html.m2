@@ -291,6 +291,7 @@ setupButtons := () -> (
      )
 
 makeHTML = (builddir,finaldir) -> (
+     gifpath := LAYOUT#"images";
      buildDirectory = minimizeFilename(builddir | "/");
      finalDirectory = minimizeFilename(finaldir | "/");
      docdatabase = DocDatabase;				    -- used to be an argument

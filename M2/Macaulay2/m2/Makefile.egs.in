@@ -21,7 +21,7 @@ ARGS := -q --silent $(srcdir)/eg.m2
 	@if [ -f ./"$*.out" ] && cmp -s ./"$*.example" ./"$*.example.old" ; \
 	then touch ./"$*.out" ; \
 	else echo "making $@ from $^"; \
-	     if env M2HOME=$(srcdir)/.. $(BINDIR)/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
+	     if $(BINDIR)/M2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
 	     then mv ./"$*.tmp" ./"$*.out" ; \
 		  cp ./"$*.example" ./"$*.example.old" ; \
 	     else echo "contents of $*.example:" ; \

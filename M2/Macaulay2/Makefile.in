@@ -89,13 +89,16 @@ install distclean clean ::; $(MAKE) -C emacs $@
 bin :; mkdir $@
 clean ::; rm -rf bin
 initialize :: bin
-install :: $(bindir)/Macaulay2$(EXE)
-$(bindir)/Macaulay2 : bin/Macaulay2$(EXE); $(INSTALL_PROGRAM) $^ $(bindir)/Macaulay2$(EXE)
+install :: $(bindir)/M2$(EXE)
+$(bindir) :; $(INSTALL) -d "$@"
+$(bindir)/M2 : bin/M2$(EXE) $(bindir)
+	$(INSTALL_PROGRAM) $< $(bindir)/M2$(EXE)
 ################################# cache
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
 install :: $(cachedir)/$(DUMPDATAFILE)
-$(cachedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE); $(INSTALL) $< "$@"
+$(cachedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE)
+	$(INSTALL_DATA) $< "$@"
 endif
 endif
 ################################# Makefile

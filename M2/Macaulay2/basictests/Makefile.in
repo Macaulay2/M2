@@ -12,11 +12,11 @@ all check:: $(TESTRESULTS)
 
 distclean :: clean
 
-$(TESTRESULTS) : ../bin/Macaulay2
+$(TESTRESULTS) : ../bin/M2
 
 %.okay : %.m2
 	@ echo testing $<
-	@ env ../bin/Macaulay2 --silent --stop --no-loaddata --no-setup '-e srcdir = "@srcdir@/"' $< '-e exit 0'
+	@ env ../bin/M2 --silent --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"' $< -e 'exit 0'
 	@ touch $@
 
 clean  :	

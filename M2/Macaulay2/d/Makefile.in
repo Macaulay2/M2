@@ -4,7 +4,7 @@ VPATH = @srcdir@
 DEPENDS = yes
 ############################## main target
 all :: compat.h
-all :: ../bin/Macaulay2$(EXE)
+all :: ../bin/M2$(EXE)
 ############################## useful targets
 all-c-files ::
 remove-c-files ::
@@ -325,8 +325,8 @@ LDLIBS += $(LIBS)
 
 LDLIBS += -lc ../compat/compat.a
 
-MADEFILES += ../bin/Macaulay2$(EXE)
-../bin/Macaulay2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
+MADEFILES += ../bin/M2$(EXE)
+../bin/M2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
 	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@

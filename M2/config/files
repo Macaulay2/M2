@@ -10,6 +10,7 @@ Macaulay2/e/tests/Makefile
 Macaulay2/emacs/M2-init.el
 Macaulay2/emacs/Makefile
 Macaulay2/html-check-links/Makefile
+Macaulay2/images/Makefile
 Macaulay2/m2/Makefile
 Macaulay2/m2/Makefile.egs
 Macaulay2/packages/ComputationsBook/Makefile
@@ -20,9 +21,6 @@ Macaulay2/test/Makefile
 Macaulay2/tutorial/Makefile
 Macaulay2/util/Makefile
 Makefile
-bin/M2-help
-bin/M2.bat
-bin/Makefile
 encap/Makefile
 encap/postinstall
 include/config.Makefile
