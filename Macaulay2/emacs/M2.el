@@ -181,10 +181,10 @@ can be executed with \\[M2-send-to-program]."
      if the mark is active, to Macaulay 2 in its buffer, making its
      window visible.  Afterwards, in the case where the mark is not
      active, move the cursor to the next line.  Alternatively, if the
-     point is at a prompt at the end of the buffer *M2*, get the next line
-     of input from demo buffer set by M2-set-demo-buffer, or if it's
-     at the end of the buffer *M2* with a line of input already there,
-     submit it."
+     point is at a prompt or a blank line at the end of the buffer 
+     *M2*, get the next line of input from demo buffer set by 
+     M2-set-demo-buffer, or if it's at the end of the buffer
+     *M2* with a line of input already there, submit it."
      (interactive)
      (or (get-buffer-window "*M2*" 'visible)
 	 (pop-to-buffer (prog1 (current-buffer) (pop-to-buffer "*M2*"))))
@@ -196,7 +196,10 @@ can be executed with \\[M2-send-to-program]."
 			  (equal (point) (point-max))
 			  (equal (current-buffer) (save-excursion (set-buffer "*M2*"))))
 			 (if (equal (point) 
-				    (save-excursion (M2-to-end-of-prompt) (point)))
+				    (save-excursion
+				      (M2-to-end-of-prompt)
+				      (if (looking-at "[ \t]+") (goto-char (match-end 0)))
+				      (point)))
 			     (let* ((s (current-buffer))
 				    (db (set-buffer M2-demo-buffer))
 				    (bol (progn (beginning-of-line) (point)))

@@ -1319,6 +1319,9 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
 				   else map(F_k.components#(F_k.indexComponents#(ab,c)),
 					     E_k.components#(E_k.indexComponents#(a,bc)),
 					     0))))))
+	       ))
+
+
      -- 	  k -> sum(E_k.indices, (a,bc) -> (
      -- 		    sum(BC_bc.indices, (b,c) -> (
      -- 			      F_k_[(a+b,c)]
@@ -1326,7 +1329,7 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
      -- 			      * tensorAssociativity(A_a,B_b,C_c)
      -- 			      * (A_a ** BC_bc^[(b,c)])
      -- 			      )) * E_k^[(a,bc)]))
-	       ))
+
 
 TEST ///
      -- here we test the commutativity of the pentagon of associativities!
