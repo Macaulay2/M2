@@ -53,6 +53,8 @@ STRIPCMD := :
 else
 STRIPFLAG := -s
 STRIPCMD := strip
+STRIPFLAG :=
+STRIPCMD := :
 endif
 
 ifdef MEMDEBUG
