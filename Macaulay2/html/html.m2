@@ -1,6 +1,13 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-htmlDefaults#"BODY" = "BACKGROUND='recbg.jpg'"
+prefix = directoryPath {"..","m2","cache","doc"}
+documentationPath = unique prepend(prefix,documentationPath)
+
+htmlDefaults#"BODY" = concatenate(
+     "BACKGROUND=\"",					    -- "
+     relativizeFilename(prefix,"recbg.jpg"),
+     "\""						    -- "
+     )
 
 setrecursionlimit 4000
 
@@ -9,8 +16,6 @@ documentationMemo := memoize documentation
 databaseFileName = "../cache/Macaulay2-doc"
 errorDepth 0
 
-prefix = directoryPath {"..","m2","cache","doc"}
-
 BUTTON = (s,alt) -> (
      s = relativizeFilename(prefix,s);
      if alt === null
@@ -18,7 +23,6 @@ BUTTON = (s,alt) -> (
      else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
      )
 
-documentationPath = unique prepend(prefix,documentationPath)
 topNodeName = "Macaulay 2"
 topFileName = cacheFileName(prefix,topNodeName) | ".html"
 linkFilename = s -> cacheFileName(prefix,s) | ".html"

@@ -32,7 +32,7 @@ extern int yylex (void);
 static void checkURL(char *);
 %}
 
-%token '<' '>' '=' WORD SRC HREF
+%token '<' '>' '=' WORD SRC HREF BACKGROUND
 
 %start html
 
@@ -44,11 +44,11 @@ tag : '<'                                  { opening("unmatched '<'"); }
       values '>'                           { closing(); }
     | error '>' ;
 values : empty | values value ;
+key : BACKGROUND | HREF | SRC ;
 value
     : WORD
     | WORD '=' WORD 
-    | HREF '=' WORD { checkURL($3); }
-    | SRC  '=' WORD { checkURL($3); }
+    | key '=' WORD { checkURL($3); }
     ;
 
 %% /* programs */
@@ -149,6 +149,7 @@ static int strseg(char *s, char *t) {
 static void checkURL(char *s) {
   char *t, *u;
   if (s[0] == '"' && s[strlen(s)-1] == '"') s++, s[strlen(s)-1]=0;
+  else if (s[0] == '\'' && s[strlen(s)-1] == '\'') s++, s[strlen(s)-1]=0;
   if (strseg(s,"mailto:") || strseg(s,"http://") || strseg(s,"ftp://")) {
     warning("unchecked external link: %s",s);
     return;
