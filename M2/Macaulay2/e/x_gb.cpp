@@ -226,7 +226,7 @@ enum ComputationStatusCode rawStatus(Computation *C,
 		   stopping_reason);
 #endif
   ERROR("resolutions need to be re-implemented");
-  return 0;
+  return COMP_ERROR;
 }
 
 int IM2_Resolution_status(Computation *C,

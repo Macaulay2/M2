@@ -2076,7 +2076,7 @@ export rawResolutionGetMatrix(e:Expr):Expr := (
      when a.0 is G:RawComputation do 
      when a.1 is level:Integer do
      if !isInt(level) then WrongArgSmallInteger(2) else
-     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawResolutionGetMatrix(", "(Computation *)", G, ")" ))
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawResolutionGetMatrix(", "(Computation *)", G, ",", toInt(level), ")" ))
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
      else WrongNumArgs(2)
@@ -2108,23 +2108,23 @@ export rawResolutionStatusLevel(e:Expr):Expr := (
      );
 setupfun("rawResolutionStatusLevel", rawResolutionStatusLevel);
 
-export rawGBGetChange(e:Expr):Expr := (
-     when e is a:Sequence do 
-     if length(a) == 2 then 
-     when a.0 is G:RawComputation do 
-     when a.1 is level:Integer do
-     if !isInt(level) then WrongArgSmallInteger(2) else
-     toExpr(
-	  Ccode(RawMatrixOrNull, 
-		    "(engine_RawMatrixOrNull)IM2_GB_get_change(",
-		    "(Computation *)", G, ",",
-		    toInt(level),
-		    ")" ))
-     else WrongArgInteger(2)
-     else WrongArg(1,"a raw computation")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
-setupfun("rawGBGetChange", rawGBGetChange);
+-- export rawGBGetChange(e:Expr):Expr := (
+--      when e is a:Sequence do 
+--      if length(a) == 2 then 
+--      when a.0 is G:RawComputation do 
+--      when a.1 is level:Integer do
+--      if !isInt(level) then WrongArgSmallInteger(2) else
+--      toExpr(
+-- 	  Ccode(RawMatrixOrNull, 
+-- 		    "(engine_RawMatrixOrNull)IM2_GB_get_change(",
+-- 		    "(Computation *)", G, ",",
+-- 		    toInt(level),
+-- 		    ")" ))
+--      else WrongArgInteger(2)
+--      else WrongArg(1,"a raw computation")
+--      else WrongNumArgs(2)
+--      else WrongNumArgs(2));
+-- setupfun("rawGBGetChange", rawGBGetChange);
 
 -- export rawGBGetLeadTerms(e:Expr):Expr := (
 --      when e is a:Sequence do 
@@ -2150,30 +2150,26 @@ setupfun("rawGBGetChange", rawGBGetChange);
 
 export rawResolutionGetFree(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 2 then 
      when a.0 is G:RawComputation do 
      when a.1 is level:Integer do
      if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is minimal:Boolean do toExpr( Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)rawResolutionGetFree(", "(Computation *)", G, ",", toInt(level), ")" ))
-     else WrongArgBoolean(3)
+     toExpr( Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)rawResolutionGetFree(", "(Computation *)", G, ",", toInt(level), ")" ))
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
 setupfun("rawResolutionGetFree", rawResolutionGetFree);
 
 export rawGBMatrixRemainder(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 2 then 
      when a.0 is G:RawComputation do 
-     when a.1 is level:Integer do
-     if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is m:RawMatrix do toExpr( Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBMatrixRemainder(", "(Computation *)", G, ",", "(Matrix*)", m, ")" ))
-     else WrongArgBoolean(3)
-     else WrongArgInteger(2)
+     when a.1 is m:RawMatrix do toExpr( Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBMatrixRemainder(", "(Computation *)", G, ",", "(Matrix*)", m, ")" ))
+     else WrongArg(2,"a raw matrix")
      else WrongArg(1,"a raw computation")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
 setupfun("rawGBMatrixRemainder", rawGBMatrixRemainder);
 
 toSequence(a:RawMatrixOrNull,b:RawMatrixOrNull):Expr := (
@@ -2261,15 +2257,14 @@ M2CC(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("M2CC", M2CC);
 
+-- seqarg(e:Expr,n:int,f(s:Sequence):Expr):Expr := when e is s:Sequence do if length(s) == n then f(s) else WrongNumArgs(n) else WrongNumArgs(n);
+
 export rawMatrixRR(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 2 then
      when s.0 is nrows:Integer do if !isInt(nrows) then WrongArgSmallInteger(1) else
-     when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else (
-	  Expr(
-	       Ccode(LMatrixRR, "(LMatrixRR *)LP_LMatrixRR_make(", toInt(nrows), ",", 
-		                                                   toInt(ncols), ")"))
-	  )
+     when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else
+     Expr( Ccode(LMatrixRR, "(LMatrixRR *)LP_LMatrixRR_make(", toInt(nrows), ",", toInt(ncols), ")"))
      else WrongArgInteger(2)
      else WrongArgInteger(1)
      else WrongNumArgs(2)
