@@ -15,7 +15,8 @@ distclean::; rm -f Makefile
 all :: $(PACKAGES:.m2=.installed)
 
 %.installed : %.m2
-	M2 -q --stop -e "installPackage(\"$*\", Encapsulate => false, PackagePrefix => \"./tmp/\")" -e "exit 0" \
+	M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, PackagePrefix => \"./tmp/\")" -e "exit 0" \
+	touch "$@"
 
 clean::; rm -rf tmp
 install: all; tar cf - -C tmp . | tar xfpv - -C $(encapdir)
