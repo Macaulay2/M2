@@ -43,11 +43,10 @@ initialize :: $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif \
 $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif $(DOC)/index.gif $(DOC)/null.gif :
 	ln -s ../../../html/$(shell basename $@) $(DOC)
 
-install ::
-	rm -rf $(datadir)/Macaulay2/packages
-	$(INSTALL) -d $(datadir)/Macaulay2/packages $(datadir)/Macaulay2/packages/cache/doc
-	$(INSTALL_DATA) *.m2 $(datadir)/Macaulay2/packages
-	$(INSTALL_DATA) cache/doc/* $(datadir)/Macaulay2/packages/cache/doc
+$(packagedir)/packages :; $(INSTALL) -d "$@"
+install :: $(packagedir)/packages
+	$(INSTALL_DATA) @srcdir@/*.m2 $<
+	tar cf - -C @srcdir@ D-modules ComputationsBook | tar xf - -C $<
 
 distclean : clean
 	rm -f Makefile

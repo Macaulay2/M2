@@ -96,9 +96,6 @@ MACAULAY2.doc:
 	$(MAKE) -C Macaulay2 doc
 doc:: MACAULAY2.doc 
 distribution:: doc $(DOCTARGET)
-################################# final status messages
-justM2 all doc::
-	@echo "--------------------- done making '$@' --------------------"
 ################################# tar manufactured files
 manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files
@@ -123,6 +120,9 @@ lsm:; sendmail lsm@execpc.com <Macaulay2.LSM
 ################################# configure
 # make this one last
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h config.Makefile
+################################# final status messages
+justM2 all doc clean distclean::
+	@echo "--------------------- done making '$@' --------------------"
 
 # Local Variables:
 # mode: Makefile

@@ -213,8 +213,8 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-install::
-	$(INSTALL) -d $(packagedir)/m2
+$(packagedir)/m2:; $(INSTALL) -d $(packagedir)/m2
+install:: $(packagedir)/m2
 	$(INSTALL_DATA) $(DUMPEDM2FILES) $(DOCSEQUENCE) $(packagedir)/m2
 
 clean::

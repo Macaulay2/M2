@@ -19,6 +19,10 @@ initialize :: bin libexec
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
+install :: $(packagedir)/cache
+$(packagedir)/cache:; $(INSTALL) -d "$@"
+install :: $(packagedir)/cache/Macaulay2-doc
+$(packagedir)/cache/Macaulay2-doc : cache/Macaulay2-doc; $(INSTALL_DATA) $^ "$(packagedir)/cache"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) NODEPENDS=1 -C util $@
@@ -55,7 +59,7 @@ distclean clean ::; $(MAKE) -C test $@
 all :: setup
 	[ -x $< ] || chmod a+x $<
 ################################# packages
-check clean distclean ::; $(MAKE) -C packages $@
+install check clean distclean ::; $(MAKE) -C packages $@
 ################################# experiments
 all distclean clean ::; if [ -d experiments ]; then $(MAKE) -C experiments $@; fi
 ################################# html
@@ -72,11 +76,17 @@ distclean clean ::; $(MAKE) -C emacs $@
 ################################# libexec
 install :: $(packagedir)/libexec
 $(packagedir)/libexec:; $(INSTALL) -d "$@"
-install ::; $(INSTALL_PROGRAM) libexec/Macaulay2 $(packagedir)/libexec
+install :: $(packagedir)/libexec/Macaulay2
+$(packagedir)/libexec/Macaulay2 : libexec/Macaulay2
+	$(INSTALL_PROGRAM) $^ $(packagedir)/libexec
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
-install ::; $(INSTALL) $(DUMPDATAFILE) $(packagedir)/$(DUMPDATAFILE)
+install :: $(packagedir)/$(DUMPDATAFILE)
+$(packagedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE); $(INSTALL) $< "$@"
 endif
 endif
 #################################
 distclean::; rm -f Makefile
+################################# final status messages
+justM2 all doc clean distclean::
+	@echo "--------------------- done making '$@' --------------------"
