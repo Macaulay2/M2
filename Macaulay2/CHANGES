@@ -12,6 +12,8 @@ Changes made, most recent ones first:
 
 New in 0.9.3:
 
+New routines: 'mkdir', 'makeDirectory', 'fileTime'.
+
 The symbol "end" which may be used to indicate the end of an input file, has
 been changed to "endInput".
 
