@@ -15,7 +15,8 @@ case "@srcdir@" in
 esac
 
 M2HOME="`dirname $0`/../Macaulay2"
-export M2HOME
+M2LIB="$M2HOME"
+export M2HOME M2LIB
 
 DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 INIPATH="-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
