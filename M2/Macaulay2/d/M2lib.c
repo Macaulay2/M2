@@ -520,6 +520,7 @@ char **argv;
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;
+	  if (0 == strcmp(argv[n],"--texmacs")) break;
 	  }
 #if !defined(__MWERKS__)
      ONSTACK(envc);
@@ -649,7 +650,7 @@ char **argv;
 #endif
 	  fprintf(stderr,"\n");
 	  fflush(stderr);
-          interp_process2();
+          interp_topLevel();
 	  }
      else {
           out_of_memory_jump_set = TRUE;

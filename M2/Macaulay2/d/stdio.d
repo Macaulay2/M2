@@ -19,22 +19,10 @@ export STDOUT := 1;
 export STDERR := 2;
 bufsize := 4 * 1024;
 
--- half-duplex control characters
-export BEGIN := char(2);
-export END := char(5);
-export ESCAPE := char(27);
-
 export file := {
      	hash:int,     	   	-- hash code
 	filename:string,	-- name of file
 	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
-	-- texmacs stuff
-	halfduplex:bool,        -- input and output take turns
-	inputting:bool,         -- currently reading (don't flush output buffers, enlarge them instead)
-	sawESCAPE:bool,         -- last input charcter encountered was an ESCAPE character
-	outputting:bool,        -- currently writing (don't try to read, return EOF instead)
-	     	       	    	-- outbuffer has ESCAPE characters already in it, but nets doesn't
-	outputComplete:bool,    -- after flushing the output, switch to input
 	-- listener stuff
         listener:bool,	   	-- is a listener
 	listenerfd:int,	    	-- file descriptor of listener, or -1
@@ -70,19 +58,16 @@ export file := {
 export noprompt(o:file):void := nothing;
 newbuffer():string := new string len bufsize do provide ' ';
 export dummyfile := file(nextHash(), "dummy",0, 
-     false,false,false,false,false,
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,noprompt,true,false,
      false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0);
 export stdIO  := file(nextHash(),  "stdio",  0, 
-     false,false,false,false,false,
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,noprompt,true,false,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0);
 export stdin  := stdIO;
 export stdout := stdIO;
 export stderr := file(nextHash(), "stderr", 0, 
-     false,false,false,false,false,
      false,NOFD,NOFD,0,
      false,NOFD  ,false,          "",        0,0,false,noprompt,true,false,
      true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0);
@@ -132,7 +117,6 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      	  if sd == ERROR then return((file or errmsg)(errmsg("can't open socket : "+syserrmsg())));
 	  );
      (file or errmsg)(addfile(file(nextHash(), filename, 0,
-     	  false,false,false,false,false,
 	  listener, so, NOFD, if listener then 0 else 1,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, noprompt, true, false,
@@ -152,7 +136,6 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  );
      f.numconns = f.numconns + 1;
      (file or errmsg)(addfile(file(nextHash(), f.filename, 0,
-          false,false,false,false,false,
 	  false, NOFD,NOFD,f.numconns,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, noprompt, true, false,
@@ -191,7 +174,6 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      if input then close(fromChild.1);
      if output then close(toChild.0);
      (file or errmsg)(addfile(file(nextHash(), filename, pid, 
-          false,false,false,false,false,
 	  listener, NOFD,NOFD,0,
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, noprompt, true, false,
@@ -212,7 +194,6 @@ export openIn(filename:string):(file or errmsg) := (
      	  if fd == ERROR
      	  then (file or errmsg)(errmsg("can't open input file "+filename+ " : "+syserrmsg()))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
-     		    false,false,false,false,false,
 		    false, NOFD,NOFD,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, noprompt,true,false,
 		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0)))));
@@ -228,7 +209,6 @@ export openOut(filename:string):(file or errmsg) := (
      	  if fd == ERROR
      	  then (file or errmsg)(errmsg("can't open output file "+filename+" : "+syserrmsg()))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
-     		    false,false,false,false,false,
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,noprompt,true,false,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0)))));
@@ -253,27 +233,12 @@ export flushinput(o:file):void := (
 simpleflush(o:file):int := (
      o.outbol = 0;
      if o.outindex == 0 then return(0);
-     if o.halfduplex && !o.outputting then (
-	  if o.outindex == length(o.outbuffer) 
-	  then o.outbuffer = new string len 2*length(o.outbuffer) do (
-	       foreach c in o.outbuffer do provide c;
-	       while true do provide char(0);
-	       );
-	  return(0);
-	  );
      r := write(o.outfd,o.outbuffer,o.outindex);
      o.outindex = 0;
-     if o.outputComplete && o.halfduplex then (
-	  o.inputting = true;
-	  o.outputting = false;
-	  o.outputComplete = false;
-	  o.outbuffer.(o.outindex) = BEGIN;
-	  o.outindex = o.outindex + 1;
-	  );
      if r == ERROR then return(r);
      o.bytesWritten = o.bytesWritten + r;
      0);
-simpleout2(o:file,c:char):int := (
+simpleout(o:file,c:char):int := (
      if o.outindex == length(o.outbuffer) then (
 	  r := simpleflush(o);
 	  if r == ERROR then return(ERROR);
@@ -281,11 +246,6 @@ simpleout2(o:file,c:char):int := (
      o.outbuffer.(o.outindex) = c;
      o.outindex = o.outindex + 1;
      0);
-simpleout(o:file,c:char):int := (
-     if o.halfduplex && (c == BEGIN || c == END || c == ESCAPE) then (
-	  if ERROR == simpleout2(o,ESCAPE) then ERROR
-	  else simpleout2(o,c))
-     else simpleout2(o,c));
 simpleout(o:file,x:string):int := (
      foreach c in x do if ERROR == simpleout(o,c) then return(ERROR);
      0);
@@ -349,7 +309,6 @@ export closeIn(o:file):int := (
 	  );
      o.infd = NOFD;
      o.input = false;
-     o.halfduplex = false;
      cleanUp(o);
      if haderror then ERROR else 0     
      );
@@ -364,7 +323,6 @@ export closeOut(o:file):int := (
 	  );
      o.outfd = NOFD;
      o.output = false;
-     o.halfduplex = false;
      cleanUp(o);
      if haderror then ERROR else 0     
      );
@@ -416,7 +374,7 @@ export (o:file) << (c:char) : file := (
      );
 export filbuf(o:file):bool := (
      -- returns true if it managed to get some more characters
-     if ! o.input || (o.halfduplex && !o.inputting) then return(false);
+     if ! o.input then return(false);
      if o.inindex > 0
      then (
 	  o.insize = o.insize - o.inindex;
@@ -427,33 +385,6 @@ export filbuf(o:file):bool := (
      if n == 0 then return(false);
      r := read(o.infd,o.inbuffer,n,o.insize);
      if r > 0 then (
-	  if o.halfduplex then (
-	       i := 0;
-	       while i < r do (
-		    if o.sawESCAPE then (
-			 o.sawESCAPE = false;
-			 i = i+1;
-			 )
-		    else (
-			 c := o.inbuffer.(o.insize+i);
-			 if c == ESCAPE then (
-			      o.sawESCAPE = true;
-			      for j from n+i to n+r-2 do o.inbuffer.j = o.inbuffer.(j+1); r = r-1;
-			      )
-			 else if c == BEGIN then (
-			      -- we don't really need a BEGIN control character at all!
-			      for j from n+i to n+r-2 do o.inbuffer.j = o.inbuffer.(j+1); r = r-1;
-			      )
-			 else if c == END then (
-			      o.inputting = false;
-			      o.outputting = true;
-			      flush(o);
-			      r = i;			    -- there shouldn't be any more characters
-			      )
-			 else i = i+1;
-			 );
-		    );
-	       );
 	  o.insize = o.insize + r;
 	  true)
      else if r == 0 then ( o.eof = true; false )
@@ -657,15 +588,8 @@ prepare(o:file):void := (
      e := if o.output then o else stdout;
      o.bol = false;
      o.prompt(e);
-     if o.halfduplex then (
-	  o << END;
-	  o.outputComplete = true;
-	  flush(o);
-	  )
-     else (
-	  flush(e);
-	  );
-     if !haveLine(o) then filbuf(o);
+     flush(e);
+     if !haveLine(o) then filbuf(o);			    -- an EOF here might be ignored by getc!!
      if o.echo then echoLine(o);
      );
 export getc(o:file):int := (

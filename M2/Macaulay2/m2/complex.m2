@@ -3,7 +3,7 @@
 CC = new Field of BasicList
 CC.synonym = "complex number"
 CC.isCommutative = true
-CC.tex = ///{\mathbb C}///
+CC.texMath = ///{\mathbb C}///
 
 ii = new CC from {0,1}
 

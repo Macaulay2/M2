@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
-use varstrin;
 use system;
 use strings;
+use varstrin;
 use stdio;
 
   -- TEST here we check that reference counts are handled correctly by "if"
