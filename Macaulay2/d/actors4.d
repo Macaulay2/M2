@@ -919,7 +919,7 @@ locate(e:Expr):Expr := (
 	  then errorExpr("location of internal symbol not available")
 	  else Expr(
 	       Sequence(
-		    p.filename,toInteger(int(p.line)),toInteger(int(p.line)))))
+		    minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.line)))))
      is f:FunctionClosure do (
 	  code.filename = "--unknown file name--";
 	  code.minline = 1000000;

@@ -11,8 +11,22 @@ use ctype;
 
 export Position := {filename:string, line:ushort, column:uchar, reloaded:uchar};
 export dummyPosition := Position("--dummy file name--",ushort(0),uchar(0),uchar(reloaded));
+export minimizeFilename(filename:string):string := (
+     ofilename := filename;
+     s := getcwd();
+     if !(s === "/") then s = s + "/";
+     i := 0;
+     while i < length(s) && i < length(filename) && s.i == filename.i do i = i+1;
+     while i > 0 && (s.(i-1) != '/' || filename.(i-1) != '/') do i = i-1;
+     filename = substr(filename,i);
+     while i < length(s) do (if s.i == '/' then filename = "../" + filename; i = i+1);
+     if length(ofilename) <= length(filename) then ofilename else filename
+     );
+export tostring(w:Position) : string := (
+     minimizeFilename(w.filename) + ":" + tostring(w.line) + ":" + tostring(w.column + 1) + ":"
+     );
 export (o:file) << (w:Position) : file := (
-     o << w.filename << ':' << w.line << ':' << w.column + 1 << ':'
+     o << minimizeFilename(w.filename) << ':' << w.line << ':' << w.column + 1 << ':'
      );
 export SuppressErrors := false;
 export errorpos(position:Position,message:string):void := (
@@ -39,7 +53,11 @@ export setprompt(o:PosFile,prompt:function():void):void := (
 export fopeninp(filename:string):(PosFile or errmsg) := (
      when fopenin(filename)
      is f:file do (PosFile or errmsg)(
-	  PosFile(f,Position(f.filename,ushort(1),uchar(0),uchar(reloaded))))
+	  PosFile(f,Position(
+		    if f.filename.0 == '/'
+		    then f.filename
+		    else getcwd() + '/' + f.filename,
+		    ushort(1),uchar(0),uchar(reloaded))))
      is s:errmsg do (PosFile or errmsg)(s)
      );
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
