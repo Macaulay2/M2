@@ -133,7 +133,9 @@ endif
 include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
 
 make-gmp : GMPconfigure
-	$(MAKE) CFLAGS="$(GMPFLAGS)" -C gmp
+	@echo we wanted to use: CFLAGS="$(GMPFLAGS)"
+	$(MAKE) -C gmp
+#	$(MAKE) CFLAGS="$(GMPFLAGS)" -C gmp
 
 ifeq "$(CC)" "cl"
 GMPconfigure : gmp/Makefile
@@ -144,7 +146,7 @@ GMPconfigure : gmp/config.status
 gmp/config.status: gmp/configure
 	cd gmp; \
 	rm -f config.status; \
-	unset CC; ./configure --silent --cache-file=../config.cache
+	unset CC CFLAGS; ./configure --silent --cache-file=../config.cache
 #	gmp 3.1 configure has a bug -- can't accept CC=gcc hint.
 endif
 
