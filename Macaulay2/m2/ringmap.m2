@@ -79,6 +79,8 @@ map(Ring,Ring) := RingMap => options -> (S,R) -> (
 	  A.?ring) do A = A.ring;
      map(S,R,matrix (S,{v})))
 
+Ring#id = (R) -> map(R,R)
+
 map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
 
 RingMap.AfterPrint = RingMap.AfterNoPrint = f -> (
