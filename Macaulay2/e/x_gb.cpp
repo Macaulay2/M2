@@ -16,16 +16,18 @@ const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
 ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       M2_bool collect_syz,
 			       int n_rows_to_keep,
+			       M2_arrayint gb_degrees,
 			       M2_bool use_max_degree,
 			       int max_degree,
 			       int algorithm,
-			       int strategy)
+			       int strategy) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
   return Computation::choose_gb(
                     m,
 		    collect_syz,
 		    n_rows_to_keep,
+		    gb_degrees,
 		    use_max_degree,
 		    max_degree,
 		    algorithm,
@@ -94,6 +96,12 @@ IM2_GB_set_stop(Computation *G,
 				 length_limit);
 }
 
+void IM2_Computation_start(Computation *G)
+  /* start or continue the computation */
+{
+  G->compute();
+}
+
 const MatrixOrNull *
 IM2_GB_get_matrix(Computation *G, 
 		  int level, 
@@ -104,7 +112,23 @@ IM2_GB_get_matrix(Computation *G,
 
 int IM2_GB_status(Computation *G,
 		  int * complete_up_through_this_degree,
-		  int * complete_up_through_this_level)
+		  int * stopping_reason) /* number from IM2_Computation_set_stop,
+					     interrupted is -1. None is 0. */
+  /* connected rawGBStatus */
+  /* -1: error condition, and the error message is set.
+     1: not started,
+     2: started, but still running in another thread (not implemented yet)
+     3: stopped because of a stopping condition or an interrupt
+     4: finished the computation completely
+  */
+{
+  return G->status(complete_up_through_this_degree,
+		   stopping_reason);
+}
+
+int IM2_Resolution_status(Computation *G,
+			  int * complete_up_through_this_degree,
+			  int * complete_up_through_this_level)
   /* -1: error condition, and the error message is set.
      0: not made, and in fact it won't ever be done...
      1: not started,
@@ -113,12 +137,14 @@ int IM2_GB_status(Computation *G,
      4: finished the computation completely
   */
 {
-  return G->status(complete_up_through_this_degree,
-		   complete_up_through_this_level);
+#warning "IM2_Resolution_status to be written"
+  ERROR("not re-implemented yet");
+  return -1;
 }
 
+
 int 
-IM2_GB_status_level(Computation *G, 
+IM2_Resolution_status_level(Computation *G, 
 		    int level, 
 		    M2_bool minimize,
 		    int * complete_up_through_this_degree)

@@ -1205,7 +1205,7 @@ extern "C" {
 		    int * stopping_reason); /* number from IM2_Computation_set_stop,
 					       interrupted is -1. None is 0. */
   /* connected rawGBStatus */
-  /* -1: error condition, and the error message is set.
+  /* -1: error condition, and the error message is set. 
      1: not started,
      2: started, but still running in another thread (not implemented yet)
      3: stopped because of a stopping condition or an interrupt

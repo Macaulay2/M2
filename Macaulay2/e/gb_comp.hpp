@@ -100,12 +100,13 @@ protected:
   virtual ~Computation();
 public:
   static ComputationOrNull *choose_gb(const Matrix *m,
-				 M2_bool collect_syz,
-				 int n_rows_to_keep,
-				 M2_bool use_max_degree,
-				 int max_degree,
-				 int algorithm,
-				 int strategy);
+				      M2_bool collect_syz,
+				      int n_rows_to_keep,
+				      M2_arrayint gb_degrees,
+				      M2_bool use_max_degree,
+				      int max_degree,
+				      int algorithm,
+				      int strategy);
 
   static ComputationOrNull *choose_res(const Matrix *m,
 				  M2_bool resolve_cokernel,
@@ -135,6 +136,8 @@ public:
   virtual const PolynomialRing *get_ring() = 0;
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h) = 0;
+
+  virtual void compute() = 0;
 
   virtual const MatrixOrNull *get_matrix(int level, M2_bool minimize) = 0;
 

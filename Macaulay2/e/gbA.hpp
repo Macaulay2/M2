@@ -142,7 +142,7 @@ private:
   void insert(POLY f, int minlevel);
   bool s_pair_step();
   int computation_is_complete();
-  int compute();
+  void compute();
 
   /* Making the minimal GB */
   void poly_auto_reduce(vector<POLY> &mat);
