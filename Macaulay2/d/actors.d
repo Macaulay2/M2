@@ -883,7 +883,7 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
      when opr 
      is Error do opr
      is oper:SymbolClosure do (
-	  if oper.symbol == AdjacentS.symbol then (
+	  if oper === AdjacentS then (
 	       b := eval(args.2);
 	       when b
 	       is Error do b
@@ -1055,3 +1055,39 @@ flatten(e:Expr):Expr := (
 	  a.mutable)
      else WrongArg("a list or sequence"));
 setupfun("flatten",flatten);
+
+subvalue(lhs:Code,rhs:Code):Expr := (
+     left := eval(lhs);
+     when left is Error do left
+     else (
+      	  right := eval(rhs);
+      	  when right is Error do right
+      	  else subvalue(left,right)));
+lengthFun(rhs:Code):Expr := (
+     e := eval(rhs);
+     when e
+     is Error do e
+     is x:HashTable do Expr(toInteger(x.numEntries))
+     is x:Sequence do Expr(toInteger(length(x)))
+     is dc:DictionaryClosure do Expr(toInteger(dc.dictionary.symboltable.numEntries))
+     is x:List do Expr(toInteger(length(x.v)))
+     is f:file do (
+	  if f.input || f.output then (
+	       r := fileLength(f);
+	       if r == ERROR then buildErrorPacket("couldn't determine length of file")
+	       else Expr(toInteger(r))
+	       )
+	  else buildErrorPacket("file not open")
+	  )
+     is s:string do Expr(toInteger(length(s)))
+     is n:Net do Expr(toInteger(length(n.body)))
+     else buildErrorPacket("expected a list, sequence, hash table, file, or string"));
+setup(SharpS,lengthFun,subvalue);
+subvalueQ(lhs:Code,rhs:Code):Expr := (
+     left := eval(lhs);
+     when left is Error do left
+     else (
+      	  right := eval(rhs);
+      	  when right is Error do right
+      	  else subvalueQ(left,right)));
+setup(SharpQuestionS,subvalueQ);

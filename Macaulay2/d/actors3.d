@@ -586,112 +586,65 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  frameID := desc.frameID;
 	  numparms := desc.numparms;
 	  framesize := desc.framesize;
-	  if desc.hasClosure then (
-	       -- since the function closure has code inside it somewhere that makes 
-	       -- a closure, we can not re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-     		    saveLocalFrame := localFrame;
-		    ret := new Sequence len newlen at i do (
-			 values := new Sequence len framesize do (
-			      provide Sequence(a1.i,a2.i);
-			      while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message == returnMessage
-			      then provide err.value
-			      else (
-				   errret = tmp;
-			      	   while true do provide nullE;
-				   )
+	  -- since the function closure has no code inside it that makes
+	  -- a closure, we can re-use its frame.
+	  if desc.restargs then (	  -- x -> ...
+	       saveLocalFrame := localFrame;
+	       values := new Sequence len framesize do provide nullE;
+	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       ret := new Sequence len newlen at i do (
+		    values.0 = Sequence(a1.i,a2.i);
+		    tmp := eval(body);
+		    when tmp is err:Error do (
+			 if err.message == returnMessage
+			 then provide err.value
+			 else (
+			      errret = tmp;
+			      while true do provide nullE;
 			      )
-			 else provide tmp;
-			 );
-		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
-		    if errret != nullE then backtr(errret) else Expr(ret)
-		    )
-	       else (				  -- (x,y) -> ...
-		    if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
-		    else (
-			 saveLocalFrame := localFrame;
-			 ret := new Sequence len newlen at i do (
-			      values := new Sequence len framesize do (
-				   provide a1.i;
-				   provide a2.i;
-				   while true do provide nullE
-				   );
-			      localFrame = Frame(previousFrame,frameID,framesize,values);
-			      tmp := eval(body);
-			      when tmp is err:Error do (
-				   if err.message == returnMessage
-				   then provide err.value
-				   else (
-					errret = tmp;
-					while true do provide nullE;
-					)
-				   )
-			      else provide tmp;
-			      );
-			 localFrame = saveLocalFrame;
-			 recursiondepth = recursiondepth - 1;
-			 if errret != nullE then backtr(errret) else Expr(ret)
 			 )
-		    )
+		    else provide tmp;
+		    if localFrame.notrecyclable then (
+			 values = new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 )
+		    else for i from 1 to framesize - 1 do values.i = nullE
+		    );
+	       localFrame = saveLocalFrame;
+	       recursiondepth = recursiondepth - 1;
+	       if errret != nullE then backtr(errret) else Expr(ret)
 	       )
-	  else (			  -- contains no closure
-	       -- since the function closure has no code inside it that makes
-	       -- a closure, we can re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-     		    saveLocalFrame := localFrame;
+	  else (				  -- (x,y) -> ...
+	       if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
+	       else (
+		    saveLocalFrame := localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,framesize,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    ret := new Sequence len newlen at i do (
-			 values.0 = Sequence(a1.i,a2.i);
+			 values.0 = a1.i;
+			 values.1 = a2.i;
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage
 			      then provide err.value
 			      else (
 				   errret = tmp;
-			      	   while true do provide nullE;
+				   while true do provide nullE;
 				   )
 			      )
 			 else provide tmp;
-			 for i from 1 to framesize - 1 do values.i = nullE;
-			 );
-		    -- stash
-		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
-		    if errret != nullE then backtr(errret) else Expr(ret)
-		    )
-	       else (				  -- (x,y) -> ...
-		    if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
-		    else (
-			 saveLocalFrame := localFrame;
-			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 ret := new Sequence len newlen at i do (
-			      values.0 = a1.i;
-			      values.1 = a2.i;
-			      tmp := eval(body);
-			      when tmp is err:Error do (
-				   if err.message == returnMessage
-				   then provide err.value
-				   else (
-					errret = tmp;
-					while true do provide nullE;
-					)
-				   )
-			      else provide tmp;
+			 if localFrame.notrecyclable then (
+			      values = new Sequence len framesize do provide nullE;
+			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      )
+			 else (
 			      -- it would be faster to do a byte copy here:
 			      for i from 2 to framesize - 1 do values.i = nullE;
 			      );
-			 -- stash
-			 localFrame = saveLocalFrame;
-			 recursiondepth = recursiondepth - 1;
-			 if errret != nullE then backtr(errret) else Expr(ret)
-			 )
+			 );
+		    localFrame = saveLocalFrame;
+		    recursiondepth = recursiondepth - 1;
+		    if errret != nullE then backtr(errret) else Expr(ret)
 		    )
 	       )
 	  )
@@ -737,51 +690,113 @@ map(a:Sequence,f:Expr):Expr := (
 	  frameID := desc.frameID;
 	  numparms := desc.numparms;
 	  framesize := desc.framesize;
-	  if desc.hasClosure then (
-	       -- since the function closure has code inside it somewhere that makes a 
-	       -- a closure, we can t re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-     		    saveLocalFrame := localFrame;
-		    ret := new Sequence len newlen do (
-			 foreach arg in a do (
-			      values := new Sequence len framesize do (
-				   provide arg; while true do provide nullE);
-			      localFrame = Frame(previousFrame,frameID,framesize,values);
-			      tmp := eval(body);
-			      when tmp is err:Error do (
-				   if err.message == returnMessage
-				   then provide err.value
-				   else (
-					errret = tmp;
-					while true do provide nullE;
-					)
+	  if desc.restargs then (	  -- x -> ...
+	       saveLocalFrame := localFrame;
+	       values := new Sequence len framesize do provide nullE;
+	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       ret := new Sequence len newlen do (
+		    foreach arg in a do (
+			 values.0 = arg;
+			 tmp := eval(body);
+			 when tmp is err:Error do (
+			      if err.message == returnMessage
+			      then provide err.value
+			      else (
+				   errret = tmp;
+				   while true do provide nullE;
 				   )
-			      else provide tmp;
+			      )
+			 else provide tmp;
+		    	 if localFrame.notrecyclable then (
+			      values = new Sequence len framesize do provide nullE;
+			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      )
+			 else for i from 1 to framesize - 1 do values.i = nullE;
+			 )
+		    );
+	       localFrame = saveLocalFrame;
+	       recursiondepth = recursiondepth - 1;
+	       if errret != nullE then backtr(errret) else Expr(ret)
+	       )
+	  else (				  -- (x,y) -> ...
+	       if numparms == 1 then (
+		    saveLocalFrame := localFrame;
+		    values := new Sequence len framesize do provide nullE;
+		    localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    ret := new Sequence len newlen do (
+			 if framesize == 1 then (
+			      foreach arg in a do (
+				   when arg is args:Sequence do (
+					if 1 == length(args) then values.0 = args.0
+					else (
+					     errret = WrongNumArgs(model.parms,numparms,length(args));
+					     while true do provide nullE;
+					     )
+					)
+				   else values.0 = arg;
+				   tmp := eval(body);
+				   when tmp is err:Error do (
+					if err.message == returnMessage
+					then provide err.value
+					else (
+					     errret = tmp;
+					     while true do provide nullE;
+					     )
+					)
+				   else provide tmp;
+		    		   if localFrame.notrecyclable then (
+					values = new Sequence len framesize do provide nullE;
+					localFrame = Frame(previousFrame,frameID,framesize,false,values);
+					);
+				   )
+			      )
+			 else (
+			      foreach arg in a do (
+				   when arg is args:Sequence do (
+					if 1 == length(args) then values.0 = args.0
+					else (
+					     errret = WrongNumArgs(model.parms,numparms,length(args));
+					     while true do provide nullE;
+					     )
+					)
+				   else values.0 = arg;
+				   tmp := eval(body);
+				   when tmp is err:Error do (
+					if err.message == returnMessage
+					then provide err.value
+					else (
+					     errret = tmp;
+					     while true do provide nullE;
+					     )
+					)
+				   else provide tmp;
+		    		   if localFrame.notrecyclable then (
+					values = new Sequence len framesize do provide nullE;
+					localFrame = Frame(previousFrame,frameID,framesize,false,values);
+					)
+				   else for i from 1 to framesize - 1 do values.i = nullE;
+				   )
 			      )
 			 );
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    if errret != nullE then backtr(errret) else Expr(ret)
 		    )
-	       else (				  -- (x,y) -> ...
-		    if numparms == 1 then (
+	       else (
+		    if framesize == 0 then (
 			 saveLocalFrame := localFrame;
+			 localFrame = previousFrame;
 			 ret := new Sequence len newlen do (
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
-					if 1 == length(args) then (
-					     values := new Sequence len framesize do (
-						  provide args.0;
-						  while true do provide nullE);
-					     localFrame = Frame(previousFrame,frameID,framesize,values);)
-					else (
-					     errret = WrongNumArgs(model.parms,numparms,length(args));
-					     while true do provide nullE;))
+					if 0 != length(args) then (
+					     errret = WrongNumArgs(model.parms,0,length(args));
+					     while true do provide nullE;
+					     )
+					)
 				   else (
-					values := new Sequence len framesize do (
-					     provide arg; 
-					     while true do provide nullE);
-					localFrame = Frame(previousFrame,frameID,framesize,values);
+					errret = WrongNumArgs(model.parms,numparms,1);
+					while true do provide nullE;
 					);
 				   tmp := eval(body);
 				   when tmp is err:Error do (
@@ -799,22 +814,25 @@ map(a:Sequence,f:Expr):Expr := (
 			 recursiondepth = recursiondepth - 1;
 			 if errret != nullE then backtr(errret) else Expr(ret)
 			 )
-		    else (
+		    else (	  -- framesize != 0
 			 saveLocalFrame := localFrame;
+			 values := new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 ret := new Sequence len newlen do (
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
 					if numparms == length(args) then (
-					     values := new Sequence len framesize do (
-						  foreach t in args do provide t;
-						  while true do provide nullE);
-					     localFrame = Frame(previousFrame,frameID,framesize,values);)
+					     foreach x at i in args do values.i = x;
+					     )
 					else (
-					     errret = WrongNumArgs(model.parms,numparms,length(args));
-					     while true do provide nullE;))
+					     errret=WrongNumArgs(model.parms,numparms,length(args));
+					     while true do provide nullE;
+					     )
+					)
 				   else (
 					errret = WrongNumArgs(model.parms,numparms,1);
-					while true do provide nullE;);
+					while true do provide nullE;
+					);
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage
@@ -825,167 +843,15 @@ map(a:Sequence,f:Expr):Expr := (
 					     )
 					)
 				   else provide tmp;
-				   )
-			      );
+		    		   if localFrame.notrecyclable then (
+					values = new Sequence len framesize do provide nullE;
+					localFrame = Frame(previousFrame,frameID,framesize,false,values);
+     	       	    	      	   	)
+				   else for i from numparms to framesize - 1 do values.i = nullE;
+				   ));
 			 localFrame = saveLocalFrame;
 			 recursiondepth = recursiondepth - 1;
 			 if errret != nullE then backtr(errret) else Expr(ret)
-			 )
-		    )
-	       )
-	  else (			  -- contains no closure
-	       -- since the function closure has no code inside it that makes a 
-	       -- a closure, we can re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-     		    saveLocalFrame := localFrame;
-		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,framesize,values);
-		    ret := new Sequence len newlen do (
-			 foreach arg in a do (
-			      values.0 = arg;
-			      tmp := eval(body);
-			      when tmp is err:Error do (
-				   if err.message == returnMessage
-				   then provide err.value
-				   else (
-					errret = tmp;
-					while true do provide nullE;
-					)
-				   )
-			      else provide tmp;
-			      for i from 1 to framesize - 1 do values.i = nullE;
-			      )
-			 );
-		    -- stash
-		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
-		    if errret != nullE then backtr(errret) else Expr(ret)
-		    )
-	       else (				  -- (x,y) -> ...
-		    if numparms == 1 then (
-			 saveLocalFrame := localFrame;
-			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 ret := new Sequence len newlen do (
-			      if framesize == 1 then (
-				   foreach arg in a do (
-					when arg is args:Sequence do (
-					     if 1 == length(args) then values.0 = args.0
-					     else (
-						  errret = WrongNumArgs(model.parms,numparms,length(args));
-						  while true do provide nullE;
-						  )
-					     )
-					else values.0 = arg;
-					tmp := eval(body);
-					when tmp is err:Error do (
-					     if err.message == returnMessage
-					     then provide err.value
-					     else (
-						  errret = tmp;
-						  while true do provide nullE;
-						  )
-					     )
-					else provide tmp;
-					)
-				   )
-			      else (
-				   foreach arg in a do (
-					when arg is args:Sequence do (
-					     if 1 == length(args) then values.0 = args.0
-					     else (
-						  errret = WrongNumArgs(model.parms,numparms,length(args));
-						  while true do provide nullE;
-						  )
-					     )
-					else values.0 = arg;
-					tmp := eval(body);
-					when tmp is err:Error do (
-					     if err.message == returnMessage
-					     then provide err.value
-					     else (
-						  errret = tmp;
-						  while true do provide nullE;
-						  )
-					     )
-					else provide tmp;
-					for i from 1 to framesize - 1 do values.i = nullE;
-					)
-				   )
-			      );
-			 -- stash;
-			 localFrame = saveLocalFrame;
-			 recursiondepth = recursiondepth - 1;
-			 if errret != nullE then backtr(errret) else Expr(ret)
-			 )
-		    else (
-			 if framesize == 0 then (
-			      saveLocalFrame := localFrame;
-			      localFrame = previousFrame;
-			      ret := new Sequence len newlen do (
-				   foreach arg in a do (
-					when arg is args:Sequence do (
-					     if 0 != length(args) then (
-						  errret = WrongNumArgs(model.parms,0,length(args));
-						  while true do provide nullE;
-						  )
-					     )
-					else (
-					     errret = WrongNumArgs(model.parms,numparms,1);
-					     while true do provide nullE;
-					     );
-					tmp := eval(body);
-					when tmp is err:Error do (
-					     if err.message == returnMessage
-					     then provide err.value
-					     else (
-						  errret = tmp;
-						  while true do provide nullE;
-						  )
-					     )
-					else provide tmp;
-					)
-				   );
-			      localFrame = saveLocalFrame;
-			      recursiondepth = recursiondepth - 1;
-			      if errret != nullE then backtr(errret) else Expr(ret)
-			      )
-			 else (	  -- framesize != 0
-			      saveLocalFrame := localFrame;
-			      values := new Sequence len framesize do provide nullE;
-			      localFrame = Frame(previousFrame,frameID,framesize,values);
-			      ret := new Sequence len newlen do (
-				   foreach arg in a do (
-					when arg is args:Sequence do (
-					     if numparms == length(args) then (
-						  foreach x at i in args do values.i = x;
-						  )
-					     else (
-						  errret=WrongNumArgs(model.parms,numparms,length(args));
-						  while true do provide nullE;
-						  )
-					     )
-					else (
-					     errret = WrongNumArgs(model.parms,numparms,1);
-					     while true do provide nullE;
-					     );
-					tmp := eval(body);
-					when tmp is err:Error do (
-					     if err.message == returnMessage
-					     then provide err.value
-					     else (
-						  errret = tmp;
-						  while true do provide nullE;
-						  )
-					     )
-					else provide tmp;
-					for i from numparms to framesize - 1 do values.i = nullE;
-					));
-			      -- stash
-			      localFrame = saveLocalFrame;
-			      recursiondepth = recursiondepth - 1;
-			      if errret != nullE then backtr(errret) else Expr(ret)
-			      )
 			 )
 		    )
 	       )
@@ -1039,31 +905,9 @@ map(n:int,f:Expr):Expr := (
 		    errret = WrongNumArgs(model.parms,numparms,1);
 		    while true do provide nullE;
 		    )
-	       else if desc.hasClosure then (
-		    -- since the function closure has code inside it somewhere that makes a 
-		    -- a closure, we can t re-use its frame.
-		    for i from 0 to n-1 do (
-			 values := new Sequence len framesize do (
-			      provide toInteger(i);
-			      while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message == returnMessage
-			      then provide err.value
-			      else (
-				   errret = tmp;
-			      	   while true do provide nullE;
-				   )
-			      )
-			 else provide tmp;
-			 )
-		    )
-	       else (			  -- contains no closure
-		    -- since the function closure has no code inside it that makes a 
-		    -- a closure, we can re-use its frame.
+	       else (
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,framesize,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    if framesize == 1 then (
 			 for i from 0 to n-1 do (
 			      values.0 = toInteger(i);
@@ -1077,6 +921,10 @@ map(n:int,f:Expr):Expr := (
 					)
 				   )
 			      else provide tmp;
+		    	      if localFrame.notrecyclable then (
+				   values = new Sequence len framesize do provide nullE;
+				   localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   );				   
 			      )
 			 )
 		    else (
@@ -1092,7 +940,11 @@ map(n:int,f:Expr):Expr := (
 					)
 				   )
 			      else provide tmp;
-			      for i from 1 to framesize - 1 do values.i = nullE;
+		    	      if localFrame.notrecyclable then (
+				   values = new Sequence len framesize do provide nullE;
+				   localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   )
+			      else for i from 1 to framesize - 1 do values.i = nullE;
 			      )
 			 )
 		    )
@@ -1203,31 +1055,9 @@ scan(n:int,f:Expr):Expr := (
      	       recursiondepth = recursiondepth - 1;
 	       return(backtr(WrongNumArgs(model.parms,numparms,1)));
 	       )
-	  else if desc.hasClosure then (
-	       -- since the function closure has code inside it somewhere that makes a 
-	       -- a closure, we can t re-use its frame.
-	       for i from 0 to n-1 do (
-		    values := new Sequence len framesize do (
-			 provide toInteger(i);
-			 while true do provide nullE;
-			 );
-		    localFrame = Frame(previousFrame,frameID,framesize,values);
-		    tmp := eval(body);
-		    when tmp is err:Error do (
-			 if err.message != returnMessage then (
-     			      recursiondepth = recursiondepth - 1;
-     			      localFrame = saveLocalFrame;
-			      return(backtrLoop(tmp)); 
-			      )
-			 )
-		    else nothing;
-		    )
-	       )
-	  else (			  -- contains no closure
-	       -- since the function closure has no code inside it that makes a 
-	       -- a closure, we can re-use its frame.
+	  else (
 	       values := new Sequence len framesize do provide nullE;
-	       localFrame = Frame(previousFrame,frameID,framesize,values);
+	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
 	       if framesize == 1 then (
 		    for i from 0 to n-1 do (
 			 values.0 = toInteger(i);
@@ -1240,6 +1070,11 @@ scan(n:int,f:Expr):Expr := (
 				   )
 			      )
 			 else nothing;
+		    	 if localFrame.notrecyclable then (
+			      values = new Sequence len framesize do provide nullE;
+			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      )
+			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 )
 		    )
 	       else (
@@ -1254,7 +1089,11 @@ scan(n:int,f:Expr):Expr := (
 				   )
 			      )
 			 else nothing;
-			 for i from 1 to framesize - 1 do values.i = nullE;
+		    	 if localFrame.notrecyclable then (
+			      values = new Sequence len framesize do provide nullE;
+			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      )
+			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 )
 		    )
 	       )
@@ -1311,67 +1150,96 @@ scan(a:Sequence,f:Expr):Expr := (
 	  frameID := desc.frameID;
 	  numparms := desc.numparms;
 	  framesize := desc.framesize;
-	  if desc.hasClosure then (
-	       -- since the function closure has code inside it somewhere that makes a 
-	       -- a closure, we can not re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-		    foreach arg in a do (
-			 values := new Sequence len framesize do (
-			      provide arg; while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message != returnMessage then (
-	  		      	   recursiondepth = recursiondepth - 1;
-     			      	   localFrame = saveLocalFrame;
-			      	   return(backtrLoop(tmp));
-				   )
+	  if desc.restargs then (	  -- x -> ...
+	       values := new Sequence len framesize do provide nullE;
+	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       foreach arg in a do (
+		    values.0 = arg;
+		    tmp := eval(body);
+		    when tmp is err:Error do (
+			 if err.message != returnMessage then (
+			      recursiondepth = recursiondepth - 1;
+			      localFrame = saveLocalFrame;
+			      return(backtrLoop(tmp));
 			      )
-			 else nothing);)
-	       else (				  -- (x,y) -> ...
-		    if numparms == 1 then (
+			 )
+		    else nothing;
+		    if localFrame.notrecyclable then (
+			 values = new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 )
+		    else for i from 1 to framesize - 1 do values.i = nullE;
+		    )
+	       )
+	  else (				  -- (x,y) -> ...
+	       if numparms == 1 then (
+		    values := new Sequence len framesize do provide nullE;
+		    localFrame = Frame(previousFrame,frameID,framesize,false,values);
+		    if framesize == 1 then (
 			 foreach arg in a do (
 			      when arg is args:Sequence do (
-				   if 1 == length(args) then (
-					values := new Sequence len framesize do (
-					     provide args.0;
-					     while true do provide nullE);
-					localFrame = Frame(previousFrame,frameID,framesize,values);)
+				   if 1 == length(args) then values.0 = args.0
 				   else (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
 					return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
-					))
-			      else (
-				   values := new Sequence len framesize do (
-					provide arg; 
-					while true do provide nullE);
-				   localFrame = Frame(previousFrame,frameID,framesize,values);
-				   );
+					)
+				   )
+			      else values.0 = arg;
 			      tmp := eval(body);
 			      when tmp is err:Error do (
-			 	   if err.message != returnMessage then (
-				   	recursiondepth = recursiondepth - 1;
-				   	localFrame = saveLocalFrame;
-				   	return(backtrLoop(tmp));
+				   if err.message != returnMessage then (
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
+					return(backtrLoop(tmp));
 					)
 				   )
 			      else nothing;
+		    	      if localFrame.notrecyclable then (
+				   values = new Sequence len framesize do provide nullE;
+				   localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   );
 			      )
 			 )
 		    else (
 			 foreach arg in a do (
 			      when arg is args:Sequence do (
-				   if numparms == length(args) then (
-					values := new Sequence len framesize do (
-					     foreach t in args do provide t;
-					     while true do provide nullE);
-					localFrame = Frame(previousFrame,frameID,framesize,values);)
+				   if 1 == length(args) then values.0 = args.0
 				   else (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
 					return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
-					))
+					)
+				   )
+			      else values.0 = arg;
+			      tmp := eval(body);
+			      when tmp is err:Error do (
+				   if err.message != returnMessage then (
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
+					return(backtrLoop(tmp));
+					)
+				   )
+			      else nothing;
+		    	      if localFrame.notrecyclable then (
+				   values = new Sequence len framesize do provide nullE;
+				   localFrame = Frame(previousFrame,frameID,framesize,false,values);
+				   )
+			      else for i from 1 to framesize - 1 do values.i = nullE;
+			      )
+			 )
+		    )
+	       else (
+		    if framesize == 0 then (
+			 localFrame = previousFrame;
+			 foreach arg in a do (
+			      when arg is args:Sequence do (
+				   if 0 != length(args) then (
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
+					return(backtr(WrongNumArgs(model.parms,0,length(args))));
+					)
+				   )
 			      else (
 				   recursiondepth = recursiondepth - 1;
 				   localFrame = saveLocalFrame;
@@ -1379,142 +1247,47 @@ scan(a:Sequence,f:Expr):Expr := (
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
-			 	   if err.message != returnMessage then (
-				   	recursiondepth = recursiondepth - 1;
-				   	localFrame = saveLocalFrame;
-				   	return(backtrLoop(tmp));
-				   	)
+				   if err.message != returnMessage then (
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
+					return(backtrLoop(tmp));
+					)
+				   )
+			      else nothing))
+		    else (	  -- framesize != 0
+			 values := new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 foreach arg in a do (
+			      when arg is args:Sequence do (
+				   if numparms == length(args) then (
+					foreach x at i in args do values.i = x;
+					)
+				   else (
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
+					return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
+					)
+				   )
+			      else (
+				   recursiondepth = recursiondepth - 1;
+				   localFrame = saveLocalFrame;
+				   return(backtr(WrongNumArgs(model.parms,numparms,1)));
+				   );
+			      tmp := eval(body);
+			      when tmp is err:Error do (
+				   if err.message != returnMessage then (
+					recursiondepth = recursiondepth - 1;
+					localFrame = saveLocalFrame;
+					return(backtrLoop(tmp));
+					)
 				   )
 			      else nothing;
-			      )
-			 )
-		    )
-	       )
-	  else (			  -- contains no closure
-	       -- since the function closure has no code inside it that makes a 
-	       -- a closure, we can re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,framesize,values);
-		    foreach arg in a do (
-			 values.0 = arg;
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message != returnMessage then (
-			      	   recursiondepth = recursiondepth - 1;
-			      	   localFrame = saveLocalFrame;
-			      	   return(backtrLoop(tmp));
+		    	      if localFrame.notrecyclable then (
+				   values = new Sequence len framesize do provide nullE;
+				   localFrame = Frame(previousFrame,frameID,framesize,false,values);
 				   )
-			      )
-			 else nothing;
-			 for i from 1 to framesize - 1 do values.i = nullE;
-			 )
-		    )
-	       else (				  -- (x,y) -> ...
-		    if numparms == 1 then (
-			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 if framesize == 1 then (
-			      foreach arg in a do (
-				   when arg is args:Sequence do (
-					if 1 == length(args) then values.0 = args.0
-					else (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
-					     )
-					)
-				   else values.0 = arg;
-				   tmp := eval(body);
-				   when tmp is err:Error do (
-			 		if err.message != returnMessage then (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtrLoop(tmp));
-					     )
-					)
-				   else nothing;
-				   )
-			      )
-			 else (
-			      foreach arg in a do (
-				   when arg is args:Sequence do (
-					if 1 == length(args) then values.0 = args.0
-					else (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
-					     )
-					)
-				   else values.0 = arg;
-				   tmp := eval(body);
-				   when tmp is err:Error do (
-			 		if err.message != returnMessage then (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtrLoop(tmp));
-					     )
-					)
-				   else nothing;
-				   for i from 1 to framesize - 1 do values.i = nullE;
-				   )
-			      )
-			 )
-		    else (
-			 if framesize == 0 then (
-			      localFrame = previousFrame;
-			      foreach arg in a do (
-				   when arg is args:Sequence do (
-					if 0 != length(args) then (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtr(WrongNumArgs(model.parms,0,length(args))));
-					     )
-					)
-				   else (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
-					return(backtr(WrongNumArgs(model.parms,numparms,1)));
-					);
-				   tmp := eval(body);
-				   when tmp is err:Error do (
-			 		if err.message != returnMessage then (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtrLoop(tmp));
-					     )
-					)
-				   else nothing))
-			 else (	  -- framesize != 0
-			      values := new Sequence len framesize do provide nullE;
-			      localFrame = Frame(previousFrame,frameID,framesize,values);
-			      foreach arg in a do (
-				   when arg is args:Sequence do (
-					if numparms == length(args) then (
-					     foreach x at i in args do values.i = x;
-					     )
-					else (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
-					     )
-					)
-				   else (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
-					return(backtr(WrongNumArgs(model.parms,numparms,1)));
-					);
-				   tmp := eval(body);
-				   when tmp is err:Error do (
-			 		if err.message != returnMessage then (
-	  				     recursiondepth = recursiondepth - 1;
-     					     localFrame = saveLocalFrame;
-					     return(backtrLoop(tmp));
-					     )
-					)
-				   else nothing;
-				   for i from numparms to framesize - 1 do values.i = nullE;
-				   ))))))
+			      else for i from numparms to framesize - 1 do values.i = nullE;
+			      )))))
      is cf:CompiledFunction do (	  -- compiled code
 	  fn := cf.fn;
 	  foreach arg in a do (
@@ -1567,104 +1340,63 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	  frameID := desc.frameID;
 	  numparms := desc.numparms;
 	  framesize := desc.framesize;
-	  if desc.hasClosure then (
-	       -- since the function closure has code inside it somewhere that makes 
-	       -- a closure, we can not re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-     		    saveLocalFrame := localFrame;
-		    for i from 0 to newlen - 1 do (
-			 values := new Sequence len framesize do (
-			      provide Sequence(a1.i,a2.i);
-			      while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message != returnMessage then (
-			      	   localFrame = saveLocalFrame;
-			      	   recursiondepth = recursiondepth - 1;
-			      	   return(backtrLoop(tmp));
-				   )
+	  if desc.restargs then (	  -- x -> ...
+	       saveLocalFrame := localFrame;
+	       values := new Sequence len framesize do provide nullE;
+	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       for i from 0 to newlen - 1 do (
+		    values.0 = Sequence(a1.i,a2.i);
+		    tmp := eval(body);
+		    when tmp is err:Error do (
+			 if err.message != returnMessage then (
+			      -- stash
+			      localFrame = saveLocalFrame;
+			      recursiondepth = recursiondepth - 1;
+			      return(backtrLoop(tmp));
 			      )
-			 else nothing;
-			 );
-		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
-		    nullE)
-	       else (				  -- (x,y) -> ...
-		    if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
-		    else (
-			 saveLocalFrame := localFrame;
-			 for i from 0 to newlen - 1 do (
-			      values := new Sequence len framesize do (
-				   provide a1.i;
-				   provide a2.i;
-				   while true do provide nullE
-				   );
-			      localFrame = Frame(previousFrame,frameID,framesize,values);
-			      tmp := eval(body);
-			      when tmp is err:Error do (
-			 	   if err.message != returnMessage then (
-				   	localFrame = saveLocalFrame;
-				   	recursiondepth = recursiondepth - 1;
-				   	return(backtrLoop(tmp));
-					)
-				   )
-			      else nothing;
-			      );
-			 localFrame = saveLocalFrame;
-			 recursiondepth = recursiondepth - 1;
-			 nullE)))
-	  else (			  -- contains no closure
-	       -- since the function closure has no code inside it that makes
-	       -- a closure, we can re-use its frame.
-	       if desc.restargs then (	  -- x -> ...
-     		    saveLocalFrame := localFrame;
+			 )
+		    else nothing;
+		    if localFrame.notrecyclable then (
+			 values = new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 )
+		    else for i from 1 to framesize - 1 do values.i = nullE;
+		    );
+	       -- stash
+	       localFrame = saveLocalFrame;
+	       recursiondepth = recursiondepth - 1;
+	       nullE)
+	  else (				  -- (x,y) -> ...
+	       if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
+	       else (
+		    saveLocalFrame := localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,framesize,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,false,values);
 		    for i from 0 to newlen - 1 do (
-			 values.0 = Sequence(a1.i,a2.i);
+			 values.0 = a1.i;
+			 values.1 = a2.i;
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message != returnMessage then (
-			      	   -- stash
-			      	   localFrame = saveLocalFrame;
-			      	   recursiondepth = recursiondepth - 1;
-			      	   return(backtrLoop(tmp));
+				   -- stash
+				   localFrame = saveLocalFrame;
+				   recursiondepth = recursiondepth - 1;
+				   return(backtrLoop(tmp));
 				   )
 			      )
 			 else nothing;
-			 for i from 1 to framesize - 1 do values.i = nullE;
-			 );
-		    -- stash
-		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
-		    nullE)
-	       else (				  -- (x,y) -> ...
-		    if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
-		    else (
-			 saveLocalFrame := localFrame;
-			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,framesize,values);
-			 for i from 0 to newlen - 1 do (
-			      values.0 = a1.i;
-			      values.1 = a2.i;
-			      tmp := eval(body);
-			      when tmp is err:Error do (
-			 	   if err.message != returnMessage then (
-				   	-- stash
-				   	localFrame = saveLocalFrame;
-				   	recursiondepth = recursiondepth - 1;
-				   	return(backtrLoop(tmp));
-					)
-				   )
-			      else nothing;
+		    	 if localFrame.notrecyclable then (
+			      values = new Sequence len framesize do provide nullE;
+			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			      )
+			 else (
 			      -- it would be faster to do a byte copy here:
 			      for i from 2 to framesize - 1 do values.i = nullE;
 			      );
-			 -- stash
-			 localFrame = saveLocalFrame;
-			 recursiondepth = recursiondepth - 1;
-			 nullE ) ) ) )
+			 );
+		    localFrame = saveLocalFrame;
+		    recursiondepth = recursiondepth - 1;
+		    nullE ) ) )
      is cf:CompiledFunction do (	  -- compiled code
 	  fn := cf.fn;
 	  for i from 0 to newlen - 1 do (
@@ -1753,6 +1485,7 @@ sequencefun(e:Expr):Expr := (
      is a:Sequence do e
      else Expr(Sequence(e)));
 setupfun("sequence",sequencefun);
+
 
 adjacentfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);

@@ -7,6 +7,7 @@ use stdio;
 use gmp;
 use nets;
 use engine;
+use err;
 use tokens;
 use basic;
 use convertr;
@@ -906,7 +907,6 @@ modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
 	  );
      storeInHashTable(object,key,keyhash,v);
      );
-
 addone(i:Expr):Expr := when i is j:Integer do Expr(j+1) else i;
 makeTally(v:Sequence):Expr := (
      o := newHashTable(Tally,nothingClass);
@@ -919,3 +919,170 @@ makeTally(e:Expr):Expr := (
      is w:List do makeTally(w.v)
      else WrongArg("a list or sequence"));
 setupfun("tally",makeTally);
+
+
+export keys(o:HashTable):Expr := list(
+     new Sequence len o.numEntries do
+     foreach bucket in o.table do (
+	  p := bucket;
+	  while p != bucketEnd do (
+	       provide Expr(p.key);
+	       p = p.next;
+	       )
+	  )
+     );
+export keys(f:Database):Expr := (
+     if !f.isopen then return(buildErrorPacket("database closed"));
+     x := newHashTable(mutableHashTableClass,nothingClass);
+     k := dbmfirst(f.handle);
+     continue := true;
+     while continue do (
+	  when k
+	  is key:string do (
+	       storeInHashTable(x,Expr(key),True);
+	       k = dbmnext(f.handle);
+	       )
+	  else continue = false;
+	  );
+     keys(x));
+export keys(o:Dictionary):Expr := Expr(
+     list(
+	  new Sequence len o.symboltable.numEntries do
+	  foreach bucket in o.symboltable.buckets do (
+	       p := bucket;
+	       while true do (
+		    when p
+		    is q:SymbolListCell do (
+			 provide Expr(q.entry.word.name);
+			 p=q.next;)
+		    else break;))));
+
+export lookup(s:string,table:SymbolHashTable):(null or Symbol) := (
+     if table == dummySymbolHashTable then error("dummy table used");
+     entryList := table.buckets.( hash(s) & (length(table.buckets)-1) );
+     while true do
+     when entryList
+     is null do return(NULL)
+     is entryListCell:SymbolListCell do (
+	  if 0 == strcmp(entryListCell.entry.word.name, s)
+	  then return(entryListCell.entry);
+	  entryList = entryListCell.next));
+
+getvalue(x:Sequence,i:int):Expr := (
+     if i < -length(x) || i >= length(x)
+     then buildErrorPacket("array index "
+	  + tostring(i)
+	  + " out of bounds 0 .. "
+	  + tostring(length(x)-1))
+     else (
+	  if i < 0
+	  then x.(length(x) + i)
+	  else x.i));
+export subvalue(left:Expr,right:Expr):Expr := (
+     -- don't change this without changing subvalueQ below
+     when left is x:Sequence do (
+	  when right is r:Integer do (
+	       if isInt(r) then getvalue(x,toInt(r))
+	       else buildErrorPacket("array index "
+		    + tostring(r)
+		    + " out of bounds 0 .. "
+		    + tostring(length(x)-1)))
+	  else buildErrorPacket("expected subscript to be an integer"))
+     is x:HashTable do lookup1force(x,right)
+     is f:Database do (
+	  when right
+	  is key:string do (
+	       if !f.isopen then return(buildErrorPacket("database closed"));
+	       when dbmfetch(f.handle,key)
+	       is a:string do Expr(a)
+	       else buildErrorPacket("encountered missing value"))
+	  else buildErrorPacket("expected a string as key to database"))
+     is x:List do (
+	  when right is r:Integer do (
+	       if isInt(r) then getvalue(x.v,toInt(r))
+	       else buildErrorPacket("array index "
+		    + tostring(r)
+		    + " out of bounds 0 .. "
+		    + tostring(length(x.v)-1)))
+	  else buildErrorPacket("array index not an integer"))
+     is dc:DictionaryClosure do (
+	  when right is s:string do (
+	       d := dc.dictionary;
+	       f := dc.frame;
+	       when lookup(s,d.symboltable)
+	       is x:Symbol do Expr(SymbolClosure(f,x))
+	       else nullE
+	       )
+	  else buildErrorPacket("expected subscript to be a string")
+	  )
+     is x:string do (
+	  when right is r:Integer do (
+	       if isInt(r) then (
+		    rr := toInt(r);
+		    if rr < 0 then rr = rr + length(x);
+		    if rr < 0 || rr >= length(x) 
+		    then buildErrorPacket("string index out of bounds")
+		    else Expr(string(x.rr)))
+	       else buildErrorPacket("string index out of bounds"))
+	  else buildErrorPacket("expected subscript to be an integer"))
+     is n:Net do (
+	  x := n.body;
+	  when right is r:Integer do (
+	       if isInt(r) then (
+		    rr := toInt(r);
+		    if rr < 0 then rr = rr + length(x);
+		    if rr < 0 || rr >= length(x) 
+		    then buildErrorPacket("net row index out of bounds")
+		    else Expr(x.rr))
+	       else buildErrorPacket("net row index out of bounds"))
+	  else buildErrorPacket("expected subscript to be an integer"))
+     else buildErrorPacket("expected a list, hash table, or sequence"));
+export subvalueQ(left:Expr,right:Expr):Expr := (
+     -- don't change this without changing subvalue above
+     when left is x:Sequence do (
+	  when right is r:Integer do (
+	       if isInt(r) then (
+	       	    i := toInt(r);
+		    if i < -length(x) || i >= length(x) then False else True
+		    )
+	       else False)
+	  else False)
+     is x:HashTable do if lookup1Q(x,right) then True else False
+     is dc:DictionaryClosure do (
+	  d := dc.dictionary;
+	  when right is s:string do when lookup(s,d.symboltable) is Symbol do True else False
+	  else buildErrorPacket("expected subscript to be a string")
+	  )
+     is x:Database do (
+	  when right
+	  is key:string do dbmquery(x,key)
+	  else buildErrorPacket("expected a string as key to database"))
+     is x:List do (
+	  when right is r:Integer do (
+	       if isInt(r) then (
+	       	    i := toInt(r);
+		    if i < -length(x.v) || i >= length(x.v) then False else True
+		    )
+	       else False)
+	  else False)
+     is x:string do (
+	  when right is r:Integer do (
+	       if isInt(r) then (
+		    rr := toInt(r);
+		    if rr < 0 || rr >= length(x) 
+		    then False
+		    else True)
+	       else False)
+	  else False)
+     is n:Net do (
+	  x := n.body;
+	  when right is r:Integer do (
+	       if isInt(r) then (
+		    rr := toInt(r);
+		    if rr < 0 || rr >= length(x) 
+		    then False
+		    else True)
+	       else False)
+	  else False)
+     else False);
+

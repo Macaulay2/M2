@@ -416,7 +416,9 @@ installMethod(AmpersandS,integerClass,integerClass,bitandfun);
 showFrames(f:Frame):void := (
      stdout << " frames bound :";
      while (
-	  stdout << " " << f.frameID << " [" << f.valuesUsed;
+	  stdout << " " << f.frameID;
+	  if f.notrecyclable then stdout << " (NR)";
+	  stdout << " [" << f.valuesUsed;
 	  if f.valuesUsed != length(f.values) then stdout << "<" << length(f.values);
 	  stdout << "]";
 	  f != f.outerFrame ) do (
@@ -450,8 +452,7 @@ examine(e:Expr):Expr := (
 	  << " restargs : " << desc.restargs << endl
 	  << " frameID : " << desc.frameID << endl
 	  << " framesize : " << desc.framesize << endl
-	  << " numparms : " << desc.numparms << endl
-	  << " hasClosure : " << desc.hasClosure << endl;
+	  << " numparms : " << desc.numparms << endl;
      	  showFrames(f);
 	  nullE)
      is fn:CompiledFunction do (
@@ -672,18 +673,6 @@ setSpin(e:Expr):Expr := (
 	  else WrongArgSmallInteger())
      else WrongArgSmallInteger());
 setupfun("setSpin",setSpin);
-
---rebind(e:Expr):Expr := (
---     when e is args:Sequence do (
---	  if length(args) == 2 then (
---	       when args.0 is f:CompiledFunctionClosure do (
---		    when args.1 is env:Sequence do (
---			 Expr(CompiledFunctionClosure(f.fn,nextHash(),env)))
---		    else Expr(CompiledFunctionClosure(f.fn,nextHash(),Sequence(args.1))))
---	       else WrongArg(1,"a compiled function closure"))
---	  else WrongNumArgs(2))
---     else WrongNumArgs(2));
---setupfun("rebind",rebind);
 
 -- method functions for use in closures
 method1(e:Expr,env:Sequence):Expr := (

@@ -139,8 +139,18 @@ export Frame := {
      outerFrame:Frame, 
      frameID:int,			  -- seqno of corresponding dictionary
      valuesUsed:int,      -- sigh, we really need this only for static frames
+     notrecyclable:bool,
      values:Sequence
      };
+
+export noRecycle(f:Frame):Frame := (
+     g := f;
+     while (
+	  g.notrecyclable = true;
+	  g != g.outerFrame
+	  ) do g = g.outerFrame;
+     f);
+
 export FrameLocation := {
      frame:Frame,
      frameindex:int
@@ -279,18 +289,18 @@ export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
-export openDictionaryCode := {
-     dictionary:Dictionary,				    -- soon to be obsolete
+export newLocalFrameCode := {
+     frameID:int,
+     framesize:int,
      body:Code
      };
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
      framesize:int,
      numparms:int,		    -- number of formal parameters
-     restargs:bool,		    -- whether last parm gets rest of args
-     hasClosure:bool		    -- whether a closure occurs inside
+     restargs:bool		    -- whether last parm gets rest of args
      };
-export dummyDesc := functionDescription(-1,0,0,false,false);
+export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := { 
      parms:Code,			  -- just for display purposes
      body:Code, 
@@ -313,7 +323,7 @@ export Code := (
      or sequenceCode
      or listCode
      or arrayCode
-     or openDictionaryCode				    -- soon obsolete
+     or newLocalFrameCode				    -- soon obsolete
      or functionCode
      );
 
@@ -328,11 +338,12 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
 export dummyFrame := Frame(self,
      -1,						    -- negative frame id's are ignored and give warning messages
      0,
+     true,
      Sequence());
 
 dummySymbolFrameIndex := 0;
 globalFramesize := dummySymbolFrameIndex+1;
-export globalFrame := Frame(self, 0, globalFramesize, 
+export globalFrame := Frame(self, 0, globalFramesize, true, 
      Sequence(
 	  nullE						    -- one value for dummySymbol
 	  ));
@@ -345,11 +356,11 @@ export DictionaryList := {
      };
      
 allDictionaries := DictionaryList(Macaulay2Dictionary,self);
-
-export newGlobalDictionary():Dictionary := (
-     d := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false);
+record(d:Dictionary):Dictionary := (
      allDictionaries = DictionaryList(d,allDictionaries);
-     d);
+     d);     
+
+export newGlobalDictionary():Dictionary := record(Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false));
 
 export globalDictionary := Macaulay2Dictionary;
 
@@ -369,41 +380,36 @@ export getLocalDictionary(frameID:int):Dictionary := (
 	  p != p.next) do p = p.next;
      error("internal error: local dictionary with frameID " + tostring(frameID) + " not found");
      dummyDictionary);
-export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(f,getLocalDictionary(f.frameID));
+export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(noRecycle(f),getLocalDictionary(f.frameID));
 
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false);
-     allDictionaries = DictionaryList(d,allDictionaries);
-     d);
+     record(Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false)));
 export newStaticLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     d := Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,
-	  0,      -- 0 for the global frame containing the static symbols' values
-	  false,  -- the first local dictionary is usually (?) non-transient
+     record(
+	  Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,
+	  0,			     -- 0 for the global frame containing the static symbols' values
+	  false,			  -- the first local dictionary is usually (?) non-transient
 	  false
-	  );
-     allDictionaries = DictionaryList(d,allDictionaries);
-     d);
+	  )));
 export emptyLocalDictionary := newStaticLocalDictionary();
 
-export newLocalFrame(d:Dictionary):Frame := Frame(self, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
-export newLocalFrame(outerFrame:Frame,d:Dictionary):Frame := Frame(outerFrame, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
-export newLocalDictionaryClosure(d:Dictionary):DictionaryClosure := DictionaryClosure(newLocalFrame(d),d);
+export newLocalFrame(d:Dictionary):Frame := Frame(self, d.frameID, d.framesize, false, new Sequence len d.framesize do provide nullE);
+export newLocalFrame(outerFrame:Frame,d:Dictionary):Frame := Frame(outerFrame, d.frameID, d.framesize, false, new Sequence len d.framesize do provide nullE);
 export newStaticLocalDictionaryClosure():DictionaryClosure := (
-     d := newStaticLocalDictionary();
-     allDictionaries = DictionaryList(d,allDictionaries);
-     DictionaryClosure(newLocalFrame(d),d));
+     d := record(newStaticLocalDictionary());
+     DictionaryClosure(noRecycle(newLocalFrame(d)),d));
 
 export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure := (
-     d := newLocalDictionary(dc.dictionary);
+     d := record(newLocalDictionary(dc.dictionary));
      d.transient = false;
-     allDictionaries = DictionaryList(d,allDictionaries);
      f := newLocalFrame(dc.frame,d);
+     noRecycle(f);
      DictionaryClosure(f,d));
 
 export emptyFrame := newLocalFrame(emptyLocalDictionary);
-export emptyDictionaryClosure := DictionaryClosure(emptyFrame,emptyLocalDictionary);
+emptyFrame.notrecyclable = true;
 
 -- hash tables for exprs
 
@@ -569,7 +575,7 @@ export codePosition(e:Code):Position := (
      is f:localSymbolClosureCode do f.position
      is f:multaryCode do f.position
      is f:nullCode do dummyPosition
-     is f:openDictionaryCode do codePosition(f.body)
+     is f:newLocalFrameCode do codePosition(f.body)
      is f:parallelAssignmentCode do f.position
      is f:realCode do f.position
      is f:sequenceCode do f.position

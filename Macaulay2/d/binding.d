@@ -589,7 +589,6 @@ bindnewdictionary(e:ParseTree,dictionary:Dictionary):ParseTree := (
      n := newLocalDictionary(dictionary);
      bind(e,n);
      ParseTree(StartDictionary(n,e)));
-SawClosure := false;
 export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is s:StartDictionary do bind(s.body,dictionary)
@@ -662,7 +661,6 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  when r
 	  is entry:Symbol do ( tok.entry = entry; )
 	  else ( makeSymbol(tok); );
-	  SawClosure = true; 
 	  )
      is q:GlobalQuote do (
 	  bind(q.operator,dictionary);
@@ -671,18 +669,14 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      is q:Quote do (
 	  bind(q.operator,dictionary);
 	  bind(q.rhs,dictionary);
-	  if q.rhs.entry.frameID != globalFrame.frameID 
-	  then SawClosure = true; 
 	  )
      is a:Arrow do (
-	  SawClosure = false;
 	  newdict := newLocalDictionary(dictionary);
-	  a.desc = functionDescription(newdict.frameID,0,0,false,false);
+	  a.desc = functionDescription(newdict.frameID,0,0,false);
 	  bindParenParmList(a.lhs,newdict,a.desc);
 	  bind(a.rhs,newdict);
 	  a.desc.framesize = newdict.framesize;
-	  a.desc.hasClosure = SawClosure;
-	  SawClosure = true; )
+	  )
      is unary:Unary do (
 	  bindop(unary.operator,dictionary);
 	  bind(unary.rhs,dictionary);)
