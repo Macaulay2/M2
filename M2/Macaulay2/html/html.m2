@@ -157,7 +157,7 @@ time scan(keys linkFollowedTable, fkey -> (
 		    buttonBar fkey,
 		    if UP#?fkey then SEQ {
 			 "Parent headings:",
-		    	 MENU apply(upAncestors fkey, i -> TO i)
+		    	 MENU apply(upAncestors fkey, i -> TOH i)
 			 },
 		    HR{}, 
 		    documentationMemo fkey,
