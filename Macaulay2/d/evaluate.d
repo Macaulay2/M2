@@ -939,7 +939,7 @@ export fullBacktrace := false;
 export backtrace := true;
 export steppingFlag := false;
 export determineExceptionFlag():void := (
-     exceptionFlag = interruptPending || steppingFlag || alarmedFlag;
+     exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
      );
 export clearAllFlags():void := (
      alarm(0);
