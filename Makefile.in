@@ -9,7 +9,7 @@ endif
 include include/config.Makefile
 VPATH = @srcdir@
 
-.PRECIOUS test-configuration install all clean distclean:: @srcdir@/configure config.status
+.PRECIOUS test-configuration install install-strip all clean distclean:: @srcdir@/configure config.status
 
 Makefile : Makefile.in; ./config.status Makefile
 include/config.Makefile: include/config.Makefile.in; ./config.status include/config.Makefile
@@ -31,13 +31,13 @@ config.status : @srcdir@/configure
 	@exit 1
 
 # announcement only:
-install all clean distclean::
+install all clean distclean install-strip ::
 	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
 
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
-install :: all
+install install-strip :: all
 
-install :: ; rm -f INSTALLDIR && ln -s $(prefix) INSTALLDIR
+install install-strip :: ; rm -f INSTALLDIR && ln -s $(prefix) INSTALLDIR
 clean   :: ; rm -f INSTALLDIR
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
@@ -45,11 +45,12 @@ ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
 all install :: ; $(MAKE) -C man $@
-all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
+install-strip :: ; $(MAKE) -C man install
+all distclean check clean install install-strip :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)
 install :: $(DIRS)
-install :: ; $(MAKE) -C encap $@
+install install-strip :: ; $(MAKE) -C encap install
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
-install all clean distclean::; @echo "-------- done making '$@' --------"
+install install-strip all clean distclean::; @echo "-------- done making '$@' --------"

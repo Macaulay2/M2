@@ -93,10 +93,9 @@ install distclean clean ::; $(MAKE) -C emacs $@
 bin :; mkdir $@
 clean ::; rm -rf bin
 initialize :: bin
-install :: $(bindir)/M2$(EXE)
 $(bindir) :; $(INSTALL) -d "$@"
-$(bindir)/M2 : bin/M2$(EXE) $(bindir)
-	$(INSTALL_PROGRAM) -s $< $(bindir)/M2$(EXE)
+install       :: $(bindir); $(INSTALL_PROGRAM)    bin/M2$(EXE) $(bindir)/M2$(EXE)
+install-strip :: $(bindir); $(INSTALL_PROGRAM) -s bin/M2$(EXE) $(bindir)/M2$(EXE)
 ################################# cache
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
