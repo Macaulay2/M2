@@ -86,10 +86,12 @@ ITALIC     = new MarkUpType
 UNDERLINE  = new MarkUpType
 TEX	   = new MarkUpType
 SEQ	   = new MarkUpType
-new SEQ from List := (SEQ,v) -> select (splice apply(v,
-	  i -> if class i === SEQ then toSequence i
-	  else if class i === List then toSequence SEQ i
-	  else i ),
+new SEQ from List := (SEQ,v) -> select (
+     v,
+--      splice apply(v,
+-- 	  i -> if class i === SEQ then toSequence i
+-- 	  else if class i === List then toSequence SEQ i
+-- 	  else i ),
      j -> j =!= null)
 TT         = new MarkUpType
 EM         = new MarkUpType
@@ -100,7 +102,7 @@ CODE       = new MarkUpType
 HREF       = new MarkUpType
 ANCHOR     = new MarkUpType
 SHIELD     = new MarkUpType
-UL         = new MarkUpType; new UL from List := (UL,x) -> select(x,i -> i =!= null)
+UL         = new MarkUpType; new UL from List := (UL,x) -> select(x,i -> i =!= null); new UL from SEQ := (UL,x) -> select(toList x,i -> i =!= null)
 OL         = new MarkUpType
 DIV        = new MarkUpType
 NL         = new MarkUpType

@@ -413,6 +413,13 @@ getOption := (s,tag) -> (
      else null
      )
 
+getOptionList := (s,tag) -> (
+     r := getOption(s,tag);
+     if class r === List then r
+     else if r === null then {}
+     else {r}
+     )
+
 getDoc := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
@@ -429,6 +436,7 @@ getUsage := key -> (
      if x =!= null then SEQ x)
 
 getSynopsis := key -> getOption(getDoc key, Synopsis)
+getNewSynopsis := key -> getOption(getDoc key, NewSynopsis)
 
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
@@ -514,6 +522,106 @@ optargs Sequence := s -> (
 	  "Optional arguments :", newline,
 	  SHIELD smenu apply(keys o, t -> s => t)}
      else optargs s#0)
+
+--there are two uses:
+--
+--     in a documentation node for a method, e.g., document { (...,...), ... }
+--     
+--     in a general documentation node:
+--
+--     	  Synopsis => {
+--	       usage,
+--	       input1,
+--	       input2,
+--	       input3,
+--	       output	       
+--	       }
+--          
+--	 the number of inputs can be 0, 1, 2, or 3
+--	 if there are no inputs, then the output is optional
+--	 each item can be of the form A => B, which is always just printed as A: B, putting A in tt font.
+--	 else it's printed as is
+--	 the usage is always printed in tt font
+--
+--     better way:
+--
+--     	  NewSynopsis => {                 -- each "..." can be replaced by { "...", ... }, which will be converted to a SEQ
+--
+--	       Usage => "...",				    -- typical way of using the thing
+--
+--	       Inputs => {
+--		    "x" => "...",
+--		    "y" => "..."
+--
+--     	       	    OR
+--
+--		    "x" => X => "...",			    -- X is the class of x typically called for
+--		    "y" => Y => "..."
+--
+--		    C => "...",				    -- C is a symbol, the tag of the optional argument
+--		    D => "..."
+--
+--     	       	    OR
+--
+--		    C => X => "...",			    -- X is the class of x typically called for
+--		    D => Y => "..."
+--
+--		    },
+--
+--	       Outputs => {
+--
+--     	       	    "..."
+--
+--     	       	    OR
+--
+--     	       	    T => "..."	   	     	   -- T is the class typically returned
+--
+--	       	    OR
+--
+--		    "t" => "...",
+--		    "u" => "..."
+--
+--	       	    OR
+--
+--		    "t" => T => "...",	   	      -- T is the class of t, typically returned
+--
+--		    },
+--
+--	       Results => {
+--		    "...",
+--		    "..."
+--		    }
+--	       }
+--
+
+
+protect Usage
+protect Inputs
+protect Outputs
+protect Results
+
+newSynopsis := method(SingleArgumentDispatch => true)
+newSynopsis Thing := f -> (
+     SYN := getNewSynopsis f;
+     usa := getOptionList(SYN,Usage);
+     inp := getOptionList(SYN,Inputs);
+     iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
+     ino := select(inp, x -> iso x);
+     inp = select(inp, x -> not iso x);
+     out := getOptionList(SYN,Outputs);
+     res := getOptionList(SYN,Results);
+     if SYN =!= null then (
+	  SEQ {						    -- to be implemented
+     	       BOLD "New synopsis",
+	       UL {
+     	       	    if usa#?0 then PARA { "Usage: ", SEQ usa },
+		    if inp#?0 then PARA { "Inputs:", UL inp },
+		    if ino#?0 then PARA { "Optional inputs:", UL ino },
+		    if out#?0 then PARA { "Outputs:", UL out },
+		    if res#?0 then PARA { "Results:", UL res }
+		    }
+	       }
+	  ))
 
 synopsis := method(SingleArgumentDispatch => true)
 synopsis Thing := f -> (
@@ -626,10 +734,13 @@ briefDocumentation HashTable := x -> (
 	  r = synopsis x;
 	  if r =!= null then << endl << text r << endl
 	  else (
-	       if headline x =!= null then << endl << headline x << endl;
-	       if class x === Function then (
-		    s := fmeth x;
-		    if s =!= null then << endl << text s << endl;))))
+	       r = newSynopsis x;
+	       if r =!= null then << endl << text r << endl
+	       else (
+		    if headline x =!= null then << endl << headline x << endl;
+		    if class x === Function then (
+			 s := fmeth x;
+			 if s =!= null then << endl << text s << endl;)))))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -740,6 +851,7 @@ documentation Symbol := S -> (
      SEQ {
 	  title S, 
 	  synopsis S,
+	  newSynopsis S,
 	  getDocBody(S),
 	  op S,
 	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", SHIELD smenu a},
@@ -756,6 +868,7 @@ documentation Option := v -> (
 	  SEQ { 
 	       title v,
 	       synopsis v,
+	       newSynopsis v,
 	       getDocBody(v),
 	       PARA BOLD "See also:",
 	       SHIELD UL {
@@ -772,6 +885,7 @@ documentation Sequence := s -> (
      SEQ {
 	  title s, 
 	  synopsis s,
+	  newSynopsis s,
 	  getDocBody(s),
 	  seecode s
 	  }
@@ -1114,7 +1228,11 @@ text SEQ := x -> (
      concatenate \\ text \ x
      )
 html SEQ := x -> concatenate(apply(toList x, html))
-net SEQ := x -> boxNets prepend("SEQ", net \ toList x)
+
+-- net UL := x -> "    " | stack apply(toList addHeadlines x, net)
+net UL := 
+net PARA := 
+net SEQ := x -> toString class x | boxNets \\ net \ toList x
 -- this is wrong:
 --      x = toList x;
 ----      x = deepSplice apply(x, y -> if class y === PARA then (PARA{}, toSequence y) else y);
@@ -1166,8 +1284,6 @@ text UL := x -> concatenate(
      newline,
      apply(addHeadlines1 x, s -> if s =!= null then ("    ", text s, newline))
      )
-
-net UL := x -> "    " | stack apply(toList addHeadlines x, net)
 
 tex UL := x -> concatenate(
      ///\begin{itemize}///, newline,
@@ -1238,7 +1354,7 @@ texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
 text SUP := x -> "^" | text x#0
 text SUB := x -> "_" | text x#0
 
-net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
+text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 tex  TO := x -> (
      key := x#0;
      node := formatDocumentTag key;

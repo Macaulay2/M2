@@ -897,26 +897,27 @@ document { scanValues,
 
 document { GlobalAssignHook,
      Headline => "hook for assignment to global variables",
-     TT "GlobalAssignHook", " -- a method name which is consulted when an
-     assignment to a global variable occurs.",
-     PARA,
-     "The method should be a function of two variables: the symbol to which
-     a value is being assigned, and the value being assigned.  The method
-     should be stored under then name ", TT "GlobalAssignHook", " in the
-     class of the value.  It will be executed just before the assignment
-     occurs.",
-     PARA,
-     "This method is used for instances of ", TO "Type", " and ", TO "Ring", "
-     to arrange for the name of the type or ring to be set to the name
-     of the global variable to which it is first assigned.  The functions
-     ", TO "globalAssignFunction", " and ", TO "globalReleaseFunction", " may installed
-     as methods for this purpose.",
-     PARA,
-     EXAMPLE {
-	  ///RR.GlobalAssignHook = (sym,val) -> <<"--assigning " <<val <<" to " <<sym <<endl;///,
-          "a=4.5",
+     NewSynopsis => {
+	  Usage => "X.GlobalAssignHook = f",
+	  Inputs => {
+	       "X" => Type => "",
+	       "f" => Function => "a function of two variables: the symbol to which a value is about to be assigned, and the value being assigned",
+	       },
+	  Results => {
+	       {TT "f", " will be called just before an assignment to a global variable of an instance of class ", TT "X", " occurs"}
+	       }
 	  },
-     SEEALSO "GlobalReleaseHook"
+     PARA {
+	  "This technique is used, for example, for instances of ", TO "Type", " and ", TO "Ring", "
+	  to arrange for the name of the type or ring to be set to the name
+	  of the global variable to which it is first assigned.  The functions
+	  ", TO "globalAssignFunction", " and ", TO "globalReleaseFunction", " may installed
+	  as methods for this purpose."},
+     EXAMPLE {
+	  ///RR.GlobalAssignHook = (sym,val) -> << "--about to assign " << val << " to " << sym << endl;///,
+          "a = 4.5",
+	  },
+     SEEALSO {"GlobalReleaseHook"}
      }
 
 document { GlobalReleaseHook,
