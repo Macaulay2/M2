@@ -584,14 +584,24 @@ document {
 
 document {
      Key => (symbol _, ChainComplex, ZZ),
-     Headline => "get component",
-     TT "C_i", " -- yields the i-th module in a chain complex C.",
-     PARA,
-     "Returns the zero module if no module has been stored in the
-     i-th spot.  You can use code like ", TT "C#?i", " to determine
-     if there is a module in the i-th spot, but if the chain complex
-     arose as a resolution, first use ", TO (complete, ChainComplex), " to 
-     fill all the spots with their modules."
+     Headline => "get component of chain complex",
+     Usage => "C_i",
+     Inputs => { "C" =>"" , "i" => "" },
+     Outputs => {{"the ", TT "i", "-th module of the chain complex ", TT "C"}},
+     Examples => EXAMPLE {
+	  "R = ZZ[x..z]",
+	  "C = res coker vars R",
+	  "C_2",
+	  "rank C_2",
+	  "degrees C_2"
+	  },
+     ProgrammingHint => {
+	  "The chain complex ", TT "C", " is implemented as a hash table, but since the computation of a projective resolution can be stopped prematurely, Macaulay 2 doesn't bother
+	  populating the hash table with the relevant free modules until explicitly requested by the user, for example, in response to the
+	  command ", TT "C_i", " described above.  The hash table ", TT "C", " can be examined directly with code like ", TT "C#i", ", but in order to populate 
+	  the hash table completely, use ", TO (complete, ChainComplex), "."
+	  },
+     SeeAlso => {res, coker, vars, rank, degrees}
      }
 
 document {
@@ -614,19 +624,46 @@ document {
      will result in the ring element being multiplied by the appropriate
      identity map."
      }
-document {
-     Key => (symbol _, ChainComplexMap, ZZ),
-     Headline => "get component",
-     TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
-     the component p_i : C_i -> D_(i+d).",
-     SeeAlso => "ChainComplexMap"
-     }
 
 document {
-     Key => extend,
-     Headline => "extend a partial map of chain complexes",
-     TT "extend(D,C,f0)", " -- produces a lifting of a map ", TT "f0 : D_0 <--- C_0", "
-     to a map ", TT "f: D <--- C", " of chain complexes of degree 0."
+     Key => (symbol _, ChainComplexMap, ZZ),
+     Headline => "get component of chain map",
+     Usage => "p_i",
+     Inputs => {
+	  "p" => ("a map ", TT "D", " <- ", TT "C", " of chain complexes, of degree ", TT "d", ", say"),
+	  "i" => ()
+	  },
+     Outputs => { ("the component ", TT "D_(i+d) <- C_i" ) },
+     Examples => EXAMPLE {
+	  "R = ZZ/101[a..c]",
+	  "I = image vars R",
+	  "J = image symmetricPower (2,vars R)",
+	  "g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))",
+	  "g_1",
+	  "g_2"
+	  },
+     SeeAlso => { (symbol _, ChainComplex, ZZ), extend, resolution, image, vars, symmetricPower }
+     }
+
+document { Key => extend, Headline => "extend a module map to a chain map, if possible" }
+document {
+     Key => (extend,ChainComplex,ChainComplex,Matrix),
+     Usage => "extend(D,C,f0)",
+     Inputs => {
+	  "D" => "",
+	  "C" => "",
+	  "f0" => { "a map from ", TT "C_0", " to ", TT "D_0" },
+	  },
+     Outputs => { { "a chain complex map ", TT "f: D <--- C", " of degree 0 extending ", TT "f0", " in the sense that ", TT "f_0==f0" } },
+     Examples => EXAMPLE {
+	  "R = ZZ/101[a..c]",
+	  "I = image vars R",
+	  "J = image symmetricPower (2,vars R)",
+	  "g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))",
+	  "g_1",
+	  "g_2"
+	  },
+     SeeAlso => {(symbol "_",ChainComplex,ZZ),(symbol "_",ChainComplexMap,ZZ),(cone,ChainComplexMap) }
      }
 
 TEST "
@@ -637,27 +674,29 @@ g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
 E = cone g
 "
 
+document { Key => cone, Headline => "mapping cone of a chain map" }
 document {
-     Key => cone,
-     Headline => "mapping cone of a chain map",
-     TT "cone f", " -- produce the mapping cone of a map f of chain complexes",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "m = image vars R",
-      	  "m2 = image symmetricPower(2,vars R)",
-      	  "M = R^1/m2",
-      	  "N = R^1/m",
-      	  "C = cone extend(resolution N,resolution M,id_(R^1))",
-	  },
-     "Let's check that the homology is correct.  HH_0 should be 0.",
-     EXAMPLE "prune HH_0 C",
-     "HH_1 should be isomorphic to m/m2.",
-     EXAMPLE {
-	  "prune HH_1 C",
-      	  "prune (m/m2)"
-	  }
-     }
+     Key => (cone,ChainComplexMap),
+     Usage => "cone f",
+     Inputs => { "f"=>"" },
+     Outputs => { {"the mapping cone of a ", TT "f", ""} },
+     Examples => {
+	  EXAMPLE {
+	       "R = ZZ/101[x,y,z]",
+	       "m = image vars R",
+	       "m2 = image symmetricPower(2,vars R)",
+	       "M = R^1/m2",
+	       "N = R^1/m",
+	       "C = cone extend(resolution N,resolution M,id_(R^1))",
+	       },
+	  "Let's check that the homology is correct; for example, ", TT "HH_0", " should be zero.",
+	  EXAMPLE "prune HH_0 C",
+	  "Let's check that ", TT "HH_1", " is isomorphic to ", TT "m/m2", ".",
+	  EXAMPLE {
+	       "prune HH_1 C",
+	       "prune (m/m2)"
+	       }
+	  }}
 
 document {
      Key => nullhomotopy,

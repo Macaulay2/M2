@@ -175,6 +175,7 @@ assert (HH_4 C == 0)
 
 document {
      Key => (resolution,Module),
+     Headline => "compute a projective resolution of a module",
      Usage => {TT "resolution M", " or ", TT "res M"},
      Inputs => {
 	  "M" => "",
@@ -222,16 +223,43 @@ document {
 
 document {
      Key => (resolution, Matrix),
-     TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
-     chain map from a resolution of the source of ", TT "f", " to a resolution of the
-     target of ", TT "f", ".",
-     SeeAlso => "free resolutions of modules"
+     Headline => "given a module map represented by a matrix, produce a comparison map between resolutions of its source and target",
+     Usage => "resolution f",
+     Inputs => {
+	  { "f" => {"a module homomorphism ", TT "N <--- M"} },
+	  { "y" => {} },
+	  },
+     Outputs => {
+	  {"a chain map from a projective resolution of the source of ", TT "f", " to a resolution of the target of ", TT "f" }
+	  },
+     EXAMPLE {
+	  "R = ZZ[x,y,z]",
+	  "N = R^1/(x,y,z)",
+	  "M = R^1/(x^2,y^2,x*y*z,z^2)",
+	  "f = map(N,M,1)",
+	  "res f"
+	  },
+     SeeAlso => { "free resolutions of modules" }
      }
 
 document {
      Key => (resolution, Ideal),
-     TT "resolution I", " -- produces a projective resolution of the 
-     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", "."
+     Headline => "compute a projective resolution of (the quotient ring corresponding to) an ideal",
+     Usage => "resolution I",
+     Inputs => {
+	  "I" => { "an ideal in a ring ", TT "R", ", say" }
+	  },
+     Outputs => {
+	  { "a resolution of ", TT "R/I", " by projective ", TT "R", "-modules" }
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..d]",
+	  "I = ideal(a,b,c,d)",
+	  "C = res I",
+	  "C_2",
+	  "C.dd_2"
+	  },
+     SeeAlso => { (symbol _, ChainComplex, ZZ), dd, res, ideal }
      }
 
 TEST "

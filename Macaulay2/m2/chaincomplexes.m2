@@ -411,10 +411,11 @@ poincareN ChainComplex := (C) -> (
      f )
 
 ChainComplex ** Module := ChainComplex => (C,M) -> (
-     P := youngest(C,M);
-     key := (C,M,symbol **);
-     if P#?key then P#key
-     else C**M = (
+--      P := youngest(C,M);
+--      key := (C,M,symbol **);
+--      if P#?key then P#key
+--      else C**M = 
+     (
 	  D := new ChainComplex;
 	  D.ring = ring C;
 	  complete C.dd;
@@ -426,10 +427,11 @@ ChainComplex ** Module := ChainComplex => (C,M) -> (
 	  D))
 
 Module ** ChainComplex := ChainComplex => (M,C) -> (
-     P := youngest(M,C);
-     key := (M,C,symbol **);
-     if P#?key then P#key
-     else M**C = (
+--      P := youngest(M,C);
+--      key := (M,C,symbol **);
+--      if P#?key then P#key
+--      else M**C = 
+     (
 	  D := new ChainComplex;
 	  D.ring = ring C;
 	  complete C.dd;
@@ -688,10 +690,11 @@ ggConcatBlocks := (R,mats) -> (
 tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
-     P := youngest(C,D);
-     key := (C,D,symbol **);
-     if P#?key then P#key
-     else C**D = (
+--      P := youngest(C,D);
+--      key := (C,D,symbol **);
+--      if P#?key then P#key
+--      else C**D = 
+     (
 	  R := ring C;
 	  if ring D =!= R then error "expected chain complexes over the same ring";
 	  E := chainComplex (lookup(symbol **, GradedModule, GradedModule))(C,D);
@@ -713,28 +716,31 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 	  E))
 
 ChainComplex ** GradedModule := ChainComplex => (C,D) -> (
-     P := youngest(C,D);
-     key := (C,D,symbol **);
-     if P#?key then P#key
-     else C**D = (
+--      P := youngest(C,D);
+--      key := (C,D,symbol **);
+--      if P#?key then P#key
+--      else C**D = 
+     (
      	  C ** chainComplex D
 	  )
      )
 
 GradedModule ** ChainComplex := ChainComplex => (C,D) -> (
-     P := youngest(C,D);
-     key := (C,D,symbol **);
-     if P#?key then P#key
-     else C**D = (
+--      P := youngest(C,D);
+--      key := (C,D,symbol **);
+--      if P#?key then P#key
+--      else C**D = 
+     (
      	  chainComplex C ** D
 	  )
      )
 
 ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
-     P := youngest(f,g);
-     key := (f,g,symbol **);
-     if P#?key then P#key
-     else f**g = (
+--      P := youngest(f,g);
+--      key := (f,g,symbol **);
+--      if P#?key then P#key
+--      else f**g = 
+     (
 	  h := new ChainComplexMap;
 	  E := h.source = source f ** source g;
 	  F := h.target = target f ** target g;
@@ -753,18 +759,20 @@ ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
 	  h))
 
 ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
-     P := youngest(f,C);
-     key := (f,C,symbol **);
-     if P#?key then P#key
-     else f**C = (
+--      P := youngest(f,C);
+--      key := (f,C,symbol **);
+--      if P#?key then P#key
+--      else f**C = 
+     (
      	  f ** id_C
 	  )
      )
 ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
-     P := youngest(C,f);
-     key := (C,f,symbol **);
-     if P#?key then P#key
-     else C**f = (
+--      P := youngest(C,f);
+--      key := (C,f,symbol **);
+--      if P#?key then P#key
+--      else C**f = 
+     (
      	  id_C ** f
 	  )
      )

@@ -73,6 +73,7 @@ BIG        = new MarkUpType of MarkUpList
 HEADER1    = new MarkUpType of MarkUpListParagraph
 HEADER2    = new MarkUpType of MarkUpListParagraph
 HEADER3    = new MarkUpType of MarkUpListParagraph
+SUBSECTION = HEADER3
 HEADER4    = new MarkUpType of MarkUpListParagraph
 HEADER5    = new MarkUpType of MarkUpListParagraph
 HEADER6    = new MarkUpType of MarkUpListParagraph

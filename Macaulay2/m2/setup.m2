@@ -55,9 +55,41 @@ commonProcessing := x -> (
      x
      )
 
+trunc := s -> (
+     maxWid := max(25,printWidth - 25);
+     maxHt := 8;
+     narrowed := false;
+     if width s > maxWid then (
+	  s = stack ( apply( unstack s, l -> substring(l,0,maxWid)));
+	  s = s | (stack ( height s + depth s : "|" ))^(height s - 1);
+     	  narrowed = true;
+	  );
+     if height s + depth s  > maxHt then (
+	  s = stack take(unstack s,maxHt);
+	  if narrowed
+	  then s = s || concatenate(width s - 1 : "-", "+")
+	  else s = s || concatenate(width s : "-");
+	  );
+     s)
 simpleToString := toString
-
 symbol debugError <- identity
+timelimit := f -> (alarm 3; r := f(); alarm 0; r)
+robustNet := y -> (
+     try timelimit (() -> net y) else (
+	  global debugError <- x -> net y;
+	  stderr << "--error in conversion of output to net: type 'debugError()' to see it; will try conversion to string" << endl << endl ;
+	  try timelimit (() -> toString y) else (
+	       stderr << "--error in conversion of output to string" << endl << endl;
+	       simpleToString y)))
+silentRobustNet2 := y -> trunc try timelimit (() -> net y) else try timelimit (() -> toString y) else simpleToString y
+silentRobustNet := y -> trunc silentRobustNet2 y | " (of class " | trunc silentRobustNet2 class y | ")"
+hush := false
+Thing Thing := (x,y) -> (
+     if hush then error "no method for adjacent object";
+     hush = true;
+     msg := toString stack ("no method for adjacent objects:", "            "|silentRobustNet x,"       and  "|silentRobustNet y);
+     hush = false;
+     error msg)
 
 Thing.Print = x -> (
      x = commonProcessing x;
@@ -65,13 +97,7 @@ Thing.Print = x -> (
      if y =!= null then (
 	  << endl			  -- double space
 	  << concatenate(interpreterDepth:"o") << lineNumber << " = " 
-	  << (
-	       try net y else (
-		    global debugError <- x -> net y;
-		    stderr << "--error in conversion of output to net: type 'debugError()' to see it; will try conversion to string" << endl << endl ;
-		    try toString y else (
-		    	 stderr << "--error in conversion of output to string" << endl << endl;
-			 try simpleToString y else "--something unprintable--"))) << endl;
+	  << robustNet y << endl;
 	  );
      applyMethod(AfterPrint,x);
      )
