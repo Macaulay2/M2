@@ -80,6 +80,7 @@ document { quote dd,
 	  
 Ext(ZZ, Module, Module) := (i,M,N) -> (
      R := ring M;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then R^0
      else if i === 0 then Hom(M,N)
@@ -99,6 +100,7 @@ Ext(ZZ, Module, Module) := (i,M,N) -> (
 
 Ext(ZZ, Matrix, Module) := (i,f,N) -> (
      R := ring f;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then R^0
      else if i === 0 then Hom(f,N)
@@ -112,6 +114,7 @@ Ext(ZZ, Matrix, Module) := (i,f,N) -> (
 
 Ext(ZZ, Module, Matrix) := (i,N,f) -> (
      R := ring f;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
      if i < 0 then R^0
      else if i === 0 then Hom(N,f)
@@ -215,6 +218,7 @@ makeAdjust := fudge -> v -> {- fudge * v#1 + v#0, - v#1}
 Ext(Module,Module) := (N,M) -> (
      R := ring N;
      if R =!= ring M then error "expected modules over the same ring";
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if M == 0 then R^0
      else if N == 0 then R^0
      else (
