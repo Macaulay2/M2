@@ -38,6 +38,9 @@ erase symbol ggringmap; erase symbol ggsat; erase symbol ggsimplify; erase symbo
 erase symbol ggtruncate; erase symbol callgg; erase symbol convert; erase symbol ConvertToExpression; erase symbol eePopBool; erase symbol eePopInt; erase symbol eePopIntarray; erase symbol
 handle;
 
+-- some symbols are mentioned in the documentation only:
+GLex
+
 -- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2"
 

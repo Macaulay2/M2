@@ -513,55 +513,6 @@ printExamples = f -> scan(examples f, i -> << i << endl)
 topics = Command (() -> pager columnate(if printWidth != 0 then printWidth else 80, format \ topicList()))
 apropos = (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
--- more general methods
------------------------------------------------------------------------------
-lookupQ := s -> (youngest s)#?s
-nextMoreGeneral2 := (f,A) -> (
-     A' := A;
-     l := false;
-     while not l and A' =!= Thing do (
-	  A' = parent A';
-	  l = lookupQ(f,A');
-	  );
-     if l then (f,A'))
-nextMoreGeneral3 := (f,A,B) -> (
-     A' := A;
-     B' := B;
-     l := false;
-     while not l and (A',B') =!= (Thing,Thing) do (
-	  if B' =!= Thing then B' = parent B' else (
-	       B' = B;
-	       A' = parent A');
-	  l = lookupQ(f,A',B'););
-     if l then (f,A',B'))
-nextMoreGeneral4 := (f,A,B,C) -> (
-     A' := A;
-     B' := B;
-     C' := C;
-     l := false;
-     while not l and (A',B',C') =!= (Thing,Thing,Thing) do (
-	  if C' =!= Thing then C' = parent C'
-	  else (
-	       C' = C;
-	       if B' =!= Thing then B' = parent B'
-	       else (
-		    B' = B;
-		    A' = parent A'));
-	  l = lookupQ(f,A',B',C');
-	  );
-     if l then (f,A',B',C'))
-nextMoreGeneral := s -> (
-     if class s === Sequence then (
-	  if #s === 0 then null 
-	  else if instance(s#-1, Symbol) then unSingleton drop(s,-1) -- dropping optional argument tag
-	  else if #s === 2 then nextMoreGeneral2 s 
-	  else if #s === 3 then nextMoreGeneral3 s 
-	  else if #s === 4 then nextMoreGeneral4 s))
-
-evenMoreGeneral := key -> (
-     t := nextMoreGeneral key;
-     if t === null and class key === Sequence then key#0 else t)
-
 headline = method(SingleArgumentDispatch => true)
 headline DocumentTag := tag -> (
      pkg := DocumentTag.Package tag;
@@ -569,28 +520,9 @@ headline DocumentTag := tag -> (
      if pkg =!= null and pkg#"raw documentation"#?fkey and pkg#"raw documentation"#fkey#?Headline then pkg#"raw documentation"#fkey#Headline
      else headline DocumentTag.Key tag			    -- revert to old method
      )
-headline Thing := memoize (				    -- save this stuff, too!
-     key -> (
-	  while (
-	       d := getOption(key,Headline);
-	       d === null
-	       )
-	  and ( 
-	       key = evenMoreGeneral key;
-	       key =!= null
-	       )
-	  do null;
-	  if d =!= null then d))
-
+headline Thing := key -> getOption(key,Headline)
 commentize := s -> if s =!= null then concatenate(" -- ",s)
-
-moreGeneral := s -> (
-     n := nextMoreGeneral s;
-     if n =!= null then fixup SEQ { "Next more general method: ", TO n, commentize headline n }
-     )
-
 -----------------------------------------------------------------------------
-
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
 --   the first member fo the pair is the string to use for sorting
 --   the second member is the corresponding hypertext entry in the UL list
@@ -602,7 +534,7 @@ optTO := i -> (
 	  (formatDocumentTag i, formatDocumentTagTO i)
 	  )
      )
-optTOCLASS := i -> (
+optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      if getDoc i =!= null then (
 	  -- we might want a new type of TO so that in info mode this would look like this:
 	  --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
