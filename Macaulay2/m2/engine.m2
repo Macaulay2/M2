@@ -275,14 +275,6 @@ ZZ * RawMatrix := (n,f) -> (
 
 RawMatrix ** RawMatrix := rawTensor
 
--- mutable matrices
-
-RawMutableMatrix.name = "RawMutableMatrix"
-RawMutableMatrix.synonym = "raw mutable matrix"
-
-RawMutableMatrix == RawMutableMatrix := (v,w) -> v === w
-net RawMutableMatrix := o -> stack lines toString o
-
 -- ring maps
 
 RawRingMap.name = "RawRingMap"
