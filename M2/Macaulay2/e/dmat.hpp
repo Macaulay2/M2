@@ -100,6 +100,15 @@ public:
   */
 
   void dot_product(int i, int j, elem &result) const; 
+
+  bool row_permute(int start_row, const M2_arrayint perm);
+
+  bool column_permute(int start_col, const M2_arrayint perm);
+
+  bool set_submatrix(const M2_arrayint rows,
+		     const M2_arrayint cols, 
+		     const DMat<CoeffRing> *N);
+  // returns false iff there is an error
 };
 
 #endif

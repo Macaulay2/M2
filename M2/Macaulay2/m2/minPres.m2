@@ -47,9 +47,9 @@ finishMap := (L,xmap) -> (
      map(A,A,toList xmap)
      )
 
-minPres2 = method(Options=>{Variable => null})
+minPres = method(Options=>{Variable => null})
 
-minPres2 Ideal := o -> (I) -> (
+minPres Ideal := o -> (I) -> (
      --Input:  Any ideal.
      --Output:  An ideal where the generators that have a 
      --         linear term where that variable does not occur 
@@ -111,7 +111,6 @@ minPres2 Ideal := o -> (I) -> (
      	  )
      )
 
-minPres = method(Options=>{Variable => null})
 minPres Ring := o -> (R) -> (
      --Input:  Any ring R.
      --Output:  A ring R'that is the input simplified.  So
@@ -184,7 +183,7 @@ minPresMap Ideal := (I) -> (
      --Output:  A map from the ring of I, call it A, to a ring with 
      --fewer variables, say R such that A/I is isomorphic to R/minPres(I) 
      --via the output of this function.
-      I = minPres2 I;
+      I = minPres I;
       I.cache.minPresMap
       )
            

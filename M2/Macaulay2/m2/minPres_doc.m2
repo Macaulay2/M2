@@ -34,10 +34,10 @@ document{ [minPres,Variable],
      ring."
      }
 
-document{(minPres2, Ideal),
+document{(minPres, Ideal),
      Headline => "compute a minimal presentation of an ideal",
      Usage => {
-	  TT "J = minPres2 I", "-- If ", TT "R", " is the ring of ", TT "I", 
+	  TT "J = minPres I", "-- If ", TT "R", " is the ring of ", TT "I", 
 	  " a minimal presentation of ", TT "R/I", " is computed and 
 	  and an ideal ", TT "J", " is returned such that ", TT "R/J", " is 
 	  isomorphic to ", TT "R/I", "."
