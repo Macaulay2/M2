@@ -272,7 +272,7 @@ fixup LITERAL    := identity
 fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
-fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
+-- fixup Option
 fixup UL         := z -> splice apply(nonnull z, i -> PARA fixup if class i === TO then TOH {i#0} else i)
 fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
@@ -419,7 +419,10 @@ processExamples := (pkg,fkey,docBody) -> (
 -----------------------------------------------------------------------------
 
 nonNull := x -> select(x,t->t=!=null)
-fixupList := x -> apply(nonNull x,fixup)
+fixupEntry := method(SingleArgumentDispatch => true)
+fixupEntry Thing := fixup
+fixupEntry Option := z -> z#0 => fixupEntry z#1		       -- "x" => List => { "a number" }
+fixupList := x -> apply(nonNull x,fixupEntry)
 enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
