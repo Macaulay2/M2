@@ -11,8 +11,7 @@ LINALGGB_FILES := MonomialOps Monomials MonomialSet MonomialTable SPairSet monom
 
 LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
 
-all :: ../$(LIBGB) #check_it
-../$(LIBGB) : $(LINALGGB_OBJECT_FILES); $(AR) rcs ../$(LIBGB) $?
+all :: $(LINALGGB_OBJECT_FILES)
 check_it : $(LINALGGB_OBJECT_FILES) check_it.o
 	gcc -o check_it check_it.o $(LINALGGB_OBJECT_FILES) -L/sw/lib -lgc
 

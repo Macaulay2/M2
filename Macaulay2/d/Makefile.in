@@ -28,6 +28,11 @@ EXTRACFILES :=
 MADECFILES :=
 SRCFILES := 
 
+## engine object files
+EFILES := ../e/*.o
+# EFILES += ../e/rings/*.o 
+EFILES += ../e/linalgGB/*.o
+
 ## *.c files
 
 # we want M2inits1 to be first on the command line
@@ -289,8 +294,8 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 # M2_LDLIBS += -lc ../compat/compat.a
 
 clean::; rm -f ../bin/M2$(EXE)
-../bin/M2$(EXE) : $(M2_OBJECTS) main.o $(LIBRARYDEPS) ../e/libgb.a
-	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) main.o ../e/libgb.a $(M2_LOADLIBES) $(M2_LDLIBS) -o "$@".tmp
+../bin/M2$(EXE) : $(M2_OBJECTS) main.o $(LIBRARYDEPS) $(EFILES)
+	time $(CC) $(M2_LDFLAGS) $(M2_OBJECTS) main.o $(EFILES) $(M2_LOADLIBES) $(M2_LDLIBS) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
 
