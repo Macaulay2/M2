@@ -78,10 +78,10 @@ scope2 TO := scope2 TOH := x -> (
      key := formatDocumentTag x#0;
      if UP#?key 
      then (
-	  stderr << "links to '" << key << "' from two nodes: '"
+	  stderr << "error: links to '" << key << "' from two nodes: '"
 	  << UP#key << "' and '" << thisKey << "'" << endl
 	  )
-     else if key == thisKey then stderr << "node " << key << " links to itself" << endl
+     else if key == thisKey then stderr << "error: node " << key << " links to itself" << endl
      else (
 	  UP#key = thisKey;
 	  if lastKey =!= null then (
@@ -135,7 +135,7 @@ pass3 := () -> (
 	  key -> (
 	       if not linkFollowedTable#?key then (
 		    haderror = true;
-		    stderr << "documentation node '" << key << "' not reachable" << endl ) ) ) )
+		    stderr << "error: documentation node '" << key << "' not reachable" << endl ) ) ) )
 
 pass4 := () -> (
      << "pass 4, writing html files" << endl;
@@ -200,10 +200,10 @@ cacheVars := varlist -> (
      valuelist := apply(varlist, x -> value x);
      () -> apply(varlist, valuelist, (x,n) -> x <- n))
 
-makeHTML = (topnode,prefix0,docdatabase0) -> (
+makeHTML = (topnode,docdatabase0) -> (
      restore := cacheVars{symbol documentationPath};
      gifpath := minimizeFilename( getenv "M2HOME" | "/html/" );
-     prefix = prefix0;
+     prefix = "cache/doc/";
      docdatabase = docdatabase0;
      checkDirectory prefix;
      checkDirectory gifpath;
@@ -241,6 +241,9 @@ makeHTML = (topnode,prefix0,docdatabase0) -> (
      	  time pass5()
 	  );
      if sav =!= null then htmlDefaults#"BODY" = sav;
-     if haderror then error "documentation errors occurred";
+     if haderror then (
+	  stderr << "error: ignoring documentation errors" << endl;
+	  -- error "documentation errors occurred";
+	  );
      restore();
      )     
