@@ -204,8 +204,8 @@ document { (resolution, Ideal),
 
 TEST "
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (toList (t_1 .. t_9),3)			  -- 3 by 3
-n = matrix pack (toList (u_1 .. u_9),3)			  -- 3 by 3
+m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
+n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
 j = flatten (m * n - n * m)
 M = cokernel j
 C = res(M, LengthLimit => 2, DegreeLimit => 1)

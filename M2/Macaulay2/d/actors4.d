@@ -484,6 +484,21 @@ packfun(e:Expr):Expr := (
      is a:Sequence do (
      	  if length(a) == 2 then (
 	       when a.0
+	       is n:Integer do (
+		    if isInt(n)
+		    then (
+			 nn := toInt(n);
+			 if nn > 0
+			 then (
+			      when a.1
+			      is x:Sequence do packlist(x,nn)
+			      is x:List do packlist(x.v,nn)
+			      else WrongArg(1,"a list or sequence")
+			      )
+			 else WrongArg(1,"a positive integer")
+			 )
+		    else WrongArg(1,"a small integer")
+		    )
 	       is x:Sequence do (
 		    when a.1
 		    is n:Integer do (

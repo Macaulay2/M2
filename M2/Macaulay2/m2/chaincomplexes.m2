@@ -638,7 +638,7 @@ betti ChainComplex := C -> (
 	       splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")},
 	       s -> (6-# s,s));
 	  v = drop(v,3);
-	  v = pack(v,maxcol-mincol+1);
+	  v = pack(maxcol-mincol+1,v);
 	  totals := apply(transpose v, sum);
 	  v = prepend(totals,v);
 	  v = transpose v;

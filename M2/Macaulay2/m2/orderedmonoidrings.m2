@@ -134,7 +134,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       local diffs0;
 	       local diffs1;
 	       if R.?newEngine then (
-		    diffs = pack(diffs,2);
+		    diffs = pack(2,diffs);
 		    diffs0 = indices(M,first\diffs);
 		    diffs1 = indices(M,last\diffs);
 		    scan(diffs0,diffs1,(x,dx) -> 
@@ -151,7 +151,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 			 ggweylalgebra)
 		    )
 	       else (
-		    diffs = pack(diffs,2);
+		    diffs = pack(2,diffs);
 		    diffs0 = indices(M,first\diffs);
 		    diffs1 = indices(M,last\diffs);
 		    scan(diffs0,diffs1,(x,dx) -> 

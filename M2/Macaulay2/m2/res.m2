@@ -245,7 +245,7 @@ status Resolution := options -> (r) -> (
 	  s -> (9-# s,s));
      v = transpose v;
      v = drop(v,3);
-     v = pack(v,maxcol-mincol+1);
+     v = pack(maxcol-mincol+1,v);
      totals := apply(transpose v, sum);
      v = prepend(totals,v);
      v = transpose v;

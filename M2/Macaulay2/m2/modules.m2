@@ -302,7 +302,7 @@ degrees Module := M -> (
 	       then toList (rk : {})
 	       else (
 	  	    sendgg ggPush M;
-		    pack(eePopIntarray(), nd)))))
+		    pack(nd,eePopIntarray())))))
 
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
