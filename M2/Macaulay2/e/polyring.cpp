@@ -372,7 +372,7 @@ int PolynomialRing::index_of_var(const ring_elem a) const
     if (_EXP1[i] > 1) return -1;
     else if (_EXP1[i] == 1)
       {
-	if (result > 0) return -1;
+	if (result >= 0) return -1;
 	result = i;
       }
   return result;
