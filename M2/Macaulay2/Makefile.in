@@ -3,6 +3,7 @@
 .PHONY: check all clean config initialize doc html book distclean justM2
 ################################# prologue
 all ::
+install ::
 justM2 all :: initialize config
 
 include ../config.Makefile
