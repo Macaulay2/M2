@@ -2,6 +2,7 @@
 *.log
 encapinfo
 TAGS
+TAGS.Roots
 Makefile
 config.Makefile
 config.status

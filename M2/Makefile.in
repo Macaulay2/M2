@@ -1,6 +1,5 @@
 # @configure_input@
 # Targets to use:
-.PHONY : all check clean distclean reconfigure always
 ifdef XYZZY
   If you get an error message on this line, it is because you are not using
   the 'gnu' version of the 'make' program.  The source code for it is

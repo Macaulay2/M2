@@ -4,6 +4,9 @@
 # default (first) target
 all::
 
+# the usual phony targets
+.PHONY : all check initialize clean distclean install always reconfigure
+
 # cygwin 'make' might get confused by setting SHELL
 # SHELL = @SHELL@
 

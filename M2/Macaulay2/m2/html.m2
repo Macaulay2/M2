@@ -440,6 +440,7 @@ installPackage = method(Options => {
           InstallPrefix => () -> homeDirectory | packageSuffix | "local/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
+	  MakeDocumentation => true,
 	  MakeInfo => false,
 	  RemakeAllDocumentation => false,
 	  AbsoluteLinks => false,
@@ -480,8 +481,8 @@ reloadPackage := (pkg,opts) -> (
 installPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then (
 	  PKG := value PackageDictionary#pkg;
-	  if PKG#?"processed documentation database" and isOpen PKG#"processed documentation database"
-     	  then return installPackage(value PackageDictionary#pkg, opts);
+	  if not opts.MakeDocumentation or PKG#?"processed documentation database" and isOpen PKG#"processed documentation database"
+     	  then return installPackage(PKG, opts);
 	  );
      reloadPackage(pkg,opts);
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then return installPackage(value PackageDictionary#pkg, opts);
@@ -497,11 +498,10 @@ installPackage Package := opts -> pkg -> (
      rawDoc := pkg#"raw documentation";
      
      -- check that we've read the raw documentation
-     if #rawDoc > 0 then null
-     else reloadPackage(pkg#"title",opts);
+     if opts.MakeDocumentation and #rawDoc == 0 then reloadPackage(pkg#"title",opts);
      
      -- here's where we get the list of nodes from the raw documentation
-     nodes := packageTagList(pkg,topDocumentTag);
+     nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
      
      buildPackage = pkg#"title";
      
@@ -538,259 +538,295 @@ installPackage Package := opts -> pkg -> (
 	       );
      	  );
 
-     -- This is a bit of a fiction: we've copied the files for our package into the build directory,
-     -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"
-     -- to find the example output files the same way it would if the package had been loaded from there.
-     oldPackagePrefix := pkg#"package prefix";
-     if oldPackagePrefix === null then oldPackagePrefix = buildDirectory;
-     pkg#"package prefix" = buildDirectory;
+     if opts.MakeDocumentation then (
+	  -- This is a bit of a fiction: we've copied the files for our package into the build directory,
+	  -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"
+	  -- to find the example output files the same way it would if the package had been loaded from there.
+	  oldPackagePrefix := pkg#"package prefix";
+	  if oldPackagePrefix === null then oldPackagePrefix = buildDirectory;
+	  pkg#"package prefix" = buildDirectory;
 
-     -- make example input files
-     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
-     infn := fkey -> exampleDir|toFilename fkey|".m2";
-     outfn := fkey -> exampleDir|toFilename fkey|".out";
-     tmpfn := fkey -> exampleDir|toFilename fkey|".errors";
-     stderr << "--making example input files in " << exampleDir << endl;
-     makeDirectory exampleDir;
-     exampleDir|".linkdir" << close;
-     exampleInputFiles := new MutableHashTable;
-     scan(pairs pkg#"example inputs", (fkey,inputs) -> (
-	       inf := infn fkey;
-	       exampleInputFiles#inf = true;
-	       val := concatenate apply(inputs, s -> s|"\n");
-	       if fileExists inf and get inf === val
-	       then (
-		    if debugLevel > 1 then stderr << "--leaving example input file for " << fkey << endl;
-		    )
-	       else (
-		    if debugLevel > 1 then stderr << "--making example input file for " << fkey << endl;
-		    inf << val << close;
-		    )));
-
-     -- check for obsolete example input files and remove them
-     scan(readDirectory exampleDir, fn -> (
-	       fn = exampleDir | fn;
-	       if match("\\.m2$",fn) and not exampleInputFiles#?fn then (
-	       	    stderr << "--warning: removing obsolete example input file: " <<  fn << endl;
-		    removeFile fn;
-		    )));
-
---     -- make test input files
---     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
---     infn2  := n -> testsDir|toString n|".m2";
---     outfn2 := n -> testsDir|toString n|".out";
---     tmpfn2 := n -> testsDir|toString n|".errors";
---     stderr << "--making test input files in " << testsDir << endl;
---     makeDirectory testsDir;
---     testsDir|".linkdir" << close;
---     scan(pairs pkg#"test inputs", (key,str) -> if class str === String then (
---	       (n,fn) := key;
---	       inf := infn2 n;
---	       val := str | "\n";
---	       if fileExists inf and get inf === val
---	       then (
---		    if debugLevel > 1 then stderr << "--leaving test input file: " << key << endl;
---		    )
---	       else (
---		    if debugLevel > 1 then stderr << "--making test input file: " << key << endl;
---		    inf << val << close;
---		    )));
-
-     -- cache raw documentation in database, and check for changes
-     rawDocUnchanged := new MutableHashTable;
-     docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
-     rawdbname := docDir | "rawdocumentation.db";
-     rawdbnametmp := rawdbname | ".tmp";
-     stderr << "--storing raw documentation in " << rawdbname << endl;
-     makeDirectory docDir;
-     docDir|".linkdir" << close;
-     if fileExists rawdbnametmp then unlink rawdbnametmp;
-     if fileExists rawdbname then (
-	  tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
-	  copyFile(rawdbname,rawdbnametmp);
-	  close tmp;
-	  );
-     rawdocDatabase := openDatabaseOut rawdbnametmp;
-     scan(nodes, tag -> (
-	       fkey := DocumentTag.FormattedKey tag;
-	       if rawDoc#?fkey then (
-	       	    v := toExternalString rawDoc#fkey;
-		    if rawdocDatabase#?fkey then (
-     	       	    	 if rawdocDatabase#fkey === v 
-			 then rawDocUnchanged#fkey = true
-			 else rawdocDatabase#fkey = v
+	  -- make example input files
+	  exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
+	  infn := fkey -> exampleDir|toFilename fkey|".m2";
+	  outfn := fkey -> exampleDir|toFilename fkey|".out";
+	  tmpfn := fkey -> exampleDir|toFilename fkey|".errors";
+	  stderr << "--making example input files in " << exampleDir << endl;
+	  makeDirectory exampleDir;
+	  exampleDir|".linkdir" << close;
+	  exampleInputFiles := new MutableHashTable;
+	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
+		    inf := infn fkey;
+		    exampleInputFiles#inf = true;
+		    val := concatenate apply(inputs, s -> s|"\n");
+		    if fileExists inf and get inf === val
+		    then (
+			 if debugLevel > 1 then stderr << "--leaving example input file for " << fkey << endl;
 			 )
 		    else (
-			 if debugLevel > 0 then stderr << "--new raw documentation, not already in database, for " << fkey << endl;
-			 rawdocDatabase#fkey = v;
-			 )
-		    )
-	       else (
-		    if rawdocDatabase#?fkey then (
-			 stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
-			 )
-		    else (
-			 rawDocUnchanged#fkey = true;
-			 )
-		    )));
-     close rawdocDatabase;
-     moveFile(rawdbnametmp,rawdbname);
-     rawkey := "raw documentation database";
-     pkg#rawkey = openDatabase rawdbname;
-     addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
+			 if debugLevel > 1 then stderr << "--making example input file for " << fkey << endl;
+			 inf << val << close;
+			 )));
 
-     -- run tests that are functions
-     stderr << "--running tests that are functions " << exampleDir << endl;
-     scan(pairs pkg#"test inputs", (key,str) -> if class str === Function then (
-	       stderr << "--  running test " << key << ", function " << str << endl;
-	       str();
-	       ));
+	  -- check for obsolete example input files and remove them
+	  scan(readDirectory exampleDir, fn -> (
+		    fn = exampleDir | fn;
+		    if match("\\.m2$",fn) and not exampleInputFiles#?fn then (
+			 stderr << "--warning: removing obsolete example input file: " <<  fn << endl;
+			 removeFile fn;
+			 )));
 
-     -- make example output files, or else copy them from old package directory tree
-     exampleDir' := oldPackagePrefix|LAYOUT#"packageexamples" pkg#"title";
-     infn' := fkey -> exampleDir'|toFilename fkey|".m2";
-     outfn' := fkey -> exampleDir'|toFilename fkey|".out";
-     stderr << "--making example result files in " << exampleDir << endl;
-     haderror := false;
-     scan(pairs pkg#"example inputs", (fkey,inputs) -> (
-     	       -- args:
-	       inf := infn fkey;
-	       outf := outfn fkey;
-	       inf' := infn' fkey;
-	       outf' := outfn' fkey;
-	       tmpf := tmpfn fkey;
-	       desc := "example results for " | fkey;
-	       changefun := () -> remove(rawDocUnchanged,fkey);
-     	       if fileExists outf and fileTime outf >= fileTime inf then (
-		    -- do nothing
-		    )
-	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
-	       then copyFile(outf',outf)
-	       else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
-	       -- read, separate, and store example output
-	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
-	       else (
-		    if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
-		    )
-	       ));
-     if haderror and not opts.IgnoreExampleErrors then error "error(s) occurred running example files";
+     --     -- make test input files
+     --     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
+     --     infn2  := n -> testsDir|toString n|".m2";
+     --     outfn2 := n -> testsDir|toString n|".out";
+     --     tmpfn2 := n -> testsDir|toString n|".errors";
+     --     stderr << "--making test input files in " << testsDir << endl;
+     --     makeDirectory testsDir;
+     --     testsDir|".linkdir" << close;
+     --     scan(pairs pkg#"test inputs", (key,str) -> if class str === String then (
+     --	       (n,fn) := key;
+     --	       inf := infn2 n;
+     --	       val := str | "\n";
+     --	       if fileExists inf and get inf === val
+     --	       then (
+     --		    if debugLevel > 1 then stderr << "--leaving test input file: " << key << endl;
+     --		    )
+     --	       else (
+     --		    if debugLevel > 1 then stderr << "--making test input file: " << key << endl;
+     --		    inf << val << close;
+     --		    )));
 
---      -- make test output files, or else copy them from the old package directory tree
---      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
---      infn2'  := n -> oldTestsDir|toString n|".m2";
---      outfn2' := n -> oldTestsDir|toString n|".out";
---      stderr << "--making test result files in " << testsDir << endl;
---      haderror = false;
---      scan(pairs pkg#"test inputs", (key,inputs) -> (
---      	       -- args:
--- 	       (n,fn) := key;
--- 	       inf := infn2 n;
--- 	       outf := outfn2 n;
--- 	       tmpf := tmpfn2 n;
--- 	       inf' := infn2' n;
--- 	       outf' := outfn2' n;
--- 	       desc := "test results for " | toString key;
---      	       if fileExists outf and fileTime outf >= fileTime inf then (
--- 		    -- do nothing
--- 		    )
--- 	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
--- 	       then copyFile(outf',outf)
--- 	       else (
--- 		    -- error "debug me";
--- 		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
--- 		    );
--- 	       ));
---      if haderror then error "error(s) occurred running test files";
-
-     -- process documentation
-     stderr << "--processing documentation nodes..." << endl;
-     scan(nodes, tag -> (
-	       fkey := DocumentTag.FormattedKey tag;
-	       if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
-	       	    if debugLevel > 0 then stderr << "--skipping   " << tag << endl;
-		    )
-	       else (
-	       	    if debugLevel > 0 then stderr << "--processing " << tag << endl;
-	       	    pkg#"processed documentation"#fkey = documentation tag;
-		    );
-	       ));
-
-     -- cache processed documentation in database
-     dbname := docDir | "documentation.db";
-     dbnametmp := dbname | ".tmp";
-     if fileExists dbnametmp then unlink dbnametmp;
-     if fileExists dbname then (
-	  tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
-	  copyFile(dbname,dbnametmp);
-	  close tmp2;
-	  );
-     stderr << "--storing processed documentation in " << dbname << endl;
-     prockey := "processed documentation database";
-     if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
-     docDatabase := openDatabaseOut dbnametmp;
-     scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
-     close docDatabase;
-     moveFile(dbnametmp,dbname);
-     pkg#prockey = openDatabase dbname;
-     addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
-
-     -- make table of contents, including next, prev, and up links
-     stderr << "--assembling table of contents" << endl;
-     assembleTree(pkg,nodes);
-     pkg#"table of contents" = new Bag from {CONT}; -- we bag it because it might be big!
-     pkg#"links up" = UP;
-     pkg#"links next" = NEXT;
-     pkg#"links prev" = PREV;
-
-     -- helper routine
-     getPDoc := fkey -> (
-	  if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
-	  if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
-	       if debugLevel > 0 then stderr << "--warning: missing documentation node: " << fkey << endl;
-	       ));
-
-     -- make info file
-     if opts.MakeInfo then (
-	  savePW := printWidth;
-	  printWidth = 79;
-	  infodir := buildDirectory|LAYOUT#"info";
-	  makeDirectory infodir;
-	  infotitle := pkg#"title";
-	  infobasename := infotitle|".info";
-	  tmpinfobasename := infobasename|".tmp";
-	  infofile := openOut (infodir|tmpinfobasename);
-	  stderr << "--making info file in " << infofile << endl;
-	  upto30 := t -> concatenate(t,30-#t:" ");
-	  infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
-	  infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
-	  infofile << "START-INFO-DIR-ENTRY" << endl;
-	  infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
-	  infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
-	  infofile << "END-INFO-DIR-ENTRY" << endl << endl;
-	  byteOffsets := new MutableHashTable;
-	  topNodeName := DocumentTag.FormattedKey topDocumentTag;
-	  chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
-	  infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
-	  traverse(unbag pkg#"table of contents", tag -> (
+	  -- cache raw documentation in database, and check for changes
+	  rawDocUnchanged := new MutableHashTable;
+	  docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
+	  rawdbname := docDir | "rawdocumentation.db";
+	  rawdbnametmp := rawdbname | ".tmp";
+	  stderr << "--storing raw documentation in " << rawdbname << endl;
+	  makeDirectory docDir;
+	  docDir|".linkdir" << close;
+	  if fileExists rawdbnametmp then unlink rawdbnametmp;
+	  if fileExists rawdbname then (
+	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
+	       copyFile(rawdbname,rawdbnametmp);
+	       close tmp;
+	       );
+	  rawdocDatabase := openDatabaseOut rawdbnametmp;
+	  scan(nodes, tag -> (
 		    fkey := DocumentTag.FormattedKey tag;
-		    chk fkey;
-		    byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
-		    infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
-		    if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
-		    if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
-		    if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
-		    infofile << endl << endl << info getPDoc fkey << endl));
-	  infofile << "\037" << endl << "Tag Table:" << endl;
-	  scan(values byteOffsets, b -> infofile << b << endl);
-	  infofile << "\037" << endl << "End Tag Table" << endl;
-	  infofile << close;
-	  moveFile(infodir|tmpinfobasename,infodir|infobasename);
-	  stderr << "--completed info file moved to " << infodir|infobasename << endl;
-	  printWidth = savePW;
-	  )
-     else (
-	  stderr << "--not making info file" << endl;
-	  );
+		    if rawDoc#?fkey then (
+			 v := toExternalString rawDoc#fkey;
+			 if rawdocDatabase#?fkey then (
+			      if rawdocDatabase#fkey === v 
+			      then rawDocUnchanged#fkey = true
+			      else rawdocDatabase#fkey = v
+			      )
+			 else (
+			      if debugLevel > 0 then stderr << "--new raw documentation, not already in database, for " << fkey << endl;
+			      rawdocDatabase#fkey = v;
+			      )
+			 )
+		    else (
+			 if rawdocDatabase#?fkey then (
+			      stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
+			      )
+			 else (
+			      rawDocUnchanged#fkey = true;
+			      )
+			 )));
+	  close rawdocDatabase;
+	  moveFile(rawdbnametmp,rawdbname);
+	  rawkey := "raw documentation database";
+	  pkg#rawkey = openDatabase rawdbname;
+	  addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
+
+	  -- run tests that are functions
+	  stderr << "--running tests that are functions " << exampleDir << endl;
+	  scan(pairs pkg#"test inputs", (key,str) -> if class str === Function then (
+		    stderr << "--  running test " << key << ", function " << str << endl;
+		    str();
+		    ));
+
+	  -- make example output files, or else copy them from old package directory tree
+	  exampleDir' := oldPackagePrefix|LAYOUT#"packageexamples" pkg#"title";
+	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
+	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
+	  stderr << "--making example result files in " << exampleDir << endl;
+	  haderror := false;
+	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
+		    -- args:
+		    inf := infn fkey;
+		    outf := outfn fkey;
+		    inf' := infn' fkey;
+		    outf' := outfn' fkey;
+		    tmpf := tmpfn fkey;
+		    desc := "example results for " | fkey;
+		    changefun := () -> remove(rawDocUnchanged,fkey);
+		    if fileExists outf and fileTime outf >= fileTime inf then (
+			 -- do nothing
+			 )
+		    else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
+		    then copyFile(outf',outf)
+		    else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
+		    -- read, separate, and store example output
+		    if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
+		    else (
+			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
+			 )
+		    ));
+	  if haderror and not opts.IgnoreExampleErrors then error "error(s) occurred running example files";
+
+     --      -- make test output files, or else copy them from the old package directory tree
+     --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
+     --      infn2'  := n -> oldTestsDir|toString n|".m2";
+     --      outfn2' := n -> oldTestsDir|toString n|".out";
+     --      stderr << "--making test result files in " << testsDir << endl;
+     --      haderror = false;
+     --      scan(pairs pkg#"test inputs", (key,inputs) -> (
+     --      	       -- args:
+     -- 	       (n,fn) := key;
+     -- 	       inf := infn2 n;
+     -- 	       outf := outfn2 n;
+     -- 	       tmpf := tmpfn2 n;
+     -- 	       inf' := infn2' n;
+     -- 	       outf' := outfn2' n;
+     -- 	       desc := "test results for " | toString key;
+     --      	       if fileExists outf and fileTime outf >= fileTime inf then (
+     -- 		    -- do nothing
+     -- 		    )
+     -- 	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
+     -- 	       then copyFile(outf',outf)
+     -- 	       else (
+     -- 		    -- error "debug me";
+     -- 		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
+     -- 		    );
+     -- 	       ));
+     --      if haderror then error "error(s) occurred running test files";
+
+	  -- process documentation
+	  stderr << "--processing documentation nodes..." << endl;
+	  scan(nodes, tag -> (
+		    fkey := DocumentTag.FormattedKey tag;
+		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
+			 if debugLevel > 0 then stderr << "--skipping   " << tag << endl;
+			 )
+		    else (
+			 if debugLevel > 0 then stderr << "--processing " << tag << endl;
+			 pkg#"processed documentation"#fkey = documentation tag;
+			 );
+		    ));
+
+	  -- cache processed documentation in database
+	  dbname := docDir | "documentation.db";
+	  dbnametmp := dbname | ".tmp";
+	  if fileExists dbnametmp then unlink dbnametmp;
+	  if fileExists dbname then (
+	       tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
+	       copyFile(dbname,dbnametmp);
+	       close tmp2;
+	       );
+	  stderr << "--storing processed documentation in " << dbname << endl;
+	  prockey := "processed documentation database";
+	  if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
+	  docDatabase := openDatabaseOut dbnametmp;
+	  scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
+	  close docDatabase;
+	  moveFile(dbnametmp,dbname);
+	  pkg#prockey = openDatabase dbname;
+	  addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
+
+	  -- make table of contents, including next, prev, and up links
+	  stderr << "--assembling table of contents" << endl;
+	  assembleTree(pkg,nodes);
+	  pkg#"table of contents" = new Bag from {CONT}; -- we bag it because it might be big!
+	  pkg#"links up" = UP;
+	  pkg#"links next" = NEXT;
+	  pkg#"links prev" = PREV;
+
+	  -- helper routine
+	  getPDoc := fkey -> (
+	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
+	       if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
+		    if debugLevel > 0 then stderr << "--warning: missing documentation node: " << fkey << endl;
+		    ));
+
+	  -- make info file
+	  if opts.MakeInfo then (
+	       savePW := printWidth;
+	       printWidth = 79;
+	       infodir := buildDirectory|LAYOUT#"info";
+	       makeDirectory infodir;
+	       infotitle := pkg#"title";
+	       infobasename := infotitle|".info";
+	       tmpinfobasename := infobasename|".tmp";
+	       infofile := openOut (infodir|tmpinfobasename);
+	       stderr << "--making info file in " << infofile << endl;
+	       upto30 := t -> concatenate(t,30-#t:" ");
+	       infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
+	       infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
+	       infofile << "START-INFO-DIR-ENTRY" << endl;
+	       infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
+	       infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
+	       infofile << "END-INFO-DIR-ENTRY" << endl << endl;
+	       byteOffsets := new MutableHashTable;
+	       topNodeName := DocumentTag.FormattedKey topDocumentTag;
+	       chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
+	       infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
+	       traverse(unbag pkg#"table of contents", tag -> (
+			 fkey := DocumentTag.FormattedKey tag;
+			 chk fkey;
+			 byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
+			 infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
+			 if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
+			 if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
+			 if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
+			 infofile << endl << endl << info getPDoc fkey << endl));
+	       infofile << "\037" << endl << "Tag Table:" << endl;
+	       scan(values byteOffsets, b -> infofile << b << endl);
+	       infofile << "\037" << endl << "End Tag Table" << endl;
+	       infofile << close;
+	       moveFile(infodir|tmpinfobasename,infodir|infobasename);
+	       stderr << "--completed info file moved to " << infodir|infobasename << endl;
+	       printWidth = savePW;
+	       )
+	  else (
+	       stderr << "--not making info file" << endl;
+	       );
+
+	  -- make html files
+	  htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
+	  setupButtons();
+	  makeDirectory (buildDirectory|htmlDirectory);
+	  buildDirectory|htmlDirectory|".linkdir" << close;
+	  stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
+	  scan(nodes, tag -> (
+	       -- key := DocumentTag.Key tag;
+	       fkey := DocumentTag.FormattedKey tag;
+	       fn := buildDirectory | htmlFilename tag;
+	       if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
+	       stderr << "--making html page for " << tag << endl;
+	       fn
+	       << html HTML { 
+		    HEAD {
+			 TITLE {fkey, commentize headline fkey}, -- I hope this works...
+			 links tag
+			 },
+		    BODY { 
+			 buttonBar tag,
+			 if UP#?tag then DIV between(" > ", apply(upAncestors tag, i -> TO i)),
+			 HR{}, 
+			 getPDoc fkey
+			 }
+		    }
+	       << endl << close));
+
+	  -- make master.html with master index of all the html files
+	  makeMasterIndex select(nodes,tag -> instance(DocumentTag.Key tag,Symbol));
+
+	  -- make table of contents
+	  makeTableOfContents();
+
+     	  );						    -- end if opts.MakeDocumentation
 
      -- make postinstall and preremove files, if encap
      if opts.Encapsulate then (
@@ -824,46 +860,10 @@ installPackage Package := opts -> pkg -> (
 	  f << close;
 	  );
 
-     -- make html files
-     htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
-     setupButtons();
-     makeDirectory (buildDirectory|htmlDirectory);
-     buildDirectory|htmlDirectory|".linkdir" << close;
-     stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
-     scan(nodes, tag -> (
-	  -- key := DocumentTag.Key tag;
-	  fkey := DocumentTag.FormattedKey tag;
-	  fn := buildDirectory | htmlFilename tag;
-	  if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
-	  stderr << "--making html page for " << tag << endl;
-	  fn
-	  << html HTML { 
-	       HEAD {
-		    TITLE {fkey, commentize headline fkey}, -- I hope this works...
-		    links tag
-		    },
-	       BODY { 
-		    buttonBar tag,
-		    if UP#?tag then DIV between(" > ", apply(upAncestors tag, i -> TO i)),
-		    HR{}, 
-		    getPDoc fkey
-		    }
-	       }
-	  << endl << close));
-
-     -- make master.html with master index of all the html files
-     makeMasterIndex select(nodes,tag -> instance(DocumentTag.Key tag,Symbol));
-
-     -- make table of contents
-     makeTableOfContents();
-
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
 	  symlinkDirectory(buildDirectory, installDirectory, Verbose => debugLevel > 0)
 	  );
-
-     -- make new package index
-     makePackageIndex();
 
      -- all done
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;

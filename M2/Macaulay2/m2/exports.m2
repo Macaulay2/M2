@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+        symbol MakeDocumentation,
 	symbol rowPermute,
 	symbol columnPermute,
         symbol Partition,
