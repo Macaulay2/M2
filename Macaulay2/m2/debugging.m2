@@ -163,6 +163,10 @@ clearAll = Command (() -> (
 	  )
      )
 
+debug = x -> (
+     error "debug x";
+     x)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -50,10 +50,10 @@ Ext(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
      else (
 	  g := resolution(f,LengthLimit=>i+1);
 	  Es := Ext^i(source f, N);
-	  Es':= target Es.pruningMap;	  -- Ext prunes everything, so get the original subquotient
+	  Es':= target Es.cache.pruningMap;	  -- Ext prunes everything, so get the original subquotient
 	  Et := Ext^i(target f, N);
-	  Et':= target Et.pruningMap;
-	  Es.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.pruningMap))
+	  Et':= target Et.cache.pruningMap;
+	  Es.cache.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.cache.pruningMap))
 
 Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
      R := ring f;
@@ -64,10 +64,10 @@ Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
      else (
 	  C := resolution(N,LengthLimit=>i+1);
 	  Es := Ext^i(N, source f);
-	  Es':= target Es.pruningMap;	  -- Ext prunes everything, so get the original subquotient
+	  Es':= target Es.cache.pruningMap;	  -- Ext prunes everything, so get the original subquotient
 	  Et := Ext^i(N, target f);
-	  Et':= target Et.pruningMap;
-	  Et.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.pruningMap))
+	  Et':= target Et.cache.pruningMap;
+	  Et.cache.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.cache.pruningMap))
 
 Ext(ZZ, Matrix, Ring) := (i,f,R) -> Ext^i(f,R^1)
 Ext(ZZ, Matrix, Ideal) := (i,f,J) -> Ext^i(f,module J)
