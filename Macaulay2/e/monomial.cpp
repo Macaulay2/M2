@@ -57,7 +57,6 @@ Monomial *Monomial::make(M2_arrayint m)
 
 Monomial *Monomial::make(const int * vp)
 {
-  assert( error() == 0 );	// did we forget to check for a previous error?
   Monomial *result = new Monomial(vp);
   if (error()) return 0;
   result->set_hash_code();

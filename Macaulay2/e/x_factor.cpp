@@ -85,7 +85,7 @@ static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      enter_M2 b;
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
-	  if (R->charac() == 0) {
+	  if (h.inZ()) {
 	       static const unsigned int base = 1 << 16;
 	       intarray v;
 	       int sign;
@@ -109,7 +109,17 @@ static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
 	       mpz_clear(x);
 	       return RingElement::make_raw(R, ret);
 	  }
-	  else return RingElement::make_raw(R, R->from_int(h.intval()));
+	  else if (h.inQ()) {
+	       ERROR("conversion from factory over QQ not implemented yet");
+	       return RingElement::make_raw(R,R->one());
+	  }
+	  else if (h.inFF()) {
+	       return RingElement::make_raw(R, R->from_int(h.intval()));
+	  }
+	  else {
+	       ERROR("conversion from factory over unknown type");
+	       return RingElement::make_raw(R,R->one());
+	  }
      }
      ring_elem result = R->from_int(0);
      for (int j = 0; j <= h.degree(); j++) {
