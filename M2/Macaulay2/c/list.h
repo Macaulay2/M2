@@ -4,7 +4,7 @@ bool member(node, node);
 node car(node x);
 node cdr(node x);
 node cons(node x, node y);
-unsigned int length(node x);
+int length(node x);
 node last(node l);
 node tailend(node l);
 node nth(node x, unsigned int n);

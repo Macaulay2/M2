@@ -16,7 +16,7 @@ version : ../Makeconf
 version.gen : ../Makeconf
 	bin/echoout '>$@' 'version ${VERSION}'
 misc :: version version.gen
-clean :: ; rm version version.gen
+clean :: ; rm -f version version.gen
 ################################# bin
 bin :; mkdir $@
 clean ::; rm -rf bin

@@ -106,7 +106,7 @@ node cons(node x, node y){
      return p;
      }
 
-unsigned int length(node x){
+int length(node x){
      unsigned int n = 0;
      while (x != NULL) {
 	  n++;

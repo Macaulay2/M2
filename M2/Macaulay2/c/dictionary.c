@@ -94,6 +94,9 @@ struct {
 
 char *Csymbols[] = {
      "NULL", "stdout", "stdin", "stderr", "flush", "select", 
+     /* avoid collisions under Windows NT */
+     "min", "max",
+     /* end Windows */
      /* avoid collisions on the Mac */
      "abs", "times", "erase", "frame", "index",
      /* end Mac */
