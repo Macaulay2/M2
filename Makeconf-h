@@ -1,5 +1,0 @@
-#! /bin/sh
-
-echo "/* this file made automatically from Makeconf */"
-echo "#define VERSION \"$VERSION\""
-echo "#define SYSTEM \"$SYSTEM\""

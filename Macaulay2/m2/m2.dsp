@@ -147,11 +147,11 @@ SOURCE=.\gbdoc.m2
 # End Source File
 # Begin Source File
 
-SOURCE=.\gbfunctions.awk
+SOURCE=.\gbfunctions.m2
 # End Source File
 # Begin Source File
 
-SOURCE=.\gbfunctions.m2
+SOURCE=.\gbfuns.awk
 # End Source File
 # Begin Source File
 

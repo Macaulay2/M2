@@ -74,6 +74,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name d2c
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name root
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -104,6 +107,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name gcStatic
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -187,6 +193,18 @@ Package=<4>
 ###############################################################################
 
 Project: "mpz"=.\gmp\mpz\mpz.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "root"=.\root.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
