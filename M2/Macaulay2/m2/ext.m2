@@ -105,8 +105,8 @@ Ext(Module,Module) := Module => (N,M) -> (
     pM := lift(presentation M,Q);
     N' := cokernel ( pN | p ** id_(target pN) );
     M' := cokernel ( pM | p ** id_(target pM) );
-    E := resolution N';
-    s := f / (g -> nullhomotopy (g*id_E));
+    C := resolution N';
+    s := f / (g -> nullhomotopy (g*id_C));
     X := local X;
     k := coefficientRing Q;
     -- compute the fudge factor for the adjustment of bidegrees
@@ -123,23 +123,23 @@ Ext(Module,Module) := Module => (N,M) -> (
     S := k(monoid [X_0 .. X_(c-1),Degrees=>{c:{2}}]);
     mS := monoid S;
     use S;
-    spots := E -> sort select(keys E, i -> class i === ZZ);
+    spots := C -> sort select(keys C, i -> class i === ZZ);
     -- make a hash table to store the blocks of the matrix
     Delta := new MutableHashTable;
-    Delta#(exponents 1_mS) = -E.dd;
+    Delta#(exponents 1_mS) = -C.dd;
     scan(c, i -> Delta#(exponents mS_i) = s_i);
     -- a helper function to list the factorizations of a monomial
     factorizations := (m) -> (
       -- input: m is the list of exponents for a monomial
       -- Return a list of pairs of lists showing the factorizations.
-      -- E.g., if m is {1,1} we return
+      -- C.g., if m is {1,1} we return
       -- {({1,0},{0,1}),({0,1},{1,0}),({1,1},{0,0}),({0,0},{1,1})}
       if m === {} then { ({}, {}) }
       else (
 	i := m#-1;
 	splice apply(factorizations drop(m,-1), 
 	  (n,o) -> apply (0..i, j -> (append(n,j), append(o,i-j))))));
-    scan(4 .. length E + 1, 
+    scan(4 .. length C + 1, 
       d -> if even d then (
 	scan( exponents \ leadMonomial \ first entries basis(d,S), 
 	  m -> (
@@ -153,8 +153,8 @@ Ext(Module,Module) := Module => (N,M) -> (
 	      Delta#m = nullhomotopy h;
 	      )))));
     -- make a free module whose basis elements have the right degrees
-    DMT := T^(apply(spots E, 
-	i -> toSequence apply(degrees E_i, d -> {i,first d})));
+    DMT := T^(apply(spots C, 
+	i -> toSequence apply(degrees C_i, d -> {i,first d})));
     -- assemble the matrix from its blocks
     DT := map(DMT, DMT, 
       transpose sum ( keys Delta, m -> T_m * toT sum Delta#m),
