@@ -212,7 +212,9 @@ computeLocalization = (M, f, output, options) -> (
 	       	  );
 	     relationsMat := transpose matrix{relationsList};
 	     tempL := coefficients({nLW-2}, relationsMat);
-	     presMat := transpose tempL#1;
+	     presMat := 
+	     -- transpose
+	     tempL#1;
 	     srcSize := numgens source presMat;
 	     targSize := numgens target presMat;
 	     genIndex := position((entries tempL#0)#0, e->(e==a^maxRoot));
