@@ -60,9 +60,9 @@ export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
 			 insert(dc.dictionary.symboltable,newword,sc.symbol);
 			 rhsval)))
 	  is Error do rhsval 
-	  else printErrorMessage(rhs,"expected a symbol"))
+	  else printErrorMessageE(rhs,"expected a symbol"))
      is Error do ival
-     else printErrorMessage(i,"expected a string"));
+     else printErrorMessageE(i,"expected a string"));
 
 assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
      ival := eval(i);
@@ -72,7 +72,7 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
 	  then (
 	       k := toInt(j);
 	       if k < -length(x) || k >= length(x)
-	       then printErrorMessage(i,"subscript out of bounds 0 .. "+tostring(length(x)-1))
+	       then printErrorMessageE(i,"subscript out of bounds 0 .. "+tostring(length(x)-1))
 	       else (
 		    val := eval(rhs);
 		    when val is Error do val
@@ -81,9 +81,9 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
 			 then x.(length(x) + k) = val
 			 else x.k = val;
 			 val)))
-	  else printErrorMessage(i,"subscript out of bounds"))
+	  else printErrorMessageE(i,"subscript out of bounds"))
      is Error do ival
-     else printErrorMessage(i,"expected integer as subscript")
+     else printErrorMessageE(i,"expected integer as subscript")
      );
 
 dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
@@ -101,8 +101,8 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 	       if 0 == dbmdelete(f.handle,key)
 	       then nullE
 	       else buildErrorPacket(dbmstrerror() + " : " + f.filename))
-	  else printErrorMessage(CONTENT,"expected a string or null"))
-     else printErrorMessage(KEY,"expected a string"));
+	  else printErrorMessageE(CONTENT,"expected a string or null"))
+     else printErrorMessageE(KEY,"expected a string"));
 
 assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
@@ -116,9 +116,9 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      is x:HashTable do storeInHashTable(x,lhsindex,rhs)
      is x:Database do dbmstore(x,lhsindex,rhs)
      is dc:DictionaryClosure do (
-	  if dc.dictionary.protected then printErrorMessage(lhsarray,"attempted to create symbol in protected dictionary")
+	  if dc.dictionary.protected then printErrorMessageE(lhsarray,"attempted to create symbol in protected dictionary")
 	  else storeInDictionary(dc,lhsindex,rhs))
-     else printErrorMessage(lhsarray,"expected a list, hash table, database, or dictionary")
+     else printErrorMessageE(lhsarray,"expected a list, hash table, database, or dictionary")
      );
 AssignElemFun = assignelemfun;
 
@@ -128,14 +128,14 @@ assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
 	  ival := Expr(SymbolClosure(globalFrame,c.symbol));
 	  val := eval(rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val))
-     else printErrorMessage(i,"'.' expected right hand argument to be a symbol")
+     else printErrorMessageE(i,"'.' expected right hand argument to be a symbol")
      );
 
 assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x
      is x:HashTable do assignquotedobject(x,lhsindex,rhs)
-     else printErrorMessage(lhsarray,"'.' expected left hand side to be a hash table")
+     else printErrorMessageE(lhsarray,"'.' expected left hand side to be a hash table")
      );
 AssignQuotedElemFun = assignquotedelemfun;
 
@@ -151,7 +151,7 @@ evalWhileDoCode(c:whileDoCode):Expr := (
 	       else nothing;
 	       )
 	  else if p == False then break
-	  else return printErrorMessage(c.predicate,"expected true or false"));
+	  else return printErrorMessageE(c.predicate,"expected true or false"));
      nullE);
 
 evalWhileListCode(c:whileListCode):Expr := (
@@ -179,7 +179,7 @@ evalWhileListCode(c:whileListCode):Expr := (
 		    );
 	       )
 	  else if p == False then break
-	  else return printErrorMessage(c.predicate,"expected true or false"));
+	  else return printErrorMessageE(c.predicate,"expected true or false"));
      Expr(
 	  list(
 	       if i == 0 then emptySequence
@@ -212,7 +212,7 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else nothing;
 	       )
 	  else if p == False then break
-	  else return printErrorMessage(c.predicate,"expected true or false"));
+	  else return printErrorMessageE(c.predicate,"expected true or false"));
      Expr(
 	  list(
 	       if i == 0 then emptySequence
@@ -228,14 +228,14 @@ evalForCode(c:forCode):Expr := (
 	  fromvalue := eval(c.fromClause);
 	  when fromvalue is f:Integer do (
 	       if isInt(f) then j = toInt(f)
-	       else return printErrorMessage(c.fromClause,"expected a small integer"))
-	  else return printErrorMessage(c.fromClause,"expected an integer"));
+	       else return printErrorMessageE(c.fromClause,"expected a small integer"))
+	  else return printErrorMessageE(c.fromClause,"expected an integer"));
      if c.toClause != dummyCode then (
 	  tovalue := eval(c.toClause);
 	  when tovalue is f:Integer do (
 	       if isInt(f) then n = toInt(f)
-	       else return printErrorMessage(c.toClause,"expected a small integer"))
-	  else return printErrorMessage(c.toClause,"expected an integer"));
+	       else return printErrorMessageE(c.toClause,"expected a small integer"))
+	  else return printErrorMessageE(c.toClause,"expected an integer"));
      localFrame = Frame(localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
      while true do (
 	  if c.toClause != dummyCode && j > n then break;
@@ -249,7 +249,7 @@ evalForCode(c:forCode):Expr := (
 	       else if p == False then break
 	       else if p != True then (
 		    localFrame = localFrame.outerFrame;
-		    return printErrorMessage(c.whenClause,"expected true or false")));
+		    return printErrorMessageE(c.whenClause,"expected true or false")));
 	  if c.listClause != dummyCode then (
 	       b := eval(c.listClause);
 	       when b is err:Error do (
@@ -377,7 +377,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       )
 	  )
      else if desc.numparms != length(v)
-     then WrongNumArgs(model.parms,desc.numparms,length(v))
+     then WrongNumArgs(model.arrow,desc.numparms,length(v))
      else (
 	  if framesize == 0 then (
 	       recursiondepth = recursiondepth + 1;
@@ -442,7 +442,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
      desc := model.desc;
      framesize := desc.framesize;
      if desc.numparms != 1
-     then return printErrorMessage(model.parms, "expected " +tostring(desc.numparms)
+     then return printErrorMessageE(model.arrow, "expected " +tostring(desc.numparms)
 	  +" argument"
 	  +(if desc.numparms == 1 then "" else "s")
 	  +" but got 1"
@@ -505,7 +505,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  if evalSequenceHadError then evalSequenceErrorMessage else apply(c,v)
 	  )
      else if desc.numparms != length(cs)
-     then WrongNumArgs(model.parms,desc.numparms,length(cs))
+     then WrongNumArgs(model.arrow,desc.numparms,length(cs))
      else if recursiondepth > recursionlimit then RecursionLimit()
      else (
      	  previousFrame := c.frame;
@@ -628,7 +628,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 	  if desc.restargs
 	  then apply(c,Expr(Sequence(e0,e1)))
 	  else if desc.numparms != 2
-	  then WrongNumArgs(model.parms,desc.numparms,2)
+	  then WrongNumArgs(model.arrow,desc.numparms,2)
 	  else if recursiondepth > recursionlimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
@@ -699,7 +699,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	  if desc.restargs
 	  then apply(c,Expr(Sequence(e0,e1,e2)))
 	  else if desc.numparms != 3
-	  then WrongNumArgs(model.parms,desc.numparms,3)
+	  then WrongNumArgs(model.arrow,desc.numparms,3)
 	  else if recursiondepth > recursionlimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
@@ -991,7 +991,7 @@ export eval(c:Code):Expr := (
 	       when p is Error do p
 	       else if p == True then eval(c.thenClause)
 	       else if p == False then eval(c.elseClause)
-	       else printErrorMessage(c.predicate,"expected true or false"))
+	       else printErrorMessageE(c.predicate,"expected true or false"))
 	  is r:localSymbolClosureCode do (
 	       f := localFrame;
 	       nd := r.nestingDepth;
@@ -1112,7 +1112,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      when left
      is q:SymbolClosure do (
 	  if q.symbol.protected then (
-	       printErrorMessage(lhs, "assignment to protected variable '" + q.symbol.word.name + "'")
+	       printErrorMessageE(lhs, "assignment to protected variable '" + q.symbol.word.name + "'")
 	       )
 	  else (
 	       value := eval(rhs);
@@ -1127,8 +1127,8 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 		    o.numEntries = p.numEntries;
 		    left)
 	       is Error do y
-	       else printErrorMessage(rhs,"expected hash table on right"))
-	  else printErrorMessage(lhs,"encountered read only hash table"))
+	       else printErrorMessageE(rhs,"expected hash table on right"))
+	  else printErrorMessageE(lhs,"encountered read only hash table"))
      is l:List do (
 	  if l.mutable then (
 	       y := eval(rhs);
@@ -1136,10 +1136,10 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	       is p:List do ( l.v = copy(p.v); left)
 	       is s:Sequence do ( l.v = copy(s); left)
 	       is Error do y
-	       else printErrorMessage(rhs,"'<-' expected list or sequence on right"))
-	  else printErrorMessage(lhs,"'<-' encountered read-only list"))
+	       else printErrorMessageE(rhs,"'<-' expected list or sequence on right"))
+	  else printErrorMessageE(lhs,"'<-' encountered read-only list"))
      is Error do left
-     else printErrorMessage(lhs,"'<-' expected symbol or hash table on left")
+     else printErrorMessageE(lhs,"'<-' expected symbol or hash table on left")
      );
 setup(LeftArrowS,assigntofun);
 

@@ -36,8 +36,8 @@ currentFileName := setupvar("currentFileName", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
-     then printErrorMessage(f,prefix + ": " + err.message)
-     else printErrorMessage(f,prefix + ": --backtrace update-- ")
+     then printErrorMessageE(f,prefix + ": " + err.message)
+     else printErrorMessageE(f,prefix + ": --backtrace update-- ")
      );
 previousLineNumber := -1;
 Print := makeProtectedSymbolClosure("Print");
@@ -47,7 +47,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
      method := lookup(Class(g),methodname);
      if method == nullE 
-     then printErrorMessage(f,"no method for '" + methodname.symbol.word.name + "'")
+     then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else apply(method,g)
      );
 errorReportS := setupconst("errorReport",nullE);

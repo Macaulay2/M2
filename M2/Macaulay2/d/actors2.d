@@ -305,9 +305,9 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------
 
-errt (newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type as prospective class");
-errtt(newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type of HashTable as prospective class");
-errp (newParentCode:Code):Expr := printErrorMessage(newParentCode,"'new' expected a Type as prospective parent");
+errt (newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"'new' expected a Type as prospective class");
+errtt(newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"'new' expected a Type of HashTable as prospective class");
+errp (newParentCode:Code):Expr := printErrorMessageE(newParentCode,"'new' expected a Type as prospective parent");
 
 newfun(newClassCode:Code):Expr := (
      classExpr := eval(newClassCode);

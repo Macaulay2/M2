@@ -206,7 +206,7 @@ export functionDescription := {
      };
 export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := { 
-     parms:Code,			  -- just for display purposes -- replace with their position?
+     arrow:Token,			  -- just for display purposes
      body:Code, 
      desc:functionDescription
      };
