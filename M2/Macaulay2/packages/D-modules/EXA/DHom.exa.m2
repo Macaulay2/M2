@@ -43,7 +43,7 @@ Drank I
 (mingens singLocus I)_(0,0) == x*y*(x-1)*(y-1)*(x-y)
 RatSols(I, {x,y,x-1,y-1,x-y}, {10,1})
 
-------------------------- EXAMPLES forDHom ---------------------------
+------------------------- EXAMPLES for DHom ---------------------------
 -- Example 1: Simple ODE examples
 W = QQ[x, dx, WeylAlgebra => {x=>dx}]
 M = cokernel matrix{{x*(dx-1)^2}}
@@ -59,3 +59,13 @@ I = gkz(A, {2})
 J = substitute(gkz(A, {1}), ring I)
 B = DHom(I,J)
 (matrix{{B#0_(0,0)}})*(gens I)%(gens J)
+
+-- Fool-proof test: nonholomonic!
+W = QQ[x, dx, y, dy, WeylAlgebra => {x=>dx, y=>dy}]
+M = cokernel matrix{{dx}}
+N = cokernel matrix{{dx,dy}}
+DHom(M,N)
+DHom(N,M)
+
+
+

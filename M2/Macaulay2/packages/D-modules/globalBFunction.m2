@@ -8,7 +8,7 @@
 -- (method: definition 5.3.10 in Saito-Strumfels-Takayama)
 -----------------------------------------------------------------------
 
-globalBFunction = method(Options => {Strategy => TryGeneric})
+globalBFunction = method(Options => {Strategy => ReducedB})
 
 -- makes polynomial f monic (internal) 
 makeMonic := f -> ( if coefficientRing ring f === QQ 
@@ -84,6 +84,7 @@ globalRB (RingElement,Boolean) := RingElement => (f,isRed) -> (
 
      Ks := (coefficientRing W)[Ws_(ns-1)];
      bpoly = substitute(bpoly, Ks);
+     if isRed then bpoly = bpoly*(Ks_0+1);
      use W;
      bpoly
      )

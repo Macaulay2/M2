@@ -13,3 +13,7 @@ Ddual I
 J = substitute(gkz(A,{1,2},Vars=>Local), ring I)
 M = directSum(cokernel gens I, cokernel gens J)
 Ddual M
+
+-- non-holonomic!
+R = QQ[x,y,dx,dy, WeylAlgebra=>{x=>dx,y=>dy}]
+Ddual ideal dx

@@ -105,7 +105,8 @@ invPermute List := L -> (
 -- of the Weyl algebra sending x -> -dx, dx -> x.
 -- Input: RingElement f, Matrix m, Ideal I, or List L
 -- Output: Fourier transform of f, m, I, or L
-Fourier = M -> (
+Fourier = method()
+FourierLocal := M -> (
      W := ring M;
      if W.monoid.Options.WeylAlgebra === {}
      then error "expected a Weyl algebra";
@@ -125,9 +126,12 @@ Fourier = M -> (
      FMap = map(W, W, matrix {toList L});
      FMap M
      )
+Fourier RingElement := M -> (FourierLocal M)
+Fourier Ideal := M -> (FourierLocal M)
+Fourier Matrix := M -> (FourierLocal M)
 
-
-FourierInverse = M -> (
+FourierInverse = method()
+FourierInverseLocal := M -> (
      W := ring M;
      if W.monoid.Options.WeylAlgebra === {}
      then error "expected a Weyl algebra";
@@ -147,7 +151,11 @@ FourierInverse = M -> (
      FInvMap = map(W, W, matrix {toList L});
      FInvMap M
      )
-
+FourierInverse RingElement := M -> (FourierInverseLocal M)
+FourierInverse Ideal := M -> (FourierInverseLocal M)
+FourierInverse Matrix := M -> (FourierInverseLocal M)
+FourierInverse ChainComplex := M -> (FourierInverseLocal M)
+FourierInverse Module := M -> (cokernel FourierInverseLocal relations prune M)
 
 -- These routines compute the transposition automorphism, which is used
 -- to turn right modules to left modules and vice versa.  Currently slow.

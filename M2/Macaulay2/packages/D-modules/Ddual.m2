@@ -14,8 +14,9 @@ Ddual Module := M -> (
      W := ring M;
      if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";
-     -- if (not(isHolonomic I)) then
-     -- error "expected a holonomic module";
+     pInfo (1, "Ddual: holonomicity check ...");
+     if not isHolonomic M then
+     error "expected a holonomic module";
      createDpairs W;
      n := #W.dpairVars#0; 
      outputList := {};

@@ -120,7 +120,14 @@ time h = localCohom (ideal{x_1,x_2,x_3}, M,
      Strategy=>OaTa); 
 pruneLocalCohom h
 
-
+---------------------------------------------------
+-- Foolproof check 
+---------------------------------------------------
+W = QQ[X, dX, Y, dY, WeylAlgebra=>{X=>dX, Y=>dY}]
+I = ideal (X^2+Y^2, X*Y)
+M = cokernel dX
+Dtrace 1
+time localCohom(I,M)
 
 
 

@@ -257,7 +257,6 @@ Dintegration(Module, List) := options -> (M,w) -> (
      if nrW == 0 then Mout := restrictOut
      else Mout = hashTable apply(toList(0..d), i -> 
 	  (i => FourierInverse restrictOut#i) );     
-
      use W;
      Mout
      )     
