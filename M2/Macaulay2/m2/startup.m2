@@ -83,6 +83,8 @@ if firstTime then (
      String | ZZ := String => (s,i) -> concatenate(s,toString i);
      ZZ | String := String => (i,s) -> concatenate(toString i,s);
 
+     new HashTable from List := HashTable => (O,v) -> hashTable v;
+
      Manipulator = new Type of BasicList;
      Manipulator.synonym = "manipulator";
      new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f};
@@ -143,6 +145,7 @@ preload := true
 noloaddata := false
 nobanner := false;
 nosetup := false
+noinitfile := false
 interpreter := commandInterpreter
 
 getRealPath := fn -> (
@@ -202,7 +205,7 @@ usage := arg -> (
      << "    --help             print brief help message and exit" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --debug            enter command interpreter upon error" << newline
-     << "    --dumpdata         dump data and exit after parsing source code" << newline
+     << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
@@ -251,10 +254,10 @@ action := hashTable {
      "-h" => usage,
      "--" => obsolete,
      "-mpwprompt" => notyeterr,
-     "-q" => silence,					    -- implemented in setup.m2
+     "-q" => arg -> noinitfile = true,
      "--silent" => arg -> nobanner = true,
      "--debug" => arg -> debuggingMode = true,
-     "--dumpdata" => arg -> (noloaddata = true; if not preload then dump()),
+     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if not preload then dump()),
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
@@ -303,8 +306,6 @@ processCommandLineOptions := () -> (			    -- two passes, based on value of 'pre
 	  );
      )
 
----------------------------------
-
 if firstTime then processCommandLineOptions()
 preload = false
 
@@ -337,6 +338,11 @@ path = select(path, fileExists)
 
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
+addStartFunction (() -> if not debuggingMode then errorDepth = loadDepth = loadDepth + 1)
+addStartFunction (
+     () -> noinitfile or (
+	  tryLoad := fn -> if fileExists fn then (load fn; true) else false;
+	  tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")))
 runStartFunctions()
 errorDepth = loadDepth
 stopIfError = false					    -- this is also set in interp.d
