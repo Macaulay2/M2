@@ -5,9 +5,8 @@ load "statuscodes.m2"
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
 raw GroebnerBasis := G -> G.RawComputation
-status GroebnerBasis := opts -> G -> status raw G
-toString GroebnerBasis := g -> toString new FunctionApplication from { gb, unbag g.matrix }
-net GroebnerBasis := g -> net gens g
+status GroebnerBasis := opts -> G -> RawStatusCodes#(status raw G)
+toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[status: " | toString status g | "]"
 
 summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
 
@@ -121,14 +120,12 @@ elseSomething := method()
 elseSomething(Thing  ,Function) := (x,f) -> x
 elseSomething(Nothing,Function) := (x,f) -> f()
 
-showargs := (n,x) -> (<< n << x << endl; x)
-
 newGB := (f,type,opts) -> (
      G := new GroebnerBasis;
      G.matrix = Bag{f};
      G.ring = ring f;
      G.target = target f;
-     G.RawComputation = rawGB showargs("rawGB", (
+     G.RawComputation = rawGB (
 	  raw f,
 	  type.Syzygies,
 	  toEngineNat type.SyzygyRows,
@@ -137,12 +134,12 @@ newGB := (f,type,opts) -> (
 	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
 	  processAlgorithm opts.Algorithm,
 	  processStrategy opts.Strategy
-	  ));
+	  );
      f.cache#type = G;			  -- do this last, in case of an interrupt
      G)
 
 setStopGB := (G,opts) -> (
-     rawGBSetStop showargs("rawGBSetStop", (G.RawComputation,
+     rawGBSetStop (G.RawComputation,
 	  opts.StopBeforeComputation,
 	  opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit,
 	  if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
@@ -153,7 +150,7 @@ setStopGB := (G,opts) -> (
      	  toEngineNat opts.SubringLimit,
      	  toEngineNat opts.StopWithMinimalGenerators,
 	  {}						    -- not used, just for resolutions
-	  ));
+	  );
      )
 
 checkArgGB := f -> (
@@ -177,7 +174,7 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      setStopGB(G,opts);
      recordOptions(G,opts);
      rawStartComputation G.RawComputation;
-     f.cache.type = G;
+     f.cache#type = G;
      G)
 
 syz = method(Options => options gb)			    -- we seem to be ignoring these options!!

@@ -2070,6 +2070,18 @@ export rawGBSetStop(e:Expr):Expr := (
      );
 setupfun("rawGBSetStop", rawGBSetStop);
 
+export rawStatus1(e:Expr):Expr := (
+     when e is G:RawComputation do 
+     toExpr(Ccode(int, "rawStatus1(", "(Computation *)", G, ")" ))
+     else WrongArg("a raw Groebner basis computation"));
+setupfun("rawStatus1", rawStatus1);
+
+export rawStatus2(e:Expr):Expr := (
+     when e is G:RawComputation do 
+     toExpr(Ccode(int, "rawStatus2(", "(Computation *)", G, ")" ))
+     else WrongArg("a raw Groebner basis computation"));
+setupfun("rawStatus1", rawStatus1);
+
 export rawGBGetMatrix(e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBGetMatrix(", "(Computation *)", G, ")" ))
