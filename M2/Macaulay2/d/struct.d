@@ -214,7 +214,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	  -- assume numparms == 1
      	  if (!desc.hasClosure) && framesize < length(stash) then (
 	       f := stash.framesize;
-	       previousStashedFrame := f.next;
+	       previousStashedFrame := f.outerFrame;
 	       if f == previousStashedFrame then (
 		    f = Frame(previousFrame,desc.scopenum,
 		    	 new Sequence len framesize do (
@@ -224,7 +224,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    )
 	       else (
 		    stash.framesize = previousStashedFrame;
-		    f.next = previousFrame;
+		    f.outerFrame = previousFrame;
 		    f.scopenum = desc.scopenum;
 		    f.values.0 = v;
 		    );
@@ -235,7 +235,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
 	       foreach x in f.values do x = nullE;
-	       f.next = stash.framesize;
+	       f.outerFrame = stash.framesize;
 	       stash.framesize = f;
 	       when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 	       )
@@ -268,7 +268,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	  else (
      	       if (!desc.hasClosure) && framesize < length(stash) then (
 		    f := stash.framesize;
-		    previousStashedFrame := f.next;
+		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
 			 f = Frame(previousFrame,desc.scopenum,
 			      new Sequence len framesize do (
@@ -278,7 +278,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 			 )
 		    else (
 			 stash.framesize = previousStashedFrame;
-			 f.next = previousFrame;
+			 f.outerFrame = previousFrame;
 			 f.scopenum = desc.scopenum;
 			 foreach x at i in v do f.values.i = x;
 			 );
@@ -289,7 +289,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
-		    f.next = stash.framesize;
+		    f.outerFrame = stash.framesize;
 		    stash.framesize = f;
 		    when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 		    )
@@ -329,7 +329,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
      recursiondepth = recursiondepth + 1;
      if (!desc.hasClosure) && framesize < length(stash) then (
 	  f := stash.framesize;
-	  previousStashedFrame := f.next;
+	  previousStashedFrame := f.outerFrame;
 	  if f == previousStashedFrame then (
 	       f = Frame(previousFrame,desc.scopenum,
 		    new Sequence len framesize do (
@@ -338,7 +338,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	       )
 	  else (
 	       stash.framesize = previousStashedFrame;
-	       f.next = previousFrame;
+	       f.outerFrame = previousFrame;
 	       f.scopenum = desc.scopenum;
 	       f.values.0 = e;
 	       );
@@ -347,7 +347,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  ret := eval(model.body);
 	  localFrame = saveLocalFrame;
 	  foreach x in f.values do x = nullE;
-	  f.next = stash.framesize;
+	  f.outerFrame = stash.framesize;
 	  stash.framesize = f;
 	  recursiondepth = recursiondepth - 1;
 	  when ret is err:Error do backtrFunction(ret,report(c,e)) else ret
@@ -409,7 +409,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  else (
      	       if (!desc.hasClosure) && framesize < length(stash) then (
 		    f := stash.framesize;
-		    previousStashedFrame := f.next;
+		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
 		    	 haderror := false;
 			 f = Frame(previousFrame,desc.scopenum,
@@ -429,7 +429,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 			 )
 		    else (
 			 stash.framesize = previousStashedFrame;
-			 f.next = previousFrame;
+			 f.outerFrame = previousFrame;
 			 f.scopenum = desc.scopenum;
 			 foreach code at i in cs do (
 			      codevalue := eval(code);
@@ -447,7 +447,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
-		    f.next = stash.framesize;
+		    f.outerFrame = stash.framesize;
 		    stash.framesize = f;
 		    ret
 		    )
@@ -529,7 +529,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 	       framesize := desc.framesize;
 	       if (!desc.hasClosure) && framesize < length(stash) then (
 		    f := stash.framesize;
-		    previousStashedFrame := f.next;
+		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
 			 f = Frame(previousFrame,desc.scopenum,
 			      new Sequence len framesize do (
@@ -541,7 +541,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 			 )
 		    else (
 			 stash.framesize = previousStashedFrame;
-			 f.next = previousFrame;
+			 f.outerFrame = previousFrame;
 			 f.scopenum = desc.scopenum;
 			 f.values.0 = e0;
 			 f.values.1 = e1;
@@ -555,7 +555,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
-		    f.next = stash.framesize;
+		    f.outerFrame = stash.framesize;
 		    stash.framesize = f;
 		    ret
 		    )
@@ -602,7 +602,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	       framesize := desc.framesize;
 	       if (!desc.hasClosure) && framesize < length(stash) then (
 		    f := stash.framesize;
-		    previousStashedFrame := f.next;
+		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
 			 f = Frame(previousFrame,desc.scopenum,
 			      new Sequence len framesize do (
@@ -615,7 +615,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 			 )
 		    else (
 			 stash.framesize = previousStashedFrame;
-			 f.next = previousFrame;
+			 f.outerFrame = previousFrame;
 			 f.scopenum = desc.scopenum;
 			 f.values.0 = e0;
 			 f.values.1 = e1;
@@ -630,7 +630,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
-		    f.next = stash.framesize;
+		    f.outerFrame = stash.framesize;
 		    stash.framesize = f;
 		    ret
 		    )

@@ -48,6 +48,7 @@ mutablefun(e:Expr):Expr := Expr(toExpr(
      	  is x:List do x.mutable
      	  is s:SymbolClosure do !s.symbol.protected
      	  is x:Database do x.mutable
+	  is Dictionary do true
      	  else false));
 setupfun("mutable",mutablefun);
 export equal(lhs:Expr,rhs:Expr):Expr;

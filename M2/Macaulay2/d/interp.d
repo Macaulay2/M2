@@ -29,7 +29,7 @@ use texmacs;
 
 import dirname(s:string):string;
 
-setvalue(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
+setvalue(x:Symbol,y:Expr):void := outermostGlobalFrame.values.(x.frameindex) = y;
 getvalue(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 currentFileName := setupvar("currentFileName", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
