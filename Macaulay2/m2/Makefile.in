@@ -54,7 +54,7 @@ tutorials.m2 : $(TUTORIALS)
 	@ ls $^ |awk '{printf "load \"%s\"\n", $$0}' >$@
 
 ################################# cache
-cache cache/doc ../tutorial/final/cache/doc :; mkdir $@
+cache cache/doc ../tutorial/final/cache/doc :; mkdir -p $@
 clean ::; rm -rf cache
 initialize :: cache cache/doc ../tutorial/final/cache/doc
 ################################# temporary directories for examples

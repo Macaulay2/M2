@@ -915,7 +915,7 @@ M2_stringarray system_wordexp(M2_string s) {
   wordfree(&buf);
   return val;
 #else
-  fprintf(stderr,"warning: wordexp() not installed on your system");
+  fprintf(stderr,"warning: wordexp() not installed on your system\n");
   return NULL;
 #endif
 }
