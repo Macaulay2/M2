@@ -261,7 +261,7 @@ package = method ()
 package Dictionary := d -> (
      if currentPackage =!= null and (currentPackage.Dictionary === d or currentPackage#?"private dictionary" and currentPackage#"private dictionary" === d)
      then currentPackage 
-     else scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
+     else scan(values PackageDictionary, pkg -> if class value pkg === Package and (value pkg).Dictionary === d then break (value pkg))
      )
 package Thing := x -> (
      d := dictionary x;

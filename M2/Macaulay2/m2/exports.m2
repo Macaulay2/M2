@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+     	symbol Email,
         symbol primaryDecomposition,
      	symbol MutableMatrix,
 	symbol rowSwap,

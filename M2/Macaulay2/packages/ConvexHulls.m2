@@ -356,9 +356,42 @@ convexHull = method()
 
 convexHull(Matrix) := (Z) -> (
      R := ring target Z;
-     Z = addRowOfOne Z;
+     Z = addRowOfOnes Z;
      polarCone polarCone(Z)
      )
+
+--------------
+-- Examples --
+--------------
+
+addRowOfOnes = (m) -> (
+    n := numgens source m;
+	m2 := map(ZZ^1, ZZ^n, {toList(n:1)});
+	m2 || m)
+
+addColumns = (m) -> (
+    n := numgens source m;
+	R := ring m;
+	ones := map(R^n, R^1, (i,j) -> 1);
+	m * ones)
+	
+permutations = (n) -> (
+    if #n === 1 then {n}
+	else (
+	    flatten apply(#n, i -> (
+	        m := drop(n,{i,i});
+			apply(permutations m, p -> prepend(n#i,p))))))
+		
+cyclicPolytope = (d,n) -> map(ZZ^(d+1), ZZ^n, (i,j) -> j^i)
+
+permutahedron = (n) -> (
+    addRowOfOnes transpose matrix permutations toList(1..n))
+
+hypersimplex = (d,k) -> (
+    x := subsets(d+1,k);
+	addRowOfOnes transpose matrix apply(x, s -> (
+	    x = set s;
+	    apply(d+1, i -> if member(i,x) then 1 else 0))))
 
 beginDocumentation()
 
@@ -608,3 +641,6 @@ scan(entries transpose P#0, e -> (C = delete(e, C)));
 assert(C == {})
 
 ------------------------------------------------------------
+needsPackage "ConvexHulls"
+m = matrix{{1,2,0},{2,1,-3}}
+convexHull m
