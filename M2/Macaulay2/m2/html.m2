@@ -321,7 +321,7 @@ installPackage Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = if pkg === Main then "Macaulay2" else pkg.name;
      buildDirectory = minimizeFilename(o.Prefix | "/");
-     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Version|"/";
+     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
      buildPackage = minimizeFilename buildPackage;
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
 
