@@ -46,7 +46,7 @@ document {
      EXAMPLE {
 	  "coefficientRing(ZZ/101[a][b])",
       	  "ultimate(coefficientRing,ZZ/101[a][b])"
-	  },}
+	  }}
 document {
      Key => isCommutative,
      Headline => "whether a ring is commutative",
@@ -225,7 +225,7 @@ document {
 	  "z = 3-4*ii",
       	  "z^5",
       	  "1/z",
-	  },}
+	  }}
 document {
      Key => ii,
      Headline => "square root of -1"}
@@ -308,7 +308,7 @@ document {
       	  "exponents (f = x^2 - 7 + x*y*z^11 + y)",
 	  "leadMonomial f",
 	  "exponents leadMonomial f"
-	  },}
+	  }}
 document {
      Key => degreesRing,
      Headline => "the ring of degrees",
@@ -342,7 +342,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
       	  "standardForm (x^2 - 7 + x*y*z^11 + y)"
-	  },}
+	  }}
 document {
      Key => listForm,
      Headline => "convert to list form",
@@ -357,7 +357,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
       	  "listForm (x^2 - 7 + x*y*z^11 + y)"
-	  },}
+	  }}
 document {
      Key => WeylAlgebra,
      Headline => "make a Weyl algebra",
@@ -778,7 +778,7 @@ document {
      "table(m,n,f) -- yields, when m and n are integers, a table of size m by n
      whose entries are obtained by evaluating f() repeatedly.",
      PARA,
-     "See also ", TO "isTable", ", and ", TO "subtable", ".",}
+     "See also ", TO "isTable", ", and ", TO "subtable", "."}
 document {
      Key => applyTable,
      Headline => "apply a function to elements of a table",
@@ -796,7 +796,7 @@ document {
      EXAMPLE {
 	  "m = table(5,5,identity)",
       	  "subtable({1,3,4},toList(2..4), m)"
-	  },}
+	  }}
 document {
      Key => transpose,
      Headline => "transpose",
@@ -876,7 +876,7 @@ document {
 	  TO (fittingIdeal, ZZ, Module),
 	  TO (isSubset, Module, Module),
 	  TO (exteriorPower,ZZ,Module),
-	  },}
+	  }}
 document {
      Key => isModule,
      Headline => "whether something is a module."}
@@ -958,7 +958,7 @@ document {
 document {
      Key => (isIdeal, Module),
      Usage => "b = isIdeal(M)",
-     Inputs => {"M" => null,},
+     Inputs => {"M" => null},
      Outputs => {"b" => {"whether ", TT "M", " is evidently an ideal."}},
      "No computation is done.  This routine checks the given description
      of ", TT "M", " to see if it is an ideal.",
@@ -1000,21 +1000,20 @@ document {
 	  "R = ZZ/101[x]",
       	  "image matrix {{2,x},{1,5}} == R^2",
       	  "image matrix {{2,x},{0,5}} == R^2"
-	  },}
+	  }}
 document {
      Key => (symbol ==, Ideal, ZZ),
 	  
      Usage => "I == n",
-     Inputs => {"I" => null,},
-     Outputs => {"n" => "either 0, or 1."},
-     "If n==1, then determines whether I is the unit ideal.
-     If n==0, then determines whether I is the zero ideal.  Any other value
-     for n is an error.",
+     Inputs => {"I" => null,"n" => "either 0, or 1."},
+     Outputs => {{"If ", TT "n==1", ", then determines whether ", TT "I", " is the unit ideal.
+     	       If ", TT "n==0", ", then determines whether ", TT "I", " is the zero ideal.  Any other value
+     	       for ", TT "n", " is an error."}},
      EXAMPLE {
 	  "R = QQ[x];",
       	  "ideal(x^2,x+1) == 1",
       	  "ideal(0_R) == 0"
-	  },}
+	  }}
 TEST "
 R = ZZ/101[a,b,c]
 M = cokernel matrix {{a,b^2,c^3}}
@@ -1141,7 +1140,7 @@ document {
       	  "p = vars R;",
       	  "rank kernel p",
       	  "rank cokernel p"
-	  },}
+	  }}
 document {
      Key => coverMap,
      Headline => "get the map to the module given by the generators of a module",
@@ -1252,7 +1251,7 @@ document {
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
 	  TO (homology, Matrix, Matrix),
-	  },}
+	  }}
 document {
      Key => getMatrix,
      Headline => "get a matrix from the engine's stack",
