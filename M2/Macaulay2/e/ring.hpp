@@ -12,6 +12,7 @@
 class ZZ;
 class QQ;
 class RR;
+class CC;
 class Z_mod;
 class GF;
 class FractionField;
@@ -379,6 +380,7 @@ public:
 extern ZZ *globalZZ;
 extern QQ *globalQQ;
 extern RR *globalRR;
+extern CC *globalCC;
 #endif
 
 // Local Variables:

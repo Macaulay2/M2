@@ -431,7 +431,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	    result1->array[next1++] = convert(P,j.getItem());
 	  }
 	  enter_M2 b;
-	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false, false);
+	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);
      }
      
      return result;

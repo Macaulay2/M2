@@ -433,8 +433,8 @@ void HermiteComputation::matrix_lift(const Matrix *m,
 				     MatrixOrNull **result_remainder,
 				     MatrixOrNull **result_quotient)
 {
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
-  MatrixConstructor mat_quotient(syz->rows(), m->cols(), false);
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor mat_quotient(syz->rows(), m->cols());
   if (m->n_rows() != gens->rows()->rank()) {
        ERROR("expected matrices to have same number of rows");
        *result_remainder = 0;

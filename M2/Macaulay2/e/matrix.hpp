@@ -17,23 +17,13 @@ class Matrix : public object
   int *_degree_shift;		// An element of the degree monoid
   array<vec> _entries;
 
-  Matrix *rowOps; // These are NULL, unless they have been set by setRowChangeMatrix
-                  // or setColumnChangeMatrix
-  Matrix *colOps; // Transpose of column matrix
-
   friend class FreeModule;
 private:
   friend class MatrixConstructor;
   Matrix(const FreeModule *rows, 
 	 const FreeModule *cols,
 	 const int *degree_shift,
-	 vector<vec,gc_alloc> & entries,
-	 bool is_mutable_flag);
-
-
-#if 0
-    void initialize(const FreeModule *r, const FreeModule *c, const int *deg);
-#endif
+	 vector<vec,gc_alloc> & entries);
 
   static bool make_sparse_vecs(MatrixConstructor &mat,
 			       const FreeModule *target,
@@ -50,70 +40,34 @@ private:
 		       const FreeModule *F, vec &vmonom) const;
   int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
 
-#if 0  
-  void k_basis0(int topvar) const;
-  void k_basis1(int topvar) const;
-  void k_basis_insert() const;
-
-
-  void symm1(Matrix * &result, 
-	     vec f,	       // product so far generated
-	     int lastn,        // can use lastn..n_cols()-1 in product
-	     int pow) const;   // remaining power to take
-#endif
-
-#if 0
-  void freeze(bool is_mutable);
-
-  Matrix(const FreeModule *r, 
-	 const FreeModule *c,
-	 const int *deg);
-
-  Matrix(const FreeModule *r, 
-	 const FreeModule *c);
-
-  Matrix(const FreeModule *r);
-
-  Matrix(const MonomialIdeal * mi);
-#endif
 public:
-  /* The following 4 routines will go away */
-
-  /*****************************************/
-
   static const MatrixOrNull * make(const FreeModule *target,
 				   int ncols,
-				   const RingElement_array *M,
-				   M2_bool is_mutable);
+				   const RingElement_array *M);
 
   static const MatrixOrNull * make(const FreeModule *target,
 				   const FreeModule *source,
 				   const M2_arrayint deg,
-				   const RingElement_array *M,
-				   M2_bool is_mutable);
+				   const RingElement_array *M);
 
   static const MatrixOrNull * make_sparse(const FreeModule *target,
 					  int ncols,
 					  const M2_arrayint rows,
 					  const M2_arrayint cols,
-					  const RingElement_array *entries,
-					  M2_bool is_mutable);
+					  const RingElement_array *entries);
 
   static const MatrixOrNull * make_sparse(const FreeModule *target,
 					  const FreeModule *source,
 					  const M2_arrayint deg,
 					  const M2_arrayint rows,
 					  const M2_arrayint cols,
-					  const RingElement_array *entries,
-					  M2_bool is_mutable);
+					  const RingElement_array *entries);
 
   const MatrixOrNull * remake(const FreeModule *target,
-				 const FreeModule *source,
-				 const M2_arrayint deg,
-				 M2_bool is_mutable) const;
+			      const FreeModule *source,
+			      const M2_arrayint deg) const;
 
-  const MatrixOrNull * remake(const FreeModule *target,
-				 M2_bool is_mutable) const;
+  const MatrixOrNull * remake(const FreeModule *target) const;
 
   static const Matrix * make(const MonomialIdeal * mi);
 
@@ -129,71 +83,11 @@ public:
   /*****************************************/
 
   /* The non-const versions of these will go away */
-  //  FreeModule *rows() { return _rows; }
-  //  FreeModule *cols() { return _cols; }
   const FreeModule *rows() const { return _rows; }
   const FreeModule *cols() const { return _cols; }
 
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
-
-  // Operations permitted on matrices which are mutable or not decided.
-  /*********************************************************************/
-
-  bool error_column_bound(int c) const;
-  bool error_row_bound(int r) const;
-
-  bool get_entry(int r, int c, ring_elem &result) const;
-  // Returns false if (r,c) is out of range.
-
-  bool get_nonzero_entry(int r, int c, ring_elem &result) const;
-  // Returns false if (r,c) entry is either zero or out of range.
-  // Otherwise, returns true, and sets result to be the matrix entry at (r,c)
-
-  bool setRowChangeMatrix(Matrix *rops);
-  // returns false if 'rops' is not appropriate, or 'this' is not mutable.
-
-  bool setColumnChangeMatrix(Matrix *cops);
-  // returns false if 'cops' is not appropriate, or 'this' is not mutable.
-
-  Matrix *getRowChangeMatrix();
-
-  Matrix *getColumnChangeMatrix();
-
-  void append_column(vec v, const int *d);
-  // If 'this' is mutable, add a new column.  If immutable, do NOTHING.
-
-  void append_column(vec v);
-  // If 'this' is mutable, add a new column.  If immutable, do NOTHING.
-
-
-  // The following routines return false if one of the row or columns given
-  // is out of range.
-
-  bool set_entry(int r, int c, const ring_elem a);
-  // Returns false if (r,c) is out of range, or the ring of a is wrong.
-
-  bool interchange_rows(int i, int j, bool do_recording=true);
-  /* swap rows: row(i) <--> row(j) */
-
-  bool interchange_columns(int i, int j, bool do_recording=true);
-  /* swap columns: column(i) <--> column(j) */
-
-  bool scale_row(ring_elem r, int i, bool opposite_mult, bool do_recording=true);
-  /* row(i) <- r * row(i) */
-
-  bool scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording=true);
-  /* column(i) <- r * column(i) */
-
-  bool row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true);
-  /* row(i) <- row(i) + r * row(j) */
-
-  bool column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true);
-  /* column(i) <- column(i) + r * column(j) */
-
-  ring_elem dot_product(int i, int j, ring_elem &result) const;
-
-  ///////////////////////////////////////////
 
   // The degree shift
   const int *degree_shift() const { return _degree_shift; }
@@ -214,8 +108,8 @@ public:
   Matrix *mult(const Matrix *m, bool opposite_mult) const;
   Matrix *concat(const Matrix &m) const;
 
-  static Matrix *identity(const FreeModule *F, bool is_mutable_flag);
-  static MatrixOrNull *zero(const FreeModule *F, const FreeModule *G, bool is_mutable_flag);
+  static Matrix *identity(const FreeModule *F);
+  static MatrixOrNull *zero(const FreeModule *F, const FreeModule *G);
 
   MatrixOrNull *koszul(int p) const;
   static MatrixOrNull *koszul(const Matrix *rows, const Matrix *cols);
@@ -300,8 +194,7 @@ public:
   static Matrix *random(const Ring *R, 
 			int r, int c, 
 			double fraction_non_zero, 
-			int special_type, // 0: general, 1:upper triangular, others?
-			M2_bool is_mutable_flag);
+			int special_type); // 0: general, 1:upper triangular, others?
     
   void text_out(buffer &o) const;
 };

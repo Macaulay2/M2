@@ -275,7 +275,7 @@ Matrix *res_comp::make(int level) const
 {
   const FreeModule *F = free_of(level-1);
   const FreeModule *G = free_of(level);
-  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  MatrixConstructor result(F, G, NULL);
 
   int n = 0;
   if (G == 0) return result.to_matrix();
@@ -321,7 +321,7 @@ Matrix *res_comp::make_minimal(int i) const
 {
   const FreeModule *F = minimal_free_of(i-1);
   const FreeModule *G = minimal_free_of(i);
-  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  MatrixConstructor result(F, G, NULL);
   if (i < 0 || i > length_limit) return result.to_matrix();
   array<res_pair *> elems;
 

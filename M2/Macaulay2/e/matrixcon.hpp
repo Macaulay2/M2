@@ -19,12 +19,10 @@ class MatrixConstructor
                        // immutable, then no more changes are allowed.
 
   const int *deg;
-  bool will_be_mutable;
 public:
   MatrixConstructor();
-  MatrixConstructor(const FreeModule *target, int ncols, bool is_mutable);
+  MatrixConstructor(const FreeModule *target, int ncols);
   MatrixConstructor(const FreeModule *target, const FreeModule *source, 
-		    bool is_mutable,
 		    const int *deg = 0);
   
   // The copy constructor just does the default thing: copy over all items.

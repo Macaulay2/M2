@@ -73,6 +73,7 @@ INTERFACE = \
 	monideal \
 	monoid2 \
 	monomial \
+	mutablemat \
 	ntuple \
 	polyring \
 	pfaff \
@@ -111,7 +112,6 @@ COMMANDS = \
         gbnod \
         freemod2 \
 	engine \
-	x_factor \
 	factor \
 	x_monom \
 	x_monoid \
@@ -123,7 +123,8 @@ COMMANDS = \
 	x_mat \
 	x_monideal \
 	x_gb \
-	x_ringmap
+	x_ringmap \
+	x_mutablemat
 
 COMMANDS_REDO = \
 	x_monoid \

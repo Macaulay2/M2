@@ -1402,9 +1402,11 @@ void gbA::insert(POLY f, gbelem_type minlevel)
       // and append it as the last column of _hilb_matrix.
 
       ring_elem a = originalR->make_flat_term(originalR->Ncoeffs()->one(), g->g.f->monom);
+#warning "I BROKE hilb_matrix!!"
+#if 0
       _hilb_matrix->append_column(0);
       _hilb_matrix->set_entry(g->g.f->comp-1,_hilb_matrix->n_cols()-1, a);
-      
+#endif      
       if (_use_hilb)
 	{
 	  _hilb_new_elems = true;
@@ -1637,7 +1639,10 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
   _use_hilb = true;
   _hilb_new_elems = true;
 
+#warning "I BROKE hilb_matrix here too"
+#if 0
   _hilb_matrix = const_cast<Matrix *>(Matrix::make(_F, 0, 0, true));
+#endif
   return this;
 }
 
@@ -1728,7 +1733,7 @@ const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
 
 #warning "NEEDS WORK!!!"
 
-  MatrixConstructor red(m->rows(), m->cols(), false, m->degree_shift());
+  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1766,8 +1771,8 @@ void gbA::matrix_lift(const Matrix *m,
       return;
   }
 
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
-  MatrixConstructor mat_quotient(_Fsyz, m->cols(), false);
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor mat_quotient(_Fsyz, m->cols());
 
   const Ring *K = R->get_flattened_coefficients();
   for (int i=0; i<m->n_cols(); i++)

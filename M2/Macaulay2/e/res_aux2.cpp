@@ -252,7 +252,7 @@ Matrix *res2_comp::make(int level) const
 {
   const FreeModule *F = free_of(level-1);
   const FreeModule *G = free_of(level);
-  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  MatrixConstructor result(F, G, NULL);
   //  Matrix *result = new Matrix(free_of(level-1), free_of(level));
 
   int n = 0;
@@ -296,7 +296,7 @@ Matrix *res2_comp::make_minimal(int i) const
 {
   const FreeModule *F = minimal_free_of(i-1);
   const FreeModule *G = minimal_free_of(i);
-  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  MatrixConstructor result(F, G, NULL);
   if (i <= 0 || i >= resn.length()-1) return result.to_matrix();
 
   array<res2_pair *> elems;
