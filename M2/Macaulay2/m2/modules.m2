@@ -424,8 +424,6 @@ cover(Module) := Module => (M) -> (
      else if M.?relations then M.relations.target
      else M)
 
-coverMap(Module) := Matrix => (M) -> map(M, cover M, gens M)
-
 super(Module) := Module => (M) -> (
      if M.?generators then (
      	  if M.?relations then cokernel M.relations

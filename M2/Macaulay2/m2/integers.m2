@@ -84,3 +84,5 @@ ceiling = x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
+
+isConstant ZZ := i -> true

@@ -3,10 +3,11 @@ I = ideal 0_R
 assert ( decompose I == {I} )
 assert ( decompose ideal 1_R == {} )
 S = R / ((a+b)*(a^2+b))
+I = ideal 0_S
 assert (
-     decompose ideal 0_S == {ideal(a^2+b), ideal(a+b)} 
+     decompose I == {ideal(a^2+b), ideal(a+b)} 
      or
-     decompose ideal 0_S == {ideal(a+b), ideal(a^2+b)} 
+     decompose I == {ideal(a+b), ideal(a^2+b)} 
      )
 
 A = ZZ/101[a,b,c]
@@ -15,7 +16,7 @@ irreducibleCharacteristicSeries I
 decompose I
 assert ( decompose I == { I } )
 
-A = QQ[a]
+A = QQ[a,b,c]
 I = ideal (b^2 - 4*a*c)
 decompose I
 assert ( decompose I == { I } )
@@ -36,6 +37,8 @@ assert( # s == 3 )
 assert( value s == h )
 
 
+h = symbol h
+
 A = ZZ/103[a..e,h]
 I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      a*b*c + b*c*d + c*d*e + d*e*a + e*a*b,
@@ -53,6 +56,10 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      )
 decompose I
 assert ( 75 == # decompose I )
+
+end
+
+-- we don't have enough time to test this one
 
 A = QQ[a..e]
 I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,

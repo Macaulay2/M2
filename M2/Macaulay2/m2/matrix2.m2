@@ -25,9 +25,10 @@ trim QuotientRing := options -> (R) -> (
      A := ring f;
      A/(trim(ideal f,options)))
 trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = (
-     if isFreeModule M then M
+     if isFreeModule M or not isHomogeneous M
+     then M
      else (
-          -- this can help sometimes, even if M is *not* homogeneous
+          -- this used to help sometimes, even if M is *not* homogeneous
 	  g := mingens(M,options);
 	  relns := if M.?relations then mingens(image M.relations,options);
 	  N := (
@@ -182,22 +183,34 @@ homogenize(Vector, RingElement) := Vector => (f,n) -> (
     homogenize(f,n,wts)
     )
 
-coefficients(List, Matrix) := (v,m) -> (
+oldCoefficients(List, Matrix) := (v,m) -> (
     sendgg(ggPush m, ggPush v, ggcoeffs); 
     m1 := getMatrix ring m; 
     {m1, getMatrix ring m})
 
-coefficients(List, RingElement) := (v,m) -> (
+oldCoefficients(List, RingElement) := (v,m) -> (
      f := matrix{{m}};
      sendgg(ggPush f, ggPush v, ggcoeffs); 
      m1 := getMatrix ring m; 
      {m1, getMatrix ring m})
 
-coefficients(Matrix) := 
-coefficients(RingElement) := (m) -> (
+oldCoefficients(Matrix) := 
+oldCoefficients(RingElement) := (m) -> (
      R := ring m;
      n := numgens R;
      coefficients(splice {0 .. n-1}, m))
+
+coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
+
+coefficients(List, Matrix) := (v,m) -> (
+     R := ring m;
+     v = splice v;
+     sendgg(ggPush m, ggPush v, ggcoeffs); 
+     {getMatrix R, getMatrix R})
+
+coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
+
+coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
 
 terms RingElement := f -> (
      s := coefficients f;

@@ -1,4 +1,4 @@
-if getenv "USER" == "dan" then exit 0
+-- if getenv "USER" == "dan" then exit 0
 
 A = Schur 4
 f = A_{1}

@@ -1,4 +1,4 @@
-if getenv "USER" == "dan" then exit 0
+-- if getenv "USER" == "dan" then exit 0
 
 -- Date: Mon, 30 Oct 2000 17:34:09 -0700 (MST)
 -- From: Anurag Singh <singh@math.utah.edu>
