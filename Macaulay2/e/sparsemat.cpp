@@ -526,7 +526,9 @@ void SparseMutableMatrix::setSizes(int c_lo, int c_hi, int *rowSize, int *colSiz
 void SparseMutableMatrix::reduce_pivots()
 {
   int nrows = n_rows();
+  if (nrows == 0) return;
   int ncols = n_cols();
+  if (ncols == 0) return;
   const Ring *K = get_ring();
   ring_elem one = K->one();
   ring_elem minus_one = K->minus_one();

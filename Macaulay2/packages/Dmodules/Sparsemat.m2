@@ -7,7 +7,7 @@ reduceCompress Matrix := (m) -> (
      R := ring m;
      msparse := rawMutableMatrix raw m;
      rawReduceByPivots msparse;
-     mout := compress map(R,msparse);
+     mout := compress map(R,rawMatrix msparse);
      colCounter := numgens source mout - 1;
      rowCounter := numgens target mout - 1;
      --if (mout == id_(target mout)) then (mout = null)
