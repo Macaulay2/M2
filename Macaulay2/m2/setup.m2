@@ -27,6 +27,7 @@ GlobalReleaseHook Manipulator := (X,x) -> remove(Symbols,x)
 
 Manipulator Nothing := (m,null) -> null
 File << Manipulator := (o,m) -> m#0 o
+List << Manipulator := (o,m) -> (scan(o, o -> m#0 o); o)
 Nothing << Manipulator := (null,m) -> null
 
 oldclose := close

@@ -686,3 +686,27 @@ document { browse,
      can visit them.  One of the menu items allows the user to go back to 
      re-examine the previous item."
      }
+
+document { showUserStructure,
+     TT "showUserStructure", " -- a command which displays the structure of 
+     types defined by the user and assigned to global variables.",
+     PARA,
+     "Each such class is displayed to the right of its parent.",
+     PARA,
+     "A type is an instance ", TO "Type", ".",
+     SEEALSO { "showStructure", "parent"}
+     }
+
+
+document { showStructure,
+     TT "showStructure", " -- a command which displays the structure of types
+     assigned to global variables.",
+     BR, NOINDENT,
+     TT "showStructure (X,Y,...)", " -- a command which displays the structure 
+     of the types specified.",
+     PARA,
+     "Each such type is displayed to the right of its parent.",
+     PARA,
+     "A type is an instance ", TO "Type", ".",
+     SEEALSO { "showUserStructure", "parent"}
+     }

@@ -250,6 +250,8 @@ document { "debugging",
 	  (TO "peek2", "            -- print contents of something to a certain depth"),
 	  (TO "profile", "          -- record run times for functions"),
 	  (TO "shield", "           -- shield interpreted code from interrupts"),
+	  (TO "showStructure", "    -- show class structure"),
+	  (TO "showUserStructure", "-- show user's class structure"),
 	  (TO "try", "              -- catching errors"),
 	  (TO "userSymbols", "      -- list global variables defined by user")
 	  },

@@ -767,3 +767,10 @@ toString Option := z -> concatenate splice (
      " => ",
      if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
      )
+
+-----------------------------------------------------------------------------
+oldvalue := value
+erase quote value
+value = method()
+value Symbol := value String := oldvalue
+

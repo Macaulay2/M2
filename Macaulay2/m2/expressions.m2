@@ -2,11 +2,6 @@
 
 precedence = method(SingleArgumentDispatch=>true)
 
-oldvalue := value
-erase quote value
-value = method()
-value Symbol := value String := oldvalue
-
 -- local variables
 local PowerPrecedence
 EmptyName := quote EmptyName
@@ -1031,6 +1026,7 @@ mathML QQ := i -> concatenate(
 mathML Thing := x -> mathML expression x
 
 File << Thing := (o,x) -> printString(o,net x)
+List << Thing := (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
 nodocs := new MutableHashTable from {
      (quote < , true),
