@@ -116,6 +116,13 @@ newPackage(String) := opts -> (title) -> (
 	       if fileExists dbname then (
 		    db := newpkg#"processed documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
+     addStartFunction(() -> 
+	  if not ( newpkg#?"raw documentation database" and isOpen newpkg#"raw documentation database" ) and prefixDirectory =!= null 
+	  then (
+	       dbname := prefixDirectory | LAYOUT#"packagedoc" title | "rawdocumentation.db"; -- what if there is more than one prefix directory?
+	       if fileExists dbname then (
+		    db := newpkg#"raw documentation database" = openDatabase dbname;
+		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
      if title =!= "Macaulay2" then (
 	  newpkg#"private dictionary" = new Dictionary; -- this is the local one

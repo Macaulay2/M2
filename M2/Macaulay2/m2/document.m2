@@ -608,7 +608,9 @@ makeDocBody Thing := key -> (
 	       then PARA {docBody}
 	       else SEQ { SUBSECTION "Description", PARA {docBody} })))
 
-title := s -> HEADER1 { formatDocumentTag s, headline s }
+title := s -> (
+     h := headline s;
+     HEADER1 { formatDocumentTag s, if h =!= null then " -- ", h })
 
 type := S -> fixup (
      s := value S;

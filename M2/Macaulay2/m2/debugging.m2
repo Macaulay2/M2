@@ -174,7 +174,7 @@ debuggerHook = () ->
      )
 
 clearOutput = Command (() -> (
-	  oo <- ooo <- oooo <- null;
+	  global oo <- global ooo <- global oooo <- null;
 	  scan(values OutputDictionary, s -> ( s <- null; erase s ));
 	  ))
 
