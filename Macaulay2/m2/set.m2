@@ -171,7 +171,7 @@ Set * Set := (x,y) -> (
 Set - Set := (x,y) -> applyKeys(x, i -> if not y#?i then i)
 sum Set := s -> sum toList s
 product Set := s -> product toList s
-unique = (x) -> keys set x
+unique = x -> keys set x
 
 member(Thing,Set) := (a,s) -> s#?a
 

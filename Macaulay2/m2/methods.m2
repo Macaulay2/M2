@@ -1550,8 +1550,24 @@ document { quote cokernel,
      "The result will be a quotient module of the target of f.  If f is
      a ring element, it is interpreted as a one by one matrix.",
      PARA,
-     "For an abbreviation, use ", TO "coker", "."
+     "The generators of the cokernel are provided by the generators of the target
+     of ", TT "f", ".  In other words, ", TT "cover target f", " and ", TT "cover cokernel f", " are equal.",
+     PARA,
+     "For an abbreviation, use ", TO "coker", ".",
+     SEEALSO {"kernel", "cover"}
      }
+
+TEST ///
+    R = ZZ[x,y,z]
+    modules = {
+	 image matrix {{x^2,x,y}},
+	 coker matrix {{x^2,y^2,0},{0,y,z}},
+	 R^{-1,-2,-3},
+	 image matrix {{x,y}} ++ coker matrix {{y,z}}
+	 }
+    scan(modules, M -> assert( cover cokernel M_{1} ==  cover M ) )
+///
+
 
 document { quote image,
      TT "image h", " -- yields the image of the homomorphism h.",

@@ -1,5 +1,30 @@
 Changes made, most recent ones first:
 
+New in 0.8.43:
+
+'prune' now works for chain complexes
+
+speed improvements for tensor products of chain complexes
+
+kernel, cokernel, image, coimage, now work for maps of chain complexes
+
+wedgeProduct now works for non-free modules
+
+C_[i] and C^[i] now work for chain complexes possibly with indices, to give
+	projection and inclusion maps for summands
+
+map(ChainComplex,ChainComplex)    	   map(C,D)
+map(ChainComplex,ChainComplex,Function)    map(C,D,f)
+	These are new ways to construct a map between chain complexes.  The function
+	f is used to provide the component maps.
+
+directSum for chain complexes implemented
+
+'tensorAssociativity' map for modules and chain complexes
+
+map(M,N,1) if cover M == cover N will now give the map induced by sending the i-th
+	generator of N to the i-th generator of M
+
 New in 0.8.42:
 
 The variable 'hypertex' has been removed.

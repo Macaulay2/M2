@@ -171,6 +171,10 @@ formatDocumentTag = s -> concatenate (
 		    else if hh.?subscript then (name s#0, " _ ", name s#1)
 		    else (name s#0, " ^ ", name s#1)
 		    )
+	       else if s#0 === homology
+	       then ("HH ", name s#1)
+	       else if s#0 === cohomology
+	       then ("HH ", name s#1)
 	       else if s#0 === NewMethod then ("new ", name s#1)
 	       else if s#0 === quote ~ then (name s#1, " ", string s#0) -- postfix!
 	       else if class s#0 === Symbol then (string s#0, " ", name s#1)

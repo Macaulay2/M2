@@ -240,6 +240,9 @@ quotientC(lhs:Code,rhs:Code):Expr := (
 	  else l//r));
 setup(SlashSlashS,quotientC);
 
+BackslashBackslashFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BackslashBackslashS);
+setup(BackslashBackslashS,BackslashBackslashFun);
+
 doublepower(x:double,n:int):double := (
      if n == 0 then return(1.0);
      if n < 0 then (x = 1./x; n = -n;);

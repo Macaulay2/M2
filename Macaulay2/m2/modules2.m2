@@ -55,9 +55,22 @@ document { (quote **, Module, Module),
      "Since M and N may be provided as submodules or subquotient modules, it
      may be necessary to replace them by quotient modules in the course of the
      computation, but the generators provided in the resulting tensor product 
-     will correspond to the tensor products of the generators."
+     will correspond to the tensor products of the generators, i.e., the modules
+     ", TT "cover M ** cover N", " and ", TT "cover(M ** N)", " are equal.
+     This makes it easier to make ", TT "M ** N", " into a functor."
      -- i.e., we don't use 'prune'!
      }
+
+TEST ///
+    R = ZZ[x,y,z]
+    modules = {
+	 image matrix {{x^2,x,y}},
+	 coker matrix {{x^2,y^2,0},{0,y,z}},
+	 R^{-1,-2,-3},
+	 image matrix {{x,y}} ++ coker matrix {{y,z}}
+	 }
+    table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
+///
 
 Matrix ** Module := (f,M) -> f ** id_M
 Module ** Matrix := (M,f) -> id_M ** f
@@ -594,16 +607,33 @@ document { quote presentation,
      BR,NOINDENT,
      TT "presentation R", " -- produce a presentation of the quotient ring R.",
      PARA,
+     "A presentation of ", TT "M", " is a map ", TT "p", " so that ", TT "coker p", " is 
+     isomorphic to ", TT "M", ".  The presentation obtained is expressed in 
+     terms of the given generators, i.e., the modules ", TT "cover M", " and 
+     ", TT "target p", " are identical.
+     The isomorphism can be obtained as ", TT "map(M,coker p,1)", ".",
+     PARA,
      "Since a module M may be described as a submodule or a subquotient 
-     module, some computation may be required to produce a presentation.
-     The presentation obtained is expressed in terms of the given generators.
-     See also ", TO "prune", " which does a bit more work to try to eliminate
-     redundant generators.",
+     module of a free module, some computation may be required to produce 
+     a presentation.  See also ", TO "prune", " which does a bit more work to try to
+     eliminate redundant generators.",
      PARA,
      "For a quotient ring R, the result is a matrix over the ultimate
      ambient polynomial ring, whose image is the ideal defining R.  The 
-     entries of the matrix form a Groebner basis."
+     entries of the matrix form a Groebner basis.",
+     SEEALSO {"cover"}
      }
+
+TEST ///
+    R = ZZ[x,y,z]
+    modules = {
+	 image matrix {{x^2,x,y}},
+	 coker matrix {{x^2,y^2,0},{0,y,z}},
+	 R^{-1,-2,-3},
+	 image matrix {{x,y}} ++ coker matrix {{y,z}}
+	 }
+    scan(modules, M -> assert( cover M == target presentation M ) )
+///
 
 presentation(Module) := M -> (
      if M.?presentation then M.presentation else M.presentation = (
@@ -620,7 +650,8 @@ document { quote prune,
      pruning its source and target.",
      PARA,
      "The isomorphism from ", TT "N = prune M", " back to ", TT "M", " can 
-     be obtained with code such as ", TT "g = N.pruningMap", ".  You may obtain 
+     be obtained with code such as ", TT "g = N.pruningMap", " unless ", TT "M.pruningMap", "
+     already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 
      the inverse isomorphism with ", TT "g^-1", ".",
      PARA,
      SEEALSO {"presentation", "trim", "pruningMap"}
@@ -656,7 +687,12 @@ prune(Module) := M -> (
 	  )
      )
 
-prune(Matrix) := (m) -> (prune target m).pruningMap^-1 * m * (prune source m).pruningMap
+prune(Matrix) := (m) -> (
+     M := source m;
+     if not M.?pruningMap then m = m * (prune M).pruningMap;
+     N := target m;
+     if not N.?pruningMap then m = (prune N).pruningMap^-1 * m;
+     m)
 
 TEST "
 r = ZZ/101[a,b]
@@ -888,58 +924,35 @@ document { (quote _, Module, ZZ),
      }
 
 -----------------------------------------------------------------------------
-Module ^ Array := (M,rows) -> (
-     -- rows = splice rows;
-     if not M.?components
-     then (
-	  if isFreeModule M then M ^ (toList rows)
-	  else error "expected a direct sum module"
-	  )
-     else (
-	  if M.?indexComponents then (
-	       ic := M.indexComponents;
-	       rows = apply(rows, i -> if ic#?i then ic#i 
-		    -- else i -- old code
-		    else error "expected an index of a component of a direct sum"
-		    );
-	       );
-	  if isFreeModule M then (
-	       -- if the components of M have 3,4,5 generators, then
-	       -- we want to construct ( (0,1,2), (3,4,5,6), (7,8,9,10,11) ) for
-	       -- quick access
-	       k := 0;
-	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
-	       M ^ (apply(toList rows, i -> v#i))
-	       )
-	  else matrix apply(toList rows, i -> 
-	       apply(#M.components, j -> 
-		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
-Module _ Array := (M,cols) -> (
-     -- cols = splice cols;
-     if not M.?components
-     then (
-	  if isFreeModule M then M _ (toList cols)
-	  else error "expected a direct sum module"
-	  )
-     else (
-	  if M.?indexComponents then (
-	       ic := M.indexComponents;
-	       cols = apply(cols, i -> if ic#?i then ic#i 
-		    -- else i -- old code
-		    else error "expected an index of a component of a direct sum"
-		    );
-	       );
-	  if isFreeModule M then (
-	       -- if the components of M have 3,4,5 generators, then
-	       -- we want to construct ( (0,1,2), (3,4,5,6), (7,8,9,10,11) ) for
-	       -- quick access
-	       k := 0;
-	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
-	       M _ (apply(toList cols, i -> v#i))
-	       )
-	  else matrix apply(#M.components, i -> 
-	       apply(toList cols, j -> 
-		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
+Module ^ Array := (M,w) -> if M#?(quote ^,w) then M#(quote ^,w) else M#(quote ^,w) = (
+     -- we don't splice any more because natural indices include pairs (i,j).
+     w = toList w;
+     if not M.?components then error "expected a direct sum module";
+     if M.?indexComponents then (
+	  ic := M.indexComponents;
+	  w = apply(w, i -> if ic#?i 
+		    then ic#i 
+		    else error "expected an index of a component of a direct sum"));
+     -- if the components of M have 3,4,5 generators, then
+     -- we want to construct { (0,1,2), (3,4,5,6), (7,8,9,10,11) } for quick access
+     k := 0;
+     v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
+     map(directSum M.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
+
+Module _ Array := (M,w) -> if M#?(quote _,w) then M#(quote _,w) else M#(quote _,w) = (
+     -- we don't splice any more because natural indices include pairs (i,j).
+     w = toList w;
+     if not M.?components then error "expected a direct sum module";
+     if M.?indexComponents then (
+	  ic := M.indexComponents;
+	  w = apply(w, i -> if ic#?i 
+		    then ic#i 
+		    else error "expected an index of a component of a direct sum"));
+     -- if the components of M have 3,4,5 generators, then
+     -- we want to construct { (0,1,2), (3,4,5,6), (7,8,9,10,11) } for quick access
+     k := 0;
+     v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
+     map(M, directSum M.components_w, (cover M)_(splice apply(w, i -> v#i))))
 
 document { (quote ^,Module,Array),
      TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",
