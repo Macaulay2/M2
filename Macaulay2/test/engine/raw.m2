@@ -102,7 +102,7 @@ k  = 27_Z
 3.5_Z
 
 -- not implemented yet:
--- (toBigReal 3.5)_Z
+-- (toBigRR 3.5)_Z
 
 i+j
 i-j

@@ -13,7 +13,7 @@ peek'(ZZ,BasicList) := (depth,s) -> (
 	  net class s,
 	  "{", horizontalJoin between (",", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
 
-peek'(ZZ,MarkUpList) := (depth,s) -> (
+peek'(ZZ,MarkUpListParagraph) := peek'(ZZ,MarkUpList) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,

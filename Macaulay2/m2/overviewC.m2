@@ -9,9 +9,9 @@ document {
 	  TO "ZZ/p", 
 	  TO "QQ", 
 	  TO "RR",
-	  TO "BigReal",
+	  TO "BigRR",
 	  TO "CC",
-	  TO "BigComplex"
+	  TO "BigCC"
 	  },
      "The names of some of these rings are double letters so the corresponding symbols
      with single letters are preserved for use as variables.",

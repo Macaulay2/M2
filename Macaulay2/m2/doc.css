@@ -11,15 +11,19 @@ a:hover { background-color: transparent; color: #009999; }
 a:active { background-color: transparent; color: #ee0000; }
 
 p.buttonbar { text-align: center; }
+pre.examples {
+     margin: 0pt;
+     padding: 0pt;
+}
 table.examples { 
      border-style: solid;
      border-top-color: #c0ffff;
      border-left-color: #a0ffff;
      border-right-color: #50b0b0;
      border-bottom-color: #50b0b0;
-     border-width: 4pt;
+     border-width: 3px;
      background-color: #80ffff;
-     border-spacing: 0pt;
+     border-spacing: 0px;
      line-height: 10pt;
      margin-left: 2em;
 }
@@ -30,7 +34,7 @@ td.examples {
      border-right-color: #a0ffff;
      border-bottom-color: #c0ffff;
      padding: 12pt;
-     border-width: 2px;
+     border-width: 1px;
 }
 img.button { border: 0; }
 form.search { text-align: center; }
