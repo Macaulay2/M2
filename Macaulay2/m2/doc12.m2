@@ -264,14 +264,22 @@ document { ultimate,
      produce unexpected results silently."
      }
 
-document { tmpname,
+document { temporaryFileName,
      Headline => "make a temporary file name",
-     TT "tmpname x", " -- create a temporary file name based on the string x
-     unique to this process.",
+     Synopsis => {
+	  "y = temporaryFileName()",
+	  "y" => "a unique temporary file name."
+	  },
+     "The file name is so unique that even with various suffixes
+     appended, no collision with existing files should occur.  But
+     no check is done to see whether such files are present.",
+     EXAMPLE {
+	  ///temporaryFileName () | ".tex"///,
+     	  ///temporaryFileName () | ".html"///,
+	  },
      PARA,
-     "The code for this function is Unix dependent at the moment.",
-     PARA,
-     "The routine doesn't actually check to see whether file exists."
+     "This function will work under Unix, and also under Windows
+     if you have a directory on the same drive called ", TT "tmp", "."
      }
 
 document { subsets,
@@ -799,9 +807,9 @@ document { texMath,
      SEEALSO {"TeX", "tex"}
      }
 
-document { TeX,
+document { showTex,
      Headline => "convert to TeX and display on screen",
-     TT "TeX x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
+     TT "showTex x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
      PARA,
      "The code for this function is Unix dependent at the moment.",
      PARA,
@@ -990,4 +998,12 @@ document { homology,
      class ", TT "B", ", then the method can be installed with ",
      PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
      SEEALSO {"HH", "cohomology", "ScriptedFunctor"}
+     }
+
+document { showHtml,
+     TT "showHtml x", "convert ", TT "x", " to html format, contact a
+     netscape process currently running on the same host, and have it 
+     display it.",
+     PARA,
+     "Try this example: ", TT ///showHtml documentation "loops"///, "."
      }

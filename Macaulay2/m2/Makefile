@@ -1,4 +1,4 @@
-justM2 default :: phase1
+justM2 default :: initialize phase1
 
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
@@ -68,12 +68,10 @@ tutorials.m2 : ../tutorial/final/*.out
 	@ echo making tutorials.m2
 	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
 
-################################# tmp
-cache-tmp :; mkdir $@
-cache-tmp/Tests :; mkdir $@
-cache-tmp/Examples :; mkdir $@
-clean ::; rm -rf cache-tmp
-initialize :: cache-tmp cache-tmp/Tests cache-tmp/Examples
+################################# cache
+cache cache/doc cache/tests :; mkdir $@
+clean ::; rm -rf cache
+initialize :: cache cache/tests cache/doc
 #################################
 
 gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
@@ -140,11 +138,13 @@ $(SCRIPTS) : makeM2.m2 ../../Makeconf.h
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 endif
 
-cache-tmp/Examples/FileNames ../cache/Macaulay2-pre : $(DUMPEDGFILES) \
+cache/doc/Macaulay2-index-cache ../cache/Macaulay2-pre : $(DUMPEDGFILES) \
 		../bin/Macaulay2$(EXESUFFIX) \
 		 $(DOCSEQUENCE) $(TUTORIALS)
 	 # phase 2 makes the example and test files
 	rm -rf ../cache/Macaulay2-tmp
+	rm -rf cache/tests
+	mkdir  cache/tests
 	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
@@ -167,14 +167,14 @@ profile : gmon.out
 	gprof ../bin/Macaulay2 >profile
 clean ::; rm -f profile
 
-INPUTS := cache-tmp/Examples/sample cache-tmp/Examples/expression
-cache-tmp/Examples/sample: sample; cp $< $@
-cache-tmp/Examples/expression: expression; cp $< $@
+INPUTS := cache/doc/sample cache/doc/expression
+cache/doc/sample: sample; cp $< $@
+cache/doc/expression: expression; cp $< $@
 
 all :: ../cache/Macaulay2-doc
-../cache/Macaulay2-doc : ../cache/Macaulay2-pre cache-tmp/Examples/FileNames \
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre cache/doc/Macaulay2-index-cache \
 		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
-	$(MAKE) -k -C cache-tmp/Examples -f ../../Makefile.egs
+	$(MAKE) -k -C cache/doc -f ../../Makefile.egs
 	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
@@ -187,7 +187,7 @@ test1 : test.m2 phase1 $(SCRIPTS)
 endif
 tests:: test2
 test2: $(SCRIPTS)
-	 $(MAKE) -k -C cache-tmp/Tests -f ../../Makefile.tests
+	 $(MAKE) -k -C cache/tests -f ../../Makefile.tests
 	touch $@
 
 tests:: test3
@@ -206,7 +206,7 @@ gdb :; gdb ../bin/Macaulay2
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
-		cache-tmp *.obj *.exe TAGS ../bin/M2 runexample \
+		cache *.obj *.exe TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core

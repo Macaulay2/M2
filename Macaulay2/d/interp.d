@@ -268,6 +268,21 @@ export topLevel():void := (
      when loadprint("-") is Error do exit(2) else nothing;
      );
 
+value(e:Expr):Expr := (
+     when e
+     is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
+     is s:string do (
+	  r := readeval(stringTokenFile("a string", s+newline));
+	  when r 
+	  is err:Error do (
+	       if err.position == dummyPosition
+	       || int(err.position.reloaded) < ErrorDepth
+	       then r
+	       else errorExpr("--backtrace--"))
+	  else r)
+     else WrongArg(1,"a string or a symbol"));
+setupfun("value",value);
+
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
      texmacsMode := false;
@@ -326,20 +341,6 @@ export process():void := (
      if texmacsMode
      then topLevelTexmacs()
      else topLevel();
-     exit(0);
+     value(Expr("exit 0"));				    -- try to exit the user's way
+     exit(0);						    -- if that fails, really exit
      );
-value(e:Expr):Expr := (
-     when e
-     is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
-     is s:string do (
-	  r := readeval(stringTokenFile("a string", s+newline));
-	  when r 
-	  is err:Error do (
-	       if err.position == dummyPosition
-	       || int(err.position.reloaded) < ErrorDepth
-	       then r
-	       else errorExpr("--backtrace--"))
-	  else r)
-     else WrongArg(1,"a string or a symbol"));
-setupfun("value",value);
-

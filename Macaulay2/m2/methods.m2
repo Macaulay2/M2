@@ -271,4 +271,3 @@ lines = x -> (
 
 between = method()
 between(Thing,VisibleList) := List => (m,v) -> mingle(v,#v-1:m)
-

@@ -1018,9 +1018,8 @@ texMath MatrixExpression := m -> concatenate(
      )
 
 ctr := 0
-TeX = x -> (
-     ctr = ctr + 1;
-     f := tmpname "tx" | toString ctr;
+showTex = x -> (
+     f := temporaryFileName();
      f | ".tex" 
      << ///\documentclass{article}
 \usepackage{amsmath}
@@ -1038,27 +1037,11 @@ TeX = x -> (
      )
 
 -----------------------------------------------------------------------------
--- netscape stuff
-
---netscape = x -> (
---     fn := tmpname "netscape" | ".html";
---     f := openOut fn;
---     f << "<TITLE>Macaulay 2 Output</TITLE>" << endl;
---     r := lookup(html,class x);
---     if r =!= null
---     then f << html x
---     else f << "<PRE>" << endl << net x << "<PRE>" << endl;
---     f << close;
---     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
---     )
---
---document { netscape,
---     TT "netscape x", "convert x to html format, contact a netscape
---     process currently running on the same host, and have it display
---     it.",
---     PARA,
---     "Try this example: ", TT "netscape documentation netscape", "."
---     }
+showHtml = x -> (
+     fn := temporaryFileName () | ".html";
+     fn << "<TITLE>Macaulay 2 Output</TITLE>" << endl << html x << endl << close;
+     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
+     )
 
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl; null)

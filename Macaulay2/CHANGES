@@ -3,6 +3,14 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+fixed Control-D under unix so the end functions get run.
+
+changed 'exit' so the end functions get run only if the return code is zero.
+
+changed 'tmpname' to 'temporaryFileName', and changed what it does, slightly.
+
+changed 'TeX' command to 'showTex', for ease of typing
+
 New keyword 'break' which for ceasing execution of a loop.
 
 New keyword 'return' for return a value from a function at any point
