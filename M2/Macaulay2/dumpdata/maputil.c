@@ -24,7 +24,7 @@ void checkmaps(int nmaps, struct MAP m[nmaps]) {
   }
 }
 
-char mapfmt[] = "%010p-%010p %c%c%c %u\n";
+char mapfmt[] = "%08p-%08p %c%c%c %u\n"; /* could have to be changed on a 64 bit machine */
 
 int isStack(map m) {
   void *p = &p;

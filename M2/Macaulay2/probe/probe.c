@@ -99,81 +99,81 @@ int main(int argc, char **argv, char **envp){
 #endif
 #ifdef __MWERKS__
      /* Metrowerks Code Warrior */
-     printf("%010p   SystemZone()\n",(int)SystemZone());
-     printf("%010p   SystemZone()->bkLim\n",(int)SystemZone()->bkLim);
-     printf("%010p   GetZone()\n",(int)GetZone());
-     printf("%010p   ApplicZone()\n",(int)ApplicZone());
-     printf("%010p   ApplicZone()->bkLim\n",(int)ApplicZone()->bkLim);
-     printf("%010p   LMGetCurStackBase()\n",(int)LMGetCurStackBase());
-     printf("%010p   LMGetMemTop()\n",(int)LMGetMemTop());
-     printf("%010p   LMGetCurrentA5()\n",(int)LMGetCurrentA5());
+     printf("%08p   SystemZone()\n",(int)SystemZone());
+     printf("%08p   SystemZone()->bkLim\n",(int)SystemZone()->bkLim);
+     printf("%08p   GetZone()\n",(int)GetZone());
+     printf("%08p   ApplicZone()\n",(int)ApplicZone());
+     printf("%08p   ApplicZone()->bkLim\n",(int)ApplicZone()->bkLim);
+     printf("%08p   LMGetCurStackBase()\n",(int)LMGetCurStackBase());
+     printf("%08p   LMGetMemTop()\n",(int)LMGetMemTop());
+     printf("%08p   LMGetCurrentA5()\n",(int)LMGetCurrentA5());
      c = (CodeZeroHandle)GetResource('CODE', 0);
      if (c != NULL) {
-     	  printf("%010p   data start = LMGetCurrentA5()-belowA5Size\n",
+     	  printf("%08p   data start = LMGetCurrentA5()-belowA5Size\n",
 	       (int)(LMGetCurrentA5()-belowA5Size));
      	  ReleaseResource((Handle)c);
 	  }
-     printf("%010p   TopMem()\n",(int)TopMem());
-     printf("%010p   MFTopMem()\n",(int)MFTopMem());
-     printf("%010p   GetApplLimit()\n",(int)GetApplLimit());
+     printf("%08p   TopMem()\n",(int)TopMem());
+     printf("%08p   MFTopMem()\n",(int)MFTopMem());
+     printf("%08p   GetApplLimit()\n",(int)GetApplLimit());
 #endif
-     printf("%010p   function\n",(int)&main);
-     printf("%010p   string\n",(int)a_string);
+     printf("%08p   function\n",(int)&main);
+     printf("%08p   string\n",(int)a_string);
 #if defined(__APPLE__) && defined(__MACH__) && defined(__POWERPC__)
 #else
 #if defined(__CYGWIN__)
 #else
-     printf("%010p   edata\n",(int)&edata);
-     printf("%010p   etext\n",(int)&etext);
+     printf("%08p   edata\n",(int)&edata);
+     printf("%08p   etext\n",(int)&etext);
 #endif
-     printf("%010p   end\n",(int)&end);
+     printf("%08p   end\n",(int)&end);
 #endif
-     printf("%010p   &malloc()\n",(int) &malloc);
-     printf("%010p   &write()\n",(int) &write);
-     printf("%010p   static variable, initialized\n",(int) &a_string);
-     printf("%010p   static memory, three pages, uninitialized\n",(int) &statmem);
-     printf("%010p   static variable, uninitialized\n",(int) &an_int);
-     printf("%010p   mallocated page 1\n",(int)x);
-     printf("%010p   mallocated page 2\n",(int)y);
+     printf("%08p   &malloc()\n",(int) &malloc);
+     printf("%08p   &write()\n",(int) &write);
+     printf("%08p   static variable, initialized\n",(int) &a_string);
+     printf("%08p   static memory, three pages, uninitialized\n",(int) &statmem);
+     printf("%08p   static variable, uninitialized\n",(int) &an_int);
+     printf("%08p   mallocated page 1\n",(int)x);
+     printf("%08p   mallocated page 2\n",(int)y);
 #ifdef HAVE_SBRK
-     printf("%010p   memory break\n",(int)membrk);
+     printf("%08p   memory break\n",(int)membrk);
 #endif
-     printf("%010p   variable on stack (&c1)\n",(int)&c1);
-     printf("%010p   variable on stack (&c2)\n",(int)&c2);
-     printf("%010p   variable on stack (&i1)\n",(int)&i1);
-     printf("%010p   variable on stack (&i2)\n",(int)&i2);
-     printf("%010p   variable on stack (&argc)\n",(int)&argc);
-     printf("%010p   variable on stack (&argv)\n",(int)&argv);
-     printf("%010p   variable on stack (&envp)\n",(int)&envp);
+     printf("%08p   variable on stack (&c1)\n",(int)&c1);
+     printf("%08p   variable on stack (&c2)\n",(int)&c2);
+     printf("%08p   variable on stack (&i1)\n",(int)&i1);
+     printf("%08p   variable on stack (&i2)\n",(int)&i2);
+     printf("%08p   variable on stack (&argc)\n",(int)&argc);
+     printf("%08p   variable on stack (&argv)\n",(int)&argv);
+     printf("%08p   variable on stack (&envp)\n",(int)&envp);
 #ifdef __DJGPP__
      {
      extern char *__dos_argv0; 
      extern char *__djgpp_stackbottom;
-     printf("%010p   bottom of stack (highest address)\n", (int)__djgpp_stackbottom);
-     printf("%010p   __dos_argv0\n",(int)__dos_argv0);
+     printf("%08p   bottom of stack (highest address)\n", (int)__djgpp_stackbottom);
+     printf("%08p   __dos_argv0\n",(int)__dos_argv0);
      }
 #endif
-     printf("%010p   argv\n",(int)argv);
-     for (i=0,pp=argv; *pp; i++,pp++) printf("%010p   argv[%d] : %s\n",(int)*pp,i,*pp);
-     printf("%010p   null pointer at end of argv\n",(int)pp);
+     printf("%08p   argv\n",(int)argv);
+     for (i=0,pp=argv; *pp; i++,pp++) printf("%08p   argv[%d] : %s\n",(int)*pp,i,*pp);
+     printf("%08p   null pointer at end of argv\n",(int)pp);
 #if !defined(__MWERKS__)
-     printf("%010p   envp\n",(int)envp);
-     printf("%010p   environ\n",(int)environ);
-     for (i=0,pp=envp; *pp; i++,pp++) printf("%010p   envp[%d] : %s\n",(int)*pp,i,*pp);
-     printf("%010p   null pointer at end of envp\n",(int)pp);
+     printf("%08p   envp\n",(int)envp);
+     printf("%08p   environ\n",(int)environ);
+     for (i=0,pp=envp; *pp; i++,pp++) printf("%08p   envp[%d] : %s\n",(int)*pp,i,*pp);
+     printf("%08p   null pointer at end of envp\n",(int)pp);
      if (envp[0] != 0) {
 	  int last;
 	  char *x;
 	  long b;
 	  int *y;
-     	  printf("%010p   envp[0]+strlen(envp[0])+1\n",(int)(envp[0]+strlen(envp[0]) + 1));
+     	  printf("%08p   envp[0]+strlen(envp[0])+1\n",(int)(envp[0]+strlen(envp[0]) + 1));
      	  last = strarrlen(envp)-1;
 	  x = envp[last]+strlen(envp[last]) + 1;
-     	  printf("%010p   envp[%d]+strlen(envp[%d])+1 : %s\n",(int)x,last,last,x);
+     	  printf("%08p   envp[%d]+strlen(envp[%d])+1 : %s\n",(int)x,last,last,x);
 	  b = (long)x + strlen(x) + 1;
 	  if (b % 8 == 0) {
 	    y = (int *)b;
-	    printf("%010p   %010p\n",(int)y,*y);
+	    printf("%08p   %08p\n",(int)y,*y);
 	  }
      }
 #endif
@@ -231,7 +231,7 @@ int main(int argc, char **argv, char **envp){
 	       writable = readable = FALSE;
 	       }
 	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
-	       printf("%010p . %s%s%s\n",
+	       printf("%08p . %s%s%s\n",
 	       	    (int)p,
 	       	    readable ? "r" : "-", 
 	       	    writable ? "w" : "-",

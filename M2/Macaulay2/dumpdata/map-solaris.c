@@ -1,6 +1,7 @@
 /*
-  This works on SunOS saturn.math.uiuc.edu 5.5.1 Generic sun4m sparc SUNW,SPARCstation-5
+  This works on SunOS 5.5.1.
   Read about it in "man -s4 proc".
+  But it's obsolete - the new way is to get the information from /proc/$$/map, with SunOS 5.8
 */
 
 #include <stddef.h>

@@ -136,12 +136,11 @@ gdb: .gdbinit .gdb-files; gdb ../bin/Macaulay2$(EXE)
 .gdbinit: .gdbinit.$(USER); cp $< $@
 clean::; rm -f .gdbinit
 .gdbinit.$(USER):; cp @srcdir@/.gdbinit.dan $@
-.gdb-files:
+.gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
-	echo 'file ../bin/Macaulay2' >$@
-	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@
+	echo 'file ../bin/Macaulay2' >>$@
 clean :: ; rm -f .gdb-files
-.gdb-run-it:
+.gdb-run-it: Makefile
 	echo 'echo -- loading .gdb-run-it\n' >$@
 	echo 'echo \n' >>$@
 	echo 'run -q' >>$@
