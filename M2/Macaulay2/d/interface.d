@@ -542,6 +542,12 @@ rawQuotientRing(e:Expr):Expr := (			    -- localization at a prime ideal
  	       "(Matrix*)", I,				    -- 1 by n matrix generating the ideal
  	       ")"
  	       ))
+     is B:RawRing do toExpr(Ccode(RawRingOrNull,
+ 	       "(engine_RawRingOrNull)IM2_Ring_quotient1(",
+ 	       "(Ring *)", R, ",",
+ 	       "(Ring *)", B,				    -- 1 by n matrix generating the ideal
+ 	       ")"
+ 	       ))
      else WrongArg(2,"a raw matrix")
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(2)
@@ -556,6 +562,24 @@ export rawFractionRing(e:Expr):Expr := (
      else WrongArg("a raw ring")
      );
 setupfun("rawFractionRing", rawFractionRing);
+
+export rawAmbientRing(e:Expr):Expr := (
+     when e is R:RawRing do toExprOrNull(
+	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawAmbientRing(",
+	       "(Ring *)", R,
+	       ")"))
+     else WrongArg("a raw ring")
+     );
+setupfun("rawAmbientRing", rawAmbientRing);
+
+export rawDenominatorRing(e:Expr):Expr := (
+     when e is R:RawRing do toExprOrNull(
+	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawDenominatorRing(",
+	       "(Ring *)", R,
+	       ")"))
+     else WrongArg("a raw ring")
+     );
+setupfun("rawDenominatorRing", rawDenominatorRing);
 
 export rawSchurRing(e:Expr):Expr := (
      when e is R:RawRing do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_schur(", "(Ring *)", R, ")" ) )

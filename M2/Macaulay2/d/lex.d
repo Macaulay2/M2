@@ -44,60 +44,60 @@ export equal(t:ParseTree,w:Word):bool := (
      );
 export (o:file) << (token:Token) : file := o << present(token.word.name);
 tokenbuf := newvarstring(100);
-export Node := { 
+export LexNode := { 
      ch:char,		     	  	-- the char
      word:(null or Word), 	   	-- the word, if ch can end it
-     next:(null or Node),		-- where to go if ch doesn't match the input
-     further:(null or Node)		-- where to go to match the next char
+     next:(null or LexNode),		-- where to go if ch doesn't match the input
+     further:(null or LexNode)		-- where to go to match the next char
      };
-base := Node( char(0), NULL, NULL, NULL );
-(o:file) << (node:Node) : file := (
+export baseLexNode := LexNode( char(0), NULL, NULL, NULL );
+(o:file) << (node:LexNode) : file := (
      o << "'" << present(node.ch) << "'" ;
      when node.word
      is null do o
      is word:Word do o << " -> \"" << present(word.name) << "\"";
      when node.further
      is null do o
-     is n:Node do o << " [" << n << "]";
+     is n:LexNode do o << " [" << n << "]";
      when node.next
      is null do o
-     is next:Node do o << " " << next;
+     is next:LexNode do o << " " << next;
      o);
-export dumpNodes():void := stdout << "[" << base << "]" << endl;
-advance(node:Node,ch:int):(null or Node) := (
+export dumpNodes():void := stdout << "[" << baseLexNode << "]" << endl;
+advance(node:LexNode,ch:int):(null or LexNode) := (
      if ch == EOF || ch == ERROR then return NULL;
      t := node.further;
      while true do (
 	  when t
 	  is null do return t
-	  is node:Node do (
+	  is node:LexNode do (
 	       if int(node.ch) == ch
 	       then return t
 	       else t = node.next
 	       )
 	  )
      );
-install(node:Node,ch:int):Node := (
+install(node:LexNode,ch:int):LexNode := (
      when advance(node,ch)
      is null do (
-	  t := Node(char(ch),NULL,node.further,NULL);
+	  t := LexNode(char(ch),NULL,node.further,NULL);
 	  node.further = t;
 	  t)
-     is u:Node do u
+     is u:LexNode do u
      );
 export install(name:string,word:Word):Word := (
-     node := base;
+     node := baseLexNode;
      foreach ch in name do node = install(node,int(ch));     
      node.word = word;
      word);
 recognize(file:PosFile):(null or Word) := (
      i := 0;
-     state := base;
+     state := baseLexNode;
      last := (null or Word)(NULL);
      while true do (
 	  when advance(state,peek(file,i))
 	  is null do break
-	  is node:Node do (state = node; i=i+1;);
+	  is node:LexNode do (state = node; i=i+1;);
 	  when state.word
 	  is null do nothing
 	  is word:Word do (last = word;)

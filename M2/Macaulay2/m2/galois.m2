@@ -116,7 +116,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.frac = F;
      F.generatorSymbols = {xx};
      F.generatorExpressions = apply( F.generatorSymbols,
-	  x -> if class x === Symbol then x else expression x
+	  x -> if instance(x, Symbol) then x else expression x
 	  );
      F.generators = {F_0};
      baseName F := y -> (

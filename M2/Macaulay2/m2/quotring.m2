@@ -129,7 +129,7 @@ EngineRing / Ideal := (R,I) -> (
      if R.?generatorExpressions then (
 	  S.generatorExpressions = R.generatorExpressions;
 	  scan(R.generatorExpressions, x -> (
-		    a := if class x === Symbol then toString x else toString x;
+		    a := if instance(x, Symbol) then toString x else toString x;
 		    S#a = promote(R#a,S);
 		    ));
 	  );

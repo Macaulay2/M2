@@ -159,7 +159,7 @@ makeit1 := (options) -> (
      then error "expected Weights option length to be a multiple of the number of variables";
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
-	  x -> if class x === Symbol then x else expression x
+	  x -> if instance(x, Symbol) then x else expression x
 	  );
      scan(varlist, 
 	  sym -> (

@@ -533,6 +533,7 @@ export optionClass := newtypeof(basicListClass);
 export fileClass := newbasictype();
 export functionClass := newbasictype();
 export symbolClass := newbasictype();
+export keywordClass := newtypeof(symbolClass);
 export codeClass := newbasictype();
 export errorClass := newbasictype();
 export netClass := newbasictype();

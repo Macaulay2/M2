@@ -1299,6 +1299,21 @@ relativizeFilename(e:Expr):Expr := (
      );
 setupfun("relativizeFilename",relativizeFilename);
 
+nodecount := 0;
+countnodes(n:LexNode):void := (
+     nodecount = 0;
+     );
+operatorStrings(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 0 then (
+	  node := baseLexNode;
+	  nodecount = 0;
+	  countnodes(baseLexNode);
+	  Expr(new Sequence len nodecount do (
+		    provide nullE
+		    )))
+     else WrongNumArgs(0) else WrongNumArgs(0));
+setupfun("operatorStrings",operatorStrings);
+
 isglobalsym(s:string):Expr := when globalLookup(makeUniqueWord(s,parseWORD)) is x:Symbol do True is null do False;
 issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
 

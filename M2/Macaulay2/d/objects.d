@@ -463,7 +463,7 @@ export Class(e:Expr):HashTable := (
      is Sequence do sequenceClass
      is CompiledFunction do functionClass
      is CompiledFunctionClosure do functionClass
-     is SymbolClosure do symbolClass
+     is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
      is BigReal do bigRealClass
      is BigComplex do bigComplexClass
      is RawComputation do rawComputationClass
@@ -524,6 +524,7 @@ setupconst("File",Expr(fileClass));
 setupconst("String",Expr(stringClass));
 setupconst("Function",Expr(functionClass));
 setupconst("Symbol",Expr(symbolClass));
+setupconst("Keyword",Expr(keywordClass));
 -- setupconst("Error",Expr(errorClass));
 setupconst("Time",Expr(timeClass));
 setupconst("Option",Expr(optionClass));

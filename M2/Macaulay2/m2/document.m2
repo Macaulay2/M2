@@ -179,7 +179,7 @@ formatDocumentTagTO Sequence := (
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
 verifyTag Sequence := s -> (
-     if s#?-1 and class s#-1 === Symbol then (		    -- e.g., (res,Strategy) or (res,Module,Strategy)
+     if s#?-1 and instance(s#-1, Symbol) then (		    -- e.g., (res,Strategy) or (res,Module,Strategy)
 	  fn := drop(s,-1);
 	  opt := s#-1;
 	  if #fn === 1 then (
@@ -312,7 +312,7 @@ DocumentableValueType := set {
      }
 UndocumentableValue := hashTable { symbol environment => true, symbol commandLine => true }
 documentableValue := key -> (
-     class key === Symbol and value key =!= key
+     instance(key, Symbol) and value key =!= key
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
 
 ---- how could this have worked (so soon)?
@@ -560,7 +560,7 @@ nextMoreGeneral4 := (f,A,B,C) -> (
 nextMoreGeneral := s -> (
      if class s === Sequence then (
 	  if #s === 0 then null 
-	  else if class s#-1 === Symbol then unSingleton drop(s,-1) -- dropping optional argument tag
+	  else if instance(s#-1, Symbol) then unSingleton drop(s,-1) -- dropping optional argument tag
 	  else if #s === 2 then nextMoreGeneral2 s 
 	  else if #s === 3 then nextMoreGeneral3 s 
 	  else if #s === 4 then nextMoreGeneral4 s))
@@ -928,7 +928,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      b := select(e,x -> instance(value x,Type));	    -- types
      m := unique flatten apply(b, T -> select(keys value T, 
 	       i -> class i === Sequence and (
-		    class i#0 === Symbol
+		    instance(i#0, Symbol)
 		    or
 		    class i#0 === Function and ReverseDictionary#?(i#0) -- some method functions are local to the package, thus not visible
 		    ))); -- methods

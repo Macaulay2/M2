@@ -16,6 +16,18 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New type Keyword, subclass of Symbol:
+
+    i6 : sort select(values Macaulay2.Dictionary, s -> class s === Keyword)
+
+    o6 = {while, when, try, to, timing, time, then, symbol, shield, return, or, of, not, new, local, list, in, if, global, from, for, else, do, continue, break, and, ~, }, ||, |-, |,
+	 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 {, _, ^^, ^**, ^, ], \\, \, [, @@, @, ?, >>>, >>, >=, >, =>, ==>, ===>, ===, ==, =!=, =, <==>, <=, <<, <-, <, ;, :=, :, /^, //, /, .?, .., ., ->, -, ,, ++, +, **, *, ), (*),
+	 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 (, &&, &, %, #?, ##, #, !=, !,  }
+
+    o6 : List
+
 We have made + also into a unary operator, as well as a binary
 operator, with installable methods.
 
