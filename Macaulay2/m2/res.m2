@@ -104,12 +104,14 @@ resolutionInEngine := options -> (M) -> (
      if C.?Resolution then (
 	  W = C.Resolution;
 	  if not W.?returnCode 
-	  or W.returnCode =!= 0 
+	  or RawStatusCodes#(W.returnCode) =!= "done"
 	  or W.length < maxlevel
 	  or W.DegreeLimit < degreelimit
 	  then (
+	       if debugLevel > 0 then stderr << "--warning: about to recompute resolution, discarding data" << endl;
 	       scan(keys C,i -> if class i === ZZ then remove(C,i));
 	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
+	       remove(C,complete);
 	       resOptions := {
 		    maxlevel,
 		    inf options.SyzygyLimit,
@@ -133,6 +135,7 @@ resolutionInEngine := options -> (M) -> (
 		    rawStartComputation W.RawComputation;
 		    W.returnCode = rawStatus1 W.RawComputation;
 		    W.length = maxlevel;
+		    W.DegreeLimit = degreelimit;
 		    )));
      C)
 
@@ -164,9 +167,7 @@ resolution Module := ChainComplex => o -> (M) -> (
 	       (resolutionInEngine default(o,Strategy2))(M))
 	  else
 	       (resolutionBySyzygies o)(M))
-     else if
-     -- k === ZZ or
-     not isCommutative R then (resolutionBySyzygies o)(M)
+     else if not isCommutative R then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then (resolutionByHomogenization o)(M)
      else if isQuotientRing R then (resolutionInEngine default(o,Strategy2))(M)
      else (resolutionInEngine default(o,Strategy1))(M)
