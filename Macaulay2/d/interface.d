@@ -957,7 +957,7 @@ export rawFactor(e:Expr):Expr := (
 	       "(RingElement_array_OrNull **)&",resultFactors, ",",
 	       "(M2_arrayint_OrNull *)&",resultPowers, ")" );
 	  when resultFactors is null do engineErrorMessage() is f:RawRingElementArray do
-	  when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExpr(p))))
+	  when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExprSeq(p))))
      else WrongArg("a raw ring element")
      );
 setupfun("rawFactor",rawFactor);
