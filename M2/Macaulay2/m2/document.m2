@@ -483,7 +483,7 @@ usage := s -> (
      if o =!= null then PARA {o}
      )
 
-title := s -> PARA { CENTER { BIG formatDocumentTag s, headline s } }
+title := s -> PARA { BIG formatDocumentTag s, headline s }
 
 inlineMenu := x -> between(", ", TO \ x)
 
@@ -925,8 +925,6 @@ html BIG := x -> concatenate( 				    -- not right any more -- no size option to
      "<b>", apply(x, html), "</b>"
      )
 
-html CENTER := x -> concatenate(newline, apply(x, html), newline ) -- obsolete tag
-
 html HEAD := x -> concatenate(newline, 
      "<", toString class x, ">", newline,
      apply(x, html), newline,
@@ -1023,18 +1021,16 @@ html TABLE := x -> concatenate(
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<p>",
-     "<table cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
+     "<table cellspacing='0' cellpadding='12' border='4' width='100%'>",
      newline,
      apply(x, 
 	  item -> (
 	       "  <tr>", newline,
-	       "    <td nowrap>", html item#1, "</td>", newline,
+	       "    <td>", html item#1, "</td>", newline,
 	       "  </tr>", newline
 	       )
 	  ),
-     "</table>",
-     "</p>"
+     "</table>"
      )			 
 
 net PRE := x -> net concatenate x
@@ -1275,7 +1271,6 @@ html Option := x -> toString x
 text Option := x -> toString x
 
 net BIG := x -> net x#0
-net CENTER := x -> net x#0
 
 tex HEADER1 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontOne=cmbx12 scaled \magstep 1\headerFontOne%
