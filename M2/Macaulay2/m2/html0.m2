@@ -96,6 +96,7 @@ TT         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
 CITE       = new MarkUpType of MarkUpList
 LABEL      = new MarkUpType of MarkUpList
+VBOX       = new MarkUpType of MarkUpListParagraph
 BOLD       = new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
