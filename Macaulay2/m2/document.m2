@@ -37,6 +37,8 @@ local exampleCounter
 local exampleInputFile
 local exampleResultsFound
 local exampleResults
+local currentNodeName
+
 docFilename := () -> (
      progname := commandLine#0;
      if substring(progname,0,1) === "\""  -- sigh "
@@ -64,15 +66,9 @@ addStartFunction(
 
 -- Documentation = new MutableHashTable
 
-duplicateDocError := nodeName -> (
-     stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
+duplicateDocWarning := () -> (
+     stderr << concatenate ("warning: documentation already provided for '", currentNodeName, "'") 
      << newline << flush; )
-storeDoc := (nodeName,docBody) -> (
-     assert( class nodeName === String );
-     d := currentPackage#"raw documentation";
-     if d#?nodeName then duplicateDocError nodeName;
-     d#nodeName = docBody;
-     )
 
 -----------------------------------------------------------------------------
 -- most things can't be documented; some can, because they always know what
@@ -287,11 +283,8 @@ NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
 PARA       = new MarkUpType
 EXAMPLE    = new MarkUpType
---new EXAMPLE from List := x -> (
---     tbl := currentPackage#"test inputs";
---     inputs := if not tbl#?nodeName then tbl#nodeName = new MutableHashTable;
---     scan(x, example -> inputs# #inputs = example);
---     x)
+-- new EXAMPLE from List := (EXAMPLE,x) -> (
+--      x)
 TABLE      = new MarkUpType
 ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
@@ -432,11 +425,10 @@ checkForExampleOutputFile := () -> (
 --      else null
 --      )
 
--- obsolete
--- extractExamples            := method(SingleArgumentDispatch => true)
--- extractExamples Thing      := x -> {}
--- extractExamples EXAMPLE    := x -> toList x
--- extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
+extractExamples            := method(SingleArgumentDispatch => true)
+extractExamples Thing      := x -> {}
+extractExamples EXAMPLE    := x -> toList x
+extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
 
 processExample := x -> (
      exampleCounter = exampleCounter + 1;
@@ -460,16 +452,18 @@ processExamplesLoop := s -> (
      else s)
 
 processExamples := (docBody) -> (
+     exampleResults = {};
+     exampleCounter = 0;
+     examples := extractExamples docBody;
+     if #examples > 0 then (
+	  inputs := currentPackage#"example inputs"#currentNodeName = new MutableHashTable;
+	  scan(examples, example -> inputs# #inputs = example);
 -- obsolete?
---      exampleResults = {};
---      exampleCounter = 0;
---      examples := extractExamples docBody;
---      if #examples > 0 then (
---      	  checkForExampleOutputFile();
---      	  checkForExampleInputFile();
--- 	  docBody = apply(docBody,processExamplesLoop);
--- 	  if exampleInputFile =!= null then close exampleInputFile;
--- 	  );
+--     	  checkForExampleOutputFile();
+--     	  checkForExampleInputFile();
+--	  docBody = apply(docBody,processExamplesLoop);
+--	  if exampleInputFile =!= null then close exampleInputFile;
+	  );
       docBody)
 -----------------------------------------------------------------------------
 -- 'document' function
@@ -486,9 +480,12 @@ document List := z -> (
      key := z#0;
      verifyTag key;
      body := drop(z,1);
-     nodeName := formatDocumentTag key;
-     nodeBaseFilename = makeFileName(nodeName,getFileName body);
-     storeDoc(nodeName,toExternalString processExamples fixup body);
+     currentNodeName = formatDocumentTag key;
+     nodeBaseFilename = makeFileName(currentNodeName,getFileName body);
+     d := currentPackage#"raw documentation";
+     if d#?currentNodeName then duplicateDocWarning();
+     d#currentNodeName = toExternalString processExamples fixup body;
+     currentNodeName = null;
      )
 
 -----------------------------------------------------------------------------
