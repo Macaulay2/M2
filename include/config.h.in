@@ -27,17 +27,14 @@
 /* operating system name, obtained with uname -s */
 #undef OS
 
+/* version number */
+#undef PACKAGE_VERSION
+
 /* operating system release, obtained with uname -r */
 #undef REL
 
-/* whether to compile and link with socks5 */
-#undef SOCKS
-
 /* whether sys_errlist is declared in errno.h or stdio.h */
 #undef SYS_ERRLIST_IS_DECLARED
-
-/* version number */
-#undef VERSION
 
 /* whether __finite is missing */
 #undef __finite

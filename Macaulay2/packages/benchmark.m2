@@ -1,5 +1,4 @@
-<< "-- beginning computation "
-run "date"
+<< "-- beginning computation " << get "!date"
 << "-- " << first lines get "!uname -a" << endl
 << "-- Macaulay2 " << version#"VERSION"
 << ", compiled with " << version#"compiler"

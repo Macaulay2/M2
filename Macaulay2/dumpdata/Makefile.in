@@ -1,13 +1,8 @@
+# @configure_input@
 .PHONY : all clean distclean install check default
 default: all check
 include ../../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
-CFLAGS := -Wall -g
-LDFLAGS := 
 all::
 check::
 checkit: checkit.o libdump.a

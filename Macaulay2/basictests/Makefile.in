@@ -1,8 +1,6 @@
+# @configure_input@
 include ../../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
 
 # export LD_LIBRARY_PATH=../lib
 

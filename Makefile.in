@@ -1,3 +1,4 @@
+# @configure_input@
 #############################################################################
 
 # Targets to use:
@@ -17,15 +18,12 @@ endif
 include config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
 .PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default lsm
 default: all
 all::
 
 ################################# preparation
-justM2 all::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
+justM2 all::; @echo 'making Macaulay 2 version $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
 always:
 clean::; rm -rf lib
 clean::; rm -f core
@@ -35,10 +33,10 @@ distclean:: clean
 ifeq "$(CC)" "cl"
 justM2 all:: ;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
-DOCTARGET := Macaulay2-$(VERSION)-doc.zip
+DOCTARGET := Macaulay2-$(PACKAGE_VERSION)-doc.zip
 else
 TARGET := Macaulay2-$(DESC).tar.gz
-DOCTARGET := Macaulay2-$(VERSION)-doc.tar.gz
+DOCTARGET := Macaulay2-$(PACKAGE_VERSION)-doc.tar.gz
 endif
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
@@ -59,9 +57,13 @@ DISTFILES_SRC := \
 		Macaulay2/CHANGES \
 	 	Macaulay2/README.txt
 DISTFILES := $(DISTFILES_SRC) $(DISTFILES_MADE)
-install :
-	@echo no install method yet >&2
-	@exit 1
+################################# install
+DIRS := $(target) $(packagedir) $(bindir)
+install :: $(DIRS)
+install :: ; $(MAKE) -C bin $@
+install :: ; $(MAKE) -C Macaulay2 $@
+$(DIRS) :; $(INSTALL) -d $@
+#################################
 Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 	tar cf - $(DISTFILES_MADE) -C @srcdir@ $(DISTFILES_SRC) |gzip >"$@"
 	@echo "-----------------------------------------------------------------------------"
@@ -75,12 +77,12 @@ Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
-Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES)
+Macaulay2-$(PACKAGE_VERSION)-doc.tar.gz : $(DOCFILES)
 	tar cf - $(DOCFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"
 	@echo "-----------------------------------------------------------------------------"
-Macaulay2-$(VERSION)-doc.zip : $(DOCFILES)
+Macaulay2-$(PACKAGE_VERSION)-doc.zip : $(DOCFILES)
 	winzip32 -u -r -p $@ $(DOCFILES)
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"

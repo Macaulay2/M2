@@ -1,9 +1,6 @@
+# @configure_input@
 include ../../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
 RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 ifneq "$(DUMPDATA)" "no"
 RESULTS := $(RESULTS) dumpdata.okay

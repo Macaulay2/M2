@@ -1,9 +1,6 @@
+# @configure_input@
 include ../../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
 ############################## main target
 all :: compat.h
 all :: ../libexec/Macaulay2
@@ -135,10 +132,6 @@ endif
 ifdef includeX11
 CPPFLAGS += -DincludeX11
 LDLIBS += -lX11
-endif
-
-ifeq "$(SOCKS)" "yes"
-LDLIBS += -lsocks5
 endif
 
 ## we use one of these in scclib.c
@@ -304,14 +297,6 @@ addresses : probe
 	sort syms > addresses
 	rm syms
 clean ::; rm -f addresses
-############################## miscellaneous
-
-ifdef MP
-M2lib.o : mpversion.h
-mpversion.h : ../../mp/MP/MP_Config.h
-	grep MP_VERSION $< >$@
-endif
-
 ###################### libraries
 
 ifeq "$(CC)" "cl"
