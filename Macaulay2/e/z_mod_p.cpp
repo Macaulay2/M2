@@ -135,12 +135,6 @@ ring_elem Z_mod::from_int(mpz_ptr n) const
   return ring_elem(m);
 }
 
-ring_elem Z_mod::var(int v, int) const
-{
-  if (v >= 0) return _ZERO;
-  return from_int(1);
-}
-
 bool Z_mod::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Rf = Z ---> Z/p

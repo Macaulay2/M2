@@ -168,11 +168,6 @@ ring_elem RRR::from_BigReal(mpf_ptr r) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem RRR::var(int v, int) const
-{
-  if (v >= 0) return from_int(0);
-  return from_int(1);
-}
 bool RRR::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;

@@ -210,20 +210,11 @@ ring_elem FractionField::from_int(mpz_ptr n) const
   return FRAC_RINGELEM(f);
 }
 
-ring_elem FractionField::var(int v, int n) const
+ring_elem FractionField::var(int v) const
 {
   frac_elem *f = new_frac_elem();
-  if (n >= 0)
-    {
-      f->numer = R_->var(v,n);
-      f->denom = R_->from_int(1);
-    }
-  else if (n < 0)
-    {
-      f->numer = R_->from_int(1);
-      f->denom = R_->var(v,-n);
-    }
-    
+  f->numer = R_->var(v);
+  f->denom = R_->from_int(1);
   return FRAC_RINGELEM(f);
 }
 

@@ -14,6 +14,7 @@
 #include "CCC.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
+#include "polyQQ.hpp"
 #include "schur.hpp"
 #include "frac.hpp"
 #include "weylalg.hpp"
@@ -116,12 +117,25 @@ const Ring *IM2_Ring_trivial_polyring()
 
 const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
+  if (K == globalQQ)
+    {
+      const PolyRing *P = PolyRing::create(globalZZ,M);
+      return PolyQQ::create(P);
+    }
   return PolyRing::create(K,M);
 }
 
 const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
+  const PolyQQ *RQ = R->cast_to_PolyQQ();
+  if (RQ != 0)
+    {
+      const PolyRing *P = SkewPolynomialRing::create(globalZZ,
+						     RQ->getMonoid(),
+						     skewvars);
+      return PolyQQ::create(P);
+    }
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {
@@ -138,6 +152,17 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 					M2_arrayint diff_vars,
 					int homog_var)
 {
+  const PolyQQ *RQ = R->cast_to_PolyQQ();
+  if (RQ != 0)
+    {
+      const WeylAlgebra *P = WeylAlgebra::create(globalZZ,
+						 RQ->getMonoid(),
+						 diff_vars, 
+						 comm_vars, 
+						 homog_var);
+      return PolyQQ::create(P);
+    }
+
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {
@@ -194,13 +219,7 @@ const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
 const RingOrNull * IM2_Ring_quotient(const Ring *R, 
 				     const Matrix *I)
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  if (I->get_ring() != P)
+  if (I->get_ring() != R)
     {
       ERROR("expected matrix to be over the same ring");
     }
@@ -209,6 +228,17 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
       ERROR("expected a one row matrix of quotient elements");
       return 0;
     }
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+
+  const PolyQQ *RQ = R->cast_to_PolyQQ();
+  if (RQ != 0)
+    return PolyQQ::create_quotient(RQ,I);
+
   return PolyRingQuotient::create(P,I);
 }
 
@@ -217,6 +247,18 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
 /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
    then form the quotient ring B[x]/J. */
 {
+  const PolyQQ *RQ = R->cast_to_PolyQQ();
+  if (RQ != 0)
+    {
+      const PolyQQ *BQ = B->cast_to_PolyQQ();
+      if (BQ != 0)
+	{
+	  ERROR("expected coefficient ring to be over QQ");
+	  return 0;
+	}
+      return PolyQQ::create_quotient(RQ,BQ);
+    }
+
   const PolyRing *R1 = R->cast_to_PolyRing();
   const PolynomialRing *B1 = B->cast_to_PolynomialRing();
   if (R1 == 0 || B1 == 0) 
@@ -401,8 +443,7 @@ const RingElementOrNull *rawRRRFromString(const M2_string s)
 
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v)
 {
-  int e = 1;
-  ring_elem a = R->var(v,e);
+  ring_elem a = R->var(v);
   if (error()) return 0;
   return RingElement::make_raw(R, a);
 }

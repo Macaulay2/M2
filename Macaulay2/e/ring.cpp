@@ -64,6 +64,12 @@ ring_elem Ring::get_zero_divisor() const
   return copy(_zero_divisor); 
 }
 
+ring_elem Ring::var(int v) const
+{
+  // The default behavior is to just return 0.
+  return zeroV;
+}
+
 ring_elem Ring::power(const ring_elem ff, mpz_t m) const
 {
   // The exponent 'm' should be > 0 here.

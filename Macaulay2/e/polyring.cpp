@@ -208,16 +208,12 @@ ring_elem PolyRing::from_double(double n) const
   return result;
 }
 
-ring_elem PolyRing::var(int v, int n) const
+ring_elem PolyRing::var(int v) const
 {
-  if (_is_skew && v >= 0 && v < _nvars && n > 1 && _skew.is_skew_var(v))
-    return ZERO_RINGELEM;
-
   for (int i=0; i<_nvars; i++) _EXP1[i] = 0;
-  if (v >= 0 && v < _nvars) _EXP1[v] = n;
+  if (v >= 0 && v < _nvars) _EXP1[v] = 1;
   else 
     {
-      ERROR("variable index out of range");
       return ZERO_RINGELEM;
     }
   Nterm *result = new_term();

@@ -20,6 +20,7 @@ class GF;
 class FractionField;
 class PolynomialRing;
 class PolyRing;
+class PolyQQ;
 class SkewPolynomialRing;
 class SchurRing;
 class WeylAlgebra;
@@ -140,6 +141,9 @@ public:
   virtual const PolyRing * cast_to_PolyRing()  const      { return 0; }
   virtual       PolyRing * cast_to_PolyRing()             { return 0; }
 
+  virtual const PolyQQ * cast_to_PolyQQ()  const      { return 0; }
+  virtual       PolyQQ * cast_to_PolyQQ()             { return 0; }
+
   virtual const FractionField * cast_to_FractionField() const    { return 0; }
   virtual       FractionField * cast_to_FractionField()          { return 0; }
   virtual const SchurRing * cast_to_SchurRing() const { return 0; }
@@ -178,7 +182,7 @@ public:
   virtual ring_elem from_BigComplex(M2_CCC z) const;  
   // The default version calls from_int(0). Change it?
 
-  virtual ring_elem var(int v, int n) const = 0;
+  virtual ring_elem var(int v) const;
 
   virtual ring_elem preferred_associate(ring_elem f) const;
   // Returns an invertible element c of the same ring such that c*f is the
