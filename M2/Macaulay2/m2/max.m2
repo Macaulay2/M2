@@ -43,6 +43,10 @@ InfiniteNumber - ZZ := (i,j) -> i
 ZZ - InfiniteNumber := (i,j) -> -j
 InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
 ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
+InfiniteNumber + InfiniteNumber := (x,y) -> if x#sign === y#sign then x else indeterminate
+InfiniteNumber - InfiniteNumber := (x,y) -> if x#sign =!= y#sign then x else indeterminate
+InfiniteNumber * InfiniteNumber := (x,y) -> if x#sign === 1 then y else -y
+InfiniteNumber / InfiniteNumber := (x,y) -> indeterminate
 
 neginfinity := new InfiniteNumber from {
      quote name => "-infinity", 

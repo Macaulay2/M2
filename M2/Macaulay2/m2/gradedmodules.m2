@@ -306,7 +306,7 @@ GradedModule ** GradedModule := (C,D) -> (
      scan(c, i -> scan(d, j -> (
 		    k := i+j;
 		    p := if not pairs#?k then pairs#k = new MutableHashTable else pairs#k;
-		    p#{i,j} = 1;
+		    p#(i,j) = 1;
 		    )));
      scan(keys pairs, k -> pairs#k = sort toList pairs#k);
      E := new GradedModule;

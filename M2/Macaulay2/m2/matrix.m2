@@ -900,7 +900,7 @@ map(Module,Module) := (M,N,options) -> (
      if F == ambient M
      then map(M,N,
 	  if M.?generators 
-	  then map(M,N,generators N // generators M)
+	  then map(M,N,generators N // generators M) -- sigh, should we check for zero remainder?
 	  else generators N,
 	  options)
      else error "expected modules to have the same ambient free module"
@@ -1897,9 +1897,10 @@ Ideal == Ideal := (I,J) -> (
      if ring I =!= ring J
      then error "expected ideals in the same ring";
      ( I.generators == J.generators or 
-	  if isHomogeneous I and isHomogeneous J  -- can be removed later
-	  then gb I == gb J 
-	  else isSubset(I,J) and isSubset(J,I)	  -- can be removed later
+	  -- if isHomogeneous I and isHomogeneous J  -- can be removed later
+	  -- then gb I == gb J 
+	  -- else
+	  isSubset(I,J) and isSubset(J,I)	  -- can be removed later
 	  ))
 
 Ideal == Module := (I,M) -> module I == M

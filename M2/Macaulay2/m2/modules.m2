@@ -102,6 +102,7 @@ document { quote Module,
 	  TO "removeLowestDimension",
 	  (TO "resolution", " M -- a finite free resolution of M"),
 	  TO "super",
+	  (TO "tensorAssociativity", " -- associativity isomorphisms for tensor products"),
 	  TO "top",
   	  (TO {"Tor", "_i(M,N)"}, " -- Tor of two modules"),
 	  (TO "trim", " -- replace generators and relations by minimal sets"),
@@ -245,9 +246,10 @@ Module == Module := (M,N) -> (
      and (
 	  if M.?relations 
 	  then N.?relations and (
-	       if isHomogeneous N.relations and isHomogeneous M.relations
-	       then gb N.relations == gb M.relations
-	       else (
+	       -- if isHomogeneous N.relations and isHomogeneous M.relations
+	       -- then gb N.relations == gb M.relations
+	       -- else 
+		    (
 		    -- temporary
 		    isSubset(image M.relations, image N.relations)
 		    and
@@ -267,9 +269,10 @@ Module == Module := (M,N) -> (
 			 if N.?relations
 			 then N.relations|N.generators
 			 else N.generators);
-		    if isHomogeneous f and isHomogeneous g
-		    then gb f == gb g
-		    else (
+		    -- if isHomogeneous f and isHomogeneous g
+		    -- then gb f == gb g
+		    -- else 
+			 (
 			 -- temporary
 		    	 isSubset(image f, image g)
 		    	 and

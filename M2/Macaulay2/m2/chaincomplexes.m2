@@ -11,21 +11,26 @@ new ChainComplex := (cl) -> (
 document { quote ChainComplex,
      TT "ChainComplex", " -- the class of all chain complexes.",
      PARA,
-     "A new chain complex can be made with 'C = new ChainComplex'.  This will
-     automatically initialize C.dd, in which the differentials are stored.
-     The modules can be installed with statements like 'C#i=M' and the 
-     differentials can be installed with statements like 'C.dd#i=d'.",
+     "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
+     the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
+     produce the differential whose source is ", TT "C_i", ".",
+     PARA,
+     "A new chain complex can be made with ", TT "C = new ChainComplex", ".  This will
+     automatically initialize ", TT "C.dd", ", in which the differentials are stored.
+     The modules can be installed with statements like ", TT "C#i=M", " and the 
+     differentials can be installed with statements like ", TT "C.dd#i=d", ".",
      PARA,
      "See also ", TO "ChainComplexMap", " for a discussion of maps between
      chain complexes.  (The boundary map C.dd is regarded as one.)",
      PARA,
      "Here are some functions for producing or manipulating chain complexes.",
      MENU {
+	  (TO (quote " ", Module, Array), " -- create a chain complex from a module"),
 	  (TO (quote ++, ChainComplex, ChainComplex), " -- direct sum"),
 	  (TO (quote **, ChainComplex, ChainComplex), " -- tensor product"),
 	  (TO (quote **, ChainComplex, GradedModule), " -- tensor product"),
 	  (TO (quote **, GradedModule, ChainComplex), " -- tensor product"),
-	  (TO quote dd, " -- obtain the differentials."),
+	  (TO "dd", " -- obtain the differentials."),
 	  (TO (quote " ", ChainComplex, Array), " -- shift a chain complex"),
 	  (TO "betti", "        -- display degrees in a free resolution"),
 	  (TO "chainComplex", " -- make a chain complex"),
@@ -33,6 +38,8 @@ document { quote ChainComplex,
 	  (TO "dual", "         -- dual complex"),
 	  (TO (Hom,ChainComplex,Module), " -- Hom"),
 	  (TO "length", "       -- length of a chain complex"),
+	  (TO (max,ChainComplex), " -- maximum index in a chain complex"),
+	  (TO (min,ChainComplex), " -- minimum index in a chain complex"),
 	  (TO "poincare", "     -- assemble degrees into polynomial"),
 	  TO "poincareN",
 	  (TO (NewMethod,ChainComplex), " -- make a new chain complex from scratch"),
@@ -40,7 +47,8 @@ document { quote ChainComplex,
 	  (TO "regularity", "   -- compute the regularity"),
 	  (TO "resolution", "   -- make a projective resolution"),
 	  (TO "status", "       -- display the status of a resolution computation"),
-	  (TO "syzygyScheme", " -- construct the syzygy scheme from some syzygies")
+	  (TO "syzygyScheme", " -- construct the syzygy scheme from some syzygies"),
+	  (TO "tensorAssociativity", " -- associativity isomorphisms for tensor products"),
 	  },
      PARA,
      "The default display for a chain complex shows the modules and
@@ -157,6 +165,9 @@ document { quote ChainComplexMap,
 	  (TO "extend", "        -- produce a map by lifting"),
 	  (TO "ring", "          -- get the base ring"),
 	  (TO "nullhomotopy", "  -- produce a null homotopy"),
+	  (TO (quote **, ChainComplexMap, ChainComplex), " -- tensor product"),
+	  (TO (quote **, ChainComplex, ChainComplexMap), " -- tensor product"),
+	  (TO (quote **, ChainComplexMap, ChainComplexMap), " -- tensor product"),
 	  (TO (quote _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes")
 	  }
      }
@@ -195,7 +206,7 @@ degree ChainComplexMap := f -> f.degree
 net ChainComplexMap := f -> (
      complete f;
      v := between("",
-	  apply(sort spots f,
+	  apply(sort union(spots f.source, spots f.target),
 	       i -> horizontalJoin (
 		    net (i+f.degree), " : ", net target f_i, " <--",
 		    lineOnTop net f_i,
@@ -1160,7 +1171,7 @@ document { (quote **, ChainComplex, ChainComplex),
      "The result, ", TT "E", ", is a chain complex.  Each module ", TT "E_k", " 
      in it is a direct sum of modules of the form ", TT "C_i**D_j", " with
      ", TT "i+j=k", ", and the preferred keys for the components of this direct
-     sum are the pairs ", TT "{i,j}", ", sorted increasing values of ", TT "i", ".  For
+     sum are the pairs ", TT "(i,j)", ", sorted increasing values of ", TT "i", ".  For
      information about how to use preferred keys, see ", TT "directSum", "."
      }
 
@@ -1179,3 +1190,108 @@ document { (quote **, GradedModule, ChainComplex),
      PARA,
      "The result is a chain complex."
      }
+
+ChainComplexMap ** ChainComplexMap := (f,g) -> (
+     h := new ChainComplexMap;
+     E := h.source = source f ** source g;
+     F := h.target = target f ** target g;
+     deg := h.degree = f.degree + g.degree;
+     scan(spots E, n -> if F#?(n+deg) then (
+	       E' := E#n;
+	       E'i := E'.indexComponents;
+	       E'c := E'.components;
+	       F' := F#(n+deg);
+	       F'i := F'.indexComponents;
+	       h#n = map(F',E', matrix {
+			 apply(E'.indices, (i,j) -> (
+				   t := (i+f.degree, j+g.degree);
+				   if F'i#?t then F'_[t] * ( ((-1)^(g.degree * i) * f_i ** g_j) )
+				   else map(F',E'c#(E'i#(i,j)),0)))})));
+     h)
+
+ChainComplexMap ** ChainComplex := (f,C) -> f ** id_C
+ChainComplex ** ChainComplexMap := (C,f) -> id_C ** f
+
+document { (quote **, ChainComplexMap, ChainComplex),
+     TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
+     PARA,
+     SEEALSO "ChainComplexMap"
+     }
+
+document { (quote **, ChainComplex, ChainComplexMap),
+     TT "C ** f", " -- tensor product of a chain complex with a map of chain complexes.",
+     PARA,
+     SEEALSO "ChainComplexMap"
+     }
+
+document { (quote **, ChainComplexMap, ChainComplexMap),
+     TT "f ** g", " -- tensor product of two maps of chain complexes.",
+     PARA,
+     SEEALSO "ChainComplexMap"
+     }
+
+min ChainComplex := C -> min spots C
+max ChainComplex := C -> max spots C
+
+document { (max,ChainComplex),
+     TT "max C", " -- the minimum index occuring in a chain complex."
+     }
+
+document { (min,ChainComplex),
+     TT "min C", " -- the minimum index occuring in a chain complex."
+     }
+
+tensorAssociativity = method()
+
+tensorAssociativity(Module,Module,Module) := (A,B,C) -> map((A**B)**C,A**(B**C),1)
+
+tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
+     h := new ChainComplexMap;
+     h.degree = 0;
+     h.source = E :=  A ** (BC := B ** C);
+     h.target = F := (AB := A ** B) ** C;
+     scan(spots E, k -> map(F_k, E_k, 
+	       h#k = sum(E_k.indices, (a,bc) -> (
+			      sum(BC_bc.indices, (b,c) -> (
+					F_k_[(a+b,c)]
+					* (AB_(a+b)_[(a,b)] ** C_c)
+					* tensorAssociativity(A_a,B_b,C_c)
+					* (A_a ** BC_(b+c)^[(b,c)])
+					* E_k^[(a,b+c)]
+					))))));
+     h)
+
+document { quote tensorAssociativity,
+     TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
+     A**(B**C) to (A**B)**C.",
+     PARA,
+     "Currently implemented for modules and chain complexes.",
+     SEEALSO {"ChainComplex", "Module"}
+     }
+
+TEST ///
+     -- here we test the commutativity of the pentagon of associativities!
+     C = QQ^1[0] ++ QQ^2[-1] ++ QQ^1[-2]
+     assert(
+	  (tensorAssociativity(C,C,C) ** C) * tensorAssociativity(C,C**C,C) * (C ** tensorAssociativity(C,C,C))
+	  ==
+	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
+	  )
+     ///
+
+Module Array := (M,v) -> (
+     if #v =!= 1 then error "expected array of length 1";
+     n := v#0;
+     if class n =!= ZZ then error "expected [n] with n an integer";
+     C := new ChainComplex;
+     C#-n = M;
+     C.ring = ring M;
+     C)
+
+document { (quote " ", Module, Array),
+     TT "M[n]", " -- create a chain complex with the module M concentrated
+     in degree -n.",
+     PARA,
+     SEEALSO "ChainComplex"
+     }
+
