@@ -130,6 +130,7 @@ String | ZZ := String => (s,i) -> concatenate(s,string i)
 ZZ | String := String => (i,s) -> concatenate(string i,s)
 
 loaded := new MutableHashTable
+unmarkAllLoadedFiles = () -> loaded = new MutableHashTable  -- symbol will be erased in debugging.m2
 
 canonicalFilename := f -> (
      f = separate(pathSeparator,f);

@@ -105,6 +105,13 @@ clearOutput = Command (() -> (
 		    s <- s;
 	       	    erase s))))
 
-clearAll = Command (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
+clearAll = Command (() -> ( 
+     	  unmarkAllLoadedFiles();
+	  clearOutput(); 
+	  scan(userSymbols(), i -> i <- i);
+	  )
+     )
+
+erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
 
 typicalValues#frame = MutableList
