@@ -107,15 +107,12 @@ endif
 
 CXXFLAGS += $(WARNINGS)
 
-ifeq ($(OS),Linux)
+ifeq (gcc,$(CC))
+ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
 ## - use this to get a memory map listing from the gnu linker
 MADEFILES += mapfile
 LDFLAGS  += -Wl,-Map,mapfile
 endif
-
-ifeq ($(OS) $(CC),Windows-95-98-NT gcc)
-## - use this to get a memory map listing from the gnu linker
-LDFLAGS  += -Wl,-Map,mapfile
 endif
 
 ifeq ($(OS),SunOS)
