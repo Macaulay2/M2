@@ -8,10 +8,7 @@ local exampleBaseFilename
 local exampleOutputFilename
 local currentNodeName
 
-docFilename := () -> (
-     if buildHomeDirectory =!= null then buildHomeDirectory | "cache/Macaulay2-doc"
-     else if prefixDirectory =!= null then prefixDirectory | LAYOUT#"cache" | "Macaulay2-doc"
-     )
+docFilename := () -> null
 
 addStartFunction( 
      () -> (

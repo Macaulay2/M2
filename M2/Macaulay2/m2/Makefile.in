@@ -155,7 +155,7 @@ install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
 clean::
-	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc cache *.obj *.exe runexample \
+	rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample \
 		temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
 distclean : clean
 	rm -f Makefile
