@@ -63,7 +63,7 @@ x*v
 
 
 -- remaking matrices
--- w = map(R^1,,v)						    -- Mike will make remake1
+w = map(R^1,,v)						    -- Mike will make remake1
 
 -- eventually:
 -- raw v * raw x
@@ -71,4 +71,5 @@ x*v
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"'"
 -- End:
