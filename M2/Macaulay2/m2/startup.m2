@@ -31,9 +31,9 @@ if firstTime then (
 	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );
 
-     use = identity;				  -- just temporary, until methods.m2
+     use = identity;				  -- temporary, until methods.m2
      globalAssignFunction = (X,x) -> (
-	  ReverseDictionary#x = X;
+	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
 	  use x;
 	  );
      globalReleaseFunction = (X,x) -> remove(ReverseDictionary,x);
