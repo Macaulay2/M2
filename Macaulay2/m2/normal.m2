@@ -5,7 +5,6 @@
 -- I_1,..., I_n such that the integral closure of R/I is the direct product 
 -- of R_1/I_1,..., R_n/I_n.
 
-local IC;
 
 -- Included is a function for checking if an affine domain is normal.  
 -- isNormal works for any ring given as a quotient ring.  
@@ -389,3 +388,4 @@ conductor(RingMap) := Ideal => (F) -> (
      )
 
 erase global w
+erase global IC
