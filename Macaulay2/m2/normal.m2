@@ -264,7 +264,7 @@ normal0 := (C) -> (
 w := local w
 integralClosure = method(Options=>{Variable => null})	    -- changed to local variable, and hid it from the documentation -- drg
 integralClosure Ring := Ring => o -> (R) -> (
-     if not R#"IC" then newICnode R;
+     if not R#?"IC" then newICnode R;
      C := R#"IC";
      while next C do (
       	  if C#"pending"#1 === null 
@@ -284,8 +284,8 @@ ICmap(Ring) := RingMap => (R) -> (
      -- Input:  a quotient ring.
      -- Output:  The natural map from R to its integral closure S.
      -- Note:  This is needed to compute the conductor of R into S.
-     if R#"IC" or not isNormal R then (
-	  if not R#"IC" then integralClosure(R);
+     if R#?"IC" or not isNormal R then (
+	  if not R#?"IC" then integralClosure(R);
 	  S := (R#"IC"#"answer"#0)#0/(R#"IC"#"answer"#0)#1;
 	  U := R#"IC"#"map";
      	  if U === null then R#"IC"#"map" = map(S,S)
@@ -306,7 +306,7 @@ ICfractions(Ring) := RingMap => (R) -> (
      -- I haven't figured out how to do the fractions and the maps
      -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
-     if R#"IC" or not isNormal R then (
+     if R#?"IC" or not isNormal R then (
 	  integralClosure R;
 	  K := (R#"IC"#"basefield")[join(flatten R#"IC"#"newvars",R.generatorSymbols)];
 	  K2 := (R#"IC"#"basefield")[toList R#"IC"#"vars"];
@@ -344,7 +344,7 @@ ICfractionsLong(Ring) := RingMap => (R) -> (
      -- I haven't figured out how to do the fractions and the maps
      -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
-     if R#"IC" or not isNormal R then (
+     if R#?"IC" or not isNormal R then (
 	  integralClosure(R);
 	  K := (R#"IC"#"basefield")[join(flatten R#"IC"#"newvars",R.generatorSymbols)];
 	  -- This constructs the new ring using all of the new variables.

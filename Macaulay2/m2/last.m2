@@ -27,6 +27,7 @@ String.Wrap = x -> wr("",x)
 
 -- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2"
+currentPackage = null					    -- eliminate the phony package we used for collecting test inputs
 
 if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw documentation database" then (
      currentPackage = Macaulay2;
