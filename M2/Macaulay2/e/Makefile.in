@@ -316,7 +316,7 @@ allfiles: Makefile
 
 # this requires gnu sort and gnu uniq commands
 dups-tmp: $(OBJFILES)
-	- nm -o $(OBJFILES) |grep ' T ' |demangle |sort +2 |uniq -2 -d |tee dups-tmp
+	- nm -o --demangle $(OBJFILES) |grep ' T ' |sort +2 |uniq -2 -d |tee dups-tmp
 dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
