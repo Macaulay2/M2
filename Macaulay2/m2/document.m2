@@ -6,17 +6,12 @@
 maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
 documentationPath = { "cache/doc/" }
-M2prefix := ""
 addStartFunction(
      () -> (
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
 	  path = join( path, { home | "/m2/", home | "/packages/" }),
-          M2prefix = getenv "M2PREFIX";
-	  if M2prefix =!= "" then path = append( path, 
-	       minimizeFilename ( M2prefix | "/share/Macaulay2/packages/" )
-	       );
 	  path = unique apply( path, minimizeFilename);
 	  documentationPath = unique apply(
 	       {
@@ -959,11 +954,11 @@ htmlLiteralTable#"\"" = "&quot;"
 htmlLiteralTable#"<" = "&lt;"
 htmlLiteralTable#"&" = "&amp;"
 htmlLiteralTable#">" = "&gt;"
-htmlLiteral := s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
+htmlLiteral = s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
 
 htmlExtraLiteralTable := copy htmlLiteralTable
 htmlExtraLiteralTable#" " = "&nbsp;"
-htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
+htmlExtraLiteral = s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
 -----------------------------------------------------------------------------
 texLiteralTable := new MutableHashTable
     scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
@@ -1249,58 +1244,6 @@ html CODE   := x -> concatenate(
      "</CODE>"
      )
 
-isAbsolute := url -> (					    -- drg: replace with regexp after merging the branch
-     "#" == substring(url,0,1) or
-     "http://" == substring(url,0,7) or
-     "ftp://" == substring(url,0,6) or
-     "mailto:" == substring(url,0,7)
-     )
-
-buildDirectory = "tmp/"					    -- buildDirectory is one possible PREFIX
-     	       	    	      	   	     	       	    -- set, for example, in packages.m2
-
-buildPackage = ""					    -- name of the package currently being built
-
-
-rel := url -> (
-     stderr << "url           = " << url << endl;
-     stderr << "htmlDirectory = " << htmlDirectory << endl;
-     if isAbsolute url 
-     then url
-     else relativizeFilename(htmlDirectory, url)
-     )
-
-
-htmlFilename = method()
-htmlFilename(String) := (nodename) -> (	-- returns the path from the PREFIX to the file
-     basename := toFilename nodename | ".html";
-     fn0 := "share/doc/Macaulay2/currentVersion/html/"|basename;
-     if M2prefix =!= "" and fileExists (M2prefix|"/"|fn0) -- depends on M2 being installed there
-     then fn0
-     else concatenate("share/doc/Macaulay2/packages/", buildPackage, "/html/", basename)
-     )
-
-html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
-text IMG  := x -> ""
-tex  IMG  := x -> ""
-
-html HREF := x -> (
-     "<A HREF=\"" 					    -- "
-     | rel first x 
-     | "\">" 						    -- "
-     | html last x 
-     | "</A>"
-     )
-text HREF := x -> "\"" | last x | "\""
-tex HREF := x -> (
-     concatenate(
-	  ///\special{html:<A href="///, 		    -- "
-	       texLiteral rel first x,
-	       ///">}///,				    -- "
-	  tex last x,
-	  ///\special{html:</A>}///
-	  )
-     )
 
 html ANCHOR := x -> (
      "<A name=\"" | x#0 | "\">" | html x#-1 | "</A>"
@@ -1412,19 +1355,6 @@ text SUP := x -> "^" | text x#0
 text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
-
-html TO := x -> (
-     key := x#0;
-     formattedKey := formatDocumentTag key;
-     concatenate ( 
-     	  ///<A HREF="///,				    -- "
-	  rel htmlFilename formattedKey,
-	  ///">///, 					    -- "
-     	  htmlExtraLiteral formattedKey,
-     	  "</A>",
-     	  drop(toList x,1) 
-     	  )
-     )
 tex  TO := x -> (
      key := x#0;
      node := formatDocumentTag key;
@@ -1452,7 +1382,6 @@ html UNDERLINE := htmlMarkUpType "U"
 html TEX := x -> x#0	    -- should do something else!
 html BOLD := htmlMarkUpType "B"
 
-html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 tex BASE := text BASE := net BASE := x -> ""
 
 html Option := x -> toString x
