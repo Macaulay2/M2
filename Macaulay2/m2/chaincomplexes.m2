@@ -676,12 +676,6 @@ chainComplex GradedModule := ChainComplex => (M) -> (
      C)
 -----------------------------------------------------------------------------
 
-concatCols := (R,mats) -> map(R, rawDirectSum apply(toSequence mats, f -> f.RawMatrix))
-concatBlocks := (R,mats) -> (
-     mats = applyTable(mats, f -> f.RawMatrix);
-     map(R, 
-	  rawDual rawDirectSum apply(toSequence mats, row -> rawDual rawDirectSum toSequence row)))
-
 tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
@@ -696,7 +690,7 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 	  scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
 		    E#(i-1),
 		    E#i,
-		    concatBlocks(R, table(
+		    concatBlocks(table(
 			      E#(i-1).cache.indices,
 			      E#i.cache.indices,
 			      (j,k) -> (
