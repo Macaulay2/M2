@@ -134,7 +134,7 @@ assert( q * j + r == i )
 errorDepth = 0
 trivial = rawMonoid()
 
-k = rawZZp(101,trivial)
+k = rawZZp(101)
 3_k
 assert( 3_k == 3 )
 assert( 3 == 3_k )
