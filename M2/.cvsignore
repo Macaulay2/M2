@@ -6,3 +6,4 @@ config.Makefile
 config.log
 config.status
 config.cache
+tmp
