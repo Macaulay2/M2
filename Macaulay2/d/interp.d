@@ -162,7 +162,6 @@ readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
      ret);
 readeval(file:TokenFile):Expr := readeval2(file,false,true);
 export StopIfError := false;
-readevalprint(file:TokenFile):Expr := readeval3(file,true,StopIfError,globalScope);
 nprompt := false;
 mpwprompt := false;
 xprompt := false;
@@ -180,13 +179,13 @@ prompt(o:file):void := (
 	                      << " " << blanks(length(tostring(stmtno))) << "   ";)
 	  else if !nprompt then (o << "i" << stmtno << " : ";)
 	  ));
-loadprint(s:string):Expr := (
+loadprint(s:string,StopIfError:bool):Expr := (
      when openTokenFile(s)
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,prompt);
-	  r := readevalprint(file);
+	  r := readeval3(file,true,StopIfError,globalScope);
 	  t := if !(s==="-") then close(file) else 0;
 	  when r is Error do r 
 	  else (
@@ -216,7 +215,7 @@ input(e:Expr):Expr := (
      is s:string do (
 	  oldxprompt := xprompt;
 	  xprompt = false;
-	  ret := loadprint(s);
+	  ret := loadprint(s,true);
 	  xprompt = oldxprompt;
 	  laststmtno = -1;
 	  ret)
@@ -271,7 +270,7 @@ usageMessage():void := (
 	  ));
 
 export topLevel():void := (
-     when loadprint("-") is Error do exit(2) else nothing;
+     when loadprint("-",StopIfError) is Error do exit(2) else nothing;
      );
 
 value(e:Expr):Expr := (

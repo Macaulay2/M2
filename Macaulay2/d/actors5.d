@@ -632,6 +632,9 @@ setup(HatHatS,hathatfun);
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
+ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
+setuppostfix(ParenStarParenS,ParenStarParenfun);
+
 underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
 setup(UnderscoreS,underscorefun);
 

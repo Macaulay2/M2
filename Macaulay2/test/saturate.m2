@@ -11,3 +11,12 @@
 	D0 = ideal(P)
 	D = saturate(D0,z)
 	--gets error message
+
+-----------------------------------------------------------------------------
+
+-- a problem with matrices formed from lists of vectors in a subquotient module
+
+R = QQ[x..z]
+m = ideal vars R
+M = m/m^2
+N = saturate 0_M

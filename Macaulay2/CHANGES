@@ -3,6 +3,20 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+Fixed a bug which prevented 'matrix' from accepting a list of vectors 
+from a subquotient module.
+
+Added a method 'prune F' that prunes a coherent sheaf by computing the graded
+module which in degree n is the global sections H^0(F(n)).
+
+'sheaf(M,X)' where M is a module and X is a variety, has been replaced by
+'sheaf(X,M)'
+
+'input' now will stop reading the file after an error occurs.
+
+The parsing precedence of the postfix operator ~ (as in F~) is now much
+higher.  There is a new postfix operator (*) available.
+
 'Ext(M,N)' now caches the result for future reference
 
 'betti f', where 'f' is a matrix of nonzero degree, is now interpreted

@@ -686,9 +686,9 @@ document { sheaf,
      Headline => "make a coherent sheaf"
      }
 
-document { (sheaf, Module, Variety),
+document { (sheaf, Variety, Module),
      Headline => "make a coherent sheaf",
-     TT "sheaf(M,X)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
+     TT "sheaf(X,M)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
      to the module ", TT "M", ".",
      PARA,
      "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is 
@@ -806,8 +806,8 @@ document { (degrees, CoherentSheaf),
 document { (cohomology, ZZ, CoherentSheaf),
      Headline => "coherent sheaf cohomology",
      TT "HH^i(F)", " -- for a coherent sheaf F on a projective variety X, computes
-     the direct sum over at least the natural numbers ", TT "n", ", of the
-     ", TT "i", "-th cohomology groups of F(n).",
+     a module which, in degrees >= 0, agrees with the direct sum over at least the
+     natural numbers ", TT "n", ", of the ", TT "i", "-th cohomology groups of F(n).",
      BR,
      NOINDENT,
      TT "HH^i(F, Degree=>e)", " -- same as above, but ", TT "n", " ranges over at least

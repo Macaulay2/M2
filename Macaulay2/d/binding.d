@@ -180,10 +180,10 @@ bump();
 bump();
      export notS := makeKeyword(unaryword("not"));
 bump();
-     export LessS := makeKeyword(binaryleft("<"));
-     export GreaterS := makeKeyword(binaryleft(">"));
-     export LessEqualS := makeKeyword(binaryleft("<="));
-     export GreaterEqualS := makeKeyword(binaryleft(">="));
+     export LessS := makeKeyword(unaryleft("<"));
+     export GreaterS := makeKeyword(unaryleft(">"));
+     export LessEqualS := makeKeyword(unaryleft("<="));
+     export GreaterEqualS := makeKeyword(unaryleft(">="));
      export EqualEqualEqualS := makeKeyword(binaryleft("==="));
      export EqualEqualS := makeKeyword(binaryleft("=="));
      export QuestionS := makeKeyword(binaryleft("?"));
@@ -201,8 +201,6 @@ bump();
      export HatHatS := makeKeyword(binaryleft("^^"));
 bump();
      export AmpersandS := makeKeyword(binaryleft("&"));
-bump();
-     export TildeS := makeKeyword(postfix("~"));
 bump();
      export DotDotS := makeKeyword(binaryleft(".."));
 bump();
@@ -230,6 +228,9 @@ bump();
      parseWORD.precedence = prec; parseWORD.binaryStrength = prec; parseWORD.unaryStrength = prec;
 bump();
      export AtAtS := makeKeyword(binaryleft("@@"));
+bump();
+     export TildeS := makeKeyword(postfix("~"));
+     export ParenStarParenS := makeKeyword(postfix("(*)"));
 bump();
      export SlashHatS := makeKeyword(binaryleft("/^"));
      export PowerS := makeKeyword(binaryleft("^"));
@@ -463,10 +464,12 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS );
-export opsWithPostfixMethod := array(SymbolClosure)( TildeS );
-export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS, orS, andS, notS, LessS,
-     GreaterS, LessEqualS, GreaterEqualS, EqualEqualEqualS, EqualEqualS,
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS,
+     LessS, GreaterS, LessEqualS, GreaterEqualS);
+export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );
+export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS, orS, andS, notS, 
+     -- LessS, GreaterS, LessEqualS, GreaterEqualS,
+     EqualEqualEqualS, EqualEqualS,
      QuestionS, NotEqualEqualEqualS, NotEqualS, SharpSharpS, SharpQuestionS, DotS, DotQuestionS,
      ExclamationS );
 

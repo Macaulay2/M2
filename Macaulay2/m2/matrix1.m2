@@ -299,7 +299,21 @@ matrix(List) := Matrix => options -> (m) -> (
      if #types === 1 then (
 	  type := types#0;
 	  if instance(type,Module) 
-	  then map(type,,table(numgens type, #m, (i,j) -> m_j_i))
+	  then (
+	       M := type;
+	       if M.?generators then error "not implemented yet";
+	       R := ring M;
+	       coverM := cover M;
+	       h := newHandle(ggPush\m, ggPush coverM, ggPush (#m), ggmatrix);
+     	       N := (sendgg(ggPush h,gggetcols); new Module from R);
+	       new Matrix from {
+		    symbol target => M,
+		    symbol handle => h,
+		    symbol source => N,
+		    symbol ring => R,
+		    symbol cache => new CacheTable
+		    }
+	       )
 	  else if type === List then (
 	       if isTable m then (matrixTable options)(m)
 	       else error "expected rows all to be the same length"
@@ -403,11 +417,11 @@ Matrix ** Matrix := Matrix => (f,g) -> (
      map(target f ** target g, source f ** source g, h, Degree => degree f + degree g))
 
 Matrix ** ZZ := 
-Matrix ** QQ := 
-Matrix ** RingElement := (f,r) -> f ** matrix {{r}}
-
+Matrix ** QQ := (f,r) -> r * f
 ZZ ** Matrix := 
-QQ ** Matrix := 
+QQ ** Matrix := (r,f) -> r * f
+
+Matrix ** RingElement := (f,r) -> f ** matrix {{r}}
 RingElement ** Matrix := (r,f) -> matrix {{r}} ** f
 
 QQ ** RingElement := 

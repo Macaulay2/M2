@@ -1,6 +1,6 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-Variety = new Type of MutableHashTable
+Variety = new Type of HashTable
 Variety.synonym = "variety"
 AffineVariety = new Type of Variety
 AffineVariety.synonym = "affine variety"
@@ -14,7 +14,8 @@ expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 net AffineVariety := (X) -> net expression X
 Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      new AffineVariety from {
-     	  symbol ring => R
+     	  symbol ring => R,
+	  symbol cache => new CacheTable
      	  }
      )
 Proj = method()
@@ -23,7 +24,8 @@ net ProjectiveVariety := (X) -> net expression X
 Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
      if not isHomogeneous R then error "expected a homgeneous ring";
      new ProjectiveVariety from {
-     	  symbol ring => R
+     	  symbol ring => R,
+	  symbol cache => new CacheTable
      	  }
      )
 CoherentSheaf = new Type of MutableHashTable
@@ -31,7 +33,7 @@ CoherentSheaf.synonym = "coherent sheaf"
 expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module }
 net CoherentSheaf := (F) -> net expression F
 sheaf = method(TypicalValue => CoherentSheaf)
-sheaf(Module,Variety) := (M,X) -> if M#?(sheaf,X) then M#(sheaf,X) else M#(sheaf,X) = (
+sheaf(Variety,Module) := (X,M) -> if M#?(sheaf,X) then M#(sheaf,X) else M#(sheaf,X) = (
      if ring M =!= ring X then error "expected module and variety to have the same ring";
      if instance(X,ProjectiveVariety) and not isHomogeneous M
      then error "expected a homogeneous module";
@@ -40,7 +42,7 @@ sheaf(Module,Variety) := (M,X) -> if M#?(sheaf,X) then M#(sheaf,X) else M#(sheaf
 	  symbol variety => X
 	  }
      )
-Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(M,Proj ring M)
+Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(Proj ring M,M)
 Ring ~ := sheaf Ring := CoherentSheaf => (R) -> sheaf R^1
 variety = method()
 variety CoherentSheaf := Variety => (F) -> F.variety
@@ -55,6 +57,7 @@ codim CoherentSheaf := (F) -> codim F.module
 rank CoherentSheaf := (F) -> rank F.module
 exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => (i,F) -> sheaf(exteriorPower(i,F.module))
 degrees CoherentSheaf := (F) -> degrees F.module
+
 degreeList := (M) -> (
      if dim M > 0 then error "expected module of finite length";
      H := poincare M;
@@ -69,8 +72,9 @@ cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
      else (
 	  -- compute global sections
 	  e := opts.Degree;
-	  M = M / saturate 0_M;
 	  A := ring M;
+	  M = cokernel presentation M;
+	  M = M / saturate image map(M,A^0,0);
 	  F := presentation A;
 	  R := ring F;
 	  N := coker lift(presentation M,R) ** coker F;
@@ -80,19 +84,20 @@ cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
 	  then M
 	  else (
 	       E1 := Ext^(r-1)(N,wR);
-	       p := max(0,
+	       p := (
 		    if dim E1 <= 0 
 		    then max degreeList E1 - min degreeList E1 + 1
-		    else min degrees E1 + e + 1
+		    else first min degrees E1 + e + 1 -- I've guessed when inserting 'first'
 		    );
-	       J := ideal apply(numgens A, j -> A_j^p);
-	       Hom(module J,M)
+	       if p > 0
+	       then Hom(image matrix {apply(numgens A, j -> A_j^p)}, M)
+	       else M
 	       )
 	  )
      )
 
 structureSheaf := method()		  -- private
-structureSheaf(Variety) := (X) -> sheaf((ring X)^1, X)
+structureSheaf(Variety) := (X) -> sheaf(X, (ring X)^1)
 
 OO = new ScriptedFunctor from { subscript => structureSheaf }
 
@@ -105,14 +110,26 @@ OO = new ScriptedFunctor from { subscript => structureSheaf }
 --	  )
 --     }
 
+prune CoherentSheaf := F -> (
+     X := variety F;
+     M := module F;
+     M = cokernel presentation M;
+     M = M / saturate 0_M;
+     F = sheaf M;
+     M = HH^0 F;
+     M = prune M;
+     sheaf_X M)
+
 cotangentSheaf = method()
 cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
-     if X.?cotangentSheaf
-     then X.cotangentSheaf
-     else X.cotangentSheaf = (
+     if X.cache.?cotangentSheaf
+     then X.cache.cotangentSheaf
+     else X.cache.cotangentSheaf = (
 	  R := ring X;
 	  F := presentation R;
-	  sheaf( prune homology(vars ring F ** R,jacobian F ** R), X)))
+	  prune sheaf(X, homology(vars ring F ** R,jacobian F ** R))
+	  )
+     )
 cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
      if X#?(cotangentSheaf,i)
      then X#(cotangentSheaf,i) 
@@ -137,3 +154,9 @@ singularLocus(ProjectiveVariety) := X -> (
      f := presentation R;
      A := ring f;
      Proj(A / saturate (minors(codim R, jacobian f) + ideal f)))
+
+degree CoherentSheaf := F -> degree F.module
+hilbertSeries CoherentSheaf := options -> F -> hilbertSeries(F.module,options)
+hilbertPolynomial CoherentSheaf := options -> F -> hilbertPolynomial(F.module,options)
+hilbertFunction(List,CoherentSheaf) := 
+hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> hilbertFunction(d,F.module)
