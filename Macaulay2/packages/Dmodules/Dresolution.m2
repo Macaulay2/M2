@@ -30,13 +30,8 @@ shifts := (m, w, oldshifts) -> (
 kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
-     sendgg(ggPush m, ggker);
-     m.cache.kerGB = newHandle();
-     sendgg(ggPush m.cache.kerGB, ggcalc);
-     m.cache.kerGBstatus = eePopInt();
-     sendgg(ggPush m.cache.kerGB, gggetsyz);
-     schreyerOrder getMatrix ring m)
-
+     map(ring m,schreyerOrder rawKernelOfGB raw m)
+     )
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

@@ -35,7 +35,7 @@ newLLLComputation = (m, threshold, hasChangeOfBasis) -> (
      -- }
      result := new LLLComputation;
      result.Engine = false;
-     result.A = sparseMutableMatrix m;
+     result.A = sparseMutableMatrix m;			    -- rewrite this line!
      n := numcols result.A;
      if hasChangeOfBasis then (
          result.changeOfBasis = iden(ring m, n);
@@ -145,7 +145,7 @@ newLLLEngineComputation = (m, threshold, hasChangeOfBasis) -> (
      -- }
      result := new LLLComputation;
      result.Engine = true;
-     result.A = sparseMutableMatrix m;
+     result.A = sparseMutableMatrix m;			    -- this line, too!
      n := numcols result.A;
      if hasChangeOfBasis then (
          result.changeOfBasis = iden(ring m, n);
