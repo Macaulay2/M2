@@ -116,3 +116,5 @@ random RR := x -> (
 erase quote randomint
 
 ceiling = x -> - floor(-x)
+
+isUnit ZZ := x -> x == 1 or x == -1

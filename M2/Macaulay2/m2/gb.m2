@@ -692,6 +692,8 @@ Matrix % GroebnerBasis := (n,g) -> (
      if R =!= ring g then error "expected matrix over the same ring";
      sendgg(ggPush g, ggPush n, ggreduce, ggpop);
      getMatrix R)
+
+ZZ % GroebnerBasis :=
 RingElement % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 
 GroebnerBasis == GroebnerBasis := (g,h) -> (

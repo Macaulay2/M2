@@ -342,6 +342,7 @@ baseName RingElement := x -> (
      )
 
 leadCoefficient RingElement := (f) -> (
+     if f == 0 then error "lead coefficient of 0 requested";
      R := ring f;
      k := coefficientRing R;
      leadCoefficient R := (f) -> (
@@ -728,3 +729,5 @@ promote(QQ,QQ) := (i,o) -> i
 liftable(ZZ,Ring) := 
 liftable(QQ,Ring) := 
 liftable(RingElement,Ring) := (f,R) -> try (lift(f,R);true) else false
+
+isUnit(RingElement) := (f) -> 1 % ideal f == 0

@@ -232,6 +232,7 @@ Matrix % Module := (f,M) -> f % gb M
 
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
 RingElement % Ideal := (r,I) -> r % gb I
+ZZ % Ideal := (r,I) -> r_(ring I) % gb I
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))
 document { (quote %, Matrix, RingElement),
