@@ -27,8 +27,6 @@ export AssignElemFun := dummyTernaryFun;	-- filled
 export AssignQuotedElemFun := dummyTernaryFun;	-- filled
 export TryElseFun := dummyBinaryFun; 	-- filled in later
 export TryFun := dummyUnaryFun; 	-- filled in later
-export IfThenFun := dummyBinaryFun;	-- filled in later
-export IfThenElseFun := dummyTernaryFun;-- filled in later
 export ForFun := dummyForFun;      -- filled in later
 export WhileDoFun := dummyBinaryFun;      -- filled in later
 export WhileListFun := dummyBinaryFun;      -- filled in later
@@ -200,15 +198,8 @@ export convert(e:ParseTree):Code := (
 	       else Code(ternaryCode(NewOfFromFun,
 		    convert(n.newclass),convert(n.newparent),convert(n.newinitializer),
 		    treePosition(e))))
-     is i:IfThen do Code(
-	  binaryCode(IfThenFun,
-	       convert(i.predicate),convert(i.thenclause),
-	       treePosition(e)))
-     is i:IfThenElse do Code(
-	  ternaryCode(IfThenElseFun,
-	       convert(i.predicate),
-	       convert(i.thenclause),convert(i.elseClause),
-	       treePosition(e)))
+     is i:IfThen do Code(ifCode(convert(i.predicate),convert(i.thenclause),NullCode,treePosition(e)))
+     is i:IfThenElse do Code(ifCode(convert(i.predicate),convert(i.thenclause),convert(i.elseClause),treePosition(e)))
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
@@ -501,5 +492,6 @@ export tostring(c:Code):string := (
      	       	    ")")))
      is x:stringCode do concatenate(array(string)("\"",present(x.x),"\""))
      is x:ternaryCode do concatenate(array(string)("(3-OP ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
+     is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," ",tostring(x.thenClause)," ",tostring(x.elseClause),")"))
      is x:unaryCode do concatenate(array(string)("(1-OP ",tostring(x.rhs),")"))
      );

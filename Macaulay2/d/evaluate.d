@@ -138,11 +138,6 @@ assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
      then globalAssignment(frameindex,t,newvalue)
      else localAssignment(nestingDepth,frameindex,newvalue));
 
-localAssignmentFun(x:localAssignmentCode):Expr := (
-     newvalue := eval(x.rhs);
-     when newvalue is Error do return newvalue else nothing;
-     localAssignment(x.nestingDepth,x.frameindex,newvalue));
-
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
@@ -246,13 +241,6 @@ assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      else printErrorMessage(lhsarray,"'.' expected left hand side to be a hash table")
      );
 AssignQuotedElemFun = assignquotedelemfun;
-ifthenfun(predicate:Code,thenclause:Code):Expr := (
-     p := eval(predicate);
-     when p is Error do p
-     else if p == True then eval(thenclause)
-     else if p == False then nullE
-     else printErrorMessage(predicate,"expected true or false"));
-IfThenFun = ifthenfun;
 tryelsefun(primary:Code,alternate:Code):Expr := (
      oldSuppressErrors := SuppressErrors;
      SuppressErrors = true;
@@ -279,14 +267,6 @@ tryfun(primary:Code):Expr := (
 	       else nullE)
 	  else p));
 TryFun = tryfun;
-ifthenelsefun(predicate:Code,thenclause:Code,elseClause:Code):Expr := (
-     p := eval(predicate);
-     when p is Error do p
-     else if p == True then eval(thenclause)
-     else if p == False then eval(elseClause)
-     else printErrorMessage(predicate,"expected true or false"));
-IfThenElseFun = ifthenelsefun;
-
 
 dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
 export breakLoopFun := dummyBreakLoop;
@@ -360,9 +340,7 @@ export eval(c:Code):Expr := (
      else when c
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)
-     is m:functionCode do (
-	  noRecycle(localFrame);
-	  return Expr(FunctionClosure(localFrame, m)))
+     is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))
      is r:localMemoryReferenceCode do (
 	  f := localFrame;
 	  nd := r.nestingDepth;
@@ -376,10 +354,19 @@ export eval(c:Code):Expr := (
 	       );
 	  return f.values.(r.frameindex))
      is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
-     is a:localAssignmentCode do localAssignmentFun(a)
+     is x:localAssignmentCode do (
+	  newvalue := eval(x.rhs);
+	  when newvalue is Error do return newvalue 
+	  else localAssignment(x.nestingDepth,x.frameindex,newvalue))
      is a:globalAssignmentCode do globalAssignmentFun(a)
      is p:parallelAssignmentCode do parallelAssignmentFun(p)
      is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
+     is c:ifCode do (
+	  p := eval(c.predicate);
+	  when p is Error do p
+	  else if p == True then eval(c.thenClause)
+	  else if p == False then eval(c.elseClause)
+	  else printErrorMessage(c.predicate,"expected true or false"))
      is r:localSymbolClosureCode do (
 	  f := localFrame;
 	  nd := r.nestingDepth;
@@ -406,14 +393,17 @@ export eval(c:Code):Expr := (
      is v:integerCode do return Expr(v.x)
      is v:stringCode do return Expr(v.x)
      is v:sequenceCode do (
+	  if length(v.x) == 0 then return emptySequence;
 	  r := evalSequence(v.x);
 	  if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)
 	  )
      is v:listCode do (
+	  if length(v.y) == 0 then return emptyList;
 	  r := evalSequence(v.y);
 	  if evalSequenceHadError then evalSequenceErrorMessage else list(r)
 	  )
      is v:arrayCode do (
+	  if length(v.z) == 0 then return emptyArray;
 	  r := evalSequence(v.z);
 	  if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	  );
