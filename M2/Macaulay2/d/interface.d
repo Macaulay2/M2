@@ -1301,9 +1301,7 @@ rawMatrixEntry(e:Expr):Expr := (
      if !isInt(r) then WrongArgSmallInteger(2) else
      when s.2 is c:Integer do 
      if !isInt(c) then WrongArgSmallInteger(3) else (
-	  Expr(Ccode(RawRingElement,
-		    "(engine_RawRingElement)",
-		    "IM2_Matrix_get_entry(", "(Matrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
+	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)", "IM2_Matrix_get_entry(", "(Matrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw matrix")
@@ -1906,14 +1904,15 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 
 rawGB(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 7 then WrongNumArgs(7) else
+     if length(s) != 8 then WrongNumArgs(8) else
      when s.0 is m:RawMatrix do
      when s.1 is collectSyz:Boolean do
      when s.2 is nRowsToKeep:Integer do if !isInt(nRowsToKeep) then WrongArgSmallInteger(3) else
-     when s.3 is useMaxDegree:Boolean do
-     when s.4 is maxDegree:Integer do if !isInt(maxDegree) then WrongArgSmallInteger(5) else
-     when s.5 is algorithm:Integer do if !isInt(algorithm) then WrongArgSmallInteger(6) else
-     when s.6 is strategy:Integer do if !isInt(strategy) then WrongArgSmallInteger(7) else
+     if isSequenceOfSmallIntegers(s.3) then
+     when s.4 is useMaxDegree:Boolean do
+     when s.5 is maxDegree:Integer do if !isInt(maxDegree) then WrongArgSmallInteger(5) else
+     when s.6 is algorithm:Integer do if !isInt(algorithm) then WrongArgSmallInteger(6) else
+     when s.7 is strategy:Integer do if !isInt(strategy) then WrongArgSmallInteger(7) else
      if !isInt(algorithm) then WrongArgSmallInteger(8) else
      toExpr(
 	  Ccode(RawComputationOrNull,
@@ -1921,6 +1920,7 @@ rawGB(e:Expr):Expr := (
 		   "(Matrix*)",m,",",
 		   isTrue(collectSyz),",",
 		   toInt(nRowsToKeep),",",
+     	       	   "(M2_arrayint)", getSequenceOfSmallIntegers(s.3), ",", -- gb degrees
 		   isTrue(useMaxDegree),",",
 		   toInt(maxDegree),",",
 		   toInt(algorithm),",",
@@ -1928,14 +1928,15 @@ rawGB(e:Expr):Expr := (
 	       ")"
 	       )
 	  )
+     else WrongArgInteger(8)
      else WrongArgInteger(7)
      else WrongArgInteger(6)
-     else WrongArgInteger(5)
-     else WrongArgBoolean(4)
+     else WrongArgBoolean(5)
+     else WrongArg(4,"a list of small integers")
      else WrongArgInteger(3)
      else WrongArgBoolean(2)
      else WrongArg(1,"a raw matrix")
-     else WrongNumArgs(7)
+     else WrongNumArgs(8)
      );
 setupfun("rawGB",rawGB);
 
@@ -2029,7 +2030,7 @@ rawGBSetStop(e:Expr):Expr := (
      when s.9 is just_min_gens:Boolean do
      if !isSequenceOfSmallIntegers(s.10) then WrongArg(11,"a sequence of small integers") else -- length_limit
      toExpr(
-	  Ccode(RawComputationOrNull,"(engine_RawComputationOrNull)IM2_GB_set_stop(",
+	  Ccode(RawComputationOrNull,"(engine_RawComputationOrNull)IM2_Computation_set_stop(",
 		    "(Computation *)", G, ",",
 		    True == always_stop, ",",
 		    True == stop_after_degree, ",",
@@ -2080,21 +2081,21 @@ setupfun("rawGBGetMatrix", rawGBGetMatrix);
 rawGBStatus(e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
-	  completionLevel := 0;
+	  stoppingReason := 0;
 	  ret := Ccode(int,"IM2_GB_status(",
 	       "(Computation*)",G,",",
 	       "&",completionDegree,",",
-	       "&",completionLevel,
+	       "&",stoppingReason,
 	       ")"
 	       );
-	  if ret == -1 then buildErrorPacket(EngineError("unknown raw computation status error")) 
-	  else Expr(Sequence(toInteger(ret),toInteger(completionDegree),toInteger(completionLevel)))
+	  if ret == -1 then buildErrorPacket(EngineError("unknown raw gb computation status error")) 
+	  else Expr(Sequence(toInteger(ret),toInteger(completionDegree),toInteger(stoppingReason)))
 	  )
      else WrongArg("a raw computation")
      );
 setupfun("rawGBStatus", rawGBStatus);
 
-rawGBStatusLevel(e:Expr):Expr := (
+rawResolutionStatusLevel(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is G:RawComputation do
@@ -2102,7 +2103,7 @@ rawGBStatusLevel(e:Expr):Expr := (
      if !isInt(level) then WrongArgSmallInteger(2) else
      when s.2 is minimize:Boolean do (
 	  completionDegree := 0;
-	  ret := Ccode(int,"IM2_GB_status_level(",
+	  ret := Ccode(int,"IM2_Resolution_status_level(",
 	       "(Computation*)",G,",",
 	       toInt(level), ",",
 	       True == minimize, ",",
@@ -2117,7 +2118,7 @@ rawGBStatusLevel(e:Expr):Expr := (
      else WrongArg(1,"a raw computation")
      else WrongNumArgs(3)
      );
-setupfun("rawGBStatusLevel", rawGBStatusLevel);
+setupfun("rawResolutionStatusLevel", rawResolutionStatusLevel);
 
 rawGBGetChange(e:Expr):Expr := (
      when e is a:Sequence do 

@@ -537,6 +537,7 @@ setupconst("RawMonoid",Expr(rawMonoidClass));
 setupconst("RawRing",Expr(rawRingClass));
 setupconst("RawFreeModule",Expr(rawFreeModuleClass));
 setupconst("RawMatrix",Expr(rawMatrixClass));
+setupconst("RawComputation",Expr(rawComputationClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));
 setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
