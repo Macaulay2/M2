@@ -58,6 +58,8 @@ import fileLength(fd:int):int;
 import fileExists(name:string):bool;
 import fileTime(name:string):int;
 import mkdir(name:string):int;
+import rmdir(name:string):int;
+import unlink(name:string):int;
 import isDirectory(name:string):int;
 import isRegularFile(name:string):int;
 import readlink(filename:string):string;

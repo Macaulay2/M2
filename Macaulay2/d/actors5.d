@@ -1422,6 +1422,24 @@ fileExists(e:Expr):Expr := (
      );
 setupfun("fileExists",fileExists);
 
+removeDirectory(e:Expr):Expr := (
+     when e is name:string do
+     if rmdir(name) == ERROR 
+     then buildErrorPacket(syscallErrorMessage("removing a directory"))
+     else nullE
+     else WrongArgString()
+     );
+setupfun("removeDirectory",removeDirectory);
+
+removeFile(e:Expr):Expr := (
+     when e is name:string do
+     if unlink(name) == ERROR 
+     then buildErrorPacket(syscallErrorMessage("removing a file"))
+     else nullE
+     else WrongArgString()
+     );
+setupfun("removeFile",removeFile);
+
 readDirectory(e:Expr):Expr := (
      when e is name:string do (
 	  r := readDirectory(name);
