@@ -8,3 +8,5 @@ gmon.out
 *.cat
 *.src
 *.dct
+*.syn
+*.stop
