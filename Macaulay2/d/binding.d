@@ -531,6 +531,10 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  bind(body,dictionary);
 	  )
      is token:Token do (
+	  if token.word.typecode != TCid then (
+	       makeErrorTree(assn.operator, "expected a symbol to left of '"+assn.operator.entry.word.name+"'");
+	       return;
+	       );
 	  bindToken(token,dictionary,colon);
 	  bind(body,dictionary);
 	  )

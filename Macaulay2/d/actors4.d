@@ -28,8 +28,8 @@ use struct;
 use objects;
 
 internalName(s:string):string := (
-     -- "$" + s						    -- old way, but now we can see these symbols sometimes
-     s
+     "$" + s
+     -- s
      );
 
 sleepfun(e:Expr):Expr := (
