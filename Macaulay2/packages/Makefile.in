@@ -18,16 +18,14 @@ PACKAGES += minimal
 
 TMPPREFIX = tmp-packages
 
-ARGS :=
-ARGS += -q
-ARGS += --stop
-ARGS += --prefix $(TMPPREFIX)
-ARGS += -e errorDepth=0
-ARGS += -e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => true, MakeInfo => true, PackagePrefix => \"./$(TMPPREFIX)/\")"
-ARGS += -e "exit 0"
-
 %.installed : %.m2
-	../bin/M2 $(ARGS)
+	../bin/M2 \
+		-q \
+		--stop \
+		--prefix $(TMPPREFIX) \
+		-e errorDepth=0 \
+		-e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => false, MakeInfo => true, PackagePrefix => \"./$(TMPPREFIX)/\")" \
+		-e "exit 0"
 	touch "$@"
 
 all :: $(PACKAGES:=.installed)
