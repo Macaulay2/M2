@@ -171,7 +171,25 @@ Module == Module := (M,N) -> (
 		    isSubset(ambient M, image g))
 	       else true)))
 
-Vector = new Type of HashTable				    -- used to be MutableHashTable!
+-----------------------------------------------------------------------------
+
+ModuleMap = new Type of HashTable
+ModuleMap.synonym = "module map"
+
+Matrix = new Type of ModuleMap
+Matrix.synonym = "matrix"
+raw Matrix := f -> f.RawMatrix
+ring Matrix := f -> (
+     S := ring target f;
+     R := ring source f;
+     if R === S then R
+     else error "expected module map with source and target over the same ring"
+     )
+source Matrix := f -> f.source
+target Matrix := f -> f.target
+
+Vector = new Type of Matrix				    -- used to be MutableHashTable!
+Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> notImplemented()		    -- we have this just because there is a possible obsolete documentation about it
 
 newModule = method(TypicalValue => Module)

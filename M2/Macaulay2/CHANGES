@@ -16,6 +16,12 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Methods for map(Module), map(Ideal), map(Ideal,Ideal),
+map(Module,Matrix), map(Module,ZZ), map(Module,RingElement) have been
+removed, in an attempt to get the methods for "map" to be more
+orthogonal and understandable.  Error messages will inform the user
+that code using these old methods will have to be rewritten slightly.
+
 Subscripted variables are now assigned to with statements like x_i=y,
 whereas before, we used x#i=y, and we had to have mentioned x_i
 previously.  This is part of a more general mechanism for assignment

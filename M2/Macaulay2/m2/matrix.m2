@@ -1,20 +1,5 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
-Matrix.synonym = "matrix"
-raw Matrix := f -> f.RawMatrix
-ring Matrix := f -> (
-     S := ring target f;
-     R := ring source f;
-     if R === S then R
-     else error "expected module map with source and target over the same ring"
-     )
-source Matrix := f -> f.source
-target Matrix := f -> f.target
-
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      R := ring tar;
@@ -442,20 +427,7 @@ map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
-map(Module,RingElement) := Matrix => options -> (M,r) -> (
-     R := ring M;
-     try r = r + R#0
-     else error "encountered scalar of unrelated ring";
-     if r == 0 then map(M,M,0)
-     else if r == 1 then map(M,1)
-     else r * (map(M,1)))
-
-map(Module,ZZ) := Matrix => options -> (M,i) -> (
-     if i === 0 then map(M,M,0)
-     else if i === 1 then map(M,options)
-     else i * map M)
-
-map(Module,Matrix) := Matrix => options -> (M,f) -> (
+map(Module,Nothing,Matrix) := Matrix => options -> (M,f) -> (
      R := ring M;
      if R =!= ring f then error "expected the same ring";
      if # degrees M =!= # degrees target f then (
@@ -467,11 +439,6 @@ map(Module,Matrix) := Matrix => options -> (M,f) -> (
 	  );
      map(M,source f ** R^{-first diffs},f)
      )
-
-map(Module) := Matrix => options -> (M) -> (
-     R := ring M;
-     if options.Degree =!= null then error "Degree option encountered with identity matrix";
-     map(M, M, reduce(M, rawIdentity(M.RawFreeModule,false,0))))
 
 inducedMap = method (
      Options => {

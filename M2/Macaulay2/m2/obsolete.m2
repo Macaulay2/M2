@@ -18,16 +18,16 @@ stats = X -> error "'stats' has been replaced by 'summary'"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
 assign = X -> error "assign' has been replaced by <-'"
 
+undocumented(map,Module)
+map(Module) := Matrix => options -> (M) -> error "method for 'map(Module)' has been removed: use 'map(M,M,1)' instead"
 undocumented(map,Ideal)
+map(Ideal) := Matrix => options -> (I) -> error "method for 'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead"
 undocumented(map,Ideal,Ideal)
-map(Ideal) := Matrix => options -> (I) -> (
-     stderr << "warning: map(Ideal) has been deprecated: use 'map(module I, 1)' instead" << endl;
-     map(module I,options)
-     )
-map(Ideal,Ideal) := Matrix => options -> (I,J) -> (
-  stderr << "warning: map(Ideal,Ideal) has been deprecated: use 'map(module I,module J)' instead" << endl;
-  map(module I,module J,options)
-  )
+map(Ideal,Ideal) := Matrix => options -> (I,J) -> error "method for 'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead"
+undocumented(Module,Matrix)
+map(Module,Matrix) := options -> (M,f) -> error "method for 'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead";
+undocumented(Module,ZZ)
+map(Module,ZZ) := map(Module,RingElement) := options -> (M,r) -> error "method for 'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -130,11 +130,11 @@ poincare MonomialIdeal := M -> ( --poincare matrix m
      R := ring M;
      ZZn := degreesRing(R);
      if not M.?poincare then (
-	if not M.?poincareComputation then (
+	if not M.cache.?poincareComputation then (
 	    sendgg(ggPush ZZn, ggPush M, gghilb);
-	    M.poincareComputation = newHandle());
-        sendgg(ggPush M.poincareComputation, ggPush (-1), ggcalc);
-	sendgg(ggPush M.poincareComputation, gggetvalue);
+	    M.cache.poincareComputation = newHandle());
+        sendgg(ggPush M.cache.poincareComputation, ggPush (-1), ggcalc);
+	sendgg(ggPush M.cache.poincareComputation, gggetvalue);
         M.poincare = ZZn.pop());
      M.poincare)
 

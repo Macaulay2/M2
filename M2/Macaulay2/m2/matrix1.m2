@@ -410,6 +410,15 @@ Matrix.AfterNoPrint = f -> (
      << endl;
      )
 
+Vector.AfterPrint = 
+Vector.AfterNoPrint = f -> (
+     << endl;				  -- double space
+     << concatenate(interpreterDepth:"o") << lineNumber << " : Vector";
+     if isFreeModule target f and isFreeModule source f
+     then << " in " << target f;
+     << endl;
+     )
+
 -- precedence Matrix := x -> precedence symbol x
 
 compactMatrixForm = true

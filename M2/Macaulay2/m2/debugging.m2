@@ -164,7 +164,7 @@ clearAll = Command (() -> (
      )
 
 debug = x -> (
-     error "debug x";
+     if debugLevel > 10 then error "debug x";
      x)
 
 -- Local Variables:
