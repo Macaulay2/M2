@@ -84,20 +84,18 @@ newPackage(M2title,
 reverseDictionary = x -> scan(packages, pkg -> (
 	  d := pkg#"reverse dictionary";
 	  if d#?x then break d#x))
-reverseDictionaryRecord = (X,x) -> (
+reverseDictionaryRecord = (X,x) -> if X =!= x then (
      s := toString X;
      scan(packages, 
-     	  pkg -> if pkg.Dictionary#?s then (
+     	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X then (	-- too bad a symbol doesn't know what dictionary it's in...
 	       pkg#"reverse dictionary"#x = X; 
-	       break))
-     )
+	       break)))
 reverseDictionaryRemove = (X,x) -> (
      s := toString X;
      scan(packages, 
      	  pkg -> if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X then (
 	       remove(pkg#"reverse dictionary",x); 
-	       break));
-     )
+	       break)))
 
 Command.GlobalAssignHook = 
 Function.GlobalAssignHook = 

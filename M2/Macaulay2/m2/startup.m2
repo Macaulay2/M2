@@ -282,7 +282,8 @@ action2 := hashTable {
      "-e" => arg -> if not preload then value arg
      }
 
-processCommandLineOptions := () -> (			    -- two passes, based on value of 'preload'
+processCommandLineOptions := pl -> (			    -- two passes, based on value of 'preload'
+     preload = pl;
      argno := 1;
      while argno < #commandLine do (
 	  arg := commandLine#argno;
@@ -306,13 +307,8 @@ processCommandLineOptions := () -> (			    -- two passes, based on value of 'pre
 	  );
      )
 
-if firstTime then processCommandLineOptions()
-preload = false
-
-if firstTime and not nobanner then (
-     stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
-     )
-
+if firstTime then processCommandLineOptions true
+if firstTime and not nobanner then stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
@@ -335,18 +331,15 @@ if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
 if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")
 path = select(path, fileExists)
-
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
-addStartFunction (() -> if not debuggingMode then errorDepth = loadDepth = loadDepth + 1)
-addStartFunction (
-     () -> noinitfile or (
-	  tryLoad := fn -> if fileExists fn then (load fn; true) else false;
-	  tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")))
+processCommandLineOptions false
+if not debuggingMode then errorDepth = loadDepth = loadDepth + 1
 runStartFunctions()
+tryLoad := fn -> if fileExists fn then (load fn; true) else false
+noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
 errorDepth = loadDepth
 stopIfError = false					    -- this is also set in interp.d
-processCommandLineOptions()				    -- the second time, with preload === false
 n := interpreter()
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
