@@ -562,6 +562,12 @@ info MENU := r -> (
      printWidth = printWidth + #pre;
      stack join({"* Menu:",""}, ret))
 
+-- the main idea of these comparisons is so sorting will sort by the way things will print:
+TO ? TO := TO ? TOH := TOH ? TO := TOH ? TOH := (x,y) -> x#0 ? y#0
+TO2 ? TO2 := (x,y) -> x#1 ? y#1
+TO ? TO2 := TOH ? TO2 := (x,y) -> x#0 ? y#1
+TO2 ? TO := TO2 ? TOH := (x,y) -> x#1 ? y#0
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -21,3 +21,4 @@ assert = x -> if not x then error "assertion failed "
  assert(("a" ? "b") === symbol <)
  assert(("b" ? "a") === symbol >)
  assert(("a" ? "a") === symbol ==)
+
