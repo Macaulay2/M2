@@ -552,19 +552,19 @@ type := S -> (
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null then SEQ { ", ", x#1 } }
 	  else error "expected type to left of '=>'"
 	  )
      else x)
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" and x#1 =!= null then SEQ { ", ", x#1 } }
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" then SEQ { ", ", x#1#1 } }
+		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" and x#1#1 =!= null then SEQ { ", ", x#1#1 } }
 		    else error "expected type to left of '=>'"
 		    )
-	       else SEQ { TT x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
+	       else SEQ { TT x#0, if x#1 =!= "" and x#1 =!= null then SEQ { ", ", x#1 } }
 	       )
 	  else error "expected string or type to left of '=>'"
 	  )
@@ -1057,19 +1057,8 @@ tex  HR := x -> ///
 html Hypertext := x -> concatenate("<P>",apply(x,html))
 
 html PARA := x -> (
-     if #x === 0 
-     then ///
-<P>
-///
-     else concatenate(///
-<P>
-///,
-          apply(x,html)
---     end P tag is optional, and giving too many of makes it not verify
---          ///
---</P>
---///
-          )
+     if #x === 0 then "\n<P>\n"
+     else concatenate("\n<P>", apply(x,html),"<P>\n")
      )
 
 tex PARA := x -> concatenate(///

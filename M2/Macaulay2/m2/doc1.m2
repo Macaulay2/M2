@@ -890,7 +890,7 @@ document {
      }
 document {
      Key => (generators,Module),
-     Usage => "g = generators M",
+     Usage => "generators M",
      Inputs => {
 	  "M" => null
 	  },
@@ -903,8 +903,8 @@ document {
      EXAMPLE {
 	  "R = GF(8)",
       	  "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
-      	  "generators(image f)",
-      	  "generators(cokernel f)"
+      	  "generators image f",
+      	  "generators cokernel f"
 	  },
      Caveat => {
 	  "This function returns a matrix with the given generators.  This 
