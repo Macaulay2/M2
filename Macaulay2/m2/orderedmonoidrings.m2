@@ -172,14 +172,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    else error "expected SkewCommutative option to be 'true' or a list of variables"
 		    );
 	       new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skews)
--- 		    (
--- 		    	 ggPush degRing, 
--- 		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust), <<<<< ---- do we have to do something with this???
--- 		    	 ggPush R, 
--- 		    	 ggPush M,
--- 		    	 ggPush skews,
--- 		    	 ggskewpolyring
--- 		    )
 	       )
 	  else (
 	       rawRM := rawPolynomialRing(raw R, raw M);
@@ -194,13 +186,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
-	  RM ? RM := (f,g) -> (
-	       sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
-	       ret := ZZ.pop();
-	       if ret === 1 then symbol >
-	       else if ret === 0 then symbol ==
-	       else symbol <
-	       );
+	  RM ? RM := (f,g) -> rawCompareMonomial(raw M, rawLeadMonomial raw f, rawLeadMonomial raw g); -- this is wrong, as the monoid doesn't know the ordering in the ring!  Mike.
 	  R * M := (r,m) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
 	  M * R := (m,r) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
 	  RM * M := (p,m) -> p * (R#1 * m);

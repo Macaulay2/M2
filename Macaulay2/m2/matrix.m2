@@ -132,11 +132,7 @@ transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpos
 
 ring(Matrix) := m -> m.target.ring
 
-Matrix * Vector := Vector => (m,v) -> (
-     if class v =!= source m then error "map not applicable to vector";
-     if not isFreeModule source m then notImplemented();
-     sendgg(ggPush m, ggPush v, ggmult);
-     new m.target)
+Matrix * Vector := Vector => (m,v) -> new Vector from (m * new Matrix from v)
 
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
@@ -329,7 +325,7 @@ listZ := v -> ( if not all(v,i -> class i === ZZ) then error "expected list of i
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
-Matrix _ ZZ := Vector => (m,i) -> error "vectors not re-implemented yet"
+Matrix _ ZZ := Vector => (m,i) -> new Vector from m_{i}
 
 submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> (
      if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";

@@ -121,15 +121,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 fixDegree := (m,d) -> (
      M := target m;
      N := source m;
-     R := ring M;
-     sendgg (
-	  ggPush cover M,
-	  ggPush cover N,
-	  ggPush m, 
-	  ggPush degreeCheck(d,R),
-	  ggmatrix);
-     map(M,N)
-     )
+     map(M,N,rawMatrixRemake2(raw cover M, raw cover N, degreeCheck(d,ring m), raw m)))
 
 concatBlocks := mats -> (
      if not isTable mats then error "expected a table of matrices";
@@ -254,22 +246,7 @@ matrix(List) := Matrix => options -> (m) -> (
      types := unique apply(m,class);
      if #types === 1 then (
 	  type := types#0;
-	  if instance(type,Module) 
-	  then (
-	       M := type;
-	       if M.?generators then error "not implemented yet";
-	       R := ring M;
-	       rawM := cover M;
-	       h := newHandle(ggPush\m, ggPush rawM, ggPush (#m), ggmatrix);
-     	       N := (sendgg(ggPush h,gggetcols); new Module from R);
-	       new Matrix from {
-		    symbol target => M,
-		    symbol handle => h,
-		    symbol source => N,
-		    symbol ring => R,
-		    symbol cache => new CacheTable
-		    }
-	       )
+	  if type === Vector then matrix { apply(m, v -> new Matrix from v) }
 	  else if type === List then (
 	       if isTable m then (matrixTable options)(m)
 	       else error "expected rows all to be the same length"
