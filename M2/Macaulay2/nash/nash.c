@@ -88,6 +88,10 @@ int main (int _argc, char **_argv) {
   argv = _argv;
   if (argc != 3 || 0 != strcmp("-c",argv[1]) || 0 != strncmp("exec ",argv[2],5)) usage();
   parse(argv[2] + 5);
+  if (NULL != getenv("OLDSHELL")) {
+    setenv("SHELL",getenv("OLDSHELL"),TRUE);
+    unsetenv("OLDSHELL");
+  }
   execvp(xargv[0],xargv);
   fprintf(stderr,"%s: failed to exec \"%s\"\n", argv[0], xargv[0]);
   return 1;
