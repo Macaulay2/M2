@@ -77,9 +77,9 @@ newPackage("Main",
      Version => version#"VERSION",
      WritableSymbols => {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
-	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory,
+	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, symbol User,
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
+	  symbol packages, symbol currentDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol interpreterHook
 	  })
