@@ -291,6 +291,29 @@ const MatrixOrNull * Matrix::make_copy(const FreeModule *target,
   return result;
 }
 
+const MatrixOrNull * Matrix::make_copy(const FreeModule *target,
+				       M2_bool is_mutable_flag) const
+{
+  if (n_rows() != target->rank())
+    {
+      ERROR("wrong number of rows");
+      return 0;
+    }
+  const Ring *R = get_ring();
+  if (R != target->get_ring())
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+
+  Matrix *result = new Matrix(target);
+  for (int i=0; i<n_cols(); i++)
+    result->append(R->copy(_entries[i]));
+
+  result->freeze(is_mutable_flag);
+  return result;
+}
+
 const Matrix * Matrix::make(const MonomialIdeal * mi)
 {
   return new Matrix(mi);

@@ -714,6 +714,16 @@ extern "C" {
   /* Is the matrix M mutable? */ /* drg : connected rawIsMutable */
 
   const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
+					 const Matrix *M,
+					 M2_bool is_mutable
+					 ); /* drg: connected rawMatrixRemake NOT YET */
+  /* Create a new matrix (mutable or immutable), from M, with new target,
+     and/or mutable-ness. The target free module must have the expected rank.
+     The source free module is computed heuristically from the the target and the
+     columns of the matrix.
+  */
+
+  const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const Matrix *M,
@@ -723,6 +733,7 @@ extern "C" {
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
   */
+
 
   /**********************************************************************************/
 

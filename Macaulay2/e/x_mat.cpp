@@ -100,7 +100,7 @@ M2_bool IM2_Matrix_is_mutable(const Matrix *M)
 }
  
 
-const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
+const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
 				      const FreeModule *source,
 				      const M2_arrayint deg,
 				      const Matrix *M,
@@ -112,6 +112,19 @@ const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
   */
 {
   return M->make_copy(target, source, deg, is_mutable);
+}
+
+const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
+				       const Matrix *M,
+				       M2_bool is_mutable
+				       )
+  /* Create a new matrix (mutable or immutable), from M, with new target,
+     and/or mutable-ness. The target free module must have the expected rank.
+     The source free module is computed heuristically from the the target and the
+     columns of the matrix.
+  */
+{
+  return M->make_copy(target, is_mutable);
 }
 
 M2_bool IM2_MutableMatrix_set_entry(Matrix *M, 
