@@ -128,7 +128,8 @@ scan(binaryOperators, op -> (
      	  opstring := if op === symbol " " then format toString op else toString op;
 	  ht := 8;
 	  preX := "            ";
-	  if not Thing#?((op,symbol =),Thing,Thing) then installMethod((op,symbol =), Thing, Thing, (x,y,z) -> (
+	  if not Thing#?((op,symbol =),Thing,Thing) then installMethod((op,symbol =), Thing, Thing, Error => 
+	       (x,y,z) -> (
 	  	    preY := centerString(width preX, opstring);
      	       	    preZ := centerString(width preX, "=");
 		    line1 := concatenate("no method for assignment to ",
@@ -143,7 +144,7 @@ scan(binaryOperators, op -> (
 		    line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 		    hush = false;
 		    error toString stack(line1,commentGuard line2,commentGuard line3,commentGuard line4)));
-	  if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, 
+	  if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, Error => 
 	       (x,y) -> (
 		    line1 := concatenate("no method for ",
 			 if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
@@ -161,7 +162,7 @@ scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) ->
      scan(ops, op -> (
 	       ht := 8;
 	       preX := "            ";
-	       if not Thing#?(op,symbol =) then installMethod((op,symbol =), Thing,
+	       if not Thing#?(op,symbol =) then installMethod((op,symbol =), Thing, Error => 
 		    (y,z) -> (
 	       		 preY := centerString(width preX, toString op);
 	       		 preZ := centerString(width preX, "=");
@@ -174,7 +175,7 @@ scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) ->
 			 line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 			 hush = false;
 			 error toString stack(line1,commentGuard line2,commentGuard line3)));
-	       if not Thing#?op then installMethod(op, Thing,
+	       if not Thing#?op then installMethod(op, Thing, Error => 
 		    (x) -> (
 			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to:");
 			 if hush then error line1;
