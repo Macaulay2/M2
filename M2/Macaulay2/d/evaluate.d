@@ -29,6 +29,8 @@ export breakLoopFun := dummyBreakLoop;
 export debuggingMode := false;
 export evalSequenceHadError := false;
 export evalSequenceErrorMessage := nullE;
+errorreturn := nullE;
+recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 NumberErrorMessagesShown := 0;
 export recursiondepth := 0;
@@ -38,14 +40,15 @@ printbottom := 7;					    -- then print this many more at the end
 ----------------------------------------------------------------------------------------
 -- forward references -- we have many mutually recursive functions in this file, too bad!
 export eval(c:Code):Expr;
-export apply(c:FunctionClosure,v:Sequence):Expr;
-export apply(c:FunctionClosure,e:Expr):Expr;
-export apply(c:FunctionClosure,cs:CodeSequence):Expr;
-export apply(f:Expr,v:Sequence):Expr;
-export apply(f:Expr,e:Expr):Expr;
-export apply(g:Expr,e0:Expr,e1:Expr):Expr;
-export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr;
+-- export apply(c:FunctionClosure,v:Sequence):Expr;
+-- export apply(c:FunctionClosure,e:Expr):Expr;
+-- export apply(c:FunctionClosure,cs:CodeSequence):Expr;
+-- export apply(f:Expr,v:Sequence):Expr;
+-- export apply(f:Expr,e:Expr):Expr;
+-- export apply(g:Expr,e0:Expr,e1:Expr):Expr;
+-- export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr;
 ----------------------------------------------------------------------------------------
+export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionlimit) + " exceeded");
 timefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
@@ -92,118 +95,6 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
      else printErrorMessage(i,"expected integer as subscript")
      );
 
-globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
-     method := lookup(Class(oldvalue),GlobalReleaseE);
-     sym := Expr(SymbolClosure(globalFrame,t));
-     -- top level hooks for assignment to a global variable
-     g := lookup1(globalAssignmentHooks,sym);
-     if g != notfoundE then (
-	  y := when g
-	  is s:List do (
-	       foreach f in s.v do (
-		    r := apply(f,sym,newvalue);
-		    when r is Error do return r else nothing;
-		    );
-	       nullE)
-	  is f:CompiledFunction do apply(g,sym,newvalue)
-	  is f:CompiledFunctionClosure do apply(g,sym,newvalue)
-	  is f:FunctionClosure do apply(g,sym,newvalue)
-	  else buildErrorPacket("expected global assignment hook for " + t.word.name + " to be a function or list of functions");
-	  when y is Error do return y else nothing;
-	  );
-     if method != nullE then (
-	  y := apply(method,sym,oldvalue);
-	  when y is Error do return y else nothing;
-	  );
-     method = lookup(Class(newvalue),GlobalAssignE);
-     if method != nullE then (
-	  y := apply(method,sym,newvalue);
-	  when y is Error do return y else nothing;
-	  );
-     nullE
-     );
-
-localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- frameID != 0
-     f := localFrame;
-     if nestingDepth == 0 then nothing
-     else if nestingDepth == 1 then f = f.outerFrame
-     else if nestingDepth == 2 then f = f.outerFrame.outerFrame
-     else (
-	  f = f.outerFrame.outerFrame.outerFrame;
-	  nestingDepth = nestingDepth - 3;
-	  while nestingDepth > 0 do ( nestingDepth = nestingDepth - 1; f = f.outerFrame );
-	  );
-     f.values.frameindex = newvalue;
-     newvalue);
-
-globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
-     if t.protected then return buildErrorPacket("assignment to protected variable");
-     vals := globalFrame.values;
-     r := globalAssignmentHook(t,vals.frameindex,newvalue);
-     when r is Error do return r else nothing;
-     vals.frameindex = newvalue;
-     newvalue);
-
-assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
-     if nestingDepth == -1
-     then globalAssignment(frameindex,t,newvalue)
-     else localAssignment(nestingDepth,frameindex,newvalue));
-
-globalAssignmentFun(x:globalAssignmentCode):Expr := (
-     t := x.lhs;
-     newvalue := eval(x.rhs);
-     when newvalue is Error do return newvalue else nothing;
-     globalAssignment(t.frameindex,t,newvalue));
-
-parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
-     syms := x.lhs;
-     nestingDepth := x.nestingDepth;
-     frameindex := x.frameindex;
-     nlhs := length(frameindex);
-     foreach sym in syms do if sym.protected then return buildErrorPacket("assignment to protected variable");
-     value := eval(x.rhs);
-     when value 
-     is Error do return value 
-     is values:Sequence do (
-	  nvals := length(values);
-	  if nlhs == nvals
-	  then (
-	       for i from 0 to nlhs-1 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return r else nothing;
-		    )
-	       )
-	  else if nlhs < nvals
-	  then (
-	       for i from 0 to nlhs-2 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return r else nothing;
-		    );
-	       m := nlhs-1;
-	       r := assignment(nestingDepth.m,frameindex.m,syms.m, Expr(new Sequence len nvals-nlhs+1 do for i from nlhs-1 to nvals-1 do provide values.i));
-	       when r is Error do return r else nothing;
-	       )
-	  else (
-	       for i from 0     to nvals-1 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return r else nothing;
-		    );
-	       for i from nvals to nlhs-1 do (
-		    r := assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
-		    when r is Error do return r else nothing;
-		    );
-	       )
-	  )
-     else (
-	  r := assignment(nestingDepth.0,frameindex.0,syms.0,value);
-	  when r is Error do return r else nothing;
-	  for i from 1 to nlhs-1 do (
-	       r = assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
-	       when r is Error do return r else nothing;
-	       );
-	  );
-     value);
-
 dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
      Key := eval(KEY);
      when Key
@@ -221,33 +112,6 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 	       else buildErrorPacket(dbmstrerror() + " : " + f.filename))
 	  else printErrorMessage(CONTENT,"expected a string or null"))
      else printErrorMessage(KEY,"expected a string"));
-
-export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
-     right := eval(rhs);
-     when right is Error do right
-     else (
-	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
-	  if method == nullE then MissingMethod(methodkey)
-	  else apply(method,right)));
-export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
-     left := eval(lhs);
-     when left is Error do left
-     else (
-	  right := eval(rhs);
-	  when right is Error do right
-	  else (
-	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
-		    methodkey.symbol.hash);
-	       if method == nullE then MissingMethodPair(methodkey,left,right)
-	       else apply(method,left,right))));
-export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
-     right := eval(rhs);
-     when right is Error do right
-     else (
-	  method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
-	       methodkey.symbol.hash);
-	  if method == nullE then MissingMethodPair(methodkey,left,right)
-	  else apply(method,left,right)));
 
 assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
@@ -279,32 +143,6 @@ assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      else printErrorMessage(lhsarray,"'.' expected left hand side to be a hash table")
      );
 AssignQuotedElemFun = assignquotedelemfun;
-
-evalAdjacentCode(lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
-     when left
-     is c:FunctionClosure do (
-	  when rhs
-	  is cs:sequenceCode do apply(c,cs.x)
-	  else (
-	       e := eval(rhs);
-	       when e is Error do e
-	       is v:Sequence do apply(c,v)
-	       else apply(c,e)))
-     is ff:CompiledFunction do (
-	  e := eval(rhs);
-	  when e is Error do e
-	  else (
-	       ret := ff.fn(e);
-	       when ret is Error do backtr(ret) else ret))
-     is ff:CompiledFunctionClosure do (
-	  e := eval(rhs);
-	  when e is Error do e
-	  else (
-	       ret := ff.fn(e,ff.env);
-	       when ret is Error do backtr(ret) else ret))
-     is Error do left
-     else binarymethod(left,rhs,AdjacentS));
 
 evalWhileDoCode(c:whileDoCode):Expr := (
      while true do (
@@ -491,143 +329,6 @@ export evalSequence(v:CodeSequence):Sequence := (
 	  if evalSequenceHadError then r = emptySequence;
 	  r));
 
-export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionlimit) + " exceeded");
-
-export eval(c:Code):Expr := (
-     -- spincursor(); -- probably obsolete
-     e := 
-     if interrupted then
-     if alarmed then (
-	  interrupted = false;
-	  alarmed = false;
-	  printErrorMessage(c,"alarm occurred"))
-     else (
-	  interrupted = false;
-     	  SuppressErrors = false;
-	  printErrorMessage(c,"interrupted"))
-     else when c
-     is u:unaryCode do u.f(u.rhs)
-     is b:binaryCode do b.f(b.lhs,b.rhs)
-     is b:adjacentCode do evalAdjacentCode(b.lhs,b.rhs)
-     is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))
-     is r:localMemoryReferenceCode do (
-	  f := localFrame;
-	  nd := r.nestingDepth;
-	  if nd == 0 then nothing
-	  else if nd == 1 then f = f.outerFrame
-	  else if nd == 2 then f = f.outerFrame.outerFrame
-	  else (
-	       f = f.outerFrame.outerFrame.outerFrame;
-	       nd = nd - 3;
-	       while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
-	       );
-	  return f.values.(r.frameindex))
-     is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
-     is x:localAssignmentCode do (
-	  newvalue := eval(x.rhs);
-	  when newvalue is Error do return newvalue 
-	  else localAssignment(x.nestingDepth,x.frameindex,newvalue))
-     is a:globalAssignmentCode do globalAssignmentFun(a)
-     is p:parallelAssignmentCode do parallelAssignmentFun(p)
-     is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
-     is c:tryCode do (
-	  oldSuppressErrors := SuppressErrors;
-	  SuppressErrors = true;
-	  p := eval(c.code);
-	  if !SuppressErrors then p		  -- eval could have turned it off
-	  else (
-	       SuppressErrors = oldSuppressErrors;
-	       when p is err:Error do (
-		    if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage then p
-		    else eval(c.elseClause))
-	       else p))
-     is c:ifCode do (
-	  p := eval(c.predicate);
-	  when p is Error do p
-	  else if p == True then eval(c.thenClause)
-	  else if p == False then eval(c.elseClause)
-	  else printErrorMessage(c.predicate,"expected true or false"))
-     is r:localSymbolClosureCode do (
-	  f := localFrame;
-	  nd := r.nestingDepth;
-	  if nd == 0 then nothing
-	  else if nd == 1 then f = f.outerFrame
-	  else if nd == 2 then f = f.outerFrame.outerFrame
-	  else (
-	       f = f.outerFrame.outerFrame.outerFrame;
-	       nd = nd - 3;
-	       while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
-	       );
-	  noRecycle(f);
-	  return Expr(SymbolClosure(f,r.symbol)))
-     is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
-     is b:multaryCode do b.f(b.args)
-     is n:newLocalFrameCode do (
-	  localFrame = Frame(localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
-	  x := eval(n.body);
-	  localFrame = localFrame.outerFrame;
-	  x)
-     is c:forCode do return evalForCode(c)
-     is c:whileListDoCode do return evalWhileListDoCode(c)
-     is c:whileDoCode do return evalWhileDoCode(c)
-     is c:whileListCode do return evalWhileListCode(c)
-     is c:newCode do return NewFun(c.newClause)
-     is c:newOfCode do return NewOfFun(c.newClause,c.ofClause)
-     is c:newFromCode do return NewFromFun(c.newClause,c.fromClause)
-     is c:newOfFromCode do return NewOfFromFun(c.newClause,c.ofClause,c.fromClause)
-     is nullCode do return nullE
-     is v:realCode do return Expr(Real(v.x))
-     is v:integerCode do return Expr(v.x)
-     is v:stringCode do return Expr(v.x)
-     is v:sequenceCode do (
-	  if length(v.x) == 0 then return emptySequence;
-	  r := evalSequence(v.x);
-	  if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)
-	  )
-     is v:listCode do (
-	  if length(v.y) == 0 then return emptyList;
-	  r := evalSequence(v.y);
-	  if evalSequenceHadError then evalSequenceErrorMessage else list(r)
-	  )
-     is v:arrayCode do (
-	  if length(v.z) == 0 then return emptyArray;
-	  r := evalSequence(v.z);
-	  if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
-	  );
-     when e is err:Error do (
-	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
-	  p := codePosition(c);
-	  err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c), err.report);
-     	  if err.position == dummyPosition && int(p.loadDepth) >= errorDepth && !SuppressErrors then (
-	       interrupted = false;
-	       alarmed = false;
-	       if debuggingMode || NumberErrorMessagesShown < printtop || recursiondepth < printbottom then (
-		    printErrorMessage(p,err.message);
-		    if recursiondepth < printbottom
-		    then NumberErrorMessagesShown = 0 
-		    else NumberErrorMessagesShown = NumberErrorMessagesShown + 1;
-		    )
-	       else if recursiondepth == printbottom then (
-		    flush(stdout);
-		    stderr << "..." << endl;);
-	       err.position = p;
-	       if debuggingMode then when breakLoopFun(localFrame,c) is z:Error do (
-		    if z.message == breakMessage then return buildErrorPacket(unwindMessage);
-		    if z.message == returnMessage then return z.value;
-		    if z.message == continueMessage then return eval(c);
-		    )
-	       else nothing);
-	  e)
-     else e);
-
-export eval(f:Frame,c:Code):Expr := (
-     saveLocalFrame := localFrame;
-     localFrame = f;
-     ret := eval(c);
-     localFrame = saveLocalFrame;
-     ret);
-
-recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export apply(c:FunctionClosure,v:Sequence):Expr := (
      previousFrame := c.frame;
      model := c.model;
@@ -798,8 +499,6 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	      -- this check takes time, too!
 	  )
      );
-
-errorreturn := nullE;
 
 export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
      -- in this version we try to avoid allocating an array of exprs to
@@ -1087,6 +786,311 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	  )
      else buildErrorPacket("expected a function"));     
 
+-----------------------------------------------------------------------------
+
+export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
+     right := eval(rhs);
+     when right is Error do right
+     else (
+	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
+	  if method == nullE then MissingMethod(methodkey)
+	  else apply(method,right)));
+export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
+     left := eval(lhs);
+     when left is Error do left
+     else (
+	  right := eval(rhs);
+	  when right is Error do right
+	  else (
+	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
+		    methodkey.symbol.hash);
+	       if method == nullE then MissingMethodPair(methodkey,left,right)
+	       else apply(method,left,right))));
+export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
+     right := eval(rhs);
+     when right is Error do right
+     else (
+	  method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
+	       methodkey.symbol.hash);
+	  if method == nullE then MissingMethodPair(methodkey,left,right)
+	  else apply(method,left,right)));
+
+-----------------------------------------------------------------------------
+
+evalAdjacentCode(lhs:Code,rhs:Code):Expr := (
+     left := eval(lhs);
+     when left
+     is c:FunctionClosure do (
+	  when rhs
+	  is cs:sequenceCode do apply(c,cs.x)
+	  else (
+	       e := eval(rhs);
+	       when e is Error do e
+	       is v:Sequence do apply(c,v)
+	       else apply(c,e)))
+     is ff:CompiledFunction do (
+	  e := eval(rhs);
+	  when e is Error do e
+	  else (
+	       ret := ff.fn(e);
+	       when ret is Error do backtr(ret) else ret))
+     is ff:CompiledFunctionClosure do (
+	  e := eval(rhs);
+	  when e is Error do e
+	  else (
+	       ret := ff.fn(e,ff.env);
+	       when ret is Error do backtr(ret) else ret))
+     is Error do left
+     else binarymethod(left,rhs,AdjacentS));
+
+-----------------------------------------------------------------------------
+
+globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
+     method := lookup(Class(oldvalue),GlobalReleaseE);
+     sym := Expr(SymbolClosure(globalFrame,t));
+     -- top level hooks for assignment to a global variable
+     g := lookup1(globalAssignmentHooks,sym);
+     if g != notfoundE then (
+	  y := when g
+	  is s:List do (
+	       foreach f in s.v do (
+		    r := apply(f,sym,newvalue);
+		    when r is Error do return r else nothing;
+		    );
+	       nullE)
+	  is f:CompiledFunction do apply(g,sym,newvalue)
+	  is f:CompiledFunctionClosure do apply(g,sym,newvalue)
+	  is f:FunctionClosure do apply(g,sym,newvalue)
+	  else buildErrorPacket("expected global assignment hook for " + t.word.name + " to be a function or list of functions");
+	  when y is Error do return y else nothing;
+	  );
+     if method != nullE then (
+	  y := apply(method,sym,oldvalue);
+	  when y is Error do return y else nothing;
+	  );
+     method = lookup(Class(newvalue),GlobalAssignE);
+     if method != nullE then (
+	  y := apply(method,sym,newvalue);
+	  when y is Error do return y else nothing;
+	  );
+     nullE
+     );
+
+localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- frameID != 0
+     f := localFrame;
+     if nestingDepth == 0 then nothing
+     else if nestingDepth == 1 then f = f.outerFrame
+     else if nestingDepth == 2 then f = f.outerFrame.outerFrame
+     else (
+	  f = f.outerFrame.outerFrame.outerFrame;
+	  nestingDepth = nestingDepth - 3;
+	  while nestingDepth > 0 do ( nestingDepth = nestingDepth - 1; f = f.outerFrame );
+	  );
+     f.values.frameindex = newvalue;
+     newvalue);
+
+globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
+     if t.protected then return buildErrorPacket("assignment to protected variable");
+     vals := globalFrame.values;
+     r := globalAssignmentHook(t,vals.frameindex,newvalue);
+     when r is Error do return r else nothing;
+     vals.frameindex = newvalue;
+     newvalue);
+
+assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
+     if nestingDepth == -1
+     then globalAssignment(frameindex,t,newvalue)
+     else localAssignment(nestingDepth,frameindex,newvalue));
+
+globalAssignmentFun(x:globalAssignmentCode):Expr := (
+     t := x.lhs;
+     newvalue := eval(x.rhs);
+     when newvalue is Error do return newvalue else nothing;
+     globalAssignment(t.frameindex,t,newvalue));
+
+parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
+     syms := x.lhs;
+     nestingDepth := x.nestingDepth;
+     frameindex := x.frameindex;
+     nlhs := length(frameindex);
+     foreach sym in syms do if sym.protected then return buildErrorPacket("assignment to protected variable");
+     value := eval(x.rhs);
+     when value 
+     is Error do return value 
+     is values:Sequence do (
+	  nvals := length(values);
+	  if nlhs == nvals
+	  then (
+	       for i from 0 to nlhs-1 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+		    when r is Error do return r else nothing;
+		    )
+	       )
+	  else if nlhs < nvals
+	  then (
+	       for i from 0 to nlhs-2 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+		    when r is Error do return r else nothing;
+		    );
+	       m := nlhs-1;
+	       r := assignment(nestingDepth.m,frameindex.m,syms.m, Expr(new Sequence len nvals-nlhs+1 do for i from nlhs-1 to nvals-1 do provide values.i));
+	       when r is Error do return r else nothing;
+	       )
+	  else (
+	       for i from 0     to nvals-1 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+		    when r is Error do return r else nothing;
+		    );
+	       for i from nvals to nlhs-1 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
+		    when r is Error do return r else nothing;
+		    );
+	       )
+	  )
+     else (
+	  r := assignment(nestingDepth.0,frameindex.0,syms.0,value);
+	  when r is Error do return r else nothing;
+	  for i from 1 to nlhs-1 do (
+	       r = assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
+	       when r is Error do return r else nothing;
+	       );
+	  );
+     value);
+
+-----------------------------------------------------------------------------
+
+export eval(c:Code):Expr := (
+     -- spincursor(); -- probably obsolete
+     e := (
+	  if interrupted then (
+	       if alarmed then (
+		    interrupted = false;
+		    alarmed = false;
+		    printErrorMessage(c,"alarm occurred"))
+	       else (
+		    interrupted = false;
+		    SuppressErrors = false;
+		    printErrorMessage(c,"interrupted")))
+	  else when c
+	  is u:unaryCode do u.f(u.rhs)
+	  is b:binaryCode do b.f(b.lhs,b.rhs)
+	  is b:adjacentCode do evalAdjacentCode(b.lhs,b.rhs)
+	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))
+	  is r:localMemoryReferenceCode do (
+	       f := localFrame;
+	       nd := r.nestingDepth;
+	       if nd == 0 then nothing
+	       else if nd == 1 then f = f.outerFrame
+	       else if nd == 2 then f = f.outerFrame.outerFrame
+	       else (
+		    f = f.outerFrame.outerFrame.outerFrame;
+		    nd = nd - 3;
+		    while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
+		    );
+	       return f.values.(r.frameindex))
+	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
+	  is x:localAssignmentCode do (
+	       newvalue := eval(x.rhs);
+	       when newvalue is Error do return newvalue 
+	       else localAssignment(x.nestingDepth,x.frameindex,newvalue))
+	  is a:globalAssignmentCode do globalAssignmentFun(a)
+	  is p:parallelAssignmentCode do parallelAssignmentFun(p)
+	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
+	  is c:tryCode do (
+	       oldSuppressErrors := SuppressErrors;
+	       SuppressErrors = true;
+	       p := eval(c.code);
+	       if !SuppressErrors then p		  -- eval could have turned it off
+	       else (
+		    SuppressErrors = oldSuppressErrors;
+		    when p is err:Error do (
+			 if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage then p
+			 else eval(c.elseClause))
+		    else p))
+	  is c:ifCode do (
+	       p := eval(c.predicate);
+	       when p is Error do p
+	       else if p == True then eval(c.thenClause)
+	       else if p == False then eval(c.elseClause)
+	       else printErrorMessage(c.predicate,"expected true or false"))
+	  is r:localSymbolClosureCode do (
+	       f := localFrame;
+	       nd := r.nestingDepth;
+	       if nd == 0 then nothing
+	       else if nd == 1 then f = f.outerFrame
+	       else if nd == 2 then f = f.outerFrame.outerFrame
+	       else (
+		    f = f.outerFrame.outerFrame.outerFrame;
+		    nd = nd - 3;
+		    while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
+		    );
+	       noRecycle(f);
+	       return Expr(SymbolClosure(f,r.symbol)))
+	  is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
+	  is b:multaryCode do b.f(b.args)
+	  is n:newLocalFrameCode do (
+	       localFrame = Frame(localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
+	       x := eval(n.body);
+	       localFrame = localFrame.outerFrame;
+	       x)
+	  is c:forCode do return evalForCode(c)
+	  is c:whileListDoCode do evalWhileListDoCode(c)
+	  is c:whileDoCode do evalWhileDoCode(c)
+	  is c:whileListCode do evalWhileListCode(c)
+	  is c:newCode do NewFun(c.newClause)
+	  is c:newOfCode do NewOfFun(c.newClause,c.ofClause)
+	  is c:newFromCode do NewFromFun(c.newClause,c.fromClause)
+	  is c:newOfFromCode do NewOfFromFun(c.newClause,c.ofClause,c.fromClause)
+	  is nullCode do return nullE
+	  is v:realCode do return Expr(Real(v.x))
+	  is v:integerCode do return Expr(v.x)
+	  is v:stringCode do return Expr(v.x)
+	  is v:sequenceCode do (
+	       if length(v.x) == 0 then return emptySequence;
+	       r := evalSequence(v.x);
+	       if evalSequenceHadError then evalSequenceErrorMessage else Expr(r))
+	  is v:listCode do (
+	       if length(v.y) == 0 then return emptyList;
+	       r := evalSequence(v.y);
+	       if evalSequenceHadError then evalSequenceErrorMessage else list(r))
+	  is v:arrayCode do (
+	       if length(v.z) == 0 then return emptyArray;
+	       r := evalSequence(v.z);
+	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	       ));
+     when e is err:Error do (
+	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
+	  p := codePosition(c);
+     	  if err.position == dummyPosition then err.position = p;
+	  err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c), err.report);
+     	  if debuggingMode || int(p.loadDepth) >= errorDepth && !SuppressErrors then (
+	       interrupted = false;
+	       alarmed = false;
+	       if debuggingMode || NumberErrorMessagesShown < printtop || recursiondepth < printbottom then (
+		    printErrorMessage(p,err.message);
+		    if recursiondepth < printbottom
+		    then NumberErrorMessagesShown = 0 
+		    else NumberErrorMessagesShown = NumberErrorMessagesShown + 1;
+		    )
+	       else if recursiondepth == printbottom then (
+		    flush(stdout);
+		    stderr << "..." << endl));
+	  if debuggingMode then 
+	  when breakLoopFun(localFrame,c) is z:Error do (
+	       if z.message == breakMessage then return buildErrorPacket(unwindMessage);
+	       if z.message == returnMessage then return z.value;
+	       if z.message == continueMessage then return eval(c);
+	       )
+	  else nothing;	  
+	  e)
+     else e);
+
+export eval(f:Frame,c:Code):Expr := (
+     saveLocalFrame := localFrame;
+     localFrame = f;
+     ret := eval(c);
+     localFrame = saveLocalFrame;
+     ret);
 
 shieldfun(a:Code):Expr := (
      if interruptShield then eval(a)
