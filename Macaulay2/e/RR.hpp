@@ -19,6 +19,8 @@ class RR : public Ring
   RRelem new_elem() const;
   void remove_elem(RRelem f) const;
 
+  bool is_zero_RR(double a) const;
+
   RR(const Monoid *D, double epsilon);
 protected:
   virtual ~RR();
