@@ -2,6 +2,8 @@
 #include "engine.h"
 
 extern Test *monomial_test(void);
+extern Test *monordering_test(void);
+extern Test *monoid_test(void);
 extern void M2inits();
 
 int main()
@@ -9,6 +11,8 @@ int main()
   M2inits(); /* calls IM2_initialize */
   Suite *s = cs_create("Engine C Interface");
   cs_addTest(s,monomial_test());
+  cs_addTest(s,monordering_test());
+  cs_addTest(s,monoid_test());
   cs_run(s);
   cs_report(s);
   cs_destroy(s,1);
