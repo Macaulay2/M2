@@ -11,6 +11,7 @@ writableGlobals.documentationPath = true
 
 addStartFunction(
      () -> (
+     	  originalPath = path;
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
@@ -40,17 +41,7 @@ local exampleResultsFound
 local exampleResults
 local currentNodeName
 
-docFilename := () -> (
-     progname := commandLine#0;
-     if substring(progname,0,1) === "\""  -- sigh "
-     then progname = substring(progname,1);
-     if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
-     else (
-	  if getenv "M2LIB" === "" 
-	  then error "environment variable M2LIB not set";
-	  concatenate(getenv "M2LIB", pathSeparator, "cache", pathSeparator, "Macaulay2-doc", )
-	  )
-     )
+docFilename := () -> buildHomeDirectory | "cache/Macaulay2-doc"
 
 addStartFunction( 
      () -> (
@@ -60,7 +51,6 @@ addStartFunction(
 		    if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
 		    new HashTable)
 	       );
-	  documentationPath = append(documentationPath,DocDatabase);
      	  )
      )
 
@@ -77,7 +67,7 @@ duplicateDocWarning := () -> (
 -----------------------------------------------------------------------------
 unDocumentable := method(SingleArgumentDispatch => true)
 unDocumentable Thing := x ->true
-unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
+unDocumentable Function := f -> class f === Function and match("^--Function.*--$", toString f)
 unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 -----------------------------------------------------------------------------
 -- unformatting document tags
@@ -122,7 +112,8 @@ formatDocumentTag           = method(SingleArgumentDispatch => true)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
-formatDocumentTag Thing    := toString
+---- shouldn't convert such things as matrices to strings here!
+formatDocumentTag Thing    := s -> "--undocumentable--"
 formatDocumentTag String   := s -> s
 
 after := (w,s) -> mingle(w,#w:s)
@@ -402,9 +393,7 @@ topics = Command (
 	  )
      )
 
-apropos = (pattern) -> (
-     mat := "*" | toString pattern | "*";
-     sort select( keys symbolTable(), i -> match(i,mat)))
+apropos = (pattern) -> sort select( keys symbolTable(), i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 -- more general methods
 -----------------------------------------------------------------------------
@@ -492,7 +481,7 @@ ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
 vowels := set characters "aeiouAEIOU"
-indefinite := s -> concatenate(if vowels#?(s#0) and not match(s,"one *") then "an " else "a ", s)
+indefinite := s -> concatenate(if vowels#?(s#0) and match("^one ",s) then "an " else "a ", s)
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
 
@@ -1102,7 +1091,7 @@ tex PRE := x -> concatenate ( VERBATIM,
      shorten lines concatenate x
      / (line ->
 	  if #line <= maximumCodeWidth then line
-	  else concatenate(substring(line,0,maximumCodeWidth), " ..."))
+	  else concatenate(substring(0,maximumCodeWidth,line), " ..."))
      / texExtraLiteral
      / (line -> if line === "" then ///\penalty-170/// else line)
      / (line -> (line, ENDLINE)),
