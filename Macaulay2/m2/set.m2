@@ -33,7 +33,6 @@ Set.name = "Set"
 
 new Set from List := Set => (X,x) -> set x
 
-set Set := x -> x
 net Set := x -> net class x | " " | net keys x
 toString Set := x -> (
      -- unpleasant hack

@@ -262,7 +262,17 @@ document { frame,
      TT "frame f", " -- provides the frame of values for local variables
      bound up in a function closure.",
      PARA,
-     "This routine is provisional."
+     "It also works when ", TT "f", " is a symbol, and returns the frame for the
+     scope it was defined in, even if the function that created it has
+     returned.",
+     PARA,
+     "The return value is a mutable list, so it's possible to modify the values
+     of the local variables, but it's probably not a good idea.",
+     PARA,
+     "Exception: if the scope of ", TT "f", " is the global scope, then an
+     empty list is returned instead, since some of the global variables are protected.",
+     PARA,
+     "This function is provisional, and is to be used mainly for debugging."
      }
 
 document { examine,

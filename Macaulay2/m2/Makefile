@@ -4,10 +4,11 @@ TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
 all:: initialize
+html: all; $(MAKE) -C ../html
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install phase1 tests
+.PHONY: clean all install phase1 tests html
 # CFLAGS =
 # LDFLAGS = -s
 # LOADLIBES =
@@ -81,10 +82,14 @@ gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
 gbfunctions.m2 :  ../e/misc/cmdnames.input gbfuns.awk
 	awk -f gbfuns.awk ../e/misc/cmdnames.input >tmp
 	mv tmp $@
+all:: TAGS.doc
+TAGS.doc : Makefile docseq
+	@echo making $@
+	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
 all:: TAGS
 TAGS: Makefile dumpseq
-	@echo making TAGS
-	@../util/echoout '>TAGS' $(foreach i, \
+	@echo making $@
+	@../util/echoout '>$@' $(foreach i, \
 			      $(GFILES) $(MADEGFILES) \
 			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
 				../basictests/*.m2 \

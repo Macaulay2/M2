@@ -207,8 +207,7 @@ document { "polynomial rings",
       	  "random(5,S)",
       	  "hilbertSeries S"
 	  },
-     "For more information see ", TO "PolynomialRing", "."
-     SEEALSO "polynomial rings with other monomial orderings"
+     SEEALSO { "polynomial rings with other monomial orderings",  "PolynomialRing"}
      }
 
 document { "polynomial rings with other monomial orderings",

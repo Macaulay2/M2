@@ -14,7 +14,7 @@ Command.name = "Command"
 GlobalAssignHook Command := (X,x) -> if not Symbols#?x then Symbols#x = X
 GlobalReleaseHook Command := (X,x) -> (
      stderr << "warning: " << string X << " redefined" << endl;
-     remove(Symbols,x);
+     if Symbols#x === X then remove(Symbols,x);
      )
 new Command from Function := Command => (command,f) -> command {f}
 new Command from String   := Command => (command,cmdname) -> command {
