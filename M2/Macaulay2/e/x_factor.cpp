@@ -152,7 +152,7 @@ CanonicalForm convert(const RingElement &g) {
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
-#warning check that the rings of f and g both polynomial rings:
+#warning "check that the rings of f and g both polynomial rings"
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
@@ -161,6 +161,32 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   return convert(f->get_ring(),h);
 }
 
+const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
+{
+#warning "check that the rings of f and g both polynomial rings"
+  CanonicalForm p = convert(*f);
+  CanonicalForm q = convert(*g);
+  //     cerr << "p = " << p << endl
+  //          << "q = " << q << endl;
+  CanonicalForm h = Prem(p,q);
+  return convert(f->get_ring(),h);
+}
+
+void rawFactor(const RingElement *f, RingElement_array **factors, M2_arrayint powers)
+{
+#if 0
+     factoryseed(23984729);
+     const RingElement &g = gg -> cast_to_RingElement();
+     const Ring *R = g.get_ring();
+     CanonicalForm h = convert(g);
+     CFFList q = Factorize(h);
+     for (CFFListIterator i = q; i.hasItem(); i++) {
+	  gStack.insert(convert(R,i.getItem().factor()));
+	  gStack.insert(new object_int(i.getItem().exp()));
+     }
+     gStack.insert(new object_int(q.length()));
+#endif
+}
 #if 0
 
 static void gcd_ring_elem(object &ff, object &gg) {
