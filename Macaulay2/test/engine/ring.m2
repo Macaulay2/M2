@@ -27,7 +27,8 @@ lift(2_R, ZZ)
 M = monoid R
 M'= raw M
 F = R^3
-F'= raw F
+assert(raw F == raw R^3)
+assert(raw F != raw R^4)
 G = F**F
 raw G
 assert( rank G == 9 )
