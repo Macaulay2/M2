@@ -1,14 +1,12 @@
 R = ZZ[x,Inverses=>true,MonomialOrder=>RevLex]
-
 v = f -> first last exponents f - first first exponents f
-
 check = (f,g) -> (
-     q := f // g;
-     r := f % g;
+     q = f // g;
+     r = f % g;
      assert(f == q*g + r);
      assert(r == 0 or v r < v g);
      )
-
+check(1-3*x^3+3*x^6-x^9,1-x)
 check(1,x)
 check(1,1-x)
 check(1,1-x^10)
