@@ -137,8 +137,8 @@ int dumpdata(char const *dumpfilename) {
   n = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE - pos;
   {
     char buf[n];
-    int i;
-    for (i=0; i<n; i++) buf[i] = '\n';
+    int k;
+    for (k=0; k<n; k++) buf[k] = '\n';
     write(fd,buf,n);
   }
   for (i=0; i<nmaps; i++) {
@@ -165,7 +165,7 @@ int loaddata(char const *filename) {
   if (fd == ERROR || f == NULL) { warning("loaddata: can't open file '%s'\n", filename); return ERROR; }
   while (TRUE) {
     char fbuf[200];
-    int n, f_end, ret;
+    int n=0, f_end, ret;
     char r, w, x;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
@@ -180,6 +180,7 @@ int loaddata(char const *filename) {
     }
     if (f_end) break;
     trim(fbuf);
+    n++;
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum);
     if (6 != ret) {
       warning("loaddata: in data file %s: invalid map: %s\n", filename, fbuf, n);

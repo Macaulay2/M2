@@ -1,3 +1,4 @@
+#include <string.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/param.h>
@@ -17,7 +18,7 @@ int nummaps() {
   return fnumlines(mapfilename);
 }
 
-int getmaps(int nmaps, struct MAP map[nmaps]) {
+int getmaps(int nmaps, struct MAP maps[nmaps]) {
   int mlen = filelen(mapfilename);
   if (mlen == ERROR) return ERROR;
   else {
@@ -30,18 +31,18 @@ int getmaps(int nmaps, struct MAP map[nmaps]) {
       int ret;
       char r, w, x;
       int len = linelen(line[i]);
-      char buf[len + 1];
-      memcpy(buf,line[i],len);
-      buf[len]=0;
-      ret = sscanf(buf, mapfmt, &map[i].from, &map[i].to, &r, &w, &x);
+      char buf2[len + 1];
+      memcpy(buf2,line[i],len);
+      buf2[len]=0;
+      ret = sscanf(buf2, mapfmt, &maps[i].from, &maps[i].to, &r, &w, &x);
       if (5 != ret) {
-	warning("can't parse map '%s' from file '%s'\n", buf, mapfilename);
+	warning("can't parse map '%s' from file '%s'\n", buf2, mapfilename);
 	return ERROR;
       }
-      map[i].r = r == 'r';
-      map[i].w = w == 'w';
-      map[i].x = x == 'x';
-      map[i].checksum = 0;
+      maps[i].r = r == 'r';
+      maps[i].w = w == 'w';
+      maps[i].x = x == 'x';
+      maps[i].checksum = 0;
     }
     return OKAY;
   }
