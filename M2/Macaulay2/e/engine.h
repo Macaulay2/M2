@@ -1021,174 +1021,6 @@ extern "C" {
      computing Hilbert series, or the computation was interrupted. */
 
   /**************************************************/
-  /**** Matrix routines which modify a Matrix *******/
-  /**************************************************/
-  /* Each of these routines returns false if the matrix is immutable, or if
-   * one of the rows or columns is out of range.
-   */
-
-#if 0
-------------------------------------------------------------------------------------------
-  DAN DAN DAN: these are the old routines taking a matrix, which are no longer needed.
-  Please remove them from here, once you have changed the interface.d
-------------------------------------------------------------------------------------------
-  M2_bool IM2_MutableMatrix_set_entry(Matrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry, OK */
-
-  M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixRowSwap, OK*/
-
-  M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixColSwap, OK*/
-
-  M2_bool IM2_MutableMatrix_row_operation(Matrix *M, 
-					  int i, 
-					  const RingElement *r, 
-					  int j,
-					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange, OK */
-  /* row(i) <- row(i) + r * row(j), returns false if matrix is 
-     immutable, or rows are out of bounds */
-
-  M2_bool IM2_MutableMatrix_column_operation(Matrix *M, 
-					     int i, 
-					     const RingElement *r, 
-					     int j,
-					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange, OK*/
-  /* column(i) <- column(i) + r * column(j), returns false if matrix is 
-     immutable, or columns are out of bounds */
-
-  M2_bool IM2_MutableMatrix_row_scale(Matrix *M, 
-				      const RingElement *r, 
-				      int i, 
-				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale, OK*/
-  /* row(i) <- r * row(i), returns false if matrix is immutable
-     or row is out of bounds */
-
-  M2_bool IM2_MutableMatrix_column_scale(Matrix *M, 
-					 const RingElement *r, 
-					 int i, 
-					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale, OK*/
-  /* column(i) <- r * column(i), returns false if matrix is immutable
-     or row is out of bounds */
-
-  M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* connected to rawInsertColumns, OK */
-  /* Insert n_to_add columns directly BEFORE column i. */
-
-  M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* connected to rawInsertRows, OK */
-  /* Insert n_to_add rows directly BEFORE row i. */
-
-  M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* connected to rawDeleteColumns, OK  */
-  /* Delete columns i .. j from M */
-
-  M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* connected to rawDeleteRows, OK */
-  /* Delete rows i .. j from M */
-
-
-  M2_bool IM2_MutableMatrix_column_2by2(Matrix *M,
-					int c1, int c2, 
-					const RingElement *a1, const RingElement *a2,
-					const RingElement *b1, const RingElement *b2,
-					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2, OK */
-  /* column(c1) <- a1 * column(c1) + a2 * column(c2)
-     column(c2) <- b1 * column(c1) + b2 * column(c2)
-  */
-
-  M2_bool IM2_MutableMatrix_row_2by2(Matrix *M,
-				     int r1, int r2, 
-				     const RingElement *a1, const RingElement *a2,
-				     const RingElement *b1, const RingElement *b2,
-				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2, OK */
-  /* row(r1) <- a1 * row(r1) + a2 * row(r2)
-     row(r2) <- b1 * row(r1) + b2 * row(r2)
-  */
-
-#if 0
-  NOTE:: DO WE REALLY NEED THESE AT TOP LEVEL??
-
-  M2_bool IM2_MutableMatrix_column_reduce(Matrix *M, int c1, int c2);
-  /* NEWLY CHANGED */
-  /*
-   c1 is the "pivot column"
-   If a1 is the lead coefficient of column c1, and if a2 is the
-   coeff of column c2 in the same row as a1, then set
-     column(c2) = column(c2) - (a2/a1) * column(c1).
-   If a1 is '1', then division is not performed.
-  */
-
-  M2_bool IM2_MutableMatrix_gcd_column_reduce1(Matrix *M, int c1, int c2);
-  /* NEWLY CHANGED */
-  /* c1 is the "pivot column"
-   If a1 is the lead coefficient of column c1, and if a2 is the
-   coeff of column c2 in the same row as a1,
-   and if x*a1+y*a2=d=gcd(a1,a2), then set
-     column(c1) <- x*column(c1) + y*column(c2)
-     column(c2) <- (a1/d) * column(c1) - (a2/d) * column(c2)
-   This assumes that gcdExtended is defined in the base ring.
-  */
-
-  M2_bool IM2_MutableMatrix_gcd_row_reduce(Matrix *M, int c, int r1, int r2);
-  /* NEWLY CHANGED */
-  /* r1 is the "pivot column"
-   If a1 is the last non-zero coefficient of row r1, and if a2 is the
-   coeff of row r2 in the same column as a1,
-   and if x*a1+y*a2=d=gcd(a1,a2), then set
-    row(r1) <- x*row(r1) + y*row(r2)
-    row(r2) <- (a1/d) row(r1) - (a2/d) row(r2)
-   This assumes that gcdExtended is defined in the base ring.
-  */
-
-  M2_bool IM2_MutableMatrix_gcd_column_reduce2(Matrix *M, int r, int c1, int c2);
-  /* NEWLY CHANGED */
-  /* c1 is the "pivot column"
-   If a1 is coefficient of column c1 in row r, and if a2 is the
-   coeff of column c2 in the same row,
-   and if x*a1+y*a2=d=gcd(a1,a2), then set
-     column(c1) <- x*column(c1) + y*column(c2)
-     column(c2) <- (a1/d) * column(c1) - (a2/d) * column(c2)
-   This assumes that gcdExtended is defined in the base ring.
-   NOTE: there is no row version of this routine...  Should there be?
-  */
-#endif
-
-  const RingElement * IM2_Matrix_dot_product(const Matrix *M, int c1, int c2); /* drg: never connected, now presumably obsolete */
-  /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
-     out of range, 0 is returned. */
-
-  M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi); /* connected to rawSortColumns2, OK */
-  /* Returns false if M is not mutable, or lo, or hi are out of range */
-
-  M2_bool IM2_MutableMatrix_row_permute(Matrix *M,
-					int start, 
-					M2_arrayint perm); /* connected to rawPermuteRows, OK */
-  /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
-     all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
-
-  M2_bool IM2_MutableMatrix_column_permute(Matrix *M,
-					   int start, 
-					   M2_arrayint perm); /* connected to rawPermuteColumns, OK */
-  /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
-     all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
-
-  MatrixOrNull * IM2_MutableMatrix_get_row_change(Matrix *M); /* drg: connected rawRowChange, OK*/
-
-  MatrixOrNull * IM2_MutableMatrix_get_col_change(Matrix *M); /* drg: connected rawColumnChange, OK*/
-
-  M2_bool IM2_MutableMatrix_set_row_change(Matrix *M,
-					   Matrix *rowChange); /* drg: connected rawRowChange, OK */
-  /* Returns false, if rowChange is not suitable 
-     (i.e. has the wrong ring, or wrong number of columns) */
-
-  M2_bool IM2_MutableMatrix_set_col_change(Matrix *M,
-					   Matrix *colChange); /* drg: connected rawColumnChange, OK*/
-  /* Returns false, if rowChange is not suitable 
-     (i.e. has the wrong ring, or wrong number of columns) */
-
-  
-  /* There are more mutable matrix routines:  find good pivots... What else? */
-
--------------------------------------------------
-DAN DAN DAN -- this is the end of the stuff to be removed
--------------------------------------------------
-#endif
-
-  /**************************************************/
   /**** RingMap routines ****************************/
   /**************************************************/
   /* My plan, Dan, is to make changes to how ring maps are
@@ -1236,12 +1068,6 @@ DAN DAN DAN -- this is the end of the stuff to be removed
   /**** MutableMatrix routines **********************/
   /**************************************************/
 
-#if 0
---------------------------------------------------
--- DAN DAN DAN these are the ones to be connected, or changed to take MutableMatrix.
--- please be careful with the arguments (e.g. _iden has changed).
---------------------------------------------------
-#endif
   MutableMatrix * IM2_MutableMatrix_identity(const Ring *R, 
 					     int nrows, 
 					     M2_bool prefer_dense); /* drg: connected rawMutableIdentity, OK*/
@@ -1370,19 +1196,15 @@ DAN DAN DAN -- this is the end of the stuff to be removed
   /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
      out of range, 0 is returned. */
 
-#if 0
-----------------------------------
--- DAN DAN DAN -- end of the new routines 
-----------------------------------
-#endif
-
-  const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M); /* CONNECT drg: connected rawIsZero*/
+  const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M); /* drg: connected rawIsZero, OK */
 
   const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
-					   const MutableMatrix *N); /* drg: connected === and to rawIsEqual for use with == */
+					   const MutableMatrix *N); /* drg: connected to rawIsEqual for use with ==, not connected to '===', OK */
   /* This checks that the entries of M,N are the same */
 
-  MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense);
+  MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense); /* connected to rawMutableMatrix, OK */
+
+     /* DAN DAN DAN : routines below here for mutable matrices not really connected yet */
 
   M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
 				       M2_arrayint rows,
