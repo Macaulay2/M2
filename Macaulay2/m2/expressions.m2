@@ -65,9 +65,33 @@ name Expression := v -> (
 HeaderType = new Type of Type
 HeaderType List := (T,z) -> new T from z
 
+document { quote HeaderType,
+     TT "HeaderType", " -- the class of all types ", TT "X", " of lists which can be
+     constructed by expressions of the form ", TT "X {a,b,c,...}", ".",
+     PARA,
+     EXAMPLE {
+	  "X = new HeaderType of BasicList",
+	  "X {a,b,c}"
+	  },
+     SEEALSO {"HeaderType", "SelfInitializingType"}
+     }
+
 WrapperType = new Type of Type
 WrapperType List := (T,z) -> new T from z
 WrapperType Thing := (T,z) -> new T from {z}
+
+document { quote WrapperType,
+     TT "WrapperType", " -- the class of all types ", TT "X", " of lists which can be
+     constructed by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists
+     of length one, by an expression of the form ", TT "X a", ".",
+     PARA,
+     EXAMPLE {
+	  "X = new WrapperType of BasicList",
+	  "X {a,b,c}",
+	  "X a"
+	  },
+     SEEALSO {"WrapperType", "SelfInitializingType"}
+     }
 
 Holder = new WrapperType of Expression
 
@@ -84,6 +108,7 @@ document { quote Holder,
 Holder#expandFunction = first
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
+mathML Holder := v -> mathML v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 name Holder := v -> name v#0
@@ -874,6 +899,20 @@ net MatrixExpression := x -> (
 
 html MatrixExpression := x -> html TABLE toList x
 
+mathML MatrixExpression := x -> concatenate(
+     "<matrix>",
+     newline,
+     apply(x, row -> (
+	       "<matrixrow>",
+	       apply(row, mathML),
+	       "</matrixrow>",
+     	       newline
+	       )
+	  ),
+     "</matrix>",
+     newline
+     )
+
 -----------------------------------------------------------------------------
 -- tex stuff
 document { quote tex,
@@ -945,6 +984,8 @@ texMath Minus := v -> (
      else "{-" | texMath term | "}"
      )
 
+mathML Minus := v -> concatenate( "<apply><minus/>", mathML v#0, "</apply>" )
+
 html Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
@@ -959,7 +1000,12 @@ html Divide := x -> (
      b := html x#1;
      if precedence x#0 <= p then a = "(" | a | ")";
      if precedence x#1 <= p then b = "(" | b | ")";
-     a | " / " | b)     
+     a | " / " | b)
+
+mathML Divide := x -> concatenate("<apply><divide/>", mathML x#0, mathML x#1, "</apply>")
+
+mathML OneExpression := x -> "<cn>1</cn>"
+mathML ZeroExpression := x -> "<cn>0</cn>"
 
 html OneExpression := html ZeroExpression :=
 texMath OneExpression := texMath ZeroExpression := name
@@ -980,6 +1026,7 @@ texMath Sum := v -> (
 		    then "(" | texMath v#i | ")"
 		    else texMath v#i ));
 	  concatenate mingle ( seps, names )))
+
 html Sum := v -> (
      n := # v;
      if n === 0 then "0"
@@ -996,6 +1043,28 @@ html Sum := v -> (
 		    then "(" | html v#i | ")"
 		    else html v#i ));
 	  concatenate mingle ( seps, names )))
+
+mathML Sum := v -> (
+     n := # v;
+     if n === 0 then "<ci>0</ci>"
+     else concatenate (
+	  "<apply><plus/>",
+	  apply( v, mathML ),
+	  "</apply>",
+	  newline
+	  )
+     )
+
+mathML Product := v -> (
+     n := # v;
+     if n === 0 then "<ci>0</ci>"
+     else concatenate (
+	  "<apply><times/>",
+	  apply( v, mathML ),
+	  "</apply>",
+	  newline
+	  )
+     )
 
 texMath Product := v -> (
      n := # v;
@@ -1029,6 +1098,14 @@ html Product := v -> (
 	       )
 	  )
      )
+
+mathML Power := v -> if v#1 === 1 then mathML v#0 else concatenate (
+     "<apply><power/>",
+     mathML v#0,
+     mathML v#1,
+     "</apply>",
+     newline
+     )     
 
 texMath Power := v -> (
      if v#1 === 1 then texMath v#0
@@ -1152,8 +1229,17 @@ texMath String := identity
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x
 
-html ZZ := string
+html ZZ := html RR := string
 html Thing := x -> html expression x
+
+mathML Boolean := i -> if i then "<ci type='constant'>&true;</ci>" else "<ci type='constant'>&false;</ci>"
+
+mathML ZZ := i -> concatenate("<cn type='integer'>",string i, "</cn>")
+mathML RR := i -> concatenate("<cn>",string i, "</cn>")
+mathML QQ := i -> concatenate(
+     "<cn type='rational'>",string numerator i, "<sep/>", string denominator i, "</cn>"
+     )
+mathML Thing := x -> mathML expression x
 
 File << Thing := (o,x) -> printString(o,net x)
 document { (quote <<, File, Thing),
@@ -1192,21 +1278,21 @@ AfterPrint Thing := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x;
      << endl;
-     briefDoc();
+     briefDoc x;
      )
 
 AfterPrint Expression := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x
      << endl;
-     briefDoc();
+     briefDoc x;
      )
 
 AfterPrint Holder := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x << " " << class x#0
      << endl;
-     briefDoc();
+     briefDoc x;
      )
 
 AfterPrint ZZ := identity
@@ -1307,10 +1393,20 @@ RightArrow = hold Entity {
      quote symbol  => quote RightArrow
      }
 
+document { quote RightArrow,
+     TT "RightArrow", " -- an entity used in hypertext to represent an
+     rightward pointing arrow."
+     }
+
 DownArrow = hold Entity {
      quote texMath => ///\downarrow{}///,
      quote html    => ///<IMG SRC="DownArrow.gif">///,
      quote name    => "DownArrow",
      quote net     => "|" || "|" || "V",
      quote symbol  => quote DownArrow
+     }
+
+document { quote DownArrow,
+     TT "DownArrow", " -- an entity used in hypertext to represent an
+     downward pointing arrow."
      }

@@ -276,7 +276,7 @@ document {
 	  TO "VAR",
 	  TO "XMP"
 	  },
-     SEEALSO {"MarkUpList", "MarkUpType"}
+     SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
      }
 
 document { quote MarkUpList,
@@ -330,7 +330,8 @@ document {
      html file, readable by a wolrd wide web client such as Mosaic.",
      PARA,
      "The function ", TO "linkFilename", " is used internally by the
-     code that generates html files from hypertext."
+     code that generates html files from hypertext.",
+     SEEALSO "mathML"
      }
 
 document { quote PRE,

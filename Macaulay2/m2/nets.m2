@@ -34,11 +34,9 @@ comma := ", "
 
 net Sequence := x -> horizontalJoin deepSplice (
      if #x === 0 then "()"
-     else if #x === 1 then (
-	  if class x#0 === Sequence
-	  then ("seq (", net x#0, ")")
-	  else ("seq ", net x#0))
+     else if #x === 1 then ("seq ", net x#0)
      else ("(", toSequence between(comma,apply(x,net)), ")"))
+
 net List := x -> horizontalJoin deepSplice (
      "{",
      toSequence between(comma,apply(x,net)),

@@ -19,6 +19,12 @@ document { quote infinity,
      SEEALSO { "-infinity", "InfiniteNumber" }
      }
 
+mathML InfiniteNumber := i -> (
+     if i#sign === -1 
+     then "<apply><minus/><ci type='constant'>&infty;</ci></apply>"
+     else "<ci type='constant'>&infty;</ci>"
+     )
+
 IndeterminateNumber = new Type of HashTable
 indeterminate = new IndeterminateNumber from {
      quote name => "indeterminate",

@@ -2,6 +2,8 @@ Changes made, most recent ones first:
 
 New in 0.8.42:
 
+'Held' renamed to 'Holder'
+
 'net String' now does not put quotes around the string, and
 'net Net' does not put a box around the net.  This changes
 the appearance of displayed objects containing strings, but you

@@ -619,9 +619,9 @@ document { quote prune,
      TT "prune f", " -- replace f by an isomorphic map of modules by
      pruning its source and target.",
      PARA,
-     "The isomorphism from ", TT "prune M", " to ", TT "M", " can be obtained
-     with code such as ", TT "g = N.pruningMap", ".  You may obtain the inverse
-     isomorphism with ", TT "g^-1", ".",
+     "The isomorphism from ", TT "N = prune M", " back to ", TT "M", " can 
+     be obtained with code such as ", TT "g = N.pruningMap", ".  You may obtain 
+     the inverse isomorphism with ", TT "g^-1", ".",
      PARA,
      SEEALSO {"presentation", "trim", "pruningMap"}
      }
