@@ -1196,7 +1196,7 @@ const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
        return 0;
   }
   start_computation();
-  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift(), false);
+  MatrixConstructor red(m->rows(), m->cols(), false, m->degree_shift());
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1228,7 +1228,7 @@ void GB_comp::matrix_lift(const Matrix *m,
       *result_quotient = 0;
   }
   start_computation();
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift(), false);
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
   MatrixConstructor mat_quotient(_Fsyz, 0, false);
   for (int i=0; i<m->n_cols(); i++)
     {

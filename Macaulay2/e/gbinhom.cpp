@@ -851,7 +851,7 @@ Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_monoid()->make_one(), false);
+  MatrixConstructor mat_red(m->rows(), m->cols(), false);
   MatrixConstructor mat_lift(Fsyz, 0, false);
   for (int i=0; i<m->n_cols(); i++)
     {

@@ -54,7 +54,7 @@ private:
     int *dp = R->degree_monoid()->make_new(m->degree_shift());
     R->degree_monoid()->power(dp, p, dp);
     
-    result = MatrixConstructor(Fp,Gp,dp,m0->is_mutable());
+    result = MatrixConstructor(Fp,Gp,m0->is_mutable(),dp);
     
     if (p >= 0)
       {
@@ -140,7 +140,7 @@ SymmMatrix::SymmMatrix(const Matrix *m0, int p)
   int *dp = R->degree_monoid()->make_new(m->degree_shift());
   R->degree_monoid()->power(dp, p, dp);
   
-  result = MatrixConstructor(Fp,Gp,dp,m0->is_mutable());
+  result = MatrixConstructor(Fp,Gp,m0->is_mutable(),dp);
 
   if (p >= 0)
     {

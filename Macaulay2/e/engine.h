@@ -1065,6 +1065,10 @@ extern "C" {
   */
 #endif
 
+  const RingElement * IM2_Matrix_dot_product(const Matrix *M, int c1, int c2);
+  /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
+     out of range, 0 is returned. */
+
   M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi); /* connected to rawSortColumns2 */
   /* Returns false if M is not mutable, or lo, or hi are out of range */
 
@@ -1430,6 +1434,23 @@ enum gbTraceValues
 
   M2_arrayint_OrNull IM2_FF_LU_decomp(Matrix *M);
 
+  M2_bool IM2_LLL(Matrix *M, const RingElement *threshold, 
+		  MatrixOrNull **LLL /* return value */
+		  );
+  /* Given a matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
+     return a matrix LLL with the same target as M, which forms a Lenstra-Lenstra-Lovasz
+     basis of the image of M.  ASSUMPTION: the columns of M are already a a basis for the 
+     lattice.  The algorithm used is that in Cohen's book on computational algebraic number
+     theory, BUT: beware of the typos in the algorithm!
+     If there is any error (interupted, M or threshold not the correct kind), then false
+     is returned, and LLL is set to 0.
+  */
+
+  M2_bool IM2_LLL2(Matrix *M, const RingElement *threshold, 
+		   MatrixOrNull **LLL, /* return value */
+		   MatrixOrNull *change_of_basis /* return value */
+		   );
+  /* Same as IM2_LLL, except also a change of basis matrix is returned. */
 
   /**************************************************/
   /**** Factory and libfac routines *****************/

@@ -80,7 +80,7 @@ Matrix * FreeModule::get_induced_order() const
     if (S->compare_num(i) > maxtie)
       maxtie = S->compare_num(i);
   const FreeModule *F = R->make_FreeModule(maxtie+1);
-  MatrixConstructor mat(F,this,P->degree_monoid()->make_one(),false);
+  MatrixConstructor mat(F,this,false);
   for (i=0; i<rank(); i++)
     {
       ring_elem f = P->term(P->Ncoeffs()->from_int(1), 
