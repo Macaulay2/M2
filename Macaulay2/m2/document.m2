@@ -4,7 +4,118 @@ debugDoc = () -> commandInterpreter local symbol
 
 maximumCodeWidth := 120
 
-DocDatabase = null
+-----------------------------------------------------------------------------
+-- normalizing document tags
+-----------------------------------------------------------------------------
+   -- The normalized form for simple objects will be the symbol whose value is the object
+   -- (We don't document objects that are not stored in global variables.)
+   -- This allows us to write documentation links like
+   --                TO "sin" 
+   -- or
+   --	             TO sin
+   -- or
+   --	             TO symbol sin
+   -- and have them all get recorded the same way
+normalizeDocumentTag := method(SingleArgumentDispatch => true)
+normalizeDocumentTag   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
+normalizeDocumentTag   Symbol := identity
+normalizeDocumentTag Sequence := identity
+normalizeDocumentTag  Nothing := key -> symbol null
+normalizeDocumentTag    Thing := key -> (
+     if ReverseDictionary#?key then return ReverseDictionary#key;
+     error("encountered unidentifiable document tag: ",key);
+     )
+
+isDocumentableThing  := method(SingleArgumentDispatch => true)
+isDocumentableThing    String := key -> true
+isDocumentableThing    Symbol := key -> true
+isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
+isDocumentableThing   Nothing := key -> true
+
+isDocumentableMethod := method(SingleArgumentDispatch => true)
+isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod)
+isDocumentableMethod    Thing := key -> false
+isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
+isDocumentableMethod     Type := 
+isDocumentableMethod Function := 
+isDocumentableThing     Thing := key -> (
+     if ReverseDictionary#?key then return true;
+     false)
+
+-----------------------------------------------------------------------------
+-- verifying the tags
+-----------------------------------------------------------------------------
+-- here we check that the method a putative document tag documents is actually installed
+verifyTag := method(SingleArgumentDispatch => true)
+verifyTag Thing    := s -> null
+verifyTag Sequence := s -> (
+     if s#?-1 and instance(s#-1, Symbol) then (		    -- e.g., (res,Strategy) or (res,Module,Strategy)
+	  fn := drop(s,-1);
+	  opt := s#-1;
+	  if #fn === 1 then (
+	       fn = fn#0;
+	       if not instance(fn, Function) then error "expected first element of document tag for optional argument to be a function";
+	       )
+	  else (
+	       if not instance(lookup fn, Function) then error("no method installed for document tag '", formatDocumentTag fn, "'");
+	       fn = fn#0;
+	       );
+	  if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
+     else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
+	  if class lookup s =!= Function then error("documentation provided for '", formatDocumentTag s, "' but no method installed")))
+verifyTag Option   := s -> error "old style option documentation tag"
+
+-----------------------------------------------------------------------------
+-- making document tags
+-----------------------------------------------------------------------------
+-- We need three bits of information about a document tag:
+--     the original key	    	    e.g., (operator **,Module,Module)
+--     the formatted key            e.g., "Module ** Module"
+--     the package                  e.g., Macaulay2, or null if there is none
+--     the package title            e.g., "Macaulay2", or "" if there is none
+-- Here we assemble them together, so we don't have to recompute the information later.
+DocumentTag = new Type of BasicList
+DocumentTag.synonym = "document tag"
+makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
+	  FormattedKey => null,
+	  Package => null
+	  })
+makeDocumentTag DocumentTag := opts -> tag -> tag
+makeDocumentTag Thing := opts -> key -> (
+     key = normalizeDocumentTag key;
+     verifyTag key;
+     fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag key;
+     pkg := if opts#Package =!= null then opts#Package else packageTag key;
+     if pkg === null then error ("can't determine correct package for document tag '",key,"'");
+     title := if pkg === null then "" else pkg#"title";
+     new DocumentTag from {key,fkey,pkg,title})
+-- a bit of experimentation...
+DocumentTag.Key = method(SingleArgumentDispatch => true)
+DocumentTag.Key DocumentTag := x -> x#0
+err := x -> error "expected a document tag; perhaps the function 'hypertext' has not yet been run on hypertext"
+DocumentTag.Key Thing := err
+DocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
+DocumentTag.FormattedKey DocumentTag := x -> x#1
+DocumentTag.FormattedKey Thing := err
+DocumentTag.Package = method(SingleArgumentDispatch => true)
+DocumentTag.Package DocumentTag := x -> x#2
+DocumentTag.Package Thing := err
+DocumentTag.Title = method(SingleArgumentDispatch => true)
+DocumentTag.Title DocumentTag := x -> x#3
+DocumentTag.Title Thing := err
+DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
+DocumentTag ? String := (x,y) -> x#1 ? y
+String ? DocumentTag := (x,y) -> x ? y#1
+net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
+toString DocumentTag := x -> error "who wants a string?"
+package DocumentTag := DocumentTag.Package
+hasDocumentation := key -> isDocumentableThing key and (
+     tag := makeDocumentTag key;
+     pkg := DocumentTag.Package tag;
+     fkey := DocumentTag.FormattedKey tag;
+     null =!= fetchRawDocumentation(pkg,fkey))
+
+-----------------------------------------------------------------------------
 
 local exampleBaseFilename
 local currentNodeName
@@ -12,13 +123,15 @@ fixup := method(SingleArgumentDispatch => true)
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
-fetchRawDocumentation := (pkg,fkey) -> (		    -- returns null if none
+fetchRawDocumentation = method()
+fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
      if d#?fkey then d#fkey
      else (
 	  if pkg#?rawKeyDB then (
 	       d = pkg#rawKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey)))
+fetchRawDocumentation DocumentTag := tag -> fetchRawDocumentation(DocumentTag.Package tag, DocumentTag.FormattedKey tag)
 fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary, 
      pkg -> (
 	  r := fetchRawDocumentation(pkg,fkey);
@@ -58,49 +171,13 @@ record      := f -> x -> (
      val)
 
 -----------------------------------------------------------------------------
--- normalizing document tags
------------------------------------------------------------------------------
-   -- The normalized form for simple objects will be the symbol whose value is the object
-   -- (We don't document objects that are not stored in global variables.)
-   -- This allows us to write documentation links like
-   --                TO "sin" 
-   -- or
-   --	             TO sin
-   -- or
-   --	             TO symbol sin
-   -- and have them all get recorded the same way
-normalizeDocumentTag := method(SingleArgumentDispatch => true)
-normalizeDocumentTag   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
-normalizeDocumentTag   Symbol := identity
-normalizeDocumentTag Sequence := identity
-normalizeDocumentTag  Nothing := key -> symbol null
-normalizeDocumentTag    Thing := key -> (
-     if ReverseDictionary#?key then return ReverseDictionary#key;
-     error("encountered unidentifiable document tag: ",key);
-     )
-
-isDocumentableThing  := method(SingleArgumentDispatch => true)
-isDocumentableThing    String := key -> true
-isDocumentableThing    Symbol := key -> true
-isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
-isDocumentableThing   Nothing := key -> true
-
-isDocumentableMethod := method(SingleArgumentDispatch => true)
-isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod)
-isDocumentableMethod    Thing := key -> false
-isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
-isDocumentableMethod     Type := 
-isDocumentableMethod Function := 
-isDocumentableThing     Thing := key -> (
-     if ReverseDictionary#?key then return true;
-     false)
------------------------------------------------------------------------------
 -- identifying the package of a document tag
 -----------------------------------------------------------------------------
 -- If we don't find it in another package, then we assume it's in the current package (which might be null)
 -- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
 -- Missing documentation can be detected when the package is closed, or later.
 packageTag = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
+packageTag DocumentTag := DocumentTag.Package
 packageTag   Symbol := key -> package key
 packageTag   String := key -> (
      r := scan(packages, pkg -> if fetchRawDocumentation(pkg,key) =!= null then break pkg);
@@ -199,78 +276,6 @@ formatDocumentTagTO Sequence := (
 	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
 	                                                          else (s -> error("unknown document tag: ", toString s))) s)
 
------------------------------------------------------------------------------
--- verifying the tags
------------------------------------------------------------------------------
--- here we check that the method a putative document tag documents is actually installed
-verifyTag := method(SingleArgumentDispatch => true)
-verifyTag Thing    := s -> null
-verifyTag Sequence := s -> (
-     if s#?-1 and instance(s#-1, Symbol) then (		    -- e.g., (res,Strategy) or (res,Module,Strategy)
-	  fn := drop(s,-1);
-	  opt := s#-1;
-	  if #fn === 1 then (
-	       fn = fn#0;
-	       if not instance(fn, Function) then error "expected first element of document tag for optional argument to be a function";
-	       )
-	  else (
-	       if not instance(lookup fn, Function) then error("no method installed for document tag '", formatDocumentTag fn, "'");
-	       fn = fn#0;
-	       );
-	  if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
-     else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
-	  if class lookup s =!= Function then error("documentation provided for '", formatDocumentTag s, "' but no method installed")))
-verifyTag Option   := s -> error "old style option documentation tag"
------------------------------------------------------------------------------
--- making document tags
------------------------------------------------------------------------------
--- We need three bits of information about a document tag:
---     the original key	    	    e.g., (operator **,Module,Module)
---     the formatted key            e.g., "Module ** Module"
---     the package                  e.g., Macaulay2, or null if there is none
---     the package title            e.g., "Macaulay2", or "" if there is none
--- Here we assemble them together, so we don't have to recompute the information later.
-DocumentTag = new Type of BasicList
-DocumentTag.synonym = "document tag"
-makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
-	  FormattedKey => null,
-	  Package => null
-	  })
-makeDocumentTag DocumentTag := opts -> tag -> tag
-makeDocumentTag Thing := opts -> key -> (
-     key = normalizeDocumentTag key;
-     verifyTag key;
-     fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag key;
-     pkg := if opts#Package =!= null then opts#Package else packageTag key;
-     if pkg === null then error ("can't determine correct package for document tag '",key,"'");
-     title := if pkg === null then "" else pkg#"title";
-     new DocumentTag from {key,fkey,pkg,title})
--- a bit of experimentation...
-DocumentTag.Key = method(SingleArgumentDispatch => true)
-DocumentTag.Key DocumentTag := x -> x#0
-err := x -> error "expected a document tag; perhaps the function 'hypertext' has not yet been run on hypertext"
-DocumentTag.Key Thing := err
-DocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
-DocumentTag.FormattedKey DocumentTag := x -> x#1
-DocumentTag.FormattedKey Thing := err
-DocumentTag.Package = method(SingleArgumentDispatch => true)
-DocumentTag.Package DocumentTag := x -> x#2
-DocumentTag.Package Thing := err
-DocumentTag.Title = method(SingleArgumentDispatch => true)
-DocumentTag.Title DocumentTag := x -> x#3
-DocumentTag.Title Thing := err
-DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
-DocumentTag ? String := (x,y) -> x#1 ? y
-String ? DocumentTag := (x,y) -> x ? y#1
-net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
-toString DocumentTag := x -> error "who wants a string?"
-package DocumentTag := DocumentTag.Package
-packageTag DocumentTag := DocumentTag.Package
-hasDocumentation := key -> isDocumentableThing key and (
-     tag := makeDocumentTag key;
-     pkg := DocumentTag.Package tag;
-     fkey := DocumentTag.FormattedKey tag;
-     null =!= fetchRawDocumentation(pkg,fkey))
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
@@ -772,7 +777,9 @@ briefSynopsis := key -> (
 	       }
 	  ))
 
-synopsis := key -> PARA { SUBSECTION "Synopsis", briefSynopsis key }
+synopsis := key -> (
+     s := briefSynopsis key;
+     if s =!= null then PARA { SUBSECTION "Synopsis", s })
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
@@ -976,36 +983,6 @@ TEST Function := TEST String := s -> (
      x# #x = s;
      )
 TEST List := y -> TEST \ y
-
------------------------------------------------------------------------------
-
-dummyDoc := x -> document {
-     if value x =!= x and (
-	  class value x === Function
-	  or class value x === ScriptedFunctor
-	  or instance(value x, Type)
-	  )
-     then value x
-     else x,
-     Headline => "undocumented symbol", "No documentation provided yet."}
-
-undocErr := x -> (
-     pos := locate x;
-     pos = if pos === null then "error: " else pos#0 | ":" | toString pos#1 | ": ";
-     stderr << pos << x << " undocumented " << synonym class value x << endl;
-     )
-
-undocumentedSymbols = () -> select(
-     flatten(values \ globalDictionaries), 
-     x -> (
-	  if (
-	       -- x =!= value x and        -- ignore symbols with no value assigned
-	       not DocDatabase#?(toString x)
-	       ) 
-     	  then (
-	       undocErr x;
-	       dummyDoc x;
-	       true)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1322,7 +1322,7 @@ issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) 
 
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
-     when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+     when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
 	  if d.protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
 	  t := makeSymbol(w,dummyPosition,d);

@@ -7,13 +7,14 @@ globalDictionaries = append(globalDictionaries,OutputDictionary)
 
 --
 
+assert = x -> if not x then error "assertion failed"
+
 PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)
+assert( not isGlobalSymbol "Macaulay2" )
 getGlobalSymbol(PackageDictionary,"Macaulay2")
 
 -----------
-
-assert = x -> if not x then error "assertion failed"
 
 addStartFunction(
      () -> (
