@@ -89,9 +89,24 @@ newERingMap = () -> (
      v := new ERingMap;
      v.handle = newHandle();
      v)
+
+engine = args -> (
+     a := args_{0..#args-2};
+     resulttype := args_(-1);
+     callgg a;
+     if resulttype === ZZ then
+       eePopInt()
+     else if resulttype === Boolean then
+       eePopBool()
+     else if resulttype === Intarray then
+       eePopIntarray()
+     else (
+	  v := new resulttype;
+	  v.handle = newHandle();
+	  v))
 ------------------------------------------------------------
-ZmodP = (p) -> (sendgg(ggPush p, ggEcharp); newERing())
-EZ = (sendgg(ggEZZ); newERing())
+ZmodP = (p) -> engine(ggEcharp, p, ERing)
+EZ = engine(ggEZZ, ERing)
 
 degreeRing = (ndegs) -> (
     local names;
@@ -154,65 +169,39 @@ monomialOrder = args -> (
     mo)
      
 
-clone MonOrder := (mo) -> (
-     sendgg(ggPush mo, ggMOclone); 
-     newMonOrder())
+clone MonOrder := (mo) -> engine(ggMOclone, mo, EMonOrder)
 
 MonOrder ** MonOrder := (mo,mo2) -> (
      result := clone mo;
      sendgg(ggPush result,ggPush mo2,ggMOproduct);
      result)
 ------------------------------------------------------------
-emonoid = (mo,printorder,names) -> (
-     sendgg(ggPush mo, ggPush printorder, ggPush names, ggmonoid);
-     newEMonoid())
+emonoid = (mo,printorder,names) -> engine(ggmonoid, mo, printorder, names, EMonoid)
 
 stats EMonoid := (M) -> sendgg(ggPush M, ggstats)
 ------------------------------------------------------------
-polyring = (K,M,ZD,degs) -> (
-     sendgg(ggPush ZD, ggPush degs, ggPush K, ggPush M, ggpolyring);
-     newERing())
+polyring = (K,M,ZD,degs) -> engine(ggpolyring, ZD, degs, K, M, ERing)
 
-weyl = (K,M,diffs,comms,ZD,degs) -> (
-     sendgg(ggPush ZD, ggPush degs, ggPush K, ggPush M, ggPush diffs, ggPush comms, ggPush (-1), ggweylalgebra);
-     newERing())
+weyl = (K,M,diffs,comms,ZD,degs) -> engine(ggweylalgebra, ZD, degs, K, M, diffs, comms, -1, ERing)
 
-weylhom = (K,M,diffs,comms,homvar,ZD,degs) -> (
-     sendgg(ggPush ZD, ggPush degs, ggPush K, ggPush M, ggPush diffs, ggPush comms, ggPush homvar, ggweylalgebra);
-     newERing())
+weylhom = (K,M,diffs,comms,homvar,ZD,degs) -> 
+    engine(ggweylalgebra, ZD, degs, K, M, diffs, comms, homvar, ERing)
 
-skewpolyring = (K,M,skews,ZD,degs) -> (
-     sendgg(ggPush ZD, ggPush degs, ggPush K, ggPush M, ggPush skews, ggskewpolyring);
-     newERing())
+skewpolyring = (K,M,skews,ZD,degs) -> engine(ggskewpolyring, ZD, degs, K, M, skews, ERing)
+
 -----------------
 -- EFreeModule --
 -----------------
 
-ERing ^ ZZ := (R,n) -> (
-     sendgg(ggPush R, ggPush n, ggfree);
-     newEFreeModule())
-ERing ^ List := (R,a) -> (
-    sendgg(ggPush R, ggPush a, ggfree);
-	newEFreeModule())
-ERing ^ EMatrix := (R,m) -> (
-    sendgg(ggPush R, ggPush m, ggfree);
-	newEFreeModule())
+ERing ^ ZZ := (R,n) -> engine(ggfree, R, n, EFreeModule)
+ERing ^ List := (R,a) -> engine(ggfree, R, a, EFreeModule)
+ERing ^ EMatrix := (R,m) -> engine(ggfree, R, m, EFreeModule)
 
-rank EFreeModule := (F) -> (
-     sendgg(ggPush F, ggrank);
-	 eePopInt())
-ring EFreeModule := (F) -> (
-    sendgg(ggPush F, gggetring);
-	newERing())
-degrees EFreeModule := (F) -> (
-    sendgg(ggPush F, ggdegree);
-	eePopIntarray())
-inducedOrder EFreeModule := (F) -> (
-    sendgg(ggPush F, gggetcols);
-	newEMatrix())
-EFreeModule == EFreeModule := (F,G) -> (
-    sendgg(ggPush F, ggPush G, ggisequal);
-	eePopBool())
+rank EFreeModule := (F) -> engine(ggrank, F, ZZ)
+ring EFreeModule := (F) -> engine(gggetring, F, ERing)
+degrees EFreeModule := (F) -> engine(ggdegree, F, Intarray)
+inducedOrder EFreeModule := (F) -> engine(gggetcols, F, EMatrix)
+EFreeModule == EFreeModule := (F,G) -> engine(ggisequal, F, G, Boolean)
 EFreeModule ++ EFreeModule := (F,G) -> (
     sendgg(ggPush F, ggPush G, ggadd);
 	newEFreeModule())
@@ -257,7 +246,10 @@ ZZ _ ERing := (n,R) -> (
      newERingElement())
 
 ERing _ Sequence := (R,a) -> (
-     sendgg(ggPush R, ggPush (a#0), ggPush (a#1), ggterm);
+     if class (a#1) === ZZ then
+       callgg(ggvar,a#0,a#1,R)
+     else
+       callgg(ggterm,R,a#0,a#1);
      newERingElement())
 
 ERing _ List := (R,a) -> (
@@ -297,12 +289,7 @@ EVector * EVector := (v,w) -> (
 rightMultiply = (v,w) -> (     
      sendgg(ggPush v, ggPush w, ggrightmult);
      newEVector())
-EVector ^ ZZ := (v,n) -> (
-     if n <= 0 then error "current restriction: exponent must be > 0";
-     result := v;
-     i := 1;
-     while i < n do (result = v * result; i=i+1;);
-     result)
+EVector ^ ZZ := (v,n) -> (callgg(ggpower,v,n); newEVector())
 EVector _ ZZ := (v,n) -> (
     sendgg(ggPush v, ggPush n, ggelem);
     newEVector())

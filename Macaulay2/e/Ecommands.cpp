@@ -735,6 +735,19 @@ static void cmd_EVector_rightMultiply(object &o1, object &o2)
   EVector *result = v->rightMultiply(w);
   gStack.insert(make_object_EVector(result));
 }
+static void cmd_EVector_power(object &o1, object &o2)
+{
+  EVector *v = o1->cast_to_EVector();
+  int n = o2->int_of();
+  EVector *result = v->getFreeModule()->basisElement(0);
+  for (int i=0; i<n; i++)
+    {
+      EVector *a = v->multiply(result);
+      delete result;
+      result = a;
+    }
+  gStack.insert(make_object_EVector(result));
+}
 // Homogeneity
 static void cmd_EVector_isgraded(object &o1)
 {
@@ -1339,7 +1352,8 @@ void i_Ecommands(void)
   install(ggmult, cmd_EVector_ZZmultiply, TY_INT, TY_EVector);
   install(ggmult, cmd_EVector_multiply, TY_EVector, TY_EVector);
   install(ggrightmult, cmd_EVector_rightMultiply, TY_EVector, TY_EVector);
-  
+  install(ggpower, cmd_EVector_power, TY_EVector, TY_INT);
+
   install(ggdegree, cmd_EVector_degree, TY_EVector);
   install(ggdegree, cmd_EVector_degreeWeightsLoHi, TY_EVector, TY_INTARRAY);
 

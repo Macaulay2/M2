@@ -80,6 +80,7 @@ c = R_(1_K,{2,1})
 d = R_(1_K,{3,1})
 f = R_(2_K,{0,3,1,2})
 g = R_(-1_K,{1,1,2,0,1,3,3,4})
+assert(R_(0,44) == a^44)
 h = f+g+1_R  -- BUG: display
 assert(f == 2*a^3*b^2)
 assert(g == -b^4*d^4)
@@ -105,6 +106,18 @@ h1 = homogenize(h,0,{1,1,1,1})
 assert(degreeWeights(h1,{1,1,1,1}) == {8,8})
 assert(isGraded h1)
 assert(not isGraded h)
+-- ggtonet
+assert(ascii callgg(ggtonet, a) == flatten{1, 0,{1,0,1},1})
+h = a+b
+assert(ascii callgg(ggtonet, h) == flatten flatten{2, {0,{1,0,1},1}, {0,{1,1,1},1}})
+assert(ascii callgg(ggtonet, 0_R) == {0})
+assert(ascii callgg(ggtonet, 2_R) == flatten flatten {1, {0,{0},2}})
+h = a*b^2-c*d^5*a+1_R  -- BUG ??
+assert(ascii callgg(ggtonet, h) == flatten flatten {3, {0,{2,0,1,1,2},1},  
+	                                           {0,{3,0,1,2,1,3,5},128,100}, 
+						   {0,{0},1}})
+h = c*d + 1_R -- BUG: sometimes is coming out to be 2*c*d??
+
 -- NOT DONE: division, remainder, gcd, fast power routine,
 -- coefficientOf, exponents, monomials.
 
