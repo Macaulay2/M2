@@ -50,3 +50,4 @@ import GrSizeX():int;
 import GrSizeY():int;
 import GrAllocColor(r:int,g:int,b:int):int;
 import kbhit():bool;
+import kill(pid:int,sig:int):int;

@@ -13,7 +13,7 @@ as the argument.
 prompts for input now go to the output side of the input file, if the file is
 an input output file, otherwise to stdout
 
-some file names changed:
+some file names changed, to avoid gratuitous use of filename extensions:
 	cache/Macaulay2.doc --> cache/Macaulay2-doc
 	cache/Macaulay2-XXXX.data --> cache/Macaulay2-XXXX-data
 

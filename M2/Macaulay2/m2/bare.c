@@ -31,7 +31,7 @@ void startM2() {
 	  close(tochild[OUT]);
 	  dup2(fromchild[OUT],STDOUT);
 	  close(fromchild[OUT]);
-	  system("M2 -tty -silent -n -x bare.m2");
+	  system("M2 -q -tty -silent -n -x bare.m2");
 	  exit(0);
 	  }
      else {

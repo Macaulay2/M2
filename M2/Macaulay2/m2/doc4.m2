@@ -279,7 +279,21 @@ document { quote close,
      "If the file was open for both input and output, both directions
      are closed.",
      PARA,
-     SEEALSO {"File", "Manipulator", "closeIn", "closeOut"}
+     "If the file is a pipe to another process, i.e., the filename
+     began with the character ", TT "!", ", we will wait for the
+     process to terminate.  If you don't want to wait for the process
+     to terminate, open the file with ", TO "openInOut", ", and if
+     necessary, use ", TO "closeIn", " to close it, to indicate that
+     it has received all its input.",
+     PARA,
+     "If the file is ", TT "stdio", " then it is left open, and
+     no error is signaled.",
+     PARA,
+     SEEALSO {"File", "Manipulator", "closeIn", "closeOut", "kill"}
+     }
+
+document { quote kill,
+     TT "kill f", " -- kill the process associated with the file ", TT "f", "."
      }
 
 document { quote closeIn,
