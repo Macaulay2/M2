@@ -97,17 +97,17 @@ all :: phase1
 phase1 :: $(DUMPEDGFILES)
 
 ifdef DUMPDATA
-ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-erunStartFunctions()' 
-phase1 :: ../cache/Macaulay2-$(ARCH).data
-../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) ../bin/Macaulay2
-	rm -f ../cache/Macaulay2-$(ARCH).data
+ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-erunStartFunctions()' 
+phase1 :: ../cache/Macaulay2-$(ARCH)-data
+../cache/Macaulay2-$(ARCH)-data : $(DUMPEDGFILES) ../bin/Macaulay2
+	rm -f ../cache/Macaulay2-$(ARCH)-data
 	../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
 endif
 
-phase1 :: ../cache/Macaulay2.made
-../cache/Macaulay2.made : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
+phase1 :: ../cache/Macaulay2-made
+../cache/Macaulay2-made : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	touch $@
 
 all:: $(SCRIPTS)
@@ -115,10 +115,10 @@ $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 
-../cache/Macaulay2.pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
-	rm -f ../cache/Macaulay2.tmp
+../cache/Macaulay2-pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
+	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
-	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre
+	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
 backup : CVS/Entries
 CVS/Entries : $(GFILES)
@@ -138,18 +138,18 @@ INPUTS := ../tmp/Examples/sample  ../tmp/Examples/expression
 ../tmp/Examples/sample: sample; cp $< $@
 ../tmp/Examples/expression: expression; cp $< $@
 
-all :: ../cache/Macaulay2.doc
-../cache/Macaulay2.doc : ../cache/Macaulay2.pre $(MADEGFILES) $(INPUTS)
+all :: ../cache/Macaulay2-doc
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEGFILES) $(INPUTS)
 	$(MAKE) -k -C ../tmp/Examples -f ../../m2/Makefile.egs
-	rm -f ../cache/Macaulay2.tmp
+	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
-	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.doc
+	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
 tests: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
 
 clean::
-	rm -rf ../cache/Macaulay2-$(ARCH).data ../cache/Macaulay2.doc \
+	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
 		../tmp/Examples ../tmp/Tests *.obj *.exe bare \
 		TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \

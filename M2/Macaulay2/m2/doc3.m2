@@ -982,6 +982,11 @@ document { quote File,
           (TO "openInOut", "     -- open an input output file"),
           (TO "openListener", "  -- open a listener"),
 	  },
+     "Ways to change the state of files:",
+     MENU {
+	  (TO "echoOff", " -- set echoing off"),
+	  (TO "echoOn", "  -- set echoing on"),
+	  },
      "Input operations:",
      MENU {
           (TO "getc", "        -- get one character from a file"),
@@ -1031,6 +1036,22 @@ document { quote File,
 	  {TO "isOutputFile", " -- whether it's an output file"},
 	  {TO "isListener", "   -- whether it's a listener"},
 	  },
+     }
+
+ccc := echoOn
+erase quote echoOn
+echoOn = new Command from ccc
+
+ccc = echoOff
+erase quote echoOff
+echoOff = new Command from ccc
+
+document { quote echoOn,
+     TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
+     }
+
+document { quote echoOff,
+     TT "echoOff f", " -- turns off echoing for the file ", TT "f", "."
      }
 
 document { quote printString,

@@ -8,7 +8,7 @@ dump = () -> (
 	  try first lines get "!uname -m | sed s=/=-=g" 
 	  else if getenv "ARCH" != "" then concatenate between("-", lines(getenv "ARCH","/"))
 	  else version#"architecture", 
-	  ".data");
+	  "-data");
      << "dumping to " << fn << endl << flush;
      runEndFunctions();
      erase quote dump;

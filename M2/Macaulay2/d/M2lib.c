@@ -413,8 +413,13 @@ char **argv;
 		    libfac_version);
 	       putstderr(buf);
 #     	       endif
+#              ifdef PORTA
+	       sprintf(buf,"  PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
+	       putstderr(buf);
+#              endif
 #     	       ifdef MP
 	       sprintf(buf,"  MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
+               putstderr(buf);
 #     	       endif
 	       putstderr("  GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
 	       putstderr("  GNU libc and libg++, copyright 1996, Free Software Foundation");

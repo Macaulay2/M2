@@ -7,13 +7,13 @@ ifeq "$(OS)" "MS-DOS"
 %.out : %.m2
 	@ echo run example $*.m2
 	@ sed 1d <$*.m2 >tmp.m2
-	@ ../../bin/Macaulay2 -silent '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- -x -s ../../m2/eg.m2 -- -x -s ../../m2/eg.m2 <tmp.m2 >tmp.out
+	@ ../../bin/Macaulay2 -silent '-eloaddata("../../cache/Macaulay2-$(ARCH)-data")' -- -x -s ../../m2/eg.m2 -- -x -s ../../m2/eg.m2 <tmp.m2 >tmp.out
 	@ mv tmp.out $*.out
 else
 
 ifdef DUMPDATA
 ARGS := -q -silent \
-	'-e loaddata "../../cache/Macaulay2-$(ARCH).data"' \
+	'-e loaddata "../../cache/Macaulay2-$(ARCH)-data"' \
 	-- -x -s ../../m2/eg.m2
 else
 ARGS := -silent -x -s -ephase=1 ../../m2/setup.m2 ../../m2/eg.m2

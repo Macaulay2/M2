@@ -6,13 +6,13 @@ TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 all:: $(TESTRESULTS)
 
 ifdef DUMPDATA
-$(TESTRESULTS) : ../../cache/Macaulay2-$(ARCH).data
+$(TESTRESULTS) : ../../cache/Macaulay2-$(ARCH)-data
 else
 $(TESTRESULTS) : ../../cache/Macaulay2.doc
 endif
 
 ifdef DUMPDATA
-ARGS := -q '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+ARGS := -q '-eloaddata("../../cache/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes

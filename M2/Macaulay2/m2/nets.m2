@@ -11,6 +11,12 @@ document { quote toString,
 
 net Option := z -> net expression z
 
+Net == Net := (x,y) -> x === y
+Net == String := (n,s) -> (
+     height n === 1 and depth n === 0 and width n === length s and first netRows n === s
+     )
+String == Net := (s,n) -> n == s
+
 Net | Net := horizontalJoin
 Net || Net := stack
 String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
@@ -77,4 +83,3 @@ tex Net := n -> concatenate(
 	  ///}///,
      newline
      )
-     
