@@ -9,7 +9,7 @@
 #include "sparsemat.hpp"
 #include "coeffrings.hpp"
 #include "dmatrix.hpp"
-#include "lapack.h"
+#include "lapack.hpp"
 
 typedef MutableMatrix MutableMatrixOrNull;
 

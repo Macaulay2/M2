@@ -1671,6 +1671,9 @@ enum gbTraceValues
   M2_arrayint_OrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   Matrix_array_OrNull * rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 
+  /* lapack routines */
+  M2_CC LP_make_M2_Complex(double re, double im);
+
 #if defined(__cplusplus)
 }
 #endif
