@@ -38,7 +38,7 @@ export hash(e:Expr):int := (
 	  foreach s in n.body do h = h * 77 + hash(s);
 	  h)
      is x:file do x.hash
-     is x:FunctionClosure do int(8820938+1299721*x.model.desc.scopenum)
+     is x:FunctionClosure do int(8820938+1299721*x.model.desc.frameID)
      is x:Error do (
 	  929+hash(x.message)+12963*(
 	       hash(x.position.filename) 
@@ -186,11 +186,11 @@ export reverse(a:List):List := sethash(
      List( a.class, reverse(a.v), 0, a.mutable), a.mutable 
      );
 copy(f:Frame):Frame := (
-     if f.scopenum == 0			  -- the global scope?
+     if f.frameID == 0			  -- the global scope?
      then f
      else Frame(
 	  copy(f.outerFrame),
-	  f.scopenum,
+	  f.frameID,
 	  new Sequence len length(f.values) do (
 	       foreach e in f.values do provide e
 	       )));

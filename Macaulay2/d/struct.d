@@ -216,7 +216,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       f := stash.framesize;
 	       previousStashedFrame := f.outerFrame;
 	       if f == previousStashedFrame then (
-		    f = Frame(previousFrame,desc.scopenum,
+		    f = Frame(previousFrame,desc.frameID,
 		    	 new Sequence len framesize do (
 			      provide v;
 			      while true do provide nullE)
@@ -225,7 +225,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       else (
 		    stash.framesize = previousStashedFrame;
 		    f.outerFrame = previousFrame;
-		    f.scopenum = desc.scopenum;
+		    f.frameID = desc.frameID;
 		    f.values.0 = v;
 		    );
 	       recursiondepth = recursiondepth + 1;
@@ -241,7 +241,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       )
 	  else (
 	       recursiondepth = recursiondepth + 1;
-	       f := Frame(previousFrame,desc.scopenum,
+	       f := Frame(previousFrame,desc.frameID,
 		    new Sequence len framesize do (
 			 provide v;
 			 while true do provide nullE));
@@ -270,7 +270,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    f := stash.framesize;
 		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
-			 f = Frame(previousFrame,desc.scopenum,
+			 f = Frame(previousFrame,desc.frameID,
 			      new Sequence len framesize do (
 			      	   foreach x in v do provide x;
 			      	   while true do provide nullE)
@@ -279,7 +279,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    else (
 			 stash.framesize = previousStashedFrame;
 			 f.outerFrame = previousFrame;
-			 f.scopenum = desc.scopenum;
+			 f.frameID = desc.frameID;
 			 foreach x at i in v do f.values.i = x;
 			 );
 		    recursiondepth = recursiondepth + 1;
@@ -296,7 +296,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       else (
 		    recursiondepth = recursiondepth + 1;
 		    saveLocalFrame := localFrame;
-		    f := Frame(previousFrame,desc.scopenum,
+		    f := Frame(previousFrame,desc.frameID,
 			 new Sequence len framesize do (
 			      foreach x in v do provide x;
 			      while true do provide nullE));
@@ -331,7 +331,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  f := stash.framesize;
 	  previousStashedFrame := f.outerFrame;
 	  if f == previousStashedFrame then (
-	       f = Frame(previousFrame,desc.scopenum,
+	       f = Frame(previousFrame,desc.frameID,
 		    new Sequence len framesize do (
 			 provide e;
 			 while true do provide nullE));
@@ -339,7 +339,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  else (
 	       stash.framesize = previousStashedFrame;
 	       f.outerFrame = previousFrame;
-	       f.scopenum = desc.scopenum;
+	       f.frameID = desc.frameID;
 	       f.values.0 = e;
 	       );
      	  saveLocalFrame := localFrame;
@@ -354,7 +354,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  	     -- this check takes time, too!
 	  )
      else (
-	  f := Frame(previousFrame,desc.scopenum,
+	  f := Frame(previousFrame,desc.frameID,
 	       new Sequence len framesize do (
 		    provide e;
 		    while true do provide nullE));
@@ -412,7 +412,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
 		    	 haderror := false;
-			 f = Frame(previousFrame,desc.scopenum,
+			 f = Frame(previousFrame,desc.frameID,
 			      new Sequence len framesize do (
 				   foreach code in cs do (
 					codevalue := eval(code);
@@ -430,7 +430,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    else (
 			 stash.framesize = previousStashedFrame;
 			 f.outerFrame = previousFrame;
-			 f.scopenum = desc.scopenum;
+			 f.frameID = desc.frameID;
 			 foreach code at i in cs do (
 			      codevalue := eval(code);
 			      when codevalue
@@ -455,7 +455,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    recursiondepth = recursiondepth + 1;
 		    saveLocalFrame := localFrame;
 		    haderror := false;
-		    f := Frame(previousFrame,desc.scopenum,
+		    f := Frame(previousFrame,desc.frameID,
 			 new Sequence len framesize do (
 			      foreach code in cs do (
 				   codevalue := eval(code);
@@ -531,7 +531,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    f := stash.framesize;
 		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
-			 f = Frame(previousFrame,desc.scopenum,
+			 f = Frame(previousFrame,desc.frameID,
 			      new Sequence len framesize do (
 				   provide e0;
 				   provide e1;
@@ -542,7 +542,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    else (
 			 stash.framesize = previousStashedFrame;
 			 f.outerFrame = previousFrame;
-			 f.scopenum = desc.scopenum;
+			 f.frameID = desc.frameID;
 			 f.values.0 = e0;
 			 f.values.1 = e1;
 			 );
@@ -563,7 +563,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    recursiondepth = recursiondepth + 1;
 		    saveLocalFrame := localFrame;
 		    haderror := false;
-		    f := Frame(previousFrame,desc.scopenum,
+		    f := Frame(previousFrame,desc.frameID,
 			 new Sequence len framesize do (
 			      provide e0;
 			      provide e1;
@@ -604,7 +604,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    f := stash.framesize;
 		    previousStashedFrame := f.outerFrame;
 		    if f == previousStashedFrame then (
-			 f = Frame(previousFrame,desc.scopenum,
+			 f = Frame(previousFrame,desc.frameID,
 			      new Sequence len framesize do (
 				   provide e0;
 				   provide e1;
@@ -616,7 +616,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    else (
 			 stash.framesize = previousStashedFrame;
 			 f.outerFrame = previousFrame;
-			 f.scopenum = desc.scopenum;
+			 f.frameID = desc.frameID;
 			 f.values.0 = e0;
 			 f.values.1 = e1;
 			 f.values.2 = e2;
@@ -638,7 +638,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    recursiondepth = recursiondepth + 1;
 		    saveLocalFrame := localFrame;
 		    haderror := false;
-		    f := Frame(previousFrame,desc.scopenum,
+		    f := Frame(previousFrame,desc.frameID,
 			 new Sequence len framesize do (
 			      provide e0;
 			      provide e1;

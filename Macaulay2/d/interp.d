@@ -29,8 +29,9 @@ use texmacs;
 
 import dirname(s:string):string;
 
-setvalue(x:Symbol,y:Expr):void := outermostGlobalFrame.values.(x.frameindex) = y;
-getvalue(x:Symbol):Expr := globalFrame.values.(x.frameindex);
+setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
+getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
+
 currentFileName := setupvar("currentFileName", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
@@ -120,7 +121,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 			      )
 			 else nothing;
 			 when lastvalue is err:Error do (
-			      setvalue(errorReportS, err.report);
+			      setGlobalVariable(errorReportS, err.report);
 			      if AbortIfError then return(lastvalue);
 			      lastvalue = nullE;
 			      )
@@ -131,7 +132,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 				   when g is err:Error do (
 					g = update(err,"at print",f);
 					when g is err2:Error do (
-					     setvalue(errorReportS, err2.report);
+					     setGlobalVariable(errorReportS, err2.report);
 					     )
 					else nothing;
 					if AbortIfError then return(g);
@@ -145,21 +146,21 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
      -- if isatty(file) then stdout << endl;
      returnvalue);
 readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
-     savecf := getvalue(currentFileName);
-      savecd := getvalue(currentFileDirectory);
-       setvalue(currentFileName,Expr(file.posFile.file.filename));
-       setvalue(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
+     savecf := getGlobalVariable(currentFileName);
+      savecd := getGlobalVariable(currentFileDirectory);
+       setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
+       setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
        ret := readeval4(file,printout,AbortIfError,scope);
-      setvalue(currentFileDirectory,savecd);
-     setvalue(currentFileName,savecf);
+      setGlobalVariable(currentFileDirectory,savecd);
+     setGlobalVariable(currentFileName,savecf);
      ret);
      
 readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
      -- wrap a new scope around the file
      saveLocalFrame := localFrame;
-     scope := newScope(globalScope);	  -- don't nest the scopes of files loaded.
+     scope := newLocalScope(globalScope);	  -- don't nest the scopes of files loaded.
      scope.transient = false;
-     localFrame = Frame(globalFrame,scope.seqno,
+     localFrame = Frame(globalFrame,scope.frameID,
 	  new Sequence len scope.framesize do provide nullE);
      ret := readeval3(file,printout,AbortIfError,scope);
      localFrame = saveLocalFrame;

@@ -176,7 +176,7 @@ values(e:Expr):Expr := (
 	       p := bucket;
 	       while true do (
 		    when p
-		    is q:SymbolListCell do (provide Expr(SymbolClosure(o.frame,q.entry)); p=q.next;)
+		    is q:SymbolListCell do (provide Expr(SymbolClosure(globalFrame,q.entry)); p=q.next;)
 		    else break;
 		    )))
      is o:HashTable do list(
@@ -197,7 +197,7 @@ pairs(e:Expr):Expr := (
 	       p := bucket;
 	       while true do (
 		    when p
-		    is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(o.frame,q.entry)))); p=q.next;)
+		    is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(globalFrame,q.entry)))); p=q.next;)
 		    else break; )))
      is o:HashTable do list(
 	  new Sequence len o.numEntries do
@@ -231,7 +231,7 @@ showtimefun(a:Code):Expr := (
 setupop(timeS,showtimefun);
 
 lookup(s:string,table:SymbolHashTable):(null or Symbol) := (
-     if table == dummyDictionary then error("dummy table used");
+     if table == dummySymbolHashTable then error("dummy table used");
      entryList := table.buckets.( hash(s) & (length(table.buckets)-1) );
      while true do
      when entryList
@@ -281,7 +281,7 @@ subvalue(left:Expr,right:Expr):Expr := (
      is d:Dictionary do (
 	  when right is s:string do (
 	       when lookup(s,d.scope.symboltable)
-	       is x:Symbol do Expr(SymbolClosure(d.frame,x))
+	       is x:Symbol do Expr(SymbolClosure(globalFrame,x))
 	       else nullE
 	       )
 	  else buildErrorPacket("expected subscript to be a string")
@@ -428,9 +428,9 @@ globalAssignment(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
      );
 
 assignment(t:Symbol,newvalue:Expr):Expr := (
-     f := frame(t.scopenum).values;
+     f := frame(t.frameID).values;
      i := t.frameindex;
-     if t.scopenum == globalScope.seqno then (
+     if t.frameID == 0 then (
 	  r := globalAssignment(t,f.i,newvalue);
 	  when r is Error do return(r) else nothing;
 	  );
@@ -1079,15 +1079,8 @@ setupfun("simpleFlush",flush);
 protect(e:Expr):Expr := (
      when e
      is q:SymbolClosure do (
-	  if !q.symbol.protected then
-	  if q.symbol.transientScope
-	  then buildErrorPacket("can't protect a symbol with transient scope")
-	  else (
-	       q.symbol.protected = true; 
-	       nullE
-	       )
-	  else nullE
-	  )
+	  q.symbol.protected = true; 
+	  nullE)
      else WrongArg( "a symbol"));
 setupfun("protect",protect);
 flagSymbol(e:Expr):Expr := (
