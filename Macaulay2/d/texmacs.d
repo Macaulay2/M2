@@ -21,6 +21,8 @@ export topLevelTexmacs():bool := (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
 	  r := getline(stdin);
 	  when r is e:errmsg do (
+	       flush(stdout);
+     	       endLine(stderr);
 	       stderr << "can't get line : " << e.message << endl << Flush;
 	       exit(1);
 	       )
@@ -30,6 +32,7 @@ export topLevelTexmacs():bool := (
 	       if method == nullE 
 	       then (
 		    flush(stdout);
+     		    endLine(stderr);
 		    stderr << "no method for TeXmacsEvaluate" << endl;
 		    )
 	       else (

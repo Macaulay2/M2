@@ -174,7 +174,7 @@ net RawRing := o -> stack lines toString o
 ZZ.RawRing = rawZZ()
 --		Copyright 1993-2002 by Daniel R. Grayson
 
--- ring elements
+-- ring elements (polynomials)
 
 RawRingElement.name = "RawRingElement"
 RawRingElement.synonym = "raw ringe element"
@@ -185,7 +185,6 @@ ZZ _ RawRing := (n,R) -> rawFromNumber(R,n)
 RR _ RawRing := (n,R) -> rawFromNumber(R,n)
 BigReal _ RawRing := (n,R) -> rawFromNumber(R,n)
 RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
-
 
 RawRingElement == RawRingElement := (x,y) -> x === y
 
@@ -206,8 +205,8 @@ RawRingElement - ZZ := (x,y) -> x - y_(rawRing x)
 ZZ - RawRingElement := (y,x) -> y_(rawRing x) - x
 RawRingElement * ZZ := (x,y) -> x * y_(rawRing x)
 ZZ * RawRingElement := (y,x) -> y_(rawRing x) * x
-RawRingElement == ZZ := (x,y) -> x === y_(rawRing x)
-ZZ == RawRingElement := (y,x) -> y_(rawRing x) === x
+RawRingElement == ZZ := (x,y) -> if y === 0 then rawIsZero x else x === y_(rawRing x)
+ZZ == RawRingElement := (y,x) -> if y === 0 then rawIsZero x else y_(rawRing x) === x
 
 RawRingElement // ZZ := (x,y) -> x // y_(rawRing x)
 ZZ // RawRingElement := (y,x) -> y_(rawRing x) // x

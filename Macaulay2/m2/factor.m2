@@ -1,18 +1,20 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
-gcd(RingElement,RingElement) := RingElement => (r,s) -> (
-     if r == 0 then s
-     else if s == 0 then r
-     else (
-	  z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
-	  a := z_(0,0);
-	  if s%a != 0 then error "can't find gcd in this ring";
-	  t := s // a;
-	  if isField coefficientRing ring t then (
-	       c := leadCoefficient t;
-	       t = t // c;
-	       );
-	  t))
+gcd(RingElement,RingElement) := RingElement => (r,s) -> new ring r from rawGCD(raw r, raw s)
+---- old way:
+--  							(
+--      if r == 0 then s
+--      else if s == 0 then r
+--      else (
+-- 	  z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
+-- 	  a := z_(0,0);
+-- 	  if s%a != 0 then error "can't find gcd in this ring";
+-- 	  t := s // a;
+-- 	  if isField coefficientRing ring t then (
+-- 	       c := leadCoefficient t;
+-- 	       t = t // c;
+-- 	       );
+-- 	  t))
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (
      R := ring f;

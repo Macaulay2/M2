@@ -206,15 +206,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    (a,m) -> expression (new R from a) * expression (new M from m))
 	       ) rawPairs f.RawRingElement;
 	  toString RM := toExternalString RM := x -> toString expression x;
-	  fac := options -> f -> (
-	       error "factoring not re-implemented yet";
-	       sendgg(ggPush f, ggfactor);
-	       v := apply(eePopInt(), i -> ( exp := eePopInt(); new Power from {RM.pop(),exp}));
-	       v = select(v, power -> first power != 1);
-	       new Product from v);
+	  fac := options -> f -> new Product from apply_(rawFactor raw f)((p,n) -> new Power from {new RM from p,n});
 	  factor RM := if R === QQ then (
+	       -- for factoring over QQ we find a commond denominator ourselves and reduce the problem to factoring over ZZ
 	       options -> f -> (
-		    -- error "factorization over QQ not implemented yet";
 	       	    d := commden f;
 		    f = d * f;
 		    s := (fac options) f;

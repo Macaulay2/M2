@@ -2,6 +2,8 @@
 RingElement = new Type of HashTable
 RingElement.synonym = "ring element"
 raw RingElement := f -> f.RawRingElement
+RingElement == RawRingElement := (x,y) -> raw x === y
+RawRingElement == RingElement := (x,y) -> x === raw y
 
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"

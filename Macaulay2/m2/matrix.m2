@@ -366,7 +366,7 @@ bothFree := (f,g) -> (
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"
      else (f,g))
 
-diff(Matrix, Matrix) := Matrix => sameRing @@ bothFree @@ ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) 
+diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing 
 diff(RingElement, RingElement) := RingElement => (f,g) -> (diff(matrix{{f}},matrix{{g}}))_(0,0)
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
 diff(RingElement, Matrix) := (f,m) -> diff(matrix{{f}},m)
@@ -378,7 +378,7 @@ diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 diff(RingElement)    := f -> diff(vars ring f, f)
 diff(Matrix)         := m -> diff(vars ring m, m)
 
-contract (Matrix, Matrix) := Matrix => sameRing @@ bothFree @@ ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) )
+contract (Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
 contract(RingElement, Matrix) := (f,m) -> contract(matrix{{f}},m)
@@ -388,8 +388,8 @@ contract(Vector, Vector) := (v,w) -> contract(matrix{v}, transpose matrix{w})
 contract(Matrix, Vector) := (m,w) -> contract(m,transpose matrix {w})
 contract(Vector, Matrix) := (v,m) -> contract(matrix {v}, m)
 
-diff'(Matrix, Matrix) := Matrix => sameRing @@ bothFree @@  ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) ))
-contract'(Matrix, Matrix) := Matrix => sameRing @@ bothFree @@ ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) ))
+diff'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) )) @@ bothFree @@ sameRing
+contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) )) @@ bothFree @@ sameRing
 
 jacobian = method()
 jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
