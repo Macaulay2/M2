@@ -877,7 +877,6 @@ Optional Features:
   --disable-optimize      disable optimization
   --disable-strip         do not strip the Macaulay 2 binary
   --enable-encap          create an encap package
-  --enable-lapack         use experimental LAPACK interface
   --enable-gc-for-new     use gc instead of malloc for c++ 'new' and 'delete'
                           operators
 
@@ -886,8 +885,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-encapsrc=...     encap directory (PREFIX/encap)
   --with-libgmp=...       libgmp option (-lgmp)
-  --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -latlas
-                          -lg2c)
+  --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -lg2c)
   --with-veclib...        replace lapack libraries by "-framework vecLib"
 
 Some influential environment variables:
@@ -3787,18 +3785,13 @@ else
   encap=no
 fi;
 
+LAPACK=yes
 
-# Check whether --enable-lapack or --disable-lapack was given.
-if test "${enable_lapack+set}" = set; then
-  enableval="$enable_lapack"
-   LAPACK="$enableval" ;
+
 cat >>confdefs.h <<\_ACEOF
 #define LAPACK
 _ACEOF
 
-else
-  LAPACK=yes
-fi;
 
 
 
@@ -3826,7 +3819,7 @@ if test "${with_lapacklibs+set}" = set; then
   withval="$with_lapacklibs"
   LAPACKLIBS="$withval"
 else
-  LAPACKLIBS="-llapack -lcblas -lf77blas -latlas -lg2c"
+  LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
 
 fi;
 

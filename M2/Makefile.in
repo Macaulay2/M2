@@ -20,8 +20,8 @@ VPATH = @srcdir@
 	@exit 1
 config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
-	@echo '| error: $^ newer than $@'
-	@echo '| exiting so you can run it again the same way you did before'
+	@echo '| error: $^ not there or newer than $@'
+	@echo '| exiting so you can run $^'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 

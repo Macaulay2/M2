@@ -33,6 +33,7 @@ static bool initialized = false;
  */
 void IM2_initialize()
 {
+  extern void i_factor_cmds();
   if (initialized) return;
   initialized = true;
   doubles                  = new doubling_stash;
@@ -40,6 +41,7 @@ void IM2_initialize()
   ZZ = Z::create(Monoid::get_trivial_monoid());
   globalQQ = QQ::create(Monoid::get_trivial_monoid());
   Random::i_random();
+  i_factor_cmds();
 }
 
 /** Engine error handling mechanism.
@@ -56,3 +58,4 @@ M2_string IM2_last_error_message()
   clear_error();
   return result;
 }
+
