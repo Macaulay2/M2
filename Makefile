@@ -83,7 +83,8 @@ $(CONFIGURED_FILES) : $(CONFIGURED_FILES:=.in) config.status
 	./config.status
 
 include/config.h : config.status include/config.h.in
-	./config.status
+	./config.status $@
+	touch $@
 
 TARGETS = all install dist check clean distclean uninstall doc port justM2 testport \
 	FACTORY LIBFAC GMP GC
