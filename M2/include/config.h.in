@@ -14,6 +14,9 @@
 /* whether to use dumpdata */
 #undef DUMPDATA
 
+/* whether to use the 'factory' library */
+#undef FACTORY
+
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 

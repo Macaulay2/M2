@@ -78,7 +78,7 @@ ifneq "$(DUMPDATA)" "no"
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/M2
 	rm -f ../$(DUMPDATAFILE)
-	../bin/M2 --stop --dumpdata
+	../bin/M2 -q --stop --dumpdata
 endif
 
 phase1 :: ../cache/Macaulay2-made
