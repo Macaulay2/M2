@@ -1,3 +1,5 @@
+error "re-implemented routines not quite working yet"
+
 -- taken from:
 -- Bernd Sturmfels, FOUR COUNTEREXAMPLES IN COMBINATORIAL ALGEBRAIC GEOMETRY.
 

@@ -165,6 +165,16 @@ const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
   return 0;
 }
 
+const MatrixOrNull *
+rawGBGetLeadTerms(Computation *C, int nparts)
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->get_initial(nparts);
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
 const MatrixOrNull *rawGBSyzygies(Computation *C)
   /* Yields a matrix containing the syzygies computed so far
      via the GB computation C, assuming that 'collect_syz' was

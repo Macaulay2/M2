@@ -1228,6 +1228,8 @@ enum gbTraceValues
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 
+  const MatrixOrNull *rawGBGetLeadTerms(Computation *G, int nparts);
+
   const MatrixOrNull *rawGBMinimalGenerators(Computation *C);
   /* Yields a matrix whose columns form a minimal generating set
      for the ideal or submodule, as computed so far.  In the
