@@ -180,13 +180,6 @@ LAPACK=yes
 AC_SUBST(LAPACK)
 AC_DEFINE(LAPACK,,whether to use LAPACK)
 
-AC_SUBST(LIBGMP)
-AC_ARG_WITH(libgmp,
-    AC_HELP_STRING(--with-libgmp=...,libgmp option (-lgmp)),
-    LIBGMP="$withval",
-    LIBGMP="-lgmp"
-    )
-
 AC_SUBST(LAPACKLIBS)
 AC_ARG_WITH(lapacklibs,
     AC_HELP_STRING(--with-lapacklibs=...,lapack libraries (-llapack -lcblas -lf77blas -lg2c)),
@@ -213,13 +206,31 @@ AC_TRY_LINK(
     ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libgc]))
 AC_MSG_RESULT([yes])
 
+AC_MSG_CHECKING([whether gc library, profiling version, is installed (-lgc-pg)])
+AC_SUBST(HAVE_LIBGC_PG)
+LIBS="-lgc-pg $SAVELIBS"
+AC_TRY_LINK(
+    [#include <gc.h>],
+    [GC_malloc(1);],
+    HAVE_LIBGC_PG=yes;AC_MSG_RESULT([yes]),
+    HAVE_LIBGC_PG=no;AC_MSG_RESULT([no]))
+
 AC_MSG_CHECKING([whether gmp library is installed])
 LIBS="-lgmp $SAVELIBS"
 AC_TRY_LINK(
     [#include <gmp.h>],
-    [__gmp_version;],
+    [return *__gmp_version;],
     ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gmp]))
 AC_MSG_RESULT([yes])
+
+AC_MSG_CHECKING([whether gmp library, profiling version, is installed (-lgmp-pg)])
+AC_SUBST(HAVE_LIBGMP_PG)
+LIBS="-lgmp-pg $SAVELIBS"
+AC_TRY_LINK(
+    [#include <gmp.h>],
+    [return *__gmp_version;],
+    HAVE_LIBGMP_PG=yes;AC_MSG_RESULT([yes]),
+    HAVE_LIBGMP_PG=no;AC_MSG_RESULT([no]))
 
 AC_MSG_CHECKING([whether gdbm library is installed])
 LIBS="-lgdbm $SAVELIBS"
@@ -228,26 +239,66 @@ AC_TRY_LINK([#include <gdbm.h>],
     ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gdbm]))
 AC_MSG_RESULT([yes])
 
+AC_MSG_CHECKING([whether ntl library is installed])
+LIBS="-lntl $SAVELIBS"
+AC_LANG(C)
+AC_TRY_LINK(
+    [#include <NTL/version.h>],
+    [double _ntl_GetTime(void); _ntl_GetTime();],
+    AC_MSG_RESULT([yes]),
+    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: ntl (-lntl)]))
+
+AC_MSG_CHECKING([whether ntl library, profiling version, is installed (-lntl-pg)])
+AC_SUBST(HAVE_LIBNTL_PG)
+LIBS="-lntl-pg $SAVELIBS"
+AC_LANG(C)
+AC_TRY_LINK(
+    [#include <NTL/version.h>],
+    [double _ntl_GetTime(void); _ntl_GetTime();],
+    HAVE_LIBNTL_PG=yes;AC_MSG_RESULT([yes]),
+    HAVE_LIBNTL_PG=no;AC_MSG_RESULT([no]))
+
 AC_MSG_CHECKING([whether factory library is installed])
 LIBS="-lcf $SAVELIBS"
-dnl -- we do not try linking, because we do not know whether libcfmem.a is installed or needed by libcf.a
-dnl -- we do not need libcfmem later, in either case, because we include replacement routines in d/scclib.c
-AC_TRY_COMPILE(
+AC_LANG(C++)
+AC_TRY_LINK(
     [#include <factoryconf.h>],
-    [FACTORYVERSION;],
-    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: factory]))
-AC_MSG_RESULT([yes])
+    [extern const char factoryVersion[]; return *factoryVersion;],
+    AC_MSG_RESULT([yes]),
+    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: factory (-lcf)]))
+
+AC_MSG_CHECKING([whether factory library, profiling version, is installed (-lcf-pg)])
+AC_SUBST(HAVE_LIBCF_PG)
+LIBS="-lcf-pg $SAVELIBS"
+AC_LANG(C++)
+AC_TRY_LINK(
+    [#include <factoryconf.h>],
+    [extern const char factoryVersion[]; return *factoryVersion;],
+    HAVE_LIBCF_PG=yes;AC_MSG_RESULT([yes]),
+    HAVE_LIBCF_PG=no;AC_MSG_RESULT([no]))
 
 AC_MSG_CHECKING([whether libfac library is installed])
 LIBS="-lfac -lcf $SAVELIBS"
+AC_LANG(C++)
 AC_TRY_LINK(
     [extern const char * libfac_version;],
-    [libfac_version;],
-    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libfac]))
-AC_MSG_RESULT([yes])
+    [return *libfac_version;],
+    AC_MSG_RESULT([yes]),
+    AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libfac (-lfac)]))
+
+AC_MSG_CHECKING([whether libfac library, profiling version, is installed (-lfac-pg)])
+AC_SUBST(HAVE_LIBFAC_PG)
+LIBS="-lfac-pg -lcf $SAVELIBS"
+AC_LANG(C++)
+AC_TRY_LINK(
+    [extern const char * libfac_version;],
+    [return *libfac_version;],
+    HAVE_LIBFAC_PG=yes;AC_MSG_RESULT([yes]),
+    HAVE_LIBFAC_PG=no;AC_MSG_RESULT([no]))
 
 AC_MSG_CHECKING([whether readline library is installed])
 LIBS="-lreadline -lhistory -lcurses $SAVELIBS"
+AC_LANG(C)
 AC_TRY_LINK(
     [extern char *readline(const char *);extern void add_history (const char *);],
     [readline;add_history;],

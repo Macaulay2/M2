@@ -25,7 +25,7 @@ factorize(f);  // .17 sec
 // g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 // h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 // F = f*g*h
-// --time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
+// --time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03 -- 2.69 seconds on a 2 Ghz Pentium 4 Dell Latitude laptop
 // --testfactor F
 
 ring r = 0, (x), dp;
