@@ -79,18 +79,18 @@ Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
 
 -- total ext over complete intersections
 
-Ext(Module,Module) := Module => (N,M) -> (
-  B := ring N;
-  if B =!= ring M
+Ext(Module,Module) := Module => (M,N) -> (
+  B := ring M;
+  if B =!= ring N
   then error "expected modules over the same ring";
   if not isCommutative B
   then error "'Ext' not implemented yet for noncommutative rings.";
   if not isHomogeneous B
   then error "'Ext' received modules over an inhomogeneous ring";
-  if not isHomogeneous M or not isHomogeneous N
+  if not isHomogeneous N or not isHomogeneous M
   then error "'Ext' received an inhomogeneous module";
-  if M == 0 then B^0
-  else if N == 0 then B^0
+  if N == 0 then B^0
+  else if M == 0 then B^0
   else (
     p := presentation B;
     A := ring p;
@@ -100,18 +100,18 @@ Ext(Module,Module) := Module => (N,M) -> (
     if c =!= codim B 
     then error "total Ext available only for complete intersections";
     f := apply(c, i -> I_i);
-    toR := map(B,A);
-    pN := lift(presentation N,A);
+    toB := map(B,A);
     pM := lift(presentation M,A);
-    N' := cokernel ( pN | p ** id_(target pN) );
+    pN := lift(presentation N,A);
     M' := cokernel ( pM | p ** id_(target pM) );
-    C := resolution N';
+    N' := cokernel ( pN | p ** id_(target pN) );
+    C := resolution M';
     s := f / (g -> nullhomotopy (g*id_C));
     X := local X;
-    k := coefficientRing A;
+    K := coefficientRing A;
     -- compute the fudge factor for the adjustment of bidegrees
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
-    T := k(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
+    S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
       Degrees => splice {
         apply(0 .. c-1,i -> {-2, - first degree f_i}), 
         n : {0,1}
@@ -119,15 +119,16 @@ Ext(Module,Module) := Module => (N,M) -> (
       Adjust => v -> {- fudge * v#0 + v#1, - v#0},
       Repair => w -> {- w#1, - fudge * w#1 + w#0}
       ]);
-    toT := map(T,A,apply(toList(c .. c+n-1), i -> T_i));
-    S := k(monoid [X_1 .. X_c,Degrees=>{c:{2}}]);
-    mS := monoid S;
-    use S;
+    toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i));
+    -- make a ring whose monomials can be used as indices
+    R := K(monoid [X_1 .. X_c,Degrees=>{c:{2}}]);
+    Rmon := monoid R;
+    use R;
     spots := C -> sort select(keys C, i -> class i === ZZ);
     -- make a hash table to store the blocks of the matrix
-    Delta := new MutableHashTable;
-    Delta#(exponents 1_mS) = -C.dd;
-    scan(c, i -> Delta#(exponents mS_i) = s_i);
+    Gamma := new MutableHashTable;
+    Gamma#(exponents 1_Rmon) = -C.dd;
+    scan(c, i -> Gamma#(exponents Rmon_i) = s_i);
     -- a helper function to list the factorizations of a monomial
     factorizations := (m) -> (
       -- input: m is the list of exponents for a monomial
@@ -141,27 +142,27 @@ Ext(Module,Module) := Module => (N,M) -> (
 	  (n,o) -> apply (0..i, j -> (append(n,j), append(o,i-j))))));
     scan(4 .. length C + 1, 
       d -> if even d then (
-	scan( exponents \ leadMonomial \ first entries basis(d,S), 
+	scan( exponents \ leadMonomial \ first entries basis(d,R), 
 	  m -> (
 	    h := sum(factorizations m,
 	      (n,o) -> (
-		if Delta#?n and Delta#?o
-		then Delta#n * Delta#o
+		if Gamma#?n and Gamma#?o
+		then Gamma#n * Gamma#o
 		else 0));
 	    if h != 0 then (
 	      -- compute and save the null homotopies
-	      Delta#m = nullhomotopy h;
+	      Gamma#m = nullhomotopy h;
 	      )))));
     -- make a free module whose basis elements have the right degrees
-    DMT := T^(apply(spots C, 
+    Cstar := S^(apply(spots C, 
 	i -> toSequence apply(degrees C_i, d -> {i,first d})));
     -- assemble the matrix from its blocks
-    DT := map(DMT, DMT, 
-      transpose sum ( keys Delta, m -> T_m * toT sum Delta#m),
+    Delta := map(Cstar, Cstar, 
+      transpose sum ( keys Gamma, m -> S_m * toS sum Gamma#m),
       Degree => {-1,0});
-    D := DT ** toT M';
+    DeltaBar := Delta ** toS N';
     -- now compute the total Ext as a single homology module
-    prune homology(D,D)))
+    prune homology(DeltaBar,DeltaBar)))
 
 Adjust					  -- just use it again
 Repair					  -- just use it again
