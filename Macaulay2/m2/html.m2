@@ -1,4 +1,6 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
+
+-- produce html form of documentation, for Macaulay 2 and for packages
 
 local prefix, local topNodeName, local topFileName, local topNodeButton
 local haderror, local databaseFileName, local nullButton, local masterIndexButton, local masterFileName
