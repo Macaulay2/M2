@@ -608,21 +608,20 @@ makeDocBody Thing := key -> (
 	       then PARA {docBody}
 	       else SEQ { SUBSECTION "Description", PARA {docBody} })))
 
-title := s -> ( HEADER1 formatDocumentTag s, HEADER2 headline s )
+title := s -> HEADER1 { formatDocumentTag s, headline s }
 
 type := S -> fixup (
      s := value S;
-     PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
-     	  if parent s =!= Nothing then (
-     	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
-	       (
-		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
-		    toSequence between(" < ", f / (T -> TO T)) 
-		    )
-	       ),
-	  "."
-     	  }
-     )
+     if class s =!= Function then (
+	  PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
+	       if parent s =!= Nothing then (
+		    f := (T -> while T =!= Thing list parent T do T = parent T) s;
+		    (
+			 if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
+			 toSequence between(" < ", f / (T -> TO T)) 
+			 )
+		    ),
+	       "."}))
 
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
@@ -885,7 +884,7 @@ documentationValue(Symbol,Type) := (s,X) -> (
      splice (
 	  if #b > 0 then ( PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
 	  if #a > 0 then ( PARA {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
-	  if #c > 0 then ( PARA {"Methods for using ", indefinite synonym X, " :"}, smenu c),
+	  if #c > 0 then ( PARA {"Additional methods, which use ", indefinite synonym X, " :"}, smenu c),
 	  if #e > 0 then ( PARA {"Fixed objects of class ", toString X, " :"}, smenu e)))
 documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;

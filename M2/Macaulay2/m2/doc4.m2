@@ -114,36 +114,6 @@ document {
      }
 
 document {
-     Key => modulus,
-     Headline => "store the modulus",
-     TT "modulus", " -- a key used in quotient rings of the form ", TT "ZZ/n to", " store 
-     the number ", TT "n", ".",
-     PARA,
-     "This may go away when more general quotient rings are working."
-     }
-
-if class XCreateWindow === Function then (
-document {
-     Key => XCreateWindow,
-     Headline => "create a window",
-     TT "XCreateWindow(pid,x,y,a,b,w,n)", " -- makes a new window.",
-     PARA,
-     "Here ", TT "pid", " is the id of the parent window, ", TT "x", " 
-     and ", TT "y", " are the coordinates of the upper left corner of the 
-     window, ", TT "a", " and ", TT "b", " are the width and
-     height, ", TT "w", " is the width of the border, and ", TT "n", " is the name of the window."
-     }
-) else erase symbol XCreateWindow
-
-if class XDefaultRootWindow === Function then (
-document {
-     Key => XDefaultRootWindow,
-     Headline => "id of the root window",
-     TT "XDefaultRootWindow()", " -- returns the id of the root window."
-     }
-) else erase symbol XDefaultRootWindow
-
-document {
      Key => format,
      Headline => "format a string",
      TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
@@ -837,7 +807,7 @@ document {
      }
 
 document {
-     Key => unstacn,
+     Key => unstack,
      Headline => "list the rows of a net",
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",

@@ -186,7 +186,7 @@ toString String := identity
 toString Symbol := simpleToString
 
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
-toExternalString Keyword := s -> concatenate("symbol \"", simpleToString s, "\"")
+toExternalString Keyword := s -> concatenate("symbol ", format simpleToString s)
 toExternalString Symbol := s -> (
      n := simpleToString s;
      if isGlobalSymbol n and getGlobalSymbol n === s then (

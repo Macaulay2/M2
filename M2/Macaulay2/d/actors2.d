@@ -493,7 +493,7 @@ isOpen(e:Expr):Expr := (
      when e
      is f:file do toExpr(f.listener || f.input || f.output)
      is x:Database do toExpr(x.isopen)
-     else False);
+     else WrongArg("a file or database"));
 setupfun("isOpen",isOpen);
 isInputFile(e:Expr):Expr := (
      when e

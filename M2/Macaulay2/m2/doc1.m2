@@ -221,19 +221,6 @@ document {
      SeeAlso => {"examples", "document"}
      }
 document {
-     Key => symbol "Documentation",
-     Headline => "where the documentation is stored",
-     TT "Documentation", " -- a hash table which is used to store
-     pointers to documentation of functions, symbols, and methods.",
-     PARA,
-     "This hash table is used by the routines that display documentation,
-     is intended for internal use only, and its format may change.",
-     PARA,
-     "The documentation is stored both in a hash table in memory, and in a 
-     database file.",
-     SeeAlso => {":="}
-     }
-document {
      Key => formatDocumentTag,
      Headline => "format documentation tags",
      TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
