@@ -6,6 +6,7 @@
 #include "matrixcon.hpp"
 #include "matrix.hpp"
 #include "montableZZ.hpp"
+#include "montable.hpp"
 
 PolyRingQuotient::~PolyRingQuotient()
 {
@@ -24,6 +25,7 @@ void PolyRingQuotient::makeQuotientIdeal(const vector<Nterm *, gc_alloc> &quotie
 // a GB over the flattened ring.
 {
   Rideal_ = new MonomialIdeal(getAmbientRing());
+  ringtable_ = MonomialTable::make(n_vars());
   intarray vp;
   int *exp = newarray(int,n_vars());
   for (int i=0; i<quotients.size(); i++)
@@ -39,18 +41,22 @@ void PolyRingQuotient::makeQuotientIdeal(const vector<Nterm *, gc_alloc> &quotie
       if (!Rideal_->search_expvector(exp, not_used))
 	{
 	  // The element is part of a minimal GB
-	  quotient_ideal_.push_back(f);
+	  int index = n_quotients();
+	  gbvector *g = R_->translate_gbvector_from_ringelem(f);
+	  appendQuotientElement(f, g);
 	  vp.shrink(0);
 	  getMonoid()->to_varpower(f->monom, vp);
-	  Bag *b = new Bag(f, vp);
+	  Bag *b = new Bag(index, vp);
 	  Rideal_->insert(b);
+	  ringtable_->insert(exp, 1, i); // consumes exp
+	  exp = newarray(int,n_vars());
 	}
     }
 
   // Now we need to set the homogeniety of this quotient ring.
-  for (int i=0; i<quotient_ideal_.size(); i++)
+  for (int i=0; i<n_quotients(); i++)
     {
-      if (!R_->is_homogeneous(quotient_ideal_[i]))
+      if (!R_->is_homogeneous(quotient_element(i)))
 	{
 	  setIsGraded(false);
 	  break;
@@ -84,8 +90,12 @@ void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quot
       if (!ringtableZZ_->is_strong_member(MPZ_VAL(f->coeff), exp, 1))
 	{
 	  // The element is part of a minimal GB
-	  ringtableZZ_->insert(MPZ_VAL(f->coeff), exp, 1, quotient_ideal_.size());
-	  quotient_ideal_.push_back(f);
+	  // Also, this grabs exp.
+	  int index = n_quotients();
+	  ringtableZZ_->insert(MPZ_VAL(f->coeff), exp, 1, index);
+	  gbvector *g = R_->translate_gbvector_from_ringelem(f);
+	  appendQuotientElement(f, g);
+	  exp = newarray(int,n_vars());
 
 	  if (f->next == 0 && getMonoid()->is_one(f->monom))
 	    {
@@ -96,9 +106,9 @@ void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quot
     }
 
   // Now we need to set the homogeniety of this quotient ring.
-  for (int i=0; i<quotient_ideal_.size(); i++)
+  for (int i=0; i<n_quotients(); i++)
     {
-      if (!R_->is_homogeneous(quotient_ideal_[i]))
+      if (!R_->is_homogeneous(quotient_element(i)))
 	{
 	  setIsGraded(false);
 	  break;
@@ -106,24 +116,6 @@ void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quot
     }
   deletearray(exp);
 }
-
-#if 0
-// This is old (pre-gg-removal) code, that we might want to ressurrect.
-void PolyRing::make_RidealZZ(const array<ring_elem> &polys)
-{
-  // If coefficients_are_ZZ, then
-  // this routine sets the fields:
-  // _quotient_ideal, RidealZ.
-
-  const PolyRing *S = _base_ring;
-  while (S->_base_ring != NULL) S = S->_base_ring;
-
-  _RidealZZ = TermIdeal::make_ring_termideal(S,
-			   _base_ring->_quotient_ideal, 
-			   polys,
-			   _quotient_ideal);
-}
-#endif
 
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
 					 const Matrix *M)
@@ -160,8 +152,8 @@ Matrix * PolyRingQuotient::getPresentation() const
   const PolyRing *R = getAmbientRing();
 
   MatrixConstructor mat(R->make_FreeModule(1), 0, false);
-  for (int i=0; i<quotient_ideal_.size(); i++)
-    mat.append(R->make_vec(0, quotient_ideal_[i]));
+  for (int i=0; i<n_quotients(); i++)
+    mat.append(R->make_vec(0, quotient_element(i)));
   return mat.to_matrix();
 }
 
@@ -170,9 +162,9 @@ void PolyRingQuotient::text_out(buffer &o) const
   o << "Quotient ring of ";
   R_->text_out(o);
   o << newline << "quotient elements" << newline;
-  for (int i=0; i<quotient_ideal_.size(); i++)
+  for (int i=0; i<n_quotients(); i++)
     {
-      o << "    "; elem_text_out(o, quotient_ideal_[i]); o << newline;
+      o << "    "; elem_text_out(o, quotient_element(i)); o << newline;
     }
 }
 
@@ -181,17 +173,6 @@ bool PolyRingQuotient::is_unit(ring_elem) const
 #warning "todo: is_unit"
   return is_field();
   return false;
-}
-
-MonomialIdeal *PolyRingQuotient::get_quotient_monomials() const
-{
-  return Rideal_;
-}
-
-const MonomialTableZZ * PolyRingQuotient::get_quotient_MonomialTableZZ() const
-  // Each id is an index into quotient_ideal_
-{
-  return ringtableZZ_;
 }
 
 bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &result) const
@@ -252,7 +233,7 @@ void PolyRingQuotient::normal_form_basic_field(ring_elem& f) const
       int_bag *b;
       if (Rideal_->search_expvector(EXP1_, b))
 	{
-	  Nterm *s = static_cast<Nterm *>(b->basis_ptr());
+	  Nterm *s = quotient_element(b->basis_elem());
 	  // Now we must replace t with 
 	  // t + c*m*s, where in(t) = in(c*m*s), and c is 1 or -1.
 	  reduce_lead_term_basic_field(t, s);
@@ -314,7 +295,7 @@ void PolyRingQuotient::normal_form_ZZ(ring_elem& f) const
 	  // reduce lead term as much as possible
 	  // If the lead monomial reduces away, continue,
 	  //   else tack the monomial onto the result
-	  Nterm *g = quotient_ideal_[w];
+	  Nterm *g = quotient_element(w);
 	  if (reduce_lead_term_ZZ(t,g))
 	    continue;
 	}
@@ -336,12 +317,12 @@ void PolyRingQuotient::normal_form(ring_elem &f) const
 
 ring_elem PolyRingQuotient::power(const ring_elem f, mpz_t n) const
 {
-  return ZERO_RINGELEM;
+  return Ring::power(f,n);
 }
 
 ring_elem PolyRingQuotient::power(const ring_elem f, int n) const
 {
-  return ZERO_RINGELEM;
+  return Ring::power(f,n);
 }
 
 ring_elem PolyRingQuotient::invert(const ring_elem f) const
@@ -398,11 +379,28 @@ ring_elem PolyRingQuotient::random(int homog, const int *deg) const
 
 ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f) const
 {
-  return ZERO_RINGELEM;
+  return R_->PolyRing::eval(map, f);
 }
 
 
 #if 0
+
+// This is old (pre-gg-removal) code, that we might want to ressurrect.
+void PolyRing::make_RidealZZ(const array<ring_elem> &polys)
+{
+  // If coefficients_are_ZZ, then
+  // this routine sets the fields:
+  // _quotient_ideal, RidealZ.
+
+  const PolyRing *S = _base_ring;
+  while (S->_base_ring != NULL) S = S->_base_ring;
+
+  _RidealZZ = TermIdeal::make_ring_termideal(S,
+			   _base_ring->_quotient_ideal, 
+			   polys,
+			   _quotient_ideal);
+}
+
 // This is part of remainderAndQuotient, for quotient rings.
 
       else if (false) //(n_vars() == 1 && K_->is_field())

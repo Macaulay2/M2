@@ -10,13 +10,15 @@ class MinimalGB : public our_new_delete
 {
 protected:
   GBRing *R;
+  const PolynomialRing *originalR;
   const FreeModule *F;
   const FreeModule *Fsyz;
   vector<POLY, gc_alloc> polys;
 public:
   MinimalGB(GBRing *R0,
+	    const PolynomialRing *originalR0,
 	    const FreeModule *F0,
-	    const FreeModule *Fsyz0) : R(R0), F(F0), Fsyz(Fsyz0) {}
+	    const FreeModule *Fsyz0) : R(R0), originalR(originalR0), F(F0), Fsyz(Fsyz0) {}
 
   virtual ~MinimalGB();
 
@@ -47,13 +49,12 @@ public:
 class MinimalGB_Field : public MinimalGB
 {
   MonomialTable *T;
+  const MonomialIdeal *Rideal;
 public:
   MinimalGB_Field(GBRing *R0,
+		  const PolynomialRing *originalR0,
 		  const FreeModule *F0,
-		  const FreeModule *Fsyz0) : MinimalGB(R0,F0,Fsyz0), T(0)
-  {
-    T = MonomialTable::make(R0->n_vars());
-  }
+		  const FreeModule *Fsyz0);
 
   virtual ~MinimalGB_Field();
 
@@ -71,14 +72,21 @@ public:
 
 class MinimalGB_ZZ : public MinimalGB
 {
+  enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE};
+
   MonomialTableZZ *T;
+  const MonomialTableZZ *ringtableZZ;
+
+
+  enum divisor_type find_divisor(exponents exp, int comp, int &result_loc);
+
 public:
+
+
   MinimalGB_ZZ(GBRing *R0,
+	       const PolynomialRing *originalR0,
 	       const FreeModule *F0,
-	       const FreeModule *Fsyz0) : MinimalGB(R0,F0,Fsyz0), T(0)
-  {
-    T = MonomialTableZZ::make(R0->n_vars());
-  }
+	       const FreeModule *Fsyz0);
 
   virtual ~MinimalGB_ZZ();
 

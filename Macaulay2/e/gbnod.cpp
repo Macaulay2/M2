@@ -22,7 +22,6 @@ void gb2_comp::setup(FreeModule *FFsyz,
       ERROR("internal error - ring is not a polynomial ring");
       assert(0);
     }
-  R = originalR;
   GR = originalR->get_gb_ring();
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
@@ -218,13 +217,11 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 
-#warning "quotient ring stuff"
-#if 0
-  if (GR->is_quotient_ring())
+  if (originalR->is_quotient_ring())
     {
-      for (int i=0; i<GR->n_quotients(); i++)
+      for (int i=0; i<originalR->n_quotients(); i++)
 	{
-	  const gbvector * f = GR->quotient_element(i);
+	  const Nterm * f = originalR->quotient_element(i);
 	  M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
@@ -232,7 +229,6 @@ void gb2_comp::find_pairs(gb_elem *p)
 	  elems.insert(new Bag(q, vplcm));
 	}
     }
-#endif
 
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = monideals[p->f->comp]->mi;
@@ -258,7 +254,7 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal *mi = new MonomialIdeal(R, elems, rejects);
+  MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects);
   while (rejects.remove(b))
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
@@ -348,34 +344,31 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       GR->gbvector_get_lead_exponents(F, f, div_totalexp);
-#warning "quotient ring stuff"
-#if 0
-      if (GR->is_quotient_ring() 
-	  && GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+      if (originalR->is_quotient_ring() 
+	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
-	  gbvector *g = (gbvector *) b->basis_ptr();
+	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,g,0);
 	  count++;
 	}
       else 
-#endif
-if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
-	{
-	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
-	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
-	  count++;
-	  if (gbTrace == 10)
-	    {
-	      buffer o;
-	      o << "  reduced by ";
-	      GR->gbvector_text_out(o,F,q->f);
-	      o << newline;
-	      o << "    giving ";
-	      GR->gbvector_text_out(o,F,f);
-	      o << newline;
-	      emit(o.str());
-	    }
-	}
+	if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
+	  {
+	    gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
+	    GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
+	    count++;
+	    if (gbTrace == 10)
+	      {
+		buffer o;
+		o << "  reduced by ";
+		GR->gbvector_text_out(o,F,q->f);
+		o << newline;
+		o << "    giving ";
+		GR->gbvector_text_out(o,F,f);
+		o << newline;
+		emit(o.str());
+	      }
+	  }
       else
 	{
 	  result->next = f;
@@ -384,7 +377,7 @@ if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
 	  result->next = 0;
 	}
     }
-
+  
   if (gbTrace >= 4)
     {
       buffer o;
@@ -416,11 +409,10 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
       Bag *b;
       GR->gbvector_get_lead_exponents(F, lead, div_totalexp);
 #warning "quotient ring stuff"
-#if 0
-      if (GR->is_quotient_ring() 
-	  && GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+      if (originalR->is_quotient_ring() 
+	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
-	  gbvector *g = (gbvector *) b->basis_ptr();
+	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  GR->reduce_lead_term_heap(F,Fsyz,
 				    lead, div_totalexp, // are these two needed
 				    result,fb,fsyzb,
@@ -428,22 +420,21 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  count++;
 	}
       else 
-#endif
-if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
-	{
-	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
-	  GR->reduce_lead_term_heap(F,Fsyz,
-				    lead, div_totalexp,
-				    result,fb,fsyzb,
-				    q->f,q->fsyz);
+	if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
+	  {
+	    gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
+	    GR->reduce_lead_term_heap(F,Fsyz,
+				      lead, div_totalexp,
+				      result,fb,fsyzb,
+				      q->f,q->fsyz);
 	  count++;
-	}
-      else
-	{
-	  result->next = fb.remove_lead_term();
-	  result = result->next;
-	  result->next = 0;
-	}
+	  }
+	else
+	  {
+	    result->next = fb.remove_lead_term();
+	    result = result->next;
+	    result->next = 0;
+	  }
     }
 
   if (gbTrace >= 4)
@@ -479,10 +470,10 @@ void gb2_comp::schreyer_append(gbvector * f)
 {
   if (orig_syz < 0)
     {
-      int *d = R->degree_monoid()->make_one();
+      int *d = originalR->degree_monoid()->make_one();
       GR->gbvector_multidegree(F, f, d);
       Fsyz->append_schreyer(d, f->monom, Fsyz->rank());
-      R->degree_monoid()->remove(d);
+      originalR->degree_monoid()->remove(d);
     }
 }
   
@@ -657,7 +648,7 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
 
   for (int i=monideals.length(); i<=F->rank(); i++)
     {
-      monideal_pair *p = new monideal_pair(R);
+      monideal_pair *p = new monideal_pair(originalR);
       monideals.append(p);
     }
 
@@ -744,7 +735,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
       if (use_hilb)
 	{
 	  RingElement *hsyz;
-	  const PolynomialRing *DR = R->get_degree_ring();
+	  const PolynomialRing *DR = originalR->get_degree_ring();
 	  RingElement *h = RingElement::make_raw(DR, DR->zero());
 	  if (syz != NULL)
 	    {

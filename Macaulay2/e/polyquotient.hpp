@@ -12,6 +12,7 @@ class PolyRingQuotient : public PolynomialRing
   bool overZZ_;
 
   MonomialIdeal *Rideal_;
+  MonomialTable *ringtable_;
   MonomialTableZZ *ringtableZZ_;
 
   bool is_ZZ_quotient_;		// true if this is a quotient of a polynomial ring over ZZ, AND
@@ -20,8 +21,6 @@ class PolyRingQuotient : public PolynomialRing
 
   int *MONOM1_;
   int *EXP1_, *EXP2_;
-
-  vector<Nterm *, gc_alloc> quotient_ideal_;
 protected:
   void makeQuotientIdeal(const vector<Nterm *, gc_alloc> &quotients);
   void makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quotients);
@@ -74,18 +73,24 @@ public:
   // Quotient ring information
   virtual bool        is_quotient_ring() const { return true; }
 
-  virtual MonomialIdeal *  get_quotient_monomials() const;
+  virtual bool is_quotient_poly_ring() const { return true; }
+
+  virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal_; }
   // Each bag value is an "Nterm *".
 
-  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const;
+  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return ringtableZZ_; }
   // Each id is an index into quotient_ideal_
+
+  virtual const MonomialTable * get_quotient_MonomialTable() const { return ringtable_; }
+  // Each id is an index into quotient_ideal_
+
+
   
   virtual bool is_pid() const {
-    return n_vars() == 1 && !getCoefficients()->is_ZZ() && quotient_ideal_.size() == 1;
+    return n_vars() == 1 && !getCoefficients()->is_ZZ() && n_quotients() == 1;
   }
 
   virtual bool has_gcd() const { return false; } // Is this correct??
-  virtual bool is_quotient_poly_ring() const { return true; }
 
   virtual void text_out(buffer &o) const;
 
@@ -125,15 +130,21 @@ public:
   }
 
   virtual ring_elem negate(const ring_elem f) const {
-    return R_->PolyRing::negate(f);
+    ring_elem result = R_->PolyRing::negate(f);
+    if (overZZ_) normal_form(result);
+    return result;
   }
 
   virtual ring_elem add(const ring_elem f, const ring_elem g) const {
-    return R_->PolyRing::add(f,g);
+    ring_elem result =  R_->PolyRing::add(f,g);
+    if (overZZ_) normal_form(result);
+    return result;
   }
 
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const {
-    return R_->PolyRing::subtract(f,g);
+    ring_elem result = R_->PolyRing::subtract(f,g);
+    if (overZZ_) normal_form(result);
+    return result;
   }
 
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const {
@@ -186,9 +197,8 @@ public:
     return R_->PolyRing::support(a);
   }
 
-#warning "need to make sure quotient is homogeneous?"
   virtual bool is_homogeneous(const ring_elem f) const {
-    return R_->PolyRing::is_homogeneous(f);
+    return is_graded() && R_->PolyRing::is_homogeneous(f);
   }
 
   virtual void degree(const ring_elem f, int *d) const {

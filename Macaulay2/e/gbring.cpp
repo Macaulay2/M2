@@ -103,7 +103,7 @@ GBRing * GBRing::create_PolynomialRing(const Ring *K, const Monoid *M)
   return new GBRingPoly(K,M);
 }
 
-gbvector *GBRingPoly::mult_by_term(const FreeModule *F,
+gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
 				   const gbvector *f,
 				   ring_elem u,
 				   const int *monom,
@@ -147,7 +147,7 @@ GBRing * GBRing::create_SkewPolynomialRing(const Ring *K0,
   return new GBRingSkew(K0,M0,skew0);
 }
 
-gbvector *GBRingSkew::mult_by_term(const FreeModule *F,
+gbvector *GBRingSkew::mult_by_term1(const FreeModule *F,
 				   const gbvector *f, 
 				   const ring_elem c, 
 				   const int *m,
@@ -204,7 +204,7 @@ GBRing * GBRing::create_WeylAlgebra(const Ring *K0, const Monoid *M0, const Weyl
   return new GBRingWeyl(K0,M0,R0); 
 }
 
-gbvector *GBRingWeyl::mult_by_term(const FreeModule *F,
+gbvector *GBRingWeyl::mult_by_term1(const FreeModule *F,
 				   const gbvector *f,
 				   ring_elem u,
 				   const int *monom,
@@ -215,7 +215,7 @@ gbvector *GBRingWeyl::mult_by_term(const FreeModule *F,
   return weyl->gbvector_mult_by_term(result,f,u,monom,comp);
 }
 
-gbvector *GBRingWeylZZ::mult_by_term(const FreeModule *F,
+gbvector *GBRingWeylZZ::mult_by_term1(const FreeModule *F,
 				   const gbvector *f,
 				   ring_elem u,
 				   const int *monom,
@@ -245,7 +245,7 @@ GBRing * GBRing::create_SolvableAlgebra(const Ring *K0,
   return new GBRingSolvable(K0,M0,R0);
 }
 
-gbvector *GBRingSolvable::mult_by_term(const FreeModule *F,
+gbvector *GBRingSolvable::mult_by_term1(const FreeModule *F,
 				       const gbvector *f,
 				       ring_elem u,
 				       const int *monom,
@@ -387,6 +387,7 @@ void GBRing::gbvector_weight(const FreeModule *F, const gbvector *f,
 		     int &result_hi)
 {
 #warning "gbvector_weight not implemented"
+  assert(0);
 }
 
 int GBRing::gbvector_term_weight(const FreeModule *F, 
@@ -394,7 +395,9 @@ int GBRing::gbvector_term_weight(const FreeModule *F,
 {
   if (f == 0) return 0;
   gbvector_get_lead_exponents(F,f,_EXP1);
-  int fdeg = F->primary_degree(f->comp-1);
+  int fdeg = 0;
+  if (f->comp > 0)
+    fdeg = F->primary_degree(f->comp-1);
   fdeg += exponents_weight(_EXP1);
   return fdeg;
 }
@@ -409,7 +412,9 @@ int GBRing::gbvector_degree(const FreeModule *F,
   for (const gbvector *t=f; t != 0; t = t->next)
     {
       gbvector_get_lead_exponents(F,t,_EXP1);
-      int tdeg = F->primary_degree(t->comp-1);
+      int tdeg = 0;
+      if (t->comp > 0)
+	tdeg = F->primary_degree(t->comp-1);
       tdeg += exponents_weight(_EXP1);
       if (first_term)
 	{
@@ -671,6 +676,22 @@ void GBRing::exponent_syzygy(const int *exp1,
 // mult_by_term routines ////////////////////////////
 /////////////////////////////////////////////////////
 
+gbvector *GBRing::mult_by_term(const FreeModule *F,
+			       const gbvector *f,
+			       ring_elem u,
+			       const int *monom,
+			       int comp)
+{
+  gbvector *result = mult_by_term1(F,f,u,monom,comp);
+  const SchreyerOrder *S;
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+    {
+      for (gbvector *t = result; t != 0; t = t->next)
+	S->schreyer_up(t->monom, comp-1, t->monom);
+    }
+  return result;
+}
+
 void GBRing::gbvector_mult_by_term(const FreeModule *F,
 				   const FreeModule *Fsyz,
 				   ring_elem a, 
@@ -733,6 +754,44 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
       gbvector_add_to(Fsyz,fsyz,result_syz1);
     }
 }
+
+#if 0
+void GBRing::gbvector_ring_reduce_lead_term(const FreeModule *F,
+					    const FreeModule *Fsyz,
+					    gbvector * flead,
+					    gbvector * &f,
+					    gbvector * &fsyz,
+					    const Nterm *g,
+					    bool use_denom,
+					    ring_elem &denom)
+{
+  int comp;
+  const ring_elem a = f->coeff;
+  const ring_elem b = g->coeff;
+  ring_elem u,v;
+  K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
+  gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
+  M->to_expvector(g->monom, _EXP2);
+  divide_exponents(_EXP1,_EXP2,_EXP3);
+  if (!K->is_equal(u,_one))
+    {
+      gbvector_mult_by_coeff_to(f,u); // modifies f
+      gbvector_mult_by_coeff_to(flead,u);
+      gbvector_mult_by_coeff_to(fsyz,u);
+      if (use_denom) K->mult_to(denom, u);
+    }
+  // mult f,flead by u (if u != 1)
+  // now mult g to cancel
+  if (is_skew_commutative())
+    {
+      if (_skew.mult_sign(_EXP3, _EXP2) < 0)
+	K->negate_to(v);
+    }
+  M->from_expvector(_EXP3, _MONOM1);
+  gbvector *result1 = ring_mult_by_term(F,g, v,_MONOM1,f->comp);
+  gbvector_add_to(F,f,result1);
+}
+#endif
 
 void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 				       const FreeModule *Fsyz,

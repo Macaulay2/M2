@@ -1077,7 +1077,7 @@ int res2_comp::find_ring_divisor(const int *exp, ring_elem &result) const
   Bag *b;
   if (!P->get_quotient_monomials()->search_expvector(exp, b))
     return 0;
-  result = reinterpret_cast<Nterm *>(b->basis_ptr());
+  result.poly_val = P->quotient_element(b->basis_elem());
   return 1;
 }
 

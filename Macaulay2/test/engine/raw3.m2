@@ -268,7 +268,9 @@ B = rawQuotientRing(A,M)
 x = rawRingVar(B,0,1)
 y = rawRingVar(B,1,1)
 z = rawRingVar(B,2,1)
-x*x
+assert(x*x == y*z+1)
+assert(x^2 == y*z+1)
+assert(x^4 == y^2*z^2+2*y*z+1)
 
 needs "raw-util.m2"
 A = polyring(rawZZ(), {symbol x, symbol y, symbol z})
@@ -279,7 +281,39 @@ y = rawRingVar(B,1,1)
 z = rawRingVar(B,2,1)
 x*x
 5*x*x
+5*x^2
+3*x^2
+assert(x^2 + x^2 == -x^2 + y*z + 1)
+assert(x^2 + x^2 + x^2 == y*z+1)
+assert(2*x^2 == x^2 + x^2)
 
+needs "raw-util.m2"
+A = polyring(rawZZ(), {symbol x, symbol y})
+M = mat{{24336_A, 2*y, 4*x-7800, y^2+2*x-3900, x^2+2*x-3900}}
+B = rawQuotientRing(A,M)
+x = rawRingVar(B,0,1)
+y = rawRingVar(B,1,1)
+f = 4*rawRingVar(A,0,1)
+rawPromote(B, f)
+-2*x
+-3*x
+-4*x
+4*x
+rawRing x
+x*x
+assert(4*x^2 == 0)
+assert(x^4 == 0)
+assert(2*x^3 == 0)
+assert(312*x == 0)
+
+5*x*x
+5*x^2
+
+5*x^2
+3*x^2
+assert(x^2 + x^2 == -x^2 + y*z + 1)
+assert(x^2 + x^2 + x^2 == y*z+1)
+assert(2*x^2 == x^2 + x^2)
 --------------------------
 -- free module routines --
 --------------------------

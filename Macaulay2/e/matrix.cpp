@@ -2024,7 +2024,6 @@ MonomialIdeal *Matrix::make_monideal(int n) const
     }
 
 #warning "make_monideal doesn't handle quotient rings"
-#if 0
   // If the base ring is a quotient ring, include these lead monomials.
   if (P->is_quotient_ring())
     {
@@ -2035,7 +2034,6 @@ MonomialIdeal *Matrix::make_monideal(int n) const
 	  new_elems.insert(b);
 	}
     }
-#endif
 
   MonomialIdeal *result = new MonomialIdeal(P, new_elems);
   return result;

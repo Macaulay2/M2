@@ -378,6 +378,97 @@ assert(m5*m6 == 0)
 assert(m7 == 0)
 assert(m1 == m)
 ----------------------------------
+-- Quotient over ZZ/101         --
+-- the max ideal
+-- Algorithm 0                  --
+----------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+A = rawQuotientRing(R,mat{{a^2+b^2+c^2}})
+a = rawPromote(A,a)
+b = rawPromote(A,b)
+c = rawPromote(A,c)
+a^2+b^2+c^2
+m = mat{{a,b,c}}
+gbTrace=3
+algorithm = 0
+C = rawResolution(m,true,5,false,0,algorithm,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(rawNumberOfRows m4 == 4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+----------------------------------
+-- Quotient over ZZ/101         --
+-- the max ideal
+-- Algorithm 1                  --
+----------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+A = rawQuotientRing(R,mat{{a^2+b^2+c^2}})
+m = mat{{a,b,c}}
+m = rawPromote(A,m) -- THIS SHOULD BE MADE TO WORK...
+a = rawPromote(A,a)
+b = rawPromote(A,b)
+c = rawPromote(A,c)
+a^2+b^2+c^2
+m = mat{{a,b,c}}
+gbTrace=3
+algorithm = 1
+C = rawResolution(m,true,5,false,0,algorithm,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(rawNumberOfRows m4 == 4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+----------------------------------
+-- Quotient over ZZ/101         --
+-- the max ideal
+-- Algorithm 2                  --
+----------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+A = rawQuotientRing(R,mat{{a^2+b^2+c^2}})
+m = mat{{a,b,c}}
+m = rawPromote(A,m) -- THIS SHOULD BE MADE TO WORK...
+a = rawPromote(A,a)
+b = rawPromote(A,b)
+c = rawPromote(A,c)
+a^2+b^2+c^2
+m = mat{{a,b,c}}
+gbTrace=3
+algorithm = 2
+C = rawResolution(m,true,5,false,0,algorithm,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C -- IGNORES QUOTIENT ELEMENTS
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(rawNumberOfRows m4 == 4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+----------------------------------
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}
 C = rawResolution(m,true,5,false,0,1,0)
