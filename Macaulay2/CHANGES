@@ -1,5 +1,18 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.49:
+
+Fixed another bug in 'betti'.
+
+'subquotient', 'coker', and 'image' now recast the matrices which provide the
+generators and relations so they have degree 0, if the result is a
+homogeneous matrix.
+
+New in 0.8.48:
+
+Fixed a bug in 'betti' which caused it to crash for certain resolutions
+with negative degrees
+
 New in 0.8.47:
 
 A bug in the engine which prevented certain data associated with computation
