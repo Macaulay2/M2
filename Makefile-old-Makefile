@@ -386,7 +386,6 @@ PORTING := CVS \
 	Macaulay2/html \
 	Macaulay2/licenses \
 	Macaulay2/m2 \
-	Macaulay2/c2/Makefile Macaulay2/c2/targettypes.c \
 	Macaulay2/msdos \
 	Macaulay2/packages \
 	Macaulay2/schubert \
