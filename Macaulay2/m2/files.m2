@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-makeDir := name -> if name != "" and (not fileExists name or not isDirectory name) then mkdir name
+makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 makeDirectory = method()
 makeDirectory String := name -> (			    -- make the whole path, too
