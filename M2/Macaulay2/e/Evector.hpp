@@ -204,6 +204,7 @@ public:
   const char * type_name   () const { return "EVector"; }
 
   void text_out(buffer &o) const {  val->text_out(o); }
+  void bin_out(buffer &o) const {  val->bin_out(o); }
 
   EVector * cast_to_EVector() { return val; }
   const EVector * cast_to_EVector() const { return val; }
