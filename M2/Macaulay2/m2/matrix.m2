@@ -1457,14 +1457,14 @@ document { quote adjoint,
      }
 
 flatten Matrix := m -> (
+     R := ring m;
      F := target m;
      G := source m;
      if not isFreeModule F or not isFreeModule G
      then error "expected source and target to be free modules";
-     if numgens F === 1 then m
-     else (
-     	  R := ring m;
-     	  reshape(R^1, G ** dual F ** R^{- degree m}, m)))
+     if numgens F === 1 
+     then m
+     else reshape(R^1, G ** dual F ** R^{- degree m}, m))
 
 flip = (F,G) -> (
   sendgg(ggPush F, ggPush G, ggflip);
@@ -1722,13 +1722,13 @@ document { quote module,
      }
 
 ideal Matrix := (f) -> (
+     R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
      then error "expected map between free modules";
-     new Ideal from {
-	  quote generators => flatten f,
-	  quote ring => ring f
-	  }
-     )
+     f = flatten f;			  -- in case there is more than one row
+     f = map(R^1,,f);			  -- in case the degrees are wrong
+     new Ideal from { quote generators => f, quote ring => R } )
+
 ideal Module := (M) -> (
      F := ambient M;
      if isSubmodule M and rank F === 1 then ideal generators M
