@@ -394,7 +394,7 @@ char **argv;
      void main_inits();
      static void *reserve = NULL;
      extern void actors4_setupargv();
-     extern void interp_process();
+     extern void interp_process(), interp_process2();;
 
 #if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
 	int n_mac_args = 4;

@@ -1,29 +1,41 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-hypertex = true
-
 load "booktex.m2"
 
 --------------------------------------------------- make the tex file
-bk = openOut "M2book.tmp"
+bookFile = openOut "M2book.tmp"
 --------------------------------------------
-bk << ///
+bookFile << ///
 %% Macaulay 2 manual
-%% plain tex
-%% Copyright 1996, by Daniel R. Grayson and Michael E. Stillman
+%% latex
+%% Copyright 1996-1999, by Daniel R. Grayson and Michael E. Stillman
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% some macros
 
-\hsize=6.5 true in
-\vsize=9.6 true in
+\documentclass{amsbook}
+\usepackage{hyperref} \hypersetup{
+        bookmarks=true,
+	bookmarksnumbered=true,
+        pdftitle=Macaulay 2,
+        pdfsubject=symbolic algebra,
+        pdfkeywords=syzygy Groebner resolution polynomials,
+        pdfauthor=Daniel R. Grayson and Michael E. Stillman
+        }
 
-\parindent=10pt
-\parskip=4pt
+\renewcommand{\thepart}{\Roman{part}}
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\makeindex
+
+% \parindent=10pt
+% \parskip=4pt
 
 \overfullrule=0pt
 
-\def\cite#1#2{{\bf #1} [#2]}
 {\obeyspaces\global\let =\ \tt}
 \def\beginverbatim{%
      \begingroup
@@ -34,78 +46,6 @@ bk << ///
      \obeyspaces\def\par{\leavevmode\hss\endgraf}\obeylines}
 \def\endverbatim{\endgroup}
 
-%% double columns, compare TeX Book, page 417
-
-\catcode`@=11
-\newdimen\ohsize
-\newdimen\ovsize
-\newbox\partialpage
-\def\begintwocolumn{%
-    \begingroup
-    \output={\global\setbox\partialpage=\vbox{\unvbox255\medskip}}\eject
-    \output={\twocolumnoutput}
-    \ohsize=\hsize
-    \ovsize=\vsize
-    \multiply\vsize by 2    	\advance\vsize by 1pc
-    \divide\hsize by 2  	\advance\hsize by -20pt
-    \def\fullline{\hbox to \ohsize}
-    \def\makeheadline{%
-	    \vbox to 0pt {%
-		    \vskip -22.5pt
-		    \fullline{\vbox to 8.5pt{}\the\headline}%
-		    \vss}%
-	    \nointerlineskip
-	    }
-    \def\makefootline{%
-	    \baselineskip 24pt
-	    \fullline{\the\footline}}
-    }
-\def\pagesofar{%
-  \unvbox\partialpage
-  \wd0=\hsize 
-  \wd2=\hsize 
-  \hbox to \ohsize {\box0\hfil\box2}}
-\def\twocolumnoutput{%
-  \dimen@=\ovsize
-  \advance\dimen@ by -\ht\partialpage
-  \splittopskip=\topskip
-  \splitmaxdepth=\maxdepth
-  \setbox0=\vsplit 255 to \dimen@
-  \setbox2=\vsplit 255 to \dimen@
-  \shipout\vbox{%
-      \makeheadline
-      \pagesofar
-      \makefootline
-      }%
-  \advancepageno
-  \unvbox255
-  \penalty\outputpenalty
-  }
-
-\def\endtwocolumn{%
-    \output={\balancecolumns}\eject
-    \endgroup
-    }
-
-\def\balancecolumns{%
-  \setbox0=\vbox{\unvbox255}%
-  \dimen@=\ht0
-  \advance \dimen@ by \topskip
-  \advance \dimen@ by -\baselineskip
-  \divide  \dimen@ by 2
-  \splittopskip=\topskip
-  {\vbadness=10000 
-    \loop 
-      \global\setbox3=\copy0
-      \global\setbox1=\vsplit3 to \dimen@
-      \ifdim \ht3 > \dimen@ \global\advance\dimen@ by 1pt 
-    \repeat
-  }%
-  \setbox0=\vbox to\dimen@{\unvbox1}
-  \setbox2=\vbox to\dimen@{\unvbox3}
-  \pagesofar
-  }
-
 \font\headerFontOne=cmbx12 scaled \magstep 1
 \font\headerFontTwo=cmbx12 scaled \magstep 1
 \font\headerFontThree=cmbx12
@@ -113,64 +53,54 @@ bk << ///
 \font\headerFontFive=cmbx10
 \font\headerFontSix=cmbx10
 
-\catcode`@=12
-
-///;
---------------------------------------------
-bk << if hypertex then ///
-\def\sectionhdr#1#2{%
-	\bigskip\goodbreak
-	\special{html:<A name="#2">}
-	\line{\bf#2\ \ \leaders\hrule\hfill\ \ #1\ \ \leaders\hrule\hfill\ \ #2}%
-	\special{html:</A>}
-	\medskip\noindent\ignorespaces
-	}
-/// else ///
-\def\sectionhdr#1#2{%
-	\bigskip\goodbreak
-	\line{\bf#2\ \ \leaders\hrule\hfill\ \ #1\ \ \leaders\hrule\hfill\ \ #2}%
-	\medskip\noindent\ignorespaces
-	}
+\begin{document}
+        \title{Macaulay 2}
+        \thanks{Supported by the NSF}
+        \author[Grayson]{Daniel R. Grayson}
+        \address{University of Illinois at Urbana-Champaign}
+        \email{dan\char`\@math.uiuc.edu}
+        \urladdr{\href{http://www.math.uiuc.edu/~dan}{http://www.math.uiuc.edu/\char`\~dan}}
+        \author[Stillman]{Michael E. Stillman}
+        \address{Cornell University}
+        \email{mike\char`\@math.cornell.edu}
+        \urladdr{\href{http://www.math.cornell.edu/~mike}{http://www.math.cornell.edu/\char`\~mike}}
+        \date{/// << version#"compile time" << ///}
+        \maketitle
+	\tableofcontents
 ///
 --------------------------------------------
-bk << ///
+    -- this loop depends on the feature of hash tables that when the keys
+    -- are consecutive integers starting at 0, the keys are scanned
+    -- in the natural order, which in turn depends on the hash number of
+    -- a small integer being the integer itself
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% title page
+    sectionType := sectionNumber -> (
+	 level := 1 + # select(characters sectionNumber, i -> i === ".");
+	 if level === 0 then "\\part"
+	 else if level === 1 then "\\chapter"
+	 else if level === 2 then "\\section"
+	 else if level === 3 then "\\subsection"
+	 else "\\subsubsection"
+	 )
 
-\begingroup
-\font\tf=cmr10 scaled \magstep 4
-\null
-\vskip 2 in
-\centerline{\tf Macaulay 2}
-\vskip .35 in
-\centerline{Daniel R. Grayson and Michael E. Stillman}
-\vskip .5 in
-\centerline{version /// << version#"VERSION" << ///}
-\vskip .5 in
-\centerline{tutorial sections written with David Eisenbud}
-\endgroup
-\vfill\eject
-
-///
---------------------------------------------
--- this depends on the feature of hash tables that when the keys
--- are consecutive integers starting at 0, the keys are scanned
--- in the natural order, which in turn depends on the hash number of
--- a small integer being the integer itself
-
-scan(pairs nodeTable, (i,node) -> (
-	  bk << endl << endl << ///\sectionhdr{///
-	  << cmrLiteral formatDocumentTag node << "}{" << sectionNumberTable#i 
-	  << "}" << endl
-	  << concatenate booktex documentation node << endl;
-	  )
-     )
-
----------------------------------
+    scan(pairs nodeTable, (i,node) -> (
+	      n := sectionNumberTable#i;
+	      bookFile << endl << endl
+	      << sectionType n << "{" << cmrLiteral formatDocumentTag node << "}"
+	      << "\\label{" << n << "}" << endl
+	      << "\\hypertarget{" << n << "}{}" << endl
+	      << concatenate booktex documentation node << endl;
+	      )
+	 )
+-----------------------------------------------------------------------------
 -- all done
 
-bk << ///
+bookFile << ///
 
-\end
+We should cite at least one paper \cite{MR47:3318}.
+
+\bibliographystyle{plain}
+\bibliography{papers}
+\printindex
+\end{document}
 /// << close
