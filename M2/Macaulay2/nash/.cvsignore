@@ -2,3 +2,4 @@ nash
 env.nonash
 env.nash
 env.gdb
+printenv
