@@ -11,7 +11,6 @@ class comb
 // tab[d][n] is n choose d
 // tab[0][n] == 1, tab[d][0] == 0, tab[0][0] = 1.
 // tab[d][n] == tab[d][n-1] + tab[d-1][n-1]
-  static array<array<int> > tab;
 
   static void expand(int n, int d);
 
@@ -28,6 +27,8 @@ class comb
 
   static void text_out(buffer &o);
 public:
+  static array<array<int> > tab;
+
   static int fast_binom(int n, int p)
     { return tab.rawelem(p).rawelem(n); }
 

@@ -108,11 +108,10 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 
   for (int r=0; r <target->rank(); r++)
     {
-      for (int c=0; c < ncols; c++)
+      for (int c=0; c < ncols && next < M->len; c++)
 	{
 	  R->set_entry(newcols[c],r,M->array[next]->get_value());
 	  next++;
-	  if (next >= M->len) break;
 	}
     }
 

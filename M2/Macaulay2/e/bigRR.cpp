@@ -245,9 +245,11 @@ ring_elem bigRR::copy(const ring_elem f) const
 
 void bigRR::remove(ring_elem &f) const
 {
+#if 0
   mpf_ptr a = MPF_VAL(f);
   remove_elem(a);  // does nothing... remove this code?
   f = MPF_RINGELEM(NULL);
+#endif
 }
 
 ring_elem bigRR::preferred_associate(ring_elem f) const
@@ -258,18 +260,18 @@ ring_elem bigRR::preferred_associate(ring_elem f) const
   return from_int(-1);
 }
 
-void bigRR::negate_to(ring_elem &f) const
+void bigRR::internal_negate_to(ring_elem &f) const
 {
   mpf_neg(MPF_VAL(f), MPF_VAL(f));
 }
 
-void bigRR::add_to(ring_elem &f, ring_elem &g) const
+void bigRR::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   mpf_add(MPF_VAL(f), MPF_VAL(f), MPF_VAL(g));
   // remove(g); should this be removed?
 }
 
-void bigRR::subtract_to(ring_elem &f, ring_elem &g) const
+void bigRR::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   mpf_sub(MPF_VAL(f), MPF_VAL(f), MPF_VAL(g));
   // remove(g); should g be removed?

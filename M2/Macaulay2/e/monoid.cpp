@@ -530,7 +530,9 @@ int *Monoid::make_one() const
 }
 void Monoid::remove(int *d) const
 {
+#if 0
   if (d != NULL) monom_stash->delete_elem(d);
+#endif
 }
 
 void Monoid::one(int *result) const

@@ -160,7 +160,17 @@ int comb::mult_subsets(int p, const int *s, int q, const int *t, int *&result)
   return -1;
 }
 
-
+void pcombtab()
+{
+  printf("comb tab has length %d\n", comb::tab.length());
+  for (int i=0; i<comb::tab.length(); i++)
+    {
+      printf("[%d] ", comb::tab[i].length());
+      for (int j=0; j<comb::tab[i].length(); j++)
+	printf("%d ",comb::tab[i][j]);
+      printf("\n");
+    }
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

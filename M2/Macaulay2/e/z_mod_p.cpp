@@ -186,13 +186,13 @@ void Z_mod::remove(ring_elem &) const
   // nothing needed to remove.
 }
 
-void Z_mod::negate_to(ring_elem &f) const
+void Z_mod::internal_negate_to(ring_elem &f) const
 {
   if (f != _ZERO)
     f = modulus_add(f, _minus_one, _P1);
 }
 
-void Z_mod::add_to(ring_elem &f, ring_elem &g) const
+void Z_mod::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
   if (f == _ZERO) 
@@ -204,7 +204,7 @@ void Z_mod::add_to(ring_elem &f, ring_elem &g) const
     }
 }
 
-void Z_mod::subtract_to(ring_elem &f, ring_elem &g) const
+void Z_mod::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
   if (f == _ZERO) 
@@ -219,7 +219,7 @@ void Z_mod::subtract_to(ring_elem &f, ring_elem &g) const
 ring_elem Z_mod::negate(const ring_elem f) const
 {
   ring_elem result = f;
-  negate_to(result);
+  internal_negate_to(result);
   return result;
 }
 
@@ -336,7 +336,7 @@ void Z_mod::syzygy(const ring_elem a, const ring_elem b,
 {
   x = Z_mod::from_int(1);
   y = Z_mod::divide(a,b);
-  Z_mod::negate_to(y);
+  internal_negate_to(y);
 }
 
 

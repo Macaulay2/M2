@@ -73,9 +73,22 @@ void Ring::remove_vector(vec &v) const
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const
 {
-  ring_elem h = mult(f,g);
-  remove(f);
-  f = h;
+  f = mult(f,g);
+}
+
+void Ring::add_to(ring_elem &f, ring_elem &g) const
+{
+  f = add(f,g);
+}
+
+void Ring::subtract_to(ring_elem &f, ring_elem &g) const
+{
+  f = subtract(f,g);
+}
+
+void Ring::negate_to(ring_elem &f) const
+{
+  f = negate(f);
 }
 
 int Ring::coerce_to_int(ring_elem) const

@@ -214,7 +214,7 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
       // this degree is < n (where Q_ = P^n).
       ring_elem g = power(_x_exponent, exp[0]);
       g = mult(g, coef);
-      add_to(result, g);
+      internal_add_to(result, g);
     }
   return true;
 }
@@ -263,13 +263,13 @@ void GF::remove(ring_elem &) const
   // nothing needed to remove.
 }
 
-void GF::negate_to(ring_elem &f) const
+void GF::internal_negate_to(ring_elem &f) const
 {
   if (f != _ZERO)
     f = modulus_add(f, _MINUS_ONE, Q1_);
 }
 
-void GF::add_to(ring_elem &f, ring_elem &g) const
+void GF::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
   if (f == _ZERO) 
@@ -303,18 +303,18 @@ void GF::add_to(ring_elem &f, ring_elem &g) const
     }
 }
 
-void GF::subtract_to(ring_elem &f, ring_elem &g) const
+void GF::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   if (g == _ZERO) return;
   if (f.int_val == g.int_val) { f = _ZERO; return; }
   ring_elem g1 = modulus_add(g, _MINUS_ONE, Q1_);  // f = -g
-  add_to(f, g1);
+  internal_add_to(f, g1);
 }
 
 ring_elem GF::negate(const ring_elem f) const
 {
   ring_elem result = f;
-  negate_to(result);
+  internal_negate_to(result);
   return result;
 }
 
@@ -322,7 +322,7 @@ ring_elem GF::add(const ring_elem f, const ring_elem g) const
 {
   ring_elem result = f;
   ring_elem g1 = g;
-  add_to(result, g1);
+  internal_add_to(result, g1);
   return result;
 }
 
@@ -330,7 +330,7 @@ ring_elem GF::subtract(const ring_elem f, const ring_elem g) const
 {
   ring_elem result = f;
   ring_elem g1 = g;
-  subtract_to(result, g1);
+  internal_subtract_to(result, g1);
   return result;
 }
 
@@ -427,7 +427,7 @@ void GF::syzygy(const ring_elem a, const ring_elem b,
 {
   x = GF::from_int(1);
   y = GF::divide(a,b);
-  GF::negate_to(y);
+  GF::internal_negate_to(y);
 }
 
 
