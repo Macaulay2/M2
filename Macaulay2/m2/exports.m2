@@ -43,6 +43,7 @@ export (
      	symbol MutableMatrix,
 	symbol rowSwap,
 	symbol columnSwap,
+        symbol mutableMatrix,
 	symbol setRowChange,
 	symbol setColumnChange,
         symbol simpleLoad,
