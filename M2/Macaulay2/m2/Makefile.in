@@ -190,6 +190,10 @@ tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo "make: Leaving directory \`tmp'"
 	touch "$@"
 
+remake: remake1 remake2
+remake1:; rm -f tmp/.documentation-made
+remake2: all
+
 install::all install-main
 install-main:; tar cf - -C tmp $(package) | tar xf - -C $(prefix)
 clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core

@@ -33,9 +33,9 @@ document {
      }
 
 document {
-     Key => flag,
+     Key => flagLookup,
      Headline => "flag a symbol",
-     TT "flag x", " -- arranges for each subsequent reference to a
+     TT "flagLookup x", " -- arranges for each subsequent reference to a
      symbol x to be flagged with a warning message."
      }
 

@@ -387,12 +387,23 @@ installPackage Package := o -> pkg -> (
      -- to find the example output files the same way it would if the package had been loaded from there.
      pkg#"package prefix" = buildDirectory;
 
+     -- check that we've read the raw documentation
+     if #pkg#"raw documentation" == 0 then (
+	  if pkg === Macaulay2 then (
+     	       currentPackage = Macaulay2;
+     	       stderr << "--loading Macaulay2-doc.m2" << endl;
+	       load "Macaulay2-doc.m2";
+     	       currentPackage = null;
+	       )
+	  else error "raw documentation not present";
+	  );
+
      -- make example input files
      exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
      infn := nodename -> exampleDir|toFilename nodename|".m2";
      outfn := nodename -> exampleDir|toFilename nodename|".out";
      tmpfn := nodename -> exampleDir|toFilename nodename|".tmp";
-     stderr << "--making example files in " << exampleDir << endl;
+     stderr << "--making example input files in " << exampleDir << endl;
      makeDirectory exampleDir;
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
 	       inf := infn nodename;
@@ -407,6 +418,7 @@ installPackage Package := o -> pkg -> (
 		    )));
 
      -- make example output files
+     stderr << "--making example result files in " << exampleDir << endl;
      haderror := false;
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
 	       inf := infn nodename;
@@ -532,7 +544,7 @@ installPackage Package := o -> pkg -> (
      -- make postinstall and preremove files, if encap
      if o.Encapsulate then (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
-	  stderr << "--making postinstall and preremove files in " << buildDirectory << endl;
+	  stderr << "--making postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
 	  f := buildDirectory | "postinstall" 
 	  << ///#! /bin/sh -e/// << endl
 	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
