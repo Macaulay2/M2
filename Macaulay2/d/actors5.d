@@ -1358,3 +1358,5 @@ setupconst("prefixOperators",Expr(new array(Expr) len length(opsWithUnaryMethod)
      foreach s in opsWithUnaryMethod do provide Expr(s))));
 setupconst("postfixOperators",Expr(new array(Expr) len length(opsWithPostfixMethod) do (
      foreach s in opsWithPostfixMethod do provide Expr(s))));
+setupconst("otherOperators",Expr(new array(Expr) len length(opsOther) do (
+     foreach s in opsOther do provide Expr(s))));

@@ -3,6 +3,11 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+documentation items:
+	HEADLINE is changed to Headline
+	USAGE is changed to Usage
+	Synopsis is introduced
+
 Fixed a design bug in computing GB's,syzygies,kernels: if the target free
 module was a Schreyer order free module (as is returned by
 res(...,Strategy=>2)), then the Groebner basis was incorrectly computed

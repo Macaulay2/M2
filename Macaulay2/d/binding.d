@@ -462,6 +462,10 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS );
+export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS, orS, andS, notS, LessS,
+     GreaterS, LessEqualS, GreaterEqualS, EqualEqualEqualS, EqualEqualS,
+     QuestionS, NotEqualEqualEqualS, NotEqualS, SharpSharpS, SharpQuestionS, DotS, DotQuestionS,
+     ExclamationS );
 
 opHasBinaryMethod(o:Symbol):bool := (
      foreach s in opsWithBinaryMethod do if s.symbol == o then return(true);
