@@ -120,72 +120,77 @@ examples = x -> (
      if ExampleHashTable#?x then ExampleHashTable#x else {}
      )
 
-fm := s -> (
+fm := (o,s) -> (
      if class s === Sequence then (
-	  if #s === 4 then << s#0 << "(" << s#1 << "," << s#2 << "," << s#3 << ")"
+	  if #s === 4 then o << s#0 << "(" << s#1 << "," << s#2 << "," << s#3 << ")"
 	  else if #s === 3 then (
 	       if class s#0 === Symbol 
-     	       then << s#1 << " " << s#0 << " " << s#2
-     	       else << s
+     	       then o << s#1 << " " << s#0 << " " << s#2
+     	       else o << s
 	       )
-	  else if #s === 2 then << s#0 << "(" << s#1 << ")"
-	  else << s
+	  else if #s === 2 then o << s#0 << "(" << s#1 << ")"
+	  else o << s
 	  )
-     else << s
+     else o << s
      )
 
-hr := () -> << "-----------------------------------------------------------------------------" << endl
+hr := (o) -> o << "-----------------------------------------------------------------------------" << endl
 
-briefHelp = s -> (
+briefHelp := (o,s) -> (
      d := doc s;
      if d === null 
      then (
-	  fm s;
-	  << " : no documentation available" << endl;
+	  fm (o,s);
+	  o << " : no documentation available" << endl;
 	  )
      else if class d === List then (
-	  fm s;
-	  << " --> " << d#0 << endl;
+	  fm (o,s);
+	  o << " --> " << d#0 << endl;
 	  d = drop(d,2);
      	  i := 0;
      	  while i < #d and d#i =!= PARA do i = i+1;
 	  d = take(d,i);
-	  if #d > 0 then << endl << text repl d << endl;
+	  if #d > 0 then o << endl << text repl d << endl;
 	  )
-     else << text d << endl;
+     else o << text d << endl;
      )
 
-help2 := s -> (
+help2 := (o,s) -> (
      d := doc s;
      if d === null 
      then (
-	  fm s;
-	  << " : no documentation available" << endl;
+	  fm (o,s);
+	  o << " : no documentation available" << endl;
 	  )
      else if class d === List then (
-	  fm s;
-	  << " --> " << d#0 << endl;
-	  if #d > 2 then << endl << text repl drop(d,2) << endl;
+	  fm (o,s);
+	  o << " --> " << d#0 << endl;
+	  if #d > 2 then o << endl << text repl drop(d,2) << endl;
 	  )
-     else << text d << endl;
+     else o << text d << endl;
      if class s =!= Sequence then (
 	  m := methods s;
 	  if #m > 0 then (
-	       scan(m, i -> ( hr(); briefHelp i; ));
-	       hr();
+	       scan(m, i -> ( hr o; briefHelp (o,i); ));
+	       hr o;
 	       );
 	  );
+     close o;
      )
 
 help = s -> (
+     pager := getenv "PAGER";
+     if pager === "" then pager = "more";
+     if getenv "TERM" === "emacs" then pager = null;
+     o = if pager === null then stdout else openOut concatenate("!", pager );
      if class s === List
      then (
-	  scan(s, i -> ( hr(); help2 i; ));
-	  hr();
+	  scan(s, i -> ( hr o; help2 (o,i); ));
+	  hr o;
 	  )
      else (
-	  << endl;
-	  help2 s;
+	  o << endl;
+	  help2 (o,s);
 	  )
      )
 
