@@ -338,12 +338,11 @@ installPackage = method(Options => {
 	  IgnoreExampleErrors => true
 	  })
 
-installPackage Symbol := opts -> pkg -> (
+installPackage String := opts -> pkg -> (
      if class value pkg === Package then return installPackage(value pkg, opts);
-     fn := toString pkg | ".m2";
-     load fn;
+     needsPackage pkg;
      if class value pkg === Package then return installPackage(value pkg, opts);
-     error ("loading file '",fn,"' failed to create a package named '",toString pkg,"'");
+     error ("can't locate package '",pkg,"'");
      )
 
 installPackage Package := o -> pkg -> (
@@ -395,7 +394,7 @@ installPackage Package := o -> pkg -> (
 	       load "Macaulay2-doc.m2";
      	       currentPackage = null;
 	       )
-	  else error "raw documentation not present";
+	  else error "raw documentation not loaded";
 	  );
 
      -- make example input files
