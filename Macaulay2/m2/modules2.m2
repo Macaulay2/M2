@@ -158,11 +158,17 @@ hilbertFunction(ZZ,Ideal) :=
 hilbertFunction(List,Ring) := 
 hilbertFunction(List,Ideal) := 
 hilbertFunction(List,Module) := (d,M) -> (
-     -- rank source basis(d,M) -- old way
-     f := hilbertSeries(M, Order => d+1);
-     U := monoid ring f;
-     u := U_0;
-     f_(u^d))
+     if class d === ZZ then (
+     	  f := hilbertSeries(M, Order => d+1);
+     	  U := monoid ring f;
+     	  u := U_0;
+     	  f_(u^d))
+     else if class d === List and all(d,i->class i === ZZ) then (
+	  -- hilbertSeries to finite order doesn't work yet for multi-degrees
+	  -- we need more flexible power series handling functions
+	  rank source basis(d,M)
+	  )
+     else error "expected degree to be an integer or list of integers")
 
 TEST "
 R = ZZ/101[a..d]

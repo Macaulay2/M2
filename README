@@ -24,7 +24,7 @@ release: factory-1.2c
 license: available soon
 
 library: libfac
-release: libfac-0.2.3
+release: libfac-0.2.4
  author: Michael Messollen <michael@math.uni-sb.de>
  get at:
 license: libfac/00README

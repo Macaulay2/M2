@@ -354,7 +354,7 @@ scan({
 	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial, subquotient,
 	  getchange, poincare, cover, super, poincareN,
-	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, stats, options,
+	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, stats, 
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,
 	  isIsomorphism, exponents, 
@@ -385,6 +385,7 @@ product = method()
 max = method(SingleArgumentDispatch=>true)
 min = method(SingleArgumentDispatch=>true)
 ideal = method(SingleArgumentDispatch=>true)
+options = method(SingleArgumentDispatch=>true)
 submodule = method(SingleArgumentDispatch=>true)
 directSum = method(SingleArgumentDispatch=>true)
 intersect = method(SingleArgumentDispatch=>true)
