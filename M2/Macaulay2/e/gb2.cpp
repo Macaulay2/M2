@@ -25,6 +25,13 @@ gb_emitter::~gb_emitter()
   deletearray(these);
 }
 
+RingElement *gb_emitter::hilbertNumerator()
+{
+  assert(0); // This routine should NEVER be called
+  return 0;
+}
+
+#if 0
 enum ComputationStatusCode gb_emitter::hilbertNumerator(RingElement *&)
 {
   assert(0); // This routine should NEVER be called
@@ -36,6 +43,7 @@ enum ComputationStatusCode gb_emitter::hilbertNumeratorCoefficient(int, int &)
   assert(0); // This routine should NEVER be called
   return COMP_DONE;
 }
+#endif
 
 enum ComputationStatusCode gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
 {

@@ -4,6 +4,7 @@
 
 #include <gmp.h>
 #include "buffer.hpp"
+#include "debug.hpp"
 
 extern int gbTrace;
 extern int p_one;

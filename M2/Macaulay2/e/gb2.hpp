@@ -44,8 +44,11 @@ public:
 
   // Hilbert functions of these nodes...
   // Both of these return 0 if computed, non-zero if interrupted.
+  virtual RingElementOrNull * hilbertNumerator() = 0;
+#if 0
   virtual enum ComputationStatusCode hilbertNumerator(RingElement *&result) = 0;
   virtual enum ComputationStatusCode hilbertNumeratorCoefficient(int deg, int &result) = 0;
+#endif
 
   virtual int n_gb_elems() const = 0;
   virtual const FreeModule *output_free_module() const = 0;
@@ -93,8 +96,11 @@ public:
   virtual void reduce(gbvector * &, gbvector * &) {}
 
   // The following two routines should NEVER be called
+#if 0
   virtual enum ComputationStatusCode hilbertNumerator(RingElement *&);
   virtual enum ComputationStatusCode hilbertNumeratorCoefficient(int, int &);
+#endif
+  virtual RingElementOrNull * hilbertNumerator();
 
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
@@ -174,12 +180,14 @@ private:
   // Hilbert function information
   char use_hilb;
   RingElement *hf;		// The Hilbert function, as so far computed
-  int n_hf;			// The HF has been computed for this many GB elements.
+  int hf_numgens_gb;			// The HF has been computed for this many GB elements.
 				// (Used to determine whether to recompute HF).
+  int hf_numgens_F;             // The HF was computed using this size of F.
   Matrix *hf_matrix;		// The mutable matrix of initial monomials, used to determine HF.
+  int n_gb_syz;
+
 
   const RingElement *hf_orig;
-  int n_gb_syz;
   int n_in_degree;		// The number of new elements that we expect to find
 				// in this degree. <0 means we don't know how many.
 private:
@@ -241,8 +249,12 @@ public:
 
   virtual void reduce(gbvector * &f, gbvector * &fsyz);
 
+  virtual RingElementOrNull * hilbertNumerator();
+
+#if 0
   virtual enum ComputationStatusCode hilbertNumerator(RingElement *&result);
   virtual enum ComputationStatusCode hilbertNumeratorCoefficient(int deg, int &result);
+#endif
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   int n_gb_elems() const { return n_gb; }

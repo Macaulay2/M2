@@ -66,13 +66,11 @@ const M2_arrayint res_comp::get_betti(int type) const
   int hi = high_degree();
   int len = (type == 0 ? length_limit : max_level());
   int totallen = 3 + (hi-lo+1)*(len+1);
-  M2_arrayint result = makearrayint(totallen);
 
-  result->array[0] = lo;
-  result->array[1] = hi;
-  result->array[2] = len;
-  int next = 3;
-  for (int d=0; d<=hi; d++)
+  int *bettis;
+  betti_init(lo,hi,len,bettis);
+
+  for (int d=lo; d<=hi; d++)
     for (int lev=0; lev<=len; lev++)
       {
 	int val = 0;
@@ -93,9 +91,11 @@ const M2_arrayint res_comp::get_betti(int type) const
 	  val = -1;
 	  break;
 	}
-	result->array[next++] = val;
+	bettis[lev+(len+1)*(d-lo)] = val;
       }
 
+  M2_arrayint result = betti_make(lo,hi,len,bettis);
+  deletearray(bettis);
   return result;
 }
 

@@ -113,6 +113,7 @@ public:
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 
+  static RingElement *hilbertNumerator(const FreeModule *F);
 
 };
 
