@@ -1263,3 +1263,9 @@ frames(e:Expr):Expr := (
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
+
+getGlobalDictionary(e:Expr):Expr := (
+     when e
+     is a:Sequence do if length(a) == 0 then Expr(globalDictionary) else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("globalDictionary", getGlobalDictionary);

@@ -66,11 +66,9 @@ benchmark = (s) -> (
 Descent := new Type of MutableHashTable
 net Descent := x -> stack sort apply(pairs x,
      (k,v) -> (
-	  r := if #v === 0
+	  if #v === 0
 	  then net k
-	  else net k | " : " | net v;
-	  << "r = " << r << endl;
-	  r
+	  else net k | " : " | net v
 	  ))
 select1 := syms -> select(apply(syms, value), s -> instance(s, Type))
      
@@ -85,14 +83,13 @@ show1 Sequence := show1 List := types -> (
      net world)
 show1 Thing := X -> show1 {X}
 showUserStructure = Command(() -> show1 select1 userSymbols())
-showStructure = Command(types -> show1 if types === () then select1 values symbolTable() else types)
+showStructure = Command(types -> show1 if types === () then select1 values globalDictionary() else types)
 
 -----------------------------------------------------------------------------
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     tab := symbolTable();
-     v := select(values tab,
+     v := select(values globalDictionary(),
 	  symb -> (
 	       hash symb > hash lastSystemSymbol  -- hash codes of symbols are sequential
 	       and mutable symb

@@ -122,7 +122,6 @@ keys(o:HashTable):Expr := list(
 	       )
 	  )
      );
-
 keys(f:Database):Expr := (
      if !f.isopen then return(buildErrorPacket("database closed"));
      x := newHashTable(mutableHashTableClass,nothingClass);
@@ -137,15 +136,28 @@ keys(f:Database):Expr := (
 	  else continue = false;
 	  );
      keys(x));
+keys(o:Dictionary):Expr := Expr(
+     list(
+	  new Sequence len o.scope.symboltable.numEntries do
+	  foreach bucket in o.scope.symboltable.buckets do (
+	       p := bucket;
+	       while true do (
+		    when p
+		    is q:SymbolListCell do (
+			 provide Expr(q.entry.word.name);
+			 p=q.next;)
+		    else break;))));
 keys(e:Expr):Expr := (
      when e
+     is o:Dictionary do keys(o)
      is f:Database do keys(f)
      is o:HashTable do keys(o)
-     else WrongArg("a hash table"));
+     else WrongArg("a hash table, database, or dictionary"));
 setupfun("keys",keys);
 toList(e:Expr):Expr := (
      when e
      is o:HashTable do keys(o)
+     is o:Dictionary do keys(o)
      is a:Sequence do list(a)
      is b:List do (
 	  if b.class == listClass then e
@@ -154,22 +166,49 @@ toList(e:Expr):Expr := (
 	       	    List(listClass, if b.mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("a hash table, list, net, or sequence"));
+     else WrongArg("a hash table, list, net, dictionary, or sequence"));
 setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e
+     is o:Dictionary do list(
+	  new Sequence len o.scope.symboltable.numEntries do
+	  foreach bucket in o.scope.symboltable.buckets do (
+	       p := bucket;
+	       while true do (
+		    when p
+		    is q:SymbolListCell do (provide Expr(SymbolClosure(o.frame,q.entry)); p=q.next;)
+		    else break;
+		    )))
      is o:HashTable do list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != bucketEnd do (
 		    provide Expr(p.value);
-		    p = p.next;
-		    )
-	       )
-	  )
-     else WrongArg("a hash table"));
+		    p = p.next; )))
+     else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
+
+pairs(e:Expr):Expr := (
+     when e
+     is o:Dictionary do list(
+	  new Sequence len o.scope.symboltable.numEntries do
+	  foreach bucket in o.scope.symboltable.buckets do (
+	       p := bucket;
+	       while true do (
+		    when p
+		    is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(o.frame,q.entry)))); p=q.next;)
+		    else break; )))
+     is o:HashTable do list(
+	  new Sequence len o.numEntries do
+	  foreach bucket in o.table do (
+	       p := bucket;
+	       while p != bucketEnd do (
+		    provide Expr(Sequence(p.key,p.value));
+		    p = p.next; )))
+     else WrongArg("a hash table or a raw polynomial"));
+setupfun("pairs",pairs);
+
 
 -- operators
 
@@ -190,6 +229,18 @@ showtimefun(a:Code):Expr := (
      stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
+
+lookup(s:string,table:SymbolHashTable):(null or Symbol) := (
+     if table == dummyDictionary then error("dummy table used");
+     entryList := table.buckets.( hash(s) & (length(table.buckets)-1) );
+     while true do
+     when entryList
+     is null do return(NULL)
+     is entryListCell:SymbolListCell do (
+	  if 0 == strcmp(entryListCell.entry.word.name, s)
+	  then return(entryListCell.entry);
+	  entryList = entryListCell.next));
+
 getvalue(x:Sequence,i:int):Expr := (
      if i < -length(x) || i >= length(x)
      then buildErrorPacket("array index "
@@ -227,6 +278,14 @@ subvalue(left:Expr,right:Expr):Expr := (
 		    + " out of bounds 0 .. "
 		    + tostring(length(x.v)-1)))
 	  else buildErrorPacket("array index not an integer"))
+     is d:Dictionary do (
+	  when right is s:string do (
+	       when lookup(s,d.scope.symboltable)
+	       is x:Symbol do Expr(SymbolClosure(d.frame,x))
+	       else nullE
+	       )
+	  else buildErrorPacket("expected subscript to be a string")
+	  )
      is x:string do (
 	  when right is r:Integer do (
 	       if isInt(r) then (
@@ -260,6 +319,10 @@ subvalueQ(left:Expr,right:Expr):Expr := (
 	       else False)
 	  else False)
      is x:HashTable do if lookup1Q(x,right) then True else False
+     is d:Dictionary do (
+	  when right is s:string do when lookup(s,d.scope.symboltable) is Symbol do True else False
+	  else buildErrorPacket("expected subscript to be a string")
+	  )
      is x:Database do (
 	  when right
 	  is key:string do dbmquery(x,key)
@@ -305,6 +368,7 @@ lengthFun(rhs:Code):Expr := (
      is Error do e
      is x:HashTable do Expr(toInteger(x.numEntries))
      is x:Sequence do Expr(toInteger(length(x)))
+     is x:Dictionary do Expr(toInteger(x.scope.symboltable.numEntries))
      is x:List do Expr(toInteger(length(x.v)))
      is f:file do (
 	  if f.input || f.output then (

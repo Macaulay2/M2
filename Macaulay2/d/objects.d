@@ -816,23 +816,6 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      );
 setup(LeftArrowW,assigntofun);
 
-symbols(e:Expr):Expr := (
-     o := newHashTable(hashTableClass,nothingClass);
-     foreach bucket in globalScope.symboltable.buckets do (
-	  p := bucket;
-	  while true do (
-	       when p
-	       is null do break
-	       is q:SymbolListCell do (
-		    storeInHashTable(o,
-			 Expr(q.entry.word.name),
-			 Expr(makeSymbolClosure(q.entry)));
-		    p = q.next;
-		    )));
-     sethash(o,false);
-     o);
-setupfun("symbolTable",symbols);
-
 varstringarray := { a:array(string), n:int };
 newvarstringarray(m:int):varstringarray := varstringarray( new array(string) len m do provide "", 0 );
 append(v:varstringarray,s:string):varstringarray := (

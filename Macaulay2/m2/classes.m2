@@ -20,6 +20,7 @@ File.synonym = "file"
 Array.synonym = "array"
 Symbol.synonym = "symbol"
 BigReal.synonym = "big real"
+Dictionary.synonym = "dictionary"
 ZZ.synonym = "integer"
 ZZ.tex = ///$\mathbb Z$///
 ZZ.texMath = ///{\mathbb Z}///
