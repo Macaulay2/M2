@@ -9,3 +9,8 @@ assert(g() === 2)
 assert(h() === 3)
 assert(g() === 3)
 assert(h() === 4)
+
+assert( class aa === Symbol )
+assert( class a0 === Symbol )
+assert( class a0b === Symbol )
+assert( class a0b7 === Symbol )

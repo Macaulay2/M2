@@ -83,7 +83,7 @@ export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
      entry);
 export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
      s := makeEntry(word,position,scope);
-     if scope == globalScope && isalpha(word.name)
+     if scope == globalScope && isalnum(word.name)
      then globalFrame.values.(s.frameindex) = Expr(SymbolClosure(globalFrame,s));
      s);
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
