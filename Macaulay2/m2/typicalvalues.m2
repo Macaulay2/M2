@@ -92,6 +92,7 @@ openOut String := File => openOut
 openInOut String := File => openInOut
 openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
+pack(ZZ,BasicList) := List => pack
 reverse BasicList := BasicList => reverse
 select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select

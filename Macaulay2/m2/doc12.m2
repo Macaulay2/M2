@@ -127,14 +127,14 @@ document { rsort,
 
 
 document { pack,
-     TT "pack(v,n)", " -- packs the elements of the list or sequence
+     TT "pack(n,v)", " -- packs the elements of the list or sequence
      ", TT "v", " into a table ", TT "n", " at a time.",
      PARA,
      "It produces, from a list ", TT "v", ", a list of lists formed 
      by packing the elements of ", TT "v", " into lists ", TT "n", " 
      at a time.  The last of the lists produced may have fewer 
      than ", TT "n", " elements.",
-     EXAMPLE "pack({a,b,c,d,e,f,g,h,i,j,k},3)",
+     EXAMPLE "pack(3,{a,b,c,d,e,f,g,h,i,j,k})",
      }
 
 document { join,

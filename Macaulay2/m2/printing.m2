@@ -16,13 +16,13 @@ columnate = (s,w) -> (
 	  ncols < # s and (
 	       newcols = ncols+1;
 	       newrows = (# s + ncols - 1)//newcols;
-	       w >= newcols - 1 + sum apply(pack(lens, newrows), max)
+	       w >= newcols - 1 + sum apply(pack(newrows, lens), max)
 	       )
 	  ) do (
 	  ncols = newcols;
 	  nrows = newrows;
 	  );
-     horizontalJoin between(" ", apply(pack(s,nrows), col -> stack col)))
+     horizontalJoin between(" ", apply(pack(nrows,s), col -> stack col)))
 
 net Time := v -> (
      t := "-- " | toString v#0 | " seconds";

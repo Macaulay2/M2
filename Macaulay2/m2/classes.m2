@@ -82,4 +82,6 @@ between = (m,v) -> mingle(v,#v-1:m)
 
 Function @@ Function := Function => (f,g) -> x -> f g x
 
+Function _ Thing := Function => (f,x) -> y -> f(x,y)
+
 -----------------------------------------------------------------------------

@@ -13,7 +13,7 @@ isTable = m -> (
 
 transpose List := List => m -> (
      if isTable m
-     then pack(mingle m,# m)
+     then pack(# m,mingle m)
      else if # m === 0
           then {}
 	  else error ("expected ", toString m, " to be a table"))

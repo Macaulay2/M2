@@ -216,7 +216,7 @@ document { mingle,
      "It is easy to transpose a nested list (thinking of it as a matrix)
      using ", TO "mingle", " and ", TO "pack", ".",
      EXAMPLE {
-      	  "pack(mingle {{1,2,3,4},{5,6,7,8}}, 2)"
+      	  "pack(2, mingle {{1,2,3,4},{5,6,7,8}})"
 	  }
      }
 
