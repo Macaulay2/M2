@@ -362,6 +362,7 @@ int hilb_comp::calc(int n_steps)
 	  int result = step();
 	  if (result == COMP_DONE)
 	    return COMP_DONE;
+	  system_spincursor();
 	  if (system_interrupted)
 	    return COMP_INTERRUPTED;
 	}
@@ -372,6 +373,7 @@ int hilb_comp::calc(int n_steps)
       int result = step();
       if (result == COMP_DONE)
 	return COMP_DONE;
+      system_spincursor();
       if (system_interrupted)
 	return COMP_INTERRUPTED;
     }

@@ -306,6 +306,7 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
 
   while (k < n && nsteps != 0 && !system_interrupted)
     {
+      system_spincursor();
       if (comp_printlevel >= 1)
 	{
 	  o.reset();

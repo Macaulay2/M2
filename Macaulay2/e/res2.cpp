@@ -46,7 +46,8 @@ int res2_comp::skeleton(int level)
       // The following will only insert pairs of degree > topdegree
       // so this routine may be used to increase the degree bound
       // note: also need to redo monomial ideals...
-      new_pairs(p);	  
+      new_pairs(p);
+      system_spincursor();	  
       if (system_interrupted) return COMP_INTERRUPTED;	  
     }
   resn[level]->state = RES_MONORDER;
@@ -128,6 +129,7 @@ int res2_comp::do_pairs(int level, int degree)
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZ_LIMIT;
 	}
+      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
@@ -154,6 +156,7 @@ int res2_comp::do_pairs_by_level(int level)
       resn[level]->next_pair = p->next;
       handle_pair_by_level(p);
       if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
+      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
     }
 
@@ -231,6 +234,7 @@ int res2_comp::do_pairs_by_degree(int level, int degree)
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZ_LIMIT;
 	}
+      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
@@ -1121,7 +1125,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 
   int count = 0;
   if (comp_printlevel >= 4)
-    emit(",");
+    emit_wrapped(",");
   
   while (f != NULL)
     {
@@ -1149,7 +1153,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 		{
 		  buffer o;
 		  o << count;
-		  emit(o.str());
+		  emit_wrapped(o.str());
 		}
 	      return q; // i.e. not computed yet
 	    }
@@ -1170,7 +1174,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
     {
       buffer o;
       o << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   return NULL;
 }
@@ -1192,7 +1196,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
 
   int count = 0;
   if (comp_printlevel >= 4)
-    emit(",");
+    emit_wrapped(",");
 
   while (f != NULL)
     {
@@ -1269,7 +1273,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
     {
       buffer o;
       o << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   return result;
 }
@@ -1298,7 +1302,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
 
   int count = 0;
   if (comp_printlevel >= 4)
-    emit(",");
+    emit_wrapped(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
     {
@@ -1358,7 +1362,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
     {
       buffer o;
       o << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   return result;
 }
@@ -1383,7 +1387,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
 
   int count = total_reduce_count;
   if (comp_printlevel >= 4)
-    emit(",");
+    emit_wrapped(",");
 
   while (f != NULL)
     {
@@ -1446,7 +1450,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
     {
       buffer o;
       o << (total_reduce_count - count);
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   return result;
 }
@@ -1465,7 +1469,7 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
 
   int count = 0;
   if (comp_printlevel >= 4)
-    emit(",");
+    emit_wrapped(",");
   
   while (f != NULL)
     {
@@ -1501,7 +1505,7 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
     {
       buffer o;
       o << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   return NULL;
 }
@@ -1520,7 +1524,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
 
   int count = 0;
   if (comp_printlevel >= 4)
-    emit(",");
+    emit_wrapped(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
     {
@@ -1561,7 +1565,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
     {
       buffer o;
       o << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   return NULL;
 }
@@ -1606,7 +1610,7 @@ void res2_comp::handle_pair(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) emit("z");
+      if (comp_printlevel >= 2) emit_wrapped("z");
       if (projdim == 0) projdim = 1;
       nminimal++;
       return;
@@ -1649,7 +1653,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	  if (p->level > projdim)
 	    projdim = p->level;
 	}
-      if (comp_printlevel >= 2) emit("z");
+      if (comp_printlevel >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1672,7 +1676,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	{
 	}
 
-      if (comp_printlevel >= 2) emit("m");
+      if (comp_printlevel >= 2) emit_wrapped("m");
     }
 }
 
@@ -1685,7 +1689,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) emit("z");
+      if (comp_printlevel >= 2) emit_wrapped("z");
       return;
     }
 
@@ -1703,7 +1707,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (f == NULL)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) emit("z");
+      if (comp_printlevel >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1728,7 +1732,7 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
       if (p->syz_type != SYZ2_NOT_NEEDED)
 	{
 	  p->syz_type = SYZ2_MINIMAL;
-	  if (comp_printlevel >= 2) emit("z");
+	  if (comp_printlevel >= 2) emit_wrapped("z");
 	  nminimal++;
 	}
       return;
@@ -1747,18 +1751,18 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 	  p->syz_type = SYZ2_MINIMAL;
 	  nminimal++;
 	  resn[p->level]->nminimal++;
-	  if (comp_printlevel >= 2) emit("z");
+	  if (comp_printlevel >= 2) emit_wrapped("z");
 	}
       else
 	{
-	  if (comp_printlevel >= 2) emit("o");
+	  if (comp_printlevel >= 2) emit_wrapped("o");
 	}
     }
   else 
     {
       p->syz_type = SYZ2_NOT_MINIMAL;
       q->syz_type = SYZ2_NOT_NEEDED;
-      if (comp_printlevel >= 2) emit("m");
+      if (comp_printlevel >= 2) emit_wrapped("m");
     }
 }
 

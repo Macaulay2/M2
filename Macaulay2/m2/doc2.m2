@@ -977,7 +977,7 @@ document { "internals",
 	  }
      }
 
-load "tutorials.m2"
+--load "tutorials.m2"
 
 document { "acknowledgements",
      "We thank the National Science Foundation for generous funding since

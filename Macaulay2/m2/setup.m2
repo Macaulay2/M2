@@ -7,7 +7,7 @@ if class path =!= List then path = { "." }
 OS := "operating system"
 
 pathSeparator = (
-	if version#OS === "MACOS"	then ":" 
+	if version#OS === "MACOS"	then "" 
 	else
 	if version#OS === "Windows NT"
 	or version#OS === "MS-DOS"
@@ -21,7 +21,10 @@ dir:= splice(apply(lines(commandLine#0, "/"), i -> toSequence lines(i, "\\")))
 if #dir > 2 
 then path = join({concatenate (apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
 
-isAbsolutePath := filename -> pathSeparator === substring(filename,0,#pathSeparator)
+--isAbsolutePath := filename -> pathSeparator === substring(filename,0,#pathSeparator)
+
+hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
+isAbsolutePath = filename -> hasColon filename and substring(filename,0,1) =!= ":"
 
 if class phase === Symbol then phase = 0
 
@@ -137,8 +140,31 @@ tryload := (filename,load) -> (
 		    result := load fn;
 		    if result then markLoaded fn;
 		    result))))
+///
+if version#OS === "MACOS"
+then tryload = (filename,load) -> (
+     if isAbsolutePath filename then (
+	  if load filename then (
+	       markLoaded filename;
+	       true)
+	  else false)
+     else (
+          if class path =!= List
+	  then error "expected 'path' to be a list of strings";
+          {} =!= select(1,path, 
+	       dir -> (
+		    if class dir =!= String 
+		    then error "member of 'path' not a string";
+		    fn := (
+			 if dir === "." then filename 
+			 else dir  | filename
+			 );
+		    result := load fn;
+		    if result then markLoaded fn;
+		    result))))
+///
 
-oldLoad := load
+oldLoad = load
 erase quote load
 load = (filename) -> (
      if not tryload(filename,oldLoad) then error ("can't open file ", filename)

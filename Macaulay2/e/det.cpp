@@ -175,14 +175,14 @@ int DetComputation::calc(int nsteps)
     {
       int result = step();
       if (comp_printlevel >= 3)
-	emit(".");
+	emit_wrapped(".");
       if (result == COMP_DONE)
 	return COMP_DONE;
       if (--nsteps == 0)
 	return COMP_DONE_STEPS;
+      system_spincursor();
       if (system_interrupted)
 	return COMP_INTERRUPTED;
-      
     }
 }
 

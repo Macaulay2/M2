@@ -550,13 +550,13 @@ void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
   if (f != NULL)
     {
       insert_gb_element(f, fsyz, maybe_minimal);
-      if (comp_printlevel >= 3) emit("m");
+      if (comp_printlevel >= 3) emit_wrapped("m");
     }
   else if (insert_syzygy(fsyz))
     {
-      if (comp_printlevel >= 3) emit("z");
+      if (comp_printlevel >= 3) emit_wrapped("z");
     }
-  else if (comp_printlevel >= 3) emit("o");
+  else if (comp_printlevel >= 3) emit_wrapped("o");
 }
 
 bool GBZZ_comp::s_pair_step()
@@ -708,6 +708,7 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 				     stop_gb, stop_syz, stop_pairs, 
 				     stop_codim, stop_min_gens, stop_subring);
       if (is_done != COMP_COMPUTING) break;
+      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;

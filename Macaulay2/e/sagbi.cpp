@@ -195,6 +195,7 @@ int sagbi_comp::calc(const int *deg, const intarray &stop_conditions)
 	return COMP_DONE;
       if (++nloops > maxnloops) return COMP_DONE_STEPS;
       if (*deg && (_current_degree > *deg)) return COMP_DONE_DEGREE_LIMIT;
+      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
 
       // Determine S-pairs

@@ -6,8 +6,6 @@
 #include "geovec.hpp"
 #include "text_io.hpp"
 
-extern char system_interrupted;
-extern "C" void spincursor(void);
 int comp_printlevel = 0;
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
@@ -843,7 +841,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
   int stop_min_gens = stop[4]; //do_min
   int stop_subring = stop[5]; //#elems in (first) subring
   int is_done = COMP_COMPUTING;
-
+  
   for (;;)
     {
       if (is_done != COMP_COMPUTING) break;
@@ -851,7 +849,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 				     stop_gb, stop_syz, stop_pairs, 
 				     stop_codim, stop_min_gens, stop_subring);
       if (is_done != COMP_COMPUTING) break;
-      spincursor();
+      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;
@@ -929,22 +927,22 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	  else switch (s_pair_step()) 
 	    {
 	    case SPAIR_MINGEN:
-	      emit("g");
+	      emit_wrapped("g");
 	      break;
 	    case SPAIR_GB:
-	      emit("m");
+	      emit_wrapped("m");
 	      break;
 	    case SPAIR_SYZ:
-	      emit("z");
+	      emit_wrapped("z");
 	      break;
 	    case SPAIR_ZERO:
-	      emit("o");
+	      emit_wrapped("o");
 	      break;
 	    case SPAIR_DONE:
 	      state = GB_COMP_GENS;
 	      break;
 	    default:
-	      emit("ERROR");
+	      emit_wrapped("ERROR");
 	      break;
 	    }
 	  break;
@@ -958,19 +956,19 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	  else switch (gen_step()) 
 	    {
 	    case SPAIR_MINGEN:
-	      emit("g");
+	      emit_wrapped("g");
 	      break;
 	    case SPAIR_SYZ:
-	      emit("z");
+	      emit_wrapped("z");
 	      break;
 	    case SPAIR_ZERO:
-	      emit("o");
+	      emit_wrapped("o");
 	      break;
 	    case SPAIR_DONE:
 	      state = GB_COMP_AUTO_REDUCE;
 	      break;
 	    default:
-	      emit("ERROR");
+	      emit_wrapped("ERROR");
 	      break;
 	    }
 	  break;

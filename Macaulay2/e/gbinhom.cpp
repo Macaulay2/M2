@@ -771,9 +771,10 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
   int stop_pairs = stop[2]; //npairs
   int stop_subring = stop[5]; //subring limit
   int is_done = COMP_COMPUTING;
-
+  
   for (;;)
     {
+      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;
@@ -800,19 +801,19 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 	switch (stype)
 	  {
 	  case SPAIR_GB:
-	    emit("m");
+	    emit_wrapped("m");
 	    break;
 	  case SPAIR_SYZ:
-	    emit("z");
+	    emit_wrapped("z");
 	    break;
 	  case SPAIR_ZERO:
-	    emit("o");
+	    emit_wrapped("o");
 	    break;
 	  case SPAIR_REMOVED:
-	    emit("r");
+	    emit_wrapped("r");
 	    break;
 	  default:
-	    emit("ERROR");
+	    emit_wrapped("ERROR");
 	    break;
 	  }
     }

@@ -1,11 +1,15 @@
 // (c) 1994 Michael E. Stillman
 
 #include <stdio.h>
+#include <string.h>
 #include "text_io.hpp"
 
 int p_plus = 0;
 int p_one = 1;
 int p_parens = 0;
+
+int MAX_LINE_LENGTH = 75;
+int emit_line_len = MAX_LINE_LENGTH;
 
 int i_text_io()
 {
@@ -27,6 +31,22 @@ void bignum_text_out(buffer &o, mpz_t a)
   o << str;
 
   if (size > 1000) delete [] allocstr;
+}
+
+void clear_emit_size()
+{
+  emit_line_len = MAX_LINE_LENGTH;
+}
+
+void emit_wrapped(char *s)
+{
+  // We wish verbose display to wrap at some reasonable length.
+  emit_line_len -= strlen(s);
+  if (emit_line_len <= 0) {
+    emit_line_len = MAX_LINE_LENGTH;
+    fprintf(stderr, "\n");
+  }
+  fprintf(stderr, s);
 }
 
 void emit(char *s)
