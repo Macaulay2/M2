@@ -135,7 +135,7 @@ document {
      PARA,
      "Let's compute a list of all the basic types:",
      EXAMPLE ///stack sort (toString \
-     select(values Main.Dictionary, i -> parent value i === Thing)
+     select(values Macaulay2.Dictionary, i -> parent value i === Thing)
      )///,
      SeeAlso => "basic types"
      }

@@ -175,11 +175,11 @@ tmp :; mkdir "$@"
 EXAMPLEOPTIONS := -q --stop
 # EXAMPLEOPTIONS += -e 'errorDepth = 0'
 EXAMPLEOPTIONS += -e 'debugLevel = 1'
-EXAMPLEOPTIONS += -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
+EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
 EXAMPLEOPTIONS += -e 'exit 0 '
 
 tmp/.documentation-made : $(DOCSEQUENCE)
-	@ echo making the Main package, including the documentation
+	@ echo making the Macaulay2 package, including the documentation
 	@ 
 	@ cd tmp && \
 	        echo "make: Entering directory \`tmp'" >&2 \

@@ -52,7 +52,6 @@ newPackage = method(
 	  Using => {}, 
 	  Version => "0.0", 
 	  DebuggingMode => false,
-	  BriefTitle => null,
 	  InfoDirSection => "Math",
 	  Headline => null,
 	  TopNodeName => null } )
@@ -67,7 +66,7 @@ newPackage(String) := opts -> (title) -> (
      saveD := globalDictionaries;
      saveP := packages;
      local hook;
-     if title =!= "Main" then (
+     if title =!= "Macaulay2" then (
      	  hook = (
 	       haderror -> if haderror then (
 	       	    globalDictionaries = saveD;
@@ -80,7 +79,7 @@ newPackage(String) := opts -> (title) -> (
      newpkg := new Package from {
           "title" => title,
 	  symbol Options => opts,
-     	  symbol Dictionary => if title === "Main" then first globalDictionaries else new Dictionary, -- this is the global one
+     	  symbol Dictionary => if title === "Macaulay2" then first globalDictionaries else new Dictionary, -- this is the global one
      	  "close hook" => hook,
 	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
@@ -94,13 +93,13 @@ newPackage(String) := opts -> (title) -> (
 	  "exported symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
-	  "package prefix" => if title === "Main" then prefixDirectory else (
+	  "package prefix" => if title === "Macaulay2" then prefixDirectory else (
 	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
      pkgsym := getGlobalSymbol(PackageDictionary,title);
-     if title =!= "Main" then (
+     if title =!= "Macaulay2" then (
 	  newpkg#"private dictionary" = new Dictionary; -- this is the local one
       	  PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      	  newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
@@ -109,13 +108,13 @@ newPackage(String) := opts -> (title) -> (
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
      packages = join(
-	  if title === "Main" then {} else {newpkg},
-	  {Main},
+	  if title === "Macaulay2" then {} else {newpkg},
+	  {Macaulay2},
 	  opts.Using
 	  );
      globalDictionaries = join(
-	  if title === "Main" then {} else {newpkg#"private dictionary"},
-	  {Main.Dictionary, PackageDictionary},
+	  if title === "Macaulay2" then {} else {newpkg#"private dictionary"},
+	  {Macaulay2.Dictionary, PackageDictionary},
 	  apply(opts.Using,pkg->pkg.Dictionary)
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
@@ -129,7 +128,7 @@ export List := v -> (
      if not all(v, x -> class x === Symbol) then error "expected a list of symbols";
      if currentPackage === null then error "no current package";
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
-     if currentPackage =!= Main then scan(v, s -> (
+     if currentPackage =!= Macaulay2 then scan(v, s -> (
 	       currentPackage.Dictionary#(toString s) = s;
 	       currentPackage.Dictionary#(currentPackage#"title" | "$" | toString s) = s;
 	       ));
@@ -142,13 +141,12 @@ exportMutable List := v -> (
      currentPackage#"mutable symbols" = join(currentPackage#"mutable symbols",v);
      v)
 
-addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
+addStartFunction( () -> if prefixDirectory =!= null then Macaulay2#"package prefix" = prefixDirectory )
 
-newPackage("Main", 
+newPackage("Macaulay2", 
      DebuggingMode => debuggingMode, 
      Version => version#"VERSION", 
      TopNodeName => "Macaulay 2",
-     BriefTitle => "Macaulay2",				    -- for info file name, for example
      Headline => "A computer algebra system designed to support algebraic geometry")
 
 exportMutable {
@@ -197,11 +195,11 @@ closePackage String := title -> (
 	       protect s;
 	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s));
      exportDict := pkg.Dictionary;
-     if pkg =!= Main then (			    -- protect it later
+     if pkg =!= Macaulay2 then (			    -- protect it later
 	  protect dict;					    -- maybe don't do this, as it will be private
 	  protect exportDict;
 	  );
-     if pkg#"title" =!= "Main" then (
+     if pkg#"title" =!= "Macaulay2" then (
 	  packages = prepend(pkg,pkg#"previous packages");
 	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
      	  checkShadow();

@@ -6,7 +6,7 @@ if class oooo =!= Symbol then error "setup.m2 already loaded"
 
 PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)
-getGlobalSymbol(PackageDictionary,"Main")
+getGlobalSymbol(PackageDictionary,"Macaulay2")
 
 -----------
 
@@ -132,7 +132,7 @@ stderr << "--loaded setup.m2" << endl
 
 globalDictionaries = prepend(UserDictionary,globalDictionaries)
 notify = true
-protect Main.Dictionary
+protect Macaulay2.Dictionary
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
