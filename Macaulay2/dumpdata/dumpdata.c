@@ -157,14 +157,14 @@ int loaddata(char const *filename) {
     dumpedmap.r = r == 'r';
     dumpedmap.w = w == 'w';
     for (; j<nmaps; j++) {
-      if (dumpedmap.from - currmap[j].from <= 0) break;
+      if ((intP)dumpedmap.from <= (intP)currmap[j].from) break;
       if (isCheckable(&currmap[j])) {
 	warning("loaddata: map has appeared or changed its location:\n  %s\n", buf);
 	return ERROR;
       }
     };
 
-    if (!f_end && !dumpedmap.w && dumpedmap.from - currmap[j].from < 0) {
+    if (!f_end && !dumpedmap.w && (intP)dumpedmap.from < (intP)currmap[j].from) {
       warning("loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
       return ERROR;
     }
