@@ -26,6 +26,34 @@ public:
   void init_set(COEFF_TYPE *result, COEFF_TYPE *a) const { *result = *a; }
 };
 
+template<typename CoeffRing>
+class CoefficientMatrix : public our_new_delete {
+  typedef std::map<monomial, int> monomial_map;
+  
+  struct row_elem : public our_new_delete {
+    monomial monom;
+    int elem;
+    sparse_row row;
+  };
+
+  struct column_elem : public our_new_delete {
+    monomial monom;
+    int comp;
+    int gb_divisor; // -1 if none, otherwise >= 0.
+    int ord; // Set before doing LU decomposition
+  };
+
+  M2_arrayint weights;
+
+  const CoeffRing *coeffK;
+  MonomialSet H; // Hash table of monomials in the ring
+  monomial_map H0; // Hash table (well...  sort of) of
+                         // monomial --> int
+
+  std::vector<row_elem, gc_allocator<row_elem> > rows;
+  std::vector<column_elem, gc_allocator<column_elem> > columns;
+};
+
 class LinearAlgebraGB : public GBComputation {
 public:
 
