@@ -305,8 +305,11 @@ document {
 	  TO "operations involving monomial orders",
 	  TO "packing monomials for efficiency",
 	  "Definitions of the specific monomial orders",
-	  TO "GRevLex, Lex, Weights, product orders",
-	  TO "general definition",
+	  TO "definition of graded reverse lexicographic order: GRevLex",
+	  TO "definition of lexicogrpahic order: Lex",
+	  TO "definition of weight orders: Weights",
+	  TO "definition of elimination orders: Eliminate",
+	  TO "definition of product (block) orders",
 	  "Developers corner",
 	  TO "obtaining the monomial order of a ring"
 	  }
@@ -317,20 +320,31 @@ document {
      TO "GRevLex, Lex, Weights, product orders",
      HEADER2 "Lexicographic order",
      EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder=>Lex]",
+	  "R = ZZ[a..d, MonomialOrder=>Lex];",
 	  "a+b^100+c*d"
 	  },
      HEADER2 "Graded lexicographic order",
      EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder=>{Weights=>4:1,Lex}]",
+	  "R = ZZ[a..d, MonomialOrder=>{Weights=>4:1,Lex}];",
 	  "a+b^100+c*d"
 	  },
      HEADER2 "Elimination order",
+     "To use an elimination order, which eliminates the first 2 variables, use",
      EXAMPLE {
-	  "R = ZZ[a..d, MonomialOrder=>{Weights=>4:1,Lex}]",
+	  "R = ZZ[a..f, MonomialOrder=>Eliminate 2];",
 	  "a+b^100+c*d"
 	  },
-     
+     "Alternatively, use a weight vector",
+     EXAMPLE {
+	  "R = ZZ[a..f, MonomialOrder=>Weights=>2:1];",
+	  "a+b^100+c*d"
+	  },
+     HEADER2 "Product (block) order",
+     "To make a product order where each block has the GRevLex order:",
+     EXAMPLE {
+	  "R = ZZ[a..f, MonomialOrder=>{2,4}];",
+	  "a^2*(c+d) + b*(c^100+d^100)"
+	  },
      }
 document {
      Key => "monomial orders for free modules",
@@ -339,10 +353,68 @@ document {
      Key => "operations involving monomial orders"
      }
 document {
-     Key => "packing monomials for efficiency"
+     Key => "packing monomials for efficiency",
+     "Sometimes for efficiency reasons, it is important to pack exponent vectors 
+     several exponents per machine word.  Polynomials take less space, and monomial 
+     operations such as comparison and multiplication become faster.",
+     PARA,
+     "The monomial order keys ", TO "Lex", " and ", TO "GRevLex", " have alternate
+     versions, which allow the packing of monomials 2 per machine word (LexSmall and
+	  GRevLexSmall), and 4 per machine word (LexTiny and GRevLexTiny).",
+     EXAMPLE {
+	  "A = QQ[a..d,MonomialOrder=>Lex];",
+	  "a^1000000000",
+	  },
+     "This exponent would give a monomial overflow error in the next ring",
+     EXAMPLE {
+	  "B = QQ[a..d,MonomialOrder=>LexSmall];",
+  	  "C = QQ[a..d,MonomialOrder=>LexTiny];"
+	  }
      }
 document {
-     Key => "obtaining the monomial order of a ring"
+     Key => "definition of graded reverse lexicographic order: GRevLex",
+     "The graded reverse lexicographic order is defined by: x^A > x^B if either
+     the degree(x^A) > degree(x^B) or degree(x^A) = degree(x^B) and
+     the LAST non-zero entry of the vector of integers A-B is NEGATIVE.",
+     PARA,
+     "This is the default order in Macaulay 2, in large part because it is often
+     the most efficient order for use with Groebner bases.  By giving GRevLex
+     a list of integers, one may change the definition of the order: deg(x^A) is
+     the dot product of A with the argument of GRevLex.",
+     EXAMPLE {
+	  "R = QQ[a..d];",
+	  "S = QQ[a..d, MonomialOrder => GRevLex => {1,2,3,4}];",
+	  "a^3 + b^2 + b*c"
+	  },
+     SeeAlso => GRevLex
+     }
+document {
+     Key => "definition of lexicogrpahic order: Lex",
+     "The lexicographic order is defined by: x^A > x^B if the FIRST
+     non-zero entry of the vector of integers A-B is POSITIVE.",
+     PARA,
+     
+     EXAMPLE {
+	  }
+     }
+document {
+     Key => "definition of weight orders: Weights"
+     }
+document {
+     Key => "definition of elimination orders: Eliminate"
+     }
+document {
+     Key => "definition of product (block) orders"
+     }
+document {
+     Key => "obtaining the monomial order of a ring",
+     "The monomial order of a ring is stored as an option in the monoid of the ring.",
+     EXAMPLE {
+	  "R = QQ[x_1 .. x_10, MonomialOrder=>{4,6}];",
+	  "(monoid R).Options.MonomialOrder",
+	  "S = QQ[a..d]",
+	  "(monoid R).Options.MonomialOrder"
+	  }
      }
 
 
