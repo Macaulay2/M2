@@ -17,87 +17,80 @@ fourDigits := i -> (
 -----------------------------------------------------------------------------
 cacheFileName = method()
 
-changed := new MutableHashTable
+readPairs := fn -> (
+     data := "{}";
+     if fileExists fn then data = get fn;
+     try data = value data else error( "couldn't evaluate contents of file: ", fn);
+     if class data =!= List or not all(data, x -> class x === Sequence and #x === 2)
+     then error("expected file '", fn, "' to contain a list of pairs");
+     new MutableHashTable from data)
+
+queryFun := symbol queryFun
+getFun := symbol getFun
+setFun := symbol setFun
+sizeFun := symbol sizeFun
 
 indexTable := memoize(
      prefix -> (
 	  fn := prefix | "Macaulay2-index-cache";
-	  tb := new MutableHashTable from try value get fn else {};
-	  -- stderr << "documentation index cache table with prefix " << prefix << " created" << endl;
-	  addEndFunction( () -> (
-		    if changed#?tb then (
-			 try fn << toExternalString pairs tb << endl << close
-			 else (
-			      stderr << "warning: cache file '" << fn << "' not created" << endl
-			      -- << "    keys : " << keys tb << endl;
-			      );
-			 remove(changed,tb);
-			 )
-		    )
+	  tb := readPairs fn;
+	  changed := false;
+	  addEndFunction (
+	       () -> if changed then (
+	       	    fn << toExternalString pairs tb << endl << close;
+	       	    changed = false;
+	       	    )
 	       );
-	  tb
+	  new HashTable from {
+	       queryFun => key -> tb#?key,
+	       getFun => key -> tb#key,
+	       setFun => key -> (
+     	       	    if not changed and not fileExists fn then (
+		    	 -- initialize the file now to ensure we can write to it later
+		    	 fn << "{}" << close;
+		    	 );
+	       	    changed = true;
+	       	    tb#key = fourDigits(#tb)
+	       	    )
+	       }
 	  )
-     )
-
-counterVariable := memoize( prefix -> ( counter := 0; symbol counter ) )
-
-cacheFileName(String) := (prefix) -> (
-     cv := counterVariable prefix;
-     prefix | toString (cv <- value cv + 1)
      )
 
 cacheFileName(String,Thing) := (prefix,key) -> (
      tb := indexTable prefix;
-     prefix | if tb#?key then tb#key else (
-	  changed#tb = true;
-	  tb#key = fourDigits(#tb)))
+     prefix | if tb#queryFun key then tb#getFun key else tb#setFun key)
 
 cacheFileName(List,Thing) := (path,key) -> (
-     for i from 0 when i < #path do (
-	  prefix := path#i;
-	  tb := indexTable prefix;
-	  if tb#?key then return prefix | tb#key;
-	  );
-     i := 0;
-     if not i < #path then error "encountered empty cache file path";
-     prefix := path#i;
-     tb := indexTable prefix;
-     changed#tb = true;
-     prefix | (tb#key = fourDigits(#tb)))     
-
-cacheFileName(String,Thing,String) := (prefix,key,suffix) -> (
-     tb := indexTable prefix;
-     changed#tb = true;
-     prefix | (tb#key = suffix)
+     apply(
+	  select(path, prefix -> (indexTable prefix)#queryFun key),
+	  prefix -> prefix | (indexTable prefix)#getFun key
+	  )
      )
 
-cacheFileNameKeys = method()
-cacheFileNameKeys String := prefix -> keys indexTable prefix
-
-tt := new MutableHashTable from toList apply(0 .. 255, i -> (
-	  c := ascii i;
-	  c => c
-	  ));
-
-tt#"/" = "%sl"
-tt#":" = "%co"
-tt#";" = "%sc"
-tt#"\\" = "%bs"
-tt#" " = "%_"
-tt#"%" = "%%"
-tt#"$" = "%do"
-tt#"<" = "%lt"
-tt#">" = "%gt"
-
-uu := new HashTable from {
-     "." => "%pe",
-     ".." => "%pe%pe"
-     }
-
-toFilename = method()
-toFilename String := s -> (
-     -- Convert a string to a new string usable as a file name.
-     -- avoid ".", "..", and any string with "/" in it.
-     s = concatenate(apply(characters s, c -> tt#c));
-     if uu#?s then s = uu#s;
-     s)
+-- tt := new MutableHashTable from toList apply(0 .. 255, i -> (
+-- 	  c := ascii i;
+-- 	  c => c
+-- 	  ));
+-- 
+-- tt#"/" = "%sl"
+-- tt#":" = "%co"
+-- tt#";" = "%sc"
+-- tt#"\\" = "%bs"
+-- tt#" " = "%_"
+-- tt#"%" = "%%"
+-- tt#"$" = "%do"
+-- tt#"<" = "%lt"
+-- tt#">" = "%gt"
+-- 
+-- uu := new HashTable from {
+--      "." => "%pe",
+--      ".." => "%pe%pe"
+--      }
+-- 
+-- toFilename = method()
+-- toFilename String := s -> (
+--      -- Convert a string to a new string usable as a file name.
+--      -- avoid ".", "..", and any string with "/" in it.
+--      s = concatenate(apply(characters s, c -> tt#c));
+--      if uu#?s then s = uu#s;
+--      s)

@@ -280,6 +280,7 @@ M2_string interp_dirname(M2_string s) {
   char *v = u;
   for (; *u; u++) if (*u == '/') v=u+1;	/* on MacOS?? */
   if (v != NULL) *v = '\0';
+  if (*t == '\0') t = "./";	/* on MacOS?? */
   return tostring(t);
 }
 
