@@ -376,11 +376,8 @@ makeit1 := (options) -> (
 
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
-	  x -> (
-	       if class x === Symbol
-	       then Unquote x
-	       else expression x
-	       ));
+	  x -> if class x === Symbol then x else expression x
+	  );
      scan(varlist, 
 	  sym -> (
 	       if Symbol =!= basictype sym 

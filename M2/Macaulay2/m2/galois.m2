@@ -194,11 +194,8 @@ GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.frac = F;
      F.generatorSymbols = {xx};
      F.generatorExpressions = apply( F.generatorSymbols,
-	  x -> (
-	       if class x === Symbol
-	       then Unquote x
-	       else expression x
-	       ));
+	  x -> if class x === Symbol then x else expression x
+	  );
      F.generators = {F_0};
      baseName F := y -> (
 	  if F_0 == y then xx else error "expected a generator"

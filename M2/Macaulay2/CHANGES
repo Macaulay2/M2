@@ -1,6 +1,11 @@
 Changes made, most recent ones first:
-
+-----------------------------------------------------------------------------
 New in 0.8.47:
+
+The documentation has been improved, especially the section on language and
+programming overview.
+
+'Unquote' removed.
 
 Warning: the way 'apply' works for hash tables (including Sets and Tallys) 
 has been changed.
@@ -13,7 +18,7 @@ Warning: the way 'accumulate' works has been changed.  It no longer includes
 the initial value in the list, and there are some new versions of it.
 And 'fold' has been changed.  It now operates the reverse way!
 
-'ascii 65' now works, and gives "A".
+Code such as 'ascii 65' now works, and gives "A".
 
   A basic change has been made to the way 'processArgs' and functions and
 methods with optional arguments are written (cf. options, Options). Formerly the
@@ -44,9 +49,7 @@ in compact Macaulay form or in 2-d Macaulay2 form.
 String is now a subclass of Net - we intend every method applicable to nets
 to also work for strings, even though the internal representation of strings
 is different.
-
 -----------------------------------------------------------------------------
-
 New in 0.8.46:
 
 clearAll now also clears all the user's variables.  The old behavior is
@@ -73,17 +76,17 @@ Unquote - new type of expression.
 
 Caching of tensor products done now.  Caching of direct sums was installed in
 an earlier version.
-
+-----------------------------------------------------------------------------
 New in 0.8.45:
 
 the default changeMatrix for forceGB is now the identity.
-
+-----------------------------------------------------------------------------
 New in 0.8.44:
 
 Fixed a bug noticed by Irena Swanson: when a polynomial ring is created
 with ordering Elimination 1, and the first variable x has degree d larger
 than 1, then x^d appeared in place of x as the first generator of the ring.
-
+-----------------------------------------------------------------------------
 New in 0.8.43:
 
 'prune' now works for chain complexes
@@ -108,7 +111,7 @@ directSum for chain complexes implemented
 
 map(M,N,1) if cover M == cover N will now give the map induced by sending the i-th
 	generator of N to the i-th generator of M
-
+-----------------------------------------------------------------------------
 New in 0.8.42:
 
 The variable 'hypertex' has been removed.

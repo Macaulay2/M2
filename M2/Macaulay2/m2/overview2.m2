@@ -119,6 +119,7 @@ document { "language and programming overview",
 		    TO "installing methods",
 		    TO "inheritance from parents",
 		    TO "making new types",
+		    TO "printing and formatting for new types",
 		    (
 			 "method functions",
 			 MENU {
@@ -1246,11 +1247,24 @@ document { "two dimensional formatting",
      notation that originated with Macaulay.  Setting the global flag
      ", TO "compactMatrixForm", " to ", TO "false", " will modify that
      behavior.",
-     EXAMPLE "f",
-     "There is a type of thing called ", TO "Expression", " which will
-     allow you to set up things that print out as powers, sums, products,
-     matrices, and so on, without enjoying all of the algebraic properties
-     of such things.  There are various types of expression, such as
+     EXAMPLE {
+	  "compactMatrixForm = false",
+	  "f",
+	  },
+     "Output of routines such as ", TO "betti", " and ", TO "net", " that
+     return nets can be easily incorporated into more complex displays 
+     using standard operations on nets.",
+     EXAMPLE {
+	  "C = resolution cokernel f",
+	  "be = betti C",
+	  ///"Betti numbers of " | net C | " are " | be^2///,
+	  },
+     "You could even learn how to display algebraic expressions with nets.",
+     EXAMPLE ///"x" | "2"^1///,
+     "There is an easier way to display algebraic expressions, using a
+     type of thing called an ", TO "Expression", ".  It allows you
+     to set up things that print out as powers, sums, products,
+     matrices, and so on.  There are various types of expression, such as
      ", TO "Power", ", ", TO "Sum", ", ", TO "Divide", ", ", TO "Minus", ",
      and ", TO "Product", " which we can use for this.",
      EXAMPLE {
@@ -1269,11 +1283,27 @@ document { "two dimensional formatting",
      "In the last example above, ", TT "1 + 2", " was evaluated first, so it
      yielded ", TT "3", " but after that the contagion set in.",
      PARA,
-     "The function ", TO "expression", " can be used to convert a polynomial
-     to an expression of this form.",
+     "The function ", TO "expression", " can be used to prepare things such
+     as polynomials for formatting using the mechanism introduced above.",
      EXAMPLE {
-	  "(x+y)^2",
-	  "expression oo"
+	  "g = (x+y)^2",
+	  "e = expression g",
+	  "peek e",
+	  },
+     "In the example above, we see that ", TO "peek", " extracts only one
+     level of the structure.  We may use ", TO "peek2", " to display
+     the structure of ", TT "e", " to depth 2.",
+     EXAMPLE {
+	  "peek2(e,2)",
+	  },
+     "Other types of ", TO "Expression", " which can be used for formatting
+     nested lists are ", TO "MatrixExpression", " and ", TO "Table", ".",
+     EXAMPLE {
+	  "Table{{1,2,3},{a,bb,ccc}}",
+	  "MatrixExpression{{1,2,3},{a,bb,ccc}}",
+	  ///Table{{"Example 1","Example 2"},
+      {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}///
+	  },
      }
 
 document { "making new types",
@@ -1323,3 +1353,8 @@ document { "method functions with optional arguments",
 document { (quote @, OptionTable, Function),
      "This node has not been written yet."
      }
+
+document { "printing and formatting for new types",
+     "This node has not been written yet."
+     }
+     

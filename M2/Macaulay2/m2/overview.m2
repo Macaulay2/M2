@@ -877,7 +877,17 @@ document { "ideals",
 	  "basis (R^1/J)",
       	  "rank source oo",
 	  },
-     NOINDENT, "(Here ", TO "oo", " refers to the result on the previous line."
+     NOINDENT, "(Here ", TO "oo", " refers to the result on the previous line.",
+     PARA,
+     "Other useful functions for dealing with ideals include ", 
+     TO "annihilator", ", ", 
+     TO "decompose", ", ",
+     TO "fittingIdeal", ", ", 
+     TO "module", ", ",
+     TO "quotient", ", ", 
+     TO "radical", ", ",
+     TO "removeLowestDimension", ", and ",
+     TO "top", "."
      }
 
 document { "making matrices",

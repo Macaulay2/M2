@@ -294,27 +294,17 @@ Ring OrderedMonoid := (			  -- no memoize
 	       R.pop()
 	       );
 	  RM.ConvertToExpression = ConvertApply(
-	       args -> (
-		    if # args === 1 
-		    then args#0
-		    else Sum toList args
-		    ),
+	       args -> if #args === 1 then args#0 else new Sum from toList args,
 	       ConvertRepeat ConvertApply ( 
 		    (m,r) -> r * m,
 		    ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
-	  expression RM := f -> convert(
-	       RM.ConvertToExpression,
-	       sendgg(ggPush f, ggtonet)
-	       );
+	  expression RM := f -> convert( RM.ConvertToExpression, sendgg(ggPush f, ggtonet) );
 	  name RM := x -> name expression x;
 	  net RM := x -> net expression x;
 	  fac := options -> f -> (
 	       sendgg(ggPush f, ggfactor);
 	       new Product from 
-	       apply(eePopInt(), i -> (
-			 exp := eePopInt();
-			 fact := RM.pop();
-			 Power{fact,exp})));
+	       apply(eePopInt(), i -> ( exp := eePopInt(); new Power from {RM.pop(),exp})));
 	  factor RM := if R === QQ then (
 	       options -> f -> (
 		    error "factorization over QQ not implemented yet";
