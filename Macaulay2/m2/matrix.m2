@@ -353,8 +353,6 @@ diff(RingElement, Vector) := (f,v) -> diff(matrix{{f}},transpose matrix{v})
 diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
-diff(RingElement)    := f -> diff(vars ring f, f)
-diff(Matrix)         := m -> diff(vars ring m, m)
 
 contract (Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ sameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)

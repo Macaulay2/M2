@@ -153,19 +153,22 @@ document {
 	  "f" => {"a polynomial in the same ring as ", TT "x",}
 	  },
      Outputs => {
-	  {"the result of differentiating ", TT "f", " by ", TT "x", "."}
+	  {"the result of differentiating ", TT "f", " by the ",
+	       TO2("differential operator corresponding to a polynomial", 
+	       "differential operator"), " corresponding to ", TT "x", "."}
 	  },
-     "If ", TT "x", " is a polynomial, not just an indeterminate, 
-     we apply the differential
-     operator corresponding to ", TT "x", " (i.e. replace each occurence
-	  of the indeterminate ", TT "y", " in ", TT "x", " with ", TT "d/dy", ").",
+     "If x is an indeterminate this is simply the usual differentiation.",
      EXAMPLE {
 	  "R = QQ[x,y,z];",
 	  "diff(x,x^7 + 4*x^3*y - 3*y)",
-	  "diff(x^2*y,x^7 + 4*x^3*y - 3*y)",
-	  "diff(x^2*y+y,x^7 + 4*x^3*y - 3*y)",
+	  "diff(x^2+y^2+z^2, y^2*z^2 - x^3 - 1)",
 	  },
-     SeeAlso => {diff',contract,contract',jacobian},
+     SeeAlso => {
+	  contract,
+	  jacobian,
+	  "differential operator corresponding to a polynomial",
+	  "diff and contract"
+	  },
      }
 document {
      Key => (diff,RingElement,Matrix),
@@ -177,24 +180,25 @@ document {
 	  },
      Outputs => {
 	  Matrix => {"having the same shape as f, whose (i,j) entry is the 
-	       result of differentiating ", TT "f_(i,j)", " by ", TT "x", "."}
+	       result of differentiating ", TT "f_(i,j)", " by the ",
+	       TO2("differential operator corresponding to a polynomial",
+	       "differential operator"), " corresponding to ", TT "x", "."}
 	  },
-     "If ", TT "x", " is a polynomial, not just an indeterminate, 
-     we apply the differential
-     operator corresponding to ", TT "x", " (i.e. replace each occurence
-	  of the indeterminate ", TT "y", " in ", TT "x", " with ", TT "d/dy", ").",
-     PARA,
-     "The target of the result is the same as the target of f, but the source, although
-     it has the same rank as the source of f, has different degrees in an attempt to
-     ensure that the result is homogeneous.",
+     "The shape of the resulting matrix is the same as the shape of f, 
+     but the degrees of the source module are different
+     in an attempt to ensure that the result is homogeneous.",
      EXAMPLE {
 	  "R = QQ[x,y,z];",
 	  "f = matrix{{x^2-y*z, x*y*z + z^4}, {x-1, 2*y^2+z^2-1}}",
 	  "diff(x,f)",
-	  "diff(y*z,f)",
-	  "diff(x^2+y^2+z^2,f)"
+	  "diff(x^2-y*z,f)"
 	  },
-     SeeAlso => {diff',contract,contract',jacobian},
+     SeeAlso => {
+	  contract,
+	  jacobian,
+	  "differential operator corresponding to a polynomial",
+	  "diff and contract"
+	  },
      }
 document {
      Key => (diff,Matrix,RingElement),
@@ -205,14 +209,13 @@ document {
 	  "g" => {"a polynomial with the same ring as ", TT "f",}
 	  },
      Outputs => {
-	  {"the result of differentiating ", TT "g", " with each entry of ", TT "f", "."}
+	  {"the result of differentiating ", TT "g", " by the ",
+	       TO2("differential operator corresponding to a polynomial", 
+	       "differential operator"), " corresponding to each entry of ", TT "f", "."}
 	  },
-     "If an entry ", TT "x", " of ", TT "f", " is a polynomial, not just an indeterminate, 
-     we apply the differential
-     operator corresponding to ", TT "x", " (i.e. replace each occurence
-	  of the indeterminate ", TT "y", " in ", TT "x", " with ", TT "d/dy", ").",
-     PARA,
-     "The shape of the resulting matrix is the same as the shape of f.",
+     "The shape of the resulting matrix is the same as the shape of f, 
+     but the degrees of the source module are different
+     in an attempt to ensure that the result is homogeneous.",
      EXAMPLE {
 	  "R = QQ[x,y,z,q];",
 	  "f = vars R",
@@ -220,54 +223,47 @@ document {
 	  "f2 = genericMatrix(R,2,2)",
 	  "diff(f2, (x+y-z)^2)"
 	  },
-     SeeAlso => {diff',contract,contract',jacobian},
-     }
-
-document {
-     Key => (diff,Matrix),
-     Headline => "differentiate a matrix",
-     TT "diff m", " -- differentiate the matrix ", TT "m", " with respect to the variables
-     of its ring."
-     }
-document {
-     Key => (diff,RingElement),
-     Headline => "differentiate a ring element",
-     TT "diff f", " -- differentiate the ring element ", TT "f", " with respect to 
-     the variables of its ring."
-     }
-document {
-     Key => (diff,ProjectiveHilbertPolynomial,ZZ),
-     TT "diff(P,i)", " -- compute the i-th difference polynomial"
+     SeeAlso => {
+	  contract,
+	  jacobian,
+	  "differential operator corresponding to a polynomial",
+	  "diff and contract"
+	  },
      }
 document {
      Key => (diff,Matrix,Matrix),
      Headline => "differentiate a matrix by a matrix",
-     Usage => "h = diff(m,n)",
+     Usage => "diff(m,n)",
      Inputs => {
 	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
 	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
 	  },
      Outputs => {
-	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+	  Matrix => {"with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
 	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
 	       is the result of differentiating ", TT { "n", SUB "j,l" }, "
-	       by the differential operator corresponding to ", TT {"m", SUB "i,k", "."}
+	       by the ",
+	       TO2("differential operator corresponding to a polynomial",
+	       "differential operator"),
+	       " corresponding to  ", TT {"m", SUB "i,k", "."}
 	       }
 	  },
-     PARA {
-	  "If ", TT "m", " or ", TT "n", " is a ring element, then it is interpreted
-	  as a one-by-one matrix.  If ", TT "m", " is a vector, it is interpreted as
-	  a matrix with one column, and if ", TT "n", " is a vector, it is interpreted
-	  as a matrix with one row.  If both ", TT "m", " and ", TT "n", " are ring
-	  elements, then the result will be a ring element rather than a one-by-one
-	  matrix.  If ", TT "m", " is a vector and ", TT "n", " is a ring element,
-	  then the result will be a vector rather than a matrix with one column."},
-     PARA {
-	  "The most common usage is when ", TT "m", " has one column and ", TT "n", "
-	  has one row.  In this case the result ", TT "h", " is a matrix whose
-	  ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, "
-	  by the differential operator corresponding to ", TT {"m", SUB "i"}, "."},
-     SeeAlso => "diff and contract"
+     EXAMPLE {
+	  "R = QQ[a,b,c][x,y,z]",
+	  "m = transpose vars R",
+	  "n = matrix{{x^2-a*y^3, x^3-z^2*y, x*y-b, x*z-c}}",
+	  "diff(m,n)"
+	  },
+     SeeAlso => {
+	  diff',
+	  contract,
+	  "differential operator corresponding to a polynomial",
+	  "diff and contract"
+	  }
+     }
+document {
+     Key => (diff,ProjectiveHilbertPolynomial,ZZ),
+     TT "diff(P,i)", " -- compute the i-th difference polynomial"
      }
 document {
      Key => (diff, ProjectiveHilbertPolynomial),
@@ -276,8 +272,30 @@ document {
 document {
      Key => diff,
      Headline => "differentiate or take difference",
-     "The main use of diff is to differentiate polynomials by indeterminates.",
-     SeeAlso => "diff and contract"
+     Usage => "diff(f,g) or diff(P) or diff(P,i)",
+     "This function has two different uses.  The most common use is for differentiation:
+     differentiate the second input by the first.",
+     PARA,
+     "The second use, less common but sometimes useful, is to compute the difference
+     polynomial of a Hilbert polynomial.",
+     SeeAlso => {
+	  "differential operator corresponding to a polynomial",
+	  "diff and contract",
+	  diff',
+	  contract,
+	  jacobian,
+	  hilbertPolynomial
+	  },
+     Subnodes => {
+	  "differentiation",
+	  TO (diff,RingElement,RingElement),
+	  TO (diff,RingElement,Matrix),
+	  TO (diff,Matrix,RingElement),
+	  TO (diff,Matrix,Matrix),
+	  "difference operator for Hilbert polynomials",
+	  TO (diff,ProjectiveHilbertPolynomial),
+	  TO (diff,ProjectiveHilbertPolynomial,ZZ)
+	  }
      }
 document {
      Key => contract,

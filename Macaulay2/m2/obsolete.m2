@@ -31,6 +31,11 @@ map(Module,ZZ) := map(Module,RingElement) := options -> (M,r) -> error "method f
 
 summary GroebnerBasis := g -> error "the method for 'summary(GroebnerBasis)' is obsolete -- the information is displayed now whenever a Groebner basis is displayed"
 
+undocumented(diff,RingElement)
+undocumented(diff,Matrix)
+diff(RingElement)    := f -> error "method for 'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead"
+diff(Matrix)         := f -> error "method for 'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
