@@ -97,7 +97,6 @@ document { quote isCommutative,
      }
 
 ZZ.isCommutative = true
-ZZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
 

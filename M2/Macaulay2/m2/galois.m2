@@ -185,6 +185,9 @@ GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  name F := h -> name expression h;
 	  net F := h -> net expression h;
 	  );
+     F.baseRings = append(S.baseRings,S);
+     if S.?newEngine then F.newEngine = true;
+     installEngineRingUnits F;
      F.isCommutative = true;
      expression F := t -> convert(
 	  F.ConvertToExpression, sendgg(ggPush t, ggtonet)
@@ -201,7 +204,6 @@ GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  if F_0 == y then xx else error "expected a generator"
 	  );
      F.order = p^n;
-     F.baseRings = append(S.baseRings,S);
      F / F := (f,g) -> f // g;		  -- it is a field
      F))
 

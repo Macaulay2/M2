@@ -58,6 +58,7 @@ document { quote RingElement,
 
 EngineRing = new Type of Ring
 
+
 document { quote EngineRing,
      TT "EngineRing", " -- denotes the class of all special-purpose engine
      rings, such as finite fields.",
@@ -117,9 +118,41 @@ new EngineRing from String := (EngineRing, ggcmds) -> (
 		    toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 		    ) } );
      R.pop = () -> new R;
-     try R#0 = 0_R;
-     try R#1 = 1_R;
      R)
+
+installEngineRingUnits = R -> (
+     if R.?newEngine then (
+	  R#1 = new R from newHandle(ggPush R, ggPush 1, ggfree, ggPush toList (numgens R : 0), ggPush 0, ggterm);
+	  R#0 = new R from newHandle(ggPush 0, ggPush R#1, ggmult);
+	  )
+     else (
+	  R#1 = 1_R;
+	  R#0 = 0_R;
+	  )
+     )
+
+-----------------------------------------------------------------------------
+
+ZZZ = new EngineRing of HashTable
+ZZZ.generators = {}
+ZZZ.pop = () -> new ZZZ
+ZZZ.handle = newHandle ggEZZ
+new ZZZ from Handle := (ZZZ,h) -> new ZZZ from { (quote handle, h) };
+new ZZZ := ZZZ -> newClass( ZZZ, hashTable { (
+	       quote handle, 
+	       toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
+	       ) } );
+ZZZ.newEngine = true
+installEngineRingUnits ZZZ
+ZZZ.isCommutative = true
+ZZZ.char = 0
+ZZZ.ConversionFormat = ConvertInteger
+ZZZ.Engine = true
+ZZZ.baseRings = {}
+ZZZ.ConvertToExpression = ConvertInteger
+ZZZ.degreeLength = 0
+
+-----------------------------------------------------------------------------
 
 TEST "
     -- test of lift/promote of an ideal
@@ -167,6 +200,9 @@ frac EngineRing := R -> (
      if R.?frac then R.frac
      else (
 	  R.frac = F := new FractionField from (ggPush R, ggfractionfield);
+	  F.baseRings = append(R.baseRings,R);
+     	  if R.?newEngine then F.newEngine = true;
+	  installEngineRingUnits F;
 	  F.ConvertToExpression = ConvertApply(
 	       (x,y) -> x/y, R.ConvertToExpression, R.ConvertToExpression
 	       );
@@ -190,7 +226,6 @@ frac EngineRing := R -> (
 	  isHomogeneous F := (f) -> (
 	       isHomogeneous numerator f and isHomogeneous denominator f);
 	  degree F := (f) -> degree numerator f - degree denominator f;
-	  F.baseRings = append(R.baseRings,R);
 	  F + F := (x,y) -> (
 	       sendgg(ggPush x, ggPush y, ggadd);
 	       freduce new F);
@@ -716,7 +751,12 @@ ZZ _ EngineRing :=
 promote(ZZ,EngineRing) := (i,R) -> (
      if R.?newEngine
      then error "not implemented yet"
-     else new R from {( quote handle, newHandle (ggPush R, ggINT, gg i, ggfromint))}
+     else new R from {( quote handle, 
+	       try newHandle (ggPush R, ggINT, gg i, ggfromint)
+	       else (					    -- newEngine
+		    newHandle (ggPush i, ggPush R#1, ggmult);
+		    )
+	       )}
      )
 
 promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)

@@ -23,6 +23,8 @@ newSchur := (R,M) -> (
 	  SR.degreesRing = ZZ;
 	  );
      SR.baseRings = append(R.baseRings,R);
+     if R.?newEngine or M.?newEngine then SR.newEngine = true;
+     installEngineRingUnits SR;
      if R.?char then SR.char = R.char;
      SR.monoid = M;
      SR ? SR := (f,g) -> (

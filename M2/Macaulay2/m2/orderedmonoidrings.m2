@@ -258,13 +258,14 @@ Ring OrderedMonoid := (			  -- no memoize
 			 else error "expected a variable of the ring"));
 	       new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
 	       );
-	  RM.degreesRing = degRing;
-	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
 	  RM.baseRings = append(R.baseRings,R);
 	  if M.?newEngine then RM.newEngine = true;
+	  RM.monoid = M;
+    	  installEngineRingUnits RM;
+	  RM.degreesRing = degRing;
+	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
-	  RM.monoid = M;
 	  RM ? RM := (f,g) -> (
 	       if f == g then quote ==
 	       else leadMonomial f ? leadMonomial g
@@ -439,3 +440,5 @@ assert( f == value name f )
 "
 
 char PolynomialRing := (R) -> char coefficientRing R
+
+numgens PolynomialRing := R -> numgens monoid R
