@@ -91,7 +91,7 @@ assert( 1 - 10_k == 92 )
 assert( 1_k - 10 == 92 )
 
 degs = {{1},{1},{1}}
-m' = makeMonomialOrdering( null, false, 3, degs / first, {}, {} )
+(m'global,m') = makeMonomialOrdering( null, false, 3, degs / first, {}, {} )
 n' = rawMonoid(m',("x","y","z"),degring 1,flatten degs)
 
 
@@ -110,8 +110,8 @@ assert( rawTerm(R, 3_Z, rawVarMonomial(1,4)) === 3*y^4 )
 rawRing x
 ring x
 
-rawRingVar(R,1,11)
-assert( rawRingVar(R,1,11) == y^11 )
+rawRingVar(R,1)
+assert( rawRingVar(R,1) == y )
 
 degree y^10
 assert( try ( degree 0_R ; false ) else true )
@@ -124,31 +124,31 @@ assert( not rawIsHomogeneous ( x^2 + y ))
 
 f = (x+1)^5
 
-assert( someTerms(f,2,2) == 10*x^3+10*x^2 )
+assert( someTerms(3,f,2,2) == 10*x^3+10*x^2 )
+assert( someTerms(1,f,2,2) == 10*x^3+10*x^2 )
 
-assert( size f == 6 )
+assert( rawTermCount(3,f) == 6 )
 f' = (x+1)^5
 g = (x-1)^6
 h = (x^2+x+1)^5
-<< "COMMENTED OUT CRASH" << endl;
---q = g // h
---r = g %  h
---assert( g == q*h + r )
+q = g // h
+r = g %  h
+assert( g == q*h + r )
 assert( f != g )
 assert( f == f' )
 rawHomogenize(f,2,{1,1,1})
 assert( rawHomogenize(f,2,{1,1,1}) == (x+z)^5 )
 assert( rawHomogenize(f,2,10,{1,1,1}) == (x+z)^5*z^5 )
 
-leadCoefficient f
-leadMonomial f
-rawPairs f
-assert( 1_Z === leadCoefficient f )
-assert( rawVarMonomial(0,5) === leadMonomial f )
+rawLeadCoefficient(rawZZ(),f)
+rawLeadMonomial(3,f)
+rawPairs(rawZZ(),f)
+assert( 1_Z === rawLeadCoefficient(rawZZ(), f) )
+assert( rawVarMonomial(0,5) === rawLeadMonomial(3, f) )
 
-assert( ((),()) == rawPairs 0_R )
-assert( try ( leadCoefficient 0_R ; false ) else true )
-assert( try ( leadMonomial    0_R ; false ) else true )
+assert( ((),()) == rawPairs(rawZZ(),0_R) )
+assert( try ( rawLeadCoefficient(rawZZ(), 0_R) ; false ) else true )
+assert( try ( rawLeadMonomial(3,0_R) ; false ) else true )
 assert( try ( rawDegree (0_R, {4,5,6}) ; false ) else true )
 
 hash f
@@ -256,12 +256,12 @@ y^2
 -- try bigrading
 
 degs = {};
-doublyGradedOrdering = makeMonomialOrdering( null, false, 2, degs, {}, {GroupLex => 2} )
+(notused,doublyGradedOrdering) = makeMonomialOrdering( null, false, 2, degs, {}, {GroupLex => 2} )
 doublyGraded = rawMonoid(doublyGradedOrdering,("s","t"),trivial,degs)
 doublyGradedRing = rawPolynomialRing(rawZZ(), doublyGraded)
 
 degs = {{2,3}, {1,0}, {1,1}}
-m'' = makeMonomialOrdering( null, false, 3, degs / first, {}, {2,1} )
+(notused,m'') = makeMonomialOrdering( null, false, 3, degs / first, {}, {2,1} )
 n'' = rawMonoid(m'',("x","y","z"),doublyGradedRing,flatten degs)
 
 R = rawPolynomialRing(rawZZ(),n'')

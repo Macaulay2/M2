@@ -55,7 +55,7 @@ assert(dim g == (dim f)^2)
 << "listForm of polynomials in Schur rings incorrect" << endl;
 << "display of polynomials in Schur rings incorrect" << endl;
 listForm g -- INCORRECT
-rawPairs(raw g)
+rawPairs(rawZZ(),raw g)
 toString raw g
 rawSchurDimension
 S = ZZ[a..d]

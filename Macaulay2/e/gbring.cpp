@@ -81,10 +81,10 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
   gbvector *used_to_determine_size = 0;
   gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
 
+  if (K == globalQQ)
+    K = globalZZ;
   if (K == globalZZ)
     _coeffs_ZZ = true;
-  else if (K == globalQQ)
-    K = globalZZ;
 }
 
 /////////////////////////////////////////////////////////////////////////

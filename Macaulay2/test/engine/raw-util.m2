@@ -54,7 +54,7 @@ elim = (vars1,vars2) -> (
 polyring = (K, vars) -> (
      -- each element of vars should be a symbol!
      R := rawPolynomialRing(K, singlemonoid vars);
-     scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
+     scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)
 
 polyring2 = (K, vars, mo) -> (
@@ -62,7 +62,7 @@ polyring2 = (K, vars, mo) -> (
      M := rawMonoid(mo, apply(vars, toString), 
 	       degring 1, (#vars):1);
      R := rawPolynomialRing(K, M);
-     scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
+     scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)
 
 polyring3 = (K, vars, mo, degs) -> (
@@ -71,7 +71,7 @@ polyring3 = (K, vars, mo, degs) -> (
      M := rawMonoid(mo, apply(vars, toString), 
 	       degring ndegs, degs);
      R := rawPolynomialRing(K, M);
-     scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
+     scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)
 
 mat = (tab) -> (

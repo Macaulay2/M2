@@ -306,7 +306,7 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
       ERROR("zero element has no degree");
       return;
     }
-  if (P != 0)
+  if (P == 0)
     {
       ERROR("expected polynomial ring");
       return;
@@ -338,7 +338,7 @@ M2_arrayint RingElement::multi_degree() const
 RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P != 0)
+  if (P == 0)
     {
       ERROR("expected polynomial ring");
       return 0;
@@ -367,7 +367,7 @@ RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
 RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P != 0)
+  if (P == 0)
     {
       ERROR("expected polynomial ring");
       return 0;
