@@ -467,7 +467,7 @@ document {
      global scope, meaning they are visible from every line of code,
      or local scope, with visibility restricted to a single file or
      function body.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "x",
 	  "ab12"
 	  },

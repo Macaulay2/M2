@@ -11,7 +11,8 @@ document {
      "The length of a graded module is the difference between the largest and
      smallest indices of occupied spots.  Chain complexes are graded modules,
      so this function applies to them, too.",
-     Examples => EXAMPLE {
+     SUBSECTION "Examples",
+     EXAMPLE {
 	  "R = QQ[x..z];",
 	  "C = res coker vars R",
 	  "length C"
@@ -49,7 +50,8 @@ document {
      braces when entering or displaying an array, and arrays can't be used
      as vectors.  Their main use is notational: for example, they appear
      in the construction of polynomial rings.",
-     Examples => EXAMPLE {
+     SUBSECTION "Examples",
+     EXAMPLE {
 	  "v = [a,b,c]",
 	  "v#2",
 	  "ZZ[a,b,c]"
@@ -63,7 +65,8 @@ document {
      "A sequence is an ordered collection of things enclosed by parentheses
      and separated by commas.  Use ", TO "#", " to get the length of a
      sequence of to get one of the elements.",
-     Examples => EXAMPLE {
+     SUBSECTION "Examples",
+     EXAMPLE {
 	  "v = (a,b,c)",
 	  "#v",
 	  "v#2"
@@ -81,7 +84,8 @@ document {
      Outputs => {
 	  Sequence => {" of length one whose single element is ", TT "x", "."},
 	  },
-     Examples => EXAMPLE {
+     SUBSECTION "Examples",
+     EXAMPLE {
 	  "singleton 3",
 	  "#oo",
 	  },
@@ -154,7 +158,8 @@ document {
 	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      "The function ", TT "f", " is responsible for printing the output prompt and for applying the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired.",
-     Examples => EXAMPLE "code Thing.Print"
+     SUBSECTION "Examples",
+     EXAMPLE "code Thing.Print"
      }
 
 document {
@@ -170,7 +175,8 @@ document {
 	       "at top level, whenever it is time, as indicated by a semicolon at the end of an input line,
 	       to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
-     Examples => EXAMPLE "code Thing.NoPrint"
+     SUBSECTION "Examples",
+     EXAMPLE "code Thing.NoPrint"
      }
 
 document {
@@ -303,7 +309,7 @@ document {
      variables in effect at the time of its creation, can change
      those values, and share the changes with other functions created
      at the same time.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "f = x -> 2*x+1",
 	  "f 100"
 	  },
@@ -319,7 +325,7 @@ document {
      any necessary terminal slashes.  One further directory is implicitly searched 
      first: the directory containing the current input file; when input is coming 
      from the standard input, that directory is the current directory of the process.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "path",
 	  ///path = append(path, getenv "HOME" | "/resolutions/")///
 	  }
@@ -399,7 +405,7 @@ document {
      Outputs => {
 	  {"a list of the keys occurring in the hash table ", TT "t"}
 	  },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
 	  "keys x",
 	  }
@@ -416,7 +422,7 @@ document {
      Outputs => {
 	  {"a list of the values occurring in the hash table ", TT "t", "."}
 	  },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
 	  "values x",
 	  }
@@ -432,7 +438,7 @@ document {
      Copying the list v is always done when v is mutable.
      Certain functions always splice their arguments or their argument
      lists for the sake of convenience.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "splice ((a,b),c,(d,(e,f)))",
       	  "splice [(a,b),c,(d,(e,f))]",
 	  },
@@ -447,7 +453,7 @@ document {
      PARA,
      "Works also for sequences, and leaves other expressions unchanged.
      Copying the list v is always done when v is mutable.",
-     Examples => EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
+     EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
      SeeAlso => "splice"
      }
 
@@ -456,7 +462,7 @@ document {
      Headline => "separator for elements of a visible list",
      TT "x,y,...,z", " -- the comma is used to separate elements of a list or
      sequence.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "a,b,c",
 	  "{a,b,c}"
 	  }
@@ -469,7 +475,7 @@ document {
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
      by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
      lists of the same class, then the result is also of that class.",
-     Examples => EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
+     EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
      }
 
 document {
@@ -484,7 +490,7 @@ document {
 	  {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
 	  },
      "The result ", TT "r", " will have the same class as ", TT "v", ".",
-     Examples => EXAMPLE "apply([1,3,5,7], i->i^2)",
+     EXAMPLE "apply([1,3,5,7], i->i^2)",
      SeeAlso => {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }
 
@@ -502,7 +508,7 @@ document {
      TT "apply(n,f)", " -- applies the function ", TT "f", " to each integer
      in the range ", TT "0 .. n-1", " returning the sequence of results.
      This is equivalent to ", TT "apply( toList(0 .. n-1),f)", ".",
-     Examples => EXAMPLE "apply(10, i -> i^2)"
+     EXAMPLE "apply(10, i -> i^2)"
      }
 document {
      Key => apply,
@@ -521,7 +527,7 @@ document {
      Headline => "apply a function to each element of a list",
      TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ".  The function values are discarded.",
-     Examples => EXAMPLE "scan({a,4,\"George\",2^100}, print)"
+     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
      }
 
 document {
@@ -531,7 +537,7 @@ document {
      in the range ", TT "0 .. n-1", " discarding the results.",
      PARA,
      "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "scan(3,print)",
 	  "v = {a,b,c}",
 	  "scan(#v, i -> print(i,v#i))"
@@ -571,7 +577,7 @@ document {
      "The order of the elements in the result will be the same as
      in the original list ", TT "v", ", and the class will be the same,
      too.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "select({1,2,3,4,5}, odd)",
 	  "select([1,2,3,4,5], odd)",
 	  }
@@ -595,7 +601,7 @@ document {
      PARA,
      "The order of the elements in the result will be the same as
      in the original list ", TT "v", ".",
-     Examples => EXAMPLE "select(2,[1,2,3,4,5], odd)"
+     EXAMPLE "select(2,[1,2,3,4,5], odd)"
      }
 document {
      Key => (select,ZZ,HashTable,Function),
@@ -746,7 +752,7 @@ document {
      Headline => "add to the end of a list",
      TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
-     Examples => EXAMPLE "append( {a,b,c}, x )",
+     EXAMPLE "append( {a,b,c}, x )",
      SeeAlso =>{ "prepend", "join"}
      }
 
@@ -755,7 +761,7 @@ document {
      Headline => "add to the beginning of a list",
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
-     Examples => EXAMPLE "prepend( x, {a,b,c} )",
+     EXAMPLE "prepend( x, {a,b,c} )",
      SeeAlso =>{ "append", "join"}
      }
 
@@ -767,7 +773,7 @@ document {
      PARA,
      "Emacs does a good job displaying the comments in a different color
      for visibility.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "x = 1 -- this is a comment",
 	  }
      }
@@ -784,7 +790,7 @@ document {
      Outputs => {
 	  {"the string whose characters have the ASCII codes listed in ", TT "v"}
 	  },
-     Examples => EXAMPLE {///ascii {65,66,67}///, ///ascii oo///},
+     EXAMPLE {///ascii {65,66,67}///, ///ascii oo///},
      SeeAlso => { (ascii, String) }
      }
 
@@ -797,7 +803,7 @@ document {
      Outputs => {
 	  {"the list of (small integer) ASCII codes of the characters of ", TT "s"}
 	  },
-     Examples => EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///},
+     EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///},
      SeeAlso => { (ascii, List) }
      }
 
@@ -922,7 +928,7 @@ document {
      TT "x /^ n", " -- computes the n-th divided power of x.",
      PARA,
      "This is implemented naively as ", TT "x^n/n!", ".",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "ZZ/101[x];",
       	  "x/^3"
 	  },
@@ -952,7 +958,7 @@ document {
      Headline => "reverse a list",
      TT "reverse v", " -- yields a list containing the elements of the 
      list ", TT "v", " in reverse order.",
-     Examples => EXAMPLE "reverse {a,b,c,d}"
+     EXAMPLE "reverse {a,b,c,d}"
      }
 
 document {
@@ -986,7 +992,7 @@ document {
      Outputs => {
 	  { "a string obtained by reading from ", TT "f", "." }
 	  },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  ///f = openInOut "!cat"///,
 	  ///isReady f///,
 	  ///f << "hi there" << flush;///,
@@ -1033,7 +1039,7 @@ document {
      NOINDENT,
      TT "get f", " -- yields a string containing the rest of the input from the 
      file ", TT "f", ", closing the file.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  ///"junk" << "hi there" << close///,
       	  ///get "junk"///,
 	  ///unlink "junk"///,
@@ -1051,7 +1057,7 @@ document {
      "The value is a list of the pieces, the number of which is one
      more than the number of occurences of d in s, so that the pieces
      may be reassembled with ", TO "between", ".",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  ///separate( ".", "a.b.c.d" )///,
 	  ///peek separate( ".", "a.b.c.d" )///,
 	  ///demark("=",ooo)///
@@ -1100,7 +1106,7 @@ document {
      Headline => "join lists",
      TT "v|w", " -- join two lists.", 
      PARA,
-     Examples => EXAMPLE "{1,2,3}|{4,5,6}"
+     EXAMPLE "{1,2,3}|{4,5,6}"
      }
 
 document {
@@ -1125,7 +1131,7 @@ document {
      TT "m|n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'or'.",
      PARA,
-     Examples => EXAMPLE "5 | 12"
+     EXAMPLE "5 | 12"
      }
 
 document {
@@ -1274,7 +1280,7 @@ document {
      PARA,
      "Its elements are the sequences (x,y), where x is an element
      of X, and y is an element of Y.",
-     Examples => EXAMPLE "set {1,2} ** set {a,b,c}",
+     EXAMPLE "set {1,2} ** set {a,b,c}",
      SeeAlso => { "**", "Set" }
      }
 
@@ -1299,7 +1305,7 @@ document {
      PARA,
      "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
-     Examples => EXAMPLE "tally apply(100, i -> random 10)",
+     EXAMPLE "tally apply(100, i -> random 10)",
      SeeAlso => {"setRandomSeed"}
      }
 
@@ -1335,7 +1341,7 @@ document {
      Outputs => {
 	  {"a random homogeneous element in the ring ", TT "R", " of degree ", TT "n"}
 	  },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "R = GF(9,Variable=>a)[x,y];",
 	  "random(3,R)"
 	  },
@@ -1362,7 +1368,7 @@ document {
      Headline => "make a random module map",
      TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
      module G to the free module F.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "random(R^{1,2,3},R^{1,2,3})"
 	  },

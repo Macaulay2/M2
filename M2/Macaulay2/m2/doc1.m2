@@ -73,7 +73,7 @@ document {						    -- rewrite this!
 	  },
      Consequences => {
 	  },
-     Examples => EXAMPLE { },
+     EXAMPLE { },
      Caveat => { },
      SeeAlso => { }
      }///
@@ -722,7 +722,7 @@ document {
      Outputs => {
 	  { "the ", TT "1", " by ", TT "n", " matrix whose entries are the variables of the polynomial ring ", TT "R"}
 	  },
-     Examples => {
+     {
 	  EXAMPLE {
       	       "R = QQ[a..e]",
       	       "vars R",

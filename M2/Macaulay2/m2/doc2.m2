@@ -9,7 +9,7 @@ document {
      PARA,
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "timing 3^30",
       	  "peek oo",
 	  },
@@ -21,7 +21,7 @@ document {
      Headline => "time a computation",
      TT "time e", " -- evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
-     Examples => EXAMPLE "time 3^30",
+     EXAMPLE "time 3^30",
      SeeAlso => "timing"
      }
 
@@ -49,7 +49,7 @@ document {
      PARA,
      "Various routines that prepare data for printing convert ", TO "null", "
      to an empty string.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "x = {2,3,,4}",
 	  "net x",
       	  "toString x#2",
@@ -103,7 +103,7 @@ document {
      PARA,
      "The variable ", TT "i", " is a new local variable whose scope includes 
      only the expressions ", TT "c", ", ", TT "x", ", and ", TT "y", ".",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "for i from 3 to 6 do print i",
 	  "for i when i^2 < 90 list i",
 	  },
@@ -153,7 +153,7 @@ document {
      TT "return;", " -- returns ", TO "null", " as the value of the function currently
      being evaluated.",
      PARA,
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "f = x -> (
      if x == 3 then return;
      if x > 3 then return x^2;
@@ -203,7 +203,7 @@ document {
      returns ", TO "null", ".",
      PARA,
      "The behavior of interrupts (other than alarms) is unaffected.",
-     Examples => EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
+     EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
      Caveat => "We will change the behavior of this function soon so that it will be
      possible to catch errors of a particular type.  Meanwhile, users are
      recommended to use this function sparingly, if at all."
@@ -369,7 +369,7 @@ document {
      Usage => "i >> j",
      Inputs => { "i" => null, "j" => null },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
-     Examples => EXAMPLE "256 >> 5",
+     EXAMPLE "256 >> 5",
      SeeAlso => {(symbol <<,ZZ, ZZ)}
      }
 document {
@@ -378,7 +378,7 @@ document {
      Usage => "i << j",
      Inputs => { "i" => null, "j" => null },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},
-     Examples => EXAMPLE "256 << 5",
+     EXAMPLE "256 << 5",
      SeeAlso => {(symbol >>,ZZ, ZZ)}
      }
 
@@ -392,7 +392,7 @@ document {
      Parsing associates leftward, so that several expressions may be displayed 
      with something like ", TT "\"name\"<<x<<y<<z", ".  It will often be convenient 
      to let the last output operation close the file, as illustrated below.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "\"foo\" << 2^30 << endl << close",
       	  "get \"foo\"",
 	  "unlink \"foo\""
@@ -403,7 +403,7 @@ document {
      Key => (symbol <<, Thing),
      Headline => "print to a file",
      TT "<< x", " -- prints the expression x on the standard output file ", TO "stdio", ".",
-     Examples => EXAMPLE "<< \"abcdefghij\" << endl",
+     EXAMPLE "<< \"abcdefghij\" << endl",
      SeeAlso => {"<<"}
      }
 
@@ -424,7 +424,7 @@ document {
      "Warning: such sequences do not get automatically spliced into lists
      containing them.",
      PARA,
-     Examples => EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" }
+     EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" }
      }
 
 document {
@@ -508,7 +508,7 @@ document {
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
      is ", TO "null", ".",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "(3;4;5)",
       	  "(3;4;5;)"
 	  }
@@ -714,7 +714,7 @@ document {
      Usage => "value s",
      Inputs => { "s" => null },
      Outputs => { {"the value of ", TT "s" } },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "x = s",
 	  "s = 11111111111",
       	  "x",
@@ -731,7 +731,7 @@ document {
      "The contents of ", TT "s", " are treated as code in the
      Macaulay 2 language, parsed it in its own scope (the same way a file is)
      and evaluated.  The string may contain multiple lines.",
-     Examples => {
+     {
 	  EXAMPLE {
 	       ///value "2 + 2"///,
       	       ///value "a := 33
@@ -749,7 +749,7 @@ document (
      Usage => "value s",
      Inputs => { "s" => null },
      Outputs => { "x" => {"the value of ", TT "s" } },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "p = (expression 2)^3 * (expression 3)^2",
       	  "value p"
 	  }
@@ -760,7 +760,7 @@ document {
      Headline => "get a global symbol", 
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "num",
       	  "num = 5",
       	  "num",
@@ -782,7 +782,7 @@ document {
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TO "null", ".",
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "f = () -> ZZ[local t]",
       	  "f()",
       	  "t",
@@ -796,7 +796,7 @@ document {
      Headline => "get a symbol",
      TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
-     Examples => {EXAMPLE {
+     {EXAMPLE {
 	       "num",
 	       "num = 5",
 	       "num",
@@ -827,7 +827,7 @@ document {
      "The arguments may also be lists or sequences of strings and symbols, in
      which case they are concatenated recursively.  Additionally,
      an integer may be used to represent a number of spaces.",
-     Examples => EXAMPLE "concatenate {\"a\",(\"s\",3,\"d\"),\"f\"}",
+     EXAMPLE "concatenate {\"a\",(\"s\",3,\"d\"),\"f\"}",
      SeeAlso => { "String"} 
      }
 

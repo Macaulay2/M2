@@ -588,7 +588,7 @@ document {
      Usage => "C_i",
      Inputs => { "C" =>"" , "i" => "" },
      Outputs => {{"the ", TT "i", "-th module of the chain complex ", TT "C"}},
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "R = ZZ[x..z]",
 	  "C = res coker vars R",
 	  "C_2",
@@ -634,7 +634,7 @@ document {
 	  "i" => ()
 	  },
      Outputs => { ("the component ", TT "D_(i+d) <- C_i" ) },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "R = ZZ/101[a..c]",
 	  "I = image vars R",
 	  "J = image symmetricPower (2,vars R)",
@@ -655,7 +655,7 @@ document {
 	  "f0" => { "a map from ", TT "C_0", " to ", TT "D_0" },
 	  },
      Outputs => { { "a chain complex map ", TT "f: D <--- C", " of degree 0 extending ", TT "f0", " in the sense that ", TT "f_0==f0" } },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "R = ZZ/101[a..c]",
 	  "I = image vars R",
 	  "J = image symmetricPower (2,vars R)",
@@ -680,7 +680,7 @@ document {
      Usage => "cone f",
      Inputs => { "f"=>"" },
      Outputs => { {"the mapping cone of a ", TT "f", ""} },
-     Examples => {
+     {
 	  EXAMPLE {
 	       "R = ZZ/101[x,y,z]",
 	       "m = image vars R",

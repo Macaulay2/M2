@@ -14,12 +14,11 @@ document {
      Consequences => {
 	  {}
 	  },
-     Examples => {
-	  ...
-	  EXAMPLE {
-	       "",
-	       ""
-	       },
+      ...
+      EXAMPLE {
+	  "...",
+	  "..."
+	  },
      Caveat => { },
      SeeAlso => { }
      }

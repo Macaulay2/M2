@@ -468,7 +468,6 @@ fixupTable := new HashTable from {
      FileName => chkIsString FileName,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
-     Examples => val -> if val =!= {} and val =!= null then fixup PARA { SUBSECTION "Examples", extractExamples hypertext val },
      Caveat => v -> if v =!= null then fixup PARA { SUBSECTION "Caveat", SEQ v },
      ProgrammingHint => v -> if v =!= null then fixup PARA { SUBSECTION "Programming Hint", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup PARA { SUBSECTION "See also", UL (TO \ enlist v) },
@@ -494,7 +493,6 @@ documentOptions := new HashTable from {
      OldSynopsis => true,				    -- old
      FileName => true,
      Headline => true,
-     Examples => true,
      SeeAlso => true,
      Caveat => true,
      ProgrammingHint => true,
