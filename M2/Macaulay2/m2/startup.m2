@@ -45,7 +45,6 @@ if firstTime then (
 	  );
      hush = () -> (
 	  Thing.BeforePrint = identity;
-	  Thing.BeforeNoPrint = identity;
 	  Thing.Print = identity;
 	  Thing.NoPrint = identity;
 	  Thing.AfterPrint = identity;
