@@ -147,24 +147,25 @@
 		       (indent-to i)
 		       ) ) ) ) )
 
-; We assume something like 
-;   (defvar M2HOME "/home/dan/src/M2/Macaulay2")
-; has been put into the user's .emacs file.
-(defvar M2-default-html-index (concat M2HOME "/html/master.html"))
-
-(autoload 'find-tag-interactive "etags")
-
-(defun M2-find-documentation (key)
-  (interactive (find-tag-interactive "Find documentation: "))
-  (let ((file M2-default-html-index))
-    (save-excursion
-      (if (get-file-buffer file)
-	  (set-buffer (get-file-buffer file))
-	(set-buffer (find-file-noselect M2-default-html-index nil t)))
-      (goto-char (point-min))
-      (if (re-search-forward (concat "^<LI><A HREF=\"\\(.*\\.html\\)\">" key "</A>$") nil t)
-	  (w3-fetch (format "file:%s/html/%s" M2HOME (buffer-substring (match-beginning 1) (match-end 1))))
-	(error "didn't find key %s in file %s" key file)))))
+;; disabled Jan 2, 2003.
+;; ; We assume something like 
+;; ;   (defvar M2HOME "/home/dan/src/M2/Macaulay2")
+;; ; has been put into the user's .emacs file.
+;; (defvar M2-default-html-index (concat M2HOME "/html/master.html"))
+;; 
+;; (autoload 'find-tag-interactive "etags")
+;; 
+;; (defun M2-find-documentation (key)
+;;   (interactive (find-tag-interactive "Find documentation: "))
+;;   (let ((file M2-default-html-index))
+;;     (save-excursion
+;;       (if (get-file-buffer file)
+;; 	  (set-buffer (get-file-buffer file))
+;; 	(set-buffer (find-file-noselect M2-default-html-index nil t)))
+;;       (goto-char (point-min))
+;;       (if (re-search-forward (concat "^<LI><A HREF=\"\\(.*\\.html\\)\">" key "</A>$") nil t)
+;; 	  (w3-fetch (format "file:%s/html/%s" M2HOME (buffer-substring (match-beginning 1) (match-end 1))))
+;; 	(error "didn't find key %s in file %s" key file)))))
 
 (require 'font-lock)
 (if (not (boundp 'font-lock-constant-face))

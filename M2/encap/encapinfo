@@ -1,3 +1,5 @@
 encap 2.0
 contact dan@math.uiuc.edu
-linkdir lib/*
+linkdir lib/Macaulay2/*
+linkdir share/Macaulay2/*
+linkdir doc/Macaulay2/*

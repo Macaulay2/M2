@@ -4,7 +4,7 @@ dump = () -> (
      -- if version#"operating system" === "Linux" then (
      --	  << "open files : " << stack lines get("!ls -l /proc/"|toString processID()|"/fd") << endl;
      --   );
-     fn := concatenate("../libexec/Macaulay2-",
+     fn := concatenate("Macaulay2-",
 	  try first lines get "!uname -m | sed s=/=-=g" 
 	  else version#"architecture", 
 	  "-data");

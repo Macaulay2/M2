@@ -105,7 +105,8 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
+	cd ../libexec && time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
+		'-e path = {"../m2/"}' \
 		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
