@@ -10,7 +10,7 @@ separateRegexp(String,ZZ,String) := (re,n,s) -> (
 
 selectRegexp = method()
 selectRegexp(String,String) := (re,s) -> selectRegexp(re,0,s)
-selectRegexp(String,ZZ,String) := (re,n,s) -> (
+selectRegexp(String,ZZ,String) := (re,n,s) -> (		    -- warning: returns null if subexpression not matched
      m := matches(re,s);
      if m#?n then substring(m#n#0,m#n#1,s))
 
