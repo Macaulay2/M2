@@ -186,7 +186,7 @@ diff -ur libfac-orig/factor/tmpl_inst.cc libfac/factor/tmpl_inst.cc
 +#ifndef NOSTREAMIO
  template ostream & operator << ( ostream &, const List<CFList> & );
  template ostream & operator << ( ostream &, const List<Variable> & );
- // template ostream & operator << ( ostream &, const List<int> & );
+ template ostream & operator << ( ostream &, const List<int> & );
  template ostream & operator << ( ostream &, const Array<int> & );
 +#endif
  
