@@ -39,16 +39,16 @@ name MutableHashTable := s -> concatenate (
      "{...}"
      )
 name HashTable := s -> concatenate (
-     name class s,
+     "new ", name class s,
      if parent s =!= Nothing then (" of ", name parent s),
-     "{",
+     " from {",
      if # s > 0
      then demark(", ", apply(pairs s, (k,v) -> name k | " => " | name v) )
      else "",
      "}")
-name MutableList := s -> concatenate(name class s, "{...}")
+name MutableList := s -> concatenate("new ",name class s, " from {...}")
 name BasicList := s -> concatenate(
-     (if class s === List then "{" else (name class s,"{")),
+     (if class s === List then "{" else ("new ", name class s," from {")),
      between(", ",apply(toList s,name)),
      "}" )
 name Array := s -> concatenate ( "[", between(", ",name \ toList s), "]" )

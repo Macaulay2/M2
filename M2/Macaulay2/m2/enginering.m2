@@ -267,6 +267,14 @@ RingElement _ RingElement := (f,m) -> (
 	  );
      f _ m)
 
+RingElement _ ZZ := (f,m) -> (
+     R := ring f;
+     R _ ZZ := (f,m) -> (
+     	  if m =!= 1 then error "expected index to be 1 or a monomial";
+     	  f_(1_(monoid R))
+	  );
+     f _ m)
+
 EngineRing _ ZZ := (R,i) -> (
      if R.?generators 
      then R.generators#i
@@ -385,15 +393,16 @@ RingElement % RingElement := (f,g) -> (
 
 QQ // RingElement := RingElement // QQ :=
 ZZ // RingElement := RingElement // ZZ :=
+
 RingElement // RingElement := (f,g) -> (
      R := class f;
      S := class g;
      R // S := (
-	  if R === S then (
-	       (x,y) -> (
+	  if R === S then (x,y) -> (
+	       try (
 	       	    sendgg ( ggPush x, ggPush y, ggdiv);
 	       	    new R)
-	       )
+	       else first first entries (matrix {{f}} // g))
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
 	       )

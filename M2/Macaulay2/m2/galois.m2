@@ -180,6 +180,7 @@ GF(Ring) := (S,options) -> unpack(S, (R,p,n,f) -> (
 	  name F := h -> name expression h;
 	  net F := h -> net expression h;
 	  );
+     F.isCommutative = true;
      expression F := t -> convert(
 	  F.ConvertToExpression, sendgg(ggPush t, ggtonet)
 	  );

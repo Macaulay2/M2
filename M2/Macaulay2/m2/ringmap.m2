@@ -207,6 +207,7 @@ kernel RingMap := (f,options) -> if f.?kernel then f.kernel else f.kernel = (
      then (
 	  JJ := graphIdeal(f,
 	       MonomialOrder => Eliminate n1, 
+	       MonomialSize => 16,
 	       VariableBaseName => local X);
 	  if isHomogeneous JJ then (
 	      hf := poincare (target f)^1;

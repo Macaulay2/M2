@@ -99,7 +99,7 @@ Grassmannian(ZZ,ZZ,Ring) := (k,r,R) ->(
         KK := coefficientRing R;
         RPr := KK[Variables => r+1];
         Pr := ideal(0_RPr);
-        Fano(k,Pr)
+        substitute( Fano(k,Pr) , vars R )
      )
 
 Grassmannian(ZZ,ZZ) := (k,r) -> (

@@ -121,18 +121,19 @@ readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
 readeval(file:TokenFile):Expr := readeval2(file,false,true);
 export StopIfError := false;
 readevalprint(file:TokenFile):Expr := readeval3(file,true,StopIfError,globalScope);
+nprompt := false;
 xprompt := false;
 prompt():void := (
      if stmtno == laststmtno 
      then (
-	  stdout << " " << blanks(length(tostring(stmtno))) << "   ";
+	  if !nprompt then stdout << " " << blanks(length(tostring(stmtno))) << "   ";
      	  )
      else (
      	  laststmtno = stmtno;
      	  if xprompt 
-	  then stdout << "\1"
-	  else stdout << endl;		  -- double space
-	  stdout << "i" << stmtno << " : ";
+	  then (stdout << "\1";)
+	  else if !nprompt then stdout << endl;		  -- double space
+	  if !nprompt then stdout << "i" << stmtno << " : ";
 	  );
      flush(stdout);
      );
@@ -196,6 +197,7 @@ usageMessage():void := (
 	  + "    -s              stop if error" + newline
 	  + "    \"-e x\"          evaluate expression x" + newline
 	  + "    -x              examples-prompt mode" + newline
+	  + "    -n              no input prompt" + newline
 	  + "    -tty            assume stdin and stdout are ttys" + newline
 	  ));
 
@@ -229,6 +231,7 @@ export process():void := (
 		    )
 	       else if arg === "-silent" then nothing
 	       else if arg === "" then nothing
+	       else if arg === "-n" then nprompt = true
 	       else if arg === "-q" then nothing  -- pass through to top level
 	       else if arg === "-h" then (
 		    usageMessage();

@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 IndexedVariableTable = new Type of MutableHashTable
-expression IndexedVariableTable := hold
+expression IndexedVariableTable := x -> hold x.name
 precedence IndexedVariableTable := x -> 70
 baseName IndexedVariableTable := x -> (
      if x.?name then x.name
@@ -24,6 +24,7 @@ name IndexedVariable := x -> concatenate(name x#0,"_",name x#1)
 expression IndexedVariable := x -> new Subscript from {
      expression x#0,expression x#1
      }
+
 net IndexedVariable := x -> net new Subscript from {x#0,x#1}
 vars IndexedVariable := x -> {x}
 IndexedVariable ? IndexedVariable := (x,y) -> (

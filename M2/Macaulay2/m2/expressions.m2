@@ -165,6 +165,25 @@ name Sum := v -> (
 		    else name v#i ));
 	  concatenate mingle ( seps, names )))
 
+DoubleArrow = new Type of Expression
+DoubleArrow#operator = "=>"
+DoubleArrow#expandFunction = (i,j) -> i => j
+expression Option := v -> new DoubleArrow from apply(v,expression)
+net DoubleArrow := v -> (
+     p := precedence v;
+     if precedence v#0 <= p
+     then (
+	  if precedence v#1 < p
+	  then horizontalJoin("(",net v#0,")=>(",net v#1,")")
+	  else horizontalJoin("(",net v#0,")=>",net v#1)
+	  )
+     else (
+	  if precedence v#1 < p
+	  then horizontalJoin(net v#0,"=>(",net v#1,")")
+	  else horizontalJoin(net v#0,"=>",net v#1)
+	  )
+     )
+
 Product = new Type of AssociativeExpression
 Product#unit = ONE
 Product#EmptyName = "1"
@@ -263,6 +282,13 @@ name Power := name Subscript := name Superscript := v -> (
 	  concatenate(x,(class v)#operator,y)))
 
 -----------------------------------------------------------------------------
+RowExpression = new Type of Expression
+net RowExpression := w -> horizontalJoin apply(toList w,net)
+name RowExpression := w -> concatenate apply(toList w,name)
+-----------------------------------------------------------------------------
+Adjacent = new Type of Expression
+Adjacent#expandFunction = x -> x#0 x#1
+-----------------------------------------------------------------------------
 Equation == Equation        := join
 Equation == Expression      := append
 Expression == Equation      := prepend
@@ -300,6 +326,11 @@ Expression ** OneExpression := (x,y) -> x
 OneExpression ** Expression := (x,y) -> y
 NonAssociativeProduct ** NonAssociativeProduct := join
 NonAssociativeProduct ** Expression := append
+Expression Expression := (x,y) -> new Adjacent from {x,y}
+Expression Array      := (x,y) -> new Adjacent from {x,y}
+     -- are lists expressions, too???
+Expression Thing      := (x,y) -> x (expression y)
+     Thing Expression := (x,y) -> (expression x) y
 Expression ** NonAssociativeProduct := prepend
 Expression ** Expression := (x,y) -> new NonAssociativeProduct from {x,y}
 Expression ** Thing      := (x,y) -> x ** (expression y)
@@ -334,6 +365,8 @@ document { quote expand,
      } 
 
 expand Expression := v -> (class v)#expandFunction apply(toSequence v,expand)
+expand OneExpression := v -> 1
+expand ZeroExpression := v -> 0
 expand Thing := identity
 
 -----------------------------------------------------------------------------
@@ -359,7 +392,7 @@ name SparseMonomialVectorExpression := v -> name (
 MatrixExpression = new Type of Expression
 MatrixExpression#expandFunction = x -> matrix applyTable(toList x,expand)
 name MatrixExpression := m -> concatenate(
-     "{",
+     "new MatrixExpression from {",
      between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
@@ -410,28 +443,42 @@ name BinaryOperation := m -> (
 -----------------------------------------------------------------------------
 FunctionApplication = new Type of Expression -- {fun,args}
 FunctionApplication#expandFunction = m -> (expand m#0) (expand m#1)
-name FunctionApplication := m -> (
+name Adjacent := name FunctionApplication := m -> (
+     p := precedence m;
      fun := m#0;
      args := m#1;
      if class args === Sequence
      then if #args === 1
      then concatenate(name fun, " ", name args)  -- f seq x
      else concatenate(name fun, name args)       -- f(x,y) or f(), ...
-     else if precedence args >= precedence m
+     else if precedence args >= p
+     then if precedence fun > p
      then concatenate(name fun, " ", name args)
-     else concatenate(name fun, "(", name args, ")"))
-net FunctionApplication := m -> (
+     else concatenate("(", name fun, ")", name args)
+     else if precedence fun > p
+     then concatenate(name fun, "(", name args, ")")
+     else concatenate("(", name fun, ")(", name args, ")")
+     )
+net Adjacent := net FunctionApplication := m -> (
+     p := precedence m;
      fun := m#0;
      args := m#1;
-     if precedence args > precedence m
+     if precedence args >= p
+     then if precedence fun > p
      then horizontalJoin (net fun, " ", net args)
-     else horizontalJoin (net fun, "(", net args, ")"))
+     else horizontalJoin ("(", net fun, ")", net args)
+     else if precedence fun > p
+     then horizontalJoin (net fun, "(", net args, ")")
+     else horizontalJoin ("(",net fun,")(", net args, ")")
+     )
 -----------------------------------------------------------------------------
      	       	      precedence Sequence := x -> (
 			   if #x === 0 then 70
 			   else if #x === 1 then 40
 			   else 70
 			   )
+-----------------------------------------------------------------------------
+     	       	   precedence DoubleArrow := x -> 5
 -----------------------------------------------------------------------------
      	       	      precedence Equation := x -> 10
 -----------------------------------------------------------------------------
@@ -447,6 +494,7 @@ net FunctionApplication := m -> (
 	 precedence NonAssociativeProduct := x -> 30
 -----------------------------------------------------------------------------
 	   precedence FunctionApplication := x -> 40
+	    precedence Adjacent := x -> 40
 -----------------------------------------------------------------------------
 			precedence Divide := x -> 50
 -----------------------------------------------------------------------------
@@ -464,6 +512,7 @@ net FunctionApplication := m -> (
 			  precedence RR := x -> 70
 		      precedence Function := x -> 70
 		          precedence List := x -> 70
+		         precedence Array := x -> 70
 			precedence Symbol := x -> 70
 			precedence String := x -> 70
          precedence AssociativeExpression := x -> 70
@@ -475,6 +524,7 @@ precedence SparseMonomialVectorExpression := x -> 70
 		   precedence Superscript := x -> 70
 	      precedence MatrixExpression := x -> 70
 		    precedence HeldString := x -> 70
+		 precedence RowExpression := x -> 70
 -----------------------------------------------------------------------------
 		          precedence Held := x -> precedence x#0
 -----------------------------------------------------------------------------
@@ -622,16 +672,25 @@ net Superscript := x -> (
      )
 net Power := v -> (
      x := v#0;
-     netx := net x;
      y := v#1;
-     if y === 1 then netx 
+     if y === 1 then net x
      else (
      	  nety := net y;
-     	  nety = nety ^ (1 + depth nety);
-     	  horizontalJoin (
-	       if precedence x <= PowerPrecedence
-     	       then ( "(" , netx , ")" , nety)
-	       else (       netx ,       nety)
+	  nety = nety ^ (1 + depth nety);
+	  if class x === Subscript then (
+	       t := verticalJoin(nety,"",net x#1);
+	       horizontalJoin (
+		    if precedence x <= PowerPrecedence
+		    then ( "(" , net x#0 , ")" , t)
+		    else (       net x#0 ,       t)
+		    )
+	       )
+	  else (
+	       horizontalJoin (
+		    if precedence x <= PowerPrecedence
+		    then ( "(" , net x , ")" , nety)
+		    else (       net x ,       nety)
+		    )
 	       )
 	  )
      )
@@ -640,12 +699,12 @@ net Sum := v -> (
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->" + "));
+	  seps := newClass(MutableList, apply(n+1, i->"+"));
 	  seps#0 = seps#n = "";
 	  v = apply(n, i -> (
 		    if class v#i === Minus 
 		    then (
-			 seps#i = if i == 0 then "- " else " - "; 
+			 seps#i = if i == 0 then "-" else "-"; 
 			 v#i#0)
 		    else v#i));
 	  horizontalJoin splice mingle(seps, 
@@ -653,24 +712,41 @@ net Sum := v -> (
 		    if precedence v#i <= p 
 		    then ("(", net v#i, ")")
 		    else net v#i))))
+
+isNumber := method()
+isNumber Thing := i -> false
+isNumber RR :=
+isNumber QQ :=
+isNumber ZZ := i -> true
+isNumber Held := i -> isNumber i#0
+
+startsWithVariable := method()
+startsWithVariable Thing := i -> false
+startsWithVariable Symbol := i -> true
+startsWithVariable Product := 
+startsWithVariable Subscript := 
+startsWithVariable Power := 
+startsWithVariable Held := i -> startsWithVariable i#0
+
 net Product := v -> (
      n := # v;
      if n === 0 then "1"
      else (
      	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i -> " "));
-	  seps#0 = seps#n = "";
+	  seps := newClass(MutableList, splice {"", n-1 : "*", ""});
+	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "";
      	  boxes := apply(#v,
 	       i -> (
 		    term := v#i;
 		    nterm := net term;
 	       	    if precedence term <= p then (
-			 -- seps# i = seps#(i+1) = "";
+			 seps#i = seps#(i+1) = "";
 			 nterm = ("(", nterm, ")");
 			 );
-	       	    nterm
-	       	    )
-	       );
+		    if class term === Power or class term === Subscript then (
+			 seps#(i+1) = "";
+			 );
+	       	    nterm));
 	  horizontalJoin splice mingle (seps, boxes)
 	  )
      )
@@ -739,7 +815,7 @@ center := (s,wid) -> (
      n := width s;
      if n === wid then s
      else (
-     	  w := (wid-n+1)//2;
+     	  w := (wid-n+2)//2;
      	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
 net MatrixExpression := x -> (
@@ -747,16 +823,16 @@ net MatrixExpression := x -> (
      if # x === 0 or # (x#0) === 0 then "|  |"
      else (
      	  x = applyTable(x,net);
-     	  w := apply(transpose x, col -> 3 + max apply(col, i -> width i));
+     	  w := apply(transpose x, 
+	       col -> 1 + max apply(col, i -> width i));
 	  m := verticalJoin between("",
 	       apply(#x,
 		    i -> (
 	       	    	 row := x#i;
-	       	    	 horizontalJoin apply(#row,
-		    	      j -> center(row#j,w#j)))));
+	       	    	 horizontalJoin apply(#row, j -> center(row#j,w#j)))));
 	  side := verticalJoin apply(height m + depth m, i -> "|");
 	  side = side^(height m - height side);
-	  horizontalJoin(side,m,side)))
+	  horizontalJoin(side,m," ",side)))
 
 -----------------------------------------------------------------------------
 -- tex stuff
@@ -913,17 +989,25 @@ File << Thing := { File,
      SEEALSO ("<<")
      }     
 
+nodocs := new MutableHashTable from {
+     (quote < , true),
+     (quote > , true),
+     (quote == , true)
+     }
+
 AfterPrint Thing := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x;
      << endl;
-     d := doc x;
-     if d =!= null then (
-     	  i := 0;
-     	  while i < #d and d#i =!= PARA do i = i+1;
-     	  if i > 0 then << endl << text take(d,i) << endl;
-	  );
-     )
+     if not nodocs#?x then (
+	 d := doc x;
+	 if d =!= null then (
+	      i := 0;
+	      while i < #d and d#i =!= PARA do i = i+1;
+	      if i > 0 then << endl << text take(d,i) << endl;
+	      );
+	 )
+    )
 AfterPrint Expression := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x
@@ -934,11 +1018,17 @@ AfterPrint String := identity
 AfterPrint Boolean := identity
 
 -----------------------------------
-expression List := expression Sequence := v -> apply(v,expression)
+expression Array :=
+expression List :=
+expression Sequence := v -> apply(v,expression)
 -----------------------------------
 -- these interact ... prevent an infinite loop!
 
 expression Thing := x -> new FunctionApplication from { expression, x }
+expression HashTable := x -> (
+     if x.?name and value x.name === x then hold x.name
+     else new FunctionApplication from { expression, x }
+     )
 expression RR := x -> (
      if x < 0 then -new Held from {-x} else new Held from {x}
      )
@@ -977,6 +1067,9 @@ net Symbol := s -> (
      then concatenate("quote ", string s)
      else string s
      )
+
+BeforePrint Symbol := net
+
 -----------------------------------------------------------------------------
 hold = x -> new Held from {x}
 

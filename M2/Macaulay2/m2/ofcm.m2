@@ -50,6 +50,22 @@ GeneralOrderedMonoid = new Type of OrderedMonoid
 GeneralOrderedMonoid.Engine = true
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
+expression GeneralOrderedMonoid := M -> (
+     if not M.?syms
+     then new HeldString from "--empty GeneralOrderedMonoid--"
+     else (
+     	  v := M.syms;
+     	  if any(M.degrees, i -> i != {1}) 
+	  then v = append(v, Degrees => M.degrees);
+          if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
+          then v = append(v, MonomialOrder => M.Options.MonomialOrder);
+          if M.Options.MonomialSize =!= (options monoid).MonomialSize
+          then v = append(v, MonomialSize => M.Options.MonomialSize);
+	  if M.Options.SkewCommutative
+	  then v = append(v, SkewCommutative => M.Options.SkewCommutative);
+	  new Array from apply(v,expression)
+	  )
+     )
 name GeneralOrderedMonoid := M -> (
      if not M.?syms
      then "--empty GeneralOrderedMonoid--"
@@ -235,7 +251,9 @@ monoidDefaults := new OptionTable from {
      Inverses => false,
      MonomialOrder => null,
      MonomialSize => 8,
-     SkewCommutative => false
+     SkewCommutative => false,
+     VariableOrder => null,
+     WeylAlgebra => {}
      }
 monoid = method()
 document { quote monoid,

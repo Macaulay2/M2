@@ -27,7 +27,7 @@ newSchur := (R,M) -> (
      SR.monoid = M;
      SR ? SR := (f,g) -> (
 	  if f == g then quote ==
-	  else SR#leadMonomial f ? SR#leadMonomial g
+	  else leadMonomial f ? leadMonomial g
 	  );
      R * M := (r,m) -> (
 	  sendgg(ggPush SR, ggPush r, ggPush m, ggterm);

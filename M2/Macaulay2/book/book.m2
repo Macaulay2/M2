@@ -3,7 +3,7 @@
 load "booktex.m2"
 
 --------------------------------------------------- make the tex file
-bk = openOut (if hypertex then "M2hbook.tex" else "M2book.tex")
+bk = openOut (if hypertex then "M2hbook.tmp" else "M2book.tmp")
 --------------------------------------------
 bk << ///
 %% Macaulay 2 manual

@@ -81,10 +81,15 @@ document { quote exponents,
      }
 
 name PolynomialRing := R -> name R.baseRings#-1 | name monoid R
+expression PolynomialRing := R -> (
+     if R.?name
+     then expression R.name
+     else (expression R.baseRings#-1) (expression monoid R)
+     )
 net PolynomialRing := R -> (
      if R.?name
-     then string R.name
-     else net R.baseRings#-1 | net monoid R
+     then net R.name
+     else (net R.baseRings#-1) | (net monoid R)
      )
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
@@ -133,7 +138,12 @@ standardForm = method()
 standardForm RingElement := (f) -> (
      RM := ring f;
      if not isPolynomialRing RM then error "expected a polynomial";
-     convert(RM.standardForm, sendgg(ggPush f, ggtonet)))
+     -- was: convert(RM.standardForm, sendgg(ggPush f, ggtonet))
+     c := coefficients f;
+     new HashTable from apply(
+	  first entries c#0 / leadMonomial / standardForm,
+	  first entries lift(c#1, coefficientRing RM),
+	  identity))
 
 document { quote standardForm,
      TT "standardForm f", " -- converts a polynomial or monomial to a
@@ -154,7 +164,12 @@ listForm = method()
 listForm RingElement := (f) -> (
      RM := ring f;
      if not isPolynomialRing RM then error "expected a polynomial";
-     convert(RM.listForm, sendgg(ggPush f, ggtonet)))
+     -- was: convert(RM.listForm, sendgg(ggPush f, ggtonet))
+     c := coefficients f;
+     apply(
+	  first entries c#0 / leadMonomial / exponents,
+	  first entries lift(c#1, coefficientRing RM),
+	  identity))
 
 document { quote listForm,
      TT "listForm f", " -- converts a polynomial or monomial to a form
@@ -185,7 +200,36 @@ Ring OrderedMonoid := (			  -- no memoize
 	  then error "expected ordered monoid handled by the engine";
 	  if not (R.?Engine and R.Engine) 
 	  then error "expected coefficient ring handled by the engine";
-	  RM := new PolynomialRing from (ggPush R, ggPush M, ggpolyring);
+	  Weyl := M.Options.WeylAlgebra === {};
+	  RM := if Weyl then (
+	       new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
+	       ) else (
+	       diffs := M.Options.WeylAlgebra;
+	       if class diffs === Option 
+	       then diffs = {diffs}
+	       else if class diffs =!= List 
+	       then error "expected list as WeylAlgebra option";
+	       diffs = apply(diffs, x -> (
+			 if not ((class x === Option or class x === List) and #x === 2)
+			 then error "expected x=>dx or {x,dx}";
+			 if class x#0 === Sequence and class x#1 === Sequence
+			 then (
+			      if #(x#0) =!= #(x#1)
+			      then error "expected sequences of the same length";
+			      x = mingle x;
+			      )
+			 else x = toList x;
+			 x));
+	       diffs = flatten diffs;
+	       diffs = apply(diffs, x -> (
+			 x = baseName x;
+			 if M.index#?x
+			 then M.index#x
+			 else error "expected a variable of the ring"));
+	       stderr << "diffs : " << diffs << endl;
+	       new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
+	       );
+	  RM.isCommutative = not Weyl;
 	  RM.baseRings = append(R.baseRings,R);
      	  ONE := RM#1;
 	  if degreeLength M != 0 then (
@@ -203,7 +247,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	  RM.monoid = M;
 	  RM ? RM := (f,g) -> (
 	       if f == g then quote ==
-	       else RM#leadMonomial f ? RM#leadMonomial g
+	       else leadMonomial f ? leadMonomial g
 	       );
 	  R * M := (r,m) -> (
 	       sendgg(ggPush RM, ggPush r, ggPush m, ggterm);
@@ -233,14 +277,6 @@ Ring OrderedMonoid := (			  -- no memoize
 	       sendgg(ggPush f, ggPush m, gggetcoeff);
 	       R.pop()
 	       );
-	  RM.standardForm = ConvertApply(
-	       v -> new HashTable from toList v,
-	       ConvertRepeat ConvertApply ( 
-	       	    (m,r) -> m => r,
-	       	    ConvertJoin(M.standardForm, R.ConvertToExpression)));
-	  RM.listForm = ConvertApply(
-	       toList,
-	       ConvertRepeat ConvertJoin(M.listForm, R.ConvertToExpression));
 	  RM.ConvertToExpression = ConvertApply(
 	       args -> (
 		    if # args === 1 
