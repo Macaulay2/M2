@@ -25,12 +25,23 @@ clean::; rm -f core
 libexec bin :; mkdir $@
 clean ::; rm -rf bin
 initialize :: bin libexec
+################################# install
 install ::
 	$(INSTALL) -d $(libexecdir) $(bindir)
-	$(INSTALL_PROGRAM) libexec/Macaulay2 $(libexecdir)/Macaulay2
+	$(INSTALL_PROGRAM) libexec/Macaulay2 $(DUMPDATAFILE) $(libexecdir)
 	rm -f $(bindir)/M2
-	sed 's@^M2HOME.*@M2HOME=$(prefix)@' <bin/M2 >$(bindir)/M2
+	<bin/M2 >$(bindir)/M2 sed \
+		-e 's@^M2HOME=.*@M2HOME=$(datadir)/Macaulay2@' \
+		-e 's@^EXE=.*@EXE=$(libexecdir)/Macaulay2@' \
+		-e 's@^DATA=.*@DATA=$$EXE-` uname -m | sed s=/=-=g `-data@' \
+		-e 's@^SETUP=.*@SETUP=$(prefix)/share/Macaulay2/m2/setup.m2@'
 	chmod 0755 $(bindir)/M2
+	$(INSTALL_DATA) encapinfo $(prefix)
+install ::
+	$(INSTALL) -d $(datadir)/Macaulay2/cache
+	$(INSTALL_DATA) cache/Macaulay2-doc $(datadir)/Macaulay2/cache/Macaulay2-doc
+install ::; $(MAKE) -C packages $@
+install ::; $(MAKE) -C m2 $@
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
