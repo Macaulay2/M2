@@ -261,24 +261,23 @@ M2-send-to-prorgram can obtain lines from this buffer."
   (let* ((f (prog1
 	      (select-frame 
 	       (new-frame
-		'(
-		  (height . 24) 
+		'((height . 24)
 		  (width . 67)
-		  (width . 80)
 		  (visiblity . t)
-		  (minibuffer . t) (name . "DEMO"))))
+		  (minibuffer . nil)
+		  (name . "DEMO"))))
 	      (toggle-scroll-bar 0)
-	      ; (set-default-font "12x24")
-	      (set-default-font "-adobe-courier-bold-r-normal--24-240-75-75-m-150-iso8859-1")
-	      )
-	    )
+	      ; use (w32-select-font) to get good font names under windows
+	      (set-default-font 
+	       (cond ((eq window-system 'w32) "-*-Lucida Console-bold-r-*-*-19-142-*-*-c-*-*-ansi-")
+		     ((eq window-system 'x) "-adobe-courier-bold-r-normal--24-240-75-75-m-150-iso8859-1")
+		     (t "12x24")))))
 	 (width (frame-pixel-width))
 	 (height (frame-pixel-height))
 	 )
-    (modify-frame-parameters f '((left - 0) (top - 0)))
+    (modify-frame-parameters f '((left + 0) (top + 0)))
     (M2)
-    (setq comint-scroll-show-maximum-output t)
-    ))
+    (setq comint-scroll-show-maximum-output t)))
 
 (global-set-key [ f11 ] 'M2-send-to-program)
 (global-set-key [ SunF36 ] 'M2-send-to-program)
