@@ -139,6 +139,10 @@ export List := v -> (
      if not all(v, x -> class x === Symbol) then error "expected a list of symbols";
      if currentPackage === null then error "no current package";
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
+     scan(v, s -> (
+	       currentPackage.Dictionary#(toString s) = s;
+	       currentPackage.Dictionary#(currentPackage.name | "$" | toString s) = s;
+	       ));
      v)
 
 addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
@@ -181,13 +185,6 @@ closePackage String := title -> (
 	       ));
      exportDict := pkg.Dictionary;
      if pkg =!= Main then (			    -- protect it later
-	  scan(pkg#"exported symbols", 
-	       s -> (
-		    nam := toString s;
-		    exportDict#nam = s;
-		    newname := title | "$" | nam;
-		    exportDict#newname = s;
-		    ));
 	  protect dict;					    -- maybe don't do this, as it will be private
 	  protect exportDict;
 	  );
@@ -217,8 +214,9 @@ dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictiona
 
 package = method ()
 package Dictionary := d -> (
-     if currentPackage =!= null and currentPackage.Dictionary === d or currentPackage#"private dictionary" === d then currentPackage else
-     scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
+     if currentPackage =!= null and (currentPackage.Dictionary === d or currentPackage#"private dictionary" === d)
+     then currentPackage 
+     else scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
      )
 package Thing := x -> (
      d := dictionary x;
