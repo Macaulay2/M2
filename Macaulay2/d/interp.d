@@ -122,6 +122,7 @@ readeval(file:TokenFile):Expr := readeval2(file,false,true);
 export StopIfError := false;
 readevalprint(file:TokenFile):Expr := readeval3(file,true,StopIfError,globalScope);
 nprompt := false;
+mpwprompt := false;
 xprompt := false;
 prompt(o:file):void := (
      if stmtno == laststmtno 
@@ -133,7 +134,9 @@ prompt(o:file):void := (
      	  if xprompt 
 	  then (o << "\1";)
 	  else if !nprompt then o << endl;		  -- double space
-	  if !nprompt then o << "i" << stmtno << " : ";
+	  if mpwprompt then (o << "i" << stmtno << " : " << endl 
+	                      << " " << blanks(length(tostring(stmtno))) << "   ";)
+	  else if !nprompt then (o << "i" << stmtno << " : ";)
 	  ));
 loadprint(s:string):Expr := (
      when openTokenFile(s)
@@ -215,6 +218,7 @@ usageMessage():void := (
 	  + "    \"-e x\"          evaluate expression x" + newline
 	  + "    -h              print this usage message" + newline
 	  + "    -n              print no input prompts" + newline
+	  + "    -mpwprompt      print a prompt suitable for use using MPW on the Macintosh" + newline
 	  + "    -q              don't load init file" + newline
 	  + "    -s              stop if an error occurs" + newline
 	  + "    -silent         don't print the startup banner" + newline
@@ -253,6 +257,7 @@ export process():void := (
 	       else if arg === "-silent" then nothing
 	       else if arg === "" then nothing
 	       else if arg === "-n" then nprompt = true
+       	       else if arg === "-mpwprompt" then mpwprompt = true
 	       else if arg === "-q" then nothing  -- pass through to top level
 	       else if arg === "-h" then (
 		    usageMessage();
