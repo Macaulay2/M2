@@ -8,6 +8,7 @@
 #include "matrix.hpp"
 #include "Z.hpp"
 #include "ntuple.hpp"
+#include "termideal.hpp"
 
 #include "geopoly.hpp"
 #include "serial.hpp"
@@ -28,39 +29,33 @@ PolynomialRing::PolynomialRing(const Ring *K, const Monoid *MF)
 		     sizeof(Nterm) +
 		     sizeof(int) * (M->monomial_size() - 1));
 
+
+  coefficients_are_ZZ = (K->is_Z());
+  Rsyz = NULL;
+  RidealZ = NULL;
+
   isfield = (nvars == 0 && K->is_field());
-  // Can be reset by the front end...
-  //|| (nvars == 1 && quotient_ideal.length() == 1 && K->is_field());}
 }
 
-PolynomialRing::PolynomialRing(const PolynomialRing *R, const array<ring_elem> &I)
+PolynomialRing::PolynomialRing(const PolynomialRing *R, const array<ring_elem> &)
 : Ring(*R),
   base_ring(R)
 {
-  // Use the stash for R
-  pstash = base_ring->pstash;
-
   bump_up((Ring *) base_ring);
 
   normal_exp = normal_exp_a.alloc(nvars);
   normal_m = normal_m_a.alloc(M->monomial_size());
 
-  int i;
+  // Use the stash for R
+  pstash = base_ring->pstash;
 
-  make_Rideal(I);
-
-  isgraded = base_ring->isgraded;
-  if (isgraded)
-    for (i=0; i<quotient_ideal.length(); i++)
-      if (!base_ring->is_homogeneous(quotient_ideal[i]))
-	{
-	  isgraded = false;
-	  break;
-	}
+  coefficients_are_ZZ = (K->is_Z());
+  Rsyz = NULL;
+  RidealZ = NULL;
 
   isfield = (nvars == 0 && K->is_field());
-  // Can be reset by the front end...
-  //|| (nvars == 1 && quotient_ideal.length() == 1 && K->is_field());}
+
+  // isgraded: is set in PolynomialRing::create.
 }
 
 PolynomialRing::~PolynomialRing()
@@ -77,6 +72,7 @@ PolynomialRing::~PolynomialRing()
 PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 {
   PolynomialRing *obj = new PolynomialRing(K,MF);
+  obj->Rsyz = obj->make_FreeModule();
   return (PolynomialRing *) intern(obj);
 }
 
@@ -84,6 +80,20 @@ PolynomialRing *PolynomialRing::create(
     const PolynomialRing *R, const array<ring_elem> &I)
 {
   PolynomialRing *obj = new PolynomialRing(R,I);
+  if (obj->coefficients_are_ZZ)
+    obj->make_RidealZ(I);
+  else
+    obj->make_Rideal(I);
+
+  obj->isgraded = obj->base_ring->isgraded;
+  if (obj->isgraded)
+    for (int i=0; i<obj->quotient_ideal.length(); i++)
+      if (!obj->base_ring->is_homogeneous(obj->quotient_ideal[i]))
+	{
+	  obj->isgraded = false;
+	  break;
+	}
+
   return (PolynomialRing *) intern(obj);
 }
 
@@ -193,6 +203,21 @@ Nterm *PolynomialRing::copy_term(const Nterm *t) const
   return result;
 }
 
+void PolynomialRing::make_RidealZ(const array<ring_elem> &polys)
+{
+  // If coefficients_are_ZZ, then
+  // this routine sets the fields:
+  // quotient_ideal, RidealZ, Rsyz,
+
+  const PolynomialRing *S = base_ring;
+  while (S->base_ring != NULL) S = S->base_ring;
+
+  RidealZ = TermIdeal::make_ring_termideal(S,
+			   base_ring->quotient_ideal, 
+			   polys,
+			   Rsyz,
+			   quotient_ideal);
+}
 void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
 {
   int i, top;
@@ -1338,8 +1363,53 @@ ring_elem PolynomialRing::get_terms(const ring_elem f, int lo, int hi) const
   return head.next;
 }
 
+void PolynomialRing::apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_elem> &elems) const
+{
+  // f in ring
+  // rsyz in Rsyz
+  // Modify f using the ring elements in rsyz.
+  ring_elem ff = f;
+  for (vec t = rsyz; t != NULL; t = t->next)
+    {
+      ring_elem r = elems[t->comp];
+      ring_elem f1 = imp_mult_by_term(r, t->coeff, t->monom);
+      add_to(ff, f1);
+    }
+  f = ff;
+}
+void PolynomialRing::normal_form_ZZ(Nterm *&f) const
+{
+  Nterm head;
+  Nterm *result = &head;
+
+  while (f != NULL)
+    {
+      vec gsyz, rsyz;
+      bool reduces = RidealZ->search(f->coeff, f->monom,
+				     gsyz, rsyz);
+      if (rsyz != NULL)	
+	{
+	  apply_ring_elements(f,rsyz,quotient_ideal);
+	  Rsyz->remove(rsyz);
+	}
+      if (!reduces)
+	{
+	  result->next = f;
+	  f = f->next;
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  f = head.next;
+}
+
 void PolynomialRing::normal_form(Nterm *&f) const
 {
+  if (coefficients_are_ZZ)
+    {
+      normal_form_ZZ(f);
+      return;
+    }
   Nterm head;
   Nterm *result = &head;
   Nterm *t = f;

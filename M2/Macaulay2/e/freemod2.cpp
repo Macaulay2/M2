@@ -34,6 +34,7 @@ void FreeModule::initialize(const Ring *RR)
 
       nf_exp = nf_exp_a.alloc(M->n_vars());
       is_quotient_ring = (P->base_ring != NULL);
+      coefficients_are_ZZ = P->coefficients_are_ZZ;
     }
 
   bump_up((Ring *) R);

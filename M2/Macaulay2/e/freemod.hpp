@@ -24,6 +24,7 @@ class FreeModule : public type
   friend class gb2_comp;
   friend class res_poly;
   friend class res2_poly;
+  friend class TermIdeal;
 protected:
 
   // free module part
@@ -34,7 +35,8 @@ protected:
   const Ring *K;		// If R is a poly ring, K is the coeff ring, otherwise
   const Ring *R;		// K = R.
   const Monoid *M;	// Resizing is possible.  This will 'change' R, M.
-  int is_quotient_ring;		// MES: this needs to be set!
+  bool is_quotient_ring;		// MES: this needs to be set!
+  bool coefficients_are_ZZ;
 
   enum {FREE, FREE_POLY, FREE_SCHREYER} ty;
       // A free module will be of type FREE if the base ring is not a polynomial ring
@@ -162,6 +164,10 @@ public:
 		   vec &f, vec &fsyz, 
 		   vec g, vec gsyz) const;
 
+  void auto_reduce_coeffs(const FreeModule *Fsyz, 
+		   vec &f, vec &fsyz, 
+		   vec g, vec gsyz) const;
+
   void make_monic(vec &v, vec &vsyz) const;
 
   vec strip(vec v) const;
@@ -225,6 +231,9 @@ protected:
 				     const Nterm *g) const;
 public:
   virtual void normal_form(vec &v) const;
+
+  void apply_quotient_ring_elements(vec &f, vec rsyz) const;
+  virtual void normal_form_ZZ(vec &v) const;
 
   void normal_form(vec &v, 
 		   const array<MonomialIdeal> &mis, 

@@ -3,7 +3,7 @@
 #include "newspair.hpp"
 #include "text_io.hpp"
 
-stash *GB_elem::mystash;
+
 stash *S_pair::mystash;
 stash *gen_pair::mystash;
 stash *s_pair_bunch::mystash;
@@ -26,16 +26,18 @@ S_pair::S_pair()
 {
 }
 
-S_pair::S_pair(vec fsyz)
+S_pair::S_pair(vec gsyz, vec rsyz)
 : next(NULL), 
-  fsyz(fsyz)
+  gsyz(gsyz),
+  rsyz(rsyz)
 {
 }
 
 s_pair_set::s_pair_set(const FreeModule *FF, 
 		       const FreeModule *FFsyz,
-		       const FreeModule *GGsyz)
-: F(FF), Fsyz(FFsyz), Gsyz(GGsyz), heap(NULL), this_deg(NULL),
+		       const FreeModule *GGsyz,
+		       const FreeModule *RRsyz)
+: F(FF), Fsyz(FFsyz), Gsyz(GGsyz), Rsyz(RRsyz), heap(NULL), this_deg(NULL),
   nelems(0), ngens(0), ncomputed(0)
 {
 }
@@ -68,7 +70,8 @@ void s_pair_set::remove_pair_list(S_pair *&p)
 void s_pair_set::remove_pair(S_pair *&s)
 {
   s->next = NULL;
-  Gsyz->remove(s->fsyz);
+  Gsyz->remove(s->gsyz);
+  Rsyz->remove(s->rsyz);
   delete s;
   s = NULL;
 }
@@ -111,7 +114,20 @@ void s_pair_set::flush_degree(s_pair_bunch *&p)
 int s_pair_set::compare(S_pair *f, S_pair *g) const
 {
   // Note: we are only comparing elements of the same degree
-  return Gsyz->compare(f->fsyz, g->fsyz);
+  if (f->rsyz == NULL)
+    {
+      if (g->rsyz == NULL)
+	return Gsyz->compare(f->gsyz, g->gsyz);
+      else 
+	return LT;
+    }
+  else
+    {
+      if (g->rsyz == NULL)
+	return GT;
+      else 
+	return Rsyz->compare(f->rsyz, g->rsyz);
+    }
 }
 
 int s_pair_set::compare(gen_pair *f, gen_pair *g) const
@@ -250,7 +266,7 @@ s_pair_bunch *s_pair_set::get_degree(int d)
     }
   if (heap->mydeg == d) return heap;
   for (p = heap; p->next != NULL; p = p->next)
-    if (p->next->mydeg >= d) break;
+    if (p->next->mydeg > d) break;
     else if (p->next->mydeg == d) return p->next;
 
   q = new s_pair_bunch(d);
@@ -258,9 +274,19 @@ s_pair_bunch *s_pair_set::get_degree(int d)
   p->next = q;
   return q;
 }
-void s_pair_set::insert(S_pair *&p)
+
+void s_pair_set::insert_s_pair(vec gsyz, vec rsyz)
 {
-  int deg = Gsyz->primary_degree(p->fsyz);
+  int deg;
+
+  if (gsyz != NULL)
+    deg = Gsyz->primary_degree(gsyz);
+  else if (rsyz != NULL)
+    deg = Rsyz->primary_degree(rsyz);
+  else 
+    return;
+
+  S_pair *p = new S_pair(gsyz,rsyz);
   s_pair_bunch *q = get_degree(deg);
   p->next = q->unsorted_pairs;
   q->unsorted_pairs = p;
@@ -269,8 +295,10 @@ void s_pair_set::insert(S_pair *&p)
   p = NULL;
 }
 
-void s_pair_set::insert(gen_pair *&p)
+void s_pair_set::insert_generator(vec f, vec fsyz)
 {
+  if (f == NULL) return;
+  gen_pair *p = new gen_pair(f, fsyz);
   int deg = F->primary_degree(p->f);
   s_pair_bunch *q = get_degree(deg);
   p->next = q->unsorted_gens;
@@ -287,6 +315,13 @@ void s_pair_set::insert(gen_pair *&p)
 int s_pair_set::next_degree(int &nextdeg)
      // Returns number to be done in nextdeg.
 {
+  while (heap != NULL && heap->nelems == 0 && heap->ngens == 0)
+    {
+      // Remove this set
+      s_pair_bunch *s = heap;
+      heap = heap->next;
+      delete s;
+    }
   if (heap == NULL) return 0;
   this_deg = heap;
   nextdeg = this_deg->mydeg;
@@ -306,31 +341,12 @@ int s_pair_set::next_degree(int &nextdeg)
   return this_deg->nelems + this_deg->ngens;
 }
 
-S_pair *s_pair_set::next_pair()	// Returns NULL if no more in this degree.
-				// OR if an element of lower degree has appeared.
+bool s_pair_set::next_generator(vec &f, vec &fsyz)
 {
-  if (this_deg != heap) return NULL;
-
-  S_pair *result = this_deg->pairs;
-  if (result == NULL) return NULL;
-  this_deg->pairs = result->next;
-  this_deg->nelems--;
-  nelems--;
-
-  result->next = NULL;
-  pairs_done[pairs_done.length()-1]++;
-  ncomputed++;
-
-  return result;
-}
-
-gen_pair *s_pair_set::next_gen()	// Returns NULL if no more in this degree.
-				// OR if an element of lower degree has appeared.
-{
-  if (this_deg != heap) return NULL;
+  if (this_deg != heap) return false;
 
   gen_pair *result = this_deg->gens;
-  if (result == NULL) return NULL;
+  if (result == NULL) return false;
   this_deg->gens = result->next;
   this_deg->ngens--;
   ngens--;
@@ -339,7 +355,30 @@ gen_pair *s_pair_set::next_gen()	// Returns NULL if no more in this degree.
   pairs_done[pairs_done.length()-1]++;
   ncomputed++;
 
-  return result;
+  f = result->f;
+  fsyz = result->fsyz;
+  delete result;
+  return true;
+}
+
+bool s_pair_set::next_s_pair(vec &gsyz, vec &rsyz)
+{
+  if (this_deg != heap) return false;
+
+  S_pair *result = this_deg->pairs;
+  if (result == NULL) return false;
+  this_deg->pairs = result->next;
+  this_deg->nelems--;
+  nelems--;
+
+  result->next = NULL;
+  pairs_done[pairs_done.length()-1]++;
+  ncomputed++;
+
+  gsyz = result->gsyz;
+  rsyz = result->rsyz;
+  delete result;
+  return true;
 }
 
 void s_pair_set::flush_degree()
@@ -358,10 +397,27 @@ void s_pair_set::flush_degree()
 //// Stats ///////////////////////////////////
 //////////////////////////////////////////////
 
-void s_pair_set::debug_out(buffer &o, S_pair *s) const
+void s_pair_set::debug_out(S_pair *q) const
 {
-  o << "  pair ";
-  Gsyz->elem_text_out(o, s->fsyz);
+  if (q == NULL) return;
+  buffer o;
+  debug_out(o,q);
+  emit(o.str());
+}
+
+
+void s_pair_set::debug_out(buffer &o, S_pair *q) const
+{
+  if (q->gsyz != NULL) 
+    {
+      o << "spair ";
+      Gsyz->elem_text_out(o, q->gsyz);
+    }
+  if (q->rsyz != NULL)
+    {
+      o << " rsyz ";
+      Rsyz->elem_text_out(o, q->rsyz);
+    }
   o << newline;
 }
 

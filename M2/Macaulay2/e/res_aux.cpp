@@ -381,8 +381,8 @@ Matrix res_comp::make_minimal(int i) const
   return m;
 }
 
-
-void cmd_res(object &om, object &olength, object &ostrategy)
+#if 0
+void cmd_res1(object &om, object &olength, object &ostrategy)
 {
   Matrix m = om->cast_to_Matrix();
   int maxlev = olength->int_of();
@@ -390,6 +390,8 @@ void cmd_res(object &om, object &olength, object &ostrategy)
   res_comp *p = new res_comp(m, maxlev, strategy);
   gStack.insert(p);
 }
+#endif
+
 void cmd_res_calc(object &op, object &odeg, object &oargs)
 {
   res_comp *p = op->cast_to_res_comp();

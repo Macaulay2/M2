@@ -694,6 +694,11 @@ schur
 K:ring M:monoid >> R:ring
 Create the ring R = K[M], where each monomial is thought of as representing an irreducible GL(n)-module, where n is the number of variables of the monoid M.  Multiplication is the multiplication of schur functors, and is implemented using a variant of the Littlewood-Richardson rule.
 
+ggsearch
+search
+ti:TermIdeal m:Matrix >> Matrix
+This is a debug routine: given a matrix with one row, return a matrix with the same number of columns as 'm', each column being the result of applying 'search' to the lead term of that column of 'm'.
+
 ggsee
 see
 string >> .
