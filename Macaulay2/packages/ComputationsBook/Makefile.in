@@ -23,19 +23,18 @@ CHAPTERS = completeIntersections \
 Makefile : Makefile.in
 	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
 
-tests: Makefile
-	for i in $(CHAPTERS); \
-	do $(MAKE) -C $$i -f ../Makefile TOPDIR=../$(TOPDIR) run-1-test ; \
-	done
+tests: $(CHAPTERS:=.test)
+%.test :
+	$(MAKE) -C $* -f ../Makefile TOPDIR=../$(TOPDIR) run-1-test
 
 run-1-test: chapter.out.expected.trim chapter.out.trim
 	diff -u $^
 
-chapter.out.trim : chapter.out
-	egrep -v -e '-- .*[0-9.][0-9.]* seconds' <$< >$@
+chapter.out.trim : chapter.out patterns
+	egrep -v -f patterns <$< >$@
 
-chapter.out.expected.trim : chapter.out.expected
-	egrep -v -e '-- .*[0-9.][0-9.]* seconds' <$< >$@
+chapter.out.expected.trim : chapter.out.expected patterns
+	egrep -v -f patterns <$< >$@
 
 clean::
 	rm -f */*.trim
