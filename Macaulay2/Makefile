@@ -10,6 +10,7 @@ include ../Makeconf
 .PHONY: default tests all clean dirs misc config \
 		initialize doc html book exe zip
 ROOT := $(shell basename `pwd`)
+clean::; rm -f core
 ################################# version
 version : ../Makeconf
 	bin/echoout '>$@' 'version ${VERSION} for ${SYSTEM}' 
@@ -80,8 +81,12 @@ clean ::; $(MAKE) -C html clean
 ################################# book
 book ::;  $(MAKE) -C book all
 clean ::; $(MAKE) -C book clean
+################################# emacs
+emacs ::;  $(MAKE) -C emacs all
+clean ::; $(MAKE) -C emacs clean
 ################################# appendix to Vasconcelos' book
 Vasconcelos-appendix ::; $(MAKE) -C Vasconcelos-appendix all
+clean ::; $(MAKE) -C Vasconcelos-appendix clean
 ################################# socket
 clean ::; $(MAKE) -C socket clean
 ################################# Mathematica

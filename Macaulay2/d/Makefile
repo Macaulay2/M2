@@ -222,4 +222,4 @@ clean :
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
-		core core.* compat.c compat.h
+		core core.* compat.c compat.h c-files.tar tmp_init.c

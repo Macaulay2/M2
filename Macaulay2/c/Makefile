@@ -7,6 +7,7 @@ include ../../Makeconf
 %.c        : %.y
 	$(YACC) $(YFLAGS) $^
 	mv y.tab.c $*.c
+	rm -f y.tab.h y.output
 ############################################################
 .PHONY : clean all install
 # YACC := yacc
@@ -51,4 +52,4 @@ wc:;				wc -l $(ALLFILES)
 # we purposely don't delete grammar.c so it can be used for porting
 clean :
 	rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
-		allfiles scc.install TAGS scc core
+		allfiles scc.install TAGS scc core y.tab.h y.output
