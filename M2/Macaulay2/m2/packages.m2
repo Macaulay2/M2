@@ -220,30 +220,6 @@ package HashTable := package Function := x -> if ReverseDictionary#?x then packa
 
 warned := new MutableHashTable
 
-package TO := x -> (
-     error "do we need this anymore?";
-     key := x#0;
-     pkg := packageTag key;
-     fkey := formatDocumentTag key;
-     p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
-     if #p == 1 then (
-	  p = p#0;
-	  if pkg =!= p then
-	  if pkg === null
-	  then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it wasn't predicted" << endl
-	  else stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
-	  p)
-     else if #p > 1 then (
-	  error("documentation for ",fkey," occurs in multiple packages: ", demark(", ",apply(p,P -> P#"title")));
-	  )
-     else (
-	  if not warned#?key then 
-     	  if pkg === null
-	  then stderr << "warning: documentation for \"" << fkey << "\" not found" << endl
-	  else stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << pkg << " eventually" << endl;
-	  warned#key = true;
-     	  pkg))
-
 Package.GlobalAssignHook = (X,x) -> (
      if not ReverseDictionary#?x then ReverseDictionary#x = X;
      -- use x;
