@@ -107,12 +107,12 @@ formatDocumentTag Sequence := record(
 -----------------------------------------------------------------------------
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
-verifyTag Sequence := s -> (
-     if class lookup s =!= Function then error("no method installed for '", formatDocumentTag s, "'"))
-verifyTag Option   := s -> (
-     fn := s#0;
-     opt := s#1;
-     if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
+ -- verifyTag Sequence := s -> (
+ --      if class lookup s =!= Function then error("no method installed for '", formatDocumentTag s, "'"))
+ -- verifyTag Option   := s -> (
+ --      fn := s#0;
+ --      opt := s#1;
+ --      if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
 
 -----------------------------------------------------------------------------
 -- html input
@@ -352,22 +352,21 @@ apropos = (pattern) -> (
      mat := "*" | toString pattern | "*";
      sort select( keys symbolTable(), i -> match(i,mat)))
 
-noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
-noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
-briefDocumentation = x -> (
-     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
-     else (
-	 d := getDoc formatDocumentTag x;
-	 if d =!= null then (
-	      i := 0;
-	      while i < #d and class d#i =!= PARA do i = i+1;
-	      if i > 0 then << endl << text take(d,i) << endl ) ) )
-
 headline := memoize (
      key -> (
 	  d := getDoc formatDocumentTag key;
 	  if d =!= null and #d > 0 and class first d === HEADLINE 
 	  then SEQ join( {"  --  "}, toList first d ) ) )
+
+noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
+noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
+briefDocumentation = x -> (
+     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
+     else (
+	 d := headline x;
+	 if d =!= null then << endl << d << endl
+	 )
+    )
 
 smenu := s -> MENU ((i -> SEQ{ TO i, headline i }) \ sort (formatDocumentTag \ s))
 menu := s -> MENU apply(s, i -> SEQ{ TO formatDocumentTag i, headline i } )
@@ -392,8 +391,14 @@ documentation String := s -> (
      then documentation unformatTag#s
      else getDoc toExternalString s
      )
-type := s -> SEQ {"The object ", TT toString s, " is a :", PARA{}, menu ancestors1 class s, PARA{}}
-documentation Thing := s -> SEQ { usage s, type s }
+
+title := s -> if headline s =!= null then SEQ { " -- ", headline s, " -- " }
+type := s -> SEQ {
+     "The object ", TT toExternalString s, " is a member of each of the
+     following classes, most specific first:", PARA{}, 
+     menu ancestors1 class s, PARA{}
+     }
+documentation Thing := s -> SEQ { title s, usage s, type s }
 binary := set binaryOperators
 prefix := set prefixOperators
 postfix := set postfixOperators
@@ -402,22 +407,27 @@ op := s -> if operator#?s then (
      ss := toString s;
      SEQ {
 	  if binary#?s then SEQ {
-	       NOINDENT{}, TT ("x "|ss|" y"), " -- a binary operator.  The user may 
-	       install ", TO {"binary method", "s"}, " for this operator with code
-	       such as ",
+	       NOINDENT{}, 
+	       "This operator may be used as a binary operator in an expression
+	       like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, "
+	       for handling such expressions with code such as ",
 	       PRE ("         X "|ss|" Y := (x,y) -> ..."), "
 	       where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
 	       class of ", TT "y", ".", PARA{}
 	       },
 	  if prefix#?s then SEQ {
-	       NOINDENT{}, TT (ss|" y"), " -- a prefix unary operator.  The user may 
-	       install a method for this operator with code such as ",
+	       NOINDENT{}, 
+	       "This operator may be used as a prefix unary operator in an expression
+	       like ", TT (ss|" y"), ".  The user may install a method for handling
+	       such expressions with code such as ",
 	       PRE ("           "|ss|" Y := (y) -> ..."), "
 	       where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
 	       },
 	  if postfix#?s then SEQ {
-	       NOINDENT{}, TT ("x "|ss), " -- a postfix unary operator.  The user may 
-	       install a method for this operator with code such as ",
+	       NOINDENT{}, 
+	       "This operator may be used as a postfix unary operator in an expression
+	       like ", TT ("x "|ss), ".  The user may install a method for handling
+	       such expressions with code such as ",
 	       PRE ("         X "|ss|"   := (x,y) -> ..."), "
 	       where ", TT "X", " is the class of ", TT "x", ".", PARA{}
 	       },
@@ -427,11 +437,12 @@ documentation Symbol := s -> (
      a := apply(options s, f -> f => s);
      b := methods s;
      SEQ {
+	  title s, 
 	  usage s,
-     	  type s,
 	  op s,
+     	  type s,
 	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, smenu a, PARA{}},
-	  if #b > 0 then SEQ {"Internal methods for ", toString s, " :", PARA{}, smenu b, PARA{}} 
+	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, smenu b, PARA{}} 
      	  }
      )
 
@@ -448,6 +459,7 @@ documentation Type := X -> (
      d := ancestors X;
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
+	  title X, 
 	  usage X,
      	  type X,
 	  if X.?synonym then SEQ {
@@ -464,7 +476,7 @@ fmeth := f -> (
      b := methods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ",toString f," :", PARA{}, smenu b, PARA{}} )     
+     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, smenu b, PARA{}} )     
 
 optargs := method(SingleArgumentDispatch => true)
 optargs Thing := x -> null
@@ -488,16 +500,68 @@ seecode := x -> if (try locate x) =!= locate method then (
      if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
      )
 
-documentation Function :=  f -> SEQ { usage f, type f, ret f, fmeth f, optargs f, seecode f }
+documentation Function :=  f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
 documentation Option := v -> (
      (fn, opt) -> SEQ { 
-	  "Default value is : ", toString opt, " => ", toString (options fn)#opt,
-	  "See also: ", TO formatDocumentTag fn
+	  title v, 
+	  usage v,
+	  "See also:",
+	  MENU {
+	       SEQ{ "Default value: ", toString (options fn)#opt},
+	       SEQ{ "Function: ", TO formatDocumentTag fn},
+	       SEQ{ "Option name: ", TO formatDocumentTag opt}
+	       }
 	  }
      ) toSequence v
+
+lookup1 := s -> (youngest s)#?s
+nextMoreGeneral2 := (f,A) -> if A =!= Thing then (
+     A' := A;
+     l := false;
+     while not l and A' =!= Thing do (
+	  A' = parent A';
+	  l = lookup1(f,A');
+	  );
+     if l then (f,A'))
+nextMoreGeneral3 := (f,A,B) -> if (A,B) =!= (Thing,Thing) then (
+     A' := A;
+     B' := B;
+     l := false;
+     while not l and (A',B') =!= (Thing,Thing) do (
+	  if B' =!= Thing then B' = parent B' else (
+	       B' = B;
+	       A' = parent A');
+	  l = lookup1(f,A',B'););
+     if l then (f,A',B'))
+nextMoreGeneral4 := (f,A,B,C) -> if (A,B,C) =!= (Thing,Thing,Thing) then (
+     A' := A;
+     B' := B;
+     C' := parent C;
+     l := false;
+     while not l and (A',B',C') =!= (Thing,Thing,Thing) do (
+	  if C' =!= Thing then C' = parent C'
+	  else (
+	       C' = C;
+	       if B' =!= Thing then B' = parent B'
+	       else (
+		    B' = B;
+		    A' = parent A'));
+	  l = lookup1(f,A',B',C');
+	  );
+     if l then (f,A',B',C'))
+nextMoreGeneral := s -> (
+     if #s === 2 then nextMoreGeneral2 s else
+     if #s === 3 then nextMoreGeneral3 s else
+     if #s === 4 then nextMoreGeneral4 s)
+moreGeneral := s -> (
+     n := nextMoreGeneral s;
+     if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
+     )
+
 documentation Sequence := s -> if #s == 0 then null else (
      t := typicalValue k;
      SEQ {
+	  title s, 
 	  usage s,
 	  "See also:",
 	  MENU {
@@ -505,9 +569,10 @@ documentation Sequence := s -> if #s == 0 then null else (
 	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1, headline s#1 }, if #s > 2 then 
 	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2, headline s#2 }, if #s > 3 then
 	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3, headline s#3 }, if t =!= Thing then
-	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}}
+	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}},
+	       optargs s#0,
+	       moreGeneral s
      	       },
-	  optargs s#0,
 	  seecode s
 	  }
      )

@@ -1093,7 +1093,7 @@ document { Monoid,
      }
 
 document { (symbol _, ZZ, Monoid),
-     TT "1_M", " -- provides the unit element of a group or monoid
-     ", TT "M", "."
+     HEADLINE "get unit element",
+     TT "1_M", " -- provides the unit element of a group or monoid ", TT "M", "."
      }
 

@@ -28,12 +28,12 @@ methodFunctionOptions = new MutableHashTable
 
 AssociativeNoOptions := () -> (
      methodFunction := newmethod1 noMethod;
-     methodFunction(Sequence) := self := 
      binaryLookup := (x,y) -> (
 	  -- Common code for every associative method without options
 	  f := lookup(methodFunction,class x,class y);
 	  if f === null then noMethod(x,y)
 	  else f(x,y));
+     methodFunction(Sequence) := self := 
      args -> (
 	  -- Common code for every associative method without options
 	  if #args === 2 then binaryLookup args

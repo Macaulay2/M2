@@ -2,14 +2,11 @@
 
 << "--loading documentation files..." << endl
 
-document { length,
-     HEADLINE "length of a chain complex",
-     TT "length C", " -- returns the length of a graded module or a chain
-     complex."
-     }
+document { length, HEADLINE "length" }
+document { (length, GradedModule), HEADLINE "length of a chain complex" }
 
 document { sendgg,
-     HEADLINE "send command to engine",
+     HEADLINE "send commands to engine",
      TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the  string ", TT "s", " 
      of data and commands to the engine.  The first byte of the result is examined 
      for an error indication, and then an error is raised or the remainder of the 
@@ -20,38 +17,45 @@ document { sendgg,
 
 document { parent,
      HEADLINE "parent type of an object",
-     TT "parent X", " -- yields the parent P of X.",
+     TT "parent X", " -- yields the parent ", TT "P", " of ", TT "X", ".",
      PARA,
-     "Methods for the ", TO {"instance", "s"}, " of X which are not found
-     in X itself are sought in P, and its parent, and so on.",
+     "Methods for the ", TO {"instance", "s"}, " of ", TT "X", " which are not found
+     in ", TT "X", " itself are sought in ", TT "P", ", and its parent, and so on.",
      PARA,
-     "The mathematical notion of a set z and a subset y can modeled
-     in this way, with z being the parent of y.",
+     "The mathematical notion of a set ", TT "z", " and a subset ", TT "y", " can modeled
+     in this way, with ", TT "z", " being the parent of ", TT "y", ".",
      PARA,
      "Things which don't have instances have the empty class, called
      ", TO "Nothing", " as their parent.",
      PARA,
-     "The of Thing is Thing itself (reflecting the fact that there can
-     be no larger class).",
+     "The parent of ", TO "Thing", " is ", TO "Thing", " itself (because every thing
+     is a thing).",
      SEEALSO "classes"
      }
 
 document { Array,
      HEADLINE "class of all arrays",
-     TT "Array", " -- the class of all arrays.",
-     PARA,
      "An array is like a list, except that brackets are used instead of
      braces when entering or displaying an array, and arrays can't be used
      as vectors.  Their main use is notational: for example, they appear
      in the construction of polynomial rings.",
      EXAMPLE {
+	  "v = [a,b,c]",
+	  "v#2",
 	  "ZZ[a,b,c]"
 	  }
      }
 
 document { Sequence,
      HEADLINE "class of all sequences",
-     TT "Sequence", " -- the class of all sequences.",
+     "A sequence is an ordered collection of things enclosed by parentheses
+     and separated by commas.  Use ", TO "#", " to get the length of a
+     sequence of to get one of the elements.",
+     EXAMPLE {
+	  "v = (a,b,c)",
+	  "#v",
+	  "v#2"
+	  },
      PARA,
      SEEALSO "sequences"
      }
@@ -65,18 +69,13 @@ document { singleton,
 	  "singleton 3",
 	  "#oo",
 	  },
-     SEEALSO "Sequence"
+     SEEALSO {"Sequence", "unSingleton"}
      }
 
-document { List,
-     HEADLINE "class of all lists",
-     TT "List", " -- the class of all lists."
-     }
+document { List, HEADLINE "class of all lists", SEEALSO "lists" }
 
 document { Type,
      HEADLINE "class of all types",
-     TT "Type", " -- the class of all types.",
-     PARA, 
      "A type is a hash table intended to contain methods for its instances.",
      PARA,
      SEEALSO {"parent",  "class", "using methods"}
@@ -84,10 +83,8 @@ document { Type,
 
 document { Print,
      HEADLINE "top level method for printing results",
-     TT "Print", " -- a method applied at top level to print the result, 
-     ", TT "r", " of an evaluation.",
-     PARA,
-     "The code for the default Print method will apply the ", TO "AfterEval", "
+     "Applied at top level to print the result, ", TT "r", ", of an evaluation.
+     The code for the default Print method will apply the ", TO "AfterEval", "
      method to ", TT "r", " if there one, and replace ", TT "r", " by the result.  
      Then it applies ", TO "BeforePrint", " method, if there is one,
      to ", TT "r", ", and prints its result instead.  The actual printing
@@ -99,11 +96,10 @@ document { Print,
 
 document { NoPrint,
      HEADLINE "top level method for non-printing results",
-     TT "NoPrint", " -- a method applied at top level to a result suppression of
-     whose printing has been indicated by a semicolon.",
-     PARA,
-     "The code for the default NoPrint method will apply the ", TO "AfterEval", "
-     method to ", TT "r", " if there one, and replace ", TT "r", " by the result.  
+     "Applied at top level to a result suppression of whose printing has
+     been indicated by a semicolon.  The code for the default ", TT "NoPrint", "
+     method will apply the ", TO "AfterEval", " method to ", TT "r", " if
+     there one, and replace ", TT "r", " by the result.
      It will then apply the appropriate ", TO "AfterNoPrint", " method to
      ", TT "r", ", which is normally used to provide auxiliary information to 
      the user about the result.",
@@ -112,62 +108,56 @@ document { NoPrint,
 
 document { BeforePrint,
      HEADLINE "top level method applied before printing results",
-     TT "BeforePrint", " -- a method applied at top level to the result of an evaluation,
+     TT "Applied at top level to the result of an evaluation,
      whose result supplants the original for printing.",
      SEEALSO "Print"
      }
 
 document { AfterEval,
      HEADLINE "top level method applied before printing results",
-     TT "AfterEval", " -- a method applied at top level to the result of an evaluatino,
-     whose result replaces the original for storing in the output variable and for
-     printing.",
+     TT "Applied at top level to the result of an evaluation, whose
+     result replaces the original for storing in the output variable and 
+     for printing.",
      SEEALSO "Print"
      }
 
 document { AfterPrint,
      HEADLINE "top level method applied after printing",
-     TT "AfterPrint", " -- a method applied at top level to the result of an evalution
-     after printing.",
+     TT "Applied at top level to the result of an evaluation after printing.",
      SEEALSO "Print"
      }
 
 document { AfterNoPrint,
      HEADLINE "top level method applied after not printing",
-     TT "AfterNoPrint", " -- a method applied at top level to the result of an 
-     evalution when printing of the result has been suppressed by a semicolon.",
+     "Applied at top level to the result of an evalution when printing of the
+     result has been suppressed by a semicolon.",
      SEEALSO "Print"
      }
 
 document { setrecursionlimit,
      HEADLINE "set the limit on recursion",
-     TT "setrecursionlimit n", " -- sets the recursion limit to n.",
+     TT "setrecursionlimit n", " -- sets the recursion limit to ", TT "n", ".",
      PARA,
-     " It returns the old value.  The recursion limit governs the nesting level
+     "It returns the old value.  The recursion limit governs the nesting level
      permissible for calls to functions."
      }
 
 document { "commandLine",
      HEADLINE "the command line arguments",
-     TT "commandLine", " -- a constant whose value is the list of arguments 
-     passed to the interpreter, including argument 0, the name of the program.",
+     "A constant whose value is the list of arguments passed to the interpreter,
+     including argument 0, the name of the program."
      }
 
 document { "environment",
      HEADLINE "the environment variables",
-     TT "environment", " -- a constant whose value is the list containing the
+     "A constant whose value is the list containing the
      environment strings for the process."
      }
 
-document { Function,
-     HEADLINE "the class of all functions",
-     TT "Function", " -- the class of all functions.",
-     PARA,
-     SEEALSO "functions"
-     }
+document { Function, HEADLINE "the class of all functions", SEEALSO "functions" }
 
 document { "->",
-     HEADLINE "makes a function",
+     HEADLINE "make a function",
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -202,14 +192,12 @@ document { "->",
 
 document { "path",
      HEADLINE "list of directories to look in",
-     TT "path", " -- a list of strings containing names of directories in which\n", 
-     TO "load", " and ", TO "input", " should seek files."
+     "A list of strings containing names of directories in
+     which", TO "load", " and ", TO "input", " should seek files."
      }
 
 document { HashTable,
      HEADLINE "the class of all hash tables",
-     TT "HashTable", " -- the class of all hash tables.",
-     PARA,
      "A hash table consists of: a class type, a parent type, and a
      set of key-value pairs.  The keys and values can be anything.
      The access functions below accept a key and return the
@@ -265,6 +253,7 @@ document { HashTable,
      }
 
 document { maxPosition,
+     HEADLINE "position of largest element",
      TT "maxPosition x", " -- yields the position of the largest element in the list.",
      PARA,
      "If it occurs more than once, then the first occurrence
@@ -272,6 +261,7 @@ document { maxPosition,
      }
 
 document { minPosition,
+     HEADLINE "position of smallest element",
      TT "minPosition x", " -- yields the position of the smallest element in the list.",
      PARA,
      "If it occurs more than once, then the first occurrence
@@ -279,6 +269,7 @@ document { minPosition,
      }
 
 document { keys,
+     HEADLINE "keys used in a hash table",
      TT "keys t", " -- yields a list of the keys occurring in the hash table t.",
      PARA,
      EXAMPLE {
@@ -288,6 +279,7 @@ document { keys,
      }
 
 document { values,
+     HEADLINE "values in a hash table",
      TT "values t", " -- yields a list of the values occurring in the hash table t.",
      PARA,
      EXAMPLE {
@@ -297,6 +289,7 @@ document { values,
      }
 
 document { splice,
+     HEADLINE "remove subsequences",
      TT "splice v", " -- yields a new list v where any members of v which are sequences
      are replaced by their elements.",
      PARA,
@@ -312,6 +305,7 @@ document { splice,
      }
 
 document { deepSplice,
+     HEADLINE "remove subsequences",
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
      PARA,
@@ -322,6 +316,7 @@ document { deepSplice,
      }
 
 document { ",",
+     HEADLINE "separator",
      TT "x,y,...,z", " -- the comma is used to separate elements of a list or
      sequence.",
      PARA,
@@ -332,6 +327,7 @@ document { ",",
      }
 
 document { apply,
+     HEADLINE "apply a function to each element of a list",
      TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ", returning the list of results. If ", TT "v", " is 
      a sequence, then a sequence is returned.",
@@ -342,8 +338,7 @@ document { apply,
 	  },
      PARA,
      NOINDENT,
-     TT "apply(v,w,f)", " -- produces, from lists or 
-     sequences ", TT "v", " and ", TT "w", ",
+     TT "apply(v,w,f)", " -- produces, from lists or sequences ", TT "v", " and ", TT "w", ",
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
      by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
      lists of the same class, then the result is also of
@@ -351,12 +346,12 @@ document { apply,
      is the result.",
      PARA,
      EXAMPLE {
-	  "apply(1 .. 5, a .. e, identity)",
       	  "apply({1,3,5,7}, i->i^2)",
+	  "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)",
 	  },
      PARA,
      NOINDENT,
-     TT "apply(n,f)", " -- equivalent to apply(list (0 .. n-1),f), for an integer n.",
+     TT "apply(n,f)", " -- equivalent to apply( toList(0 .. n-1),f), for an integer n.",
      PARA,
      SEEALSO{ "scan", "select",  "any",  "all", "member"},
      PARA,
@@ -369,6 +364,7 @@ document { apply,
      }
 
 document { scan,
+     HEADLINE "apply a function to each element of a list",
      TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ".  The function values are discarded.",
      PARA,
@@ -380,6 +376,7 @@ document { scan,
      }
 
 document { scanPairs,
+     HEADLINE "apply a function to pair in a hash table",
      TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
      pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
      table ", TT "x", " and ", TT "v", " is the corresponding 
@@ -392,6 +389,7 @@ document { scanPairs,
      }
 
 document { select,
+     HEADLINE "select elements from a list or hash table",
      TT "select(v,f)", " -- select elements of the list or hash table
      ", TT "v", " which yield ", TT "true", " when the function 
      ", TT "f", " is applied.",
@@ -423,9 +421,10 @@ document { select,
 --     }
 
 document { any,
-     TT "any(v,f)", " -- yields the value true or false depending on 
-     whether any element ", TT "v#i", " of ", TT "v", " yields the value true 
-     when the predicate ", TT "f", " is applied.",
+     HEADLINE "whether an element satisfies a condition",
+     TT "any(v,f)", " -- yields the value true or false depending on
+     whether any element ", TT "v#i", " of ", TT "v", " yields the value
+     ", TT "true", " when the predicate ", TT "f", " is applied.",
      PARA,
      "Works when v is a list, sequence, or hash table, but when v is an
      hash table, f is applied to each pair (k,x) consisting of a key k
@@ -435,6 +434,7 @@ document { any,
      }
 
 document { describe,
+     HEADLINE "real description",
      TT "describe x", " -- returns an ", TO "Expression", " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
      certain types of things to acquire the names of global variables to which
@@ -503,16 +503,19 @@ document { times,
      }
 
 document { power,
+     HEADLINE "power",
      TT "power(x,n)", " -- yields the n-th power of ", TT "x", ".",
      PARA,
      SEEALSO "^"
      }
 
 document { difference, 
+     HEADLINE "difference",
      TT "difference(x,y)", " -- returns ", TT "x-y", "." 
      }
 
 document { minus,
+     HEADLINE "additive inverse",
      TT "minus(x)   ", " -- yields ", TT "-x", ".",
      PARA,
      "minus(x,y)  -- yields x-y, but see also ", TO "difference", "."
@@ -539,11 +542,13 @@ document { prepend,
      }
 
 document { "--",
+     HEADLINE "comment",
      TT "--", " introduces a comment in the text of a program.  The comment runs from
      the double hyphen to the end of the line."
      }
 
 document { ascii,
+     HEADLINE "ASCII character conversion",
      TT "ascii s", " -- convert a string to a list of ascii codes.", BR,
      NOINDENT,
      TT "ascii v", " -- convert a list of ascii codes to a string.",
@@ -553,6 +558,7 @@ document { ascii,
      }
 
 document { transnet,
+     HEADLINE "assemble bytes into 4-byte integers",
      TT "transnet v", " -- takes a list ", TT "v", " of integers, and assembles the bytes of the
      integers, four at a time, in network order (high order byte
      first), into a string.",
@@ -568,7 +574,11 @@ document { transnet,
      }
 
 document { symbol " ",
-     TT "f x", " -- yields the result of applying the function f to x.",
+     SEEALSO(symbol " ", Function, Thing),
+     }
+
+document { (symbol " ", Function, Thing),
+     TT "f x", " -- yields the result of applying the function ", TT "f", " to ", TT "x", ".",
      }
 
 document { symbol "*",
@@ -598,11 +608,7 @@ document { symbol "+",
      SEEALSO{ "plus", "sum" }
      }
 
-document { (symbol +, Set, Set),
-     TT "s + t", " -- union of two sets",
-     PARA,
-     SEEALSO "+"
-     }
+document { (symbol +, Set, Set), TT "s + t", " -- union of two sets" }
 
 document { symbol "-",
      TT "x - y", " -- a binary operator used for subtraction in many situations
@@ -620,9 +626,7 @@ document { symbol "/",
      SEEALSO { "//" }
      }
 
-document { symbol "%",
-     TT "x % y", " -- a binary operator used for remainder and reduction."
-     }
+document { symbol "%", TT "x % y", " -- a binary operator used for remainder and reduction." }
 
 document { symbol "//",
      TT "x // y", " -- a binary operator used for quotients in the same
@@ -672,9 +676,7 @@ document { substring,
      "Positions are numbered starting at 0.",
      PARA,
      "Requests for character positions out of bounds are 
-     silently ignored.",
-     PARA,
-     SEEALSO{ "String" }
+     silently ignored."
      }
 
 document { reverse,
@@ -729,7 +731,7 @@ document { get,
      	  and version#"operating system" =!= "Windows-95-98-NT"
       	  then ///get "!date"///
 	  },
-     SEEALSO{ "File", "String", "read" }
+     SEEALSO{ "File", "read" }
      }
 
 document { lines,
@@ -750,7 +752,7 @@ document { lines,
      }
 
 document { "!",
-     "n ! -- computes n factorial, 1*2*3*...*n."
+     TT "n !", " -- computes n factorial, 1*2*3*...*n."
      }
 
 document { "not",
@@ -805,7 +807,7 @@ document { (symbol |, Matrix, Matrix),
      SEEALSO {"|", (symbol ||, Matrix, Matrix)}
      }
 
-document { symbol "||",
+document { symbol ||,
      }
 
 document { (symbol ||, Net, Net),
@@ -905,10 +907,7 @@ document { "!=",
      SEEALSO{ "==" }
      }
 
-document { symbol "**", 
-     TT "x ** y", " -- a binary operator used for tensor product and
-     cartesian product."
-     }
+document { symbol "**", "Usually used for tensor product and cartesian product." }
 
 document { (symbol **, Set, Set),
      TT "X ** Y", " -- form the Cartesian product of two sets.",
@@ -922,6 +921,7 @@ document { (symbol **, Set, Set),
      }
 
 document { set,
+     HEADLINE "make a set",
      TT "set v", " -- yields the set whose elements are the members of the list v.",
      PARA,
      SEEALSO { "Set" }
@@ -931,14 +931,20 @@ document { random,
      HEADLINE "get a random element",
      "This function can be used to get random elements of various sorts."
      }
-document { (random, ZZ), TT "random n", " -- yields a random integer in the range 0 .. n-1.",
+document { (random, ZZ), 
+     HEADLINE "random integer",
+     TT "random n", " -- yields a random integer in the range 0 .. n-1.",
      PARA,
      "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
      EXAMPLE "tally apply(100, i -> random 10)"
      }
-document { (random, RR), TT "random x", " -- yields a random real number in the range 0 .. x." }
-document { (random, Ring), TT "random R", " -- yields a random element of the ring ", TT "R", ".",
+document { (random, RR), 
+     HEADLINE "random real number",
+     TT "random x", " -- yields a random real number in the range 0 .. x." }
+document { (random, Ring),
+     HEADLINE "random element of a ring",
+     TT "random R", " -- yields a random element of the ring ", TT "R", ".",
      PARA,
      "Currently implemented only for rings of the form ", TT "ZZ/n", "."
      }

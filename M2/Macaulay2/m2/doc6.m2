@@ -32,34 +32,7 @@ document { Engine,
      ring is supported by the ", TO "engine", "."
      }
 
-document { ring,
-     TT "ring x", " -- yields the ring associated with ", TT "x", ".",
-     BR,
-     NOINDENT,
-     TT "ring x", " -- yields the ambient ring of a ring element ", TT "x", ".",
-     BR,
-     NOINDENT,
-     TT "ring M", " -- yields the base ring of a module ", TT "M", ".",
-     BR,
-     NOINDENT,
-     TT "ring C", " -- yields the base ring of a chain complex ", TT "C", ".",
-     BR,
-     NOINDENT,
-     TT "ring I", " -- yields the ambient ring of an ideal ", TT "I", ".",
-     BR,
-     NOINDENT,
-     TT "ring p", " -- yields the base ring of a module homomorphism ", TT "p", ".",
-     BR,
-     NOINDENT,
-     TT "ring f", " -- yields the base ring of a map of chain complexes ", TT "f", ".",
-     BR,
-     NOINDENT,
-     TT "ring X", " -- yields the coordinate ring of an affine variety ", TT "X", ".",
-     BR,
-     NOINDENT,
-     TT "ring Z", " -- yields the homogeneous coordinate ring of a projective variety ", TT "Z", ".",
-     SEEALSO "Ring"
-     }
+document { ring, HEADLINE "get the associated ring" }
 
 document { coefficientRing,
      TT "coefficientRing R", " -- yields the coefficient ring of the ring ", TT "R", ".",
@@ -148,14 +121,6 @@ document { EngineRing,
 	  "a ring, in which case another top-level ring is formed as
 	  an interface to the same underlying engine ring.",
 	  "the handle of on engine ring"
-	  },
-     "Types of EngineRing:",
-     MENU {
-	  TO "FractionField",
-	  TO "GaloisField",
-	  TO "PolynomialRing",
-	  TO "QuotientRing",
-	  TO "SchurRing"
 	  }
      }
 
@@ -172,15 +137,7 @@ assert ( b == numerator(b/a) )
 assert ( 1 == numerator(b/b) )
 "
 
-document { FractionField,
-     TT "FractionField", " -- the class of all fraction fields.",
-     PARA,
-     "Functions:",
-     MENU {
-	  (TO "frac", "     -- constructing a fraction field"),
-	  (TO "fraction", " -- constructing a fraction")
-	  }
-     }
+document { FractionField, HEADLINE "the class of all fraction fields" }
 
 document { frac,
      HEADLINE "constructing a fraction field",
@@ -193,13 +150,15 @@ document { frac,
 	  "F = frac (ZZ/101[x,y])",
       	  "1/x + 1/y + 1/2",
 	  },
-     SEEALSO "FractionField"
+     "Results of division with ", TO "/", " will be in the fraction field, and
+     the fraction field will be created if necessary.",
+     EXAMPLE {
+	  "R = ZZ[x,y]",
+	  "x/y"
+	  }
      }
 
-document { ZZ,
-     HEADLINE "the class of all integers",
-     TT "ZZ", " -- denotes the class of all integers.",
-     }
+document { ZZ, HEADLINE "the class of all integers" }
 
 TEST "
 assert (not isPrime 1333333)
@@ -212,6 +171,7 @@ assert ( isPrime 3333331)
 "
 
 document { isPrime,
+     HEADLINE "primality test",
      TT "isPrime x", " -- tests for primality",
      PARA,
      NOINDENT,
@@ -240,17 +200,8 @@ document { denominator,
      }
 
 document { QQ,
-     HEADLINE "the class of all real numbers",
-     TT "QQ", " -- denotes the class of all rational numbers.",
-     PARA,
+     HEADLINE "the class of all rational numbers",
      EXAMPLE "1/2 + 3/5",
-     PARA,
-     "Functions:",
-     MENU {
-	  TO "denominator",
-	  TO "numerator"
-	  },
-     PARA,
      SEEALSO{"numbers", "arithmetic functions"}
      }
 
@@ -261,8 +212,6 @@ TEST ///
 
 document { RR,
      HEADLINE "the class of all real numbers",
-     TT "RR", " -- the class of all real numbers.  It is a field.",
-     PARA,
      "A real number is entered as a sequence of decimal digits with a point.",
      EXAMPLE "3.14159",
      PARA,
@@ -271,8 +220,6 @@ document { RR,
 
 document { CC,
      HEADLINE "the class of all complex numbers",
-     TT "CC", " -- the class of all complex numbers.",
-     PARA,
      "The symbol ", TO "ii", " represents the square root of -1.",
      PARA, 
      EXAMPLE {
@@ -282,29 +229,23 @@ document { CC,
 	  },
      PARA,
      "Here are some functions for use with complex numbers.",
-     MENU {
-	  TO "realPart",
-	  TO "imaginaryPart",
-	  TO "conjugate"
-	  },
      PARA,
      SEEALSO "numbers"
      }
 
-document { ii,
-     HEADLINE "square root of -1",
-     TT "ii", " -- the square root of -1.",
-     PARA,
-     SEEALSO{ "CC"}
-     }
+document { ii, HEADLINE "square root of -1" }
+
 document { realPart,
+     HEADLINE "real part",
      TT "realPart z", " -- return the real part of a complex number z."
      }
 document { imaginaryPart,
+     HEADLINE "imaginary part",
      TT "imaginaryPart z", " -- return the imaginary part of a complex number z."
      }
 
 document { conjugate,
+     HEADLINE "complex conjugate",
      TT "conjugate z", " -- the complex conjugate of the complex number z."
      }
 
@@ -318,8 +259,8 @@ document { gcdCoefficients,
      }
 
 document { mod,
-     TT "mod(i,n)", " -- reduce the integer i modulo n, producing an
-     element of ZZ/n."
+     TT "mod(i,n)", " -- reduce the integer ", TT "i", " modulo ", TT "n", ", producing an
+     element of ", TT "ZZ/n", "."
      }
 
 document { ProductRing,
@@ -347,13 +288,6 @@ document { OrderedMonoid,
      See ", TO "PolynomialRing", ".",
      PARA,
      "A free commutative ordered monoid can be created with ", TO "monoid", ".",
-     MENU {
-	  TO "<",
-	  TO "<=",
-	  TO ">",
-	  TO ">=",
-	  TO "?"
-	  },
      SEEALSO  {"Monoid", "group"}
      }
 
@@ -381,50 +315,8 @@ document { PolynomialRing,
      "Elements of these rings are displayed with the monoid
      elements appearing in decreasing order from left to right.",
      PARA,
-     "Operations on rings:",
-     MENU {
-	  TO "modifyRing",
-	  TO "numgens",
-	  TO "vars"
-	  },
-     "Operations on ring elements:",
-     MENU {
-	  TO "+",
-	  TO "-",
-	  TO "*",
-	  TO "coefficients",
-	  TO "content",
-	  TO "exponents",
-	  TO "index",
-	  TO "isPrime",
-	  TO "isPrimitive",
-	  TO "isUnit",
-	  TO "leadComponent",
-	  TO "leadCoefficient",
-	  TO "leadMonomial",
-	  TO "leadTerm",
-	  TO "lift",
-	  TO "liftable",
-	  TO "listForm",
-	  TO "promote",
-	  TO "size",
-	  TO "someTerms",
-	  TO "standardForm",
-	  TO "substitute",
-	  TO "terms"
-	  },
-     PARA,
-     "Producing ring elements:",
-     MENU {
-	  TO "random"
-	  },
-     PARA,
-     "Keys used:",
-     MENU {
-  	  TO "ring",
-	  TO "degreesRing"
-	  },
-     SEEALSO {"OrderedMonoid", "RingElement"},
+     "Elements of polynomial rings are also ", TO "RingElement", "s.",
+     SEEALSO {"OrderedMonoid"}
      }
 
 document { isUnit,
@@ -496,12 +388,6 @@ document { listForm,
 	  },
      }
 
-document { (symbol " ",Ring, OrderedMonoid),
-     TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
-     ", TT "M", ".",
-     SEEALSO {"Ring", "OrderedMonoid"}
-     }
-
 document { WeylAlgebra,
      TT "WeylAlgebra", " -- an option used when creating a polynomial ring
      to specify that a Weyl algebra is to be produced.",
@@ -522,6 +408,7 @@ document { WeylAlgebra,
      }
 
 document { (symbol _, RingElement, RingElement),
+     HEADLINE "get a coefficient",
      TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",
      PARA,
      EXAMPLE {
@@ -544,6 +431,7 @@ document { (symbol _, Ring, String),
      }
 
 document { (symbol _, Ring, ZZ),
+     HEADLINE "get a generator from a ring",
      TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
      PARA,
      EXAMPLE {
@@ -597,6 +485,7 @@ document { SchurRing,
      }
 
 document { (symbol _, SchurRing, List),
+     HEADLINE "make an element of a Schur ring",
      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
      PARA,
@@ -704,24 +593,14 @@ document { GeneralOrderedMonoid,
      TT "GeneralOrderedMonoid", " -- the class of all ordered free 
      commutative monoids, as implemented by ", TO "monoid", ".",
      PARA,
-     "This is the class of free monoids that can be handled by the ",
-     TO "engine", ".",
-     PARA,
-     "Functions:",
-     MENU {
-	  TO "degree"
-	  },
-     PARA,
-     "Keys:",
-     MENU {
-	  TO "degreesMonoid",
-	  TO "index"
-	  },
+     "This is the class of free monoids that can be handled by 
+     the ", TO "engine", ".",
      PARA,
      SEEALSO { "monoid", "Degrees", "MonoidElement"}
      }     
 
-document { (symbol _, Monoid,ZZ),
+document { (symbol _, Monoid, ZZ),
+     HEADLINE "get a generator of a monoid",
      TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
      PARA,
      SEEALSO { "Monoid", "_" }
@@ -793,7 +672,7 @@ document { MonomialOrder,
      TT "MonomialOrder", " -- a key used with monoids to indicate a
      monomial order other than the default (graded reverse lexicographic)",
      PARA,
-     "Values:",
+     "Permissible values:",
      MENU {
 	  {TO "GRevLex", " -- graded reverse lexicographic order (the default)"},
 	  {TO "GLex", " -- graded lexicographic order"},
@@ -803,7 +682,7 @@ document { MonomialOrder,
 	  {TO "ProductOrder", " -- product order"}
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
-     SEEALSO "Weights"
+     SEEALSO {"polynomial rings with other monomial orderings", "Weights"}
      }
 
 document { Weights,
@@ -837,18 +716,6 @@ document { monoid,
      NOINDENT,
      TT "monoid [a,b,c]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
-     "Options available:",
-     MENU {
-	  TO "Degrees",
-	  TO "Inverses",
-	  TO "MonomialOrder",
-	  TO "MonomialSize",
-	  TO "SkewCommutative",
-	  TO "Variables",
-	  TO "VariableBaseName",
-	  TO "VariableOrder"
-	  },
-     PARA,
      NOINDENT,
      TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, with degrees 2, 3, and 4, respectively.",
@@ -877,12 +744,6 @@ document { GeneralOrderedGroup,
      PARA,
      "This is the class of free commutative groups that can be 
      handled by the ", TO "engine", ".",
-     PARA, "Functions:", MENU { 
-	  TO "degree"
-	  },
-     PARA, "Keys:", MENU {
-	  TO "index"
-	  },
      PARA,
      SEEALSO { "group", "Degrees" }
      }     
@@ -991,89 +852,7 @@ document { Module,
      produce the quotient module is stored as ", TT "M.relations", " and 
      the matrix of generators is stored as ", TT "M.generators", ".",
      PARA,
-     "Functions which create modules:",
-     MENU {
-	  TO (symbol ^, Ring, ZZ),
-	  TO "cokernel",
-	  TO "homology",
-	  TO "ideal",
-	  TO "image",
-	  TO "kernel",
-	  TO "submodule"
-	  },
-     PARA,
-     "Tests:",
-     MENU {
-	  TO "isDirectSum",
-	  TO "isFreeModule",
-	  TO "isIdeal",
-	  TO "isModule",
-	  TO "isQuotientModule",
-	  TO "isSubmodule",
-	  },
-     "Operations on modules:",
-     MENU {
-	  TO (symbol ==, Module, Module),
-	  (TO (symbol _, Module, ZZ), " -- get a generator of a module"),
-	  TO (symbol +,Module,Module),
-	  (TO (symbol **,Module,Ring), " -- tensor product, base change."),
-	  (TO (symbol ++, Module, Module), " -- direct sum"),
-	  (TO (symbol **, Module, Module), " -- tensor product"),
-	  (TO (symbol :, Module, Module), " -- the submodule quotient ", TT "M : N", ""),
-	  (TO (symbol /, Module, Module), " -- the quotient module ", TT "(M+N)/N"),
-	  (TO (symbol /, Module, Ideal), " -- the quotient module ", TT "M/IM"),
-	  (TO (symbol /, Ideal, Ideal), " -- the quotient module ", TT "(I+J)/J"),
-	  TO "ambient",
-	  (TO "annihilator", " -- the annihilator of a module"),
-	  (TO "codim", " -- codimension of the support of a module"),
-	  TO "cover",
-	  TO "degree",
-	  TO "degrees",
-	  TO "dim",
-	  TO "dual",
-	  TO "End",
-	  TO "euler",
-	  (TO {"fittingIdeal", "(i,m)"}, " -- the ", TT "i", "-th Fitting ideal of the module ", TT "M"),
-	  (TO {"Ext", "^i(M,N)"}, " -- Ext of two modules"),
-	  TO "gcdDegree",
-	  TO "genera",
-	  TO "generators",
-	  (TO {"poincare", "(M,t)", }, " -- the numerator of the Hilbert series of ", TT "M", "."),
-	  (TO {"hilbertFunction", "(d,M)"}, " -- the Hilbert function of a module."),
-	  (TO {"hilbertPolynomial", "(M)"}, " -- the Hilbert polynomial of a module"),
-	  (TO {"hilbertSeries", "(M)"}, " -- the Hilbert series of a module."),
-	  (TO {"Hom", "(M,N)"}, " -- the module of homomorphisms"),
-	  (TO {"intersect", "(I,J)"}, " -- intersection of modules or ideals"),
-	  TO "lcmDegree",
-	  TO "numgens",
-	  TO "mingens",
-	  TO "pdim",
-	  (TO "presentation", " M -- a presentation matrix for M"),
-	  (TO "prune", " M -- a minimal presentation for M"),
-	  TO "quotient",
-	  TO "rank",
-	  TO "relations",
-	  TO "removeLowestDimension",
-	  (TO "resolution", " M -- a finite free resolution of M"),
-	  TO "super",
-	  (TO "tensorAssociativity", " -- associativity isomorphisms for tensor products"),
-	  TO "top",
-  	  (TO {"Tor", "_i(M,N)"}, " -- Tor of two modules"),
-	  (TO "trim", " -- replace generators and relations by minimal sets"),
-	  TO "truncate"
-     	  },
-     "Operations on elements of modules (vectors):",
-     MENU {
-	  TO "+",
-	  TO "-",
-	  TO "*",
-	  (TO (symbol _, Vector, ZZ), " -- get a component of a vector"),
-	  TO "components",
-	  TO "leadCoefficient",
-	  TO "leadMonomial"
-	  },
-     PARA,
-     SEEALSO{ "Vector"}
+     "Elements of modules are also instances of the class ", TO "Vector", "."
      }
 
 document { isModule,
@@ -1160,6 +939,7 @@ document { Vector,
      }
 
 document { (symbol _, Vector, ZZ),
+     HEADLINE "get a component",
      TT "v_i", " -- produce the i-th entry of a vector or module element v.",
      PARA,
      EXAMPLE {
@@ -1313,107 +1093,7 @@ document { Matrix,
      usual matrix arithmetic.  Use ", TT "m == n", ", and ", TT "m == 0", " to 
      check equality of matrices.",
      PARA,
-     "Operations which produce matrices:", 
-     MENU {
-	  (TO "adjoint", "                -- matrix of adjointness"),
-	  (TO "adjoint1", "               -- another matrix of adjointness"),
-          (TO "genericMatrix", "          -- a generic matrix"),
-          (TO "genericSkewMatrix", "      -- a generic skew-symmetric matrix"),
-          (TO "genericSymmetricMatrix", " -- a generic symmetric matrix"),
-	  (TO "id", "                     -- identity maps"),
-	  (TO "matrix", "                 -- create a matrix"),
-	  (TO "map", "                    -- create a map of modules"),
-	  (TO "random", "                 -- a random homgeneous matrix")
-	  },
-     "Tests on matrices:",
-     MENU {
-	  (TO "==", "                    -- equality test"),
-	  (TO "!=", "                    -- inequality test"),
-	  (TO "inducesWellDefinedMap", " -- whether a matrix would induce a well defined map"),
-          (TO "isHomogeneous", "         -- whether a matrix is homogeneous"),
-	  (TO "isInjective", "           -- whether a map is injective"),
-          (TO "isIsomorphism", "         -- whether a map is an isomorphism"),
-	  (TO "isSurjective", "          -- whether a map is surjective"),
-	  (TO "isWellDefined", "         -- whether a map is well-defined"),
-	  },
-     "Making new matrices from old ones:",
-     MENU {
-	  (TO "+", "                      -- sum"),
-	  (TO "-", "                      -- difference"),
-	  (TO "*", "                      -- product"),
-	  (TO "^", "                      -- power"),
-	  (TO (symbol ^, Matrix, List), "  -- extracting or permuting rows"),
-	  (TO (symbol ^, Matrix, Array), " -- extracting or permuting blocks of rows"),
-	  (TO (symbol %,Matrix,Matrix), "  -- remainder"),
-	  (TO (symbol %,Matrix,RingElement), " -- remainder"),
-	  (TO (symbol //,Matrix,Matrix), " -- quotient"),
-	  (TO (symbol //,Matrix,RingElement), " -- quotient"),
-	  (TO (symbol _, Matrix, List), " -- extracting or permuting columns"),
-	  (TO (symbol _, Matrix, Array), " -- extracting or permuting blocks of columns"),
-	  (TO (symbol |, Matrix, Matrix), " -- horizontal concatenation"),
-	  (TO (symbol ||, Matrix, Matrix), " -- vertical concatenation"),
-	  (TO (symbol ++, Matrix, Matrix), " -- direct sum"),
-	  (TO (symbol **,Matrix, Matrix), " -- tensor product of matrices"),
-	  (TO (symbol **, Matrix, Module), " -- tensor product, e.g., degree shifting"),
-	  (TO (symbol **,Matrix,Ring), " -- tensor product, base change"),
-          (TO "borel", "                -- Borel submodule generated by a matrix"),
-          (TO "complement", "           -- generators of cokernel"),
-          (TO "compress", "             -- removal of zero columns"),
-          (TO "contract", "             -- contraction"),
-          (TO "diff", "                 -- differentiation"),
-          (TO "divideByVariable", "     -- divide columns by a variable repeatedly"),
-          (TO "dual", "                 -- dual of a map (transpose)"),
-          (TO "exteriorPower", "        -- exterior power of m"),
-          (TO "flatten", "              -- collect entries of a matrix into one row"),
-          (TO "homogenize", "           -- homogenize a matrix"),
-          (TO "inducedMap", "           -- a map induced on subquotients"),
-          (TO "jacobian", "             -- Jacobian matrix of a matrix"),
-          (TO "koszul", "               -- i-th Koszul matrix of a matrix"),
-          (TO "leadTerm", "             -- lead monomial matrix of the columns of a matrix"),
-          (TO "minors", "               -- ideal of minors of a matrix"),
-          (TO "modulo", "               -- generators for pre-image of an image"),
-          (TO "pfaffians", "            -- Pfaffians of a skew symmetric matrix"),
-          (TO "reshape", "              -- reshape a matrix"),
-          (TO "selectInSubring", "      -- select certain columns"),
-          (TO "sortColumns", "          -- sort the columns of a matrix"),
-          (TO "submatrix", "            -- extract a submatrix"),
-          (TO "substitute", "           -- replacing the variables in a matrix"),
-          (TO "symmetricPower", "       -- symmetric power of a matrix"),
-	  (TO "syz", "                  -- matrix of syzygies the columns"),
-          (TO "topCoefficients", "      -- top coefficients of a matrix"),
-          (TO "transpose", "            -- transpose of a matrix")
-	  },
-     "Operations on matrices:",
-     MENU {
-	  (TO (symbol _, Matrix, Sequence), " -- getting an entry"),
-	  (TO (symbol _, Matrix, ZZ), "  -- getting a column"),
-          (TO "content", "              -- content of a matrix"),
-          (TO "degree", "               -- degree of a matrix, as specified"),
-          (TO "det", "                  -- determinant of a matrix"),
-          (TO "entries", "              -- the entries of m"),
-	  (TO "gb", "                   -- Groebner basis of the columns"),
-          (TO "ring", "                 -- the base ring of a matrix"),
-          (TO "source", "               -- the source module of a map"),
-          (TO "target", "               -- the target module of a map"),
-          (TO "trace", "                -- trace of a matrix"),
-	  },
-     PARA,
-     "Operations which produce modules and ideals from matrices:",
-     MENU {
-	  (TO "cokernel", "            -- the cokernel of a map"),
-	  (TO "homology", "            -- homology of a pair of maps"),
-	  (TO "ideal", "               -- ideal generated by the entries"),
-	  (TO "image", "               -- image of a map"),
-	  (TO "kernel", "              -- the kernel of a map"),
-	  (TO "subquotient", "         -- subquotient module"),
-	  },
-     "Printing matrices:",
-     MENU {
-	  (TO "compactMatrixForm", "   -- global flag for compact printing"),
-	  (TO "net", "                 -- convert to a net"),
-	  (TO "toExternalString", "    -- convert to a string"),
-	  (TO "toString", "            -- convert to a string"),
-	  }
+     "See also ", TO "compactMatrixForm", ", which governs printing matrices."
      }
 
 document { gcdDegree,
@@ -1429,11 +1109,13 @@ document { getMatrix,
      the engine's stack and returns it."
      }
 document { (symbol _, Matrix, Sequence),
+     HEADLINE "get an entry",
      TT "f_(i,j)", " -- provide the element in row ", TT "i", " and
      column ", TT "j", " of the matrix ", TT "f", ".",
      SEEALSO {"_", "Matrix"}
      }
 document { (symbol _, Matrix, ZZ),
+     HEADLINE "get a column from a matrix",
      TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
      PARA,
      "Vectors are disparaged, so we may do away with this function in the future.",

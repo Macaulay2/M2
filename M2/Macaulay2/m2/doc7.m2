@@ -2,6 +2,7 @@
 
 
 document { (symbol _, Matrix, List),
+     HEADLINE "get some columns from a matrix",
      TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      columns numbered i, j, k, ... .",
      PARA,
@@ -613,6 +614,7 @@ assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
 "
 
 document { "compactMatrixForm",
+     HEADLINE "global flag for compact printing",
      TT "compactMatrixForm", " -- a global flag which specifies whether to display
      matrices in compact form.",
      PARA,
@@ -770,7 +772,8 @@ document { (symbol ^,Matrix,Array),
      SEEALSO {submatrix, (symbol ^,Module,Array), (symbol _,Matrix,Array)}
      }
 
-document { (symbol _,Matrix,Array),
+document { (symbol _, Matrix, Array),
+     HEADLINE "get some columns of blocks",
      TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
      PARA,
      "The source of ", TT "f", " should be a direct sum, and the result is obtained by
@@ -1383,9 +1386,11 @@ document { dim,
      SEEALSO {"Schur"}
      }
 document { presentation,
-     TT "presentation M", " -- produce a presentation of the module M.",
+     TT "presentation M", " -- produce a presentation of the module ", TT "M", ".",
      BR,NOINDENT,
-     TT "presentation R", " -- produce a presentation of the quotient ring R.",
+     TT "presentation R", " -- produce a presentation of the quotient ring ", TT "R", ".",
+     BR,NOINDENT,
+     TT "presentation(R,S)", " -- produce a presentation of the quotient ring ", TT "S", " over ", TT "R", ".",
      PARA,
      "A presentation of ", TT "M", " is a map ", TT "p", " so that ", TT "coker p", " is 
      isomorphic to ", TT "M", ".  The presentation obtained is expressed in 
@@ -1399,7 +1404,7 @@ document { presentation,
      eliminate redundant generators.",
      PARA,
      "For a quotient ring R, the result is a matrix over the ultimate
-     ambient polynomial ring, whose image is the ideal defining R.  The 
+     ambient polynomial ring, whose image is the ideal defining ", TT "R", ".  The 
      entries of the matrix form a Groebner basis.",
      SEEALSO {"cover"}
      }

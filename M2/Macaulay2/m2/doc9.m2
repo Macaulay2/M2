@@ -92,6 +92,7 @@ document { adjust,
      }
 
 document { dd,
+     HEADLINE "differential in a chain complex",
      TT "dd", " -- a symbol used as a key in a chain complex, under which
      are stored the differentials.",
      PARA,
@@ -324,34 +325,6 @@ document { ChainComplex,
      "See also ", TO "ChainComplexMap", " for a discussion of maps between
      chain complexes.  (The boundary map C.dd is regarded as one.)",
      PARA,
-     "Here are some functions for producing or manipulating chain complexes.",
-     MENU {
-	  (TO (symbol " ", Module, Array), " -- create a chain complex from a module"),
-	  (TO (symbol ++, ChainComplex, ChainComplex), " -- direct sum"),
-	  (TO (symbol **, ChainComplex, ChainComplex), " -- tensor product"),
-	  (TO (symbol **, ChainComplex, GradedModule), " -- tensor product"),
-	  (TO (symbol **, GradedModule, ChainComplex), " -- tensor product"),
-	  (TO "dd", " -- obtain the differentials."),
-	  (TO (symbol " ", ChainComplex, Array), " -- shift a chain complex"),
-	  (TO "betti", "        -- display degrees in a free resolution"),
-	  (TO "chainComplex", " -- make a chain complex"),
-	  (TO "complete", "     -- complete the internal parts of a chain complex"),
-	  (TO "dual", "         -- dual complex"),
-	  (TO (Hom,ChainComplex,Module), " -- Hom"),
-	  (TO "length", "       -- length of a chain complex"),
-	  (TO (max,ChainComplex), " -- maximum index in a chain complex"),
-	  (TO (min,ChainComplex), " -- minimum index in a chain complex"),
-	  (TO "poincare", "     -- assemble degrees into polynomial"),
-	  TO "poincareN",
-	  (TO (NewMethod,ChainComplex), " -- make a new chain complex from scratch"),
-	  (TO "nullhomotopy", " -- produce a null homotopy"),
-	  (TO "regularity", "   -- compute the regularity"),
-	  (TO "resolution", "   -- make a projective resolution"),
-	  (TO "status", "       -- display the status of a resolution computation"),
-	  (TO "syzygyScheme", " -- construct the syzygy scheme from some syzygies"),
-	  (TO "tensorAssociativity", " -- associativity isomorphisms for tensor products"),
-	  },
-     PARA,
      "The default display for a chain complex shows the modules and
      the stage at which they appear.",
      EXAMPLE {
@@ -364,6 +337,7 @@ document { ChainComplex,
      }
 
 document { (complete, ChainComplex),
+     HEADLINE "complete the internal parts",
      TT "complete C", " -- fills in the modules of a chain complex
      obtained as a resolution with information from the engine.",
      PARA,
@@ -384,6 +358,7 @@ document { (complete, ChainComplex),
      }
 
 document { (symbol _, ChainComplex, ZZ),
+     HEADLINE "get component",
      TT "C_i", " -- yields the i-th module in a chain complex C.",
      PARA,
      "Returns the zero module if no module has been stored in the
@@ -394,12 +369,14 @@ document { (symbol _, ChainComplex, ZZ),
      }
 
 document { (length, ChainComplex),
+     HEADLINE "length of a chain complex or graded module",
      TT "length C", " -- the length of a chain complex.",
      PARA,
      "The length of a chain complex is defined to be the difference
      between the smallest and largest indices of spots occupied by
      modules, even if those modules happen to be zero."
      }
+
 document { ChainComplexMap,
      TT "ChainComplexMap", " -- the class of all maps between chain complexes.",
      PARA,
@@ -430,6 +407,7 @@ document { ChainComplexMap,
 	  }
      }
 document { (symbol _, ChainComplexMap, ZZ),
+     HEADLINE "get component",
      TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
      the component p_i : C_i -> D_(i+d).",
      SEEALSO "ChainComplexMap"
@@ -470,6 +448,7 @@ document { cone,
      }
 
 document { nullhomotopy,
+     HEADLINE "make a null homotopy",
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",
      PARA, 
@@ -494,6 +473,7 @@ document { nullhomotopy,
      }
 
 document { poincare,
+     HEADLINE "assemble degrees into polynomial",
      TT "poincare C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      BR,NOINDENT,
@@ -533,6 +513,7 @@ document { poincare,
      }
 
 document { poincareN,
+     HEADLINE "assemble degrees into polynomial",
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      PARA,
@@ -1363,14 +1344,8 @@ document { (homology,ChainComplex),
      }
 
 document { chainComplex,
+     HEADLINE "make a chain complex",
      TT "chainComplex", " -- a method for creating chain complexes.",
-     PARA,
-     "See:",
-     MENU {
-	  TO (chainComplex,Matrix),
-	  TO (chainComplex,Sequence),
-	  TO (chainComplex,GradedModule)
-	  }
      }
 
 document { (chainComplex, Matrix),
@@ -1387,6 +1362,7 @@ document { (chainComplex, Sequence),
      }
 
 document { (symbol ++,ChainComplex,ChainComplex),
+     HEADLINE "direct sum",
      TT "C++D", " -- direct sum of chain complexes.",
      PARA,
      EXAMPLE {
@@ -1403,21 +1379,25 @@ document { (components, ChainComplex),
      }
 
 document { (symbol " ", ChainComplex, Array),
+     HEADLINE "chain complex degree shift",
      TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
      D in which D_j is C_(i+j).  The signs of the differentials are reversed
      if i is odd."
      }
 
 document { (Hom,ChainComplex,Module),
+     HEADLINE "Hom",
      TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
      a module M."
      }
 
 document { (dual, ChainComplex),
+     HEADLINE "dual",
      TT "dual C", " -- the dual of a chain complex."
      }
 
 document { regularity,
+     HEADLINE "compute the regularity",
      TT "regularity M", " -- computes the regularity of a module or chain complex C.",
      PARA,
      "For a free chain complex C, the regularity r is the smallest number so that 
@@ -1426,6 +1406,7 @@ document { regularity,
      }
 
 document { betti,
+     HEADLINE "display degrees in a free resolution",
      TT "betti C", " -- display the graded Betti numbers for a ", TO "ChainComplex", " C.",
      PARA,
      NOINDENT,
@@ -1479,8 +1460,9 @@ assert( P == poincare prune W )
 "
 
 document { syzygyScheme,
+     HEADLINE "construct a syzygy scheme",
      TT "syzygyScheme(C,i,v)", " -- produce the syzygy scheme from a map
-     v : R^j ---> C_i which selects some syzygies from a resolution C."
+     ", TT "v : R^j ---> C_i", " which selects some syzygies from a resolution ", TT "C", "."
      }
 
 document { (sum, ChainComplex),
@@ -1509,6 +1491,7 @@ document { (sum, ChainComplexMap),
      }
 
 document { (NewMethod, ChainComplex),
+     HEADLINE "make a new chain complex from scratch",
      TT "C = new ChainComplex", " -- make a new chain complex.",
      PARA,
      "The new chain complex is initialized with a differential of
@@ -1534,6 +1517,7 @@ document { (chainComplex,GradedModule),
      }
 
 document { (symbol **, ChainComplex, ChainComplex),
+     HEADLINE "tensor product",
      TT "C**D", " -- the tensor product of two chain complexes.",
      PARA,
      "The result, ", TT "E", ", is a chain complex.  Each module ", TT "E_k", " 
@@ -1544,40 +1528,47 @@ document { (symbol **, ChainComplex, ChainComplex),
      }
 
 document { (symbol **, ChainComplex, GradedModule),
+     HEADLINE "tensor product",
      TT "C**D", " -- the tensor product of a chain complex with a graded module.",
      PARA,
      "The result is a chain complex."
      }
 
 document { (symbol **, GradedModule, ChainComplex),
+     HEADLINE "tensor product",
      TT "C**D", " -- the tensor product of a graded module with a chain complex.",
      PARA,
      "The result is a chain complex."
      }
 
 document { (symbol **, ChainComplexMap, ChainComplex),
+     HEADLINE "tensor product",
      TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
 document { (symbol **, ChainComplex, ChainComplexMap),
+     HEADLINE "tensor product",
      TT "C ** f", " -- tensor product of a chain complex with a map of chain complexes.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
 document { (symbol **, ChainComplexMap, ChainComplexMap),
+     HEADLINE "tensor product",
      TT "f ** g", " -- tensor product of two maps of chain complexes.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
 document { (max,ChainComplex),
-     TT "max C", " -- the minimum index occuring in a chain complex."
+     HEADLINE " -- maximum index in a chain complex",
+     TT "max C", " -- the maximum index occuring in a chain complex."
      }
 
 document { (min,ChainComplex),
+     HEADLINE "minimum index in a chain complex",
      TT "min C", " -- the minimum index occuring in a chain complex."
      }
 
@@ -1592,6 +1583,7 @@ TEST ///
      ///
 
 document { tensorAssociativity,
+     HEADLINE "associativity isomorphisms for tensor products",
      TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
      A**(B**C) to (A**B)**C.",
      PARA,
@@ -1600,6 +1592,7 @@ document { tensorAssociativity,
      }
 
 document { (symbol " ", Module, Array),
+     HEADLINE "make a chain complex from a module",
      TT "M[n]", " -- create a chain complex with the module M concentrated
      in degree -n.",
      PARA,

@@ -1,8 +1,9 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
-singleton = x -> toSequence {x}
+-- singleton = x -> toSequence {x}
+typicalValues#singleton = Sequence
 
-List _ ZZ     := (x,i) -> x#i
+List _ ZZ    := (x,i) -> x#i
 ggPush List  := v -> (ggINTARRAY, gg v)
 List | List  := List => join
 

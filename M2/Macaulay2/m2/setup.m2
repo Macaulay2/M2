@@ -15,7 +15,7 @@ GlobalAssignHook Function := (X,x) -> (
      if not Symbols#?x then Symbols#x = X;
      )
 GlobalReleaseHook Function := (X,x) -> (
-     error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
+     -- error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
      remove(Symbols,x);
      )
 
@@ -132,9 +132,9 @@ NoPrint Thing := x -> (
      applyMethod(AfterNoPrint,x);
      )
 
-String | String := concatenate
-String | ZZ := (s,i) -> concatenate(s,string i)
-ZZ | String := (i,s) -> concatenate(string i,s)
+String | String := String => concatenate
+String | ZZ := String => (s,i) -> concatenate(s,string i)
+ZZ | String := String => (i,s) -> concatenate(string i,s)
 
 notify := false						    -- can change this for debugging
 loaded := new MutableHashTable
@@ -260,6 +260,8 @@ if OLDENGINE then (
      erase symbol newDegreesRing;
      erase symbol newEngine;
      erase symbol monomialOrdering;
+     remove(ZZ,newDegreesRing);
+     remove(ZZ,newDegreesMonoid);
      erase symbol clone;
      )
 erase symbol OLDENGINE
@@ -271,7 +273,7 @@ if phase === 1 then scanPairs(symbolTable(),
      )
 
 GlobalReleaseHook Function := (X,x) -> (
-     stderr << "warning: " << string X << " redefined" << endl;
+     stderr << "warning: " << toString X << " redefined" << endl;
      remove(Symbols,x);
      )
 
