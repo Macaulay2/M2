@@ -3,6 +3,10 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+Fixed two bugs in computing global sections of a coherent sheaf: -- it was
+ignoring the degree option, and in some cases, it would give a missing method
+error message.
+
 Fixed a bug which prevented 'matrix' from accepting a list of vectors 
 from a subquotient module.
 
