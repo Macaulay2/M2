@@ -1031,55 +1031,6 @@ bool Ring::vec_is_scalar_multiple(vec f, vec g) const
   return false;
 }
 
-#if 0
-void Ring::vec_monomial_divisor(vec f, int *exp) const
-// It is expected that 'exp' is already an initialized exponent vector.
-{
-  const PolynomialRing *PR = cast_to_PolynomialRing();
-  if (PR == 0) return;
-  if (f == NULL) return;
-  Nterm *t = f->coeff;
-  PR->getMonoid()->to_expvector(t->monom, exp); // Get the process started
-
-  for (vec a = f; a != NULL; a = a->next)
-    monomial_divisor(a->coeff, exp);
-}
-
-vec Ring::vec_monomial_squarefree(vec f) const
-{
-  const PolynomialRing *PR = cast_to_PolynomialRing();
-  if (PR == 0) return copy_vec(f);
-  if (f == 0) return 0;
-
-  int *exp = newarray(int,n_vars());
-  vec_monomial_divisor(f, exp); // 'exp' need not be initialized, just allocated
-
-  // Now divide each term by exp[i]-1, if exp[i] >= 2
-  for (int i=0; i<n_vars(); i++)
-    if (exp[i] >= 1) exp[i]--;
-  vec result = vec_divide_by_expvector(exp, f);
-
-  deletearray(exp);
-  return result;
-}
-
-vec Ring::vec_remove_monomial_divisors(vec f) const
-{
-  const PolynomialRing *PR = cast_to_PolynomialRing();
-  if (PR == 0) return copy_vec(f);
-  if (f == 0) return 0;
-
-  int *exp = newarray(int,n_vars());
-  vec_monomial_divisor(f, exp); // 'exp' need not be initialized, just allocated
-
-  // Now divide each term by exp
-  vec result = vec_divide_by_expvector(exp, f);
-
-  deletearray(exp);
-  return result;
-}
-#endif
-
 vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
 {
   const PolynomialRing *PR = cast_to_PolynomialRing();

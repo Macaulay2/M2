@@ -351,11 +351,6 @@ public:
 
   // Some divisibility routines
   bool vec_is_scalar_multiple(vec f, vec g) const;// is cf = dg, some scalars c,d? (not both zero).
-#if 0
-  void vec_monomial_divisor(vec f, int *exp) const;
-  vec vec_monomial_squarefree(vec f) const;
-  vec vec_remove_monomial_divisors(vec f) const;
-#endif
   vec vec_remove_monomial_factors(vec f, bool make_squarefree_only) const;
 
   bool vec_multi_degree(const FreeModule *F, const vec f, int *degf) const;
