@@ -219,6 +219,10 @@ public:
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
 
+  virtual ring_elem lead_term(int nparts, const ring_elem f) const;
+
+public:
+  virtual vec vec_lead_term(int nparts, vec v) const;
 
 protected:
   ring_elem diff_term(const int *m, const int *n, 

@@ -317,6 +317,10 @@ public:
     return R_->PolyRing::divide_by_expvector(exp,a);
   }
 
+  virtual vec vec_lead_term(int nparts, vec v) const {
+    return R_->PolyRing::vec_lead_term(nparts, v);
+  }
+
   virtual gbvector * translate_gbvector_from_ringelem(ring_elem coeff) const {
     return R_->PolyRing::translate_gbvector_from_ringelem(coeff);
   }

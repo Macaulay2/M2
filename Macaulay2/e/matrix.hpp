@@ -280,6 +280,10 @@ public:
   Matrix *lead_term(int n=-1) const; // Select those monomials in each column
 				  // which are maximal in the order under
 				  // the first n weight vectors
+  // If n is -1, then the flat lead terms are returned, 
+  // If n is > 0, then the first n parts of the monomial order are used.
+  //   HOWEVER: in this case, the Schreyer order is not used: the usual order
+  //   of the ring (for free modules) is used.
 
   // Module operations
   int dimension() const;	// Compute the dimension of the quotient of the 

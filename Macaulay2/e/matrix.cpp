@@ -1187,19 +1187,14 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
 Matrix *Matrix::lead_term(int n) const
     // Select those monomials in each column
     // which are maximal in the order under
-    // the first n weight vectors, where the
-    // component slot is considered as the nvars+1 st weight
-    // vector.
+    // the first n parts of the monomial order.
 {
-#warning "implement Matrix::lead_term(int n)"
-#if 0
-  // MES aug 2002
-  Matrix *result = new Matrix(rows(), cols(), degree_shift());
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  MatrixConstructor mat(rows(),cols(),is_mutable(),degree_shift());
+
   for (int i=0; i<n_cols(); i++)
-    (*result)[i] = rows()->lead_term(n, elem(i));
-  return result;
-#endif
-  return 0;
+    mat.set_column(i, P->vec_lead_term(n, elem(i)));
+  return mat.to_matrix();
 }
 
 #if 0

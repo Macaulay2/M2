@@ -216,6 +216,8 @@ public:
 
   void sort(Nterm *&f) const;
 
+  virtual vec vec_lead_term(int nparts, vec v) const = 0;
+
   virtual gbvector * translate_gbvector_from_ringelem(ring_elem coeff) const = 0;
 
   virtual gbvector * translate_gbvector_from_vec(const FreeModule *F, 
