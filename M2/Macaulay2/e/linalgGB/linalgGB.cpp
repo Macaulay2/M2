@@ -295,11 +295,6 @@ void LinAlgGB<CoefficientRing>::make_matrix()
 }
 
 template<typename CoefficientRing>
-void LinAlgGB<CoefficientRing>::make_dense_row(int r, )
-{
-}
-
-template<typename CoefficientRing>
 void LinAlgGB<CoefficientRing>::LU_decompose()
 {
 #if 0
