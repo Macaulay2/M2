@@ -725,9 +725,6 @@ Matrix *Matrix::random(const Ring *R,
   // set that element.
 
 #warning "fraction_non_zero not yet used"  
-  mpz_t a, p;
-  mpz_init(a);
-  mpz_init_set_si(p,R->charac());
 
   if (fraction_non_zero != 1.0)
     {
@@ -748,13 +745,7 @@ Matrix *Matrix::random(const Ring *R,
 		int32 u = Random::random0(10000);
 		if (u > threshold) continue;
 	      }
-	    if (R->charac() != 0) {
-		 mat.set_entry(j,i,R->from_int(Random::get_random_integer_0(p)));
-	    }
-	    else {
-		 Random::random_integer(a);
-		 mat.set_entry(j,i,R->from_int(a));
-	    }
+	    mat.set_entry(j,i,R->random());
 	  }
     }
   else if (special_type == 1)
@@ -769,13 +760,11 @@ Matrix *Matrix::random(const Ring *R,
 		  int32 u = Random::random0(10000);
 		  if (u > threshold) continue;
 		}
-	      Random::random_integer(a);
-	      mat.set_entry(j,i,R->from_int(a));
+	      mat.set_entry(j,i,R->random());
 	    }
 	}
 
     }
-  mpz_clear(a);
   return mat.to_matrix();
 }
 
