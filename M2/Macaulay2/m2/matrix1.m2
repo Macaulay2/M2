@@ -148,7 +148,7 @@ fixDegree := (m,d) -> (
      N := source m;
      map(M,N,rawMatrixRemake2(raw cover M, raw cover N, degreeCheck(d,ring m), raw m)))
 
-concatBlocks := mats -> (
+concatBlocks = mats -> (
      if not isTable mats then error "expected a table of matrices";
      if #mats === 1
      then concatCols mats#0
