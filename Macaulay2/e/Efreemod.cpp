@@ -251,6 +251,7 @@ EVector *EFreeModule::tensorShift(int n, int m, const EVector *v) const
     G->sort();
   return G;
 }
+#if 0
 EVector *EFreeModule::tensor(const EVector *v, const EVector *w) const
 {
   poly head;
@@ -273,6 +274,24 @@ EVector *EFreeModule::tensor(const EVector *v, const EVector *w) const
   EVector *G = buildVector(head.next,newlen);
   G->sort();
   return G;
+}
+#endif
+EVector *EFreeModule::tensor(const EVector *v, const EVector *w) const
+{
+  int n = w->getFreeModule()->rank();
+  EVectorHeap H(this);
+  const ECoefficientRing *K = R->getCoefficientRing();
+  const EMonoid *M = R->getMonoid();
+  for (poly *a = v->elems; a != 0; a = a->next)
+    {
+      EVector *v1 = makeTerm(a->coeff, a->monom, 0);
+      EVector *w1 = componentShift(a->component * n, w);
+      EVector *w2 = v1->multiply(w1);
+      delete v1;
+      delete w1;
+      H.add(w2);
+    }
+  return H.value();
 }
 
 ////////////////////////////
