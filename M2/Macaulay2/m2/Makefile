@@ -100,7 +100,7 @@ ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-erunStar
 phase1 :: ../cache/Macaulay2-$(ARCH)-data
 ../cache/Macaulay2-$(ARCH)-data : $(DUMPEDGFILES) ../bin/Macaulay2
 	rm -f ../cache/Macaulay2-$(ARCH)-data
-	../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
+	time ../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
 endif
@@ -152,8 +152,16 @@ all :: ../cache/Macaulay2-doc
 test : test.m2 phase1 $(SCRIPTS)
 	M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
 
-tests: $(SCRIPTS)
+tests:: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
+
+tests:: test1 test2
+test1:
+	echo 2+3 | M2
+	touch $@
+test2:
+	echo 2+3 | ../util/screen M2
+	touch $@
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \

@@ -101,6 +101,17 @@ bool system_alarmed = FALSE;
 extern int libfac_interruptflag;
 #endif
 
+#if 0
+void unblock(int sig)
+{
+  /* following a suggestion of Tom Hageman  <tom@basil.icce.dev.rug.null.nl>  [NeXTmail/Mime OK] */
+  sigset_t s;
+  sigemptyset(&s);
+  sigaddset(&s, sig);
+  sigprocmask(SIG_UNBLOCK, &s, NULL);
+}
+#endif
+
 static void alarm_handler(int sig)
 {
      system_alarmed = TRUE;
@@ -117,7 +128,7 @@ static void alarm_handler(int sig)
      }
 
 extern bool interp_StopIfError;
-static jmp_buf loaddata_jump, out_of_memory_jump, abort_jump;
+static sigjmp_buf loaddata_jump, out_of_memory_jump, abort_jump;
 static bool out_of_memory_jump_set = FALSE, abort_jump_set = FALSE;
 
 static void interrupt_handler(int sig)
@@ -139,7 +150,7 @@ static void interrupt_handler(int sig)
 			 system_interruptPending = FALSE;
 			 system_interruptShield = FALSE;
 			 system_alarmed = FALSE;
-     	  		 longjmp(abort_jump,1);
+     	  		 siglongjmp(abort_jump,1);
 			 }
 		    else {
 			 fprintf(stderr,"exiting\n");
@@ -171,7 +182,7 @@ void outofmem(){
      if (!interp_StopIfError && out_of_memory_jump_set) {
      	  fprintf(stderr,"out of memory, returning to top level");
      	  fflush(stderr);
-     	  longjmp(out_of_memory_jump,1);
+     	  siglongjmp(out_of_memory_jump,1);
 	  }
      else {
      	  fprintf(stderr,"out of memory, exiting\n");
@@ -437,7 +448,7 @@ char **argv;
      ONSTACK(envc);
 #endif
      GC_free_space_divisor = 14;
-     if (0 != setjmp(loaddata_jump)) {
+     if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
 	  old_collections = GC_gc_no;
@@ -563,7 +574,7 @@ char **argv;
      if (reserve == NULL) {
 	  reserve = GC_MALLOC_ATOMIC(102400);
 	  }
-     if (setjmp(out_of_memory_jump)) {
+     if (sigsetjmp(out_of_memory_jump,TRUE)) {
 	  if (reserve != NULL) {
 	       GC_FREE(reserve);
 	       reserve = NULL;
@@ -577,7 +588,7 @@ char **argv;
 	  fflush(stderr);
 	  }
      out_of_memory_jump_set = TRUE;
-     setjmp(abort_jump);
+     sigsetjmp(abort_jump,TRUE);
      abort_jump_set = TRUE;
      interp_process();
      clean_up();
@@ -646,33 +657,41 @@ extern int etext, end;
 #define PAGESIZE 4096
 #endif
 
-static jmp_buf jumpbuffer;
+static sigjmp_buf jumpbuffer;
 
 static int sig = -1;
 
 static void handler(int k) 
 {
      sig = 1;
-     longjmp(jumpbuffer,1);
+     siglongjmp(jumpbuffer,1);
      }
 
 static void handler2(int k) 
 {
      sig = 2;
-     longjmp(jumpbuffer,2);
+     siglongjmp(jumpbuffer,2);
      }
 
 #if !defined(__MWERKS__) && !defined(__CYGWIN32__)
 static void *first_rw_page_after_etext() {
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
-     char *p = (char *)RUP((long)&etext);
+     char *p = (char *)RUP((long long)&etext);
+     /* will have to replace "long long" above by some integer type
+	determined to be the same size as a pointer */
      for (;; p+=PAGESIZE) {
-	  if (0 != setjmp(jumpbuffer))  {
+	  if (0 != sigsetjmp(jumpbuffer,TRUE))  {
 	       signal(SIGSEGV,handler);	/* reset the handler */
 	       }
 	  else {
 	       char *t = (char *)p;
-	       char c = *t;
+	       char c;
+               { /* for some reason we need this on alpha linux, sigh */
+                 static sigset_t newset;
+                 sigaddset(&newset,SIGSEGV);
+                 sigprocmask(SIG_UNBLOCK, &newset, NULL);
+               }
+	       c = *t;
 	       ONSTACK(p);	/* fool the optimizer */
 	       *t = c;		/* try to write to page */
 	       break;		/* break if writable */
@@ -741,8 +760,8 @@ int min(int i, int j) {
 static void extend_memory(void *newbreak) {
      if (ERROR == brk(newbreak)) {
 	  char buf[200];
-	  sprintf(buf,"loaddata: out of memory (extending break from 0x%lx to 0x%lx)",
-	       (long)sbrk(0), (long)newbreak);
+	  sprintf(buf,"loaddata: out of memory (extending break from 0x%p to 0x%p)",
+	       sbrk(0), newbreak);
 	  perror(buf);
 	  _exit(1);
 	  }
@@ -769,14 +788,14 @@ static int probe() {
 #ifdef SIGBUS
      	  signal(SIGBUS,handler2);
 #endif
-	  if (0 == setjmp(jumpbuffer))  {
+	  if (0 == sigsetjmp(jumpbuffer,TRUE))  {
 	       c = *p;		/* try reading a byte */
 	       readable = TRUE;
      	       signal(SIGSEGV,handler);
 #ifdef SIGBUS
      	       signal(SIGBUS,handler2);
 #endif
-	       if (0 == setjmp(jumpbuffer)) {
+	       if (0 == sigsetjmp(jumpbuffer,TRUE)) {
 		    *p = c;	/* try writing a byte */
 		    writable = TRUE;
 		    }
@@ -789,8 +808,8 @@ static int probe() {
 	       }
 	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
 	       char buf[80];
-	       sprintf(buf,"%16lx . %s%s%s",
-	       	    (long)p,
+	       sprintf(buf,"%p . %s%s%s",
+	       	    p,
 	       	    readable ? "r" : "-", 
 	       	    writable ? "w" : "-",
 	       	    sig == 1 ? "  SEGV" : sig == 2 ? "  BUS" : ""
@@ -800,9 +819,7 @@ static int probe() {
 	  }
      {
 	  char buf[80];
-	  sprintf(buf,"%16lx .",
-	       (long)p
-	       );
+	  sprintf(buf,"%p .", p);
 	  putstderr(buf);
 	       }
 #endif
@@ -821,7 +838,7 @@ int system_loaddata(M2_string datafilename){
      char *datafilename_s = tocharstar(datafilename);
      char savetimestamp[60];
      struct stat statbuf;
-     jmp_buf save_loaddata_jump;
+     sigjmp_buf save_loaddata_jump;
      int filelen;
      int reloaded = system_reloaded;
      int datafile = open(datafilename_s, O_BINARY | O_RDONLY);
@@ -861,15 +878,12 @@ x)",
      }
 #elif HAVE_MMAP
      {
-     char *loc = STARTDATA;
-     extend_memory(loc+filelen);
-     if (loc != mmap( loc,
-	       filelen,
-	       PROT_READ|PROT_WRITE,MAP_FIXED|MAP_PRIVATE,
-	       datafile, 0)) {
+     char *loc = STARTDATA, *loc2;
+     extend_memory(loc+filelen); /* Do we really need to do this? */
+     loc2 = mmap(loc, filelen, PROT_READ|PROT_WRITE,MAP_FIXED|MAP_PRIVATE, datafile, 0);
+     if (loc != loc2) {
 	  char buf[200];
-	  sprintf(buf,"loaddata: error while mapping file (length 0x%x at 0x%lx)",
-	       filelen, (long)loc);
+	  sprintf(buf,"loaddata: error while mapping file (length 0x%x at 0x%p)", filelen, loc);
 	  putstderr(buf);
 	  _exit(1);
 	  }
@@ -880,8 +894,7 @@ x)",
      extend_memory(loc+filelen);
      if (filelen != read(datafile,loc,filelen)) {
 	  char buf[200];
-	  sprintf(buf,"loaddata: error while reading file (length 0x%x at 0x%lx)",
-	       filelen, (long)loc);
+	  sprintf(buf,"loaddata: error while reading file (length 0x%x at 0x%p)", filelen, loc);
 	  putstderr(buf);
 	  _exit(1);
 	  }
@@ -894,7 +907,7 @@ x)",
 	  }
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
      system_reloaded = reloaded + 1;
-     longjmp(loaddata_jump,1);
+     siglongjmp(loaddata_jump,1);
 #endif
      }
 

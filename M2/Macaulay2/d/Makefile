@@ -219,6 +219,11 @@ ALLOBJ += putc.o
 putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
+ifeq ($(OS),Linux)
+ALLOBJ += malloc.o
+# LDFLAGS += -rdynamic
+malloc.o : /usr/lib/libc.a; ar x $^ $@
+endif
 ################################# c file production for porting
 ALLC := $(PROJECT:.d=.c)
 all-c-files :: $(ALLC)
