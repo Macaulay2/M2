@@ -69,9 +69,9 @@ tutorials.m2 : ../tutorial/final/*.out
 	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
 
 ################################# cache
-cache cache/doc cache/tests :; mkdir $@
+cache cache/doc cache/tests ../tutorial/final/cache/doc :; mkdir $@
 clean ::; rm -rf cache
-initialize :: cache cache/tests cache/doc
+initialize :: cache cache/tests cache/doc ../tutorial/final/cache/doc
 #################################
 
 gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
@@ -138,6 +138,10 @@ $(SCRIPTS) : makeM2.m2 ../../Makeconf.h
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 endif
 
+phase2 :: initialize
+phase2 :: phase1
+phase2 :: ../cache/Macaulay2-pre
+
 ../cache/Macaulay2-pre : $(DUMPEDGFILES) \
 		../bin/Macaulay2$(EXESUFFIX) \
 		 $(DOCSEQUENCE) $(TUTORIALS)
@@ -172,9 +176,14 @@ cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
 all :: ../cache/Macaulay2-doc
+
+phase3 : initialize phase2 cache/doc/sample cache/doc/expression
+	$(MAKE) -k -C ../m2/cache/doc       -f ../../../m2/Makefile.egs
+	$(MAKE) TOPDIR=../../../../.. -k -C ../tutorial/final/cache/doc -f ../../../../m2/Makefile.egs
+
+phase4 : ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
-		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
-	$(MAKE) -k -C cache/doc -f ../../Makefile.egs
+		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS) phase3
 	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc

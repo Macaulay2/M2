@@ -6,6 +6,8 @@ GaloisField.synonym = "Galois field"
 ambient GaloisField := Ring => R -> last R.baseRings
 coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
 
+expression(GaloisField) := F -> new FunctionApplication from { GF, F.order }
+
 GF = method (
      Options => { 
 	  PrimitiveElement => FindOne,

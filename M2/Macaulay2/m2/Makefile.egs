@@ -3,10 +3,10 @@ include $(TOPDIR)/Makeconf
 
 ifndef NODUMPDATA
 ARGS := -q -silent \
-	'-e loaddata "../../../cache/Macaulay2-$(ARCH)-data"' \
-	-- -x -s ../../../m2/eg.m2
+	'-e loaddata "$(M2HOME)/cache/Macaulay2-$(ARCH)-data"' \
+	-- -x -s $(M2HOME)/m2/eg.m2
 else
-ARGS := -q -silent -x -s -ephase=1 ../../setup.m2 -ephase=0 ../../../m2/eg.m2
+ARGS := -q -silent -x -s -ephase=1 $(M2HOME)/m2/setup.m2 -ephase=0 $(M2HOME)/m2/eg.m2
 endif
 
 # ifdef CYGWIN32
@@ -18,26 +18,25 @@ endif
 # 	 else \
 # 	   echo "running example $*"; \
 # 	   echo $(M2HOME)/bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' ">$*.tmp" ; \
-# 	   ../../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
+# 	   $(M2HOME)/bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
 # 	   mv $*.tmp $*.out && \
 # 	   cp $*.m2 $*.old ; \
 # 	 fi
 # else
-%.out : %.m2
-	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
-	 then touch $*.out ; \
-	 else \
-	   echo "running example $*"; \
-	   if $(M2HOME)/bin/Macaulay2 $(ARGS) <"$*.m2" >$*.tmp ; \
-	   then mv $*.tmp $*.out ; \
-                cp $*.m2 $*.old ; \
-	   else echo "contents of $*.m2:" ; \
-		cat $*.m2 ; \
-	   fi ; \
-	 fi
+%.out : %.example
+	@if [ -f ./"$*.out" ] && cmp -s ./"$*.example" ./"$*.example.old" ; \
+	then touch ./"$*.out" ; \
+	else echo "running example $*"; \
+	     if $(M2HOME)/bin/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
+	     then mv ./"$*.tmp" ./"$*.out" ; \
+		  cp ./"$*.example" ./"$*.example.old" ; \
+	     else echo "contents of $*.example:" ; \
+		  cat ./"$*.example" ; \
+	     fi ; \
+	fi
 # endif
 
-INFILES  := $(wildcard *.m2)
-OUTFILES := $(INFILES:.m2=.out)
+INFILES  := $(wildcard *.example)
+OUTFILES := $(INFILES:.example=.out)
 
 all:: $(OUTFILES)
