@@ -7,8 +7,6 @@ addStartFunction(
 	  if prefixDirectory =!= null then path = prepend(prefixDirectory|LAYOUT#"packages",path);
 	  ))
 
-packages = {}
-
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 
@@ -16,18 +14,19 @@ hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
      )
 
-reverseDictionary = x -> scan(packages, pkg -> (
+reverseDictionary = x -> scan(values PackagesDictionary, 
+     pkg -> (
 	  d := pkg#"reverse dictionary";
 	  if d#?x then break d#x))
 reverseDictionaryRecord = (X,x) -> if X =!= x then (
      s := toString X;
-     scan(packages, 
+     scan(values PackagesDictionary, 
      	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x then (	-- too bad a symbol doesn't know what dictionary it's in...
 	       pkg#"reverse dictionary"#x = X; 
 	       break)))
 reverseDictionaryRemove = (X,x) -> (
      s := toString X;
-     scan(packages, 
+     scan(values PackagesDictionary, 
      	  pkg -> if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X then (
 	       remove(pkg#"reverse dictionary",x); 
 	       break)))
@@ -61,10 +60,9 @@ installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 removePackage = method()
 removePackage Package := p -> (
      hide p.Dictionary;
-     packages = select(packages, q -> q =!= p);
      stderr << "--previous definitions removed for package " << p << endl;
      )
-removePackage String := s -> scan(packages, p -> if p.name == s then removePackage p)
+removePackage String := n -> if PackagesDictionary#?n and class value PackagesDictionary#n === Package then removePackage value PackagesDictionary#n
 
 currentPackageS := getGlobalSymbol(PackagesDictionary,"currentPackage")
 
@@ -74,15 +72,15 @@ newPackage(Package) := opts -> p -> (
      newPackage(p.name,opts))
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
-     stderr << "--package " << p << " loading" << endl;
+     stderr << "--package " << title << " loading" << endl;
      removePackage title;
      saveD := globalDictionaries;
-     hook := () -> globalDictionaries = saveD;
+     hook := haderror -> if haderror then globalDictionaries = saveD else closePackage title;
      newdict := (
 	  if title === "Main" then first globalDictionaries
 	  else (
 	       d := new Dictionary;
-	       loadErrorHooks = prepend(hook, loadErrorHooks);
+	       fileExitHooks = prepend(hook, fileExitHooks);
 	       globalDictionaries = {d,Main.Dictionary,PackagesDictionary};    -- implement Using, too
 	       d));
      if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
@@ -92,7 +90,6 @@ newPackage(String) := opts -> (title) -> (
      	  symbol Dictionary => newdict,
 	  symbol Version => opts.Version,
 	  symbol WritableSymbols => opts.WritableSymbols,
-	  "load error hook" => hook,
 	  "previous package" => currentPackage,
 	  "previous dictionaries" => saveD,
 	  "old debugging mode" => debuggingMode,
@@ -113,7 +110,6 @@ newPackage(String) := opts -> (title) -> (
 	  };
      PrintNames#newdict = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
-     packages = prepend(p,packages);
      p)
 
 addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
@@ -125,7 +121,7 @@ newPackage("Main",
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol packages, symbol notify, symbol loadDepth, symbol printingPrecision, symbol loadErrorHooks,
+	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  })
@@ -144,7 +140,7 @@ Command.GlobalReleaseHook = (X,x) -> (
 
 closePackage = method()
 closePackage String := title -> (
-     if title =!= currentPackage.name then error ("package not the current package");
+     if currentPackage === null or title =!= currentPackage.name then error ("package not current: ",title);
      p := currentPackage;
      sym := getGlobalSymbol(PackagesDictionary,title);
      p.Symbol = sym;
@@ -153,8 +149,6 @@ closePackage String := title -> (
      scan(p.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
      ws := set p.WritableSymbols;
      d := p.Dictionary;
-     loadErrorHooks = select(loadErrorHooks, f -> f =!= p#"load error hook");
-     remove(p,"load error hook");
      scan(values d,
 	  s -> (
 	       if not ws#?s then protect s;
@@ -163,7 +157,6 @@ closePackage String := title -> (
      if p =!= Main then (			    -- protect it later
 	  protect p.Dictionary;
 	  );
-     if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
      if p.name =!= "Main" then globalDictionaries = prepend(d,p#"previous dictionaries");
      currentPackage = p#"previous package";
      debuggingMode = p#"old debugging mode";
@@ -187,7 +180,7 @@ dictionary Symbol := s -> (				    -- eventually every symbol will know what dic
 dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
 package = method ()
-package Dictionary := d -> scan(packages, pkg -> if pkg.Dictionary === d then break pkg)
+package Dictionary := d -> scan(values PackagesDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
 package Thing := x -> (
      d := dictionary x;
      if d =!= null then package d)
@@ -202,7 +195,7 @@ package TO := x -> (
      key := normalizeDocumentTag x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
-     p := select(packages, P -> P#"documentation"#?fkey);
+     p := select(values PackagesDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
      if #p == 1 then (
 	  p = p#0;
 	  if pkg =!= p then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;

@@ -31,7 +31,7 @@ use texmacs;
 
 import dirname(s:string):string;
 
-loadErrorHooks := setupvar("loadErrorHooks", Expr(emptyList));
+fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
 currentFileName := setupvar("currentFileName", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
@@ -138,16 +138,22 @@ readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,re
      localFrame = saveLocalFrame;
      ret);
 readeval(file:TokenFile,returnLastvalue:bool):Expr := (
-     savefe := getGlobalVariable(loadErrorHooks);
+     savefe := getGlobalVariable(fileExitHooks);
+     setGlobalVariable(fileExitHooks,emptyList);
      ret := readeval3(file,false,true,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false);
-     when ret is Error do (
-	  hook := getGlobalVariable(loadErrorHooks);
-	  when hook
-	  is x:List do foreach f in x.v do apply(f,emptySequence)
-	  else nothing)
+     haderror := when ret is Error do True else False;
+     hadexiterror := false;
+     hook := getGlobalVariable(fileExitHooks);
+     when hook is x:List do foreach f in x.v do (
+	  r := apply(f,haderror);
+	  when r is err:Error do (
+	       if err.position == dummyPosition then stderr << "error in file exit hook: " << err.message << endl;
+	       hadexiterror = true;
+	       ) else nothing
+	  )
      else nothing;
-     setGlobalVariable(loadErrorHooks,savefe);
-     ret);
+     setGlobalVariable(fileExitHooks,savefe);
+     if hadexiterror then buildErrorPacket("error in file exit hook") else ret);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");

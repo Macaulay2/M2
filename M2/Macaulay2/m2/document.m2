@@ -38,7 +38,7 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
-getPackage := key -> scan(packages,
+getPackage := key -> scan(values PackagesDictionary,
      pkg -> (
 	  d := pkg#"documentation";
 	  if d#?key then break pkg)) 
@@ -659,12 +659,6 @@ documentation String := s -> (
      else SEQ { title s, getDocBody s }
      )
 
--- documentation Thing := s -> (
---      scan(packages, pkg -> (
--- 	       d := pkg#"reverse dictionary";
--- 	       if d#?s then break documentation d#s;
--- 	       )))
-
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
 postfix := set postfixOperators; erase symbol postfixOperators
@@ -782,7 +776,7 @@ documentation Thing := x -> if ReverseDictionary#?x then return documentation Re
 
 hasDocumentation = x -> (
      fkey := formatDocumentTag x;
-     p := select(packages, P -> P#"documentation"#?fkey);
+     p := select(values PackagesDictionary, P -> P#"documentation"#?fkey);
      0 < #p)
 
 hr1 := newline | "-----------------------------------------------------------------------------" | newline
