@@ -14,7 +14,7 @@ use arithmetic;
 
 export hash(e:Expr):int := (
      when e
-     is x:Object do x.hash
+     is x:HashTable do x.hash
      is x:SymbolClosure do x.symbol.hash
      is x:Database do x.hash
      is x:Integer do hash(x)
@@ -73,7 +73,7 @@ export setmutability(x:List,mutable:bool):List := (
 	  x.hash = hash(x);
 	  x
 	  ));
-export hash(x:Object):int := (
+export hash(x:HashTable):int := (
      h := x.parent.hash + x.class.hash * 231 + 32455;
      foreach bucket in x.table do (
 	  p := bucket;
@@ -83,7 +83,7 @@ export hash(x:Object):int := (
 	       p = p.next;
 	       ));
      h);
-export sethash(o:Object,mutable:bool):Object := (
+export sethash(o:HashTable,mutable:bool):HashTable := (
      if mutable 
      then (
 	  o.mutable = true;
@@ -94,7 +94,7 @@ export sethash(o:Object,mutable:bool):Object := (
 	  o.hash = hash(o);
 	  );
      o);
-export setmutability(o:Object,mutable:bool):Object := (
+export setmutability(o:HashTable,mutable:bool):HashTable := (
      if o.mutable == mutable 
      then o
      else if mutable
@@ -129,7 +129,7 @@ export copy(table:array(KeyValuePair)):array(KeyValuePair) := (
 				   p = p.next;
 				   );
 			      newbucket))))));
-export copy(obj:Object):Object := Object(
+export copy(obj:HashTable):HashTable := HashTable(
      copy(obj.table), 
      obj.class, 
      obj.parent, 
@@ -163,15 +163,15 @@ export list(a:Sequence):Expr := (
      r := List(listClass,a,0,false);
      r.hash = hash(r);
      Expr(r));     
-export list(class:Object,a:Sequence):Expr := (
+export list(class:HashTable,a:Sequence):Expr := (
      r := List(class,a,0,false);
      r.hash = hash(r);
      Expr(r));     
-export list(class:Object,a:Sequence,mutable:bool):Expr := (
+export list(class:HashTable,a:Sequence,mutable:bool):Expr := (
      r := List(class,a,0,mutable);
      r.hash = hash(r);
      Expr(r));     
-export list(class:Object,e:Expr):Expr := (
+export list(class:HashTable,e:Expr):Expr := (
      when e
      is a:Sequence do list(class,a)
      else list(class,Sequence(e)));

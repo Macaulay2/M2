@@ -486,26 +486,23 @@ assignNewFun(newclass:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c
      is Error do c
-     is o:Object do (
+     is o:HashTable do (
 	  r := eval(rhs);
 	  when r is Error do r
-	  else assignobject(o,NewE,NewS.symbol.hash,r))
+	  else storeInHashTable(o,NewE,NewS.symbol.hash,r))
      else errorpos(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
 assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c
      is Error do c
-     is cc:Object do
+     is cc:HashTable do
      if cc.mutable then (
 	  p := eval(newparent);
 	  when p 
 	  is Error do p
-	  is pp:Object do 
-	  if pp.mutable then (
-	       r := eval(rhs);
-	       when r is Error do r
-	       else install(NewOfE,cc,pp,r))
+	  is pp:HashTable do 
+	  if pp.mutable then installMethod(NewOfE,cc,pp,eval(rhs))
 	  else errorpos(newparent,"expected a mutable hash table")
 	  else errorpos(newparent,"expected a hash table as prospective parent"))
      else errorpos(newclass,"expected a mutable hash table")
@@ -516,16 +513,13 @@ assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c
      is Error do c
-     is cc:Object do 
+     is cc:HashTable do 
      if cc.mutable then (
 	  i := eval(newinitializer);
 	  when i 
 	  is Error do i
-	  is ii:Object do 
-	  if ii.mutable then (
-	       r := eval(rhs);
-	       when r is Error do r
-	       else install(NewFromE,cc,ii,r))
+	  is ii:HashTable do 
+	  if ii.mutable then installMethod(NewFromE,cc,ii,eval(rhs))
      	  else errorpos(newinitializer,"expected a mutable hash table")
      	  else errorpos(newinitializer,"expected a hash table"))
      else errorpos(newclass,"expected a mutable hash table")
@@ -539,22 +533,22 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
      c := eval(newclass);
      when c 
      is Error do c 
-     is cc:Object do
+     is cc:HashTable do
      if cc.mutable then (
 	  p := eval(newparent);
 	  when p
 	  is Error do p
-	  is pp:Object do
+	  is pp:HashTable do
 	  if pp.mutable then (
 	       i := eval(newinitializer);
 	       when i 
 	       is Error do i 
-	       is ii:Object do
+	       is ii:HashTable do
 	       if ii.mutable then (
 	       	    r := eval(rhs);
 	       	    when r 
 		    is Error do r
-	       	    else install(NewOfFromE,cc,pp,ii,r))
+	       	    else installMethod(NewOfFromE,cc,pp,ii,r))
      	       else errorpos(newinitializer,"expected a mutable hash table")
      	       else errorpos(newinitializer,"expected a hash table"))
 	  else errorpos(newparent,"expected a mutable hash table")
@@ -563,7 +557,7 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
      else errorpos(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
-export ancestor(o:Object,p:Object):bool := (
+export ancestor(o:HashTable,p:HashTable):bool := (
      while true do (
 	  if o == p then return(true);
 	  if o == thingClass then return(false);
@@ -581,55 +575,39 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 	       is bcd:Sequence do (
 		    if length(bcd) == 2 then (
 			 when bcd.0
-			 is bb:Object do
+			 is bb:HashTable do
 			 if !ancestor(bb.class,typeClass)
 			 then errorExpr("expected first parameter to be a type") else
 			 when bcd.1
-			 is cc:Object do
-			 if !ancestor(cc.class,typeClass)
-			 then errorExpr("expected second parameter to be a type") else (
-			      r := eval(args.3);
-			      when r is Error do r
-			      is FunctionClosure do install(a,bb,cc,r)
-			      is CompiledFunction do install(a,bb,cc,r)
-			      is CompiledFunctionClosure do install(a,bb,cc,r)
-			      else errorExpr("expected a function"))
+			 is cc:HashTable do
+			 if ancestor(cc.class,typeClass)
+			 then installMethod(a,bb,cc,eval(args.3))
+			 else errorExpr("expected second parameter to be a type")
 			 else errorExpr("expected second parameter to be a hash table")
 			 else errorExpr("expected first parameter to be a hash table")
 			 )
 		    else if length(bcd) == 3 then (
 			 when bcd.0
-			 is bb:Object do
+			 is bb:HashTable do
 			 if !ancestor(bb.class,typeClass)
 			 then errorExpr("expected first parameter to be a type") else
 			 when bcd.1
-			 is cc:Object do
+			 is cc:HashTable do
 			 if !ancestor(cc.class,typeClass)
 			 then errorExpr("expected second parameter to be a type") else 
 			 when bcd.2
-			 is dd:Object do
-			 if !ancestor(dd.class,typeClass)
-			 then errorExpr("expected third parameter to be a type") else (
-			      r := eval(args.3);
-			      when r is Error do r
-			      is FunctionClosure do install(a,bb,cc,dd,r)
-			      is CompiledFunction do install(a,bb,cc,dd,r)
-			      is CompiledFunctionClosure do install(a,bb,cc,dd,r)
-			      else errorExpr("expected a function"))
+			 is dd:HashTable do
+			 if ancestor(dd.class,typeClass)
+			 then installMethod(a,bb,cc,dd,eval(args.3))
+			 else errorExpr("expected third parameter to be a type") 
 			 else errorExpr("expected third parameter to be a hash table")
 			 else errorExpr("expected second parameter to be a hash table")
 			 else errorExpr("expected first parameter to be a hash table")
 			 )
 		    else errorExpr("expected two or three parameter types"))
-	       is bb:Object do (
+	       is bb:HashTable do (
 		    if ancestor(bb.class,typeClass)
-		    then (
-			 r := eval(args.3);
-			 when r is Error do r
-			 is FunctionClosure do install(a,bb,r)
-			 is CompiledFunction do install(a,bb,r)
-			 is CompiledFunctionClosure do install(a,bb,r)
-			 else errorExpr("expected a function"))
+		    then installMethod(a,bb,eval(args.3))
 		    else errorExpr("expected right hand parameter type"))
 	       else errorExpr("expected right hand parameter hash table or sequence"))
 	  else errorExpr("encountered symbol instead of a class"))
@@ -642,26 +620,19 @@ installFun(args:CodeSequence):Expr := (
      is CompiledFunction do installFun2(a,args)
      is CompiledFunctionClosure do installFun2(a,args)
      is FunctionClosure do installFun2(a,args)
-     is aa:Object do (
+     is aa:HashTable do (
 	  if !ancestor(aa.class,typeClass)
 	  then installFun2(a,args)
 	  else (
 	       b := eval(args.2);
 	       when b
 	       is Error do b 
-	       is bb:Object do (
+	       is bb:HashTable do (
 		    if ancestor(bb.class,typeClass)
 		    then (
 			 opr := eval(args.0);
-			 when opr 
-			 is Error do opr
-			 else (
-			      r := eval(args.3);
-			      when r is Error do r
-			      is FunctionClosure do install(opr,aa,bb,r)
-			      is CompiledFunction do install(opr,aa,bb,r)
-			      is CompiledFunctionClosure do install(opr,aa,bb,r)
-			      else errorExpr("expected a function")))
+			 when opr is Error do opr
+			 else installMethod(opr,aa,bb,eval(args.3)))
 		    else errorExpr("expected right hand parameter to be a type"))
 	       else errorExpr("expected right hand parameter to be a hash table")))
      else errorExpr("expected a hash table"));
@@ -672,7 +643,7 @@ unaryInstallFun(meth:Code,argtype:Code,body:Code):Expr := (
      when Argtype is Error 
      do Argtype 
      else when Argtype is
-     o:Object do assignobject(o,meth,body)
+     o:HashTable do storeInHashTable(o,meth,body)
      else errorpos(argtype,"expected a hash table")
      );
 UnaryInstallFun = unaryInstallFun;

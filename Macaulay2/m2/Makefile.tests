@@ -7,5 +7,5 @@ $(TESTRESULTS) : ../../bin/Macaulay2-$(ARCH).data
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../bin/Macaulay2 '-eloaddata("../../bin/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' -silent $< '-eexit(0)'
+	@ ../../bin/Macaulay2 '-eloaddata("../../bin/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent $< '-eexit(0)'
 	@ touch $@

@@ -24,8 +24,8 @@ use objects;
 use GB;
 use actors4;
 
-install(s:SymbolClosure,X:Object,Y:Object,f:fun):Expr := (
-     install(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
+installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
+     installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
      );
 
 cvtlen := 0;
@@ -419,7 +419,7 @@ exitfun(e:Expr):Expr := (
      else WrongArg(1,"an integer"));
 setupfun("exit",exitfun);
 
-applythem(obj:Object,fn:FunctionClosure):void := (
+applythem(obj:HashTable,fn:FunctionClosure):void := (
      apply(fn,Expr(obj));
      );
 RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
@@ -441,7 +441,7 @@ FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)
 --     if length(a) == 2
 --     then (
 --	  when a.0
---	  is obj:Object do (
+--	  is obj:HashTable do (
 --	       when a.1 
 --	       is fn:FunctionClosure do (
 --		    RegisterFinalizer(obj,applythem,fn);
@@ -536,7 +536,7 @@ integermod(e:Expr):Expr := (
      	       else WrongArg(1,"an integer"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-install(PercentS,integerClass,integerClass,integermod);
+installMethod(PercentS,integerClass,integerClass,integermod);
 
 modC(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PercentS);
 setup(PercentS,modC);
@@ -584,7 +584,7 @@ setup(UnderscoreS,underscorefun);
 dotfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
-     is x:Object do (
+     is x:HashTable do (
 	  when rhs
 	  is r:exprCode do lookup1force(x, r.v)
 	  else errorpos(rhs,"expected a symbol"))
@@ -595,7 +595,7 @@ setup(DotS,dotfun);
 dotQfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left is Error do left
-     is x:Object do (
+     is x:HashTable do (
 	  when rhs
 	  is r:exprCode do if lookup1Q(x,r.v) then True else False
 	  else errorpos(rhs,"expected a symbol"))
@@ -687,7 +687,7 @@ replicate(e:Expr):Expr := (
 	       else WrongArgInteger(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-install(ColonS,integerClass,thingClass,replicate);
+installMethod(ColonS,integerClass,thingClass,replicate);
 
 bitorfun(e:Expr):Expr := (
      when e is a:Sequence do (
@@ -699,7 +699,7 @@ bitorfun(e:Expr):Expr := (
 	       else WrongArgInteger(1))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-install(BarS,integerClass,integerClass,bitorfun);
+installMethod(BarS,integerClass,integerClass,bitorfun);
 
 bitandfun(e:Expr):Expr := (
      when e is a:Sequence do (
@@ -710,7 +710,7 @@ bitandfun(e:Expr):Expr := (
 	       else WrongArgInteger(1))
  	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-install(AmpersandS,integerClass,integerClass,bitandfun);
+installMethod(AmpersandS,integerClass,integerClass,bitandfun);
 
 examine(e:Expr):Expr := (
      when e
@@ -817,7 +817,7 @@ removefun(e:Expr):Expr := (
 	  then WrongNumArgs(2)
 	  else (
 	       when args.0
-	       is o:Object do (
+	       is o:HashTable do (
 		    ret := remove(o,args.1);
 		    when ret is Error do ret else nullE)
 	       else WrongArg(1,"a hash table")))
@@ -866,16 +866,16 @@ erase(e:Expr):Expr := (
 setupfun("erase", erase);
 
 factorInt(n:int):Expr := (
-     facs := newobject(Tally,emptyClass);
+     facs := newHashTable(Tally,nothingClass);
      if n == 0 then (
-	  assignobject(facs,Expr(toInteger(n)),Expr(toInteger(1)));
+	  storeInHashTable(facs,Expr(toInteger(n)),Expr(toInteger(1)));
 	  )
      else (
 	  d := 2;
 	  hadone := false;
 	  while (n % d) == 0 && n != -1 && n != 1 do (
 	       key := Expr(toInteger(d));
-	       assignobject(facs,key, 
+	       storeInHashTable(facs,key, 
 		    if hadone 
 		    then lookup1(facs,key) + Expr(toInteger(1))
 		    else Expr(toInteger(1)));
@@ -884,14 +884,14 @@ factorInt(n:int):Expr := (
 	       );
 	  if n < 0 then (
 	       n = -n;
-	       assignobject(facs,Expr(toInteger(-1)),Expr(toInteger(1)));
+	       storeInHashTable(facs,Expr(toInteger(-1)),Expr(toInteger(1)));
 	       );
 	  d = 3;
 	  while n > 1 do (
 	       hadodd := false;
 	       while n > 1 && (n % d) == 0 do (
 	       	    key := Expr(toInteger(d));
-		    assignobject(facs,key, 
+		    storeInHashTable(facs,key, 
 			 if hadodd
 			 then lookup1(facs,key) + Expr(toInteger(1))
 			 else Expr(toInteger(1)));
@@ -942,11 +942,11 @@ method123(e:Expr,env:Sequence):Expr := (
      -- env.1 : the function to call if no method found
      when e is args:Sequence do (
 	  if length(args) == 2 then (
-	       f := lookup2(Class(args.0),Class(args.1),env.0);
+	       f := lookupBinaryMethod(Class(args.0),Class(args.1),env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args))
 	  else if length(args) == 3 then (
-	       f := lookup3(Class(args.0),Class(args.1),Class(args.2),env.0);
+	       f := lookupTernaryMethod(Class(args.0),Class(args.1),Class(args.2),env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args))
 	  else if length(args) == 1 then (
@@ -959,7 +959,7 @@ method123(e:Expr,env:Sequence):Expr := (
 	  if f == nullE then f = env.1;
      	  apply(f,e)));
 
-anonymousClass := newobject(thingClass,thingClass);
+anonymousClass := newHashTable(thingClass,thingClass);
 method123c(e:Expr,env:Sequence):Expr := (
      -- ClassArgument version
      -- env.0 : the primary method function, used as key for lookup
@@ -975,35 +975,35 @@ method123c(e:Expr,env:Sequence):Expr := (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:Object do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else anonymousClass);
 	       a1 := (
 		    if length(useClass) <= 1 || useClass.1 == False
 		    then Class(args.1)
-		    else when args.1 is o:Object do o else anonymousClass);
-	       f := lookup2(a0,a1,env.0);
+		    else when args.1 is o:HashTable do o else anonymousClass);
+	       f := lookupBinaryMethod(a0,a1,env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args))
 	  else if length(args) == 3 then (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:Object do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else anonymousClass);
 	       a1 := (
 		    if length(useClass) <= 1 || useClass.1 == False
 		    then Class(args.1)
-		    else when args.1 is o:Object do o else anonymousClass);
+		    else when args.1 is o:HashTable do o else anonymousClass);
 	       a2 := (
 		    if length(useClass) <= 2 || useClass.2 == False
 		    then Class(args.2)
-		    else when args.2 is o:Object do o else anonymousClass);
-	       f := lookup3(a0,a1,a2,env.0);
+		    else when args.2 is o:HashTable do o else anonymousClass);
+	       f := lookupTernaryMethod(a0,a1,a2,env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args))
 	  else if length(args) == 1 then (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
 		    then Class(args.0)
-		    else when args.0 is o:Object do o else anonymousClass);
+		    else when args.0 is o:HashTable do o else anonymousClass);
 	       f := lookup(a0,env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args.0))
@@ -1012,7 +1012,7 @@ method123c(e:Expr,env:Sequence):Expr := (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
 		    then Class(e)
-		    else when e is o:Object do o else anonymousClass);
+		    else when e is o:HashTable do o else anonymousClass);
 	       f := lookup(Class(e),env.0);
 	       if f == nullE then f = env.1;
 	       apply(f,e)))

@@ -23,7 +23,8 @@ export minimizeFilename(filename:string):string := (
      if length(ofilename) <= length(filename) then ofilename else filename
      );
 export tostring(w:Position) : string := (
-     minimizeFilename(w.filename) + ":" + tostring(w.line) + ":" + tostring(w.column + 1) + ":"
+     minimizeFilename(w.filename) + ":" + tostring(int(w.line))
+     + ":" + tostring(int(w.column + 1)) + ":"
      );
 export (o:file) << (w:Position) : file := (
      o << minimizeFilename(w.filename) << ':' << w.line << ':' << w.column + 1 << ':'

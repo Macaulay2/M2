@@ -140,7 +140,7 @@ accountfor(sizeof(dummyFrame.values));
 export FunctionClosure := { frame:Frame, model:functionCode };
 export SymbolClosure := {frame:Frame, symbol:Symbol};
 export List := {
-     class:Object,
+     class:HashTable,
      v:Sequence,
      hash:int,
      mutable:bool
@@ -164,7 +164,7 @@ export Expr := (
      Real or Boolean or file or string or FunctionClosure or Error or Sequence
      or CompiledFunction or CompiledFunctionClosure
      or SymbolClosure or List or Rational or Integer 
-     or Object or Handle or Database or Nothing or Net
+     or HashTable or Handle or Database or Nothing or Net
      );
 export fun := function(Expr):Expr;
 
@@ -233,10 +233,10 @@ export newScope(scope:Scope):Scope := (
 -- hash tables for exprs
 
 export KeyValuePair := {key:Expr, hash:int, value:Expr, next:KeyValuePair};
-export Object := {
+export HashTable := {
      table:array(KeyValuePair), -- length is always a power of 2, initially 2^0 == 1
-     class:Object,
-     parent:Object,
+     class:HashTable,
+     parent:HashTable,
      numEntries:int,
      hash:int,
      mutable:bool
@@ -283,7 +283,7 @@ export emptynullE := Expr(Sequence());
 export bucketEnd := KeyValuePair(emptynullE,0,emptynullE, self);
 accountfor(sizeof(bucketEnd));
 accountfor(sizeof(emptynullE));
-export thingClass := Object(
+export thingClass := HashTable(
      array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
      self,self,0,(HashCounter = HashCounter + 1;HashCounter),
      true);
@@ -300,27 +300,29 @@ export parseERRMSG  := makedummy();
 
 export ExprEmptySequence := Expr(emptySequence);
 -----------------------------------------------------------------------------
-dummyclean(x:Object):void := nothing;
+dummyclean(x:HashTable):void := nothing;
 export cleanfun := dummyclean;			  -- filled in later
---export clean(x:Object):void := cleanfun(x);
+--export clean(x:HashTable):void := cleanfun(x);
 -----------------------------------------------------------------------------
-export newobject(class:Object,parent:Object):Object := (
+export newHashTable(class:HashTable,parent:HashTable):HashTable := (
      HashCounter = HashCounter + 1;
-     Object(
+     HashTable(
 	  array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in objects.d that the number of buckets
 	  -- here (four) is a power of two!
-	  class,parent,0,HashCounter,true));
-export objectClass := newobject(thingClass,thingClass);
-export mutableObjectClass := newobject(thingClass,objectClass);
-export typeClass := newobject(mutableObjectClass,mutableObjectClass);
+	  class,parent,0,HashCounter,
+	  true				  -- mutable by default!
+	  ));
+export hashTableClass := newHashTable(thingClass,thingClass);
+export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
+export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
        thingClass.class = typeClass;
        typeClass.class = typeClass;
-       mutableObjectClass.class = typeClass;
-       objectClass.class = typeClass;
-       newtypeof(parent:Object):Object := newobject(typeClass,parent);
-       newbasictype():Object := newtypeof(thingClass);
+       mutableHashTableClass.class = typeClass;
+       hashTableClass.class = typeClass;
+       newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+       newbasictype():HashTable := newtypeof(thingClass);
 export basicListClass := newbasictype();
 export mutableListClass := newtypeof(basicListClass);
 export listClass := newtypeof(basicListClass);
@@ -335,16 +337,16 @@ export netClass := newbasictype();
 export booleanClass := newbasictype();
 export dbClass := newbasictype();
 export sequenceClass := newbasictype();
-export symboltableClass := newtypeof(objectClass);
+export symboltableClass := newtypeof(hashTableClass);
 export arrayClass := newtypeof(basicListClass);
 export ringClass := newtypeof(typeClass);
-       newbasicringtype():Object := newobject(ringClass,thingClass);
+       newbasicringtype():HashTable := newHashTable(ringClass,thingClass);
 export integerClass := newbasicringtype();
 export fieldClass := newtypeof(ringClass);
-       newbasicfieldtype():Object := newobject(fieldClass,thingClass);
+       newbasicfieldtype():HashTable := newHashTable(fieldClass,thingClass);
 export rationalClass := newbasicfieldtype();
 export doubleClass := newbasicfieldtype();
-export emptyClass := newbasictype();
+export nothingClass := newbasictype();
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame

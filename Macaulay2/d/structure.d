@@ -16,7 +16,7 @@ use converter;
 export copy(e:Expr):Expr := (
      when e
      is a:List do if a.mutable then Expr(copy(a)) else e
-     is o:Object do if o.mutable then Expr(copy(o)) else e
+     is o:HashTable do if o.mutable then Expr(copy(o)) else e
      else e);
 setupfun("copy",copy);
 reverse(e:Expr):Expr := (
@@ -29,7 +29,7 @@ export seq(e:Expr):Expr := Expr(Sequence(e));
 setupfun("seq",seq);
 pairs(e:Expr):Expr := (
      when e
-     is o:Object do list(
+     is o:HashTable do list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
@@ -131,11 +131,11 @@ export toArrayExpr(v:array(int)):Sequence := (
      new Sequence len length(v) do foreach i in v do provide Expr(toInteger(i))
      );
 
-export newlist(class:Object,v:Sequence):List := (
+export newlist(class:HashTable,v:Sequence):List := (
      x := List(class,v,0,false);
      x.hash = hash(x);
      x);
-export basictype(o:Object):Object := (
+export basictype(o:HashTable):HashTable := (
      while true do (
 	  if o.parent == thingClass then return(o);
 	  o = o.parent;
