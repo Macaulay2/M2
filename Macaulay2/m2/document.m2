@@ -565,7 +565,7 @@ documentation Type := X -> (
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
 	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, SHIELD menu d, PARA{}},
 	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, SHIELD smenu a, PARA{}},
-	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, SHIELD smenu c, PARA{}},
+	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
 	  })
 
@@ -722,9 +722,8 @@ ttLiteralTable := new MutableHashTable
 scan(0 .. 255, 
      c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
 scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~", 
-     c -> ttLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
-scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
+-- scan(characters "\\{}$&#^_%~", c -> ttLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
+-- scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
 
 cmrLiteralTable := copy ttLiteralTable
 
@@ -830,7 +829,7 @@ text HR := x -> ///
 ///
 tex  HR := x -> ///
 \hfill\break
-\line{\leaders\hrule\hfill}
+\hbox to\hsize{\leaders\hrule\hfill}
 ///
 
 html PARA := x -> (

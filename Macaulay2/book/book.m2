@@ -24,6 +24,37 @@ bookFile << ///
     	colorlinks=true
         }
 
+\setcounter{secnumdepth}{10}
+\catcode`\@=11
+\def\subsection{\@startsection{subsection}{2}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subsubsection{\@startsection{subsubsection}{3}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\paragraph{\@startsection{paragraph}{4}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subparagraph{\@startsection{subparagraph}{5}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subsubparagraph{\@startsection{subparagraph}{6}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subsubsubparagraph{\@startsection{subparagraph}{7}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subsubsubsubparagraph{\@startsection{subparagraph}{8}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subsubsubsubsubparagraph{\@startsection{subparagraph}{9}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\def\subsubsubsubsubsubparagraph{\@startsection{subparagraph}{10}%
+  \z@{.7\linespacing\@plus\linespacing}{.5\linespacing}%
+  {\normalfont\bfseries\centering}}
+\catcode`\@=12
+
 \renewcommand{\thepart}{\Roman{part}}
 \renewcommand{\thechapter}{\arabic{chapter}}
 \renewcommand{\thesection}{\thechapter.\arabic{section}}
@@ -75,22 +106,33 @@ bookFile << ///
     -- in the natural order, which in turn depends on the hash number of
     -- a small integer being the integer itself
 
+    levelLimit := 10;
+
     sectionType := sectionNumber -> (
-	 level := 1 + # select(characters sectionNumber, i -> i === ".");
-	 if level === 0 then "\\part"
-	 else if level === 1 then "\\chapter"
-	 else if level === 2 then "\\section"
-	 else if level === 3 then "\\subsection"
-	 else "\\subsubsection"
+	 level := # select(characters sectionNumber, i -> i === ".");
+	 if level > levelLimit then level = levelLimit;
+	 if level === 0 then "\\part" else
+	 if level === 1 then "\\chapter" else
+	 if level === 2 then "\\section" else
+	 if level === 3 then "\\subsection" else
+	 if level === 4 then "\\subsubsection" else
+	 if level === 5 then "\\paragraph" else
+	 if level === 6 then "\\subparagraph" else
+	 if level === 7 then "\\subsubparagraph" else
+	 if level === 8 then "\\subsubsubparagraph" else
+	 if level === 9 then "\\subsubsubsubparagraph" else
+	 "\\subsubsubsubsubparagraph"
 	 )
 
-    scan(pairs nodeTable, (i,node) -> (
+    scan(pairs getNameFromNumber, (i,node) -> (
 	      n := sectionNumberTable#i;
+	      d := documentationMemo node;
+	      if class d#0 === CENTER then d = drop(d,1);
 	      bookFile << endl << endl
 	      << sectionType n << "{" << cmrLiteral formatDocumentTag node << "}"
 	      << "\\label{" << n << "}" << endl
 	      << "\\hypertarget{" << n << "}{}" << endl
-	      << concatenate booktex documentation node << endl;
+	      << concatenate booktex d << endl;
 	      )
 	 )
 -----------------------------------------------------------------------------

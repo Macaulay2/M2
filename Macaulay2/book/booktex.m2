@@ -1,24 +1,32 @@
 --		Copyright 1997 by Daniel R. Grayson
 
+documentationMemo = memoize documentation
+
 asciiLineWidth = 60
 
-nodeTable = new MutableHashTable
-nodeTable2 = new MutableHashTable
-fileNumberTable = new MutableHashTable
+getNameFromNumber = new MutableHashTable
+otherNodes = new MutableHashTable
+getNumberFromName = new MutableHashTable
 sectionNumberTable = new MutableHashTable
 sectionNumber = {0}
 descend = () -> sectionNumber = append(sectionNumber,0)
-ascend = () -> sectionNumber = drop(sectionNumber,-1)
+ascend = () -> (
+     if # sectionNumber === 1 then error "oops: ascending too high, producing empty section number";
+     if # sectionNumber === 0 then error "oops: empty section number";
+     sectionNumber = drop(sectionNumber,-1)
+     )
 String + ZZ := (s,i) -> s
 record = (
      counter := 0;
      node -> (
 	  counter = counter + 1;
-	  if # sectionNumber === 0 then error "oops: empty section number";
-	  sectionNumber = append( drop(sectionNumber, -1), sectionNumber#-1 + 1 );
-	  fileNumberTable#node = counter;
-	  nodeTable#counter = node;
-	  sectionNumberTable#counter = concatenate between(".",apply(sectionNumber,toString));
+	  getNumberFromName#node = counter;
+	  getNameFromNumber#counter = node;
+	  if # sectionNumber =!= 0 then (
+	       sectionNumber = append( drop(sectionNumber, -1), sectionNumber#-1 + 1 );
+	       );
+	  n := sectionNumberTable#counter = concatenate between(".",apply(sectionNumber,toString));
+	  stderr << "node : " << node << " [" << n << "]" << endl;
 	  )
      )
 
@@ -31,42 +39,60 @@ reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
 reach1 SHIELD := x -> scan(x,reach3)
 reach1 MENU := x -> scan(x,reach2)
 reach1 TO := reach1 TOH := (x) -> (
-     node := x#0;
-     nodeTable2#node = true;
+     node := formatDocumentTag x#0;
+     if not getNumberFromName#?node and not otherNodes#?node 
+     then otherNodes#node = documentationMemo x#0;
      )
 reach2 Thing := reach1
+goOver := node -> (
+     record node;
+     descend();
+     reach1 documentationMemo node;
+     ascend();
+     )
 reach2 TO := reach2 TOH := (x) -> (
      node := formatDocumentTag x#0;
-     if not fileNumberTable#?node
+     if not getNumberFromName#?node
      then (
-	  record node;
-     	  descend();
-	  reach1 documentation node;
-     	  ascend();
+	  if otherNodes#?node then remove(otherNodes,node);
+     	  goOver node;
 	  ))
 reach3 Thing := reach1
 reach3 MENU := x -> scan(x,reach1)
 --------------- body of book
-reach2 TO "Macaulay 2"
-scan(sort keys nodeTable2, i -> reach2 TO i)
---------------- unreached nodes
-docDatabase = openDatabase "../cache/Macaulay2-doc"
-unreachedNodes = new MutableHashTable
-scanKeys(docDatabase, 
-     node -> (
-	  if not fileNumberTable#?node 
-	  then unreachedNodes#node = true))
+reach1 documentationMemo "Macaulay 2"
 --------------- appendix
 sectionNumber = {"A"}
 document { "Appendix",
      "We present various footnotes in this appendix.",
      }
-(
-     reach2 TO "Appendix";
-     descend();
-     reach2 apply(sort keys unreachedNodes, node -> TO node);
-     ascend()
+reach2 TO "Appendix";
+--------------- cover everything else
+reach2 = reach1
+more := true
+while more do (
+     more = false;
+     scan(keys otherNodes, node -> (
+	       doc = otherNodes#node;
+	       if doc =!= true then ( 
+		    reach1 doc;
+		    more = true;
+		    otherNodes#node = true;
+		    )
+	       )
+	  )
      )
+--------------- fill in Appendix
+docDatabase = openDatabase "../cache/Macaulay2-doc"
+descend()
+descend()
+scan(sort join(
+	  formatDocumentTag \ value \ keys docDatabase,
+	  keys otherNodes
+	  ),
+     node -> if not getNumberFromName#?node then goOver node )
+ascend()
+ascend()
 --------------- index
  -- sectionNumber = {"B"}
  -- document { "Combined Index",
@@ -87,9 +113,8 @@ ttLiteralTable = new MutableHashTable
 scan(characters ascii(0 .. 255), 
      c -> ttLiteralTable#c = concatenate(///{\char///, toString first ascii c, "}"))
 scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~", 
-     c -> ttLiteralTable#c = concatenate("{\\char", toString first ascii c, "}"))
-scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
+scan(characters "\\{}$&#^_%~", c -> ttLiteralTable#c = concatenate("{\\char", toString first ascii c, "}"))
+-- scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
 ttLiteralTable#"\n" = "\n"
 ttLiteralTable#"\t" = "\t"
 ttLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
@@ -97,12 +122,7 @@ ttLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 ttLiteral = s -> concatenate apply(characters s, c -> ttLiteralTable#c)
 ---------------
 cmrLiteralTable = copy ttLiteralTable
-cmrLiteralTable#"\\" = "{\\tt\\char`\\\\}"
-cmrLiteralTable# "<" = "{\\tt\\char`\\<}"
-cmrLiteralTable# ">" = "{\\tt\\char`\\>}"
-cmrLiteralTable# "|" = "{\\tt\\char`\\|}"
-cmrLiteralTable# "{" = "{\\tt\\char`\\{}"
-cmrLiteralTable# "}" = "{\\tt\\char`\\}}"
+scan(characters "^=_\\<>|{}", c -> cmrLiteralTable#c = concatenate("{\\tt\\char",toString first ascii c,"}"))
 cmrLiteral = s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 ---------------
 
@@ -110,8 +130,8 @@ UnknownReference := "???"
 
 crossReference := (key,text) -> (
      sectionNumber := (
-	  if fileNumberTable#?key
-	  then sectionNumberTable#(fileNumberTable#key)
+	  if getNumberFromName#?key
+	  then sectionNumberTable#(getNumberFromName#key)
 	  else (
 	       -- error("warning: documentation for key '", key, "' not found");
 	       -- stderr << "warning: documentation for key '" << key << "' not found" << endl;
@@ -120,7 +140,7 @@ crossReference := (key,text) -> (
 	  );
      if sectionNumber === UnknownReference
      then (                                  "{\\bf ", cmrLiteral text,  "} [", sectionNumber, "]" )
-     else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", cmrLiteral text, "}} [\\ref{", sectionNumber, "}]" )
+     else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", cmrLiteral text, "}} [", sectionNumber, "]" )
      )
 
 booktex = method(SingleArgumentDispatch=>true)
@@ -161,7 +181,7 @@ booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///
 
 booktex HR := (x) -> ///\par
-\line{\leaders\hrule\hfill}
+\hbox to\hsize{\leaders\hrule\hfill}
 ///
 
 booktex PARA := (x) -> concatenate(newline,newline)
@@ -232,8 +252,8 @@ booktex ExampleTABLE := x -> concatenate apply(x,y -> booktex y#1)
 booktex CODE :=
 booktex PRE := x -> concatenate (
      ///\par
+\penalty-200
 \beginverbatim%
-\penalty-500
 ///,
      between(newline, 
 	  shorten lines concatenate x
@@ -245,6 +265,7 @@ booktex PRE := x -> concatenate (
 	  ),
      ///
 \endverbatim
+\penalty-200
 \noindent
 ///
      )
