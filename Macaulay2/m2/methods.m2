@@ -225,9 +225,12 @@ mingens = method ( Options => {
 	  } )
 
 width File := fileWidth; erase symbol fileWidth
+height File := fileHeight; erase symbol fileHeight
+
 width Net := netWidth; erase symbol netWidth
 height Net := netHeight; erase symbol netHeight
 depth Net := netDepth; erase symbol netDepth
+
 width String := s -> #s
 height String := s -> 1
 depth String := s -> 0
