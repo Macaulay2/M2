@@ -1,5 +1,5 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
-
+///
 document { "ideals and modules",
      Headline => "an overview",
      "In this section we present an overview of ideals and modules.
@@ -135,6 +135,7 @@ document { "ideals",
      PARA,
      "For more information see ", TO "Ideal", "."
      }
+///
 
 document { "free modules",
      "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",

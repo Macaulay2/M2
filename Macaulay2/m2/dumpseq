@@ -72,6 +72,8 @@ primdecomp-fastgb.m2
 primdecomp-SY.m2
 primdecomp-EHV.m2
 primdecomp.m2
+minPres.m2
+normal.m2
 monomcurve.m2
 fano.m2
 code.m2
