@@ -204,7 +204,10 @@ document { "reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT "Macaulay2/html", " contains the documentation in html
      form, suitable for viewing with a web browser such as lynx or Netscape,
-     and this is the best way to view it.",
+     and this is the best way to view it.  Each documentation page has a text
+     box for entering a search string.  This will work only if you or your
+     system administrator has already installed ", TT "htdig", ", which is a 
+     free indexing package available at ", TT "http://www.htdig.org/", ".",
      PARA,
      "The directory ", TT "Macaulay2/book", " contains the code for producing
      the documentation in TeX form, which can be printed with ", TT "dvips", " 

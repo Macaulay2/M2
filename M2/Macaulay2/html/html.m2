@@ -106,6 +106,14 @@ scope2 TO := scope2 TOH := x -> (
      follow x#0;
      )
 
+--      LITERAL ///
+--      <form action="/SFgate/cgi-bin/SFgate">
+-- 	<input type="hidden" name="database" value="localhost:2200/Macaulay2">
+-- 	search for: <input name="text">
+--      </form>
+--      ///
+
+
 buttonBar = (key) -> CENTER {
      next key,
      prev key, 
@@ -113,9 +121,15 @@ buttonBar = (key) -> CENTER {
      if key =!= topNodeName then topNodeButton else nullButton,
      masterIndexButton,
      LITERAL ///
-     <form action="/SFgate/cgi-bin/SFgate">
-	<input type="hidden" name="database" value="localhost:2200/Macaulay2">
-	search for: <input name="text">
+     <form action="/cgi-bin/htsearch">
+	search for:
+	<input type="text"   name="words">
+	<input type="hidden" name="method"   value="boolean">
+	<input type="hidden" name="format"   value="builtin-short">
+	<input type="hidden" name="sort"     value="score">
+	<input type="hidden" name="config"   value="htdig">
+	<input type="hidden" name="restrict" value="">
+	<input type="hidden" name="exclude"  value="">
      </form>
      ///
      }
@@ -140,13 +154,13 @@ time scanKeys(docFile,
      )
 close docFile
 
-<< "pass 3, writing html files" << endl
+<< "pass 3, writing " << linkFilenameCounter << " html files" << endl
 masterIndex = new MutableHashTable
 time scan(keys linkFollowedTable, fkey -> (
      	  masterIndex#fkey = true;
 	  linkFilename fkey
 	  << html HTML { 
-	       HEAD TITLE fkey,
+	       HEAD TITLE {fkey, headline fkey},
 	       BODY { 
 		    buttonBar fkey, 
 		    HR{}, 
