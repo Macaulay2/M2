@@ -609,25 +609,14 @@ basis Ideal := Matrix => opts -> I -> if I.cache.?basis then I.cache.basis else 
 truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
 
 truncate(List,Module) := Module => (deg,M) -> (
-     -- check the following:
-     --     R = ring m is a polynomial ring
-     --     
-     R := ring M;
-     F := ambient M;
-     top := (
-	  if M.?generators then generators gb (
-	       if M.?relations then M.generators | M.relations else M.generators
-	       )
-	  else id_F
-	  );
-     bottom := (
-	  if M.?relations 
-	  then generators gb M.relations 
-	  else map(F, R^0, 0)
-	  );
-     error "'IM2_Matrix_truncate' not implemented yet";
-     sendgg(ggPush top, ggPush bottom, ggPush deg, ggtruncate);
-     subquotient(getMatrix R, if M.?relations then M.relations))
+     if M.?generators then (
+	  b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
+	  if M.?relations
+	  then subquotient(b, M.relations)
+	  else image b
+	  )
+     else image basis(deg,deg,M,Truncate=>true)
+     )
 
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
 truncate(ZZ,Ideal) := Ideal => (deg,M) -> truncate({deg},M)

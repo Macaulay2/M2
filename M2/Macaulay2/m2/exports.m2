@@ -658,7 +658,6 @@ export (
 	symbol getNonUnit,
 	symbol getParsing,
 	symbol getWWW,
-	symbol getZeroDivisor,
 	symbol getc,
 	symbol getenv,
 	symbol global,

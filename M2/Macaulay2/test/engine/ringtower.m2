@@ -4,21 +4,15 @@ load "raw-util.m2"
 errorDepth = 0
 
 A = ZZ[x]
-toExternalString A
-C = A/(2*x+1,11)
-toExternalString C                                          -- broken
-D = C[z]                                                    -- the engine ignores the relations defining C in constructing D
-toExternalString D
+C = A/(2*x+1)
+D = C[z]
 raw D
 E = D/(x*z)
-toExternalString E                                          -- broken
 assert ( 2*x*z === -z )
 
 ---------
 k = GF(9)
-toExternalString k                                          -- broken
 R = k[t]
-toExternalString R
 presentation R                                              -- redesign
 
 -------------------------

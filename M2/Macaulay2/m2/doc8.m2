@@ -1430,8 +1430,7 @@ document {
      PARA,
      "If the engine eventually discovers that some nonzero element of ", TT "R", "
      is not a unit, an error will be signalled.  The user may then use
-     ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ",
-     or ", TO "getZeroDivisor", " to obtain a zero divisor in ", TT "R", ".
+     ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ".
      If a ring is probably a field, it can be used as a field until a
      contradiction is found, and this may be a good way of discovering
      whether a ring is a field."
@@ -1448,20 +1447,7 @@ document {
 	  },
      "Warning: this function does not work yet for divisions attempted in the course
      of computing a Groebner basis or resolution.",
-     SeeAlso => { "toField", "getZeroDivisor" }
-     }
-
-document {
-     Key => getZeroDivisor,
-     Headline => "retrieve a previously discovered zero divisor",
-     Usage => "getZeroDivisor R",
-     Inputs => {
-	  "R" => "a ring in which a zero-divisor has been found"
-	  },
-     Outputs => {
-	  "the zero divisor"
-	  },
-     SeeAlso => { "toField", "getNonUnit" }
+     SeeAlso => { "toField" }
      }
 
 document {
