@@ -868,7 +868,6 @@ document {
      Usage => "map(M,,f)",
      Inputs => {
 	  "M" => null,
-	  "" => null,
 	  "f" => {"whose target has the same number of generators as ", TT "M"}
 	  },
      Outputs => {
