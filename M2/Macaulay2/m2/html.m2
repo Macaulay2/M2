@@ -246,26 +246,10 @@ makeTree = topNode -> (
 
 --
 
-
+local follow
 scope := method()
 scope2 := method()
 scope1 := method()
-
-externalReferences := new MutableHashTable
-showExternalReferences = () -> sort keys externalReferences
-
-local nodesToScope
-follow := (f,key) -> (
-     key = normalizeDocumentTag key;
-     fkey := formatDocumentTag key;
-     if currentPackage#"documentation"#?fkey or fkey == topNodeName -- there are other ways to deduce a node belongs in our package...
-     then (
-     	  if not linkTable#?fkey then (
-	       nodesToScope#(f,key) = true;
-	       linkTable#fkey = {};
-	       -- scope(fkey,documentationMemo key);
-	       ))
-     else externalReferences#fkey = true)
 
 -- scanning at top level
 scope (String, Thing    ) := (f,x) -> null
@@ -274,14 +258,14 @@ scope (String, BasicList) := (f,x) -> scan(x,y -> scope(f,y))
 scope (String, SHIELD   ) := (f,x) -> scan(x,y -> scope1(f,y))
 scope (String, UL       ) := (f,x) -> scan(x,y -> scope2(f,y))
 scope (String, TO       ) :=
-scope (String, TOH      ) := (f,x) -> follow(f,x#0)
+scope (String, TOH      ) := (f,x) -> follow(x#0)
 
 -- scanning inside a SHIELD
 scope1 (String, Thing    ) := (f,x) -> null
 scope1 (String, Sequence ) :=
 scope1 (String, BasicList) := (f,x) -> scan(x,y -> scope1(f,y))
 scope1 (String, TO       ) :=
-scope1 (String, TOH      ) := (f,x) -> follow(f,x#0)
+scope1 (String, TOH      ) := (f,x) -> follow(x#0)
 
 -- scanning inside a UL not inside a SHIELD
 scope2 (String, Thing    ) := scope
@@ -292,29 +276,47 @@ scope2 (String, TOH      ) := (f,x) -> (
       key := normalizeDocumentTag x#0;
       fkey := formatDocumentTag key;
       linkTable#f = append(linkTable#f,fkey);
-      follow(f,key);
+      follow(key);
       )
 
-follow = on (follow, Name => "follow")
+externalReferences := new MutableHashTable
+showExternalReferences = () -> sort keys externalReferences
+local nodesToScope
+follow = key -> (
+     key = normalizeDocumentTag key;
+     fkey := formatDocumentTag key;
+     if currentPackage#"documentation"#?fkey or fkey == topNodeName -- there are other ways to deduce a node belongs in our package...
+     then (
+     	  if not linkTable#?fkey then (
+	       nodesToScope#(fkey,key) = true;
+	       linkTable#fkey = {};
+	       ))
+     else externalReferences#fkey = true)
+
+-- follow = on (follow, Name => "follow")
+-- scope = on (scope, Name => "scope")
+-- scope1 = on (scope1, Name => "scope1")
+-- scope2 = on (scope2, Name => "scope2")
 
 assembleTree = method()
 assembleTree Package := pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
-     nodesToScope = new MutableHashTable;
      topNodeName = pkg#"title";
      nodes := packageNodes(pkg,topNodeName);
-     linkTable = new MutableHashTable from { };
+     linkTable = new MutableHashTable from { "--root--" => {} };
+     nodesToScope = new MutableHashTable from { ("--root--",topNodeName) => true };
      UP = new MutableHashTable;
      NEXT = new MutableHashTable;
      PREV = new MutableHashTable;
-     while (
-     	  follow("--root--",topNodeName);			    -- no parent node!
-	  #nodesToScope > 0)
-     do (
+     while #nodesToScope > 0 do (
 	  m := keys nodesToScope;
-	  scan(m, (f,x) -> scope(f,x));
-	  nodesToScope = new MutableHashTable from keys (set keys nodesToScope - set m);
+	  scan(m, (fkey,key) -> (
+		    linkTable#fkey = {};
+		    scope(fkey,documentationMemo key)));
+     	  -- stderr << "nodesToScope = " << peek nodesToScope << endl;
+     	  -- error "debug this";
+	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
      makeTree topNodeName)
 
