@@ -208,6 +208,11 @@ ring_elem Ring::get_terms(const ring_elem f, int, int) const
   return f;
 }
 
+void Ring::monomial_divisor(const ring_elem a, int *exp) const
+{
+  // Do nothing
+}
+
 ring_elem Ring::diff(ring_elem a, ring_elem b, int use_coeff) const
 {
   return mult(a,b);

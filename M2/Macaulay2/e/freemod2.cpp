@@ -16,14 +16,6 @@ void FreeModule::initialize(const Ring *RR)
   schreyer = 0;
 }
 
-#if 0
-FreeModule::FreeModule(const Ring *RR)
-: immutable_object(0)
-{
-  initialize(RR);
-}
-#endif
-
 FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
 : immutable_object(0)
      // Create R^n, with all gradings zero.
@@ -45,24 +37,6 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
   else
     schreyer = 0;
 }
-
-#if 0
-FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
-: immutable_object(0)
-    // Take the degrees and monomials from F, but take the 
-    // new ring/monomial information using R.
-{
-  initialize(RR);
-  // MES: make sure that (1) nvars are equal, (2) degree_monoid's are equal.
-
-  int rk = F->rank();
-
-  int *exp = newarray(int,R->n_vars());
-  for (int i=0; i<rk; i++) append(F->degree(i));
-  if (F->schreyer) 
-    schreyer = F->schreyer->copy();
-}
-#endif
 
 FreeModule *FreeModule::make_schreyer(const Matrix *m)
 {
@@ -130,6 +104,15 @@ void FreeModule::append_schreyer(const int *d, const int *base, int compare_num)
   int *p = degree_monoid()->make_new(d);
   components.append(p);
   schreyer->append(compare_num,base);
+}
+
+void FreeModule::change_degree(int i, const int *deg)
+{ 
+  // WARNING: this modifies the degree, and should only be used during
+  // the construction of a free module (or matrix).
+  assert(i >= 0);
+  assert(i < rank());
+  degree_monoid()->copy(deg, components[i]);
 }
 
 bool FreeModule::is_equal(const FreeModule *F) const

@@ -296,6 +296,10 @@ public:
     normal_form(f);
   }
 
+  virtual void monomial_divisor(const ring_elem a, int *exp) const {
+    return R_->PolyRing::monomial_divisor(a,exp);
+  }
+
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const {
 #warning "diff for quotient rings: should do what?"
     return R_->PolyRing::diff(a,b,use_coeff);
@@ -321,8 +325,9 @@ public:
     return R_->PolyRing::vec_lead_term(nparts, F, v);
   }
 
-  virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const {
+  virtual vec vec_top_coefficient(const vec v, int &x, int &e) const {
 #warning "vec_top_coefficient not implemented for fraction rings"
+    return 0;
   }
 
 

@@ -899,6 +899,17 @@ extern "C" {
   const Matrix * rawMatrixCompress(const Matrix *M); /* connected rawMatrixCompress */
 
   const MatrixOrNull * IM2_Matrix_uniquify(const Matrix *M); /* TODO */
+  /* if any two columns are the same up to a scalar multiple, then keep only
+     one of the columns.  Remove any zero columns too.
+     The definition of "same up to a scalar" is this:
+     if K is the base field or ring (i.e. QQ in QQ(x,y,z)[s,t]),
+     and if c and d are the lead scalar coeff's of vecs v,w, resp, then
+     v and w are scalar multiplies iff d*v == c*w.  
+     Warning: Over non-domains, this might not be the intended effect.
+  */
+
+  const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only);
+  /* Dan: please connect */
 
   const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M); 
       /* drg: tried to connect to rawRemoveContent*/

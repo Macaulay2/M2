@@ -582,7 +582,7 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
    If a variable is negative, and shouldn't be, 0 is returned.
    Otherwise 1 is returned. */
 {
-  if (mo == 0) return;
+  if (mo == 0) return 1;
   int i;
   int result = 1;
   for (i=0; i<mo->nvars; i++)
@@ -607,7 +607,7 @@ int monomialOrderToActualExponents(const MonomialOrder *mo,
 				      const_exponents expon, 
 				      exponents result_exp)
 {
-  if (mo == 0) return;
+  if (mo == 0) return 1;
   int i;
   for (i=0; i<mo->nvars; i++)
     {

@@ -106,6 +106,7 @@ STILLTOCOMPILE = \
 COMMANDS = \
 	mat-kbasis \
 	mat-symm \
+	mat-sort \
 	ring-vecs \
         gbnod \
         freemod2 \

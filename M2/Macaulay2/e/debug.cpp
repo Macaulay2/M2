@@ -44,7 +44,7 @@ void dNterm(const Ring *R, const Nterm *f)
 void dvec(const Ring *R, const vec v)
 {
   buffer o;
-  R->elem_text_out(o,v);
+  R->vec_text_out(o,v);
   emit_line(o.str());
 }
 
