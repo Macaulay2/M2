@@ -133,7 +133,10 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 			      if opts.Verbose then stderr << "--symlinking: " << relsrcf << " -> " << tarf << endl;
 			      if fileExists tarf then (
 				   if readlink tarf === relsrcf
-				   then stderr << "--  skipping: link already exists" << endl
+				   then (
+					-- stderr << "--  skipping: link already exists" << endl;
+					null
+					)
 				   else stderr << "--  warning: file " << tarf << " already exists, not what we want" << endl;
 				   )
 			      else symlink(relsrcf,tarf))
