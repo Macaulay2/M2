@@ -155,7 +155,9 @@ fakeMenu := x -> (
 
 makeHtmlNode = fkey -> (
      -- stderr << "--fkey=" << fkey << endl;		    --  debugging
-     (buildDirectory | "/" | htmlFilename fkey) << html HTML { 
+     -- fn := buildDirectory | "/" | htmlFilename fkey;
+     fn := "cache/html/" | toFilename fkey | ".html";
+     fn << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
 	       buttonBar fkey,
@@ -221,11 +223,11 @@ cacheVars := varlist -> (
 makeHTML = (topnode,docdatabase0) -> (
      restore := cacheVars{symbol documentationPath};
      gifpath := "cache/images/";
-     prefix = first documentationPath;
+     prefix = "cache/html/";
      docdatabase = docdatabase0;
      checkDirectory prefix;
      checkDirectory gifpath;
-     documentationPath = unique prepend(prefix,documentationPath);
+     -- documentationPath = unique prepend(prefix,documentationPath);
      topNodeName = topnode;
      topFileName = cacheFileName(prefix,topNodeName) | ".html";
      topNodeButton = HREF { topFileName, BUTTON (checkFile(gifpath|"top.gif"),"top") };

@@ -28,8 +28,6 @@ buildPackage = ""					    -- name of the package currently being built
 
 
 rel := url -> (
-     stderr << "url           = " << url << endl;
-     stderr << "htmlDirectory = " << htmlDirectory << endl;
      if isAbsolute url 
      then url
      else relativizeFilename(htmlDirectory, url)
