@@ -60,7 +60,7 @@ J1 == J2
 J3 = J2 : a
 J3 == J2
 J4 = J3 : a
-J4 == J3
+assert(J4 == J3)
 mingens J4
 
 restart
@@ -97,7 +97,7 @@ Lanswer = ideal(a*b^3*c-a^2*b*c*d+a*b^2*c-3*a*b^2+a*b*c+3*a^2*d-3*a*b-b^2+a*d-3*
      a^2*c^4*d-11644*a*b*c^4*d-3*a*b^2*c^3-8697*b^3*c^3+a^2*c^4+2903*a*b*c^4-b^2*c^3+a*c^4-a^3*c*d+11644*a^2*b*c*d-a^2*c^2*d+11644*a*b*c^2*d+11626*a*c^3*d+3*a^2*b^2+8697*a*b^3-a^3*c-2903*a^2*b*c+3*a*b^2*c+8697*b^3*c-a^2*c^2-2903*a*b*c^2-12*a*c^3+11644*c^3*d+a*b^2-a^2*c+b^2*c-a*c^2+5794*c^3-11626*a^2*d-11626*a*c*d+12*a^2+12*a*c-11644*a*d-11644*c*d-5794*a-5794*c,
      a^2*b*c^3*d-a*b^2*c^3-a^2*c^3*d-a^2*b^3+3*a*b^2*c^2-a^2*c^3-a*b*c^3-a^2*b*c*d-3*a^2*c^2*d+a*b^2*c+3*a*b*c^2+b^2*c^2-a*c^3+a^3*d+a^2*c*d-a*c^2*d+a^3-3*a*b^2+a^2*c+a*b*c+3*a*c^2+b*c^2+3*a^2*d+a^2-3*a*b-b^2+a*c+c^2+a*d-3*a-b-1,
      a^3*c^3*d^2-896*a*b*c^4*d^2-a^2*b^2*c^3+560*a*b^2*c^4-1680*b^3*c^4+a^3*c^3*d+2*a^2*b*c^3*d+3080*b^3*c^3*d-252*a^2*c^4*d-1232*a*b*c^4*d-a^2*b^4+b^4*c^2-2*a^2*b*c^3+750*a*b^2*c^3-2604*b^3*c^3-252*a^2*c^4+2632*a*b*c^4-a*b^2*c^2*d-5*a^2*c^3*d+1680*a*c^4*d-a^3*c*d^2+896*a^2*b*c*d^2+896*a*b*c^2*d^2-392*a*c^3*d^2-5*a^2*b^3-3*a*b^4-559*a^2*b^2*c-548*a*b^2*c^2+1682*b^3*c^2-6*a^2*c^3-1686*a*b*c^3+252*b^2*c^3+1428*a*c^4+a^3*b*d+3*a^2*b^2*d-3080*a*b^3*d+251*a^3*c*d+2910*a^2*b*c*d-3080*b^3*c*d+240*a^2*c^2*d+1231*a*b*c^2*d+3220*a*c^3*d+896*c^3*d^2+a^3*b-756*a^2*b^2+2598*a*b^3-b^4+252*a^3*c-2630*a^2*b*c-2421*a*b^2*c+2607*b^3*c+252*a^2*c^2-2620*a*b*c^2+6*b^2*c^2-5298*a*c^3-560*b*c^3+1680*c^4+5*a^3*d+3*a^2*b*d+a*b^2*d-1684*a^2*c*d-3*a*b*c*d-1684*a*c^2*d-1848*c^3*d+392*a^2*d^2+392*a*c*d^2+5*a^3+1681*a^2*b+4797*a*b^2-2*b^3-1422*a^2*c+15*a*b*c-246*b^2*c-1416*a*c^2+5*b*c^2-28*c^3-8275*a^2*d+a*b*d-3223*a*c*d-896*a*d^2-896*c*d^2+5297*a^2+5612*a*b+1683*b^2+3627*a*c+566*b*c-1676*c^2+163*a*d+1848*c*d+5083*a+1684*b+31*c+1685)
-assert(L == Lanswer) -- false!! Should be true
+assert(L == Lanswer)
 L1 = ideal gens gb L;
 Lanswer_0 == L1_0
 Lanswer_1 == L1_1
@@ -108,10 +108,11 @@ Lanswer_5 + 11644*d*L1_3 + 8697*L1_4 - 2903*L1_3 == L1_5
 Lanswer_6 == L1_6
 Lanswer_7 + 896*d^2*L1_3 - 560*b*L1_3 + 1680*c*L1_4 -2*L1_6 - 3080*d*L1_4 + 252*L1_5 + 1232*d*L1_3 + 2604*L1_4 - 2632*L1_3 + 1680*L1_0 == L1_7
 assert(Lanswer == L1) -- true
-assert(Lanswer == L) -- false!
-assert(L1 == L) -- false!
+assert(Lanswer == L)
+assert(L1 == L)
 
-decompose L1 -- ouch!
+print "The following decompose takes too long, so it is commented out" 
+decompose ideal mingens L1 -- ouch!
 irreducibleCharacteristicSeries L1
 
 apply(numgens Lanswer, i -> Lanswer_i == L1_i)

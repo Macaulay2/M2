@@ -2004,7 +2004,11 @@ gbvector * PolyRing::translate_gbvector_from_vec_QQ(const FreeModule *F,
 					     const vec v,
 					     ring_elem &result_denominator) const
 {
-  if (v == 0) return 0;
+  if (v == 0) 
+    {
+      result_denominator = globalZZ->one();
+      return 0;
+    }
   GBRing *GR = get_gb_ring();
   result_denominator = vec_get_denominator_QQ(v);
   gbvectorHeap H(GR,F);
@@ -2036,9 +2040,10 @@ gbvector * PolyRing::translate_gbvector_from_vec(const FreeModule *F,
 					     const vec v,
 					     ring_elem &result_denominator) const
 {
-  if (v == 0) return 0;
   if (getCoefficients() == globalQQ)
     return translate_gbvector_from_vec_QQ(F,v,result_denominator);
+  result_denominator = getCoefficients()->one();
+  if (v == 0) return 0;
   GBRing *GR = get_gb_ring();
   gbvectorHeap H(GR,F);
   gbvector head;
@@ -2057,7 +2062,7 @@ gbvector * PolyRing::translate_gbvector_from_vec(const FreeModule *F,
       H.add(head.next);
     }
 
-  result_denominator = getCoefficients()->one();
+
   return H.value();
 }
 

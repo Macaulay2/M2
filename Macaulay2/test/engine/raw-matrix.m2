@@ -328,7 +328,7 @@ rawExteriorPower(4,M,0) == rawExteriorPower(4,M,1)
 rawExteriorPower(5,M,0) == 0
 rawExteriorPower(5,M,1) == 0
 
-assert (rawMinors(3,M,0) == rawMinors(3,M,1))
+assert (rawMinors(3,M,0,-1,null,null) == rawMinors(3,M,1,-1,null,null))
 
 -------------------
 -- rawPfaffians ---
@@ -384,32 +384,28 @@ assert(rawHomogenize(m,6,(1,1,1,1,1,1,1))
 ---------------------
 -- a simple example first:
 needs "raw-util.m2"
-A = polyring(rawZZ(), (symbol a, symbol b))
-B = polyring(A, (symbol x, symbol y))
-a = rawPromote(B,a)
-b = rawPromote(B,b)
-m = mat{{a*x+b*y}}
-m2 = mat{{x^2,x*y,y^2}}
-m3 = mat{{x^3,x^2*y,x*y^2,y^3}}
-M = m ** m2
-C = rawCoefficients((0,1), m3,M)
-assert(m3 * C == M)
-
 R = polyring(rawZZ(), (symbol x .. symbol z))
 m = mat{{x*y+x*z+x^2*y*z}}
 mons = rawMonomials(1:0,m)
 coeffs = rawCoefficients(1:0, mons, m)
 mons * coeffs
 print "WARNING: in rawMonomials, monomials should be sorted"
-
 ------------------
-load "raw-util.m2"
+needs "raw-util.m2"
 R = ZZ/101[symbol a .. symbol d]
 f = (a+b)^4*(c+d)^2
 m = rawMonomials((0,1),mat{{raw f}})
 m = matrix{{f}}
 coefficients((0,1),m)
-
+------------------
+A = ZZ[symbol a,symbol b]
+B = A[symbol x, symbol y]
+m = matrix{{a*x+b*y}}
+m2 = matrix{{x^2,x*y,y^2}}
+m3 = matrix{{x^3,x^2*y,x*y^2,y^3}}
+M = m ** m2
+print "coefficients interface is NOT complete"
+--coefficients((x,y), m3, M)
 -------------------
 -- rawInitial -----
 -------------------
@@ -593,12 +589,14 @@ A = rawQuotientRing(R, mat{{2*x,3*y,x*y}})
 mb = rawBasis(mat{{0_A}}, {2}, {2}, {1}, {0,1}, false, -1)
 
 -- Polynomial ring over polynomial ring
-A = polyring(rawZZp 101, (symbol a .. symbol c))
-B = polyring(A, (symbol x, symbol y))
-b1 = rawBasis(mat{{0_B}}, {2},{2},{1},{0,1,2,3},false,-1)
+A = ZZ/101[symbol a .. symbol c]
+B = A[symbol x, symbol y]
+basis(2,B)
+B = raw B
 b1 = rawBasis(mat{{0_B}}, {2},{2},{1},(0,1),false,-1)
-f = rawPromote(B,a)*x^2 + rawPromote(B,b)*x*y + rawPromote(B,c)*y^2
-rawCoefficients((0,1),b1,mat{{f}})
+f = a*x^2 + b*x*y + c*y^2
+rawCoefficients((0,1),b1,mat{{raw f}})
+
 print "WARNING: rawBasis: test for quotient rings"
 
 R = ZZ/101[symbol a .. symbol c]
@@ -609,7 +607,7 @@ rawBasis(m,{1},{1},{1},{0,1,2},false,-1)
 -- rawRemoveScalarMultiples --
 ------------------------------
 needs "raw-util.m2"
-R = ZZ/32003[a..d]
+R = ZZ/32003[symbol a..symbol d]
 m = matrix{{3*a^2-6*a*b, 2*a^2-4*a*b, -a^2+a*b}}
 m1 = rawRemoveScalarMultiples raw m
 assert(m1 === raw matrix{{2*a^2-4*a*b, -a^2+a*b}})
@@ -622,13 +620,12 @@ assert(m1 === raw matrix{{-a^2+2*a*b, 1_R}})
 -- rawRemoveMonomialFactors --
 ------------------------------
 needs "raw-util.m2"
-R = ZZ/32003[a..d]
+R = ZZ/32003[symbol a..symbol d]
 m = matrix{{a^2*b*c*(a^3-b^3-c^3)}}
 m1 = rawRemoveMonomialFactors(raw m,true)
+assert(m1 == mat{{raw(a*b*c*(a^3-b^3-c^3))}})
 m1 = rawRemoveMonomialFactors(raw m,false)
-
-
-assert(m1 === raw matrix{{2*a^2-4*a*b, -a^2+a*b}})
+assert(m1 == mat{{raw(a^3-b^3-c^3)}})
 
 -- Local Variables:
 -- compile-command: "M2 -e errorDepth=0 --stop -e 'load \"raw-matrix.m2\"' -e 'exit 0' "

@@ -87,3 +87,73 @@ f^2
 -- assert not rawIsHomogeneous f
 -- assert rawIsHomogeneous (a^100*x^2-b*x*z-z^2)
 -- rawHomogenize(a*x-y^3-1, 2, {1,1,1})
+-------------------------------
+needs "raw-util.m2"
+-- Polynomial rings ZZ[a,b][c,d],[e,f]
+A = rawPolynomialRing(rawZZ(), singlemonoid(symbol a, symbol b))
+B = rawPolynomialRing(A, singlemonoid(symbol c, symbol d))
+C = rawPolynomialRing(B, singlemonoid(symbol e, symbol f))
+
+fa = rawRingVar(A,0,3)
+ga = rawRingVar(A,1,5)
+ha = 3*fa-7*ga
+fb = rawPromote(B,fa)
+gb1 = rawPromote(B,ga)
+hb = rawPromote(B,ha)
+assert(hb == 3*fb -7* gb1)
+
+fc = rawPromote(C,fb)
+gc1 = rawPromote(C,gb1)
+hc = rawPromote(C,hb)
+assert(hc == 3*fc -7* gc1)
+
+e = rawRingVar(C,0)
+f = rawRingVar(C,1)
+p = rawLeadCoefficient(hc*e*f + f^3)
+assert(rawRing p === B)
+p = rawLeadCoefficient(hc*e + f)
+assert(p === hb)
+
+
+-- Polynomial rings QQ[a,b][c,d],[e,f]
+A = rawPolynomialRing(rawQQ(), singlemonoid(symbol a, symbol b))
+B = rawPolynomialRing(A, singlemonoid(symbol c, symbol d))
+C = rawPolynomialRing(B, singlemonoid(symbol e, symbol f))
+
+fa = rawRingVar(A,0,3)
+ga = rawRingVar(A,1,5)
+ha = 3*fa-7*ga
+fb = rawPromote(B,fa)
+gb1 = rawPromote(B,ga)
+hb = rawPromote(B,ha)
+assert(hb == 3*fb -7* gb1)
+
+fc = rawPromote(C,fb)
+gc1 = rawPromote(C,gb1)
+hc = rawPromote(C,hb)
+assert(hc == 3*fc -7* gc1)
+
+e = rawRingVar(C,0)
+f = rawRingVar(C,1)
+p = rawLeadCoefficient(hc*e*f + f^3)
+assert(rawRing p === B)
+p = rawLeadCoefficient(hc*e + f)
+assert(p === hb)
+
+F = hc*e*f + f^2
+<< "rawIsHomogeneous NOT WORKING" << endl;
+--assert rawIsHomogeneous F
+--assert(rawMultiDegree F === {2})
+
+-- Quotients of polynomial rings, and towers of such
+A = rawPolynomialRing(rawZZ(), singlemonoid(symbol a, symbol b))
+a = rawRingVar(A,0)
+b = rawRingVar(A,1)
+M = mat{{a^2-1, b^2-1}}
+B = rawQuotientRing(A,M)
+print "ERROR: rawAmbientRing needs to be implemented"
+--assert(A === rawAmbientRing B)
+
+C1 = rawPolynomialRing(A, singlemonoid(symbol x, symbol y))
+print "ERROR: rawQuotientRing(Ring,Ring) needs to be implemented"
+--C = rawQuotientRing(C1,B) -- B must be a quotient ring of the coefficient ring of C1.

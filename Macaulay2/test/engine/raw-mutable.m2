@@ -13,15 +13,13 @@ R = ZZ[vars(0..11)]
 id10 = rawMutableIdentity(raw R, 10, true); net id10
 m = genericMatrix(R,a,3,4)
 p = rawMutableMatrix(raw m,true); net p
-assert(rawNumberOfColumns p == 4)
-assert(rawNumberOfRows p == 3)
-
-rawMatrixColumnOperation2(p,1,2,raw e,raw f,raw g,raw h,false) -- WRONG!
-net p
 assert(rawColumnDotProduct(p, 1, 1) == raw(d^2+e^2+f^2))
 assert(rawColumnDotProduct(p, 1,2) == raw(d*g+e*h+f*i))
-
+assert(rawNumberOfColumns p == 4)
+assert(rawNumberOfRows p == 3)
 assert(raw m === rawMatrix p)
+
+
 rawMatrixRowSwap(p,0,1); net p
 assert(rawMatrix p - raw transpose matrix{{b,a,c},{e,d,f},{h,g,i},{k,j,l}} == 0)
 rawMatrixColumnSwap(p,1,2); net p
@@ -31,6 +29,10 @@ rawMatrixRowScale(p, raw (5_R), 2, false); net p
 rawMatrixColumnScale(p, raw (7_R), 1, false); net p
 rawMatrixRowChange(p, 0, raw c, 1, false); net p
 rawMatrixColumnChange(p, 1, raw d, 0, false); net p
+
+rawMatrixColumnOperation2(p,1,2,raw e,raw f,raw g,raw h,false) -- WRONG!
+net p
+
 
 
 p = rawMutableMatrix(raw R, 3,4,true)
@@ -298,4 +300,4 @@ r5 = rawIdentity(R^5,0) -- mutable r5
   net x
   x1 = rawMatrix b
   m*(rawMatrix x)
-  rawMinors(4,m,0)
+  rawMinors(4,m,0,-1,null,null)
