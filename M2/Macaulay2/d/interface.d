@@ -163,7 +163,7 @@ export rawMonomialDivide(e:Expr):Expr := (
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monoid")
      else WrongNumArgs(3));
-setupfun("rawMonomialDivides",rawMonomialDivides);
+setupfun("rawMonomialDivide",rawMonomialDivides);
 
 export rawRadical(e:Expr):Expr := (
      when e
