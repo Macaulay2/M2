@@ -48,6 +48,7 @@ export hash(e:Expr):int := (
      is x:RawMonomial do int(Ccode(ulong, "IM2_Monomial_hash((Monomial*)",x,")" ))
      is x:RawMonomialOrdering do int(Ccode(ulong, "IM2_MonomialOrdering_hash((MonomialOrdering*)",x,")" ))
      is x:RawMonoid do int(Ccode(ulong, "IM2_Monoid_hash((Monoid*)",x,")" ))
+     is x:RawMatrix do int(Ccode(int, "IM2_Matrix_hash((Matrix*)",x,")" ))
      is x:RawRing do int(Ccode(ulong, "IM2_Ring_hash((Ring*)",x,")" ))
      is x:RawComputation do int(Ccode(ulong, "IM2_GB_hash((Computation*)",x,")" ))
      is x:RawFreeModule do (
@@ -57,10 +58,6 @@ export hash(e:Expr):int := (
      is x:RawRingMap do (
 	  0
 	  -- int(Ccode(ulong, "IM2_RingMap_hash((RingMap*)",x,")" ))
-	  )
-     is x:RawMatrix do (
-	  0
-	  -- int(Ccode(ulong, "IM2_Matrix_hash((Matrix*)",x,")" ))
 	  )
      is x:LMatrixRR do (
 	  0
