@@ -974,21 +974,30 @@ document { isModule,
      }
 
 document { isFreeModule,
-     Headline => "whether something a free module",
-     TT "isFreeModule M", " -- determine whether ", TT "M", " is evidently a 
-     free module.",
-     PARA,
+     Headline => "whether something is a free module",
+     Usage =>
+       {TT "isFreeModule M", " -- is the module ", TT "M", " evidently a 
+     free module."}
+     }
+
+document { (isFreeModule,Module),
+     Synopsis => {
+	  "b = isFreeModule(M)",
+	  "M" => null,
+	  "b" => {"whether ", TT "M", " is evidently a free module."}
+	  },
      "No computation is done, so the module may be free but we don't
      detect it.  To try to determine whether ", TT "M", " is isomorphic to a free 
      module, one may prune ", TT "M", " first.",
      EXAMPLE {
-	  "R = ZZ/101[x,y]",
+	  "R = ZZ/101[x,y];",
       	  "M = kernel vars R",
       	  "isFreeModule M",
       	  "isFreeModule prune M"
 	  },
+     SEEALSO {(prune,Module)}
      }
-
+     
 document { isSubmodule,
      Headline => "whether a module is evidently a submodule of a free module"
      }
@@ -1159,6 +1168,24 @@ document { cover,
      to the generators of M.",
      PARA,
      SEEALSO {"ambient", "super"}
+     }
+
+document { (cover,Module),
+     Synopsis => {
+	  "F = cover M",
+	  "M" => null,
+	  "F" => {"the free module whose basis elements correspond
+	          to the generators of ", TT "M", "."}
+	  },
+     PARA,
+     "The free module ", TT "F", " is the source of the generator matrix 
+     of ", TT "M", ".",
+     EXAMPLE "R = QQ[a..f];",
+     EXAMPLE "g = matrix{{a,b},{c,d},{e,f}}",
+     EXAMPLE "M = subquotient(g,matrix{{b},{c},{d}})",
+     EXAMPLE "cover M",
+     EXAMPLE "cover M == source generators M",
+     SEEALSO {(ambient,Module), (super,Module)}
      }
 
 document { super,
