@@ -7,12 +7,14 @@ M2 : M2-build.in
 	rm -f config.log
 	chmod 0755 $@
 
-install :: $(bindir)/M2
+install :: $(bindir)/M2 $(bindir)/M2.bat
 $(bindir)/M2 : M2-final.in
 	$(INSTALL) -d $(bindir)
 	sed -e 's,^M2HOME=.*,M2HOME=$(prefix)/lib/Macaulay2-@PACKAGE_VERSION@,' $< >"$@".tmp
 	mv "$@".tmp "$@"
 	chmod 0755 "$@"
+$(bindir)/M2.bat : M2.bat
+	cp $< $@
 
 all :: M2-help
 	[ -x $< ] || chmod a+x $<

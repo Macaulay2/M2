@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-/* for Windows NT and Windows 95 */
+/* for Microsoft Windows */
 
-#include <direct.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	char dirWithBackslashes[1000];
 	char dir[1000];
 	int i;
@@ -16,10 +16,11 @@ main(int argc, char **argv) {
 	if (M2bat == NULL) { perror("can't open bin/M2.bat"); exit(1); }
 	if (M2 == NULL) { perror("can't open bin/M2"); exit(1); }
 	if (startup == NULL) { perror("can't open bin/startup.m2"); exit(1); }
-	if (NULL == _getcwd(dirWithBackslashes, sizeof dirWithBackslashes))
+	if (NULL == getcwd(dirWithBackslashes, sizeof dirWithBackslashes))
 	  { perror("can't get current working directory"); exit(1); }
 	strcpy(dir,dirWithBackslashes);
 	for (i=0; i<sizeof dir; i++) if (dir[i] == '\\') dir[i] = '/';
+	for (i=0; i<sizeof dirWithBackslashes; i++) if (dirWithBackslashes[i] == '/') dirWithBackslashes[i] = '\\';
 	fprintf(M2bat,
 		"\"%s\\bin\\Macaulay2\""
 		/* " -tty" */
