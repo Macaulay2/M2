@@ -479,7 +479,7 @@ documentOptions := new HashTable from {
      SeeAlso => true,
      Caveat => true,
      Subnodes => true }
-reservedNodeNames := set apply( {"Top", "Table of Contents", "Combined Index"}, toLower )
+reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
 document = method( SingleArgumentDispatch => true )
 
