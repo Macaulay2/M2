@@ -467,7 +467,7 @@ document Sequence := args -> (
 	  ) else error "missing Key";
      opts.DocumentTag = tag := makeDocumentTag(opts.Key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
      currentNodeName = DocumentTag.FormattedKey tag;
-     if reservedNodeNames#?currentNodeName then error("'document' encountered a reserved node name '",currentNodeName,"'");
+     if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
