@@ -59,20 +59,20 @@ static char *present(unsigned char *s) {
 int line_type(char **s)
 {
   int i;
-  int isblank = 1;
+  int is_blank = 1;
   *s = (char *)line;
   for (i=0; i<LEN; i++)
     {
       if (line[i] == '\0') break;
       else if (!isspace(line[i]))
-	isblank = 0;
+	is_blank = 0;
       else if (line[i] == '\n')
 	{
 	  line[i] = '\0';
 	  break;
 	}
     }
-  if (isblank) return BLANK_LINE;
+  if (is_blank) return BLANK_LINE;
   if (line[0] == '-' && line[1] == '-')
     {
       if (line[2] == '\0') return PARA;

@@ -205,18 +205,6 @@ MISCO := M2lib.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o
 
 # MISCO += factoryseed.o
 
-ifeq ($(OS),Darwin)
-# The file libfac_tmpl_inst.o needs to be extracted from libfac.a
-# for some mysterious reason.  I either don't understand template
-# instantiation on darwin, or it is doing it wrong.
-# The macaulay2 fink package does this automatically before this
-# compilation starts.  If you need to do it by hand:
-#	ar x $(prefix)/lib/libfac.a tmpl_inst.o
-#	mv tmpl_inst.o libfac_tmpl_inst.o
-# ftmpl_inst.cc is no longer needed?
-MISCO += libfac_tmpl_inst.o 
-endif
-
 ifeq ($(GC_FOR_NEW),yes)
 # replace the builtin c++ memory allocation routines by calls to gc.
 MISCO += gc_cpp.o
