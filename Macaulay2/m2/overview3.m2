@@ -451,7 +451,7 @@ document { "Resources required",
 document { "How to get this program",
      "The program is available over the web at the Macaulay 2 home page",
      PARA, 
-     CENTER HREF {"http://www.math.uiuc.edu/Macaulay2/"}, 
+     HREF {"http://www.math.uiuc.edu/Macaulay2/"}, 
      PARA,
      NOINDENT,
      "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 

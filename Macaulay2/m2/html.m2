@@ -166,7 +166,7 @@ scope2 TO := scope2 TOH := x -> (
      follow key;
      )
 
-buttonBar := (key) -> CENTER {
+buttonBar := (key) -> SEQ {
      PARA { 
 	  next key, prev key, up key,
      	  if key =!= topNodeName then topNodeButton else nullButton,
@@ -249,21 +249,6 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      SEQ apply(s, c -> ANCHOR {c, ""})
      )
 
-pass5 := () -> (
-     fn := buildDirectory | htmlDirectory | indexFileName;
-     << "pass 5, creating the master index in " << fn << endl;
-     masterNodeName := topNodeName | " Index";
-     fn << html HTML {
-	  HEAD { TITLE masterNodeName },
-	  BODY {
-	       HEADER2 masterNodeName, PARA,
-	       CENTER topNodeButton, PARA,
-	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
-	       UL apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TOH key })
-	       }
-	  } << endl << close
-     )
-
 -----------------------------------------------------------------------------
 -- making the html pages
 -----------------------------------------------------------------------------
@@ -298,12 +283,15 @@ makeMasterIndex := keylist -> (
      fn := buildDirectory | htmlDirectory | indexFileName;
      title := topNodeName | " Index";
      << "--making  '" << title << "' in " << fn << endl;
-     fn << html HTML {
+     fn
+     << encoding << endl
+     << doctype << endl     
+     << html HTML {
 	  HEAD { TITLE title },
 	  BODY {
 	       HEADER2 title, PARA,
-	       CENTER topNodeButton, PARA,
-	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
+	       topNodeButton, PARA,
+ 	       between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
 	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey })
 	       }
 	  } << endl << close

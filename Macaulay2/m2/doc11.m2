@@ -377,15 +377,6 @@ document { STRONG,
      SEEALSO "hypertext"
      }
 
-document { CENTER,
-     Headline => "HTML CENTER item",
-     TT "CENTER x", " -- encloses ", TT "x", " in a hypertext CENTER item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     SEEALSO "hypertext"
-     }
-
 document { BIG,
      Headline => "HTML BIG item",
      TT "BIG x", " -- encloses ", TT "x", " in a hypertext BIG item.",

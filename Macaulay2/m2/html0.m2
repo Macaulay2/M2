@@ -63,7 +63,6 @@ HEAD       = new MarkUpType
 BODY       = new MarkUpType
 IMG	   = new MarkUpType
 HTML       = new MarkUpType
-CENTER     = new MarkUpType
 BIG        = new MarkUpType
 HEADER1    = new MarkUpType
 HEADER2    = new MarkUpType

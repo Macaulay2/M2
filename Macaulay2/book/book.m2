@@ -131,7 +131,8 @@ bookFile << ///
     scan(pairs getNameFromNumber, (i,node) -> (
 	      n := sectionNumberTable#i;
 	      d := documentationMemo node;
-	      if class d#0 === CENTER then d = drop(d,1);
+	      -- oops: what was this for?
+	      -- if class d#0 === CENTER then d = drop(d,1);
 	      bookFile << endl << endl
 	      << "\\hypertarget{" << n << "}{}" << endl
 	      << sectionType n << "{" << tex formatDocumentTag node << "}"
