@@ -12,9 +12,6 @@ INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 include $(TOPDIR)/Makeconf
 
-ifndef NODEPENDS
-include compat.mak
-endif
 ############################## main target
 all :: compat.h ../bin/Macaulay2
 ############################## useful targets
@@ -244,9 +241,8 @@ endif
 ifeq "$(CC)" "cl"
 compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
-compat.mak : ; echo >$@
 else
-compat.c compat.h compat.mak : configure ../../Makeconf.h Makefile
+compat.c compat.h : configure ../../Makeconf.h Makefile
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" ./configure
 endif
 
