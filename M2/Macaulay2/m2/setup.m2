@@ -112,6 +112,7 @@ notify = true
 newPackage(User, DebuggingMode => debuggingMode)
 User#"source directory" = null
 protect Main.Dictionary
+protect symbol User
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
