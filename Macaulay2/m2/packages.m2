@@ -189,7 +189,12 @@ closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
-     scan(pkg#"mutable symbols", s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
+     scan(pkg#"mutable symbols", s -> (
+	       if value s === s
+	       and s =!= symbol oo
+	       and s =!= symbol ooo
+	       and s =!= symbol oooo
+	       then stderr << "warning: unused writable symbol '" << s << "'" << endl));
      ws := set pkg#"mutable symbols";
      dict := pkg.Dictionary;
      scan(sortByHash values dict, s -> if not ws#?s then (
