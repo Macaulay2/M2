@@ -382,7 +382,7 @@ document {
      Key => (setRandomSeed, ZZ),
      Usage => "setRandomSeed i",
      Inputs => {"i" => null},
-     Results => {
+     Consequences => {
      	  "Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
      	  The sequence of future pseudo-random results is determined by the seed."},
      EXAMPLE {
@@ -397,7 +397,7 @@ document {
      Key => (setRandomSeed, String),
      Usage => ///setRandomSeed s///,
      Inputs => {"s" => null},
-     Results => {
+     Consequences => {
 	  "Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
 	  of the string contributes to the seed, but only 32 bits of data are used.
 	  The sequence of future pseudo-random results is determined by the seed."},
@@ -414,7 +414,7 @@ document {
      Usage => "truncateOutput w",
      Inputs => {"w" => ZZ => null},
      Outputs => {},
-     Results => {
+     Consequences => {
 	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
 	  This function works by assigning a value to ", TT "Thing.BeforePrint", ", which 
      	  may conflict with other ", TO "BeforePrint", " methods installed by the user, or those installed by the system that do line wrapping."
@@ -437,7 +437,7 @@ document {
      Inputs => {
 	  "n" => ZZ => "the width to use for wrapping printed output"
 	  },
-     Results => {
+     Consequences => {
 	  "The function ", TT "wrap", " will use ", TT "n", " as the window width when wrapping
 	  certain types of output."
 	  }
@@ -451,7 +451,7 @@ document {
 	  Title => String => "a substitute title for the package, in case you want to load two versions of the same package",
 	  DebuggingMode => Boolean => "the debugging mode to use during the loading of the package"
 	  },
-     Results => {
+     Consequences => {
 	  "The file, which will typically start with a 'newPackage' command, is loaded."
 	  },
      SeeAlso => { "newPackage", "Package", "load" }

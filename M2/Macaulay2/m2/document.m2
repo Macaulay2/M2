@@ -450,7 +450,7 @@ fixupTable := new HashTable from {
      FormattedKey => chkIsString FormattedKey,
      Inputs => val -> fixupList val,
      Outputs => val -> fixupList val,
-     Results => val -> fixupList val,
+     Consequences => val -> fixupList val,
      OldSynopsis => identity,				    -- old
      FileName => chkIsString FileName,
      Headline => chkIsString Headline,
@@ -477,7 +477,7 @@ documentOptions := new HashTable from {
      Function => true,
      Inputs => true,
      Outputs => true,
-     Results => true,
+     Consequences => true,
      OldSynopsis => true,				    -- old
      FileName => true,
      Headline => true,
@@ -703,7 +703,7 @@ synopsisOpts := new OptionTable from {			    -- old
      Function => null,
      Inputs => {},
      Outputs => {},
-     Results => {}
+     Consequences => {}
      }
 
 briefSynopsis := key -> (
@@ -714,7 +714,7 @@ briefSynopsis := key -> (
      if o === null then o = synopsisOpts;
      inp := if o.?Inputs then o.Inputs else {};
      out := if o.?Outputs then o.Outputs else {};
-     res := if o.?Results then o.Results else {};
+     res := if o.?Consequences then o.Consequences else {};
      usa := if o.?Usage then o.Usage;
      fun := if o#?Function then o#Function;
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
@@ -766,7 +766,7 @@ briefSynopsis := key -> (
 			 ),
 		    if inp#?0 then PARA1 { "Inputs:", UL inp },
 		    if out#?0 then PARA1 { "Outputs:", UL out },
-		    if res#?0 then PARA1 { "Results:", UL res },
+		    if res#?0 then PARA1 { "Consequences:", UL res },
 		    if ino#?0 then PARA1 { "Optional inputs [default] :", UL ino }
 		    }
 	       }

@@ -150,7 +150,7 @@ document {
 	  "X" => Type => "",
 	  "f" => Function => { " that can print something of type ", TT "X"}
 	  },
-     Results => {
+     Consequences => {
 	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      "The function ", TT "f", " is responsible for printing the output prompt and for applying the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired.",
@@ -165,7 +165,7 @@ document {
 	  "X" => Type => "",
 	  "f" => Function => { " that can accept something of type ", TT "X"}
 	  },
-     Results => {
+     Consequences => {
 	  {
 	       "at top level, whenever it is time, as indicated by a semicolon at the end of an input line,
 	       to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
@@ -180,7 +180,7 @@ document {
      Inputs => {
 	  "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
 	  },
-     Results => {
+     Consequences => {
 	  {"The value returned by ", TT "f", " is printed instead."}
 	  }
      }
@@ -192,7 +192,7 @@ document {
      Inputs => {
 	  "f" => { "a function to be applied after evaluating a top-level evaluation result ", TT "r", " of type ", TT "X", "."},
 	  },
-     Results => {
+     Consequences => {
 	  "The value returned result replaces the original for storing in the output variables and for printing"
 	  },
      }
@@ -225,7 +225,7 @@ document {
      Inputs => {
 	  "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
 	  },
-     Results => {
+     Consequences => {
 	  {
 	       "The function ", TT "f", " will be applied at top level to the 
 	       result of an evalution when printing of the result has
@@ -241,7 +241,7 @@ document {
      Inputs => {
 	  "n" => ZZ => "",
 	  },
-     Results => {
+     Consequences => {
 	  "The recursion depth limit for the interpreter is set to ", TT "n", "."
 	  },
      "Each time a function is called, the recursion depth is incremented by
