@@ -60,9 +60,14 @@ comprehensive and informative.  Once you have spent an hour with the emacs
 tutorial and manual, come back and continue from this point.",
 PARA,
 "Edit your ", TT ".emacs", " initialization file, located in your home directory,
-creating one if necessary.  (Under Windows, this file is called ", TT "_emacs", ".)
-Insert into it the following lines of emacs-lisp code (which can also
-be found in the file ", TT "emacs/emacs-hlp.txt", ", or obtained by running
+creating one if necessary.  (Under Windows, this file is called ", TT "_emacs", ",
+and your home directory is the one your Desktop folder is in.  If your login
+name is ", TT "xxx", ", then your home directory ", TT "c:/winnt/profiles/xxx", " 
+under NT and ", TT "c:/windows/profiles/xxx", " under Windows 95/98.  In 
+any case, the name of the home directory is abbreviated to a single
+tilde ", TT "~", " under emacs.)  Insert into your initialization
+file the following lines of emacs-lisp code (which can also be found
+in the file ", TT "emacs/emacs-hlp.txt", ", or obtained by running
 ", TT ///help "running Macaulay 2 in emacs"///, " in Macaulay 2).",
 PARA,
 CODE ///(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
@@ -82,6 +87,7 @@ The next three lines provide a special mode for running Macaulay 2 in an emacs b
 The sixth line tells emacs where to find the emacs-lisp files provided in the
 Macaulay 2 emacs directory - you must edit the string in that line to
 indicate the correct path on your system to the Macaulay 2 emacs directory.
+(Even under Windows, the path may contain forward slashes '/' as separators.)
 The files needed from that directory are ", TT "M2-mode.el", ",
 ", TT "M2-symbols.el", ", and ", TT "M2.el", ".  The seventh line sets
 the variable ", TT "transient-mark-mode", " so that it can

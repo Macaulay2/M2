@@ -316,6 +316,92 @@ sheafExt = new ScriptedFunctor from {
 	       }
 	  )
      }
-sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (n,F,G) -> prune sheaf Ext^n(module F, module G)
-Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => (n,F,G) -> error "global Ext not implemented yet"
-Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (n,F,G') -> error "global Ext not implemented yet"
+sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
+     (n,F,G) -> prune sheaf Ext^n(module F, module G)
+     )
+
+-----------------------------------------------------------------------------
+-- code donated by Greg Smith <ggsmith@math.berkeley.edu>
+
+-- The following algorithms and examples appear in Gregory G. Smith,
+-- Computing global extension modules, Journal of Symbolic Computation
+-- 29 (2000) 729-746.
+-----------------------------------------------------------------------------
+
+Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (m,F,G') -> (
+     G := G'#"object";
+     e := (G'#"bound")#0;
+     if variety G =!= variety F
+     then error "expected sheaves on the same variety";
+     if not instance(variety G,ProjectiveVariety)
+     then error "expected sheaves on a projective variety";
+     M := module F;
+     N := module G;
+     R := ring M;
+     if not isAffineRing R
+     then error "expected sheaves on a variety over a field";
+     local E;
+     if dim M === 0 or m < 0 then E = R^0
+     else (
+          f := presentation R;
+          S := ring f;
+          n := numgens S -1;
+          l := min(dim N, m);
+	  P := res(coker lift(presentation N,S) ** coker f);
+	  p := length P;
+	  if p < n-l then E = Ext^m(M, N)
+	  else (
+	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
+	       r := a-e-m+1;
+	       E = Ext^m(truncate(r,M), N)));
+     if (min degrees E) === infinity then E
+     else if (min degrees E)#0 > e then prune E
+     else prune truncate(e,E))
+
+Ext(ZZ,SheafOfRings,SumOfTwists) := Module => (m,O,G') -> Ext^m(O^1,G')
+
+Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => (n,F,G) -> (
+     E := Ext^n(F,G(>=0));
+     k := coefficientRing ring E;
+     k^(rank source basis(0,E)))
+
+Ext(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> Ext^n(O^1,G)
+Ext(ZZ,CoherentSheaf,SheafOfRings) := Module => (n,F,O) -> Ext^n(F,O^1)
+Ext(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> Ext^n(O^1,R^1)
+
+-- Example 4.1: the bounds can be sharp.
+TEST ///
+     S = QQ[w,x,y,z];
+     X = Proj S;
+     I = monomialCurveIdeal(S,{1,3,4})
+     N = S^1/I;
+     assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
+     assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
+     ///
+
+-- Example 4.2: locally free sheaves and global Ext.
+TEST ///
+     S = ZZ/32003[u,v,w,x,y,z];
+     I = minors(2,genericSymmetricMatrix(S,u,3));
+     X = variety I;
+     R = ring X;
+     Omega = cotangentSheaf X;
+     OmegaDual = dual Omega;
+     assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
+     ///
+
+-- Example 4.3: Serre-Grothendieck duality.
+TEST ///
+     S = QQ[v,w,x,y,z];
+     X = variety ideal(w*x+y*z,w*y+x*z);
+     R = ring X;
+     omega = OO_X^{-1};
+     G = sheaf coker genericSymmetricMatrix(R,R_0,2);
+     assert(Ext^2(G,omega) == dual HH^0(G))
+     assert(Ext^1(G,omega) == dual HH^1(G))
+     assert(Ext^0(G,omega) == dual HH^2(G))
+     ///
+
+-----------------------------------------------------------------------------
+-- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
+-----------------------------------------------------------------------------

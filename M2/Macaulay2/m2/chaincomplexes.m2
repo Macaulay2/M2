@@ -60,7 +60,7 @@ net ChainComplex := C -> if C.?name then C.name else (
      else (
 	  a := s#0;
 	  b := s#-1;
-	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
+	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
 texMath ChainComplex := C -> if C.?name then C.name else (
      complete C;
