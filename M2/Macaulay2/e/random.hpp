@@ -18,8 +18,10 @@ class Random
 				// number that can be generated...
 
   // gmp random routines
-  static gmp_randstate_t _st;
-  static mpz_t _maxN;
+  static gmp_randstate_t state;
+  static mpz_t maxN;
+  static bool maxNisSmall;
+  static int maxNint;
 public:
   static void i_random();
   static RingElement *get_max_int();
