@@ -2,7 +2,7 @@
 
 TMP=tmp$$.c
 
-LDFLAGS='-static'
+echo "-- using LDFLAGS=$LDFLAGS"
 
 cat <<EOF >compat.h
 /* this file produced automatically by configure, do not edit */

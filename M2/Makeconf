@@ -82,19 +82,19 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '#' >$@
 	echo '# PROFILE     := TRUE' >>$@
 	echo '# NOSTRIP     := TRUE' >>$@
-	echo '# NOSTATIC    := TRUE' >>$@
 	echo '# NOOPTIM     := TRUE' >>$@
 	echo '# MEMDEBUG    := TRUE' >>$@
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
 	echo 'export OLDENGINE := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
-	echo 'NEWDUMPDATA  := TRUE' >>$@
-	echo 'NOMP        := TRUE' >>$@
+	echo 'NEWDUMPDATA   := TRUE' >>$@
+	echo 'NOMP          := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@
 	echo '# if you change CC or CXX, then remove config.cache' >>$@
 	echo '# SHAREDLIBS  := TRUE' >>$@
+	echo 'NOSTATIC      := TRUE' >>$@
 	echo '# set LIBC manually for Linux' >>$@
 	echo '# LIBC        := -glibc' >>$@
 	echo 'CC            := gcc' >>$@
