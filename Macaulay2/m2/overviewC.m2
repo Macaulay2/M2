@@ -923,8 +923,8 @@ document {
 document {
      Key => "matrices to and from modules",
      Headline => "including kernel, cokernel and image",
-     TOC {
-	  SECTION { "matrices to modules (kernel, image, cokernel)",
+     
+	  SUBSECTION "matrices to modules (kernel, image, cokernel)",
      	       "Let's make a matrix.",
      	       EXAMPLE {
 	  	    "R = ZZ/101[a..c];",
@@ -937,11 +937,11 @@ document {
 	  	    "coker f",
 	  	    "image f",
 	  	    },
-	       },
-	  SECTION { "modules to matrices",
+	       ,
+	  SUBSECTION "modules to matrices",
 	       "gens, mingens, presentation"
-	       }
-     }
+	       
+     
 }
 
 document {
@@ -954,8 +954,8 @@ document {
      or if ", TT "M", " is not graded, some of these functions still work, but
      care must be taken in interpreting the output.  Here, we just consider the
      standard grading case.",
-     TOC {
-	  SECTION { "checking homogeneity",
+     
+	  SUBSECTION "checking homogeneity",
 	       "Let's start by making a module over a ring with 18 variables",
 	       EXAMPLE {
 		    "R = ZZ/32003[vars(0..17)];",
@@ -964,8 +964,8 @@ document {
 	       "Use ", TO "isHomogeneous", " to check whether a given module is
 	       graded.",
 	       EXAMPLE "isHomogeneous M"
-	       },
-	  SECTION { "codimension, degree, and sectional arithmetic genera",
+	       ,
+	  SUBSECTION "codimension, degree, and sectional arithmetic genera",
 	       "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
 	       numeric information about a module.",
 	       EXAMPLE {
@@ -976,8 +976,8 @@ document {
 	       "The last number in the list of genera is the degree minus one.  The second to last
 	       number is the genus of the generic linear section curve, ..., and the first
 	       number is the arithmetic genus",
-	       },
-	  SECTION { "the Hilbert series",
+	       ,
+	  SUBSECTION "the Hilbert series",
 	       "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
 	       TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 
 	       denominator ", TT "(1-t)^n", ", where ", TT "n", " is the number of variables
@@ -998,8 +998,8 @@ document {
 	H)",
                     "poincare' M",
 		    }
-	       },
-	  SECTION { "free resolutions",
+	       ,
+	  SUBSECTION "free resolutions",
 	       "The minimal free resolution ", TT "C", " is computed using ", TO (resolution,Module), ".  
 	       The specific matrices are obtained by indexing ", TT "C.dd", ".",
 	       EXAMPLE {
@@ -1008,8 +1008,8 @@ document {
 		    },
 	       "For more information about chain complexes and resolutions, see ", TO "chain complexes",
 	       " and ", TO "computing resolutions", "."
-	       },
-	  SECTION { "betti numbers",
+	       ,
+	  SUBSECTION "betti numbers",
 	       "Use ", TO (betti,ChainComplex), " to display the graded betti numbers of ", TT "M", ".",
 	       EXAMPLE "betti C",
 	       "This table should be interpreted as follows: the number in the ", 
@@ -1018,8 +1018,8 @@ document {
 	       In the above example, there are 15 second syzygies of degree 4, and the entries
 	       of the maps ",
 	       TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
-	       }
-	  }
+	       
+	  
      }
 
 document {
@@ -1084,8 +1084,6 @@ document {
 document {
      Key => "information about a map of modules",
      "usual information: source, target, ring.",
-     TOC {
-     	  }
      }
 
 
@@ -1272,8 +1270,8 @@ document {
      Key => "fine control of a Groebner basis computation",
      "Sometimes a Groebner basis computation doesn't finish quickly enough.  If so
      then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION.",
-     TOC {
-	  SECTION { "Partially computed Groebner bases",
+     
+	  SUBSECTION "Partially computed Groebner bases",
 	       "Suppose that you have computed part of a Groebner basis.  For
 	       example, you may have interrupted the computation using CTRL-C 
 	       (typing 'c' while holding the CTRL key down, in emacs, you have to 
@@ -1288,10 +1286,10 @@ document {
 	       "We can make a Groebner basis snapshot by using StopBeforeComputation:",
 	       EXAMPLE "gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);",
 	       EXAMPLE "leadTerm gbSnapshot(I)"
-	       }
---	  SECTION { ""
---	       }
-	 }
+	       
+--	  SUBSECTION ""
+--	       
+	 
      }
 
 TEST ///

@@ -113,8 +113,6 @@ TO         = new MarkUpType of MarkUpList
 TOH        = new MarkUpType of MarkUpList
 new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- document tags can be sequences, so keep them intact
 MENU       = new MarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
-SECTION    = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
-TOC	   = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
 MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
