@@ -466,20 +466,24 @@ setupfun("exit",exitfun);
 applythem(obj:HashTable,fn:FunctionClosure):void := (
      apply(fn,Expr(obj));
      );
+
 RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
-     Ccode( void,
-     	  "GC_REGISTER_FINALIZER(__subfront__(",
-     	  h,
-	  "),(GC_finalization_proc)", 
-	  fn,
-	  ",(void *)(", 
-	  0,
-	  "),0,0)" 
-	  );
+     Ccode( void, "GC_REGISTER_FINALIZER(", h, ",(GC_finalization_proc)", fn, ",(void *)0,(void *)0,(void *)0)" );
+
+-- RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
+--      Ccode( void,
+--      	  "GC_REGISTER_FINALIZER(__subfront__(",
+--      	  h,
+-- 	  "),(GC_finalization_proc)", 
+-- 	  fn,
+-- 	  ",(void *)(", 
+-- 	  0,
+-- 	  "),0,0)" 
+-- 	  );
 
  -- see memdebug.h
- -- FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
-    FixUp( obj:Handle ):void ::= Ccode( void, "(", obj, " = __addfront__(", obj, "))" );
+ -- old : FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
+--    FixUp( obj:Handle ):void ::= Ccode( void, "(", obj, " = __addfront__(", obj, "))" );
 
 --RegisterFinalizerFun(e:Expr):Expr := (
 --     when e
@@ -502,7 +506,8 @@ RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::=
 --setupfun("register",RegisterFinalizerFun);
 
 freeHandle(obj:Handle,i:int):void := (
-     FixUp(obj);
+     -- FixUp(obj);
+     -- stdout << "finalizing " << obj.handle << endl;
      gbforget(obj.handle);
      obj.handle = -1;			  -- mainly for debugging
      );
@@ -512,6 +517,7 @@ toHandle(e:Expr):Expr := (
 	  if isInt(i) 
 	  then (
 	       h := Handle(toInt(i));
+     	       -- stdout << "registering " << i << endl;
 	       RegisterFinalizer(h,freeHandle);
 	       Expr(h)
 	       )

@@ -1218,6 +1218,11 @@ document { (map,Ring,Ring,List),
      SEEALSO {(map,Ring,Ring,Matrix)}
      }
 
+document { symbol "sub",
+     Headline => "substitute values for variables",
+     TT "sub", " -- a synonym for ", TO "substitute", "."
+     }
+
 document { substitute,
      Headline => "substitute values for variables",
      TT "substitute(f,v)", " -- substitute values for the variables in the matrix,
@@ -1251,8 +1256,11 @@ document { substitute,
      "Warning: the specified substitution is not checked to see whether
      the corresponding ring homomorphism is well-defined; this may produce
      surprising results, especially if rational coefficients are converted
-     to integer coefficients."
+     to integer coefficients.",
+     PARA,
+     "A convenient abbreviation for ", TO "substitute", " is ", TO "sub", "."
      }
+
 
 document { modifyRing,
      Headline => "make a copy of a ring, with some features changed",

@@ -3,6 +3,16 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+an important memory leak was found and repaired -- rings and monoids were
+never getting freed!  This should make a vast improvement for those who
+create many rings.
+
+'heap' has been renamed to 'engineHeap'
+
+g[a,b,c] is a new synonym for substitute(r,matrix {toList v})
+
+'sub' is a new abbreviation for 'substitute'.
+
 x_R will produce the element of R named x, if x is a symbol, or an indexed
 variable, or even a generator of some other ring.
 

@@ -488,7 +488,7 @@ document { "high level gb engine commands",
 	  TO "look",
 	  TO "engineMemory",
 	  TO "engineStack",
-	  TO "heap",
+	  TO "engineHeap",
 	  TO "see"
 	  }
      }
