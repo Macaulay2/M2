@@ -239,20 +239,6 @@ runStartFunctions = () -> scan(startFunctions, f -> f())
 OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
 
-if not version#"mp" then (
-     erase symbol PutAnnotationPacket;
-     erase symbol PutCommonMetaOperatorPacket;
-     erase symbol PutCommonMetaTypePacket;
-     erase symbol PutCommonOperatorPacket;
-     erase symbol PutOperatorPacket;
-     erase symbol WritePacket;
-     erase symbol closeLink;
-     erase symbol openLink;
-     erase symbol writeMessage;
-     erase symbol writePacket;
-     erase symbol writeRawPacket;
-     )
-
 load "loads.m2"
 
 path = savepath

@@ -13,7 +13,7 @@ To do here:
     exterior, symm (how best to do this?)
     random_matrix
     coeffs, 
-    inpart, stdpart, mininimalpart (but call them what??)
+    inpart, stdpart, mininimalpart (but call them what?? )
 #endif
 
 #include "style.hpp"

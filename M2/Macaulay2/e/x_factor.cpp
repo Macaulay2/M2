@@ -4,27 +4,35 @@
 #if 1
 #include <assert.h>
 #include <iostream.h>
+#define divides ignore_this_symbol /* bits/stl_function.h contains a generic one, sigh, gcc 3.0 */
 #include "interp.hpp"
+#undef divides
 #include "matrix.hpp"
 #include "z_mod_p.hpp"
 #include "Z.hpp"
 #include "frac.hpp"
 
 ostream &operator<<(ostream &o,const intarray &w) {
+#if defined(__GNUC__) && __GNUC__ >= 3
+     hex(o);
+#else
      o << hex;
+#endif
      for (int k = 0; ; ) {
 	  o << w[k];
 	  if (++k >= w.length()) break;
 	  o << ' ';
      }
+#if defined(__GNUC__) && __GNUC__ >= 3
+     dec(o);
+#else
      o << dec;
+#endif
      return o;
 }
 
 #define Matrix MaTrIx
-/* #include <factory.h> */
-#include <factor.h>		// from Messollen
-#include <templates/functions.h>
+#include <factor.h>		// from Messollen's libfac
 #undef Matrix
 
 static RingElement convert(const Ring *R, CanonicalForm h) {
@@ -168,8 +176,10 @@ static void gcd_ring_elem(object &ff, object &gg) {
      const Ring *R = f.get_ring();
      CanonicalForm p = convert(f);
      CanonicalForm q = convert(g);
+#ifndef NDEBUG
      cerr << "p = " << p << endl
           << "q = " << q << endl;
+#endif
      CanonicalForm h = gcd(p,q);
      gStack.insert(convert(R,h));
 }
@@ -304,8 +314,3 @@ void i_factor_cmds() {
 }
 
 #endif
-
-//template int tmax(int const &, int const &);
-//template int tmin(int const &, int const &);
-//template CanonicalForm tmax(CanonicalForm const &, CanonicalForm const &);
-//template CanonicalForm tmin(CanonicalForm const &, CanonicalForm const &);

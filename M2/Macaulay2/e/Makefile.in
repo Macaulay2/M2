@@ -242,7 +242,7 @@ endif
 
 HHFILES := $(addsuffix .hpp, \
 		$(NAMES_H) $(NAMES) \
-		$(INTERFACE_H) $(INTERFACE) $(CONTAINER) $(E_H))
+		$(INTERFACE_H) $(INTERFACE) $(CONTAINER))  $(E_H)
 
 OTHERS := Makefile \
 	res_aux.cpp res_aux2.cpp geoT.hpp \
@@ -290,19 +290,19 @@ cmdnames.hpp : misc/cmdnames.input
 cmdinst.hpp : misc/cmdnames.input
 	$(AWK) -f misc/cmdinst.awk $^ >$@
 
-all tags:: TAGS
+tags:: TAGS
 
-TAGS: $(HFILES) $(CCFILES)
+TAGS: $(HHFILES) $(CCFILES)
 	etags *.hpp *.cpp *.c
 
 clean:
 	rm -f *.lo *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
 	rm -f TAGS
 
-Makefile-o.depends: Makefile $(HFILES) $(CCFILES) $(CFILES)
+Makefile-o.depends: Makefile $(HHFILES) $(CCFILES) $(CFILES)
 	touch $@
 	-makedepend -o.o -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
-Makefile-lo.depends: Makefile $(HFILES) $(CCFILES) $(CFILES)
+Makefile-lo.depends: Makefile $(HHFILES) $(CCFILES) $(CFILES)
 	touch $@
 	-makedepend -o.lo -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
 
@@ -379,3 +379,5 @@ endif
 #include $(addsuffix .dd,$(FILES))
 #endif
 
+distclean : clean
+	rm -f Makefile
