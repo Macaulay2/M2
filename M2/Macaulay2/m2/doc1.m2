@@ -430,12 +430,20 @@ document { (symbol "==>", List, Function),
 
 document { (symbol "==>", OptionTable, Function),
      Headline => "declare option names and default values",
-     TT "g = defs ==> fun", " -- produces a new function ", TT "g", " from 
-     the function ", TT "fun", " that processes optional arguments.",
+     Usage => { TT "defs ==> fun", " -- a new function made from the
+	  function ", TT "fun", " that processes optional arguments
+	  specified by ", TT "defs", "."},
+     Synopsis => {
+	  "g = defs ==> fun",
+	  "defs" => { "a hash table whose keys are the names
+     of the optional arguments, and whose values are the
+     corresponding default values." },
+     	  "fun" => { "a function that expects optional arguments." },
+     	  "g" => { "a new function that pre-processes the optional
+     arguments and then calls ", TT "fun", "." }
+     	  },
      PARA,
-     "Here ", TT "defs", " is a hash table of class ", TO "OptionTable", " whose 
-     keys are the names of the optional arguments, and whose values are the
-     corresponding default values.
+     "The new function ", TT "g", " works as follows.
      The value of ", TT "g args", ", say, is obtained by evaluation of 
      ", TT "(fun opts)(args')", ", where ", TT "args'", " is obtained from
      ", TT "args", " by removing the options of the form ", TT "X=>A", " 

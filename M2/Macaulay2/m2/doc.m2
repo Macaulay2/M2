@@ -667,7 +667,7 @@ document { (symbol +, Set, Set),
      TT "s + t", " -- union of two sets" }
 
 document { symbol "-",
-     Headline => "a binary operator, usually used for subtraction",
+     Headline => "a unary or binary operator, usually used for negation or subtraction",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
      BR,NOINDENT,

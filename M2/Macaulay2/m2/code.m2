@@ -91,11 +91,11 @@ methods HashTable := F -> (
      found := new MutableHashTable;
      seen#F = true;
      scan(pairs F, (key,meth) -> (
-	       if class meth === Function 
-	       then if class key === Sequence and member(F,key)
-	       then found#key = true
-	       else if class key === Function 
-	       then found#(key,F) = true
+	       if class meth === Function then (
+		    if class key === Sequence and member(F,key) then found#key = true
+	       	    else if class key === Function then found#(key,F) = true
+		    else if class key === Symbol and operator#?key then found#(key,F) = true
+		    )
 	       )
 	  );
      scanPairs(symbolTable(),
@@ -109,6 +109,9 @@ methods HashTable := F -> (
 			      else if class key === Sequence and member(F,key)
 			      then found#key = true)))));
      sort keys found)
+
+erase symbol operator					    -- created in document.m2
+
 methods Sequence := F -> (
      seen := new MutableHashTable;
      found := new MutableHashTable;

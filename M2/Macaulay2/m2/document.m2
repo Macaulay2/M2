@@ -579,7 +579,8 @@ documentation Thing := s -> SEQ { title s, usage s, type s }
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
 postfix := set postfixOperators; erase symbol postfixOperators
-operator := binary + prefix + postfix
+other := set otherOperators; erase symbol otherOperators
+operator = binary + prefix + postfix + other			    -- erase later in code.m2
 op := s -> if operator#?s then (
      ss := toString s;
      SEQ {

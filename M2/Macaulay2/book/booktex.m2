@@ -216,7 +216,7 @@ booktex MENU := x -> concatenate(
      )
 
 booktex HREF := s -> concatenate( "\\href{", ttLiteral s#0, "}{", booktex s#-1, "}" )
-booktex HEADLINE := s -> ""
+booktex Headline := s -> ""
 booktex TEX := identity
 booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///
