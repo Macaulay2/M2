@@ -76,6 +76,7 @@ struct enter_M2 {
 };
 
 static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
+     // this seems not to handle polynomials with rational coefficients at all!!
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (R->charac() == 0) {

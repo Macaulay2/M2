@@ -3,6 +3,16 @@ d = 5*x^2*y+7*x^3-1/11*y^4
 f = (3*x^3-x*y+y^2) * d
 g = (3*x^3+x*y+y^2) * d
 assert( degree ( gcd(f,g) // d ) == {0} )
+
+debugPackage Macaulay2
+R = QQ[x,y]
+f = 1+x^2
+g = 1+x^3
+rawGCD( raw ( f ), raw ( g ))
+rawGCD( raw ( 1/2*f ), raw ( 1/3*g ))			    -- crashes, probably because convert() in x-factor.cpp doesn't handle rational coefficients at all
+rawExtendedGCD( raw ( f ), raw ( g ))
+rawExtendedGCD( raw ( 1/2*f ), raw ( 1/3*g ))	       	    -- loops forever
+
 -- Local Variables:
 -- compile-command: "make gcd.okay "
 -- End:
