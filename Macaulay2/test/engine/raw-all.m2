@@ -4,6 +4,7 @@ runM2 = (filename) -> (
      )
 
 runM2 "raw.m2" -- some general tests
+runM2 "raw3.m2"
 runM2 "raw-monomial.m2"
 runM2 "raw-monoid.m2"
 runM2 "raw-ring.m2"
@@ -14,10 +15,10 @@ runM2 "raw-weyl.m2" -- not much here yet
 runM2 "ring.m2" -- works
 
 runM2 "raw-ring2.m2"
-runM2 "raw-ring3.m2"
 
 runM2 "raw-monideal.m2"
 runM2 "raw-hilb.m2"
+
 runM2 "raw-decompose.m2"
 runM2 "raw-gb.m2" -- this file needs to be split into smaller files
 runM2 "raw-res.m2"
@@ -25,7 +26,7 @@ runM2 "raw-mutable.m2"
 runM2 "raw-numerics.m2"
 runM2 "raw-localgb.m2"
 
-runM2 "raw3.m2"
+
 
 
 

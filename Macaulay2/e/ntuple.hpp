@@ -54,21 +54,47 @@ inline
 void ntuple::mult(int nvars, const int *a, const int *b, int *result)
 {
   for (int i=0; i<nvars; i++)
-    *result++ = *a++ + *b++;  // What about overflow checking here?
+    {
+      long x = *a++;
+      long y = *b++;
+      long z = x+y;
+      if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
+	{
+	  ERROR("monomial overflow");
+	}
+      *result++ = z;
+    }
 }
 
 inline
 void ntuple::power(int nvars, const int *a, int n, int *result)
 {
   for (int i=0; i<nvars; i++)
-    *result++ = *a++ * n;  // What about overflow checking here?
+    {
+      long e = *a++;
+      long long e1 = e;
+      e *= n;
+      e1 *= n;
+      if (e != e1)
+	ERROR("monomial overflow");
+      *result++ = e1;
+    }
 }
 
 inline
 void ntuple::divide(int nvars, const int *a, const int *b, int *result)
 {
   for (int i=0; i<nvars; i++)
-    *result++ = *a++ - *b++;  // What about overflow checking here?
+    {
+      long x = *a++;
+      long y = *b++;
+      long z = x-y;
+      if ((x < 0) == (y > 0) && (x < 0) != (z < 0))
+	{
+	  ERROR("monomial overflow");
+	}
+      *result++ = z;
+    }
 }
 
 inline
@@ -76,9 +102,19 @@ void ntuple::quotient(int nvars, const int *a, const int *b, int *result)
 {
   for (int i=0; i<nvars; i++)
     {
-      int c = *a++ - *b++;  // What about overflow checking here?
-      if (c < 0) c = 0;
-      *result++ = c;
+      long x = *a++;
+      long y = *b++;
+      long z;
+      if (x <= y) z = 0;
+      else
+	{
+	  z = x-y;
+	  if (z < 0)
+	    {
+	      ERROR("monomial overflow");
+	    }
+	  *result++ = z;
+	}
     }
 }
 
