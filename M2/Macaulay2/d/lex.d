@@ -273,28 +273,3 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
 	       )
 	  else return(w);
 	  ));
-export dumpWords(o:file):void := (
-     o << endl << endl << "word      precedence scope strength" << endl << endl;
-     o << ("<WORDS>",12)
-     << (parseWORD.precedence,-7) 
-     << (parseWORD.scope,-7) 
-     << (parseWORD.strength,-7) 
-     << endl;
-     foreach hashListX in hashTable do (
-	  hashList := hashListX;
-	  while true do
-	  when hashList
-	  is null do break
-	  is hashCell:WordListCell do (
-	       if hashCell.word.parse != parseWORD 
-	       then (
-		    o << (present(hashCell.word.name),12)
-		    << (hashCell.word.parse.precedence,-7) 
-		    << (hashCell.word.parse.scope,-7) 
-		    << (hashCell.word.parse.strength,-7) 
-		    << endl;
-		    );
-	       hashList = hashCell.next;
-	       );
-	  );
-     );

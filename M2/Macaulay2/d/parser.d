@@ -10,7 +10,6 @@ use arith;
 use nets;
 use tokens;
 
-
 export parseInt(s:string):Integer := (
      i := toInteger(0);
      foreach c in s do (
@@ -103,7 +102,6 @@ export ofW := dummyWord;		  -- filled in by binding.d
 export doW := dummyWord;		  -- filled in by binding.d
 export listW := dummyWord;		  -- filled in by binding.d
 export fromW := dummyWord;		  -- filled in by binding.d
-export whileW := dummyWord;		  -- filled in by binding.d
 export toW := dummyWord;		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
@@ -158,41 +156,28 @@ accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret
      );
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     ret := ParseTree(token1);
-     ret = accumulate(ret,file,prec,obeylines);
-     ret
+     accumulate(ParseTree(token1),file,prec,obeylines)
      );
 export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 export unaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret := parse(file,max(prec,token1.word.parse.strength),obeylines);
-     if ret != errorTree
-     then ret = accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines);
-     ret
-     );
+     if ret == errorTree then ret
+     else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret := nparse(file,token1.word.parse.scope,obeylines);
-     if ret != errorTree
-     then ret = accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines);
-     ret
-     );
-export precObject := 0;		-- filled in later by keywords.d
-export defaultbinary(
-     lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+     if ret == errorTree then ret
+     else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
+export precSpace := 0;		-- filled in later by keywords.d
+export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
      	  errorpos(token2.position,"missing semicolon on previous line?");
-     	  errorTree
-	  )
+     	  errorTree)
      else (
-     	  e := token2.word.parse.funs.unary(token2,file,precObject-1,obeylines);
-     	  ret := if e == errorTree then e else ParseTree(Adjacent(lhs,e));
-     	  ret));
-export postfixop(
-     lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
-     e := ParseTree(Postfix(lhs,token2));
-     ret := accumulate(e,file,prec,obeylines);
-     ret
-     );
+     	  ret := token2.word.parse.funs.unary(token2,file,precSpace-1,obeylines);
+     	  if ret == errorTree then ret else ParseTree(Adjacent(lhs,ret))));
+export postfixop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+     accumulate(ParseTree(Postfix(lhs,token2)),file,prec,obeylines));
 export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      token := gettoken(file,false);
      if token == errorToken then return(errorTree);
@@ -218,35 +203,21 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
 	  if isatty(file) then flush(file) else skip(file,prec));
      ret
      );
-export binaryop(
-     lhs:ParseTree, token2:Token, 
-     file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+export binaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+     ret := parse(file,token2.word.parse.scope,obeylines);
+     if ret == errorTree then ret 
+     else ParseTree(Binary(lhs, token2, ret)));
+export nbinaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+     ret := nparse(file,token2.word.parse.scope,obeylines);
+     if ret == errorTree then ret else ParseTree(Binary(lhs, token2, ret)));
+export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      e := parse(file,token2.word.parse.scope,obeylines);
-     ret := if e == errorTree then e else ParseTree(Binary(lhs, token2, e));
-     ret
-     );
-export nbinaryop(
-     lhs:ParseTree, token2:Token, 
-     file:TokenFile, prec:int, obeylines:bool):ParseTree := (
-     e := nparse(file,token2.word.parse.scope,obeylines);
-     ret := if e == errorTree then e else ParseTree(Binary(lhs, token2, e));
-     ret
-     );
-export arrowop(
-     lhs:ParseTree, token2:Token, 
-     file:TokenFile, prec:int, obeylines:bool):ParseTree := (
-     e := parse(file,token2.word.parse.scope,obeylines);
-     ret := if e == errorTree then e else ParseTree(
-	  Arrow(lhs, token2, e, dummyDesc)
-	  );
-     ret
-     );
+     if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
 export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      errorpos(token1.position,"syntax error at " + token1.word.name);
      errorTree
      );
-export errorbinary(lhs:ParseTree, token2:Token, 
-     file:TokenFile, prec:int,obeylines:bool):ParseTree := (
+export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
      errorpos(token2.position,"syntax error at " + token2.word.name);
      errorTree
      );
@@ -331,8 +302,8 @@ export binarybracket(
      	  e := singleparen(token2,file,token2.word.parse.scope);
      	  ret := if e == errorTree then e else ParseTree(Adjacent(lhs,e));
      	  ret));
-export leftparen  := parsefuns(unaryparen, defaultbinary);
-export rightparen := parsefuns(errorunary, errorbinary);
+export leftParenFuns  := parsefuns(unaryparen, defaultbinary);
+export rightParenFuns := parsefuns(errorunary, errorbinary);
 export unarywhile(
      whiletoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,whiletoken.word.parse.scope,false);
@@ -462,7 +433,7 @@ export unaryif(iftoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
 	  ret
 	  )
      );
-export unarytry(trytoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree:=(
+export unarytry(trytoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,trytoken.word.parse.scope,obeylines);
      if primary == errorTree then return(primary);
      if peektoken(file,obeylines).word == elseW then (
@@ -474,14 +445,8 @@ export unarytry(trytoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       return(errorTree));
 	  elseclause := parse(file,elsetoken.word.parse.scope,obeylines);
 	  if elseclause == errorTree then return(errorTree);
-	  ret := ParseTree(TryElse(trytoken,primary,elsetoken,elseclause));
-	  ret = accumulate(ret,file,prec,obeylines);
-	  ret)
-     else (
-	  ret := ParseTree(Try(trytoken,primary));
-	  ret = accumulate(ret,file,prec,obeylines);
-	  ret)
-     );
+	  accumulate(ParseTree(TryElse(trytoken,primary,elsetoken,elseclause)),file,prec,obeylines))
+     else accumulate(ParseTree(Try(trytoken,primary)),file,prec,obeylines));
 export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      newclass := parse(file,newtoken.word.parse.scope,obeylines);
      if newclass == errorTree then return(errorTree);
@@ -499,6 +464,4 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  newinitializer = parse(file,fromtoken.word.parse.scope,obeylines);
 	  if newinitializer == errorTree then return(errorTree);
 	  );
-     ret := ParseTree(New(newtoken,newclass,oftoken,newparent,fromtoken,newinitializer));
-     ret = accumulate(ret,file,prec,obeylines);
-     ret);
+     accumulate(ParseTree(New(newtoken,newclass,oftoken,newparent,fromtoken,newinitializer)),file,prec,obeylines));

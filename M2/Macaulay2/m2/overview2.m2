@@ -1370,8 +1370,8 @@ document { "creating and writing files",
 	  ///f << "hi" << endl///,
 	  ///f << "ho" << endl///,
 	  ///f << close///,
-	  ///<< get "testfile";///,
-	  },
+	  ///get "testfile"///,
+	  }
      }
 
 document { "two dimensional formatting",

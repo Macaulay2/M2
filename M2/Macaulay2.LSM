@@ -13,8 +13,8 @@ Description:    Symbolic algebra program designed to support research in
                 modules over various rings.  This amounts to giving
                 qualitative information about systems of polynomial 
                 equations in several variables.
-Keywords:       equation variety scheme polynomial Macaulay Groebner basis
-                homomorphism ideal syzygy
+Keywords:       equation variety scheme polynomial Macaulay Macaulay2
+                Groebner basis homomorphism ideal syzygy
 Author:         Daniel R. Grayson <dan@math.uiuc.edu>, and
                 Michael E. Stillman <mike@math.cornell.edu>
 Maintained-by:  Daniel R. Grayson <dan@math.uiuc.edu>, and

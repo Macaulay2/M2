@@ -69,12 +69,12 @@ seqlen(e:ParseTree):int := (
 	       then ( i = i + 1; e = u.rhs )
 	       else return(i+1))
 	  is p:parentheses do (
-	       --if p.left.word == paren
+	       --if p.left.word == leftparen
 	       --then return(i)
 	       --else 
 	       return(i+1))
 	  is p:parenthesized do (
-	       --if p.left.word == paren
+	       --if p.left.word == leftparen
 	       --then e = p.contents
 	       --else
 	       return(i+1))
@@ -97,12 +97,12 @@ fillseq(e:ParseTree,v:CodeSequence,m:int):int := (
 		    e = u.rhs )
 	       else ( v.m = convert(e); return(m+1)))
 	  is p:parentheses do (
-	       --if p.left.word == paren
+	       --if p.left.word == leftparen
 	       --then (return(m))
 	       --else
 	       (v.m = convert(e); return(m+1)))
 	  is p:parenthesized do (
-	       --if p.left.word == paren
+	       --if p.left.word == leftparen
 	       --then e = p.contents
 	       --else 
 	       ( v.m = convert(e); return(m+1)))
@@ -217,20 +217,14 @@ export convert(e:ParseTree):Code := (
 	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
 	       treePosition(e)))
      is p:parentheses do (
-	  if p.left.word == paren 
-	  then Code(exprCode(ExprEmptySequence,treePosition(e)))
-	  else 
-	  if p.left.word == brace then Code(exprCode(emptylist,treePosition(e)))
-	  else
-	  if p.left.word == BracketS.symbol.word then Code(
-	       exprCode(emptyArray, treePosition(e)))
-	  else 
-	  dummyCode			  -- should not happen
+	  if p.left.word == leftparen then Code(exprCode(ExprEmptySequence,treePosition(e)))
+	  else if p.left.word == leftbrace then Code(exprCode(emptylist,treePosition(e)))
+	  else if p.left.word == leftbracket then Code(exprCode(emptyArray, treePosition(e)))
+	  else dummyCode			  -- should not happen
 	  )
      is p:parenthesized do (
-	  if p.left.word == paren then convert(p.contents)
-	  else 
-	  if p.left.word == brace 
+	  if p.left.word == leftparen then convert(p.contents)
+	  else if p.left.word == leftbrace 
 	  then (
 	       cs := ensequence(p.contents);
 	       if allExprCodes(cs)
@@ -238,7 +232,7 @@ export convert(e:ParseTree):Code := (
 	       else Code(multaryCode(braceFun,cs,treePosition(e)))
 	       )
 	  else 
-	  if p.left.word == BracketS.symbol.word 
+	  if p.left.word == leftbracket 
 	  then (
 	       cs := ensequence(p.contents);
 	       if allExprCodes(cs)
@@ -701,9 +695,7 @@ export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
      e.symbol.unary = fun1;
      e.symbol.postfix = fun2;
      );
-export setupop(name:string,fun:unop):void := (
-     -- like setupfun below, but scope larger, like 'if'.
-     word := special(name,unaryop);
+export setupop(word:Word,fun:unop):void := (
      entry := makeSymbol(word,dummyPosition,globalScope);
      entry.unary = fun;
      entry.protected = true;
@@ -755,4 +747,4 @@ shieldfun(a:Code):Expr := (
 	       exit(1);
 	       );
      	  ret));
-setupop("shield",shieldfun);     
+setupop(shieldW,shieldfun);     

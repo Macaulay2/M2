@@ -13,7 +13,7 @@ use stdiop;
 
 export defaultparsefuns := parsefuns(defaultunary, defaultbinary);
 foreach p in array(parseinfo)(
-     parseEOL, parseEOF, parseERRMSG, parseWORD
+     parseEOF, parseERRMSG, parseWORD
      ) do p.funs = defaultparsefuns;
 prec := 0;
 step := 2;
@@ -35,15 +35,11 @@ binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTr
 binaryright(s:string)   :Word := binaryright(s,binaryop);
 token(s:string)         :Word :=           unique(s,parseinfo(prec,prec,prec,parsefuns(errorunary,errorbinary)));
 
-specialprec := -1;			  -- filled in below
-export special(s:string,f:function(Token,TokenFile,int,bool):ParseTree):Word := (
-     unique(s, parseinfo(precObject,specialprec,specialprec, parsefuns(f, defaultbinary))));
-
 export parens(binaryleft:string,binaryright:string,prec:int,scope:int,strength:int):Word := (
-     l := unique(binaryleft, parseinfo(prec,scope,strength,leftparen));
+     l := unique(binaryleft, parseinfo(prec,scope,strength,leftParenFuns));
      binaryleft = l.name;
      install(binaryleft,l);
-     r := unique(binaryright,parseinfo(scope,0,0,rightparen));
+     r := unique(binaryright,parseinfo(scope,0,0,rightParenFuns));
      binaryright = r.name;
      install(binaryright,r);
      addmatch(binaryleft,binaryright);
@@ -173,7 +169,7 @@ bump();
      parseEOF.precedence = pEOF;
      parseEOF.scope = pEOF;
 bump();
-     pRPAREN := prec;
+     precRightParen := prec;
 bump(2);
      semicolonW = nleft(";");
      export semicolonS := makeProtectedSymbolClosure(semicolonW);
@@ -182,6 +178,7 @@ bump(2);
 bump();
      export commaW := nunaryleft(",");
 bump(2);
+     wide := prec;
      elseW = token("else");
      thenW = token("then");
      doW = token("do");
@@ -195,7 +192,7 @@ bump();
      export DoubleArrowS := makeProtectedSymbolClosure(binaryright("=>"));
      export LongDoubleArrowS := makeProtectedSymbolClosure(binaryright("==>"));
 bump();
-     specialprec = prec;
+     narrow := prec;
      whenW = token("when");
      ofW = token("of");
      fromW = token("from");
@@ -247,7 +244,7 @@ bump();
 bump();
      export StarStarS := makeProtectedSymbolClosure(binaryleft("**"));
 bump();
-     export BracketS := makeProtectedSymbolClosure(parens("[","]",prec,pRPAREN,prec-1));
+     precBracket := prec;
 bump();
      export BackslashBackslashS := makeProtectedSymbolClosure(binaryright("\\\\"));
 bump();
@@ -260,27 +257,8 @@ bump();
      export SharpSharpS := makeProtectedSymbolClosure(binaryright("##"));
      export AtS := makeProtectedSymbolClosure(binaryright("@"));
 bump();
-     export AdjacentS:=makeProtectedSymbolClosure(binaryright(" "));
-
-     precObject = prec;
-     parseWORD.precedence = prec;
-     parseWORD.scope = prec;
-     parseWORD.strength = prec;
-
-     special("if",unaryif);
-     special("try", unarytry);
-     special("new", unarynew);
-     special("for",unaryfor);
-
-     whileW = special("while",unarywhile);
-
-     special("symbol",unaryquote);
-     special("global",unaryglobal);
-     special("local",unarylocal);
-
-     export paren := parens("(",")",prec,pRPAREN,prec);
-     export brace := parens("{","}",prec,pRPAREN,prec);
-     export keywordprec := prec;
+     export AdjacentS:=makeProtectedSymbolClosure(binaryright(" ")); precSpace = prec;
+     parseWORD.precedence = prec; parseWORD.scope = prec; parseWORD.strength = prec;
 bump();
      export AtAtS := makeProtectedSymbolClosure(binaryleft("@@"));
 bump();
@@ -288,19 +266,33 @@ bump();
      export PowerS := makeProtectedSymbolClosure(binaryleft("^"));
      export UnderscoreS := makeProtectedSymbolClosure(binaryleft("_"));
      export SharpS := makeProtectedSymbolClosure(unaryleft("#"));
-     SharpS.symbol.word.parse.strength = precObject-step;
+     SharpS.symbol.word.parse.strength = precSpace-1;
      export SharpQuestionS := makeProtectedSymbolClosure(binaryleft("#?"));
      export DotS := makeProtectedSymbolClosure(binaryleft("."));
      export DotQuestionS := makeProtectedSymbolClosure(binaryleft(".?"));
 bump();
      export ExclamationS := makeProtectedSymbolClosure(postfix("!"));
 bump();
-     paren.parse.strength = prec;
-     BracketS.symbol.word.parse.strength = prec;
-     brace.parse.strength = prec;
-     parseEOL.precedence = prec;
-     parseEOL.scope = prec;
+     export leftparen   := parens("(",")",precSpace,  precRightParen,prec);
+     export leftbrace   := parens("{","}",precSpace,  precRightParen,prec);
+     export leftbracket := parens("[","]",precBracket,precRightParen,prec);
+-----------------------------------------------------------------------------
+special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Word := (
+     unique(s, parseinfo(precSpace, prec, prec, parsefuns(f, defaultbinary))));
 
+     special("new",unarynew,narrow);
+     special("for",unaryfor,narrow);
+
+     export timeW := special("time",unaryop,wide);
+     export timingW := special("timing",unaryop,wide);
+     export shieldW := special("shield",unaryop,wide);
+     special("while",unarywhile,wide);
+     special("if",unaryif,wide);
+     special("try",unarytry,wide);
+     special("symbol",unaryquote,wide);
+     special("global",unaryglobal,wide);
+     special("local",unarylocal,wide);
+-----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
 export GlobalAssignE := Expr(GlobalAssignS);
 
