@@ -11,7 +11,7 @@ extern "C" void actors5_setFactorySeed(int s) {
 #endif
 }
 
-void factory_setup() {
+void factory_setup_1() {
 #ifdef FACTORY
   On(SW_USE_NTL);		/* tell factory to use NTL */
 #endif

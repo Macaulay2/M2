@@ -44,19 +44,19 @@ static void init_gc(void) {
 #endif
      }
 
-static void *GC_malloc_function (size_t new) {
+void *GC_malloc_function (size_t new) {
      void *p = GC_MALLOC(new);
      if (p == NULL) outofmem();
      return p;
      }
 
-static void *GC_realloc_function (void *s, size_t old, size_t new) {
+void *GC_realloc_function (void *s, size_t old, size_t new) {
      void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem();
      return p;
      }
 
-static void GC_free_function (void *s, size_t old) {
+void GC_free_function (void *s, size_t old) {
      GC_FREE(s);
 }
 
@@ -87,7 +87,7 @@ static void factory_mp_set_memory_functions() {
 }
 #endif
 
-void factory_setup() {
+void factory_setup_2() {
 # ifdef FACTORY
   factory_mp_set_memory_functions();
 # endif

@@ -38,13 +38,15 @@ addStartFunction(
 	  )
      )
 
-if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw documentation database" then (
-     currentPackage = Macaulay2;
-     stderr << "--loading Macaulay2-doc.m2" << endl;
-     notify = true;
-     load "Macaulay2-doc.m2";
-     currentPackage = null;
-     )
+stderr << "--warning: bypassing some important code in last.m2 temporarily!" << endl
+-- if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw documentation database" then (
+--      currentPackage = Macaulay2;
+-- 
+--      stderr << "--loading Macaulay2-doc.m2" << endl;
+--      notify = true;
+--      load "Macaulay2-doc.m2";
+--      currentPackage = null;
+--      )
 
 addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory )
 

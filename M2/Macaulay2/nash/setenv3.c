@@ -1,5 +1,5 @@
 #include "env.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define ERROR (-1)

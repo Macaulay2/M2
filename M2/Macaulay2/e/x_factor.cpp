@@ -38,6 +38,10 @@ void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
 #endif
 
+extern "C" {
+  extern void factory_setup_2();
+};
+
 struct enter_factory { 
   void *(*save_gmp_allocate_func  )(size_t);
   void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
@@ -46,7 +50,7 @@ struct enter_factory {
     save_gmp_allocate_func = __gmp_allocate_func;
     save_gmp_reallocate_func = __gmp_reallocate_func;
     save_gmp_free_func = __gmp_free_func;
-    factory_setup();
+    factory_setup_2();
   }
   void exit() {
     __gmp_allocate_func = save_gmp_allocate_func;
@@ -78,6 +82,7 @@ struct enter_M2 {
 
 static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      // this seems not to handle polynomials with rational coefficients at all!!
+     enter_M2 b;
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (R->charac() == 0) {
@@ -262,17 +267,19 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
       ERROR("encountered different rings");
       return 0;
     }
-  CanonicalForm p = convert(*f);
-  CanonicalForm q = convert(*g);
-  //     cerr << "p = " << p << endl
-  //          << "q = " << q << endl;
   enter_factory a;
-  CanonicalForm h = gcd(p,q);
-  const RingElement *r = convert(P,h);
-  return r;
+  {
+    CanonicalForm p = convert(*f);
+    CanonicalForm q = convert(*g);
+    //     cerr << "p = " << p << endl
+    //          << "q = " << q << endl;
+    CanonicalForm h = gcd(p,q);
+    const RingElement *r = convert(P,h);
+    return r;
+  }
 #else
-  ERROR("'factory' library not installed");
-  return NULL;
+    ERROR("'factory' library not installed");
+    return NULL;
 #endif
 }
 
