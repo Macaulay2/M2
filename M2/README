@@ -41,6 +41,10 @@ depend on some of the earlier ones.
     bugs to: downsj@downsj.com
      get at: ftp://ftp.gnu.org/pub/gnu/gdbm/
     license: GNU GENERAL PUBLIC LICENSE
+      notes: Makefile.in has "prefix = /usr/local", so when installing, you must
+		use "make prefix=/whatever" to install in a nonstandard place.
+	        Also, if you aren't root, it will try to change the ownership of
+		the installed files, so change BINOWN and BINGRP to suit you.
 
     library: gmp
     release: gmp-3.1.1
