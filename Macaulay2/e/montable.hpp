@@ -50,13 +50,13 @@ public:
   int find_divisors(int max,
 		    exponents exp, 
 		    int comp,
-		    vector< mon_term *> *result = 0);
+		    vector< mon_term *> *result = 0) const;
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
      return value: length of this array, i.e. the number of matches found */
 
-  mon_term *find_exact(exponents exp, int comp);
+  mon_term *find_exact(exponents exp, int comp) const;
   /* If this returns non-NULL, it is valid to grab the 'val' field, and/or to assign to it.
      All other fields should be considered read only */
 
