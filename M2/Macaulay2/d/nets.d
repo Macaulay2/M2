@@ -195,11 +195,11 @@ export netcmp(s:Net, t:Net):int := (
      tbody := t.body;
      slen := length(sbody);
      tlen := length(tbody);
-     si := 0;
-     ti := 0;
-     while si<slen && ti<tlen do (
-	  r := strnumcmp(sbody.si,tbody.ti);
+     i := 0;
+     while i<slen do (
+	  r := strnumcmp(sbody.i,tbody.i);
 	  if r != 0 then return r;
+	  i = i+1;
 	  );
      if slen > tlen then return 1;
      if slen < tlen then return -1;

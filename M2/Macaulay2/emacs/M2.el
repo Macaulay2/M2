@@ -94,15 +94,13 @@
   (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
   )
 
-(defvar M2-history nil "The history of recent Macaulay2 command lines.")
 (defvar M2-command 
   (concat "M2  --print-width " 
 	  (number-to-string (- (- (screen-width) 1) 
 			       7	; allows for prompts up to "i999 = ", which has 7 characters
 			       )) " ")
   "*The default Macaulay2 command line.")
-
-
+(defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 
 (defun M2 (command)
   "Run Macaulay 2 in a buffer.  With a prefix argument, the command line that runs Macaulay 2
