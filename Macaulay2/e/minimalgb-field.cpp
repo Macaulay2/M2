@@ -128,7 +128,7 @@ void MinimalGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 	}
     }
   h.f = head.next;
-  R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
+  //  R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
   R->exponents_delete(_EXP);
@@ -179,7 +179,7 @@ void MinimalGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 	}
     }
   h = head.next;
-  R->gbvector_remove_content(h, 0, use_denom, denom);
+  // R->gbvector_remove_content(h, 0, use_denom, denom);
   f = h;
   R->exponents_delete(_EXP);
 }

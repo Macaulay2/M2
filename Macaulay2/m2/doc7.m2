@@ -1587,7 +1587,7 @@ assert ( cokernel ff === M )		  -- cokernel memoized
 G = gb ff
 pM = poincare M
 MM = cokernel fff
-MM.poincare = pM
+MM.cache.poincare = pM
 -- << \"gb fff (with poincare provided) ...\" << flush
 GG = gb fff
 assert( numgens source generators G == numgens source generators GG )

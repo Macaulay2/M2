@@ -1654,6 +1654,7 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 
 MonomialIdeal *Matrix::make_monideal(int n) const
 {
+#warning "this is NOT WHAT WE USUALLY WANT!!"
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == 0)
     {

@@ -520,7 +520,7 @@ assert(dec#0 == ideal ( d*f-a*g,  g^4-b*e^2*h, a*d^2*g^2-c^2*h^3,
 	  ideal(-d*f+a*g,g^4-b*e^2*h,-d^3*f*g+c^2*h^3,-a^3*b*e^2+c^2*f^2*h^2,-a^2*b*d*e^2+c^2*f*g*h^2,-a*b*d^2*e^2+c^2*g^2*h^2)
 	  }
 
-    Ds = set apply(D, I -> gens gb I)
+    Ds = set apply(dec, I -> gens gb I)
     Es = set apply(E, I -> gens gb I)
     assert(Ds === Es)
 
