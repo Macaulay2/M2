@@ -21,23 +21,28 @@ tags := new HashTable from {
 opts := new HashTable from {
      Lex => (
 	  x -> (
-	       if class x === ZZ then sendgg(ggPush x,ggPush mo, ggMOlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOlex)
-	       else error "expected Lex argument to be an integer or list of integers"
+	       if class x === ZZ then sendgg(ggPush x, ggPush 0, ggPush mo, ggMOlex)
+	       else error "expected Lex argument to be an integer"
      	       )
 	  ),
      GroupLex => (
 	  x -> (
 	       if class x === ZZ then sendgg(ggPush x, ggPush 1, ggPush mo, ggMOlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x, ggPush 1, ggPush mo, ggMOlex)
-	       else error "expected Lex argument to be an integer or list of integers"
+	       else error "expected GroupLex argument to be an integer"
 	       )
 	  ),
      RevLex => (
 	  x -> (
-	       if class x === ZZ then sendgg(ggPush x, ggPush mo, ggMOrevlex)
+	       if class x === ZZ then sendgg(ggPush x, ggPush 0, ggPush mo, ggMOrevlex)
 	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOrevlex)
 	       else error "expected RevLex argument to be an integer or list of integers"
+	       )
+	  ),
+     GroupRevLex => (
+	  x -> (
+	       if class x === ZZ then sendgg(ggPush x, ggPush 1, ggPush mo, ggMOrevlex)
+	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOrevlex)
+	       else error "expected GroupRevLex argument to be an integer or list of integers"
 	       )
 	  ),
      NCLex => (
