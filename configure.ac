@@ -1,4 +1,5 @@
-AC_INIT(Macaulay 2, 0.9.3, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 0.9.5, Macaulay2@math.uiuc.edu, Macaulay2)
+dnl -- check Makefile-configuration is present in srcdir?
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -149,6 +150,12 @@ AC_ARG_ENABLE(encap,
     encap="$enableval",
     encap=no)
 
+AC_SUBST(LAPACK)
+AC_ARG_ENABLE(lapack,
+    AC_HELP_STRING(--enable-lapack,use experimental LAPACK interface),
+    [ LAPACK="$enableval" ; AC_DEFINE(LAPACK,,whether to use LAPACK) ],
+    LAPACK=no)
+
 AC_SUBST(encapdir)
 AC_ARG_WITH(encapdir,
     AC_HELP_STRING(--with-encapdir=...,encap directory [PREFIX/encap]),
@@ -209,7 +216,9 @@ AC_MSG_RESULT([yes])
 
 LIBS="$SAVELIBS"
 
-# M2_SHOW_CONFDEFS()
+AC_CHECK_HEADERS(wordexp.h)
+AC_CHECK_FUNCS(wordexp)
+M2_SHOW_CONFDEFS()
 
 # the next three are obsolete:
 M2_IS_THERE(sys_errlist)

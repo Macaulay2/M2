@@ -138,6 +138,16 @@ files installed in a nonstandard location:
 
 where ... represents the remaining arguments, as above.
 
+To use a different prefix, say /mnt/local, for finding libraries and include
+files installed in a nonstandard location:
+
+	LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ../configure ...
+
+where ... represents the remaining arguments, as above.  As an example, if
+you have compiled the libraries with fink, then you could use this line:
+
+        LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ./configure ...
+
 -----------------------
 Windows 95, 98 and NT notes
 -----------------------
@@ -233,13 +243,44 @@ Each user needs to do the following after installation:
 These are done by the fink macaulay2 package, but if you compile on your own,
 you may need to do the following:
 
+	# this is in Macaulay2/d
         ar x /sw/lib/libfac.a tmpl_inst.o
         mv tmpl_inst.o libfac_tmpl_inst.o
 
 Dumpdata doesn't work, I haven't tried removing --disable-strip yet.
 Here is the configure line I have used that works:
 
-./configure --disable-strip --disable-dumpdata -prefix=/sw
+    export CPPFLAGS=-I/sw/include
+    export LDFLAGS=-L/sw/lib
+    ./configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize
+    OR
+    ./configure --disable-strip --disable-dumpdata --prefix=/sw
+
+    LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ./configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --enable-lapack --enable-profile
+
+Further notes:
+
+  Dynamic linking:
+
+    The gc library, version 6.1, doesn't support dynamic linking, so it is
+    important to link libgmp in statically, otherwise you'll get weird and
+    horrible errors when the garbage collector reclaims memory that's
+    actually in use.  To see whether you got it right, use 'otool -L
+    libexec/Macaulay2': you shouldn't see libgmp on the list.  There seems to
+    be *no* linker option which will tell it to use the static library -- one
+    way is to delete (or move aside temporarily) the dynamic libraries
+    (libgmp*.dylib, libgmp*.la) for gmp in /sw/lib.  Another way is to
+    replace -lgmp on the command line by a reference to /sw/lib/libgmp.a.
+    
+  Stack size:
+
+    The default stack size seems to be small under Mac OS X.  If you
+    get a segmentation fault while building the html version of the
+    documentation, it's probably because of a stack overflow.  Under bash try
+    running
+	     ulimit -s 16000
+    and then recompile (in the same shell) to see whether that will fix the
+    problem.
 
 ----------------------
 HPUX notes
