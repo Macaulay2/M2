@@ -1,6 +1,5 @@
 .gdbinit
 cache-tmp
-bare
 gmon.out
 Examples
 Tests

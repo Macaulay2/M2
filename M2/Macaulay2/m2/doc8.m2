@@ -960,22 +960,32 @@ document { Variable,
      a symbol to be used as a name for the generator of the Galois field."
      }
 
-document { GaloisField, HEADLINE "the class of all Galois fields",
-     "A Galois field is a finite field implemented in the ", TO "engine", ",
-     and created with ", TO "GF", "."
-     }
-
-
-document { GF,
+document { GaloisField, HEADLINE "the class of all Galois fields" }
+document { GF, HEADLINE "make a finite field" }
+document { (GF,Ring), HEADLINE "make a finite field from a ring",
      TT "GF R", " -- make a Galois field from a quotient ring R which happens
      to be isomorphic to a finite field.",
-     BR,NOINDENT,
+     EXAMPLE {
+	  "k = GF(ZZ/2[t]/(t^3+t+1))",
+	  "t+t^2"
+	  }
+     }
+document { (GF,ZZ,ZZ), HEADLINE "make a finite field of a given prime power order",
      TT "GF(p,n)", " -- make a Galois field with ", TT "p^n", " elements, where 
      ", TT "p", " is a prime.",
-     BR,NOINDENT,
+     EXAMPLE {
+	  "k = GF(2,3,Variable=>x)",
+	  "x+x^2"
+	  }
+     }
+document { (GF,ZZ), HEADLINE "make a finite field of a given order",
      TT "GF(q)", " -- make a Galois field with ", TT "q", " elements, where 
      ", TT "q", " is a power of a prime.",
-     SEEALSO {"GaloisField"}
+     EXAMPLE {
+	  "k = GF(8)",
+	  "x = k_0",
+	  "x+x^2"
+	  }
      }
 
 TEST "
@@ -984,7 +994,7 @@ assert isPrime (t^2+t+1)
 assert (not isPrime (t^2+1))
 "
 
-document { isPrimitive, HEADLINE "whether something is a primitive element of a finite field",
+document { isPrimitive, HEADLINE "whether for a primitive element of a finite field",
      EXAMPLE { "R = ZZ/5[t]/(t^2+t+1);", "isPrimitive t", "isPrimitive (t-1)" }
      }
 

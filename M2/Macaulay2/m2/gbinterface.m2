@@ -26,11 +26,11 @@ eeLift = (f,R) -> (
      R.pop())
 
 -- these routines are used just for debugging
-look  = new Command from (() -> (<< sendgg ggsee;))
+look  = Command (() -> (<< sendgg ggsee;))
      
-engineStack = new Command from (() -> stack lines sendgg ggstack)
-heap = new Command from (() -> (<< sendgg ggheap;))
-engineMemory = new Command from (() -> (<< sendgg ggmem;))
+engineStack = Command (() -> stack lines sendgg ggstack)
+heap = Command (() -> (<< sendgg ggheap;))
+engineMemory = Command (() -> (<< sendgg ggmem;))
 
 see = method()
 see ZZ := i -> sendgg(ggPush i, ggderef, ggsee, ggpop)
