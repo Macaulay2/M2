@@ -35,8 +35,8 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- NeXTstep mms-hal 3.2 2 i586
 -- 	6.74973 seconds
 
--- SunOS venus.math.uiuc.edu 5.5.1 Generic sun4m sparc SUNW,SPARCstation-5
---         7.51 seconds		0.8.46
+-- SunOS saturn.math.uiuc.edu 5.5.1 Generic sun4m sparc SUNW,SPARCstation-5
+-- 7.71 seconds, Macaulay 2 version 0.8.41
 
 -- SunOS orion.math.uiuc.edu 5.5 Generic sun4d sparc SUNW,SPARCserver-1000
 -- 	8.41 seconds		0.8.46
