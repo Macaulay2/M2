@@ -25,7 +25,7 @@ enlarge(object:HashTable):void := (
      foreach x in oldTable do (
 	  p := x;
 	  while true do (
-	       if p == bucketEnd then break;
+	       if p == p.next then break;
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;)));
@@ -38,7 +38,7 @@ shrink(object:HashTable):void := (
      foreach x in oldTable do (
 	  p := x;
 	  while true do (
-	       if p == bucketEnd then break;
+	       if p == p.next then break;
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;)));
@@ -58,12 +58,8 @@ export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
-     if bucket.key == key then return bucket.value;
-     if bucket.next.key == key then return bucket.next.value;
-     while bucket != bucketEnd do (
-	  if bucket.key == key
-	  || bucket.hash == keyhash && equal(bucket.key,key)==True
-	  then return bucket.value;
+     while bucket != bucket.next do (
+	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then return bucket.value;
 	  bucket = bucket.next;
 	  );
      notfoundE);
@@ -71,12 +67,8 @@ export lookup1(object:HashTable,key:Expr):Expr := lookup1(object,key,hash(key));
 export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
-     if bucket.key == key then return bucket.value;
-     if bucket.next.key == key then return bucket.next.value;
-     while bucket != bucketEnd do (
-	  if bucket.key == key
-	  || bucket.hash == keyhash && equal(bucket.key,key)==True
-	  then return bucket.value;
+     while bucket != bucket.next do (
+	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then return bucket.value;
 	  bucket = bucket.next;
 	  );
      buildErrorPacket("key not found in hash table"));
@@ -84,12 +76,8 @@ export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,h
 export lookup1Q(object:HashTable,key:Expr,keyhash:int):bool := (
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
-     if bucket.key == key then return true;
-     if bucket.next.key == key then return true;
-     while bucket != bucketEnd do (
-	  if bucket.key == key
-	  || bucket.hash == keyhash && equal(bucket.key,key)==True
-	  then return true;
+     while bucket != bucket.next do (
+	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then return true;
 	  bucket = bucket.next;
 	  );
      false);
@@ -98,12 +86,8 @@ export lookup(object:HashTable,key:Expr,keyhash:int):Expr := (
      while true do (
      	  keymod := int(keyhash & (length(object.table)-1));
      	  bucket := object.table.keymod;
-	  if bucket.key == key then return bucket.value;
-	  if bucket.next.key == key then return bucket.next.value;
-     	  while bucket != bucketEnd do (
-	       if bucket.key == key
-	       || bucket.hash == keyhash && equal(bucket.key,key)==True
-	       then return bucket.value;
+     	  while bucket != bucket.next do (
+	       if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then return bucket.value;
 	       bucket = bucket.next;
 	       );
 	  if object == thingClass then break;
@@ -137,11 +121,11 @@ equal(x:HashTable,y:HashTable):Expr := (
 	       || p.value != q.value && False == equal(p.value,q.value) 
 	       then return False;)
 	  else (
-	       plen := 0; pp := p; while pp != bucketEnd do (pp=pp.next; plen=plen+1);
-	       qlen := 0; qq := q; while qq != bucketEnd do (qq=qq.next; qlen=qlen+1);
+	       plen := 0; pp := p; while pp != pp.next do (pp=pp.next; plen=plen+1);
+	       qlen := 0; qq := q; while qq != qq.next do (qq=qq.next; qlen=qlen+1);
 	       if plen != qlen then return False;
 	       while true do (
-		    if p == bucketEnd then break;
+		    if p == p.next then break;
 		    z := q;
 		    while true do (
 			 if z.key == p.key
@@ -153,7 +137,7 @@ equal(x:HashTable,y:HashTable):Expr := (
 			      else return False;
 			      );
 			 z = z.next;
-			 if z == bucketEnd then return False;
+			 if z == z.next then return False;
 			 );
 		    p = p.next;
 		    )));
@@ -352,7 +336,7 @@ export remove(x:HashTable,key:Expr):Expr := (
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      prev := p;
-     while p != bucketEnd do (
+     while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
 	       if prev == p then x.table.hmod = p.next
@@ -370,7 +354,7 @@ export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
-     while p != bucketEnd do (
+     while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
 	       p.value = value; 
@@ -390,7 +374,7 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
      if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
-     while p != bucketEnd do (
+     while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then return buildErrorPacket("collision of keys in hash table");
 	  p = p.next);
@@ -407,7 +391,7 @@ export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr :
      if !x.mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
-     while p != bucketEnd do (
+     while p != p.next do (
 	  if p.key == key || equal(p.key,key)==True 
 	  then (
 	       p.value = value; 
@@ -448,7 +432,7 @@ bucketsfun(e:Expr):Expr := (
 		    n := 0;
 		    p := pp;
 		    while true do (
-			 if p == bucketEnd then break;
+			 if p == p.next then break;
 			 n = n+1;
 			 p = p.next);
 		    p = pp;
@@ -894,18 +878,8 @@ modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
      keyhash:= hash(key);
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
-     if bucket.key == key then (
-	  bucket.value = f(bucket.value); -- notice: no error checking here
-	  return;
-	  );
-     if bucket.next.key == key then (
-	  bucket.next.value = f(bucket.next.value);-- notice: no error checking here
-	  return;
-	  );
-     while bucket != bucketEnd do (
-	  if bucket.key == key
-	  || bucket.hash == keyhash && equal(bucket.key,key)==True
-	  then (
+     while bucket != bucket.next do (
+	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
 	       bucket.value = f(bucket.value); -- notice: no error checking here
 	       return;
 	       );
@@ -931,7 +905,7 @@ export keys(o:HashTable):Expr := list(
      new Sequence len o.numEntries do
      foreach bucket in o.table do (
 	  p := bucket;
-	  while p != bucketEnd do (
+	  while p != p.next do (
 	       provide Expr(p.key);
 	       p = p.next;
 	       )

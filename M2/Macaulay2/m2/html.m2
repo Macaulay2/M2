@@ -307,6 +307,14 @@ installPackage = method(Options => {
 	  IgnoreExampleErrors => true
 	  })
 
+installPackage Symbol := opts -> pkg -> (
+     if class value pkg === Package then return installPackage(value pkg, opts);
+     fn := toString pkg | ".m2";
+     load fn;
+     if class value pkg === Package then return installPackage(value pkg, opts);
+     error ("loading file '",fn,"' failed to create a package named '",toString pkg,"'");
+     )
+
 installPackage Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = if pkg === Main then "Macaulay2" else pkg.name;

@@ -159,26 +159,22 @@ statuscodes.m2 : ../e/statuscodes
 		echo '}' ; \
 	) <$< >$@
 
-all:: tmp tmp/$(package)
+all:: tmp tmp/.documentation-made
 tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
-tmp/$(package) : $(DOCSEQUENCE)
+tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo making the Main package, including the documentation
-	cd tmp && ../../bin/M2 -q --stop -e 'errorDepth = 0' \
+	cd tmp && ../../bin/M2 -q --stop \
+	   -e 'errorDepth = 0' \
+	   -e 'debugLevel = 1' \
 	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") ' \
 	   -e 'exit 0 '
 	touch "$@"
 
-install::install-main
-install-main: all
-	tar cf - -C tmp $(package) | tar xf - -C $(prefix)
-
-clean::
-	rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample \
-		temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
-distclean : clean
-	rm -f Makefile
-
+install::all install-main
+install-main:; tar cf - -C tmp $(package) | tar xf - -C $(prefix)
+clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
+distclean : clean; rm -f Makefile
 always:
 
 # Local Variables:

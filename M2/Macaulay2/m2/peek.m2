@@ -17,19 +17,29 @@ peek2(List,ZZ) := (s,depth) -> (
 
 peek2(String, ZZ) := (s,depth) -> if depth === 0 then s else format s
 
-boxNet := x -> ( 
-     s := concatenate("+", width x : "-", "+");
-     n := height x + depth x;
-     if n === 0 then (
-     	  (s || x || s) ^ (height x)
-	  )
-     else (
-     	  t := (stack (n : "|")) ^ (height x - 1);
-     	  (s || t | x | t || s) ^ (height x)
-	  )
-     )
+boxNets = method()
+boxNets List := nets -> (
+     wid := if #nets === 0 then 0 else max \\ width \ nets;
+     side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|")) ^ (height n - 1)));
+     w := side | stack between(concatenate (wid:"-"), nets) | side;
+     top := concatenate("+", width w - 2 : "-", "+");
+     w = stack(top,w,top);
+     if #nets > 0 then w = w ^ (height first nets);
+     w)
 
-peek2(Net, ZZ) := (s,depth) -> if depth === 0 then s else boxNet s
+-- boxNet := x -> ( 
+--      s := concatenate("+", width x : "-", "+");
+--      n := height x + depth x;
+--      if n === 0 then (
+--      	  (s || x || s) ^ (height x)
+-- 	  )
+--      else (
+--      	  t := (stack (n : "|")) ^ (height x - 1);
+--      	  (s || t | x | t || s) ^ (height x)
+-- 	  )
+--      )
+
+peek2(Net, ZZ) := (s,depth) -> if depth === 0 then s else boxNets {s}
 
 peek2(Sequence,ZZ) := (s,depth) -> (
      if depth === 0 then net s

@@ -27,22 +27,6 @@ duplicateDocWarning := () -> (
      << newline << flush; )
 
 -----------------------------------------------------------------------------
--- most things can't be documented; some can, because they always know what
--- symbol they are associated with.  Hmm, this seems to be have two purposes,
--- should fix.
--- This also seems to conflict with formatDocumentTag, which now tries to decide the same thing!
--- FIX
------------------------------------------------------------------------------
-unDocumentable := method(SingleArgumentDispatch => true)
-unDocumentable Thing := x ->true
-unDocumentable Function := f -> false -- class f === Function and match("^--Function.*--$", toString f)
-unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
-scan( {
-	  IndeterminateNumber,Manipulator, Manipulator, ScriptedFunctor, InfiniteNumber, Boolean, CC,
-      	  Command, File, Nothing, Symbol, Type, Entity, Package, String, Option
-	  },
-     TYPE -> unDocumentable TYPE := x -> false)
------------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
 -- we need to be able to do this only for the document tags we have shown to the user in formatted form 
@@ -59,7 +43,7 @@ needDoc := () -> (
      currentPackage = Main;				    -- there must be a better way
      on := notify;
      notify = false;
-     load "Macaulay2-doc.m2";
+     needs "Macaulay2-doc.m2";
      currentPackage = op;
      notify = on;
      needDoc = identity;
@@ -97,6 +81,23 @@ normalizeDocumentTag    Thing := x -> (
      t := reverseDictionary x;
      if t === null then error "encountered unidentifiable document tag";
      t)
+
+isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
+
+isDocumentableTag          = method(SingleArgumentDispatch => true)
+isDocumentableTag   Symbol := s -> null =!= package s
+isDocumentableTag   String := s -> true
+isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
+isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
+isDocumentableTag    Thing := s -> false
+
+packageTag          = method(SingleArgumentDispatch => true)
+packageTag   Symbol := s -> package s
+packageTag   String := s -> currentPackage
+packageTag Sequence := s -> package youngest s
+packageTag   Option := s -> package youngest toSequence s
+packageTag    Thing := s -> error "can't provide package for documentation tag of unknown type"
+
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -293,15 +294,16 @@ checkForExampleOutputFile := () -> (
      exampleResults = {};
      exampleResultsFound = false;
      exampleOutputFilename = null;
-     stderr << "exampleBaseFilename = " << exampleBaseFilename << endl; -- debugging:
+     if debugLevel > 0 then stderr << "exampleBaseFilename = " << exampleBaseFilename << endl;
      if exampleBaseFilename =!= null then (
 	  exampleOutputFilename = exampleBaseFilename | ".out";
-	  -- debugging:
-	  stderr << "checking for example output in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
+	  if debugLevel > 0 then (
+	       stderr << "checking for example output in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
+	       );
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example output
 	       exampleResults = currentPackage#"example outputs"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
-	       stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl; -- debugging
+	       if debugLevel > 0 then stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl;
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -325,7 +327,9 @@ processExamplesLoop := s -> (
      then apply(s,processExamplesLoop)
      else s)
 processExamples := (key,docBody) -> (
+     thePackage = packageTag key;
      currentNodeName = formatDocumentTag key;
+     if debugLevel > 0 then stderr << "thePackage = " << endl;
      exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,thePackage);
      checkForExampleOutputFile();
      processExamplesLoop docBody)
@@ -337,10 +341,10 @@ processExamples := (key,docBody) -> (
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
-     key := z#0;
+     key := normalizeDocumentTag z#0;
      verifyTag key;
      body := drop(z,1);
-     if unDocumentable key then error("undocumentable type of thing: '",class key,"'");
+     if not isDocumentableTag key then error("undocumentable item encountered");
      currentNodeName = formatDocumentTag key;
      exampleBaseFilename = makeFileName(currentNodeName,getFileName body,currentPackage);
      d := currentPackage#"documentation";
@@ -431,7 +435,7 @@ getOption := (s,tag) -> (
      )
 
 getDoc := key -> value getRecord formatDocumentTag key
--- getDoc = on (getDoc, Name => "getDoc")			    -- debugging
+if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
  
 getDocBody := key -> (
      a := getDoc key;
@@ -443,9 +447,8 @@ getHeadline := key -> (
      )
 
 getUsage := key -> (
-     if not unDocumentable key then (
-     	  x := getOption(getDoc key, Usage);
-     	  if x =!= null then SEQ x))
+     x := getOption(getDoc key, Usage);
+     if x =!= null then SEQ x)
 
 getSynopsis := key -> getOption(getDoc key, Synopsis)
 
@@ -623,7 +626,7 @@ synopsis Sequence := s -> (
 	  }
      )
 
-documentableMethods := s -> select(methods s, i -> not unDocumentable i)
+documentableMethods := s -> select(methods s, isDocumentableTag)
 
 fmeth := f -> (
      b := documentableMethods f;
@@ -638,18 +641,17 @@ fmeth := f -> (
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
 briefDocumentation = x -> (
-     if noBriefDocClasses#?(class x) or noBriefDocThings#?x or unDocumentable x then null
+     if noBriefDocClasses#?(class x) or noBriefDocThings#?x or not isDocumentableThing x then return null;
+     r := getUsage x;
+     if r =!= null then << endl << text r << endl
      else (
-	  r := getUsage x;
+	  r = synopsis x;
 	  if r =!= null then << endl << text r << endl
 	  else (
-	       r = synopsis x;
-	       if r =!= null then << endl << text r << endl
-	       else (
-		    if headline x =!= null then << endl << headline x << endl;
-		    if class x === Function then (
-			 s := fmeth x;
-		    	 if s =!= null then << endl << text s << endl;)))))
+	       if headline x =!= null then << endl << headline x << endl;
+	       if class x === Function then (
+		    s := fmeth x;
+		    if s =!= null then << endl << text s << endl;))))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -723,11 +725,11 @@ seecode := x -> (
 
 documentationValue := method()
 documentationValue(Symbol,Function) := (s,f) -> SEQ { 
-     title f, synopsis f, usage f, type s, ret f, fmeth f, optargs f, seecode f 
+     title f, synopsis f, usage s, type s, ret f, fmeth f, optargs f, seecode f 
      }
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := flatten(values \ globalDictionaries);
-     a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
+     a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableTag key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
@@ -738,7 +740,7 @@ documentationValue(Symbol,Type) := (s,X) -> (
 	  if #b > 0 then SEQ {
 	       "Types of ", if X.?synonym then X.synonym else toString X, " :", PARA{},
 	       smenu b, PARA{}},
-	  usage X,
+	  usage s,
 	  if #a > 0 then SEQ {
 	       "Functions and methods returning ",
 	       indefinite synonym X, " :", PARA{},
@@ -754,7 +756,7 @@ documentationValue(Symbol,HashTable) := (s,x) -> (
      SEQ {
 	  title x,
 	  synopsis x,
-	  usage x,
+	  usage s,
      	  type s,
 	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, 
 	       SHIELD smenu c, PARA{}},
@@ -763,7 +765,7 @@ documentationValue(Symbol,Symbol) := (s,x) -> null
 documentationValue(Symbol,Thing) := (s,x) -> null
 
 documentation Symbol := S -> (
-     a := apply(select(optionFor S,f -> not unDocumentable f), f -> f => S);
+     a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
      b := documentableMethods S;
      SEQ {
 	  title S, 
@@ -1007,7 +1009,7 @@ text EXAMPLE := x -> concatenate apply(#x, i -> text PRE concatenate("i",toStrin
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
-text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
+text ExampleTABLE := x -> boxNets apply(toList x, y -> text y#1)
 net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
 
 tex TABLE := x -> concatenate applyTable(x,tex)

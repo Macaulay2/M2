@@ -1112,7 +1112,7 @@ scanpairs(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
-	       if p == bucketEnd then break;
+	       if p == p.next then break;
 	       v := apply(f,p.key,p.value);
 	       when v is Error do return v else nothing;
 	       p = p.next;
@@ -1136,7 +1136,7 @@ mappairs(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
-	       if p == bucketEnd then break;
+	       if p == p.next then break;
 	       v := apply(f,p.key,p.value);
 	       when v 
 	       is Error do return v 
@@ -1176,7 +1176,7 @@ export mapkeys(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
-	       if p == bucketEnd then break;
+	       if p == p.next then break;
 	       newkey := apply(f,p.key);
 	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
 	       when newkey is Error do return newkey else nothing;
@@ -1207,7 +1207,7 @@ export mapvalues(f:Expr,obj:HashTable):Expr := (
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       q := bucketEnd;
-	       while p != bucketEnd do (
+	       while p != p.next do (
 		    newvalue := apply(f,p.value);
 		    when newvalue is Error do (
 			 errm = newvalue;
@@ -1250,7 +1250,7 @@ merge(e:Expr):Expr := (
 	       z.mutable = true;
 	       foreach bucket in y.table do (
 		    q := bucket;
-		    while q != bucketEnd do (
+		    while q != q.next do (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
 			      t := apply(g,val,q.value);
@@ -1277,7 +1277,7 @@ merge(e:Expr):Expr := (
 	       z.mutable = true;
 	       foreach bucket in x.table do (
 		    q := bucket;
-		    while q != bucketEnd do (
+		    while q != q.next do (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
 			      t := apply(g,q.value,val);
@@ -1308,10 +1308,10 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.class,x.parent);
      foreach pp in x.table do (
 	  p := pp;
-	  while p != bucketEnd do (
+	  while p != p.next do (
 	       foreach qq in y.table do (
 		    q := qq;
-		    while q != bucketEnd do (
+		    while q != q.next do (
 			 pqkey := apply(f,p.key,q.key);
 			 when pqkey is Error do return pqkey else nothing;
 			 pqvalue := apply(g,p.value,q.value);

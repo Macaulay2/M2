@@ -56,7 +56,7 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
 	  is y:HashTable do (
 	       foreach bucket in y.table do (
 		    q := bucket;
-		    while q != bucketEnd do (
+		    while q != q.next do (
 			 r := storeInHashTableMustClobber(z,q.key,q.hash,q.value);
 			 when r is Error do return r else nothing;
 			 q = q.next)))
