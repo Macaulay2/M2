@@ -519,6 +519,7 @@ betti Module := M -> (
      else "generators: " | betti generators M
      )
 
+directSum ChainComplex := C -> directSum(1 : C)
 ChainComplex.directSum = args -> (
      C := new ChainComplex;
      C.cache.components = toList args;
