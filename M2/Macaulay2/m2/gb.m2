@@ -119,8 +119,9 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
 	       raw f,
 	       type.Syzygies,
 	       toEngineNat type.SyzygyRows,
+	       checkListOfIntegers {},			    -- later: gb degree list
 	       opts.HardDegreeLimit =!= null,
-	       if opts.HardDegreeLimit =!= null then checkListOfIntegers opts.HardDegreeLimit else {},
+	       if opts.HardDegreeLimit =!= null then opts.HardDegreeLimit else 0,
 	       processAlgorithm opts.Algorithm,
 	       processStrategy opts.Strategy
 	       );
