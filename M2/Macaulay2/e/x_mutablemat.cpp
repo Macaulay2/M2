@@ -10,6 +10,7 @@
 #include "coeffrings.hpp"
 #include "dmatrix.hpp"
 #include "lapack.hpp"
+#include "dmat-LU.hpp"
 
 typedef MutableMatrix MutableMatrixOrNull;
 
@@ -490,38 +491,39 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 typedef DMat<CoefficientRingRR> LMatrixRR;
 typedef DMat<CoefficientRingCC> LMatrixCC;
 
-M2_bool rawLU(MutableMatrix *A,
-	      MutableMatrix *L,
-	      MutableMatrix *U,
-	      MutableMatrix *P)
+M2_arrayint_OrNull rawLU(MutableMatrix *A)
 {
   const Ring *R = A->get_ring();
   if (R == globalRR)
     {
       LMatrixRR *A2 = A->get_DMatRR();
-      LMatrixRR *P2 = P->get_DMatRR();
-      if (A2 == 0 || P2 == 0)
+      if (A2 == 0)
 	{
-	  ERROR("requires dense mutable matrices over RR");
-	  return false;
+	  ERROR("requires dense mutable matrix over RR");
+	  return 0;
 	}
-      return Lapack::LU(A2,P2);
+      return Lapack::LU(A2);
     }
   if (R == globalCC)
     {
       LMatrixCC *A2 = A->get_DMatCC();
-      LMatrixRR *P2 = P->get_DMatRR();
       if (A2 == 0)
 	{
 	  ERROR("requires dense mutable matrix over CC");
-	  return false;
+	  return 0;
 	}
-      if (P2 == 0)
+      return Lapack::LU(A2);
+    }
+  const Z_mod *KZZp = R->cast_to_Z_mod();
+  if (KZZp != 0)
+    {
+      DMat<CoefficientRingZZp> *A2 = A->get_DMatZZp();
+      if (A2 == 0)
 	{
-	  ERROR("requires dense mutable matrix over RR");
-	  return false;
+	  ERROR("requires dense mutable matrix over ZZ/p");
+	  return 0;
 	}
-      return Lapack::LU(A2,P2);
+      return DMatLU<CoefficientRingZZp>::LU(A2);
     }
   ERROR("not re-implemented yet");
   return false;

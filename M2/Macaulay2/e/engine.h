@@ -1315,11 +1315,9 @@ extern "C" {
 		   MutableMatrix *b,
 		   MutableMatrix *x); /* connected */
 
-  M2_bool rawLU(MutableMatrix *A,
-		MutableMatrix *L,
-		MutableMatrix *U,
-		MutableMatrix *P); /* connected */
-  /*
+  M2_arrayint_OrNull rawLU(MutableMatrix *A); /* connected */
+  /* Returns the permutation array: we need to be more precise which one.
+     A encodes both the L and the U part, as in lapack.
    */
 
   M2_bool rawEigenvalues(MutableMatrix *A,
