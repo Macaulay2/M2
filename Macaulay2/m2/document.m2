@@ -173,8 +173,10 @@ formatDocumentTagTO Sequence := (
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
 verifyTag Sequence := s -> (
-     if class lookup s =!= Function then error(
-	  "documentation provided for '", formatDocumentTag s, "' but no method installed"))
+     if class lookup s =!= Function then (
+	  -- error("documentation provided for '", formatDocumentTag s, "' but no method installed");
+	  stderr << "warning: documentation provided for '" << formatDocumentTag s << "' but no method installed" << endl ;
+     ))
 verifyTag Option   := s -> (
      fn := s#0;
      opt := s#1;

@@ -230,19 +230,6 @@ rank RawFreeModule := rawRank
 
 RawFreeModule ** RawFreeModule := rawTensor
 
--- vectors
-
-RawVector.name = "RawVector"
-RawVector.synonym = "raw ring"
-
-RawFreeModule _ ZZ := (F,i) -> rawTerm(F,1_(rawRing F),i)
-RawVector == RawVector := Boolean => (v,w) -> v === W
-
-isHomogeneous RawVector := Boolean => rawIsHomogeneous
-entries RawVector := List => rawVectorEntries
-module RawVector := RawFreeModule => rawFreeModule
-ring RawVector := RawRing => rawRing @@ rawFreeModule
-
 -- matrices
 
 RawMatrix.name = "RawMatrix"
@@ -250,10 +237,8 @@ RawMatrix.synonym = "raw matrix"
 
 RawMatrix == RawMatrix := (v,w) -> v === w
 
-RawVector == ZZ := 
 RawMatrix == ZZ := (v,n) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
 
-ZZ == RawVector := 
 ZZ == RawMatrix := (v,n) -> n == v
 
 net RawMatrix := o -> stack lines toString o

@@ -142,12 +142,6 @@ homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
      homogCheck(f,v,wts);
      new R from rawHomogenize(f.RawRingElement, index v, wts))
 
-homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
-     M := class f;
-     wts = flatten wts;
-     homogCheck(f,v,wts);
-     new M from rawHomogenize(f.RawVector, index v, wts))
-
 homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      R := ring f;
      wts = flatten wts;
