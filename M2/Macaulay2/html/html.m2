@@ -39,6 +39,11 @@ NEXT = new MutableHashTable
 PREV = new MutableHashTable
 UP   = new MutableHashTable
 
+upAncestors := key -> reverse (
+     n := 0;
+     while UP#?key and n < 20 list (n = n+1; key = UP#key)
+     )
+
 nextButton = BUTTON("next.gif","next")
 prevButton = BUTTON("previous.gif","previous")
 upButton = BUTTON("up.gif","up")
@@ -78,13 +83,15 @@ scope SHIELD := x -> scan(x,scope3)
 scope MENU := x -> scan(x,scope2)
 scope TO := scope TOH := x -> follow x#0
 
-scope3 Thing := scope
-scope3 MENU := x -> scan(x,scope)
+scope3 Thing := x -> null
+scope3 Sequence := scope3 BasicList := x -> scan(x,scope3)
+scope3 TO := scope3 TOH := x -> follow x#0
 
 scope2 Thing := scope
+scope2 SEQ := x -> scan(x,scope2)
 scope2 TO := scope2 TOH := x -> (
      key := formatDocumentTag x#0;
-     if not UP#?key then (
+     if not UP#?key and key != thisKey then (
 	  UP#key = thisKey;
 	  if lastKey =!= null then (
 	       PREV#key = lastKey;
@@ -116,7 +123,7 @@ buttonBar = (key) -> CENTER {
      <form action="///,
      if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
      ///">
-	search for:
+	search:
 	<input type="text"   name="words">
 	<input type="hidden" name="method"   value="boolean">
 	<input type="hidden" name="format"   value="builtin-short">
@@ -150,11 +157,13 @@ time scan(keys linkFollowedTable, fkey -> (
 	  << html HTML { 
 	       HEAD TITLE {fkey, headline fkey},
 	       BODY { 
-		    buttonBar fkey, 
+		    buttonBar fkey,
+		    if UP#?fkey then SEQ {
+			 "Parent headings:",
+		    	 MENU apply(upAncestors fkey, i -> TO i)
+			 },
 		    HR{}, 
 		    documentationMemo fkey,
-		    HR{}, 
-		    buttonBar fkey 
 		    }
 	       }
 	  << endl
