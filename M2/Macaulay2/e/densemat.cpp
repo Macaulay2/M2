@@ -284,6 +284,86 @@ bool DenseMutableMatrixRing::column_op(int i, ring_elem r, int j, bool opposite_
   return true;
 }
 
+bool DenseMutableMatrixRing::row2by2(int r1, int r2, 
+				     ring_elem a1, ring_elem a2,
+				     ring_elem b1, ring_elem b2,
+				     bool opposite_mult,
+				     bool doRecording)
+{
+  if (error_row_bound(r1)) return false;
+  if (error_row_bound(r2)) return false;
+  ring_elem *loc1 = array_ + r1;
+  ring_elem *loc2 = array_ + r2;
+  for (int i=0; i<ncols; i++)
+    {
+      ring_elem f1,f2,g1,g2;
+      if (opposite_mult)
+	{
+	  f1 = R->mult(*loc1,a1);
+	  f2 = R->mult(*loc2,a2);
+	  g1 = R->mult(*loc1,b1);
+	  g2 = R->mult(*loc2,b2);
+	}
+      else
+	{
+	  f1 = R->mult(a1,*loc1);
+	  f2 = R->mult(a2,*loc2);
+	  g1 = R->mult(b1,*loc1);
+	  g2 = R->mult(b2,*loc2);
+	}
+      R->add_to(f1,f2);
+      R->add_to(g1,g2);
+      *loc1 = f1;
+      *loc2 = f2;
+      loc1 += nrows;
+      loc2 += nrows;
+    }
+
+  if (doRecording && rowOps != 0)
+    rowOps->column2by2(r1,r2,a1,a2,b1,b2,opposite_mult,false);
+  return true;
+}
+
+bool DenseMutableMatrixRing::column2by2(int c1, int c2, 
+					ring_elem a1, ring_elem a2,
+					ring_elem b1, ring_elem b2,
+					bool opposite_mult,
+					bool doRecording)
+{
+  if (error_column_bound(c1)) return false;
+  if (error_column_bound(c2)) return false;
+  ring_elem *loc1 = array_ + c1 * nrows;
+  ring_elem *loc2 = array_ + c2 * nrows;
+
+  for (int i=0; i<nrows; i++)
+    {
+      ring_elem f1,f2,g1,g2;
+      if (opposite_mult)
+	{
+	  f1 = R->mult(*loc1,a1);
+	  f2 = R->mult(*loc2,a2);
+	  g1 = R->mult(*loc1,b1);
+	  g2 = R->mult(*loc2,b2);
+	}
+      else
+	{
+	  f1 = R->mult(a1,*loc1);
+	  f2 = R->mult(a2,*loc2);
+	  g1 = R->mult(b1,*loc1);
+	  g2 = R->mult(b2,*loc2);
+	}
+      R->add_to(f1,f2);
+      R->add_to(g1,g2);
+      *loc1++ = f1;
+      *loc2++ = f2;
+    }
+
+  // Do the recording, if needed:
+  if (doRecording && colOps != 0)
+    colOps->column2by2(c1,c2,a1,a2,b1,b2,opposite_mult,false);
+  return true;
+}
+
 bool DenseMutableMatrixRing::dot_product(int i, int j, ring_elem &result) const
 {
   if (error_column_bound(i)) return false;

@@ -130,6 +130,7 @@ DenseMutableMatrixCC::zero_matrix(int nrows,
   return 0;
 }
 
+
 #if 0
 
 

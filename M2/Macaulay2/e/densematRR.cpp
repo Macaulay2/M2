@@ -251,6 +251,67 @@ bool DenseMutableMatrixRR::column_op(int i, ring_elem r, int j, bool opposite_mu
   return true;
 }
 
+bool DenseMutableMatrixRR::row2by2(int r1, int r2, 
+				   ring_elem ra1, ring_elem ra2,
+				   ring_elem rb1, ring_elem rb2,
+				   bool opposite_mult,
+				   bool doRecording)
+{
+  if (error_row_bound(r1)) return false;
+  if (error_row_bound(r2)) return false;
+  double *loc1 = array_ + r1;
+  double *loc2 = array_ + r2;
+  double a1 = globalRR->to_double(ra1);
+  double a2 = globalRR->to_double(ra2);
+  double b1 = globalRR->to_double(rb1);
+  double b2 = globalRR->to_double(rb2);
+  for (int i=0; i<ncols; i++)
+    {
+      double f1 = a1 * *loc1;
+      double f2 = a2 * *loc2;
+      double g1 = b1 * *loc1;
+      double g2 = b2 * *loc2;
+      *loc1 = f1+f2;
+      *loc2 = g1+g2;
+      loc1 += nrows;
+      loc2 += nrows;
+    }
+
+  if (doRecording && rowOps != 0)
+    rowOps->column2by2(r1,r2,ra1,ra2,rb1,rb2,opposite_mult,false);
+  return true;
+}
+
+bool DenseMutableMatrixRR::column2by2(int c1, int c2, 
+				      ring_elem ra1, ring_elem ra2,
+				      ring_elem rb1, ring_elem rb2,
+				      bool opposite_mult,
+				      bool doRecording)
+{
+  if (error_column_bound(c1)) return false;
+  if (error_column_bound(c2)) return false;
+  double *loc1 = array_ + c1 * nrows;
+  double *loc2 = array_ + c2 * nrows;
+  double a1 = globalRR->to_double(ra1);
+  double a2 = globalRR->to_double(ra2);
+  double b1 = globalRR->to_double(rb1);
+  double b2 = globalRR->to_double(rb2);
+  for (int i=0; i<nrows; i++)
+    {
+      double f1 = a1 * *loc1;
+      double f2 = a2 * *loc2;
+      double g1 = b1 * *loc1;
+      double g2 = b2 * *loc2;
+      *loc1++ = f1+f2;
+      *loc2++ = g1+g2;
+    }
+
+  // Do the recording, if needed:
+  if (doRecording && colOps != 0)
+    colOps->column2by2(c1,c2,ra1,ra2,rb1,rb2,opposite_mult,false);
+  return true;
+}
+
 bool DenseMutableMatrixRR::dot_product(int i, int j, ring_elem &result) const
 {
   if (error_column_bound(i)) return false;

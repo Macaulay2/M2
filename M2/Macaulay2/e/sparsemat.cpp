@@ -201,6 +201,115 @@ bool SparseMutableMatrix::column_op(int i, ring_elem r, int j, bool opposite_mul
   return true;
 }
 
+void SparseMutableMatrix::vec_row2by2(vec &v, 
+				      int r1, int r2,
+				      ring_elem a1, ring_elem a2,
+				      ring_elem b1, ring_elem b2,
+				      bool opposite_mult) const
+{
+  // v[row r1] = a1 * v[r1] + a2 * v[r2]
+  // v[row r2] = b1 * v[r1] + b2 * v[r2]
+  ring_elem e1,e2, c1,c2,c3,c4;
+  bool r1_nonzero = R->get_entry(v,r1,e1);
+  bool r2_nonzero = R->get_entry(v,r2,e2);
+  if (!r1_nonzero && !r2_nonzero) return;
+
+  if (r1_nonzero)
+    {
+      if (opposite_mult)
+	{
+	  c1 = R->mult(e1,a1);
+	  c3 = R->mult(e1,b1);
+	}
+      else
+	{
+	  c1 = R->mult(a1,e1);
+	  c3 = R->mult(b1,e1);
+	}
+    }
+  else
+    {
+      c1 = R->from_int(0);
+      c3 = R->from_int(0);
+    }
+  if (r2_nonzero)
+    {
+      if (opposite_mult)
+	{
+	  c2 = R->mult(e2,a2);
+	  c4 = R->mult(e2,b2);
+	}
+      else
+	{
+	  c2 = R->mult(a2,e2);
+	  c4 = R->mult(b2,e2);
+	}
+    }
+  else
+    {
+      c2 = R->from_int(0);
+      c4 = R->from_int(0);
+    }
+
+  R->add_to(c1,c2);
+  R->add_to(c3,c4);
+  R->set_entry(v,r1,c1);
+  R->set_entry(v,r2,c3);
+}
+
+bool SparseMutableMatrix::row2by2(int r1, int r2, 
+				  ring_elem a1, ring_elem a2,
+				  ring_elem b1, ring_elem b2,
+				  bool opposite_mult,
+				  bool doRecording)
+{
+  if (error_row_bound(r1)) return false;
+  if (error_row_bound(r2)) return false;
+
+  for (int i=0; i<ncols; i++)
+    vec_row2by2(columns_[i],r1,r2,a1,a2,b1,b2,opposite_mult);
+
+  if (doRecording && rowOps != 0)
+    rowOps->column2by2(r1,r2,a1,a2,b1,b2,opposite_mult,false);
+
+  return true;
+}
+
+bool SparseMutableMatrix::column2by2(int c1, int c2, 
+				     ring_elem a1, ring_elem a2,
+				     ring_elem b1, ring_elem b2,
+				     bool opposite_mult,
+				     bool doRecording)
+{
+  // do the replacements:
+  // new column c1 = a1 * column[c1] + a2 * column[c2]
+  // new column c2 = b1 * column[c1] + b2 * column[c2]
+  // Make first column: v1 = a1*c1+a2*c2
+  if (error_column_bound(c1)) return false;
+  if (error_column_bound(c2)) return false;
+
+  vec v1 = R->copy_vec(columns_[c1]);
+  vec v2 = R->copy_vec(columns_[c2]);
+  R->mult_vec_to(v1,a1,opposite_mult);
+  R->mult_vec_to(v2,a2,opposite_mult);
+  R->add_vec_to(v1,v2);
+  // Second column: w1 = b1*c1 + b2*c2
+  vec w1 = R->copy_vec(columns_[c1]);
+  vec w2 = R->copy_vec(columns_[c2]);
+  R->mult_vec_to(w1,b1,opposite_mult);
+  R->mult_vec_to(w2,b2,opposite_mult);
+  R->add_vec_to(w1,w2);
+  // Set the matrices:
+  R->remove_vec(columns_[c1]);
+  R->remove_vec(columns_[c2]);
+  columns_[c1] = v1;
+  columns_[c2] = w1;
+  // Do the recording, if needed:
+  if (doRecording && colOps != 0)
+    colOps->column2by2(c1,c2,a1,a2,b1,b2,opposite_mult,false);
+  return true;
+}
+
 bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
 {
   if (error_column_bound(i) || error_column_bound(j))

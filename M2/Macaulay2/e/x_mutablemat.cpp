@@ -279,8 +279,16 @@ M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 {
-  ERROR("not re-implemented yet");
-  return false;
+  const Ring *R = M->get_ring();
+  if (a1->get_ring() != R || a2->get_ring() != R || b1->get_ring() != R || b2->get_ring() != R)
+    {
+      ERROR("expected elements in the same ring");
+      return 0;
+    }
+  return M->column2by2(c1,c2,
+		       a1->get_value(),a2->get_value(),
+		       b1->get_value(),b2->get_value(),
+		       opposite_mult);
 }
 
 
@@ -293,8 +301,16 @@ M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 {
-  ERROR("not re-implemented yet");
-  return false;
+  const Ring *R = M->get_ring();
+  if (a1->get_ring() != R || a2->get_ring() != R || b1->get_ring() != R || b2->get_ring() != R)
+    {
+      ERROR("expected elements in the same ring");
+      return 0;
+    }
+  return M->row2by2(r1,r2,
+		    a1->get_value(),a2->get_value(),
+		    b1->get_value(),b2->get_value(),
+		    opposite_mult);
 }
 
 M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi)
