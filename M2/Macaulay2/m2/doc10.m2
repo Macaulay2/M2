@@ -125,7 +125,7 @@ document { resolution => HardDegreeLimit,
      }
 
 document { resolution => Algorithm,
-     HEADLINE "which algorithm to use",
+     -- HEADLINE "which algorithm to use",
      TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",

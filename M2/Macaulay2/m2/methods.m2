@@ -119,7 +119,7 @@ setup((), {
 	  singularLocus, 
 	  dim, Hom, diff, contract, contract', exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial,
-	  getchange, poincare, cover, super, poincareN, terms,
+	  getChangeMatrix, poincare, cover, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, size, sum, product,

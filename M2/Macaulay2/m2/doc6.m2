@@ -1,28 +1,32 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 document { odd,
+     HEADLINE "tell whether an integer is odd",
      TT "odd x", " -- returns true or false, tells whether x is an odd integer.",
      PARA,
      "See also ", TO "even", "."
      }
 
 document { even,
+     HEADLINE "tell whether an integer is even",
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
      PARA,
      "See also ", TO "odd", "."
      }
 
-document { Numeric,
-     TT "Numeric x", " -- yields the expression obtained from x by converting the 
+document { numeric,
+     HEADLINE "convert to floating point",
+     TT "numeric x", " -- yields the expression obtained from x by converting the 
      integers and rational numbers within to double precision floating 
      point numbers.",
      PARA,
-     EXAMPLE "Numeric {1,2,3}",
+     EXAMPLE "numeric {1,2,3}",
      PARA,
      "See also ", TO "RR", "."
      }
 
 document { symbol "pi",
+     HEADLINE "the number 'pi'",
      TT "pi", " -- the numerical value of the arithmetic quantity pi."
      }
 
@@ -34,6 +38,7 @@ document { Engine,
 document { ring, HEADLINE "get the associated ring" }
 
 document { coefficientRing,
+     HEADLINE "get the coefficient ring",
      TT "coefficientRing R", " -- yields the coefficient ring of the ring ", TT "R", ".",
      PARA,
      "If ", TT "R", " is a polynomial ring, then the coefficient ring is
@@ -69,6 +74,7 @@ document { baseRings,
      }
 
 document { lift,
+     HEADLINE "lift to another ring",
      TT "lift(f,R)", " -- promotes a ring element ", TT "f", " to 
      the ring ", TT "R", ".",
      PARA,
@@ -91,6 +97,7 @@ document { liftable, HEADLINE "whether a ring element can be lifted to another r
      }
 
 document { promote,
+     HEADLINE "promote to another ring",
      TT "promote(f,R)", " -- promotes a ring element ", TT "f", " to 
      the ring ", TT "R", ".",
      PARA,
@@ -145,7 +152,7 @@ document { symbol frac,
      }
 
 document { frac,
-     HEADLINE "constructing a fraction field",
+     HEADLINE "construct a fraction field",
      TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
      PARA,
      "If ", TT "R", " has no name yet, then the names for its symbols will
@@ -176,7 +183,7 @@ assert ( isPrime 3333331)
 "
 
 document { isPrime,
-     HEADLINE "whether an integer is a prime",
+     HEADLINE "tell whether an integer is a prime",
      TT "isPrime x", " -- tests for primality",
      PARA,
      NOINDENT,
@@ -193,12 +200,14 @@ document { isPrime,
      }
 
 document { numerator,
+     HEADLINE "numerator of a fraction",
      TT "numerator x", " -- provides the numerator of a fraction.",
      PARA,
      EXAMPLE "numerator (4/6)"
      }
 
 document { denominator,
+     HEADLINE "denominator of a fraction",
      TT "denominator x", " -- provides the denominator of a fraction.",
      PARA,
      EXAMPLE "denominator (4/6)"
@@ -250,6 +259,7 @@ document { conjugate,
      }
 
 document { gcdCoefficients,
+     HEADLINE "gcd with coefficients",
      TT "gcdCoefficients(a,b)", " -- returns ", TT "{r,s}", " so that
      ", TT"a*r + b*s", " is the greatest common divisor of ", TT "a", "
      and ", TT "b", ".",
@@ -259,8 +269,10 @@ document { gcdCoefficients,
      }
 
 document { mod,
-     TT "mod(i,n)", " -- reduce the integer ", TT "i", " modulo ", TT "n", ", producing an
-     element of ", TT "ZZ/n", "."
+     HEADLINE "reduce modulo an integer",
+     TT "mod(i,n)", " -- reduce the integer ", TT "i", " modulo ", TT "n", ".",
+     PARA,
+     "The result is an element of ", TT "ZZ/n", "."
      }
 
 document { ProductRing, HEADLINE "the class of all product rings",
@@ -288,6 +300,7 @@ document { OrderedMonoid, HEADLINE "the class of all ordered monoids",
      }
 
 document { binomial,
+     HEADLINE "binomial coefficient",
      TT "binomial(n,i)", " -- returns the binomial coefficient, the coefficient
      of x^i in (1+x)^i.",
      PARA,
@@ -309,6 +322,7 @@ document { isUnit, HEADLINE "whether a ring element is a unit",
      }
 
 document { exponents,
+     HEADLINE "list the exponents in a polynomial",
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
      of exponents.",
      BR, NOINDENT,
@@ -324,6 +338,7 @@ document { exponents,
      }
 
 document { degreesRing,
+     HEADLINE "the ring of degrees",
      TT "degreesRing n", " -- produce the ring in n variables whose monomials
      are to be used to represent degrees in another ring with multi-degrees
      of length n",
@@ -337,6 +352,7 @@ document { degreesRing,
      }
 
 document { standardForm,
+     HEADLINE "convert to standard form",
      TT "standardForm f", " -- converts a polynomial or monomial to a
      form involving hash tables.",
      PARA,
@@ -354,6 +370,7 @@ document { standardForm,
      }
 
 document { listForm,
+     HEADLINE "convert to list form",
      TT "listForm f", " -- converts a polynomial or monomial to a form
      represented by nested lists.",
      PARA,
@@ -369,6 +386,7 @@ document { listForm,
      }
 
 document { WeylAlgebra,
+     HEADLINE "make a Weyl algebra",
      TT "WeylAlgebra", " -- an option used when creating a polynomial ring
      to specify that a Weyl algebra is to be produced.",
      PARA,
@@ -399,8 +417,9 @@ document { (symbol _, RingElement, RingElement),
      }
 
 document { (symbol _, Ring, String),
-     TT "R_\"x\"", " -- produce the indeterminate of the polynomial ring R 
-     whose name is x.",
+     HEADLINE "get a variable by name",
+     TT "R_\"x\"", " -- produce the variable of the polynomial ring R 
+     whose name is ", TT "x", ".",
      PARA,
      EXAMPLE {
 	  "R = ZZ[x,y,z];",
@@ -411,7 +430,7 @@ document { (symbol _, Ring, String),
      }
 
 document { (symbol _, Ring, ZZ),
-     HEADLINE "get a generator from a ring",
+     HEADLINE "get a variable by number",
      TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
      PARA,
      EXAMPLE {
@@ -421,6 +440,7 @@ document { (symbol _, Ring, ZZ),
      }
 
 document { (symbol _, Ring, List),
+     HEADLINE "make a monomial from a list of exponents",
      TT "R_w", " -- produce the monomial of the ring ", TT "R", " by using the 
      integers in the list ", TT "w", " as exponents of the variables.",
      PARA,
@@ -439,6 +459,7 @@ assert( f == value toString f )
 "
 
 document { Schur,
+     HEADLINE "make a Schur ring",
      TT "Schur n", " -- creates a Schur ring of degree n.",
      PARA,
      "This is the representation ring for the general linear group of n by n
@@ -471,7 +492,8 @@ document { (symbol _, SchurRing, List),
      SEEALSO "SchurRing"
      }
 
-document { IndexedVariableTable, HEADLINE "the class of tables for indexed variables",
+document { IndexedVariableTable,
+     HEADLINE "the class of indexed variable tables",
      "These hash tables are used to hold the values of those indexed variables 
      sharing a given base name.",
      PARA,
@@ -485,6 +507,7 @@ document { IndexedVariableTable, HEADLINE "the class of tables for indexed varia
      }
 
 document { assign,
+     HEADLINE "assign a value",
      TT "assign(x,v)", " -- assigns v as the value of x.",
      PARA,
      "If the value of x is a symbol or indexed variable, then it
@@ -500,7 +523,8 @@ document { assign,
      "to work with indexed variables.  See ", TO "<-", "."
      }
 
-document { IndexedVariable, HEADLINE "the class of all indexed variables",
+document { IndexedVariable,
+     HEADLINE "the class of all indexed variables",
      "Indexed variables provide the possibility of producing 
      polynomial rings ", TT "R[x_0, x_1, ..., x_(n-1)]", " in n variables,
      where n is not known in advance.  If ", TT "x", " is an symbol,
@@ -519,11 +543,13 @@ document { IndexedVariable, HEADLINE "the class of all indexed variables",
      SEEALSO "IndexedVariableTable"
      }
 
-document { MonoidElement, HEADLINE "the class of all monoid elements",
+document { MonoidElement,
+     HEADLINE "the class of all monoid elements",
      SEEALSO "monoid"
      }
 
 document { Degrees,
+     HEADLINE "specify the degrees",
      TT "Degrees", " -- an option which specifies the degrees of the generators.",
      PARA,
      "Used as an option to ", TO "monoid", ", or when a polynomial ring
@@ -531,7 +557,9 @@ document { Degrees,
      PARA,
      "See ", TO "monoid", " for details."
      }
+
 document { SkewCommutative,
+     HEADLINE "make a skewcommutative (alternating) ring",
      TT "SkewCommutative", " -- name for an optional argument for monoids
      that specifies that monoid rings created from them will be skewcommutative.",
      PARA,
@@ -544,6 +572,7 @@ document { SkewCommutative,
      }
 
 document { MonomialSize,
+     HEADLINE "specify maximum exponent size",
      TT "MonomialSize => n", " -- an option which determines the maximum 
      exponent size.",
      PARA,
@@ -556,6 +585,7 @@ document { MonomialSize,
      }
 
 document { Inverses,
+     HEADLINE "specify whether generators are invertible",
      TT "Inverses", " -- an option used in creating a monoid which tells
      whether negative exponents will be allowed, making the monoid into
      a group.",
@@ -579,6 +609,7 @@ document { (symbol _, Monoid, ZZ),
      }
 
 document { degreesMonoid,
+     HEADLINE "get the monoid of degrees",
      TT "degreesMonoid n", " -- returns the monoid whose elements correspond
      to the multi-degrees of monomials in another monoid.",
      PARA,
@@ -586,11 +617,13 @@ document { degreesMonoid,
      }
 
 document { RevLex,
+     HEADLINE "reverse lexicographic ordering",
      TT "RevLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the reverse lexicographic order."
      }
 document { GRevLex,
+     HEADLINE "reverse lexicographic ordering",
      TT "GRevLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded reverse lexicographic order.",
@@ -600,6 +633,7 @@ document { GRevLex,
      eventually change."  -- MES
      }
 document { GLex,
+     HEADLINE "graded lexicographic ordering",
      TT "GLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded lexicographic order.",
@@ -609,11 +643,13 @@ document { GLex,
      eventually change."  -- MES
      }
 document { Lex,
+     HEADLINE "lexicographic ordering",
      TT "Lex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the (non-graded) lexicographic order."
      }
 document { Eliminate,
+     HEADLINE "elimination ordering",
      TT "Eliminate", " n -- an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the elimination order eliminating the
@@ -624,6 +660,7 @@ document { Eliminate,
      eventually change."  -- MES
      }
 document { ProductOrder,
+     HEADLINE "product ordering",
      TT "ProductOrder", "{n1, ..., nr} -- an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the product of r graded reverse lex
@@ -635,29 +672,32 @@ document { ProductOrder,
      }
 
 document { VariableBaseName,
+     HEADLINE "base name for variables",
      TT "VariableBaseName => x", " -- an optional argument used when creating
      monoids or rings to specify that the variables should be ",
      TT "x_0, ..., x_n", "."
      }
 
 document { MonomialOrder,
+     HEADLINE "monomial ordering",
      TT "MonomialOrder", " -- a key used with monoids to indicate a
-     monomial order other than the default (graded reverse lexicographic)",
+     monomial ordering other than the default (graded reverse lexicographic)",
      PARA,
      "Permissible values:",
      MENU {
-	  {TO "GRevLex", " -- graded reverse lexicographic order (the default)"},
-	  {TO "GLex", " -- graded lexicographic order"},
-	  {TO "Lex", " -- lexicographic order"},
-	  {TO "RevLex", " -- reverse lexicographic order"},
-	  {TO "Eliminate", " -- elimination order"},
-	  {TO "ProductOrder", " -- product order"}
+	  TO "GRevLex",
+	  TO "GLex",
+	  TO "Lex",
+	  TO "RevLex",
+	  TO "Eliminate",
+	  TO "ProductOrder"
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
      SEEALSO {"polynomial rings with other monomial orderings", "Weights"}
      }
 
 document { Weights,
+     HEADLINE "specify monomial ordering by weights",
      TT "Weights => {...}", " -- a keyword for an option used in specifying
      monomial orderings.",
      PARA,
@@ -665,6 +705,7 @@ document { Weights,
      }
 
 document { Variables,
+     HEADLINE "specify the variable names",
      TT "Variables", " -- a key used with monoids to indicate the list of 
      variable names, or the number of variables.",
      PARA,
@@ -684,7 +725,8 @@ document { VariableOrder,
 monoidOptions := first frame first frame lookup(monoid,Array)
 assert( monoidOptions #? MonomialOrder )
 
-document { (monoid, Array), HEADLINE "make a polynomial ring or monoid ring",
+document { (monoid, Array),
+     HEADLINE "make a polynomial ring or monoid ring",
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
      "Optional arguments (placed between the brackets):",
@@ -709,7 +751,8 @@ document { (symbol " ",Ring, OrderedMonoid),
      SEEALSO "polynomial rings"
      }
 
-document { (monoid, Ring), HEADLINE "get the monoid from a monoid ring",
+document { (monoid, Ring),
+     HEADLINE "get the monoid from a monoid ring",
      TT "monoid R", " -- yields the underlying monoid of polynomial ring
      or monoid ring.",
      EXAMPLE {
@@ -719,6 +762,7 @@ document { (monoid, Ring), HEADLINE "get the monoid from a monoid ring",
      }
 
 document { monoid,
+     HEADLINE "make a monoid",
      TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, with degrees 2, 3, and 4, respectively.",
      PARA,
@@ -749,6 +793,7 @@ document { GeneralOrderedGroup,
      }     
 
 document { group,
+     HEADLINE "make a group (monoid with inverses)",
      TT "group R      ", " -- yields the underlying group of a group ring.",
      PARA,
      "group [a,b,c] -- makes a free ordered commutative group on the
@@ -773,36 +818,39 @@ document { group,
      }
 
 document { (symbol **, Monoid, Monoid),
+     HEADLINE "tensor product of monoids",
      TT "M ** N", " -- tensor product of monoids.",
      PARA,
      "For complete documentation, see ", TO "tensor", "."
      }
 
-document { tensor, HEADLINE "tensor product",
-  TT "tensor(M,N)", " -- tensor product of rings or monoids.",
-  PARA,
-  "This method allows all of the options available for monoids, see
-  ", TO "monoid", " for details.  This routine essentially combines the 
-  variables of M and N into one monoid.",
-  PARA,
-  "For rings, the rings should be quotient rings of polynomial rings over the same
-  base ring.",
-  PARA,
-  "Here is an example with monoids.",
-  EXAMPLE {
-       "M = monoid[a..d, MonomialOrder => Eliminate 1]",
-       "N = monoid[e,f,g, Degrees => {1,2,3}]",
-       "P = tensor(M,N,MonomialOrder => GRevLex)",
-       "describe P",
-       "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
-       "describe oo",
-       },
-  "Here is a similar example with rings.",
-  EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",
-  SEEALSO "**"
-  }
+document { tensor,
+     HEADLINE "tensor product",
+     TT "tensor(M,N)", " -- tensor product of rings or monoids.",
+     PARA,
+     "This method allows all of the options available for monoids, see
+     ", TO "monoid", " for details.  This routine essentially combines the 
+     variables of M and N into one monoid.",
+     PARA,
+     "For rings, the rings should be quotient rings of polynomial rings over the same
+     base ring.",
+     PARA,
+     "Here is an example with monoids.",
+     EXAMPLE {
+	  "M = monoid[a..d, MonomialOrder => Eliminate 1]",
+	  "N = monoid[e,f,g, Degrees => {1,2,3}]",
+	  "P = tensor(M,N,MonomialOrder => GRevLex)",
+	  "describe P",
+	  "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
+	  "describe oo",
+	  },
+     "Here is a similar example with rings.",
+     EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",
+     SEEALSO "**"
+     }
 
 document { table,
+     HEADLINE "make a table (nested list)",
      TT "table(u,v,f)", " -- yields a table m in which m_i_j is f(u_i,v_j).",
      PARA,
      "A table is a list of lists, all of the same length.  The entry m_i_j is 
@@ -815,6 +863,7 @@ document { table,
      }
 
 document { applyTable,
+     HEADLINE "apply a function to elements of a table",
      TT "applyTable(m,f)", " -- applies the function f to each element of the table m.",
      PARA,
      "It yields a table of the same shape as m containing the resulting values.",
@@ -823,6 +872,7 @@ document { applyTable,
      }
 
 document { subtable,
+     HEADLINE "extract a subtable from a table",
      TT "subtable(u,v,m)", " -- yields the subtable of the table m obtained from the
      list u of row numbers and the list v of column numbers.",
      PARA,
@@ -833,17 +883,20 @@ document { subtable,
      }
 
 document { transpose,
+     HEADLINE "transpose",
      TT "transpose m", " -- yields the transpose n of the table or homomorphism m."
      }
 
 document { vector,
+     HEADLINE "make a vector",
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
      PARA,
      "The elements a,b,c,... must be elements of the same ring, or be
      convertible to elements of the same ring."
      }
 
-document { Module, HEADLINE "the class of all modules",
+document { Module,
+     HEADLINE "the class of all modules",
      "The most general module ", TT "M", " is represented as a submodule of a 
      quotient module of a free module ", TT "F", ".  The matrix of relations used to
      produce the quotient module is stored as ", TT "M.relations", " (if
@@ -854,9 +907,12 @@ document { Module, HEADLINE "the class of all modules",
      SEEALSO "modules",
      }
 
-document { isModule, HEADLINE "whether something is a module." }
+document { isModule,
+     HEADLINE "whether something is a module."
+     }
 
-document { isFreeModule, HEADLINE "whether something a free module",
+document { isFreeModule,
+     HEADLINE "whether something a free module",
      TT "isFreeModule M", " -- determine whether ", TT "M", " is evidently a 
      free module.",
      PARA,
@@ -871,11 +927,15 @@ document { isFreeModule, HEADLINE "whether something a free module",
 	  },
      }
 
-document { isSubmodule, HEADLINE "whether a module is evidently a submodule of a free module" }
-document { isQuotientModule, HEADLINE "whether a module is evidently a quotient of a free module" }
-document { isIdeal, HEADLINE "whether something is an ideal" }
+document { isSubmodule,
+     HEADLINE "whether a module is evidently a submodule of a free module" }
+document { isQuotientModule,
+     HEADLINE "whether a module is evidently a quotient of a free module" }
+document { isIdeal,
+     HEADLINE "whether something is an ideal" }
 
 document { numgens,
+     HEADLINE "the number of generators",
      TT "numgens X", " -- yields the number of generators used to present
      a module or ring.",
      PARA,
@@ -886,6 +946,7 @@ document { numgens,
      }
 
 document { relations,
+     HEADLINE "the defining relations",
      TT "relations M", " -- produce the relations defining a module M.",
      PARA,
      "The relations are represented as a matrix, and if not stored
@@ -1037,11 +1098,13 @@ document { super,
 document { End,
      TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."
      }
-document { ModuleMap, HEADLINE "the class of all maps between modules",
+document { ModuleMap,
+     HEADLINE "the class of all maps between modules",
      "This class is experimental, designed to support graded modules.",
      SEEALSO {"Matrix"}
      }
-document { Matrix, HEADLINE "the class of all matrices",
+document { Matrix,
+     HEADLINE "the class of all matrices",
      "These are the matrices for which Groebner basis operations
      are available from the ", TO "engine", ".",
      PARA,
@@ -1104,9 +1167,11 @@ document { (symbol _, Matrix, ZZ),
      SEEALSO "_"
      }
 
-document { isWellDefined, HEADLINE "whether a map is well defined" }
+document { isWellDefined,
+     HEADLINE "whether a map is well defined" }
 
-document { isDirectSum, HEADLINE "whether something is a direct sum",
+document { isDirectSum,
+     HEADLINE "whether something is a direct sum",
      "Works for modules, graded modules, etc.  The components of the sum
      can be recovered with ", TO "components", "."
      }

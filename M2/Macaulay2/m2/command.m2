@@ -11,6 +11,7 @@ SelfInitializingType\List := (T,z) -> (i -> T i) \ z
 List/SelfInitializingType := (z,T) -> z / (i -> T i)
 
 Command = new SelfInitializingType of BasicList
+Command.synonym = "command"
 Command.name = "Command"
 Command.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X
 Command.GlobalReleaseHook = (X,x) -> (

@@ -483,9 +483,9 @@ document { SyzygyRows,
      "This option is for internal use only."
      }
 
-document { getchange,
+document { getChangeMatrix,
      HEADLINE "get the change of basis matrix",
-     TT "getchange G", " -- for a Groebner basis G, return the change of
+     TT "getChangeMatrix G", " -- for a Groebner basis G, return the change of
      basis matrix from the Groebner basis to another generating set, 
      usually a minimal, or original, generating set.",
      PARA,

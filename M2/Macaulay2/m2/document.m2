@@ -433,10 +433,14 @@ nextMoreGeneral4 := (f,A,B,C) -> (
 	  l = lookupQ(f,A',B',C');
 	  );
      if l then (f,A',B',C'))
-nextMoreGeneral := s -> if class s === Sequence then (
-     if #s === 2 then nextMoreGeneral2 s else
-     if #s === 3 then nextMoreGeneral3 s else
-     if #s === 4 then nextMoreGeneral4 s)
+nextMoreGeneral := s -> (
+     if class s === Sequence then (
+     	  if #s === 2 then nextMoreGeneral2 s else
+     	  if #s === 3 then nextMoreGeneral3 s else
+     	  if #s === 4 then nextMoreGeneral4 s)
+     else if class s === Option and #s === 2 then s#1
+     )
+
 getHeadline := key -> (
      d := getUsage key;
      if d =!= null and #d > 0 and class first d === HEADLINE then SEQ join( {"  --  "}, toList first d )
@@ -487,16 +491,17 @@ inlineMenu := x -> between(", ", TO \ x)
 type := s -> (
      SEQ {
 	  if class s =!= Thing then SEQ {
-	       "The object ", TT toExternalString s, " is a member of the class ", TO class s, ".\n"
+	       "The ",
+	       if (class s).?synonym then (class s).synonym else "object",
+	       " ", TT toExternalString s, " is a member of the class ", TO class s, ".\n"
 	       },
 	  if instance(s,Type) then (
 	       SEQ {
 		    if s.?synonym then SEQ {
-			 "     Each object of class ", toString s,
-			 " is also called ", indefinite s.synonym, ".\n"
+			 "Each object of class ", toString s, " is called ", indefinite s.synonym, ".\n"
 			 },
 		    if parent s =!= Thing then SEQ {
-			 "     Each ", synonym s, " is also a: ", TO parent s, "."
+			 "Each ", synonym s, " is also a member of class ", TO parent s, "."
 			 }
 		    }
 	       ),

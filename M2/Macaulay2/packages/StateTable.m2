@@ -1,4 +1,5 @@
 StateTable = new Type of HashTable
+StateTable.synonym = "state table"
 
 document { StateTable, HEADLINE "the class of all state tables",
      "State tables are hash tables designed to be used in the implementation
@@ -65,6 +66,7 @@ document { (symbol ||, StateTable, StateTable),
      }
 
 StateTableAlternative = new Type of BasicList
+StateTableAlternative.synonym = "state table alternative list"
 fixStateTableEntry(StateTableAlternative,Thing) := (a,s) -> apply(toSequence a, i -> {i,s})
 document { StateTableAlternative,
      HEADLINE "the class of all state table alternative lists",

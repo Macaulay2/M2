@@ -5,7 +5,8 @@ needs "invariants2.m2"
 -------------------
 
 if Group === symbol Group then (
-    Group = new Type of MutableHashTable
+    Group = new Type of MutableHashTable;
+    Group.synonym = "group";
 )
 
 document { Group,
