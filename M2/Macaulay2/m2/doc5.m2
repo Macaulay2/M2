@@ -639,11 +639,6 @@ document { eeLift,
      SEEALSO "high level gb engine commands"
      }
 
-document { symbol directSum,
-     Headline => "specify method for forming direct sums",
-     SEEALSO "directSum"
-     }
-
 document { (symbol ^**, Module, ZZ),
      Headline => "tensor power",
      Synopsis => {

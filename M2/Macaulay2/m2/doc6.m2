@@ -159,10 +159,6 @@ document { FractionField,
      may be equal without displaying the same numerator and denominator."
      }
 
-document { symbol frac,
-     "A symbol used as a key under which is stored the fraction field of a ring."
-     }
-
 document { frac,
      Headline => "construct a fraction field",
      TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
@@ -179,7 +175,10 @@ document { frac,
      EXAMPLE {
 	  "R = ZZ[x,y]",
 	  "x/y"
-	  }
+	  },
+     PARA,
+     "The symbol ", TT "frac", " is also used as a key under which is stored 
+     the fraction field of a ring."
      }
 
 document { ZZ,
