@@ -147,7 +147,7 @@ listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     select2(type,values User.Dictionary))
+     select2(type,values User#"private dictionary"))
 
 listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
@@ -158,7 +158,7 @@ clearOutput = Command (() -> (
 
 clearAll = Command (() -> ( 
 	  clearOutput(); 
-	  scan(values User.Dictionary, i -> (i <- i; erase i));
+	  scan(values User#"private dictionary", i -> (i <- i; erase i));
 	  )
      )
 
