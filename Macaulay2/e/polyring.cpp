@@ -1204,21 +1204,36 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   // compute until one syz is found
   // grab the answer from the syz matrix.
 
-  intarray syzygy_stop_conditions;
-  syzygy_stop_conditions.append(0); // ngb
-  syzygy_stop_conditions.append(1); // nsyz
-  syzygy_stop_conditions.append(0); // npairs
-  syzygy_stop_conditions.append(0);
-  syzygy_stop_conditions.append(0); 
-  syzygy_stop_conditions.append(0); // subring limit
-  syzygy_stop_conditions.append(0);
-
-  const FreeModule *F = make_FreeModule(1);
-  Matrix m(F);
-  m.append(F->term(0,a));
-  m.append(F->term(0,b));
-  
-#if 0
+  // Special situations:
+  ring_elem one = from_int(1);
+  ring_elem minus_one = from_int(-1);
+  if (PolynomialRing::is_equal(b, one))
+    {
+      x = PolynomialRing::copy(b);
+      y = PolynomialRing::negate(a);
+    }
+  else if (PolynomialRing::is_equal(b, minus_one))
+    {
+      x = PolynomialRing::from_int(1);
+      y = PolynomialRing::copy(a);
+    }
+  else
+    {
+      intarray syzygy_stop_conditions;
+      syzygy_stop_conditions.append(0); // ngb
+      syzygy_stop_conditions.append(1); // nsyz
+      syzygy_stop_conditions.append(0); // npairs
+      syzygy_stop_conditions.append(0);
+      syzygy_stop_conditions.append(0); 
+      syzygy_stop_conditions.append(0); // subring limit
+      syzygy_stop_conditions.append(0);
+      
+      const FreeModule *F = make_FreeModule(1);
+      Matrix m(F);
+      m.append(F->term(0,a));
+      m.append(F->term(0,b));
+      
+#if 0  
   buffer o;
   o << "constructing syzygy on ";
   elem_text_out(o,a);
@@ -1232,11 +1247,10 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   o.reset();
 #endif
 
-  EGB1 *g = new EGB1(m,true,-1,0);
-  bump_up(g);
-  g->calc(0, syzygy_stop_conditions);
-  Matrix s = g->syz_matrix();
-
+      EGB1 *g = new EGB1(m,true,-1,0);
+      bump_up(g);
+      g->calc(0, syzygy_stop_conditions);
+      Matrix s = g->syz_matrix();
 #if 0
   if (s.n_cols() != 1)
     {
@@ -1244,9 +1258,8 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
       emit_line(o.str());
     }
 #endif
-
-  x = s.elem(0,0);
-  y = s.elem(1,0);
+      x = s.elem(0,0);
+      y = s.elem(1,0);
 
 #if 0
   o << "result: x = ";
@@ -1255,8 +1268,10 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   elem_text_out(o,y);
   emit_line(o.str());
 #endif
-
-  delete g;
+      delete g;
+    }
+  remove(one);
+  remove(minus_one);
 }
 
 ring_elem PolynomialRing::random() const
