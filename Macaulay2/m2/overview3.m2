@@ -519,7 +519,7 @@ document {
 document {
      Key => "Michael E. Stillman",
      HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
-     HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"},
+     HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"}, ".",
      PARA,
      "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
      taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
@@ -740,7 +740,8 @@ document {
 
 document {
      Key => "Your first input prompt",
-     PARA { "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
+     PARA {
+	  "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
 	  evaluated - no punctuation is required at the end of the line."},
      EXAMPLE "2+2",
@@ -748,11 +749,11 @@ document {
      PARA,
      "Here is some arithmetic with fractions.",
      EXAMPLE "3/5 + 7/11",
-     "Notice the additional line of output labelled with ", TT "o2 :", ".  Output 
-     lines labelled with colons provide information about the type of output.  In 
-     this case, the symbol ", TO "QQ", " is our notation for the class of all 
-     rational numbers, and indicates that the answer on the previous line is a 
-     rational number.",
+     PARA {"Notice the additional line of output labelled with ", TT "o2 :", ".  Output 
+	  lines labelled with colons provide information about the type of output.  In 
+	  this case, the symbol ", TO "QQ", " is our notation for the class of all 
+	  rational numbers, and indicates that the answer on the previous line is a 
+	  rational number."},
      PARA,
      "Multiplication is indicated with ", TO "*", ".",
      EXAMPLE "1*2*3*4",

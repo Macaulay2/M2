@@ -146,35 +146,21 @@ tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
 
-html BIG := x -> concatenate( 				    -- not right any more -- no size option to font -- no font tag -- use css
-     "<b>", apply(x, html), "</b>"
-     )
+html HEAD  := x -> concatenate( "<head>", newline, apply(x, html), newline, "</head>", newline )
+html TITLE := x -> concatenate( "<title>", apply(x, html), "</title>", newline )
 
-html HEAD := x -> concatenate(newline, 
-     "<", toString class x, ">", newline,
-     apply(x, html), newline,
-     "</", toString class x, ">", newline
-     )
-
-html TITLE := 
-x -> concatenate(newline, 
-     "<", toString class x, ">", apply(x, html), "</", toString class x, ">", newline
-     )
-
-html HR := x -> ///
-<hr>
-///
+html HR := x -> "\n<hr/>\n"
 tex  HR := x -> ///
 \hfill\break
 \hbox to\hsize{\leaders\hrule\hfill}
 ///
 
-html Hypertext := x -> concatenate("<p>",apply(x,html))
+html Hypertext := x -> concatenate(apply(x,html))	    -- used to have "<p>" in here
 
 html PARA1 := x -> concatenate("\n", apply(x,html),"\n")
 html PARA := x -> (
-     if #x === 0 then "\n<p>\n"
-     else concatenate("\n<p>", apply(x,html),"<p>\n")
+     if #x === 0 then "\n<p/>\n"
+     else concatenate("\n<p>\n", apply(x,html),"\n</p>\n")
      )
 
 tex PARA := x -> concatenate(///
@@ -184,16 +170,16 @@ tex PARA := x -> concatenate(///
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<p><table class=\"examples\">",
+     "<table class=\"examples\">",
      newline,
      apply(x, 
 	  item -> (
-	       "  <tr>", newline,
-	       "    <td class=\"examples\">", html item#1, "</td>", newline,
-	       "  </tr>", newline
+	       " <tr>", newline,
+	       "  <td>", html item#1, "</td>", newline,
+	       " </tr>", newline
 	       )
 	  ),
-     "</table></p><p>"
+     "</table>"
      )			 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 html ButtonTABLE := x -> concatenate(
@@ -203,7 +189,7 @@ html ButtonTABLE := x -> concatenate(
      apply(x, row -> ( 
 	       "  <tr>",
 	       newline,
-	       apply(row, item -> ("    <td align=center>", html item, "</td>",newline)),
+	       apply(row, item -> ("    <td>", html item, "</td>",newline)),
 	       "  </tr>",
 	       newline)),
      "</table>",
@@ -248,7 +234,7 @@ html TABLE := x -> concatenate(
      apply(x, row -> ( 
 	       "  <tr>",
 	       newline,
-	       apply(row, item -> ("    <td align=center>", html item, "</td>",newline)),
+	       apply(row, item -> ("    <td>", html item, "</td>",newline)),
 	       "  </tr>",
 	       newline)),
      "</table>",
@@ -322,7 +308,7 @@ html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 
 info CODE := net CODE := x -> stack lines concatenate x
 html CODE   := x -> concatenate( 
-     "<pre class=\"examples\">", 
+     "<pre>", 
      demark(newline, apply(lines concatenate x, htmlExtraLiteral) ),
      "</pre>"
      )
@@ -455,8 +441,6 @@ html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 html TEX := x -> x#0	    -- should do something else!
 
 html Option := x -> toString x
-
-info BIG := net BIG := x -> net x#0
 
 tex HEADER1 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontOne=cmbx12 scaled \magstep 1\headerFontOne%

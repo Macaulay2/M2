@@ -14,13 +14,6 @@ selectRegexp(String,ZZ,String) := (re,n,s) -> (
      m := matches(re,s);
      if m#?n then substring(m#n#0,m#n#1,s) else error "regular expression didn't match")
 
-lower := "abcdefghijklmnopqrstuvwxyz"
-upper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-tolower := new HashTable from apply(characters upper,characters lower,identity)
-toupper := new HashTable from apply(characters lower,characters upper,identity)
-toLower = s -> concatenate apply(characters s, c -> if tolower#?c then tolower#c else c)
-toUpper = s -> concatenate apply(characters s, c -> if toupper#?c then toupper#c else c)
-
 -- nets
 
 -- Net.AfterPrint = identity
