@@ -426,7 +426,7 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("  Copyright 1993-1998, all rights reserved, D. R. Grayson and M. E. Stillman");
+	       putstderr("  Copyright 1993-1999, all rights reserved, D. R. Grayson and M. E. Stillman");
 #     	       ifdef FACTORY
 	       putstderr("  Factory " 
 		    FACTORYVERSION
