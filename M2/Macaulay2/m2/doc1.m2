@@ -13,17 +13,17 @@ document {
      Usage => "document { Key => key, ... }",
      Headline => "install documentation",
 	Inputs => {List => {"a hyptertext list including special documentation entries"}},
-	Outputs => {"a formatted documentation entry"},
-	    "The documentation is composed of a ", TO "Hypertext", " list.  There are two basic types of documentation. 
-	    The first type is documenting a function or a method, as in ", TO (resolution,Module), ". The second type of 
-	    documentation is used for overviews or functions with methods, as in ", 
+	Consequences => {"formatted documentation is created"},
+	    "There are two basic types of documentation. The first type documents 
+	    a function or a method, as in ", TO (resolution,Module), ". The second type of 
+	    documentation is for overviews or functions with methods, as in ", 
 	    TO "free resolutions, chain complexes, and homological algebra", 
-	    " or ", TO resolution, " respectively. Here is a template of a typical documentation node.",
+	    " or ", TO resolution, " respectively. The headings ", TO "Usage", ", ", TO2 {"Function ", "Function"}, 
+	    ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are useful only for documentation of the first type. 
+	    Here is a template for a typical documentation node.",
  	PRE ///document {
      Key => key,
-     FileName => "filename",
-     Headline => "description",
-	-- the following entries are relevant only for documentation of the first type
+     Headline => "one line description", -- not needed for overviews
      Usage => "usage",
      Function => "function",
      Inputs => {
@@ -44,23 +44,25 @@ document {
 	"There can be explanatory prose here in the form of a hypertext list.",
      Caveat => {"warning"},
      SeeAlso => {link},
-     Subnodes => {hypertextlist}
+     Subnodes => {hypertextlist},
+     FileName => "filename" -- this is generally not used
      }///,
      PARA "Special documentation entries:",
      UL {
 	  TOH Key,
 	  TOH Headline,
 	  TOH Usage,
-	  TOH Function,
+	  {TO2 {"Function ", "Function"}, " -- function for a documented feature"},
 	  TOH Inputs,
 	  TOH Outputs,
 	  TOH Consequences,
-	  TOH FileName,
-	  TOH Caveat,
+    	  TOH Caveat,
 	  TOH EXAMPLE,
 	  TOH SeeAlso,
-       TOH Subnodes
-	  }
+       TOH Subnodes,	    
+	  TOH FileName
+	  },
+	SeeAlso => {"writing documentation", hypertext}
   }
 document {
 	Key => Key,
@@ -95,7 +97,7 @@ document {
 document { -- This node is used as an example in the node: Consequences 
      Key => Headline,
      Headline => "make a headline for a documentation node",
-     Usage => "document { Key => key, Headline => \"description\", ... }",
+     Usage => "document { Key => key, Headline => \"one line description\", ... }",
      Function => document,
      Consequences => {
 	  { "the headline string will be used to annotate itemized 
@@ -119,15 +121,13 @@ document {
 	PRE ///Usage => {TT "resolution M", " or ", TT "res M"},///,
 	SeeAlso => {document, Inputs, Outputs} 
 	}
---document {
---	Key => [document, Function],
---	Headline => "function for a documented feature",
---	Usage => "document { ... , Function => function, ... }",
---	Function => "document",
---	Inputs => {
---		"function" => Function
---		}
---	}
+document {
+	Key => "Function ",
+	Headline => "function for a documented feature",
+	"The ", TT "Function", " entry gives the function that uses the feature being documented. 
+	Using this node as an example we see that the function is ", TO "document", 
+	". Indeed, outside of the function ", TO "document", ", ", TT "Function", " has a completely different usage.", 
+	}
 document {
      Key => Inputs, 
 	Headline => "inputs for a function",
@@ -169,7 +169,7 @@ document {
      "As an example, here is the ", TT "Outputs", " entry of the method ", TO (resolution,Ideal), ":",
 	 PRE /// Outputs => { {"a resolution of ", TT "R/I", " by projective ", TT "R", "-modules" } },///,
 	"Note that the hypertext list needs to be bounded by ", TT "{", " and ", TT "}", " as there is only one output for ", 
-	TO (resolution, Ideal), ". Without the braces, multiple outputs are defined.", "Note also that
+	TO (resolution, Ideal), ". Without the braces, multiple outputs are defined. Note also that
 	the ", TO Type, " of the output is automatically added in this case.",
 	"Here is an example of the ", TT "Outputs", " entry of the function ", TO sin, ":",
 	PRE ///Outputs => { { "the sine of ", TT "x", "" } },///,
@@ -224,31 +224,15 @@ document {
      Headline => "a menu of documentation nodes",
      Usage =>  "document { ... , Subnodes => { hypertextlist }, ... }",
 	Function => document,
-   	"This option inserts into a documentation page a menu of subnodes. As an example, here is the code for the ", TT "Subnodes", 
-	" part of this documentation node.",
+   	"This option inserts into a documentation page a menu of subnodes. Here is a generic example:",
 	PRE ///Subnodes => {
-		"Optional documentation entries used in this node",
-		TO document,
-		TO Headline,
-		TO Usage,
-		TO Function,
-		TO Inputs,
-		TO SeeAlso,
-		TO Subnodes
+		"An example of subnodes",
+		TO "a link name",
+		TO "another link name"
 		},///,
 	"The ", TT "Subnodes", " option defines how the tree structure of the documentation is constructed. This is relevant when printing
 	the documentation.",   
     	SeeAlso => {document, TO},
-	Subnodes => {
-		"Optional documentation entries used in this node",
-		TO document,
-		TO Headline,
-		TO Usage,
-		TO Function,
-		TO Inputs,
-		TO SeeAlso,
-		TO Subnodes
-		},
      }
 
 document {
@@ -301,7 +285,7 @@ document {
      	  ("copyright", "                        -- the copyright"),
      	  ("help \"Macaulay 2\"", "                -- top node of the documentation."),
      	  ("help \"Reading the documentation\"", " -- "),
-     	  ("help \"Getting started\"", "           -- "),
+     	  ("help \"getting started\"", "           -- "),
      	  ("help \"Your first input prompt\"", "   -- "),
      	  ("help x", "                           -- display the documentation for ", TT "x"),
 	  ("printWidth = 80", "                  -- set the print width to 80 characters"),

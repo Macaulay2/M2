@@ -77,13 +77,12 @@ document {
      TT "PRE x", " encloses ", TT "x", " in a hypertext PRE item.",
      PARA,
      "The argument ", TT "x", " should be a string, possibly containing newlines.",
-     PARA,
      "Here is an example.",
      PRE "
    1234   2345    4567    5678
      34    345    3455       7
 ",
-     PARA,
+	"If one wishes to use quotation marks in the preformatted text, then ", TO "///", " should be used instead of quotation marks as delimiters.",
      SeeAlso => "hypertext"
      }
 
@@ -734,7 +733,7 @@ document {
 	Usage => "I = monomialCurveIdeal(R,a)",
 	Inputs => {
 		"R" => Ring => {},
-		"a" => {}
+		"a" => {"a list of integers to be used as exponents in the parametrization of a rational curve"}
 		},
 	Outputs => {"I" => Ideal => {}},
      TT "monomialCurveIdeal(R,a)", " yields the defining ideal of the projective

@@ -155,7 +155,7 @@ document {
           SEQ (TO "#", " -- hash table access; length of a list, sequence or hash table"),
           SEQ (TO "#?", " -- test for hash table access"),
           SEQ (TO "|", " -- horizontal concatenation of strings or matrices"),
-          SEQ (TO "||", " -- vertical concatentation of strings or matrices"),
+          SEQ (TO "||", " -- vertical concatenation of strings or matrices"),
           SEQ (TO "&", " -- bit-wise and"),
           SEQ (TO ":", " -- ideal quotient, repetitions"),
           SEQ (TO "\\", " -- applying a function to elements of a list"),
@@ -209,7 +209,7 @@ document {
      }
 
 document {
-     Key => "Preface",
+     Key => "preface",
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  We are eager to help new users
@@ -280,7 +280,7 @@ document {
      }
 
 document {
-     Key => "Mathematical Examples",
+     Key => "mathematical examples",
      "In this section we present some tutorials which aim to introduce
      the user to some mathematical ways of using Macaulay 2.  The tutorials
      are relatively independent of each other, and each one introduces the use
@@ -315,8 +315,8 @@ document {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
 	  },
      Subnodes => {
-	  TO "Preface",
-	  TO "Getting started",
+	  TO "preface",
+	  TO "getting started",
 	  "Mathematical Overview",			    -- part 1 of the book
 	       -- "Mathematical objects",
 	       TO "combinatorial functions",		    -- where does this really go?
@@ -351,28 +351,30 @@ document {
 	       TO "classes and types",
 	       TO "system",
 	       TO "advanced input and output",
-	       TO "Using the debugger",
 	       TO "debugging",
 	       TO "executing other programs",
+	       TO "packages",
+		  TO "writing documentation",
+		  "Developer's Corner",
+		  TO "handling hypertext",
      	  "Appendix",
-	       TO "Mathematical Examples",
-	       TO "Frequently encountered problems",
-	       TO "Packages",
-	       TO "Replacements for commands and scripts from Macaulay",
-     	       TO "Reference material",			    -- every symbol and methods
+	       TO "mathematical examples",
+	       TO "frequently encountered problems",
+	       TO "replacements for commands and scripts from Macaulay",
+     	       TO "reference material",			    -- every symbol and methods
 	  }
      }
 
-document { Key => "Frequently encountered problems",
+document { Key => "frequently encountered problems",
      Subnodes => {
 	  }
      }
 
 
-document { Key => "Packages",
+document { Key => "packages",
      Subnodes => {
-	  TO "Using packages",				    -- ?
-	  TO "Writing packages",			    -- ?
+	  TO "using packages",				    -- ?
+	  TO "writing packages",			    -- ?
      	  -- these next ones might not be needed:
      	  TO "loading a library",
      	  TO "how to get documentation on a library",
@@ -388,37 +390,146 @@ document { Key => "Packages",
 	  }
      }
 
-document { Key => "Using packages" }
+document { Key => "using packages",
+	"To use a package one must load it.",
+	EXAMPLE {
+		///loadPackage "FirstPackage"///
+		},
+	"At this point the package is mostly functional. However, to get the full functionality out of the package, one must install the package.",
+	EXAMPLE {
+		"installPackage FirstPackage"
+		},
+	"Installing the package creates the online documentation for the package and evaluates Macaulay 2 code in the documentation of the package."
+	 }
 
-document { Key => "Writing packages",
+document { Key => "writing packages",
+	"There are essentially four pieces to a Macaulay 2 package: a preamble which is initiated by the ", TO "newPackage",
+	" function, a section where one defines which variables will be exported to global variables, a section containing 
+	the actual coding that constitutes the package, and a section containing documentation for the new package. Here is
+	a basic template for new packages:",
+	PRE///
+	newPackage( ... )
+	
+	export( ... )
+	
+	-- Macaulay 2 code goes here
+	
+	beginDocumentation()
+	document { ... } 
+	///,
      Subnodes => {
+	  TO "an example of a package",
 	  TO "newPackage",
 	  TO "export",
 	  TO "exportMutable",
-	  TO "Writing documentation"
+	  TO "writing documentation"
 	  }
      }
 
 document {
-     Key => "Writing documentation",
-     "How to write documentation yourself:",
-     UL {
-	  TOH "document",
-	  TOH "hypertext",
-	  },
-     "Output formatting routines:",
-     UL {
-	  TOH "html",
-	  TOH "mathML",
-	  TOH "tex",
-	  TOH "info",
-	  TOH "net"
-	  },
+     Key => "an example of a package",
+     "Here is a basic example of a complete package:",
+	PRE///
+newPackage(
+	"FirstPackage",
+    	Version => "1.0", 
+    	Date => "February 11, 2004",
+    	Author => "Jane Doe <doe@math.uiuc.edu>",
+    	HomePage => "http://www.math.uiuc.edu/~doe/",
+    	Headline => "an example Macaulay 2 package",
+    	DebuggingMode => true
+    	)
+
+export(firstFunction)
+
+firstFunction = method(TypicalValue => String)
+firstFunction ZZ := String => n -> (
+	if n == 1
+	then print "Hello World!"
+	else print "D'oh!"	
+	);
+
+beginDocumentation()
+document { 
+	Key => FirstPackage,
+	Headline => "an example Macaulay 2 package",
+	EM "FirstPackage", " is a basic package to be used as an example."
+	}
+document {
+	Key => firstFunction,
+	Headline => "a silly first function",
+	Usage => "firstFunction n",
+	Inputs => {
+		"n" => ZZ => {}
+		},
+	Outputs => {
+		String => {}
+		},
+	EXAMPLE {
+		"firstFunction 1",
+		"firstFunction 0"
+		}
+	}
+	///,
+	SeeAlso => {newPackage,export,exportMutable,"writing documentation"}
+	}
+
+
+document {
+     Key => "writing documentation",
+	"Documentation for Macaulay 2 is written in a hypertext markup language. It is 
+	then formatted as the documentation built in to Macaulay 2, the online 
+	", TO "HTML", " documentation, and the info pages. Much of the
+	format and structure of the documentation is automatically generated.",
+	PARA,
+        "There are two main types of documentation in Macaulay 2: basic
+	documentation of individual features, and overviews.  Essentially
+	they are documented the same way. However, there are some differences,
+	see ", TO "document", " for details.",
+	PARA,
+	"There are a few stylistic conventions which should be noted:",
+	UL {
+		{"Lowercase is used for all titles, unless a proper noun is being used."},
+		{"The name of any Macaulay 2 function, option, or variable, occurring in the documentation 
+		should be an active hyperlink. This can be accomplished with the tag", TO "TO", "."},
+		{"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."}
+		},
+  SeeAlso => document
      }
 
-document { Key => "newPackage" }
-document { Key => "export" }
-document { Key => "exportMutable" }
+document {
+	Key => newPackage, 
+     Headline => "starts the definition of a package",
+	Usage => "newPackage ( \"package name\", ... )",
+ 	Inputs => {},
+	Consequences => {"a package is created"},
+	"Here is a template for a typical ", TT "newPackage", " entry in a package.",
+ 	PRE ///
+	newPackage(
+		"package name",
+		Headline => "one line description",
+		Version => 1.0,
+		Date => "month  XX, 20XX",
+		Author => "author <email>",
+		HomePage => "url",
+		DebuggingMode => true,
+		InfoDirSection => ... , -- this option is not normally used
+		TopNodeName => ... , -- this option is not normally used
+		)
+	///,
+	SeeAlso => {"writing packages"}
+  }
+
+document { 
+	Key => export,
+	Headline => "make global variables visible to the user",
+	Usage => "export(function1, function2, ... )",
+	Inputs => { Sequence => {} },
+	Consequences => {"the functions in the sequence are made available to the user"},
+	"A package can contain the code for many functions, only some of which should be made visible to the user. ", TT "export",
+	" allows one to decided which variables are global variables. For an example see ", TO "an example of a package", "."
+	}
+document { Key => exportMutable }
 
 document {
      Key => "specifying typical values",
@@ -560,7 +671,11 @@ document {
 
 document {
      Key => "debugging",
-     "Here are some debugging tools.",
+     "Macaulay 2 has a debugger.",
+	UL{
+	TO "using the debugger",
+	},
+	"Here are some other debugging tools.",
      UL {
 	  TO "assert",
 	  TO "benchmark",
@@ -692,7 +807,7 @@ document {
      }
 
 document {
-     Key => "Getting started",
+     Key => "getting started",
      PARA {
 	  "The program is available over the web at the Macaulay 2 home page ", HREF {"http://www.math.uiuc.edu/Macaulay2/"}, "
 	  or by ftp at ", HREF "ftp://Macaulay2:Macaulay2@ftp.math.uiuc.edu/", ".  (The host is ", TT "ftp.math.uiuc.edu", ", the 
@@ -724,8 +839,8 @@ document {
      PARA,
      "Here is some arithmetic with fractions.",
      EXAMPLE "3/5 + 7/11",
-     PARA {"Notice the additional line of output labelled with ", TT "o2 :", ".  Output 
-	  lines labelled with colons provide information about the type of output.  In 
+     PARA {"Notice the additional line of output labeled with ", TT "o2 :", ".  Output 
+	  lines labeled with colons provide information about the type of output.  In 
 	  this case, the symbol ", TO "QQ", " is our notation for the class of all 
 	  rational numbers, and indicates that the answer on the previous line is a 
 	  rational number."},
@@ -910,6 +1025,20 @@ document {
      ", TO "get", " with a file name consisting of the character '!' 
      followed by the command."
      }
+
+document {
+	Key => "handling hypertext",
+     "Output formatting routines:",
+     UL {
+	  TOH "html",
+	  TOH "mathML",
+	  TOH "tex",
+	  TOH "info",
+	  TOH "net"
+	  },
+	}
+
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

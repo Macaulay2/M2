@@ -1116,7 +1116,12 @@ document {
       	"f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
       	"f|f|f"
 	  },
-     Caveat => {"It is assumed that ", TT "g", " and ", TT "h", " both have the same target. Moreover, it is assumed that both ", TT "g", " and ", TT "h", " have the same ", TO "Ring", "."},
+     "If one of the arguments is ring element or an integer, then it
+     will be multiplied by a suitable identity matrix.",
+	EXAMPLE "33 | f",
+     Caveat => {"It is assumed that ", TT "g", " and ", TT "h", " both
+		have the same target. Moreover, it is assumed that both ", TT "g", " and ", 
+		TT "h", " have the same ", TO "Ring", "."},
      SeeAlso => {(symbol ||, Matrix, Matrix), (ring, Matrix)}
      }
 
@@ -1136,7 +1141,8 @@ document {
 	    "R = ZZ/101[x,y,z]",
          "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
          "2|f|3"
-	  }
+	  },
+  	"This also works for a arbitrary element of the ring of the matrix."
      }
 
 
@@ -1156,7 +1162,8 @@ document {
 	  "R = ZZ/101[x,y,z]",
        "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
       "2|f|3"
-	  }
+	  },
+   	"This also works for a arbitrary element of the ring of the matrix."
      }
 
 document {
@@ -1199,6 +1206,9 @@ document {
       	  "h = matrix {{m,n},{o,p}}",
       	  "f= g || h",
 	  },
+     "If one of the arguments is ring element or an integer, then it
+     will be multiplied by a suitable identity matrix.",
+	EXAMPLE "f || 33",
 	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO "Ring", "."},
      SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
      }
@@ -1219,7 +1229,8 @@ document {
 	    "R = ZZ/101[x,y,z]",
          "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
          "2||f||3"
-	  }
+	  },
+	"This also works for a arbitrary element of the ring of the matrix."
      }
 
 
@@ -1238,7 +1249,8 @@ document {
 	    "R = ZZ/101[x,y,z]",
          "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
          "2||f||3"
-	  }
+	  },
+  	"This also works for a arbitrary element of the ring of the matrix."
      }
 
 
@@ -1360,7 +1372,7 @@ document {
 	Usage => "random n",
 	Inputs => {"n"=> {}},
 	Outputs => {ZZ => {"a random integer in the range ", TT "0 .. n-1"}},
-     Caveat => "Warning: doesn't correctly handle the case when n an integer is larger
+     Caveat => "doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
 	"Here is a basic example:",
 	EXAMPLE "random 57",

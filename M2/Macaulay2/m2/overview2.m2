@@ -541,7 +541,7 @@ document {
      EXAMPLE {
 	  "o2",
 	  },
-     "Other symbols refer to functions built in to Macaulay 2 that provide
+     "Other symbols refer to functions built into Macaulay 2 that provide
      much of its functionality, as we will learn.",
      PARA,
      "The class of all symbols is ", TO "Symbol", "."

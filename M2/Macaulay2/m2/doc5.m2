@@ -153,7 +153,7 @@ document {
      PARA,
      "The load depth also determines which command line arguments are
      heeded.  If the load depth is ", TT "i", " then the arguments between
-     the ", TT "i", "-th and the ", TT "i+1", "-st occurence of ", TT "--", "
+     the ", TT "i", "-th and the ", TT "i+1", "-st occurrence of ", TT "--", "
      are the ones heeded.",
      SeeAlso => { "errorDepth" }
      }
@@ -161,12 +161,20 @@ document {
 document {
      Key => benchmark,
      Headline => "accurate timing of execution",
-     TT "benchmark s", " -- produce an accurate timing for the code contained
+	Inputs => {
+		"s" => String => "a string containing Macaulay 2 code"
+		},
+	Outputs => {
+		RR => {"the number of seconds it takes to evaluate the code in ", TT "s"}
+		},
+     TT "benchmark s", " produces an accurate timing for the code contained
      in the string ", TT "s", ".  The value returned is the number of seconds.",
-     PARA,
+     EXAMPLE {
+		///benchmark "2^500"///
+		},
      "The snippet of code provided will be run enough times to register
      meaningfully on the clock, and the garbage collector will be called
-     beforehand."
+     beforehand.",
      }
 
 document {
@@ -287,19 +295,8 @@ document {
 
 document {
      Key => tally,
-     Headline => "tally the elements of a list",
-     TT "tally x", " -- tallies the frequencies of items in a list x.",
-     PARA,
-     "It produces an hash table (multiset) y which tallies the
-     frequencies of occurrences of items in the list x, i.e.,
-     y_i is the number of times i appears in x, or is 0 if
-     i doesn't appear in the list.",
-     PARA,
-     EXAMPLE {
-	  "y = tally {1,2,3,a,b,1,2,a,1,2,{a,b},{a,b},a}",
-      	  "y_{a,b}",
-	  },
-     PARA,
+     Headline => "tally the elements of a list or sequence",
+     TT "tally x", " tallies the frequencies of items in a list or sequence x.",
      SeeAlso => "Tally"
      }
 
@@ -307,6 +304,28 @@ TEST ///
 assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 ///
+
+document {
+	Key => (tally, BasicList),
+	Headline => "tally the elements of a list, sequence, or array",
+	Usage => "y = tally x",
+	Inputs => {
+		"x" => {}
+		},
+	Outputs => {
+		"y" => "a listing of tallied results"
+		},
+	"It produces an hash table (multiset) ", TT "y", " which tallies the
+     frequencies of occurrences of items in the list ", TT "x", ", i.e.,
+     ", TT "y_i", " is the number of times ", TT "i", " appears in ", TT "x", ", or is ", TT "0", " if
+     ", TT "i", " doesn't appear in the list.",
+     EXAMPLE {
+	  "y = tally {1,2,3,a,b,1,2,a,1,2,{a,b},{a,b},a}",
+       	  "y_2",
+	  "y_5",
+	  "y_{a,b}",
+	  }
+  }
 
 document {
      Key => Set, 

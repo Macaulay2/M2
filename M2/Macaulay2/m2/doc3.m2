@@ -179,8 +179,6 @@ document {
 document {
      Key => "///",					    -- ///
      Headline => "delineate a string",
-     TT "/// a string ///", " -- a string.",
-     PARA,
      "This method for entering a string involves no escape characters, so
      it can be used for easily inserting large chunks of text into a string
      without treating the characters ", TT "\\", " and ", TT "\"", " specially.",

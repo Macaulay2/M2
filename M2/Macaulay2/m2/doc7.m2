@@ -785,7 +785,7 @@ document {
       or between objects in other categories.",
      PARA,
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
-     rectangular arrays of ring elements or matrices. Yo",
+     rectangular arrays of ring elements or matrices.",
      Subnodes => {
 	  "Creating a map between modules (a matrix)",
 	  TO (map,Module,Module,Function),   -- done
@@ -1036,8 +1036,7 @@ document {
      degree zero.",
      EXAMPLE {
 	  },
-     SeeAlso => {(map,Module,Module,Function)},
-     Caveat => {}
+     SeeAlso => {(map,Module,Module,Function)}
      }
 document {
      Key => (map,Module,ZZ,List),
@@ -1342,6 +1341,7 @@ document {
      Key => symbol "compactMatrixForm",
      Headline => "global flag for compact printing",
 	Usage => "compactMatrixForm = x",
+	Consequences => {"changes the display of matrices"},
      TT "compactMatrixForm", " is a global flag which specifies whether to display
      matrices in compact form.",
      PARA,
@@ -1704,7 +1704,7 @@ document {
      Usage => "g = koszul(i,f)",
      Inputs => {
           "i" => "",
-          "f" => {"a ", TT "1", " by ", TT "n", " matrix."},
+          "f" => {"a ", TT "1", " by ", TT "n", " matrix"},
           },
      Outputs => {
           "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
@@ -1713,7 +1713,7 @@ document {
           "R = QQ[x_1..x_4];",
           "f = matrix{{x_1..x_4}}"
           },
-     "To see the ", TT "2", "-nd differential in the Koszul complex of the matrix ", TT "f", " look at:",
+     "To see the second differential in the Koszul complex of the matrix ", TT "f", " look at:",
      EXAMPLE "koszul(2,f)",
      }
 document {

@@ -229,8 +229,8 @@ ifeq "$(GCC)" "yes"
 CFLAGS   += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
 CXXFLAGS += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wold-style-cast
 ifeq "$(OPTIMIZE)" "yes"
-CFLAGS   += -O3 -fexpensive-optimizations
-CXXFLAGS += -O3 -fexpensive-optimizations
+CFLAGS   += -O3
+CXXFLAGS += -O3
 else
 CFLAGS   += -O0
 CXXFLAGS += -O0
