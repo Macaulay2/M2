@@ -741,7 +741,7 @@ net SparseMonomialVectorExpression := v -> (
 	  )
      )
 
-centerString := (wid,s) -> (
+centerString = (wid,s) -> (
      n := width s;
      if n === wid then s
      else (

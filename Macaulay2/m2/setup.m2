@@ -106,32 +106,60 @@ silentRobustString = (wid,sec,y) -> (
 	  simpleToString y))
 
 hush := false
-scan(binaryOperators, op -> 
-     if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, 
-	  (x,y) -> (
-	       line1 := concatenate("no method for ",
-		    if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
-		    );
-	       if hush then error line1;
+scan(binaryOperators, op -> (
+	  ht := 8;
+	  preX := "            ";
+	  if not Thing#?((op,symbol =),Thing,Thing) then installMethod((op,symbol =), Thing, Thing, (x,y,z) -> (
+	  	    preY := centerString(width preX, toString op);
+     	       	    preZ := centerString(width preX, "=");
+		    line1 := concatenate("no method for assignment to ",
+			 if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
+			 );
+		    if hush then error line1;
+		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+		    wid = wid - width preX;
+		    hush = true;					    -- prevent error message recursion
+		    line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
+		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
+		    line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
+		    hush = false;
+		    error toString stack(line1,line2,line3,line4)));
+	  if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, 
+	       (x,y) -> (
+	  	    preY := "       and  ";
+		    line1 := concatenate("no method for ",
+			 if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
+			 );
+		    if hush then error line1;
+		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+		    wid = wid - width preX;
+		    hush = true;					    -- prevent error message recursion
+		    line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
+		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
+		    hush = false;
+		    error toString stack(line1,line2,line3)))))
+scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> 
+     scan(ops, op -> (
 	       ht := 8;
-	       wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 	       preX := "            ";
-	       preY := "       and  ";
-	       wid = wid - width preX;
-	       hush = true;					    -- prevent error message recursion
-	       line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
-	       line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
-	       hush = false;
-	       error toString stack(line1,line2,line3))))
-scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> (
-	  scan(ops, op -> 
-	       if not Thing#?op then installMethod(op, Thing,
-	  	    (x) -> (
-			 line1 := concatenate("no method for ", concatenate(type," operator ",op));
+	       if not Thing#?(op,symbol =) then installMethod((op,symbol =), Thing,
+		    (y,z) -> (
+	       		 preY := centerString(width preX, toString op);
+	       		 preZ := centerString(width preX, "=");
+			 line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to:");
 			 if hush then error line1;
-			 ht := 8;
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-			 preX := "            ";
+			 wid = wid - width preX;
+			 hush = true;					    -- prevent error message recursion
+			 line2 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
+			 line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
+			 hush = false;
+			 error toString stack(line1,line2,line3)));
+	       if not Thing#?op then installMethod(op, Thing,
+		    (x) -> (
+			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to:");
+			 if hush then error line1;
+			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 			 wid = wid - width preX;
 			 hush = true;					    -- prevent error message recursion
 			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
