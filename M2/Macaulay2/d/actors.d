@@ -788,35 +788,22 @@ assignNewFun(newclass:Code,rhs:Code):Expr := (
 AssignNewFun = assignNewFun;
 assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
      c := eval(newclass);
-     when c
-     is Error do c
-     is cc:HashTable do
-     if cc.mutable then (
+     when c is Error do c
+     is cc:HashTable do (
 	  p := eval(newparent);
-	  when p 
-	  is Error do p
-	  is pp:HashTable do 
-	  if pp.mutable then installMethod(NewOfE,cc,pp,eval(rhs))
-	  else printErrorMessageE(newparent,"expected a mutable hash table")
+	  when p is Error do p
+	  is pp:HashTable do installMethod(NewOfE,cc,pp,eval(rhs))
 	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
-     else printErrorMessageE(newclass,"expected a mutable hash table")
-     else printErrorMessageE(newclass,"expected a hash table as prospective class")
-     );
+     else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewOfFun = assignNewOfFun;
 assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
      c := eval(newclass);
-     when c
-     is Error do c
-     is cc:HashTable do 
-     if cc.mutable then (
+     when c is Error do c
+     is cc:HashTable do (
 	  i := eval(newinitializer);
-	  when i 
-	  is Error do i
-	  is ii:HashTable do 
-	  if ii.mutable then installMethod(NewFromE,cc,ii,eval(rhs))
-     	  else printErrorMessageE(newinitializer,"expected a mutable hash table")
+	  when i is Error do i
+	  is ii:HashTable do installMethod(NewFromE,cc,ii,eval(rhs))
      	  else printErrorMessageE(newinitializer,"expected a hash table"))
-     else printErrorMessageE(newclass,"expected a mutable hash table")
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
 assignNewOfFromFun(args:CodeSequence):Expr := (
@@ -827,27 +814,21 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
      c := eval(newclass);
      when c 
      is Error do c 
-     is cc:HashTable do
-     if cc.mutable then (
+     is cc:HashTable do (
 	  p := eval(newparent);
 	  when p
 	  is Error do p
-	  is pp:HashTable do
-	  if pp.mutable then (
+	  is pp:HashTable do (
 	       i := eval(newinitializer);
 	       when i 
 	       is Error do i 
-	       is ii:HashTable do
-	       if ii.mutable then (
+	       is ii:HashTable do (
 	       	    r := eval(rhs);
 	       	    when r 
 		    is Error do r
 	       	    else installMethod(NewOfFromE,cc,pp,ii,r))
-     	       else printErrorMessageE(newinitializer,"expected a mutable hash table")
-     	       else printErrorMessageE(newinitializer,"expected a hash table"))
-	  else printErrorMessageE(newparent,"expected a mutable hash table")
+     	       else printErrorMessageE(newinitializer,"expected a hash table as class to initialize from"))
 	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
-     else printErrorMessageE(newclass,"expected a mutable hash table")
      else printErrorMessageE(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
@@ -864,8 +845,6 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 		    if length(bcd) == 2 then (
 			 when bcd.0
 			 is bb:HashTable do
-			 if bb.parent == nothingClass
-			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
 			 if cc.parent != nothingClass
@@ -875,78 +854,47 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
 		    else if length(bcd) == 3 then (
-			 when bcd.0
-			 is bb:HashTable do
-			 if bb.parent == nothingClass
-			 then buildErrorPacket("expected first parameter to be a type") else
-			 when bcd.1
-			 is cc:HashTable do
-			 if cc.parent == nothingClass
-			 then buildErrorPacket("expected second parameter to be a type") else 
-			 when bcd.2
-			 is dd:HashTable do
-			 if dd.parent != nothingClass
-			 then installMethod(a,bb,cc,dd,eval(args.3))
-			 else buildErrorPacket("expected third parameter to be a type") 
+			 when bcd.0 is bb:HashTable do
+			 when bcd.1 is cc:HashTable do
+			 when bcd.2 is dd:HashTable do installMethod(a,bb,cc,dd,eval(args.3)) 
 			 else buildErrorPacket("expected third parameter to be a hash table")
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
 		    else if length(bcd) == 4 then (
-			 when bcd.0
-			 is bb:HashTable do
-			 if bb.parent == nothingClass
-			 then buildErrorPacket("expected first parameter to be a type") else
-			 when bcd.1
-			 is cc:HashTable do
-			 if cc.parent == nothingClass
-			 then buildErrorPacket("expected second parameter to be a type") else 
-			 when bcd.2
-			 is dd:HashTable do
-			 if dd.parent != nothingClass then 
-			 when bcd.3
-			 is ee:HashTable do
-			 if ee.parent != nothingClass then installMethod(a,bb,cc,dd,ee,eval(args.3))
-			 else buildErrorPacket("expected fourth parameter to be a type") 
+			 when bcd.0 is bb:HashTable do
+			 when bcd.1 is cc:HashTable do
+			 when bcd.2 is dd:HashTable do
+			 when bcd.3 is ee:HashTable do installMethod(a,bb,cc,dd,ee,eval(args.3)) 
 			 else buildErrorPacket("expected fourth parameter to be a hash table")
-			 else buildErrorPacket("expected third parameter to be a type") 
 			 else buildErrorPacket("expected third parameter to be a hash table")
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
 		    else buildErrorPacket("expected two or three parameter types"))
-	       is bb:HashTable do (
-		    -- if ancestor(bb.class,typeClass)
-		    if bb.parent != nothingClass
-		    then installMethod(a,bb,eval(args.3))
-		    else buildErrorPacket("expected right hand parameter to be a type"))
+	       is bb:HashTable do installMethod(a,bb,eval(args.3))
 	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
-	  else buildErrorPacket("encountered symbol instead of a class"))
+	  else buildErrorPacket("expected adjacency operator ' ' on left"))
      else buildErrorPacket("expected operator to be a symbol"));
 installMethodFun(args:CodeSequence):Expr := (
      a := eval(args.1);
      when a 
      is Error do a
-     -- is SymbolClosure do installFun2(a,args)
      is CompiledFunction do installFun2(a,args)
      is CompiledFunctionClosure do installFun2(a,args)
      is FunctionClosure do installFun2(a,args)
      is aa:HashTable do (
-	  -- if !ancestor(aa.class,typeClass)
 	  if aa.parent == nothingClass
-	  then installFun2(a,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
+	  then (
+	       installFun2(a,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
+	       )
 	  else (
 	       b := eval(args.2);
-	       when b
-	       is Error do b 
+	       when b is Error do b 
 	       is bb:HashTable do (
-		    -- if ancestor(bb.class,typeClass)
-		    if bb.parent != nothingClass
-		    then (
-			 opr := eval(args.0);
-			 when opr is Error do opr
-			 else installMethod(opr,aa,bb,eval(args.3)))
-		    else buildErrorPacket("expected right hand parameter to be a type"))
+		    opr := eval(args.0);
+		    when opr is Error do opr
+		    else installMethod(opr,aa,bb,eval(args.3)))
 	       else buildErrorPacket("expected right hand parameter to be a hash table")))
      else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
 InstallMethodFun = installMethodFun;

@@ -4,6 +4,8 @@
 typicalValues#singleton = Sequence
 
 List _ ZZ    := (x,i) -> x#i
+installAssignmentMethod(symbol "_", List, ZZ, (x,i,v) -> x#i = v)
+
 List | List  := List => join
 
 List + List  := List => (v,w) -> apply(v,w,plus)

@@ -942,12 +942,8 @@ export backtrace := true;
 export eval(c:Code):Expr := (
      e := (
 	  if interrupted then (
-	       if alarmed then (
-		    interrupted = false;
-		    alarmed = false;
-		    buildErrorPacket(alarmMessage))
+	       if alarmed then buildErrorPacket(alarmMessage)
 	       else (
-		    interrupted = false;
 		    SuppressErrors = false;
 		    buildErrorPacket(interruptMessage)))
 	  else when c
@@ -1038,6 +1034,9 @@ export eval(c:Code):Expr := (
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	       ));
      when e is err:Error do (
+     	  alarm(0);					    -- reset alarm after error
+	  interrupted = false;
+	  alarmed = false;
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage
 	  then (
