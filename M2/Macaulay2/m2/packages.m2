@@ -58,7 +58,7 @@ newPackage(String) := opts -> (title) -> (
 	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
-	  "raw documentation" => new MutableHashTable,
+	  "documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
 	  "example outputs" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
@@ -164,7 +164,7 @@ package TO := x -> (
      key := normalizeDocumentTag x#0;
      fkey := formatDocumentTag key;
      pkgs := select(packages, P -> P =!= User and P =!= Output);
-     p := select(pkgs, P -> P#"raw documentation"#?fkey);
+     p := select(pkgs, P -> P#"documentation"#?fkey);
      if #p == 1 then return p#0;
      if #p > 1 then error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
      if class key === Symbol then (

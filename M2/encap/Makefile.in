@@ -6,24 +6,20 @@ install ::
 
 Makefile : Makefile.in; cd ..; ./config.status encap/Makefile
 
-ifeq "$(encap)" "yes"
+ifeq "$(ENCAP)" "yes"
 
-install ::
-	[ "$(prefix)" != /usr ] 
-	[ "$(prefix)" != /usr/local ] 
-
-install :: $(prefix)/encapinfo
-$(prefix)/encapinfo: encapinfo
+install :: $(encapdir)/encapinfo
+$(encapdir)/encapinfo: encapinfo
 	$(INSTALL_DATA) $< "$@"
 
-install :: $(prefix)/postinstall
-$(prefix)/postinstall: postinstall
+install :: $(encapdir)/postinstall
+$(encapdir)/postinstall: postinstall
 	$(INSTALL_PROGRAM) $< "$@"
 postinstall : @srcdir@ ; cd .. && ./config.status encap/$@
 
-install :: $(prefix)/INSTALL
+install :: $(encapdir)/INSTALL
 
-$(prefix)/INSTALL : INSTALL
+$(encapdir)/INSTALL : INSTALL
 	cp $< $@
 
 endif

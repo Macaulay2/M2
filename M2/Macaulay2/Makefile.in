@@ -98,7 +98,7 @@ install       :: $(bindir); $(INSTALL_PROGRAM)    bin/M2$(EXE) $(bindir)/M2$(EXE
 install-strip :: $(bindir); $(INSTALL_PROGRAM) -s bin/M2$(EXE) $(bindir)/M2$(EXE)
 ################################# cache
 ifeq "$(DUMPDATA)" "yes"
-ifeq "$(encap)" "no"
+ifeq "$(ENCAP)" "no"
 install :: $(cachedir)/$(DUMPDATAFILE)
 $(cachedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE)
 	$(INSTALL_DATA) $< "$@"

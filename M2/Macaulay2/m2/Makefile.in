@@ -19,7 +19,7 @@ DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
 TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := loads.m2 Macaulay2-doc.m2
+MADEM2FILES := loads.m2 Macaulay2-doc.m2 statuscodes.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -156,10 +156,10 @@ install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
-ifeq "$(encap)" "yes"
-ENCAP = true
+ifeq "$(ENCAP)" "yes"
+ENCAPVALUE = true
 else 
-ENCAP = false
+ENCAPVALUE = false
 endif
 
 initialize :: statuscodes.m2
@@ -174,7 +174,7 @@ install::install-main
 install-main: all
 	M2 -q --stop \
 	   -e 'errorDepth = 0' \
-	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAP), Prefix => "$(prefix)") ' \
+	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => "$(prefix)") ' \
 	   -e 'exit 0 '
 
 clean::

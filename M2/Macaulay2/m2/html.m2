@@ -401,7 +401,7 @@ installPackage Package := o -> pkg -> (
      htmlDirectory = LAYOUT#"packagehtml" pkg.name;
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
-     nodes := unique join(keys pkg.Dictionary,keys pkg#"raw documentation",{topNodeName});
+     nodes := unique join(keys pkg.Dictionary,keys pkg#"documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
 
