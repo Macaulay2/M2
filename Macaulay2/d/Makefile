@@ -235,15 +235,17 @@ allc : $(PROJECT:.d=.c) tmp_init.c
 $(PROJECT:.d=.loo) $(PROJECT:.d=.lo) : compat.h
 
 ALLOBJ :=
-MISCO := M2lib.o scclib.o tmp_init.o memdebug.o
+MISCO := M2lib.o scclib.o tmp_init.o memdebug.o readline.o
 
 # The next line replaces the builtin c++ memory allocation routines by
 # calls to gc.
 # MISCO += gc_cpp.o
 
+LIBRARYOPTIONS += -ldl -lncurses
+LDFLAGS += -rdynamic
+
 ifdef SHAREDLIBS
 LOADLIBES += -L../lib
-LDFLAGS += -rdynamic
 LIBRARYFILES += ../lib/libengine1.so
 LIBRARYOPTIONS += -lengine1
 LIBRARYFILES += ../lib/libengine2.so

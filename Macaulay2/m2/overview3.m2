@@ -201,11 +201,22 @@ document { "internals",
      }
 
 document { "reading the documentation",
+     "The documentation is divided into the main parts, the ", TO "User's Guide", "
+     and the ", TO "Reference Manual", ".  The reference manual is organized mainly
+     according to the types of things, and reflects the particular way we've
+     programmed the system.  For example, if you want to find out about chain
+     complexes, then you might get there by clicking first on ", TO "Thing", ",
+     then click on ", TO "Type", ", and then on ", TO "ChainComplex", ".  The user's
+     guide is organized more according to mathematical topics that might occur to
+     an initial user, and might be a good place to look first, except that it's
+     not completely written yet.",
+     PARA,
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT "Macaulay2/html", " contains the documentation in html
      form, suitable for viewing with a web browser such as lynx or Netscape,
      and this is the best way to view it.  Each documentation page has a text
-     box for entering a search string.  This will work only if you or your
+     box for entering a search string.  This will work if you view the documentation
+     at our web site; it will work on you local machine only if you or your
      system administrator has already installed ", TT "htdig", ", which is a 
      free indexing package available at ", TT "http://www.htdig.org/", ".",
      PARA,
@@ -224,11 +235,12 @@ document { "reading the documentation",
      text form using ", TO "help", "."
      }
 
-document { "Preface",
+document { "preface",
      MENU {
 	  TO "how to get this program",
 	  TO "resources required",
-	  TO "reading the documentation",
+	  TO "invoking the program",
+	  TO "getting started",
 	  TO "copyright and license",
 	  TO "acknowledgements",
 	  TO "the authors",
@@ -238,9 +250,8 @@ document { "Preface",
 document { "User's Guide",
      "Here are the basic concepts needed to use Macaulay 2 effectively.",
      MENU {
-	  TO "Preface",
-	  TO "getting started",
-	  TO "invoking the program",
+	  TO "preface",
+	  TO "reading the documentation",
 	  TO "mathematical overview",
 	  TO "language and programming overview",
 	  TO "miscellaneous topics",

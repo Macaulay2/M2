@@ -134,8 +134,9 @@ gmp/Makefile: WindowsNT/gmp/Makefile
 	cp WindowsNT/$@ $@
 else
 GMPconfigure : gmp/config.status
-gmp/config.status: gmp/configure
+gmp/config.status: gmp/configure config/config.guess config/config.sub
 	cd gmp; \
+	rm -f config.status; \
 	./configure --silent --cache-file=../config.cache
 endif
 
@@ -468,3 +469,6 @@ TAGS:
 	etags `find . \( -name '*.h' -o -name '*.c' -o -name '*.s' -o -name '*.S' \)`
 PATH:
 	printenv $@
+################################# lsm
+lsm:
+	sendmail lsm@execpc.com <Macaulay2.LSM

@@ -34,10 +34,20 @@ update(err:Error,prefix:string,f:Code):Expr := (
 stmtno := 0;
 linefun(e:Expr):Expr := (
      when e
-     is a:Sequence
-     do if length(a) == 0
-     then Expr(toInteger(stmtno))
-     else WrongNumArgs(0)
+     is n:Integer do (
+	  if isInt(n) then (
+	       old := Expr(toInteger(stmtno));
+	       nn := toInt(n);
+	       if nn >= 0 then (
+		    stmtno = nn;
+	       	    old)
+	       else WrongArg(1,"a non-negative integer"))
+	  else WrongArg(1,"a small integer")
+	  )
+     is a:Sequence do (
+	  if length(a) == 0
+     	  then Expr(toInteger(stmtno))
+     	  else WrongNumArgs(0))
      else WrongNumArgs(0)
      );
 setupfun("lineNumber",linefun);

@@ -415,6 +415,10 @@ document { addEndFunction,
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited.",
      PARA,
+     "Warning: in the current implementation, the function will be run
+     only if the program is explicitly exited with ", TO "exit", ", and not
+     if it encounters end of file.",
+     PARA,
      SEEALSO "runEndFunctions"
      }
 
