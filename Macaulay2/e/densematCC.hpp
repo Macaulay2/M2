@@ -19,6 +19,7 @@ public:
   static DenseMutableMatrixCC *zero_matrix(int nrows, int ncols);
 
   virtual DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() { return this; }
+  virtual const DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() const { return this; }
 
 public:
   virtual Matrix *to_matrix() const;

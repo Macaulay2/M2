@@ -234,6 +234,7 @@ bool SparseMutableMatrix::is_equal(const MutableMatrix *B) const
     }
   // Otherwise B is dense. 
 #warning "implement isequal for dense == sparse"
+  return false;
 }
 
 bool SparseMutableMatrix::set_values(M2_arrayint rows,

@@ -18,6 +18,7 @@ public:
   static SparseMutableMatrix *zero_matrix(const Ring *R, int nrows, int ncols);
 
   virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return this; }
+  virtual const SparseMutableMatrix * cast_to_SparseMutableMatrix() const { return this; }
 
 public:
   virtual Matrix *to_matrix() const;

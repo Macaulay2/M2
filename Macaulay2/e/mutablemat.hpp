@@ -71,6 +71,12 @@ public:
   virtual DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() { return 0; }
   virtual DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() { return 0; }
 
+  virtual const SparseMutableMatrix * cast_to_SparseMutableMatrix() const { return 0; }
+  virtual const DenseMutableMatrix * cast_to_DenseMutableMatrix() const { return 0; }
+  virtual const DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() const { return 0; }
+  virtual const DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() const { return 0; }
+  virtual const DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() const { return 0; }
+
   virtual bool is_dense() const = 0;
   virtual void text_out(buffer &o) const;
 public:
