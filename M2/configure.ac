@@ -162,7 +162,7 @@ AC_SUBST(encapdir)
 AC_ARG_WITH(encapdir,
     AC_HELP_STRING(--with-encapdir=...,encap directory [PREFIX/encap]),
     encapdir="$withval",
-    AC_MSG_ERROR([--with-encapdir=???]))
+    )
 
 AC_SUBST(GC_FOR_NEW)
 AC_ARG_ENABLE(gc_for_new,
