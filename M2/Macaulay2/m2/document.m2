@@ -102,6 +102,7 @@ alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 ---- shouldn't convert such things as matrices to strings here!
 formatDocumentTag Thing    := s -> "--undocumentable--"
 formatDocumentTag String   := s -> s
+formatDocumentTag Function := toString
 
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(

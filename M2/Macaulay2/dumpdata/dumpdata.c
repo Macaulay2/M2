@@ -178,12 +178,14 @@ int loaddata(char const *filename) {
 	return ERROR;
       }
       if (dumpedmap.to != currmap[j].to && !isStatic(&dumpedmap)) {
+#       if 0
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	trim(buf);
 	warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);
 	fclose(f);
 	return ERROR;
+#       endif
       }
       if (dumpedmap.checksum != currmap[j].checksum) {
 	char buf[100];
