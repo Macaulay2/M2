@@ -257,8 +257,11 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Symbol
      export timingS := special("timing",unaryop,wide);
      export shieldS := special("shield",unaryop,wide);
 
+     export returnS := special("return",nunaryop,narrow);
+
      special("while",unarywhile,wide);
      special("if",unaryif,wide);
+
      special("try",unarytry,wide);
 
      special("symbol",unaryquote,prec);

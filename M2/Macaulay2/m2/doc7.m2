@@ -244,9 +244,11 @@ document { jacobian,
       	  "p = symmetricPower(2,vars R)",
       	  "jacobian p",
 	  },
-     CAVEAT "If a matrix or ideal over a quotient polynomial ring S/J
-     is given, then only the derivatives of the given elements are
-     computed and NOT the derivatives of elements of J."
+     CAVEAT {
+	  "If a matrix or ideal over a quotient polynomial ring ", TT "S/J", "
+     	  is given, then only the derivatives of the given elements are
+     	  computed and NOT the derivatives of elements of ", TT "J", "."
+	  }
      }
 
 

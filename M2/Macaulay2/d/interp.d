@@ -106,9 +106,15 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 			 lastvalue = eval(f);	  -- run it
 			 if lastvalue == EndOfInput then return(lastvalue);
 			 when lastvalue is err:Error do (
+			      if err.message == returnMessage
+			      then lastvalue = err.report;
+			      )
+			 else nothing;
+			 when lastvalue is err:Error do (
 			      setvalue(errorReportS, err.report);
 			      if AbortIfError then return(lastvalue);
-			      lastvalue = nullE; )
+			      lastvalue = nullE;
+			      )
 			 else (
 			      if s.word != semicolonW then returnvalue = lastvalue;
 			      if printout then (

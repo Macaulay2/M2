@@ -775,24 +775,24 @@ document { Grassmannian,
      EXAMPLE "R = QQ[a..f];",
      EXAMPLE "J = Grassmannian(1,3,R)",
      CAVEAT "Currently, this ideal is constructed using relations on minors
-     of a generic matrix.  It should really use the Plucker equations"
+     of a generic matrix.  It should really use the Pluecker equations."
      }
 
 document { code,
      Headline => "display source code",
-     TT "code f", " -- prints out the source code of the function f.",
+     TT "code f", " -- prints out the source code of the function ", TT "f", ".",
      BR, NOINDENT,
      TT "code(f,X)", " -- prints out the source code of the particular 
-     method that would be applied if f were applied to an argument of 
-     class X.",
+     method that would be applied if ", TT "f", " were applied to an argument of 
+     class ", TT "X", ".",
      BR, NOINDENT,
      TT "code(f,X,Y)", " -- prints out the source code of the particular 
-     method that would be applied if f were applied to arguments of
-     classes X and Y.",
+     method that would be applied if ", TT "f", " were applied to arguments of
+     classes ", TT "X", " and ", TT "Y", ".",
      BR, NOINDENT,
      TT "code(f,X,Y,Z)", " -- prints out the source code of the 
-     particular method that would be applied if f were applied to 
-     arguments of classes X, Y, and Z.",
+     particular method that would be applied if ", TT "f", " were applied to 
+     arguments of classes ", TT "X", ", ", TT "Y", ", and ", TT "Z", ".",
      BR, NOINDENT,
      TT "code {v,w,...}", " -- prints out the source code for each
      of the items listed.",
@@ -806,19 +806,19 @@ document { edit,
      TT "edit", " -- a command which starts the text editor",
      BR,NOINDENT,
      TT "edit f", " -- starts the text editor at the source code of the
-     function f.",
+     function ", TT "f", ".",
      BR,NOINDENT,
      TT "edit(f,X)", " -- edits the source code of the particular 
-     method that would be applied if f were applied to an argument of 
-     class X.",
+     method that would be applied if ", TT "f", " were applied to an argument of 
+     class ", TT "X", ".",
      BR, NOINDENT,
      TT "edit(f,X,Y)", " -- edits the source code of the particular 
-     method that would be applied if f were applied to arguments of
-     classes X and Y.",
+     method that would be applied if ", TT "f", " were applied to arguments of
+     classes ", TT "X", " and ", TT "Y", ".",
      BR, NOINDENT,
      TT "edit(f,X,Y,Z)", " -- edits the source code of the 
-     particular method that would be applied if f were applied to 
-     arguments of classes X, Y, and Z.",
+     particular method that would be applied if ", TT "f", " were applied to 
+     arguments of classes ", TT "X", ", ", TT "Y", ", and ", TT "Z", ".",
      PARA,
      "The name of the user's preferred editor is take from the environment 
      variable ", TT "EDITOR", ".  If X is running and the editor is not
@@ -857,8 +857,8 @@ document { methods,
 document { isTable,
      Headline => "whether something is a rectangular list of lists",
      PARA,
-     "Warning: it is not possible to represent a 0-by-k matrix 
-     as a list of lists.",
+     "Warning: it is intrinsically impossible to represent a ", TT "0", " 
+     by ", TT "k", " matrix as a list of lists.",
      EXAMPLE {
 	  "isTable {{1,2,3},{4,5}}",
 	  "isTable {{1,2,3},{4,5,6}}",

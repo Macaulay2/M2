@@ -142,9 +142,11 @@ document { truncate,
      The ring of M should be a (quotient of a) polynomial ring, 
      where the coefficient ring, k, is a field.",
      PARA,
-     CAVEAT "If the degrees of the variables are not all one, then there is
-     currently a bug in the routine: some generators of higher degree than i
-     may be duplicated in the generator list",
+     CAVEAT {
+	  "If the degrees of the variables are not all one, then there is
+     	  currently a bug in the routine: some generators of higher degree
+	  than ", TT "i", " may be duplicated in the generator list."
+	  },
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[a..c];",
@@ -804,8 +806,10 @@ document { homogenize,
      PARA,
      "The weights that may be used are limited (roughly) to the range -2^30 .. 2^30.",
      PARA,
-     CAVEAT "If the homogenization overflows the monomial, this is not
-     reported as an error."
+     CAVEAT {
+	  "If the homogenization overflows the monomial, this is not
+     	  reported as an error."
+	  }
      }
 
 TEST "
@@ -918,9 +922,12 @@ document { selectInSubring,
       	  "selectInSubring(3,m)",
 	  },
      PARA,
-     CAVEAT "This routine doesn't do what one would expect for graded orders
-     such as 'GLex'.  There, the first part of the monomial order is the degree, 
-     which is usually not zero.  This routine should detect and correct this.",
+     CAVEAT {
+	  "This routine doesn't do what one would expect for graded orders
+     	  such as ", TT "GLex", ".  There, the first part of the monomial 
+	  order is the degree, which is usually not zero.  This routine 
+	  should detect and correct this."
+     },
      SEEALSO "polynomial rings with other monomial orderings"
      }
 

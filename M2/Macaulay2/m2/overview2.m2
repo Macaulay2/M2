@@ -221,82 +221,92 @@ document { "Language and Programming Overview",
      language and the main programming features of Macaulay 2.",
      PARA,
      MENU {
-     	  (
-	       "variables and symbols",
-	       MENU {
-     	       	    TO "valid names",
-		    TO "assigning values",
-		    TO "local variables in a file",
-		    TO "viewing the symbols defined so far",
-		    TO "subscripted variables",
-		    TO "numbered variables",
-		    }
-	       ),
+	  TO "variables and symbols",
+	  TO "functions",
+     	  TO "basic types",
+	  TO "control structures",
+	  TO "input and output",
+	  TO "classes and types"
+	  }
+     }
+
+document { "variables and symbols",
+     MENU {
+	  TO "valid names",
+	  TO "assigning values",
+	  TO "local variables in a file",
+	  TO "viewing the symbols defined so far",
+	  TO "subscripted variables",
+	  TO "numbered variables",
+	  }
+     }
+
+document { "functions",
+     Headline => "an overview",
+     "In this section we present an overview of functions.  For details, 
+     see ", TO "Function", ".",
+     PARA,
+     MENU {
+	  TO "using functions",
+	  TO "making functions",
+	  TO "local variables in a function",
+	  TO "making functions with a variable number of arguments",
+	  TO "using functions with optional arguments",
+	  TO "making new functions with optional arguments",
+	  }
+     }
+
+document { "basic types",
+     MENU {
+	  TO "strings",
+	  TO "nets",
+	  TO "lists",
+	  TO "sequences",
+	  TO "hash tables",
+	  }
+     }
+
+document { "control structures",
+     MENU {
+	  TO "loops",
+	  TO "mapping over lists",
+	  TO "mapping over hash tables",
+	  TO "conditional execution",
+	  TO "error handling",
+	  }
+     }
+
+document { "input and output",
+     MENU {
+	  TO "printing to the screen",
+	  TO "reading files",
+	  TO "getting input from the user",
+	  TO "creating and writing files",
+	  TO "two dimensional formatting",
+	  TO "communicating with programs",
+	  TO "using sockets",
+	  }
+     }
+
+document { "interfacing with the system",
+     MENU {
+	  }
+     }
+
+document { "classes and types",
+     MENU {
+	  TO "what a class is",
+	  TO "installing methods",
+	  TO "inheritance from parents",
+	  TO "making new types",
+	  TO "printing and formatting for new types",
 	  (
-	       "overview of functions",
+	       "method functions",
 	       MENU {
-		    TO "using functions",
-		    TO "making functions",
-		    TO "local variables in a function",
-		    TO "making functions with a variable number of arguments",
-		    TO "using functions with optional arguments",
-		    TO "making new functions with optional arguments",
+		    TO "making a new method function",
+		    TO "method functions with a variable number of arguments",
+		    TO "method functions with optional arguments",
 		    }
-	       ),
-	  (
-	       "basic types",
-	       MENU {
-		    TO "strings",
-		    TO "nets",
-		    TO "lists",
-		    TO "sequences",
-		    TO "hash tables",
-		    }
-	       ),
-	  (
-	       "control structures",
-	       MENU {
-		    TO "loops",
-		    TO "mapping over lists",
-		    TO "mapping over hash tables",
-		    TO "conditional execution",
-		    TO "error handling",
-		    }
-	       ),
-	  (
-	       "input and output",
-	       MENU {
-		    TO "printing to the screen",
-		    TO "reading files",
-		    TO "getting input from the user",
-		    TO "creating and writing files",
-		    TO "two dimensional formatting",
-		    TO "communicating with programs",
-		    TO "using sockets",
-		    }
-	       ),
-	  (
-	       "interfacing with the system",
-	       MENU {
-		    }
-	       ),
-	  (
-	       "classes and types",
-	       MENU {
-		    TO "what a class is",
-		    TO "installing methods",
-		    TO "inheritance from parents",
-		    TO "making new types",
-		    TO "printing and formatting for new types",
-		    (
-			 "method functions",
-			 MENU {
-			      TO "making a new method function",
-			      TO "method functions with a variable number of arguments",
-			      TO "method functions with optional arguments",
-			      }
-			 ),
-		    },
 	       ),
 	  }
      }
