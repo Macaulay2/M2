@@ -180,7 +180,7 @@ timefun(a:Code):Expr := (
      when ret
      is Error do ret
      else list(timeClass,Sequence(Expr(Real((x-v)-(y-x))),ret)));
-setupop("timing",timefun);
+setupop(timingW,timefun);
 showtimefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
@@ -188,7 +188,7 @@ showtimefun(a:Code):Expr := (
      y := etime();
      stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
      ret);
-setupop("time",showtimefun);
+setupop(timeW,showtimefun);
 getvalue(x:Sequence,i:int):Expr := (
      if i < -length(x) || i >= length(x)
      then errorExpr("array index "

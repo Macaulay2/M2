@@ -306,7 +306,6 @@ export dummySymbol   := Symbol(
      globalScope.seqno,-1,1,true,true,false
      );
 export dummyToken   := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
-export parseEOL     := makedummy();
 export parseEOF     := makedummy();
 export parseWORD    := makedummy();
 export parseERRMSG  := makedummy();

@@ -8,13 +8,6 @@ new keywords 'for', 'when' and 'to', and a new control structure:
 This repeatedly evaluates x and y, letting i run over a..b, as long as
 c remains true, accumulating the values of x into a list to return.
 
-parsing precedence of 'if' changed so that it's lower than '='.  So if you
-have something like 'if a=b then c' then change it to 'if (a=b) then c'.
-Same for 'try' and 'time'.  This shouldn't be a problem, because one usually
-types 'if a=b then c' by mistake instead of 'if a==b then c'.  If you really
-meant that, then change it to 'if (a=b) then c'.  You may change 'time a = b'
-to 'a = time b' or 'time (a = b)'.
-
 new keyword 'list' and new control structure:
 	while p list x
 which evaluates x repeatedly as long as p remains true, returning a list of the

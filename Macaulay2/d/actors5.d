@@ -309,8 +309,32 @@ formatfun(e:Expr):Expr := (
      is l:List do formatseq(l.v)
      else WrongArg(0+1,"an integer, a list of integers, or a handle"));
 setupfun("gg",formatfun);
+
+seeParsing(o:file):void := (
+     o
+     << endl << endl
+     << "word      precedence scope strength" << endl << endl
+     << ("<WORDS>",12) << (parseWORD.precedence,-7) << (parseWORD.scope,-7) << (parseWORD.strength,-7) << endl;
+     foreach hashListX in hashTable do (
+	  hashList := hashListX;
+	  while true do
+	  when hashList
+	  is null do break
+	  is hashCell:WordListCell do (
+	       if hashCell.word.parse != parseWORD 
+	       then (
+		    o << (hashCell.word.name,12)
+		    << (hashCell.word.parse.precedence,-7) 
+		    << (hashCell.word.parse.scope,-7) 
+		    << (hashCell.word.parse.strength,-7) 
+		    << endl;
+		    );
+	       hashList = hashCell.next;
+	       );
+	  );
+     );
 seeParsing(e:Expr):Expr := (
-     dumpWords(stdout);
+     seeParsing(stdout);
      nullE);
 setupfun("seeParsing",seeParsing);
 
