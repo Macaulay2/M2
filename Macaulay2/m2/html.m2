@@ -330,6 +330,17 @@ makeHTML = (builddir,finaldir) -> (
 	  );
      )     
 
+separateRegexp = method()
+separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
+separateRegexp(String,ZZ,String) := (re,n,s) -> (
+     m := matches(re,s);
+     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
+separateExampleOutput = s -> (
+     r := capture s;
+     while r#0 == "\n" do r = substring(1,r);
+     while r#-1 == "\n" do r = substring(0,#r-1,r);
+     separateRegexp("(\n\n)i+[1-9][0-9]* : ",1,r))
+
 -----------------------------------------------------------------------------
 -- assembling packages -- eventually to be merged with 
 -- the code above for making html for Macaulay 2 itself
@@ -360,7 +371,7 @@ assemble Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
      buildDirectory = o.TemporaryDirectory | "/";
-     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg#"version"|"/";
+     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Version|"/";
      buildPackage = minimizeFilename buildPackage;
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
      stderr << "--assembling package " << pkg << " in " << buildDirectory << endl;
@@ -435,8 +446,7 @@ check = method()
 check Package := pkg -> (
      logfile := "Macaulay2-test.log";
      scan(values pkg#"test inputs", t -> (
-	       -- later we'll figure out how to start *this* version of M2!!!
-	       cmd := "M2 --silent -q -e 'load \""|pkg.name|".m2\"' >/dev/null";
+	       cmd := commandLine#0 | " --silent -q -e 'load \""|pkg.name|".m2\"' >/dev/null";
 	       stderr << "--   " << cmd << endl << "     " << net t << endl;
 	       "!" | cmd << t << endl << close;
 	       )))

@@ -291,26 +291,7 @@ simpleout(o:file,x:string):int := (
      0);
 flushnets(o:file):int := (
      if o.hadNet then (
-	  i := 0;
-	  p := o.nets;
-	  while p.next != p do (
-	       i = i+1;
-	       p = p.next;
-	       );
-	  s := new array(Net) len i do (
-	       p = o.nets;
-	       while true do (
-		    provide p.this;
-		    p = p.next;
-		    );
-	       );
-	  for j from 0 to (i-1)/2 do (
-	       k := i-1-j;
-	       t := s.j;
-	       s.j = s.k;
-	       s.k = t;
-	       );
-	  n := HorizontalJoin(s);
+	  n := HorizontalJoin(o.nets);
 	  o.hadNet = false;
 	  o.nets = dummyNetList;
 	  lastone := length(n.body)-1;

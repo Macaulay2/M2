@@ -4,31 +4,52 @@ use system;
 use strings;
 export varstring := {
      str:string,
-     size:int
+     size:int						    -- the number of bytes in str that are used; if greater than length(str), blank padding is understood
      };
-export newvarstring(i:int):varstring := varstring(
-     new string len i do provide ' ', 
-     0);
-needatleast(i:int,v:varstring):void := (
-     if length(v.str) < i then (
-     	  v.str = new string len 2*i do (
+export newvarstring(n:int):varstring := (		    -- assume n > 0
+     varstring( new string len n do provide ' ', 0)
+     );
+needatleast(n:int,v:varstring):void := (
+     if length(v.str) < n then (
+     	  v.str = new string len 2*n do (
 	       foreach c in v.str do provide c;
 	       while true do provide ' '
 	       );
      	  );
      );
+export blankfill(n:int,o:varstring):void := (		    -- add blanks if necessary to get a varstring of size at least n, lazily
+     if o.size < n then (
+     	  m := n;
+	  if m > length(o.str) then m = length(o.str);	    -- blank padding is understood
+	  for i from o.size to m-1 do o.str.i = ' ';
+	  o.size = n;
+	  );
+     );
 export (v:varstring) << (c:char) : varstring := (
-     needatleast(v.size + 1,v);
+     n := v.size + 1;
+     if n > length(v.str) then needatleast(n,v);
      v.str.(v.size) = c;
-     v.size = v.size + 1;
+     v.size = n;
      v
      );
-export (v:varstring) << (s:string):varstring := (foreach c in s do v << c;v);
-export tostring(v:varstring):string := (
-     new string len v.size do foreach c in v.str do provide c
+export (v:varstring) << (s:string):varstring := (
+     m := length(s);
+     k := v.size;
+     n := k + m;
+     if n > length(v.str) then needatleast(n,v);
+     foreach c at i in s do v.str.(k + i) = c;
+     v.size = n;
+     v
+     );
+export tostring(v:varstring):string := new string len v.size do (
+     foreach c in v.str do provide c;
+     while true do provide ' ';
      );
 export toreversestring(v:varstring):string := (
-     new string len v.size do for i from v.size-1 to 0 by -1 do provide v.str.i
+     new string len v.size do (
+	  for v.size - length(v.str) do provide ' ';
+	  for i from v.size-1 to 0 by -1 do provide v.str.i;
+	  )
      );
 export empty(v:varstring):void := v.size = 0;
 export takestring(v:varstring):string := (

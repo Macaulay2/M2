@@ -43,7 +43,7 @@ newPackage(String) := opts -> (title) -> (
 	  if title === M2title
 	  then first globalDictionaries
 	  else if title === "Output" then OutputDictionary
-	  else first (globalDictionaries = prepend(newDictionary(),globalDictionaries))
+	  else first (globalDictionaries = prepend(new Dictionary,globalDictionaries))
 	  );
      p := global currentPackage <- new Package from {
           symbol name => title,
@@ -78,7 +78,7 @@ closePackage = p -> (
      p)
 
 pushDictionary = () -> (
-     d := newDictionary();
+     d := new Dictionary;
      globalDictionaries = prepend(d,globalDictionaries);
      d)
 
