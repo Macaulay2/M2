@@ -281,7 +281,7 @@ makeFileName := (key,filename,pkg) -> (			 -- may return 'null'
 exampleResultsFound := false
 exampleResults := {}
 exampleCounter := 0
-checkForExampleOutputFile := () -> (
+checkForExampleOutputFile := (node,pkg) -> (
      exampleCounter = 0;
      exampleResults = {};
      exampleResultsFound = false;
@@ -294,8 +294,8 @@ checkForExampleOutputFile := () -> (
 	       );
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example results
-	       exampleResults = currentPackage#"example results"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
-	       if debugLevel > 0 then stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl;
+	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
+	       if debugLevel > 0 then stderr << "node " << node << " : " << peek \ net \ exampleResults << endl;
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -319,8 +319,9 @@ processExamplesLoop := s -> (
      else s)
 processExamples := (key,docBody) -> (
      currentNodeName = formatDocumentTag key;
-     exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,currentPackage);
-     checkForExampleOutputFile();
+     pkg := packageTag key;
+     exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,pkg);
+     checkForExampleOutputFile(currentNodeName,pkg);
      processExamplesLoop docBody)
 
 -----------------------------------------------------------------------------
