@@ -16,11 +16,19 @@ use varstrin;
 use strings;
 use basic;
 
-export codePosition(e:Code):Position := (
-     when e
+export codePosition(c:Code):Position := (
+     when c
      is f:binaryCode do f.position
+     is f:adjacentCode do f.position
      is f:forCode do f.position
      is f:ifCode do f.position
+     is f:newOfFromCode do f.position
+     is f:newFromCode do f.position
+     is f:newOfCode do f.position
+     is f:newCode do f.position
+     is f:whileListDoCode do f.position
+     is f:whileListCode do f.position
+     is f:whileDoCode do f.position
      is f:tryCode do f.position
      is f:functionCode do codePosition(f.parms)
      is f:globalAssignmentCode do f.position
@@ -47,6 +55,7 @@ export tostring(c:Code):string := (
      when c
      is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
      is x:binaryCode do concatenate(array(string)("(2-OP ",tostring(x.lhs)," ",tostring(x.rhs),")"))
+     is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:forCode do concatenate(array(string)(
 	       "(for from: ",tostring(x.fromClause),
 	       " to: ",tostring(x.toClause),
@@ -54,6 +63,13 @@ export tostring(c:Code):string := (
 	       " list: ",tostring(x.listClause),
 	       " do: ",tostring(x.doClause),
 	       ")"))
+     is x:whileListDoCode do concatenate(array(string)( "(while ",tostring(x.predicate), " list: ",tostring(x.listClause), " do: ",tostring(x.doClause), ")"))
+     is x:newOfFromCode do concatenate(array(string)( "(new ",tostring(x.newClause), " of: ",tostring(x.ofClause), " from: ",tostring(x.fromClause), ")"))
+     is x:newFromCode do concatenate(array(string)( "(new ",tostring(x.newClause), " from: ",tostring(x.fromClause), ")"))
+     is x:newOfCode do concatenate(array(string)( "(new ",tostring(x.newClause), " of: ",tostring(x.ofClause), ")"))
+     is x:newCode do concatenate(array(string)( "(new ",tostring(x.newClause), ")"))
+     is x:whileDoCode do concatenate(array(string)( "(while ",tostring(x.predicate), " do: ",tostring(x.doClause), ")"))
+     is x:whileListCode do concatenate(array(string)( "(while ",tostring(x.predicate), " list: ",tostring(x.listClause), ")"))
      is x:functionCode do concatenate(array(string)(
 	       "(function restargs: ",tostring(x.desc.restargs),
 	       " numparms: ",tostring(x.desc.numparms),
@@ -91,7 +107,7 @@ export tostring(c:Code):string := (
      	       	    ")")))
      is x:stringCode do concatenate(array(string)("\"",present(x.x),"\""))
      is x:ternaryCode do concatenate(array(string)("(3-OP ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
-     is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," ",tostring(x.thenClause)," ",tostring(x.elseClause),")"))
+     is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," then: ",tostring(x.thenClause)," else: ",tostring(x.elseClause),")"))
      is x:tryCode do concatenate(array(string)("(try ",tostring(x.code)," ",tostring(x.elseClause),")"))
      is x:unaryCode do concatenate(array(string)("(1-OP ",tostring(x.rhs),")"))
      );

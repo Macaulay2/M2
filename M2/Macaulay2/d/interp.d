@@ -74,7 +74,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessage(f,"no method for '" + methodname.symbol.word.name + "'")
      else apply(method,g)
      );
-errorReportS := setupconst("errorReport",Expr(emptySequence));
+errorReportS := setupconst("errorReport",nullE);
 errorReportS.protected = false;
 
 num(x:CodeClosureList):int := (
@@ -274,7 +274,13 @@ decrementInterpreterDepth():void := (
      interpreterDepth = interpreterDepth - 1;
      setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
 
-export topLevel():bool := when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
+export topLevel():bool := (
+     when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) 
+     is err:Error do (
+	  -- printErrorMessage(err);		    -- this message may not have been printed before (?)
+	  false)
+     else true
+     );
 
 topLevel(dc:DictionaryClosure):Expr := loadprint("-",stopIfError,dc);
 topLevel(f:Frame):Expr := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
@@ -337,14 +343,16 @@ export process():void := (
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      ret := readeval(stringTokenFile("--startupString1--/layout.m2",startupString1),false);
-     when ret is Error do (
+     when ret is err:Error do (
+	  printErrorMessage(err);			    -- just in case
 	  if stopIfError
 	  then exit(1)					    -- probably can't happen, because layout.m2 doesn't set stopIfError
 	  else if !topLevel()				    -- give a prompt for debugging
 	  then exit(1))
      else nothing;
      ret = readeval(stringTokenFile("--startupString2--/startup.m2",startupString2),false); -- startup.m2 calls commandInterpreter and eventually returns
-     when ret is Error do (
+     when ret is err:Error do (
+	  printErrorMessage(err);			    -- just in case
 	  if stopIfError 
 	  then exit(1)
 	  else if !topLevel()				    -- give a prompt for debugging

@@ -73,25 +73,13 @@ export Token := {		-- a word, as encountered in the input
 -- ParseTree
 
 export Adjacent := {lhs:ParseTree, rhs:ParseTree};
-export For := {
-     forToken:Token, variable:ParseTree,
-     fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree,
-     dictionary:Dictionary					    -- filled in later
+export For := { forToken:Token, variable:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
+     dictionary:Dictionary 					    -- filled in later
      };
-export WhileDo := {
-     whileToken:Token, predicate:ParseTree,
-     dotoken:Token, doClause:ParseTree};
-export WhileList := {
-     whileToken:Token, predicate:ParseTree,
-     listtoken:Token, listClause:ParseTree};
-export WhileListDo := {
-     whileToken:Token, predicate:ParseTree,
-     listtoken:Token, listClause:ParseTree,
-     dotoken:Token, doClause:ParseTree
-     };
-export TryElse := {
-     tryToken:Token, primary:ParseTree,
-     elseToken:Token, alternate:ParseTree};
+export WhileDo := { whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
+export WhileList := { whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
+export WhileListDo := { whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
+export TryElse := { tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
 export Try := { tryToken:Token, primary:ParseTree};
 export IfThen := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
 export IfThenElse := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
@@ -179,15 +167,25 @@ export integerCode := {x:Integer,position:Position};
 export stringCode := {x:string};
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
+export binaryCodeEval := {f:binop,lhs:Code,rhs:Code,position:Position};
+export adjacentCode := {lhs:Code,rhs:Code,position:Position};
+export whileDoCode := {predicate:Code,doClause:Code,position:Position};
+export whileListCode := {predicate:Code,listClause:Code,position:Position};
+export whileListDoCode := {predicate:Code,listClause:Code,doClause:Code,position:Position};
+
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
+
+export newOfFromCode := {newClause:Code,ofClause:Code,fromClause:Code,position:Position};
+export newFromCode   := {newClause:Code,fromClause:Code,position:Position};
+export newOfCode     := {newClause:Code,ofClause:Code,position:Position};
+export newCode       := {newClause:Code,position:Position};
 
 export CodeSequence := array(Code);
 export sequenceCode := {x:CodeSequence, position:Position};
 export listCode     := {y:CodeSequence, position:Position};
 export arrayCode    := {z:CodeSequence, position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
-export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
-     frameID:int, framesize:int, position:Position} ;
+export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code, frameID:int, framesize:int, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
@@ -210,26 +208,14 @@ export functionCode := {
      desc:functionDescription
      };
 export Code := (
-     nullCode
-     or realCode
-     or stringCode
-     or integerCode
-     or globalMemoryReferenceCode
-     or localMemoryReferenceCode
-     or globalAssignmentCode
-     or localAssignmentCode
-     or parallelAssignmentCode
-     or globalSymbolClosureCode 
-     or localSymbolClosureCode
-     or unaryCode or binaryCode 
-     or ternaryCode or multaryCode or forCode
-     or sequenceCode
-     or listCode
-     or arrayCode
-     or ifCode
-     or tryCode
+     nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
+     or localAssignmentCode or parallelAssignmentCode or globalSymbolClosureCode or localSymbolClosureCode
+     or unaryCode or binaryCode or binaryCodeEval or ternaryCode or multaryCode or forCode
+     or sequenceCode or listCode or arrayCode
+     or newCode or newFromCode or newOfCode or newOfFromCode
+     or whileDoCode or whileListCode or whileListDoCode
+     or ifCode or tryCode or adjacentCode or functionCode
      or newLocalFrameCode				    -- soon obsolete
-     or functionCode
      );
 export CodeClosure := { frame:Frame, code:Code };
 
@@ -274,6 +260,7 @@ export List := {
 export CodeClosureList := {code:CodeClosure, next:CodeClosureList};
 
 export Error := {position:Position, message:string, report:CodeClosureList, value:Expr};
+export printErrorMessage(err:Error):void := printErrorMessage(err.position,err.message);
 export Database := {
      filename:string,
      hash:int,

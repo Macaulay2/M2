@@ -1087,6 +1087,7 @@ locate(e:Code):void := (
      is f:localSymbolClosureCode do lookat(f.position)
      is f:unaryCode do (lookat(f.position); locate(f.rhs);)
      is f:binaryCode do (lookat(f.position); locate(f.lhs); locate(f.rhs);)
+     is f:adjacentCode do (lookat(f.position); locate(f.lhs); locate(f.rhs);)
      is f:ternaryCode do (
 	  lookat(f.position);
 	  locate(f.arg1);
@@ -1110,6 +1111,42 @@ locate(e:Code):void := (
 	  locate(f.toClause);
 	  locate(f.whenClause);
 	  locate(f.listClause);
+	  locate(f.doClause);
+	  )
+     is f:newOfFromCode do (
+	  lookat(f.position);
+	  locate(f.newClause);
+	  locate(f.ofClause);
+	  locate(f.fromClause);
+	  )
+     is f:newFromCode do (
+	  lookat(f.position);
+	  locate(f.newClause);
+	  locate(f.fromClause);
+	  )
+     is f:newOfCode do (
+	  lookat(f.position);
+	  locate(f.newClause);
+	  locate(f.ofClause);
+	  )
+     is f:newCode do (
+	  lookat(f.position);
+	  locate(f.newClause);
+	  )
+     is f:whileListDoCode do (
+	  lookat(f.position);
+	  locate(f.predicate);
+	  locate(f.listClause);
+	  locate(f.doClause);
+	  )
+     is f:whileListCode do (
+	  lookat(f.position);
+	  locate(f.predicate);
+	  locate(f.listClause);
+	  )
+     is f:whileDoCode do (
+	  lookat(f.position);
+	  locate(f.predicate);
 	  locate(f.doClause);
 	  )
      is f:newLocalFrameCode do locate(f.body)
