@@ -105,7 +105,6 @@ Ext(Module,Module) := Module => (M,N) -> (
     M' := cokernel ( pM | p ** id_(target pM) );
     N' := cokernel ( pN | p ** id_(target pN) );
     C := complete resolution M';
-    s := f / (g -> nullhomotopy (g*id_C));
     X := local X;
     K := coefficientRing A;
     -- compute the fudge factor for the adjustment of bidegrees
@@ -123,41 +122,45 @@ Ext(Module,Module) := Module => (M,N) -> (
     -- make group ring, so 'basis' can enumerate the monomials
     R := K Rmon;
     -- make a hash table to store the blocks of the matrix
-    Gamma := new MutableHashTable;
-    Gamma#(exponents 1_Rmon) = -C.dd;
-    scan(c, i -> Gamma#(exponents Rmon_i) = s_i);
+    blks := new MutableHashTable;
+    blks#(exponents 1_Rmon) = C.dd;
+    scan(0 .. c-1, i -> 
+	 blks#(exponents Rmon_i) = nullhomotopy (- f_i*id_C));
     -- a helper function to list the factorizations of a monomial
-    factorizations := (m) -> (
-      -- Input: m is the list of exponents for a monomial
+    factorizations := (gamma) -> (
+      -- Input: gamma is the list of exponents for a monomial
       -- Return a list of pairs of lists of exponents showing the
-      -- possible factorizations of m.
-      if m === {} then { ({}, {}) }
+      -- possible factorizations of gamma.
+      if gamma === {} then { ({}, {}) }
       else (
-	i := m#-1;
-	splice apply(factorizations drop(m,-1), 
-	  (n,o) -> apply (0..i, j -> (append(n,j), append(o,i-j))))));
+	i := gamma#-1;
+	splice apply(factorizations drop(gamma,-1), 
+	  (alpha,beta) -> apply (0..i, 
+	       j -> (append(alpha,j), append(beta,i-j))))));
     scan(4 .. length C + 1, 
       d -> if even d then (
 	scan( exponents \ leadMonomial \ first entries basis(d,R), 
-	  m -> (
-	    h := sum(factorizations m,
-	      (n,o) -> (
-		if Gamma#?n and Gamma#?o
-		then Gamma#n * Gamma#o
+	  gamma -> (
+	    s := - sum(factorizations gamma,
+	      (alpha,beta) -> (
+		if blks#?alpha and blks#?beta
+		then blks#alpha * blks#beta
 		else 0));
-            -- compute and save the null homotopies
-            if h != 0 then Gamma#m = nullhomotopy h;
+            -- compute and save the nonzero nullhomotopies
+            if s != 0 then blks#gamma = nullhomotopy s;
       	    ))));
     -- make a free module whose basis elements have the right degrees
     spots := C -> sort select(keys C, i -> class i === ZZ);
-    Cstar := S^(apply(spots C, 
+    Cstar := S^(apply(spots C,
 	i -> toSequence apply(degrees C_i, d -> {i,first d})));
     -- assemble the matrix from its blocks
     toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i));
     Delta := map(Cstar, Cstar, 
-      transpose sum ( keys Gamma, m -> S_m * toS sum Gamma#m),
+      transpose sum ( keys blks, m -> S_m * toS sum blks#m),
       Degree => {-1,0});
     DeltaBar := Delta ** toS N';
+    assert(isHomogeneous DeltaBar);
+    assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
     prune homology(DeltaBar,DeltaBar)))
 
