@@ -238,8 +238,10 @@ endif
 DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
 
 ifneq "$(prefix)" "/usr"
+ifneq "$(prefix)" "/usr/local"
 CPPFLAGS += -I$(prefix)/include
 LOADLIBES += -L$(prefix)/lib
+endif
 endif
 
 # Local Variables:
