@@ -133,8 +133,9 @@ masterFileName << html HTML {
      HEAD { TITLE masterNodeName },
      BODY {
 	  H2 masterNodeName,
+	  CENTER topNodeButton,
 	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag key}),
-	  topNodeButton
+	  CENTER topNodeButton
 	  }
      } << endl << close
 

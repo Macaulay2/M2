@@ -38,6 +38,7 @@ document { annihilator,
      }
 
 document { (symbol _, Module, ZZ),
+     HEADLINE "get a generator",
      TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",
      PARA,
      EXAMPLE "(ZZ^5)_2"
@@ -60,7 +61,8 @@ document { (symbol ^,Module,Array),
      }
 
 document { (symbol _,Module,Array),
-     TT "M_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
+     HEADLINE "get inclusion map into directo sum",
+     TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
      PARA,
      "The module ", TT "M", " should be a direct sum, and the result is the matrix
      obtained by inclusion from the sum of the components numbered
@@ -83,6 +85,7 @@ document { (symbol ^, Module, List),
      SEEALSO {"_", Module, List}
      }
 document { (symbol _, Module, List),
+     HEADLINE "map from free module to some generators",
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
      ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
      whose index numbers are listed.",
@@ -1129,10 +1132,6 @@ document { substitute,
 document { modifyRing,
      TT "modifyRing(R,options)", " -- yields a ring similar to R, with 
      certain features changed.",
-     PARA,
-     "Allowed options include:",
-     MENU {
-	  },
      PARA,
      "Bug: doesn't work yet."
      }

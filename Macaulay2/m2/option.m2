@@ -24,8 +24,7 @@ installMethod(symbol ==>, OptionTable, Function, Function => (defaults,f) ->
 		    else true
 		    )
 	       );
-	  if #args === 1 then args = args#0;
-	  (f (new OptionTable from options)) args)
+	  (f (new OptionTable from options)) unSingleton args)
      )
 installMethod(symbol ==>, List, Function, Function => (o,f) -> (new OptionTable from o) ==> f)
 

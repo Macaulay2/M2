@@ -621,6 +621,7 @@ assert ( toString x === \"set {1, 2, 3}\" )
 "
 
 document { Handle,
+     HEADLINE "the class of all handles for engine objects",
      TT "Handle", " -- the class of all Handles.",
      PARA,
      "This concept is mainly for internal use.",
@@ -1166,6 +1167,7 @@ document { (symbol +, List, List),
      }
 
 document { (symbol _, List, List),
+     HEADLINE "get a list of entries",
      TT "w_{i,j,...}", " -- selects entries from a list or sequence ", TT "w", ".",
      PARA,
      EXAMPLE {

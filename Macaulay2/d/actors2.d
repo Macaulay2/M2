@@ -860,3 +860,10 @@ installMethod(Expr(LessLessS),integerClass,integerClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 
+singleton(e:Expr):Expr := Expr(Sequence(e));
+setupfun("singleton",singleton);
+unSingleton(e:Expr):Expr := (
+     when e
+     is v:Sequence do if length(v) == 1 then v.0 else e
+     else e);
+setupfun("unSingleton",unSingleton);

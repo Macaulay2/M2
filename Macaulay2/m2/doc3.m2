@@ -159,25 +159,10 @@ document { "programming",
 	  (TO "lineNumber", "        -- the current line number"),
 	  (TO "lookupCount", "       -- how many times a symbol has been seen"),
 	  (TO "phase", "             -- internal variable for compilation"),
---	  (TO "readExamples", "      -- used to control compilation"),
 	  (TO "runStartFunctions", " -- run the start functions")
---	  (TO "writeExamples", "     -- used to control compilation")
 	  }
      }
 
--- document { readExamples,
---      TT "readExamples", " -- a variable used to control the compilation
---      of the interpreted code of the system.",
---      PARA,
---      SEEALSO "writeExamples"
---      }
-
--- document { writeExamples,
---      TT "writeExamples", " -- a variable used to control the compilation
---      of the interpreted code of the system.",
---      PARA,
---      SEEALSO "readExamples"
---      }
 
 document { "shield",
      TT "shield x", " -- executes the expression ", TT "x", ", temporarily
@@ -629,6 +614,7 @@ document { "///",
      }
 
 document { Net,
+     HEADLINE "the class of all nets",
      TT "Net", " -- the class of all nets.",
      PARA,
      "A net is a generalization of a string which is designed to facilitate
@@ -773,15 +759,6 @@ document { class,
      SEEALSO "classes"
      }
 
-document { "assignment",
-     MENU {
-     	  (TO "=", "   -- assignment"),
-     	  (TO ":=", "  -- assignment to a new local variable, or 
-	       installation of a method"),
-     	  (TO "<-", "  -- assignment via overlay")
-	  }
-     }
-
 document { "combinatorial functions",
      MENU {
 	  (TO "random", "               -- random real number or integer"),
@@ -826,11 +803,12 @@ document { "top level loop",
      }
 
 document { BasicList,
+     HEADLINE "the class of all basic lists",
      TT "BasicList", " -- the class of all things represented internally as a
      list.  A list is a sequence of expressions indexed by integers
      0, 1, ..., N-1, where N is the length of the sequence.",
      PARA,
-     "The reason for distinguishing ", TO "List", " from ", TO "BasicList", "
+     "The reason for distinguishing ", TO "List", " from ", TT "BasicList", "
      is so lists can be treated as vectors, without everything else
      implemented as a basic list inheriting that behavior.",
      PARA,
@@ -854,6 +832,7 @@ document { toSequence,
      }
 
 document { Boolean,
+     HEADLINE "the class of Boolean values",
      TT "Boolean", " -- the class whose two members are ", TO "true", " and
      ", TO "false", ".",
      PARA,
@@ -899,8 +878,7 @@ document { "numbers",
      }
 
 document { Symbol,
-     TT "Symbol", " -- denotes the class of all symbols.",
-     PARA,
+     HEADLINE "the class of all symbols",
      "Symbols are entered as an alphabetic character followed by a
      sequence of alphanumeric characters; case is significant.
      The single symbol character ' is regarded as alphabetic, so that
@@ -918,6 +896,7 @@ document { Symbol,
      }
 
 document { File,
+     HEADLINE "the class of all files",
      TT "File", " -- the class of all files.",
      PARA,
      "Files may be input files, output files, pipes, or sockets.

@@ -99,7 +99,8 @@ document { topicList,
      }
 
 document { topics,
-     TT "topics  ", " -- displays a list of topics on which help is available.",
+     HEADLINE "available help topics",
+     TT "topics", " -- displays a list of topics on which help is available.",
      PARA,
      "topics() -- Does the same in a function or file.",
      PARA,
@@ -107,6 +108,7 @@ document { topics,
      }
 
 document { apropos,
+     HEADLINE "symbols matching a patter",
      TT "apropos s", " -- displays a list of global symbols which match
      the pattern specified by the string ", TT "s", ".",
      PARA,
@@ -167,7 +169,7 @@ document { newClass,
      }
 
 document { MutableList,
-     TT "MutableList", " -- the class of all mutable Lists.",
+     HEADLINE "the class of all mutable lists",
      PARA,
      "Normally the entries in a mutable list are not printed, to prevent
      infinite loops in the printing routines.  To print them out, use 
@@ -183,7 +185,7 @@ document { MutableList,
      }
 
 document { lookup,
-     TT "lookup", " -- a function for looking up methods.",
+     HEADLINE "look up methods",
      PARA,
      NOINDENT,
      TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
@@ -206,7 +208,7 @@ document { lookup,
      }
 
 document { installMethod,
-     TT "installMethod", " -- a function for installing methods.",
+     HEADLINE "install methods",
      PARA,
      "Most users will use a different way of installing methods.",
      PARA,
@@ -236,6 +238,7 @@ document { installMethod,
      }
 
 document { "new",
+     HEADLINE "new objects of various types",
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR,
      NOINDENT,
@@ -340,30 +343,21 @@ document { NewOfFromMethod,
 
 document { Thing,
      HEADLINE "the class of all things",
-     TT "Thing", " -- the class of all things.",
-     PARA,
      "Everything in Macaulay 2 is a ", ITALIC "thing", ".  This 
      includes numbers, strings, and lists.  More complicated things such as 
      polynomials, groups, rings, and chain complexes are implemented
-     as ", ITALIC "hash tables", ".  The class of all things is ", TO "Thing", ".",
-     PARA,
-     "Operations on things:",
-     MENU {
-	  TO "assignment"
-	  }
+     as ", ITALIC "hash tables", ".  The class of all things is ", TO "Thing", "."
      }
 
 document { Nothing,
      HEADLINE "the empty class",
-     TT "Nothing", " -- the empty class.",
-     PARA,
      "This class is useful for representing the class of an argument
      which is missing.  It is also used as the parent for those things which
      are not themselves types, i.e., which do not have instances." 
      }
 
 document { Option,
-     TT "Option", " -- the class of all pairs x => y.",
+     HEADLINE "the class of all pairs x => y",
      PARA,
      "Such pairs are used as optional arguments for functions.  There
      is also a way to make new hash tables with ", TO "new", " by
@@ -391,11 +385,7 @@ document { (NewFromMethod, HashTable, List),
      the key ", TT "s", "."
      }
 
-document { OptionTable,
-     TT "OptionTable", " -- the class of those hash tables which are used
-     to store optional named parameters to functions.",
-     SEEALSO "==>"
-     }
+document { OptionTable, HEADLINE "the class of hash tables for optional arguments", SEEALSO "==>" }
 
 document { (symbol "==>", OptionTable, Function),
      TT "g = defs ==> fun", " -- produces a new function ", TT "g", " from 
@@ -531,9 +521,9 @@ document { "binary method",
      }
 
 document { "OptionsRegistry",
-     TT "OptionsRegistry", " -- a hash table used for recording the tables of
-     option names and their default values for those functions which accpet
-     optional arguments.",
+     HEADLINE "default values of optional arguments",
+     "A hash table used for recording the tables of option names and
+     their default values for those functions which accept optional arguments.",
      PARA,
      "If ", TT "f", " is a function which accepts optional arguments, then
      the ", TO "OptionTable", " for ", TT "f", " is stored as ", 
@@ -590,14 +580,17 @@ document { "specifying typical values",
      }
 
 document { "typicalValues",
-     TT "typicalValues", " -- a hash table used to store information about
-     the type of values typically returned by functions and methods.",
+     HEADLINE "types of values returned by functions",
+     "A hash table used to store information about the type of values
+     typically returned by functions and methods.",
      PARA,
      "This information is used only to build documentation automatically.",
+     EXAMPLE "typicalValues#sin",
      SEEALSO { "specifying typical values" }
      }
 
-document { TypicalValue,
+document { (method => TypicalValue),
+     HEADLINE "specify return value type",
      TT "TypicalValue => X", " -- an option to ", TO "method", "
      which specifies that values returned by the method function will
      typically be of type ", TT "X", ".",
@@ -608,6 +601,7 @@ document { TypicalValue,
      }
 
 document { method,
+     HEADLINE "make a new method function",
      TT "f = method()", " -- creates a method function",
      PARA,
      "The code above creates a method function which takes up to three 
@@ -625,10 +619,8 @@ document { method,
      SEEALSO {"Options", "methods", "OptionsRegistry"}
      }
 
-document { Associative,
-     TT "Associative", " -- an option name for ", TO "method", " which
-     allows associative methods to be created.",
-     PARA,
+document { method => Associative,
+     HEADLINE "allows associative methods to be created",
      NOINDENT,
      TT "f = method(Associative=>true)", " -- creates an associative
      method which will call upon the appropriate binary methods for its arguments 
@@ -637,23 +629,26 @@ document { Associative,
      "In the following example we install a method which isn't associative
      to illustrate the order of evaluation.",
      EXAMPLE {
-	  "f = method(Associative => true)",
+	  ///f = method(Associative => true)///,
 	  ///f(String,String) := (i,j) -> "(" | i | ")," | j;///,
       	  ///f("a","b","c","d")///,
-	  },
-     SEEALSO "method"
+	  }
      }
 
 document { size,
      TT "size x", " -- returns the size of ", TT "x", " which usually gives
      a rough indication of memory space required to store the object ", TT "x", ".",
      PARA,
-     "For a polynomial, the size is the number of terms."
+     "For a polynomial, the size is the number of terms.",
+     PARA,
+     "This function should be replaced by something more generally useful."
      }
+
 document { baseName,
      TT "baseName x", " -- returns the variable or symbol upon which a generator of a
      monoid or polynomial ring is based."
      }
+
 document { degree,
      TT "degree X", " -- returns the degree of a polynomial, vector, 
      matrix, monomial, or module.",
@@ -1000,40 +995,17 @@ document { "#?",
      }
 
 document { "_",
-     TT "x_i", " -- a binary operator which is used for various
-     mathematical operations that are customarily written with subscripts.",
-     PARA,
-     "A ", TO "binary method", " may be installed for ", TT "x_i", " with code like ",
-     PRE "          X _ Y := (x,i) -> ...",
-     "where X is the prospective class of x and Y is the class of i.",
-     PARA,
-     "Examples where methods have been installed:",
-     MENU {
-	  SHIELD (TO (symbol _, List, ZZ), " -- get an entry from a list"),
-	  SHIELD (TO (symbol _, Sequence, ZZ), " -- get an entry from a sequence"),
-	  SHIELD (TO (symbol _, List, List), " -- get a list of entries from a list or sequence"),
-	  SHIELD (TO (symbol _, ChainComplex, ZZ), " -- get a module from a chain complex"),
-	  SHIELD (TO (symbol _, Matrix, ZZ), " -- get a column from a matrix"),
-	  SHIELD (TO (symbol _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes"),
-	  SHIELD (TO (symbol _, Matrix, Sequence), " -- get an entry from a matrix"),
-	  SHIELD (TO (symbol _, Matrix, List), " -- get some columns from a matrix"),
-	  SHIELD (TO (symbol _, RingElement, RingElement), " -- get a coefficient from a polynomial"),
-	  SHIELD (TO (symbol _, Ring, ZZ), " -- get a generator from a ring"),
-	  SHIELD (TO (symbol _, Module, ZZ), " -- get a generator of a module"),
-	  SHIELD (TO (symbol _, Monoid, ZZ), " -- get a generator from a monoid"),
-	  SHIELD (TO (symbol _, Module, List), " -- get a map onto some generators of a module"),
-	  SHIELD (TO "Tor", " -- Tor functor"),
-	  SHIELD (TO "HH", " -- homology functor"),
-	  SHIELD (TO (symbol _, Vector, ZZ), " -- get an component from a vector"),
-	  SHIELD (TO (symbol _, SchurRing, List), " -- make an element of a Schur ring")
-	  }
+     "A binary operator which is used for various mathematical operations
+     that are customarily written with subscripts."
      }
 
 document { (symbol _, List, ZZ),
+     HEADLINE "get an entry from a list",
      TT "w_i", " -- selects an entry from a list."
      }
 
 document { (symbol _, Sequence, ZZ),
+     HEADLINE "get an entry from a sequence",
      TT "w_i", " -- selects an entry from a sequence."
      }
 
