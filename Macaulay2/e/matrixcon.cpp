@@ -31,12 +31,13 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, const FreeModule 
  : R(target->get_ring()),
    rows(target),
    cols(source),
-   deg(deg0),
    will_be_mutable(is_mutable)
 {
   entries.reserve(source->rank());
   for (int i=0; i<source->rank(); i++)
     entries.push_back(0);
+
+  deg = R->degree_monoid()->make_new(deg0);
 }
 
 void MatrixConstructor::append(vec v) 

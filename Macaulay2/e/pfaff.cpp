@@ -5,12 +5,12 @@
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
   : R(M0->get_ring()),
     M(M0),
-    pfaffs(new Matrix(R->make_FreeModule(1))),
     p(p0),
     I(0),
     row_set(p0)
 {
   endI = comb::binom(M->n_rows(), p);
+  pfaffs = MatrixConstructor(R->make_FreeModule(1),0,false);
 }
 
 PfaffianComputation::~PfaffianComputation()
@@ -25,7 +25,7 @@ int PfaffianComputation::step()
   comb::decode(I++, row_set.raw(), p);
   ring_elem r = calc_pfaff(row_set.raw(), p);
   if (!R->is_zero(r))
-    pfaffs->append(pfaffs->rows()->raw_term(r,0));
+    pfaffs.append(R->make_vec(0,r));
   else
     R->remove(r);
   return COMP_COMPUTING;
@@ -92,6 +92,15 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
     r[i] = r[i-1];
   r[0] = temp;
 
+  return result;
+}
+
+Matrix *Matrix::pfaffians(int p) const
+{
+  PfaffianComputation *d = new PfaffianComputation(this,p);
+  d->calc(-1);
+  Matrix *result = d->pfaffians();
+  deleteitem(d);
   return result;
 }
 

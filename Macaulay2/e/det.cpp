@@ -22,17 +22,17 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
 {
   if (do_exterior)
     {
-      FreeModule *F = M->rows()->exterior(p);
+      F = M->rows()->exterior(p);
       FreeModule *G = M->cols()->exterior(p);
       int *deg = R->degree_monoid()->make_new(M->degree_shift());
       R->degree_monoid()->power(deg, p, deg);
-      result = new Matrix(F,G,deg);
+      result = MatrixConstructor(F,G,deg,M0->is_mutable());
       R->degree_monoid()->remove(deg);
     }
   else
     {
-      FreeModule *F = R->make_FreeModule(1);
-      result = new Matrix(F);
+      F = R->make_FreeModule(1);
+      result = MatrixConstructor(F,0,M0->is_mutable());
     }
 
   if (do_trivial_case())
@@ -90,12 +90,9 @@ int DetComputation::step()
   if (!R->is_zero(r))
     {
       if (do_exterior)
-	{
-	  vec v = result->rows()->raw_term(r,this_row);
-	  result->rows()->add_to((*result)[this_col], v);
-	}
+	result.set_entry(this_row,this_col,r);
       else
-	result->append(result->rows()->raw_term(r,0));
+	result.append(R->make_vec(0,r));
     }
   else
     R->remove(r);
@@ -140,7 +137,7 @@ bool DetComputation::do_trivial_case()
 void DetComputation::clear()
 {
   if (do_exterior) return;
-  result = new Matrix(result->rows());
+  result = MatrixConstructor(F,0,M->is_mutable());
 }
 
 void DetComputation::set_next_minor(const int *rows, const int *cols)
@@ -317,6 +314,25 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
 
   return answer;
 }
+
+Matrix *Matrix::exterior(int p,int strategy) const
+{
+  DetComputation *d = new DetComputation(this,p,1,strategy);
+  d->calc(-1);
+  Matrix *result = d->determinants();
+  deleteitem(d);
+  return result;
+}
+
+Matrix *Matrix::minors(int p,int strategy) const
+{
+  DetComputation *d = new DetComputation(this,p,0,strategy);
+  d->calc(-1);
+  Matrix *result = d->determinants();
+  deleteitem(d);
+  return result;
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
