@@ -18,7 +18,7 @@ document { quote Resolution,
 
 resolution = method(
      Options => {
-	  Compute => true,
+	  StopBeforeComputation => false,
 	  LengthLimit => infinity,	  -- (infinity means numgens R)
 	  DegreeLimit => null,		  -- slant degree limit
 	  SyzygyLimit => infinity,	  -- number of min syzs found
@@ -52,12 +52,11 @@ document { quote resolution,
      "Optional arguments and flags:",
      MENU {
 	  (TO "Algorithm", "        -- which algorithm to use"),
-	  (TO "Compute", "          -- whether to start the computation"),
+	  (TO "StopBeforeComputation", " -- whether to stop the computation immediately"),
 	  (TO "DegreeLimit", "      -- compute only up to this degree"),
+	  (TO "HardDegreeLimit", "  -- always compute only up to this degree"),
 	  (TO "SyzygyLimit", "      -- stop when this number of syzygies are obtained"),
 	  (TO "PairLimit", "        -- stop when this number of pairs are handled"),
-	  (TO "NextExponentSize", " -- the number of bits to use for each
-	       exponent the next time expansion occurs"),
 	  (TO "LengthLimit", "      -- stop when the resolution reaches this length"),
 	  (TO "SortStrategy", "     -- specify strategy for sorting S-pairs")
 	  },
@@ -144,29 +143,28 @@ inf := t -> if t === infinity then -1 else t
 spots := C -> select(keys C, i -> class i === ZZ)
 
 resolutionByHomogenization := (M,options) -> (
-     R := ring M;
-     p := presentation R;
-     A := ring p;
-     k := coefficientRing A;
-     n := numgens A;
-     x := local x;
-     B := k[x_0 .. x_n, MonomialOrder => GRevLex];
-     forth := map(B,A,(vars B)_{0 .. n-1});
-     q := homogenize(generators gb forth p, B_n);
-     forceGB q;
-     S := B / ideal q;
-     forth = map(S,R,(vars S)_{0 .. n-1});
-     back := map(R,S, vars R | 1);
-     g := homogenize(generators gb forth presentation M,S_n);
-     forceGB g;
-     C := res (cokernel g, options);
-     complete C;
-     complete C.dd;
-     D := new ChainComplex;
-     D.ring = R;
-     scan(spots C, i -> D#i = back C#i);
-     scan(spots C.dd, i -> D.dd#i = map(D_(i-1),D_i,back C.dd#i));
-     D)
+     R    := ring M;
+     f    := presentation M;
+     p    := presentation R;
+     A    := ring p;
+     k    := coefficientRing A;
+     n    := numgens A;
+     A'   := k[Variables => n+1, MonomialOrder => GRevLex];
+     toA' := map(A',A,(vars A')_{0 .. n-1});
+     p'   := toA' p;
+     R'   := A'/(ideal p');
+     toR' := map(R',R,(vars R')_{0 .. n-1});
+     f'   := toR' f;
+     pH   := homogenize(generators gb p', A'_n);     	  forceGB pH;
+     RH   := A' / ideal pH;
+     toRH := map(RH, R', vars RH);
+     fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
+     MH   := cokernel fH;
+     C    := resolution(MH, options, 
+	  LengthLimit => if options.LengthLimit == infinity then n+1 else options.LengthLimit
+	  );
+     toR  := map(R, RH, vars R | 1);
+     toR C)
 
 resolutionBySyzygies := (M,options) -> (
      R := ring M;
@@ -190,7 +188,7 @@ resolutionBySyzygies := (M,options) -> (
 resolutionInEngine := (M,options) -> (
      R := ring M;
      degreelimit := (
-	  if class options.DegreeLimit === ZZ then {Options.DegreeLimit}
+	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
 	  else if degreelimit === null then degreelimit = {}
 	  else error "expected DegreeLimit to be an integer or null");
      maxlength := (
@@ -209,7 +207,7 @@ resolutionInEngine := (M,options) -> (
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
 	  harddegreelimit := (
-	       if class options.HardDegreeLimit === ZZ then {Options.HardDegreeLimit}
+	       if class options.HardDegreeLimit === ZZ then {options.HardDegreeLimit}
 	       else if harddegreelimit === null then harddegreelimit = {}
 	       else error "expected HardDegreeLimit to be an integer or null");
 	  W := new Resolution;
@@ -247,7 +245,7 @@ resolutionInEngine := (M,options) -> (
 		    inf options.PairLimit,
 		    0, 0, 0};                   -- MES: these are three other options,
 						-- to be filled in yet.
-	       if options.Compute then (
+	       if not options.StopBeforeComputation then (
 		    sendgg(ggPush W, 
 			   ggPush degreelimit,
 			   ggPush resOptions,

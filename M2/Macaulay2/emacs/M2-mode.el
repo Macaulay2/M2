@@ -3,6 +3,9 @@
 ;; (autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)
 ;;;;
 
+(defvar M2-mode-hook nil
+  "*Hook evaluated when first loading Macaulay 2 mode.")
+
 (autoload 'M2-dynamic-complete-symbol "M2.el"
   "Dynamic completion function for Macaulay 2 symbols." t)
 
@@ -27,6 +30,7 @@
   (make-local-variable 'comment-start-skip)
   (setq comment-start-skip "-- *")
   (local-set-key "\^C\t" 'M2-dynamic-complete-symbol)
+  (run-hooks 'M2-mode-hook)
   )
 
 (defvar M2-mode-abbrev-table nil

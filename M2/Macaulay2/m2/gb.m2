@@ -164,14 +164,13 @@ runGB := (G,ggcmds) -> (
      G.returnCode = eePopInt();
      )
 
-protect quote Compute
+protect quote StopBeforeComputation
 protect quote DegreeLimit
-protect quote GeneratorLimit
+protect quote BasisElementLimit
 protect quote SyzygyLimit
 protect quote PairLimit
 protect quote CodimensionLimit
-protect quote Minimal
-protect quote NextExponentSize
+protect quote StopWithMinimalGenerators
 protect quote Syzygies
 protect quote ChangeMatrix
 protect quote SyzygyRows
@@ -187,14 +186,14 @@ cl List := t -> (
 
 gb = method(
      Options => {
-	  Compute => true,
+	  StopBeforeComputation => false,
 	  DegreeLimit => {},
-	  GeneratorLimit => infinity,
+	  BasisElementLimit => infinity,
 	  SyzygyLimit => infinity,
 	  PairLimit => infinity,
 	  CodimensionLimit => infinity,
           SubringLimit => infinity,
-	  Minimal => false,
+	  StopWithMinimalGenerators => false,
 	  Syzygies => false,
 	  ChangeMatrix => false,
 	  SyzygyRows => infinity,
@@ -244,15 +243,15 @@ gb Matrix := (f,options) -> (
 	  };
      strat := processStrategy options.Strategy;
      G := makeGB(f, type, strat);
-     if options.Compute 
+     if not options.StopBeforeComputation 
      then runGB(G, (
 	       ggPush cl options.DegreeLimit,
 	       ggPush {
-		    inf options.GeneratorLimit,
+		    inf options.BasisElementLimit,
 		    inf options.SyzygyLimit,
 		    inf options.PairLimit,
 		    inf options.CodimensionLimit,
-		    bool options.Minimal,
+		    bool options.StopWithMinimalGenerators,
 		    inf options.SubringLimit,
 		    strat
 		    }));
@@ -270,28 +269,28 @@ document { quote gb,
      PARA,
      "Optional arguments and flags:",
      MENU {
-	  (TO "Compute", "          -- whether to start the computation"),
 	  (TO "DegreeLimit", "      -- compute only up to this degree"),
-	  (TO "GeneratorLimit", "   -- stop when this number of generators are
-	       obtained"),
-	  (TO "SyzygyLimit", "      -- stop when this number of syzygies are obtained"),
-	  (TO "PairLimit", "        -- stop when this number of pairs are handled"),
+	  (TO "BasisElementLimit", "   -- stop when this number of minimal generators is obtained"),
+	  (TO "SyzygyLimit", "      -- stop when this number of syzygies is obtained"),
+	  (TO "PairLimit", "        -- stop when this number of pairs is handled"),
 	  (TO "CodimensionLimit", " -- stop when this codimension is reached"),
-	  (TO "Minimal", "          -- whether to produce a set of minimal generators"),
-	  (TO "NextExponentSize", " -- the number of bits to use for each
-	       exponent the next time expansion occurs."),
-	  (TO "Syzygies", "         -- whether to collect syzygies"),
-	  (TO "ChangeMatrix", "     -- whether to produce the change of basis matrix"),
-	  (TO "SyzygyRows", "       -- if syzygies are to be collected, the number
-	       rows of the syzygy matrix to collect"),
-	  (TO "Strategy", "         -- change the strategy used to compute Groebner bases")
-
+	  (TO "Strategy", "         -- specify the strategy used to compute Groebner bases")
+	  },
+     "Optional arguments and flags for internal use only:",
+     MENU {
+	  (TO "ChangeMatrix", "              -- whether to produce the change of basis matrix"),
+	  (TO "StopBeforeComputation", "     -- whether to stop the computation immediately"),
+	  (TO "StopWithMinimalGenerators", " -- whether to produce a set of minimal generators"),
+	  (TO "Syzygies", "                  -- whether to collect syzygies"),
+	  (TO "SyzygyRows", "                -- if syzygies are to be collected, the number
+	       rows of the syzygy matrix to collect")
 	  },
      SEEALSO "GroebnerBasis"
      }
-document { quote Compute,
-     TT "Compute", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", ".",
+
+document { quote StopBeforeComputation,
+     TT "StopBeforeComputation", " -- keyword for an optional argument used with
+     ", TO "gb", " and ", TO "resolution", ", and ", TO "pushForward1", ".",
      PARA,
      "Tells whether to start the computation, with the default value
      being ", TT "true", ".  This can be useful when you want to obtain
@@ -303,32 +302,82 @@ document { quote DegreeLimit,
      ", TO "gb", ", ", TO "resolution", ", and ", TO "quotient", ", which specifies
      that the computation should halt after dealing with degree n.",
      PARA,
+     "This option is relevant only for homogeneous matrices.",
+     PARA,
      "For resolutions, one might get some matrix entries of slightly higher degree 
-     than requested."
+     than requested.",
+     EXAMPLE "R = ZZ/101[x,y,z,w]",
+     EXAMPLE "I = ideal(x*y-z^2,y^2-w^2)",
+     EXAMPLE "gb(I,DegreeLimit => 2)",
+     EXAMPLE "gb(I,DegreeLimit => 3)"
      }
-document { quote GeneratorLimit,
-     TT "GeneratorLimit", " -- keyword for an optional argument used with
-     ", TO "gb", "."
+document { quote BasisElementLimit,
+     TT "BasisElementLimit", " -- keyword for an optional argument used with
+     ", TO "gb", ", which can be used to specify that the computation should
+     stop after a certain number of Groebner basis elements have been 
+     discovered.",
+     EXAMPLE "R = ZZ/101[x,y,z,w]",
+     EXAMPLE "I = ideal(x*y-z^2,y^2-w^2,w^4)",
+     EXAMPLE "gb(I,BasisElementLimit => 2)",
+     EXAMPLE "gb(I,BasisElementLimit => 3)",
+     EXAMPLE "gb(I,BasisElementLimit => 4)",
+     EXAMPLE "gb(I,BasisElementLimit => 5)"
      }
 document { quote SyzygyLimit,
      TT "SyzygyLimit", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", "."
+     ", TO "gb", " and ", TO "resolution", ", which specifies that
+     the computation should stop after a certain number of syzygies
+     have computed.",
+     PARA,
+     "This option is relevant only if ", TT "Syzygies => true", " has
+     been specified.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,y,z,w]",
+     EXAMPLE "I = ideal(x*y-z^2,y^2-w^2,w^4)",
+     EXAMPLE "gb(I,SyzygyLimit => 1, Syzygies => true)",
+     EXAMPLE "syz oo",
+     EXAMPLE "gb(I,SyzygyLimit => 2, Syzygies => true)",
+     EXAMPLE "syz oo",
+     EXAMPLE "gb(I,SyzygyLimit => infinity, Syzygies => true)",
+     EXAMPLE "syz oo"
      }
 document { quote PairLimit,
      TT "PairLimit", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", "."
+     ", TO "gb", " and ", TO "resolution", ", which specifies that the
+     computation should be stopped after a certain number of S-pairs
+     have been reduced.",
+     EXAMPLE "R = QQ[x,y,z,w]",
+     EXAMPLE "I = ideal(x*y-z,y^2-w-1,w^4-3)",
+     EXAMPLE "gb(I,PairLimit => 1)",
+     EXAMPLE "gb(I,PairLimit => 2)",
+     EXAMPLE "gb(I,PairLimit => 3)"
      }
 document { quote CodimensionLimit,
      TT "CodimensionLimit", " -- keyword for an optional argument used with
-     ", TO "gb", "."
+     ", TO "gb", ", which specifies that the computation should stop when
+     the codimension of the zero set of the ideal (or submodule) generated
+     by the leading terms of the Groebner basis elements found so far reaches 
+     a certain limit.",
+     PARA,
+     "This option has not been implemented yet.",
+     PARA,
+     "Eventually the codimension of the ideal of leading terms is the
+     codimension of the original ideal."
      }
-document { quote Minimal,
-     TT "Minimal", " -- keyword for an optional argument used with
-     ", TO "gb", "."
-     }
-document { quote NextExponentSize,
-     TT "NextExponentSize", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", "."
+document { quote StopWithMinimalGenerators,
+     TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
+     with ", TO "gb", ", which, if the value provided is ", TT "true", "
+     indicates that the computation should stop as
+     soon as a complete list of minimal generators for the submodule
+     or ideal has been determined, even if the entire Groebner basis
+     has not yet been determined.",
+     PARA,
+     "Currently this option is implemented by stopping the computation
+     as soon as the those S-polynomials and generators, of the same 
+     degree as the generator of highest degree, have been processed.",
+     PARA,
+     "This option is for internal use only.  Use ", TO "mingens", "
+     instead."
      }
 document { quote Strategy,
      TT "Strategy => v", " -- an optional argument used with various routines 
@@ -370,7 +419,10 @@ document { quote LongPolynomial,
 
 document { quote Syzygies,
      TT "Syzygies", " -- keyword for an optional argument used with
-     ", TO "gb", "."
+     ", TO "gb", ", which indicates whether the syzygies should be
+     computed.",
+     PARA,
+     "This option is for internal use only."
      }
 
 document { quote ChangeMatrix,
@@ -383,7 +435,10 @@ document { quote ChangeMatrix,
 
 document { quote SyzygyRows,
      TT "SyzygyRows", " -- keyword for an optional argument used with
-     ", TO "gb", "."
+     ", TO "gb", ", which specifies how many rows of the syzygy matrix
+     to retain.",
+     PARA,
+     "This option is for internal use only."
      }
 
 mingens GroebnerBasis := (g,options) -> (

@@ -773,9 +773,11 @@ int GB_comp::coeff_of(const RingElement &h, int deg) const
 //---- Completion testing -----------------------------
 
 int GB_comp::computation_complete(const int * /* stop_degree */,
-				  int stop_gb, int stop_syz, 
-				  int /*stop_codim*/,
-				  int stop_pairs, int stop_min_gens,
+				  int stop_gb, 
+				  int stop_syz, 
+				  int stop_pairs,
+				  int /* stop_codim */,
+				  int stop_min_gens,
 				  int stop_subring)
      // Test whether the current computation is done.
      // Return COMP_DONE_DEGREE_LIMIT, COMP_DONE, COMP_DONE_GB_LIMIT, COMP_DONE_SYZ_LIMIT,

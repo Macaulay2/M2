@@ -7,11 +7,11 @@ mingens Module := (M,options) -> if M.?mingens then M.mingens else M.mingens = (
 	  if M.?relations then (
 	       c := mingens gb (M.generators|M.relations,
 		    options,
-		    Minimal=>true,Syzygies=>false,ChangeMatrix=>false);
+		    StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false);
 	       c * complement(M.relations // c))
 	  else mingens gb (M.generators, 
 	       options,
-	       Minimal=>true,Syzygies=>false,ChangeMatrix=>false)
+	       StopWithMinimalGenerators=>true,Syzygies=>false,ChangeMatrix=>false)
 	  )
      else (
 	  if M.?relations then complement M.relations
@@ -87,7 +87,7 @@ document { quote syz,
      PARA,
      "syz G -- retrieve the ", TO "Matrix", " of syzygies from the Groebner
      basis G.  The result may be empty if syzygies were not to be retained during the
-     calculation, or if the computation was not conitnued to a high enough degree.",
+     calculation, or if the computation was not continued to a high enough degree.",
      PARA,
      "This function takes the same optional arguments as ", TT "gb", ".",
      PARA,

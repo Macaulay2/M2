@@ -15,10 +15,10 @@ pushForward1 = method(
 	  UseHilbertFunction => true,  -- if possible
 	  MonomialOrder => EliminationOrder,
 				       -- EliminationOrder, ProductOrder, LexOrder
-	  Minimal => false,            -- determine the minimal generators of the subring
-	  GeneratorLimit => infinity,  -- number of generators of GB in the subring
+	  StopWithMinimalGenerators => false,            -- determine the minimal generators of the subring
+	  BasisElementLimit => infinity,  -- number of generators of GB in the subring
 
-	  Compute => true,
+	  StopBeforeComputation => false,
 	  DegreeLimit => {},
 	  PairLimit => infinity
 	  }
@@ -61,9 +61,9 @@ pushtest := (f,M,options) -> (
 	f#comp#0
     else (
 	gboptions := new OptionTable from {
-			Compute=>options.Compute,
-			DegreeLimit=>options.DegreeLimit,
-			PairLimit=>options.PairLimit};
+			StopBeforeComputation => options.StopBeforeComputation,
+			DegreeLimit => options.DegreeLimit,
+			PairLimit => options.PairLimit};
 	m1 = f#comp#0;
 	g := gb(m1,gboptions);
 	result := f#comp#1 g;
