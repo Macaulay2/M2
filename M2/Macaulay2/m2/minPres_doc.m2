@@ -8,7 +8,7 @@ document {
 	  "R" => {"a quotient ring of the form ", TT "R = S/I"}
 	  },
      Outputs => {
-	  "Q" = {"an minimally presented isomorphic quotient ring ", TT "S'/J"}
+	  "Q" => {"an minimally presented isomorphic quotient ring ", TT "S'/J"}
 	  },
      PARA "The function ", TT "minPres", " is written so that it stores 
      the map from ", TT "R", " to ", TT "Q", ".  The map is stored 

@@ -80,7 +80,7 @@ isDocumentableThing     Thing := key -> (
 packageTag = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
 packageTag   Symbol := key -> package key
 packageTag   String := key -> (
-     r := scan(packages, pkg -> if pkg#"documentation"#?key then break pkg);
+     r := scan(packages, pkg -> if pkg#"raw documentation"#?key then break pkg);
      if r === null then currentPackage else r)
 packageTag  Package := identity
 packageTag Sequence := key -> youngest \\ package \ key
@@ -235,7 +235,7 @@ packageTag DocumentTag := DocumentTag.Package
 hasDocumentation := key -> isDocumentableThing key and (
      tag := makeDocumentTag key;
      pkg := DocumentTag.Package tag;
-     pkg =!= null and pkg#"documentation"#?(DocumentTag.FormattedKey tag))
+     pkg =!= null and pkg#"raw documentation"#?(DocumentTag.FormattedKey tag))
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
@@ -308,8 +308,8 @@ file := null
 -----------------------------------------------------------------------------
 
 extractBody := x -> if x.?Description then x.Description
-getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
-getPackage := key -> scan(value \ values PackageDictionary, pkg -> if pkg#?"documentation" and pkg#"documentation"#?key then break pkg)
+getRecord := (pkg,key) -> pkg#"raw documentation"#key	    -- for Databases, insert 'value' here
+getPackage := key -> scan(value \ values PackageDictionary, pkg -> if pkg#?"raw documentation" and pkg#"raw documentation"#?key then break pkg)
 getDoc := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
@@ -471,9 +471,9 @@ document Sequence := args -> (
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
-     if currentPackage#"documentation"#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
+     if currentPackage#"raw documentation"#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
      opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key(key,val)));
-     currentPackage#"documentation"#currentNodeName = opts;
+     currentPackage#"raw documentation"#currentNodeName = opts;
      currentNodeName = null;
      )
 
@@ -481,7 +481,7 @@ document Sequence := args -> (
 -- getting help from the documentation
 -----------------------------------------------------------------------------
 
-topicList = () -> sort flatten apply(values PackageDictionary, p -> keys (value p)#"documentation")
+topicList = () -> sort flatten apply(values PackageDictionary, p -> keys (value p)#"raw documentation")
 
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
@@ -546,7 +546,7 @@ headline = method(SingleArgumentDispatch => true)
 headline DocumentTag := tag -> (
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
-     if pkg =!= null and pkg#"documentation"#?fkey and pkg#"documentation"#fkey#?Headline then pkg#"documentation"#fkey#Headline
+     if pkg =!= null and pkg#"raw documentation"#?fkey and pkg#"raw documentation"#fkey#?Headline then pkg#"raw documentation"#fkey#Headline
      else headline DocumentTag.Key tag			    -- revert to old method
      )
 headline Thing := memoize (				    -- save this stuff, too!

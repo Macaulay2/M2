@@ -87,7 +87,8 @@ newPackage(String) := opts -> (title) -> (
 	  "mutable symbols" => {},
 	  "old debuggingMode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
-	  "documentation" => new MutableHashTable,
+	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
+	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
 	  "example inputs" => new MutableHashTable,
 	  "top node name" => if opts.TopNodeName === null then title else opts.TopNodeName,
 	  "exported symbols" => {},

@@ -113,7 +113,7 @@ net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
-net Option := z -> net expression z
+net Option := z -> net z#0 | " => " | net z#1
 
 Net == Net := (x,y) -> x === y
 Net == String := (n,s) -> (
