@@ -207,8 +207,6 @@ gc_cpp.o : ../../include/config.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
-ALLOBJ += cxx-wrappers.o
-
 ifeq ($(GC_FOR_NEW),yes)
 # replace the builtin c++ memory allocation routines by calls to gc.
 ALLOBJ += gc_cpp.o
