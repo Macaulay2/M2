@@ -1827,6 +1827,68 @@ export rawDeleteColumns(e:Expr):Expr := (
      );
 setupfun("rawDeleteColumns",rawDeleteColumns);
 
+export rawMatrixColumnOperation2(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 8 then WrongNumArgs(8) else
+     when s.0 is M:RawMatrix do
+     when s.1 is c1:Integer do 
+     when s.2 is c2:Integer do 
+     when s.3 is a1:RawRingElement do
+     when s.4 is a2:RawRingElement do
+     when s.5 is b1:RawRingElement do
+     when s.6 is b2:RawRingElement do
+     when s.7 is opposite:Boolean do
+     toExpr(Ccode(bool,"IM2_MutableMatrix_column_2by2(",
+	       "(Matrix *)", M, ",",
+	       toInt(c1), ",",
+	       toInt(c2), ",",
+	       "(RingElement*)", a1, ",",
+	       "(RingElement*)", a2, ",",
+	       "(RingElement*)", b1, ",",
+	       "(RingElement*)", b2, ",",
+	       opposite.v,
+	       ")"))     
+     else WrongArgBoolean(8)
+     else WrongArg(7,"a raw ring element")
+     else WrongArg(6,"a raw ring element")
+     else WrongArg(5,"a raw ring element")
+     else WrongArg(4,"a raw ring element")
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArgInteger(1)
+     else WrongNumArgs(8));
+setupfun("rawMatrixColumnOperation2",rawMatrixColumnOperation2);
+
+export rawMatrixRowOperation2(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 8 then WrongNumArgs(8) else
+     when s.0 is M:RawMatrix do
+     when s.1 is r1:Integer do 
+     when s.2 is r2:Integer do 
+     when s.3 is a1:RawRingElement do
+     when s.4 is a2:RawRingElement do
+     when s.5 is b1:RawRingElement do
+     when s.6 is b2:RawRingElement do
+     when s.7 is opposite:Boolean do
+     toExpr(Ccode(bool,"IM2_MutableMatrix_row_2by2(",
+	       "(Matrix *)", M, ",",
+	       toInt(r1), ",",
+	       toInt(r2), ",",
+	       "(RingElement*)", a1, ",",
+	       "(RingElement*)", a2, ",",
+	       "(RingElement*)", b1, ",",
+	       "(RingElement*)", b2, ",",
+	       opposite.v,
+	       ")"))     
+     else WrongArgBoolean(8)
+     else WrongArg(7,"a raw ring element")
+     else WrongArg(6,"a raw ring element")
+     else WrongArg(5,"a raw ring element")
+     else WrongArg(4,"a raw ring element")
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArgInteger(1)
+     else WrongNumArgs(8));
+setupfun("rawMatrixRowOperation2",rawMatrixRowOperation2);
+
 -----------------------------------------------------------------------------
 -- monomial ideals
 
