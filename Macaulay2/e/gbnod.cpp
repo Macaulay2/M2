@@ -852,7 +852,13 @@ enum ComputationStatusCode gb2_comp::hilbertNumerator(RingElement *&result)
     hf_comp = new hilb_comp(R->get_degree_ring(), gbmatrix);
 #endif
 
+#if 1
+#warning code commented out
+  enum ComputationStatusCode retval;
+#else
   enum ComputationStatusCode retval = hf_comp->calc(-1);
+#endif
+
   if (retval != COMP_DONE) return retval;
   hf = hf_comp->value();
   result = hf;
