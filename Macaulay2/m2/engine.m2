@@ -71,12 +71,12 @@ optionSizes := hashTable {
      }
 fix := key -> if optionSizes#?(key,MonSize) then optionSizes#(key,MonSize) else key
 warn := key -> (
-     newkey := GroupLex;
+     newkey := GroupRevLex;
      stderr << "--warning: for rawMonomialOrdering, replacing monomial ordering " << key << " by " << newkey << endl;
      newkey)
 optionInverses := hashTable {
      Lex => key -> GroupLex,
-     RevLex => warn,
+     RevLex => key -> GroupRevLex,
      GRevLex => warn
      }
 fix1 := key -> if invert and optionInverses#?key then optionInverses#key key else key
