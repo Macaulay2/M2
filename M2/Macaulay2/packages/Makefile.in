@@ -15,11 +15,15 @@ distclean::; rm -f Makefile
 all :: $(PACKAGES:.m2=.installed)
 
 %.installed : %.m2
-	M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, PackagePrefix => \"./tmp/\")" -e "exit 0" \
+	M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
 	touch "$@"
 
-clean::; rm -rf tmp
-install: all; tar cf - -C tmp . | tar xfpv - -C $(encapdir)
+clean::; rm -rf tmp tmp-packages *.installed
+install: all; tar cf - -C tmp-packages . | tar xfpv - -C $(encapdir)
+
+# ./tmp is used by examples in CacheFileName.m2
+CacheFileName.installed : tmp
+tmp : ; mkdir tmp
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
