@@ -190,7 +190,11 @@ loadprint(s:string,StopIfError:bool):Expr := (
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,StopIfError,newLocalDictionary());
+     	  saveLocalFrame := localFrame;
+	  d := newLocalDictionary();
+     	  localFrame = newLocalFrame(d);
+	  r := readeval3(file,true,StopIfError,d);
+     	  localFrame = saveLocalFrame;
 	  t := if !(s==="-") then close(file) else 0;
 	  when r is Error do r 
 	  else (

@@ -705,7 +705,7 @@ op := s -> if operatorSet#?s then (
 	  }
      )
 
-optionFor := s -> unique select( value \ values globalDictionary(), f -> class f === Function and (options f)#?s)
+optionFor := s -> unique select( value \ values first globalDictionaryList(), f -> class f === Function and (options f)#?s)
 
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
@@ -728,7 +728,7 @@ documentation Symbol := s -> (
      )
 
 documentation Type := X -> (
-     syms := values globalDictionary();
+     syms := values first globalDictionaryList();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);

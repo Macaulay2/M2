@@ -102,7 +102,7 @@ methods Type := F -> (
 		    )
 	       )
 	  );
-     scan(pairs globalDictionary(),
+     scan(pairs first globalDictionaryList(),
 	  (Name,sym) -> (
 	       x := value sym;
 	       if instance(x,Type) and not seen#?x then (
@@ -133,7 +133,7 @@ methods Thing := F -> (
      if F === HH then return join(methods homology, methods cohomology);
      seen := new MutableHashTable;
      found := new MutableHashTable;
-     scan(pairs globalDictionary(),
+     scan(pairs first globalDictionaryList(),
 	  (Name,sym) -> (
 	       x := value sym;
 	       if instance(x,Type) and not seen#?x then (
