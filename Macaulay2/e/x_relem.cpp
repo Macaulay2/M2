@@ -630,6 +630,18 @@ const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,
   return a->fraction(R,b);
 }
 
+const M2_IntegerOrNull rawSchurDimension(const RingElement *f)
+{
+  const SchurRing *S = f->get_ring()->cast_to_SchurRing();
+  if (S == 0)
+    {
+      ERROR("expected a polynomial over a Schur ring");
+      return 0;
+    }
+  ring_elem result = S->dimension(f->get_value());
+  return MPZ_VAL(result);
+}
+
 
 
 #if 0

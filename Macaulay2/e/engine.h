@@ -556,6 +556,11 @@ extern "C" {
 						    const RingElement *a,
 						    const RingElement *b); /* drg: connected rawFraction*/
 
+  const M2_IntegerOrNull rawSchurDimension(const RingElement *f); /* Dan: please connect */
+  /* f should be a polynomial whose base ring was created using rawSchurRing
+     (otherwise NULL is returned).  If so, the dimension of the corresponding
+     (virtual) GL(n) representation is returned. */
+
   /**************************************************/
   /**** FreeModule routines *************************/
   /**************************************************/
