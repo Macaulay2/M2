@@ -182,7 +182,7 @@ export convert(e:ParseTree):Code := (
      when e
      is s:StartDictionary do (
 	  if s.dictionary.framesize != 0
-	  then Code(openScopeCode(s.dictionary,convert(s.body)))
+	  then Code(openDictionaryCode(s.dictionary,convert(s.body)))
 	  else convert(s.body)
 	  )
      is w:For do Code(
@@ -507,7 +507,7 @@ export codePosition(e:Code):Position := (
      is f:ternaryCode do f.position
      is f:multaryCode do f.position
      is f:forCode do f.position
-     is f:openScopeCode do codePosition(f.body)
+     is f:openDictionaryCode do codePosition(f.body)
      is f:functionCode do codePosition(f.parms)
      is v:CodeSequence do codePosition(v.0)-- it would be better to get the surrounding parens...
      );
@@ -659,7 +659,7 @@ export eval(c:Code):Expr := (
 	  x := ForFun(n);
 	  localFrame = localFrame.outerFrame;
 	  x)
-     is n:openScopeCode do (
+     is n:openDictionaryCode do (
 	  localFrame = Frame(localFrame,n.dictionary.frameID,
 	       new Sequence len n.dictionary.framesize do provide nullE);
 	  x := eval(n.body);

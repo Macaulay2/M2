@@ -229,7 +229,7 @@ export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
-export openScopeCode := {dictionary:Dictionary, body:Code};
+export openDictionaryCode := {dictionary:Dictionary, body:Code};
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
      framesize:int,
@@ -246,7 +246,7 @@ export functionCode := {
 export Code := (exprCode or variableCode 
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
-     or CodeSequence or openScopeCode or functionCode
+     or CodeSequence or openDictionaryCode or functionCode
      or assignmentCode or parallelAssignmentCode
      );
 
