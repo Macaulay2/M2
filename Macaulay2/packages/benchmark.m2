@@ -23,6 +23,14 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 
 -- Results:
 
+-- beginning computation Mon Dec 23 00:06:16 CST 2002
+-- Linux u126.math.uiuc.edu 2.4.18-18.7.xsmp #1 SMP Wed Nov 13 19:01:42 EST 2002 i686 unknown
+--    Dell_dualX/2600 
+-- Macaulay2 0.9, compiled with gcc 3.0
+-- res39: 0.285138 seconds
+-- resG25: 4.98438 seconds
+--loaded benchmark.m2 from /home/17/dan/tmp/M2-linux/Macaulay2-0.9/lib/Macaulay2-0.9/packages/benchmark.m2
+
 -- beginning computation Mon Dec 31 19:22:33 CST 2001
 -- Linux capybara 2.4.18 #25 Sun Jul 28 15:59:31
 -- Macaulay2 0.9.2, compiled with gcc 2.95
