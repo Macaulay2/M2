@@ -157,8 +157,6 @@ public:
 class DenseMutableMatrix : public MutableMatrix
 {
 public:
-  static DenseMutableMatrix *zero_matrix(const Ring *R, int nrows, int ncols);
-
   virtual DenseMutableMatrix * cast_to_DenseMutableMatrix() { return this; }
 };
 
@@ -169,7 +167,7 @@ class DenseMutableMatrixRing : public DenseMutableMatrix
 
   void initialize(int nrows, int ncols, ring_elem *array);
 public:
-  static DenseMutableMatrixRing *zero_matrix(int nrows, int ncols);
+  static DenseMutableMatrixRing *zero_matrix(const Ring *R, int nrows, int ncols);
 
   virtual DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() { return this; }
 };
