@@ -18,7 +18,7 @@ addStartFunction(
 	       	    filepath{getenv "M2HOME","packages"}
 		    });
 	  documentationPath = {
-	       filepath{"cache","doc"},
+	       filepath{"cache","doc"},			    -- this is where documentation is written
 	       filepath{getenv "M2HOME","m2","cache","doc"},
 	       filepath{getenv "M2HOME","packages","cache","doc"},
 	       filepath{getenv "M2HOME","packages","D-modules","cache","doc"}
@@ -28,10 +28,11 @@ addStartFunction(
 -----------------------------------------------------------------------------
 -- the phase encoding
 -----------------------------------------------------------------------------
-writingDocDatabase        := () -> phase === 2 or phase === 4
 writingExampleInputFiles  := () -> phase === 2
 writingTestInputFiles     := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
+writingHtmlFiles          := () -> phase === 4
+writing                   := () -> phase === 2 or phase === 4
 docExtension := () -> (
      if phase === 2 then "-tmp"		  -- writing, to be renamed -pre externally
      else if phase === 3 then "-pre"	  -- reading
@@ -43,7 +44,7 @@ docExtension := () -> (
 -----------------------------------------------------------------------------
 local DocDatabase
 local nodeBaseFilename
-local exampleOutputFilename				    -- nodeBaseFilename | ( ".out" or ".tmp" )
+local exampleOutputFilename				    -- nodeBaseFilename | ".out"
 local exampleCounter
 local exampleInputFile
 local exampleResultsFound
@@ -67,7 +68,7 @@ addStartFunction(
 	       stderr << "--warning: couldn't open help file " << t << endl;
 	       new MutableHashTable))
      )
-if writingDocDatabase() then (
+if writing() then (
      DocDatabase = openDatabaseOut docFilename();
      addEndFunction(() -> (close DocDatabase; DocDatabase = null; ));
      )
@@ -377,16 +378,13 @@ exprCounter := 0
 file := null
 fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 
-htmlFilename := fkey -> (
-     v := cacheFileName(documentationPath, fkey);
-     if v =!= {} then first v else cacheFileName(first documentationPath, fkey)
-     ) | ".html"
-
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
 checkForNodeBaseFilename := nodeName -> (
-     nodeBaseFilename = cacheFileName(documentationPath, nodeName); -- returns a list
+     nodeBaseFilename = cacheFileName(
+	  if writing() then take(documentationPath,1) else documentationPath,
+	  nodeName); -- returns a list
      assert( class nodeBaseFilename === List );
      if #nodeBaseFilename > 1 then (
 	  stderr << "warning: documentation node '" << nodeName << "' occurs in multiple locations:" << endl;
@@ -413,8 +411,6 @@ checkForExampleOutputFile := () -> (
 		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'"
 		    << endl;
 		    );
-	       if fileExists (nodeBaseFilename | ".tmp")
-	       then exampleOutputFilename = nodeBaseFilename | ".tmp" 
 	       );
 	  if exampleOutputFilename =!= null then (
 	       exampleResults = separate("\1", get exampleOutputFilename);
@@ -466,7 +462,22 @@ processExamples := (docBody) -> (
 	  );
      docBody)
 -----------------------------------------------------------------------------
---
+-- produce html page
+-----------------------------------------------------------------------------
+writeHtmlPage := (nodeName,doc) -> (
+     nodeBaseFilename | ".html" << html HTML { 
+	  HEAD TITLE {nodeName, headline nodeName},
+	  BODY { 
+	       -- buttonBar key, 
+	       HR{}, 
+	       documentation nodeName,
+	       HR{}, 
+	       -- buttonBar key 
+	       }
+	  }
+     << close)
+-----------------------------------------------------------------------------
+-- 'document' function
 -----------------------------------------------------------------------------
 document = method()
 document List := z -> (
@@ -479,7 +490,9 @@ document List := z -> (
      -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
      checkForNodeBaseFilename nodeName;
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
-     storeDoc(skey,toExternalString processExamples fixup body);
+     body = processExamples fixup body;
+     storeDoc(skey,toExternalString body);
+     if writingHtmlFiles() then writeHtmlPage (nodeName, body);
      )
 
 -----------------------------------------------------------------------------
@@ -898,6 +911,8 @@ documentation Function := f -> SEQ {
 
 documentation Option := v -> (
      (fn, opt) -> (
+	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
+	  default := (options fn)#opt;
 	  SEQ { 
 	       title v,
 	       synopsis v,
@@ -905,10 +920,7 @@ documentation Option := v -> (
 	       BOLD "See also:",
 	       SHIELD MENU {
 		    SEQ{ "Default value: ",
-			 if class (options fn)#opt =!= ZZ
-			 then TOH toString (options fn)#opt 
-			 else     toString (options fn)#opt 
-			 },
+			 if class default =!= ZZ then TOH toString default else toString default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
 		    }
@@ -1386,6 +1398,11 @@ text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 
+htmlFilename := fkey -> (
+     v := cacheFileName(documentationPath, fkey);
+     if v =!= {} then first v else cacheFileName(first documentationPath, fkey)
+     ) | ".html"
+
 html TO := x -> (
      fkey := formatDocumentTag x#0;
      concatenate ( 
@@ -1547,21 +1564,3 @@ html TOC := x -> (
 	  }
      )
 
-
-end
-
--- here is an idea for making the html pages, too:
-
-
-scan(cacheFileNameKeys(""), key -> cacheFileName("",key) | ".html" 
-     << html HTML { 
-	       HEAD TITLE {key, headline key},
-	       BODY { 
-		    -- buttonBar key, 
-		    HR{}, 
-		    documentation key,
-		    HR{}, 
-		    -- buttonBar key 
-		    }
-	       }
-     << close)

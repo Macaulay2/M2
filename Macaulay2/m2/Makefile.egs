@@ -5,11 +5,14 @@ include ../../../../include/config.Makefile
 ifeq "$(DUMPDATA)" "yes"
 ARGS := -q -silent \
 	'-e loaddata "../../../$(DUMPDATAFILE)"' \
-	-- -x -s $(srcdir)/../m2/eg.m2
+	-- \
+	'-e phase=3' \
+	-x -s $(srcdir)/../m2/eg.m2
 else
 ARGS := -q -silent -x -s \
 	'-e path = { "../../../m2/" }' \
-	'-e phase=1' $(srcdir)/../m2/setup.m2 '-e phase=0' \
+	'-e phase=3' \
+	 $(srcdir)/../m2/setup.m2 \
 	$(srcdir)/../m2/eg.m2
 endif
 

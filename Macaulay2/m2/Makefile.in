@@ -104,9 +104,9 @@ ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
-	 # phase 1: read *.m2 and dump data
+	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty '-ephase=1' \
+	time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
 		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
@@ -122,7 +122,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
 
 ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made : \
 		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
-	 # phase 2: make the example files, the test files, and $@
+	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
@@ -143,7 +143,7 @@ clean::; rm -f .gdbinit
 clean :: ; rm -f .gdb-files
 .gdb-run-it:
 	echo 'echo \n' >$@
-	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
+	echo 'run @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" "-e runStartFunctions()"' >>$@
 clean :: ; rm -f .gdb-run-it
 ##
 backup : CVS/Entries
@@ -161,7 +161,7 @@ cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
-	 # phase 3: perhaps running the example input files
+	 #------ phase 3: running new example input files: cache/doc/*.example
 	$(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
 
 all :: phase4
@@ -169,7 +169,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
-	 # phase 4: make $@
+	 #------ phase 4: making $@, cache/doc/*.html
 	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=4' @srcdir@/setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
