@@ -1,6 +1,7 @@
 // Copyright 2004 Michael E. Stillman
 
 #include "computation.hpp"
+#include "buffer.hpp"
 
 ComputationOrNull *
 Computation::set_stop_conditions(M2_bool always_stop,
@@ -44,6 +45,11 @@ Computation::Computation()
 
 Computation::~Computation()
 {
+}
+
+void Computation::text_out(buffer &o)
+{
+  o << "-- computation --";
 }
 
 // Local Variables:

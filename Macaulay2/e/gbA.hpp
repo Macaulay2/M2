@@ -147,7 +147,7 @@ private:
   /* Making the minimal GB */
   void poly_auto_reduce(vector<POLY> &mat);
 
-  virtual bool stop_conditions_ok();
+  virtual bool stop_conditions_ok() { return true; }
 
 public:
   //////////////////////////
