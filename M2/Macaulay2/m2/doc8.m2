@@ -1057,7 +1057,49 @@ document { order,
 
 document { isField, Headline => "whether something is a field",
      "No computation is done -- the question is whether the ring was
-     explicitly constructed a field."
+     explicitly constructed a field.",
+     SEEALSO "toField"
+     }
+
+document { toField, Headline => "declare that a ring is a field",
+     Synopsis {
+	  "toField R",
+	  "R" => "a ring",
+     	  null
+	  },
+     "Use this to declare that a ring ", TT "R", " is known to be a field.  This
+     is accomplished by setting ", TT "R.isField", " to be ", TT "true", ",
+     and, in case the ring is a ring handled by the engine, informing the
+     engine.  Polynomial rings over rings declared to be fields support
+     Groebner basis operations.",
+     PARA,
+     "If the engine evenutually discovers that some nonzero element of ", TT "R", "
+     a unit, an error will be signalled.  The user may then use
+     ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ",
+     or ", TO "getZeroDivisor", " to obtain a zero divisor in ", TT "R", ".
+     If a ring is probably a field, it can be used as a field until a
+     contradiction is found, and this may be a good way of discovering
+     whether a ring is a field."
+     }
+
+document { getNonUnit, Headline => "retrieve a previously discovered non-unit",
+     Synopsis => {
+	  "r = getNonUnit R",
+	  "R" => "a ring in which division by a non-unit has been attempted",
+	  "r" => "the non-unit"
+	  },
+     "Warning: this function does not work yet for divisions attempted in the course
+     of computing a Groebner basis or resolution.",
+     SEEALSO { "toField", "getZeroDivisor" }
+     }
+
+document { getZeroDivisor, Headline => "retrieve a previously discovered zero divisor",
+     Synopsis => {
+	  "r = getZeroDivisor R",
+	  "R" => "a ring in which a zero-divisor has been found",
+	  "r" => "the zero divisor"
+	  },
+     SEEALSO { "toField", "getNonUnit" }
      }
 
 document { isAffineRing, Headline => "whether something is an affine ring",

@@ -6,6 +6,7 @@ RR.char = 0
 RR.ConversionFormat = ConvertMissing
 RR.InverseMethod = x -> 1/x
 RR.degreeLength = 0
+RR.isField = true
 
 RR == ZZ := (x,y) -> x === y+0.
 ZZ == RR := (y,x) -> x === y+0.

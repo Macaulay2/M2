@@ -34,7 +34,6 @@ rationals.m2
 reals.m2
 complex.m2
 quotient.m2
-product.m2
 monoids.m2
 powers.m2
 orderedmonoidrings.m2

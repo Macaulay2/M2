@@ -53,6 +53,18 @@ net ChainComplex := C -> if C.?name then C.name else (
 	  a := s#0;
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
+
+texMath ChainComplex := C -> if C.?name then C.name else (
+     complete C;
+     s := sort spots C;
+     if # s === 0 then "0"
+     else (
+	  a := s#0;
+	  b := s#-1;
+	  horizontalJoin between(" \\leftarrow ", apply(a .. b,i -> texMath C_i))))
+
+tex ChainComplex := C -> "$" | texMath C | "$"
+
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of MutableHashTable
 ChainComplexMap.synonym = "chain complex map"

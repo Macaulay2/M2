@@ -74,7 +74,7 @@ describe MutableHashTable := x -> (
      if x.?name then (
 	  n := x.name;
 	  remove(x, symbol name);
-	  d := expression x;
+	  d := net x;
 	  x.name = n;
 	  d)
      else net x
@@ -169,12 +169,17 @@ net HashTable := x -> (
      )
 net MutableHashTable := x -> if x.?name then x.name else horizontalJoin ( net class x, "{...}" )
 
-tex Net := n -> concatenate(
-     ///\vtop{///,
-	  newline,
-	  apply(netRows n, x -> (///\hbox{///, tex TT x, ///}///, newline)),
-	  ///}///,
-     newline
+tex Net := n -> (
+     if height n === 1 and depth n === 0 then first netRows n
+     else concatenate(					    -- this is not quite right, yet
+     	  ///\vtop{///,
+	       newline,
+	       apply(netRows n, x -> (///\hbox{///, tex TT x, ///}///, newline)),
+	       ///}///,
+     	  newline
+     	  )
      )
+
+texMath Net := n -> if height n === 1 and depth n === 0 then texMath first netRows n else tex n
 
 erase symbol string

@@ -57,8 +57,6 @@ RR.synonym = "real number"
 RR.texMath = ///{\mathbb R}///
 Ring.name = "Ring"
 Ring.synonym = "ring"
-Field.name = "Field"
-Field.synonym = "field"
 
 uniform = (x) -> same apply(x,class)
 

@@ -35,6 +35,10 @@ tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
 
 texMath PolynomialRing := R -> (
      if R.?tex then R.tex
+     else if R.?name then (
+	  if 1 === #R.name then R.name
+	  else "\\text{" | R.name | "}"
+	  )
      else (texMath last R.baseRings)|(texMath expression monoid R)
      )
 

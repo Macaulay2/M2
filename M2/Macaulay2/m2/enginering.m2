@@ -97,7 +97,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
                  if R.?name then hold R.name
 		 else (expression frac) (expression last R.baseRings))
 
-freduce := (f) -> (numerator f)/(denominator f)
+-- freduce := (f) -> (numerator f)/(denominator f)
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
@@ -133,16 +133,16 @@ frac EngineRing := R -> (
 	  F.generators = apply(generators R, m -> promote(m,F));
 	  F + F := (x,y) -> (
 	       sendgg(ggPush x, ggPush y, ggadd);
-	       freduce new F);
+	       new F);
 	  F - F := (x,y) -> (
 	       sendgg ( ggPush x, ggPush y, ggsubtract );
-	       freduce new F);
+	       new F);
 	  F * F := (x,y) -> (
 	       sendgg ( ggPush x, ggPush y, ggmult);
-	       freduce new F);
-	  F / F := (x,y) -> (
+	       new F);
+	  fraction(F,F) := F / F := (x,y) -> (
 	       sendgg ( ggPush x, ggPush y, ggdiv);
-	       freduce new F);
+	       new F);
 	  fraction(R,R) := (r,s) -> (
 	       -- need a better method
 	       r = promote(r,F);
@@ -504,6 +504,15 @@ RingElement / QQ := (f,g) -> (
 	  );
      f / g)
 
+fraction(RingElement,RingElement) := (r,s) -> (
+     R := ring r;
+     S := ring s;
+     if R === S then (
+	  frac R;
+	  fraction(r,s))
+     else error "numerator and denominator not in the same ring"
+     )
+
 RingElement / RingElement := RingElement =>
 ZZ / RingElement := RingElement / ZZ :=
 (f,g) -> (
@@ -511,10 +520,8 @@ ZZ / RingElement := RingElement / ZZ :=
      S := class g;
      R / S := (
 	  if R === S then (
-	       F := frac R; 
-	       (r,s) -> ( 
-	  	    ((r,s) -> fraction(r,s)) reduce (r,s)
-	  	    )
+	       frac R; 
+	       (r,s) -> fraction (r,s)
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) / y

@@ -4,6 +4,7 @@ ZZ.frac = QQ
 QQ#1 = 1/1
 QQ#0 = 0/1
 QQ.char = 0
+QQ.isField = true
 toString QQ := x -> toString numerator x | "/" | toString denominator x
 QQ.ConversionFormat = ConvertApply((x,y) -> x/y, ConvertInteger, ConvertInteger)
 QQ.ConvertToExpression = ConvertApply((x,y)->expression(x/y),ConvertInteger,ConvertInteger)

@@ -286,7 +286,7 @@ Function.GlobalReleaseHook = (X,x) -> (
      if Symbols#x === X then remove(Symbols,x);
      )
 
--- the last function restarted
+-- the last functions restarted
 addStartFunction(
      () -> (
 	  if not member("-q",commandLine)
@@ -295,5 +295,14 @@ addStartFunction(
 	       or
 	       getenv "HOME" =!= "" and tryload(concatenate(getenv "HOME", "/init.m2"),oldLoad)
 	       )
+	  )
+     )
+
+addStartFunction(
+     () -> (
+	  TeXmacsMode = member("--texmacs",commandLine);
+	  if TeXmacsMode then (
+	       << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
+	       );
 	  )
      )

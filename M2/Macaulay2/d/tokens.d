@@ -342,10 +342,8 @@ export arrayClass := newtypeof(visibleListClass);
 export ringClass := newtypeof(typeClass);
        newbasicringtype():HashTable := newHashTable(ringClass,thingClass);
 export integerClass := newbasicringtype();
-export fieldClass := newtypeof(ringClass);
-       newbasicfieldtype():HashTable := newHashTable(fieldClass,thingClass);
-export rationalClass := newbasicfieldtype();
-export doubleClass := newbasicfieldtype();
+export rationalClass := newbasicringtype();
+export doubleClass := newbasicringtype();
 export nothingClass := newbasictype();
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (

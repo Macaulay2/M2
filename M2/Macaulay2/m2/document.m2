@@ -935,7 +935,10 @@ cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 html String := htmlLiteral
 mathML String := htmlLiteral
 tex String := cmrLiteral
-texMath String := s -> concatenate("\\text{", cmrLiteral s, "}")
+texMath String := s -> (
+     if #s === 1 then s
+     else concatenate("\\text{", cmrLiteral s, "}")
+     )
 text String := identity
 
 text Thing := toString
@@ -954,14 +957,15 @@ tex HashTable := x -> (
      )
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
-
 mathML Symbol := x -> concatenate("<ci>",string x,"</ci>")
 
-texMath Boolean := texMath Symbol := 
-tex Boolean := tex Symbol :=
+tex Function := x -> "--Function--"
+
+tex Boolean := tex Symbol := 
 text Symbol := text Boolean := 
 html Symbol := html Boolean := string
 
+texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
 html MarkUpList := x -> concatenate apply(x,html)
 text MarkUpList := x -> concatenate apply(x,text)
