@@ -129,7 +129,7 @@ document { "manipulating modules",
 	  "cover N",
 	  },
      "Some simple operations on modules:",
-     SHIELD UL {
+     UL {
 	  TO (symbol ^, Module, ZZ),
 	  TO (symbol ++, Module, Module),
 	  TO (symbol **, Module, Module),
@@ -226,7 +226,7 @@ document { "extracting information from chain complexes",
       	  "C = res coker matrix {{x,y^2,z^3}};",
 	  },
      "Some simple functions for discovering the shape of ", TT "C", ".",
-     SHIELD UL {
+     UL {
 	  TO (length, ChainComplex),
 	  TO (max, ChainComplex),
 	  TO (min, ChainComplex),
@@ -459,8 +459,7 @@ document { "variables and symbols",
 
 document { "functions",
      Headline => "an overview",
-     "In this section we present an overview of functions.  For details, 
-     see ", TO "Function", ".",
+     "In this section we present an overview of functions.",
      PARA,
      UL {
 	  TO "using functions",
@@ -469,6 +468,7 @@ document { "functions",
 	  TO "making functions with a variable number of arguments",
 	  TO "using functions with optional arguments",
 	  TO "making new functions with optional arguments",
+	  TO "Function"
 	  }
      }
 
@@ -975,6 +975,10 @@ document { "loops",
      at once.",
      EXAMPLE {
 	  "for i from 10 to 30 when i<15 list 100*i do print i"
+	  },
+     UL {
+	  TOH "while",
+	  TOH "for"
 	  }
      }
 
@@ -1083,7 +1087,9 @@ fghij"///,
 	  "substring(5,x)",
 	  "substring(5,2,x)",
 	  },
-     "The class of all strings is ", TO "String", "."
+     UL {
+     	  SEQ {"The class of all strings is ", TO "String", "."}
+	  }
      }
 
 document { "nets",
@@ -1130,7 +1136,11 @@ document { "nets",
 	  "peek oo",
 	  "stack v"
 	  },
-     "The class of all nets is ", TO "Net", "."
+     UL {
+	  SEQ {
+     	       "The class of all nets is ", TO "Net", "."
+	       }
+	  }
      }
 
 document { "lists",
@@ -1191,9 +1201,12 @@ document { "lists",
      TO "take", ", and ",
      TO "unique", ".",
      PARA,
-     "The class of all lists is ", TO "List", ", and the class of all
-     basic lists, useful for deriving news types of list that do not
-     inherit methods for treating lists as vectors, is ", TO "BasicList", "."
+     UL {
+	  TOH "List",
+	  TOH "VisibleList",
+	  TOH "BasicList",
+	  TOH "Array"
+	  }
      }
 
 document { "sequences",
@@ -1252,8 +1265,10 @@ document { "sequences",
 	  "toSequence oo",
 	  },
      "Other functions for dealing especially with sequences
-     include ", TO "sequence", " and ", TO "deepSplice", ".  The class of all
-     sequences is ", TO "Sequence", "."
+     include ", TO "sequence", " and ", TO "deepSplice", ".",
+     UL {
+	  TOH "Sequence"
+	  }
      }
 
 document { "hash tables",
@@ -1992,7 +2007,7 @@ document { "what a class is",
      types of its arguments whose details the user doesn't need to know.",
      PARA,
      "For more details, see one of the topics below.",
-     SHIELD UL {
+     UL {
 	  TO "class",
 	  TO "parent",
 	  TO "instance",
@@ -2001,7 +2016,7 @@ document { "what a class is",
 	  TO "new",
 	  },
      "For related topics, see one of the following.",
-     SHIELD UL {
+     UL {
 	  TO "uniform",
 	  TO "Thing",
 	  TO "Nothing",

@@ -51,7 +51,7 @@ document { "Copyright and license",
      ", TO "COPYING", ".",
      PARA,
      "Various free libraries have been compiled into Macaulay 2.",
-     SHIELD UL {
+     UL {
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "GNU MP",
@@ -192,25 +192,13 @@ document { "internals",
      }
 
 document { "Reading the Documentation",
-     "The documentation is divided into the main parts, the ", TO "User's Guide", "
-     and the ", TO "Reference Manual", ".  The reference manual is organized mainly
-     according to the types of things, and reflects the particular way we've
-     programmed the system.  For example, if you want to find out about 
-     matrices, then you might get there by clicking first on ", TO "Thing", ",
-     then click on ", TO "Type", ", and then on ", TO "Matrix", ".  The user's
-     guide is organized more according to mathematical topics that might occur to
-     an initial user, and might be a good place to look first.",
-     PARA,
      "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT ("Macaulay2-" | version#"VERSION" | "/html"), " 
+     The directory ", TT (LAYOUT#"packagehtml" "Main"), " 
      contains the documentation in html form, suitable for viewing with a web 
-     browser such as lynx or Netscape, and this is the best way to view 
-     it.  The command ", TT "M2-help", " will start your favorite web browser
-     and point direct it to the web pages there.  Each documentation page has a text
-     box for entering a search string.  This will work if you view the documentation
-     at our web site; it will work on your local machine only if you or your
-     system administrator has already installed ", TT "htdig", ", which is a 
-     free indexing package available at ", TT "http://www.htdig.org/", ".",
+     browser, and this is the best way to view it.  The command ", TT "M2-help", "
+     will start your favorite web browser and point direct it to the web 
+     pages there.  Each documentation page has a text box for entering a
+     search string.  This works by viewing the documentation at our web site.",
      PARA,
      "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."
@@ -286,52 +274,6 @@ load "canEmbed.out"
 load "divisors.out"
 load "elementary.out"
 
-document { "Reference Manual",
-     "This section is intended to offer detailed documentation on
-     every aspect of the system of interest to users.  We organize the
-     software and therefore the documentation primarily according to
-     the types of objects, and secondarily according to the functions
-     available for dealing with objects of a given type.  For example,
-     if you want to know how to get a projective resolution of an ideal,
-     you should first find either the section dealing with ideals or 
-     the section dealing with chain complexes.  More briefly, look first
-     for the noun and then for the verb.",
-     PARA,
-     "In line with that advice, we list here some types of things
-     with particular mathematical interest.",
-     SHIELD UL {
-	  TO "Ring",
-	  TO "Ideal",
-	  TO "Matrix",
-	  TO "Module",
-	  TO "RingMap",
-	  TO "GroebnerBasis",
-	  TO "ChainComplex",
-	  TO "Variety",
-	  },
-     "Some types of things of interest to the programmer and user:",
-     SHIELD UL {
-	  TO "Function",
-	  TO "VisibleList",
-	  TO "File"
-	  },
-     "A list of the operators:",
-     UL {
-	  SHIELD TO "operators",
-	  },
-     "We've mentioned that our software is organized according to the
-     types of things there are.  The types form a hierarchy; for example,
-     a polynomial ring is a type of ring, and an affine variety is a
-     type of variety.  At the top of the hierarchy sits ", TO "Thing", ";
-     everything is a thing, and every type is a type of thing.  The
-     documentation is organized here as a view of the hierarchy from the
-     top down, so you can find everything (eventually) in the following
-     section, its subsections, or the sections it refers to.",
-     UL {
-     	  TO "Thing"
-	  }
-     }
-
 document {  "Developer's Corner",
      UL {
 	  TO "engine",
@@ -351,8 +293,6 @@ document { "Macaulay 2",
      UL {
 	  (TO "User's Guide", " -- This is the place to get started"),
  	  (TO "Mathematical Tutorials", " -- Several extended examples"),
-	  (TO "Reference Manual", " -- Complete documentation for every type and function in Macaulay 2"),
-	  (TO "Developer's Corner", " -- For experts only")
 	  }
      }
 
@@ -508,7 +448,7 @@ document { "syntax",
 document { "debugging",
      Headline => "an overview",
      "Here are some debugging tools.",
-     SHIELD UL {
+     UL {
 	  TO "assert",
 	  TO "benchmark",
 	  TO "browse",
@@ -544,7 +484,7 @@ document { "debugging",
 document { "system",
      Headline => "an overview",
      "Loading files:",
-     SHIELD UL {
+     UL {
 	  TO "autoload",
 	  TO "initialization file",
 	  TO "input",
@@ -552,12 +492,12 @@ document { "system",
 	  TO "needs"
 	  },
      "Echoing characters:",
-     SHIELD UL {
+     UL {
 	  TO "clearEcho",
 	  TO "setEcho"
 	  },
      "Dumping and restoring the state of the system:",
-     SHIELD UL {
+     UL {
 	  TO "dumpdata",
 	  TO "loaddata",
 	  TO "restart",
@@ -565,7 +505,7 @@ document { "system",
 	  TO "addEndFunction"
 	  },
      "Interface to the operating system:",
-     SHIELD UL{
+     UL{
 	  TO "top level loop",
 	  TO "alarm",
 	  TO "currentDirectory",
@@ -584,19 +524,18 @@ document { "system",
 	  TO "wait"
 	  },
      "Variables with information about the state of the current process:",
-     SHIELD UL {
+     UL {
 	  TO "commandLine",
 	  TO "environment",
 	  TO "version"
 	  },
      "Miscellaneous commands:",
-     SHIELD UL {
+     UL {
 	  TO "getWWW"
 	  },
      "Dealing with the garbage collector:",
-     SHIELD UL {
+     UL {
 	  TO "collectGarbage",
-	  -- TO "gcDump"
 	  }
      }
 
@@ -645,7 +584,7 @@ document { "help functions",
      PARA,
      NOINDENT,
      "Functions for accessing the documentation:",
-     SHIELD UL {
+     UL {
 	  TO "apropos",
 	  TO "briefDocumentation",
 	  TO "documentation",
@@ -655,20 +594,16 @@ document { "help functions",
 	  TO "topics"
 	  },
      "How to write documentation yourself:",
-     SHIELD UL {
+     UL {
 	  TO "document",
 	  TO "hypertext",
 	  },
      "Output formatting routines:",
-     SHIELD UL {
+     UL {
 	  TO "html",
 	  TO "mathML",
 	  TO "tex",
 	  TO "text",
-	  },
-     "Some internals:",
-     SHIELD UL {
-	  TO "Documentation",
 	  },
      SEEALSO "Reading the Documentation"
      }
