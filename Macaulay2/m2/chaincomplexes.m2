@@ -1359,6 +1359,8 @@ map(ChainComplex,ChainComplex,Function) := (C,D,f,options) -> (
      h
      )
 
+map(ChainComplex,ChainComplex,ChainComplexMap) := (C,D,f,options) -> map(C,D,k -> f_k)
+
 document { (map,ChainComplex,ChainComplex,Function),
      TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
      complex ", TT "C", " which in degree ", TT "k", " is the map provided

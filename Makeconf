@@ -7,7 +7,7 @@ ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
-export VERSION	      := 0.8.44
+export VERSION	      := 0.8.45
 export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
