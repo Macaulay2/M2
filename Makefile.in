@@ -115,8 +115,6 @@ manufactured.tgz : Makefile
 		Macaulay2/m2/cache-tmp/Examples/*.m2 \
 		Macaulay2/m2/cache-tmp/Tests/*.m2 \
 		Macaulay2/html
-################################# lsm
-lsm:; sendmail lsm@execpc.com <Macaulay2.LSM
 ################################# configure
 # make this one last
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h config.Makefile
