@@ -26,7 +26,8 @@ trim QuotientRing := options -> (R) -> (
      A/(trim(ideal f,options)))
 trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = (
      if isFreeModule M then M
-     else if isHomogeneous M then (
+     else (
+          -- this can help sometimes, even if M is *not* homogeneous
 	  g := mingens(M,options);
 	  relns := if M.?relations then mingens(image M.relations,options);
 	  N := (
@@ -37,7 +38,6 @@ trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = 
 	       );
 	  N.trim = N;
 	  N)
-     else M
      )
 
 syz Matrix := Matrix => options -> (f) -> (

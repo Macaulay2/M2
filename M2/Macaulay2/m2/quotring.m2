@@ -197,8 +197,13 @@ Ring / RingElement := Ring / List := Ring / Sequence := QuotientRing => (R,f) ->
 
 presentation QuotientRing := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
-	  sendgg (ggPush R, gggetideal);
-	  getMatrix ultimate(ambient,R)
+	  S := ambient R;
+	  f := gens ideal R;
+	  while class S === QuotientRing do (		    -- untested code
+	       f = lift(f,ambient S) | gens ideal S;
+	       S = ambient S;
+	       );
+	  f
 	  )
      )
 
