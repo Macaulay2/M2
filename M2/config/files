@@ -1,5 +1,6 @@
 Macaulay2/Makefile
 Macaulay2/basictests/Makefile
+Macaulay2/bin/Makefile
 Macaulay2/book/Makefile
 Macaulay2/c/Makefile
 Macaulay2/compat/Makefile
