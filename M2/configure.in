@@ -56,6 +56,14 @@ case "$FACTORY" in
    *) echo configure: error: unrecognized value --with-factory="$withval" >&2; exit 1 ;;
 esac
 
+GMP=provided
+AC_SUBST(GMP)
+AC_ARG_WITH(gmp,[  --with-gmp              use system gmp library],GMP="$withval")
+case "$GMP" in
+   provided|yes) ;;
+   *) echo configure: error: unrecognized value --with-gmp="$withval" >&2; exit 1 ;;
+esac
+
 # 'enable' options
 
 DUMPDATA=yes
