@@ -1096,7 +1096,7 @@ document {
      TT "cohomology", " -- a method name available for computing expressions
      of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
      PARA,
-     "If it is intended that ", TT "i", " be of class ", TT "ZZ", ", ", TT "M", " be of
+     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", ", TT "M", " be of
      class ", TT "A", ", and ", TT "N", " be of 
      class ", TT "B", ", then the method can be installed with ",
      PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
@@ -1111,7 +1111,7 @@ document {
      TT "homology", " -- a method name available for computing expressions
      of the forms ", TT "HH_i(X) and", " ", TT "HH_i(M,N).",
      PARA,
-     "If it is intended that ", TT "i", " be of class ", TT "ZZ", ", 
+     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", 
      ", TT "M", " be of class ", TT "A", ", and ", TT "N", " be of
      class ", TT "B", ", then the method can be installed with ",
      PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",

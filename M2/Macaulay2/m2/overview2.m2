@@ -1969,7 +1969,7 @@ document {
 	  "instance(33,ZZ)",
 	  "instance(33,String)"
 	  },
-     "The corresponding mathematical idea is that ", TT "ZZ", " is the set of
+     "The corresponding mathematical idea is that ", TO "ZZ", " is the set of
      all integers.",
      PARA,
      "The class of all classes or types is called ", TO "Type", ".",

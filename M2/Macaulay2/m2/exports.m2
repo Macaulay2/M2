@@ -847,7 +847,6 @@ export (
 	symbol PackageDictionary,
 	symbol pack,
 	symbol package,
-	symbol packageTag,
 	symbol pad,
 	symbol pager,
 	symbol PairLimit,
