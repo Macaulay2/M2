@@ -996,13 +996,23 @@ tex PARA := x -> concatenate(///
 ///,
      apply(x,tex))
 
-text PARA := x -> concatenate(newline, newline, apply(x,text))
+
+trimline := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
+
+text PARA := x -> toString (
+     x = toList x;
+     x = flatten apply(x, s -> if class s === String then trimline \ lines s else s);
+     x = prepend("    ",x);
+     x = net \ x;
+     x = select(x, n -> width n > 0);
+     x = horizontalJoin between(" ",x);
+     wrap("",x)) | newline
 
 text EXAMPLE := x -> concatenate apply(#x, i -> text PRE concatenate("i",toString (i+1)," : ",x#i))
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
-text ExampleTABLE := x -> "\n\n" | toString ("        " | boxNets apply(toList x, y -> text y#1)) | "\n\n"
+text ExampleTABLE := x -> "\n" | toString (boxNets apply(toList x, y -> text y#1)) | "\n\n"
 net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
 
 tex TABLE := x -> concatenate applyTable(x,tex)
