@@ -175,7 +175,6 @@ help2 := (o,s) -> (
 	       hr o;
 	       );
 	  );
-     close o;
      )
 
 help = s -> (
@@ -191,7 +190,8 @@ help = s -> (
      else (
 	  o << endl;
 	  help2 (o,s);
-	  )
+	  );
+     if o =!= stdout then close o;
      )
 
 topics = Command (
