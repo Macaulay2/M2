@@ -1255,15 +1255,21 @@ isAbsolute := url -> (
      "mailto:" == substring(url,0,7)
      )
 
--- htmlFilename := key -> first cacheFileName(documentationPath, key) | ".html"
-htmlFilename = s -> currentHTMLDirectory | toFilename s | ".html"
-
-currentHTMLDirectory = "./"
+buildDirectory = "./"
+htmlFilename = (pkgname,nodename) -> (
+     if pkgname === ""
+     then concatenate(
+     	  buildDirectory, "/share/doc/Macaulay2/currentVersion/html/", toFilename nodename, ".html"
+     	  )
+     else concatenate(
+     	  buildDirectory, "/share/doc/Macaulay2/packages/", pkgname, "/html/", toFilename nodename, ".html"
+     	  )
+     )
 
 rel := url -> (
      if isAbsolute url 
      then url
-     else relativizeFilename(currentHTMLDirectory, url)
+     else relativizeFilename(htmlDirectory, url)
      )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"

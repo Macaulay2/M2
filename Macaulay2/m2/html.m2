@@ -16,7 +16,7 @@ documentationMemo := memoize documentation		    -- for speed
 
 BUTTON := (s,alt) -> (
      -- if not fileExists s then error ("file ", s, " doesn't exist");
-     s = relativizeFilename(currentHTMLDirectory,s);
+     s = relativizeFilename(htmlDirectory,s);
      if alt === null
      then LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center>")
      else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
@@ -233,7 +233,7 @@ makeHTML = (topnode,docdatabase0) -> (
      sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
      htmlDefaults#"BODY" = concatenate(
 	  "BACKGROUND=\"",				    -- "
-	  relativizeFilename(currentHTMLDirectory,checkFile(gifpath|"recbg.jpg")),
+	  relativizeFilename(htmlDirectory,checkFile(gifpath|"recbg.jpg")),
 	  "\""						    -- "
 	  );
      lastKey = null;

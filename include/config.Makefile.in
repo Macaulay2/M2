@@ -95,7 +95,8 @@ libm2dir = $(libdir)/Macaulay2/$(PACKAGE_VERSION)
 cachedir = $(libm2dir)/cache
 libexecdir = $(libm2dir)/libexec
 
-sharedir = $(datadir)/Macaulay2/$(PACKAGE_VERSION)
+datam2dir = $(datadir)/Macaulay2/
+sharedir = $(datam2dir)/$(PACKAGE_VERSION)
 m2dir = $(sharedir)/m2
 
 docm2reldir = $(docm2dir)/$(PACKAGE_VERSION)
