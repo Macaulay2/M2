@@ -22,6 +22,7 @@ export (
 --     minSatPPD,
 --     sortByDegree
 
+load "PrimaryDecomposition/GTZ.m2"
 load "PrimaryDecomposition/Shimoyama-Yokoyama.m2"
 load "PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
 

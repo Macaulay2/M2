@@ -89,8 +89,7 @@ GTZ0 Ideal := (I) -> (
      ms := independentSets(I, Limit=>1);
      if #ms == 0 then (I, ideal(0_(ring I)))
      else (
-     	  C := flatt(I,ms_0);
-     	  F := (intersect values C)_0;
+	  F := flattener(I,ms_0);
      	  (J,G) := saturation(I,F);
      	  (J, I + ideal(G))))
 
