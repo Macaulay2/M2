@@ -453,7 +453,7 @@ char **argv;
 	       putstderr("--Copyright 1993-2002, D. R. Grayson and M. E. Stillman");
 	       putstderr("--Singular-Factory " 
 		    FACTORYVERSION
-		    ", copyright 1993-2001, G.-M. Greuel, et al.");
+		    ", copyright 1991-2002, G.-M. Greuel et al.");
 	       sprintf(buf,"--Singular-Libfac %s, copyright 1996-2001, M. Messollen",
 		    get_libfac_version());
 	       putstderr(buf);
@@ -461,7 +461,7 @@ char **argv;
 	       sprintf(buf,"--PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
 	       putstderr(buf);
 #              endif
-# if 0
+# if 1
 	       if (GC_ALPHA_VERSION == GC_NOT_ALPHA) {
 		 sprintf(buf,
 			 "--GC %d.%d, copyright, H-J. Boehm, A. J. Demers",

@@ -157,7 +157,7 @@ AC_ARG_WITH(encapdir,
 
 AC_SUBST(GC_FOR_NEW)
 AC_ARG_ENABLE(gc_for_new,
-    AC_HELP_STRING(--enable-gc-for-new,use gc instead of builtin_new),
+    AC_HELP_STRING(--enable-gc-for-new,use gc instead of malloc for c++ 'new' and 'delete' operators),
     GC_FOR_NEW="$enableval",
     GC_FOR_NEW=no)
 

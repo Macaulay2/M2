@@ -860,6 +860,17 @@ listFrame(s:Sequence):Expr := Expr(
 	  nextHash(),
 	  true));	  
 
+numFrames(f:Frame):int := (
+     n := 0;
+     while f.scopenum > 0 do (n = n+1; f = f.next);
+     n);
+
+listFrames(f:Frame):Expr := list(
+     new Sequence len numFrames(f) do (
+	  while f.scopenum > 0 do (provide listFrame(f.values); f = f.next);
+	  )
+     );     
+
 frame(e:Expr):Expr := (
      when e
      is sc:SymbolClosure do Expr(listFrame(sc.frame.values))
@@ -868,6 +879,16 @@ frame(e:Expr):Expr := (
      is CompiledFunction do Expr(listFrame(emptySequence))
      else WrongArg("a function"));
 setupfun("frame", frame);
+
+frames(e:Expr):Expr := (
+     when e
+     is sc:SymbolClosure do Expr(listFrames(sc.frame))
+     is fc:FunctionClosure do Expr(listFrames(fc.frame))
+     is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
+     is CompiledFunction do Expr(list(listFrame(emptySequence)))
+     else WrongArg("a function"));
+setupfun("frames", frames);
+
 
 netWidth(e:Expr):Expr := (
      when e
