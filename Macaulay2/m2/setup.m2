@@ -11,10 +11,10 @@ File << Thing  := File => (x,y) -> printString(x,string y)     -- provisional
 if class Manipulator =!= Symbol then error ///attempted to load "setup.m2" a second time///
 
 Symbols = new MutableHashTable
-GlobalAssignHook Function := (X,x) -> (
+Function.GlobalAssignHook = (X,x) -> (
      if not Symbols#?x then Symbols#x = X;
      )
-GlobalReleaseHook Function := (X,x) -> (
+Function.GlobalReleaseHook = (X,x) -> (
      -- error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
      if Symbols#x === X then remove(Symbols,x);
      )
@@ -24,8 +24,8 @@ new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulat
 Manipulator.name = "Manipulator"
 Manipulator Database := Manipulator File := (m,o) -> m#0 o
 
-GlobalAssignHook Manipulator := (X,x) -> if not Symbols#?x then Symbols#x = X
-GlobalReleaseHook Manipulator := (X,x) -> if Symbols#x === X then remove(Symbols,x)
+Manipulator.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X
+Manipulator.GlobalReleaseHook = (X,x) -> if Symbols#x === X then remove(Symbols,x)
 
 Manipulator Nothing := (m,null) -> null
 File << Manipulator := File => (o,m) -> m#0 o
@@ -104,7 +104,7 @@ applyMethod := (m,x) -> if x === null then x else (
 
 outputSymbols = new MutableHashTable
 
-Print Thing := x -> (
+Thing.Print = x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
@@ -121,7 +121,7 @@ Print Thing := x -> (
      applyMethod(AfterPrint,x);
      )
 
-NoPrint Thing := x -> (
+Thing.NoPrint = x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
      s := value concatenate("symbol ",o);
@@ -259,8 +259,11 @@ if OLDENGINE then (
      erase symbol newEngine;
      erase symbol monomialOrdering;
      remove(ZZ,newDegreesRing);
+     remove(Sequence,newDegreesRing);
      remove(ZZ,newDegreesMonoid);
+     remove(Sequence,newDegreesMonoid);
      erase symbol clone;
+     remove(Sequence,clone);
      )
 erase symbol OLDENGINE
 erase symbol outputSymbols
@@ -270,7 +273,7 @@ if phase === 1 then scanPairs(symbolTable(),
      (name,sym) -> if not writableGlobals#?sym then protect sym
      )
 
-GlobalReleaseHook Function := (X,x) -> (
+Function.GlobalReleaseHook = (X,x) -> (
      stderr << "warning: " << toString X << " redefined" << endl;
      if Symbols#x === X then remove(Symbols,x);
      )

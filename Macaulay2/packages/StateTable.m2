@@ -38,8 +38,8 @@ fixStateTableEntry(Thing,Thing) := (a,s) -> {a,s}
 
 new StateTable from List := (StateTable,v) -> hashTable splice (fixStateTableEntry \ v)
 names := new MutableHashTable
-GlobalAssignHook StateTable := (X,x) -> names#x = toString X
-GlobalReleaseHook StateTable := (X,x) -> remove(names,x)
+StateTable.GlobalAssignHook = (X,x) -> names#x = toString X
+StateTable.GlobalReleaseHook = (X,x) -> remove(names,x)
 
 net StateTable := x -> if names#?x then names#x else (lookup(net,parent StateTable)) x
 

@@ -174,7 +174,7 @@ htmlMarkUpType := s -> (
      off := "</" | s | ">";
      t -> concatenate(on, apply(t,html), off))
 
-GlobalAssignHook MarkUpType := (X,x) -> (
+MarkUpType.GlobalAssignHook = (X,x) -> (
      if not x.?name then (
 	  x.Symbol = X;
 	  x.name = string X;
@@ -441,7 +441,7 @@ headline := memoize (
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SHIELD SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
+     if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
      )
 -----------------------------------------------------------------------------
 
@@ -452,13 +452,13 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU (SHIELD \ TOH \ sort (formatDocumentTag \ s))
- menu := s -> MENU (SHIELD \ TOH \ formatDocumentTag \ s)
+smenu := s -> MENU (TOH \ sort (formatDocumentTag \ s))
+ menu := s -> SHIELD MENU (TOH \ formatDocumentTag \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
-vowels := hashTable apply(characters "aeiouAEIOU", i -> i => true)
+vowels := set characters "aeiouAEIOU"
 indefinite := s -> concatenate(if vowels#?(s#0) then "an " else "a ", s)
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
@@ -538,8 +538,8 @@ documentation Symbol := s -> (
 	  usage s,
 	  op s,
      	  type s,
-	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, smenu a, PARA{}},
-	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, smenu b, PARA{}} 
+	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, SHIELD smenu a, PARA{}},
+	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, SHIELD smenu b, PARA{}} 
      	  }
      )
 
@@ -562,9 +562,9 @@ documentation Type := X -> (
 	       " is also called ", indefinite X.synonym, ".", PARA{}},
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
 	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, menu d, PARA{}},
-	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, smenu a, PARA{}},
-	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
-	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, smenu e, PARA{}},
+	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, SHIELD smenu a, PARA{}},
+	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, SHIELD smenu c, PARA{}},
+	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
 	  })
 
 documentation HashTable := x -> (
@@ -573,14 +573,14 @@ documentation HashTable := x -> (
 	  title x, 
 	  usage x,
      	  type x,
-	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, smenu c, PARA{}},
+	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, SHIELD smenu c, PARA{}},
 	  })
 
 fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, smenu b, PARA{}} )
+     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, SHIELD smenu b, PARA{}} )
 
 optargs := method(SingleArgumentDispatch => true)
 
@@ -590,13 +590,13 @@ optargs Function := f -> (
      o := options f;
      if o =!= null then SEQ {
 	  "Optional arguments :", PARA{},
-	  smenu apply(keys o, t -> f => t), PARA{}})
+	  SHIELD smenu apply(keys o, t -> f => t), PARA{}})
 
 optargs Sequence := s -> (
      o := options s;
      if o =!= null then SEQ {
 	  "Optional arguments :", PARA{}, 
-	  smenu apply(keys o, t -> s => t), PARA{}}
+	  SHIELD smenu apply(keys o, t -> s => t), PARA{}}
      else optargs s#0)
 
 typicalValue := k -> (
@@ -628,14 +628,14 @@ documentation Option := v -> (
 	       title v, 
 	       usage v,
 	       "See also:",
-	       MENU {
+	       SHIELD MENU {
 		    SEQ{ "Default value: ",
 			 if class (options fn)#opt =!= ZZ
-			 then SHIELD TOH toString (options fn)#opt 
-			 else            toString (options fn)#opt 
+			 then TOH toString (options fn)#opt 
+			 else     toString (options fn)#opt 
 			 },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", SHIELD TOH formatDocumentTag fn },
-		    SEQ{ "Option name: ", SHIELD TOH formatDocumentTag opt }
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH formatDocumentTag fn },
+		    SEQ{ "Option name: ", TOH formatDocumentTag opt }
 		    }
 	       }
 	  )
@@ -649,16 +649,16 @@ documentation Sequence := s -> (
 	  usage s,
 	  "See also:",
 	  if #s==2 and not instance(s#1,Type)
-	  then MENU {
-	       SHIELD SEQ {"Hash table: ", TO formatDocumentTag s#1 },
-	       SHIELD SEQ {"Key: ", TO formatDocumentTag s#0 },
+	  then SHIELD MENU {
+	       SEQ {"Hash table: ", TO formatDocumentTag s#1 },
+	       SEQ {"Key: ", TO formatDocumentTag s#0 },
 	       }
-	  else MENU {
-	       SHIELD SEQ {"Operator: ", TO formatDocumentTag s#0 },
-	       SHIELD SEQ {"Class of argument 1: ", TO formatDocumentTag s#1 }, if #s > 2 then 
-	       SHIELD SEQ {"Class of argument 2: ", TO formatDocumentTag s#2 }, if #s > 3 then
-	       SHIELD SEQ {"Class of argument 3: ", TO formatDocumentTag s#3 }, if t =!= Thing then
-	       SHIELD SEQ {"Class of typical returned value: ", TO formatDocumentTag t, PARA{}},
+	  else SHIELD MENU {
+	       SEQ {"Operator: ", TO formatDocumentTag s#0 },
+	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1 }, if #s > 2 then 
+	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2 }, if #s > 3 then
+	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3 }, if t =!= Thing then
+	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, PARA{}},
 	       optargs s,
 	       moreGeneral s
      	       },
@@ -694,7 +694,7 @@ TEST = (e) -> if phase === 2 then (
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA{}, "See also:", MENU (SHIELD \ TOH \ v) })
+     if #v > 0 then SEQ { PARA{}, "See also:", SHIELD MENU (TOH \ v) })
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1029,24 +1029,26 @@ net SHIELD := x -> horizontalJoin apply(x,net)
 
 html TEX := x -> x#0
 
+addHeadlines := x -> apply(x, i -> if class i === TO then SEQ{ new TO from i, headline i#0 } else i)
+
 html MENU := x -> concatenate (
      "<MENU>", newline,
-     apply(x, s -> if s =!= null then ("<LI>", html s, newline)),
+     apply(addHeadlines x, s -> if s =!= null then ("<LI>", html s, newline)),
      "</MENU>", newline, 
      "<P>", newline)
 
 text MENU := x -> concatenate(
      newline,
-     apply(x, s -> if s =!= null then ("    ", text s, newline))
+     apply(addHeadlines x, s -> if s =!= null then ("    ", text s, newline))
      )
 
-net MENU := x -> "    " | stack apply(toList x, net)
+net MENU := x -> "    " | stack apply(toList addHeadlines x, net)
 
 tex MENU := x -> concatenate(
      ///
 \begingroup\parindent=40pt
 ///,
-     apply(x, x -> if x =!= null then ( ///\item {$\bullet$}///, tex x, newline)),
+     apply(addHeadlines x, x -> if x =!= null then ( ///\item {$\bullet$}///, tex x, newline)),
      "\\endgroup", newline, newline)
 
 
@@ -1136,3 +1138,6 @@ html ITALIC := htmlMarkUpType "I"
 html UNDERLINE := htmlMarkUpType "U"
 html TEX := x -> x#0	    -- should do something else!
 html BOLD := htmlMarkUpType "B"
+
+html Option := x -> toString x
+text Option := x -> toString x

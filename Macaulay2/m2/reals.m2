@@ -4,7 +4,7 @@ RR#0 = 0.
 RR#1 = 1.
 RR.char = 0
 RR.ConversionFormat = ConvertMissing
-InverseMethod RR := x -> 1/x
+RR.InverseMethod = x -> 1/x
 RR.degreeLength = 0
 
 RR == ZZ := (x,y) -> x === y+0.

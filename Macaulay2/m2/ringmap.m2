@@ -60,7 +60,7 @@ map(Ring,Ring) := RingMap => options -> (S,R) -> (
 
 map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
 
-AfterPrint RingMap := AfterNoPrint RingMap := f -> (
+RingMap.AfterPrint = RingMap.AfterNoPrint = f -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class f;
      << " " << target f << " <--- " << source f << endl;

@@ -14,9 +14,8 @@ document { MarkUpType,
 document { EmptyMarkUpType }
 
 document { SHIELD,
-     TT "SHIELD v", " -- indicates that the ", TO "hypertext", " links in v
-     will not lead immediately to subsections of the book, even though
-     the expression is in a ", TO "MENU", "."
+     TT "SHIELD v", " -- indicates that the ", TO "hypertext", " links in the
+     menu ", TT "v", " will not lead immediately to subsections of the book."
      }
 
 document { PARA,
@@ -607,7 +606,10 @@ document { TO,
      PARA,
      "The special form ", TT "TO (f => X)", " produces a hypertext link to the
      page documenting the optional argument named ", TT "X", " for the 
-     function ", TT "f", "."
+     function ", TT "f", ".",
+     PARA,
+     "If ", TT "TO x", " is an entry in a ", TO "MENU", ", then it is treated
+     as ", TT "TOH x", ", and headlines are added automatically.  See also ", TO "TOH", "."
      }
 
 document { Command, "the class of all commands",

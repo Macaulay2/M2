@@ -304,20 +304,8 @@ document { (symbol _, Tally, Thing),
      }
 
 document { Tally,
-     TT "Tally", " -- a class designed to hold tally results, i.e., multisets.",
-     PARA,
-     "Operations:",
-     MENU {
-	  (TO (symbol **,Tally,Tally), " -- Cartesian product"),
-	  (TO (symbol +,Tally,Tally), "  -- sum"),
-	  (TO (symbol -,Tally,Tally), "  -- difference"),
-	  (TO (symbol ?,Tally,Tally), "  -- comparison"),
-	  (TO (symbol _,Tally,Thing), "  -- access"),
-	  (SHIELD TOH "tally"),
-	  (TO "toList", "               -- a list of the elements"),
-	  (TO (sum,Tally), "           -- add the elements"),
-	  (TO (product,Tally), "       -- multiply the elements")
-	  }
+     HEADLINE "the class of all tally results",
+     TT "Tally", " -- a class designed to hold tally results, i.e., multisets."
      }
 
 document { (symbol **, Tally, Tally),

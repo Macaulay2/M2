@@ -424,7 +424,7 @@ super(Module) := Module => (M) -> (
 
 End = (M) -> Hom(M,M)
 
-AfterPrint Module := M -> (
+Module.AfterPrint = M -> (
      << endl;				  -- double space
      n := rank ambient M;
      << "o" << lineNumber() << " : "

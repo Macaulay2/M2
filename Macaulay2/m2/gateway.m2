@@ -1,8 +1,8 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 ScriptedFunctor = new Type of MutableHashTable
-GlobalAssignHook ScriptedFunctor := globalAssignFunction
-GlobalReleaseHook ScriptedFunctor := globalReleaseFunction
+ScriptedFunctor.GlobalAssignHook = globalAssignFunction
+ScriptedFunctor.GlobalReleaseHook = globalReleaseFunction
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i

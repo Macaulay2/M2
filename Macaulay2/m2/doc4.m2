@@ -67,10 +67,10 @@ document { loaddata,
      PARA,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
-     MENU {
-	  SHIELD TOH "reloaded",
-	  SHIELD TOH "environment",
-	  SHIELD TOH "commandLine",
+     SHIELD MENU {
+	  TOH "reloaded",
+	  TOH "environment",
+	  TOH "commandLine",
 	  "whether the standard input is echoed and prompts to the 
 	  standard output are properly flushed, which depends on whether 
 	  the standard input is a terminal."
@@ -611,11 +611,11 @@ document { saturate,
 
 document { saturate => Strategy,
      "The strategy option value should be one of the following:",
-    MENU {
-        (SHIELD TOH "Linear", "      -- use the reverse lex order"),
-	(SHIELD TOH "Iterate", "     -- use successive ideal quotients (the default)"),
-	(SHIELD TOH "Bayer", "       -- use the method in Bayer's thesis"),
-	(SHIELD TOH "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
+    SHIELD MENU {
+        (TOH "Linear", "      -- use the reverse lex order"),
+	(TOH "Iterate", "     -- use successive ideal quotients (the default)"),
+	(TOH "Bayer", "       -- use the method in Bayer's thesis"),
+	(TOH "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
         },
      }
 
@@ -676,8 +676,8 @@ document { globalAssignFunction,
      EXAMPLE {
 	  "X = new Type of MutableHashTable",
       	  "x = new X",
-      	  "GlobalAssignHook X := globalAssignFunction",
-      	  "GlobalReleaseHook X := globalReleaseFunction",
+      	  "X.GlobalAssignHook = globalAssignFunction",
+      	  "X.GlobalReleaseHook = globalReleaseFunction",
       	  "x' = new X",
       	  "t = {x,x'}",
       	  "x = x' = 44",

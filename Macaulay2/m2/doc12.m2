@@ -210,6 +210,7 @@ scan(1 .. 22, i -> fib = fib())
 "
 
 document { ultimate,
+     HEADLINE " -- ultimate value for an iteration",
      TT "ultimate(f,x)", " -- yields the value ultimately obtained by
      applying the function ", TT "f", " to ", TT "x", ".",
      PARA,
@@ -330,7 +331,7 @@ document { (symbol _, List, List),
 document { number,
      TT "number(x,f)", " -- the number of elements e of the list x for which f(e) is true.",
      PARA,
-     "See also ", TO "positions", " and ", TO "select", "."
+     SEEALSO { "positions", "select" }
      }
 
 document { all,
@@ -357,9 +358,9 @@ document { member, HEADLINE "whether something is a member",
      EXAMPLE {
 	  "x = {a,b,c,d,e};",
       	  "member(c,x)",
-      	  "member(f,x)",
-      	  {"positions", "Set"}
+      	  "member(f,x)"
 	  },
+     SEEALSO {"positions"}
      }
 
 document { sum,

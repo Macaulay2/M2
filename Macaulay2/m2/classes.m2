@@ -60,8 +60,8 @@ globalReleaseFunction = (X,x) -> (
 	  )
      )
 
-GlobalAssignHook Type := globalAssignFunction
-GlobalReleaseHook Type := globalReleaseFunction
+Type.GlobalAssignHook = globalAssignFunction
+Type.GlobalReleaseHook = globalReleaseFunction
 -----------------------------------------------------------------------------
 
 endFunctions := {}

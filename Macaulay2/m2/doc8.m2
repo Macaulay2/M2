@@ -189,22 +189,22 @@ document { GroebnerBasis,
       current state of the computation.  Further computation of the Groebner
       basis will ", EM "not", " change matrices previously obtained from
       these routines.",
-      MENU {
-       	   SHIELD TOH (generators, GroebnerBasis),
-       	   SHIELD TOH (mingens, GroebnerBasis),
-	   SHIELD TOH (syz, GroebnerBasis),
+      SHIELD MENU {
+       	   TOH (generators, GroebnerBasis),
+       	   TOH (mingens, GroebnerBasis),
+	   TOH (syz, GroebnerBasis),
        	   },
       "Status of the computation can be determined by the following
       routines",
-      MENU {
-       	   SHIELD TOH (stats, GroebnerBasis),
-       	   SHIELD TOH "gbTrace"
+      SHIELD MENU {
+       	   TOH (stats, GroebnerBasis),
+       	   TOH "gbTrace"
        	   },
       PARA,
       "Keys used:",
-      MENU {
+      SHIELD MENU {
 	   TOH "GBtype",
-	   SHIELD TOH "ring",
+	   TOH "ring",
 	   TOH "returnCode"
 	   },
       }
@@ -440,11 +440,11 @@ document { gb => Strategy,
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     MENU {
-	  SHIELD TOH "EGB",
-	  SHIELD TOH "GBinhom",
-	  SHIELD TOH "LongPolynomial",
-	  SHIELD TOH "Sort"
+     SHIELD MENU {
+	  TOH "EGB",
+	  TOH "GBinhom",
+	  TOH "LongPolynomial",
+	  TOH "Sort"
 	  }
      }
 
@@ -1217,9 +1217,9 @@ document { pushForward1 => Strategy,
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     MENU {
-	  SHIELD TOH "NonLinear",
-     	  SHIELD TOH "Linear"
+     SHIELD MENU {
+	  TOH "NonLinear",
+     	  TOH "Linear"
 	  },
      PARA,
      "The default is for the code to select the best strategy heuristically."
