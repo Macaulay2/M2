@@ -42,7 +42,7 @@ match := X -> 0 < #(matches X)				    -- defined as a method later
 
 somethingElse = () -> error "something else needs to be implemented here"
 
-rot := x -> (
+rotateOutputLines := x -> (
      if ooo =!= null then global oooo <- ooo;
      if oo =!= null then global ooo <- oo;
      if x =!= null then global oo <- x;
@@ -53,16 +53,13 @@ applyMethod := (m,x) -> if x === null then x else (
      if method === null then x else method x
      )
 
-commonProcessing := x -> (
-     err := rawGetErrorMessage(); if err =!= null then stderr << endl << " -- internal error : engine error message ignored : " << err << endl << endl;	-- just temporary
-     x = applyMethod(AfterEval,x);
+Thing.AfterEval = x -> (
      if x =!= null then (
      	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",toString lineNumber));
      	  s <- x;
 	  );
-     rot x;
-     x
-     )
+     rotateOutputLines x;
+     x)
 
 simpleToString := toString
 
@@ -80,18 +77,15 @@ robustNet := y -> (
 	       stderr << endl << "--error in conversion of output to string" << endl;
 	       simpleToString y)))
 Thing.Print = x -> (
-     x = commonProcessing x;
-     y := applyMethod(BeforePrint,x);
-     if y =!= null then (
-     	  z := robustNet y;
-	  wrapper := lookup(symbol Wrap,class y);
+     if x =!= null then (
+     	  z := robustNet x;
+	  wrapper := lookup(symbol Wrap,class x);
 	  if wrapper =!= null then (
 	       fun := () -> z = wrapper z;
 	       try timelimit(printingTimeLimit, fun) else (
 	  	    global debugError <- fun;
 		    stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
 	  << endl << concatenate(interpreterDepth:"o") << lineNumber << " = " << z << endl);
-     applyMethod(AfterPrint,x);
      )
 
 truncNet := (wid,ht,s) -> (
@@ -197,8 +191,7 @@ scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) ->
 			 error toString stack(line1,commentGuard line2))))))
 
 Thing.NoPrint = x -> (
-     x = commonProcessing x;
-     applyMethod(AfterNoPrint,x);
+     -- do nothing
      )
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"

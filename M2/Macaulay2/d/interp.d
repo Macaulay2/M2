@@ -40,9 +40,23 @@ update(err:Error,prefix:string,f:Code):Expr := (
      else printErrorMessageE(f,prefix + ": --backtrace update-- ")
      );
 previousLineNumber := -1;
+
+AfterEval := makeProtectedSymbolClosure("AfterEval");
+BeforePrint := makeProtectedSymbolClosure("BeforePrint");
+BeforeNoPrint := makeProtectedSymbolClosure("BeforeNoPrint");
 Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
+AfterPrint := makeProtectedSymbolClosure("AfterPrint");
+AfterNoPrint := makeProtectedSymbolClosure("AfterNoPrint");
+runmethod(methodname:SymbolClosure,g:Expr,f:Code):Expr := (
+     method := lookup(Class(g),methodname);
+     if method == nullE 
+     then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
+     else applyEE(method,g)
+     );
+
 endInput := makeProtectedSymbolClosure("end");
+
 PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
      method := lookup(Class(g),methodname);
@@ -50,7 +64,6 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else applyEE(method,g)
      );
-
 readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      lastvalue := nullE;
      while true do (
@@ -100,12 +113,23 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 			      )
 			 else (
 			      if printout then (
-				   g := PrintOut(lastvalue,s.word == SemicolonW,f);
-				   when g is err:Error do (
-					g = update(err,"at print",f);
-					if stopIfError then return g;
-					)
-				   else nothing)))
+				   -- result of AfterEval replaces lastvalue
+				   g := runmethod(AfterEval,lastvalue,f);
+				   when g is err:Error do ( g = update(err,"after eval",f); if stopIfError then return g; ) else nothing;
+				   lastvalue = g;
+				   -- result of BeforePrint is printed instead
+				   g = runmethod(if s.word == SemicolonW then BeforeNoPrint else BeforePrint,lastvalue,f);
+				   when g is err:Error do ( g = update(err,"before print",f); if stopIfError then return g; ) else nothing;
+				   printvalue := g;
+				   -- result of Print is ignored
+				   g = runmethod(if s.word == SemicolonW then NoPrint else Print,printvalue,f);
+				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError then return g; ) else nothing;
+				   -- result of AfterPrint is ignored
+				   g = runmethod(if s.word == SemicolonW then AfterNoPrint else AfterPrint,lastvalue,f);
+				   when g is err:Error do ( g = update(err,"after print",f); if stopIfError then return g; ) else nothing;
+				   )
+			      )
+			 )
 		    else if isatty(file) 
 		    then flush(file)
 		    else return buildErrorPacket("error while loading file")))));

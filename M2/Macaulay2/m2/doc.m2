@@ -309,7 +309,7 @@ document {
      from the standard input, that directory is the current directory of the process.",
      EXAMPLE {
 	  "path",
-	  ///path = append(path, getenv "HOME" | "/resolutions/")///
+	  ///path = append(path, homeDirectory | "resolutions/")///
 	  }
      }
 

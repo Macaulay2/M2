@@ -22,6 +22,13 @@ if firstTime then (
      loadedFiles = new MutableHashTable;
      ReverseDictionary = new MutableHashTable;
      PrintNames = new MutableHashTable;
+     Thing.AfterEval = identity;
+     Thing.BeforePrint = identity;
+     Thing.BeforeNoPrint = identity;
+     Thing.Print = identity;
+     Thing.NoPrint = identity;
+     Thing.AfterPrint = identity;
+     Thing.AfterNoPrint = identity;
      scan(
 	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC,
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
@@ -92,7 +99,6 @@ if firstTime then (
      flush = new Manipulator from flush;
      endl = new Manipulator from endl;
 
-     Thing.NoPrint = x -> null;
      Thing.Print = x ->  (
 	  << newline << "o" << lineNumber << " = ";
 	  try << x;
@@ -375,9 +381,12 @@ packageSuffix = if version#"operating system" === "Darwin" then "Library/Applica
 
 path = {}
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
+homeDirectory = getenv "HOME" | "/"
 if not noinitfile then (
-     path = prepend(getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2", path);
-     packagePrefixPath = prepend(getenv "HOME" | "/" | packageSuffix | "local/", packagePrefixPath);
+     path = join(
+	  {homeDirectory | packageSuffix | "local/" | LAYOUT#"datam2", homeDirectory | packageSuffix | "code/"},
+	  path);
+     packagePrefixPath = prepend(homeDirectory | packageSuffix | "local/", packagePrefixPath);
      )
 if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
@@ -394,7 +403,7 @@ runStartFunctions()
 errorDepth = loadDepth+1
 if not noinitfile then (
      -- the location of init.m2 is documented in the node "initialization file"
-     tryLoad ("init.m2", getenv "HOME" | "/" | packageSuffix | "init.m2");
+     tryLoad ("init.m2", homeDirectory | packageSuffix | "init.m2");
      );
 processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
