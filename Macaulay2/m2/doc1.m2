@@ -610,32 +610,76 @@ document { isIsomorphism,
      }
 
 document { isHomogeneous,
-     Headline => "test for homogeneity",
-     TT "isHomogeneous x", " -- whether the polynomial or ideal x is homogeneous."
+     Headline => "test for homogeneity"
+     }
+
+document { (isHomogeneous,Matrix),
+     Synopsis => {
+	  "t = isHomogeneous f",
+	  "f" => { "a map ", TT "F", " <-- ", TT "G", "" },
+	  "t" => {"whether the matrix ", TT "f", " is homogeneous"}
+	  },
+     "Associated with every matrix is an arbitary integer called
+     its degree: it has nothing to do with the degrees of the entries
+     of the matrix; see ", TO "(degree,Matrix)", ".  The
+     matrix ", TT "f", " is called homogeneous if every entry
+     ", TT "f_(i,j)", " has degree equal to
+     ", TT "degree G_i - degree F_j + degree f", ".  Another way to
+     say it is that applying f to a homogeneous vector add
+     ", TT "degree f", " to its degree.",
+     EXAMPLE {
+	  "R = QQ[x];",
+	  "f = map(F = R^{0}, G = R^{-1}, {{x^3}}, Degree => 2)",
+	  "degree f",
+	  "degree G_0",
+	  "degree F_0",
+	  "f * G_0",
+	  "degree (f * G_0)",
+	  "isHomogeneous f"
+	  }
      }
 
 document { vars, 
-     Headline => "the matrix of the variables",
-     TT "vars R", " -- provides a 1 by n matrix whose entries are the
-     variables of the polynomial ring R.",
-     BR,
-     NOINDENT,
-     TT "vars(i .. j)", " -- provides a sequence of symbols which can be used
-     as indeterminates in a polynomial ring, the i-th one through the j-th one.
-     There is no limit on the size of the integers ", TT "i", " and ", TT "j", ".",
-     PARA,
+     Headline => "variables"
+     }
+
+document { (vars,Ring),
+     Headline => "row matrix of the variables",
+     Usage => {
+	  "v = vars R",
+	  "R" => null,
+	  "v" => { "the ", TT "1", " by ", TT "n", " matrix whose 
+	       entries are the variables of the polynomial 
+	       ring ", TT "R", "."}
+	  },
      EXAMPLE {
-	  "vars(3 .. 9,1000,-100)",
-      	  "R = ZZ/101[vars(3 .. 5)]",
+      	  "R = QQ[a..e]",
       	  "vars R",
-      	  "symmetricPower(2,vars R)"
+	  "ideal vars R",
+	  "coker vars R",
+	  "res coker vars R",
+	  }
+     }
+
+document { (vars,Sequence),
+     Usage => {
+	  "w = vars(i .. j)",
+	  "(i .. j)" => "a sequence of integers",
+	  "w" => { "a sequence of symbols which can be used as indeterminates
+	  in a polynomial ring, the ", TT "i", "-th one through the ", TT "j", "-th one." }
+	  },
+     "There is no limit on the size or sign of the integers ", TT "i", " 
+     and ", TT "j", ".  The symbols returned are single letters, or the letter 
+     ", TT "x", " or ", TT "X", " followed by some digits.",
+     EXAMPLE {
+	  "vars(3 .. 9, 33 .. 35, 1000 .. 1002, -100 .. -98)"
 	  }
      }
 
 document { leadCoefficient,
      Headline => "the leading coefficient",
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
-     or vector f.",
+     or vector ", TT "f", ".",
      PARA,
      SEEALSO {"leadTerm", "leadMonomial", "leadComponent"}
      }

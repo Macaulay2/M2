@@ -733,7 +733,7 @@ document { "diff and contract",
      the first argument is the variable to differentiate with respect to,
      and the second argument is the polynomial to be differentiated.",
      EXAMPLE {
-	  "R = QQ[x,y];",
+	  "R = QQ[a,b,t,x,y,z];",
 	  "f = x^7 * y^11;",
 	  "diff(x,f)",
 	  "diff(y,f)",
@@ -770,6 +770,29 @@ document { "diff and contract",
 	  "diff(matrix {{x,x^2,x^3,x^4}}, m)",
 	  "diff(matrix {{x,x^2},{x^3,x^4}}, m)",
 	  },
+     PARA,
+     "Perhaps the most common usage of ", TO "diff", " is when one argument
+     has a single column and the other column has a single row.  For example,
+     the Jacobian matrix can be computed as follows.",
+     EXAMPLE {
+	  "diff(matrix {{x},{y}}, matrix {{x^2, x*y, y^2}})",
+	  },
+     HR,
+     "We can also compute the Hessian matrix of a quadratic form using ", TO "diff", ",
+     as follows.",
+     EXAMPLE {
+	  "v = matrix {{x,y}}",
+	  "diff(v ** transpose v, 3*x^2 + 5*x*y + 11*y^2)"
+	  },
+     HR,
+     "As another example, we show how to compute the Wronskian of a
+     polynomial ", TT "f", ".",
+     EXAMPLE {
+      	  "f = x^3 + y^3 + z^3 - t*x*y*z",
+      	  "v = matrix {{x,y,z}}",
+      	  "det diff(transpose v * v, f)",
+	  },
+     HR,
      "The function ", TO "contract", " is the same as ", TO "diff", ",
      except the multiplication by integers that occurs during
      differentiation is omitted.",
@@ -779,6 +802,36 @@ document { "diff and contract",
 	  "contract(matrix {{x,x^2,x^3,x^4}}, m)",
 	  "contract(matrix {{x,x^2},{x^3,x^4}}, m)",
 	  },
+     "One use is for picking out coefficients of homogeneous polynomials.",
+     EXAMPLE {
+	  "f",
+	  "v3 = symmetricPower(3,matrix{{x,y,z}})",
+	  "contract(v3, f)",
+	  },
+     HR,
+     "As an example, the Sylvester resultant between homogeneous polynomials
+     ", TT "f(x,y)", " and ", TT "g(x,y)", " can be found in the following way.",
+     EXAMPLE {
+      	  "f = a * x^3 + b * x^2 * y + y^3",
+      	  "g = b * x^3 + a * x * y^2 + y^3",
+	  },
+     "Multiply each of these by all quadrics, obtaining a set of elements in
+     degree 5.",
+     EXAMPLE {
+	  "n = matrix {{f,g}} ** symmetricPower(2,matrix {{x,y}})",
+	  },
+     "Now create the matrix of coefficients by using contract against all
+     monomials of degree 5 in ", TT "x", " and ", TT "y", ", and
+     compute its determinant.",
+     EXAMPLE {
+	  "M = contract(transpose symmetricPower(5,matrix {{x,y}}), n)",
+      	  "det M",
+          --
+          --                5    2 3    3     2 2       3    4    3     2        2    3
+          --       ideal(- a  - a b  - a b - a b  + 2a*b  - b  + a  - 3a b + 3a*b  - b )
+          --   
+	  },
+     HR,
      "The function ", TO "diff'", " is the same as ", TO "diff", ",
      except that the first argument is differentiated by the second;
      the shape of the first argument still plays the major role.",
@@ -793,8 +846,15 @@ document { "diff and contract",
 	  "contract'(m, matrix {{x,x^2,x^3,x^4}})",
 	  "contract'(m, matrix {{x,x^2},{x^3,x^4}})",
 	  },
+     HR,
      "All four of these operators are engineered so that the result is
-     a homogeneous matrix if the arguments are."
+     a homogeneous matrix if the arguments are.  The operations ", TO "diff", "
+     and ", TO "contract", " are essentially partially defined division operations,
+     so it should come as no surprise that the source and target of
+     ", TT "diff(m,n)", " are the same as those we would get from
+     the tensor product ", TT "transpose m^-1 ** n", ", if 
+     only ", TT "m", " were invertible.",
+     SEEALSO { (diff,Matrix,Matrix), (contract,Matrix,Matrix) }
      }
 
 document { "computing syzygies",

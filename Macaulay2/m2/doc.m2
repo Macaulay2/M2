@@ -732,9 +732,9 @@ document { symbol "^^",
      }
 
 document { symbol "+",
-     Headline => "a bina operator",
+     Headline => "a binary operator",
      TT "x + y", " -- a binary operator used for addition in many situations
-     and union of sets.",
+     and for union of sets.",
      PARA,
      SEEALSO{ "plus", "sum" }
      }

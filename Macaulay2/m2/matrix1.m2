@@ -620,7 +620,7 @@ getshift := (f) -> (
      sendgg(ggPush f, gggetshift);
      eePopIntarray())
 
-degree(Matrix) := (f) -> (
+degree Matrix := List => (f) -> (
      M := source f;
      N := target f;
      d := getshift f;
