@@ -85,7 +85,8 @@ public:
 
   virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0) = 0;
 
-  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0) = 0;
+  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0,
+			  bool auto_reduce=true) = 0;
   // I have to decide: does this ADD to the existing set?
 
   // Choose a minimal set of generators of the lead terms.

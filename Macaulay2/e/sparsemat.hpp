@@ -21,6 +21,9 @@ class SparseMutableMatrix : public MutableMatrix
 
   void setSizes(int c_lo, int c_hi, int *rowSize, int *colSize);
 
+  void perform_reduction(int r, int c, int nr, int nc,
+			 int pivot_type);
+
   SparseMutableMatrix(const Ring *R);
 
   virtual ~SparseMutableMatrix() {}

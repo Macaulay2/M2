@@ -30,7 +30,8 @@ public:
 
   virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0);
 
-  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0);
+  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0,
+			  bool auto_reduced);
   // I have to decide: does this ADD to the existing set?
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
