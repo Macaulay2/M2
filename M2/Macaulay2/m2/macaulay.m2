@@ -9,7 +9,7 @@ document { "translating programs from Macaulay",
      functions in Macaulay 2 that might be used to replace them.",
      PARA,
      MENU {
-	  "Macaulay commands:",
+	  ("Macaulay commands:",
 	  MENU {
 	       (". -- not available"),
 	       ("ac -- such destructive changes are not allowed"),
@@ -84,7 +84,7 @@ document { "translating programs from Macaulay",
 	       ("mc -- ", TO ""),
 	       ("min -- ", TO "min"),
 	       ("modulo -- ", TO "modulo"),
-	       ("monitor -- ", TO ""),
+	       ("monitor -- ", TO "emacs"),
 	       ("monitoring -- ", TO ""),
 	       ("monoms -- ", TO ""),
 	       ("monprimes -- ", TO ""),
@@ -156,8 +156,8 @@ document { "translating programs from Macaulay",
 	       ("type -- ", TO ""),
 	       ("version -- ", TO "version"),
 	       ("wedge -- ", TO "minors", ",", TO "exteriorPower")
-	       },
-	  "Macaulay scripts from 'scriptsde':",
+	       }),
+	  ("Macaulay scripts from 'scriptsde':",
 	  MENU {
 	       ("<adj_of_cat -- ", TO ""),
 	       ("<adjoin_fractions -- ", TO ""),
@@ -281,8 +281,8 @@ document { "translating programs from Macaulay",
 	       ("<wedge_cokernel -- ", TO ""),
 	       ("<x_to_last -- ", TO "newCoordinateSystem"),
 	       ("<zeromat -- ", TO "")
-	       },
-	  "Macaulay scripts from 'scriptsmj':",
+	       }),
+	  ("Macaulay scripts from 'scriptsmj':",
 	  MENU {
 	       ("<2BYN -- ", TO ""),
 	       ("<add_matrix_to_array -- ", TO ""),
@@ -301,8 +301,8 @@ document { "translating programs from Macaulay",
 	       ("<pres -- ", TO ""),
 	       ("<smult_complex -- ", TO ""),
 	       ("<splice_resns -- ", TO "")
-	       },
-	  "Macaulay scripts from 'scriptsms':",
+	       }),
+	  ("Macaulay scripts from 'scriptsms':",
 	  MENU {
 	       ("<block_map -- ", TO ""),
 	       ("<blowup -- ", TO ""),
@@ -324,7 +324,7 @@ document { "translating programs from Macaulay",
 	       ("<proj_bundle -- ", TO ""),
 	       ("<rmap -- ", TO ""),
 	       ("<symmetric_algebra -- ", TO "")
-	       }
+	       })
 	  }
      }
 

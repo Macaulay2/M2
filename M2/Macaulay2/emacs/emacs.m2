@@ -4,7 +4,7 @@
 In this file we learn how to use emacs to edit Macaulay 2 code.  Assuming you
 have set up your .emacs file as described in part 1 (see the file emacs.hlp),
 you will see on the mode line of this window the name "Macaulay 2" in
-parentheses, indicating that this file is being edit in Macaulay 2 mode.
+parentheses, indicating that this file is being edited in Macaulay 2 mode.
 
 To see how electric parentheses, electric semicolons, and indentation work,
 move to a blank line of this file and enter the following text.
@@ -17,7 +17,7 @@ f = () -> (
 Observe carefully how matching left parentheses are indicated briefly when a
 right parenthesis is typed.  
 
-Now position your cursor in the between the 6 and 7.  Notice how Notice how
+Now position your cursor in between the 6 and 7.  Notice how
 M-C-u moves you up out of the list to its left.  Do it again.  Experiment
 with M-C-f and M-C-b to move forward and back over complete parenthesized
 expressions.  (In the emacs manual a complete parenthesized expression is

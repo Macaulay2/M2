@@ -256,10 +256,15 @@ resolutionInEngine := (M,options) -> (
 		    )));
      C)
 
-resolution Module := (M,options) -> (
-     if not isCommutative ring M then resolutionBySyzygies(M,options)
-     else if not isHomogeneous M then resolutionByHomogenization(M,options)
-     else resolutionInEngine(M,options)
+resolution Module := (M,o) -> (
+     R := ring M;
+     oR := options R;
+     if oR.SkewCommutative and isHomogeneous M then (
+	  processArgs((M, Algorithm => 2), o, (args,o) -> resolutionInEngine(M,o))
+	  )
+     else if not isCommutative R then resolutionBySyzygies(M,o)
+     else if not isHomogeneous M then resolutionByHomogenization(M,o)
+     else resolutionInEngine(M,o)
      )
 
 resolution Ideal := (I,options) -> (

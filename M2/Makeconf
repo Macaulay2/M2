@@ -164,7 +164,7 @@ export LDFLAGS += -s
 # we should be able to do away with these:
 STRIPFLAG := -s
 STRIPCMD := strip
-DEBUGFLAGS += -fomit-frame-pointer
+# DEBUGFLAGS += -fomit-frame-pointer
 endif
 export STRIPFLAG STRIPCMD 
 
