@@ -16,8 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-Internal code for inner interpreter has been sped up, and the
-recursion depth has been reduced for code like (a;b;c;d).
+Inner interpreter has been sped up, and the stack depth has been
+reduced, for code like (a;b;c;d): faster by a factor of 4 for long
+sequences.
 
 Function "singleton x" removed -- use 1:x instead.
 
