@@ -110,6 +110,9 @@ public:
 				// there is no baggage...
   ~TermIdeal();
 
+  const FreeModule *get_Rsyz() const { return Rsyz; }
+  // Note: Rsyz is NULL if there is no quotient.
+
   // Creation
   static TermIdeal *make_termideal(const Matrix &m, int n);
   static TermIdeal *make_termideal(const PolynomialRing *A,
@@ -119,12 +122,10 @@ public:
   static TermIdeal *make_ring_termideal(const PolynomialRing *R, 
 					const array<ring_elem> &elems1,					
 					const array<ring_elem> &elems2,
-					FreeModule * &Rsyz,
 					array<ring_elem> &result);
   // This routine takes a ring R, which should be a polynomial ring with ZZ as coefficients,
   // NOT a quotient ring; and two sets of ring elements that together should form a GB.
-  // Returns a term ideal of all of these, which refers to the newly created 'result',
-  // and 'Rsyz', which is a free module over R corresponding to 'result'.
+  // Returns a term ideal of all of these, which refers to the newly created 'result'.
 
   void append_to_matrix(Matrix m, int i) const;
   Matrix change_matrix() const;

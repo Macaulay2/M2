@@ -58,6 +58,7 @@ mon_order::mon_order(mon_order_types t, const intarray &d,const intarray &wts)
 
 mon_order::~mon_order()
 {
+  delete [] degs;
   delete [] inv_degs;
   for (int i=0; i<n; i++)
     {
@@ -567,4 +568,13 @@ void elim_mon_order::decode(const int *m, int *exp) const
 	exp[i] = (m[n-i-1] - m[n-i]) / d[i];
       exp[nelim-1] = (m[0] - m[n-nelim+1]) / d[nelim-1];
     }
+}
+
+mon_order * object_mon_order::grab_mon_order()
+{ 
+  mon_order *result = val;
+  val = 0;
+  if (result == 0)
+    gError << "cannot reuse engine monomial order";
+  return result;
 }

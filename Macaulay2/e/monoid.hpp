@@ -41,6 +41,7 @@ class monoid_info
 
 public:
   monoid_info();
+  ~monoid_info();
   monoid_info(const mon_order *mmo, 
 	      const char *s, 
 	      int len, 
@@ -83,6 +84,7 @@ private:
   int *MONlocal;		// To be used ONLY by to/from expvector.
 public:
   Monoid(monoid_info *mo, int nbits);
+  ~Monoid();
 
   bool is_group() const { return moninfo->isgroup; }
 

@@ -2,19 +2,20 @@
 S = ZZ[t,u];
 k = # netRows engineHeap()
 k'= # netRows engineMemory()
-n = 200
+n = 1000
 f = i -> (
      x := local x; 
      y := local y;
+     M := monoid[x,y];
      R := QQ[x,y];
      g := matrix{{x,y}};
      s := syz g;
      I := ideal(x,y);
      G := gb I;
-     S := R/I;
-     f := map(R,R,{y,x});
+     S := R/I; -- seems to be leaking 2 fractions (2022) [Dec 7,00]
+     f := map(R,R,{y,x});  -- leaking 2 fractions? (4027)[Dec 7,00]
      M := coker g; 
-     C := res M;
+     C := res M;  -- leaking one fraction? (5031)[Dec 7,00]
      N := image g;
      )
 scan(n, f)

@@ -8,6 +8,8 @@
 #include "intarray.hpp"
 #include "obj_ptr.hpp"
 
+#include "text_io.hpp"
+
 extern buffer gError;
 extern buffer gOutput;
 
@@ -303,6 +305,7 @@ inline void bump_down(const object_element *p)
   object_element *q = (object_element *) p;
   assert(q != NULL);
   q->refcount--;
+
   if (q->refcount == 0) delete q;
 }
 

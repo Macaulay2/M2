@@ -62,6 +62,7 @@ monoid_info::monoid_info(const mon_order *mmo,
 : nvars(mmo->n_vars()), degvals(degs),
   degree_monoid(deg_monoid), mo(mmo), isgroup(isgrp)
 { 
+  bump_up(degree_monoid);
   set_names(nvars, s, len, varnames); 
   set_degrees();
   if (skewvariables.length() == 0)
@@ -95,6 +96,23 @@ monoid_info::monoid_info(const mon_order *mmo,
 	    n_skew--;
 	}
     }
+}
+
+monoid_info::~monoid_info()
+{
+  int i;
+  for (i=0; i<varnames.length(); i++)
+    delete [] varnames[i];
+
+  for (i=0; i<degree_of_var.length(); i++)
+    degree_monoid->remove(degree_of_var[i]);
+  delete [] primary_degree_of_var;
+
+  bump_down(degree_monoid);
+  delete mo;
+
+  delete [] skew_vars;
+  delete [] skew_list;
 }
 
 void monoid_info::set_names(int nvars, const char *s, int slength, array<char *> &varnames)
@@ -191,6 +209,19 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   EXP2 = new int[nvars];
   EXP3 = new int[nvars];
   MONlocal = new int[nvars + nwords]; // MES: should be total number of words of result...
+
+}
+
+Monoid::~Monoid()
+{
+  delete [] EXP1;
+  delete [] EXP2;
+  delete [] EXP3;
+  delete [] MONlocal;
+  delete [] skew_mvars;
+  delete [] skew_nvars;
+  delete monom_stash;
+  delete moninfo;  // This takes care of bump_down of degree monoid.
 }
 
 void Monoid::write_object(object_writer &o) const

@@ -790,6 +790,7 @@ void FreeModule::apply_quotient_ring_elements(vec &f, vec rsyz) const
 void FreeModule::normal_form_ZZ(vec &f) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const FreeModule *Rsyz = P->get_Rsyz(); // Possibly NULL.
   vecterm head;
   vecterm *result = &head;
 
@@ -801,7 +802,7 @@ void FreeModule::normal_form_ZZ(vec &f) const
       if (rsyz != NULL)	
 	{
 	  apply_quotient_ring_elements(f, rsyz);
-	  P->Rsyz->remove(rsyz);
+	  Rsyz->remove(rsyz);
 	}
       if (!reduces)
 	{

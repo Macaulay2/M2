@@ -29,6 +29,8 @@ protected:
   bool isfield;			// true means yes, or declared yes.
 				// If a zero divisor is found, isfield is set to false.
 
+  bool isquotientring;		// True if constructed via Ring(const Ring &R).
+				// If true, then vecstash,resstash are not owned.
   stash *vecstash;		// Stash used to allocate vectors over this ring.
   stash *resstash;		// For resolutions
 

@@ -115,13 +115,13 @@ public:
 class object_mon_order : public type
 {
 public:
-  const mon_order *val;
+  mon_order *val;
 
   object_mon_order() {}
-  object_mon_order(const mon_order *mo) : val(mo) {}
+  object_mon_order(mon_order *mo) : val(mo) {}
   ~object_mon_order() {}
 
-  const mon_order * mon_order_of() const { return val; }
+  mon_order * grab_mon_order(); // Note: can only use monomial order once!
 
   class_identifier class_id() const { return CLASS_MonomialOrder; }
   type_identifier  type_id () const { return TY_MON_ORDER; }

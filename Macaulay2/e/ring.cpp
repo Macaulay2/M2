@@ -18,9 +18,16 @@ Ring::Ring(int P,
 HRing(NULL)
 {
   if (K != NULL) bump_up((Ring *) K);
+  bump_up(M);
+  bump_up(D);
 
   if (D->n_vars() > 0)
-    HRing = PolynomialRing::create(ZZ, D);
+    {
+      HRing = PolynomialRing::create(ZZ, D);
+      bump_up(HRing);
+    }
+  else
+    HRing = NULL;
 
   int msize = M->monomial_size();
   vecstash = new stash("vectors",
@@ -32,7 +39,9 @@ HRing(NULL)
 		     + sizeof(int) * M->monomial_size());
 
   isfield = false;
+  isquotientring = false;
   zero_divisor = (Nterm *)0;
+
 }
 
 Ring::Ring(const Ring &R)
@@ -46,6 +55,7 @@ Ring::Ring(const Ring &R)
   HRing(R.HRing),
   zero_divisor((Nterm *)0),
   isfield(false),
+  isquotientring(true),
   vecstash(R.vecstash),
   resstash(R.resstash)
 {
@@ -54,8 +64,16 @@ Ring::Ring(const Ring &R)
 
 Ring::~Ring()
 {
-  // PROBLEM: zero_divisor needs to be freed.
+  // PROBLEM: zero_divisor needs to be freed: this MUST be done by the specific ring.
   // PROBLEM: resstash, vecstash need to be freed, if this is not a quotient.
+  if (!isquotientring)
+    {
+      delete vecstash;
+      delete resstash;
+      bump_down(M);
+      bump_down(D);
+      if (HRing != NULL) bump_down(HRing);
+    }
   if (K != NULL) bump_down((Ring *) K);
 }
 

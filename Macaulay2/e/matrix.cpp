@@ -545,7 +545,7 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
   const array<vec> vecs = obj->entries;
   rows()->sort(vecs, degs, 0, 1, indices);
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  const FreeModule *Rsyz = P->get_Rsyz();
+  const FreeModule *Rsyz = P->get_Rsyz(); // NULL if not a quotient ring.
   FreeModule *Gsyz = P->make_FreeModule(vecs.length());
   bump_up(Gsyz);
   for (x=0; x<n_cols(); x++)
@@ -565,7 +565,7 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
 	  result.append(indices[i]);
 	}
       Gsyz->remove(gsyz);
-      Rsyz->remove(rsyz);
+      if (rsyz != NULL) Rsyz->remove(rsyz);
     }
   for (x=0; x<n_cols(); x++)
     delete mis[x];

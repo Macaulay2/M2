@@ -31,7 +31,8 @@ void cmd_Monoid(object &omo, object &ostr,
 				// sorted in ascending order.
 {
 #ifdef MIKE_OLD_MONOID
-  const mon_order *mo = omo->cast_to_mon_order()->mon_order_of();
+  mon_order *mo = omo->cast_to_mon_order()->grab_mon_order();
+  if (mo == 0) return; // Error message already given.
 #else
 #ifdef MIKE_EMONOID
   const EMonomialOrder *mo = omo->cast_to_EMonomialOrder();
@@ -119,7 +120,7 @@ void cmd_Monoid(object &omo, object &ostr,
   delete [] var_names;
 #endif
 #endif
-  bump_up(M);
+  //  bump_up(M);
   gStack.insert(M);
 }
 
@@ -144,7 +145,7 @@ void cmd_mo_grevlex(object &ow, object &oa)
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
   intarray *wts = ow->intarray_of();
-  const mon_order *mo = mon_order::grlex(*a,*wts);
+  mon_order *mo = mon_order::grlex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
@@ -155,7 +156,7 @@ void cmd_mo_revlex(object &ow, object &oa)
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
   intarray *wts = ow->intarray_of();
-  const mon_order *mo = mon_order::rlex(*a,*wts);
+  mon_order *mo = mon_order::rlex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
@@ -166,7 +167,7 @@ void cmd_mo_glex(object &ow, object &oa)
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
   intarray *wts = ow->intarray_of();
-  const mon_order *mo = mon_order::glex(*a,*wts);
+  mon_order *mo = mon_order::glex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
@@ -177,7 +178,7 @@ void cmd_mo_lex(object &ow, object &oa)
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
   intarray *wts = ow->intarray_of();
-  const mon_order *mo = mon_order::lex(*a,*wts);
+  mon_order *mo = mon_order::lex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
@@ -189,7 +190,7 @@ void cmd_mo_elim(object &ow, object &oa, object &on)
   if (!check_all_positive(*a)) return;
   intarray *wts = ow->intarray_of();
   int n = on->int_of();
-  const mon_order *mo = mon_order::elim(*a, n, *wts);
+  mon_order *mo = mon_order::elim(*a, n, *wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
@@ -202,7 +203,7 @@ void cmd_mo_product1(object &ow, object &oa, object &on)
   if (!check_all_positive(*a)) return;
   if (!check_all_positive(*n)) return;
   intarray *wts = ow->intarray_of();
-  const mon_order *mo = mon_order::product(*a, *n, *wts);
+  mon_order *mo = mon_order::product(*a, *n, *wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else

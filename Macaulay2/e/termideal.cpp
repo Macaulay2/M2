@@ -46,10 +46,9 @@ TermIdeal::~TermIdeal()
     }
   delete_mon_term(terms);
   ring_terms = NULL;
-  Rsyz = NULL;
+  delete Rsyz;
   K->remove(one);
   bump_down(Gsyz);
-  //  bump_down(Rsyz);
   bump_down(R);
 }
 
@@ -174,7 +173,7 @@ void TermIdeal::delete_tagged_term(tagged_term *&t) const
   K->remove(t->_coeff);
   M->remove(t->_monom);
   Gsyz->remove(t->_gsyz);
-  Rsyz->remove(t->_rsyz);
+  if (t->_rsyz != NULL) Rsyz->remove(t->_rsyz);
   delete t;
   t = NULL;
 }
@@ -292,7 +291,6 @@ TermIdeal *TermIdeal::make_termideal(const PolynomialRing *A,
 TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
 					  const array<ring_elem> &elems1,
 					  const array<ring_elem> &elems2,
-					  FreeModule * &RRsyz,
 					  array<ring_elem> &result)
 {
   // R should be the polynomial ring, NOT a quotient.
@@ -328,7 +326,7 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
       R->apply_ring_elements(f, t->gsyz(), all);
       result.append(f);
     }
-  RRsyz = R->make_FreeModule(result.length());
+  const FreeModule *RRsyz = R->make_FreeModule(result.length());
   ti->Rsyz = RRsyz;
   i = 0;
   for (p = ti->terms->next; p != ti->terms; p = p->next)
@@ -379,6 +377,7 @@ Matrix TermIdeal::change_matrix() const
 
 Matrix TermIdeal::ring_change_matrix() const
 {
+  if (Rsyz == NULL) return Matrix();
   Matrix result(Rsyz);
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
@@ -586,8 +585,9 @@ tagged_term *TermIdeal::gcd(array<tagged_term *> &elems, const int *m) const
   int *factor = M->make_one();
   M->divide(m, elems[0]->monom(), factor);
 
+  vec rsyz = NULL;
   vec gsyz = Gsyz->mult_by_monomial(factor, elems[0]->gsyz());
-  vec rsyz = Rsyz->mult_by_monomial(factor, elems[0]->rsyz());
+  if (Rsyz != NULL) rsyz = Rsyz->mult_by_monomial(factor, elems[0]->rsyz());
   vec tmp, tmp2;
 
   for (int i=1; i<elems.length(); i++)
@@ -613,17 +613,20 @@ tagged_term *TermIdeal::gcd(array<tagged_term *> &elems, const int *m) const
       Gsyz->remove(gsyz);
       gsyz = tmp;
 
-      if (!K->is_zero(u))
-	tmp = Rsyz->mult_by_coeff(u, rsyz);
-      else
-	tmp = NULL;
-      if (!K->is_zero(v))
-	tmp2 = Rsyz->mult_by_term(v, factor, elems[i]->rsyz());
-      else
-	tmp2 = NULL;
-      Rsyz->add_to(tmp, tmp2);
-      Rsyz->remove(rsyz);
-      rsyz = tmp;
+      if (Rsyz != NULL)
+	{
+	  if (!K->is_zero(u))
+	    tmp = Rsyz->mult_by_coeff(u, rsyz);
+	  else
+	    tmp = NULL;
+	  if (!K->is_zero(v))
+	    tmp2 = Rsyz->mult_by_term(v, factor, elems[i]->rsyz());
+	  else
+	    tmp2 = NULL;
+	  Rsyz->add_to(tmp, tmp2);
+	  Rsyz->remove(rsyz);
+	  rsyz = tmp;
+	}
 
       K->remove(u);
       K->remove(v);
@@ -663,7 +666,10 @@ bool TermIdeal::search(const ring_elem coeff, const int *m, vec &result_gsyz, ve
   if (!K->is_zero(d))
     {
       result_gsyz = Gsyz->mult_by_coeff(d,p->gsyz());
-      result_rsyz = Rsyz->mult_by_coeff(d,p->rsyz());
+      if (Rsyz == NULL)
+	result_rsyz = NULL;
+      else 
+	result_rsyz = Rsyz->mult_by_coeff(d,p->rsyz());
     }
   else
     {
@@ -671,7 +677,7 @@ bool TermIdeal::search(const ring_elem coeff, const int *m, vec &result_gsyz, ve
       result_rsyz = NULL;
     }
   Gsyz->remove(p->_gsyz);
-  Rsyz->remove(p->_rsyz);
+  if (p->_rsyz != NULL) Rsyz->remove(p->_rsyz);
   p->_gsyz = NULL;
   p->_rsyz = NULL;
   delete_tagged_term(p);

@@ -28,7 +28,7 @@ void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   M = R->Nmonoms();
   one = K->from_int(1);
 
-  Rsyz = A->get_Rsyz();
+  Rsyz = A->get_Rsyz(); // Possibly NULL.
 
   Gsyz = R->make_FreeModule();
 
@@ -338,7 +338,7 @@ void GBZZ_comp::find_pairs(int me)
   // Now minimalize these elements, and insert them into
   // the proper degree.
 
-  TermIdeal *ti = TermIdeal::make_termideal(R,Gsyz,elems);  
+  TermIdeal *ti = TermIdeal::make_termideal(A,Gsyz,elems);  
                                 // Removes the elements which are
   				// not minimal.
 
@@ -600,7 +600,7 @@ bool GBZZ_comp::s_pair_step()
   n_computed++;
   compute_s_pair(gsyz, rsyz, f, fsyz);	// Sets f, fsyz from gsyz, rsyz.
   Gsyz->remove(gsyz);
-  Rsyz->remove(rsyz);
+  if (rsyz != NULL) Rsyz->remove(rsyz);
 
   handle_element(f, fsyz, GB_NOT_MINIMAL);
   return true;

@@ -24,15 +24,9 @@ protected:
   array<ring_elem> quotient_ideal;
   MonomialIdeal Rideal;		// This is used if the coeff ring is not ZZ.
   TermIdeal *RidealZ;		// This is used if the coeff ring is ZZ.
-  bool coefficients_are_ZZ;
-  FreeModule *Rsyz;
-  bool isgraded;
 
-  // These are local variables for the normal_form routine
-  intarray normal_exp_a;
-  intarray normal_m_a;
-  int *normal_exp;
-  int *normal_m;
+  bool coefficients_are_ZZ;
+  bool isgraded;
 
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
@@ -54,7 +48,7 @@ public:
   const PolynomialRing * get_base_poly_ring() const { return base_ring; }
   MonomialIdeal  get_quotient_monomials() const { return Rideal; }
   const TermIdeal *get_quotient_monomials_ZZ() const { return RidealZ; }
-  const FreeModule *get_Rsyz() const { return Rsyz; }
+  const FreeModule *get_Rsyz() const;
 
   Matrix     get_ideal() const;
   ring_elem get_quotient_elem(int i) const { return quotient_ideal[i]; }
