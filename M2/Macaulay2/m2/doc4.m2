@@ -381,8 +381,12 @@ document { lookupCount,
 
 document { "version",
      Headline => "information about this version of the program",
-     TT "version", " -- a hash table describing this version of the program.",
-     PARA,
+     Synopsis => {
+	  "version" => "a hash table describing this version of the program."
+	  },
+     "The values stored in this hash table depend on the source code version
+     the architecture for which the program was compiled, and the libraries
+     (both static and dynamic) against which the program is linked.",
      EXAMPLE "version"
      }
 

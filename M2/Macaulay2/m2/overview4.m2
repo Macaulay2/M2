@@ -14,6 +14,7 @@ document {
      }
 
 document { "emacs",
+     Headline => "invoking Macaulay 2 with emacs",
      "The best way to edit Macaulay 2 code or to run Macaulay 2 is with GNU 
      emacs, a versatile text editor written by Richard Stallman which
      runs well under most UNIX systems.  Its

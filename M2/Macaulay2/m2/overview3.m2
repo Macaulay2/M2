@@ -229,13 +229,9 @@ document { "Preface",
      from the National Science Foundation.  We are eager to help new users
      get started with it.",
      UL {
-	  TO "How to get this program",
-	  TO "Resources required",
-	  TO "Invoking the program",
-	  TO "How Macaulay 2 finds its files",
-	  TO "Copyright and license",
-	  TO "Acknowledgements",
-	  TO "The authors",
+	  TOH "Copyright and license",
+	  TOH "Acknowledgements",
+	  TOH "The authors",
 	  }
      }
 
@@ -245,24 +241,62 @@ document { "How Macaulay 2 finds its files",
      or it has to find a data file containing a memory dump from a
      previous session.  Here is the way it does that.",
      PARA,
-     "It examines the command name you used to run the Macaulay 2
-     program, which is provided to it as the argument in position number
-     0 on the command line.  If it's not an absolute path, it searches
-     along the path of directories mentioned in the environment
-     variable PATH until it finds a file with the same name.  If the
+     "Its first task is to discover the path to the binary file ", TT "M2", " that is currently running.  On some systems, that
+     information is available from the ", TT "/proc", " file system.  Otherwise, it examines the command name you used to run the
+     program, which is provided to it as the argument in position number 0 on the command line.  If it's not an absolute path, it searches
+     along the path of directories mentioned in the environment variable PATH until it finds a file with the same name.  If the
      result is a symbolic link, the link is followed.  The final
-     result is assumed to be in a directory named \"bin\", and the
-     startup files are located in a sibling directory named \"m2\".
-     It looks there for the file \"m2/setup.m2\".  During compilation,
-     \"m2/srcdir\" may be a symbolic link from the build directory to
-     the corresponding source directory; if so, it is followed, too.",
+     result is assumed to be in a directory named \"", TT LAYOUT#"bin", "\", and the
+     startup files are located relative to that.  The path to the top level directory is stored in the variable
+     ", TO "prefixDirectory", ", which you can examine to see whether it all worked out.
+     For detailed information about the relative location of Macaulay 2 files,
+     see ", TO "LAYOUT", ".  Special arrangements are made during compilation to allow the program to be run and
+     tested; see ", TO "buildHomeDirectory", " and ", TO "sourceHomeDirectory", ".",
      PARA,
-     "A possible memory dump may be located in another sibling
-     directory of \"bin\" and \"m2\" called \"cache\".  The name of
-     the file found there is of the form \"Macaulay2-M2ARCH-data\",
-     where \"M2ARCH\" is replaced by the value of the environment
-     variable name M@ARCH, or a value precomputed at compile time and
-     stored in the hash table called ", TO "version", "."
+     "A possible data memory dump file may be located in the directory ", TT LAYOUT#"cache", " and loaded with ", TO "loaddata", ".
+     If the file is present and and loading it works, then startup will be quicker.  If it's absent then the necessary setup files will be loaded instead;
+     if problems with it are encountered, it is always safe to delete it.
+     The name of the file data dump file is of the form \"Macaulay2-*-data\",
+     where \"*\" is replaced by the value of the environment
+     variable name M2ARCH if present, or else is a value computed at compile time and
+     stored in the hash table called ", TO "version", " and accessible as ", TT "version#\"architecture\"", ".",
+     UL {
+	  TOH "LAYOUT",
+     	  TOH "prefixDirectory",
+	  TOH "buildHomeDirectory",
+	  TOH "sourceHomeDirectory"
+	  }
+     }
+
+document { "LAYOUT",
+     Headline => "relative locations of Macaulay 2 files",
+     Synopsis => {
+	  "LAYOUT"
+	  },
+     PARA {
+	  "The hash table ", TT "LAYOUT", " is a translation table from symbolic names to directory paths,
+	  which are to interpreted relative to the path stored in ", TO "prefixDirectory", ".
+	  Some of the entries are strings: these provide paths to various types of files associated with
+	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
+	  types of files associated with packages, and accept a string containing the name of the package
+	  as argument.  Finally, for convenience, many Macaulay 2 files are regarded as being associate with a special package
+	  called ", TO "Main", "."
+     	  },
+     EXAMPLE "LAYOUT",
+     PARA {
+	  "Let's apply the functions above to the name of a fictional package named \"", TT "FOO", "\" to see what paths are returned."
+     	  },
+     EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///,
+     SEEALSO "How Macaulay 2 finds its files"
+     }
+
+document { "Main",
+     Synopsis => {
+	  "Main"
+	  },
+     PARA {
+	  "This package is the main Macaulay 2 package.  Its dictionary contains all the global Macaulay 2 symbols."
+	  }
      }
 
 document { "Mathematical Tutorials",
@@ -302,7 +336,6 @@ document { "Macaulay 2",
      UL {
 	  TOH "Preface",
 	  TOH "Getting started",
-	  TOH "Reading the documentation",
 	  TOH "Mathematical Overview",
  	  TOH "Mathematical Tutorials",
 	  TOH "Language and Programming Overview",
@@ -396,21 +429,6 @@ document { "Michael E. Stillman",
      }
 
 document { "Resources required",
-     "You will need about 70 megabytes of disk space to install Macaulay 2, though
-     this may vary.  It will need about 50 megabytes of RAM to run modest size problems,
-     and can benefit from any additional memory."
-     }
-
-document { "How to get this program",
-     "The program is available over the web at the Macaulay 2 home page",
-     PARA, 
-     HREF {"http://www.math.uiuc.edu/Macaulay2/"}, 
-     PARA,
-     NOINDENT,
-     "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 
-     and password ", TT "Macaulay2", ".  There you will find the documentation, both in
-     readable form and available for downloading, the source code, ready for compiling
-     on the machine of your choice, and various precompiled versions, ready to run."
      }
 
 document { "syntax",
@@ -594,13 +612,27 @@ document { "top level loop",
      }
 
 document { "Getting started",
-     PARA { "The best way to run Macaulay 2 is with emacs - for details on getting
-	  that set up, see ", TO "emacs", ".  (On MacOS systems, we include a shareware
-	  editor called ", TT "alpha", " for this purpose.)  Learning emacs is worth 
-	  the effort! Alternatively, you may start Macaulay 2 with the command ", TT "M2", "
-	  in a shell window.  On most systems Macaulay 2 will start very
-	  quickly, but other parts of the program may have to be loaded from the
-	  disk later, causing a slight delay."},
+     PARA {
+	  "The program is available over the web at the Macaulay 2 home page ", HREF {"http://www.math.uiuc.edu/Macaulay2/"}, "
+	  or by ftp at ", HREF "ftp://Macaulay2:Macaulay2@ftp.math.uiuc.edu/", ".  (The host is ", TT "ftp.math.uiuc.edu", ", the 
+	       user name is ", TT "Macaulay2", ", and the password ", TT "Macaulay2", ".  There you will find the documentation, both in
+	  readable form and available for downloading, the source code, ready for compiling
+	  on the machine of your choice, and various precompiled versions, ready to run."},
+     PARA {
+     	  "You will need about 70 megabytes of disk space to install Macaulay 2, though
+     	  this may vary.  It will need about 50 megabytes of RAM to run modest size problems,
+     	  and can benefit from any additional memory."
+	  },     
+     UL {
+	  TOH "Invoking the program",
+	  TOH "emacs",
+	  TOH "Your first interaction with Macaulay 2",
+	  TOH "How Macaulay 2 finds its files",
+	  TOH "Reading the documentation",
+	  }
+     }
+
+document { "Your first interaction with Macaulay 2",
      PARA { "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
 	  evaluated - no punctuation is required at the end of the line."},
