@@ -7,6 +7,8 @@
 
 -- this next file loads before this:
 
+debug Macaulay2
+
 quotMin = (I, facs, F) -> (
      J := quotient(I,F);
      if #facs > 1 then (
