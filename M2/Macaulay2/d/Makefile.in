@@ -191,9 +191,37 @@ tmp_init.c : $(DFILES)
 ###################### libraries
 
 # singular libraries
+
+ifeq "$(PROFILE)" "yes"
+ifeq "$(HAVE_LIBFAC_PG)" "yes"
+LIBRARYOPTIONS += -lfac-pg
+else
 LIBRARYOPTIONS += -lfac
+endif
+else
+LIBRARYOPTIONS += -lfac
+endif
+
+ifeq "$(PROFILE)" "yes"
+ifeq "$(HAVE_LIBCF_PG)" "yes"
+LIBRARYOPTIONS += -lcf-pg
+else
 LIBRARYOPTIONS += -lcf
+endif
+else
+LIBRARYOPTIONS += -lcf
+endif
+
+ifeq "$(PROFILE)" "yes"
+ifeq "$(HAVE_LIBNTL_PG)" "yes"
+LIBRARYOPTIONS += -lntl-pg
+else
 LIBRARYOPTIONS += -lntl
+endif
+else
+LIBRARYOPTIONS += -lntl
+endif
+
   # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
 LIBRARYOPTIONS += $(LAPACKLIBS)
 
@@ -203,8 +231,26 @@ LIBRARYOPTIONS += $(LAPACKLIBS)
 LIBRARYOPTIONS += M2inits2.o
 LIBRARYDEPS   += M2inits2.o
 
-LIBRARYOPTIONS += $(LIBGMP)
+ifeq "$(PROFILE)" "yes"
+ifeq "$(HAVE_LIBGMP_PG)" "yes"
+LIBRARYOPTIONS += -lgmp-pg
+else
+LIBRARYOPTIONS += -lgmp
+endif
+else
+LIBRARYOPTIONS += -lgmp
+endif
+
+ifeq "$(PROFILE)" "yes"
+ifeq "$(HAVE_LIBGC_PG)" "yes"
+LIBRARYOPTIONS += -lgc-pg
+else
 LIBRARYOPTIONS += -lgc
+endif
+else
+LIBRARYOPTIONS += -lgc
+endif
+
 LIBRARYOPTIONS += -lgdbm
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
   # we successfully avoid using streamio, but we need the personality function in libstc++

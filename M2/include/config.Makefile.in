@@ -53,7 +53,6 @@ LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
 LAPACKLIBS = @LAPACKLIBS@
 ENCAP = @ENCAP@
-LIBGMP = @LIBGMP@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
 # Hence we have to use it, too.
@@ -265,6 +264,21 @@ CXXFLAGS += -faltivec
 endif
 
 XCODE = @XCODE@
+
+# whether a profiling version of library libntl is available with -lntl-pg
+HAVE_LIBNTL_PG = @HAVE_LIBNTL_PG@
+
+# whether a profiling version of factory library libcf is available with -lcf-pg
+HAVE_LIBCF_PG = @HAVE_LIBCF_PG@
+
+# whether a profiling version of library libfac is available with -lfac-pg
+HAVE_LIBFAC_PG = @HAVE_LIBFAC_PG@
+
+# whether a profiling version of library libgc is available with -lgc-pg
+HAVE_LIBGC_PG = @HAVE_LIBGC_PG@
+
+# whether a profiling version of library libgmp is available with -lgmp-pg
+HAVE_LIBGMP_PG = @HAVE_LIBGMP_PG@
 
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"
