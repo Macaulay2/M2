@@ -719,8 +719,6 @@ check Package := pkg -> (
 		    stderr << "-- test " << i << ":" << endl << code t << endl;
 		    t()))))
 
-relativizeFilename2 = on relativizeFilename
-
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
 makePackageIndex List := packagePrefixPath -> (
