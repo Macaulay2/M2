@@ -210,7 +210,7 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
      g.ring = ring f;
      g.target = target f;
      g.returnCode = 0;
-     notImplemented();
+     g.RawComputation = rawGBForce(raw minmat, raw f, raw changemat, raw syzmat);
      f.cache#type = g;
      g)
 

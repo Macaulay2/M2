@@ -119,30 +119,6 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
 #endif
 }
 
-ComputationOrNull * GBComputation::force(const Matrix *m,
-					 const Matrix *gb,
-					 const Matrix *change,
-					 const Matrix *syz)
-{
-  // First determine which kind of MinimalGB is appropriate.
-#if 0
-  const Ring *R = m->get_ring();
-  Ring::CoefficientType typ = R->coefficient_type();
-
-  // Then make one
-  switch (typ) {
-  case Ring::COEFF_ZZ:
-    return new minimalGB_ZZ(GR,R,m->rows(),change->rows());
-  case Ring::COEFF_QQ:
-    return 0;
-  case Ring::COEFF_BASIC:
-    return new minimalGB_Field(GR,R,m->rows(),change->rows());
-  }
-#endif
-  ERROR("not done with implementation");
-  return 0;
-}
-
 ComputationOrNull *GBComputation::set_hilbert_function(const RingElement *h)
   // The default version returns an error saying that Hilbert functions cannot be used.
 {

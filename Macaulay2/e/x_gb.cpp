@@ -4,6 +4,7 @@
 #include "hilb.hpp"
 #include "comp_gb.hpp"
 #include "comp_res.hpp"
+#include "comp_gb_declared.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -72,7 +73,7 @@ IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb 
 	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
 	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
-  return GBComputation::force(m,gb,change,syz);
+  return GBDeclared::create(m,gb,change,syz);
 }
 
 ComputationOrNull* 
