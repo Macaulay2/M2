@@ -56,17 +56,15 @@ docFilename := () -> (
      )
 
 addStartFunction( 
-     () -> (
-	  try DocDatabase = openDatabase docFilename() else ( 
-	       	    stderr << "--warning: couldn't open help file " << docFilename() << endl;
-	       	    new MutableHashTable)))
+     () -> DocDatabase = try openDatabase docFilename() else (
+	  stderr << "--warning: couldn't open help file " << docFilename() << endl;
+	  new HashTable)
+     )
 Documentation = new MutableHashTable
 duplicateDocError := nodeName -> (
      stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
      << newline << flush; )
 storeDoc := (nodeName,docBody) -> (
-     -- note: nodeName and docBody should both be strings which can be evaluated with 'value'.
-     -- That usually means making then with 'toExternalString'.
      if mutable DocDatabase then (
 	  if DocDatabase#?nodeName then duplicateDocError nodeName;
 	  DocDatabase#nodeName = docBody;
@@ -76,27 +74,17 @@ storeDoc := (nodeName,docBody) -> (
      	  Documentation#nodeName = docBody;
 	  )
      )
------------------------------------------------------------------------------
--- getting database records
------------------------------------------------------------------------------
 
-getRecord := key -> (
-     if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
+-----------------------------------------------------------------------------
+-- unformatting document tags
+-----------------------------------------------------------------------------
+unformatTag := new MutableHashTable
+record      := f -> x -> (val := f x; unformatTag#val = x; val)
+unformat    := s -> (
+     if isGlobalSymbol s then value s
+     else if unformatTag#?s then unformatTag#s
+     else s
      )
-
-betterStringKey := key -> (
-     if class key === String and (
-     	  d := getRecord key;
-	  d =!= null and substring(d,0,5) === "goto "
-	  )
-     then substring(d,5)
-     else key)
-
-betterKey  := key -> value           betterStringKey toExternalString key
-getDoc     := key -> value getRecord betterStringKey toExternalString key
-getDocBody := key -> (
-     a := getDoc key;
-     if a =!= null then select(a, s -> class s =!= Option))
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -104,25 +92,13 @@ getDocBody := key -> (
 Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
-unformatTag                := new MutableHashTable
-unformat                   := s -> if unformatTag#?s then unformatTag#s else s
-record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
 formatDocumentTag Thing    := s -> toString s
+formatDocumentTag Symbol   := record toString
+formatDocumentTag Function := record toString
 formatDocumentTag String   := s -> s
-
--- formatDocumentTag Function := record toString
--- formatDocumentTag Symbol   := record(
---      s -> (
--- 	  n := toString s;
--- 	  if value s === s then n
--- 	  else if n === "" or n === " " then concatenate("symbol \"",n,"\"")
--- 	  else if alphabet#?(n#0) then concatenate("symbol ",n)
--- 	  else n
--- 	  )
---      )
 
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
@@ -210,6 +186,19 @@ formatDocumentTagTO Sequence := (
 	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
 	       else if fSeqTO#?#s                       then fSeqTO#(#s)
 						        else toString) s))
+
+-----------------------------------------------------------------------------
+-- getting database records
+-----------------------------------------------------------------------------
+
+getRecord := key -> (
+     if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
+     )
+
+getDoc     := key -> value getRecord formatDocumentTag key
+getDocBody := key -> (
+     a := getDoc key;
+     if a =!= null then select(a, s -> class s =!= Option))
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -463,13 +452,9 @@ document List := z -> (
      key := z#0;
      verifyTag key;
      body := drop(z,1);
-     skey := toExternalString key;
      nodeName := formatDocumentTag key;
      nodeBaseFilename = makeFileName(nodeName,getFileName body);
-     if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
-     storeDoc(skey,toExternalString processExamples fixup body);
-     -- we can't write the html files now, because we need to have all the documentation
-     -- in hand
+     storeDoc(nodeName,toExternalString processExamples fixup body);
      )
 
 -----------------------------------------------------------------------------
@@ -567,7 +552,6 @@ evenMoreGeneral := key -> (
      if t === null and class key === Sequence then key#0 else t)
 headline = memoize (
      key -> (
-	  key = unformat key;
 	  while ( d := getHeadline key ) === null and ( key = evenMoreGeneral key ) =!= null do null;
 	  d))
 
@@ -775,12 +759,9 @@ briefDocumentation = x -> (
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
-     if unformatTag#?s then documentation unformatTag#s
-     else (
-	  key := betterKey s;
-	  if key =!= s then documentation key 
-	  else SEQ { title s, getDocBody s }
-	  )
+     t := unformat s;
+     if t =!= s then documentation t
+     else SEQ { title s, getDocBody s }
      )
 documentation Thing := s -> SEQ { title s, usage s, type s }
 binary := set binaryOperators; erase symbol binaryOperators
@@ -928,11 +909,7 @@ documentation Sequence := s -> (
 help = method(SingleArgumentDispatch => true)
 help List := v -> hr apply(v, help)
 help Thing := s -> (
-     d := documentation s;
-     if d === null 
-     then "No documentation available for '" |formatDocumentTag s | "'."
-     else "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text d
- --  else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
+     "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text documentation s
      )
 
 -----------------------------------------------------------------------------
@@ -1570,7 +1547,7 @@ html TOC := x -> (
 
 addEndFunction( () -> if writingFinalDocDatabase() then (
 	  scan(values symbolTable(), x -> (
-		    if not DocDatabase#?(toExternalString toString x) 
+		    if not DocDatabase#?(toString x) 
 		    then (
 			 pos := locate x;
 			 if pos =!= null then pos = pos#0 | ":" | toString pos#1 | ": ";

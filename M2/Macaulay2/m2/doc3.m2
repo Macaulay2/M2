@@ -570,12 +570,11 @@ document { cacheFileName,
      the name of the node."
      }
 
-document { (cacheFileName, String, Thing),
+document { (cacheFileName, String, String),
      Synopsis => {
 	  ///fn = cacheFileName(prefix,key)///,
 	  "prefix" => "the prefix from which to construct the file name",
-	  "key" => "a key, which can be anything",
-	  "fn" => "a new file name"
+	  "key" => "a key, which can be anything"
 	  },
      "A file name is returned that depends only on the prefix and the key.  The
      prefix should be the path to a directory, together with a terminating path component
@@ -585,17 +584,39 @@ document { (cacheFileName, String, Thing),
      and filenames.",
      EXAMPLE {
 	  ///cacheFileName("./tmp/","algebra")///,
-	  ///cacheFileName("./tmp/",14)///,
-	  ///cacheFileName("./tmp/",14)///
+	  ///cacheFileName("./tmp/","14")///,
+	  ///cacheFileName("./tmp/","14")///
 	  }
      }
 
-document { (cacheFileName, List, Thing),
+document { (cacheFileName, String, String, String),
+     Synopsis => {
+	  ///fn = cacheFileName(prefix,key,base)///,
+	  "prefix" => "the prefix from which to construct the file name",
+	  "key" => "a key, which can be anything",
+	  "base" => "the base part of the file name",
+	  "fn" => "a new file name"
+	  },
+     "A file name ", TT "fn", " is constructed by concatenating ", TT "prefix", " and
+     ", TT "base", " and associate with the key for future retrieval with
+     ", TT "cacheFileName", ".  The prefix should be the path to a directory,
+     together with a terminating path component
+     separator.  When the program terminates, a file called
+     ", TT "Macaulay2-index-cache", " will be created or updated, if
+     necessary, in which to store the table of correspondences between keys
+     and filenames.",
+     EXAMPLE {
+	  ///cacheFileName("./tmp/","algebra","foo")///,
+	  ///cacheFileName("./tmp/","algebra")///,
+	  }
+     }
+
+document { (cacheFileName, List, String),
      Synopsis => {
 	  ///fn = cacheFileName(path,key)///,
 	  "path" => "a search path (list) of prefixes from which to construct the
 	        file name",
-	  "key" => "a key, which can be anything",
+	  "key" => "a key",
 	  "fn" => "a new file name"
 	  },
      "The path should be a list of prefixes which correspond to existing
@@ -604,7 +625,7 @@ document { (cacheFileName, List, Thing),
      the directories on the path will be returned.",
      EXAMPLE {
 	  ///documentationPath///,
-	  ///cacheFileName ( documentationPath, "--" )///,
+	  ///cacheFileName ( documentationPath, "sin" )///,
 	  ///cacheFileName ( documentationPath, "xxxxx" )///
 	  },
      SEEALSO { "documentationPath" }
