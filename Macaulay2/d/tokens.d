@@ -227,7 +227,7 @@ export Code := (
      or newLocalFrameCode				    -- soon obsolete
      or functionCode
      );
-export CodeWrapper := { code:Code };
+export CodeClosure := { frame:Frame, code:Code };
 
 -- Expr
 
@@ -285,7 +285,7 @@ export Expr := (
      BigComplex or
      BigReal or
      Boolean or
-     CodeWrapper or
+     CodeClosure or
      CompiledFunction or
      CompiledFunctionClosure or
      Complex or

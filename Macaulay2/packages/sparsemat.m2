@@ -49,7 +49,7 @@ net SparseMutableMatrix := f -> (
 SparseMutableMatrix.AfterPrint = SparseMutableMatrix.AfterNoPrint = f -> (
      R := ring f;
      << endl;				  -- double space
-     << concatenate(interpreterDepth():"o") << lineNumber() << " : Matrix";
+     << concatenate(interpreterDepth:"o") << lineNumber() << " : Matrix";
      << " " << (expression R)^(numrows f) << " <--- " << (expression R)^(numcols f);
      << endl;
      )

@@ -450,6 +450,13 @@ export eval(c:Code):Expr := (
 	  e)
      else e);
 
+export eval(f:Frame,c:Code):Expr := (
+     saveLocalFrame := localFrame;
+     localFrame = f;
+     ret := eval(c);
+     localFrame = saveLocalFrame;
+     ret);
+
 recycleBin := new array(Frame) len 20 do provide dummyFrame;
 report(c:FunctionClosure,v:Sequence):Expr := list(Expr(c),Expr(v));
 export apply(c:FunctionClosure,v:Sequence):Expr := (

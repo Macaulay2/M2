@@ -759,14 +759,14 @@ setupfun("sameFunctionBody", sameFunctionBody);
 disassemble(e:Expr):Expr := (
      when e
      is f:FunctionClosure do Expr(tostring(Code(f.model)))
-     is c:CodeWrapper do Expr(tostring(c.code))
+     is c:CodeClosure do Expr(tostring(c.code))
      else WrongArg("a function derived from Macaulay 2 code")
      );
 setupfun("disassemble", disassemble);
 
 pseudocode(e:Expr):Expr := (
      when e
-     is f:FunctionClosure do Expr(CodeWrapper(f.model))
+     is f:FunctionClosure do Expr(CodeClosure(f.frame, Code(f.model)))
      else WrongArg("a function derived from Macaulay 2 code")
      );
 setupfun("pseudocode", pseudocode);

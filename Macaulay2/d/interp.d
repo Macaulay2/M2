@@ -76,7 +76,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      );
 errorReportS := setupconst("report",Expr(emptySequence));
 errorReportS.protected = false;
-readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):Expr := (
+readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
      lastvalue := nullE;
      while true do (
      	  if printout then stmtno = stmtno + 1;
@@ -92,7 +92,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 	  interrupted = false;
 	  interruptPending = false;
 	  parsed := parse(file,semicolonW.parse.precedence,true);
-	  if equal(parsed,wordEOF) then return lastvalue;
+	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       if AbortIfError then return buildErrorPacket("--backtrace--");
@@ -109,7 +109,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 		    then (		  
 			 f := convert(parsed); -- convert to runnable code
 			 lastvalue = eval(f);	  -- run it
-			 if lastvalue == endInput then return lastvalue;
+			 if lastvalue == endInput then return nullE;
 			 when lastvalue is err:Error do (
 			      if err.message == returnMessage then return lastvalue
 			      else if err.message == breakMessage then lastvalue = nullE
@@ -131,19 +131,19 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 		    else if isatty(file) 
 		    then flush(file)
 		    else return buildErrorPacket("error while loading file")))));
-readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure):Expr := (
+readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,returnLastvalue:bool):Expr := (
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
        savecd := getGlobalVariable(currentFileDirectory);
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
-	ret := readeval4(file,printout,AbortIfError,dc.dictionary);
+	ret := readeval4(file,printout,AbortIfError,dc.dictionary,returnLastvalue);
        setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
      localFrame = saveLocalFrame;
      ret);
-readeval(file:TokenFile):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure());
+readeval(file:TokenFile,returnLastvalue:bool):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure(),returnLastvalue);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
@@ -161,7 +161,7 @@ loadprintstdin(stopIfError:bool,dc:DictionaryClosure):Expr := (
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,stopIfError,dc);
+	  r := readeval3(file,true,stopIfError,dc,false);
 	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 	  r));
 
@@ -171,7 +171,7 @@ loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,stopIfError,dc);
+	  r := readeval3(file,true,stopIfError,dc,false);
 	  t := (
 	       if s === "-"			 -- whether it's stdin
 	       then (
@@ -179,7 +179,9 @@ loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
 		    0
 		    )
 	       else close(file));
-	  when r is Error do r 
+	  when r is err:Error do (
+	       if err.message == returnMessage then err.value else r
+	       )
 	  else (
 	       if t == ERROR
 	       then buildErrorPacket("error closing file") 
@@ -188,9 +190,11 @@ load(s:string):Expr := (
      when openTokenFile(s)
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
-	  r := readeval(file);
+	  r := readeval(file,false);
 	  t := if !(s==="-") then close(file) else 0;
-	  when r is Error do r
+	  when r is err:Error do (
+	       if err.message == returnMessage then err.value else r
+	       )
 	  else (
 	       if t == ERROR
 	       then buildErrorPacket("error closing file") 
@@ -248,47 +252,44 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	  NULL));
 
 interpreterDepth := 0;
-interpreterDepthFun(e:Expr):Expr := (
-     when e
-     is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else Expr(toInteger(interpreterDepth))
-     else WrongArgInteger());
-setupfun("interpreterDepth",interpreterDepthFun);
+interpreterDepthS := setupconst("interpreterDepth",toExpr(0));
+incrementInterpreterDepth():void := (
+     interpreterDepth = interpreterDepth + 1;
+     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
+decrementInterpreterDepth():void := (
+     interpreterDepth = interpreterDepth - 1;
+     setGlobalVariable(interpreterDepthS,toExpr(interpreterDepth)));
 
 export topLevel():bool := when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
 
 topLevel(dc:DictionaryClosure):bool := when loadprint("-",stopIfError,dc) is Error do false else true;
 topLevel(f:Frame):bool := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 topLevel(e:Expr):Expr := (
-     interpreterDepth = interpreterDepth + 1;
-     ret := 
-     when e is s:Sequence do (
-	  if length(s) == 0 then toExpr(topLevel())
-	  else WrongNumArgs(0,1)
-	  )
-     is dc:DictionaryClosure do toExpr(topLevel(dc))
-     is sc:SymbolClosure do toExpr(topLevel(sc.frame))
-     is fc:FunctionClosure do toExpr(topLevel(fc.frame))
-     is cfc:CompiledFunctionClosure do toExpr(topLevel(emptyFrame))	    -- some values are there, but no symbols
-     is CompiledFunction do toExpr(topLevel(emptyFrame))		    -- no values or symbols are there
-     else WrongArg("a function, a symbol, or ()");
-     interpreterDepth = interpreterDepth - 1;
+     incrementInterpreterDepth();
+       ret := 
+       when e is s:Sequence do (
+	    if length(s) == 0 then toExpr(topLevel())
+	    else WrongNumArgs(0,1)
+	    )
+       is dc:DictionaryClosure do toExpr(topLevel(dc))
+       is sc:SymbolClosure do toExpr(topLevel(sc.frame))
+       is fc:FunctionClosure do toExpr(topLevel(fc.frame))
+       is cfc:CompiledFunctionClosure do toExpr(topLevel(emptyFrame))	    -- some values are there, but no symbols
+       is CompiledFunction do toExpr(topLevel(emptyFrame))		    -- no values or symbols are there
+       else WrongArg("a function, a symbol, or ()");
+     decrementInterpreterDepth();
      ret);
 setupfun("commandInterpreter",topLevel);
 
-breakLoopFrameS := setupconst("breakLoopFrame",nullE);
-breakLoopPseudocodeS := setupconst("breakLoopPseudocode",nullE);
+breakLoopCodeS := setupconst("breakLoopCode",nullE);
 breakLoop(f:Frame,c:Code):Expr := (
      setDebuggingMode(false);
-     dc := localDictionaryClosure(f);
-     oldBreakLoopFrame := getGlobalVariable(breakLoopFrameS);
-     oldBreakLoopPseudocode := getGlobalVariable(breakLoopPseudocodeS);
-     setGlobalVariable(breakLoopFrameS,Expr(dc));
-     setGlobalVariable(breakLoopPseudocodeS,Expr(CodeWrapper(c)));
-     interpreterDepth = interpreterDepth + 1;
-     ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(dc));
-     interpreterDepth = interpreterDepth - 1;
-     setGlobalVariable(breakLoopFrameS,oldBreakLoopFrame);
-     setGlobalVariable(breakLoopPseudocodeS,oldBreakLoopPseudocode);
+       oldBreakLoopCode := getGlobalVariable(breakLoopCodeS);
+       setGlobalVariable(breakLoopCodeS,Expr(CodeClosure(f,c)));
+	 incrementInterpreterDepth();
+	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
+	 decrementInterpreterDepth();
+       setGlobalVariable(breakLoopCodeS,oldBreakLoopCode);
      setDebuggingMode(true);
      ret);
 breakLoopFun = breakLoop;
@@ -296,16 +297,19 @@ breakLoopFun = breakLoop;
 value(e:Expr):Expr := (
      when e
      is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
+     is c:CodeClosure do eval(c.frame,c.code)
      is s:string do (
-	  r := readeval(stringTokenFile("a string", s+newline));
+	  r := readeval(stringTokenFile("a string", s+newline),true);
 	  when r 
 	  is err:Error do (
-	       if err.position == dummyPosition
-	       || int(err.position.loadDepth) < errorDepth
-	       then r
-	       else buildErrorPacket("--backtrace--"))
+	       if err.message == returnMessage then err.value 
+	       else (
+		    if err.position == dummyPosition
+		    || int(err.position.loadDepth) < errorDepth
+		    then r
+		    else buildErrorPacket("--backtrace--")))
 	  else r)
-     else WrongArg(1,"a string or a symbol"));
+     else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value",value);
 
 export process():void := (
@@ -318,7 +322,7 @@ export process():void := (
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      ret := (
-	  when readeval(stringTokenFile("--startupString1--/layout.m2",startupString1))
+	  when readeval(stringTokenFile("--startupString1--/layout.m2",startupString1),false)
 	  is Error do (
 	       if stopIfError
 	       then 1					    -- probably can't happen, because layout.m2 doesn't set stopIfError
@@ -326,7 +330,7 @@ export process():void := (
 		    if topLevel() 			    -- give a prompt for debugging
 		    then 0 else 1))
 	  else 
-	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2)) -- startup.m2 calls topLevel and eventually returns
+	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2),false) -- startup.m2 calls topLevel and eventually returns
 	  is Error do (
 	       if stopIfError 
 	       then 1

@@ -818,7 +818,7 @@ tostringfun(e:Expr):Expr := (
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
      is Net do Expr("--net--")
-     is CodeWrapper do Expr("--code--")
+     is CodeClosure do Expr("--code--")
      is CompiledFunction do Expr("--compiled function--")
      is CompiledFunctionClosure do Expr("--compiled function closure--")
      is FunctionClosure do Expr("--function closure--")
@@ -1066,6 +1066,24 @@ locate(e:Code):void := (
      is v:integerCode do lookat(v.position)
      );
 
+locate0():void := (
+     code.filename = "--unknown file name--";
+     code.minline = 1000000;
+     code.maxline = 0;
+     );
+
+locate1():Expr := (
+     if code.minline == 1000000 then (
+	  code.minline = 0;
+	  code.mincol = 0;
+	  code.maxcol = 0;
+	  );
+     Expr(Sequence(
+	       Expr(minimizeFilename(code.filename)),
+	       Expr(toInteger(code.minline)),
+	       Expr(toInteger(code.maxline))
+	       )));
+
 locate(e:Expr):Expr := (
      when e
      is Nothing do nullE
@@ -1079,22 +1097,15 @@ locate(e:Expr):Expr := (
 	  else Expr(
 	       Sequence(
 		    minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.line)))))
+     is c:CodeClosure do (
+	  locate0();
+	  locate(c.code);
+	  locate1())
      is f:FunctionClosure do (
-	  code.filename = "--unknown file name--";
-	  code.minline = 1000000;
-	  code.maxline = 0;
+	  locate0();
 	  locate(f.model.parms);
 	  locate(f.model.body);
-	  if code.minline == 1000000 then (
-	       code.minline = 0;
-	       code.mincol = 0;
-	       code.maxcol = 0;
-	       );
-	  Expr(Sequence(
-		    Expr(minimizeFilename(code.filename)),
-		    Expr(toInteger(code.minline)),
-		    Expr(toInteger(code.maxline))
-		    )))
+	  locate1())
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
 

@@ -45,7 +45,7 @@ outputLabel := ""
 OutputDictionary = newDictionary()
 
 commonProcessing := x -> (
-     outputLabel = concatenate(interpreterDepth():"o",toString lineNumber());
+     outputLabel = concatenate(interpreterDepth:"o",toString lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
      	  s := getGlobalSymbol(OutputDictionary,outputLabel);
@@ -75,7 +75,7 @@ Thing.NoPrint = x -> (
 loaded := new MutableHashTable
 unmarkAllLoadedFiles = () -> loaded = new MutableHashTable  -- symbol will be erased in debugging.m2
 
-markLoaded := (filename,origfilename) -> ( 
+markLoaded := (filename,origfilename,notify) -> ( 
      loaded#origfilename = true; 
      if notify then (
 	  filename = minimizeFilename filename;
@@ -85,37 +85,34 @@ markLoaded := (filename,origfilename) -> (
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 
-tryload := (filename,loadfun) -> (
+tryload := (filename,loadfun,notify) -> (
+     ret := null;
      if isAbsolutePath filename or isSpecial filename then (
-	  if not fileExists filename then return false;
-	  loadfun filename;
-	  markLoaded(filename,filename);
-	  true)
+	  if fileExists filename then (
+	       ret = loadfun filename;
+	       markLoaded(filename,filename,notify);
+	       ret)
+	  else error("can't open file ", filename))
      else (
           if class path =!= List then error "expected 'path' to be a list (of strings)";
-          {} =!= select(1,
-	       if currentFileDirectory == "--startupString--/" then path
-	       else prepend(currentFileDirectory, path),
+	  loaded := false;
+          scan(
+	       if currentFileDirectory == "--startupString--/" then path else prepend(currentFileDirectory, path),
 	       dir -> (
 		    if class dir =!= String then error "member of 'path' not a string";
 		    fullfilename := dir | filename;
-		    if not fileExists fullfilename then return false;
-		    loadfun fullfilename;
-		    markLoaded(fullfilename,filename);
-		    true))))
+		    if fileExists fullfilename then (
+		    	 ret = loadfun fullfilename;
+		    	 markLoaded(fullfilename,filename,notify);
+			 loaded = true;
+			 break)));
+	  if loaded then ret else error("can't find file ", filename)))
 
 simpleLoad := load
-load = (filename) -> (
-     if not tryload(filename,simpleLoad) then error ("can't open file ", filename)
-     )
+load = (filename) -> tryload(filename,simpleLoad,notify)
 
 simpleInput := input
-input = (filename) -> (
-     savenotify := notify;
-     notify = false;
-     if not tryload(filename,simpleInput) then error ("can't open file ", filename);
-     notify = savenotify;
-     )
+input = (filename) -> tryload(filename,simpleInput,false)
 
 setnotify := () -> (
      -- notify = true			-- notify after initialization, commented out

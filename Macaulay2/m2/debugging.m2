@@ -102,7 +102,7 @@ list2 := syms -> stack apply(syms, s ->  toString s | ": " | toString class valu
 
 listUserSymbols = Command ( type -> list2 userSymbols type )
 
-clearOutput = Command (() -> scan(keys Output.Dictionary, s -> ( s <- null; erase s )))
+clearOutput = Command (() -> scan(values Output.Dictionary, s -> ( s <- null; erase s )))
 
 clearAll = Command (() -> ( 
      	  unmarkAllLoadedFiles();
@@ -142,11 +142,16 @@ abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else x)
 
-ll := f -> Table (apply ( reverse flatten (sortByHash \ values \ localDictionaries f) , s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))
+ll := f -> Table (
+     prepend(
+	  {"symbol",, "type",, "value", "location"},
+	  apply (
+	       reverse \\ flatten \\ sortByHash \ values \ localDictionaries f,
+	       s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s})))
 
 listLocalVariables = Command(
      x -> if x === () then (
-	       if breakLoopFrame === null then error "no break loop active";
-	       ll breakLoopFrame
+	       if breakLoopCode === null then error "no break loop active";
+	       ll breakLoopCode
 	       )
 	  else ll x)

@@ -443,6 +443,10 @@ examine(e:Expr):Expr := (
      	  showFrames(f);
           if s.frameID != f.frameID then stdout << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
+     is c:CodeClosure do (
+	  f := c.frame;
+     	  showFrames(f);
+	  nullE)
      is fc:FunctionClosure do (
 	  f := fc.frame;
 	  model := fc.model;
@@ -1237,6 +1241,7 @@ frame(e:Expr):Expr := (
      is s:Sequence do 
      if length(s) == 0 then Expr(listFrame(localFrame)) else WrongNumArgs(1,2)
      is sc:SymbolClosure do Expr(listFrame(sc.frame))
+     is c:CodeClosure do Expr(listFrame(c.frame))
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
      is CompiledFunction do Expr(listFrame(emptySequence))
@@ -1261,6 +1266,7 @@ frames(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
      is sc:SymbolClosure do Expr(listFrames(sc.frame))
+     is c:CodeClosure do Expr(listFrames(c.frame))
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
@@ -1284,10 +1290,11 @@ localDictionaries(f:Frame):Expr := Expr(
 localDictionaries(e:Expr):Expr := (
      when e
      is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
-     is dc:DictionaryClosure do localDictionaries(dc.frame)
-     is sc:SymbolClosure do localDictionaries(sc.frame)
-     is fc:FunctionClosure do localDictionaries(fc.frame)
-     is cfc:CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
+     is x:DictionaryClosure do localDictionaries(x.frame)
+     is x:SymbolClosure do localDictionaries(x.frame)
+     is x:CodeClosure do localDictionaries(x.frame)
+     is x:FunctionClosure do localDictionaries(x.frame)
+     is CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
      else WrongArg("a function, a symbol, or ()"));
 setupfun("localDictionaries", localDictionaries);

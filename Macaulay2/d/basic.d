@@ -21,7 +21,7 @@ export hash(e:Expr):int := (
      is b:Boolean do if b.v then 444777 else 777333
      is Nothing do 333889
      is x:List do x.hash
-     is CodeWrapper do 73889				    -- improve this later!
+     is CodeClosure do 73889				    -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash	    -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:Rational do hash(x)
      is x:BigReal do hash(x)
