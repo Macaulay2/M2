@@ -3,7 +3,7 @@
 -----------------------------------------
 -- MonomialIdeal's ----------------------
 -----------------------------------------
-restart
+--restart
 needs "raw-util.m2"
 
 R = polyring(rawZZ(), (symbol a .. symbol g))
