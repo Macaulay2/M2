@@ -367,7 +367,9 @@ transpose Matrix :=  (m) -> (
      then error "expected a map between free modules";
      sendgg (ggPush m, ggtranspose);
      f := getMatrix ring m;
-     map(dual source m, dual target m, f, Degree => - degree m))
+     -- map(dual source m, dual target m, f, Degree => - degree m)
+     f
+     )
 
 ring(Matrix) := m -> (
      R := m.source.ring;

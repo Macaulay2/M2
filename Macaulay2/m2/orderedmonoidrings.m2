@@ -224,7 +224,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	  if R.?newEngine != M.?newEngine
 	  then error "expected both ring and monoid to be handled by new engine routines";
 	  Weyl := M.Options.WeylAlgebra =!= {};
-	  Skew := M.Options.SkewCommutative != false;
+	  Skew := M.Options.SkewCommutative =!= false;
 	  degRing := (
 	       if M.?newEngine or R.?newEngine
 	       then if degreeLength M != 0 then newDegreesRing degreeLength M else ZZZ
@@ -260,8 +260,12 @@ Ring OrderedMonoid := (			  -- no memoize
 			 if not x<dx
 			 then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
 			 );
-	       	    new PolynomialRing from (ggPush R, ggPush M, 
-			 ggPush diffs1, ggPush diffs0,
+	       	    new PolynomialRing from (
+		    	 ggPush degRing, 
+		    	 ggPush flatten (options M).Degrees, 
+			 ggPush R, ggPush M, 
+			 ggPush diffs0,
+			 ggPush diffs1,
 			 ggPush h,
 			 ggweylalgebra)
 		    )
@@ -274,7 +278,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       if M.?newEngine
 	       then (
 		    skews := (
-		    	 if M.Options.SkewCommutative == true
+		    	 if M.Options.SkewCommutative === true
 			 then toList (0 .. numgens M - 1)
 			 else if class M.Options.SkewCommutative === List
 			 then indices(M,M.Options.SkewCommutative)
