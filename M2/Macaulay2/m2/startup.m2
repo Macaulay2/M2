@@ -160,6 +160,7 @@ if firstTime then (
 sourceHomeDirectory = null				    -- home directory of Macaulay 2
 buildHomeDirectory  = null	       -- parent of the directory of the executable described in command line argument 0
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
+packagePath = null
 encapDirectory = null	   -- encap directory, after installation, if present, e.g., "/usr/local/encap/Macaulay2-0.9.5/"
 
 fullCopyright := false
@@ -217,8 +218,6 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
      if prev =!= null then setPrefixFromBindir dir prev)
 
-if prefixDirectory =!= null then packagePath = { prefixDirectory } else packagePath = { }
-
 phase := 1
 
 silence := arg -> null
@@ -244,6 +243,7 @@ usage := arg -> (
      << "    --notify           notify when loading files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
@@ -329,7 +329,11 @@ action := hashTable {
 action2 := hashTable {
      "-E" => arg -> if phase == 2 then value arg,
      "-e" => arg -> if phase == 3 then value arg,
-     "--print-width" => arg -> if phase == 3 then printWidth = value arg
+     "--print-width" => arg -> if phase == 3 then printWidth = value arg,
+     "--prefix" => arg -> if phase == 1 then (
+	  if arg === "" or not match("/$",arg) then arg = arg | "/";
+	  prefixDirectory = arg;
+	  )
      }
 
 processCommandLineOptions := phase0 -> (			    -- 3 passes
@@ -382,13 +386,20 @@ packageSuffix = if version#"operating system" === "Darwin" then "Library/Applica
 
 path = {}
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
+
 homeDirectory = getenv "HOME" | "/"
+
 if not noinitfile then (
      path = join(
 	  {homeDirectory | packageSuffix | "local/" | LAYOUT#"datam2", homeDirectory | packageSuffix | "code/"},
 	  path);
+     )
+
+if packagePath === null then if prefixDirectory =!= null then packagePath = { prefixDirectory } else packagePath = { }
+if not noinitfile then (
      packagePath = prepend(homeDirectory | packageSuffix | "local/", packagePath);
      )
+
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
 if prefixDirectory      =!= null then (

@@ -99,7 +99,7 @@ newPackage(String) := opts -> (title) -> (
 	  "package prefix" => if title === "Macaulay2" then prefixDirectory else (
 	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
-	       -- else error "debug me"
+	       else error "debug me"
 	       ),
 	  };
      testnumber = 0;
