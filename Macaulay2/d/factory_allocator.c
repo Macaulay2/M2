@@ -4,7 +4,7 @@
 /* this is code from factory's file memutil.c, slightly sped up */
 
 /* amazingly, GC_MALLOC is faster than malloc even for the few times getBlock needs to get brand new memory */
-#  define malloc GC_MALLOC_UNCOLLECTABLE
+#  define malloc GC_MALLOC
 #  define free GC_FREE
 #  define realloc GC_REALLOC
 

@@ -240,9 +240,7 @@ void *p;
 #define NOTHING(p) nop((void *)p)
 #define ONSTACK(p) nop((void *)&p)
 
-#ifdef NDEBUG
 void dummy_GC_warn_proc(char *msg, GC_word arg) { }
-#endif
 
 #define stringify(x) #x
 
