@@ -173,22 +173,22 @@ LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
 AC_TRY_LINK(
     [#include <gc.h>],
     [GC_malloc(1);],
-    ,AC_MSG_WARN(missing library: libgc))
+    ,AC_MSG_ERROR(missing library: libgc))
 AC_TRY_LINK(
     [#include <gmp.h>],
     [__gmp_version;],
-    ,AC_MSG_WARN(missing library: libgmp))
+    ,AC_MSG_ERROR(missing library: libgmp))
 AC_TRY_LINK([#include <gdbm.h>],
     [gdbm_close(0);],
-    ,AC_MSG_WARN(missing library: libgdbm))
+    ,AC_MSG_ERROR(missing library: libgdbm))
 AC_TRY_LINK(
     [#include <factoryconf.h>],
     [FACTORYVERSION;],
-    ,AC_MSG_WARN(missing library: libcf))
+    ,AC_MSG_ERROR(missing library: libcf))
 AC_TRY_LINK(
     [extern const char * libfac_version;],
     [libfac_version;],
-    ,AC_MSG_WARN(missing library: libfac))
+    ,AC_MSG_ERROR(missing library: libfac))
 LIBS="$OLIBS"
 
 # M2_SHOW_CONFDEFS()
