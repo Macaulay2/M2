@@ -2,7 +2,7 @@
 
 TMP=tmp$$.c
 
-LDFLAGS='-static -lsocket'
+LDFLAGS='-static'
 
 cat <<EOF >compat.h
 /* this file produced automatically by configure, do not edit */
@@ -54,6 +54,13 @@ cat >>compat.c <<'EOF'
 #define ENOSYS 0
 #endif
 EOF
+
+cat <<'EOF' >$TMP
+main(){ }
+EOF
+if gcc $TMP $LDFLAGS -lsocket >/dev/null 2>&1
+then LDFLAGS="$LDFLAGS -lsocket"
+fi
 
 cat <<'EOF' >$TMP
 main(){ getprotobyname(); }
