@@ -210,7 +210,7 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
 
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
-notyet := arg -> if phrase == 1 then (
+notyet := arg -> if phase == 1 then (
      << "warning: command line option " << arg << " not re-implemented yet" << newline << flush;
      )
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")

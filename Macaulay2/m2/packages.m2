@@ -14,8 +14,6 @@ packages = {}
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 
-toString Dictionary := d -> if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
-
 hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
      )
@@ -35,6 +33,12 @@ reverseDictionaryRemove = (X,x) -> (
      	  pkg -> if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X then (
 	       remove(pkg#"reverse dictionary",x); 
 	       break)))
+
+toString Dictionary := d -> (
+     r := reverseDictionary d;
+     if r =!= null then return toString r;
+     if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
+     )
 
 globalAssignFunction = (X,x) -> (
      reverseDictionaryRecord (X,x);
