@@ -158,7 +158,7 @@ document { basictype,
      PARA,
      "Let's compute a list of all the basic types:",
      EXAMPLE ///stack sort (toString \
-     select(values symbolTable(), i -> parent value i === Thing)
+     select(values globalDictionary(), i -> parent value i === Thing)
      )///,
      SEEALSO "basic types"
      }
@@ -465,7 +465,7 @@ document { Symbol,
      PARA,
      EXAMPLE "ab12345cde",
      PARA,
-     SEEALSO {"symbolTable", "local", "global", "symbol", ":="}
+     SEEALSO {"local", "global", "symbol", ":="}
      }
 
 document { File,

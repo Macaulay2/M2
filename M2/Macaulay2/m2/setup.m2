@@ -163,7 +163,7 @@ stderr << "--loaded loads.m2" << endl
 lastSystemSymbol = local newPrivateSymbol
 
 addStartFunction(
-     () -> scanPairs(symbolTable(), (name,sym) -> if not writableGlobals#?sym then protect sym)
+     () -> scan(pairs globalDictionary(), (name,sym) -> if not writableGlobals#?sym then protect sym)
      )
 
 notify = true

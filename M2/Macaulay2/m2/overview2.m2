@@ -1822,7 +1822,7 @@ document { "communicating with programs",
      else
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,
-	  ///scan(keys symbolTable(), key -> f << key << endl)///,
+	  ///scan(keys globalDictionary(), key -> f << key << endl)///,
 	  ///f << closeOut///,
 	  ///get f///
 	  },

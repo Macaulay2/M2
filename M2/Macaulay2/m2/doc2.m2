@@ -1061,15 +1061,6 @@ document { (symbol _, ZZ, Ring),
      TT "n_R", " -- promotes the integer ", TT "n", " to the ring ", TT "R", ".",
      }
 
-document { symbolTable,
-     Headline => "the global symbols",
-     TT "symbolTable()", " -- constructs an hash table containing the 
-     global symbol table.",
-     PARA,
-     "Each key is a string containing the name of a symbol, and the 
-     corresponding value is the symbol itself."
-     }
-
 document { applyPairs,
      Headline => "apply a function to pairs in a hash table",
      TT "applyPairs(x,f)", " -- applies ", TT "f", " to each pair ", TT "(k,v)", " in the 
@@ -1154,36 +1145,6 @@ document { use,
      automatically called for it.",
      SEEALSO "GlobalAssignHook"
      }
-
-  --  types := new MutableHashTable
-  --  itemize := (sym) -> (
-  --       thing := value sym;
-  --       type := class thing;
-  --       if not types#?type then types#type = new MutableHashTable;
-  --       types#type#sym = true;
-  --       )
-  --  itemize \ values symbolTable()
-  --  sortByName := v -> (i -> i#1) \ sort ((i -> (toString i, i)) \ v)
-  --  nm := type -> "index for class " | toString type
-  --  document { "index of existing objects by class", MENU apply(sortByName keys types, type -> TO nm type) }
-  --  scan(sortByName keys types, type -> (
-  --  	  if type === Symbol then (
-  --  	       op := sym -> value sym === sym and toExternalString sym =!= toString sym;
-  --  	       ops := v -> select(v,op);
-  --  	       nonops := v -> select(v,i -> not op i);
-  --  	       document { nm type,
-  --  		    "Operators:",
-  --  		    MENU ((i -> TOH i) \ toString \ sortByName    ops keys types#type),
-  --  		    "Nonoperators:",
-  --  		    MENU ((i -> TOH i) \ toString \ sortByName nonops keys types#type),
-  --  		    }
-  --  	       )
-  --  	  else document { nm type,
-  --  	       MENU ((i -> TOH i) \ toString \ sortByName keys types#type),
-  --  	       }
-  --  	  )
-  --       )
-  --  types = null
 
 document { setSpin,
      Headline => "set interval for spinning the cursor",

@@ -1126,18 +1126,3 @@ setprec(e:Expr):Expr := (
 	  else WrongArgSmallInteger())
      else WrongArgInteger());
 setupfun("setPrecision",setprec);
-
-pairs(e:Expr):Expr := (
-     when e
-     is o:HashTable do list(
-	  new Sequence len o.numEntries do
-	  foreach bucket in o.table do (
-	       p := bucket;
-	       while p != bucketEnd do (
-		    provide Expr(Sequence(p.key,p.value));
-		    p = p.next;
-		    )
-	       )
-	  )
-     else WrongArg("a hash table or a raw polynomial"));
-setupfun("pairs",pairs);

@@ -267,6 +267,7 @@ export globalScope := (
 export globalFrame := Frame(dummyFrame,globalScope.seqno,Sequence(
 	  nullE						    -- value for dummySymbol
 	  ));
+export globalDictionary := Dictionary(nextHash(), globalScope, globalFrame);
 export localFrame := globalFrame;
 export newScope(scope:Scope):Scope := (
      s := Scope(newDictionary(),scope,numScopes,0,true);

@@ -37,7 +37,7 @@ newPackage(String,String) := opts -> (title,vers) -> (
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
 	  "options" => opts,
-	  "initial global symbols" => new MutableList from values symbolTable(),
+	  "initial global symbols" => new MutableList from values globalDictionary(),
 	  "file directory" => currentFileDirectory
 	  }
      )
@@ -45,7 +45,7 @@ newPackage(String,String) := opts -> (title,vers) -> (
 end Package := p -> (
      if p =!= currentPackage then error ("package not open");
      p#"dictionary" = new PseudoDictionary from (
-	  apply(keys (set values symbolTable() - set p#"initial global symbols"), 
+	  apply(keys (set values globalDictionary() - set p#"initial global symbols"), 
 	       s -> toString s => s));
      remove(p,"initial global symbols");
      packages = append(packages,p);
