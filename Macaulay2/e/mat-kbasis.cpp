@@ -108,9 +108,8 @@ KBasis::KBasis(const Matrix *bottom,
 
   mat = MatrixConstructor(bottom->rows(), 0, false);
 
-  if (D->n_vars() > 1)
+  if (D->n_vars() > 1 && lo_degree)
     {
-      assert(lo_degree);
       kb_target_degree = D->make_one();
       D->from_expvector(lo_degree, kb_target_degree);
     }
@@ -157,7 +156,7 @@ void KBasis::k_basis0(int firstvar)
       do_insert = true; // unless the following search_expvector fails
     }
   if (kb_monideal->search_expvector(kb_exp,b)) return;
-  if (D->n_vars() > 1)
+  if (kb_target_degree)
     {
       if (D->compare(kb_exp_degree, kb_target_degree) == EQ)
 	do_insert = true;
