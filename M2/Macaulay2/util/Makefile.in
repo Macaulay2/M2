@@ -10,7 +10,7 @@ ifeq ($(OS),Linux)
 EXES += screen
 endif
 
-.PHONY : all clean distclean wc
+.PHONY : all clean distclean
 
 all:: $(EXES) targettypes.h
 targettypes.h : targettypes ; ./$^ >$@
@@ -23,8 +23,6 @@ all:: ../setup.exe
 ../setup.exe : setup
 	cp setup.exe ..
 endif
-
-wc:; wc -l *.c *.h
 
 distclean : clean
 	rm -f Makefile

@@ -7,7 +7,7 @@ INSTALL_DATA = $(INSTALL)
 ELFILES = M2-mode.el M2.el
 ALLFILES = makesyms.m2 Makefile $(ELFILES) emacs-hlp.txt emacs.m2
 
-.PHONY : all clean distclean wc install check default
+.PHONY : all clean distclean install check default
 
 all:: M2-symbols.el M2-symbols
 

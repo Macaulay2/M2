@@ -23,6 +23,7 @@ INSTALL_DATA = $(INSTALL)
 .PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default lsm
 default: all
 all::
+
 ################################# preparation
 justM2 all::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
 always:

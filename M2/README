@@ -35,6 +35,13 @@ depend on some of the earlier ones.
 	     -- cp gc.a /usr/lib/libgc.a
 	     -- cp include/gc.h and include/gc_cpp.h /usr/include
 
+    library: gdbm
+    release: gdbm-1.8.0
+     author: phil@cs.wwu.edu
+    bugs to: downsj@downsj.com
+     get at: ftp://ftp.gnu.org/pub/gnu/gdbm/
+    license: GNU GENERAL PUBLIC LICENSE
+
     library: gmp
     release: gmp-3.1.1
      author: Torbjorn Granlund <tege@nada.kth.se>

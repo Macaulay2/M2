@@ -229,7 +229,7 @@ OTHERS := Makefile \
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
 
-.PHONY : all clean distclean wc install tar check
+.PHONY : all clean distclean install tar check
 
 ###################################################################
 ## Targets ##
@@ -325,8 +325,6 @@ x_relem.o : x_relem.cpp
 endif
 
 m2.exe : # used on Wintel
-
-wc ::; wc -l *.hpp *.cpp 
 
 ########################
 ## Obsolete targets ####

@@ -10,7 +10,7 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install phase1 check html clean distclean wc check \
+.PHONY: clean all install phase1 check html clean distclean check \
 		default initialize phase2 phase3 phase4
 
 # CFLAGS =
@@ -40,10 +40,6 @@ endif
 
 NONDOCM2FILES = @srcdir@/setup.m2 $(DUMPSEQUENCE) \
 	$(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2)
-
-wc:
-	wc -l $(DOCSEQUENCE)
-	wc -l $(NONDOCM2FILES)
 
 M2FILES = $(NONDOCM2FILES) $(DOCSEQUENCE)
 SCRIPTS = ../bin/M2

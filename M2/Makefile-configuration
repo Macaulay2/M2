@@ -1,25 +1,12 @@
-# -*- Mode: Makefile -*-
-
-default : configure include/config.h.in
-
-configure.options :
-	echo "# -*- Mode: Makefile -*-" > $@
-	echo "# CONFIGURE_ENVIRON = " >>$@
-	echo "# CONFIGURE_OPTIONS = " >>$@
-	echo "# CONFIGURE_OPTIONS += --disable-dumpdata" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-dumpdata=old" >>$@
-	echo "# CONFIGURE_OPTIONS += --with-socks" >>$@
-	echo "# CONFIGURE_OPTIONS += --disable-strip" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-profile" >>$@
-	echo "# CONFIGURE_OPTIONS += --disable-optimize" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-debug" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-static" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-memdebug" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-verbose" >>$@
-	echo "# CONFIGURE_OPTIONS += --disable-gc-for-new" >>$@
-
+default : configure include/config.h.in.stamp
 configure : configure.ac aclocal.m4 config.files
 	autoconf
-include/config.h.in : configure.ac aclocal.m4
+# autoheader may also change include/config.h.in
+include/config.h.in.stamp : configure.ac aclocal.m4
 	autoheader
-	touch $@
+	echo stamped >$@
+
+# Local Variables:
+# mode: Makefile
+# compile-command: "make -f Makefile-configuration"
+# End:

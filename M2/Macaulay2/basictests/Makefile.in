@@ -8,7 +8,7 @@ INSTALL_DATA = $(INSTALL)
 
 TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 
-.PHONY : all clean distclean wc install check default
+.PHONY : all clean distclean install check default
 
 all:: $(TESTRESULTS)
 
