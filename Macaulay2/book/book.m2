@@ -159,7 +159,7 @@ scan(pairs nodeTable, (i,node) -> (
 	  bk << ///
 
 \sectionhdr{///
-	  << ttLiteral formatDocumentTag evaluate node << "}{" << sectionNumberTable#i 
+	  << cmrLiteral formatDocumentTag evaluate node << "}{" << sectionNumberTable#i 
 	  << "}" << endl
 	  << concatenate booktex doc node << endl;
 	  )

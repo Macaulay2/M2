@@ -115,7 +115,7 @@ cmrLiteralTable# ">" = "{\\tt\\char`\\>}"
 cmrLiteralTable# "|" = "{\\tt\\char`\\|}"
 cmrLiteralTable# "{" = "{\\tt\\char`\\{}"
 cmrLiteralTable# "}" = "{\\tt\\char`\\}}"
-cmrLiteral = s -> apply(characters s, c -> cmrLiteralTable#c)
+cmrLiteral = s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 ---------------
 crossReference := (key,text) -> (
      sectionNumber := (
