@@ -167,8 +167,6 @@ const MatrixOrNull *rawGBSyzygies(Computation *C)
   return 0;
 }
 
-
-
 #if 0
 const MatrixOrNull *
 IM2_GB_get_matrix(Computation *G, 
