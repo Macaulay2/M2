@@ -21,7 +21,7 @@ document { Resolution, HEADLINE "the class of all resolution computations",
     by the user.",
     }
 
-document { "res",
+document { symbol "res",
     "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
     }
 
@@ -183,8 +183,7 @@ document { (resolution, Module),
      projective resolution of ", TT "M", ", then it can be installed
      with ", TT "M.resolution = C", ".",
      PARA,
-     "For an abbreviation, use ", TO "res", ".",
-     SEEALSO {"ChainComplex", "resolution"}
+     "For an abbreviation, use ", TO "res", "."
      }
 document { (resolution, Matrix),
      TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
@@ -200,8 +199,7 @@ document { (resolution, Matrix),
 
 document { (resolution, Ideal),
      TT "resolution I", " -- produces a projective resolution of the 
-     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", ".",
-     SEEALSO "resolution"
+     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", "."
      }
 
 TEST "
@@ -577,7 +575,7 @@ document { showStructure,
      SEEALSO { "showUserStructure", "parent"}
      }
 
-document { "..",
+document { symbol "..",
      TT "m .. n", " -- produces a sequence of integers in the range from m to 
      n inclusive. If n is less than m then the result is an empty sequence.",
      PARA,
@@ -631,42 +629,26 @@ document { (cohomology, ZZ, Module),
 	  }
      }
 
-document { Variety, HEADLINE "the class of all algebraic varieties",
-     SEEALSO "CoherentSheaf"
-     }
+document { Variety, HEADLINE "the class of all algebraic varieties", SEEALSO "CoherentSheaf" }
 
 document { AffineVariety, HEADLINE "the class of all affine varieties",
      "To create an affine variety, use ", TO "Spec", ".",
-     EXAMPLE {
-	  "Spec(QQ[x,y])"
-	  }
+     EXAMPLE { "Spec(QQ[x,y])" }
      }
 
 document { ProjectiveVariety, HEADLINE "the class of all projective varieties",
      "To create a projective variety, use ", TO "Proj", ".",
-     EXAMPLE {
-	  "Proj(QQ[x,y])",
-	  }
+     EXAMPLE { "Proj(QQ[x,y])" }
      }
 
 document { Spec,
      TT "Spec R", " -- create an affine variety or scheme from the ring ", TT "R", ".",
-     PARA,
-     EXAMPLE {
-	  "R = QQ[x,y];",
-	  "Spec R"
-	  },
-     SEEALSO "AffineVariety"
+     EXAMPLE { "R = QQ[x,y];", "Spec R" }
      }
 
 document { Proj,
      TT "Proj R", " -- create a projective variety or scheme from the graded ring ", TT "R", ".",
-     PARA,
-     EXAMPLE {
-	  "R = QQ[x,y];",
-	  "Proj R"
-	  },
-     SEEALSO "ProjectiveVariety"
+     EXAMPLE { "R = QQ[x,y];", "Proj R" }
      }
 
 document { CoherentSheaf, HEADLINE "the class of all coherent sheaves" }
@@ -676,16 +658,12 @@ document { (sheaf, Module, Variety),
      to the module ", TT "M", ".",
      PARA,
      "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is 
-     the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module.",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
      }
 
 document { (sheaf, Module),
      TT "sheaf M", " -- produce the coherent sheaf on a projective variety ", TT "X", "
-     corresponding to a homegeneous module ", TT "M", ".",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     corresponding to a homegeneous module ", TT "M", "."
      }
 
 document { (symbol ~, Module),
@@ -695,16 +673,13 @@ document { (symbol ~, Module),
      SEEALSO "CoherentSheaf"
      }
 
-document { (sheaf, Ring),
-     TT "sheaf R", " -- produce the structure sheaf on the projective variety ", TT "Proj R", ".",
-     PARA,
-     SEEALSO "CoherentSheaf"
+document { (sheaf, Ring), 
+     TT "sheaf R", " -- produce the structure sheaf on the projective variety ", TT "Proj R", "."
      }
 
-document { (symbol ~, Ring),
+document { (symbol ~, Ring), HEADLINE "structure sheaf",
      TT "R~", " -- produce the structure sheaf on the projective variety ", TT "Proj R", ".",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     EXAMPLE { "R = QQ[x,y,z];", "R~", "variety oo" }
      }
 
 document { (variety, CoherentSheaf),
@@ -714,16 +689,12 @@ document { (variety, CoherentSheaf),
 	  "X = Proj(QQ[x,y,z])",
 	  "OO_X(3)",
 	  "variety oo"
-	  },
-     PARA,
-     SEEALSO "CoherentSheaf"
+	  }
      }
-document { variety, HEADLINE "make a variety" }
+document { variety, HEADLINE "get the variety" }
 document { (ring, CoherentSheaf),
      TT "ring F", " -- produce the coordinate ring of the variety on which a coherent sheaf
-     ", TT "F", " is defined.",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     ", TT "F", " is defined."
      }
 
 document { (module, CoherentSheaf),
@@ -734,20 +705,15 @@ document { (module, CoherentSheaf),
 	  "F = OO_X(3)",
 	  "module F",
 	  "degrees oo",
-	  },
-     SEEALSO "CoherentSheaf"
+	  }
      }
 
 document { (symbol ++, CoherentSheaf, CoherentSheaf),
-     TT "F ++ G", " -- direct sum of coherent sheaves.",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     TT "F ++ G", " -- direct sum of coherent sheaves."
      }
 
 document { (symbol **, CoherentSheaf, CoherentSheaf),
-     TT "F ** G", " -- tensor product of coherent sheaves.",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     TT "F ** G", " -- tensor product of coherent sheaves."
      }
 
 document { (symbol " ", CoherentSheaf, ZZ),
@@ -760,8 +726,7 @@ document { (symbol " ", CoherentSheaf, ZZ),
 	  "G = F(3)",
 	  "module G",
 	  "degrees oo",
-	  },
-     SEEALSO "CoherentSheaf"
+	  }
      }
 
 document { (symbol /, CoherentSheaf, CoherentSheaf),
@@ -771,30 +736,16 @@ document { (symbol /, CoherentSheaf, CoherentSheaf),
      }
 
 
-document { (codim, CoherentSheaf),
-     TT "codim F", " -- calculate the codimension of the support of a coherent sheaf.",
-     PARA,
-     SEEALSO "CoherentSheaf"
-     }
-
-document { (rank, CoherentSheaf),
-     TT "rank F", " -- calculate the rank of a coherent sheaf.",
-     PARA,
-     SEEALSO "CoherentSheaf"
-     }
-
+document { (codim, CoherentSheaf), HEADLINE "codimension of support" }
+document { (rank, CoherentSheaf) }
 document { (exteriorPower, ZZ, CoherentSheaf),
      TT "exteriorPower(i,F)", " -- calculate the ", TT "i", "-th exterior power of a coherent sheaf
      ", TT "F", ".",
-     PARA,
-     SEEALSO "CoherentSheaf"
      }
 
 document { (degrees, CoherentSheaf),
      TT "degrees F", " -- produce a list of the degrees of the generators of the module
-     defining a coherent sheaf ", TT "F", ".",
-     PARA,
-     SEEALSO "CoherentSheaf"
+     defining a coherent sheaf ", TT "F", "."
      }
 
 document { (cohomology, ZZ, CoherentSheaf),
@@ -811,19 +762,15 @@ document { (cohomology, ZZ, CoherentSheaf),
 	  "X = Proj R",
 	  "HH^1(cotangentSheaf X)",
 	  "hilbertFunction(0,oo)"
-	  },
-     SEEALSO "CoherentSheaf"
+	  }
      }
 
 document { OO,
-     TT "OO_X", " -- produce the structure sheaf on a variety ", TT "X", ".",
-     SEEALSO "CoherentSheaf"
+     TT "OO_X", " -- produce the structure sheaf on a variety ", TT "X", "."
      }
 
 document { (cotangentSheaf, ProjectiveVariety),
-     TT "cotangentSheaf X", " -- calculate the cotangent sheaf of a variety ", TT "X", ".",
-     PARA,
-     SEEALSO {"CoherentSheaf", (cotangentSheaf, ZZ, ProjectiveVariety)}
+     TT "cotangentSheaf X", " -- calculate the cotangent sheaf of a variety ", TT "X", "."
      }
 document { cotangentSheaf, HEADLINE "make a cotangent sheaf" }
 document { (cotangentSheaf, ZZ, ProjectiveVariety),

@@ -22,7 +22,7 @@ document { Numeric,
      "See also ", TO "RR", "."
      }
 
-document { "pi",
+document { symbol "pi",
      TT "pi", " -- the numerical value of the arithmetic quantity pi."
      }
 
@@ -48,10 +48,12 @@ document { coefficientRing,
      }
 
 document { isCommutative,
+     HEADLINE "whether a ring is commutative",
      TT "isCommutative R", " -- tells whether the ring R is commutative."
      }
 
 document { isRing,
+     HEADLINE "whether something is a ring",
      TT "isRing x", " -- determines whether x is a ring."
      }
 
@@ -75,13 +77,17 @@ document { lift,
      SEEALSO "baseRings"
      }
 
-document { liftable,
-     TT "lift(f,R)", " -- tells whether a ring element ", TT "f", " can be
+document { liftable, HEADLINE "whether a ring element can be lifted to another ring",
+     TT "liftable(f,R)", " -- tells whether a ring element ", TT "f", " can be
      lifted to the ring ", TT "R", ".",
      PARA,
      "The ring ", TT "R", " should be one of the base rings associated with the
      ring of ", TT "f", ".",
-     SEEALSO "baseRings"
+     EXAMPLE {
+	  "R = ZZ[x]",
+	  "liftable ((x-1)*(x+1)-x^2, ZZ)",
+	  },
+     SEEALSO {"lift"}
      }
 
 document { promote,
@@ -170,7 +176,7 @@ assert ( isPrime 3333331)
 "
 
 document { isPrime,
-     HEADLINE "primality test",
+     HEADLINE "whether an integer is a prime",
      TT "isPrime x", " -- tests for primality",
      PARA,
      NOINDENT,
@@ -288,18 +294,14 @@ document { binomial,
      EXAMPLE "binomial(13,6)"
      }
 
-document { isPolynomialRing,
-     TT "isPolynomialRing R", " -- tells whether R is a polynomial ring."
-     }
+document { isPolynomialRing, HEADLINE "whether something is a polynomial ring" }
 
 document { PolynomialRing, HEADLINE "the class of all ordered monoid rings",
      "Every element of a polynomial ring is also a ", TO "RingElement", ".",
      SEEALSO "polynomial rings"
      }
 
-document { isUnit,
-     TT "isUnit r", " -- determines whether a ring element is a unit.",
-     PARA,
+document { isUnit, HEADLINE "whether a ring element is a unit",
      EXAMPLE {
 	  "S = QQ[x,y]/(1-(x-1)*(y-1));",
 	  "isUnit (x^2 - 2*x + 1)"
@@ -854,7 +856,7 @@ document { Module, HEADLINE "the class of all modules",
 
 document { isModule, HEADLINE "whether something is a module." }
 
-document { isFreeModule, "whether something a free module",
+document { isFreeModule, HEADLINE "whether something a free module",
      TT "isFreeModule M", " -- determine whether ", TT "M", " is evidently a 
      free module.",
      PARA,
@@ -869,21 +871,9 @@ document { isFreeModule, "whether something a free module",
 	  },
      }
 
-document { isSubmodule,
-     TT "isSubmodule M", " -- tells whether M is provided as a submodule
-     of a free module."
-     }
-
-document { isQuotientModule,
-     TT "isQuotientModule M", " -- tells whether M is provided as a
-     quotient module of a free module."
-     }
-
-document { isIdeal,
-     TT "isIdeal I", " -- tells whether a module is an ideal.",
-     PARA,
-     "An ideal is a submodule of a free module of rank 1."
-     }
+document { isSubmodule, HEADLINE "whether a module is evidently a submodule of a free module" }
+document { isQuotientModule, HEADLINE "whether a module is evidently a quotient of a free module" }
+document { isIdeal, HEADLINE "whether something is an ideal" }
 
 document { numgens,
      TT "numgens X", " -- yields the number of generators used to present
@@ -1114,15 +1104,9 @@ document { (symbol _, Matrix, ZZ),
      SEEALSO "_"
      }
 
-document { isWellDefined, HEADLINE "whether a map is well defined",
-     TT "isWellDefined m", " -- tells whether a map ", TT "m", " of modules is 
-     well-defined."
-     }
+document { isWellDefined, HEADLINE "whether a map is well defined" }
 
 document { isDirectSum, HEADLINE "whether something is a direct sum",
-     TT "isDirectSum M", " -- returns ", TT "true", " if ", TT "M", " was
-     formed as a direct sum.",
-     PARA,
      "Works for modules, graded modules, etc.  The components of the sum
      can be recovered with ", TO "components", "."
      }

@@ -125,7 +125,7 @@ document { printExamples,
      SEEALSO {"examples", "document"}
      }
 
-document { "Symbols",
+document { symbol "Symbols",
      TT "Symbols", " -- a hash table which can be used to obtain the global
      symbol with a particular value.",
      PARA,
@@ -133,7 +133,7 @@ document { "Symbols",
      example."
      }
 
-document { "Documentation",
+document { symbol "Documentation",
      TT "Documentation", " -- a hash table which is used to store
      pointers to documentation of functions, symbols, and methods.",
      PARA,
@@ -254,10 +254,6 @@ document { "new",
      HR,
      NOINDENT,
      TT "new A of b from c", " -- make a hash table ", TT "n", " of
-     class ", TT "AA", " and parent ", TT "b", " initialized from ", TT "c", ".",
-     PARA,
-     "One may use this to model the mathematical notion
-     that ", TT "x", " is an element of ", TT "A", " and a subset of ", TT "b", ".
      Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
      any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
      be an instance of ", TT "C", ", and let ", TT "AA", " be an
@@ -270,6 +266,9 @@ document { "new",
      PARA,
      "If no installation routine has been installed, then ", TT "c", " should be
      a hash table or a list, and it will be converted directly.",
+     PARA,
+     "The class ", TT "A", " should be a type of type, which means that
+     ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
      HR,
      NOINDENT,
      TT "new A of b", " -- make a hash table of class ", TT "A", "
@@ -278,6 +277,9 @@ document { "new",
      "Same as above, except ", TT "c", " is missing.  Use ",
      PRE "          new AA of B := (A,b) -> ... ",
      "to install the initialization routine.",
+     PARA,
+     "The class ", TT "A", " should be a type of type, which means that
+     ", TT "Type", " is an ancestor of ", TT "A", " and of the class of ", TT "A", ".",
      HR,
      NOINDENT,
      TT "new A from c", " -- make a hash table or list ", TT "n", " of 
@@ -290,6 +292,9 @@ document { "new",
      "Since no parent ", TT "b", " has been provided, the value returned by the
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
+     PARA,
+     "The class ", TT "A", " should be a type, which means that
+     ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
      HR,
      NOINDENT,
      TT "new A", " -- make a new instance ", TT "n", " of 
@@ -302,22 +307,25 @@ document { "new",
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
      PARA,
+     "The class ", TT "A", " should be a type, which means that
+     ", TT "Type", " is an ancestor of the class of ", TT "A", ".",
+     HR,
      "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
      need not consist of hash tables or lists.  We are using this feature by
      installing a method so that ", TT "new ZZ", " returns an integer popped
      from the top of the engine's stack.",
      PARA,
      "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
-     TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used for 
-     installation of the initialization routines.",
-     SEEALSO {"classes", "of", "from"}
+     TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
+     for installation of the initialization routines.",
+     SEEALSO {"classes"}
      }
 
-document { "of",
+document { "of", HEADLINE "a keyword",
      TT "of", " -- a keyword used with ", TO "new", "."
      }
 
-document { "from",
+document { "from", HEADLINE "a keyword",
      TT "from", " -- a keyword used with ", TO "new", "."
      }
 
@@ -434,13 +442,13 @@ document { SingleArgumentDispatch,
 	  }
      }
 
-document { "typicalValues",
+document { symbol "typicalValues",
      HEADLINE "types of values returned by functions",
      "A hash table used to store information about the type of values
      typically returned by functions and methods.",
      PARA,
      "This information is used only to build documentation automatically.",
-     EXAMPLE "typicalValues#sin",
+     EXAMPLE "typicalValues#isRing",
      SEEALSO { "specifying typical values" }
      }
 
@@ -545,9 +553,11 @@ document { coefficients,
      }
 
 document { isIsomorphism,
+     HEADLINE "whether a map is an isomorphism",
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 document { isHomogeneous,
+     HEADLINE "test for homogeneity",
      TT "isHomogeneous x", " -- whether the polynomial or ideal x is homogeneous."
      }
 document { vars, 
@@ -596,10 +606,10 @@ document { flatten,
      PARA,
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
      }
-document { "coker",
+document { symbol "coker",
      "An abbreviation for ", TO "cokernel", "."
      }
-document { "cokernel",
+document { cokernel,
      TT "cokernel f", " -- produces the cokernel of the module homomorphism f",
      PARA,
      "The result will be a quotient module of the target of f.  If f is
@@ -826,7 +836,7 @@ document { mathML,
      }
 
 
-document { "#",
+document { symbol "#",
      HEADLINE "length, or access to elements",
      "The precedence of ", TT "#", " when used as a binary operator is high,
      as high as ", TT ".", ", but the precedence when used as a unary operator
@@ -928,12 +938,12 @@ document { (symbol #?, Sequence, ZZ), HEADLINE "check for element in sequence",
      SEEALSO {(symbol #, Sequence, ZZ)}
      }
 
-document { "#?",
+document { symbol "#?",
      HEADLINE "check for presence of elements",
      SEEALSO{ "#" }
      }
 
-document { "_",
+document { symbol "_",
      "A binary operator which is used for various mathematical operations
      that are customarily written with subscripts."
      }

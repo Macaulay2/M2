@@ -609,7 +609,13 @@ export eval(c:Code):Expr := (
 	  x)
      is v:CodeSequence do evalSequence(v);
      when e is err:Error do (
-	  p := codePosition(c);
+	  p := codePosition(
+	       when c
+	       is u:unaryCode do u.rhs
+	       is b:binaryCode do b.rhs
+	       is b:ternaryCode do b.arg3
+	       is b:multaryCode do b.args.(length(b.args)-1)
+	       else c);
 	  err.report = seq(
 	       list(Expr(p.filename),
 		    Expr(toInteger(int(p.line))),

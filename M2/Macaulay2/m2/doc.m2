@@ -92,7 +92,7 @@ document { Type,
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
      PARA,
-     "The list of types known to the system is displayed below."
+     "The list of objects of class Type known to the system is displayed below."
      }
 
 document { Print,
@@ -763,7 +763,7 @@ document { lines,
      SEEALSO "newline"
      }
 
-document { "!",
+document { symbol "!",
      TT "n !", " -- computes n factorial, 1*2*3*...*n."
      }
 
@@ -848,7 +848,7 @@ document { (symbol ||, Matrix, Matrix),
      SEEALSO{(symbol |, Matrix, Matrix)}
      }
 
-document { "===",
+document { symbol "===",
      HEADLINE "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
@@ -875,7 +875,7 @@ document { "===",
      SEEALSO{ "==",  "=!=" }
      }
 
-document { "=!=",
+document { symbol "=!=",
      HEADLINE "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
@@ -908,7 +908,7 @@ document { symbol "==",
      SEEALSO{ "!=" }
      }
 
-document { "!=",
+document { symbol "!=",
      HEADLINE "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,

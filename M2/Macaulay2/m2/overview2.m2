@@ -1273,14 +1273,10 @@ document { "two dimensional formatting",
 	  },
      }
 
-document { isReady,
-     TT "isReady f", " -- tells whether an input file ", TT "f", " has data
-     available for reading, or it's at the end.",
-     PARA,
-     SEEALSO {"File"}
-     }
+document { isReady, HEADLINE "whether a file has data available for reading" }
 
 document { atEndOfFile,
+     HEADLINE "test for end of file",
      TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
      PARA,
      SEEALSO {"File"}

@@ -75,6 +75,7 @@ Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
 unformatTag                := new MutableHashTable
+unformat                   := s -> if unformatTag#?s then unformatTag#s else s
 record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 	  
 formatDocumentTag Thing    := s -> toString s
@@ -126,7 +127,7 @@ formatDocumentTag Sequence := record(
 	  if #s == 0                           then toString
 	  else if fSeq#?(#s,s#0)               then fSeq#(#s,s#0)
 	  else if fSeq#?(#s, class, class s#0) then fSeq#(#s,class, class s#0)
-	  else if fSeq#?#s                     then fSeq##s
+	  else if fSeq#?#s                     then fSeq#(#s)
 					       else toString) s)
 
 -----------------------------------------------------------------------------
@@ -386,16 +387,16 @@ apropos = (pattern) -> (
 -----------------------------------------------------------------------------
 -- more general methods
 -----------------------------------------------------------------------------
-lookup1 := s -> (youngest s)#?s
-nextMoreGeneral2 := (f,A) -> if A =!= Thing then (
+lookupQ := s -> (youngest s)#?s
+nextMoreGeneral2 := (f,A) -> (
      A' := A;
      l := false;
      while not l and A' =!= Thing do (
 	  A' = parent A';
-	  l = lookup1(f,A');
+	  l = lookupQ(f,A');
 	  );
      if l then (f,A'))
-nextMoreGeneral3 := (f,A,B) -> if (A,B) =!= (Thing,Thing) then (
+nextMoreGeneral3 := (f,A,B) -> (
      A' := A;
      B' := B;
      l := false;
@@ -403,12 +404,12 @@ nextMoreGeneral3 := (f,A,B) -> if (A,B) =!= (Thing,Thing) then (
 	  if B' =!= Thing then B' = parent B' else (
 	       B' = B;
 	       A' = parent A');
-	  l = lookup1(f,A',B'););
+	  l = lookupQ(f,A',B'););
      if l then (f,A',B'))
-nextMoreGeneral4 := (f,A,B,C) -> if (A,B,C) =!= (Thing,Thing,Thing) then (
+nextMoreGeneral4 := (f,A,B,C) -> (
      A' := A;
      B' := B;
-     C' := parent C;
+     C' := C;
      l := false;
      while not l and (A',B',C') =!= (Thing,Thing,Thing) do (
 	  if C' =!= Thing then C' = parent C'
@@ -418,7 +419,7 @@ nextMoreGeneral4 := (f,A,B,C) -> if (A,B,C) =!= (Thing,Thing,Thing) then (
 	       else (
 		    B' = B;
 		    A' = parent A'));
-	  l = lookup1(f,A',B',C');
+	  l = lookupQ(f,A',B',C');
 	  );
      if l then (f,A',B',C'))
 nextMoreGeneral := s -> if class s === Sequence then (
@@ -429,16 +430,13 @@ getHeadline := key -> (
      d := getUsage key;
      if d =!= null and #d > 0 and class first d === HEADLINE then SEQ join( {"  --  "}, toList first d )
      )
+evenMoreGeneral := key -> (
+     t := nextMoreGeneral key;
+     if t === null and class key === Sequence then key#0 else t)
 headline := memoize (
      key -> (
-	  while (
-	       d := getHeadline key;
-	       d === null )
-	  and (
-	       key = nextMoreGeneral key;
-	       if key === null and class key === Sequence and #key > 0 then key = key#0;
-	       key =!= null )
-	  do ();
+	  key = unformat key;
+	  while ( d := getHeadline key ) === null and ( key = evenMoreGeneral key ) =!= null do null;
 	  d))
 
 moreGeneral := s -> (
@@ -500,7 +498,7 @@ op := s -> if operator#?s then (
 	       like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, "
 	       for handling such expressions with code such as ",
 	       PRE ("         X "|ss|" Y := (x,y) -> ..."), 
-	       NOINDENT,
+	       NOINDENT{},
 	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
 	       class of ", TT "y", ".", PARA{}
 	       },
@@ -510,7 +508,7 @@ op := s -> if operator#?s then (
 	       like ", TT (ss|" y"), ".  The user may install a method for handling
 	       such expressions with code such as ",
 	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       NOINDENT, "where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
+	       NOINDENT{}, "where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
 	       },
 	  if postfix#?s then SEQ {
 	       NOINDENT{}, 
@@ -518,7 +516,7 @@ op := s -> if operator#?s then (
 	       like ", TT ("x "|ss), ".  The user may install a method for handling
 	       such expressions with code such as ",
 	       PRE ("         X "|ss|"   := (x,y) -> ..."),
-	       NOINDENT, "where ", TT "X", " is the class of ", TT "x", ".", PARA{}
+	       NOINDENT{}, "where ", TT "X", " is the class of ", TT "x", ".", PARA{}
 	       },
 	  }
      )
@@ -547,7 +545,7 @@ documentation Symbol := s -> (
 
 documentation Type := X -> (
      syms := values symbolTable();
-     a := apply(select(pairs typicalValues, (key,Y) -> Y===X), (key,Y) -> key);
+     a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, 
 	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
      c := apply(

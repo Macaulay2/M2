@@ -2,6 +2,16 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+New function 'override' designed for internal use in collecting optional 
+arguments for funtions that use them.
+
+New built-in operator '##' for uncurrying functions.  f#(a,b) becomes ((f a) b),
+and so on.
+
+In 'new A' we are now enforcing the rule that A should be a Type.
+In 'new A of B' we are now also enforcing the rule that A should be
+a Type of Type.
+
 'stack' and 'horizontalJoin' will now silently accept 'null' an argument
 
 'locate' now will return 'null' instead of giving an error for a compiled function

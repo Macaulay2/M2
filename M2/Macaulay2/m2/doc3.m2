@@ -5,7 +5,7 @@ document { "shield",
      ignoring interrupts."
      }
 
-document { "phase",
+document { symbol "phase",
      TT "phase", " -- an internal variable indicating which phase of compilation we
      are in.",
      PARA,
@@ -48,7 +48,7 @@ document { Position,
      the line number, and the column number."
      }
 
-document { "currentFile",
+document { symbol "currentFile",
      TT "currentFile", " -- a variable whose value is the name of the current
      source file."
      }
@@ -92,6 +92,7 @@ document { seeParsing,
      }
 
 document { instance,
+     HEADLINE "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
      PARA,
@@ -101,7 +102,7 @@ document { instance,
      SEEALSO { "classes", "class", "parent" }
      }
 
-document { "pathSeparator",
+document { symbol "pathSeparator",
      TT "pathSeparator", " -- the character used under the current operating
      system to separate the component directory names in a file path.",
      PARA,
@@ -486,7 +487,7 @@ document { printString,
      EXAMPLE ///printString(stdio, (a,10,"b",20,c))///
      }
 
-document { mutable,
+document { mutable, HEADLINE "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA,
      "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents

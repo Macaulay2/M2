@@ -125,7 +125,7 @@ time scan(pairs linkFilenameTable, (key,filename) -> (
      	  masterIndex#key = filename;
      	  filename << html HTML { 
 	       HEAD TITLE key,
-	       BODY { buttonBar key, HR, documentation key, HR, buttonBar key }
+	       BODY { buttonBar key, HR{}, documentation key, HR{}, buttonBar key }
 	       } << endl << close)) 
 
 -- create the master index

@@ -684,7 +684,7 @@ node chkforeach(node e, env v) {
       (foreach (i e a) ... )		... and also i == index, readonly
       (foreach (i e a s) ... )		... ... and with stepsize s
 #endif
-     node argblock, var, arr, tarr, tmem, code, arrtmp, indx, loop, veryend;
+     node argblock, var, arr, arr2, tarr, tmem, code, arrtmp, indx, loop, veryend;
      node step, endlabel=newlabel();
      bool increasing=FALSE, decreasing=FALSE, breaklabelused;
      if (length(e) == 1) {
@@ -737,11 +737,12 @@ node chkforeach(node e, env v) {
 	  if (step == bad_K) return bad_K;
 	  step = entmp(step,v);
 	  }
+     arr2 = arr;
      arr = chk(arr,v);
      if (arr == bad_K) return bad_K;
      tarr = type(arr);
      if (!isarraytype(tarr)) {
-	  errorpos(caddr(e),"should be an array");
+	  errorpos(arr2, "should be an array");
 	  return bad_K;
 	  }
      pushenv(&v);

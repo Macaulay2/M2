@@ -26,7 +26,7 @@ document { (symbol /, Ideal, Ideal),
      SEEALSO "Module"
      }
 
-document { "ann",
+document { symbol "ann",
      TT "ann", " -- a synonym for ", TO "annihilator", "."
      }
 
@@ -969,15 +969,8 @@ assert isPrime (t^2+t+1)
 assert (not isPrime (t^2+1))
 "
 
-document { isPrimitive,
-     TT "isPrimitive g", " -- determines whether ", TT "g", " is a primitive
-     element of a finite field.",
-     PARA,
-     EXAMPLE {
-	   "R = ZZ/5[t]/(t^2+t+1);",
-      	   "isPrimitive t",
-      	   "isPrimitive (t-1)"
-	   },
+document { isPrimitive, HEADLINE "whether something is a primitive element of a finite field",
+     EXAMPLE { "R = ZZ/5[t]/(t^2+t+1);", "isPrimitive t", "isPrimitive (t-1)" }
      }
 
 TEST "
@@ -994,16 +987,12 @@ document { order,
      SEEALSO "GaloisField"
      }
 
-document { isField,
-     TT "isField R", " -- tells whether a ring is a field.",
-     PARA,
+document { isField, HEADLINE "whether something is a field",
      "No computation is done -- the question is whether the ring was
-     constructed as a field."
+     explicitly constructed a field."
      }
 
-document { isAffineRing,
-     TT "isAffineRing R", " -- tells whether a ring is an affine ring.",
-     PARA,
+document { isAffineRing, HEADLINE "whether something is an affine ring",
      "An affine ring is a quotient of a polynomial ring over a field."
      }
 

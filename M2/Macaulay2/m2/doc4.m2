@@ -82,7 +82,7 @@ document { loaddata,
      SEEALSO {"listUserSymbols"}
      }
 
-document { "reloaded",
+document { symbol "reloaded",
      TT "reloaded", " -- a constant whose value is the number of 
      times ", TO "loaddata", " has been executed by the current process.  Since
      loaddata completely resets the state of the system, something like this
@@ -155,7 +155,7 @@ document { generatorExpressions,
      of the symbols used as generators for the monoid."
      }
 
-document { match,
+document { match, HEADLINE "whether a string matches a pattern",
      TT "match(s,p)", " -- whether the string s matches the pattern ", TT "p", ".",
      PARA,
      "The pattern p may contain '*'s, which serve as wild card characters.
@@ -305,7 +305,7 @@ document { endl,
      and it will not flush the output buffer."
      }
 
-document { "newline",
+document { symbol "newline",
      TT "newline", " -- a string containing the character or sequence of
      characters which represents the end of a line.  To end an output line,
      you should use ", TO "endl", " instead, because there is more to 
@@ -346,7 +346,7 @@ document { lookupCount,
      encountered in source code presented to the interpreter."
      }
 
-document { "version",
+document { symbol "version",
      TT "version", " -- a hash table describing this version of the program.",
      PARA,
      EXAMPLE "version"
@@ -435,19 +435,19 @@ document { runEndFunctions,
      "The funuctions are called with no arguments."
      }
 
-document { "oo",
+document { symbol "oo",
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
      SEEALSO { "oo", "ooo", "oooo" }
      }
 
-document { "ooo",
+document { symbol "ooo",
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
      SEEALSO { "oo", "oooo" }
      }
 
-document { "oooo",
+document { symbol "oooo",
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",
      SEEALSO { "oo", "ooo" }
@@ -718,6 +718,20 @@ document { netRows, HEADLINE "list of rows of a net",
      all trailing spaces removed, unless this would make all of them 
      narrower than the original net, in which case the first string
      retains its trailing spaces."
+     }
+
+document { symbol ##, HEADLINE "uncurry a function",
+     TT "f ## (a,b)", "     -- computes ", TT "((f a) b)", ".",
+     BR, NOINDENT,
+     TT "f ## (a,b,c)", "   -- computes ", TT "(((f a) b) c)", ".",
+     BR, NOINDENT,
+     TT "f ## (a,b,c,d)", " -- computes ", TT "((((f a) b) c) d)", ".",
+     BR, NOINDENT,
+     "... and so on.",
+     EXAMPLE {
+	  "f = a -> b -> c -> [a,b,c]",
+	  "f ## (1,2,3)"
+	  }
      }
 
 -- these files are made at compile time
