@@ -177,7 +177,7 @@ int main(int argc, char **argv){
      int i;
      char *p;
      struct test {char a;double b;};
-     assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
+     i = assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
      progname = BaseName(argv[0]);
      yyinit();
      for (p=argv[0]; *p; p++) if (*p=='/') progname = p+1;

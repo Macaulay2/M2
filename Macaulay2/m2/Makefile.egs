@@ -2,12 +2,15 @@
 # @configure_input@
 include ../../../../include/config.Makefile
 
-ifneq "$(DUMPDATA)" "no"
+ifeq "$(DUMPDATA)" "yes"
 ARGS := -q -silent \
 	'-e loaddata "../../../$(DUMPDATAFILE)"' \
 	-- -x -s $(srcdir)/../m2/eg.m2
 else
-ARGS := -q -silent -x -s -ephase=1 ../../../m2/setup.m2 -ephase=0 ../../../m2/eg.m2
+ARGS := -q -silent -x -s \
+	'-e path = { "../../" }' \
+	'-e phase=1' $(srcdir)/setup.m2 '-e phase=0' \
+	$(srcdir)/eg.m2
 endif
 
 ARGS += '-e path = prepend("$(srcdir)/",path)'

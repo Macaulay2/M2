@@ -131,11 +131,10 @@ ifeq "$(MEMDEBUG)" "yes"
 DEBUGFLAGS += -DMEM_DEBUG
 endif
 
-ifneq "$(DUMPDATA)" "no"
 DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
-endif
 
 CPPFLAGS += -I$(prefix)/include
+LOADLIBES += -L$(prefix)/lib
 
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"

@@ -221,12 +221,6 @@ HHFILES := $(addsuffix .hpp, \
 		$(NAMES_H) $(NAMES) \
 		$(INTERFACE_H) $(INTERFACE) $(CONTAINER))  $(E_H)
 
-OTHERS := Makefile \
-	res_aux.cpp res_aux2.cpp geoT.hpp \
-	check misc keep newmonoid.hpp newmonoid.cpp
-
-ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
-
 .PHONY : all clean distclean install tar check
 
 ###################################################################

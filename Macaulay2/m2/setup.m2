@@ -57,6 +57,7 @@ stderr << "--loading setup.m2" << endl
 
 if class path =!= List then path = { "" }
 savepath := path
+path = join({ currentFileDirectory, ""}, path)
 
 OS := "operating system"
 
@@ -64,11 +65,6 @@ pathSeparator = (
 	if version#"operating system" === "MACOS" then "" 
 	else "/"
 	)
-
-path = { 
-     currentFileDirectory, 
-     ""
-     }
 
 isAbsolutePath := (
      if version#"operating system" === "MACOS"
@@ -159,6 +155,7 @@ isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 tryload := (filename,load) -> (
      -- if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
+	  -- stderr << "trying to load " << filename << endl;		    -- debugging
 	  if load filename then (
 	       markLoaded(filename,filename);
 	       true)
@@ -171,33 +168,32 @@ tryload := (filename,load) -> (
 		    if class dir =!= String 
 		    then error "member of 'path' not a string";
 		    fullfilename := dir | filename;
-		    -- << "trying to load " << fullfilename << endl;		    -- debugging
+		    -- stderr << "trying to load " << fullfilename << endl;		    -- debugging
 		    result := load fullfilename;
 		    if result then markLoaded(fullfilename,filename);
 		    result))))
-///
-if version#"operating system" === "MACOS"
-then tryload = (filename,load) -> (
-     if isAbsolutePath filename then (
-	  if load filename then (
-	       markLoaded filename;
-	       true)
-	  else false)
-     else (
-          if class path =!= List
-	  then error "expected 'path' to be a list of strings";
-          {} =!= select(1,path, 
-	       dir -> (
-		    if class dir =!= String 
-		    then error "member of 'path' not a string";
-		    fn := (
-			 if dir === "." or dir === ":" then filename 
-			 else dir  | filename
-			 );
-		    result := load fn;
-		    if result then markLoaded fn;
-		    result))))
-///
+
+ -- if version#"operating system" === "MACOS"
+ -- then tryload = (filename,load) -> (
+ --      if isAbsolutePath filename then (
+ -- 	  if load filename then (
+ -- 	       markLoaded filename;
+ -- 	       true)
+ -- 	  else false)
+ --      else (
+ --           if class path =!= List
+ -- 	  then error "expected 'path' to be a list of strings";
+ --           {} =!= select(1,path, 
+ -- 	       dir -> (
+ -- 		    if class dir =!= String 
+ -- 		    then error "member of 'path' not a string";
+ -- 		    fn := (
+ -- 			 if dir === "." or dir === ":" then filename 
+ -- 			 else dir  | filename
+ -- 			 );
+ -- 		    result := load fn;
+ -- 		    if result then markLoaded fn;
+ -- 		    result))))
 
 oldLoad := load
 erase symbol load
