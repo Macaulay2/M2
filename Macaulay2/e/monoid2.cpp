@@ -335,11 +335,11 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 	  error = true;
 	break;
       case OVER2:
-	if ((z % 0x80008000) != 0)
+	if ((z & 0x80008000) != 0)
 	  error = true;
 	break;
       case OVER4:
-	if ((z % 0x80808080) != 0)
+	if ((z & 0x80808080) != 0)
 	  error = true;
 	break;
       }

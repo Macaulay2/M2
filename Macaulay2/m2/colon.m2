@@ -257,16 +257,16 @@ satideal4 := options -> (I,f) -> (
      f = f_0;
      R := ring I;
      n := numgens R;
-     R1 := (coefficientRing R)[Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
-     fto := map(R1,R,genericMatrix(R1,R1_1,1,n));
-     f1 := fto f;
-     R2 := R1/(f1*R1_0-1);
-     fback := map(R,R2,matrix{{0_R}} | vars R);
-     fto =  map(R2,R,genericMatrix(R2,R2_1,1,n));
-     II := ideal fto generators I;
-     g := gb(II,options);
-     p1 := selectInSubring(1, generators g);
-     ideal fback p1)
+     time R1 := (coefficientRing R)[Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
+     time fto := map(R1,R,genericMatrix(R1,R1_1,1,n));
+     time f1 := fto f;
+     time R2 := R1/(f1*R1_0-1);
+     time fback := map(R,R2,matrix{{0_R}} | vars R);
+     time fto =  map(R2,R,genericMatrix(R2,R2_1,1,n));
+     time II := ideal fto generators I;
+     time g := gb(II,options);
+     time p1 := selectInSubring(1, time generators g);
+     time ideal fback p1)
 
 removeOptions := (options, badopts) -> (
     options = new MutableHashTable from options;

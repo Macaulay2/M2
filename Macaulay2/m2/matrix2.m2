@@ -276,8 +276,8 @@ sortColumns Matrix := options -> (f) -> (
 selectInSubring = method()
 
 selectInSubring(ZZ, Matrix) := Matrix => (i,m) -> (
-     sendgg(ggPush m, ggdup, ggPush i, ggelim, ggsubmatrix);
-     getMatrix ring m)
+     p := rawEliminateVariables(i,m.RawMatrix);
+     submatrix(m, p))
 
 divideByVariable = method()
 
