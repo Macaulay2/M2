@@ -301,13 +301,6 @@ int IM2_GB_hash(const Computation *G)
   return G->get_hash_value();
 }
 
-int IM2_GB_verbose(int level)
-{
-  int result = gbTrace;
-  gbTrace = level;
-  return result;
-}
-
 #if 0
 #include "gb_comp.hpp"
 

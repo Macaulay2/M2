@@ -25,6 +25,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 INTERFACE = \
 	computation \
+	comp_gb \
 	gbA \
 	gbasis \
 	montable \
@@ -124,8 +125,7 @@ COMMANDS_REDO = \
 	x_borel \
 	gbnod
 
-NAMES_H = comp_gb \
-	comp \
+NAMES_H = comp \
 	ringelem \
 	style \
 	hash \

@@ -1211,7 +1211,7 @@ enum gbTraceValues
 
   int IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */
 
-  int IM2_GB_verbose(int level); /* drg; connected rawGBverbose */
+  extern int gbTrace;
 
   /*******************************************
    * Computation routines for Groebner bases *
@@ -1259,18 +1259,15 @@ enum gbTraceValues
      syzygy are kept. */
 
   const MatrixOrNull *rawGBMatrixRemainder(Computation *G, 
-						int level,
 						const Matrix *m); /* drg: connected rawGBMatrixRemainder */
 
   void IM2_GB_matrix_lift(Computation *G,
-			  int level,
 			  const Matrix *m,
 			  MatrixOrNull **result_remainder,
 			  MatrixOrNull **result_quotient
 			  ); /* drg: connected rawGBMatrixLift */
 
   int IM2_GB_contains(Computation *G, 
-		      int level,
 		      const Matrix *m); /* drg: connected rawGBContains */
 
 
@@ -1290,20 +1287,7 @@ enum gbTraceValues
 				  int strategy /* drg: connected rawResolution */
 				  );
 
-  const MatrixOrNull *IM2_GB_get_matrix(Computation *G, int level, M2_bool minimize); 
-  /* drg: connected rawGBGetMatrix */
-
-  int rawStatus(Computation *G,
-		    int * complete_up_through_this_degree,
-		    int * stopping_reason); /* number from IM2_Computation_set_stop,
-					       interrupted is -1. None is 0. */
-  /* drg: connected rawStatus */
-  /* -1: error condition, and the error message is set. 
-     1: not started,
-     2: started, but still running in another thread (not implemented yet)
-     3: stopped because of a stopping condition or an interrupt
-     4: finished the computation completely
-  */
+  const MatrixOrNull *IM2_res_get_matrix(Computation *G); 
 
   int IM2_Resolution_status(Computation *G,
 		    int * complete_up_through_this_degree,
@@ -1322,12 +1306,9 @@ enum gbTraceValues
 			  int * complete_up_through_this_degree); /* drg: connected rawResolutionStatusLevel */
   /* Same return values */
 
-  const MatrixOrNull *IM2_GB_get_change(Computation *G, int level);/* drg: connected rawGBGetChange */
-
-  const MatrixOrNull *IM2_GB_get_leadterms(Computation *G, int nparts, int level);/* drg: connected rawGBGetLeadTerms */
-  const FreeModuleOrNull *IM2_GB_get_free(Computation *G, int level, M2_bool minimal); 
+  const FreeModuleOrNull *IM2_GB_get_free(Computation *G, int level);
+  /* minimal should always be set to true */
     /*drg: connected rawGBGetFree*/
-
 
   const M2_arrayint IM2_GB_betti(Computation *G,
 				 int type); /* drg: connected rawGBBetti */
