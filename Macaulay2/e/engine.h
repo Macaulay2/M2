@@ -86,6 +86,8 @@ typedef struct Matrix_array {
 } Matrix_array;
 
 typedef M2_Integer M2_IntegerOrNull;
+typedef M2_Rational M2_RationalOrNull;
+typedef M2_CC M2_CCOrNull;
 typedef Monomial MonomialOrNull;
 typedef Monoid MonoidOrNull;
 typedef Ring RingOrNull;
@@ -393,13 +395,20 @@ extern "C" {
   const RingElement *IM2_RingElement_from_Integer(const Ring *R, 
 						  const M2_Integer d);  /* drg: connected rawFromNumber*/
 
+  const RingElementOrNull *IM2_RingElement_from_rational(const Ring *R, 
+							 const M2_Rational r); /* rawFromNumber*/
+
   const RingElement *IM2_RingElement_from_double(const Ring *R, 
 						 double d); /* drg: connected rawFromNumber*/
 
   const RingElement *IM2_RingElement_from_complex(const Ring *R, 
 						  M2_CC z); /* drg: connected rawFromNumber*/
 
-  const M2_Integer IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
+  const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
+    /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
+       Otherwise, NULL is returned, and an error is given */
+
+  const M2_Rational IM2_RingElement_to_rational(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
 
@@ -407,16 +416,18 @@ extern "C" {
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise 0.0 is returned. */
 
-  const RingElementOrNull *IM2_RingElement_from_rational(const Ring *R, 
-							 const M2_Rational r); /* rawFromNumber*/
+  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* TODO */
+    /* If the ring of a is RR, this returns the underlying representation of 'a'.
+       Otherwise 0.0 is returned. */
+
+  const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
+							const M2_BigReal d); /* drg: waiting, rawFromNumber*/
+    /* TODO */
 
   M2_BigReal IM2_RingElement_to_BigReal(const RingElement *a); /* TODO */
     /* If the ring of a is BigRR, this returns the underlying representation of 'a'.
        Otherwise NULL is returned. */
 
-  const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
-							const M2_BigReal d); /* drg: waiting, rawFromNumber*/
-    /* TODO */
 
   const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, 
 						    int v, 
@@ -557,6 +568,11 @@ extern "C" {
      (otherwise NULL is returned).  If so, the dimension of the corresponding
      (virtual) GL(n) representation is returned. */
 
+  const RingElement *rawRealPart(const RingElement *f);
+
+  const RingElement *rawImaginaryPart(const RingElement *f);
+
+  
   /**************************************************/
   /**** FreeModule routines *************************/
   /**************************************************/

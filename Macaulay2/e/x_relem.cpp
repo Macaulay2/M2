@@ -309,26 +309,23 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, const M2_BigReal 
   return RingElement::make_raw(R, R->from_BigReal(z));
 }
 
-#if 0
-const RingElement *IM2_RingElement_from_double(const Ring *R, const M2_BigReal d)
-{
-  return new RingElement(R, R->from_BigReal(d));
-}
-#endif
-
 const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
      Otherwise, NULL is returned, and an error is given */
 {
+  if (!a->get_ring()->is_ZZ())
+    {
+      ERROR("expected an element of ZZ");
+      return 0;
+    }
+  void *f = a->get_value().poly_val;
+  return static_cast<M2_Integer>(f);
+#if 0
   const Ring *R = a->get_ring();
   if (R == globalZZ)
     {
       ring_elem f = a->get_value();
       return MPZ_VAL(f);
-#if 0
-      Nterm *t = f;
-      return (M2_Integer)(t);
-#endif
     }
   else if (R->cast_to_Z_mod() != 0)
     {
@@ -342,8 +339,46 @@ const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
       ERROR("Expected ZZ or ZZ/p as base ring");
       return 0;
     }
-
+#endif
 }
+
+const M2_RationalOrNull IM2_RingElement_to_rational(const RingElement *a)
+{
+  if (!a->get_ring()->is_QQ())
+    {
+      ERROR("expected an element of QQ");
+      return 0;
+    }
+  void *f = a->get_value().poly_val;
+  return static_cast<M2_Rational>(f);
+}
+
+double IM2_RingElement_to_double(const RingElement *a)
+/* If the ring of a is RR, this returns the underlying representation of 'a'.
+   Otherwise 0.0 is returned. */
+{
+  if (!a->get_ring()->cast_to_RR())
+    {
+      ERROR("expected an element of RR");
+      return 0;
+    }
+  return globalRR->to_double(a->get_value());
+    
+}
+
+M2_CCOrNull IM2_RingElement_to_complex(const RingElement *a)
+/* If the ring of a is RR, this returns the underlying representation of 'a'.
+   Otherwise 0.0 is returned. */
+{
+  if (!a->get_ring()->cast_to_CC())
+    {
+      ERROR("expected an element of CC");
+      return 0;
+    }
+  void *f = a->get_value().poly_val;
+  return static_cast<M2_CC>(f);
+}
+
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v, int e)
 {
   ring_elem a = R->var(v,e);

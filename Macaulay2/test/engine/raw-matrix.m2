@@ -8,11 +8,16 @@ needs "raw-util.m2"
 errorDepth = 0
 
 
--- tested in many places: m == 0, rawIsEqual, raw
+-- tested in many places: m == 0, rawIsEqual, 
+-- rawTarget, rawSource
 -- rawNumberOfRows, rawNumberOfColumns
 -- rawMultiDegree
 -- rawIsDense
 -- rawIsZero, rawIsEqual, === 
+
+-- toString, hash
+-- rawMatrixEntry (can give error)
+-- rawIsDense
 
 -----------------
 -- rawIdentity --
@@ -37,6 +42,7 @@ errorDepth = 0
 R = polyring(rawZZ(), (symbol a .. symbol g))
 p = rawZero(R^0,R^100,0)
 assert(p == 0)
+assert(rawIsZero p)
 assert(rawNumberOfRows p === 0)
 assert(rawNumberOfColumns p === 100)
 assert(rawMultiDegree p === {0})
@@ -66,6 +72,8 @@ assert(try (rawZero(R^4, (rawZZ())^3,0); false) else true)
 -- rawMatrix1, rawMatrix2             --
 -- rawSparseMatrix1, rawSparseMatrix2 --
 ----------------------------------------
+needs "raw-util.m2"
+errorDepth = 0
 R = polyring(rawZZ(), (vars 0 .. vars 15))
 F = rawFreeModule(R,5)
 G = rawFreeModule(R,10)
@@ -93,14 +101,30 @@ p1 == p2
 ---------------------------------------
 -- rawMatrixRemake, rawMatrixRemake2 --
 ---------------------------------------
-
-
-
+needs "raw-util.m2"
+errorDepth = 0
+R = polyring(rawZZ(), (vars 0 .. vars 15))
+m = rawMatrix2(R^3, R^4, 1:0, (a,b,c,d,e,f,g,h,i,j,k,l), 0)
+G = rawSource m
+m1 = rawMatrixRemake1(R^3, m, 0)
+G1 = rawSource m1
+m2 = rawMatrixRemake2(R^3, R^4, 1:0, m1, 0)
+assert (m2 === m)
+assert(rawSource m2 === rawSource m)
+assert(rawTarget m2 === rawTarget m)
+assert(m-m2 == 0)
+assert(G1 === rawFreeModule(R, (1,1,1,1)))
+assert not isHomogeneous m
+assert isHomogeneous m1
+assert try (rawMatrixRemake2(R^3,(rawZZ())^4, 1:0, m, 0);false) else true
 ----------------------------
 -- scalar multiplication, --
 -- matrix mult,           --
 -- add, subtract, negate  --
 ----------------------------
+needs "raw-util.m2"
+errorDepth = 0
+R = polyring(rawZZ(), (vars 0 .. vars 15))
 m = rawMatrix1(R^4,4,(a,b,c,d, b^2+c*d,e^2,f^2,g^2, c^3,f^3,h^3,0_R, d^4,g^4,i^4,j^4),0)
 m2 = m*m
 m3 = m2*m
@@ -128,8 +152,7 @@ assert(m4b == m4c)
 assert(rawMultiDegree m2 == {0})
 assert(rawTarget m == rawTarget m2)
 assert(rawSource m == rawSource m2)
-<< "-- ERROR: want this to be homogeneous!!" << endl;
---assert rawIsHomogeneous m2  
+assert not rawIsHomogeneous m2  
 
 assert(m+m == 2*m)
 assert(m + 3*m == 4*m)
@@ -198,6 +221,11 @@ f1 = rawFlip(rawTarget m1, rawTarget m2)
 f2 = rawFlip(rawSource m1, rawSource m2)
 assert(m4a == f2*m3a*f1)
 
+---------------------
+-- rawWedgeProduct --
+---------------------
+assert instance(rawWedgeProduct,Function)
+
 -------------------
 -- rawDual --------
 -------------------
@@ -253,6 +281,7 @@ rawReshape(rawDual m,R^1,R^12)
 
 -------------------
 -- rawSubmatrix ---
+-- 2 forms --------
 -------------------
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol j))
@@ -263,6 +292,8 @@ assert(rawMatrixEntry(rawSubmatrix(m1,1: 1, 1: 0), 0,0) == c)
 -- rawKoszul ------
 -- (2 forms??) ----
 -------------------
+rawKoszul
+rawKoszulMonomials
 
 -----------------------
 -- rawSymmetricPower --
@@ -312,17 +343,25 @@ assert(rawSource m1 == rawSource m2)
 assert(rawMultiDegree m1 == rawMultiDegree m2)
 assert(m1 == m2)
 
--------------------
--- rawMatrixDiff --
--------------------
-
 -----------------------
+-- rawMatrixDiff ------
 -- rawMatrixContract --
 -----------------------
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol x .. symbol z))
+x = rawRingVar(R,0,1)
+y = rawRingVar(R,1,1)
 
+assert(rawMatrixDiff(mat{{x}}, mat{{x^3+7*x+2}}) == mat{{3*x^2+7}})
+assert(rawMatrixContract(mat{{2*x}}, mat{{x^3+7*x+2}}) == mat{{2*x^2+14}})
+
+R = ZZ[symbol x]
+diff(matrix{{x}}, matrix{{x^3+7*x+2}}) == matrix{{3*x^2+7}}
+contract(matrix{{x}}, matrix{{x^3+7*x+2}}) == matrix{{x^2+7}}
 --------------------
 -- rawSortColumns --
 --------------------
+rawSortColumns
 
 -------------------------------------
 -- rawIsHomogeneous, rawHomogenize --
@@ -341,6 +380,7 @@ assert(rawHomogenize(m,6,(1,1,1,1,1,1,1))
 
 ---------------------
 -- rawCoefficients --
+-- rawMonomials -----
 ---------------------
 -- a simple example first:
 needs "raw-util.m2"
@@ -355,10 +395,12 @@ M = m ** m2
 C = rawCoefficients((0,1), m3,M)
 assert(m3 * C == M)
 
--------------------
--- rawMonomials ---
--------------------
-
+R = polyring(rawZZ(), (symbol x .. symbol z))
+m = mat{{x*y+x*z+x^2*y*z}}
+mons = rawMonomials(1:0,m)
+coeffs = rawCoefficients(1:0, mons, m)
+mons * coeffs
+print "WARNING: in rawMonomials, monomials should be sorted"
 -------------------
 -- rawInitial -----
 -------------------
@@ -435,9 +477,19 @@ rawDivideByVariable(m,1,-1)
 rawDivideByVariable(m,4,-1)
 rawDivideByVariable(m-m,1,-1)
 
+-----------------------
+-- rawMatrixCompress --
+-----------------------
+assert instance(rawMatrixCompress,Function)
+
 ---------------------
 -- rawModuleTensor --
 ---------------------
+
+------------------------
+-- rawTopCoefficients --
+------------------------
+assert instance(rawTopCoefficients,Function)
 
 ---------------------
 -- rawBasis --
@@ -538,7 +590,7 @@ b1 = rawBasis(mat{{0_B}}, {2},{2},{1},{0,1,2,3},false,-1)
 b1 = rawBasis(mat{{0_B}}, {2},{2},{1},(0,1),false,-1)
 f = rawPromote(B,a)*x^2 + rawPromote(B,b)*x*y + rawPromote(B,c)*y^2
 rawCoefficients((0,1),b1,mat{{f}})
-<< "rawBasis: test for quotient rings" << endl;
+print "WARNING: rawBasis: test for quotient rings"
 
 R = ZZ/101[symbol a .. symbol c]
 m = mat{{0_(raw R)}}

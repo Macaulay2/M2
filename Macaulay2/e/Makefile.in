@@ -108,6 +108,7 @@ STILLTOCOMPILE = \
 	lattice # lattice has been replaced with fractionfreeLU, one other?
 
 COMMANDS = \
+	densemat-lapack \
 	mat-kbasis \
 	mat-symm \
 	mat-sort \

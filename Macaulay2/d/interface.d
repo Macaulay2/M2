@@ -773,6 +773,30 @@ export rawToInteger(e:Expr):Expr := (
      );
 setupfun("rawToInteger",rawToInteger);
 
+export rawToRational(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do toExpr( 
+	  Ccode( RationalOrNull, "(engine_RationalOrNull)IM2_RingElement_to_rational(", "(RingElement*)",x, ")" ))
+     else WrongArg("a raw ring element")
+     );
+setupfun("rawToRational",rawToRational);
+
+export rawToReal(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do Expr( 
+	  Real(Ccode( double, "IM2_RingElement_to_double(", "(RingElement*)",x, ")" )))
+     else WrongArg("a raw ring element")
+     );
+setupfun("rawToReal",rawToReal);
+
+export rawToComplex(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do toExpr( 
+	  Ccode( ComplexOrNull, "(M2_CCOrNull)IM2_RingElement_to_complex(", "(RingElement*)",x, ")" ))
+     else WrongArg("a raw ring element")
+     );
+setupfun("rawToComplex",rawToComplex);
+
 export rawLeadCoefficient(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
@@ -2732,6 +2756,26 @@ export rawGBBetti(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
 
+
+export rawSolve(e:Expr):Expr := (
+     -- rawSolve(A, b, x)
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is A:RawMutableMatrix do 
+     when s.1 is b:RawMutableMatrix do
+     when s.2 is x:RawMutableMatrix do (
+	  if Ccode(bool, 
+	       "(M2_bool)rawSolve(", "(MutableMatrix *)", A, ",", 
+		       "(MutableMatrix *)", b, ",", "(MutableMatrix *)", x, ")")
+	  then nullE
+	  else buildErrorPacket(EngineError("error calling lapack solve routine")))
+     else WrongArg(3,"a raw mutable matrix")
+     else WrongArg(2,"a raw mutable matrix")
+     else WrongArg(1, "a raw mutable matrix")
+     else WrongNumArgs(3));
+setupfun("rawSolve", rawSolve);
+
+
 -----------------------------------------------------------------------------
 -- LAPACK 
 -----------------------------------------------------------------------------
@@ -3006,34 +3050,6 @@ export rawGetSubmatrix(e:Expr):Expr := (
      );
 setupfun("rawGetSubmatrix",rawGetSubmatrix);
 
-export rawSolve(e:Expr):Expr := (
-     -- rawSolve(A, b, x)
-     when e is s:Sequence do
-     if length(s) != 3 then WrongNumArgs(3) else
-     when s.0
-     is A:LMatrixRR do (
-	when s.1 is b:LMatrixRR do
-	when s.2 is x:LMatrixRR do (
-	  toExpr(
-	  Ccode(LMatrixRROrNull, "(engine_LMatrixRROrNull)LP_LMatrixRR_solve(", "(LMatrixRR *)", A, ",", 
-		       "(LMatrixRR *)", b, ",", "(LMatrixRR *)", x, ")"))
-	  )
-	else WrongArg(3,"a raw matrixRR")
-	else WrongArg(2,"a raw matrixRR")
-	)
-      is A:LMatrixCC do (
-	when s.1 is b:LMatrixCC do
-	when s.2 is x:LMatrixCC do (
-	  toExpr(
-	  Ccode(LMatrixCCOrNull, "(engine_LMatrixCCOrNull)LP_LMatrixCC_solve(", "(LMatrixCC *)", A, ",", 
-		       "(LMatrixCC *)", b, ",", "(LMatrixCC *)", x, ")"))
-	  )
-	else WrongArg(3,"a raw matrixCC")
-	else WrongArg(2,"a raw matrixCC")
-	)
-     else WrongArg(1, "a raw matrixRR or raw matrixCC")
-     else WrongNumArgs(3));
-setupfun("rawSolve", rawSolve);
 
 export rawLU(e:Expr):Expr := (
      -- rawLU(M, L, U, P)

@@ -3,7 +3,8 @@
 
 QQ.RawRing = rawQQ()
 -- from raw QQ to toplevel QQ
-new QQ from RawRingElement := (QQ,x) -> rawToInteger rawNumerator x / rawToInteger rawDenominator x
+--MES removed --new QQ from RawRingElement := (QQ,x) -> rawToInteger rawNumerator x / rawToInteger rawDenominator x
+new QQ from RawRingElement := (QQ,x) -> rawToRational x
 -- from toplevel QQ to raw QQ
 raw QQ := x -> rawFraction(
      QQ.RawRing,
