@@ -3,6 +3,10 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.41:
 
+Fixed a problem in 'kernel' of a ring map which attached incorrect degrees
+to the generators.  The change was to 'ideal Matrix' so that now it always
+ignores the degrees attached to the incoming matrix.
+
 new function 'inducedMap'
 
 functoriality for Hom and Ext
