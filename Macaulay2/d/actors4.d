@@ -648,9 +648,6 @@ readfun(e:Expr):Expr := (
 	  stdin.prompt = readpromptfun;
 	  r := getline(stdin);				    -- used to be read(stdin);
 	  stdin.prompt = oldprompt;
-	  -- n := length(r);
-	  -- while n>0 && (r.(n-1) == '\n' || r.(n-1) == '\r') do n = n-1;
-	  -- if n < length(r) then r = substr(r,0,n);
 	  Expr(r))	  
      is s:Sequence do (
 	  if length(s) == 0

@@ -179,7 +179,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.?kernel then f.kernel else f.k
      else error "not implemented yet"
      )
 
-image RingMap := QuotientRing => f -> f.source / kernel f
+image RingMap := coimage RingMap := QuotientRing => f -> f.source / kernel f
 
 RingMap * RingMap := RingMap => (g,f) -> (
      if source g != target f then error "ring maps not composable";

@@ -357,8 +357,7 @@ makeMonoid := (options) -> (
          options.Variables = toList (x_0 .. x_(options.Variables - 1)))
      else (
          options.Variables =
-	    apply(flatten toList 
-	       apply(options.Variables,
+	    apply(flatten toList apply(options.Variables,
 		    x->if class x === MutableList then toList x else x), 
 	       i -> (
 		    try baseName i

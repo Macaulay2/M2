@@ -677,8 +677,7 @@ net NonAssociativeProduct := v -> (
      )
 net Minus := x -> (
      term := x#0;
-     horizontalJoin
-     if precedence term < precedence x 
+     horizontalJoin if precedence term < precedence x 
      then ("-", "(", net term, ")")
      else ("- ", net term))
 

@@ -1,8 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
+
 -- a flavor of input stream where line numbers and
 -- column numbers are maintained properly
+
 -- Also, if a \ comes at the end of the line, then it swallows the next
 -- line up to a nonspace
+
+-- Also, these are *text* files, so we translate all three flavors of line termination
+-- into a single \n.
 
 use system;
 use strings;
@@ -40,7 +45,7 @@ isAbsolutePath(s:string):bool := (
      -- eventually make this happen only in MSDOS
      length(s) >= 1 && s.0 == '/' ||
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
-     s == "stdin"
+     s == "stdio"
      );
 export minimizeFilename(filename:string):string := (
      ofilename := shorten(filename);
@@ -76,8 +81,8 @@ export (o:file) << (p:(null or Position)):file := (
      );
 export copy(p:Position):Position := Position(
      p.filename, p.line, p.column, uchar(reloaded));
-export PosFile := {file:file, pos:Position};
-export makePosFile(o:file):PosFile := PosFile(o, 
+export PosFile := {file:file, lastchar:int, pos:Position};
+export makePosFile(o:file):PosFile := PosFile(o, 0,
      Position(o.filename, ushort(1), ushort(0), uchar(reloaded)));
 export peek(o:PosFile, offset:int):int := peek(o.file,offset);
 export peek(o:PosFile):int := peek(o.file);
@@ -89,7 +94,7 @@ export setprompt(o:PosFile,prompt:function(file):void):void := (
 export openPosIn(filename:string):(PosFile or errmsg) := (
      when openIn(filename)
      is f:file do (PosFile or errmsg)(
-	  PosFile(f,Position(
+	  PosFile(f,0,Position(
 		    if isAbsolutePath(f.filename)
 		    then f.filename
 		    else getcwd() + '/' + f.filename,
@@ -99,11 +104,24 @@ export openPosIn(filename:string):(PosFile or errmsg) := (
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
 tabwidth := 8;
 export getc(o:PosFile):int := (
+     prevchar := o.lastchar;
      c := getc(o.file);
+     o.lastchar = c;
      if c != EOF then (
- 	  if isnewline(c) then (
+ 	  if c == int('\r') then (
 	       o.pos.line = o.pos.line + 1;
 	       o.pos.column = ushort(0);
+	       c = int('\n');
+	       )
+ 	  else if c == int('\n') then (
+	       if prevchar == int('\r') then (
+		    -- swallow a \n that comes after a \r
+		    return(getc(o));
+		    )
+	       else (
+	       	    o.pos.line = o.pos.line + 1;
+	       	    o.pos.column = ushort(0);
+		    );
 	       )
 	  else if c == int('\t') then (
 	       o.pos.column = ushort(((int(o.pos.column)+8)/8)*8);
@@ -112,6 +130,5 @@ export getc(o:PosFile):int := (
 	       o.pos.column = o.pos.column + 1;
 	       )
 	  );
-     c
-     );
+     c );
 export flush(o:PosFile):void := flushinput(o.file);

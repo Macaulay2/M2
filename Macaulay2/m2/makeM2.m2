@@ -1,8 +1,8 @@
 --		Copyright 1996 by Daniel R. Grayson
 
 split := s -> flatten apply(separate(s,"/"), i -> separate(i,"\\")) -- sigh...
-enquote := s -> "'" | s | "'"
 M2HOME := concatenate between(pathSeparator, drop(split currentDirectory(),-1))
+fix := s -> format concatenate s
 
 (
   if version#"operating system" === "Windows-95-98-NT"
@@ -25,53 +25,39 @@ M2HOME := concatenate between(pathSeparator, drop(split currentDirectory(),-1))
        << close;
        );
   (
-       args := new Manipulator from (
+       command := new Manipulator from (
 	    if version#"dumpdata" then (
 		 o -> o
-		 << "exec $M2HOME/bin/Macaulay2 "
-		 << format concatenate( 
-		      "-e loaddata ", format concatenate(
-			   "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `-data" 
-			   )
-		      )
-		 << " --"
-		 -- << " $TTY"
-		 << " "
-		 -- << enquote ( "-epath={" | format "." | "," | format (M2HOME | "/m2") | "}" )
-		 << " "
-		 << enquote "-e runStartFunctions()" 
 		 )
 	    else (
 		 o -> o
-		 << "exec "
-		 << format "$M2HOME/bin/Macaulay2"
-		 -- << " $TTY"
-		 << " -ephase=1"
-		 << " "
-		 << format "$M2HOME/m2/setup.m2"
-		 << " "
-		 << "-ephase=0"
-		 << " "
-		 -- << enquote ( "-epath={" | format "." | "," | format (M2HOME | "/m2") | "}" )
-		 << " "
-		 << enquote "-e runStartFunctions()" 
 		 )
 	    );
        FILENAME := "../bin/M2";
-       FILENAME
+       M2 := FILENAME
        << "#! /bin/sh" << endl
        << "M2HOME='" << M2HOME << "'" << endl
        << "export M2HOME" << endl
-       << ///if [ "" = "$LD_LIBRARY_PATH" ]/// << endl
-       << ///then LD_LIBRARY_PATH="$M2HOME/lib"/// << endl
-       << ///else LD_LIBRARY_PATH="$M2HOME/lib:$LD_LIBRARY_PATH"/// << endl
-       << ///fi/// << endl
-       << ///export LD_LIBRARY_PATH/// << endl
-       << ///# reminder: root ignores LD_LIBRARY_PATH/// << endl
+       << "EXE=" << fix "$M2HOME/bin/Macaulay2" << endl
+       << "DATA=" << fix "$M2HOME/cache/Macaulay2-`uname -m |sed s=/=-=g`-data" << endl
+       << "SETUP=" << fix "$M2HOME/m2/setup.m2" << endl;
+       if getenv "SHAREDLIBS" =!= "" then ( M2
+	    << ///if [ "" = "$LD_LIBRARY_PATH" ]/// << endl
+       	    << ///then LD_LIBRARY_PATH="$M2HOME/lib"/// << endl
+       	    << ///else LD_LIBRARY_PATH="$M2HOME/lib:$LD_LIBRARY_PATH"/// << endl
+       	    << ///fi/// << endl
+       	    << ///export LD_LIBRARY_PATH/// << endl
+       	    << ///# reminder: root ignores LD_LIBRARY_PATH/// << endl
+	    );
        -- << "if [ \"$EMACS\" = t ]; then TTY=-tty; else TTY=; fi" << endl
-       << "if [ $# = 0 ]" << endl
-       << "then " << args << endl
-       << "else " << args << " " << format "$@" << endl
+       M2
+       << "if [ -f \"$DATA\" ]" << endl
+       << "then exec " << fix "$EXE"
+		 << " " << fix "-e loaddata \"$DATA\""
+		 << " -- " << fix "-e runStartFunctions()" << " " << fix "$@" << endl
+       << "else exec " << fix "$EXE"
+		 << " -ephase=1 \"$SETUP\" -ephase=0 "
+		 << fix "-e runStartFunctions()" << " " << fix "$@" << endl
        << "fi" << endl << close;
        run concatenate ("chmod a+x ", FILENAME);
   )

@@ -242,15 +242,16 @@ int loaddata(char const *filename) {
     if (ERROR == extend_memory(newbreak)) return ERROR;
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
-	if (installed_one) {
-	  warning("loaddata: failed to map memory completely\n");
-	  _exit(1);
-	}
-	else {
-	  warning("loaddata: failed to map any memory\n");
-	  fclose(f);
-	  return ERROR;
-	}
+        if (installed_one) {
+          char x[] = "loaddata: failed to map memory completely\n";
+          write(STDERR,x,strlen(x));
+          _exit(1);
+        }
+        else {
+          char x[] = "loaddata: failed to map any memory\n";
+          write(STDERR,x,strlen(x));
+          return ERROR;
+        }
       }
       else installed_one = TRUE;
     }

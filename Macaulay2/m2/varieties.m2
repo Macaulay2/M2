@@ -112,8 +112,7 @@ cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
      else X.cotangentSheaf = (
 	  R := ring X;
 	  F := presentation R;
-	  sheaf( prune 
-	       homology(vars ring F ** R,jacobian F ** R), X)))
+	  sheaf( prune homology(vars ring F ** R,jacobian F ** R), X)))
 cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
      if X#?(cotangentSheaf,i)
      then X#(cotangentSheaf,i) 

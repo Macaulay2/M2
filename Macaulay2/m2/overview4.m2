@@ -129,11 +129,11 @@ version of this documentation in an emacs buffer already, position
 the cursor on the first line of code, and press the ", TT "F11", " function 
 key (or ", TT "C-C s", ") repeatedly to present each line to Macaulay 2.",
 PARA,
-CODE ///i1 = R = ZZ/101[x,y,z]
-i2 = f = symmetricPower(2,vars R)
-i3 = M = cokernel f
-i4 = C = resolution M
-i5 = betti C///,
+CODE ///i1 : R = ZZ/101[x,y,z]
+i2 : f = symmetricPower(2,vars R)
+i3 : M = cokernel f
+i4 : C = resolution M
+i5 : betti C///,
 PARA,
 "Notice that the input prompts are not submitted to Macaulay 2.",
 PARA,
