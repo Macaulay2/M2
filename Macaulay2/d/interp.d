@@ -67,6 +67,10 @@ toExpr(x:CodeClosureList):Expr := Expr(list(
 
 readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
      lastvalue := nullE;
+     if interpreterHook != nullE then (
+     	  r := apply(interpreterHook,emptySequence);
+     	  when r is Error do return r else nothing;
+	  );
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
 	  interrupted = false;

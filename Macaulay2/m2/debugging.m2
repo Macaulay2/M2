@@ -142,19 +142,23 @@ abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else x)
 
-ll := f -> Table (
-     prepend(
-	  {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
-	  apply (
-	       reverse \\ flatten \\ sortByHash \ values \ localDictionaries f,
-	       s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s})))
+ll := f -> (
+     lv := reverse \\ flatten \\ sortByHash \ values \ localDictionaries f;
+     if #lv > 0 then net Table (
+	  prepend(
+	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
+	       apply (lv, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
 
-listLocalVariables = Command(
+localVariables = Command(
      x -> if x === () then (
 	       if errorCode === null then error "no break loop active";
 	       ll errorCode
 	       )
 	  else ll x)
+
+interpreterHook = () -> if interpreterDepth > 1 then (
+     << localVariables errorCode << endl;
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
