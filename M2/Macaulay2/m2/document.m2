@@ -1568,8 +1568,8 @@ undocumentedSymbols = () -> select(
      values symbolTable(), 
      x -> (
 	  if (
-	       x =!= value x        -- ignore symbols with no value assigned
-     	       not DocDatabase#?(toString x) and not Documentation#?(toString x) 
+	       x =!= value x and        -- ignore symbols with no value assigned
+	       not DocDatabase#?(toString x) and not Documentation#?(toString x) 
 	       ) 
      	  then (
 	       undocErr x;

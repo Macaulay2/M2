@@ -8,8 +8,14 @@ ifdef XYZZY
 endif
 include include/config.Makefile
 VPATH = @srcdir@
+
+# announcement only:
 install all clean distclean::
 	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
+
+# first install target:
+install :: all
+
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"
@@ -19,7 +25,6 @@ all install clean :: ; $(MAKE) -C bin $@
 all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)
-install :: all
 install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
