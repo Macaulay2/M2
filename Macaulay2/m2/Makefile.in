@@ -184,7 +184,6 @@ cache/doc/expression: expression; cp $< $@
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 # phase 3: running the example input files
 	$(MAKE) -C cache/doc -f ../../@srcdir@/Makefile.egs
-	$(MAKE) TOPDIR=../../../../.. -C ../tutorial/final/cache/doc -f ../../@srcdir@/Makefile.egs
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
@@ -192,7 +191,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
 	 # phase 4: make $@
-	../libexec/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
+	../libexec/Macaulay2 -q -silent '-ephase=4' @srcdir@/setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
 ifdef NEWENGINE

@@ -51,7 +51,7 @@ export CONFIGURED_FILES := $(shell cat config.files)
 	./config.status $@
 #############################################################################
 
-configure : configure.ac aclocal.m4
+configure : configure.ac aclocal.m4 config.files
 	autoconf
 include/config.h.in : configure.ac aclocal.m4
 	autoheader
@@ -67,5 +67,5 @@ include/config.h : config.status include/config.h.in
 
 configuration : include/config.h $(CONFIGURED_FILES)
 
-$(TARGETS) :: configuration
-	$(MAKE) $@ -f Makefile-run
+$(TARGETS) :: configuration Makefile
+	$(MAKE) $@ -f Makefile
