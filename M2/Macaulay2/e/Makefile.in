@@ -52,9 +52,12 @@ INTERFACE = \
 	res \
 	respoly \
 	minimalgb \
+	minimalgb-field \
+	minimalgb-ZZ \
 	matrixcon \
 	computation \
 	comp_gb \
+	comp_gb_proxy \
 	gbA \
 	montable \
 	montableZZ \

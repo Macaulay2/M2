@@ -14,6 +14,8 @@
 #include "hilb.hpp"
 
 #include "gbweight.hpp"
+#include "minimalgb-field.hpp"
+#include "minimalgb-ZZ.hpp"
 
 /*************************
  * Initialization ********
@@ -1577,9 +1579,7 @@ void gbA::start_computation()
 
       s_pair_step();
     }
-  //  return is_done;
   set_status(is_done);
-  //  showgb();
 }
 
 
@@ -1596,20 +1596,8 @@ void gbA::minimalize_gb()
       if (gb[i]->minlevel != ELEM_NON_MIN_GB)
 	polys.push_back(gb[i]->g);
     }
-#if 0
-  for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
-    {
-      if ((*i)->minlevel != ELEM_NON_MIN_GB)
-	{
-	  polys.push_back((*i)->g);
-	}
-    }
-#endif
-
 
   minimal_gb->minimalize(polys);
-
-
   minimal_gb_valid = true;
 }
 
@@ -1643,40 +1631,13 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
   _use_hilb = true;
   _hilb_new_elems = true;
 
-#warning "I BROKE hilb_matrix here too"
-#if 0
-  _hilb_matrix = const_cast<Matrix *>(Matrix::make(_F, 0, 0, true));
-#endif
   return this;
 }
 
 const MatrixOrNull *gbA::get_gb()
 {
   minimalize_gb();
-  const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
-  MatrixConstructor mat(_F,0);
-#if 0
-  int j=0;
-#endif
-  for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
-    {
-#if 0
-      fprintf(stderr, "%d ", j++);
-      if (j % 20 == 0) fprintf(stderr,"\n");
-#endif
-      vec v = originalR->translate_gbvector_to_vec(_F, (*i).f);
-#if 0
-      buffer o;
-      o << "element " << j++ << " ";
-      R->gbvector_text_out(o, F, (*i).f);
-      o << "\n  vec   ";
-      F->elem_text_out(o, v);
-      emit_line(o.str());
-#endif
-      mat.append(v);
-      //      mat.append(originalR->translate_gbvector_to_vec(F, (*i).f));
-    }
-  return mat.to_matrix();
+  return minimal_gb->get_gb();
 }
 
 const MatrixOrNull *gbA::get_mingens()
@@ -1692,11 +1653,7 @@ const MatrixOrNull *gbA::get_mingens()
 const MatrixOrNull *gbA::get_change()
 {
   minimalize_gb();
-  const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
-  MatrixConstructor mat(_Fsyz,0);
-  for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
-    mat.append(originalR->translate_gbvector_to_vec(_Fsyz, (*i).fsyz));
-  return mat.to_matrix();
+  return minimal_gb->get_change();
 }
 
 const MatrixOrNull *gbA::get_syzygies()
@@ -1711,49 +1668,13 @@ const MatrixOrNull *gbA::get_syzygies()
 const MatrixOrNull *gbA::get_initial(int nparts)
 {
   minimalize_gb();
-  const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
-  MatrixConstructor mat(_F,0);
-  for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
-    {
-      gbvector *f = R->gbvector_lead_term(nparts, _F, (*i).f);
-      mat.append(originalR->translate_gbvector_to_vec(_F, f));
-    }
-  return mat.to_matrix();
-
+  return minimal_gb->get_initial(nparts);
 }
 
 const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
 {
-  if (m->get_ring() != originalR)
-    {
-      ERROR("expected matrix over the same ring");
-      return 0;
-    }
-
-  if (m->n_rows() != _F->rank()) {
-       ERROR("expected matrices to have same number of rows");
-       return 0;
-  }
-
-#warning "NEEDS WORK!!!"
-
-  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      POLY g;
-      g.f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
-      g.fsyz = R->gbvector_zero();
-
-      remainder(g, 
-		weightInfo_->gbvector_weight(g.f), 
-		true, denom);
-
-      vec fv = originalR->translate_gbvector_to_vec_denom(_F, g.f, denom);
-      // MES: what about g.fsyz??
-      red.set_column(i, fv);
-    }
-  return red.to_matrix();
+  minimalize_gb();
+  return minimal_gb->matrix_remainder(m);
 }
 
 void gbA::matrix_lift(const Matrix *m,
@@ -1761,43 +1682,8 @@ void gbA::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_quotient
 		 )
 {
-  if (m->get_ring() != originalR)
-    {
-      ERROR("expected matrix over the same ring");
-      *result_remainder = 0;
-      *result_quotient = 0;
-      return;
-    }
-  if (m->n_rows() != _F->rank()) {
-       ERROR("expected matrices to have same number of rows");
-      *result_remainder = 0;
-      *result_quotient = 0;
-      return;
-  }
-
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_quotient(_Fsyz, m->cols(), 0);
-
-  const Ring *K = R->get_flattened_coefficients();
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      POLY g;
-      g.f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
-      g.fsyz = R->gbvector_zero();
-
-      remainder(g, 
-		weightInfo_->gbvector_weight(g.f), 
-		true, denom);
-
-      vec fv = originalR->translate_gbvector_to_vec_denom(_F, g.f, denom);
-      K->negate_to(denom);
-      vec fsyzv = originalR->translate_gbvector_to_vec_denom(_Fsyz,g.fsyz, denom);
-      mat_remainder.set_column(i, fv);
-      mat_quotient.set_column(i, fsyzv);
-    }
-  *result_remainder = mat_remainder.to_matrix();
-  *result_quotient = mat_quotient.to_matrix();
+  minimalize_gb();
+  return minimal_gb->matrix_lift(m, result_remainder, result_quotient);
 }
 
 int gbA::contains(const Matrix *m)
@@ -1805,30 +1691,8 @@ int gbA::contains(const Matrix *m)
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
-  // Reduce each column of m one by one.
-  if (m->get_ring() != originalR)
-    {
-      ERROR("expected matrix over the same ring");
-      return -2;
-    }
-
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom, junk;
-      POLY g;
-      g.f = originalR->translate_gbvector_from_vec(_F,(*m)[i], denom);
-      g.fsyz = NULL;
-      remainder(g, 
-		weightInfo_->gbvector_weight(g.f),
-		false, junk);
-      R->gbvector_remove(g.fsyz);
-      if (g.f != NULL)
-	{
-	  R->gbvector_remove(g.f);
-	  return i;
-	}
-    }
-  return -1;
+  minimalize_gb();
+  return minimal_gb->contains(m);
 }
 
 int gbA::complete_thru_degree() const

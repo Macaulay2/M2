@@ -24,7 +24,7 @@ class GBComputation : public Computation
 // This is the base type for all Groebner basis and syzygy computations
 {
 protected:
-
+  friend class GBProxy;
   GBComputation() {}
   virtual ~GBComputation();
 

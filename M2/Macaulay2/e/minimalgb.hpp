@@ -1,12 +1,15 @@
+// Copyright 2004 Michael E. Stillman.
+
 #ifndef _minimalgb_hpp_
 #define _minimalgb_hpp_
 
+#include "comp_gb.hpp"
 #include <vector>
 #include "gbring.hpp"
 #include "montable.hpp"
 #include "montableZZ.hpp"
 
-class MinimalGB : public our_new_delete
+class MinimalGB : public GBComputation
 {
 protected:
   GBRing *R;
@@ -14,13 +17,65 @@ protected:
   const FreeModule *F;
   const FreeModule *Fsyz;
   vector<POLY, gc_alloc> polys;
+
+  virtual bool stop_conditions_ok() { return true; }
+  // If the stop conditions in _Stop are inappropriate,
+  // return false, and use ERROR(...) to provide an error message.
+
 public:
   MinimalGB(GBRing *R0,
 	    const PolynomialRing *originalR0,
 	    const FreeModule *F0,
-	    const FreeModule *Fsyz0) : R(R0), originalR(originalR0), F(F0), Fsyz(Fsyz0) {}
+	     const FreeModule *Fsyz0);
 
   virtual ~MinimalGB();
+
+  virtual GBComputation * cast_to_GBComputation() { return this;} 
+
+  virtual void start_computation() {}
+
+  virtual int complete_thru_degree() const { return 0; }
+  // The computation is complete up through this degree.
+
+  // Recall that the status of the computation is maintained by the Computation class,
+
+  ////////////////////////////////
+  // Results of the computation //
+  ////////////////////////////////
+  virtual const MatrixOrNull *get_gb();
+
+  virtual const MatrixOrNull *get_mingens();
+
+  virtual const MatrixOrNull *get_change();
+
+  virtual const MatrixOrNull *get_syzygies();
+
+  virtual const MatrixOrNull *get_initial(int nparts);
+
+  //////////////////////////////////////
+  // Statistics and spair information //
+  //////////////////////////////////////
+
+  virtual void text_out(buffer &o);
+  // This displays statistical information, and depends on the
+  // gbTrace value.
+
+  ////////////////////////////////
+  // Normal forms and lifting ////
+  ////////////////////////////////
+
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+
+  virtual void matrix_lift(const Matrix *m,
+			   MatrixOrNull **result_remainder,
+			   MatrixOrNull **result_quotient);
+
+  virtual int contains(const Matrix *m);
+
+  ////////////////////////////////////////////////
+  // The following are the functions which need //
+  // to be provided by subclasses               //
+  ////////////////////////////////////////////////
 
   virtual void set_gb(vector<POLY, gc_alloc> &polys0) = 0;
 
@@ -44,63 +99,8 @@ public:
   // REALLY??
 
   virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom) = 0;
-};	     
+};
 
-class MinimalGB_Field : public MinimalGB
-{
-  MonomialTable *T;
-  const MonomialIdeal *Rideal;
-public:
-  MinimalGB_Field(GBRing *R0,
-		  const PolynomialRing *originalR0,
-		  const FreeModule *F0,
-		  const FreeModule *Fsyz0);
-
-  virtual ~MinimalGB_Field();
-
-  virtual void set_gb(vector<POLY, gc_alloc> &polys0);
-
-  virtual void minimalize(const vector<POLY, gc_alloc> &polys0);
-  // I have to decide: does this ADD to the existing set?
-
-  virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
-  // WARNING: this should only be used with term orders!
-  // REALLY??
-  virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom);
-
-};	     
-
-class MinimalGB_ZZ : public MinimalGB
-{
-  enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE};
-
-  MonomialTableZZ *T;
-  const MonomialTableZZ *ringtableZZ;
-
-
-  enum divisor_type find_divisor(exponents exp, int comp, int &result_loc);
-
-public:
-
-
-  MinimalGB_ZZ(GBRing *R0,
-	       const PolynomialRing *originalR0,
-	       const FreeModule *F0,
-	       const FreeModule *Fsyz0);
-
-  virtual ~MinimalGB_ZZ();
-
-  virtual void set_gb(vector<POLY, gc_alloc> &polys0);
-
-  virtual void minimalize(const vector<POLY, gc_alloc> &polys0);
-  // I have to decide: does this ADD to the existing set?
-
-  virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
-  // WARNING: this should only be used with term orders!
-  // REALLY??
-  virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom);
-
-};	     
 
 #endif
 
