@@ -1,4 +1,4 @@
-gbTrace = 1
+-- gbTrace = 1
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
 cmp = method()
@@ -219,8 +219,8 @@ status G
 
 -- rawGBContains
 
-assert( rawGBContains( raw gb matrix {{x,y}} , raw matrix {{0,0,x,y,0,0}} ) )
-
+-- i = rawGBContains( raw gb matrix {{x,y}} , raw matrix {{0,0,x,y,0,0}} )
+assert ( i == -1 )
 
 end
 -- Local Variables:
