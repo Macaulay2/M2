@@ -30,13 +30,15 @@ RawMatrix.Wrap = Matrix.Wrap = RingElement.Wrap = List.Wrap = Sequence.Wrap = x 
 String.Wrap = x -> wr("",x)
 
 -- make sure this is after all global symbols are defined or erased
+
 closePackage "Macaulay2"
+
 currentPackage = null					    -- eliminate the phony package we used for collecting test inputs
 
 addStartFunction( 
      () -> (
      	  dismiss "User";
-	  newPackage "User";
+	  newPackage("User", DebuggingMode => true);
 	  )
      )
 
