@@ -454,7 +454,7 @@ homology(ZZ,ChainComplexMap) := Matrix => opts -> (i,f) -> (
      )
 cohomology(ZZ,ChainComplexMap) := Matrix => opts -> (i,f) -> homology(-i,f)
 
-homology(ChainComplex) := GradedModule => opts -> (C) -> (
+homology(Nothing,ChainComplex) := homology(ChainComplex) := GradedModule => opts -> (C) -> (
      H := new GradedModule;
      H.ring = ring C;
      complete C;
@@ -468,7 +468,7 @@ gradedModule(ChainComplex) := GradedModule => (C) -> (
      scan(spots C, i -> H#i = C#i);
      H)
 
-homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
+homology(Nothing,ChainComplexMap) := homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      g := new GradedModuleMap;
      g.degree = f.degree;
      g.source = HH f.source;

@@ -700,9 +700,9 @@ document { Command,
      }
 
 
-document { monomialCurve, 
-     Headline => "make a monomial curve",
-     TT "monomialCurve(R,a)", " -- yields the defining ideal of the projective
+document { monomialCurveIdeal, 
+     Headline => "make the ideal of a monomial curve",
+     TT "monomialCurveIdeal(R,a)", " -- yields the defining ideal of the projective
      curve given parametrically on an affine piece by 
      t |---> (t^a1, ..., t^an).",
      PARA,
@@ -712,34 +712,34 @@ document { monomialCurve,
      "For example, the following defines a plane quintic curve of genus 6.",
      EXAMPLE {
 	  "R = ZZ/101[a..f]",
-	  "monomialCurve(R,{3,5})",
+	  "monomialCurveIdeal(R,{3,5})",
 	  },
      "Here is a genus 2 curve with one singular point.",
-     EXAMPLE "monomialCurve(R,{3,4,5})",
+     EXAMPLE "monomialCurveIdeal(R,{3,4,5})",
      "Here is one with two singular points, genus 7.",
-     EXAMPLE "monomialCurve(R,{6,7,8,9,11})",
+     EXAMPLE "monomialCurveIdeal(R,{6,7,8,9,11})",
      "Finally, here is the smooth rational quartic in P^3.",
-     EXAMPLE "monomialCurve(R,{1,3,4})"
+     EXAMPLE "monomialCurveIdeal(R,{1,3,4})"
      }
 
 TEST ///
     R := ZZ/101[a..f];
     -- plane quintic, genus=6
-    I1 := monomialCurve(R,{3,5});
+    I1 := monomialCurveIdeal(R,{3,5});
     assert(I1 == image matrix{{b^5-a^2*c^3}});
 
     -- one singular point, g=2
-    I2 := monomialCurve(R,{3,4,5});
+    I2 := monomialCurveIdeal(R,{3,4,5});
     assert(I2 == image matrix {{c^2-b*d, b^2*c-a*d^2, b^3-a*c*d}});
 
     -- two singular points, g=7
-    I3 := monomialCurve(R,{6,7,8,9,11});
+    I3 := monomialCurveIdeal(R,{6,7,8,9,11});
     assert(I3 == image matrix {{
                d*e-b*f, e^2-c*f, c*d-b*e, d^2-c*e, 
                c^2-b*d, b*c*e-a*f^2, b^2*d-a*e*f, b^2*c-a*d*f, b^3-a*c*f}});
 
     -- smooth rational quartic in P^3
-    I4 := monomialCurve(R,{1,3,4});
+    I4 := monomialCurveIdeal(R,{1,3,4});
     assert(I4 == image matrix {{b*c-a*d, c^3-b*d^2, a*c^2-b^2*d, b^3-a^2*c}});
 ///
 

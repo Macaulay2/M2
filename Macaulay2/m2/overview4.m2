@@ -499,7 +499,7 @@ document { "component example",
      ", and ", TO "decompose", ".",
      EXAMPLE {
 	  "R = ZZ/32003[a..d];",
-      	  "I = monomialCurve(R,{1,3,4})",
+      	  "I = monomialCurveIdeal(R,{1,3,4})",
       	  "J = ideal(a^3,b^3,c^3-d^3)",
       	  "I = intersect(I,J)",
       	  "removeLowestDimension I",
@@ -526,7 +526,7 @@ document { "top-method",
 
 TEST "
     R = ZZ/32003[a..d]
-    I = monomialCurve(R,{1,3,4})
+    I = monomialCurveIdeal(R,{1,3,4})
     J = ideal(a^3,b^3,c^3-d^3)
     I = intersect(I,J)
     removeLowestDimension I
@@ -565,7 +565,7 @@ TEST "
 
 TEST "
 R = ZZ/101[symbol a..symbol d]
-I = monomialCurve(R,{1,2,3})
+I = monomialCurveIdeal(R,{1,2,3})
 I^2
 removeLowestDimension(I^2)
 assert(I == 

@@ -67,10 +67,11 @@ HH = new ScriptedFunctor from {
 	       }
 	  ),
      argument => (
-	  args -> homology args
+	  args -> homology(args)
 	  )
      }
 
+  homology(Nothing,Sequence) := 
+  homology(ZZ,Sequence) := opts -> (i,X) -> homology prepend(i,X)
 cohomology(ZZ,Sequence) := opts -> (i,X) -> cohomology(prepend(i,X), opts)
-  homology(ZZ,Sequence) := (i,X) ->   homology prepend(i,X)
 
