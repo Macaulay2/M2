@@ -791,7 +791,7 @@ int system_run(M2_string command){
      char *c = tocharstar(command);
      int r = system(c);
      GC_FREE(c);
-     return r >> 8;
+     return r;
      }
 
 struct FINAL *final_list, *pre_final_list;
