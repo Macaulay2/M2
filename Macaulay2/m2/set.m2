@@ -8,7 +8,7 @@ name Tally := x -> (
      )
 
 net Tally := x -> horizontalJoin flatten(
-     "tally {",
+     "tally splice {",
      between(", ", apply(pairs x, (v,i) -> string i | " : " | net v)),
      "}"
      )
@@ -157,6 +157,7 @@ document { "Set ++ Set",
      SEEALSO ("Set", "++")
      }
 
+set Set := x -> x
 net Set := x -> "set " | name keys x
 name Set := x -> "set " | name keys x
 Set + Set := {

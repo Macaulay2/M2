@@ -8,6 +8,7 @@ all::
 .PHONY: clean all install
 CFLAGS =
 LDFLAGS = -s
+LOADLIBES =
 DUMPSEQUENCE = $(shell cat dumpseq)
 
 MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2
@@ -45,7 +46,7 @@ version.m2 : $(TOPDIR)/Makeconf ../../Makeconf-m2
 	../../Makeconf-m2 >version.tmp
 	mv version.tmp $@
 
-tutorials.m2 : Makefile
+tutorials.m2 :
 	@ echo making tutorials.m2
 	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
 
@@ -92,6 +93,8 @@ it all:: ../cache/Macaulay2-$(ARCH).data
 	../bin/Macaulay2 -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre
 
+all :: bare
+
 all :: ../cache/Macaulay2.doc
 ../cache/Macaulay2.doc : ../cache/Macaulay2.pre \
 			../cache/Macaulay2-$(ARCH).data $(MADEGFILES)
@@ -112,3 +115,4 @@ clean:
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
+

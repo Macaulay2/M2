@@ -77,6 +77,12 @@ document { quote coefficientRing,
      EXAMPLE "ultimate(coefficientRing,ZZ/101[a][b])"
      }
 
+isCommutative = method()
+isCommutative Ring := R -> R.isCommutative
+ZZ.isCommutative = true
+QQ.isCommutative = true
+RR.isCommutative = true
+
 isRing = method()
 isRing Thing := R -> false
 isRing Ring := R -> true

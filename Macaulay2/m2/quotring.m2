@@ -77,14 +77,15 @@ random QuotientRing := S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
 
-expression QuotientRing := S -> new Divide from {
-     expression last S.baseRings,  expression pretty S.relations
-     }
-net QuotientRing := S -> (
+expression QuotientRing := S -> (
      if S.?name
-     then net S.name
-     else net new Divide from { last S.baseRings, pretty S.relations }
+     then S.name
+     else new Divide from { 
+	  expression last S.baseRings,  
+	  expression pretty S.relations 
+	  }
      )
+net QuotientRing := S -> net expression S
 dim QuotientRing := S -> if S.?dim then S.dim else S.dim = dim S^1
 
 ambient PolynomialRing := R -> R

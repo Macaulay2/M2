@@ -1,6 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 CC = new Field of BasicList
+CC.isCommutative = true
 
 document { quote CC,
      TT "CC", " -- the class of all complex numbers.",
@@ -126,5 +127,5 @@ TEST "
      assert( x == 2 )
      assert( x == 2. )
      assert( x == 2/1 )
-     assert( net (2-3*ii) === \"2 - 3 ii\"^0 )
+     assert( net (2-3*ii) === \"2-3ii\"^0 )
      "

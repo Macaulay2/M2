@@ -1524,13 +1524,15 @@ cokernel RingElement := f -> cokernel matrix {{f}}
 image RingElement := f -> image matrix {{f}}
 
 Ideal = new Type of MutableHashTable
-net Ideal := (I) -> net new FunctionApplication from { ideal, I.generators }
-name Ideal := (I) -> name new FunctionApplication from { ideal, 
+expression Ideal := (I) -> new FunctionApplication from { 
+     ideal,
      (
-	  v := toSequence first entries gens I;
-	  if #v === 1 then v#0 else v
+	  v := expression toSequence first entries generators I;
+     	  if #v === 1 then v#0 else v
 	  )
      }
+net Ideal := (I) -> net expression I
+name Ideal := (I) -> name expression I
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 genera(Ideal) := (I) -> genera module I

@@ -1,7 +1,7 @@
 --		Copyright 1996 by Daniel R. Grayson
 
 net Option := z -> horizontalJoin splice (
-     if precedence z > precedence z#0 then ("(",net z#0,")") else net z#0,
+     if precedence z >= precedence z#0 then ("(",net z#0,")") else net z#0,
      " => ",
      if precedence z > precedence z#1 then ("(",net z#1,")") else net z#1
      )
@@ -15,25 +15,28 @@ net Net := x -> (
      t := (verticalJoin (height x + depth x : "|")) ^ (height x - 1);
      (s || t | x | t || s) ^ (height x)
      )
+
+comma := ", "
+
 net Sequence := x -> horizontalJoin deepSplice (
      if #x === 0 then "()"
      else if #x === 1 then (
 	  if class x#0 === Sequence
 	  then ("seq (", net x#0, ")")
 	  else ("seq ", net x#0))
-     else ("(", toSequence between(",",apply(x,net)), ")"))
+     else ("(", toSequence between(comma,apply(x,net)), ")"))
 net List := x -> horizontalJoin deepSplice (
      "{",
-     toSequence between(",",apply(x,net)),
+     toSequence between(comma,apply(x,net)),
      "}")
 net Array := x -> horizontalJoin deepSplice (
      "[",
-     toSequence between(",",apply(x,net)),
+     toSequence between(comma,apply(x,net)),
      "]")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
-      toSequence between(",",apply(x,net)),
+      toSequence between(comma,apply(x,net)),
       "}")
 net MutableList := x -> horizontalJoin ( net class x, "{...}" )
 net HashTable := x -> (

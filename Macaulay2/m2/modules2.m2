@@ -947,7 +947,7 @@ basis Module := M -> (
      --     
      R := ring M;
      A := ultimate(ambient,R);
-     if not isAffineRing A then error "expected an affine ring";
+     if not isField coefficientRing A then error "expected an algebra over a field";
      k := coefficientRing A;
      bottom := generators gb presentation M;
      top := id_(target bottom);
@@ -960,6 +960,7 @@ basis Module := M -> (
      p)
 
 basis Ring := R -> basis(R^1)
+basis Ideal := I -> basis module I
 
 document { quote basis,
      TT "basis", "(i,M) -- produce a map (of degree i) from a free k-module to M 

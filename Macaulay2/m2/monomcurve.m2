@@ -10,8 +10,9 @@ monomialCurve = (S, a) -> (
     a = prepend(0,a);
     s := quote s;
     t := quote t;
-    R1 := (coefficientRing S)[s,t];
-    R2 := (coefficientRing S)[Variables=>n+1];
+    monsize := (options S).MonomialSize;
+    R1 := (coefficientRing S)[s,t,MonomialSize=>monsize];
+    R2 := (coefficientRing S)[Variables=>n+1,MonomialSize=>monsize];
     mm := matrix table(1, n+1, (j,i) -> s^(a#i) * t^(topa - a#i));
     j := generators kernel map(R1, R2, mm);
     ideal substitute(j, submatrix(vars S, {0..n}))
@@ -20,7 +21,9 @@ monomialCurve = (S, a) -> (
 document{quote monomialCurve, 
     TT "monomialCurve(R,a)", " -- yields the defining ideal of the projective
     curve given parametrically on an affine piece by 
-    t |---> (t^a1, ..., t^an).  The ideal is defined in the polynomial ring R,
+    t |---> (t^a1, ..., t^an).",
+    PARA,
+    "The ideal is defined in the polynomial ring R,
     which must have at least n+1 variables, preferably all of equal 
     degree.  The first n+1 variables in the ring are used",
     "For example, the following defines a plane quintic curve of genus 6:",

@@ -111,28 +111,24 @@ cmrLiteralTable#"{" = "$\\{$"
 cmrLiteralTable#"}" = "$\\}$"
 cmrLiteral = s -> apply(characters s, c -> cmrLiteralTable#c)
 ---------------
-booktex = method(SingleArgumentDispatch=>true)
-booktex TO  := x -> (
+crossReference := (key,text) -> (
      sectionNumber := (
-	  if fileNumberTable#?(x#0)
-	  then sectionNumberTable#(fileNumberTable#(x#0))
+	  if fileNumberTable#?key
+	  then sectionNumberTable#(fileNumberTable#key)
 	  else (
-	       stderr << "warning: documentation for key '" << x#0 << "' not found" << endl;
+	       stderr << "warning: documentation for key '" << key << "' not found" << endl;
 	       "???"
 	       )
 	  );
-     if hypertex then (
-	  ///\null\special{html:<A href="#///,
-	  sectionNumber, 
-	  ///">}///
-	  ),
-     "\\cite{",
-     cmrLiteral concatenate x,
-     "}{",
-     sectionNumber,
-     "}",
-     if hypertex then ///\special{html:</A>}///
+     if hypertex then ( ///\null\special{html:<A href="#///, sectionNumber, ///">}/// ),
+     "\\cite{", cmrLiteral text, "}{", sectionNumber, "}",
+     if hypertex then   ///\special{html:</A>}///
      )
+
+booktex = method(SingleArgumentDispatch=>true)
+booktex TO  := x -> crossReference(x#0, concatenate x)
+booktex TOMETHOD := x -> crossReference(x, name x)
+
 booktex MENU := x -> (
      ///
 

@@ -679,7 +679,7 @@ document { quote ^,
      "Here are some methods for computing powers:",
      MENU {
 	  TO "SimplePowerMethod",
-	  TO "BinaryPowerMethod",
+	  TO "BinaryPowerMethod"
 	  },
      PARA,
      "If n is 0, then the unit element ", TT "(class x)#1", " is returned.
@@ -1532,8 +1532,8 @@ document { quote combine,
      "The objects are assumed to have the same class, and the result will
      have the class of one of them.  The combined object will contain f(p,q)
      => g(b,c) when x : p => b and y : q => c, and the function h is used to
-     combine values when key collisions occur in the result, as with ", TO
-     "merge", ".  The function h should be a function of two arguments; it
+     combine values when key collisions occur in the result, as with ", TO "merge", ".
+     The function h should be a function of two arguments; it
      may assume that its first argument will be the value accumulated so far,
      and its second argument will be the result g(b,c) from a single pair of
      values.  Normally h will be an associative and commutative function.",
@@ -1709,6 +1709,7 @@ document { "Macaulay 2",
 	  TO "copyright and license",
 	  TO "reading the documentation",
 	  TO "getting started",
+	  TO "mathematical overview",
 	  TO "tutorials",
 	  TO "Thing", 
 	  TO "classes",
