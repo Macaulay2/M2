@@ -1511,9 +1511,9 @@ document { (pushForward1,MonomialOrder),
      PARA,
      "Possible values:",
      UL {
-	  (TT "MonomialOrder => EliminationOrder", " -- use the natural elimination order (the default)"),
-	  (TT "MonomialOrder => ProductOrder", " -- use the product order"),
-	  (TT "MonomialOrder => LexOrder", " -- use lexical order"),
+	  SEQ (TT "MonomialOrder => EliminationOrder", " -- use the natural elimination order (the default)"),
+	  SEQ (TT "MonomialOrder => ProductOrder", " -- use the product order"),
+	  SEQ (TT "MonomialOrder => LexOrder", " -- use lexical order"),
 	  },
      SEEALSO "EliminationOrder"
      }

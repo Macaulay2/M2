@@ -515,7 +515,14 @@ installPackage Package := o -> pkg -> (
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
-			 if o.IgnoreExampleErrors then link(tmpf,outf) else unlink tmpf;
+			 if o.IgnoreExampleErrors then (
+			      unlink outf;
+			      link(tmpf,outf);
+			      unlink tmpf
+			      )
+			 else (
+			      unlink tmpf;
+			      );
 			 stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
 			 if r == 131 then (
 			      stderr << "subprocess terminated abnormally, exiting" << endl;

@@ -523,7 +523,7 @@ document { "classes and types",
 	  TO "making new classes",
 	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
-	  (
+	  SEQ (
 	       "method functions",
 	       UL {
 		    TO "making a new method function",

@@ -242,7 +242,7 @@ file := null
 -----------------------------------------------------------------------------
 
 getOption := (s,tag) -> (
-     if class s === SEQ then (
+     if class s === BODY or class s === SEQ then (
      	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
      	  if #x > 0 then x#0#1 else null)
      else null
@@ -672,9 +672,9 @@ synopsis Thing := f -> (
      --	       moreGeneral s
      -- back somewhere....
      SYN := getSynopsis f;
-     if SYN === null then SYN = SEQ {};
-     if class SYN =!= SEQ then error "expected Synopsis to be a list";
-     SYN = toSequence SYN;
+     if SYN === null then SYN = {};
+     if class SYN =!= List then error "expected Synopsis to be a list";
+     SYN = select(toSequence SYN, i -> i =!= null);
      (o,args) := override(synopsisOpts,SYN);
      if #args > 0 then error "encountered non-option in Synopsis list";
      usa := o#Usage;
@@ -682,6 +682,9 @@ synopsis Thing := f -> (
      inp := o#Inputs;
      out := o#Outputs;
      res := o#Results;
+     inp = select(inp, i -> i =!= null);
+     out = select(out, i -> i =!= null);
+     res = select(res, i -> i =!= null);
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
      if class inp === SEQ then inp = toList inp;
      ino := select(inp, x -> iso x);
@@ -772,7 +775,11 @@ documentation String := s -> (
 	  t := getGlobalSymbol s;
 	  documentation(t)
 	  )
-     else join( BODY { title s, PARA{" "} }, getDocBody(s) )
+     else (
+	  b := getDocBody(s);
+	  if b === null then null
+	  else join( BODY { title s, PARA{" "} }, b )
+	  )
      )
 
 binary := set binaryOperators; erase symbol binaryOperators

@@ -226,13 +226,13 @@ document { "polynomial rings",
      PARA,NOINDENT,
      "Some things to watch out for when using polynomial rings:",
      UL {
-	  ("Defining a ring twice gives different rings, as far as Macaulay 2 is concerned:
+	  SEQ ("Defining a ring twice gives different rings, as far as Macaulay 2 is concerned:
      	       We use the strict comparison operator ", TO "===", " to	    
      	       demonstrate this.",     
      	       EXAMPLE "ZZ[a,b,c] === ZZ[a,b,c]",
      	       "Thus it is a good idea to assign a new ring to a variable for
      	       future reference."),
-	  ("Variables in monomials are compacted into a smaller space in the machine, for
+	  SEQ ("Variables in monomials are compacted into a smaller space in the machine, for
 	       efficiency reasons.  If your exponents will be larger than 127, then use
 	       the ", TO "MonomialSize", "  option to increase the amount of space.",
 	       EXAMPLE {
@@ -243,7 +243,7 @@ document { "polynomial rings",
 		    },
 	       "The value 16 is the largest value that you may currently give.  Giving the value
 	       k to MonomialSize, allows exponents with maximum value 2^(k-1)-1."),
-	  ("Polynomial rings whose coefficient rings are polynomial rings can be very useful
+	  SEQ ("Polynomial rings whose coefficient rings are polynomial rings can be very useful
 	       for organizing and extracting coefficients easily, but currently most computations
 	       cannot be done for these rings. This includes Groebner bases, and therefore all
 	       of the applications of Groebner bases.")

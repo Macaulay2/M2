@@ -51,15 +51,11 @@ clean::; rm -f Macaulay2-doc.m2
 
 #################################
 
-default:: TAGS.doc
-TAGS.doc : docseq
-	@echo making $@
-	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
-clean::; rm -f TAGS.doc
+default:: 
 
 all default justM2:: tags
-tags: @srcdir@/TAGS
-clean::; rm -f TAGS @srcdir@/TAGS
+tags: @srcdir@/TAGS @srcdir@/TAGS.doc
+clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: loadsequence docseq Makefile.in $(NONDOCM2FILES) $(DOCSEQUENCE) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
 		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 @srcdir@/../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
 		@srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
@@ -70,6 +66,13 @@ clean::; rm -f TAGS @srcdir@/TAGS
 	cd @srcdir@ && \
 	for i in $(patsubst @srcdir@/%, %, $^) ; \
 	do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
+@srcdir@/TAGS.doc: docseq Makefile.in $(DOCSEQUENCE)
+	@echo making $@
+	set -e ; \
+	cd @srcdir@ && \
+	for i in $(patsubst @srcdir@/%, %, $^) ; \
+	do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS.doc
+clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 
 phase1 :: prep
@@ -168,16 +171,22 @@ statuscodes.m2 : ../e/statuscodes
 all:: tmp tmp/.documentation-made
 tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
+
+EXAMPLEOPTIONS := -q --stop
+# EXAMPLEOPTIONS += -e 'errorDepth = 0'
+EXAMPLEOPTIONS += -e 'debugLevel = 1'
+EXAMPLEOPTIONS += -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
+EXAMPLEOPTIONS += -e 'exit 0 '
+
 tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo making the Main package, including the documentation
 	@ 
 	@ cd tmp && \
-	   echo "make: Entering directory \`tmp'" >&2 && ( set -x ; \
-	   ../../bin/M2 -q --stop \
-	     -e 'errorDepth = 0' \
-	     -e 'debugLevel = 1' \
-	     -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") ' \
-	     -e 'exit 0 ' ) || (echo "make: Leaving directory \`tmp'" >&2 ; false )
+	        echo "make: Entering directory \`tmp'" >&2 \
+		&& \
+		(set -x ; ../../bin/M2 $(EXAMPLEOPTIONS)) \
+		|| \
+		(echo "make: Leaving directory \`tmp'" >&2 ; false )
 	@ echo "make: Leaving directory \`tmp'"
 	touch "$@"
 
