@@ -598,6 +598,8 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
      or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
      if lo =!= hi and #lo > 1 then error "encountered a range of multi-degrees";
      heft := opts.Heft;
+     var := opts.Variables;
+     if var === null then var = 0 .. numgens R - 1;
      if R.?Adjust then (
 	  lo = R.Adjust lo;
 	  hi = R.Adjust hi;
@@ -616,7 +618,7 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
 	  ) then error "'basis' can't handle this type of ring";
      k := coefficientRing A;
      pres := generators gb presentation M;
-     f := map(M,,rawBasis(raw pres, lo, hi, heft, 0 .. numgens R - 1, false, -1));
+     f := map(M,,rawBasis(raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit));
      s := sortColumns f;
      f = f_s;
      f)
@@ -638,12 +640,13 @@ basis Module := Matrix => opts -> M -> if M.cache.?basis then M.cache.basis else
      R := ring M;
      A := ultimate(ambient,R);
      if not isField coefficientRing A then error "expected ring to be an algebra over a field";
-     if dim M != 0 then error "expected module to be a finite dimensional module";
+     -- the engine better catch this now:
+     -- if dim M != 0 then error "expected module to be a finite dimensional module";
      k := coefficientRing A;
      pres := generators gb presentation M;
      map(M,,rawBasis(raw pres, {}, {}, splice(1, degreeLength R - 1 : 0), 0 .. numgens R - 1, false, -1)))
 
-basis Ring := Matrix => opts -> R -> if R.?basis then R.cache.basis else R.cache.basis = basis(R^1,opts)
+basis Ring := Matrix => opts -> R -> if R.?basis then R.basis else R.basis = basis(R^1,opts)
 basis Ideal := Matrix => opts -> I -> if I.cache.?basis then I.cache.basis else I.cache.basis = basis(module I,opts)
 -----------------------------------------------------------------------------
 

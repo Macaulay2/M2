@@ -334,7 +334,7 @@ submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> (
      if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
      map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols)))
 submatrix(Matrix,VisibleList) := Matrix => (m,cols) -> (
-     if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
+     if not isFreeModule source m then error "expected source of homomorphism to be free";
      map(ring m,rawSubmatrix(raw m, listZ toList splice cols)))
 submatrix(Matrix,Nothing,VisibleList) := Matrix => (m,rows,cols) -> submatrix(m,cols)
 submatrix(Matrix,VisibleList,Nothing) := Matrix => (m,rows,cols) -> submatrix(m, rows, 0 .. numgens source m - 1)
