@@ -209,7 +209,7 @@ public:
   virtual ring_elem lead_logical_coeff(const Ring *coeffR, const ring_elem f) const;
 
   virtual const int * lead_flat_monomial(const ring_elem f) const;
-  virtual const int * lead_logical_monomial(const ring_elem f) const;
+  virtual void lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const;
 
   ring_elem lead_term(const ring_elem f) const; // copies the lead term
   int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
@@ -237,8 +237,6 @@ protected:
 		      int *resultmon,
 		      int use_coeff) const;
 
-
-  void get_logical_monomial(const Nterm *f, int *& result_monomial) const;
 
   ring_elem get_logical_coeff(const Ring *coeffR, const Nterm *&f) const;
   // Given an Nterm f, return the coeff of its logical monomial, in the

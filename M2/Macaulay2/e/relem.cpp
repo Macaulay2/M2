@@ -262,10 +262,11 @@ Monomial *RingElement::lead_monom(int nvars) const
     }
 
   intarray resultvp;
-
   Nterm *t = get_value();
-  const int *lead = P->lead_logical_monomial(t);
-  P->getLogicalMonoid()->to_varpower(lead, resultvp);
+
+  int *exp = newarray(int,nvars);
+  P->lead_logical_exponents(nvars,t,exp);
+  varpower::from_ntuple(nvars,exp,resultvp);
   return Monomial::make(resultvp.raw());
 }
 

@@ -291,16 +291,15 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
-  const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
-  if (logicalK_ == Rg || Rg1 != 0 && Rg1->getAmbientRing() == logicalK_)
-    {
-      const int *lead = lead_logical_monomial(f);
-      if (!logicalM_->is_one(lead))
-	return false;
-      result = lead_logical_coeff(logicalK_,f);
-      return true;
-    }
-  return false;
+  // We assume that Rg is one of the coefficient rings of 'this'
+
+  int nvars0 = n_vars() - Rg->n_vars();
+  int *exp = newarray(int,nvars0);
+  lead_logical_exponents(nvars0,f,exp);
+  if (!ntuple::is_one(nvars0,exp))
+    return false;
+  result = lead_logical_coeff(Rg,f);
+  return true;
 }
 
 ring_elem PolyRing::preferred_associate(ring_elem ff) const
@@ -1401,20 +1400,13 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
   return head.next;
 }
 
-void PolyRing::get_logical_monomial(const Nterm *f, int *& result_monomial) const
+void PolyRing::lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const
 {
-  assert(f != NULL);
+  Nterm *g = f;
+  assert(g != NULL);
   int *exp = newarray(int,n_vars());
-  M_->to_expvector(f->monom, exp);
-  logicalM_->from_expvector(exp, result_monomial); // only uses the first part
-  deletearray(exp);
-}
-
-const int * PolyRing::lead_logical_monomial(const ring_elem f) const
-{
-  int *result = logicalM_->make_one();
-  get_logical_monomial(f, result);
-  return result;
+  M_->to_expvector(g->monom, exp);
+  ntuple::copy(nvars0,exp,result_exp);
 }
 
 ring_elem PolyRing::lead_logical_coeff(const Ring *coeffR, const ring_elem f) const
@@ -1590,7 +1582,7 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *
 	break;
     }
 
-  ring_elem result = get_logical_coeff(logicalK_, t);
+  ring_elem result = get_logical_coeff(coeffR, t);
   deletearray(exp2);
   deletearray(exp);
   return result;

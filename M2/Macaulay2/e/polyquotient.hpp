@@ -269,8 +269,8 @@ public:
     return R_->PolyRing::lead_flat_monomial(f);
   }
 
-  virtual const int * lead_logical_monomial(const ring_elem f) const {
-    return R_->PolyRing::lead_logical_monomial(f);
+  virtual void lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const {
+    R_->PolyRing::lead_logical_exponents(nvars0,f,result_exp);
   }
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const {

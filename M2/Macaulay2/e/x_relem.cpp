@@ -479,9 +479,9 @@ int rawRingElementCompare(const RingElement *a,
   if (R != b->get_ring() || P == 0)
     return 0;
   
-  const int *m = P->lead_logical_monomial(a->get_value());
-  const int *n = P->lead_logical_monomial(b->get_value());
-  return P->getLogicalMonoid()->compare(m,n);
+  const int *m = P->lead_flat_monomial(a->get_value());
+  const int *n = P->lead_flat_monomial(b->get_value());
+  return P->getMonoid()->compare(m,n);
 }
 
 const RingElement *IM2_RingElement_promote(const Ring *S, 
