@@ -11,11 +11,11 @@ export NULL := null();
 bufsize := 4 * 1024;
 export file := {
 	filename:string,	-- name of file
-	fd:int,			-- file descriptor
-	pid:int,	        -- pid if it's a pipe to a child process, else 0
-        isatty:bool,
+	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
      	-- input file stuff
-     	input:bool,	        -- input file
+     	input:bool,	        -- is input file
+	infd:int,		-- file descriptor or -1
+        inisatty:bool,
 	inbuffer:string,        -- buffer
 	inindex:int,		-- inbuffer.inindex is the first available char
         insize:int,		-- inbuffer.(insize-1) is the last char
@@ -25,7 +25,9 @@ export file := {
         bol:bool,     	   	-- at the beginning of a line
 	echo:bool,     	   	-- whether to echo characters read to stdout
      	-- output file stuff
-     	output:bool,	        -- output file
+     	output:bool,	        -- is output file
+	outfd:int,		-- file descriptor or -1
+        outisatty:bool,
 	outbuffer:string,	-- buffer
 	                        -- outbuffer . 0 is the first char in the buffer
 	outindex:int,	        -- outbuffer.(outindex-1) is the last char
@@ -37,20 +39,18 @@ export file := {
 	nets:NetList	        -- list of nets, to be printed after the outbuffer
 	};
 export noprompt():void := nothing;
-export dummyfile := file("dummy",-1,0,false,
-     false,"",0,0,false,noprompt,false,false,
-     false,"",0, 0, false, dummyNetList);
 newbuffer():string := new string len bufsize do provide ' ';
-export stdin := file( "stdin", 0, 0, 
-     true,				  -- isatty
-     true, newbuffer(), 0, 0, false, noprompt,true,false,
-     false, "", 0, 0, false, dummyNetList);
-export stdout := file( "stdout", 1, 0, 0 != isatty(1),
-     false, "", 0, 0, false, noprompt,false,false,
-     true, newbuffer(), 0, 0, false, dummyNetList);
-export stderr := file( "stderr", 2, 0, 0 != isatty(2),
-     false, "", 0, 0, false, noprompt,false,false,
-     true, newbuffer(), 0, 0, false, dummyNetList);
+export dummyfile := file("dummy",0,
+     false,-1,false,        "",          0,0,false,noprompt,true,false,
+     false,-1,false,        "",	    	 0,0,false,dummyNetList);
+export stdIO  := file( "stdio",  0, 
+     true,  0,0!=isatty(0), newbuffer(), 0,0,false,noprompt,true,false,
+     true,  1,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList);
+export stdin  := stdIO;
+export stdout := stdIO;
+export stderr := file( "stderr", 0, 
+     false,-1,false,          "",        0,0,false,noprompt,true,false,
+     true,  2,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList);
 export errmsg := { message:string };
 export fopenin(filename:string):(file or errmsg) := (
      if filename === "-"
@@ -68,9 +68,9 @@ export fopenin(filename:string):(file or errmsg) := (
 	  if sd == ERROR
 	  then (file or errmsg)(errmsg("can't open socket"))
 	  else (file or errmsg) (file(
-	       	    filename, sd, 0, false,
-	       	    true, newbuffer(), 0, 0, false, noprompt,true,false,
-	       	    true, newbuffer(), 0, 0, false, dummyNetList)))
+	       	    filename, 0,
+	       	    true, sd, false, newbuffer(), 0, 0, false, noprompt,true,false,
+	       	    false,-1, false, newbuffer(), 0, 0, false, dummyNetList)))
      else if length(filename) > 0 && filename . 0 == '!'
      then (
 	  fildes := array(int)(-1,-1);
@@ -80,9 +80,9 @@ export fopenin(filename:string):(file or errmsg) := (
 	  if pid != 0
 	  then (
 	       close(fildes.1);
-	       (file or errmsg)(file(filename, fildes.0, pid, false,
-		    true, newbuffer(), 0, 0, false, noprompt,true,false,
-		    false, "", 0, 0, false, dummyNetList)))
+	       (file or errmsg)(file(filename, pid, 
+		    true, fildes.0, false, newbuffer(), 0, 0, false, noprompt,true,false,
+		    false,-1,       false, "",          0, 0, false, dummyNetList)))
 	  else (
 	       close(fildes.0);
 	       dup2(fildes.1, 1);
@@ -95,9 +95,9 @@ export fopenin(filename:string):(file or errmsg) := (
      	  then (file or errmsg)(
 	       errmsg("can't open input file "+filename))
      	  else (file or errmsg)(
-	       file(filename, fd, 0, 0 != isatty(fd),
-		    true, newbuffer(), 0, 0, false, noprompt,true,false,
-		    false, "", 0, 0, false, dummyNetList))));
+	       file(filename, 0,
+		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, noprompt,true,false,
+		    false, -1, false,           "",          0, 0, false, dummyNetList))));
 export FileCell := {file:file,next:(null or FileCell)};
 export openfiles := (null or FileCell)(NULL);
 addfile(o:file):file := (openfiles = FileCell(o,openfiles); o);
@@ -128,9 +128,9 @@ export fopenout(filename:string):(file or errmsg) := (
 	  if pid != 0
 	  then (
 	       close(fildes.0);
-	       f := file(filename, fildes.1, pid, false,
-		    false, "", 0, 0, false, noprompt,true,false,
-		    true, newbuffer(), 0, 0, false, dummyNetList);
+	       f := file(filename, pid,
+		    false, -1,      false, "",          0, 0, false, noprompt,true,false,
+		    true, fildes.1, false, newbuffer(), 0, 0, false, dummyNetList);
 	       if gc then addfile(f);
 	       (file or errmsg)(f))
 	  else (
@@ -144,9 +144,9 @@ export fopenout(filename:string):(file or errmsg) := (
      	  then (file or errmsg)(
 	       errmsg("can't open output file "+filename))
      	  else (
-	       f := file(filename, fd, 0, 0 != isatty(fd),
-		    false, "", 0, 0, false, noprompt,true,false,
-		    true, newbuffer(), 0, 0, false, dummyNetList);
+	       f := file(filename, 0,
+		    false, -1, false,           "",          0, 0, false,noprompt,true,false,
+		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList);
 	       if gc then addfile(f);
 	       (file or errmsg)(f))));
 export flushinput(o:file):void := (
@@ -155,7 +155,7 @@ export flushinput(o:file):void := (
      );
 
 simpleflush(o:file):int := (
-     r := if o.outindex > 0 then write(o.fd,o.outbuffer,o.outindex) else 0;
+     r := if o.outindex > 0 then write(o.outfd,o.outbuffer,o.outindex) else 0;
      o.outindex = 0;
      o.outbol = 0;
      r);
@@ -205,16 +205,35 @@ flushnets(o:file):int := (
 export flush(o:file):int := (
      if o.hadNet then if ERROR == flushnets(o) then return(ERROR);
      simpleflush(o));
-export close(o:file):int := (
-     if o == stdin then if o.isatty then return(-1);
-     if o.fd == -1 then return(-1);
+export closeIn(o:file):int := (
+     if o == stdin && o.inisatty then return(ERROR);
+     if o.infd == -1 then return(ERROR);
      if o.input then flushinput(o);
-     ret1 := flush(o) == ERROR;
-     ret2 := close(o.fd) == ERROR;
-     ret3 := o.pid != 0 && 0 != wait(o.pid);
-     o.fd = -1;
-     rmfile(o);
-     if ret1 || ret2 || ret3 then ERROR else 0     
+     haderror := (
+	  o.infd != -1 && o.infd != o.outfd && close(o.infd) == ERROR ||
+	  o.outfd == -1 && o.pid != 0 && 0 != wait(o.pid)
+	  );
+     o.infd = -1;
+     o.input = false;
+     if o.outfd == -1 then rmfile(o);
+     if haderror then ERROR else 0     
+     );
+export closeOut(o:file):int := (
+     if o.outfd == -1 then return(ERROR);
+     haderror := (
+	  flush(o) == ERROR ||
+	  o.outfd != -1 && o.infd != o.outfd && close(o.outfd) == ERROR ||
+	  o.infd == -1 && o.pid != 0 && 0 != wait(o.pid)
+	  );
+     o.outfd = -1;
+     o.output = false;
+     if o.infd == -1 then rmfile(o);
+     if haderror then ERROR else 0     
+     );
+export close(o:file):int := (
+     if !o.input && !o.output
+     || o.input && closeIn(o) == ERROR
+     || o.output && closeOut(o) == ERROR then ERROR else 0
      );
 closem():void := (
      f := openfiles;
@@ -265,12 +284,12 @@ filbuf(o:file):bool := (
 	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
 	  o.inindex = 0;
 	  );
-     if o.isatty then (
+     if o.inisatty then (
 	  flush(stdout);
 	  if o.bol then o.prompt();	  -- ?????? changed 8/12/98
 	       -- under Windows and emacs we receive incomplete lines!
 	  );
-     r := read(o.fd,o.inbuffer,length(o.inbuffer)-o.insize,o.insize);
+     r := read(o.infd,o.inbuffer,length(o.inbuffer)-o.insize,o.insize);
      if r <= 0 then (
 	  -- r is -1 when the read was interrupted
 	  -- r is 0 when we are at end of file (if we asked for >0 bytes)
@@ -353,7 +372,7 @@ export present(x:string):string := (
 	       else if c == '\f' then v << "\\f" 
 	       else if c == '\t' then v << "\\t" 
 	       else if c == '\n' then v << "\\n" 
-	       else if c == '"' then v << "\\\"" 
+	       else if c == '\"' then v << "\\\"" 
 	       else if c == '\\' then v << "\\\\" 
 	       else if c == char(127) then v << "\\177"
 	       else if c < char(32) then (
@@ -437,7 +456,7 @@ endlfun(o:file):int := (
      if o.output then (
 	  if o.hadNet then if ERROR == flushnets(o) then return(ERROR);
 	  o << newline;
-	  if o.isatty || o == stderr 
+	  if o.outisatty || o == stderr 
 	  then (
 	       if ERROR == simpleflush(o) then return(ERROR);
 	       )
@@ -521,7 +540,7 @@ export get(filename:string):(string or errmsg) := (
      when fopenin(filename)
      is x:errmsg do (string or errmsg)(x)
      is f:file do (
-	  s := readfile(f.fd);
+	  s := readfile(f.infd);
 	  r := close(f);
 	  if r == -1
 	  then (string or errmsg)(errmsg("failed to close file"))
@@ -545,3 +564,56 @@ export (o:file) << (s:Cstring) : file := (
 	  );
      o
      );
+export fopeninout(filename:string):(file or errmsg) := (
+     if filename === "-"
+     then (file or errmsg)(stdIO)
+     else if length(filename) > 0 && filename . 0 == '$'
+     then (
+	  host := substr(filename,1);
+	  serv := "2500";		  -- Macaulay 2 default port
+	  foreach c at j in filename do if c == ':' then (
+	       host = substr(filename,1,j-1);
+	       serv = substr(filename,j+1);
+	       break;
+	       );
+	  sd := opensocket(host,serv);
+	  if sd == ERROR
+	  then (file or errmsg)(errmsg("can't open socket"))
+	  else (file or errmsg) (file(
+	       	    filename, 0,
+	       	    true, sd, false, newbuffer(), 0, 0, false, noprompt,true,false,
+	       	    true, sd, false, newbuffer(), 0, 0, false, dummyNetList)))
+     else if length(filename) > 0 && filename . 0 == '!'
+     then (
+	  toChild := array(int)(-1,-1);
+	  fromChild := array(int)(-1,-1);
+	  if pipe(toChild) == ERROR || pipe(fromChild) == ERROR
+	  then return(errmsg("can't make pipe"));
+	  pid := fork();
+	  if pid != 0
+	  then (
+	       close(toChild.0);
+	       close(fromChild.1);
+	       f := file(filename, pid,
+		    true, fromChild.0, false, newbuffer(), 0, 0, false, noprompt,true,false,
+		    true,   toChild.1, false, newbuffer(), 0, 0, false, dummyNetList);
+	       if gc then addfile(f);
+	       (file or errmsg)(f))
+	  else (
+	       close(fromChild.0);
+	       close(  toChild.1);
+	       dup2( fromChild.1, 1);
+	       dup2(   toChild.0, 0);
+	       exec(array(string)("/bin/sh","-c",substr(filename,1)));
+	       (file or errmsg)(errmsg("exec of /bin/sh failed!"))))
+     else (
+     	  fd := openout(filename);
+     	  if fd == ERROR
+     	  then (file or errmsg)(
+	       errmsg("can't open output file "+filename))
+     	  else (
+	       f := file(filename, 0,
+		    false, -1, false,           "",          0, 0, false, noprompt,true,false,
+		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, dummyNetList);
+	       if gc then addfile(f);
+	       (file or errmsg)(f))));

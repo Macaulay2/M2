@@ -55,7 +55,7 @@ conjugate CC := z -> new CC from {z#0,-z#1}
 realPart CC := z -> z#0
 imaginaryPart CC := z -> z#1
 exprI := quote ii
-expression CC := z -> z#0 + z#1*exprI
+expression CC := z -> z#0 + z#1 * hold exprI
 name CC := z -> name expression z
 net CC := z -> net expression z
 document { quote realPart,

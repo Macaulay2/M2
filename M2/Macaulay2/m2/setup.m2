@@ -37,6 +37,14 @@ oldclose := close
 erase quote close
 close = new Manipulator from oldclose
 
+oldcloseIn := closeIn
+erase quote closeIn
+closeIn = new Manipulator from oldcloseIn
+
+oldcloseOut := closeOut
+erase quote closeOut
+closeOut = new Manipulator from oldcloseOut
+
 oldflush := flush
 erase quote flush
 flush = new Manipulator from oldflush
@@ -46,6 +54,9 @@ erase quote endl
 endl = new Manipulator from oldendl
 
 erase quote "--newline--"
+
+stdout = stdio
+stdin = stdio
 
 << Thing := x -> stdout << x
 File << Net := printString

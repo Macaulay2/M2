@@ -665,8 +665,9 @@ untilfun(predicate:Code,body:Code):Expr := (
 	  else return(errorpos(predicate,"expected true or false")));
      nullE);
 UntilFun = untilfun;
-setupconst("stdin",Expr(stdin));
-setupconst("stdout",Expr(stdout));
+setupconst("stdio",Expr(stdIO));
+--setupconst("stdin",Expr(stdin));
+--setupconst("stdout",Expr(stdout));
 setupconst("stderr",Expr(stderr));
 openfilesfun(e:Expr):Expr := (
      n := 0;
@@ -684,36 +685,58 @@ openfilesfun(e:Expr):Expr := (
 	  );
      list(v));
 setupfun("openFiles",openfilesfun);
-openin(filename:Expr):Expr := (
+openIn(filename:Expr):Expr := (
      when filename
      is f:string do (
 	  when fopenin(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do errorExpr(m.message))
      is Error do filename
-     else errorExpr("expected a string"));
-setupfun("openIn",openin);
-openout(filename:Expr):Expr := (
+     else WrongArg("a string"));
+setupfun("openIn",openIn);
+openOut(filename:Expr):Expr := (
      when filename
      is f:string do (
 	  when fopenout(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do errorExpr(m.message))
      is Error do filename
-     else errorExpr("expected a string"));
-setupfun("openOut",openout);
+     else WrongArg("a string"));
+setupfun("openOut",openOut);
+openInOut(filename:Expr):Expr := (
+     when filename
+     is f:string do (
+	  when fopeninout(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do errorExpr(m.message))
+     is Error do filename
+     else WrongArg("a string"));
+setupfun("openInOut",openInOut);
 close(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if f.fd == -1 then return(errorExpr("file already closed"));
+	  if f.infd == -1 && f.outfd == -1 then return(errorExpr("file already closed"));
 	  if close(f) == 0 then g
-	  else errorExpr(
-	       if f.pid != 0
-	       then "error closing pipe"
-	       else "error closing file"))
+	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
      is x:Database do dbmclose(x)
-     else errorExpr("expected a file"));
+     else errorExpr("expected a file or database"));
 setupfun("close",close);
+closeIn(g:Expr):Expr := (
+     when g
+     is f:file do ( 
+	  if f.infd == -1 then return(errorExpr("file already closed"));
+	  if closeIn(f) == 0 then g
+	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
+     else errorExpr("expected an open input file"));
+setupfun("closeIn",closeIn);
+closeOut(g:Expr):Expr := (
+     when g
+     is f:file do ( 
+	  if f.infd == -1 && f.outfd == -1 then return(errorExpr("file already closed"));
+	  if closeOut(f) == 0 then g
+	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
+     else errorExpr("expected an open output file"));
+setupfun("closeOut",closeOut);
 flush(g:Expr):Expr := (
      when g
      is f:file do (

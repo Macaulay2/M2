@@ -129,16 +129,13 @@ document { quote stderr,
      }
 
 document { quote openIn,
-     TT "openIn \"fff\"", "  -- opens an input file whose filename is fff.",
-     BR,BR,NOINDENT,
+     TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
+     BR,NOINDENT,
      TT "openIn \"!cmd\"", " -- opens an input file which corresponds to a pipe 
      receiving the output from the shell command ", TT "cmd", ".",
-     BR,BR,NOINDENT,
-     TT "openIn \"$hostname:service\"", " -- opens a socket and returns a file which
-     can be used both for input and output.",
-     PARA,
-     "The class of all files is ", TO "File", ".",
-     PARA,
+     BR,NOINDENT,
+     TT "openInOut \"$hostname:service\"", " -- opens an input file
+     by connecting to the specified service port at the specified host.",
      EXAMPLE {
 	  ///"junk" << "abcdefghijk" << endl << close///,
 	  ///f = openIn "junk"///,
@@ -152,11 +149,28 @@ document { quote openIn,
      provide static versions of crucial libraries dealing with network
      communications, or the static version doesn't provide network name
      service for looking up hostnames.",
-     if version#"operating system" =!= "SunOS"
-     and version#"operating system" =!= "CYGWIN32_NT"
-     and version#"operating system" =!= "CYGWIN32_95"
-     then EXAMPLE ///get "$localhost:daytime"///,
-     SEEALSO "File"
+     PARA,
+     "Other commands which open files will open sockets or pipes if the
+     file name starts with dollar sign or exclamation point.",
+     SEEALSO {"File",  "openOut",  "openInOut"}
+     }
+
+document { quote openInOut,
+     TT "openInOut \"fff\"", "  -- opens an input output file whose filename is ", TT "fff", ".",
+     BR,NOINDENT,
+     TT "openInOut \"!cmd\"", " -- opens an input file which corresponds to a pipe 
+     receiving the output from the shell command ", TT "cmd", ".",
+     BR,NOINDENT,
+     TT "openInOut \"$hostname:service\"", " -- opens an input output file
+     by connecting to the specified service port at the specified host.",
+     PARA,
+     "In order to open a socket successfully, there must be a process
+     accepting connections for the desired service on the specified host.
+     This feature is not available on Sun computers, because Sun doesn't
+     provide static versions of crucial libraries dealing with network
+     communications, or the static version doesn't provide network name
+     service for looking up hostnames.",
+     SEEALSO {"File", "openIn",  "openOut"}
      }
 
 document { quote openOut,
@@ -165,7 +179,7 @@ document { quote openOut,
      TT "openOut \"!cmd\"", " -- opens an output file which corresponds to a pipe 
      providing the output to the shell command ", TT "cmd", ".",
      PARA,
-     SEEALSO { "File" }
+     SEEALSO {"File", "openIn",  "openInOut"}
      }
 
 document { quote protect,

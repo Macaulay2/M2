@@ -8,7 +8,7 @@ getWWW String := memoize ((url) -> (
 	       host := (lines(url,"/"))#0;
 	       url = substring(url, # host);
 	       if url == "" then url = "/";
-	       f := openIn( "$" | host | ":80" );
+	       f := openInOut( "$" | host | ":80" );
 	       f << "GET " << url << " HTTP/1.0" << endl;
 	       f << "User-Agent: Macaulay2" << endl;
 	       f << endl << flush;
@@ -25,7 +25,7 @@ getWWW(String, String) := memoize (
 	       host := (lines(url,"/"))#0;
 	       url = substring(url, # host);
 	       if url == "" then url = "/";
-	       f := openIn( "$" | host | ":80" );
+	       f := openInOut( "$" | host | ":80" );
 	       f << "POST " << url << " HTTP/1.0" << endl
 	       << "User-Agent: Macaulay2" << endl
 	       << "Content-type: application/x-www-form-urlencoded" << endl

@@ -1306,11 +1306,61 @@ document { "two dimensional formatting",
 	  },
      }
 
-document { "making new types",
-     "This node has not been written yet."
+document { "communicating with programs",
+     "The most naive way to interact with another program is simply to run
+     it, let it communicate directly with the user, and wait for it to
+     finish.  This is done with the ", TO "run", " command.",
+     EXAMPLE ///run "uname -a"///,
+     "More often, one wants access Macaulay 2 code to be able to obtain
+     and manipulate the output from the other program.  If one
+     needs only to receive data, as in the example above, then we can
+     use ", TO "get", " with a file name whose first character is an
+     exclamation point; the rest of the file name will be taken as the
+     command to run.",
+     EXAMPLE {
+	  ///get "!uname -a"///,
+	  ///peek oo///,
+	  },
+     "We can even use this method to call upon Macaulay2 itself for a 
+     computation, putting the computational request into the command line.  We
+     then use ", TO "value", " to convert the string returned to a number.",
+     EXAMPLE {
+	  ///g = get "!M2 -q -silent -e'<< 2^100'"///,
+	  ///peek g///,
+	  ///value g///,
+	  },
+     "Bidirectional communication with a program is also possible.  We use
+     ", TO "openInOut", " to create a file that serves as a bidirectional
+     connection to a program.  We call such a file an input output file.  In
+     this example we open a connection to the unix utility ", TT "egrep", "
+     and use it to locate the symbol names in Macaulay2 that begin with
+     ", TT "in", ".",
+     EXAMPLE {
+	  ///f = openInOut "!egrep '^in'"///,
+	  ///scan(keys symbolTable(), key -> f << key << endl)///,
+	  ///f << closeOut///,
+	  ///verticalJoin lines read f///,
+	  ///close f///,
+	  },
+     "We also allow for bidirectional communication
+     through sockets over the internet.  We illustrate
+     this by getting a web page.  We open a socket to port 80
+     of ", TT "www.math.uiuc.edu", " by handing a file name beginning with a
+     dollar sign to ", TO "openInOut", ".  Then we write to it the same
+     way a web browser would, close the file for output with ", TO "closeOut", ",
+     (thereby flushing the output buffers), read the web page from
+     it, and finally close it.",
+     EXAMPLE {
+	  ///f = openInOut "$www.math.uiuc.edu:80"///,
+	  ///(f << "GET /~dan/test.html HTTP/1.0" << endl
+   << "User-Agent: Macaulay2" << endl
+   << endl << closeOut)///,
+       	  ///verticalJoin lines get f///,
+	  ///close f///,
+	  }
      }
 
-document { "communicating with programs",
+document { "making new types",
      "This node has not been written yet."
      }
 
@@ -1357,4 +1407,3 @@ document { (quote @, OptionTable, Function),
 document { "printing and formatting for new types",
      "This node has not been written yet."
      }
-     
