@@ -430,4 +430,51 @@ prune GradedModule := (M) -> (
 complete GradedModule := (M) -> null
 rank GradedModule := (M) -> sum(spots M, i -> rank M#i)
 
+map(GradedModule,GradedModule,Function) := (C,D,f,options) -> (
+     h := new GradedModuleMap;
+     h.source = D;
+     h.target = C;
+     deg := h.degree = if options.Degree === null then 0 else options.Degree;
+     scan(spots D, k -> (
+	       if C#?(k+deg) then (
+		    g := f(k);
+		    if g =!= null and g != 0 then h#k = map(C#(k+deg),D#k,g);
+		    )));
+     h
+     )
+
+ggConcatBlocks := (R,mats) -> (
+     sendgg (
+	  apply(mats, row -> ( apply(row, m -> ggPush m), 
+		    ggPush(#row), ggconcat, ggtranspose )),
+	  ggPush(#mats), ggconcat, ggtranspose );
+     getMatrix R)
      
+tensorAssociativity(GradedModule,GradedModule,GradedModule) := (A,B,C) -> (
+     R := ring A;
+     map(
+	  F := (AB := A ** B) ** C,
+	  E :=  A ** (BC := B ** C),
+	  k -> ggConcatBlocks(R, apply(F_k.indices, (ab,c) -> (
+			 apply(E_k.indices, (a,bc) -> (
+				   b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
+				   if A#?a and B#?b and C#?c
+				   then (
+					(AB#ab_[(a,b)] ** C#c)
+					* tensorAssociativity(A#a,B#b,C#c)
+					* (A#a ** BC#bc^[(b,c)])
+					)
+				   else map(F_k.components#(F_k.indexComponents#(ab,c)),
+					     E_k.components#(E_k.indexComponents#(a,bc)),
+					     0))))))
+	  ))
+
+TEST ///
+     -- here we test the commutativity of the pentagon of associativities!
+     C = QQ^1[0] ++ QQ^1[-1]
+     assert(
+	  (tensorAssociativity(C,C,C) ** C) * tensorAssociativity(C,C**C,C) * (C ** tensorAssociativity(C,C,C))
+	  ==
+	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
+	  )
+     ///

@@ -718,6 +718,17 @@ document { quote //,
      class of ", TT "y", "."
      }
 
+document { quote \\,
+     TT "x \\ y", " -- a binary operator used for quotients (with a possible
+     remainder).",
+     PARA,
+     "The user may install ", TO {"binary method", "s"}, " for this operator 
+     with code such as ",
+     PRE "         X \\ Y := (x,y) -> ...",
+     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
+     class of ", TT "y", "."
+     }
+
 document { quote ^,
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
@@ -2114,6 +2125,7 @@ document { "operators",
           (TO "*", " -- multiplication"),
           (TO "/", " -- division"),
           (TO "//", " -- quotient"),
+          (TO "\\\\", " -- left quotient"),
           (TO "%", " -- remainder"),
           (TO "^", " -- power"),
           (TO "/^", " -- divided power"),
@@ -3493,6 +3505,7 @@ document { "arithmetic functions",
           (TO "times", "      -- multiplication"),
           (TO "/", "          -- division"),
           (TO "//", "         -- quotient"),
+          (TO "\\\\", "         -- left quotient"),
           (TO "%", "          -- remainder"),
 	  (TO "mod", "        -- reduction modulo n"),
           (TO "^", "          -- power"),

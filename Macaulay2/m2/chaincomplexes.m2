@@ -1139,18 +1139,18 @@ document { (chainComplex,GradedModule),
      }
 -----------------------------------------------------------------------------
 
-ggConcatCols := (mats) -> (
+ggConcatCols := (R,mats) -> (
      sendgg(apply(mats,ggPush), ggPush (#mats), ggconcat);
      getMatrix R)
 
-ggConcatBlocks := (mats) -> (
+ggConcatBlocks := (R,mats) -> (
      sendgg (
 	  apply(mats, row -> ( apply(row, m -> ggPush m), 
 		    ggPush(#row), ggconcat, ggtranspose )),
 	  ggPush(#mats), ggconcat, ggtranspose );
      getMatrix R)
 
-tens := (f,g) -> (
+tens := (R,f,g) -> (
      sendgg (ggPush f, ggPush g, ggtensor);
      getMatrix R)
 
@@ -1161,18 +1161,18 @@ ChainComplex ** ChainComplex := (C,D) -> (
      scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
 	       E#(i-1),
 	       E#i,
-	       ggConcatBlocks table(
-		    E#(i-1).indices,
-		    E#i.indices,
-		    (j,k) -> (
-			 if j#0 === k#0 and j#1 === k#1 - 1 
-			 then (-1)^(k#0) * tens(map cover C#(j#0), matrix D.dd_(k#1))
-			 else if j#0 === k#0 - 1 and j#1 === k#1 
-			 then tens(matrix C.dd_(k#0), map cover D#(k#1))
-			 else map(
-			      E#(i-1).components#(E#(i-1).indexComponents#j),
-			      E#i.components#(E#i.indexComponents#k),
-			      0)))));
+	       ggConcatBlocks(R, table(
+			 E#(i-1).indices,
+			 E#i.indices,
+			 (j,k) -> (
+			      if j#0 === k#0 and j#1 === k#1 - 1 
+			      then (-1)^(k#0) * tens(R, map cover C#(j#0), matrix D.dd_(k#1))
+			      else if j#0 === k#0 - 1 and j#1 === k#1 
+			      then tens(R, matrix C.dd_(k#0), map cover D#(k#1))
+			      else map(
+				   E#(i-1).components#(E#(i-1).indexComponents#j),
+				   E#i.components#(E#i.indexComponents#k),
+				   0))))));
      E)
 
 document { (quote **, ChainComplex, ChainComplex),
@@ -1264,45 +1264,30 @@ newMatrix := (tar,src) -> (
      p)
      
 tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
-     R = ring A;			  -- our temporary ring
+     R := ring A;
      map(
 	  F := (AB := A ** B) ** C,
 	  E :=  A ** (BC := B ** C),
-	  k -> ggConcatBlocks apply(F_k.indices, (ab,c) -> (
-		    apply(E_k.indices, (a,bc) -> (
-			      b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
-			      if A#?a and B#?b and C#?c
-			      then (
-			      	   (AB#ab_[(a,b)] ** C#c)
-			      	   * tensorAssociativity(A#a,B#b,C#c)
-			      	   * (A#a ** BC#bc^[(b,c)])
-				   )
-			      else map(F_k.components#(F_k.indexComponents#(ab,c)),
-					E_k.components#(E_k.indexComponents#(a,bc)),
-					0)))))
- --	  k -> ggConcatCols(F, E, apply (E_k.indices, (a,bc) -> 
- --		    sum(BC_bc.indices, (b,c) -> (
- --			      F_k_[(a+b,c)]
- --			      * (AB_(a+b)_[(a,b)] ** C_c)
- --			      * tensorAssociativity(A_a,B_b,C_c)
- --			      * (A_a ** BC_bc^[(b,c)])
- --			      ))))
--- 	  k -> sum(E_k.indices, (a,bc) -> (
--- 		    sum(BC_bc.indices, (b,c) -> (
--- 			      F_k_[(a+b,c)]
--- 			      * (AB_(a+b)_[(a,b)] ** C_c)
--- 			      * tensorAssociativity(A_a,B_b,C_c)
--- 			      * (A_a ** BC_bc^[(b,c)])
--- 			      )) * E_k^[(a,bc)]))
-	  ))
-
-document { quote tensorAssociativity,
-     TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
-     A**(B**C) to (A**B)**C.",
-     PARA,
-     "Currently implemented for modules and chain complexes.",
-     SEEALSO {"ChainComplex", "Module"}
-     }
+	  k -> ggConcatBlocks(R, apply(F_k.indices, (ab,c) -> (
+			 apply(E_k.indices, (a,bc) -> (
+				   b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
+				   if A#?a and B#?b and C#?c
+				   then (
+					(AB#ab_[(a,b)] ** C#c)
+					* tensorAssociativity(A#a,B#b,C#c)
+					* (A#a ** BC#bc^[(b,c)])
+					)
+				   else map(F_k.components#(F_k.indexComponents#(ab,c)),
+					     E_k.components#(E_k.indexComponents#(a,bc)),
+					     0))))))
+     -- 	  k -> sum(E_k.indices, (a,bc) -> (
+     -- 		    sum(BC_bc.indices, (b,c) -> (
+     -- 			      F_k_[(a+b,c)]
+     -- 			      * (AB_(a+b)_[(a,b)] ** C_c)
+     -- 			      * tensorAssociativity(A_a,B_b,C_c)
+     -- 			      * (A_a ** BC_bc^[(b,c)])
+     -- 			      )) * E_k^[(a,bc)]))
+	       ))
 
 TEST ///
      -- here we test the commutativity of the pentagon of associativities!
@@ -1313,6 +1298,14 @@ TEST ///
 	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
 	  )
      ///
+
+document { quote tensorAssociativity,
+     TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
+     A**(B**C) to (A**B)**C.",
+     PARA,
+     "Currently implemented for modules, graded modules, and chain complexes.",
+     SEEALSO {"ChainComplex", "Module"}
+     }
 
 Module Array := (M,v) -> (
      if #v =!= 1 then error "expected array of length 1";
@@ -1433,9 +1426,9 @@ TEST ///
      C = res coker vars R
      D = C ++ C
      E = ker D_[0]
-     E = coim D_[0]
      E = coker D_[0]
-     E = im D_[0]
+     E = image D_[0]
+     E = coimage D_[0]
 ///
 
 prune ChainComplex := (C) -> (
