@@ -67,8 +67,7 @@ DISTFILES_MADE:= \
 		Macaulay2/emacs \
 		Macaulay2/m2/*.m2
 DISTFILES_SRC := \
-		$(shell cd @srcdir@; echo Macaulay2/m2/*.m2) \
-		Macaulay2/tutorial/final/*.m2 \
+		$(shell cd @srcdir@; echo Macaulay2/m2/*.m2 Macaulay2/tutorial/final/*.m2) \
 		Macaulay2/packages \
 		Macaulay2/emacs \
 		Macaulay2/CHANGES \
