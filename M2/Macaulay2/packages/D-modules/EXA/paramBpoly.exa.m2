@@ -2,7 +2,7 @@ restart
 load "Dloadfile.m2"
 A =  (QQ [a,b,c,d]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 
-setInfoLevel 2
+Dtrace 666
 paramBpoly(
      a*x^2,
      "quadratic2" 

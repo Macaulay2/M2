@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 -- "lucky" prime & QQflag (says when to use Q)
 ----------------------------------------
-bigPrime := 32749;
+DBIGPRIME = 32749;
 QQflag := false;
 
 -- get gens from the paramGB output
@@ -42,10 +42,11 @@ ZtoQ := (p, Q) -> (
 	       );
 -- (Z/p to Q)
 ZmodP2Q := c -> (
-     F1 := bigPrime//100;
+     if class c =!= ZZ then c = substitute(c,ZZ);
+     F1 := DBIGPRIME//100;
      F2 := 100;
      
-     b := bigPrime;
+     b := DBIGPRIME;
      i := 1;
      while (abs(i * c % b)) > F1 and i < F2 do i = i+1;
      j := 1;
@@ -124,7 +125,7 @@ calculateAss := (I) -> (
 		    ));
 	       )
 	  else ( 
-	       -- for ZZ/bigPrime
+	       -- for ZZ/DBIGPRIME
 	       l = decompose(I);
 	       );
 	  r = select(l, u -> u != (ideal 1_R));
@@ -410,6 +411,24 @@ VSet2tex := (l, TeXfile) -> (
 	  j = j + 1;
 	  );  
      );
+
+factorBFunctionZmodP = method()
+factorBFunctionZmodP RingElement := Product => f -> (
+     R := ring f;
+     f = select(factor f, u->first degree u#0 > 0);
+     f = select(f, u->first degree u#0 > 0);
+     S := symbol S;
+     QR := QQ[S];
+     result := apply(f, u->(
+	       if first degree u#0 != 1 then error "incorrect b-function";
+	       coeff := listForm u#0 / (v->v#1);
+	       pInfo(666, {"coeff = ", coeff});
+     	       Power(QR_0 + (if #coeff> 1 then ZmodP2Q(coeff#1//coeff#0) else 0), u#1)
+	       ));
+     use R;
+     result
+     );-- end factorBFunction
+
 BSet2tex := (s, filename) -> (
      TeXfile := filename << "\\documentclass{article}\n\\begin{document}\n"; 
      s / (u -> ( 
@@ -417,9 +436,9 @@ BSet2tex := (s, filename) -> (
 	       TeXfile << (
 		    -- b-function
 		    S := symbol S; 
-		    R := QQ[S];
-		    toString factorBFunction sum(u.tempBF, 
-			 v->ZmodP2Q(v#1) * R_(v#0))
+		    R := (ZZ/DBIGPRIME)[S];
+		    toString factorBFunctionZmodP sum(u.tempBF, 
+			v->v#1 * R_(v#0))
 	       ) << ",$$";
 	       
 	       i := 0;
@@ -506,8 +525,8 @@ CALLglobalBFunctionParam(Thing) := a -> (
  
 makeMonic := f -> ( (1 / (leadCoefficient f)) * f );
 ZZtoQQ := u -> (
-     c := substitute(lift(u, ZZ/bigPrime), ZZ);
-     b := bigPrime;
+     c := substitute(lift(u, ZZ/DBIGPRIME), ZZ);
+     b := DBIGPRIME;
      i := 1;
      while (abs(i * c % b)) > 100 and i < 100 do i = i+1;
      ((i * c % b) / i) 
@@ -784,15 +803,21 @@ takeCareOf(HashTable, ZZ) := (V, num) -> (
 -- MAIN
 ----------
 
-paramBpoly = method()
-paramBpoly(RingElement, String) := List => (f, fname) -> (
-     QQflag = false;
+paramBpoly = method(Options => {GroundField => 32749}) -- 0 stays for QQ
+paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
+     QQflag = (o.GroundField == 0);
+     if not QQflag then (
+	  if isPrime o.GroundField 
+     	  then DBIGPRIME == o.GroundField
+     	  else error "need a prime";
+	  )
+     else error "algorithm is implemented over finite field so far"; 
      R := ring f;
      K := coefficientRing R;
      if coefficientRing K != QQ then 
      error "base ring = QQ expected";
-     
-     Z := (ZZ/bigPrime)[(entries vars K)#0][
+	  
+     Z := (ZZ/DBIGPRIME)[(entries vars K)#0][
 	  (entries vars R)#0, WeylAlgebra => R.monoid.Options.WeylAlgebra];
      f = QtoZmodP(f,Z);  
      V := createVTree(f);
@@ -811,8 +836,8 @@ paramBpoly(RingElement, String) := List => (f, fname) -> (
      use ring f;
      apply(bs, u->(
 	       s := symbol s;
-	       RZ := (ZZ/bigPrime)[s];
-	       ZmodP2Qpoly(sum(u.tempBF, v->v#1*RZ_(v#0))) 
+	       RZ := (ZZ/DBIGPRIME)[s];
+	       factorBFunctionZmodP(sum(u.tempBF, v->v#1*RZ_(v#0))) 
 	       ))
      );
 

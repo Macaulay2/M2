@@ -34,8 +34,9 @@ assert(F1 == substitute(F2, ring F1));
 
 F1 = Drestriction(I, {1,5,0});
 F2 = Drestriction(I, {1,6,0});
+assert(all (toList(0..2), i -> (
+	       relations F1#i == substitute(relations F2#i, ring relations F1#i)) ) );
 
-assert(all (toList(0..2), i -> (F1#i == map(ring F1#i, ring F2#i) ** F2#i)));
 
 -- Example 3: Restriction and Integration of a rational function
 W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
