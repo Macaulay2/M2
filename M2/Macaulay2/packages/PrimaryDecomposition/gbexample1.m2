@@ -23,22 +23,32 @@ time gens gb(J, Hilbert=>hf);
 time leadTerm(1,gens gb I);
 
 restart
-R = ZZ/32003[b,c,h,k,l,s,t,u,v,w,y,z, MonomialOrder=>GRevLexTiny]
-I = ideal(s^2+t^2+10665*s*u-7110*u^2+10665*t*v-7110*v^2-7110*w^2-10667*t*y+3555*v*y+3555*w*z,c*s-b*t,b*s-2*h*s+c*t-2*k*t-10669*b*u-10665*h*u-10669*c*v-10665*k*v-10665*l*w,b*h+c*k+3*h*s+3*k*t-4*h*u-4*k*v-4*l*w,b^2+c^2-2*c*y)
-transpose gens I
-codim I
-degree I
-independentSets I
 needsPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
-(L1,M1) = GTZ0 I
-load "Elimination.m2"
-eliminate(I,{s,t,b})
-(codim oo, degree oo)
-
+R = ZZ/32003[b,c,h,k,l,s,t,u,v,w,y,z, MonomialOrder=>GRevLexTiny]
+I = ideal(s^2+t^2+10665*s*u-7110*u^2+10665*t*v-7110*v^2-7110*w^2-10667*t*y+3555*v*y+3555*w*z,c*s-b*t,b*s-2*h*s+c*t-2*k*t-10669*b*u-10665*h*u-10669*c*v-10665*k*v-10665*l*w,b*h+c*k+3*h*s+3*k*t-4*h*u-4*k*v-4*l*w,b^2+c^2-2*c*y)
 J = saturation(I,c)
 L1 = J_0
 L2 = trim(I + ideal(c))
+
+-- Compute the primary decomposition of L1
+codim L1 -- 5
+degree L1 -- 16
+genera L1
+res L1 -- length 5, so CM, so equidimensional
+
+independentSets L1
+transpose gens L1
+-- how best to check that L1 is prime?
+
+load "Elimination.m2"
+M1 = trim eliminate(L1,{h,s,y})
+codim M1
+degree M1
+res M1
+(L1,M1) = GTZ0 I
+(codim oo, degree oo)
+
 transpose gens trim L1
 codim L1
 codim L2
