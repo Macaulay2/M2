@@ -115,7 +115,7 @@ prune CoherentSheaf := F -> (
      M := module F;
      M = cokernel presentation M;
      M = M / saturate 0_M;
-     F = sheaf M;
+     F = sheaf_X M;
      M = HH^0 F;
      M = prune M;
      sheaf_X M)
