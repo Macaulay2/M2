@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "hilb.hpp"
 #include "comp_gb.hpp"
+#include "comp_res.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -45,18 +46,13 @@ ComputationOrNull *IM2_res_make(
 	   )
 {
   // Choose the correct computation here.
-#warning "implement choose_res"
-#if 0
-  return Computation::choose_res(m,
+  return ResolutionComputation::choose_res(m,
 				 resolve_cokernel,
 				 max_level,
 				 use_max_slanted_degree,
 				 max_slanted_degree,
 				 algorithm,
 				 strategy);
-#endif
-  ERROR("resolutions not yet re-implemented");
-  return 0;
 }
 
 ComputationOrNull *
@@ -108,9 +104,7 @@ IM2_Computation_set_stop(Computation *G,
 void rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    G->start_computation();
+  C->start_computation();
 }
 
 enum ComputationStatusCode rawStatus1(Computation *C)
@@ -227,11 +221,10 @@ const MatrixOrNull *
 rawResolutionGetMatrix(Computation *C, 
 		       int level)
 {
-#warning write this routine
-#if 0
-  return G->get_matrix(level);
-#endif
-  ERROR("resolutions need to be re-implemented");
+  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+  if (G != 0)
+    return G->get_matrix(level);
+  ERROR("expected resolution computation type");
   return 0;
 }
 
@@ -239,11 +232,10 @@ const FreeModuleOrNull *
 rawResolutionGetFree(Computation *C, 
 		     int level)
 {
-#warning write this routine
-#if 0
-  return G->get_free(level);
-#endif
-  ERROR("resolutions need to be re-implemented");
+  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+  if (G != 0)
+    return G->get_free(level);
+  ERROR("expected resolution computation type");
   return 0;
 }
 
@@ -283,11 +275,10 @@ rawResolutionBetti(Computation *C,
      3:
   */
 {
-#warning write this routine
-#if 0
-  return G->betti(type);
-#endif
-  ERROR("resolutions need to be re-implemented");
+  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+  if (G != 0)
+    return G->get_betti(type);
+  ERROR("expected resolution computation type");
   return 0;
 }
 

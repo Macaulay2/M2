@@ -1451,23 +1451,23 @@ bool gbA::s_pair_step()
 
 enum ComputationStatusCode gbA::computation_is_complete()
 {
-  // This handles everything but _Stop.always, _Stop.degree_limit
-  if (_Stop.basis_element_limit > 0 && gb.size() > _Stop.basis_element_limit) 
+  // This handles everything but stop_.always, stop_.degree_limit
+  if (stop_.basis_element_limit > 0 && gb.size() > stop_.basis_element_limit) 
     return COMP_DONE_GB_LIMIT;
-  if (_Stop.syzygy_limit > 0 && _n_syz > _Stop.syzygy_limit)
+  if (stop_.syzygy_limit > 0 && _n_syz > stop_.syzygy_limit)
     return COMP_DONE_SYZ_LIMIT;
-  if (_Stop.pair_limit > 0 && _n_pairs_computed > _Stop.pair_limit)
+  if (stop_.pair_limit > 0 && _n_pairs_computed > stop_.pair_limit)
     return COMP_DONE_PAIR_LIMIT;
-  if (_Stop.just_min_gens && _n_gens_left == 0)
+  if (stop_.just_min_gens && _n_gens_left == 0)
     return COMP_DONE_MIN_GENS;
-  if (_Stop.subring_limit > 0 && _n_subring > _Stop.subring_limit)
+  if (stop_.subring_limit > 0 && _n_subring > stop_.subring_limit)
     return COMP_DONE_SUBRING_LIMIT;
-  if (_Stop.use_codim_limit)
+  if (stop_.use_codim_limit)
     {
       // Compute the codimension
       int c = 0;
       //int c = codim_of_lead_terms();
-      if (c >= _Stop.codim_limit)
+      if (c >= stop_.codim_limit)
 	return COMP_DONE_CODIM;
     }
   return COMP_COMPUTING;
@@ -1515,7 +1515,7 @@ void gbA::start_computation()
 	      is_done = COMP_DONE;
 	      break;
 	    }
-	  if (_Stop.stop_after_degree && _this_degree > _Stop.degree_limit->array[0])
+	  if (stop_.stop_after_degree && _this_degree > stop_.degree_limit->array[0])
 	    {
 	      is_done = COMP_DONE_DEGREE_LIMIT;
 	      break;
@@ -1746,9 +1746,10 @@ const MatrixOrNull *gbA::get_gb()
   int j=0;
   for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
     {
+#if 0
       fprintf(stderr, "%d ", j++);
       if (j % 20 == 0) fprintf(stderr,"\n");
-
+#endif
       vec v = originalR->translate_gbvector_to_vec(_F, (*i).f);
 #if 0
       buffer o;

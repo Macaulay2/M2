@@ -1425,17 +1425,21 @@ enum gbTraceValues
 				  int strategy /* drg: connected rawResolution */
 				  );
 
-  const MatrixOrNull *rawResolutionGetMatrix(Computation *G,int level); /* rawResolutionGetMatrix */
+  const MatrixOrNull *rawResolutionGetMatrix(Computation *G,int level); 
+  /* rawResolutionGetMatrix */
+
   const FreeModuleOrNull *rawResolutionGetFree(Computation *G, int level);
-  /* minimal should always be set to true */
     /*drg: connected rawResolutionGetFree*/
+
   const M2_arrayint rawResolutionBetti(Computation *G,
 				 int type); /* drg: connected rawGBBetti */
   /* type:
 	 0: minimal betti numbers,
-	 1: ...
-	 2: ...
-	 3: ...
+	 1: non-minimal betti numbers (skeleton size, or size of GB's).
+	 2: number of S-pairs remaining to consider
+	 3: number of monomials in polynomials at this slot
+     Not all of these may be accessible with all algorithms.  If not available, 
+     A betti diagram with all -1's is displayed.
   */
 
   int IM2_Resolution_status(Computation *G,

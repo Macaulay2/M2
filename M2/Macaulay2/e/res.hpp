@@ -9,7 +9,7 @@
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "polyring.hpp"
-#include "comp.hpp"
+#include "comp_res.hpp"
 
 #include "respoly.hpp"
 
@@ -60,7 +60,7 @@ public:
   res_level() : compare_num_list(NULL), npairs(0), nleft(0), nminimal(0) {}
 };
 
-class res_comp : public mutable_object
+class res_comp : public ResolutionComputation
 {
   // Base ring and input
   const PolynomialRing *P;
@@ -81,7 +81,7 @@ class res_comp : public mutable_object
 
   int lodegree;			// Base degree
   int hidegree;			// Highest (slanted) degree appearing
-  int length_limit;		// May be downsized during the computation
+  int length_limit;		// May be downsized during the computation, but never increased.
 
   int max_degree;		// This is the largest degree than can be represented
 				// as a least common multiple.  Any higher degree found
@@ -109,9 +109,9 @@ class res_comp : public mutable_object
   void reduce_gen(resterm *&f) const;
   resterm *s_pair(res_pair *fsyz) const;
 
-  int gens(int deg);
-  int pairs(int level, int deg);
-  int reductions(int level, int deg);
+  enum ComputationStatusCode gens(int deg);
+  enum ComputationStatusCode pairs(int level, int deg);
+  enum ComputationStatusCode reductions(int level, int deg);
 
   void handle_pair(res_pair *p);
   void handle_gen(res_pair *p);
@@ -157,21 +157,15 @@ public:
 	   int LengthLimit, 
 	   int strategy);
 
-  ~res_comp();
+  virtual ~res_comp();
 
   void resize(const Ring *new_ring);
+
+  bool stop_conditions_ok();
 
 //////////////////////////////////////////////
 //  Performing the calculation ///////////////
 //////////////////////////////////////////////
-
-  int calc(const int *DegreeLimit, 
-	   int LengthLimit, 
-	   int SyzygyLimit,
-	   int PairLimit,
-	   int SyzLimitValue,
-	   int SyzLimitLevel,
-	   int SyzLimitDegree);
 
   void skeleton_init(array<res_pair *> &reslevel);
   void skeleton_pairs(res_pair *&result, res_pair *p);
@@ -179,6 +173,10 @@ public:
   void skeleton_stats(const array<res_pair *> &reslevel);
 
   void skeleton(int strategy);
+
+  void start_computation();
+
+  int res_complete_thru_degree();
 
 //////////////////////////////////////////////
 //  Result matrices of the resolution ////////
@@ -193,6 +191,10 @@ public:
   FreeModule *minimal_free_of(int i) const;
   Matrix *make(int i) const;
   Matrix *make_minimal(int i) const;
+
+  const MatrixOrNull *get_matrix(int level) { return make_minimal(level); }
+
+  const FreeModuleOrNull *get_free(int level) { return minimal_free_of(level); }
 
 //////////////////////////////////////////////
 //  Betti routines and numbers associated ////
@@ -216,10 +218,12 @@ public:
   int max_level() const;
   int regularity() const;
 
-  void betti_skeleton(intarray &result) const;
-  void betti_remaining(intarray &result) const;
-  void betti_minimal(intarray &result) const;
-  void betti_nmonoms(intarray &result) const;
+  M2_arrayint betti_skeleton() const;
+  M2_arrayint betti_remaining() const;
+  M2_arrayint betti_minimal() const;
+  M2_arrayint betti_nmonoms() const;
+
+  const M2_arrayint get_betti(int type) const;
 
 //////////////////////////////////////////////
 //  Debugging ////////////////////////////////
@@ -231,15 +235,7 @@ public:
   void text_out(buffer &o, const res_pair *p) const;
   void stats(buffer &o) const;
 
-//////////////////////////////////////////////
-//  Infrastructure ///////////////////////////
-//////////////////////////////////////////////
-
-public:  
-  const Ring   * get_ring() const { return P; }
-  const Monoid  * Nmonoms() const { return M; }
-  const Ring   * Ncoeffs() const { return K; }
-  const Monoid  * degree_monoid() const { return P->degree_monoid(); }
+  void text_out(buffer &o);
 };
 #endif
 

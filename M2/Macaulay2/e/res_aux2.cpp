@@ -273,7 +273,7 @@ void res2_comp::stats() const
 FreeModule *res2_comp::free_of(int i) const
 {
   FreeModule *result;
-  result = P->make_FreeModule();
+  result = P->make_Schreyer_FreeModule();
   if (i < 0 || i >= resn.length())
     return result;
 
@@ -282,7 +282,7 @@ FreeModule *res2_comp::free_of(int i) const
   for (res2_pair *p = resn[i]->pairs; p != NULL; p = p->next)
     {
       multi_degree(p, deg);
-      result->append(deg, p->syz->monom); // MES: add also p->compare_num as arg
+      result->append_schreyer(deg, p->syz->monom, p->compare_num);
       p->me = n++;
     }
   degree_monoid()->remove(deg);
@@ -291,7 +291,7 @@ FreeModule *res2_comp::free_of(int i) const
 FreeModule *res2_comp::minimal_free_of(int i) const
 {
   FreeModule *result;
-  result = P->make_FreeModule();
+  result = P->make_Schreyer_FreeModule();
   if (i < 0 || i >= resn.length()-1)
     return result;
 
@@ -301,7 +301,7 @@ FreeModule *res2_comp::minimal_free_of(int i) const
     if (p->syz_type == SYZ2_MINIMAL)
       {
 	multi_degree(p, deg);
-	result->append(deg, p->syz->monom); // MES: add also p->compare_num as arg
+	result->append(deg, p->syz->monom, p->compare_num);
 	p->me = n++;
       }
   degree_monoid()->remove(deg);

@@ -96,7 +96,7 @@ void gbres_comp::setup(const Matrix *m,
   GR = originalR->get_gb_ring();
 
 #warning "FreeModules should be over what ring?"
-  FreeModule *Fsyz = originalR->make_FreeModule();
+  FreeModule *Fsyz = originalR->make_Schreyer_FreeModule();
   if (length <= 0)
     {
       ERROR("resolution length must be at least 1");
@@ -105,27 +105,27 @@ void gbres_comp::setup(const Matrix *m,
 
   // If origsyz, and length>1, create Fsyz as a Schreyer free
   // if origsyz is smaller, truncate this module...
-#if 0
-  // MES: Aug 2002
+
   if (length > 1 && origsyz > 0)
     {
       if (origsyz > m->n_cols())
 	origsyz = m->n_cols();
-      int *one = R->Nmonoms()->make_one();
+      int *one = originalR->Nmonoms()->make_one();
       const int *mon;
       for (i=0; i<origsyz; i++)
 	{
 	  if ((*m)[i] == NULL)
 	    mon = one;
 	  else
-	    mon = (*m)[i]->monom;
-	  // MES Aug 2002: is Fsyz a Schreyer order always?
-	  Fsyz->append(m->cols()->degree(i));
-	  Fsyz->get_schreyer_order()->append(i, mon);
+	    {
+	      Nterm *t = (*m)[i]->coeff;
+	      mon = t->monom;
+	    }
+	  Fsyz->append_schreyer(m->cols()->degree(i), mon, i);
 	}
-      R->Nmonoms()->remove(one);
+      originalR->Nmonoms()->remove(one);
     }
-#endif
+
   lo_degree = m->cols()->lowest_primary_degree();
 
   n_nodes = length + 1;
@@ -147,11 +147,11 @@ void gbres_comp::setup(const Matrix *m,
       if (origsyz > 0) deg--;
       for (i=2; i<n_nodes-1; i++)
 	{
-	  FreeModule *F = originalR->make_FreeModule();
+	  FreeModule *F = originalR->make_Schreyer_FreeModule();
 	  nodes[i] = new gb2_comp(F,nodes[i-1],deg++,-1,i,strategy);
 	  nodes[i-1]->set_output(nodes[i]);
 	}
-      FreeModule *F = originalR->make_FreeModule();
+      FreeModule *F = originalR->make_Schreyer_FreeModule();
       nodes[n_nodes-1] = new gb2_comp(F,nodes[n_nodes-2],deg++,0,n_nodes-1,strategy);
       nodes[n_nodes-1]->set_output(NULL);      
     }

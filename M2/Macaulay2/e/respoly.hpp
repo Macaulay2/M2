@@ -78,10 +78,11 @@ class res_poly
   const PolynomialRing *R;
   const Monoid *M;
   const Ring *K;		// Coefficient field of R.
-  stash *pstash;
+  int element_size;
 
   resterm *new_term() const;
 
+  void sort(resterm *&f) const;
 public:
   res_poly(PolynomialRing *R);
   ~res_poly();
@@ -117,6 +118,7 @@ public:
   int n_terms(const resterm *f) const; // Used for stats
   void elem_text_out(buffer &o, const resterm *f) const; // Used for debugging and stats
   void elem_text_out(const resterm *f) const; // Used for debugging and stats
+
 };
 
 inline const res_pair *res_poly::lead_component(const resterm *f) const { return f->comp; }

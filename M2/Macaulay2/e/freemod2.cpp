@@ -16,13 +16,15 @@ void FreeModule::initialize(const Ring *RR)
   schreyer = 0;
 }
 
+#if 0
 FreeModule::FreeModule(const Ring *RR)
 : immutable_object(0)
 {
   initialize(RR);
 }
+#endif
 
-FreeModule::FreeModule(const Ring *RR, int n)
+FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
 : immutable_object(0)
      // Create R^n, with all gradings zero.
 {
@@ -32,6 +34,16 @@ FreeModule::FreeModule(const Ring *RR, int n)
   for (int i=0; i<n; i++)
     append(deg);
   degree_monoid()->remove(deg);
+
+  if (has_schreyer_order)
+    {
+      const PolynomialRing *P = RR->cast_to_PolynomialRing();
+      assert(P != 0);
+      assert(n == 0);
+      schreyer = new SchreyerOrder(P->Nmonoms());
+    }
+  else
+    schreyer = 0;
 }
 
 #if 0
@@ -107,14 +119,16 @@ FreeModule *FreeModule::new_free() const
 
 void FreeModule::append(const int *d)
 {
+  assert(schreyer == 0);
   int *p = degree_monoid()->make_new(d);
   components.append(p);
 }
 
 void FreeModule::append_schreyer(const int *d, const int *base, int compare_num)
 {
-  append(d);
-  assert(schreyer);
+  assert(schreyer != 0);
+  int *p = degree_monoid()->make_new(d);
+  components.append(p);
   schreyer->append(compare_num,base);
 }
 
