@@ -32,7 +32,8 @@ document { quote Ext,
      a module in the evident way.",
      PARA,
      "The computation of the total Ext module is possible for modules over the
-     ring ", TT "R", " of a complete intersection.  The result is provided as a finitely
+     ring ", TT "R", " of a complete intersection, according the algorithm
+     of Shamash-Eisenbud-Avramov-Buchweitz.  The result is provided as a finitely
      presented module over a new ring with one additional variable for each
      equation of ", TT "R", ".  The variables in this new ring have degree
      length 2; we would have liked to arrange for the degree ", TT "i", "-- 
