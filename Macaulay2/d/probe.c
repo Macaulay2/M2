@@ -147,14 +147,17 @@ int main(int argc, char **argv, char **envp){
      if (envp[0] != 0) {
 	  int last;
 	  char *x;
-	  int *y;
+	  int b, *y;
      	  printf("%08x   envp[0]+strlen(envp[0])+1\n",(int)(envp[0]+strlen(envp[0]) + 1));
      	  last = strarrlen(envp)-1;
 	  x = envp[last]+strlen(envp[last]) + 1;
      	  printf("%08x   envp[%d]+strlen(envp[%d])+1 : %s\n",(int)x,last,last,x);
-	  y = (int *)(x + strlen(x) + 1);
-     	  printf("%08x   %08x\n",(int)y,*y);
+	  b = x + strlen(x) + 1;
+	  if (b % 8 == 0) {
+	    y = (int *)b;
+	    printf("%08x   %08x\n",(int)y,*y);
 	  }
+     }
 #endif
      fflush(stdout);
 #if !defined(__MWERKS__)
