@@ -54,7 +54,7 @@ imaginaryPart RR := z -> 0
 conjugate CC := z -> new CC from {z#0,-z#1}
 realPart CC := z -> z#0
 imaginaryPart CC := z -> z#1
-exprI := hold quote ii
+exprI := Unquote quote ii
 expression CC := z -> z#0 + z#1*exprI
 name CC := z -> name expression z
 net CC := z -> net expression z
@@ -132,6 +132,5 @@ TEST ///
      assert( x == 2 )
      assert( x == 2. )
      assert( x == 2/1 )
-     assert( net (2-3*ii) === "2 - 3ii"^0 )
+     assert( net (2-3*ii) === "2 - 3*ii"^0 )
      ///
-     

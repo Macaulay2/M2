@@ -1,14 +1,18 @@
 --		Copyright 1996 by Daniel R. Grayson
 
-M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
+split := s -> flatten apply(lines(s,"/"), i -> lines(i,"\\")) -- sigh...
+
+M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentDirectory()),-1)), 1)
 
 (
   if version#"operating system" === "MS-DOS"
+  or version#"operating system" === "CYGWIN32_NT"
+  or version#"operating system" === "CYGWIN32_95"
   then (
        dossify := s -> concatenate between("\\",lines(s,"/"));
        "../bin/M2.arg"
        << "'-e loaddata \"" << M2HOME << "/cache/Macaulay2-"
-       << version # "ARCH"
+       << version#"architecture"
        << ".data\"'" << endl
        << "--" << endl
        << "'-e path = {\".\", \"" << M2HOME << "/m2\"}'" << endl

@@ -58,7 +58,7 @@ char *intToString(int n){
      i = 19;
      s[i--]=0;
      while (n>0) {
-	  s[i] = n%10 + '0';
+	  s[i] = (char)(n%10 + '0');
 	  n/=10;
 	  if (n==0) break;
 	  i--;

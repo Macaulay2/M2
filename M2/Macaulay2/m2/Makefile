@@ -40,7 +40,11 @@ ifeq "$(OS)" "MS-DOS"
 SCRIPTS = ../bin/M2.bat ../bin/M2.arg
 endif
 
-ifeq "$(OS)" "CYGWIN32-95"
+ifeq "$(OS)" "CYGWIN32_95"
+SCRIPTS = ../bin/M2.bat
+endif
+
+ifeq "$(OS)" "CYGWIN32_NT"
 SCRIPTS = ../bin/M2.bat
 endif
 

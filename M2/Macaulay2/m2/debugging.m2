@@ -68,14 +68,14 @@ benchmark = (s) -> (
 	  s1 := concatenate("timing scan(",string n,", i -> (",s,";null;null))");
 	  s2 := concatenate("timing scan(",string n,", i -> (      null;null))");
 	  collectGarbage();
-	  evaluate s1;
-	  evaluate s2;
+	  value s1;
+	  value s2;
 	  collectGarbage();
-	  evaluate s1;
-	  evaluate s2;
+	  value s1;
+	  value s2;
 	  collectGarbage();
-	  t1 := first evaluate s1;
-	  t2 := first evaluate s2;
+	  t1 := first value s1;
+	  t2 := first value s2;
 	  t := t1 - t2;
 	  t < 1 and t2 < 5)
      do (

@@ -271,6 +271,14 @@ SOURCE=.\gbnod.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\gbZZ.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gbZZ.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\geores.hpp
 # End Source File
 # Begin Source File
@@ -348,6 +356,22 @@ SOURCE=.\interp.cpp
 # Begin Source File
 
 SOURCE=.\interp.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lattice.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lattice.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LLL.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LLL.hpp
 # End Source File
 # Begin Source File
 
@@ -598,6 +622,14 @@ SOURCE=.\spair.cpp
 # Begin Source File
 
 SOURCE=.\spair.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sparsemat.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sparsemat.hpp
 # End Source File
 # Begin Source File
 

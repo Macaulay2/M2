@@ -158,10 +158,8 @@ bk << ///
 -- a small integer being the integer itself
 
 scan(pairs nodeTable, (i,node) -> (
-	  bk << ///
-
-\sectionhdr{///
-	  << cmrLiteral formatDocumentTag evaluate node << "}{" << sectionNumberTable#i 
+	  bk << endl << endl << ///\sectionhdr{///
+	  << cmrLiteral formatDocumentTag value node << "}{" << sectionNumberTable#i 
 	  << "}" << endl
 	  << concatenate booktex doc node << endl;
 	  )

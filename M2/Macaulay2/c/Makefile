@@ -13,7 +13,13 @@ include $(TOPDIR)/Makeconf
 # YACC := yacc
 YACC := bison -o y.tab.c
 YFLAGS := -vdlt
+
+ifeq "$(CC)" "cl"
+LOADLIBES := ../../lib/gc.lib
+else
 LOADLIBES := -lm -L${LIBDIR} -lgc
+endif
+
 ##############################
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c \
 	  type.c chk.c compat.c
@@ -24,17 +30,22 @@ OTHERS := makefile.dos scc.template Makefile README COPYRIGHT
 ALLFILES := $(SRCFILES) $(OTHERS) grammar.c
 OPTIMIZE := -Winline -finline-functions -O2
 INCLUDES := -I${INCDIR}
-ifeq "$(OS)" "MSDOS"
-  WARNINGS := -Wall -Wshadow -Wcast-qual -Wtraditional
+GCFLAGS  := -O $(INCLUDES)
+
+ifeq "$(CC)" "cl"
+  GCFLAGS += -Zi -Za
+  WARNINGS := -W3
 else
+  GCFLAGS += -g
   WARNINGS := -Wall -Wshadow -Wcast-qual -Wtraditional -ansi
 endif
-GCFLAGS  := -g -O $(INCLUDES)
+
 CFLAGS   := $(GCFLAGS) $(WARNINGS)
 ############################## compiling
 scc1 : $(OFILES)
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
-grammar.o : grammar.c;	 	$(CC) $(GCFLAGS) -c $<
+grammar.o : grammar.c;	 	$(CC) $(GCFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## installation 
 #scc : scc.template Makefile
 #	rm -f $@

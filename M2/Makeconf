@@ -1,13 +1,16 @@
 all::
 
 ifndef MAKECONF
-export MAKECONF = TRUE
+
+# don't export this, as some of the definitions below do not go into the
+# environment
+MAKECONF = TRUE
 
 ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
-export VERSION	      := 0.8.45
+export VERSION	      := 0.8.46
 export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
@@ -20,6 +23,14 @@ export INCDIR	      := ../../include
 
 AR = ar
 RANLIB = ranlib
+
+ifeq "$(OS)" "CYGWIN32_95"
+export CYGWIN32 = TRUE
+endif
+
+ifeq "$(OS)" "CYGWIN32_NT"
+export CYGWIN32 = TRUE
+endif
 
 ifeq "$(OS)" "CYGWIN32-95"
 export CYGWIN32 = TRUE
@@ -109,12 +120,12 @@ OUTPUT_OPTION = -Fo$@
 
 export AR = lib
 export ARFLAGS = -MACHINE:i386 -nologo -verbose
-(%): %;  $(AR) $(ARFLAGS) /out:$@ $<
+(%): %;  $(AR) $(ARFLAGS) /out:$@ $@ $<
 
 export RANLIB = true
 
 CFLAGS   =     -O2 -Zi -nologo -G5 -W3
-CXXFLAGS = -TP -O2 -Zi -nologo -G5 -W3
+CXXFLAGS = -O2 -Zi -nologo -G5 -W3
 
 LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 %: %.c;  $(LINK.c) $^ $(LOADLIBES) -link $(LDLIBS) -out:$@.exe
@@ -180,9 +191,9 @@ ifdef NOSTRIP
 STRIPFLAG :=
 STRIPCMD := :
 else
+ifneq "$(CC)" "cl"
 export CFLAGS += -fomit-frame-pointer
 export CXXFLAGS += -fomit-frame-pointer
-ifneq "$(CC)" "cl"
 export LDFLAGS += -s
 endif
 
@@ -205,5 +216,7 @@ include $(TOPDIR)/Makeconf.ver
 export FACTORYVERSION := $(factory_version)
 endif
 #################################
+
+MAKEFLAGS += -w
 
 endif

@@ -4,7 +4,7 @@
 #include "sparsemat.hpp"
 #include "text_io.hpp"
 
-extern char system_interrupted;
+extern "C" char system_interrupted;
 extern int comp_printlevel;
 
 MatrixComputation::MatrixComputation(const Matrix &m, bool do_rowchange, bool do_colchange)

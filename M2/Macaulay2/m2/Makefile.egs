@@ -25,12 +25,17 @@ endif
 	 else \
 	   echo "run example $* `head -1 $*.m2`"; \
 	   echo "../../bin/Macaulay2 $(ARGS)"; \
-	   sed 1d <$*.m2 | \
-	   ../../bin/Macaulay2 $(ARGS) >tmp \
+	   sed 1d <$*.m2 >$*.trim; \
+	   ../../bin/Macaulay2 $(ARGS) <$*.trim >$*.tmp \
 		&& \
-	   mv tmp $*.out && \
+	   mv $*.tmp $*.out && \
+	   rm $*.trim && \
 	   cp $*.m2 $*.old ; \
 	 fi
+
+# Sigh, some bug under windows with bash.exe and pipes garbles the first character
+# delivered to Macaulay 2 through a pipe, hence the need for $*.trim above.
+
 endif
 
 INFILES = $(wildcard *.m2)

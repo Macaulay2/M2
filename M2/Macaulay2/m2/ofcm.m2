@@ -56,7 +56,7 @@ expression GeneralOrderedMonoid := M -> (
      if not M.?generatorSymbols
      then new Holder from {"--empty GeneralOrderedMonoid--"}
      else (
-     	  v := M.generatorSymbols;
+     	  v := M.generatorExpressions;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
           if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
@@ -69,10 +69,10 @@ expression GeneralOrderedMonoid := M -> (
 	  )
      )
 name GeneralOrderedMonoid := M -> (
-     if not M.?generatorSymbols
+     if not M.?generatorExpressions
      then "--empty GeneralOrderedMonoid--"
      else (
-     	  v := M.generatorSymbols;
+     	  v := M.generatorExpressions;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
           if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
@@ -84,10 +84,10 @@ name GeneralOrderedMonoid := M -> (
      	  concatenate("[",between(",",name\v),"]")
 	  ))
 net GeneralOrderedMonoid := M -> (
-     if not M.?generatorSymbols
-     then "--empty GeneralOrderedMonoid--"
+     if M.?name then M.name
+     else if not M.?generatorExpressions then "--empty GeneralOrderedMonoid--"
      else (
-     	  v := M.generatorSymbols;
+     	  v := M.generatorExpressions;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
           if (M.Options.MonomialOrder =!= (options monoid).MonomialOrder)
@@ -375,6 +375,12 @@ makeit1 := (options) -> (
      M.MonomialOrder = mo;
 
      M.generatorSymbols = varlist;
+     M.generatorExpressions = apply(varlist,
+	  x -> (
+	       if class x === Symbol
+	       then Unquote x
+	       else expression x
+	       ));
      scan(varlist, 
 	  sym -> (
 	       if Symbol =!= basictype sym 
@@ -414,13 +420,13 @@ makeit1 := (options) -> (
 	  ConvertRepeat ConvertApply (
 	       (v,i) -> if i != 1 then (expression v)^(expression i) else expression v,
 	       ConvertJoin( 
-		    ConvertApply(i -> M.generatorSymbols#i, ConvertInteger), 
+		    ConvertApply(i -> M.generatorExpressions#i, ConvertInteger), 
 		    ConvertInteger)));
      expression M := x -> (
 	  x = select(x, (k,v) -> k < n);
 	  x = new Product from apply(
 	       toList x,
-	       (k,v) -> Power{expression M.generatorSymbols#k, v}
+	       (k,v) -> Power{M.generatorExpressions#k, v}
 	       );
 	  if #x === 0 then expression 1 else x
 	  );
@@ -575,10 +581,10 @@ monoid Ring := R -> R.monoid
 GeneralOrderedGroup = new Type of GeneralOrderedMonoid
 GeneralOrderedGroup.Engine = true
 name GeneralOrderedGroup := M -> (
-     if not M.?generatorSymbols
+     if not M.?generatorExpressions
      then "--empty GeneralOrderedGroup--"
      else (
-     	  v := M.generatorSymbols;
+     	  v := M.generatorExpressions;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
      	  concatenate("group [",between(",",name\v),"]")

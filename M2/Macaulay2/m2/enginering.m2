@@ -146,8 +146,7 @@ coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
            name FractionField := F -> "frac(" | name F.baseRings#-1 | ")"
 	isField FractionField := F -> true
             net FractionField := F -> (
-		 if F.?symbol
-		 then net expression F.symbol
+		 if F.?name then F.name
 		 else net new FunctionApplication from { frac, F.baseRings#-1 }
 		 )
 
@@ -207,6 +206,7 @@ frac EngineRing := R -> (
 	       sendgg ( ggPush r, ggPush s, ggdiv);
 	       new F);
 	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
+	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
 	  scan(keys R,k -> if class k === String then F#k = promote(R#k,F));
 	  F))

@@ -344,6 +344,17 @@ int offset;
      return read(fd,buffer->array+offset,len);
      }
 
+/* stupid ANSI forces some systems to put underscores in front of useful identifiers */
+#if !defined(S_ISREG)
+#if defined(_S_ISREG)
+#define S_ISREG _S_ISREG
+#elif defined(S_IFREG)
+#define S_ISREG(m)	(((m) & S_IFMT) == S_IFREG)
+#elif defined(_S_IFREG)
+#define S_ISREG(m)	(((m) & _S_IFMT) == _S_IFREG)
+#endif
+#endif
+
 M2_string stdio_readfile(fd)
 int fd;
 {

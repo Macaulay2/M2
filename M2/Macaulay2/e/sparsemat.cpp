@@ -523,11 +523,13 @@ ring_elem SparseMutableMatrix::leadCoefficient(int c) const // Can be zero.
 
 int SparseMutableMatrix::numNonZeroRow(int r) const
 {
-}
+return -1;
+	}
 
 int SparseMutableMatrix::numNonZeroColumn(int c) const
 {
-}
+return -1;
+	}
 
 bool SparseMutableMatrix::getEntry(int r, int c, ring_elem &result) const
 {

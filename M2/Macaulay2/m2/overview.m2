@@ -356,10 +356,10 @@ document { "manipulating polynomials",
      PARA,
      "The results above are represented as products of powers.  (Exponents equal
      to 1 don't appear in the display.)  We can see the internal structure
-     to a specified depth (in this case, 2) with ", TO "peek", ".",
+     to a specified depth (in this case, 2) with ", TO "peek2", ".",
      EXAMPLE {
-	  "peek(S,2)",
-      	  "peek(T,2)",
+	  "peek2(S,2)",
+      	  "peek2(T,2)",
 	  },
      "The components of the expressions above (Products and Powers) are types of
      lists, and the parts can be extracted with ", TO "#", ".",

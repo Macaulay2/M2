@@ -35,7 +35,7 @@ all:: GC
 clean::; rm -f gc/*.obj gc/*.lib
 GC:: gc include/gc.h include/gc_cpp.h
 
-ifdef CYGWIN32
+ifeq "$(CC)" "cl"
 GC:: lib/gc.lib
 else
 GC:: lib/libgc.a
@@ -65,9 +65,9 @@ lib/gc.lib: 	  gc/gc.lib lib/.exists;	 cp $< $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
 
-ifdef CYGWIN32
+ifeq "$(CC)" "cl"
 gc/gc.lib:	  always
-	cd gc; nmake -nologo -f NT_MAKEFILE
+	cd gc; MAKEFLAGS= nmake /nologo /f NT_MAKEFILE
 else
 gc/gc.a: 	  always
 	$(MAKE) -C gc CXX='$(CXX)' CC='$(CC)' AS='$(AS)' \
@@ -77,30 +77,50 @@ endif
 
 clean::; $(MAKE) -C gc clean
 clean::; rm -f gc/base_lib
+
 ###################### GMP
+
 all:: GMP
-GMP : 	gmp include/gmp.h \
-	lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
-include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
+
+ifeq "$(CC)" "cl"
+GMPlibs = lib/gmp.lib
+lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
+gmp/gmp.lib : make-gmp
+else
+GMPlibs = lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
 lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
 lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
 lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
 lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
 lib/libgmp.a: gmp/libgmp.a lib/.exists; cp $< $@; ranlib $@
-
 gmp/mpn/libmpn.a : make-gmp
 gmp/mpz/libmpz.a : make-gmp
 gmp/mpq/libmpq.a : make-gmp
 gmp/mpf/libmpf.a : make-gmp
 gmp/libgmp.a : make-gmp
+endif
 
-make-gmp : gmp/config.status
-	$(MAKE) -C gmp CFLAGS="$(CFLAGS)"
+GMP : 	gmp include/gmp.h $(GMPlibs)
+
+include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
+
+make-gmp : GMPconfigure
+	$(MAKE) -C gmp
+
+ifeq "$(CC)" "cl"
+GMPconfigure : gmp/Makefile
+gmp/Makefile: WindowsNT/gmp/Makefile
+	cp WindowsNT/$@ $@
+else
+GMPconfigure : gmp/config.status
 gmp/config.status: gmp/configure
 	cd gmp; \
 	./configure --silent --cache-file=../config.cache
+endif
 
-clean::; -$(MAKE) -C gmp distclean
+GMPclean clean::
+	-$(MAKE) -C gmp distclean
+	rm -f lib/gmp.lib lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
 
 ###################### FACTORY
 
@@ -109,15 +129,12 @@ clean::; -$(MAKE) -C gmp distclean
 
 all:: FACTORY
 
-ifdef CYGWIN32
-FACTORY :: factory/malloc.h
-factory/malloc.h :; touch $@
-endif
+FACTORYMFLAGS :=
+FACTORYINC :=
 
-FACTORY:: FACTORYconfigured FACTORYmade lib/FACTORYinstalled
+FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/FACTORYinstalled
 
 FACTORYexports := \
-		factory/libcf.a \
 		factory/factory.h \
 		factory/factoryconf.h \
 		factory/templates/array.cc     \
@@ -131,34 +148,71 @@ FACTORYexports := \
 		factory/templates/matrix.h     \
 		factory/tmpl_inst.cc
 
-FACTORYconfigured: factory/config.status
-factory/config.status factory/GNUmakefile : factory/GNUmakefile.in factory/configure
+ifeq "$(CC)" "cl"
+FACTORYexports += factory/cf.lib
+clean :: rm -f factory/malloc.h
+FACTORYMAKEFLAGS += -f ../WindowsNT/factory/GNUmakefile
+FACTORYconfigured: factory/config.h factory/factoryconf.h
+FACTORYINC += -I../WindowsNT/factory
+factory/config.h : WindowsNT/factory/config.h
+	cp $< $@
+factory/factoryconf.h : WindowsNT/factory/factoryconf.h
+	cp $< $@
+else
+FACTORYexports += factory/libcf.a
+FACTORYconfigured: factory/config.status factory/config.h
+factory/config.h factory/config.status factory/GNUmakefile : \
+		factory/GNUmakefile.in factory/configure
 	cd factory;\
 	GMP_INCLUDE_PATH=../include \
 	CFLAGS="$(CFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS)" \
 	LDFLAGS="$(LDFLAGS)" \
 	./configure --cache-file=../config.cache --prefix=.. --with-memman --with-optimize
-FACTORYmade:; $(MAKE) -C factory CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+endif
+
+FACTORYmade:
+	$(MAKE) -C factory $(FACTORYMAKEFLAGS) \
+	   CFLAGS="$(CFLAGS)" \
+	   CXXFLAGS="$(CXXFLAGS)" \
+	   CPPFLAGS="$(CPPFLAGS) -I../include $(FACTORYINC)"
+
 lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
-	$(MAKE) -C factory install
-	ranlib lib/libcfmem.a
+	$(MAKE) -C factory $(FACTORYMAKEFLAGS) install
+	rm -f lib/libcfmem.a
 	touch $@
-clean::; -$(MAKE) -C factory distclean
+FACTORYclean clean::
+	-$(MAKE) -C factory $(FACTORYMAKEFLAGS) distclean
+	cd factory; rm -f *.cpp *.pdb
+	rm -f lib/cf.lib lib/libcf.a lib/FACTORYinstalled
 clean::; rm -rf share
 ###################### LIBFAC
 all:: LIBFAC
-LIBFAC:		libfac libfac/OPTOBJ \
-		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
+
+ifeq "$(CC)" "cl"
+LIBFAC: libfac libfac/Makefile lib/libfac.lib include/factor.h
+libfac/Makefile : WindowsNT/libfac/Makefile
+	cp WindowsNT/$@ $@
+lib/libfac.lib: libfac/libfac.lib lib/.exists; cp $< $@; ranlib $@
+libfac/libfac.lib : always
+	$(MAKE) -C libfac
+else
+LIBFAC: libfac libfac/OPTOBJ libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
 libfac/OPTOBJ :; mkdir $@
 libfac/config.status : libfac/configure
 	cd libfac; ./configure --silent --cache-file=../config.cache --includedir=../include
+lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 libfac/libfac.a : always
 	$(MAKE) CXX=$(CXX) OPTCXX=$(CXX) -C libfac libfac
+endif
+
 include/factor.h: libfac/factor.h include/.exists; cp $< $@
-lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
-clean::; -$(MAKE) -C libfac distclean
+LIBFACclean clean::
+	-$(MAKE) -C libfac distclean
+	rm -f lib/libfac.a lib/libfac.lib
+
 ###################### MP
+
 # warning: perl is needed to recreate mp/MP/MP.h - but this file is
 # provided with the distribution.
 ifdef MP
@@ -274,8 +328,12 @@ nondist :
 	(Export; find . -name CVS -prune -o -type f -print ) | sort | uniq -u
 ################################# CVS
 clean::
-	@echo pruning old CVS version files
-	find . -type f -name '.#*' -exec rm '{}' ';'
+	find .  \( \
+		   -type f -name '.#*' \
+		-o -type d -name Release \
+		-o -name '*.pdb' \
+		\) -exec rm -r '{}' ';'
+	rm -f M2.ncb M2.opt
 ################################# status messages
 all::
 	@echo "--------------------- done making 'all' --------------------"

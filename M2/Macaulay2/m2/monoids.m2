@@ -34,6 +34,7 @@ document { quote Monoid,
      "Keys:",
      MENU {
 	  TO "index",
+	  TO "generatorExpressions",
 	  TO "generatorSymbols"
 	  }
      }

@@ -85,13 +85,11 @@ document { quote exponents,
 
 name PolynomialRing := R -> name R.baseRings#-1 | name monoid R
 expression PolynomialRing := R -> (
-     if R.?symbol
-     then expression R.symbol
+     if R.?name then R.name
      else (expression R.baseRings#-1) (expression monoid R)
      )
 net PolynomialRing := R -> (
-     if R.?symbol
-     then net expression R.symbol
+     if R.?name then R.name
      else (net R.baseRings#-1) | (net monoid R)
      )
 
@@ -321,6 +319,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       #v === 2 and v#1#1 === 1 and v#0#1 === 1
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
+	  RM.generatorExpressions = M.generatorExpressions;
 	  RM.generators = apply(M.generators, m -> RM#(name m) = RM#0 + m);
 	  scan(keys R, k -> if class k === String then RM#k = promote(R#k,RM));
 	  RM.use = x -> (
@@ -432,7 +431,7 @@ TEST "
 -- test name
 R = ZZ/101[a..e]
 f = symmetricPower(2,vars R)
-assert( f == evaluate name f )
+assert( f == value name f )
 "
 
 char PolynomialRing := (R) -> char coefficientRing R

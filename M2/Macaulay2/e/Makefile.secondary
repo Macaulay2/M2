@@ -3,7 +3,7 @@ TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
 %.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< $(OUTPUT_OPTION)
 
 AWK      = awk
 
@@ -15,10 +15,14 @@ ifndef CXX
 CXX      = g++ 
 endif
 
+ifeq "$(CC)" "cl"
+WARNINGS = -W3
+else
 WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
 	   -Wparentheses -Wreturn-type -Wswitch -Wtrigraphs -Wuninitialized \
 	   -Wreorder -Wtemplate-debugging
 WARNINGS = -Wall
+endif
 
 CPPFLAGS += -I$(INCDIR) -DNDEBUG
 
@@ -33,14 +37,26 @@ endif
 CXXFLAGS += $(DEBUGFLAGS)
 ######################
 
-CXXFLAGS += -g $(WARNINGS) -O3 
+ifeq "$(CC)" "cl"
+# cl doesn't know about -O3
+CXXFLAGS += -O2
+else
+CXXFLAGS += -O3 
+CXXFLAGS += -g $(WARNINGS)
+endif
 
 CFLAGS = $(CXXFLAGS)
-ARFLAGS  = r
+# ARFLAGS  = r
 LIBNAME  = gb
+
+ifeq "$(CC)" "cl"
 LIB      = lib$(LIBNAME).a
+else
+LIB      = $(LIBNAME).lib
+endif
+
 LIBSCC   = ../interpret.a
-RANLIB   = ranlib
+# RANLIB   = ranlib
 PRE.cc   = $(COMPILE.cc) -E 
 
 ##################
@@ -170,8 +186,14 @@ ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS)
 
 all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES) # $(LIB)
 
+ifeq "$(CC)" "cl"
+$(LIB): $(OFILES)
+	$(AR) $(ARFLAGS) /out:$@ $^	
+else
 $(LIB): $(LIB)($(OFILES))
 	$(RANLIB) $(LIB) || true
+endif
+
 
 %.ii: %.cpp
 	$(PRE.cc) $< -o $@
@@ -180,11 +202,10 @@ $(LIB): $(LIB)($(OFILES))
 
 %.dd: %.cpp
 	@echo remaking $@
-	$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's|$*\.o|& $@|g' > tmp.dd
+	g++ -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's|$*\.o|& $@|g' > tmp.dd
 	mv tmp.dd $@
-# this was:
-#	@$(SHELL) -ec '$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed '\''s/$*.o/& $@/g'\'' > $@'
-# but we can't use that under MSDOS, and besides, it looks weird
+# we say g++ above instead of $(CXX) because -MM is understood only by g++, or at
+# not by cl
 
 geovec.hpp: geoT.hpp
 	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@

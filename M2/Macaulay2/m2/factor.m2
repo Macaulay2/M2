@@ -9,11 +9,11 @@ document { quote factor,
      EXAMPLE {
 	  "y = (2^15-4)/(2^15-5)",
       	  "x = factor y",
-      	  "expand x",
+      	  "value x",
 	  },
      "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
      its true structure as ", TO "Expression", ".",
-     EXAMPLE "peek(x,100)",
+     EXAMPLE "peek2(x,100)",
      PARA,
      "For small integers factorization is done by trial division.  Eventually
      we will have code for large integers.  For multivariate polynomials the
@@ -186,7 +186,7 @@ TEST ///
 R = ZZ[x,y,z]
 f = (x - 2^32 * y) * (x + 2^33 * z - 77 * y)
 d = factor f
-assert( #d == 3 and expand d == f )
+assert( #d == 3 and value d == f )
 ///
 
 TEST ///

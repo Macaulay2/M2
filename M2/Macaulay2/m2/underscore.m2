@@ -45,7 +45,7 @@ document { quote #?,
 
 document { quote _,
      TT "x_i", " -- a binary operator which is used for various
-     mathematica operations that are customarily written with subscripts.",
+     mathematical operations that are customarily written with subscripts.",
      PARA,
      "A ", TO "binary method", " may be installed for ", TT "x_i", " with code like ",
      PRE "          X _ Y := (x,i) -> ...",

@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-peek2 := method()
+peek2 = method()
 
 peek2(Nothing,ZZ) := (s,depth) -> "null"
 peek2(Symbol,ZZ) := (s,depth) -> if depth === 0 then string s else name s
@@ -8,14 +8,12 @@ peek2(Thing,ZZ) := (s,depth) -> net s
 peek2(BasicList,ZZ) := (s,depth) -> (
      if depth === 0 then net s
      else horizontalJoin(
-	  if class s =!= List then net class s else "",
-	  "{",
-	  horizontalJoin between (",",
-	       apply(s,
-	       	    value -> peek2(value,depth-1))),
-	  "}"
-	  )
-     )
+	  net class s,
+	  "{", horizontalJoin between (",", apply(s, value -> peek2(value,depth-1))), "}" ) )
+peek2(List,ZZ) := (s,depth) -> (
+     if depth === 0 then net s
+     else horizontalJoin(
+	  "{", horizontalJoin between (",", apply(s, value -> peek2(value,depth))), "}" ) )
 peek2(String, ZZ) := (s,depth) -> if depth === 0 then s else format s
 
 boxNet := x -> ( 
@@ -35,15 +33,11 @@ peek2(Net, ZZ) := (s,depth) -> if depth === 0 then s else boxNet s
 peek2(Sequence,ZZ) := (s,depth) -> (
      if depth === 0 then net s
      else horizontalJoin(
-	  if #s === 0 then "()"
-	  else if #s === 1 then "seq (" 
-	  else (
-	       "(",
-	       horizontalJoin between (",", 
-	       	    apply(s,
-	       	    	 value -> peek2(value,depth))),
-	       ")"
-	       )))
+	  if #s === 0
+	  then "()"
+	  else if #s === 1 
+	  then ("seq (", peek2(s#0,depth), ")")
+	  else ("(", horizontalJoin between (",", apply(s, value -> peek2(value,depth))), ")" )))
 
 precOption := precedence ( 1 => 2 )
 
@@ -69,27 +63,32 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 	  "}"
 	  ))
 
-peek = method()
+peek = s -> peek2(s,1)
 
-peek(Thing,ZZ) := (s,depth) -> peek2(s,depth)
-
-peek(Thing) := s -> peek(s,1)
-
-document {
-     quote peek,
-     TT "peek s", " -- displays contents of s, bypassing installed methods.",
-     BR,
-     NOINDENT, 
-     TT "peek (s,n)", " -- displays contents of s to depth n, bypassing installed 
-     methods.",
+document { quote peek,
+     TT "peek s", " -- displays contents of ", TT "s", " to depth 1, bypassing
+     installed methods.",
      PARA,
-     "It applies the default output method to the object s,
-     bypassing the installed method for objects of its class.",
      EXAMPLE {
 	  "t = set {1,2,3}",
       	  "peek t",
       	  "new MutableHashTable from {a=>3, b=>44}",
       	  "peek oo"
-	  }
+	  },
+     SEEALSO "peek2"
+     }
+
+document { quote peek2,
+     TT "peek2(s,n)", " -- displays contents of ", TT "s", " to depth ", TT "n", ", 
+     bypassing installed methods.",
+     PARA,
+     "It applies the default output method to the object ", TT "s", ",
+     bypassing the installed method for objects of its class.",
+     EXAMPLE {
+	  "s = factor 112",
+      	  "peek s",
+      	  "peek2(s,2)"
+	  },
+     SEEALSO "peek"
      }
 

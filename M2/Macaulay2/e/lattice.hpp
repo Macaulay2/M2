@@ -18,11 +18,11 @@ class MatrixComputation : public type
   bool smithStep();
   bool gaussStep();
 public:
-  const int Algorithm_Hermite = 0;
-  const int Algorithm_Hermite_noAutoReduce = 1;
-  const int Algorithm_Smith = 2;
-  const int Algorithm_Gauss = 3;  // Requires that the ring be a field.
-  const int Algorithm_LLL = 4;
+#define Algorithm_Hermite 0
+#define Algorithm_Hermite_noAutoReduce 1
+#define Algorithm_Smith 2
+#define Algorithm_Gauss 3
+#define Algorithm_LLL 4
 public:
   MatrixComputation(const Matrix &m, bool do_rowchange, bool do_colchange);
   virtual ~MatrixComputation();

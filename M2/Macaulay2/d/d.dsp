@@ -177,6 +177,15 @@ SOURCE=.\parser.c
 # Begin Source File
 
 SOURCE=.\scclib.c
+
+!IF  "$(CFG)" == "d - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "d - Win32 Debug"
+
+# ADD CPP /Ze /Od
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 

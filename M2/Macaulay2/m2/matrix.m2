@@ -1054,7 +1054,8 @@ map(Module,Module,Matrix) := (M,N,f,options) -> (
      then f
      else (
 	  R := ring M;
-	  sendgg (ggPush cover M, ggPush cover N, ggPush f,
+	  N' := cover N ** R;
+	  sendgg (ggPush cover M, ggPush N', ggPush f,
 	       ggPush (
 		    if options.Degree === null
 		    then toList (degreeLength R : 0)
@@ -1808,8 +1809,10 @@ document { quote subquotient,
      }
 
 Matrix ** Matrix := (f,g) -> (
-     R := ring f;
-     if ring g =!= R then error "expected matrices over the same ring";
+     R := ring target f;
+     if ring target g =!= R 
+     or ring source g =!= ring source f
+     then error "expected matrices over the same ring";
      sendgg (ggPush f, ggPush g, ggtensor);
      h := getMatrix R;
      map(target f ** target g, source f ** source g, h, Degree => degree f + degree g))
