@@ -409,7 +409,7 @@ void cprintgetmem(node g){
   }
   else {
     if (gc) {
-      if (atomic(t)) put("GC_malloc_atomic");
+      if (atomic(t)) put("GC_MALLOC_ATOMIC");
       else {
 #if CLEAR_MEMORY
 	put("GC_malloc_clear"); /* see comment below! */

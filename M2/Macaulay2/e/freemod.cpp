@@ -1218,7 +1218,7 @@ vec FreeModule::tensor(const FreeModule *F, vec v,
 			 const FreeModule *G, vec w) const
 {
   vecHeap H(this);
-  int *m;
+  int *m = NULL;
   if (M != NULL)
     m = M->make_one();
   for ( ; v != NULL; v = v->next)

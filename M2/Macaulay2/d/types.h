@@ -161,8 +161,7 @@ typedef struct {
 extern char **tocharstarstar(M2_stringarray);
 extern M2_stringarray tostrings(int,char **);
 
-#define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) \
-     + (len)*sizeof(s->array[0]))
+#define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
 void *GC_malloc1 (size_t size_in_bytes);
 void *GC_realloc3 (void *s, size_t old, size_t new);

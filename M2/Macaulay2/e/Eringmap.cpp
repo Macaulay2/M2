@@ -106,7 +106,7 @@ ERingElement ERingMap::evaluateTerm(
   if (R->is_zero(result)) return result;
 
   ERingElement result_coeff; // element of K, if target is a polynomial ring.
-  const monomial *result_monom; // element of M, if target is a polynomial ring.
+  const monomial *result_monom = NULL; // element of M, if target is a polynomial ring.
   if (ispolyring)
     {
       result_coeff = K->from_int(1);

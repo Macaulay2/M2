@@ -13,6 +13,7 @@ eePop = format -> convert(format, sendgg ggtonet)
 
 ZZ.pop = eePopInt = () -> eePop ConvertInteger
 ZZ.handle = newHandle ggZ
+
 ggPush ZZ := i -> (ggINT, gg i)
 
 eePopBool = () -> eePop ConvertInteger === 1

@@ -16,8 +16,10 @@ YFLAGS := -vdlt
 
 ifeq "$(CC)" "cl"
 LOADLIBES := ../../lib/gc.lib
+scc1 : ../../lib/gc.lib
 else
 LOADLIBES := -lm -L${LIBDIR} -lgc
+scc1 : ../../lib/libgc.a
 endif
 
 ##############################

@@ -1,3 +1,5 @@
+<< "-- beginning computation --" << endl
+
 rr = ZZ/101[a..Z];
 cc = timing res coker genericMatrix(rr,a,3,9)
 ti = cc#0
@@ -6,7 +8,10 @@ vv = apply(8,i->rank re_i)
 assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
 << "-- " << first lines get "!uname -a" << endl
-<< "-- " <<  string ti << " seconds, Macaulay 2 version " << version#"VERSION" << endl
+<< "-- " <<  string ti << " seconds"
+<< ", Macaulay2 " << version#"VERSION"
+<< ", compiled with " << version#"compiler"
+<< endl
 
 -- Results:
 
@@ -28,6 +33,10 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
 -- IRIX illi 5.3 12201932 IP22 mips
 -- 	5.49 seconds		0.8.10
+
+-- with SHAREDLIBS and DEBUG and egcs compiler
+-- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
+-- 5.65 seconds, Macaulay2 0.8.52, compiled with gcc 2.91
 
 -- HP-UX ux1 B.10.10 U 9000/819 65611361 unlimited-user license
 -- 	6.26 seconds

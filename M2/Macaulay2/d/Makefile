@@ -258,12 +258,12 @@ ifeq ($(OS),Linux)
 # The maintainers of linux' libstdc++ unwisely decided to incorporate
 # their own private versions of routines from libc in their library!
 # Unforgiveable, since the symbols defined differ (of course).
-ALLOBJ += putc.o
+# ALLOBJ += putc.o
 putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
 ifeq ($(OS),Linux)
-ALLOBJ += malloc.o
+# ALLOBJ += malloc.o
 # LDFLAGS += -rdynamic
 malloc.o : /usr/lib/libc.a; ar x $^ $@
 endif

@@ -263,6 +263,7 @@ projectiveHilbertPolynomial(ZZ,ZZ) := memoize(
 
 i := quote i
 hilbertFunctionRing := QQ[i]
+
 hilbertFunctionQ := method()
 hilbertFunctionQ(ZZ) := (n) -> (
      if n === 0 then 1_hilbertFunctionRing

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <time.h>
 
-main() {
+int main() {
      char buf[100], *p;
      time_t t;
      time(&t);
