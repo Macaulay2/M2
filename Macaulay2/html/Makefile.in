@@ -1,12 +1,26 @@
 # @configure_input@
 include ../../include/config.Makefile
-IMAGES = \
-	up.gif next.gif previous.gif top.gif index.gif null.gif \
-	recbg.jpg 9planets.gif Grayson2.jpg
-TARGETDIR = ../m2/cache/doc
-HOMEDIR := $(shell cd .. && pwd)
+IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9planets.gif Grayson2.jpg
+
 all :: $(IMAGES)
-all :: $(TARGETDIR)/index.html
+
+ifneq "@srcdir@" "."
+up.gif : @srcdir@/up.gif ; cp $< $@
+next.gif : @srcdir@/next.gif ; cp $< $@
+previous.gif : @srcdir@/previous.gif ; cp $< $@
+index.gif : @srcdir@/index.gif ; cp $< $@
+top.gif : @srcdir@/top.gif ; cp $< $@
+null.gif : @srcdir@/null.gif ; cp $< $@
+recbg.jpg : @srcdir@/recbg.jpg ; cp $< $@
+9planets.gif : @srcdir@/9planets.gif ; cp $< $@
+Grayson2.jpg : @srcdir@/Grayson2.jpg ; cp $< $@
+clean ::; rm -f *.gif *.jpg
+endif
+
+clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
+distclean: clean; rm -f Makefile
+$(packagedir)/html:; $(INSTALL) -d "$@"
+install:: $(packagedir)/html; $(INSTALL_DATA) Makefile $(IMAGES) $(packagedir)/html
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
@@ -36,34 +50,3 @@ all :: $(TARGETDIR)/index.html
 ## 	cd @srcdir@; gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
 ## @srcdir@/null.gif : @srcdir@/Macaulay2-empty-button.scm
 ## 	cd @srcdir@; gimp -b "(Macaulay2-empty-button \"null.gif\")"  -b '(gimp-quit 0)'
-
-ifneq "@srcdir@" "."
-up.gif : @srcdir@/up.gif ; cp $< $@
-next.gif : @srcdir@/next.gif ; cp $< $@
-previous.gif : @srcdir@/previous.gif ; cp $< $@
-index.gif : @srcdir@/index.gif ; cp $< $@
-top.gif : @srcdir@/top.gif ; cp $< $@
-null.gif : @srcdir@/null.gif ; cp $< $@
-recbg.jpg : @srcdir@/recbg.jpg ; cp $< $@
-9planets.gif : @srcdir@/9planets.gif ; cp $< $@
-Grayson2.jpg : @srcdir@/Grayson2.jpg ; cp $< $@
-clean ::; rm -f *.gif *.jpg
-endif
-
-$(TARGETDIR)/index.html : @srcdir@/html.m2 \
-		../cache/Macaulay2-made ../cache/Macaulay2-doc \
-		../libexec/Macaulay2
-	../../bin/M2 -q $< '-eexit(0)'
-check : $(TARGETDIR)/index.html
-	@ echo "make: Entering directory \`$(shell cd $(TARGETDIR) && pwd)'"
-	cd $(TARGETDIR) && $(HOMEDIR)/html-check-links/html-check-links *.html
-	@ echo "make: Leaving directory \`$(shell cd $(TARGETDIR) && pwd)'"
-all :: check
-view:; netscape index.html &
-clean::; rm -f ./*.html
-clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct Macaulay2-index-cache
-distclean: clean; rm -f Makefile
-$(packagedir)/html:; $(INSTALL) -d "$@"
-install:: $(packagedir)/html
-	$(INSTALL_DATA) Makefile $(IMAGES) *.html @srcdir@/html.m2 $(packagedir)/html
-

@@ -306,9 +306,7 @@ export process():void := (
 		    )
 	       else if arg.0 == '-' && arg.1 == 'e' then (
 		    when readeval(
-			 stringTokenFile(
-			      "command line argument " + tostring (1+i) + " ",
-			      substr(arg,2)+newline))
+			 stringTokenFile("commandLine#" + tostring (1+i),substr(arg,2)+newline))
 		    is Error do exit(2)
 		    else nothing;
 		    )	       
