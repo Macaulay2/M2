@@ -34,12 +34,17 @@ rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm
 ifeq "$(CC)" "cl"
 all::;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
+DOCTARGET := Macaulay2-$(VERSION)-doc.zip
 else
 TARGET := Macaulay2-$(DESC).tar.gz
+DOCTARGET := Macaulay2-$(VERSION)-doc.tar.gz
 endif
 all:: announce
 announce ::
 	@echo '## making $(TARGET)'
+doc:: announce.doc
+announce.doc ::
+	@echo '## making $(DOCTARGET)'
 ################################ GC
 all:: GC
 clean::; rm -f gc/*.obj gc/*.lib
@@ -160,6 +165,9 @@ Macaulay2/lib/libcf.so : lib/libcf.a Macaulay2/lib/.exists
 	rm -rf tmplib
 endif
 
+factory/clean :
+	$(MAKE) -C factory clean
+
 FACTORYexports := \
 		factory/factory.h \
 		factory/factoryconf.h \
@@ -225,6 +233,9 @@ LIBFACFLAGS := -fPIC
 else
 LIBFACFLAGS := 
 endif
+
+libfac/clean :
+	$(MAKE) -C libfac clean
 
 ifeq "$(CC)" "cl"
 LIBFAC:: libfac libfac/Makefile lib/libfac.lib include/factor.h
@@ -326,15 +337,7 @@ endif
 clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
-
-ifeq "$(CC)" "cl"
-all ::; $(MAKE) -C Macaulay2 html
-else
-all :: rmcores 
-endif
-
 all :: $(TARGET)
-
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
 DISTFILES := 	Macaulay2/README.txt \
@@ -346,11 +349,11 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/bin \
 		Macaulay2/m2 \
 		Macaulay2/emacs \
-		Macaulay2/tutorial/final/*.out
+		Macaulay2/tutorial/final
 ifdef SHAREDLIBS
 DISTFILES += Macaulay2/lib
 endif
-Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
+Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores
 	tar cf - $(DISTFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
@@ -382,6 +385,7 @@ PORTING := CVS \
 	Macaulay2/html \
 	Macaulay2/licenses \
 	Macaulay2/m2 \
+	Macaulay2/c2/Makefile Macaulay2/c2/targettypes.c \
 	Macaulay2/msdos \
 	Macaulay2/packages \
 	Macaulay2/schubert \
@@ -394,17 +398,29 @@ port : rmcores Macaulay2-$(VERSION)-porting-src.tar.gz
 Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 ###################### Macaulay 2 documentation
-DOCFILES = 	Macaulay2/html \
-		Macaulay2/book/M2book.dvi \
-		Macaulay2/Vasconcelos-appendix/appendix.dvi
+DOCFILES = Macaulay2/html
+ifdef CYGWIN32
+DOCFILES += Macaulay2/book/M2book.tex
+else
+DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
+DOCFILES += Macaulay2/book/M2book.dvi
+endif
+
 Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores
 	tar cf - $(DOCFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"
 	@echo "-----------------------------------------------------------------------------"
-MACAULAY2.doc: MACAULAY2
+Macaulay2-$(VERSION)-doc.zip : $(DOCFILES)
+	winzip32 -u -r -p $@ $(DOCFILES)
+	@echo "-----------------------------------------------------------------------------"
+	@echo "  $@ contains the documentation"
+	@echo "-----------------------------------------------------------------------------"
+MACAULAY2.doc:
 	$(MAKE) -C Macaulay2 doc
-doc:: MACAULAY2.doc Macaulay2-$(VERSION)-doc.tar.gz
+doc:: # MACAULAY2
+doc:: MACAULAY2.doc 
+doc:: $(DOCTARGET)
 ################################# nondist
 # print the files in the directory tree that are not part of the distribution
 nondist :
@@ -425,6 +441,7 @@ doc::
 ################################# tar manufactured files
 manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files
+	make -C Macaulay2/tutorial
 	tar cfz $@ \
 		Macaulay2/e/geovec.hpp \
 		Macaulay2/e/geores.hpp \

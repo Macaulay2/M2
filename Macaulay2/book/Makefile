@@ -8,7 +8,10 @@ DVIPSFLAGS = -z
 %.pdf : %.ps
 	ps2pdf $<
 
+all:: M2book.tex
+ifndef CYGWIN32
 all:: M2book.dvi
+endif
 M2book.tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 	../bin/M2 -q book.m2 '-e exit 0'
 	mv M2book.tmp M2book.tex

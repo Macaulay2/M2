@@ -3,6 +3,8 @@ int j;
 extern edata;
 extern etext;
 extern end;
+extern __bss_start__, __bss_end__;
+extern __data_start__, __data_end__;
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -55,7 +57,7 @@ int strarrlen(char **p) {
 void *a_function();
 int an_int;
 extern char **environ;
-extern char **_environ;
+extern char **__environ;
 int main(int argc, char **argv, char **envp){
      int i1;
      char c1;
@@ -101,12 +103,19 @@ int main(int argc, char **argv, char **envp){
 #endif
      printf("%08x   function\n",(int)&main);
      printf("%08x   string\n",(int)a_string);
-     printf("%08x   etext\n",(int)&etext);
+#ifdef  __CYGWIN__
+     printf("%08x   __bss_start__\n",(int)&__bss_start__);
+     printf("%08x   __bss_end__\n",(int)&__bss_end__);
+     printf("%08x   __data_start__\n",(int)&__data_start__);
+     printf("%08x   __data_end__\n",(int)&__data_end__);
+#else
      printf("%08x   edata\n",(int)&edata);
+     printf("%08x   end\n",(int)&end);
+#endif
+     printf("%08x   etext\n",(int)&etext);
      printf("%08x   static variable\n",(int) &a_string);
      printf("%08x   static memory, three pages, uninitialized\n",(int) &statmem);
      printf("%08x   static variable, uninitialized\n",(int) &an_int);
-     printf("%08x   end\n",(int)&end);
      printf("%08x   mallocated page 1\n",(int)x);
      printf("%08x   mallocated page 2\n",(int)y);
 #ifdef HAVE_SBRK
@@ -133,7 +142,9 @@ int main(int argc, char **argv, char **envp){
 #if !defined(__MWERKS__)
      printf("%08x   envp\n",(int)envp);
      printf("%08x   environ\n",(int)environ);
-     printf("%08x   _environ\n",(int)_environ);
+#ifndef __CYGWIN__
+     printf("%08x   __environ\n",(int)__environ);
+#endif
      for (i=0,pp=envp; *pp; i++,pp++) printf("%08x   envp[%d]\n",(int)*pp,i);
      printf("%08x   envp tail\n",(int)pp);
      if (envp[0] != 0) {

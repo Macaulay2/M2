@@ -85,7 +85,7 @@ extern char errfmtnc[];
 
 #include <fcntl.h>
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 int write(int, char *, int);
 #endif
 

@@ -77,9 +77,8 @@ binary file bin/Macaulay2 will work on both, but the bin/Macaulay2-XXXX.data
 files will differ.  If you have both of these types of machines, you can run
 'setup' on each of these in the same directory tree.
 
-Unless you are using the Windows version, make sure you also download and
-install the manual.  It is kept in a separate file at our web site, the name
-of which is something like this:
+Make sure you also download and install the manual.  It is kept in a separate
+file at our web site, the name of which is something like this:
 
 	Macaulay2-0.8.46-doc.tar.gz
 

@@ -10,11 +10,11 @@ ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
-export VERSION	      := 0.8.52
+export VERSION	      := 0.8.52a
 export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
-export REL            := $(shell uname -r | sed -e s=/=-=g -e 's= =+=' )
+export REL            := $(shell uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g' )
 
 export SYSTEM         := $(ARCH) $(OS) $(REL)
 export LIBDIR	      := ../../lib

@@ -45,20 +45,27 @@ pathSeparator = (
 	else "/"
 	)
 
-dir := splice(apply(lines(commandLine#0, "/"), i -> if i === "" then i else toSequence lines(i, "\\")))
+progname := commandLine#0
+-- under Windows when run from M2.bat the quotation marks are not removed.
+-- quotation marks are needed because the path may contain spaces
+if substring(progname,0,1) === "\"" then progname = substring(progname,1)
+
+dir := splice(apply(lines(progname, "/"), i -> if i === "" then i else toSequence lines(i, "\\")))
 
 if #dir > 1
 then (
      sourcedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "m2");
-     -- << "source dir = " << sourcedir << endl;
+     -- << "source dir = " << sourcedir << endl;		    -- debugging
      path = join({sourcedir}, path);
      )
 
-hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
+-- hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
 
 isAbsolutePath := (
-     if version#"operating system" === "MACOS" 
-     then filename -> hasColon filename and substring(filename,0,1) =!= ":"     
+     if version#"operating system" === "MACOS"
+     then filename -> substring(filename,0,1) =!= ":"
+     else if version#"operating system" === "Windows-95-98-NT"
+     then filename -> substring(filename,1,1) === ":"
      else filename -> pathSeparator === substring(filename,0,#pathSeparator)
      )
 
@@ -141,6 +148,7 @@ tryload := (filename,load) -> (
 			 if dir === "." then filename 
 			 else dir | pathSeparator | filename
 			 );
+		    -- << "trying to load " << fn << endl;		    -- debugging
 		    result := load fn;
 		    if result then markLoaded fn;
 		    result))))
