@@ -15,6 +15,9 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
 -- Results:
 
+-- OSF1 despina.ks.uiuc.edu V4.0 1229 alpha
+-- 0.75152 seconds, Macaulay2 0.8.52
+
 -- Linux noether.matematik.su.se 2.1.121 #3 Wed Sep 16 10:05:16 CEST 1998 alpha unknown (600 mHz)
 -- 1.20106 seconds, 0.8.46
 
