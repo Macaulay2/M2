@@ -45,7 +45,8 @@ protected:
 public:
   virtual ~ReducedGB_Field_Local();
 
-  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0);
+  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0,
+			  bool auto_reduced); // last argument is ignored
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
 

@@ -34,9 +34,11 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     }
 }
 
-void ReducedGB_Field_Local::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_Field_Local::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0,
+				       bool auto_reduced)
 {
-  ReducedGB_Field::minimalize(polys0);
+  // auto_reduced flag is ignored, since it can lead to infinite loops here
+  ReducedGB_Field::minimalize(polys0,false);
 
   for (int i=0; i<polys.size(); i++)
     {
@@ -186,6 +188,14 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
 	{
 	  if (g_alpha > h_alpha)
 	    {
+	      if (head.next != 0)
+		{
+		  // In this case, we can't reduce the tail without 
+		  // risking an infinite loop.  So we delcare ourselves done
+		  // Attach the rest of h.f to frem
+		  frem->next = h.f;
+		  break;
+		}
 	      // place h into T1, and store its (value,deg,alpha) values.
 	      store_in_table(h, h_exp, h_comp, h_alpha);
 	      h_deg += g_alpha - h_alpha;
@@ -234,6 +244,14 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 	{
 	  if (g_alpha > h_alpha)
 	    {
+	      if (head.next != 0)
+		{
+		  // In this case, we can't reduce the tail without 
+		  // risking an infinite loop.  So we delcare ourselves done
+		  // Attach the rest of h.f to frem
+		  frem->next = h.f;
+		  break;
+		}
 	      // place h into T1, and store its (value,deg,alpha) values.
 	      POLY h_copy;
 	      h_copy.f = R->gbvector_copy(h.f);

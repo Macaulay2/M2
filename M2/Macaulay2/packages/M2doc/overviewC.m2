@@ -290,9 +290,20 @@ document {
 	       of the applications of Groebner bases.")
 	       }
      }
-
 document {
      Key => "monomial orderings", 
+     "Every polynomial ring in Macaulay 2 comes equipped with an ordering on
+     tine monomials.  The default ordering is GRevLex, the graded reverse lexicographic order
+     (see below for the definition).  Polynomials are displayed by ordering 
+     the monomials in decreasing order.
+     The choice of monomial order can make a difference in the
+     time and space required for various computations, especially Groebner basis computations.",
+     PARA,
+     HEADER2 "Specifying alternate monomial orders"
+     }
+
+document {
+     Key => "monomial orderings1", 
      HEADER2 "The default monomial order: GRevLex",
      "Every polynomial ring in Macaulay 2 comes equipped with an ordering on
      the monomials.  The default ordering is GRevLex: the graded reverse lexicographic
@@ -337,6 +348,18 @@ document {
 	  TO "negative exponents"
 	  }
      }
+
+TEST "
+R = QQ[a..d, MonomialOrder => GRevLex]
+a*c + b^2 + a*c^3
+R = QQ[a..d, MonomialOrder => {GRevLex=>2, GRevLex=>2}]
+a*c + b^2 + a*c^3
+R = QQ[a..d, MonomialOrder => {2,2}]
+a*c + b^2 + a*c^3
+R = QQ[a..d, MonomialOrder => RevLex => 4]
+1 + a*c + b^2 + a*c^3
+a+a^2
+"
 
 document {
      Key => "monomial orderingsOLD",

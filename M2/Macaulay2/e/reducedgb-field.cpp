@@ -39,7 +39,8 @@ ReducedGB_Field::ReducedGB_Field(GBRing *R0,
     Rideal = originalR->get_quotient_monomials();
 }
 
-void ReducedGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0,
+				 bool auto_reduced)
 // I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
@@ -73,7 +74,8 @@ void ReducedGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0
 	  h.f = R->gbvector_copy(f);
 	  h.fsyz = R->gbvector_copy(polys0[*i].fsyz);
 	  
-	  remainder(h,false,junk); // This auto-reduces h.
+	  if (auto_reduced)
+	    remainder(h,false,junk); // This auto-reduces h.
 	  
 	  T->insert(e, f->comp, polys.size());
 	  polys.push_back(h);
