@@ -462,26 +462,35 @@ char *name;
 
 int opensocket(char *host, char *serv) {
 #if HAVE_SOCKETS
-     int sd = socket(AF_INET,SOCK_STREAM,0);
-     int ha;
-     struct sockaddr_in addr;
-     addr.sin_family = PF_INET;
-     ha = host_address(host);
-     if (ha == ERROR) {
-          close(sd);
-	  return ERROR;
-          }
-     addr.sin_addr.s_addr = ha;
-     addr.sin_port = serv_address(serv);
-     if (ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) {
-	  close(sd);
-	  return ERROR;
-	  }
-     else return sd;
+  int sd = socket(AF_INET,SOCK_STREAM,0);
+  struct sockaddr_in addr;
+  int addrlen = sizeof addr;
+  addr.sin_family = PF_INET;
+  addr.sin_port = serv_address(serv);
+  if (host[0] == 0) {
+    int so;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    if (ERROR == bind(sd,(struct sockaddr*)&addr,sizeof addr) ||
+	ERROR == listen(sd,1) ||
+	ERROR == (so = accept(sd,(struct sockaddr*)&addr,&addrlen)) ||
+	ERROR == close(sd)
+	) { close(sd); return ERROR; }
+    return so;
+  }
+  else {
+    int ha = host_address(host);
+    if (ha == ERROR) { close(sd); return ERROR; }
+    addr.sin_addr.s_addr = ha;
+    if (ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) {
+      close(sd);
+      return ERROR;
+    }
+    return sd;
+  }
 #else
-     return ERROR;
+  return ERROR;
 #endif
-     }
+}
 
 int system_opensocket(host,serv)
 M2_string host,serv;

@@ -652,7 +652,7 @@ horizontalJoin(e:Expr):Expr := (
      else WrongArg("a net, a string, or a list or sequence of nets and strings"));
 setupfun("horizontalJoin",horizontalJoin);
 
-verticalJoin(s:Sequence):Expr := (
+stack(s:Sequence):Expr := (
      s = deepsplice(s);
      foreach f at i in s do (
 	  when f 
@@ -666,14 +666,14 @@ verticalJoin(s:Sequence):Expr := (
 	       is s:string do provide toNet(s)
 	       else nothing));
      Expr(VerticalJoin(v)));
-verticalJoin(e:Expr):Expr := (
+stack(e:Expr):Expr := (
      when e
-     is s:Sequence do verticalJoin(s)
-     is s:List do verticalJoin(s.v)
+     is s:Sequence do stack(s)
+     is s:List do stack(s.v)
      is n:Net do e
      is s:string do Expr(toNet(s))
      else WrongArg("a sequence of nets and strings"));
-setupfun("verticalJoin",verticalJoin);
+setupfun("stack",stack);
 
 raisef(e:Expr):Expr := (
      when e

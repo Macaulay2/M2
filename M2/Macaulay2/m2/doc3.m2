@@ -660,7 +660,7 @@ document { quote Net,
 	  TO "height",
 	  TO "horizontalJoin",
 	  TO "netRows",
-	  TO "verticalJoin",
+	  TO "stack",
 	  TO "width",
 	  },
      "Formatting expressions:",
@@ -711,8 +711,8 @@ document { quote horizontalJoin,
      SEEALSO {"Net", (quote |, String, String)}
      }
 
-document { quote verticalJoin,
-     TT "verticalJoin(m,n,...)", " -- joins nets or strings by concatenating
+document { quote stack,
+     TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline in the result is the baseline of the
      first one.",
      PARA,
@@ -948,8 +948,7 @@ document { quote File,
      PARA,
      "Some standard files, already open:",
      MENU {
-          (TO "stdin", "    -- standard input file"),
-          (TO "stdout", "   -- standard output file"),
+          (TO "stdio", "    -- standard input output file"),
           (TO "stderr", "   -- standard error output file")
 	  },
      "Ways to create new files:",
@@ -1012,7 +1011,7 @@ document { quote printString,
      or indeterminate is encountered, its name is printed.  If ", TT "null", "
      is encountered, nothing is printed.",
      PARA,
-     EXAMPLE ///printString(stdout, (a,10,"b",20,c))///
+     EXAMPLE ///printString(stdio, (a,10,"b",20,c))///
      }
 
 document { "help functions",

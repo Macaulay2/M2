@@ -767,10 +767,10 @@ net Matrix := f -> (
      then "0"
      else if compactMatrixForm then (
 	  R := ring target f;
-	  m := verticalJoin toSequence apply(
+	  m := stack toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  if degreeLength R > 0 -- and isHomogeneous f
-	  then m = horizontalJoin(verticalJoin(degrees cover target f / name), " ", m);
+	  then m = horizontalJoin(stack(degrees cover target f / name), " ", m);
 	  m)
      else net expression f				    -- add row labels somehow
      )

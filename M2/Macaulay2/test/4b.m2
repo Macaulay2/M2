@@ -1,9 +1,6 @@
 -- taken from:
 -- Bernd Sturmfels, FOUR COUNTEREXAMPLES IN COMBINATORIAL ALGEBRAIC GEOMETRY.
 
--- warning : these tests require 84MB of memory, so if your machine doesn't
--- have that, just skip them
-
 -- 2
 S = QQ[x,y,z]
 Ideals = { ideal(x, y, z^8), ideal(y*z, x, y^2, z^7),

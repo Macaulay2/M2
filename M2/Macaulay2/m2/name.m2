@@ -48,7 +48,7 @@ name = s -> (
 name Thing := string
 name String := format
 name Net := x -> (
-     s := concatenate( "verticalJoin(", between(",",apply(netRows x, format)), ")" );
+     s := concatenate( "stack(", between(",",apply(netRows x, format)), ")" );
      if height x === 1 then s
      else concatenate( "((", s, ")^", string(height x - 1), ")" )
      )

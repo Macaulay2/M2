@@ -1412,20 +1412,15 @@ M2_string oper1;
 void C__prepare() {}
 
 int actors4_isReady(int fd) {
-#if 1
   int ret;
   static fd_set r, w, e;
   struct timeval timeout;
   FD_SET(fd,&r);
   timerclear(&timeout);
-  ret = select(64,&r,&w,&e,&timeout);
+  ret = select(fd+1,&r,&w,&e,&timeout);
   FD_CLR(fd,&r);
   return ret;
-#else
-  return -1;
-#endif
 }
-
 
 int actors5_WindowWidth(int fd) {
 #if defined(__DJGPP__) || defined(__alpha) || defined(__MWERKS__) || defined(_WIN32)

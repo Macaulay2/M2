@@ -23,7 +23,7 @@ boxNet := x -> (
      	  (s || x || s) ^ (height x)
 	  )
      else (
-     	  t := (verticalJoin (n : "|")) ^ (height x - 1);
+     	  t := (stack (n : "|")) ^ (height x - 1);
      	  (s || t | x | t || s) ^ (height x)
 	  )
      )
@@ -50,7 +50,7 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 	  then horizontalJoin(" of ", net parent s)
 	  else "",
 	  "{",
-	  verticalJoin sort apply(
+	  stack sort apply(
 	       pairs s,
 	       (key,value) -> horizontalJoin splice (
 		    if precedence key < precOption

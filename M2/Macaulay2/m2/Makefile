@@ -74,7 +74,7 @@ all:: TAGS
 TAGS: Makefile dumpseq
 	@echo making TAGS
 	@../util/echoout '>TAGS' $(foreach i, \
-			      $(GFILES) $(MADEGFILES) ../CHANGES \
+			      $(GFILES) $(MADEGFILES) \
 			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
 				../basictests/*.m2 ../emacs/*.m2 \
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
@@ -88,7 +88,8 @@ TAGS: Makefile dumpseq
 				../Vasconcelos-appendix/cohomology.tex \
 				../Vasconcelos-appendix/elementary.tex \
 				../Vasconcelos-appendix/introduction.tex \
-				../examples/*.m2 ../schubert/*.m2), \
+				../examples/*.m2 ../schubert/*.m2 \
+				../CHANGES), \
 			       $(i),0)
 
 all :: phase1

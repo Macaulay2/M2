@@ -1,9 +1,6 @@
 -- taken from:
 -- Bernd Sturmfels, FOUR COUNTEREXAMPLES IN COMBINATORIAL ALGEBRAIC GEOMETRY.
 
--- warning : these tests require 84MB of memory, so if your machine doesn't
--- have that, just skip them
-
 -- 1
 R = QQ[a,b,c,d,e,f]
 M = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)

@@ -244,12 +244,12 @@ document { quote Function,
      SEEALSO "functions"
      }
 
-document { quote "->",
-     TT "x -> e    ", " -- denotes a function.  When the function is called, the initial 
+document { quote ->,
+     TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
-     PARA,
-     "(x) -> e   -- denotes a function of one argument.  When the function is 
+     BR,NOINDENT,
+     TT "(x) -> e", " -- denotes a function of one argument.  When the function is 
      applied to an expression w three things may happen:",
      UL {
      	  "if w is not a sequence, then the initial value of x is w;",
@@ -258,7 +258,8 @@ document { quote "->",
      	  "if w is a sequence of length other than one, then it
      	  is an error."
 	  },
-     "(x,y) -> e -- denotes a function of two arguments.",
+     BR,NOINDENT,
+     TT "(x,y) -> e", " -- denotes a function of two arguments.",
      PARA,
      "Similarly for more arguments.",
      PARA,
@@ -268,7 +269,10 @@ document { quote "->",
      those values, and share the changes with other functions created
      at the same time.",
      PARA,
-     EXAMPLE "f = x -> 2*x+1",
+     EXAMPLE {
+	  "f = x -> 2*x+1",
+	  "f 100"
+	  },
      PARA,
      "The class of all functions is ", TO "Function", "."
      }
@@ -874,9 +878,9 @@ document { quote read,
      TT "read f", "  -- yields a string obtained by reading bytes from the input file
      ", TT "f", ".",BR,
      NOINDENT, 
-     TT "read ()", " -- reads from stdin, getting input from the user.",BR,
+     TT "read ()", " -- reads from stdio, getting input from the user.",BR,
      NOINDENT, 
-     TT "read s", "  -- reads from stdin, getting input from the user, prompting
+     TT "read s", "  -- reads from stdio, getting input from the user, prompting
      with the string s.",BR,
      PARA,
      "Input files are buffered, so the current contents of the buffer are returned
@@ -1033,7 +1037,7 @@ document { (quote ||, Net, Net),
 	  ///x = "x" | "3"^1///,
       	  ///"<--- " | ( x || "" || x ) | " --->"///,
 	  },
-     SEEALSO {"||", "|", "Net", "verticalJoin"}
+     SEEALSO {"||", "|", "Net", "stack"}
      }
 document { (quote ||, Matrix, Matrix),
      TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by

@@ -313,7 +313,7 @@ RingElement ? RingElement := (x,y) -> (
      if ring x === ring y and x == y then quote == else handle x ? handle y
      );
 
-net RingElement := x -> verticalJoin lines sendgg(ggPush x, ggsee, ggpop);
+net RingElement := x -> stack lines sendgg(ggPush x, ggsee, ggpop);
 
 RingElement ^ ZZ := (x,i) -> (
      R := ring x;

@@ -69,7 +69,7 @@ document { quote dumpdata,
      the file whose name is stored in the string s.",
      PARA,
      "This effectively saves the entire state of the system, except that the
-     input buffer for the file ", TO "stdin", " appears to have been emptied,
+     input buffer for the file ", TO "stdio", " appears to have been emptied,
      and care is taken so that the environment and the command line arguments
      maintain their new values when the data is reloaded later with 
      ", TO "loaddata", "."
@@ -1072,7 +1072,7 @@ document { quote netRows,
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA,
      "The orginal net, adjusted so its height is 1, may be recovered
-     with ", TO "verticalJoin", ". The individual strings will have 
+     with ", TO "stack", ". The individual strings will have 
      all trailing spaces removed, unless this would make all of them 
      narrower than the original net, in which case the first string
      retains its trailing spaces."

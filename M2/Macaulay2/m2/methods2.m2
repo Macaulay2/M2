@@ -75,11 +75,11 @@ document { quote new,
      SEEALSO {"classes", "of", "from"}
      }
 
-document { quote "of",
+document { quote of,
      TT "of", " -- a keyword used with ", TO "new", "."
      }
 
-document { quote "from",
+document { quote from,
      TT "from", " -- a keyword used with ", TO "new", "."
      }
 

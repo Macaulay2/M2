@@ -2,6 +2,10 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.47:
 
+'stdin' and 'stdout' replaced by 'stdio'
+
+'verticalJoin' changed to 'stack'.
+
 The documentation has been improved, especially the section on language and
 programming overview.
 

@@ -2,8 +2,8 @@ if not version#"dumpdata" then error "can't dump data with this version of Macau
 phase = 0
 scan(openFiles(), f -> (
 	  flush stderr;
-	  flush stdout;
-	  if not (f === stdout or f === stdin or f === stderr)
+	  flush stdio;
+	  if not (f === stdio or f === stdio or f === stderr)
 	  then (
 	       << "--closing file " << name f << "\n";
 	       close f;

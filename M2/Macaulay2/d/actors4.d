@@ -548,34 +548,14 @@ readpromptfun():void := (
 import isReady(fd:int):int;
 isReadyFun(e:Expr):Expr := (
      when e
-     is f:file do (
-	  if f.input then
-	  if f.eof then False
-	  else if f.insize > f.inindex then True
-	  else (
-	       ret := isReady(f.infd);
-	       if ret > 0 then True
-	       else if ret == 0 then False
-	       else errorExpr("'select' error occurred")
-	       )
-	  else WrongArg("an input file")
-	  )
-     else WrongArg("an input file"));
+     is f:file do toBoolean ( f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) )
+     else WrongArg("a file"));
 setupfun("isReady",isReadyFun);
 
 isEOFfun(e:Expr):Expr := (
      when e
-     is f:file do (
-	  if !f.input then WrongArg("an input file")
-	  else if f.eof then True
-	  else if f.insize > f.inindex then False
-	  else (
-	       ret := isReady(f.infd);
-	       if ret > 0 then ( if filbuf(f) then False else True )
-	       else if ret == 0 then False
-	       else errorExpr("'select' error occurred")
-	       ))
-     else WrongArg("an input file"));
+     is f:file do toBoolean ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 && !filbuf(f) )
+     else WrongArg("a file"));
 setupfun("isEOF",isEOFfun);
 
 tokenbuf := newvarstring(100);
@@ -817,7 +797,7 @@ join(e:Expr):Expr := (
 	       when x
 	       is b:Sequence do (newlen = newlen + length(b);)
 	       is c:List do (newlen = newlen + length(c.v);)
-	       else return(WrongArg("a list or sequence"));
+	       else return(WrongArg("lists or sequences"));
 	       );
 	  z := new Sequence len newlen do (
 	       foreach x in a do (
@@ -833,7 +813,7 @@ join(e:Expr):Expr := (
 	  else nullE			  -- shouldn't happen anyway
 	  )
      is c:List do if c.mutable then Expr(copy(c)) else e
-     else WrongArg("a list or sequence"));
+     else WrongArg("lists or sequences"));
 setupfun("join",join);
 
 instanceof(e:Expr):Expr := (

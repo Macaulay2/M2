@@ -345,6 +345,7 @@ Expression == Expression    := (x,y) -> new Equation from {x,y}
 Holder     == Holder        := (x,y) -> new Equation from {x#0,y#0}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
+ZeroExpression + Holder     :=
 ZeroExpression + Expression := (x,y) -> y
 Expression + ZeroExpression := (x,y) -> x
 Sum + Sum                   := join
@@ -363,9 +364,13 @@ Expression + Thing          := (x,y) -> x + expression y
 Expression - Expression     := (x,y) -> x + -y
 Expression - Thing          := (x,y) -> x - expression y
      Thing - Expression     := (x,y) -> expression x - y
-Expression * OneExpression  := (x,y) -> x
-OneExpression * Expression  := (x,y) -> y
+Expression * OneExpression  :=
+Holder     * OneExpression  := (x,y) -> x
+OneExpression * Expression  :=
+OneExpression * Holder      := (x,y) -> y
+Holder     * ZeroExpression :=
 Expression * ZeroExpression := (x,y) -> y
+ZeroExpression * Holder     :=
 ZeroExpression * Expression := (x,y) -> x
 Product * Product           := join
 Product * Expression        := append
@@ -381,7 +386,9 @@ Minus * Expression := (x,y) -> -(x#0 * y)
 Minus * Minus := (x,y) -> expression x#0 * expression y#0
 Expression * Thing      := (x,y) -> x * (expression y)
      Thing * Expression := (x,y) -> (expression x) * y
+Holder     ** OneExpression :=
 Expression ** OneExpression := (x,y) -> x
+OneExpression ** Holder     :=
 OneExpression ** Expression := (x,y) -> y
 NonAssociativeProduct ** NonAssociativeProduct := join
 NonAssociativeProduct ** Expression := append
@@ -403,6 +410,7 @@ Expression ** Holder     := (x,y) -> new NonAssociativeProduct from {x,y#0}
 Holder     ** Holder     := (x,y) -> new NonAssociativeProduct from {x#0,y#0}
 Expression ** Thing      := (x,y) -> x ** (expression y)
      Thing ** Expression := (x,y) -> (expression x) ** y
+Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := (x,y) -> new Divide from {x,y}
 Holder     / Expression := (x,y) -> new Divide from {x#0,y}
@@ -417,8 +425,11 @@ expression ZZ := i -> (
      else if i < 0 then new Minus from { new Holder from {-i} }
      else new Holder from {i}
      )
+Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
+Holder     ^ ZeroExpression :=
 Expression ^ ZeroExpression := (x,y) -> ONE
+ZeroExpression ^ Holder     :=
 ZeroExpression ^ Expression := (x,y) -> ZERO
 ZeroExpression ^ ZeroExpression := (x,y) -> ONE
 Expression ^ Expression := (x,y) -> Power{x,y}
@@ -428,7 +439,7 @@ Holder     ^ Holder     := (x,y) -> Power{x#0,y#0}
 Expression ^ Thing      := (x,y) -> x ^ (expression y)
      Thing ^ Expression := (x,y) -> (expression x) ^ y
 -----------------------------------------------------------------------------
-value Expression := first
+value Holder := x -> value x#0
 value OneExpression := v -> 1
 value ZeroExpression := v -> 0
 value Thing := identity
@@ -753,7 +764,7 @@ net Power := v -> (
      	  nety := net y;
 	  nety = nety ^ (1 + depth nety);
 	  if class x === Subscript then (
-	       t := verticalJoin(nety,"",nopars x#1);
+	       t := stack(nety,"",nopars x#1);
 	       horizontalJoin (
 		    if precedence x < PowerPrecedence
 		    then ( "(" , net x#0 , ")" , t)
@@ -902,7 +913,7 @@ center := (s,wid) -> (
 net Table := x -> (
      x = applyTable(toList x, net);
      w := apply(transpose x, col -> 2 + max apply(col, i -> width i));
-     verticalJoin between("",
+     stack between("",
 	  apply(x, row -> horizontalJoin apply(#row, j -> center(row#j,w#j)))))
 
 net MatrixExpression := x -> (
@@ -1265,7 +1276,7 @@ document { (quote <<, File, Thing),
      PARA,
      EXAMPLE {
 	  "x = 5",
-      	  ///stdout << "the value of x is " << x << endl///,
+      	  ///<< "the value of x is " << x << endl///,
 	  },
      SEEALSO {"<<"}
      }     
@@ -1360,7 +1371,6 @@ TEST ///
 R=ZZ[a]
 assert( name a === "a" )
 assert( name a^2 === "a^2" )
--- assert( name (quote Tally, Tally) === "(quote Tally,Tally)" )
 ///
 
 -----------------------------------

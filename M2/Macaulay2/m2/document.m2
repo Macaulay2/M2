@@ -188,7 +188,10 @@ formatDocumentTag = s -> concatenate (
      else if class s === Option and #s === 2 and class s#0 === Function then (
 	  (name s#0, "(", name s#1, " => ...)")
 	  )
-     else if class s === String then s
+     else if class s === String then (
+	  if s#0 === "\"" and s#-1 === "\"" then value s
+	  else if substring(s,0,6) === "quote " then substring(s,6)
+	  else s)
      else if class s === Symbol then string s
      else name s
      )
@@ -240,7 +243,7 @@ help = s -> (
      if pager === "" 
      or getenv "TERM" === "emacs" 
      then pager = null;
-     o := if pager === null then stdout else openOut concatenate("!", pager );
+     o := if pager === null then stdio else openOut concatenate("!", pager );
      if class s === List
      then (
 	  scan(s, i -> ( hr o; help2 (o,i); ));
@@ -258,14 +261,14 @@ help = s -> (
 	  o << endl;
 	  help2 (o,s);
 	  );
-     if o =!= stdout then close o;
+     if o =!= stdio then close o;
      )
 
 topics = Command (
      () -> (
 	  << columnate(
 	       topicList(),
-	       if width stdout == 0 then 79 else width stdout - 1) << endl;
+	       if width stdio == 0 then 79 else width stdio - 1) << endl;
 	  )
      )
 

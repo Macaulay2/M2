@@ -76,7 +76,7 @@ process := (key,doc) -> (
      filename := linkFilename key;
      masterIndex#key = filename;
      vkey := value key;
-     title := formatDocumentTag vkey;
+     title := formatDocumentTag key;
      filename << html HTML { 
 	  HEAD TITLE title,
 	  BODY {
@@ -84,7 +84,7 @@ process := (key,doc) -> (
 	       try value doc else error ("value ", doc),
 	       HR,
 	       CENTER {
-		    if vkey =!= topNodeName then topNodeButton,
+		    if key =!= topNodeName then topNodeButton,
 		    masterIndexButton,
 		    prev key, up key, next key,
 		    }
@@ -120,7 +120,7 @@ masterFileName << html HTML {
 	  },
      BODY {
 	  H2 masterNodeName,
-	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag value key}),
+	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag key}),
 	  topNodeButton
 	  }
      } << endl << close

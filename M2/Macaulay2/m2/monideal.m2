@@ -84,7 +84,7 @@ BinaryMonomialIdealOperation := (operation) -> (m,n) -> (
 net MonomialIdeal := I -> (
      if I == 0 then "0"
      else (
-	  "monomialIdeal " | verticalJoin apply(
+	  "monomialIdeal " | stack apply(
 	       lines sendgg(ggPush I,ggsee,ggpop), 
 	       x -> concatenate ("| ",x,"|")
 	       )

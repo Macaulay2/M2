@@ -14,7 +14,7 @@ showit := (ITEMS,SAME,DEFAULT) -> (
      wid := if # ITEMS < 10 then 1 else if # ITEMS < 100 then 2 else 3;
      << columnate(
 	  apply(#ITEMS, i -> concatenate {pad(wid,name i), ":", ITEMS#i#0}),
-	  if width stdout != 0 then width stdout - 1 else 79) << endl;
+	  if width stdio != 0 then width stdio - 1 else 79) << endl;
      while (
      	  i := value read concatenate("menu item [",string DEFAULT,"]: ");
      	  if i === null then i = DEFAULT;
@@ -63,7 +63,7 @@ menu(Function,Thing) := (x,back) -> (
 	  ("METHODS", (METHODS {x}, (x,back)))
 	  };
      try (
-	  if (locate x)#0 === "stdin" then error "";
+	  if (locate x)#0 === "stdio" then error "";
 	  items = join(items,{
 		    ("SOURCE",(RUNME{()->(code x;read "press return: ";)},(x,back))),
 	  	    ("EDIT",(RUNME{()->edit x},(x,back)))});
@@ -80,7 +80,7 @@ menu(Symbol,Thing) := (x,back) -> (
 	  ("class=>" | name class x,(class x,(x,back))),
 	  ("parent=>" | name parent x,(parent x,(x,back)))} ;
      try (
-	  if (locate x)#0 === "stdin" then error "";
+	  if (locate x)#0 === "stdio" then error "";
 	  items = append(items,
 	       ("SOURCE",(RUNME {() -> (code x;read "press return: ";)},(x,back)))
 	       );

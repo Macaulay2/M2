@@ -104,18 +104,12 @@ document { quote openFiles,
      SEEALSO { "File" }
      }
 
-document { quote stdin,
-     TT "stdin", " -- the standard input file.",
+document { quote stdio,
+     TT "stdio", " -- the standard input output file.",
      PARA,
-     "Use this file to get input from the terminal.",
-     PARA,
-     SEEALSO { "File" }
-     }
-
-document { quote stdout,
-     TT "stdout", " -- the standard output file.",
-     PARA,
-     "Use this file to display information on the user's screen.",
+     "Use this file to get input from the terminal, or to display information
+     on the user's screen.  This is the file always used by ", TO "print", "
+     and used ", TO "<<", " if it is not explicitly given a file."
      PARA,
      SEEALSO { "File" }
      }
@@ -239,7 +233,7 @@ document { (quote <<, String, Thing),
 
 document { (quote <<, Thing),
      TT "<< x", " -- prints the expression x on the standard output file ", 
-     TO "stdout", ".",
+     TO "stdio", ".",
      PARA,
      EXAMPLE "<< \"abcdefghij\" << endl",
      SEEALSO {"<<"}
@@ -983,9 +977,10 @@ document { "copyright and license",
      }
 
 document { "GC garbage collector",
-     "Macaulay 2 uses the garbage collector 'GC' written by Hans-J. Boehm
-     and Alan J. Demers.  The copyright is contained in its README file
-     which we provide in the file ", TT "Macaulay2/licenses/gc.lic", ".",
+     "Macaulay 2 uses the excellent garbage collector 'GC' written by Hans-J. Boehm
+     and Alan J. Demers and generously provided to the publinc.  The copyright is 
+     contained in its README file which we provide in the 
+     file ", TT "Macaulay2/licenses/gc.lic", ".",
      SEEALSO {"collectGarbage", "gcDump"}
      }
 

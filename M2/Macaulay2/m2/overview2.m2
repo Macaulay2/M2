@@ -1126,12 +1126,12 @@ document { "printing to the screen",
      EXAMPLE {
 	  "<< 2^100"
 	  },
-     "Notice that the value returned is the standard output file
-     ", TO "stdout", ".  We can also use ", TO "<<", " as a binary
+     "Notice that the value returned is the standard input output file
+     ", TO "stdio", ".  We can also use ", TO "<<", " as a binary
      operator to print explicitly to this file, and the output will 
      appear on the screen.",
      EXAMPLE {
-	  "stdout << 2^100"
+	  "stdio << 2^100"
 	  },
      "The associativity of the operator ", TO "<<", " during parsing is
      arranged so that the following code will work in a useful way.",
@@ -1181,9 +1181,9 @@ document { "reading files",
      EXAMPLE ///y = lines x///,
      "Use ", TO "peek", " to observe the extent of these strings.",
      EXAMPLE ///peek y///,
-     "We could even use ", TO "verticalJoin", " to assemble the lines of the
+     "We could even use ", TO "stack", " to assemble the lines of the
      file into a net.",
-     EXAMPLE ///verticalJoin y///,
+     EXAMPLE ///stack y///,
      }
 
 document { "getting input from the user",
@@ -1330,7 +1330,8 @@ document { "communicating with programs",
      needs only to receive data, as in the example above, then we can
      use ", TO "get", " with a file name whose first character is an
      exclamation point; the rest of the file name will be taken as the
-     command to run.",
+     command to run.  Then we peek at the string to see whether it includes
+     a newline character.",
      EXAMPLE {
 	  ///get "!uname -a"///,
 	  ///peek oo///,
@@ -1353,7 +1354,7 @@ document { "communicating with programs",
 	  ///f = openInOut "!egrep '^in'"///,
 	  ///scan(keys symbolTable(), key -> f << key << endl)///,
 	  ///f << closeOut///,
-	  ///verticalJoin lines read f///,
+	  ///stack sort lines read f///,
 	  ///close f///,
 	  },
      "With this form of bidirectional communication there is always a danger
@@ -1391,7 +1392,7 @@ document { "communicating with programs",
 	  ///(f << "GET /~dan/test.html HTTP/1.0" << endl
    << "User-Agent: Macaulay2" << endl
    << endl << closeOut)///,
-       	  ///verticalJoin lines get f///,
+       	  ///stack lines get f///,
 	  ///close f///,
 	  }
      }

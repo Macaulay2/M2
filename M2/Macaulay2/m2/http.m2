@@ -48,3 +48,29 @@ document { quote getWWW,
      "This doesn't work under solaris because Sun doesn't provide sockets
      or name service to statically linked programs like this one."
      }
+
+--  
+--  
+--  Here is the way netscape queries us:
+--  
+--  o7 = GET / HTTP/1.0
+--       Connection: Keep-Alive
+--       User-Agent: Mozilla/4.05 [en] (X11; U; Linux 2.1.121 i586; Nav)
+--       Host: localhost:2500
+--       Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, image/png, */*
+--       Accept-Language: en-US,en,en-GB,de,fr,fr-FR,ru,ja
+--       Accept-Charset: iso-8859-1,*,utf-8
+--  
+--  Here is the way wget queries us:
+--  
+--  o5 = HEAD / HTTP/1.0
+--       User-Agent: Wget/1.5.1
+--       Host: localhost:2500
+--       Accept: */*
+--  
+--  Here is the way Macaulay 2 does it.
+--  
+--  o12 = GET / HTTP/1.0
+--        User-Agent: Macaulay2
+--  
+--  
