@@ -372,14 +372,15 @@ void cmd_res(object &om, object &oalg, object &olength, object &odegree, object 
   }
 }
 
-void cmd_binomialGB_make(object &oR, object &owts, object &orevlex)
+void cmd_binomialGB_make(object &oR, object &owts, object &orevlex, object &ooptions)
 {
   const Ring *R = oR->cast_to_Ring();
   intarray *awts = owts->intarray_of();
   int *wts = NULL;
-  if (awts != NULL) wts = awts->raw();
+  if (awts != NULL && awts->length() == R->n_vars()) wts = awts->raw();
   bool revlex = (orevlex->int_of() != 0);
-  gStack.insert(new binomialGB_comp(R,wts,revlex));
+  unsigned int options = ooptions->int_of();
+  gStack.insert(new binomialGB_comp(R,wts,revlex,options));
 }
 
 void cmd_binomialGB_addgens(object &og, object &om)
@@ -479,7 +480,7 @@ void i_NGB_cmds(void)
   install(ggtracing, cmd_NGB_tracing, TY_INT);
 
   // binomial GB's
-  install(ggbinomialGB, cmd_binomialGB_make, TY_RING, TY_INTARRAY, TY_INT);
+  install(ggbinomialGB, cmd_binomialGB_make, TY_RING, TY_INTARRAY, TY_INT, TY_INT);
   install(ggbinomialGBaddgens, cmd_binomialGB_addgens, TY_GB_COMP, TY_MATRIX);
   install(ggbinomialGBenlarge, cmd_binomialGB_enlarge, TY_GB_COMP, TY_RING, TY_INTARRAY);
   install(gggetsubring, cmd_binomialGB_subring, TY_GB_COMP);
