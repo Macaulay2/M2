@@ -5,6 +5,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)
 all:: initialize
+Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
 
 ##############################
@@ -189,14 +190,21 @@ phase4 : phase3 ../cache/Macaulay2-doc
 all :: phase5
 
 # this directory must be the same as the prefix in makeHTML() in html.m2:
-TARGETDIR = cache/doc
 
-phase5 : $(TARGETDIR) $(TARGETDIR)/index.html
-$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
+# override config.Makefile.in
+target = .
+builddir = tmp/$(package)
+
+$(builddir)/$(htmldocdir) : ; install -d $@
+
+phase5 : $(builddir)/$(htmldocdir) $(builddir)/$(htmldocdir)/index.html
+$(builddir)/$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
 	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
 		'-e phase = 5' \
 		'-e errorDepth 0' \
+		'-e buildDirectory = "$(builddir)/"' \
+		'-e htmlDirectory = "$(htmldocdir)/"' \
 		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
 install ::
 	install -d $(docm2dir)
@@ -204,15 +212,15 @@ install ::
 
 install ::
 	$(INSTALL_PROGRAM) -d "$(htmldocdir)"
-	cd $(TARGETDIR) && tar cf - *.html | tar xf - -C "$(htmldocdir)"
+	cd $(htmldocdir) && tar cf - *.html | tar xf - -C "$(htmldocdir)"
 
 HOMEDIR := $(shell cd .. && pwd)
 check :: check-links
 check-links :
-	@ echo "make: Entering directory \`$(shell cd $(TARGETDIR) && pwd)'"
+	@ echo "make: Entering directory \`$(shell cd $(htmldocdir) && pwd)'"
 	 #------ checking the links in the html documentation
-	@ cd $(TARGETDIR) && $(HOMEDIR)/html-check-links/html-check-links *.html
-	@ echo "make: Leaving directory \`$(shell cd $(TARGETDIR) && pwd)'"
+	@ cd $(htmldocdir) && $(HOMEDIR)/html-check-links/html-check-links *.html
+	@ echo "make: Leaving directory \`$(shell cd $(htmldocdir) && pwd)'"
 
 ifdef NEWENGINE
 check:: test1
