@@ -2252,9 +2252,9 @@ setupfun("rawReduceByPivots",rawReduceByPivots);
 
 export rawKernelOfGB(e:Expr):Expr := (
      when e
-     is m:RawMutableMatrix
-     do toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)", "IM2_kernel_of_GB(", "(MutableMatrix *)", m, ")" ))
-     else WrongArgMutableMatrix());
+     is m:RawMatrix
+     do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_kernel_of_GB(", "(Matrix *)", m, ")" ))
+     else WrongArgMatrix());
 setupfun("rawKernelOfGB",rawKernelOfGB);
 
 -----------------------------------------------------------------------------

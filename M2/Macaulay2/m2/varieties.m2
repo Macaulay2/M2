@@ -247,15 +247,6 @@ cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
 tangentSheaf = method()
 tangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> dual cotangentSheaf X
 
-TEST ///
-     k = ZZ/101
-     R = k[a,b,c,d]/(a^4+b^4+c^4+d^4)
-     X = Proj R
-     result = table(3,3,(p,q) -> timing ((p,q) => rank HH^q(cotangentSheaf(p,X))))
-     assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
-     print new MatrixExpression from result
-     ///
-
 dim AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1
 codim ProjectiveVariety := X -> codim ring X
@@ -372,39 +363,6 @@ Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => (n,F,G) -> (
 Ext(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> Ext^n(O^1,G)
 Ext(ZZ,CoherentSheaf,SheafOfRings) := Module => (n,F,O) -> Ext^n(F,O^1)
 Ext(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> Ext^n(O^1,R^1)
-
--- Example 4.1: the bounds can be sharp.
-TEST ///
-     S = QQ[w,x,y,z];
-     X = Proj S;
-     I = monomialCurveIdeal(S,{1,3,4})
-     N = S^1/I;
-     assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
-     assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
-     ///
-
--- Example 4.2: locally free sheaves and global Ext.
-TEST ///
-     S = ZZ/32003[u,v,w,x,y,z];
-     I = minors(2,genericSymmetricMatrix(S,u,3));
-     X = variety I;
-     R = ring X;
-     Omega = cotangentSheaf X;
-     OmegaDual = dual Omega;
-     assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
-     ///
-
--- Example 4.3: Serre-Grothendieck duality.
-TEST ///
-     S = QQ[v,w,x,y,z];
-     X = variety ideal(w*x+y*z,w*y+x*z);
-     R = ring X;
-     omega = OO_X^{-1};
-     G = sheaf cokernel genericSymmetricMatrix(R,R_0,2);
-     assert(Ext^2(G,omega) == dual HH^0(G))
-     assert(Ext^1(G,omega) == dual HH^1(G))
-     assert(Ext^0(G,omega) == dual HH^2(G))
-     ///
 
 -----------------------------------------------------------------------------
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>

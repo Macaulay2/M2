@@ -368,7 +368,7 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
-test := opt -> if run("2>/dev/null "|opt) == 0 then opt else "";
+test  := opt -> if run("2>/dev/null >/dev/null "|opt) == 0 then opt else "";
 utest := opt -> if run("2>/dev/null >/dev/null ulimit "|opt) == 0 then opt else "";
 ulimit := null
 
