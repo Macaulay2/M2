@@ -164,57 +164,22 @@ assert(R^{0,0} != R^{0,1})
 "
 document { GroebnerBasis,
      HEADLINE "the class of all Groebner bases",
-     "A Groebner basis in Macaulay 2 consists of a
-      Groebner basis computation, and several associated matrices. 
-      Normally you don't need to refer to these objects directly, as many
-      operations on matrices and modules create them, and refer to them.
-      Nonetheless it is sometimes useful to have control over the
-      creation of Groebner bases.",
-     PARA,
-     "Groebner bases are attached to a matrix using one of the following
-      operations. Recomputation is avoided, in that if a Groebner basis
-      has already been partially computed, then it will be used whenever
-      possible.  Each of these routines takes a matrix as input, together
-      with optional ", TT "Degree", " and ", TT "Hilb", ", parameters, and 
-      returns a matrix. Eventually, these commands will handle the
-      situtation when the ring of m is a quotient ring, or is not graded, or is
-      a local ring",
-      PARA,
-      "Each of the operations dealing with Groebner bases may be
-      interrupted or stopped (by typing CTRL-C).  The computation
-      is continued by re-issuing the same command.",
-      PARA,
-      "To obtain information from a Groebner basis, use one of the
-      following routines.  These return matrices which represent the
-      current state of the computation.  Further computation of the Groebner
-      basis will ", EM "not", " change matrices previously obtained from
-      these routines.",
-      SHIELD MENU {
-       	   TO (generators, GroebnerBasis),
-       	   TO (mingens, GroebnerBasis),
-	   TO (syz, GroebnerBasis),
-       	   },
-      "Status of the computation can be determined by the following
-      routines",
-      SHIELD MENU {
-       	   TO (stats, GroebnerBasis),
-       	   TO "gbTrace"
-       	   },
-      PARA,
-      "Keys used:",
-      SHIELD MENU {
-	   TO "GBtype",
-	   TO "ring",
-	   TO "returnCode"
-	   },
-      }
+     "A Groebner basis in Macaulay 2 consists of a Groebner basis
+     computation, and several associated matrices. Normally you don't
+     need to refer to these objects directly, as many operations on
+     matrices and modules create them, and refer to them.  For more
+     information, see ", TO "Groebner bases", " or
+     ", TO "computing Groebner bases", "."
+     }
 
 document { (stats, GroebnerBasis),
-     HEADLINE " -- display some statistics about the computation",
+     HEADLINE " -- display some statistics about the computation"
      }
 
 document { (generators, GroebnerBasis),
      HEADLINE " -- the Groebner basis matrix",
+     TT "generators g", " -- returns a matrix whose columns are the
+     generators of the Groebner basis."
      }
 
 document { (mingens, GroebnerBasis),
@@ -237,14 +202,14 @@ document { gbTrace,
      PARA,
      "The notations used in tracing are :",
      MENU {
-	  "z       - a syzygy has been found (a generator or S-pair reduced to zero).",
-	  "m       - a new basis element has been found.",
+	  "g       - a generator reduced to something nonzero and has been added to the basis.",
+	  "m       - an S-pair reduced to something nonzero and has been added to the basis.",
+	  "z       - an S-pair reduced to zero, and a syzygy has been recorded.",
 	  "o       - an S-pair or generator reduced to zero, but no new syzygy occurred.",
 	  "r       - an S-pair has been removed.",
-	  "g       - a minimal generator has been found.",
 	  "{2}     - beginning to reduce the S-pairs of multi-degree {2}",
-	  "(15,34) - there are 15 S-pairs to do in this degree, and 34 more in 
-	  higher degrees.",
+	  "(7)     - 7 more S-pairs among basis elements need to be reduced",
+	  "(8,9)   - there are 8 S-pairs to do in this degree, and 9 more in higher degrees.",
 	  },
      PARA,
      "The value returned is the old tracing level."
@@ -290,32 +255,21 @@ document { DegreeLimit,
 document { gb => DegreeLimit, 
      HEADLINE "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
-     ", TO "gb", " which specifies that the computation should halt after dealing 
-     with degree n.",
+     ", TO "gb", " which specifies that the computation should halt after 
+     dealing S-polynomials up to degree ", TT "n", ".",
      PARA,
      "This option is relevant only for homogeneous matrices.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,w];",
-      	  "I = ideal(x*y-z^2,y^2-w^2)",
-      	  "gb(I,DegreeLimit => 2)",
-      	  "gb(I,DegreeLimit => 3)"
-	  }
+     PARA,
+     "For an example, see ", TO "computing Groebner bases", "."
      }
 
 document { BasisElementLimit, 
-     HEADLINE "stop when this number of minimal generators is obtained",
+     HEADLINE "stop when this number of basis elements is obtained",
      TT "BasisElementLimit", " -- keyword for an optional argument used with
      ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
      and ", TO "syz", ", which can be used to specify that the computation should
      stop after a certain number of Groebner basis elements have been discovered.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,w];",
-      	  "I = ideal(x*y-z^2,y^2-w^2,w^4)",
-      	  "gb(I,BasisElementLimit => 2)",
-      	  "gb(I,BasisElementLimit => 3)",
-      	  "gb(I,BasisElementLimit => 4)",
-      	  "gb(I,BasisElementLimit => 5)"
-	  }
+     SEEALSO "computing Groebner bases"
      }
 
 document { SyzygyLimit,

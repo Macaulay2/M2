@@ -44,21 +44,21 @@ void emit_wrapped(char *s)
   emit_line_len -= strlen(s);
   if (emit_line_len <= 0) {
     emit_line_len = MAX_LINE_LENGTH;
-    fprintf(stderr, "\n");
+    fprintf(stdout, "\n");
   }
-  fprintf(stderr, s);
-  fflush(stderr);
+  fprintf(stdout, s);
+  fflush(stdout);
 }
 
 void emit(char *s)
 {
-  fprintf(stderr, s);
-  fflush(stderr);
+  fprintf(stdout, s);
+  fflush(stdout);
 }
 
 void emit_line(char *s)
 {
-  fprintf(stderr, "%s%s", s, "\n");
-  fflush(stderr);
+  fprintf(stdout, "%s%s", s, "\n");
+  fflush(stdout);
 }
 

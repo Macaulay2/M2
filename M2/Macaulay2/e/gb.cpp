@@ -503,7 +503,7 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
     {
       buffer o;
       o << "." << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   result->next = NULL;
   f = head.next;
@@ -562,7 +562,7 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
     {
       buffer o;
       o << "." << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   result->next = NULL;
   f = head.next;
@@ -916,7 +916,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	      if (use_hilb) 
 		o << n_in_degree << ',';
 	      o << spairs->n_elems() << ')';
-	      emit(o.str());
+	      emit_wrapped(o.str());
 	    }
 
 	  // Set state information for auto reduction, new pairs
@@ -1153,7 +1153,7 @@ void GB_comp::debug_out(s_pair *q) const
   o << " ";
   M->elem_text_out(o, q->lcm);
   o << ") ";
-  emit(o.str());
+  emit_wrapped(o.str());
 }
 
 void GB_comp::stats() const

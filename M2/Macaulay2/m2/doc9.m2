@@ -419,15 +419,8 @@ document { poincare,
 	  },
      PARA,
      TT "(cokernel f).poincare = p", " -- inform the system that the Poincare 
-     polynomial of the cokernel of f is p.  This can speed the computation 
-     of a Groebner basis of f.",
-     EXAMPLE {
-	  "R = ZZ/101[t_0 .. t_17]",
-      	  "T = (degreesRing R)_0",
-      	  "f = genericMatrix(R,t_0,3,6)",
-      	  "(cokernel f).poincare = 3-6*T+15*T^2-20*T^3+15*T^4-6*T^5+T^6",
-      	  "gb f"
-	  }
+     polynomial of the cokernel of ", TT "f", " is ", TT "p", ".  This can speed the computation 
+     of a Groebner basis of ", TT "f", ".  For details, see ", TO "computing Groebner bases", "."     
      }
 
 document { poincareN,

@@ -70,10 +70,10 @@ void tableau::display() const
   for (i=1; p[i] != 0; i++)
     {
       for (j=1; j <= lambda[i]; j++)
-	fprintf(stderr, "--  ");
+	fprintf(stdout, "--  ");
       for ( ; j <= p[i]; j++)
-	fprintf(stderr, "%2d  ", elem(i,j));
-      fprintf(stderr, "\n");
+	fprintf(stdout, "%2d  ", elem(i,j));
+      fprintf(stdout, "\n");
     }
 }
 

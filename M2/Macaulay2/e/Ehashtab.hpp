@@ -145,10 +145,10 @@ public:
 	else if (nelems[i] > maxpernode)
 	  maxpernode = nelems[i];
       }
-    fprintf(stderr, "total #elem = %d\n", total);
-    fprintf(stderr, "max per bin = %d\n", maxpernode);
-    fprintf(stderr, "min per bin = %d\n", minpernode);
-    fprintf(stderr, "# zero bins = %d\n", nzeros);
+    fprintf(stdout, "total #elem = %d\n", total);
+    fprintf(stdout, "max per bin = %d\n", maxpernode);
+    fprintf(stdout, "min per bin = %d\n", minpernode);
+    fprintf(stdout, "# zero bins = %d\n", nzeros);
     buffer o;
     for (i=0; i<len; i++)
       {

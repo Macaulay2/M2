@@ -708,8 +708,16 @@ document { kernel,
      }
 
 document { SubringLimit,
+     TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
+     which can stop the computation after a certain number of basis elements in
+     a subring have been found.",
+     SEEALSO "computing Groebner bases"
+     }
+
+
+document { (kernel, SubringLimit),
      TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
-     causes the computation of the kernel of a ring map to stop after n
+     causes the computation of the kernel of a ring map to stop after ", TT "n", "
      elements have been discovered."
      }
 

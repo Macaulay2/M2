@@ -443,7 +443,7 @@ bool GBZZ_comp::gb_reduce(vec &f, vec &fsyz) const
     {
       buffer o;
       o << "." << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   result->next = NULL;
   f = head.next;
@@ -749,7 +749,7 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 	      o << '{' << this_degree << '}';
 	      o << '(';
 	      o << n_in_degree << ')';
-	      emit(o.str());
+	      emit_wrapped(o.str());
 	    }
 
 	  // Set state information for auto reduction, new pairs
@@ -1005,7 +1005,7 @@ void GBZZ_comp::gb_reduce(vec &f, vec &fsyz)
     {
       buffer o;
       o << "." << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   result->next = NULL;
   f = head.next;
@@ -1064,7 +1064,7 @@ void GBZZ_comp::gb_geo_reduce(vec &f, vec &fsyz)
     {
       buffer o;
       o << "." << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
   result->next = NULL;
   f = head.next;

@@ -43,7 +43,7 @@ pushtest := options -> (f,M) -> (
 	m1 = presentation ((cokernel m1) ** (cokernel JJ));
 	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S);
 
-	if options.UseHilbertFunction 
+	if options.UseHilbertFunction === true 
            and isHomogeneous m1 and isHomogeneous f and isHomogeneous m then (
 	    hf := poincare cokernel m;
 	    T := (ring hf)_0;
