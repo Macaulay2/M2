@@ -5,3 +5,4 @@ install : $(bindir)/M2
 $(bindir)/M2 : M2.in
 	sed -e 's,@pr.fix@,$(prefix),g' \
 	    -e 's,@PACKAGE.VERSION@,@PACKAGE_VERSION@,g' $< >"$@"
+	chmod a+x "$@"
