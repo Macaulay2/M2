@@ -4,6 +4,7 @@
 ;; functions which make horizontal scrolling easier.
 
 (require 'comint)
+(require 'M2-mode)
 (defvar M2-demo-buffer "ann.m2"
   "The buffer from which lines are obtained by M2-send-to-program when the
 cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
@@ -100,6 +101,10 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
   (let ((word (comint-word "a-zA-Z")))
     (if word (comint-dynamic-simple-complete word M2-symbols))))
 
+(defvar M2-font-lock-keywords
+  '((eval . (cons M2-comint-prompt-regexp 'font-lock-warning-face)))
+  "Additional expressions to highlight in M2 mode.")
+
 (add-hook 'comint-M2-hook 
 	  (function 
 	   (lambda ()
@@ -122,6 +127,10 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 	     (local-set-key "\^Cr" 'scroll-right)
 	     (local-set-key [ f8 ] 'switch-to-completions)
 	     (local-set-key "\^Cc" 'switch-to-completions)
+	     (set-syntax-table M2-mode-syntax-table)
+	     (turn-on-font-lock)
+	     ;; (make-local-variable 'font-lock-defaults)
+	     ;; (setq font-lock-defaults '(M2-font-lock-keywords t))
 	     (setq comint-dynamic-complete-functions 
 		   '(
 		     M2-dynamic-complete-symbol
