@@ -196,6 +196,7 @@ makeit1 := (options) -> (
 	       M.generators / toString,
 	       (degreesMonoid degreeLength M).RawMonoid,
 	       flatten internalDegrees));
+     raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
      M ? M := (x,y) -> (
 	  -- comparison of two monomials
