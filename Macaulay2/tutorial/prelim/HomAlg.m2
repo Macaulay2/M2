@@ -87,7 +87,7 @@ Kb % Kb2
 -- \example{}{Simplicial Homology}
 
 -- The following will be used in a bit...
-mybasis = (d,I) -> matrix (basis(d, coker I) ** (ring I))
+mybasis = (d,I) -> matrix (basis(d, coker I))
 
 -- The first example is the torus.
 R = ZZ/101[a..g]/(a^2,b^2,c^2,d^2,e^2,f^2,g^2)

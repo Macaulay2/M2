@@ -259,7 +259,7 @@ pushForward(RingMap, Module) := options -> (f,M) -> (
 	  M = cokernel presentation M;
 	  M1 := M ** (S^1/(image f.matrix));
 	  if dim M1 > 0 then error "module given is not finite over base";
-	  M2 := subquotient(matrix (basis M1 ** S), relations M);
+	  M2 := subquotient(matrix (basis M1), relations M);
 	  cokernel pushForward1(f,M2,options)
 	  )
      else error "not implemented yet for inhomogeneous modules or maps"
@@ -308,7 +308,7 @@ TEST "
     S = ZZ/101[a,b,c]
     M = cokernel matrix{{c^3}}
     f = map(S,R)
-    assert( R^3 == pushForward(f,M) )
+    assert( R^{0,-1,-2} == pushForward(f,M) )
 "
 
 document { quote UseHilbertFunction,

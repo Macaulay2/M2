@@ -375,7 +375,6 @@ makeit1 := (options) -> (
 	       else error("invalid MonomialOrder option: ", name mo)
 	       )
 	  );
-
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
 	  x -> if class x === Symbol then x else expression x

@@ -1057,14 +1057,8 @@ basis(List,Module) := (deg,M) -> (
      k := coefficientRing A;
      bottom := generators gb presentation M;
      top := id_(target bottom);
-     sendgg(ggPush top, ggPush bottom, ggPush deg, ggkbasis, 
-	  ggdup, ggPush deg, ggsetshift);
-     p := new Matrix;
-     p.target = M;
-     sendgg(ggdup,gglength);
-     p.source = k^(eePopInt());
-     p.handle = newHandle "";
-     p)
+     sendgg(ggPush top, ggPush bottom, ggPush deg, ggkbasis);
+     getMatrix R)
 
 TEST "
 	R = ZZ/101[a..d]
@@ -1091,45 +1085,27 @@ basis Module := M -> (
      bottom := generators gb presentation M;
      top := id_(target bottom);
      sendgg(ggPush top, ggPush bottom, ggkbasis);
-     p := new Matrix;
-     p.target = M;
-     sendgg(ggdup,gglength);
-     p.source = k^(eePopInt());
-     p.handle = newHandle "";
-     p)
+     getMatrix R)
 
 basis Ring := R -> basis(R^1)
 basis Ideal := I -> basis module I
 
 document { quote basis,
-     TT "basis(i,M)", " -- produce a map (of degree ", TT "i", ") from a free ", TT "k", "-module 
-     to ", TT "M", " whose image is the degree ", TT "i", " part of the module (or ring) ", TT "M", ".",
+     TT "basis(i,M)", " -- produce a map from a free module to ", TT "M", " whose image
+     is the degree ", TT "i", " part of the module (or ring) ", TT "M", ".",
      BR, NOINDENT,
-     TT "basis M", " -- produce a map from a free ", TT "k", "-module to ", TT "M", " whose image
+     TT "basis M", " -- produce a map from a free module to ", TT "M", " whose image
      is the finite dimensional module (or ring) ", TT "M", ".",
      PARA,
-     "The field ", TT "k", " is the coefficient ring of the ring of ", TT "M", ".  The degree
-     ", TT "i", " may be a multi-degree, represented as a list of integers.",
-     PARA,
-     "Alternatively, if the coefficient ring of the ring of ", TT "M", " is ", TT "ZZ", ", then the
-     basis returned is a basis only modulo torsion.",
+     "The degree ", TT "i", " may be a multi-degree, represented as a list of integers.",
      EXAMPLE {
 	  "R = ZZ/101[a..c];",
-      	  "f = basis(2,R)",
-	  },
-     "A map of R-modules can be obtained by tensoring.",
-     EXAMPLE {
-	  "f ** R",
+      	  "basis(2, R)",
       	  "basis(2, ideal(a,b,c)/ideal(a^2,b^2,c^2))",
       	  "basis(R/(a^2-a*b, b^2-c^2, b*c))",
-	  },
-     EXAMPLE {
-      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}]",
+      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];",
       	  "basis({7,24}, S)",
-	  },
-     "Here is another example.",
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
+	  "R = ZZ/101[a..d];",
       	  "f = basis(3, ideal(a^2, b^2))",
 	  },
      "Notice that the matrix of ", TT "f", " is expressed in terms of the
