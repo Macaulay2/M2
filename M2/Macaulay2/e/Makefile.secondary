@@ -162,7 +162,8 @@ $(LIB): $(LIB)($(OFILES))
 
 %.dd: %.cpp
 	@echo remaking $@
-	$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's/$*\.o/& $@/g' > $@
+	$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's/$*\.o/& $@/g' > tmp.dd
+	mv tmp.dd $@
 # this was:
 #	@$(SHELL) -ec '$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed '\''s/$*.o/& $@/g'\'' > $@'
 # but we can't use that under MSDOS, and besides, it looks weird
