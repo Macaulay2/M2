@@ -1,7 +1,7 @@
 #include "M2types.h"
 #include <string.h>
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #if defined(__DJGPP__) || defined(_WIN32)
 #define NEWLINE "\r\n"
