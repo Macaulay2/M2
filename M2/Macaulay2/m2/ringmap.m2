@@ -356,14 +356,17 @@ document { quote substitute,
      }
 
 RingMap Ideal := (f,I) -> ideal f module I
+
+fixup := (f) -> if isHomogeneous f then f else map(target f,,f)
+
 RingMap Module := (f,M) -> (
      R := source f;
      S := target f;
-     if R =!= ring M then error "no method found";
+     if R =!= ring M then error "expected module over source ring";
      if M.?generators or M.?relations 
      then subquotient(
-	  if M.?generators then f M.generators, 
-	  if M.?relations then f M.relations)
+	  if M.?generators then fixup f M.generators, 
+	  if M.?relations then fixup f M.relations)
       else if degreesRing R === degreesRing S then
           S^(-degrees M)
       else

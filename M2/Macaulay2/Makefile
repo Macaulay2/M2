@@ -103,4 +103,5 @@ clean ::; if [ -d socket ]; then $(MAKE) -C socket clean; fi
 clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
 ################################# backup
 backup ::; $(MAKE) -C m2 backup
-backup ::; if [ -d backup ]; then $(MAKE) -C docs backup; fi
+backup ::; if [ -d docs ]; then $(MAKE) -C docs backup; fi
+backup ::; if [ -d experiments ]; then $(MAKE) -C experiments backup; fi

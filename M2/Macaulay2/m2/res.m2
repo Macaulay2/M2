@@ -26,7 +26,7 @@ resolution = method(
 	  HardDegreeLimit => {},          -- throw out information in degrees above this one
 	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
 	  SortStrategy => 0,		  -- strategy choice for sorting s-pairs
-          Algorithm => 1
+          Algorithm => null		  -- algorithm to use, usually 1, but sometimes 2
 	  }
      )
 
@@ -103,14 +103,13 @@ documentOption { resolution, quote Algorithm,
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",
      MENU {
-	  ("0", " -- The default algorithm, which is to compute syzygies on 
-	       the Groebner bases of each syzygy module.  The algorithm uses 
-	       important speedups due to R. Lascala.  This algorithm appears 
-	       to be on the average the fastest."),
+	  ("0", " -- Compute syzygies on the Groebner bases of each syzygy
+	       module.  The algorithm uses important speedups due to R. Lascala.
+	       This algorithm appears to be on the average the fastest."),
 	  ("1", " -- An older version of algorithm 0, which doesn't allow as 
 	       much experimentation, but can sometimes be marginally faster."),
 	  ("2", " -- Compute syzygies on the minimal generators of each 
-	       matrix in the resolution."),
+	       matrix in the resolution.  Over quotient rings, preferred."),
 	  ("3", " -- Same as algorithm 2, but compute those Hilbert functions 
 	       which allow removal of s-pairs (a la Robbiano, et al.).  
 	       Sometimes this improvement can be very dramatic.")
@@ -228,11 +227,7 @@ resolutionInEngine := (M,options) -> (
 	  W.length = maxlength;
 	  W.DegreeLimit = degreelimit;
 	  W.handle = newHandle(ggPush g, 
-	       ggPush (
-		    if (monoid R).Options.SkewCommutative
-		    then 2
-		    else options.Algorithm
-		    ),
+	       ggPush options.Algorithm,
 	       ggPush maxlength,
 	       ggPush harddegreelimit,
 	       ggPush options.SortStrategy,
@@ -268,16 +263,21 @@ resolutionInEngine := (M,options) -> (
 		    )));
      C)
 
+default := (o,defaults) -> merge(o,defaults,(x,y) -> if x === null then y else x)
+Algorithm0 := new OptionTable from { Algorithm => 0 }
+Algorithm1 := new OptionTable from { Algorithm => 1 }
+Algorithm2 := new OptionTable from { Algorithm => 2 }
+
 resolution Module := (M,o) -> (
      R := ring M;
      k := ultimate(coefficientRing, R);
      oR := options R;
      if oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M then (
-	  processArgs((M, Algorithm => 2), o, (args,o) -> resolutionInEngine(M,o))
-	  )
+	  resolutionInEngine(M,default(o,Algorithm2)))
      else if k === ZZ or not isCommutative R then resolutionBySyzygies(M,o)
      else if not isHomogeneous M then resolutionByHomogenization(M,o)
-     else resolutionInEngine(M,o)
+     else if isQuotientRing R then resolutionInEngine(M,default(o,Algorithm2))
+     else resolutionInEngine(M,default(o,Algorithm1))
      )
 
 resolution Matrix := (f,o) -> (
