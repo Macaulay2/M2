@@ -117,23 +117,19 @@ new EngineRing from String := (EngineRing, ggcmds) -> (
 		    quote handle, 
 		    toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 		    ) } );
+     R#1 = 1_R;
+     R#0 = 0_R;
      R.pop = () -> new R;
      R)
 
-installEngineRingUnits = R -> (
-     if R.?newEngine then (
-	  R#1 = new R from newHandle(ggPush R, ggPush 1, ggfree, ggPush toList (numgens R : 0), ggPush 0, ggterm);
-	  R#0 = new R from newHandle(ggPush 0, ggPush R#1, ggmult);
-	  )
-     else (
-	  R#1 = 1_R;
-	  R#0 = 0_R;
-	  )
+ZZ _ EngineRing := 
+promote(ZZ,EngineRing) := (i,R) -> (
+     new R from {( quote handle, newHandle (ggPush R, ggINT, gg i, ggfromint) )}
      )
 
 -----------------------------------------------------------------------------
 
-ZZZ = new EngineRing of HashTable
+ZZZ = new EngineRing of RingElement
 ZZZ.generators = {}
 ZZZ.pop = () -> new ZZZ
 ZZZ.handle = newHandle ggEZZ
@@ -143,14 +139,16 @@ new ZZZ := ZZZ -> newClass( ZZZ, hashTable { (
 	       toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 	       ) } );
 ZZZ.newEngine = true
-installEngineRingUnits ZZZ
+ZZZ#1 = 1_ZZZ
+ZZZ#0 = 0_ZZZ
 ZZZ.isCommutative = true
 ZZZ.char = 0
 ZZZ.ConversionFormat = ConvertInteger
 ZZZ.Engine = true
-ZZZ.baseRings = {}
+ZZZ.baseRings = {ZZ}
 ZZZ.ConvertToExpression = ConvertInteger
 ZZZ.degreeLength = 0
+net ZZZ := name ZZZ := see
 
 -----------------------------------------------------------------------------
 
@@ -202,7 +200,6 @@ frac EngineRing := R -> (
 	  R.frac = F := new FractionField from (ggPush R, ggfractionfield);
 	  F.baseRings = append(R.baseRings,R);
      	  if R.?newEngine then F.newEngine = true;
-	  installEngineRingUnits F;
 	  F.ConvertToExpression = ConvertApply(
 	       (x,y) -> x/y, R.ConvertToExpression, R.ConvertToExpression
 	       );
@@ -746,18 +743,6 @@ promote(RingElement, RingElement) := (r,o) -> (
 --		    toHandle convert(ConvertInteger,
 --			 sendgg (ggPushS, ggpush f, ggpromotenewh)))});
 
-
-ZZ _ EngineRing := 
-promote(ZZ,EngineRing) := (i,R) -> (
-     if R.?newEngine
-     then error "not implemented yet"
-     else new R from {( quote handle, 
-	       try newHandle (ggPush R, ggINT, gg i, ggfromint)
-	       else (					    -- newEngine
-		    newHandle (ggPush i, ggPush R#1, ggmult);
-		    )
-	       )}
-     )
 
 promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)
 

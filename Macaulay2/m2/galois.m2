@@ -187,7 +187,6 @@ GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  );
      F.baseRings = append(S.baseRings,S);
      if S.?newEngine then F.newEngine = true;
-     installEngineRingUnits F;
      F.isCommutative = true;
      expression F := t -> convert(
 	  F.ConvertToExpression, sendgg(ggPush t, ggtonet)

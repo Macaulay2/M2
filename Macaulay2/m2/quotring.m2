@@ -101,7 +101,6 @@ ZZZquotient := (R,I) -> (
 	  ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
 	  ES.baseRings = {R};
 	  ES.newEngine = true;
-	  installEngineRingUnits ES;
 	  ES.relations = EgensI;
 	  ES.ConvertToExpression = R.ConvertToExpression;
 	  ES.isCommutative = R.isCommutative;
@@ -133,7 +132,6 @@ ZZquotient := (R,I) -> (
 	  sendgg(ggPush n, ggPush G, ggcharp);
 	  S := new QuotientRing from newHandle();
 	  S.baseRings = {R};
-	  installEngineRingUnits S;
 	  S.relations = gensI;
 	  S.ConvertToExpression = R.ConvertToExpression;
 	  S.isCommutative = R.isCommutative;
@@ -195,7 +193,6 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotie
      S := new QuotientRing from newHandle();
      if R.?newEngine then S.newEngine = true;
      S.baseRings = append(R.baseRings,R);
-     installEngineRingUnits S;
      S.relations = gensI;
      S.ConvertToExpression = R.ConvertToExpression;
      S.isCommutative = R.isCommutative;

@@ -261,7 +261,6 @@ Ring OrderedMonoid := (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  if M.?newEngine then RM.newEngine = true;
 	  RM.monoid = M;
-    	  installEngineRingUnits RM;
 	  RM.degreesRing = degRing;
 	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
      	  ONE := RM#1;
@@ -325,7 +324,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;
-	  RM.generators = apply(M.generators, m -> RM#(name m) = RM#0 + m);
+	  RM.generators = apply(# M.generators, i -> RM#(name M.generators#i) = RM_i);
 	  scan(keys R, k -> if class k === String then RM#k = promote(R#k,RM));
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;

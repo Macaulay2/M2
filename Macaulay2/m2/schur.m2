@@ -12,7 +12,6 @@ newSchur := (R,M) -> (
      SR := new SchurRing from (ggPush R, ggPush M, ggschur);
      SR.baseRings = append(R.baseRings,R);
      if R.?newEngine or M.?newEngine then SR.newEngine = true;
-     installEngineRingUnits SR;
      ONE := SR#1;
      if degreeLength M != 0 then (
 	  -- there must be something smarter to do, but if we
