@@ -407,7 +407,7 @@ all::
 doc::
 	@echo "--------------------- done making 'doc' --------------------"
 ################################# tar manufactured files
-manufactured.tgz :
+manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files
 	tar cfz $@ \
 		Macaulay2/e/geovec.hpp \
@@ -416,7 +416,7 @@ manufactured.tgz :
 		Macaulay2/e/cmdnames.hpp \
 		Macaulay2/e/cmdinst.hpp \
 		Macaulay2/m2/tutorials.m2 \
-		Macaulay2/tutorial \
+		Macaulay2/tutorial/final/*.out \
 		Macaulay2/m2/gbdoc.m2 \
 		Macaulay2/m2/gbfunctions.m2 \
 		Macaulay2/m2/loads.m2 \

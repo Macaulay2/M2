@@ -133,10 +133,13 @@ Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*1_(ring f)
      h.handle = newHandle (ggPush f, ggnegate);
      h)
 
-setdegree := (M,N,type,degree) -> sendgg (
-     if R.?newEngine 
-     then (ggPush M, ggPush N, ggPush type, ggPush degree)
-     else (ggdup, ggPush degree, ggsetshift)
+setdegree := (M,N,type,degree) -> (
+     R := ring M;
+     sendgg (
+     	  if R.?newEngine 
+     	  then (ggPush M, ggPush N, ggPush type, ggPush degree)
+     	  else (ggdup, ggPush degree, ggsetshift)
+     	  )
      )
 
 Matrix * Matrix := (m,n) -> (
