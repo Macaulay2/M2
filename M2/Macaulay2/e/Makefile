@@ -189,15 +189,16 @@ endif
 
 GENERATED_H = cmdnames cmdinst geovec geores
 
-LOFILES1 := $(addsuffix .lo,$(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE))
-LOFILES2 := $(addsuffix .lo,$(COMMANDS) $(C_FILES))
+CC_FILES1 := $(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE)
+CC_FILES2 := $(COMMANDS)
+CC_FILES := $(CC_FILES1) $(CC_FILES2)
+FILES := $(CC_FILES) $(C_FILES)
+LOFILES1 := $(addsuffix .lo,$(CC_FILES1))
+LOFILES2 := $(addsuffix .lo,$(CC_FILES2) $(C_FILES))
 LOFILES := $(LOFILES1) $(LOFILES2)
-FILES := $(LOFILES:.lo=)
-%.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
-%.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
-%.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
-CCFILES := $(addsuffix .cpp,$(FILES))
+CCFILES := $(addsuffix .cpp,$(CC_FILES))
 CFILES := $(addsuffix .c,$(C_FILES))
+OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
 
 HHFILES := $(addsuffix .hpp, \
 		$(NAMES_H) $(NAMES) \
@@ -207,18 +208,17 @@ OTHERS := Makefile \
 	res_aux.cpp res_aux2.cpp geoT.hpp \
 	tests misc keep newmonoid.hpp newmonoid.cpp
 
-
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
 
 ###################################################################
 ## Targets ##
 #############
-all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
+all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H))
 
 ifdef SHAREDLIBS
 all:: ../lib/libengine1.so ../lib/libengine2.so
-../lib/libengine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
-../lib/libengine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
+else
+all:: $(OFILES)
 endif
 
 %.ii: %.cpp
@@ -226,6 +226,11 @@ endif
 %.s: %.cpp
 	$(CXX) $(CXXFLAGS) -S $< -o $@
 
+%.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
+../lib/libengine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
+../lib/libengine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
 
 geovec.hpp: geoT.hpp
 	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
