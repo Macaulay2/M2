@@ -31,7 +31,7 @@ use texmacs;
 
 import dirname(s:string):string;
 
-loadErrorHook := setupvar("loadErrorHook", nullE);
+loadErrorHooks := setupvar("loadErrorHooks", Expr(emptyList));
 currentFileName := setupvar("currentFileName", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
@@ -138,13 +138,15 @@ readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,re
      localFrame = saveLocalFrame;
      ret);
 readeval(file:TokenFile,returnLastvalue:bool):Expr := (
-     savefe := getGlobalVariable(loadErrorHook);
+     savefe := getGlobalVariable(loadErrorHooks);
      ret := readeval3(file,false,true,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false);
      when ret is Error do (
-	  hook := getGlobalVariable(loadErrorHook);
-	  if hook != nullE then apply(hook,emptySequence))
+	  hook := getGlobalVariable(loadErrorHooks);
+	  when hook
+	  is x:List do foreach f in x.v do apply(f,emptySequence)
+	  else nothing)
      else nothing;
-     setGlobalVariable(loadErrorHook,savefe);
+     setGlobalVariable(loadErrorHooks,savefe);
      ret);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
