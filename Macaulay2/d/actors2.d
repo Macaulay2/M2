@@ -519,24 +519,24 @@ forfun(c:forCode):Expr := (
 	       b := eval(listClause);
 	       when b is err:Error do (
 		    localFrame = localFrame.outerFrame;
-		    return if err.message == breakMessage then err.value else b
+		    if err.message == continueMessage then b = err.value
+		    else return if err.message == breakMessage then err.value else b
 		    )
-	       else (
-		    if i == length(r) then (
-			 r = new Sequence len 2*length(r) do (
-			      foreach x in r do provide x;
-			      while true do provide nullE;
-			      );
+	       else nothing;
+	       if i == length(r) then (
+		    r = new Sequence len 2*length(r) do (
+			 foreach x in r do provide x;
+			 while true do provide nullE;
 			 );
-		    r.i = b;
-		    i = i+1;
 		    );
+	       r.i = b;
+	       i = i+1;
 	       );
 	  if doClause != dummyCode then (
 	       b := eval(doClause);
 	       when b is err:Error do (
 		    localFrame = localFrame.outerFrame;
-		    return if err.message == breakMessage then err.value else b
+		    if err.message != continueMessage then return if err.message == breakMessage then err.value else b
 		    )
 	       else nothing;
 	       );
