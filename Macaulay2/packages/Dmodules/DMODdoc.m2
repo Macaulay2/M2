@@ -5,7 +5,7 @@ INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
      }
 needs "Dmodules/Dloadfile.m2";
 document {
-     Key => "D-modules Package",
+     Key => "Dmodules",
      Headline => "algorithms for D-modules",
      INSERTUSAGE {
 	  "Load the package by typing: ", 
