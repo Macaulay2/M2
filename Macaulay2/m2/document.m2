@@ -923,7 +923,12 @@ tex HashTable := x -> (
      )
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
-mathML Symbol := x -> concatenate("<mi>",toString x,"</mi>")
+
+specials := new HashTable from {
+     symbol ii => "&ii;"
+     }
+
+mathML Symbol := x -> concatenate("<mi>",if specials#?x then specials#x else toString x,"</mi>")
 
 tex Function := x -> "--Function--"
 
