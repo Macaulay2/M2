@@ -525,6 +525,7 @@ extern "C" {
     */
 
   const RingElement *IM2_RingElement_get_terms(
+            int nvars, /* n variables in an outermost monoid */
             const RingElement *a,
 	    int lo, int hi); /* drg: connected rawGetTerms*/
     /* Returns the sum of some monomials of 'a', starting at 'lo',
@@ -534,19 +535,28 @@ extern "C" {
     */
 
   const RingElementOrNull *IM2_RingElement_get_coeff(
+            const Ring * coeffRing, /* ring of the result */
             const RingElement *a,
 	    const Monomial *m); /* drg: connected rawCoefficient*/
     /* Return (as an element of the coefficient ring) the coeff
        of the monomial 'm'. 
     */
 
-  const RingElementOrNull *IM2_RingElement_lead_coeff(const RingElement *a); /* drg: connected rawLeadCoefficient*/
+  const RingElementOrNull *IM2_RingElement_lead_coeff(
+            const Ring * coeffRing, /* ring of the result */
+	    const RingElement *a); /* drg: connected rawLeadCoefficient*/
 
-  const MonomialOrNull *IM2_RingElement_lead_monomial(const RingElement *a); /* drg: connected rawLeadMonomial*/
+  const MonomialOrNull *IM2_RingElement_lead_monomial(
+            int nvars, /* number of vaariables in an outermost monoid */
+	    const RingElement *a); /* drg: connected rawLeadMonomial*/
 
-  int IM2_RingElement_n_terms(const RingElement *a); /* drg: connected rawTermCount*/
+  int IM2_RingElement_n_terms(
+            int nvars, /* number of vaariables in an outermost monoid */
+            const RingElement *a); /* drg: connected rawTermCount*/
 
-  ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f); /* drg: connected rawPairs */
+  ArrayPairOrNull IM2_RingElement_list_form(
+            const Ring * coeffRing, /* ring of the result coefficients */
+            const RingElement *f); /* drg: connected rawPairs */
 
   int IM2_RingElement_index_if_var(const RingElement *f); /* drg: connected rawIndexIfVariable */
   /* if f is a variable of its ring, then the index of that variable is returned.

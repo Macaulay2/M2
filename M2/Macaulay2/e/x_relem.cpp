@@ -574,33 +574,62 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
   return RingElement::make_raw(R,val);
 }
 
-const RingElement *IM2_RingElement_get_terms(const RingElement *a,
-					     int lo, int hi)
+const RingElement *IM2_RingElement_get_terms(
+            int nvars, /* n variables in an outermost monoid */
+            const RingElement *a,
+	    int lo, int hi)
+  /* Returns the sum of some monomials of 'a', starting at 'lo',
+     going up to 'hi'.  If either of these are negative, they are indices 
+     from the back of the polynomial.
+     'a' should be an element of a polynomial ring. 
+  */
 {
-  return a->get_terms(lo,hi);
+  return a->get_terms(nvars,lo,hi);
 }
 
-const RingElementOrNull *IM2_RingElement_get_coeff(const RingElement *a,
-						   const Monomial *m)
+const RingElementOrNull *IM2_RingElement_get_coeff(
+	   const Ring * coeffRing, /* ring of the result */
+	   const RingElement *a,
+	   const Monomial *m)
   /* Return (as an element of the coefficient ring) the coeff
-     of the monomial 'm'. */
+       of the monomial 'm'. 
+    */
 {
-  return a->get_coeff(m);
+  return a->get_coeff(coeffRing,m);
 }
 
-const RingElement *IM2_RingElement_lead_coeff(const RingElement *a)
+const RingElementOrNull *IM2_RingElement_lead_coeff(
+           const Ring * coeffRing, /* ring of the result */
+	   const RingElement *a)
 {
-  return a->lead_coeff();
+  return a->lead_coeff(coeffRing);
 }
 
-const MonomialOrNull *IM2_RingElement_lead_monomial(const RingElement *a)
+const MonomialOrNull *IM2_RingElement_lead_monomial(
+           int nvars, /* number of vaariables in an outermost monoid */
+	   const RingElement *a)
 {
-  return a->lead_monom();
+  return a->lead_monom(nvars);
 }
 
-int IM2_RingElement_n_terms(const RingElement *a)
+int IM2_RingElement_n_terms(
+          int nvars, /* number of vaariables in an outermost monoid */
+          const RingElement *a)
 {
-  return a->n_terms();
+  return a->n_terms(nvars);
+}
+
+ArrayPairOrNull IM2_RingElement_list_form(
+          const Ring * coeffRing, /* ring of the result coefficients */
+          const RingElement *f)
+{
+  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected a polynomial");
+      return 0;
+    }
+  return P->list_form(coeffRing, f->get_value());
 }
 
 int IM2_RingElement_index_if_var(const RingElement *f)
@@ -617,61 +646,6 @@ M2_arrayint IM2_RingElement_indices(const RingElement *f)
   const Ring *R = f->get_ring();
   return R->support(f->get_value());
 }
-
-ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f)
-{
-  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial");
-      return 0;
-    }
-  return P->list_form(f->get_value());
-}
-
-#if 0
-  int n = f->n_terms();
-  Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
-  RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
-  monoms->len = n;
-  coeffs->len = n;
-  ArrayPairOrNull result = newitem(ArrayPair);
-  result->monoms = monoms;
-  result->coeffs = coeffs;
-
-  const Ring *K = P->getLogicalCoefficients();
-  intarray resultvp;
-  Nterm *t = f->get_value();
-  int next = 0;
-  while (t != 0)
-    {
-      ring_elem c = P->get_logical_coeff(K, t); // increments t to the next term of f.
-      P->getMonoid()->to_expvector(t->monom, exp);
-      varpower::from_ntuple(nvars, exp, resultvp);
-      monoms->array[next] = Monomial::make(resultvp.raw());
-      assert( monoms->array[next] != NULL );
-      coeffs->array[next] = RingElement::make_raw(K, c);
-      assert( coeffs->array[next] != NULL );
-      next++;
-      resultvp.shrink(0);
-    }
-  return result;
-
-  intarray resultvp;
-  Nterm *t = f->get_value();
-  int next = 0;
-  for ( ; t != NULL; t = t->next)
-    {
-      P->Nmonoms()->to_varpower(t->monom, resultvp);
-      monoms->array[next] = Monomial::make(resultvp.raw());
-      assert( monoms->array[next] != NULL );
-      coeffs->array[next] = RingElement::make_raw(P->Ncoeffs(), P->Ncoeffs()->copy(t->coeff));
-      assert( coeffs->array[next] != NULL );
-      next++;
-      resultvp.shrink(0);
-    }
-  return result;
-#endif
 
 const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
 {

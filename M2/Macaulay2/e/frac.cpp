@@ -664,7 +664,7 @@ ring_elem FractionField::get_coeff(const ring_elem f, const int *) const
 {
   return f;
 }
-ring_elem FractionField::get_terms(const ring_elem f, int, int) const
+ring_elem FractionField::get_terms(int nvars0, const ring_elem f, int, int) const
 {
   return f;
 }

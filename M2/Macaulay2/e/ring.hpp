@@ -260,8 +260,6 @@ public:
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
 
-  virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
-
   virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
 			       const M2_arrayint wts) const;
   virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;

@@ -67,11 +67,18 @@ public:
 
   RingElement *lead_term(int n=-1) const;
   RingElement *rest() const;
-  int n_terms() const;
-  RingElement *get_terms(int lo, int hi) const;
-  RingElement *get_coeff(const Monomial *m) const;
-  RingElement *lead_coeff() const;
-  Monomial  *lead_monom() const;
+
+  ////////////////////////////////////
+  // The following take extra arguments, using logical monoid and coefficient ring
+  // nvars is the number of variables in an outermost monoid
+  // coeffR is the coefficient ring the result coefficients will be in
+  int n_terms(int nvars) const;
+  RingElementOrNull *get_terms(int nvars, int lo, int hi) const;
+  RingElementOrNull *get_coeff(const Ring *coeffR, const Monomial *m) const;
+  RingElementOrNull *lead_coeff(const Ring *coeffR) const;
+  MonomialOrNull  *lead_monom(int nvars) const;
+  ////////////////////////////////////
+
   int       is_homogeneous() const;
   RingElement *homogenize(int v, M2_arrayint wts) const;
   RingElement *homogenize(int v, int deg, M2_arrayint wts) const;

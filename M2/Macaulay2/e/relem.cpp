@@ -19,7 +19,7 @@ RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
   return new RingElement(R,f);
 }
 
-int RingElement::n_terms() const
+int RingElement::n_terms(int nvars) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -27,7 +27,7 @@ int RingElement::n_terms() const
       ERROR("expected polynomial ring");
       return 0;
     }
-  return P->n_logical_terms(val);
+  return P->n_logical_terms(nvars,val);
 }
 
 RingElement *RingElement::operator-() const
@@ -209,12 +209,18 @@ void RingElement::text_out(buffer &o) const
   R->elem_text_out(o, val);
 }
 
-RingElement *RingElement::get_terms(int lo, int hi) const
+RingElementOrNull *RingElement::get_terms(int nvars, int lo, int hi) const
 {
-  return new RingElement(R, R->get_terms(val, lo, hi));
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  return new RingElement(P, P->get_terms(nvars, val, lo, hi));
 }
 
-RingElementOrNull *RingElement::lead_coeff() const
+RingElementOrNull *RingElement::lead_coeff(const Ring *coeffR) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -227,11 +233,10 @@ RingElementOrNull *RingElement::lead_coeff() const
       ERROR("zero polynomial has no lead coefficient");
       return 0;
     }
-  const Ring *K = P->getLogicalCoefficients();
-  return new RingElement(K, P->lead_logical_coeff(val));
+  return new RingElement(coeffR, P->lead_logical_coeff(coeffR,val));
 }
 
-RingElementOrNull *RingElement::get_coeff(const Monomial *m) const
+RingElementOrNull *RingElement::get_coeff(const Ring *coeffR, const Monomial *m) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -239,11 +244,10 @@ RingElementOrNull *RingElement::get_coeff(const Monomial *m) const
       ERROR("expected polynomial ring");
       return 0;
     }
-  const Ring *K = P->getLogicalCoefficients();
-  return new RingElement(K, P->get_coeff(get_value(), m->ints()));
+  return new RingElement(coeffR, P->get_coeff(coeffR, get_value(), m->ints()));
 }
 
-Monomial *RingElement::lead_monom() const
+Monomial *RingElement::lead_monom(int nvars) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
