@@ -1,3 +1,11 @@
+Changes anticipated or in progress:
+
+New command line option --restricted disables the use of the following system
+calls: open, pipe, socket, connect, fork.  It also attempts "chroot .", which
+will fail unless running as root, and then tries "setuid ...
+
+-----------------------------------------------------------------------------
+
 Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
