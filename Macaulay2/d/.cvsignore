@@ -51,3 +51,4 @@ actors4.c
 mp.c
 interp.c
 actors5.c
+.gdbinit
