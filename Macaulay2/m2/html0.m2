@@ -55,7 +55,7 @@ new MarkUpType := x -> error "obsolete 'new' method called"
 
 BR         = new EmptyMarkUpType of MarkUpList
 NOINDENT   = new EmptyMarkUpType of MarkUpList
-HR         = new EmptyMarkUpType of MarkUpList
+HR         = new EmptyMarkUpType of MarkUpListParagraph
 PARA       = new MarkUpType of MarkUpListParagraph
 EXAMPLE    = new MarkUpType of MarkUpListParagraph; new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
 TABLE      = new MarkUpType of MarkUpListParagraph

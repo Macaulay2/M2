@@ -863,15 +863,11 @@ hasDocumentation = x -> (
      p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey);
      0 < #p)
 
-hr1 := newline | "-----------------------------------------------------------------------------" | newline
-hr := v -> concatenate mingle(#v + 1 : hr1 , v)
-
--- this was removing initial and terminal newlines
--- trimwhole := x -> selectRegexp ( "^\n*(.*[^\n]|)\n*$",1, x)
-
 help = method(SingleArgumentDispatch => true)
-help List := v -> hr apply(v, help)
-help Thing := s -> documentation s
+help List := v -> SEQ { between(HR{}, apply(v, help)) }
+help Thing := s -> (
+     r := documentation s;
+     if r === null then PARA { "No documentation found for '", formatDocumentTag s, "'"} else r)
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
@@ -1189,6 +1185,8 @@ html TEX := x -> x#0
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
+
+net HR := x -> "-----------------------------------------------------------------------------"
 
 net UL := 
 net OL := 
