@@ -134,6 +134,24 @@ normalizeColumn
   virtual bool dot_product(int i, int j, ring_elem &result) const = 0;
   /* dot product of columns i and j */
 
+  virtual bool column2by2(int c1, int c2, 
+			  ring_elem a1, ring_elem a2,
+			  ring_elem b1, ring_elem b2,
+			  bool opposite_mult,
+			  bool doRecording=true) = 0;
+  /* column(c1) <- a1 * column(c1) + a2 * column(c2),
+     column(c2) <- b1 * column(c1) + b2 * column(c2)
+  */
+
+  virtual bool row2by2(int r1, int r2, 
+		       ring_elem a1, ring_elem a2,
+		       ring_elem b1, ring_elem b2,
+		       bool opposite_mult,
+		       bool doRecording=true) = 0;
+  /* row(r1) <- a1 * row(r1) + a2 * row(r2),
+     row(r2) <- b1 * row(r1) + b2 * row(r2)
+  */
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
