@@ -13,7 +13,7 @@ struct frac_elem
 
 class FractionField : public Ring
 {
-  const PolyRing *R_;		// Base ring.  Assumed to be a domain.
+  const PolyRingFlat *R_;		// Base ring.  Assumed to be a domain.
   ring_elem _MINUS_ONE;		// this is -1 in the ring R.
 
   frac_elem *new_frac_elem() const;
@@ -23,9 +23,9 @@ class FractionField : public Ring
 protected:
   FractionField() {}
   virtual ~FractionField() {}
-  bool initialize_frac(const PolyRing *R);
+  bool initialize_frac(const PolyRingFlat *R);
 public:
-  static FractionField * create(const PolyRing *R);
+  static FractionField * create(const PolyRingFlat *R);
 
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }

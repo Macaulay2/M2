@@ -7,6 +7,7 @@
 #include "matrix.hpp"
 #include "montableZZ.hpp"
 #include "montable.hpp"
+#include "comp_gb.hpp"
 
 PolyRingQuotient::~PolyRingQuotient()
 {
@@ -188,6 +189,40 @@ ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_e
 void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
 			      ring_elem &x, ring_elem &y) const
 {
+  MatrixConstructor mat(make_FreeModule(1),2);
+  mat.set_entry(0,0,a);
+  mat.set_entry(0,1,b);
+  Matrix *m = mat.to_matrix(); // {a,b}
+  M2_arrayint weights = makearrayint(n_vars());
+  for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
+  GBComputation *G = GBComputation::choose_gb(m, 
+					      true, // collect syz
+					      -1, // keep all rows
+					      weights,
+					      false,
+					      -1,
+					      0,0);
+  G->set_stop_conditions(false,
+			 false,
+			 NULL,
+			 -1,
+			 1, // syzygy limit
+			 -1,
+			 -1,
+			 -1,
+			 false,
+			 NULL);
+  G->start_computation();
+  const Matrix *s = G->get_syzygies();
+
+  // Now extract the two pieces of info
+  x = s->elem(0,0);
+  y = s->elem(1,0);
+  ring_elem c = preferred_associate(x);
+  ring_elem x1 = mult(c,x);
+  ring_elem y1 = mult(c,y);
+  x = x1;
+  y = y1;
 }
 
 ring_elem PolyRingQuotient::random() const

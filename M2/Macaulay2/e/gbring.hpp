@@ -42,6 +42,7 @@ class gbvectorHeap;
 
 class GBRing : public our_new_delete
 {
+  friend class GBKernelComputation;
   friend class WeylAlgebra;
   friend class SkewPolynomialRing;
 
@@ -197,6 +198,12 @@ public:
   const ring_elem one() { return _one; }  // the element '1' in the base K.
 
   void gbvector_remove(gbvector *f);
+
+  gbvector * gbvector_raw_term(ring_elem coeff, 
+			       const int *monom, 
+			       int comp);
+  // Returns coeff*monom*e_sub_i in a free module.  If the order is a Schreyer
+  // order, the 'monom' should already be encoded.
 
   gbvector * gbvector_term(const FreeModule *F, ring_elem coeff, int comp);
   // Returns coeff*e_sub_i in F, the monomial is set to 1.

@@ -7,6 +7,9 @@
 #include "intarray.hpp"
 #include "monoid.hpp"
 
+class GBMatrix;
+class Matrix;
+
 class SchreyerOrder : public our_new_delete
 {
   const Monoid *M;
@@ -23,6 +26,7 @@ public:
   SchreyerOrder(const Monoid *m) : M(m), _nslots(m->monomial_size() + 1), _rank(0) {}
 
   static SchreyerOrder *create(const Matrix *m);
+  static SchreyerOrder *create(const GBMatrix *m);
 
   int rank() const { return _rank; }
   int compare_num(int i) const { return _order[i * _nslots]; }
@@ -60,6 +64,10 @@ public:
 		       const int *n,
 		       int n_comp) const;
 
+  int schreyer_compare_encoded(const int *m,
+			       int m_comp,
+			       const int *n,
+			       int n_comp) const;
 
   void text_out(buffer &o) const;
 };

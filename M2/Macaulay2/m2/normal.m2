@@ -1,3 +1,4 @@
+a
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
 -- Computes the integral closure of a reduced ring (R/I where I is radical).  
@@ -91,7 +92,7 @@ isSinglyGraded := (R) -> (
 if ICnode === symbol ICnode then
     ICnode = new Type of MutableHashTable;
 
-newICnode := (R) -> (
+newICnode = (R) -> (
      I := ideal presentation R;
      C := new ICnode;
      C#"todo" = {{I,null}};
@@ -112,7 +113,7 @@ newICnode := (R) -> (
      C)
 
 -- Tells us when to stop the algorithm.  Moves ideals from C#"todo" to C#"pending".
-next := (C) -> (
+next = (C) -> (
      if C#"pending" =!= null then true
      else if #C#"todo" > 0
      then (
@@ -121,7 +122,7 @@ next := (C) -> (
 	  true)
      else false)
 
-idealizer0 := (C,w) -> (
+idealizer0 = (C,w) -> (
      -- Takes {I,J} off the pending list of C,
      -- computes the ring sturcture of Hom_R(J,J).
      -- This is done using the IC structure, since we wish to be able to
@@ -225,16 +226,15 @@ idealizer0 := (C,w) -> (
 	       C#"pending" = null;
 	       C#"rings" = R2;
 	       )
-     	  )
+     	  );
      )
 
 
-normal0 := (C) -> (
+normal0 = (C) -> (
      -- This handles the first node: finding an ideal that contains the NNL 
      -- locus.  
      I := C#"pending"#0;
      III = I;
-     error "got to normal0";
      local J;
      SI := jacobian I;
      R := (ring I)/I;

@@ -377,6 +377,9 @@ class PolyRingFlat : public PolynomialRing
 {
 public:
   virtual Nterm * numerator(ring_elem f) const { return f.poly_val; }
+
+  virtual const PolyRingFlat * cast_to_PolyRingFlat()  const { return this; }
+  virtual       PolyRingFlat * cast_to_PolyRingFlat()        { return this; }
 };
 
 

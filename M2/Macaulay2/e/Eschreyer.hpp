@@ -3,21 +3,36 @@
 #define _Eschreyer_hpp
 
 #include "polyring.hpp"
+#include "gbring.hpp"
+#include "schorder.hpp"
 #include "matrix.hpp"
-#include "geovec.hpp"
+
+struct GBMatrix : public our_new_delete {
+  const FreeModule *F; // target
+  std::vector<gbvector *, gc_allocator<gbvector *> > elems;
+
+  GBMatrix(const Matrix *m);
+  GBMatrix(const FreeModule *F);
+  void append(gbvector *f); // grabs f
+  const FreeModule * get_free_module() const { return F; }
+  Matrix *to_matrix();
+};
 
 class GBKernelComputation : public object
 {
   const PolynomialRing *R;
   const Ring *K;
+  GBRing *GR;
   const Monoid *M;
+  const SchreyerOrder *SF; // order for F.
+  const SchreyerOrder *SG; // order for G.
   const FreeModule *F;  // This is where the action is...
   const FreeModule *G;  // This is where the resulting syzygies live.
         // This MUST be a Schreyer free module compatible with the input!
 
   array<MonomialIdeal *> mi;  // Used in reduction.
-  array<vec> gb;            // This is the "stripped" GB.
-  array<vec> syzygies;     // This is basically the result.
+  array<gbvector *> gb;            // This is the "stripped" GB.
+  array<gbvector *> syzygies;     // This is basically the result.
 
   ring_elem one;
   int *PAIRS_mon;   // A monomial in M, used only in new_pairs.
@@ -29,25 +44,26 @@ class GBKernelComputation : public object
   int total_reduce_count;
 
   void new_pairs(int i);
-  void strip_gb(const Matrix *m);  // Fills in 'gb' with stripped GB.
+  void strip_gb(const std::vector<gbvector *, gc_allocator<gbvector *> > &m);
+  void strip_gb(const GBMatrix *m);
 
-  vec make_syz_term(ring_elem c, const int *monom, int comp) const;
+  gbvector * make_syz_term(ring_elem c, const int *monom, int comp) const;
   // This routine grabs 'c', and 'monom' should be the total monomial.
 
-  bool find_ring_divisor(const int *exponents, ring_elem &result);
+  bool find_ring_divisor(const int *exponents, const gbvector *&result);
   int find_divisor(const MonomialIdeal * mi, const int *exponents, int &result);
   // Returns the index of the least element in the monomial order which divides.
 
-  vec s_pair(vec syz) const;
-  void reduce(vec &g, vec &gsyz);  // Reduces g to zero.  gsyz is real result.
+  gbvector * s_pair(gbvector * syz) const;
+  void reduce(gbvector * &g, gbvector * &gsyz);  // Reduces g to zero.  gsyz is real result.
 public:
-  GBKernelComputation(const Matrix *m);
+  GBKernelComputation(const GBMatrix *m);
 
   virtual ~GBKernelComputation();
 
   int calc();
 
-  Matrix *get_syzygies();
+  GBMatrix *get_syzygies();
 
 public:
   GBKernelComputation * cast_to_GBKernelComputation() { return this; }

@@ -20,6 +20,7 @@ class GF;
 class FractionField;
 class PolynomialRing;
 class PolyRing;
+class PolyRingFlat;
 class PolyQQ;
 class SkewPolynomialRing;
 class SchurRing;
@@ -141,6 +142,9 @@ public:
 
   virtual const PolyQQ * cast_to_PolyQQ()  const      { return 0; }
   virtual       PolyQQ * cast_to_PolyQQ()             { return 0; }
+
+  virtual const PolyRingFlat * cast_to_PolyRingFlat()  const { return 0; }
+  virtual       PolyRingFlat * cast_to_PolyRingFlat()        { return 0; }
 
   virtual const FractionField * cast_to_FractionField() const    { return 0; }
   virtual       FractionField * cast_to_FractionField()          { return 0; }

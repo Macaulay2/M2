@@ -47,6 +47,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	Eschreyer \
 	ntl_interface \
 	gbweight \
 	qring \

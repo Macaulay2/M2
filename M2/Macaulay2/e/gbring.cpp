@@ -60,6 +60,7 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     K(K0),
     _coeffs_ZZ(false),  // set below
     _nvars(M->n_vars()),
+    _up_order(false),
     _is_skew(false),
     _skew(),
     _skew_monoms(0),
@@ -307,6 +308,21 @@ gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   return v;
 }
 
+gbvector * GBRing::gbvector_raw_term(ring_elem coeff, 
+				 const int *monom, 
+				 int comp)
+  // Returns coeff*monom*e_sub_i in a free module.  If the order is a Schreyer
+  // order, the 'monom' should already be encoded.
+{
+  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  v->coeff = coeff;
+  v->comp = comp;
+  v->next = 0;
+  M->copy(monom,v->monom);
+
+  return v;
+}
+
 gbvector * GBRing::gbvector_term(const FreeModule *F, 
 				 ring_elem coeff, 
 				 const int *monom, 
@@ -314,11 +330,7 @@ gbvector * GBRing::gbvector_term(const FreeModule *F,
   // Returns coeff*monom*e_sub_i in F.  If comp is 0, then F is never 
   // considered.
 {
-  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
-  v->coeff = coeff;
-  v->comp = comp;
-  v->next = 0;
-  M->copy(monom,v->monom);
+  gbvector *v = gbvector_raw_term(coeff,monom,comp);
 
   const SchreyerOrder *S;
   if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
@@ -457,18 +469,23 @@ int GBRing::gbvector_compare(const FreeModule *F,
 		     const gbvector *g) const
   // Return LT, EQ, GT depending on the monomial order of lead(f), lead(g) in F.
 {
-  if (!_schreyer_encoded)
-    {
-      const SchreyerOrder *S = F->get_schreyer_order();
-      if (S != 0)
-	return S->schreyer_compare(f->monom, f->comp-1, g->monom, g->comp-1);
-    }
-
   int cmp;
-  if (_up_order)
-    cmp = M->compare(f->monom, -f->comp, g->monom, -g->comp);
+  const SchreyerOrder *S = F->get_schreyer_order();
+  if (S)
+    {
+      if (_schreyer_encoded)
+	cmp = S->schreyer_compare_encoded(f->monom, f->comp-1, g->monom, g->comp-1);
+      else
+	cmp = S->schreyer_compare(f->monom, f->comp-1, g->monom, g->comp-1);
+    }
   else
-    cmp = M->compare(f->monom, f->comp, g->monom, g->comp);
+    {
+      // At this point F doesn't have a Schreyer order
+      if (_up_order)
+	cmp = M->compare(f->monom, -f->comp, g->monom, -g->comp);
+      else
+	cmp = M->compare(f->monom, f->comp, g->monom, g->comp);
+    }
   return cmp;
 }
 

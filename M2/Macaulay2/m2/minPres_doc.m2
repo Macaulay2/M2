@@ -1,81 +1,66 @@
--- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
-
-document {
-     Key => (minPres,Ring),
+document{(minPres,Ring),
      Headline => "compute a minimal presentation of a quotient ring",
-     Usage => "Q = minPres R",
+     Usage => {
+	  TT "Q = minPres R", "-- If ", TT "S", " is a polynomial ring 
+	  and ", TT "I", " an ideal of ", TT "S", " then we compute a minimal presentation of  ", TT "R = S/I", " and 
+	  return a quotient ring ", TT "S'/J", " such that ", TT "S'/J", " is 
+	  isomorphic to ", TT "S/I", "."
+    	  },
      Inputs => {
-	  "R" => {"a quotient ring of the form ", TT "R = S/I"}
+	  "R" => {"Any quotient ring S/I."}
 	  },
      Outputs => {
-	  "Q" => {"an minimally presented isomorphic quotient ring ", TT "S'/J"}
+	  {"A quotient ring ", TT "Q = S'/J", " that is isomorphic 
+	       to ", TT "S/I", " and ", TT "J", " has fewer generators 
+	       than ", TT "I", "."}
 	  },
      PARA "The function ", TT "minPres", " is written so that it stores 
-     the map from ", TT "R", " to ", TT "Q", ".  The map is stored 
-     as ", TT "R.minPresMap", ".  The inverse of this map is stored 
+     the map from ", TT "R = S/I", " to ", TT "Q = S'/J", ".  The map is stored 
+     as ", TT "R.minPresMap", " , where ", TT "I", " is the input
+     ideal.  Similarly the inverse of this map is stored 
      as ", TT "R.minPresMapInv", ".",
      EXAMPLE {
 	  "C = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
 	  "minPres(C)",
 	  "C.minPresMap",
-	  "C.minPresMapInv"
+	  "C.minPresMapInv",
 	  }
      }
 
 
--- I commented this out because minPres doesn't actually accept this option (drg)
+document{ [minPres,Variable],
+     Headline=> "Rename the variables in the ring given so that the minimal 
+     presentation variables are named differently than those in the original 
+     ring."
+     }
 
--- document { (minPres,VarName),
---      Headline=> "Rename the variables in the ring given so that the minimal 
---      presentation variables are named differently than those in the original 
---      ring."
---      }
-
-document {
-     Key => (minPresIdeal,Ideal),
+document{(minPres2, Ideal),
      Headline => "compute a minimal presentation of an ideal",
---      Usage => {
--- 	  TT "minPresIdeal I", "-- If ", TT "R", " is the ring of ", TT "I", 
--- 	  " then computes a minimal presentation of ", TT "R/I", " and 
--- 	  returns and ideal ", TT "J", " such that ", TT "R/J", " is 
--- 	  isomorphic to ", TT "R/I", "."
---     	  },
-     Usage => "J = minPresIdeal I",
+     Usage => {
+	  TT "J = minPres2 I", "-- If ", TT "R", " is the ring of ", TT "I", 
+	  " a minimal presentation of ", TT "R/I", " is computed and 
+	  and an ideal ", TT "J", " is returned such that ", TT "R/J", " is 
+	  isomorphic to ", TT "R/I", "."
+    	  },
      Inputs => {
 	  "I" => {"Any ideal in a polynomial ring."}
 	  },
-     Outputs => {
-	  "J" => {"An ideal such that ", TT "R/J", " is isomorphic 
+     Outputs => 
+	  {"An ideal such that ", TT "R/J", " is isomorphic 
 	       to ", TT "R/I", " and ", TT "J", " has fewer generators 
-	       than ", TT "I", "."}
-	  },
-     -- this documentation is wrong, because the ambient ring changes, too!
-     PARA {
-	  "The function ", TT "minPresIdeal", " is written so that it stores 
-	  the map from ", TT "R/I", " to ", TT "R/J", ".  The map is stored 
-	  as ", TT "I.cache.minPresMap", " , where ", TT "I", " is the input
-	  ideal.  Similarly the inverse of this map is stored 
-	  as ", TT "I.cache.minPresMapInv", ".  There are times when it is 
-	  advantageous to have the input be an ideal as opposed to the 
-	  quotient ring."},
-     SeeAlso => {"minPres"},
+	       than ", TT "I", "."},
+     PARA "The function ", TT "minPres", " is written so that it stores 
+     the map from ", TT "R/I", " to ", TT "R/J", ".  The map is stored 
+     as ", TT "I.cache.minPresMap", " , where ", TT "I", " is the input
+     ideal.  Similarly the inverse of this map is stored 
+     as ", TT "I.cache.minPresMapInv", ".  There are times when it is 
+     advantageous to have the input be an ideal as opposed to the 
+     quotient ring.",
      EXAMPLE {
 	  "C = ZZ/101[x,y,z,u,w];",
 	  "I = ideal(x-x^2-y,z+x*y,w^2-u^2);",
-	  "minPresIdeal I",
+	  "minPres2 I",
 	  "I.cache.minPresMap",
-	  "I.cache.minPresMapInv"
+	  "I.cache.minPresMapInv",
 	  }
      }
-
--- I commented this out because minPres doesn't actually accept this option (drg)
-
--- document { (minPresIdeal,VarName),
---      Headline=> "Rename the variables in the ring of the ideal given so 
---      that the variables for the minimal presentation are named differently 
---      than the variables in the original ring."
---      }
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:

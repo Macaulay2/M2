@@ -32,7 +32,7 @@ int FractionField::n_fraction_vars() const
   return R_->n_vars();
 }
 
-bool FractionField::initialize_frac(const PolyRing *R) 
+bool FractionField::initialize_frac(const PolyRingFlat *R) 
 {
   initialize_ring(R->charac(),
 		  R->get_degree_ring());
@@ -48,7 +48,7 @@ bool FractionField::initialize_frac(const PolyRing *R)
   return true;
 }
 
-FractionField *FractionField::create(const PolyRing *R)
+FractionField *FractionField::create(const PolyRingFlat *R)
 {
   FractionField *result = new FractionField;
   result->initialize_frac(R);

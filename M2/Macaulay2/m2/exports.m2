@@ -808,6 +808,7 @@ export (
 	symbol min,
 	symbol minPosition,
 	symbol minPres,
+	symbol minPres2,
 	symbol minPresIdeal,
 	symbol minPresMap,
 	symbol minPresMapIdeal,

@@ -35,15 +35,16 @@ protected:
 public:
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
-  static ComputationOrNull *choose_gb(const Matrix *m,
-				      M2_bool collect_syz,
-				      int n_rows_to_keep,
-				      M2_arrayint gb_weights,
-				      M2_bool use_max_degree,
-				      int max_degree,
-				      int algorithm,
-				      int strategy);
+  static GBComputation *choose_gb(const Matrix *m,
+				  M2_bool collect_syz,
+				  int n_rows_to_keep,
+				  M2_arrayint gb_weights,
+				  M2_bool use_max_degree,
+				  int max_degree,
+				  int algorithm,
+				  int strategy);
   // Values for algorithm and strategy are documented in engine.h
+  // Returns NULL if an error occurs
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
   // The default version returns an error saying that Hilbert functions cannot be used.
