@@ -21,7 +21,7 @@ gb I;
 R = ZZ/32003[u,v,x,y,z,MonomialOrder=>Lex]
 li = {x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}
 I = ideal li
-time doGB(gens I,0,{Lex=>5,Component})
+time doGB(gens I,0,{Lex=>5,Position})
 
 ///
 -- Local Variables:

@@ -77,7 +77,7 @@ assert( gcd(a^5*b^3*c^7 , a^7*b^2*c) == a^5*b^2*c )
 
 assert( rawSyzygy(ab,b2) == {b,a} )
 
-rawMonomialOrdering {Component => null, Lex => 3, LexTiny => 4, GRevLex => {1,2,3}}
+rawMonomialOrdering {Position => Up, Lex => 3, LexTiny => 4, GRevLex => {1,2,3}}
 rawMonomialOrdering {Lex => 1, LexSmall => 2, LexTiny => 4}
 rawMonomialOrdering {GRevLex => {1,1,1}, GRevLexSmall => {2,2}, GRevLexTiny => {4,4,4,4}}
 rawMonomialOrdering {GroupLex => 3, NCLex => 4, Weights => {3,4,5}}

@@ -1167,13 +1167,13 @@ expression Boolean := expression Symbol := expression File := expression String 
 
 -----------------------------------
 
-Position = new Type of BasicList
-Position.synonym = "position"
-toString Position := net Position := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
+FilePosition = new Type of BasicList
+FilePosition.synonym = "file position"
+toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 backtrace = () -> apply(toList deepSplice report, 
      i -> (
-	  if class i#0 === String then new Position from i
+	  if class i#0 === String then new FilePosition from i
 	  else if class i#0 === Function then new FunctionApplication from i
 	  else if class i#0 === Symbol and #i === 3 then new BinaryOperation from i
 	  else i
