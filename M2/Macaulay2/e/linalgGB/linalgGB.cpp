@@ -1,5 +1,6 @@
 #include "linalgGB.hpp"
 #include <vector>
+#include "../text_io.hpp"
 
 void LinearAlgebraGB::append_row(monomial m, int elem)
 {
@@ -177,6 +178,168 @@ void LinearAlgebraGB::start_computation()
       s_pair_step();
     }
   set_status(is_done);
+}
+
+LinearAlgebraGB::LinearAlgebraGB(const Matrix *m,
+				  M2_bool collect_syz, 
+				  int n_rows_to_keep,
+				  M2_arrayint gb_weights,
+				  int strategy, 
+				  M2_bool use_max_degree,
+				  int max_degree)
+  : S(&H)
+{
+}
+
+LinearAlgebraGB::~LinearAlgebraGB()
+{
+#warning "anything to delete?"
+}
+
+LinearAlgebraGB * LinearAlgebraGB::create(const Matrix *m, 
+				  M2_bool collect_syz, 
+				  int n_rows_to_keep,
+				  M2_arrayint gb_weights,
+				  int strategy, 
+				  M2_bool use_max_degree,
+				  int max_degree)
+{
+  buffer o;
+  o << "entering LinearAlgebraGB::create" << newline;
+  emit(o.str());
+  LinearAlgebraGB *result = new LinearAlgebraGB(m,
+						collect_syz,
+						n_rows_to_keep,
+						gb_weights,
+						strategy,
+						use_max_degree,
+						max_degree);
+  return result;
+}
+
+/*************************
+ ** Top level interface **
+ *************************/
+
+ComputationOrNull *LinearAlgebraGB::set_hilbert_function(const RingElement *hf)
+{
+#if 0
+  _hf_orig = hf;
+  _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
+  _use_hilb = true;
+  _hilb_new_elems = true;
+
+  return this;
+#endif
+  return 0;
+}
+
+const MatrixOrNull *LinearAlgebraGB::get_gb()
+{
+#if 0
+  minimalize_gb();
+  return minimal_gb->get_gb();
+#endif
+  return 0;
+}
+
+const MatrixOrNull *LinearAlgebraGB::get_mingens()
+{
+#if 0
+  MatrixConstructor mat(_F,0);
+  for (vector<gbelem *, gc_allocator<gbelem *> >::iterator i = gb.begin(); i != gb.end(); i++)
+    if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
+      mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
+  return mat.to_matrix();
+#endif
+  return 0;
+}
+
+const MatrixOrNull *LinearAlgebraGB::get_change()
+{
+#if 0
+  minimalize_gb();
+  return minimal_gb->get_change();
+#endif
+  return 0;
+}
+
+const MatrixOrNull *LinearAlgebraGB::get_syzygies()
+{
+#if 0
+  // The (non-minimal) syzygy matrix
+  MatrixConstructor mat(_Fsyz, 0);
+  for (vector<gbvector *, gc_allocator<gbvector *> >::iterator i = _syz.begin(); i != _syz.end(); i++)
+    {
+      mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+    }
+  return mat.to_matrix();
+#endif
+  return 0;
+}
+
+const MatrixOrNull *LinearAlgebraGB::get_initial(int nparts)
+{
+#if 0
+  minimalize_gb();
+  return minimal_gb->get_initial(nparts);
+#endif
+  return 0;
+}
+
+const MatrixOrNull *LinearAlgebraGB::matrix_remainder(const Matrix *m)
+{
+#if 0
+  minimalize_gb();
+  return minimal_gb->matrix_remainder(m);
+#endif
+  return 0;
+}
+
+void LinearAlgebraGB::matrix_lift(const Matrix *m,
+		 MatrixOrNull **result_remainder,
+		 MatrixOrNull **result_quotient
+		 )
+{
+#if 0
+  minimalize_gb();
+  minimal_gb->matrix_lift(m, result_remainder, result_quotient);
+#endif
+}
+
+int LinearAlgebraGB::contains(const Matrix *m)
+  // Return -1 if every column of 'm' reduces to zero.
+  // Otherwise return the index of the first column that
+  // does not reduce to zero.
+{
+#if 0
+  minimalize_gb();
+  return minimal_gb->contains(m);
+#endif
+  return 0;
+}
+
+int LinearAlgebraGB::complete_thru_degree() const
+  // The computation is complete up through this degree.
+{
+#if 0
+  return _complete_thru_this_degree;
+#endif
+  return 0;
+}
+
+void LinearAlgebraGB::text_out(buffer &o)
+  /* This displays statistical information, and depends on the
+     gbTrace value */
+{
+  o << "# pairs computed = " << n_pairs_computed << newline;
+  if (gbTrace >= 5 && gbTrace % 2 == 1)
+    for (unsigned int i=0; i<gb.size(); i++)
+      {
+	o << i << '\t';
+	//	R->gbvector_text_out(o, F, gb[i].f);
+	o << newline;
+      }
 }
 
 // Local Variables:

@@ -1,7 +1,7 @@
 // (c) 1994-2004  Michael E. Stillman
 
-#ifndef _MonomialTable_h_
-#define _MonomialTable_h_
+#ifndef _MonomialLookupTable_h_
+#define _MonomialLookupTable_h_
 
 #include <vector>
 #include <gc.h>
@@ -12,7 +12,7 @@
 typedef int * monomial;
 typedef int * exponent_vector;
 
-class MonomialTable;
+class MonomialLookupTable;
 struct tagged_monomial : public our_new_delete
 {
   monomial monom; // pointer to some space
@@ -24,7 +24,7 @@ struct tagged_monomial : public our_new_delete
 
 class mi_node : public our_new_delete // monomial ideal internal node ///
 {
-  friend class MonomialTable;
+  friend class MonomialLookupTable;
 protected:
   int                 var;
   int                 exp;		
@@ -60,7 +60,7 @@ protected:
     }
 };
 
-class MonomialTable : public our_new_delete
+class MonomialLookupTable : public our_new_delete
 {
  public:
  private:
@@ -88,14 +88,14 @@ private:
   void k_basis1(int topvar) const;
 
 public:
-  MonomialTable() : mi(0), count(0) {}
-  virtual ~MonomialTable() { deleteitem(mi); }
+  MonomialLookupTable() : mi(0), count(0) {}
+  virtual ~MonomialLookupTable() { deleteitem(mi); }
   int length_of() const { return count; }
 
-  MonomialTable(queue<tagged_monomial *> &elems);
-  MonomialTable(queue<tagged_monomial *> &elems, queue<tagged_monomial *> &rejects);
+  MonomialLookupTable(queue<tagged_monomial *> &elems);
+  MonomialLookupTable(queue<tagged_monomial *> &elems, queue<tagged_monomial *> &rejects);
 
-  MonomialTable * copy() const;
+  MonomialLookupTable * copy() const;
 
   monomial first_elem() const; // returns varpower
   monomial second_elem() const; // returns varpower
@@ -132,9 +132,9 @@ public:
   void find_all_divisors(exponent_vector exp, vector<tagged_monomial *,gc_allocator <tagged_monomial *> > &b) const;
   // Search. Return a list of all elements which divide 'exp'.
   
-  tagged_monomial *operator[](Index< MonomialTable  > i) const;
-  Index< MonomialTable  > first() const;
-  Index< MonomialTable  > last () const;
+  tagged_monomial *operator[](Index< MonomialLookupTable  > i) const;
+  Index< MonomialLookupTable  > first() const;
+  Index< MonomialLookupTable  > last () const;
 
   void *next (void *p) const;
   void *prev (void *p) const;
@@ -146,36 +146,36 @@ public:
 
 //-----------------------------------------------------------------
 
-inline void MonomialTable::insert_minimal(tagged_monomial *b) 
+inline void MonomialLookupTable::insert_minimal(tagged_monomial *b) 
 {
   insert1(mi, b); 
   count++; 
 }
 
-inline tagged_monomial * MonomialTable::operator[](Index<MonomialTable > i) const
+inline tagged_monomial * MonomialLookupTable::operator[](Index<MonomialLookupTable > i) const
 {
   mi_node *p = reinterpret_cast<mi_node *>(i.val());
   return p->baggage();
 }
 
-inline mi_node *MonomialTable::first_node() const
+inline mi_node *MonomialLookupTable::first_node() const
 {
   return next(mi);
 }
 
-inline mi_node *MonomialTable::last_node() const
+inline mi_node *MonomialLookupTable::last_node() const
 {
   return prev(mi);
 }
 
-inline Index<MonomialTable > MonomialTable::first() const 
+inline Index<MonomialLookupTable > MonomialLookupTable::first() const 
 { 
-  return Index<MonomialTable >(next(reinterpret_cast<void *>(mi)), this);
+  return Index<MonomialLookupTable >(next(reinterpret_cast<void *>(mi)), this);
 }
 
-inline Index<MonomialTable > MonomialTable::last() const 
+inline Index<MonomialLookupTable > MonomialLookupTable::last() const 
 { 
-  return Index<MonomialTable >(prev(reinterpret_cast<void *>(mi)), this);
+  return Index<MonomialLookupTable >(prev(reinterpret_cast<void *>(mi)), this);
 }
 
 #endif

@@ -1,5 +1,6 @@
 // Copyright 2004 Michael E. Stillman
 
+#include "linalgGB.hpp"
 #include "SPairSet.h"
 #include "monoms.h"
 #include <functional>
@@ -103,7 +104,7 @@ void SPairSet::insert(SPairSet::spair *p)
   p->next = heap;
   heap = p;
 }
-int SPairSet::find_new_pairs(const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
+int SPairSet::find_new_pairs(const std::vector<gbelem, gc_allocator<gbelem> > &gb,
 			     bool remove_disjoints)
   // returns the number of new pairs found
 {
@@ -171,7 +172,7 @@ SPairConstructor::pre_spair *SPairConstructor::create_pre_spair(int i)
 
 SPairConstructor::SPairConstructor(MonomialSet* H0,
 				   SPairSet *S0,
-				   const std::vector<gb_elem, gc_allocator<gb_elem> > &gb0,
+				   const std::vector<gbelem, gc_allocator<gbelem> > &gb0,
 				   bool remove_disjoints0)
   : H(H0),
     S(S0),
@@ -249,7 +250,7 @@ int SPairConstructor::construct_pairs()
   ////////////////////////////
   // Now minimalize the set //
   ////////////////////////////
-  MonomialTable *montab = new MonomialTable;
+  MonomialLookupTable *montab = new MonomialLookupTable;
 
   spairs::iterator first = new_set.begin();
   spairs::iterator next = first;
@@ -296,7 +297,7 @@ int SPairConstructor::construct_pairs()
 
 int SPairConstructor::make(MonomialSet* H0,
 			   SPairSet *S0,
-			   const std::vector<gb_elem, gc_allocator<gb_elem> > &gb0,
+			   const std::vector<gbelem, gc_allocator<gbelem> > &gb0,
 			   bool remove_disjoints0)
 {
   SPairConstructor C(H0,S0,gb0,remove_disjoints0);

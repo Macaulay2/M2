@@ -490,7 +490,7 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
 #endif
 #include "linalgGB/MonomialTable.h"
 #include "linalgGB/interface.h"
-MonomialTable *make_monideal(const Matrix *M, MonomialSet &H)
+MonomialLookupTable *make_monideal(const Matrix *M, MonomialSet &H)
 {
   const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -517,7 +517,7 @@ MonomialTable *make_monideal(const Matrix *M, MonomialSet &H)
 	}
     }
 
-  MonomialTable *result = new MonomialTable(new_elems);
+  MonomialLookupTable *result = new MonomialLookupTable(new_elems);
   return result;
 }
 
@@ -554,7 +554,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
   H.dump();
 
   // Now make a MonomialTable
-  MonomialTable *T = make_monideal(M,H);
+  MonomialLookupTable *T = make_monideal(M,H);
 
   buffer o;
   o << "Number of elements in MonomialTable = " << T->length() << newline;

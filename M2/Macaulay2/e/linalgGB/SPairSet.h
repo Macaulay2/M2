@@ -6,12 +6,8 @@
 #include "MonomialSet.h"
 #include "interface.h"
 
-struct gb_elem : public our_new_delete {
-  poly f; // maybe a pointer??
-  int deg;
-  unsigned char is_minimal; /* use this for minimality checking too? */
-};
-
+class LinearAlgebraGB;
+class gbelem;
 
 class SPairSet : public our_new_delete
 {
@@ -35,7 +31,7 @@ class SPairSet : public our_new_delete
 
   ~SPairSet();
 
-  int find_new_pairs(const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
+  int find_new_pairs(const std::vector<gbelem, gc_allocator<gbelem> > &gb,
 		    bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
 
@@ -84,7 +80,8 @@ class SPairConstructor : public our_new_delete
 
   SPairConstructor(MonomialSet *H0,
 		   SPairSet *S0,
-		   const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
+		   const std::vector<gbelem, 
+                                     gc_allocator<gbelem> > &gb,
 		   bool remove_disjoints);
 
   int construct_pairs();
@@ -94,13 +91,14 @@ class SPairConstructor : public our_new_delete
   MemoryBlock B;
   SPairSet *S;
 
-  const std::vector<gb_elem, gc_allocator<gb_elem> > &gb;
+  const std::vector<gbelem, gc_allocator<gbelem> > &gb;
   bool remove_disjoints;
 
  public:
   static int make(MonomialSet *H0,
 		  SPairSet *S0,
-		  const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
+	          const std::vector<gbelem, 
+                                     gc_allocator<gbelem> > &gb,
 		  bool remove_disjoints);
 };
 

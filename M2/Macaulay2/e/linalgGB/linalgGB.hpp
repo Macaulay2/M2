@@ -8,15 +8,24 @@
 #include "SPairSet.h"
 #include "MonomialTable.h"
 
+enum gbelem_type { 
+  ELEM_IN_RING,  // These are ring elements
+  ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might also be min gens
+  // In the graded case, they ARE minimal generators
+  ELEM_MIN_GB,    // These are elements which are minimal GB elements
+  ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
+};
+
+struct gbelem : public our_new_delete {
+  poly f;
+  int deg;
+  int alpha; // the homogenizing degree
+  unsigned char is_minimal;
+  gbelem_type minlevel;
+};
+
 class LinearAlgebraGB : public GBComputation {
 public:
-  enum gbelem_type { 
-    ELEM_IN_RING,  // These are ring elements
-    ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might also be min gens
-                            // In the graded case, they ARE minimal generators
-    ELEM_MIN_GB,    // These are elements which are minimal GB elements
-    ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
-  };
   enum spair_type {
     SPAIR_SPAIR,
     SPAIR_GCD_ZZ,
@@ -24,13 +33,6 @@ public:
     SPAIR_SKEW,
     SPAIR_GEN,
     SPAIR_ELEM
-  };
-
-  struct gbelem : public our_new_delete {
-    poly g;
-    int deg;
-    int alpha; // the homogenizing degree
-    gbelem_type minlevel;
   };
 
   struct row_elem : public our_new_delete {
@@ -55,7 +57,7 @@ private:
   MonomialSet H; // Hash table of monomials in the ring
   SPairSet S;
 
-  MonomialTable *lookup; // This should be the monomial ideal type
+  MonomialLookupTable *lookup; // This should be the monomial ideal type
   int this_degree;
 #if 0
   const MonomialTable *ringtable;    // At most one of these two will be non-NULL.
@@ -149,6 +151,14 @@ private:
 private:
   enum ComputationStatusCode computation_is_complete();
   virtual bool stop_conditions_ok() { return true; }
+
+  LinearAlgebraGB(const Matrix *m, 
+		  M2_bool collect_syz, 
+		  int n_rows_to_keep,
+		  M2_arrayint gb_weights,
+		  int strategy, 
+		  M2_bool use_max_degree,
+		  int max_degree);
 
 public:
   //////////////////////////
