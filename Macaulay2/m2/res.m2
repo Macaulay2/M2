@@ -268,7 +268,7 @@ resolution Module := (M,o) -> (
      )
 
 resolution Matrix := (f,o) -> (
-     extend(resolution(target f, o), resolution(source f, o), cover f)
+     extend(resolution(target f, o), resolution(source f, o), matrix f)
      )
 
 resolution Ideal := (I,options) -> (

@@ -40,13 +40,43 @@ Ext(ZZ, Module, Module) := (i,M,N) -> (
 	  complete b;
 	  if b#?i then (
 	       if b#?(i+1) 
-	       then prune homology(Hom(b_(i+1),N), Hom(b_i,N))-- DAG
+	       then (
+		    prune homology(Hom(b_(i+1),N), Hom(b_i,N))
+		    )
 	       else cokernel Hom(b_i,N))
 	  else (
 	       if b#?(i+1) 
 	       then kernel Hom(b_(i+1),N)
 	       else Hom(C_i,N))))
 
+Ext(ZZ, Matrix, Module) := (i,f,N) -> (
+     R := ring f;
+     if R =!= ring N then error "expected modules over the same ring";
+     if i < 0 then R^0
+     else if i === 0 then Hom(f,N)
+     else (
+	  g := resolution(f,LengthLimit=>i+1);
+	  Es := Ext^i(source f, N);
+	  Es':= target Es.pruningMap;	  -- Ext prunes everything, so get the original subquotient
+	  Et := Ext^i(target f, N);
+	  Et':= target Et.pruningMap;
+	  Es.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.pruningMap))
+
+Ext(ZZ, Module, Matrix) := (i,N,f) -> (
+     R := ring f;
+     if R =!= ring N then error "expected modules over the same ring";
+     if i < 0 then R^0
+     else if i === 0 then Hom(N,f)
+     else (
+	  C := resolution(N,LengthLimit=>i+1);
+	  Es := Ext^i(N, source f);
+	  Es':= target Es.pruningMap;	  -- Ext prunes everything, so get the original subquotient
+	  Et := Ext^i(N, target f);
+	  Et':= target Et.pruningMap;
+	  Et.pruningMap^-1 * inducedMap(Et',Es',Hom(C_i,f)) * Es.pruningMap))
+
+Ext(ZZ, Matrix, Ring) := (i,f,R) -> Ext^i(f,R^1)
+Ext(ZZ, Matrix, Ideal) := (i,f,J) -> Ext^i(f,module J)
 Ext(ZZ, Module, Ring) := (i,M,R) -> Ext^i(M,R^1)
 Ext(ZZ, Module, Ideal) := (i,M,J) -> Ext^i(M,module J)
 Ext(ZZ, Ideal, Ring) := (i,I,R) -> Ext^i(module I,R^1)

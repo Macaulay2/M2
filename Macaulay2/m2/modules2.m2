@@ -590,55 +590,43 @@ document { quote prune,
      pruning its source and target.",
      PARA,
      "The isomorphism from ", TT "prune M", " to ", TT "M", " can be obtained
-     with code such as ", TT "g = M.fromPrune", ".  You may obtain the inverse
+     with code such as ", TT "g = N.pruningMap", ".  You may obtain the inverse
      isomorphism with ", TT "g^-1", ".",
      PARA,
-     SEEALSO ("presentation", "trim", "fromPrune")
+     SEEALSO ("presentation", "trim", "pruningMap")
      }
 
-document { quote fromPrune,
-     TT "fromPrune", " -- the key under which is stored the isomorphism to
+document { quote pruningMap,
+     TT "pruningMap", " -- the key under which is stored the isomorphism to
      a module ", TT "M", " from the module ", TT "prune M", ".",
      PARA,
-     "This map exists only after ", TT "prune M", " has been executed
-     at least once, and then the map can be obtained with ", TT "M.fromPrune", ".",
+     "This map exists only after ", TT "N = prune M", " has been executed
+     at least once, and then the map can be obtained with ", TT "N.pruningMap", ".",
      SEEALSO "prune"
      }
 
-prune(Module) := M -> if M.?prune then M.prune else M.prune = (
-     if isFreeModule M then (
-	  M.fromPrune = id_M;
-	  M)
-     else if isHomogeneous M then (
-	  f := presentation M;
-	  g := complement f;
-	  N := cokernel modulo(g, f);
-	  M.fromPrune = map(M,N,g);
-	  N.prune = N;
-	  N.fromPrune = id_N;
-	  N)
-     else (
-	  f = presentation M;
-	  -- MES: can't it do more here?
-	  N = cokernel f;
-	  N.prune = N;
-	  N.fromPrune = id_N;
-	  M.fromPrune = map(M,N,id_(cover M));
-	  N)
+prune(Module) := M -> (
+     if M.?pruningMap then M
+     else if M.?prune then M.prune else M.prune = (
+	  if isFreeModule M then (
+	       M.pruningMap = id_M;
+	       M)
+	  else if isHomogeneous M then (
+	       f := presentation M;
+	       g := complement f;
+	       N := cokernel modulo(g, f);
+	       N.pruningMap = map(M,N,g);
+	       N)
+	  else (
+	       f = presentation M;
+	       -- MES: can't it do more here?
+	       N = cokernel f;
+	       N.pruningMap = map(M,N,id_(cover M));
+	       N)
+	  )
      )
 
-prune(Matrix) := (m) -> (
-     F := target m;
-     G := source m;
-     if not isFreeModule F then (
-	  prune F;
-	  m = (F.fromPrune)^(-1) * m;
-	  );
-     if not isFreeModule G then (
-	  prune G;
-	  m = m * G.fromPrune;
-	  );
-     m)
+prune(Matrix) := (m) -> (prune target m).pruningMap^-1 * m * (prune source m).pruningMap
 
 TEST "
 r = ZZ/101[a,b]
@@ -657,7 +645,7 @@ R = ZZ/101[a..f]
 
 M = cokernel matrix (R, {{1},{-1}})
 N = prune M
-p = M.fromPrune
+p = N.pruningMap
 
 assert( source p == N )
 assert( target p == M )

@@ -193,6 +193,10 @@ html EXAMPLE := x -> html TABLE {{PRE x}}
 -- html EXAMPLE := x -> html TABLE {{ CODE x#0 }}
 
 TABLE      = newListHead "TABLE"
+text TABLE := x -> (
+     -- not good yet
+     concatenate apply(toList x, row -> (row/text, newline))
+     )
 html TABLE := x -> concatenate(
      newline,
      "<P>",
