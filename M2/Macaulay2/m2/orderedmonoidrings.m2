@@ -90,8 +90,8 @@ expression PolynomialRing := R -> (
      else (expression R.baseRings#-1) (expression monoid R)
      )
 net PolynomialRing := R -> (
-     if R.?name
-     then R.name
+     if R.?symbol
+     then net expression R.symbol
      else (net R.baseRings#-1) | (net monoid R)
      )
 

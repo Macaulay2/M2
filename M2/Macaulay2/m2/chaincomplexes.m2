@@ -120,7 +120,7 @@ ChainComplex == ChainComplex := (C,D) -> (
 ChainComplex == ZZ := (C,i) -> all(spots C, i -> C_i == 0)
 ZZ == ChainComplex := (i,C) -> all(spots C, i -> C_i == 0)
 
-net ChainComplex := C -> if C.?name then C.name else (
+net ChainComplex := C -> if C.?symbol then net expression C.symbol else (
      complete C;
      s := sort spots C;
      if # s === 0 then "0"

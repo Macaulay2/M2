@@ -146,8 +146,8 @@ coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
            name FractionField := F -> "frac(" | name F.baseRings#-1 | ")"
 	isField FractionField := F -> true
             net FractionField := F -> (
-		 if F.?name
-		 then F.name
+		 if F.?symbol
+		 then net expression F.symbol
 		 else net new FunctionApplication from { frac, F.baseRings#-1 }
 		 )
 
