@@ -481,7 +481,7 @@ linkFilename = s -> (
 html MarkUpList := x -> concatenate apply(x,html)
 text MarkUpList := x -> concatenate apply(x,text)
 tex MarkUpList := x -> concatenate apply(x,tex)
-net MarkUpList := x -> horizontalJoin apply(toList x,net)
+net MarkUpList := x -> peek x
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
