@@ -10,13 +10,11 @@
 #include "../matrixcon.hpp"
 #include "../matrix.hpp"
 #include <vector>
+#include "../sparsemat.hpp"
 
 void from_M2_vec(MonomialSet *H,
 		 const FreeModule *F, 
 		 vec v,
-		 int &deg,
-		 int &alpha, // difference in degree of lead term with 
-		             // highest degree of a term
 		 poly &result)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
@@ -47,15 +45,33 @@ void from_M2_vec(MonomialSet *H,
     }
 }
 
+void poly_set_degrees(const M2_arrayint wts,
+		      const poly &f,
+		      int &deg, 
+		      int &alpha)
+{
+  int leaddeg = monomial_weight(f.monoms[0], wts);
+  deg = leaddeg;
+  for (int i=1; i<f.len; i++)
+    {
+      int degi = monomial_weight(f.monoms[i],wts);
+      if (degi > deg) deg = degi;
+    }
+  alpha = deg-leaddeg;
+}
+
 void from_M2_matrix(const Matrix *m, 
 		    MonomialSet *H,
+		    M2_arrayint wts,
 		    gb_array &result_polys)
 {
   const FreeModule *F = m->rows();
   for (int i=0; i<m->n_cols(); i++)
     {
       gbelem *g = new gbelem;
-      from_M2_vec(H,F,m->elem(i),g->deg,g->alpha,g->f);
+      from_M2_vec(H,F,m->elem(i),g->f);
+      if (wts != 0)
+	poly_set_degrees(wts,g->f,g->deg,g->alpha);
       result_polys.push_back(g);
     }
 }
@@ -116,6 +132,26 @@ void spair_testing(MonomialSet *H,
       S->display();
     }
 }
+
+MutableMatrix * to_M2_MutableMatrix(  
+    const Ring *K,
+    std::vector<LinearAlgebraGB::row_elem, gc_allocator<LinearAlgebraGB::row_elem> > &rows,
+    std::vector<LinearAlgebraGB::column_elem, gc_allocator<LinearAlgebraGB::column_elem> > &columns
+    )
+{
+  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(K,rows.size(),columns.size());
+  for (int r=0; r<rows.size(); r++)
+    {
+      sparse_row &row = rows[r].row;
+      for (int i=0; i<row.len; i++)
+	{
+	  ring_elem a = K->copy(row.coeffs[i]);
+	  result->set_entry(r,row.comps[i],a);
+	}
+    }
+  return result;
+}
+
 
 #if 0
 Todo:

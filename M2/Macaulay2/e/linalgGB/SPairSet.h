@@ -37,7 +37,6 @@ class SPairSet : public our_new_delete
 	int second_gb_num;
       } spair;
       struct {
-	poly * gen;
 	int column; // original column
       } poly;
     } s;
@@ -56,7 +55,7 @@ class SPairSet : public our_new_delete
 		    monomial second_monom,
 		    int second_gb_num);
 
-  static spair *make_spair_gen(int deg, poly *f, int column);
+  static spair *make_spair_gen(int deg, monomial lcm, int column);
 
   int find_new_pairs(const gb_array &gb,
 		    bool remove_disjoints);

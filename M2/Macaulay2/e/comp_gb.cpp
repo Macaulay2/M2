@@ -67,6 +67,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			 strategy,
 			 use_max_degree,
 			 max_degree);
+    break;
   default:
     result = gbA::create(m, 
 			 collect_syz, 
@@ -75,6 +76,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 			 strategy,
 			 use_max_degree,
 			 max_degree);
+    break;
   }
   return new GBProxy(result);
 

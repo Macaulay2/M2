@@ -58,6 +58,8 @@ class MonomialSet : public our_new_delete {
   int hashtab_len;
   hash_node **hashtab;
 
+  int *last_alloc; // The last call to 'reserve'.  If this matches the
+                   // monomial to be interned, then a copy is not done.
   MemoryBlock B;
  private:
   unsigned long hash(uninterned_monomial m);
