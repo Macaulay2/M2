@@ -15,7 +15,7 @@ leadMonomial RingElement := MonoidElement => (f) -> (
      R := ring f;
      M := monoid R;
      n := numgens M;
-     leadMonomial R := f -> new M from rawLeadMonomial(n, f.RawRingElement);
+     leadMonomial R := f -> new M from rawLeadMonomial(n, f.RawRingElement); -- the default method for most engine rings, but not Schur rings
      leadMonomial f)
 
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)

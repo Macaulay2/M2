@@ -49,7 +49,7 @@ newSchur := (R,M) -> (
 	  (coeffs,monoms) -> sum(
 	       coeffs,monoms,
 	       (a,m) -> expression (new R from a) * expression (new M from m))
-	  ) pairs f.RawRingElement;
+	  ) rawPairs(raw R, raw f);
      SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
      scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
      SR.use = x -> (
@@ -69,6 +69,7 @@ newSchur := (R,M) -> (
 	       M % A := (m,r) -> (m * ONE) % (r * ONE);
 	       ));
 	  SR);
+     -- leadMonomial R := f -> new M from rawLeadMonomial(n, f.RawRingElement); -- fix this
      SR
      )
 
