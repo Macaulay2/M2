@@ -198,26 +198,7 @@ makeit1 := (options) -> (
 	       flatten internalDegrees));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
-     M ? M := (x,y) -> (
-	  -- comparison of two monomials
-	  i := 1;
-	  while i <= # x and i <= # y and x#-i === y#-i do i = i+1;
-	  if i > # x
-	  then (
-	       if i > # y 
-	       then symbol ==
-	       else y#-i#1 ? 0
-	       )
-	  else (
-	       if i > # y 
-	       then 0 ? x#-i#1
-	       else (
-		    if y#-i#0 === x#-i#0
-		    then y#-i#1 ? x#-i#1
-		    else y#-i#0 ? x#-i#0
-		    )
-	       )
-	  );
+     M ? M := (x,y) -> rawCompare(raw M, raw x, raw y);
      M Array := (m,x) -> (
 	  if # x != n then error (
 	       "expected a list of length ", toString n
