@@ -37,7 +37,7 @@ g = matrix{{1,-1},{0,1}}
 -- o2 : Matrix ZZ  <--- ZZ
 -- 
 
-h = directSum(f,g)
+k = directSum(f,g)
 
 -- i3 : directSum(f,g)
 -- 
@@ -49,6 +49,9 @@ h = directSum(f,g)
 --               4        4
 -- o3 : Matrix ZZ  <--- ZZ
 -- 
+
+h = directSum({1,1} => f, {1,2} => g)
+
 -- i4 : directSum({1,1} => f, {1,2} => g)
 -- /usr/local/Macaulay2-0.9.2/lib/Macaulay2-0.9.2/m2/matrix.m2:342:29:
 -- attempted to modify an immutable hash table
@@ -70,3 +73,8 @@ assert( h == M_[{1,1}] * f * M^[{1,1}] + M_[{1,2}] * g * M^[{1,2}] )
 -- 
 -- i6 :
 -- 
+
+
+-- Local Variables:
+-- compile-command: "make direct.okay"
+-- End:
