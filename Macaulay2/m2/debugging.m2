@@ -160,7 +160,7 @@ usage := () -> (
      << endl
      << "useful break loop commands:" << endl
      << "    break                   leave the break loop" << endl
-     << "    end (or Control-D)      end this break loop and restart one step earlier" << endl
+     << "    end                     end this break loop and restart one step earlier" << endl
      << "    continue                execute the same code again" << endl
      << "    return                  return 'null' as the value of the code" << endl
      << "    return x                return 'x' as the value of the code" << endl
