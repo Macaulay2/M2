@@ -360,7 +360,7 @@ processExamples := (docBody) -> (
      examples := extractExamples docBody;
      if phase > 1 and #examples > 0 then (
 	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
-	  exampleOutputFile << "-- " << nodeName << endl;
+	  exampleOutputFile << "-- " << formatDocumentTag nodeName << endl;
 	  exampleResults = try get (nodeBaseFilename | ".out") else (
 	       if phase === 4 or phase === 5 then (
 		    stderr << "warning : can't open input file '" 

@@ -1987,8 +1987,6 @@ document { "copyright and license",
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We 
      permit you to make copies under the following conditions.",
      PARA,
-     H2 "Macaulay 2 copying license:",
-     PARA,
      -- this paragraph has to be duplicated in licenses/README
      "Provided you are a person (and not a corporate entity), you may make as
      many copies of Macaulay 2 as you like for your personal non-commercial
@@ -2170,14 +2168,14 @@ document { "the authors",
      }
 
 document { "David Eisenbud",
-     "David Eisenbud", TT "<de@cs.brandeis.edu>",
+     "David Eisenbud ", TT "<de@cs.brandeis.edu>", ".",
      PARA,
      "In this spot will go a brief biography of David Eisenbud, a
      commutative algebraist and algebraic geometer at Brandeis University."
      }
 
 document { "Daniel R. Grayson",
-     "Daniel R. Grayson", TT " <dan@math.uiuc.edu>",
+     "Daniel R. Grayson ", TT " <dan@math.uiuc.edu>", ".",
      PARA,
      "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
      at Columbia from 1976 to 1981, and came to the University of Illinois at
@@ -2192,7 +2190,7 @@ document { "Daniel R. Grayson",
      }
 
 document { "Michael E. Stillman",
-     "Michael E. Stillman", TT "<mike@math.cornell.edu>",
+     "Michael E. Stillman ", TT "<mike@math.cornell.edu>", ".",
      PARA,
      "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
      taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
@@ -2204,10 +2202,12 @@ document { "Michael E. Stillman",
      }
 
 document { "how to get this program",
-     "The program is available over the web at the Macaulay 2 home page
-     ", HREF {"http://www.math.uiuc.edu/Macaulay2"}, ", or by 
-     ftp to the host ", TT "ftp.math.uiuc.edu", ", user name ", TT "Macaulay2", ",
-     password ", TT "Macaulay2", ".  There you will find the documentation, both in
+     "The program is available over the web at the Macaulay 2 home page",
+     PARA, 
+     HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
+     PARA, 
+     "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 
+     and password ", TT "Macaulay2", ".  There you will find the documentation, both in
      readable form and available for downloading, the source code, ready for compiling
      on the machine of your choice, and various precompiled versions, ready to run."
      }

@@ -13,8 +13,8 @@ bk << ///
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% some macros
 
-\hsize=7 true in
-\vsize=9.1 true in
+\hsize=6.5 true in
+\vsize=9.6 true in
 
 \parindent=10pt
 \parskip=4pt
@@ -101,6 +101,13 @@ bk << ///
   \setbox2=\vbox to\dimen@{\unvbox3}
   \pagesofar
   }
+
+\font\headerFontOne=cmbx12 scaled \magstep 1
+\font\headerFontTwo=cmbx12 scaled \magstep 1
+\font\headerFontThree=cmbx12
+\font\headerFontFour=cmbx12
+\font\headerFontFive=cmbx10
+\font\headerFontSix=cmbx10
 
 \catcode`@=12
 
