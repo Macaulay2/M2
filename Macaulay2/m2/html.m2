@@ -999,7 +999,7 @@ makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePath
 makePackageIndex List := packagePath -> (
      absoluteLinks = true;
-     key := "package index";
+     key := "Macaulay 2";
      htmlDirectory = userMacaulay2Directory();		    -- links are relative to this directory
      fn := htmlDirectory | "index.html";
      stderr << "--making index of installed packages in " << fn << endl;
@@ -1010,18 +1010,27 @@ makePackageIndex List := packagePath -> (
 	       },
 	  BODY { 
 	       -- buttonBar tag, HR{},
-	       PARA BOLD "Index of installed packages:",
-	       UL apply(packagePath, prefixDirectory -> (
-			 p := prefixDirectory | LAYOUT#"docm2";
-			 if isDirectory p then (
-			      r := readDirectory p;
-			      r = select(r, fn -> fn != "." and fn != "..");
-			      r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
-			      r = sort r;
-			      SEQ { HEADER3 prefixDirectory, UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) }
+	       PARA {
+		    "This is the top level documentation page for Macaulay 2 and its packages."
+		    },
+	       HEADER3 "Documentation",
+	       UL splice {
+               	    HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2" | "index.html", "Macaulay 2" },
+		    apply(toSequence packagePath, prefixDirectory -> (
+			      p := prefixDirectory | LAYOUT#"docm2";
+			      if isDirectory p then (
+				   r := readDirectory p;
+				   r = select(r, fn -> fn != "." and fn != ".." and fn != "Macaulay2");
+				   r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
+				   r = sort r;
+				   SEQ {
+					HEADER3 {"Packages in ", prefixDirectory},
+					UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) 
+					}
+				   )
 			      )
 			 )
-		    )
+		    }
 	       }
 	  } << endl
      << close;
