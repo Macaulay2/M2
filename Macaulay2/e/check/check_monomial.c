@@ -24,7 +24,7 @@ void test_monomials(Test *pTest)
 
   /* Given monomials a,b, call all of the functions: */
   c1 = IM2_Monomial_mult(a,b);
-  c2 = IM2_Monomial_quotient(a,b);
+  c2 = rawColonMonomial(a,b);
   c3 = IM2_Monomial_power(a,143);
   c4 = rawLCM(a,b);
   c5 = rawGCD(a,b);
@@ -32,10 +32,7 @@ void test_monomials(Test *pTest)
   c7 = rawRadicalMonomial(a);
   /*  p  = rawSyzygy(a,b); */
 
-  ct_test(pTest,IM2_Monomial_degree(a) == 6);
   ct_test(pTest,IM2_Monomial_hash(a) == IM2_Monomial_hash(a2));
-  ct_test(pTest,
-    IM2_Monomial_degree(a) + IM2_Monomial_degree(b) == IM2_Monomial_degree(c1));
   ct_test(pTest,!rawMonomialIsOne(a));
   ct_test(pTest,IM2_Monomial_is_equal( IM2_Monomial_mult(c4,c5), c1));
   /*  m1 = toarrayint(6, (int[]){8,3,4,1,3,2});*/

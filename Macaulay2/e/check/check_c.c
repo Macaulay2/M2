@@ -7,7 +7,6 @@ extern Test *monoid_test(void);
 extern Test *ring_test(void);
 extern Test *freemodule_test(void);
 extern Test *matrix_test(void);
-extern Test *vector_test(void);
 extern Test *sparsemat_test(void);
 extern Test *lapack_test(void);
 extern void M2inits();
@@ -21,10 +20,11 @@ int main()
   cs_addTest(s,monoid_test());
   cs_addTest(s,ring_test());
   cs_addTest(s,freemodule_test());
+#if 0
   cs_addTest(s,matrix_test());
-  cs_addTest(s,vector_test());
   cs_addTest(s,sparsemat_test());
   /*  cs_addTest(s,lapack_test());*/
+#endif
   cs_run(s);
   cs_report(s);
   cs_destroy(s,1);

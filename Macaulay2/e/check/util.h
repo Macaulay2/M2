@@ -12,7 +12,10 @@ M2_Integer make_integer(long int a);
 M2_arrayint arrayint(int len, ...);
 const Monomial *monom(int len, ...);
 MonomialOrdering * monorder(int len, ...);
-const RingElement_array *make_ringelem_array(int len, ...);
+
+RingElement_array *alloc_ringelem_array(int len); 
+  /* alloc_ringelem_array sets all entries to 0 */
+RingElement_array *make_ringelem_array(int len, ...);
 
 M2_stringarray make_names(char *s, int n);
 Monoid *make_degree_monoid(int ndegs);

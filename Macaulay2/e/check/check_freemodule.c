@@ -81,7 +81,7 @@ void test_schreyer_order(Test *pTest)
   int i;
   const Ring *R, *ZZ;
   const Matrix *M, *N;
-  Vector_array *V;
+  RingElement_array *V;
   const RingElement *one;
 
   ZZ = IM2_Ring_ZZ();
@@ -89,16 +89,13 @@ void test_schreyer_order(Test *pTest)
 
   /* Now make a matrix over R, with one row */
   F = IM2_FreeModule_make(R, 1);
-  V = make_vector_array(5);
+  V = alloc_ringelem_array(5);
   one = IM2_RingElement_from_Integer(ZZ, make_integer(1));
   for (i=0; i<5; i++)
     {
-      const Vector *w = 
-        make_vector(F, IM2_RingElement_term(R, one, monom(2,i,i+1)));
-      
-      V->array[i] = w;
+      V->array[i] = IM2_RingElement_term(R, one, monom(2,i,i+1));
     }
-  M = IM2_Matrix_make1(F,V);
+  M = IM2_Matrix_make1(F,5,V,0);
   display_matrix(M);
 
   /* Now use this to make a free module of rank 5: */

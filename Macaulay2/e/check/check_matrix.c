@@ -11,9 +11,9 @@ void test_coeffs(Test *pTest)
 
   const RingElement *a1,*f1,*f2,*f;
   const Monomial *m1,*m2;
-  Vector_array *Vs;
   const FreeModule *F;
   const Matrix *M, *N;
+  RingElement_array *elems;
 
   a1 = IM2_RingElement_from_Integer(ZZ, make_integer(1));
   m1 = rawMakeMonomial(arrayint(4,1,1,0,1));
@@ -27,10 +27,8 @@ void test_coeffs(Test *pTest)
   display_relem(f);
 
   F = IM2_FreeModule_make(R,1);
-  Vs = make_vector_array(1);
-  Vs->array[0] = IM2_Vector_term(F,f,0);
-
-  M = IM2_Matrix_make1(F,Vs);
+  elems = make_ringelem_array(1,f);
+  M = IM2_Matrix_make1(F,1,elems,0);
 
   display_matrix(M);
 
@@ -74,13 +72,46 @@ void test_matrix_ops(Test *pTest,const Matrix *M, const Matrix *N)
   ct_test(pTest,IM2_Matrix_is_equal(M, Mdual2));
   ct_test(pTest,IM2_Matrix_is_equal(IM2_Matrix_add(M,Mdual),
 			     IM2_Matrix_add(Mdual,M)));
-  ct_test(pTest,IM2_Matrix_is_equal(IM2_Matrix_transpose(IM2_Matrix_mult(M,Mdual)),
+  ct_test(pTest,IM2_Matrix_is_equal(IM2_Matrix_transpose(IM2_Matrix_mult(M,Mdual,0)),
 			     IM2_Matrix_mult(IM2_Matrix_transpose(Mdual),
-					     IM2_Matrix_transpose(M))));
+					     IM2_Matrix_transpose(M),
+					     0)));
   ct_test(pTest,IM2_Matrix_is_equal(IM2_Matrix_negate(IM2_Matrix_subtract(M,Mdual)),
 			     IM2_Matrix_subtract(Mdual,M)));
 }
 
+void test_matrix_ZZ(Test *pTest)
+{
+  const Ring *R = IM2_Ring_ZZ();
+  const FreeModule *F = IM2_FreeModule_make(R, 5);
+  int r,c,next=0;
+  RingElement_array *elems = alloc_ringelem_array(25);
+  const Matrix *M, *N;
+  for (r=0; r<5; r++)
+    for(c=0; c<5; c++)
+      elems->array[next++] = IM2_RingElement_from_Integer(R, make_integer(10*r+c));
+  M = IM2_Matrix_make1(F,5,elems,0);
+  ct_test(pTest,is_eq(IM2_Matrix_to_string(M),
+		      "0 6  12 18 24 \n"
+		      "1 7  13 19 25 \n"
+		      "2 8  14 20 26 \n"
+		      "3 9  15 21 27 \n"
+		      "4 10 16 22 28 \n"));
+  
+  next = 0;
+  elems = alloc_ringelem_array(9);
+  for (r=0; r<3; r++)
+    for(c=0; c<3; c++)
+      elems->array[next++] = IM2_RingElement_from_Integer(R, make_integer(-r+c));
+  F = IM2_FreeModule_make(R, 3);
+  N = IM2_Matrix_make1(F,3,elems,0);
+  ct_test(pTest,is_eq(IM2_Matrix_to_string(M),
+		      "0 -1 -2 \n"
+		      "1 0  -1 \n"
+		      "2 1  0  \n"));
+  test_matrix_ops(pTest,M,N);
+}
+#if 0
 void test_matrix_ZZ(Test *pTest)
 {
   int i;
@@ -129,6 +160,7 @@ void test_matrix_ZZ(Test *pTest)
 
   test_matrix_ops(pTest,M,N);
 }
+#endif
 
 void test_matrices(Test *pTest)
 {
