@@ -571,6 +571,7 @@ digits(o:varstring,x:double,a:int,b:int):void := (
 export finite(x:double):bool := x==x && x-x == x-x;
 export isinf(x:double):bool := x==x && x-x != x-x;
 export isnan(x:double):bool := x!=x;
+export tostring(x:bool):string := if x then "true" else "false";
 export tostring(x:double) : string := (
      o := newvarstring(25);
      if isinf(x) then return("infinity");

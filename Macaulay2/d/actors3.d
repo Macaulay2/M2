@@ -1070,6 +1070,7 @@ scan(n:int,f:Expr):Expr := (
 				   )
 			      )
 			 else nothing;
+		    	 -- if debugLevel > 0 then stdout << "localFrame.notrecyclable = " << localFrame.notrecyclable << endl;
 		    	 if localFrame.notrecyclable then (
 			      values = new Sequence len framesize do provide nullE;
 			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
