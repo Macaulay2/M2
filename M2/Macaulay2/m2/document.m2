@@ -454,16 +454,13 @@ processExamples := (docBody) -> (
      exampleResults = {};
      exampleCounter = 0;
      examples := extractExamples docBody;
-     if #examples > 0 then (
-	  inputs := currentPackage#"example inputs"#currentNodeName = new MutableHashTable;
-	  scan(examples, example -> inputs# #inputs = example);
+     if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
 -- obsolete?
 --     	  checkForExampleOutputFile();
 --     	  checkForExampleInputFile();
 --	  docBody = apply(docBody,processExamplesLoop);
 --	  if exampleInputFile =!= null then close exampleInputFile;
-	  );
-      docBody)
+     docBody)
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------

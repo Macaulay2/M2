@@ -379,7 +379,7 @@ assemble Package := o -> pkg -> (
      makeDirectory exampleDir;
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
 	       inf := infn nodename;
-	       val := concatenate apply(values inputs, s -> s|"\n");
+	       val := concatenate apply(inputs, s -> s|"\n");
 	       if fileExists inf and get inf === val
 	       then stderr << "--leaving example input file for " << nodename << endl
 	       else (
