@@ -963,7 +963,6 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     last_pattern = pattern;
   }
   {
-    char *msg;
     int n = regex.re_nsub+1;
     regmatch_t match[n];
     char *s_text = tocharstar(text);
@@ -971,26 +970,9 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     GC_FREE(s_text);
     if (ret != 0) {
 	 if (ret != REG_NOMATCH) {
-	      switch (ret) {
-                   case REG_NOMATCH:            msg = "matches: Didn't find a match"; break;
-                   case REG_BADPAT:             msg = "matches: Invalid pattern"; break;
-                   case REG_ECOLLATE:           msg = "matches: Not implemented"; break;
-                   case REG_ECTYPE:             msg = "matches: Invalid character class name"; break;
-                   case REG_EESCAPE:            msg = "matches: Trailing backslash"; break;
-                   case REG_ESUBREG:            msg = "matches: Invalid back reference"; break;
-                   case REG_EBRACK:             msg = "matches: Unmatched left bracket"; break;
-                   case REG_EPAREN:             msg = "matches: Parenthesis imbalance"; break;
-                   case REG_EBRACE:             msg = "matches: Unmatched \\{"; break;
-                   case REG_BADBR:              msg = "matches: Invalid contents of \\{\\}"; break;
-                   case REG_ERANGE:             msg = "matches: Invalid range end"; break;
-                   case REG_ESPACE:             msg = "matches: Ran out of memory"; break;
-                   case REG_BADRPT:             msg = "matches: No preceding re for repetition op"; break;
-                   case REG_EEND:               msg = "matches: Premature end"; break;
-                   case REG_ESIZE:              msg = "matches: Compiled pattern bigger than 2^16 bytes"; break;
-                   case REG_ERPAREN:            msg = "matches: Unmatched ) or \\)"; break;
-                   default:                     msg = "matches: Unknown error return code from regexec"; break;
-	           }
-	      system_regexmatchErrorMessage = tostring(msg);
+	      char message[1024];
+	      regerror(ret,&regex,message,sizeof message);
+	      system_regexmatchErrorMessage = tostring(message);
 	      }
 	 return empty;
 	 }
