@@ -7,10 +7,7 @@
 strat = LongPolynomial;
 --strat = Primary;
 
-
-checkEngine := (f, str) -> (
-  str2 := sendgg (ggPush f, ggsee);
-  assert(str == str2);)
+checkEngine := (f, str) -> assert(str == toString f)
 
 sortcols = (m) -> m_(sortColumns m)
 

@@ -337,8 +337,8 @@ ULop := op -> x -> (
      r := stack apply(toList x, i -> s | op i);
      printWidth = printWidth + #s;
      r)
-info UL := info OL := info DL := ULop info
-net UL := net OL := net DL := ULop net
+info UL := ULop info
+net UL := ULop net
 
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
@@ -357,19 +357,7 @@ html UL := x -> concatenate (
      apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
      "</ul>", newline)
 
-html OL   := x -> concatenate( "<ol>", newline, apply(x,s -> ("<li>", html s, "</li>", newline)), "</ol>", newline )
 html NL   := x -> concatenate( "<nl>", newline, apply(x,s -> ("<li>", html s, "</li>", newline)), "</nl>", newline)
-html DL   := x -> (
-     "<dl>" 
-     | concatenate apply(x, p -> (
-	       if class p === List or class p === Sequence then (
-		    if # p === 2 then "<dt>" | html p#0 | "<dd>" | html p#1
-		    else if # p === 1 then "<dt>" | html p#0
-		    else error "expected a list of length 1 or 2"
-		    )
-	       else "<dt>" | html p
-	       ))
-     | "</dl>")	  
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )

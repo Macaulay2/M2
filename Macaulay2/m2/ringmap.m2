@@ -198,7 +198,7 @@ RingMap * RingMap := RingMap => (g,f) -> (
 	  symbol source => source f,
 	  symbol target => target g,
 	  symbol matrix => m,
-	  symbol handle => newHandle(ggPush m, ggringmap),
+	  symbol RawRingMap => rawRingMap raw m,
 	  symbol DegreeMap => g.DegreeMap @@ f.DegreeMap,
 	  symbol cache => new CacheTable
 	  }

@@ -5,14 +5,7 @@ sagbi Matrix := (M) -> (
      -- check that M has a single row
      if numgens target M != 1
      then error "'sagbi' expects a one row matrix";
-     if not M.?SagbiComputation then (
-	  sendgg(ggPush M, ggsagbi);
-	  M.SagbiComputation = newHandle();
-	  );
-     -- check whether computation is done...
-     sendgg(ggPush M.SagbiComputation, ggPush {}, ggPush {}, ggcalc);
-     M.SagbiReturnValue = eePopInt();
-     M.SagbiComputation)
+     notImplemented())
 
 subduction = method()
 subduction (Matrix, RingMap, Matrix) := (m,F,J) -> (
@@ -25,8 +18,7 @@ subduction (Matrix, RingMap, Matrix) := (m,F,J) -> (
      m = RtoRS m;
      g := J#{false,0};
      FRStoRS = map(RS,RS, (vars RS)_{0..n-1} | RtoRS (F.matrix));
-     time sendgg(ggPush m, ggPush FRStoRS, ggPush g, ggsubduction);
-     result := getMatrix ring m;
+     result := notImplemented();
      RStoR result)
 
 ///
@@ -39,24 +31,6 @@ J = graphIdeal(inF, MonomialOrder=>ProductOrder{3,2})
 generators gb J
 
 subduction(m, F, J)
-///
-
-///
-sagbi m
-sendgg(ggPush m.SagbiComputation, gggetgb)
-getMatrix ring m
-
-subduction = method()
-subduction(Matrix, Matrix) := (f,m) -> (
-     R := ring f;
-     if R =!= ring m then error "expected same rings";
-     -- possibly other error checks
-     -- m.SagbiComputation needs to exist?
-     g := sagbi m;
-     sendgg(ggPush g, ggPush f, ggsubduction);
-     getMatrix R)
-
-subduction(RingElement, Matrix) := (f,m) -> (subduction(matrix{{f}},m))_(0,0)
 ///
 
 

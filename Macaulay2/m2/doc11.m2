@@ -623,51 +623,6 @@ document {
      }
 
 document {
-     Key => DL,
-     Headline => "hypertext DL item",
-	Usage => "DL x",
-	Inputs => {"x" => {}},
-	Outputs => {DL => {}},
-     TT "DL x", " encloses the list x as a hypertext DL itemized list.",
-     PARA,
-     "The argument ", TT "x", " should be a list, each member of which should be
-     a list of length two.",
-     PARA,
-     "Here is an example. The expression ",
-     PRE "DL {
-     {\"first heading\",\"first item's text\"},
-     {\"second heading\",\"second item's text\"},
-     {\"third heading\",\"third item's text\"}}",
-     "produces",
-     DL {
-     	  {"first heading","first item's text"},
-	  {"second heading","second item's text"},
-	  {"third heading","third item's text"}
-	  },
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
-     Key => OL,
-     Headline => "hypertext OL item",
-	Usage => "OL x", 
-	Inputs => {"x" => {}},
-	Outputs => {OL => {}},
-     TT "OL x", " encloses the list x as a hypertext OL itemized list.",
-     PARA,
-     "The argument ", TT "x", " should be a list of strings or hypertext items.
-     The items are numbered in the display.",
-     PARA,
-     "Here is an example. The expression ",
-     PRE "OL {\"first\",\"second\",\"third\"}",
-     "produces",
-     OL {"first","second","third"},
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
      Key => NL,
      Headline => "hypertext NL item",
 	Usage => "NL x",

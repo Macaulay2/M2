@@ -41,14 +41,6 @@ bb1 = betti syz M1 -- wrong if return cmp;
 cc = betti (fnt.dd_3)
 assert ( bb == cc)
 
-alternategb = (m) -> (
-     C := res(coker m, LengthLimit=>1, Strategy=>2);
-     sendgg(ggPush C.Resolution, ggPush 1, gggetgb); 
-     getMatrix E)
-
-time alternategb M
-
-
 -- Local Variables:
 -- compile-command: "make resskew.okay "
 -- End:

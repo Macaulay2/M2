@@ -1384,9 +1384,6 @@ document {
 
 TEST ///
 -- document these routines DO THIS
-
--- Create a free module with an induced (Schreyer) order
-Ring ^ Matrix := (R,m) -> (sendgg(ggPush m, ggfree); new Module from R)
 -- schreyerMatrix F -- DO THIS
 
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
