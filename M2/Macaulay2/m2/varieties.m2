@@ -409,3 +409,7 @@ TEST ///
 -----------------------------------------------------------------------------
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
 -----------------------------------------------------------------------------
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

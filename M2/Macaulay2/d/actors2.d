@@ -628,3 +628,7 @@ showtimefun(a:Code):Expr := (
      stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

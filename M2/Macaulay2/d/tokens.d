@@ -573,3 +573,7 @@ export (x:Symbol) === (y:Expr):bool := (
 export (x:Expr) === (y:Symbol):bool := (
      when x is z:SymbolClosure do y == z.symbol else false
      );
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

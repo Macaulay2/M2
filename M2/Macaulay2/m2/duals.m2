@@ -20,3 +20,7 @@ toDual = (d, f) -> (
 	 transpose mingens image (generators (image box : image f) % box),
 	 matrix{{g}}))
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

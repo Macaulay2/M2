@@ -39,3 +39,7 @@ truncateOutput ZZ := maxwidth -> (
 		    if #row <= maxwidth then return row;
 		    concatenate(substring(0,maxwidth - 4,row), " ...")))))
 truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

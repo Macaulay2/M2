@@ -17,3 +17,7 @@ memoize(Function,List) := (f,initialValues) -> (
 	  if not values#?x then values#x = f(x) else values#x
 	  )
      )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

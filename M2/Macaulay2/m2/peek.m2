@@ -95,3 +95,7 @@ seeParsing = args -> (
 			 between("  ",
 			      sort(b/toString)))))))
 seeParsing = new Command from seeParsing
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

@@ -2247,3 +2247,7 @@ document { "printing and formatting for new classes",
 	  "peek oo"
 	  }
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

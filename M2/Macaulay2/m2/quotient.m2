@@ -16,3 +16,7 @@ gcdCoefficients(ZZ,ZZ) := (a,b) -> (
 mod = (i,n) -> i * 1_(ZZ/n)
 
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

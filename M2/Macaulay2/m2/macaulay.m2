@@ -661,3 +661,7 @@ isHomogeneous n
 	       ("incr_set -- ", TO "not documented yet"),
 
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

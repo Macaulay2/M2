@@ -919,3 +919,7 @@ prune ChainComplexMap := ChainComplexMap => (f) -> (
      complete f;
      map(prune target f, prune source f, k -> prune f#k)
      )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

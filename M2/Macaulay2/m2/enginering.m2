@@ -545,3 +545,7 @@ ZZ _ Ring := RingElement => (i,R) -> (
      )
 
 isConstant RingElement := r -> r == 0 or all(degree r, i -> i === 0)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

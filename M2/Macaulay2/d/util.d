@@ -356,3 +356,7 @@ export toExpr(x:LMatrixCCOrNull):Expr := (
      is M:LMatrixCC do Expr(M)
      is null do buildErrorPacket(EngineError("unknown lapack engine error"))
      );
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

@@ -345,3 +345,7 @@ saturate(Module,RingElement) := Module => options -> (M,f) -> saturate(M,ideal(f
 saturate(Module) := Module => options -> (M) -> saturate(M,ideal vars ring M, options)
 saturate(Vector) := Module => options -> (v) -> saturate(image matrix {v}, options)
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

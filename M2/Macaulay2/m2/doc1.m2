@@ -1215,3 +1215,7 @@ document { autoload,
      automatically loaded from the file named ", TT "x", " the first
      time it is used."
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

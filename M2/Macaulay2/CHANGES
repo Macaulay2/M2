@@ -16,6 +16,14 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New variables tell the directories in which the code can be found:
+  after installation:
+    prefixDirectory		   e.g., /usr/local/
+    encapDirectory		   e.g., /usr/local/encap/Macaulay2-0.9.5/
+  during compilation and development:
+    sourceHomeDirectory		   e.g., /usr/local/src/M2/BUILDDIR/Macaulay2/
+    buildHomeDirectory		   e.g., /usr/local/src/M2/Macaulay2/
+
 The function "gbTrace" has been replaced by a variable.  So now,
 instead of typing "gbTrace 1" you would type "gbTrace = 1".
 

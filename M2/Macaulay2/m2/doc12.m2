@@ -1021,3 +1021,7 @@ document { (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
 	  "E" => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G", "." }
 	  }
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

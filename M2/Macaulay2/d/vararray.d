@@ -36,3 +36,7 @@ export takereversearrayint(v:vararrayint):array(int) := (
      s := toreversearrayint(v);
      empty(v);
      s);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

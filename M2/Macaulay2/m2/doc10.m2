@@ -950,3 +950,7 @@ document { (symbol _, RingElement, List),
      "The length of ", TT "d", " should be the same as the degree length of ", TT "f", ".",
      SEEALSO {(symbol _, RingElement, ZZ), "degreeLength"}
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

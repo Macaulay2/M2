@@ -306,3 +306,7 @@ export dbmreorganize(f:Database):Expr := (
      if !f.mutable then return buildErrorPacket("database not mutable");
      dbmcheck(dbmreorganize(f.handle)));
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

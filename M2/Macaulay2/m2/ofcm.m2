@@ -368,3 +368,7 @@ RingElement _ MonoidElement := RingElement => (f,m) -> (
      if M =!= class m then error "expected monomial from same ring";
      RM _ M := (f,m) -> new R from rawCoefficient(f.RawRingElement, m.RawMonomial);
      f _ m)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

@@ -130,3 +130,7 @@ symmetricAlgebra Module := QuotientRing => options -> (M) -> (
      (ring I)/(image I))
 
 erase symbol monoidDefaults
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

@@ -716,3 +716,7 @@ export localBind(e:ParseTree,dictionary:Dictionary):bool := (
      bind(e,dictionary);
      !HadError
      );
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

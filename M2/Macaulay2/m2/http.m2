@@ -116,3 +116,7 @@ getWWW (String,Nothing) := (url,body) -> (
 --        User-Agent: Macaulay2
 --  
 --  
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

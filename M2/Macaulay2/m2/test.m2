@@ -24,3 +24,7 @@ print leadMonomial f
 print baseName t
 -- print listForm f
 -- print standardForm f
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

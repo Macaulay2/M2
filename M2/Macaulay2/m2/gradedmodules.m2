@@ -439,3 +439,7 @@ tensorAssociativity(GradedModule,GradedModule,GradedModule) := GradedModuleMap =
 					     E_k.components#(E_k.indexComponents#(a,bc)),
 					     0))))))
 	  ))
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

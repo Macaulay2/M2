@@ -174,3 +174,7 @@ export getc(o:PosFile):int := (
 	  );
      c );
 export flush(o:PosFile):void := flushinput(o.file);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

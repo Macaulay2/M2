@@ -35,3 +35,7 @@ Tor(ZZ, Module, Module) := Module => (i,M,N) -> (
 	       then error "internal error"
 	       else C_i ** N)))
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

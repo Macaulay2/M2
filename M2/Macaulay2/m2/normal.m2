@@ -389,3 +389,7 @@ conductor(RingMap) := Ideal => (F) -> (
 
 erase global w
 erase global IC
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

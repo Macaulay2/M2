@@ -898,3 +898,7 @@ document { (symbol _, ZZ, Monoid),
      TT "1_M", " -- provides the unit element of a monoid ", TT "M", "."
      }
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

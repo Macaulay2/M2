@@ -22,3 +22,7 @@ new Command from String   := Command => (command,cmdname) -> command {
 Command.AfterEval = x -> x#0 ()
 Command Thing := (x,y) -> x#0 y
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

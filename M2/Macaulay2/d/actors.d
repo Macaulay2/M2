@@ -1091,3 +1091,7 @@ subvalueQ(lhs:Code,rhs:Code):Expr := (
       	  when right is Error do right
       	  else subvalueQ(left,right)));
 setup(SharpQuestionS,subvalueQ);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

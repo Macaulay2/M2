@@ -23,3 +23,7 @@ closePackage Main
 currentPackage = Main
 -- load "Macaulay2-doc.m2"
 currentPackage = null
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

@@ -178,3 +178,7 @@ Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
 Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
 Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
 Ext(Ideal, Module) := (I,N) -> Ext(module I,N)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

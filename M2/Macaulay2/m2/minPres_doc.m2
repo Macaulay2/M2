@@ -76,3 +76,7 @@ document{(minPresIdeal,Ideal),
 --      that the variables for the minimal presentation are named differently 
 --      than the variables in the original ring."
 --      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

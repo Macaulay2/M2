@@ -38,3 +38,7 @@ String.TeXmacsEvaluate = s -> (
      else << "evaluation failed";
      << TeXmacsEnd << flush;
      )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

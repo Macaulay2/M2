@@ -312,3 +312,7 @@ lift(Ideal,Ring) := Ideal => (I,S) -> (
 -- promote(Ideal,Ring) := (I,S) -> (
 --      error "this use of 'promote' has been replaced by '*'";
 --      );
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

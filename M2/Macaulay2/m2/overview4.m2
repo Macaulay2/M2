@@ -747,3 +747,7 @@ document { "computing resolutions",
      "There are various optional arguments associated with ", TO "res", "
      which allow detailed control over the progress of the computation."
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

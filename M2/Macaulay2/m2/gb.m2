@@ -263,3 +263,7 @@ R = ZZ/101[a..f]
 m = matrix{{a^2-b-c,b^2-c-d,c^4-b^3-2*d}}
 autoReduce m
 ///     
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

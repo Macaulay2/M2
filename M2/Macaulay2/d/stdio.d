@@ -706,3 +706,7 @@ export fileLength(o:file):int := (
      if o.input then fileLength(o.infd)
      else if o.output then o.bytesWritten + o.outindex
      else -1);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

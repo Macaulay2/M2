@@ -122,3 +122,7 @@ protect symbol Output
 newPackage User
 User#"file directory" = null
 protect Main.Dictionary
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

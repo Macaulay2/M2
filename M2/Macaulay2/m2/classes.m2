@@ -76,3 +76,7 @@ Function @@ Function := Function => (f,g) -> x -> f g x
 Function _ Thing := Function => (f,x) -> y -> f splice (x,y)
 
 -----------------------------------------------------------------------------
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

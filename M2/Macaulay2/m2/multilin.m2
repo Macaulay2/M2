@@ -211,3 +211,7 @@ fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
      then ideal 1_(ring M)
      else trim minors(n-i,p))
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

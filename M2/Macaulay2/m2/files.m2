@@ -219,3 +219,7 @@ cacheFileName(String,List,String) := (head,path,key) -> (
      if #w === 0 then {cacheFileName(head, key)} else w
      )
 cacheFileName(Nothing,List,String) := (head,path,key) -> cacheFileName(path,key)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:
