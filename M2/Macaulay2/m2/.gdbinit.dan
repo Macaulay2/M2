@@ -13,6 +13,7 @@ directory /usr/tmp/gmp-build/gmp-4.1.2/mpq/
 directory /usr/tmp/gmp-build/gmp-4.1.2/mpf/
 directory /usr/tmp/gc-build/gc6.3alpha2/
 directory /usr/tmp/gdbm-build/gdbm-1.8.3/
-directory /usr/tmp/readline-build/readline-4.3:
+directory /usr/tmp/readline-build/readline-4.3/
+directory /usr/tmp/ntl-build/ntl/src/
 source .gdb-files
 source .gdb-run-it
