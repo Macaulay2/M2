@@ -114,3 +114,5 @@ random RR := x -> (
      x * (randomint() / d))
 
 erase quote randomint
+
+ceiling = x -> - floor(-x)

@@ -1126,7 +1126,7 @@ document { (chainComplex,GradedModule),
      TT "chainComplex M", " -- convert a graded module to a chain complex by
      installing the zero map as differential.",
      PARA,
-     SEEALSO ("GradedModule", "ChainComplex")
+     SEEALSO {"GradedModule", "ChainComplex"}
      }
 -----------------------------------------------------------------------------
 
@@ -1135,8 +1135,8 @@ ChainComplex ** ChainComplex := (C,D) -> (
      e := spots E;
      scan(e, i -> if E#?i and E#?(i-1) then (
 	       E.dd#i = matrix table(
-		    sort keys E#(i-1).indexComponents,
-		    sort keys E#i.indexComponents,
+		    E#(i-1).indices,
+		    E#i.indices,
 		    (j,k) -> (
 			 if j#0 === k#0 and j#1 === k#1 - 1 then (
 			      (-1)^(k#0) * map(C#(j#0),C#(k#0),1) ** D.dd_(k#1)
@@ -1157,7 +1157,11 @@ ChainComplex ** ChainComplex := (C,D) -> (
 document { (quote **, ChainComplex, ChainComplex),
      TT "C**D", " -- the tensor product of two chain complexes.",
      PARA,
-     "The result is a chain complex."
+     "The result, ", TT "E", ", is a chain complex.  Each module ", TT "E_k", " 
+     in it is a direct sum of modules of the form ", TT "C_i**D_j", " with
+     ", TT "i+j=k", ", and the preferred keys for the components of this direct
+     sum are the pairs ", TT "{i,j}", ", sorted increasing values of ", TT "i", ".  For
+     information about how to use preferred keys, see ", TT "directSum", "."
      }
 
 ChainComplex ** GradedModule := (C,D) -> C ** chainComplex D

@@ -52,8 +52,8 @@ exteriorPower(ZZ,Module) := (p,M) -> (
 
 exteriorPower(ZZ, Matrix) := (p,m) -> (
      R := ring m;
-     if p === 0 then map(R^1,R^1,1_R)
-     else if p < 0 then map(R^0,R^0,0_R)
+     if p === 0 then map(R^1,R^1,1)
+     else if p < 0 then map(R^0,R^0,0)
      else (
 	  -- h := prune m;
 	  h := m;			  -- DRG: disabled 'prune' here.

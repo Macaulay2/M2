@@ -898,7 +898,10 @@ Module ^ Array := (M,rows) -> (
      else (
 	  if M.?indexComponents then (
 	       ic := M.indexComponents;
-	       rows = apply(rows, i -> if ic#?i then ic#i else i);
+	       rows = apply(rows, i -> if ic#?i then ic#i 
+		    -- else i -- old code
+		    else error "expected an index of a component of a direct sum"
+		    );
 	       );
 	  if isFreeModule M then (
 	       -- if the components of M have 3,4,5 generators, then
@@ -921,7 +924,10 @@ Module _ Array := (M,cols) -> (
      else (
 	  if M.?indexComponents then (
 	       ic := M.indexComponents;
-	       cols = apply(cols, i -> if ic#?i then ic#i else i);
+	       cols = apply(cols, i -> if ic#?i then ic#i 
+		    -- else i -- old code
+		    else error "expected an index of a component of a direct sum"
+		    );
 	       );
 	  if isFreeModule M then (
 	       -- if the components of M have 3,4,5 generators, then

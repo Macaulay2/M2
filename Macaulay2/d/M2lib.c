@@ -466,8 +466,8 @@ char **argv;
      actors5_REL = tostring(REL);
      actors5_LIBFACVERSION = tostring(libfac_version);
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
-     actors5_DATE = tostring(__DATE__);
-     actors5_TIME = tostring(__TIME__);
+     actors5_DATE = tostring(current_date);
+     actors5_TIME = tostring(current_time);
 #ifdef DUMPDATA
      actors5_DUMPDATA = TRUE;
 #else

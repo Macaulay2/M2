@@ -1493,37 +1493,40 @@ document { quote :=,
      }
 
 document { quote abs,
-     TT "abs x", " -- computes the absolute value of x." }
+     TT "abs x", " -- computes the absolute value of ", TT "x", "." }
 document { quote sin,
-     TT "sin x", " -- computes the sine of x." }
+     TT "sin x", " -- computes the sine of ", TT "x", "." }
 document { quote cos,
-     TT "cos x", " -- computes the cosine of x." }
+     TT "cos x", " -- computes the cosine of ", TT "x", "." }
 document { quote tan,
-     TT "tan x", " -- computes the tangent of x." }
+     TT "tan x", " -- computes the tangent of ", TT "x", "." }
 document { quote asin,
-     TT "asin x", " -- computes the arcsine of x."}
+     TT "asin x", " -- computes the arcsine of ", TT "x", "."}
 document { quote acos,
-     TT "acos x", " -- computes the arccosine of x."}
+     TT "acos x", " -- computes the arccosine of ", TT "x", "."}
 document { quote atan,
-     TT "atan x", " -- computes the arctangent of x.",
+     TT "atan x", " -- computes the arctangent of ", TT "x", ".",
      BR,NOINDENT,
      TT "atan(x,y)", " -- computes the angle formed with the 
-     x-axis by the ray from the origin {0,0} to the point {x,y}."
+     x-axis by the ray from the origin ", TT "{0,0}", " to the point ", TT "{x,y}", "."
      }
 document { quote sinh,
-     TT "sinh x", " -- computes the hyperbolic sine of x."}
+     TT "sinh x", " -- computes the hyperbolic sine of ", TT "x", "."}
 document { quote cosh,
-     TT "cosh x", " -- computes the hyperbolic cosine of x."}
+     TT "cosh x", " -- computes the hyperbolic cosine of ", TT "x", "."}
 document { quote tanh,
-     TT "tanh x", " -- computes the hyperbolic tangent of x."}
+     TT "tanh x", " -- computes the hyperbolic tangent of ", TT "x", "."}
 document { quote exp,
-     TT "exp x", " -- computes the exponential of x."}
+     TT "exp x", " -- computes the exponential of ", TT "x", "."}
 document { quote log,
-     TT "log x", " -- computes the logarithm of x."}
+     TT "log x", " -- computes the logarithm of ", TT "x", "."}
 document { quote sqrt,
-     TT "sqrt x", " -- provides the square root of the number x."}
+     TT "sqrt x", " -- provides the square root of the number ", TT "x", "."}
 document { quote floor,
-     TT "floor x", " -- provides the largest integer less than or equal to the number x"
+     TT "floor x", " -- provides the largest integer less than or equal to the number ", TT "x", "."
+     }
+document { quote ceiling,
+     TT "ceiling x", " -- provides the largest integer greater than or equal to the number ", TT "x", "."
      }
 
 document { quote run,
@@ -3499,6 +3502,7 @@ document { "arithmetic functions",
           (TO "gcd", "        -- greatest common divisor"),
           (TO "odd", "        -- predicate for odd integers"),
           (TO "even", "       -- predicate for even integers"),
+          (TO "ceiling", "    -- ceiling"),
           (TO "floor", "      -- floor"),
 	  (TO "isPrime", "    -- primality test"),
 	  (TO "factor", "     -- factor"),

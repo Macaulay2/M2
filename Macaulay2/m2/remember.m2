@@ -45,6 +45,14 @@ document { quote memoize,
      PARA,
      "Warning: when the value returned by f is null, it will always be 
      recomputed, even if the same arguments are presented.",
+     PARA,
+     "Warning: the new function created by ", TT "memoize", " will save
+     references to all arguments and values it encounters, and this will
+     often prevent those arguments and values from being garbage-collected
+     as soon as they might have been.  If the arguments are
+     implemented as mutable hash tables (modules, matrices and rings are
+     implemented this way) then a viable strategy is to stash computed
+     results in the arugments themselves!",
      SEEALSO "original"
      }
 
