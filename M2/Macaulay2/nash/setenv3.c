@@ -5,7 +5,7 @@
 #define ERROR (-1)
 extern char **environ;
 
-int setenv(char *name, char *value, int overwrite) {
+int setenv(const char *name, const char *value, int overwrite) {
   char **p, **newenv, **q;
   int n, numenv;
   for (numenv = 0, p = environ; *p; p++) numenv++;

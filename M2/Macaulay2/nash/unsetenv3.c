@@ -3,7 +3,7 @@
 
 extern char **environ;
 
-void unsetenv(char *v) {
+void unsetenv(const char *v) {
   char **p;
   int n = strlen(v);
   for (p = environ; *p; p++) {
