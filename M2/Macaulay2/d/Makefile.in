@@ -212,6 +212,8 @@ else
 LIBRARYOPTIONS += -lcf
 endif
 
+LIBRARYOPTIONS += -lcfmem
+
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBNTL_PG)" "yes"
 LIBRARYOPTIONS += -lntl-pg
