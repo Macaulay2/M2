@@ -344,7 +344,6 @@ globalassignfun(lhs:Code,rhs:Code):Expr := (
 	       f := frame(var.v.scopenum).values;
 	       i := var.v.frameindex;
 	       oldvalue := f.i;
-	       f.i = value;
 	       method := lookup(Class(oldvalue),GlobalReleaseE);
 	       if method != nullE then (
 		    y := apply(method,Expr(makeSymbolClosure(var.v)),oldvalue);
@@ -359,6 +358,7 @@ globalassignfun(lhs:Code,rhs:Code):Expr := (
 		    is Error do return(y)
 		    else nothing;
 		    );
+	       f.i = value;
 	       value))
      else errorpos(lhs,"left side of assignment should be symbol")
      );

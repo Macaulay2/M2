@@ -8,7 +8,7 @@
 class LatticeOperations
 {
   // What are the integer matrix operations that we desire?
-
+public:
   static Matrix gram_matrix(const Matrix &m);
   static Matrix LLL(const Matrix &m);
   static Matrix smith(const Matrix &m);
