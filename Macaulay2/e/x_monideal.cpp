@@ -124,7 +124,13 @@ int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
 
 const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I)
 {
-  return I->assprimes();
+  return I->assprimes(-1);
+}
+
+const MonomialIdeal *rawMaximalIndependentSets(const MonomialIdeal *I,
+					       int count)
+{
+  return I->assprimes(count);
 }
 
 const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)

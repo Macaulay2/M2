@@ -31,6 +31,13 @@ rawMonomialIdealToMatrix rawSaturate(I,J)
 rawMonomialIdealToMatrix rawSaturate(I,m)
 rawMonomialIdealToMatrix rawStronglyStableClosure(I)
 rawMonomialIdealToMatrix rawAssociatedPrimes I
+rawMonomialIdealToMatrix rawMaximalIndependentSets(I,-1)
+rawMonomialIdealToMatrix rawMaximalIndependentSets(I,1)
+rawMonomialIdealToMatrix rawMaximalIndependentSets(I,2)
+rawMonomialIdealToMatrix rawMaximalIndependentSets(I,3)
+rawMonomialIdealToMatrix rawMaximalIndependentSets(I,4)
+rawMonomialIdealToMatrix rawMaximalIndependentSets(I,5)
+
 assert(rawCodimension I === 2)
 L = rawSaturate(I,m)
 rawCodimension L -- is 8??
@@ -52,6 +59,7 @@ primaryDecomposition I
 saturate(I,a)
 I : a
 
+independentSets(ideal I, Limit => 1)
 borel I
 isBorel I -- returns a function??
 poincare I

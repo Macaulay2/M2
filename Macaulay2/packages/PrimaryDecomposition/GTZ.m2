@@ -83,7 +83,7 @@ saturation(Ideal,RingElement) := (I,F) -> (
 
 GTZ0 = method()
 GTZ0 Ideal := (I) -> (
-     ms := independentSets I;
+     ms := independentSets(I, Limit=>1);
      if #ms == 0 then (I, ideal(0_(ring I)))
      else (
      	  C := flatt(I,ms_0);
@@ -164,12 +164,12 @@ codim I -- therefore a CI, therefore equidimensional
 independentSets I
 I1 = eliminate(I, {a,b,c,d})
 F = oo_0
-factor F -- fails
+factor F 
 Ih = saturate(I,h)
 --------------------------------------
 restart
 load "Elimination.m2"
-load "GTZ.m2"
+load "PrimaryDecomposition/GTZ.m2"
 R = ZZ/32003[x,y,z]
 I = ideal(
     x^2+x*y^2*z-2*x*y+y^4+y^2+z^2,
@@ -204,7 +204,7 @@ degree J2
 ----------------------------------------
 restart
 load "Elimination.m2"
-load "GTZ.m2"
+load "PrimaryDecomposition/GTZ.m2"
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
 I = ideal(
     b*v+s*u,
@@ -216,7 +216,7 @@ I = ideal(
     u*y+v*x,
     u*z+w*x,
     v*z+w*y)
-independentSets I
+independentSets(I,Limit=>1)
 flatt(I,b*s*t)
 peek oo
 (J1, F1) = GTZ0 I
@@ -236,6 +236,7 @@ peek oo
 (J15, F15) = GTZ0 F14
 (J16, F16) = GTZ0 F15
 L = intersect(J1,J2,J3,J4,J5,J6,J7,J8,J9,J10,J11,J12,J13,J14,J15)
+oo == I
 (gens L) % J16 == 0
 (J16, F17) = GTZ0 F16
 (gens L) % J16 == 0
@@ -276,7 +277,7 @@ L = intersect(J1,J2,J3,J4,J5,J6,J7,J8,J9,J10,J11,J12,J13,J14,J15)
 (J16, F35) = GTZ0 F34
 (gens L) % J16 == 0
 radI = intersect(L,F35)
-radical I
+intersect decompose I
 (J16, F36) = GTZ0 F35
 (gens L) % J16 == 0
 
@@ -294,15 +295,16 @@ F = (intersect values C)_0
 ----------------------------------------
 restart
 load "Elimination.m2"
-load "GTZ.m2"
+load "PrimaryDecomposition/GTZ.m2"
 R = ZZ/3[x,y,u,s,t]
 I = ideal(
     x^27,
     y^27,
     u^27,
     u^5-x*y*(x-y)*(s*x-t*y))
-independentSets I
+independentSets(I,Limit=>1)
 lt = flatt(I, s*t)
+peek lt
 ltideal = intersect values lt
 lts = factors ltideal_0
 I1 = saturate(I,s)

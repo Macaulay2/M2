@@ -149,7 +149,7 @@ public:
   MonomialIdeal * borel() const;
   int is_borel() const;
 
-  MonomialIdeal * assprimes() const;
+  MonomialIdeal * assprimes(int count) const; // -1 means all, > 0 means take that many
   int codim() const;
 
   MonomialIdeal * operator+(const MonomialIdeal &F) const;

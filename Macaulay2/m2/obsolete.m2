@@ -14,6 +14,7 @@ Numeric = X -> error "'Numeric' has been replaced by 'numeric'"
 submodule = X -> error "'submodule' has been removed"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
 assign = X -> error "assign' has been replaced by <-'"
+minprimes = X -> error "'minprimes' has been replaced by 'independentSets'"
 
 --undocumented(map,Module)
 --map(Module) := Matrix => options -> (M) -> error "method for 'map(Module)' has been removed: use 'map(M,M,1)' instead"

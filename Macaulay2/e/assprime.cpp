@@ -41,7 +41,7 @@ int AssociatedPrimes::codimension()
   return min_codim;
 }
 
-MonomialIdeal * AssociatedPrimes::associated_primes()
+MonomialIdeal * AssociatedPrimes::associated_primes(int count)
     // Place the associated primes of minimal codimension 
     // into a monomial ideal where each monomial corresponds to the prime
     // monomial ideal which is its support.
@@ -51,6 +51,8 @@ MonomialIdeal * AssociatedPrimes::associated_primes()
       codimension();
       state = do_primes;
     }
+  minprime_limit = count;
+  n_minprimes = 0;
   if (exps[0] == 0) exps[0] = newarray(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
   ass_prime_generator(mi->first_node(), 0);
@@ -106,6 +108,9 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 	      Bag *b = new Bag(0);
 	      varpower::from_ntuple(nvars, exp, b->monom());
 	      ass_primes->insert(b);
+	      n_minprimes++;
+	      if (minprime_limit > 0 && n_minprimes >= minprime_limit)
+		return;
 	    }
 	  return ;
 	}
@@ -125,6 +130,8 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 		  exp[i2.var()] = 1 ;
 		  ass_prime_generator(mi->next(p), codim+1) ;
 		  exp[i2.var()] = -1 ;
+		  if (minprime_limit > 0 && n_minprimes >= minprime_limit)
+		    return;
 		}
 	  return ;
 	}

@@ -718,10 +718,10 @@ int MonomialIdeal::is_borel() const
 
 #include "assprime.hpp"
 
-MonomialIdeal * MonomialIdeal::assprimes() const
+MonomialIdeal * MonomialIdeal::assprimes(int n_to_take) const
 {
   AssociatedPrimes ap(this);
-  return ap.associated_primes();
+  return ap.associated_primes(n_to_take);
 }
 
 int MonomialIdeal::codim() const

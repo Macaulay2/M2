@@ -26,7 +26,8 @@ class AssociatedPrimes
 				// corresponds to a prime monomial ideal
 				// whose generators are the variables occuring
 				// in the monomial.
-
+  int minprime_limit; // -1 means find all.  >= 1 means stop after that number
+  int n_minprimes; // number found so far, during associated_primes computation
   int **exps;
 
   void ass_prime_generator(Nmi_node *p, int codim);
@@ -37,7 +38,7 @@ public:
   ~AssociatedPrimes();
 
   int codimension();
-  MonomialIdeal * associated_primes();
+  MonomialIdeal * associated_primes(int count);
 };
 
 #endif
