@@ -176,7 +176,7 @@ export rawSyzygy(e:Expr):Expr := (
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do (
 	  r := Ccode(RawMonomialPair, "(engine_RawMonomialPair)rawSyzygy((Monomial*)", x,",","(Monomial*)",y, ")");
-	  Expr(list(Expr(r.a), Expr(r.b))))
+	  Expr(Sequence(Expr(r.a), Expr(r.b))))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
      else WrongArg("a pair of raw monomials")
