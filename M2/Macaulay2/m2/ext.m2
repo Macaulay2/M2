@@ -100,12 +100,11 @@ Ext(Module,Module) := Module => (M,N) -> (
     if c =!= codim B 
     then error "total Ext available only for complete intersections";
     f := apply(c, i -> I_i);
-    toB := map(B,A);
     pM := lift(presentation M,A);
     pN := lift(presentation N,A);
     M' := cokernel ( pM | p ** id_(target pM) );
     N' := cokernel ( pN | p ** id_(target pN) );
-    C := resolution M';
+    C := complete resolution M';
     s := f / (g -> nullhomotopy (g*id_C));
     X := local X;
     K := coefficientRing A;
@@ -119,22 +118,19 @@ Ext(Module,Module) := Module => (M,N) -> (
       Adjust => v -> {- fudge * v#0 + v#1, - v#0},
       Repair => w -> {- w#1, - fudge * w#1 + w#0}
       ]);
-    toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i));
-    -- make a ring whose monomials can be used as indices
-    R := K(monoid [X_1 .. X_c,Degrees=>{c:{2}}]);
-    Rmon := monoid R;
-    use R;
-    spots := C -> sort select(keys C, i -> class i === ZZ);
+    -- make a monoid whose monomials can be used as indices
+    Rmon := monoid [X_1 .. X_c,Degrees=>{c:{2}}];
+    -- make group ring, so 'basis' can enumerate the monomials
+    R := K Rmon;
     -- make a hash table to store the blocks of the matrix
     Gamma := new MutableHashTable;
     Gamma#(exponents 1_Rmon) = -C.dd;
     scan(c, i -> Gamma#(exponents Rmon_i) = s_i);
     -- a helper function to list the factorizations of a monomial
     factorizations := (m) -> (
-      -- input: m is the list of exponents for a monomial
-      -- Return a list of pairs of lists showing the factorizations.
-      -- E.g., if m is {1,1} we return
-      -- {({1,0},{0,1}),({0,1},{1,0}),({1,1},{0,0}),({0,0},{1,1})}
+      -- Input: m is the list of exponents for a monomial
+      -- Return a list of pairs of lists of exponents showing the
+      -- possible factorizations of m.
       if m === {} then { ({}, {}) }
       else (
 	i := m#-1;
@@ -149,14 +145,15 @@ Ext(Module,Module) := Module => (M,N) -> (
 		if Gamma#?n and Gamma#?o
 		then Gamma#n * Gamma#o
 		else 0));
-	    if h != 0 then (
-	      -- compute and save the null homotopies
-	      Gamma#m = nullhomotopy h;
-	      )))));
+            -- compute and save the null homotopies
+            if h != 0 then Gamma#m = nullhomotopy h;
+      	    ))));
     -- make a free module whose basis elements have the right degrees
+    spots := C -> sort select(keys C, i -> class i === ZZ);
     Cstar := S^(apply(spots C, 
 	i -> toSequence apply(degrees C_i, d -> {i,first d})));
     -- assemble the matrix from its blocks
+    toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i));
     Delta := map(Cstar, Cstar, 
       transpose sum ( keys Gamma, m -> S_m * toS sum Gamma#m),
       Degree => {-1,0});
