@@ -33,7 +33,7 @@ removePackage String := s -> scan(packages, p -> if p.name == s then removePacka
 
 globalDictionaries = append(globalDictionaries,OutputDictionary)
 
-newPackage = method( Options => { Using => {}, Version => "0.0", WritableSymbols => {} } )
+newPackage = method( Options => { Using => {}, Version => "0.0", WritableSymbols => {}, DebuggingMode => false } )
 newPackage(Package) := opts -> p -> (
      hide p.Dictionary;		    -- hide the old dictionary
      newPackage(p.name,opts))
@@ -55,6 +55,7 @@ newPackage(String) := opts -> (title) -> (
 	  symbol Version => opts.Version,
 	  symbol WritableSymbols => opts.WritableSymbols,
 	  "previous package" => currentPackage,
+	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
@@ -68,12 +69,14 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
+     debuggingMode = opts.DebuggingMode;
      globalAssignFunction(sym,p);
      sym <- p;
      packages = prepend(p,packages);
      p)
 
 newPackage("Main",
+     DebuggingMode => debuggingMode,
      Version => version#"VERSION",
      WritableSymbols => {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
@@ -81,7 +84,7 @@ newPackage("Main",
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol packages, symbol currentDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
-	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol interpreterHook
+	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook
 	  })
 reverseDictionary = x -> scan(packages, pkg -> (
 	  d := pkg#"reverse dictionary";
@@ -123,8 +126,8 @@ closePackage = p -> (
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
-     currentPackage = p#"previous package";
-     remove(p,"previous package");
+     currentPackage = p#"previous package"; remove(p,"previous package");
+     debuggingMode = p#"old debugging mode"; remove(p,"old debugging mode");
      stderr << "--package " << p << " installed" << endl;
      p)
 
