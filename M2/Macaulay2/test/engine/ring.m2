@@ -3,7 +3,7 @@ oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
 cmp = method()
 cmp(HashTable,HashTable) := (x,y) -> new HashTable from merge (x,y,(a,b) -> if a === b then "equal" else (a,b))
-
+load "raw-util.m2"
 
 -- ideals in ZZ :
 I = ideal (30,40,50)
@@ -49,7 +49,7 @@ assert( raw 0_R == 0 )
 R'= raw R
 M' = raw monoid R
 2_R
-raw 2_R						    -- Mike's bug?
+raw 2_R
 raw ZZ
 rawLift(raw ZZ, raw 2_R)
 rawToInteger rawLift(raw ZZ, raw 2_R)
@@ -107,7 +107,7 @@ assert ( F === R^3 )
 assert(raw F === raw R^3)
 assert(raw F =!= raw R^4)
 
-G = F**F						    -- we no longer cache the results of tensor products of modules
+G = F**F -- we no longer cache the results of tensor products of modules
 assert( G === F**F )
 
 raw G
@@ -147,7 +147,7 @@ assert( v' ++ v === v' ++ v )
 v ** v
 v ** v'
 assert( v ** v' === v ** v' )
-
+end
 2*v
 v*2
 assert ( 2*v === v*2 )
