@@ -327,7 +327,7 @@ libM2d.a: $(ALLOBJ)
 	$(RANLIB) libM2d.a
 
 MADEFILES += ../bin/M2$(EXE)
-../bin/M2$(EXE) : libM2d.a main.o $(LIBRARYFILES)
+../bin/M2$(EXE) : libM2d.a main.o $(LIBRARYFILES) ../e/libgb.a
 	rm -f $@
 	time $(PURIFYCMD) $(CC) main.o $(LDFLAGS) libM2d.a ../e/libgb.a $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
