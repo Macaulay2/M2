@@ -1,5 +1,4 @@
---needs "../e/test-sparse.m2"
-needs "../e/sparsemat.m2"
+needs "sparsemat.m2"
 
 LLLalpha := 3/4
 alphaNumerator := 3

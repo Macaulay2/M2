@@ -15,7 +15,7 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
        << version#"architecture"
        << ".data\"'" << endl
        << "--" << endl
-       << "'-e path = {\".\", \"" << M2HOME << "/m2\"}'" << endl
+       -- << "'-e path = {\".\", \"" << M2HOME << "/m2\"}'" << endl
        << "'-e runStartFunctions()'" << endl
        << close;
        "../bin/M2.bat"
@@ -38,7 +38,7 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
 		 << " --"
 		 -- << " $TTY"
 		 << " "
-		 << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
+		 -- << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
 		 << " "
 		 << format "-e runStartFunctions()" 
 		 )
@@ -53,7 +53,7 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
 		 << " "
 		 << "-ephase=0"
 		 << " "
-		 << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
+		 -- << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
 		 << " "
 		 << format "-e runStartFunctions()" 
 		 )
@@ -62,6 +62,7 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
        FILENAME
        << "#! /bin/sh" << endl
        << "M2HOME=" << M2HOME << endl
+       << "export M2HOME" << endl
        -- << "if [ \"$EMACS\" = t ]; then TTY=-tty; else TTY=; fi" << endl
        << "if [ $# = 0 ]" << endl
        << "then " << args << endl
