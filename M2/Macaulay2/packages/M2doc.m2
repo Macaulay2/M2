@@ -1,4 +1,5 @@
-newPackage "M2doc"
+newPackage ("M2doc",
+     Version => version#"VERSION")
 
 beginDocumentation()
 
