@@ -1,6 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document { exit,
+     HEADLINE "exit the program",
      TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
      BR,
      NOINDENT, 
@@ -13,6 +14,7 @@ document { exit,
      }
 
 document { quit,
+     HEADLINE "quit the program",
      TT "quit", " -- terminates the program and returns 0 as return code.",
      PARA,
      "Files are flushed and closed.  Another way to exit is to type the end of
@@ -22,19 +24,24 @@ document { quit,
      }
 
 document { fork,
+     HEADLINE "fork the process",
      TT "fork()", " -- forks the process, returning the process id of the child
      in the parent, and returning 0 in the child."
      }
 
 document { sleep,
+     HEADLINE "sleep for a while",
      TT "sleep n", " -- sleeps for ", TT "n", " seconds."
      }
 
 document { processID,
-     TT "processID()", " -- returns the process id of the current Macaulay 2 process."
+     HEADLINE "the process identifier",
+     TT "processID()", " -- returns the process identifier of the current 
+     Macaulay 2 process."
      }
 
 document { BinaryPowerMethod,
+     HEADLINE "compute powers by squaring",
      TT "BinaryPowerMethod(x,n)", " -- computes ", TT "x^n", " using successive squaring",
      PARA,
      "The technique depends in a standard way on the binary expansion of ", TT "n", ",
@@ -44,12 +51,14 @@ document { BinaryPowerMethod,
      }
 
 document { SimplePowerMethod,
+     HEADLINE "compute powers by multiplying",
      TT "SimplePowerMethod(x,n)", " -- computes x^n using repeated multiplication",
      PARA,
      SEEALSO "BinaryPowerMethod"
      }
 
 document { dumpdata,
+     HEADLINE "dump state of the system to a file",
      TT "dumpdata s", " -- dump all data segments for the current process to 
      the file whose name is stored in the string ", TT "s", ".",
      PARA,
@@ -61,6 +70,7 @@ document { dumpdata,
      }
 
 document { loaddata,
+     HEADLINE "load state of the system from a file",
      TT "loaddata s", " -- load all data segments for the current process from 
      the file whose name is stored in the string ", TT "s", ".  The file must have been
      created with ", TO "dumpdata", " and the same version of Macaulay 2.",
@@ -91,6 +101,7 @@ document { symbol "reloaded",
      }
 
 document { buckets,
+     HEADLINE "list the buckets in a hash table",
      TT "buckets x", " -- returns a list of the buckets used internally in an 
      hash table ", TT "x", ".",
      PARA,
@@ -98,6 +109,7 @@ document { buckets,
      }
 
 document { ggPush,
+     HEADLINE "convert a push command to engine communication format",
      TT "ggPush h", " -- provides a string which when sent to the engine will
      cause it to push the object ", TT "h", " onto the engine's stack.",
      PARA,
@@ -112,20 +124,23 @@ document { ggPush,
      }
 
 document { identity,
+     HEADLINE "the identity function",
      TT "identity x", " -- returns x.",
      PARA,
      "This is the identity function."
      }
 
 document { modulus,
-     TT "modulus", " -- a key used in quotient rings of the form ZZ/n to store 
-     the number n.",
+     HEADLINE "store the modulus",
+     TT "modulus", " -- a key used in quotient rings of the form ", TT "ZZ/n to", " store 
+     the number ", TT "n", ".",
      PARA,
      "This may go away when more general quotient rings are working."
      }
 
 if class XCreateWindow === Function then (
 document { XCreateWindow,
+     HEADLINE "create a window",
      TT "XCreateWindow(pid,x,y,a,b,w,n)", " -- makes a new window.",
      PARA,
      "Here ", TT "pid", " is the id of the parent window, ", TT "x", " 
@@ -137,26 +152,31 @@ document { XCreateWindow,
 
 if class XDefaultRootWindow === Function then (
 document { XDefaultRootWindow,
+     HEADLINE "id of the root window",
      TT "XDefaultRootWindow()", " -- returns the id of the root window."
      }
 ) else erase symbol XDefaultRootWindow
 
 document { format,
-     TT "format s", " -- prepare a string s for output by converting nonprintable
+     HEADLINE "format a string",
+     TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
      characters to printable ones, or to escape sequences."
      }
 
 document { generatorSymbols,
+     HEADLINE "store the symbols for the generators",
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under
      which is stored a list of the symbols used as generators for the monoid."
      }
 
 document { generatorExpressions,
-     TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under which is stored a list
-     of the symbols used as generators for the monoid."
+     HEADLINE "store the generators",
+     TT "generatorExpressions", " -- a key used in a ", TO "Monoid", " under which 
+     is stored a list of the generators for the monoid."
      }
 
-document { match, HEADLINE "whether a string matches a pattern",
+document { match, 
+     HEADLINE "whether a string matches a pattern",
      TT "match(s,p)", " -- whether the string s matches the pattern ", TT "p", ".",
      PARA,
      "The pattern p may contain '*'s, which serve as wild card characters.
@@ -165,6 +185,7 @@ document { match, HEADLINE "whether a string matches a pattern",
      }
 
 document { gg,
+     HEADLINE "convert to engine communication format",
      TT "gg x", " -- converts an integer, handle, or list of integers to the format
      required for communication with the engine.",
      PARA,
@@ -172,6 +193,7 @@ document { gg,
      }
 
 document { pairs,
+     HEADLINE "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
      PARA,
@@ -182,6 +204,7 @@ document { pairs,
      }
 
 document { sequence,
+     HEADLINE "make a sequence",
      TT "sequence v", " -- returns ", TT "v", " if ", TT "v", " is a sequence, otherwise makes
      a sequence of length one containing ", TT "v", ".",
      PARA,
@@ -195,6 +218,7 @@ document { sequence,
      }
 
 document { xor,
+     HEADLINE "logical exclusive-or",
      TT "xor(i,j)", " -- produces the bitwise logical exclusive-or of
      the integers ", TT "i", " and ", TT "j", ".",
      PARA,
@@ -202,6 +226,7 @@ document { xor,
      }
 
 document { mingle,
+     HEADLINE "mingle elements of several lists",
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
      and so on.",
@@ -235,13 +260,15 @@ document { SelfInitializingType,
      SEEALSO {"HeaderType", "WrapperType"}
      }
 
-document { Manipulator, HEADLINE "the class of all file manipulators",
+document { Manipulator,
+     HEADLINE "the class of all file manipulators",
      "A file manipulator is a type of list which, when put out to
      a file with ", TO "<<", " causes a chosen function to be applied
      to the file.",
      }
 
 document { close,
+     HEADLINE "close a file",
      TT "f << close", " -- closes the file ", TT "f", ".",
      BR, NOINDENT,
      TT "close f", " -- closes the file ", TT "f", ".",
@@ -266,19 +293,25 @@ document { close,
      }
 
 document { kill,
+     HEADLINE "kill a process",
      TT "kill f", " -- kill the process associated with the file ", TT "f", "."
      }
 
 document { closeIn,
+     HEADLINE "close an input file",
      TT "f << closeIn", " -- closes the input file ", TT "f", ".",
      BR, NOINDENT,
      TT "closeIn f", " -- closes the input file ", TT "f", ".",
+     PARA,
+     "If the file was open only for input, then ", TO "close", " is
+     easier to use and has the same effect.",
      PARA,
      "If the file was open for both input and output, it remains
      open for output."
      }
 
 document { closeOut,
+     HEADLINE "close an output file",
      TT "f << closeOut", " -- closes the output file ", TT "f", ".",
      BR, NOINDENT,
      TT "closeOut f", " -- closes the output file ", TT "f", ".",
@@ -288,15 +321,20 @@ document { closeOut,
      on error, or the return status of the child process
      in case the the file was a pipe.",
      PARA,
+     "If the file was open only for output, then ", TO "close", " is
+     easier to use and has the same effect.",
+     PARA,
      "If the file was open for both input and output, it remains
      open for input."
      }
 
 document { flush,
-     TT "f << flush", " -- writes out any buffered output for the output file f.",
+     HEADLINE "flush output to file",
+     TT "f << flush", " -- writes out any buffered output for the output file ", TT "f", ".",
      }
 
 document { endl,
+     HEADLINE "end an output line",
      TT "f << endl", " -- ends the line currently being put out to the
      file ", TT "f", ".",
      PARA,
@@ -307,6 +345,7 @@ document { endl,
      }
 
 document { symbol "newline",
+     HEADLINE "the new line character sequence",
      TT "newline", " -- a string containing the character or sequence of
      characters which represents the end of a line.  To end an output line,
      you should use ", TO "endl", " instead, because there is more to 
@@ -327,12 +366,14 @@ document { symbol "newline",
      }
 
 document { collectGarbage,
+     HEADLINE "collect the garbage in memory",
      TT "collectGarbage()", " -- attempt a garbage collection.",
      PARA,
      SEEALSO "GC garbage collector"
      }
 
 document { gcDump,
+     HEADLINE "the status of the memory allocator",
      TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
      PARA,
      "Users will normally not want to use this function.  It calls the 
@@ -343,11 +384,13 @@ document { gcDump,
      }
 
 document { lookupCount,
+     HEADLINE "reference count for a symbol",
      TT "lookupCount s", " -- the number of times the symbol ", TT "s", " has been
      encountered in source code presented to the interpreter."
      }
 
-document { symbol "version",
+document { "version",
+     HEADLINE "information about this version of the program",
      TT "version", " -- a hash table describing this version of the program.",
      PARA,
      EXAMPLE "version"
@@ -370,23 +413,27 @@ document { Database,
      SEEALSO {"HashTable", "String"}
      }
 
-document { reorganize, HEADLINE "reorganize a database file",
+document { reorganize,
+     HEADLINE "reorganize a database file",
      TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
      PARA,
      SEEALSO "Database"
      }
 
-document { openDatabase, HEADLINE "open a database file",
+document { openDatabase,
+     HEADLINE "open a database file",
      TT "openDatabase \"filename\"", " -- open a database file with the given
      file name."
      }
 
-document { openDatabaseOut, HEADLINE "open a database file for writing",
+document { openDatabaseOut,
+     HEADLINE "open a database file for writing",
      TT "openDatabaseOut \"filename\"", " -- open a database file with the given
      file name, and allow changes to be made to it."
      }
 
-document { firstkey, HEADLINE "get the first key",
+document { firstkey,
+     HEADLINE "get the first key",
      TT "firstkey f", " -- return the first key available in the database
      file ", TT "f", ".",
      PARA,
@@ -396,8 +443,9 @@ document { firstkey, HEADLINE "get the first key",
      }
 
 document { nextkey,
+     HEADLINE "the next key in a database",
      TT "nextkey f", " -- return the next key available in the database
-     file f.",
+     file ", TT "f", ".",
      PARA,
      "Returns ", TT "null", " if none.",
      PARA,
@@ -405,6 +453,7 @@ document { nextkey,
      }
 
 document { addStartFunction,
+     HEADLINE "add a startup function",
      TT "addStartFunction (() -> ...)", " -- record a function for later 
      execution, when the program is restarted after loading dumped data.",
      PARA,
@@ -412,6 +461,7 @@ document { addStartFunction,
      }
 
 document { addEndFunction,
+     HEADLINE "add an ending function",
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited.",
      PARA,
@@ -423,6 +473,7 @@ document { addEndFunction,
      }
 
 document { runStartFunctions,
+     HEADLINE "run the start up functions",
      TT "runStartFunctions()", " -- call all the functions previously recorded
      by ", TO "addStartFunction", ".",
      PARA,
@@ -432,6 +483,7 @@ document { runStartFunctions,
      }
 
 document { runEndFunctions,
+     HEADLINE "run the ending functions",
      TT "runEndFunctions()", " -- call all the functions previously recorded
      by ", TO "addEndFunction", ".",
      PARA,
@@ -441,24 +493,28 @@ document { runEndFunctions,
      }
 
 document { symbol "oo",
+     HEADLINE "the last output value",
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
      SEEALSO { "oo", "ooo", "oooo" }
      }
 
 document { symbol "ooo",
+     HEADLINE "the next to the last output value",
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
      SEEALSO { "oo", "oooo" }
      }
 
 document { symbol "oooo",
+     HEADLINE "the third to the last output value",
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",
      SEEALSO { "oo", "ooo" }
      }
 
 document { InverseMethod,
+     HEADLINE "compute reciprocals",
      TT "InverseMethod", " -- a key used under which is stored a method
      for computing multiplicative inverses.",
      PARA,
@@ -484,7 +540,8 @@ document { "and",
      SEEALSO{ "or", "not" }
      }
 
-document { locate, HEADLINE "locate source code",
+document { locate,
+     HEADLINE "locate source code",
      TT "locate f", " -- for a symbol interpreted function ", TT "f", " 
      returns a sequence ", TT "(n,i,j)", " describing the location of
      the definition in the source code.  The name of the source file 
@@ -516,12 +573,15 @@ document { MutableHashTable,
      }
 
 document { map,
+     HEADLINE "make a map",
      TT "map(Y,X,d)", " -- constructs a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", ".",
      PARA,
      "This is intended to be a general mechanism for constructing maps
      (homomorphisms) between objects in various categories."
      }
+
 document { precedence,
+     HEADLINE "parsing precedence",
      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
      the printing routines.",
      PARA,
@@ -529,6 +589,7 @@ document { precedence,
      }
 
 document { hashTable,
+     HEADLINE "make a hash table",
      TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
      pairs.",
      PARA,
@@ -577,7 +638,9 @@ document { (toList, Set),
 	  }
      }
 
-document { toList, HEADLINE "list of elements" }
+document { toList,
+     HEADLINE "list of elements"
+     }
 
 document { saturate,
      HEADLINE "saturation of ideal or submodule",
@@ -615,14 +678,13 @@ document { saturate,
 
 document { saturate => Strategy,
      "The strategy option value should be one of the following:",
-    SHIELD MENU {
-        (TO "Linear", "      -- use the reverse lex order"),
-	(TO "Iterate", "     -- use successive ideal quotients (the default)"),
-	(TO "Bayer", "       -- use the method in Bayer's thesis"),
-	(TO "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
-        },
+     SHIELD MENU {
+          TO "Linear",
+	  TO "Iterate",
+	  TO "Bayer",
+	  TO "Elimination"
+          }
      }
-
 
 document { saturate => DegreeLimit,
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
@@ -631,7 +693,8 @@ document { saturate => DegreeLimit,
      }
 
 document { profile,
-     TT "f = profile f", " -- replace a global function f by a profiled version.",
+     HEADLINE "profile a function",
+     TT "f = profile f", " -- replace a global function ", TT "f", " by a profiled version.",
      PARA,
      "The new function is the same as the old one, except that when
      the new function is run, it will record the number of times it
@@ -640,11 +703,13 @@ document { profile,
      }
 
 document { profileSummary,
+     HEADLINE "display profiling data",
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
 
 document { name,
+     HEADLINE "store the name of a hash table",
      TT "name", " -- a key under which string giving the preferred name
      of a hash table can be stored.",
      PARA,
@@ -662,6 +727,7 @@ document { name,
      }
 
 document { globalAssignFunction,
+     HEADLINE "the standard method for the global assignment hook",
      TT "globalAssignFunction", " -- the standard function which can be used
      as a method for ", TO GlobalAssignHook, " so that certain types of
      mutable hash tables ", TT "X", ", when assigned to a global variable, will acquire
@@ -692,6 +758,7 @@ document { globalAssignFunction,
      }
 
 document { globalReleaseFunction,
+     HEADLINE "the standard method for the global variable release hook",
      TT "globalReleaseFunction", " -- the standard function which can be used as
      a method for ", TO GlobalReleaseHook, " so that certain types of things, which
      have acquired as their name the name of a global variable to which they have
@@ -702,7 +769,7 @@ document { globalReleaseFunction,
      }
 
 document { Entity,
-     HEADLINE "special typsettable objects",
+     HEADLINE "the class of all entities",
      "Entities are special typsettable objects which have different realizations
      in various typesetting systems.",
      PARA,
@@ -714,7 +781,8 @@ document { Entity,
 	  }
      }
 
-document { netRows, HEADLINE "list of rows of a net",
+document { netRows,
+     HEADLINE "list the rows of a net",
      TT "netRows x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA,
@@ -725,7 +793,8 @@ document { netRows, HEADLINE "list of rows of a net",
      retains its trailing spaces."
      }
 
-document { symbol ##, HEADLINE "uncurry a function",
+document { symbol ##,
+     HEADLINE "uncurry a function",
      TT "f ## (a,b)", "     -- computes ", TT "((f a) b)", ".",
      BR, NOINDENT,
      TT "f ## (a,b,c)", "   -- computes ", TT "(((f a) b) c)", ".",
