@@ -238,7 +238,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       v := factor f;				    -- constant term last
 	       #v === 1 and last v#0 === 1 and not isConstant first v#0
 	       or
-	       #v === 2 and v#0#1 === 1 and isConstant first v#0
+	       #v === 2 and v#0#1 === 1 and isConstant first v#0 and v#1#1 === 1
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;
