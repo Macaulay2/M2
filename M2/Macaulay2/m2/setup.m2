@@ -137,9 +137,13 @@ ZZ | String := String => (i,s) -> concatenate(string i,s)
 notify := false						    -- can change this for debugging
 loaded := new MutableHashTable
 
-markLoaded := (filename) -> ( 
-     loaded#filename = true; 
-     if notify then stderr << "--loaded " << filename << endl;
+markLoaded := (filename,origfilename) -> ( 
+     loaded#origfilename = true; 
+     if notify then (
+	  if filename === origfilename
+	  then stderr << "--loaded " << filename << endl
+	  else stderr << "--loaded " << origfilename << " from " << filename << endl
+	  );
      )
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
@@ -164,7 +168,7 @@ tryload := (filename,load) -> (
 			 );
 		    -- << "trying to load " << fn << endl;		    -- debugging
 		    result := load fn;
-		    if result then markLoaded fn;
+		    if result then markLoaded(fn,filename);
 		    result))))
 ///
 if version#"operating system" === "MACOS"
