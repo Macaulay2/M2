@@ -431,23 +431,19 @@ compactMatrixForm = true
 net Matrix := f -> (
      if f == 0 
      then "0"
-     else if compactMatrixForm then (
-	  R := ring target f;
-	  m := stack toSequence apply(
-	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
-	  if degreeLength R > 0 -- and isHomogeneous f
+     else (
+	  m := (
+	       if compactMatrixForm then (
+	       	    stack toSequence apply(lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"))
+	       	    )
+     	       else net expression f
+	       );
+	  if degreeLength ring f > 0 -- and isHomogeneous f
 	  then (
 	       d := degrees cover target f;
-	       if not all(d, i -> all(i, j -> j == 0)) then (
-	       	    repair := if R.?Repair then R.Repair else identity;
-	       	    m = horizontalJoin(
-	       	    	 stack( d / repair / toString ),
-	       	    	 " ",
-	       	    	 m);
-		    );
+	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
 	       );
 	  m)
-     else net expression f				    -- add row labels somehow
      )
 
 image Matrix := Module => f -> (

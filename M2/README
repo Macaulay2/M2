@@ -142,6 +142,8 @@ and commented out the Makefile line
 
 	all:: GMP
 
+Dumpdata doesn't work, so configure with the option --disable-dumpdata.
+
 ----------------------
 MS-DOS notes
 ----------------------
