@@ -116,9 +116,11 @@ LOADLIBES += ../dbm/libdbm2.a
 # __underflow
 # LOADLIBES += -lc
 
-# ifneq ($(OS),Linux)
-LDFLAGS += -static
-# endif
+ifeq ($(OS),Linux)
+LDFLAGS += -static -Wl,-defsym,_DYNAMIC=0
+else
+LDFLAGS += -static 
+endif
 
 #ifeq ($(OS),Linux)
 #LOADLIBES += -lieee

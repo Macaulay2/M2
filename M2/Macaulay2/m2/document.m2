@@ -98,9 +98,7 @@ doc = x -> (
 	  else null)
      else if DocDatabase#?x then evaluate DocDatabase#x else null)
 
-err := nodeName -> (
-     stderr << "warning: documentation already provided for '" << nodeName << "'" << endl;
-     )
+err := nodeName -> error("warning: documentation already provided for '", nodeName, "'")
 
 storeDoc := (nodeName,docBody) -> (
      if phase === 0
@@ -380,11 +378,9 @@ document = z -> (
      if class z != List then error "expected a list";
      if #z === 0 then error "expected a nonempty list";
      label := z#0;
-     nodeName := (
-	  if class label === Sequence 
-     	  then concatenate(name label#1, " ", string label#0, " ", name label#2)
-	  else string label
-	  );
+     if not ( class label === Symbol or class label === String )
+     then error "expected first element of list to be a symbol";
+     nodeName := string label;
      filename = (
 	  if (NameHashTable())#?nodeName
 	  then (NameHashTable())#nodeName
@@ -553,9 +549,16 @@ document { quote examples,
      of ", TT "f", ".",
      PARA,
      EXAMPLE ///examples partitions///,
-     EXAMPLE ///print \ partitions;///,
-     SEEALSO ("document", "printExamples");
+     EXAMPLE ///print \ examples partitions;///,
+     SEEALSO ("document", "printExamples")
      }
+
+TEST ///
+     assert( class examples MutableList === List )
+     assert( # examples MutableList > 0 )
+///
+
+
 
 printExamples = f -> scan(examples f, i -> << i << endl)
 

@@ -1859,15 +1859,23 @@ document { "copyright and license",
      MENU {
 	  TO "Factory library",
 	  TO "Factorization and characteristic sets library",
+	  TO "MP: Multi Protocol",
 	  TO "GNU MP",
 	  TO "GC garbage collector"
 	  }
      }
 
+document { "MP: Multi Protocol",
+     "Macaulay 2 incorporates code from the MP (Multi Protocol) subroutine
+     library written by S. Gray, N. Kajler, and P. Wang.  The license is
+     contained in its README file, part of which we provide in the file
+     ", TT "Macaulay2/licenses/mp.lic", "."
+     }
+
 document { "GC garbage collector",
      "Macaulay 2 uses the garbage collector 'GC' written by Hans-J. Boehm
      and Alan J. Demers.  The copyright is contained in its README file
-     which we provide in the file licenses/gc.lic.",
+     which we provide in the file ", TT "Macaulay2/licenses/gc.lic", ".",
      SEEALSO "collectGarbage"
      }
 
@@ -1876,7 +1884,8 @@ document { "Factory library",
      G. Pfister, H. Schoenemann and R. Stobbe, University of Kaiserslautern,
      Macaulay 2 incorporates 'Factory', a Singular library of polynomial
      routines which provides for factorization of polynomials. That library
-     is copyright 1996 by Gert-Martin Greuel and Ruediger Stobbe.",
+     is copyright 1996 by Gert-Martin Greuel and Ruediger Stobbe.  We provide
+     a copy of the license in the file ", TT "Macaulay2/licenses/factory.lic", ".",
      SEEALSO ("factor", "gcd")
      }
 
@@ -1886,7 +1895,8 @@ document { "Factorization and characteristic sets library",
      provides factorization of multivariate polynomials over finite fields
      and computation of the minimal associated primes of ideals via
      characteristic sets.  That library is copyright 1996 by Michael
-     Messollen.",
+     Messollen.  We provide a copy of the license in the file
+     ", TT "Macaulay2/licenses/libfac.lic", ".",
      SEEALSO ("factor", "gcd", "decompose", "irreducibleCharacteristicSeries")
      }
 
@@ -1895,11 +1905,11 @@ document { "GNU MP",
      integer and floating point arithmetic.  Version 2.0 of the library
      is provided to us under the GNU LIBRARY GENERAL PUBLIC LICENSE,
      a copy of which is provided to you as part of the Macaulay 2
-     package in the file licenses/gnulib.lic.  Macaulay 2 contains
-     no derivative of GNU MP, and works with it by being linked
-     with it, and hence the Macaulay2 executable is covered by section
-     6 of the GNU license.  We fulfill the terms of its license by
-     offering you the source code of the program, available at our
+     package in the file ", TT "Macaulay2/licenses/gnulib.lic", ".  
+     Macaulay 2 contains no derivative of GNU MP, and works with it by 
+     being linked with it, and hence the Macaulay2 executable is covered 
+     by section 6 of the GNU license.  We fulfill the terms of its license 
+     by offering you the source code of the program, available at our
      web site and our anonymous ftp site.",
      SEEALSO "how to get this program"
      }
@@ -3944,20 +3954,6 @@ document { quote profileSummary,
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
-
-
-document { quote examples,
-     TT "examples X", " -- returns a list of examples of the use of ", TT "X", "
-     from the online documentation.",
-     SEEALSO "printExamples"
-     }
-
-
-TEST ///
-     assert( class examples MutableList === List )
-     assert( # examples MutableList > 0 )
-///
-
 
 -- these files are made at compile time
 load "gbdoc.m2"

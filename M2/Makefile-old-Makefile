@@ -137,7 +137,7 @@ FACTORYexports := \
 		factory/tmpl_inst.cc
 
 FACTORYconfigured: factory/config.status
-factory/config.status factory/GNUmakefile : factory/GNUmakefile.in
+factory/config.status factory/GNUmakefile : factory/GNUmakefile.in factory/configure
 	cd factory;\
 	GMP_INCLUDE_PATH=../include;\
 	export GMP_INCLUDE_PATH;\
@@ -153,7 +153,7 @@ lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
 ###################### LIBFAC
 LIBFAC:		libfac \
 		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
-libfac/config.status :
+libfac/config.status : libfac/configure
 	cd libfac; ./configure --cache-file=../config.cache --includedir=../include
 libfac/libfac.a : always
 	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac libfac
@@ -163,7 +163,7 @@ lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 ###################### MP
 MP:	mp mp/config.status mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
-mp/config.status:
+mp/config.status: mp/configure
 	cd mp; ./configure --cache-file=../config.cache --prefix=$(TOPDIR) # --with-debug
 mp/libMP.a:
 	$(MAKE) -C mp libMP.a
