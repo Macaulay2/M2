@@ -65,8 +65,7 @@ normalizeDocumentTag   Option := identity
 normalizeDocumentTag  Nothing := x -> symbol null
 normalizeDocumentTag    Thing := x -> (
      if x.?Symbol and value x.Symbol === x then return x.Symbol;
-     t := reverseDictionary x;
-     if t =!= null then return t;
+     if ReverseDictionary#?x then return ReverseDictionary#x;
      error "encountered unidentifiable document tag";
      )
 
@@ -779,10 +778,7 @@ documentation Sequence := s -> (
 	  }
      )
 
-documentation Thing := x -> (
-     s := reverseDictionary x;
-     if s =!= null then documentation s else SEQ{ " -- undocumented -- "}
-     )
+documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
 
 hasDocumentation = x -> (
      fkey := formatDocumentTag x;

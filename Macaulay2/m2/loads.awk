@@ -1,7 +1,7 @@
-BEGIN { printf "s := currentPackage\n" }
-BEGIN { printf "currentPackage = Main\n" }
+# BEGIN { printf "s := currentPackage\n" }
+# BEGIN { printf "currentPackage = Main\n" }
 { printf "load \"%s\"\n", $0 }
-END { printf "currentPackage = s\n" }
+# END { printf "currentPackage = s\n" }
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:
