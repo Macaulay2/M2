@@ -187,8 +187,6 @@ public:
   // Routines special to fields (anything else?)
   
   // Infrastructure here
-  virtual void write_element(object_writer &o, const ring_elem f) const = 0;
-  virtual void read_element(object_reader &i, ring_elem &result) const = 0;
 
   int          length_of() const      { return n_vars(); }
   const Ring * cast_to_Ring() const { return this; }

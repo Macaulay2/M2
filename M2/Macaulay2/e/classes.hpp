@@ -243,9 +243,6 @@ class res2_comp;
 class gb_emitter;
 class GBKernelComputation;
 
-class object_writer;
-class object_reader;
-
 #if defined(ARING)
 class PolynomialRing;
 class Polynomial;

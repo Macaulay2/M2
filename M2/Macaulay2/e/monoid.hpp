@@ -164,11 +164,6 @@ public:
   type_identifier  type_id () const { return TY_MONOID; }
   const char * type_name   () const { return "Monoid"; }
 
-  // serialize
-  virtual void write_object(object_writer &o) const;
-  static Monoid *read_object(object_reader &i);
-  void write_element(object_writer &o, const int *m) const;
-  void read_element(object_reader &i, int * &result) const;
 };
 
 extern Monoid *trivial_monoid;		// set in x_monoid.cpp

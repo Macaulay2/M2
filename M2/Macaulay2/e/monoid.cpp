@@ -224,16 +224,6 @@ Monoid::~Monoid()
   delete moninfo;  // This takes care of bump_down of degree monoid.
 }
 
-void Monoid::write_object(object_writer &o) const
-{
-  // MESXX
-}
-Monoid *Monoid::read_object(object_reader &i)
-{
-  // MESXX
-  return 0;
-}
-
 void Monoid::text_out(buffer &o) const
 {
   int i;
@@ -550,16 +540,6 @@ void Monoid::elem_bin_out(buffer &o, const int *m) const
 {
   to_expvector(m, EXP1);
   ntuple::elem_bin_out(o, nvars, EXP1);
-}
-
-void Monoid::write_element(object_writer &o, const int *m) const
-{
-  // MESXX
-}
-
-void Monoid::read_element(object_reader &i, int * &result) const
-{
-  // MESXX
 }
 
 void Monoid::multi_degree(const int *m, int *result) const

@@ -11,7 +11,6 @@
 #include "termideal.hpp"
 
 #include "geopoly.hpp"
-#include "serial.hpp"
 
 #include "gb_comp.hpp"
 
@@ -155,45 +154,6 @@ bool PolynomialRing::equals(const object_element *o) const
   return true;
 }
 #endif
-
-void PolynomialRing::write_object(object_writer &o) const
-{
-  o << class_id() << K << M << quotient_ideal.length();
-  if (base_ring != NULL)
-    {
-      o << base_ring;
-      for (int i=0; i<quotient_ideal.length(); i++)
-	write_element(o, quotient_ideal[i]);
-    }
-}
-
-PolynomialRing *PolynomialRing::read_object(object_reader &i)
-{
-  object_element *obj1, *obj2, *obj3;
-  int nquotients;
-  i >> obj1 >> obj2;
-  const Ring *K = obj1->cast_to_Ring();
-  const Monoid *M = obj2->cast_to_Monoid();
-  i >> nquotients;
-  if (nquotients > 0)
-    {
-      array<ring_elem> quots;
-      i >> obj3;
-      const PolynomialRing *R = obj3->cast_to_Ring()->cast_to_PolynomialRing();
-      for (int j=0; j<nquotients; j++)
-	{
-	  ring_elem f;
-	  R->read_element(i, f);
-	  quots.append(f);
-	}
-      return new PolynomialRing(R,quots);
-    }
-  else
-    {
-      return new PolynomialRing(K,M);
-    }
-  
-}
 
 void PolynomialRing::text_out(buffer &o) const
 {
@@ -1596,36 +1556,6 @@ void PolynomialRing::elem_text_out(buffer &o, const ring_elem f) const
   p_parens = old_parens;
   p_plus = old_plus;
 
-}
-
-void PolynomialRing::write_element(object_writer &o, const ring_elem f) const
-{
-  int n = n_terms(f);
-  o << n;
-
-  for (Nterm *t = f; t != NULL; t = t->next)
-    {
-      M->write_element(o, t->monom);
-      K->write_element(o, t->coeff);
-    }
-}
-
-void PolynomialRing::read_element(object_reader &i, ring_elem &result) const
-{
-  int n;
-  i >> n;
-  Nterm head;
-  Nterm *f = &head;
-  for (int j=0; j<n; j++)
-    {
-      Nterm *t = new_term();
-      f->next = t;
-      f = t;
-     // M->read_element(i, t->monom);
-      K->read_element(i, t->coeff);
-    }
-  f->next = NULL;
-  result = head.next;
 }
 
 void PolynomialRing::elem_bin_out(buffer &o, const ring_elem f) const

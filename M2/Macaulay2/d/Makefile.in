@@ -217,14 +217,6 @@ ifeq ($(OS),MS-DOS)
 LDLIBS += -lgpp
 else
 
-ifneq "$(CC)" "cl"
-ifeq ($(OS),SunOS)
-LDLIBS += /usr/local/lib/libstdc++.a.*
-else
-LDLIBS += -lstdc++
-endif
-endif
-
 #	We used to -lc in here, but it's for a good reason.
 #	Under linux, I have a modern version 2.8.0 of libstdc++ that defines
 #	the routine _IO_init which is called by sprintf, indirectly.  My sprintf

@@ -71,10 +71,6 @@ public:
 
   class_identifier class_id() const { return CLASS_WeylAlgebra; }
 
-  // serialize
-  virtual void write_object(object_writer &o) const;
-  static WeylAlgebra *read_object(object_reader &i);
-
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;
 

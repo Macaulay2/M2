@@ -127,9 +127,8 @@ distclean clean ::; $(MAKE) -C book $@
 all ::;  $(MAKE) -C emacs all
 distclean clean ::; $(MAKE) -C emacs $@
 ################################# appendix to Vasconcelos' book
-doc :: Vasconcelos-appendix
-Vasconcelos-appendix ::; $(MAKE) -C Vasconcelos-appendix all
-distclean clean ::; $(MAKE) -C Vasconcelos-appendix clean
+Vasconcelos-appendix ::; if [ -d Vasconcelos-appendix ] ; then $(MAKE) -C Vasconcelos-appendix all; fi
+distclean clean ::; if [ -d Vasconcelos-appendix ] ; then $(MAKE) -C Vasconcelos-appendix clean; fi
 ################################# socket
 distclean clean ::; if [ -d socket ]; then $(MAKE) -C socket clean; fi
 ################################# Mathematica

@@ -9,7 +9,6 @@
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "random.hpp"
-#include "serial.hpp"
 
 #define RRELEM_VAL(f) (RRelem ((f).poly_val))
 #define RR_VAL(f) ((RRELEM_VAL(f))->val)
@@ -31,21 +30,6 @@ RR *RR::create(const Monoid *D, double epsilon)
 RR::~RR()
 {
   delete RR_stash;
-}
-
-void RR::write_object(object_writer &o) const
-{
-  o << class_id() << D;
-}
-
-RR *RR::read_object(object_reader &i)
-{
-  object_element *obj;
-  double epsilon;
-  i >> obj;
-  i >> epsilon;
-  Monoid *D = obj->cast_to_Monoid();
-  return new RR(D,epsilon);
 }
 
 void RR::text_out(buffer &o) const
@@ -119,17 +103,6 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
 void RR::elem_bin_out(buffer &o, const ring_elem a) const
 {
   bin_double_out(o, RR_VAL(a));
-}
-
-void RR::write_element(object_writer &o, const ring_elem f) const
-{
-  o << RR_VAL(f);
-}
-void RR::read_element(object_reader &i, ring_elem &result) const
-{
-  double a;
-  i >> a;
-  result = RR::from_double(a);
 }
 
 ring_elem RR::from_int(int n) const

@@ -84,17 +84,6 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF,
   return R;
 }
 
-void WeylAlgebra::write_object(object_writer &o) const
-{
-  // MESXX
-}
-
-WeylAlgebra *WeylAlgebra::read_object(object_reader &i)
-{
-  // MESXX
-  return 0;
-}
-
 void WeylAlgebra::text_out(buffer &o) const
 {
   o << "WeylAlgebra(";

@@ -140,9 +140,6 @@ public:
   virtual int hash() const { return 0; }
     // For mutable types, this is a sequence number.
 
-  // Serialization (see serial.hpp for use)
-  virtual void write_object(object_writer &) const { }
-
   // Display
   virtual void bin_out(buffer &) const { }
   virtual void text_out(buffer &o) const { o << "<" << type_name() << ">"; }

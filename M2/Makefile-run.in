@@ -57,7 +57,8 @@ announce.doc ::
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
 all :: $(TARGET)
-MACAULAY2:; $(MAKE) -C Macaulay2 all tests
+check :: $(MAKE) -C Macaulay2 tests
+MACAULAY2:; $(MAKE) -C Macaulay2 all
 justM2 distclean::; $(MAKE) -C Macaulay2 $@
 DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/CHANGES \
@@ -125,7 +126,7 @@ testport-go:
 	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
-DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
+# DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
 # DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
 # DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
 # DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps

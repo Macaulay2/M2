@@ -30,12 +30,6 @@ public:
 
   class_identifier class_id() const { return CLASS_GF; }
 
-  // serialize
-  virtual void write_object(object_writer &o) const;
-  static GF *read_object(object_reader &i);
-  void write_element(object_writer &o, const ring_elem f) const;
-  void read_element(object_reader &i, ring_elem &result) const;
-
   int to_int(int a) const;
 
   GF * cast_to_GF() { return this; }

@@ -1,4 +1,4 @@
-/* include/config.h.in.  Generated automatically from configure.in by autoheader.  */
+/* include/config.h.in.  Generated automatically from configure.ac by autoheader.  */
 
 /* machine hardware type, obtained with uname -m */
 #undef ARCH

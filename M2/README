@@ -49,12 +49,14 @@ you can compile and link Macaulay 2.  We always compile with gcc.
 		And it can erroneously decide that 'const' and 'inline' keywords don't
 		work, and add -Dconst= -Dinline= to DEFS.  This results in a stream of
 		error messages about duplicate declarations.
+	     Also, ignore the warning message about factory.h being missing, if you think you've put
+		it in $prefix/include.
 	     Also, make sure you patch the source with the diffs in README.libfac-0.3.2,
 		or else it gets confused about the NOSTREAMIO option.  Do it this way:
 			cd libfac
 			patch -p1 < ...../README.libfac-0.3.2
-	     Also, ignore the warning message about factory.h being missing, if you think you've put
-		it in $prefix/include.
+			make DEFS=-DHAVE_SINGULAR_ERROR
+			make prefix=/usr/local/... install
 
     library: gmp
     release: gmp-3.1.1
@@ -87,6 +89,10 @@ Quick and easy:
     script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  The
     resulting files distributions/Macaulay2-*-tar.gz can be distributed.
 
+    Run 'make check' to run the tests.
+
+    Eventually 'make install' will do something, but not yet!
+
 Useful intermediate make targets:
 
     Use
@@ -95,7 +101,9 @@ Useful intermediate make targets:
     Comment out the ones you want, or install some of your own.  An example of
     one you might want to add is
 	    CONFIGURE_OPTIONS += --prefix=$HOME/local
-    You don't have to do it this way; you could also run 'configure' manually.
+    You don't have to do it this way; you could also run 
+	    ./configure
+    manually if you want to, but the Makefile will do that for you.
 
     Use
 	    make configuration
