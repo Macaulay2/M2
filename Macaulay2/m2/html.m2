@@ -843,7 +843,9 @@ makePackageIndex List := packagePrefixPath -> (
      absoluteLinks = true;
      htmlDirectory = getenv "HOME" | "/" | packageSuffix;
      key := "package index";
-     fn := getenv "HOME" | "/" | packageSuffix | "index.html";
+     dir := getenv "HOME" | "/" | packageSuffix;
+     if not isDirectory dir then makeDirectory dir;
+     fn := dir | "index.html";
      stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
 	  HEAD {
@@ -855,11 +857,13 @@ makePackageIndex List := packagePrefixPath -> (
 	       PARA BOLD "Index of installed packages:",
 	       UL apply(packagePrefixPath, prefixDirectory -> (
 			 p := prefixDirectory | LAYOUT#"docm2";
-			 r := readDirectory p;
-			 r = select(r, fn -> fn != "." and fn != "..");
-			 r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
-			 r = sort r;
-	       		 SEQ { HEADER3 prefixDirectory, UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) }
+			 if isDirectory p then (
+			      r := readDirectory p;
+			      r = select(r, fn -> fn != "." and fn != "..");
+			      r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
+			      r = sort r;
+			      SEQ { HEADER3 prefixDirectory, UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) }
+			      )
 			 )
 		    )
 	       }

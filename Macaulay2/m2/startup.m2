@@ -357,7 +357,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  )
      )
 
-packageSuffix = ".Macaulay2/"
+packageSuffix = if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 
 path = {}
 scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
