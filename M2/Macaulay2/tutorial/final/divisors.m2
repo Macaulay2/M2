@@ -338,6 +338,7 @@ degree imI
 
 --$
 globalSections = method()
+--$
 globalSections Divisor := (D) -> (
     -- First let's grab the parts (I,J) of D.
     I := D#0;
