@@ -58,11 +58,11 @@ newring.m2
 subring.m2
 ext.m2
 tor.m2
-monideal.m2
 duals.m2
 gradedmodules.m2
 chaincomplexes.m2
 res.m2
+monideal.m2
 radical.m2
 factor.m2
 integrate.m2

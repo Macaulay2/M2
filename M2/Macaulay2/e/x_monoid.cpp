@@ -55,6 +55,7 @@ void cmd_Monoid(object &omo, object &ostr,
       return;
     }
   // Check that the first degree for each variable is positive
+  if (D->n_vars() != 0)		// drg
   for (int i=0; i<mo->n_vars(); i++)
     if ((*degs)[i * D->n_vars()] <= 0)
       {

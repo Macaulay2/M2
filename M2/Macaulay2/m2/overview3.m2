@@ -661,7 +661,7 @@ document { "Getting started",
      quickly, but other parts of the program may have to be loaded from the
      disk later, causing a slight delay.",
      PARA,
-     "Your first input prompt will be ", TT "i1 = ", ".  In response to the prompt,
+     "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
      type ", TT "2+2", " and press return.  The expression you entered will be
      evaluated -- no punctuation is required at the end of the line.",
      EXAMPLE "2+2",

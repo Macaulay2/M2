@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-<< "--loading documentation files..." << endl
+stderr << "--loading documentation files..." << endl
 
 document { length,
      Headline => "length"

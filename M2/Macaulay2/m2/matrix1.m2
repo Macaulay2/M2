@@ -426,14 +426,16 @@ net Matrix := f -> (
 	  m := stack toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  if degreeLength R > 0 -- and isHomogeneous f
-	  then m = horizontalJoin(
-	       stack(
-		    degrees cover target f
-		    / (if R.?repair then R.repair else identity)
-		    / toString
-		    ),
-	       " ",
-	       m);
+	  then (
+	       d := degrees cover target f;
+	       if not all(d, i -> all(i, j -> j == 0)) then (
+	       	    repair := if R.?Repair then R.Repair else identity;
+	       	    m = horizontalJoin(
+	       	    	 stack( d / repair / toString ),
+	       	    	 " ",
+	       	    	 m);
+		    );
+	       );
 	  m)
      else net expression f				    -- add row labels somehow
      )

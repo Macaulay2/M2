@@ -377,19 +377,6 @@ Module == ZZ := (M,n) -> (
 --      else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
 --      )
 
-codim Module := M -> if M.?codim then M.codim else M.codim = (
-     R := ring M;
-     if M == 0 then infinity
-     else if isField R then 0
-     else if R === ZZ then if M ** QQ == 0 then 1 else 0
-     else (
-	  p := gens gb presentation M;
-	  n := rank target p;
-	  c := infinity;
-	  for i from 0 to n-1 when c > 0 do c = min(c,codim monomialIdeal(i,p));
-	  c - codim R)
-     )
-
 dim Module := M -> dim ring M - codim M
 
 degree Module := M -> (
@@ -538,9 +525,19 @@ Module / Vector := Module => (M,v) -> (
 
 ann = annihilator
 
-annihilator Module := Ideal => M -> (
+ann' = method()
+
+ann' Module := Ideal => M -> (
      f := presentation M;
      image f : target f )
+
+annihilator Module := Ideal => (M) -> (
+     if M == 0 then ideal 1_(ring M)
+     else (
+	  P := presentation M;
+	  F := target P;
+	  intersect apply(numgens F, i-> ideal modulo(matrix{F_i},P))))
+
 annihilator Ideal := Ideal => I -> annihilator module I
 annihilator RingElement := Ideal => f -> annihilator ideal f
 
