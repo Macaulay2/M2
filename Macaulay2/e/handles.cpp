@@ -67,3 +67,11 @@ void handles::text_out(buffer &o) const
   o << "Number of null entries in table = " << nnulls << newline;
   o << "Number of null objects in table = " << nnullobjs << newline;
 }
+
+extern "C"
+void prhandles(handles *h)
+{
+  buffer o;
+  h->text_out(o);
+  emit(o.str());
+}
