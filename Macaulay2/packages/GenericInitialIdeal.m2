@@ -56,3 +56,4 @@ gin(I, MonomialOrder => {GRevLex => 5}, AttemptCount=>5)
 installPackage GenericInitialIdeal
 run("/usr/bin/open tmp/GenericInitialIdeal-0.1/share/doc/Macaulay2/GenericInitialIdeal/html/index.html")
 run("/usr/bin/open tmp/GenericInitialIdeal-0.1/share/doc/Macaulay2/GenericInitialIdeal/html/master.html")
+

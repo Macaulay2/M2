@@ -243,6 +243,7 @@ load "loads.m2"
 stderr << "--loaded setup.m2" << endl
 
 notify = true
+addEndFunction (() -> notify = false)
 protect Macaulay2.Dictionary
 
 -- Local Variables:

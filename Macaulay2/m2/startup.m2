@@ -222,7 +222,7 @@ usage := arg -> (
      << "    --fullbacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              accept interrupts" << newline -- handled by M2lib.c
-     << "    --notify           notify when loading source files during initialization" << newline
+     << "    --notify           notify when loading files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
@@ -284,7 +284,7 @@ action := hashTable {
      "-x" => obsolete,
      "-s" => obsolete,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
-     "--stop" => arg -> if phase == 1 then (stopIfError = true; debuggingMode = false), -- see also M2lib.c and tokens.d
+     "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
      "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-setup" => arg -> if phase == 1 then nosetup = true,
      "--texmacs" => arg -> if phase == 3 then (
@@ -337,10 +337,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  );
      if fileExists datafile then
      try (
-	  stderr << "--loading cached memory data from " << datafile << newline << flush;
+	  if notify then stderr << "--loading cached memory data from " << datafile << newline << flush;
 	  loaddata datafile
 	  ) else (
-	  stderr << "--warning: can not load data from " << datafile << newline << flush;
+	  if notify then stderr << "--warning: can not load data from " << datafile << newline << flush;
 	  )
      )
 
