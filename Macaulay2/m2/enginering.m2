@@ -6,6 +6,7 @@ raw RingElement := f -> f.RawRingElement
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
 raw EngineRing := R -> R.RawRing
+raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring associated with this ring"
 -----------------------------------------------------------------------------
 
 reduce := (r,s) -> (
@@ -461,8 +462,10 @@ promoteChain := (A,R) -> (
 		    else promoteChain(A, S))),
 	  R))
 
+eeLift := (B,r) -> new B from rawLift(raw B, raw r)
+
 lift(RingElement, RingElement) := RingElement =>
-lift(RingElement, ZZ) := (r,o) -> rawToInteger raw r
+lift(RingElement, ZZ) :=
 lift(RingElement, QQ) := (r,o) -> (
      R := class r;
      A := class o;
@@ -472,7 +475,7 @@ lift(RingElement, QQ) := (r,o) -> (
      else (
 	  c := liftChain(R,A);
 	  lift(R,A) := (r,o) -> (
-	       scan(c, B -> r = eeLift(r,B));
+	       scan(c, B -> r = eeLift(B,r));
 	       r)
 	  );
      lift(r,o))
