@@ -1,3 +1,448 @@
+2004-08-06  author  <author@rhodium>
+
+	* engine.h, x_mat.cpp:
+	connect rawTopCoefficients, IM2_Matrix_compress, rawSchurDimension
+
+2004-08-05  author  <author@rhodium>
+
+	* TODO: tried to fix promote(MonoidElement,RingElement)
+
+	* TODO, monoid2.cpp, polyring.cpp, engine.h: *** empty log message ***
+
+2004-08-04  author  <author@rhodium>
+
+	* TODO, engine.h, freemod.cpp, matrix.cpp, matrix.hpp, poly.hpp, polyquotient.hpp, polyring.cpp, polyring.hpp, x_mat.cpp:
+	more gg removals, divideByVariable changed
+
+2004-08-03  author  <author@rhodium>
+
+	* TODO, freemod2.cpp, matrix.cpp, monoid2.cpp, poly.hpp, polyquotient.hpp, polyring.cpp, polyring.hpp, schorder.cpp:
+	rawInitial, leadTerm now working
+
+2004-08-02  author  <author@rhodium>
+
+	* TODO, matrix.cpp, random.cpp:
+	some schreyer order routines, random matrix routines
+
+2004-07-15  author  <author@rhodium>
+
+	* mat-kbasis.cpp, ntuple.hpp: rawBasis is now working, I think
+
+	* engine.h: wedgeProduct and rawWedgeProduct
+
+2004-07-14  author  <author@rhodium>
+
+	* engine.h, x_relem.cpp: schur dimension interfacce routine added
+
+	* hilb.hpp, x_monideal.cpp, engine.h, hilb.cpp: HF for monomial ideals
+
+	* engine.h, matrix.cpp, x_mat.cpp: rawWedgeProduct is now available
+
+	* GF.cpp, imonorder.c: fixed GF creation routines, hopefully
+
+	* engine.h, x_relem.cpp: connect rawGaloisField
+
+2004-07-01  author  <author@rhodium>
+
+	* engine.h, gbA.cpp, monoid2.cpp, monordering.c:
+	in the middle of GroeberBasis type
+
+2004-06-23  author  <author@rhodium>
+
+	* engine.h, x_monom.cpp: *** empty log message ***
+
+2004-06-21  author  <author@rhodium>
+
+	* Makefile.in, monoid2.cpp, varpower.hpp, varpower2.cpp, varpower2.hpp:
+	monomial fixes
+
+2004-06-03  author  <author@rhodium>
+
+	* Makefile.in, monideal.cpp, monoid2.cpp, monoid2.hpp, polyring.cpp, res.cpp, res2.cpp, varpower.hpp, varpower1.cpp, varpower1.hpp, varpower2.cpp, varpower2.hpp:
+	monomial fixes: not quite done yet
+
+2004-05-27  author  <author@rhodium>
+
+	* varpower1.cpp, varpower1.hpp, varpower2.cpp, varpower2.hpp:
+	new varpower files
+
+	* Makefile.in, error.c, gbA.cpp, gbA.hpp, imonorder.c, imonorder.h, monoid.hpp, monoid2.cpp, monoid2.hpp, ringmap.cpp, varpower.cpp, varpower.hpp, x_factor.cpp:
+	more monomial overflow changes
+
+2004-05-25  author  <author@rhodium>
+
+	* imonorder.c, monoid2.cpp, monoid2.hpp: more monomial code fixes
+
+	* imonorder.c, imonorder.h, monoid1.cpp, monoid1.hpp, monoid2.cpp, monoid2.hpp:
+	some files for monomial handling
+
+	* Makefile.in, freemod.cpp, gbring.cpp, matrix.cpp, monoid.cpp, monoid.hpp, monordering.c, monordering.h, poly.hpp, polyquotient.hpp, polyring.cpp, polyring.hpp, ring.cpp, ring.hpp, x_monoid.cpp:
+	improved monomial handling is close to being done
+
+2004-05-21  author  <author@rhodium>
+
+	* x_relem.cpp, engine.h: *** empty log message ***
+
+	* mat-kbasis.cpp, matrix.cpp, matrix.hpp, monoid.cpp, monoid.hpp, poly.hpp:
+	rawBasis should work over ZZ, and other polynomial rings
+
+	* mat-kbasis.cpp: fixed bug in rawBasis
+
+	* engine.h, monordering.c, monordering.h:
+	added monomial ordering GroupRevLex => n  as rawGroupRevLex
+
+	* TODO, gbweight.hpp, monoid.hpp: gbweight now uses newdelete
+
+	* mat-kbasis.cpp: rawBasis is, I think, working now
+
+	* mat-kbasis.cpp, matrix.cpp, matrix.hpp, poly.hpp, polyquotient.hpp, polyring.cpp, polyring.hpp:
+	basis is almost debugged
+
+2004-05-20  author  <author@rhodium>
+
+	* gbA.cpp, mat-kbasis.cpp, matrix.cpp, minimalgb.cpp:
+	fixed some const casts
+
+	* engine.h, x_mat.cpp: rawModuleTensor reconnected
+
+2004-05-19  author  <author@rhodium>
+
+	* engine.h, mat-kbasis.cpp, matrix.cpp, matrix.hpp, x_mat.cpp:
+	basis, get coeff routines for matrices have been inserted
+
+2004-05-18  author  <author@rhodium>
+
+	* Makefile.in, comp_gb.cpp, comp_gb.hpp, engine.h, gb.cpp, gb.hpp, gbA.cpp, gbA.hpp, gb_comp.cpp, gb_comp.hpp, gbinhom.cpp, gbinhom.hpp, gbring.cpp, gbring.hpp, gbweight.cpp, gbweight.hpp, monoid.cpp, polyring.cpp, ring.hpp, x_gb.cpp, x_monoid.cpp:
+	primary degrees no longer need to be positive
+
+2004-05-15  author  <author@rhodium>
+
+	* Eschreyer.cpp, gb.cpp, gb2.hpp, gbA.cpp, gbA.hpp, gbinhom.cpp, gbnod.cpp, gbring.cpp, gbring.hpp, matrix.cpp, minimalgb.cpp, minimalgb.hpp, poly.cpp, poly.hpp, polyquotient.cpp, polyquotient.hpp, res.cpp, res2.cpp, weylalg.cpp:
+	GB over quotient rings is close to functional
+
+2004-05-06  author  <author@rhodium>
+
+	* Makefile.in, polyquotient.cpp, polyquotient.hpp, polyring.cpp, polyring.hpp, ring.cpp, ring.hpp, skewpoly.cpp, skewpoly.hpp, solvable.cpp, solvable.hpp, weylalg.cpp, weylalg.hpp, weylfree.cpp, weylfree.hpp:
+	*** empty log message ***
+
+2004-05-05  author  <author@rhodium>
+
+	* CC.cpp, CC.hpp, GF.cpp, GF.hpp, Makefile.in, QQ.cpp, QQ.hpp, RR.cpp, RR.hpp, ZZ.hpp, bigCC.cpp, bigCC.hpp, frac.cpp, frac.hpp, gbring.cpp, poly.hpp, polyquotient.cpp, polyquotient.hpp, polyring.cpp, polyring.hpp, ring.hpp, sparsemat.cpp, x_relem.cpp, z_mod_p.cpp, z_mod_p.hpp:
+	working on quotient rings
+
+2004-05-04  author  <author@rhodium>
+
+	* QQ.cpp, QQ.hpp, check/test_ring.cpp, debug.cpp, engine.h, frac.cpp, frac.hpp, freemod.cpp, freemod2.cpp, gb.cpp, gb2.hpp, gbA.cpp, gbA.hpp, gb_comp.cpp, gbasis.cpp, gbasis.hpp, gbinhom.cpp, gbnod.cpp, gbring.cpp, gbring.hpp, hilb.cpp, mat-kbasis.cpp, matrix.cpp, poly.hpp, polyring.cpp, polyring.hpp, relem.cpp, respoly.cpp, respoly2.cpp, ring.cpp, ring.hpp, ringmap.cpp, schorder.cpp, schur.cpp, skewpoly.cpp, skewpoly.hpp, solvable.cpp, solvable.hpp, weylalg.cpp, weylalg.hpp, x_relem.cpp:
+	polynomials are now stored as flat polynomials
+
+2004-04-30  author  <author@rhodium>
+
+	* Makefile.in, TODO, ZZ.hpp, engine.cpp, frac.hpp, freemod.cpp, gb2.cpp, gbA.cpp, gbnod.cpp, monoid.cpp, monoid.hpp, poly.cpp, poly.hpp, polyring.cpp, polyring.hpp, res_aux.cpp, ring.cpp, ring.hpp, schur.hpp, skewpoly.cpp, skewpoly.hpp, solvable.cpp, solvable.hpp, weylalg.cpp, weylalg.hpp, x_relem.cpp:
+	working on polyrings
+
+2004-04-29  author  <author@rhodium>
+
+	* polyring.cpp: check for some null return values
+
+2004-04-26  author  <author@rhodium>
+
+	* TODO, debug.cpp, debug.hpp, freemod.cpp, freemod.hpp, gauss.cpp, gb.cpp, gb2.cpp, gbZZ.cpp, gbinhom.cpp, hermite.cpp, matrix.cpp, polyring.cpp, ring-vecs.cpp, ringmap.cpp, sagbi.cpp, x_mat.cpp, x_sparsemat.cpp:
+	some minor changes with freemodules and vectors
+
+2004-04-23  author  <author@rhodium>
+
+	* debug.cpp, gb2.cpp, gbnod.cpp, res2.cpp, res_aux2.cpp, respoly.cpp, respoly2.cpp:
+	bug fixes for resolutions
+
+2004-04-22  author  <author@rhodium>
+
+	* Makefile.in, comp_res.cpp, debug.cpp, debug.hpp, gb2.cpp, gb2.hpp, gbnod.cpp, gbring.cpp, hilb.cpp, hilb.hpp, matrix.cpp, res_aux.cpp, ring.cpp, text_io.hpp:
+	more resolution fixes
+
+2004-04-21  author  <author@rhodium>
+
+	* gb2.hpp, gbA.cpp, gbnod.cpp, gbring.cpp, gbring.hpp, matrix.cpp, polyring.cpp, res2.cpp, ring.cpp:
+	hilbert function resolution algorithm (algorithm 3) is almost up and running
+
+2004-04-20  author  <author@rhodium>
+
+	* comp_res.cpp, comp_res.hpp, gb2.cpp, gbnod.cpp, gbring.cpp, res2.hpp, res_aux2.cpp, schorder.cpp, schorder.hpp, weylalg.cpp, weylalg.hpp:
+	bug fixes to resolution code
+
+	* gbnod.cpp: *** empty log message ***
+
+	* TODO, comp_res.cpp, comp_res.hpp, computation.cpp, computation.hpp, gb2.cpp, gb2.hpp, gbnod.cpp, res.hpp, res2.cpp, res2.hpp, res_aux.cpp, res_aux2.cpp, spair.cpp, spair.hpp:
+	resolution algorithms 2 and 3 are almost back up
+
+2004-04-19  author  <author@rhodium>
+
+	* Makefile.in, comp_gb.hpp, comp_res.cpp, comp_res.hpp, computation.hpp, engine.h, gb.cpp, gb.hpp, gbA.cpp, gbA.hpp, res.cpp, res.hpp, res2.cpp, res2.hpp, res_aux.cpp, res_aux2.cpp, respoly.cpp, respoly2.cpp, respoly2.hpp, x_gb.cpp:
+	resolution algorithm 0 is almost done
+
+2004-04-17  author  <author@rhodium>
+
+	* res.hpp, respoly.hpp: *** empty log message ***
+
+2004-04-16  author  <author@rhodium>
+
+	* respoly.hpp, ring.cpp, ring.hpp, x_gb.cpp, Makefile.in, comp_gb.cpp, comp_gb.hpp, comp_res.cpp, comp_res.hpp, computation.cpp, computation.hpp, engine.h, freemod.hpp, freemod2.cpp, gb.cpp, gb2.cpp, gbA.cpp, gbnod.cpp, montableZZ.cpp, res.cpp, res.hpp, res_aux.cpp, res_aux2.cpp, respoly.cpp:
+	resolution algorithm 1 is almost working now
+
+2004-04-14  author  <author@rhodium>
+
+	* Makefile.in, TODO, engine.h, freemod.hpp, freemod2.cpp, matrix.cpp, matrix.hpp, polyring.hpp, res.cpp, x_mat.cpp:
+	changed rawCoefficients interface, some changes to get resolutions back up and running
+
+2004-04-02  author  <author@rhodium>
+
+	* CC.cpp, GF.cpp, QQ.cpp, QQ.hpp, RR.cpp, ZZ.cpp, ZZ.hpp, bigCC.cpp, bigRR.cpp, engine.cpp, frac.cpp, monoid.cpp, polyring.cpp, polyring.hpp, ring.cpp, ring.hpp, z_mod_p.cpp:
+	more changes to get ZZ[] logic correct
+
+2004-03-31  author  <author@rhodium>
+
+	* TODO, monoid.cpp: fixed bug introduced by trivial poly ring addition
+
+	* montableZZ.cpp, engine.h: *** empty log message ***
+
+	* engine.cpp, engine.h, gbnod.cpp, hilb.cpp, monoid.cpp, monoid.hpp, polyring.cpp, polyring.hpp, ring.cpp, ring.hpp, x_monoid.cpp, x_relem.cpp:
+	added degree_ring in monoids, trivial poly ring
+
+	* polyring.cpp: bug in diff fixed, more doc changes
+
+2004-03-30  author  <author@rhodium>
+
+	* TODO, x_gb.cpp: *** empty log message ***
+
+2004-03-29  author  <author@rhodium>
+
+	* matrix.cpp: fix to monideal code, more doc changes
+
+	* TODO: added file for Mike: TODO; doc changes, doc.css change
+
+	* x_mat.cpp: *** empty log message ***
+
+2004-03-28  author  <author@rhodium>
+
+	* engine.cpp, error.c, error.h, gbinhom.cpp, x_gb.cpp:
+	*** empty log message ***
+
+2004-03-27  author  <author@rhodium>
+
+	* Makefile.in, QQ.hpp, frac.hpp, montableZZ.hpp, ntuple.hpp, pfaff.cpp, res.cpp, res2.cpp, res_aux.cpp, res_aux2.cpp, respoly2.cpp, respoly2.hpp, ring.hpp, x_relem.cpp:
+	doc changes, plus a start at getting resolution to work again
+
+2004-03-22  author  <author@rhodium>
+
+	* engine.h, x_relem.cpp, polyring.cpp: *** empty log message ***
+
+2004-03-21  author  <author@rhodium>
+
+	* LLL.cpp, check/util.c, comp.hpp, computation.hpp, det.cpp, gauss.cpp, gb.cpp, gb2.cpp, gbA.cpp, gbZZ.cpp, gbbinom.cpp, gbinhom.cpp, gbnod.cpp, hilb.cpp, lattice.cpp, pfaff.cpp, res.cpp, res2.cpp, sagbi.cpp:
+	*** empty log message ***
+
+2004-03-20  author  <author@rhodium>
+
+	* CC.cpp, CC.hpp, GF.cpp, GF.hpp, RR.cpp, RR.hpp, freemod.cpp, matrix.cpp, polyring.cpp, z_mod_p.cpp, z_mod_p.hpp:
+	fixed bug: ring was not being checked for graded-ness
+
+	* CC.hpp, GF.hpp, Makefile.in, QQ.hpp, RR.hpp, ZZ.hpp, bigCC.hpp, bigRR.hpp, frac.hpp, geovec.hpp, polyring.cpp, polyring.hpp, ring.hpp, skewpoly.hpp, solvable.hpp, weylalg.hpp, z_mod_p.hpp:
+	*** empty log message ***
+
+2004-03-19  author  <author@rhodium>
+
+	* CC.cpp, GF.cpp, QQ.cpp, RR.cpp, ZZ.cpp, bigCC.cpp, bigRR.cpp, frac.cpp, geopoly.hpp, matrix.cpp, monideal.cpp, monideal.hpp, polyring.cpp, polyring.hpp, relem.cpp, ring.cpp, ring.hpp, ringmap.cpp, ringmap.hpp, x_factor.cpp, x_relem.cpp, z_mod_p.cpp:
+	changes to ring handling
+
+2004-03-16  author  <author@rhodium>
+
+	* minimalgb.hpp: malloc was being called...
+
+	* Makefile.in, check/util.c, comp_gb.cpp, gbA.cpp, hermite.cpp, intarray.cpp, matrixCC.cpp, matrixRR.cpp, mem.cpp, monoid.cpp, montable.cpp, montableZZ.cpp, newdelete.hpp, x_lapack.cpp:
+	removed rest of old style casts
+
+	* CC.cpp, M2-factory.cpp, QQ.cpp, QQ.hpp, RR.cpp, ZZ.cpp, ZZ.hpp, bigCC.cpp, bigCC.hpp, bigRR.cpp, bigRR.hpp, det.cpp, frac.cpp, frac.hpp, freemod.cpp, gb.cpp, gbA.cpp, gbA.hpp, gbinhom.cpp, gbnod.cpp, gbring.cpp, geopoly.hpp, hermite.cpp, hilb.cpp, hilb.hpp, matrix.cpp, matrix.hpp, monideal.cpp, newdelete.hpp, polyring.cpp, random.cpp, relem.cpp, ring.cpp, ring.hpp, ringmap.cpp, schur.cpp, skewpoly.cpp, solvable.cpp, sparsemat.cpp, weylalg.cpp, x_factor.cpp, x_relem.cpp:
+	fixed most of the old style casts
+
+2004-03-12  author  <author@rhodium>
+
+	* minimalgb.cpp, minimalgb.hpp: new files for minimal GB
+
+	* Makefile.in, frac.cpp, gbA.cpp, gbA.hpp, gbring.cpp, gbring.hpp, montable.cpp, montable.hpp, montableZZ.cpp, montableZZ.hpp:
+	more gb over ZZ
+
+2004-03-04  author  <author@rhodium>
+
+	* gbA.cpp, gbring.cpp, montableZZ.cpp: more gb over ZZ fixes
+
+	* QQ.hpp, ZZ.hpp, frac.cpp, frac.hpp, gbA.cpp, gbA.hpp, gbring.cpp, gbring.hpp, montableZZ.cpp, montableZZ.hpp, polyring.hpp, ring.hpp, skewpoly.cpp, solvable.cpp, weylalg.cpp:
+	gb over ZZ code
+
+2004-03-03  author  <author@rhodium>
+
+	* gbA.cpp: more gb changes
+
+	* check/test_gb.cpp, check/test_ring.cpp: two new test files
+
+	* montableZZ.cpp, montableZZ.hpp: new files montableZZ.{hpp,cpp}
+
+	* Makefile.in, gbA.cpp, gbA.hpp, gbring.cpp, gbring.hpp, montable.cpp, montable.hpp:
+	working on inhomog groebner bases over ZZ
+
+2004-03-01  author  <author@rhodium>
+
+	* gbasis.cpp: fixed bug in raw gb remainder and lift
+
+	* check/Makefile.in, check/check_cc.cpp, check/util.h, gbA.cpp, gbasis.cpp, gbring.cpp, monoid.cpp, montable.cpp, newdelete.hpp:
+	more gb fixes
+
+2004-02-16  author  <author@rhodium>
+
+	* check/check_freemodule.c, check/check_matrix.c, check/check_monomial.c, check/util.h, freemod.cpp, freemod.hpp, matrix.cpp, matrix.hpp, matrixcon.hpp, ring-vecs.cpp, ring.hpp:
+	*** empty log message ***
+
+2004-02-15  author  <author@rhodium>
+
+	* check/Makefile.in, check/check_freemodule.c, check/check_matrix.c, check/src_test/test.h, check/util.h, engine.h:
+	*** empty log message ***
+
+2004-02-14  author  <author@rhodium>
+
+	* newdelete.hpp, table.h: *** empty log message ***
+
+2004-02-11  author  <author@rhodium>
+
+	* matrix.cpp, matrix.hpp:
+	some fixes so Mike's code will compile on my machine
+
+	* gbasis.cpp, gbinhom.cpp, gbnod.cpp, hermite.cpp, mat-symm.cpp, matrix.cpp, matrix.hpp, matrixcon.cpp, matrixcon.hpp, x_mat.cpp, det.cpp, engine.h, freemod2.cpp, gb.cpp, gb2.cpp:
+	more matrix changes
+
+	* Makefile.in, freemod2.cpp, gb.cpp, gb2.cpp, gb2.hpp, gbA.cpp, gbasis.cpp, gbinhom.cpp, gbinhom.hpp, gbnod.cpp, hermite.cpp, hermite.hpp, mat-kbasis.cpp, mat-symm.cpp, matrix.cpp, matrix.hpp, random.hpp, ringmap.cpp, sparsemat.cpp, symm.cpp, symm.hpp, x_mat.cpp:
+	many matrix changes
+
+2004-02-04  author  <author@rhodium>
+
+	* det.cpp, det.hpp, matrix.cpp, matrix.hpp, matrixcon.cpp, pfaff.cpp, pfaff.hpp:
+	*** empty log message ***
+
+	* matrixcon.cpp, matrixcon.hpp, symm.cpp, symm.hpp: some new files
+
+	* CC.cpp, GF.cpp, Makefile.in, QQ.cpp, RR.cpp, ZZ.cpp, bigCC.cpp, bigRR.cpp, engine.h, frac.cpp, freemod2.cpp, hash.hpp, matrix.cpp, matrix.hpp, polyring.cpp, ring-vecs.cpp, ring.cpp, ring.hpp, x_mat.cpp, z_mod_p.cpp:
+	matrix maintenance
+
+2004-02-03  author  <author@rhodium>
+
+	* x_factor.cpp: *** empty log message ***
+
+2004-02-02  author  <author@rhodium>
+
+	* x_factor.cpp: *** empty log message ***
+
+2004-02-01  author  <author@rhodium>
+
+	* engine.cpp, factor.cpp, x_factor.cpp: *** empty log message ***
+
+2004-01-31  author  <author@rhodium>
+
+	* buffer.hpp, monideal.hpp, x_factor.cpp, intarray.hpp, queue.hpp:
+	*** empty log message ***
+
+	* check/src_test/Main1.cpp, check/src_test/stack.h, check/src_test/suite.cpp, check/src_test/suite.h, freemod.cpp, freemod2.cpp, gauss.cpp, gauss.hpp, gb.cpp, gb2.cpp, gb2.hpp, gbA.cpp, gbA.hpp, gbZZ.cpp, gbasis.cpp, gbasis.hpp, gbbinom.cpp, gbbinom.hpp, gbinhom.cpp, gbnod.cpp, gbring.cpp, gbring.hpp, hash.hpp, hermite.cpp, hermite.hpp, hilb.cpp, hilb.hpp, int_bag.hpp, lattice.cpp, matrix.cpp, mem.cpp, mem.hpp, monideal.cpp, monideal.hpp, monoid.cpp, monoid.hpp, monorder.cpp, monorder.hpp, montable.cpp, montable.hpp, newdelete.hpp, newspair.cpp, newspair.hpp, polyring.cpp, polyring.hpp, queue.hpp, relem.cpp, res.cpp, res2.cpp, res_aux2.cpp, respair2.hpp, respoly.hpp, ring-vecs.cpp, ringelem.hpp, ringmap.cpp, ringmap.hpp, sagbi.cpp, schorder.cpp, schorder.hpp, schur.cpp, skew.cpp, skew.hpp, spair.hpp, sparsemat.cpp, sparsemat.hpp, termideal.cpp, termideal.hpp, text_io.cpp, vector.cpp, weylalg.cpp, weylfree.cpp, x_factor.cpp, x_free.cpp, x_mat.cpp, x_relem.cpp, z_mod_p.cpp, Eschreyer.cpp, GF.cpp, LLL.cpp, M2-factory.cpp, Makefile.in, QQ.cpp, ZZ.cpp, array.hpp, assprime.cpp, bigCC.cpp, bigRR.cpp, buffer.cpp, buffer.hpp, det.cpp, engine.h:
+	make the engine not use ::operator new/delete at all
+
+2004-01-30  author  <author@rhodium>
+
+	* x_factor.cpp: *** empty log message ***
+
+2004-01-25  author  <author@rhodium>
+
+	* engine.h: *** empty log message ***
+
+2004-01-24  author  <author@rhodium>
+
+	* engine.h, x_mat.cpp: *** empty log message ***
+
+	* engine.h, x_mat.cpp: added shell for matrix random routine
+
+	* Makefile.in, engine.h, matrix.hpp, x_factor.cpp, x_mat.cpp:
+	some new matrix routines, and some changes to interface
+
+2004-01-21  author  <author@rhodium>
+
+	* check/Makefile.in, check/util.c, engine.h, ring-vecs.cpp, ring.hpp:
+	more tests aded
+
+2004-01-20  author  <author@rhodium>
+
+	* x_factor.cpp: *** empty log message ***
+
+2004-01-19  author  <author@rhodium>
+
+	* x_factor.cpp, CC.cpp, QQ.cpp, RR.cpp, ZZ.cpp, bigCC.cpp, bigRR.cpp, frac.cpp, matrixCC.cpp, matrixRR.cpp, monoid.cpp, monordering.c, polyring.cpp, table.h, x_lapack.cpp, x_relem.cpp, mem.cpp:
+	*** empty log message ***
+
+2004-01-17  author  <author@rhodium>
+
+	* x_factor.cpp: *** empty log message ***
+
+	* engine.h, x_factor.cpp:
+	finished re-implementing x_factor.cpp, modulo some error messages
+
+2004-01-16  author  <author@rhodium>
+
+	* engine.h, x_factor.cpp, factor.cpp, Makefile.in:
+	*** empty log message ***
+
+2004-01-15  author  <author@rhodium>
+
+	* gbasis.cpp, gbring.cpp, ring-vecs.cpp, engine.h, x_gb.cpp, gbA.cpp, text_io.cpp, text_io.hpp, comp_gb.hpp, gb.cpp, gb.hpp, gbA.hpp, matrix.cpp, Makefile.in, statuscodes, computation.cpp, computation.hpp, comp_gb.cpp, comp.hpp, gb2.hpp, gbZZ.cpp, gb_comp.cpp, gb_comp.hpp, gbinhom.cpp, gbinhom.hpp, gbnod.cpp, hermite.cpp, hermite.hpp, polyring.cpp, polyring.hpp, sagbi.cpp, sagbi.hpp:
+	*** empty log message ***
+
+2004-01-14  author  <author@rhodium>
+
+	* engine.h, gbA.cpp, x_gb.cpp, CC.cpp, CC.hpp, GF.cpp, GF.hpp, QQ.cpp, QQ.hpp, RR.cpp, RR.hpp, ZZ.cpp, ZZ.hpp, bigCC.cpp, bigCC.hpp, bigRR.cpp, bigRR.hpp, check/Makefile.in, check/check_c.c, comb.cpp, comb.hpp, frac.cpp, frac.hpp, matrix.cpp, monoid.cpp, polyring.cpp, polyring.hpp, ring-vecs.cpp, ring.cpp, ring.hpp, z_mod_p.cpp, z_mod_p.hpp, check/check_freemodule.c, check/check_matrix.c, check/check_monomial.c, check/check_vector.c, check/util.c, check/util.h, gb.cpp, Eschreyer.cpp, Eschreyer.hpp, LLL.cpp, LLL.hpp, M2-factory.cpp, M2-factory.h, Makefile.in, array.hpp, assprime.cpp, assprime.hpp, buffer.cpp, buffer.hpp, check/check.c, check/check_cc.cpp, check/check_lapack.c, check/check_monoid.c, check/check_monordering.c, check/check_ring.c, check/check_sparsemat.c, check/test_monomial.cpp, comp.hpp, det.cpp, det.hpp, engine.cpp, error.c, error.h, exptable.c, exptable.h, factor.cpp, freemod.cpp, freemod.hpp, freemod2.cpp, gauss.cpp, gauss.hpp, gb.hpp, gb2.cpp, gb2.hpp, gbA.hpp, gbZZ.cpp, gbZZ.hpp, gb_comp.cpp, gb_comp.hpp, gbasis.cpp, gbasis.hpp, gbbinom.cpp, gbbinom.hpp, gbinhom.cpp, gbinhom.hpp, gbnod.cpp, gbring.cpp, gbring.hpp, geoT.hpp, geopoly.hpp, hash.hpp, hermite.cpp, hermite.hpp, hilb.cpp, hilb.hpp, index.hpp, int_bag.cpp, int_bag.hpp, intarray.cpp, intarray.hpp, lapack.h, lattice.cpp, lattice.hpp, mac2.c, matrix.hpp, matrixCC.cpp, matrixCC.hpp, matrixRR.cpp, matrixRR.hpp, mem.cpp, mem.hpp, monideal.cpp, monideal.hpp, monoid.hpp, monomial.cpp, monomial.hpp, monorder.cpp, monorder.hpp, monordering.c, monordering.h, montable.cpp, montable.hpp, newspair.cpp, newspair.hpp, ntuple.cpp, ntuple.hpp, obj_iarr.hpp, pfaff.cpp, pfaff.hpp, queue.hpp, random.cpp, random.hpp, relem.cpp, relem.hpp, res.cpp, res.hpp, res2.cpp, res2.hpp, res_aux.cpp, res_aux2.cpp, respair2.hpp, respoly.cpp, respoly.hpp, respoly2.cpp, respoly2.hpp, ringelem.hpp, ringmap.cpp, ringmap.hpp, sagbi.cpp, sagbi.hpp, schorder.cpp, schorder.hpp, schur.cpp, schur.hpp, skew.cpp, skew.hpp, skewpoly.cpp, skewpoly.hpp, solvable.cpp, solvable.hpp, spair.cpp, spair.hpp, sparsemat.cpp, sparsemat.hpp, style.hpp, table.c, table.h, termideal.cpp, termideal.hpp, text_io.cpp, text_io.hpp, varpower.cpp, varpower.hpp, vector.cpp, vector.hpp, weylalg.cpp, weylalg.hpp, weylfree.cpp, weylfree.hpp, x_factor.cpp, x_free.cpp, x_lapack.cpp, x_mat.cpp, x_monideal.cpp, x_monoid.cpp, x_monom.cpp, x_relem.cpp, x_ringmap.cpp, x_sparsemat.cpp:
+	*** empty log message ***
+
+2004-01-13  author  <author@rhodium>
+
+	* matrix.cpp, ring-vecs.cpp, engine.h, polyring.cpp:
+	*** empty log message ***
+
+	* engine.h, frac.cpp, frac.hpp, polyring.cpp, polyring.hpp, ring.cpp, ring.hpp, x_relem.cpp:
+	added routines IM2_RingElement_index_if_var, IM2_RingElement_indices
+
+	* engine.h, matrix.cpp, matrix.hpp, ring-vecs.cpp, ring.hpp, x_mat.cpp:
+	*** empty log message ***
+
+	* engine.h, matrix.cpp, matrix.hpp, ring-vecs.cpp, ring.hpp, x_mat.cpp:
+	made all matrix mult take a left_mult boolean flag
+
+	* engine.h, matrix.cpp, matrix.hpp, x_mat.cpp:
+	*** empty log message ***
+
+	* engine.h, matrix.cpp, matrix.hpp, x_mat.cpp:
+	added a new routine IM2_make_copy, renamed that one to IM2_make_copy2
+
+	* engine.h, matrix.cpp, x_free.cpp:
+	changed matrix creation routines to do row by row, instead of column by column
+
+	* engine.h: *** empty log message ***
+
+	* Makefile.in, engine.h, gauss.cpp, gauss.hpp, gb2.cpp, gb2.hpp, gbZZ.cpp, gbZZ.hpp, gb_comp.hpp, gbbinom.cpp, gbbinom.hpp, gbinhom.cpp, gbinhom.hpp, hermite.cpp, hermite.hpp, matrix.cpp, matrix.hpp, monomial.cpp, monomial.hpp, ringmap.cpp, ringmap.hpp, sagbi.cpp, sagbi.hpp, varpower.cpp, x_free.cpp, x_mat.cpp, x_monideal.cpp, x_monom.cpp, x_ringmap.cpp:
+	changed monomial code to fix: comparison, colon, divides
+
+	* engine.h, x_mat.cpp: *** empty log message ***
+
+	* engine.h, matrix.cpp, matrix.hpp, ring-vecs.cpp, ring.hpp, x_mat.cpp, x_sparsemat.cpp:
+	more mutable matrix routines for Matrix
+
+2004-01-12  author  <author@rhodium>
+
+	* engine.h: connected rawIsMutable
+
+	* check/util.c, engine.h, x_mat.cpp, x_sparsemat.cpp, ChangeLog, check/check_ring.c, check/check_freemodule.c, check/check_lapack.c, check/check_matrix.c, check/check_sparsemat.c, check/check_vector.c, ring-vecs.cpp, Eschreyer.hpp, Makefile.in, check/Makefile.in, check/check_c.c, check/check_monordering.c, engine.cpp, hash.hpp, matrix.cpp, matrix.hpp, ring.hpp:
+	*** empty log message ***
+
 2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
 
 	* engine.h, x_mat.cpp: *** empty log message ***
