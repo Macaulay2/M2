@@ -21,12 +21,12 @@ document { Resolution,
      store the resolution it comes from."
      }
 
-document { symbol "res",
+document { symbol res,
      Headline => "make a projective resolution",
      "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
      }
 
-document { resolution,
+document { symbol resolution,
      Headline => "make a projective resolution",
      Usage => { 
 	  TT "resolution M", " -- make a projective resolution of M.", BR,
