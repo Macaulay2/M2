@@ -4,6 +4,7 @@ new HashTable from List := HashTable => (O,v) -> hashTable v
 -- erase symbol hashTable
 
 OptionTable = new Type of HashTable
+OptionTable.synonym = "option table"
 
  -- installMethod(symbol ==>, OptionTable, Function, Function => 
  --      (defaults,f) -> args -> (

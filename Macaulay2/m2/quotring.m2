@@ -2,6 +2,7 @@
 
 
 QuotientRing = new Type of EngineRing
+QuotientRing.synonym = "quotient ring"
 
 isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false

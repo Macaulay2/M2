@@ -844,14 +844,14 @@ document { vector,
      }
 
 document { Module, HEADLINE "the class of all modules",
-     "These modules are handled by the ", TO "engine", ".",
-     PARA,
      "The most general module ", TT "M", " is represented as a submodule of a 
      quotient module of a free module ", TT "F", ".  The matrix of relations used to
-     produce the quotient module is stored as ", TT "M.relations", " and 
-     the matrix of generators is stored as ", TT "M.generators", ".",
+     produce the quotient module is stored as ", TT "M.relations", " (if
+     there is a nonzero relation) and the matrix of generators is stored as
+     ", TT "M.generators", " (if the submodule is smaller than the free module).",
      PARA,
-     "Elements of modules implemented as instances of the class ", TO "Vector", "."
+     "Elements of modules are implemented as instances of the class ", TO "Vector", ".",
+     SEEALSO "modules",
      }
 
 document { isModule, HEADLINE "whether something is a module." }
@@ -1071,7 +1071,7 @@ document { Matrix, HEADLINE "the class of all matrices",
      PARA,
      "If ", TT "m", " and ", TT "n", " are matrices, ", TT "a", " is a ring element, 
      and ", TT "i", " is an integer, then ", TT "m+n", ", ", TT "m-n", ", 
-     ", TT "-m", ", ", TT "m n", ", ", TT "a*m", ", and ", TT "i*m", " denote the
+     ", TT "-m", ", ", TT "m*n", ", ", TT "a*m", ", and ", TT "i*m", " denote the
      usual matrix arithmetic.  Use ", TT "m == n", ", and ", TT "m == 0", " to 
      check equality of matrices.",
      PARA,
@@ -1164,8 +1164,8 @@ document { directSum,
      SHIELD MENU {
 	  TO (symbol ^,Module,Array),
 	  TO (symbol _,Module,Array),
-	  TO (symbol ^,Matrix,Array),
-	  TO (symbol _,Matrix,Array)
+	  TO (symbol ^,Matrix,List),
+	  TO (symbol _,Matrix,List)
 	  },
      PARA,
      "It sometimes happens that the user has indices for the components of

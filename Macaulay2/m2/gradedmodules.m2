@@ -1,6 +1,7 @@
 --		Copyright 1997 by Daniel R. Grayson
 
 GradedModule = new Type of MutableHashTable
+GradedModule.synonym = "graded module"
 
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
@@ -23,6 +24,7 @@ length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
 GradedModuleMap = new Type of MutableHashTable
+GradedModuleMap.synonym = "graded module map"
 net GradedModuleMap := f -> (
      d := f.degree;
      v := between("",

@@ -1,8 +1,10 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
 ModuleMap = new Type of MutableHashTable
+ModuleMap.synonym = "module map"
 
 Matrix = new Type of ModuleMap
+Matrix.synonym = "matrix"
 ring Matrix := f -> (
      S := ring target f;
      R := ring source f;

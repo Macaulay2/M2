@@ -1,6 +1,7 @@
 --		Copyright 1996 by Daniel R. Grayson
 
 GaloisField = new Type of EngineRing
+GaloisField.synonym = "Galois field"
 
 ambient GaloisField := Ring => R -> last R.baseRings
 coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings

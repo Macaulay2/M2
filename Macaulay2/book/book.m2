@@ -78,6 +78,8 @@ bookFile << ///
      \obeyspaces\def\par{\leavevmode\hss\endgraf}\obeylines}
 \def\endverbatim{\endgroup}
 
+\def\beginsection#1{{\bf #1}}
+
 \font\headerFontOne=cmbx12 scaled \magstep 1
 \font\headerFontTwo=cmbx12 scaled \magstep 1
 \font\headerFontThree=cmbx12

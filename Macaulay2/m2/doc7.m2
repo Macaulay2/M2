@@ -715,7 +715,7 @@ document { SubringLimit,
      }
 
 
-document { (kernel, SubringLimit),
+document { kernel => SubringLimit,
      TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
      causes the computation of the kernel of a ring map to stop after ", TT "n", "
      elements have been discovered."

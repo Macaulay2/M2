@@ -22,6 +22,7 @@ vector = (v) -> (
 -----------------------------------------------------------------------------
 -- BasicModule = new Type of Type
 Module = new Type of Type
+Module.synonym = "module"
 submodule = method(SingleArgumentDispatch=>true, TypicalValue => Module)
 
 isModule = method(TypicalValue => Boolean)
@@ -157,6 +158,7 @@ Module == Module := (M,N) -> (
 	       else true)))
 
 Vector = new Type of MutableHashTable
+Vector.synonym = "vector"
 ring Vector := v -> ring class v
 
 expression Vector := v -> (

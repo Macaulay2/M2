@@ -3,7 +3,9 @@ lift = method()
 liftable = method()
 promote = method()
 RingElement = new Type of MutableHashTable
+RingElement.synonym = "ring element"
 EngineRing = new Type of Ring
+EngineRing.synonym = "engine ring"
 -----------------------------------------------------------------------------
 
 reduce := (r,s) -> (
@@ -72,6 +74,7 @@ expression ZZZ := n -> expression lift(n,ZZ)
 
 -----------------------------------------------------------------------------
                 FractionField = new Type of EngineRing
+		FractionField.synonym = "fraction field"
 
 frac = method(TypicalValue => FractionField)
 frac Ring := R -> (

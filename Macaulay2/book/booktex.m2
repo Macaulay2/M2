@@ -256,7 +256,7 @@ booktex ExampleTABLE := x -> concatenate apply(x,y -> booktex y#1)
 
 booktex CODE :=
 booktex PRE := x -> concatenate (
-     ///\par
+     ///
 \beginverbatim%
 \penalty-200
 ///,

@@ -1,6 +1,7 @@
 -- Copyright 1995 by Michael Stillman
 
 MonomialIdeal = new Type of MutableHashTable
+MonomialIdeal.synonym = "monomial ideal"
 monomialIdeal = method()
 numgens MonomialIdeal := I -> I.numgens
 

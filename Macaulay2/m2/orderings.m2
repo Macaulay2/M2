@@ -3,6 +3,7 @@
 clone = method()
 
 MonomialOrdering = new Type of MutableHashTable
+MonomialOrdering.synonym = "monomial ordering"
 net MonomialOrdering := toString MonomialOrdering := see
 
 hasComponent := false					    -- not re-entrant

@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 GroebnerBasis = new Type of MutableHashTable
+GroebnerBasis.synonym = "Groebner basis"
 toString GroebnerBasis := g -> toString new FunctionApplication from { gb, g.matrix }
 net GroebnerBasis := g -> net gens g
 

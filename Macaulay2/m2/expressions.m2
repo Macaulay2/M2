@@ -21,10 +21,12 @@ endsWithIdentifier := s -> (
 -----------------------------------------------------------------------------
 
 HeaderType = new Type of Type
+HeaderType.synonym = "header type"
 HeaderType List := (T,z) -> new T from z
 HeaderType Sequence := (T,z) -> new T from toList z
 
 WrapperType = new Type of Type
+WrapperType.synonym = "wrapper type"
 WrapperType List := (T,z) -> new T from z
 WrapperType Sequence := (T,z) -> new T from toList z
 WrapperType Thing := (T,z) -> new T from {z}
@@ -32,11 +34,13 @@ WrapperType Thing := (T,z) -> new T from {z}
 -----------------------------------------------------------------------------
 
 Expression = new Type of BasicList
+Expression.synonym = "expression"
 expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
 
 AssociativeExpression = new Type of Expression
+AssociativeExpression.synonym = "associative expression"
 --new AssociativeExpression from Sequence := 
 --new AssociativeExpression from List := (type,v) -> (
 --     toList splice apply(v, 
@@ -115,10 +119,12 @@ toString Equation := v -> (
 	       apply(v, e -> if precedence e <= p then ("(", toString e, ")") else toString e))))
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
+ZeroExpression.synonym = "zero expression"
 ZeroExpression.name = "ZeroExpression"
 ZERO := new ZeroExpression from {0}
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
+OneExpression.synonym = "one expression"
 OneExpression.name = "OneExpression"
 ONE := new OneExpression from {1}
 -----------------------------------------------------------------------------
@@ -1089,6 +1095,7 @@ expression Boolean := expression Symbol := expression File := expression String 
 -----------------------------------
 
 Position = new Type of BasicList
+Position.synonym = "position"
 toString Position := net Position := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 backtrace = () -> apply(toList deepSplice report, 

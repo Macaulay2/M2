@@ -1,8 +1,11 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 Variety = new Type of MutableHashTable
+Variety.synonym = "variety"
 AffineVariety = new Type of Variety
+AffineVariety.synonym = "affine variety"
 ProjectiveVariety = new Type of Variety
+ProjectiveVariety.synonym = "projective variety"
 ring Variety := (X) -> X.ring
 hilbertPolynomial Variety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial ring X
 Spec = method()
@@ -23,6 +26,7 @@ Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
      	  }
      )
 CoherentSheaf = new Type of MutableHashTable
+CoherentSheaf.synonym = "coherent sheaf"
 expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module }
 net CoherentSheaf := (F) -> net expression F
 sheaf = method(TypicalValue => CoherentSheaf)

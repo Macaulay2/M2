@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 ChainComplex = new Type of GradedModule
+ChainComplex.synonym = "chain complex"
 new ChainComplex := ChainComplex => (cl) -> (
      C := newClass(ChainComplex,new MutableHashTable); -- sigh
      b := C.dd = new ChainComplexMap;
@@ -55,6 +56,7 @@ net ChainComplex := C -> if C.?name then C.name else (
 	  between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of MutableHashTable
+ChainComplexMap.synonym = "chain complex map"
 ring ChainComplexMap := C -> ring source C
 complete ChainComplexMap := f -> (
      if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
