@@ -13,3 +13,7 @@ setRandomSeed "ABCDEFGHIJKLMNOQ"
 f {1, 13, 9, 11, 8, 18, 2, 5, 12, 1, 13, 15, 12, 17, 16, 5, 8, 12, 4, 19}
 setRandomSeed "=BCDEFGHIJKLMNOP"
 f {14, 13, 15, 13, 0, 18, 18, 5, 12, 18, 5, 3, 0, 13, 9, 5, 19, 10, 7, 3}
+
+-- let's make sure the seed setter ignores the 32nd bit
+setRandomSeed (2^31 + 5)
+f {9, 11, 10, 5, 5, 5, 18, 17, 10, 15, 1, 12, 4, 10, 9, 13, 12, 18, 11, 18}
