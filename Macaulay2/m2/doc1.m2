@@ -736,7 +736,31 @@ document { ambient,
      EXAMPLE "ambient(ZZ/101[a,b]/b^3/a^3)",
      SEEALSO {"cover", "super"}
      }
-     
+
+document { (ambient,Module),
+     Synopsis => {
+	  "F = ambient M",
+	  "M" => null,
+	  "F" => {"the ambient free module of ", TT "M", "."}
+	  },
+     PARA,
+     "The ambient free module is the target of both the generator matrix of ",
+     TT "M", " and the relations matrix of ", TT "M", ".",
+     PARA,
+     "If ", TT "M", " is the module ", TT "M = (image(g) + image(h)) / image(h)",
+     ", where ", TT "g : F <--- G", " and ", TT "h : F <--- H", " are matrices between
+     free modules, then the ambient module of ", TT "M", " is ", TT "F", ".",
+     EXAMPLE "R = QQ[x_1 .. x_10];",
+     EXAMPLE "N = coker vars R ++ coker vars R",
+     EXAMPLE "f = N_{0} - N_{1}",
+     TT "f", " is  a matrix from a free module of rank 1 to ", TT "N", ".",
+     EXAMPLE "M = image(f)",
+     EXAMPLE "ambient M",
+     EXAMPLE "ambient M == target generators M",
+     EXAMPLE "ambient M == target relations M",
+     SEEALSO {(cover,Module), (super,Module), (generators,Module), (relations,Module)}
+     }     
+
 document { Hom,
      Headline => "module of homomorphisms",
      TT "Hom(M,N)", " -- constructs the module of homomorphisms from M to N.",
@@ -770,6 +794,28 @@ document { generators,
      SEEALSO {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
      }
 
+document { (generators,Module),
+     Synopsis => {
+	  "g = generators M",
+	  "M" => null,
+	  "g" => {"the matrix of generators of ", TT "M", "."}
+	  },
+     PARA,
+     "Every module in Macaulay2 has, at least implicitly, a generator matrix and a 
+     matrix of relations, both of which are matrices between free modules.  
+     This function returns the generator matrix.",
+     PARA,
+     EXAMPLE "R = GF(8)",
+     EXAMPLE "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
+     EXAMPLE "generators(image f)",
+     EXAMPLE "generators(cokernel f)",
+     CAVEAT "This function returns a matrix with the given generators.  This set of
+     generators may not be minimal, or sorted in any particular order. Use ", TO (trim,Module),
+     " or ", TO (mingens,Module), " instead.",
+     SEEALSO {(relations,Module)}
+     }
+
+     
 document { someTerms,
      Headline => "select some terms of a polynomial",
      TT "someTerms(f,i,n)", " -- select ", TT "n", " terms from the polynomial 
