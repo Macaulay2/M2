@@ -12,3 +12,8 @@ addresses
 probe
 c-files.tar
 gmon.out
+arith.c
+struct.c
+basic.c
+strings.c
+actors3.c
