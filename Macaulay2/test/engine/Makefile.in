@@ -28,6 +28,11 @@ CFLAGS += -O3
 CXXFLAGS := $(CFLAGS)
 LDFLAGS =  -g -L/capybara/lib
 LDFLAGS += -Wl,-Map,mapfile
+
+CFLAGS += -pg
+CXXFLAGS += -pg
+LDFLAGS += -pg
+
 benchmark : factor factor.poly mapfile.demangled
 	time ./factor < @srcdir@/factor.poly >factor.out
 	cat factor.out
@@ -36,7 +41,7 @@ benchmark : factor factor.poly mapfile.demangled
 	time ./factor < @srcdir@/factor.poly
 factor.o factor-init.o : factor.h
 mapfile factor : factor.o factor-init.o factor-init1.o 
-	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf -lcfmem -lntl -lgmp -lgc -lm factor-init1.o -o "$@"
+	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg -lm factor-init1.o -o "$@"
 mapfile.demangled : mapfile
 	demangle <$< >$@
 
