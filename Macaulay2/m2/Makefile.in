@@ -16,7 +16,7 @@ LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
 DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := loads.m2 tutorials.m2 layout.m2
+MADEM2FILES := loads.m2 tutorials.m2
 
 initialize:: srcdir
 srcdir:; ln -s @srcdir@ srcdir
@@ -67,9 +67,6 @@ TAGS.doc : docseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
 clean::; rm -f TAGS.doc
-
-layout.m2 : ../../include/config.Makefile
-	echo 'LAYOUT = new HashTable from $(LAYOUT)' | sed 's/,/,%     /g' | tr % '\n' >$@
 
 default:: TAGS
 clean::; rm -f TAGS

@@ -6,7 +6,8 @@
 #include <gmp.h>
 
 extern char newline[];
-extern char startupString[];
+extern char startupString1[];
+extern char startupString2[];
 
 typedef struct M2_string_struct {
     unsigned int len;

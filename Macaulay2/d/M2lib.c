@@ -174,7 +174,8 @@ M2_string actors5_DATE;
 M2_string actors5_TIME;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
-M2_string actors5_startupString;
+M2_string actors5_startupString1;
+M2_string actors5_startupString2;
 M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FACTORYVERSION;
@@ -472,7 +473,8 @@ char **argv;
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      actors5_DATE = tostring(current_date);
      actors5_TIME = tostring(current_time);
-     actors5_startupString = tostring(startupString);
+     actors5_startupString1 = tostring(startupString1);
+     actors5_startupString2 = tostring(startupString2);
 #ifdef DUMPDATA
      actors5_DUMPDATA = TRUE;
      if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */

@@ -545,7 +545,8 @@ import GMPVERSION:string;
 import NTLVERSION:string;
 import FACTORYVERSION:string;
 import DUMPDATA:bool;
-import startupString:string;
+import startupString1:string;
+import startupString2:string;
 setupconst("newline", Expr(newline));
 
 x := newHashTable(hashTableClass,nothingClass);
@@ -564,7 +565,8 @@ storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));
 storeInHashTable(x,Expr("factory version"),Expr(FACTORYVERSION));
 sethash(x,false);
 setupconst("version", Expr(x));
-setupconst("startupString", Expr(startupString));
+setupconst("startupString1", Expr(startupString1));
+setupconst("startupString2", Expr(startupString2));
 
 removefun(e:Expr):Expr := (
      when e

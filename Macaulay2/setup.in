@@ -8,7 +8,5 @@ export ARCH
 if [ "$DUMPDATA" = yes ]
 then echo Dumping data
      M2HOME=.. \
-     ../bin/Macaulay2 -silent -q '-e phase=1' \
-	"$M2DIR/setup.m2" "$M2DIR/dumpdata.m2"  '-edump()' '-e exit 0' \
-    || exit 1
+     ../bin/M2 -silent -q -e 'phase=1' "$M2DIR/setup.m2" "$M2DIR/dumpdata.m2"  -e 'dump()' -e 'exit 0'
 fi

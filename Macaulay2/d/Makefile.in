@@ -211,15 +211,15 @@ ALLOBJ += gc_cpp.o
 endif
 
 MADEFILES += startup.c
+SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 startup.c : ../m2/startup.m2
-	(echo 'char startupStringFilename[] ='; \
-	 r=`/bin/pwd`; cd `dirname $^`; dir=`/bin/pwd`; cd "$$r"; \
-	 echo "    \"$$dir/startup.m2\";"; \
-	 echo ; \
-	 echo 'char startupString[] ='; \
-	 sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'  ; \
+	(echo 'char startupString1[] =' ; \
+	 (echo '--layout.m2'; echo 'LAYOUT = hashTable $(LAYOUT)' ) | sed 's/,/,%     /g' | tr % '\n' | sed $(SSTRING) ; \
+	 echo ';' ; \
+	 echo 'char startupString2[] =' ; \
+	 cat $< | sed $(SSTRING) ; \
 	 echo ';' \
-        ) <$^ >$@ 
+        ) >$@
 
 ALLOBJ += ../e/libgb.a
 

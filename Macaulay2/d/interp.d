@@ -288,7 +288,10 @@ export process():void := (
      stdout.outisatty =   0 != isatty(1) ;
      stderr.outisatty =   0 != isatty(2) ;
      ret := (
-	  when readeval(stringTokenFile("--startupString--/startup.m2",startupString))
+	  when readeval(stringTokenFile("--startupString1--/layout.m2",startupString1))
+	  is Error do ( if StopIfError then 1 else ( topLevel(); 0) )
+	  else 
+	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2))
 	  is Error do ( if StopIfError then 1 else ( topLevel(); 0) )
 	  else 0);
      value(Expr("exit " + tostring(ret)));		    -- try to exit the user's way
