@@ -212,9 +212,9 @@ makeDocumentTag Thing := opts -> key -> (
      title := if pkg === null then "" else pkg#"title";
      new DocumentTag from {key,fkey,pkg,title})
 -- a bit of experimentation...
-err := x -> error "expected a document tag, perhaps the function 'hypertext' has not yet run on hypertext"
 DocumentTag.Key = method(SingleArgumentDispatch => true)
 DocumentTag.Key DocumentTag := x -> x#0
+err := x -> error "expected a document tag; perhaps the function 'hypertext' has not yet been run on hypertext"
 DocumentTag.Key Thing := err
 DocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
 DocumentTag.FormattedKey DocumentTag := x -> x#1
