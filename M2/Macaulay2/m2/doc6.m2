@@ -1197,7 +1197,7 @@ document {
      When the source or target modules are not free, the matrix is
      interpreted as a linear transformation in terms of the generators
      of the modules.",
-     SeeAlso => "matrices",
+     SeeAlso => "matrices and free modules",
      PARA,
      "A matrix ", TT "f", " is an immutable object, so if you want to 
      cache information about it, put it in the hash table ", TT "f.cache", ".",

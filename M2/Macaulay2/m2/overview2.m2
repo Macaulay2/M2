@@ -151,7 +151,7 @@ document {
 document {
      Key => "maps between modules",			    -- map
      "Maps between free modules are usual specified as matrices, as
-     described in the section on ", TO "matrices", ".  In this section 
+     described in the section on ", TO "matrices and free modules", ".  In this section 
      we cover a few other techniques.",
      PARA,
      "Let's set up a ring, a matrix, and a free module.",

@@ -9,18 +9,11 @@ document {
      Subnodes => {
 	  TO "rings",
 	  TO "ideals",
-	  TO "matrices",
+	  TO "matrices and free modules",
 	  TO "substitution and maps between rings",
-	  "Modules",
-	  TO "modules: part I",
-	  TO "modules: part II",
-     	  "Other topics",
-	  TO "Groebner bases and related computations",
+	  TO "modules",
 	  TO "free resolutions, chain complexes, and homological algebra",
 	  TO "varieties",
-	  "An unrelated topic",
-	  TO "using external libraries",
-	  "Specialized routines",
 	  TO "commutative algebra",
 	  TO "algebraic geometry",
 	  }
@@ -92,7 +85,7 @@ document {
      PARA,
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",
-     TO "modules: part I", ".",
+     TO "modules", ".",
      PARA,
       "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use ideals, see ", TO "Ideal", "."
@@ -222,19 +215,20 @@ document {
 
 
 document {
-     Key => "matrices",
+     Key => "matrices and free modules",
      HEADER2 "An overview",     
      "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay 2.",
      Subnodes => {
 	  "making matrices", 
-	  TO "input a matrix",
+	  TO "inputting a matrix",
+   	  TO "projections, inclusions, and permutations",
 	  TO "random and generic matrices",
-	  TO "concatenating matrices",
 	  "operations involving matrices",
-	  TO "simple information about a matrix",
+	  TO "extracting information about a matrix",
 	  TO "basic arithmetic of matrices",
-	  TO "kernel, cokernel and image of a matrix",
+	  TO "concatenating matrices",
+ 	  TO "submatrices",
 	  TO "differentiation",
 	  "determinants and related computations",
 	  TO "rank of a matrix",
@@ -247,21 +241,29 @@ document {
 	  },
      PARA,
      "For an overview of matrices as homomorphisms between modules, 
-     see ", TO "modules: part I", ".  
+     see ", TO "modules", ".  
      For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use matrices, see ", TO "Matrix", "."
      }
 
 document {
+     Key => "projections, inclusions, and permutations",
+     -- F_List, F^List
+     }
+
+
+document {
      Key => "substitution and maps between rings",
      HEADER2 "An overview",
      Subnodes => {
-	  TO "substitute values for variables",
+     	  "Substitution",
+	  TO "substituting values for variables",
 	  TO "working with multiple rings",
-	  "ring maps",
+	  "Ring maps",
 	  TO "basic construction, source and target of a ring map",
 	  TO "evaluation and composition of ring maps",
 	  TO "kernel and image of a ring map",
+	  TO "preimage of an ideal",
 	  },
      PARA,
       "For additional common operations and a comprehensive list of all routines
@@ -270,7 +272,6 @@ document {
      
 document {
      Key => "modules",
-     Headline => "getting started",
      Subnodes => {
 	  "construction of modules",
 	  TO "free modules",
@@ -346,24 +347,6 @@ document {
 	  TO "coherent sheaves",
 	  TO "Variety"
 	  },
-     }
-
-document {
-     Key => "using external libraries",
-     "This node will be rewritten using packages.",
-     Subnodes => {
-     	  TO "loading a library",
-     	  TO "how to get documentation on a library",
-     	  "available libraries",
-	  TO "blow ups",
-	  TO "convex hulls and polar cones",
-	  TO "D-modules",
-	  TO "elimination theory",
-	  TO "graphing curves and surfaces via 'surf'",
-	  TO "invariants of finite groups",
-	  TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
-	  TO "SAGBI bases",
-	  }
      }
 
 ----------------------------

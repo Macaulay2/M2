@@ -1,16 +1,16 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
-document {
-     Key => (ambient,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     -- description here, with examples
-     SeeAlso => {},
-     Caveat => {}
-     }
+-- document {
+--      Key => (ambient,Module),
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      -- description here, with examples
+--      SeeAlso => {},
+--      Caveat => {}
+--      }
 
 document {
      Key => (symbol _, Matrix, List),
@@ -763,7 +763,7 @@ document {
      EXAMPLE {
       	  "p = map(R^2,R^3,{(0,0) => x+y, (1,1) => x^2, (0,2) => x-1, (0,0) => x-y})"
 	  },
-     SeeAlso => {matrix, (map,Module,Nothing,List), "input a matrix"}
+     SeeAlso => {matrix, (map,Module,Nothing,List), "inputting a matrix"}
      }
 document {
      Key => (map,Module,Module,Matrix),
