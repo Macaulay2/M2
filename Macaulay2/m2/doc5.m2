@@ -663,3 +663,49 @@ document { (symbol ^**, CoherentSheaf, ZZ),
 	  "N" => { "the i-th tensor power of M" }
 	  }
      }    
+
+document { setRandomSeed,
+     Headline => "set starting point for random number generator"
+     }
+
+document { (setRandomSeed, ZZ),
+     Synopsis => {
+	  "setRandomSeed i",
+	  "i" => null
+	  },
+     "Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
+     The sequence of future pseudo-random results is determined by the seed.",
+     EXAMPLE {
+	  "setRandomSeed 123456",
+	  "for i to 10 list random 100",
+	  "setRandomSeed 123456",
+	  "for i to 10 list random 100"
+	  }
+     }
+
+document { (setRandomSeed, String),
+     Synopsis => {
+	  ///setRandomSeed s///,
+	  "s" => null
+	  },
+     "Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
+     of the string contributes to the seed, but only 32 bits of data are used.
+     The sequence of future pseudo-random results is determined by the seed.",
+     EXAMPLE {
+	  ///setRandomSeed "thrkwjsxz"///,
+	  ///for i to 10 list random 100///,
+	  ///setRandomSeed "thrkwjsxz"///,
+	  ///for i to 10 list random 100///
+	  }
+     }
+
+document { truncateOutput,
+     Synopsis => {
+	  "truncateOutput w",
+	  "w" => "the maximum output line width to enforce"
+	  },
+     "If ", TT "w", " is ", TO "infinity", " then truncation is turned off.",
+     PARA,
+     "This function works by assigning a value to ", TT "Thing.BeforePrint", ", which
+     may conflict with other ", TO "BeforePrint", " methods installed by the user.",
+     }
