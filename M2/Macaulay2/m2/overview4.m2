@@ -76,7 +76,7 @@ PARA,
 "Now edit that line and replace the path by the correct path to Macaulay2's
 files on your system.  To find out what that path is, evaluate the variable 
 ", TT ///sourceHomeDirectory///, " in Macaulay 2.  Then append 
-", TT "/emacs/M2-init.el", " to the value returned and incorporate it into 
+", TT "emacs/M2-init.el", " to the value returned and incorporate it into 
 the ", TT "load", " command above.",
 PARA,
 "Loading the file will cause emacs to enter a special mode for editing
@@ -96,9 +96,10 @@ PARA,
 "Exit and restart emacs with your new initialization file.  
 If you are reading this file with emacs, then use the keystrokes
 ", TT "C-x 2", " to divide the buffer containing this file into two windows.
-Then press the ", TT "F12", " function key to start up 
-Macaulay 2 in a buffer named ", TT "*M2*", ".  (The command line used to
-start Macaulay 2 may be edited before being run if you press ", TT "C-U F12", " instead.)",
+Then press the ", TT "M-x M2", " to start up Macaulay 2 in a buffer
+named ", TT "*M2*", ".  (The command line used to start Macaulay 2 may
+be edited before being run if you use a prefix argument with the above
+command: press ", TT "C-U", " just before.)",
 PARA,
 "If this doesn't start up Macaulay 2, one reason may be that your function
 keys are not operable.  In that case press ", TT "C-C m", " instead.  (The 
@@ -109,12 +110,21 @@ A third reason may be that you are in Windows-98 and are using anti-virus
 software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
 when it tries to run a subprocess.",
 PARA,
+"You may wish to bind the emacs function ", TT "M2-send-to-program", "
+to a keystroke for ease of use.  For example, the following emacs code
+will bind it to the function key ", TT "f11", ".  We assume now that
+you have done that, or that you have done the equivalent thing with
+", TT "M-x global-set-key", "."
+PARA,
+CODE ///
+///
+PARA,
 "You may use ", TT "C-x o", " freely to switch from one window to the other.
 Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
 Now paste the following text into a buffer, unless you have the ASCII
 version of this documentation in an emacs buffer already, position
-the cursor on the first line of code, and press the ", TT "F11", " function 
-key (or ", TT "C-C s", ") repeatedly to present each line to Macaulay 2.",
+the cursor on the first line of code, and press the ", TT "f11", " function 
+key repeatedly to present each line to Macaulay 2.",
 PARA,
 CODE ///i1 : R = ZZ/101[x,y,z]
 i2 : f = symmetricPower(2,vars R)
@@ -132,28 +142,30 @@ CODE ///20!
 4 + 5 2^20
 -- that's all folks!///,
 PARA,
-"Press ", TT "M-F11", " with your cursor in this buffer to designate it as
-the source for the Macaulay 2 commands.  (The notation ", TT "M-F11", " means 
-that while holding the ", TT "Meta", " key down, you should press the ", TT "F11", " 
-key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
+"Press ", TT "M-f11", " with your cursor in this buffer to designate it as
+the source for the Macaulay 2 commands.  (The notation ", TT "M-f11", " means 
+that while holding the ", TT "Meta", " key down, you should press the ", TT "f11", " 
+function key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
 pressing Escape (just once) and following that with the key you wanted to press 
 while the meta key was held down.)  Then position your cursor (and thus the 
-emacs point) within the line containing ", TT "20!", ".  Now press ", TT "M-F12", "
-to open up a new frame called ", TT "DEMO", " for the ", TT "*M2*", " window with
-a large font suitable for use with a projector, and with your cursor in that
-frame, press ", TT "F11", " a few times to conduct the demo.  (If the font or frame 
-is the wrong size, you may have to create a copy of the file ", TT "M2.el", "
-with a version of the function ", TT "M2-demo", " modified to fit your screen.)",
+emacs point) within the line containing ", TT "20!", ".  Now press 
+", TT "M-x M2-demo", " to open up a new frame called ", TT "DEMO", "
+for the ", TT "*M2*", " window with a large font suitable for use with
+a projector, and with your cursor in that frame, press ", TT "f11", "
+a few times to conduct the demo.  (If the font or frame is the wrong
+size, you may have to create a copy of the file ", TT "M2.el", " with
+a version of the function ", TT "M2-demo", " modified to fit your
+screen.)",
 PARA,
-"One press of ", TT "F11", " brings the next line of code forward into the
+"One press of ", TT "f11", " brings the next line of code forward into the
 ", TT "*M2*", " buffer, and the next press executes it.  Use ", TT "C-x 5 0", " 
 when you want the demo frame to go away.",
 PARA,
 "There is a way to send a region of text to Macaulay 2: simply select a region
-of text, making sure the mark is active (as described above) and press ", TT "F11", ".
+of text, making sure the mark is active (as described above) and press ", TT "f11", ".
 Try that on the list below; put it into an emacs buffer, move your cursor to the 
 start of the list, press ", TT "M-C-@", " or ", TT "M-C-space", " to mark the list, 
-and then press ", TT "F11", " to send it to Macaulay 2.  (The notation ", TT "M-C-@", " 
+and then press ", TT "f11", " to send it to Macaulay 2.  (The notation ", TT "M-C-@", " 
 means: while holding down the Meta key and the Control key press the ", TT "@", " key, 
 for which you'll also need the shift key.)",
 PARA,
@@ -176,9 +188,9 @@ cursor at the top of the buffer and press ", TT "F10.", "  The cursor will move
 just past the first ", TT "<<<", ", and the emacs mark will be positioned just 
 before the ", TT ">>>", ".  Thus ", TT "1*2*3*4", " is the region, and it will
 even be highlighted if you have set the emacs variable ", TT "transient-mark-mode", "
-to ", TT "t", " for this buffer.  Pressing ", TT "F11", " will send ", TT "1*2*3*4", " 
+to ", TT "t", " for this buffer.  Pressing ", TT "f11", " will send ", TT "1*2*3*4", " 
 to Macaulay 2 for execution: try it now.  A sequence of such Macaulay 2 commands 
-can be executed by alternately pressing ", TT "F10", " and ", TT "F11", ".  You may
+can be executed by alternately pressing ", TT "F10", " and ", TT "f11", ".  You may
 also use ", TT "M-F10", " to move backward to the previous bracketed expression.",
 PARA,
 "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
@@ -233,7 +245,7 @@ have set up your emacs init file as described in ", TO "running Macaulay 2 in em
 when you visit a file whose name ends with ", TT ".m2", " 
 you will see on the mode line the name ", TT "Macaulay 2", " in
 parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
-sure that the file ", TT "emacs/M2-mode.el", " is on your ", TT "load-path", ".)",
+sure that the file ", TT "emacs/M2.el", " is on your ", TT "load-path", ".)",
 PARA,
 "To see how electric parentheses, electric semicolons, and indentation work,
 move to a blank line of this file and type the following text.",
