@@ -101,7 +101,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   else
     minimal_gb = new MinimalGB_Field(R,originalR,_F,_Fsyz);
   minimal_gb_valid = true;
-  _EXP = R->exponents_make();
+  EXP_ = R->exponents_make();
 
   if (originalR->is_quotient_ring())
     {
@@ -896,23 +896,22 @@ bool gbA::reduce(spair *p)
       R->gbvector_text_out(o, _F, p->f());
       emit_line(o.str());
     }
-  //  exponents _EXP = R->exponents_make();
   while (!R->gbvector_is_zero(p->f()))
     {
       int alpha,w;
-      R->gbvector_get_lead_exponents(_F, p->f(), _EXP);
+      R->gbvector_get_lead_exponents(_F, p->f(), EXP_);
       int x = p->f()->comp;
       if (over_ZZ())
 	{
 	  mpz_ptr c = MPZ_VAL(p->f()->coeff);
-	  w = find_good_term_divisor_ZZ(c,_EXP,x,_this_degree,alpha);
+	  w = find_good_term_divisor_ZZ(c,EXP_,x,_this_degree,alpha);
 
 	  // If w < 0, then no divisor was found.  Is there a GB element of
 	  // the same degree as this one, and with the same exponent vector?
 	  // If so, use gcdextended to find (g,u,v), 
 	  if (w < 0)
 	  {
-	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(_EXP,
+	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP_,
 									 x,
 									 _first_in_degree);
 	    if (t != 0)
@@ -948,7 +947,7 @@ bool gbA::reduce(spair *p)
 	}
       else
 	{
-	  w = find_good_divisor(_EXP,x,_this_degree, alpha); 
+	  w = find_good_divisor(EXP_,x,_this_degree, alpha); 
 	}
 
 	
@@ -1005,7 +1004,6 @@ bool gbA::reduce(spair *p)
 	      emit_line(o.str());
 	    }
 	  spair_set_insert(p);
-	  R->exponents_delete(_EXP);
 	  return false;
 	}
     }
@@ -1015,7 +1013,6 @@ bool gbA::reduce(spair *p)
       o << "." << count;
       emit(o.str());
     }
-  //R->exponents_delete(_EXP);
   return true;
 }
 
@@ -1175,9 +1172,9 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   while (!R->gbvector_is_zero(h.f))
     {
       int alpha;
-      R->gbvector_get_lead_exponents(_F, h.f, _EXP);
+      R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_monomial_divisor_ZZ(MPZ_VAL(h.f->coeff),_EXP,x,degf,  alpha);
+      int w = find_good_monomial_divisor_ZZ(MPZ_VAL(h.f->coeff),EXP_,x,degf,  alpha);
         // replaced alpha, g.
       if (w < 0 || alpha > 0)
 	{
@@ -1264,9 +1261,9 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   while (!R->gbvector_is_zero(h.f))
     {
       int alpha;
-      R->gbvector_get_lead_exponents(_F, h.f, _EXP);
+      R->gbvector_get_lead_exponents(_F, h.f, EXP_);
       int x = h.f->comp;
-      int w = find_good_divisor(_EXP,x,degf,  alpha);
+      int w = find_good_divisor(EXP_,x,degf,  alpha);
         // replaced alpha, g.
       if (w < 0 || alpha > 0)
 	{
@@ -1571,6 +1568,12 @@ void gbA::minimalize_gb()
   if (minimal_gb_valid) return;
 
   vector<POLY,gc_alloc> polys;
+  for (int i=_first_gb_element; i<gb.size(); i++)
+    {
+      if (gb[i]->minlevel != ELEM_NON_MIN_GB)
+	polys.push_back(gb[i]->g);
+    }
+#if 0
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     {
       if ((*i)->minlevel != ELEM_NON_MIN_GB)
@@ -1578,6 +1581,7 @@ void gbA::minimalize_gb()
 	  polys.push_back((*i)->g);
 	}
     }
+#endif
 
 
   minimal_gb->minimalize(polys);

@@ -88,7 +88,7 @@ INTERFACE = \
 	spair \
 	sparsemat \
 	text_io \
-	varpower \
+	varpower2 \
 	weylalg \
 	z_mod_p
 

@@ -249,6 +249,25 @@ assert(toString(a*b*c) === "abc")
 assert(toString(a*b^41*c^513) === "ab41c513")
 assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
 toString(a^-100000 * b * c^-5) === "a^(-100000)bc^(-5)"
+-------------------
+-- GroupRevLex -------
+-------------------
+needs "raw-util.m2"
+mo = rawMonomialOrdering {
+     GroupRevLex => 3 }
+M = rawMonoid(mo, {"a","b","c"},
+	      degring 1, 3:1)
+R = rawPolynomialRing(rawZZ(), M)
+a = rawRingVar(R,0,1)
+b = rawRingVar(R,1,1)
+c = rawRingVar(R,2,1)
+assert(toString a === "a")
+assert(toString b === "b")
+assert(toString c === "c")
+assert(toString(a*b*c) === "abc")
+assert(toString(a*b^41*c^513) === "ab41c513")
+assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
+toString(a^-100000 * b * c^-5) === "a^(-100000)bc^(-5)"
 --------------------------
 -- GRevLex weights -------
 --------------------------

@@ -38,6 +38,11 @@ struct MonomialOrder_rec {
 		   Any graded rev lex block assumes graded wrt these degrees. */
   struct mo_block *blocks; /* 0..nblocks-1 with each entry a struct mo_block */
   int *is_laurent; /* 0..nvars-1: 0 or 1: 1 means negative exponents allowed */
+#if 0
+  int *max_exponent; /* 0..nvars-1: maximum value for this exponent */
+  int *min_exponent; /* 0..nvars-1: minimum value for this exponent (often 0) */
+  int *slot_kind;    /* 0..nslots-1: 0 means normal int, 1 means packed 2, 2 means packed 4. */
+#endif
 };
 
 typedef struct MonomialOrder_rec MonomialOrder;
