@@ -942,7 +942,7 @@ document { "making matrices",
 	  },
      "If possible, the degrees of the basis vectors of the source are set so 
      that the map ", TT "f", " turns out to a homogeneous map of degree zero.
-     This opportunism isimportant because certain algorithms will run faster 
+     This opportunism is important because certain algorithms will run faster 
      on homogeneous maps.",
      EXAMPLE {
 	  "degree N_0",
