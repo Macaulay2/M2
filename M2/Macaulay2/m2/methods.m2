@@ -161,9 +161,11 @@ primaryDecomposition = method(
 	  PrintLevel => 0,
 	  Strategy => null})
 
+simpleToString := toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
 toString String := identity
-toString Symbol := string
+toString Thing := simpleToString			    -- if all else fails...
+toString Symbol := simpleToString
 
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
 options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)

@@ -21,6 +21,7 @@ Array.synonym = "array"
 Symbol.synonym = "symbol"
 BigReal.synonym = "big real"
 Dictionary.synonym = "dictionary"
+Pseudocode.synonym = "pseudocode"
 ZZ.synonym = "integer"
 ZZ.tex = ///$\mathbb Z$///
 ZZ.texMath = ///{\mathbb Z}///
@@ -46,7 +47,7 @@ use = identity				  -- just temporary, until methods.m2
 globalAssignFunction = (X,x) -> (
      if not x#?(symbol name) then (
 	  x.Symbol = X;
-	  x.name = string X;
+	  x.name = toString X;
 	  );
      use x;
      )

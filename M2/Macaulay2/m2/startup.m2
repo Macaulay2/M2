@@ -10,8 +10,6 @@ firstTime := not Array.?name
 
 -- here we put local variables that might be used by the global definitions below
 match := X -> 0 < #(matches X);
-oldstring := string; string := if class oldstring === Function then oldstring else toString
---
 
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
@@ -21,6 +19,7 @@ if firstTime then (
      BigReal.name = "BigReal";
      Boolean.name = "Boolean";
      CacheTable.name = "CacheTable";
+     Pseudocode.name = "Pseudocode";
      Database.name = "Database";
      Dictionary.name = "Dictionary";
      File.name = "File";
@@ -45,18 +44,17 @@ if firstTime then (
      Type.name = "Type";
      VisibleList.name = "VisibleList";
      ZZ.name = "ZZ";
-     erase symbol Error;
      notify = false;
 
      normalPrompts = () -> (
 	  lastprompt := "";
-	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth():"i", string lineno, " : "));
+	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth():"i", toString lineno, " : "));
 	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
 	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
 	  );
      examplePrompts = () -> (
 	  normalPrompts();
-	  ZZ.InputPrompt = lineno -> concatenate (newline, "\1i", string lineno, " : ");
+	  ZZ.InputPrompt = lineno -> concatenate (newline, "\1i", toString lineno, " : ");
 	  symbol currentPrompts <- examplePrompts;
 	  );
      noPrompts = () -> (
@@ -72,20 +70,43 @@ if firstTime then (
      endFunctions := {};
      addEndFunction = f -> ( endFunctions = append(endFunctions,f); f);
      runEndFunctions = () -> scan(endFunctions, f -> f());
-     exit = ret -> ( runEndFunctions(); simpleExit ret );
-     erase symbol simpleExit;
 
-     File << Thing  := File => (x,y) -> printString(x,string y);
+     simpleExit := exit;
+     exit = ret -> ( runEndFunctions(); simpleExit ret );
+
+     File << Thing  := File => (x,y) -> printString(x,toString y);
      File << Net := File << Symbol := File << String := printString;
      << Thing := x -> stdio << x;
      String | String := String => concatenate;
      Function _ Thing := Function => (f,x) -> y -> f splice (x,y);
      String | String := String => concatenate;
-     String | ZZ := String => (s,i) -> concatenate(s,string i);
-     ZZ | String := String => (i,s) -> concatenate(string i,s);
+     String | ZZ := String => (s,i) -> concatenate(s,toString i);
+     ZZ | String := String => (i,s) -> concatenate(toString i,s);
+
+     Symbols = new MutableHashTable;
+
+     Manipulator = new Type of BasicList;
+     Manipulator.synonym = "manipulator";
+     new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f};
+     Manipulator.name = "Manipulator";
+     Manipulator Database := Manipulator File := (m,o) -> m#0 o;
+
+     Manipulator.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X;
+     Manipulator.GlobalReleaseHook = (X,x) -> if Symbols#x === X then remove(Symbols,x);
+
+     Manipulator Nothing := (m,null) -> null;
+     File << Manipulator := File => (o,m) -> m#0 o;
+     List << Manipulator := File => (o,m) -> (scan(o, o -> m#0 o); o);
+     Nothing << Manipulator := (null,m) -> null;
+
+     close = new Manipulator from close;
+     closeIn = new Manipulator from closeIn;
+     closeOut = new Manipulator from closeOut;
+     flush = new Manipulator from flush;
+     endl = new Manipulator from endl;
 
      Thing.NoPrint = x -> null;
-     Thing.Print = x -> simpleFlush (
+     Thing.Print = x -> flush (				    -- this is the internal flush function, not the Manipulator
 	  << newline << "o" << lineNumber() << " = ";
 	  try << x;
 	  << newline);
@@ -116,7 +137,6 @@ if firstTime then (
      )
 
 fullCopyright := false
-loadFile := if class load === Function then load else simpleLoad
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 dir := s -> (
@@ -140,7 +160,7 @@ getRealPath := fn -> (
      	  fn))
 
 exe := (
-     processExe := "/proc/" | string processID() | "/exe";  -- this is a reliable way to get the executable in linux
+     processExe := "/proc/" | toString processID() | "/exe";  -- this is a reliable way to get the executable in linux
      if fileExists processExe then getRealPath processExe
      else (
 	  e := commandLine#0;
@@ -160,7 +180,7 @@ if fileExists (buildHomeDirectory|"srcdir/m2/setup.m2") then sourceHomeDirectory
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
 notyet := arg -> if preload then (
-     << "warning: command line option " << arg << " not re-implemented yet" << newline; simpleFlush stdio;
+     << "warning: command line option " << arg << " not re-implemented yet" << newline << flush;
      )
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
@@ -194,7 +214,7 @@ usage := arg -> (
 loadSetup := () -> (
      -- try to load setup.m2
      if sourceHomeDirectory === null then error ("can't find file setup.m2; exe = ",exe,"; commandLine#0 = ",commandLine#0);
-     loadFile minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
+     load minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
      )
 
 action := hashTable {
@@ -219,8 +239,7 @@ action := hashTable {
      "--no-setup" => arg -> nosetup = true,
      "--texmacs" => arg -> (
 	  interpreter = topLevelTexmacs;
-	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd;
-	  simpleFlush stdout;
+	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
      };
@@ -245,7 +264,7 @@ processCommandLineOptions := () -> (			    -- two passes, based on value of 'pre
 	       )
 	  else if match("^-e",arg) and not preload then value substring(2,arg) -- to become obsolete
 	  else if arg#0 == "-" then error("unrecognized command line option: ", arg)
-	  else if not preload then loadFile arg;
+	  else if not preload then load arg;
 	  argno = argno+1;
 	  );
      )
@@ -256,8 +275,7 @@ if firstTime then processCommandLineOptions()
 preload = false
 
 if firstTime and not nobanner then (
-     stderr << (if fullCopyright then copyright else first separate copyright) << newline;
-     simpleFlush stderr
+     stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush;
      )
 
 if firstTime and not noloaddata and version#"dumpdata" then (
@@ -266,10 +284,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
      datafile := minimizeFilename concatenate(buildHomeDirectory, "/cache/Macaulay2-",arch, "-data");
      if fileExists datafile then
      try (
-	  stderr << "--loading cached memory data from " << datafile << newline; simpleFlush stderr;
+	  stderr << "--loading cached memory data from " << datafile << newline << flush;
 	  loaddata datafile
 	  ) else (
-	  stderr << "warning: failed to load data from " << datafile << newline; simpleFlush stderr;
+	  stderr << "warning: failed to load data from " << datafile << newline << flush;
 	  )
      )
 

@@ -152,7 +152,7 @@ exitfun(e:Expr):Expr := (
 	       nullE)
 	  else WrongArgSmallInteger(1))
      else WrongArgInteger(1));
-setupfun("simpleExit",exitfun);
+setupfun("exit",exitfun).protected = false;
 
 applythem(obj:HashTable,fn:FunctionClosure):void := (
      apply(fn,Expr(obj));
@@ -525,7 +525,7 @@ endlfun(e:Expr):Expr := (
      else WrongArg("an output file")
      else WrongArg("a file")
      );
-setupfun("simpleEndl",endlfun);
+setupfun("endl",endlfun).protected = false;
 
 import CCVERSION:string;
 import VERSION:string;

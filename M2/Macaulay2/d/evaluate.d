@@ -288,7 +288,7 @@ ifthenelsefun(predicate:Code,thenclause:Code,elseClause:Code):Expr := (
 IfThenElseFun = ifthenelsefun;
 
 
-dummyBreakLoop(f:Frame):bool := false;
+dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
 export breakLoopFun := dummyBreakLoop;
 export debuggingMode := false;
 
@@ -395,11 +395,7 @@ export eval(c:Code):Expr := (
 	  Expr(SymbolClosure(f,r.symbol)))
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
-     is n:forCode do (
-	  localFrame = Frame(localFrame,n.frameID,n.framesize,false,new Sequence len n.framesize do provide nullE);
-	  x := ForFun(n);
-	  localFrame = localFrame.outerFrame;
-	  x)
+     is n:forCode do ForFun(n)
      is n:newLocalFrameCode do (
 	  localFrame = Frame(localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
 	  x := eval(n.body);
@@ -431,8 +427,7 @@ export eval(c:Code):Expr := (
 		    Expr(toInteger(int(p.line))),
 		    Expr(toInteger(int(p.column)+1))),
 	       err.report);
-     	  if err.position == dummyPosition
-	  && int(p.loadDepth) >= errorDepth 
+     	  if (debuggingMode || err.position == dummyPosition && int(p.loadDepth) >= errorDepth)
 	  && !SuppressErrors then (
 	       interrupted = false;
 	       alarmed = false;
@@ -446,8 +441,12 @@ export eval(c:Code):Expr := (
 		    flush(stdout);
 		    stderr << "..." << endl;);
 	       err.position = p;
-	       if debuggingMode then breakLoopFun(localFrame);
-	       );
+	       if debuggingMode then (
+		    when breakLoopFun(localFrame,c)
+		    is er:Error do (
+			 if er.message == returnMessage then return er.value;
+			 )
+		    else nothing));
 	  e)
      else e);
 

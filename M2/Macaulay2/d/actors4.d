@@ -860,7 +860,7 @@ tostringfun(e:Expr):Expr := (
      is BigComplex do Expr("--big complex number--")
      is c:RawComputation do Expr(Ccode(string, "IM2_GB_to_string((Computation*)",c,")" ))
      );
-setupfun("string",tostringfun);
+setupfun("toString",tostringfun).protected = false;
 
 connectionCount(e:Expr):Expr := (
      when e is f:file do if f.listener then Expr(toInteger(f.numconns))

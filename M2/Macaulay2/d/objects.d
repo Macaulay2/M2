@@ -520,6 +520,7 @@ setupconst("Type",Expr(typeClass));
 setupconst("Thing",Expr(thingClass));
 setupconst("HashTable",Expr(hashTableClass));
 setupconst("Dictionary",Expr(dictionaryClass));
+setupconst("Pseudocode",Expr(codeClass));
 setupconst("MutableHashTable",Expr(mutableHashTableClass));
 setupconst("CacheTable",Expr(cacheTableClass));
 setupconst("BasicList",Expr(basicListClass));
@@ -545,7 +546,7 @@ setupconst("File",Expr(fileClass));
 setupconst("String",Expr(stringClass));
 setupconst("Function",Expr(functionClass));
 setupconst("Symbol",Expr(symbolClass));
-setupconst("Error",Expr(errorClass));
+-- setupconst("Error",Expr(errorClass));
 setupconst("Time",Expr(timeClass));
 setupconst("Option",Expr(optionClass));
 setupconst("Net",Expr(netClass));
@@ -1013,7 +1014,7 @@ export subvalue(left:Expr,right:Expr):Expr := (
 	       f := dc.frame;
 	       when lookup(s,d.symboltable)
 	       is x:Symbol do Expr(SymbolClosure(f,x))
-	       else nullE
+	       else buildErrorPacket("key not found in dictionary")
 	       )
 	  else buildErrorPacket("expected subscript to be a string")
 	  )

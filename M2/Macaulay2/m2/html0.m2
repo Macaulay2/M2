@@ -38,8 +38,8 @@ htmlMarkUpType = s -> (
 MarkUpType.GlobalAssignHook = (X,x) -> (
      if not x.?name then (
 	  x.Symbol = X;
-	  x.name = string X;
-     	  html x := htmlMarkUpType string X;
+	  x.name = toString X;
+     	  html x := htmlMarkUpType toString X;
 	  );
      )
 

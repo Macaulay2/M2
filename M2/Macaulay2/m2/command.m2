@@ -15,7 +15,7 @@ Command.synonym = "command"
 Command.name = "Command"
 Command.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X
 Command.GlobalReleaseHook = (X,x) -> (
-     stderr << "warning: " << string X << " redefined" << endl;
+     stderr << "warning: " << toString X << " redefined" << endl;
      if Symbols#x === X then remove(Symbols,x);
      )
 new Command from Function := Command => (command,f) -> command {f}
@@ -23,7 +23,7 @@ new Command from String   := Command => (command,cmdname) -> command {
      x -> (
 	  if x === ()
 	  then run cmdname
-	  else run (cmdname | " " | string x))}
+	  else run (cmdname | " " | toString x))}
 Command.AfterEval = x -> x#0 ()
 Command Thing := (x,y) -> x#0 y
 
