@@ -864,12 +864,10 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 		    if length(bcd) == 2 then (
 			 when bcd.0
 			 is bb:HashTable do
-			 -- if !ancestor(bb.class,typeClass)
 			 if bb.parent == nothingClass
 			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
-			 -- if ancestor(cc.class,typeClass)
 			 if cc.parent != nothingClass
 			 then installMethod(a,bb,cc,eval(args.3))
 			 else buildErrorPacket("expected second parameter to be a type")
@@ -879,19 +877,38 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 		    else if length(bcd) == 3 then (
 			 when bcd.0
 			 is bb:HashTable do
-			 -- if !ancestor(bb.class,typeClass)
 			 if bb.parent == nothingClass
 			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
-			 -- if !ancestor(cc.class,typeClass)
 			 if cc.parent == nothingClass
 			 then buildErrorPacket("expected second parameter to be a type") else 
 			 when bcd.2
 			 is dd:HashTable do
-			 -- if ancestor(dd.class,typeClass)
 			 if dd.parent != nothingClass
 			 then installMethod(a,bb,cc,dd,eval(args.3))
+			 else buildErrorPacket("expected third parameter to be a type") 
+			 else buildErrorPacket("expected third parameter to be a hash table")
+			 else buildErrorPacket("expected second parameter to be a hash table")
+			 else buildErrorPacket("expected first parameter to be a hash table")
+			 )
+		    else if length(bcd) == 4 then (
+			 when bcd.0
+			 is bb:HashTable do
+			 if bb.parent == nothingClass
+			 then buildErrorPacket("expected first parameter to be a type") else
+			 when bcd.1
+			 is cc:HashTable do
+			 if cc.parent == nothingClass
+			 then buildErrorPacket("expected second parameter to be a type") else 
+			 when bcd.2
+			 is dd:HashTable do
+			 if dd.parent != nothingClass then 
+			 when bcd.3
+			 is ee:HashTable do
+			 if ee.parent != nothingClass then installMethod(a,bb,cc,dd,ee,eval(args.3))
+			 else buildErrorPacket("expected fourth parameter to be a type") 
+			 else buildErrorPacket("expected fourth parameter to be a hash table")
 			 else buildErrorPacket("expected third parameter to be a type") 
 			 else buildErrorPacket("expected third parameter to be a hash table")
 			 else buildErrorPacket("expected second parameter to be a hash table")

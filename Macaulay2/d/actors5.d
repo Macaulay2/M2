@@ -742,6 +742,10 @@ method123(e:Expr,env:Sequence):Expr := (
 	       f := lookup(env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, emptySequence))
+	  else if length(args) == 4 then (
+	       f := lookupQuaternaryMethod(Class(args.0),Class(args.1),Class(args.2),Class(args.3),env.0);
+	       if f == nullE then f = env.1;
+	       apply(f, args))
 	  else apply(env.1, args))
      else (
 	  f := lookup(Class(e),env.0);
@@ -796,6 +800,26 @@ method123c(e:Expr,env:Sequence):Expr := (
 	       f := lookup(a0,env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args.0))
+	  else if length(args) == 4 then (
+	       a0 := (
+		    if length(useClass) <= 0 || useClass.0 == False
+		    then Class(args.0)
+		    else when args.0 is o:HashTable do o else anonymousClass);
+	       a1 := (
+		    if length(useClass) <= 1 || useClass.1 == False
+		    then Class(args.1)
+		    else when args.1 is o:HashTable do o else anonymousClass);
+	       a2 := (
+		    if length(useClass) <= 2 || useClass.2 == False
+		    then Class(args.2)
+		    else when args.2 is o:HashTable do o else anonymousClass);
+	       a3 := (
+		    if length(useClass) <= 3 || useClass.3 == False
+		    then Class(args.3)
+		    else when args.3 is o:HashTable do o else anonymousClass);
+	       f := lookupQuaternaryMethod(a0,a1,a2,a3,env.0);
+	       if f == nullE then f = env.1;
+	       apply(f, args))
 	  else apply(env.1, args)
 	  else (
 	       a0 := (

@@ -604,6 +604,29 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
 	  else buildErrorPacket(messx))
      else buildErrorPacket(messx));
 -----------------------------------------------------------------------------
+-- nullary methods
+export NullaryMethods := (
+     x := newHashTable(mutableHashTableClass,nothingClass);
+     sethash(x,true);
+     x);
+setupconst("nullaryMethods",Expr(NullaryMethods));
+export lookup(e:Expr):Expr := (
+     r := lookup1(NullaryMethods,Expr(Sequence(e)));
+     if r == notfoundE then r = nullE;
+     r);
+export installMethod(meth:Expr,value:Expr):Expr := (
+     when value is Error do value
+     is FunctionClosure do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
+     is CompiledFunction do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
+     is CompiledFunctionClosure do storeInHashTable(NullaryMethods,Expr(Sequence(meth)),value)
+     is x:List do (
+	  if x.class == optionClass && length(x.v) == 2 then (
+	       storeInHashTable(typicalValues,Expr(Sequence(meth)),x.v.0);
+	       installMethod(meth,x.v.1);
+	       value)
+	  else buildErrorPacket(messx))
+     else buildErrorPacket(messx));
+-----------------------------------------------------------------------------
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      when value is Error do value
@@ -753,10 +776,77 @@ export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr):Exp
      lookupTernaryMethod(s1,s2,s3,meth,hash(meth))
      );
 -----------------------------------------------------------------------------
+-- quaternary methods
+export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,value:Expr):Expr := (
+     installIt( 
+	  if s1.hash > s2.hash
+	  then if s1.hash > s3.hash 
+	  then if s1.hash < s4.hash then s4 else s1
+	  else if s3.hash < s4.hash then s4 else s3
+	  else if s2.hash > s3.hash 
+	  then if s2.hash < s4.hash then s4 else s2 
+	  else if s3.hash < s4.hash then s4 else s3,
+	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3),Expr(s4))), 
+	  value));
+key4 := Sequence(nullE,nullE,nullE,nullE,nullE);
+key4E := Expr(key4);
+export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:int):Expr := (
+     key4.0 = meth;
+     -- the big numbers here are the same is in hash() for sequences in structure.d
+     keyhash0 := 27449 * 27457 + methhash;
+     while true do (			  -- loop through ancestors of s1
+	  key4.1 = Expr(s1);
+	  s1hash := s1.hash;
+	  keyhash1 := keyhash0 * 27457 + s1hash;
+	  s2ptr := s2;
+	  while true do (		  -- loop through ancestors of s2
+	       key4.2 = Expr(s2ptr);
+     	       s2hash := s2ptr.hash;
+	       keyhash2 := keyhash1 * 27457 + s2hash;
+	       s3ptr := s3;
+	       while true do (		  -- loop through ancestors of s3
+		    key4.3 = Expr(s3ptr);
+		    s3hash := s3ptr.hash;
+		    keyhash3 := keyhash2  * 27457 + s3hash;
+		    s4ptr := s4;
+		    while true do (		  -- loop through ancestors of s4
+			 key4.4 = Expr(s4ptr);
+			 s4hash := s4ptr.hash;
+			 keyhash4 := keyhash3  * 27457 + s4hash;
+			 s := lookup1(
+			      if s1hash > s2hash then (
+				   if s1hash > s3hash 
+				   then if s4hash > s1hash then s4ptr else s1 
+				   else if s4hash > s3hash then s4ptr else s3ptr
+				   )
+			      else (
+				   if s2hash > s3hash 
+				   then if s4hash > s2hash then s4ptr else s2ptr 
+				   else if s4hash > s3hash then s4ptr else s3ptr
+				   ),
+			      key4E, keyhash4);
+			 if s != notfoundE then ( key4.0 = nullE; key4.1 = nullE; key4.2 = nullE; key4.3 = nullE; return s; );
+			 if s4ptr == thingClass then break;
+			 s4ptr = s4ptr.parent;
+			 );
+		    if s3ptr == thingClass then break;
+		    s3ptr = s3ptr.parent;
+		    );
+	       if s2ptr == thingClass then break;
+	       s2ptr = s2ptr.parent;
+	       );
+     	  if s1 == thingClass then break;
+	  s1 = s1.parent;
+	  );
+     key4.0 = nullE; key4.1 = nullE; key4.2 = nullE; key4.3 = nullE;
+     nullE);
+export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr):Expr := lookupQuaternaryMethod(s1,s2,s3,s4,meth,hash(meth));
+-----------------------------------------------------------------------------
 installfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
-	  if length(a) == 3 then (
+	  if length(a) == 2 then installMethod(a.0,a.1)
+	  else if length(a) == 3 then (
 	       when a.1 is s:HashTable do
 	       if s.mutable then installMethod(a.0,s,a.2)
 	       else WrongArg(1+1,"a mutable hash table")
@@ -792,15 +882,6 @@ installfun(e:Expr):Expr := (
      else WrongNumArgs(3,5));
 setupfun("installMethod",installfun);
 -----------------------------------------------------------------------------
-export NullaryMethods := (
-     x := newHashTable(mutableHashTableClass,nothingClass);
-     sethash(x,true);
-     x);
-setupconst("nullaryMethods",Expr(NullaryMethods));
-export lookup(e:Expr):Expr := (
-     r := lookup1(NullaryMethods,Expr(Sequence(e)));
-     if r == notfoundE then r = nullE;
-     r);
 export lookupfun(e:Expr):Expr := (
      when e 
      is a:Sequence do
@@ -820,6 +901,15 @@ export lookupfun(e:Expr):Expr := (
      when a.1 is s1:HashTable do
      when a.2 is s2:HashTable do 
      when a.3 is s3:HashTable do lookupTernaryMethod(s1,s2,s3,a.0)
+     else nullE
+     else nullE
+     else nullE
+     else if length(a) == 5 then
+     when a.1 is s1:HashTable do
+     when a.2 is s2:HashTable do 
+     when a.3 is s3:HashTable do
+     when a.4 is s4:HashTable do lookupQuaternaryMethod(s1,s2,s3,s4,a.0)
+     else nullE
      else nullE
      else nullE
      else nullE
