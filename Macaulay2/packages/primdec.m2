@@ -237,7 +237,7 @@ minSatPPDold = (I, facs) -> (
      while ret#0 != Iprev do (
 	  F = F * ret#2;
 	  Iprev = ret#0;
-	  ret = quotMinold unlist ret;
+	  ret = quotMinold toSequence ret;
 	  );
      {ret#0, F0, F, facs0}
      )

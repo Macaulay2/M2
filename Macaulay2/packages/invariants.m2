@@ -620,7 +620,7 @@ derkson = (G) -> (
      v1 := genericMatrix(S,S_(n), 1, n);
      gelem := (F) -> ideal(v1 - substitute(F vars R, v0));
      G1 := apply(G.elements, gelem);
-     JJ1 := intersect unlist G1;
+     JJ1 := intersect toSequence G1;
      JJ := substitute(JJ1, vars R | map(R^1, R^n, 0));
      JJ = compress gens JJ;
      reynolds(G,JJ))
@@ -656,7 +656,7 @@ v1 = genericMatrix(S,y_1,1,12)
 gelem = (F) -> ideal(v1 - substitute(F vars R, S))
 G1 = apply(G, gelem)
 gbTrace 3
-JJ = intersect unlist G1;
+JJ = intersect toSequence G1;
 JJ1 = substitute(JJ, vars R | map(R^1, R^12, 0));
 JJ1 = compress gens JJ1
 transpose JJ1
