@@ -4,30 +4,26 @@
 -- configuration
 -----------------------------------------------------------------------------
 maximumCodeWidth := 200
-filepath := x -> minimizeFilename concatenate mingle(x,#x:pathSeparator)
-CachePrefix := filepath {"cache"}
-TestsPrefix := filepath {"cache", "tests"}
+directoryPath = x -> minimizeFilename concatenate mingle(x,#x:pathSeparator)
+CachePrefix := directoryPath {"cache"}
+TestsPrefix := directoryPath {"cache", "tests"}
 documentationPath = {
-     filepath{"cache","doc"}
+     directoryPath{"cache","doc"}
      }
 addStartFunction(
      () -> (
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
-	  p := join(apply(path, minimizeFilename), {
-	       	    filepath{home,"m2"},
-	       	    filepath{home,"packages"}
+	  path = unique join(apply(path, minimizeFilename), {
+	       	    directoryPath{home,"m2"},
+	       	    directoryPath{home,"packages"}
 		    });
-	  path = {};
-	  apply(p, dir -> if not member(dir,path) then path = append(path,dir));
-	  p = {
-	       filepath{"cache","doc"},			    -- this is where new documentation is written
-	       filepath{home,"m2","cache","doc"},
-	       filepath{home,"packages","cache","doc"}
+	  documentationPath = unique {
+	       directoryPath{"cache","doc"}, -- this is where new documentation is written
+	       directoryPath{home,"m2","cache","doc"},
+	       directoryPath{home,"packages","cache","doc"}
 	       };
-     	  documentationPath = {};
-	  apply(p, dir -> if not member(dir,path) then documentationPath = append(documentationPath,dir));
 	  )
      )
 -----------------------------------------------------------------------------
@@ -376,20 +372,18 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
-checkForNodeBaseFilename := key -> (
-     t := cacheFileName(
-	  if writing() then take(documentationPath,1) else documentationPath,
-	  key);
+makeFileName := (key,filename) -> (
+     if writingInputFiles() then (
+	  prefix := first documentationPath;
+	  if filename === null then cacheFileName(prefix, key)
+	  else cacheFileName(prefix, key, filename)
+	  );
+     t := cacheFileName(documentationPath, key);
      if #t > 1 then (
 	  stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
 	  apply(t, fn -> stderr << "    " << fn << endl );
 	  );
-     nodeBaseFilename = (
-	  if #t > 0 then first t
-	  else if writingInputFiles()
-	  then cacheFileName(first documentationPath, key)
-	  else null
-     	  );
+     if #t > 0 then first t else null
      )
 checkForExampleOutputFile := () -> (
      exampleResultsFound = false;
@@ -457,6 +451,12 @@ processExamples := (docBody) -> (
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
+
+getFileName := body -> (
+     x := select(1, body, i -> class i === Option and #i === 2 and first i === FileName);
+     if #x > 0 then x#0#1 else null
+     )
+
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
@@ -465,7 +465,7 @@ document List := z -> (
      body := drop(z,1);
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     checkForNodeBaseFilename key;
+     nodeBaseFilename = makeFileName(nodeName,getFileName body);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      -- we can't write the html files now, because we need to have all the documentation
@@ -547,7 +547,9 @@ nextMoreGeneral := s -> (
 getOption := (s,tag) -> (
      if class s === SEQ then (
      	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
-     	  if #x > 0 then x#0#1))
+     	  if #x > 0 then x#0#1 else null)
+     else null
+     )
 
 getHeadline := key -> (
      d := getOption(getDoc key, Headline);
@@ -1382,9 +1384,11 @@ htmlFilename := key -> (
 html TO := x -> (
      key := x#0;
      formattedKey := formatDocumentTag key;
-     nodeBaseDirectory := filepath ( nodeBaseFilename, ".." );
+     prefix := first documentationPath;
      concatenate ( 
-     	  ///<A HREF="///, relativizeFilename(nodeBaseDirectory, htmlFilename formattedKey), ///">///, 
+     	  ///<A HREF="///,				    -- "
+	  relativizeFilename(prefix, htmlFilename formattedKey),
+	  ///">///, 					    -- "
      	  htmlExtraLiteral formattedKey,
      	  "</A>",
      	  drop(toList x,1) 

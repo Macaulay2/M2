@@ -15,9 +15,10 @@ BUTTON = (s,alt) -> (
      else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
      )
 
-prefix = ""
+prefix = directoryPath {"..","m2","cache","doc"}
+documentationPath = unique prepend(prefix,documentationPath)
 topNodeName = "Macaulay 2"
-topFileName = cacheFileName(prefix,topNodeName,"index") | ".html"
+topFileName = cacheFileName(prefix,topNodeName) | ".html"
 linkFilename = s -> cacheFileName(prefix,s) | ".html"
 
 topNodeButton = HREF { topFileName, BUTTON("top.gif","top") }
@@ -27,24 +28,6 @@ nullButton = BUTTON("null.gif",null)
 masterFileName = "master.html"
 masterNodeName = "master index"
 masterIndexButton = HREF { masterFileName, BUTTON("index.gif","index") }
-
-
-htmlLiteralTable := new MutableHashTable
-scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
-htmlLiteralTable#"\"" = "&quot;"
-htmlLiteralTable#"<" = "&lt;"
-htmlLiteralTable#"&" = "&amp;"
-htmlLiteralTable#">" = "&gt;"
-htmlLiteral := s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
-
-htmlExtraLiteralTable := copy htmlLiteralTable
-htmlExtraLiteralTable#" " = "&nbsp;"
-htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
-
-html TO := x -> (
-     fkey := formatDocumentTag x#0;
-     concatenate("<A HREF=\"", linkFilename fkey, "\">", htmlExtraLiteral fkey, "</A>", drop(toList x,1))
-     )
 
 NEXT = new MutableHashTable
 PREV = new MutableHashTable

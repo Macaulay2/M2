@@ -49,7 +49,7 @@ clean ::; rm -f *.gif *.jpg
 endif
 
 index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
-	rm -f ./*.html
+	rm -f ../m2/cache/doc/*.html
 	../../bin/M2 -q $< '-eexit(0)'
 view:; netscape index.html &
 clean::; rm -f ./*.html
