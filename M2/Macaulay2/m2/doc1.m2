@@ -190,10 +190,12 @@ document { topicList,
 
 document { topics,
      Headline => "display available help topics",
-     OldSynopsis => {
-	  "topics"
+     Synopsis => {
+	  Usage => "topics",
+	  Results => {
+	       "This command displays a list of topics on which help is available, in columnated form."
+	       }
 	  },
-     "This command displays a list of topics on which help is available, in columnated form.",
      SEEALSO {"help"}
      }
 
@@ -533,12 +535,14 @@ document { (symbol ">>>", OptionTable, Function),
 
 document { (method, SingleArgumentDispatch),
      Headline => "method functions with a variable number of arguments",
-     OldSynopsis => {
-	  "f = method(SingleArgumentDispatch => true)",
-	  "f" => "a method function that treats several arguments as
-	  a single argument, i.e., as a sequence."
+     Synopsis => {
+	  Usage => "f = method(SingleArgumentDispatch => true)",
+	  Inputs => {
+	       },
+	  Outputs => {
+	       "f" => "a method function that treats several arguments as a single argument, i.e., as a sequence."
+	       }
 	  },
-     PARA,
      "Here is an example.",
      EXAMPLE {
 	  "f = method(SingleArgumentDispatch=>true);",
@@ -547,7 +551,6 @@ document { (method, SingleArgumentDispatch),
 	  "f 44",
 	  "f(3,4,5,6)"
 	  },
-     PARA,
      "Normally, at most three arguments could be handled by such a method
      function, and the types would have to be considered separately."
      }
@@ -677,10 +680,14 @@ document { isConstant,
      }
 
 document { (isConstant, RingElement),
-     OldSynopsis => {
-	  "t = isConstant f",
-	  "f" => null,
-	  "t" => {"whether the polynomial ", TT "f", " is constant"}
+     Synopsis => {
+	  Usage => "t = isConstant f",
+	  Inputs => {
+	       "f" => null,
+	       },
+	  Outputs => {
+	       {"whether the polynomial ", TT "f", " is constant"}
+	       }
 	  }
      }
 
@@ -689,10 +696,14 @@ document { isHomogeneous,
      }
 
 document { (isHomogeneous,Matrix),
-     OldSynopsis => {
-	  "t = isHomogeneous f",
-	  "f" => { "a map ", TT "F", " <-- ", TT "G", "" },
-	  "t" => {"whether the matrix ", TT "f", " is homogeneous"}
+     Synopsis => {
+	  Usage => "isHomogeneous f",
+	  Inputs => {
+	       "f" => { "a map ", TT "F", " <-- ", TT "G", "" },
+	       },
+	  Outputs => {
+	       {"whether the matrix ", TT "f", " is homogeneous"}
+	       }
 	  },
      "Associated with every matrix is an arbitary integer called
      its degree: it has nothing to do with the degrees of the entries
@@ -847,26 +858,31 @@ document { ambient,
      }
 
 document { (ambient,Module),
-     OldSynopsis => {
-	  "F = ambient M",
-	  "M" => null,
-	  "F" => {"the ambient free module of ", TT "M", "."}
+     Synopsis => {
+	  Usage => "ambient M",
+	  Inputs => {
+	       "M" => null
+	       },
+	  Outputs => {
+	       {"the ambient free module of ", TT "M", "."}
+	       }
 	  },
-     PARA,
-     "The ambient free module is the target of both the generator matrix of ",
-     TT "M", " and the relations matrix of ", TT "M", ".",
-     PARA,
-     "If ", TT "M", " is the module ", TT "M = (image(g) + image(h)) / image(h)",
-     ", where ", TT "g : F <--- G", " and ", TT "h : F <--- H", " are matrices between
-     free modules, then the ambient module of ", TT "M", " is ", TT "F", ".",
-     EXAMPLE "R = QQ[x_1 .. x_10];",
-     EXAMPLE "N = coker vars R ++ coker vars R",
-     EXAMPLE "f = N_{0} - N_{1}",
-     TT "f", " is  a matrix from a free module of rank 1 to ", TT "N", ".",
-     EXAMPLE "M = image(f)",
-     EXAMPLE "ambient M",
-     EXAMPLE "ambient M == target generators M",
-     EXAMPLE "ambient M == target relations M",
+     PARA { "The ambient free module is the target of both the generator matrix of ",
+     	  TT "M", " and the relations matrix of ", TT "M", "."},
+     PARA { "If ", TT "M", " is the subquotient module ", TT "M = (image(g) + image(h)) / image(h)",
+     	  ", where ", TT "g : F <--- G", " and ", TT "h : F <--- H", " are matrices between
+     	  free modules, then the ambient module of ", TT "M", " is ", TT "F", "."},
+     EXAMPLE {
+	  "R = QQ[x_1 .. x_10];",
+      	  "N = coker vars R ++ coker vars R",
+      	  "f = N_{0} - N_{1}"
+	  },
+     "Here ", TT "f", " is  a matrix from a free module of rank 1 to ", TT "N", ".",
+     EXAMPLE {
+	  "M = image(f)",
+      	  "ambient M",
+      	  "ambient M == target generators M",
+      	  "ambient M == target relations M"},
      SEEALSO {(cover,Module), (super,Module), (generators,Module), (relations,Module)}
      }     
 
@@ -897,20 +913,24 @@ document { generators,
      }
 
 document { (generators,Module),
-     OldSynopsis => {
-	  "g = generators M",
-	  "M" => null,
-	  "g" => {"the matrix of generators of ", TT "M", "."}
+     Synopsis => {
+	  Usage => "g = generators M",
+	  Inputs => {
+	       "M" => null
+	       },
+	  Outputs => {
+	       {"the matrix of generators of ", TT "M", "."}
+	       }
 	  },
-     PARA,
      "Every module in Macaulay2 has, at least implicitly, a generator matrix and a 
      matrix of relations, both of which are matrices between free modules.  
      This function returns the generator matrix.",
-     PARA,
-     EXAMPLE "R = GF(8)",
-     EXAMPLE "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
-     EXAMPLE "generators(image f)",
-     EXAMPLE "generators(cokernel f)",
+     EXAMPLE {
+	  "R = GF(8)",
+      	  "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
+      	  "generators(image f)",
+      	  "generators(cokernel f)"
+	  },
      CAVEAT {
 	  "This function returns a matrix with the given generators.  This 
 	  set of generators may not be minimal, or sorted in any particular 
@@ -1012,26 +1032,32 @@ document { complete,
      }
 
 document { (drop, BasicList, List),
-     OldSynopsis => {
-	  "w = drop(v,{m,n})",
-	  "v" => null,
-	  "{m,n}" => "a pair of natural numbers",
-	  "w" => {"a list by omitting those elements of the list
-	       ", TT "v", " in positions ", TT "m", " through ", TT "n", "." }
+     Synopsis => {
+	  Usage => "drop(v,{m,n})",
+	  Inputs => {
+	       "v" => null,
+	       "{m,n}" => "a pair of natural numbers"
+	       },
+	  Outputs => {
+	       { "the list by omitting those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n", "." }
+	       }
 	  },
      EXAMPLE "drop({a,b,c,d,e},{2,4})"
      }
 
 document { (drop, BasicList, ZZ),
-     OldSynopsis => {
-	  "w = drop(v,n)",
-	  "v" => null,
-	  "n" => null,
-	  "w" => {"a list obtained by omitting the first ", TT "n", " elements of 
-	       the list ", TT "v", " if ", TT "n", " is positive, or
-	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
+     Synopsis => {
+	  Usage => "w = drop(v,n)",
+	  Inputs => {
+	       "v" => null,
+	       "n" => null
+	       },
+	  Outputs => {
+	       {"the list obtained by omitting the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
+	       	    the last ", TT "-n", " elements if ", TT "n", " is negative."}
+	       }
 	  },
-     EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)", }
+     EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)" }
      }
 
 document { drop,

@@ -184,45 +184,46 @@ document { NoPrint,
 
 document { BeforePrint,
      Headline => "top level method applied before printing results",
-     OldSynopsis => {
-	  "X.BeforePrint = f",
-	  "f" => { "a function to be applied before printing a 
-	       top-level evaluation result ", TT "r", " of 
-	       type ", TT "X", "."},
-     	  null
-	  },
-     "The value returned supplants the original for printing."
+     Synopsis => {
+	  Usage => "X.BeforePrint = f",
+	  Inputs => {
+	       "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
+	       },
+	  Results => {
+	       {"The value returned by ", TT "f", " is printed instead."}
+	       }
+	  }
      }
 
 document { AfterEval,
      Headline => "top level method applied after evaluation",
-     OldSynopsis => {
-	  "X.AfterEval = f",
-	  "f" => { "a function to be applied after evaluating a 
-	       top-level evaluation result ", TT "r", " of 
-	       type ", TT "X", "."},
-     	  null
-	  },
-     "The value returned result replaces the original for
-     storing in the output variables and for printing."
+     Synopsis => {
+	  Usage => "X.AfterEval = f",
+	  Inputs => {
+	       "f" => { "a function to be applied after evaluating a top-level evaluation result ", TT "r", " of type ", TT "X", "."},
+	       },
+	  Results => {
+	       "The value returned result replaces the original for storing in the output variables and for printing"
+	       }
+	  }
      }
 
 document { AfterPrint,
      Headline => "top level method applied after printing",
-     OldSynopsis => {
-	  "X.AfterPrint = f",
-	  "f" => { "a function to be applied after printing a 
-	       top-level evaluation result ", TT "r", " of 
-	       type ", TT "X", "."},
-     	  null
+     Synopsis => {
+	  Usage => "X.AfterPrint = f",
+	  Inputs => {
+	       "f" => { "a function to be applied after printing a top-level evaluation result ", TT "r", " of type ", TT "X", "."}
+	       },
+	  Outputs => {
+	       {"The value returned by ", TT "f", " is discarded."}
+	       }
 	  },
-     "This is used currently to print the type of the result of
-     a computation.",
+     "This method is used to print the type of the result of a computation.",
      EXAMPLE {
 	  "3/4"
 	  },
-     "We could suppress that output for a single type as
-     follows.",
+     "We could suppress that output for a single type as follows.",
      EXAMPLE {
 	  "QQ.AfterPrint = r -> r;",
 	  "3/4"
@@ -231,23 +232,31 @@ document { AfterPrint,
 
 document { AfterNoPrint,
      Headline => "top level method applied after not printing",
-     OldSynopsis => {
-	  "X.AfterNoPrint = f",
-	  "f" => { "a function to be applied after not printing a 
-	       top-level evaluation result ", TT "r", " of 
-	       type ", TT "X", "."},
-     	  null
-	  },
-     "The function ", TT "f", " will be applied at top level to the 
-     result of an evalution when printing of the result has
-     been suppressed by a semicolon."
+     Synopsis => {
+	  Usage => "X.AfterNoPrint = f",
+	  Inputs => {
+	       "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
+	       },
+	  Results => {
+	       {
+		    "The function ", TT "f", " will be applied at top level to the 
+	       	    result of an evalution when printing of the result has
+	       	    been suppressed by a semicolon."
+		    }
+	       }
+	  }
      }
 
 document { "recursionLimit",
      Headline => "set the limit on recursion",
-     OldSynopsis => {
-	  "recursionLimit = n",
-	  "n" => "the desired limit on recursion depth",
+     Synopsis => {
+	  Usage => "recursionLimit = n",
+	  Inputs => {
+	       "n" => ZZ => "",
+	       },
+	  Results => {
+	       "The recursion depth limit for the interpreter is set to ", TT "n", "."
+	       }
 	  },
      "Each time a function is called, the recursion depth is incremented by
      1, and each time a function returns, the recursion depth is decremented.
@@ -360,44 +369,46 @@ document { maxPosition,
      }
 
 document { (maxPosition,BasicList),
-     OldSynopsis => {
-	  "n = maxPosition x",
-	  "x" => null,
-	  "n" => { "the position of the largest element in the list ", TT "x", "." },
+     Synopsis => {
+	  Usage => "maxPosition x",
+	  Inputs => {
+	       "x" => ""
+	       },
+	  Outputs => {
+	       { "the position of the largest element in the list ", TT "x" }
+	       }
 	  },
      "If the largest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
-     SEEALSO {
-	  (minPosition,BasicList)
-	  }
+     SEEALSO { (minPosition,BasicList) }
      }
 
-document { minPosition,
-     Headline => "position of smallest element"
-     }
-
+document { minPosition, Headline => "position of smallest element" }
 document { (minPosition,BasicList),
-     OldSynopsis => {
-	  "n = minPosition x",
-	  "x" => null,
-	  "n" => { "the position of the smallest element in the list ", TT "x", "." },
+     Synopsis => {
+	  Usage => "minPosition x",
+	  Inputs => {
+	       "x" => "",
+	       },
+	  Outputs => {
+	       { "the position of the smallest element in the list ", TT "x", "." }
+	       }
 	  },
      "If the smallest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
-     SEEALSO {
-	  (maxPosition,BasicList)
-	  }
+     SEEALSO { (maxPosition,BasicList) }
      }
 
-document { keys,
-     Headline => "keys used in a hash table"
-     }
-
+document { keys, Headline => "keys used in a hash table" }
 document { (keys,HashTable),
-     OldSynopsis => {
-	  "x = keys t",
-	  "t" => null,
-	  "x" => {"a list of the keys occurring in the hash table ", TT "t", "."}
+     Synopsis => {
+	  Usage => "keys t",
+	  Inputs => {
+	       "t" => ""
+	       },
+	  Outputs => {
+	       {"a list of the keys occurring in the hash table ", TT "t"}
+	       }
 	  },
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
@@ -405,15 +416,16 @@ document { (keys,HashTable),
 	  }
      }
 
-document { values,
-     Headline => "values in a hash table"
-     }
-
+document { values, Headline => "values in a hash table" }
 document { (values,HashTable),
-     OldSynopsis => {
-	  "x = values t",
-	  "t" => null,
-	  "x" => {"a list of the values occurring in the hash table ", TT "t", "."}
+     Synopsis => {
+	  Usage => "values t",
+	  Inputs => {
+	       "t" => ""
+	       },
+	  Outputs => {
+	       {"a list of the values occurring in the hash table ", TT "t", "."}
+	       }
 	  },
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
@@ -470,11 +482,15 @@ document { (apply,BasicList,BasicList,Function),
 
 document { (apply,BasicList,Function),
      Headline => "apply function to each element",
-     OldSynopsis => {
-	  "r = apply(v,f)",
-	  "v" => null,
-	  "f" => null,
-	  "r" => {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
+     Synopsis => {
+	  Usage => "apply(v,f)",
+	  Inputs => {
+	       "v" => "",
+	       "f" => "",
+	       },
+	  Outputs => {
+	       {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
+	       }
 	  },
      "The result ", TT "r", " will have the same class as ", TT "v", ".",
      EXAMPLE "apply([1,3,5,7], i->i^2)",
@@ -744,21 +760,28 @@ document { "--",
 document { ascii, Headline => "ASCII character conversion" }
 
 document { (ascii, List),
-     OldSynopsis => {
-	  "s = ascii v",
-	  "v" => "a list of small integers",
-	  "s" => {"the string whose characters have the ASCII codes listed in ", TT "v"}
+     Synopsis => {
+	  Usage => "ascii v",
+	  Inputs => {
+	       "v" => "a list of small integers"
+	       },
+	  Outputs => {
+	       {"the string whose characters have the ASCII codes listed in ", TT "v"}
+	       }
 	  },
      EXAMPLE {///ascii {65,66,67}///, ///ascii oo///},
      SEEALSO { (ascii, String) }
      }
 
 document { (ascii, String),
-     OldSynopsis => {
-	  "v = ascii s",
-	  "s" => "a string",
-	  "v" => {"the list of (small integer) ASCII codes
-	       of the characters of ", TT "s"}
+     Synopsis => {
+	  Usage => "ascii s",
+	  Inputs => {
+	       "s" => "",
+	       },
+	  Outputs => {
+	       {"the list of (small integer) ASCII codes of the characters of ", TT "s"}
+	       }
 	  },
      EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///},
      SEEALSO { (ascii, List) }
@@ -901,31 +924,40 @@ document { reverse,
      EXAMPLE "reverse {a,b,c,d}"
      }
 
+document { read, Headline => "read from a file", }
 document { (read,Sequence),
-     OldSynopsis => {
-	  "s = read()",
-     	  "()" => null,
-	  "s" => { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
+     Synopsis => {
+	  Usage => "read()",
+	  Inputs => {
+	       "()" => null
+	       },
+	  Outputs => {
+	       { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
+	       }
 	  }
      }
-
 document { (read,String),
-     OldSynopsis => {
-	  "s = read p",
-     	  "p" => "a string containing a prompt to be displayed for the user",
-	  "s" => { "a string obtained by reading from the standard
-	       input file ", TO "stdio", "." }
+     Synopsis => {
+	  Usage => "read p",
+	  Inputs => {
+	       "p" => "a string containing a prompt to be displayed for the user"
+	       },
+	  Outputs => {
+	       { "a string obtained by reading from the standard input file ", TO "stdio" }
+	       }
 	  }
      }
-
 document { (read,File),
-     OldSynopsis => {
-	  "s = read f",
-     	  "f" => "an input file",
-	  "s" => { "a string obtained by reading from ", TT "f", "." }
+     Synopsis => {
+	  Usage => "read f",
+	  Inputs => {
+	       "f" => "an input file"
+	       },
+	  Outputs => {
+	       { "a string obtained by reading from ", TT "f", "." }
+	       }
 	  },
-     if version#"operating system" =!= "Windows-95-98-NT"
-     then EXAMPLE {
+     EXAMPLE {
 	  ///f = openInOut "!cat"///,
 	  ///isReady f///,
 	  ///f << "hi there" << flush;///,
@@ -933,24 +965,24 @@ document { (read,File),
 	  ///read f///,
 	  ///isReady f///,
 	  },
-     SEEALSO {"isReady"}
-     }
-
-document { (read,File,ZZ),
-     OldSynopsis => {
-	  "s = read(f,n)",
-     	  "f" => "a file",
-	  "n" => "an integer specifying the maximum number of bytes to read",
-	  "s" => { "a string obtained by reading from ", TT "f", "." }
-	  }
-     }
-
-document { read,
-     Headline => "read from a file",
-     PARA,
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
-     SEEALSO {"openIn", "get"}
+     SEEALSO {"openIn", "get", "isReady"}
+     }
+document { (read,File,ZZ),
+     Synopsis => {
+	  Usage => "read(f,n)",
+	  Inputs => {
+	       "f" => "a file",
+	       "n" => "an integer specifying the maximum number of bytes to read"
+	       },
+	  Outputs => {
+	       { "a string obtained by reading from ", TT "f" }
+	       }
+	  },
+     "Input files are buffered, so the current contents of the buffer are returned
+     if the buffer is not empty, otherwise reading from the file is attempted first.",
+     SEEALSO {"openIn", "get", "isReady"}
      }
 
 document { get,
@@ -1234,10 +1266,14 @@ document { (random, RR),
 
 document { (random, Ring),
      Headline => "random element of a ring",
-     OldSynopsis => {
-	  "r = random R",
-	  "R" => null,
-	  "r" => { "a random element of the ring ", TT "R" }
+     Synopsis => {
+	  Usage => "random R",
+	  Inputs => {
+	       "R" => null
+	       },
+	  Outputs => {
+	       { "a random element of the ring ", TT "R" }
+	       }
 	  },
      "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings.",
      SEEALSO {"setRandomSeed"}
@@ -1245,11 +1281,15 @@ document { (random, Ring),
 
 document { (random, ZZ, Ring),
      Headline => "a random ring element of a given degree",
-     OldSynopsis => {
-	  "r = random(n,R)",
-	  "n" => null,
-	  "R" => null,
-	  "r" => {"a random homogeneous element of degree ", TT "n"}
+     Synopsis => {
+	  Usage => "r = random(n,R)",
+	  Inputs => {
+	       "n" => null,
+	       "R" => null
+	       },
+	  Outputs => {
+	       {"a random homogeneous element in the ring ", TT "R", " of degree ", TT "n"}
+	       }
 	  },
      EXAMPLE {
 	  "R = GF(9,Variable=>a)[x,y];",
@@ -1260,11 +1300,15 @@ document { (random, ZZ, Ring),
 
 document { (random, List, Ring),
      Headline => "a random ring element of a given degree",
-     OldSynopsis => {
-	  "r = random(n,R)",
-	  "n" => "a list of integers",
-	  "R" => null,
-	  "r" => {"a random homogeneous element of degree ", TT "n"}
+     Synopsis => {
+	  Usage => "r = random(n,R)",
+	  Inputs => {
+	       "n" => "a list of integers",
+	       "R" => null
+	       },
+	  Outputs => {
+	       {"a random homogeneous element in the ring ", TT "R", " of multi-degree ", TT "n"}
+	       }
 	  },
      "The length of ", TT "n", " should be the same as ", TT "degreeLength R", ".",
      SEEALSO {"setRandomSeed"}
