@@ -26,6 +26,15 @@ SkewPolynomialRing *SkewPolynomialRing::create(const Ring *K,
   return result;
 }
 
+void SkewPolynomialRing::text_out(buffer &o) const
+{
+  o << "SkewPolynomialRing(";
+  K_->text_out(o);
+  M_->text_out(o);
+  o << ")";
+}
+
+
 #if 0
 const SkewPolynomialRing *SkewPolynomialRing::createPolyRing(const Monoid *M) const
   // creates this[M], which is commutative in M variables, but skew commutative in
