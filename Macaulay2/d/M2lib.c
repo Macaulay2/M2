@@ -379,7 +379,7 @@ void M2_init_gmp() {
 #endif
      }
 
-int M2main(argc,argv)
+int main(argc,argv)
 int argc; 
 char **argv;
 {
