@@ -26,11 +26,13 @@ process := (key,doc) -> (
 	       H2 title,
 	       try evaluate doc else error ("evaluate ", doc),
 	       if key =!= topNodeName then SEQ {
-		    PARA,
-		    "Go to ", HREF {topFileName, topNodeAlias}, "."
+		    PARA{
+		    	 "Go to ", HREF {topFileName, topNodeAlias}, "."
+			 },
 		    },
-	       PARA,
-	       "Go to ", HREF {masterFileName, masterNodeName}, "."
+	       PARA{
+	       	    "Go to ", HREF {masterFileName, masterNodeName}, "."
+		    },
 	       }
 	  } << endl << close)
 
@@ -44,14 +46,17 @@ scan(linkFilenameKeys(),
 	       HEAD TITLE title,
 	       BODY {
 		    H2 title,
-		    PARA,
-		    "The text for this node has not been written yet.",
-		    if key =!= "index" then SEQ {
-			 PARA,
-			 "Go to ", HREF {topFileName, topNodeAlias}, "."
+		    PARA{
+		    	 "The text for this node has not been written yet.",
 			 },
-		    PARA,
-		    "Go to ", HREF {masterFileName, masterNodeName}, "."
+		    if key =!= "index" then SEQ {
+			 PARA{
+			      "Go to ", HREF {topFileName, topNodeAlias}, "."
+			      },
+			 },
+		    PARA{
+		    	 "Go to ", HREF {masterFileName, masterNodeName}, "."
+			 },
 		    }
 	       } << endl << close;
 	  ))
@@ -63,7 +68,9 @@ masterFileName << html HTML {
      BODY {
 	  H2 masterNodeName,
 	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag key}),
-     	  PARA, "Go to ", HREF {topFileName, topNodeAlias}, "."
+     	  PARA{
+	       "Go to ", HREF {topFileName, topNodeAlias}, "."
+	       },
 	  }
      } << endl << close
 
