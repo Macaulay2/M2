@@ -199,6 +199,7 @@ bump();
      export QuestionS := makeKeyword(binaryleft("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryleft("=!="));
      export NotEqualS := makeKeyword(binaryleft("!="));
+     export inS := makeKeyword(binaryleft("in"));
 -- operations on terms that yield terms:
 bump();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -445,18 +446,18 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, NotEqualS,
      LongLongDoubleArrowS, GreaterGreaterGreaterS, LongBiDoubleArrowS, DeductionS,
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
+     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, inS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS, notS, DeductionS,
      LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
      );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );
 export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS,
      EqualEqualEqualS, EqualEqualS,
-     QuestionS, NotEqualEqualEqualS, NotEqualS, SharpSharpS, SharpQuestionS, DotS, DotQuestionS,
+     QuestionS, NotEqualEqualEqualS, SharpSharpS, SharpQuestionS, DotS, DotQuestionS,
      ExclamationS );
 
 opHasBinaryMethod(o:Symbol):bool := (
