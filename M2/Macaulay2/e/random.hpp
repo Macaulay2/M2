@@ -22,6 +22,9 @@ public:
 
   static int32 random0();	// Return a random number in range 0..2^31-2
   static int32 random0(int32 r);
+  static inline int64 random0(int64 r) { 
+    return random0((int32) r);	// not particularly correct! (drg)
+  }
   static RingElement random();
 };
 
