@@ -41,16 +41,16 @@ flat Nothing := x -> ()
 fixflat := z -> splice apply(z, i -> flat fixup i)
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 fixup Nothing    := identity				       -- null
-fixup Sequence   := 
+fixup Sequence   := z -> SEQ fixflat z
 fixup List       := z -> SEQ fixflat z
 fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
 fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
 fixup UL         := z -> apply(z, i -> fixup if class i === TO then TOH i#0 else i)
-fixup PRE        := 
-fixup CODE       := 
-fixup TO         := 
-fixup TO2        := 
-fixup TOH        := identity
+fixup PRE        := identity
+fixup CODE       := identity
+fixup TO         := x -> TO if x#?1 then { normalizeDocumentTag x#0, concatenate drop(toSequence x,1) } else { normalizeDocumentTag x#0 }
+fixup TO2        := x -> TO2{ normalizeDocumentTag x#0, concatenate drop(toSequence x,1) }
+fixup TOH        := x -> TOH{ normalizeDocumentTag x#0 }
 fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
 fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings

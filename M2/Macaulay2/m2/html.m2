@@ -23,84 +23,49 @@ tocFileName := "toc.html"       			    -- file name for the table of contents of
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory
 
+-----------------------------------------------------------------------------
+-- relative URLs and filenames
+-----------------------------------------------------------------------------
+
 isAbsolute := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 rel := url -> (
      if isAbsolute url 
      then url
-     else relativizeFilename(htmlDirectory, url)
-     )
+     else relativizeFilename(htmlDirectory, url))
 
 htmlFilename = key -> (				   -- returns the relative path from the PREFIX to the file
-     key = normalizeDocumentTag key;
      fkey := formatDocumentTag key;
      pkg := package TO key;
      if pkg === null then toFilename fkey|".html"
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
-html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
-
-html HREF := x -> (
-     "<A HREF=\"" 					    -- "
-     | rel first x 
-     | "\">" 						    -- "
-     | html last x 
-     | "</A>"
-     )
-
-tex HREF := x -> (
-     concatenate(
-	  ///\special{html:<A href="///, 		    -- "
-	       texLiteral rel first x,
-	       ///">}///,				    -- "
-	  tex last x,
-	  ///\special{html:</A>}///
-	  )
-     )
-
-html LABEL := x -> LITERAL concatenate(
-     "<label title=\"", x#0, "\">",
-     html x#1,
-     "</label>"
-     )
-
-html TO := x -> (
-     key := normalizeDocumentTag x#0;
-     formattedKey := formatDocumentTag key;
-     concatenate ( 
-     	  ///<A HREF="///,				    -- "
-	  rel htmlFilename key,
-	  ///">///, 					    -- "
-     	  htmlExtraLiteral formattedKey,
-     	  "</A>",
-     	  drop(toList x,1) 
-     	  )
-     )
-
-html TO2 := x -> (
-     key := normalizeDocumentTag x#0;
-     formattedKey := formatDocumentTag key;
-     concatenate ( 
-     	  ///<A HREF="///,				    -- "
-	  rel htmlFilename key,
-	  ///">///, 					    -- "
-     	  drop(toList x,1),
-     	  "</A>"
-     	  )
-     )
-
+html IMG  := x -> concatenate("<IMG src=\"", rel first x, "\">")
+html HREF := x -> concatenate("<A HREF=\"", rel first x, "\">", html last x, "</A>")
+tex  HREF := x -> concatenate("\special{html:<A href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</A>}")
+html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
+html TO   := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral formatDocumentTag x#0, "</A>", if x#?1 then x#1)
+html TO2  := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                   x#1, "</A>")
 html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
-
---
-
-encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
-doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
 
 style := () -> LITERAL {///
 <style type="text/css">
    @import "/// | rel ( LAYOUT#"style" | "doc.css" ) | ///";
 </style>
 /// }
+
+BUTTON := (s,alt) -> (
+     s = rel s;
+     if alt === null
+     then error "required attribute: ALT"
+     else LITERAL concatenate("<IMG class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
+     )
+
+-----------------------------------------------------------------------------
+
+encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
+doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
+
 
 links := () -> ""
 -- LITERAL ///
@@ -151,13 +116,6 @@ buttonBar := (key) -> TABLE { {
 	       },
 
 	  } }
-
-BUTTON := (s,alt) -> (
-     s = rel s;
-     if alt === null
-     then error "required attribute: ALT"
-     else LITERAL concatenate("<IMG class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
-     )
 
 upAncestors := key -> reverse (
      n := 0;
@@ -295,7 +253,7 @@ assembleTree Package := pkg -> (
      topNodeName = pkg#"top node name";
      linkTable = new HashTable from apply(
 	  pairs pkg#"documentation", (fkey,doc) -> fkey => (
-	       if not doc.?Subnodes then {} else formatDocumentTag \ normalizeDocumentTag \ first \ select(doc.Subnodes, x -> class x === TO)));
+	       if not doc.?Subnodes then {} else formatDocumentTag \ normalizeDocumentTag \ first \ select(toList doc.Subnodes, x -> class x === TO)));
      CONT = getTrees();
      buildLinks CONT;
      )
@@ -460,12 +418,12 @@ installPackage Package := o -> pkg -> (
 		    r := run cmd;
 		    if r != 0 then (
 			 if o.IgnoreExampleErrors then (
-			      unlink outf;
+			      if fileExists outf then unlink outf;
 			      link(tmpf,outf);
 			      unlink tmpf
 			      )
 			 else (
-			      unlink tmpf;
+			      if fileExists tmpf then unlink tmpf;
 			      );
 			 stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
 			 if r == 131 then (
