@@ -15,9 +15,8 @@ extern ZZ *globalZZ;
 int32 RandomSeed = MASK;
 
 #define INITIALMAXINT 10
-int32 Random::maxint32 = INITIALMAXINT;
-int32 RandomFoo::maxNint = INITIALMAXINT;
-bool RandomFoo::maxNisSmall = true;
+int32 Random::maxNint = INITIALMAXINT;
+bool Random::maxNisSmall = true;
 
 RingElement *Random::maxint;
 
@@ -26,8 +25,8 @@ gmp_randstate_t Random::state;
 
 void Random::i_random()
 {
-  maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(maxint32));
-  mpz_init_set_si(maxN, maxint32);
+  maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(INITIALMAXINT));
+  mpz_init_set_si(maxN, INITIALMAXINT);
   gmp_randinit_default(state);
 }
 
@@ -55,6 +54,7 @@ int32 Random::random0()
 
 int32 Random::random0(int32 r)
 {
+     // this routine returns a number in the range 0 .. r-1
   if (r <= 0) return 0;
   return random0() % r;
 }
@@ -76,10 +76,12 @@ M2_Integer Random::get_random_integer(M2_Integer mxN)
 {
   M2_Integer result = newitem(__mpz_struct);
   if (mpz_fits_sint_p(mxN)) {
+       // return a number in the range -mxN .. mxN-1
        int32 n = mpz_get_si(mxN);
-       mpz_init_set_si(result,Random::random0(n));
+       mpz_init_set_si(result,Random::random0(2*n)-n);
   }
   else {
+       // return a number in the range 0 .. mxN-1
        mpz_init(result);
        mpz_urandomm(result, state, mxN);
   }
@@ -92,10 +94,13 @@ void Random::random_integer(M2_Integer result)
 {
   if (maxNisSmall)
     {
-      mpz_init_set_si(result,Random::random0(maxNint));
+      // return a number in the range -maxNint .. maxNint-1
+      int32 r = Random::random0(2*maxNint)-maxNint;
+      mpz_init_set_si(result,r);
     }
   else
     {
+      // return a number in the range 0 .. maxN-1
       mpz_init(result);
       mpz_urandomm(result, state, maxN);
     }
@@ -108,23 +113,12 @@ int32 random00() {
 
 RingElement *Random::random()
 {
-  int result = random0(2*maxint32);
-  result -= maxint32;
+     // this routine returns a number in the range -maxNint .. maxNint-1
+  int result = random0(2*maxNint);
+  result -= maxNint;
   return RingElement::make_raw(globalZZ, globalZZ->from_int(result));
 }
-#if 0
-void Random::set_max_int(RingElement *a)
-{
-  maxint = a;
-  // If maxint is larger than 2^29 (somewhat arbitrary bound, but
-  // less than the 2^31-1 by a factor of several...
-  int cmp = mask_mpz_cmp_si(MPZ_VAL(maxint->get_value()), IM/2);
-  if (cmp <= 0)
-    maxint32 = mpz_get_ui(MPZ_VAL(maxint->get_value()));
-  else
-    ERROR("max random integer is %d",IM/2);
-}
-#endif
+
 RingElement *Random::get_max_int()
 {
   return maxint;
