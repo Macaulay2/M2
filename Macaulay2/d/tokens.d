@@ -461,7 +461,7 @@ export dummySymbol := Symbol(
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
-export dummyCode := Code(globalMemoryReferenceCode(0,dummyPosition));
+export dummyCode := Code(nullCode());
 export dummyToken   := Token(dummyWord,
      dummyPosition.filename,
      dummyPosition.line,
