@@ -470,7 +470,7 @@ net Ideal := (I) -> (
      )
 toString Ideal := (I) -> if I.cache.?name then I.cache.name else toString expression I
 
-isHomogeneous Ideal := (I) -> isHomogeneous I.generators
+isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
 
@@ -530,7 +530,7 @@ Ring == Ideal := (R,I) -> I == R
 Ideal == Ideal := (I,J) -> (
      if ring I =!= ring J
      then error "expected ideals in the same ring";
-     ( I.generators == J.generators or 
+     ( generators I == generators J or 
 	  -- if isHomogeneous I and isHomogeneous J  -- can be removed later
 	  -- then gb I == gb J 
 	  -- else
@@ -541,7 +541,7 @@ Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
 module Ideal := Module => I -> (
-     M := image I.generators;
+     M := image generators I;
      if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
      M
      )
@@ -681,7 +681,7 @@ scan({ZZ}, S -> (
 	       -- this will be pretty slow
 	       if ring I === S then I
 	       else
-		   (ideal lift(I.generators,S)) +
+		   (ideal lift(generators I,S)) +
 		   ideal (presentation ring I ** S));
 	  ));
 

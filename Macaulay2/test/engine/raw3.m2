@@ -363,9 +363,8 @@ G = rawFreeModule(R,10)
 m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
 m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
 assert(-(-m) == m)
-assert((m-m) == m + (-m)) -- CURRENTLY FAILS BECAUSE OF HASH CODES
---<< "make sure mutable matrices and immutable matrices are not ==" << endl;
-assert(not(m == m1))
+assert((m-m) == m + (-m))
+assert(m == m1)
 rawTarget m == F
 rawSource m == G
 rawMultiDegree m === {0}
@@ -468,68 +467,6 @@ mr = rawMatrixRandom(R,10,15,.5,0,0)
 mr = rawMatrixRandom(R,10,15,.5,1,0)
 mr = rawMatrixRandom(R,10,10,.5,1,0)
 
--------------------------------
--- row and column operations --
--------------------------------
-needs "raw-util.m2"
-<< "change these to mutable matrices" << endl;
-R = polyring(rawZZ(), (symbol a .. symbol f))
-m = rawMatrix1(R^3,3,(3_R,2_R,17_R,1_R,-5_R,13_R,0_R,2_R,1_R),true,0)
-assert(3_R === rawMatrixEntry(m,0,0))
-rawMatrixEntry(m,1,2,15_R)
-assert(15_R === rawMatrixEntry(m,1,2))
-m
--- now let's do row and column operations on this
-m1 = rawConcat(m,rawIdentity(R^3,0))
-m = rawMatrixRemake1(R^3,m1,true,0)
-rawMatrixRowScale(m,3_R,1,true)  -- OK now
-m
-rawMatrixRowChange(m,1,-1_R,0,true) -- OK now
-m
-rawMatrixRowChange(m,1,9_R,2,true) -- OK now
-m
-rawMatrixRowChange(m,2,-1_R,1,true) -- OK now
-rawMatrixRowChange(m,2,-1_R,1,true) -- OK now
-m
-rawMatrixRowSwap(m,1,2)
-rawMatrixRowSwap(m,1,2)
-m
-
-
-
-rawMatrixRowScale(m,2_R,0,true)  -- OK now
-m
-rawMatrixRowChange(m,0,-17_R,2,true) -- still messed up?
-m
-m
-m = rawMatrix1(R^3,3,(a,b,c,a^2,b^2,c^2,a*b-1,b*c-1,c*d-1),true,0)
-assert(a === rawMatrixEntry(m,0,0))
-rawMatrixEntry(m,1,2,c^3)
-assert(c^3 === rawMatrixEntry(m,1,2))
-m
-rawMatrixEntry(m,2,1,0_R)
-assert(rawMatrixEntry(m,2,1) == 0_R)
-m
-rawMatrixRowSwap(m,0,1)
-assert try (rawMatrixRowSwap(m,2,3); false) else true
-rawMatrixRowSwap(m,1,2)
-rawMatrixColumnSwap(m,1,2)
-
-m
-
-rawMatrixRowChange(m,1,a^5,0,true) 
-rawMatrixRowChange(m,1,a^5,0,true) 
-assert try (rawMatrixRowChange(m,1,a^5,0);false) else true
-
-  
-rawMatrixColumnChange(m,1,a^5,0,true) -- 
-m
-rawMatrixRowScale(m,f,2,true) -- wrong error message
-rawMatrixColumnScale(m,f,2,true) -- wrong error message
-m
-m1 = rawMatrixRemake1(rawTarget m,m,0)
-m * m1
-assert try (rawMatrixEntry(m1,2,1,0_R); false) else true
 ------------------
 -- rawGCD --------
 ------------------

@@ -115,7 +115,7 @@ EngineRing / Ideal := (R,I) -> (
      -- recall that ZZ is NOT an engine ring.
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
-     gensI := I.generators ** R;
+     gensI := generators I ** R;
      gensgbI := generators gb gensI;
      S := new QuotientRing from rawQuotientRing(raw R, raw gensgbI);
      if R.?Adjust then S.Adjust = R.Adjust;

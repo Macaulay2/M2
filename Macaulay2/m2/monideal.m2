@@ -123,7 +123,7 @@ intersect(Sequence) := args -> (
     )
 
 borel MonomialIdeal := MonomialIdeal => UnaryMonomialIdealOperation rawStronglyStableClosure
-isBorel MonomialIdeal := m -> UnaryMonomialIdealOperation rawIsStronglyStable
+isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 codim MonomialIdeal := m -> rawCodimension raw m
 
 poincare MonomialIdeal := M -> (
@@ -223,7 +223,7 @@ resolution MonomialIdeal := ChainComplex => options -> I -> resolution ideal I
 betti MonomialIdeal := I -> betti ideal I
 
 
-lcmOfGens := (I) -> if I#?(local lcm) then I#(local lcm) else I#(local lcm) = (
+lcmOfGens := (I) -> if I.cache#?(local lcm) then I.cache#(local lcm) else I.cache#(local lcm) = (
      max \ transpose apply(first entries generators I, i -> first exponents i)
      )
 
