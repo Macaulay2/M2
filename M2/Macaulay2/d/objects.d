@@ -12,7 +12,7 @@ use converter;
 use structure;
 use binding;
 
-enlarge(object:Object):void := (
+enlarge(object:HashTable):void := (
      oldTable := object.table;
      newlen := 2*length(oldTable);
      mask := newlen - 1;
@@ -25,7 +25,7 @@ enlarge(object:Object):void := (
 	       hmod := int(p.hash & mask);
 	       newTable.hmod = KeyValuePair(p.key,p.hash,p.value,newTable.hmod);
 	       p = p.next;)));
-shrink(object:Object):void := (
+shrink(object:HashTable):void := (
      oldTable := object.table;
      newlen := length(oldTable)/2;
      mask := newlen - 1;
@@ -42,14 +42,14 @@ hashfun(e:Expr):Expr := Expr(toInteger(int(hash(e))));
 setupfun("hash",hashfun);
 export toExpr(h:int):Expr := Expr(toInteger(int(h)));
 mutablefun(e:Expr):Expr := Expr(toBoolean(
-     	  when e is o:Object do o.mutable
+     	  when e is o:HashTable do o.mutable
      	  is x:List do x.mutable
      	  is s:SymbolClosure do !s.symbol.protected
      	  is x:Database do x.mutable
      	  else false));
 setupfun("mutable",mutablefun);
 export equal(lhs:Expr,rhs:Expr):Expr;
-export lookup1(object:Object,key:Expr,keyhash:int):Expr := (
+export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
      if bucket.key == key then return(bucket.value);
@@ -61,8 +61,8 @@ export lookup1(object:Object,key:Expr,keyhash:int):Expr := (
 	  bucket = bucket.next;
 	  );
      nullE);
-export lookup1(object:Object,key:Expr):Expr := lookup1(object,key,hash(key));
-export lookup1force(object:Object,key:Expr,keyhash:int):Expr := (
+export lookup1(object:HashTable,key:Expr):Expr := lookup1(object,key,hash(key));
+export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
      if bucket.key == key then return(bucket.value);
@@ -74,8 +74,8 @@ export lookup1force(object:Object,key:Expr,keyhash:int):Expr := (
 	  bucket = bucket.next;
 	  );
      errorExpr("key not found in hash table"));
-export lookup1force(object:Object,key:Expr):Expr := lookup1force(object,key,hash(key));
-export lookup1Q(object:Object,key:Expr,keyhash:int):bool := (
+export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
+export lookup1Q(object:HashTable,key:Expr,keyhash:int):bool := (
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
      if bucket.key == key then return(true);
@@ -87,8 +87,8 @@ export lookup1Q(object:Object,key:Expr,keyhash:int):bool := (
 	  bucket = bucket.next;
 	  );
      false);
-export lookup1Q(object:Object,key:Expr):bool := lookup1Q(object,key,hash(key));
-export lookup(object:Object,key:Expr,keyhash:int):Expr := (
+export lookup1Q(object:HashTable,key:Expr):bool := lookup1Q(object,key,hash(key));
+export lookup(object:HashTable,key:Expr,keyhash:int):Expr := (
      while true do (
      	  keymod := int(keyhash & (length(object.table)-1));
      	  bucket := object.table.keymod;
@@ -104,11 +104,11 @@ export lookup(object:Object,key:Expr,keyhash:int):Expr := (
 	  object = object.parent;
 	  );
      nullE);	  
-export lookup(object:Object,key:Expr):Expr := lookup(object,key,hash(key));
-export lookup(object:Object,key:SymbolClosure):Expr := (
+export lookup(object:HashTable,key:Expr):Expr := lookup(object,key,hash(key));
+export lookup(object:HashTable,key:SymbolClosure):Expr := (
      lookup(object,Expr(key),key.symbol.hash)
      );
-equal(x:Object,y:Object):Expr := (
+equal(x:HashTable,y:HashTable):Expr := (
      if x==y then return(True);
      if x.hash != y.hash
      || x.mutable 
@@ -181,9 +181,9 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  -- other cases needed soon
 	  else False)
-     is x:Object do (
+     is x:HashTable do (
 	  when rhs
-	  is y:Object do equal(x,y)
+	  is y:HashTable do equal(x,y)
 	  else False)		    
      is x:string do (
 	  when rhs 
@@ -235,7 +235,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      );
-export remove(x:Object,key:Expr):Expr := (
+export remove(x:HashTable,key:Expr):Expr := (
      if !x.mutable then (
 	  return(errorExpr("attempted to modify an immutable hash table"));
 	  );
@@ -251,13 +251,13 @@ export remove(x:Object,key:Expr):Expr := (
 	       x.numEntries = x.numEntries - 1;
 	       if 8 * x.numEntries == 3 * length(x.table) -- SEE BELOW
 	       && length(x.table) > 4
-	       -- 4 is the length of a new hash table, see tokens.d, newobject()
+	       -- 4 is the length of a new hash table, see tokens.d, newHashTable()
 	       then shrink(x);
 	       return(Expr(x)));
 	  prev = p;
 	  p = p.next);
      Expr(x));
-export assignobject(x:Object,key:Expr,h:int,value:Expr):Expr := (
+export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      if !x.mutable then (
 	  return(errorExpr("attempted to modify an immutable hash table"));
 	  );
@@ -277,18 +277,18 @@ export assignobject(x:Object,key:Expr,h:int,value:Expr):Expr := (
      x.numEntries = x.numEntries + 1;
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
      value);
-export assignobject(x:Object,key:Expr,value:Expr):Expr := assignobject(x,key,hash(key),value);
-export assignobject(x:Object,i:Code,rhs:Code):Expr := (
+export storeInHashTable(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTable(x,key,hash(key),value);
+export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
      ival := eval(i);
      when ival is Error do ival else (
 	  val := eval(rhs);
-	  when val is Error do val else assignobject(x,ival,val)));
-export assignquotedobject(x:Object,i:Code,rhs:Code):Expr := (
+	  when val is Error do val else storeInHashTable(x,ival,val)));
+export assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      when i
      is var:variableCode do (
 	  ival := Expr(makeSymbolClosure(var.v));
 	  val := eval(rhs);
-	  when val is Error do val else assignobject(x,ival,val))
+	  when val is Error do val else storeInHashTable(x,ival,val))
      else errorpos(i,"'.' expected right hand argument to be a symbol")
      );
 idfun(e:Expr):Expr := e;
@@ -296,7 +296,7 @@ setupfun("identity",idfun);
 --mappairstolistfun(e:Expr):Expr := (
 --     when e is a:Sequence do
 --     if length(a) == 2 then
---     when a.0 is o:Object do (
+--     when a.0 is o:HashTable do (
 --	  if o.mutable then return(WrongArg("an immutable hash table"));
 --	  haderror := false;
 --	  result := new Sequence len o.numEntries do foreach bucket in o.table do (
@@ -316,7 +316,7 @@ setupfun("identity",idfun);
 --     else WrongNumArgs(2)
 --     else WrongNumArgs(2));
 --setupfun("mappairstolist",mappairstolistfun);
-scanpairs(f:Expr,obj:Object):Expr := (
+scanpairs(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -329,7 +329,7 @@ scanpairs(f:Expr,obj:Object):Expr := (
 scanpairsfun(e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
-     then when a.0 is o:Object 
+     then when a.0 is o:HashTable 
      do
      if	       o.mutable
      then      WrongArg("an immutable hash table")
@@ -339,8 +339,8 @@ scanpairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("scanPairs",scanpairsfun);
 
-mappairs(f:Expr,obj:Object):Expr := (
-     newobj := newobject(obj.class,obj.parent);
+mappairs(f:Expr,obj:HashTable):Expr := (
+     newobj := newHashTable(obj.class,obj.parent);
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -352,7 +352,7 @@ mappairs(f:Expr,obj:Object):Expr := (
 	       is a:Sequence do (
 		    if length(a) == 2
 		    then (
-			 assignobject(newobj,a.0,a.1);
+			 storeInHashTable(newobj,a.0,a.1);
 			 )
 		    else return(
 			 errorExpr(
@@ -368,7 +368,7 @@ mappairs(f:Expr,obj:Object):Expr := (
 mappairsfun(e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
-     then when a.0 is o:Object 
+     then when a.0 is o:HashTable 
      do
      if        o.mutable 
      then      WrongArg("an immutable hash table")
@@ -378,8 +378,8 @@ mappairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
-mapkeys(f:Expr,obj:Object):Expr := (
-     newobj := newobject(obj.class,obj.parent);
+mapkeys(f:Expr,obj:HashTable):Expr := (
+     newobj := newHashTable(obj.class,obj.parent);
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -388,7 +388,7 @@ mapkeys(f:Expr,obj:Object):Expr := (
 	       if newkey != nullE
 	       then when newkey 
 	       is Error do return(newkey) 
-	       else (assignobject(newobj,newkey,p.value););
+	       else (storeInHashTable(newobj,newkey,p.value););
 	       p = p.next;
 	       ));
      sethash(newobj,obj.mutable);
@@ -396,7 +396,7 @@ mapkeys(f:Expr,obj:Object):Expr := (
 mapkeysfun(e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
-     then when a.0 is o:Object 
+     then when a.0 is o:HashTable 
      do        
      if        o.mutable
      then      WrongArg("an immutable hash table")
@@ -408,7 +408,7 @@ setupfun("applyKeys",mapkeysfun);
 
 bucketsfun(e:Expr):Expr := (
      when e
-     is h:Object do list(
+     is h:HashTable do list(
 	  new Sequence len length(h.table) do (
 	       foreach pp in h.table do (
 		    n := 0;
@@ -428,9 +428,9 @@ merge(e:Expr):Expr := (
      when e is v:Sequence do (
 	  if length(v) != 3 then return(WrongNumArgs(2));
 	  g := v.2;
-	  when v.0 is x:Object do
+	  when v.0 is x:HashTable do
 	  if x.mutable then WrongArg("an immutable hash table") else
-	  when v.1 is y:Object do
+	  when v.1 is y:HashTable do
 	  if y.mutable then WrongArg("an immutable hash table") else 
 	  if length(x.table) >= length(y.table) then (
 	       z := copy(x);
@@ -442,10 +442,10 @@ merge(e:Expr):Expr := (
 			 if val != nullE then (
 			      t := apply(g,val,q.value);
 			      when t is Error do return(t) else nothing;
-			      assignobject(z,q.key,q.hash,t);
+			      storeInHashTable(z,q.key,q.hash,t);
 			      )
 			 else (
-			      assignobject(z,q.key,q.hash,q.value);
+			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
 	       mut := false;
@@ -455,8 +455,8 @@ merge(e:Expr):Expr := (
 		    mut = x.mutable;
 		    )
 	       else (
-		    z.class = objectClass;
-		    z.parent = emptyClass);
+		    z.class = hashTableClass;
+		    z.parent = nothingClass);
 	       sethash(z,mut);
 	       Expr(z))
 	  else (
@@ -469,10 +469,10 @@ merge(e:Expr):Expr := (
 			 if val != nullE then (
 			      t := apply(g,q.value,val);
 			      when t is Error do return(t) else nothing;
-			      assignobject(z,q.key,q.hash,t);
+			      storeInHashTable(z,q.key,q.hash,t);
 			      )
 			 else (
-			      assignobject(z,q.key,q.hash,q.value);
+			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
 	       mut := false;
@@ -482,8 +482,8 @@ merge(e:Expr):Expr := (
 		    mut = x.mutable;
 		    )
 	       else (
-		    z.class = objectClass;
-		    z.parent = emptyClass;
+		    z.class = hashTableClass;
+		    z.parent = nothingClass;
 		    );
 	       sethash(z,mut);
 	       Expr(z))
@@ -491,8 +491,8 @@ merge(e:Expr):Expr := (
 	  else WrongArg(1,"a hash table"))
      else WrongNumArgs(3));
 setupfun("merge",merge);		  -- see objects.d
-combine(f:Expr,g:Expr,h:Expr,x:Object,y:Object):Expr := (
-     z := newobject(x.class,x.parent);
+combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
+     z := newHashTable(x.class,x.parent);
      foreach pp in x.table do (
 	  p := pp;
 	  while p != bucketEnd do (
@@ -505,7 +505,7 @@ combine(f:Expr,g:Expr,h:Expr,x:Object,y:Object):Expr := (
 			 when pqvalue is Error do return(pqvalue) else nothing;
 			 pqhash := hash(pqkey);
 			 previous := lookup1(z,pqkey,pqhash);
-			 r:=assignobject(z,pqkey,pqhash,
+			 r:=storeInHashTable(z,pqkey,pqhash,
 			      if previous == nullE
 			      then pqvalue
 			      else (
@@ -522,9 +522,9 @@ combine(e:Expr):Expr := (
      when e
      is v:Sequence do
      if length(v) == 5 then 
-     when v.0 is x:Object do
+     when v.0 is x:HashTable do
      if x.mutable then WrongArg(1,"an immutable hash table") else
-     when v.1 is y:Object do
+     when v.1 is y:HashTable do
      if y.mutable then WrongArg(2,"an immutable hash table") else
      combine(v.2,v.3,v.4,x,y)
      else WrongArg(1+1,"a hash table")
@@ -532,12 +532,12 @@ combine(e:Expr):Expr := (
      else WrongNumArgs(5)
      else WrongNumArgs(5));
 setupfun("combine",combine);
-export Parent(e:Expr):Object := when e is obj:Object do obj.parent else emptyClass;
+export Parent(e:Expr):HashTable := when e is obj:HashTable do obj.parent else nothingClass;
 export parentfun(e:Expr):Expr := Expr(Parent(e));
 setupfun("parent",parentfun);
-export Class(e:Expr):Object := (
+export Class(e:Expr):HashTable := (
      when e 
-     is obj:Object do obj.class
+     is obj:HashTable do obj.class
      is x:List do x.class
      is Integer do integerClass
      is Rational do rationalClass
@@ -552,7 +552,7 @@ export Class(e:Expr):Object := (
      is CompiledFunctionClosure do functionClass
      is SymbolClosure do symbolClass
      is Handle do handleClass
-     is Nothing do emptyClass
+     is Nothing do nothingClass
      is Database do dbClass
      is Boolean do booleanClass
      );
@@ -561,16 +561,16 @@ setupfun("class",classfun);
 -- these couldn't have been right
 --export lookup(e:Expr,key:Expr,keyhash:int):Expr := (
 --     when e
---     is obj:Object do lookup(obj,key,keyhash)
+--     is obj:HashTable do lookup(obj,key,keyhash)
 --     else lookup(Class(e),key,keyhash));
 --export lookup(e:Expr,key:Expr):Expr := (
 --     when e
---     is obj:Object do lookup(obj,key)
+--     is obj:HashTable do lookup(obj,key)
 --     else lookup(Class(e),key));
 setupconst("Type",Expr(typeClass));
 setupconst("Thing",Expr(thingClass));
-setupconst("HashTable",Expr(objectClass));
-setupconst("MutableHashTable",Expr(mutableObjectClass));
+setupconst("HashTable",Expr(hashTableClass));
+setupconst("MutableHashTable",Expr(mutableHashTableClass));
 setupconst("BasicList",Expr(basicListClass));
 setupconst("List",Expr(listClass));
 setupconst("MutableList",Expr(mutableListClass));
@@ -595,7 +595,7 @@ setupconst("Array",Expr(arrayClass));
 setupconst("SymbolTable",Expr(symboltableClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Field",Expr(fieldClass));
-setupconst("Nothing",Expr(emptyClass));
+setupconst("Nothing",Expr(nothingClass));
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
@@ -609,10 +609,10 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	       when value is Error do return(value) else nothing;
 	       q.frame.values.(q.symbol.frameindex) = value;
 	       value))
-     is o:Object do (
+     is o:HashTable do (
 	  if o.mutable then (
 	       y := eval(rhs);
-	       when y is p:Object do (
+	       when y is p:HashTable do (
 		    o.table = copy(p.table);
 		    o.numEntries = p.numEntries;
 		    left)
@@ -634,14 +634,14 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 setup(assigntoW,assigntofun);
 
 symbols(e:Expr):Expr := (
-     o := newobject(symboltableClass,emptyClass);
+     o := newHashTable(symboltableClass,nothingClass);
      foreach bucket in globalScope.dictionary.hashTable do (
 	  p := bucket;
 	  while true do (
 	       when p
 	       is null do break
 	       is q:SymbolListCell do (
-		    assignobject(o,
+		    storeInHashTable(o,
 			 Expr(q.entry.word.name),
 			 Expr(makeSymbolClosure(q.entry)));
 		    p = q.next;
@@ -650,7 +650,7 @@ symbols(e:Expr):Expr := (
      o);
 setupfun("symbolTable",symbols);
 
-export commonAncestor(x:Object,y:Object):Object := (
+export commonAncestor(x:HashTable,y:HashTable):HashTable := (
      if x == y then return(x);
      t := x;
      while t != thingClass do ( t.numEntries = - 1 - t.numEntries; t = t.parent; );
@@ -679,15 +679,61 @@ export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      if method == nullE then MissingMethod(methodkey)
      else apply(method,right));
 -----------------------------------------------------------------------------
+-- method documentation
+Documentation := newHashTable(mutableHashTableClass,nothingClass);
+setupconst("Documentation", Expr(Documentation));
+installIt(h:HashTable,key:Expr,value:Expr):Expr := (
+     when value is Error do value
+     is FunctionClosure do storeInHashTable(h,key,value)
+     is CompiledFunction do storeInHashTable(h,key,value)
+     is CompiledFunctionClosure do storeInHashTable(h,key,value)
+     is x:List do (
+	  if x.class == listClass then (
+	       if length(x.v) >= 3 then (
+		    storeInHashTable(Documentation, key, value);
+		    f := x.v.1;
+		    when f
+		    is FunctionClosure do storeInHashTable(h,key,f)
+		    is CompiledFunction do storeInHashTable(h,key,f)
+		    is CompiledFunctionClosure do storeInHashTable(h,key,f)
+     		    else errorExpr("expected second entry in list to be a function")
+		    )
+	       else errorExpr("expected a list of length at least 3")
+	       )
+	  else errorExpr("expected a list of class List")
+	  )
+     else errorExpr("expected a function or list"));
+-----------------------------------------------------------------------------
+-- unary methods
+export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
+     when value is Error do value
+     is FunctionClosure do storeInHashTable(s,meth,value)
+     is CompiledFunction do storeInHashTable(s,meth,value)
+     is CompiledFunctionClosure do storeInHashTable(s,meth,value)
+     is x:List do (
+	  if x.class == listClass then (
+	       if length(x.v) >= 3 then (
+		    key := Expr(Sequence(Expr(s),meth));
+		    storeInHashTable( Documentation, key, value);
+		    f := x.v.1;
+		    when f
+		    is FunctionClosure do storeInHashTable(s,meth,f)
+		    is CompiledFunction do storeInHashTable(s,meth,f)
+		    is CompiledFunctionClosure do storeInHashTable(s,meth,f)
+     		    else errorExpr("expected second entry in list to be a function"))
+	       else errorExpr("expected a list of length at least 3"))
+	  else errorExpr("expected a list of class List"))
+     else errorExpr("expected a function or list"));
+-----------------------------------------------------------------------------
 -- binary methods
-export install(meth:Expr,lhs:Object,rhs:Object,value:Expr):Expr := (
-     assignobject(
+export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
+     installIt(
 	  if lhs.hash > rhs.hash then lhs else rhs,
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
 key2 := Sequence(nullE,nullE,nullE);
 keyE := Expr(key2);
-export lookup2(lhs:Object,rhs:Object,meth:Expr,methhash:int):Expr := (
+export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
      key2.0 = meth;
      -- the big numbers here are the same as in hash() for sequences in structure.d
      keyhash0 := 27449 * 27457 + methhash;
@@ -711,25 +757,25 @@ export lookup2(lhs:Object,rhs:Object,meth:Expr,methhash:int):Expr := (
 	  lhs = lhs.parent;
 	  );
      nullE);
-export lookup2(lhs:Object,rhs:Object,meth:Expr):Expr := (
-     lookup2(lhs,rhs,meth,hash(meth)));
-export lookup2(lhs:Object,rhs:Object,meth:SymbolClosure):Expr := (
-     lookup2(lhs,rhs,Expr(meth),meth.symbol.hash));
+export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr):Expr := (
+     lookupBinaryMethod(lhs,rhs,meth,hash(meth)));
+export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:SymbolClosure):Expr := (
+     lookupBinaryMethod(lhs,rhs,Expr(meth),meth.symbol.hash));
 -----------------------------------------------------------------------------
 -- ternary methods
-export install(meth:Expr,s1:Object,s2:Object,s3:Object,value:Expr):Expr := (
-     assignobject(
+export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,value:Expr):Expr := (
+     installIt( 
 	  if s1.hash > s2.hash then (
 	       if s1.hash > s3.hash then s1 else s3
 	       )
 	  else (
 	       if s2.hash > s3.hash then s2 else s3
 	       ),
-	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3))),
+	  Expr(Sequence(meth,Expr(s1),Expr(s2),Expr(s3))), 
 	  value));
 key3 := Sequence(nullE,nullE,nullE,nullE);
 key3E := Expr(key3);
-export lookup3(s1:Object,s2:Object,s3:Object,meth:Expr,methhash:int):Expr := (
+export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:int):Expr := (
      key3.0 = meth;
      -- the big numbers here are the same is in hash() for sequences in structure.d
      keyhash0 := 27449 * 27457 + methhash;
@@ -776,8 +822,8 @@ export lookup3(s1:Object,s2:Object,s3:Object,meth:Expr,methhash:int):Expr := (
      key3.2 = nullE;
      key3.3 = nullE;
      nullE);
-export lookup3(s1:Object,s2:Object,s3:Object,meth:Expr):Expr := (
-     lookup3(s1,s2,s3,meth,hash(meth))
+export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr):Expr := (
+     lookupTernaryMethod(s1,s2,s3,meth,hash(meth))
      );
 -----------------------------------------------------------------------------
 export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
@@ -787,7 +833,7 @@ export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
 	  right := eval(rhs);
 	  when right is Error do right
 	  else (
-	       method := lookup2(Class(left),Class(right),Expr(methodkey),
+	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
 		    methodkey.symbol.hash);
 	       if method == nullE then MissingMethodPair(methodkey,left,right)
 	       else apply(method,left,right))));
@@ -795,32 +841,31 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
      right := eval(rhs);
      when right is Error do right
      else (
-	  method := lookup2(Class(left),Class(right),Expr(methodkey),
+	  method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
 	       methodkey.symbol.hash);
 	  if method == nullE then MissingMethodPair(methodkey,left,right)
 	  else apply(method,left,right)));
 export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
-     method := lookup2(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);
+     method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);
      if method == nullE then MissingMethodPair(methodkey,left,right)
      else apply(method,left,right));
 -----------------------------------------------------------------------------
-export install(meth:Expr,s:Object,value:Expr):Expr := assignobject(s,meth,value);
 -- installfun(e:Expr):Expr := (
 --      when e
 --      is a:Sequence do
 -- 
 --      if length(a) == 3 then
---      when a.1 is s:Object do
+--      when a.1 is s:HashTable do
 --      if s.mutable then install(a.0,s,a.2)
 --      else WrongArg(1+1,"a mutable hash table")
 --      else WrongArg(1+1,"a hash table")
 -- 
 --      else if length(a) == 4 then
 --      when a.1
---      is lhs:Object do
+--      is lhs:HashTable do
 --      if lhs.mutable then
 --      when a.2
---      is rhs:Object do
+--      is rhs:HashTable do
 --      if rhs.mutable then install(a.0,lhs,rhs,a.3)
 --      else WrongArg(2+1,"a mutable hash table")
 --      else WrongArg(2+1,"a hash table")
@@ -829,13 +874,13 @@ export install(meth:Expr,s:Object,value:Expr):Expr := assignobject(s,meth,value)
 -- 
 --      else if length(a) == 5 then
 --      when a.1
---      is s1:Object do
+--      is s1:HashTable do
 --      if s1.mutable then
 --      when a.2
---      is s2:Object do
+--      is s2:HashTable do
 --      if s2.mutable then 
 --      when a.3
---      is s3:Object do
+--      is s3:HashTable do
 --      if s3.mutable then install(a.0,s1,s2,s3,a.4)
 --      else WrongArg(3+1,"a mutable hash table")
 --      else WrongArg(3+1,"a hash table")
@@ -851,22 +896,22 @@ lookupfun(e:Expr):Expr := (
      when e is a:Sequence do
      if length(a)== 2 then
      when a.1
-     is s:Object do lookup(s,a.0)
+     is s:HashTable do lookup(s,a.0)
      else nullE
      else if length(a)==3 then
      when a.1
-     is lhs:Object do
+     is lhs:HashTable do
      when a.2
-     is rhs:Object do lookup2(lhs,rhs,a.0)
+     is rhs:HashTable do lookupBinaryMethod(lhs,rhs,a.0)
      else nullE
      else nullE
      else if length(a) == 4 then
      when a.1
-     is s1:Object do
+     is s1:HashTable do
      when a.2 
-     is s2:Object do 
+     is s2:HashTable do 
      when a.3
-     is s3:Object do lookup3(s1,s2,s3,a.0)
+     is s3:HashTable do lookupTernaryMethod(s1,s2,s3,a.0)
      else nullE
      else nullE
      else nullE
@@ -877,17 +922,17 @@ setupfun("lookup",lookupfun);
 toHashTableError(i:int):Expr := errorExpr(
      "expected element at position "+tostring(i)+" to be a pair");
 toHashTable(v:Sequence):Expr := (
-     o := newobject(objectClass,emptyClass);
+     o := newHashTable(hashTableClass,nothingClass);
      foreach e at i in v do (
 	  when e
 	  is pair:Sequence do (
 	       if length(pair) == 2 
-	       then (assignobject(o,pair.0,pair.1);)
+	       then (storeInHashTable(o,pair.0,pair.1);)
 	       else return(toHashTableError(i)))
 	  is z:List do (
 	       pair := z.v;
 	       if length(pair) == 2 
-	       then (assignobject(o,pair.0,pair.1);)
+	       then (storeInHashTable(o,pair.0,pair.1);)
 	       else return(toHashTableError(i)))
 	  else return(toHashTableError(i)));
      sethash(o,false);
@@ -898,15 +943,15 @@ toHashTable(e:Expr):Expr := (
      else WrongArg("a list"));
 setupfun("hashTable",toHashTable);
 
-newtypeof(parent:Object):Object := newobject(typeClass,parent);
-export Tally := newtypeof(objectClass);
+newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
+export Tally := newtypeof(hashTableClass);
 setupconst("Tally",Expr(Tally));
 export Set := newtypeof(Tally);
 one := Expr(toInteger(1));
 setupconst("Set",Expr(Set));
 makeSet(v:Sequence):Expr := (
-     o := newobject(Set,emptyClass);
-     foreach e in v do assignobject(o,e,one);
+     o := newHashTable(Set,nothingClass);
+     foreach e in v do storeInHashTable(o,e,one);
      sethash(o,false);
      Expr(o));
 makeSet(e:Expr):Expr := (
@@ -916,7 +961,7 @@ makeSet(e:Expr):Expr := (
      else WrongArg("a list or sequence"));
 setupfun("set",makeSet);
 
-modify(object:Object,key:Expr,f:function(Expr):Expr,v:Expr):void := (
+modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (
      keyhash:= hash(key);
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
@@ -937,12 +982,12 @@ modify(object:Object,key:Expr,f:function(Expr):Expr,v:Expr):void := (
 	       );
 	  bucket = bucket.next;
 	  );
-     assignobject(object,key,keyhash,v);
+     storeInHashTable(object,key,keyhash,v);
      );
 
 addone(i:Expr):Expr := when i is j:Integer do Expr(j+1) else i;
 makeTally(v:Sequence):Expr := (
-     o := newobject(Tally,emptyClass);
+     o := newHashTable(Tally,nothingClass);
      foreach e at i in v do modify(o,e,addone,one);
      sethash(o,false);
      Expr(o));

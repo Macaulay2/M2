@@ -73,9 +73,9 @@ select(a:Sequence,f:Expr):Expr := (
 	  foreach p at i in b do if p then provide a.i));
 select(e:Expr,f:Expr):Expr := (
      when e
-     is obj:Object do (
+     is obj:HashTable do (
 	  if obj.mutable then return(WrongArg(0+1,"an immutable hash table"));
-	  u := newobject(obj.class,obj.parent);
+	  u := newHashTable(obj.class,obj.parent);
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       while p != bucketEnd do (
@@ -83,7 +83,7 @@ select(e:Expr,f:Expr):Expr := (
 		    when newvalue 
 		    is Error do return(newvalue)
 		    else if newvalue == True 
-		    then assignobject(u,p.key,p.hash,p.value);
+		    then storeInHashTable(u,p.key,p.hash,p.value);
 		    p = p.next;
 		    ));
 	  sethash(u,obj.mutable);
@@ -115,9 +115,9 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
      when n is nn:Integer do
      if isInt(n) then
      when e
-     is obj:Object do (
+     is obj:HashTable do (
 	  if obj.mutable then return(WrongArg(1+1,"an immutable hash table"));
-	  u := newobject(obj.class,obj.parent);
+	  u := newHashTable(obj.class,obj.parent);
 	  nval := toInt(n);
 	  if nval > 0 then
 	  foreach bucket in obj.table do (
@@ -128,7 +128,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 		    is Error do return(newvalue)
 		    else if newvalue == True 
 		    then (
-			 assignobject(u,p.key,p.hash,p.value);
+			 storeInHashTable(u,p.key,p.hash,p.value);
 			 nval = nval-1;
 			 );
 		    p = p.next;
@@ -156,7 +156,7 @@ select(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("select",select);
 
-any(f:Expr,obj:Object):Expr := (
+any(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -177,7 +177,7 @@ any(f:Expr,e:Expr):Expr := (
      when e
      is a:Sequence do Expr(any(f,a))
      is b:List do Expr(any(f,b.v))
-     is c:Object do 
+     is c:HashTable do 
      if c.mutable then WrongArg(1,"an immutable hash table") else
      Expr(any(f,c))
      else WrongArg("a list"));
@@ -189,7 +189,7 @@ any(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("any",any);
 
---find(f:Expr,obj:Object):Expr := (
+--find(f:Expr,obj:HashTable):Expr := (
 --     foreach bucket in obj.table do (
 --	  p := bucket;
 --	  while true do (
@@ -217,7 +217,7 @@ setupfun("any",any);
 --	       when x
 --	       is a:Sequence do Expr(find(f,a))
 --	       is b:List do Expr(find(f,b.v))
---	       is c:Object do
+--	       is c:HashTable do
 --	       if c.mutable then WrongArg(1,"an immutable hash table") else
 --	       Expr(find(f,c))
 --	       else WrongArg(1+1,"a list")))
@@ -724,7 +724,7 @@ tostringfun(e:Expr):Expr := (
      is c:FunctionClosure do Expr("--function closure--")
      is e:Error do Expr("--error message--")
      is s:Sequence do Expr("--sequence--")
-     is o:Object do Expr("--hash table--")
+     is o:HashTable do Expr("--hash table--")
      is l:List do Expr("--list--")
      );
 setupfun("string",tostringfun);
@@ -779,7 +779,7 @@ instanceof(e:Expr):Expr := (
      when e
      is args:Sequence do (
 	  when args.1
-	  is y:Object do if ancestor(Class(args.0),y) then True else False
+	  is y:HashTable do if ancestor(Class(args.0),y) then True else False
 	  else False)
      else WrongNumArgs(2));
 setupfun("instance",instanceof);
@@ -791,7 +791,7 @@ ancestorfun(e:Expr):Expr := (
 	  y := args.1;
 	  if x==y then return(True);
 	  when y 
-	  is yy:Object do if ancestor(Parent(x),yy) then True else False
+	  is yy:HashTable do if ancestor(Parent(x),yy) then True else False
 	  else False)
      else WrongNumArgs(2));
 setupfun("ancestor",ancestorfun);

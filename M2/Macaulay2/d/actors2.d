@@ -111,7 +111,7 @@ dbmopenout(e:Expr):Expr := (
 setupfun("openDatabaseOut",dbmopenout);
 -----------------------------------------------------------------------------
 
-keys(o:Object):Expr := list(
+keys(o:HashTable):Expr := list(
      new Sequence len o.numEntries do
      foreach bucket in o.table do (
 	  p := bucket;
@@ -124,13 +124,13 @@ keys(o:Object):Expr := list(
 
 keys(f:Database):Expr := (
      if !f.isopen then return(errorExpr("database closed"));
-     x := newobject(mutableObjectClass,emptyClass);
+     x := newHashTable(mutableHashTableClass,nothingClass);
      k := dbmfirst(f.handle);
      continue := true;
      while continue do (
 	  when k
 	  is key:string do (
-	       assignobject(x,Expr(key),True);
+	       storeInHashTable(x,Expr(key),True);
 	       k = dbmnext(f.handle);
 	       )
 	  else continue = false;
@@ -139,12 +139,12 @@ keys(f:Database):Expr := (
 keys(e:Expr):Expr := (
      when e
      is f:Database do keys(f)
-     is o:Object do keys(o)
+     is o:HashTable do keys(o)
      else WrongArg("a hash table"));
 setupfun("keys",keys);
 elements(e:Expr):Expr := (
      when e
-     is o:Object do keys(o)
+     is o:HashTable do keys(o)
      is a:Sequence do list(a)
      is b:List do (
 	  if b.class == listClass then e
@@ -157,7 +157,7 @@ elements(e:Expr):Expr := (
 setupfun("elements",elements);
 values(e:Expr):Expr := (
      when e
-     is o:Object do list(
+     is o:HashTable do list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
@@ -209,7 +209,7 @@ subvalue(left:Expr,right:Expr):Expr := (
 		    + " out of bounds 0 .. "
 		    + tostring(length(x)-1)))
 	  else errorExpr("expected subscript to be an integer"))
-     is x:Object do lookup1force(x,right)
+     is x:HashTable do lookup1force(x,right)
      is f:Database do (
 	  when right
 	  is key:string do (
@@ -247,7 +247,7 @@ subvalueQ(left:Expr,right:Expr):Expr := (
 		    )
 	       else False)
 	  else False)
-     is x:Object do if lookup1Q(x,right) then True else False
+     is x:HashTable do if lookup1Q(x,right) then True else False
      is x:Database do (
 	  when right
 	  is key:string do dbmquery(x,key)
@@ -281,7 +281,7 @@ lengthFun(rhs:Code):Expr := (
      e := eval(rhs);
      when e
      is Error do e
-     is x:Object do Expr(toInteger(x.numEntries))
+     is x:HashTable do Expr(toInteger(x.numEntries))
      is x:Sequence do Expr(toInteger(length(x)))
      is x:List do Expr(toInteger(length(x.v)))
      is s:string do Expr(toInteger(length(s)))
@@ -371,7 +371,7 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
 	  else errorExpr("assignment attempted to element of immutable list")
 	  )
      is x:Sequence do errorExpr("assignment attempted to element of sequence")
-     is x:Object do assignobject(x,lhsindex,rhs)
+     is x:HashTable do storeInHashTable(x,lhsindex,rhs)
      is x:Database do dbmstore(x,lhsindex,rhs)
      else errorpos(lhsarray,"expected a list, sequence, hash table, or database")
      );
@@ -379,7 +379,7 @@ AssignElemFun = assignelemfun;
 assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x
-     is x:Object do assignquotedobject(x,lhsindex,rhs)
+     is x:HashTable do assignquotedobject(x,lhsindex,rhs)
      else errorpos(lhsarray,"'.' expected left hand side to be a hash table")
      );
 AssignQuotedElemFun = assignquotedelemfun;
@@ -417,7 +417,7 @@ ifthenelsefun(predicate:Code,thenclause:Code,elseclause:Code):Expr := (
      else errorpos(predicate,"expected true or false"));
 IfThenElseFun = ifthenelsefun;
 
-basictype(e:Expr):Object := basictype(Class(e));
+basictype(e:Expr):HashTable := basictype(Class(e));
 basictypefun(e:Expr):Expr := Expr(basictype(e));
 setupfun("basictype",basictypefun);
 
@@ -429,19 +429,19 @@ expected(type:string,returned:bool):Expr := errorExpr(
 
 wrongTarget():Expr := errorExpr("'new' expected a type of list or hash table");
 
-transform(e:Expr,class:Object,parent:Object,returned:bool):Expr := (
+transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      basicType := basictype(class);
      when e
      is Error do e
-     is o:Object do (
-	  if basicType == objectClass then (
+     is o:HashTable do (
+	  if basicType == hashTableClass then (
 	       if o.class == class && o.parent == parent
 	       then e
 	       else (
-	       	    mutable := ancestor(class,mutableObjectClass);
+	       	    mutable := ancestor(class,mutableHashTableClass);
 		    Expr(
 			 sethash(
-			      Object(
+			      HashTable(
 				   if mutable || o.mutable 
 				   then copy(o.table) else o.table,
 				   class,parent,
@@ -460,31 +460,31 @@ transform(e:Expr,class:Object,parent:Object,returned:bool):Expr := (
 			      	   if mutable || o.mutable then copy(o.v) else o.v,
 			      	   0,false),
 			      mutable))))
-	  else if basicType == objectClass 
+	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
      else expected(
 	  if basicType == basicListClass
 	  then "a list"
-	  else if basicType == objectClass
+	  else if basicType == hashTableClass
 	  then "a hash table"
 	  else "a list or hash table",
 	  returned
 	  ));
 
-transform(e:Expr,class:Object,returned:bool):Expr := (
+transform(e:Expr,class:HashTable,returned:bool):Expr := (
      -- same as above, but no parent specified, so leave what s provided alone
      basicType := basictype(class);
      when e
      is Error do e
-     is o:Object do (
-	  if basicType == objectClass then (
+     is o:HashTable do (
+	  if basicType == hashTableClass then (
 	       if o.class == class then e
 	       else (
-	       	    mutable := ancestor(class,mutableObjectClass);
+	       	    mutable := ancestor(class,mutableHashTableClass);
 		    Expr(
 			 sethash(
-			      Object(
+			      HashTable(
 				   if mutable || o.mutable 
 				   then copy(o.table) else o.table,
 				   class,o.parent,
@@ -503,13 +503,13 @@ transform(e:Expr,class:Object,returned:bool):Expr := (
 			      	   if mutable || o.mutable then copy(o.v) else o.v,
 			      	   0,false),
 			      mutable))))
-	  else if basicType == objectClass 
+	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
      else expected(
 	  if basicType == basicListClass
 	  then "a list"
-	  else if basicType == objectClass
+	  else if basicType == hashTableClass
 	  then "a hash table"
 	  else "a list or hash table",
 	  returned
@@ -520,39 +520,39 @@ newclassfun(e:Expr):Expr := (
      is a:Sequence do
      if length(a) == 2
      then when a.0
-     is class:Object do transform(a.1,class,false)
+     is class:HashTable do transform(a.1,class,false)
      else WrongArg(1,"a hash table")
      else if length(a) == 3
      then when a.0
-     is class:Object do (
+     is class:HashTable do (
 	  when a.1
-	  is parent:Object do transform(a.2,class,parent,false)
+	  is parent:HashTable do transform(a.2,class,parent,false)
 	  else WrongArg(2,"a hash table"))
      else WrongArg(1,"a hash table")
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("newClass",newclassfun);
 
-makenew(class:Object,parent:Object):Expr := (
+makenew(class:HashTable,parent:HashTable):Expr := (
      basicType := basictype(class);
-     if basicType == objectClass 
+     if basicType == hashTableClass 
      then Expr(
 	  sethash(
-	       newobject(class,parent),
-	       ancestor(class,mutableObjectClass)))
+	       newHashTable(class,parent),
+	       ancestor(class,mutableHashTableClass)))
      else if basicType == basicListClass 
      then Expr(
 	  sethash(
 	       List(class,emptySequence,0,false),
-	       ancestor(class,mutableObjectClass)))
+	       ancestor(class,mutableHashTableClass)))
      else errorExpr("basic type for 'new' method should have been BasicList or HashTable"));
-makenew(class:Object):Expr := makenew(class,emptyClass);
+makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------
 newfun(newClassCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:Object do (
+     is class:HashTable do (
 	  method := lookup(class,NewS);
 	  if method != nullE
 	  then transform(apply(method,Expr(class)),class,true)
@@ -564,12 +564,12 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:Object do (
+     is class:HashTable do (
 	  newParentExpr := eval(newParentCode);
 	  when newParentExpr
 	  is Error do newParentExpr
-	  is parent:Object do (
-	       method := lookup2(class,parent.class,NewOfS);
+	  is parent:HashTable do (
+	       method := lookupBinaryMethod(class,parent.class,NewOfS);
 	       if method != nullE
 	       then transform(apply(method,Expr(class),Expr(parent)),class,parent,true)
 	       else makenew(class,parent))
@@ -581,12 +581,12 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:Object do (
+     is class:HashTable do (
 	  newInitExpr := eval(newInitCode);
 	  when newInitExpr
 	  is Error do newInitExpr
 	  else (
-	       method := lookup2(class,Class(newInitExpr),NewFromS);
+	       method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
 	       if method != nullE
 	       then transform(apply(method,Expr(class),newInitExpr),class,true)
 	       else (
@@ -595,7 +595,7 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 			 if p.class == class
 			 then Expr(if p.mutable then copy(p) else p)
 			 else transform(newInitExpr,class,false))
-		    is p:Object do (
+		    is p:HashTable do (
 			 if p.class == class
 			 then Expr(if p.mutable then copy(p) else p)
 			 else transform(newInitExpr,class,false))
@@ -606,16 +606,16 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:Object do (
+     is class:HashTable do (
 	  newParentExpr := eval(newParentCode);
 	  when newParentExpr
 	  is Error do newParentExpr
-	  is parent:Object do (
+	  is parent:HashTable do (
 	       newInitExpr := eval(newInitCode);
 	       when newInitExpr
 	       is Error do newInitExpr
 	       else (
-		    method := lookup3(
+		    method := lookupTernaryMethod(
 			 class,parent.class,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 		    if method != nullE 
 		    then transform(
@@ -623,10 +623,10 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 			 class,parent,true)
 		    else (when newInitExpr
 		    	 is p:List do (
-			      if p.class == class && emptyClass == parent
+			      if p.class == class && nothingClass == parent
 			      then Expr(if p.mutable then copy(p) else p)
 			      else transform(newInitExpr,class,parent,false))
-		    	 is p:Object do (
+		    	 is p:HashTable do (
 			      if p.class == class && p.parent == parent
 			      then Expr(if p.mutable then copy(p) else p)
 			      else transform(newInitExpr,class,false))
@@ -776,7 +776,7 @@ leftshiftfun(e:Expr):Expr := (
 	       else  WrongArg(1,"an integer"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-install(Expr(LessLessS),integerClass,integerClass,
+installMethod(Expr(LessLessS),integerClass,integerClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
      );
 
