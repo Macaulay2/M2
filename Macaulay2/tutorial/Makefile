@@ -18,6 +18,10 @@ TMPIN := aaa
 	./translate <$(TMPIN) >$*.out
 	[ -s $*.out ]
 	rm $(TMPIN)
+
+all:: final/cache/doc
+final/cache/doc :; mkdir -p $@
+
 all:: $(OUTPUTS)
 
 tutbook.dvi : tutbook.tex ../book/macros.tex titlepage.tex
