@@ -557,7 +557,11 @@ document { abs,
      TT "abs x", " -- computes the absolute value of ", TT "x", "."
      }
 
-document { sin,
+
+-- the next three document nodes illustrate three possibilities for the first entry of the list:
+-- string, function, and symbol.
+
+document { "sin",
      Headline => "sine function", 
      Synopsis => {
 	  "y = sin x",
@@ -575,7 +579,7 @@ document { cos,
 	  },
      }
 
-document { tan,
+document { symbol tan,
      Headline => "tangent function",
      Synopsis => {
 	  "y = tan x",

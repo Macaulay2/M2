@@ -140,7 +140,7 @@ unique := x -> (
      select(x, i -> if seen#?i then false else seen#i = true))
 
 tryload := (filename,load) -> (
-     if notify then << "--loading " << filename << endl;
+     if notify then stderr << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
 	  if not fileExists filename then return false;
 	  -- stderr << "trying to load " << filename << endl;		    -- debugging
