@@ -23,10 +23,14 @@ indexTable := memoize(
      prefix -> (
 	  fn := prefix | "Macaulay2-index-cache";
 	  tb := new MutableHashTable from try value get fn else {};
+	  -- stderr << "documentation index cache table with prefix " << prefix << " created" << endl;
 	  addEndFunction( () -> (
 		    if changed#?tb then (
 			 try fn << toExternalString pairs tb << endl << close
-			 else stderr << "warning: cache file '" << fn << "' not created" << endl;
+			 else (
+			      stderr << "warning: cache file '" << fn << "' not created" << endl
+			      << "    keys : " << keys tb << endl;
+			      );
 			 remove(changed,tb);
 			 )
 		    )
@@ -59,7 +63,7 @@ cacheFileName(List,Thing) := (path,key) -> (
      prefix := path#i;
      tb := indexTable prefix;
      changed#tb = true;
-     tb#key = fourDigits(#tb))     
+     prefix | (tb#key = fourDigits(#tb)))     
 
 cacheFileName(String,Thing,String) := (prefix,key,suffix) -> (
      tb := indexTable prefix;

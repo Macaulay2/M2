@@ -223,6 +223,9 @@ scan((
 	  -- symbol writeExamples,
 	  -- symbol readExamples,
 	  symbol phase,
+	  symbol currentDirectory,
+	  symbol documentationPath,
+	  symbol currentFile,
 	  symbol compactMatrixForm,
 	  symbol TeXmacsMode
 	  ), x -> writableGlobals#x = true)

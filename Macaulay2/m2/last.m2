@@ -10,6 +10,12 @@ addStartFunction(
      	  then { "." }
      	  else { "." , getenv "M2HOME" | "/packages" } ))
 
+addStartFunction(
+     () -> documentationPath = (
+     	  if getenv "M2HOME" === "" 
+     	  then { "", "cache/doc/" }
+     	  else { "", "cache/doc/" , getenv "M2HOME" | "/packages/cache/doc/", getenv "M2HOME" | "/m2/cache/doc/" } ))
+
 setrecursionlimit 300
 
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))

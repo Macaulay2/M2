@@ -258,6 +258,15 @@ char **s;
      return a;
      }
 
+M2_string interp_dirname(M2_string s) {
+  char *t = tocharstar(s);
+  char *u = t;
+  char *v = u;
+  for (; *u; u++) if (*u == '/') v=u+1;	/* on MacOS?? */
+  if (v != NULL) *v = '\0';
+  return tostring(t);
+}
+
 M2_string system_getcwd()
 {
      char buf[700];
