@@ -20,6 +20,7 @@ Macaulay2/packages/Makefile
 Macaulay2/probe/Makefile
 Macaulay2/setup
 Macaulay2/test/Makefile
+Macaulay2/test/engine/Makefile
 Macaulay2/tutorial/Makefile
 Macaulay2/util/Makefile
 Makefile
