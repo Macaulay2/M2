@@ -366,18 +366,16 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -- process examples
 -----------------------------------------------------------------------------
 makeFileName := (key,filename) -> (
-     if writingInputFiles() then (
-	  prefix := first documentationPath;
-	  if filename === null then cacheFileName(prefix, key)
-	  else cacheFileName(prefix, key, filename)
-	  );
-     t := cacheFileName(documentationPath, key);
-     if #t > 1 then (
-	  stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
-	  apply(t, fn -> stderr << "    " << fn << endl );
-	  );
-     if #t > 0 then first t else null
-     )
+     prefix := first documentationPath;
+     if filename =!= null then cacheFileName(prefix, key, filename)
+     else (
+     	  t := cacheFileName(documentationPath, key);
+	  if #t > 1 then (
+	       stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
+	       apply(t, fn -> stderr << "    " << fn << endl );
+	       );
+	  first t))
+
 checkForExampleOutputFile := () -> (
      exampleResultsFound = false;
      exampleOutputFilename = null;
@@ -1240,10 +1238,7 @@ isAbsolute := url -> (
      "mailto:" == substring(url,0,7)
      )
 
-htmlFilename := key -> (
-     v := cacheFileName(documentationPath, key);
-     if v =!= {} then first v else cacheFileName(first documentationPath, key)
-     ) | ".html"
+htmlFilename := key -> first cacheFileName(documentationPath, key) | ".html"
 
 rel := url -> (
      if isAbsolute url 
@@ -1569,4 +1564,11 @@ addEndFunction( () -> if writingFinalDocDatabase() then (
 			      Headline => "undocumented symbol", "No documentation provided yet."};
 			 )))))
 
-new TO from List := (TO,x) -> (verifyTag first x; x)
+new TO from List := (TO,x) -> (
+     verifyTag first x;
+     x)
+new IMG from List := (IMG,x) -> (
+     url := first x;
+     if not isAbsolute url and not fileExists url
+     then error ("file ", url, " does not exist");
+     x)

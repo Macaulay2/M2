@@ -622,7 +622,9 @@ document { (cacheFileName, List, String),
      "The path should be a list of prefixes which correspond to existing
      directories.  A list of those file names for the given key that have already been
      assigned (see ", TO (cacheFileName, String, String), ") in one of
-     the directories on the path will be returned.",
+     the directories on the path will be returned.  In case no previous assignments
+     to this key have occurred yet, one will be made using the first element of the
+     search path.",
      EXAMPLE {
 	  ///documentationPath///,
 	  ///cacheFileName ( documentationPath, "sin" )///,

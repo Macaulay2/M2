@@ -8,8 +8,9 @@ local NEXT, local PREV, local UP
 local nextButton, local prevButton, local upButton
 local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
+local docdatabase
 
-linkFilename := s -> cacheFileName(prefix,s) | ".html";
+linkFilename := s -> first cacheFileName(documentationPath,s) | ".html";
 
 documentationMemo := memoize documentation		    -- for speed
 
@@ -37,16 +38,21 @@ scope3 := method(SingleArgumentDispatch => true)
 follow := key -> (
      fkey := formatDocumentTag key;
      if not linkFollowedTable#?fkey then (
-	  if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
-	  linkFollowedTable#fkey = true;
-	  linkFilename fkey;
-	  saveThisKey := thisKey;
-	  saveLastKey := lastKey;
-	  thisKey = fkey;
-	  lastKey = null;
-	  scope documentationMemo key;
-	  thisKey = saveThisKey;
-	  lastKey = saveLastKey;
+	  fn := linkFilename fkey;
+	  if prefix == substring(fn,0,#prefix) then (	    -- don't stray outside this package
+	       linkFollowedTable#fkey = true;
+	       if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
+	       saveThisKey := thisKey;
+	       saveLastKey := lastKey;
+	       thisKey = fkey;
+	       lastKey = null;
+	       scope documentationMemo key;
+	       thisKey = saveThisKey;
+	       lastKey = saveLastKey;
+	       )
+	  else (
+	       linkFollowedTable#fkey = false;
+	       )
 	  )
      )
 
@@ -64,16 +70,16 @@ scope2 Thing := scope
 scope2 SEQ := x -> scan(x,scope2)
 scope2 TO := scope2 TOH := x -> (
      key := formatDocumentTag x#0;
-     if not UP#?key and key != thisKey then (
+     if UP#?key 
+     then << "links to '" << key << "' from two nodes: '" << UP#key << "' and '" << thisKey << "'" << endl
+     else if key == thisKey then << "node " << key << " links to itself" << endl
+     else (
 	  UP#key = thisKey;
 	  if lastKey =!= null then (
 	       PREV#key = lastKey;
 	       NEXT#lastKey = key;
 	       );
 	  lastKey = key;
-	  )
-     else (
-	  << "links to '" << key << "' from two nodes: '" << UP#key << "' and '" << thisKey << "'" << endl;
 	  );
      follow x#0;
      )
@@ -106,7 +112,7 @@ pass1 := () -> (
 
 pass2 := () -> (
      << "pass 2, checking for unreachable documentation nodes" << endl;
-     scanKeys(DocDatabase,
+     scan(keys docdatabase,
 	  key -> (
 	       if not linkFollowedTable#?key then (
 		    haderror = true;
@@ -114,7 +120,7 @@ pass2 := () -> (
 
 pass3 := () -> (
      << "pass 3, writing html files" << endl;
-     scan(keys linkFollowedTable, fkey -> (
+     scan(keys linkFollowedTable, fkey -> if linkFollowedTable#?fkey then (
 	       linkFilename fkey
 	       << html HTML { 
 		    HEAD TITLE {fkey, headline fkey},
@@ -167,21 +173,37 @@ checkDirectory := path -> (
 	  )
      )
 
-makeHTML = (topnode,gifpath,prefix0) -> (
+checkFile := filename -> (
+     if not fileExists filename then error ("file ", filename, " doesn't exist");
+     filename)
+
+cacheVars := varlist -> (
+     valuelist := apply(varlist, x -> value x);
+     () -> apply(varlist, valuelist, (x,n) -> x <- n))
+
+makeHTML = (topnode,gifpath,prefix0,docdatabase0) -> (
+     restore := cacheVars{symbol documentationPath};
      prefix = prefix0;
+     docdatabase = docdatabase0;
      checkDirectory prefix;
      checkDirectory gifpath;
      documentationPath = unique prepend(prefix,documentationPath);
      topNodeName = topnode;
      topFileName = cacheFileName(prefix,topNodeName) | ".html";
-     topNodeButton = HREF { topFileName, BUTTON(gifpath|"top.gif","top") };
+     topNodeButton = HREF { topFileName, BUTTON (checkFile(gifpath|"top.gif"),"top") };
      databaseFileName = "../cache/Macaulay2-doc";
-     nullButton = BUTTON(gifpath|"null.gif",null);
+     nullButton = BUTTON(checkFile(gifpath|"null.gif"),null);
      masterFileName = prefix | "master.html";
-     masterIndexButton = HREF { masterFileName, BUTTON(gifpath|"index.gif","index") };
-     nextButton = BUTTON(gifpath|"next.gif","next");
-     prevButton = BUTTON(gifpath|"previous.gif","previous");
-     upButton = BUTTON(gifpath|"up.gif","up");
+     masterIndexButton = HREF { masterFileName, BUTTON(checkFile(gifpath|"index.gif"),"index") };
+     nextButton = BUTTON(checkFile(gifpath|"next.gif"),"next");
+     prevButton = BUTTON(checkFile(gifpath|"previous.gif"),"previous");
+     upButton = BUTTON(checkFile(gifpath|"up.gif"),"up");
+     sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
+     htmlDefaults#"BODY" = concatenate(
+	  "BACKGROUND=\"",				    -- "
+	  relativizeFilename(prefix,checkFile(gifpath|"recbg.jpg")),
+	  "\""						    -- "
+	  );
      lastKey = null;
      thisKey = null;
      linkFollowedTable = new MutableHashTable;
@@ -189,12 +211,6 @@ makeHTML = (topnode,gifpath,prefix0) -> (
      NEXT = new MutableHashTable;
      PREV = new MutableHashTable;
      UP   = new MutableHashTable;
-     sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
-     htmlDefaults#"BODY" = concatenate(
-	  "BACKGROUND=\"",				    -- "
-	  relativizeFilename(prefix,"recbg.jpg"),
-	  "\""						    -- "
-	  );
      haderror = false;
      setrecursionlimit first (
 	  setrecursionlimit 4000,
@@ -205,4 +221,5 @@ makeHTML = (topnode,gifpath,prefix0) -> (
 	  );
      if sav =!= null then htmlDefaults#"BODY" = sav;
      if haderror then error "documentation errors occurred";
+     restore();
      )     

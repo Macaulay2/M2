@@ -306,7 +306,7 @@ document {  "Developer's Corner",
 
 document { "Macaulay 2",
      FileName => "index",
-     IMG "9planets.gif", PARA,
+     IMG "../html/9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  The current version is 
@@ -389,7 +389,7 @@ document { "Daniel R. Grayson",
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA,
-     IMG "Grayson2.jpg"
+     IMG "../html/Grayson2.jpg"
      }
 
 document { "Michael E. Stillman",
