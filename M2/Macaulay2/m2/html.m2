@@ -29,12 +29,19 @@ htmlDirectory := ""					    -- relative path to the html directory, depends on t
 -- relative URLs and filenames
 -----------------------------------------------------------------------------
 
+absoluteLinks := false
+
 isAbsolute := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 rel := url -> (
      if isAbsolute url 
      then url
-     else relativizeFilename(htmlDirectory, url))
+     else (
+	  --stderr << "rel : url = " << url << endl
+	  --<< "    (prefixDirectory | url) = " << (prefixDirectory | url) << endl
+	  --<< "     fileExists (prefixDirectory | url) = " << fileExists (prefixDirectory | url) << endl;
+	  if absoluteLinks and fileExists (prefixDirectory | url) then (prefixDirectory | url)
+     	  else relativizeFilename(htmlDirectory, url)))
 
 htmlFilename = method(SingleArgumentDispatch => true)
 htmlFilename DocumentTag := tag -> (
@@ -361,7 +368,8 @@ installPackage = method(Options => {
 	  Prefix => "./tmp/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
-	  MakeInfo => true
+	  MakeInfo => true,
+	  AbsoluteLinks => false
 	  })
 
 installPackage String := opts -> pkg -> (
@@ -372,6 +380,8 @@ installPackage String := opts -> pkg -> (
      )
 
 installPackage Package := o -> pkg -> (
+     absoluteLinks = o.AbsoluteLinks;
+     if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
      oldpkg := currentPackage;
      currentPackage = pkg;
      topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
