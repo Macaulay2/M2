@@ -1188,6 +1188,16 @@ document { components,
      }
 
 document { (symbol ^,Module,ZZ),
+     Headline => "make a direct sum of several copies of a module",
+     Synopsis => {
+	  "Y = M^n",
+	  "M" => {"a module"},
+	  "n" => null,
+	  "Y" => {"the direct sum of ", TT "n", " copies of ", TT "M", ""}
+	  }
+     }
+
+document { (symbol ^,Ring,ZZ),
      Headline => "make a free module",
      Synopsis => {
 	  "F = R^n",

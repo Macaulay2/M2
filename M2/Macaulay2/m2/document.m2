@@ -82,9 +82,20 @@ unformatTag                := new MutableHashTable
 unformat                   := s -> if unformatTag#?s then unformatTag#s else s
 record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 	  
+alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
+
 formatDocumentTag Thing    := s -> toString s
 formatDocumentTag Function := record toString
-formatDocumentTag Symbol   := record(s -> if value s =!= s then toExternalString s else toString s)
+formatDocumentTag Symbol   := record(
+     s -> (
+	  n := toString s;
+	  if value s === s then n
+	  else if n === "" or n === " " then concatenate("symbol \"",n,"\"")
+	  else if alphabet#?(n#0) then concatenate("symbol ",n)
+	  else n
+	  )
+     )
+
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
      s -> concatenate (

@@ -102,34 +102,58 @@ document { (symbol _, Module, List),
      SEEALSO {"^", Module, List}
      }
 
-document { basis,
-     Headline => "a k-basis of all or part of a module",
-     TT "basis(i,M)", " -- produce a map from a free module to ", TT "M", " whose image
-     is the degree ", TT "i", " part of the module (or ring) ", TT "M", ".",
-     BR, NOINDENT,
-     TT "basis M", " -- produce a map from a free module to ", TT "M", " whose image
-     is the finite dimensional module (or ring) ", TT "M", ".",
-     PARA,
-     "The degree ", TT "i", " may be a multi-degree, represented as a list of integers.",
-     EXAMPLE {
-	  "R = ZZ/101[a..c];",
-      	  "basis(2, R)",
-      	  "basis(2, ideal(a,b,c)/ideal(a^2,b^2,c^2))",
-      	  "basis(R/(a^2-a*b, b^2-c^2, b*c))",
-      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];",
-      	  "basis({7,24}, S)",
-	  "R = ZZ/101[a..d];",
-      	  "f = basis(3, ideal(a^2, b^2))",
+document { (basis,List,Module),
+     Headline => "basis of the part of a module of a certain degree",
+     Synopsis => {
+	  "f = basis(i,M)",
+	  "i" => "the degree of the desired part of the module",
+	  "M" => "a module",
+	  "f" => {
+	       "a map from a free module to ", TT "M", " which sends the
+	       basis elements to a basis, over the ground field, of the
+	       degree ", TT "i", " part of ", TT "M", "."
+	       }
 	  },
-     "Notice that the matrix of ", TT "f", " is expressed in terms of the
-     generators of the ideal.  The reason is that the ideal is the target
-     of ", TT "f", ", and matrices are always expressed in terms of the
-     generators of the target.",
-     EXAMPLE "target f",
-     "The command ", TO "super", " is useful for getting around this.",
-     EXAMPLE "super f"
+     "The degree ", TT "i", " is a multi-degree, represented as a list of 
+     integers.  If the number of degrees is just 1, then ", TT "i", " may
+     be provided as an integer.",
+     SEEALSO {
+	  (basis,Module),
+	  "bases of parts of modules"
+	  }
      }
 
+document { (basis,Module),
+     Headline => "basis of a module",
+     Synopsis => {
+	  "f = basis M",
+	  "M" => "a module",
+	  "f" => {
+	       "a map from a free module to ", TT "M", " which sends the
+	       basis elements to a basis, over the ground field, of ", TT "M", "."
+	       }
+	  },
+     SEEALSO {
+	  (basis,List,Module),
+	  "bases of parts of modules"
+	  }
+     }
+
+document { (basis,Ring),
+     Headline => "basis of a ring",
+     Synopsis => {
+	  "f = basis R",
+	  "R" => "a ring",
+	  "f" => {
+	       "a map from a free module to ", TT "R", " which sends the
+	       basis elements to a basis, over the ground field, of ", TT "R", "."
+	       }
+	  },
+     EXAMPLE {
+	  "R = QQ[x,y]/(x^3,y^2);",
+	  "basis R"
+	  }
+     }
 
 document { truncate,
      Headline => "truncate the module at a specified degree",
@@ -1062,7 +1086,7 @@ document { isField, Headline => "whether something is a field",
      }
 
 document { toField, Headline => "declare that a ring is a field",
-     Synopsis {
+     Synopsis => {
 	  "toField R",
 	  "R" => "a ring",
      	  null

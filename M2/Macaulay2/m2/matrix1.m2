@@ -561,21 +561,24 @@ kernel Matrix := Module => options -> (g) -> if g.?kernel then g.kernel else g.k
 kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
-     R := ring f;
-     M := source f;
-     N := target f;
-     P := target g;
-     if source g != N then error "expected maps to be composable";
-     f = matrix f;
-     if not all(degree f, i -> i === 0) then f = map(target f, source f ** R^{-degree f}, f);
-     g = matrix g;
-     if P.?generators then g = P.generators * g;
-     h := modulo(g, if P.?relations then P.relations);
-     if N.?generators then (
-	  f = N.generators * f;
-	  h = N.generators * h;
-	  );
-     subquotient(h, if N.?relations then f | N.relations else f))
+     if g == 0 then cokernel g
+     else if f == 0 then kernel g
+     else (
+	  R := ring f;
+	  M := source f;
+	  N := target f;
+	  P := target g;
+	  if source g != N then error "expected maps to be composable";
+	  f = matrix f;
+	  if not all(degree f, i -> i === 0) then f = map(target f, source f ** R^{-degree f}, f);
+	  g = matrix g;
+	  if P.?generators then g = P.generators * g;
+	  h := modulo(g, if P.?relations then P.relations);
+	  if N.?generators then (
+	       f = N.generators * f;
+	       h = N.generators * h;
+	       );
+	  subquotient(h, if N.?relations then f | N.relations else f)))
 
 Hom(Matrix, Module) := Matrix => (f,N) -> (
      if isFreeModule source f and isFreeModule target f

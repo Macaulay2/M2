@@ -17,6 +17,25 @@ document { document,
      mark up items, and instances of ", TO "MarkUpType", ", such as ", TO "PARA", "
      are converted to empty instances of their type.",
      PARA,
+     "Special documentation entries:",
+     MENU {
+	  SEQ { TT "Headline => \"...\"", " -- some text to be displayed along
+	       with menu items that lead to this node.  The text should be
+	       less than a line full." },
+	  SEQ { TT "Usage => ...", " -- text to be displayed as a usage message
+	       when the user types the name of this object at top level.  In its
+	       absence, the synopsis, if any, is displayed, otherwise the
+	       available methods are displayed." },
+	  SEQ { TT ///Synopsis => { "z = f(x,y)", "x" => ..., "y" => ..., "z" => ... }///,
+	       " -- synopsis of the use of a function with a return value."
+	       },
+	  SEQ { TT ///Synopsis => { "f(x,y)", "x" => ..., "y" => ..., null }///,
+	       " -- synopsis of the use of a function without a return value."
+	       },
+	  SEQ { TT ///EXAMPLE { "...", "..." }///, " -- bits of example code to display"},
+	  SEQ { TT ///SEEALSO { "a", "b" }///, " -- a menu of related nodes to visit." },
+	  },
+     PARA,
      SEEALSO {"help functions"}
      }
 
@@ -721,7 +740,7 @@ document { target,
      }
 
 document { ambient,
-     Headline => "ambient free module or ring",
+     Headline => "ambient free module of a subquotient, or ambient ring",
      TT "ambient M", " -- yields the ambient free module for the module ", TT "M", ".",
      BR,
      NOINDENT,
