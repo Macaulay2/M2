@@ -5,6 +5,7 @@
 #include <vector>
 #include "matrix.hpp"
 #include "geovec.hpp"
+#include "ringmap.hpp"
 //  Notes: ring_elem's are treated as immutable objects: they are not changed, and 
 // the fact that one cannot change is used throughout.
 
@@ -28,11 +29,19 @@ void Ring::remove_vec_node(vec n) const
 
 vec Ring::make_vec(int r, ring_elem a) const
 {
+  if (is_zero(a))
+    return NULL;
   vec result = new_vec();
   result->next = 0;
   result->comp = r;
   result->coeff = a;
   return result;
+}
+
+vec Ring::e_sub_i(int i) const
+{
+  ring_elem a = from_int(1);
+  return make_vec(i,a);
 }
 
 vec Ring::copy_vec(const vecterm * v) const
@@ -94,12 +103,98 @@ bool Ring::get_entry(const vecterm * v, int r, ring_elem &result) const
   return false;
 }
 
+ring_elem Ring::get_entry(vec v, int r) const
+{
+  while (v != NULL)
+    {
+      if (v->comp == r) return v->coeff;
+      if (v->comp < r) return from_int(0);
+      v = v->next;
+    }
+  return from_int(0);
+}
+
 int Ring::n_nonzero_terms(const vecterm * v) const
 {
   int result = 0;
   for ( ; v != NULL; v = v->next)
     result++;
   return result;
+}
+
+vec Ring::negate_vec(vec v) const
+{
+  vecterm result;
+  vecterm *b = &result;
+  for (vecterm *a = v; a != NULL; a = a->next)
+    {
+      b->next = make_vec(a->comp, negate(a->coeff));
+      b = b->next;
+    }
+  b->next = NULL;
+  return result.next;
+}
+
+vec Ring::add_vec(vec v, vec w) const
+{
+  vec f = copy_vec(v);
+  vec g = copy_vec(w);
+  add_vec_to(f, g);
+  return f;
+}
+
+vec Ring::subtract_vec(vec v, vec w) const
+{
+  vec f = copy_vec(v);
+  vec g = negate_vec(w);
+  add_vec_to(f, g);
+  return f;
+}
+
+
+vec Ring::mult_vec(int n, vec v) const
+{
+  ring_elem f = from_int(n);
+  vec result = mult_vec(f, v);
+  return result;
+}
+
+vec Ring::mult_vec(const ring_elem f, const vec w) const
+{
+  if (f == NULL) return NULL;
+  vecterm head;
+  vec result = &head;
+  for (vec v = w ; v != 0; v = v->next)
+    {
+      ring_elem a = mult(f,v->coeff);
+      if (!is_zero(a))
+	{
+	  vec t = make_vec(v->comp, a);
+	  result->next = t;
+	  result = t;
+	}
+    }
+  result->next = NULL;
+  return head.next;
+}
+
+vec Ring::rightmult_vec(const vec w, const ring_elem f) const
+{
+  if (f == NULL) return NULL;
+  vecterm head;
+  vec result = &head;
+  for (vec v = w ; v != 0; v = v->next)
+    {
+      ring_elem a = mult(v->coeff,f);
+      if (!is_zero(a))
+	{
+	  vec t = make_vec(v->comp,a);
+	  result->next = t;
+	  result = t;
+	}
+    }
+  result->next = NULL;
+  return head.next;
 }
 
 vec Ring::sub_vector(const vecterm * v, const M2_arrayint r) const
@@ -128,7 +223,7 @@ vec Ring::sub_vector(const vecterm * v, const M2_arrayint r) const
   result->next = NULL;
   result = head.next;
 
-  sort(result);
+  vec_sort(result);
   return result;
 }
 
@@ -201,6 +296,29 @@ void Ring::elem_text_out(buffer &o, const vecterm * v) const
   p_one = old_one;
   p_parens = old_parens;
   p_plus = old_plus;
+}
+
+vec Ring::vec_eval(const RingMap *map, 
+		   const FreeModule *F,
+		   const vec v) const
+// v is a vector over 'this'
+{
+  const Ring *targetRing = map->get_ring();
+
+  vecterm head;
+  vec result = &head;
+
+  for (vec t = v; t != 0; t = t->next)
+    {
+      ring_elem a = eval(map, t->coeff); // a is now in the target ring
+      if (!is_zero(a))
+	{
+	  result->next = targetRing->make_vec(t->comp,a);
+	  result = result->next;
+	}
+    }
+  result->next = 0;
+  return head.next;
 }
 
 // int FreeModule::lead_component(vec v) const
@@ -383,6 +501,22 @@ void Ring::interchange_rows(vec &v, int i, int j) const
     }
   tmp->comp = j;
   v = head.next;
+}
+
+void Ring::negate_vec_to(vec &v) const
+{
+  vec w = v;
+  while (w != NULL)
+    {
+      negate_to(w->coeff);
+      w = w->next;
+    }
+}
+
+void Ring::subtract_vec_to(vec &v, vec &w) const
+{
+  negate_vec_to(w);
+  add_vec_to(v, w);
 }
 
 void Ring::add_vec_to(vec &v, vec &w) const
@@ -591,7 +725,7 @@ void Ring::set_entry(vec &v, int r, ring_elem a) const
   v = head.next;
 }
 
-void Ring::sort(vecterm *&f) const
+void Ring::vec_sort(vecterm *&f) const
 {
   // Internal routine to place the elements back in order after 
   // an operation such as subvector.
@@ -616,10 +750,245 @@ void Ring::sort(vecterm *&f) const
       f2 = t;
     }
   
-  sort(f1);
-  sort(f2);
+  vec_sort(f1);
+  vec_sort(f2);
   add_vec_to(f1, f2);
   f = f1;
+}
+
+extern "C" void debugout(const Ring *R, const vec v)
+{
+  buffer o;
+  R->elem_text_out(o,v);
+  emit_line(o.str());
+}
+
+vec Ring::vec_diff(vec v, int rankFw, vec w, int use_coeff) const
+// rankFw is the rank of the free module corresponding to w.
+{
+  vec result = NULL;
+  for ( ; v != NULL; v = v->next)
+    for (vecterm *p = w; p != NULL; p = p->next)
+      {
+	ring_elem a = diff(v->coeff, p->coeff, use_coeff);
+	if (is_zero(a)) 
+	  {
+	    remove(a);
+	    continue;
+	  }
+	vecterm *t = new_vec();
+	t->comp = rankFw * v->comp + p->comp;
+	t->coeff = a;
+	t->next = result;
+	result = t;
+      }
+  vec_sort(result);
+  return result;
+}
+
+int Ring::vec_in_subring(int nslots, const vec v) const
+{
+  const PolynomialRing *PR = cast_to_PolynomialRing();
+  if (PR == 0 || v == NULL) return true;
+  const Monoid *M = PR->getMonoid();
+  for (vec w = v ; w != NULL; w = w->next)
+    if (!M->in_subring(nslots, PR->lead_flat_monomial(w->coeff)))
+      return false;
+  return true;
+}
+
+void Ring::vec_degree_of_var(int n, const vec v, int &lo, int &hi) const
+{
+  if (v == NULL)
+    {
+      ERROR("attempting to find degree of zero vector");
+      return;
+    }
+  degree_of_var(n, v->coeff, lo, hi);
+  for (vec w = v->next; w != 0; w = w->next)
+    {
+      int lo1,hi1;
+      degree_of_var(n, w->coeff, lo1, hi1);
+      if (lo1 < lo) lo = lo1;
+      if (hi1 > hi) hi = hi1;
+    }
+}
+
+vec Ring::vec_divide_by_var(int n, int d, const vec v) const
+{
+  vecterm head;
+  vecterm *result = &head;
+  for (vec w = v; w != 0; w = w->next)
+    {
+      ring_elem a = divide_by_var(n, d, w->coeff);
+      if (!is_zero(a))
+	{
+	  vec t = make_vec(w->comp,a);
+	  result->next = t;
+	  result = t;
+	}
+    }
+  result->next = 0;
+  return head.next;
+}
+
+vec Ring::vec_divide_by_expvector(const int *exp, const vec v) const
+{
+  vecterm head;
+  vecterm *result = &head;
+  for (vec w = v; w != 0; w = w->next)
+    {
+      ring_elem a = divide_by_expvector(exp, w->coeff);
+      if (!is_zero(a))
+	{
+	  vec t = make_vec(w->comp,a);
+	  result->next = t;
+	  result = t;
+	}
+    }
+  result->next = 0;
+  return head.next;
+}
+
+//////////////////////////////////////////////
+//  Homogeniety and the grading //////////////
+//////////////////////////////////////////////
+
+bool Ring::vec_multi_degree(const FreeModule *F, const vec f, int *degf) const
+  // Returns true if the element is homogeneous
+  // Sets degf to be the highest degree found (actually, the join of the 
+  //   degree vectors occuring).
+{
+  int *degv;
+  degree_monoid()->one(degf);
+  if (f == NULL) return true;
+  bool result = multi_degree(f->coeff, degf);
+  degree_monoid()->mult(degf, F->degree(f->comp), degf);
+  degv = degree_monoid()->make_one();
+
+  for (vec v = f->next; v != 0; v = v->next)
+    {
+      bool ishom = multi_degree(v->coeff, degv);
+      result = result && ishom;
+      degree_monoid()->mult(degv, F->degree(v->comp), degv);
+
+      if (0 != degree_monoid()->compare(degf, degv))
+	{
+	  result = false;
+	  degree_monoid()->lcm(degf, degv, degf);
+	}
+    }
+  degree_monoid()->remove(degv);
+  return result;
+}
+
+void Ring::vec_degree(const FreeModule *F, const vec f, int *degf) const
+{
+  vec_multi_degree(F, f, degf);
+}
+
+bool Ring::vec_is_homogeneous(const FreeModule *F, const vec f) const
+{
+  if (!this->is_graded()) return false;
+  if (f == NULL) return true;
+  int *d = degree_monoid()->make_one();
+  int *e = degree_monoid()->make_one();
+  bool result = multi_degree(f->coeff, d);
+  if (result) 
+    {
+      degree_monoid()->mult(d, F->degree(f->comp), d);
+      for (vecterm *t = f->next; (t != NULL) && result; t = t->next)
+	{
+	  bool ishom = multi_degree(t->coeff, e);
+	  result = result && ishom;
+	  if (result)
+	    {
+	      degree_monoid()->mult(e, F->degree(t->comp), e);
+	      if (0 != degree_monoid()->compare(d,e))
+		result = false;
+	    }
+	}
+    }
+  degree_monoid()->remove(d);
+  degree_monoid()->remove(e);
+  return result;
+}
+
+#if 0
+// 8-9-04 maybe this one is not needed any longer?
+int Ring::vec_primary_degree(const FreeModule *F, const vec f) const
+{
+  if (f == NULL) return 0;
+  int deg = primary_degree(f->coeff);
+
+  return F->primary_degree(f->comp) + deg;
+}
+#endif
+
+void Ring::vec_degree_weights(const FreeModule *F,
+			      const vec f, 
+			      const M2_arrayint wts, 
+			      int &lo, 
+			      int &hi) const
+{
+  vecterm *t = f;
+  if (t == NULL)
+    {
+      lo = hi = 0;
+      return;
+    }
+  degree_weights(t->coeff, wts, lo, hi);
+  lo += F->primary_degree(t->comp);
+  hi += F->primary_degree(t->comp);
+  for (t = t->next; t != NULL; t = t->next)
+    {
+      int lo1, hi1;
+      degree_weights(t->coeff, wts, lo1, hi1);
+      lo1 += F->primary_degree(t->comp);
+      hi1 += F->primary_degree(t->comp);
+      if (hi1 > hi) hi = hi1;
+      if (lo1 < lo) lo = lo1;
+    }
+}
+
+vec Ring::vec_homogenize(const FreeModule *F,
+			 const vec f, 
+			 int v, 
+			 int d, 
+			 const M2_arrayint wts) const
+// Any terms which can't be homogenized are silently set to 0
+{
+  vecterm head;
+  vecterm *result = &head;
+  assert(wts->array[v] != 0);
+  // If an error occurs, then return 0, and set ERROR
+
+  for (vec w = f; w != 0; w = w->next)
+    {
+      int e = F->primary_degree(w->comp);
+      ring_elem a = homogenize(w->coeff, v, d-e, wts);
+      if (!is_zero(a))
+	{
+	  result->next = make_vec(w->comp,a);
+	  result = result->next;
+	}
+    }
+  result->next = 0;
+  return head.next;
+}
+
+vec Ring::vec_homogenize(const FreeModule *F,
+			       const vec f, 
+			       int v, 
+			       const M2_arrayint wts) const
+{
+  vecterm *result = NULL;
+  if (f == NULL) return result;
+  int lo, hi;
+  vec_degree_weights(F, f, wts, lo, hi);
+  assert(wts->array[v] != 0);
+  int d = (wts->array[v] > 0 ? hi : lo);
+  return vec_homogenize(F, f, v, d, wts);
 }
 
 // Local Variables:

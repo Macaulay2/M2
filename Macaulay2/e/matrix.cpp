@@ -341,6 +341,11 @@ const MatrixOrNull * Matrix::make(const MonomialIdeal * mi)
   return mat.to_matrix();
 }
 
+ring_elem Matrix::elem(int i, int j) const
+{
+  return get_ring()->get_entry(elem(j), i);
+}
+
 bool Matrix::error_column_bound(int c) const
 {
   if (c < 0 || c >= n_cols())
@@ -442,7 +447,7 @@ void Matrix::append_column(vec v)
 {
   if (is_immutable()) return;
   int *d = degree_monoid()->make_one();
-  if (v != 0) rows()->degree(v, d);
+  if (v != 0) get_ring()->vec_degree(rows(), v, d);
   append_column(v,d);
   degree_monoid()->remove(d);
 }
@@ -666,13 +671,13 @@ int Matrix::is_homogeneous() const
   for (int i=0; i<n_cols(); i++)
     {
       if (elem(i) == 0) continue;
-      if (! rows()->is_homogeneous(elem(i)))
+      if (! get_ring()->vec_is_homogeneous(rows(), elem(i)))
 	{
 	  degree_monoid()->remove(d);
 	  return 0;
 	}
  
-      rows()->degree(elem(i), d);
+      get_ring()->vec_degree(rows(), elem(i), d);
       degree_monoid()->divide(d, degree_shift(), d);
       if (0 != degree_monoid()->compare(d, cols()->degree(i)))
 	{
@@ -688,7 +693,7 @@ Matrix *Matrix::homogenize(int v, const M2_arrayint wts) const
 {
   MatrixConstructor mat(rows(), n_cols(), is_mutable());
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i, rows()->homogenize(elem(i), v, wts));
+    mat.set_column(i, get_ring()->vec_homogenize(rows(), elem(i), v, wts));
   mat.compute_column_degrees();
   return mat.to_matrix();
 }
@@ -790,7 +795,7 @@ Matrix *Matrix::operator-(const Matrix &m) const
   bool is_mutable_flag = is_mutable() && m.is_mutable();
   MatrixConstructor mat(F,G,is_mutable_flag,deg);
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i, F->subtract(elem(i),m[i]));
+    mat.set_column(i, R->subtract_vec(elem(i),m[i]));
   return mat.to_matrix();
 }
 
@@ -798,7 +803,7 @@ Matrix *Matrix::operator-() const
 {
   MatrixConstructor mat(rows(), cols(), is_mutable(), degree_shift());
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i, rows()->negate(elem(i)));
+    mat.set_column(i, get_ring()->negate_vec(elem(i)));
   return mat.to_matrix();
 }
 
@@ -879,7 +884,8 @@ MatrixOrNull *Matrix::reshape(const FreeModule *F, const FreeModule *G) const
 
 MatrixOrNull *Matrix::flip(const FreeModule *F, const FreeModule *G)
 {
-  if (F->get_ring() != G->get_ring())
+  const Ring *R = F->get_ring();
+  if (R != G->get_ring())
     {
       ERROR("flip: expected same ring");
       return 0;
@@ -891,7 +897,7 @@ MatrixOrNull *Matrix::flip(const FreeModule *F, const FreeModule *G)
   int next = 0;
   for (int f=0; f<F->rank(); f++)
     for (int g=0; g<G->rank(); g++)
-      mat.set_column(next++, H->e_sub_i(f + g * F->rank()));
+      mat.set_column(next++, R->e_sub_i(f + g * F->rank()));
   return mat.to_matrix();
 }
 
@@ -1171,7 +1177,13 @@ Matrix *Matrix::tensor(const Matrix *m) const
 
 Matrix *Matrix::diff(const Matrix *m, int use_coef) const
 {
-  if (get_ring() != m->get_ring())
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  if (P != m->get_ring())
     {
       ERROR("matrix diff: different base rings");
       return 0;
@@ -1190,22 +1202,8 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   int i, j, next=0;
   for (i=0; i<n_cols(); i++)
     for (j=0; j<m->n_cols(); j++)
-      mat.set_column(next++, F->diff(rows(), elem(i), 
-				     m->rows(), (*m)[j],
-				     use_coef));
+      mat.set_column(next++, P->vec_diff(elem(i), m->rows()->rank(), m->elem(j), use_coef));
   return mat.to_matrix();
-#if 0
-  Matrix *result = new Matrix(F, G, deg);
-  degree_monoid()->remove(deg);
-  int i, j, next=0;
-  for (i=0; i<n_cols(); i++)
-    for (j=0; j<m->n_cols(); j++)
-      (*result)[next++] = F->diff(rows(), elem(i), 
-				  m->rows(), (*m)[j],
-				  use_coef);
-
-  return result;
-#endif
 }
 
 Matrix *Matrix::lead_term(int nparts) const
@@ -1361,7 +1359,7 @@ M2_arrayint_OrNull Matrix::elim_vars(int nparts) const
     }
   int nslots = P->getMonoid()->n_slots(nparts);
   for (int i=0; i<n_cols(); i++)
-    if (rows()->in_subring(nslots, elem(i)))
+    if (P->vec_in_subring(nslots, elem(i)))
       keep.append(i);
   M2_arrayint result = makearrayint(keep.length());
   for (unsigned int i=0; i<result->len; i++)
@@ -1380,7 +1378,7 @@ M2_arrayint_OrNull Matrix::elim_keep(int nparts) const
     }
   int nslots = P->getMonoid()->n_slots(nparts);
   for (int i=0; i<n_cols(); i++)
-    if (!rows()->in_subring(nslots, elem(i)))
+    if (!P->vec_in_subring(nslots, elem(i)))
       keep.append(i);
   M2_arrayint result = makearrayint(keep.length());
   for (unsigned int i=0; i<result->len; i++)
@@ -1390,6 +1388,12 @@ M2_arrayint_OrNull Matrix::elim_keep(int nparts) const
 
 Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
 {
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
   MatrixConstructor mat(rows(), 0, false);
   maxdivided = 0;
   for (int i=0; i<n_cols(); i++)
@@ -1397,12 +1401,12 @@ Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
       if (elem(i) != NULL)
 	{
 	  int lo,hi;
-	  rows()->degree_of_var(n, elem(i), lo,hi);
+	  P->vec_degree_of_var(n, elem(i), lo,hi);
 	  if (maxd >= 0 && lo > maxd)
 	    lo = maxd;
 	  if (lo > maxdivided)
 	    maxdivided = lo;
-	  mat.append(rows()->divide_by_var(n, lo, elem(i)));
+	  mat.append(P->vec_divide_by_var(n, lo, elem(i)));
 	}
     }
   return mat.to_matrix();
@@ -1878,7 +1882,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 	exp[vars->array[j]] = exp1[j];
       M->from_expvector(exp, mon);
       ring_elem a = P->make_flat_term(one, mon);
-      mat.append(rows()->raw_term(a,0));
+      mat.append(P->make_vec(0,a));
     }
   
   // Remove the garbage memory
@@ -1914,6 +1918,7 @@ static void get_part_of_expvector(M2_arrayint vars,
 static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 			 const FreeModule *F, vec f)
     // private routine for 'coeffs'.
+#warning "coeffs_of_vec should maybe be in PolynomialRing"
 {
   if (f == NULL) return 0;
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
@@ -1948,10 +1953,9 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
   deletearray(exp);
   deletearray(scratch_exp);
   M->remove(mon);
-  F->sort(result);
+  P->vec_sort(result);
   return result;
 }
-
 
 MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 {
@@ -2039,7 +2043,6 @@ MonomialIdeal *Matrix::make_monideal(int n) const
       new_elems.insert(b);      
     }
 
-#warning "make_monideal doesn't handle quotient rings"
   // If the base ring is a quotient ring, include these lead monomials.
   if (P->is_quotient_ring())
     {
@@ -2174,269 +2177,6 @@ int Matrix::dimension() const
     }
 }
 
-#if 0
-
-static int            kb_do_trunc;
-static Matrix       * kb_result;
-static MonomialIdeal* kb_monideal;
-static int          * kb_deg;
-static vec            kb_vec;
-static int            kb_n_vars;
-static int          * kb_exp;
-static int          * kb_mon;
-static int          * kb_vec_monom;
-static int          * kb_exp_degree;
-static const Monoid * kb_D;
-static const PolynomialRing * kb_P;
-
-void Matrix::k_basis_insert() const
-{
-  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  get_ring()->Nmonoms()->divide(kb_mon, kb_vec_monom, kb_mon);
-  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
-  kb_result->append(rows()->mult(tmp, kb_vec));
-  get_ring()->remove(tmp);
-}
-void Matrix::k_basis0(int firstvar) const
-    // Recursively add to the result matrix all monomials in the
-    // variables 0..topvar having degree 'deg' which are not in 'mi'.
-{
-  for (int i=firstvar; i<kb_n_vars; i++)
-    {
-      if (kb_P->is_skew_commutative() &&
-	    kb_P->is_skew_var(i) &&
-	    kb_exp[i] >= 1)
-	{
-	  continue;
-	}
-
-      kb_exp[i]++;
-      kb_D->mult(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
-		     kb_exp_degree);
-
-      int cmp = kb_D->primary_value(kb_exp_degree) - kb_D->primary_value(kb_deg);
-      Bag *b;
-      if (cmp > 0 
-	  && kb_do_trunc 
-	  && !kb_monideal->search_expvector(kb_exp,b))
-	{
-	  k_basis_insert();
-	}
-
-      if (cmp <= 0 && !kb_monideal->search_expvector(kb_exp,b))
-	{
-	  if (cmp == 0)
-	    {
-	      if (kb_D->compare(kb_exp_degree, kb_deg) == EQ)
-		{
-		  k_basis_insert();
-		}
-	    }
-	  else
-	    k_basis0(i);
-	}
-
-      kb_exp[i]--;
-      kb_D->divide(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
-		   kb_exp_degree);
-    }
-}
-
-Matrix *Matrix::k_basis(Matrix &bot, const int *d, int do_trunc) const
-    // Only the lead monomials of the two matrices 'this' and 'bottom' are
-    // considered.  Thus, you must perform the required GB's elsewhere.
-    // Find a basis for (image this)/(image bottom) in degree d.
-    // If 'd' is NULL, first check that (image this)/(image bottom) has
-    // finite dimension, and if so, return a basis.
-    // If 'd' is not NULL, it is an element of the degree monoid.
-{
-  kb_do_trunc = do_trunc;
-  kb_result = new Matrix(rows());
-  kb_n_vars = get_ring()->n_vars();
-  kb_D = get_ring()->degree_monoid();
-
-  kb_mon = get_ring()->Nmonoms()->make_one();
-  kb_vec_monom = get_ring()->Nmonoms()->make_one();
-  kb_deg = kb_D->make_one();
-  intarray kb_exp_a;
-  kb_exp = kb_exp_a.alloc(kb_n_vars);
-  kb_exp_degree = kb_D->make_one();
-
-  int *e = kb_D->make_one();
-  kb_D->from_expvector(d, e);
-
-  kb_P = get_ring()->cast_to_PolynomialRing();
-  if (kb_P != 0)
-    {
-      for (int i=0; i<n_rows(); i++)
-	{
-	  degree_monoid()->divide(e, rows()->degree(i), kb_deg);
-	  
-	  // get the two monomial ideals
-	  MonomialIdeal *top = make_monideal(i);
-	  MonomialIdeal *bottom = bot.make_monideal(i);
-	  top = *top - *bottom;
-	  
-	  Bag *b;
-	  while (top->remove(b))
-	    {
-	      kb_vec = elem(b->basis_elem());
-	      get_ring()->Nmonoms()->from_varpower(b->monom().raw(),kb_vec_monom);
-	      
-	      MonomialIdeal *miq = top->intersect(b->monom().raw());
-	      
-	      kb_monideal = *miq + *bottom;
-	      
-	      kb_exp_a.shrink(0);
-	      varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
-	      get_ring()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
-							kb_exp_degree);
-	      
-	      int cmp = kb_D->primary_value(kb_exp_degree) 
-		- kb_D->primary_value(kb_deg);
-	      if ((cmp > 0 && do_trunc)
-		  || (0 == kb_D->compare(kb_deg, kb_exp_degree)))
-		kb_result->append(rows()->copy(kb_vec));
-	      else if (cmp < 0)
-		k_basis0(0);
-	      
-	      deleteitem(b);
-	    }
-	  //	}
-	  //      else if (do_trunc)
-	  //	{
-	  //	  kb_result.append(rows()->copy(elem(i)));
-	  //	}
-	}
-    }
-  
-  Matrix *result = kb_result;
-
-  kb_D->remove(kb_deg);
-  kb_D->remove(kb_exp_degree);
-  kb_D->remove(e);
-  get_ring()->Nmonoms()->remove(kb_mon);
-  get_ring()->Nmonoms()->remove(kb_vec_monom);  
-  kb_result = 0;
-  kb_P = 0;
-
-  return result;
-}
-
-
-void Matrix::k_basis1(int firstvar) const
-    // Recursively add to the result matrix all monomials in the
-    // variables 0..topvar having degree 'deg' which are not in 'mi'.
-{
-  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  get_ring()->Nmonoms()->divide(kb_mon, kb_vec_monom, kb_mon);
-  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
-  kb_result->append(rows()->mult(tmp, kb_vec));
-  get_ring()->remove(tmp);
-
-  for (int i=firstvar; i<kb_n_vars; i++)
-    {
-      if (kb_P->is_skew_commutative() &&
-	    kb_P->is_skew_var(i) &&
-	    kb_exp[i] >= 1)
-	{
-	  continue;
-	}
-
-      kb_exp[i]++;
-      Bag *b;
-      if (!kb_monideal->search_expvector(kb_exp,b))
-	k_basis1(i);
-
-      kb_exp[i]--;
-    }
-}
-
-Matrix *Matrix::k_basis(Matrix &bot) const
-    // Only the lead monomials of the two matrices 'this' and 'bottom' are
-    // considered.  Thus, you must perform the required GB's elsewhere.
-    // first check that (image this)/(image bottom) has
-    // finite dimension, and if so, return a basis.
-{
-  kb_result = new Matrix(rows());
-  kb_n_vars = get_ring()->n_vars();
-
-  kb_mon = get_ring()->Nmonoms()->make_one();
-  kb_vec_monom = get_ring()->Nmonoms()->make_one();
-  intarray kb_exp_a;
-  kb_exp = kb_exp_a.alloc(kb_n_vars);
-
-  kb_P = get_ring()->cast_to_PolynomialRing();
-  if (kb_P != 0)
-    {
-      for (int i=0; i<n_rows(); i++)
-	{
-	  // get the two monomial ideals
-	  MonomialIdeal *top = make_monideal(i);
-	  MonomialIdeal *bottom = bot.make_monideal(i);
-	  
-	  Bag *b, *c;
-	  while (top->remove(b))
-	    {
-	      kb_vec = elem(b->basis_elem());
-	      get_ring()->Nmonoms()->from_varpower(b->monom().raw(),kb_vec_monom);
-	      
-	      MonomialIdeal *miq = top->intersect(b->monom().raw());
-	      kb_monideal = *miq + *bottom;
-	      
-	      kb_exp_a.shrink(0);
-	      varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
-	      if (!kb_monideal->search(b->monom().raw(), c))
-		k_basis1(0);
-	      
-	      deleteitem(b);
-	    }
-	}
-    }
-  get_ring()->Nmonoms()->remove(kb_mon);  
-  get_ring()->Nmonoms()->remove(kb_vec_monom);  
-  Matrix *result = kb_result;
-  kb_result = 0;
-  kb_P = 0;
-  return result;
-}
-#endif
-
-////////////////////////////////////////////////////////////////////////////////
-#if 0
-#if 0
-To do here:
-  +k-basis routines
-  +monideal routines (done)
-  elem(r,c) makes new element, so be sure to remove it if needed
-
-  check error conditions
-  lead term routines are a bit messed up
-
-  new routines to add: 
-    exterior, symm (how best to do this?)
-    random_matrix
-    coeffs, 
-    inpart, stdpart, mininimalpart (but call them what?? )
-#endif
-
-#if 0
-void Matrix::schreyer_append(vec v)
-{
-  if (! rows()->is_zero(v)) 
-    {
-      int *d = degree_monoid()->make_one();
-      rows()->degree(v, d);
-      cols()->append(d, v->monom, cols()->rank());
-      degree_monoid()->remove(d);
-      _entries.append(v);
-    }
-  else
-    append(v);
-}
-#endif
-
-#endif
 
 
 

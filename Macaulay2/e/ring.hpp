@@ -309,22 +309,35 @@ protected:
   vec new_vec() const;
   void remove_vec_node(vec n) const;
 
-  void sort(vecterm *&f) const;
 public:
+  void vec_sort(vecterm *&f) const;
+
+  vec e_sub_i(int r) const;
   vec make_vec(int r, ring_elem a) const;
   vec copy_vec(const vecterm * v) const;
   void remove_vec(vec v) const;
 
   bool is_equal(const vecterm * a, const vecterm * b) const;
   bool get_entry(const vecterm * v, int r, ring_elem &result) const;
+  ring_elem get_entry(vec v, int r) const;
   vec sub_vector(const vecterm * v, const M2_arrayint r) const;
   int n_nonzero_terms(const vecterm * v) const;
   void elem_text_out(buffer &o, const vecterm * v) const;
+  vec vec_eval(const RingMap *map, const FreeModule *F,	const vec v) const;
+
+  vec negate_vec(vec v) const;
+  vec add_vec(vec v, vec w) const;
+  vec subtract_vec(vec v, vec w) const;
+  vec mult_vec(int n, vec v) const;
+  vec mult_vec(const ring_elem f, const vec w) const;
+  vec rightmult_vec(const vec w, const ring_elem f) const;
 
   void set_entry(vec &v, int i, ring_elem r) const;
   void mult_vec_to(vec &v, const ring_elem r, bool opposite_mult) const; // multiplies v <- r * v or v * r
   void mult_row(vec &v, const ring_elem r, int i, bool opposite_mult) const;
+  void negate_vec_to(vec &v) const; // v <- -v.
   void add_vec_to(vec &v, vec &w) const; // v <- v+w, w is set to 0.
+  void subtract_vec_to(vec &v, vec &w) const; // v <- v-w, w is set to 0.
   void interchange_rows(vec &v, int i, int j) const;
   void vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const;
 
@@ -348,6 +361,34 @@ public:
   void divide_row(vec &v, int r, const ring_elem a) const;
   ring_elem dot_product(const vecterm *v, const vecterm *w) const;
 
+  /* Polynomial routines.  These all set an error if the ring is not
+     a polynomial ring.  OR, they will be moved to poly.hpp  */
+  vec vec_diff(vec v, int rankFw, vec w, int use_coeff) const;
+  int vec_in_subring(int n, const vec v) const;
+  void vec_degree_of_var(int n, const vec v, int &lo, int &hi) const;
+  vec vec_divide_by_var(int n, int d, const vec v) const;
+  vec vec_divide_by_expvector(const int *exp, const vec v) const;
+
+  bool vec_multi_degree(const FreeModule *F, const vec f, int *degf) const;
+  // returns true iff f is homogeneous
+
+  void vec_degree(const FreeModule *F, const vec f, int *d) const;
+  void vec_degree_weights(const FreeModule *F, 
+			  const vec f, 
+			  const M2_arrayint wts, 
+			  int &lo, 
+			  int &hi) const;
+  int vec_primary_degree (const FreeModule *F, const vec f) const;
+  bool vec_is_homogeneous (const FreeModule *F, const vec f) const;
+  vec vec_homogenize(const FreeModule *F, 
+		     const vec f, 
+		     int v, 
+		     int deg, 
+		     const M2_arrayint wts) const;
+  vec vec_homogenize(const FreeModule *F, 
+		     const vec f, 
+		     int v, 
+		     const M2_arrayint wts) const;
 
   // Other operations desired:
   // assemble a vector from ring elements

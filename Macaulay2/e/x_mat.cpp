@@ -492,6 +492,7 @@ const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
       return 0;
     }
   const FreeModule *F = Ms->array[0]->rows();
+  const Ring *R = F->get_ring();
   MatrixConstructor mat(Ms->array[0]->rows(), 0, false);
   int next=0;
   for (unsigned int i=0; i<n; i++)
@@ -509,7 +510,7 @@ const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
 	}
       for (int j=0; j<M->n_cols(); j++)
 	{
-	  mat.append(F->translate(M->rows(), (*M)[j]));
+	  mat.append(R->copy_vec(M->elem(j)));
 	  mat.set_column_degree(next++, M->cols()->degree(j));
 	}
     }

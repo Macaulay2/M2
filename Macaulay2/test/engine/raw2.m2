@@ -41,18 +41,22 @@ B = rawGaloisField raw x
 x = B_0
 apply(1..24, i -> x^i)
 
+errorDepth = 0
+GF 25 -- FAILS
 -----------------------------
 -- Test of SchurRing --------
 -----------------------------
+needs "raw-util.m2"
 R = Schur 4
 f = R_{1,1}
 dim f
 g = f*f
 assert(dim g == (dim f)^2)
-listForm g
+<< "listForm of polynomials in Schur rings incorrect" << endl;
+<< "display of polynomials in Schur rings incorrect" << endl;
+listForm g -- INCORRECT
 rawPairs(raw g)
 toString raw g
-load "raw-util.m2"
 rawSchurDimension
 S = ZZ[a..d]
 listForm(a^2+b^2+c^3)

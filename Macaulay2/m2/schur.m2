@@ -93,10 +93,7 @@ Schur(ZZ) := SchurRing => options -> n -> (
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
      -- toString M := net M := x -> first lines toString x;
      S := newSchur(R,M);
-     dim S := s -> (
-	  error "ggdim for Schur rings not re-implemented yet";
-	  sendgg(ggPush s, ggdim);
-	  R.pop());
+     dim S := s -> rawSchurDimension raw s;
      S)
 
 -- Local Variables:

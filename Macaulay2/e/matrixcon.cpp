@@ -44,7 +44,7 @@ void MatrixConstructor::append(vec v)
 {
   //  if (cols->is_immutable()) return; // HOW BEST TO HANDLE THIS??
   int *d = R->degree_monoid()->make_one();
-  if (v != 0) rows->degree(v, d);
+  if (v != 0) R->vec_degree(rows,v, d);
   append(v,d);
   R->degree_monoid()->remove(d);
 
@@ -90,7 +90,7 @@ void MatrixConstructor::compute_column_degree(int i)
 
   int *d = R->degree_monoid()->make_one();
   const vec v = entries[i];
-  if (v != 0) rows->degree(v, d);
+  if (v != 0) R->vec_degree(rows, v, d);
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->change_degree(i,d);
   R->degree_monoid()->remove(d);
