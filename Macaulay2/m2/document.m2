@@ -298,9 +298,11 @@ fourDigits := i -> (
      concatenate(4-#s:"0", s)
      )
 
+CachePrefix := "cache-tmp"
+
 TEST = (e) -> if phase === 2 then (
      testFileCounter = testFileCounter + 1;
-     openOut concatenate("../tmp/Tests/", fourDigits testFileCounter, ".m2") 
+     openOut concatenate(CachePrefix,"/Tests/", fourDigits testFileCounter, ".m2") 
      << e << endl << close;
      )
 
@@ -319,25 +321,23 @@ extractExamples := x -> (
      then join apply(toSequence x, extractExamples)
      else {})
 
-NameFile := "../tmp/Examples/FileNames"
+NameFile := concatenate(CachePrefix,"/Examples/FileNames")
 
 saveNameHashTable := null
-NameHashTable := () -> (
-     NameHashTable = () -> saveNameHashTable;
-     saveNameHashTable = (
-     	  if phase === 4 then hashTable value get NameFile
-     	  else (
-      	       try new MutableHashTable from hashTable value get NameFile
-     	       else new MutableHashTable
-	       )
+NameHashTable := () -> if saveNameHashTable =!= null then saveNameHashTable else saveNameHashTable = (
+     if phase === 4 then hashTable value get NameFile
+     else (
+	  try  new MutableHashTable from hashTable value get NameFile
+	  else new MutableHashTable
 	  )
      )
-if phase === 2 then (
-     addEndFunction( () -> (
+
+addEndFunction( () -> (
+	  if phase === 2 then (
 	       stderr << "writing " << NameFile << endl;
-	       NameFile << toExternalString pairs NameHashTable() << endl << close;
-	       ));
-     )
+	       NameFile << toExternalString pairs NameHashTable() << endl << close;);
+	  saveNameHashTable = null;
+	  ))
 
 nodeName := ""
 nodeBaseFilename := ""
@@ -345,16 +345,10 @@ exampleCounter := 0
 exampleOutputFile := null
 exampleResults := {}
 makeBaseFilename := () -> (
-     if (NameHashTable())#?nodeName
-     then (NameHashTable())#nodeName
+     if (NameHashTable())#?nodeName then (NameHashTable())#nodeName
      else (
-	  if phase === 4 then error(
-	       "documentation node '", nodeName, "' has no sequence number");
-	  (NameHashTable())#nodeName = concatenate(
-	       "../tmp/Examples/", fourDigits (#(NameHashTable()))
-	       )
-	  )
-     );
+	  if phase === 4 then error("documentation node '", nodeName, "' has no sequence number");
+	  (NameHashTable())#nodeName = concatenate( CachePrefix,"/Examples/", fourDigits(#(NameHashTable())))))
 
 processExample := x -> (
      exampleCounter = exampleCounter + 1;
@@ -394,15 +388,18 @@ processExamples := (docBody) -> (
 	  );
      docBody
      )
+
+storeLocally := (docBody) -> (
+     if Documentation#?nodeName then err nodeName;
+     Documentation#nodeName = docBody;
+     )
+
 storeDoc := (docBody) -> (
-     if phase === 0
-     then (
-	  if Documentation#?nodeName then err nodeName;
-	  Documentation#nodeName = docBody
-	  )
+     if phase === 0 then storeLocally docBody
      else if phase === 2 or phase === 4 then (
 	  if DocDatabase#?nodeName then err nodeName;
-	  DocDatabase#nodeName = toExternalString docBody;
+	  if mutable DocDatabase then DocDatabase#nodeName = toExternalString docBody
+	  else storeLocally docBody;
 	  );
      )
 
@@ -420,7 +417,6 @@ document = z -> (
      if class key === Sequence and class lookup key =!= Function then (
 	  error("expected a method for ", formatDocumentTag key);
 	  );
-     if class key === ZZ then error "oops";
      -- if documentableValue key then Symbols#(value key) = key;
      nodeName = formatDocumentTag key;
      -- Documentation#key = nodeName;

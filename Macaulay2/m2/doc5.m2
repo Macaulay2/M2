@@ -1686,7 +1686,6 @@ document { columnate,
      PARA,
      EXAMPLE {
 	  "columnate(characters ascii (65 .. 90) , 12)",
-	  "<<oo;"
 	  }
      }
 

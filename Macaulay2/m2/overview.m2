@@ -87,7 +87,7 @@ document { "basic rings",
       	  "3*5*7",
       	  "5!",
 	  },
-     "An additional pair of division operations which produce integral quotients
+     "An additional pair of division operations that produce integral quotients
      and remainders is available.",
      EXAMPLE {
 	  "1234//100",
@@ -139,7 +139,7 @@ document { "polynomial rings",
      EXAMPLE "coefficientRing R",
      "An element of the coefficient ring can be promoted to the polynomial ring.",
      EXAMPLE "promote(11/2,R)",
-     "Conversely, an element of the polynomial ring which is known to be a scalar
+     "Conversely, an element of the polynomial ring that is known to be a scalar
      can be lifted back to the coefficient ring.",
      EXAMPLE {
 	  "sc = (a-2)^2-a^2+4*a",
@@ -181,9 +181,9 @@ document { "polynomial rings",
 	  "(p_(0,0)+q_2-1)^2",
 	  },
      "The subscripts can be much more general, but care is required when using
-     symbols as subscripts, for the symbols may acquire values later which would
+     symbols as subscripts, for the symbols may acquire values later that would
      interfere with your original use of them as symbols.  Thus you should
-     protect symbols which will be used in this way.",
+     protect symbols that will be used in this way.",
      EXAMPLE {
 	  "protect xx; protect yy; protect zz;",
       	  "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
@@ -277,9 +277,9 @@ document { "polynomial rings with other monomial orderings",
 	  "R=ZZ/101[a,b,c,MonomialOrder=>Eliminate 2];",
       	  "(a+b+c+1)^2",
 	  },
-     "The next ring uses the product ordering which segregates the
+     "The next ring uses the product ordering that segregates the
      first variable from the next two.  This means that terms come
-     first which would come first in the graded reverse lexicographic
+     first that would come first in the graded reverse lexicographic
      ordering when their parts involving the
      second two variables are ignored, and in case of equality,
      the graded reverse lexicographic ordering of their parts involving
@@ -426,7 +426,7 @@ document { "manipulating polynomials",
      exponents need to be provided.  The information can be extracted with ", TO "#", ".",
      EXAMPLE "S#(new HashTable from {0 => 2})",
      PARA,
-     "Monomials (monoid elements) have an accessible form which is implicitly used
+     "Monomials (monoid elements) have an accessible form that is implicitly used
      above.",
      EXAMPLE {
 	  "listForm leadMonomial g",
@@ -533,7 +533,7 @@ document { "quotient rings",
      "In the example above you might have wondered whether typing ", TT "x", "
      would give an element of ", TT "S", " or an element of ", TT "QQ[x,y,z]", ".  Our
      convention is that typing ", TT "x", " gives an element of the 
-     last ring which has been assigned to a global variable.  Here is another
+     last ring that has been assigned to a global variable.  Here is another
      example.",
      EXAMPLE {
 	  "T = ZZ/101[r,s,t]",
@@ -617,7 +617,7 @@ document { "finite fields",
       	  "random(2,R)",
 	  },
      "If you have a quotient ring that you know is a finite field, then you can
-     convert it to ring which is known by the system to be a finite field.",
+     convert it to ring that is known by the system to be a finite field.",
      EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
      "You may also provide your own choice of primitive element.  Internally,
      elements of the finite field are stored as powers of the primitive element.
@@ -734,13 +734,13 @@ document { "symmetric algebras",
 document { "Weyl algebras",
      "A Weyl algebra is the non-commutative algebra of algebraic differential 
      operators on a polynomial ring.  To each variable ", TT "x", " corresponds 
-     the operator ", TT "dx", " which differentiates with respect to that 
+     the operator ", TT "dx", " that differentiates with respect to that 
      variable.  The evident commutation relation takes the form 
      ", TT "dx*x == x*dx + 1", ".",
      PARA,
      "We can give any names we like to the variables in a Weyl algebra, provided
-     we specify the correspondence between the variables and the derivatives, which
-     we do with the ", TO "WeylAlgebra", " option, as follows.",
+     we specify the correspondence between the variables and the derivatives,
+     with the ", TO "WeylAlgebra", " option, as follows.",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[x,dx,t,WeylAlgebra => {x=>dx}]",
@@ -858,7 +858,7 @@ document { "ideals",
      "And if you want the module underlying ", TT "I", " itself, you can get it with
      ", TO "module", ".",
      EXAMPLE "module I",
-     "In general, when an ideal is used as an argument to a function which usually
+     "In general, when an ideal is used as an argument to a function that usually
      would be given a module, we try to make an informed choice about whether the user
      intends the ideal to be used as a module directly, or whether the quotient module
      is more suitable.  In homological functions such as ", TO "Ext", " and ", TO "Tor", "

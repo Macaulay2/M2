@@ -107,9 +107,11 @@ docFile := openDatabase databaseFileName
 scandb(docFile, preprocess) 
 
 buttonBar := (key) -> CENTER {
+     next key,
+     prev key, 
+     up key,
      if key =!= topNodeName then topNodeButton,
      masterIndexButton,
-     prev key, up key, next key,
      }
 
 process := (key,doc) -> (

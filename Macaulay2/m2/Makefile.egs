@@ -1,12 +1,12 @@
-TOPDIR = ../../..
+TOPDIR = ../../../..
 include $(TOPDIR)/Makeconf
 
 ifndef NODUMPDATA
 ARGS := -q -silent \
-	'-e loaddata "../../cache/Macaulay2-$(ARCH)-data"' \
-	-- -x -s ../../m2/eg.m2
+	'-e loaddata "../../../cache/Macaulay2-$(ARCH)-data"' \
+	-- -x -s ../../../m2/eg.m2
 else
-ARGS := -q -silent -x -s -ephase=1 ../../m2/setup.m2 -ephase=0 ../../m2/eg.m2
+ARGS := -q -silent -x -s -ephase=1 ../../setup.m2 -ephase=0 ../../../m2/eg.m2
 endif
 
 # ifdef CYGWIN32
@@ -18,7 +18,7 @@ endif
 # 	 else \
 # 	   echo "running example $*"; \
 # 	   echo $(M2HOME)/bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' ">$*.tmp" ; \
-# 	   ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
+# 	   ../../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
 # 	   mv $*.tmp $*.out && \
 # 	   cp $*.m2 $*.old ; \
 # 	 fi

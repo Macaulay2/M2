@@ -741,7 +741,7 @@ text DL   := x -> concatenate(
 ff := {"\"","\""}
 
 text TO   := x -> concatenate ( 
-     "'", formatDocumentTag x#0, "'",
+     "\"", formatDocumentTag x#0, "\"",
      drop(toList x, 1)
      )
 
