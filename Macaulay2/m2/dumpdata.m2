@@ -10,7 +10,7 @@ scan(openFiles(), f -> (
 errorDepth (reloaded + 1)
 collectGarbage()
 fn := concatenate("../cache/Macaulay2-",
-     try first lines get "!uname -m | sed s=/=-=g" else version#"ARCH", 
+     try first lines get "!uname -m | sed s=/=-=g" else version#"architecture", 
      ".data")
 << "dumping to " << fn << endl
 dumpdata fn

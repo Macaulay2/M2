@@ -816,14 +816,28 @@ import ARCH:string;
 import REL:string;
 import DATE:string;
 import TIME:string;
+import LIBFACVERSION:string;
+import GCVERSION:string;
+import FACTORYVERSION:string;
+import DUMPDATA:bool;
+import FACTORY:bool;
+import MP:bool;
 setupconst("newline", Expr(newline));
 
 x := newHashTable(hashTableClass,nothingClass);
 storeInHashTable(x,Expr("VERSION"),Expr(VERSION));
-storeInHashTable(x,Expr("OS"),Expr(OS));
-storeInHashTable(x,Expr("ARCH"),Expr(ARCH));
-storeInHashTable(x,Expr("REL"),Expr(REL));
-storeInHashTable(x,Expr("COMPILETIME"),Expr(DATE+" "+TIME));
+storeInHashTable(x,Expr("architecture"),Expr(ARCH));
+storeInHashTable(x,Expr("operating system"),Expr(OS));
+storeInHashTable(x,Expr("operating system release"),Expr(REL));
+storeInHashTable(x,Expr("compile time"),Expr(DATE+" "+TIME));
+storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));
+storeInHashTable(x,Expr("factory"),Expr(if FACTORY then True else False));
+storeInHashTable(x,Expr("mp"),Expr(if MP then True else False));
+storeInHashTable(x,Expr("gc version"),Expr(GCVERSION));
+if FACTORY then (
+     storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));
+     storeInHashTable(x,Expr("factory version"),Expr(FACTORYVERSION));
+     );
 sethash(x,false);
 setupconst("version", Expr(x));
 

@@ -15,7 +15,7 @@ warning := (sym,msg) -> (
 	  stderr << "error: " << msg << endl;
 	  )
      else ((filename,row1,row2) -> (
-			   if version#"OS" === "Windows NT"
+			   if version#"operating system" === "Windows NT"
 			   then stderr << filename << "(" << row1 << ") : " << msg << endl
      	       else stderr << filename << ":" << row1 << ": " << msg << endl;
 	       )) r)

@@ -1,13 +1,11 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#include "../../Makeconf.h"	/* VERSION, MP, FACTORY, and DUMPDATA are defined here */
+
 #undef _POSIX_THREAD_SAFE_FUNCTIONS
 #undef _REENTRANT
 
-#define FACTORY 1
-#define MP 1
-
 #ifdef _WIN32
-#undef MP
 #define alloca _alloca
 #endif
 
@@ -24,8 +22,6 @@ char newline[] = NEWLINE;
 #ifdef FACTORY
 extern char *libfac_version;
 #endif
-
-#include "../../Makeconf.h"	/* VERSION is defined here */
 
 #ifdef __MWERKS__
 #include ".._c_compat.h"
@@ -168,6 +164,7 @@ static void putstderr(char *m) {
      write(STDERR,NEWLINE,strlen(NEWLINE));
      }
 
+#ifdef DUMPDATA
 #if defined(__NeXT__)
 #   define STARTDATA (void *)0x00146000	/* provisional! */
 #   define STARTGAP  (void *)0x00154000
@@ -195,13 +192,12 @@ static void putstderr(char *m) {
 #   define ENDDATA sbrk(0)
 #   define HAVE_MMAP FALSE
 #elif defined(_WIN32)
-#   define STARTDATA (char *)0
-#   define ENDDATA (char *)0
-#   define HAVE_MMAP FALSE
+    /* no hope ? */
 #else
 #   define STARTDATA first_rw_page_after_etext()
 #   define ENDDATA sbrk(0)
 #   define HAVE_MMAP TRUE
+#endif
 #endif
 
 static char *progname;
@@ -421,6 +417,8 @@ typedef struct {
      char array[1];
      } *M2_string;
 
+typedef char M2_bool;
+
 typedef struct {
      unsigned int len;
      int array[1];
@@ -439,6 +437,12 @@ M2_string actors5_ARCH;
 M2_string actors5_REL;
 M2_string actors5_DATE;
 M2_string actors5_TIME;
+M2_string actors5_GCVERSION;
+M2_string actors5_LIBFACVERSION;
+M2_string actors5_FACTORYVERSION;
+M2_bool actors5_DUMPDATA;
+M2_bool actors5_FACTORY;
+M2_bool actors5_MP;
 
 int system_read(fd,buffer,len)
 int fd;
@@ -607,6 +611,8 @@ char **argv;
 {
      char *p, **x;
      char **saveenvp = NULL;
+     /* I don't know why gcc gives this message: */
+     /*   warning: variable `saveenvp' might be clobbered by `longjmp' or `vfork' */
      int envc = 0;
      static int old_collections = 0;
      char **saveargv;
@@ -660,7 +666,9 @@ char **argv;
 	       putstderr(buf);
 	       putstderr("  Copyright 1993-1997, all rights reserved, D. R. Grayson and M. E. Stillman");
 #     	       ifdef FACTORY
-	       putstderr("  Factory library from Singular, copyright 1993-1997, G.-M. Greuel, R. Stobbe");
+	       putstderr("  Factory " 
+		    FACTORYVERSION
+		    " from Singular, copyright 1993-1997, G.-M. Greuel, R. Stobbe");
 	       sprintf(buf,"  Factorization and characteristic sets %s, copyright 1996, M. Messollen",
 		    libfac_version);
 	       putstderr(buf);
@@ -742,8 +750,40 @@ char **argv;
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
      actors5_REL = tostring(REL);
+     actors5_LIBFACVERSION = tostring(libfac_version);
+     actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      actors5_DATE = tostring(__DATE__);
      actors5_TIME = tostring(__TIME__);
+#ifdef DUMPDATA
+     actors5_DUMPDATA = TRUE;
+#else
+     actors5_DUMPDATA = FALSE;
+#endif
+#ifdef MP
+     actors5_MP = TRUE;
+#else
+     actors5_MP = FALSE;
+#endif
+#ifdef FACTORY
+     actors5_FACTORY = TRUE;
+#else
+     actors5_FACTORY = FALSE;
+#endif
+     {
+	  char buf[100];
+	  extern unsigned GC_version;
+	  unsigned major, minor, alpha;
+	  major = GC_version >> 16;
+	  minor = (GC_version >> 8) & 0xff;
+	  alpha = GC_version & 0xff;
+	  if (alpha == 0xff) {
+	       sprintf(buf,"%d.%d", major, minor);
+	       }
+	  else {
+	       sprintf(buf,"%d.%d alpha %d", major, minor, alpha);
+	       }
+	  actors5_GCVERSION = tostring(buf);
+	  }
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
      system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
@@ -1163,7 +1203,7 @@ int probe();
 int system_dumpdata(datafilename)
 M2_string datafilename;
 {
-#if defined(__MWERKS__) || defined(_WIN32)
+#ifndef DUMPDATA
      return ERROR;
 #else
      /* this routine should keep its data on the stack */
@@ -1212,7 +1252,7 @@ int min(int i, int j) {
      return i<j ? i : j;
      }
 
-#if !defined(__MWERKS__)
+#ifdef DUMPDATA
 static void extend_memory(void *newbreak) {
      if (ERROR == brk(newbreak)) {
 	  char buf[200];
@@ -1224,7 +1264,8 @@ static void extend_memory(void *newbreak) {
      }
 #endif
 
-int probe() {
+#ifdef DUMPDATA
+static int probe() {
      int sig = -1;
      char c, *p, readable=FALSE, writable=FALSE;
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
@@ -1281,9 +1322,10 @@ int probe() {
 #endif
      return 0;
      }
+#endif
 
 int system_loaddata(M2_string datafilename){
-#if defined(__MWERKS__) || defined(_WIN32)
+#ifndef DUMPDATA
      return ERROR;
 #else
      char *datafilename_s = tocharstar(datafilename);
