@@ -208,14 +208,17 @@ document { quote EliminationOrder,
 pushForward = method (Options => options pushForward1)
 
 pushForward(RingMap, Module) := (f,M,options) -> (
-    -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
-    S := target f;
-    M = cokernel presentation M;
-    M1 := M ** (S^1/(image f.matrix));
-    if dim M1 > 0 then error "module given is not finite over base";
-    M2 := subquotient(matrix (basis M1 ** S), relations M);
-    cokernel pushForward1(f,M2,options)
-    )
+     if isHomogeneous f and isHomogeneous M then (
+	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
+	  S := target f;
+	  M = cokernel presentation M;
+	  M1 := M ** (S^1/(image f.matrix));
+	  if dim M1 > 0 then error "module given is not finite over base";
+	  M2 := subquotient(matrix (basis M1 ** S), relations M);
+	  cokernel pushForward1(f,M2,options)
+	  )
+     else error "not implemented yet for inhomogeneous modules or maps"
+     )
 
 document { quote pushForward,
      TT "pushForward", "(f,M) -- yields an R-presentation of the S-module M, where

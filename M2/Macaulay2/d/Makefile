@@ -139,11 +139,18 @@ endif
 ifeq ($(OS),MS-DOS)
 LDLIBS += -lgpp
 else
-LDLIBS += -lg++ -lc -lstdc++
+
+# LDLIBS += -lc -lstdc++
+
+LDLIBS += -lstdc++
+
 #	It may look strange to put -lc in here, but it's for a good reason.
 #	Under linux, I have a modern version 2.8.0 of libstdc++ that defines
 #	the routine _IO_init which is called by sprintf, indirectly.  My sprintf
 #	comes from the old libc, and the _IO_init is incompatible, for some reason.
+
+# 	We used to have -lg++ here, too, (before -lc), but it's obsolete now, and 
+#	has been incorporated into libstdc++ with version 2.8.1.1.
 endif
 
 # but on some machines, with non-gnu ld being used, libiostream is
