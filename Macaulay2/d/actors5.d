@@ -621,7 +621,11 @@ setup(LeftDivideS,leftDividefun);
 import WindowWidth(fd:int):int;
 fileWidth(e:Expr):Expr := (
      when e
-     is o:file do Expr(toInteger(WindowWidth(o.fd)))
+     is o:file do (
+	  if o.infd == -1 && o.outfd == -1
+	  then WrongArg("an open file")
+	  else Expr(toInteger(WindowWidth(if o.infd != -1 then o.infd else o.outfd)))
+	  )
      else WrongArg("a file"));
 setupfun("fileWidth",fileWidth);
 

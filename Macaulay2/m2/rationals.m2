@@ -32,7 +32,7 @@ QQ.Engine = true
 QQ.handle = newHandle (ggZ, ggfractionfield)
 assert (hash ZZ < hash QQ)
 promote(ZZ,QQ) := (n,QQ) -> n/1
-lift(QQ,ZZ) := r -> (
+lift(QQ,ZZ) := (r,o) -> (
      if denominator r === 1 then numerator r 
      else error "rational number is not an integer"
      )

@@ -73,7 +73,7 @@ operators#(quote " ") = ///quote " "///
 
 name Symbol := s -> (
      if operators#?s then operators#s 
-     else if value s =!= s then concatenate("quote ", string s)
+     -- else if value s =!= s then concatenate("quote ", string s)
      else string s
      )
 

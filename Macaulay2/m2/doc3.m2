@@ -954,8 +954,9 @@ document { quote File,
 	  },
      "Ways to create new files:",
      MENU {
-          (TO "openIn", "   -- open an input file"),
-          (TO "openOut", "  -- open an output file")
+          (TO "openIn", "     -- open an input file"),
+          (TO "openOut", "    -- open an output file"),
+          (TO "openInOut", "  -- open an input output file"),
 	  },
      "Input operations:",
      MENU {

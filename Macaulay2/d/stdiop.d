@@ -81,7 +81,7 @@ export makePosFile(o:file):PosFile := PosFile(o,
      Position(o.filename, ushort(1), uchar(0), uchar(reloaded)));
 export peek(o:PosFile, offset:int):int := peek(o.file,offset);
 export peek(o:PosFile):int := peek(o.file);
-export isatty(o:PosFile):bool := o.file.isatty;
+export isatty(o:PosFile):bool := o.file.inisatty;
 export close(o:PosFile):void := close(o.file);
 export setprompt(o:PosFile,prompt:function():void):void := (
      setprompt(o.file,prompt)

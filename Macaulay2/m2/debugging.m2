@@ -16,17 +16,20 @@ on = f -> (
      x -> (
 	  j := i;
 	  i = i+1;
-     	  stderr << n << " (" << depth << ", " << j << ") called with args : " << x << endl;
+     	  << n << " (" << j << ")";
+	  if depth > 0 then << " [" << depth << "]";
+	  << " called with args : " << x << endl;
 	  depth = depth + 1;
      	  r := timing f x;
 	  timeused := r#0;
 	  value := r#1;
 	  depth = depth - 1;
 	  if depth === 0 then totaltime = totaltime + timeused;
-     	  stderr << n << " (" << depth << ", " << j << ", " << timeused << " seconds";
-	  if depth === 0 
-	  then stderr << ", total " << totaltime << " seconds";
-	  stderr << ")" << endl << "      returned value  : " << value << endl;
+     	  << n << " (" << j << ")";
+	  if depth > 0 then << " [" << depth << "]";
+	  << " " << timeused << " seconds";
+	  if depth === 0 then << ", total " << totaltime << " seconds";
+	  << endl << "  and returned value : " << value << endl;
      	  value)
      )
 
@@ -36,7 +39,11 @@ document { quote on,
      together with a sequence number so the two reports can be connected.",
      PARA,
      "This function is of only limited utility because it cannot be used
-     with write-protected system functions."
+     with write-protected system functions.",
+     PARA,
+     "The reason we write ", TT "f = on f", " and not something like
+     ", TT "f = on(x -> ...)", " is so the function handed to ", TO "on", "
+     will know its name.  The name will appear in the display."
      }
 
 assert = x -> if not x then error "assertion failed"

@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#ifdef SOCKS
+#include <socks.h>
+#endif
+
 #undef _POSIX_THREAD_SAFE_FUNCTIONS
 #undef _REENTRANT
 

@@ -267,16 +267,46 @@ document { quote Manipulator,
      }
 
 document { quote close,
-     TT "f << close", " -- closes the file f.",
-     BR,
-     "close f -- closes the file f.",
+     TT "f << close", " -- closes the file ", TT "f", ".",
+     BR, NOINDENT,
+     TT "close f", " -- closes the file ", TT "f", ".",
      PARA,
      "In the case of an output file, any buffered output is first
      written to the file, and the return value is an integer,
      normally 0, or -1 on error, or the return status of the child
      process in case the the file was a pipe.",
      PARA,
-     SEEALSO {"File", "Manipulator"}
+     "If the file was open for both input and output, both directions
+     are closed.",
+     PARA,
+     SEEALSO {"File", "Manipulator", "closeIn", "closeOut"}
+     }
+
+document { quote closeIn,
+     TT "f << closeIn", " -- closes the input file ", TT "f", ".",
+     BR, NOINDENT,
+     TT "closeIn f", " -- closes the input file ", TT "f", ".",
+     PARA,
+     "If the file was open for both input and output, it remains
+     open for output.",
+     PARA,
+     SEEALSO {"File", "Manipulator", "close", "closeOut"}
+     }
+
+document { quote closeOut,
+     TT "f << closeOut", " -- closes the output file ", TT "f", ".",
+     BR, NOINDENT,
+     TT "close f", " -- closes the output file ", TT "f", ".",
+     PARA,
+     "Any buffered output is first written to the file,
+     and the return value is an integer, normally 0, or -1
+     on error, or the return status of the child process
+     in case the the file was a pipe.",
+     PARA,
+     "If the file was open for both input and output, it remains
+     open for input.",
+     PARA,
+     SEEALSO {"File", "Manipulator", "closeIn", "close"}
      }
 
 document { quote flush,

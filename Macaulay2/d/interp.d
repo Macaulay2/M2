@@ -177,10 +177,10 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	  makePosFile(
 	  file(
 	       name,	 		  -- filename
-	       -1,			  -- fd
 	       0,			  -- pid
-	       false,			  -- isatty
 	       true,			  -- input
+	       -1,			  -- infd
+	       false,			  -- inisatty
 	       contents,		  -- inbuffer
 	       0,			  -- inindex
 	       length(contents),	  -- insize
@@ -189,6 +189,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
      	       true,	       	    	  -- bol
 	       false,			  -- echo
 	       false,			  -- output
+	       -1,			  -- outfd
+	       false,			  -- outisatty
 	       "",			  -- outbuffer,
 	       0,			  -- outindex
 	       0,     	   	     	  -- outbol
@@ -212,10 +214,10 @@ usageMessage():void := (
 
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
-     stdin.isatty =   0 != isatty(0);
-     stdin.echo   = !(0 != isatty(0));
-     stdout.isatty =  0 != isatty(1);
-     stderr.isatty =  0 != isatty(2);
+     stdin .inisatty  =   0 != isatty(0) ;
+     stdin.echo       = !(0 != isatty(0));
+     stdout.outisatty =   0 != isatty(1) ;
+     stderr.outisatty =   0 != isatty(2) ;
      phase := 0;
      foreach arg at i in args do (
 	  if arg === "--" then phase = phase + 1
@@ -233,10 +235,10 @@ export process():void := (
 		    )	       
 	       else if arg === "-x" then xprompt = true
 	       else if arg === "-tty" then (
-		    stdin.isatty = true;
+		    stdin.inisatty = true;
 		    stdin.echo = false;
-		    stdout.isatty = true;
-		    stderr.isatty = true;
+		    stdout.outisatty = true;
+		    stderr.outisatty = true;
 		    )
 	       else if arg === "-silent" then nothing
 	       else if arg === "" then nothing

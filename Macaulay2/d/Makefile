@@ -125,6 +125,10 @@ CPPFLAGS += -DincludeX11
 LDLIBS += -lX11
 endif
 
+ifdef SOCKS
+LDLIBS += -lsocks5
+endif
+
 ## we use one of these in scclib.c
 # libdbm2.a is our own database manager
 # libgdbm.a is the gnu database manager

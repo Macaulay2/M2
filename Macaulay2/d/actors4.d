@@ -318,7 +318,7 @@ outstringfun(e:Expr):Expr := (
 	  if length(a) == 2 then (
 	       when a.0 
 	       is x:file do (
-		    if x.fd == -1 then return(errorExpr("attempted to write to a closed file"));
+		    if x.outfd == -1 then return(WrongArg("an open output file"));
 		    when a.1 
 		    is y:string do Expr(x << y)
 		    is Nothing do Expr(x)
@@ -529,9 +529,9 @@ setupfun("currentDirectory",getcwdfun);
 getfun(e:Expr):Expr := (
      when e
      is f:file do (
-	  if f.fd == -1
-	  then WrongArg("an open file")
-	  else Expr(readfile(f.fd))
+	  if f.infd == -1
+	  then WrongArg("an open input file")
+	  else Expr(readfile(f.infd))
 	  )
      is filename:string do (
 	  when get(filename)
@@ -733,10 +733,14 @@ tostringfun(e:Expr):Expr := (
 	  else internalName(q.symbol.word.name)
 	  )
      is f:file do Expr(
-	  if f == stdin then "stdin"
+	  if f == stdIO then "stdio"
+	  else if f == stdin then "stdin"
 	  else if f == stdout then "stdout"
 	  else if f == stderr then "stderr"
-	  else if f.fd == -1 then "--closed file--"
+	  else if f.infd == -1 && f.outfd == -1 then "--closed file--"
+	  else if f.input && f.output then "--open input output file "+f.filename+"--"
+	  else if f.input then "--open input file "+f.filename+"--"
+	  else if f.output then "--open output file "+f.filename+"--"
 	  else "--open file "+f.filename+"--"
 	  )
      is b:Boolean do Expr(if b.v then "true" else "false")
