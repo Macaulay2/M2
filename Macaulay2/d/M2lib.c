@@ -357,6 +357,8 @@ char **argv;
 	argc = 5;
 #endif
 
+     GC_stackbottom = dummy;
+
      ONSTACK(saveenvp);
 
 #if defined(_WIN32)
@@ -455,6 +457,7 @@ char **argv;
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
+	  GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
 #if !defined(__MWERKS__)
      	  environ = saveenvp;	/* environ is a static variable that points

@@ -181,8 +181,8 @@ ifdef SHAREDLIBS
 FACFLAGS += -fPIC
 endif
 FACTORYexports += factory/libcf.a
-FACTORYconfigured: factory/config.status factory/config.h
-factory/config.h factory/config.status factory/GNUmakefile : \
+FACTORYconfigured: factory/config.status
+factory/config.status factory/GNUmakefile : \
 		factory/GNUmakefile.in factory/configure
 	cd factory;\
 	GMP_INCLUDE_PATH=../include \

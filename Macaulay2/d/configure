@@ -160,6 +160,13 @@ $CC $TMP $LDFLAGS >/dev/null 2>&1 ||
 	>>compat.c
 
 cat <<'EOF' >$TMP
+main(){ extern char *sys_errlist; char *p = sys_errlist; return -1; }
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
+	echo '$define NO_SYS_ERRLIST 1' \
+	>>compat.h
+
+cat <<'EOF' >$TMP
 #include <netinet/in.h>
 main(){ htons(0); }
 EOF
