@@ -179,7 +179,7 @@ AC_CHECK_DECLS(sys_nerr)
 SAVELIBS="$LIBS"
 
 AC_MSG_CHECKING([whether gc library is installed])
-LIBS="$SAVELIBS -lgc"
+LIBS="-lgc $SAVELIBS"
 AC_TRY_LINK(
     [#include <gc.h>],
     [GC_malloc(1);],
@@ -187,7 +187,7 @@ AC_TRY_LINK(
 AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([whether gmp library is installed])
-LIBS="$SAVELIBS -lgmp"
+LIBS="-lgmp $SAVELIBS"
 AC_TRY_LINK(
     [#include <gmp.h>],
     [__gmp_version;],
@@ -195,22 +195,23 @@ AC_TRY_LINK(
 AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([whether gdbm library is installed])
-LIBS="$SAVELIBS -lgdbm"
+LIBS="-lgdbm $SAVELIBS"
 AC_TRY_LINK([#include <gdbm.h>],
     [gdbm_close(0);],
     ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gdbm]))
 AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([whether factory library is installed])
-LIBS="$SAVELIBS -lcf"
-AC_TRY_LINK(
+LIBS="-lcf $SAVELIBS"
+dnl -- we do not try linking, because we do not know whether libcfmem.a is installed or needed by libcf.a
+AC_TRY_COMPILE(
     [#include <factoryconf.h>],
     [FACTORYVERSION;],
     ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: factory]))
 AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([whether libfac library is installed])
-LIBS="$SAVELIBS -lfac -lcf"
+LIBS="-lfac -lcf $SAVELIBS"
 AC_TRY_LINK(
     [extern const char * libfac_version;],
     [libfac_version;],
