@@ -237,16 +237,6 @@ rawResolutionGetFree(Computation *C,
   return 0;
 }
 
-enum ComputationStatusCode rawStatus2(Computation *C,
-		  int * complete_up_through_this_degree)
-{
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->gb_status(complete_up_through_this_degree);
-  ERROR("computation type unknown or not implemented");
-  return COMP_ERROR;
-}
-
 int IM2_Resolution_status(Computation *C,
 			  int * complete_up_through_this_degree,
 			  int * complete_up_through_this_level)
