@@ -25,14 +25,14 @@ void* operator new []( size_t size ) { return GC_MALLOC( size ); }
 #endif
 
 int main() {
-  Variable z( 'z' );
-  Variable y( 'y' );
-  Variable x( 'x' );
-  CanonicalForm f;
-  setCharacteristic( 0 );
-  cin >> f;
-  cout << "factorize(f) = " << factorize(f) << endl;
-  return 0;
+     Variable z( 'z' );
+     Variable y( 'y' );
+     Variable x( 'x' );
+     CanonicalForm f;
+     setCharacteristic( 0 );
+     cin >> f;
+     cout << "factorize(f) = " << factorize(f) << endl;
+     return 0;
 }
 
 // Local Variables:
