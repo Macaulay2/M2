@@ -310,7 +310,7 @@ value(e:Expr):Expr := (
 		    else buildErrorPacket("--backtrace--")))
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
-setupfun("value",value);
+setupfun("value",value).protected = false;
 
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
