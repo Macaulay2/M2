@@ -130,7 +130,7 @@ booktex = method(SingleArgumentDispatch=>true)
 booktex TO  := x -> (
      if class x#0 === String
      then crossReference(x#0, concatenate x)
-     else crossReference(name x#0, name x#0)
+     else crossReference(formatDocumentTag x#0, name x#0)
      )
 
 menuLevel := 2

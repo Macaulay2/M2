@@ -9,16 +9,17 @@ conceptTable = new MutableHashTable
 scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
 
 process := (key,doc) -> (
+     -- stderr << key << endl;
      filename := linkFilename key;
      conceptTable#key = filename;
+     key = evaluate key;
+     title := if class key === String then key else formatDocumentTag key;
      filename << html HTML { 
-	  HEAD {
-	       TITLE key
-	       },
+	  HEAD TITLE title,
 	  BODY {
-	       H2 key,
+	       H2 title,
 	       try evaluate doc else error ("evaluate ", doc),
-	       if key != "index" then SEQ {
+	       if key =!= "index" then SEQ {
 		    PARA,
 		    "Go to ", HREF {"index.html", "main index"}, "."
 		    },
@@ -26,14 +27,8 @@ process := (key,doc) -> (
 	       "Go to ", HREF {"concepts.html", "concepts index"}, "."
 	       }
 	  } << endl << close)
---try (
-     scandb(openDatabase "../cache/Macaulay2.doc", process) 
---     )
---else (
---     scan(keys Documentation, k -> (
---	       v := Documentation#k;	  -- this doesn't work???
---	       if class v === SEQ then process (k,name v)
---	       )))
+
+scandb(openDatabase "../cache/Macaulay2.doc", process) 
 
 scan(linkFilenameKeys(),
      key -> if not conceptTable#?key then (
@@ -76,5 +71,5 @@ run concatenate (
      if version#OS === "CYGWIN32-NT" then "copy" else 
 	 "ln -s",
      " ",
-     conceptTable#"Macaulay 2", 
+     conceptTable#(format "Macaulay 2"),
      " index.html")

@@ -137,17 +137,15 @@ document { quote name,
      TT "name x", " -- convert x to a string",
      PARA,
      "It converts an expression x to a string which contains a visible
-     representation of x, unless x is already a string, in which case
-     it escapes the control characters within the string and encloses
-     it in quotation marks.  
-     The value of ", TT "name x", " is used when printing out x.
-     If x is an hash table and x.name has a value, this value is returned.
-     But if the value of x.name is a symbol, then the name of this symbol
-     is returned only if the value of the symbol is equal to x.
-     If x.name has no value and (class x)#name has a value, it
-     is assumed to be a function and is applied to x in order to produce 
-     the name. Otherwise, the name provided is a suitable visible 
-     representation of the expression.",
+     representation of x, unless x is already a string, in which case it
+     escapes the control characters within the string and encloses it in
+     quotation marks.  The value of ", TT "name x", " is used when printing
+     out ", TT "x", ".  If ", TT "x", " is an hash table and ", TT "x.name",
+     " has a value, this value is returned.  But if the value of ", TT
+     "x.name", " is a string or net, then it is returned.  If x.name has no
+     value and (class x)#name has a value, it is assumed to be a function and
+     is applied to x in order to produce the name. Otherwise, the name
+     provided is a suitable visible representation of the expression.",
      PARA,
      NOINDENT,
      TT "x.name = \"x\"", " -- sets the name of ", TT "x", " to ", TT "\"x\"", ".",
@@ -178,7 +176,7 @@ document { quote Function,
      SEEALSO "functions"
      }
 
-document { "->",
+document { quote "->",
      TT "x -> e    ", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -327,7 +325,7 @@ document { quote seq,
      SEEALSO( "sequence", "lists, arrays, and sequences")
      }
 
-document { ",",
+document { quote ",",
      TT "x,y,...,z", " -- produces a sequence.",
      PARA,
      SEEALSO "lists, arrays, and sequences"
@@ -515,7 +513,7 @@ document { quote prepend,
      }
 
 document { "--",
-     "-- introduces a comment in the text of a program.  The comment runs from
+     TT "--", " introduces a comment in the text of a program.  The comment runs from
      the double hyphen to the end of the line."
      }
 
@@ -538,7 +536,7 @@ document { quote transnet,
      SEEALSO( "String" )
      }
 
-document { "adjacency operator",
+document { quote " ",
      TT "f x", " -- yields the result of applying the function f to x.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -812,7 +810,7 @@ document { quote !,
      "n ! -- computes n factorial, 1*2*3*...*n."
      }
 
-document { "not",
+document { quote "not",
      TT "not x", " -- yields the negation of x, which must be true or false.",
      SEEALSO( "and", "or" )
      }
@@ -868,7 +866,7 @@ document { quote ||,
      SEEALSO("|", "Net")
      }
 
-document { "===",
+document { quote "===",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
      PARA,
@@ -887,7 +885,7 @@ document { "===",
      SEEALSO( "==",  "!=" )
      }
 
-document { "=!=",
+document { quote "=!=",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
      PARA,
@@ -987,7 +985,7 @@ document { quote false,
      SEEALSO("true", "Boolean")
      }
 
-document { "timing",
+document { quote "timing",
      TT "timing e", " -- evaluates e and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
      of cpu timing used, and ", TT "v", " is the value of the the expression.",
@@ -999,7 +997,7 @@ document { "timing",
      SEEALSO "Time"
      }
 
-document { "time",
+document { quote "time",
      TT "time e", " -- evaluates e, prints the amount of cpu time
      used, and returns the value of e.",
      PARA,
@@ -1007,7 +1005,7 @@ document { "time",
      SEEALSO "timing"
      }
 
-document { "Time",
+document { quote Time,
      TT "Time", " -- is the class of all timing results.  Each timing result
      is a ", TO "BasicList", " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
@@ -1030,17 +1028,27 @@ document { quote null,
      SEEALSO ( "Nothing" )
      }
 
-document { "if",
-     TT "if p then x else y", " -- computes p, which must yield the value ", TO "true", " 
-     or ", TO "false", ".  If true, then the value of x is provided,
-     else the value of y is provided.",
-     PARA,
-     "if p then x        --  computes p, which must yield the value ", TO "true", " 
-     or ", TO "false", ".  If true, then the value of x is provided,
-     else the symbol ", TO "null", " is provided."
+document { quote "then",
+     TT "then", " -- a keyword used with ", TO "if", "."
      }
 
-document { "while",
+document { quote "else",
+     TT "else", " -- a keyword used with ", TO "if", "."
+     }
+
+document { quote "if",
+     TT "if p then x else y", " -- computes ", TT "p", ", which must yield the value ", TO "true", " 
+     or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
+     else the value of ", TT "y", " is provided.",
+     PARA,
+     TT "if p then x", " --  computes ", TT "p", ", which must yield the value ", TO "true", " 
+     or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
+     else the symbol ", TO "null", " is provided.",
+     PARA,
+     SEEALSO ("then", "else")
+     }
+
+document { quote "while",
      TT "while p do x", " -- repeatedly evaluates x as long as the value of p remains 
      ", TO "true", ".",
      PARA,
@@ -1050,10 +1058,15 @@ document { "while",
      compound statements.  For example, the expression",
      PRE "     while (a(); not b()) and (c(); not d()) do e()",
      "might be used to replace C code that looks like this:",
-     PRE "     while (TRUE) { a(); if (b()) break; c(); if (d()) break; e(); }"
+     PRE "     while (TRUE) { a(); if (b()) break; c(); if (d()) break; e(); }",
+     SEEALSO "do"
      }
 
-document { "try",
+document { quote "do",
+     TT "do", " -- a keyword used with ", TO "while", "."
+     }
+
+document { quote "try",
      TT "try x else y ", " -- returns the value of x unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
      returns the value of y.", BR, NOINDENT,
@@ -1417,7 +1430,7 @@ document { quote value,
      EXAMPLE "value x"
      }
 
-document { "global",
+document { quote "global",
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
      PARA,
@@ -1433,7 +1446,7 @@ document { quote erase,
      symbol table."
      }
 
-document { "local",
+document { quote "local",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TT "null", ".",
@@ -1443,7 +1456,7 @@ document { "local",
      SEEALSO ("global", "quote")
      }
 
-document { "quote",
+document { quote quote,
      TT "quote s", " -- provides the symbol s, even if s currently has a value.",
      PARA,
      EXAMPLE "num",
@@ -1758,11 +1771,12 @@ document { "Macaulay 2",
 	  TO "system",
 	  TO "syntax",
 	  SHIELD TO "engine",
+	  SHIELD TO "obsolete functions and symbols",
 	  TO "invoking the program",
 	  TO "translating programs from Macaulay",
 	  TO "how to get this program",
 	  TO "plans for the future",
-	  TO "the authors"
+	  TO "the authors",
 	  }
      }
 
@@ -1912,7 +1926,7 @@ document { "operators",
      of them can have methods installed for handling arguments of specific
      types.",
      MENU {
-          (TO "adjacency operator", " -- function application"),
+          (TO {quote " "}, " -- function application"),
           (TO ",", " -- separates elements of lists or sequences"),
           (TO ";", " -- statement separator"),
           (TO "=", " -- assignment"),
@@ -1955,7 +1969,7 @@ document { "operators",
           (TO "||", " -- vertical concatentation of strings or matrices"),
           (TO "&", " -- bit-wise and"),
           (TO ":", " -- ideal quotient, repetitions"),
-          (TO "\\", " -- applying a function to elements of a list"),
+          (TO {quote "\\"}, " -- applying a function to elements of a list"),
           (TO "/", " -- applying a function to elements of a list"),
           (TO "@", " -- "),
           (TO "@@", " -- composing functions"),
@@ -2174,7 +2188,7 @@ document { "programming",
 --      SEEALSO "readExamples"
 --      }
 
-document { "shield",
+document { quote "shield",
      TT "shield x", " -- executes the expression x, temporarily
      ignoring interrupts."
      }
@@ -2415,8 +2429,7 @@ document { "system",
      "Dealing with the garbage collector:",
      MENU {
 	  TO "collectGarbage"
-	  },
-     SEEALSO "obsolete functions"     
+	  }
      }
 
 document { quote pathSeparator,
@@ -2453,7 +2466,7 @@ document { "initialization file",
      and also in the home directory of the user."
      }
 
-document { "Field",
+document { quote Field,
      TT "Field", " -- the class of all fields.",
      PARA,
      "Some fields:",
@@ -3494,8 +3507,8 @@ document { quote format,
      }
 
 
-document { quote syms,
-     TT "syms", " -- a key used in a ", TO "Monoid", " under which is stored a list
+document { quote generatorSymbols,
+     TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under which is stored a list
      of the symbols used as generators for the monoid."
      }
 

@@ -50,7 +50,7 @@ newMonomialIdeal := R -> (
      mi.ring = R;
      mi)
 
-name MonomialIdeal := m -> "monomialIdeal " | name matrix m
+name MonomialIdeal := m -> "monomialIdeal " | name generators m
 
 UnaryMonomialIdealOperation := (operation) -> (m) -> (
      sendgg (ggPush m, operation);

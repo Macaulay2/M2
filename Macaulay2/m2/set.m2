@@ -1,6 +1,6 @@
 -- Copyright 1994 by Daniel R. Grayson
 
-Tally.name = quote Tally
+Tally.name = "Tally"
 name Tally := x -> (
      "tally {"
      | demark(", ", apply(pairs x, (v,i) -> string i | " : " | name v))
@@ -126,7 +126,7 @@ assert( name tally {1,1,1,2,1,3,2} === \"tally {4 : 1, 2 : 2, 1 : 3}\" )
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 "
 
-Set.name = quote Set
+Set.name = "Set"
 document { quote Set,
      TT "Set", " -- the class of all sets.",
      PARA,

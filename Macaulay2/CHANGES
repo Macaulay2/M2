@@ -4,6 +4,19 @@ New in 0.8.42:
 
 graphIdeal now returns an ideal instead of a matrix
 
+Formerly once could specify that a hash table assigned to the variable X 
+should print as "X" by executing
+	X.name = quote X
+The new way is to use
+	X.name = "X"
+The symbol X can also be stored, as before, with
+	X.symbol = quote X
+
+A symbol x with a value will now print as "quote x" rather than as "x".
+But a symbol x "held" inside an Expression will continue to print as "x".
+
+'syms' has been changed to 'generatorSymbols'
+
 -----------------------------------------------------------------------------
 New in 0.8.41:
 

@@ -11,22 +11,29 @@ unlist
 elements = X -> error "'elements' has been replace by toList"
 elements
 
-document { "obsolete functions",
-     "The following functions have become obsolete.",
+document { "obsolete functions and symbols",
+     "The following functions and symbols have become obsolete.",
      MENU {
 	  TO "unlist",
-	  TO "elements"
+	  TO "elements",
+	  TO "syms"
 	  }
      }
 
 document { quote unlist,
      TT "unlist",
      PARA,
-     "An obsolete function, replace by ", TO "toSequence", "."
+     "An obsolete function, replaced by ", TO "toSequence", "."
      }
 
 document { quote elements,
      TT "elements",
      PARA,
-     "An obsolete function, replace by ", TO "toList", "."
+     "An obsolete function, replaced by ", TO "toList", "."
+     }
+
+document { quote syms,
+     TT "syms",
+     PARA,
+     "A symbol, replaced by ", TO "generatorSymbols", "."
      }

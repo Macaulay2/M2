@@ -9,6 +9,93 @@ use stdiop;
 use arith;
 use nets;
 use tokens;
+
+
+export parseInt(s:string):Integer := (
+     i := toInteger(0);
+     foreach c in s do (
+	  if c == '"'
+	  then nothing
+	  else i = 10 * i + (c - '0')
+	  );
+     i);
+export parseDouble(s:string):double := (
+     point := false;
+     x := 0.0;
+     y := 1.0;
+     foreach c in s do (
+	  if c == '"'
+	  then nothing
+	  else if c == '.'
+	  then point = true
+	  else if point
+	  then (
+	       x = x + (y * (c - '0'))/10;
+	       y = y / 10;
+	       )
+	  else x = 10 * x + (c - '0')
+	  );
+     x);
+export parseString(s:string):string := (
+     v := newvarstring(length(s)-2);
+     i := 1;
+     while true do (
+	  if s.i == '"' then break;
+	  if s.i == '\\' then (
+	       i = i+1;
+	       c := s.i;
+	       if c == 'n' then v << '\n'
+	       else if c == 'r' then v << '\r'
+	       else if c == 't' then v << '\t'
+	       else if c == 'f' then v << '\f'
+	       else if '0' <= c && c < '8' then (
+		    j := c - '0';
+		    c = s.(i+1);
+		    if '0' <= c && c < '8' then (
+			 i = i+1;
+			 j = 8 * j +  (c - '0');
+			 c = s.(i+1);
+			 if '0' <= c && c < '8' then (
+			      i = i+1;
+			      j = 8 * j +  (c - '0');
+			      );
+			 );
+		    v << char(j)
+		    )
+	       else v << c
+	       )
+	  else v << s.i;
+	  i = i+1;
+	  );
+     tostring(v)
+     );
+
+export parseChar(s:string):char := (
+     if s.1 == '\\' then (
+	  c := s.2;
+	  if c == 'n' then '\n'
+	  else if c == 'r' then '\r'
+	  else if c == 't' then '\t'
+	  else if c == 'f' then '\f'
+	  else if '0' <= c && c < '8' then (
+	       j := c - '0';
+	       c = s.3;
+	       if '0' <= c && c < '8' then (
+		    j = 8 * j +  (c - '0');
+		    c = s.4;
+		    if '0' <= c && c < '8' then (
+			 j = 8 * j +  (c - '0');
+			 );
+		    );
+	       char(j)
+	       )
+	  else c
+	  )
+     else s.1
+     );
+
+
+
 export thenW := dummyWord;		  -- filled in by keywords.d
 export elseW := dummyWord;		  -- filled in by keywords.d
 export ofW := dummyWord;		  -- filled in by keywords.d
@@ -247,23 +334,27 @@ export unarywhile(
      if body == errorTree then return(errorTree);
      r := ParseTree(While(iftoken,predicate,dotoken,body));
      accumulate(r,file,prec,obeylines));
+unstringToken(q:Token):Token := (
+     if q.word.typecode == TCstring 
+     then Token(unique(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry)
+     else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,true);
      if arg == errorToken then return(errorTree);
-     r := ParseTree(Quote(quotetoken,arg));
+     r := ParseTree(Quote(quotetoken,unstringToken(arg)));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,true);
      if arg == errorToken then return(errorTree);
-     r := ParseTree(GlobalQuote(quotetoken,arg));
+     r := ParseTree(GlobalQuote(quotetoken,unstringToken(arg)));
      accumulate(r,file,prec,obeylines));
 export unarylocal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,true);
      if arg == errorToken then return(errorTree);
-     r := ParseTree(LocalQuote(quotetoken,arg));
+     r := ParseTree(LocalQuote(quotetoken,unstringToken(arg)));
      accumulate(r,file,prec,obeylines));
 export unaryif(iftoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,iftoken.word.parse.scope,false);

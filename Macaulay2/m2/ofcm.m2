@@ -51,10 +51,10 @@ GeneralOrderedMonoid.Engine = true
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
 expression GeneralOrderedMonoid := M -> (
-     if not M.?syms
+     if not M.?generatorSymbols
      then new HeldString from "--empty GeneralOrderedMonoid--"
      else (
-     	  v := M.syms;
+     	  v := M.generatorSymbols;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
           if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
@@ -67,10 +67,10 @@ expression GeneralOrderedMonoid := M -> (
 	  )
      )
 name GeneralOrderedMonoid := M -> (
-     if not M.?syms
+     if not M.?generatorSymbols
      then "--empty GeneralOrderedMonoid--"
      else (
-     	  v := M.syms;
+     	  v := M.generatorSymbols;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
           if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
@@ -82,10 +82,10 @@ name GeneralOrderedMonoid := M -> (
      	  concatenate("[",between(",",name\v),"]")
 	  ))
 net GeneralOrderedMonoid := M -> (
-     if not M.?syms
+     if not M.?generatorSymbols
      then "--empty GeneralOrderedMonoid--"
      else (
-     	  v := M.syms;
+     	  v := M.generatorSymbols;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
           if (M.Options.MonomialOrder =!= (options monoid).MonomialOrder)
@@ -365,7 +365,7 @@ makeit1 := (options) -> (
      else error "invalid MonomialOrder option";
      M.MonomialOrder = mo;
 
-     M.syms = varlist;
+     M.generatorSymbols = varlist;
      scan(varlist, 
 	  sym -> (
 	       if Symbol =!= basictype sym 
@@ -405,13 +405,13 @@ makeit1 := (options) -> (
 	  ConvertRepeat ConvertApply (
 	       (v,i) -> if i != 1 then (expression v)^(expression i) else expression v,
 	       ConvertJoin( 
-		    ConvertApply(i -> M.syms#i, ConvertInteger), 
+		    ConvertApply(i -> M.generatorSymbols#i, ConvertInteger), 
 		    ConvertInteger)));
      expression M := x -> (
 	  x = select(x, (k,v) -> k < n);
 	  x = new Product from apply(
 	       toList x,
-	       (k,v) -> new Power from {expression M.syms#k, v}
+	       (k,v) -> new Power from {expression M.generatorSymbols#k, v}
 	       );
 	  if #x === 0 then expression 1 else x
 	  );
@@ -477,7 +477,7 @@ makeit1 := (options) -> (
 	  );
      baseName M := x -> (
 	  if 1 === number(x, (v,e) -> v<n) and x#0#1 === 1
-	  then (M.syms) # (x#0#0)
+	  then (M.generatorSymbols) # (x#0#0)
 	  else error "expected a generator"
 	  );
      if options.Inverses then (
@@ -511,7 +511,7 @@ makeit1 := (options) -> (
                   options.MonomialSize,
                   if options.SkewCommutative then 1 else 0},
 	  ggmonoid) ;
-     M.use = x -> scan(M.syms,M.vars,assign);
+     M.use = x -> scan(M.generatorSymbols,M.vars,assign);
      M)
 
 makeit1 = memoize makeit1
@@ -566,10 +566,10 @@ monoid Ring := R -> R.monoid
 GeneralOrderedGroup = new Type of GeneralOrderedMonoid
 GeneralOrderedGroup.Engine = true
 name GeneralOrderedGroup := M -> (
-     if not M.?syms
+     if not M.?generatorSymbols
      then "--empty GeneralOrderedGroup--"
      else (
-     	  v := M.syms;
+     	  v := M.generatorSymbols;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
      	  concatenate("group [",between(",",name\v),"]")
@@ -682,7 +682,7 @@ document { quote tensor,
   EXAMPLE "N = monoid[e,f,g, Degrees => {1,2,3}]",
   EXAMPLE "P = tensor(M,N,MonomialOrder => GRevLex)",
   EXAMPLE "describe P",
-  EXAMPLE "tensor(M,M,Variables => {x_0 .. x_7}, MonomialOrder => ProductOrder{4,4})",
+  EXAMPLE "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
   EXAMPLE "describe oo",
   "Here is a similar example with rings.",
   EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",

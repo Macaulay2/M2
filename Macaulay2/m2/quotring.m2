@@ -158,10 +158,10 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
      S.ConvertToExpression = R.ConvertToExpression;
      S.isCommutative = R.isCommutative;
      S.baseRings = append(R.baseRings,R);
-     if R.?syms then (
-	  S.syms = R.syms;
-	  scan(R.syms, x -> (
-		    a := name x;
+     if R.?generatorSymbols then (
+	  S.generatorSymbols = R.generatorSymbols;
+	  scan(R.generatorSymbols, x -> (
+		    a := if class x === Symbol then string x else name x;
 		    S#a = promote(R#a,S);
 		    ));
 	  );

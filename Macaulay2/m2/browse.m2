@@ -5,10 +5,10 @@ menu := quote menu
 menu = method()
 
 RUNME := new SelfInitializingType of BasicList
-RUNME.name = quote RUNME
+RUNME.name = "RUNME"
 
 METHODS := new SelfInitializingType of BasicList
-METHODS.name = quote METHODS
+METHODS.name = "METHODS"
 
 showit := (ITEMS,SAME,DEFAULT) -> (
      wid := if # ITEMS < 10 then 1 else if # ITEMS < 100 then 2 else 3;

@@ -72,11 +72,15 @@ document { quote Held,
      include positive numbers, functions, boolean values, symbols, ...,
      but not negative numbers or rational numbers, for they require special
      treatment when printed which depends on their neighbors in the containing
-     expression, and on whether two-dimensional printing is being done."
+     expression, and on whether two-dimensional printing is being done.",
+     PARA,
+     "As an experimental exception to the rule stated above, if the thing
+     being held is a symbol, then the method for printing is to apply ", TO
+     "string", ", so that the word ", TT "quote", " is not included."
      }
 
 Held#expandFunction = first
-tex Held := v -> "{" | name v#0 | "}"
+tex Held := v -> "{" | if class v#0 === Symbol then string v#0 else name v#0 | "}"
 
 HeldString = new Type of Expression
 HeldString#expandFunction = first
@@ -133,7 +137,7 @@ name Equation := v -> (
 	       apply(v, e -> if precedence e <= p then ("(", name e, ")") else name e))))
 
 ZeroExpression = new Type of Expression
-ZeroExpression.name = quote ZeroExpression
+ZeroExpression.name = "ZeroExpression"
 ZERO := new ZeroExpression
 name ZeroExpression := net ZeroExpression := x -> "0"
 
@@ -143,7 +147,7 @@ document { quote ZeroExpression,
      }
 
 OneExpression = new Type of Expression
-OneExpression.name = quote OneExpression
+OneExpression.name = "OneExpression"
 ONE := new OneExpression
 name OneExpression := net OneExpression := x -> "1"
 
@@ -400,10 +404,6 @@ name MatrixExpression := m -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-X := new Type of HashTable
-X X := identity
-SPACE := first first keys X
-
 binary := new HashTable from {
      quote * => ((x,y) -> x*y),		  -- 
      quote + => ((x,y) -> x+y),		  -- 
@@ -430,7 +430,7 @@ binary := new HashTable from {
      quote ** => ((x,y) -> x**y),
      quote /^ => ((x,y) -> x/^y),
      quote _ => ((x,y) -> x_y),
-     SPACE => ((x,y) -> x y)
+     quote " " => ((x,y) -> x y)
      }
 BinaryOperation = new Type of Expression -- {op,left,right}
 BinaryOperation#expandFunction = m -> (
@@ -540,10 +540,6 @@ document { quote Expression,
      producing them is ", TO "expression", ".  The usual algebraic
      operations are available for them, but most simplifications do not
      occur.",
-     PARA,
-     "An expression whose class is ", TT "Expression", " has just one part
-     and serves as a simple container for it; such containers are produced
-     by the function ", TO "hold", ".",
      PARA,
      "The parts of expressions are not always expressions.  For example,
      ", TO "factor", " returns such an expression.",
@@ -1036,7 +1032,7 @@ expression Sequence := v -> apply(v,expression)
 
 expression Thing := x -> new FunctionApplication from { expression, x }
 expression HashTable := x -> (
-     if x.?name and value x.name === x then hold x.name
+     if x.?name then new HeldString from {x.name}
      else new FunctionApplication from { expression, x }
      )
 expression RR := x -> (
@@ -1056,13 +1052,7 @@ expression Boolean := expression Symbol := expression File :=
      expression Handle := expression Nothing := expression Database := 
      expression Function := x -> new Held from {x}
 
-net Held := v -> net v#0
-
-name Held := v -> (
-     if class v#0 === Symbol
-     then string v#0
-     else name v#0
-     )
+net Held := name Held := v -> if class v#0 === Symbol then string v#0 else name v#0
 
 TEST ///
 R=ZZ[a]
@@ -1111,13 +1101,7 @@ document { quote SelfNamer,
      EXAMPLE "y = new Y"
      }
 
-GlobalAssignHook SelfNamer := (X,x) -> (
-     if not x#?(quote name) then x.name = X
-     )
+GlobalAssignHook SelfNamer := globalAssignFunction
+GlobalReleaseHook SelfNamer := globalReleaseFunction
 
-GlobalReleaseHook SelfNamer := (X,x) -> (
-     if x#?(quote name) and X === x.name
-     then remove(x,quote name)
-     )
-
-expression SelfNamer := (x) -> hold x.name
+expression SelfNamer := (x) -> hold x.symbol

@@ -1,32 +1,32 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-Net.name = quote Net
-Time.name = quote Time
-Handle.name = quote Handle
-HashTable.name = quote HashTable
-Boolean.name = quote Boolean
-MutableHashTable.name = quote MutableHashTable
-Function.name = quote Function
-Sequence.name = quote Sequence
-Error.name = quote Error
+Net.name = "Net"
+Time.name = "Time"
+Handle.name = "Handle"
+HashTable.name = "HashTable"
+Boolean.name = "Boolean"
+MutableHashTable.name = "MutableHashTable"
+Function.name = "Function"
+Sequence.name = "Sequence"
+Error.name = "Error"
 erase quote Error
-Database.name = quote Database
-Thing.name = quote Thing
-Nothing.name = quote Nothing
-Type.name = quote Type
-String.name = quote String
-BasicList.name = quote BasicList
-List.name = quote List
-MutableList.name = quote MutableList
-File.name = quote File
-Array.name = quote Array
-Symbol.name = quote Symbol
-SymbolTable.name = quote SymbolTable
-ZZ.name = quote ZZ
-QQ.name = quote QQ
-RR.name = quote RR
-Ring.name = quote Ring
-Field.name = quote Field
+Database.name = "Database"
+Thing.name = "Thing"
+Nothing.name = "Nothing"
+Type.name = "Type"
+String.name = "String"
+BasicList.name = "BasicList"
+List.name = "List"
+MutableList.name = "MutableList"
+File.name = "File"
+Array.name = "Array"
+Symbol.name = "Symbol"
+SymbolTable.name = "SymbolTable"
+ZZ.name = "ZZ"
+QQ.name = "QQ"
+RR.name = "RR"
+Ring.name = "Ring"
+Field.name = "Field"
 
 uniform = (x) -> same apply(x,class)
 
@@ -103,7 +103,7 @@ document { quote installMethod,
      SEEALSO( "lookup",  "new", "classes")
      }
  
-document { "new",
+document { quote "new",
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR,
      NOINDENT,
@@ -170,7 +170,15 @@ document { "new",
      "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
      TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used for 
      installation of the initialization routines.",
-     SEEALSO "classes"
+     SEEALSO ("classes", "of", "from")
+     }
+
+document { quote "of",
+     TT "of", " -- a keyword used with ", TO "new", "."
+     }
+
+document { quote "from",
+     TT "from", " -- a keyword used with ", TO "new", "."
      }
 
 document { quote NewMethod,

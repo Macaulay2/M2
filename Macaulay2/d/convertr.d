@@ -43,87 +43,6 @@ export UnaryInstallFun := dummyTernaryFun;
 export braceFun := dummyMultaryFun;     -- filled in later in actors.d
 export bracketFun := dummyMultaryFun;   -- filled in later in actors.d
 
-convertint(s:string):Integer := (
-     i := toInteger(0);
-     foreach c in s do (
-	  if c == '"'
-	  then nothing
-	  else i = 10 * i + (c - '0')
-	  );
-     i);
-convertdouble(s:string):double := (
-     point := false;
-     x := 0.0;
-     y := 1.0;
-     foreach c in s do (
-	  if c == '"'
-	  then nothing
-	  else if c == '.'
-	  then point = true
-	  else if point
-	  then (
-	       x = x + (y * (c - '0'))/10;
-	       y = y / 10;
-	       )
-	  else x = 10 * x + (c - '0')
-	  );
-     x);
-convertstring(s:string):string := (
-     v := newvarstring(length(s)-2);
-     i := 1;
-     while true do (
-	  if s.i == '"' then break;
-	  if s.i == '\\' then (
-	       i = i+1;
-	       c := s.i;
-	       if c == 'n' then v << '\n'
-	       else if c == 'r' then v << '\r'
-	       else if c == 't' then v << '\t'
-	       else if c == 'f' then v << '\f'
-	       else if '0' <= c && c < '8' then (
-		    j := c - '0';
-		    c = s.(i+1);
-		    if '0' <= c && c < '8' then (
-			 i = i+1;
-			 j = 8 * j +  (c - '0');
-			 c = s.(i+1);
-			 if '0' <= c && c < '8' then (
-			      i = i+1;
-			      j = 8 * j +  (c - '0');
-			      );
-			 );
-		    v << char(j)
-		    )
-	       else v << c
-	       )
-	  else v << s.i;
-	  i = i+1;
-	  );
-     tostring(v)
-     );
-convertchar(s:string):char := (
-     if s.1 == '\\' then (
-	  c := s.2;
-	  if c == 'n' then '\n'
-	  else if c == 'r' then '\r'
-	  else if c == 't' then '\t'
-	  else if c == 'f' then '\f'
-	  else if '0' <= c && c < '8' then (
-	       j := c - '0';
-	       c = s.3;
-	       if '0' <= c && c < '8' then (
-		    j = 8 * j +  (c - '0');
-		    c = s.4;
-		    if '0' <= c && c < '8' then (
-			 j = 8 * j +  (c - '0');
-			 );
-		    );
-	       char(j)
-	       )
-	  else c
-	  )
-     else s.1
-     );
 export convert(e:ParseTree):Code;
 seqlen(e:ParseTree):int := (
      i := 0;
@@ -246,11 +165,11 @@ export convert(e:ParseTree):Code := (
 	  wrd := token.word;
 	  pos := token.position;
 	  if wrd.typecode == TCdouble
-	  then Code(exprCode(Real(convertdouble(wrd.name)),pos))
+	  then Code(exprCode(Real(parseDouble(wrd.name)),pos))
 	  else if wrd.typecode == TCint
-	  then Code(exprCode(convertint(wrd.name),pos))
+	  then Code(exprCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
-	  then Code(exprCode(convertstring(wrd.name), pos))
+	  then Code(exprCode(parseString(wrd.name), pos))
 	  else if var.protected && !var.transientScope
 	  then Code(exprCode(frame(var.scopenum).values.(var.frameindex), pos))
 	  else Code(variableCode(var,pos)))

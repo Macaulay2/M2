@@ -36,6 +36,17 @@ document { quote res,
     "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
     }
 
+document { quote resolution,
+     TT "resolution", " -- a command for producing resolutions.",
+     PARA,
+     "See one of the following entries.",
+     MENU {
+	  TO (resolution, Module),
+	  TO (resolution, Matrix),
+	  TO (resolution, Ideal)
+	  }
+     }
+
 document { resolution => DegreeLimit,
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "resolution", " which specifies that the computation should halt
@@ -80,14 +91,6 @@ document { resolution => StopBeforeComputation,
      "Tells whether to start the computation, with the default value
      being ", TT "true", ".  This can be useful when you want to obtain
      the partially computed resolution contained in an interrupted computation."
-     }
-
-document { quote resolution,
-     MENU {
-	  TO (resolution, Module),
-	  TO (resolution, Matrix),
-	  TO (resolution, Ideal)
-	  }
      }
 
 document { (resolution, Ideal),

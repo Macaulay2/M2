@@ -9,14 +9,21 @@ document { quote InfiniteNumber,
 
 sign := quote sign
 
-infinity = new InfiniteNumber from {quote name => quote infinity, sign => 1}
+infinity = new InfiniteNumber from {
+     quote name => "infinity", 
+     quote symbol => infinity,
+     sign => 1
+     }
 document { quote infinity,
      TT "infinity", " -- a representation of infinity.",
      SEEALSO ( "-infinity", "InfiniteNumber" )
      }
 
 IndeterminateNumber = new Type of HashTable
-indeterminate = new IndeterminateNumber from {quote name => quote indeterminate}
+indeterminate = new IndeterminateNumber from {
+     quote name => "indeterminate",
+     quote symbol => quote indeterminate
+     }
 document { quote IndeterminateNumber,
      TT "IndeterminateNumber", " -- the class of indeterminate numbers (of
      which there is only one).",
