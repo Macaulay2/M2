@@ -193,7 +193,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  else if isnewline(ch) then (
 	       getc(file);
 	       return(Token(newlineW,pos,globalScope,dummySymbol,sawNewline)))
-	  else if isalpha(ch) then (
+	  else if isalpha(ch) && ch != int('\'') then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return(Token(
