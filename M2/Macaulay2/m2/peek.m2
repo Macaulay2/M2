@@ -65,29 +65,3 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 
 peek = s -> peek2(s,1)
 
-document { quote peek,
-     TT "peek s", " -- displays contents of ", TT "s", " to depth 1, bypassing
-     installed methods.",
-     PARA,
-     EXAMPLE {
-	  "t = set {1,2,3}",
-      	  "peek t",
-      	  "new MutableHashTable from {a=>3, b=>44}",
-      	  "peek oo"
-	  },
-     SEEALSO "peek2"
-     }
-
-document { quote peek2,
-     TT "peek2(s,n)", " -- displays contents of ", TT "s", " to depth ", TT "n", ", 
-     bypassing installed methods.",
-     PARA,
-     "It applies the default output method to the object ", TT "s", ",
-     bypassing the installed method for objects of its class.",
-     EXAMPLE {
-	  "s = factor 112",
-      	  "peek s",
-      	  "peek2(s,2)"
-	  },
-     SEEALSO "peek"
-     }

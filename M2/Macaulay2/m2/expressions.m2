@@ -29,36 +29,10 @@ HeaderType = new Type of Type
 HeaderType List := (T,z) -> new T from z
 HeaderType Sequence := (T,z) -> new T from toList z
 
-document { quote HeaderType,
-     TT "HeaderType", " -- the class of all types ", TT "X", " of lists which can be
-     constructed by expressions of the form ", TT "X {a,b,c,...}", ".  They
-     also act on sequences.",
-     PARA,
-     EXAMPLE {
-	  "X = new HeaderType of BasicList",
-	  "X {a,b,c}"
-	  },
-     SEEALSO {"WrapperType", "SelfInitializingType"}
-     }
-
 WrapperType = new Type of Type
 WrapperType List := (T,z) -> new T from z
 WrapperType Sequence := (T,z) -> new T from toList z
 WrapperType Thing := (T,z) -> new T from {z}
-
-document { quote WrapperType,
-     TT "WrapperType", " -- the class of all types ", TT "X", " of lists which can be
-     constructed by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists
-     of length one, by an expression of the form ", TT "X a", ".  They also act
-     on sequences.",
-     PARA,
-     EXAMPLE {
-	  "X = new WrapperType of BasicList",
-	  "X {a,b,c}",
-	  "X a"
-	  },
-     SEEALSO {"HeaderType", "SelfInitializingType"}
-     }
 
 -----------------------------------------------------------------------------
 
@@ -73,18 +47,6 @@ AssociativeExpression = new Type of Expression
 --	  term -> if class term === type then toSequence term else term
 --	  )
 --     )
-
-document { quote AssociativeExpression,
-     TT "AssociativeExpression", " -- a type of ", TO "Expression", ".",
-     PARA,
-     "Types of associative expression:",
-     MENU {
-	  TO "Equation",
-	  TO "Product",
-	  TO "Sum"
-	  },
-     SEEALSO "Expression"
-     }
 
 lookupi := x -> (
      r := lookup x;
@@ -105,16 +67,6 @@ name Expression := v -> (
      )
 
 Holder = new WrapperType of Expression
-
-document { quote Holder,
-     TT "Holder", " -- a type of ", TO "Expression", ".",
-     PARA,
-     "This type of expresssion is a container for a single, arbitrary, thing which
-     is basic enough that the correct method for printing does not depend
-     on its neighbors in the containing expression.  A negative number would
-     not be basic enough for this purpose, since as a member of a sum, it would
-     require special treatment."
-     }
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
 mathML Holder := v -> mathML v#0
@@ -169,18 +121,10 @@ name Equation := v -> (
 ZeroExpression = new Type of Holder
 ZeroExpression.name = "ZeroExpression"
 ZERO := new ZeroExpression from {0}
-document { quote ZeroExpression,
-     TT "ZeroExpression", " -- a type of ", TO "Expression", " of which
-     there is just one instance, an expression representing the number 0."
-     }
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
 OneExpression.name = "OneExpression"
 ONE := new OneExpression from {1}
-document { quote OneExpression,
-     TT "OneExpression", " -- a type of ", TO "Expression", " of which
-     there is just one instance, an expression representing the number 1."
-     }
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 
@@ -217,13 +161,6 @@ net DoubleArrow := v -> (
      if precedence v#0 <= p then v0 = horizontalJoin("(",net v0,")");
      if precedence v#1 <  p then v1 = horizontalJoin("(",net v1,")");
      horizontalJoin(v0," => ",v1))
-
-document { quote DoubleArrow,
-     TT "DoubleArrow", " -- a type of ", TO "Expression", " which represents
-     something of the form ", TT "a => b", ".",
-     PARA,
-     "This is experimental, and intended for internal use only."
-     }
 
 Product = new WrapperType of AssociativeExpression
 
@@ -576,144 +513,6 @@ net Adjacent := net FunctionApplication := m -> (
 	    precedence Expression := x -> 70    -- the default
 		precedence Holder := x -> 70    -- used to be precedence x#0
 -----------------------------------------------------------------------------
-
-document { quote Expression,
-     TT "Expression", " -- the class of all expressions.",
-     PARA,
-     "These expressions are symbolic representations of algebraic
-     expressions, mainly useful in printing.  The method for 
-     producing them is ", TO "expression", ".  The usual algebraic
-     operations are available for them, but most simplifications do not
-     occur.",
-     PARA,
-     "The parts of expressions are not always expressions.  For example,
-     ", TO "factor", " returns such an expression.",
-     PARA,
-     EXAMPLE "(expression 2)^5 * (expression 3)^3 / ((expression 5) * (expression 11)^2)^6",
-     PARA,
-     "Types of expressions:",
-     MENU {
-	  TO "Adjacent",
-	  TO "AssociativeExpression",
-	  TO "BinaryOperation",
-	  TO "Divide",
-	  TO "DoubleArrow",
-     	  TO "FunctionApplication",
-	  TO "Holder",
-	  TO "MatrixExpression",
-	  TO "Minus",
-	  TO "NonAssociativeProduct",
-	  TO "OneExpression",
-	  TO "Power",
-	  TO "Product",
-	  TO "RowExpression",
-	  TO "SparseMonomialVectorExpression",
-	  TO "SparseVectorExpression",
-	  TO "Subscript",
-	  TO "Superscript",
-	  TO "Sum",
-	  TO "Table",
-	  TO "ZeroExpression",
-	  },
-     "Functions which create expressions:",
-     MENU {
-	  TO "hold",
-	  },
-     "Functions which act on expressions:",
-     MENU {
-	  TO "value",
-	  TO "precedence"
-	  }
-     }
-document { quote expression,
-     TT "expression x", " -- make an ", TO "Expression", " from x."
-     }
-document { quote Divide,
-     TT "Divide", " -- a type of ", TO "Expression", " representing a quotient."
-     }
-document { quote Table,
-     TT "Table", " -- a type of ", TO "Expression", " representing
-     a table, i.e., a list of lists of the same length.",
-     PARA,
-     EXAMPLE {
-	  ///Table {{a,b,c},{a,bb,ccc}}///,
-	  ///value oo///,
-	  },
-     SEEALSO {"MatrixExpression"}
-     }
-document { quote MatrixExpression,
-     TT "MatrixExpression", " -- a type of ", TO "Expression", " representing
-     a matrix.",
-     PARA,
-     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
-     SEEALSO {"Table"}
-     }
-document { quote RowExpression,
-     TT "RowExpression", " -- a type of ", TO "Expression", " representing
-     a horizontal sequence of expressions."
-     }
-document { quote Minus,
-     TT "Minus", " -- a type of ", TO "Expression", " representing negation.",
-     PARA,
-     "This is a unary operator."
-     }
-document { quote NonAssociativeProduct,
-     TT "NonAssociativeProduct", " -- a type of ", TO "Expression", " representing
-     a nonassociative product."
-     }
-document { quote Power,
-     TT "Power", " -- a type of ", TO "Expression", " representing a power.",
-     PARA,
-     "Normally power expressions with an exponent equal to 1 will not be
-     produced.  But it is desirable for ", TO "factor", " to return 
-     a product of powers, and some of them will have 1 as exponent.  The
-     routines for printing of expressions will take this into account,
-     suppress exponents equal to 1, and arrange for parenthesization
-     correctly."
-     }
-document { quote Product,
-     TT "Product", " -- a type of ", TO "Expression", " representing a product."
-     }
-document { quote SparseVectorExpression,
-     TT "SparseVectorExpression", " -- a type of ", TO "Expression", "
-     representing a sparse vector."
-     }
-document { quote SparseMonomialVectorExpression,
-     TT "SparseMonomialVectorExpression", " -- a type of ", TO "Expression", "
-     representing a sparse monomial vector.",
-     PARA,
-     "The difference between this and ", TO "SparseVectorExpression", " is that
-     the basis vectors are treated like variables for printing purposes."
-     }
-document { quote BinaryOperation,
-     TT "BinaryOperation", " -- a type of ", TO "Expression", " representing
-     the result of a binary operation."
-     }
-document { quote Subscript,
-     TT "Subscript", " -- a type of ", TO "Expression", " representing a
-     subscripted expression."
-     }
-document { quote Adjacent,
-     TT "Adjacent", " -- a type of ", TO "Expression", " representing a pair
-     of adjacent expressions, separated only by white space."
-     }
-document { quote FunctionApplication,
-     TT "FunctionApplication", " -- a type of ", TO "Expression", " representing an
-     application of a function."
-     }
-document { quote Superscript,
-     TT "Superscript", " -- a type of ", TO "Expression", " representing a
-     superscripted expression."
-     }
-document { quote Equation,
-     TT "Equation", " -- a type of ", TO "Expression", " representing an
-     equation."
-     }
-document { quote Sum,
-     TT "Sum", " -- a type of ", TO "Expression", " representing a sum."
-     }
-
------------------------------------------------------------------------------
 -- printing two dimensional ascii output
 
 nobracket := identity
@@ -941,29 +740,6 @@ mathML MatrixExpression := x -> concatenate(
 
 -----------------------------------------------------------------------------
 -- tex stuff
-document { quote tex,
-     TT "tex x", " -- convert ", TT "x", " to TeX format.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ[a..f]",
-      	  "tex matrix {{a^2+2,b,c},{d,e,f^3-a}}",
-	  },
-     SEEALSO {"TeX", "texMath"}
-     }
-
-document { quote texMath,
-     TT "texMath x", " -- convert ", TT "x", " to TeX format
-     for use in TeX math mode.",
-     PARA,
-     "The main difference between this and ", TO "tex", " is that the
-     surrouding dollar signs aren't there.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ[x]",
-      	  "texMath (x-1)^6",
-	  },
-     SEEALSO {"TeX", "tex"}
-     }
 
 texMath Expression := v -> (
      op := class v;
@@ -1204,13 +980,7 @@ TeX = x -> (
      then run("(xdvi -s 4 "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log)&")
      else run("rm -f "|f|".tex "|f|".dvi "|f|".log");
      )
-document { quote TeX,
-     TT "TeX x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
-     PARA,
-     "The code for this function is Unix dependent at the moment.",
-     PARA,
-     SEEALSO "tex"
-     }
+
 -----------------------------------------------------------------------------
 -- netscape stuff
 
@@ -1237,11 +1007,6 @@ document { quote TeX,
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl; null)
 
-document { quote print,
-     TT "print x", " -- prints ", TT "x", " on the standard output followed by a new line",
-     PARA,
-     "The return value is ", TO "null", "."
-     }
 -----------------------------------------------------------------------------
 
 texMath RR := string
@@ -1266,20 +1031,6 @@ mathML QQ := i -> concatenate(
 mathML Thing := x -> mathML expression x
 
 File << Thing := (o,x) -> printString(o,net x)
-document { (quote <<, File, Thing),
-     TT "f << x", " -- prints the expression x on the output file f.",
-     PARA,
-     "Returns f as its value.  Parsing associates leftward, so that 
-     several expressions may be displayed with something like f<<x<<y<<z.
-     If f is a string, then a new file with name f is created,
-     the expression x is printed into f, and the file f is closed.",
-     PARA,
-     EXAMPLE {
-	  "x = 5",
-      	  ///<< "the value of x is " << x << endl///,
-	  },
-     SEEALSO {"<<"}
-     }     
 
 nodocs := new MutableHashTable from {
      (quote < , true),
@@ -1367,36 +1118,7 @@ expression Boolean := expression Symbol := expression File :=
      expression Handle := expression Nothing := expression Database := 
      expression Function := x -> new Holder from {x}
 
-TEST ///
-R=ZZ[a]
-assert( name a === "a" )
-assert( name a^2 === "a^2" )
-///
-
 -----------------------------------
-
-document { quote hold,
-     TT "hold x", " -- embeds it argument x in a list of class ", TO "Holder", ".",
-     PARA,
-     "It might be useful for displaying an integer in factored form,
-     for example, because the usual algebraic operations are available
-     for ", TO "Expression", "s, but no simplification occurs.",
-     PARA,
-     EXAMPLE "(hold 2)^5 * (hold 3)^3 * (hold 5) * (hold 11)^2",
-     PARA,
-     "Here is example of a little function that expresses rational numbers
-     as Egyptian fractions using ", TT "hold", ".",
-     EXAMPLE {
-	  "egyptian = method();",
-	  ///egyptian QQ := x -> (
-    if x == 0 then 0
-    else (
-         n := ceiling(1/x);
-         hold(1/n) + egyptian(x - 1/n) 
-         ));///,
-     	  "egyptian(30/31)"
-     	  }
-     }
 
 Position = new Type of BasicList
 name Position := net Position := i -> concatenate(i#0,":",string i#1,":",string i#2)
@@ -1430,11 +1152,6 @@ RightArrow = Entity {
      quote symbol  => quote RightArrow
      }
 
-document { quote RightArrow,
-     TT "RightArrow", " -- an entity used in hypertext to represent an
-     rightward pointing arrow."
-     }
-
 DownArrow = Entity {
      quote texMath => ///\downarrow{}///,
      quote html    => ///<IMG SRC="DownArrow.gif">///,
@@ -1443,7 +1160,3 @@ DownArrow = Entity {
      quote symbol  => quote DownArrow
      }
 
-document { quote DownArrow,
-     TT "DownArrow", " -- an entity used in hypertext to represent an
-     downward pointing arrow."
-     }

@@ -3,34 +3,7 @@
 CC = new Field of BasicList
 CC.isCommutative = true
 
-document { quote CC,
-     TT "CC", " -- the class of all complex numbers.",
-     PARA,
-     "The symbol ", TO "ii", " represents the square root of -1.",
-     PARA, 
-     EXAMPLE {
-	  "z = 3-4*ii",
-      	  "z^5",
-      	  "1/z",
-	  },
-     PARA,
-     "Here are some functions for use with complex numbers.",
-     MENU {
-	  TO "realPart",
-	  TO "imaginaryPart",
-	  TO "conjugate"
-	  },
-     PARA,
-     SEEALSO "numbers"
-     }
-
-
 ii = new CC from {0,1}
-document { quote ii,
-     TT "ii", " -- the square root of -1.",
-     PARA,
-     SEEALSO{ "CC"}
-     }
 
 CC.char = 0
 CC#0 = new CC from {0,0}
@@ -58,16 +31,6 @@ exprI := quote ii
 expression CC := z -> z#0 + z#1 * hold exprI
 name CC := z -> name expression z
 net CC := z -> net expression z
-document { quote realPart,
-     TT "realPart z", " -- return the real part of a complex number z."
-     }
-document { quote imaginaryPart,
-     TT "imaginaryPart z", " -- return the imaginary part of a complex number z."
-     }
-
-document { quote conjugate,
-     TT "conjugate z", " -- the complex conjugate of the complex number z."
-     }
 
 CC + CC := (x,y) -> new CC from {x#0+y#0,x#1+y#1}
 
@@ -117,20 +80,3 @@ CC == QQ := (z,i) -> z#0 == i and z#1 == 0
 QQ == CC := (i,z) -> z#0 == i and z#1 == 0
 CC == RR := (z,i) -> z#0 == i and z#1 == 0
 RR == CC := (i,z) -> z#0 == i and z#1 == 0
-
-TEST ///
-     z = 2 - 3*ii
-     w = 4 + 5*ii
-     x = 2 + ii - ii
-     assert( z*w == 23  - 2*ii )
-     assert( z/w == -7/41 + -22/41 * ii )
-     assert( 1 + z == 3 - 3*ii )
-     assert( 2*w == 8 + 10*ii )
-     assert( z + w == 6 + 2*ii )
-     assert( name w == "4+5*ii" )
-     assert( conjugate z == 2 + 3*ii )
-     assert( x == 2 )
-     assert( x == 2. )
-     assert( x == 2/1 )
-     assert( net ( 2 - 3 * ii ) === "2 - 3ii"^0 )
-     ///

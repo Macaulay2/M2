@@ -336,7 +336,7 @@ int main(argc,argv)
 int argc; 
 char **argv;
 {
-     char dummy[1];
+     char dummy;
      extern char *GC_stackbottom;
      char *p, **x;
      char **saveenvp = NULL;
@@ -357,7 +357,7 @@ char **argv;
 	argc = 5;
 #endif
 
-     GC_stackbottom = dummy;
+     GC_stackbottom = &dummy;
 
      ONSTACK(saveenvp);
 
@@ -498,7 +498,7 @@ char **argv;
      progname = saveargv[0];
      for (p=progname; *p; p++) if (*p=='/') progname = p+1;
 
-     GC_stackbottom = dummy;	
+     GC_stackbottom = &dummy;
      if (getenv("GC_free_space_divisor")) {
 	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
 	  if (GC_free_space_divisor <= 0) {
@@ -683,9 +683,9 @@ static void handler2(int k)
 #if !defined(__MWERKS__) && !defined(__CYGWIN32__)
 static void *first_rw_page_after_etext() {
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
-     char *p = (char *)RUP((long long)&etext);
-     /* will have to replace "long long" above by some integer type
-	determined to be the same size as a pointer */
+     char *p = (char *)RUP((intp)&etext);
+     /* "intp" is determined to be the same size as a pointer
+	in ../c2/targettypes.h */
      for (;; p+=PAGESIZE) {
 	  if (0 != sigsetjmp(jumpbuffer,TRUE))  {
 	       signal(SIGSEGV,handler);	/* reset the handler */

@@ -17,13 +17,6 @@ binomial(ZZ,ZZ) := memoize (
 	  )
      )
 
-document { quote binomial,
-     TT "binomial(n,i)", " -- returns the binomial coefficient, the coefficient
-     of x^i in (1+x)^i.",
-     PARA,
-     EXAMPLE "binomial(13,6)"
-     }
-
 Thing ^ QQ := (x,r) -> (
      if denominator r === 1
      then x^(numerator r)

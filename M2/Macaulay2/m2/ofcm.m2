@@ -1,52 +1,8 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 MonoidElement = new Type of BasicList
-document { quote MonoidElement,
-     TT "MonoidElement", " -- the class of all monoid elements.",
-     PARA,
-     SEEALSO "monoid"
-     }
 
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
-
-document { quote Degrees,
-     TT "Degrees", " -- an option which specifies the degrees of the generators.",
-     PARA,
-     "Used as an option to ", TO "monoid", ", or when a polynomial ring
-     is created.",
-     PARA,
-     "See ", TO "monoid", " for details."
-     }
-document { quote SkewCommutative,
-     TT "SkewCommutative", " -- name for an optional argument for monoids
-     that specifies that monoid rings created from them will be skewcommutative.",
-     PARA,
-     "The default value is false.",
-     EXAMPLE {
-	  "R = ZZ[x,y,SkewCommutative=>true]",
-      	  "x*y",
-      	  "y*x"
-	  }
-     }
-
-document { quote MonomialSize,
-     TT "MonomialSize => n", " -- an option which determines the maximum 
-     exponent size.",
-     PARA,
-     "Used as an option to ", TO "monoid", ", or when a polynomial ring
-     is created.  Setting 'MonomialSize=>n' specifies that monomial exponents 
-     may be as large as 2^n - 1.  The default value is 8, allowing for exponents 
-     up to 255.",
-     PARA,
-     "See ", TO "monoid", " for details."
-     }
-
-document { quote Inverses,
-     TT "Inverses", " -- an option used in creating a monoid which tells
-     whether negative exponents will be allowed, making the monoid into
-     a group.",
-     SEEALSO "monoid"
-     }
 
 GeneralOrderedMonoid = new Type of OrderedMonoid
 GeneralOrderedMonoid.Engine = true
@@ -97,36 +53,10 @@ net GeneralOrderedMonoid := M -> (
      	  horizontalJoin flatten ("[",between(",",net\v),"]")
 	  ))
 
-document { quote GeneralOrderedMonoid,
-     TT "GeneralOrderedMonoid", " -- the class of all ordered free 
-     commutative monoids, as implemented by ", TO "monoid", ".",
-     PARA,
-     "This is the class of free monoids that can be handled by the ",
-     TO "engine", ".",
-     PARA,
-     "Functions:",
-     MENU {
-	  TO "degree"
-	  },
-     PARA,
-     "Keys:",
-     MENU {
-	  TO "degreesMonoid",
-	  TO "index"
-	  },
-     PARA,
-     SEEALSO { "monoid", "Degrees", "MonoidElement"}
-     }     
-
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
 
 Monoid _ ZZ := (M,i) -> M.generators#i
-document { (quote _, Monoid,ZZ),
-     TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
-     PARA,
-     SEEALSO { "Monoid", "_" }
-     }
 
 Monoid _ List := (M,v) -> (
      if #v === 0 then 1_M
@@ -172,13 +102,6 @@ newDegreesMonoid2 := memoize(
 
 newDegreesMonoid ZZ := n -> use newDegreesMonoid2 n
 
-document { quote degreesMonoid,
-     TT "degreesMonoid n", " -- returns the monoid whose elements correspond
-     to the multi-degrees of monomials in another monoid.",
-     PARA,
-     "Also used as a key under which to store the result."
-     }
-
 Eliminate = new SelfInitializingType of BasicList
 new Eliminate from ZZ := (Eliminate,n) -> Eliminate {n}
 expression Eliminate := v -> (
@@ -186,87 +109,6 @@ expression Eliminate := v -> (
      then new FunctionApplication from {Eliminate, v#0}
      else new FunctionApplication from {Eliminate, toList v})
 ProductOrder = new SelfInitializingType of BasicList
-
-document { quote RevLex,
-     TT "RevLex", " -- a symbol used as an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the reverse lexicographic order."
-     }
-document { quote GRevLex,
-     TT "GRevLex", " -- a symbol used as an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the graded reverse lexicographic order.",
-     PARA,
-     "Caveat: If the number of degree vectors is greater than one, this
-     is currently only graded using the first degree vector.  This will 
-     eventually change."  -- MES
-     }
-document { quote GLex,
-     TT "GLex", " -- a symbol used as an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the graded lexicographic order.",
-     PARA,
-     "Caveat: If the number of degree vectors is greater than one, this
-     is currently only graded using the first degree vector.  This will 
-     eventually change."  -- MES
-     }
-document { quote Lex,
-     TT "Lex", " -- a symbol used as an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the (non-graded) lexicographic order."
-     }
-document { quote Eliminate,
-     TT "Eliminate", " n -- an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the elimination order eliminating the
-     first n variables, refined by the graded reverse lexicographic order.",
-     PARA,
-     "Caveat: If the number of degree vectors is greater than one, this
-     is currently only graded using the first degree vector.  This will 
-     eventually change."  -- MES
-     }
-document { quote ProductOrder,
-     TT "ProductOrder", "{n1, ..., nr} -- an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the product of r graded reverse lex
-     orders, each with n1, n2, ..., nr variables.",
-     PARA,
-     "Caveat: If the number of degree vectors is greater than one, the
-     grading in each block only uses the first degree vector. This will 
-     eventually change."  -- MES
-     }
-
-document { quote VariableBaseName,
-     TT "VariableBaseName => x", " -- an optional argument used when creating
-     monoids or rings to specify that the variables should be ",
-     TT "x_0, ..., x_n", "."
-     }
-
-document { quote MonomialOrder,
-     TT "MonomialOrder", " -- a key used with monoids to indicate a
-     monomial order other than the default (graded reverse lexicographic)",
-     PARA,
-     "Values:",
-     MENU {
-	  {TO "GRevLex", " -- graded reverse lexicographic order (the default)"},
-	  {TO "GLex", " -- graded lexicographic order"},
-	  {TO "Lex", " -- lexicographic order"},
-	  {TO "RevLex", " -- reverse lexicographic order"},
-	  {TO "Eliminate", " -- elimination order"},
-	  {TO "ProductOrder", " -- product order"}
-          },
-     "Eventually, more general monomial orders will be allowed." -- MES
-     }
-
-document { quote Variables,
-     TT "Variables", " -- a key used with monoids to indicate the list of 
-     variable names, or the number of variables.",
-     PARA,
-     "This option is useful for those situations when one doesn't care about the
-     names of the variables in a ring or monoid, or when one is creating a 
-     tensor product ring, symmetric algebra, or other ring, and one wants control
-     over the names of the ring variables. See also ", TO "tensor", "."
-     }
 
 monoidDefaults := new OptionTable from {
      VariableBaseName => null,
@@ -279,54 +121,6 @@ monoidDefaults := new OptionTable from {
      SkewCommutative => false,
      VariableOrder => null,		  -- not implemented yet
      WeylAlgebra => {}
-     }
-
-document { quote VariableOrder,
-     TT "VariableOrder", " -- an option used when creating a monoid.",
-     PARA,
-     "Not implemented yet.",
-     SEEALSO "monoid"
-     }
-
-document { quote monoid,
-     TT "monoid R      ", " -- yields the underlying monoid of polynomial ring, 
-                        group ring, or monoid ring.",
-     PARA,
-     NOINDENT,
-     TT "monoid [a,b,c]", " -- makes a free ordered commutative monoid on the variables listed.",
-     PARA,
-     "Options available:",
-     MENU {
-	  TO "Degrees",
-	  TO "Inverses",
-	  TO "MonomialOrder",
-	  TO "MonomialSize",
-	  TO "SkewCommutative",
-	  TO "Variables",
-	  TO "VariableBaseName",
-	  TO "VariableOrder"
-	  },
-     PARA,
-     NOINDENT,
-     TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
-	     variables listed, with degrees 2, 3, and 4, respectively.",
-     PARA,
-     NOINDENT,
-     TT "monoid [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}]", " -- makes a free ordered
-     commutative monoid on the variables listed, with multi-degrees as listed.",
-     PARA,
-     NOINDENT,
-     TT "monoid [a,b,c,Degrees=>{{},{},{}}]", " -- makes a free ordered commutative monoid on the
-	     variables listed, ungraded.",
-     PARA,
-     "The variables listed may be symbols or indexed variables.
-     The values assigned to these variables (with ", TO "assign", ") are
-     the corresponding monoid generators.  The function ", TO "baseName", "
-     may be used to recover the original symbol or indexed variable.",
-     PARA,
-     "The class of all monoids created this way is ", TO "GeneralOrderedMonoid", ".",
-     PARA,
-     SEEALSO {"OrderedMonoid","IndexedVariable","Symbol"}
      }
 
 generators GeneralOrderedMonoid := M -> M.generators
@@ -593,48 +387,8 @@ name GeneralOrderedGroup := M -> (
      	  concatenate("group [",between(",",name\v),"]")
 	  ))
 
-document { quote GeneralOrderedGroup,
-     TT "GeneralOrderedGroup", " -- the class of all ordered free 
-     commutative groups, as implemented by ", TO "group", ".",
-     PARA,
-     "This is the class of free commutative groups that can be 
-     handled by the ", TO "engine", ".",
-     PARA, "Functions:", MENU { 
-	  TO "degree"
-	  },
-     PARA, "Keys:", MENU {
-	  TO "index"
-	  },
-     PARA,
-     SEEALSO { "group", "Degrees" }
-     }     
-
 group = method()
 group Ring := G -> G.group
-
-document { quote group,
-     TT "group R      ", " -- yields the underlying group of a group ring.",
-     PARA,
-     "group [a,b,c] -- makes a free ordered commutative group on the
-     variables listed.",
-     PARA,
-     "group [a,b,c,Degrees=>{2,3,4}] 
-     -- makes a free ordered commutative group on the
-        variables listed, with degrees 2, 3, and 4, respectively.",
-     PARA,
-     "group [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}] 
-     -- makes a free ordered commutative group on the
-        variables listed, with multi-degrees as listed.",
-     PARA,
-     "group [a,b,c,Degrees=>{{},{},{}}] 
-          -- makes a free ordered commutative group on the
-	     variables listed, ungraded.",
-     PARA,
-     "The class of all groups created this way is ",
-     TO "GeneralOrderedMonoid", ".",
-     PARA,
-     SEEALSO { "Degrees", "OrderedMonoid", "monoid" }
-     }
 
 generators GeneralOrderedGroup := G -> G.generators
 vars GeneralOrderedGroup := G -> G.generators
@@ -644,11 +398,6 @@ group Array := X -> monoid append(X,Inverses=>true)
 tensor = method( Options => options monoid )
 
 Monoid ** Monoid := (M,N) -> tensor(M,N)
-document { (quote **, Monoid, Monoid),
-     TT "M ** N", " -- tensor product of monoids.",
-     PARA,
-     "For complete documentation, see ", TO "tensor", "."
-     }
 
 tensor(Monoid, Monoid) := options -> (M,N) -> (
      M = M.Options;
@@ -684,30 +433,6 @@ tensor(Monoid, Monoid) := options -> (M,N) -> (
          then opts.Inverses = M.Inverses or N.Inverses
          else opts.Inverses = false;
      makeMonoid new OptionTable from opts)
-
-document { quote tensor,
-  TT "tensor(M,N)", " -- tensor product of rings or monoids.",
-  PARA,
-  "This method allows all of the options available for monoids, see
-  ", TO "monoid", " for details.  This routine essentially combines the 
-  variables of M and N into one monoid.",
-  PARA,
-  "For rings, the rings should be quotient rings of polynomial rings over the same
-  base ring.",
-  PARA,
-  "Here is an example with monoids.",
-  EXAMPLE {
-       "M = monoid[a..d, MonomialOrder => Eliminate 1]",
-       "N = monoid[e,f,g, Degrees => {1,2,3}]",
-       "P = tensor(M,N,MonomialOrder => GRevLex)",
-       "describe P",
-       "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
-       "describe oo",
-       },
-  "Here is a similar example with rings.",
-  EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",
-  SEEALSO "**"
-  }
 
 -- delayed installation of methods for monoid elements
 

@@ -203,9 +203,10 @@ else
 compat.c compat.h : configure; ./configure
 endif
 
-M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h ../../Makeconf.h compat.h memdebug.h
-memdebug.o scclib.o actors5.oo gc_cpp.o : memdebug.h
-gc_cpp.o : ../../Makeconf.h
+M2lib.o scclib.o M2lib.lo scclib.lo : \
+	../c/compat.h ../c/compat.c types.h ../../Makeconf.h compat.h memdebug.h
+memdebug.o scclib.o actors5.oo gc_cpp.o memdebug.lo scclib.lo actors5.loo gc_cpp.lo : memdebug.h
+gc_cpp.o gc_cpp.lo : ../../Makeconf.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
@@ -386,7 +387,7 @@ CVS/Entries : $(ALLFILES)
 wc:
 	wc -l $(WC1FILES)
 clean :
-	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep \
+	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep *.loo *.lo \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
 		core core.* compat.c compat.h c-files.tar tmp_init.c

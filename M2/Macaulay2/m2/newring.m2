@@ -33,22 +33,6 @@ modifyRing Ring := options -> (R) -> (
      S/image f
      )
 
-document { quote modifyRing,
-     TT "modifyRing(R,options)", " -- yields a ring similar to R, with 
-     certain features changed.",
-     PARA,
-     "Allowed options include:",
-     MENU {
-	  },
-     PARA,
-     "Bug: doesn't work yet."
-     }
-
-TEST "
-    R = ZZ/101[a..d,Degrees=>{1,2,3,4}]
-    S = modifyRing(R,Degrees=>{1,1,1,1})
-    S1 = modifyRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
-"
 -----------------------------
 -- tensor product of rings --
 -----------------------------
@@ -61,12 +45,6 @@ PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
 Ring ** Ring := (R,S) -> error "tensor product not implemented for these rings"
-
-document { (quote **, Ring, Ring),
-     TT "R ** S", " -- tensor product of rings.",
-     PARA,
-     "For complete documentation, see ", TO "tensor", "."
-     }
 
 tensor(PolynomialRing, PolynomialRing) :=
 tensor(QuotientRing, PolynomialRing) :=
@@ -128,18 +106,6 @@ graphRing RingMap := options -> (f) -> if f.?graphRing then f.graphRing else f.g
      R := ring I;
      R/I)
 
-document { quote graphIdeal,
-     TT "graphIdeal f", " -- provides the ideal of the graph of the map
-     associated to the ring map f.",
-     SEEALSO "graphRing"
-     }
-
-document { quote graphRing,
-     TT "graphRing f", " -- provides the ring of the graph of the map
-     associated to the ring map f.",
-     SEEALSO "graphIdeal"
-     }
-
 -----------------------
 -- Symmetric Algebra --
 -----------------------
@@ -148,13 +114,6 @@ symmetricAlgebraIdeal := method( Options => options monoid )
 
 symmetricAlgebra = method( Options => options monoid )
 
-document { quote symmetricAlgebra,
-     TT "symmetricAlgebra M", " -- produces the symmetric algebra of a
-     module M.",
-     PARA,
-     "Bugs: uses symbols from the beginning of the alphabet as variables in
-     the new ring; makes a quotient ring when it doesn't have to."
-     }
 
 symmetricAlgebraIdeal Module := opts -> (M) -> (
      R := ring M;
@@ -172,9 +131,3 @@ symmetricAlgebraIdeal Module := opts -> (M) -> (
 symmetricAlgebra Module := options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
      (ring I)/(image I))
-
-TEST "
-    R = ZZ/101[s,t]
-    J = image matrix {{s^4, s^3*t, s*t^3, t^4}}
-    S = symmetricAlgebra J  -- MES: make an assertion here...
-"

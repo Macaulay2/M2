@@ -47,6 +47,9 @@ wc ::; $(MAKE) NODEPENDS=1 -C util wc
 all ::; $(MAKE) -C c all
 clean ::; $(MAKE) NODEPENDS=1 -C c clean
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
+################################# c2
+all ::; $(MAKE) -C c2 targettypes.h
+clean ::; $(MAKE) NODEPENDS=1 -C c2 clean
 ################################# e
 all ::; $(MAKE) -C e all
 tests ::; $(MAKE) -C e tests
@@ -58,9 +61,11 @@ tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
+ifdef NODUMPDATA
 all ::; $(MAKE) -C dumpdata all
-clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
 tests ::; $(MAKE) -C dumpdata tests
+endif
+clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# d
 config ::; $(MAKE) NODEPENDS=1 -C d compat.h

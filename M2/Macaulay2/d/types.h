@@ -1,6 +1,8 @@
 
 #include "../../Makeconf.h"	/* VERSION, MP, FACTORY, GCMALLOC, and DUMPDATA are defined here */
 
+#include "../c2/targettypes.h"
+
 #include <stdio.h>
 
 #ifdef SOCKS
@@ -135,7 +137,7 @@ typedef struct M2_string_struct {
      char array[1];
      } *M2_string;
 
-extern M2_string tostring(char *);
+extern M2_string tostring(char const *);
 
 extern M2_string system_newline;
 extern char *tocharstar(M2_string);

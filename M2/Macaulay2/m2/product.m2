@@ -1,15 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 ProductRing = new Type of Ring
-document { quote ProductRing,
-     TT "ProductRing", " -- the class of all product rings.",
-     PARA,
-     "If R and S are rings, then R * S denotes their product ring.
-     If r and s are elements of R and S respectively, then an element
-     of the product is provided by ", 
-     PRE "          new R*S from {r,s}",
-     "This has to be rethought!"     
-     }
+
 name ProductRing := (RS) -> name RS.baseRings#0 | " * " | name RS.baseRings#1
 net ProductRing := (RS) -> net RS.baseRings#0 | " * " | net RS.baseRings#1
 Ring * Ring := (R,S) -> (
@@ -38,15 +30,3 @@ Ring * Ring := (R,S) -> (
      --check RS;
      RS
      )
-
-TEST "
--- test product
-R = ZZ/101
-S = ZZ/103
-RS = R*S
-r = 23_R
-s = 47_S
-x = new RS from {r,s}
-assert( 2*x == new RS from {2*r,2*s} )
-assert( x + 1_RS == new RS from {r+1, s+1} )
-"

@@ -216,8 +216,7 @@ M2_stringarray argv;
      return ERROR;
      }
 
-M2_string tostring(s)
-char *s;
+M2_string tostring(char const *s)
 {
      int n = strlen(s);
      M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));

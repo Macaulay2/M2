@@ -4,11 +4,6 @@ toString = method(SingleArgumentDispatch => true)
 toString String := identity
 toString Thing := name
 
-document { quote toString,
-     TT "toString x", " -- converts ", TT "x", " to a string using ", TT "name", ", unless
-     ", TT "x", " is already a string, in which case ", TT "x", " is returned."
-     }
-
 net Option := z -> net expression z
 
 Net == Net := (x,y) -> x === y

@@ -1,90 +1,9 @@
 --		Copyright 1995 by Daniel R. Grayson
-
-document { quote baseRings,
-     TT "baseRings", " -- a symbol used as a key in a ring ", TT "R", " under which is
-     stored a list of base rings for ", TT "R", ".",
-     PARA,
-     "A base ring ", TT "A", " of ", TT "R", " is one of the rings involved in the
-     construction of ", TT "R", ".  The natural ring homomorphism from ", TT "A", "
-     to ", TT "R", " is implemented with ", TO "promote", ".",
-     PARA,
-     "The base rings are presented in chronological order."
-     }
-
 lift = method()
-
-document { quote lift,
-     TT "lift(f,R)", " -- promotes a ring element ", TT "f", " to 
-     the ring ", TT "R", ".",
-     PARA,
-     "The ring ", TT "R", " should be one of the base rings associated with the
-     ring of ", TT "f", ".",
-     SEEALSO "baseRings"
-     }
-
 liftable = method()
-
-document { quote liftable,
-     TT "lift(f,R)", " -- tells whether a ring element ", TT "f", " can be
-     lifted to the ring ", TT "R", ".",
-     PARA,
-     "The ring ", TT "R", " should be one of the base rings associated with the
-     ring of ", TT "f", ".",
-     SEEALSO "baseRings"
-     }
-
 promote = method()
-
-document { quote promote,
-     TT "promote(f,R)", " -- promotes a ring element ", TT "f", " to 
-     the ring ", TT "R", ".",
-     PARA,
-     "The element ", TT "f", " should be an element of some base ring of ", TT "R", ".",
-     PARA,
-     "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
-     an algebra over ", TT "QQ", ", then an element of ", TT "R", " is provided
-     by attempting the evident division.",
-     SEEALSO "baseRings"
-     }
-
 RingElement = new Type of MutableHashTable
-
-document { quote RingElement,
-     TT "RingElement", " -- the class of all ring elements handled by the 
-     ", TO "engine", ".",
-     PARA,
-     SEEALSO "PolynomialRing"
-     }
-
 EngineRing = new Type of Ring
-
-
-document { quote EngineRing,
-     TT "EngineRing", " -- denotes the class of all special-purpose engine
-     rings, such as finite fields.",
-     PARA,
-     "The command ", TT "new Engine from x", " is not meant for general 
-     users, and provides the developers with a way to create top-level 
-     rings corresponding to rings implemented in the engine.  Here ", TT "x", "
-     may be:",
-     MENU {
-	  "commands for the engine, as a string, or a sequence or list
-	  of strings, which cause a ring to be placed on the top of the
-	  engine's stack.",
-	  "a ring, in which case another top-level ring is formed as
-	  an interface to the same underlying engine ring.",
-	  "the handle of on engine ring"
-	  },
-     "Types of EngineRing:",
-     MENU {
-	  TO "FractionField",
-	  TO "GaloisField",
-	  TO "PolynomialRing",
-	  TO "QuotientRing",
-	  TO "SchurRing"
-	  }
-     }
-
 -----------------------------------------------------------------------------
 
 reduce := (r,s) -> (
@@ -151,29 +70,6 @@ ZZZ.degreeLength = 0
 net ZZZ := name ZZZ := see
 expression ZZZ := n -> expression lift(n,ZZ)
 
------------------------------------------------------------------------------
-
-TEST "
-    -- test of lift/promote of an ideal
-    A = ZZ/101[a..d]
-    A = QQ[a..d]
-    A = GF(5,2)[a..d]
-    B = A/(a^2-d^2)
-    use A
-    I = ideal(a,b)
-    assert(ring I === A)
-    I1 = I*B
-    I2 = lift(I1,A)
-    assert(trim I2 == ideal(a,b,d^2))
-    C = B/(b^3-c^3)
-    I3 = I2*C
-    I3a = I*C
-    assert(I3 == I3a)
-    I4 = lift(I3,B)
-    I5 = trim lift(I3,A)
-    use A
-    assert(I5 == ideal(a,b,c^3,d^2))
-"
 -----------------------------------------------------------------------------
                 FractionField = new Type of EngineRing
            frac FractionField := identity
@@ -247,41 +143,6 @@ frac EngineRing := R -> (
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
 	  scan(keys R,k -> if class k === String then F#k = promote(R#k,F));
 	  F))
-
-document { quote fraction,
-     TT "fraction(f,g)", " -- manufactures the fraction f/g in the fraction
-     ring of the ring containing f and g without reducing it to lowest terms."
-     }
-
-TEST "
-frac(QQ[a,b])
-assert ( a == denominator(b/a) )
-assert ( b == numerator(b/a) )
-assert ( 1 == numerator(b/b) )
-"
-
-document { quote FractionField,
-     TT "FractionField", " -- the class of all fraction fields.",
-     PARA,
-     "Functions:",
-     MENU {
-	  (TO "frac", "     -- constructing a fraction field"),
-	  (TO "fraction", " -- constructing a fraction")
-	  }
-     }
-
-document { quote frac,
-     TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
-     PARA,
-     "If ", TT "R", " has no name yet, then the names for its symbols will
-     be usurped as names for the corresponding elements of ", TT "R", ".",
-     PARA,
-     EXAMPLE {
-	  "F = frac (ZZ/101[x,y])",
-      	  "1/x + 1/y + 1/2",
-	  },
-     SEEALSO "FractionField"
-     }
 
 -- methods for all ring elements
 

@@ -1,10 +1,10 @@
 command.m2
 name.m2
 document.m2
+symbols.m2
 classes.m2
 option.m2
 methods.m2
-methods2.m2
 profile.m2
 underscore.m2
 autoload.m2
@@ -69,10 +69,6 @@ chaincomplexes.m2
 res.m2
 radical.m2
 factor.m2
-doc.m2
-doc2.m2
-doc3.m2
-doc4.m2
 macaulay.m2
 integrate.m2
 http.m2
@@ -81,9 +77,8 @@ examples.m2
 monomcurve.m2
 fano.m2
 code.m2
-overview.m2
-overview2.m2
 obsolete.m2
 indeterminates.m2
 local.m2
 varieties.m2
+last.m2

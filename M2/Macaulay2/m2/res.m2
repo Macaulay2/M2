@@ -2,19 +2,6 @@
 
 Resolution = new Type of MutableHashTable
 name Resolution := g -> "<<resolution " | name g.handle | ">>"
-document { quote Resolution,
-    TT "Resolution", " -- the class of all resolution computations, as well
-    as the key used in a ", TO "ChainComplex", " to store the resolution it
-    comes from.",
-    PARA,
-    "These resolutions are internal engine objects not meant to be examined
-    by the user.",
-    PARA,
-    "Functions dealing with resolutions:",
-    MENU {
-	 TO "status"
-	 }
-    }
 
 resolution = method(
      Options => {
@@ -31,175 +18,6 @@ resolution = method(
      )
 
 res = resolution
-
-document { quote res,
-    "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
-    }
-
-document { quote resolution,
-     TT "resolution", " -- a command for producing resolutions.",
-     PARA,
-     "See one of the following entries.",
-     MENU {
-	  TO (resolution, Module),
-	  TO (resolution, Matrix),
-	  TO (resolution, Ideal)
-	  }
-     }
-
-document { resolution => DegreeLimit,
-     TT "DegreeLimit => n", " -- keyword for an optional argument used with
-     ", TO "resolution", " which specifies that the computation should halt
-     after dealing with degree n.",
-     PARA,
-     "This option is relevant only for homogeneous modules.",
-     PARA,
-     "One might get some matrix entries of slightly higher degree than requested.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,w];",
-      	  "M = cokernel matrix {{x*y-z^2,y^2-w^2}}",
-      	  "res(M,DegreeLimit => 1)",
-      	  "res(M,DegreeLimit => 2)"
-	  },
-     }
-
-document { resolution => SyzygyLimit,
-     TT "SyzygyLimit", " -- keyword for an optional argument used with
-     ", TO "resolution", ", which specifies that the computation should
-     stop after a certain number of syzygies have computed.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,w];",
-      	  "M = cokernel matrix {{x*y-z^2,y^2-w^2,w^4}}",
-      	  "res(M,SyzygyLimit => 1)",
-      	  "res(M,SyzygyLimit => 2)",
-      	  "res(M,SyzygyLimit => infinity)"
-	  }
-     }
-
-document { resolution => PairLimit,
-     TT "PairLimit", " -- keyword for an optional argument used with
-     ", TO "resolution", ", which specifies that the computation should
-     be stopped after a certain number of S-pairs have been reduced.",
-     EXAMPLE {
-	  "R = QQ[x,y,z,w]",
-      	  "M = cokernel matrix {{x*y-z,y^2-w-1,w^4-3}}",
-      	  "res(M, PairLimit => 1)",
-      	  "res(M, PairLimit => 10)",
-      	  "res(M, PairLimit => 20)"
-	  }
-     }
-
-document { resolution => StopBeforeComputation,
-     TT "StopBeforeComputation", " -- keyword for an optional argument used with
-     ", TO "resolution", ".",
-     PARA,
-     "Tells whether to start the computation, with the default value
-     being ", TT "true", ".  This can be useful when you want to obtain
-     the partially computed resolution contained in an interrupted computation."
-     }
-
-document { quote LengthLimit,
-     TT "LengthLimit", " -- a keyword for an optional argument used with
-     ", TO "resolution", ".",
-     PARA,
-     MENU {
-	  TO (resolution => LengthLimit),
-	  }
-     }
-
-document { quote Algorithm,
-     TT "Algorithm", " -- a keyword for an optional argument used with
-     ", TO "resolution", ".",
-     PARA,
-     MENU {
-	  TO (resolution => Algorithm),
-	  }
-     }
-
-document { resolution => LengthLimit,
-     TT "LengthLimit", " -- keyword for an optional argument used with
-     ", TO "resolution", " which indicates how long a resolution to make.",
-     PARA,
-     "For polynomial rings over a field or over the integers, the length
-     is taken to be the dimension of the ring, so the complete resolution will
-     be obtained.  For quotient rings of such rings, the same number is used,
-     so the complete resolution may not be obtained.",
-     PARA,
-     "In the current version, asking for a second and longer resolution of the
-     same module involves recomputing the resolution from scratch.  Eventually
-     the previous work will be used and the recomputation will go quicker.",
-     PARA,
-     "The resolution returned may actually be one step longer than requested.
-     The extra differential is not guaranteed to be minimal."
-     }
-
-document { quote HardDegreeLimit,
-     TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
-     that information above a specified degree is to be discarded.",
-     PARA,
-     "See:",
-     MENU {
-	  TO (resolution => HardDegreeLimit)
-	  }
-     }
-
-document { resolution => HardDegreeLimit,
-     TT "HardDegreeLimit", " -- keyword for an optional argument used with
-     ", TO "resolution", ".",
-     PARA,
-     "The default value is ", TT "{}", ".",
-     PARA,
-     "Information above the specified degree is discarded."
-     }
-
-document { resolution => Algorithm,
-     TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
-     which algorithm to use.  Algorithms are specified by number and the
-     algorithms available are",
-     MENU {
-	  (TT "Algorithm => 0", " -- Compute syzygies on the Groebner bases of each syzygy
-	       module.  The algorithm uses important speedups due to R. Lascala.
-	       This algorithm appears to be on the average the fastest."),
-	  (TT "Algorithm => 1", " -- An older version of algorithm 0, which doesn't allow as 
-	       much experimentation, but can sometimes be marginally faster."),
-	  (TT "Algorithm => 2", " -- Compute syzygies on the minimal generators of each 
-	       matrix in the resolution.  Over quotient rings, preferred."),
-	  (TT "Algorithm => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
-	       which allow removal of S-pairs (a la Robbiano, et al.).  
-	       Sometimes this improvement can be very dramatic.")
-	  },
-     "All algorithms use induced monomial orders (Schreyer orders), since 
-     this makes an enormous improvement to the efficiency of the algorithm."
-     }
-
-document { quote SortStrategy,
-     TT "SortStrategy", " -- an keyword for an optional argument which 
-     specifies the strategy to be used for sorting S-pairs.",
-     PARA,
-     MENU {
-	  TO (resolution => SortStrategy),
-	  }
-     }
-
-document { resolution => SortStrategy,
-     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
-     specifies the strategy to be used for sorting S-pairs.",
-     PARA,
-     "Not implemented yet."
-     }
-
-TEST "
-R = ZZ/101[x,y]
-M = cokernel matrix {{x^2+y^4, y^2 + x*y^3 + 11, 1 + x*y^2}}
-C = res M
-assert (HH_-1 C == 0)
-assert (HH_0 C == M)
-assert (HH_1 C == 0)
-assert (HH_2 C == 0)
-assert (HH_3 C == 0)
-assert (HH_4 C == 0)
-"
 
 inf := t -> if t === infinity then -1 else t
 
@@ -344,78 +162,17 @@ resolution Module := o -> (M) -> (
      else if isQuotientRing R then (resolutionInEngine default(o,Algorithm2))(M)
      else (resolutionInEngine default(o,Algorithm1))(M)
      )
-document { (resolution, Module),
-     TT "resolution M", " -- produces a projective resolution of the 
-     module ", TT "M", ".",
-     PARA,
-     "If the computation is interrupted after the skeleton has been
-     successfully computed, then the partially completed
-     resolution is available as ", TT "M.resolution", ".  The computation 
-     can be continued with ", TT "resolution M", ".",
-     PARA,
-     "If the user has a chain complex in hand which is known to be a
-     projective resolution of ", TT "M", ", then it can be installed
-     with ", TT "M.resolution = C", ".",
-     PARA,
-     "Optional arguments and flags:",
-     MENU {
-	  (TO (resolution => Algorithm), "             -- which algorithm to use"),
-	  (TO (resolution => StopBeforeComputation), " -- whether to stop the computation immediately"),
-	  (TO (resolution => DegreeLimit), "           -- compute only up to this degree"),
-	  (TO (resolution => HardDegreeLimit), "       -- always compute only up to this degree"),
-	  (TO (resolution => SyzygyLimit), "           -- stop when this number of syzygies are obtained"),
-	  (TO (resolution => PairLimit), "             -- stop when this number of pairs are handled"),
-	  (TO (resolution => LengthLimit), "           -- stop when the resolution reaches this length"),
-	  (TO (resolution => SortStrategy), "          -- specify strategy for sorting S-pairs")
-	  },
-     PARA,
-     "For an abbreviation, use ", TO "res", ".",
-     SEEALSO {"ChainComplex", "resolution"}
-     }
 
 resolution Matrix := options -> (f) -> extend(
      resolution(target f, options), 
      resolution(source f, options), 
      matrix f)
-document { (resolution, Matrix),
-     TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
-     chain map from a resolution of the source of ", TT "f", " to a resolution of the
-     target of ", TT "f", ".",
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-      	  "m = ideal vars R",
-      	  "resolution map(m/m^3, m^2/m^4)"
-	  }
-     }
-
 
 resolution Ideal := options -> (I) -> resolution(
      if I.?quotient 
      then I.quotient
      else I.quotient = (ring I)^1/I,
      options)
-
-document { (resolution, Ideal),
-     TT "resolution I", " -- produces a projective resolution of the 
-     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", ".",
-     SEEALSO "resolution"
-     }
-
-TEST "
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (toList (t_1 .. t_9),3)			  -- 3 by 3
-n = matrix pack (toList (u_1 .. u_9),3)			  -- 3 by 3
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 2, DegreeLimit => 1)
--- assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 2, DegreeLimit => 2)
--- assert( rank C_2 == 42 )
-C = res(M, LengthLimit => 2, DegreeLimit => 3)
--- assert( rank C_2 == 83 )
-C = res(M, LengthLimit => 2, DegreeLimit => 4)
---- assert( rank C_2 == 90 )
-"
 
 -- MES: these need to be documented.  They also only work currently
 -- for correct strategy... (non-Schreyer resolution).  In fact, the
@@ -512,31 +269,4 @@ status Resolution := options -> (r) -> (
      )
 
 status ChainComplex := options -> (C) -> status(C.Resolution, options)
-document { quote status,
-     TT "status C", " -- displays the status of the computation of a
-     chain complex C constructed by ", TO "resolution", ".  The display has
-     the same shape as the display produced by ", TO "betti", ", but
-     the number(s) displayed in each degree differ.",
-     PARA,
-     "Options:",
-     MENU {
-	  {TO TotalPairs, " -- display the total number of S-pairs, default value ",
-	       statusDefaults.TotalPairs },
-	  {TO PairsRemaining, " -- display the number of S-pairs remaining, default value ",
-	       statusDefaults.PairsRemaining},
-	  {TO Monomials, " -- display the number of monomials, default value ",
-	       statusDefaults.Monomials}
-	  }
-     }
-document { quote TotalPairs,
-     TT "TotalPairs", " -- an option for ", TO "status", " which specifies
-     whether to display the total number of S-pairs."
-     }
-document { quote PairsRemaining,
-     TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
-     whether to display number of S-pairs remaining."
-     }
-document { quote Monomials,
-     TT "Monomials", " -- an option for ", TO "status", " which specifies
-     whether to display the number of monomials."
-     }
+

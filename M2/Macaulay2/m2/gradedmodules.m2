@@ -1,26 +1,7 @@
 --		Copyright 1997 by Daniel R. Grayson
 
 GradedModule = new Type of MutableHashTable
-document { quote GradedModule,
-     TT "GradedModule", " -- the class of all graded modules.",
-     PARA,
-     "A new graded module can be made with 'M = new GradedModule'.
-     The i-th module can be installed with a statement like ", TT "M#i=N", ",
-     and can be retrieved with an expression like ", TT "M_i", ".  The ground
-     ring should be installed with a statement like ", TT "M.ring = R", ".",
-     PARA,
-     "Operations on graded modules:",
-     MENU {
-	  (TO "==", "                -- comparison"),
-	  (TO "length", "            -- length")
-	  },
-     "Producing graded modules:",
-     MENU {
-	  TO "coimage",
-	  TO "gradedModule"
-	  },
-     SEEALSO "GradedModuleMap"
-     }
+
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
 GradedModule == GradedModule := (C,D) -> (
@@ -58,19 +39,6 @@ net GradedModuleMap := f -> (
 	  );
      if # v === 0 then "0"
      else stack v)
-document { quote GradedModuleMap,
-     TT "GradedModuleMap", " -- the class of all maps between graded modules.",
-     PARA,
-     "Operations on graded module maps:",
-     MENU {
-	  },
-     "Producing graded module maps:",
-     MENU {
-	  TO "gradedModuleMap"
-	  },
-     PARA,
-     SEEALSO "GradedModule"
-     }
 GradedModuleMap _ ZZ := (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)
      )
@@ -268,10 +236,6 @@ Module ** GradedModule := (M,C) -> (
 
 gradedModule = method(SingleArgumentDispatch=>true)
 
-document { quote gradedModule,
-     TT "gradedModule", " -- a method for creating graded modules."
-     }
-
 gradedModule Sequence := gradedModule List := modules -> (
      C := new GradedModule;
      R := C.ring = ring modules#0;
@@ -331,10 +295,6 @@ GradedModule ** GradedModule := (C,D) -> (
 	  ))
 
 gradedModuleMap = method(SingleArgumentDispatch=>true)
-
-document { quote gradedModuleMap,
-     TT "gradedModuleMap", " -- a method for creating maps of graded modules."
-     }
 
 gradedModuleMap Sequence := gradedModuleMap List := maps -> (
      if #maps === 0 then error "expected at least one argument";
@@ -397,15 +357,6 @@ coimage GradedModuleMap := (f) -> (
      scan(spots f, i -> E#i = coimage f#i);
      E
      )
-
-document { quote coimage,
-     TT "coimage f", " -- coimage of a map of graded modules.",
-     PARA,
-     "The coimage of a map differs slightly from the image, in that the
-     coimage is a quotient module of the source of the map, but the image
-     is a submodule of the target of the map.",
-     SEEALSO "GradedModule"
-     }
 
 cokernel GradedModuleMap := (f) -> (
      E := new GradedModule;
@@ -482,13 +433,3 @@ tensorAssociativity(GradedModule,GradedModule,GradedModule) := (A,B,C) -> (
 					     E_k.components#(E_k.indexComponents#(a,bc)),
 					     0))))))
 	  ))
-
-TEST ///
-     -- here we test the commutativity of the pentagon of associativities!
-     C = QQ^1[0] ++ QQ^1[-1]
-     assert(
-	  (tensorAssociativity(C,C,C) ** C) * tensorAssociativity(C,C**C,C) * (C ** tensorAssociativity(C,C,C))
-	  ==
-	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
-	  )
-     ///

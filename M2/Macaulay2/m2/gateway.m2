@@ -19,25 +19,6 @@ id = new ScriptedFunction from {
 	       else error ("no method 'id_' found for item of class ", name class x)))
      }
 
-document { quote ScriptedFunction,
-     TT "ScriptedFunction", " -- the class of all scripted functions,
-     by which we mean those functions 'f' of one argument 'x' which
-     accept their argument as a subscript 'f_x' or as a superscript 'f^x'.",
-     PARA,
-     "To create a new subscripted function use a statement of the following
-     form.",
-     PRE "     f = new ScriptedFunction from { subscript => (x) -> ... }",
-     "To create a new superscripted function use a statement of the following
-     form.",
-     PRE "     f = new ScriptedFunction from { superscript => (x) -> ... }",
-     "The subscript and superscript options can be combined to create a
-     scripted function which accepts either a subscript or a superscript.",
-     PARA,
-     "A good example of a subscripted function is ", TO "identity", ".",
-     PARA,
-     SEEALSO "ScriptedFunctor"
-     }
-
 ScriptedFunctor = new Type of MutableHashTable
 GlobalAssignHook ScriptedFunctor := globalAssignFunction
 GlobalReleaseHook ScriptedFunctor := globalReleaseFunction
@@ -101,77 +82,3 @@ HH = new ScriptedFunctor from {
 cohomology(ZZ,Sequence) := (i,X) -> cohomology prepend(i,X)
   homology(ZZ,Sequence) := (i,X) ->   homology prepend(i,X)
 
-document { quote ScriptedFunctor,
-     TT "ScriptedFunctor", " -- the class of all functors which accept a 
-     subscript or a superscript, the primary example of which is ", TO "HH", ".",
-     SEEALSO {"subscript", "superscript", "argument"}
-     }
-
-document { quote argument,
-     TT "argument", " -- a key used in scripted functors under which is
-     stored the function that accepts the arguments.",
-     SEEALSO "ScriptedFunctor"
-     }
-
-document { quote subscript,
-     TT "subscript", " -- a key used in scripted functors under which is
-     stored the function of one variable that accepts the subscript and
-     returns a scripted functor that accepts the arguments.",
-     SEEALSO "ScriptedFunctor"
-     }
-
-document { quote superscript,
-     TT "superscript", " -- a key used in scripted functors under which is
-     stored the function of one variable that accepts the superscript and
-     returns a scripted functor that accepts the arguments.",
-     SEEALSO "ScriptedFunctor"
-     }
-
-document { quote HH,
-     TT "HH", " -- general homology and cohomology functor.",
-     PARA,
-     "Specific examples:",
-     MENU {
-	  (TO (homology, ZZ, ChainComplex), "      -- homology of a chain complex"),
-	  (TO (homology, ChainComplex), "          -- total homology of a chain complex"),
-	  (TO (homology, ZZ, ChainComplexMap), "   -- homology as a functor"),
-	  (TO (homology, Matrix, Matrix), "        -- homology of a pair of maps"),
-	  (TO (cohomology, ZZ, ChainComplex), "    -- cohomology of a chain complex"),
-	  (TO (cohomology, ZZ, ChainComplexMap), " -- cohomology as a functor"),
-	  (TO (cohomology, ZZ, Module), "          -- local cohomology"),
-	  (TO (cohomology, ZZ, CoherentSheaf), "   -- sheaf cohomology"),
-	  }
-     }
-
-TEST ("
-     R=ZZ/101[a..d]
-     C=resolution cokernel vars R
-     D = C ++ C[1] ++ C[2]
-     betti D
-     assert( degree HH_1 D === 0 )
-     assert( degree HH_0 D === 1 )
-     assert( degree HH_-1 D === 1 )
-     assert( degree HH_-2 D === 1 )
-     ")
-
-document { quote cohomology,
-     TT "cohomology", " -- a method name available for computing expressions
-     of the forms HH^i(X) and HH^i(M,N).",
-     PARA,
-     "If it is intended that i be of class ZZ, M be of class A, and N be of 
-     class B, then the method can be installed with ",
-     PRE "   cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SEEALSO {"homology", "ScriptedFunctor"}
-     }
-
-document { quote homology,
-     TT "homology(f,g)", " -- computes the homology module (kernel f)/(image g).",
-     BR, NOINDENT,
-     TT "homology", " -- a method name available for computing expressions
-     of the forms HH_i(X) and HH_i(M,N).",
-     PARA,
-     "If it is intended that i be of class ZZ, M be of class A, and N be of
-     class B, then the method can be installed with ",
-     PRE "   homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SEEALSO {"cohomology", "ScriptedFunctor"}
-     }

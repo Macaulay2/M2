@@ -18,20 +18,6 @@ mingens Module := options -> (M) -> if M.?mingens then M.mingens else M.mingens 
 	  else id_M
 	  )
      )
-document { quote mingens,
-     TT "mingens M", " -- returns a minimal generating set for the module ", TT "M", ",
-     represented as a matrix whose target is the ambient free module of ", TT "M", ".",
-     PARA,
-     SEEALSO "GroebnerBasis"
-     }
-
-TEST "
-R = ZZ/101[a..d]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( mingens M == matrix (R, {{1},{0}}))
-"
 
 trim Ring := options -> (R) -> R
 trim QuotientRing := options -> (R) -> (
@@ -53,27 +39,6 @@ trim Module := options -> (M) -> if M.?trim then M.trim else M.trim = (
 	  N)
      else M
      )
-document { quote trim,
-     TT "trim M", " -- produce a module isomorphic to the module M obtained
-     by replacing its generators by a minimal set of generators, and doing
-     the same for the relations.",
-     PARA,
-     "Also works for rings and ideals.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "M = subquotient( matrix {{x,x^2,x^3}}, matrix {{x^3,x^4,x^5}})",
-      	  "trim M"
-	  }
-     }
-
-TEST "
-R = ZZ/101[a..d]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( generators trim M == matrix (R, {{1},{0}}))
-"
 
 syz Matrix := options -> (f) -> (
      if not isFreeModule target f or not isFreeModule source f
@@ -83,62 +48,6 @@ syz Matrix := options -> (f) -> (
      else mingens image syz gb (f, options, Syzygies=>true)
      )
 
-document { syz => StopWithMinimalGenerators,
-     TT "StopWithMinimalGenerators => true", " -- an optional argument used 
-     with ", TO "syz", " that specifies that the computation should stop as soon as a
-     complete list of minimal generators for the submodule or ideal has been
-     determined.",
-     PARA,
-     "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb => StopWithMinimalGenerators), " for details."
-     }
-
-document { syz => Strategy,
-     TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
-     be used to specify the strategy to be used in the computation.",
-     PARA,
-     "The value of the option is simply passed to ", TO "gb", ", so see the
-     documentation there for details."
-     }
-
-document { syz => CodimensionLimit,
-     TT "CodimensionLimit => n", " -- keyword for an optional argument used with
-     ", TO "syz", " which specifies that the computation should stop when
-     the codimension of the zero set of the ideal (or submodule) generated
-     by the leading terms of the Groebner basis elements found so far reaches 
-     a certain limit.",
-     PARA,
-     "This option has not been implemented yet.",
-     PARA,
-     "Eventually the codimension of the ideal of leading terms is the
-     codimension of the original ideal.",
-     }
-
-document { quote syz,
-     TT "syz f", " -- compute minimal generators for the module of syzygies for the 
-     ", TO "Matrix", " ", TT "f", ".",
-     PARA,
-     "syz G -- retrieve the ", TO "Matrix", " of syzygies from the Groebner
-     basis ", TT "G", ".  The result may be empty if syzygies were not to be retained during the
-     calculation, or if the computation was not continued to a high enough degree.",
-     PARA,
-     "This function takes the same optional arguments as ", TT "gb", ".",
-     SEEALSO "GroebnerBasis"
-     }
-
-document { syz => StopBeforeComputation,
-     TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
-     PARA,
-     "Tells whether not to start the computation, with the default value
-     being ", TT "false", ".  This can be useful when you want to obtain
-     the partially computed Groebner basis contained in an interrupted
-     computation."
-     }
-
-document { syz => ChangeMatrix,
-     TT "ChangeMatrix => true", " -- an optional argument for ", TO "syz", " which
-     specifies whether to compute the change of basis matrix."
-     }
 
 modulo = method()
 modulo(Matrix,Nothing) := (m,null) -> syz m
@@ -152,15 +61,6 @@ modulo(Matrix,Matrix) := (m,n) -> (
      then error "expected maps between free modules";
      syz(m|n, SyzygyRows => numgens source m)
      )
-document { quote modulo,
-     "modulo(f,g) - given homomorphisms ", TT "f", " and ", TT "g", " of free 
-     modules with the same target, produces a homomorphism of free modules whose 
-     target is the source of ", TT "f", ", and whose image is the pre-image (under
-     ", TT "f", ") of the image of ", TT "g", ".",
-     PARA,
-     "If ", TT "f", " is null, then it's taken to be the identity.  If ", TT "g", " is null, it's
-     taken to be zero."
-     }
 
 Matrix // Matrix := (f,g) -> (
      -- if ring g =!= ring f then error "expected maps over the same ring";
@@ -178,41 +78,11 @@ Matrix // Matrix := (f,g) -> (
 	       ChangeMatrix => true),
 	  Degree => degree f - degree g  -- do this in the engine instead
 	  ))
-document { (quote //, Matrix, Matrix),
-     TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
-     such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
-     for the image of ", TT "g", ".",
-     PARA,
-     "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
-     satisfies the equation ", TT "f = g * (f//g)", ".",
-     SEEALSO {"%", "\\\\"}
-     } 
-
-TEST "
-R = ZZ/101[a..d]
-A = image matrix {{a}}
-B = image matrix {{b}}
-f = map((A+B)/A, B/intersect(A,B))
-assert isIsomorphism f
-g = f^-1
-assert( f^-1 === g )			  -- check caching of inverses
-assert( f*g == 1 )
-assert( g*f == 1 )
-assert isWellDefined f
-assert isWellDefined g
-assert not isWellDefined map(R^1,cokernel matrix {{a}})
-"
 
 RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
 ZZ           // Matrix := (r,f) -> promote(r,ring f) // f
 
 Matrix // RingElement := (f,r) -> f // (r * id_(target f))
-document { (quote //, Matrix, RingElement),
-     TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
-     such that f - r*h is the reduction of f modulo a Groebner basis 
-     for the image of r times the identity matrix.",
-     SEEALSO "%"
-     } 
 
 Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
 
@@ -223,10 +93,6 @@ Matrix % Matrix := (n,m) -> (
      or not isFreeModule target n or not isFreeModule target m
      then error "expected maps between free modules";
      n % gb m)
-document { (quote %, Matrix, Matrix),
-     TT "f % g", " -- yields the reduction of the columns of the matrix
-     ", TT "f", " modulo a Groebner basis of the matrix ", TT "g", "."
-     }
 
 Matrix % Module := (f,M) -> f % gb M
 
@@ -235,47 +101,12 @@ RingElement % Ideal := (r,I) -> r % gb I
 ZZ % Ideal := (r,I) -> r_(ring I) % gb I
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))
-document { (quote %, Matrix, RingElement),
-     TT "f % r", " -- yields the reduction of the columns of the matrix
-     ", TT "f", " modulo the ring element ", TT "r", "."
-     }
+
 
 complement Matrix := (m) -> (
      if not isHomogeneous m then error "expected homogeneous matrix";
      n := transpose syz transpose substitute(m,0);
      id_(target n) // n)
-
-document { quote complement,
-     TT "complement f", " -- for a matrix ", TT "f", ", return a map ", TT "g", " with the same
-     target whose columns are minimal generators for the cokernel of ", TT "f", ".",
-     PARA,
-     "The map ", TT "f", " must be homogeneous."
-     }
-
------------------------------------------------------------------------------
-
-TEST "
-S = ZZ/107[vars ( 0 .. 5 ) ]
-
-g = matrix {{a*b*c - d*e*f, a*d^2 - e^3, a*e^2 - b*c*e}}
-k = syz g
-assert( numgens source k === 4 )
-
-t = (a + b + c)^4 
-u = (a + b + c) * b^3
-v = a * t + b * u
-w = c * t - d * u
-x = b * t + f * u
-
-h = matrix {{t,u,v,w,x}}
-h1 = mingens image h
-
-assert ( h1 == matrix {{
-	       a*b^3+b^4+b^3*c,
-	       a^4+4*a^3*b+6*a^2*b^2-3*b^4+4*a^3*c+12*a^2*b*c+12*a*b^2*c+6*a^2*c^2
-	       +12*a*b*c^2+6*b^2*c^2+4*a*c^3+4*b*c^3+c^4
-	       }} )
-"
 
 -------------------------------------
 -- index number of a ring variable --
@@ -285,34 +116,6 @@ index = method()
 index RingElement := f -> (
     v := try (baseName f) else error("expected a ring variable but received ",name f);
     (monoid ring f).index#v)
-
-document { quote index,
-    TT "index v", " -- yields the numeric index of the variable 'v' in its ring.
-    Variables are indexed starting at 0, and ending at n-1, where n is the number
-    of variables in the ring of 'v'.",
-    PARA,
-    EXAMPLE {
-	 "R = ZZ/101[a..d,t]",
-     	 "index a",
-     	 "index t",
-	 },
-    "If the ring element 'v' is not a variable, an error is generated.",
-    PARA,
-    "The symbol ", TT "index", " is also as a key used in 
-    ", TO {"GeneralOrderedMonoid", "s"}, " to store a table which is used to 
-    map generator names to the position of the generator in the list of generators."
-    }
-
-TEST "
-    R = ZZ/101[x_0 .. x_10]
-    scan(11, i -> assert(index x_i == i))
-    assert( try (index x_11;false) else true )
-    R = ZZ/101[w,z,t,e]
-    assert( index w == 0 )
-    assert( index z == 1 )
-    assert( index t == 2 )
-    assert( index e == 3 )
-"
 
 --------------------
 -- homogenization --
@@ -376,51 +179,6 @@ homogenize(Vector, RingElement) := (f,n) -> (
     homogenize(f,n,wts)
     )
 
-document { quote homogenize,
-     TT "homogenize(m,v)", " -- homogenize the ring element, vector,
-     matrix, or module ", TT "m", " using the variable ", TT "v", " in the ring of ", TT "m", ".",
-     BR,
-     NOINDENT,     
-     TT "homogenize(m,v,w)", " -- homogenize ", TT "m", " using the variable ", TT "v", ",
-     so that the result is homogeneous with respect to the given list ", TT "w", " of
-     integers provided as weights for the variables.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,Degrees => {1,2,3}]",
-      	  "f = 1 + y + z^2",
-      	  "homogenize(f,x)",
-      	  "homogenize(f,x,{1,0,-1})",
-	  },
-     PARA,
-     "The weights that may be used are limited (roughly) to the range -2^30 .. 2^30.",
-     PARA,
-     "Caveats and bugs: If the homogenization overflows the monomial, this is not
-     reported as an error"
-     }
-
-TEST "
-R = ZZ/101[a..d,t]
-f = a^2-d^3*b-1
-assert(homogenize(f,t) == a^2*t^2 - d^3*b - t^4)
-assert(homogenize(f,t,{1,2,3,4,2}) == a^2*t^6 - d^3*b - t^7)
-assert(homogenize(f,b,{1,1,0,-1,1}) == a^2 - d^3*b^5 - b^2)
-
-m = map(R^{1,-1}, , {{a,b},{c,d-1}})
-assert(homogenize(m,t) == map(R^{1,-1}, , {{a*t^2, b*t^2}, {c, d-t}}))
-assert(homogenize(m,t,{-1,-1,-1,-1,1}) == map(R^{1,-1}, , {{a*t^2, b*t^3}, {c, d*t-1}}))
-
-v = m_0
-F = class v
-assert(homogenize(v,t) == a*t^2 * F_0 + c * F_1)
-assert(homogenize(v,t,{-1,-1,-1,-1,1}) == a*t^2 * F_0 + c * F_1)
-
--- now check to make sure that all is ok over quotient rings
-R = ZZ/101[a..d]/(a^2-b^2, a*b)
-use R
-f = c^2 - 1 + b^2 - b
-assert(homogenize(f,a) == c^2)
-"
-
 coefficients(List, Matrix) := (v,m) -> (
     sendgg(ggPush m, ggPush v, ggcoeffs); 
     m1 := getMatrix ring m; 
@@ -442,16 +200,6 @@ terms RingElement := f -> (
      s := coefficients f;
      apply(first entries s#0,first entries s#1, times))
 
-document { quote terms,
-     TT "terms f", " -- provide a list of terms of a polynomial.",
-     PARA,
-     EXAMPLE {
-	  "R = QQ[x,y]",
-      	  "terms (x+2*y-1)^2",
-	  },
-     SEEALSO "coefficients"
-     }
-
 sortColumns = method ( 
      Options => {
 	  DegreeOrder => Ascending,
@@ -472,64 +220,6 @@ sortColumns Matrix := options -> (f) -> (
 	       error "expected MonomialOrder option value to be Ascending or Descending"));
      eePopIntarray())
 
-document { quote Ascending,
-     TT "Ascending", " -- a symbol used as a value for optional
-     arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
-     }
-
-document { quote Descending,
-     TT "Descending", " -- a symbol used as a value for optional
-     arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
-     }
-
-document { quote DegreeOrder,
-     TT "DegreeOrder", " -- an optional argument for use with certain
-     functions, used to specify sort order.",
-     PARA,
-     MENU {
-	  TO (sortColumns => DegreeOrder)
-	  }
-     }
-
-document { (sortColumns => DegreeOrder),
-     TT "DegreeOrder => x", " -- an optional argument for use with the function
-     ", TO "sortColumns", ".",
-     PARA,
-     "The possible values for ", TT "x", " are ", TO "Ascending", ",
-     ", TO "Descending", ", and ", TO "null", "."
-     }
-
-document { (sortColumns => MonomialOrder),
-     TT "MonomialOrder => x", " -- an optional argument for use with the function
-     ", TO "sortColumns", ".",
-     PARA,
-     "The possible values for ", TT "x", " are ", TO "Ascending", " and
-     ", TO "Descending", "."
-     }
-
-document { quote sortColumns,
-     TT "sortColumns f", " -- sorts the columns of a matrix, returning a list of integers
-     describing the resulting permutation.",
-     PARA,
-     "The sort ordering used is by degree first, and then by monomial order.  Optional
-     arguments may be given to specify whether the ordering is ascending, descending,
-     or ignored.  The default ordering is ascending.",
-     PARA,
-     "Optional arguments:",
-     MENU {
-	  TO (sortColumns => DegreeOrder),
-	  TO (sortColumns => MonomialOrder)
-	  },
-     EXAMPLE {
-	  "R = ZZ/101[a..c];",
-      	  "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",
-      	  "s = sortColumns f",
-      	  "f_s",
-      	  "s = sortColumns(f,DegreeOrder => Descending)",
-      	  "f_s"
-	  },
-     }
-
 -----------------------------
 -- Matrix utility routines --
 -----------------------------
@@ -539,25 +229,6 @@ selectInSubring = method()
 selectInSubring(ZZ, Matrix) := (i,m) -> (
      sendgg(ggPush m, ggdup, ggPush i, ggelim, ggsubmatrix);
      getMatrix ring m)
-
-document { quote selectInSubring,
-     TT "selectInSubring(i,m)", " -- Form the submatrix of the matrix 'm' consisting of those
-     columns which lie in the subring generated by the first 'i' parts of the
-     monomial order.",
-     PARA,
-     "For example, consider the graded lexicographic order",
-     EXAMPLE {
-	  "R = ZZ/101[a..d,MonomialOrder=>Lex]",
-      	  "m = matrix{{b^2-c^2, a^2 - b^2, c*d}}",
-      	  "selectInSubring(1,m)",
-      	  "selectInSubring(2,m)",
-      	  "selectInSubring(3,m)",
-	  },
-     PARA,
-     "Caveats: this routine doesn't do what one would expect for graded orders
-     such as 'GLex'.  There, the first part of the monomial order is the degree, 
-     which is usually not zero.  This routine should detect and correct this."
-     }
 
 divideByVariable = method()
 
@@ -573,26 +244,6 @@ divideByVariable(Matrix, RingElement, ZZ) := (m,v,d) -> (
      sendgg(ggPush m, ggPush index v, ggPush d, ggsat);
      getMatrix ring m)
 
-document { quote divideByVariable,
-     TT "divideByVariable(m,v)", " -- divide each column of the matrix 'm' by 
-     as high a power of the variable 'v' as possible.",
-     BR,NOINDENT,
-     TT "divideByVariable(m,v,d)", " -- divide each column of the matrix 'm' by 
-     as high a power of the variable 'v' as possible, but divide by no more than v^d.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "m = matrix{{a*b, a^2*c}, {a*b^2, a^4*d}}",
-      	  "divideByVariable(m,a)",
-      	  "divideByVariable(m,a,1)",
-	  },
-     "Caveats and limitations: you can only divide by a variable, not a monomial,
-     and you have little control on what power will be divided.  This routine is mostly
-     used by the saturation commands as a fast internal way of dividing.",
-     PARA,
-     "We may eliminate this routine."
-     }
-
 compress = method()
 --compress Matrix := (m) -> (
 --     R := ring m;
@@ -601,11 +252,6 @@ compress = method()
 compress Matrix := (m) -> (
      R := ring m;
      submatrix(m, select(toList(0..numgens source m-1), i -> m_i != 0)))
-
-document { quote compress,
-     TT "compress m", " -- provides the matrix obtained from the matrix ", TT "m", "
-     by removing the columns which are zero."
-     }
 
 newCoordinateSystem = method()
 
@@ -623,23 +269,6 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
   n := complement m | m;
   { map(S,R,vars S * substitute(n, S)), map(R,S,vars R * n^(-1))}
   )
-
-document { quote newCoordinateSystem,
-     TT "newCoordinateSystem(S,m)", " -- takes a one-rowed matrix ", TT "m", " of
-     independent linear forms over a ring ", TT "R", " and returns a list 
-     ", TT "{f,g}", ", where ", TT "f", " is a ring map given by some linear change 
-     of coordinates from ", TT "R", " to ", TT "S", " which sends the last variables 
-     of ", TT"R", " to the forms in ", TT "m", ", and ", TT "g", " is the inverse 
-     of ", TT "f", ".",
-     PARA,
-     "The ring ", TT "S", " should have the same number of variables as 
-     ", TT "S", ".",
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "S = ZZ/101[p..s]",
-      	  "newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})"
-	  },
-     }
 
 lift(Matrix,Ring) := (f,S) -> (
      -- this will be pretty slow and stupid

@@ -1,5 +1,264 @@
---		Copyright 1993-1998 by Daniel R. Grayson
- 
+--		Copyright 1993-1999 by Daniel R. Grayson
+
+TEST ///
+assert( null =!= doc sin)
+assert( null =!= doc "sin")
+assert( null =!= doc quote sin)
+///
+
+document { quote document,
+     TT "document {s, d}", " -- install documentation ", TT "d", " for 
+     the topic ", TT "s", ".",
+     PARA,
+     "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
+     ", TT "s", " may be one of the special forms useable with ", TO "TO", ".  As
+     a convenience, lists and sequences in ", TT "d", " are converted to ", TT "SEQ", "
+     mark up items, and instances of ", TO "MarkUpType", ", such as ", TO "PARA", "
+     are converted to empty instances of their type.",
+     PARA,
+     SEEALSO {"help functions"}
+     }
+
+document { quote TEST,
+     TT "TEST s", " -- writes the string s to a new test file.  The
+     commands in that file can be run later as a test.",
+     PARA,
+     "Intended for internal use only."
+     }
+
+document { quote between,
+     TT "between(m,v)", " -- inserts ", TT "m", " between each pair of elements 
+     of the list or sequence ", TT "v", ", returning a list.",
+     PARA,
+     EXAMPLE {
+	  "between(55,{a,b,c,d})"
+	  }
+     }
+
+document { quote SEEALSO,
+     TT "SEEALSO {a, b, ...}", " -- inserts, into a documentation page, a sentence
+     instructing the reader to see some other topics.",
+     PARA,
+     "The topics may have the special forms used with ", TO "TO", ".",
+     SEEALSO "document"
+     }
+
+document { quote RETURNS,
+     TT "RETURNS X", " -- inserts, into a documentation page, a sentence
+     explaining that the return type is ", TT "X", ", and referring the user to
+     the page for ", TT "X", "."
+     }
+
+document { quote doc,
+     TT "doc s", " -- provides the online documention for the topic s, in
+     internal ", TO "hypertext", " form, suitable for conversion to
+     text with ", TO "text", " or to html with ", TO "html", ".",
+     PARA,
+     EXAMPLE "doc partitions"
+     }
+
+document { quote help,
+     -- no PARA in this documentation, so it all gets displayed.
+     TT "help X", " -- displays the online documentation for ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help \"Macaulay 2\"", " -- displays the base of the online documentation
+     tree.",
+     BR, NOINDENT,
+     TT "help methods X", " -- displays help messages about the methods usable
+     with things of type ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help methods res", " -- displays help messages about the methods 
+     usable with the function ", TT "res", ".",
+     BR, NOINDENT,
+     TT "help methods quote **", " -- displays help messages about the methods 
+     usable with the operator ", TT "**", ".",
+     BR, NOINDENT,
+     TT "help methods (res, X)", " -- displays help messages about the 
+     methods usable with the function ", TT "res", " and a thing of
+     class ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help methods (quote **, X)", " -- displays help messages about the 
+     methods usable with the operator ", TT "**", " and a thing of
+     class ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help methods (X, Y)", " -- displays help messages about the 
+     methods usable with a thing of class ", TT "X", " and a thing of class
+     ", TT "Y", "."
+     }
+
+document { quote topicList,
+     TT "topicList()", " -- provides a complete list of topics on which help 
+     is available.",
+     PARA,
+     "Intended to be used in programs.  Users will prefer 
+     to use ", TO "topics", ".",
+     PARA,
+     SEEALSO "help"
+     }
+
+document { quote topics,
+     TT "topics  ", " -- displays a list of topics on which help is available.",
+     PARA,
+     "topics() -- Does the same in a function or file.",
+     PARA,
+     SEEALSO "help"
+     }
+
+document { quote apropos,
+     TT "apropos s", " -- displays a list of global symbols which match
+     the pattern specified by the string s.",
+     PARA,
+     "The pattern may contain '*'s as wild card characters.",
+     EXAMPLE "apropos \"scan\""
+     }
+
+document { quote printExamples,
+     TT "printExamples f", " -- prints out the examples of code using
+     the function ", TT "f", " provided in the documentation for
+     ", TT "f", ".",
+     PARA,
+     EXAMPLE "printExamples partition",
+     SEEALSO {"examples", "document"}
+     }
+
+document { quote Documentation,
+     TT "Documentation", " -- a hash table which is used to store
+     pointers to documentation of functions, symbols, and methods.",
+     PARA,
+     "This hash table is used by the routines that display 
+     documentation, is intended for internal use only, and its format may change.",
+     PARA,
+     "The documentation is stored both in a hash table in memory, and in a 
+     database file.  Combined, the two look like a single hash table, but
+     the ", TO "phase", " variable controls whether entries stored in it 
+     persist to the next session.",
+     PARA,
+     "The key may be anything, and if the value is a string, then
+     that string is taken to be the name of the thing, (which can be used for
+     when printing the thing).  The search for documentation continues 
+     with the name.",
+     PARA,
+     "The key may be anything, and if the value is a symbol, then
+     the symbol is one whose value is the thing, (which can be used for
+     when printing the thing), and the search for 
+     documentation continues with the symbol.",
+     PARA,
+     "The key may be a string: if the value is a database, then the
+     documentation is to be found there.  If the value is a list of
+     type ", TO "SEQ", " then it's the documentation itself.",
+     PARA,
+     "The key may be a sequence such as ", TT "(quote +,X,Y)", "
+     which is used to access the documentation installed when the method
+     for adding an instance of class X to an instance of class Y was
+     defined.  In this case the value is the list presented at that time,
+     i.e., a list of the form ", TT "{Z, (x,y) -> ... , documentation ... }",
+     ".",
+     PARA,
+     "The function ", TO "getDocumentationTag", " is used to chase through this
+     hash table to the final key.",
+     SEEALSO ":="
+     }
+
+document { quote getDocumentationTag,
+     TT "getDocumentationTag s", " -- chase through the pointers in 
+     the hash table ", TO "Documentation", " and return the final key, which
+     is a string which can be used as a key into the documentation database.",
+     PARA,
+     "This function is intended for internal use only."
+     }
+
+document { quote formatDocumentTag,
+     TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
+     display purposes in documents.",
+     PARA,
+     "This function is intended for internal use only."
+     }
+
+document { quote uniform,
+     TT "uniform x", " -- whether all elements of the list x have the same class."
+     }
+document { quote newClass,
+     TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR,
+     TT "newClass(N,M,m)", " -- makes a copy of m with N as class and M as parent",
+     PARA,
+     "If m is a list, then BasicList should be an ancestor of N.  If m is 
+     a hash table, then ", TT "HashTable", " should be an ancestor of N.",
+     PARA,
+     "If m is mutable, and instances of class N are also mutable, then
+     copying is not required, and is not done.",
+     PARA,
+     SEEALSO { "copy", "toList" }
+     }
+
+document { quote MutableList,
+     TT "MutableList", " -- the class of all mutable Lists.",
+     PARA,
+     "Normally the entries in a mutable list are not printed, to prevent
+     infinite loops in the printing routines.  To print them out, use 
+     ", TO "peek", ".",
+     PARA,
+     EXAMPLE {
+	  "s = new MutableList from {a,b,c};",
+      	  "s#2 = 1234;",
+	  "s",
+      	  "peek s",
+	  },
+     SEEALSO {"BasicList"}
+     }
+
+document { quote lookup,
+     TT "lookup", " -- a function for looking up methods.",
+     PARA,
+     NOINDENT,
+     TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
+     The first place to look is ", TT "A#M", ".  The search proceeds with
+     the parent of ", TT "A", ", and so on.",
+     PARA,
+     NOINDENT, TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
+     The first place to look is ", TT "Y#(M,A,B)", " where ", TT "Y", " is the younger
+     of ", TT "A", " and ", TT "B", ".  The search proceeds next with the parent of ", TT "B", ", 
+     and so on.",
+     PARA,
+     NOINDENT, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
+     ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 
+     is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with 
+     the parent of ", TT "C", ", and so on.",
+     PARA,
+     "If no method is found, then ", TT "null", " is returned.",
+     PARA,
+     SEEALSO {"#", "classes", "installMethod", "youngest"}
+     }
+
+document { quote installMethod,
+     TT "installMethod", " -- a function for installing methods.",
+     PARA,
+     "Most users will use a different way of installing methods.",
+     PARA,
+     NOINDENT,
+     TT "installMethod(M,A,f)", "     -- installs a function ", TT "f", " as a unary method for
+     the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " 
+     if ", TT "M", " is a function.  As currently implemented, this is also the same 
+     as ", TT "A#M = f", ".",
+     PARA,
+     NOINDENT,
+     TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
+     classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as 
+     ", TT "M(A,B) := f", " if ", TT "M", " is a
+     function, or the same as ", TT "A M B := f", " if ", TT "M", " is a binary operator. As currently
+     implemented, this is also the same as ", TT "Y#(M,A,B) = f", ", where ", TT "Y", " is 
+     the younger of ", TT "A", " and ", TT "B", ".",
+     PARA,
+     NOINDENT,
+     TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
+     for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  
+     This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
+     is a function.  As currently implemented, this is also the same as
+     ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
+     and ", TT "C", ".",
+     PARA,
+     SEEALSO{"#", "lookup",  "new", "classes"}
+     }
+
 document { quote new,
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR,
@@ -708,4 +967,109 @@ document { quote mathML,
 	  "mathML matrix {{x,y},{x^2+2,0}}"
 	  },
      SEEALSO "hypertext"
+     }
+
+document { quote #,
+     TT "#x", " -- provides the length of a list, sequence, array or 
+     string, or the number of elements in a hash table or set.",
+     BR,NOINDENT,
+     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
+     ", TT "x", "; or else the i-th element of ", TT "x", " if ", TT "x", " is a list, array, or 
+     sequence; or the i-th character of ", TT "x", " if ", TT "x", " is a string; or the value stored 
+     in the database ", TT "x", " under the key ", TT "i", ", which must be a string.",
+     PARA,
+     "If ", TT "x", " is a string, then ", TT "i", " must be an integer, and ", TT "x#i", " is the i-th
+     character in the string, presented as a string of length one, or if 
+     ", TT "i", " is out of range, a string of length zero is returned.  If ", TT "i", " is
+     negative, then the i-th character from the end is provided.",
+     PARA,
+     "Assignment to ", TT "x#i", " can change the value if x is mutable.",
+     PARA,
+     "The precedence of ", TT "#", " when used as a binary operator is high,
+     as high as ", TT ".", ", but the precedence when used as a unary operator
+     lower, as low as adjacency or function application.",
+     PARA,
+     EXAMPLE {
+	  "x = new MutableHashTable",
+	  "x#i = p",
+	  "x#i",
+	  },
+     SEEALSO{ "#?", "#" }
+     }
+
+document { quote #?,
+     TT "x#?i", " -- tells whether there is a value associated to the key ", TT "i", " in 
+     the hash table ", TT "x", "; or else whether the i-th element of ", TT "x", " exists if ", TT "x", " is a list, 
+     array, or sequence; or else whether the i-th character of ", TT "x", " exists if ", TT "x", "
+     is a string; or the value stored in the database ", TT "x", " under the key ", TT "i", ", which
+     must be a string.",
+     PARA,
+     SEEALSO{ "#" }
+     }
+
+document { quote _,
+     TT "x_i", " -- a binary operator which is used for various
+     mathematical operations that are customarily written with subscripts.",
+     PARA,
+     "A ", TO "binary method", " may be installed for ", TT "x_i", " with code like ",
+     PRE "          X _ Y := (x,i) -> ...",
+     "where X is the prospective class of x and Y is the class of i.",
+     PARA,
+     "Examples where methods have been installed:",
+     MENU {
+	  SHIELD (TO (quote _, List, ZZ), " -- get an entry from a list"),
+	  SHIELD (TO (quote _, Sequence, ZZ), " -- get an entry from a sequence"),
+	  SHIELD (TO (quote _, List, List), " -- get a list of entries from a list or sequence"),
+	  SHIELD (TO (quote _, ChainComplex, ZZ), " -- get a module from a chain complex"),
+	  SHIELD (TO (quote _, Matrix, ZZ), " -- get a column from a matrix"),
+	  SHIELD (TO (quote _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes"),
+	  SHIELD (TO (quote _, Matrix, Sequence), " -- get an entry from a matrix"),
+	  SHIELD (TO (quote _, Matrix, List), " -- get some columns from a matrix"),
+	  SHIELD (TO (quote _, RingElement, RingElement), " -- get a coefficient from a polynomial"),
+	  SHIELD (TO (quote _, Ring, ZZ), " -- get a generator from a ring"),
+	  SHIELD (TO (quote _, Module, ZZ), " -- get a generator of a module"),
+	  SHIELD (TO (quote _, Monoid, ZZ), " -- get a generator from a monoid"),
+	  SHIELD (TO (quote _, Module, List), " -- get a map onto some generators of a module"),
+	  SHIELD (TO "Tor", " -- Tor functor"),
+	  SHIELD (TO "HH", " -- homology functor"),
+	  SHIELD (TO (quote _, Vector, ZZ), " -- get an component from a vector"),
+	  SHIELD (TO (quote _, SchurRing, List), " -- make an element of a Schur ring")
+	  }
+     }
+
+document { (quote _, List, ZZ),
+     TT "w_i", " -- selects an entry from a list."
+     }
+
+document { (quote _, Sequence, ZZ),
+     TT "w_i", " -- selects an entry from a sequence."
+     }
+
+document { quote .,
+     TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
+     a global symbol and provide the value stored in the hash table ", TT "x", " 
+     under the key ", TT "k", ".",
+     PARA,
+     "May also be used in an assignment.",
+     PARA,
+     EXAMPLE {
+	  "x = new MutableHashTable;",
+      	  "x.k = 444",
+      	  "x.k",
+      	  "peek x",
+	  },
+     SEEALSO {"#", ".?", "global"}
+     }
+
+document { quote .?,
+     TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
+     available with ", TT "x.k", ".",
+     PARA,
+     SEEALSO{ ".", "#?" }
+     }
+
+document { quote autoload,
+     TT "autoload(f,\"x\")", " -- arranges for a function ", TT "f", " to be 
+     automatically loaded from the file named ", TT "x", " the first
+     time it is used."
      }

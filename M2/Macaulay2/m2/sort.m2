@@ -28,18 +28,6 @@ sort = (v) -> (
 	  subsort(0,#v - 1);
 	  toList v))
 
-document { quote sort,
-     TT "sort v", " -- produces a sorted version of the list v.",
-     PARA,
-     "The sort function uses ", TO "<=", " to compare elements of the
-     list, which in turn calls upon ", TO "?", ".",
-     EXAMPLE {
-	  "sort {c,e,a,f,b,f}",
-	  "sort {4,2,6,3,8,2}"
-	  },
-     SEEALSO { "rsort", "<=", "?" }
-     }
-
 rsort = (v) -> (
      -- quick rsort routine
      if # v <= 1
@@ -61,19 +49,6 @@ rsort = (v) -> (
 	       );
 	  subrsort(0,#v - 1);
 	  toList v));
-
-
-document { quote rsort,
-     TT "rsort v", " -- produces a reverse sorted version of the list v.",
-     PARA,
-     "The rsort function uses ", TO "<=", " to compare elements of the
-     list, which in turn calls upon ", TO "?", ".",
-     EXAMPLE {
-	  "rsort {g,d,w,s,c,a,r}",
-	  "rsort {4,2,3,1}",
-	  },
-     SEEALSO { "sort", "<=", "?" }
-     }
 
 lexcompare := (v,w,i) -> (
      if i === # v

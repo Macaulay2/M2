@@ -9,21 +9,6 @@ net RingMap := f -> horizontalJoin(
      )
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}
-document { quote RingMap,
-     TT "RingMap", " -- the class of all ring maps.",
-     "Operations which produce ring maps:",
-     MENU {
-	  TO "maps between rings",
-	  TO "newCoordinateSystem"
-	  },
-     "Operations on ring maps:",
-     MENU {
-	  TO "graphIdeal",
-	  TO "graphRing",
-	  TO "isInjective",
-	  TO "kernel"
-	  }
-     }
 
 map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
      if isFreeModule target m
@@ -61,13 +46,6 @@ map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
 	  " or a square matrix over the coefficient ring"
 	  ))
 
-TEST "
-R=ZZ/101[a,b,c]
-f = map(R,R,matrix(ZZ/101,{{1,2,3},{4,5,6},{7,8,9}}))
-assert( f(a) == a + 4*b + 7*c )
-assert( kernel f == ideal ( a-2*b+c ) )
-"
-
 map(Ring,Matrix) := options -> (S,m) -> map(ring m,S,m)
 
 map(Ring,Ring) := options -> (S,R) -> (
@@ -81,35 +59,6 @@ map(Ring,Ring) := options -> (S,R) -> (
      map(S,R,matrix (S,{v})))
 
 map(Ring,Ring,List) := options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
-
-document { "making ring maps",
-     TT "map(R,S,m)", " -- sets up a ring homomorphism from ", TT "S", "
-     to ", TT "R", " which sends the i-th variable of S to the i-th element
-     of the list ", TT "m", ".  Alternatively, ", TT "m", " may be
-     a 1 by n matrix over ", TT "R", ", where n is the
-     number of variables in the polynomial ring ", TT "S", "; or it may
-     be a square matrix over the common coefficient ring of the two rings,
-     in which case it is used as the matrix of a linear change of coordinates.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b];",
-      	  "m = symmetricPower(3, vars R)",
-      	  "rank source m",
-      	  "S = ZZ/101[s_1 .. s_oo]",
-      	  "f = map(R,S,m)",
-      	  "f s_2",
-      	  "f vars S",
-      	  "kernel f",
-      	  "generators oo",
-      	  "f oo",
-      	  "U = ZZ/101[t,u,v]",
-      	  "g = map(S,U,{s_1+s_2, s_2 + s_3, s_3+s_4})",
-      	  "f * g",
-      	  "kernel oo",
-      	  "f g generators oo",
-	  },
-     PARA,
-     "The class of all ring maps is ", TO "RingMap", "."
-     }
 
 AfterPrint RingMap := AfterNoPrint RingMap := f -> (
      << endl;				  -- double space
@@ -229,40 +178,6 @@ kernel RingMap := options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
      else error "not implemented yet"
      )
 
-TEST "
-f = map(frac (QQ[r,s,t]), QQ[x,y,z], {(r-s)/t,(s-t)/r,(t-r)/s})
-assert( kernel( f, SubringLimit => 1 ) == ideal(x*y*z+x+y+z) )
-"
-
-TEST "
-S = ZZ/101[x,y]
-R = ZZ/101[t,u]
-f = map(S,R,{x,0})
-assert( kernel f == ideal u )
-"
-
-TEST "
-S = ZZ/101[x,y]
-R = ZZ/101[t,u]
-f = map(S,R,{x,1})
-assert( kernel f == ideal (u-1) )
-"
-
-TEST "
-R = ZZ/101[a..f]
-m = matrix {{a*b*c*d, b^2*c*d, b*c^2*d, b*c*d^2, b*c*d*e, 
-	     c*d*e*f, a*d*e*f, a*b*e*f, a*b*c*f, b*c*d*f}}
-f = map(R,ZZ/101[x_0..x_9],m)
-J = kernel f
-"
-
-TEST "
-S = ZZ/101[a..j]
-m = matrix {{d*g*i-a*g*j, c*h^2-e*h*i, a*b^2*g-a*b*d*h, b*d*f-d*e*j}}
-E = Ext^3(cokernel m, S)
-annihilator E
-"
-
 image RingMap := f -> f.source / kernel f
 
 RingMap * RingMap := (g,f) -> (
@@ -331,33 +246,6 @@ substitute(Module,Option) := (M,v) -> (sub2(ring M,{v})) M
 substitute(Ideal,Option) := (I,v) -> (sub2(ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(ring f,{v})) f
-
-document { quote substitute,
-     TT "substitute(f,v)", " -- substitute values for the variables in the matrix,
-     module, vector, polynomial, or monomial f as specified by v.", 
-     PARA,
-     "If f is a matrix over R, and v is a 1 by k matrix over another
-     ring S, then the result is obtained by substituting the entries in v 
-     for the variables in R.",
-     PARA,
-     "If f is a module over R, then substitution amounts to substitution
-     in the matrices of generators and relations defining the module.  This is
-     not the same as tensor product!",
-     PARA,
-     "If v is a ring, then the result is obtained by substituting the variables of
-     v for the variables of R with the same name.  The substitution extends
-     to the coefficient ring of R, and so on.",
-     PARA,
-     "If v is a list of options ", TT "{a => f, b => g, ...}", " then the variable
-     ", TT "a", " is replaced by the polynomial ", TT "f", ", etc.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "f = x+2*y+3*z",
-      	  "substitute(f,{x=>x^3, y=>y^3})",
-      	  "S = ZZ/101[z,y,x]",
-      	  "substitute(f,S)"
-	  },
-     }
 
 RingMap Ideal := (f,I) -> ideal f module I
 
