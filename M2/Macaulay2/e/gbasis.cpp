@@ -329,7 +329,7 @@ void GBasis::minimalize_gb()
 
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     {
-      if ((*i)->minlevel <= ELEM_MIN_GB)
+      //      if ((*i)->minlevel <= ELEM_MIN_GB)
 	{
 	  exponents e = (*i)->lead;
 	  exps.push_back(e);
@@ -367,8 +367,24 @@ const Matrix *GBasis::get_minimal_gb()
 {
   minimalize_gb();
   MatrixConstructor mat(F,0,false/*not mutable*/);
+  int j=0;
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
-    mat.append(originalR->translate_gbvector_to_vec(F, (*i).f));
+    {
+      fprintf(stderr, "%d ", j++);
+      if (j % 20 == 0) fprintf(stderr,"\n");
+
+      vec v = originalR->translate_gbvector_to_vec(F, (*i).f);
+#if 0
+      buffer o;
+      o << "element " << j++ << " ";
+      R->gbvector_text_out(o, F, (*i).f);
+      o << "\n  vec   ";
+      F->elem_text_out(o, v);
+      emit_line(o.str());
+#endif
+      mat.append(v);
+      //      mat.append(originalR->translate_gbvector_to_vec(F, (*i).f));
+    }
   return mat.to_matrix();
 }
 
@@ -385,7 +401,9 @@ const Matrix *GBasis::get_change()
 {
   minimalize_gb();
   MatrixConstructor mat(Fsyz,0,false/*not mutable*/);
-  for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
+  for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); 
+       i != minimal_gb.end(); 
+       i++)
     mat.append(originalR->translate_gbvector_to_vec(Fsyz, (*i).fsyz));
   return mat.to_matrix();
 }

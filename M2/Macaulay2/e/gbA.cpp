@@ -165,12 +165,12 @@ static bool exponents_equal(int nvars, exponents a, exponents b)
   return true;
 }
 
-static bool exponents_greater(int nvars, exponents a, exponents b)
+static bool exponents_less_than(int nvars, exponents a, exponents b)
 {
   for (int i=0; i<nvars; i++)
     {
-      if (a[i] < b[i]) return false;
-      if (a[i] > b[i]) return true;
+      if (a[i] < b[i]) return true;
+      if (a[i] > b[i]) return false;
     }
   return false;
 }
@@ -264,6 +264,15 @@ void gbA::spair_text_out(buffer &o, spair *p)
   case SPAIR_SPAIR:
     sprintf(s, "spair(%d,%d)", p->x.pair.i, p->x.pair.j);
     o << s;
+    sprintf(s, " deg(%d)", p->deg);
+    o << s;
+    o << " lcm[";
+    for (int i=0; i<_nvars+2; i++)
+      {
+	sprintf(s, "%d ", p->lcm[i]);
+	o << s;
+      }
+    o << "]";
     break;
   case SPAIR_GEN:
     o << "gen ";
@@ -418,7 +427,7 @@ struct spair_sorter : public binary_function<gbA::spair *,gbA::spair *,bool> {
 	cmp = a->type - b->type;
 	if (cmp < 0) result = true;
 	else if (cmp > 0) result = false;
-	else result = !exponents_greater(nvars,a->lcm, b->lcm);
+	else result = exponents_less_than(nvars,a->lcm, b->lcm);
       }
       return result;
     }
@@ -428,6 +437,14 @@ struct spair_sorter : public binary_function<gbA::spair *,gbA::spair *,bool> {
 void gbA::minimalize_pairs(spairs &new_set)
      /* new_set: array of spair*  */
 {
+#if 0
+  spairs keep_for_now;
+  emit("--minimalize pairs--\n");
+  for (int i=0; i<new_set.size(); i++) {
+    keep_for_now.push_back(new_set[i]);
+    debug_spair(new_set[i]);
+  }
+#endif
   sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
   MonomialTable *montab = MonomialTable::make(_nvars);
 
@@ -447,8 +464,8 @@ void gbA::minimalize_pairs(spairs &new_set)
 	}
       /* At this point: [first,next) is the range of equal monomials */
       
-      bool inideal = montab->find_divisors(1, me->lcm, 1);
-      if (!inideal)
+      int inideal = montab->find_divisors(1, me->lcm, 1);
+      if (inideal == 0)
 	{
 	  spairs::iterator t = choose_pair(first, next);
 	  spair *p = *t;
@@ -744,7 +761,7 @@ bool gbA::reduce(spair *p)
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
 	  insert(h,ELEM_NON_MIN_GB);
-	  if ((gbTrace % PRINT_SPAIR_TRACKING) != 0)
+	  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
 	    {
 	      buffer o;
 	      o << "deferring A spair ";
@@ -771,7 +788,7 @@ bool gbA::reduce(spair *p)
       if (alpha > 0)
 	{
 	  p->deg += alpha;
-	  if ((gbTrace % PRINT_SPAIR_TRACKING) != 0)
+	  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
 	    {
 	      buffer o;
 	      o << "deferring B spair ";
@@ -807,6 +824,12 @@ void gbA::auto_reduce_by(int id)
     {
       GBasis::gbelem *g = G->gb[i];
       if (g->deg < me->deg) return;
+      if (gbTrace == 10)
+	{
+	  buffer o;
+	  o << "auto reduce " << id << " by " << i;
+	  emit_line(o.str());
+	}
       R->gbvector_auto_reduce(_F, _Fsyz,
 			      g->g.f, g->g.fsyz, // these are modified
 			      me->g.f, me->g.fsyz);
@@ -822,7 +845,7 @@ void gbA::insert(POLY f, int minlevel)
 
   int me = G->insert(f.f, f.fsyz, (gbelem_type)minlevel, _this_degree);
 
-  if (gbTrace >= 5)
+  if (gbTrace >= 4)
     {
       char s[100];
       buffer o;

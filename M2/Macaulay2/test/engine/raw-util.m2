@@ -40,6 +40,15 @@ polyring = (K, vars) -> (
      scan(#vars, i -> assign(vars#i, rawRingVar(R,i,1)));
      R)
 
+polyring2 = (K, vars, mo) -> (
+     -- each element of vars should be a symbol!
+     vars = toList vars;
+     M := rawMonoid(mo, apply(vars, toString), 
+	       degmonoid 1, (#vars):1);
+     R := rawPolynomialRing(K, M);
+     scan(#vars, i -> assign(vars#i, rawRingVar(R,i,1)));
+     R)
+
 mat = (tab) -> (
      -- tab should be a non-empty table of ring elements
      R := rawRing tab#0#0;

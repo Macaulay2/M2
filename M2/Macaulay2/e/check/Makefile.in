@@ -1,7 +1,10 @@
 # @configure_input@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
-CCTESTS = test_monomial.o
+CCTESTS = test_monomial.o \
+	test_ring.o \
+	test_gb.o
+
 CTESTS = \
 	check_monomial.o \
 	check_monordering.o \

@@ -8,6 +8,10 @@
 
 #include "engine.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 M2_Integer make_integer(long int a);
 M2_arrayint arrayint(int len, ...);
 const Monomial *monom(int len, ...);
@@ -31,6 +35,10 @@ void display_matrix(const Matrix *f);
 
 int is_eq(M2_string elem, char *answer);
 int arrayint_is_eq(M2_arrayint a, M2_arrayint b);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif
 
