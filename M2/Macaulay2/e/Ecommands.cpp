@@ -390,7 +390,7 @@ static void cmd_EFreeModule2(object &o1, object &o2)
   int rank = degs->length() / ndegrees;
   if (degs->length() % ndegrees != 0)
     {
-      gError << "hi wrong number of degrees";
+      gError << "wrong number of degrees";
       return;
     }
   const monomial **result_degs = new const monomial *[rank];
@@ -403,12 +403,6 @@ static void cmd_EFreeModule2(object &o1, object &o2)
           return;
         }
     }
-  buffer o;
-  o << "free module ";
-  for (int j=0; j<rank; j++)
-    { D->elem_text_out(o,result_degs[j]); o << " "; }
-  o << newline;
-  emit(o.str());
   EFreeModule *F = R->makeFreeModule(rank,result_degs);
   gStack.insert(F);
 }

@@ -35,6 +35,8 @@ void EMonomialOrder::append_block(int nzeros, mon_order_node *b)
 {
   int *wts;
   int i;
+  if (componentloc >= 0)
+    componentloc += b->nslots;
   switch (b->typ)
     {
     case MO_LEX:
@@ -91,12 +93,8 @@ EMonomialOrder *EMonomialOrder::product(const EMonomialOrder *mo2)
   for (i=0; i<nb; i++)
     append_block(0, oldblocks[i]);
   for (i=0; i<mo2->nblocks; i++)
-    {
-      if (mo2->order[i]->first_slot == componentloc)
-	component();
-      append_block(n, mo2->order[i]);
-    }
-  
+    append_block(n, mo2->order[i]);
+  componentloc = mo2->componentloc;
   delete [] oldblocks;
   return this;
 }
@@ -167,7 +165,8 @@ EMonomialOrder *EMonomialOrder::lexWeights(int nvars, const int *wts, bool isgro
 
 EMonomialOrder *EMonomialOrder::component()
 {
-  componentloc = this->nslots;
+  // Take the last component mentioned.
+  componentloc = 0;
   return this;
 }
 

@@ -257,31 +257,27 @@ void EVector::degreeWeightsLoHi(int i, int &lo, int &hi) const
   const EMonoid *M = F->getMonoid();
   const EMonoid *D = F->getDegreeMonoid();
   const int *wts = F->getRing()->getDegreeVector(i);
-  buffer o;
-  o << "weights: ";
-  for (int j=0; j<M->n_vars(); j++)
-    o << wts[j] << " ";
   int d = M->degree(p->monom,wts);
   d += D->to_exponents(F->getDegree(p->component))[i];
-  o << "degree " << i << ": " << d << " ";
   lo = hi = d;
   for (p = p->next; p != 0; p=p->next)
     {
       d = M->degree(p->monom,wts);
       d += D->to_exponents(F->getDegree(p->component))[i];
-      o << d << " ";
       if (d < lo) lo = d;
       if (d > hi) hi = d;
     }
-  o << newline;
-  emit(o.str());
 }
 
 void EVector::degreeWeightsLoHi(const int *wts, 
                             const int *componentdegs, 
                             int &lo, int &hi) const
 {
-  if (len == 0) return;
+  if (len == 0) 
+    {
+      lo = hi = 0;
+      return;
+    }
   poly *p = elems;
   const EMonoid *M = F->getMonoid();
   int d = M->degree(p->monom,wts);
@@ -298,7 +294,11 @@ void EVector::degreeWeightsLoHi(const int *wts,
 void EVector::degreeWeightsLoHi(const int *wts, 
                             int &lo, int &hi) const
 {
-  if (len == 0) return;
+  if (len == 0) 
+    {
+      lo = hi = 0;
+      return;
+    }
   poly *p = elems;
   const EMonoid *M = F->getMonoid();
   int d = M->degree(p->monom,wts);

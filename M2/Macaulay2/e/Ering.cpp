@@ -769,11 +769,6 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank,
       result = new EFreeModule(this,rank,degrees,ordering,tiebreaks);
       result->setCover(result);
     }
-  buffer o;
-  o << "Schreyer free created: ";
-  result->text_out(o);
-  o << newline;
-  emit(o.str());
   EUniqueObjects.insertEFreeModule(result);
   return result;
 }
