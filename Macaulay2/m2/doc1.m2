@@ -165,7 +165,9 @@ document {
      	  ("help \"Your first input prompt\"", "   -- "),
      	  ("help x", "                           -- display the documentation for ", TT "x"),
 	  },
-     "Even better, read the documentation in html form or in info form ... "
+     "To read the documentation in info form, in case you happen to be running Macaulay 2 in a 
+     terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands 
+     above."
      }
 document {
      Key => help,

@@ -172,12 +172,12 @@ anchor := entry -> (
      	  SEQ apply(s, c -> ANCHOR {c, ""})
      	  ))
 
-packageNodes := (pkg,topDocumentTag) -> checkIsTag \ unique join(
+packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
      apply(
      	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
 	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
      apply(
-	  values pkg#"documentation",
+	  values pkg#"raw documentation",
 	  doc -> doc.DocumentTag),
      { topDocumentTag }
      )
@@ -266,25 +266,18 @@ buildLinks ForestNode := x -> (
 
 -----------------------------------------------------------------------------
 
-assembleTree = method()
-assembleTree Package := pkg -> (
+assembleTree := (pkg,nodes) -> (
      missingReferences = new MutableHashTable;
      repeatedReferences = new MutableHashTable;
-     oldpkg := currentPackage;
-     currentPackage = pkg;
      duplicateReferences = new MutableHashTable;
-     topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
-     linkTable = new HashTable from apply(		    -- compare with packageNodes, sigh...
-	  values pkg#"documentation", 
-	  doc -> doc.DocumentTag => checkIsTag \ (
-	       if not doc.?Subnodes then {} else first \ select(toList doc.Subnodes, x -> class x === TO)
+     linkTable = new HashTable from apply(nodes, tag -> (   -- collect links from each tag to its subnodes
+	       if pkg#"raw documentation"#?tag then (
+		    doc = pkg#"raw documentation"#tag;
+		    tag => first \ select(if doc.?Subnodes then doc.Subnodes else {}, x -> class x === TO))
+	       else (
+		    tag => {}
+		    )
 	       ));
-     linkTable = merge(
-	  linkTable, 
-	  new HashTable from apply(			    -- compare with packageNodes, sigh...
-     	       select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
-	       (nam,sym) -> makeDocumentTag(sym, Package => pkg) => {}),
-	  (a,b) -> a);
      CONT = getTrees();
      buildLinks CONT;
      )
@@ -377,8 +370,8 @@ installPackage Symbol := opts -> pkg -> (
 installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg); -- duplicated above
-     nodes := packageNodes(pkg,topDocumentTag);
+     topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
+     nodes := packageTagList(pkg,topDocumentTag);
      buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
@@ -483,7 +476,7 @@ installPackage Package := o -> pkg -> (
 
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;
-     assembleTree pkg;
+     assembleTree(pkg,nodes);
      pkg#"table of contents" = new Bag from {CONT}; -- we bag it because it might be big!
      pkg#"links up" = UP;
      pkg#"links next" = NEXT;
