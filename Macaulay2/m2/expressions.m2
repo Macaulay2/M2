@@ -85,9 +85,9 @@ Minus#operator = "-"
 value Minus := v -> minus apply(toSequence v,value)
 toString Minus := v -> (
      term := v#0;
-     if precedence term <= precedence v
-     then "-(" | toString term | ")"
-     else "-" | toString term
+     if precedence term > precedence v or class term === Product
+     then "-" | toString term
+     else "-(" | toString term | ")"
      )
 
 Equation = new HeaderType of AssociativeExpression
