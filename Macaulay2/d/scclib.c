@@ -337,11 +337,11 @@ M2_string system_realpath(M2_string filename) {
   return r == NULL ? filename : system_tostring(buf);
 }
 
-M2_string system_errfmt(M2_string filename, int lineno, int colno) {
+M2_string system_errfmt(M2_string filename, int lineno, int colno, int loaddepth) {
 	char *s = getmem_atomic(filename->len+strlen(posfmt)+10);
 	char *fn = tocharstar(filename);
 	M2_string ret;
-	sprintf(s,posfmt,fn,lineno,colno);
+	sprintf(s,posfmt,fn,lineno,colno,loaddepth);
 	ret = system_tostring(s);
 	GC_FREE(s);
 	GC_FREE(fn);
