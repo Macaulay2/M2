@@ -125,11 +125,11 @@ document { topicList,
 
 document { topics,
      Headline => "display available help topics",
-     TT "topics", " -- displays a list of topics on which help is available.",
-     PARA,
-     "topics() -- Does the same in a function or file.",
-     PARA,
-     SEEALSO "help"
+     Synopsis => {
+	  "topics"
+	  },
+     "This command displays a list of topics on which help is available, in columnated form.",
+     SEEALSO {"help"}
      }
 
 document { apropos,

@@ -683,17 +683,25 @@ document { TO,
 
 document { Command,
      Headline => "the class of all commands",
+     Synopsis => {
+	  "f = Command g",
+	  "g" => "a function or a string",
+	  "f" => {
+	       "a new command that will evaluate ", TT "g()", " if ", TT "g", " is a function, and
+	       will evaluate ", TT "run g", " if ", TT "g", " is a string" }
+	  },
      "A command behaves as a function does if it is followed by an adjacent
      expression which can serve as its argument or argument list.  In addition,
      if it appears as the value of an expression typed by the user at top
-     level, then it gets executed with empty argument list.  This is
-     accomplished by installing a method for ", TO "AfterEval", ".",
+     level (i.e., not in a file), then it gets executed with empty argument list.",
      PARA,
-     "Create a new command ", TT "f", " from a function ", TT "g", " with ", 
-     TT "f = Command g", ".",
-     PARA,
-     "Create a new command ", TT "f", " from a shell command named g with
-     ", TT "f = Command \"g\"", ".  Arguments to f will be provided to g."
+     EXAMPLE {
+	  "(f = Command ( () -> 2^30 );)",
+	  "f",
+	  "(c = Command ( () -> \"date\" );)",
+	  "c"
+	  },
+     SEEALSO {"run", "AfterEval"}
      }
 
 
