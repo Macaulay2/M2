@@ -543,8 +543,9 @@ installPackage Package := o -> pkg -> (
 	  f = buildDirectory | "encapinfo"
 	  << ///encap 2.0/// << endl
 	  << ///contact dan@math.uiuc.edu/// << endl;
+	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
 	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
-	       k -> f << "linkdir " << (if class LAYOUT#k === Function then LAYOUT#k "*" else LAYOUT#k) << endl);
+	       k -> f << "linkdir " << (if class LAYOUT#k === Function then removeLastSlash LAYOUT#k "*" else removeLastSlash LAYOUT#k) << endl);
 	  f << close;
 	  );
 
