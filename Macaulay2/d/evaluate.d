@@ -30,13 +30,13 @@ errorreturn := nullE;
 recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 NumberErrorMessagesShown := 0;
-export recursiondepth := 0;
-export recursionlimit := 300;
+export recursionDepth := 0;
+export recursionLimit := 300;
 ----------------------------------------------------------------------------------------
 -- just one forward reference -- we have many mutually recursive functions in this file, too bad!
 export eval(c:Code):Expr;
 ----------------------------------------------------------------------------------------
-export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionlimit) + " exceeded");
+export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionLimit) + " exceeded");
 
 export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
      ival := eval(i);
@@ -329,7 +329,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
      model := c.model;
      desc := model.desc;
      framesize := desc.framesize;
-     if recursiondepth > recursionlimit then RecursionLimit()
+     if recursionDepth > recursionLimit then RecursionLimit()
      else if desc.restargs then (
 	  -- assume numparms == 1
      	  if framesize < length(recycleBin) then (
@@ -348,12 +348,12 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    f.frameID = desc.frameID;
 		    f.values.0 = v;
 		    );
-	       recursiondepth = recursiondepth + 1;
+	       recursionDepth = recursionDepth + 1;
 	       saveLocalFrame := localFrame;
 	       localFrame = f;
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
-	       recursiondepth = recursiondepth - 1;
+	       recursionDepth = recursionDepth - 1;
 	       if !f.notrecyclable then (
 	       	    foreach x in f.values do x = nullE;
 		    f.outerFrame = recycleBin.framesize;
@@ -363,7 +363,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  else (
-	       recursiondepth = recursiondepth + 1;
+	       recursionDepth = recursionDepth + 1;
 	       f := Frame(previousFrame,desc.frameID,framesize,false,
 		    new Sequence len framesize do (
 			 provide v;
@@ -372,7 +372,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       localFrame = f;
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
-	       recursiondepth = recursiondepth - 1;
+	       recursionDepth = recursionDepth - 1;
 	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  )
@@ -380,12 +380,12 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
      then WrongNumArgs(model.arrow,desc.numparms,length(v))
      else (
 	  if framesize == 0 then (
-	       recursiondepth = recursiondepth + 1;
+	       recursionDepth = recursionDepth + 1;
 	       saveLocalFrame := localFrame;
 	       localFrame = previousFrame;
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
-	       recursiondepth = recursiondepth - 1;
+	       recursionDepth = recursionDepth - 1;
 	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  else (
@@ -405,12 +405,12 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 			 f.frameID = desc.frameID;
 			 foreach x at i in v do f.values.i = x;
 			 );
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -420,7 +420,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    when ret is err:Error do returnFromFunction(ret) else ret
 		    )
 	       else (
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
 			 new Sequence len framesize do (
@@ -429,7 +429,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    localFrame = f;
 		    ret := eval(model.body);
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    when ret is err:Error do returnFromFunction(ret) else ret
 		    )
 	       )
@@ -447,8 +447,8 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  +(if desc.numparms == 1 then "" else "s")
 	  +" but got 1"
 	  );
-     if recursiondepth > recursionlimit then return RecursionLimit();
-     recursiondepth = recursiondepth + 1;
+     if recursionDepth > recursionLimit then return RecursionLimit();
+     recursionDepth = recursionDepth + 1;
      if framesize < length(recycleBin) then (
 	  f := recycleBin.framesize;
 	  previousStashedFrame := f.outerFrame;
@@ -474,7 +474,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	       f.frameID = -2;				    -- just to be tidy, not really needed
 	       recycleBin.framesize = f;
 	       );
-	  recursiondepth = recursiondepth - 1;
+	  recursionDepth = recursionDepth - 1;
 	  when ret is err:Error do returnFromFunction(ret) else ret
 	  	     -- this check takes time, too!
 	  )
@@ -487,7 +487,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
      	  localFrame = f;
 	  ret := eval(model.body);
 	  localFrame = saveLocalFrame;
-	  recursiondepth = recursiondepth - 1;
+	  recursionDepth = recursionDepth - 1;
 	  when ret is err:Error do returnFromFunction(ret) else ret
 	      -- this check takes time, too!
 	  )
@@ -506,19 +506,19 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  )
      else if desc.numparms != length(cs)
      then WrongNumArgs(model.arrow,desc.numparms,length(cs))
-     else if recursiondepth > recursionlimit then RecursionLimit()
+     else if recursionDepth > recursionLimit then RecursionLimit()
      else (
      	  previousFrame := c.frame;
      	  framesize := desc.framesize;
 	  if framesize == 0 then (
-	       recursiondepth = recursiondepth + 1;
+	       recursionDepth = recursionDepth + 1;
 	       saveLocalFrame := localFrame;
 	       localFrame = previousFrame;
 	       ret := eval(model.body);
 	       when ret is err:Error do ret = returnFromFunction(ret)
 	       else nothing;
 	       localFrame = saveLocalFrame;
-	       recursiondepth = recursiondepth - 1;
+	       recursionDepth = recursionDepth - 1;
 	       ret
 	       )
 	  else (
@@ -553,14 +553,14 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 			      else f.values.i = codevalue;
 			      );
 			 );
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -570,7 +570,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    ret
 		    )
 	       else (
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    haderror := false;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
@@ -592,7 +592,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    ret
 		    )
 	       )
@@ -629,7 +629,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 	  then apply(c,Expr(Sequence(e0,e1)))
 	  else if desc.numparms != 2
 	  then WrongNumArgs(model.arrow,desc.numparms,2)
-	  else if recursiondepth > recursionlimit then RecursionLimit()
+	  else if recursionDepth > recursionLimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
 	       framesize := desc.framesize;
@@ -652,13 +652,13 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 			 f.values.0 = e0;
 			 f.values.1 = e1;
 			 );
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
@@ -668,7 +668,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    ret
 		    )
 	       else (
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    haderror := false;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
@@ -682,7 +682,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    when ret is err:Error do ret = returnFromFunction(ret) 
 		    else nothing;
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    ret
 		    )
 	       )
@@ -700,7 +700,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	  then apply(c,Expr(Sequence(e0,e1,e2)))
 	  else if desc.numparms != 3
 	  then WrongNumArgs(model.arrow,desc.numparms,3)
-	  else if recursiondepth > recursionlimit then RecursionLimit()
+	  else if recursionDepth > recursionLimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
 	       framesize := desc.framesize;
@@ -725,23 +725,22 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 			 f.values.1 = e1;
 			 f.values.2 = e2;
 			 );
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
+		    recursionDepth = recursionDepth - 1;
 		    if !f.notrecyclable then (
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;
 			 f.frameID = -2;				    -- just to be tidy, not really needed
 			 recycleBin.framesize = f;
 			 );
-		    ret
-		    )
+		    ret)
 	       else (
-		    recursiondepth = recursiondepth + 1;
+		    recursionDepth = recursionDepth + 1;
 		    saveLocalFrame := localFrame;
 		    haderror := false;
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
@@ -755,11 +754,8 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    localFrame = saveLocalFrame;
-		    recursiondepth = recursiondepth - 1;
-		    ret
-		    )
-	       )
-	  )
+		    recursionDepth = recursionDepth - 1;
+		    ret)))
      else buildErrorPacket("expected a function"));     
 
 -----------------------------------------------------------------------------
@@ -938,14 +934,64 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 export fullBacktrace := false;
 export backtrace := true;
+export steppingFlag := false;
+export determineExceptionFlag():void := (
+     exceptionFlag = interruptPending || steppingFlag || alarmedFlag;
+     );
+export clearAllFlags():void := (
+     alarm(0);
+     exceptionFlag = false;
+     interruptedFlag = false;
+     steppingFlag = false;
+     alarmedFlag = false;
+     interruptPending = false;
+     );
+export setInterruptFlag():void := (
+     interruptedFlag = true;
+     exceptionFlag = true;
+     );
+export setAlarmedFlag():void := (
+     alarmedFlag = true;
+     exceptionFlag = true;
+     );
+export setSteppingFlag():void := (
+     steppingFlag = true;
+     exceptionFlag = true;
+     );
+export clearInterruptFlag():void := (
+     interruptedFlag = false;
+     determineExceptionFlag();
+     );
+export clearAlarmedFlag():void := (
+     alarmedFlag = false;
+     determineExceptionFlag();
+     );
+export clearSteppingFlag():void := (
+     steppingFlag = false;
+     determineExceptionFlag();
+     );
+
+stepCount := 0;
+steppingFurther():bool := (
+     if !steppingFlag then return false;
+     stepCount = stepCount - 1;
+     stepCount > 0);
 
 export eval(c:Code):Expr := (
      e := (
-	  if interrupted then (
-	       if alarmed then buildErrorPacket(alarmMessage)
+	  if exceptionFlag && !steppingFurther() then (
+	       if steppingFlag then (
+		    steppingFlag = false;
+		    buildErrorPacket(steppingMessage))
+	       else if alarmedFlag then (
+		    buildErrorPacket(alarmMessage))
+	       else if interruptedFlag then (
+		    SuppressErrors = false;
+		    buildErrorPacket(interruptMessage))
 	       else (
 		    SuppressErrors = false;
-		    buildErrorPacket(interruptMessage)))
+		    buildErrorPacket("unknown exception")
+		    ))
 	  else when c
 	  is u:unaryCode do u.f(u.rhs)
 	  is b:binaryCode do b.f(b.lhs,b.rhs)
@@ -1034,9 +1080,7 @@ export eval(c:Code):Expr := (
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	       ));
      when e is err:Error do (
-     	  alarm(0);					    -- reset alarm after error
-	  interrupted = false;
-	  alarmed = false;
+     	  clearAllFlags();
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage
 	  then (
@@ -1057,8 +1101,15 @@ export eval(c:Code):Expr := (
 			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
-			      if z.message == continueMessage then return eval(c);
-			      )
+			      if z.message == continueMessage then (
+				   when z.value is step:Integer do (
+					if isInt(step) then (
+					     steppingFlag = true;
+					     exceptionFlag = true;
+					     stepCount = toInt(step)+1;
+					     ))
+				   else nothing;
+				   return eval(c)))
 			 else nothing)
 		    else (printError(err);)));
 	  e)
@@ -1074,12 +1125,13 @@ export eval(f:Frame,c:Code):Expr := (
 shieldfun(a:Code):Expr := (
      if interruptShield then eval(a)
      else (
-     	  interruptPending = interrupted;
+     	  interruptPending = interruptedFlag;
      	  interruptShield = true;
      	  ret := eval(a);
      	  interruptShield = false;
-     	  interrupted = interruptPending;
-	  if interrupted && !stdIO.inisatty then (
+     	  interruptedFlag = interruptPending;
+     	  determineExceptionFlag();
+	  if interruptedFlag && !stdIO.inisatty then (
      	       endLine(stderr);
 	       stderr << "interrupted" << endl;
 	       exit(1);

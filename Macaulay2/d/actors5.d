@@ -1275,7 +1275,7 @@ setupfun("wrap",wrap);
 dillyDallyFun(e:Expr):Expr := (				    -- for debugging interrupts in compiled code
      while true do (
 	  sleep(1);
-	  if interrupted then return buildErrorPacket("dilly dally: interrupted");
+	  if interruptedFlag then return buildErrorPacket("dilly dally: interrupted");
 	  ));
 setupfun("dillyDally",dillyDallyFun);
 
@@ -1375,7 +1375,11 @@ regexmatch(e:Expr):Expr := (
      when e is a:Sequence do
      if length(a) == 2 then
      when a.0 is regexp:string do
-     when a.1 is text:string do toPairs(regexmatch(regexp,text))
+     when a.1 is text:string do (
+	  r := regexmatch(regexp,text);
+	  if length(r) == 0 && regexmatchErrorMessage != noErrorMessage
+	  then buildErrorPacket(regexmatchErrorMessage)
+	  else toPairs(r))
      else WrongArgString(2)
      else WrongArgString(1)
      else WrongNumArgs(2)
@@ -1507,7 +1511,7 @@ syms := SymbolSequence(
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
      (  loadDepthS = setupvar("loadDepth",toExpr(loadDepth));  loadDepthS  ),
      (  printingPrecisionS = setupvar("printingPrecision",toExpr(printingPrecision));  printingPrecisionS  ),
-     (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionlimit));  recursionLimitS  ),
+     (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionLimit));  recursionLimitS  ),
      (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  )
      );
@@ -1560,7 +1564,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       if sym === loadDepthS then (loadDepth = n; e)
 	       else if sym === errorDepthS then (errorDepth = n; e)
 	       else if sym === debugLevelS then (debugLevel = n; e)
-	       else if sym === recursionLimitS then (recursionlimit = n; e)
+	       else if sym === recursionLimitS then (recursionLimit = n; e)
 	       else if sym === lineNumberS then (lineNumber = n; e)
 	       else if sym === printingPrecisionS then (printingPrecision = n; e)
 	       else if sym === gbTraceS then (gbTrace = n; e)
@@ -1620,6 +1624,12 @@ fileMode(e:Expr):Expr := (
 	  else Expr(toInteger(r)))
      else WrongArgString());
 setupfun("fileMode",fileMode);
+
+recursionDepthFun(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 0 then Expr(toInteger(recursionDepth))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("recursionDepth",recursionDepthFun);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
