@@ -38,7 +38,6 @@ exportMutable (
 	)
 
 export (
-     	symbol checkPackage,
         symbol MakeLinks,
         symbol Undo,
         symbol symlinkDirectory,
