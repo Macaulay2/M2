@@ -882,13 +882,13 @@ document { peek,
       	  "new MutableHashTable from {a=>3, b=>44}",
       	  "peek oo"
 	  },
-     SEEALSO "peek2"
+     SEEALSO "peek'"
      }
 
-document { (peek2,ZZ,Thing),
+document { (peek',ZZ,Thing),
      Headline => "examine contents of an object",
      Synopsis => {
-	  Usage => {TT "peek2(n,s)", " or ", TT "peek2_n s"},
+	  Usage => {TT "peek'(n,s)", " or ", TT "peek'_n s"},
 	  Inputs => {
 	       "n" => "",
 	       "s" => ""
@@ -900,7 +900,7 @@ document { (peek2,ZZ,Thing),
      EXAMPLE {
 	  "s = factor 112",
       	  "peek s",
-      	  "peek2_2 s"
+      	  "peek'_2 s"
 	  },
      PARA {
 	  "Some types of things have the notion of depth modified slightly to make the entire structure visible at depth 1, as in the following example, which

@@ -366,7 +366,7 @@ document { factor,
 	  },
      "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
      its true structure as ", TO "Expression", ".",
-     EXAMPLE "peek2(100,x)",
+     EXAMPLE "peek'(100,x)",
      PARA,
      "For small integers factorization is done by trial division.  Eventually
      we will have code for large integers.  For multivariate polynomials the

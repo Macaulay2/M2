@@ -470,9 +470,10 @@ synonymAndClass := X -> (
 
 justClass := X -> SEQ {"an instance of class ", TO X}
 
-justSynonym := X -> (
-     if X.?synonym then TO2 {X, indefinite X.synonym}
-     else SEQ {"an object of class ", TO X}
+OFCLASS = X -> (
+     if parent X === Nothing then error "expected a class";
+     if X.?synonym then SHIELD TO2 {X, indefinite X.synonym}
+     else SEQ {"an object of class ", SHIELD TO X}
      )
 
 getDocBody := method(SingleArgumentDispatch => true)
@@ -495,7 +496,7 @@ inlineMenu := x -> between(", ", TO \ x)
 
 type := S -> (
      s := value S;
-     PARA { "The object ", TO S, " is ", justSynonym class s,
+     PARA { "The object ", TO S, " is ", OFCLASS class s,
      	  if parent s =!= Nothing then (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
 	       SEQ splice {
@@ -514,23 +515,23 @@ protect Results
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { justSynonym x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
 	  else error "expected type to left of '=>' in Synopsis"
 	  )
      else x)
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { justSynonym x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
+	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SEQ { TT x#0, ", ", justSynonym x#1#0, if x#1#1 =!= "" then SEQ { ", ", x#1#1 } }
+		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" then SEQ { ", ", x#1#1 } }
 		    else error "expected type to left of '=>' in Synopsis"
 		    )
 	       else SEQ { TT x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
 	       )
 	  else error "expected string or type to left of '=>' in Synopsis"
 	  )
-     else x)
+     else SEQ x)
 
 typicalValue := k -> (
      if typicalValues#?k then typicalValues#k 
@@ -649,11 +650,11 @@ synopsis Thing := f -> (
      	       PARA BOLD "Synopsis",
 	       UL {
      	       	    if usa#?0 then PARA { "Usage: ", if class usa === String then TT usa else usa},
-		    if fun =!= null then SEQ { "Function: ", TO fun }
+		    if fun =!= null then SEQ { "Function: ", SHIELD TO fun }
 		    else if class f === Sequence and f#?0 then (
 	       		 if class f#0 === Function 
-			 then SEQ { "Function: ", TO f#0 }
-			 else SEQ { "Operator: ", TO f#0 }
+			 then SEQ { "Function: ", SHIELD TO f#0 }
+			 else SEQ { "Operator: ", SHIELD TO f#0 }
 			 ),
 		    if inp#?0 then PARA { "Inputs:", SHIELD UL inp },
 		    if ino#?0 then PARA { "Optional inputs:", SHIELD UL ino },
