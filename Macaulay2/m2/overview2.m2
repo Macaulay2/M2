@@ -478,7 +478,7 @@ document {
 	  TO "making functions",
 	  TO "local variables in a function",
 	  TO "making functions with a variable number of arguments",
-	  TO "using functions with optional arguments",
+	  TO "Optional inputs",
 	  TO "making new functions with optional arguments",
 	  TO "Function"
 	  }
@@ -833,36 +833,6 @@ document {
 	  "singleton 3",
 	  "((x) -> x) oo",
 	  }
-     }
-
-document {
-     Key => "using functions with optional arguments",
-     "Some functions accept optional arguments.  Each of these optional arguments
-     has a name.  For example, one of the optional arguments for ", TO "gb", "
-     is named ", TO "DegreeLimit", "; it can be used to specify that the computation
-     should stop after a certain degree has been reached.  Values for optional
-     arguments are specified by providing additional arguments of the form ", TT "B=>v", "
-     where ", TT "B", " is the name of the optional argument, and ", TT "v", " is
-     the value provided for it.",
-     EXAMPLE {
-     	  "R = ZZ/101[x,y,z,w];",
-     	  "gb ideal(x*y-z^2,y^2-w^2)",
-	  "gb(ideal(x*y-z^2,y^2-w^2),DegreeLimit => 2)",
-	  },
-     "The names and default values of the optional arguments for a function can
-     be obtained with ", TO "options", ", as follows.",
-     EXAMPLE {
-	  "o = options res"
-	  },
-     "The value returned is a type of hash table, and can be used to obtain particular
-     default values.",
-     EXAMPLE "o.SortStrategy",
-     "The entry ", TT "DegreeLimit => 2", " is called an option.  Internally it is
-     represented as a type of list of length 2.",
-     EXAMPLE {
-	  "DegreeLimit => 2",
-	  "peek oo"
-	  },
      }
 
 document {

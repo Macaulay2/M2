@@ -399,7 +399,11 @@ tex TO := x -> (
 	  }
      )
 
-net TO  := x -> concatenate( "\"",     DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
+net TO  := x -> (
+     if class x#0 === DocumentTag 
+     then concatenate( "\"", DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
+     else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
+     )
 net TO2 := x -> x#1
 
 -- node names in info files are delimited by commas and parentheses somehow...
