@@ -1,4 +1,3 @@
-
 /// *** DOCUMENT PATTERN ***
 document { (functionName, Type, Type),
      Headline => "very short description",
@@ -28,7 +27,7 @@ document { (functionName, Type, Type),
 INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
      {BOLD "Usage: ", PARA, l, PARA} 
      }
-needs "D-modules.m2";
+needs "D-modules/Dloadfile.m2";
 document { "D-modules Package",
      Headline => "algorithms for D-modules",
      INSERTUSAGE {
@@ -1387,6 +1386,10 @@ document { (Dresolution),
 
      SEEALSO {"gbw", "Drestriction"}
      }
+document { (Dres),
+     Headline => "abbreviation for Dresolution",
+     SEEALSO{"Dresolution"}
+     }	
 
 document {(Drestriction=>Strategy),
 	  "Option is passed to Dresolution. See ",
@@ -1480,6 +1483,10 @@ document { (Drestriction),
      
      SEEALSO {"Dresolution", "Dintegration"}
      }
+document { (Drestrict),
+     Headline => "abbreviation for Drestrict",
+     SEEALSO{"Drestriction"}
+     }	
 
 document {(Dintegration=>Strategy),
 	  "Option is passed to Dresolution. See ",
@@ -1572,6 +1579,10 @@ document { (Dintegration),
      
      SEEALSO{"Drestriction"}
      }
+document { (Dintegrate),
+     Headline => "abbreviation for Dintegration",
+     SEEALSO{"Dintegration"}
+     }	
 document { (gkz),
      Headline => "GKZ A-hypergeometric ideal",
      INSERTUSAGE {
@@ -1912,3 +1923,9 @@ document { (gbw),
      SEEALSO {"inw", "setHomSwitch"}
      }
 
+document { (pInfo),
+     Headline => "prints tracing info",
+     "Prints tracing information according to the level set by ", 
+	TT "Dtrace", ".",
+     SEEALSO { "Dtrace" }
+     }
