@@ -78,14 +78,8 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 peek2(Dictionary,ZZ) := (d,depth) -> (
      if depth === 0 then net d
      else horizontalJoin(
-	  "Dictionary{",
-	  stack (
-	       last \ sort apply(
-		    pairs d, (lhs,s) -> (
-		    	 v := value s;
-		    	 rhs := peek2(v,depth-1);
-		    	 if precedence v < precOption then rhs = ("(",rhs,")");
-		    	 (hash v,horizontalJoin splice (lhs," => ",rhs))))),
+	  "Dictionary{", 
+	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek2(rhs,depth-1))),
 	  "}"))
 
 peek = s -> peek2(s,1)
