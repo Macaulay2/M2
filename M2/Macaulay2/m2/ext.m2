@@ -92,11 +92,10 @@ Ext(Module,Module) := Module => (N,M) -> (
   else if N == 0 then R^0
   else (
     p := presentation R;
-    p = matrix (reverse \ entries p); -- make it look prettier
     Q := ring p;
     I := ideal p;
     n := numgens Q;
-    c := numgens I;
+    c := rank source mingens I;
     if c =!= codim R 
     then error "total Ext available only for complete intersections";
     f := apply(c, i -> I_i);
