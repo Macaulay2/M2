@@ -254,7 +254,16 @@ RawMatrix.synonym = "raw matrix"
 RawMutableMatrix.name = "RawMutableMatrix"
 RawMutableMatrix.synonym = "raw mutable matrix"
 
-RawMutableMatrix _ Sequence := RawMatrix _ Sequence := (m,rc) -> ((r,c) -> rawMatrixEntry(m,r,c)) rc
+extract := method()
+
+extract(RawMatrix,ZZ,ZZ) := 
+extract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
+
+extract(RawMatrix,Sequence,Sequence) := 
+extract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,splice r,splice c)
+
+RawMatrix _ Sequence := 
+RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> extract(m,r,c)) rc
 
 RawMutableMatrix == RawMutableMatrix := RawMatrix == RawMatrix := rawIsEqual
 
@@ -288,7 +297,7 @@ new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(r
 new RawMatrix from RawMutableMatrix := rawMatrix
 new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
-installAssignmentMethod(symbol "_",RawMutableMatrix,Sequence, (M,ij,val) -> ((i,j) -> rawSetMatrixEntry(M,i,j,raw val)) ij)
+installAssignmentMethod(symbol "_",RawMutableMatrix,Sequence, (M,ij,val) -> ((i,j) -> rawSetMatrixEntry(M,i,j,val)) ij)
 
 -- computations
 
