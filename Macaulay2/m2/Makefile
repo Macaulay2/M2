@@ -5,7 +5,7 @@ all::
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install it phase1
+.PHONY: clean all install it phase1 tests
 CFLAGS =
 LDFLAGS = -s
 LOADLIBES =
@@ -103,7 +103,7 @@ $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 
-../cache/Macaulay2.pre : $(MADEGFILES)
+../cache/Macaulay2.pre : $(MADEGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	rm -f ../cache/Macaulay2.tmp
 	../bin/Macaulay2 -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre

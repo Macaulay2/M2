@@ -24,7 +24,7 @@ release: factory-1.2c
 license: available soon
 
 library: libfac
-release: libfac-0.2.4
+release: libfac-0.3.0
  author: Michael Messollen <michael@math.uni-sb.de>
  get at:
 license: libfac/00README
@@ -67,16 +67,45 @@ Makefile.lcl.
 Windows 95 and NT notes
 -----------------------
 
-We use Microsoft Visual C/C++ compiler version 5.0 with service pack 2.
-First install the "gnuish" utilities in C:\WINNT\SYSTEM32: awk.exe, cp.exe,
-gawk.exe, grep.exe, ls.exe, make.exe, mv.exe, pwd.exe, rm.exe, sed.exe, and
-uname.exe.  Then open up the workspace, M2.dsw, set it to build the Release
-version, and start it compiling.
+There are two ways to compile Macaulay 2 under Windows 95 and NT.
 
-This is not quite ready yet, but to try it, cd to ./Macaulay2/m2, and
-try 
+	-------------------------------
+	Microsoft Visual C/C++ compiler
+	-------------------------------
 
-	..\d\Release\Macaulay2 setup.m2
+	We use Microsoft Visual C/C++ compiler version 5.0 with service pack
+	2.  First install the "gnuish" utilities in C:\WINNT\SYSTEM32:
+	awk.exe, cp.exe, gawk.exe, grep.exe, ls.exe, make.exe, mv.exe,
+	pwd.exe, rm.exe, sed.exe, and uname.exe.  Then open up the workspace,
+	M2.dsw, set it to build the Release version, and start it compiling.
+
+	----------------------
+	The Cygnus port of GCC
+	----------------------
+
+	Download cdk.exe from http://www.cygnus.com/misc/gnu-win32/ and
+	type make.  It should all work!  (oops, does this require
+	distribution of a .dll file, too?)
+
+	You will also want to pick up emacs for Windows from
+	http://www.cs.washington.edu/homes/voelker/ntemacs.html .
+
+	Problems:
+	   general:
+		environment variables are all upper case!
+		read() isn't interruptable
+	   make:
+		'export' does not work in makefiles.
+		some targets in makefiles get run in parallel (?)
+	   c library:
+		abort() seems to be equivalent to exit(0)
+	   bash:
+		'cd ..' doesn't work from the initial directory
+		when bash is started by emacs
+	   ps:
+		reports WIN32-PID in octal instead of decimal
+	   kill:
+		doesn't ever kill any processes
 
 ----------------------
 Linux notes

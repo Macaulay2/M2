@@ -22,7 +22,6 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
        << " %1 %2 %3 %4 %5 %6 %7 %8 %9" << endl
        << close;
   ) else (
-       FILENAME := "../bin/M2";
        args := new Manipulator from (
 	    if version#"dumpdata" then (
 		 o -> o
@@ -32,7 +31,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 			   "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `.data" 
 			   )
 		      )
-		 << " -- "
+		 << " -- $TTY "
 		 << format ( "-e path = prepend("| format "$M2HOME/m2" | ", path)" )
 		 << " "
 		 << format "-e runStartFunctions()" 
@@ -41,8 +40,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 		 o -> o
 		 << "exec "
 		 << format "$M2HOME/bin/Macaulay2"
-		 << " "
-		 << "-ephase=1"
+		 << " $TTY -ephase=1"
 		 << " "
 		 << format "$M2HOME/m2/setup.m2"
 		 << " "
@@ -53,9 +51,11 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 		 << format "-e runStartFunctions()" 
 		 )
 	    );
+       FILENAME := "../bin/M2";
        FILENAME
        << "#! /bin/sh" << endl
        << "M2HOME=" << M2HOME << endl
+       << "if [ \"$EMACS\" = t ]; then TTY=-tty; else TTY=; fi" << endl
        << "if [ $# = 0 ]" << endl
        << "then " << args << endl
        << "else " << args << " " << format "$@" << endl

@@ -157,16 +157,4 @@ gcc $TMP $LDFLAGS >/dev/null 2>&1 ||
 	echo 'short htons(short x) { return x; }' \
 	>>compat.c
 
-cat <<'EOF' >$TMP
-main(){
-	int i = 0;
-	if (i < sizeof(long)) i = sizeof(long);
-	if (i < sizeof(double)) i = sizeof(double);
-	if (i < sizeof(void *)) i = sizeof(void *);
-	printf("#define GRANULARITY %d\n",i);
-	}
-EOF
-gcc $TMP && a.out >>compat.c
-rm -f a.out
-
 rm $TMP

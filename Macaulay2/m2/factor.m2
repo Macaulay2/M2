@@ -226,6 +226,7 @@ TEST ///
 		        -- used 102.09 seconds
      			-- used 43.06 seconds (Messollen speed up!)
 			-- used 41.93 seconds
+			-- used 6.87 seconds, cygnus32
 			-- 82 seconds in Singular
     assert(D == {
 	      ideal(u,r,y,x,z,t*v+s*w),

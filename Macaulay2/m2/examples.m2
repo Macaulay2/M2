@@ -238,8 +238,7 @@ document { "executing other programs",
      PARA,
      "If you want to collect the output from a command in a string, use 
      ", TO "get", " with a file name consisting of the character '!' 
-     followed by the command.",
-     EXAMPLE ///lines get "!ls /etc/g*"///
+     followed by the command."
      }
 
 -- html.m2 documentation

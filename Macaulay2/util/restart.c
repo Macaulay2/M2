@@ -41,7 +41,10 @@ main(int argc,char **argv) {
 	       unlink(filename);
 	       continue;
 	       }
-	  if (ret == RESTART) continue;
+	  if (ret == RESTART) {
+	    puts("restart: restarting");
+	  }
+	  puts("restart: done");
 	  exit(ret);
 	  }
      }

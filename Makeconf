@@ -1,11 +1,12 @@
 ifndef MAKECONF
-MAKECONF := TRUE
+export MAKECONF = TRUE
 
 ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
 export VERSION	      := 0.8.37
+export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
@@ -16,26 +17,48 @@ export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 
+ifeq "$(OS)" "CYGWIN32-95"
+export CYGWIN32 = TRUE
+endif
+
+ifeq "$(OS)" "CYGWIN32-NT"
+export CYGWIN32 = TRUE
+endif
+
+EXESUFFIX =
+
+ifdef CYGWIN32
+EXESUFFIX = .exe
+endif
+
 PATHSEP    := /
 PATHDELIM  := :
 PATHPARENT := ../
 
 ifeq "$(OS)" "MS-DOS"
+EXESUFFIX = .exe
 NULL :=
 PATHSEP    := \$(NULL)
 PATHDELIM  := ;
 PATHPARENT := ..$(PATHSEP)
 endif
 
-export PATH := $(PATHPARENT)util$(PATHDELIM)$(PATH)
+export EXESUFFIX
 
-all::				# do this first
+#################################
+
+# every makefile that includes this one should use 'all' as the
+# default (first) target
+
+all:: announce
+announce ::
+	@echo '## making Macaulay 2 version $(VERSION) for $(SYSTEM) ##'
 
 ################################# Makeconf.lcl
 
 $(TOPDIR)/Makeconf.lcl :
-	echo '# This file generated automatically, but may be edited.' >$@
-	echo '# Turn on local options by uncommenting some of the following lines.' >$@
+	echo '# This file generated automatically, but may be edited to set local options.' >$@
+	echo '# COMPILER    := microsoft' >>$@
 	echo '#	PROFILE     := TRUE' >>$@
 	echo '#	NOSTRIP     := TRUE' >>$@
 	echo '#	MEMDEBUG    := TRUE' >>$@
@@ -46,25 +69,72 @@ include $(TOPDIR)/Makeconf.lcl
 
 #################################
 
-MP := TRUE
+export CC = gcc
+export CXX = g++
+export CFLAGS = -O2 -g
+export CXXFLAGS = -O2 -g
+
+ifdef CYGWIN32
+# CFLAGS += '-Dabort()=exit(1)'
+# CXXFLAGS += '-Dabort()=exit(1)'
+# this approach to fixing "abort" doesn't work because of a slight
+# bug in configure/makeconf - strings here get evaluated by the
+# shell a different number of times between now and
+#   (1) the evaluation of the test compilations in factory/configure
+#   (2) the evaluation of the compilations in factory/GNUmakefile
+# and thus it is impossible to shield the parentheses from the shell.
+# A fix is for all expressions in factory/configure like 
+#	eval $ac_compile
+# to be replaced by expressions like
+#	eval `eval "echo $ac_compile"`
+endif
+
+ifeq "$(COMPILER)" "microsoft"
+
+# 'make -p' shows the database of rules
+
+CC = cl -TC
+CXX = cl -TP
+
+OUTPUT_OPTION = -Fo$@
+
+LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+%: %.c;  $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
+%: %.o;  $(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
+%: %.cc; $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+%.o: %.cc; $(COMPILE.cc) $< $(OUTPUT_OPTION)
+%.o: %.cpp; $(COMPILE.cc) $< $(OUTPUT_OPTION)
+
+endif
+
+export MP := TRUE
+ifdef CYGWIN32
+MP :=
+endif
 ifdef NOMP
 MP :=
 endif
 
-FACTORY := TRUE
+export FACTORY := TRUE
 ifdef NOFACTORY
 FACTORY :=
 endif
 
-DUMPDATA := TRUE
-ifeq "$(OS)" "CYGWIN32-95"
+export DUMPDATA := TRUE
+ifdef CYGWIN32
 DUMPDATA :=
 endif
 ifdef NODUMPDATA
 DUMPDATA :=
 endif
 
-DEBUGFLAGS :=
+export DEBUGFLAGS :=
 
 ifdef PROFILE
 DEBUGFLAGS += -pg
@@ -75,10 +145,15 @@ ifdef NOSTRIP
 STRIPFLAG :=
 STRIPCMD := :
 else
+export CFLAGS += -fomit-frame-pointer
+export CXXFLAGS += -fomit-frame-pointer
+export LDFLAGS += -s
+# we should be able to do away with these:
 STRIPFLAG := -s
 STRIPCMD := strip
 DEBUGFLAGS += -fomit-frame-pointer
 endif
+export STRIPFLAG STRIPCMD 
 
 ifdef MEMDEBUG
 DEBUGFLAGS += -DMEM_DEBUG
@@ -86,17 +161,11 @@ endif
 
 ################################# Makeconf.ver
 ifdef FACTORY
-$(TOPDIR)/Makeconf.ver :
-	egrep '^version ' factory/GNUmakefile > $@
-
+$(TOPDIR)/Makeconf.ver : $(TOPDIR)/Makeconf
+	egrep '^factory_version=' $(TOPDIR)/factory/configure.in > $@
 include $(TOPDIR)/Makeconf.ver
-
-FACTORYVERSION := $(version)
-version :=
-
+export FACTORYVERSION := $(factory_version)
 endif
-
 #################################
 
-export DEBUGFLAGS STRIPFLAG STRIPCMD DUMPDATA MP FACTORY
 endif

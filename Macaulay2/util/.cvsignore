@@ -2,3 +2,5 @@ echoout
 timestmp
 restart
 update
+*.orig
+*.rej
