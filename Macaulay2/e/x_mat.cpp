@@ -463,7 +463,9 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
 }
 
 #include "linalgGB/MonomialSet.h"
+#if 0
 #include "linalgGB/MonomialHeap.h"
+#endif
 #include "linalgGB/MonomialTable.h"
 #include "linalgGB/interface.h"
 MonomialTable *make_monideal(const Matrix *M, MonomialSet &H)

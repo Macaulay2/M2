@@ -1402,7 +1402,7 @@ installHilbertFunction = method()
 installHilbertFunction(Module,RingElement) := (M,hf) -> (
      -- we need to place hf into the degree ring of M.
      hf = substitute(hf,degreesRing M);
-     M.poincare = hf;
+     M.cache.poincare = hf;
      )
 
 installGroebner = method()

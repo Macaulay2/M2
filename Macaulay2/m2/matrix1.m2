@@ -542,7 +542,7 @@ Module == Ideal := (M,I) -> M == module I
 
 module Ideal := Module => I -> (
      M := image I.generators;
-     if I.cache.?poincare then M.poincare = I.cache.poincare;
+     if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
      M
      )
 

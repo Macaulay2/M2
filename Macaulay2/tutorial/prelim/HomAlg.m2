@@ -29,7 +29,7 @@ time gb J
 
 -- If we set the poincare polynomial, we get better performance...
 J1 = substitute(I,S1)
-(coker gens J1).poincare = poincare coker gens I
+(coker gens J1).cache.poincare = poincare coker gens I
 time gb J1
 
 p = leadTerm(2, J1)

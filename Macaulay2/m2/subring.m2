@@ -49,7 +49,7 @@ pushtest := options -> (f,M) -> (
 	    hf := poincare cokernel m;
 	    T := (ring hf)_0;
 	    hf = hf * product(numgens source JJ, i -> (d := (degrees source JJ)#i#0; 1 - T^d));
-	    (cokernel m1).poincare = hf;
+	    (cokernel m1).cache.poincare = hf;
 	    );
 
 	cleanupcode := g -> mapback selectInSubring(1,generators g);
@@ -96,7 +96,7 @@ pushlinear := options -> (f,M) -> (
     if isHomogeneous f and isHomogeneous m then (
         hf := poincare cokernel m;
         T := (ring hf)_0;
-        (cokernel m1).poincare = hf;
+        (cokernel m1).cache.poincare = hf;
         );
     g := selectInSubring(1, generators gb(m1,options));
     -- now map the answer back to S = source f.
