@@ -330,14 +330,10 @@ Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some row
 
 Matrix _ ZZ := Vector => (m,i) -> new Vector from m_{i}
 
-submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> (
-     if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
-     map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols)))
-submatrix(Matrix,VisibleList) := Matrix => (m,cols) -> (
-     if not isFreeModule source m then error "expected source of homomorphism to be free";
-     map(ring m,rawSubmatrix(raw m, listZ toList splice cols)))
-submatrix(Matrix,Nothing,VisibleList) := Matrix => (m,rows,cols) -> submatrix(m,cols)
-submatrix(Matrix,VisibleList,Nothing) := Matrix => (m,rows,cols) -> submatrix(m, rows, 0 .. numgens source m - 1)
+submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
+submatrix(Matrix,VisibleList            ) := Matrix => (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
+submatrix(Matrix,Nothing    ,VisibleList) := Matrix => (m,rows,cols) -> submatrix(m,cols)
+submatrix(Matrix,VisibleList,Nothing    ) := Matrix => (m,rows,cols) -> map((ring m)^#rows,source m,rawSubmatrix(raw m, listZ toList splice rows, 0 .. numgens source m - 1))
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
