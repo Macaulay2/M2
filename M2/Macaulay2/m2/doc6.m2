@@ -932,10 +932,11 @@ document { Module,
 	  TO (cokernel, Matrix),
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
-	  TO (homology, Matrix, Matrix),
 	  },
      "Common ways to get information about modules:",
      MENU {
+	  TO (ring, Module),
+	  TO (numgens, Module),
 	  TO (degrees, Module),
 	  TO (generators, Module),
 	  TO (relations, Module),
@@ -945,27 +946,44 @@ document { Module,
      MENU {
 	  TO (symbol +, Module, Module),
 	  TO (symbol /, Module, Module),
-	  TO (symbol :, Module, Ideal),
 	  TO (symbol ==, Module, Module),
 	  TO (symbol ++, Module, Module),
 	  TO (symbol **, Module, Module),
-	  TO (symbol ^, Module, Array),
 	  TO (symbol ^, Module, List),
-	  TO (symbol _, Module, Array),
 	  TO (symbol _, Module, List),
-	  TO (prune, Module),
-	  TO (saturate, Module, Ideal),
 	  },
-     "Common ways to use a module:",
+     "Numerical information about a module:",
      MENU {
-	  TO (annihilator, Module),
 	  TO (codim, Module),
 	  TO (degree, Module),
 	  TO (dim, Module),
-	  TO (fittingIdeal, ZZ, Module),
+	  TO (genera, Module),
+	  TO (hilbertSeries, Module),
+	  TO (hilbertFunction, ZZ, Module),
+	  TO (poincare, Module),
+	  TO (pdim, Module),
+	  TO (regularity, Module),
+	  TO (rank, Module)
+	  },
+     "Common computations on modules:",
+     MENU {
+	  TO (symbol :, Module, Ideal),
+	  TO (annihilator, Module),
 	  TO (gb, Module),
-	  TO (isSubset, Module, Module),
+	  TO (prune, Module),
 	  TO (res, Module),
+	  TO (saturate, Module, Ideal),
+	  TO "Hom",
+	  TO (homomorphism,Matrix),
+	  TO (Ext,ZZ,Module,Module),
+	  TO (Tor,ZZ,Module,Module),
+	  TO (homology, Matrix, Matrix),
+	  },
+     "Common ways to use a module:",
+     MENU {
+	  TO (fittingIdeal, ZZ, Module),
+	  TO (isSubset, Module, Module),
+	  TO (exteriorPower,ZZ,Module),
 	  },
      }
 
@@ -1001,13 +1019,71 @@ document { (isFreeModule,Module),
 document { isSubmodule,
      Headline => "whether a module is evidently a submodule of a free module"
      }
+document { (isSubmodule, Module),
+     Synopsis => {
+	  "b = isSubmodule(M)",
+	  "M" => null,
+	  "b" => {"whether ", TT "M", " is evidently a submodule of a free module."}
+	  },
+     "No computation is done, so the module may be isomorphic to a submodule
+     of a free module but we don't detect it.",
+     EXAMPLE {
+	  "R = ZZ/101[a,b,c];",
+	  "M = R^3;",
+	  "N = ideal(a,b) * M",
+	  "isSubmodule N",
+	  "N1 = ideal(a,b) * (R^1 / ideal(a^2,b^2,c^2))",
+	  "isSubmodule N1"
+	  }
+     }
 
 document { isQuotientModule,
      Headline => "whether a module is evidently a quotient of a free module"
      }
 
+document { (isQuotientModule, Module),
+     Synopsis => {
+	  "b = isQuotientModule(M)",
+	  "M" => null,
+	  "b" => {"whether ", TT "M", " is evidently a quotient of a free module."}
+	  },
+     "No computation is done.  This routine simply detects whether the given description
+     of ", TT "M", " is such a quotient.",
+     EXAMPLE {
+	  "R = ZZ/101[a,b,c];",
+	  "M = R^1/(a^2,b^2,c^2)",
+	  "isQuotientModule M",
+	  "f = M_{0}",
+	  "N = image f"
+	  },
+     "Recall (", TO (symbol_, Module, List), ") that ", TT "f", " is a map to the first generator of ",
+     TT "M", " so that the module ", TT "N", " is the same as ", TT "M", " but its description is now as a
+     submodule of ", TT "M", " so isQuotientModule returns false.  However, these two modules are equal:",
+     EXAMPLE {
+	  "isQuotientModule N",
+	  "M == N"
+	  }
+     }
+
 document { isIdeal,
      Headline => "whether something is an ideal"
+     }
+
+document { (isIdeal, Module),
+     Synopsis => {
+	  "b = isIdeal(M)",
+	  "M" => null,
+	  "b" => {"whether ", TT "M", " is evidently an ideal."}
+	  },
+     "No computation is done.  This routine checks the given description
+     of ", TT "M", " to see if it is an ideal.",
+     EXAMPLE {
+	  "R = QQ[a..d]/(a*b*c*d);",
+	  "I = ideal(a^2,b^2) * R^1",
+	  "isIdeal I",
+	  "J = a^2 * R^2 + a*b * R^2",
+	  "isIdeal J"
+	  }
      }
 
 document { numgens,
