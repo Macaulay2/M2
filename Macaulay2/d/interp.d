@@ -1,7 +1,9 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
 
-use system;
+newStartupMethod := true;				    -- for testing purposes
+
 use C;
+use system;
 use actors;
 use convertr;
 use binding;
@@ -11,7 +13,7 @@ use actors4;
 use actors5;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -30,7 +32,7 @@ import dirname(s:string):string;
 setvalue(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
 getvalue(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 currentFileName := setupvar("currentFileName", nullE);
-currentFileDirectory := setupvar("currentFileDirectory", nullE);
+currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
      then printErrorMessage(f,prefix + ": " + err.message)
@@ -47,7 +49,7 @@ linefun(e:Expr):Expr := (
 		    stmtno = nn;
 	       	    old)
 	       else WrongArg(1,"a non-negative integer"))
-	  else WrongArg(1,"a small integer")
+	  else WrongArgSmallInteger(1)
 	  )
      is a:Sequence do (
 	  if length(a) == 0
@@ -163,23 +165,27 @@ readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
      ret);
 readeval(file:TokenFile):Expr := readeval2(file,false,true);
 export StopIfError := false;
-nprompt := false;
-mpwprompt := false;
-xprompt := false;
+stopIfError(e:Expr):Expr := (
+     ret := toExpr(StopIfError);
+     if e == True then (StopIfError = true; ret)
+     else if e == False then (StopIfError = false; ret)
+     else WrongArg("true or false")
+     );
+setupfun("stopIfError",stopIfError);
+
+InputPrompt := makeProtectedSymbolClosure("InputPrompt");
+InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
+
 prompt(o:file):void := (
      if stmtno == laststmtno 
      then (
-	  if !nprompt then o << " " << blanks(length(tostring(stmtno))) << "   ";
+	  method := lookup(integerClass,InputContinuationPrompt);
+	  if method != nullE then apply(method,toExpr(stmtno));
      	  )
      else (
      	  laststmtno = stmtno;
-     	  if xprompt 
-	  then (o << "\1";)
-	  else if !nprompt then o << endl;		  -- double space
-	  if mpwprompt then (o << "i" << stmtno << " : " << endl 
-	                      << " " << blanks(length(tostring(stmtno))) << "   ";)
-	  else if !nprompt then (o << "i" << stmtno << " : ";)
-	  ));
+	  method := lookup(integerClass,InputPrompt);
+	  if method != nullE then apply(method,toExpr(stmtno))));
 loadprint(s:string,StopIfError:bool):Expr := (
      when openTokenFile(s)
      is errmsg do False
@@ -209,19 +215,17 @@ load(e:Expr):Expr := (
      when e
      is s:string do load(s)
      else buildErrorPacket("expected string as file name"));
-setupfun("load",load);
+setupfun("simpleLoad",load);
 
 input(e:Expr):Expr := (
      when e
      is s:string do (
-	  oldxprompt := xprompt;
-	  xprompt = false;
+	  -- we should have a way of setting normal prompts while inputting
 	  ret := loadprint(s,true);
-	  xprompt = oldxprompt;
 	  laststmtno = -1;
 	  ret)
      else buildErrorPacket("expected string as file name"));
-setupfun("input",input);
+setupfun("simpleInput",input);
 
 stringTokenFile(name:string,contents:string):TokenFile := (
      TokenFile(
@@ -257,24 +261,9 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       )),
 	  NULL));
 
-usageMessage():void := (
-     usage(argv.0 + " [options...] filename ..." + newline 
-	  + "    --              ignore previous arguments after reloading data" + newline
-	  + "    \"-e x\"          evaluate expression x" + newline
-	  + "    -h              print this usage message" + newline
-	  + "    -n              print no input prompts" + newline
-	  + "    -mpwprompt      print a prompt suitable for use using MPW on the Macintosh" + newline
-	  + "    -q              don't load init file" + newline
-	  + "    -s              stop if an error occurs" + newline
-	  + "    -silent         don't print the startup banner" + newline
-	  + "    --texmacs       TeXmacs session mode" + newline
-	  + "    -tty            assume stdin and stdout are ttys" + newline
-	  + "    -x              examples-prompt mode" + newline
-	  ));
-
-export topLevel():void := (
-     when loadprint("-",StopIfError) is Error do exit(2) else nothing;
-     );
+export topLevel():bool := when loadprint("-",StopIfError) is Error do false else true;
+topLevel(e:Expr):Expr := toExpr(topLevel());
+setupfun("topLevel",topLevel);
 
 value(e:Expr):Expr := (
      when e
@@ -293,61 +282,16 @@ setupfun("value",value);
 
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
-     texmacsMode := false;
      localFrame = globalFrame;
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));
      stdout.outisatty =   0 != isatty(1) ;
      stderr.outisatty =   0 != isatty(2) ;
-     phase := 0;
-     setvalue(currentFileDirectory,Expr(getcwd()));
-     foreach arg at i in args do (
-	  if arg === "--" then phase = phase + 1
-	  else if LoadDepth == phase then (
-	       if arg === "-s" then ( 
-		    StopIfError = true; 
-		    )
-	       else if arg.0 == '-' && arg.1 == 'e' then (
-		    when readeval(
-			 stringTokenFile("commandLine#" + tostring (1+i),substr(arg,2)+newline))
-		    is Error do exit(2)
-		    else nothing;
-		    )	       
-	       else if arg === "-x" then xprompt = true
-	       else if arg === "--texmacs" then (
-		    texmacsMode = true;
-		    )
-	       else if arg === "-tty" then (
-		    stdin.inisatty = true;
-		    stdin.echo = false;
-		    stdout.outisatty = true;
-		    stderr.outisatty = true;
-		    )
-	       else if arg === "-silent" then nothing
-	       else if arg === "" then nothing
-	       else if arg === "-n" then nprompt = true
-       	       else if arg === "-mpwprompt" then mpwprompt = true
-	       else if arg === "-q" then nothing  -- pass through to top level
-	       else if arg === "-h" then (
-		    usageMessage();
-		    exit(1))
-	       else if arg.0 == '-' then (
-		    stderr << "unknown option " << arg << endl;
-		    usageMessage();
-		    exit(1))
-	       else (
-		    r := load(arg);
-		    when r
-		    is Error do exit(2)
-		    else if r == False 
-		    then (
-			 error("can't open file " + arg);
-			 exit(1);
-			 )
-		    )));
-     if texmacsMode
-     then topLevelTexmacs()
-     else topLevel();
-     value(Expr("exit 0"));				    -- try to exit the user's way
-     exit(0);						    -- if that fails, really exit
+     ret := (
+	  when readeval(stringTokenFile("--startupString--/startup.m2",startupString))
+	  is Error do 2
+	  else 0
+	  );
+     value(Expr("exit " + tostring(ret)));		    -- try to exit the user's way
+     exit(ret);
      );
