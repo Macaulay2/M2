@@ -478,8 +478,15 @@ document { quote directSum,
      "The components can be recovered later with ", TO "components", ".",
      SEEALSO ("++", "components")
      }
+
+Matrix ++ ZZ :=
 Matrix ++ RingElement := (f,r) -> f ++ matrix {{r}}
+
+ZZ ++ Matrix :=
 RingElement ++ Matrix := (r,f) -> matrix {{r}} ++ f
+
+ZZ ++ RingElement :=
+RingElement ++ ZZ :=
 RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
 concatCols := mats -> (

@@ -2,7 +2,7 @@
 
 GroebnerBasis = new Type of MutableHashTable
 name GroebnerBasis := g -> name new FunctionApplication from { gb, g.matrix }
-net GroebnerBasis := g -> net new FunctionApplication from { gb, g.matrix }
+net GroebnerBasis := g -> net gens g
 document { quote GroebnerBasis,
      TT "GroebnerBasis", " -- the class of all Groebner bases.",
      PARA,
