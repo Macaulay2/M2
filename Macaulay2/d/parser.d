@@ -175,10 +175,14 @@ export nunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
 export precObject := 0;		-- filled in later by keywords.d
 export defaultbinary(
      lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
-     e := token2.word.parse.funs.unary(token2,file,precObject-1,obeylines);
-     ret := if e == errorTree then e else ParseTree(Adjacent(lhs,e));
-     ret
-     );
+     if token2.followsNewline then (
+     	  errorpos(token2.position,"missing semicolon on line before " + token2.word.name + "?");
+     	  errorTree
+	  )
+     else (
+     	  e := token2.word.parse.funs.unary(token2,file,precObject-1,obeylines);
+     	  ret := if e == errorTree then e else ParseTree(Adjacent(lhs,e));
+     	  ret));
 export postfixop(
      lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      e := ParseTree(Postfix(lhs,token2));
@@ -315,10 +319,14 @@ unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
 export binarybracket(
      lhs:ParseTree, token2:Token, 
      file:TokenFile, prec:int,obeylines:bool):ParseTree := (
-     e := singleparen(token2,file,token2.word.parse.scope);
-     ret := if e == errorTree then e else ParseTree(Adjacent(lhs,e));
-     ret
-     );
+     if token2.followsNewline then (
+     	  errorpos(token2.position,"missing semicolon on line before '" + token2.word.name + "'?");
+     	  errorTree
+	  )
+     else (
+     	  e := singleparen(token2,file,token2.word.parse.scope);
+     	  ret := if e == errorTree then e else ParseTree(Adjacent(lhs,e));
+     	  ret));
 export leftparen  := parsefuns(unaryparen, defaultbinary);
 export rightparen := parsefuns(errorunary, errorbinary);
 export unarywhile(
@@ -337,7 +345,7 @@ export unarywhile(
      accumulate(r,file,prec,obeylines));
 unstringToken(q:Token):Token := (
      if q.word.typecode == TCstring 
-     then Token(unique(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry)
+     then Token(unique(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry,q.followsNewline)
      else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (

@@ -1,4 +1,4 @@
-all::
+rall::
 
 ifndef MAKECONF
 
@@ -10,7 +10,7 @@ ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
-export VERSION	      := 0.8.58
+export VERSION	      := 0.8.59
 export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
@@ -260,10 +260,15 @@ endif
 
 MAKEFLAGS += -w
 
-endif
-
 export CFLAGS += -DMACAULAY2
 export CXXFLAGS += -DMACAULAY2
 
 export M2HOME := $(shell cd $(TOPDIR)/Macaulay2; pwd)
-export LD_LIBRARY_PATH += $(M2HOME)/lib
+
+ifdef LD_LIBRARY_PATH
+export LD_LIBRARY_PATH:=$(M2HOME)/lib:$(LD_LIBRARY_PATH)
+else
+export LD_LIBRARY_PATH:=$(M2HOME)/lib
+endif
+
+endif
