@@ -37,7 +37,6 @@ class Ring : public mutable_object
 {
 protected:
   int P;
-  int _nvars;
   const PolynomialRing *degree_ring;
 
   ring_elem _zero_divisor;
@@ -49,7 +48,6 @@ protected:
   ring_elem minus_oneV;
 
   void initialize_ring(int charac, 
-		       int nvars, 
 		       const PolynomialRing *DR = 0);
   Ring() {}
 public:

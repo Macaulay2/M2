@@ -35,7 +35,6 @@ int FractionField::n_fraction_vars() const
 bool FractionField::initialize_frac(const PolyRing *R) 
 {
   initialize_ring(R->charac(),
-		  R->n_vars(),
 		  R->get_degree_ring());
 
   R_ = R;

@@ -83,9 +83,9 @@ bool SchurRing::initialize_schur()
   _SMfinalwt = 0;
   _SMresult = 0;
   
-  _EXP1 = newarray(int,_nvars);
-  _SMtab.p = newarray(int,_nvars+1);
-  for (int i=0; i<_nvars+1; i++) _SMtab.p[i] = 0;
+  _EXP1 = newarray(int,nvars_);
+  _SMtab.p = newarray(int,nvars_+1);
+  for (int i=0; i<nvars_+1; i++) _SMtab.p[i] = 0;
   return true;
 }
 
@@ -113,14 +113,14 @@ void SchurRing::to_partition(const int *m, int *exp) const
     // exp[1]..exp[nvars] are set
 {
   M_->to_expvector(m, const_cast<SchurRing *>(this)->_EXP1);
-  exp[_nvars] = _EXP1[_nvars-1];
-  for (int i=_nvars-1; i>=1; i--)
+  exp[nvars_] = _EXP1[nvars_-1];
+  for (int i=nvars_-1; i>=1; i--)
     exp[i] = exp[i+1] + _EXP1[i-1];
 }
 void SchurRing::from_partition(const int *exp, int *m) const
 {
-  _EXP1[_nvars-1] = exp[_nvars];
-  for (int i=_nvars-1; i>0; i--)
+  _EXP1[nvars_-1] = exp[nvars_];
+  for (int i=nvars_-1; i>0; i--)
     const_cast<SchurRing *>(this)->_EXP1[i-1] = exp[i] - exp[i+1];
   M_->from_expvector(_EXP1, m);
 }
@@ -136,8 +136,8 @@ void SchurRing::bounds(int &lo, int &hi)
 
   if (y == _SMfilled.p[x])	// There is not one to the right
     {
-      hi = _nvars;
-      for (k=1; k<=_nvars; k++)
+      hi = nvars_;
+      for (k=1; k<=nvars_; k++)
 	if (_SMtab.p[k] == 0)
 	  {
 	    hi = k;
@@ -223,10 +223,10 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
 {
   int i;
   intarray a_part_a, b_part_a, lambda_a, p_a;
-  int *a_part = a_part_a.alloc(_nvars+1);
-  int *b_part = b_part_a.alloc(_nvars+1);
-  int *lambda = lambda_a.alloc(2*_nvars+2);
-  int *p      = p_a.alloc(2*_nvars+2);
+  int *a_part = a_part_a.alloc(nvars_+1);
+  int *b_part = b_part_a.alloc(nvars_+1);
+  int *lambda = lambda_a.alloc(2*nvars_+2);
+  int *p      = p_a.alloc(2*nvars_+2);
 
   // First: obtain the partitions
   to_partition(m, a_part);
@@ -234,13 +234,13 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
   
   // Second: make the skew partition
   int a = b_part[1];
-  for (i=1; i <= _nvars && a_part[i] != 0; i++)
+  for (i=1; i <= nvars_ && a_part[i] != 0; i++)
     {
       p[i] = a + a_part[i];
       lambda[i] = a;
     }
   int top = i-1;
-  for (i=1; i <= _nvars && b_part[i] != 0; i++)
+  for (i=1; i <= nvars_ && b_part[i] != 0; i++)
     {
       p[top+i] = b_part[i];
       lambda[top+i] = 0;
@@ -309,20 +309,20 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
 
 void SchurRing::dimension(const int *exp, mpz_t result) const
     // Return in 'result' the dimension of the irreducible
-    // GL(_nvars) representation having highest weight
+    // GL(nvars_) representation having highest weight
     // 'exp'
 {
   // MES: this might not be efficient enough in practice?
   int i,j;
 
   mpz_set_ui(result, 1);
-  for (i=1; i<_nvars; i++)
-    for (j=i+1; j<=_nvars; j++)
+  for (i=1; i<nvars_; i++)
+    for (j=i+1; j<=nvars_; j++)
       if (exp[i] != exp[j])
 	mpz_mul_ui(result, result, exp[i] - exp[j] + j - i);
 
-  for (i=1; i<_nvars; i++)
-    for (j=i+1; j<=_nvars; j++)
+  for (i=1; i<nvars_; i++)
+    for (j=i+1; j<=nvars_; j++)
       if (exp[i] != exp[j])
 	mpz_div_ui(result, result, j - i);
 }
@@ -330,7 +330,7 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
 ring_elem SchurRing::dimension(const ring_elem f) const
 {
   intarray expa;
-  int *exp = expa.alloc(_nvars+1);
+  int *exp = expa.alloc(nvars_+1);
   ring_elem result = K_->from_int(0);
   mpz_t dim;
   mpz_init(dim);
@@ -349,7 +349,7 @@ ring_elem SchurRing::dimension(const ring_elem f) const
 void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
 {
   intarray exp_a;
-  int *exp = exp_a.alloc(_nvars+1);
+  int *exp = exp_a.alloc(nvars_+1);
   int n = n_terms(f);
 
   int old_plus = p_plus;
@@ -373,7 +373,7 @@ void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
       p_one = 0;
       to_partition(t->monom, exp);
       o << "{" << exp[1];
-      for (int i=2; i<=_nvars && exp[i] != 0; i++)
+      for (int i=2; i<=nvars_ && exp[i] != 0; i++)
 	o << "," << exp[i];
       o << "}";
       p_one = old_one;

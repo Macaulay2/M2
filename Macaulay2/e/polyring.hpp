@@ -17,7 +17,7 @@ class GBComputation;
 
 #include "poly.hpp"
 
-class PolyRing : public PolynomialRing
+class PolyRing : public PolyRingFlat
 {
   friend class GBRingSkew;
   friend class FreeModule;
@@ -41,81 +41,15 @@ public:
   static const PolyRing *create(const Ring *K, const Monoid *M);
 
 protected:
-  const Ring *K_;
-  const Monoid *M_;
-
-  int _poly_size;
-
-  bool _is_ZZ_quotient;		// true if this is a quotient of a polynomial ring over ZZ, AND
-				// there is an integer in the factored ideal.
-  ring_elem _ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
-
-  
-  GBRing *_gb_ring;
-
-  bool _coefficients_are_ZZ;
-
-  // Most skew-mult specific poly code is in skewpoly.{hpp,cpp}.  However, var, homogenize,
-  //   and diff_term all have a small amount of skew commutative specific code.
-  bool _is_skew;
-  SkewMultiplication _skew; // Completely ignored if _is_skew is false.
 
   int *_EXP1, *_EXP2, *_EXP3;
 public:
-  virtual const PolyRing * getAmbientRing() const { return this; }
-
-  virtual const RingOrNull *getDenominatorRing() const { return 0; }
-
-  virtual const Ring *getCoefficients() const { return K_; }
-  // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
-  // is another PolyRing.
-
-#if 0
-  virtual const Ring *getLogicalCoefficients() const { return logicalK_; }
-  // The logical coefficient ring of 'this'.  
-  // This is either a non polynomial ring, or it is a PolyRing.
-#endif
-
-  virtual const Monoid *getMonoid() const { return M_; }
-  // The implementation monoid of this ring.
-
-#if 0
-  virtual const Monoid *getLogicalMonoid() const { return logicalM_; }
-  // The logical monoid of this polynomial ring.
-#endif
 
   static const PolyRing *get_trivial_poly_ring();
 
   virtual const PolyRing * cast_to_PolyRing()  const { return this; }
   virtual       PolyRing * cast_to_PolyRing()        { return this; }
 
-  virtual bool is_basic_ring() const { return false; }
-  GBRing *get_gb_ring() const { return _gb_ring; }
-
-  // Quotient ring information
-  bool        is_quotient_ring() const { return false; }
-  MonomialIdeal *  get_quotient_monomials() const { return 0; }
-  
-  // skew commutativity 
-  bool is_skew_commutative() const { return _is_skew; }
-  int n_skew_commutative_vars() const { return _skew.n_skew_vars(); }
-  int skew_variable(int i) const { return _skew.skew_variable(i); }
-  bool is_skew_var(int v) const { return _skew.is_skew_var(v); }
-  const SkewMultiplication & getSkewInfo() const { return _skew; }
-
-  virtual bool is_pid() const       { return (_nvars == 1 && K_->is_field())
-				       || (_nvars == 0 && K_->is_pid()); }
-  virtual bool has_gcd() const      { return (_nvars == 1 && K_->is_field())
-				       || (_nvars == 0 && K_->has_gcd()); }
-
-  virtual bool is_poly_ring() const { return true; }
-  virtual bool is_quotient_poly_ring() const { return false; }
-
-  virtual CoefficientType coefficient_type() const 
-  { return Ncoeffs()->coefficient_type(); }
-
-  virtual int n_fraction_vars() const
-  { return 0; }
 
   virtual void text_out(buffer &o) const;
 

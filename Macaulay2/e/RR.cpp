@@ -27,7 +27,7 @@ RR::~RR()
 
 bool RR::initialize_RR(double epsilon) 
 {
-  initialize_ring(0,0);
+  initialize_ring(0);
   _epsilon = epsilon;
 
   zeroV = from_int(0);

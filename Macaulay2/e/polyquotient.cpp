@@ -12,6 +12,7 @@ PolyRingQuotient::~PolyRingQuotient()
 {
 }
 
+#if 0
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
 					   std::vector<Nterm *, gc_allocator<Nterm *> > &elems)
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
@@ -19,7 +20,6 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
 {
   PolyRingQuotient *result = new PolyRingQuotient;
   result->initialize_ring(R->charac(),
-			  R->n_vars(),
 			  R->get_degree_ring());
   result->R_ = R;
 
@@ -27,7 +27,7 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
   if (result->overZZ_)
     result->setQuotientInfo(new QRingInfo_ZZ(R,elems));
   else
-    result->setQuotientInfo(new QRingInfo_field(R,elems));
+    result->setQuotientInfo(new QRingInfo_field_basic(R,elems));
 
   for (int i=0; i<result->n_quotients(); i++)
     {
@@ -90,6 +90,7 @@ Matrix * PolyRingQuotient::getPresentation() const
     mat.append(R->make_vec(0, quotient_element(i)));
   return mat.to_matrix();
 }
+#endif
 
 void PolyRingQuotient::text_out(buffer &o) const
 {

@@ -7,8 +7,9 @@
 #include "monideal.hpp"
 #include "qring.hpp"
 
-class PolyRingQuotient : public PolynomialRing
+class PolyRingQuotient : public PolyRingFlat
 {
+  friend class PolynomialRing;
   const PolyRing *R_;
   bool overZZ_;
 protected:
@@ -17,13 +18,14 @@ protected:
   virtual ~PolyRingQuotient();
   PolyRingQuotient() {}
 
+#if 0
   static PolyRingQuotient *create(const PolyRing *R, 
 			   std::vector<Nterm *, gc_allocator<Nterm *> > &elems);
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
   // They should also form a GB.
-
+#endif
 public:
-
+#if 0
   static PolyRingQuotient *create(const PolynomialRing *R, const Matrix *M);
 
   static PolyRingQuotient *create(const PolyRing *R, 
@@ -34,24 +36,17 @@ public:
   // return A[x]/I.
 
   Matrix * getPresentation() const;
-
-#if 0
-  virtual const Ring *getLogicalCoefficients() const { return R_->getLogicalCoefficients(); }
-  // The logical coefficient ring of 'this'.  
-  // This is either a non polynomial ring, or it is a PolyRing.
 #endif
 
+#if 0
   virtual const Ring *getCoefficients() const { return R_->getCoefficients(); }
   // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
   // is another PolyRing.
 
-#if 0
-  virtual const Monoid *getLogicalMonoid() const { return R_->getLogicalMonoid(); }
-  // The logical monoid of this polynomial ring.
-#endif
-
   virtual const Monoid *getMonoid() const { return R_->getMonoid(); }
   // The implementation monoid of this ring.
+
+  virtual const PolyRing * getNumeratorRing() const { return R_; }
 
   virtual const PolyRing * getAmbientRing() const { return R_->getAmbientRing(); }
   // Yields the ambient PolyRing corresponding to this polynomial ring
@@ -65,20 +60,18 @@ public:
   // 'this', the result value is its ring.
 
   virtual GBRing *get_gb_ring() const { return R_->get_gb_ring(); }
+#endif
 
   virtual const PolyRingQuotient * cast_to_PolyRingQuotient()  const { return this; }
   virtual       PolyRingQuotient * cast_to_PolyRingQuotient()        { return this; }
 
-  // Quotient ring information
-  virtual bool        is_quotient_ring() const { return true; }
-
-  virtual bool is_quotient_poly_ring() const { return true; }
-
+#if 0
   virtual bool is_pid() const {
     return n_vars() == 1 && !getCoefficients()->is_ZZ() && n_quotients() == 1;
   }
 
   virtual bool has_gcd() const { return false; } // Is this correct??
+#endif
 
   virtual void text_out(buffer &o) const;
 

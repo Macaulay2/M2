@@ -13,7 +13,7 @@ extern ZZ *globalZZ;
 bool Z_mod::initialize_Z_mod(int p)
 {
 
-  initialize_ring(p,0);
+  initialize_ring(p);
 		  
 
   declare_field();

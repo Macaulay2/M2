@@ -52,24 +52,40 @@ public:
 
 class QRingInfo_field : public QRingInfo
 {
+protected:
   MonomialIdeal *Rideal;
   MonomialTable *ringtable;
-
-  void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field(const PolyRing *ambientR,
 		  const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_field();
+};
+
+class QRingInfo_field_basic : public QRingInfo_field
+{
+  void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
+public:
+  QRingInfo_field_basic(const PolyRing *ambientR,
+			const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
+  ~QRingInfo_field_basic();
 
   void normal_form(ring_elem &f) const;
 
   void normal_form(const FreeModule *F, gbvector *&f) const;
+};
 
-  virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
-  // Each bag value is an "Nterm *".
 
-  virtual const MonomialTable * get_quotient_MonomialTable() const { return ringtable; }
-  // Each id is an index into quotient_ideal_
+class QRingInfo_field_QQ : public QRingInfo_field
+{
+  void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
+public:
+  QRingInfo_field_QQ(const PolyRing *ambientR,
+		     const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
+  ~QRingInfo_field_QQ();
+
+  void normal_form(ring_elem &f) const;
+
+  void normal_form(const FreeModule *F, gbvector *&f) const;
 };
 
 class QRingInfo_ZZ : public QRingInfo
