@@ -19,7 +19,7 @@ class res_level;
 class res_comp;
 class res_poly;
 
-class res_degree
+class res_degree : public our_new_delete
     // Collection of pairs all of the same degree
 {
 friend class res_comp;
@@ -42,7 +42,7 @@ public:
   ~res_degree() {}
 };
 
-class res_level
+class res_level : public our_new_delete
     // Collection of pairs all at same syzygy level
 {
 friend class res_comp;

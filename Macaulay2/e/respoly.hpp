@@ -73,7 +73,7 @@ struct resterm
   int monom[1];
 };
 
-class res_poly
+class res_poly : public our_new_delete
 {
   const PolynomialRing *R;
   const Monoid *M;

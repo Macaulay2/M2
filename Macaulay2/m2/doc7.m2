@@ -723,9 +723,17 @@ document {
      }
 document {
      Key => (matrix,List),
-     TT "matrix v", " -- create a matrix from a doubly-nested list of
-     ring elements or matrices, or from a list of (column) vectors.",
-     PARA,
+     Headline => "create a matrix from a doubly-nested list of ring 
+                  elements or matrices",
+     Usage => "matrix v",
+     Inputs => {
+	  "v" => "a list of lists of either ring elements or matrices"
+	  },
+     Outputs => {
+	  "A matrix where the first list of v gives the first row (or set
+	  of rows, if the elements are matrices), the second list is the 
+          second row, etc."
+	  },
      "An attempt is made to coerce the ring elements and matrices to
      a common ring.  If the entries are ring elements, they are used as
      the entries of the matrix, and if the entries are matrices, then
@@ -1401,7 +1409,19 @@ document {
 document {
      Key => (symbol *,Ideal,Ideal),
      Headline => "product of ideals",
-     TT "I * J", " -- the product of two ideals."
+     Usage => "I * J",
+     Inputs => {
+	  "I" => null,
+	  "J" => {"in the same ring as ", TT "I"},
+	  },
+     Outputs => {
+	  {"the product of the two ideals ", TT "I", " and ", TT "J", ""}
+	  },
+     EXAMPLE {
+	  "R = QQ[t][a..d];",
+	  "ideal(a,t*c) * ideal(a^2,b^2)"
+	  },
+     SeeAlso => {"ideals"}
      }
 document {
      Key => (symbol ^,Ideal,ZZ),
@@ -2538,16 +2558,28 @@ document {
 document {
      Key => homomorphism,
      Headline => "get the homomorphism from element of Hom",
-     TT "homomorphism f", " -- finds the matrix ", TT "M <-- N", " corresponding to the 
-     element ", TT "f", ".",
-     PARA,
-     "This element should be a matrix ", TT "f : Hom(M,N) <--- R^1", ", where ", TT "Hom(M,N)", " 
-     has been previously computed, and ", TT "R", " is the ring of ", TT "M", " and ", TT "N", ".",
-     PARA,
-     "When ", TT "A := Hom(M,N)", " is computed, enough information is stored in ", TT "A.cache.Hom", "
-     to compute this correspondence.",
-     PARA,
-     SeeAlso => "Hom"
+     Usage => "homomorphism f",
+     Inputs => {
+	  "f" => {"of the form Hom(M,N) <-- R^1, where Hom(M,N) has been
+	  previously computed, and R is the ring of f, M and N"},
+	  },
+     Outputs => {
+	  {"M <-- N, corresponding to the element f"}
+	  },
+     "When ", TT "H := Hom(M,N)", " is computed, enough information is stored in ", 
+     TT "H.cache.Hom", " to compute this correspondence.",
+     EXAMPLE {
+	  "R = QQ[x,y,z]/(y^2-x^3)",
+	  "H = Hom(ideal(x,y), R^1)",
+	  "g = homomorphism H_{1}"
+	  },
+     "The homomorphism g takes x to y and y to x2.  The source and target are
+     what they should be.",
+     EXAMPLE {
+	  "source g",
+	  "target g"
+	  },
+     SeeAlso => Hom
      }
 TEST ///
 S = ZZ/101[a..d]
