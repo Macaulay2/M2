@@ -1233,7 +1233,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     {
       buffer o;
       o << "," << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
 }
 
@@ -1318,7 +1318,7 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     {
       buffer o;
       o << "," << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
 }
 
@@ -1439,19 +1439,19 @@ void gbA::handle_elem(POLY f, gbelem_type minlevel)
     {
       insert(f,minlevel);
       if (gbTrace == 3)
-	emit("m");
+	emit_wrapped("m");
     }
   else if (!R->gbvector_is_zero(f.fsyz))
     {
       /* This is a syzygy */
       collect_syzygy(f.fsyz);
       if (gbTrace == 3)
-	emit("z");
+	emit_wrapped("z");
     }
   else
     {
       if (gbTrace == 3)
-	emit("o");
+	emit_wrapped("o");
     }
 }
 

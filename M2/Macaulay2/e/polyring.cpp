@@ -1065,11 +1065,6 @@ ring_elem PolyRing::random() const
   ERROR("not yet implemented");
   return 0;
 }
-ring_elem PolyRing::random(int /*homog*/, const int * /*deg*/) const
-{
-  ERROR("not yet implemented");
-  return 0;
-}
 
 void PolyRing::elem_text_out(buffer &o, const ring_elem f) const
 {

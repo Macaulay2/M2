@@ -976,24 +976,6 @@ vec Ring::vec_homogenize(const FreeModule *F,
   return vec_homogenize(F, f, v, d, wts);
 }
 
-#if 0
-// MES 8-9-04
-vec FreeModule::random() const
-{
-  vec result = NULL;
-  for (int i=0; i<rank(); i++)
-    {
-      vec v = R->make_vec(i,R->random());
-      if (v != NULL)
-	{
-	  v->next = result;
-	  result = v;
-	}
-    }
-  return result;
-}
-#endif
-
 //////////////////////////////////////////////
 //  Divisibility checks               ////////
 //                                    ////////

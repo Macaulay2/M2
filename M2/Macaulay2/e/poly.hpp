@@ -161,7 +161,6 @@ public:
 		      ring_elem &x, ring_elem &y) const = 0;
 
   virtual ring_elem random() const = 0;
-  virtual ring_elem random(int homog, const int *deg) const = 0;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
 
@@ -634,4 +633,4 @@ public:
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
-// End:
+// End: 

@@ -174,18 +174,6 @@ ring_elem FractionField::random() const
   return FRAC_RINGELEM(make_elem(a,b));
 }
 
-ring_elem FractionField::random(int homog, const int *deg) const
-{
-  ring_elem a = R_->random(homog,deg);
-  ring_elem b = R_->random(homog,deg);
-  if (R_->is_zero(b))
-    {
-      R_->remove(b);
-      b = R_->from_int(1);
-    }
-  return FRAC_RINGELEM(make_elem(a,b));
-}
-
 void FractionField::elem_text_out(buffer &o, const ring_elem a) const
 {
   int old_one = p_one;

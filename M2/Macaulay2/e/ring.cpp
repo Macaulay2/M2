@@ -190,11 +190,6 @@ ring_elem Ring::random() const
   ERROR("random scalar elements for this ring are not implemented");
   return 0;
 }
-ring_elem Ring::random(int /*homog*/, const int * /*deg*/) const
-{
-  ERROR("random non-scalar elements for this ring are not implemented");
-  return 0;
-}
 
 ring_elem Ring::preferred_associate(ring_elem f) const
 {

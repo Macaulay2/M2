@@ -372,11 +372,6 @@ ring_elem PolyRingQuotient::random() const
   return ZERO_RINGELEM;
 }
 
-ring_elem PolyRingQuotient::random(int homog, const int *deg) const
-{
-  return ZERO_RINGELEM;
-}
-
 ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f) const
 {
   return R_->PolyRing::eval(map, f);

@@ -178,8 +178,6 @@ public:
 
   virtual ring_elem random() const;
 
-  virtual ring_elem random(int homog, const int *deg) const;
-
   virtual void elem_text_out(buffer &o, const ring_elem f) const {
     R_->PolyRing::elem_text_out(o,f);
   }
