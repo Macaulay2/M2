@@ -11,18 +11,18 @@
 #include "relem.hpp"
 
 extern Z *ZZ;
-long Random::seed;
-long Random::maxlong;
+int32 Random::seed;
+int32 Random::maxint32;
 RingElement Random::maxint;
 
 void Random::i_random()
 {
   seed = MASK;
   maxint = RingElement(ZZ,10);
-  maxlong = 10;
+  maxint32 = 10;
 }
 
-void Random::set_seed(long s)
+void Random::set_seed(int32 s)
 {
   if (s == MASK) s = 0;
   seed = s ^ MASK;
@@ -35,7 +35,7 @@ void Random::set_max_int(RingElement a)
   // less than the 2^31-1 by a factor of several...
   int cmp = mpz_cmp_si(MPZ_VAL(maxint.get_value()), IM/2);
   if (cmp <= 0)
-    maxlong = mpz_get_ui(MPZ_VAL(maxint.get_value()));
+    maxint32 = mpz_get_ui(MPZ_VAL(maxint.get_value()));
   else
     gError << "max random integer is " << IM/2;
 }
@@ -45,9 +45,9 @@ RingElement Random::get_max_int()
   return maxint;
 }
 
-long Random::random0()
+int32 Random::random0()
 {
-  long k = seed/IQ;
+  int32 k = seed/IQ;
   seed = IA * (seed - k*IQ) - IR*k; /* Schrage algorithm to compute 
 				       idum = (IA*idum) mod IM */
   if (seed < 0) seed += IM;
@@ -56,11 +56,11 @@ long Random::random0()
 }
 
 extern "C"
-long random00() {
+int32 random00() {
      return Random::random0();
 }
 
-long Random::random0(long r)
+int32 Random::random0(int32 r)
 {
   if (r <= 0) return 0;
   return random0() % r;
@@ -68,7 +68,7 @@ long Random::random0(long r)
 
 RingElement Random::random()
 {
-  int result = random0(2*maxlong);
-  result -= maxlong;
+  int result = random0(2*maxint32);
+  result -= maxint32;
   return RingElement(ZZ,result);
 }
