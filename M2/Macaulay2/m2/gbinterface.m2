@@ -15,8 +15,15 @@ document { quote callgg,
 
 ggPush String := s -> concatenate(ggSTRING, gg (# s), s)
 eePop = format -> convert(format, sendgg ggtonet)
+
 ZZ.pop = eePopInt = () -> eePop ConvertInteger
 ZZ.handle = newHandle ggZ
+
+ZZZ = new Ring
+ZZZ.pop = eePopInt = () -> eePop ConvertInteger
+ZZZ.handle = newHandle ggEZZ
+ZZZ.newEngine = true
+
 eePopBool = () -> eePop ConvertInteger === 1
 eePopIntarray = () -> eePop ConvertList ConvertInteger
 eePromote = (f,R) -> (
@@ -88,20 +95,17 @@ document { quote engineMemory,
 	  }
      }
 
-see = (X) -> (
-     << sendgg(
-	  if instance(X,ZZ) 
-	  then ( ggPush X, ggderef )
-	  else try ggPush X else error "not an engine object", 
-	  ggsee,
-	  ggpop)
-     << endl;)
+see = method()
+see ZZ := i -> sendgg(ggPush i, ggderef, ggsee, ggpop)
+see Handle := i -> sendgg(ggPush i, ggsee, ggpop)
+see HashTable := (X) -> if X.?handle then see X.handle else error "not an engine object"
 
 document { quote see,
-     TT "see i", " -- display the engine object whose handle is the integer i.",
+     TT "see i", " -- return a string which displays the engine object whose handle 
+     is the integer i.",
      BR,
-     "see X -- display the engine object corresponding to the ring, matrix,
-     module, or ring element X.",
+     TT "see X", " -- return a string which displays the engine object corresponding 
+     to the ring, matrix, module, or ring element X.",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
