@@ -716,7 +716,15 @@ document { read,
      PARA,
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
-     SEEALSO {"get", "File"}
+     EXAMPLE {
+	  ///f = openInOut "!cat"///,
+	  ///isReady f///,
+	  ///f << "hi there" << flush;///,
+	  ///isReady f///,
+	  ///read f///,
+	  ///isReady f///,
+	  },
+     SEEALSO {"isReady", "get"}
      }
 
 document { get,

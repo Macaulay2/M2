@@ -844,7 +844,11 @@ export (x:Rational) / (y:Integer) : Rational := (
 export (x:Rational) / (y:int) : Rational := x / toInteger(y);
 export (x:Integer) / (y:Rational) : Rational := (
      g := gcd(x,y.numerator);
-     Rational(y.denominator * (x//g), y.numerator//g));
+     num := y.denominator * (x//g);
+     den := y.numerator//g;
+     if den > 0 
+     then Rational(num,den)
+     else Rational(-num,-den));
 export (x:int) / (y:Rational) : Rational := toInteger(x) / y;
 export (x:Rational) + (y:Rational) : Rational := (
      g := gcd(x.denominator,y.denominator);
