@@ -92,7 +92,7 @@ m3 = rawMatrixRemake2(F,G,rawMultiDegree m2, m2, 0)
 m4 = rawMatrixRemake2(F,G,{13}, m2, 0)
 assert(rawMultiDegree m4 === {13})
 
-elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))
+elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j)))
 m = rawMatrix1(F,5,elems,0)
 p1 = rawMatrix1(F,5,toSequence flatten entries m,0)
 p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,0)
@@ -349,8 +349,8 @@ assert(m1 == m2)
 -----------------------
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x .. symbol z))
-x = rawRingVar(R,0,1)
-y = rawRingVar(R,1,1)
+x = rawRingVar(R,0)
+y = rawRingVar(R,1)
 
 assert(rawMatrixDiff(mat{{x}}, mat{{x^3+7*x+2}}) == mat{{3*x^2+7}})
 assert(rawMatrixContract(mat{{2*x}}, mat{{x^3+7*x+2}}) == mat{{2*x^2+14}})

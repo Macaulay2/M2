@@ -215,6 +215,23 @@ public:
   ///////////////////////////////////////////////////////
   // These are only meant to be called by Ring's.
 public:
+  void determine_common_denominator_QQ(ring_elem f,
+					       mpz_ptr denom_so_far) const;
+
+  ring_elem get_denominator_QQ(ring_elem f) const;
+
+  ring_elem vec_get_denominator_QQ(vec f) const;
+
+  gbvector * translate_gbvector_from_vec_QQ(const FreeModule *F, 
+					    const vec v, 
+					    ring_elem &result_denominator) const;
+
+  vec translate_gbvector_to_vec_QQ(const FreeModule *F, 
+				   const gbvector *v,
+				   const ring_elem denom) const;
+
+  gbvector *translate_gbvector_from_ringelem_QQ(ring_elem coeff) const;
+
   gbvector *translate_gbvector_from_ringelem(ring_elem coeff) const;
   
   gbvector * translate_gbvector_from_vec(const FreeModule *F, 

@@ -1,10 +1,10 @@
 load "raw-util.m2"
 WP = rawPolynomialRing(rawQQ(), singlemonoid{x,y,Dx,Dy})
 W = rawWeylAlgebra(WP, {0,1}, {2,3}, -1)
-x = rawRingVar(W,0,1)
-y = rawRingVar(W,1,1)
-Dx = rawRingVar(W,2,1)
-Dy = rawRingVar(W,3,1)
+x = rawRingVar(W,0)
+y = rawRingVar(W,1)
+Dx = rawRingVar(W,2)
+Dy = rawRingVar(W,3)
 
 m1 = mat{{Dx}}
 m2 = mat{{x}}

@@ -68,8 +68,8 @@ R1 = polyring(rawZZ(), {symbol x, symbol y, symbol z})
 
 rawFromNumber(R1, 3)
 assert(rawFromNumber(R1, 0) == 0)
-assert(size rawFromNumber(R1,0) === 0)
-assert(size rawFromNumber(R1,1) === 1)
+assert(rawTermCount(3, rawFromNumber(R1,0)) === 0)
+assert(rawTermCount(3, rawFromNumber(R1,1)) === 1)
 rawFromNumber(R1,1.4) -- this is 1.  Is this a feature or a bug?
 -- rawFromNumber(R1,1+ii) -- gives an error now, good.
 f = rawFromNumber(R1,3)
@@ -85,16 +85,16 @@ time (
 
 assert(2 == rawLeadCoefficient(rawZZ(),2*x))
 
-x100 = rawRingVar(R1,0,100)
-x1000 = rawRingVar(R1,0,1000)
-assert(x1000 * x1000 == rawRingVar(R1,0,2000))
+x100 = (rawRingVar(R1,0))^100
+x1000 = (rawRingVar(R1,0))^1000
+assert(x1000 * x1000 == (rawRingVar(R1,0))^2000)
 assert(x^100 == x100)
 assert(x100 === x^100)
 -x
 x+y
 assert(x+y+z-x-y-z == 0)
-assert(size(3,x+y+z-x-y-z) == 0)
-assert(size(x+y+z-x-y-z^2) == 2)
+assert(rawTermCount(3,x+y+z-x-y-z) == 0)
+assert(rawTermCount(3,x+y+z-x-y-z^2) == 2)
 f = (x^2+x*y+y^2)
 g = ((3*x^10+x*y-3)*f)//(3*x^10+x*y-3)
 assert(f == g)
@@ -109,7 +109,7 @@ assert rawIsHomogeneous(x+y-z)
 rawMultiDegree(x*y-3)
 rawDegree(f, {1,0,0})
 rawDegree(f, {1,1,1})
-rawTermCount f
+rawTermCount(3,f)
 pf = x^4-y*z-3*x-6
 assert(z^2 * rawHomogenize(f, 2, 4, {1,1,1}) 
      === rawHomogenize(f, 2, 6, {1,1,1}))
@@ -119,16 +119,16 @@ assert try (rawMakeMonomial{(1,2),(0,3)};false) else true
 assert(rawTerm(R1,rawFromNumber(rawZZ(),-23),rawMakeMonomial{(0,2),(1,3)})
  === -23*x^2*y^3)
 f = (x+y^2+z^3)^9
-rawTermCount f
-rawGetTerms(f,2,4)
-rawGetTerms(f,-2,-1)
-rawCoefficient(f, rawMakeMonomial{(0,2),(2,21)})
-assert(1231212 == rawLeadCoefficient(1231212*f))
-rawLeadMonomial(y*z*f) -- strange: comes out with indets a,b,c.
-(cs,ms) = rawPairs(f)
+rawTermCount(3,f)
+rawGetTerms(3,f,2,4)
+rawGetTerms(3,f,-2,-1)
+rawCoefficient(rawZZ(),f, rawMakeMonomial{(0,2),(2,21)})
+assert(1231212 == rawLeadCoefficient(rawZZ(),1231212*f))
+rawLeadMonomial(3,y*z*f) -- strange: comes out with indets a,b,c.
+(cs,ms) = rawPairs(rawZZ(),f)
 cs
 ms
-rawPairs((x+y)^3)
+rawPairs(rawZZ(),(x+y)^3)
 assert(f === sum apply(#cs, i -> rawTerm(R1,cs#i, ms#i)))
 
 -- rawNumerator   -- test once fraction rings are defined
@@ -173,99 +173,17 @@ assert(f === sum apply(#cs, i -> rawTerm(R1,cs#i, ms#i)))
 -- Switching to numeric types is messy
 -- For evaluation, and so on, see RawRingMap
 
-A = polyring(rawZZ(), {symbol a, symbol b, symbol c})
-stderr << "warning: flattening not rewritten yet" << endl
-B = polyring(A, {symbol x, symbol y, symbol z})
-a = rawPromote(B,a)
-ring a === B
-b = rawPromote(B,b)
-c = rawPromote(B,c)
-f = (a+b+1)*(x^2-y*z^5-1) -- display is a bit off
-f^2
--- rawFromNumber(B,3462346246246246263287642) * c
--- assert(rawTermCount f === 3)
--- assert(rawGetTerms(f,1,1) === (a+b+1)*x^2)
--- assert((a+b+x+y)^2 === (a+b+x+y)*(a+b+x+y))
--- assert (rawDegree(f, {1,0,0}) == (0,2))
--- assert (rawDegree(f, {0,0,1}) == (0,5))
--- 
--- assert try rawDegree(f, {1,0,0,3,4,5}) else true 
--- assert (rawMultiDegree f == {6})
--- 
--- assert not rawIsHomogeneous f
--- assert rawIsHomogeneous (a^100*x^2-b*x*z-z^2)
--- rawHomogenize(a*x-y^3-1, 2, {1,1,1})
 
 --------------------------------------
 -- poly rings over other poly rings --
 --------------------------------------
-needs "raw-util.m2"
-A = polyring(rawZZ(), 1 : symbol x)
-B = polyring(A, 1 : symbol y)
-A === ring x
-x1 = rawPromote(B,x)
-f = (x1+y)^3
-rawLeadCoefficient(x1+y)
-g = x1*y^3+(1+x1)*y
-
-assert(2 == rawTermCount g)
-rawLeadCoefficient g
-rawLeadMonomial g 
-rawGetTerms(g,0,0) -- the lead term
-rawGetTerms(g,1,1)
-rawGetTerms(g,2,2)
-rawPairs g
-rawLeadMonomial y
-rawCoefficient(g, rawLeadMonomial(y))
-rawCoefficient(g, rawMakeMonomial{(0,1)})
-h1 = rawTerm(B,(x+1)^3,rawMakeMonomial{(0,3)})
-h2 = rawPromote(B, (x+1)^3) * y^3 
-assert(h1 == h2)
-
-
-
-needs "raw-util.m2"
-A = polyring(rawZZ(), (symbol r, symbol s))
-B = rawPolynomialRing(A, singlemonoid(symbol x, symbol y, symbol z))
-C = rawPolynomialRing(B, singlemonoid(symbol X, symbol Y, symbol Z))
-X = C_0
-Y = C_1
-ring X === C
-x = rawPromote(C,B_0)
-ring x === C
-((1_C+x)*X+Y)^3
-r = rawPromote(C, rawPromote(B,A_0))
-s = rawPromote(C, rawPromote(B,A_1))
-(r+s+x+X)^3
+-- tested in ringtower.m2
 
 ---------------------------------
 -- fraction fields --------------
 ---------------------------------
-needs "raw-util.m2"
-A = polyring(rawZZ(), {symbol x, symbol y, symbol z})
-B = rawFractionRing A
-f = rawFraction(B,x,y)
-f1 = rawFraction(B,y,x)
-f*f1
-assert((f-f)*f1 == 0)
-assert(f * f1 == 1)
-assert(1//f == f1)
-assert(rawPromote(B,x) == rawFraction(B,x,1_A))
+-- tested in ring-frac.m2
 
-C = polyring(B, {symbol s, symbol t})
-x1 = rawPromote(C,rawPromote(B,x))
-y1 = rawPromote(C,rawPromote(B,y))
-z1 = rawPromote(C,rawPromote(B,z))
-s
-f = s//(x1*y1)
-g = f^2 + s^2
-assert(g - s^2 == f^2)
-
-
-
-g = rawFraction(B,x^2+y*z,y)
-h = rawFraction(B, 5*(3*x^2-x-y+1_A)^2*(y+z), 10*(3*x^2-x-y+1_A)^2*(x+y^2-1_A))
-h + 1_B//h
 ---------------------------------
 -- quotient rings ---------------
 ---------------------------------
@@ -273,9 +191,9 @@ needs "raw-util.m2"
 A = polyring(rawZZp(101), {symbol x, symbol y, symbol z})
 M = mat{{x^2-y*z-1_A}}
 B = rawQuotientRing(A,M)
-x = rawRingVar(B,0,1)
-y = rawRingVar(B,1,1)
-z = rawRingVar(B,2,1)
+x = rawRingVar(B,0)
+y = rawRingVar(B,1)
+z = rawRingVar(B,2)
 assert(x*x == y*z+1)
 assert(x^2 == y*z+1)
 assert(x^4 == y^2*z^2+2*y*z+1)
@@ -284,9 +202,9 @@ needs "raw-util.m2"
 A = polyring(rawZZ(), {symbol x, symbol y, symbol z})
 M = mat{{3*x^2-y*z-1_A}}
 B = rawQuotientRing(A,M)
-x = rawRingVar(B,0,1)
-y = rawRingVar(B,1,1)
-z = rawRingVar(B,2,1)
+x = rawRingVar(B,0)
+y = rawRingVar(B,1)
+z = rawRingVar(B,2)
 x*x
 5*x*x
 5*x^2
@@ -299,9 +217,9 @@ needs "raw-util.m2"
 A = polyring(rawZZ(), {symbol x, symbol y})
 M = mat{{24336_A, 2*y, 4*x-7800, y^2+2*x-3900, x^2+2*x-3900}}
 B = rawQuotientRing(A,M)
-x = rawRingVar(B,0,1)
-y = rawRingVar(B,1,1)
-f = 4*rawRingVar(A,0,1)
+x = rawRingVar(B,0)
+y = rawRingVar(B,1)
+f = 4*rawRingVar(A,0)
 rawPromote(B, f)
 -2*x
 -3*x
@@ -340,16 +258,16 @@ assert(312*x == 0)
 -- rawMatrixRowChange, rawMatrixColChange
 -- rawMatrixRowScale, rawMatrixColumnScale
 R1 = rawPolynomialRing(rawZZ(), singlemonoid{x,y,z})
-x = rawRingVar(R1,0,1)
-y = rawRingVar(R1,1,1)
-z = rawRingVar(R1,2,1)
+x = rawRingVar(R1,0)
+y = rawRingVar(R1,1)
+z = rawRingVar(R1,2)
 F = rawFreeModule(R1,5)
 
 R2 = rawPolynomialRing(rawZZ(), singlemonoid toList (vars 0 .. vars 15))
-a = rawRingVar(R2,0,1)
-b = rawRingVar(R2,1,1)
+a = rawRingVar(R2,0)
+b = rawRingVar(R2,1)
 F = rawFreeModule(R2,4)
-elems = toList apply(0..3, j -> toList apply(0..3, i -> rawRingVar(R2,i+j,1)))
+elems = toList apply(0..3, j -> toList apply(0..3, i -> rawRingVar(R2,i+j)))
 m = rawMatrix1(F,4,toSequence flatten elems,0)
 
 
@@ -378,7 +296,7 @@ m1 = rawMatrixRemake2(F,G,rawMultiDegree m, m, 0)
 m2 = rawMatrixRemake2(F,G,{13}, m, 0)
 assert(rawMultiDegree m2 === {13})
 
-elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))
+elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j)))
 m = rawMatrix1(F,5,elems,0)
 p1 = rawMatrix1(F,5,toSequence flatten entries m,0)
 p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,0)
@@ -434,7 +352,7 @@ rawExteriorPower(2,m,0)
 rawExteriorPower(2,m,1)
 rawExteriorPower(3,m,0)
 rawSortColumns(m,1,1)
-rawMinors(2,m,0)
+rawMinors(2,m,0,-1,null,null) -- do all minors
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),0)
 --<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
@@ -553,8 +471,8 @@ f = (x+3*y-14)^3*(x^2+y^4+z^7-x*y-13*x*z^2+12)
 time rawFactor f
 testfactor f
 f = (x+3*y-14)^10*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
---time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
---testfactor f
+time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
+--testfactor f FAILS for some reason??
 
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;

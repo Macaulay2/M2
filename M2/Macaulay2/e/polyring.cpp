@@ -15,6 +15,7 @@
 #include "gb_comp.hpp"
 #include "../d/M2mem.h"
 
+#include "ZZ.hpp"
 #include "QQ.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
@@ -1589,7 +1590,7 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *
 	break;
     }
 
-  ring_elem result = get_logical_coeff(coeffR1, t);
+  ring_elem result = get_logical_coeff(coeffR, t);
   deletearray(exp2);
   deletearray(exp);
   return result;
@@ -1913,8 +1914,79 @@ vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
 ///////////////////////////////////
 #include "geovec.hpp"
 
+void PolyRing::determine_common_denominator_QQ(ring_elem f,
+					       mpz_ptr denom_so_far) const
+{
+  // We assume that 'this' is QQ[M].
+  if (getCoefficients() != globalQQ) return;
+
+  for (Nterm *t = f; t != 0; t=t->next)
+    {
+      mpq_ptr a = MPQ_VAL(t->coeff);
+      mpz_lcm(denom_so_far, denom_so_far, mpq_denref(a));
+    }
+}
+
+ring_elem PolyRing::get_denominator_QQ(ring_elem f) const
+  // returns an element c of getCoefficients(), s.t. f = c*g, and g has:
+  // over QQ: content(g)=1, leadmonomial(g) is positive, g has no denominators in QQ
+  // over ZZ: c is the content, leadmonomial(g) is positive.
+  // over a basic field: leadmonomial(g) is 1.
+{
+  Nterm *t = f;
+
+  assert(t != 0);
+  assert(getCoefficients() == globalQQ);
+
+  mpz_t denom;
+  mpz_init_set_si(denom,1);
+
+  determine_common_denominator_QQ(f,denom);
+  ring_elem result = globalZZ->ZZ::from_int(denom);
+  mpz_clear(denom);
+  return result;
+}
+
+ring_elem PolyRing::vec_get_denominator_QQ(vec f) const
+  // returns an element c of getCoefficients(), s.t. f = c*g, and g has:
+  // over QQ: content(g)=1, leadmonomial(g) is positive, g has no denominators in QQ
+  // over ZZ: c is the content, leadmonomial(g) is positive.
+  // over a basic field: leadmonomial(g) is 1.
+{
+  assert(f != 0);
+  assert(getCoefficients() == globalQQ);
+
+  mpz_t denom;
+  mpz_init_set_si(denom,1);
+  
+  for (vec w = f; w != 0; w = w->next)
+    determine_common_denominator_QQ(w->coeff,denom);
+  ring_elem result = globalZZ->ZZ::from_int(denom);
+  mpz_clear(denom);
+  return result;
+}
+
+gbvector *PolyRing::translate_gbvector_from_ringelem_QQ(ring_elem coeff) const
+{
+  // We assume that the ring elements here have no denominators
+  GBRing *GR = get_gb_ring();
+  gbvector head;
+  gbvector *inresult = &head;
+  for (Nterm *t = coeff; t != 0; t = t->next)
+    {
+      // make a gbvector node.
+      ring_elem a = globalZZ->ZZ::from_int(mpq_numref(MPQ_VAL(t->coeff)));
+      gbvector *g = GR->gbvector_term(0, a, t->monom, 0);
+      inresult->next = g;
+      inresult = inresult->next;
+    }
+  return head.next;
+}
+
 gbvector *PolyRing::translate_gbvector_from_ringelem(ring_elem coeff) const
 {
+  if (getCoefficients() == globalQQ)
+    return translate_gbvector_from_ringelem_QQ(coeff);
   GBRing *GR = get_gb_ring();
   gbvector head;
   gbvector *inresult = &head;
@@ -1928,10 +2000,45 @@ gbvector *PolyRing::translate_gbvector_from_ringelem(ring_elem coeff) const
   return head.next;
 }
 
+gbvector * PolyRing::translate_gbvector_from_vec_QQ(const FreeModule *F, 
+					     const vec v,
+					     ring_elem &result_denominator) const
+{
+  if (v == 0) return 0;
+  GBRing *GR = get_gb_ring();
+  result_denominator = vec_get_denominator_QQ(v);
+  gbvectorHeap H(GR,F);
+  gbvector head;
+  gbvector *inresult;
+  mpz_t a;
+  mpz_init(a);
+  for (vec w = v; w != 0; w=w->next)
+    {
+      inresult = &head;
+      int comp = w->comp + 1;
+      for (Nterm *t = w->coeff; t != 0; t = t->next)
+	{
+	  // make a gbvector node.
+	  mpq_ptr b = MPQ_VAL(t->coeff);
+	  mpz_mul(a, MPZ_VAL(result_denominator), mpq_numref(b));
+	  mpz_divexact(a, a, mpq_denref(b));
+	  gbvector *g = GR->gbvector_term(F, globalZZ->ZZ::from_int(a), t->monom, comp);
+	  inresult->next = g;
+	  inresult = inresult->next;
+	}
+      H.add(head.next);
+    }
+  mpz_clear(a);
+  return H.value();
+}
+
 gbvector * PolyRing::translate_gbvector_from_vec(const FreeModule *F, 
 					     const vec v,
 					     ring_elem &result_denominator) const
 {
+  if (v == 0) return 0;
+  if (getCoefficients() == globalQQ)
+    return translate_gbvector_from_vec_QQ(F,v,result_denominator);
   GBRing *GR = get_gb_ring();
   gbvectorHeap H(GR,F);
   gbvector head;
@@ -1954,9 +2061,31 @@ gbvector * PolyRing::translate_gbvector_from_vec(const FreeModule *F,
   return H.value();
 }
 
-vec PolyRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const
+vec PolyRing::translate_gbvector_to_vec_QQ(const FreeModule *F, 
+					   const gbvector *v,
+					   const ring_elem denom) const
 {
 #warning "is this too inefficient?"
+  GBRing *GR = get_gb_ring();
+  vecHeap H(F);
+
+  for (const gbvector *t = v; t != 0; t=t->next)
+    {
+      Nterm *s = new_term();
+      GR->gbvector_get_lead_monomial(F, t, s->monom);
+      s->coeff = globalQQ->QQ::fraction(t->coeff, denom);
+      s->next = 0;
+      vec w = make_vec(t->comp-1, s);
+      H.add(w);
+    }
+
+  return H.value();
+}
+
+vec PolyRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const
+{
+  if (getCoefficients() == globalQQ)
+    return translate_gbvector_to_vec_QQ(F,v,globalZZ->one());
   GBRing *GR = get_gb_ring();
   vecHeap H(F);
 
@@ -1977,6 +2106,8 @@ vec PolyRing::translate_gbvector_to_vec_denom(const FreeModule *F,
 					  const gbvector *v,
 					  const ring_elem denom) const
 {
+  if (getCoefficients() == globalQQ)
+    return translate_gbvector_to_vec_QQ(F,v,denom);
   GBRing *GR = get_gb_ring();
   const ring_elem c = K_->invert(denom);
   gbvector *w = GR->gbvector_mult_by_coeff(v, c);
