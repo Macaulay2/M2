@@ -65,7 +65,7 @@ toExpr(x:CodeClosureList):Expr := Expr(list(
 	       if x.code != dummyCodeClosure then provide x.code;
 	       x != x.next) do x = x.next));
 
-readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
+readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      lastvalue := nullE;
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
@@ -102,6 +102,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 			 when lastvalue is err:Error do (
 			      if AbortIfError then return lastvalue;
 			      if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then (
+				   if stopIfBreakReturnContinue then return lastvalue;
 				   printErrorMessage(err.position,"warning: unhandled " + err.message);
 				   );
 			      if err.message == unwindMessage 
@@ -123,19 +124,19 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 		    else if isatty(file) 
 		    then flush(file)
 		    else return buildErrorPacket("error while loading file")))));
-readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,returnLastvalue:bool):Expr := (
+readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
        savecd := getGlobalVariable(currentFileDirectory);
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
-	ret := readeval4(file,printout,AbortIfError,dc.dictionary,returnLastvalue);
+	ret := readeval4(file,printout,AbortIfError,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
        setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
      localFrame = saveLocalFrame;
      ret);
-readeval(file:TokenFile,returnLastvalue:bool):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue);
+readeval(file:TokenFile,returnLastvalue:bool):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue,false);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
@@ -148,12 +149,12 @@ topLevelPrompt():string := (
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
 
-loadprintstdin(stopIfError:bool,dc:DictionaryClosure):Expr := (
+loadprintstdin(stopIfError:bool,dc:DictionaryClosure,stopIfBreakReturnContinue:bool):Expr := (
      when openTokenFile("-")
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,stopIfError,dc,false);
+	  r := readeval3(file,true,stopIfError,dc,false,stopIfBreakReturnContinue);
 	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 	  r));
 
@@ -163,7 +164,7 @@ loadprint(filename:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,stopIfError,dc,false);
+	  r := readeval3(file,true,stopIfError,dc,false,false);
 	  t := (
 	       if filename === "-"			 -- whether it's stdin
 	       then (
@@ -294,7 +295,7 @@ debugger(f:Frame,c:Code):Expr := (
 		r := apply(debuggerHook,emptySequence);
 		when r is Error do return r else nothing;
 		);
-	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
+	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true);
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
      setDebuggingMode(true);
@@ -332,7 +333,7 @@ capture(e:Expr):Expr := (
 	  previousLineNumber = -1;
 	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
-	  r := readeval3(stringFile,true,true,newStaticLocalDictionaryClosure(),false);;
+	  r := readeval3(stringFile,true,true,newStaticLocalDictionaryClosure(),false,false);
 	  out := substr(stdIO.outbuffer,0,stdIO.outindex);
 	  stdIO.outfd = oldfd;
 	  stdIO.outbuffer = oldbuf;
