@@ -254,6 +254,10 @@ M2_string system_getcwd()
 {
      char buf[700];
      char *x = getcwd(buf,sizeof(buf));
+#if defined(_WIN32)
+     char *p;
+     for (p=x; *p; p++) if (*p == '\\') *p = '/';
+#endif
      if (x != NULL) return tostring(x);
      return tostring("");
      }

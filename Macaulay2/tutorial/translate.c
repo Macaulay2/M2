@@ -24,7 +24,7 @@ static char *present(unsigned char *s) {
      static char buf[5*LEN];
      char *p = buf;
      for(;*s != 0;s++) {
-	  int i = *s;
+	  char i = *s;
 	  switch(i) {
 	       case '\n' :
 	       case '\r' :
@@ -44,9 +44,9 @@ static char *present(unsigned char *s) {
 	       		 }
 		    else {
 		    	 *p++ = '\\';
-		    	 *p++ = '0' + i/64, i %= 64;
-		    	 *p++ = '0' + i/8, i %= 8;
-		    	 *p++ = '0' + i;
+		    	 *p++ = (char)('0' + i/64), i %= 64;
+		    	 *p++ = (char)('0' + i/8), i %= 8;
+		    	 *p++ = (char)('0' + i);
 		    	 break;
 			 }
 		    }
@@ -93,11 +93,11 @@ int main(int argc, char **argv)
   int block = 0;
   int head = 0;
   int state = EXAMPLE;
+  fprintf(stdout, "-- this file produced by 'translate', do not edit\n");
   if (argc > 1)
     {
       return 1;
     }
-
   fgets((char *)line,LEN,stdin);
   line_type(&s);
   fprintf(stdout, "document { \"%s", line+3);

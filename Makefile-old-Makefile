@@ -30,6 +30,10 @@ clean::; rm -rf include
 clean::; rm -f config.cache
 clean::; rm -f core
 rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
+################################ SETUP
+ifeq "$(CC)" "cl"
+all::;	$(MAKE) -C WindowsNT
+endif
 ################################ GC
 all:: GC
 clean::; rm -f gc/*.obj gc/*.lib

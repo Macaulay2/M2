@@ -3,7 +3,6 @@
 #include <string.h>
 #include <malloc.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include "restart.h"
 
 char *argv0;

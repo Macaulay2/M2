@@ -6,9 +6,9 @@ all::
 ##############################
 .SUFFIXES: .m2
 .PHONY: clean all install phase1 tests
-CFLAGS =
-LDFLAGS = -s
-LOADLIBES =
+# CFLAGS =
+# LDFLAGS = -s
+# LOADLIBES =
 DUMPSEQUENCE = $(shell cat dumpseq)
 
 MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2
@@ -125,7 +125,9 @@ profile : gmon.out
 	gprof ../bin/Macaulay2 >profile
 clean ::; rm -f profile
 
+ifneq "$(CC)" "cl"
 all :: bare
+endif
 
 all :: ../cache/Macaulay2.doc
 ../cache/Macaulay2.doc : ../cache/Macaulay2.pre $(MADEGFILES)
@@ -139,7 +141,7 @@ tests: $(SCRIPTS)
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH).data ../cache/Macaulay2.doc \
-		../tmp/Examples ../tmp/Tests \
+		../tmp/Examples ../tmp/Tests *.obj *.exe bare \
 		TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2 \

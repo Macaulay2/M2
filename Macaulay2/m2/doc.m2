@@ -836,7 +836,10 @@ document { quote get,
      EXAMPLE {
 	  ///"junk" << "hi there" << endl << close///,
       	  ///get "junk"///,
-      	  ///get "!date"///,
+     	  if version#"operating system" =!= "SunOS"
+     	  and version#"operating system" =!= "CYGWIN32_NT"
+     	  and version#"operating system" =!= "CYGWIN32_95"
+      	  then ///get "!date"///
 	  },
      if version#"operating system" =!= "SunOS"
      and version#"operating system" =!= "CYGWIN32_NT"
@@ -1271,8 +1274,8 @@ document { quote openIn,
      communications, or the static version doesn't provide network name
      service for looking up hostnames.",
      if version#"operating system" =!= "SunOS"
-     and version#"operating system" =!= "CYGWIN32-NT"
-     and version#"operating system" =!= "CYGWIN32-95"
+     and version#"operating system" =!= "CYGWIN32_NT"
+     and version#"operating system" =!= "CYGWIN32_95"
      then EXAMPLE ///get "$localhost:daytime"///,
      SEEALSO "File"
      }
