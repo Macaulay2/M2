@@ -12,12 +12,13 @@ class ReducedGB_Field_Local : public ReducedGB_Field
 protected:
   vector<int, gc_allocator<int> > alpha;
   vector<int, gc_allocator<int> > deg;
-public:
+
   ReducedGB_Field_Local(GBRing *R0,
 			const PolynomialRing *originalR0,
 			const FreeModule *F0,
 			const FreeModule *Fsyz0);
 
+public:
   virtual ~ReducedGB_Field_Local();
 
   virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0);

@@ -10,12 +10,13 @@ class ReducedGB_Field : public ReducedGB
 protected:
   MonomialTable *T;
   const MonomialIdeal *Rideal;
-public:
+
   ReducedGB_Field(GBRing *R0,
 		  const PolynomialRing *originalR0,
 		  const FreeModule *F0,
 		  const FreeModule *Fsyz0);
 
+public:
   virtual ~ReducedGB_Field();
 
   virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0);

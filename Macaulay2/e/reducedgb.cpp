@@ -8,10 +8,11 @@
 #include "reducedgb-field-local.hpp"
 #include "reducedgb-ZZ.hpp"
 
-ReducedGB *ReducedGB::createReducedGB(const PolynomialRing *originalR0,
-				      const FreeModule *F0,
-				      const FreeModule *Fsyz0)
+ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
+			     const FreeModule *F0,
+			     const FreeModule *Fsyz0)
 {
+#if 0
   // Depending on whether the ring is over a field, or over ZZ, or
   // has local variables, we create a different class.
 
@@ -29,6 +30,7 @@ ReducedGB *ReducedGB::createReducedGB(const PolynomialRing *originalR0,
       else
 	return new ReducedGB_Field(R,originalR0,F0,Fsyz0);
     }
+#endif
 }
 
 

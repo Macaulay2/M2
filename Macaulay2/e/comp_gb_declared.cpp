@@ -1,7 +1,6 @@
 #include "comp_gb_declared.hpp"
 #include "matrix.hpp"
-#include "reducedgb-field.hpp"
-#include "reducedgb-ZZ.hpp"
+#include "reducedgb.hpp"
 #include "poly.hpp"
 
 GBDeclared::GBDeclared(const Matrix *m0,
@@ -15,22 +14,10 @@ GBDeclared::GBDeclared(const Matrix *m0,
   const Ring *R = gb->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
 
-  Ring::CoefficientType typ = R->coefficient_type();
-  GBRing *GR = P->get_gb_ring();
-
   const FreeModule *F = m0->rows();
   const FreeModule *Fsyz = change->rows();
 
-  // Then make one
-  switch (typ) {
-  case Ring::COEFF_ZZ:
-    G = new ReducedGB_ZZ(GR,P,F,Fsyz);
-    break;
-  case Ring::COEFF_QQ:
-  case Ring::COEFF_BASIC:
-    G = new ReducedGB_Field(GR,P,F,Fsyz);
-    break;
-  }
+  G = ReducedGB::create(P,F,Fsyz);
 
   // Now add in the elements
   std::vector<POLY, gc_allocator<POLY> > elems;

@@ -30,9 +30,9 @@ public:
 
   virtual ~ReducedGB();
 
-  static ReducedGB *createReducedGB(const PolynomialRing *originalR0,
-				    const FreeModule *F0,
-				    const FreeModule *Fsyz0);
+  static ReducedGB *create(const PolynomialRing *originalR0,
+			   const FreeModule *F0,
+			   const FreeModule *Fsyz0);
 
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 
