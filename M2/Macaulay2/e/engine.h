@@ -48,25 +48,6 @@ struct M2_Integer_pair { M2_Integer a; M2_Integer b; };
 struct Matrix_pair { const Matrix *a; const Matrix *b; };
 struct Matrix_int_pair { const Matrix *a; int b; };
 
-typedef M2_Integer M2_IntegerOrNull;
-typedef Monomial MonomialOrNull;
-typedef Monoid MonoidOrNull;
-typedef Ring RingOrNull;
-typedef RingElement RingElementOrNull;
-typedef FreeModule FreeModuleOrNull;
-typedef Matrix MatrixOrNull;
-typedef MonomialIdeal MonomialIdealOrNull;
-typedef RingMap RingMapOrNull;
-typedef Computation ComputationOrNull;
-
-typedef Matrix_pair Matrix_pair_OrNull;
-typedef Matrix_int_pair Matrix_int_pair_OrNull;
-typedef M2_Integer_pair M2_Integer_pair_OrNull;
-typedef M2_arrayint M2_arrayint_OrNull;
-
-typedef SparseMutableMatrix MutableMatrix;
-typedef MutableMatrix MutableMatrixOrNull;
-
 typedef struct M2_Integer_array {
   unsigned int len;
   M2_Integer array[1];
@@ -96,6 +77,28 @@ typedef struct Matrix_array {
   unsigned int len;
   const Matrix *array[1];
 } Matrix_array;
+
+typedef M2_Integer M2_IntegerOrNull;
+typedef Monomial MonomialOrNull;
+typedef Monoid MonoidOrNull;
+typedef Ring RingOrNull;
+typedef RingElement RingElementOrNull;
+typedef FreeModule FreeModuleOrNull;
+typedef Matrix MatrixOrNull;
+typedef MonomialIdeal MonomialIdealOrNull;
+typedef RingMap RingMapOrNull;
+typedef Computation ComputationOrNull;
+
+typedef Matrix_pair Matrix_pair_OrNull;
+typedef Matrix_int_pair Matrix_int_pair_OrNull;
+typedef M2_Integer_pair M2_Integer_pair_OrNull;
+typedef M2_arrayint M2_arrayint_OrNull;
+typedef Matrix_array Matrix_array_OrNull;
+typedef RingElement_array RingElement_array_OrNull;
+
+typedef SparseMutableMatrix MutableMatrix;
+typedef MutableMatrix MutableMatrixOrNull;
+
   
 #if defined(__cplusplus)
 extern "C" {
@@ -1323,7 +1326,17 @@ enum gbTraceValues
   /**************************************************/
 
   const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g);
+  /* rawGCD */
 
+  const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g);
+
+
+  void rawFactor(const RingElement *f, 
+		 RingElement_array_OrNull **result_factors, 
+		 M2_arrayint_OrNull *result_powers);
+
+  void rawCharSeries(const Matrix *M, 
+		     Matrix_array_OrNull *result_ideals);
 
 #if defined(__cplusplus)
 }
