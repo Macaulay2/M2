@@ -95,7 +95,7 @@ ZZZquotient := (R,I) -> (
 	  ES.ConvertToExpression = R.ConvertToExpression;
 	  ES.isCommutative = R.isCommutative;
 	  ES.presentation = EgensgbI;
-	  ES.char = En;
+	  ES.order = ES.char = En;
 	  if En === 1 then ES.dim = -1 else if En === 0 then ES.dim = 1 else ES.dim = 0;
 	  ES.ConvertToExpression = ConvertApply(expression, ConvertInteger);
 	  expression ES := x -> convert(
@@ -127,7 +127,7 @@ ZZquotient := (R,I) -> (
 	  S.ConvertToExpression = R.ConvertToExpression;
 	  S.isCommutative = R.isCommutative;
 	  S.presentation = gensgbI;
-	  S.char = n;
+	  S.order = S.char = n;
 	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
 	  S.ConvertToExpression = ConvertApply(expression, ConvertInteger);
 	  expression S := x -> convert(
@@ -283,8 +283,8 @@ toField = R -> (
 		    error "division by non-invertible element attempted";
 		    )
 	       );
-	  )
-     )
+	  );
+     R)
 
 getNonUnit = R -> (
      if R.?nonUnit then R.nonUnit

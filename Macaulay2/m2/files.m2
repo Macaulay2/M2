@@ -73,3 +73,28 @@ cacheFileName(String,Thing,String) := (prefix,key,suffix) -> (
 
 cacheFileNameKeys = method()
 cacheFileNameKeys String := prefix -> keys indexTable prefix
+
+tt := new MutableHashTable from toList apply(0 .. 255, i -> (
+	  c := ascii i;
+	  c => c
+	  ));
+
+tt#"/" = "%sl"
+tt#":" = "%co"
+tt#";" = "%sc"
+tt#"\\" = "%bs"
+tt#" " = "%_"
+tt#"%" = "%%"
+
+uu := new HashTable from {
+     "." => "%d",
+     ".." => "%d%d"
+     }
+
+toFilename = method()
+toFilename String := s -> (
+     -- Convert a string to a new string usable as a file name.
+     -- avoid ".", "..", and any string with "/" in it.
+     s = concatenate(apply(characters s, c -> tt#c));
+     if uu#?s then s = uu#s;
+     s)

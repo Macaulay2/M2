@@ -381,7 +381,7 @@ processExamples := (docBody) -> (
 	       );
 	  exampleResults = separate(exampleResults,"\1");
 	  exampleCounter = 0;
-	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
+	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".example");
 	  docBody = apply(docBody,processExamplesLoop);
 	  close exampleOutputFile;
 	  );
@@ -395,7 +395,8 @@ document List := z -> (
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
      -- stderr << "documenting " << nodeName << " in " << currentFile << " in " << currentFileDirectory << endl;
-     nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
+     -- nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
+     nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
