@@ -15,4 +15,4 @@ scan({"createCommAlgebra", "CommAlgebra", "createAssCommRing", "ThetaRing",
   s -> (
        if not DmodulesDictionary#?s then error("expected ",s," to be a symbol first defined by the Dmodules package");
        erase DmodulesDictionary#s))
-endPackage Dmodules
+closePackage Dmodules

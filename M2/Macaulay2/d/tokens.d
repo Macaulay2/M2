@@ -43,7 +43,7 @@ export Symbol := {		    -- symbol table entry for a symbol
      frameindex:int,		    -- index within the frame of its value
      lookupCount:int,		    -- number of times looked up
      protected:bool,	            -- whether protected against assignment by the user
-     transient:bool,         -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient dictionary
+     transient:bool,                -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient dictionary
      flagLookup:bool		    -- whether to warn when symbol is used
      };
 export SymbolListCell := {entry:Symbol, next:SymbolList};
@@ -58,9 +58,10 @@ export Dictionary := {
      outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
      frameID:int,	        -- -1 for dummy, 0 for global, then 1,2,3,...
      framesize:int,	        -- one for each symbol, even the erased ones; for transient frames only
-     transient:bool	        -- whether there can be multiple frames
+     transient:bool,	        -- whether there can be multiple frames
      	       	    	        -- for the global dictionary and file scopes : no
 				-- for function closures : yes
+     protected:bool             -- whether symbols can be added; closing a package protects it
      };
 export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
@@ -267,9 +268,9 @@ export globalFrame := Frame(dummyFrame, 0, globalFramesize,
 	  nullE						    -- one value for dummySymbol
 	  ));
 
-export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false);
+export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false,false);
 
-export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false);
+export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false);
 
 export globalDictionary := Macaulay2Dictionary;
 
@@ -277,11 +278,12 @@ numLocalDictionaries := 0;
 export localFrame := dummyFrame;
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true));
+     Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false));
 export newLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,0,
-	  false						    -- the first local dictionary is usually (?) non-transient
+	  false, -- the first local dictionary is usually (?) non-transient
+	  false
 	  )
      );
 
@@ -313,7 +315,7 @@ export dummyWord    := Word("--dummy word--",TCnone,0,newParseinfo());
 export dummySymbolHashTable := newSymbolHashTable();
 export dummyDictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false));
+     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
