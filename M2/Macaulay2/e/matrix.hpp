@@ -130,8 +130,32 @@ public:
   void append(vec v, const int *d);
   void schreyer_append(vec v);
 
+  bool error_column_bound(int c) const;
+  bool error_row_bound(int r) const;
+
+  // The following routines return false if one of the row or columns given
+  // is out of range.
+
   bool set_entry(int r, int c, const ring_elem a);
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
+
+  bool interchange_rows(int i, int j);
+  /* swap rows: row(i) <--> row(j) */
+
+  bool interchange_columns(int i, int j);
+  /* swap columns: column(i) <--> column(j) */
+
+  bool scale_row(ring_elem r, int i);
+  /* row(i) <- r * row(i) */
+
+  bool scale_column(ring_elem r, int i);
+  /* column(i) <- r * column(i) */
+
+  bool row_op(int i, ring_elem r, int j);
+  /* row(i) <- row(i) + r * row(j) */
+
+  bool column_op(int i, ring_elem r, int j);
+  /* column(i) <- column(i) + r * column(j) */
 
   ///////////////////////////////////////////
 

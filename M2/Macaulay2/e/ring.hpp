@@ -266,18 +266,22 @@ public:
   int n_nonzero_terms(const vecterm * v) const;
   void elem_text_out(buffer &o, const vecterm * v) const;
 
+  void set_entry(vec &v, int i, ring_elem r) const;
+  void mult(vec &v, const ring_elem r) const; // LEFT multiplies v <- r * v
+  void mult_row(vec &v, int i, const ring_elem r) const;
+  void add(vec &v, vec &w) const; // v <- v+w, w is set to 0.
+  void interchange_rows(vec &v, int i, int j) const;
+  void vec_row_op(vec &v, int i, ring_elem r, int j) const;
+
+
   void row2by2(vec &, int r1, int r2,
 	       ring_elem a1, ring_elem a2,
 	       ring_elem b1, ring_elem b2) const;
-  void mult(vec &v, const ring_elem a) const;
-  void mult_row(vec &v, int r, const ring_elem a) const;
+
   void divide(vec &v, const ring_elem a) const;
   void divide_row(vec &v, int r, const ring_elem a) const;
-  void interchange_rows(vec &v, int r1, int r2) const;
-  void add(vec &v, vec &w) const;
-  void add_row_multiple(vec &v, int r1, ring_elem a, int r) const;
   ring_elem dot_product(const vecterm *v, const vecterm *w) const;
-  void set_entry(vec &v, int r, ring_elem a) const;
+
 
   // Other operations desired:
   // assemble a vector from ring elements

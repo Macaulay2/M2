@@ -27,5 +27,5 @@
 #directory ~/local/share/capybara/packages/readline/TMP/readline-4.3:
 source .gdb-files
 cd ~/src/M2/Macaulay2/test/engine
-run -q --no-loaddata --debug
+run -q --no-loaddata 
 #source .gdb-run-it

@@ -157,9 +157,9 @@ void Ring::elem_text_out(buffer &o, const vecterm * v) const
 // Routines which modify a vec ////////
 ///////////////////////////////////////
 
-void Ring::mult(vec &v, const ring_elem a) const
+void Ring::mult(vec &v, const ring_elem r) const
 {
-  if (this->is_zero(a))
+  if (this->is_zero(r))
     {
       remove(v);
       v = 0;
@@ -169,7 +169,7 @@ void Ring::mult(vec &v, const ring_elem a) const
   for (vec p = &head; p->next != 0; p=p->next)
     {
       //old version: this->mult_to(p->next->coeff, a);
-      ring_elem c = this->mult(a, p->next->coeff);
+      ring_elem c = this->mult(r, p->next->coeff);
       p->next->coeff = c;
       if (this->is_zero(p->next->coeff))
 	{
@@ -181,16 +181,16 @@ void Ring::mult(vec &v, const ring_elem a) const
   v = head.next;
 }
 
-void Ring::mult_row(vec &v, int r, const ring_elem a) const
+void Ring::mult_row(vec &v, int i, const ring_elem r) const
 {
   vecterm head;
   head.next = v;
   for (vec p = &head; p->next != 0; p = p->next)
-    if (p->next->comp < r) 
+    if (p->next->comp < i) 
       break;
-    else if (p->next->comp == r)
+    else if (p->next->comp == i)
       {
-	this->mult_to(p->next->coeff, a);
+	this->mult_to(p->next->coeff, r);
 	if (this->is_zero(p->next->coeff))
 	  {
 	    vec tmp = p->next;
@@ -246,33 +246,33 @@ void Ring::divide_row(vec &v, int r, const ring_elem a) const
       }
 }
 
-void Ring::interchange_rows(vec &v, int r1, int r2) const
+void Ring::interchange_rows(vec &v, int i, int j) const
 {
   vec p;
-  if (r1 == r2) return;
+  if (i == j) return;
   if (v == 0) return;
-  if (r1 < r2) 
+  if (i < j) 
     {
-      int tmp = r1;
-      r1 = r2;
-      r2 = tmp;
+      int tmp = i;
+      i = j;
+      j = tmp;
     }
-  // So now r1 > r2.
+  // So now i > j.
   vecterm head;
   head.next = v;
   vec vec1;
   vec vec2;
   for (p = &head; p->next != 0; p=p->next)
-    if (p->next->comp <= r1)
+    if (p->next->comp <= i)
       break;
   vec1 = p;
   for ( ; p->next != 0; p=p->next)
-    if (p->next->comp <= r2)
+    if (p->next->comp <= j)
       break;
   vec2 = p;
-  if (vec1->next != 0 && vec1->next->comp == r1)
+  if (vec1->next != 0 && vec1->next->comp == i)
     {
-      if (vec2->next != 0 && vec2->next->comp == r2)
+      if (vec2->next != 0 && vec2->next->comp == j)
 	{
 	  ring_elem tmp = vec1->next->coeff;
 	  vec1->next->coeff = vec2->next->coeff;
@@ -280,12 +280,12 @@ void Ring::interchange_rows(vec &v, int r1, int r2) const
 	  return;
 	}
     }
-  else if (vec2->next != 0 && vec2->next->comp == r2)
+  else if (vec2->next != 0 && vec2->next->comp == j)
     {
       vec tmp = vec1;
       vec1 = vec2;
       vec2 = tmp;
-      r2 = r1;			// Used below.
+      j = i;			// Used below.
     }
   else
     return;
@@ -297,7 +297,7 @@ void Ring::interchange_rows(vec &v, int r1, int r2) const
       tmp->next = vec2->next;
       vec2->next = tmp;
     }
-  tmp->comp = r2;
+  tmp->comp = j;
   v = head.next;
 }
 
@@ -366,6 +366,47 @@ void Ring::add(vec &v, vec &w) const
       }
 }
 
+void Ring::vec_row_op(vec &v, int i, ring_elem r, int j) const
+{
+  vec p;
+  vec vec2 = 0;
+  for (p = v; p != 0; p=p->next)
+    if (p->comp == i)
+      {
+	vec2 = p;
+	break;
+      }
+  if (vec2 == 0) return;
+  ring_elem r1 = this->mult(vec2->coeff, r);
+  vecterm head;
+  head.next = v;
+  for (p = &head; p->next != 0; p=p->next)
+    if (p->next->comp <= j)
+      break;
+  if (p->next == 0 || p->next->comp < j)
+    {
+      // Make a new node
+      vec w = new_vec();
+      w->next = p->next;
+      w->comp = j;
+      w->coeff = r1;
+      p->next = w;
+    }
+  else
+    {
+      this->add_to(p->next->coeff, r1);
+      if (this->is_zero(p->next->coeff))
+	{
+	  vec tmp = p->next;
+	  p->next = tmp->next;
+	  remove_vec_node(tmp);
+	}
+    }
+
+  v = head.next;
+}
+
+
 void Ring::row2by2(vec &v, 
 		      int r1, int r2,
 		      ring_elem a1, ring_elem a2,
@@ -403,46 +444,6 @@ void Ring::row2by2(vec &v,
   this->add_to(c3,c4);
   set_entry(v,r1,c1);
   set_entry(v,r2,c3);
-}
-
-void Ring::add_row_multiple(vec &v, int r1, ring_elem a, int r) const
-{
-  vec p;
-  vec vec2 = 0;
-  for (p = v; p != 0; p=p->next)
-    if (p->comp == r1)
-      {
-	vec2 = p;
-	break;
-      }
-  if (vec2 == 0) return;
-  ring_elem a1 = this->mult(vec2->coeff, a);
-  vecterm head;
-  head.next = v;
-  for (p = &head; p->next != 0; p=p->next)
-    if (p->next->comp <= r)
-      break;
-  if (p->next == 0 || p->next->comp < r)
-    {
-      // Make a new node
-      vec w = new_vec();
-      w->next = p->next;
-      w->comp = r;
-      w->coeff = a1;
-      p->next = w;
-    }
-  else
-    {
-      this->add_to(p->next->coeff, a1);
-      if (this->is_zero(p->next->coeff))
-	{
-	  vec tmp = p->next;
-	  p->next = tmp->next;
-	  remove_vec_node(tmp);
-	}
-    }
-
-  v = head.next;
 }
 
 ring_elem Ring::dot_product(const vecterm *v, const vecterm *w) const

@@ -389,7 +389,108 @@ const Matrix * Matrix::make(const MonomialIdeal * mi)
   return new Matrix(mi);
 }
 
+bool Matrix::error_column_bound(int c) const
+{
+  if (c < 0 || c >= n_cols())
+    {
+      ERROR("column out of range");
+      return true;
+    }
+  return false;
+}
 
+bool Matrix::error_row_bound(int r) const
+{
+  if (r < 0 || r >= n_rows())
+    {
+      ERROR("row out of range");
+      return true;
+    }
+  return false;
+}
+
+bool Matrix::set_entry(int r, int c, const ring_elem a)
+  // Returns false if (r,c) is out of range, or the ring of a is wrong.
+{
+  // Check that r and c are in range. Returns false if a problem.
+  _rows->get_ring()->set_entry(_entries[c], r, a);
+  return true;
+}
+
+bool Matrix::interchange_rows(int i, int j)
+  /* swap rows: row(i) <--> row(j) */
+{
+  if (is_immutable()) return false;
+  if (error_row_bound(i)) return false;
+  if (error_row_bound(j)) return false;
+  const Ring *R = get_ring();
+  for (int c=0; c<n_cols(); c++)
+    R->interchange_rows(_entries[c], i, j);
+  return true;
+}
+
+
+bool Matrix::interchange_columns(int i, int j)
+  /* swap columns: column(i) <--> column(j) */
+{
+  if (is_immutable()) return false;
+  if (error_column_bound(i)) return false;
+  if (error_column_bound(j)) return false;
+  vec tmp = _entries[i];
+  _entries[i] = _entries[j];
+  _entries[j] = tmp;
+  return true;
+}
+
+bool Matrix::scale_row(ring_elem r, int i)
+  /* row(i) <- r * row(i) */
+{
+  if (is_immutable()) return false;
+  if (error_row_bound(i)) return false;
+  const Ring *R = get_ring();
+  for (int c=0; c<n_cols(); c++)
+    R->mult_row(_entries[c], r, i);
+  return true;
+}
+
+bool Matrix::scale_column(ring_elem r, int i)
+  /* column(i) <- r * column(i) */
+{
+  if (is_immutable()) return false;
+  if (error_column_bound(i)) return false;
+  const Ring *R = get_ring();
+  R->mult(_entries[i], r);
+  return true;
+}
+
+bool Matrix::row_op(int i, ring_elem r, int j)
+  /* row(i) <- row(i) + r * row(j) */
+{
+  if (is_immutable()) return false;
+  if (error_row_bound(i)) return false;
+  if (error_row_bound(j)) return false;
+  const Ring *R = get_ring();
+
+  for (int c=0; c<n_cols(); c++)
+    R->vec_row_op(_entries[c], i, r, j);
+
+  return true;
+}
+
+bool Matrix::column_op(int i, ring_elem r, int j)
+  /* column(i) <- column(i) + r * column(j) */
+{
+  if (is_immutable()) return false;
+  if (error_column_bound(i)) return false;
+  if (error_column_bound(j)) return false;
+  const Ring *R = get_ring();
+
+  vec tmp = R->copy(_entries[j]);
+  R->mult(tmp, r); // replaces tmp by r*tmp
+  R->add(_entries[i], tmp);
+
+  return true;
+}
 
 bool Matrix::is_equal(const Matrix &m) const
 {
@@ -410,13 +511,6 @@ bool Matrix::is_zero() const
 {
   for (int i=0; i<n_cols(); i++)
     if (! rows()->is_zero(elem(i))) return false;
-  return true;
-}
-
-bool Matrix::set_entry(int r, int c, const ring_elem a)
-{
-  // Check that r and c are in range. Returns false if a problem.
-  _rows->get_ring()->set_entry(_entries[c], r, a);
   return true;
 }
 

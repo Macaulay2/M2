@@ -50,7 +50,6 @@ struct M2_Integer_pair { M2_Integer a; M2_Integer b; };
 struct Matrix_pair { const Matrix *a; const Matrix *b; };
 struct Matrix_int_pair { const Matrix *a; int b; };
 
-typedef M2_bool VoidOrError;
 typedef M2_Integer M2_IntegerOrNull;
 typedef Monomial MonomialOrNull;
 typedef Monoid MonoidOrNull;
@@ -761,9 +760,11 @@ extern "C" {
 
   unsigned long  IM2_Matrix_hash(const Matrix *M); /* TODO */ /* drg: waiting, returning 0 */
 
-  const RingElementOrNull * IM2_Matrix_get_element(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
+  const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
 
+#if 0
   const Vector * IM2_Matrix_get_column(const Matrix *M, int c); /* drg: connected rawMatrixColumn, used in rawMatrixColumns*/
+#endif
 
   /*******************************************************************************/
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
@@ -983,6 +984,32 @@ extern "C" {
   /* BUG: currently (7/18/2002), the result will be put into a ring ZZ[D],
      which is set for each ring by the engine.  This needs to change...! */
 
+
+  /**************************************************/
+  /**** Matrix routines which modify a Matrix *******/
+  /**************************************************/
+
+  M2_bool IM2_MutableMatrix_set_entry(Matrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry*/
+
+  M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int r1, int r2); /* drg: connected rawMatrixRowSwap*/
+
+  M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int c1, int c2); /* drg: connected rawMatrixColSwap*/
+
+  M2_bool IM2_MutableMatrix_row_operation(Matrix *M, int row_to_change, const RingElement *a, int r); /* drg: connected rawMatrixRowChange*/
+  /* Add a times row r to row 'row_to_change' */
+
+  M2_bool IM2_MutableMatrix_column_operation(Matrix *M, int col_to_change, const RingElement *a, int c); /* drg: connected rawMatrixColChange*/
+  /* Add a times column c to column 'col_to_change' */
+
+  M2_bool IM2_MutableMatrix_row_scale(Matrix *M, int row_to_change, const RingElement *a); /* drg: connected rawMatrixRowScale*/
+  /* Multiply row 'row_to_change' by a, on the left */
+
+  M2_bool IM2_MutableMatrix_column_scale(Matrix *M, int col_to_change, const RingElement *a); /* drg: connected rawMatrixColumnScale*/
+  /* Multiply column 'col_to_change' by a, on the left */
+
+  /* There are more mutable matrix routines: delete row/column, insert rows/columns,
+     find good pivots... What else? */
+
   /**************************************************/
   /**** RingMap routines ****************************/
   /**************************************************/
@@ -1035,6 +1062,7 @@ extern "C" {
   /**** MutableMatrix routines **********************/
   /**************************************************/
 
+#if 0
   MutableMatrix * IM2_MutableMatrix_make(const Ring *R,
 					 int nrows,
 					 int ncols); /* drg: connected rawMutableMatrix*/
@@ -1048,6 +1076,7 @@ extern "C" {
   const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M); /* drg: connected rawMatrix*/
 
   unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* TODO */ /* drg: waiting, returning 0 */
+#endif
 
   MutableMatrix * IM2_MutableMatrix_get_row_change(MutableMatrix *M); /* drg: connected rawRowChange*/
 
@@ -1060,28 +1089,6 @@ extern "C" {
 					MutableMatrix *colChange); /* drg: connected rawColumnChange*/
 
   
-  const RingElement * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
-
-  VoidOrError IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry*/
-
-  void IM2_MutableMatrix_row_swap(MutableMatrix *M, int r1, int r2); /* drg: connected rawMatrixRowSwap*/
-
-  void IM2_MutableMatrix_column_swap(MutableMatrix *M, int c1, int c2); /* drg: connected rawMatrixColSwap*/
-
-  VoidOrError IM2_MutableMatrix_row_change(MutableMatrix *M, int row_to_change, const RingElement *a, int r); /* drg: connected rawMatrixRowChange*/
-  /* Add a times row r to row 'row_to_change' */
-
-  VoidOrError IM2_MutableMatrix_column_change(MutableMatrix *M, int col_to_change, const RingElement *a, int c); /* drg: connected rawMatrixColChange*/
-  /* Add a times column c to column 'col_to_change' */
-
-  VoidOrError IM2_MutableMatrix_row_scale(MutableMatrix *M, int row_to_change, const RingElement *a); /* drg: connected rawMatrixRowScale*/
-  /* Multiply row 'row_to_change' by a, on the left */
-
-  VoidOrError IM2_MutableMatrix_column_scale(MutableMatrix *M, int col_to_change, const RingElement *a); /* drg: connected rawMatrixColumnScale*/
-  /* Multiply column 'col_to_change' by a, on the left */
-
-  /* There are more mutable matrix routines: delete row/column, insert rows/columns,
-     find good pivots... What else? */
 
   /**************************************************/
   /**** Monomial ideal routines *********************/
