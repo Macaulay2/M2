@@ -474,7 +474,17 @@ document { input,
      "The file is sought along the ", TO "path", ", unless the name of the
      file begins with '/' or './' or '../' .",
      PARA,
+     "If one of the expressions in the file evaluates to the symbol ", TO "end", "
+     the reading of the file is stopped at that point.",
+     PARA,
      SEEALSO{ "path", "needs", "load"}
+     }
+
+document { end,
+     HEADLINE "stop loading a file",
+     TT "end", " -- a symbol which causes loading of a file to be stopped.",
+     PARA,
+     SEEALSO{ "needs", "load", "input" }
      }
 
 document { load,
@@ -515,7 +525,7 @@ document { times,
 
 document { power,
      HEADLINE "power",
-     TT "power(x,n)", " -- yields the n-th power of ", TT "x", ".",
+     TT "power(x,n)", " -- yields the ", TT "n", "-th power of ", TT "x", ".",
      PARA,
      SEEALSO "^"
      }

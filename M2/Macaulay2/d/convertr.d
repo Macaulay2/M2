@@ -693,19 +693,22 @@ export setupfun(name:string,value:fun):void := (
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.protected = true;
      );
-export setupconst(name:string,value:Expr):Symbol := (
+export setupvar(name:string,value:Expr):Symbol := (
      word := unique(name,parseWORD);
      when lookup(word,globalScope)
      is null do (
      	  entry := makeSymbol(word,dummyPosition,globalScope);
      	  globalFrame.values.(entry.frameindex) = value;
-     	  entry.protected = true;
 	  entry)
      is entry:Symbol do (
 	  -- we are doing it again after loading data with loaddata()
 	  -- or we are reassigning to o or oo in interpret.d
      	  globalFrame.values.(entry.frameindex) = value;
 	  entry));
+export setupconst(name:string,value:Expr):Symbol := (
+     s := setupvar(name,value);
+     s.protected = true;
+     s);
 setup(commaW,dummyBinaryFun);
 
 shieldfun(a:Code):Expr := (

@@ -1,6 +1,13 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#include "readline.h"
+
 #include "types.h"
+
+#include "../../gmp/version.c"
+
+#define GC_NO_VERSION_VAR
+#include "../../gc/version.h"
 
 #ifdef NEWDUMPDATA
 #include "../dumpdata/dumpdata.h"
@@ -499,9 +506,18 @@ char **argv;
 	       sprintf(buf,"--MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
                putstderr(buf);
 #     	       endif
-	       putstderr("--GC, copyright 1999, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
+	       sprintf(buf,
+#                      if GC_ALPHA_VERSION == GC_NOT_ALPHA
+		       "--GC %d.%d, copyright 1999, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
+#                      else
+		       "--GC %d.%d alpha %d, copyright 1999, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
+#                      endif
+		       GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION
+		       );
+	       putstderr(buf);
 	       putstderr("--GNU libc and libg++, copyright 1996, Free Software Foundation");
-	       putstderr("--GNU MP, copyright 1996, Free Software Foundation");
+	       sprintf(buf,"--GNU MP %s, copyright 1996, Free Software Foundation",gmp_version);
+	       putstderr(buf);
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;
@@ -511,6 +527,7 @@ char **argv;
 #endif
      GC_free_space_divisor = 14;
      GC_free_space_divisor = 3;
+
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
@@ -618,6 +635,9 @@ char **argv;
 	  }
      sigsetjmp(abort_jump,TRUE);
      abort_jump_set = TRUE;
+
+     setup_readline();
+
      if (sigsetjmp(out_of_memory_jump,TRUE)) {
 	  if (reserve != NULL) {
 	       GC_FREE(reserve);

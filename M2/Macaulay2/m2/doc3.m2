@@ -23,7 +23,10 @@ document { symbol "phase",
      }
 
 document { lineNumber,
-     TT "lineNumber()", " -- returns the current line number."
+     TT "lineNumber()", " -- returns the current line number.",
+     BR, NOINDENT,
+     TT "lineNumber n", " -- sets the line number to ", TO "n", " and
+     returns the old line number.",
      }
 
 document { backtrace,

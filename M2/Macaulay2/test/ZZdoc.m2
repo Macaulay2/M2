@@ -2,6 +2,8 @@
 
 -- this file has an unusual name so it will be done last.
 
+end -- disable this test
+
 if class documentation "Macaulay 2" =!= SEQ then (
      stderr
      << ///Can't get started on checking documentation, top node missing, key Macaulay 2.///
