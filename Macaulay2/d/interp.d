@@ -281,7 +281,7 @@ value(e:Expr):Expr := (
 	  when r 
 	  is err:Error do (
 	       if err.position == dummyPosition
-	       || int(err.position.reloaded) < ErrorDepth
+	       || int(err.position.LoadDepth) < ErrorDepth
 	       then r
 	       else buildErrorPacket("--backtrace--"))
 	  else r)
@@ -300,7 +300,7 @@ export process():void := (
      setvalue(currentFileDirectory,Expr(getcwd()));
      foreach arg at i in args do (
 	  if arg === "--" then phase = phase + 1
-	  else if reloaded == phase then (
+	  else if LoadDepth == phase then (
 	       if arg === "-s" then ( 
 		    StopIfError = true; 
 		    )

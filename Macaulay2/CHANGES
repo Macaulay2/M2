@@ -12,7 +12,12 @@ Changes made, most recent ones first:
 
 New in 0.9.3:
 
-New routines: 'mkdir', 'makeDirectory', 'fileTime'.
+When dumpdata/loaddata is not in use, the formerly copious backtrace messages
+in response to an error have now been trimmed down to 1 message.
+
+New routines: 'mkdir', 'makeDirectory', 'fileTime', 'loadDepth'.
+
+New: 'errorDepth()' will report the error depth without changing it.
 
 The symbol "end" which may be used to indicate the end of an input file, has
 been changed to "endInput".

@@ -157,6 +157,7 @@ setrecursionlimit(e:Expr):Expr := (
 setupfun("setrecursionlimit",setrecursionlimit);
 errordepthfun(e:Expr):Expr := (
      when e
+     is s:Sequence do if length(s) != 0 then WrongNumArgs(0,1) else Expr(toInteger(ErrorDepth))
      is i:Integer do (
 	  if isInt(i) then (
 	       j := ErrorDepth;
@@ -165,10 +166,21 @@ errordepthfun(e:Expr):Expr := (
 	  else WrongArgSmallInteger())
      else WrongArgInteger());
 setupfun("errorDepth",errordepthfun);
+loaddepthfun(e:Expr):Expr := (
+     when e
+     is s:Sequence do if length(s) != 0 then WrongNumArgs(0,1) else Expr(toInteger(LoadDepth))
+     is i:Integer do (
+	  if isInt(i) then (
+	       j := LoadDepth;
+	       LoadDepth = toInt(i);
+	       Expr(toInteger(j)))
+	  else WrongArgSmallInteger())
+     else WrongArgInteger());
+setupfun("loadDepth",loaddepthfun);
 export backtr(z:Expr):Expr := (
      when z is err:Error do 
      if err.position == dummyPosition 
-     || int(err.position.reloaded) < ErrorDepth
+     || int(err.position.LoadDepth) < ErrorDepth
      || SuppressErrors
      then z
      else buildErrorPacket("--backtrace--",err.report)

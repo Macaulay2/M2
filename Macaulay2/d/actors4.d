@@ -692,7 +692,6 @@ toExpr(v:array(string)):Expr := list(
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv)).transientScope = true;
      setupconst("environment",toExpr(envp)).transientScope = true;
-     setupconst("reloaded",toExpr(reloaded)).transientScope = true;
      );
 
 -- setupargv();

@@ -219,7 +219,7 @@ M2_bool actors5_MP;
 M2_stringarray system_envp;
 M2_stringarray system_argv;
 M2_stringarray system_args;
-int system_reloaded;
+int system_LoadDepth;
 
 int system_randomint() {
 #if 0
@@ -713,11 +713,11 @@ int system_loaddata(M2_string datafilename){
 #else
      char *datafilename_s = tocharstar(datafilename);
      sigjmp_buf save_loaddata_jump;
-     int reloaded = system_reloaded;
+     int LoadDepth = system_LoadDepth;
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
      if (ERROR == loaddata(datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
-     system_reloaded = reloaded + 1;
+     system_LoadDepth = LoadDepth + 1;
      siglongjmp(loaddata_jump,1);
 #endif
      }

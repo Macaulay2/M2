@@ -567,14 +567,14 @@ export TooManyArgs(name:string,m:int):Expr := (
 export ErrorDepth := 0;
 export printErrorMessage(e:Code,message:string):Expr := (
      p := codePosition(e);
-     if int(p.reloaded) >= ErrorDepth
+     if int(p.LoadDepth) >= ErrorDepth
      then (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,emptySequence,nullE)))
      else buildErrorPacket(message));
 export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
      p := codePosition(e);
-     if int(p.reloaded) >= ErrorDepth
+     if int(p.LoadDepth) >= ErrorDepth
      then (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,report,nullE)))
@@ -672,7 +672,7 @@ export eval(c:Code):Expr := (
 		    Expr(toInteger(int(p.column)+1))),
 	       err.report);
      	  if err.position == dummyPosition
-	  && int(p.reloaded) >= ErrorDepth 
+	  && int(p.LoadDepth) >= ErrorDepth 
 	  && !SuppressErrors then (
 	       interrupted = false;
 	       alarmed = false;
