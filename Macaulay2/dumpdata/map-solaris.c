@@ -45,6 +45,7 @@ extern int getmaps(int nmaps, struct MAP maps[nmaps]) {
     maps[i].to = buf[i].pr_vaddr + buf[i].pr_size;
     maps[i].r = (buf[i].pr_mflags & MA_READ ) != 0;
     maps[i].w = (buf[i].pr_mflags & MA_WRITE) != 0;
+    maps[i].x = (buf[i].pr_mflags & MA_EXEC ) != 0;
     maps[i].checksum = 0;
   }
   return close(fd);
