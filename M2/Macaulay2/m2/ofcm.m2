@@ -271,7 +271,6 @@ monoidDefaults := new OptionTable from {
      VariableOrder => null,		  -- not implemented yet
      WeylAlgebra => {}
      }
-monoid = method()
 
 document { quote VariableOrder,
      TT "VariableOrder", " -- an option used when creating a monoid.",
