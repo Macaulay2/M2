@@ -32,7 +32,7 @@ OTHERS := makefile.dos scc.template Makefile COPYRIGHT
 ALLFILES := $(SRCFILES) $(OTHERS) grammar.c
 OPTIMIZE := -Winline -finline-functions -O2
 INCLUDES := -I${INCDIR}
-GCFLAGS  := -O $(INCLUDES)
+GCFLAGS  := $(INCLUDES)
 
 ifeq "$(CC)" "cl"
   GCFLAGS += -Zi -Za

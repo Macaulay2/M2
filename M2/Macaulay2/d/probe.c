@@ -142,7 +142,7 @@ int main(int argc, char **argv, char **envp){
 #if !defined(__MWERKS__)
      printf("%08x   envp\n",(int)envp);
      printf("%08x   environ\n",(int)environ);
-#ifndef __CYGWIN__
+#if !defined(__CYGWIN__)
      printf("%08x   __environ\n",(int)__environ);
 #endif
      for (i=0,pp=envp; *pp; i++,pp++) printf("%08x   envp[%d]\n",(int)*pp,i);

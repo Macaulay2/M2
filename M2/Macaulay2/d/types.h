@@ -108,7 +108,7 @@ extern char *libfac_version;
 #endif
 
 #ifndef PAGESIZE
-#if !defined(__linux__)
+#if !defined(__linux__) && !defined(__osf__)
 extern size_t getpagesize();
 #endif
 #define PAGESIZE getpagesize()
