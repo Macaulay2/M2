@@ -11,6 +11,7 @@ typicalValues#(symbol timing) = Time
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
+typicalValues#(symbol ?) = Boolean
 
 dummy := method(SingleArgumentDispatch=>true)	    -- a compiled function closure is pretty anonymous
 installMethod(symbol !, ZZ, ZZ => dummy)
