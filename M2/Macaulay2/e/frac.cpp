@@ -40,7 +40,7 @@ bool FractionField::initialize_frac(const Ring *R)
   initialize_ring(R->charac(),
 		  R->total_n_vars(),
 		  R->total_n_vars(),
-		  R->degree_monoid());
+		  R->get_degree_ring());
 
   R_ = R;
   _MINUS_ONE = R->from_int(-1);

@@ -42,13 +42,11 @@ void IM2_initialize()
   initialized = true;
   doubles                  = new doubling_stash;
 
-  // get_trivial_poly_ring sets the degree ring of the trivial monoid to be 
-  // globalZZ[get_trivial_monoid].  So be careful changing these four lines.
-  // The calls creating globalZZ, globalQQ don't access the degree ring.
-  Monoid::get_trivial_monoid();
-  globalZZ = ZZ::create(Monoid::get_trivial_monoid());
-  globalQQ = QQ::create(Monoid::get_trivial_monoid());
+  // This next routine initializes: globalZZ, trivial_monoid, trivial_poly_ring,
+  // and makes sure their degree rings are interconnected.
   PolynomialRing::get_trivial_poly_ring();
+
+  globalQQ = QQ::create();
 
   Random::i_random();
   factory_setup();

@@ -38,13 +38,6 @@ on = { CallLimit => 100000, Name => null } >>> opts -> f -> (
      	  value)
      )
 
-rawPolynomialRing' = rawPolynomialRing
-rawMonoid' = rawMonoid
-erase symbol rawPolynomialRing
-erase symbol rawMonoid
-rawPolynomialRing = on (rawPolynomialRing', Name => "rawPolynomialRing" )
-rawMonoid = on (rawMonoid', Name => "rawMonoid" )
-
 notImplemented = x -> error "not implemented yet"
 
 benchmark = (s) -> (

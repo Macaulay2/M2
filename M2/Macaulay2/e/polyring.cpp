@@ -27,12 +27,51 @@ PolynomialRing::~PolynomialRing()
   // Nothing to do
 }
 
-void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
+const PolynomialRing *PolynomialRing::get_trivial_poly_ring()
+{
+  if (trivial_poly_ring == 0)
+    {
+      make_trivial_ZZ_poly_ring();
+    }
+
+  return trivial_poly_ring;
+}
+
+// Order of initialization of trivial monoid M, and trivial ring ZZ[].
+//
+// (a) make ZZ ring.  Sets degree_ring, D_ to be 0.
+// (b) make trivial monoid M, with M->info->degree_ring = 0.
+// (c) make trivial poly R = ring(ZZ,M).
+// (d) set ZZ's degree ring to be R
+// (e) set M's degree ring to be R
+// (f) set R's degree ring to be R.
+
+void PolynomialRing::make_trivial_ZZ_poly_ring()
+{
+  if (trivial_poly_ring != 0) return;
+
+  globalZZ = new ZZ;
+  Monoid *M = Monoid::get_trivial_monoid();
+  trivial_poly_ring = new PolynomialRing();
+
+  Monoid::set_trivial_monoid_degree_ring(trivial_poly_ring);
+  globalZZ->initialize_ZZ(trivial_poly_ring);
+  trivial_poly_ring->initialize_poly_ring(globalZZ,M,trivial_poly_ring);
+  
+  const PolynomialRing *flatR = trivial_poly_ring;
+  trivial_poly_ring->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), 
+							      flatR->Nmonoms());
+}
+
+void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M, 
+					  const PolynomialRing *deg_ring)
+// This version is to be called directly ONLY by initialize_poly_ring
+// and make_trivial_ZZ_poly_ring.
 {
   initialize_ring(K->charac(),
 		  M->n_vars(),
 		  M->n_vars() + K->total_n_vars(),
-		  M->degree_monoid());
+		  deg_ring);
 
   K_ = K;
   M_ = M;
@@ -51,7 +90,10 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   _quotient_gb = 0;
 
   _coefficients_are_ZZ = (K_->is_ZZ());
-  _isgraded = M_->degree_monoid()->n_vars() > 0;
+  if (deg_ring->Nmonoms() == 0)
+    _isgraded = true;
+  else
+    _isgraded = deg_ring->Nmonoms()->n_vars() > 0;
   _is_skew = 0;
   _EXP1 = newarray(int,_nvars);
   _EXP2 = newarray(int,_nvars);
@@ -70,6 +112,11 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   flattened_ring = make_flattened_ring();
 }
 
+void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
+{
+  initialize_poly_ring(K, M, M->get_degree_ring());
+}
+
 PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 {
   PolynomialRing *result = new PolynomialRing;
@@ -79,21 +126,6 @@ PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
   return result;
 }
 
-const PolynomialRing *PolynomialRing::get_trivial_poly_ring()
-{
-  if (trivial_poly_ring == 0)
-    {
-      Monoid *M = Monoid::get_trivial_monoid();
-      trivial_poly_ring = new PolynomialRing();
-      trivial_poly_ring->initialize_poly_ring(globalZZ,M);
-      const PolynomialRing *flatR = trivial_poly_ring;
-      trivial_poly_ring->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), 
-								  flatR->Nmonoms());
-      Monoid::set_trivial_monoid_degree_ring(trivial_poly_ring);
-    }
-
-  return trivial_poly_ring;
-}
 
 #if 0
 //////////////////////////////////////////////////////

@@ -29,7 +29,7 @@ CC::~CC()
 
 bool CC::initialize_CC(double epsilon) 
 {
-  initialize_ring(0,0,0,Monoid::get_trivial_monoid());
+  initialize_ring(0,0,0);
   _epsilon = epsilon;
 
   zeroV = from_int(0);
