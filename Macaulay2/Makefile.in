@@ -61,7 +61,7 @@ all distclean clean ::; if [ -d experiments ]; then $(MAKE) -C experiments $@; f
 ################################# html
 doc :: html
 html ::; $(MAKE) -C html all
-distclean clean ::; $(MAKE) -C html $@
+install distclean clean ::; $(MAKE) -C html $@
 ################################# book
 # doc :: book
 book ::;  $(MAKE) -C book all
