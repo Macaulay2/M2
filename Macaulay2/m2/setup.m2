@@ -15,13 +15,9 @@ globalDictionaries = append(globalDictionaries,OutputDictionary)
 
 PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)
-assert( not isGlobalSymbol "Macaulay2" )
-getGlobalSymbol(PackageDictionary,"Macaulay2")
+assert( not isGlobalSymbol "Macaulay2Core" )
+getGlobalSymbol(PackageDictionary,"Macaulay2Core")
 getGlobalSymbol(PackageDictionary,"User")
-
--- Macaulay2 = new MutableHashTable		     -- just temporary
--- Macaulay2#"test inputs" = new MutableHashTable	     -- just temporary, so we can accumulate TEST inputs
--- currentPackage = Macaulay2
 
 -----------
 
@@ -225,7 +221,7 @@ needs = s -> if not filesLoaded#?s then load s
 load "loads.m2"
 if notify then stderr << "--loaded " << currentFileName << endl
 
-protect Macaulay2.Dictionary
+protect Macaulay2Core.Dictionary
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

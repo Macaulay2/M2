@@ -1,4 +1,4 @@
-debug Macaulay2
+debug Macaulay2Core
 R = ZZ/101[a..d]
 m = matrix{{a^2, a*b, a*c}}
 rawRemoveScalarMultiples raw m
@@ -34,7 +34,7 @@ s7 = rawRemoveScalarMultiples s6;
 s8 = rawRemoveScalarMultiples s7;
 )
 
-debug Macaulay2
+debug Macaulay2Core
 J = Grassmannian(2,5)
 R = ZZ/31991[vars(0..19)]
 J = ideal(p*r-o*s+m*t,j*r-i*s+g*t,p*q-n*s+l*t,o*q-n*r+k*t,m*q-l*r+k*s,j*q-h*s+f*t,i*q-h*

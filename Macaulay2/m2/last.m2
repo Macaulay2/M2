@@ -27,12 +27,12 @@ String.Wrap = x -> wr("",x)
 
 -- make sure this is after all global symbols are defined or erased
 
-closePackage "Macaulay2"
+closePackage "Macaulay2Core"
 
-newPackage "Missing"
-closePackage "Missing"
+-- newPackage "Missing"
+-- closePackage "Missing"
 
-installedPackages := {"PrimaryDecomposition", "M2doc"}
+installedPackages := {"PrimaryDecomposition", "Macaulay2Doc"}
 scan(installedPackages, pkg -> loadPackage(pkg,DebuggingMode => not stopIfError))
 
 -- currentPackage = null					    -- eliminate the phony package we used for collecting TEST inputs
@@ -45,7 +45,7 @@ addStartFunction(
 	  )
      )
 
-addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory|"m2/" )
+addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2Core#"source directory" = sourceHomeDirectory|"m2/" )
 
 addStartFunction( () -> if not member("-q",commandLine) and prefixDirectory =!= null then makePackageIndex() )
 

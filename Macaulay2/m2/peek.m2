@@ -97,7 +97,7 @@ seeParsing = args -> (
      x := new MutableHashTable;
      t := (p,s) -> if x#?p then x#p = append(x#p,s) else x#p = {s};
      q := getParsing symbol seeParsing;
-     scan(keys set values Macaulay2.Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
+     scan(keys set values Macaulay2Core.Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
      t(getParsing symbol args, "<SYMBOLS>"  );
      t(getParsing symbol " ", "<ADJACENCY>");
      new Table from prepend(

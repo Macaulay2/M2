@@ -1,7 +1,7 @@
 -- Test of division in various rings
 -- ggdiv, ggmod, ggdivmod.
 -- For the purposes of this test, we define:
-debug Macaulay2
+debug Macaulay2Core
 quot = (m,n) -> new ring m from raw m // raw n
 rem = (m,n) -> new ring m from raw m % raw n
 remquot = (m,n) -> (

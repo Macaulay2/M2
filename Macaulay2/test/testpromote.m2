@@ -10,7 +10,7 @@
 mylift = method()
 mypromote = method()
 
-debug Macaulay2
+debug Macaulay2Core
 
 mylift(RingElement, EngineRing) := 
 mylift(RingElement, Ring) := (f,R) -> try rawLift(raw R, raw f) else error("cannot lift ", toString f, " to the ring ", toString R)

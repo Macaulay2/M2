@@ -1,4 +1,4 @@
-newPackage ("Macaulay2",
+newPackage ("Macaulay2Doc",
      Version => version#"VERSION")
 
 beginDocumentation()
