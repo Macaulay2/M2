@@ -3,6 +3,7 @@
 #include "ringmap.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"
+#include "matrixcon.hpp"
 
 RingMap::RingMap(const Matrix *m)
 : immutable_object(0), R(m->get_ring())
@@ -203,11 +204,11 @@ RingElementOrNull *RingMap::eval(const RingElement *r) const
 
 MatrixOrNull *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F, 0, false);
   for (int i=0; i<m->n_cols(); i++)
-    result->append(m->rows()->eval(this, F, (*m)[i]));
+    mat.append(m->rows()->eval(this, F, (*m)[i]));
   if (error()) return 0;
-  return result;
+  return mat.to_matrix();
 }
 
 

@@ -1,5 +1,7 @@
 // Copyright 1995-2004 Michael E. Stillman
 
+// setEntry, dotProduct, getEntry
+// addColumnMultiple, interchangeColumns
 
 #include "style.hpp"
 #include "text_io.hpp"
@@ -20,6 +22,7 @@
 #include "matrixcon.hpp"
 #include "random.hpp"
 
+#if 0
 void Matrix::initialize(const FreeModule *r, 
 		     const FreeModule *c,
 		     const int *deg)
@@ -69,24 +72,34 @@ Matrix::Matrix(const FreeModule *r)
 }
 
 
-Matrix::Matrix(const FreeModule *rows0, 
-	       const FreeModule *cols0,
-	       const int *degree_shift0,
-	       vector<vec> & entries0,
-	       bool is_mutable_flag)
-{
-  initialize(rows0,cols0,degree_shift0);
-  for (int i=0; i<cols0->rank(); i++)
-    _entries[i] = entries0[i];
-  freeze(is_mutable_flag);
-}
-
 Matrix::Matrix(const MonomialIdeal *mi) 
 { 
   const FreeModule *r = mi->get_ring()->make_FreeModule(1);
   int *one = r->get_ring()->degree_monoid()->make_one();
   initialize(r, r->new_free(), one);
   append_monideal(mi,0);
+}
+#endif
+
+Matrix::Matrix(const FreeModule *rows0, 
+	       const FreeModule *cols0,
+	       const int *degree_shift0,
+	       vector<vec> & entries0,
+	       bool is_mutable_flag)
+{
+  _rows = const_cast<FreeModule *>(rows0);
+  _cols = const_cast<FreeModule *>(cols0);
+  _degree_shift = const_cast<int *>(degree_shift0);
+  for (int i=0; i<cols0->rank(); i++)
+    _entries.append(entries0[i]);
+
+  rowOps = NULL;
+  colOps = NULL;
+
+  if (is_mutable_flag)
+    make_mutable();
+  else 
+    make_immutable(234123 + get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols()));
 }
 
 
@@ -289,9 +302,28 @@ const MatrixOrNull * Matrix::remake(const FreeModule *target,
   return mat.to_matrix();
 }
 
-const Matrix * Matrix::make(const MonomialIdeal * mi)
+const MatrixOrNull * Matrix::make(const MonomialIdeal * mi)
 {
-  return new Matrix(mi);
+  const PolynomialRing *P = mi->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected a matrix over a polynomial ring");
+      return 0;
+    }
+  const Monoid *M = P->Nmonoms();
+  int *mon = M->make_one();
+
+  MatrixConstructor mat(P->make_FreeModule(1), 0, false);
+  int next = 0;
+  for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
+    {
+      M->from_varpower((*mi)[i]->monom().raw(), mon);
+      ring_elem f = P->term(P->Ncoeffs()->from_int(1), mon);
+      mat.set_entry(0,next++,f);
+    }
+  M->remove(mon);
+
+  return mat.to_matrix();
 }
 
 bool Matrix::error_column_bound(int c) const
@@ -791,9 +823,19 @@ MatrixOrNull *Matrix::reshape(const FreeModule *F, const FreeModule *G) const
       return 0;
     }
 
-  Matrix *result = new Matrix(F,G);
-  F->reshape(*this, *result);
-  return result;
+  // EFFICIENCY: might be better to sort columns at end?
+  MatrixConstructor mat(F,G,degree_monoid()->make_one(),false);
+  for (int c=0; c<n_cols(); c++)
+    for (vecterm *p = elem(c); p != NULL; p = p->next)
+      {
+	// Determine new component
+	int loc = c * n_rows() + p->comp;
+	int result_col = loc / F->rank();
+	int result_row = loc % F->rank();
+
+	mat.set_entry(result_row,result_col,p->coeff);
+      }
+  return mat.to_matrix();
 }
 
 MatrixOrNull *Matrix::flip(const FreeModule *F, const FreeModule *G)
@@ -1026,6 +1068,8 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   return result;
 #endif
 }
+#if 0
+// REMOVE THIS ONE??
 Matrix *Matrix::random(const Ring *R, int r, int c)
 {
   FreeModule *F = R->make_FreeModule(r);
@@ -1035,6 +1079,7 @@ Matrix *Matrix::random(const Ring *R, int r, int c)
     (*result)[i] = F->random();
   return result;
 }
+#endif
 
 Matrix *Matrix::random(const Ring *R, 
 		       int r, int c, 
@@ -1326,14 +1371,11 @@ M2_arrayint Matrix::elim_keep(int nparts) const
 
 Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
 {
-  Matrix *result = new Matrix(rows(), cols(), degree_shift());
-  int *newdeg = degree_monoid()->make_one();
+  MatrixConstructor mat(rows(), 0, false);
   maxdivided = 0;
   for (int i=0; i<n_cols(); i++)
     {
-      if (elem(i) == NULL)
-	(*result)[i] = elem(i);
-      else
+      if (elem(i) != NULL)
 	{
 	  int lo,hi;
 	  rows()->degree_of_var(n, elem(i), lo,hi);
@@ -1341,14 +1383,10 @@ Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
 	    lo = maxd;
 	  if (lo > maxdivided)
 	    maxdivided = lo;
-	  degree_monoid()->power(get_ring()->Nmonoms()->degree_of_var(n), lo, newdeg);
-	  degree_monoid()->divide(cols()->degree(i), newdeg, newdeg);
-	  result->cols()->change_degree(i, newdeg);
-	  (*result)[i] = rows()->divide_by_var(n, lo, elem(i));
+	  mat.append(rows()->divide_by_var(n, lo, elem(i)));
 	}
     }
-  degree_monoid()->remove(newdeg);
-  return result;
+  return mat.to_matrix();
 }
 
 // ideal operations
@@ -1362,36 +1400,28 @@ MatrixOrNull *Matrix::koszul(int p) const
   
   FreeModule *F = cols()->exterior(p-1);
   FreeModule *G = cols()->exterior(p);
-  Matrix *result = new Matrix(F, G, degree_shift());
-  if (p <= 0 || p > n_cols()) return result;
-  intarray carray(p);
-  int *a = carray.alloc(p);
-  for (int c=0; c < result->n_cols(); c++)
+  const Ring *R = get_ring();
+  MatrixConstructor mat(F,G,degree_shift(),false);
+  if (p <= 0 || p > n_cols()) return mat.to_matrix();
+  int *a = newarray(int,p);
+  for (int c=0; c < G->rank(); c++)
     {
       comb::decode(c, a,p);
-      vec v = F->zero();
       int negate = ((p % 2) != 0);
       for (int r=p-1; r>=0; r--)
 	{
 	  negate = !negate;
-#if 0
-	  int tmp = a[r];
-	  a[r] = a[p-1];
-	  a[p-1] = tmp;
-#else
 	  swap(a[p-1], a[r]);
-#endif
 	  int x = comb::encode(a, p-1);
-	  vec temp = F->raw_term(elem(0, a[p-1]), x);
-
+	  ring_elem f = elem(0, a[p-1]);
 	  if (negate)
-	    F->subtract_to(v, temp);
-	  else 
-	    F->add_to(v, temp);
+	    R->negate_to(f);
+
+	  mat.set_entry(x,c,f);
 	}
-      (*result)[c] = v;
     }
-  return result;
+  deletearray(a);
+  return mat.to_matrix();
 }
 
 static int signdivide(int n, const int *a, const int *b, int *exp)
@@ -1410,18 +1440,18 @@ static int signdivide(int n, const int *a, const int *b, int *exp)
   if (sign == 0) return 1;
   return -1;
 }
-Matrix *Matrix::koszul(const Matrix *r, const Matrix *c)
+MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 {
   // First check rings: r,c,'this' should be row vectors.
   // and the ring should be a polynomial ring
   const FreeModule *F = r->cols();
 
-  // Create result matrix
-  Matrix *result = new Matrix(F, c->cols());
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
-  if (P == NULL) return result;
+  if (P == NULL) return 0;
   const Monoid *M = P->Nmonoms();
+
+  MatrixConstructor mat(F, c->cols(), P->degree_monoid()->make_one(), false);
 
   int nvars = F->get_ring()->n_vars();
   int nrows = r->n_cols();
@@ -1431,32 +1461,30 @@ Matrix *Matrix::koszul(const Matrix *r, const Matrix *c)
   int *result_exp = newarray(int,nvars);
   for (int i=0; i<ncols; i++)
     {
-      if ((*c)[i] == NULL) continue;
-      const int *a = P->lead_monomial((*c)[i]->coeff);
+      if (c->elem(i) == 0) continue;
+      const int *a = P->lead_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
-      vec v = NULL;
       for (int j=0; j<nrows; j++)
 	{
-	  if ((*r)[j] == NULL) continue;
-	  const int *b = P->lead_monomial((*r)[j]->coeff);
+	  if (r->elem(j) == 0) continue;
+	  const int *b = P->lead_monomial(r->elem(j)->coeff);
 	  M->to_expvector(b, bexp);
 	  int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
 	    {
-	      ring_elem f = P->from_int(sign);
-	      M->from_expvector(result_exp, f.poly_val->monom);
-	      vec p = F->raw_term(f,j);
-	      p->next = v;
-	      v = p;
+	      const int *m;
+#warning "does m need to be initialized?"
+	      M->from_expvector(m, result_exp);
+	      ring_elem s = (sign > 0 ? P->Ncoeffs()->one() : P->Ncoeffs()->minus_one());
+	      ring_elem f = P->term(s,m);
+	      mat.set_entry(j,i,f);
 	    }
 	}
-      F->sort(v);
-      (*result)[i] = v;
     }
   deletearray(aexp);
   deletearray(bexp);
   deletearray(result_exp);
-  return result;
+  return mat.to_matrix();
 }
 
 Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
@@ -1465,17 +1493,18 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
   const FreeModule *Fq = F->exterior(q);
   const FreeModule *Fn = F->exterior(p+q);
   const FreeModule *G = Fp->tensor(Fq);
+  const Ring *R = F->get_ring();
 
-  Matrix *result = new Matrix(Fn, G);
+  MatrixConstructor mat(Fn,G,Fn->get_ring()->degree_monoid()->make_one(),false);
 
   if (p < 0 || q < 0 || p+q >F->rank())
-    return result;
+    return mat.to_matrix();
 
   if (p == 0 || q == 0)
     {
       for (int i=0; i<G->rank(); i++)
-	(*result)[i] = Fn->e_sub_i(i);
-      return result;
+	mat.set_entry(i,i,R->one());
+      return mat.to_matrix();
     }
 
   int *a = newarray(int,p);
@@ -1497,14 +1526,14 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
 	    }
 	  ring_elem r = F->get_ring()->from_int(sgn);
 	  int row = comb::encode(c,p+q);
-	  (*result)[col++] = Fn->raw_term(r,row);
+	  mat.set_entry(row,col++,r);
 	}
     }
 
   deletearray(a);
   deletearray(b);
   deletearray(c);
-  return result;
+  return mat.to_matrix();
 }
 
 void Matrix::text_out(buffer &o) const
@@ -1798,7 +1827,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
     }
 
   // Take all of these monomials and make an array out of them
-  Matrix *result = new Matrix(get_ring()->make_FreeModule(1));
+  MatrixConstructor mat(get_ring()->make_FreeModule(1),0,false);
   const void ** monoms = exponent_table_to_array(E);
   for (int i=0; i<nvars; i++) exp[i] = 0;
   for (int i=0; monoms[i] != 0; i += 2)
@@ -1808,7 +1837,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 	exp[vars->array[j]] = exp1[j];
       M->from_expvector(exp, mon);
       ring_elem a = P->term(one, mon);
-      result->append(rows()->raw_term(a,0));
+      mat.append(rows()->raw_term(a,0));
     }
   
   // Remove the garbage memory
@@ -1817,6 +1846,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
   exponent_table_free(&E);
 
   // Finally, we sort them
+  Matrix *result = mat.to_matrix();
   M2_arrayint perm = result->sort(1,1);
   return result->sub_matrix(perm);
 }
@@ -1903,11 +1933,11 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const M2_arrayint monoms) const
   // Step 2: for each vector column of 'this'
   //     create a column, and put this vector into result.
 
-  Matrix *result = new Matrix(get_ring()->make_FreeModule(nelements));
+  MatrixConstructor mat(get_ring()->make_FreeModule(nelements), 0 , false);
   for (int i=0; i<n_cols(); i++)
-    result->append(coeffs_of_vec(E, vars, rows(), elem(i)));
+    mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
 
-  return result;
+  return mat.to_matrix();
 }
 
 MonomialIdeal *Matrix::make_monideal(int n) const
@@ -1968,25 +1998,6 @@ MonomialIdeal *Matrix::make_skew_monideal(int n) const
   return result;
 }
 
-void Matrix::append_monideal(const MonomialIdeal *mi, int k)
-{
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected a matrix over a polynomial ring");
-      return;
-    }
-  const Monoid *M = P->Nmonoms();
-  int *mon = M->make_one();
-  for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
-    {
-      M->from_varpower((*mi)[i]->monom().raw(), mon);
-      ring_elem f = P->term(P->Ncoeffs()->from_int(1), mon);
-      vec v = rows()->raw_term(f, 0);
-      append(v);
-    }
-  M->remove(mon);
-}
 
 
 int Matrix::dimension() const
@@ -2033,6 +2044,7 @@ int Matrix::dimension() const
     }
 }
 
+#if 0
 
 static int            kb_do_trunc;
 static Matrix       * kb_result;
@@ -2258,6 +2270,7 @@ Matrix *Matrix::k_basis(Matrix &bot) const
   kb_P = 0;
   return result;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 #if 0

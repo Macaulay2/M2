@@ -4,6 +4,7 @@
 #include "gbinhom.hpp"
 #include "text_io.hpp"
 #include "vector.hpp"
+#include "matrixcon.hpp"
 
 extern char system_interrupted;
 extern int gbTrace;
@@ -57,8 +58,9 @@ void GBinhom_comp::set_up(const Matrix *m, int csyz, int nsyz, int strat)
   set_up0(m, csyz, nsyz);
 
   Fsyz = m->cols()->sub_space(n_comps_per_syz);  
-  syz = new Matrix(Fsyz);
-
+  //  syz = new Matrix(Fsyz);
+  syz = MatrixConstructor(Fsyz, 0, false);
+  n_syz = 0;
   add_gens(0, m->n_cols()-1, m);
 }
 
@@ -94,7 +96,8 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
   set_up0(m, csyz, mchange->n_rows());
 
   Fsyz = mchange->rows();
-  syz = const_cast<Matrix *>(msyz);
+#pragma "put back syzygy module!"
+  //  syz = const_cast<Matrix *>(msyz);
 
   for (int i=0; i<gb0->n_cols(); i++)
     {
@@ -200,7 +203,8 @@ s_pair *GBinhom_comp::new_gen(int i, gbvector * f, ring_elem denom)
       if (!GR->gbvector_is_zero(fsyz))
 	{
 	  vec fsyzvec = originalR->translate_gbvector_to_vec(Fsyz,fsyz);
-	  syz->append(fsyzvec);
+	  n_syz++;
+	  syz.append(fsyzvec);
 	}
       return NULL;
     }
@@ -734,7 +738,8 @@ int GBinhom_comp::s_pair_step(s_pair *p)
       if (collect_syz)
 	{
 	  vec fsyzvec = originalR->translate_gbvector_to_vec(Fsyz,fsyz);
-	  syz->append(fsyzvec);
+	  n_syz++;
+	  syz.append(fsyzvec);
 	  return SPAIR_SYZ;
 	}
       else
@@ -752,7 +757,7 @@ int GBinhom_comp::computation_complete(int stop_gb,
      // Test whether the current computation is done.
 {
   if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  if (stop_syz > 0 && syz->n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
+  if (stop_syz > 0 && n_syz >= stop_syz) return COMP_DONE_SYZ_LIMIT;
   if (stop_pairs > 0 && n_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
   if (stop_subring > 0 && n_subring >= stop_subring) return COMP_DONE_SUBRING_LIMIT;
   return COMP_COMPUTING;
@@ -846,8 +851,8 @@ Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  Matrix *red = new Matrix(m->rows(), m->cols());
-  lift = new Matrix(Fsyz, m->cols());
+  MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_monoid()->make_one(), false);
+  MatrixConstructor mat_lift(Fsyz, 0, false);
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -859,10 +864,11 @@ Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
       vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
       K->negate_to(denom);
       vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
-      (*red)[i] = fv;
-      (*lift)[i] = fsyzv;
+      mat_red.set_column(i, fv);
+      mat_lift.append(fsyzv);
     }
-  return red;
+  lift = mat_lift.to_matrix();
+  return mat_red.to_matrix();
 }
 
 int GBinhom_comp::contains(const Matrix *m)
@@ -891,43 +897,44 @@ int GBinhom_comp::contains(const Matrix *m)
 //--- Obtaining matrices as output -------
 Matrix *GBinhom_comp::min_gens_matrix()
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F, 0, false);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     if (q->is_min)
-      result->append(originalR->translate_gbvector_to_vec(F,q->f));
-  return result;
+      mat.append(originalR->translate_gbvector_to_vec(F,q->f));
+  return mat.to_matrix();
 }
 
 Matrix *GBinhom_comp::initial_matrix(int n)
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F, 0, false);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     {
       gbvector *f = GR->gbvector_lead_term(n, F, q->f);
-      result->append(originalR->translate_gbvector_to_vec(F,f));
+      mat.append(originalR->translate_gbvector_to_vec(F,f));
     }
-  return result;
+  return mat.to_matrix();
 }
 
 Matrix *GBinhom_comp::gb_matrix()
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F, 0, false);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    result->append(originalR->translate_gbvector_to_vec(F,q->f));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(F,q->f));
+  return mat.to_matrix();
 }
 
 Matrix *GBinhom_comp::change_matrix()
 {
-  Matrix *result = new Matrix(Fsyz);
+  MatrixConstructor mat(Fsyz, 0, false);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    result->append(originalR->translate_gbvector_to_vec(Fsyz,q->fsyz));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(Fsyz,q->fsyz));
+  return mat.to_matrix();
 }
 
 Matrix *GBinhom_comp::syz_matrix()
 {
-  return syz;
+#pragma "this is not correct: this grabs the vectors, and so can't be called twice"
+  return syz.to_matrix();
 }
 
 void GBinhom_comp::debug_out(s_pair *q) const

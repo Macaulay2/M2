@@ -4,6 +4,7 @@
 #include "hilb.hpp"
 #include "text_io.hpp"
 #include "vector.hpp"
+#include "matrixcon.hpp"
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 extern int compare_type;
@@ -230,8 +231,10 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  lift = new Matrix(nodes[1]->output_free_module(), m->cols());
+  MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_shift(), false);
+  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), 
+			     m->degree_monoid()->make_one(), false);
+
   for (int i=0; i<m->n_cols(); i++)
     {
       const FreeModule *Fsyz = nodes[1]->output_free_module();
@@ -245,10 +248,11 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
       vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
       GR->get_flattened_coefficients()->negate_to(denom);
       vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
-      (*red)[i] = fv;
-      (*lift)[i] = fsyzv;
+      mat_red.set_column(i, fv);
+      mat_lift.set_column(i,fsyzv);
     }
-  return red;
+  lift = mat_lift.to_matrix();
+  return mat_red.to_matrix();
 }
 
 
@@ -266,34 +270,34 @@ FreeModule *gbres_comp::free_module(int level)
 Matrix *gbres_comp::min_gens_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return new Matrix(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->min_gens_matrix();
 }
 Matrix *gbres_comp::get_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return new Matrix(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->get_matrix();
 }
 
 Matrix *gbres_comp::initial_matrix(int n, int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return new Matrix(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->initial_matrix(n);
 }
 
 Matrix *gbres_comp::gb_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return new Matrix(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->gb_matrix();
 }
 
 Matrix *gbres_comp::change_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return new Matrix(free_module(level-1), free_module(level));
+    return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->change_matrix();
 }
 

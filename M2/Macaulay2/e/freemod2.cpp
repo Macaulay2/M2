@@ -4,6 +4,7 @@
 #include "comb.hpp"
 #include "polyring.hpp"
 #include "matrix.hpp"
+#include "matrixcon.hpp"
 
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
@@ -79,14 +80,14 @@ Matrix * FreeModule::get_induced_order() const
     if (S->compare_num(i) > maxtie)
       maxtie = S->compare_num(i);
   const FreeModule *F = R->make_FreeModule(maxtie+1);
-  Matrix *result = new Matrix(F,this);
+  MatrixConstructor mat(F,this,P->degree_monoid()->make_one(),false);
   for (i=0; i<rank(); i++)
     {
       ring_elem f = P->term(P->Ncoeffs()->from_int(1), 
 			    S->base_monom(i));
-      (*result)[i] = F->raw_term(f,S->compare_num(i));
+      mat.set_entry(S->compare_num(i), i, f);
     }
-  return result;
+  return mat.to_matrix();
 }
 
 FreeModule::~FreeModule()

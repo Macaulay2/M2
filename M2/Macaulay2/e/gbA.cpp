@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "matrix.hpp"
+#include "matrixcon.hpp"
 #include "polyring.hpp"
 #include "newdelete.hpp"
 
@@ -1018,10 +1019,10 @@ const MatrixOrNull *gbA::get_change()
 const MatrixOrNull *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
-  Matrix *result = new Matrix(_Fsyz);
+  MatrixConstructor mat(_Fsyz, 0, false /* not mutable */);
   for (vector<gbvector *,gc_alloc>::iterator i = _syz.begin(); i != _syz.end(); i++)
-    result->append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *gbA::get_initial(int nparts)

@@ -6,6 +6,7 @@
 #include "text_io.hpp"
 #include "polyring.hpp"
 #include "ntuple.hpp"
+#include "matrixcon.hpp"
 
 extern int gbTrace;
 // todo: minimalize_gb, remainder
@@ -365,40 +366,40 @@ const Matrix *GBasis::get_minimal_gb()
   // The result contains no quotient ring elements
 {
   minimalize_gb();
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F,0,false/*not mutable*/);
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
-    result->append(originalR->translate_gbvector_to_vec(F, (*i).f));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(F, (*i).f));
+  return mat.to_matrix();
 }
 
 const Matrix *GBasis::get_minimal_gens()
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F,0,false/*not mutable*/);
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel <= ELEM_TRIMMED)
-      result->append(originalR->translate_gbvector_to_vec(F, (*i)->g.f));
-  return result;
+      mat.append(originalR->translate_gbvector_to_vec(F, (*i)->g.f));
+  return mat.to_matrix();
 }
 
 const Matrix *GBasis::get_change()
 {
   minimalize_gb();
-  Matrix *result = new Matrix(Fsyz);
+  MatrixConstructor mat(Fsyz,0,false/*not mutable*/);
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
-    result->append(originalR->translate_gbvector_to_vec(Fsyz, (*i).fsyz));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(Fsyz, (*i).fsyz));
+  return mat.to_matrix();
 }
 
 const Matrix *GBasis::get_leadterms(int nparts)
 {
   minimalize_gb();
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F,0,false/*not mutable*/);
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     {
       gbvector *f = R->gbvector_lead_term(nparts, F, (*i).f);
-      result->append(originalR->translate_gbvector_to_vec(F, f));
+      mat.append(originalR->translate_gbvector_to_vec(F, f));
     }
-  return result;
+  return mat.to_matrix();
 }
 
 const FreeModule *GBasis::get_free(M2_bool minimal)
@@ -415,7 +416,7 @@ const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift(), false);
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -427,9 +428,9 @@ const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       // MES: what about g.fsyz??
-      (*red)[i] = fv;
+      red.set_column(i, fv);
     }
-  return red;
+  return red.to_matrix();
 }
 
 void GBasis::matrix_lift(const Matrix *m,
@@ -442,8 +443,9 @@ void GBasis::matrix_lift(const Matrix *m,
       *result_remainder = 0;
       *result_quotient = 0;
   }
-  *result_remainder = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  *result_quotient = new Matrix(Fsyz, m->cols());
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift(),false);
+  MatrixConstructor mat_quotient(Fsyz, m->cols(), m->degree_monoid()->make_one(), false);
+
   const Ring *K = R->get_flattened_coefficients();
   for (int i=0; i<m->n_cols(); i++)
     {
@@ -457,9 +459,11 @@ void GBasis::matrix_lift(const Matrix *m,
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       K->negate_to(denom);
       vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,g.fsyz, denom);
-      (**result_remainder)[i] = fv;
-      (**result_quotient)[i] = fsyzv;
+      mat_remainder.set_column(i, fv);
+      mat_quotient.set_column(i, fsyzv);
     }
+  *result_remainder = mat_remainder.to_matrix();
+  *result_quotient = mat_quotient.to_matrix();
 }
 
 int GBasis::contains(const Matrix *m)

@@ -1,4 +1,3 @@
-#include "symm.hpp"
 #include "matrix.hpp"
 #include "matrixcon.hpp"
 

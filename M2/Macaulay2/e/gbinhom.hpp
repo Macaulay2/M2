@@ -9,6 +9,7 @@
 #include "comp_gb.hpp"
 
 #include "spair.hpp"
+#include "matrixcon.hpp"
 
 class GBinhom_comp : public GBComputation
 {
@@ -33,10 +34,11 @@ private:
                               // This is the 'large' GB
 
   // Syzygies collected
-  Matrix *syz;
+  MatrixConstructor syz;
 
   // statistics information
   int n_gb;
+  int n_syz;
   int n_subring;
   int n_pairs;
   int n_computed;
