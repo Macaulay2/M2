@@ -5,7 +5,8 @@ BUGS:
       compress (uses submatrix)
       submatrix (vectors not yet re-implemented)
       terms RingElement
-
+      sortColumns
+      
 packages:
 	gin
 	lexideal
@@ -50,11 +51,14 @@ factorization and decomposition from singular needs to be interruptable.
 Groebner bases todo: HF use, mingens, subring elements, elements sorted in 
 decreasing monomial order?
 
-random matrices of scalars
+random should take optional parameters for FractionNonZero, UpperTriangular, or something
+like that.
+
+DONE random matrices of scalars
 
 skew multiplication: does it still work?  Get it working, test it.
 
-leadTerm needs to be made to work again
+DONE (I think) leadTerm needs to be made to work again
 
 basis needs to be made to work again (engine part DONE)
 
@@ -174,6 +178,29 @@ do:
 -------------------------------------------------
 -- gg engine lines, as found on 8/2/04, 9am. ----
 -------------------------------------------------
+-- files:
+--    factor.m2
+--    galois.m2
+--    gb.m2
+--    genmat.m2
+--    matrix.m2
+--    matrix1.m2
+--    matrix2.m2
+--    modules2.m2
+--    monideal.m2
+--    multilin.m2
+--    ofcm.m2
+--    orderedmonoidrings.m2
+--    overviewC.m2
+--    primdecomp-SY.m2
+--    primdecomp-fastgb.m2
+--    quotring.m2
+--    ringmap.m2
+--    sagbi.m2
+--    schur.m2
+--    system.m2
+
+--
 -- these represent the following routines/computations:
 --   factorization/char series
 --   GF

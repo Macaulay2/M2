@@ -43,8 +43,7 @@ genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 
 randommat := (R,r,c) -> (
      if R.?Adjust then c = R.Adjust c;
-     sendgg(ggPush R, ggPush r, ggPush c, ggrandom); 
-     getMatrix R)
+     map(R, rawMatrixRandom(R.RawRing, r, c, 1.0, 0, false, 0)))
 
 random(List,Ring) := RingElement => (deg,R) -> (
      if #deg =!= degreeLength R
