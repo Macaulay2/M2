@@ -148,7 +148,7 @@ install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
-STYLE := doc.css doc-no-buttons.css
+STYLE := doc.css doc-no-buttons.css styleswitcher.js
 install:: $(styledir)
 $(styledir):; $(INSTALL) -d "$@"
 install:: $(STYLE)
