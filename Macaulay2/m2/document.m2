@@ -69,7 +69,17 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
+new DocumentTag from List := (DocumentTag,x) -> (
+     (nkey,fkey,pkg,title) := toSequence x;
+     -- if class pkg =!= Package then error("document tag specifies unloaded package: ",toString pkg);
+     x)
 -- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
+
+pkgTitle = method()
+pkgTitle Package := pkg -> pkg#"title"
+pkgTitle Symbol  := toString
+pkgTitle Nothing := x -> ""
+
 makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  FormattedKey => null,
 	  Package => null
@@ -80,10 +90,7 @@ makeDocumentTag Thing := opts -> key -> (
      verifyKey nkey;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
      pkg := if opts#Package =!= null then opts#Package else packageKey fkey;
-     -- figure out to avoid this warning message for f = method ( Options => { a => 4 } )
-     if pkg === null then stderr << "warning: can't determine correct package for document tag '" << nkey << "'" << endl;
-     title := if pkg === null then "" else pkg#"title";
-     new DocumentTag from {nkey,fkey,pkg,title})
+     new DocumentTag from {nkey,fkey,pkg,pkgTitle pkg})
 -- a bit of experimentation...
 DocumentTag.Key = method(SingleArgumentDispatch => true)
 DocumentTag.Key DocumentTag := x -> x#0
@@ -140,6 +147,8 @@ fixup := method(SingleArgumentDispatch => true)
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
 fetchRawDocumentation = method()
+fetchRawDocumentation(Symbol,String) := (pkg,fkey) -> (
+     error("package ", toString pkg, " not loaded, and its documentation is not available"))
 fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
      if d#?fkey then d#fkey
