@@ -338,8 +338,13 @@ export globalFrame := Frame(self, 0, globalFramesize,
 	  ));
 
 export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false,false);
+     
+allDictionaries := LocalDictionaryList(Macaulay2Dictionary,self);
 
-export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false);
+export newGlobalDictionary():Dictionary := (
+     d := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false);
+     allDictionaries = LocalDictionaryList(d,allDictionaries);
+     d);
 
 export globalDictionary := Macaulay2Dictionary;
 
@@ -352,16 +357,13 @@ export dummyDictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
 
-export dummyDictionaryClosure := DictionaryClosure(dummyFrame,dummyDictionary);
-
 export LocalDictionaryList := {
      dictionary:Dictionary,
      next:LocalDictionaryList				    -- pointer to self indicates end
      };
-     
-allLocalDictionaries := LocalDictionaryList(dummyDictionary,self);
+
 export getLocalDictionary(frameID:int):Dictionary := (
-     p := allLocalDictionaries;
+     p := allDictionaries;
      while (
 	  if p.dictionary.frameID == frameID then return(p.dictionary);
 	  p != p.next) do p = p.next;
@@ -372,7 +374,7 @@ export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(f,
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false);
-     allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
+     allDictionaries = LocalDictionaryList(d,allDictionaries);
      d);
 export newStaticLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
@@ -381,7 +383,7 @@ export newStaticLocalDictionary():Dictionary := (
 	  false,  -- the first local dictionary is usually (?) non-transient
 	  false
 	  );
-     allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
+     allDictionaries = LocalDictionaryList(d,allDictionaries);
      d);
 export emptyLocalDictionary := newStaticLocalDictionary();
 
@@ -390,10 +392,13 @@ export newLocalFrame(outerFrame:Frame,d:Dictionary):Frame := Frame(outerFrame, d
 export newLocalDictionaryClosure(d:Dictionary):DictionaryClosure := DictionaryClosure(newLocalFrame(d),d);
 export newStaticLocalDictionaryClosure():DictionaryClosure := (
      d := newStaticLocalDictionary();
+     allDictionaries = LocalDictionaryList(d,allDictionaries);
      DictionaryClosure(newLocalFrame(d),d));
 
 export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure := (
      d := newLocalDictionary(dc.dictionary);
+     d.transient = false;
+     allDictionaries = LocalDictionaryList(d,allDictionaries);
      f := newLocalFrame(dc.frame,d);
      DictionaryClosure(f,d));
 

@@ -10,6 +10,7 @@ all-c-files ::
 remove-c-files ::
 ##############################
 .PHONY : all-c-files remove-c-files
+.PRECIOUS : ../bin/M2$(EXE)
 ############################## files
 # the names on these lines should be in sequence from most dependent to
 # least dependent so that "make" can remake the *.dep makefiles

@@ -474,6 +474,19 @@ examine(e:Expr):Expr := (
 	  << " hash : " << fnc.hash << endl
 	  << " env : [" << length(fnc.env) << "]" << endl;
 	  nullE)
+     is dc:DictionaryClosure do (
+	  f := dc.frame;
+	  d := dc.dictionary;
+	  stdout
+	  << " hash : " << d.hash << endl
+	  << " frameID : " << d.frameID << endl
+	  << " framesize : " << d.framesize << endl
+	  << " transient : " << d.transient << endl
+	  << " protected : " << d.protected << endl
+	  << " symboltable size : " << d.symboltable.numEntries << endl;
+     	  showFrames(f);
+          if d.frameID != f.frameID then stdout << " -- warning: incorrect frameID on first frame" << endl;
+	  nullE)
      is s:Sequence do (
 	  if length(s) == 0 then (
      	       showFrames(localFrame);
