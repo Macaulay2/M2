@@ -185,8 +185,13 @@ tmp_init.c : $(DFILES)
 	mv tmp tmp_init.c
 
 ###################### libraries
+
+# singular libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
+LIBRARYOPTIONS += -lntl
+  # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
+LIBRARYOPTIONS += $(LAPACKLIBS)
 
 ## We put M2inits.o here so its constructor gets run first, before those of libcf, placed above.
 ## This assumes that that link runs the constructors in reverse order -- those rightmost on the command line are run first.
@@ -194,9 +199,6 @@ LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += M2initschk.o M2inits.o
 LIBRARYFILES   += M2initschk.o M2inits.o
 
-  # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
-LIBRARYOPTIONS += $(LAPACKLIBS)
-LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += $(LIBGMP)
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
