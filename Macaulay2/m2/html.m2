@@ -41,12 +41,12 @@ htmlFilename DocumentTag := tag -> (
      if pkg === null then toFilename fkey|".html"
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
-html IMG  := x -> concatenate("<IMG src=\"", rel first x, "\">")
-html HREF := x -> concatenate("<A HREF=\"", rel first x, "\">", html last x, "</A>")
-tex  HREF := x -> concatenate("\special{html:<A href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</A>}")
+html IMG  := x -> concatenate("<img src=\"", rel first x, "\">")
+html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
+tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
-html TO   := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral DocumentTag.FormattedKey x#0, "</A>", if x#?1 then x#1)
-html TO2  := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</A>")
+html TO   := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral DocumentTag.FormattedKey x#0, "</a>", if x#?1 then x#1)
+html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</a>")
 
 next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NEXT#tag, nextButton } } else nullButton
 prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
@@ -62,7 +62,7 @@ BUTTON := (s,alt) -> (
      s = rel s;
      if alt === null
      then error "required attribute: ALT"
-     else LITERAL concatenate("<IMG class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
+     else LITERAL concatenate("<img class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
      )
 
 -----------------------------------------------------------------------------
