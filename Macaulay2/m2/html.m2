@@ -84,7 +84,8 @@ links := tag -> SEQ {
 	  LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
 	  },
      if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
-     LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" title=\"Macaulay 2 document\" type=\"text/css\"" }
+     LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
+     LINK { LAYOUT#"style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
      }
 
 BUTTON := (s,alt) -> (
@@ -103,8 +104,7 @@ doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.o
 
 -- produce html form of documentation, for Macaulay 2 and for packages
 
-buttonBar := (tag) -> TABLE { { 
-
+buttonBar := (tag) -> ButtonTABLE {{ 
 	  LITERAL concatenate (///
 	       <form class="search" action="///,					    -- "
 	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
@@ -122,16 +122,15 @@ buttonBar := (tag) -> TABLE { {
 	       ///),						    -- "
 
 	  SEQ {
-	       LITERAL ///<p class="buttonbar">///,
+	       LITERAL "<p class=\"buttonbar\">",
 	       next tag, prev tag, up tag,
      	       if tag =!= topDocumentTag then topNodeButton else nullButton,
      	       masterIndexButton,
      	       tocButton,
      	       homeButton,
-     	       LITERAL ///</p>///
-	       },
+     	       LITERAL "</p>"
 
-	  } }
+	       }}}
 
 upAncestors := tag -> reverse (
      n := 0;

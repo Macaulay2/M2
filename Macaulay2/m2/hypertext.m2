@@ -196,6 +196,19 @@ html ExampleTABLE := x -> concatenate(
      "</table></p><p>"
      )			 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
+html ButtonTABLE := x -> concatenate(
+     newline,
+     "<table class=\"buttons\">",
+     newline,
+     apply(x, row -> ( 
+	       "  <tr>",
+	       newline,
+	       apply(row, item -> ("    <td align=center>", html item, "</td>",newline)),
+	       "  </tr>",
+	       newline)),
+     "</table>",
+     newline
+     )			 
 
 truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,printWidth-1),"$")
 truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else stack(apply(unstack n,truncateString))
