@@ -771,7 +771,6 @@ document { locate,
 
 document { MutableHashTable,
      HEADLINE "the class of all mutable hash tables",
-     TT "MutableHashTable", " -- the class of all mutable hash tables.",
      PARA,
      "A mutable hash table is a type of hash table whose entries can be changed.",
      PARA,

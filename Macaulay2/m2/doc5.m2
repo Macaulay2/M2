@@ -1681,20 +1681,12 @@ document { superscript,
      SEEALSO "ScriptedFunctor"
      }
 
-document { HH,
-     TT "HH", " -- general homology and cohomology functor.",
-     PARA,
-     "Specific examples:",
-     MENU {
-	  (TO (homology, ZZ, ChainComplex), "      -- homology of a chain complex"),
-	  (TO (homology, ChainComplex), "          -- total homology of a chain complex"),
-	  (TO (homology, ZZ, ChainComplexMap), "   -- homology as a functor"),
-	  (TO (homology, Matrix, Matrix), "        -- homology of a pair of maps"),
-	  (TO (cohomology, ZZ, ChainComplex), "    -- cohomology of a chain complex"),
-	  (TO (cohomology, ZZ, ChainComplexMap), " -- cohomology as a functor"),
-	  (TO (cohomology, ZZ, Module), "          -- local cohomology"),
-	  (TO (cohomology, ZZ, CoherentSheaf), "   -- sheaf cohomology"),
-	  }
+document { HH, HEADLINE "general homology and cohomology functor",
+     TT "HH", " is a ", TO "ScriptedFunctor", " which serves as an interface
+     to the methods for ",  TO "homology", " and ", TO "cohomology", ", in
+     the sense that, ", TT "HH_i(M)", " is an abbreviation for ", TT "homology(i,M)", "
+     and ", TT "HH^i(M)", " is an abbreviation for ", TT "cohomology(i,M)", ".
+     A second argument and optional arguments may be added."
      }
 
 TEST ("
@@ -1710,22 +1702,24 @@ TEST ("
 
 document { cohomology,
      TT "cohomology", " -- a method name available for computing expressions
-     of the forms HH^i(X) and HH^i(M,N).",
+     of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
      PARA,
-     "If it is intended that i be of class ZZ, M be of class A, and N be of 
-     class B, then the method can be installed with ",
-     PRE "   cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SEEALSO {"homology", "ScriptedFunctor"}
+     "If it is intended that ", TT "i", " be of class ", TT "ZZ", ", ", TT "M", " be of
+     class ", TT "A", ", and ", TT "N", " be of 
+     class ", TT "B", ", then the method can be installed with ",
+     PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
+     SEEALSO {"homology", "HH", "ScriptedFunctor"}
      }
 
 document { homology,
-     TT "homology(f,g)", " -- computes the homology module (kernel f)/(image g).",
+     TT "homology(f,g)", " -- computes the homology module ", TT "(kernel f)/(image g)", ".",
      BR, NOINDENT,
      TT "homology", " -- a method name available for computing expressions
-     of the forms HH_i(X) and HH_i(M,N).",
+     of the forms ", TT "HH_i(X) and", " ", TT "HH_i(M,N).",
      PARA,
-     "If it is intended that i be of class ZZ, M be of class A, and N be of
-     class B, then the method can be installed with ",
-     PRE "   homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SEEALSO {"cohomology", "ScriptedFunctor"}
+     "If it is intended that ", TT "i", " be of class ", TT "ZZ", ", 
+     ", TT "M", " be of class ", TT "A", ", and ", TT "N", " be of
+     class ", TT "B", ", then the method can be installed with ",
+     PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
+     SEEALSO {"HH", "cohomology", "ScriptedFunctor"}
      }

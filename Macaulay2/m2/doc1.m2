@@ -108,7 +108,7 @@ document { topics,
      }
 
 document { apropos,
-     HEADLINE "symbols matching a patter",
+     HEADLINE "symbols matching a pattern",
      TT "apropos s", " -- displays a list of global symbols which match
      the pattern specified by the string ", TT "s", ".",
      PARA,
@@ -186,7 +186,6 @@ document { MutableList,
 
 document { lookup,
      HEADLINE "look up methods",
-     PARA,
      NOINDENT,
      TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
@@ -201,6 +200,7 @@ document { lookup,
      ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 
      is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with 
      the parent of ", TT "C", ", and so on.",
+     NOINDENT, TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
      PARA,
      "If no method is found, then ", TT "null", " is returned.",
      PARA,
@@ -380,9 +380,8 @@ document { (NewFromMethod, HashTable, List),
      list ", TT "x", ".",
      PARA,
      "Elements of ", TT "x", " which are options, ", TT "k => v", " cause
-     the value ", TT "v", " to be stored in ", TT "x", " under the key ", TT "k", ".
-     Other elements ", TT "s", " cause the value ", TT "true", " to be stored under 
-     the key ", TT "s", "."
+     the value ", TT "v", " to be stored in ", TT "x", " under the key ", TT "k", ".",
+     SEEALSO "hashTable"
      }
 
 document { OptionTable, HEADLINE "the class of hash tables for optional arguments", SEEALSO "==>" }

@@ -6,6 +6,8 @@ SelfInitializingType = new Type of Type
 SelfInitializingType.name = "SelfInitializingType"
 SelfInitializingType.Symbol = symbol SelfInitializingType
 SelfInitializingType Thing := (T,z) -> new T from z
+SelfInitializingType\List := (T,z) -> (i -> T i) \ z
+List/SelfInitializingType := (z,T) -> z / (i -> T i)
 
 Command = new SelfInitializingType of BasicList
 Command.name = "Command"
