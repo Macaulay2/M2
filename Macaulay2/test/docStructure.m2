@@ -1,17 +1,28 @@
 --		Copyright 1998 by Daniel R. Grayson
 
 Descent = new Type of MutableHashTable
-world = new Descent
 stars = n -> (
      d := depth n + height n;
      if d == 0 then n else (verticalJoin ( d : " " )) ^ (height n - 1) | n
      )
-net Descent := x -> stars verticalJoin sort apply( pairs x, (k,v) -> " " | k || net v )
+net Descent := x -> stars verticalJoin apply(values x.index, k -> "  " | k || net x#k )
+new Descent := Descent -> (
+     r := new MutableHashTable;
+     r.index = new MutableHashTable;
+     r)
+enter = method()
+enter(Descent, String) := (r,s) -> (
+     x := new Descent;
+     x.parent = r;
+     r.index#(#r.index) = s;
+     r#s = x;
+     x)
 
+currentDescent = world = new Descent
 reachable = new MutableHashTable
 
-reach1 := method(SingleArgumentDispatch=>true)
-reach2 := method(SingleArgumentDispatch=>true)
+reach1 = method(SingleArgumentDispatch=>true)
+reach2 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence :=
@@ -25,27 +36,29 @@ reach2 HtmlList := x -> scan(x,reach2)
 reach2 SHIELD := x -> null
 reach2 TO := x -> (
      s := getDocumentationTag x#0;
-     if not reachable#?s then (
+     if not reachable#?s or not reachable#s then (
 	  reachable#s = true;
-	  t := currentDescent;
-	  currentDescent = currentDescent#(formatDocumentTag s) = new Descent;
+	  currentDescent = enter(currentDescent, formatDocumentTag s);
 	  reach1 doc s;
-	  currentDescent = t;
+	  currentDescent = currentDescent.parent;
 	  ))
 
-reachable#(getDocumentationTag "Macaulay 2") = true
-
-topName = "Macaulay 2"
-currentDescent = world#topName = new Descent
-reach1 doc topName
+DocumentationProvided = set apply(topicList(), getDocumentationTag)
+scan(keys DocumentationProvided, s -> reachable#s = false)
+reach2 TO "Macaulay 2"
 
 fn = "docStructure.out"
-(
-     fn
-     -- << "-- -*- mode: Outline; truncate-lines: 1; -*- --" << endl
-     << world << endl
-     << close
+o = openOut fn
+o << world << endl
+
+unreachable = applyPairs(new HashTable from reachable, (k,v) -> if not v then (k,true))
+scan(sort keys unreachable, s -> (
+	  o << "documentation for '" << s << "' not reachable through main menus" << endl
+	  )
      )
+
+o << close
+
 << "Documentation structure written to file " << fn << endl
 
 

@@ -265,7 +265,9 @@ document { quote HashTable,
 	  },
      "Types of hash tables:",
      MENU {
-	  TO "MutableHashTable"
+	  TO "MutableHashTable",
+	  TO Set,
+	  TO Tally
 	  }
      }
 
@@ -1407,14 +1409,14 @@ document { quote =,
 document { quote :=,
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
-     TT "f X := (x) -> (...) ", " -- install a method for the method function
+     TT "f X := (x) -> ( ... )", " -- install a method for the method function
      ", TT "f", " acting on an argument of class ", TT "X", ".",
      BR,NOINDENT,
-     TT "X * Y := (x,y) -> (...)", " -- install a method for the operator
+     TT "X * Y := (x,y) -> ( ... )", " -- install a method for the operator
      ", TT "*", " applied to arguments of classes ", TT "X", " and ", TT "Y", ".
      Many other operators are allowed: see ", TO "operators", ".",
      PARA,
-     "This operator is schizophrenic in its function, as the installation
+     "This operator is slightly schizophrenic in its function, as the installation
      of a method has global effect if the classes involved are globally known,
      as is typically the case, whereas the assignment of a value to a local
      variable is never globally known."
@@ -1695,7 +1697,7 @@ document { quote Ring,
      "Ways to create new rings:",
      MENU {
 	  (TO (quote **,Ring,Ring), " -- tensor product of rings"),
-	  (TO (quote " ", Ring, OrdereMonoid), " -- monoid ring"),
+	  (TO (quote " ", Ring, OrderedMonoid), " -- monoid ring"),
 	  (TO "symmetricAlgebra", " -- symmetric algebra")
 	  },
      "Here are some keys used in rings:",
@@ -1779,10 +1781,10 @@ document { quote use,
 
 document { "reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT "./html", " contains the documentation in html
+     The directory ", TT "Macaulay2/html", " contains the documentation in html
      form, suitable for viewing with a web browser such as Netscape.",
      PARA,
-     "The directory ", TT "./book", " contains the code for producing
+     "The directory ", TT "Macaulay2/book", " contains the code for producing
      the documentation in TeX form, which can be printed or viewed with
      ", TT "xdvi", ".  A hyperTeX form of the book is also makeable there
      which can be viewed with ", TT "xhdvi", ", the most recent version of
@@ -1798,64 +1800,89 @@ document { "reading the documentation",
 document { "Macaulay 2",
      IMG "9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
-     algebraic geometry and commutative algebra.  Here are the basic
-     concepts needed to use it effectively.",
-     MENU { 
-	  TO "acknowledgements",
-	  TO "copyright and license",
-	  TO "reading the documentation",
-	  TO "getting started",
-	  TO "mathematical overview",
-	  TO "tutorials",
-	  TO "Thing", 
-	  TO "classes",
-	  TO "operators",
-	  TO "programming",
-	  TO "mathematics", 
-	  TO "help functions",
-	  TO "executing other programs",
-	  TO "debugging",
-	  TO "system",
-	  TO "syntax",
-	  SHIELD TO "engine",
-	  SHIELD TO "obsolete functions and symbols",
-	  TO "invoking the program",
-	  TO "translating programs from Macaulay",
-	  TO "how to get this program",
-	  TO "plans for the future",
-	  TO "the authors",
+     algebraic geometry and commutative algebra.",
+     MENU {
+	  {
+	       H2 "User's Guide",
+	       "Here are the basic concepts needed to use Macaulay 2 effectively.",
+	       MENU {
+		    TO "acknowledgements",
+		    TO "copyright and license",
+		    TO "how to get this program",
+		    TO "reading the documentation",
+		    TO "getting started",
+		    TO "mathematical overview",
+		    TO "programming overview",
+		    TO "translating programs from Macaulay",
+		    TO "plans for the future",
+		    TO "the authors",
+		    }
+	       },
+	  {
+	       H2 "Mathematical Vignettes",
+	       "In this section we present some tutorials which aim to introduce
+	       the user to some mathematical ways of using Macaulay 2.  The tutorials
+	       are relatively independent of each other, and each one introduces the use
+	       of some features of Macaulay 2 in a slow and leisurely way, assuming the
+	       reader is already familiar with the mathematical concepts involved.  
+	       ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
+	       MENU {
+		    TO "Elementary uses of Groebner bases",
+		    TO "Canonical Embeddings of Plane Curves and Gonality",
+		    TO "Fano varieties",
+		    TO "Divisors",
+		    TO "Homological Algebra 2",
+		    }
+	       },
+     	  { 
+	       H2 "Reference Manual",
+	       "This section is intended to offer detailed documentation on
+	       every aspect of the system of interest to users.",
+	       MENU {
+		    TO "invoking the program",
+		    TO "classes",
+		    TO "operators",
+		    TO "Thing", 
+		    TO "programming",
+		    TO "mathematics", 
+		    TO "executing other programs",
+		    TO "debugging",
+		    TO "system",
+	       	    TO "help functions",
+		    TO "syntax",
+		    TO "obsolete functions and symbols",
+		    },
+     	       },
+	  {
+	       H2 "Developer's Corner",
+	       MENU {
+	       	    TO "engine",
+		    TO "internals",
+	       	    }
+	       },
 	  }
      }
 
-document { "tutorials",
-     "In this chapter we present some tutorials which aim to introduce
-     the user to some mathematical ways of using Macaulay 2.  The tutorials
-     are relatively independent of each other, and each one introduces the use
-     of some features of Macaulay 2 in a slow and leisurely way, assuming the
-     reader is already familiar with the mathematical concepts involved.  
-     ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
+document { "internals",
+     "Here are some functions and classes that are intended for internal use 
+     by the developers only.",
      MENU {
-          TO "Tutorial:Elementary uses of Groebner bases",
-          -- TO "Tutorial:Binomial Ideals",
-	  TO "Tutorial:Canonical Embeddings of Plane Curves and Gonality",
-	  TO "Tutorial:Fano varieties",
-	  TO "Tutorial:Divisors",
-	  TO "Tutorial:Homological Algebra 2"
---	  TO "Tutorial:Multi-gradings",
---	  TO "Tutorial:Rational Normal Scrolls",
---	  TO "Example:Enriques surface"
+	  TO "formatDocumentTag",
 	  }
      }
 
 load "tutorials.m2"
 
 document { "acknowledgements",
-     "We thank the National Science Foundation for generous funding for 
-     this project, Gert-Martin Greuel and Ruediger Stobbe for the incorporation
-     of their ", TO "Factory library", ", Michael Messollen for the
-     incorporation of his ", TO "Factorization and characteristic sets library", ",
-     and David Eisenbud, Wolfram Decker and Sorin Popescu for early support,
-     encouragement and suggestions."
+     "We thank the National Science Foundation for generous funding since
+     1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
+     incorporation of their ", TO "Factory library", ", Michael Messollen for
+     the incorporation of his ", TO "Factorization and characteristic sets library", ",
+     and David Eisenbud, Wolfram Decker and Sorin Popescu for
+     early support, encouragement and suggestions.  We also acknowledge an
+     intellectual debt to David Bayer, who, with Michael Stillman,
+     wrote Macaulay, a specialized computer algebra system for algebraic
+     geometry and the predecessor of this program."
      }
 
 document { "plans for the future",
@@ -1872,7 +1899,7 @@ document { "plans for the future",
 	  "The ability to trap errors by type",
 	  "Ensure that all routines handle inhomogeneous modules."
 	  },
-     "Here are some known bugs:",
+     "Here are some known problems.",
      MENU {
 	  ("The ", TO "DegreeLimit", " option doesn't work with ", TO "saturate", "
 	  or ", TO "quotient", ".  This will be fixed soon."),
@@ -1917,13 +1944,6 @@ document { "copyright and license",
 	  TO "GNU MP",
 	  TO "GC garbage collector"
 	  }
-     }
-
-document { "MP: Multi Protocol",
-     "Macaulay 2 incorporates code from the MP (Multi Protocol) subroutine
-     library written by S. Gray, N. Kajler, and P. Wang.  The license is
-     contained in its README file, part of which we provide in the file
-     ", TT "Macaulay2/licenses/mp.lic", "."
      }
 
 document { "GC garbage collector",
@@ -2087,14 +2107,6 @@ document { "Daniel R. Grayson",
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA,
-     "In January, 1993, he and Michael Stillman received funding from the NSF
-     to produce a successor to Macaulay, the computer program written by
-     Stillman and David Bayer which supports computations in commutative
-     algebra and algebraic geometry.  The result is the program whose
-     documentation you are reading, Macaulay 2.",
-     PARA,
-     HR,
-     PARA,
      IMG "Grayson2.jpg"
      }
 
@@ -2107,20 +2119,16 @@ document { "Michael E. Stillman",
      computational algebraic geometry and algebraic geometry.  He started writing
      syzygy programs as an undergraduate at the University of Illinois, and from
      1983 to 1992 with David Bayer he wrote Macaulay, a specialized computer
-     algebra system for algebraic geometry and a predecessor of this program.",
-     PARA,
-     "In June, 1993, he and Daniel Grayson received funding from the NSF
-     to produce a successor to Macaulay, the computer program written by
-     Stillman and David Bayer which supports computations in commutative
-     algebra and algebraic geometry.  The result is the program whose
-     documentation you are reading, Macaulay 2."
+     algebra system for algebraic geometry and the predecessor of this program."
      }
 
 document { "how to get this program",
-     "The program is available over the web at the
-     ", HREF {"http://www.math.uiuc.edu/Macaulay2","Macaulay 2 home page"}, ", or by 
-     anonymous ftp to the host ", TT "ftp.math.uiuc.edu", ", in the subdirectory
-     ", TT "Macaulay2", "."
+     "The program is available over the web at the Macaulay 2 home page
+     ", HREF {"http://www.math.uiuc.edu/Macaulay2"}, ", or by 
+     ftp to the host ", TT "ftp.math.uiuc.edu", ", user name ", TT "Macaulay2", ",
+     password ", TT "Macaulay2", ".  There you will find the documentation, both in
+     readable form and available for downloading, the source code, ready for compiling
+     on the machine of your choice, and various precompiled versions, ready to run."
      }
 
 document { "syntax",
@@ -2416,8 +2424,8 @@ document { "mathematics",
 	  TO "Ring",
 	  TO "Ideal",
 	  TO "Module",
+	  TO "ModuleMap",
 	  TO "Matrix",
-	  -- TO "AbstractFreeModule",
 	  TO "GradedModule",
 	  TO "ChainComplex",
 	  TO "GroebnerBasis",
@@ -3700,8 +3708,18 @@ document { quote linkFilename,
      PARA,
      "The value returned is a sequence number, and hence may not be
      the same in subsequent sessions.  Hence this is mainly useful
-     for creating html for all the on-line documentation, and the general 
-     user will not find it useful."
+     for creating html for all the online documentation, and the general 
+     user will not find it useful.",
+     PARA,
+     SEEALSO "linkFilenameKeys"
+     }
+
+document { quote linkFilenameKeys,
+     TT "linkFilenameKeys()", " -- returns a list of the strings which
+     have been given to ", TO "linkFilename", ".",
+     PARA,
+     "This function is intended mainly for internal use in generating
+     the documentation for Macaulay 2."
      }
 
 document { quote collectGarbage,
@@ -3825,219 +3843,242 @@ document { "emacs",
      user to scroll horizontally to see the rest of the output.  We
      provide a package for emacs which implements this, in
      ", TT "emacs/M2.el", ".  It also provides for dynamic completiong
-     of symbols in the language.  See ", TO "running Macaulay2 in emacs", ".",
+     of symbols in the language.  See ", TO "running Macaulay 2 in emacs", ".",
      PARA,
      "A package for editing program text in the Macaulay 2 language
      is available in ", TT "emacs/M2-mode.el", ".  It also provides for
      dynamic completion of symbols in the language.  See ",
-     TO "editing Macaulay2 code with emacs", "."
+     TO "editing Macaulay 2 code with emacs", "."
      }
 
-document { "running Macaulay2 in emacs",
-     "If you are a newcomer to emacs, start up emacs with the command ",
-     TT "emacs", " and then start up the emacs tutorial with the keystrokes ",
-     TT "C-H t", ".  (The symbol ", TT "C-H", " indicates that you should type 
-     ", TT "Control-H", ", i.e., while holding down the control key, 
-     press ", TT "H", ".)  The emacs tutorial will introduce you to the
-     basic keystrokes useful with emacs.  After running through that you will want
-     to examine the on-line emacs manual which can be read with ", TT "info", "
-     mode; enter it with the keystrokes ", TT "C-H i", ".  You may also want
-     to purchase (or print out) the emacs manual.  It is cheap,
-     comprehensive and informative.  Once you have spent an hour with the emacs
-     tutorial and manual, come back and continue from this point.",
-     PARA,
-     "Edit your ", TT ".emacs", " initialization file, located in your home directory,
-     creating one if necessary.  Insert into it the following lines of emacs-lisp
-     code.",
-     PARA,
-     CODE ///(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
+document { "running Macaulay 2 in emacs",
+-- don't indent
+"The best way to run Macaulay 2 is with GNU emacs,
+a versatile text editor written by Richard Stallman which
+runs well under most UNIX systems.  Its
+web page is ", HREF "http://www.gnu.org/software/emacs/emacs.html", "
+and the software can be obtained from one of the ftp sites listed
+at ", HREF "http://www.gnu.org/order/ftp.html", "; the primary ftp
+site is ", HREF "ftp://ftp.gnu.org/pub/gnu", ".",
+PARA,
+"There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
+See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
+details about how to get it, as well as information about how to swap your
+caps lock and control keys.",
+PARA,
+"There is an ASCII version of this section of the documentation distributed
+in the file ", TT "emacs/emacs.hlp", ".  It might be useful for you to visit
+that file with emacs now, thereby avoiding having to cut and paste bits of
+text into emacs buffers for the deomonstrations below.",
+PARA,
+"If you are a newcomer to emacs, start up emacs with the command 
+", TT "emacs", " and then start up the emacs tutorial with the keystrokes 
+", TT "C-H t", ".  (The notation ", TT "C-H", " indicates that you should type 
+", TT "Control-H", ", by holding down the control key, 
+and pressing ", TT "H", ".)  The emacs tutorial will introduce you to the
+basic keystrokes useful with emacs.  After running through that you will want
+to examine the online emacs manual which can be read with ", TT "info", "
+mode; you may enter or re-enter that mode with the keystrokes ", TT "C-H i", ".  
+You may also want to purchase (or print out) the emacs manual.  It is cheap,
+comprehensive and informative.  Once you have spent an hour with the emacs
+tutorial and manual, come back and continue from this point.",
+PARA,
+"Edit your ", TT ".emacs", " initialization file, located in your home directory,
+creating one if necessary.  (Under Windows, this file is called ", TT "_emacs", ".)
+Insert into it the following lines of emacs-lisp code.",
+PARA,
+CODE ///(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
 (autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)
 (global-set-key "\^Cm" 'M2) (global-set-key [ f12 ] 'M2)
+(global-set-key "\^Cm" 'M2) (global-set-key [ SunF37 ] 'M2)
 (autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
 (setq load-path (cons "/usr/local/Macaulay2/emacs" load-path))
 (make-variable-buffer-local 'transient-mark-mode)
 (add-hook 'M2-mode-hook '(lambda () (setq transient-mark-mode t)))
 (add-hook 'comint-M2-hook '(lambda () (setq transient-mark-mode t)))///,
-     PARA,
-     "The first two lines cause emacs to enter a special mode for editing Macaulay 2
-     code whenever a file whose name has the form ", TT "*.m2", " is encountered.  
-     The next two lines provide a special mode for running Macaulay 2 in an emacs buffer.
-     The fifth line tells emacs where to find the emacs-lisp files provided in the
-     Macaulay 2 emacs directory - you must edit the string in that line to
-     indicate the correct path on your system to the Macaulay 2 emacs directory.
-     The files needed from that directory are ", TT "M2-mode.el", ",
-     ", TT "M2-symbols.el", ", and ", TT "M2.el", ".  The sixth line sets
-     the variable ", TT "transient-mark-mode", " so that it can
-     have a different value in each buffer.  The seventh and eighth lines set
-     hooks so that ", TT "transient-mark-mode", " will be set to ", TT "t", " 
-     in M2 buffers.  The effect of this is that the mark is only active occasionally,
-     and then emacs functions which act on a region of text will refuse to proceed 
-     unless the mark is active.  The ", TT "set-mark", " function or the
-     ", TT "exchange-point-and-mark", " function will activate the mark, and it
-     will remain active until some change occurs to the buffer.  The only reason
-     we recommend the use of this mode is so the same key can be used to evaluate 
-     a line or a region of code, depending on whether the region is active.",
-     PARA,
-     "Exit and restart emacs with your new ", TT ".emacs", " initialization file.  
-     Use the keystrokes ", TT "C-x 2", " to divide the buffer containing this file 
-     into two windows, and then press the ", TT "F12", " function key to start up 
-     Macaulay 2 in a buffer named ", TT "*M2*", ".",
-     PARA,
-     "If this doesn't start up Macaulay 2, one reason may be that your function
-     keys are not operable.  In that case press ", TT "C-C m", " instead.  (The 
-     notation ", TT "C-C", " is standard emacs notation for Control-C.)",
-     PARA,
-     "You may use ", TT "C-x o", " freely to switch from one window to the other.
-     Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
-     Now return to the buffer containing this file and position the cursor on the 
-     first line of code below and press the ", TT "F11", " function key (or 
-     ", TT "C-C s", ") repeatedly to present each line to Macaulay 2.",
-     PARA,
-     CODE ///i1 = R = ZZ/101[x,y,z]
+PARA,
+"The first two lines cause emacs to enter a special mode for editing Macaulay 2
+code whenever a file whose name has the form ", TT "*.m2", " is encountered.  
+The next three lines provide a special mode for running Macaulay 2 in an emacs buffer.
+The sixth line tells emacs where to find the emacs-lisp files provided in the
+Macaulay 2 emacs directory - you must edit the string in that line to
+indicate the correct path on your system to the Macaulay 2 emacs directory.
+The files needed from that directory are ", TT "M2-mode.el", ",
+", TT "M2-symbols.el", ", and ", TT "M2.el", ".  The seventh line sets
+the variable ", TT "transient-mark-mode", " so that it can
+have a different value in each buffer.  The eighth and ninth lines set
+hooks so that ", TT "transient-mark-mode", " will be set to ", TT "t", " 
+in M2 buffers.  The effect of this is that the mark is only active occasionally,
+and then emacs functions which act on a region of text will refuse to proceed 
+unless the mark is active.  The ", TT "set-mark", " function or the
+", TT "exchange-point-and-mark", " function will activate the mark, and it
+will remain active until some change occurs to the buffer.  The only reason
+we recommend the use of this mode is so the same key can be used to evaluate 
+a line or a region of code, depending on whether the region is active.",
+PARA,
+"Exit and restart emacs with your new initialization file.  
+If you are reading this file with emacs, then use the keystrokes
+", TT "C-x 2", " to divide the buffer containing this file into two windows.
+Then press the ", TT "F12", " function key to start up 
+Macaulay 2 in a buffer named ", TT "*M2*", ".",
+PARA,
+"If this doesn't start up Macaulay 2, one reason may be that your function
+keys are not operable.  In that case press ", TT "C-C m", " instead.  (The 
+notation ", TT "C-C", " is standard emacs notation for Control-C.)  Another
+reason may be that you have not installed Macaulay 2 properly - the executables
+should be on your path.",
+PARA,
+"You may use ", TT "C-x o", " freely to switch from one window to the other.
+Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
+Now paste the following text into a buffer, unless you have the ASCII
+version of this documentation in an emacs buffer already, and position
+the cursor on the first line of code, and press the ", TT "F11", " function 
+key (or ", TT "C-C s", ") repeatedly to present each line to Macaulay 2.",
+PARA,
+CODE ///i1 = R = ZZ/101[x,y,z]
 i2 = f = symmetricPower(2,vars R)
 i3 = M = cokernel f
 i4 = C = resolution M
 i5 = betti C///,
-     PARA,
-     "Notice that the input prompts are not submitted to Macaulay 2.",
-     PARA,
-     "Here is a way to conduct a demo of Macaulay 2 in which the code to be
-     submitted is not visible on the screen.  Enter the following text into
-     an emacs buffer.",
-     PARA,
-     CODE ///20!
+PARA,
+"Notice that the input prompts are not submitted to Macaulay 2.",
+PARA,
+"Here is a way to conduct a demo of Macaulay 2 in which the code to be
+submitted is not visible on the screen.  Paste the following text into
+an emacs buffer.",
+PARA,
+CODE ///20!
 4 + 5 2^20
 -- that's all folks!///,
-     PARA,
-     "Press ", TT "M-F11", " now with your cursor in this buffer to designate it as
-     the source for the Macaulay 2 commands.  (The notation ", TT "M-F11", " means 
-     that while holding the ", TT "Meta", " key down, you should press the ", TT "F11", " 
-     key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
-     pressing Escape (just once) and following that with the key you wanted to press 
-     while the meta key was held down.)  Then position your cursor (and thus the 
-     emacs point) within the line containing ", TT "20!", ".  Now press ", TT "M-F12", "
-     to open up a new frame called ", TT "DEMO", " for the ", TT "*M2*", " window with
-     a large font suitable for use with a projector, and with your cursor in that
-     frame, press ", TT "F11", " a few times to conduct the demo.",
-     PARA,
-     "One press of ", TT "F11", " brings the next line of code forward into the
-     ", TT "*M2*", " buffer, and the next press executes it.  Use ", TT "C-x 5 0", " 
-     when you want the demo frame to go away.",
-     PARA,
-     "There is a way to send a region of text to Macaulay 2: simply select a region
-     of text, making sure the mark is active (as described above) and press ", TT "F11", ".
-     Try that on the list below; put it into an emacs buffer, move your cursor to the 
-     start of the list, press ", TT "M-C-@", " or ", TT "M-C-space", " to mark the list, 
-     and then press ", TT "F11", " to send it to Macaulay 2.  (The notation ", TT "M-C-@", " means: 
-     while holding down the Meta key and the Control key press the ", TT "@", " key, for 
-     which you'll also need the shift key.)",
-     PARA,
-     CODE ///{a,b,c,d,e,f,
+PARA,
+"Press ", TT "M-F11", " with your cursor in this buffer to designate it as
+the source for the Macaulay 2 commands.  (The notation ", TT "M-F11", " means 
+that while holding the ", TT "Meta", " key down, you should press the ", TT "F11", " 
+key.  The Meta key is the Alt key on some keyboards, or it can be simulated by 
+pressing Escape (just once) and following that with the key you wanted to press 
+while the meta key was held down.)  Then position your cursor (and thus the 
+emacs point) within the line containing ", TT "20!", ".  Now press ", TT "M-F12", "
+to open up a new frame called ", TT "DEMO", " for the ", TT "*M2*", " window with
+a large font suitable for use with a projector, and with your cursor in that
+frame, press ", TT "F11", " a few times to conduct the demo.  (If the font or frame is the
+wrong size, you may have to create a copy of the file ", TT "M2.el", "
+with a version of the function ", TT "M2-demo", " modified to fit your screen.)",
+PARA,
+"One press of ", TT "F11", " brings the next line of code forward into the
+", TT "*M2*", " buffer, and the next press executes it.  Use ", TT "C-x 5 0", " 
+when you want the demo frame to go away.",
+PARA,
+"There is a way to send a region of text to Macaulay 2: simply select a region
+of text, making sure the mark is active (as described above) and press ", TT "F11", ".
+Try that on the list below; put it into an emacs buffer, move your cursor to the 
+start of the list, press ", TT "M-C-@", " or ", TT "M-C-space", " to mark the list, 
+and then press ", TT "F11", " to send it to Macaulay 2.  (The notation ", TT "M-C-@", " 
+means: while holding down the Meta key and the Control key press the ", TT "@", " key, 
+for which you'll also need the shift key.)",
+PARA,
+CODE ///{a,b,c,d,e,f,
 g,h,i,j,k,l,
 m,n}///,
-     PARA,
-     "We have developed a system for incorporating Macaulay 2 interactions into TeX
-     files.  Here is an example of how that looks.  Paste the following text
-     into an emacs buffer.",
-     PARA,
-     CODE ///The answer, 4, is displayed after the output label ``{\tt o1\ =}''.
+PARA,
+"We have developed a system for incorporating Macaulay 2 interactions into TeX
+files.  Here is an example of how that looks.  Paste the following text
+into an emacs buffer.",
+PARA,
+CODE ///The answer, 4, is displayed after the output label ``{\tt o1\ =}''.
 Multiplication is indicated with the traditional {\tt *}.
 <<<1*2*3*4>>>
 Powers are obtained as follows.
 <<<2^100>>>///,
-     PARA,
-     "The bits in brackets can be submitted to Macaulay 2 easily.  Position your
-     cursor at the top of the buffer and press ", TT "F10.", "  The cursor will move 
-     just past the first ", TT "<<<", ", and the emacs mark will be positioned just 
-     before the ", TT ">>>", ".  Thus ", TT "1*2*3*4", " is the region, and it will
-     even be highlighted if you have put the line",
-     PARA,
-     CODE ///(setq transient-mark-mode t)///,
-     PARA,
-     "into your emacs init file.  Then pressing ", TT "F11", " will send ", TT "1*2*3*4", " 
-     to Macaulay 2 for execution: try it now.  A sequence of such Macaulay 2 commands 
-     can be executed by alternately pressing ", TT "F10", " and ", TT "F11", ".  You may
-     also use ", TT "M-F10", " to move backward to the previous bracketed expression.",
-     PARA,
-     "Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
-     following line of code (with the ", TT "F11", " key as above.)",
-     PARA,
-     CODE ///random(R^20,R^{6:-2})///,
-     PARA,
-     "Notice that the long lines in the Macaulay 2 window, instead of being wrapped
-     around to the next line, simply disappear off the right side of the screen,
-     as indicated by the dollar signs in the rightmost column.  Switch to the
-     other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-     and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-C <", ") 
-     and the function key ", TT "F4", " (or ", TT "C-C >", ").  Notice how the use of
-     ", TT "C-E", " to go to the end of the line
-     sends the cursor to the dollar sign at the right hand side of the screen;
-     that's where the cursor will appear whenever you go to a position off the
-     screen to the right.  Then use the ", TT "F2", " function key (or ", TT "C-C .", ") to 
-     scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-A", " to 
-     move to the beginning of the line and then the ", TT "F2", " function key (or ", TT "C-C .", ") 
-     to bring the left margin back into view.",
-     PARA,
-     "You may use the ", TT "F5", " function key or (or ", TT "C-C ?", ") to 
-     toggle whether long lines are truncated or wrapped;initially they are truncated
-     so the keystrokes described above work.",
-     PARA,
-     "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
-     experiment with keyword completion.  Type ", TT "reso", " and then press the 
-     ", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
-     for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
-     and then press the ", TT "TAB", " key.  The possible completions are displayed 
-     in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
-     completion, select it with the ", TT "RETURN", " key, and then return to the 
-     ", TT "*M2*", " buffer with ", TT "C-X o", ".  Alternatively, if you have a
-     mouse, use the middle button to select the desired completion.",
-     PARA,
-     "Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
-     your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
-     to move to the previous and next line of input remembered in the history.  When you 
-     get to one you'd like to run again, simply press return to do so.  Or edit it
-     slightly to change it before pressing return."
-     }
+PARA,
+"The bits in brackets can be submitted to Macaulay 2 easily.  Position your
+cursor at the top of the buffer and press ", TT "F10.", "  The cursor will move 
+just past the first ", TT "<<<", ", and the emacs mark will be positioned just 
+before the ", TT ">>>", ".  Thus ", TT "1*2*3*4", " is the region, and it will
+even be highlighted if you have set the emacs variable ", TT "transient-mark-mode", "
+to ", TT "t", " for this buffer.  Pressing ", TT "F11", " will send ", TT "1*2*3*4", " 
+to Macaulay 2 for execution: try it now.  A sequence of such Macaulay 2 commands 
+can be executed by alternately pressing ", TT "F10", " and ", TT "F11", ".  You may
+also use ", TT "M-F10", " to move backward to the previous bracketed expression.",
+PARA,
+"Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
+following line of code.",
+PARA,
+CODE ///random(R^20,R^{6:-2})///,
+PARA,
+"Notice that the long lines in the Macaulay 2 window, instead of being wrapped
+around to the next line, simply disappear off the right side of the screen,
+as indicated by the dollar signs in the rightmost column.  Switch to the
+other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-C <", ") 
+and the function key ", TT "F4", " (or ", TT "C-C >", ").  Notice how the use of
+", TT "C-E", " to go to the end of the line
+sends the cursor to the dollar sign at the right hand side of the screen;
+that's where the cursor will appear whenever you go to a position off the
+screen to the right.  Then use the ", TT "F2", " function key (or ", TT "C-C .", ") to 
+scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-A", " to 
+move to the beginning of the line and then the ", TT "F2", " function key 
+(or ", TT "C-C .", ") to bring the left margin back into view.",
+PARA,
+"You may use the ", TT "F5", " function key or (or ", TT "C-C ?", ") to 
+toggle whether long lines are truncated or wrapped; initially they are truncated.",
+PARA,
+"Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
+experiment with keyword completion.  Type ", TT "reso", " and then press the 
+", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
+for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
+and then press the ", TT "TAB", " key.  The possible completions are displayed 
+in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
+completion, select it with the ", TT "RETURN", " key, and then return to the 
+", TT "*M2*", " buffer with ", TT "C-X o", ".  Alternatively, if you have a
+mouse, use the middle button to select the desired completion.",
+PARA,
+"Experiment with command line history in the ", TT "*M2*", " buffer.  Position 
+your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
+to move to the previous and next line of input remembered in the history.  When you 
+get to one you'd like to run again, simply press return to do so.  Or edit it
+slightly to change it before pressing return."
+}
 
-document { "editing Macaulay2 code with emacs",
-     "In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
-     have set up your emacs init file as described in ", TO "running Macaulay2 in emacs", "
-     when you visit a file whose name ends with ", TT ".m2", " 
-     you will see on the mode line the name ", TT "Macaulay 2", " in
-     parentheses, indicating that the file is being edited in Macaulay 2 mode.",
-     PARA,
-     "To see how electric parentheses, electric semicolons, and indentation work,
-     move to a blank line of this file and type the following text.",
-     PARA,
-     CODE ///f = () -> (
+document { "editing Macaulay 2 code with emacs",
+-- don't indent
+"In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
+have set up your emacs init file as described in ", TO "running Macaulay 2 in emacs", "
+when you visit a file whose name ends with ", TT ".m2", " 
+you will see on the mode line the name ", TT "Macaulay 2", " in
+parentheses, indicating that the file is being edited in Macaulay 2 mode.",
+PARA,
+"To see how electric parentheses, electric semicolons, and indentation work,
+move to a blank line of this file and type the following text.",
+PARA,
+CODE ///f = () -> (
      a := 4;
      b := {6,7};
      a+b)///,
-     PARA,
-     "Observe carefully how matching left parentheses are indicated briefly when a
-     right parenthesis is typed.",
-     PARA,
-     "Now position your cursor in between the 6 and 7.  Notice how
-     pressing ", TT "M-C-u", " moves you up out of the list to its left.  Do it 
-     again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
-     and back over complete parenthesized
-     expressions.  (In the emacs manual a complete parenthesized expression is
-     referred to as an sexp, which is an abbreviation for S-expression.)  Try out
-     ", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
-     expression, and see how to use ", TT "C-W", " to kill them and ", TT "C-Y", " to yank 
-     them back.  Experiment with ", TT "M-C-K", " to kill the next complete parenthesized 
-     expression.",
-     PARA,
-     "Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
-     for you with two hyphens, and position the cursor at the point where commentary
-     may be entered.",
-     PARA,
-     "Type ", TT "res", " somewhere and then press ", TT "C-C TAB", " to bring up the
-     possible completions of the word to documented Macaulay 2 symbols.",
-     PARA,
-     "Notice how ", TT "C-H m", " will display the keystrokes peculiar to the mode in 
-     a help window."
-     }
+PARA,
+"Observe carefully how matching left parentheses are indicated briefly when a
+right parenthesis is typed.",
+PARA,
+"Now position your cursor in between the 6 and 7.  Notice how
+pressing ", TT "M-C-u", " moves you up out of the list to its left.  Do it 
+again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
+and back over complete parenthesized
+expressions.  (In the emacs manual a complete parenthesized expression is
+referred to as an sexp, which is an abbreviation for S-expression.)  Try out
+", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
+expression, and see how to use ", TT "C-W", " to kill them and ", TT "C-Y", " to yank 
+them back.  Experiment with ", TT "M-C-K", " to kill the next complete parenthesized 
+expression.",
+PARA,
+"Position your cursor on the 4 and observe how ", TT "M-;", " will start a comment 
+for you with two hyphens, and position the cursor at the point where commentary
+may be entered.",
+PARA,
+"Type ", TT "res", " somewhere and then press ", TT "C-C TAB", " to bring up the
+possible completions of the word to documented Macaulay 2 symbols.",
+PARA,
+"Finally, notice how ", TT "C-H m", " will display the keystrokes peculiar to 
+the mode in a help window."
+}
 
 document { quote oo,
      TT "oo", " -- denotes the value of the expression on the previous output
@@ -4232,6 +4273,146 @@ document { quote profile,
 document { quote profileSummary,
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
+     }
+
+document { quote globalAssignFunction,
+     TT "globalAssignFunction", " -- the standard function which can be used
+     as a method for ", TO GlobalAssignHook, " so that certain types of
+     mutable hash tables ", TT "X", ", when assigned to a global variable, will acquire
+     the name of the global variable as their name.  The companion function
+     ", TO "globalReleaseFunction", " is used to release the name when the
+     global variable gets reassigned.",
+     PARA,
+     "The current way this function works is by storing the string used for
+     printing under ", TT "X.name", " and storing the global variable under
+     ", TT "X.symbol", ".",
+     PARA,
+     "Another thing done by this function is to apply ", TO use, " to the thing.
+     This is used for polynomial rings to assign values to the symbols representing
+     the variables (indeterminates) in the ring.",
+     PARA,
+     EXAMPLE "X = new Type of MutableHashTable",
+     EXAMPLE "x = new X",
+     EXAMPLE "GlobalAssignHook X := globalAssignFunction",
+     EXAMPLE "GlobalReleaseHook X := globalReleaseFunction",
+     EXAMPLE "x' = new X",
+     EXAMPLE "t = {x,x'}",
+     EXAMPLE "x = x' = 44",
+     EXAMPLE "t",
+     EXAMPLE "code globalAssignFunction",
+     SEEALSO { "name", "symbol" }
+     }
+
+document { quote globalReleaseFunction,
+     TT "globalReleaseFunction", " -- the standard function which can be used as
+     a method for ", TO GlobalReleaseHook, " so that certain types of things, which
+     have acquired as their name the name of a global variable to which they have
+     been assigned, will lose that name when a different value is assigned to
+     the variable.",
+     PARA,
+     SEEALSO "globalAssignFunction"
+     }
+
+document { "MP: Multi Protocol",
+     "Macaulay 2 incorporates code from the MP (Multi Protocol) subroutine
+     library written by S. Gray, N. Kajler, and P. Wang.  The license is
+     contained in its README file, part of which we provide in the file
+     ", TT "Macaulay2/licenses/mp.lic", ".",
+     PARA,
+     "The implementation is only experimental at this stage.",
+     PARA,
+     MENU {
+	  TO "PutAnnotationPacket",
+	  TO "PutCommonMetaOperatorPacket",
+	  TO "PutCommonMetaTypePacket",
+	  TO "PutCommonOperatorPacket",
+	  TO "PutOperatorPacket",
+	  TO "WritePacket",
+	  TO "closeLink",
+	  TO "openLink",
+	  TO "writeMessage",
+	  TO "writePacket",
+	  TO "writeRawPacket",
+	  }
+     }
+
+document { quote PutAnnotationPacket,
+     TT "PutAnnotationPacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote PutCommonMetaOperatorPacket,
+     TT "PutCommonMetaOperatorPacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote PutCommonMetaTypePacket,
+     TT "PutCommonMetaTypePacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote PutCommonOperatorPacket,
+     TT "PutCommonOperatorPacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote PutOperatorPacket,
+     TT "PutOperatorPacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote WritePacket,
+     TT "WritePacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote closeLink,
+     TT "closeLink", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote openLink,
+     TT "openLink", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote writeMessage,
+     TT "writeMessage", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote writePacket,
+     TT "writePacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+document { quote writeRawPacket,
+     TT "writeRawPacket", " -- a function used for our experimental implementation of
+     MP (Multi Protocol).",
+     PARA,
+     SEEALSO "MP: Multi Protocol"
+     }
+
+document { quote symbol,
+     TT "symbol", " -- a symbol used as a key in a hash table under which to store
+     the variable to which the hash table has been assigned as value.",
+     PARA,
+     "This is intended mainly for internal use.",
+     PARA,
+     SEEALSO "globalAssignFunction"
+     }
+
+document { "programming overview",
      }
 
 -- these files are made at compile time

@@ -127,15 +127,8 @@ lookupi := x -> (
      r)
 
 ListHead = new Type of Type
-
 ListHead List := (h,y) -> new h from y
-
-ListHead String := 
-ListHead Symbol := 
-ListHead Function := 
-ListHead Type := 
-ListHead Sequence := 
-ListHead HtmlList := (h,y) -> new h from {y}
+ListHead Thing := (h,y) -> new h from {y}
 
 GlobalAssignHook ListHead := globalAssignFunction
 
@@ -191,11 +184,8 @@ name ParaHead := x -> "PARA"
 PARA          = ParaHead {}
 
 EXAMPLE    = newListHead "EXAMPLE"
-text EXAMPLE := x -> text PRE x#0
-
-html EXAMPLE := x -> html TABLE {{PRE x}}
--- html EXAMPLE := x -> html PRE x#0
--- html EXAMPLE := x -> html TABLE {{ CODE x#0 }}
+text EXAMPLE := x -> concatenate apply(toList x,i -> text PRE i)
+html EXAMPLE := x -> concatenate apply(toList x, x -> html TABLE {{PRE x}})
 
 TABLE      = newListHead "TABLE"
 text TABLE := x -> (
@@ -323,8 +313,12 @@ html CODE   := x -> concatenate(
 hypertex = true
 
 HREF       = newListHead "HREF"
-html HREF := x -> "<A HREF=\"" | x#0 | "\">" | x#1 | "</A>"
-text HREF := x -> "\"" | x#1 | "\""
+html HREF := x -> (
+     "<A HREF=\"" | x#0 | "\">" | 
+     (if #x === 2 then x#1 else x#0) | 
+     "</A>"
+     )
+text HREF := x -> "\"" | (if #x === 2 then x#1 else x#0) | "\""
 tex HREF := s -> (
      if hypertex 
      then concatenate(
@@ -344,20 +338,20 @@ html TEX := x -> x#0
 MENU       = newListHead "MENU"
 html MENU := x -> concatenate (
      "<MENU>", newline,
-     apply(x, s-> ("<LI>", html s, newline)),
+     apply(x, s -> if s =!= null then ("<LI>", html s, newline)),
      "</MENU>", newline, 
      "<P>", newline)
 
 text MENU := x -> concatenate(
      newline,
-     apply(x, s -> ("    ", text s, newline))
+     apply(x, s -> if s =!= null then ("    ", text s, newline))
      )
 
 tex MENU := x -> concatenate(
      ///
 \begingroup\parindent=40pt
 ///,
-     apply(x, x -> ( ///\item {$\bullet$}///, tex x, newline)),
+     apply(x, x -> if x =!= null then ( ///\item {$\bullet$}///, tex x, newline)),
      "\\endgroup", newline, newline)
 
 UL         = newListHead "UL"

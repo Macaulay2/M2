@@ -61,46 +61,56 @@ document { quote MutableList,
      }
 
 document { quote lookup,
-     TT "lookup(M,A)", "     -- provides the binary method named ", TT "M", " for class ", TT "A", ".
+     TT "lookup", " -- a function for looking up methods.",
+     PARA,
+     NOINDENT,
+     TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
      the parent of ", TT "A", ", and so on.",
-     BR,
-     NOINDENT, TT "lookup(M,A,B)", "   -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
+     PARA,
+     NOINDENT, TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
      The first place to look is ", TT "Y#(M,A,B)", " where ", TT "Y", " is the younger
-     of ", TT "A", " and ", TT "B", ".  The search proceeds next with the parent of ", TT "B", ", and so on.",
-     BR,
-     NOINDENT, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for ", TT "(A,B,C)", ".
-     The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " is the youngest
-     of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with the parent of ", TT "C", ", and so on.",
+     of ", TT "A", " and ", TT "B", ".  The search proceeds next with the parent of ", TT "B", ", 
+     and so on.",
+     PARA,
+     NOINDENT, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
+     ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 
+     is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with 
+     the parent of ", TT "C", ", and so on.",
      PARA,
      "If no method is found, then ", TT "null", " is returned.",
      PARA,
-     SEEALSO {"classes", "installMethod"}
+     SEEALSO {"#", "classes", "installMethod"}
      }
 
 document { quote installMethod,
      TT "installMethod", " -- a function for installing methods.",
      PARA,
      "Most users will use a different way of installing methods.",
-     BR,NOINDENT,
+     PARA,
+     NOINDENT,
      TT "installMethod(M,A,f)", "     -- installs a function ", TT "f", " as a unary method for
-     the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " if ", TT "M", " 
-     is a function.  As currently implemented, this is also the same as ", TT "A#M = f", ".",
-     BR,
-     NOINDENT, TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
-     classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as ", TT "M(A,B) := f", " if ", TT "M", " is a
+     the class ", TT "A", " under the name ", TT "M", ".  This is the same as ", "M A := f", " 
+     if ", TT "M", " is a function.  As currently implemented, this is also the same 
+     as ", TT "A#M = f", ".",
+     PARA,
+     NOINDENT,
+     TT "installMethod(M,A,B,f)", "   -- installs a function ", TT "f", " as a binary method for
+     classes ", TT "A", " and ", TT "B", " under the name ", TT "M", ".  This is the same as 
+     ", TT "M(A,B) := f", " if ", TT "M", " is a
      function, or the same as ", TT "A M B := f", " if ", TT "M", " is a binary operator. As currently
      implemented, this is also the same as ", TT "Y#(M,A,B) = f", ", where ", TT "Y", " is 
      the younger of ", TT "A", " and ", TT "B", ".",
-     BR,
-     NOINDENT, TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
-     for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
-     is a function.  As currently implemented, this is also the same as
-     ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".",
      PARA,
-     "In all case, ", TT "f", " may also be a list ", TT "{D,f,doc...}", ", where ", TT "D", " is the class of the value
-     returned by the function ", TT "f", ", and ", TT "{doc...}", " is documentation.",
-     SEEALSO{ "lookup",  "new", "classes"}
+     NOINDENT,
+     TT "installMethod(M,A,B,C,f)", " -- installs a function ", TT "f", " as a ternary method 
+     for classes ", TT "A", ", ", TT "B", ", and ", TT "C", " under the name ", TT "M", ".  
+     This is the same as ", TT "M(A,B,C) := f", " if ", TT "f", "
+     is a function.  As currently implemented, this is also the same as
+     ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
+     and ", TT "C", ".",
+     PARA,
+     SEEALSO{"#", "lookup",  "new", "classes"}
      }
  
 document { quote new,

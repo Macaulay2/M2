@@ -80,7 +80,8 @@ document { quote Held,
      }
 
 Held#expandFunction = first
-tex Held := v -> "{" | if class v#0 === Symbol then string v#0 else name v#0 | "}"
+tex Held := v -> "{" | (if class v#0 === Symbol then string v#0 else name v#0) | "}"
+html Held := v -> if class v#0 === Symbol then string v#0 else name v#0
 
 HeldString = new Type of Expression
 HeldString#expandFunction = first
@@ -190,6 +191,13 @@ net DoubleArrow := v -> (
      if precedence v#0 <= p then v0 = horizontalJoin("(",net v0,")");
      if precedence v#1 <  p then v1 = horizontalJoin("(",net v1,")");
      horizontalJoin(v0," => ",v1))
+
+document { quote DoubleArrow,
+     TT "DoubleArrow", " -- a type of ", TO "Expression", " which represents
+     something of the form ", TT "a => b", ".",
+     PARA,
+     "This is experimental, and intended for internal use only."
+     }
 
 Product = new Type of AssociativeExpression
 Product#unit = ONE
@@ -552,19 +560,27 @@ document { quote Expression,
 	  TO "AssociativeExpression",
 	  TO "BinaryOperation",
 	  TO "Divide",
+	  TO "DoubleArrow",
      	  TO "FunctionApplication",
 	  TO "Held",
 	  TO "HeldString",
 	  TO "MatrixExpression",
 	  TO "Minus",
 	  TO "NonAssociativeProduct",
+	  TO "OneExpression",
 	  TO "Power",
 	  TO "Product",
+	  TO "RowExpression",
 	  TO "SparseMonomialVectorExpression",
 	  TO "SparseVectorExpression",
 	  TO "Subscript",
 	  TO "Superscript",
-	  TO "Sum"
+	  TO "Sum",
+	  TO "ZeroExpression",
+	  },
+     "Functions which create expressions:",
+     MENU {
+	  TO "hold",
 	  },
      "Functions which act on expressions:",
      MENU {
@@ -581,6 +597,10 @@ document { quote Divide,
 document { quote MatrixExpression,
      TT "MatrixExpression", " -- a type of ", TO "Expression", " representing
      a matrix."
+     }
+document { quote RowExpression,
+     TT "RowExpression", " -- a type of ", TO "Expression", " representing
+     a horizontal sequence of expressions."
      }
 document { quote Minus,
      TT "Minus", " -- a type of ", TO "Expression", " represting negation."
@@ -674,6 +694,7 @@ net Superscript := x -> (
      then horizontalJoin( "(", net x#0, ")", n^(1+depth n))
      else net x#0 | n^(1+depth n)
      )
+
 net Power := v -> (
      x := v#0;
      y := v#1;
@@ -860,15 +881,47 @@ tex Expression := v -> (
      if # v === 0 then op#EmptyName 
      else concatenate between(op#operator,names)
      )
-tex HeldString := v -> "{" | name v#0 | "}"
+
+html Expression := v -> (
+     op := class v;
+     p := precedence v;
+     names := apply(v,term -> (
+	       if precedence term <= p
+	       then ("(", html term, ")")
+	       else html term));
+     if # v === 0 then op#EmptyName 
+     else concatenate between(op#operator,names)
+     )
+
+tex HeldString := v -> "{" | v#0 | "}"
+html HeldString := v -> v#0
+
 tex Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
      then "{-(" | tex term | ")}"
      else "{-" | tex term | "}"
      )
+
+html Minus := v -> (
+     term := v#0;
+     if precedence term <= precedence v
+     then "-(" | html term | ")"
+     else "-" | html term
+     )
+
 tex Divide := x -> "{" | tex x#0 | " \\over " | tex x#1 | "}"
+html Divide := x -> (
+     p := precedence x;
+     a := html x#0;
+     b := html x#1;
+     if precedence x#0 <= p then a = "(" | a | ")";
+     if precedence x#1 <= p then b = "(" | b | ")";
+     a | " / " | b)     
+
+html OneExpression := html ZeroExpression :=
 tex OneExpression := tex ZeroExpression := name
+
 tex Sum := v -> (
      n := # v;
      if n === 0 then "0"
@@ -885,7 +938,40 @@ tex Sum := v -> (
 		    then "(" | tex v#i | ")"
 		    else tex v#i ));
 	  concatenate mingle ( seps, names )))
+html Sum := v -> (
+     n := # v;
+     if n === 0 then "0"
+     else (
+	  p := precedence v;
+	  seps := newClass(MutableList, apply(n+1, i->"+"));
+	  seps#0 = seps#n = "";
+	  v = apply(n, i -> (
+		    if class v#i === Minus 
+		    then ( seps#i = "-"; v#i#0 )
+		    else v#i ));
+	  names := apply(n, i -> (
+		    if precedence v#i <= p 
+		    then "(" | html v#i | ")"
+		    else html v#i ));
+	  concatenate mingle ( seps, names )))
+
 tex Product := v -> (
+     n := # v;
+     if n === 0 then "1"
+     else (
+     	  p := precedence v;
+     	  concatenate between( "\\cdot ", apply(#v,
+		    i -> (
+			 term := v#i;
+			 if precedence term <= p 
+			 then "(" | tex term | ")"
+			 else tex term
+			 )
+		    )
+	       )
+	  )
+     )
+html Product := v -> (
      n := # v;
      if n === 0 then "1"
      else (
@@ -894,19 +980,51 @@ tex Product := v -> (
 	       i -> (
 		    term := v#i;
 	       	    if precedence term <= p 
-		    then "(" | tex term | ")"
-	       	    else tex term
+		    then "(" | html term | ")"
+	       	    else html term
 	       	    )
 	       )
 	  )
      )
-tex Power := tex Subscript := tex Superscript := v -> (
+
+tex Power := v -> (
+     if v#1 === 1 then tex v#0
+     else (
+	  p := precedence v;
+	  x := tex v#0;
+	  y := tex v#1;
+	  if precedence v#0 <  p then x = "(" | x | ")";
+	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
+
+tex Subscript := tex Superscript := v -> (
      p := precedence v;
      x := tex v#0;
      y := tex v#1;
      if precedence v#0 <  p then x = "(" | x | ")";
-     -- if precedence v#1 <= p then y = "(" | y | ")";
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
+
+html Superscript := v -> (
+     p := precedence v;
+     x := html v#0;
+     y := html v#1;
+     if precedence v#0 <  p then x = "(" | x | ")";
+     concatenate(x,"<sup>",y,"</sup>"))
+
+html Power := v -> (
+     if v#1 === 1 then html v#0
+     else (
+	  p := precedence v;
+	  x := html v#0;
+	  y := html v#1;
+	  if precedence v#0 <  p then x = "(" | x | ")";
+	  concatenate(x,"<sup>",y,"</sup>")))
+
+html Subscript := v -> (
+     p := precedence v;
+     x := html v#0;
+     y := html v#1;
+     if precedence v#0 <  p then x = "(" | x | ")";
+     concatenate(x,"<sub>",y,"</sub>"))
 
 tex SparseVectorExpression := v -> (
      n := v#0;
@@ -914,12 +1032,14 @@ tex SparseVectorExpression := v -> (
      scan(v#1,(i,x)->w#i=tex x);
      concatenate("\\pmatrix{", between("\\cr ",w),"\\cr}")
      )
+
 tex SparseMonomialVectorExpression := v -> (
      tex sum(v#1,(i,m,a) -> 
 	  expression a * 
 	  expression m * 
 	  new HeldString from concatenate("<",name i,">"))
      )
+
 tex MatrixExpression := m -> concatenate(
      "\\pmatrix{",
      apply(m,
@@ -935,7 +1055,7 @@ TeX = x -> (
      f := tmpname "tx" | string ctr;
      f | ".tex" 
      << "\\magnification = \\magstep 0" << endl
-     << tex x << endl
+     << "$" << tex x << "$" << endl
      << "\\end" << endl << close;
      if 0 === run("cd /tmp; tex " | f)
      then run("(xdvi -s 4 "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log)&")
@@ -979,7 +1099,11 @@ document { quote print,
      }
 -----------------------------------------------------------------------------
 
-tex Thing := x -> "$" | tex expression x | "$"
+tex ZZ := string
+tex Thing := x -> tex expression x
+
+html ZZ := string
+html Thing := x -> html expression x
 
 File << Thing := (o,x) -> printString(o,net x)
 document { (quote <<, File, Thing),
@@ -1085,23 +1209,3 @@ backtrace = () -> apply(toList deepSplice report,
 	  )
      )
 erase quote report
-
-
----------------------------------
-
-SelfNamer = new Type of MutableHashTable
-
-document { quote SelfNamer,
-     TT "SelfNamer", " -- the class of mutable hash tables which acquire
-     the name of the first global variable they get assigned to.",
-     PARA,
-     EXAMPLE "X = new Type of MutableHashTable",
-     EXAMPLE "x = new X",
-     EXAMPLE "Y = new Type of SelfNamer",
-     EXAMPLE "y = new Y"
-     }
-
-GlobalAssignHook SelfNamer := globalAssignFunction
-GlobalReleaseHook SelfNamer := globalReleaseFunction
-
-expression SelfNamer := (x) -> hold x.symbol

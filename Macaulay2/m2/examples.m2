@@ -1,55 +1,25 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-
-document { "running Macaulay 2 in emacs",
-     "It is possible simply to run Macaulay 2 in an emacs shell buffer, but
-     since Macaulay 2 makes no effort to wrap lines, it is useful to have
-     commands which make left and right scrolling easier.  It is also useful
-     to have dynamic completion of Macaulay 2 symbol names available.  These
-     facilities are provided by ", TT "M2.el", ".",
-     PARA,
-     "Install the files ", TT "emacs/M2.el", " and ", TT "emacs/M2-symbols.el", "
-     in a directory where they can be found by the emacs ", TT "load", " 
-     command, and insert the line",
-     PRE "(autoload 'M2 \"M2\" \"Run Macaulay 2 in a buffer.\" t)",
-     "in your ", TT ".emacs", " initialization file.  Execute the command
-     ", TT "M-x M2", " to start Macaulay 2 running in a buffer.  The usual
-     method for getting help in emacs on commands available in such a buffer
-     is ", TT "C-H m", ".",
-     PARA,
-     "New emacs commands available in Macaulay 2 buffers:",
-     MENU {
-	  (TT "TAB", " -- dynamic completion of filenames and Macaulay 2 symbols"),
-	  (TT "f2", "  -- position point at center of screen"),
-	  (TT "f3", "  -- move point rightward, keeping it visible by scrolling"),
-	  (TT "f4", "  -- move point leftward, keeping it visible by scrolling"),
-	  (TT "f5", "  -- toggle the truncation of long lines"),
-	  (TT "f7", "  -- scroll window leftwards"),
-	  (TT "f8", "  -- scroll window rightwards")
-	  },
-     PARA,
-     "New emacs commands available in all buffers:",
-     MENU {
-	  (TT "f6", "  -- send line of text to Macaulay 2")
-	  },
-     PARA,
-     "The commands are mostly bound to function keys, but that is easily
-     customizable by the user."
-     }
-
 document { "getting started",
-     "Start Macaulay 2 with the command ", TT "M2", ", and  you will be 
-     presented with an input prompt.  (Usually Macaulay 2 will start very quickly,
-     but other parts of the program may have to be loaded from the disk later,
-     causing a slight delay.)",
+     "The best way to run Macaulay 2 is with emacs - for details on getting
+     that set up, see ", TO "running Macaulay 2 in emacs", ".  Learning emacs
+     is worth the effort.  Alternatively, you may start Macaulay 2 with the
+     command ", TT "M2", " in a shell window.  On most Unix systems Macaulay
+     2 will start very quickly, but other parts of the program may have to be
+     loaded from the disk later, causing a slight delay.",
      PARA,
-     "Another way to start Macaulay 2 is to run it in an emacs buffer.  See
-     ", TO "running Macaulay 2 in emacs", ".",
-     PARA,
-     "An expression entered at the keyboard will be evaluated -- no 
-     punctuation is required at the end of the line.",
+     "Your first input prompt will be ", TT "i1 = ", " in response to the prompt,
+     type ", TT "2+2", " and press return.  The expression you entered will be
+     evaluated -- no punctuation is required at the end of the line.",
      EXAMPLE "2+2",
-     "The answer, 4, is displayed.",
+     "The answer is displayed to the right of the output label ", TT "o1 =", ".",
+     PARA,
+     "Here is some arithmetic with fractions.",
+     EXAMPLE "3/5 + 7/11",
+     "Notice the additional output labelled with ", TT "o2 :", ".  Output lines
+     labelled with colons provide information about the type of output.  In this
+     case, the symbol ", TO "QQ", " is our notation for the class of all rational
+     numbers, and indicates that the answer on the previous line is a rational number.",
      PARA,
      "Multiplication is indicated with *.",
      EXAMPLE "1*2*3*4",
@@ -62,8 +32,6 @@ document { "getting started",
      user to scroll left horizontally to see the rest of the output.  (See
      ", TO "emacs", ".)",
      EXAMPLE "100!",
-     "Here is some arithmetic with fractions.",
-     EXAMPLE "3/5 + 7/11",
      "Multiple expressions may be separated by semicolons.  (See ", TO ";", ".)",
      EXAMPLE "1;2;3*4",
      "A semicolon at the end of the line suppresses the printing of the value.",
@@ -74,7 +42,7 @@ document { "getting started",
      "Lines before that can be obtained with ", TO "ooo", " and ", TO "oooo", ".  
      Alternatively, the symbol labeling an output line
      can be used to retrieve the value, as in the following example.",
-     EXAMPLE "o4 + 1",
+     EXAMPLE "o5 + 1",
      "To enter a string, use quotation marks.",
      EXAMPLE "\"hi there\"",
      "A value can be assigned to a variable with ", TO "=", ".",
@@ -114,16 +82,15 @@ document { "getting started",
      EXAMPLE "j=1; scan(10, i -> j = 2*j); j",
      "Most computations with polynomials take place in rings that may be
      specified in usual mathematical notation.",
-     EXAMPLE "R = ZZ/5[x,y,z]",
+     EXAMPLE "R = ZZ/5[x,y,z];",
      "(We reserve single letter symbols such as Z for use as variables in rings.
      Hence we must use something like ZZ to stand for the ring of integers;
      it may remind you of the \"blackboard bold\" font of AMSTeX.  If you prefer
      Z to ZZ, you may put ", TT "Z=ZZ; protect quote Z", " in your
      ", TO "initialization file", ".)",
      EXAMPLE "(x+y)^5",
-     "Rings with long names (not precomputed and stored 
-     in ", TT "R.name", ") acquire the name of the global variable
-     they are assigned to.",
+     "Rings and certain other types of things acquire the name of the global
+     variable they are assigned to.",
      EXAMPLE "R",
      "To see the description of a ring, use ", TO "describe", ".",
      EXAMPLE "describe R",

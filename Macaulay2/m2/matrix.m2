@@ -544,7 +544,19 @@ document { quote directSum,
 	  TO (quote ^,Matrix,Array),
 	  TO (quote _,Matrix,Array)
 	  },
+     PARA,
+     "The symbol ", TO "indexComponents", " is used as a key in a direct sum
+     under which to store a hash table in which to register preferred keys used
+     to index the components of the direct sum.",
      SEEALSO {"++", "components"}
+     }
+
+document { quote indexComponents,
+     TT "indexComponents", " -- a symbol used as a key in a direct sum
+     under which to store a hash table in which to register preferred keys used
+     to index the components of the direct sum.",
+     PARA,
+     SEEALSO "directSum"
      }
 
 Matrix ++ ZZ :=
@@ -987,8 +999,34 @@ document { quote inducedMap,
      PARA,
      "Here ", TT "M", " should be a subquotient module of the target of ", TT "f", ", and
      ", TT "N", " should be a subquotient module of the source of ", TT "f", ".",
+     PARA,
+     "Options: ",
+     MENU {
+	  TO (inducedMap => Verify),
+	  TO (inducedMap => Degree)
+	  },
      SEEALSO "inducesWellDefinedMap"
      }
+
+document { (inducedMap => Degree),
+     TT "Degree => n", " -- an option to ", TO "inducedMap", " that provides the
+     degree of the map produced."
+     }
+
+document { quote Verify,
+     TT "Verify", " -- an option that can be used to request verification
+     that a map is well defined.",
+     PARA,
+     MENU {
+	  (inducedMap => Verify)
+	  }
+     }
+
+document { (inducedMap => Verify),
+     TT "Verify => true", " -- an option for ", TO "inducedMap", " which
+     requests verification that the induced map produced is well defined."
+     }
+
 
 inducesWellDefinedMap = method()
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
@@ -1392,7 +1430,7 @@ document { quote Degree,
      EXAMPLE "isHomogeneous p",
      EXAMPLE "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
      EXAMPLE "isHomogeneous q",
-     SEEALSO {"map", "matrix"}
+     SEEALSO {"map", "matrix", (inducedMap => Degree)}
      }
 
 document { (map,Module,ZZ,Function),
@@ -1746,17 +1784,19 @@ document { quote Ideal,
      MENU {
 	  TO "annihilator",
 	  TO "fittingIdeal",
+	  TO "Grassmannian",
 	  TO "ideal",
 	  TO "quotient"
 	  },
      "Operations on ideals:",
      MENU {
 	  TO (quote +,Ideal,Ideal),
+	  TO (quote *,Ideal, Ideal),
+	  TO (quote ^,Ideal, ZZ),
 	  TO "codim",
 	  TO "decompose",
 	  TO "dim",
-	  TO (quote *,Ideal, Ideal),
-	  TO (quote ^,Ideal, ZZ),
+	  TO "Fano",
 	  TO "module",
 	  TO "radical",
 	  TO "removeLowestDimension",

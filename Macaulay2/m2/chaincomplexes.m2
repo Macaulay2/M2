@@ -8,21 +8,6 @@ new ChainComplex := (cl) -> (
      b.source = b.target = C;
      C)
 
--- a useful hack
-Documentation#(quote ., ChainComplex, dd) = { ChainComplexMap, 
-     identity,
-     TT "C.dd", " -- gets the differentials from a chain complex",
-     PARA,
-     "The differentials are stored as the members in a chain complex
-     map of degree ", TT "-1", ".  The map ", TT "C.dd_i", " is the
-     one whose source is the module ", TT "C_i", ".",
-     EXAMPLE "R = ZZ/101[a,b];",
-     EXAMPLE "C = resolution cokernel vars R",
-     EXAMPLE "C.dd",
-     EXAMPLE "C.dd_2"
-     }
-ChainComplex#(quote ., ChainComplex, dd) = identity
-
 document { quote ChainComplex,
      TT "ChainComplex", " -- the class of all chain complexes.",
      PARA,
@@ -37,8 +22,7 @@ document { quote ChainComplex,
      "Here are some functions for producing or manipulating chain complexes.",
      MENU {
 	  (TO (quote ++, ChainComplex, ChainComplex), " -- direct sum"),
-	  (TO (quote .,ChainComplex,dd), " -- obtain the differentials."),
-	  (TO "C.dd_i", " -- obtain a single differential."),
+	  (TO quote dd, " -- obtain the differentials."),
 	  (TO (quote " ", ChainComplex, Array), " -- shift a chain complex"),
 	  (TO "betti", "        -- display degrees in a free resolution"),
 	  (TO "chainComplex", " -- make a chain complex"),
@@ -131,17 +115,6 @@ ChainComplex == ChainComplex := (C,D) -> (
 
 ChainComplex == ZZ := (C,i) -> all(spots C, i -> C_i == 0)
 ZZ == ChainComplex := (i,C) -> all(spots C, i -> C_i == 0)
-
-document { "C.dd_i",
-     TT "C.dd_i", " -- yields the i-th differential from a chain complex C",
-     PARA,
-     "Returns a zero matrix if no map has been stored in the
-     i-th spot.",
-     PARA,
-     "This differential is the one mapping C_i to C_(i-1).",
-     PARA,
-     "See also ", TO "ChainComplex", "."
-     }
 
 net ChainComplex := C -> if C.?name then C.name else (
      complete C;
@@ -593,7 +566,7 @@ poincareN ChainComplex := (C) -> (
 	       then scanPairs(tally degrees C_n, 
 		    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
      f )
-document { poincareN,
+document { quote poincareN,
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      PARA,

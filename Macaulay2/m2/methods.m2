@@ -1,32 +1,32 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 document { "using methods",
-     "The method to be used for computing an expression such as -x depends 
-     on the type of x.  For example, the method for negating a polynomial
+     "The method to be used for computing an expression such as ", TT "-x", " depends 
+     on the type of Algorithm => x.  For example, the method for negating a polynomial
      differs from the method for negating an integer modulo 111.  Each
      method is a function of one variable, and is stored in the class 
-     of x under a key which is referred to as the name of the method.
-     For some built-in methods the method name is a ", TO "Symbol", ", but for
+     of ", TT "x", " under a key which is referred to as the name of the method.
+     For some built-in methods the method name is a symbol, but for
      methods created with ", TO "method", ", the method name is the same
      as the function used for calling it up.",
      PARA,
-     "Let's assume that X is the class of x.  The way to install a method
-     for the negation of an instance x of X is with a statement of the 
+     "Let's assume that ", TT "X", " is the class of ", TT "x", ".  The way to install a method
+     for the negation of an instance ", TT "x", " of ", TT "X", " is with a statement of the 
      following form.",
-     PRE "          - X := x -> ...",
-     "Here '...' represents the body of the function, consisting of
+     PRE "- X := x ->( ... )",
+     "Here ", TT "( ... )", " represents the body of the function, consisting of
      suitable code for the operation at hand.",
      PARA,
      "The method installed by the code above is automatically inherited by
      ", TO "subclass", "es of X.  Here is a brief description of the way 
-     this works.  Suppose X is the ", TO "parent", " of P.  When an expression
-     -p is to be evaluated, where the class of p is P, then the method for
-     -P is applied, unless there isn't one, in which case the method for
-     -X is applied, and so on, all the way up the chain of parents to the
+     this works.  Suppose ", TT "X", " is the ", TO "parent", " of ", TT "P", ".  When an expression
+     ", TT "-p", " is to be evaluated, where the class of ", TT "p", " is ", TT "P", ", then the method for
+     ", TT "-P", " is applied, unless there isn't one, in which case the method for
+     ", TT "-X", " is applied, and so on, all the way up the chain of parents to the
      topmost ancestor of everything, which is called ", TO "Thing", ".",
      PARA,
      "As an extreme example of inheritance, code like", 
-     PRE "          - Thing := x -> ...",
+     PRE "- Thing := x -> ...",
      "will install a method for negating anything, which will take
      effect as a last resort whenever more a specifically defined method
      isn't found.",
@@ -34,54 +34,57 @@ document { "using methods",
      "The user may introduce new methods as well as new method names.  So it
      is important to understand how methods are installed and consulted.",
      PARA,
-     "Applying a method named C to a thing x whose class is X means that",
-     PRE "          (lookup(C,X)) x",
-     "is evaluated.  In other words, C is used as a key
-     to obtain a function from X (or its parent, grandparent,
-     and so on), and the function is applied to x.  See ", TO "lookup", ".",
+     "Applying a method named ", TT "C", " to a thing ", TT "x", " whose class is ", TT "X", " means that",
+     PRE "(lookup(C,X)) x",
+     "is evaluated.  In other words, ", TT "C", " is used as a key
+     to obtain a function from ", TT "X", " (or its parent, grandparent,
+     and so on), and the function is applied to ", TT "x", ".  See ", TO "lookup", ".",
      PARA,
-     "Installing a method named C for the class X is done with code such
+     "Installing a method named ", TT "C", " for the class ", TT "X", " is done with code such
      as ",
-     PRE "          C X := (x) -> ...",
-     "where '...' represents suitable code for the operation at hand.",
+     PRE "C X := (x) -> ( ... )",
+     "where ", TT "( ... )", " represents suitable code for the operation at hand.",
      PARA,
      "Here is the routine for making new methods.",
      MENU {
 	  TO "method"
 	  },
-     SEEALSO{ ".", "binary method", "classes", "lookup"}
+     SEEALSO{"binary method", "classes", "lookup"}
      }
 
 document { "binary method",
-     "The method for computing a sum x+y depends on the types of x and y.
-     For example, the method for adding an integer x and a polynomial 
-     y differs from the method for adding two integers modulo 111.  Because
-     both the type of x and the type of y must enter into the selection of
+     "The method for computing a sum ", TT "x+y", " depends on the types of ", TT "x", " and ", TT "y", ".
+     For example, the method for adding an integer ", TT "x", " and a polynomial 
+     ", TT "y", " differs from the method for adding two integers modulo 111.  Because
+     both the type of ", TT "x", " and the type of ", TT "y", " must enter into the selection of
      the method, we refer to these methods as binary methods.  Each binary
      method is a function of two variables, and is stored either in the class
-     of x or in the class of y.  See also ", TO "lookup", ".",
+     of ", TT "x", " or in the class of ", TT "y", ".  See also ", TO "lookup", ".",
      PARA,
-     "Let's assume that X is the class (or type) of x, and that Y is the
-     class of y.  The way to install a method for the addition of an
-     instance x of class X to an instance y of class Y is with a statement
-     of the form ",
-     PRE "          X + Y := (x,y) -> ...",
-     "where ... represents the body of the function, consisting of suitable
+     "Let's assume that ", TT "X", " is the class (or type) of ", TT "x", ", 
+     and that ", TT "Y", " is the class of ", TT "y", ".  The way to install a 
+     method for the addition of an instance ", TT "x", " of class ", TT "X", " to 
+     an instance ", TT "y", " of class ", TT "Y", " is with a statement of the form ",
+     PRE "X + Y := (x,y) -> ( ... )",
+     "where ", TT "( ... )", " represents the body of the function, consisting of suitable
      code for the operation at hand.",
      PARA,
-     "The method installed by the code above is automatically inherited by
-     ", TO "subclass", "es of X and Y.  Here is a brief description of the way 
-     this works.  Suppose X is the ", TO "parent", " of P and Y is the parent
-     of X.  When a sum p+q is evaluated where the class of p is P and the class
-     of q is Q, then the binary method for P+Q is applied, unless there isn't one,
-     in which case the binary method for P+Y is applied, unless there isn't one,
-     in which case the binary method for X+Q is applied, unless there isn't one,
-     in which case the binary method for P+Q is applied.  In general this search 
-     for a binary method continues all the way up the chain of parents to the
-     topmost ancestor of everything, which is called ", TO "Thing", ".",
+     "The method installed by the code above is automatically inherited by 
+     ", TO "subclass", "es of ", TT "X", " and ", TT "Y", ".  Here is a brief
+     description of the way this works.  Suppose ", TT "X", " is the 
+     ", TO "parent", " of ", TT "P", " and ", TT "Y", " is the parent of X.  When 
+     a sum ", TT "p+q", " is evaluated where the class of ", TT "p", " is 
+     ", TT "P", " and the class of ", TT "q", " is ", TT "Q", ", then the binary
+     method for ", TT "P+Q", " is applied, unless there isn't one, in which
+     case the binary method for ", TT "P+Y", " is applied, unless there isn't
+     one, in which case the binary method for ", TT "X+Q", " is applied,
+     unless there isn't one, in which case the binary method for ", TT "P+Q", "
+     is applied.  In general this search for a binary method continues all
+     the way up the chain of parents to the topmost ancestor of everything,
+     which is called ", TO "Thing", ".",
      PARA,
      "As an extreme example of inheritance, the code ", 
-     PRE "          Thing + Thing := (x,y) -> ...",
+     PRE "Thing + Thing := (x,y) -> ( ... )",
      "will install a binary method for adding any two things, which will take
      effect as a last resort whenever more a specifically defined method
      isn't found.",
@@ -90,15 +93,15 @@ document { "binary method",
      find the initialization function for the new thing, and should
      be thought of as a ternary operator.  The initialization function
      for a new expression created by",
-     PRE "         new Z of x from y",
+     PRE "new Z of x from y",
      "is obtained as",
-     PRE "         lookup(NewMethod,Z,X,Y)",
+     PRE "lookup(NewMethod,Z,X,Y)",
      "Here ", TT "X", " is ", TT "class x", ", and ", TT "Y", " is
      ", TT "class y", ".  The initialization function can be installed 
      with",
-     PRE "         new Z of X from Y := (z,y) -> ...",
-     "where z denotes the new hash table of class Z and parent x provided
-     to the routine by the system."
+     PRE "new Z of X from Y := (z,y) -> ...",
+     "where ", TT "z", " denotes the new hash table of class ", TT "Z", " and parent
+     ", TT "x", " provided to the routine by the system."
      }
 
 noapp := (f,x) -> error(
@@ -613,7 +616,9 @@ document { quote GlobalAssignHook,
      PARA,
      "This method is used for instances of ", TO "Type", " and ", TO "Ring", "
      to arrange for the name of the type or ring to be set to the name
-     of the global variable to which it is first assigned.",
+     of the global variable to which it is first assigned.  The functions
+     ", TO "globalAssignFunction", " and ", TO "globalReleaseFunction", " may installed
+     as methods for this purpose.",
      PARA,
      EXAMPLE "GlobalAssignHook RR := (sym,val) -> << concatenate (
      	  \"assigning \", name val, \" to \", name sym

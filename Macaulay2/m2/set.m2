@@ -133,13 +133,13 @@ document { quote Set,
 	  (TO (quote **, Set, Set), " -- Cartesian product"),
 	  (TO quote #, " -- the number of elements"),
 	  (TO "apply(Set,Function)", "  -- applying a function to elements"),
-	  (TO toList, " -- a list of the elements"),
 	  (TO member, " -- whether something is a member"),
 	  (TO (product,Set), " -- multiply the elements"),
 	  (TO (isSubset,Set,Set), " -- whether a set is a subset of another"),
 	  (TO (subsets,Set), " -- a list of the subsets"),
 	  (TO (subsets,Set,ZZ), " -- a list of the subsets with given cardinality"),
-	  (TO (sum,Set), " -- sum the elements")
+	  (TO (sum,Set), " -- sum the elements"),
+	  (TO "toList", " -- a list of the elements"),
 	  }
      }
 
@@ -169,7 +169,9 @@ member(Thing,Set) := (a,s) -> s#?a
 
 isSubset(Set,Set) := (S,T) -> all(S, (k,v) -> T#?k)
 document { (isSubset,Set,Set),
-     TT "isSubset(X,Y)", " -- tells whether X is a subset of Y."
+     TT "isSubset(X,Y)", " -- tells whether X is a subset of Y.",
+     PARA,
+     SEEALSO "isSubset"
      }
 
 isSubset(Sequence,Set) := isSubset(List,Set) := (S,T) -> all(S, x -> T#?x)

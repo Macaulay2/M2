@@ -28,7 +28,7 @@ document { quote Monoid,
 	  (TO "generators", "        -- get the generators of the monoid"),
 	  (TO (quote _, ZZ, Monoid), "         -- get the unit element"),
 	  (TO (quote _, Monoid, ZZ), "         -- get a generator from a monoid"),
-	  (TO (quote " ",Ring, Monoid), " -- make a monoid ring")
+	  (TO (quote " ",Ring, OrderedMonoid), " -- make a monoid ring")
 	  },
      PARA,
      "Keys:",

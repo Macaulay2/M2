@@ -7,23 +7,23 @@ Fano = method()
 Grassmannian = method()
 
 document { quote Fano, 
-        TT "Fano(k,X,GR) or  Fano(k,X)", " -- computes 
-        the ideal of a Fano scheme in the Grassmannian.",
-        PARA,
-        "Given an ideal X representing a projective variety 
-        in P^r, a positive integer k<r, and optionally a 
-        ring GR with (exactly) r+1 choose k+1 variables, 
-        representing the ambient space of the Grassmannian of 
-        k-planes in P^r, this routine returns the ideal in
-        GR of the Fano scheme that parametrizes the k-planes 
-        lying on X. If the optional third argument is not 
-        present, the routine fabricates its own local ring, 
-        and returns an ideal over it."
-        }
+     TT "Fano(k,I,GR) or  Fano(k,I)", " -- computes 
+     the ideal of a Fano scheme in the Grassmannian.",
+     PARA,
+     "Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
+     in ", TT "P^r", ", a positive integer k<r, and optionally a 
+     ring ", TT "GR", " with (exactly) ", TT "r+1", " choose ", TT "k+1", " variables, 
+     representing the ambient space of the Grassmannian of 
+     k-planes in ", TT "P^r", ", this routine returns the ideal in
+     ", TT "GR", " of the Fano scheme that parametrizes the k-planes 
+     lying on ", TT "X", ".  If the optional third argument is not 
+     present, the routine fabricates its own ring, 
+     and returns an ideal in it."
+     }
+
 document{quote Grassmannian, 
-    TT "Grassmannian(k,r,R) or 
-        Grassmannian(k,r)",
-       "-- Given natural numbers k <= r,
+    TT "Grassmannian(k,r,R) or Grassmannian(k,r)", " -- given natural numbers
+     k <= r,
         and optionally a ring R with at least binomial(r+1,k+1)
         variables, the routine defines the ideal of the 
         Grassmannian of projective k-planes in P^r, using 
