@@ -40,9 +40,8 @@ htmlMarkUpType = s -> (
      t -> concatenate(on, apply(t,html), off))
 
 MarkUpType.GlobalAssignHook = (X,x) -> (
-     if not x.?name then (
-	  x.Symbol = X;
-	  x.name = toString X;
+     if not ReverseDictionary#?x then (
+	  ReverseDictionary#x = X;
      	  html x := htmlMarkUpType toString X;
 	  );
      )

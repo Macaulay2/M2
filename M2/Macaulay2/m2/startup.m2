@@ -31,20 +31,6 @@ if firstTime then (
 	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );
 
-     use = identity;				  -- temporary, until methods.m2
-     globalAssignFunction = (X,x) -> (
-	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
-	  use x;
-	  );
-     globalReleaseFunction = (X,x) -> remove(ReverseDictionary,x);
-     scan(
-	  {Type,Function},
-	  X -> (
-	       X.GlobalAssignHook = globalAssignFunction; 
-	       X.GlobalReleaseHook = globalReleaseFunction;
-	       )
-	  );
-
      notify = false;
 
      normalPrompts = () -> (
@@ -88,7 +74,6 @@ if firstTime then (
      Manipulator = new Type of BasicList;
      Manipulator.synonym = "manipulator";
      new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f};
-     Manipulator.name = "Manipulator";
      Manipulator Database := Manipulator File := (m,o) -> m#0 o;
 
      Manipulator Nothing := (m,null) -> null;
@@ -133,6 +118,23 @@ if firstTime then (
 	  | "--NTL Library " | version#"ntl version" | ", copyright, Victor Shoup" | newline
      	  | "--GNU MP Library " | version#"gmp version"
 	  );
+
+     use = identity;				  -- temporary, until methods.m2
+     globalAssignFunction = (X,x) -> (
+	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
+	  use x;
+	  );
+     globalReleaseFunction = (X,x) -> remove(ReverseDictionary,x);
+     globalAssignment = X -> (
+	  if instance(X, VisibleList) then apply(X,globalAssignment)
+	  else if instance(X,Type) then (
+	       X.GlobalAssignHook = globalAssignFunction; 
+	       X.GlobalReleaseHook = globalReleaseFunction;
+	       )
+	  else error "expected a type";
+	  );
+     globalAssignment {Type,Function};
+
      )
 
 sourceHomeDirectory = null				    -- home directory of Macaulay 2

@@ -9,6 +9,7 @@ addStartFunction(
 
 Package = new Type of MutableHashTable
 Package.synonym = "package"
+net Package := toString Package := p -> if p#?"title" then p#"title" else "--package--"
 
 hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
@@ -41,7 +42,7 @@ newPackage = method(
      )
 newPackage(Package) := opts -> p -> (
      hide p.Dictionary;		    -- hide the old dictionary
-     newPackage(p.name,opts))
+     newPackage(p#"title",opts))
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      if class opts.Using =!= List or not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
@@ -57,7 +58,7 @@ newPackage(String) := opts -> (title) -> (
 	       globalDictionaries = join({d,Main.Dictionary,PackageDictionary},apply(opts.Using,pkg->pkg.Dictionary));
 	       d));
      p := currentPackageS <- new Package from {
-          symbol name => title,
+          "title" => title,
      	  "private dictionary" => newdict,			    -- how do I make a synonym in a *different* dictionary (make a synonym dictionary closure, with the same frame?)
 	  symbol Options => opts,
      	  symbol Dictionary => if title === "Main" then newdict else new Dictionary,
@@ -85,7 +86,6 @@ newPackage(String) := opts -> (title) -> (
      PrintNames#(p.Dictionary) = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
      sym := getGlobalSymbol(PackageDictionary,title);
-     p.Symbol = sym;
      ReverseDictionary#p = sym;
      sym <- p;
      p)
@@ -99,7 +99,7 @@ export List := v -> (
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
      if currentPackage =!= Main then scan(v, s -> (
 	       currentPackage.Dictionary#(toString s) = s;
-	       currentPackage.Dictionary#(currentPackage.name | "$" | toString s) = s;
+	       currentPackage.Dictionary#(currentPackage#"title" | "$" | toString s) = s;
 	       ));
      v)
 exportMutable = method(SingleArgumentDispatch => true)
@@ -125,7 +125,7 @@ exportMutable {
 
 closePackage = method()
 closePackage String := title -> (
-     if currentPackage === null or title =!= currentPackage.name then error ("package not current: ",title);
+     if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
      scan(pkg#"mutable symbols", s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
      ws := set pkg#"mutable symbols";
@@ -140,7 +140,7 @@ closePackage String := title -> (
 	  protect dict;					    -- maybe don't do this, as it will be private
 	  protect exportDict;
 	  );
-     if pkg.name =!= "Main" then (
+     if pkg#"title" =!= "Main" then (
 	  globalDictionaries = pkg#"previous dictionaries";
 	  scan(keys exportDict, nam -> if isGlobalSymbol nam then (
 		    stderr << "warning: global symbol '" << nam << "' obscured by package " << title << endl;
@@ -190,7 +190,7 @@ package TO := x -> (
 	  if pkg =!= p then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
 	  p)
      else if #p > 1 then (
-	  error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
+	  error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P#"title")));
 	  )
      else (
 	  if not warned#?key then stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << pkg << " eventually" << endl;
@@ -198,13 +198,10 @@ package TO := x -> (
      	  pkg))
 
 Package.GlobalAssignHook = (X,x) -> (
-     ReverseDictionary#x = X;
+     if not ReverseDictionary#?x then ReverseDictionary#x = X;
      -- use x;
      )
-
-Package.GlobalReleaseHook = (X,x) -> (
-     remove(ReverseDictionary,x);
-     )
+Package.GlobalReleaseHook = globalReleaseFunction
 
 use Package := pkg -> (
      if not member(pkg.Dictionary,globalDictionaries) then globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);

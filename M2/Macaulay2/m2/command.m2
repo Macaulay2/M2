@@ -4,7 +4,6 @@
 
 SelfInitializingType = new Type of Type
 SelfInitializingType.synonym = "self initializing type"
-SelfInitializingType.name = "SelfInitializingType"
 SelfInitializingType.Symbol = symbol SelfInitializingType
 SelfInitializingType Thing := (T,z) -> new T from z
 SelfInitializingType\List := (T,z) -> (i -> T i) \ z
@@ -12,7 +11,6 @@ List/SelfInitializingType := (z,T) -> z / (i -> T i)
 
 Command = new SelfInitializingType of BasicList
 Command.synonym = "command"
-Command.name = "Command"
 new Command from Function := Command => (command,f) -> command {f}
 new Command from String   := Command => (command,cmdname) -> command {
      x -> (
