@@ -189,7 +189,7 @@ assert (HH_4 C == 0)
 
 document { (resolution, Module),
      Synopsis => {
-	  Usage => "C = resolution M",
+	  Usage => "resolution M",
 	  Inputs => {
 	       "M" => "",
 	       },
@@ -197,7 +197,7 @@ document { (resolution, Module),
 	       {"a free resolution of ", TT "M"}
 	       }
 	  },
-     "For an abbreviation, use ", TO "res", ".",
+     "For an abbreviation, use ", TT "res", ".",
      EXAMPLE {
 	  "R = ZZ/32003[a..d]/(a^2+b^2+c^2+d^2);",
 	  "M = coker vars R",
