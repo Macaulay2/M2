@@ -175,9 +175,9 @@ target Matrix := f -> f.target
 
 Vector = new Type of List				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
-Vector _ ZZ := (v,i) -> (v#0)_(i,0)
+Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 net Vector := v -> net first v
-entries Vector := v -> entries v#0 / first
+entries Vector := v -> entries ambient v#0 / first
 toExternalString Vector := 				    -- not quite right
 toString Vector := v -> concatenate ( "vector ", toString entries v )
 ring Vector := v -> ring class v

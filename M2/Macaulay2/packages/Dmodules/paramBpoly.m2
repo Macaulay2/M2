@@ -525,7 +525,7 @@ BSet2tex := (s, filename) -> (
 getChangeMat := g->g#1
 getInv := GB -> (
      l := flatten entries getChangeMat GB;
-     l = l / (u -> (entries (coefficients u)#1)#0);
+     l = l / (u -> (entries transpose (coefficients u)#1)#0);
      l = (flatten l) / (u -> lift(u, coefficientRing ring GB#0#0));
      select(l / (u -> denominator u), u -> not isUnit u)
      ); 
