@@ -198,9 +198,6 @@ RawRingElement == RawRingElement := (x,y) -> x === y
 
 ring RawRingElement := rawRing
 degree RawRingElement := rawMultiDegree
-
-someTerms(ZZ,RawRingElement,ZZ,ZZ) := (nvars,f,i,n) -> rawGetTerms(nvars,f,i,i+n-1)
-
 denominator RawRingElement := rawDenominator
 numerator RawRingElement := rawNumerator
 isHomogeneous RawRingElement := rawIsHomogeneous
