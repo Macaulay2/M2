@@ -160,7 +160,7 @@ HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
 #############
 
 all tags:: @srcdir@/TAGS
-@srcdir@/TAGS: Makefile @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c @srcdir@/check/*.c @srcdir@/check/*.cpp @srcdir@/check/*.h \
+@srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c @srcdir@/check/*.c @srcdir@/check/*.cpp @srcdir@/check/*.h \
 		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp
 	cd @srcdir@ && etags $(patsubst @srcdir@/%, %, $^)
 
