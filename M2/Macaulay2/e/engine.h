@@ -899,6 +899,8 @@ extern "C" {
 
   const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars) ;/* TODO */
 
+
+  /* Dan: This version can be removed from the d code */
   const MatrixOrNull * IM2_Matrix_get_coeffs(const M2_arrayint vars,
 					     const M2_arrayint monoms,
 					     const Matrix *M); /* drg: connected rawCoefficients*/
@@ -909,6 +911,14 @@ extern "C" {
      WARNING DAN: this has never been run before (new routine).  In particular,
      should the second argument instead be a one row matrix, and the monoms are the lead 
      exponent vectors of the columns?? */
+
+  const MatrixOrNull * rawCoefficients(const M2_arrayint vars,
+				       const Matrix *monoms,
+				       const Matrix *M); /* TODO drg: to be connected as rawCoefficients*/
+  /* Given a list of variable indices, 'vars', and a one row matrix 'monoms' over a polynomial 
+     ring, AND a matrix with one row, returns a matrix
+     of size #cols(monoms) by #cols(M), where the i th column consists of the polynomials
+     in the other variables which is the coeff of the lead monomial of monoms(0,i). */
 
   const MatrixOrNull * IM2_Matrix_monomials(const M2_arrayint vars, const Matrix *M); /* drg: connected rawMonomials*/
 

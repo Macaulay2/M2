@@ -1879,6 +1879,66 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
   return result;
 }
 
+MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
+{
+  // Given an array of variable indices, 'vars', and given
+  // that 'monoms' and 'this' both have one row, makes a matrix
+  // having number of rows = ncols(monoms), 
+  //        number of cols = ncols(this),
+  // whose (r,c) entry is the coefficient (in the other variables)
+  // of this[0,c] in the monomial monoms[0,r].
+
+
+  // Step 0: Do some error checking
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  int nvars = P->n_vars();
+  int nelements = monoms->n_cols();
+  if (monoms->n_rows() != 1)
+    {
+      ERROR("expected a matrix with one row");
+      return 0;
+    }
+  for (unsigned int i=0; i<vars->len; i++)
+    if (vars->array[i] < 0 || vars->array[i] >= nvars)
+      {
+	ERROR("coeffs: expected a set of variable indices");
+	return 0;
+      }
+
+  // Step 1: Make an exponent_table of all of the monoms.
+  // We set the value of the i th monomial to be 'i+1', since 0
+  // indicates a non-existent entry.
+
+  exponent_table *E = exponent_table_new(nelements, vars->len);
+  for (int i=0; i<nelements; i++)
+    {
+      ring_elem f = monoms->elem(0,i);
+      if (P->is_zero(f))
+	{
+	  ERROR("expected non-zero polynomials");
+	  return 0;
+	}
+      const int *m = P->lead_monomial(f);
+      exponent e = newarray(int, nvars);
+      P->Nmonoms()->to_expvector(m, e);
+      exponent_table_put(E, e, i+1);
+    }
+
+  // Step 2: for each vector column of 'this'
+  //     create a column, and put this vector into result.
+
+  MatrixConstructor mat(P->make_FreeModule(nelements), 0 , false);
+  for (int i=0; i<n_cols(); i++)
+    mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
+
+  return mat.to_matrix();
+}
+
 MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const M2_arrayint monoms) const
 {
   // Given an array of variable indices, 'vars', and given

@@ -1,5 +1,19 @@
 -- Mike's to do list, new version, started 3/29/04
 
+Groebner bases todo: HF use, mingens, subring elements, elements sorted in 
+decreasing monomial order?
+
+random matrices of scalars
+
+skew multiplication: does it still work?  Get it working, test it.
+
+leadTerm needs to be made to work again
+
+basis needs to be made to work again
+
+rawMonomials needs to be connected to front end (this is the new version which 
+takes a matrix instead a list of exponent vectors)
+
 Monomial orders for free modules should obey what we agreed with Cox
 
 Add GroupRevLex to monomial order creation routines
@@ -10,13 +24,14 @@ Get quotient rings functional: this includes getting fraction rings functional,
   and polynomial rings over that.  This includes having various routines
   like leadCoefficient do the right thing.
 
-Polynomial rings should take a degree ring instead of a degree monoid.  Then we need a
+DONE Polynomial rings should take a degree ring instead of a degree monoid.  Then we need a
 way of specifying the trivial ring.
 
 Go back to having a MutableMatrix class, which does not have free module information.
 All mutable operations must be switched back.  Need a routine: map(Module,Module,MutableMatrix)
   - Write the remaining mutable matrix operations.
   - Change the interface to some of the rawMatrix commands.
+How does this interact with lapack matrices?
 
 statistics routine for Computation
   summary or stats for a computation should be in the toString.

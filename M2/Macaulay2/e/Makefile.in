@@ -86,8 +86,8 @@ INTERFACE = \
 
 
 STILLTOCOMPILE = \
-	respoly \
 	res \
+	respoly \
 	respoly2 \
 	res2 \
 	newspair \

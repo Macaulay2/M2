@@ -111,6 +111,13 @@ void FreeModule::append(const int *d)
   components.append(p);
 }
 
+void FreeModule::append_schreyer(const int *d, const int *base, int compare_num)
+{
+  append(d);
+  assert(schreyer);
+  schreyer->append(compare_num,base);
+}
+
 bool FreeModule::is_equal(const FreeModule *F) const
 {
   int i;

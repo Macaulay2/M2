@@ -239,7 +239,12 @@ public:
   MatrixOrNull *symm(int n) const; // in symm.cpp
 
   MatrixOrNull *coeffs(const int *vars, Matrix * &result_monoms) const;
+
+  MatrixOrNull *coeffs(M2_arrayint vars, const Matrix *monoms) const;
+
   MatrixOrNull *coeffs(M2_arrayint vars, const M2_arrayint monoms) const;
+  // to be removed soon
+
   MatrixOrNull *monomials(M2_arrayint vars) const;
 
   Matrix *lead_var_coefficient(Matrix * &monoms) const;

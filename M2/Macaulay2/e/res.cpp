@@ -49,6 +49,7 @@ void res_comp::initialize(const Matrix *mat,
 
   component_number = 0;
   next_me_number = 0;
+  const SchreyerOrder *S = mat->rows()->get_schreyer_order();
   for (i=0; i<mat->n_rows(); i++)
     {
       res_pair *p = new res_pair;
@@ -57,7 +58,10 @@ void res_comp::initialize(const Matrix *mat,
       next_me_number++;	// this and 'component_number' should still be equal here.
       p->compare_num = i;
 
-      p->base_monom = M->make_new(mat->rows()->base_monom(i));
+      if (S == 0)
+	p->base_monom = M->make_one();
+      else
+	p->base_monom = M->make_new(S->base_monom(i));
       p->mi = new MonomialIdeal(P);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
@@ -601,27 +605,24 @@ void res_comp::new_pairs(res_pair *p)
   // First add in syzygies arising from exterior variables
   // At the moment, there are none of this sort.
 
-  if (M->is_skew())
+  if (P->is_skew_commutative())
     {
-      intarray vplcm;
       intarray find_pairs_vp;
-
-      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
-      int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
-      
-      // Add in syzygies arising from exterior variables
-      for (int v=0; v < nskew; v++)
-	{
-	  int w = skewvars[v];
+      int *exp = find_pairs_vp.raw();
 
-	  thisvp.shrink(0);
-	  varpower::var(w,1,thisvp);
-	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	  elems.insert(b);
+      int nskew = P->n_skew_commutative_vars();
+      for (int v=0; v<nskew; v++)
+	{
+	  int w = P->skew_variable(v);
+	  if (exp[w] > 0)
+	    {
+	      thisvp.shrink(0);
+	      varpower::var(w,1,thisvp);
+	      Bag *b = new Bag(static_cast<void *>(0), thisvp);
+	      elems.insert(b);
+	    }
 	}
-      // Remove the local variables
-      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1124,27 +1125,24 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   // First add in syzygies arising from exterior variables
   // At the moment, there are none of this sort.
 
-  if (M->is_skew())
+  if (P->is_skew_commutative())
     {
-      intarray vplcm;
       intarray find_pairs_vp;
-
-      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
-      int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
-      
-      // Add in syzygies arising from exterior variables
-      for (int v=0; v < nskew; v++)
-	{
-	  int w = skewvars[v];
+      int *exp = find_pairs_vp.raw();
 
-	  thisvp.shrink(0);
-	  varpower::var(w,1,thisvp);
-	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	  elems.insert(b);
+      int nskew = P->n_skew_commutative_vars();
+      for (int v=0; v<nskew; v++)
+	{
+	  int w = P->skew_variable(v);
+	  if (exp[w] > 0)
+	    {
+	      thisvp.shrink(0);
+	      varpower::var(w,1,thisvp);
+	      Bag *b = new Bag(static_cast<void *>(0), thisvp);
+	      elems.insert(b);
+	    }
 	}
-      // Remove the local variables
-      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
