@@ -61,9 +61,9 @@ html TO   := x -> concatenate(
      if x#?1 then x#1)
 html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</a>")
 
-next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NEXT#tag, nextButton } } else nullButton
-prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
-up   := tag -> if   UP#?tag then LABEL { "Parent node",   HREF { htmlFilename   UP#tag,   upButton } } else nullButton
+next := tag -> if NEXT#?tag then ( HREF { htmlFilename NEXT#tag, nextButton }, " | ")
+prev := tag -> if PREV#?tag then ( HREF { htmlFilename PREV#tag, prevButton }, " | ")
+up   := tag -> if   UP#?tag then ( HREF { htmlFilename   UP#tag,   upButton }, " | ")
 
 FIRST := tag -> (while PREV#?tag do tag = PREV#tag; tag)
 LAST  := tag -> (while NEXT#?tag do tag = NEXT#tag; tag)
@@ -108,31 +108,27 @@ html HTML := t -> concatenate(
 -- produce html form of documentation, for Macaulay 2 and for packages
 
 buttonBar := (tag) -> ButtonTABLE {{ 
-	  LITERAL concatenate (///
-	       <form action="///,					    -- "
+	  LITERAL concatenate (
+	       "<form action=\"",
 	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
-	       ///">
-	       <p>
-	       <label title="Macaulay2 term to search for">Search: 
-	         <input type="text" name="words"/>
-	       </label>
-	       <input type="hidden" name="method"   value="boolean"/>
-	       <input type="hidden" name="format"   value="builtin-short"/>
-	       <input type="hidden" name="sort"     value="score"/>
-	       <input type="hidden" name="config"   value="htdig-M2"/>
-	       </p>
+	       "\">
+     	         <div>Search:
+		   <input type=\"text\"   name=\"words\"  />
+		   <input type=\"hidden\" name=\"method\" value=\"boolean\" />
+		   <input type=\"hidden\" name=\"format\" value=\"builtin-short\" />
+		   <input type=\"hidden\" name=\"sort\"   value=\"score\" />
+		   <input type=\"hidden\" name=\"config\" value=\"htdig-M2\" />
+     	         </div>
 	       </form>
-	       ///),						    -- "
-
-	  SEQ {
-	       LITERAL "<div class=\"buttonbar\">",
-	       next tag, prev tag, up tag,
-     	       if tag =!= topDocumentTag then topNodeButton else nullButton,
-     	       masterIndexButton,
-     	       tocButton,
-     	       homeButton,
-     	       LITERAL "</div>"
-
+	       "),
+	  DIV splice {
+	       next tag,
+	       prev tag,
+	       up tag,
+     	       if tag =!= topDocumentTag then (topNodeButton, " | "),
+     	       masterIndexButton, " | ",
+     	       tocButton, " | ",
+     	       homeButton
 	       }}}
 
 upAncestors := tag -> reverse (
@@ -282,16 +278,26 @@ assembleTree := (pkg,nodes) -> (
 -- making the html pages
 -----------------------------------------------------------------------------
 
+-- setupButtons := () -> (
+--      gifpath := LAYOUT#"images";
+--      topNodeButton = LABEL { "top node", HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") } };
+--      tocButton = LABEL { "table of contents", HREF { htmlDirectory|tocFileName, BUTTON (gifpath|"toc.gif","toc") } };
+--      homeButton = LABEL { "table of contents", HREF { Macaulay2HomePage, BUTTON (gifpath|"home.gif","home") } };
+--      nullButton = BUTTON(gifpath|"null.gif","null");
+--      masterIndexButton = LABEL { "index", HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") } };
+--      nextButton = BUTTON(gifpath|"next.gif","next");
+--      prevButton = BUTTON(gifpath|"previous.gif","previous");
+--      upButton = BUTTON(gifpath|"up.gif","up");
+--      )
 setupButtons := () -> (
-     gifpath := LAYOUT#"images";
-     topNodeButton = LABEL { "top node", HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") } };
-     tocButton = LABEL { "table of contents", HREF { htmlDirectory|tocFileName, BUTTON (gifpath|"toc.gif","toc") } };
-     homeButton = LABEL { "table of contents", HREF { Macaulay2HomePage, BUTTON (gifpath|"home.gif","home") } };
-     nullButton = BUTTON(gifpath|"null.gif","null");
-     masterIndexButton = LABEL { "index", HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") } };
-     nextButton = BUTTON(gifpath|"next.gif","next");
-     prevButton = BUTTON(gifpath|"previous.gif","previous");
-     upButton = BUTTON(gifpath|"up.gif","up");
+     topNodeButton = HREF {htmlDirectory|topFileName, "top" };
+     tocButton = HREF {htmlDirectory|tocFileName, "toc"};
+     homeButton = HREF {Macaulay2HomePage, "home"};
+     nullButton = "";
+     masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
+     nextButton = "next";
+     prevButton = "previous";
+     upButton = "up";
      )
 
 separateRegexp = method()

@@ -283,8 +283,7 @@ action := hashTable {
      "--notify" => arg -> if phase == 1 then notify = true,
      "-x" => obsolete,
      "-s" => obsolete,
-     "--fullbacktrace" => arg -> if phase == 1 then fullBacktrace = true,
-     "--no-backtrace" => arg -> if phase == 1 then fullBacktrace = backtrace = false,
+     "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
      "--stop" => arg -> if phase == 1 then (stopIfError = true; debuggingMode = false), -- see also M2lib.c and tokens.d
      "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-setup" => arg -> if phase == 1 then nosetup = true,

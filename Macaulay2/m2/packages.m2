@@ -145,7 +145,7 @@ newPackage(String) := opts -> (title) -> (
      newpkg)
 
 export = method(SingleArgumentDispatch => true)
-export Symbol := x -> export singleton x
+export Symbol := x -> export (1:x)
 export List := v -> export toSequence v
 export Sequence := v -> (
      if currentPackage === null then error "no current package";
@@ -171,7 +171,7 @@ export Sequence := v -> (
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",select(v,s -> instance(s,Symbol)));
      v)
 exportMutable = method(SingleArgumentDispatch => true)
-exportMutable Symbol := x -> exportMutable singleton x
+exportMutable Symbol := x -> exportMutable (1:x)
 exportMutable List := v -> exportMutable toSequence v
 exportMutable Sequence := v -> (
      export v;

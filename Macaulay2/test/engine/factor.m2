@@ -17,7 +17,7 @@ time rawFactor f                                  -- used 0.29 seconds, improved
 
 -- Example 2
 
-R = polyring(rawZZ(), singleton symbol x)
+R = polyring(rawZZ(), 1: symbol x)
 f = x^20+13*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20

@@ -1620,22 +1620,36 @@ sequencefun(e:Expr):Expr := (
      else Expr(Sequence(e)));
 setupfun("sequence",sequencefun);
 
-iteratedApply(lhs:Code,rhs:Code):Expr := (
-     -- f ## (x,y,z) becomes ((f x) y) z
-     f := eval(lhs);
-     when f is Error do f else (
-	  arg := eval(rhs);
+-- iteratedApply(lhs:Code,rhs:Code):Expr := (
+--      -- f ## (x,y,z) becomes ((f x) y) z
+--      f := eval(lhs);
+--      when f is Error do f else (
+-- 	  arg := eval(rhs);
+-- 	  when arg
+-- 	  is Error do arg
+-- 	  is args:Sequence do (
+-- 	       foreach x in args do (
+-- 		    f = apply(f,x);
+-- 		    when f is Error do return f else nothing;
+-- 		    );
+-- 	       f)
+-- 	  else apply(f,arg)));
+-- setup(SharpSharpS,iteratedApply);
+iteratedApply(e:Expr):Expr := (
+     -- uncurry(f,(x,y,z)) becomes ((f x) y) z
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+	  f := s.0;
+	  arg := s.1;
 	  when arg
-	  is Error do arg
 	  is args:Sequence do (
 	       foreach x in args do (
 		    f = apply(f,x);
 		    when f is Error do return f else nothing;
 		    );
 	       f)
-	  else apply(f,arg)));
-setup(SharpSharpS,iteratedApply);
-
+	  else apply(f,arg))
+     else WrongNumArgs(2));
+setupfun("uncurry",iteratedApply);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

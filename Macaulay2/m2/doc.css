@@ -2,7 +2,7 @@
 
 body { color: black; font-size: 12pt; background-image: url("../images/recbg.jpg"); margin : 1.5em; }
 
-h1   { text-align: center; font-size : 115%; }
+h1   { text-align: center; font-size : 125%; }
 h2   { font-size : 110%; }
 h3   { font-size : 105%; }
 h4   { font-size : 100%; margin-left: 8pt; }
@@ -15,10 +15,6 @@ a:active { background-color: transparent; color: #ee0000; }
 
 table.buttons td { text-align: center; }
 
-div.buttonbar      { text-align: center; }
-div.buttonbar img  { border: 0; }
-div.buttonbar form { text-align: center; }
-
 table.examples { 
      margin-left: 2em;
      background-color: #80ffff;
@@ -27,7 +23,7 @@ table.examples {
      border-left-color: #a0ffff;     border-right-color: #50b0b0;
      border-width: 3px;
      border-spacing: 0px;
-     line-height: 13pt;
+     line-height: 14pt;
 }
 table.examples td {
      border-style: solid;

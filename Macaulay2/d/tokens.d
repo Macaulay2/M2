@@ -85,6 +85,7 @@ export WhileListDo := { whileToken:Token, predicate:ParseTree, listtoken:Token, 
 export TryElse := { tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
 export TryThenElse := { tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
 export Try := { tryToken:Token, primary:ParseTree};
+export Catch := { catchToken:Token, primary:ParseTree};
 export IfThen := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
 export IfThenElse := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
 export New := { newtoken:Token, newclass:ParseTree, newparent:ParseTree, newinitializer:ParseTree};
@@ -104,7 +105,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
      or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
      or Quote or GlobalQuote or LocalQuote
-     or TryThenElse or TryElse or Try or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
+     or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
 -- misc
 
@@ -156,6 +157,7 @@ export globalAssignmentCode := {
      };
 export ifCode := { predicate:Code, thenClause:Code, elseClause:Code, position:Position };
 export tryCode := { code:Code, thenClause:Code, elseClause:Code, position:Position };
+export catchCode := { code:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {
@@ -219,7 +221,7 @@ export Code := (
      or sequenceCode or listCode or arrayCode
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode
-     or ifCode or tryCode or adjacentCode or functionCode
+     or ifCode or tryCode or adjacentCode or functionCode or catchCode
      or newLocalFrameCode				    -- soon obsolete
      );
 export CodeClosure := { frame:Frame, code:Code };
@@ -479,6 +481,7 @@ export parseWORD    := newParseinfo();
 export returnMessage := "return command";
 export continueMessage := "continue command";
 export breakMessage := "break command";
+export throwMessage := "throw command";
 export unwindMessage := "unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";

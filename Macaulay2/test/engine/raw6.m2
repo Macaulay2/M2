@@ -269,7 +269,7 @@ rawReshape(rawDual m,R^1,R^12)
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol j))
 m1 = rawMatrix1(R^2,2,(a,b,c,d), false, 0)
-assert(rawMatrixEntry(rawSubmatrix(m1,singleton 1, singleton 0), 0,0) == c)
+assert(rawMatrixEntry(rawSubmatrix(m1,1: 1, 1: 0), 0,0) == c)
 
 -------------------
 -- rawKoszul ------
@@ -318,7 +318,7 @@ needs "raw-util.m2"
 R = polyring(rawZZ(), (vars 0 .. vars 9))
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false,0)
 m1 = rawPfaffians(4,m)
-m2 = rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false,0)
+m2 = rawMatrix1(R^1,1,1: (d*f-c*g+b*i), false,0)
 assert(rawTarget m1 == rawTarget m2)
 assert(rawSource m1 == rawSource m2)
 assert(rawIsMutable m1 == rawIsMutable m2)

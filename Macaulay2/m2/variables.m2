@@ -6,9 +6,9 @@ Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;
      if n =!= #w then error "expected sequences of equal length";
      if n === 0 
-     then singleton v
+     then 1 : v
      else if n === 1 
-     then apply(first v .. first w, singleton)
+     then apply(first v .. first w, t -> 1:t)
      else splice table(first v .. first w, drop(v,1) .. drop(w,1), prepend))
 
 List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)

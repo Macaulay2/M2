@@ -814,7 +814,7 @@ document {
      singleton sequence.",
      EXAMPLE {
 	  "((x) -> x) 3",
-	  "singleton 3",
+	  "1 : 3",
 	  "((x) -> x) oo",
 	  }
      }
@@ -1194,12 +1194,6 @@ document {
      would be involved, and parentheses are also used for simple grouping
      of algebraic expressions.",
      EXAMPLE "(a)",
-     "We provide the function ", TO "singleton", ", which can be used to 
-     create a sequence of length 1.  Its name appears when a sequence 
-     of length 1 is displayed.",
-     EXAMPLE {
-	  "singleton a",
-	  },
      "Most of the functions that apply to lists also work with sequences.  We
      give just one example.",
      EXAMPLE "append(x,f)",
@@ -1216,6 +1210,9 @@ document {
      "The operator ", TO (symbol :, ZZ, Thing), " can be used to create sequences
      by replicating something a certain number of times.",
      EXAMPLE "12:a",
+     "Replicating something once results in a sequence that cannot be represented
+     in the usual way with commas.",
+     EXAMPLE "1:a",
      "Notice what happens when we try to construct a list using ", TO "..", " 
      or ", TO ":", ".",
      EXAMPLE {

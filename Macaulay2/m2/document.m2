@@ -489,7 +489,7 @@ reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, to
 document = method( SingleArgumentDispatch => true )
 
 document List := z -> document toSequence z
-document Thing := z -> document singleton z
+document Thing := z -> document (1:z)
 document Sequence := args -> (
      if currentPackage === null then error "encountered 'document' command, but no package is open";
      opts := new MutableHashTable;

@@ -287,9 +287,6 @@ setup(GreaterGreaterS,greatergreaterfun2);
 barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
 setup(BarS,barfun);
 
-SlashHatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,SlashHatS);
-setup(SlashHatS,SlashHatfun);
-
 PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
 setup(PowerStarStarS,PowerStarStarfun);
 
@@ -1514,7 +1511,6 @@ debugLevelS := dummySymbol;
 engineDebugLevelS := dummySymbol;
 debuggingModeS := dummySymbol;
 errorDepthS := dummySymbol;
-fullBacktraceS := dummySymbol;
 gbTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
@@ -1530,7 +1526,6 @@ syms := SymbolSequence(
      (  engineDebugLevelS = setupvar("engineDebugLevel",toExpr(engineDebugLevel));  engineDebugLevelS  ),
      (  debuggingModeS = setupvar("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
-     (  fullBacktraceS = setupvar("fullBacktrace",toExpr(fullBacktrace));  fullBacktraceS  ),
      (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
@@ -1583,7 +1578,6 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       n := b.v;
 	       if sym === debuggingModeS then (debuggingMode = n; e)
 	       else if sym === stopIfErrorS then (stopIfError = n; e)
-	       else if sym === fullBacktraceS then (fullBacktrace = n; e)
 	       else if sym === backtraceS then (backtrace = n; e)
 	       else buildErrorPacket(msg))
 	  is i:Integer do 

@@ -433,13 +433,13 @@ liftChain := (R,A) -> (
      else (
 	  S := R;
 	  while S =!= A and class S === QuotientRing do S = ambient S;
-	  if S === A then singleton S
+	  if S === A then 1 : S
 	  else (
 	       if class S === PolynomialRing 
 	       or class S === GaloisField
 	       or class S === FractionField
 	       then S = last S.baseRings;
-	       if S === A then singleton S
+	       if S === A then 1 : S
 	       else if R === S then error "no lifting possible for these rings"
 	       else prepend(S, liftChain(S, A)))))
 

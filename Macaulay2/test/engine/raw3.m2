@@ -373,8 +373,8 @@ m = rawMatrix1(R^4,4,(a,b,c,d, b^2+c*d,e^2,f^2,g^2, c^3,f^3,h^3,0_R, d^4,g^4,i^4
 assert(m == rawDual rawDual m)
 m2 = m*m
 
-rawSubmatrix(m2,singleton 1)
-rawSubmatrix(m2,singleton 2)
+rawSubmatrix(m2,1: 1)
+rawSubmatrix(m2,1: 2)
 assert(m2*m2 == m*m*m*m)
 m2-m
 assert(rawIsHomogeneous(m) == false)
@@ -403,7 +403,7 @@ a*rawIdentity(F,false,0)
 rawZero(F,F,false,0)
 -- rawKoszul
 -- is IM2_Matrix_koszul_monoms connected?
-m1 = rawSubmatrix(m,singleton 0,(0,1,2,3))
+m1 = rawSubmatrix(m,1: 0,(0,1,2,3))
 rawSymmetricPower(3,m1)
 rawExteriorPower(2,m,0)
 rawExteriorPower(2,m,1)
@@ -413,7 +413,7 @@ rawMinors(2,m,0)
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false,0)
 --<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
-assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false,0))
+assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,1: (d*f-c*g+b*i), false,0))
 
 R2 = polyring(rawZZ(), (symbol x, symbol y, symbol z))
 m = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
@@ -606,7 +606,7 @@ f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f -- .13 sec 1 Gz G4 tibook 1/19/03
 testfactor f
 
-R = polyring(rawZZ(), singleton symbol x)
+R = polyring(rawZZ(), 1: symbol x)
 f = x^20+13*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
@@ -625,8 +625,8 @@ F = f^2*g^2*h^2;
 R = polyring(rawZZ(), (symbol x .. symbol z))
 f = 20_R
 assert(f1 = rawFactor f; #f1_0 === 1 and f1_1_0 === 1)
-assert(rawFactor (0_R) === (singleton (0_R), singleton 1))
-assert(rawFactor (4_R) === (singleton (4_R), singleton 1))
+assert(rawFactor (0_R) === (1: (0_R), 1: 1))
+assert(rawFactor (4_R) === (1: (4_R), 1: 1))
 assert(rawFactor (4*x^3) === ((4_R, x), (1,3)))
 
 -------------------

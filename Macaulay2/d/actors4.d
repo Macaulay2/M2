@@ -1056,7 +1056,8 @@ locate(e:Code):void := (
      is v:sequenceCode do foreach c in v.x do locate(c)
      is v:stringCode do nothing
      is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
-     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.elseClause); )
+     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.thenClause); locate(v.elseClause); )
+     is v:catchCode do ( lookat(v.position); locate(v.code); )
      is v:unaryCode do (lookat(v.position); locate(v.rhs);)
      is v:whileDoCode do ( lookat(v.position); locate(v.predicate); locate(v.doClause); )
      is v:whileListCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); )

@@ -8,7 +8,7 @@ installMethod(symbol >>>, OptionTable, Function, Function =>
      args -> (
        -- Common code for functions created with >>> to
        -- process options and arguments.
-       f ## override (defaults,args)
+       uncurry(f, override (defaults,args))
        )
      )
   )

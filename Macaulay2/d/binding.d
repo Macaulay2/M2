@@ -217,8 +217,6 @@ bump();
 bump();
      export BarBarS := makeKeyword(binaryleft("||"));
 bump();
-     export AmpersandAmpersandS := makeKeyword(binaryleft("&&"));
-bump();
      export ColonS := makeKeyword(binaryright(":"));
 bump();
      export BarS := makeKeyword(binaryleft("|"));
@@ -245,7 +243,6 @@ bump();
      export PercentS := makeKeyword(binaryleft("%"));
      export SlashSlashS := makeKeyword(binaryleft("//"));
 bump();
-     export SharpSharpS := makeKeyword(binaryright("##"));
      export AtS := makeKeyword(binaryright("@"));
 bump();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
@@ -257,7 +254,6 @@ bump();
 bump();
      export TildeS := makeKeyword(postfix("~"));
 bump();
-     export SlashHatS := makeKeyword(binaryleft("/^"));
      export PowerS := makeKeyword(binaryleft("^"));
      export PowerStarStarS := makeKeyword(binaryleft("^**"));
      export UnderscoreS := makeKeyword(binaryleft("_"));
@@ -298,6 +294,7 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Symbol
      export timingS := special("timing",unaryop,wide);
      export shieldS := special("shield",unaryop,wide);
 
+     export throwS := special("throw",nunaryop,narrow);
      export returnS := special("return",nunaryop,narrow);
      export breakS := special("break",nunaryop,narrow);
      export continueS := special("continue",nunaryop,narrow);
@@ -308,6 +305,7 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Symbol
      special("if",unaryif,wide);
 
      special("try",unarytry,wide);
+     special("catch",unarycatch,wide);
 
      special("symbol",unaryquote,prec);
      special("global",unaryglobal,prec);
@@ -466,9 +464,9 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
 export opsWithBinaryMethod := array(SymbolClosure)(
      LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, NotEqualS,
      LongLongDoubleArrowS, GreaterGreaterGreaterS, LongBiDoubleArrowS, DeductionS,
-     AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
+     ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, inS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, inS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS,
      LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
      );
@@ -739,6 +737,9 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(i.alternate,dictionary);
 	  )
      is i:Try do (
+	  bind(i.primary,dictionary);
+	  )
+     is i:Catch do (
 	  bind(i.primary,dictionary);
 	  )
      );
