@@ -38,3 +38,5 @@ TAGS: $(SRC); etags $^
 lex.o : grammar.fixed.c
 clean:; rm -f	*.o html-check-links *.dep y.tab.h lex.yy.c TAGS y.output \
 		core grammar.c grammar.tab.* lex.c grammar.fixed.* grammar.output
+distclean : clean
+	rm -f Makefile
