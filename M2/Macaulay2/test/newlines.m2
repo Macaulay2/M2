@@ -2,7 +2,10 @@
 --   line 2 ends with just ^M  
     --    line 3 ends with ^M^J  
 f = x -> x	   --    line 4
-assert( drop(locate f, 1) === (4, 4) )
+assert( drop(locate f, 1) === (4, 4, 4, 9) )
+ascii "a\na"
+ascii "a
+a"
 assert ( "a\na" === "a
 a" )
 assert ( "a\na" === "a
