@@ -38,10 +38,10 @@ CFG=d2c - Win32 Debug
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Cmd_Line "NMAKE /f d2c.mak"
-# PROP Rebuild_Opt "/a"
-# PROP Target_File "d2c.exe"
-# PROP Bsc_Name "d2c.bsc"
+# PROP Cmd_Line "make all-c-files"
+# PROP Rebuild_Opt ""
+# PROP Target_File "all-c-files"
+# PROP Bsc_Name ""
 # PROP Target_Dir ""
 
 !ELSEIF  "$(CFG)" == "d2c - Win32 Debug"
