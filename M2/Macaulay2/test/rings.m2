@@ -42,5 +42,5 @@ R = QQ[A,B,a,b,n][p]
 f = n*p^3+(A-B)*(p+1)^3+(b-a)*(p+2)^3+(p+3)^3*((p+2)*(p+1)/2-3*n+B)
 
 -- Local Variables:
--- compile-command: "make rings.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test rings.okay "
 -- End:

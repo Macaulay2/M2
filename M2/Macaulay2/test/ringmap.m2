@@ -11,5 +11,5 @@ assert(class f 4 === ZZ/5)
 assert(f 4 == -1)
 kernel f
 -- Local Variables:
--- compile-command: "make ringmap.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap.okay "
 -- End:

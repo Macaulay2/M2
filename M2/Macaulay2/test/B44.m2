@@ -11,5 +11,5 @@ assert( unSingleton 1 === 1 )
 assert( unSingleton (1:1) === 1 )
 assert( unSingleton () === () )
 -- Local Variables:
--- compile-command: "make B44.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test B44.okay "
 -- End:

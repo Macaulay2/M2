@@ -22,5 +22,5 @@ scan(q, l -> (
      assert( diff(m_(i,k),n_(j,l)) == h_(g*i+j,q*k+l) )
 )))))
 -- Local Variables:
--- compile-command: "make diff.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test diff.okay "
 -- End:

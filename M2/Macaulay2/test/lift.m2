@@ -27,5 +27,5 @@ assert( degree f == {0} )
 
 
 -- Local Variables:
--- compile-command: "make lift.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test lift.okay "
 -- End:

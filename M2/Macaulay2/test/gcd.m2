@@ -14,5 +14,5 @@ rawExtendedGCD( raw ( f ), raw ( g ))
 rawExtendedGCD( raw ( 1/2*f ), raw ( 1/3*g ))	       	    -- loops forever
 
 -- Local Variables:
--- compile-command: "make gcd.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gcd.okay "
 -- End:

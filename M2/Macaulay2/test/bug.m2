@@ -33,5 +33,5 @@ MA=substitute(fA.dd_3,matrix{{y_0..y_3}})
 try MA % plgb						    -- this line crashed before
      	       	    	      	   	     	       	    -- now it just gives an error
 -- Local Variables:
--- compile-command: "make bug.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test bug.okay "
 -- End:

@@ -14,5 +14,5 @@ while i < 5 do (
 J = substitute(ideal I,S);
 dim J
 -- Local Variables:
--- compile-command: "make sottile.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test sottile.okay "
 -- End:

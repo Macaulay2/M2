@@ -5,5 +5,5 @@ n = transpose C.dd_1
 D = res (coker n, LengthLimit => 3)
 print betti D
 -- Local Variables:
--- compile-command: "make ggbetti.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ggbetti.okay "
 -- End:

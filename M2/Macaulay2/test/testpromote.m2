@@ -62,5 +62,5 @@ assert(mypromote(g,C) == C_0)
 
 
 -- Local Variables:
--- compile-command: "make testpromote.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testpromote.okay "
 -- End:

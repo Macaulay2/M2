@@ -21,5 +21,5 @@ N=(R^1)/(J^d)
 assert( annihilator Tor_1(M,N)==  annihilator Tor_1(N,M) )
 
 -- Local Variables:
--- compile-command: "make ann2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ann2.okay "
 -- End:
