@@ -71,25 +71,28 @@ cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
      if i =!= 0 
      then HH^(i+1)(M,opts)
      else (
-	  -- compute global sections
-	  A := ring M;
-	  M = cokernel presentation M;
-	  M = M / saturate image map(M,A^0,0);
-	  F := presentation A;
-	  R := ring F;
-	  N := coker lift(presentation M,R) ** coker F;
-	  r := numgens R;
-	  wR := R^{-r};
-	  if pdim N >= r-1 then (
-	       E1 := Ext^(r-1)(N,wR);
-	       p := 1 + opts.Degree + (
-		    if dim E1 <= 0 
-		    then (max degreeList E1 - min degreeList E1)
-		    else (- first min degrees E1)
-		    );
-	       if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
-	       );
-	  M))
+          -- compute global sections
+          A := ring M;
+          M = cokernel presentation M;
+          M = M / saturate image map(M,A^0,0);
+          F := presentation A;
+          R := ring F;
+          N := coker lift(presentation M,R) ** coker F;
+          r := numgens R;
+          wR := R^{-r};
+          if pdim N >= r-1 then (
+               E1 := Ext^(r-1)(N,wR);
+               p := (
+                    if dim E1 <= 0
+                    then (
+                         -- this is big enough to compute it all, so we can ignore opts.Degree!
+                         max degreeList E1 - min degreeList E1 + 1
+                         )
+                    else opts.Degree - first min degrees E1 + 1
+                    );
+               if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
+               );
+          M))
 
 structureSheaf := method()		  -- private
 structureSheaf(Variety) := (X) -> sheaf(X, (ring X)^1)
