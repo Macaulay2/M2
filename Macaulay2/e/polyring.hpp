@@ -51,10 +51,15 @@ class PolynomialRing : public Ring
 protected:
   const PolynomialRing * make_flattened_ring();
   void initialize_poly_ring(const Ring *K, const Monoid *M);
+
+  void initialize_poly_ring(const Ring *K, const Monoid *M, const PolynomialRing *deg_ring);
+  // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring
+
   virtual ~PolynomialRing();
   PolynomialRing() {}
 
   static PolynomialRing *trivial_poly_ring;
+  static void make_trivial_ZZ_poly_ring();
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
 

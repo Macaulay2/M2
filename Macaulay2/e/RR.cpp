@@ -27,8 +27,7 @@ RR::~RR()
 
 bool RR::initialize_RR(double epsilon) 
 {
-  initialize_ring(0,0,0,
-		  Monoid::get_trivial_monoid());
+  initialize_ring(0,0,0);
   _epsilon = epsilon;
 
   zeroV = from_int(0);

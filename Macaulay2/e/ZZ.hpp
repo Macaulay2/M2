@@ -27,13 +27,17 @@ class ZZ : public Ring
   void remove_elem(mpz_ptr f) const;
 
 protected:
-  ZZ() {}
   virtual ~ZZ() {}
-  bool initialize_ZZ(const Monoid *D);
+
 public:
   typedef mpz_ptr element_type;
 
-  static ZZ * create(const Monoid *D);
+  //////////////////////////////////////////////
+  // Creation of globalZZ is done in PolynomialRing::make_trivial_ZZ_poly_ring
+  // These two routines should not be called from elsewhere
+  ZZ() {}
+  bool initialize_ZZ(const PolynomialRing *deg_ring);
+  //////////////////////////////////////////////
 
   ZZ * cast_to_ZZ() { return this; }
   const ZZ * cast_to_ZZ() const { return this; }

@@ -33,7 +33,7 @@ protected:
   int _nvars;
   int _totalvars;		// The total number of variables, including all base rings
                                 // BUT: not including basic fields.
-  const Monoid *D_;
+  const PolynomialRing *degree_ring;
 
   ring_elem _zero_divisor;
   bool _isfield;		// true means yes, or declared yes.
@@ -43,7 +43,10 @@ protected:
   ring_elem oneV;
   ring_elem minus_oneV;
 
-  void initialize_ring(int charac, int nvars, int totalvars, const Monoid *D);
+  void initialize_ring(int charac, 
+		       int nvars, 
+		       int totalvars, 
+		       const PolynomialRing *DR = 0);
   Ring() {}
 public:
   virtual ~Ring();
@@ -58,8 +61,8 @@ public:
   virtual int n_fraction_vars() const { return 0; }
   // The ultimate number of fraction field variables.
 
-  const Monoid * degree_monoid() const { return D_; }
-  const PolynomialRing *get_degree_ring() const { return D_->get_degree_ring(); }
+  const Monoid * degree_monoid() const;
+  const PolynomialRing *get_degree_ring() const { return degree_ring; }
 
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
   virtual bool is_ZZ() const { return false; }

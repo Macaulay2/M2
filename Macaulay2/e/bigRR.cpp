@@ -20,7 +20,7 @@ mpf_ptr bigRR::_epsilon = NULL;
 
 bool bigRR::initialize_bigRR() 
 {
-  initialize_ring(0,0,0,Monoid::get_trivial_monoid());
+  initialize_ring(0,0,0);
   _elem_size = sizeof(mpf_t);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {

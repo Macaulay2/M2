@@ -15,9 +15,9 @@
 #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-bool ZZ::initialize_ZZ(const Monoid *D) 
+bool ZZ::initialize_ZZ(const PolynomialRing *deg_ring) 
 {
-  initialize_ring(0,0,0,D);
+  initialize_ring(0,0,0,0);
   _elem_size = sizeof(mpz_t);
   _zero_elem = new_elem();
   mpz_init_set_si(_zero_elem, 0);
@@ -26,14 +26,8 @@ bool ZZ::initialize_ZZ(const Monoid *D)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+  degree_ring = deg_ring;
   return true;
-}
-
-ZZ *ZZ::create(const Monoid *D)
-{
-  ZZ *result = new ZZ;
-  result->initialize_ZZ(D);
-  return result;
 }
 
 void ZZ::text_out(buffer &o) const

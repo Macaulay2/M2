@@ -10,9 +10,9 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
-bool QQ::initialize_QQ(const Monoid *D) 
+bool QQ::initialize_QQ() 
 {
-  initialize_ring(0,0,0,D);
+  initialize_ring(0,0,0);
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
   trans_one = globalZZ->from_int(1);
@@ -24,10 +24,10 @@ bool QQ::initialize_QQ(const Monoid *D)
   return true;
 }
 
-QQ *QQ::create(const Monoid *D)
+QQ *QQ::create()
 {
   QQ *result = new QQ;
-  result->initialize_QQ(D);
+  result->initialize_QQ();
   return result;
 }
 

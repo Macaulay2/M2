@@ -25,9 +25,9 @@ class QQ : public Ring
 protected:
   QQ() {}
   virtual ~QQ() {}
-  bool initialize_QQ(const Monoid *D);
+  bool initialize_QQ();
 public:
-  static QQ * create(const Monoid *D);
+  static QQ * create();
 
   QQ * cast_to_QQ() { return this; }
   const QQ * cast_to_QQ() const { return this; }

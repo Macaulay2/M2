@@ -8,10 +8,12 @@
 
 #include "freemod.hpp"
 
+const Monoid * Ring::degree_monoid() const { return degree_ring->Nmonoms(); }
+
 void Ring::initialize_ring(int P0,
 			   int nvars,
 			   int totalvars,
-			   const Monoid *D)
+			   const PolynomialRing *DR)
 {
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
@@ -19,7 +21,10 @@ void Ring::initialize_ring(int P0,
   P = P0;
   _nvars = nvars;
   _totalvars = totalvars;
-  D_ = D;
+  if (DR == 0)
+    degree_ring = PolynomialRing::get_trivial_poly_ring();
+  else
+    degree_ring = DR;
 
   _zero_divisor = ZERO_RINGELEM;
   _isfield = false;
