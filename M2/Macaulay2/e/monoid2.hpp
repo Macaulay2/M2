@@ -89,6 +89,8 @@ public:
 
   static Monoid *get_trivial_monoid();
 
+  const MonomialOrdering * getMonomialOrdering() const { return mo_; }
+
   const PolynomialRing *get_degree_ring() const { return degree_ring_; }
   const Monoid *degree_monoid() const { return degree_monoid_; }
   const_monomial degree_of_var(int v) const { return degree_of_var_[v]; }

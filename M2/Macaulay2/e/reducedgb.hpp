@@ -22,13 +22,17 @@ protected:
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
-public:
   ReducedGB(GBRing *R0,
 	    const PolynomialRing *originalR0,
 	    const FreeModule *F0,
-	     const FreeModule *Fsyz0);
+	    const FreeModule *Fsyz0);
+public:
 
   virtual ~ReducedGB();
+
+  static ReducedGB *createReducedGB(const PolynomialRing *originalR0,
+				    const FreeModule *F0,
+				    const FreeModule *Fsyz0);
 
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 

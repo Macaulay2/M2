@@ -361,9 +361,9 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
 	  "m = matrix{{a,b,c,d}};",
-	  "F = schreyerOrder m",
-	  "f = map(target m, F, m)",
-	  "g = syz f",
+	  "m1 = schreyerOrder m",
+	  "F = source m1",
+	  "g = syz m1",
 	  "leadTerm g"
 	  },
      "In Macaulay 2, free modules are displayed without any indication of whether they are
@@ -394,15 +394,15 @@ document {
 
 document {
      Key => (schreyerOrder,Matrix),
-     Headline => "create a free module having a Schreyer monomial order",
+     Headline => "create a matrix with the same entries whose source free module has a Schreyer monomial order",
      Usage => "schreyerOrder m",
      Inputs => {
 	  "m" => "G <-- F between free modules"
 	  },
      Outputs => {
 	  {
-	       "the same free module as F, except it is endowed with 
-	       a Schreyer, or induced, monomial order"
+	       "the same matrix as ", TT "m", ", except that its source free module
+	       is endowed with a Schreyer, or induced, monomial order"
 	       }
 	  },
      "Given a matrix m : F --> G, the Schreyer order on the monomials
@@ -418,8 +418,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
 	  "m = matrix{{a,b,c,d}};",
-	  "F = schreyerOrder m",
-	  "f = map(target m, F, m)",
+	  "f = schreyerOrder m",
 	  "g = syz f",
 	  "leadTerm g"
 	  },
