@@ -44,6 +44,26 @@ export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
 	  val := eval(rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val)));
 
+export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
+     ival := eval(i);
+     when ival
+     is newname:string do (
+	  rhsval := eval(rhs);
+	  when rhsval
+	  is sc:SymbolClosure do (
+	       if dc.frame != sc.frame then buildErrorPacket("expected a symbol in the same dictionary")
+	       else (
+     		    newword := makeUniqueWord(newname,sc.symbol.word.parse);
+		    when lookup(newword,dc.dictionary.symboltable)
+		    is Symbol do return buildErrorPacket("symbol already exists with this name")
+		    else (
+			 insert(dc.dictionary.symboltable,newword,sc.symbol);
+			 rhsval)))
+	  is Error do rhsval 
+	  else printErrorMessage(rhs,"expected a symbol"))
+     is Error do ival
+     else printErrorMessage(i,"expected a string"));
+
 assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
      ival := eval(i);
      when ival
@@ -87,6 +107,7 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x
+     is Error do x
      is x:List do (
 	  if x.mutable then assignvector(x.v,lhsindex,rhs)
 	  else buildErrorPacket("assignment attempted to element of immutable list")
@@ -94,7 +115,8 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      is x:Sequence do buildErrorPacket("assignment attempted to element of sequence")
      is x:HashTable do storeInHashTable(x,lhsindex,rhs)
      is x:Database do dbmstore(x,lhsindex,rhs)
-     else printErrorMessage(lhsarray,"expected a list, sequence, hash table, or database")
+     is x:DictionaryClosure do storeInDictionary(x,lhsindex,rhs)
+     else printErrorMessage(lhsarray,"expected a list, hash table, database, or dictionary")
      );
 AssignElemFun = assignelemfun;
 

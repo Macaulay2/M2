@@ -421,7 +421,7 @@ bucketsfun(e:Expr):Expr := (
 					when c
 					is null do false
 					is cell:SymbolListCell do (
-					     provide Expr(SymbolClosure(f,cell.entry));
+					     provide Expr(Sequence(Expr(cell.word.name),SymbolClosure(f,cell.entry)));
 					     c = cell.next;
 					     true)
 					)
@@ -568,7 +568,7 @@ export completions(s:string):array(string) := (
 	       while true do when b
 	       is null do break
 	       is q:SymbolListCell do (
-		    t := q.entry.word.name;
+		    t := q.word.name;
 		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
 		    b = q.next; ));
 	  d != d.outerDictionary) do d = d.outerDictionary;
@@ -1023,7 +1023,7 @@ export keys(o:Dictionary):Expr := Expr(
 	       while true do (
 		    when p
 		    is q:SymbolListCell do (
-			 provide Expr(q.entry.word.name);
+			 provide Expr(q.word.name);
 			 p=q.next;)
 		    else break;))));
 
@@ -1034,7 +1034,7 @@ export lookup(s:string,table:SymbolHashTable):(null or Symbol) := (
      when entryList
      is null do return NULL
      is entryListCell:SymbolListCell do (
-	  if 0 == strcmp(entryListCell.entry.word.name, s)
+	  if 0 == strcmp(entryListCell.word.name, s)
 	  then return entryListCell.entry;
 	  entryList = entryListCell.next));
 

@@ -17,13 +17,13 @@ use stdiop;
 append(buckets:array(SymbolList),entry:Symbol):void := (
      h := entry.word.hash & (length(buckets)-1);
      when buckets.h
-     is null do buckets.h = SymbolListCell(entry,NULL)
+     is null do buckets.h = SymbolListCell(entry.word,entry,NULL)
      is e:SymbolListCell do (
 	  while true do (
 	       when e.next 
 	       is f:SymbolListCell do e = f
 	       is null do (
-		    e.next = SymbolListCell(entry,NULL);
+		    e.next = SymbolListCell(entry.word,entry,NULL);
 		    break))));
 enlarge(table:SymbolHashTable):void := (
      newbuckets := new array(SymbolList) len 2*length(table.buckets) do provide NULL;
@@ -39,13 +39,23 @@ enlarge(table:SymbolHashTable):void := (
 	  );
      table.buckets = newbuckets;
      );
-insert(entry:Symbol,table:SymbolHashTable):Symbol := (
+
+-- warning: these routines have similar code
+export insert(entry:Symbol,table:SymbolHashTable):Symbol := (
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := entry.word.hash & (length(table.buckets)-1);
-     table.buckets.h = SymbolListCell(entry,table.buckets.h);
+     table.buckets.h = SymbolListCell(entry.word,entry,table.buckets.h);
      entry);
+export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- warning -- unsafe -- check that the dictionary of the symbol is the same as this dictionary
+     table.numEntries = table.numEntries + 1;
+     if 3 * table.numEntries > 2 * length(table.buckets) + 1
+     then enlarge(table);
+     h := newname.hash & (length(table.buckets)-1);
+     table.buckets.h = SymbolListCell(newname,entry,table.buckets.h);
+     entry);
+
 enlarge(f:Frame):int := (
      n := f.valuesUsed;
      f.valuesUsed = n + 1;
@@ -358,7 +368,7 @@ export lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
      when entryList
      is null do return NULL
      is entryListCell:SymbolListCell do (
-	  if entryListCell.entry.word == word 
+	  if entryListCell.word == word 
 	  then (
 	       e := entryListCell.entry;
 	       e.lookupCount = e.lookupCount + lookupCountIncrement;

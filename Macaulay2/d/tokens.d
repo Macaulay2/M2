@@ -28,7 +28,7 @@ export TCid := 1;			-- identifiers and operators
 export TCint := 2;
 export TCdouble := 3;
 export TCstring := 4;
-export Word := {		-- a word
+export Word := {		-- a word, one for each name made by makeUniqueWord()
      name:string,		--   the string representing it in this language
      typecode:int,		--   TCid, TCint, TCdouble, or TCstring
      hash:int,	    		--   the hash value
@@ -47,7 +47,7 @@ export Symbol := {		    -- symbol table entry for a symbol
      protected:bool,	            -- whether protected against assignment by the user
      flagLookup:bool		    -- whether to warn when symbol is used
      };
-export SymbolListCell := {entry:Symbol, next:SymbolList};
+export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
 export SymbolHashTable := { 
      buckets:array(SymbolList),	 -- length always a power of 2

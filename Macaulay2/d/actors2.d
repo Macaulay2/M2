@@ -110,7 +110,7 @@ pairs(e:Expr):Expr := (
 			      p := bucket;
 			      while true do (
 				   when p
-				   is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(f,q.entry)))); p=q.next;)
+				   is q:SymbolListCell do (provide Expr(Sequence(Expr(q.word.name),Expr(SymbolClosure(f,q.entry)))); p=q.next;)
 				   else break; ));
 			 ))))
      is o:HashTable do list(
