@@ -28,6 +28,7 @@ Authors: John R. Ellis and Jesse Hull
 
 /* #define GC_DEBUG */
 
+#include <stdlib.h>
 #include "gc_cpp.h"
 #include "../../Makeconf.h"
 
@@ -83,6 +84,41 @@ void* __builtin_vec_new( unsigned int size ) {
   
 void __builtin_vec_delete( void* obj ) {
     if (obj != NULL) GC_FREE( obj );
+    }
+
+#endif
+
+#else
+
+#ifndef NDEBUG
+
+static void set_to_garbage(void *p, size_t size) {
+  char *q = (char *)p;
+  for (; size>0; size--, q++) *q = 0xe5;
+}
+
+void* operator new( size_t size ) {
+    void *p;
+    p = malloc( size );
+    if (p == NULL) outofmem();
+    set_to_garbage(p,size);
+    return p;
+}
+  
+void operator delete( void* p ) {
+    if (p != NULL) free(p) ;
+     }
+
+void* operator new[]( size_t size ) {
+    void *p;
+    p = malloc( size );
+    if (p == NULL) outofmem();
+    set_to_garbage(p,size);
+    return p;
+    }
+  
+void operator delete[]( void* p ) {
+    if (p != NULL) free(p) ;
     }
 
 #endif

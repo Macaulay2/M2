@@ -202,11 +202,6 @@ int n;
 {
      }
 
-#ifdef DEBUG
-static int trapnum=-1;
-static int chunknum=0;
-#endif
-
 int system_returncode;
 
 M2_string actors5_VERSION;
@@ -454,6 +449,7 @@ char **argv;
 	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
 	  }
 #ifdef GCMALLOC
+     /* obsolete, search and destroy GCMALLOC eventually */
      mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
 #else
      mp_set_memory_functions(malloc1,realloc3,free2);

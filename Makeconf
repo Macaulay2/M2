@@ -74,7 +74,6 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo '# NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
-	echo '# NOGCMALLOC  := TRUE' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl
@@ -145,14 +144,6 @@ endif
 export FACTORY := TRUE
 ifdef NOFACTORY
 FACTORY :=
-endif
-
-export GCMALLOC := TRUE
-ifdef NOGCMALLOC
-GCMALLOC :=
-else
-CFLAGS += -DGCMALLOC
-CXXFLAGS += -DGCMALLOC
 endif
 
 export DUMPDATA := TRUE

@@ -21,7 +21,10 @@ void debugout(const FreeModule *F, const vec v)
 }
 vec FreeModule::new_term() const
 {
-  return (vec) R->vecstash->new_elem();
+  vec result = (vec) R->vecstash->new_elem();
+  result->next = NULL;
+  result->coeff = NULL;
+  return result;
 }
 vec FreeModule::copy_term(vec v) const
 {
@@ -1378,6 +1381,13 @@ vec FreeModule::diff(const FreeModule * F, vec v,
 	    M->divide(v->monom, F->base_monom(v->comp), mon1);
 	    M->divide(p->monom, G->base_monom(p->comp), mon2);
 	    ring_elem g = diff_term(mon1, mon2, t->monom, use_coeff);
+	    if (K->is_zero(g))
+	      {
+		t->next = NULL;
+		t->coeff = g;	// just to get rid of it!
+		remove(t);
+		continue;
+	      }
 	    M->mult(t->monom, base_monom(t->comp), t->monom);
 	    K->mult_to(t->coeff, g);
 	    K->remove(g);
