@@ -191,8 +191,6 @@ void IM2_GB_matrix_lift(Computation *C,
   if (G != 0)
     G->matrix_lift(m, result_remainder, result_quotient);
   ERROR("computation type unknown or not implemented");
-  return 0;
-
 }
 
 int 
