@@ -322,6 +322,8 @@ GlobalAssignHook MarkUpType := (X,x) -> (
 
 new MarkUpType := theMarkUpType -> new theMarkUpType of MarkUpList
 
+html EmptyMarkUpType := html MarkUpType := X -> html X{}
+
 BR         = new EmptyMarkUpType
 NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
