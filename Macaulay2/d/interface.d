@@ -760,7 +760,8 @@ export rawIsZero(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_zero(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_zero(", "(Matrix*)",x, ")" ))
-     else WrongArg("a raw ring element")
+     is x:RawMutableMatrix do toExpr( Ccode( bool, "IM2_MutableMatrix_is_zero(", "(MutableMatrix*)",x, ")" ))
+     else WrongArg("a raw ring element or matrix or mutable matrix")
      );
 setupfun("rawIsZero",rawIsZero);
 
@@ -1218,7 +1219,12 @@ export rawIsEqual(e:Expr):Expr := (
      when s.1 is y:RawMatrix do
      toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
      else WrongArg(2,"a raw matrix")
-     else WrongArg(1,"a raw matrix")
+     else
+     when s.0 is x:RawMutableMatrix do
+     when s.1 is y:RawMutableMatrix do
+     toExpr(Ccode(bool, "IM2_MutableMatrix_is_equal((MutableMatrix *)",x,",(MutableMatrix *)",y,")"))
+     else WrongArg(2,"a raw mutable matrix")
+     else WrongArg(1,"a raw matrix or mutable matrix")
      else WrongNumArgs(2));
 setupfun("rawIsEqual",rawIsEqual);
 
@@ -1439,7 +1445,16 @@ export rawMatrixEntry(e:Expr):Expr := (
 	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)", "IM2_MutableMatrix_get_entry(", "(MutableMatrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
      else WrongArgInteger(3)
      else WrongArgInteger(2)
-     else WrongArg(1,"a raw mutable matrix")
+     else 
+     when s.0 is M:RawMatrix do
+     when s.1 is r:Integer do 
+     if !isInt(r) then WrongArgSmallInteger(2) else
+     when s.2 is c:Integer do 
+     if !isInt(c) then WrongArgSmallInteger(3) else (
+	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)", "IM2_Matrix_get_entry(", "(Matrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix or mutable matrix")
      else WrongNumArgs(3,4)
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
@@ -1744,7 +1759,15 @@ export rawMutableMatrix(e:Expr):Expr := (
 	       "(Matrix *)", M, ",",
 	       preferDense == True, ")"))
      else WrongArgBoolean(2)
-     else WrongArg(1,"a raw matrix")
+     else
+     when s.0 is M:RawMutableMatrix do
+     when s.1 is preferDense:Boolean do
+     Expr(Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)",
+	       "IM2_MutableMatrix_copy(",
+	       "(MutableMatrix *)", M, ",",
+	       preferDense == True, ")"))
+     else WrongArgBoolean(2)
+     else WrongArg(1,"a raw matrix or mutable matrix")
      else WrongArg("2 or 4 arguments")
      else WrongArg("2 or 4 arguments"));
 setupfun("rawMutableMatrix",rawMutableMatrix);
