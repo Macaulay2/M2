@@ -37,6 +37,8 @@ exportMutable (
 	)
 
 export (
+        symbol symlinkDirectory,
+        symbol unSymlinkDirectory,
         symbol symlink,
      	symbol reduceHilbert,
 	symbol Date,

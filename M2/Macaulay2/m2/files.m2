@@ -124,9 +124,43 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 		    else if match(backupFileRegexp,srcf)
 		    then stderr << "--skipping: backup file: " << srcf << endl
 		    else (
-			 if opts.Verbose then stderr << "--symlinking: " << srcf << " -> " << tarf << endl;
-			 tardir := oops; -- want to get directory part of tarf
-			 symlink(relativizeFilename(tardir,srcf),tarf);
+			 tardir := concatenate drop(separate("/",tarf),-1); -- directory part of file name
+			 relsrcf := relativizeFilename(tardir,srcf);
+			 if opts.Verbose then stderr << "--symlinking: " << relsrcf << " -> " << tarf << endl;
+			 if fileExists tarf then (
+			      stderr << "--skipping: file " << tarf << " already exists" << endl;
+			      )
+			 else symlink(relsrcf,tarf))))));
+unSymlinkDirectory = method(Options => fileOptions)
+unSymlinkDirectory(String,String) := opts -> (src,dst) -> (
+     if not fileExists src then error("directory not found: ",src);
+     if not isDirectory src then error("file not a directory: ",src);
+     if not src#-1 === "/" then src = src | "/";
+     if not dst#-1 === "/" then dst = dst | "/";
+     transform := fn -> dst | substring(fn,#src);
+     scan(findFiles(src,opts), 
+	  srcf -> (
+	       tarf := transform srcf;
+	       if tarf#-1 === "/" 
+	       then (
+		    if not isDirectory tarf then mkdir tarf 
+		    )
+	       else (
+     		    if not isRegularFile srcf 
+		    then stderr << "--skipping: non regular file: " << srcf << endl
+		    else if match(backupFileRegexp,srcf)
+		    then stderr << "--skipping: backup file: " << srcf << endl
+		    else (
+			 tardir := concatenate drop(separate("/",tarf),-1); -- directory part of file name
+			 relsrcf := relativizeFilename(tardir,srcf);
+			 if opts.Verbose then stderr << "--unsymlinking: " << relsrcf << " -> " << tarf << endl;
+			 if not fileExists tarf then (
+			      stderr << "--skipping: " << tarf << " does not exists " << endl;
+			      )
+			 else if relsrcf =!= readlink tarf then (
+			      stderr << "--skipping: expected " << tarf << " to be a symlink to " << relsrcf << endl;
+			      )
+			 else removeFile tarf;
 			 )))));
 
 -----------------------------------------------------------------------------
