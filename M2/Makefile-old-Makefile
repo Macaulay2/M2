@@ -41,8 +41,11 @@ GC:: lib/libgc.a
 endif
 
 GC_TARGETS := gc.a
-GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS $(DEBUGFLAGS)
+
+# The only reason to have ALL_INTERIOR_POINTERS on is if we are using GC_malloc for C++ routines.
 GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
+GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS $(DEBUGFLAGS)
+
 ifndef VERBOSE
 GC_CFLAGS += -DSILENT
 endif
