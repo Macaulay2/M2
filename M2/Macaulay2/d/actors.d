@@ -486,10 +486,7 @@ assignNewFun(newclass:Code,rhs:Code):Expr := (
      c := eval(newclass);
      when c
      is Error do c
-     is o:HashTable do (
-	  r := eval(rhs);
-	  when r is Error do r
-	  else storeInHashTable(o,NewE,NewS.symbol.hash,r))
+     is o:HashTable do installMethod(NewE,o,eval(rhs))
      else errorpos(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
 assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
