@@ -243,7 +243,7 @@ ifeq "$(CC)" "cl"
 compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 else
-compat.c compat.h : configure ../../Makeconf.h Makefile
+compat.c compat.h : configure ../../Makeconf.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" ./configure
 endif
 
@@ -320,7 +320,7 @@ c-files.tar :: $(ALLC)
 UTIL := ../util/
 
 tmp_init.o : tmp_init.c
-tmp_init.c : Makefile $(TOPDIR)/Makeconf $(PROJECT)
+tmp_init.c : $(TOPDIR)/Makeconf $(PROJECT)
 	 $(UTIL)timestmp >tmp
 	@ echo "echoout '>>tmp' ..."
 	@ $(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
