@@ -286,6 +286,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
   D(S->degree_monoid()),
   input_mat(m),
   this_comp(0),
+  n_components(m->n_rows()),
   current(NULL),
   part_table(S->n_vars())
 {
@@ -303,6 +304,35 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
   // Collect the 'this_comp' monideal of the input matrix
   // Set up the computation for that
   next_monideal();
+}
+
+hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
+: S(I->get_ring()->cast_to_PolynomialRing()),
+  R(RR),
+  M(S->Nmonoms()),
+  D(S->degree_monoid()),
+  input_mat(0),
+  this_comp(0),
+  n_components(1),
+  current(NULL),
+  part_table(S->n_vars())
+{
+  assert(D == R->Nmonoms());
+  one = R->Ncoeffs()->from_int(1);
+  minus_one = R->Ncoeffs()->from_int(-1);
+  LOCAL_deg1 = D->make_one();
+
+  result_poincare = R->from_int(0);
+  nsteps = 0;
+  maxdepth = 0;
+  nideal = 0;
+  nrecurse = 0;
+
+  reset();
+  MonomialIdeal *copyI = I->copy();
+  part_table.partition(copyI, current->monids);
+  current->i = current->monids.length() - 1;
+  current->first_sum = current->i + 1; // This part is not used at top level
 }
 
 
@@ -328,7 +358,7 @@ hilb_comp::~hilb_comp()
 int hilb_comp::calc(int n_steps)
      // Possible return values: COMP_DONE, COMP_INTERRUPTED.
 {
-  if (input_mat->n_rows() == 0)
+  if (n_components == 0)
     return COMP_DONE;
   if (n_steps >= 0)
     {
@@ -381,15 +411,17 @@ int hilb_comp::step()
       current->monids.shrink(0);
       if (current->up == NULL) 
 	{
-
-	  ring_elem tmp = R->make_flat_term(one, input_mat->rows()->degree(this_comp));
-	  R->mult_to(f, tmp);
+	  if (input_mat)
+	    {
+	      ring_elem tmp = R->make_flat_term(one, input_mat->rows()->degree(this_comp));
+	      R->mult_to(f, tmp);
+	      R->remove(tmp);
+	    }
 	  R->add_to(result_poincare, f);
-	  R->remove(tmp);
 	  this_comp++;
 
 	  // Now check if we have any more components
-	  if (this_comp >= input_mat->n_rows())
+	  if (this_comp >= n_components)
 	    return COMP_DONE;
 	  // otherwise go on to the next component:
 
@@ -589,6 +621,21 @@ RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
       P->add_to(f, f1);
     }
   return RingElement::make_raw(P, f);
+}
+
+RingElementOrNull *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
+/* This routine computes the numerator of the Hilbert series
+   for coker I.   NULL is returned if the ring is not appropriate for
+   computing Hilbert series, or the computation was interrupted. */
+{
+  const PolynomialRing *P = I->get_ring()->get_degree_ring();
+  if (P == 0) return 0;
+  hilb_comp *hf = new hilb_comp(P,I);
+  int retval = hf->calc(-1);
+  if (retval != COMP_DONE) return 0;
+  RingElement *result = hf->value();
+  deleteitem(hf);
+  return result;
 }
 
 int hilb_comp::coeff_of(const RingElement *h, int deg)
