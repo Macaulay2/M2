@@ -565,8 +565,8 @@ fghij"///,
      "Strings, like anything else, can be assigned to variables.",
      EXAMPLE ///x = "abcdefghij"///,
      "There are escape sequences that make it possible to
-     enter special characters:",  PRE 
-"      \\n             newline
+     enter special characters:",
+     PRE "      \\n             newline
       \\f             form feed
       \\r             return
       \\\\             \\ 
@@ -576,7 +576,8 @@ fghij"///,
      EXAMPLE ///y = "abc\101\102\n\tstu"///,
      "We can use ", TO "peek", " to see what characters are in the string.",
      EXAMPLE "peek y",
-     "Another way to enter special characters into strings is to use ", TO "///", "
+     "Another way to enter special characters into strings is to use ", TO "///", -- ///
+										  "
      as the string delimiter.",
      EXAMPLE ("///" | ///a \ n = "c"/// | "///"),
      "The function ", TO "ascii", " converts strings to lists of
@@ -1273,10 +1274,10 @@ document { "two dimensional formatting",
 	  },
      }
 
-document { isReady, HEADLINE "whether a file has data available for reading" }
+document { isReady, HEADLINE => "whether a file has data available for reading" }
 
 document { atEndOfFile,
-     HEADLINE "test for end of file",
+     HEADLINE => "test for end of file",
      TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
      PARA,
      SEEALSO {"File"}

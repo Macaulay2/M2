@@ -541,6 +541,7 @@ ideal Ring := R -> ideal 0_R
 
 kernel = method(Options => {
 	  SubringLimit => infinity
+	  -- DegreeLimit => {}
 	  })
 
 ker = kernel
@@ -550,7 +551,9 @@ kernel Matrix := Module => options -> (g) -> if g.?kernel then g.kernel else g.k
      P := target g;
      g = matrix g;
      if P.?generators then g = P.generators * g;
-     h := modulo(g, if P.?relations then P.relations);
+     h := modulo(g, if P.?relations then P.relations
+	  -- DegreeLimit => options.DegreeLimit
+	  );
      if N.?generators then h = N.generators * h;
      subquotient( h, if N.?relations then N.relations))
 

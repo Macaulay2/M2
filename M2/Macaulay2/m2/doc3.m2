@@ -1,13 +1,13 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document { "shield",
-     HEADLINE "shield evaluation from interrupts",
+     HEADLINE => "shield evaluation from interrupts",
      TT "shield x", " -- executes the expression ", TT "x", ", temporarily
      ignoring interrupts."
      }
 
 document { symbol phase,
-     HEADLINE "compilation phase",
+     HEADLINE => "compilation phase",
      TT "phase", " -- an internal variable indicating which phase of compilation we
      are in.",
      PARA,
@@ -25,7 +25,7 @@ document { symbol phase,
      }
 
 document { lineNumber,
-     HEADLINE "current line number",
+     HEADLINE => "current line number",
      TT "lineNumber()", " -- returns the current line number.",
      BR, NOINDENT,
      TT "lineNumber n", " -- sets the line number to ", TO "n", " and
@@ -33,7 +33,7 @@ document { lineNumber,
      }
 
 document { backtrace,
-     HEADLINE "trace back through evaluations after an error",
+     HEADLINE => "trace back through evaluations after an error",
      TT "backtrace()", " -- after an error, returns a list representing the
      steps in the computation that led to the error.",
      PARA,
@@ -48,7 +48,7 @@ document { backtrace,
      }
 
 document { Position,
-     HEADLINE "the class of all file positions",
+     HEADLINE => "the class of all file positions",
      TT "Position", " -- a type of list designed to represent a position
      in a file.",
      PARA,
@@ -57,19 +57,19 @@ document { Position,
      }
 
 document { symbol "currentFile",
-     HEADLINE "the current source file",
+     HEADLINE => "the current source file",
      TT "currentFile", " -- a variable whose value is the name of the current
      source file."
      }
 
 document { flag,
-     HEADLINE "flag a symbol",
+     HEADLINE => "flag a symbol",
      TT "flag x", " -- arranges for each subsequent reference to a
      symbol x to be flagged with a warning message."
      }
 
 document { frame,
-     HEADLINE "the frame of a function",
+     HEADLINE => "the frame of a function",
      TT "frame f", " -- provides the frame of values for local variables
      bound up in a function closure.",
      PARA,
@@ -87,7 +87,7 @@ document { frame,
      }
 
 document { examine,
-     HEADLINE "examine internal information about functions or symbols",
+     HEADLINE => "examine internal information about functions or symbols",
      TT "examine ()", " -- list the sequence numbers for the scopes corresponding
      to the frames currently in use.", BR,NOINDENT, 
      TT "examine f", " -- display internal information about an interpreted 
@@ -99,13 +99,13 @@ document { examine,
      }
 
 document { seeParsing,
-     HEADLINE "print syntax table",
+     HEADLINE => "print syntax table",
      TT "seeParsing()", " -- print the syntax table which governs parsing
      precedence."
      }
 
 document { instance,
-     HEADLINE "whether something has a certain type",
+     HEADLINE => "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
      PARA,
@@ -116,7 +116,7 @@ document { instance,
      }
 
 document { symbol "pathSeparator",
-     HEADLINE "path separator for filenames",
+     HEADLINE => "path separator for filenames",
      TT "pathSeparator", " -- the character used under the current operating
      system to separate the component directory names in a file path.",
      PARA,
@@ -125,7 +125,7 @@ document { symbol "pathSeparator",
      }
 
 document { alarm,
-     HEADLINE "set an alarm",
+     HEADLINE => "set an alarm",
      TT "alarm n", " -- arrange for an interrupt to occur in ", TT "n", "
      seconds, cancelling any previously set alarm.",
      PARA,
@@ -144,7 +144,7 @@ document { alarm,
      }
 
 document { Field,
-     HEADLINE "the class of all fields",
+     HEADLINE => "the class of all fields",
      "Use ", TO "isField", " to determine whether a given ring is a field,
      since some rings that are fields, for implementation reasons, cannot
      be instances of ", TO "Field", ".",
@@ -152,7 +152,7 @@ document { Field,
      }
 
 document { char,
-     HEADLINE "the characteristic of a field or ring",
+     HEADLINE => "the characteristic of a field or ring",
      TT "char F", " -- returns the characteristic of the ring ", TT "F", ".",
      PARA,
      "The key ", TO "char", " is used to store the characteristic
@@ -160,7 +160,7 @@ document { char,
      }
 
 document { basictype,
-     HEADLINE "the basic type",
+     HEADLINE => "the basic type",
      TT "basictype x", " -- yields the class representing the basic type of ", TT "x", ".",
      PARA,
      "Every thing has basic type which tells what sort of thing it
@@ -175,15 +175,15 @@ document { basictype,
      }
 
 document { symbol "++",
-     HEADLINE "a binary operator, usually used for direct sum"
+     HEADLINE => "a binary operator, usually used for direct sum"
      }
 
 document { symbol "@@",
-     HEADLINE "a binary operator"
+     HEADLINE => "a binary operator"
      }
 
 document { symbol "==>",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      "This operator is right associative.",
      PARA,
      "New methods must be installed with ", TO "installMethod", ", because the
@@ -191,16 +191,16 @@ document { symbol "==>",
      }
 
 document { symbol "@",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      "This operator is right associative."
      }
 
 document { symbol "\\",
-     HEADLINE "a binary operator"
+     HEADLINE => "a binary operator"
      }
 
 document { (symbol /, VisibleList, Function),
-     HEADLINE "apply a function to each member of a list",
+     HEADLINE => "apply a function to each member of a list",
      TT "w / f", " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
@@ -212,7 +212,7 @@ document { (symbol /, VisibleList, Function),
      }
 
 document { (symbol \,Function, VisibleList),
-     HEADLINE "apply a function to each member of a list",
+     HEADLINE => "apply a function to each member of a list",
      TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
@@ -230,7 +230,7 @@ document { (symbol \,Function, VisibleList),
      }
 
 document { String,
-     HEADLINE "the class of all strings",
+     HEADLINE => "the class of all strings",
      "A string is thing which contains a sequence of characters (bytes).
      A string is normally entered as a sequence of characters surrounded 
      by quotation marks.",
@@ -245,7 +245,7 @@ document { String,
      }
 
 document { unhex,
-     HEADLINE "translate a URL",
+     HEADLINE => "translate a URL",
      TT "unhex s", " -- translates a string provided as the trailing part
      of a URL by a web browser.",
      PARA,
@@ -264,7 +264,7 @@ document { unhex,
      }
 
 document { "///",					    -- ///
-     HEADLINE "delineate a string",
+     HEADLINE => "delineate a string",
      TT "/// a string ///", " -- a string.",
      PARA,
      "This method for entering a string involves no escape characters, so
@@ -278,7 +278,7 @@ document { "///",					    -- ///
      }
 
 document { Net,
-     HEADLINE "the class of all nets and strings",
+     HEADLINE => "the class of all nets and strings",
      "A net is a generalization of a string which is designed to facilitate
      two-dimensional printing on ascii terminals.  It consists of a rectangular
      array of characters subdivided horizontally by an imaginary baseline.",
@@ -297,7 +297,7 @@ document { Net,
      }
 
 document { net, 
-     HEADLINE "convert to net",
+     HEADLINE => "convert to net",
      TT "net x", " -- format ", TT "x", " for printing.",
      PARA,
      "This function is the primary function called upon by ", TO "<<", " to
@@ -324,7 +324,7 @@ document { net,
      }
 
 document { horizontalJoin,
-     HEADLINE "join nets or strings horizontally",
+     HEADLINE => "join nets or strings horizontally",
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
      appropriately.",
@@ -339,7 +339,7 @@ document { horizontalJoin,
      }
 
 document { stack,
-     HEADLINE "join nets or string vertically",
+     HEADLINE => "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first argument.",
@@ -357,7 +357,7 @@ document { stack,
      }
 
 document { (symbol ^, Net, ZZ),
-     HEADLINE "raise a net",
+     HEADLINE => "raise a net",
      TT "n^i", " -- elevates a net or string ", TT "n", " by raising its
      characters by ", TT "i", " rows.",
      PARA,
@@ -369,7 +369,7 @@ document { (symbol ^, Net, ZZ),
      }
 
 document { width,
-     HEADLINE "width of a file or net",
+     HEADLINE => "width of a file or net",
      TT "width f", " -- determines the width of the terminal associated to an
      output file ", TT "f", ", if any.", BR,NOINDENT, 
      TT "width n", " -- the width of a net ", TT "n", ".",
@@ -377,7 +377,7 @@ document { width,
      }
 
 document { height,
-     HEADLINE "height of a net",
+     HEADLINE => "height of a net",
      TT "height n", " -- the height of a net ", TT "n", ".",
      PARA,
      "The height of a net is the number of rows of characters it has above
@@ -387,7 +387,7 @@ document { height,
      }
 
 document { depth,
-     HEADLINE "depth of a net",
+     HEADLINE => "depth of a net",
      TT "depth n", " -- the depth of a net ", TT "n", ".",
      PARA,
      "The depth of a net is the number of rows of characters it has below
@@ -397,14 +397,14 @@ document { depth,
      }
 
 document { class,
-     HEADLINE "class of an object",
+     HEADLINE => "class of an object",
      TT "class x", " -- yields the class of ", TT "x", ".",
      PARA,
      SEEALSO "classes"
      }
 
 document { hash,
-     HEADLINE "hash code of an object",
+     HEADLINE => "hash code of an object",
      TT "hash x", " -- returns the hash code of ", TT "x", ".",
      PARA,
      "The hash code of ", TT "x", " is an integer produced in a deterministic way
@@ -414,7 +414,7 @@ document { hash,
      }
 
 document { remove,
-     HEADLINE "remove an entry from a hash table",
+     HEADLINE => "remove an entry from a hash table",
      TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
      under the key ", TT "k", ".",
      PARA,
@@ -426,7 +426,7 @@ document { remove,
      }
 
 document { BasicList,
-     HEADLINE "the class of all basic lists",
+     HEADLINE => "the class of all basic lists",
      "A list is a sequence of expressions indexed by integers
      ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ", where ", TT "N", " is the length of the sequence.",
      PARA,
@@ -436,7 +436,7 @@ document { BasicList,
      }
 
 document { toSequence,
-     HEADLINE "convert to sequence",
+     HEADLINE => "convert to sequence",
      TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
      PARA,
      "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
@@ -448,7 +448,7 @@ document { toSequence,
      }
 
 document { Boolean,
-     HEADLINE "the class of Boolean values",
+     HEADLINE => "the class of Boolean values",
      "Predicate functions return these as values, and the logical connectives 
      expect to receive them as arguments.",
      PARA,
@@ -463,7 +463,7 @@ document { Boolean,
      }
 
 document { Symbol,
-     HEADLINE "the class of all symbols",
+     HEADLINE => "the class of all symbols",
      "Symbols are entered as an alphabetic character followed by a
      sequence of alphanumeric characters; case is significant.
      The single symbol character ' is regarded as alphabetic, so that
@@ -481,13 +481,13 @@ document { Symbol,
      }
 
 document { File,
-     HEADLINE "the class of all files",
+     HEADLINE => "the class of all files",
      "Files may be input files, output files, pipes, or sockets.
      A list of currently open files may be obtained with ", TO "openFiles", "."
      }
 
 document { connectionCount,
-     HEADLINE "the number of connections",
+     HEADLINE => "the number of connections",
      TT "connectionCount f", " -- returns the number of connections accepted by 
      the listener ", TT "f", " so far."
      }
@@ -501,17 +501,17 @@ erase symbol echoOff
 echoOff = Command ccc
 
 document { echoOn,
-     HEADLINE "turn on echoing",
+     HEADLINE => "turn on echoing",
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
      }
 
 document { echoOff,
-     HEADLINE "turn off echoing",
+     HEADLINE => "turn off echoing",
      TT "echoOff f", " -- turns off echoing for the file ", TT "f", "."
      }
 
 document { printString,
-     HEADLINE "lowlevel function to print a string",
+     HEADLINE => "lowlevel function to print a string",
      TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
      PARA,
      "This function is intended for internal use only.",
@@ -526,7 +526,7 @@ document { printString,
      }
 
 document { mutable,
-     HEADLINE "whether something may be modified",
+     HEADLINE => "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA,
      "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents
@@ -543,13 +543,13 @@ document { mutable,
      }
 
 document { setEcho,
-     HEADLINE "turn on echoing",
+     HEADLINE => "turn on echoing",
      TT "setEcho stdio", " -- turn on echoing of characters typed to the standard
      input."
      }
 
 document { clearEcho,
-     HEADLINE "turn off echoing",
+     HEADLINE => "turn off echoing",
      TT "clearEcho stdio", " -- turn off echoing of characters typed to the standard
      input."
      }

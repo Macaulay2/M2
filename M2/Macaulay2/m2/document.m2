@@ -66,8 +66,11 @@ betterStringKey := key -> (
      then substring(d,5)
      else key)
 
-getUsage  := key -> value getRecord betterStringKey toExternalString key
-betterKey := key -> value           betterStringKey toExternalString key
+betterKey  := key -> value           betterStringKey toExternalString key
+getDoc     := key -> value getRecord betterStringKey toExternalString key
+getDocBody := key -> (
+     a := getDoc key;
+     if a =!= null then select(a, s -> class s =!= Option))
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -199,7 +202,6 @@ ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
 TITLE      = new MarkUpType
 HEAD       = new MarkUpType
-HEADLINE   = new MarkUpType
 BODY       = new MarkUpType
 IMG	   = new MarkUpType
 HTML       = new MarkUpType
@@ -278,6 +280,7 @@ fixup String     := z -> z				    -- "..."
 fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
 fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
 fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
+fixup Option     := z -> z#0 => fixup z#1		    -- HEADLINE => "...", USAGE => "..."
 fixup TO         := z -> z				    -- TO{x}
 fixup TOH        := z -> z				    -- TOH{x}
 fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
@@ -442,10 +445,20 @@ nextMoreGeneral := s -> (
      else if class s === Option and #s === 2 then s#1
      )
 
+getOption := (s,tag) -> (
+     if not instance(s,BasicList) then error ("class = ", toString class s);
+     x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
+     if #x > 0 then x#0#1)
+
 getHeadline := key -> (
-     d := getUsage key;
-     if d =!= null and #d > 0 and class first d === HEADLINE then SEQ join( {"  --  "}, toList first d )
+     d := getOption(getDoc key, HEADLINE);
+     if d =!= null then SEQ join( {"  --  ", SEQ d} )
      )
+
+getUsage := key -> (
+     x := getOption(getDoc key, USAGE);
+     if x =!= null then SEQ x)
+
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
      if t === null and class key === Sequence then key#0 else t)
@@ -461,14 +474,7 @@ moreGeneral := s -> (
      )
 -----------------------------------------------------------------------------
 
-noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
-noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
-briefDocumentation = x -> (
-     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
-     else if headline x =!= null then << endl << headline x << endl
-     )
-
-optTO := i -> if getUsage i =!= null then TO i else TT formatDocumentTag i
+optTO := i -> if getDoc i =!= null then TO i else TT formatDocumentTag i
 
 smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> MENU (optTO \ s)
@@ -481,9 +487,9 @@ indefinite := s -> concatenate(if vowels#?(s#0) and not match(s,"one *") then "a
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
 
-usage = s -> (
-     o := getUsage s;
-     if o === null and class s === Symbol then o = getUsage toString s;
+usage := s -> (
+     o := getDocBody s;
+     if o === null and class s === Symbol then o = getDoc toString s;
      if o =!= null then SEQ {o, PARA{}}
      )
 
@@ -518,7 +524,7 @@ documentation String := s -> (
      else (
 	  key := betterKey s;
 	  if key =!= s then documentation key 
-	  else SEQ { title s, getUsage s }
+	  else SEQ { title s, getDocBody s }
 	  )
      )
 documentation Thing := s -> SEQ { title s, usage s, type s }
@@ -613,7 +619,22 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TT toString f," :", PARA{}, SHIELD smenu b} )
+     if #b > 0 then SEQ {"Ways to use ", TT toString f," :", BR{}, SHIELD smenu b} )
+
+noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
+noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
+briefDocumentation = x -> (
+     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
+     else (
+	  r := getUsage x;
+	  if r =!= null then << endl << text r << endl
+	  else (
+	       s := if class x === Function then fmeth x;
+	       if s =!= null then << endl << text s << endl
+ 	       else if headline x =!= null then << endl << headline x << endl
+	       )
+	  )
+     )
 
 optargs := method(SingleArgumentDispatch => true)
 
@@ -1000,10 +1021,6 @@ texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
 html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 
 texMath TEX := tex TEX := identity
-
-net HEADLINE := texMath HEADLINE := tex HEADLINE := text HEADLINE := s -> ""
-html HEADLINE := s -> concatenate ( "<!--headline: -- " , s, "-->", newline )
-
 
 texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))
 text SEQ := x -> concatenate(apply(x, text))

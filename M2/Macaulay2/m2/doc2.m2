@@ -1,7 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document { "timing",
-     HEADLINE "time a computation",
+     HEADLINE => "time a computation",
      TT "timing e", " -- evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
      of cpu timing used, and ", TT "v", " is the value of the the expression.",
@@ -16,7 +16,7 @@ document { "timing",
      }
 
 document { "time",
-     HEADLINE "time a computation",
+     HEADLINE => "time a computation",
      TT "time e", " -- evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
      PARA,
@@ -25,7 +25,7 @@ document { "time",
      }
 
 document { Time,
-     HEADLINE "the class of all timing results",
+     HEADLINE => "the class of all timing results",
      TT "Time", " -- is the class of all timing results.  Each timing result
      is a ", TO "BasicList", " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
@@ -34,7 +34,7 @@ document { Time,
      }
 
 document { null,
-     HEADLINE "nothingness",
+     HEADLINE => "nothingness",
      "When it is the value of an expression entered into the interpreter, the
      output line doesn't appear.  Empty spots in a list are represented by
      it.",
@@ -57,17 +57,17 @@ document { null,
      }
 
 document { "then",
-     HEADLINE "condition testing",
+     HEADLINE => "condition testing",
      TT "then", " -- a keyword used with ", TO "if", "."
      }
 
 document { "else",
-     HEADLINE "condition testing",
+     HEADLINE => "condition testing",
      TT "else", " -- a keyword used with ", TO "if", "."
      }
 
 document { "if",
-     HEADLINE "condition testing",
+     HEADLINE => "condition testing",
      TT "if p then x else y", " -- computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
      else the value of ", TT "y", " is provided.",
@@ -78,7 +78,7 @@ document { "if",
      }
 
 document { "while",
-     HEADLINE "loop control",
+     HEADLINE => "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ".",
      PARA,
@@ -89,12 +89,12 @@ document { "while",
      }
 
 document { "do",
-     HEADLINE "loop control",
+     HEADLINE => "loop control",
      TT "do", " -- a keyword used with ", TO "while", "."
      }
 
 document { "try",
-     HEADLINE "catch an error",
+     HEADLINE => "catch an error",
      TT "try x else y ", " -- returns the value of x unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
      returns the value of y.", BR, NOINDENT,
@@ -111,14 +111,14 @@ document { "try",
      }
 
 document { openFiles,
-     HEADLINE "list the open files",
+     HEADLINE => "list the open files",
      TT "openFiles()", " -- produces a list of all currently open files.",
      PARA,
      SEEALSO { "File" }
      }
 
 document { stdio,
-     HEADLINE "the standard input output file",
+     HEADLINE => "the standard input output file",
      TT "stdio", " -- the standard input output file.",
      PARA,
      "Use this file to get input from the terminal, or to display information
@@ -127,14 +127,14 @@ document { stdio,
      }
 
 document { stderr,
-     HEADLINE "the standard error output file",
+     HEADLINE => "the standard error output file",
      TT "stderr", " -- the standard error output file.",
      PARA,
      "Use this file to display error messages on the user's screen."
      }
 
 document { openListener,
-     HEADLINE "open a port for listening",
+     HEADLINE => "open a port for listening",
      TT "f = openListener \"$:service\"", "  -- opens a listener on the local
      host at the specified service port.",
      BR,NOINDENT,
@@ -146,21 +146,21 @@ document { openListener,
      }
 
 document { openIn,
-     HEADLINE "open an input file",
+     HEADLINE => "open an input file",
      TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
 document { openOut,
-     HEADLINE "open an output file",
+     HEADLINE => "open an output file",
      TT "openOut \"fff\"", "  -- opens an output file whose filename is fff.",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
 document { openInOut,
-     HEADLINE "open an input outpuf file",
+     HEADLINE => "open an input outpuf file",
      TT "openInOut \"fff\"", "  -- opens an input output file whose 
      filename is ", TT "fff", ".",
      BR,NOINDENT,
@@ -202,7 +202,7 @@ document { openInOut,
      }
 
 document { protect,
-     HEADLINE "protect a symbol",
+     HEADLINE => "protect a symbol",
      TT "protect s", " -- protects the symbol ", TT "s", " from having its value changed.",
      PARA,
      "There is no unprotect function, because we want to allow the compiler
@@ -213,21 +213,21 @@ document { protect,
      }
 
 document { isInputFile,
-     HEADLINE "whether a file is open for input",
+     HEADLINE => "whether a file is open for input",
      TT "isInputFile f", " -- whether ", TT "f", " is an input file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
 document { isOutputFile,
-     HEADLINE "whether a file is open for output",
+     HEADLINE => "whether a file is open for output",
      TT "isOutputFile f", " -- whether ", TT "f", " is an output file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
 document { isOpenFile,
-     HEADLINE "whether a file is open",
+     HEADLINE => "whether a file is open",
      TT "isOpenFile f", " -- whether ", TT "f", " is an open file.",
      PARA,
      "An open file is either an input file, an output file, an
@@ -237,7 +237,7 @@ document { isOpenFile,
      }
 
 document { isListener,
-     HEADLINE "whether a file is open for listening",
+     HEADLINE => "whether a file is open for listening",
      TT "isListener f", " -- whether ", TT "f", " is a listener.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
@@ -250,7 +250,7 @@ document { symbol <<,
      }
 
 document { (symbol <<,ZZ, ZZ),
-     HEADLINE "shift bits leftward",
+     HEADLINE => "shift bits leftward",
      TT "i << j", " -- shifts the bits in the integer ", TT "i", " leftward ", TT "j", " places.",
      PARA,
      EXAMPLE "2 << 5",
@@ -258,7 +258,7 @@ document { (symbol <<,ZZ, ZZ),
      }
 
 document { (symbol >>, ZZ, ZZ),
-     HEADLINE "shift bits rightward",
+     HEADLINE => "shift bits rightward",
      TT "i >> j", " -- shifts the bits in the integer ", TT "i", " rightward ", TT "j", " places.",
      PARA,
      EXAMPLE "256 >> 5",
@@ -266,7 +266,7 @@ document { (symbol >>, ZZ, ZZ),
      }
 
 document { (symbol <<, String, Thing),
-     HEADLINE "print to a file",
+     HEADLINE => "print to a file",
      TT "\"name\" << x", " -- prints the expression ", TT "x", " on the output file
      named \"name\".",
      PARA,
@@ -282,7 +282,7 @@ document { (symbol <<, String, Thing),
      }
 
 document { (symbol <<, Thing),
-     HEADLINE "print to a file",
+     HEADLINE => "print to a file",
      TT "<< x", " -- prints the expression x on the standard output file ", TO "stdio", ".",
      PARA,
      EXAMPLE "<< \"abcdefghij\" << endl",
@@ -290,16 +290,16 @@ document { (symbol <<, Thing),
      }
 
 document { symbol ">>",
-     HEADLINE "shift bits rightward",
+     HEADLINE => "shift bits rightward",
      TT "i >> j", " -- shifts the bits in the integer ", TT "i", " rightward ", TT "j", " places."
      }
 
 document { symbol ":",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      }
 
 document { (symbol :, ZZ, Thing),
-     HEADLINE "repeat an item",
+     HEADLINE => "repeat an item",
      TT "n : x", " -- repetition ", TT "n", " times of ", TT "x", " in a sequence",
      PARA,
      "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
@@ -313,7 +313,7 @@ document { (symbol :, ZZ, Thing),
      }
 
 document { getc,
-     HEADLINE "get a byte",
+     HEADLINE => "get a byte",
      TT "getc f", " -- obtains one byte from the input file f and provides it as a 
      string of length 1.  On end of file an empty string of is returned.",
      PARA,
@@ -323,7 +323,7 @@ document { getc,
      }
 
 document { symbol "<",
-     HEADLINE "less than",
+     HEADLINE => "less than",
      TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
      PARA,
@@ -331,7 +331,7 @@ document { symbol "<",
      }
 
 document { symbol "<=",
-     HEADLINE "less than or equal",
+     HEADLINE => "less than or equal",
      TT "x <= y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
      PARA,
@@ -339,7 +339,7 @@ document { symbol "<=",
      }
 
 document { symbol ">",
-     HEADLINE "greater than",
+     HEADLINE => "greater than",
      TT "x > y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
      PARA,
@@ -347,7 +347,7 @@ document { symbol ">",
      }
 
 document { symbol ">=",
-     HEADLINE "greater than or equal",
+     HEADLINE => "greater than or equal",
      TT "x >= y", " -- yields ", 
      TO "true", " or ", 
      TO "false", " depending on whether x >= y.",
@@ -357,13 +357,13 @@ document { symbol ">=",
 
 protect incomparable
 document { incomparable,
-     HEADLINE "a result indicating incomparability",
+     HEADLINE => "a result indicating incomparability",
      TT "incomparable", " -- a symbol which may be returned by ", TO "?", "
      when the two things being compared are incomparable."
      }
 
 document { symbol "?",
-     HEADLINE "comparison operator",
+     HEADLINE => "comparison operator",
      TT "x ? y", " -- compares x and y, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA,
@@ -387,7 +387,7 @@ document { symbol "?",
      }
 
 document { ";",
-     HEADLINE "statement separator",
+     HEADLINE => "statement separator",
      TT "(e;f;...;g;h)", " -- the semicolon can be used for evaluating a sequence of 
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
@@ -399,7 +399,7 @@ document { ";",
      }
 
 document { symbol "<-",
-     HEADLINE "assignment",
+     HEADLINE => "assignment",
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
      "If the value of x is a symbol, then the value of y is assigned as the
@@ -420,7 +420,7 @@ document { symbol "<-",
      }
 
 document { "=",
-     HEADLINE "assignment",
+     HEADLINE => "assignment",
      TT "x = e", "      -- assigns the value e to the variable x.",
      PARA,
      NOINDENT,
@@ -435,7 +435,7 @@ document { "=",
 
 
 document { ":=",
-     HEADLINE "assignment to a new local variable",
+     HEADLINE => "assignment to a new local variable",
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
      TT "f X := (x) -> ( ... )", " -- install a method for the method function
@@ -452,35 +452,35 @@ document { ":=",
      }
 
 document { abs,
-     HEADLINE "absolute value function", 
+     HEADLINE => "absolute value function", 
      TT "abs x", " -- computes the absolute value of ", TT "x", "."
      }
 
 document { sin,
-     HEADLINE "sine function", 
+     HEADLINE => "sine function", 
      TT "sin x", " -- computes the sine of ", TT "x", "."
      }
 
 document { cos,
-     HEADLINE "cosine function", 
+     HEADLINE => "cosine function", 
      TT "cos x", " -- computes the cosine of ", TT "x", "."
      }
 
 document { tan,
-     HEADLINE "tangent function",
+     HEADLINE => "tangent function",
      TT "tan x", " -- computes the tangent of ", TT "x", "."
      }
 
 document { asin,
-     HEADLINE "arcsine function", 
+     HEADLINE => "arcsine function", 
      TT "asin x", " -- computes the arcsine of ", TT "x", "."
      }
 document { acos,
-     HEADLINE "arccosine function", 
+     HEADLINE => "arccosine function", 
      TT "acos x", " -- computes the arccosine of ", TT "x", "."
      }
 document { atan,
-     HEADLINE "arctangent function", 
+     HEADLINE => "arctangent function", 
      TT "atan x", " -- computes the arctangent of ", TT "x", ".",
      BR,NOINDENT,
      TT "atan(x,y)", " -- computes the angle formed with the 
@@ -488,47 +488,47 @@ document { atan,
     }
 
 document { sinh,
-     HEADLINE "hyperbolic sine function",
+     HEADLINE => "hyperbolic sine function",
      TT "sinh x", " -- computes the hyperbolic sine of ", TT "x", "."
      }
 
 document { cosh,
-     HEADLINE "hyperbolic cosine function",
+     HEADLINE => "hyperbolic cosine function",
      TT "cosh x", " -- computes the hyperbolic cosine of ", TT "x", "."
      }
 
 document { tanh,
-     HEADLINE "hyperbolic tangent function",
+     HEADLINE => "hyperbolic tangent function",
      TT "tanh x", " -- computes the hyperbolic tangent of ", TT "x", "."
      }
 
 document { exp,
-     HEADLINE "exponential function",
+     HEADLINE => "exponential function",
      TT "exp x", " -- computes the exponential of ", TT "x", "."
      }
 
 document { log,
-     HEADLINE "logarithm function",
+     HEADLINE => "logarithm function",
      TT "log x", " -- computes the logarithm of ", TT "x", "."
      }
 
 document { sqrt,
-     HEADLINE "square root function",
+     HEADLINE => "square root function",
      TT "sqrt x", " -- provides the square root of the number ", TT "x", "."
      }
 
 document { floor,
-     HEADLINE "floor function",
+     HEADLINE => "floor function",
      TT "floor x", " -- provides the largest integer less than or equal to the number ", TT "x", "."
     }
 
 document { ceiling,
-     HEADLINE "ceiling function",
+     HEADLINE => "ceiling function",
      TT "ceiling x", " -- provides the largest integer greater than or equal to the number ", TT "x", "."
      }
 
 document { run,
-     HEADLINE "run an external command", 
+     HEADLINE => "run an external command", 
      TT "run s", " -- runs the command string ", TT "s", "
      by passing it to the operating system.",
      PARA,
@@ -537,7 +537,7 @@ document { run,
      }
 
 document { wait,
-     HEADLINE "wait for child process", 
+     HEADLINE => "wait for child process", 
      TT "wait i", " -- wait for the completion of child process with process id
      ", TT "i", ".",
      BR,NOINDENT,
@@ -549,7 +549,7 @@ document { wait,
      }
 
 document { value,
-     HEADLINE "evaluate", 
+     HEADLINE => "evaluate", 
      TT "value s", " -- provides the value of ", TT "s", ", which may be a
      symbol, string, or an expression.",
      PARA,
@@ -576,7 +576,7 @@ document { value,
      }
 
 document { "global",
-     HEADLINE "get a global symbol", 
+     HEADLINE => "get a global symbol", 
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
      PARA,
@@ -591,13 +591,13 @@ document { "global",
      }
 
 document { erase,
-     HEADLINE "remove a global symbol",
+     HEADLINE => "remove a global symbol",
      TT "erase s", " -- removes the global symbol ", TT "s", " from the
      symbol table."
      }
 
 document { "local",
-     HEADLINE "get a local symbol",
+     HEADLINE => "get a local symbol",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TT "null", ".",
@@ -611,7 +611,7 @@ document { "local",
      }
 
 document { "symbol",
-     HEADLINE "get a symbol",
+     HEADLINE => "get a symbol",
      TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
      EXAMPLE {
@@ -630,13 +630,13 @@ document { "symbol",
      }
 
 document { gcd,
-     HEADLINE "greatest common divisor",
+     HEADLINE => "greatest common divisor",
      TT "gcd(x,y)", " -- yields the greatest common divisor of x and y.",
      SEEALSO "gcdCoefficients"
      }
 
 document { concatenate,
-     HEADLINE "join strings",
+     HEADLINE => "join strings",
      TT "concatenate(s,t,...,u)", " -- yields the concatenation of the strings s,t,...,u.",
      PARA,
      "The arguments may also be lists or sequences of strings and symbols, in
@@ -648,7 +648,7 @@ document { concatenate,
      }
 
 document { error,
-     HEADLINE "deliver error message",
+     HEADLINE => "deliver error message",
      TT "error s", " -- causes an error message s to be displayed.",
      PARA,
      "The error message s (which should be a string or a sequence of
@@ -663,7 +663,7 @@ document { error,
      }
 
 document { characters,
-     HEADLINE "get characters from a string",
+     HEADLINE => "get characters from a string",
      TT "characters s", " -- produces a list of the characters in the string s.",
      PARA,
      "The characters are represented by strings of length 1.",
@@ -674,7 +674,7 @@ document { characters,
      }
 
 document { getenv,
-     HEADLINE "get value of environment variable",
+     HEADLINE => "get value of environment variable",
      TT "getenv s", " -- yields the value associated with the string s in the 
      environment.",
      PARA,
@@ -684,16 +684,16 @@ document { getenv,
      }
 
 document { currentDirectory,
-     HEADLINE "current working directory",
+     HEADLINE => "current working directory",
      TT "currentDirectory()", " -- returns the name of the current directory."
      }
 
 document { symbol "~",
-     HEADLINE "a unary postfix operator",
+     HEADLINE => "a unary postfix operator",
      }
 
 document { copy,
-     HEADLINE "copy an object",
+     HEADLINE => "copy an object",
      TT "copy x", " -- yields a copy of x.",
      PARA,
      "If x is an hash table, array, list or sequence, then the elements are 
@@ -708,7 +708,7 @@ document { copy,
      }
 
 document { mergePairs,
-     HEADLINE "merge sorted lists of pairs",
+     HEADLINE => "merge sorted lists of pairs",
      TT "mergePairs(x,y,f)", " -- merges sorted lists of pairs.",
      PARA,
      "It merges ", TT "x", " and ", TT "y", ", which should be lists 
@@ -726,7 +726,7 @@ document { mergePairs,
      }
 
 document { merge,
-     HEADLINE "merge hash tables",
+     HEADLINE => "merge hash tables",
      TT "merge(x,y,g)", " -- merges hash tables x and y using the function
      g to combine the values when the keys collide.",
      PARA,
@@ -742,7 +742,7 @@ document { merge,
      }
 
 document { combine,
-     HEADLINE "combine hash tables",
+     HEADLINE => "combine hash tables",
      TT "combine(x,y,f,g,h)", " -- yields the result of combining hash tables
      ", TT "x", " and ", TT "y", ", using ", TT "f", " to combine keys, ", TT "g", "
      for values, and ", TT "h", " for collisions.",
@@ -766,7 +766,7 @@ document { combine,
      }
 
 document { ancestor,
-     HEADLINE "whether one type is an ancestor of another",
+     HEADLINE => "whether one type is an ancestor of another",
      TT "ancestor(x,y)", " -- tells whether y is an ancestor of x.",
      PARA,
      "The ancestors of x are x, parent x, parent parent x, and so on.",
@@ -775,7 +775,7 @@ document { ancestor,
      }
 
 document { unique,
-     HEADLINE "eliminate duplicates from a list",
+     HEADLINE => "eliminate duplicates from a list",
      TT "unique v", " -- yields the elements of the list ", TT "v", ", without duplicates.",
      PARA,
      EXAMPLE {
@@ -787,7 +787,7 @@ document { unique,
      }
 
 document { Ring,
-     HEADLINE "the class of all rings",
+     HEADLINE => "the class of all rings",
      "A ring is a set together with operations +, -, * and elements 0, 1 
      satisfying the usual rules.  In this system, it is also understood to 
      be a ZZ-algebra, which means that the operations where one argument is 
@@ -803,14 +803,14 @@ document { (symbol _, ZZ, Ring),
      }
 
 document { SymbolTable,
-     HEADLINE "the class of all symbol tables",
+     HEADLINE => "the class of all symbol tables",
      "In a symbol table, each key is string containing the name of 
      a symbol, and the corresponding value is the symbol itself.",
      SEEALSO "Symbol"
      }
 
 document { symbolTable,
-     HEADLINE "the global symbols",
+     HEADLINE => "the global symbols",
      TT "symbolTable()", " -- constructs an hash table containing the 
      global symbol table.",
      PARA,
@@ -821,7 +821,7 @@ document { symbolTable,
      }
 
 document { applyPairs,
-     HEADLINE "apply a function to pairs in a hash table",
+     HEADLINE => "apply a function to pairs in a hash table",
      TT "applyPairs(x,f)", " -- applies ", TT "f", " to each pair ", TT "(k,v)", " in the 
      hash table ", TT "x", " to produce a new hash table.",
      PARA,
@@ -849,7 +849,7 @@ document { applyPairs,
      }
 
 document { applyKeys,
-     HEADLINE "apply a function to each key in a hash table",
+     HEADLINE => "apply a function to each key in a hash table",
      TT "applyKeys(x,f)", " -- applies ", TT "f", " to each key ", TT "k", " in the 
      hash table ", TT "x", " to produce a new hash table.",
      PARA,
@@ -867,7 +867,7 @@ document { applyKeys,
      }
 
 document { applyValues,
-     HEADLINE "apply a function to each value",
+     HEADLINE => "apply a function to each value",
      TT "applyValues(x,f)", " -- applies ", TT "f", " to each value ", TT "v", " 
      in the hash table ", TT "x", " to produce a new hash table.",
      PARA,
@@ -884,7 +884,7 @@ document { applyValues,
      }
 
 document { use,
-     HEADLINE "install defaults",
+     HEADLINE => "install defaults",
      TT "use S", " -- installs certain defaults associated with S.",
      PARA,
      "This will install functions or methods which make the use 
@@ -936,7 +936,7 @@ document { use,
   --  types = null
 
 document { setSpin,
-     HEADLINE "set interval for spinning the cursor",
+     HEADLINE => "set interval for spinning the cursor",
      TT "setSpin n", " -- sets the interval between calls to spin the cursor on
      the Macintosh.",
      PARA,
@@ -944,7 +944,7 @@ document { setSpin,
      }
 
 document { symbol "=>",
-     HEADLINE "produce an Option",
+     HEADLINE => "produce an Option",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
      }
