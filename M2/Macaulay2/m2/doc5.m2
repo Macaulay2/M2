@@ -3,7 +3,7 @@
 document {
      Key => override,
      Headline => "override default values for optional arguments",
-     TT "override(defaults,args)", " -- overrides default values for
+     TT "override(defaults,args)", " overrides default values for
      optional arguments present in the argument sequence ", TT "args", ".",
      PARA,
      "The argument ", TT "defaults", " should be an immutable hash table (
@@ -25,11 +25,13 @@ document {
 document {
      Key => userSymbols,
      Headline => "a list of the user's symbols",
-     TT "userSymbols ()", " -- provides a list of symbols defined by
+	Usage => "userSymbols ()",
+	Outputs => {List => {" a list of symbols"}},
+     TT "userSymbols ()", " provides a list of symbols defined by
      the user.",
      BR,
-     NOINDENT, TT "userSymbols X", " -- limits the list to those symbols whose
-     values are instances of the class X.",
+     NOINDENT, TT "userSymbols X", " limits the list to those symbols whose
+     values are instances of the ", TO "class", " ", TT "X", ".",
      PARA,
      "Protected symbols are excluded from the list.",
      SeeAlso => "listUserSymbols"
@@ -39,11 +41,12 @@ document {
 document {
      Key => listUserSymbols,
      Headline => "display the user's symbols",
-     TT "listUserSymbols", " -- a command which returns a display of the variables 
+	Usage => "listUserSymbols",
+     TT "listUserSymbols", " is a command which returns a display of the variables 
      defined by the user, along with their types.",
      BR,
-     NOINDENT, TT "listUserSymbols X", " -- limits the list to those variables whose
-     values are instances of X.",
+     NOINDENT, TT "listUserSymbols X", " limits the list to those variables whose
+     values are instances of ", TO "class", " ", TT "X", ".",
      PARA,
      "This function is useful after using ", TO "loaddata", " to restore 
      a previous session.",
@@ -53,25 +56,26 @@ document {
 document {
      Key => clearOutput,
      Headline => "forget output values",
-     TT "clearOutput", " -- a command which attempts to release memory by 
+	Usage => "clearOutput",
+     TT "clearOutput", " is a command which attempts to release memory by 
      clearing the values retained by the output line symbols.",
-     PARA,
      SeeAlso => { "clearAll" }
      }
 
 document {
      Key => clearAll,
      Headline => "forget everything",
-     TT "clearAll", " -- a command which attempts to release memory by clearing 
+	Usage => "clearAll",
+     TT "clearAll", " is a command which attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
-     PARA,
      SeeAlso => {"userSymbols", "clearOutput"}
      }
 
 document {
      Key => exec,
      Headline => "execute another program",
-     TT "exec argv", " -- uses the 'exec' operating system call to
+	Usage => "exec argv",
+     TT "exec argv", "  uses the 'exec' operating system call to
      start up another program, replacing the current Macaulay 2 process.
      Here ", TT "argv", " is a string, or a sequence or list of strings
      to be passed as arguments to the new process.  The first string
@@ -81,7 +85,8 @@ document {
 document {
      Key => restart,
      Headline => "restart Macaulay 2",
-     TT "restart", " -- restart Macaulay 2 from the beginning.",
+	Usage => "restart",
+     TT "restart", " restarts Macaulay 2 from the beginning.",
      PARA,
      "Functions previously registered with ", TO "addEndFunction", " will
      be called first."
@@ -105,13 +110,15 @@ document {
 document {
      Key => assert,
      Headline => "assert something is true",
-     TT "assert x", " -- prints an error message if x isn't true."
+	Usage => "assert x",
+     TT "assert x", " prints an error message if x isn't true."
      }
 
 document {
      Key => notImplemented,
      Headline => "print an 'not implemented' error message",
-     TT "notImplemented()", " -- print an error message that 
+	Usage => "notImplemented()",
+     TT "notImplemented()", " prints an error message that 
      says \"not implemented yet\"."
      }
 

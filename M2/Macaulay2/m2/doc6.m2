@@ -24,7 +24,11 @@ document {
 document {
      Key => "pi",
      Headline => "the number 'pi'",
-     TT "pi", " -- the numerical value of the arithmetic quantity pi."}
+     TT "pi", " the numerical value of the arithmetic quantity pi.",
+	EXAMPLE {
+		"pi"
+		}
+	}
 document {
      Key => Engine,
      Headline => "specify whether a ring is handled by the engine",
@@ -34,6 +38,39 @@ document {
      Key => ring,
      Headline => "get the associated ring"}
 document {
+	Key => (ring, Matrix),
+	Headline => "get the ring of a matrix",
+	Usage => "ring f",
+	Inputs => {
+		"f" => ""
+		},
+     Outputs => {
+		{"the ring containing the entries of the matrix ", TT "f", "."}
+		}
+	}
+document {
+	Key => (ring, Ideal),
+	Headline => "get the ring of an ideal",
+	Usage => "ring I",
+	Inputs => {
+		"I" => ""
+		},
+     Outputs => {
+		{"the ring containing the ideal ", TT "I", "."}
+		}
+	}
+document {
+	Key => (ring, MonomialIdeal),
+	Headline => "get the ring of a monomial ideal",
+	Usage => "ring I",
+	Inputs => {
+		"I" => ""
+		},
+     Outputs => {
+		{"the ring containing the monomial ideal ", TT "I", "."}
+		}
+	}
+document {
      Key => coefficientRing,
      Headline => "get the coefficient ring",
      TT "coefficientRing R", " -- yields the coefficient ring of the ring ", TT "R", ".",
@@ -41,7 +78,7 @@ document {
      "If ", TT "R", " is a polynomial ring, then the coefficient ring is
      the base ring from which the coefficients are drawn.  If ", TT "R", " is
      constructed from a polynomial ring as a quotient ring or a fraction ring
-     or a sequence of such operatinos, then the original coefficient ring
+     or a sequence of such operations, then the original coefficient ring
      is returned.",
      EXAMPLE {
 	  "coefficientRing(ZZ/101[a][b])",
@@ -164,6 +201,8 @@ document {
 document {
      Key => ZZ,
      Headline => "the class of all integers" }
+
+
 TEST "
 assert (not isPrime 1333333)
 assert (not isPrime 3133333)

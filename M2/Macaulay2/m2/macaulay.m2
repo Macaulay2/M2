@@ -376,7 +376,7 @@ document {
      EXAMPLE "result_1",
      
      HEADER3 "col_degree <matrix> <column> [result integer]",
-     "To obtain the degree of the ", TT "i", "th column of a matrix ", 
+     "To obtain the degree of the ", TT "i", "-th column of a matrix ", 
      TT "m", ", use ", TT "(degrees source m)_i", ".  See ", TO "degrees",
      ".  Note that in Macaulay2, one can use multi-degrees, so the result
      is a list of integers.  Also all indices in Macaulay2 start at 0.",

@@ -19,7 +19,8 @@ document {
 document {
      Key => "time",
      Headline => "time a computation",
-     TT "time e", " -- evaluates ", TT "e", ", prints the amount of cpu time
+	Usage => "time e",
+     TT "time e", " evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
      EXAMPLE "time 3^30",
      SeeAlso => "timing"
@@ -28,7 +29,7 @@ document {
 document {
      Key => Time,
      Headline => "the class of all timing results",
-     TT "Time", " -- is the class of all timing results.  Each timing result
+     TT "Time", " is the class of all timing results.  Each timing result
      is ", OFCLASS BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
      of the the expression."
@@ -606,7 +607,7 @@ document {
 -- string, function, and symbol.
 
 document {
-     Key => sin, 
+     Key => sin, -- this node is used as an example in the documentation node Inputs and Outputs.
      Headline => "sine function",
      Usage => "sin x",
      Inputs => { "x" => RR => null },

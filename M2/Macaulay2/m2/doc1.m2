@@ -1,104 +1,256 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
-document {						    -- rewrite this!
+
+-- throughout the documentation of the documentation
+-- examples are referred to in the code. 
+-- Each time such a reference was made, a comment
+-- was added to the referenced code to insure that 
+-- if changes are made there, the author will know to
+-- change the documentation of the documentation to meet
+-- the changes.
+
+document {  
      Key => document,
-     Usage => "document { Key => x, ... }",
+     Usage => "document { Key => key, ... }",
      Headline => "install documentation",
-     TT "document {s, d}", " -- install documentation ", TT "d", " for 
-     the topic ", TT "s", ".",
-     PARA {
-	  "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
-	  ", TT "s", " may be one of the special forms useable with ", TO "TO", ".  As
-	  a convenience, lists and sequences in ", TT "d", " are converted to ", TT "SEQ", "
-	  mark up items, and instances of ", TO "MarkUpType", ", such as ", TO "PARA", "
-	  are converted to empty instances of their type."},
-     PARA "Special documentation entries:",
-     UL {
-	  TOH "Key",
-	  TOH "Headline",
-	  TOH "Usage",
-	  TOH "Inputs",
-	  TOH "Outputs",
-	  TOH "Consequences",
-	  TOH "FileName",
-	  TOH "Caveat",
-	  TOH "EXAMPLE",
-	  TOH "SeeAlso",
-	  TOH "Subnodes"
-	  },
+	Inputs => {List => {"a hyptertext list including special documentation entries"}},
+	Outputs => {"a formatted documentation entry"},
+	    "The documentation is composed of a ", TO "Hypertext", " list.  There are two basic types of documentation. 
+	    The first type is documenting a function or a method, as in ", TO (resolution,Module), ". The second type of 
+	    documentation is used for overviews or functions with methods, as in ", 
+	    TO "free resolutions, chain complexes, and homological algebra", 
+	    " or ", TO resolution, " respectively. Here is a template of a typical documentation node.",
+ 	PRE ///document {
+     Key => key,
+     FileName => "filename",
+     Headline => "description",
+	-- the following entries are relevant only for documentation of the first type
+     Usage => "usage",
+     Function => "function",
      Inputs => {
-	  "opts" => List => "a list of options",
-	  },
-     Consequences => {
-	  "provides the synopsis section of a documentation node"
-	  },
-     PARA {
-	  "The list ", TT "opts", " should be a list of options, each of which is in one of the
-	  following forms."},
-     UL {
-	  { TO "Usage", " => ", TT "\"USAGESTRING\""},
-	  { TO "Inputs", " => ", TT "INPUTLIST"},
-	  { TO "Outputs", " => ", TT "OUTPUTLIST"},
-	  { TO "Consequences", " => ", TT "RESULTLIST"}
-	  },
-     PARA {
-	  "The only entry that is mandatory is USAGESTRING, which should show a typical usage of
-	  the documented item, ", TT "x", ".  Each of the other lists should consist of items in one of the
-	  following forms."},
-     UL {
-	  TT "HYPERTEXTLIST",
-	  TT "CLASS => HYPERTEXTLIST",
-	  TT "STRING => HYPERTEXTLIST",
-	  TT "STRING => CLASS => HYPERTEXTLIST",
-	  TT "SYMBOL => HYPERTEXTLIST",
-	  TT "SYMBOL => CLASS => HYPERTEXTLIST"
-	  },
-     PARA {
-	  "Here ", TT "STRING", " should be the name of one of the symbols appearing in ", TT "USAGESTRING", ", ", TT "SYMBOL", " should
-	  be the symbol used as a tag for an optional argument to the function, ", TT "CLASS", " should be a type giving
-	  the class typically expected for the input or typically provided by the output, and ", TT "HYPERTEXTLIST", "
-	  may be a string of a list of ", TO "hypertext", " items."},
-     PARA {
-	  "The types of the inputs and outputs are often provided in other ways, see ", TO "typicalValues", "."
-	  },
-     PARA {
-	  "Here is an outline or template of a typical documentation node.",
-	  PRE ///document {
-     Key => x,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+		inputs
 	  },
      Outputs => {
+		outputs
 	  },
      Consequences => {
+		effects
 	  },
-     EXAMPLE { },
-     Caveat => { },
-     SeeAlso => { }
-     }///
-     	  }
-     }
+  	"There can be explanatory prose here in the form of a hypertext list.",
+     EXAMPLE {
+		"m2code",
+		"m2code",
+		"m2code"
+		 },
+	"There can be explanatory prose here in the form of a hypertext list.",
+     Caveat => {"warning"},
+     SeeAlso => {link},
+     Subnodes => {hypertextlist}
+     }///,
+     PARA "Special documentation entries:",
+     UL {
+	  TOH Key,
+	  TOH Headline,
+	  TOH Usage,
+	  TOH Function,
+	  TOH Inputs,
+	  TOH Outputs,
+	  TOH Consequences,
+	  TOH FileName,
+	  TOH Caveat,
+	  TOH EXAMPLE,
+	  TOH SeeAlso,
+       TOH Subnodes
+	  }
+  }
 document {
+	Key => Key,
+	Headline => "key of a documentation node",
+	Usage => "document { Key => key, ... }",
+	Function => document, 
+	Consequences => {"specifies the name under which the documentation is stored"},
+	"The document key is the the name of the node, specifically the one that allows 
+	users to find the documentation for the desired command. Some node names, rather than being strings, 
+	are sequences of Macaulay 2 objects that refer to specific method functions. If one is documenting 
+	a function of Macaulay 2, the key  will just be the function's name, as in the
+	documentation for ", TO "resolution", ".",
+	PRE ///Key => resolution,///,
+	"However, if one is documenting a method for a  function, then the key will have a different form, as in the 
+	documentation for ", TO {(resolution,Module)}, ".",
+	PRE ///Key => (resolution,Module),///,
+	"If one is documenting an optional argument to a function, then the key has a different form still, as in ",
+	TO {[resolution,SyzygyLimit]}, ".",
+	PRE ///Key => [resolution,SyzygyLimit],///,
+	"Finally, if one is documenting an overview of a group of functions or a package, as in ", 
+	TO "free resolutions, chain complexes, and homological algebra", 
+	" then one would set up a document key of the form:",
+    	PRE ///Key => "free resolutions, chain complexes, and homological algebra",///,
+	Caveat => {"No two documentation nodes may have the same key or even a key which is a synonym for a key 
+	     which is already used. However, sometimes there is a need for several documentation nodes to have the same  
+		key. This happens when a command that needs to be documented is a synonym for another already documented command. In this case the 
+		synonym's key should be stated in quotation marks. As an example, look at the documentation for ", TO "SUBSECTION", " and ", TO "HEADER2", "."},
+	SeeAlso => {document,TO}
+	}
+
+
+document { -- This node is used as an example in the node: Consequences 
      Key => Headline,
      Headline => "make a headline for a documentation node",
-     Usage => "document { x, Headline => HEADLINE, ... }",
+     Usage => "document { Key => key, Headline => \"description\", ... }",
      Function => document,
-     Inputs => {
-	  "HEADLINE" => String => "a brief headline"
-	  },
      Consequences => {
-	  { "the headline string will be used to annotate itemized lists of cross references to ", TT "x", " in the documentation" }
+	  { "the headline string will be used to annotate itemized 
+		  lists of cross references to the documentation ", TO "Key" }
 	  },
-     SeeAlso => "hypertext"
+	"The headline of a documentation node, gives a brief, half line, description of the thing being documented. 
+	As an example, the headline for this documentation node was obtained with the code:",
+	PRE ///Headline => "make a headline for a documentation node", ///,
+     SeeAlso => {document, hypertext, TOH}
      }
 document {
-     Key => Usage, "See ", TO "document", "." }
+     Key => Usage, 
+	Headline => "shows the usage of a function",
+	Usage => "document { ... , Usage => \"usage\", ... }",
+     Function => document,
+	"The ", TT "Usage", " entry should give a formal example showing the usage of the function. 
+	The variables used in this formal example should be the ones used in the ", TO "Inputs", " and ", TO "Outputs",
+	" sections of the documentation. Here is the code for the ", TT "Usage", " entry of the method ", TO (matrix, List), ":",
+	PRE ///Usage => "matrix v",///,
+	"Here is the code for the ", TT "Usage", " entry of the method ", TO (resolution, Module), ":",
+	PRE ///Usage => {TT "resolution M", " or ", TT "res M"},///,
+	SeeAlso => {document, Inputs, Outputs} 
+	}
+--document {
+--	Key => [document, Function],
+--	Headline => "function for a documented feature",
+--	Usage => "document { ... , Function => function, ... }",
+--	Function => "document",
+--	Inputs => {
+--		"function" => Function
+--		}
+--	}
 document {
-     Key => Consequences, "See ", TO "document", "." }
+     Key => Inputs, 
+	Headline => "inputs for a function",
+	Usage => "document { ... , Inputs => { inputs, ... }, ... }",
+	Function => document,
+	"The entries should consist of items in one of the following forms.",
+	  UL {
+	  TT "hypertextlist",
+	  TT "class => hypertextlist",
+	  TT "string => null",
+	  TT "string => hypertextlist",
+	  TT "string => class => hypertextlist",
+	  TT "symbol => null",
+	  TT "symbol => hypertextlist",
+	  TT "symbol => class => hypertextlist"
+	  },
+	"As an example, here is the ", TT "Inputs", " entry of the method ", TO (resolution,Ideal), ":",
+	PRE ///Inputs => { "I" => { "an ideal in a ring ", TT "R", ", say" } },///,
+	"Here is an example of the ", TT "Inputs", " entry of the function ", TO sin, ":",
+	PRE ///Inputs => { "x" => RR => null },///,
+	SeeAlso => {document, Outputs, Usage}
+	}
 document {
-     Key => Inputs, "See ", TO "document", "." }
+     Key => Outputs,
+	Headline => "outputs for a function",
+	Usage => "document { ... , Outputs => { outputs, ... }, ... }",
+	Function => document,
+	"The entries should consist of items in one of the following forms.",
+	  UL {
+	  TT "hypertextlist",
+	  TT "class => hypertextlist",
+	  TT "string => null",
+	  TT "string => hypertextlist",
+	  TT "string => class => hypertextlist",
+	  TT "symbol => null",
+	  TT "symbol => hypertextlist",
+	  TT "symbol => class => hypertextlist"
+	  },
+     "As an example, here is the ", TT "Outputs", " entry of the method ", TO (resolution,Ideal), ":",
+	 PRE /// Outputs => { {"a resolution of ", TT "R/I", " by projective ", TT "R", "-modules" } },///,
+	"Note that the hypertext list needs to be bounded by ", TT "{", " and ", TT "}", " as there is only one output for ", 
+	TO (resolution, Ideal), ". Without the braces, multiple outputs are defined.", "Note also that
+	the ", TO Type, " of the output is automatically added in this case.",
+	"Here is an example of the ", TT "Outputs", " entry of the function ", TO sin, ":",
+	PRE ///Outputs => { { "the sine of ", TT "x", "" } },///,
+    	SeeAlso => {document, Inputs, Usage}
+	}
 document {
-     Key => Outputs, "See ", TO "document", "." }
+     Key => Consequences, 
+	Headline => "side-effects of a function",
+	Usage => "document { ... , Consequences => {\"effects\" }, ... }",
+	Function => document,
+    	"Here is where one documents effects of a function which are not return values. As an 
+	example here is the ", TT "Consequences", " entry for the documentation node ", TO Headline, ":", 
+	PRE ///Consequences => {
+	  { "the headline string will be used to annotate itemized 
+		  lists of cross references to the documentation ", TO "Key" }
+	  },///,
+	SeeAlso => {document}
+	}
+document {
+     Key => FileName, 
+	Headline => "name of the generated documentation file",
+	Usage => "document { ... , FileName => \"filename\", ... }",
+	Function => document,
+   	Caveat => {"This option should ", STRONG "not", " normally be used."},
+	"This seldom used option will force the name of the generated html file to be \"filename.html\". 
+	Note that this option is not a visible part of the documentation.",
+	SeeAlso => {document}
+	}
+document {
+     Key => Caveat, 
+	Headline => "warnings",
+	Usage => "document { ... , Caveat => {\"warning\"}, ... }",
+	Function => document,
+    	"This part of the documentation serves to highlight pitfalls for the user.",
+	SeeAlso => {document}
+	}
+document {
+     Key => SeeAlso,
+     Headline => "crossreferences in documentation",
+     Usage =>  "document { ... , SeeAlso => { ... }, ... }",
+	Function => document,
+    	"This option inserts into a documentation page a sentence
+     instructing the reader to see some other topics.",
+     PARA,
+     "The entries may have the special forms used with ", TO "TO", ". As an example, here is the code for the ", TT "SeeAlso", 
+	" part of this documentation node.",
+	PRE ///SeeAlso => {document, TO},///,
+     SeeAlso => {document, TO}
+     }
+document {
+     Key => Subnodes,
+     Headline => "a menu of documentation nodes",
+     Usage =>  "document { ... , Subnodes => { hypertextlist }, ... }",
+	Function => document,
+   	"This option inserts into a documentation page a menu of subnodes. As an example, here is the code for the ", TT "Subnodes", 
+	" part of this documentation node.",
+	PRE ///Subnodes => {
+		"Optional documentation entries used in this node",
+		TO document,
+		TO Headline,
+		TO Usage,
+		TO Function,
+		TO Inputs,
+		TO SeeAlso,
+		TO Subnodes
+		},///,
+	"The ", TT "Subnodes", " option defines how the tree structure of the documentation is constructed. This is relevant when printing
+	the documentation.",   
+    	SeeAlso => {document, TO},
+	Subnodes => {
+		"Optional documentation entries used in this node",
+		TO document,
+		TO Headline,
+		TO Usage,
+		TO Function,
+		TO Inputs,
+		TO SeeAlso,
+		TO Subnodes
+		},
+     }
+
 document {
      Key => TEST,
      Headline => "commands for testing later",
@@ -118,15 +270,6 @@ document {
 	  }
      }
 document {
-     Key => SeeAlso,
-     Headline => "crossreferences in documentation",
-     TT "SeeAlso => {a, b, ...}", " -- inserts, into a documentation page, a sentence
-     instructing the reader to see some other topics.",
-     PARA,
-     "The topics may have the special forms used with ", TO "TO", ".",
-     SeeAlso => "document"
-     }
-document {
      Key => briefDocumentation,
      Headline => "get brief documentation",
      TT "briefDocumentation s", " -- provides the first paragraph of the online
@@ -138,7 +281,7 @@ document {
 document {
      Key => documentation,
      Headline => "get documentation, unformatted",
-     TT "documentation s", " -- provides the online documention for the topic s, in
+     TT "documentation s", " -- provides the online documentation for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to
      text with ", TO "net", " or to html with ", TO "html", ".",
      PARA,
@@ -398,28 +541,28 @@ document {
      }
 document {
      Key => NewMethod,
-     TT "NewMethod", " -- a symbol used as a method name in conjuction with
+     TT "NewMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
      PARA,
      "Intended for internal use only."
      }
 document {
      Key => NewOfMethod,
-     TT "NewOfMethod", " -- a symbol used as a method name in conjuction with
+     TT "NewOfMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
      PARA,
      "Intended for internal use only."
      }
 document {
      Key => NewFromMethod,
-     TT "NewFromMethod", " -- a symbol used as a method name in conjuction with
+     TT "NewFromMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
      PARA,
      "Intended for internal use only."
      }
 document {
      Key => NewOfFromMethod,
-     TT "NewOfFromMethod", " -- a symbol used as a method name in conjuction with
+     TT "NewOfFromMethod", " -- a symbol used as a method name in conjunction with
      the ", TO "new", " operator.",
      PARA,
      "Intended for internal use only."
@@ -680,7 +823,7 @@ document {
      Outputs => {
 	  {"whether the matrix ", TT "f", " is homogeneous"}
 	  },
-     "Associated with every matrix is an arbitary integer called
+     "Associated with every matrix is an arbitrary integer called
      its degree: it has nothing to do with the degrees of the entries
      of the matrix; see ", TO (degree,Matrix), ".  The
      matrix ", TT "f", " is called homogeneous if every entry
@@ -772,6 +915,24 @@ document {
      for matrices.",
      PARA,
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
+     }
+document {
+     Key => (flatten,Matrix),
+     Headline => "puts the columns of a matrix into a single row",
+	Usage => "g = flatten f",
+	Inputs => {
+		"f" => {"a ", TT "m", " by ", TT "n", " matrix."}
+		},
+	Outputs => {
+		"g" => { "a ", TT "1", " by ", TT "m*n", " matrix."}
+		},
+     TT "flatten f", " produces a new matrix from ", TT "f", " by placing the entries of the columns of ", TT "f", " all in a single row, one after the other.",
+     EXAMPLE {
+		"R = ZZ/101[x,y,z];",
+		"f = matrix {{2, x},{y^2, 23},{z, z^3}}",
+		"flatten f"
+		},
+	"Note that this is the matrix given by unnesting the list which was used to enter the matrix.",
      }
 document {
      Key => symbol cokernel,
@@ -1137,7 +1298,7 @@ document {
      Headline => "get element from list",
      TT "x#i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
      PARA,
-     "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
+     "If ", TT "i", " is out of range, an error is signaled. If  ", TT "i", " 
      is negative, then the ", TT "i", "-th entry counting from the end is provided.",
      PARA,
      "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable."
@@ -1147,7 +1308,7 @@ document {
      Headline => "get element from sequence",
      TT "x#i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
      PARA,
-     "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
+     "If ", TT "i", " is out of range, an error is signaled. If  ", TT "i", " 
      is negative, then the ", TT "i", "-th entry counting from the end is provided."
      }
 document {
