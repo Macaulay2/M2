@@ -1,7 +1,9 @@
 needsPackage "FirstPackage"
 newPackage "SecondPackage"
+needsPackage "FirstPackage"
 export secondFunction
 secondFunction = () -> apply(5, firstFunction)
+
 document {
      Key => SecondPackage,
      Headline => "an example of a package that depends on another",

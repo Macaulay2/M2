@@ -16,6 +16,13 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+All the routines connected with primary decomposition of ideals are
+now in a package called "PrimaryDecomposition".  Load the package if
+you wish to use those routines.
+
+New symbol 'packagePath' -- provides a list of top-level directories
+in which the directory trees for isntalled packages have been installed.
+
 The function 'printExamples' has been removed, and 'examples' has been
 modified to yield a net.
 
