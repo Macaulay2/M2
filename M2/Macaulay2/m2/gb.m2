@@ -185,13 +185,13 @@ syz GroebnerBasis := Matrix => options -> (g) -> (
      sendgg(ggPush g, gggetsyz);
      getMatrix ring g )
 
-generators GroebnerBasis := Matrix => (g) -> (
+generators GroebnerBasis := Matrix => (G) -> (
+     newMatrix(ring G, rawGBGetMatrix (G.RawComputation,1,false))
      -- new: IM2_GB_get_matrix(Computation *G, int level, M2_toEngineBool minimize); 
      -- level = 1 and minimize = true then get the minimal generators
      -- level = 1 and minimize = false then get generators of the gb
      -- level = 2 and minimize = false then get the syzygies, which may not be gb of the syzygy module
-     sendgg(ggPush g, gggetgb);
-     getMatrix ring g)
+     )
 
 getChangeMatrix GroebnerBasis := Matrix => (g) -> (
      sendgg(ggPush g, gggetchange);

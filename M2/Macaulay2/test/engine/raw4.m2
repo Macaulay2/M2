@@ -11,9 +11,6 @@ z = rawRingVar(R1,2,1)
 algorithm = 0
 algorithm = 1
 
-stderr << "warning: GB's don't work yet" << endl
-end
-
 -- Test 1.  A very simple GB.
 G = mat {{x,y,z}}
 Gcomp = rawGB(G,false,0,false,0,algorithm,0)
@@ -252,4 +249,5 @@ m
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"raw4.m2\"' -e 'exit 0' "
 -- End:
