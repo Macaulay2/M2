@@ -215,7 +215,9 @@ LIBS="$SAVELIBS"
 M2_IS_THERE(sys_errlist)
 M2_IS_THERE(herror)
 M2_IS_THERE(gnu_get_libc_version)
-AC_CHECK_DECLS([sys_errlist herror gnu_get_libc_version])
+AC_CHECK_DECLS([sys_errlist])
+AC_CHECK_DECLS([herror])
+AC_CHECK_DECLS([gnu_get_libc_version])
 
 M2_IS_DECLARED(char **,sys_errlist)
 M2_IS_DECLARED(char **,h_errlist)
