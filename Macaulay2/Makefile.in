@@ -1,10 +1,10 @@
 # @configure_input@
 ############################### targets to use
-.PHONY: check all clean config initialize doc book distclean justM2
+.PHONY: check all clean initialize doc book distclean justM2
 ################################# prologue
 all ::
 install ::
-justM2 all :: initialize config
+justM2 all :: initialize
 
 include ../include/config.Makefile
 VPATH = @srcdir@
@@ -19,10 +19,6 @@ $(docm2reldir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/README  : README  ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
-################################# libexec
-libexec :; mkdir $@
-clean ::; rm -rf libexec
-initialize :: libexec
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
@@ -43,15 +39,17 @@ all justM2 ::; $(MAKE) -C c all
 ################################# e
 justM2 ::; $(MAKE) -C e all
 all check ::; $(MAKE) -C e $@
-distclean clean ::; $(MAKE) DEPENDS=no -C e $@
+initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
 all check ::; $(MAKE) -C dumpdata $@
 endif
 distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
+################################# compat
+all clean distclean ::; $(MAKE) -C compat $@
 ################################# d
-config ::; $(MAKE) DEPENDS=no -C d compat.h
+initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
@@ -84,12 +82,18 @@ distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
+################################# bin
+bin :; mkdir $@
+clean ::; rm -rf bin
+initialize :: bin
+install :: $(bindir)/Macaulay2$(EXE)
+$(bindir)/Macaulay2 : bin/Macaulay2$(EXE); $(INSTALL_PROGRAM) $^ $(bindir)/Macaulay2$(EXE)
 ################################# libexec
+libexec :; mkdir $@
+clean ::; rm -rf libexec
+initialize :: libexec
 install :: $(libexecdir)
 $(libexecdir):; $(INSTALL) -d "$@"
-install :: $(libexecdir)/Macaulay2
-$(libexecdir)/Macaulay2 : libexec/Macaulay2
-	$(INSTALL_PROGRAM) $^ $(libexecdir)
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
 install :: $(cachedir)/$(DUMPDATAFILE)
