@@ -360,10 +360,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 packageSuffix = ".Macaulay2/"
 
 path = {}
-scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
+scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile = true)
 if not noinitfile then (
-     path = append(path, getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2");
-     packagePrefixPath = append(packagePrefixPath, getenv "HOME" | "/" | packageSuffix | "local/");
+     path = prepend(getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2", path);
+     packagePrefixPath = prepend(getenv "HOME" | "/" | packageSuffix | "local/", packagePrefixPath);
      )
 if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
