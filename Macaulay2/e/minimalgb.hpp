@@ -6,7 +6,7 @@
 #include "montable.hpp"
 #include "montableZZ.hpp"
 
-class MinimalGB
+class MinimalGB : public our_new_delete
 {
 protected:
   GBRing *R;
