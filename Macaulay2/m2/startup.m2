@@ -218,6 +218,8 @@ usage := arg -> (
      << "    --debug            enter command interpreter upon error" << newline
      << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
+     << "    --backtrace        print backtrace after error" << newline
+     << "    --fullBacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
@@ -278,6 +280,8 @@ action := hashTable {
      "-x" => obsolete,
      "--example-prompts" => arg -> examplePrompts(),
      "-s" => obsolete,
+     "--fullBacktrace" => arg -> fullBacktrace = true,
+     "--no-backtrace" => arg -> fullBacktrace = backtrace = false,
      "--stop" => arg -> stopIfError = true,
      "--no-loaddata" => arg -> noloaddata = true,
      "--no-setup" => arg -> nosetup = true,

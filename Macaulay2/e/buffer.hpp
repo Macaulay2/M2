@@ -1,4 +1,5 @@
 // Copyright 1997 by  Michael E. Stillman
+
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 

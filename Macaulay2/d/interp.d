@@ -42,7 +42,6 @@ previousLineNumber := -1;
 Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
 endInput := makeProtectedSymbolClosure("end");
-(x:Position) === (y:Position) : bool := x == y || x.filename === y.filename && x.line == y.line && x.column == y.column ;
 PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
      method := lookup(Class(g),methodname);
@@ -92,7 +91,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 	       if !(s.word == semicolonW || s.word == newlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
-		    if AbortIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE));
+		    if AbortIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE,false));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
@@ -348,17 +347,17 @@ export process():void := (
      stderr.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
-     ret := readeval(stringTokenFile("--startupString1--/layout.m2",startupString1),false);
+     ret := readeval(stringTokenFile("layout.m2",startupString1),false); -- we don't know the right directory!
      when ret is err:Error do (
-	  printErrorMessage(err);			    -- just in case
+	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError
 	  then exit(1)					    -- probably can't happen, because layout.m2 doesn't set stopIfError
 	  else if !topLevel()				    -- give a prompt for debugging
 	  then exit(1))
      else nothing;
-     ret = readeval(stringTokenFile("--startupString2--/startup.m2",startupString2),false); -- startup.m2 calls commandInterpreter and eventually returns
+     ret = readeval(stringTokenFile("startup.m2",startupString2),false); -- startup.m2 calls commandInterpreter and eventually returns -- we don't know the right directory!
      when ret is err:Error do (
-	  printErrorMessage(err);			    -- just in case
+	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError 
 	  then exit(1)
 	  else if !topLevel()				    -- give a prompt for debugging

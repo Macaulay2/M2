@@ -262,12 +262,12 @@ export List := {
 export CodeClosureList := {code:CodeClosure, next:CodeClosureList};
 
 export Error := {
-     position:Position,					    -- dummyPosition here indicates message not displayed yet
+     position:Position,
      message:string,
      report:CodeClosureList,
-     value:Expr
+     value:Expr,
+     printed:bool
      };
-export printErrorMessage(err:Error):void := printErrorMessage(err.position,err.message);
 export Database := {
      filename:string,
      hash:int,
@@ -477,6 +477,25 @@ export printErrorMessage(t:Token,message:string):void := printErrorMessage(posit
 export parseEOF     := newParseinfo();
 export parseWORD    := newParseinfo();
 
+-- debugging
+
+export returnMessage := "return message";
+export continueMessage := "continue message";
+export breakMessage := "break message";
+export unwindMessage := "unwind message";
+
+export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE,false));
+export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE,false));
+
+dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
+export breakLoopFun := dummyBreakLoop;
+export debuggingMode := false;
+export printError(err:Error):void := (
+     printErrorMessage(err.position, err.message);
+     err.printed = true;
+     err.message = "--back trace--";
+     );
+
 -----------------------------------------------------------------------------
 export newHashTable(class:HashTable,parent:HashTable):HashTable := (
      HashCounter = HashCounter + 1;
@@ -575,5 +594,5 @@ export (x:Expr) === (y:Symbol):bool := (
      );
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
 -- End:

@@ -16,6 +16,7 @@ use stdio;
 use ctype;
 
 export Position := {filename:string, line:ushort, column:ushort, loadDepth:uchar};
+export (s:Position) === (t:Position) : bool := s == t || s.filename === t.filename && s.line == t.line && s.column == t.column;
 export dummyPosition := Position("--dummy file name--",ushort(0),ushort(0),uchar(loadDepth));
 shorten(s:string):string := (
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"

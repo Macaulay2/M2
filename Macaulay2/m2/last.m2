@@ -21,7 +21,7 @@ Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack l
 closePackage Main
 -- we load the documentation afterwards, because closing the package records the reverse dictionary entries
 currentPackage = Main
--- load "Macaulay2-doc.m2"
+load "Macaulay2-doc.m2"
 currentPackage = null
 
 -- Local Variables:

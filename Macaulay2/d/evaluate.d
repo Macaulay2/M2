@@ -24,9 +24,6 @@ use objects;
 -- put bindings to variables before the forward references, for safety
 export globalAssignmentHooks := newHashTable(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
-dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
-export breakLoopFun := dummyBreakLoop;
-export debuggingMode := false;
 export evalSequenceHadError := false;
 export evalSequenceErrorMessage := nullE;
 errorreturn := nullE;
@@ -910,6 +907,9 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 
+export fullBacktrace := false;
+export backtrace := true;
+
 export eval(c:Code):Expr := (
      e := (
 	  if interrupted then (
@@ -1012,19 +1012,20 @@ export eval(c:Code):Expr := (
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
 	  p := codePosition(c);
-     	  if int(p.loadDepth) >= errorDepth then (
-	       if err.position == dummyPosition then (err.position = p; printErrorMessage(err); );
-	       if localFrame != err.report.code.frame then (
-		    err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
+     	  if int(p.loadDepth) >= errorDepth && ! err.position === p then (
+	       oldReportFrame := err.report.code.frame;
+	       err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
+	       err.position = p;
+	       if backtrace && localFrame != oldReportFrame || fullBacktrace then (
+	       	    printError(err);
 		    if debuggingMode && stdIO.inisatty && stdIO.outisatty then (
-			 printErrorMessage(p,"--break loop--");
-			 when breakLoopFun(localFrame,c) is z:Error do (
-			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
-			      if z.message == returnMessage then return z.value;
-			      if z.message == continueMessage then return eval(c);
+			 printErrorMessage(err.position,"--entering break loop--");
+			 when breakLoopFun(err.report.code.frame,err.report.code.code) is z:Error do (
+			      if err.message == breakMessage then return buildErrorPacket(unwindMessage);
+			      if err.message == returnMessage then return err.value;
+			      if err.message == continueMessage then return eval(c);
 			      )
-			 else nothing));
-	       );
+			 else nothing)));
 	  e)
      else e);
 
@@ -1052,17 +1053,17 @@ setupop(shieldS,shieldfun);
 
 returnFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,returnMessage,dummyCodeClosureList,e)));
+     when e is Error do e else Expr(Error(dummyPosition,returnMessage,dummyCodeClosureList,e,false)));
 setupop(returnS,returnFun);
 
 continueFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,continueMessage,dummyCodeClosureList,e)));
+     when e is Error do e else Expr(Error(dummyPosition,continueMessage,dummyCodeClosureList,e,false)));
 setupop(continueS,continueFun);
 
 breakFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,breakMessage,dummyCodeClosureList,e)));
+     when e is Error do e else Expr(Error(dummyPosition,breakMessage,dummyCodeClosureList,e,false)));
 setupop(breakS,breakFun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
@@ -1353,5 +1354,5 @@ export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      else apply(method,left,right));
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
 -- End:

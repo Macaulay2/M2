@@ -1344,16 +1344,31 @@ export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 export stopIfError := false;
 export lineNumber := 0;
 
-gbTraceS := setupvar("gbTrace",toExpr(gbTrace));
-printingPrecisionS := setupvar("printingPrecision",toExpr(printingPrecision));
-debuggingModeS := setupvar("debuggingMode",toExpr(debuggingMode));
-debugLevelS := setupvar("debugLevel",toExpr(debugLevel));
-loadDepthS := setupvar("loadDepth",toExpr(loadDepth));
-recursionLimitS := setupvar("recursionLimit",toExpr(recursionlimit));
-errorDepthS := setupvar("errorDepth",toExpr(errorDepth));
-stopIfErrorS := setupvar("stopIfError",toExpr(stopIfError));
-lineNumberS := setupvar("lineNumber",toExpr(lineNumber));
-syms := SymbolSequence(debuggingModeS,loadDepthS,errorDepthS,recursionLimitS,stopIfErrorS,debugLevelS,lineNumberS);
+backtraceS := dummySymbol;
+debugLevelS := dummySymbol;
+debuggingModeS := dummySymbol;
+errorDepthS := dummySymbol;
+fullBacktraceS := dummySymbol;
+gbTraceS := dummySymbol;
+lineNumberS := dummySymbol;
+loadDepthS := dummySymbol;
+printingPrecisionS := dummySymbol;
+recursionLimitS := dummySymbol;
+stopIfErrorS := dummySymbol;
+
+syms := SymbolSequence(
+     (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
+     (  debugLevelS = setupvar("debugLevel",toExpr(debugLevel));  debugLevelS  ),
+     (  debuggingModeS = setupvar("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
+     (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
+     (  fullBacktraceS = setupvar("fullBacktrace",toExpr(fullBacktrace));  fullBacktraceS  ),
+     (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
+     (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
+     (  loadDepthS = setupvar("loadDepth",toExpr(loadDepth));  loadDepthS  ),
+     (  printingPrecisionS = setupvar("printingPrecision",toExpr(printingPrecision));  printingPrecisionS  ),
+     (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionlimit));  recursionLimitS  ),
+     (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  )
+     );
 
 export setDebuggingMode(b:bool):void := (
      debuggingMode = b;
@@ -1378,8 +1393,11 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  sym := s.0;
 	  when s.1
 	  is b:Boolean do (
-	       if sym === debuggingModeS then (debuggingMode = b.v; e)
-	       else if sym === stopIfErrorS then (stopIfError = b.v; e)
+	       n := b.v;
+	       if sym === debuggingModeS then (debuggingMode = n; e)
+	       else if sym === stopIfErrorS then (stopIfError = n; e)
+	       else if sym === fullBacktraceS then (fullBacktrace = n; e)
+	       else if sym === backtraceS then (backtrace = n; e)
 	       else buildErrorPacket(msg))
 	  is i:Integer do 
 	  if !isInt(i) then buildErrorPacket(msg)
