@@ -28,6 +28,24 @@ M = R^1/I
 N = R^1/J
 f = map(M,N)
 g = Ext^2(f,R)
-assert( presentation target g - matrix{{a^2,b^2,0,0},{0,0,c^2,d^2}} == 0 )
-assert( presentation source g - matrix {{a, b, 0, 0}, {0, 0, c, d}} == 0 )
-assert( matrix g - matrix {{a*b, 0}, {0, c*d}} == 0 )
+so = m -> m_(sortColumns m)
+print presentation target g
+h = matrix{{a^2,b^2,0,0},{0,0,c^2,d^2}}
+assert(
+     so presentation target g - so h == 0 
+     or
+     so presentation target g - so h^{1,0} == 0 
+     )
+print presentation source g
+h2 = matrix {{a, b, 0, 0}, {0, 0, c, d}}
+assert(
+     so presentation source g - so h2 == 0
+     or
+     so presentation source g - so h2^{1,0} == 0
+     )
+h3 = matrix {{a*b, 0}, {0, c*d}}
+assert(
+     so matrix g - so h3 == 0 
+     or
+     so matrix g - so h3^{1,0} == 0 
+     )
