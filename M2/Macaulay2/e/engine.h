@@ -1583,19 +1583,13 @@ enum gbTraceValues
   /**** Factory and libfac routines *****************/
   /**************************************************/
 
-  const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g);
-  /* rawGCD */
-
-  const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected */
-
-
+  const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g); /* connected to rawGCD */
+  const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected to rawPseudoRemainder */
   void rawFactor(const RingElement *f, 
 		 RingElement_array_OrNull **result_factors, 
-		 M2_arrayint_OrNull *result_powers); /* rawFactor */
-
-  M2_arrayint_OrNull rawIdealReorder(const Matrix *M);/* rawIdealReorder */
-
-  Matrix_array_OrNull * rawCharSeries(const Matrix *M);/* rawCharSeries */
+		 M2_arrayint_OrNull *result_powers); /* connected to rawFactor  */
+  M2_arrayint_OrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
+  Matrix_array_OrNull * rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 
 #if defined(__cplusplus)
 }
