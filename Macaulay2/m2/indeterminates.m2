@@ -4,18 +4,18 @@ indeterminates :=  new MutableHashTable
 
 indices := new MutableHashTable
 
-vars Symbol := a -> (
-     if indices#?a 
-     then indices#a
-     else (
-	  s := toString a;
-	  if #s === 1 and s =!= "'" then (
-	       i := first ascii s;
-	       if i < 97 then i - 65 + 26 else i - 97
-	       )
-     	  else error(s, " is not one of the symbols known to 'vars'")
-     	  )
-     )
+-- vars Symbol := a -> (
+--      if indices#?a 
+--      then indices#a
+--      else (
+-- 	  s := toString a;
+-- 	  if #s === 1 and s =!= "'" then (
+-- 	       i := first ascii s;
+-- 	       if i < 97 then i - 65 + 26 else i - 97
+-- 	       )
+--      	  else error(s, " is not one of the symbols known to 'vars'")
+--      	  )
+--      )
 
 vars ZZ := i -> (
      if indeterminates#?i then indeterminates#i else (

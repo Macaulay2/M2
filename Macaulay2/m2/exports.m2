@@ -258,6 +258,7 @@ export (
 	symbol Database,
 	symbol dd,
 	symbol debugDoc,
+	symbol debugPackage,
 	symbol DebuggingMode,
 	symbol decompose,
 	symbol deepSplice,

@@ -289,10 +289,12 @@ beginDocumentation = () -> (
 	  );
      )
 
-debugPackage := method()
+debugPackage = method()
 debugPackage Package := pkg -> (
      d := pkg#"private dictionary";
-     if not member(d,globalDictionaries) then globalDictionaries = prepend(d,globalDictionaries));
+     if not member(d,globalDictionaries) then (
+	  globalDictionaries = prepend(d,globalDictionaries);
+	  ))
 
 
 -- Local Variables:

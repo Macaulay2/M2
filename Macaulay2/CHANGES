@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Method for vars(Symbol) removed.
+
 The symbol 'errorReport' has been removed.  It is no longer needed,
 now that there is a real debugger.
 
