@@ -158,7 +158,14 @@ HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
 ###################################################################
 ## Targets ##
 #############
-all:: $(addsuffix .hpp, $(GENERATED_H))
+
+all tags:: @srcdir@/TAGS
+@srcdir@/TAGS: Makefile @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c @srcdir@/check/*.c @srcdir@/check/*.cpp @srcdir@/check/*.h \
+		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp
+	cd @srcdir@ && etags $(patsubst @srcdir@/%, %, $^)
+
+# the target 'initialize' is used by the Makefile in the parent directory
+initialize all :: $(addsuffix .hpp, $(GENERATED_H))
 
 ifeq "$(SHARED)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so
@@ -182,13 +189,6 @@ RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g" 
 geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
-
-# this target is used by the Makefile in the parent directory
-initialize :: $(addsuffix .hpp, $(GENERATED_H))
-
-all tags:: @srcdir@/TAGS
-@srcdir@/TAGS: Makefile @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c
-	cd @srcdir@ && etags *.hpp *.h *.cpp *.c
 
 clean::; rm -f *.lo *.o $(LIBGB) TAGS $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
