@@ -212,9 +212,11 @@ endif
 
 MADEFILES += startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
-startup.c : ../m2/startup.m2
+layout.m2 : ../../include/config.Makefile
+	(echo '--layout.m2'; echo 'LAYOUT = hashTable $(LAYOUT)' ) | sed 's/,/,%     /g' | tr % '\n' >$@
+startup.c : ../m2/startup.m2 layout.m2
 	(echo 'char startupString1[] =' ; \
-	 (echo '--layout.m2'; echo 'LAYOUT = hashTable $(LAYOUT)' ) | sed 's/,/,%     /g' | tr % '\n' | sed $(SSTRING) ; \
+	 cat layout.m2 | sed $(SSTRING) ; \
 	 echo ';' ; \
 	 echo 'char startupString2[] =' ; \
 	 cat $< | sed $(SSTRING) ; \
