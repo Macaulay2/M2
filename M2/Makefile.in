@@ -39,7 +39,6 @@ ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
 all :: initialize
-all install clean initialize :: ; $(MAKE) -C bin $@
 all install :: ; $(MAKE) -C man $@
 all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
