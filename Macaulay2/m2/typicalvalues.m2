@@ -139,7 +139,7 @@ Function Thing := Thing => dummy
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
-locate Symbol := locate Function := locate Sequence := locate Nothing := Sequence => locate
+locate Symbol := locate Pseudocode := locate Function := locate Sequence := locate Nothing := Sequence => locate
 separate(String,String) := List => separate
 lines(String,String) := List => lines
 lines String := List => lines

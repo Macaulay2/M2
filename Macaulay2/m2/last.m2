@@ -16,8 +16,6 @@ addEndFunction(() -> (
 	  )
      )
 
-testErrorDepth = x -> ((y -> (z -> error "testing") 111) 222)
-
 writableGlobals := set (
      symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
      symbol documentationPath, symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
