@@ -1101,7 +1101,8 @@ map(n:int,f:Expr):Expr := (
 	       while true do provide nullE; ));
      localFrame = saveLocalFrame;
      recursionDepth = recursionDepth - 1;
-     if errret != nullE then errret 
+     when errret
+     is err:Error do if err.message == breakMessage then err.value else errret
      else list(b));
 
 map(e:Expr,f:Expr):Expr := (
