@@ -123,7 +123,9 @@ int dumpdata(char const *dumpfilename) {
   int nmaps = nummaps();
   struct MAP dumpmaps[nmaps];
   int i;
-  int fd = open(dumpfilename,O_WRONLY|O_CREAT|O_TRUNC,0666);
+  int fd;
+  if (!haveDumpdata()) return ERROR;
+  fd = open(dumpfilename,O_WRONLY|O_CREAT|O_TRUNC,0666);
   if (fd == ERROR) {
     warning("can't open dump data file '%s'\n", dumpfilename);
     return ERROR;

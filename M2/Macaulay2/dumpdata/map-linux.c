@@ -14,6 +14,10 @@
 static char mapfilename[] = "/proc/self/maps";
 static char mapfmt[] = "%p-%p %c%c%c%*c %08*x %02*x:%02*x %8*d %*s\n";
 
+int haveDumpdata() {
+  return TRUE;
+}
+
 int nummaps() {
   return fnumlines(mapfilename);
 }

@@ -6,6 +6,6 @@
 #include "map-solaris.c"
 #elif defined(__FreeBSD__)
 #include "map-freebsd.c"
-#elif
- ... map functions not implemented yet for this architecture ...
+#else
+#include "map-notimplemented.c"
 #endif
