@@ -18,7 +18,7 @@ char *getmem(n)
 unsigned int n;
 {
      char *p;
-     p = GC_malloc(n);
+     p = GC_malloc_ignore_off_page(n);
      if (p == NULL) outofmem();
      return p;
      }
@@ -26,7 +26,7 @@ unsigned int n;
 char *GC_malloc_clear(n)
 unsigned int n;
 {
-  char *p = GC_malloc(n);
+  char *p = GC_malloc_ignore_off_page(n);
   if (p == NULL) outofmem();
   memset(p,0,n);
   return p;
@@ -36,7 +36,7 @@ char *getmem_atomic(n)
 unsigned int n;
 {
      char *p;
-     p = GC_malloc_atomic(n);
+     p = GC_malloc_atomic_ignore_off_page(n);
      if (p == NULL) outofmem();
      return p;
      }
@@ -348,47 +348,47 @@ M2_string stdio_readfile(fd)
 int fd;
 {
      M2_string s;
-#if 1
-     /* this version uses fstat() to get the length of the file */
      unsigned int filesize;
      struct stat buf;
-     if (ERROR == fstat(fd,&buf)) fatal("can't stat file descriptor %d", fd);
-     filesize = buf.st_size;
-     s = (M2_string)getmem_atomic(sizeofarray(s,filesize));
-     s->len = filesize;
-     if (filesize != read(fd,s->array,filesize)) fatal("can't read entire file, file descriptor %d", fd);
-     return s;
-#else
-     /* this version just keeps reading larger and larger blocks */
-     char *text;
-     unsigned int bufsize = 4096;
-     unsigned int size = 0;
-     text = getmem_atomic(bufsize);
-     while (TRUE) {
-	  int n = read(fd,text+size,bufsize-size);
-	  if (ERROR == n) {
+     if (ERROR == fstat(fd,&buf) || !S_ISREG(buf.st_mode)) {
+       char *text;
+       unsigned int bufsize = 1024;
+       unsigned int size = 0;
+       text = getmem_atomic(bufsize);
+       while (TRUE) {
+	    int n = read(fd,text+size,bufsize-size);
+	    if (ERROR == n) {
 #ifdef EINTR
-	       if (errno == EINTR) continue;
+		 if (errno == EINTR) continue;
 #endif
-	       fatal("can't read file descriptor %d", fd);
-	       }
-	  if (0 == n) break;
-	  size += n;
-	  if (size == bufsize) {
-	       char *p;
-	       int newbufsize = 2 * bufsize;
-	       p = getmem_atomic(newbufsize);
-	       memcpy(p,text,size);
-	       bufsize = newbufsize;
-	       text = p;
-	       }
-	  }
-     s = (M2_string)getmem_atomic(sizeofarray(s,size));
-     s->len = size;
-     memcpy(s->array,text,size);
-#endif
-     return s;
+		 fatal("can't read file descriptor %d", fd);
+		 }
+	    if (0 == n) break;
+	    size += n;
+	    if (size == bufsize) {
+		 char *p;
+		 int newbufsize = 2 * bufsize;
+		 p = getmem_atomic(newbufsize);
+		 memcpy(p,text,size);
+		 bufsize = newbufsize;
+		 GC_FREE(text);
+		 text = p;
+		 }
+	    }
+       s = (M2_string)getmem_atomic(sizeofarray(s,size));
+       s->len = size;
+       memcpy(s->array,text,size);
+       GC_FREE(text);
+       return s;
      }
+     else {
+       filesize = buf.st_size;
+       s = (M2_string)getmem_atomic(sizeofarray(s,filesize));
+       s->len = filesize;
+       if (filesize != read(fd,s->array,filesize)) fatal("can't read entire file, file descriptor %d", fd);
+       return s;
+     }
+}
 
 M2_string strings_join(x,y)
 M2_string x;
