@@ -814,7 +814,7 @@ export NullaryMethods := (
      x);
 setupconst("nullaryMethods",Expr(NullaryMethods));
 export lookup(e:Expr):Expr := (
-     r := lookup1(NullaryMethods,e);
+     r := lookup1(NullaryMethods,Expr(Sequence(e)));
      if r == notfoundE then r = nullE;
      r);
 export lookupfun(e:Expr):Expr := (
@@ -840,10 +840,10 @@ export lookupfun(e:Expr):Expr := (
      else nullE
      else nullE
      else nullE
-     is SymbolClosure do e
-     is CompiledFunctionClosure do e
-     is FunctionClosure do e
-     is CompiledFunction do e
+     is SymbolClosure do e		      -- why do we want this??
+     is CompiledFunctionClosure do e	      -- why do we want this??
+     is FunctionClosure do e		      -- why do we want this??
+     is CompiledFunction do e		      -- why do we want this??
      else nullE);
 setupfun("lookup",lookupfun);	  
 

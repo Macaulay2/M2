@@ -193,6 +193,12 @@ if fileExists (bindir | "../c/scc1") then (
 	  else null);
      ) else setPrefixFromBindir bindir
 
+
+if prefixDirectory === null and buildHomeDirectory =!= null then (
+     -- see Makefile.in, too, for the directory installPackage is run in
+     prefixDirectory = buildHomeDirectory | "m2/tmp/Macaulay2-" | version#"VERSION" | "/";
+     )
+
 if prefixDirectory === null and sourceHomeDirectory === null then stderr << "warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
 
 if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (

@@ -25,10 +25,6 @@ Sequence.BeforePrint = x -> (
 -- make sure this is after all global symbols are defined or erased
 closePackage Main
 addStartFunction( () -> if sourceHomeDirectory =!= null then Main#"source directory" = sourceHomeDirectory )
--- we load the documentation afterwards, because closing the package records the reverse dictionary entries
-currentPackage = Main
-load "Macaulay2-doc.m2"
-currentPackage = null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
