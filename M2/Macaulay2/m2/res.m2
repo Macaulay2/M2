@@ -334,8 +334,11 @@ resolution Module := o -> (M) -> (
      R := ring M;
      k := ultimate(coefficientRing, R);
      oR := options R;
-     if oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M then (
-	  (resolutionInEngine default(o,Algorithm2))(M))
+     if oR.?SkewCommutative and oR.SkewCommutative then (
+	  if isHomogeneous M then (
+	       (resolutionInEngine default(o,Algorithm2))(M))
+	  else
+	       (resolutionBySyzygies o)(M))
      else if k === ZZ or not isCommutative R then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then (resolutionByHomogenization o)(M)
      else if isQuotientRing R then (resolutionInEngine default(o,Algorithm2))(M)

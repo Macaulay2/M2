@@ -306,6 +306,16 @@ void gbres_comp::betti_minimal(intarray &result)
 {
   int lev, i, j, d, k;
   int lo = nodes[0]->output_free_module()->lowest_primary_degree();
+  if (n_nodes >= 2)
+    {
+      int lo1 = nodes[1]->output_free_module()->lowest_primary_degree()-1;
+      if (lo1 < lo) lo=lo1;
+    }
+  if (n_nodes >= 3)
+    {
+      int lo2 = nodes[2]->output_free_module()->lowest_primary_degree()-2;
+      if (lo2 < lo) lo=lo2;
+    }
   int hi = lo;
   int len = 1;
   

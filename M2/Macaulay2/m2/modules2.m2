@@ -695,10 +695,13 @@ document { quote pruningMap,
 prune(Module) := M -> (
      if M.?pruningMap then M
      else if M.?prune then M.prune else M.prune = (
+	  R := ring M;
+	  oR := options R;
 	  if isFreeModule M then (
 	       M.pruningMap = id_M;
 	       M)
-	  else if isHomogeneous M and isAffineRing ring M then (
+	  else if (isAffineRing R and isHomogeneous M)
+	         or (oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M) then (
 	       f := presentation M;
 	       g := complement f;
 	       N := cokernel modulo(g, f);

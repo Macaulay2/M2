@@ -1181,6 +1181,7 @@ vec FreeModule::mult_by_matrix(const Matrix &m,
     }
   return result;
 }
+#if 0
 vec FreeModule::tensor(const FreeModule *F, vec v, 
 			 const FreeModule *G, vec w) const
 {
@@ -1211,6 +1212,24 @@ vec FreeModule::tensor(const FreeModule *F, vec v,
       }
   sort(result);
   return result;
+}
+#endif
+vec FreeModule::tensor(const FreeModule *F, vec v, 
+			 const FreeModule *G, vec w) const
+{
+  geobucket H(this);
+  int *m = M->make_one();
+  for ( ; v != NULL; v = v->next)
+    {
+      vec w1 = component_shift(v->comp * G->rank(),
+			       G,w);
+      M->divide(v->monom, F->base_monom(v->comp), m);
+      vec w2 = mult_by_term(v->coeff, m, w1);
+      remove(w1);
+      H.add(w2);
+    }
+  M->remove(m);
+  return H.value();
 }
 
 void FreeModule::auto_reduce_ZZ(array<vec> & vecs) const
