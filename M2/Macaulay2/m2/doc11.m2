@@ -102,9 +102,10 @@ document {
 document {
      Key => IMG,
      Headline => "HTML IMG item",
-     TT "IMG x", " -- encloses ", TT "x", " in a hypertext IMG item.",
+     TT "IMG{x,y}", " -- encloses ", TT "x,y", " in a hypertext IMG item.",
      PARA,
-     "The argument ", TT "x", " should be a string containing the URL of the image.",
+     "The argument ", TT "x", " should be a string containing the URL of the image, and
+     ", TT "y", " should be a suitable string for the ALT attribute.",
      PARA,
      SeeAlso => "hypertext"
      }
@@ -653,18 +654,13 @@ document {
 document {
      Key => Command,
      Headline => "the class of all commands",
-     OldSynopsis => {
-	  "f = Command g",
-	  "g" => "a function or a string",
-	  "f" => {
-	       "a new command that will evaluate ", TT "g()", " if ", TT "g", " is a function, and
-	       will evaluate ", TT "run g", " if ", TT "g", " is a string" }
-	  },
+     Usage => "Command g",
+     Inputs => { "g" => "a function or a string" },
+     Outputs => { { "a new command that will evaluate ", TT "g()", " if ", TT "g", " is a function, and will evaluate ", TT "run g", " if ", TT "g", " is a string" } },
      "A command behaves as a function does if it is followed by an adjacent
      expression which can serve as its argument or argument list.  In addition,
      if it appears as the value of an expression typed by the user at top
      level (i.e., not in a file), then it gets executed with empty argument list.",
-     PARA,
      EXAMPLE {
 	  "(f = Command ( () -> 2^30 );)",
 	  "f",

@@ -43,23 +43,21 @@ htmlFilename DocumentTag := tag -> (
      if pkg === null then toFilename fkey|".html"
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
-html IMG  := x -> concatenate("<img src=\"", rel first x, "\"/>")
+html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\", x#1, \"/>")
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
 html TO   := x -> concatenate(
-     "<a",
-     " href=\"",
+     "<a href=\"",
      rel htmlFilename x#0,
-     "\"",
-     " title=\"",
+     "\" title=\"",
      headline x#0,
      "\">",
-     htmlExtraLiteral DocumentTag.FormattedKey x#0,
+     htmlLiteral DocumentTag.FormattedKey x#0,
      "</a>",
      if x#?1 then x#1)
-html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</a>")
+html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlLiteral x#1, "</a>")
 
 next := tag -> if NEXT#?tag then ( HREF { htmlFilename NEXT#tag, nextButton }, " | ")
 prev := tag -> if PREV#?tag then ( HREF { htmlFilename PREV#tag, prevButton }, " | ")
@@ -134,17 +132,6 @@ buttonBar := (tag) -> ButtonTABLE {{
 upAncestors := tag -> reverse (
      n := 0;
      prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
-
-fakeMenu := x -> (
-     --   o  item 1
-     --     o  item 2
-     --       o  item 3
-     SEQ { BR,
-	  SEQ for i from 0 to #x-1 list SEQ {
-	       LITERAL ( 3*i+2 : "&nbsp;", "&#149;", 2 : "&nbsp;"), x#i, BR
-	       }
-	  }
-     )
 
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 
@@ -324,9 +311,10 @@ makeMasterIndex := keylist -> (
      << html HTML {
 	  HEAD { TITLE title, links() },
 	  BODY {
-	       HEADER2 title, PARA,
-	       topNodeButton, tocButton, homeButton,
-	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
+	       DIV { topNodeButton, " | ", tocButton, " | ", homeButton },
+	       HR{},
+	       HEADER1 title,
+	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (tag) -> (
 			 checkIsTag tag;
 			 SEQ { anchor tag, TOH tag }
@@ -343,9 +331,9 @@ makeTableOfContents := () -> (
      << html HTML {
 	  HEAD { TITLE title, links() },
 	  BODY {
-	       HEADER2 title, PARA,
-	       topNodeButton, masterIndexButton, homeButton,
+	       DIV { topNodeButton, " | ", masterIndexButton, " | ", homeButton },
 	       HR{},
+	       HEADER1 title,
 	       toDoc CONT
 	       }
 	  } << endl << close

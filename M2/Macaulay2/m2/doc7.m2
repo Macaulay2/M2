@@ -1623,31 +1623,37 @@ R = ZZ/101[t]
 document {
      Key => (symbol /, Ring, RingElement),
      Headline => "quotient ring",
-     OldSynopsis => {
-	  "S = R/f",
+     Usage => "S = R/f",
+     Inputs => {
 	  "R" => null,
-	  "f" => { "an element of ", TT "R" },
+	  "f" => { "an element of ", TT "R" }
+	  },
+     Outputs => {
 	  "S" => { "the quotient ring ", TT "R/Rf"}
 	  }
      }
 document {
      Key => (symbol /, Ring, Sequence),
      Headline => "quotient ring",
-     OldSynopsis => {
-	  "S = R/(f,g,h,...)",
+     Usage => "S = R/(f,g,h,...)",
+     Inputs => {
 	  "R" => null,
-	  "(f,g,h,...)" => { "a sequence of elements of ", TT "R" },
+	  "(f,g,h,...)" => { "a sequence of elements of ", TT "R" }
+	  },
+     Outputs => {
 	  "S" => { "the quotient ring ", TT "R/(Rf+Rg+Rh+...)"}
 	  }
      }
 document {
      Key => (symbol /, Ring, Ideal),
      Headline => "quotient ring",
-     OldSynopsis => {
-	  "S = R/I",
+     Usage => "S = R/I",
+     Inputs => {
 	  "R" => null,
-	  "I" => { "an ideal of ", TT "R", "" },
-	  "S" => "the quotient ring"
+	  "I" => { "an ideal of ", TT "R"}
+	  },
+     Outputs => {
+	  "S" => {"the quotient ring ", TT "R/I"}
 	  },
      "The names of the variables are assigned values in the new quotient ring
      by automatically running ", TT "use R", ", unless ", TT "R", " has a name,
@@ -2389,13 +2395,14 @@ document {
      }
 document {
      Key => (codim, Module),
-     OldSynopsis => {
-	  "c = codim M",
-	  "M" => {"A module over a ring ", TT "R", "."},
-	  "c" => {"The number ", TT "dim R - dim M", "."}
+     Usage => "c = codim M",
+     Inputs => {
+	  "M" => {"a module over a ring ", TT "R"}
 	  },
-     PARA,
-     "The returned value is the usual codimension if R is an integral domain, or all
+     Outputs => {
+	  "c" => {"the codimension of the module, ", TT "dim R - dim M"}
+	  },
+     "The returned value is the usual codimension if ", TT "R", " is an integral domain, or all
      components have the same dimension.",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
@@ -2407,23 +2414,11 @@ document {
      }
 document {
      Key => dim,
-     Headline => "calculate the dimension",
-     TT "dim M", " -- calculate the dimension of the support of a module M.",
-     BR,NOINDENT,
-     TT "dim R", " -- calculate the dimension of a ring R.",
-     BR,NOINDENT,
-     TT "dim I", " -- calculate the dimension of the quotient ring R/I.",
-     BR,NOINDENT,
-     TT "dim r", " -- calculate the dimension of the virtual representation
-     corresponding to an element of a Schur ring.",
-     PARA,
-     "Warning: if you want the dimension of a vector space, you should use
-     ", TO "rank", ".",
+     Headline => "calculate the dimension of a ring, module",
+     "Warning: if you want the dimension of a vector space, you should use ", TO "rank", ".",
      PARA,
      "Warning: over the integers, the computation effectively tensors first with the
-     rational numbers, yielding the wrong answer in some cases.",
-     PARA,
-     SeeAlso => {"Schur"}
+     rational numbers, yielding the wrong answer in some cases."
      }
 document {
      Key => presentation,
@@ -2465,25 +2460,24 @@ document {
      }
 document {
      Key => (prune, Matrix),
-     OldSynopsis => {
-	  "h = prune f",
-	  "f" => null,
-	  "h" => { "the map corresponding to f obtained by pruning its source
-	       and target"
-	       }
+     Usage => "prune f",
+     Inputs => {
+	  "f" => null
 	  },
-     SeeAlso => {"presentation", "trim"}
+     Outputs => {
+	  { "the map corresponding to ", TT "f", " obtained by pruning its source and target modules" }
+	  },
+     SeeAlso => {(prune,Module), "presentation", "trim"}
      }
 document {
      Key => (prune, Module),
-     OldSynopsis => {
-	  "N = prune M",
-	  "M" => null,
-	  "N" => { "a module isomorphic to ", TT "M", " with a minimal number of
-	       generators and relations."
-	       }
+     Usage => "N = prune M",
+     Inputs => {
+	  "M" => null
 	  },
-     PARA,
+     Outputs => {
+	  "N" => { "a module isomorphic to ", TT "M", " with a minimal number of generators and relations." }
+	  },
      "The isomorphism from ", TT "N", " to ", TT "M", " can 
      be obtained with as ", TT "g = N.cache.pruningMap", " unless ", TT "M.cache.pruningMap", "
      already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 

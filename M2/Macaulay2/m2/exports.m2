@@ -80,7 +80,6 @@ export (
 	symbol >,
 	symbol >=,
 	symbol >>,
-	symbol >>>,
 	symbol ?,
 	symbol @,
 	symbol @@,
@@ -94,7 +93,7 @@ export (
 	symbol Algorithm,
 	symbol Array,
 	symbol Ascending,
-	symbol Assasinator,				    -- spelling?
+	symbol Assassinator,
 	symbol Associative,
 	symbol AssociativeExpression,
 	symbol BLOCKQUOTE,

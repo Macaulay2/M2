@@ -195,12 +195,13 @@ document {
 
 document {
      Key => (take,BasicList,ZZ),
-     OldSynopsis => {
-	  "w = take(v,n)",
+     Usage => "take(v,n)",
+     Inputs => {
 	  "v" => null,
-	  "n" => null,
-	  "w" => {"a list containing the first ", TT "n", " elements of 
-	       the list ", TT "v", " if ", TT "n", " is positive, or
+	  "n" => null
+	  },
+     Outputs => {
+	  {"a list containing the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
 	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
 	  },
      EXAMPLE { "take({a,b,c,d,e,f},3)", "take({a,b,c,d,e,f},-2)" }
@@ -208,13 +209,9 @@ document {
 
 document {
      Key => (take,BasicList,List),
-     OldSynopsis => {
-	  "w = take(v,{m,n})",
-	  "v" => null,
-	  "{m,n}" => "a pair of natural numbers",
-	  "w" => {"a list containing those elements of the list
-	       ", TT "v", " in positions ", TT "m", " through ", TT "n", "." }
-	  },
+     Usage => "take(v,{m,n})",
+     Inputs => { "v" => null, "{m,n}" => "a pair of natural numbers" },
+     Outputs => { {"a list containing those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
      EXAMPLE "take({a,b,c,d,e,f},{2,4})"
      }
 
@@ -297,10 +294,8 @@ document {
 document {
      Key => temporaryFileName,
      Headline => "make a temporary file name",
-     OldSynopsis => {
-	  "y = temporaryFileName()",
-	  "y" => "a unique temporary file name."
-	  },
+     Usage => "temporaryFileName()",
+     Outputs => { "a unique temporary file name." },
      "The file name is so unique that even with various suffixes
      appended, no collision with existing files should occur.  But
      no check is done to see whether such files are present.",
@@ -310,7 +305,7 @@ document {
 	  },
      PARA,
      "This function will work under Unix, and also under Windows
-     if you have a directory on the same drive called ", TT "tmp", "."
+     if you have a directory on the same drive called ", TT "/tmp", "."
      }
 
 document {
@@ -401,36 +396,31 @@ TEST ///
 
 document {
      Key => (symbol -, List), Headline => "negation of a vector",
-     OldSynopsis => {
-	  "w = -v",
-	  "v" => "a list interpreted as a vector",
-	  "w" => {"the negation of ", TT "v"}}}
+     Usage => "-v",
+     Inputs => { "v" => "a list interpreted as a vector" },
+     Outputs => {{"the negation of ", TT "v"}}}
 
 document {
      Key => (symbol +, List, List), Headline => "sum of two vectors",
-     OldSynopsis => {
-	  "x = v+w",
-	  "v" => "a list interpreted as a vector",
-	  "w" => "a list interpreted as a vector",
-	  "x" => "the sum of the two vectors"}}
+     Usage => "v+w",
+     Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
+     Outputs => {"the sum of the two vectors"}}
 
 document {
      Key => (symbol -, List, List), Headline => "sum of two vectors",
-     OldSynopsis => {
-	  "x = v-w",
-	  "v" => "a list interpreted as a vector",
-	  "w" => "a list interpreted as a vector",
-	  "x" => "the difference of the two vectors"}}
+     Usage => "v-w",
+     Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
+     Outputs => {"the difference of the two vectors"}}
 
 document {
      Key => (symbol _, VisibleList, List),
      Headline => "get some entries of a list",
-     OldSynopsis => {
-	  "v = w_{i,j,...}",
+     Usage => "w_{i,j,...}",
+     Inputs => {
 	  "w" => "a list",
-	  "{i,j,...}" => "the list of subscripts",
-	  "v" => "the list of entries ", TT "{w_i, w_j, ...}", "."
+	  "{i,j,...}" => "the list of subscripts"
 	  },
+     Outputs => {{ "the list of entries ", TT "{w_i, w_j, ...}" }},
      EXAMPLE {
 	  "w = {a,b,c,d,e,f,g,h};",
       	  "w_{1,3,4}",
@@ -1134,12 +1124,9 @@ document {
 
 document {
      Key => (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
-     OldSynopsis => {
-	  "E = sheafExt^n(F,G)",
-	  "F" => null,
-	  "G" => null,
-	  "E" => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G", "." }
-	  }
+     Usage => "E = sheafExt^n(F,G)",
+     Inputs => { "n" => null, "F" => null, "G" => null },
+     Outputs => { { "the n-th sheaf Ext of ", TT "F", " and ", TT "G" } }
      }
 
 -- Local Variables:
