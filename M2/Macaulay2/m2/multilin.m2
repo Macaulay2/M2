@@ -6,9 +6,6 @@ symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i
 MinorsComputation = new SelfInitializingType of BasicList
 MinorsComputation.synonym = "minors computation"
 
-PfaffiansComputation = new SelfInitializingType of BasicList
-PfaffiansComputation.synonym = "Pfaffians computation"
-
 getMinorsStrategy := (R,options) -> (
      bareiss := 0;  -- WARNING: these must match the engine!!
      cofactor := 1;
@@ -151,43 +148,10 @@ minors(ZZ,Matrix) := Ideal => options -> (j,m) -> (
 	  ideal getMatrix ring m
 	)))
 
-pfaffians = method()
+pfaffians = method(TypicalValue => Ideal)
 pfaffians(ZZ,Matrix) := Ideal => (j,m) -> (
      ideal(map(ring m, rawPfaffians(j,raw m))))
 
-///     
-pfaffians = method(Options => { Limit => infinity })
-pfaffians(ZZ,Matrix) := Ideal => options -> (j,m) -> (
-     ideal(map(ring m, rawPfaffians(j,raw m))))
-
-     error "IM2_Matrix_pfaffians not re-implemented yet";
-     if j === 0 then ideal 1_(ring m)
-     else if j < 0 then ideal 0_(ring m)
-     else (
-	  comp := PfaffiansComputation{j};
-	  if not m.cache#?comp then (
-	      sendgg(
-		   ggPush m,			  -- m
-		   ggINT, gg j,		  -- m j
-		   ggpfaffs);			  -- create computation
-	      m.cache#comp = {1, newHandle()};       -- the '1' means: not done yet.
-	     );
-	  if m.cache#comp#0 =!= 0 then (
-	      nsteps := if options.Limit === infinity then -1 else options.Limit;
-
-	      sendgg(
-		   ggPush m.cache#comp#1,
-		   ggPush nsteps,
-		   ggcalc);
-	      m.cache#comp = {eePopInt(), m.cache#comp#1}   -- return code: 0 means done, != 0 means more left
-	      );
-
-	  sendgg(ggPush m.cache#comp#1,
-		 ggINT, gg 0,
-		 ggindex);
-	  ideal getMatrix ring m
-	  ))
-///
 -----------------------------------------------------------------------------
 trace Matrix := RingElement => f -> (
      if rank source f != rank target f
@@ -203,7 +167,7 @@ det Matrix := RingElement => options -> f -> (
      then error "expected a square matrix";
      (exteriorPower(numgens source f, f, options))_(0,0))
 
-fittingIdeal = method()
+fittingIdeal = method(TypicalValue => Ideal)
 fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
      p := presentation M;
      n := rank target p;

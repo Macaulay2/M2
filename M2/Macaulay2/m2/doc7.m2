@@ -368,6 +368,7 @@ document {
      }
 
 ///
+-- Put this in once the routine exists!! (MES 3/27/04)
 document {
      Key => (leadTerm, ZZ, RingElement),
      Headline => "get the lead polynomials using part of the monomial order",
@@ -471,7 +472,7 @@ document {
      Outputs => {
 	  {"the homomorphism ", TT "M <-- N", " induced by the identity."}
 	  },
-     "The modules ", TT "M", " and ", TT "N", " must both be", TO "subquotients", " of 
+     "The modules ", TT "M", " and ", TT "N", " must both be ", TO "subquotients", " of 
      the same ambient free module ", TT "F", ".
      If ", TT "M = M1/M2", " and ", TT "N = N1/N2", ", where ", TT "M1", ", 
      ", TT "M2", ", ", TT "N1", ", ", TT "N2", " are all submodules of ", TT "F", ", then
@@ -505,7 +506,7 @@ document {
      Outputs => {
 	  {"the homomorphism ", TT "M <-- N", " induced by ", TT "f", "."}
 	  },
-     "The modules ", TT "M", " and ", TT "N", " must both be", TO "subquotients", " where
+     "The modules ", TT "M", " and ", TT "N", " must both be ", TO "subquotients", " where
      M and P have the same ambient module, and N and Q have the same ambient module.
      If the optional argument ", TT "Verify", 
      " is given, check that the result defines a well defined homomorphism.",
@@ -1418,13 +1419,6 @@ document {
      }
 
 document {
-     Key => PfaffiansComputation,
-     Headline => "the class of all Pfaffians computations",
-     TT "PfaffiansComputation", " -- a type of self initializing list used
-     internally by ", TO "pfaffians", "."
-     }
-
-document {
      Key => wedgeProduct,
      Headline => "the exterior multiplication map",
      TT "wedgeProduct(p,q,M)", " -- returns the matrix which represents the
@@ -1638,8 +1632,8 @@ document {
 document {
      Key => Limit,
      Headline => "specify how many to compute",
-     TT "Limit => n", " -- an optional argument for ", TO "pfaffians", "
-     or for ", TO "minors", " specifying that the computation should stop 
+     TT "Limit => n", " -- an optional argument for ",
+     TO "minors", " specifying that the computation should stop 
      after ", TT "n", " more elements are computed."
      }
 
@@ -1672,32 +1666,145 @@ assert( fittingIdeal(7,M) == ideal x )
 assert( fittingIdeal(8,M) == ideal 1_R )
 assert( fittingIdeal(9,M) == ideal 1_R )
 "
+
+document {
+     Key => (genericMatrix,Ring,RingElement,ZZ,ZZ),
+     Headline => "make a generic matrix of indeterminates",
+     Usage => "genericMatrix(R,x,m,n)",
+     Inputs => {
+	  "R" => null,
+	  "x" => {"an indeterminate in the ring ", TT "R"},
+	  "m" => null,
+	  "n" => null
+	  },
+     Outputs => {
+	  {"An ", TT "m", " by ", TT "n", " matrix of indeterminates drawn from the ring ", 
+	       TT "R", ", starting with ", TT "x", "."}
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..f];",
+      	  "genericMatrix(R,a,2,3)"
+	  },
+     SeeAlso => {genericSkewMatrix, genericSymmetricMatrix}
+     }
+
+document {
+     Key => (genericMatrix,Ring,ZZ,ZZ),
+     Headline => "make a generic matrix of indeterminates",
+     Usage => "genericMatrix(R,m,n)",
+     Inputs => {
+	  "R" => null,
+	  "m" => null,
+	  "n" => null
+	  },
+     Outputs => {
+	  {"An ", TT "m", " by ", TT "n", " matrix of indeterminates drawn from the ring ", 
+	       TT "R", ", starting with the first one."}
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..f];",
+      	  "genericMatrix(R,2,3)"
+	  },
+     SeeAlso => {genericSkewMatrix, genericSymmetricMatrix}
+     }
+
+document {
+     Key => (genericSkewMatrix,Ring,RingElement,ZZ),
+     Headline => "make a generic skew symmetric matrix of indeterminates",
+     Usage => "genericSkewMatrix(R,x,n)",
+     Inputs => {
+	  "R" => null,
+	  "x" => {"an indeterminate in the ring ", TT "R"},
+	  "n" => null
+	  },
+     Outputs => {
+	  {"An ", TT "n", " by ", TT "n", " skew symmetric 
+            matrix whose entries above the diagonal are the indeterminates of ", TT "R",
+	       ", starting with ", TT "x", "."}
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..f];",
+      	  "genericSkewMatrix(R,a,4)"
+	  },
+     SeeAlso => {genericMatrix, genericSymmetricMatrix}
+     }
+
+document {
+     Key => (genericSkewMatrix,Ring,ZZ),
+     Headline => "make a generic skew symmetric matrix of indeterminates",
+     Usage => "genericSkewMatrix(R,n)",
+     Inputs => {
+	  "R" => null,
+	  "n" => null
+	  },
+     Outputs => {
+	  {"An ", TT "n", " by ", TT "n", " skew symmetric
+            matrix whose entries above the diagonal are the indeterminates of ", TT "R", ", 
+	    starting with the first one."}
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..f];",
+      	  "genericSkewMatrix(R,4)"
+	  },
+     SeeAlso => {genericMatrix, genericSymmetricMatrix}
+     }
+
+document {
+     Key => (genericSymmetricMatrix,Ring,RingElement,ZZ),
+     Headline => "make a generic symmetric matrix of indeterminates",
+     Usage => "genericSymmetricMatrix(R,x,n)",
+     Inputs => {
+	  "R" => null,
+	  "x" => {"an indeterminate in the ring ", TT "R"},
+	  "n" => null
+	  },
+     Outputs => {
+	  {"An ", TT "n", " by ", TT "n", " symmetric 
+	       matrix whose entries on and above the diagonal
+	       are drawn from the ring ", 
+	       TT "R", ", starting with ", TT "x", "."}
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..j];",
+      	  "genericSymmetricMatrix(R,a,4)"
+	  },
+     SeeAlso => {genericMatrix, genericSkewMatrix}
+     }
+
+document {
+     Key => (genericSymmetricMatrix,Ring,ZZ),
+     Headline => "make a generic symmetric matrix of indeterminates",
+     Usage => "genericSymmetricMatrix(R,n)",
+     Inputs => {
+	  "R" => null,
+	  "n" => null
+	  },
+     Outputs => {
+	  {"An ", TT "n", " by ", TT "n", " symmetric matrix whose entries
+	       on and above the diagonal
+	       are drawn from the ring ", 
+	       TT "R", ", starting with the first one."}
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..j];",
+      	  "genericSkewMatrix(R,4)"
+	  },
+     SeeAlso => {genericMatrix, genericSkewMatrix}
+     }
+
 document {
      Key => genericMatrix,
-     Headline => "make a generic matrix of variables",
-     TT "genericMatrix(R,x,m,n)", " -- produce an m by n matrix of variables drawn
-     from the ring R, starting with variable x.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "genericMatrix(R,a,2,2)"
-	  },
+     SeeAlso => {genericSymmetricMatrix, genericSkewMatrix}
      }
 
 document {
      Key => genericSkewMatrix,
-     Headline => "make a generic skew symmetric matrix",
-     TT "genericSkewMatrix(R,x,n)", " -- make a skew symmetric n by n 
-     matrix whose entries above the diagonal are the variables of R, starting 
-     with the variable x."
+     Headline => "make a generic skew symmetric matrix"
      }
 
 document {
      Key => genericSymmetricMatrix,
-     Headline => "make a generic symmetric matrix",
-     TT "genericSymmetricMatrix(R,x,n)", " -- make a symmetric n by n matrix 
-     whose entries on and above the diagonal are the variables of R, starting 
-     with the variable x."
+     Headline => "make a generic symmetric matrix"
      }
 
 document {
