@@ -320,7 +320,9 @@ degrees Module := M -> (
 	       then toList (rk : {})
 	       else (
 	  	    sendgg ggPush M;
-		    pack(nd,eePopIntarray())))))
+		    d := pack(nd,eePopIntarray());
+		    if R.?Repair then d = apply(d,R.Repair);
+		    d))))
 
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 

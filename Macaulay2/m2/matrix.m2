@@ -139,6 +139,7 @@ Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
 
 setdegree := (M,N,type,degree) -> (
      R := ring M;
+     if R.?Adjust then degree = R.Adjust degree;
      sendgg (
      	  if R.?newEngine 
      	  then (ggPush M, ggPush N, ggPush type, ggPush degree)

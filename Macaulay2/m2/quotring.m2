@@ -157,6 +157,8 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotie
      sendgg(ggPush gensgbI, ggqring);
      S := new QuotientRing from newHandle();
      if R.?newEngine then S.newEngine = true;
+     if R.?Adjust then S.Adjust = R.Adjust;
+     if R.?Repair then S.Repair = R.Repair;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
      S.relations = gensI;

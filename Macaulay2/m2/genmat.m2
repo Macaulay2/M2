@@ -35,7 +35,10 @@ genericSymmetricMatrix = (R,first,n) -> (
 		    nextvar = nextvar+1)));
      matrix table(n,n, (i,j) -> if i>j then vars#(j,i) else vars#(i,j)))
 
-randommat := (R,r,c) -> (sendgg(ggPush R, ggPush r, ggPush c, ggrandom); getMatrix R)
+randommat := (R,r,c) -> (
+     if R.?Adjust then c = R.Adjust c;
+     sendgg(ggPush R, ggPush r, ggPush c, ggrandom); 
+     getMatrix R)
 
 random(List,Ring) := RingElement => (deg,R) -> (
      if #deg =!= degreeLength R

@@ -112,17 +112,16 @@ Ext(Module,Module) := Module => (N,M) -> (
     s := f / (g -> nullhomotopy (g*id_E));
     X := local X;
     k := coefficientRing Q;
-    -- Make a linear transformation of the degrees to ensure
-    -- the first component of each degree is positive.
+    -- compute the fudge factor for the adjustment of bidegrees
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
-    adjust := v -> {- fudge * v#0 + v#1, - v#0};
-    repair := w -> {- w#1, - fudge * w#1 + w#0};
-    degs := splice {
-      apply(0 .. c-1,i -> adjust {-2, - first degree f_i}), 
-      n : adjust {0,1}
-      };
-    T := k[X_0 .. X_(c-1), toSequence Q.generatorSymbols, 
-      Degrees => degs];
+    T := k[X_0 .. X_(c-1), toSequence Q.generatorSymbols,
+      Degrees => splice {
+        apply(0 .. c-1,i -> {-2, - first degree f_i}), 
+        n : {0,1}
+        },
+      Adjust => v -> {- fudge * v#0 + v#1, - v#0},
+      Repair => w -> {- w#1, - fudge * w#1 + w#0}
+      ];
     toT := map(T,Q,apply(toList(c .. c+n-1), i -> T_i));
     S := k[X_0 .. X_(c-1),Degrees=>{c:{2}}];
     mS := monoid S;
@@ -158,18 +157,14 @@ Ext(Module,Module) := Module => (N,M) -> (
 	      )))));
     -- make a free module whose basis elements have the right degrees
     DMT := T^(apply(spots E, 
-	i -> toSequence apply(degrees E_i, d -> adjust {i,first d})));
+	i -> toSequence apply(degrees E_i, d -> {i,first d})));
     -- assemble the matrix from its blocks
     DT := map(DMT, DMT, 
       transpose sum ( keys Delta, m -> T_m * toT sum Delta#m),
-      Degree => adjust {-1,0});
+      Degree => {-1,0});
     D := DT ** toT M';
     -- now compute the total Ext as a single homology module
-    ext := prune homology(D,D);
-    -- store the 'adjust' and 'repair' functions for later use
-    ext.adjust = T.adjust = adjust;
-    ext.repair = T.repair = repair;
-    ext))
+    prune homology(D,D)))
 
-adjust					  -- just use it again
-repair					  -- just use it again
+Adjust					  -- just use it again
+Repair					  -- just use it again

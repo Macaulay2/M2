@@ -107,12 +107,12 @@ Matrix ** Ring := Matrix => (f,R) -> (
 -----------------------------------------------------------------------------       
 poincare Module := M -> (
      R := ring M;
-     if degreeLength R == 0
-     then error "expected nonzero degree length";
+     n := degreeLength R;
+     if n == 0 then error "expected nonzero degree length";
      M = coker presentation M;
      -- if not isHomogeneous relations M then error "expected a homogeneous module";
      ZZn := degreesRing R;
-     if not M.?poincare then (
+     if M.?poincare then M.poincare else M.poincare = (
 	if not M.?poincareComputation then (
             g := generators gb presentation M;
 	    sendgg(ggPush ZZn, ggPush g, gghilb);
@@ -121,8 +121,21 @@ poincare Module := M -> (
             -- the last ggpop is to remove the return code.  MES: we should
             -- look at it first.
 	sendgg(ggPush M.poincareComputation, gggetvalue);
-        M.poincare = ZZn.pop());
-     M.poincare)
+	p := ZZn.pop();
+	if R.?Repair and R.Repair =!= identity then (
+	     repair := R.Repair;
+	     p = substitute(p,
+		  apply( toList ( 0 .. n-1 ), 
+		       i -> ZZn_i => ZZn_(
+			    repair apply( toList ( 0 .. n-1 ),  -- should just have the matrix of Repair available! 
+				 j -> if j === i then 1 else 0
+				 )
+			    )
+		       )
+		  );
+	     );
+        p)
+     )
 
 hilbertFunction(ZZ,Module) :=
 hilbertFunction(ZZ,Ring) :=
@@ -168,16 +181,22 @@ hilbertSeries Module := options -> (M) -> (
      else (
 	  A := ring M;
 	  num := poincare M;
+	  -- stderr << "num = " << num << endl;
 	  T := degreesRing A;
 	  denom := tally (degree \ generators A);
+	  -- stderr << "denom = " << denom << endl;
 	  if options.Order === infinity 
 	  then M#{hilbertSeries} = (
 	       y := flatten apply(pairs denom,
 		    (i,e) -> (
 			 f := 1 - T_i;			    -- f^e is a factor of the denominator
 			 while true do (
-			      q := num/f;		    -- // and % go into an infinite loop, sigh
-			      if denominator q == 1 then (
+     	       	    	      -- stderr << toExternalString num << " / " << toExternalString f << " = " << flush;
+			      -- q := num/f; -- might go into an infinite loop, sigh
+			      q := null;
+			      -- stderr << toExternalString q << endl;
+			      if false			    -- temporary bypass
+			      and denominator q == 1 then (
 				   num = numerator q;
 			      	   e = e-1;
 			      	   if e == 0 then break {};
@@ -587,6 +606,7 @@ Module _ List := Matrix => (M,v) -> (
 basis(List,Module) := Matrix => (deg,M) -> (
      if #deg =!= degreeLength ring M then error "expected degree length to match that of ring";
      R := ring M;
+     if R.?Adjust then deg = R.Adjust deg;
      A := ultimate(ambient,R);
      if not (
 	  isAffineRing A 
