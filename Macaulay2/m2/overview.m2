@@ -34,7 +34,6 @@ document { "Mathematical Overview",
 		    TO "making generic matrices",
 		    TO "displaying matrices",
 		    TO "manipulating matrices",
-		    TO "Groebner bases"
 		    }
 	       ),
 	  (
@@ -57,7 +56,16 @@ document { "Mathematical Overview",
 		    TO "manipulating chain complexes",
 		    TO "maps between chain complexes"
 		    }
-	       )
+	       ),
+	  (
+	       "computations",
+	       MENU {
+		    TO "Groebner bases",
+		    TO "computing Groebner bases",
+		    TO "computing syzygies",
+		    TO "computing resolutions",
+		    }
+	       ),
 	  }
      }
 
@@ -850,8 +858,12 @@ document { "ideals",
       	  "intersect(I,J)",
       	  "I*J",
       	  "J:I",
+	  "saturate(J,I)",
       	  "radical J",
 	  },
+     "See also: ", TO "intersect", ", ", TO (symbol :, Ideal, Ideal), ",
+     ", TO "saturate", ", and ", TO "radical", ".",
+     PARA,
      "We may ask whether one ideal is contained in another.",
      EXAMPLE {
 	  "isSubset(I,J)",

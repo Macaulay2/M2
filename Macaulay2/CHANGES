@@ -2,9 +2,14 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.56:
 
+singularLocus has been changed so that the ring returned is a quotient ring
+  of the ambient ring, instead of a quotient ring of the quotient ring given
+  to it.
+-----------------------------------------------------------------------------
+New in 0.8.56:
+
 Operation of html item 'SHIELD' changed - it now is used to protect a whole
 MENU rather than its items.
-
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
