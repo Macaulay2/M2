@@ -297,7 +297,7 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 	  else Expr(
 	       sethash(
 		    List(class,emptySequence,0,false),
-		    ancestor(class,mutableHashTableClass))))
+		    ancestor(class,mutableListClass))))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList or HashTable"));
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
