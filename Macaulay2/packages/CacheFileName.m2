@@ -65,7 +65,8 @@ cacheFileName(String,List,String) := (head,path,key) -> (
      )
 cacheFileName(Nothing,List,String) := (head,path,key) -> cacheFileName(path,key)
 
-document { cacheFileName,
+document {
+     Key => cacheFileName,
      Headline => "produce the name of a cache file",
      "Macaulay 2 needs to remember some bits of data from one invocation to the next,
      so it stores this data in cache files.  The name and directory of the cache file
@@ -74,7 +75,8 @@ document { cacheFileName,
      the name of the node."
      }
 
-document { (cacheFileName, String, String),
+document {
+     Key => (cacheFileName, String, String),
      OldSynopsis => {
 	  ///fn = cacheFileName(prefix,key)///,
 	  "prefix" => "the prefix from which to construct the file name",
@@ -93,7 +95,8 @@ document { (cacheFileName, String, String),
 	  }
      }
 
-document { (cacheFileName, String, String, String),
+document {
+     Key => (cacheFileName, String, String, String),
      OldSynopsis => {
 	  ///fn = cacheFileName(prefix,key,base)///,
 	  "prefix" => "the prefix from which to construct the file name",
@@ -115,7 +118,8 @@ document { (cacheFileName, String, String, String),
 	  }
      }
 
-document { (cacheFileName, List, String),
+document {
+     Key => (cacheFileName, List, String),
      OldSynopsis => {
 	  ///fn = cacheFileName(path,key)///,
 	  "path" => "a search path (list) of prefixes from which to construct the

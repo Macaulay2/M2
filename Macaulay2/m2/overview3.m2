@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { "Invoking the program",
+document {
+     Key => "Invoking the program",
      "On systems with a command line interface, the following commands
      can be used to start the program.  When the program starts up,
      the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
@@ -17,7 +18,8 @@ document { "Invoking the program",
      ", TO "end", ", or the end of file character."
      }
 
-document { "COPYING",
+document {
+     Key => "COPYING",
      Headline => "the Macaulay 2 license agreement",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA,
@@ -29,7 +31,8 @@ document { "COPYING",
 	  )
      }
 
-document { "Copyright and license",
+document {
+     Key => "Copyright and license",
      "Macaulay 2, its object code and source code, and its documentation,
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
      you to use it under the terms of the GNU General Public License, version
@@ -46,7 +49,8 @@ document { "Copyright and license",
 	  }
      }
 
-document { "GC garbage collector",
+document {
+     Key => "GC garbage collector",
      "Macaulay 2 uses the excellent garbage collector GC, version ", version#"gc version", ",
      written by Hans-J. Boehm and Alan J. Demers and generously licensed
      to the public.  It is available at
@@ -55,7 +59,8 @@ document { "GC garbage collector",
      SEEALSO {"collectGarbage" }
      }
 
-document { "Singular-Factory",
+document {
+     Key => "Singular-Factory",
      "With the kind permission of the authors of Singular, 
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
@@ -67,7 +72,7 @@ document { "Singular-Factory",
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
      PARA,
      "The following important routines call upon it:",
-     NOCONTENTS UL {
+     UL {
 	  TOH "factor",
 	  TOH "gcd",
 	  TOH "decompose",
@@ -75,7 +80,8 @@ document { "Singular-Factory",
 	  }
      }
 
-document { "Singular-Libfac",
+document {
+     Key => "Singular-Libfac",
      "With the kind permission of the author, Michael Messollen, Macaulay 2
      incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
      a free library of routines, depending on ", TO "Singular-Factory", ", that provides
@@ -87,7 +93,7 @@ document { "Singular-Libfac",
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
      PARA,
      "The following important routines call upon it:",
-     NOCONTENTS UL {
+     UL {
 	  TOH "factor",
 	  TOH "gcd",
 	  TOH "decompose",
@@ -95,7 +101,8 @@ document { "Singular-Libfac",
 	  }
      }
 
-document { "GNU MP",
+document {
+     Key => "GNU MP",
      "The GNU MP library, gmp, version ", version#"gmp version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License.
@@ -103,7 +110,8 @@ document { "GNU MP",
      ", HREF "http://www.swox.com/gmp/", "."
      }
 
-document { "operators",
+document {
+     Key => "operators",
      Headline => "an overview",
      "Here is a list of unary and binary operators in the language.  Many
      of them can have methods installed for handling arguments of specific
@@ -164,7 +172,8 @@ document { "operators",
      	  }
      }
 
-document { "Acknowledgements",
+document {
+     Key => "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
      incorporation of their library ", TO "Singular-Factory", ", Michael Messollen for
@@ -176,7 +185,8 @@ document { "Acknowledgements",
      geometry and the predecessor of this program."
      }
 
-document { "internals",
+document {
+     Key => "internals",
      "Here are some functions and classes that are intended for internal use 
      by the developers only.",
      UL {
@@ -185,7 +195,8 @@ document { "internals",
 	  }
      }
 
-document { "Reading the documentation",
+document {
+     Key => "Reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT (LAYOUT#"packagehtml" "Main"), " 
      contains the documentation in html form, suitable for viewing with a web 
@@ -208,7 +219,8 @@ document { "Reading the documentation",
      SEEALSO "Writing documentation"
      }
 
-document { "Writing documentation",
+document {
+     Key => "Writing documentation",
      "How to write documentation yourself:",
      UL {
 	  TOH "document",
@@ -222,7 +234,8 @@ document { "Writing documentation",
 	  },
      }
 
-document { "Preface",
+document {
+     Key => "Preface",
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  We are eager to help new users
@@ -234,7 +247,8 @@ document { "Preface",
 	  }
      }
 
-document { "How Macaulay 2 finds its files",
+document {
+     Key => "How Macaulay 2 finds its files",
      "When you run Macaulay 2, it has to find and load a sequence of
      startup files containing code written in the Macaulay 2 language,
      or it has to find a data file containing a memory dump from a
@@ -267,7 +281,8 @@ document { "How Macaulay 2 finds its files",
 	  }
      }
 
-document { "LAYOUT",
+document {
+     Key => "LAYOUT",
      Headline => "relative locations of Macaulay 2 files",
      OldSynopsis => {
 	  "LAYOUT"
@@ -288,7 +303,8 @@ document { "LAYOUT",
      EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///
      }
 
-document { "Main",
+document {
+     Key => "Main",
      OldSynopsis => {
 	  "Main"
 	  },
@@ -297,7 +313,8 @@ document { "Main",
 	  }
      }
 
-document { "Mathematical Tutorials",
+document {
+     Key => "Mathematical Tutorials",
      Headline => "several extended examples",
      "In this section we present some tutorials which aim to introduce
      the user to some mathematical ways of using Macaulay 2.  The tutorials
@@ -318,14 +335,16 @@ load "canEmbed.out"
 load "divisors.out"
 load "elementary.out"
 
-document {  "Developer's Corner",
+document {
+     Key =>  "Developer's Corner",
      UL {
 	  TO "engine",
 	  TO "internals",
 	  }
      }
 
-document { "Macaulay 2",
+document {
+     Key => "Macaulay 2",
      FileName => "index",
      PARA IMG (LAYOUT#"images" | "9planets.gif"),
      PARA {
@@ -342,7 +361,8 @@ document { "Macaulay 2",
 	  }
      }
 
-document { "specifying typical values",
+document {
+     Key => "specifying typical values",
      "For the purpose of construction good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
@@ -375,7 +395,8 @@ document { "specifying typical values",
      }
 
 
-document { "The authors",
+document {
+     Key => "The authors",
      "The authors of Macaulay 2 and the bulk of this manual:",
      UL {
 	  TO "Daniel R. Grayson",
@@ -390,14 +411,16 @@ document { "The authors",
      
      }
 
-document { "David Eisenbud",
+document {
+     Key => "David Eisenbud",
      HREF {"http://www.msri.org/people/staff/de/", "David Eisenbud "}, " ",
      HREF {"mailto:de@msri.org", "<de@msri.org>"}, ".",
      PARA,
      "In this spot will go a brief biography of David Eisenbud."
      }
 
-document { "Daniel R. Grayson",
+document {
+     Key => "Daniel R. Grayson",
      HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " ",
      HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
      PARA,
@@ -413,7 +436,8 @@ document { "Daniel R. Grayson",
      IMG "../html/Grayson2.jpg"
      }
 
-document { "Michael E. Stillman",
+document {
+     Key => "Michael E. Stillman",
      HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
      HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"},
      PARA,
@@ -426,10 +450,12 @@ document { "Michael E. Stillman",
      algebra system for algebraic geometry and the predecessor of this program."
      }
 
-document { "Resources required",
+document {
+     Key => "Resources required",
      }
 
-document { "syntax",
+document {
+     Key => "syntax",
      Headline => "an overview",
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",
@@ -476,7 +502,8 @@ document { "syntax",
      occur to the right of the comma or semicolon or to the left of the comma."
      }
 
-document { "debugging",
+document {
+     Key => "debugging",
      Headline => "an overview",
      "Here are some debugging tools.",
      UL {
@@ -512,7 +539,8 @@ document { "debugging",
 	  }
      }
 
-document { "system",
+document {
+     Key => "system",
      Headline => "an overview",
      "Loading files:",
      UL {
@@ -570,7 +598,8 @@ document { "system",
 	  }
      }
 
-document { "initialization file",
+document {
+     Key => "initialization file",
      "The file ", TT "init.m2", " is loaded automatically when the
      program is started.",
      PARA,
@@ -582,7 +611,8 @@ document { "initialization file",
      SEEALSO "load"
      }
 
-document { "combinatorial functions",
+document {
+     Key => "combinatorial functions",
      Headline => "an overview",     
      UL {
 	  TO "random",
@@ -593,7 +623,8 @@ document { "combinatorial functions",
 	  }
      }
 
-document { "top level loop",
+document {
+     Key => "top level loop",
      "The top level evaluation loop of the interpreter contains hooks so the user can
      control how printing of the results of evaluation is done.  If the result is 
      ", TO "null", " then nothing is printed.  Otherwise, the appropriate method
@@ -609,7 +640,8 @@ document { "top level loop",
 	  }
      }
 
-document { "Getting started",
+document {
+     Key => "Getting started",
      PARA {
 	  "The program is available over the web at the Macaulay 2 home page ", HREF {"http://www.math.uiuc.edu/Macaulay2/"}, "
 	  or by ftp at ", HREF "ftp://Macaulay2:Macaulay2@ftp.math.uiuc.edu/", ".  (The host is ", TT "ftp.math.uiuc.edu", ", the 
@@ -630,7 +662,8 @@ document { "Getting started",
 	  }
      }
 
-document { "Your first interaction with Macaulay 2",
+document {
+     Key => "Your first interaction with Macaulay 2",
      PARA { "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
 	  evaluated - no punctuation is required at the end of the line."},
@@ -821,7 +854,8 @@ document { "Your first interaction with Macaulay 2",
      EXAMPLE "betti gb j"
      }
 
-document { "executing other programs",
+document {
+     Key => "executing other programs",
      Headline => "an overview",
      "The ", TO "run", " command can be used to execute another program,
      after which control will return to Macaulay 2.",

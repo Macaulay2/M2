@@ -4,7 +4,8 @@
 -- IDEAL nodes ---------
 ----------------------------
 
-document { "creating an ideal",
+document {
+     Key => "creating an ideal",
    TOC { 
 	SECTION { "ideal",
      	     "An ideal ", TT "I", " is represented by its generators.  
@@ -42,7 +43,8 @@ document { "creating an ideal",
    }
 
 
-document { "ideals to and from matrices",
+document {
+     Key => "ideals to and from matrices",
      TOC {
 	  SECTION { "forming an ideal from a matrix",
 	       "After defining a matrix (see ", TO "input a matrix", ")
@@ -69,7 +71,8 @@ document { "ideals to and from matrices",
      }
 
 
-document { "ideals to and from modules",
+document {
+     Key => "ideals to and from modules",
      TOC {
 	  SECTION { "from ideals to modules",
 	       --     "There are two main ways to consider an ideal as 
@@ -132,7 +135,8 @@ document { "ideals to and from modules",
 	  }
      }
 
-document { "sums, products, and powers of ideals",
+document {
+     Key => "sums, products, and powers of ideals",
      "Arithmetic for ideals uses the standard symbols.  Below are examples 
      of the basic arithmetic functions for ideal.", 
      EXAMPLE {
@@ -150,7 +154,8 @@ document { "sums, products, and powers of ideals",
      ", TO (symbol*,Ideal,Ideal), ", and ", TO (symbol^,Ideal,ZZ), "."
      }
 
-document { "equality and containment",
+document {
+     Key => "equality and containment",
      "Equality and containment can sometimes be subtle in Macaulay 2.  For 
      example, testing if an ideal is equal to 0 or 1 are special functions 
      so we give an example here.  We try to illustrate the subtleties. ",
@@ -201,7 +206,8 @@ document { "equality and containment",
      }
 }
 
-document { "extracting generators of an ideal",
+document {
+     Key => "extracting generators of an ideal",
      TOC {
      	  SECTION {"obtain a single generator as an element",
 	       "Once an ideal has been constructed it is possible to 
@@ -260,7 +266,8 @@ document { "extracting generators of an ideal",
 	  }
      }
 
-document { "dimension, codimension, and degree",
+document {
+     Key => "dimension, codimension, and degree",
      "Use ", TO "dim", ", ", TO "codim", ", and ", TO "degree", " to 
      compute the dimension, codimension and degree, respectively, 
      of an ideal.  The functions ", TO "dim", " and ", TO "degree", " compute 
@@ -274,7 +281,8 @@ document { "dimension, codimension, and degree",
 	  }
      }
 
-document { "intersection of ideals",
+document {
+     Key => "intersection of ideals",
      "Use ", TO "intersect", " to compute the intersection of two or 
      more ideals.",
      EXAMPLE {
@@ -283,7 +291,8 @@ document { "intersection of ideals",
 	  }
      }
 
-document { "ideal quotients and saturation",
+document {
+     Key => "ideal quotients and saturation",
      TOC {
      	  SECTION { "colon and quotient",
 	       "The ", TO "quotient", " of two ideals ", TT "I", " 
@@ -355,7 +364,8 @@ document { "ideal quotients and saturation",
 
 
 
-document { "radical of an ideal",
+document {
+     Key => "radical of an ideal",
       "There are two main ways to find the radical of an ideal.  The first is to use 
       the function ", TO "radical", " and the second is to find the intersection of 
       the minimal prime ideals.  On some large examples the second method is faster.",
@@ -380,7 +390,8 @@ document { "radical of an ideal",
 	   }
       }
  
-document { "minimal primes of an ideal",
+document {
+     Key => "minimal primes of an ideal",
      TOC {
 	  SECTION { "using decompose",
      	       "To obtain a list of the minimal associated primes for an 
@@ -414,7 +425,8 @@ document { "minimal primes of an ideal",
      }
 
 
-document { "associated primes of an ideal",
+document {
+     Key => "associated primes of an ideal",
        "The function ", TO "ass", " returns a list of the 
        associated prime ideals for a given ideal ", "I", ".  The 
        associated prime ideals correspond to the irreducible 
@@ -433,7 +445,8 @@ document { "associated primes of an ideal",
      minimal prime ideals see ", TO "minimal primes of an ideal", "."   
      }
 
-document { "primary decomposition",
+document {
+     Key => "primary decomposition",
      TOC {
 	  SECTION { "introduction",
 	       "It is now possible to find the primary decomposition 
@@ -502,7 +515,8 @@ document { "primary decomposition",
 -- RING MAP nodes -
 -------------------
 
-document { "substitute values for variables",
+document {
+     Key => "substitute values for variables",
      "Once a ring is defined that has variables, values can be 
      given to these variables using ", TO "substitute", ".  We give 
      an example.",
@@ -524,7 +538,8 @@ document { "substitute values for variables",
 	  }
      }
 
-document { "working with multiple rings",   -- DOUBLE CHECK BEING DONE WITH THIS ONE!
+document {
+     Key => "working with multiple rings",   -- DOUBLE CHECK BEING DONE WITH THIS ONE!
      "Working with multiple rings is more subtle than simply 
      replacing values of the variables in a ring.  On the other 
      hand it is particularly easy in Macaulay2.  We define a 
@@ -664,7 +679,8 @@ document { "working with multiple rings",   -- DOUBLE CHECK BEING DONE WITH THIS
      	  }
      }
 
-document { "basic construction, source and target of a ring map",
+document {
+     Key => "basic construction, source and target of a ring map",
      TOC {
 	  SECTION { "constructing a ring map", 
 	       "Use the function ", TO "map", " construct a map 
@@ -715,7 +731,8 @@ document { "basic construction, source and target of a ring map",
 	 }
     }
 
-document { "evaluation and composition of ring maps",
+document {
+     Key => "evaluation and composition of ring maps",
      TOC{
 	  SECTION { "evaluating ring maps",
      	       "Once a ring map ", TT "F", " is defined, the image of an 
@@ -744,7 +761,8 @@ document { "evaluation and composition of ring maps",
      }
 
 
-document { "kernel and image of a ring map",
+document {
+     Key => "kernel and image of a ring map",
      "The kernel and image of a ring map can be computed 
      using ", TO "image", " and ", TO "ker", " .  The output 
      of ", TT "ker", " is an ideal and the output of ", TT "image", "is a 
@@ -765,7 +783,8 @@ document { "kernel and image of a ring map",
 -- Matrix nodes ---
 -------------------
 
-document { "input a matrix",
+document {
+     Key => "input a matrix",
      TOC {
 	  SECTION { "by its entries",
 	       "Using the function ", TO "matrix", " is the most basic method 
@@ -796,7 +815,8 @@ document { "input a matrix",
 	  }
      }
 
-document { "random and generic matrices",
+document {
+     Key => "random and generic matrices",
      TOC {
 	  SECTION {"random matrices",
 	       "To construct a random m by n matrix with entries in a ring 
@@ -844,7 +864,8 @@ document { "random and generic matrices",
 	  }
      }
 
-document { "concatenating matrices",
+document {
+     Key => "concatenating matrices",
      TOC {
 	  SECTION { "concatenate horizontally",
 	       "Use ", TO "|", "to concatenate two matrices horizontally.",
@@ -882,7 +903,8 @@ document { "concatenating matrices",
 	  }
      }
 
-document { "simple information about a matrix",
+document {
+     Key => "simple information about a matrix",
      TOC { 
 	  SECTION { "ring",
 	       },	       
@@ -901,7 +923,8 @@ document { "simple information about a matrix",
 	  }
      }
 
-document { "basic arithmetic of matrices",
+document {
+     Key => "basic arithmetic of matrices",
      TOC {
 	  SECTION { "+",
 	       },	       
@@ -922,7 +945,8 @@ document { "basic arithmetic of matrices",
 	  }
      }
 
-document { "kernel, cokernel and image of a matrix",
+document {
+     Key => "kernel, cokernel and image of a matrix",
      TOC {
 	  SECTION { "kernel", " -- (synonym is 'ker')",
 	       },	       
@@ -933,7 +957,8 @@ document { "kernel, cokernel and image of a matrix",
 	  }
      }
 
-document { "differentiation",
+document {
+     Key => "differentiation",
      TOC {
 	  SECTION { "diff",
 	       },	       
@@ -948,7 +973,8 @@ document { "differentiation",
 	  }
      }
 
-document { "rank of a matrix",
+document {
+     Key => "rank of a matrix",
      TOC {
 	  SECTION { "rank",
 	       },	       
@@ -957,7 +983,8 @@ document { "rank of a matrix",
 	  }
      }
 
-document { "determinants and minors",
+document {
+     Key => "determinants and minors",
      TOC {
 	  SECTION { "det",
 	       },	       
@@ -966,28 +993,32 @@ document { "determinants and minors",
 	  }
      }
 
-document { "Pfaffians",
+document {
+     Key => "Pfaffians",
      TOC {
 	  SECTION { "pfaffians"
 	       }
 	  }
      }
 
-document { "exterior power of a matrix",
+document {
+     Key => "exterior power of a matrix",
      TOC {
 	  SECTION { "exteriorPower"
 	       }
 	  }
      }
 
-document { "format and display of matrices in Macaulay 2",
+document {
+     Key => "format and display of matrices in Macaulay 2",
      TOC {
 	  SECTION { "compactMatrixForm",
 	       }
 	  }
      }
 
-document { "importing and exporting matrices",
+document {
+     Key => "importing and exporting matrices",
      TOC {
 	  SECTION { "toString",
 	       },

@@ -4,7 +4,8 @@
 
 this is an old node, apparently
 
-document { "ideals and modules",
+document {
+     Key => "ideals and modules",
      Headline => "an overview",
      "In this section we present an overview of ideals and modules.
      For details, see ", TO "Ideal", " and ", TO "Module", ".",
@@ -27,7 +28,8 @@ document { "ideals and modules",
 
 ///
 
-document { "free modules",
+document {
+     Key => "free modules",
      "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",
      PARA,
      EXAMPLE {
@@ -62,7 +64,8 @@ document { "free modules",
 	  }
      }
 
-document { "making modules from matrices",
+document {
+     Key => "making modules from matrices",
      "Let's make some matrices.",
      EXAMPLE {
 	  "R = ZZ/101[a..c];",
@@ -92,7 +95,8 @@ document { "making modules from matrices",
 	  }
      }
 
-document { "manipulating modules",
+document {
+     Key => "manipulating modules",
      "Suppose we have a module which is represented as an image of a
      matrix, and we want to represent it as a cokernel of a matrix.
      This task may be accomplished with ", TO "prune", ".",
@@ -119,7 +123,7 @@ document { "manipulating modules",
      both represented as modules with two generators.",
      PARA,
      "Functions for finding related modules:",
-     NOCONTENTS UL {
+     UL {
 	  TO "ambient",
 	  TO "cover",
 	  TO "super",
@@ -145,7 +149,8 @@ document { "manipulating modules",
 	  }
      }
 
-document { "maps between modules",			    -- map
+document {
+     Key => "maps between modules",			    -- map
      "Maps between free modules are usual specified as matrices, as
      described in the section on ", TO "matrices", ".  In this section 
      we cover a few other techniques.",
@@ -172,7 +177,8 @@ document { "maps between modules",			    -- map
 	  },
      }
 
-document { "bases of parts of modules",
+document {
+     Key => "bases of parts of modules",
      "The function ", TO "basis", " can be used to produce bases (over the
      ground field) of parts of modules (and rings) of a specified degree.",
      EXAMPLE {
@@ -197,7 +203,8 @@ document { "bases of parts of modules",
      }
 
 
-document { "free resolutions of modules",
+document {
+     Key => "free resolutions of modules",
      "The function ", TO "resolution", " (also called ", TT "res", "),
      can be used to produce a free resolution of a module.",
      EXAMPLE {
@@ -219,7 +226,8 @@ document { "free resolutions of modules",
 	  }
      }
 
-document { "extracting information from chain complexes",
+document {
+     Key => "extracting information from chain complexes",
      "Let's make a chain complex.",
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
@@ -261,7 +269,8 @@ document { "extracting information from chain complexes",
      basis elements of degree ", TT "i+j", " in ", TT "C_j", "."
      }
 
-document { "making chain complexes by hand",
+document {
+     Key => "making chain complexes by hand",
      "A new chain complex can be made with ", TT "C = new ChainComplex", ".  This will
      automatically initialize ", TT "C.dd", ", in which the differentials are stored.
      The modules can be installed with statements like ", TT "C#i=M", " and the 
@@ -301,7 +310,8 @@ document { "making chain complexes by hand",
 	  }
      }
 
-document { "manipulating chain complexes",
+document {
+     Key => "manipulating chain complexes",
      "There are several natural ways to handle chain complexes; for
      details, see ", TO "ChainComplex", ".  Let's illustrate by
      making two chain complexes.",
@@ -341,7 +351,8 @@ document { "manipulating chain complexes",
 	  },
      }
 
-document { "maps between chain complexes",
+document {
+     Key => "maps between chain complexes",
      "One way to make maps between chain complexes is by lifting maps between
      modules to resolutions of those modules.  First we make some modules.",
      EXAMPLE {
@@ -398,7 +409,8 @@ document { "maps between chain complexes",
 	  }
      }
 
-document { "coherent sheaves",
+document {
+     Key => "coherent sheaves",
      "The main reason to implement algebraic varieties is support the
      computation of sheaf cohomology of coherent sheaves, which doesn't
      have an immediate description in terms of graded modules.",
@@ -425,7 +437,8 @@ document { "coherent sheaves",
 	  }
      }
 
-document { "Language and Programming Overview",
+document {
+     Key => "Language and Programming Overview",
      "In this section we give a comprehensive overview of the user
      language and the main programming features of Macaulay 2.",
      PARA,
@@ -445,7 +458,8 @@ document { "Language and Programming Overview",
 	  }
      }
 
-document { "variables and symbols",
+document {
+     Key => "variables and symbols",
      Headline => "an overview",
      UL {
 	  TO "valid names",
@@ -457,7 +471,8 @@ document { "variables and symbols",
 	  }
      }
 
-document { "functions",
+document {
+     Key => "functions",
      Headline => "an overview",
      "In this section we present an overview of functions.",
      PARA,
@@ -472,7 +487,8 @@ document { "functions",
 	  }
      }
 
-document { "basic types",
+document {
+     Key => "basic types",
      Headline => "an overview",
      "The basic type of an object is the way the object is
      essentially implemented internally.  It is not possible for
@@ -489,7 +505,8 @@ document { "basic types",
 	  }
      }
 
-document { "control structures",
+document {
+     Key => "control structures",
      Headline => "an overview",
      UL {
 	  TO "loops",
@@ -501,7 +518,8 @@ document { "control structures",
 	  }
      }
 
-document { "input and output",
+document {
+     Key => "input and output",
      Headline => "an overview",
      UL {
 	  TO "printing to the screen",
@@ -514,7 +532,8 @@ document { "input and output",
 	  }
      }
 
-document { "classes and types",
+document {
+     Key => "classes and types",
      Headline => "an overview",
      UL {
 	  TO "what a class is",
@@ -534,7 +553,8 @@ document { "classes and types",
 	  }
      }
 
-document { "valid names",
+document {
+     Key => "valid names",
      "Valid names for symbols may be constructed using letters, digits, and
      the apostrophe, and should not begin with a digit.",
      EXAMPLE {
@@ -554,7 +574,8 @@ document { "valid names",
      "The class of all symbols is ", TO "Symbol", "."
      }
 
-document { "assigning values",
+document {
+     Key => "assigning values",
      "Use an equal sign to assign values to variables.",
      EXAMPLE {
 	  "x = \"abcde\"",
@@ -609,7 +630,8 @@ document { "assigning values",
      SEEALSO { "GlobalAssignHook", "GlobalReleaseHook" }
      }
 
-document { "local variables in a file",
+document {
+     Key => "local variables in a file",
      "There is a way to construct variables that can be used within a given
      source file, and are invisible to code placed in other files.  We use
      ", TO ":=", " for this.  Assume the code below is placed in a file, and
@@ -637,7 +659,8 @@ document { "local variables in a file",
 	  }
      }
 
-document { "viewing the symbols defined so far",
+document {
+     Key => "viewing the symbols defined so far",
      "After using Macaulay 2 for a while, you may have stored data in
      several variables.  The system also stores output values for you
      in output variables.  You may wish to free the memory space occupied
@@ -665,7 +688,8 @@ document { "viewing the symbols defined so far",
 	  },
      }
 
-document { "subscripted variables",
+document {
+     Key => "subscripted variables",
      "It is common in mathematics to use subscripted variables.  We use the underscore
      to represent subscripts.  If we haven't assigned a value to ", TT "x", "
      we may simply start using it as a subscripted variable.  The subscripts can be
@@ -690,7 +714,8 @@ document { "subscripted variables",
      SEEALSO {"IndexedVariable","IndexedVariableTable"}
      }
 
-document { "using functions",
+document {
+     Key => "using functions",
      "There are many functions in Macaulay 2 that do various things.  You can
      get a brief indication of what a function does by typing its name.",
      EXAMPLE "sin",
@@ -726,7 +751,8 @@ document { "using functions",
 	  },
      }
 
-document { "making functions",
+document {
+     Key => "making functions",
      "The operator ", TO "->", " is used to make new functions.  On its left
      we provide the names of the parameters to the function, and to the 
      right we provide the body of the function, an expression involving
@@ -783,7 +809,8 @@ document { "making functions",
      "The class of all functions is ", TO "Function", "."
      }
 
-document { "making functions with a variable number of arguments",
+document {
+     Key => "making functions with a variable number of arguments",
      "It is easy to write a function with a variable number of arguments.
      Define the function with just one parameter, with no parentheses around
      it.  If the function is called with several arguments, the value of the
@@ -821,7 +848,8 @@ document { "making functions with a variable number of arguments",
 	  }
      }
 
-document { "using functions with optional arguments",
+document {
+     Key => "using functions with optional arguments",
      "Some functions accept optional arguments.  Each of these optional arguments
      has a name.  For example, one of the optional arguments for ", TO "gb", "
      is named ", TO "DegreeLimit", "; it can be used to specify that the computation
@@ -850,7 +878,8 @@ document { "using functions with optional arguments",
 	  },
      }
 
-document { "making new functions with optional arguments",
+document {
+     Key => "making new functions with optional arguments",
      "Let's consider an example where we wish to construct a linear function of ", TT "x", " 
      called ", TT "f", ", with the slope and y-intercept of the graph being optional
      arguments of ", TT "f", ".  We use the ", TO ">>>", " operator to attach the default
@@ -879,7 +908,8 @@ document { "making new functions with optional arguments",
 	  },
      }
 
-document { "conditional execution",
+document {
+     Key => "conditional execution",
      Headline => "execute some code if a condition is true",
      "The basic way to control the execution of code is with the ", TO "if", "
      expression.  Such an expression typically has the form
@@ -909,7 +939,8 @@ document { "conditional execution",
      results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
      }
 
-document { "loops",
+document {
+     Key => "loops",
      Headline => "evaluate code repeatedly",
      "One good way to perform an operation several times is with the
      keyword ", TO "while", ".  An expression of the form
@@ -982,7 +1013,8 @@ document { "loops",
 	  }
      }
 
-document { "numbered variables",
+document {
+     Key => "numbered variables",
      "One way to get many variables suitable for use as indeterminates in
      a polynomial ring is with the function ", TO "vars", ".  It converts 
      a list or sequence of integers into symbols.  It prefers to hand out
@@ -998,7 +1030,8 @@ document { "numbered variables",
 	  }
      }
 
-document { "local variables in a function",
+document {
+     Key => "local variables in a function",
      "A local variable in a function is one that is not visible to
      code in other locations.  Correct use of local variables is
      important, for data stored in global variables will stay around
@@ -1038,7 +1071,8 @@ document { "local variables in a function",
 	  }
      }
 
-document { "strings",
+document {
+     Key => "strings",
      Headline => "an overview",
      "A string is a sequence of characters.  Strings can
      be manipulated in various ways to produce printed output.
@@ -1092,7 +1126,8 @@ fghij"///,
 	  }
      }
 
-document { "nets",
+document {
+     Key => "nets",
      Headline => "an overview",
      "A net is a rectangular two-dimensional array of characters, together
      with an imaginary horizontal baseline that allows nets to be assembled
@@ -1143,7 +1178,8 @@ document { "nets",
 	  }
      }
 
-document { "lists",
+document {
+     Key => "lists",
      Headline => "an overview",
      "A list is a handy way to store a series of things.  We create one
      by separating the elements of the series by commas and surrounding 
@@ -1209,7 +1245,8 @@ document { "lists",
 	  }
      }
 
-document { "sequences",
+document {
+     Key => "sequences",
      Headline => "an overview",
      "A sequence is like a list, except that parentheses are used
      instead of braces to create them and to print them.  Sequences
@@ -1271,7 +1308,8 @@ document { "sequences",
 	  }
      }
 
-document { "hash tables",
+document {
+     Key => "hash tables",
      Headline => "an overview",
      "A hash table is a data structure that can implement a function
      whose domain is a finite set.  An element of the domain is called
@@ -1347,7 +1385,8 @@ document { "hash tables",
      mutable hash tables is ", TO "MutableHashTable", ".",
      }
 
-document { "hashing",
+document {
+     Key => "hashing",
      "A hash table contains a set of key-value pairs.  The access
      functions for hash tables accept a key and retrieve the
      corresponding value.  Here are the details, together with a
@@ -1451,7 +1490,8 @@ document { "hashing",
      SEEALSO "HashTable"
      }
 
-document { "mapping over lists",
+document {
+     Key => "mapping over lists",
      Headline => "apply a function to each element of a list",
      "In programming, loops that operate on consecutive elements of a
      list are common, so we offer various ways to apply functions to
@@ -1540,7 +1580,8 @@ document { "mapping over lists",
      that lists of length 0 can be handled correctly."
      }
 
-document { "mapping over hash tables",
+document {
+     Key => "mapping over hash tables",
      Headline => "apply a function to each element of a hash table",
      "Each entry in a hash table consists of a key and a value.  We provide
      three ways to map functions over a hash table, depending on whether the
@@ -1583,7 +1624,8 @@ document { "mapping over hash tables",
 	  },
      }
 
-document { "error handling",
+document {
+     Key => "error handling",
      Headline => "signalling and trapping errors",
      "When an error occurs in your program, an error message will appear that
      gives the name of the file, the line number, and the column number of
@@ -1597,7 +1639,8 @@ document { "error handling",
      execution is stopped and to continue or to try something else."
      }
 
-document { "printing to the screen",
+document {
+     Key => "printing to the screen",
      "Use the operator ", TO "<<", " to print something to the screen.",
      EXAMPLE {
 	  "<< 2^100"
@@ -1643,7 +1686,8 @@ document { "printing to the screen",
 	  }
      }
 
-document { "reading files",
+document {
+     Key => "reading files",
      "Sometimes a file will contain a single expression whose value you wish
      to have access to.  For example, it might be a polynomial produced by
      another program.  The function ", TO "get", " can be used to obtain 
@@ -1687,7 +1731,8 @@ document { "reading files",
      EXAMPLE ///stack lines get "sample"///
      }
 
-document { "getting input from the user",
+document {
+     Key => "getting input from the user",
      "The function ", TO "read", " can be used to prompt the user and obtain
      a line of input as a string.  In response to the prompt, the user enters
      ", TT "sample", " and press return.",
@@ -1709,7 +1754,8 @@ sample///,
 	  }
      }
 
-document { "creating and writing files",
+document {
+     Key => "creating and writing files",
      "We can print to a file in essentially the same way we print to the screen.
      In the simplest case, we create the entire file with one command; we
      give the file name as the initial left hand operand of ", TO "<<", ",
@@ -1733,7 +1779,8 @@ document { "creating and writing files",
 	  }
      }
 
-document { "two dimensional formatting",
+document {
+     Key => "two dimensional formatting",
      "We have seen that ", TO "nets", " are potentially useful for two
      dimesional formatting of output to an ascii terminal with limited
      graphical ability.  We present now a few more hints about putting
@@ -1802,16 +1849,19 @@ document { "two dimensional formatting",
 	  },
      }
 
-document { isReady, Headline => "whether a file has data available for reading" }
+document {
+     Key => isReady, Headline => "whether a file has data available for reading" }
 
-document { atEndOfFile,
+document {
+     Key => atEndOfFile,
      Headline => "test for end of file",
      TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
      PARA,
      SEEALSO {"File"}
      }
 
-document { "communicating with programs",
+document {
+     Key => "communicating with programs",
      "The most naive way to interact with another program is simply to run
      it, let it communicate directly with the user, and wait for it to
      finish.  This is done with the ", TO "run", " command.",
@@ -1875,7 +1925,8 @@ document { "communicating with programs",
      files."
      }
 
-document { "using sockets",
+document {
+     Key => "using sockets",
      "It's easy to use sockets as though they were files.  Simply replace
      the file name by a string of the form ", TT "$host:service", " where
      ", TT "host", " is the name of IP number of host to contact, and
@@ -1914,7 +1965,8 @@ document { "using sockets",
      SEEALSO { "openInOut", "openListener" }
      }
 
-document { "making new classes",
+document {
+     Key => "making new classes",
      "All new classes are made with the operator ", TO "new", ".
      You may choose to implement the instances of your new class
      either as basic lists or as hash tables, or you may even
@@ -1944,7 +1996,8 @@ document { "making new classes",
 	  }
      }
 
-document { "making a new method function",
+document {
+     Key => "making a new method function",
      "The function ", TO "method", " can be used to make new functions
      which execute different bits of code depending on the types
      of the arguments presented.  Our system depends heavily on
@@ -1963,7 +2016,8 @@ document { "making a new method function",
 	  }
      }
 
-document { "what a class is",
+document {
+     Key => "what a class is",
      "In Macaulay 2 the behavior of a function depends heavily on the types
      of the arguments it's presented with.  For example, the expression ", TT "x+y", "
      means the sum if ", TT "x", " and ", TT "y", " are integers, but it
@@ -2027,7 +2081,8 @@ document { "what a class is",
 	  }
      }
 
-document { "binary methods",
+document {
+     Key => "binary methods",
      "The method for computing a sum ", TT "x+y", " depends on the types of ", TT "x", " and ", TT "y", ".
      For example, the method for adding an integer ", TT "x", " and a polynomial 
      ", TT "y", " differs from the method for adding two integers modulo 111.  Because
@@ -2079,7 +2134,8 @@ document { "binary methods",
      ", TT "x", " provided to the routine by the system."
      }
 
-document { "installing methods",
+document {
+     Key => "installing methods",
      "The method to be used for computing an expression such as ", TT "-x", " depends 
      on the type of ", TT "x", ".  For example, the method for negating a polynomial
      differs from the method for negating an integer modulo 111.  Each
@@ -2129,7 +2185,8 @@ document { "installing methods",
      SEEALSO{"binary methods"}
      }
 
-document { "inheritance from parents",
+document {
+     Key => "inheritance from parents",
      "Each class has a parent class which can be used as a container
      for bits of code that apply to a more general class of objects.
      In this section we show how this mechanism works in detail.",
@@ -2191,7 +2248,8 @@ document { "inheritance from parents",
      ", TO "method", "."
      }
 
-document { (method,Options),
+document {
+     Key => (method,Options),
      Headline => "method functions with optional arguments",
      OldSynopsis => {
 	  "f = method(Options => {a=>x, b=>y, ...})",
@@ -2226,7 +2284,8 @@ document { (method,Options),
 	  }
      }
 
-document { "printing and formatting for new classes",
+document {
+     Key => "printing and formatting for new classes",
      "After making a new type, it's desirable to install methods
      for displaying the instances of the new type in various formats.",
      EXAMPLE {

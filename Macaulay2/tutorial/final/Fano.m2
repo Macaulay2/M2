@@ -139,7 +139,8 @@ erase symbol Grassmannian
 
 -- The documentation has the following form:
 --$
-document { Fano, 
+document {
+     Key => Fano, 
         TT "Fano(k,X,GR) or  Fano(k,X)", " -- computes 
         the ideal of a Fano scheme in the Grassmannian.",
         PARA,
@@ -167,7 +168,8 @@ document { Fano,
 -- itself if no ambient ring is given.
 
 --$
-document{symbol Grassmannian, 
+document {
+     Key => symbol Grassmannian, 
     TT "Grassmannian(k,r,R) or 
         Grassmannian(k,r)",
        "-- Given natural numbers k <= r,

@@ -1,10 +1,12 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { "length",
+document {
+     Key => "length",
      Headline => "length"
      }
 
-document { (length, GradedModule),
+document {
+     Key => (length, GradedModule),
      Headline => "length of a graded module",
      "The length of a graded module is the difference between the largest and
      smallest indices of occupied spots.  Chain complexes are graded modules,
@@ -16,18 +18,16 @@ document { (length, GradedModule),
 	  }
      }
 
-document { (parent,Thing),
+document {
+     Key => (parent,Thing),
      Headline => "parent type of an object",
-     Synopsis => {
-	  Usage => "X = parent x",
-	  Inputs => {
-	       "x" => ""
-	       },
-	  Outputs => {
-	       "X" => { ", the parent class of ", TT "x" }
-	       }
+     Usage => "X = parent x",
+     Inputs => {
+	  "x" => ""
 	  },
-     PARA,
+     Outputs => {
+	  "X" => { ", the parent class of ", TT "x" }
+	  },
      "Methods for the instances of ", TT "X", " which are not found
      in ", TT "X", " itself are sought in ", TT "P", ", and its parent, and so on.
      Thus the mathematical notion of a set ", TT "P", " and a subset ", TT "X", " 
@@ -42,7 +42,8 @@ document { (parent,Thing),
      SEEALSO "classes and types"
      }
 
-document { Array,
+document {
+     Key => Array,
      Headline => "the class of all arrays -- [...]",
      "An array is like a list, except that brackets are used instead of
      braces when entering or displaying an array, and arrays can't be used
@@ -56,7 +57,8 @@ document { Array,
      SEEALSO "lists"
      }
 
-document { Sequence,
+document {
+     Key => Sequence,
      Headline => "the class of all sequences -- (...)",
      "A sequence is an ordered collection of things enclosed by parentheses
      and separated by commas.  Use ", TO "#", " to get the length of a
@@ -69,16 +71,15 @@ document { Sequence,
      SEEALSO "sequences"
      }
 
-document { singleton,
+document {
+     Key => singleton,
      Headline => "make a sequence of length one",
-     Synopsis => {
-	  Usage => "singleton x",
-	  Inputs => {
-	       "x" => "",
-	       },
-	  Outputs => {
-	       Sequence => {" of length one whose single element is ", TT "x", "."},
-	       }
+     Usage => "singleton x",
+     Inputs => {
+	  "x" => "",
+	  },
+     Outputs => {
+	  Sequence => {" of length one whose single element is ", TT "x", "."},
 	  },
      EXAMPLE {
 	  "singleton 3",
@@ -87,7 +88,8 @@ document { singleton,
      SEEALSO {"unSingleton"}
      }
 
-document { List,
+document {
+     Key => List,
      Headline => "the class of all lists -- {...}",
      SEEALSO "lists",
      PARA,
@@ -125,7 +127,8 @@ document { List,
 	  },
      }
 
-document { VisibleList,
+document {
+     Key => VisibleList,
      Headline => "the class of all visible lists",
      "There are three types of lists that can be entered directly from
      the keyboard, as follows.",
@@ -138,7 +141,8 @@ document { VisibleList,
      referring to lists of these types."
      }
 
-document { Type,
+document {
+     Key => Type,
      Headline => "the class of all types",
      "Everything in the system is classified, and the class that a thing
      belongs to is a type.  A type is implemented as a hash table containing
@@ -147,17 +151,16 @@ document { Type,
      "The list of types known to the system is displayed below."
      }
 
-document { Print,
+document {
+     Key => Print,
      Headline => "top level method for printing results",
-     Synopsis => {
-	  Usage => "X.Print = f",
-	  Inputs => {
-	       "X" => Type => "",
-	       "f" => Function => { " that can print something of type ", TT "X"}
-	       },
-	  Results => {
-	       { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
-	       }
+     Usage => "X.Print = f",
+     Inputs => {
+	  "X" => Type => "",
+	  "f" => Function => { " that can print something of type ", TT "X"}
+	  },
+     Results => {
+	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      PARA {
 	  "The function ", TT "f", " is responsible for printing the output prompt and apply the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired."
@@ -165,59 +168,55 @@ document { Print,
      EXAMPLE "code Thing.Print"
      }
 
-document { NoPrint,
+document {
+     Key => NoPrint,
      Headline => "top level method for non-printing results",
-     Synopsis => {
-	  Usage => "X.NoPrint = f",
-	  Inputs => {
-	       "X" => Type => "",
-	       "f" => Function => { " that can accept something of type ", TT "X"}
-	       },
-	  Results => {
-	       {
-		    "at top level, whenever it is time, as indicated by a semicolon at the end of an input line,
-		    to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
-	       }
+     Usage => "X.NoPrint = f",
+     Inputs => {
+	  "X" => Type => "",
+	  "f" => Function => { " that can accept something of type ", TT "X"}
+	  },
+     Results => {
+	  {
+	       "at top level, whenever it is time, as indicated by a semicolon at the end of an input line,
+	       to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      EXAMPLE "code Thing.NoPrint"
      }
 
-document { BeforePrint,
+document {
+     Key => BeforePrint,
      Headline => "top level method applied before printing results",
-     Synopsis => {
-	  Usage => "X.BeforePrint = f",
-	  Inputs => {
-	       "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
-	       },
-	  Results => {
-	       {"The value returned by ", TT "f", " is printed instead."}
-	       }
+     Usage => "X.BeforePrint = f",
+     Inputs => {
+	  "f" => { "a function to be applied before printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." },
+	  },
+     Results => {
+	  {"The value returned by ", TT "f", " is printed instead."}
 	  }
      }
 
-document { AfterEval,
+document {
+     Key => AfterEval,
      Headline => "top level method applied after evaluation",
-     Synopsis => {
-	  Usage => "X.AfterEval = f",
-	  Inputs => {
-	       "f" => { "a function to be applied after evaluating a top-level evaluation result ", TT "r", " of type ", TT "X", "."},
-	       },
-	  Results => {
-	       "The value returned result replaces the original for storing in the output variables and for printing"
-	       }
-	  }
+     Usage => "X.AfterEval = f",
+     Inputs => {
+	  "f" => { "a function to be applied after evaluating a top-level evaluation result ", TT "r", " of type ", TT "X", "."},
+	  },
+     Results => {
+	  "The value returned result replaces the original for storing in the output variables and for printing"
+	  },
      }
 
-document { AfterPrint,
+document {
+     Key => AfterPrint,
      Headline => "top level method applied after printing",
-     Synopsis => {
-	  Usage => "X.AfterPrint = f",
-	  Inputs => {
-	       "f" => { "a function to be applied after printing a top-level evaluation result ", TT "r", " of type ", TT "X", "."}
-	       },
-	  Outputs => {
-	       {"The value returned by ", TT "f", " is discarded."}
-	       }
+     Usage => "X.AfterPrint = f",
+     Inputs => {
+	  "f" => { "a function to be applied after printing a top-level evaluation result ", TT "r", " of type ", TT "X", "."}
+	  },
+     Outputs => {
+	  {"The value returned by ", TT "f", " is discarded."}
 	  },
      "This method is used to print the type of the result of a computation.",
      EXAMPLE {
@@ -230,55 +229,56 @@ document { AfterPrint,
 	  }
      }
 
-document { AfterNoPrint,
+document {
+     Key => AfterNoPrint,
      Headline => "top level method applied after not printing",
-     Synopsis => {
-	  Usage => "X.AfterNoPrint = f",
-	  Inputs => {
-	       "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
-	       },
-	  Results => {
-	       {
-		    "The function ", TT "f", " will be applied at top level to the 
-	       	    result of an evalution when printing of the result has
-	       	    been suppressed by a semicolon."
-		    }
+     Usage => "X.AfterNoPrint = f",
+     Inputs => {
+	  "f" => { "a function to be applied after not printing a top-level evaluation result ", TT "r", " of type ", TT "X", "." }
+	  },
+     Results => {
+	  {
+	       "The function ", TT "f", " will be applied at top level to the 
+	       result of an evalution when printing of the result has
+	       been suppressed by a semicolon."
 	       }
 	  }
      }
 
-document { "recursionLimit",
+document {
+     Key => "recursionLimit",
      Headline => "set the limit on recursion",
-     Synopsis => {
-	  Usage => "recursionLimit = n",
-	  Inputs => {
-	       "n" => ZZ => "",
-	       },
-	  Results => {
-	       "The recursion depth limit for the interpreter is set to ", TT "n", "."
-	       }
+     Usage => "recursionLimit = n",
+     Inputs => {
+	  "n" => ZZ => "",
+	  },
+     Results => {
+	  "The recursion depth limit for the interpreter is set to ", TT "n", "."
 	  },
      "Each time a function is called, the recursion depth is incremented by
      1, and each time a function returns, the recursion depth is decremented.
      This limit on recursion depth is a way to detect infinite loops."
      }
 
-document { toString symbol commandLine,
+document {
+     Key => toString symbol commandLine,
      Headline => "the command line arguments",
      "A constant whose value is the list of arguments passed to the interpreter,
      including argument 0, the name of the program."
      }
 
-document { toString symbol environment,
+document {
+     Key => toString symbol environment,
      Headline => "the environment variables",
      "A constant whose value is the list containing the
      environment strings for the process."
      }
 
-document { Function,
+document {
+     Key => Function,
      Headline => "the class of all functions",
      "Common ways to make a function:",
-     NOCONTENTS UL {
+     UL {
 	  TO "->"
 	  },
      "Returning from functions:",
@@ -288,7 +288,8 @@ document { Function,
      SEEALSO "functions"
      }
 
-document { "->",
+document {
+     Key => "->",
      Headline => "make a function",
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
@@ -322,7 +323,8 @@ document { "->",
      "The class of all functions is ", TO "Function", "."
      }
 
-document { "path",
+document {
+     Key => "path",
      Headline => "list of directories to look in",
      "A list of strings containing names of directories in
      which ", TO "load", " and ", TO "input", " should seek files.  These strings
@@ -337,7 +339,8 @@ document { "path",
 	  }
      }
 
-document { HashTable,
+document {
+     Key => HashTable,
      Headline => "the class of all hash tables",
      "A hash table consists of: a class type, a parent type, and a
      set of key-value pairs.  The keys and values can be anything.
@@ -353,62 +356,62 @@ document { HashTable,
      which consists of those hash tables whose entries can be changed.",
      PARA,
      "Access functions:",
-     NOCONTENTS UL {
+     UL {
  	  TO "#",
  	  TO "."
  	  },
      "Query functions:",
-     NOCONTENTS UL {
+     UL {
  	  TO "#?",
  	  TO ".?"
  	  }
      }
 
-document { maxPosition,
+document {
+     Key => maxPosition,
      Headline => "position of largest element",
      }
 
-document { (maxPosition,BasicList),
-     Synopsis => {
-	  Usage => "maxPosition x",
-	  Inputs => {
-	       "x" => ""
-	       },
-	  Outputs => {
-	       { "the position of the largest element in the list ", TT "x" }
-	       }
+document {
+     Key => (maxPosition,BasicList),
+     Usage => "maxPosition x",
+     Inputs => {
+	  "x" => ""
+	  },
+     Outputs => {
+	  { "the position of the largest element in the list ", TT "x" }
 	  },
      "If the largest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
      SEEALSO { (minPosition,BasicList) }
      }
 
-document { minPosition, Headline => "position of smallest element" }
-document { (minPosition,BasicList),
-     Synopsis => {
-	  Usage => "minPosition x",
-	  Inputs => {
-	       "x" => "",
-	       },
-	  Outputs => {
-	       { "the position of the smallest element in the list ", TT "x", "." }
-	       }
+document {
+     Key => minPosition, Headline => "position of smallest element" }
+document {
+     Key => (minPosition,BasicList),
+     Usage => "minPosition x",
+     Inputs => {
+	  "x" => "",
+	  },
+     Outputs => {
+	  { "the position of the smallest element in the list ", TT "x", "." }
 	  },
      "If the smallest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
      SEEALSO { (maxPosition,BasicList) }
      }
 
-document { keys, Headline => "keys used in a hash table" }
-document { (keys,HashTable),
-     Synopsis => {
-	  Usage => "keys t",
-	  Inputs => {
-	       "t" => ""
-	       },
-	  Outputs => {
-	       {"a list of the keys occurring in the hash table ", TT "t"}
-	       }
+document {
+     Key => keys, Headline => "keys used in a hash table" }
+document {
+     Key => (keys,HashTable),
+     Usage => "keys t",
+     Inputs => {
+	  "t" => ""
+	  },
+     Outputs => {
+	  {"a list of the keys occurring in the hash table ", TT "t"}
 	  },
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
@@ -416,16 +419,16 @@ document { (keys,HashTable),
 	  }
      }
 
-document { values, Headline => "values in a hash table" }
-document { (values,HashTable),
-     Synopsis => {
-	  Usage => "values t",
-	  Inputs => {
-	       "t" => ""
-	       },
-	  Outputs => {
-	       {"a list of the values occurring in the hash table ", TT "t", "."}
-	       }
+document {
+     Key => values, Headline => "values in a hash table" }
+document {
+     Key => (values,HashTable),
+     Usage => "values t",
+     Inputs => {
+	  "t" => ""
+	  },
+     Outputs => {
+	  {"a list of the values occurring in the hash table ", TT "t", "."}
 	  },
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
@@ -433,7 +436,8 @@ document { (values,HashTable),
 	  }
      }
 
-document { splice,
+document {
+     Key => splice,
      Headline => "remove subsequences",
      TT "splice v", " -- yields a new list v where any members of v which are sequences
      are replaced by their elements.",
@@ -449,7 +453,8 @@ document { splice,
      SEEALSO "deepSplice"
      }
 
-document { deepSplice,
+document {
+     Key => deepSplice,
      Headline => "remove subsequences",
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
@@ -460,7 +465,8 @@ document { deepSplice,
      SEEALSO "splice"
      }
 
-document { ",",
+document {
+     Key => ",",
      Headline => "separator for elements of a visible list",
      TT "x,y,...,z", " -- the comma is used to separate elements of a list or
      sequence.",
@@ -471,7 +477,8 @@ document { ",",
 	  }
      }
 
-document { (apply,BasicList,BasicList,Function),
+document {
+     Key => (apply,BasicList,BasicList,Function),
      Headline => "apply function to elements in pairs",
      TT "apply(v,w,f)", " -- produces, from lists ", TT "v", " and ", TT "w", ",
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
@@ -480,55 +487,60 @@ document { (apply,BasicList,BasicList,Function),
      EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
      }
 
-document { (apply,BasicList,Function),
+document {
+     Key => (apply,BasicList,Function),
      Headline => "apply function to each element",
-     Synopsis => {
-	  Usage => "apply(v,f)",
-	  Inputs => {
-	       "v" => "",
-	       "f" => "",
-	       },
-	  Outputs => {
-	       {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
-	       }
+     Usage => "apply(v,f)",
+     Inputs => {
+	  "v" => "",
+	  "f" => "",
+	  },
+     Outputs => {
+	  {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
 	  },
      "The result ", TT "r", " will have the same class as ", TT "v", ".",
      EXAMPLE "apply([1,3,5,7], i->i^2)",
      SEEALSO {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }
 
-document { (apply,HashTable,Function),
+document {
+     Key => (apply,HashTable,Function),
      Headline => "apply function to each value",
      TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
      an hash table ", TT "x", " by applying the function
      ", TT "f", " to each of the values of ", TT "x", ".  This means that
      if ", TT "x#k === v", " then ", TT "y#k === f(v)", "."
      }
-document { (apply,ZZ,Function),
+document {
+     Key => (apply,ZZ,Function),
      Headline => "apply function to 0 .. n-1",
      TT "apply(n,f)", " -- applies the function ", TT "f", " to each integer
      in the range ", TT "0 .. n-1", " returning the sequence of results.
      This is equivalent to ", TT "apply( toList(0 .. n-1),f)", ".",
      EXAMPLE "apply(10, i -> i^2)"
      }
-document { apply,
+document {
+     Key => apply,
      Headline => "apply a function to each element",
      SEEALSO { "mapping over lists"}
      }
 
-document { scan,
+document {
+     Key => scan,
      Headline => "apply a function to each element",
      SEEALSO { "mapping over lists"}
      }
 
-document { (scan,BasicList,Function),
+document {
+     Key => (scan,BasicList,Function),
      Headline => "apply a function to each element of a list",
      TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ".  The function values are discarded.",
      EXAMPLE "scan({a,4,\"George\",2^100}, print)"
      }
 
-document { (scan,ZZ,Function),
+document {
+     Key => (scan,ZZ,Function),
      Headline => "apply a function to 0 .. n-1",
      TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
      in the range ", TT "0 .. n-1", " discarding the results.",
@@ -541,10 +553,12 @@ document { (scan,ZZ,Function),
 	  }
      }
 
-document { scanPairs,
+document {
+     Key => scanPairs,
      Headline => "apply a function to pairs in a hash table" }
 
-document { (scanPairs,HashTable,Function),
+document {
+     Key => (scanPairs,HashTable,Function),
      Headline => "apply a function to pairs in a hash table",
      TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
      pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
@@ -557,11 +571,13 @@ document { (scanPairs,HashTable,Function),
      SEEALSO "scan"
      }
 
-document { select,
+document {
+     Key => select,
      Headline => "select elements from a list or hash table",
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
-document { (select,BasicList,Function),
+document {
+     Key => (select,BasicList,Function),
      Headline => "select elements from a list",
      TT "select(v,f)", " -- select elements of the list
      ", TT "v", " that yield ", TT "true", " when the function 
@@ -575,7 +591,8 @@ document { (select,BasicList,Function),
 	  "select([1,2,3,4,5], odd)",
 	  }
      }
-document { (select,HashTable,Function),
+document {
+     Key => (select,HashTable,Function),
      Headline => "select pairs from a hash table",
      TT "select(v,f)", " -- select pairs of the hash table ", TT "v", "
      that yield ", TT "true", " when the function ", TT "f", " is applied to
@@ -584,7 +601,8 @@ document { (select,HashTable,Function),
      "The hash table should be immutable: to scan the values in a mutable hash
      table, use ", TT "scan(values x, f)", "."
      }
-document { (select,ZZ,BasicList,Function),
+document {
+     Key => (select,ZZ,BasicList,Function),
      Headline => "select a limited number of elements from a list",
      TT "select(n,v,f)", " -- select at most ", TT "n", " elements of the list
      ", TT "v", " that yield ", TT "true", " when the function 
@@ -594,7 +612,8 @@ document { (select,ZZ,BasicList,Function),
      in the original list ", TT "v", ".",
      EXAMPLE "select(2,[1,2,3,4,5], odd)"
      }
-document { (select,ZZ,HashTable,Function),
+document {
+     Key => (select,ZZ,HashTable,Function),
      Headline => "select a limited number of pairs from a hash table",
      TT "select(n,v,f)", " -- select at most ", TT "n", " pairs of the hash 
      table ", TT "v", " that yield ", TT "true", " when the function ", TT "f", " 
@@ -610,7 +629,8 @@ document { (select,ZZ,HashTable,Function),
 --     If no result is non-null, then it returns null."
 --     }
 
-document { any,
+document {
+     Key => any,
      Headline => "whether an element satisfies a condition",
      TT "any(v,f)", " -- yields the value true or false depending on
      whether any element ", TT "v#i", " of ", TT "v", " yields the value
@@ -623,7 +643,8 @@ document { any,
      SEEALSO{ "scan", "apply", "select", "all", "member"}
      }
 
-document { describe,
+document {
+     Key => describe,
      Headline => "real description",
      TT "describe x", " -- returns an ", TO "Expression", " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
@@ -644,7 +665,8 @@ document { describe,
      SEEALSO "toString"
      }
 
-document { input,
+document {
+     Key => input,
      Headline => "read Macaulay 2 commands and echo",
      TT "input \"f\"", " -- reads and executes the commands found in the 
      file named ", TT "f", ", echoing the input, printing the values, and incrementing
@@ -663,13 +685,15 @@ document { input,
      SEEALSO{ "path", "needs", "load"}
      }
 
-document { end,
+document {
+     Key => end,
      Headline => "stop loading a file",
      TT "end", " -- a symbol which causes loading of a file to be stopped.",
      SEEALSO{ "needs", "load", "input" }
      }
 
-document { load,
+document {
+     Key => load,
      Headline => "read Macaulay 2 commands",
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
@@ -684,7 +708,8 @@ document { load,
      SEEALSO{ "path", "needs", "input"}
      }
 
-document { needs,
+document {
+     Key => needs,
      Headline => "read Macaulay 2 commands if necessary",
      TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
      been loaded yet.",
@@ -692,7 +717,8 @@ document { needs,
      SEEALSO "load"
      }
 
-document { plus,
+document {
+     Key => plus,
      Headline => "addition",
      TT "plus(x,y,...)", " -- yields the sum of its arguments.",
      PARA,
@@ -700,33 +726,38 @@ document { plus,
      are no arguments, the answer is the integer 0."
      }
 
-document { times,
+document {
+     Key => times,
      Headline => "multiplication",
      TT "times(x,y,...)", " -- yields the product of its arguments.",
      PARA,
      "If there are no arguments, the value is the integer 1."
      }
 
-document { power,
+document {
+     Key => power,
      Headline => "power",
      TT "power(x,n)", " -- yields the ", TT "n", "-th power of ", TT "x", ".",
      PARA,
      SEEALSO "^"
      }
 
-document { difference, 
+document {
+     Key => difference, 
      Headline => "difference",
      TT "difference(x,y)", " -- returns ", TT "x-y", "." 
      }
 
-document { minus,
+document {
+     Key => minus,
      Headline => "additive inverse",
      TT "minus(x)   ", " -- yields ", TT "-x", ".",
      PARA,
      "minus(x,y)  -- yields x-y, but see also ", TO "difference", "."
      }
 
-document { append,
+document {
+     Key => append,
      Headline => "add to the end of a list",
      TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
@@ -736,7 +767,8 @@ document { append,
      SEEALSO{ "prepend", "join"}
      }
 
-document { prepend,
+document {
+     Key => prepend,
      Headline => "add to the beginning of a list",
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
@@ -746,7 +778,8 @@ document { prepend,
      SEEALSO{ "append", "join"}
      }
 
-document { "--",
+document {
+     Key => "--",
      Headline => "comment",
      "Use a double hyphen (", TT "--", ") to introduce a comment in the text
      of a program.  The comment runs from to the end of the line.",
@@ -758,72 +791,79 @@ document { "--",
 	  }
      }
 
-document { ascii, Headline => "ASCII character conversion" }
+document {
+     Key => ascii, Headline => "ASCII character conversion" }
 
-document { (ascii, List),
-     Synopsis => {
-	  Usage => "ascii v",
-	  Inputs => {
-	       "v" => "a list of small integers"
-	       },
-	  Outputs => {
-	       {"the string whose characters have the ASCII codes listed in ", TT "v"}
-	       }
+document {
+     Key => (ascii, List),
+     Usage => "ascii v",
+     Inputs => {
+	  "v" => "a list of small integers"
+	  },
+     Outputs => {
+	  {"the string whose characters have the ASCII codes listed in ", TT "v"}
 	  },
      EXAMPLE {///ascii {65,66,67}///, ///ascii oo///},
      SEEALSO { (ascii, String) }
      }
 
-document { (ascii, String),
-     Synopsis => {
-	  Usage => "ascii s",
-	  Inputs => {
-	       "s" => "",
-	       },
-	  Outputs => {
-	       {"the list of (small integer) ASCII codes of the characters of ", TT "s"}
-	       }
+document {
+     Key => (ascii, String),
+     Usage => "ascii s",
+     Inputs => {
+	  "s" => "",
+	  },
+     Outputs => {
+	  {"the list of (small integer) ASCII codes of the characters of ", TT "s"}
 	  },
      EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///},
      SEEALSO { (ascii, List) }
      }
 
-document { symbol " ", 
+document {
+     Key => symbol " ", 
      Headline => "blank operator for adjacent expressions",
      SEEALSO(symbol " ", Function, Thing)		    -- not really a method
      }
 
-document { (symbol " ", Function, Thing),
+document {
+     Key => (symbol " ", Function, Thing),
      Headline => "function application",
      TT "f x", " -- yields the result of applying the function ", TT "f", " to ", TT "x", ".",
      }
 
-document { symbol "*",
+document {
+     Key => symbol "*",
      Headline => "a binary operator, usually used for multiplication",
      TT "x * y", " -- usually yields the product of x and y.",
      PARA,
      SEEALSO{ "times", "product" }
      }
 
-document { symbol "&",
+document {
+     Key => symbol "&",
      Headline => "a binary operator",
      }
 
-document { (symbol &, ZZ, ZZ),
+document {
+     Key => (symbol &, ZZ, ZZ),
      Headline => "logical and",
      TT "m & n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
      }
 
-document { symbol "&&",
+document {
+     Key => symbol "&&",
      Headline => "a binary operator",
      }
 
-document { symbol "^^",
+document {
+     Key => symbol "^^",
      Headline => "a binary operator",
      }
 
-document { symbol "+",
+document {
+     Key => symbol "+",
      Headline => "a binary operator",
      TT "x + y", " -- a binary operator used for addition in many situations
      and for union of sets.",
@@ -831,11 +871,13 @@ document { symbol "+",
      SEEALSO{ "plus", "sum" }
      }
 
-document { (symbol +, Set, Set),
+document {
+     Key => (symbol +, Set, Set),
      Headline => "union",
      TT "s + t", " -- union of two sets" }
 
-document { symbol "-",
+document {
+     Key => symbol "-",
      Headline => "a unary or binary operator, usually used for negation or subtraction",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
@@ -845,7 +887,8 @@ document { symbol "-",
      SEEALSO{ "difference", "minus" }
      }
 
-document { symbol "/",
+document {
+     Key => symbol "/",
      Headline => "a binary operator, usually used for division",
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
@@ -853,11 +896,13 @@ document { symbol "/",
      SEEALSO { "//" }
      }
 
-document { symbol "%",
+document {
+     Key => symbol "%",
      Headline => "a binary operator, usually used for remainder",
      TT "x % y", " -- a binary operator used for remainder and reduction." }
 
-document { symbol "//",
+document {
+     Key => symbol "//",
      Headline => "a binary operator, usually used for quotient",
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
@@ -865,11 +910,13 @@ document { symbol "//",
      SEEALSO { "/" }
      }
 
-document { symbol "\\\\",
+document {
+     Key => symbol "\\\\",
      Headline => "a binary operator",
      }
 
-document { symbol "^",
+document {
+     Key => symbol "^",
      Headline => "a binary operator, usually used for exponents",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
@@ -883,11 +930,13 @@ document { symbol "^",
      named ", TO "InverseMethod", " will be called."
      }
 
-document { symbol "/^",
+document {
+     Key => symbol "/^",
      Headline => "a binary operator",
      }
 
-document { (symbol /^, Thing, ZZ),
+document {
+     Key => (symbol /^, Thing, ZZ),
      Headline => "divided power",
      TT "x /^ n", " -- computes the n-th divided power of x.",
      PARA,
@@ -899,7 +948,8 @@ document { (symbol /^, Thing, ZZ),
 	  },
      }
 
-document { substring,
+document {
+     Key => substring,
      Headline => "extract part of a string",
      TT "substring(i,n,s)", " -- yields the substring of the string ", TT "s", " starting at 
      position ", TT "i", " with length ", TT "n", ".",
@@ -917,7 +967,8 @@ document { substring,
      the old way will still work."
      }
 
-document { reverse,
+document {
+     Key => reverse,
      Headline => "reverse a list",
      TT "reverse v", " -- yields a list containing the elements of the 
      list ", TT "v", " in reverse order.",
@@ -925,38 +976,36 @@ document { reverse,
      EXAMPLE "reverse {a,b,c,d}"
      }
 
-document { read, Headline => "read from a file", }
-document { (read,Sequence),
-     Synopsis => {
-	  Usage => "read()",
-	  Inputs => {
-	       "()" => null
-	       },
-	  Outputs => {
-	       { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
-	       }
-	  }
+document {
+     Key => read, Headline => "read from a file", }
+document {
+     Key => (read,Sequence),
+     Usage => "read()",
+     Inputs => {
+	  "()" => null
+	  },
+     Outputs => {
+	  { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
+	  },
      }
-document { (read,String),
-     Synopsis => {
-	  Usage => "read p",
-	  Inputs => {
-	       "p" => "a string containing a prompt to be displayed for the user"
-	       },
-	  Outputs => {
-	       { "a string obtained by reading from the standard input file ", TO "stdio" }
-	       }
-	  }
+document {
+     Key => (read,String),
+     Usage => "read p",
+     Inputs => {
+	  "p" => "a string containing a prompt to be displayed for the user"
+	  },
+     Outputs => {
+	  { "a string obtained by reading from the standard input file ", TO "stdio" }
+	  },
      }
-document { (read,File),
-     Synopsis => {
-	  Usage => "read f",
-	  Inputs => {
-	       "f" => "an input file"
-	       },
-	  Outputs => {
-	       { "a string obtained by reading from ", TT "f", "." }
-	       }
+document {
+     Key => (read,File),
+     Usage => "read f",
+     Inputs => {
+	  "f" => "an input file"
+	  },
+     Outputs => {
+	  { "a string obtained by reading from ", TT "f", "." }
 	  },
      EXAMPLE {
 	  ///f = openInOut "!cat"///,
@@ -970,23 +1019,23 @@ document { (read,File),
      if the buffer is not empty, otherwise reading from the file is attempted first.",
      SEEALSO {"openIn", "get", "isReady"}
      }
-document { (read,File,ZZ),
-     Synopsis => {
-	  Usage => "read(f,n)",
-	  Inputs => {
-	       "f" => "a file",
-	       "n" => "an integer specifying the maximum number of bytes to read"
-	       },
-	  Outputs => {
-	       { "a string obtained by reading from ", TT "f" }
-	       }
+document {
+     Key => (read,File,ZZ),
+     Usage => "read(f,n)",
+     Inputs => {
+	  "f" => "a file",
+	  "n" => "an integer specifying the maximum number of bytes to read"
+	  },
+     Outputs => {
+	  { "a string obtained by reading from ", TT "f" }
 	  },
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
      SEEALSO {"openIn", "get", "isReady"}
      }
 
-document { get,
+document {
+     Key => get,
      Headline => "get an entire file",
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
@@ -1017,7 +1066,8 @@ document { get,
      SEEALSO{ "File", "read" }
      }
 
-document { separate,
+document {
+     Key => separate,
      Headline => "split a string into pieces",
      TT "separate(d,s)", " -- split the string ", TT "s", " into pieces 
      delimited by the string ", TT "d", ".",
@@ -1032,7 +1082,8 @@ document { separate,
 	  }
      }
 
-document { lines,
+document {
+     Key => lines,
      Headline => "split a string into lines",
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",
@@ -1050,29 +1101,34 @@ document { lines,
      SEEALSO "newline"
      }
 
-document { symbol "!",
+document {
+     Key => symbol "!",
      Headline => "factorial",
      TT "n !", " -- computes n factorial, 1*2*3*...*n."
      }
 
-document { "not",
+document {
+     Key => "not",
      Headline => "negation",
      TT "not x", " -- yields the negation of x, which must be true or false.",
      SEEALSO{ "and", "or" }
      }
 
-document { symbol "|", 
+document {
+     Key => symbol "|", 
      Headline => "a binary operator",
      SEEALSO "||" }
 
-document { (symbol |, List, List),
+document {
+     Key => (symbol |, List, List),
      Headline => "join lists",
      TT "v|w", " -- join two lists.", 
      PARA,
      EXAMPLE "{1,2,3}|{4,5,6}"
      }
 
-document { (symbol |, Net, Net),
+document {
+     Key => (symbol |, Net, Net),
      Headline => "join strings or nets",
      TT "s|t", " -- concatenates strings or nets horizontally.", 
      PARA,
@@ -1088,7 +1144,8 @@ document { (symbol |, Net, Net),
      EXAMPLE ///"t = " | 333///
      }
 
-document { (symbol |, ZZ, ZZ),
+document {
+     Key => (symbol |, ZZ, ZZ),
      Headline => "logical or",
      TT "m|n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'or'.",
@@ -1096,7 +1153,8 @@ document { (symbol |, ZZ, ZZ),
      EXAMPLE "5 | 12"
      }
 
-document { (symbol |, Matrix, Matrix),
+document {
+     Key => (symbol |, Matrix, Matrix),
      Headline => "join matrices horizontally",
      TT "f|g", " -- concatenate matrices horizontally.",
      PARA,
@@ -1113,11 +1171,13 @@ document { (symbol |, Matrix, Matrix),
      SEEALSO {(symbol ||, Matrix, Matrix)}
      }
 
-document { symbol ||,
+document {
+     Key => symbol ||,
      Headline => "a binary operator"
      }
 
-document { (symbol ||, Net, Net),
+document {
+     Key => (symbol ||, Net, Net),
      Headline => "join nets or strings vertically",
      TT "m||n", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
@@ -1132,7 +1192,8 @@ document { (symbol ||, Net, Net),
      SEEALSO {"stack"}
      }
 
-document { (symbol ||, Matrix, Matrix),
+document {
+     Key => (symbol ||, Matrix, Matrix),
      Headline => "join matrices vertically",
      TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
      concatenating the columns.",
@@ -1150,7 +1211,8 @@ document { (symbol ||, Matrix, Matrix),
      SEEALSO{(symbol |, Matrix, Matrix)}
      }
 
-document { symbol "===",
+document {
+     Key => symbol "===",
      Headline => "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
@@ -1177,7 +1239,8 @@ document { symbol "===",
      SEEALSO{ "==",  "=!=" }
      }
 
-document { symbol "=!=",
+document {
+     Key => symbol "=!=",
      Headline => "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
@@ -1185,7 +1248,8 @@ document { symbol "=!=",
      "See ", TO "===", " for details."
      }
 
-document { symbol "==",
+document {
+     Key => symbol "==",
      Headline => "equality",
      TT "x == y", " -- a binary operator for testing mathematical equality.",
      PARA,
@@ -1210,22 +1274,26 @@ document { symbol "==",
      SEEALSO{ "!=" }
      }
 
-document { symbol "!=",
+document {
+     Key => symbol "!=",
      Headline => "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
      SEEALSO{ "==" }
      }
 
-document { symbol "**",
+document {
+     Key => symbol "**",
      Headline => "a binary operator, usually used for tensor product",
      }
 
-document { symbol "^**",
+document {
+     Key => symbol "^**",
      Headline => "a binary operator, usually used for tensor power",
      }
 
-document { (symbol **, Set, Set),
+document {
+     Key => (symbol **, Set, Set),
      Headline => "Cartesian product",
      TT "X ** Y", " -- form the Cartesian product of two sets.",
      PARA,
@@ -1237,19 +1305,22 @@ document { (symbol **, Set, Set),
      SEEALSO { "**", "Set" }
      }
 
-document { set,
+document {
+     Key => set,
      Headline => "make a set",
      TT "set v", " -- yields the set whose elements are the members of the list v.",
      PARA,
      SEEALSO { "Set" }
      }
 
-document { random,
+document {
+     Key => random,
      Headline => "get a random element",
      "This function can be used to get random elements of various sorts.",
      SEEALSO {"setRandomSeed"}
      }
-document { (random, ZZ), 
+document {
+     Key => (random, ZZ), 
      Headline => "random integer",
      TT "random n", " -- yields a random integer in the range 0 .. n-1.",
      PARA,
@@ -1259,38 +1330,37 @@ document { (random, ZZ),
      SEEALSO {"setRandomSeed"}
      }
 
-document { (random, RR), 
+document {
+     Key => (random, RR), 
      Headline => "random real number",
      TT "random x", " -- yields a random real number in the range 0 .. x.",
      SEEALSO {"setRandomSeed"}
      }
 
-document { (random, Ring),
+document {
+     Key => (random, Ring),
      Headline => "random element of a ring",
-     Synopsis => {
-	  Usage => "random R",
-	  Inputs => {
-	       "R" => null
-	       },
-	  Outputs => {
-	       { "a random element of the ring ", TT "R" }
-	       }
+     Usage => "random R",
+     Inputs => {
+	  "R" => null
+	  },
+     Outputs => {
+	  { "a random element of the ring ", TT "R" }
 	  },
      "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings.",
      SEEALSO {"setRandomSeed"}
      }
 
-document { (random, ZZ, Ring),
+document {
+     Key => (random, ZZ, Ring),
      Headline => "a random ring element of a given degree",
-     Synopsis => {
-	  Usage => "r = random(n,R)",
-	  Inputs => {
-	       "n" => null,
-	       "R" => null
-	       },
-	  Outputs => {
-	       {"a random homogeneous element in the ring ", TT "R", " of degree ", TT "n"}
-	       }
+     Usage => "r = random(n,R)",
+     Inputs => {
+	  "n" => null,
+	  "R" => null
+	  },
+     Outputs => {
+	  {"a random homogeneous element in the ring ", TT "R", " of degree ", TT "n"}
 	  },
      EXAMPLE {
 	  "R = GF(9,Variable=>a)[x,y];",
@@ -1299,23 +1369,23 @@ document { (random, ZZ, Ring),
      SEEALSO {"setRandomSeed"}
      }
 
-document { (random, List, Ring),
+document {
+     Key => (random, List, Ring),
      Headline => "a random ring element of a given degree",
-     Synopsis => {
-	  Usage => "r = random(n,R)",
-	  Inputs => {
-	       "n" => "a list of integers",
-	       "R" => null
-	       },
-	  Outputs => {
-	       {"a random homogeneous element in the ring ", TT "R", " of multi-degree ", TT "n"}
-	       }
+     Usage => "r = random(n,R)",
+     Inputs => {
+	  "n" => "a list of integers",
+	  "R" => null
+	  },
+     Outputs => {
+	  {"a random homogeneous element in the ring ", TT "R", " of multi-degree ", TT "n"}
 	  },
      "The length of ", TT "n", " should be the same as ", TT "degreeLength R", ".",
      SEEALSO {"setRandomSeed"}
      }
 
-document { (random, Module, Module),
+document {
+     Key => (random, Module, Module),
      Headline => "make a random module map",
      TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
      module G to the free module F.",
@@ -1326,12 +1396,14 @@ document { (random, Module, Module),
      SEEALSO {"setRandomSeed"}
      }
 
-document { true,
+document {
+     Key => true,
      Headline => "Boolean value true",
      TT "true", " -- a value indicating truth."
      }
 
-document { false,
+document {
+     Key => false,
      Headline => "Boolean value false",
      TT "false", " -- a value indicating falsity."
      }

@@ -4,7 +4,8 @@ INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
      {BOLD "Usage: ", PARA, l, PARA} 
      }
 needs "Dmodules/Dloadfile.m2";
-document { "D-modules Package",
+document {
+     Key => "D-modules Package",
      Headline => "algorithms for D-modules",
      INSERTUSAGE {
 	  "Load the package by typing: ", 
@@ -92,41 +93,50 @@ document { "D-modules Package",
      PARA
      }
 -----------------------------------------------
-document { (ExternalProduct),
+document {
+     Key => (ExternalProduct),
      Headline => "external product of modules or complexes"
      }
-document { (ExternalProduct,TwistMap),
+document {
+     Key => (ExternalProduct,TwistMap),
      Headline => "indicates whether TwistMap should be computed"
      }
-document { (TwistMap),
+document {
+     Key => (TwistMap),
      Headline => "indicates whether TwistMap should be computed"
      }
 
-document { (twistMap),
+document {
+     Key => (twistMap),
      Headline => "a key attached by ExternalProduct",
      "see ", TO "ExternalProduct"
      }
-document { (twistInvMap),
+document {
+     Key => (twistInvMap),
      Headline => "a key attached by ExternalProduct",
      "see ", TO "ExternalProduct"
      }
-document { (projMap1),
+document {
+     Key => (projMap1),
      Headline => "a key attached by ExternalProduct",
      "see ", TO "ExternalProduct"
      }
-document { (projMap2),
+document {
+     Key => (projMap2),
      Headline => "a key attached by ExternalProduct",
      "see ", TO "ExternalProduct"
      }
 
-document { (bFunction),
+document {
+     Key => (bFunction),
      UL {
 	  {TO (bFunction, Ideal,List), " - for an ideal"},
 	  {TO (bFunction, Module,List,List), " - for a module"}  
 	  }
      }
 
-document { (bFunction,Strategy),
+document {
+     Key => (bFunction,Strategy),
      Headline => "specify strategy for computing b-function",
      UL { 
 	  {BOLD "IntRing", " -- the simplest algorithm available. 
@@ -151,19 +161,23 @@ document { (bFunction,Strategy),
 	  {"Default:", BOLD "IntRing"}
 	  }
      }
-document { (NonGeneric),
+document {
+     Key => (NonGeneric),
      Headline => "a strategy option for b-functions",
      "see ", TO "bFunction"
      }
-document { (TryGeneric),
+document {
+     Key => (TryGeneric),
      Headline => "a strategy option for b-functions",
      "see ", TO "bFunction"
      }
-document { (IntRing),
+document {
+     Key => (IntRing),
      Headline => "a strategy option for b-functions",
      "see ", TO "bFunction"
      }
-document { (bFunction, Ideal, List),
+document {
+     Key => (bFunction, Ideal, List),
      Headline => "b-function of an ideal",
      INSERTUSAGE {
 	  TT "bFunction(I,w)", " -- find the b-function of ", EM "I", 
@@ -204,7 +218,8 @@ document { (bFunction, Ideal, List),
      SEEALSO { "globalBFunction", "factorBFunction" }
      }
 
-document { (bFunction, Module, List, List),
+document {
+     Key => (bFunction, Module, List, List),
      Headline => "b-function of a holonomic D-module",
      INSERTUSAGE {
 	  TT "bFunction(M,w,m)", " -- find the b-function of ", EM "M", 
@@ -247,9 +262,10 @@ document { (bFunction, Module, List, List),
      }
 
 
-document { (globalBFunction,Strategy),
+document {
+     Key => (globalBFunction,Strategy),
      Headline => "specify strategy for computing global b-function",
-     NOCONTENTS UL { 
+     UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
 	       " -- passed to ", TO "bFunction",  ", see ", 
 	       TO (bFunction,Strategy) },
@@ -264,16 +280,19 @@ document { (globalBFunction,Strategy),
 	  }
      }
 
-document { (ViaAnnFs),
+document {
+     Key => (ViaAnnFs),
      Headline => "a strategy option for global b-functions",
      "see ", TO "globalBFunction"
      }
-document { (ReducedB),
+document {
+     Key => (ReducedB),
      Headline => "a strategy option for global b-functions",
      "see ", TO "globalBFunction"
      }
 
-document {  (globalBFunction),
+document {
+     Key =>  (globalBFunction),
      Headline => {"global b-function (else known as 
 	  the Bernstein-Sato polynomial)"},
      INSERTUSAGE {
@@ -314,7 +333,8 @@ document {  (globalBFunction),
      SEEALSO { "bFunction", "factorBFunction" }
      }
                
-document { (factorBFunction--!!!, RingElement
+document {
+     Key => (factorBFunction--!!!, RingElement
 	  ),
      Headline => "factor b-function",
      INSERTUSAGE {
@@ -343,12 +363,14 @@ document { (factorBFunction--!!!, RingElement
 	  }
      }  
 
-document { (getIntRoots--, RingElement
+document {
+     Key => (getIntRoots--, RingElement
 	  ),
      Headline => "get integer roots of a b-function"
      }
 
-document { (globalB), 
+document {
+     Key => (globalB), 
      Headline => "compute global b-function and b-operator 
           for a D-module and a polynomial",
      INSERTUSAGE {
@@ -375,20 +397,24 @@ document { (globalB),
      	  },
      SEEALSO { "bFunction", "globalBFunction", "factorBFunction" }
      }  
-document { (Boperator),
+document {
+     Key => (Boperator),
      Headline => "a key attached by globalB and Dlocalize",
      SEEALSO { "globalB", "Dlocalize" }
      }
-document { (Bpolynomial),
+document {
+     Key => (Bpolynomial),
      Headline => "a key attached by globalB",
      "see ", TO "globalB"
      }
-document { (globalBoperator),
+document {
+     Key => (globalBoperator),
      Headline => "compute a b-operator of a polynomial",
      SEEALSO{"globalB"}
      } 
 
-document { (AnnFs--, RingElement
+document {
+     Key => (AnnFs--, RingElement
 	  ),
      Headline => "annihilator of f^s",
      INSERTUSAGE {
@@ -420,7 +446,8 @@ document { (AnnFs--, RingElement
      SEEALSO {"AnnIFs", "WeylAlgebra"}
      }  
 
-document { (AnnIFs--, Ideal, RingElement
+document {
+     Key => (AnnIFs--, Ideal, RingElement
 	  ), 
      Headline => "the annihilator ideal for an arbitrary D-module", 
      INSERTUSAGE {
@@ -450,7 +477,8 @@ document { (AnnIFs--, Ideal, RingElement
      SEEALSO {"AnnFs", "WeylAlgebra"}
      }  
 
-document { (Dtrace--, ZZ
+document {
+     Key => (Dtrace--, ZZ
 	  ),
      Headline => "set the depth of comments made by D-module routines",
      OldSynopsis => {
@@ -460,12 +488,14 @@ document { (Dtrace--, ZZ
 	  },
      SEEALSO {"getDtrace"}
      }  
-document { getDtrace,
+document {
+     Key => getDtrace,
      Headline => "(internal) -- get the INFOLEVEL switch",
      SEEALSO {"Dtrace"}
      }  
 
-document { (setHomSwitch--, Boolean
+document {
+     Key => (setHomSwitch--, Boolean
 	  ),
      Headline => "toggles use of homogeneous Weyl algebra",
      INSERTUSAGE {"sets the switch that determines whether homogenized 
@@ -479,12 +509,14 @@ document { (setHomSwitch--, Boolean
      SEEALSO {"getHomSwitch"}
      }  
 
-document { getHomSwitch,
+document {
+     Key => getHomSwitch,
      Headline => "(internal) -- get the HOMOGENIZATION switch",
      SEEALSO {"setHomSwitch"}
      }  
 
-document { (localCohom,Strategy),
+document {
+     Key => (localCohom,Strategy),
      Headline => "specify strategy for local cohomology",
      "This option together with ", TO "LocStrategy", " determines a strategy for ", 
      TT "localCohom(...Ideal...)", " and ", TT "localCohom(...Ideal, Module...)", ".",
@@ -519,24 +551,30 @@ document { (localCohom,Strategy),
 	       }
 	  }    	      
      } 
-document { (Walther),
+document {
+     Key => (Walther),
      Headline => "an option for localCohom=>Strategy",
      "see ", TO "localCohom"
      } 
-document { (OaTa),
+document {
+     Key => (OaTa),
      Headline => "an option for localCohom=>Strategy",
      "see ", TO "localCohom"
      } 
-document { (LocStrategy) }
-document { (localCohom,LocStrategy),
+document {
+     Key => (LocStrategy) }
+document {
+     Key => (localCohom,LocStrategy),
      Headline => "specify localization strategy for local cohomology",
      "See ", TO (localCohom,Strategy)
      }
-document { (OaTaWa),
+document {
+     Key => (OaTaWa),
      Headline => "an option for localCohom => LocStrategy",
      SEEALSO "localCohom"
      }
-document { (localCohom),
+document {
+     Key => (localCohom),
      Headline => "local cohomology",
      "Local cohomology of a polynomial ring:",
      UL {
@@ -551,7 +589,8 @@ document { (localCohom),
 	  {TO (localCohom, List, Ideal, Module)}
 	  } 
      }
-document { (localCohom, Ideal),
+document {
+     Key => (localCohom, Ideal),
      Headline => "local cohomology of a polynomial ring",
      INSERTUSAGE {
 	  TT "localCohom I", " -- find local cohomology ", 
@@ -580,7 +619,8 @@ document { (localCohom, Ideal),
      	  use ", TO "pruneLocalCohom", "."}
      }  
 
-document { (localCohom, List, Ideal),
+document {
+     Key => (localCohom, List, Ideal),
      Headline => "local cohomology of a polynomial ring",
      INSERTUSAGE {
 	  TT "localCohom(l,I)",
@@ -596,7 +636,8 @@ document { (localCohom, List, Ideal),
 	  }
      }
 
-document { (localCohom, ZZ, Ideal),
+document {
+     Key => (localCohom, ZZ, Ideal),
      Headline => "local cohomology of a polynomial ring",
      INSERTUSAGE {
 	  TT "localCohom(d,I)",
@@ -612,7 +653,8 @@ document { (localCohom, ZZ, Ideal),
 	  }
      }
 
-document { (localCohom, Ideal, Module),
+document {
+     Key => (localCohom, Ideal, Module),
      Headline => "local cohomology of a D-module",
      INSERTUSAGE {
 	  TT "localCohom(I,M)", " -- find local cohomology ", 
@@ -645,7 +687,8 @@ document { (localCohom, Ideal, Module),
      	  use ", TO "pruneLocalCohom", "."}
      }
 
-document { (localCohom, ZZ, Ideal, Module),
+document {
+     Key => (localCohom, ZZ, Ideal, Module),
      Headline => "local cohomology of a D-module",
      INSERTUSAGE {
 	  TT "localCohom(d,I,M)", " -- find local cohomology ", 
@@ -662,7 +705,8 @@ document { (localCohom, ZZ, Ideal, Module),
 	  }
      }
 
-document { (localCohom, List, Ideal, Module),
+document {
+     Key => (localCohom, List, Ideal, Module),
      Headline => "local cohomology of a D-module",
      INSERTUSAGE {
 	  TT "localCohom(l,I,M)", " -- find local cohomology ", 
@@ -680,15 +724,18 @@ document { (localCohom, List, Ideal, Module),
 	  }
      }
 
-document { (pruneLocalCohom),
+document {
+     Key => (pruneLocalCohom),
      Headline => "prunes local cohomology modules",
      SEEALSO {"localCohom"} 
      }
-document { (paramBpoly,GroundField),
+document {
+     Key => (paramBpoly,GroundField),
      Headline => "characteristic for modular computation"
      }
 document {(GroundField)}
-document { (paramBpoly),
+document {
+     Key => (paramBpoly),
      Headline => "compute the list of all possible Bernstein-Sato polynomials 
      for a polynomial with parametric coefficients",
      OldSynopsis => { 
@@ -713,7 +760,8 @@ document { (paramBpoly),
 	  }
      }  
 
-document { (makeCyclic),
+document {
+     Key => (makeCyclic),
      Headline => "finds a cyclic generator of a D-module",
      OldSynopsis => {
      	  "H = makeCyclic M", 
@@ -748,11 +796,13 @@ document {(AnnG),
 document {(isHolonomic),
      Headline => "determines whether a D-module (or ideal in Weyl algebra) is holonomic"
      } 
-document { (DHom,Strategy),
+document {
+     Key => (DHom,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
-document { (DHom),
+document {
+     Key => (DHom),
      Headline=>"D-homomorphisms between holonomic D-modules",
      INSERTUSAGE {
      TT "DHom (M, N)", " -- computes a basis of
@@ -792,7 +842,8 @@ document { (DHom),
      SEEALSO {"DExt", "Drestriction"}
      }
 
-document { (DExt,Strategy),
+document {
+     Key => (DExt,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
@@ -807,7 +858,8 @@ document {(DExt=>Output)}
 document {(Output)}
 document {(DExt=>Info)}
 document {(Info)}
-document { (DExt),
+document {
+     Key => (DExt),
      Headline => "dimensions of Ext groups between holonomic modules",
      INSERTUSAGE {
      TT "DExt (M, N)", " -- 
@@ -844,23 +896,28 @@ document { (DExt),
      SEEALSO {"DHom", "Drestriction"}
      }
 
-document { (PolySols,Alg),
+document {
+     Key => (PolySols,Alg),
      Headline => "algorithm for finding polynomial solutions",
      UL {
 	  {BOLD "GD", " -- uses Groebner deformations"},
 	  {BOLD "Duality", " -- uses homological duality"}
 	  }     
      }
-document { (Alg) }
-document { (GD),
+document {
+     Key => (Alg) }
+document {
+     Key => (GD),
      Headline => "an option for PolySols=>Alg",
      SEEALSO "PolySols" 
      }
-document { (Duality),
+document {
+     Key => (Duality),
      Headline => "an option for PolySols=>Alg",
      SEEALSO "PolySols" 
      }
-document { (PolySols),
+document {
+     Key => (PolySols),
      Headline => "polynomial solutions of a holonomic system",
      INSERTUSAGE {
      TT "PolySols I", " -- computes a basis of the polynomial solutions
@@ -898,11 +955,13 @@ document { (PolySols),
      SEEALSO {"RatSols", "Dintegration"}
      },
 
-document { (PolyExt,Strategy),
+document {
+     Key => (PolyExt,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
-document { (PolyExt),
+document {
+     Key => (PolyExt),
      Headline => "dimensions of Ext groups between 
      a holonomic module and a polynomial ring",
      INSERTUSAGE {
@@ -937,7 +996,8 @@ document { (PolyExt),
      SEEALSO {"PolySols", "RatExt", "DExt", "Dintegration"}
      }
 
-document { (RatSols),
+document {
+     Key => (RatSols),
      Headline => "rational solutions of a holonomic system",
      INSERTUSAGE {
      TT "RatSols I", " -- computes a basis of the rational solutions
@@ -983,11 +1043,13 @@ document { (RatSols),
      SEEALSO {"PolySols", "RatExt", "DHom"} 
      },
 
-document { (RatExt,Strategy),
+document {
+     Key => (RatExt,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
-document { (RatExt),
+document {
+     Key => (RatExt),
      Headline => 
      "dim Ext(holonomic D-module, polynomial ring localized at the sigular locus)",
      INSERTUSAGE {
@@ -1031,7 +1093,8 @@ document { (RatExt),
      SEEALSO {"Dresolution", "Dintegration"}
      }
 
-document { WeylAlgebra,
+document {
+     Key => WeylAlgebra,
      TT "WeylAlgebra", " --
      name for an optional argument for a monoid that
      specifies that a PolynomialRing created from it will
@@ -1056,7 +1119,8 @@ document { WeylAlgebra,
 	  must be listed before the derivation variable (in this case Dx)"}
      }
 
-document { (createDpairs),
+document {
+     Key => (createDpairs),
      Headline => "sorts out the variables in Weyl algebra",
      INSERTUSAGE {
      TT "createDpairs W", " -- 
@@ -1084,16 +1148,19 @@ document { (createDpairs),
      SEEALSO {"WeylAlgebra"}
      },
 
-document { (dpairInds),
+document {
+     Key => (dpairInds),
      Headline => "a key attached by createDpairs",
      "see ", TO "createDpairs"
      }
-document { (dpairVars),
+document {
+     Key => (dpairVars),
      Headline => "a key attached by createDpairs",
      "see ", TO "createDpairs"
      }
 
-document { (Fourier),
+document {
+     Key => (Fourier),
      Headline => "Fourier transform for Weyl algebra",
      INSERTUSAGE {
      TT "Fourier L", " -- computes the Fourier transform of a ring element L",
@@ -1117,7 +1184,8 @@ document { (Fourier),
      SEEALSO {"WeylAlgebra"}
      },
 
-document { (Dtransposition),
+document {
+     Key => (Dtransposition),
      Headline => "standard transposition for Weyl algebra",
      INSERTUSAGE {
      TT "Dtransposition L", " -- computes the standard transposition of a ring element L",
@@ -1150,7 +1218,8 @@ document { (Dtransposition),
      SEEALSO {"WeylAlgebra"}
      },
 
-document { (singLocus),
+document {
+     Key => (singLocus),
      Headline => "singular locus of a D-module",
      INSERTUSAGE {
      TT "singLocus M", " -- 
@@ -1183,7 +1252,8 @@ document { (singLocus),
      SEEALSO {"charIdeal", "Drank", "Ddim"}
      },
 
-document { (charIdeal),
+document {
+     Key => (charIdeal),
      Headline => "characteristic ideal of a D-module",
      INSERTUSAGE {
      TT "charIdeal M", " -- 
@@ -1225,7 +1295,8 @@ document { (charIdeal),
      SEEALSO {"Ddim", "singLocus", "Drank"}
      },
 
-document { (Drank),
+document {
+     Key => (Drank),
      Headline => "rank of a D-module",
      INSERTUSAGE {
      TT "Drank M", "-- calculates the rank of a D-module M",
@@ -1261,7 +1332,8 @@ document { (Drank),
      SEEALSO {"charIdeal", "singLocus", "Ddim"}
      },
 
-document { (Ddim),
+document {
+     Key => (Ddim),
      Headline => "dimension of a D-module", 
      INSERTUSAGE {
      TT "Ddim M", " -- calculate the dimension of a D-module M ",
@@ -1286,7 +1358,8 @@ document { (Ddim),
      SEEALSO {"charIdeal", "Drank", "singLocus"}
      },
 
-document { (makeWeylAlgebra),
+document {
+     Key => (makeWeylAlgebra),
      Headline => "Weyl algebra corresponding to a polynomial ring",
      INSERTUSAGE {
      TT "makeWeylAlgebra R", " -- 
@@ -1310,7 +1383,8 @@ document { (makeWeylAlgebra),
      SEEALSO {"WeylAlgebra"}
      }
 
-document { (Ddual),
+document {
+     Key => (Ddual),
      Headline => "holonomic dual of a D-module",
      INSERTUSAGE {
      TT "Ddual M", " -- 
@@ -1341,23 +1415,27 @@ document { (Ddual),
      SEEALSO {"Ddim", "Dtransposition"}
      }
 
-document { (Dlocalize,Strategy),
+document {
+     Key => (Dlocalize,Strategy),
      Headline=>"strategy for computing a localization of a D-module",
      UL{
 	  {BOLD "Oaku", " -- use the Oaku algorithm"},
 	  {BOLD "OTW", " -- use the Oaku-Takayama-Walther algorithm"}
 	  }
      }
-document { (Oaku),
+document {
+     Key => (Oaku),
      Headline => "an option for Dlocalize=>Strategy",
      "see ", TO "Dlocalize"
      } 
-document { (OTW),
+document {
+     Key => (OTW),
      Headline => "an option for Dlocalize=>Strategy",
      "see ", TO "Dlocalize"
      } 
 
-document { (Dlocalize),
+document {
+     Key => (Dlocalize),
      Headline => "localization of a D-module",
      INSERTUSAGE {
      TT "Dlocalize (M, f)", " -- 
@@ -1411,48 +1489,60 @@ document { (Dlocalize),
      
      SEEALSO {"AnnFs", "Dintegration"}
      }
-document { (Dlocalization),
+document {
+     Key => (Dlocalization),
      "See ", TO "Dlocalize", "."
      }
-document { (DlocalizationAll),
+document {
+     Key => (DlocalizationAll),
      "See ", TO "Dlocalize", "."
      }
-document { (DlocalizeMap),
+document {
+     Key => (DlocalizeMap),
      "See ", TO "Dlocalize", "."
      }
-document { (LocModule),
+document {
+     Key => (LocModule),
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
-document { (GeneratorPower),
+document {
+     Key => (GeneratorPower),
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
-document { (LocMap),
+document {
+     Key => (LocMap),
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
-document { (annFS),
+document {
+     Key => (annFS),
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
-document { (DlocalizeAll),
+document {
+     Key => (DlocalizeAll),
      "See ", TO "Dlocalize", "."
      }
-document { (IntegrateBfunction),
+document {
+     Key => (IntegrateBfunction),
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
-document { (Bfunction),
+document {
+     Key => (Bfunction),
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
-document { (DlocalizationMap),
+document {
+     Key => (DlocalizationMap),
      "See ", TO "Dlocalize", "."
      }
 
 
-document { (Dresolution,Strategy),
+document {
+     Key => (Dresolution,Strategy),
      Headline => "strategy for computing a resolution of a D-module",
      UL { 
 	  {BOLD "Schreyer", 
@@ -1460,14 +1550,17 @@ document { (Dresolution,Strategy),
 	  {BOLD "Vhomogenize", " -- uses V-homogenization method of Oaku"}
      }
 }
-document { (Schreyer),
+document {
+     Key => (Schreyer),
      Headline => "strategy for computing a resolution of a D-module"
      }
-document { (Vhomogenize),
+document {
+     Key => (Vhomogenize),
      Headline => "strategy for computing a resolution of a D-module"
      }
 
-document { (Dresolution),
+document {
+     Key => (Dresolution),
      Headline => "resolution of a D-module",
      INSERTUSAGE {TT "Dresolution (M)", " -- 
      computes a Schreyer resolution of the D-module M",
@@ -1519,16 +1612,19 @@ document { (Dresolution),
 
      SEEALSO {"gbw", "Drestriction"}
      }
-document { (Dres),
+document {
+     Key => (Dres),
      Headline => "abbreviation for Dresolution",
      SEEALSO{"Dresolution"}
      }	
 
-document { (Drestriction,Strategy),
+document {
+     Key => (Drestriction,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 	  }
-document { (Drestriction),
+document {
+     Key => (Drestriction),
      Headline => "restriction modules of a D-module",
      INSERTUSAGE {TT "Drestriction (M, w)", " -- 
      computes derived restriction modules of M with respect
@@ -1616,74 +1712,93 @@ document { (Drestriction),
      
      SEEALSO {"Dresolution", "Dintegration"}
      }
-document { (Drestrict),
+document {
+     Key => (Drestrict),
      Headline => "abbreviation for Drestrict",
      SEEALSO{"Drestriction"}
      }	
-document { (DrestrictionClasses),
+document {
+     Key => (DrestrictionClasses),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictClasses),
+document {
+     Key => (DrestrictClasses),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictIdeal),
+document {
+     Key => (DrestrictIdeal),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictAll),
+document {
+     Key => (DrestrictAll),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictionComplex),
+document {
+     Key => (DrestrictionComplex),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictionAll),
+document {
+     Key => (DrestrictionAll),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictionIdeal),
+document {
+     Key => (DrestrictionIdeal),
      SEEALSO{"Drestriction"}
      }
-document { (DrestrictComplex),
+document {
+     Key => (DrestrictComplex),
      SEEALSO{"Drestriction"}
      }
 
-document { (HomologyModules),
+document {
+     Key => (HomologyModules),
      Headline => "a key in a hashtable; an option of DExt",
      SEEALSO {"Drestriction", "Dintegration", "DExt" }
      }
-document { (GenCycles),
+document {
+     Key => (GenCycles),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SEEALSO {"Drestriction", "Dintegration" }
      }
-document { (Exponents),
+document {
+     Key => (Exponents),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SEEALSO {"Drestriction", "Dintegration" }
      }
-document { (Cycles),
+document {
+     Key => (Cycles),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SEEALSO {"Drestriction", "Dintegration" }
      }
-document { (Boundaries),
+document {
+     Key => (Boundaries),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SEEALSO {"Drestriction", "Dintegration" }
      }
-document { (VResolution),
+document {
+     Key => (VResolution),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SEEALSO {"Drestriction", "Dintegration" }
      }
-document { (Explicit),
+document {
+     Key => (Explicit),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SEEALSO {"Drestriction", "Dintegration" }
      }
 
-document { (IntegrateComplex),
+document {
+     Key => (IntegrateComplex),
      Headline => "a key in the hashtable created by Dintegration",
      SEEALSO {"Dintegration" }
      }
 
-document { (Dintegration,Strategy),
+document {
+     Key => (Dintegration,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
-document { (Dintegration),
+document {
+     Key => (Dintegration),
      Headline => "integration modules of a D-module",
      INSERTUSAGE {
      TT "Dintegration (M, w)", " -- 
@@ -1770,44 +1885,58 @@ document { (Dintegration),
      
      SEEALSO{"Drestriction"}
      }
-document { (Dintegrate),
+document {
+     Key => (Dintegrate),
      Headline => "abbreviation for Dintegration",
      SEEALSO{"Dintegration"}
      }	
-document { (DintegrateIdeal),
+document {
+     Key => (DintegrateIdeal),
      SEEALSO{"Dintegration"}
      }	
-document { (DintegrationIdeal),
+document {
+     Key => (DintegrationIdeal),
      SEEALSO{"Dintegration"}
      }	
-document { (DintegrationComplex),
+document {
+     Key => (DintegrationComplex),
      SEEALSO{"Dintegration"}
      }	
-document { (DintegrateClasses),
+document {
+     Key => (DintegrateClasses),
      SEEALSO{"Dintegration"}
      }
-document { (DintegrateComplex),
+document {
+     Key => (DintegrateComplex),
      SEEALSO{"Dintegration"}
      }
-document { (DintegrationClasses),
+document {
+     Key => (DintegrationClasses),
      SEEALSO{"Dintegration"}
      }
-document { (DintegrateAll),
+document {
+     Key => (DintegrateAll),
      SEEALSO{"Dintegration"}
      }
-document { (DintegrationAll),
+document {
+     Key => (DintegrationAll),
      SEEALSO{"Dintegration"}
      }
 
-document { (gkz=>Vars) }
-document { (Vars) }
-document { (Local),
+document {
+     Key => (gkz=>Vars) }
+document {
+     Key => (Vars) }
+document {
+     Key => (Local),
      Headline => "a choice for option Vars" 
      }
-document { (Global),
+document {
+     Key => (Global),
      Headline => "a choice for option Vars" 
      }
-document { (gkz),
+document {
+     Key => (gkz),
      Headline => "GKZ A-hypergeometric ideal",
      INSERTUSAGE {
      TT "gkz (A,b)", " -- 
@@ -1842,7 +1971,8 @@ document { (gkz),
      SEEALSO {"AppellF1"}
      },
 
-document { (AppellF1),
+document {
+     Key => (AppellF1),
      Headline => "Appell F1 system of PDE's",
      INSERTUSAGE {
      TT "AppellF1 {a0,a1,a2,a3}", " -- 
@@ -1864,7 +1994,8 @@ document { (AppellF1),
      SEEALSO {"gkz"}
      }
 
-document { (PolyAnn),
+document {
+     Key => (PolyAnn),
      Headline => "annihilator of a polynomial in Weyl algebra",
      INSERTUSAGE {
      TT "PolyAnn f", " -- 
@@ -1886,7 +2017,8 @@ document { (PolyAnn),
      SEEALSO {"RatAnn"}
      }
 
-document { (RatAnn),
+document {
+     Key => (RatAnn),
      Headline => "annihilator of a rational function in Weyl algebra",
      INSERTUSAGE {
      TT "RatAnn f", " -- 
@@ -1913,7 +2045,8 @@ document { (RatAnn),
 
      SEEALSO {"PolyAnn"}
      }
-document { (WeylClosure),
+document {
+     Key => (WeylClosure),
      Headline => "Weyl closure of an ideal",
      INSERTUSAGE {
      TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
@@ -1955,11 +2088,13 @@ document { (WeylClosure),
 	  
      SEEALSO {"Dlocalize", "singLocus", "Drank"}
      }
-document { (deRham,Strategy),
+document {
+     Key => (deRham,Strategy),
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
-document { (deRham),
+document {
+     Key => (deRham),
      Headline => "deRham cohomology groups",
      INSERTUSAGE {
      TT "deRham f", "-- 
@@ -1995,27 +2130,33 @@ document { (deRham),
 	},
      SEEALSO {"Dlocalization", "Dintegration"}
      }
-document { (deRhamAll),
+document {
+     Key => (deRhamAll),
      "see ", TO "deRham"
      }
-document { (TransferCycles),
+document {
+     Key => (TransferCycles),
      Headline => "a key in the hashtable created by deRham",
      SEEALSO "deRham"
      }
-document { (CohomologyGroups),
+document {
+     Key => (CohomologyGroups),
      Headline => "a key in the hashtable created by deRham",
      SEEALSO "deRham"
      }
-document { (PreCycles),
+document {
+     Key => (PreCycles),
      Headline => "a key in the hashtable created by deRham",
      SEEALSO "deRham"
      }
-document { (OmegaRes),
+document {
+     Key => (OmegaRes),
      Headline => "a key in the hashtable created by deRham",
      SEEALSO "deRham"
      }
 
-document { (diffOps),
+document {
+     Key => (diffOps),
      Headline => "differential operators of specified order 
      for a quotient polynomial ring",
      INSERTUSAGE {
@@ -2056,16 +2197,19 @@ document { (diffOps),
 
      },
 
-document { (PolyGens),
+document {
+     Key => (PolyGens),
      Headline => "a key of the hashtable generated by diffOps",
      SEEALSO "diffOps"
      }
-document { (BasisElts),
+document {
+     Key => (BasisElts),
      Headline => "a key of the hashtable generated by diffOps",
      SEEALSO "diffOps"
      }
 
-document { (putWeylAlgebra),
+document {
+     Key => (putWeylAlgebra),
      Headline => "the output of diffOps => elements of Weyl algebra",
      INSERTUSAGE {
      TT "putWeylAlgebra m", " -- 
@@ -2093,7 +2237,8 @@ document { (putWeylAlgebra),
 
      }
 
-document { (inw),
+document {
+     Key => (inw),
      Headline => "initial form/ideal w.r.t. a weight",
      INSERTUSAGE {
      TT "inw (L, w)", " -- 
@@ -2138,7 +2283,8 @@ document { (inw),
      SEEALSO {"gbw", "setHomSwitch"}
      },
 
-document { (gbw),
+document {
+     Key => (gbw),
      Headline => "Groebner basis w.r.t. a weight",
      INSERTUSAGE {
      TT "gbw (I, w)", " -- 
@@ -2176,7 +2322,8 @@ document { (gbw),
      SEEALSO {"inw", "setHomSwitch"}
      }
 
-document { (pInfo),
+document {
+     Key => (pInfo),
      Headline => "prints tracing info",
      "Prints tracing information according to the level set by ", 
 	TT "Dtrace", ".",
@@ -2185,52 +2332,68 @@ document { (pInfo),
 ----------------------------------------------------------------------------
 -- (better docs needed)
 ----------------------------------------------------------------------------
-document { (SparseMutableMatrix),
+document {
+     Key => (SparseMutableMatrix),
      Headline => "sparse matrix"
      }
-document { (sparseMutableMatrix),
+document {
+     Key => (sparseMutableMatrix),
      Headline => "make sparse matrix"
      }
-document { (newSparseMatrix),
+document {
+     Key => (newSparseMatrix),
      Headline => "a way to grab sparse matrix from engine"
      }
-document { (reduceCompress),
+document {
+     Key => (reduceCompress),
      Headline => "simplify sparse matrix"
      }
-document { (getEntry),
+document {
+     Key => (getEntry),
      Headline => "get a sparse matrix entry"
      }
-document { (iden),
+document {
+     Key => (iden),
      Headline => "identity sparse matrix"
      }
-document { (sparsemat),
+document {
+     Key => (sparsemat),
      Headline => "create a sparse matrix"
      }
-document { (numcols),
+document {
+     Key => (numcols),
      Headline => "number of columns of a sparse matrix"
      }
-document { (numrows),
+document {
+     Key => (numrows),
      Headline => "number of rows of a sparse matrix"
      }
-document { (setEntry),
+document {
+     Key => (setEntry),
      Headline => "set a sparse matrix entry"
      }
-document { (reducePivots),
+document {
+     Key => (reducePivots),
      Headline => "reduce pivots in a sparse matrix"
      }
-document { (Dprune),
+document {
+     Key => (Dprune),
      Headline => "prunes a matrix over a Weyl algebra"
      }
-document { (Dprune2),
+document {
+     Key => (Dprune2),
      Headline => "prunes a matrix over a Weyl algebra (phased out)"
      }
-document { (Dprune,optGB),
+document {
+     Key => (Dprune,optGB),
      Headline => "indicates whether Grobner basis should be computed"
      }
-document { (optGB),
+document {
+     Key => (optGB),
      Headline => "indicates whether Grobner basis should be computed"
      }
-document { (FourierInverse),
+document {
+     Key => (FourierInverse),
      Headline => "Inverse Fourier map (D-modules)",
      " see ", TO "Fourier" 
      }

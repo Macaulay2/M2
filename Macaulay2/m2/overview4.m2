@@ -2,7 +2,7 @@
 
 
 document {
-     "hypertext",
+     Key => "hypertext",
      "All the online documentation for Macaulay 2 is maintained in
      hypertext form in a special internal format which can be easily
      manipulated or examined.  The function ", TO "html", " can be used to 
@@ -14,7 +14,8 @@ document {
      SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
      }
 
-document { "emacs",
+document {
+     Key => "emacs",
      Headline => "invoking Macaulay 2 with emacs",
      "The best way to edit Macaulay 2 code or to run Macaulay 2 is with GNU 
      emacs, a versatile text editor written by Richard Stallman which
@@ -35,7 +36,8 @@ document { "emacs",
 	  },
      }
 
-document { "running Macaulay 2 in emacs",
+document {
+     Key => "running Macaulay 2 in emacs",
 -- don't indent
 "Because some answers can be very wide, it is a good idea to run Macaulay 2
 in a window which does not wrap output lines and allows the
@@ -239,7 +241,8 @@ when the prompt appears, you can type the key whose documentation should be
 found."
 }
 
-document { "editing Macaulay 2 code with emacs",
+document {
+     Key => "editing Macaulay 2 code with emacs",
 -- don't indent
 "In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
 have set up your emacs init file as described in ", TO "running Macaulay 2 in emacs", "
@@ -287,14 +290,16 @@ when the prompt appears, you can type the key whose documentation should be
 found."
 }
 
-document { "w3",
+document {
+     Key => "w3",
      "You may download the package ", TT "w3", ", by William M. Perry, from 
      ", TT "http://www.cs.indiana.edu/elisp/w3/docs.html", ".  It is an
      emacs package that implements a web browser that displays web pages
      within emacs."
      }
 
-document { "engine", 
+document {
+     Key => "engine", 
      "The engine is the part of the program that is dedicated to
      performing the computation of Groebner bases with Buchberger's
      algorithm.  It is coded directly in C++ for speed.",
@@ -305,7 +310,8 @@ document { "engine",
      efficiency reasons.",
      }
 
-document { "component example",
+document {
+     Key => "component example",
      "The following simple example illustrates the use of 
      ", TO "removeLowestDimension", ",", TO "top", ",", TO "radical",
      ", and ", TO "decompose", ".",
@@ -321,7 +327,8 @@ document { "component example",
 	  },
      }
 
-document { "top-method",
+document {
+     Key => "top-method",
      "If M is a module in a polynomial ring R, then the implementations of 
      ", TO "top", " and ", TO "removeLowestDimension", " are based on 
      the following observations:",
@@ -408,7 +415,8 @@ radical(I, CompleteIntersection=>I1)
 -- I2 = removeLowestDimension I1
 "
 
-document { "computing Groebner bases",
+document {
+     Key => "computing Groebner bases",
      "In this section we give some more detail about how to control
      the computation of Groebner bases.",
      PARA,
@@ -540,7 +548,8 @@ document { "computing Groebner bases",
      "The computation turns out to be substantially faster."
      }
 
-document { "diff and contract",
+document {
+     Key => "diff and contract",
      "We may use the function ", TO "diff", " to differentiate polynomials:
      the first argument is the variable to differentiate with respect to,
      and the second argument is the polynomial to be differentiated.",
@@ -669,7 +678,8 @@ document { "diff and contract",
      SEEALSO { (diff,Matrix,Matrix), (contract,Matrix,Matrix), "reshape", "adjoint" }
      }
 
-document { "computing syzygies",
+document {
+     Key => "computing syzygies",
      "A syzygy among the columns of a matrix is, by definition, an
      element of the kernel of the corresponding map between free modules,
      and the easiest way to compute the syzygies applying the 
@@ -703,7 +713,8 @@ document { "computing syzygies",
      extent of the computation."
      }
 
-document { "computing resolutions",
+document {
+     Key => "computing resolutions",
      "Use the function ", TO "resolution", ", often abbreviated as ", TT "res", ",
      to compute a free resolution of a module.",
      EXAMPLE {

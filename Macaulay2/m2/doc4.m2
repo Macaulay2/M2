@@ -1,6 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { exit,
+document {
+     Key => exit,
      Headline => "exit the program",
      TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
      BR,
@@ -14,7 +15,8 @@ document { exit,
      SEEALSO {"quit"}
      }
 
-document { quit,
+document {
+     Key => quit,
      Headline => "quit the program",
      TT "quit", " -- terminates the program and returns 0 as return code.",
      PARA,
@@ -24,24 +26,28 @@ document { quit,
      SEEALSO "exit"
      }
 
-document { fork,
+document {
+     Key => fork,
      Headline => "fork the process",
      TT "fork()", " -- forks the process, returning the process id of the child
      in the parent, and returning 0 in the child."
      }
 
-document { sleep,
+document {
+     Key => sleep,
      Headline => "sleep for a while",
      TT "sleep n", " -- sleeps for ", TT "n", " seconds."
      }
 
-document { processID,
+document {
+     Key => processID,
      Headline => "the process identifier",
      TT "processID()", " -- returns the process identifier of the current 
      Macaulay 2 process."
      }
 
-document { BinaryPowerMethod,
+document {
+     Key => BinaryPowerMethod,
      Headline => "compute powers by squaring",
      TT "BinaryPowerMethod(x,n)", " -- computes ", TT "x^n", " using successive squaring",
      PARA,
@@ -51,14 +57,16 @@ document { BinaryPowerMethod,
      SEEALSO "SimplePowerMethod"
      }
 
-document { SimplePowerMethod,
+document {
+     Key => SimplePowerMethod,
      Headline => "compute powers by multiplying",
      TT "SimplePowerMethod(x,n)", " -- computes x^n using repeated multiplication",
      PARA,
      SEEALSO "BinaryPowerMethod"
      }
 
-document { dumpdata,
+document {
+     Key => dumpdata,
      Headline => "dump state of the system to a file",
      TT "dumpdata s", " -- dump all data segments for the current process to 
      the file whose name is stored in the string ", TT "s", ".",
@@ -70,7 +78,8 @@ document { dumpdata,
      ", TO "loaddata", "."
      }
 
-document { loaddata,
+document {
+     Key => loaddata,
      Headline => "load state of the system from a file",
      TT "loaddata s", " -- load all data segments for the current process from 
      the file whose name is stored in the string ", TT "s", ".  The file must have been
@@ -78,7 +87,7 @@ document { loaddata,
      PARA,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
-     NOCONTENTS UL {
+     UL {
 	  TO "environment",
 	  TO "commandLine",
 	  "whether the standard input is echoed and prompts to the 
@@ -87,7 +96,8 @@ document { loaddata,
 	  }
      }
 
-document { buckets,
+document {
+     Key => buckets,
      Headline => "list the buckets in a hash table",
      TT "buckets x", " -- returns a list of the buckets used internally in an 
      hash table ", TT "x", ".",
@@ -95,14 +105,16 @@ document { buckets,
      "Each bucket is represented as a list of key/value pairs."
      }
 
-document { identity,
+document {
+     Key => identity,
      Headline => "the identity function",
      TT "identity x", " -- returns x.",
      PARA,
      "This is the identity function."
      }
 
-document { modulus,
+document {
+     Key => modulus,
      Headline => "store the modulus",
      TT "modulus", " -- a key used in quotient rings of the form ", TT "ZZ/n to", " store 
      the number ", TT "n", ".",
@@ -111,7 +123,8 @@ document { modulus,
      }
 
 if class XCreateWindow === Function then (
-document { XCreateWindow,
+document {
+     Key => XCreateWindow,
      Headline => "create a window",
      TT "XCreateWindow(pid,x,y,a,b,w,n)", " -- makes a new window.",
      PARA,
@@ -123,31 +136,36 @@ document { XCreateWindow,
 ) else erase symbol XCreateWindow
 
 if class XDefaultRootWindow === Function then (
-document { XDefaultRootWindow,
+document {
+     Key => XDefaultRootWindow,
      Headline => "id of the root window",
      TT "XDefaultRootWindow()", " -- returns the id of the root window."
      }
 ) else erase symbol XDefaultRootWindow
 
-document { format,
+document {
+     Key => format,
      Headline => "format a string",
      TT "format s", " -- prepare a string ", TT "s", " for output by converting nonprintable
      characters to printable ones, or to escape sequences."
      }
 
-document { generatorSymbols,
+document {
+     Key => generatorSymbols,
      Headline => "store the symbols for the generators",
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under
      which is stored a list of the symbols used as generators for the monoid."
      }
 
-document { generatorExpressions,
+document {
+     Key => generatorExpressions,
      Headline => "store the generators",
      TT "generatorExpressions", " -- a key used in a ", TO "Monoid", " under which 
      is stored a list of the generators for the monoid."
      }
 
-document { match, 
+document {
+     Key => match, 
      Headline => "regular expression matching",
      TT "match(p,s)", " -- matches the string ", TT "s", " against the 
      GNU regular expression ", TT "p", ".",
@@ -164,7 +182,8 @@ document { match,
      SEEALSO "matches"
      }
 
-document { matches, 
+document {
+     Key => matches, 
      Headline => "regular expression matching",
      TT "matches(p,s)", " -- matches the string ", TT "s", " against the 
      GNU regular expression ", TT "p", ".",
@@ -182,7 +201,8 @@ document { matches,
      SEEALSO "match"
      }
 
-document { pairs,
+document {
+     Key => pairs,
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
@@ -193,7 +213,8 @@ document { pairs,
 	  }
      }
 
-document { sequence,
+document {
+     Key => sequence,
      Headline => "make a sequence",
      TT "sequence v", " -- returns ", TT "v", " if ", TT "v", " is a sequence, otherwise makes
      a sequence of length one containing ", TT "v", ".",
@@ -207,7 +228,8 @@ document { sequence,
      SEEALSO { "singleton", "sequences" }
      }
 
-document { xor,
+document {
+     Key => xor,
      Headline => "logical exclusive-or",
      TT "xor(i,j)", " -- produces the bitwise logical exclusive-or of
      the integers ", TT "i", " and ", TT "j", ".",
@@ -215,7 +237,8 @@ document { xor,
      EXAMPLE "xor(10,12)"
      }
 
-document { mingle,
+document {
+     Key => mingle,
      Headline => "mingle elements of several lists",
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
@@ -235,7 +258,8 @@ document { mingle,
 	  }
      }
 
-document { SelfInitializingType,
+document {
+     Key => SelfInitializingType,
      Headline => "the class of all self initializing types",
      "A self initializing type ", TT "X", " will produce an instance of X from
      initial data ", TT "v", " with the expression ", TT "X v", ".",
@@ -250,14 +274,16 @@ document { SelfInitializingType,
      SEEALSO {"HeaderType", "WrapperType"}
      }
 
-document { Manipulator,
+document {
+     Key => Manipulator,
      Headline => "the class of all file manipulators",
      "A file manipulator is a type of list which, when put out to
      a file with ", TO "<<", " causes a chosen function to be applied
      to the file.",
      }
 
-document { close,
+document {
+     Key => close,
      Headline => "close a file",
      TT "f << close", " -- closes the file ", TT "f", ".",
      BR, NOINDENT,
@@ -282,12 +308,14 @@ document { close,
      no error is signaled."
      }
 
-document { kill,
+document {
+     Key => kill,
      Headline => "kill a process",
      TT "kill f", " -- kill the process associated with the file ", TT "f", "."
      }
 
-document { closeIn,
+document {
+     Key => closeIn,
      Headline => "close an input file",
      TT "f << closeIn", " -- closes the input file ", TT "f", ".",
      BR, NOINDENT,
@@ -300,7 +328,8 @@ document { closeIn,
      open for output."
      }
 
-document { closeOut,
+document {
+     Key => closeOut,
      Headline => "close an output file",
      TT "f << closeOut", " -- closes the output file ", TT "f", ".",
      BR, NOINDENT,
@@ -318,12 +347,14 @@ document { closeOut,
      open for input."
      }
 
-document { flush,
+document {
+     Key => flush,
      Headline => "flush output to file",
      TT "f << flush", " -- writes out any buffered output for the output file ", TT "f", ".",
      }
 
-document { endl,
+document {
+     Key => endl,
      Headline => "end an output line",
      TT "f << endl", " -- ends the line currently being put out to the
      file ", TT "f", ".",
@@ -334,7 +365,8 @@ document { endl,
      and it will not flush the output buffer."
      }
 
-document { symbol "newline",
+document {
+     Key => symbol "newline",
      Headline => "the new line character sequence",
      TT "newline", " -- a string containing the character or sequence of
      characters which represents the end of a line.  To end an output line,
@@ -355,7 +387,8 @@ document { symbol "newline",
      SEEALSO "Net"
      }
 
-document { collectGarbage,
+document {
+     Key => collectGarbage,
      Headline => "collect the garbage in memory",
      TT "collectGarbage()", " -- attempt a garbage collection.",
      PARA,
@@ -373,19 +406,19 @@ document { collectGarbage,
 --     SEEALSO "GC garbage collector"
 --     }
 
-document { lookupCount,
+document {
+     Key => lookupCount,
      Headline => "reference count for a symbol",
      TT "lookupCount s", " -- the number of times the symbol ", TT "s", " has been
      encountered in source code presented to the interpreter."
      }
 
-document { "version",
+document {
+     Key => "version",
      Headline => "information about this version of the program",
-     Synopsis => {
-	  Usage => "version",
-	  Results => {
-	       HashTable => "describing this version of the program"
-	       }
+     Usage => "version",
+     Results => {
+	  {OFCLASS HashTable, " describing this version of the program"}
 	  },
      "The values stored in this hash table depend on the source code version
      the architecture for which the program was compiled, and the libraries
@@ -393,7 +426,8 @@ document { "version",
      EXAMPLE "version"
      }
 
-document { Database,
+document {
+     Key => Database,
      Headline => "the class of all database files",
      "A database file is just like a hash table, except both the keys and
      values have to be strings.  In this example we create a database file, store
@@ -411,26 +445,30 @@ document { Database,
      SEEALSO {"HashTable", "String"}
      }
 
-document { reorganize,
+document {
+     Key => reorganize,
      Headline => "reorganize a database file",
      TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
      PARA,
      SEEALSO "Database"
      }
 
-document { openDatabase,
+document {
+     Key => openDatabase,
      Headline => "open a database file",
      TT "openDatabase \"filename\"", " -- open a database file with the given
      file name."
      }
 
-document { openDatabaseOut,
+document {
+     Key => openDatabaseOut,
      Headline => "open a database file for writing",
      TT "openDatabaseOut \"filename\"", " -- open a database file with the given
      file name, and allow changes to be made to it."
      }
 
-document { firstkey,
+document {
+     Key => firstkey,
      Headline => "get the first key",
      TT "firstkey f", " -- return the first key available in the database
      file ", TT "f", ".",
@@ -440,7 +478,8 @@ document { firstkey,
      SEEALSO "Database"
      }
 
-document { nextkey,
+document {
+     Key => nextkey,
      Headline => "the next key in a database",
      TT "nextkey f", " -- return the next key available in the database
      file ", TT "f", ".",
@@ -450,7 +489,8 @@ document { nextkey,
      SEEALSO "Database"
      }
 
-document { addStartFunction,
+document {
+     Key => addStartFunction,
      Headline => "add a startup function",
      TT "addStartFunction (() -> ...)", " -- record a function for later 
      execution, when the program is restarted after loading dumped data.",
@@ -458,7 +498,8 @@ document { addStartFunction,
      SEEALSO "runStartFunctions"
      }
 
-document { addEndFunction,
+document {
+     Key => addEndFunction,
      Headline => "add an ending function",
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited.",
@@ -466,7 +507,8 @@ document { addEndFunction,
      SEEALSO "runEndFunctions"
      }
 
-document { runStartFunctions,
+document {
+     Key => runStartFunctions,
      Headline => "run the start up functions",
      TT "runStartFunctions()", " -- call all the functions previously recorded
      by ", TO "addStartFunction", ".",
@@ -476,7 +518,8 @@ document { runStartFunctions,
      "The funuctions are called with no arguments."
      }
 
-document { runEndFunctions,
+document {
+     Key => runEndFunctions,
      Headline => "run the ending functions",
      TT "runEndFunctions()", " -- call all the functions previously recorded
      by ", TO "addEndFunction", ".",
@@ -484,28 +527,32 @@ document { runEndFunctions,
      "The funuctions are called with no arguments."
      }
 
-document { symbol "oo",
+document {
+     Key => symbol "oo",
      Headline => "the last output value",
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
      SEEALSO { "oo", "ooo", "oooo" }
      }
 
-document { symbol "ooo",
+document {
+     Key => symbol "ooo",
      Headline => "the next to the last output value",
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
      SEEALSO { "oo", "oooo" }
      }
 
-document { symbol "oooo",
+document {
+     Key => symbol "oooo",
      Headline => "the third to the last output value",
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",
      SEEALSO { "oo", "ooo" }
      }
 
-document { InverseMethod,
+document {
+     Key => InverseMethod,
      Headline => "compute reciprocals",
      TT "InverseMethod", " -- a key used under which is stored a method
      for computing multiplicative inverses.",
@@ -514,7 +561,8 @@ document { InverseMethod,
      the exponent is negative."
      }
 
-document { "or",
+document {
+     Key => "or",
      Headline => "disjunction",
      TT "t or u", " -- returns true if ", TT "t", " is true or ", TT "u", "
      is true.",
@@ -523,7 +571,8 @@ document { "or",
      SEEALSO{ "and", "not" }
      }
 
-document { "and",
+document {
+     Key => "and",
      Headline => "conjunction",
      TT "t and u", " -- returns true if ", TT "t", " is true and ", TT "u", "
      is true.",
@@ -532,7 +581,8 @@ document { "and",
      SEEALSO{ "or", "not" }
      }
 
-document { locate,
+document {
+     Key => locate,
      Headline => "locate source code",
      TT "locate f", " -- for a symbol interpreted function ", TT "f", " 
      returns a sequence ", TT "(n,i,c,j,d)", " describing the location of
@@ -547,7 +597,8 @@ document { locate,
      "If ", TT "f", " is ", TO "null", ", then ", TO "null", " is returned."
      }
 
-document { MutableHashTable,
+document {
+     Key => MutableHashTable,
      Headline => "the class of all mutable hash tables",
      PARA,
      "A mutable hash table is a type of hash table whose entries can be changed.",
@@ -564,7 +615,8 @@ document { MutableHashTable,
      SEEALSO "HashTable"
      }
 
-document { map,
+document {
+     Key => map,
      Headline => "make a map",
      TT "map(Y,X,d)", " -- constructs a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", ".",
      PARA,
@@ -572,7 +624,8 @@ document { map,
      (homomorphisms) between objects in various categories."
      }
 
-document { precedence,
+document {
+     Key => precedence,
      Headline => "parsing precedence",
      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
      the printing routines.",
@@ -580,7 +633,8 @@ document { precedence,
      SEEALSO {"Expression", "net", "toString"}
      }
 
-document { hashTable,
+document {
+     Key => hashTable,
      Headline => "make a hash table",
      TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
      pairs.",
@@ -597,7 +651,8 @@ document { hashTable,
 	  },
      }
 
-document { (toList, HashTable),
+document {
+     Key => (toList, HashTable),
      Headline => "convert to list",
      TT "toList x", " -- provides a list of keys in the hash table ", TT "x", ".",
      PARA,
@@ -610,7 +665,8 @@ document { (toList, HashTable),
 	  }
      }
 
-document { (toList, BasicList),
+document {
+     Key => (toList, BasicList),
      Headline => "list of elements",
      TT "toList x", " -- provides a list of elements in the basic list ", TT "x", ".",
      PARA,
@@ -621,7 +677,8 @@ document { (toList, BasicList),
 	  } 
      }
 
-document { (toList, Set),
+document {
+     Key => (toList, Set),
      Headline => "list of elements",
      TT "toList x", " -- provides a list of element in the set ", TT "x", ".",
      EXAMPLE {
@@ -630,11 +687,13 @@ document { (toList, Set),
 	  }
      }
 
-document { toList,
+document {
+     Key => toList,
      Headline => "list of elements"
      }
 
-document { saturate,
+document {
+     Key => saturate,
      Headline => "saturation of ideal or submodule",
      TT "saturate(I,J,options)", " -- computes the saturation ", TT "(I : J^*)", " 
      of I with respect to ", TT "J", ".  If ", TT "J", " is not given, the 
@@ -668,9 +727,10 @@ document { saturate,
      This will be changed in a later version."
      }
 
-document { (saturate,Strategy),
+document {
+     Key => (saturate,Strategy),
      "The strategy option value should be one of the following:",
-     NOCONTENTS UL {
+     UL {
           TO "Linear",
 	  TO "Iterate",
 	  TO "Bayer",
@@ -678,13 +738,15 @@ document { (saturate,Strategy),
           }
      }
 
-document { (saturate,DegreeLimit),
+document {
+     Key => (saturate,DegreeLimit),
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "saturate", " which specifies that the computation should halt after dealing 
      with degree n."
      }
 
-document { profile,
+document {
+     Key => profile,
      Headline => "profile a function",
      TT "f = profile f", " -- replace a global function ", TT "f", " by a profiled version.",
      PARA,
@@ -694,13 +756,15 @@ document { profile,
      to display the data recorded so far."
      }
 
-document { profileSummary,
+document {
+     Key => profileSummary,
      Headline => "display profiling data",
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
 
-document { name,
+document {
+     Key => name,
      Headline => "store the name of a hash table",
      TT "name", " -- a key under which string giving the preferred name
      of a hash table can be stored.",
@@ -718,7 +782,8 @@ document { name,
      SEEALSO{ "describe"}
      }
 
-document { globalAssignFunction,
+document {
+     Key => globalAssignFunction,
      Headline => "the standard method for the global assignment hook",
      TT "globalAssignFunction", " -- the standard function which can be used
      as a method for ", TO GlobalAssignHook, " so that certain types of
@@ -749,7 +814,8 @@ document { globalAssignFunction,
      SEEALSO { "name", "symbol", "SelfInitializingType" }
      }
 
-document { globalReleaseFunction,
+document {
+     Key => globalReleaseFunction,
      Headline => "the standard method for the global variable release hook",
      TT "globalReleaseFunction", " -- the standard function which can be used as
      a method for ", TO GlobalReleaseHook, " so that certain types of things, which
@@ -760,7 +826,8 @@ document { globalReleaseFunction,
      SEEALSO "globalAssignFunction"
      }
 
-document { Entity,
+document {
+     Key => Entity,
      Headline => "the class of all entities",
      "Entities are special typsettable objects which have different realizations
      in various typesetting systems.",
@@ -773,7 +840,8 @@ document { Entity,
 	  }
      }
 
-document { unstacn,
+document {
+     Key => unstacn,
      Headline => "list the rows of a net",
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
@@ -785,7 +853,8 @@ document { unstacn,
      retains its trailing spaces."
      }
 
-document { symbol ##,
+document {
+     Key => symbol ##,
      Headline => "uncurry a function",
      TT "f ## (a,b)", "     -- computes ", TT "((f a) b)", ".",
      BR, NOINDENT,

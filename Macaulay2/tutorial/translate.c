@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     }
   fgets((char *)line,LEN,stdin);
   line_type(&s);
-  fprintf(stdout, "document { \"%s", line+3);
+  fprintf(stdout, "document { Key => \"%s", line+3);
   while (fgets((char *)line,LEN,stdin))
     {
       typ = line_type(&s);

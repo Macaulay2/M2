@@ -32,7 +32,8 @@ M = rawMatrixRandom(raw R, 1,5,1.0,0,false,0)
 M = random(R^1, R^5)
 "
 
-document { (gin,Ideal),
+document {
+     Key => (gin,Ideal),
      Headline => "the generic initial ideal",
      OldSynopsis => {
 	  "J = gin I",

@@ -1,6 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { "timing",
+document {
+     Key => "timing",
      Headline => "time a computation",
      TT "timing e", " -- evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
@@ -15,7 +16,8 @@ document { "timing",
      SEEALSO "Time"
      }
 
-document { "time",
+document {
+     Key => "time",
      Headline => "time a computation",
      TT "time e", " -- evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
@@ -24,7 +26,8 @@ document { "time",
      SEEALSO "timing"
      }
 
-document { Time,
+document {
+     Key => Time,
      Headline => "the class of all timing results",
      TT "Time", " -- is the class of all timing results.  Each timing result
      is a ", TO "BasicList", " of the form ", TT "{t,v}", ", where ", TT "t", " 
@@ -33,7 +36,8 @@ document { Time,
      SEEALSO "timing"
      }
 
-document { null,
+document {
+     Key => "null",
      Headline => "nothingness",
      "When it is the value of an expression entered into the interpreter, the
      output line doesn't appear.  Empty spots in a list are represented by
@@ -56,17 +60,20 @@ document { null,
 	  }
      }
 
-document { "then",
+document {
+     Key => "then",
      Headline => "condition testing",
      TT "then", " -- a keyword used with ", TO "if", "."
      }
 
-document { "else",
+document {
+     Key => "else",
      Headline => "condition testing",
      TT "else", " -- a keyword used with ", TO "if", "."
      }
 
-document { "if",
+document {
+     Key => "if",
      Headline => "condition testing",
      TT "if p then x else y", " -- computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
@@ -77,7 +84,8 @@ document { "if",
      else ", TO "null", " is provided."
      }
 
-document { "for",
+document {
+     Key => "for",
      Headline => "loop control",
      TT "for i from a to b when c list x do y", " -- repeatedly 
      evaluate ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
@@ -105,7 +113,8 @@ document { "for",
      SEEALSO { "loops", "while", "return" }
      }     
 
-document { "while",
+document {
+     Key => "while",
      Headline => "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning 
@@ -123,7 +132,8 @@ document { "while",
      SEEALSO { "loops", "break", "for" }
      }
 
-document { "break",
+document {
+     Key => "break",
      Headline => "break from a loop",
      TT "break x", " -- interrupts execution of a loop controled by ",
      TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
@@ -138,7 +148,8 @@ document { "break",
      SEEALSO { "scan", "while", "for" }
      }
 
-document { "return",
+document {
+     Key => "return",
      Headline => "return from a function",
      TT "return x", " -- returns ", TT "x", " as the value of the function currently
      being evaluated.",BR,
@@ -157,27 +168,32 @@ document { "return",
      SEEALSO { "break" }
      }
 
-document { "list",
+document {
+     Key => "list",
      Headline => "loop control",
      TT "list", " -- a keyword used with ", TO "while", ", and ", TO "for", "."
      }
 
-document { "from",
+document {
+     Key => "from",
      Headline => "loop control",
      TT "from", " -- a keyword used with ", TO "for", " and ", TO "new", "."
      }
 
-document { "to",
+document {
+     Key => "to",
      Headline => "loop control",
      TT "to", " -- a keyword used with ", TO "for", "."
      }
 
-document { "do",
+document {
+     Key => "do",
      Headline => "loop control",
      TT "do", " -- a keyword used with ", TO "while", ", and ", TO "for", "."
      }
 
-document { "try",
+document {
+     Key => "try",
      Headline => "catch an error",
      TT "try x then y else z", " -- returns the value of y unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
@@ -197,14 +213,16 @@ document { "try",
      recommended to use this function sparingly, if at all."
      }
 
-document { openFiles,
+document {
+     Key => openFiles,
      Headline => "list the open files",
      TT "openFiles()", " -- produces a list of all currently open files.",
      PARA,
      SEEALSO { "File" }
      }
 
-document { stdio,
+document {
+     Key => stdio,
      Headline => "the standard input output file",
      TT "stdio", " -- the standard input output file.",
      PARA,
@@ -213,14 +231,16 @@ document { stdio,
      and used ", TO "<<", " if it is not explicitly given a file."
      }
 
-document { stderr,
+document {
+     Key => stderr,
      Headline => "the standard error output file",
      TT "stderr", " -- the standard error output file.",
      PARA,
      "Use this file to display error messages on the user's screen."
      }
 
-document { openListener,
+document {
+     Key => openListener,
      Headline => "open a port for listening",
      TT "f = openListener \"$:service\"", "  -- opens a listener on the local
      host at the specified service port.",
@@ -234,21 +254,24 @@ document { openListener,
      arrived, without blocking."
      }
 
-document { openIn,
+document {
+     Key => openIn,
      Headline => "open an input file",
      TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
-document { openOut,
+document {
+     Key => openOut,
      Headline => "open an output file",
      TT "openOut \"fff\"", "  -- opens an output file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
-document { openInOut,
+document {
+     Key => openInOut,
      Headline => "open an input outpuf file",
      TT "openInOut \"fff\"", "  -- opens an input output file whose 
      filename is ", TT "fff", ".",
@@ -292,7 +315,8 @@ document { openInOut,
      standard output of the parent Macaulay2 process."
      }
 
-document { protect,
+document {
+     Key => protect,
      Headline => "protect a symbol",
      TT "protect s", " -- protects the symbol ", TT "s", " from having its value changed.",
      PARA,
@@ -303,21 +327,24 @@ document { protect,
      it documents."
      }
 
-document { isInputFile,
+document {
+     Key => isInputFile,
      Headline => "whether a file is open for input",
      TT "isInputFile f", " -- whether ", TT "f", " is an input file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { isOutputFile,
+document {
+     Key => isOutputFile,
      Headline => "whether a file is open for output",
      TT "isOutputFile f", " -- whether ", TT "f", " is an output file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { isOpenFile,
+document {
+     Key => isOpenFile,
      Headline => "whether a file is open",
      TT "isOpenFile f", " -- whether ", TT "f", " is an open file.",
      PARA,
@@ -327,37 +354,39 @@ document { isOpenFile,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { isListener,
+document {
+     Key => isListener,
      Headline => "whether a file is open for listening",
      TT "isListener f", " -- whether ", TT "f", " is a listener.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { symbol <<, Headline => " -- a binary operator" }
-document { symbol >>, Headline => " -- a binary operator" }
-document { (symbol >>, ZZ, ZZ),
+document {
+     Key => symbol <<, Headline => " -- a binary operator" }
+document {
+     Key => symbol >>, Headline => " -- a binary operator" }
+document {
+     Key => (symbol >>, ZZ, ZZ),
      Headline => "shift bits rightward",
-     Synopsis => {
-	  Usage => "i >> j",
-	  Inputs => { "i" => null, "j" => null },
-	  Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }}
-	  },
+     Usage => "i >> j",
+     Inputs => { "i" => null, "j" => null },
+     Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
      EXAMPLE "256 >> 5",
      SEEALSO {(symbol <<,ZZ, ZZ)}
      }
-document { (symbol <<, ZZ, ZZ),
+document {
+     Key => (symbol <<, ZZ, ZZ),
      Headline => "shift bits rightward",
-     Synopsis => {
-	  Usage => "i << j",
-	  Inputs => { "i" => null, "j" => null },
-	  Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }}
-	  },
+     Usage => "i << j",
+     Inputs => { "i" => null, "j" => null },
+     Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},
      EXAMPLE "256 << 5",
      SEEALSO {(symbol >>,ZZ, ZZ)}
      }
 
-document { (symbol <<, String, Thing),
+document {
+     Key => (symbol <<, String, Thing),
      Headline => "print to a file",
      TT "\"name\" << x", " -- prints the expression ", TT "x", " on the output file
      named \"name\".",
@@ -374,7 +403,8 @@ document { (symbol <<, String, Thing),
 	  }
      }
 
-document { (symbol <<, Thing),
+document {
+     Key => (symbol <<, Thing),
      Headline => "print to a file",
      TT "<< x", " -- prints the expression x on the standard output file ", TO "stdio", ".",
      PARA,
@@ -382,11 +412,13 @@ document { (symbol <<, Thing),
      SEEALSO {"<<"}
      }
 
-document { symbol ":",
+document {
+     Key => symbol ":",
      Headline => "a binary operator",
      }
 
-document { (symbol :, ZZ, Thing),
+document {
+     Key => (symbol :, ZZ, Thing),
      Headline => "repeat an item",
      TT "n : x", " -- repetition ", TT "n", " times of ", TT "x", " in a sequence",
      PARA,
@@ -401,7 +433,8 @@ document { (symbol :, ZZ, Thing),
      EXAMPLE "splice {5:a,10:b}"
      }
 
-document { getc,
+document {
+     Key => getc,
      Headline => "get a byte",
      TT "getc f", " -- obtains one byte from the input file f and provides it as a 
      string of length 1.  On end of file an empty string of is returned.",
@@ -411,7 +444,8 @@ document { getc,
      "Bug: the name is cryptic and should be changed."
      }
 
-document { symbol "<",
+document {
+     Key => symbol "<",
      Headline => "less than",
      TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
@@ -419,7 +453,8 @@ document { symbol "<",
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { symbol "<=",
+document {
+     Key => symbol "<=",
      Headline => "less than or equal",
      TT "x <= y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
@@ -427,7 +462,8 @@ document { symbol "<=",
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { symbol ">",
+document {
+     Key => symbol ">",
      Headline => "greater than",
      TT "x > y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
@@ -435,7 +471,8 @@ document { symbol ">",
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { symbol ">=",
+document {
+     Key => symbol ">=",
      Headline => "greater than or equal",
      TT "x >= y", " -- yields ", 
      TO "true", " or ", 
@@ -445,13 +482,15 @@ document { symbol ">=",
      }
 
 protect incomparable
-document { incomparable,
+document {
+     Key => incomparable,
      Headline => "a result indicating incomparability",
      TT "incomparable", " -- a symbol which may be returned by ", TO "?", "
      when the two things being compared are incomparable."
      }
 
-document { symbol "?",
+document {
+     Key => symbol "?",
      Headline => "comparison operator",
      TT "x ? y", " -- compares x and y, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
@@ -472,7 +511,8 @@ document { symbol "?",
      efficient hash tables, but we haven't done this."  
      }
 
-document { ";",
+document {
+     Key => ";",
      Headline => "statement separator",
      TT "(e;f;...;g;h)", " -- the semicolon can be used for evaluating a sequence of 
      expressions.  The value of the sequence is the value of its
@@ -484,7 +524,8 @@ document { ";",
 	  }
      }
 
-document { symbol "<-",
+document {
+     Key => symbol "<-",
      Headline => "assignment with left side evaluated",
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
@@ -505,7 +546,8 @@ document { symbol "<-",
      SEEALSO "="
      }
 
-document { "=",
+document {
+     Key => "=",
      Headline => "assignment",
      TT "x = e", "      -- assigns the value ", TT "e", " to the variable ", TT "x", ".",
      PARA,
@@ -530,7 +572,8 @@ document { "=",
      }
 
 
-document { ":=",
+document {
+     Key => ":=",
      Headline => "assignment of method or new local variable",
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
@@ -557,7 +600,8 @@ document { ":=",
      variable is never globally known."
      }
 
-document { abs,
+document {
+     Key => abs,
      Headline => "absolute value function", 
      TT "abs x", " -- computes the absolute value of ", TT "x", "."
      }
@@ -566,97 +610,98 @@ document { abs,
 -- the next three document nodes illustrate three possibilities for the first entry of the list:
 -- string, function, and symbol.
 
-document { sin, 
+document {
+     Key => sin, 
      Headline => "sine function",
-     Synopsis => {
-	  Usage => "sin x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the sine of ", TT "x", "" } } } }
-document { cos, 
+     Usage => "sin x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the sine of ", TT "x", "" } } }
+document {
+     Key => cos, 
      Headline => "cosine function",
-     Synopsis => {
-	  Usage => "cos x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the cosine of ", TT "x", "" } } } }
-document { symbol tan,
+     Usage => "cos x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the cosine of ", TT "x", "" } } }
+document {
+     Key => symbol tan,
      Headline => "tangent function",
-     Synopsis => {
-	  Usage => "tan x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the tangent of ", TT "x" } } } }
-document { asin,
+     Usage => "tan x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the tangent of ", TT "x" } } }
+document {
+     Key => asin,
      Headline => "arcsine function", 
-     Synopsis => {
-	  Usage => "asin x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the arcsine of ", TT "x"} } } }
-document { acos,
+     Usage => "asin x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the arcsine of ", TT "x"} } }
+document {
+     Key => acos,
      Headline => "arccosine function", 
-     Synopsis => {
-	  Usage => "acos x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the arccosine of ", TT "x"} } } }
-document { atan,
+     Usage => "acos x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the arccosine of ", TT "x"} } }
+document {
+     Key => atan,
      Headline => "arctangent function",
-     Synopsis => {
-	  Usage => "atan x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the arctangent of ", TT "x"} } } }
-document { (atan,RR,RR),
-     Synopsis => {
-	  Usage => "atan(x,y)",
-	  Inputs => { "x" => RR => null, "y" => RR => null },
-	  Outputs => { { "the angle formed with the x-axis by the ray from the origin to the point ", TT "{x,y}" } } } }
-document { sinh,
+     Usage => "atan x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the arctangent of ", TT "x"} } }
+document {
+     Key => (atan,RR,RR),
+     Usage => "atan(x,y)",
+     Inputs => { "x" => RR => null, "y" => RR => null },
+     Outputs => { { "the angle formed with the x-axis by the ray from the origin to the point ", TT "{x,y}" } } }
+document {
+     Key => sinh,
      Headline => "hyperbolic sine function",
-     Synopsis => {
-	  Usage => "sinh x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the hyperbolic sine of ", TT "x" } } } }
-document { cosh, Headline => "hyperbolic cosine function",
-     Synopsis => {
-	  Usage => "cosh x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the hyperbolic cosine of ", TT "x" } } } }
-document { tanh, Headline => "hyperbolic tangent function",
-     Synopsis => {
-	  Usage => "tanh x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the hyperbolic tangent of ", TT "x" } } } }
-document { exp, Headline => "exponential function",
-     Synopsis => {
-	  Usage => "exp x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the exponential of ", TT "x" } } } }
-document { log, Headline => "logarithm function",
-     Synopsis => {
-	  Usage => "log x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the logarithm of ", TT "x"} } } }
-document { sqrt, Headline => "square root function",
-     Synopsis => {
-	  Usage => "sqrt x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the square root of ", TT "x"} } } }
-document { floor,
+     Usage => "sinh x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the hyperbolic sine of ", TT "x" } } }
+document {
+     Key => cosh, Headline => "hyperbolic cosine function",
+     Usage => "cosh x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the hyperbolic cosine of ", TT "x" } } }
+document {
+     Key => tanh, Headline => "hyperbolic tangent function",
+     Usage => "tanh x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the hyperbolic tangent of ", TT "x" } } }
+document {
+     Key => exp, Headline => "exponential function",
+     Usage => "exp x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the exponential of ", TT "x" } } }
+document {
+     Key => log, Headline => "logarithm function",
+     Usage => "log x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the logarithm of ", TT "x"} } }
+document {
+     Key => sqrt, Headline => "square root function",
+     Usage => "sqrt x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the square root of ", TT "x"} } }
+document {
+     Key => floor,
      Headline => "floor function",
-     Synopsis => {
-	  Usage => "floor x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the largest integer less than or equal to the number ", TT "x" } } } }
-document { ceiling,
+     Usage => "floor x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the largest integer less than or equal to the number ", TT "x" } } }
+document {
+     Key => ceiling,
      Headline => "ceiling function",
-     Synopsis => {
-	  Usage => "ceiling x",
-	  Inputs => { "x" => RR => null },
-	  Outputs => { { "the largest integer greater than or equal to the number ", TT "x" } } } }
-document { run,
+     Usage => "ceiling x",
+     Inputs => { "x" => RR => null },
+     Outputs => { { "the largest integer greater than or equal to the number ", TT "x" } } }
+document {
+     Key => run,
      Headline => "run an external command", 
-     Synopsis => {
-	  Usage => "run s",
-	  Inputs => { "s" => String => {"a command understandable by your operating system"} },
-	  Outputs => { "the exit status of the command (a small integer which is normally zero)" } } }
-document { wait,
+     Usage => "run s",
+     Inputs => { "s" => String => {"a command understandable by your operating system"} },
+     Outputs => { "the exit status of the command (a small integer which is normally zero)" } }
+document {
+     Key => wait,
      Headline => "wait for child process", 
      TT "wait i", " -- wait for the completion of child process with process id
      ", TT "i", ".",
@@ -668,16 +713,17 @@ document { wait,
      corresponding to ready files."
      }
 
-document { value,
+document {
+     Key => value,
      Headline => "evaluate"
      }
 
-document { (value,Symbol),
+document {
+     Key => (value,Symbol),
      Headline => "retrieve the value of a symbol",
-     Synopsis => {
-	  Usage => "value s",
-	  Inputs => { "s" => null },
-	  Outputs => { {"the value of ", TT "s" } } },
+     Usage => "value s",
+     Inputs => { "s" => null },
+     Outputs => { {"the value of ", TT "s" } },
      EXAMPLE {
 	  "x = s",
 	  "s = 11111111111",
@@ -686,12 +732,12 @@ document { (value,Symbol),
 	  }
      }
 
-document { (value,String),
+document {
+     Key => (value,String),
      Headline => "evaluate a string",
-     Synopsis => {
-	  Usage => "value s",
-	  Inputs => { "s" => null },
-	  Outputs => { {"the value obtained by evaluating the code in ", TT "s" } } },
+     Usage => "value s",
+     Inputs => { "s" => null },
+     Outputs => { {"the value obtained by evaluating the code in ", TT "s" } },
      "The contents of ", TT "s", " are treated as code in the
      Macaulay 2 language, parsed it in its own scope (the same way a file is)
      and evaluated.  The string may contain multiple lines.",
@@ -705,19 +751,20 @@ a+a"///,
      the value of the global variable ", TT "a", " is unaffected."
      }
 
-document { (value,Expression),
+document (
+     Key => (value,Expression),
      Headline => "evaluate an expression",
-     Synopsis => {
-	  Usage => "value s",
-	  Inputs => { "s" => null },
-	  Outputs => { "x" => {"the value of ", TT "s" } } },
+     Usage => "value s",
+     Inputs => { "s" => null },
+     Outputs => { "x" => {"the value of ", TT "s" } },
      EXAMPLE {
 	  "p = (expression 2)^3 * (expression 3)^2",
       	  "value p"
 	  }
-     }
+     )
 
-document { "global",
+document {
+     Key => "global",
      Headline => "get a global symbol", 
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
@@ -730,13 +777,15 @@ document { "global",
      SEEALSO {"local", "symbol" }
      }
 
-document { erase,
+document {
+     Key => erase,
      Headline => "remove a global symbol",
      TT "erase s", " -- removes the global symbol ", TT "s", " from the
      symbol table."
      }
 
-document { "local",
+document {
+     Key => "local",
      Headline => "get a local symbol",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
@@ -750,7 +799,8 @@ document { "local",
      }
      }
 
-document { "symbol",
+document {
+     Key => "symbol",
      Headline => "get a symbol",
      TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
@@ -769,13 +819,15 @@ document { "symbol",
      }
      }
 
-document { gcd,
+document {
+     Key => gcd,
      Headline => "greatest common divisor",
      TT "gcd(x,y,...)", " -- yields the greatest common divisor of ", TT "x", ", ", TT "y", ", ... .",
      SEEALSO "gcdCoefficients"
      }
 
-document { concatenate,
+document {
+     Key => concatenate,
      Headline => "join strings",
      TT "concatenate(s,t,...,u)", " -- yields the concatenation of the strings s,t,...,u.",
      PARA,
@@ -787,7 +839,8 @@ document { concatenate,
      SEEALSO { "String"} 
      }
 
-document { error,
+document {
+     Key => error,
      Headline => "deliver error message",
      TT "error s", " -- causes an error message s to be displayed.",
      PARA,
@@ -802,7 +855,8 @@ document { error,
      the error expression itself."
      }
 
-document { characters,
+document {
+     Key => characters,
      Headline => "get characters from a string",
      TT "characters s", " -- produces a list of the characters in the string s.",
      PARA,
@@ -813,7 +867,8 @@ document { characters,
      SEEALSO "String"
      }
 
-document { getenv,
+document {
+     Key => getenv,
      Headline => "get value of environment variable",
      TT "getenv s", " -- yields the value associated with the string s in the 
      environment.",
@@ -823,17 +878,20 @@ document { getenv,
 	  }
      }
 
-document { currentDirectory,
+document {
+     Key => currentDirectory,
      Headline => "current working directory",
      TT "currentDirectory()", " -- returns the name of the current directory,
      together with an extra slash (or appropriate path separator)."
      }
 
-document { symbol "~",
+document {
+     Key => symbol "~",
      Headline => "a unary postfix operator",
      }
 
-document { copy,
+document {
+     Key => copy,
      Headline => "copy an object",
      TT "copy x", " -- yields a copy of x.",
      PARA,
@@ -848,7 +906,8 @@ document { copy,
      SEEALSO { "newClass" }
      }
 
-document { mergePairs,
+document {
+     Key => mergePairs,
      Headline => "merge sorted lists of pairs",
      TT "mergePairs(x,y,f)", " -- merges sorted lists of pairs.",
      PARA,
@@ -866,54 +925,53 @@ document { mergePairs,
      SEEALSO { "merge" }
      }
 
-document { merge,
+document {
+     Key => merge,
      Headline => "merge hash tables",
-     Synopsis => {
-	  Usage => "z = merge(x,y,g)",
-	  Inputs => {
-	       "x" => {"a hash table"},
-	       "y" => {"a hash table"},
-	       "g" => {"a function of two variables to be used to combine a value of ", TT "x", " with a value of ", TT "y", " when the 
-	       	    corresponding keys coincide"
-		    } },
-	  Outputs => {
-	       "z" => { "a new hash table whose keys are the keys occuring in ", TT "x", "
-		    or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
-		    ", TT "g(x#k,y#k)", " is used instead." } } },
+     Usage => "z = merge(x,y,g)",
+     Inputs => {
+	  "x" => {"a hash table"},
+	  "y" => {"a hash table"},
+	  "g" => {"a function of two variables to be used to combine a value of ", TT "x", " with a value of ", TT "y", " when the 
+	       corresponding keys coincide"
+	       } },
+     Outputs => {
+	  "z" => { "a new hash table whose keys are the keys occuring in ", TT "x", "
+	       or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
+	       ", TT "g(x#k,y#k)", " is used instead." } },
      "If ", TT "x", " and ", TT "y", " have the same class and parent, then so will ", TT "z", ".",
      PARA "This function is useful for multiplying monomials or adding polynomials.",
      SEEALSO {"combine"}
      }
 
-document { combine,
+document {
+     Key => combine,
      Headline => "combine hash tables",
-     Synopsis => {
-	  Usage => "z = combine(x,y,f,g,h)",
-	  Inputs => {
-	       "x" => "a hash table",
-	       "y" => {"a hash table of the same class as ", TT "x"},
-	       "f" => { "a function of two variables to be used for combining a key
-		    of ", TT "x", " with a key of ", TT "y", " to make a new key
-		    for ", TT "z", "." },
-	       "g" => { "a function of two variables to be used for combining a value
-		    of ", TT "x", " with a value of ", TT "y", " to make a new value
-		    for ", TT "z", "." },
-	       "h" => { "a function of two variables to be used for combining two
-		    values returned by ", TT "g", " when the corresponding keys
-		    returned by ", TT "f", " turn out to be equal.  Its first argument
-		    will be the value accumulated so far, and its second argument will
-		    be a value just provided by ", TT "g", "."
-		    }
-	       },
-	  Outputs => {
-	       "z" => {
-		    "a new hash table, of the same class as ", TT "x", " and ", TT "y", ",
-		    containing the pair ", TT "f(p,q) => g(b,c)", "
-		    whenever ", TT "x", " contains the pair ", TT "p => b", "
-		    and ", TT "y", " contains the pair ", TT "q => c", ",
-		    except that ", TT "h", " is used to combine values when two keys
-		    coincide."
-		    }
+     Usage => "z = combine(x,y,f,g,h)",
+     Inputs => {
+	  "x" => "a hash table",
+	  "y" => {"a hash table of the same class as ", TT "x"},
+	  "f" => { "a function of two variables to be used for combining a key
+	       of ", TT "x", " with a key of ", TT "y", " to make a new key
+	       for ", TT "z", "." },
+	  "g" => { "a function of two variables to be used for combining a value
+	       of ", TT "x", " with a value of ", TT "y", " to make a new value
+	       for ", TT "z", "." },
+	  "h" => { "a function of two variables to be used for combining two
+	       values returned by ", TT "g", " when the corresponding keys
+	       returned by ", TT "f", " turn out to be equal.  Its first argument
+	       will be the value accumulated so far, and its second argument will
+	       be a value just provided by ", TT "g", "."
+	       }
+	  },
+     Outputs => {
+	  "z" => {
+	       "a new hash table, of the same class as ", TT "x", " and ", TT "y", ",
+	       containing the pair ", TT "f(p,q) => g(b,c)", "
+	       whenever ", TT "x", " contains the pair ", TT "p => b", "
+	       and ", TT "y", " contains the pair ", TT "q => c", ",
+	       except that ", TT "h", " is used to combine values when two keys
+	       coincide."
 	       }
 	  },
      "The function ", TT "f", " is applied to every pair ", TT "(p,q)", "
@@ -935,18 +993,18 @@ document { combine,
      PRE "     combine(x, y, monomialTimes, coeffTimes, coeffPlus)"
      }
 
-document { ancestor,
+document {
+     Key => ancestor,
      Headline => "whether one type is an ancestor of another",
-     Synopsis => {
-	  Usage => "ancestor(x,y)",
-	  Inputs => { "x" => Type => null, "y" => Type => null },
-	  Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
-	  },
+     Usage => "ancestor(x,y)",
+     Inputs => { "x" => Type => null, "y" => Type => null },
+     Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
      "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on.",
      SEEALSO "classes and types"
      }
 
-document { unique,
+document {
+     Key => unique,
      Headline => "eliminate duplicates from a list",
      TT "unique v", " -- yields the elements of the list ", TT "v", ", without duplicates.",
      PARA,
@@ -962,7 +1020,8 @@ document { unique,
      SEEALSO {"sort"}
      }
 
-document { Ring,
+document {
+     Key => Ring,
      Headline => "the class of all rings",
      SEEALSO "rings",
      "Common ways to make a ring:",
@@ -993,7 +1052,8 @@ document { Ring,
 	  },
      }
 
-document { (symbol _, ZZ, Ring),
+document {
+     Key => (symbol _, ZZ, Ring),
      TT "1_R", " -- provides the unit element of the ring ", TT "R", ".",
      BR, NOINDENT,
      TT "0_R", " -- provides the zero element of the ring ", TT "R", ".",
@@ -1001,7 +1061,8 @@ document { (symbol _, ZZ, Ring),
      TT "n_R", " -- promotes the integer ", TT "n", " to the ring ", TT "R", ".",
      }
 
-document { applyPairs,
+document {
+     Key => applyPairs,
      Headline => "apply a function to pairs in a hash table",
      TT "applyPairs(x,f)", " -- applies ", TT "f", " to each pair ", TT "(k,v)", " in the 
      hash table ", TT "x", " to produce a new hash table.",
@@ -1029,7 +1090,8 @@ document { applyPairs,
      }
      }
 
-document { applyKeys,
+document {
+     Key => applyKeys,
      Headline => "apply a function to each key in a hash table",
      TT "applyKeys(x,f)", " -- applies ", TT "f", " to each key ", TT "k", " in the 
      hash table ", TT "x", " to produce a new hash table.",
@@ -1047,7 +1109,8 @@ document { applyKeys,
      }
      }
 
-document { applyValues,
+document {
+     Key => applyValues,
      Headline => "apply a function to each value",
      TT "applyValues(x,f)", " -- applies ", TT "f", " to each value ", TT "v", " 
      in the hash table ", TT "x", " to produce a new hash table.",
@@ -1064,7 +1127,8 @@ document { applyValues,
      }
      }
 
-document { use,
+document {
+     Key => use,
      Headline => "install defaults",
      TT "use S", " -- installs certain defaults associated with S.",
      PARA,
@@ -1086,21 +1150,22 @@ document { use,
      SEEALSO "GlobalAssignHook"
      }
 
-document { symbol "=>",
+document {
+     Key => symbol "=>",
      Headline => "produce an Option",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
      }
 
-document { (symbol " ", RingElement, Array),
+document {
+     Key => (symbol " ", RingElement, Array),
      Headline => "substitution of variables",
-     Synopsis => {
-	  Usage => "f[a,b,c]",
-	  Inputs => {
-	       "f" => null,
-	       "[a,b,c]" => { "an array of ring elements" } },
-	  Outputs => {
-	       "r" => { "the result of replacing the variables in ", TT "f", " by the ring elements provided in brackets." } } },
+     Usage => "f[a,b,c]",
+     Inputs => {
+	  "f" => null,
+	  "[a,b,c]" => { "an array of ring elements" } },
+     Outputs => {
+	  "r" => { "the result of replacing the variables in ", TT "f", " by the ring elements provided in brackets." } } ,
      EXAMPLE {
 	  "R = QQ[x,y];",
 	  "f = x^3 + 99*y;",
@@ -1108,33 +1173,34 @@ document { (symbol " ", RingElement, Array),
 	  }
      }
      
-document { (symbol _, Symbol, Ring),
+document {
+     Key => (symbol _, Symbol, Ring),
      Headline => "generator of a ring with a given name",
-     Synopsis => {
-	  Usage => "x_R",
-	  Inputs => {
-	       "x" => null,
-	       "R" => null },
-	  Outputs => { { "the generator of the ring ", TT "R", " whose name is ", TT "x" } } } }
+     Usage => "x_R",
+     Inputs => {
+	  "x" => null,
+	  "R" => null },
+     Outputs => { { "the generator of the ring ", TT "R", " whose name is ", TT "x" } }
+     }
      
-document { (symbol _, IndexedVariable, Ring),
+document {
+     Key => (symbol _, IndexedVariable, Ring),
      Headline => "generator of a ring with a given name",
-     Synopsis => {
-	  Usage => "x_R",
-	  Inputs => {
-	       "x" => null,
-	       "R" => null },
-	  Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } } } }
+     Usage => "x_R",
+     Inputs => {
+	  "x" => null,
+	  "R" => null },
+     Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } }
+     }
      
-document { (symbol _, RingElement, Ring),
+document {
+     Key => (symbol _, RingElement, Ring),
      Headline => "generator of a ring with a given name",
-     Synopsis => {
-	  Usage => "x_R",
-	  Inputs => {
-	       "x" => null,
-	       "R" => null },
-	  Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } },
-	  }
+     Usage => "x_R",
+     Inputs => {
+	  "x" => null,
+	  "R" => null },
+     Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } }
      }
 
 -- Local Variables:

@@ -53,7 +53,7 @@ fixup TO         :=
 fixup TO2        := 
 fixup TOH        := identity
 fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
-fixup Function   := z -> z				       -- allow Function => f in Synopsis
+fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
      ln := lines s;
      if not ln#?1 then return s;
@@ -177,7 +177,7 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
 
-fSeqTO := fSeqInitialize(i -> NOCONTENTS TO i, i -> NOCONTENTS TO i)
+fSeqTO := fSeqInitialize(i -> TO i, i -> TO i)
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Sequence := (
@@ -243,9 +243,8 @@ file := null
 -- getting database records
 -----------------------------------------------------------------------------
 
-makeRecord := (opts,body) -> (opts,body)
-extractOptions := x -> x#0
-extractBody := x -> x#1
+extractOptions := x -> x
+extractBody := x -> x.Discussion
 getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
 getPackage := key -> scan(
      value \ values PackageDictionary,
@@ -259,21 +258,12 @@ getDoc := key -> (
 if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
 getOption := (key,tag) -> (
      s := getDoc key;
-     if s =!= null then s#0#tag)
-getOptionList := (key,tag) -> (
-     s := getDoc key;
-     r := getOption(s,tag);
-     if class r === List then r
-     else if class r === SEQ then toList r
-     else if r === null then {}
-     else {r})
-getHeadline := key -> (
+     if s =!= null then s#tag)
+etHeadline := key -> (
      d := getOption(key, Headline);
      if d =!= null then SEQ join( {"  --  ", SEQ d} ))
-getSynopsis := key -> getOption(key, Synopsis)
-getBody := key -> (
-     s := getDoc key;
-     if s =!= null then s#1)
+getSynopsis := key -> getDoc key
+getBody := key -> getOption(key,Discussion)
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
@@ -351,31 +341,57 @@ processExamples := (pkg,fkey,docBody) -> (
 -- 'document' function
 -----------------------------------------------------------------------------
 
+fixupList := x -> apply(select(x,t->t=!=null),fixup)
+
+fixupTable := new HashTable from {
+     	  Key => identity,
+	  Usage => fixup,
+	  Function => fixup,
+	  Inputs => fixupList,
+	  Outputs => fixupList,
+	  Results => fixupList,
+	  OldSynopsis => identity,				    -- old
+	  FileName => fixup,
+	  Headline => fixup,
+	  Discussion => extractExamples @@ hypertext,
+	  Menu => fixup
+	  }
+
 document = method(
+     SingleArgumentDispatch => true,
      Options => {
-	  Synopsis => null,
-	  OldSynopsis => null,
+     	  Key => null,
+	  Usage => null,
+	  Function => null,
+	  Inputs => {},
+	  Outputs => {},
+	  Results => {},
+	  OldSynopsis => null,				    -- old
 	  FileName => null,
 	  Headline => null,
+	  Discussion => null,				    -- the "body"
 	  Menu => null
 	  })
-document List := opts -> z -> document append(toSequence z,opts)
-document Thing := opts -> z -> (1:z,opts)
-document Sequence := opts -> z -> (
-     if #z === 0 then error "expected a nonempty list";
-     key := normalizeDocumentTag z#0;
-     pkg := packageTag key;
-     if pkg =!= currentPackage then error("documentation for \"",key,"\" belongs in package ",pkg," but current package is ",currentPackage);
+
+document List := opts -> z -> document prepend(opts,toSequence z)
+document Thing := opts -> z -> document (1:z,opts)
+document Sequence := opts -> args -> (
+     if opts.Key === null then error "missing Key";
+     key := normalizeDocumentTag opts.Key;
      verifyTag key;
-     body := drop(z,1);
      if not isDocumentableTag key then error("undocumentable item encountered");
      currentNodeName = formatDocumentTag key;
-     exampleBaseFilename = makeFileName(currentNodeName,getFileName body,currentPackage);
+     pkg := packageTag key;
+     if pkg =!= currentPackage then error("documentation for \"",key,"\" belongs in package ",pkg," but current package is ",currentPackage);
+     if #args > 0 then (
+	  if opts.Discussion =!= null then error "Discussion option provided, as well as items in the list";
+	  opts = merge(opts, new HashTable from {Discussion => toList args}, (x,y) -> y);
+	  );
+     exampleBaseFilename = makeFileName(currentNodeName,opts.FileName,currentPackage);
      if currentPackage === null then error "documentation encountered outside a package";
-     d := currentPackage#"documentation";
-     if d#?currentNodeName then duplicateDocWarning();
-     opts = applyValues(opts,fixup);
-     d#currentNodeName = makeRecord(opts,extractExamples hypertext body);
+     if currentPackage#"documentation"#?currentNodeName then duplicateDocWarning();
+     opts = applyPairs(opts,(key,val) -> (key,fixupTable#key val));
+     currentPackage#"documentation"#currentNodeName = opts;
      currentNodeName = null;
      )
 
@@ -446,7 +462,15 @@ evenMoreGeneral := key -> (
 
 headline = memoize (
      key -> (
-	  while ( d := getHeadline key ) === null and ( key = evenMoreGeneral key ) =!= null do null;
+	  while (
+	       d := getOption(key,Headline);
+	       d === null
+	       )
+	  and ( 
+	       key = evenMoreGeneral key;
+	       key =!= null
+	       )
+	  do null;
 	  d))
 
 moreGeneral := s -> (
@@ -480,8 +504,8 @@ justClass := X -> SEQ {"an instance of class ", TO X}
 
 OFCLASS = X -> (
      if parent X === Nothing then error "expected a class";
-     if X.?synonym then SEQ {indefiniteArticle X.synonym, NOCONTENTS TO2 {X, X.synonym}}
-     else SEQ {"an object of class ", NOCONTENTS TO X}
+     if X.?synonym then SEQ {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
+     else SEQ {"an object of class ", TO X}
      )
 
 makeDocBody := method(SingleArgumentDispatch => true)
@@ -515,16 +539,11 @@ type := S -> (
      	  }
      )
 
-protect Menu
-protect Usage
-protect Inputs
-protect Outputs
-protect Results
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
      if class x === Option and #x === 2 then (
 	  if istype x#0 then SEQ { OFCLASS x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
-	  else error "expected type to left of '=>' in Synopsis"
+	  else error "expected type to left of '=>'"
 	  )
      else x)
 alter := x -> (
@@ -533,11 +552,11 @@ alter := x -> (
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
 		    if istype x#1#0 then SEQ { TT x#0, ", ", OFCLASS x#1#0, if x#1#1 =!= "" then SEQ { ", ", x#1#1 } }
-		    else error "expected type to left of '=>' in Synopsis"
+		    else error "expected type to left of '=>'"
 		    )
 	       else SEQ { TT x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
 	       )
-	  else error "expected string or type to left of '=>' in Synopsis"
+	  else error "expected string or type to left of '=>'"
 	  )
      else SEQ x)
 
@@ -580,10 +599,10 @@ optargs := method(SingleArgumentDispatch => true)
 optargs Thing := x -> null
 optargs Function := f -> (
      o := options f;
-     if o =!= null then PARA { "Optional arguments :", NOCONTENTS smenu apply(keys o, t -> f => t)})
+     if o =!= null then PARA { "Optional arguments :", smenu apply(keys o, t -> f => t)})
 optargs Sequence := s -> (
      o := options s;
-     if o =!= null then PARA { "Optional arguments :", NOCONTENTS smenu apply(keys o, t -> s => t)}
+     if o =!= null then PARA { "Optional arguments :", smenu apply(keys o, t -> s => t)}
      else optargs s#0)
 
 optin0 := new OptionTable from {}
@@ -596,7 +615,7 @@ optin Sequence := s -> (
      o := options s;
      if o =!= null then o else optin s#0)
 
-synopsisOpts := new OptionTable from {
+synopsisOpts := new OptionTable from {			    -- old
      Usage => null,
      Function => null,
      Inputs => {},
@@ -608,25 +627,15 @@ synopsis Thing := f -> (
      -- we still want to put
      --	       moreGeneral s
      -- back somewhere....
-     SYN := getSynopsis f;
-     if SYN === null then SYN = {};
-     if class SYN =!= List then error "expected Synopsis to be a list";
-     SYN = select(toSequence SYN, i -> i =!= null);
-     (o,args) := override(synopsisOpts,SYN);
-     if #args > 0 then error "encountered non-option in Synopsis list";
-     usa := o#Usage;
-     fun := o#Function;			    -- yes, Function is not a symbol
-     inp := o#Inputs;
-     out := o#Outputs;
-     res := o#Results;
-     inp = select(inp, i -> i =!= null);
-     out = select(out, i -> i =!= null);
-     res = select(res, i -> i =!= null);
+     o := getSynopsis f;
+     if o === null then o = synopsisOpts;
+     res := o.Results;
+     inp := o.Inputs;
+     out := o.Outputs;
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
      if class inp === SEQ then inp = toList inp;
      ino := select(inp, x -> iso x);
      opt := optin f;
-     scan(ino, o -> if not opt#?(o#0) then error(o#0," is not an optional argument for this function"));
      ino = new HashTable from toList ino;
      ino = apply(sort pairs opt, (tag,dft) -> (
 	       if ino#?tag 
@@ -653,21 +662,21 @@ synopsis Thing := f -> (
 	  );
      inp = alter \ inp;
      out = alter \ out;
-     if #SYN > 0 or #inp > 0 or #ino > 0 or #out > 0 then (
+     if #inp > 0 or #ino > 0 or #out > 0 then (
 	  SEQ {						    -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
-     	       	    if usa#?0 then PARA { "Usage: ", if class usa === String then TT usa else usa},
-		    if fun =!= null then SEQ { "Function: ", NOCONTENTS TO fun }
+     	       	    if o.Usage =!= null then PARA { "Usage: ", if class o.Usage === String then TT o.Usage else o.Usage},
+		    if o#Function =!= null then SEQ { "Function: ", TO o#Function }
 		    else if class f === Sequence and f#?0 then (
 	       		 if class f#0 === Function 
-			 then SEQ { "Function: ", NOCONTENTS TO f#0 }
-			 else SEQ { "Operator: ", NOCONTENTS TO f#0 }
+			 then SEQ { "Function: ", TO f#0 }
+			 else SEQ { "Operator: ", TO f#0 }
 			 ),
-		    if inp#?0 then PARA { "Inputs:", NOCONTENTS UL inp },
-		    if ino#?0 then PARA { "Optional inputs:", NOCONTENTS UL ino },
-		    if out#?0 then PARA { "Outputs:", NOCONTENTS UL out },
-		    if res#?0 then PARA { "Results:", NOCONTENTS UL res }
+		    if inp#?0 then PARA { "Inputs:", UL inp },
+		    if ino#?0 then PARA { "Optional inputs:", UL ino },
+		    if out#?0 then PARA { "Outputs:", UL out },
+		    if res#?0 then PARA { "Results:", UL res }
 		    }
 	       }
 	  ))
@@ -678,7 +687,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, NOCONTENTS smenu b } )
+     if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, smenu b } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 briefDocumentation = method(SingleArgumentDispatch => true)
@@ -777,14 +786,14 @@ documentationValue(Symbol,Type) := (s,X) -> (
      SEQ {
 	  if #b > 0 then SEQ { 
 	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
-	       NOCONTENTS smenu b},
-	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", NOCONTENTS smenu a },
-	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", NOCONTENTS smenu c},
-	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", NOCONTENTS smenu e},
+	       smenu b},
+	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", smenu a },
+	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", smenu c},
+	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", smenu e},
 	  })
 documentationValue(Symbol,HashTable) := (s,x) -> (
      c := documentableMethods x;
-     SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", NOCONTENTS smenu c}})
+     SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", smenu c}})
 documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
 documentationValue(Symbol,Package) := (s,pkg) -> (
      e := pkg#"exported symbols";
@@ -823,8 +832,8 @@ documentation Symbol := S -> (
 	  synopsis S,
 	  makeDocBody(S),
 	  op S,
-	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", NOCONTENTS smenu a},
-	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", NOCONTENTS smenu b},
+	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", smenu a},
+	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", smenu b},
      	  documentationValue(S,value S),
 	  type S
      	  }
@@ -841,7 +850,7 @@ documentation Sequence := s -> (
 	       synopsis s,
 	       makeDocBody(s),
 	       PARA BOLD "See also",
-	       NOCONTENTS UL {
+	       UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
@@ -897,9 +906,9 @@ TEST List := y -> TEST \ y
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA BOLD "See also", NOCONTENTS UL (TO \ v) })
+     if #v > 0 then SEQ { PARA BOLD "See also", UL (TO \ v) })
 
-CAVEAT = v -> SEQ { PARA BOLD "Caveat", NOCONTENTS UL { SEQ v } }
+CAVEAT = v -> SEQ { PARA BOLD "Caveat", UL { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1192,9 +1201,6 @@ tex ANCHOR := x -> (
 	  ///\special{html:</A>}///
 	  )
      )
-
-html NOCONTENTS := x -> concatenate apply(x,html)
-net NOCONTENTS := x -> horizontalJoin apply(x,net)
 
 html TEX := x -> x#0
 

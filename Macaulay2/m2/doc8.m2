@@ -1,20 +1,23 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { pdim,
+document {
+     Key => pdim,
      Headline => "calculate the projective dimension",
      TT "pdim M", " -- calculate the projective dimension of a module ", TT "M", ".",
      PARA,
      "For now, the method is to measure the length of a projective resolution."
      }
 
-document { (symbol /, Module, Module),
+document {
+     Key => (symbol /, Module, Module),
      Headline => "quotient module",
      TT "M/N", " -- computes the quotient module ", TT "M/N", ".",
      PARA,
      "The modules should be submodules of the same module."
      }
 
-document { (symbol /, Module, Ideal),
+document {
+     Key => (symbol /, Module, Ideal),
      Headline => "quotient module by an ideal",
      TT "M/I", " -- computes the quotient module ", TT "M/IM", ",
      where ", TT "M", " is a module and ", TT "I", " is an ideal.",
@@ -22,7 +25,8 @@ document { (symbol /, Module, Ideal),
      "The module and ideal should belong to the same ring."
      }
 
-document { (symbol /, Ideal, Ideal),
+document {
+     Key => (symbol /, Ideal, Ideal),
      Headline => "quotient module",
      TT "I/J", " -- produces the quotient module ", TT "(I+J)/J", ", where
      ", TT "I", " and ", TT "J", " are ideals in a ring.",
@@ -30,18 +34,21 @@ document { (symbol /, Ideal, Ideal),
      SEEALSO "Module"
      }
 
-document { symbol ann,
+document {
+     Key => symbol ann,
      Headline => "the annihilator ideal",
      TT "ann", " -- a synonym for ", TO "annihilator", "."
      }
 
-document { symbol annihilator,
+document {
+     Key => symbol annihilator,
      Headline => "the annihilator ideal",
      TT "annihilator M", " -- produce the annihilator ideal of a 
      module, ideal, ring element, or coherent sheaf."
      }
 
-document { (annihilator, Module),
+document {
+     Key => (annihilator, Module),
      OldSynopsis => {
 	  "I = annihilator M",
 	  "M" => "a module, or an ideal or ring element",
@@ -68,14 +75,16 @@ document { (annihilator, Module),
      SEEALSO {(symbol :, Module, Module), (quotient, Module, Module)}
      }
 
-document { (symbol _,Module,ZZ),
+document {
+     Key => (symbol _,Module,ZZ),
      Headline => "get a generator",
      TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",
      PARA,
      EXAMPLE "(ZZ^5)_2"
      }
 
-document { (symbol ^,Module,Array),
+document {
+     Key => (symbol ^,Module,Array),
      Headline => "projection onto some factors of a direct sum module",
      TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",
      PARA,
@@ -92,7 +101,8 @@ document { (symbol ^,Module,Array),
      SEEALSO {(symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
      }
 
-document { (symbol _,Module,Array),
+document {
+     Key => (symbol _,Module,Array),
      Headline => "get inclusion map into direct sum",
      TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
      PARA,
@@ -108,7 +118,8 @@ document { (symbol _,Module,Array),
 	  },
      SEEALSO {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
      }
-document { (symbol ^, Module, List),
+document {
+     Key => (symbol ^, Module, List),
      Headline => "projection map from a free module",
      TT "M^{i,j,k,...}", " -- provides the projection map from a free module
      ", TT "M", " to the free module corresponding to the basis vectors whose
@@ -118,7 +129,8 @@ document { (symbol ^, Module, List),
      SEEALSO {"_", Module, List}
      }
 
-document { (symbol _, Module, List),
+document {
+     Key => (symbol _, Module, List),
      Headline => "map from free module to some generators",
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
      ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
@@ -128,7 +140,8 @@ document { (symbol _, Module, List),
      SEEALSO {"^", Module, List}
      }
 
-document { (symbol _, Ideal, List),
+document {
+     Key => (symbol _, Ideal, List),
      Headline => "map from free module to some generators",
      OldSynopsis => {
 	  "f = I_{i,j,k,...}",
@@ -148,7 +161,8 @@ document { (symbol _, Ideal, List),
      SEEALSO { (module, Ideal) }
      }
 
-document { (basis,List,Module),
+document {
+     Key => (basis,List,Module),
      Headline => "basis of the part of a module of a certain degree",
      OldSynopsis => {
 	  "f = basis(i,M)",
@@ -169,7 +183,8 @@ document { (basis,List,Module),
 	  }
      }
 
-document { (basis,Module),
+document {
+     Key => (basis,Module),
      Headline => "basis of a module",
      OldSynopsis => {
 	  "f = basis M",
@@ -185,7 +200,8 @@ document { (basis,Module),
 	  }
      }
 
-document { (basis,Ring),
+document {
+     Key => (basis,Ring),
      Headline => "basis of a ring",
      OldSynopsis => {
 	  "f = basis R",
@@ -201,7 +217,8 @@ document { (basis,Ring),
 	  }
      }
 
-document { truncate,
+document {
+     Key => truncate,
      Headline => "truncate the module at a specified degree",
      TT "truncate", " (i,M) -- yields the submodule of M consisting of all 
      elements of degrees >= i.  If i is a multi-degree, then this yields the
@@ -244,7 +261,8 @@ assert ( rank cokernel f == 0 )
 assert(R^{0,0} == R^2)
 assert(R^{0,0} != R^{0,1})
 "
-document { GroebnerBasis,
+document {
+     Key => GroebnerBasis,
      Headline => "the class of all Groebner bases",
      "A Groebner basis in Macaulay 2 consists of a Groebner basis
      computation, and several associated matrices. Normally you don't
@@ -254,26 +272,31 @@ document { GroebnerBasis,
      ", TO "computing Groebner bases", "."
      }
 
-document { (summary, GroebnerBasis),
+document {
+     Key => (summary, GroebnerBasis),
      Headline => "display some statistics about the computation"
      }
 
-document { (generators, GroebnerBasis),
+document {
+     Key => (generators, GroebnerBasis),
      Headline => "the Groebner basis matrix",
      TT "generators g", " -- returns a matrix whose columns are the
      generators of the Groebner basis."
      }
 
-document { (mingens, GroebnerBasis),
+document {
+     Key => (mingens, GroebnerBasis),
      Headline => "a matrix whose columns are minimal generators of the submodule",
      }
 
-document { returnCode,
+document {
+     Key => returnCode,
      TT "returnCode", " --  a key for a ", TO "GroebnerBasis", " under which is
      stored the return code from the engine for the computation."
      }
 
-document { symbol gbTrace,
+document {
+     Key => symbol gbTrace,
      Headline => "provide tracing output during various computations in the 	 engine.",
      TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
      level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
@@ -296,7 +319,8 @@ document { symbol gbTrace,
      "The value returned is the old tracing level."
      }
      
-document { gb,
+document {
+     Key => gb,
      Headline => "compute a Groebner basis",
      TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " ", TT "f", ".",
      PARA,
@@ -308,13 +332,15 @@ document { gb,
      ", TT "gb", " command with the same options."
      }
 
-document { StopBeforeComputation,
+document {
+     Key => StopBeforeComputation,
      Headline => "initialize but do not begin the computation",
      TT "StopBeforeComputation", " -- an option used by certain functions to cause
      the computation to be initialized but not begun."
      }
 
-document { (gb,StopBeforeComputation),
+document {
+     Key => (gb,StopBeforeComputation),
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
@@ -324,14 +350,16 @@ document { (gb,StopBeforeComputation),
      computation."
      }
 
-document { DegreeLimit,
+document {
+     Key => DegreeLimit,
      Headline => "compute up to a certain degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      various functions which specifies that the computation should halt after dealing 
      with degree n."
      }
 
-document { (gb,DegreeLimit), 
+document {
+     Key => (gb,DegreeLimit), 
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should halt after 
      dealing S-polynomials up to degree ", TT "n", ".",
@@ -341,7 +369,8 @@ document { (gb,DegreeLimit),
      "For an example, see ", TO "computing Groebner bases", "."
      }
 
-document { BasisElementLimit, 
+document {
+     Key => BasisElementLimit, 
      Headline => "stop when this number of basis elements is obtained",
      TT "BasisElementLimit", " -- keyword for an optional argument used with
      ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
@@ -350,14 +379,16 @@ document { BasisElementLimit,
      SEEALSO "computing Groebner bases"
      }
 
-document { SyzygyLimit,
+document {
+     Key => SyzygyLimit,
      Headline => "stop when this number of syzygies is obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument which specifies
      that the computation should stop after a certain number of syzygies 
      have computed.",
      }
 
-document { (gb,SyzygyLimit), 
+document {
+     Key => (gb,SyzygyLimit), 
      Headline => "stop when this number of syzygies is obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop
@@ -378,7 +409,8 @@ document { (gb,SyzygyLimit),
 	  },
      }
 
-document { PairLimit,
+document {
+     Key => PairLimit,
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      certain functions which specifies that the
@@ -386,7 +418,8 @@ document { PairLimit,
      have been reduced."
      }
 
-document { (gb,PairLimit), 
+document {
+     Key => (gb,PairLimit), 
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the
@@ -401,7 +434,8 @@ document { (gb,PairLimit),
 	  }
      }
 
-document { CodimensionLimit,
+document {
+     Key => CodimensionLimit,
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      certain functions which specifies that the computation should stop when
@@ -419,7 +453,8 @@ document { CodimensionLimit,
 	  }
      }
 
-document { (gb,CodimensionLimit), 
+document {
+     Key => (gb,CodimensionLimit), 
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop when
@@ -433,7 +468,8 @@ document { (gb,CodimensionLimit),
      codimension of the original ideal."
      }
 
-document { StopWithMinimalGenerators,
+document {
+     Key => StopWithMinimalGenerators,
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators", " -- an option used with certain
      functions to specify that the computation should stop as soon as a
@@ -448,7 +484,8 @@ document { StopWithMinimalGenerators,
 	  }
      }
 
-document { (gb,StopWithMinimalGenerators), 
+document {
+     Key => (gb,StopWithMinimalGenerators), 
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
      with ", TO "gb", ", which, if the value provided is ", TT "true", "
@@ -465,19 +502,21 @@ document { (gb,StopWithMinimalGenerators),
      instead."
      }
 
-document { Strategy,
+document {
+     Key => Strategy,
      Headline => "specify a computational strategy",
      TT "Strategy => v", " -- an optional argument used with various routines 
      to suggest a strategy for efficient computation."
      }
 
-document { (gb,Strategy), 
+document {
+     Key => (gb,Strategy), 
      Headline => "specify the strategy used to compute Groebner bases",
      TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     NOCONTENTS UL {
+     UL {
 	  TO "Primary",
      	  TO "Homogeneous",
 	  TO "Inhomogeneous",
@@ -486,7 +525,8 @@ document { (gb,Strategy),
 	  }
      }
 
-document { Sort,
+document {
+     Key => Sort,
      TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "Indicates that the Groebner basis should be sorted by lead term; usually
@@ -494,7 +534,8 @@ document { Sort,
      running time can change either for the good or bad."
      }
 
-document { Primary,
+document {
+     Key => Primary,
      TT "Primary", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "This is a new Groebner basis algorithm, that works in the homogeneous and
@@ -502,21 +543,24 @@ document { Primary,
      feature is currently under development."
      }
 
-document { Homogeneous,
+document {
+     Key => Homogeneous,
      TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "This is an alternate Groebner basis algorithm which can be used if the submodule
      is homogeneous, and the ring is a (quotient of) a polynomial ring over a field."
      }
 
-document { Inhomogeneous,
+document {
+     Key => Inhomogeneous,
      TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "This is the default Groebner basis algorithm used if the submodule is
      inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field."
      }
 
-document { LongPolynomial,
+document {
+     Key => LongPolynomial,
      TT "LongPolynomial", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "Indicates that during computation of a Groebner basis, the reduction
@@ -526,7 +570,8 @@ document { LongPolynomial,
      successfully by Thomas Yan, graduate student in CS at Cornell."
      }
 
-document { Syzygies, 
+document {
+     Key => Syzygies, 
      Headline => "whether to collect syzygies",
      TT "Syzygies", " -- keyword for an optional argument used with
      ", TO "gb", " which indicates whether the syzygies should be
@@ -536,13 +581,15 @@ document { Syzygies,
      any value provided by the user with the value ", TT "true", "."
      }
 
-document { ChangeMatrix,
+document {
+     Key => ChangeMatrix,
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix", " -- a keyword for optional arguments to certain functions
      which concern a change of basis matrix."
      }
 
-document { (gb,ChangeMatrix), 
+document {
+     Key => (gb,ChangeMatrix), 
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
      specifies whether to compute the change of basis matrix from the basis to
@@ -551,7 +598,8 @@ document { (gb,ChangeMatrix),
      "Intended for internal use only."
      }
      
-document { SyzygyRows, 
+document {
+     Key => SyzygyRows, 
      Headline => "the number rows of the syzygy matrix to collect",
      TT "SyzygyRows", " -- keyword for an optional argument used with
      ", TO "gb", " and ", TO "syz", ", which specifies how many rows of 
@@ -560,7 +608,8 @@ document { SyzygyRows,
      "This option is for internal use only."
      }
 
-document { getChangeMatrix,
+document {
+     Key => getChangeMatrix,
      Headline => "get the change of basis matrix",
      TT "getChangeMatrix G", " -- for a Groebner basis G, return the change of
      basis matrix from the Groebner basis to another generating set, 
@@ -570,7 +619,8 @@ document { getChangeMatrix,
      to enable the computation of the change of basis matrix."
      }
 
-document { forceGB,
+document {
+     Key => forceGB,
      Headline => "declare that the columns of a matrix are a Groebner basis",
      TT "forceGB f", " -- declares that the columns of the matrix ", TT "f", "
      constitute a Groebner basis, and returns a Groebner basis object
@@ -580,20 +630,23 @@ document { forceGB,
      ", TO "gb", " somehow."
      }
 
-document { (forceGB,ChangeMatrix),
+document {
+     Key => (forceGB,ChangeMatrix),
      Headline => "set the change of basis matrix",
      TT "ChangeMatrix => p", " -- an optional argument for ", TO "forceGB", " which
      which specifies that the change of basis matrix is ", TT "p", "."
      }
 
-document { MinimalMatrix,
+document {
+     Key => MinimalMatrix,
      Headline => "set the matrix of minimal generators",
      TT "MinimalMatrix => g", " -- an option for ", TO "forceGB", " which
      specifies that the columns of g are minimal generators for the submodule
      generated by the Groebner basis."
      }
 
-document { SyzygyMatrix,
+document {
+     Key => SyzygyMatrix,
      Headline => "set the syzygy matrix",
      TT "SyzygyMatrix => h", " -- an option for ", TO "forceGB", " which
      specifies that the columns of h are the syzygies for the Groebner basis."
@@ -627,7 +680,8 @@ v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
 assert (v  === {0, 0, 8, 20, 25, 26, 26} )
 "
 
-document { mingens,
+document {
+     Key => mingens,
      Headline => "returns a minimal generatoring set of a graded module",
      TT "mingens M", " -- returns a minimal generating set for the module ", TT "M", ",
      represented as a matrix whose target is the ambient free module of ", TT "M", ".",
@@ -642,7 +696,8 @@ h = matrix {{1,0,0},{0,c,d}}
 M = subquotient(h,f)
 assert( mingens M == matrix (R, {{1},{0}}))
 "
-document { trim,
+document {
+     Key => trim,
      Headline => "simplify the presentation",
      TT "trim M", " -- produce a module isomorphic to the module M obtained
      by replacing its generators by a minimal set of generators, and doing
@@ -665,7 +720,8 @@ M = subquotient(h,f)
 assert( generators trim M == matrix (R, {{1},{0}}))
 "
 
-document { (syz,StopWithMinimalGenerators),
+document {
+     Key => (syz,StopWithMinimalGenerators),
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators => true", " -- an optional argument used 
      with ", TO "syz", " that specifies that the computation should stop as soon as a
@@ -676,7 +732,8 @@ document { (syz,StopWithMinimalGenerators),
      ", TO (gb,StopWithMinimalGenerators), " for details."
      }
 
-document { (syz,Strategy),
+document {
+     Key => (syz,Strategy),
      Headline => "specify the strategy used to compute the Groebner basis",
      TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
      be used to specify the strategy to be used in the computation.",
@@ -685,7 +742,8 @@ document { (syz,Strategy),
      documentation there for details."
      }
 
-document { (syz,CodimensionLimit),
+document {
+     Key => (syz,CodimensionLimit),
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "syz", " which specifies that the computation should stop when
@@ -699,11 +757,13 @@ document { (syz,CodimensionLimit),
      codimension of the original ideal.",
      }
 
-document { syz,
+document {
+     Key => syz,
      Headline => "the syzygy matrix"
      }
 
-document { (syz, GroebnerBasis),
+document {
+     Key => (syz, GroebnerBasis),
      Headline => "retrieve the syzygy matrix",
      OldSynopsis => {
 	  "f = syz G",
@@ -715,7 +775,8 @@ document { (syz, GroebnerBasis),
      high enough degree.",
      }
 
-document { (syz, Matrix),
+document {
+     Key => (syz, Matrix),
      Headline => "compute the syzygy matrix",
      OldSynopsis => {
 	  "f = syz h",
@@ -725,7 +786,8 @@ document { (syz, Matrix),
 	  }
      }
 
-document { (syz,StopBeforeComputation),
+document {
+     Key => (syz,StopBeforeComputation),
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
@@ -735,13 +797,15 @@ document { (syz,StopBeforeComputation),
      computation."
      }
 
-document { (syz,ChangeMatrix),
+document {
+     Key => (syz,ChangeMatrix),
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "syz", " which
      specifies whether to compute the change of basis matrix."
      }
 
-document { modulo,
+document {
+     Key => modulo,
      Headline => "find the pre-image of a map (low level version)",
      "modulo(f,g) - given homomorphisms ", TT "f", " and ", TT "g", " of free 
      modules with the same target, produces a homomorphism of free modules whose 
@@ -751,7 +815,8 @@ document { modulo,
      "If ", TT "f", " is null, then it's taken to be the identity.  If ", TT "g", " is null, it's
      taken to be zero."
      }
-document { (symbol //, Matrix, Matrix),
+document {
+     Key => (symbol //, Matrix, Matrix),
      Headline => "factor a map through another",
      TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
      such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
@@ -777,7 +842,8 @@ assert isWellDefined g
 assert not isWellDefined map(R^1,cokernel matrix {{a}})
 "
 
-document { (symbol //, Matrix, RingElement),
+document {
+     Key => (symbol //, Matrix, RingElement),
      Headline => "factor a map through a multiplication map",
      TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
      such that f - r*h is the reduction of f modulo a Groebner basis 
@@ -785,19 +851,22 @@ document { (symbol //, Matrix, RingElement),
      SEEALSO "%"
      } 
 
-document { (symbol %, Matrix, Matrix),
+document {
+     Key => (symbol %, Matrix, Matrix),
      Headline => "find the normal form modulo the image of a map",
      TT "f % g", " -- yields the reduction of the columns of the matrix
      ", TT "f", " modulo a Groebner basis of the matrix ", TT "g", "."
      }
 
-document { (symbol %, Matrix, RingElement),
+document {
+     Key => (symbol %, Matrix, RingElement),
      Headline => "reduce the columns modulo of a ring element",
      TT "f % r", " -- yields the reduction of the columns of the matrix
      ", TT "f", " modulo the ring element ", TT "r", "."
      }
 
-document { complement,
+document {
+     Key => complement,
      Headline => "find the minimal generators for cokernel of a matrix (low level form)",
      TT "complement f", " -- for a matrix ", TT "f", ", return a map ", TT "g", " with the same
      target whose columns are minimal generators for the cokernel of ", TT "f", ".",
@@ -832,7 +901,8 @@ assert ( so h1 == so matrix {{
 	       }} )
 "
 
-document { index,
+document {
+     Key => index,
      Headline => "yields the numeric index of a ring variable",
     TT "index v", " -- yields the numeric index of the variable 'v' in its ring.
     Variables are indexed starting at 0, and ending at n-1, where n is the number
@@ -861,7 +931,8 @@ TEST "
     assert( index e == 3 )
 "
 
-document { homogenize,
+document {
+     Key => homogenize,
      Headline => "homogenize with respect to a variable",
      TT "homogenize(m,v)", " -- homogenize the ring element, vector,
      matrix, or module ", TT "m", " using the variable ", TT "v", " in the ring of ", TT "m", ".",
@@ -909,7 +980,8 @@ f = c^2 - 1 + b^2 - b
 assert(homogenize(f,a) == c^2)
 "
 
-document { terms,
+document {
+     Key => terms,
      Headline => "provide a list of terms of a polynomial",
      TT "terms f", " -- provide a list of terms of a polynomial.",
      PARA,
@@ -920,24 +992,28 @@ document { terms,
      SEEALSO "coefficients"
      }
 
-document { Ascending,
+document {
+     Key => Ascending,
      TT "Ascending", " -- a symbol used as a value for optional
      arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
      }
 
-document { Descending,
+document {
+     Key => Descending,
      Headline => "specify descending order",
      TT "Descending", " -- a symbol used as a value for optional
      arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
      }
 
-document { DegreeOrder,
+document {
+     Key => DegreeOrder,
      Headline => "sort primarily by degree",
      TT "DegreeOrder", " -- an optional argument for use with certain
      functions, used to specify sort order."
      }
 
-document { (sortColumns,DegreeOrder),
+document {
+     Key => (sortColumns,DegreeOrder),
      Headline => "sort primarily by degree",
      TT "DegreeOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",
@@ -946,7 +1022,8 @@ document { (sortColumns,DegreeOrder),
      ", TO "Descending", ", and ", TO "null", "."
      }
 
-document { (sortColumns,MonomialOrder),
+document {
+     Key => (sortColumns,MonomialOrder),
      Headline => "specify Ascending or Descending sort order",
      TT "MonomialOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",
@@ -955,7 +1032,8 @@ document { (sortColumns,MonomialOrder),
      ", TO "Descending", "."
      }
 
-document { sortColumns,
+document {
+     Key => sortColumns,
      Headline => "sort the columns of a matrix",
      TT "sortColumns f", " -- sorts the columns of a matrix, returning a list of integers
      describing the resulting permutation.",
@@ -974,7 +1052,8 @@ document { sortColumns,
 	  },
      }
 
-document { selectInSubring,
+document {
+     Key => selectInSubring,
      Headline => "select columns in a subring",
      TT "selectInSubring(i,m)", " -- Form the submatrix of the matrix 'm' consisting of those
      columns which lie in the subring generated by all but the first 'i' parts of the
@@ -1005,7 +1084,8 @@ document { selectInSubring,
      SEEALSO "monomial orderings"
      }
 
-document { divideByVariable,
+document {
+     Key => divideByVariable,
      Headline => "divide all columns by a (power of a) variable",
      TT "divideByVariable(m,v)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible.",
@@ -1026,13 +1106,15 @@ document { divideByVariable,
      "We may eliminate this routine."
      }
 
-document { compress,
+document {
+     Key => compress,
      Headline => "remove columns which are zero",
      TT "compress m", " -- provides the matrix obtained from the matrix ", TT "m", "
      by removing the columns which are zero."
      }
 
-document { newCoordinateSystem,
+document {
+     Key => newCoordinateSystem,
      Headline => "change variables",
      TT "newCoordinateSystem(S,m)", " -- takes a one-rowed matrix ", TT "m", " of
      independent linear forms over a ring ", TT "R", " and returns a list 
@@ -1050,7 +1132,8 @@ document { newCoordinateSystem,
 	  },
      }
 
-document { PrimitiveElement,
+document {
+     Key => PrimitiveElement,
      Headline => "specify a primitive element",
      TT "PrimitiveElement => g", " -- an option used with ", TO "GF", ".",
      PARA,
@@ -1059,23 +1142,28 @@ document { PrimitiveElement,
      ", TO "GF", " should search for a primitive element."
      }
 
-document { FindOne,
+document {
+     Key => FindOne,
      Headline => "find a primitive element",
      TT "FindOne", " -- a value for the option ", TO "PrimitiveElement", "
      to ", TO "GF", " which specifies that ", TO "GF", " should search 
      for a primitive element."
      }
 
-document { Variable,
+document {
+     Key => Variable,
      Headline => "specify a name for a variable",
      -- it is also used with integralClosure, but we should automate that
      TT "Variable => x", " -- an option used with ", TO "GF", ", to specify
      a symbol to be used as a name for the generator of the Galois field."
      }
 
-document { GaloisField, Headline => "the class of all Galois fields" }
-document { GF, Headline => "make a finite field" }
-document { (GF,Ring), Headline => "make a finite field from a ring",
+document {
+     Key => GaloisField, Headline => "the class of all Galois fields" }
+document {
+     Key => GF, Headline => "make a finite field" }
+document {
+     Key => (GF,Ring), Headline => "make a finite field from a ring",
      TT "GF R", " -- make a Galois field from a quotient ring R which happens
      to be isomorphic to a finite field.",
      EXAMPLE {
@@ -1083,7 +1171,8 @@ document { (GF,Ring), Headline => "make a finite field from a ring",
 	  "t+t^2"
 	  }
      }
-document { (GF,ZZ,ZZ), Headline => "make a finite field of a given prime power order",
+document {
+     Key => (GF,ZZ,ZZ), Headline => "make a finite field of a given prime power order",
      TT "GF(p,n)", " -- make a Galois field with ", TT "p^n", " elements, where 
      ", TT "p", " is a prime.",
      EXAMPLE {
@@ -1091,7 +1180,8 @@ document { (GF,ZZ,ZZ), Headline => "make a finite field of a given prime power o
 	  "x+x^2"
 	  }
      }
-document { (GF,ZZ), Headline => "make a finite field of a given order",
+document {
+     Key => (GF,ZZ), Headline => "make a finite field of a given order",
      TT "GF(q)", " -- make a Galois field with ", TT "q", " elements, where 
      ", TT "q", " is a power of a prime.",
      EXAMPLE {
@@ -1107,7 +1197,8 @@ assert isPrime (t^2+t+1)
 assert (not isPrime (t^2+1))
 "
 
-document { isPrimitive, Headline => "whether an element is a primitive element of a finite field",
+document {
+     Key => isPrimitive, Headline => "whether an element is a primitive element of a finite field",
      TT "isPrimitive(f)", " -- Given an element ", TT "f", " in a quotient of a polynomial ring ",
      TT "R", " over a finite field ", TT "K", "which is itself a finite field,
       with the ring being finite dimensional over the field,
@@ -1122,7 +1213,8 @@ assert isPrimitive (t-1)
 assert (not isPrimitive 0_R)
 "
 
-document { order,
+document {
+     Key => order,
      Headline => "a key used internally ",
      TT "order", " -- used as a key inside finite fields under which is
      stored the number of elements in the field.  Intended for internal use only",
@@ -1130,13 +1222,15 @@ document { order,
      SEEALSO "GaloisField"
      }
 
-document { isField, Headline => "whether something is a field",
+document {
+     Key => isField, Headline => "whether something is a field",
      "No computation is done -- the question is whether the ring was
      explicitly constructed a field.",
      SEEALSO "toField"
      }
 
-document { toField, Headline => "declare that a ring is a field",
+document {
+     Key => toField, Headline => "declare that a ring is a field",
      OldSynopsis => {
 	  "toField R",
 	  "R" => "a ring",
@@ -1157,7 +1251,8 @@ document { toField, Headline => "declare that a ring is a field",
      whether a ring is a field."
      }
 
-document { getNonUnit, Headline => "retrieve a previously discovered non-unit",
+document {
+     Key => getNonUnit, Headline => "retrieve a previously discovered non-unit",
      OldSynopsis => {
 	  "r = getNonUnit R",
 	  "R" => "a ring in which division by a non-unit has been attempted",
@@ -1168,7 +1263,8 @@ document { getNonUnit, Headline => "retrieve a previously discovered non-unit",
      SEEALSO { "toField", "getZeroDivisor" }
      }
 
-document { getZeroDivisor, Headline => "retrieve a previously discovered zero divisor",
+document {
+     Key => getZeroDivisor, Headline => "retrieve a previously discovered zero divisor",
      OldSynopsis => {
 	  "r = getZeroDivisor R",
 	  "R" => "a ring in which a zero-divisor has been found",
@@ -1177,11 +1273,13 @@ document { getZeroDivisor, Headline => "retrieve a previously discovered zero di
      SEEALSO { "toField", "getNonUnit" }
      }
 
-document { isAffineRing, Headline => "whether something is an affine ring",
+document {
+     Key => isAffineRing, Headline => "whether something is an affine ring",
      "An affine ring is a quotient of a polynomial ring over a field."
      }
 
-document { RingMap,
+document {
+     Key => RingMap,
      Headline => "the class of all ring maps",
      "Common ways to make a ring map:",
      UL {
@@ -1209,7 +1307,8 @@ document { RingMap,
 	  },
      }
 
-document { (symbol **, RingMap, Module),
+document {
+     Key => (symbol **, RingMap, Module),
      OldSynopsis => {
 	  "N = f ** M",
 	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
@@ -1226,7 +1325,8 @@ document { (symbol **, RingMap, Module),
      SEEALSO { (symbol " ", RingMap, Module) }
      }
 
-document { (symbol " ", RingMap, Module),
+document {
+     Key => (symbol " ", RingMap, Module),
      OldSynopsis => {
 	  "N = f M",
 	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
@@ -1242,13 +1342,15 @@ document { (symbol " ", RingMap, Module),
      SEEALSO { (symbol " ", RingMap, Module) }
      }
 
-document { DegreeMap,
+document {
+     Key => DegreeMap,
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map.",
      SEEALSO { (map, DegreeMap) }
      }
 
-document { (map,DegreeMap),
+document {
+     Key => (map,DegreeMap),
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map, to specify a function that transforms degrees
      of elements in the source ring to degrees of elements in the
@@ -1271,7 +1373,8 @@ document { (map,DegreeMap),
      will be provided automatically."
      }
 
-document { (map,Ring,Ring,Matrix),
+document {
+     Key => (map,Ring,Ring,Matrix),
      Headline => "make a ring map",
      OldSynopsis => {
 	  "f = map(R,S,m)",
@@ -1310,7 +1413,8 @@ document { (map,Ring,Ring,Matrix),
 	  }
      }
 
-document { (map,Ring,Ring,List),
+document {
+     Key => (map,Ring,Ring,List),
      Headline => "make a ring map",
      OldSynopsis => {
 	  "f = map(R,S,m)",
@@ -1333,7 +1437,8 @@ document { (map,Ring,Ring,List),
      SEEALSO {(map,Ring,Ring,Matrix)}
      }
 
-document { substitute,
+document {
+     Key => substitute,
      Headline => "substitute values for variables",
      TT "substitute(f,v)", " -- substitute values for the variables in the matrix,
      module, vector, polynomial, or monomial ", TT "f", " as specified by ", TT "v", ".", 
@@ -1372,7 +1477,8 @@ document { substitute,
      }
 
 
-document { modifyRing,
+document {
+     Key => modifyRing,
      Headline => "make a copy of a ring, with some features changed",
      TT "modifyRing(R,options)", " -- yields a ring similar to R, with 
      certain features changed.",
@@ -1386,25 +1492,29 @@ TEST "
     S1 = modifyRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
 "
 
-document { (symbol **, Ring, Ring), Headline => "tensor product",
+document {
+     Key => (symbol **, Ring, Ring), Headline => "tensor product",
      "For complete documentation, see ", TO "tensor", "."
      }
 
-document { graphIdeal,
+document {
+     Key => graphIdeal,
      Headline => "the ideal of the graph of a ring map",
      TT "graphIdeal f", " -- provides the ideal of the graph of the map
      associated to the ring map f.",
      SEEALSO "graphRing"
      }
 
-document { graphRing,
+document {
+     Key => graphRing,
      Headline => "the ring of the graph of a ring map",
      TT "graphRing f", " -- provides the ring of the graph of the map
      associated to the ring map f.",
      SEEALSO "graphIdeal"
      }
 
-document { symmetricAlgebra,
+document {
+     Key => symmetricAlgebra,
      Headline => "the symmetric algebra of a module",
      TT "symmetricAlgebra M", " -- produces the symmetric algebra of a
      module M.",
@@ -1413,13 +1523,15 @@ document { symmetricAlgebra,
      the new ring; makes a quotient ring when it doesn't have to."
      }
 
-document { NonLinear,
+document {
+     Key => NonLinear,
      Headline => "use the algorithm which doesn't assume that the ring map is linear",
      TT "Strategy => NonLinear", " -- an option value for the ", TO "Strategy", "
      option to ", TO "pushForward1", "."
      }
 
-document { (pushForward1,StopBeforeComputation),
+document {
+     Key => (pushForward1,StopBeforeComputation),
      Headline => "initialize but do not begin the computation",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "pushForward1", ".",
@@ -1428,7 +1540,8 @@ document { (pushForward1,StopBeforeComputation),
      being ", TT "true", "."
      }
 
-document { (pushForward1,DegreeLimit),
+document {
+     Key => (pushForward1,DegreeLimit),
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "pushForward1", " which specifies that the computation should halt after dealing 
@@ -1444,7 +1557,8 @@ document { (pushForward1,DegreeLimit),
      SEEALSO {"pushForward1", "DegreeLimit"}
      }
 
-document { pushForward1,
+document {
+     Key => pushForward1,
      Headline => "the main computational component of pushForward",
      TT "pushForward1(f,M,options)", " -- Given a ring map f : R --> S, and an S-module
      M, yields a presentation matrix of the R-submodule of M generated by the given
@@ -1485,7 +1599,8 @@ document { pushForward1,
      "The type ", TO "PushforwardComputation", " is used internally by our current implementation.",
      }
 
-document { (pushForward1,StopWithMinimalGenerators),
+document {
+     Key => (pushForward1,StopWithMinimalGenerators),
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward1", "
      that specifies that the computation should stop as soon as a
@@ -1496,14 +1611,16 @@ document { (pushForward1,StopWithMinimalGenerators),
      ", TO (gb,StopWithMinimalGenerators), " for details."
      }
 
-document { (pushForward1,PairLimit),
+document {
+     Key => (pushForward1,PairLimit),
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit => n", " -- keyword for an optional argument used with
      ", TO "pushForward1", ", which specifies that the computation should
      be stopped after a certain number of S-pairs have been reduced."
      }
 
-document { (pushForward1,MonomialOrder),
+document {
+     Key => (pushForward1,MonomialOrder),
      Headline => "specify the elimination order to use in pushForward1",
      TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
      which tells which monomial order to use for the Groebner basis computation
@@ -1518,7 +1635,8 @@ document { (pushForward1,MonomialOrder),
      SEEALSO "EliminationOrder"
      }
 
-document { (pushForward1,UseHilbertFunction),
+document {
+     Key => (pushForward1,UseHilbertFunction),
      Headline => "whether to use knowledge of the Hilbert function",
      TT "UseHilbertFunction => true", " -- a keyword for an optional argument to
      ", TO "pushForward1", " which specifies whether to use the Hilbert function,
@@ -1527,13 +1645,14 @@ document { (pushForward1,UseHilbertFunction),
      "The default is to use it if possible."
      }
 
-document { (pushForward1,Strategy),
+document {
+     Key => (pushForward1,Strategy),
      Headline => "specify which algorithm to use in the computation",
      TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     NOCONTENTS UL {
+     UL {
 	  TO "NonLinear",
      	  TO "Linear"
 	  },
@@ -1541,13 +1660,15 @@ document { (pushForward1,Strategy),
      "The default is for the code to select the best strategy heuristically."
      }
 
-document { PushforwardComputation,
+document {
+     Key => PushforwardComputation,
      Headline => "a type of list used internally by pushForward1",
      TT "PushforwardComputation", " -- a type of list used internally by
      ", TO "pushForward1", "."
      }
 
-document { EliminationOrder,
+document {
+     Key => EliminationOrder,
      Headline => "use the natural elmination order in a pushForward1 computation",
      TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
      option to ", TO "pushForward1", " which specifies the natural elimination

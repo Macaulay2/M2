@@ -33,7 +33,7 @@ reach1 MarkUpList := x -> scan(x,reach1)
 reach1 TO := identity
 reach1 TOH := identity
 reach1 UL := x -> scan(x,reach2)
-reach1 NOCONTENTS := x -> scan(x,reach3)
+-- reach1 NOCONTENTS := x -> scan(x,reach3)
 
 reach3 Thing := reach
 reach3 UL := x -> scan(x,reach1)

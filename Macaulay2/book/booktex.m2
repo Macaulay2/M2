@@ -67,7 +67,7 @@ reach3 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
-reach1 NOCONTENTS := x -> scan(x,reach3)
+-- reach1 NOCONTENTS := x -> scan(x,reach3)
 reach1 UL := x -> scan(x,reach2)
 reach1 TO := reach1 TOH := (x) -> (
      node := formatDocumentTag x#0;
@@ -117,7 +117,8 @@ while more do (
 reach2 = oldreach2
 --------------- fill in Appendix
 -- docDatabase = openDatabase "../cache/Macaulay2-doc"
-document { "Miscellaneous documentation",
+document {
+     Key => "Miscellaneous documentation",
      "We present various additional documentation in this chapter.",
      UL apply(sort unique join(
 	       formatDocumentTag \ value \ keys docDatabase,
@@ -125,7 +126,8 @@ document { "Miscellaneous documentation",
 	       ),
 	  node -> if not getNumberFromName#?node then TO node )
      }
-document { "Appendix",
+document {
+     Key => "Appendix",
      "This appendix contains additional information about the following topics.",
      UL {
 	  TO "Miscellaneous documentation"

@@ -1,16 +1,16 @@
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
 --Documentation and tests for the functions normalization and isNormal.
-document { isNormal, Headline => "determine whether a reduced ring is normal" }
-document { (isNormal,Ring),
-     Synopsis => {
-	  Usage => "isNormal R",
-	  Inputs => {
-	       "R" => {"a reduced ring"}
-	       },
-	  Outputs => {
-	       {"whether ", TT "R", " is normal, i.e., whether the Serre conditions R1 and S2 hold"}
-	       }
+document {
+     Key => isNormal, Headline => "determine whether a reduced ring is normal" }
+document {
+     Key => (isNormal,Ring),
+     Usage => "isNormal R",
+     Inputs => {
+	  "R" => {"a reduced ring"}
+	  },
+     Outputs => {
+	  {"whether ", TT "R", " is normal, i.e., whether the Serre conditions R1 and S2 hold"}
 	  },
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
@@ -23,24 +23,24 @@ document { (isNormal,Ring),
      	  ring and J is an ideal."
 	  }
      }
-document { integralClosure,
+document {
+     Key => integralClosure,
      Headline => "compute the integral closure of a ring",
      SEEALSO {"ICmap", "ICfractions", "conductor"}
      }
 
-document { (integralClosure,Ring),
+document {
+     Key => (integralClosure,Ring),
      Headline => "compute the integral closure of a ring",
-     Synopsis => {
-	  Usage => "S = integralClosure R",
-	  Inputs => {
-	       "R" => {"a reduced ring"},
-	       Variable => {"an unassigned symbol"},
-	       },
-	  Outputs => {
-	       "S" => {
-		    "The integral closure of ", TT "R", "in its total ring of fractions, presented as a quotient ring 
-		    using new indexed variables based on the symbol ", TT "w"}
-	       }
+     Usage => "S = integralClosure R",
+     Inputs => {
+	  "R" => {"a reduced ring"},
+	  Variable => {"an unassigned symbol"},
+	  },
+     Outputs => {
+	  "S" => {
+	       "The integral closure of ", TT "R", "in its total ring of fractions, presented as a quotient ring 
+	       using new indexed variables based on the symbol ", TT "w"}
 	  },
      EXAMPLE {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
@@ -72,21 +72,21 @@ document { (integralClosure,Ring),
      by Amelia Taylor, ", HREF {"mailto:ataylor@math.rutgers.edu", "<ataylor@math.rutgers.edu>"}, "."
      }
     
-document { (integralClosure,Variable),
+document {
+     Key => (integralClosure,Variable),
      Headline=> "Sets the name of the indexed variables introduced in computing 
      the integral closure of a reduced ring."
      }
 
-document { (ICmap,Ring),
+document {
+     Key => (ICmap,Ring),
      Headline => "natural map from an affine domain into its integral closure.",
-     Synopsis => {
-	  Usage => "ICmap R",
-	  Inputs => {
-	       "R" => {"an affine domain"}
-	       },
-	  Outputs => {
-	       {"a map from ", TT "R", " to its integral closure"}
-	       }
+     Usage => "ICmap R",
+     Inputs => {
+	  "R" => {"an affine domain"}
+	  },
+     Outputs => {
+	  {"a map from ", TT "R", " to its integral closure"}
 	  },
      "Note that if an integrally closed ring is given as input, the identity map from 
      the ring to itself is returned.",
@@ -96,16 +96,15 @@ document { (ICmap,Ring),
 	  }
      }
 
-document { (ICfractions,Ring),
+document {
+     Key => (ICfractions,Ring),
      Headline => "Compute the fractions integral over a domain.",
-     Synopsis => {
-	  Usage => "ICfractions R",
-	  Inputs => {
-	       "R" => {"an affine domain"},
-	       },
-	  Outputs => {
-	       {"returns a matrix whose entries are fractions that generate the integral closure of ", TT "R", " over R."}
-	       }
+     Usage => "ICfractions R",
+     Inputs => {
+	  "R" => {"an affine domain"},
+	  },
+     Outputs => {
+	  {"returns a matrix whose entries are fractions that generate the integral closure of ", TT "R", " over R."}
 	  },
      EXAMPLE {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
@@ -119,16 +118,15 @@ document { (ICfractions,Ring),
      closure."
      }
 
-document{(conductor,RingMap),
+document {
+     Key => (conductor,RingMap),
      Headline => "compute the conductor of a finite ring map",
-     Synopsis => {
-	  Usage => "conductor F",
-	  Inputs => {
-	       "F" => {"a finite map from a ring ", TT "R", " to a ring ", TT "S"},
-	       },
-	  Outputs => {
-	       {"the conductor ideal of ", TT "S", " into ", TT "R", "."}
-	       }
+     Usage => "conductor F",
+     Inputs => {
+	  "F" => {"a finite map from a ring ", TT "R", " to a ring ", TT "S"},
+	  },
+     Outputs => {
+	  {"the conductor ideal of ", TT "S", " into ", TT "R", "."}
 	  },
      EXAMPLE {
 	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",

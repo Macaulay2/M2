@@ -2,53 +2,46 @@
 
 -- html.m2 documentation
 
-document { MarkUpList, 
+document {
+     Key => MarkUpList, 
      Headline => "the class of mark-up lists used with hypertext",
      PARA,
      "Intended for internal use only."
      }
 
-document { MarkUpType,
+document {
+     Key => MarkUpType,
      Headline => "the class of mark-up types used with hypertext", 
      PARA,
      "Intended for internal use only.",
      SEEALSO "EmptyMarkUpType"
      }
 
-document { EmptyMarkUpType,
+document {
+     Key => EmptyMarkUpType,
      Headline => "the class of empty mark-up types used with hypertext"
      }
 
-document { NOCONTENTS,
-     Headline => "shield menu items so they don't produce subsections",
-     TT "NOCONTENTS v", " -- indicates that the ", TO "hypertext", " links in the
-     menu ", TT "v", " will not lead immediately to subsections of the book.",
-     PARA,
-     "The documentation is organized as a tree, rooted at the most general
-     type (", TO "Thing", "), and descending to more specific types.  The
-     branches of the tree are those menu items that are not protected by
-     ", TT "NOCONTENTS", ".  The book is created by searching the tree in a
-     depth-first fashion, and printing the sections as they are encountered.
-     Sections never encountered are assembled alphabetically into an
-     appendix."
-     }
-
-document { PARA,
+document {
+     Key => PARA,
      Headline => "paragraph separator",
      TT "PARA x", " -- a ", TO "hypertext", " paragraph.",
      }
 
-document { BR,
+document {
+     Key => BR,
      Headline => "line break",
      TT "BR{}", " -- a ", TO "hypertext", " line break."
      }
 
-document { HR,
+document {
+     Key => HR,
      Headline => "horizontal rule",
      TT "HR{}", " -- a ", TO "hypertext", " horiziontal rule."
      }
 
-document { html,
+document {
+     Key => html,
      Headline => "convert hypertext to html format",
      TT "html x", " -- convert ", TO "hypertext", " to html format",
      PARA,
@@ -57,7 +50,8 @@ document { html,
      SEEALSO "mathML"
      }
 
-document { PRE,
+document {
+     Key => PRE,
      Headline => "preformatted text",
      TT "PRE x", " -- encloses ", TT "x", " in a hypertext PRE item.",
      PARA,
@@ -72,7 +66,8 @@ document { PRE,
      SEEALSO "hypertext"
      }
 
-document { TITLE,
+document {
+     Key => TITLE,
      Headline => "hypertext title",
      TT "TITLE x", " -- encloses ", TT "x", " in a hypertext TITLE item.",
      PARA,
@@ -82,7 +77,8 @@ document { TITLE,
      SEEALSO "hypertext"
      }
 
-document { HEAD,
+document {
+     Key => HEAD,
      Headline => "HTML HEAD item",
      TT "HEAD x", " -- encloses ", TT "x", " in a hypertext HEAD item.",
      PARA,
@@ -92,7 +88,8 @@ document { HEAD,
      SEEALSO "hypertext"
      }
 
-document { BODY,
+document {
+     Key => BODY,
      Headline => "HTML BODY item",
      TT "BODY x", " -- encloses ", TT "x", " in a hypertext BODY item.",
      PARA,
@@ -102,7 +99,8 @@ document { BODY,
      SEEALSO "hypertext"
      }
 
-document { IMG,
+document {
+     Key => IMG,
      Headline => "HTML IMG item",
      TT "IMG x", " -- encloses ", TT "x", " in a hypertext IMG item.",
      PARA,
@@ -111,7 +109,8 @@ document { IMG,
      SEEALSO "hypertext"
      }
 
-document { SEQ,
+document {
+     Key => SEQ,
      Headline => "hypertext sequence",
      TT "SEQ x", " -- encloses ", TT "x", " in a hypertext SEQ item.",
      PARA,
@@ -122,7 +121,8 @@ document { SEQ,
      SEEALSO "hypertext"
      }
 
-document { HTML,
+document {
+     Key => HTML,
      Headline => "HTML item",
      TT "HTML x", " -- encloses ", TT "x", " in a hypertext HTML item.",
      PARA,
@@ -132,7 +132,8 @@ document { HTML,
      SEEALSO "hypertext"
      }
 
-document { HEADER1,
+document {
+     Key => HEADER1,
      Headline => "HTML HEADER1 item",
      TT "HEADER1 x", " -- encloses ", TT "x", " in a hypertext HEADER1 header item.",
      PARA,
@@ -147,7 +148,8 @@ document { HEADER1,
      SEEALSO "hypertext"
      }
 
-document { HEADER2,
+document {
+     Key => HEADER2,
      Headline => "HTML HEADER2 item",
      TT "HEADER2 x", " -- encloses ", TT "x", " in a hypertext HEADER2 header item.",
      PARA,
@@ -162,7 +164,8 @@ document { HEADER2,
      SEEALSO "hypertext"
      }
 
-document { HEADER3,
+document {
+     Key => HEADER3,
      Headline => "HTML HEADER3 item",
      TT "HEADER3 x", " -- encloses ", TT "x", " in a hypertext HEADER3 header item.",
      PARA,
@@ -177,7 +180,8 @@ document { HEADER3,
      SEEALSO "hypertext"
      }
 
-document { HEADER4,
+document {
+     Key => HEADER4,
      Headline => "HTML HEADER4 item",
      TT "HEADER4 x", " -- encloses ", TT "x", " in a hypertext HEADER4 header item.",
      PARA,
@@ -192,7 +196,8 @@ document { HEADER4,
      SEEALSO "hypertext"
      }
 
-document { HEADER5,
+document {
+     Key => HEADER5,
      Headline => "HTML HEADER5 item",
      TT "HEADER5 x", " -- encloses ", TT "x", " in a hypertext HEADER5 header item.",
      PARA,
@@ -207,7 +212,8 @@ document { HEADER5,
      SEEALSO "hypertext"
      }
 
-document { HEADER6,
+document {
+     Key => HEADER6,
      Headline => "HTML HEADER6 item",
      TT "HEADER6 x", " -- encloses ", TT "x", " in a hypertext HEADER6 header item.",
      PARA,
@@ -222,7 +228,8 @@ document { HEADER6,
      SEEALSO "hypertext"
      }
 
-document { LISTING,
+document {
+     Key => LISTING,
      Headline => "HTML LISTING item",
      TT "LISTING x", " -- encloses ", TT "x", " in a hypertext LISTING item.",
      PARA,
@@ -237,7 +244,8 @@ document { LISTING,
      SEEALSO "hypertext"
      }
 
-document { XMP,
+document {
+     Key => XMP,
      Headline => "HTML XMP item",
      TT "XMP x", " -- encloses ", TT "x", " in a hypertext XMP item.",
      PARA,
@@ -252,7 +260,8 @@ document { XMP,
      SEEALSO "hypertext"
      }
 
-document { BLOCKQUOTE,
+document {
+     Key => BLOCKQUOTE,
      Headline => "HTML BLOCKQUOTE item",
      TT "BLOCKQUOTE x", " -- encloses ", TT "x", " in a hypertext BLOCKQUOTE item.",
      PARA,
@@ -267,7 +276,8 @@ document { BLOCKQUOTE,
      SEEALSO "hypertext"
      }
 
-document { EXAMPLE,
+document {
+     Key => EXAMPLE,
      Headline => "HTML EXAMPLE item",
      TT "EXAMPLE x", " -- evaluates the string or list of strings
      ", TT "x", " as Macaulay 2 code, inserting the results in
@@ -280,24 +290,28 @@ document { EXAMPLE,
      SEEALSO "hypertext"
      }
 
-document { TABLE,
+document {
+     Key => TABLE,
      Headline => "hypertext table",
      TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
      }
 
-document { LITERAL,
+document {
+     Key => LITERAL,
      Headline => "hypertext literal text",
      TT "LITERAL x", " -- produces a special hypertext item which contains
      HTML text that should be left unchanged by ", TO "html", "."
      }
 
-document { ExampleTABLE,
+document {
+     Key => ExampleTABLE,
      Headline => "hypertext list of examples",
      TT "ExampleTABLE x", " -- produces a hypertext display suitable for displaying
      a list of examples."
      }
 
-document { SECTION,
+document {
+     Key => SECTION,
      Headline => "hypertext section",
      OldSynopsis => {
 	  ///SECTION { "title of the section", ... contents of the section ... }///
@@ -305,7 +319,8 @@ document { SECTION,
      SEEALSO { "TOC" }
      }
 
-document { TOC,
+document {
+     Key => TOC,
      Headline => "table of contents for sections",
      OldSynopsis => {
 	  ///TOC {
@@ -317,7 +332,8 @@ document { TOC,
      SEEALSO { "SECTION" }
      }
 
-document { VAR,
+document {
+     Key => VAR,
      Headline => "HTML VAR item",
      TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
      PARA,
@@ -331,7 +347,8 @@ document { VAR,
      SEEALSO "hypertext"
      }
 
-document { DFN,
+document {
+     Key => DFN,
      Headline => "HTML DFN item",
      TT "DFN x", " -- encloses ", TT "x", " in a hypertext DFN item.",
      PARA,
@@ -344,7 +361,8 @@ document { DFN,
      SEEALSO "hypertext"
      }
 
-document { STRONG,
+document {
+     Key => STRONG,
      Headline => "HTML STRONG item",
      TT "STRONG x", " -- encloses ", TT "x", " in a hypertext STRONG item.",
      PARA,
@@ -358,7 +376,8 @@ document { STRONG,
      SEEALSO "hypertext"
      }
 
-document { BIG,
+document {
+     Key => BIG,
      Headline => "HTML BIG item",
      TT "BIG x", " -- encloses ", TT "x", " in a hypertext BIG item.",
      PARA,
@@ -372,7 +391,8 @@ document { BIG,
      SEEALSO "hypertext"
      }
 
-document { SMALL,
+document {
+     Key => SMALL,
      Headline => "HTML SMALL item",
      TT "SMALL x", " -- encloses ", TT "x", " in a hypertext SMALL item.",
      PARA,
@@ -386,7 +406,8 @@ document { SMALL,
      SEEALSO "hypertext"
      }
 
-document { SUB,
+document {
+     Key => SUB,
      Headline => "HTML subscript",
      TT "SUB x", " -- encloses ", TT "x", " in a hypertext ", TT "SUB", " item,
      thereby making it a subscript.",
@@ -397,7 +418,8 @@ document { SUB,
      SEEALSO "hypertext"
      }
 
-document { SUP,
+document {
+     Key => SUP,
      Headline => "HTML superscript",
      TT "SUP x", " -- encloses ", TT "x", " in a hypertext ", TT "SUP", " item,
      thereby making it a superscript.",
@@ -408,7 +430,8 @@ document { SUP,
      SEEALSO "hypertext"
      }
 
-document { SAMP,
+document {
+     Key => SAMP,
      Headline => "HTML SAMP item",
      TT "SAMP x", " -- encloses ", TT "x", " in a hypertext SAMP item.",
      PARA,
@@ -422,7 +445,8 @@ document { SAMP,
      SEEALSO "hypertext"
      }
 
-document { KBD,
+document {
+     Key => KBD,
      Headline => "HTML KBD item",
      TT "KBD x", " -- encloses ", TT "x", " in a hypertext KBD item.",
      PARA,
@@ -436,7 +460,8 @@ document { KBD,
      SEEALSO "hypertext"
      }
 
-document { ITALIC,
+document {
+     Key => ITALIC,
      Headline => "HTML italic font",
      TT "ITALIC x", " -- encloses ", TT "x", " in a hypertext ITALIC item.",
      PARA,
@@ -451,7 +476,8 @@ document { ITALIC,
      SEEALSO "hypertext"
      }
 
-document { UNDERLINE,
+document {
+     Key => UNDERLINE,
      Headline => "HTML underlining",
      TT "UNDERLINE x", " -- encloses ", TT "x", " in a hypertext UNDERLINE item.",
      PARA,
@@ -465,7 +491,8 @@ document { UNDERLINE,
      SEEALSO "hypertext"
      }
 
-document { TEX,
+document {
+     Key => TEX,
      Headline => "hypertext TEX item",
      TT "TEX s", " -- includes the string ", TT "s", ", presumably
      containing TeX commands, in the TeX version of the documentation
@@ -474,7 +501,8 @@ document { TEX,
      "Invisible in the text and html versions."
      }
 
-document { TT,
+document {
+     Key => TT,
      Headline => "HTML TT item",
      TT "TT x", " -- encloses ", TT "x", " in a hypertext ", TT "TT", " item.",
      PARA,
@@ -488,7 +516,8 @@ document { TT,
      SEEALSO "hypertext"
      }
 
-document { EM,
+document {
+     Key => EM,
      Headline => "HTML EM item",
      TT "EM x", " -- encloses ", TT "x", " in a hypertext EM item.",
      PARA,
@@ -502,7 +531,8 @@ document { EM,
      SEEALSO "hypertext"
      }
 
-document { CITE,
+document {
+     Key => CITE,
      Headline => "HTML CITE item",
      TT "CITE x", " -- encloses ", TT "x", " in a hypertext CITE item.",
      PARA,
@@ -516,7 +546,8 @@ document { CITE,
      SEEALSO "hypertext"
      }
 
-document { BOLD,
+document {
+     Key => BOLD,
      Headline => "HTML BOLD item",
      TT "BOLD x", " -- encloses ", TT "x", " in a hypertext BOLD item.",
      PARA,
@@ -530,7 +561,8 @@ document { BOLD,
      SEEALSO "hypertext"
      }
 
-document { CODE,
+document {
+     Key => CODE,
      Headline => "HTML CODE item",
      TT "CODE x", " -- encloses ", TT "x", " in a hypertext CODE item.",
      PARA,
@@ -544,7 +576,8 @@ document { CODE,
      SEEALSO "hypertext"
      }
 
-document { HREF,
+document {
+     Key => HREF,
      Headline => "HTML link",
      TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
      pointing to the url ", TT "u", ".",
@@ -552,7 +585,8 @@ document { HREF,
      SEEALSO "hypertext"
      }
 
-document { ANCHOR,
+document {
+     Key => ANCHOR,
      Headline => "HTML anchor",
      TT "ANCHOR{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext A anchor
      named ", TT "u", ".",
@@ -560,7 +594,8 @@ document { ANCHOR,
      SEEALSO "hypertext"
      }
 
-document { UL,
+document {
+     Key => UL,
      Headline => "HTML UL item",
      TT "UL x", " -- encloses the list x as a hypertext UL itemized list.",
      PARA,
@@ -574,7 +609,8 @@ document { UL,
      SEEALSO "hypertext"
      }
 
-document { DL,
+document {
+     Key => DL,
      Headline => "HTML DL item",
      TT "DL x", " -- encloses the list x as a hypertext DL itemized list.",
      PARA,
@@ -596,7 +632,8 @@ document { DL,
      SEEALSO "hypertext"
      }
 
-document { OL,
+document {
+     Key => OL,
      Headline => "HTML OL item",
      TT "OL x", " -- encloses the list x as a hypertext OL itemized list.",
      PARA,
@@ -611,7 +648,8 @@ document { OL,
      SEEALSO "hypertext"
      }
 
-document { NL,
+document {
+     Key => NL,
      Headline => "HTML NL item",
      TT "NL x", " -- encloses the list x as a hypertext NL itemized list.",
      PARA,
@@ -625,7 +663,8 @@ document { NL,
      SEEALSO "hypertext"
      }
 
-document { NOINDENT,
+document {
+     Key => NOINDENT,
      Headline => "cancel hypertext indentation",
      TT "NOINDENT{}", " -- specifies that no indentation should be used
      for following hypertext items.",
@@ -636,7 +675,8 @@ document { NOINDENT,
      SEEALSO "hypertext"
      }
 
-document { TO,
+document {
+     Key => TO,
      Headline => "hypertext documentation link",
      TT "TO \"x\"", " -- produces a hypertext link to the documentation page labelled ", TT "x", ".",
      PARA,
@@ -662,7 +702,8 @@ document { TO,
      as ", TT "TOH x", ", and headlines are added automatically.  See also ", TO "TOH", "."
      }
 
-document { Command,
+document {
+     Key => Command,
      Headline => "the class of all commands",
      OldSynopsis => {
 	  "f = Command g",
@@ -686,7 +727,8 @@ document { Command,
      }
 
 
-document { monomialCurveIdeal, 
+document {
+     Key => monomialCurveIdeal, 
      Headline => "make the ideal of a monomial curve",
      TT "monomialCurveIdeal(R,a)", " -- yields the defining ideal of the projective
      curve given parametrically on an affine piece by 
@@ -729,7 +771,8 @@ TEST ///
     assert(I4 == image matrix {{b*c-a*d, c^3-b*d^2, a*c^2-b^2*d, b^3-a^2*c}});
 ///
 
-document { Fano, 
+document {
+     Key => Fano, 
      Headline => "Fano scheme",
      TT "Fano(k,I,GR) or  Fano(k,I)", " -- computes 
      the ideal of a Fano scheme in the Grassmannian.",
@@ -745,7 +788,8 @@ document { Fano,
      and returns an ideal in it."
      }
 
-document { Grassmannian,
+document {
+     Key => Grassmannian,
      Headline => "find the ideal of a Grassmannian",
      TT "Grassmannian(k,r)", " -- Grassmannian of k-planes in P^r",BR,NOINDENT,
      TT "Grassmanian(k,r,R)", 
@@ -764,7 +808,8 @@ document { Grassmannian,
      of a generic matrix.  It should really use the Pluecker equations."
      }
 
-document { code,
+document {
+     Key => code,
      Headline => "display source code",
      TT "code f", " -- prints out the source code of the function ", TT "f", ".",
      BR, NOINDENT,
@@ -787,7 +832,8 @@ document { code,
      SEEALSO "methods"
      }
 
-document { edit,
+document {
+     Key => edit,
      Headline => "edit source code",
      TT "edit", " -- a command which starts the text editor",
      BR,NOINDENT,
@@ -816,7 +862,8 @@ document { edit,
      ", TO "run", ", usually zero."
      }
 
-document { methods,
+document {
+     Key => methods,
      Headline => "list methods",
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",
@@ -840,7 +887,8 @@ document { methods,
      EXAMPLE "methods drop"
      }
 
-document { isTable,
+document {
+     Key => isTable,
      Headline => "whether something is a rectangular list of lists",
      PARA,
      "Warning: it is intrinsically impossible to represent a ", TT "0", " 
@@ -851,7 +899,8 @@ document { isTable,
 	  }
      }
 
-document { Monoid,
+document {
+     Key => Monoid,
      Headline => "the class of all monoids",
      "A monoid is a set with a multiplicative operation on
      it and an identity element.  A typical monoid is the set
@@ -859,7 +908,8 @@ document { Monoid,
      created before the polynomial ring is created."
      }
 
-document { (symbol _, ZZ, Monoid),
+document {
+     Key => (symbol _, ZZ, Monoid),
      Headline => "get unit element",
      TT "1_M", " -- provides the unit element of a monoid ", TT "M", "."
      }

@@ -1,4 +1,5 @@
-document { (ass, Ideal),
+document {
+     Key => (ass, Ideal),
      Headline => "find the associated primes of an ideal",
      OldSynopsis => {
 	  "L = ass(I)",
@@ -36,9 +37,10 @@ document { (ass, Ideal),
 	       removeLowestDimension}
      }
 
-document { (ass,Strategy),
+document {
+     Key => (ass,Strategy),
      "The strategy option value should be one of the following.",
-     NOCONTENTS UL{
+     UL{
 	  SEQ ("1", " -- The assasinator is found using Ext modules."),
 	  SEQ ("2", " -- The assasinator is found using ", TO(top), " on a 
 	       series of ideals.")
@@ -56,9 +58,10 @@ document { (ass,Strategy),
      TT "I", " by ", TT "I:(top I)", "."
      }
 
-document { (ass,PrintLevel),
+document {
+     Key => (ass,PrintLevel),
      "The PrintLevel should be one of the following.",
-     NOCONTENTS UL {
+     UL {
 	  SEQ ("0", " -- (default) Returns the list of associated primes."),
 	  SEQ ("1", " -- Returns strategy number, associated primes as they are 
 	       found, and full list at the end."),
@@ -73,7 +76,8 @@ document { (ass,PrintLevel),
 	  }
      }     
 
-document { (localize,Ideal,Ideal),
+document {
+     Key => (localize,Ideal,Ideal),
      Headline => "localize an ideal at a prime ideal",
      OldSynopsis => {
 	  "J = localize(I,P)",
@@ -109,9 +113,10 @@ document { (localize,Ideal,Ideal),
 	  removeLowestDimension}
      }
 ///
-document { (localize,Strategy),
+document {
+     Key => (localize,Strategy),
 	  "The strategy option value should be one of the following.",
-	  NOCONTENTS UL{
+	  UL{
 	       SEQ ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
 	       SEQ ("1" , " -- Uses a separator to find the localization")
 	       },
@@ -136,9 +141,10 @@ document { (localize,Strategy),
 	  " = 2."
 	   }
 ///
-document { (localize,PrintLevel),
+document {
+     Key => (localize,PrintLevel),
 	  "The PrintLevel option value should be one of the following.",
-	  NOCONTENTS UL{
+	  UL{
 	       SEQ ("0", " -- default"),
 	       SEQ ("1" , " -- Informs the user of the current operation"),
 	       SEQ ("2" , " -- Prints the current operation and its result")},
@@ -153,7 +159,8 @@ document { (localize,PrintLevel),
 	  }
 
 
-document { (primaryComponent, Ideal, Ideal),
+document {
+     Key => (primaryComponent, Ideal, Ideal),
     Headline => "find a primary component corresponding to an associated prime",
     OldSynopsis => {
 	 "Q = primaryComponent(I,P)",
@@ -179,16 +186,18 @@ document { (primaryComponent, Ideal, Ideal),
 	 removeLowestDimension}
     }
 
-document { (primaryComponent,Strategy),
+document {
+     Key => (primaryComponent,Strategy),
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
-     NOCONTENTS UL{
+     UL{
 	  SEQ ("0", " -- Uses ", TT "localize", " Strategy 0"),
 	  SEQ ("1", " -- Uses ", TT "localize", " Strategy 1"),
 	  SEQ ("2", " -- Uses ", TT "localize", " Strategy 2")}
      }
 
-document { (primaryComponent,Increment),
+document {
+     Key => (primaryComponent,Increment),
       "The Increment option value should be an integer.  As explained in ",
       TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
       Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992),
@@ -198,9 +207,10 @@ document { (primaryComponent,Increment),
       sufficiently large.  The default value is 1." 
      }
 
-document { (primaryComponent,PrintLevel),     
+document {
+     Key => (primaryComponent,PrintLevel),     
       "The Strategy option value should be one of the following.",
-     NOCONTENTS UL{
+     UL{
 	  SEQ ("0", " -- default"),
 	  SEQ ("1", " -- informs user of the current power being checked."),
 	  SEQ ("2", " -- gives output of time-consuming processes.")
@@ -210,7 +220,8 @@ document { (primaryComponent,PrintLevel),
 
      
      
-document { (primaryDecomposition, Ideal),
+document {
+     Key => (primaryDecomposition, Ideal),
      Headline => "find a primary decomposition of an ideal",
      OldSynopsis => {
 	  "L = primaryDecomposition I",
@@ -237,9 +248,10 @@ document { (primaryDecomposition, Ideal),
 	  removeLowestDimension}
      }
 
-document { (primaryDecomposition,Strategy),
+document {
+     Key => (primaryDecomposition,Strategy),
      "The strategy option value should be one of the following.",
-     NOCONTENTS UL {
+     UL {
           SEQ ("Monomial", " -- uses Alexander duality of a monomial ideal"),
 	  SEQ ("Binomial", " -- finds a cellular resolution of a 
 	                     binomial ideal"),

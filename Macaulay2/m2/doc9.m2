@@ -1,7 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 
-document { pushForward,
+document {
+     Key => pushForward,
      TT "pushForward(f,M)", " -- yields an R-presentation of the S-module ", TT "M", ", where
      ", TT "f:R --> S", " is a ring map, and ", TT "M", " is considered as 
      an ", TT "R", "-module via ", TT "f", ".",
@@ -11,7 +12,8 @@ document { pushForward,
      "Currently, ", TT "R", " and ", TT "S", " must both be polynomial rings over the same base field."
      }
 
-document { (pushForward,StopBeforeComputation),
+document {
+     Key => (pushForward,StopBeforeComputation),
      TT "StopBeforeComputation => false", " -- an optional argument used with
      ", TO "pushForward", ".",
      PARA,
@@ -19,7 +21,8 @@ document { (pushForward,StopBeforeComputation),
      being ", TT "true", "."
      }
 
-document { (pushForward,StopWithMinimalGenerators),
+document {
+     Key => (pushForward,StopWithMinimalGenerators),
      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward", "
      that specifies that the computation should stop as soon as a
      complete list of minimal generators for the submodule or ideal has been
@@ -29,12 +32,13 @@ document { (pushForward,StopWithMinimalGenerators),
      ", TO (gb,StopWithMinimalGenerators), " for details."
      }
 
-document { (pushForward,Strategy),
+document {
+     Key => (pushForward,Strategy),
      TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     NOCONTENTS UL {
+     UL {
 	  TO "NonLinear",
      	  TO "Linear"
 	  }
@@ -48,11 +52,13 @@ TEST "
     assert( R^{0,-1,-2} == pushForward(f,M) )
 "
 
-document { UseHilbertFunction,
+document {
+     Key => UseHilbertFunction,
      TT "UseHilbertFunction", " -- an option for ", TO "pushForward1", "."
      }
 
-document { (Ext,Module,Module),
+document {
+     Key => (Ext,Module,Module),
      OldSynopsis => {
 	  "H = Ext(M,N)",
 	  "M" => null,
@@ -90,7 +96,8 @@ document { (Ext,Module,Module),
      SEEALSO{"ScriptedFunctor", "Adjust", "Repair"}
      }
 
-document { (Ext,ZZ,Module,Module),
+document {
+     Key => (Ext,ZZ,Module,Module),
      OldSynopsis => {
 	  "H = Ext^i(M,N)",
 	  "i" => null,
@@ -102,11 +109,13 @@ document { (Ext,ZZ,Module,Module),
      a module in the evident way.",
      }
 
-document { Ext,
+document {
+     Key => Ext,
      Headline => "compute an Ext module"
      }
 
-document { Adjust,
+document {
+     Key => Adjust,
      Headline => "adjust the multi-degree",
      TT "Adjust", " -- an option used when creating a polynomial ring
      to specify a linear function for transforming multi-degrees of monomials 
@@ -124,7 +133,8 @@ document { Adjust,
      SEEALSO { "Repair" }
      }
 
-document { Repair,
+document {
+     Key => Repair,
      Headline => "repair the multi-degree",
      TT "Adjust", " -- an option used when creating a polynomial ring
      to specify a linear function for transforming internally used multi-degrees
@@ -135,7 +145,8 @@ document { Repair,
      SEEALSO { "Adjust" }
      }
 
-document { dd,
+document {
+     Key => dd,
      Headline => "differential in a chain complex",
      TT "dd", " -- a symbol used as a key in a chain complex, under which
      are stored the differentials.",
@@ -157,13 +168,15 @@ TEST "
 assert( toString Tor == \"Tor\" )
 "
 
-document { Tor,
+document {
+     Key => Tor,
      Headline => "compute a Tor module",
      TT "Tor_i(M,N)", " -- compute the Tor module of two modules M, N.",
      SEEALSO{"ScriptedFunctor"}
      }
 
-document { MonomialIdeal, 
+document {
+     Key => MonomialIdeal, 
      Headline => "the class of all monomial ideals handled by the engine",
      SEEALSO "engine" 
      }
@@ -191,7 +204,8 @@ document { MonomialIdeal,
 --     }
 
 
-document { (dual,MonomialIdeal,List),
+document {
+     Key => (dual,MonomialIdeal,List),
      Headline => "the Alexander dual",
      OldSynopsis => {
 	  "J = dual(I,e)",
@@ -205,7 +219,8 @@ document { (dual,MonomialIdeal,List),
      SEEALSO {(dual,MonomialIdeal)}
      }
 
-document { (dual,MonomialIdeal,RingElement),
+document {
+     Key => (dual,MonomialIdeal,RingElement),
      Headline => "the Alexander dual",
      OldSynopsis => {
 	  "J = dual(I,m)",
@@ -219,7 +234,8 @@ document { (dual,MonomialIdeal,RingElement),
      SEEALSO {(dual,MonomialIdeal)}
      }
 
-document { (dual,MonomialIdeal),
+document {
+     Key => (dual,MonomialIdeal),
      Headline => "the Alexander dual of a monomial ideal",
      OldSynopsis => {
 	  "J = dual I",
@@ -282,16 +298,15 @@ document { (dual,MonomialIdeal),
      "Implemented by Greg Smith."
      }
 
-document { (isSquareFree,MonomialIdeal),
+document {
+     Key => (isSquareFree,MonomialIdeal),
      Headline => {"whether a monomial ideal is square free"},
-     Synopsis => {
-	  Usage => "isSquareFree I",
-	  Inputs => {
-	       "I" => ""
-	       },
-	  Outputs => {
-	       {"whether ", TT "I", " is a square free"}
-	       }
+     Usage => "isSquareFree I",
+     Inputs => {
+	  "I" => ""
+	  },
+     Outputs => {
+	  {"whether ", TT "I", " is a square free"}
 	  },
      PARA {
 	  "A square free monomial ideal is an ideal generated 
@@ -312,16 +327,15 @@ document { (isSquareFree,MonomialIdeal),
      PARA "Implemented by Greg Smith."
      }
 
-document { (standardPairs, MonomialIdeal),
+document {
+     Key => (standardPairs, MonomialIdeal),
      Headline => {"finds the standard pairs of a monomial ideal"},
-     Synopsis => {
-	  Usage => "standardPairs I",
-	  Inputs => {
-	       "I" => {"a monomial ideal"},
-	       },
-	  Outputs => {
-	       {"a list of the standard pairs of ", TT "I", ""}
-	       }
+     Usage => "standardPairs I",
+     Inputs => {
+	  "I" => {"a monomial ideal"},
+	  },
+     Outputs => {
+	  {"a list of the standard pairs of ", TT "I", ""}
 	  },
      PARA,
      "A standard pair of a monomial ideal ", TT "I", " is 
@@ -354,16 +368,15 @@ document { (standardPairs, MonomialIdeal),
      "Implemented by Greg Smith."
      }
 
-document { (monomialSubideal, Ideal),
+document {
+     Key => (monomialSubideal, Ideal),
      Headline => {"find the largest monomial ideal in an ideal"},
-     Synopsis => {
-	  Usage => "monomialSubideal I",
-	  Inputs => {
-	       "I" => {"an ", TT "Ideal", "."}
-	       },
-	  Outputs => {
-	       {"the largest monomial ideal contained in ", TT "I"}
-	       }
+     Usage => "monomialSubideal I",
+     Inputs => {
+	  "I" => {"an ", TT "Ideal", "."}
+	  },
+     Outputs => {
+	  {"the largest monomial ideal contained in ", TT "I"}
 	  },
      EXAMPLE {
 	  "QQ[a,b,c,d];",
@@ -373,11 +386,13 @@ document { (monomialSubideal, Ideal),
      PARA "Implemented by Greg Smith"
      }
 
-document { monomialIdeal,
+document {
+     Key => monomialIdeal,
      Headline => "make a monomial ideal"
      }
 
-document { (monomialIdeal, Ideal),
+document {
+     Key => (monomialIdeal, Ideal),
      OldSynopsis => {
 	  "I = monomialIdeal J",
 	  "J" => "an ideal",
@@ -386,7 +401,8 @@ document { (monomialIdeal, Ideal),
 	  }
      }
 
-document { (monomialIdeal, List),
+document {
+     Key => (monomialIdeal, List),
      OldSynopsis => {
 	  "I = monomialIdeal {f,g,h,...}",
 	  "{f,g,h,...}" => "a list of ring elements",
@@ -394,7 +410,8 @@ document { (monomialIdeal, List),
 	  }
      }
 
-document { (monomialIdeal, Sequence),
+document {
+     Key => (monomialIdeal, Sequence),
      OldSynopsis => {
 	  "I = monomialIdeal(f,g,h,...)",
 	  "(f,g,h,...)" => "a sequence of ring elements",
@@ -402,7 +419,8 @@ document { (monomialIdeal, Sequence),
 	  }
      }
 
-document { (monomialIdeal, Matrix),
+document {
+     Key => (monomialIdeal, Matrix),
      OldSynopsis => {
 	  "I = monomialIdeal f",
 	  "f" => "a 1 by n matrix",
@@ -416,7 +434,8 @@ document { (monomialIdeal, Matrix),
 	  }
      }
 
-document { (monomialIdeal, MonomialIdeal),
+document {
+     Key => (monomialIdeal, MonomialIdeal),
      TT "monomialIdeal I", " -- create a copy of a monomial ideal I."
      }
 
@@ -444,18 +463,21 @@ assert(
      )
 "
 
-document { intersect,
+document {
+     Key => intersect,
      Headline => "compute an intersection",
      TT "intersect(M,N,...)", " -- calculate the intersection of 
      submodules of the same free module, or of monomial ideals in the same ring."
      }
 
-document { isBorel,
+document {
+     Key => isBorel,
      Headline => "whether an ideal is Borel fixed",
      Headline => "whether an ideal is fixed by upper triangular changes of coordinates"
      }
 
-document { minprimes,
+document {
+     Key => minprimes,
      Headline => "compute the minimal primes",
      TT "minprimes I", " -- compute the minimal primes of a monomial ideal I.",
      PARA,
@@ -469,7 +491,8 @@ TEST "
     assert(f - toDual(4, fdual) == 0)
 "
 
-document { fromDual,
+document {
+     Key => fromDual,
      TT "fromDual f", " -- given a 1 by n matrix ", TT "f", " over a polynomial
      ring ", TT "R", ", computes ", TT "g", " so that ", TT "Hom(R/image g, E)", "
      corresponds to ", TT "f", ", where ", TT "E", " is the injective envelope 
@@ -480,7 +503,8 @@ document { fromDual,
      SEEALSO "toDual"
      }
 
-document { toDual,
+document {
+     Key => toDual,
      TT "toDual(d,f)", " -- given a 1 by n matrix ", TT "f", " over a polynomial
      ring R and an integer d such that the d-th power of each variable is in
      the image of ", TT "f", ", computes ", TT "Hom(R/image f, E)", ", where 
@@ -491,7 +515,8 @@ document { toDual,
      SEEALSO "fromDual"
      }
 
-document { GradedModule,
+document {
+     Key => GradedModule,
      Headline => "the class of all graded modules",
      "A new graded module can be made with 'M = new GradedModule'.
      The i-th module can be installed with a statement like ", TT "M#i=N", ",
@@ -500,22 +525,26 @@ document { GradedModule,
      SEEALSO "GradedModuleMap"
      }
 
-document { GradedModuleMap,
+document {
+     Key => GradedModuleMap,
      Headline => "the class of all maps between graded modules",
      SEEALSO "GradedModule"
      }
 
-document { gradedModule,
+document {
+     Key => gradedModule,
      Headline => "make a graded module",
      TT "gradedModule", " -- a method for creating graded modules."
      }
 
-document { gradedModuleMap,
+document {
+     Key => gradedModuleMap,
      Headline => "make a map of graded modules",
      TT "gradedModuleMap", " -- a method for creating maps of graded modules."
      }
 
-document { coimage,
+document {
+     Key => coimage,
      Headline => "coimage of a map",
      TT "coimage f", " -- coimage of a map.",
      PARA,
@@ -526,12 +555,14 @@ document { coimage,
      SEEALSO "GradedModule"
      }
 
-document { ChainComplex,
+document {
+     Key => ChainComplex,
      Headline => "the class of all chain complexes",
      SEEALSO "chain complexes"
      }
 
-document { (complete, ChainComplex),
+document {
+     Key => (complete, ChainComplex),
      Headline => "complete the internal parts",
      TT "complete C", " -- fills in the modules of a chain complex
      obtained as a resolution with information from the engine.",
@@ -552,7 +583,8 @@ document { (complete, ChainComplex),
 	  }
      }
 
-document { (symbol _, ChainComplex, ZZ),
+document {
+     Key => (symbol _, ChainComplex, ZZ),
      Headline => "get component",
      TT "C_i", " -- yields the i-th module in a chain complex C.",
      PARA,
@@ -563,7 +595,8 @@ document { (symbol _, ChainComplex, ZZ),
      fill all the spots with their modules."
      }
 
-document { (length, ChainComplex),
+document {
+     Key => (length, ChainComplex),
      Headline => "length of a chain complex or graded module",
      TT "length C", " -- the length of a chain complex.",
      PARA,
@@ -572,7 +605,8 @@ document { (length, ChainComplex),
      modules, even if those modules happen to be zero."
      }
 
-document { ChainComplexMap,
+document {
+     Key => ChainComplexMap,
      Headline => "the class of all maps between chain complexes",
      "The usual algebraic operations are available: addition, subtraction,
      scalar multiplication, and composition.  The identity map from a
@@ -581,14 +615,16 @@ document { ChainComplexMap,
      will result in the ring element being multiplied by the appropriate
      identity map."
      }
-document { (symbol _, ChainComplexMap, ZZ),
+document {
+     Key => (symbol _, ChainComplexMap, ZZ),
      Headline => "get component",
      TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
      the component p_i : C_i -> D_(i+d).",
      SEEALSO "ChainComplexMap"
      }
 
-document { extend,
+document {
+     Key => extend,
      Headline => "extend a partial map of chain complexes",
      TT "extend(D,C,f0)", " -- produces a lifting of a map ", TT "f0 : D_0 <--- C_0", "
      to a map ", TT "f: D <--- C", " of chain complexes of degree 0."
@@ -602,7 +638,8 @@ g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
 E = cone g
 "
 
-document { cone,
+document {
+     Key => cone,
      Headline => "mapping cone of a chain map",
      TT "cone f", " -- produce the mapping cone of a map f of chain complexes",
      PARA,
@@ -623,7 +660,8 @@ document { cone,
 	  }
      }
 
-document { nullhomotopy,
+document {
+     Key => nullhomotopy,
      Headline => "make a null homotopy",
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",
@@ -648,7 +686,8 @@ document { nullhomotopy,
 	  },
      }
 
-document { poincare,
+document {
+     Key => poincare,
      Headline => "assemble degrees into polynomial",
      TT "poincare C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
@@ -681,7 +720,8 @@ document { poincare,
      SEEALSO { "degreesRing" }
      }
 
-document { poincareN,
+document {
+     Key => poincareN,
      Headline => "assemble degrees into polynomial",
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
@@ -695,7 +735,8 @@ document { poincareN,
 	  },
      }
 
-document { (homology,ZZ,ChainComplex),
+document {
+     Key => (homology,ZZ,ChainComplex),
      Headline => "homology of a chain complex",
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      EXAMPLE {
@@ -717,7 +758,8 @@ assert ( 0 == HH_3 res M )
 assert ( 0 == HH_4 res M )
 "
 
-document { (symbol :, Ideal, Ideal),
+document {
+     Key => (symbol :, Ideal, Ideal),
      Headline => "ideal quotient",
      TT "I:J", " -- computes the ideal quotient.",
      PARA,
@@ -726,7 +768,8 @@ document { (symbol :, Ideal, Ideal),
      See ", TO quotient, " for further details."
      }
 
-document { quotient,
+document {
+     Key => quotient,
      Headline => "ideal or submodule quotient",
      TT "quotient(I,J)", " -- computes the ideal or submodule quotient ", TT "(I:J)", ".", 
      PARA,
@@ -754,12 +797,13 @@ document { quotient,
      This will be changed in a later version."
      }
 
-document { (quotient,Strategy),
+document {
+     Key => (quotient,Strategy),
      TT "quotient(I,J,Strategy => v)", " -- an option which can
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     NOCONTENTS UL {
+     UL {
 	  TO "Iterate",
           TO "Linear"
           }
@@ -1084,7 +1128,8 @@ TEST "
 	assert( numgens source basis(3,M) == 16 )
 "
 
-document { MinimalGenerators,
+document {
+     Key => MinimalGenerators,
      TT "MinimalGenerators => true", " -- an option for certain functions
      which specifies whether to compute minimal generators for the result.",
      PARA,
@@ -1096,28 +1141,32 @@ document { MinimalGenerators,
      "The default value is ", TT "true", "."
      }
 
-document { (quotient,MinimalGenerators),
+document {
+     Key => (quotient,MinimalGenerators),
      TT "MinimalGenerators => true", " -- an option for ", TO "quotient", "
      which specifies whether to compute minimal generators for the result.",
      PARA,
      "The default value is ", TT "true", "."
      }
 
-document { (saturate,MinimalGenerators),
+document {
+     Key => (saturate,MinimalGenerators),
      TT "MinimalGenerators => true", " -- an option for ", TO "saturate", "
      which specifies whether to compute minimal generators for the result.",
      PARA,
      "The default value is ", TT "true", "."
      }
 
-document { Elimination,
+document {
+     Key => Elimination,
      Headline => "compute the saturation by elimination",
      TT "Strategy => Elimination", " -- an option value for ", TO "saturate", " 
      which indicates that the saturation of (I:f) should be computed by
      eliminating z from (I,f*z-1), where z is a new variable."
      }
 
-document { Bayer,
+document {
+     Key => Bayer,
      Headline => "use the method in Bayer's thesis",
      TT "Strategy => Bayer", " -- an option value for ", TO "saturate", " which
      indicates that the method of Bayer's thesis should be used.",
@@ -1127,7 +1176,8 @@ document { Bayer,
      divide by z, and finally replace z by f."
      }
 
-document { Iterate,
+document {
+     Key => Iterate,
      Headline => "use successive ideal quotients (the default)",
      TT "Strategy => Iterate", " -- an option value for ", TO "saturate", " which
      indicates that successive ideal or module quotients should be used.",
@@ -1135,7 +1185,8 @@ document { Iterate,
      "This value is the default."
      }
 
-document { Linear,
+document {
+     Key => Linear,
      Headline => "use the reverse lex order",
      TT "Strategy => Linear", " -- an option value for ", TO "saturate", " which
      indicates that the reverse lex order should be used to compute the saturation.",
@@ -1474,14 +1525,16 @@ TEST ///
 	  )
      ///
 
-document { (cohomology,ZZ,ChainComplex),
+document {
+     Key => (cohomology,ZZ,ChainComplex),
      Headline => "cohomology of a chain complex",
      TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
      "By definition, this is the same as HH_(-i) C."
      }
 
-document { (homology,ZZ,ChainComplexMap),
+document {
+     Key => (homology,ZZ,ChainComplexMap),
      Headline => "homology of a chain complex map",
      TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
      by a map ", TT "f", " of chain complexes.",
@@ -1489,7 +1542,8 @@ document { (homology,ZZ,ChainComplexMap),
      SEEALSO {"homology", "HH"}
      }
 
-document { (cohomology,ZZ,ChainComplexMap),
+document {
+     Key => (cohomology,ZZ,ChainComplexMap),
      Headline => "cohomology of a chain complex map",
      TT "HH^i f", " -- provides the map on the ", TT "i", "-th cohomology module
      by a map ", TT "f", " of chain complexes.",
@@ -1497,7 +1551,8 @@ document { (cohomology,ZZ,ChainComplexMap),
      SEEALSO {"cohomology", "HH"}
      }
 
-document { (homology,ChainComplex),
+document {
+     Key => (homology,ChainComplex),
      Headline => "homology of a chain complex",
      TT "HH C", " -- produces the direct sum of the homology modules of the
      chain complex ", TT "C", " as a graded module.",
@@ -1505,18 +1560,21 @@ document { (homology,ChainComplex),
      SEEALSO {"GradedModule", "HH"}
      }
 
-document { chainComplex,
+document {
+     Key => chainComplex,
      Headline => "make a chain complex",
      TT "chainComplex", " -- a method for creating chain complexes.",
      }
 
-document { (chainComplex, Matrix),
+document {
+     Key => (chainComplex, Matrix),
      Headline => "make a small chain complex",
      TT "chainComplex f", " -- create a chain complex ", TT "C", " with
      the map ", TT "f", " serving as the differential ", TT "C.dd_1", "."
      }
 
-document { (chainComplex, Sequence),
+document {
+     Key => (chainComplex, Sequence),
      Headline => "make a chain complex",
      TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
      differentials are the maps ", TT "f", ", ", TT "g", ", ", TT "h", ".",
@@ -1525,7 +1583,8 @@ document { (chainComplex, Sequence),
      as ", TT "C.dd_2", ", and so on."
      }
 
-document { (symbol ++,ChainComplex,ChainComplex),
+document {
+     Key => (symbol ++,ChainComplex,ChainComplex),
      Headline => "direct sum",
      TT "C++D", " -- direct sum of chain complexes.",
      PARA,
@@ -1535,14 +1594,16 @@ document { (symbol ++,ChainComplex,ChainComplex),
 	  },
      }
 
-document { (components, ChainComplex),
+document {
+     Key => (components, ChainComplex),
      TT "components C", " -- returns from which C was formed, if C
      was formed as a direct sum.",
      PARA,
      SEEALSO "isDirectSum"
      }
 
-document { (symbol " ", ChainComplex, Array),
+document {
+     Key => (symbol " ", ChainComplex, Array),
      Headline => "degree shift",
      OldSynopsis => {
 	  "D = C[i]",
@@ -1554,24 +1615,28 @@ document { (symbol " ", ChainComplex, Array),
 	  }
      }
 
-document { (symbol " ", GradedModule, Array),
+document {
+     Key => (symbol " ", GradedModule, Array),
      Headline => "degree shift",
      TT "C[i]", " -- shifts the graded module ", TT "C", ", producing a new graded module
      ", TT "D", " in which ", TT "D_j", " is ", TT "C_(i+j)", "."
      }
 
-document { (Hom,ChainComplex,Module),
+document {
+     Key => (Hom,ChainComplex,Module),
      Headline => "Hom",
      TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
      a module M."
      }
 
-document { (dual, ChainComplex),
+document {
+     Key => (dual, ChainComplex),
      Headline => "dual",
      TT "dual C", " -- the dual of a chain complex."
      }
 
-document { regularity,
+document {
+     Key => regularity,
      Headline => "compute the regularity",
      TT "regularity M", " -- computes the regularity of a module or chain complex C.",
      PARA,
@@ -1580,7 +1645,8 @@ document { regularity,
      regularity is the regularity of a free minimal resolution of M."
      }
 
-document { (betti, Matrix),
+document {
+     Key => (betti, Matrix),
      Headline => "display of the degrees of a map",
      OldSynopsis => {
 	  "n = betti f",
@@ -1594,7 +1660,8 @@ document { (betti, Matrix),
      "For an explanation of the display, see ", TO (betti, ChainComplex), "."
      }
 
-document { (betti, GroebnerBasis),
+document {
+     Key => (betti, GroebnerBasis),
      Headline => "display of the degrees of a groebner basis",
      OldSynopsis => {
 	  "n = betti G",
@@ -1606,7 +1673,8 @@ document { (betti, GroebnerBasis),
      "For an explanation of the display, see ", TO (betti, ChainComplex), "."
      }
 
-document { (betti, ChainComplex),
+document {
+     Key => (betti, ChainComplex),
      Headline => "display of degrees in a chain complex",
      OldSynopsis => {
 	  "n = betti C",
@@ -1643,7 +1711,8 @@ document { (betti, ChainComplex),
 	  }
      }
 
-document { betti,
+document {
+     Key => betti,
      Headline => "display degrees"
      }
 
@@ -1666,13 +1735,15 @@ assert( P == poincare kernel f + poincare cokernel f )
 assert( P == poincare prune W )
 "
 
-document { syzygyScheme,
+document {
+     Key => syzygyScheme,
      Headline => "construct a syzygy scheme",
      TT "syzygyScheme(C,i,v)", " -- produce the syzygy scheme from a map
      ", TT "v : R^j ---> C_i", " which selects some syzygies from a resolution ", TT "C", "."
      }
 
-document { (sum, ChainComplex),
+document {
+     Key => (sum, ChainComplex),
      Headline => "direct sum of the components of a chain complex",
      TT "sum C", " -- yields the sum of the modules in a chain complex.",
      PARA,
@@ -1686,7 +1757,8 @@ document { (sum, ChainComplex),
      SEEALSO {"sum",(sum, ChainComplexMap)}
      }
 
-document { (sum, ChainComplexMap),
+document {
+     Key => (sum, ChainComplexMap),
      Headline => "direct sum of the components of a chain map",
      TT "sum C", " -- yields the sum of the modules in a chain complex map.",
      PARA,
@@ -1700,7 +1772,8 @@ document { (sum, ChainComplexMap),
      SEEALSO {"sum", (sum, ChainComplex)}
      }
 
-document { (NewMethod, ChainComplex),
+document {
+     Key => (NewMethod, ChainComplex),
      Headline => "make a new chain complex from scratch",
      TT "C = new ChainComplex", " -- make a new chain complex.",
      PARA,
@@ -1719,7 +1792,8 @@ document { (NewMethod, ChainComplex),
 	  },
      }
 
-document { (chainComplex,GradedModule),
+document {
+     Key => (chainComplex,GradedModule),
      Headline => "make a chain complex from a graded module",
      TT "chainComplex M", " -- convert a graded module to a chain complex by
      installing the zero map as differential.",
@@ -1727,7 +1801,8 @@ document { (chainComplex,GradedModule),
      SEEALSO {"GradedModule", "ChainComplex"}
      }
 
-document { (symbol **, ChainComplex, ChainComplex),
+document {
+     Key => (symbol **, ChainComplex, ChainComplex),
      Headline => "tensor product",
      TT "C**D", " -- the tensor product of two chain complexes.",
      PARA,
@@ -1738,47 +1813,54 @@ document { (symbol **, ChainComplex, ChainComplex),
      information about how to use preferred keys, see ", TO "directSum", "."
      }
 
-document { (symbol **, ChainComplex, GradedModule),
+document {
+     Key => (symbol **, ChainComplex, GradedModule),
      Headline => "tensor product",
      TT "C**D", " -- the tensor product of a chain complex with a graded module.",
      PARA,
      "The result is a chain complex."
      }
 
-document { (symbol **, GradedModule, ChainComplex),
+document {
+     Key => (symbol **, GradedModule, ChainComplex),
      Headline => "tensor product",
      TT "C**D", " -- the tensor product of a graded module with a chain complex.",
      PARA,
      "The result is a chain complex."
      }
 
-document { (symbol **, ChainComplexMap, ChainComplex),
+document {
+     Key => (symbol **, ChainComplexMap, ChainComplex),
      Headline => "tensor product",
      TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
-document { (symbol **, ChainComplex, ChainComplexMap),
+document {
+     Key => (symbol **, ChainComplex, ChainComplexMap),
      Headline => "tensor product",
      TT "C ** f", " -- tensor product of a chain complex with a map of chain complexes.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
-document { (symbol **, ChainComplexMap, ChainComplexMap),
+document {
+     Key => (symbol **, ChainComplexMap, ChainComplexMap),
      Headline => "tensor product",
      TT "f ** g", " -- tensor product of two maps of chain complexes.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
-document { (max,ChainComplex),
+document {
+     Key => (max,ChainComplex),
      Headline => "maximum index in a chain complex",
      TT "max C", " -- the maximum index occuring in a chain complex."
      }
 
-document { (min,ChainComplex),
+document {
+     Key => (min,ChainComplex),
      Headline => "minimum index in a chain complex",
      TT "min C", " -- the minimum index occuring in a chain complex."
      }
@@ -1793,7 +1875,8 @@ TEST ///
 	  )
      ///
 
-document { tensorAssociativity,
+document {
+     Key => tensorAssociativity,
      Headline => "associativity isomorphisms for tensor products",
      TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
      A**(B**C) to (A**B)**C.",
@@ -1802,7 +1885,8 @@ document { tensorAssociativity,
      SEEALSO {"ChainComplex", "Module"}
      }
 
-document { (symbol " ", Module, Array),
+document {
+     Key => (symbol " ", Module, Array),
      Headline => "make a chain complex from a module",
      TT "M[n]", " -- create a chain complex with the module M concentrated
      in degree -n.",
@@ -1810,7 +1894,8 @@ document { (symbol " ", Module, Array),
      SEEALSO "ChainComplex"
      }
 
-document { (map,ChainComplex,ChainComplex,Function),
+document {
+     Key => (map,ChainComplex,ChainComplex,Function),
      Headline => "make a map of chain complexes",
      TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
      complex ", TT "C", " which in degree ", TT "k", " is the map provided
@@ -1825,7 +1910,8 @@ document { (map,ChainComplex,ChainComplex,Function),
      SEEALSO "ChainComplex"
      }
 
-document { (dual,ChainComplexMap),
+document {
+     Key => (dual,ChainComplexMap),
      Headline => "dual of a chain complex",
      OldSynopsis => {
 	  "D = dual C",

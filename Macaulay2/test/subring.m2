@@ -9,7 +9,8 @@ sat1 = m -> (
     R := ring m;
     divideByVariable(generators gb m,R_(numgens R - 1)))
 
-document{ symbol sat1,
+document {
+     Key => symbol sat1,
      TT "sat1(m)", " -- returns (m : lastvar^*), if the monomial
      order is the reverse lex order."
      }
@@ -39,14 +40,16 @@ subrg = (f, I, S) -> (
   mingens image substitute((sat1 generators gb J),mapback)
   )
 
-document{symbol subrg,
+document {
+     Key => symbol subrg,
      TT "subrg(f,I,S)", " -- returns the image of V(I) in Proj S
      under the rational map defined by f."
      }
  
 suber = (f, S) -> subrg(f, map(R^1, 0), S)
 
-document{symbol suber,
+document {
+     Key => symbol suber,
      "suber(f,S)", " -- returns the image of the projective space
      under the rational map defined by f."
      }
