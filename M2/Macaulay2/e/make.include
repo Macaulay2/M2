@@ -1,0 +1,17 @@
+# @configure_input@
+
+%.o : %.cpp; $(COMPILE.cc) $(OUTPUT_OPTION) $<
+
+CPPFLAGS += -I../../../include
+CPPFLAGS += -I../../util
+CPPFLAGS += -I..
+
+CXXFLAGS += $(DEBUGFLAGS)
+CFLAGS   += $(DEBUGFLAGS)
+
+ifeq "$(SHARED)" "yes"
+CXXFLAGS += -fPIC
+endif
+
+LIBGB      = libgb.a
+PRE.cc   = $(COMPILE.cc) -E 
