@@ -10,7 +10,7 @@ local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 local docdatabase
 
-linkFilename := s -> first cacheFileName(documentationPath,s) | ".html";
+linkFilename := s -> first cacheFileName(first documentationPath, documentationPath, s)
 
 documentationMemo := memoize documentation		    -- for speed
 

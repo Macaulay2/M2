@@ -10,11 +10,6 @@ temporaryFileName = () -> (
      "/tmp/M2-" | toString processID() | "-" | toString counter
      )
 -----------------------------------------------------------------------------
-fourDigits := i -> (
-     s := toString i;
-     concatenate(4-#s:"0", s)
-     )
------------------------------------------------------------------------------
 tt := new MutableHashTable from toList apply(0 .. 255, i -> (
 	  c := ascii i;
 	  c => c
@@ -67,13 +62,13 @@ indexTable := memoize(
 	       );
      	  next := null;
 	  makeName := key -> (
-	       if true
+	       if false
 	       then (
-	       	    toFilename key	    -- for OSes with long file names
+	       	    toFilename key	    -- for long file names
 	       	    )
-	       else (			    -- for OSes with short file names
+	       else (			    -- for short file names
      	       	    if next === null then next = #(keys tb);
-	       	    val := fourDigits next;
+	       	    val := toString next;
 	       	    next = next+1;
 	       	    val
 	       	    )

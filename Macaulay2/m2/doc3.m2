@@ -606,8 +606,8 @@ document { (cacheFileName, String, String, String),
      necessary, in which to store the table of correspondences between keys
      and filenames.",
      EXAMPLE {
-	  ///cacheFileName("./tmp/","algebra","foo")///,
-	  ///cacheFileName("./tmp/","algebra")///,
+	  ///cacheFileName("./tmp/","K-theory","motives")///,
+	  ///cacheFileName("./tmp/","K-theory")///,
 	  }
      }
 
