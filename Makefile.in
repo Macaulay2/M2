@@ -171,7 +171,7 @@ FACTORYINC :=
 
 FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/libcf.a lib/FACTORYinstalled
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 FACTORY:: Macaulay2/lib/libcf.so
 Macaulay2/lib/.exists:; mkdir -p Macaulay2/lib; touch $@
 Macaulay2/lib/libcf.so : lib/libcf.a Macaulay2/lib/.exists
@@ -211,7 +211,7 @@ factory/config.h : WindowsNT/factory/config.h
 factory/factoryconf.h : WindowsNT/factory/factoryconf.h
 	cp $< $@
 else
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 FACFLAGS += -fPIC
 endif
 FACTORYexports += factory/libcf.a
@@ -246,7 +246,7 @@ distclean::; -$(MAKE) -C factory $(FACTORYMAKEFLAGS) distclean
 ###################### LIBFAC
 justM2 all:: LIBFAC
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 LIBFACFLAGS := -fPIC
 else
 LIBFACFLAGS := 
@@ -264,7 +264,7 @@ libfac/libfac.lib : always
 	$(MAKE) -C libfac
 else
 LIBFAC:: libfac libfac/OPTOBJ libfac/config.status libfac/libfac.a include/factor.h
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 LIBFAC:: Macaulay2/lib/libfac.so
 Macaulay2/lib/libfac.so : libfac/libfac.a
 	rm -rf tmplib
@@ -294,7 +294,7 @@ distclean::; -$(MAKE) -C libfac distclean
 # we don't use this, usually
 # warning: perl is needed to recreate mp/MP/MP.h - but this file is
 # provided with the distribution.
-ifdef MP
+ifeq "$(MP)" "yes"
 all:: MP
 endif
 MP:	mp mp/config.status mp/Makefile mp/libMP.a \
@@ -326,7 +326,7 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/m2/Makefile \
 		Macaulay2/emacs \
 		Macaulay2/tutorial/final/*.out
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 DISTFILES += Macaulay2/lib
 endif
 distributions :; mkdir $@
