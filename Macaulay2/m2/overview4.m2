@@ -3,6 +3,7 @@
 
 document {
      Key => "hypertext",
+     Headline => "prepare hypertext for display",
      Usage => "hypertext x",
      Inputs => {
 	  "x" => List => {"a list of strings and hypertext mark-up lists"}
@@ -767,7 +768,7 @@ document {
      which allow detailed control over the progress of the computation."
      }
 
-document { Key => "Using the debugger",
+document { Key => "using the debugger",
      "We have a Macaulay 2 source file with a pair of functions in it that
      we can use for demonstrating the debugger.  Let's load it so we can
      run the functions in it.",

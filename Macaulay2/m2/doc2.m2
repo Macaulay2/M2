@@ -3,7 +3,7 @@
 document {
      Key => "timing",
      Headline => "time a computation",
-     TT "timing e", " -- evaluates ", TT "e", " and returns a list of type ", TO "Time", "
+     TT "timing e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
      of cpu timing used, and ", TT "v", " is the value of the the expression.",
      PARA,
@@ -61,23 +61,31 @@ document {
 document {
      Key => "then",
      Headline => "condition testing",
-     TT "then", " -- a keyword used with ", TO "if", "."
+     TT "then", " a keyword used with ", TO "if", ".",
+	EXAMPLE {
+		"if 5 > 4 then 8 else 7"
+		},
+	SeeAlso => {"if", "else"}
      }
 
 document {
      Key => "else",
      Headline => "condition testing",
-     TT "else", " -- a keyword used with ", TO "if", "."
+     TT "else", " a keyword used with ", TO "if", ".",
+	EXAMPLE {
+		"if 4 > 5 then 8 else 7"
+		},
+	SeeAlso => {"if", "then"}
      }
 
 document {
      Key => "if",
      Headline => "condition testing",
-     TT "if p then x else y", " -- computes ", TT "p", ", which must yield the value ", TO "true", " 
+     TT "if p then x else y", " computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
      else the value of ", TT "y", " is provided.",
      PARA,
-     TT "if p then x", " --  computes ", TT "p", ", which must yield the value ", TO "true", " 
+     TT "if p then x", " computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
      else ", TO "null", " is provided."
      }
@@ -85,7 +93,7 @@ document {
 document {
      Key => "for",
      Headline => "loop control",
-     TT "for i from a to b when c list x do y", " -- repeatedly 
+     TT "for i from a to b when c list x do y", " repeatedly 
      evaluate ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
      true, letting the variable ", TT "i", " be assigned the values
      ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
@@ -114,15 +122,15 @@ document {
 document {
      Key => "while",
      Headline => "loop control",
-     TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
+     TT "while p do x", " repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning 
      ", TO "null", ".",
      BR,NOINDENT,
-     TT "while p list x", " -- repeatedly evaluates ", TT "x", " as long 
+     TT "while p list x", " repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning a
      list of the values of ", TT "x", " encountered.",
      BR,NOINDENT,
-     TT "while p list x do z", " -- repeatedly evaluates ", TT "x", " 
+     TT "while p list x do z", " repeatedly evaluates ", TT "x", " 
      and ", TT "z", " as long as the value of ", TT "p", " remains
      ", TO "true", ", returning a list of the values of ", TT "x", " 
      encountered.",BR,
@@ -133,25 +141,25 @@ document {
 document {
      Key => "break",
      Headline => "break from a loop",
-     TT "break x", " -- interrupts execution of a loop controled by ",
+     TT "break x", " interrupts execution of a loop controlled by ",
      TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
      TT "x", " as the value of the loop currently being
      evaluated.",BR,
-     TT "break", " -- interrupts execution of a loop, returning
+     TT "break", " interrupts execution of a loop, returning
      ", TO "null", " as the value of the function currently being evaluated.",
      PARA,
      "Warning: trying to break from a loop controlled by ", TO "table", " will
      probably not do what you expect, since ", TO "table", " is implemented by two nested
-     loops controlled to ", TT "apply", ", and only the innter one will stop.",
+     loops controlled to ", TT "apply", ", and only the inner one will stop.",
      SeeAlso => { "scan", "while", "for" }
      }
 
 document {
      Key => "return",
      Headline => "return from a function",
-     TT "return x", " -- returns ", TT "x", " as the value of the function currently
+     TT "return x", " returns ", TT "x", " as the value of the function currently
      being evaluated.",BR,
-     TT "return;", " -- returns ", TO "null", " as the value of the function currently
+     TT "return;", " returns ", TO "null", " as the value of the function currently
      being evaluated.",
      PARA,
      EXAMPLE {
@@ -169,25 +177,25 @@ document {
 document {
      Key => "list",
      Headline => "loop control",
-     TT "list", " -- a keyword used with ", TO "while", ", and ", TO "for", "."
+     TT "list", " a keyword used with ", TO "while", ", and ", TO "for", "."
      }
 
 document {
      Key => "from",
      Headline => "loop control",
-     TT "from", " -- a keyword used with ", TO "for", " and ", TO "new", "."
+     TT "from", " a keyword used with ", TO "for", " and ", TO "new", "."
      }
 
 document {
      Key => "to",
      Headline => "loop control",
-     TT "to", " -- a keyword used with ", TO "for", "."
+     TT "to", " a keyword used with ", TO "for", "."
      }
 
 document {
      Key => "do",
      Headline => "loop control",
-     TT "do", " -- a keyword used with ", TO "while", ", and ", TO "for", "."
+     TT "do", " a keyword used with ", TO "while", ", and ", TO "for", "."
      }
 
 document {
@@ -204,7 +212,7 @@ document {
 	  },
      "The return value is the value returned by ", TT "y", " or ", TT "z", ", as the case may be.",
      PARA,
-     "The clause '", TT "then y", "' may be ommitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
+     "The clause '", TT "then y", "' may be omitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
      PARA,
      "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
      alarm occurs, in which case ", TO "null", " is returned.",
@@ -218,7 +226,7 @@ document {
 document {
      Key => openFiles,
      Headline => "list the open files",
-     TT "openFiles()", " -- produces a list of all currently open files.",
+     TT "openFiles()", " produces a list of all currently open files.",
      PARA,
      SeeAlso => { "File" }
      }
@@ -226,7 +234,7 @@ document {
 document {
      Key => stdio,
      Headline => "the standard input output file",
-     TT "stdio", " -- the standard input output file.",
+     TT "stdio", " the standard input output file.",
      PARA,
      "Use this file to get input from the terminal, or to display information
      on the user's screen.  This is the file always used by ", TO "print", "
@@ -236,7 +244,7 @@ document {
 document {
      Key => stderr,
      Headline => "the standard error output file",
-     TT "stderr", " -- the standard error output file.",
+     TT "stderr", " the standard error output file.",
      PARA,
      "Use this file to display error messages on the user's screen."
      }
@@ -244,10 +252,10 @@ document {
 document {
      Key => openListener,
      Headline => "open a port for listening",
-     TT "f = openListener \"$:service\"", "  -- opens a listener on the local
+     TT "f = openListener \"$:service\"", "  opens a listener on the local
      host at the specified service port.",
      BR,NOINDENT,
-     TT "f = openListener \"$\"", "  -- opens a listener on the local
+     TT "f = openListener \"$\"", "  opens a listener on the local
      host at the Macaulay2 port (2500).",
      PARA,
      "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
@@ -259,7 +267,7 @@ document {
 document {
      Key => openIn,
      Headline => "open an input file",
-     TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
+     TT "openIn \"fff\"", " opens an input file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
@@ -267,35 +275,35 @@ document {
 document {
      Key => openOut,
      Headline => "open an output file",
-     TT "openOut \"fff\"", "  -- opens an output file whose filename is ", TT "fff", ".",
+     TT "openOut \"fff\"", " opens an output file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
 document {
      Key => openInOut,
-     Headline => "open an input outpuf file",
-     TT "openInOut \"fff\"", "  -- opens an input output file whose 
+     Headline => "open an input output file",
+     TT "openInOut \"fff\"", " opens an input output file whose 
      filename is ", TT "fff", ".",
      BR,NOINDENT,
-     TT "openInOut \"!cmd\"", " -- opens an input output file which corresponds to a pipe 
+     TT "openInOut \"!cmd\"", " opens an input output file which corresponds to a pipe 
      receiving the output from the shell command ", TT "cmd", ".",
      BR,NOINDENT,
-     TT "openInOut \"$hostname:service\"", " -- opens an input output file
+     TT "openInOut \"$hostname:service\"", "opens an input output file
      by connecting to the specified service port at the specified host.",
      BR,NOINDENT,
-     TT "openInOut \"$:service\"", " -- opens an input output file by
+     TT "openInOut \"$:service\"", " opens an input output file by
      listening to the specified service port on the local host, and 
      waiting for an incoming connection.",
      BR,NOINDENT,
-     TT "openInOut \"$hostname\"", " -- opens an input output file
+     TT "openInOut \"$hostname\"", " opens an input output file
      by connecting to the Macaulay2 service port (2500) at the specified host.",
      BR,NOINDENT,
-     TT "openInOut \"$\"", " -- opens an input output file by listening to the
+     TT "openInOut \"$\"", " opens an input output file by listening to the
      Macaulay2 service port (2500) on the local host, and waiting for an
      incoming connection.",
      BR,NOINDENT,
-     TT "openInOut f", " -- opens an input output file by accepting a
+     TT "openInOut f", " opens an input output file by accepting a
      connection to the listener ", TT "f", ", previously created with
      ", TO "openListener", ".",
      PARA,
@@ -320,7 +328,7 @@ document {
 document {
      Key => protect,
      Headline => "protect a symbol",
-     TT "protect s", " -- protects the symbol ", TT "s", " from having its value changed.",
+     TT "protect s", " protects the symbol ", TT "s", " from having its value changed.",
      PARA,
      "There is no unprotect function, because we want to allow the compiler
      to take advantage of the unchangeability.",
@@ -332,7 +340,7 @@ document {
 document {
      Key => isInputFile,
      Headline => "whether a file is open for input",
-     TT "isInputFile f", " -- whether ", TT "f", " is an input file.",
+     TT "isInputFile f", " whether ", TT "f", " is an input file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
@@ -340,7 +348,7 @@ document {
 document {
      Key => isOutputFile,
      Headline => "whether a file is open for output",
-     TT "isOutputFile f", " -- whether ", TT "f", " is an output file.",
+     TT "isOutputFile f", " whether ", TT "f", " is an output file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
@@ -348,7 +356,7 @@ document {
 document {
      Key => isOpen,
      Headline => "whether a file or database is open",
-     TT "isOpen f", " -- whether ", TT "f", " is an open file or an
+     TT "isOpen f", " whether ", TT "f", " is an open file or an
      open database.",
      PARA,
      "An open file is either an input file, an output file, an
@@ -360,15 +368,15 @@ document {
 document {
      Key => isListener,
      Headline => "whether a file is open for listening",
-     TT "isListener f", " -- whether ", TT "f", " is a listener.",
+     TT "isListener f", " whether ", TT "f", " is a listener.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
 document {
-     Key => symbol <<, Headline => " -- a binary operator" }
+     Key => symbol <<, Headline => "a binary operator" }
 document {
-     Key => symbol >>, Headline => " -- a binary operator" }
+     Key => symbol >>, Headline => "a binary operator" }
 document {
      Key => (symbol >>, ZZ, ZZ),
      Headline => "shift bits rightward",
@@ -391,7 +399,7 @@ document {
 document {
      Key => (symbol <<, String, Thing),
      Headline => "print to a file",
-     TT "\"name\" << x", " -- prints the expression ", TT "x", " on the output file
+     TT "\"name\" << x", " prints the expression ", TT "x", " on the output file
      named \"name\".",
      PARA,
      "Returns the newly created ", TO "File", " associated to the given name.
@@ -421,7 +429,7 @@ document {
 document {
      Key => (symbol :, ZZ, Thing),
      Headline => "repeat an item",
-     TT "n : x", " -- repetition ", TT "n", " times of ", TT "x", " in a sequence",
+     TT "n : x", " repetition ", TT "n", " times of ", TT "x", " in a sequence",
      PARA,
      "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
      sequence consisting of ", TT "x", " repeated ", TT "n", " times.  A negative 
@@ -436,7 +444,7 @@ document {
 document {
      Key => getc,
      Headline => "get a byte",
-     TT "getc f", " -- obtains one byte from the input file f and provides it as a 
+     TT "getc f", " obtains one byte from the input file f and provides it as a 
      string of length 1.  On end of file an empty string of is returned.",
      PARA,
      SeeAlso => { "File" },
@@ -447,7 +455,7 @@ document {
 document {
      Key => symbol "<",
      Headline => "less than",
-     TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
+     TT "x < y", " yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
@@ -456,7 +464,7 @@ document {
 document {
      Key => symbol "<=",
      Headline => "less than or equal",
-     TT "x <= y", " -- yields ", TO "true", " or ", 
+     TT "x <= y", " yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
@@ -465,7 +473,7 @@ document {
 document {
      Key => symbol ">",
      Headline => "greater than",
-     TT "x > y", " -- yields ", TO "true", " or ", 
+     TT "x > y", " yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
@@ -474,7 +482,7 @@ document {
 document {
      Key => symbol ">=",
      Headline => "greater than or equal",
-     TT "x >= y", " -- yields ", 
+     TT "x >= y", " yields ", 
      TO "true", " or ", 
      TO "false", " depending on whether x >= y.",
      PARA,
@@ -485,14 +493,14 @@ protect incomparable
 document {
      Key => incomparable,
      Headline => "a result indicating incomparability",
-     TT "incomparable", " -- a symbol which may be returned by ", TO "?", "
+     TT "incomparable", " a symbol which may be returned by ", TO "?", "
      when the two things being compared are incomparable."
      }
 
 document {
      Key => symbol "?",
      Headline => "comparison operator",
-     TT "x ? y", " -- compares x and y, returning ", TT "symbol <", ", ",
+     TT "x ? y", " compares x and y, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA,
      "The user may install additional ", TO "binary methods", " for this 
@@ -510,7 +518,7 @@ document {
 document {
      Key => ";",
      Headline => "statement separator",
-     TT "(e;f;...;g;h)", " -- the semicolon can be used for evaluating a sequence of 
+     TT "(e;f;...;g;h)", " the semicolon can be used for evaluating a sequence of 
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
      is ", TO "null", ".",
@@ -523,7 +531,7 @@ document {
 document {
      Key => symbol "<-",
      Headline => "assignment with left side evaluated",
-     TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
+     TT "x <- y    ", " assigns the value of y to x, but x is evaluated, too.",
      PARA,
      "If the value of x is a symbol, then the value of y is assigned as the
      value of that symbol.  If the value of x is a hash table, then the value 
@@ -545,18 +553,18 @@ document {
 document {
      Key => "=",
      Headline => "assignment",
-     TT "x = e", "      -- assigns the value ", TT "e", " to the variable ", TT "x", ".",
+     TT "x = e", " assigns the value ", TT "e", " to the variable ", TT "x", ".",
      PARA,
      NOINDENT,
-     TT "x#i = e", "    -- assigns the value ", TT "e", " to the ", TT "i", "-th member of the array ", TT "x", ".  Here
+     TT "x#i = e", " assigns the value ", TT "e", " to the ", TT "i", "-th member of the array ", TT "x", ".  Here
      ", TT "i", " must be a nonnegative integer.",
      PARA,
      NOINDENT,
-     TT "x#k = e", "    -- assigns the value ", TT "e", " to the key ", TT "k", " in the hash table
+     TT "x#k = e", " assigns the value ", TT "e", " to the key ", TT "k", " in the hash table
      ", TT "x", ".  Here ", TT "k", " can be any expression.",
      PARA,
      NOINDENT,
-     TT "(a,b,c) = x", "    -- assigns the members of the sequence ", TT "x", " as
+     TT "(a,b,c) = x", " assigns the members of the sequence ", TT "x", " as
      values of the variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
      has too few elements, then the trailing symbols on the left
      side are given the value ", TO "null", ".  If ", TT "x", " has too
@@ -571,17 +579,17 @@ document {
 document {
      Key => ":=",
      Headline => "assignment of method or new local variable",
-     TT "x := e", " -- assign the value e to the new local variable x",
+     TT "x := e", " assign the value e to the new local variable x",
      BR,NOINDENT,
-     TT "f X := (x) -> ( ... )", " -- install a method for the method function
+     TT "f X := (x) -> ( ... )", " installs a method for the method function
      ", TT "f", " acting on an argument of class ", TT "X", ".",
      BR,NOINDENT,
-     TT "X * Y := (x,y) -> ( ... )", " -- install a method for the operator
+     TT "X * Y := (x,y) -> ( ... )", " installs a method for the operator
      ", TT "*", " applied to arguments of classes ", TT "X", " and ", TT "Y", ".
      Many other operators are allowed: see ", TO "operators", ".",
      PARA,
      NOINDENT,
-     TT "(a,b,c) := x", "    -- assigns the members of the sequence ", TT "x", " as
+     TT "(a,b,c) := x", " assigns the members of the sequence ", TT "x", " as
      values of the local variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
      has too few elements, then the trailing symbols on the left
      side are given the value ", TO "null", ".  If ", TT "x", " has too
@@ -599,7 +607,17 @@ document {
 document {
      Key => abs,
      Headline => "absolute value function", 
-     TT "abs x", " -- computes the absolute value of ", TT "x", "."
+	Usage => "abs x",
+	Inputs => {
+		"x" => "a number"
+		},
+	Outputs => {
+		{"the absolute value of ", TT "x"}
+		},
+     TT "abs x", " computes the absolute value of ", TT "x", ".",
+	EXAMPLE {
+		"abs(-pi)"
+		},
      }
 
 
@@ -611,31 +629,51 @@ document {
      Headline => "sine function",
      Usage => "sin x",
      Inputs => { "x" => RR => null },
-     Outputs => { { "the sine of ", TT "x", "" } } }
+     Outputs => { { "the sine of ", TT "x", "" } },
+	EXAMPLE {
+		"sin 1"
+		}
+	 }
 document {
      Key => cos, 
      Headline => "cosine function",
      Usage => "cos x",
      Inputs => { "x" => RR => null },
-     Outputs => { { "the cosine of ", TT "x", "" } } }
+     Outputs => { { "the cosine of ", TT "x", "" } },
+	EXAMPLE {
+		"cos 1"
+		}
+	 }
 document {
      Key => symbol tan,
      Headline => "tangent function",
      Usage => "tan x",
      Inputs => { "x" => RR => null },
-     Outputs => { { "the tangent of ", TT "x" } } }
+     Outputs => { { "the tangent of ", TT "x" } },
+	EXAMPLE {
+		"tan 1"
+		}
+	 }
 document {
      Key => asin,
      Headline => "arcsine function", 
      Usage => "asin x",
      Inputs => { "x" => RR => null },
-     Outputs => { { "the arcsine of ", TT "x"} } }
+     Outputs => { { "the arcsine of ", TT "x"} },
+	EXAMPLE {
+		"asin 1"
+		}
+	 }
 document {
      Key => acos,
      Headline => "arccosine function", 
      Usage => "acos x",
      Inputs => { "x" => RR => null },
-     Outputs => { { "the arccosine of ", TT "x"} } }
+     Outputs => { { "the arccosine of ", TT "x"} },
+	EXAMPLE {
+		"acos .5"
+		}
+	 }
 document {
      Key => atan,
      Headline => "arctangent function",
@@ -699,12 +737,12 @@ document {
 document {
      Key => wait,
      Headline => "wait for child process", 
-     TT "wait i", " -- wait for the completion of child process with process id
+     TT "wait i", " waits for the completion of child process with process id
      ", TT "i", ".",
      BR,NOINDENT,
-     TT "wait f", " -- wait for the input file to have some input ready.",
+     TT "wait f", " waits for the input file to have some input ready.",
      BR,NOINDENT,
-     TT "wait s", " -- wait for at least one of the files in the list 
+     TT "wait s", " waits for at least one of the files in the list 
      ", TT "s", " of input files to be ready, and return the list of positions
      corresponding to ready files."
      }
@@ -764,7 +802,7 @@ document (
 document {
      Key => "global",
      Headline => "get a global symbol", 
-     TT "global s", " -- provides the global symbol s, even if s currently has 
+     TT "global s", " provides the global symbol s, even if s currently has 
      a value.",
      EXAMPLE {
 	  "num",
@@ -778,14 +816,14 @@ document {
 document {
      Key => erase,
      Headline => "remove a global symbol",
-     TT "erase s", " -- removes the global symbol ", TT "s", " from the
+     TT "erase s", " removes the global symbol ", TT "s", " from the
      symbol table."
      }
 
 document {
      Key => "local",
      Headline => "get a local symbol",
-     TT "local s", " -- provides the local symbol ", TT "s", ", creating
+     TT "local s", " provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TO "null", ".",
      EXAMPLE {
@@ -800,7 +838,7 @@ document {
 document {
      Key => "symbol",
      Headline => "get a symbol",
-     TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
+     TT "symbol s", " provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
      {EXAMPLE {
 	       "num",
@@ -821,14 +859,24 @@ document {
 document {
      Key => gcd,
      Headline => "greatest common divisor",
-     TT "gcd(x,y,...)", " -- yields the greatest common divisor of ", TT "x", ", ", TT "y", ", ... .",
+	Usage => "gcd(x,y,...)",
+	Inputs => {
+		"x" => ZZ => {}
+		},
+	Outputs => {
+		ZZ => {}
+		},
+     TT "gcd(x,y,...)", " yields the greatest common divisor of ", TT "x", ", ", TT "y", ", ... .",
+	EXAMPLE {
+		gcd(2,4,8)
+		},
      SeeAlso => "gcdCoefficients"
      }
 
 document {
      Key => concatenate,
      Headline => "join strings",
-     TT "concatenate(s,t,...,u)", " -- yields the concatenation of the strings s,t,...,u.",
+     TT "concatenate(s,t,...,u)", " yields the concatenation of the strings s,t,...,u.",
      PARA,
      "The arguments may also be lists or sequences of strings and symbols, in
      which case they are concatenated recursively.  Additionally,
@@ -840,14 +888,27 @@ document {
 document {
      Key => error,
      Headline => "deliver error message",
-     TT "error s", " -- causes an error message s to be displayed.",
+	Usage => "error s",
+	Inputs => {
+		"s" => String => "a string or a sequence which can be converted to strings"
+		},
+	Consequences => {
+		"an error message is displayed"
+		},
+     TT "error s", " causes an error message s to be displayed.",
      PARA,
-     "The error message s (which should be a string or a sequence of
+     "The error message ", TT "s", " (which should be a string or a sequence of
      things which can be converted to strings and concatenated) is printed.
      Execution of the code is interrupted, and control is returned
-     to top level.",
-     PARA,
-     "Eventually we will have a means of ensuring that the line 
+     to top level. Here is an explicit example showing how this command is used:",
+	PRE///exampleCode = p -> (
+		if not isPrime p	
+	    	then error "expected a prime integer";
+	    	if p == 2
+	    	then error "expected an odd prime";
+	    	lift((p+1)/2, ZZ)
+	    	);///,
+	"Eventually we will have a means of ensuring that the line 
      number printed out with the error message will have more 
      significance, but currently it is the location in the code of 
      the error expression itself."
@@ -856,7 +917,7 @@ document {
 document {
      Key => characters,
      Headline => "get characters from a string",
-     TT "characters s", " -- produces a list of the characters in the string s.",
+     TT "characters s", " produces a list of the characters in the string s.",
      PARA,
      "The characters are represented by strings of length 1.",
      PARA,
@@ -868,7 +929,7 @@ document {
 document {
      Key => getenv,
      Headline => "get value of environment variable",
-     TT "getenv s", " -- yields the value associated with the string s in the 
+     TT "getenv s", " yields the value associated with the string s in the 
      environment.",
      PARA,
      EXAMPLE {
@@ -879,7 +940,7 @@ document {
 document {
      Key => currentDirectory,
      Headline => "current working directory",
-     TT "currentDirectory()", " -- returns the name of the current directory,
+     TT "currentDirectory()", " returns the name of the current directory,
      together with an extra slash (or appropriate path separator)."
      }
 
@@ -891,7 +952,7 @@ document {
 document {
      Key => copy,
      Headline => "copy an object",
-     TT "copy x", " -- yields a copy of x.",
+     TT "copy x", " yields a copy of x.",
      PARA,
      "If x is an hash table, array, list or sequence, then the elements are 
      placed into a new copy. If x is a hash table, the copy is mutable if 
@@ -907,7 +968,7 @@ document {
 document {
      Key => mergePairs,
      Headline => "merge sorted lists of pairs",
-     TT "mergePairs(x,y,f)", " -- merges sorted lists of pairs.",
+     TT "mergePairs(x,y,f)", " merges sorted lists of pairs.",
      PARA,
      "It merges ", TT "x", " and ", TT "y", ", which should be lists 
      of pairs ", TT "(k,v)", " arranged in increasing order according
@@ -934,7 +995,7 @@ document {
 	       corresponding keys coincide"
 	       } },
      Outputs => {
-	  "z" => { "a new hash table whose keys are the keys occuring in ", TT "x", "
+	  "z" => { "a new hash table whose keys are the keys occurring in ", TT "x", "
 	       or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
 	       ", TT "g(x#k,y#k)", " is used instead." } },
      "If ", TT "x", " and ", TT "y", " have the same class and parent, then so will ", TT "z", ".",
@@ -1004,7 +1065,7 @@ document {
 document {
      Key => unique,
      Headline => "eliminate duplicates from a list",
-     TT "unique v", " -- yields the elements of the list ", TT "v", ", without duplicates.",
+     TT "unique v", " yields the elements of the list ", TT "v", ", without duplicates.",
      PARA,
      EXAMPLE {
 	  "unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
@@ -1028,7 +1089,7 @@ document {
 	  TO (symbol " ", Ring, Array),
 	  TO "GF",
 	  },
-     "Common functions for accessing the variables or elemenets in a ring:",
+     "Common functions for accessing the variables or elements in a ring:",
      UL {
 	  TO (use, Ring),
 	  TO (generators, Ring),
@@ -1052,17 +1113,17 @@ document {
 
 document {
      Key => (symbol _, ZZ, Ring),
-     TT "1_R", " -- provides the unit element of the ring ", TT "R", ".",
+     TT "1_R", " provides the unit element of the ring ", TT "R", ".",
      BR, NOINDENT,
-     TT "0_R", " -- provides the zero element of the ring ", TT "R", ".",
+     TT "0_R", " provides the zero element of the ring ", TT "R", ".",
      BR, NOINDENT,
-     TT "n_R", " -- promotes the integer ", TT "n", " to the ring ", TT "R", ".",
+     TT "n_R", " promotes the integer ", TT "n", " to the ring ", TT "R", ".",
      }
 
 document {
      Key => applyPairs,
      Headline => "apply a function to pairs in a hash table",
-     TT "applyPairs(x,f)", " -- applies ", TT "f", " to each pair ", TT "(k,v)", " in the 
+     TT "applyPairs(x,f)", " applies ", TT "f", " to each pair ", TT "(k,v)", " in the 
      hash table ", TT "x", " to produce a new hash table.",
      PARA,
      "It produces a new hash table ", TT "y", " from a hash table ", TT "x", " 
@@ -1091,7 +1152,7 @@ document {
 document {
      Key => applyKeys,
      Headline => "apply a function to each key in a hash table",
-     TT "applyKeys(x,f)", " -- applies ", TT "f", " to each key ", TT "k", " in the 
+     TT "applyKeys(x,f)", " applies ", TT "f", " to each key ", TT "k", " in the 
      hash table ", TT "x", " to produce a new hash table.",
      PARA,
      "Thus ", TT "f", " should be a function of one variable ", TT "k", " which 
@@ -1110,7 +1171,7 @@ document {
 document {
      Key => applyValues,
      Headline => "apply a function to each value",
-     TT "applyValues(x,f)", " -- applies ", TT "f", " to each value ", TT "v", " 
+     TT "applyValues(x,f)", " applies ", TT "f", " to each value ", TT "v", " 
      in the hash table ", TT "x", " to produce a new hash table.",
      PARA,
      "Thus ", TT "f", " should be a function of one variable ", TT "v", " which 
@@ -1128,7 +1189,7 @@ document {
 document {
      Key => use,
      Headline => "install defaults",
-     TT "use S", " -- installs certain defaults associated with S.",
+     TT "use S", " installs certain defaults associated with S.",
      PARA,
      "This will install functions or methods which make the use 
      of S the default in certain contexts.  For example, if ", TT "S", " is
@@ -1151,7 +1212,7 @@ document {
 document {
      Key => symbol "=>",
      Headline => "produce an Option",
-     TT "x => y", " -- a binary operator which produces a type of list called
+     TT "x => y", " a binary operator which produces a type of list called
      an ", TO "Option", "."
      }
 

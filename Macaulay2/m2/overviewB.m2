@@ -980,15 +980,37 @@ document {
 			"ff^4"
 			},
      SUBSECTION "inverse of a matrix",
-					-- f^-1 tends to work except no error if not working
-     SUBSECTION "==", -- m == n, m-n == 0 are different
-					-- to be specific
-					-- m == n insists that the degress match up
-					-- m - n == 0 does not insist that the degrees match up
+		"If a matrix ", TT "f", " is invertible, then ", TT "f^-1", " will work.",
+		EXAMPLE {				
+				-- f^-1 tends to work except no error if not working
+			},
+     SUBSECTION "==", 
+		"To check whether two matrices are equal, one can use ", TO "==", ".",
+		EXAMPLE {
+			"ff == gg",
+			"ff == ff"
+			},
+		"However, given two matrices ", TT "ff", " and ", TT "gg", ",
+it can be the case that ", TT "ff - gg == 0", " returns ", TO "true",
+" but ", TT "ff == gg", " returns ", TO "false", ".",
+		EXAMPLE {
+			"M = R^{1,2,3}",
+			"N = R^3",
+			"ff = id_M",
+			"gg = id_N",
+			"ff - gg == 0",
+			"ff == gg"			
+			},
+		"Since the degrees attached to the matrices were different, ", TO "==", " returned the value ", TO "false", ".", 
      SUBSECTION "!=",
-					-- Check and see if the degress match up
+		"To check whether two matrices are not equal, one can use ", TO "!=", ":",
+		EXAMPLE {
+			"ff != gg"
+			},
+		"From the definition above of ", TT "ff", " and ", TT "gg", " we see that ", TO "!=", " will return a value of ", TO "true", 
+		" if the degrees attached the the matrices are different, even if the entries are the same.", 
      SUBSECTION "**",
-		"Since tensor product is a functor of two variables, we may compute the tensor product of two matrices. 
+		"Since tensor product (also known as Kronecker product and outer product) is a functor of two variables, we may compute the tensor product of two matrices. 
 		Recalling that a matrix is a map between modules, we may write:",
 		PRE///
 		      ff : K ---> L
@@ -1016,8 +1038,9 @@ document {
      Key => "rank of a matrix",
      
 	  SUBSECTION "rank",
-	  ,
-	  SUBSECTION "random rank of a matrix"
+
+	  SUBSECTION "rank of a matrix, determined probabilistically"
+	  
 	  }
 
 document {
@@ -1047,27 +1070,38 @@ document {
 
 document {
      Key => "exterior power of a matrix",
-     
-	  SUBSECTION "exteriorPower",
-	       "Since the ", TT "i", "-th exterior power is a functor, given a matrix,",
+	       "Since the ", TT "i", "-th exterior power is a functor, it applies to matrices as well as to modules.",
 		  EXAMPLE {
 			  "R = ZZ[vars(0..19)]",
-			  "ff = genericMatrix(R,4,5)"
-			  },
-		  "we may then take the exterior power:",
-		  EXAMPLE {
+			  "ff = genericMatrix(R,4,5)",
 			  "exteriorPower (2,ff)"
 			  },
 		  "Note that each entry of in the above matrix is a ", TT "2", " by ", TT "2", 
-		  " minor (the determinant of a ", TT "2", " by ", TT "2", " submatrix) of the matrix ", TT "ff", "."
+		  " minor (the determinant of a ", TT "2", " by ", TT "2", " submatrix) of the matrix ", TT "ff", ".",
+		  SeeAlso => "exterior power of a module"
      }
 
-document {
+document { -- something should be said about the degrees
+		 -- and also about line wrapping
      Key => "format and display of matrices in Macaulay 2",
-     
-	  SUBSECTION "compactMatrixForm",
-	       
-	  
+	"By default, Macaulay 2 displays matrices in a compact form.",
+	EXAMPLE {
+		"QQ[x];",
+		"matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"
+		},
+	"Note how the exponents of ", TT "x", " have been placed to the
+right of ", TT "x", " rather than formatted in superscript.  While this
+format is generally considered to be desirable, this can
+be turned off by setting the variable ", TO "compactMatrixForm", " to ", TT "false", ".",
+	EXAMPLE {
+		"compactMatrixForm = false",
+		"matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"		
+		},
+	"To have Macaulay 2 display matrices in compact form again, type:",
+	EXAMPLE {
+		"compactMatrixForm = true",
+		"matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"
+		},
      }
 
 document {

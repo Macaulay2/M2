@@ -1164,14 +1164,29 @@ document {
 
 document {
      Key => "constructing maps between modules",
-     "The standard way to define a map from an R-module M to an 
-     R-module N is to give a matrix whose columns are the image vectors
-     of the generators of M.",
-     EXAMPLE {
-	  "R = QQ[x,y,z];",
-	  "m = cokernel vars R",
-	  "--F = map(m/m^2, R^1/m, {{x*y*z}})"
-	  }
+	"Let's start with a free module.",
+	EXAMPLE {
+		"R = ZZ/5[x,y,z];",
+		"F = R^3"
+		},
+	"A list of indices can be used to produce homomorphisms corresponding to the corresponding basis vectors.",
+	EXAMPLE {
+		"F_{0,1,2}",
+		"F_{0,1}",
+		"F_{1,2}"
+		},
+	"Matrices are viewed as linear transformations.",
+	EXAMPLE {
+		"f = matrix{{x,y,z}}"
+		},
+--     "The standard way to define a map from an R-module M to an 
+--     R-module N is to give a matrix whose columns are the image vectors
+--     of the generators of M.",
+--     EXAMPLE {
+--	  "R = QQ[x,y,z];",
+--	  "m = cokernel vars R",
+--	  "--F = map(m/m^2, R^1/m, {{x*y*z}})"
+--	  }
      }
 
 document {
@@ -1228,6 +1243,26 @@ document {
 
 document {
      Key => "exterior power of a module",
+	"The ", TT "k","-th exterior power of a module ", TT "M"," is the ", TT "k", "-fold tensor product of ",
+	TT "M", " together with the equivalence relation:",
+	PRE ///
+	m_1 ** m_2 ** .. ** m_k = 0     if m_i = m_j for i != j
+	///,
+	"If ", TT "M", " is a free ", TT "R", "-module of rank ", TT "n", ", then the ", TT "k", "-th exterior power of ", TT "M",
+	" is a free ", TT "R", "-module of rank ", TT "binomial(n,k)", ". Macaulay 2 computes the ", TT "k", "-th
+	exterior power of a module ", TT "M", " with the command exteriorPower.",
+	EXAMPLE {
+		"R = ZZ/2[x,y]",
+		"exteriorPower(3,R^6)",
+		"binomial(6,3)"
+		},
+	"Macaulay 2 can compute exterior powers of modules which are not free as well.",
+	EXAMPLE {
+		"exteriorPower(2,R^1)",
+		"I = module ideal (x,y)",
+		"exteriorPower(2,I)"
+		},
+	SeeAlso => "exterior power of a matrix"
      }
 
 document {

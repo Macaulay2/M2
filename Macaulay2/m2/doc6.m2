@@ -313,11 +313,20 @@ document {
      SeeAlso =>  {"Monoid"}}
 document {
      Key => binomial,
-     Headline => "binomial coefficient",
-     TT "binomial(n,i)", " -- returns the binomial coefficient, the coefficient
-     of x^i in (1+x)^i.",
-     PARA,
-     EXAMPLE "binomial(13,6)"}
+     Headline => "binomial coefficient"
+	}
+document {
+	Key => (binomial,ZZ,ZZ),
+	Headline => "binomial coefficient",
+	Usage => "binomial(n,k)",
+	Inputs => {
+		"n" => {},
+		"k" => {}
+		},
+	Outputs => {{"the binomial coefficient, the coefficient of ", TT "x^i", " in ", TT "(1+x^i)"}
+		},
+     EXAMPLE "binomial(13,6)"
+	}
 document {
      Key => isPolynomialRing,
      Headline => "whether something is a polynomial ring" }

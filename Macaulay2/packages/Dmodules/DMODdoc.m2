@@ -1400,7 +1400,7 @@ document {
      BOLD "Ext", SUP "n", SUB "D", "(", EM "M,D", ")", 
      ".  The dual is obtained by
      computing a free resolution of ", EM "M", ", dualizing, and applying
-     the standard transposition to the ", EM "n", "th homology.",
+     the standard transposition to the ", EM "n", "-th homology.",
      PARA,
      "A simple example:",
      EXAMPLE {
@@ -1704,7 +1704,7 @@ document {
 	  This is true for holonomic modules.",
 	  "The weight vector ", EM "w", " should be a list of ", EM "n",
 	  " numbers if ", EM "M", 
-	  " is a module over the ", EM "n", "th Weyl algebra."},
+	  " is a module over the ", EM "n", "-th Weyl algebra."},
      PARA,
      "Abbreviations :",
      UL{"Drestrict"},
