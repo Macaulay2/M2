@@ -123,7 +123,7 @@ assert isPrimitive (t-1)
 assert (not isPrimitive 0_R)
 "
 
-GF(ZZ,ZZ) := (p,n,options) -> (
+GF(ZZ,ZZ) := options -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      if n === 1 then ZZ/p
@@ -134,13 +134,13 @@ GF(ZZ,ZZ) := (p,n,options) -> (
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
 	  GF(R/f,options,Variable => x)))
 
-GF(ZZ) := (q,options) -> (
+GF(ZZ) := options -> (q) -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
      then error "expected a power of a prime";
      GF(factors#0#0,factors#0#1,options))
 
-GF(Ring) := (S,options) -> unpack(S, (R,p,n,f) -> (
+GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
      if not isPrime f
      then error("expected ",name S," to be a quotient ring by an irreducible polynomial");
      g := options.PrimitiveElement;

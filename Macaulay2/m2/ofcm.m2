@@ -567,14 +567,17 @@ makeMonoid := (options) -> (
      options = new OptionTable from options;
      makeit1 options)
 
-makeit2 := (args,options) -> (
-     options = new MutableHashTable from options;
-     if options.Variables === null then
-          options.Variables = splice args;
-     options = new OptionTable from options;
+makeit2 := options -> args -> (
+     if options.Variables === null then (
+     	  options = new MutableHashTable from options;
+	  options.Variables = splice sequence args;
+     	  options = new OptionTable from options;
+	  );
      makeMonoid options)
 
-monoid Array := (args) -> processArgs(toSequence args,monoidDefaults,makeit2)
+monoid Array := (args) -> processArgs(
+     toSequence args, -- e.g., changes [x,Inverses=>true] to (x,Inverses=>true)
+     monoidDefaults,makeit2)
 OptionsRegistry#monoid = monoidDefaults
 monoid Ring := R -> R.monoid
 
@@ -647,7 +650,7 @@ document { (quote **, Monoid, Monoid),
      "For complete documentation, see ", TO "tensor", "."
      }
 
-tensor(Monoid, Monoid) := (M,N,options) -> (
+tensor(Monoid, Monoid) := options -> (M,N) -> (
      M = M.Options;
      N = N.Options;
      opts := new MutableHashTable from options;

@@ -2,7 +2,7 @@
 
 complement = method()
 
-mingens Module := (M,options) -> if M.?mingens then M.mingens else M.mingens = (
+mingens Module := options -> (M) -> if M.?mingens then M.mingens else M.mingens = (
      if M.?generators then (
 	  if M.?relations then (
 	       c := mingens gb (M.generators|M.relations,
@@ -33,12 +33,12 @@ M = subquotient(h,f)
 assert( mingens M == matrix (R, {{1},{0}}))
 "
 
-trim Ring := (R,options) -> R
-trim QuotientRing := (R,options) -> (
+trim Ring := options -> (R) -> R
+trim QuotientRing := options -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,options)))
-trim Module := (M,options) -> if M.?trim then M.trim else M.trim = (
+trim Module := options -> (M) -> if M.?trim then M.trim else M.trim = (
      if isFreeModule M then M
      else if isHomogeneous M then (
 	  g := mingens(M,options);
@@ -75,7 +75,7 @@ M = subquotient(h,f)
 assert( generators trim M == matrix (R, {{1},{0}}))
 "
 
-syz Matrix := (f,options) -> (
+syz Matrix := options -> (f) -> (
      if not isFreeModule target f or not isFreeModule source f
      then error "expected map between free modules";
      if ring f === ZZ or not isHomogeneous f
@@ -459,7 +459,7 @@ sortColumns = method (
 	  }
      )
 
-sortColumns Matrix := (f,options) -> (
+sortColumns Matrix := options -> (f) -> (
      callgg(ggsortcolumns, f,
 	  (
 	       if options.DegreeOrder === Ascending then 1 else

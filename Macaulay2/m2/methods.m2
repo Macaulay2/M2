@@ -5,18 +5,17 @@ noapp := (f,x) -> error(
      " to item of class ", name class x
      )
 
-Symbol Thing := (f,x) -> (
-     m := lookup(f,class x);
-     if m =!= null then (
-	  if class m === Function then m x
-	  else noapp(f,x)
-	  )
-     else noapp(f,x))
+--Symbol Thing := (f,x) -> (
+--     m := lookup(f,class x);
+--     if m =!= null then (
+--	  if class m === Function then m x
+--	  else noapp(f,x)
+--	  )
+--     else noapp(f,x))
 
 -----------------------------------------------------------------------------
 
 protect Options
-OptionsRegistry = new MutableHashTable
 
 noMethod := args -> (
      if class args === Sequence 
@@ -36,8 +35,7 @@ methodDefaults := new OptionTable from {
 method = args -> processArgs(
   args,
   methodDefaults,
-  (args,options) -> (
-    () -> (
+  options -> () -> (
       if options.Options === null then (
 	if options.Associative then (
 	  methodFunction := newmethod1 noMethod;
@@ -85,32 +83,28 @@ method = args -> processArgs(
 	args -> processArgs(args,opts,
 	  -- Common code for every method with options.
 	  -- Using browse?  Try looking at the METHODS.
-	  (args,options) -> (
-	    if #args === 1 then args = args#0;
+	  options -> args -> (
 	    f := lookup(methodFunction, class args);
 	    if f === null then noMethod args
-	    else f(args,options)));
+	    else (f options)(args)));
 	OptionsRegistry#methodFunction = opts;
-	methodFunction(Sequence) := 
-	(args,options) -> (
+	methodFunction(Sequence) := options -> args -> (
 	  -- Common code for every method with options
 	  if #args === 2 
 	  then ((x,y) -> (
 	      f := lookup(methodFunction,class x,class y);
 	      if f === null then noMethod args
-	      else f(x,y,options))
+	      else (f options)(x,y))
 	    ) args
 	  else if #args === 3 
 	  then ((x,y,z) -> (
 	      f := lookup(methodFunction,class x,class y,class z);
-	      if f === null then noMethod args
-	      else f(x,y,z,options))
+	      if f === null then noMethod args else (f options)(x,y,z))
 	    ) args
 	  else if #args === 1 
 	  then ((x) -> (
 	      f := lookup(methodFunction,class x);
-	      if f === null then noMethod args
-	      else f(x,options))
+	      if f === null then noMethod args else (f options)(x))
 	    ) args
 	  else if #args === 0
 	  then noMethod args
@@ -119,7 +113,6 @@ method = args -> processArgs(
 	);
       methodFunction
       )
-    ) args
   )
 
 OptionsRegistry#method = methodDefaults
@@ -1249,24 +1242,32 @@ document { quote OptionTable,
      }
 
 document { quote processArgs,
-     TT "processArgs(args,defaults,function)", " -- Here ", TT "args", " 
-     is the sequence of arguments previously passed to some function 
-     intended to accept optional arguments, ", TT "defaults", " is a
+     TT "processArgs(args,defs,fun)", " -- a helper function which processes
+     optional arguments.  Intended for internal use only.",
+     PARA,
+     "Here ", TT "args", " is the sequence of arguments previously passed to 
+     some function intended to accept optional arguments, ", TT "defs", " is a
      hash table whose keys are the names of the optional arguments, and 
      whose values are the corresponding default values.
-     The return value is obtained by evaluation of
-     ", TT "function(newargs,options)", ",
-     where newargs is obtained from args by removing the
+     The return value is obtained by evaluation of ", TT "(fun opts)(args')", ",
+     where ", TT "args'", " is obtained from ", TT "args", " by removing the
      options of the form ", TT "X=>A", " (where ", TT "X", " is a
-     name of an optional argument), and ", TT "options", " is a hash table
-     of the same form as ", TT "defaults", " in which the default
+     name of an optional argument), and ", TT "opts", " is a hash table
+     of the same form as ", TT "defs", " in which the default
      values have been replaced by the user-supplied values, e.g., the
      value stored under the key ", TT "X", " has been replaced by
-     ", TT "A", ".  As shorthand for the option ", TT "X=>true", " the
-     one may use ", TT "X", ".",
+     ", TT "A", ".",
      PARA,
-     EXAMPLE "processArgs((t,u,a=>4,c), new HashTable from {a=>1,b=>2,c=>false},identity)",
-     SEEALSO {"OptionTable", "Option", "=>"}
+     "In the following example we use a simple definition for ", TT "fun", "
+     so we can see everything that ", TT "fun", " receives from ", TT "processArgs", ".",
+     EXAMPLE {
+	  "defs = new OptionTable from {a=>1, b=>2}",
+	  "fun = opts -> args -> {opts, args}",
+	  "processArgs(x,defs,fun)",
+	  "processArgs((x,y,b=>66),defs,fun)",
+	  "processArgs((t,u,a=>44,b=>77),defs,fun)",
+	  },
+     SEEALSO {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 
 document { "using methods",

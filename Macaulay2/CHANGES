@@ -2,6 +2,22 @@ Changes made, most recent ones first:
 
 New in 0.8.47:
 
+  A basic change has been made to the way 'processArgs' and functions and
+methods with optional arguments are written.  Formerly the function was written
+with a parameter list (args,opts) where args was always a sequence containing
+the non-optional arguments, and opts was a hash table containing the values of
+the optional arguments, indexed by name.  Now, the function will have the
+form (opts -> args -> (...)).  This will allow the user to code the function body
+in various other way, too, e.g., (opts -> (x) -> (...)) or (opts -> (x,y) -> (...)),
+to allow quicker process of the sequence of arguments.  Another change is
+that now 'args' will be the single argument when there is just one, rather than
+a sequence of length one containing it.
+  There is also a new use of the operator @ which allows optional argument values
+to be attached to functions.  This makes it unnecessary for the user to use
+processArgs.
+
+The method for applying a symbol to a thing has been removed.
+
 function 'seq' changed to 'singleton'
 
 'tex' works for nets now

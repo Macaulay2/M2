@@ -212,9 +212,9 @@ processStrategy := (v) -> (
 	       then error("unknown strategy ", name s, " encountered");
 	       strategyCodes#s)))     
 
-gb Ideal := (I,options) -> gb ( module I, options )
+gb Ideal := options -> (I) -> gb ( module I, options )
 
-gb Module := (M,options) -> (
+gb Module := options -> (M) -> (
      if M.?relations 
      then (
 	  notImplemented();
@@ -228,7 +228,7 @@ gb Module := (M,options) -> (
 	       SyzygyRows => numgens source m))
      else gb(generators M, options))
 
-gb Matrix := (f,options) -> (
+gb Matrix := options -> (f) -> (
      R := ring target f;
      if ring source f =!= R
      then error "expected module map with source and target over the same ring";
@@ -551,14 +551,14 @@ document { quote SyzygyRows,
      "This option is for internal use only."
      }
 
-mingens GroebnerBasis := (g,options) -> (
+mingens GroebnerBasis := options -> (g) -> (
      sendgg(ggPush g, gggetmingens);
      getMatrix ring g			  -- we're losing information here! MES
      )
 
 syz = method(Options => options gb)
 
-syz GroebnerBasis := (g,options) -> (
+syz GroebnerBasis := options -> (g) -> (
      sendgg(ggPush g, gggetsyz);
      getMatrix ring g )
 
@@ -587,7 +587,7 @@ forceGB = method(
 	  }
      )
 
-forceGB Matrix := (f,options) -> (
+forceGB Matrix := options -> (f) -> (
      if not isFreeModule source f then error "expected a free module";
      minmat := if options.MinimalMatrix === null
                then f

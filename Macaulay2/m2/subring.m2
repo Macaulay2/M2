@@ -23,7 +23,7 @@ pushForward1 = method(
 	  }
      )
 
-pushtest := (f,M,options) -> (
+pushtest := options -> (f,M) -> (
     comp := PushforwardComputation{M,NonLinear};
     if not f#?comp then (
 	-- create the computation
@@ -74,7 +74,7 @@ pushtest := (f,M,options) -> (
 	)
     )
 
-pushlinear := (f,M,options) -> (
+pushlinear := options -> (f,M) -> (
     -- assumptions here:
     -- (a) f is homogeneous linear, and the linear forms are independent
     -- 
@@ -108,11 +108,11 @@ document { quote NonLinear,
      option to ", TO "pushForward1", "."
      }
 
-pushForward1(RingMap, Module) := (f,M,options) -> (
+pushForward1(RingMap, Module) := options -> (f,M) -> (
     if options.Strategy === Linear then
-        pushlinear(f,M,options)
+        (pushlinear options)(f,M)
     else if options.Strategy === NonLinear then
-        pushtest(f,M,options)
+        (pushtest options)(f,M)
     else error "unrecognized Strategy"
     )
 
@@ -252,7 +252,7 @@ document { quote EliminationOrder,
 
 pushForward = method (Options => options pushForward1)
 
-pushForward(RingMap, Module) := (f,M,options) -> (
+pushForward(RingMap, Module) := options -> (f,M) -> (
      if isHomogeneous f and isHomogeneous M then (
 	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
 	  S := target f;

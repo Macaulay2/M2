@@ -209,11 +209,11 @@ defaultResolutionLength := (R) -> (
      numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
      )
 
-resolutionLength := (R,options) -> (
+resolutionLength := options -> (R) -> (
      if options.LengthLimit == infinity then defaultResolutionLength R else options.LengthLimit
      )
 
-resolutionByHomogenization := (M,options) -> (
+resolutionByHomogenization := options -> (M) -> (
      R    := ring M;
      f    := presentation M;
      p    := presentation R;
@@ -231,13 +231,13 @@ resolutionByHomogenization := (M,options) -> (
      toRH := map(RH, R', vars RH);
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
-     C    := resolution(MH, options, LengthLimit => resolutionLength(R,options));
+     C    := resolution(MH, options, LengthLimit => (resolutionLength options)(R));
      toR  := map(R, RH, vars R | 1);
      toR C)
 
-resolutionBySyzygies := (M,options) -> (
+resolutionBySyzygies := options -> (M) -> (
      R := ring M;
-     maxlength := resolutionLength(R,options);
+     maxlength := (resolutionLength options)(R);
      if M.?resolution 
      then C := M.resolution
      else (
@@ -262,14 +262,14 @@ resolutionBySyzygies := (M,options) -> (
 	  );
      C)
 
-resolutionInEngine := (M,options) -> (
+resolutionInEngine := options -> (M) -> (
      local C;
      R := ring M;
      degreelimit := (
 	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
 	  else if degreelimit === null then degreelimit = {}
 	  else error "expected DegreeLimit to be an integer or null");
-     maxlength := resolutionLength(R,options);
+     maxlength := (resolutionLength options)(R);
      if not M.?resolution 
      or M.resolution.Resolution.length < maxlength
      then M.resolution = (
@@ -330,16 +330,16 @@ Algorithm0 := new OptionTable from { Algorithm => 0 }
 Algorithm1 := new OptionTable from { Algorithm => 1 }
 Algorithm2 := new OptionTable from { Algorithm => 2 }
 
-resolution Module := (M,o) -> (
+resolution Module := o -> (M) -> (
      R := ring M;
      k := ultimate(coefficientRing, R);
      oR := options R;
      if oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M then (
-	  resolutionInEngine(M,default(o,Algorithm2)))
-     else if k === ZZ or not isCommutative R then resolutionBySyzygies(M,o)
+	  (resolutionInEngine default(o,Algorithm2))(M))
+     else if k === ZZ or not isCommutative R then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then resolutionByHomogenization(M,o)
-     else if isQuotientRing R then resolutionInEngine(M,default(o,Algorithm2))
-     else resolutionInEngine(M,default(o,Algorithm1))
+     else if isQuotientRing R then (resolutionInEngine default(o,Algorithm2))(M)
+     else (resolutionInEngine default(o,Algorithm1))(M)
      )
 document { (resolution, Module),
      TT "resolution M", " -- produces a projective resolution of the 
@@ -370,7 +370,7 @@ document { (resolution, Module),
      SEEALSO {"ChainComplex", "resolution"}
      }
 
-resolution Matrix := (f,o) -> (
+resolution Matrix := o -> (f) -> (
      extend(resolution(target f, o), resolution(source f, o), matrix f)
      )
 document { (resolution, Matrix),
@@ -385,7 +385,7 @@ document { (resolution, Matrix),
      }
 
 
-resolution Ideal := (I,options) -> resolution(
+resolution Ideal := options -> (I) -> resolution(
      if I.?quotient 
      then I.quotient
      else I.quotient = (ring I)^1/I,
@@ -417,7 +417,7 @@ C = res(M, LengthLimit => 2, DegreeLimit => 4)
 -- for correct strategy... (non-Schreyer resolution).  In fact, the
 -- only way to obtain that is use Strategy => xxx, some xxx.
 
-mingens(ZZ,Resolution) := (level,g,options) -> (
+mingens(ZZ,Resolution) := options -> (level,g) -> (
      sendgg(ggPush g, ggPush level, gggetmingens);
      getMatrix ring g			  -- we're losing information here! MES
      )
@@ -447,7 +447,7 @@ nmonoms := g -> (
     sendgg(ggPush g, ggnmonoms);
     eePopIntarray())
 
-ResolutionStatus := (r,options) -> (
+ResolutionStatus := options -> (r) -> (
      v := {};
      lab := {};
      if options#TotalPairs     === true then (
@@ -505,7 +505,7 @@ statusDefaults := new OptionTable from {
      Monomials => false
      }
 status = method (Options => statusDefaults)
-status ChainComplex := (C,options) -> ResolutionStatus(C.Resolution, options)
+status ChainComplex := options -> (C) -> ResolutionStatus(C.Resolution, options)
 document { quote status,
      TT "status C", " -- displays the status of the computation of a
      chain complex C constructed by ", TO "resolution", ".  The display has
@@ -534,4 +534,4 @@ document { quote Monomials,
      TT "Monomials", " -- an option for ", TO "status", " which specifies
      whether to display the number of monomials."
      }
-status Resolution := (r,options) -> ResolutionStatus(r, options)
+status Resolution := options -> (r) -> ResolutionStatus(r, options)

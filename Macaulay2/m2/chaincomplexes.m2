@@ -642,7 +642,7 @@ Module ** ChainComplex := (M,C) -> (
 	  D))
 -----------------------------------------------------------------------------
 
-homology(ZZ,ChainComplex) := (i,C,opts) -> homology(C.dd_i, C.dd_(i+1))
+homology(ZZ,ChainComplex) := opts -> (i,C) -> homology(C.dd_i, C.dd_(i+1))
 document { (homology,ZZ,ChainComplex),
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      EXAMPLE {
@@ -665,18 +665,18 @@ assert ( 0 == HH_4 res M )
 "
 
 
-cohomology(ZZ,ChainComplex) := (i,C,opts) -> homology(-i, C)
+cohomology(ZZ,ChainComplex) := opts -> (i,C) -> homology(-i, C)
 document { (cohomology,ZZ,ChainComplex),
      TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
      "By definition, this is the same as HH_(-i) C."
      }
 
-  homology(ZZ,ChainComplexMap) := (i,f,opts) -> (
+  homology(ZZ,ChainComplexMap) := opts -> (i,f) -> (
        inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
        )
 
-cohomology(ZZ,ChainComplexMap) := (i,f,opts) -> homology(-i,f)
+cohomology(ZZ,ChainComplexMap) := opts -> (i,f) -> homology(-i,f)
 document { (homology,ZZ,ChainComplexMap),
      TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
      by a map ", TT "f", " of chain complexes.",
@@ -690,7 +690,7 @@ document { (cohomology,ZZ,ChainComplexMap),
      SEEALSO {"cohomology", "HH"}
      }
 
-homology(ChainComplex) := (C,opts) -> (
+homology(ChainComplex) := opts -> (C) -> (
      H := new GradedModule;
      H.ring = ring C;
      complete C;
@@ -710,7 +710,7 @@ gradedModule(ChainComplex) := (C) -> (
      scan(spots C, i -> H#i = C#i);
      H)
 
-homology(ChainComplexMap) := (f,opts) -> (
+homology(ChainComplexMap) := opts -> (f) -> (
      g := new GradedModuleMap;
      g.degree = f.degree;
      g.source = HH f.source;
@@ -1388,7 +1388,7 @@ ChainComplex ^ Array := (C,v) -> if C#?(quote ^,v) then C#(quote ^,v) else C#(qu
      D := directSum apply(toList v, i -> C.components#i);
      map(D,C,k -> C_k^v))
 
-map(ChainComplex,ChainComplex,Function) := (C,D,f,options) -> (
+map(ChainComplex,ChainComplex,Function) := options -> (C,D,f) -> (
      h := new ChainComplexMap;
      h.source = D;
      h.target = C;
@@ -1401,7 +1401,7 @@ map(ChainComplex,ChainComplex,Function) := (C,D,f,options) -> (
      h
      )
 
-map(ChainComplex,ChainComplex,ChainComplexMap) := (C,D,f,options) -> map(C,D,k -> f_k)
+map(ChainComplex,ChainComplex,ChainComplexMap) := options -> (C,D,f) -> map(C,D,k -> f_k)
 
 document { (map,ChainComplex,ChainComplex,Function),
      TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
@@ -1417,7 +1417,7 @@ document { (map,ChainComplex,ChainComplex,Function),
      SEEALSO "ChainComplex"
      }
 
-map(ChainComplex,ChainComplex) := (C,D,options) -> (
+map(ChainComplex,ChainComplex) := options -> (C,D) -> (
      h := new ChainComplexMap;
      h.source = D;
      h.target = C;
@@ -1426,7 +1426,7 @@ map(ChainComplex,ChainComplex) := (C,D,options) -> (
      h
      )
 
-kernel ChainComplexMap := (f,options) -> (
+kernel ChainComplexMap := options -> (f) -> (
      D := source f;
      C := new ChainComplex;
      C.ring = ring f;

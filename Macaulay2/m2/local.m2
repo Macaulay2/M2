@@ -8,7 +8,7 @@ truncatedDual := (M,e) -> (
      M1 := prune (M / (truncate(-e+1,M)));
      Ext^n(M1,ww))
 
-cohomology(ZZ,Module) := (i,M,opts) -> (
+cohomology(ZZ,Module) := opts -> (i,M) -> (
      -- this is local cohomology for the maximal ideal
      e := opts.Degree;
      A := ring M;

@@ -130,8 +130,8 @@ document { quote irreducibleCharacteristicSeries,
      "This is an internal routine used by ", TO "decompose", "."
      }
 
-factor ZZ := (n,options) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
-factor QQ := (r,options) -> factor numerator r / factor denominator r
+factor ZZ := options -> (n) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
+factor QQ := options -> (r) -> factor numerator r / factor denominator r
 erase quote factorInteger
 -----------------------------------------------------------------------------
 topCoefficients = method()

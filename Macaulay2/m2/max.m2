@@ -16,6 +16,7 @@ infinity = new InfiniteNumber from {
      }
 document { quote infinity,
      TT "infinity", " -- a representation of infinity.",
+     PARA,
      SEEALSO { "-infinity", "InfiniteNumber" }
      }
 

@@ -1,6 +1,6 @@
 -- 	Copyright 1994 by Daniel R. Grayson
 
-flag quote sequence
+-- flag quote sequence
 
 if class path =!= List then path = { "." }
 
@@ -153,11 +153,6 @@ path = { ".", getenv "M2HOME" | "/packages" }
 
 setrecursionlimit 300
 
-clearAll = () -> (
-     clearOutput();
-     scan(userSymbols(), i -> i <- i);
-     )
-
 userSymbols = type -> (			  -- last symbol introduced
      if type === () then type = Thing;
      tab := symbolTable();
@@ -187,14 +182,11 @@ document { quote userSymbols,
      }
 
 listUserSymbols = new Command from (
-     type -> (
-	  << endl;
-	  scan(userSymbols type, s -> << "    " << s << ": " << class value s << endl);
-	  )
+     type -> verticalJoin apply(userSymbols type, s ->  string s | ": " | name class value s)
      )
 
 document { quote listUserSymbols,
-     TT "listUserSymbols", " -- a command which displays a list of variables 
+     TT "listUserSymbols", " -- a command which returns a display of the variables 
      defined by the user, along with their types.",
      BR,
      NOINDENT, TT "listUserSymbols X", " -- limits the list to those variables whose
@@ -204,6 +196,11 @@ document { quote listUserSymbols,
      a previous session.",
      SEEALSO {"userSymbols"}
      }
+
+clearAll = new Command from (() -> (
+     	  clearOutput();
+     	  scan(userSymbols(), i -> i <- i);
+     	  ))
 
 clearOutput = new Command from (
      () -> (
@@ -215,15 +212,15 @@ clearOutput = new Command from (
      )
 
 document { quote clearOutput,
-     TT "clearOutput()", " -- attempts to release memory by clearing the values
-     retained by the output line symbols.",
+     TT "clearOutput", " -- a command which attempts to release memory by 
+     clearing the values retained by the output line symbols.",
      PARA,
      SEEALSO { "clearAll" }
      }
 
 document { quote clearAll,
-     TT "clearAll()", " -- attempts to release memory by clearing the values
-     retained by the output line symbols and all the user symbols.",
+     TT "clearAll", " -- a command which attempts to release memory by clearing 
+     the values retained by the output line symbols and all the user symbols.",
      PARA,
      SEEALSO {"userSymbols", "clearOutput"}
      }
@@ -239,16 +236,17 @@ document { quote Options,
      optional arguments.  Here 'w' is a list ", TT "{A=>a,B=>b,...}", " of
      optional argument names A,B,... and corresponding default values a,b,...",
      PARA,
-     "When optional arguments are specified, the method functions installed
-     should accept an additional argument to which will be passed a
-     hash table of type ", TO "OptionTable", " containing the optional 
-     argument names and their values.  The table will be stored in the
-     ", TO "OptionsRegistry", " and can be recovered with the function
-     ", TO "options", ".",
+     "The methods installed for this method function should be written in
+     the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
+     will be assigned a hash table of type ", TO "OptionTable", " containing 
+     the optional argument names and their values.  The default table will
+     be stored in the ", TO "OptionsRegistry", " and can be recovered with the 
+     function ", TO "options", ".",
      EXAMPLE {
 	  "f = method(Options => {Slope => 1, Intercept => 1})",
-      	  "f RR := (x,options) -> options.Slope * x + options.Intercept",
+      	  "f RR := o -> x -> o.Slope * x + o.Intercept",
       	  "f(5.,Slope=>100)",
+	  "options f",
 	  },
      PARA,
      "Here is a complete list of symbols which are used as names of options:

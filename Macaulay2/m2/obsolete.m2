@@ -1,10 +1,5 @@
 --		Copyright 1997 by Daniel R. Grayson
 
-Function @ List := (f,v) -> error ///
-'@' is obsolete now - use '\' or '/' instead to apply a 
-function to each element of a list.
-///
-
 unlist = X -> error "'unlist' has been replaced by toSequence"
 unlist
 
@@ -14,11 +9,12 @@ elements
 document { "obsolete functions and symbols",
      "The following functions and symbols have become obsolete.",
      MENU {
-	  TO "unlist",
 	  TO "elements",
-	  TO "syms",
-	  TO "expand",
 	  TO "evaluate",
+	  TO "expand",
+	  TO "seq",
+	  TO "syms",
+	  TO "unlist",
 	  }
      }
 

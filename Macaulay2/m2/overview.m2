@@ -176,7 +176,7 @@ document { "polynomial rings",
       	  "ZZ[vars (0..4),vars(26..30),vars 51]",
 	  },
      "Subscripted variables can be used, provided the base for the subscripted
-     variable has not bee used for something else.",
+     variable has not been used for something else.",
      EXAMPLE "ZZ[t,p_0,p_1,q_0,q_1];",
      "Sequences of subscripted variables can be obtained.",
      EXAMPLE {
@@ -1033,7 +1033,8 @@ document { "making generic matrices",
      }
 
 document { "manipulating matrices",
-     "This node has not been written yet."
+     "In previous sections we have learned various ways to make matrices.  Now
+     we discuss methods for manipulating matrices."
      }
 
 document { "Groebner bases",
@@ -1112,15 +1113,39 @@ document { "language and programming overview",
      	       	    TO "valid names",
 		    TO "assigning values",
 		    TO "local variables in a file",
+		    TO "viewing the symbols defined so far",
+		    TO "subscripted variables",
 		    }
 	       ),
 	  (
 	       "overview of functions",
 	       MENU {
+		    TO "using functions",
 		    TO "making functions",
-		    TO "parameters",
 		    TO "local variables in a function",
-		    TO "functions with a variable number of arguments",
+		    TO "making functions with a variable number of arguments",
+		    TO "using functions with optional arguments",
+		    TO "making new functions with optional arguments",
+		    }
+	       ),
+	  (
+	       "basic types",
+	       MENU {
+		    TO "strings",
+		    TO "nets",
+		    TO "lists",
+		    TO "sequences",
+		    TO "hash tables",
+		    }
+	       ),
+	  (
+	       "control structures",
+	       MENU {
+		    TO "loops",
+		    TO "mapping over lists",
+		    TO "mapping over hash tables",
+		    TO "conditional execution",
+		    TO "error handling",
 		    }
 	       ),
 	  (
@@ -1142,13 +1167,21 @@ document { "language and programming overview",
 		    }
 	       ),
 	  (
-	       "control structures",
+	       "classes and types",
 	       MENU {
-		    TO "loops",
-		    TO "mapping over lists",
-		    TO "conditional execution",
-		    TO "error handling",
-		    }
+		    TO "what a class is",
+		    TO "installing methods",
+		    TO "inheritance from parents",
+		    TO "making new types",
+		    (
+			 "method functions",
+			 MENU {
+			      TO "making a new method function",
+			      TO "method functions with a variable number of arguments",
+			      TO "method functions with optional arguments",
+			      }
+			 ),
+		    },
 	       ),
 	  }
      }
@@ -1160,5 +1193,279 @@ document { "valid names",
 	  "x",
 	  "q0r55",
 	  "f'"
+	  },
+     "Some symbols have preassigned meanings and values.  For example, symbols
+     consisting of the letter ", TT "o", " followed by a number are used 
+     to store output values.",
+     EXAMPLE {
+	  "o2",
+	  },
+     "Other symbols refer to functions built in to Macaulay 2 which provide
+     much of its functionality, as we will learn."
+     }
+
+document { "assigning values",
+     "Use an equal sign to assign values to variables.",
+     EXAMPLE {
+	  "x",
+	  "x = \"abcde\"",
+	  "x"
+	  },
+     "Before assignment, any reference to a variable provides the symbol
+     with that name.  After assignment, the assigned value is provided.
+     The variable created is global, in the sense that any code placed
+     elsewhere which contains a reference to a variable called ", TT "x", "
+     will refer to the one we just set.",
+     }
+
+document { "local variables in a file",
+     "There is a way to construct variables which can be used within a given
+     source file, and are invisible to code placed in other files.  We use
+     ", TO ":=", " for this.  Assume the code below is placed in a file, and
+     that the file is loaded with the ", TO "load", " command.",
+     EXAMPLE {
+	  "ff := 5",
+	  "ff"
+	  },
+     "The variable above is a local one.  Its value is not available to code
+     in other files.",
+     PARA,
+     "Assume the code above is entered directly by the user into Macaulay 2.  Then
+     the variable is still a local one and is not available to code previously loaded
+     or to functions previously defined, but it will be available to code 
+     loaded subsequently.  We illustrate this below with the variable ", TT "jj", ".",
+     PARA,
+     EXAMPLE {
+	  "hh = () -> jj",
+	  "hh()",
+	  "jj = 444",
+	  "hh()",
+	  "jj := 555",
+	  "hh()",
+	  "jj"
 	  }
+     }
+
+document { "viewing the symbols defined so far",
+     "After using Macaulay 2 for a while, you may have stored data in
+     several variables.  The system also stores output values for you
+     in output variables.  You may wish to free the memory space occupied
+     by that data, or you may simply wish to remind yourself where you
+     stored a previously computed value.",
+     PARA,
+     "We may use the command ", TO "listUserSymbols", " to obtain a list of the user's
+     symbols encountered so far.",
+     EXAMPLE {
+	  "ff = 20:4; hh = true; kk",
+	  "listUserSymbols"
+	  },
+     "The symbols are listed in alphabetical order, and the type of value stored
+     under it is displayed.",
+     PARA,
+     "We can clear the output symbols with ", TO "clearOutput", ".",
+     EXAMPLE {
+     	  "clearOutput",
+	  "listUserSymbols"
+	  },
+     "We can clear all the symbols with ", TO "clearAll", ".",
+     EXAMPLE {
+     	  "clearAll",
+	  "listUserSymbols"
+	  },
+     }
+
+document { "subscripted variables",
+     "It is common in mathematics to use subscripted variables.  We use the underscore
+     to represent subscripts.  If we haven't assigned a value to ", TT "x", "
+     we may simply start using it as a subscripted variable.  The subscripts can be
+     anything.",
+     EXAMPLE {
+	  "x",
+	  "x_4",
+	  "x_(2,3)",
+	  },
+     "The ", TO "..", " operator knows what to do with subscripted variables.",
+     EXAMPLE {
+	  "x_10 .. x_20",
+	  "x_(1,1) .. x_(2,3)",
+	  },
+     "Values can be assigned to these variables with ", TO "#", ".",
+     EXAMPLE {
+	  "x#10 = 555;",
+	  "x_10",
+	  },
+     "Be careful not to assign a value to ", TT "x", " itself if you wish to continue
+     using it as a subscripted variable.",
+     SEEALSO {"IndexedVariable","IndexedVariableTable"}
+     }
+
+document { "using functions",
+     "There are many functions in Macaulay 2 that do various things.  You can
+     get a brief indication of what a function does by typing its name.",
+     EXAMPLE "sin",
+     "In this case, we see that the function ", TO "sin", " takes a single argument
+     ", TT "x", ".  We apply a function to its argument by typing them in adjacent
+     positions.  It is possible but not necessary to place parentheses around
+     the argument.",
+     EXAMPLE {
+	  "sin 1.2",
+	  "sin(1.2)",
+	  "sin(1.0+0.2)",
+	  },
+     "In parsing the operator ", TO "^", " takes precedence over adjacency, so the
+     function is applied after the power is computed in the following code.  This
+     may not be what you expect.",
+     EXAMPLE "print(10 + 1)^2",
+     "Some functions take more than one argument, and the arguments are separated
+     by a comma, and then parentheses are needed.",
+     EXAMPLE {
+	  "append",
+	  "append({a,b,c},d)"
+	  },
+     "Some functions take a variable number of arguments.",
+     EXAMPLE {
+	  "join",
+	  "join({a,b},{c,d},{e,f},{g,h,i})"
+	  },
+     "Functions, like anything else, can be assigned to variables.  You may do this
+     to provide handy private abbreviations.",
+     EXAMPLE {
+	  "ap = append;",
+	  "ap({a,b,c},d)"
+	  },
+     }
+
+document { "making functions",
+     "The operator ", TO "->", " is used to make new functions.  To the left
+     we provide the names of the parameters to the function, and to the right we
+     provide an expression involving those parameters, whose value is to be
+     computed when the function is applied.  Let's make a function for squaring
+     numbers, and call it ", TO "sq", ".",
+     EXAMPLE {
+	  "sq = i -> i^2",
+	  "sq 10",
+	  "sq(5+5)",
+	  },
+     "When the function is evaluated, the parameter ", TT "i", " is temporarily
+     assigned as its value the argument provided, which in this case is
+     ", TT "10", ", and the body of the function, namely ", TT "i^2", ", is evaluated.",
+     PARA,
+     "Here is how we make a function with more than one argument.",
+     EXAMPLE {
+	  "tm = (i,j) -> i*j",
+	  "tm(5,7)",
+	  },
+     "Functions can be used without assigning them to variables.",
+     EXAMPLE {
+	  "(i -> i^2) 7",
+	  },
+     "Functions can even create new functions and return them.",
+     EXAMPLE {
+	  "g = i -> j -> i+j",
+	  "h = g 7",
+	  "h 100",
+	  },
+     "What happened here is that when ", TT "g 7", " was evaluated, the value ", TT "7", "
+     was assigned to ", TT "i", " and the body of ", TT "g", " was evaluated, producing
+     the function ", TT "j -> i+j", " which was then assigned to ", TT "h", ".  When the
+     expression ", TT "h 100", " was evaluated, the value ", TT "100", " was assigned to
+     ", TT "j", " and the body of ", TT "h", ", which is ", TT "i+j", ", was evaluated,
+     yielding ", TT "107", ".  As long as the function ", TT "h", " is reachable, the 
+     memory location where the value of ", TT "i", " is stored will be reserved, and kept
+     distinct from other uses of the same code.  This means we can reuse ", TT "g", " without
+     fear, as we demonstrate in the following code.",
+     EXAMPLE {
+	  "k = g 37",
+	  "{h 100, k 100}"
+	  }
+     }
+
+document { "making functions with a variable number of arguments",
+     "It is easy to write a function with a variable number of arguments.
+     Define the function with just one parameter, with no parentheses around
+     it.  If the function is called with several arguments, the value of the
+     single parameter will be a sequence containing the several arguments;
+     if the function is called with one argument, the value of the parameter
+     will be that single argument.",
+     EXAMPLE {
+	  "f = x -> {class x, if class x === Sequence then #x};",
+	  "f()",
+	  "f(3)",
+	  "f(3,4)",
+	  "f(3,4,5)",
+	  },
+     "We could use the function ", TO "sequence", " to bring the case where there
+     is just one argument into line with the others.  It will enclose anything
+     that is not a sequence in a sequence of length one.",
+     EXAMPLE {
+	  "f = x -> (
+     x = sequence x;
+     {class x, #x});",
+	  "f()",
+	  "f(3)",
+	  "f(3,4)",
+	  "f(3,4,5)",
+	  },
+     "As an aside, we reveal that there is a way to define a function of one argument
+     which will signal an error if it's given more than one argument: put
+     parentheses around the single parameter in the definition of the function.
+     As a side effect it can be used to extract the single element from a
+     singleton sequence.",
+     EXAMPLE {
+	  "((x) -> x) 3",
+	  "singleton 3",
+	  "((x) -> x) oo",
+	  }
+     }
+
+document { "using functions with optional arguments",
+     "Some functions accept optional arguments.  Each of these optional arguments
+     has a name.  For example, one of the optional arguments for ", TO "gb", "
+     is named ", TO "DegreeLimit", "; it can be used to specify that the computation
+     should stop after a certain degree has been reached.  Values for optional
+     arguments are specified by providing additional arguments of the form ", TT "B=>v", "
+     where ", TT "B", " is the name of the optional argument, and ", TT "v", " is
+     the value provided for it.",
+     EXAMPLE {
+     	  "R = ZZ/101[x,y,z,w];",
+     	  "gb ideal(x*y-z^2,y^2-w^2)",
+	  "gb(ideal(x*y-z^2,y^2-w^2),DegreeLimit => 2)",
+	  },
+     "The names and default values of the optional arguments for a function can
+     be obtained with ", TO "options", ", as follows.",
+     EXAMPLE {
+	  "o = options res"
+	  },
+     "The value returned is a type of hash table, and can be used to obtain particular
+     default values.",
+     EXAMPLE "o.SortStrategy",
+     "The entry ", TT "DegreeLimit => 2", " is called an option.  Internally it is
+     represented as a type of list of length 2.",
+     EXAMPLE {
+	  "DegreeLimit => 2",
+	  "peek oo"
+	  },
+     }
+
+document { "making new functions with optional arguments",
+     "Let's consider an example where we wish to construct a linear function of ", TT "x", " 
+     called ", TT "f", ", with the slope and y-intercept of the graph being optional
+     arguments of ", TT "f", ".  We use the ", TT "@", " operator to attach the default
+     values to our function, coded in a special way.",
+     EXAMPLE {
+	  "f = (
+     (opts -> x -> x * opts.Slope + opts.Intercept)
+     @
+     {Slope => 1, Intercept => 1}
+     )",
+	  "f 5",
+	  "f(5,Slope => 100)",
+	  "f(5,Slope => 100, Intercept => 1000)",
+	  },
+     "In the example the function body is the code ", TT "x * opts.Slope + opts.Intercept", ".
+     When it is evaluated, a hash table is assigned to ", TT "opts", "; its
+     keys are the names of the optional arguments, and the values
+     are the corresponding current values, obtained either from the default values 
+     specified in the definition of ", TT "f", ", or from the options specified at 
+     the time ", TT "f", " is called."
      }

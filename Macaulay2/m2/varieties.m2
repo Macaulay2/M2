@@ -290,7 +290,7 @@ degreeList := (M) -> (
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-cohomology(ZZ,CoherentSheaf) := (i,G,opts) -> (
+cohomology(ZZ,CoherentSheaf) := opts -> (i,G) -> (
      M := module G;
      if i =!= 0 
      then HH^(i+1)(M,opts)

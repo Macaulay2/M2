@@ -4,7 +4,7 @@
 -- quotients ---
 ----------------
 
-quot0 := (I,J,options) -> (
+quot0 := options -> (I,J) -> (
     -- this is the version when I, J are ideals,
     R := (ring I)/I;
     mR := transpose gens J ** R;
@@ -17,7 +17,7 @@ quot0 := (I,J,options) -> (
     lift(ideal g, ring I)
     )
 
-quot1 := (I,J,options) -> (
+quot1 := options -> (I,J) -> (
     -- This is the iterative version, where I and J
     -- are ideals
     R := ring I;
@@ -29,12 +29,12 @@ quot1 := (I,J,options) -> (
 	    M1 = intersect(M1,M2);)));
     M1)
 
-quot2 := (I,J,options) -> (
+quot2 := options -> (I,J) -> (
      error "not implemented yet";
      -- linear case, I,J ideals homog. J=(x) linear
      )
 
-quotmod0 := (M,J,options) -> (
+quotmod0 := options -> (M,J) -> (
      m := gens M;
      F := target m;
      mm := generators M;
@@ -55,7 +55,7 @@ quotmod0 := (M,J,options) -> (
          image h
      )
 
-quotmod1 := (I,J,options) -> (
+quotmod1 := options -> (I,J) -> (
     -- This is the iterative version, where I is a 
     -- submodule of F/K, or ideal, and J is an ideal.
     M1 := super I;
@@ -67,13 +67,13 @@ quotmod1 := (I,J,options) -> (
 	    M1 = intersect(M1,M2);)));
     M1)
 
-quotmod2 := (I,J,options) -> (
+quotmod2 := options -> (I,J) -> (
      error "not implemented yet";
      -- This is the case when J is a single linear 
      -- element, and everything is homogeneous
      )
 
-quotann0 := (M,J,options) -> (
+quotann0 := options -> (M,J) -> (
      m := gens M;
      if M.?relations then m = m | M.relations;
      j := adjoint(gens J, (ring J)^1, source gens J);
@@ -90,7 +90,7 @@ quotann0 := (M,J,options) -> (
      ideal h
      )
 
-quotann1 := (I,J,options) -> (
+quotann1 := options -> (I,J) -> (
     R := ring I;
     M1 := ideal(1_R);
     m := gens I | relations I;
@@ -111,7 +111,7 @@ doQuotientOptions := (options) -> (
     new OptionTable from options
     )
 
-quotientIdeal := (I,J,options) -> (
+quotientIdeal := options -> (I,J) -> (
      if ring I =!= ring J
        then error "expected ideals in the same ring";
      domins := options.MinimalGenerators;
@@ -119,14 +119,14 @@ quotientIdeal := (I,J,options) -> (
      options = doQuotientOptions options;
      local IJ;
      if strat === quote Iterate then
-         IJ = quot1(I,J,options)
+         IJ = (quot1 options)(I,J)
      else if strat === quote Linear then
-         IJ = quot2(I,J,options)
+         IJ = (quot2 options)(I,J)
      else 
-     	 IJ = quot0(I,J,options);
+     	 IJ = (quot0 options)(I,J);
      if domins then trim IJ else IJ)
 
-quotientModule := (I,J,options) -> (
+quotientModule := options -> (I,J) -> (
      if ring I =!= ring J
        then error "expected same ring";
      domins := options.MinimalGenerators;
@@ -134,14 +134,14 @@ quotientModule := (I,J,options) -> (
      options = doQuotientOptions options;
      local IJ;
      if strat === quote Iterate then
-         IJ = quotmod1(I,J,options)
+         IJ = (quotmod1 options)(I,J)
      else if strat === quote Linear then
-         IJ = quotmod2(I,J,options)
+         IJ = (quotmod2 options)(I,J)
      else 
-     	 IJ = quotmod0(I,J,options);
+     	 IJ = (quotmod0 options)(I,J);
      if domins then trim IJ else IJ)
 
-quotientAnn := (I,J,options) -> (
+quotientAnn := options -> (I,J) -> (
      if ring I =!= ring J
        then error "expected same ring";
      domins := options.MinimalGenerators;
@@ -149,11 +149,11 @@ quotientAnn := (I,J,options) -> (
      options = doQuotientOptions options;
      local IJ;
      if strat === quote Iterate then
-         IJ = quotann1(I,J,options)
+         IJ = (quotann1 options)(I,J)
      else if strat === quote Linear then
          error "'Linear' not allowable strategy"
      else
-     	 IJ = quotann0(I,J,options);
+     	 IJ = (quotann0 options)(I,J);
      if domins then trim IJ else IJ)
 
 quotient = method(
@@ -166,20 +166,20 @@ quotient = method(
 	  }
      )
 
-quotient(Ideal,Ideal) := (I,J,options) ->
-    quotientIdeal(I,J,options)
+quotient(Ideal,Ideal) := options -> (I,J) ->
+    (quotientIdeal options)(I,J)
 
-quotient(Ideal,RingElement) := (I,f,options) ->
-    quotientIdeal(I,ideal(f),options)
+quotient(Ideal,RingElement) := options -> (I,f) ->
+    (quotientIdeal options)(I,ideal(f))
 
-quotient(Module,Ideal) := (M,I,options) ->
-    quotientModule(M,I,options)
+quotient(Module,Ideal) := options -> (M,I) ->
+    (quotientModule options)(M,I)
 
-quotient(Module,RingElement) := (M,f,options) -> 
-    quotientModule(M,ideal(f),options)
+quotient(Module,RingElement) := options -> (M,f) -> 
+    (quotientModule options)(M,ideal(f))
 
-quotient(Module,Module) := (M,I,options) ->
-    quotientAnn(M,I,options)
+quotient(Module,Module) := options -> (M,I) ->
+    (quotientAnn options)(M,I)
 
 Ideal : Ideal :=
 Ideal : RingElement :=
@@ -396,7 +396,7 @@ saturate = method(
 	  }
      )
 
-satideal0old := (I,J,options) -> (
+satideal0old := options -> (I,J) -> (
     R := ring I;
     I = lift(I,ring presentation R);
     m := transpose gens J;
@@ -408,7 +408,7 @@ satideal0old := (I,J,options) -> (
     -- lift(I,R)
     ideal (presentation ring I ** R)
     )
-satideal0 := (I,J,options) -> (
+satideal0 := options -> (I,J) -> (
     R := ring I;
     m := transpose gens J;
     while (
@@ -421,7 +421,7 @@ satideal0 := (I,J,options) -> (
     ideal (presentation ring I ** R)
     )
 
-satideal1 := (I,f,options) -> (
+satideal1 := options -> (I,f) -> (
     I1 := ideal(1_(ring I));
     f = f_0;
     while not(I1 == I) do (
@@ -430,7 +430,7 @@ satideal1 := (I,f,options) -> (
                 SyzygyRows=>1,Syzygies=>true););
     I)
 
-satideal2 := (I,f,options) -> (
+satideal2 := options -> (I,f) -> (
     -- This version may be used if f is a linear form
     -- and I is a submodule
     -- We need an easy test whether the ring of I
@@ -448,7 +448,7 @@ satideal2 := (I,f,options) -> (
 	ideal fback m)
     )
 
-satideal3 := (I,f,options) -> (
+satideal3 := options -> (I,f) -> (
      -- Bayer method.  This may be used if I,f are homogeneous.
      -- Basic idea: in a ring R[z]/(f-z), with the rev lex order,
      -- compute a GB of I.
@@ -468,7 +468,7 @@ satideal3 := (I,f,options) -> (
      ideal iback g
      )
 
-satideal4 := (I,f,options) -> (
+satideal4 := options -> (I,f) -> (
      f = f_0;
      R := ring I;
      n := numgens R;
@@ -488,7 +488,7 @@ removeOptions := (options, badopts) -> (
     scan(badopts, k -> remove(options, k));
     new OptionTable from options)
 
-saturate(Ideal,Ideal) := (J,I,options) -> (
+saturate(Ideal,Ideal) := options -> (J,I) -> (
     -- various cases here
     n := numgens I;
     R := ring I;
@@ -530,15 +530,15 @@ saturate(Ideal,Ideal) := (J,I,options) -> (
     else
         f = satideal0;
 
-    g := f(J,I,options);
+    g := (f options)(J,I);
     if domins then trim g else g
     )
 
-saturate(Ideal, RingElement) := (I,f,options) -> saturate(I,ideal f,options)
+saturate(Ideal, RingElement) := options -> (I,f) -> saturate(I,ideal f,options)
 
-saturate Ideal := (I,options) -> saturate(I,ideal vars ring I, options)
+saturate Ideal := options -> (I) -> saturate(I,ideal vars ring I, options)
 
-saturate(Module,Ideal) := (M,I,options) -> (
+saturate(Module,Ideal) := options -> (M,I) -> (
     -- various cases here
     M1 := M : I;
     while M1 != M do (
@@ -547,11 +547,11 @@ saturate(Module,Ideal) := (M,I,options) -> (
 	 );
     M)
 
-saturate(Module,RingElement) := (M,f,options) -> saturate(M,ideal(f),options)
+saturate(Module,RingElement) := options -> (M,f) -> saturate(M,ideal(f),options)
 
-saturate(Module) := (M,options) -> saturate(M,ideal vars ring M, options)
+saturate(Module) := options -> (M) -> saturate(M,ideal vars ring M, options)
 
-saturate(Vector) := (v,options) -> saturate(submodule v, options)
+saturate(Vector) := options -> (v) -> saturate(submodule v, options)
 
 document { quote MinimalGenerators,
      TT "MinimalGenerators => true", " -- an option for certain functions

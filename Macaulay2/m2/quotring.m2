@@ -221,7 +221,7 @@ assert(size promote(f,S) == 4)
 codim PolynomialRing := R -> 0
 codim QuotientRing := (R) -> codim cokernel presentation R
 
-hilbertSeries QuotientRing := (S,options) -> (
+hilbertSeries QuotientRing := options -> (S) -> (
      hilbertSeries(coker presentation S,options)
      )
 

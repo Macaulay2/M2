@@ -16,7 +16,7 @@ globalAssignFunction = (X,x) -> (
      )
 
 globalReleaseFunction = (X,x) -> (
-     if x.?name and X === x.name
+     if x.?symbol and X === x.symbol
      then (
 	  remove(x,quote name);
 	  remove(x,quote symbol);

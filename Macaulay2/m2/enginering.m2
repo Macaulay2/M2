@@ -169,7 +169,7 @@ frac EngineRing := R -> (
 	  F.ConvertToExpression = ConvertApply(
 	       (x,y) -> x/y, R.ConvertToExpression, R.ConvertToExpression
 	       );
-	  factor F := (f,options) -> factor numerator f / factor denominator f;
+	  factor F := options -> f -> factor numerator f / factor denominator f;
 	  name F := x -> name expression x;
 	  net F := x -> net expression x;
 	  baseName F := (f) -> (

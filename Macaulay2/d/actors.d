@@ -648,8 +648,8 @@ installValueFun(args:CodeSequence):Expr := (
 	       opr := eval(args.0);
 	       when opr is Error do opr
 	       else installValue(opr,aa,bb,eval(args.3)))
-	  else errorExpr("expected right hand parameter to be a hash table"))
-     else errorExpr("expected a hash table"));
+	  else errorExpr("caching not possible without hash tables"))
+     else errorExpr("caching not possible without hash tables"));
 InstallValueFun = installValueFun;
 
 unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (

@@ -33,7 +33,7 @@ sparseMutableMatrix(Matrix) := (m) -> (
      sendgg(ggPush m, ggsparsematrix);
      newSparseMatrix ring m)
 
-matrix(SparseMutableMatrix) := (m,options) -> (
+matrix(SparseMutableMatrix) := options -> (m) -> (
      sendgg(ggPush m, ggmatrix);
      getMatrix ring m)
 
