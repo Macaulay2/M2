@@ -450,6 +450,7 @@ document {
 	  TO "input and output",
 	  TO "combinatorial functions",
 	  TO "system",
+     	  TO "Using the debugger",
 	  TO "debugging",
 	  TO "operators",
 	  TO "executing other programs",

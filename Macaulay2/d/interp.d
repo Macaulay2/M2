@@ -66,7 +66,7 @@ toExpr(x:CodeClosureList):Expr := Expr(list(
 	       if x.code != dummyCodeClosure then provide x.code;
 	       x != x.next) do x = x.next));
 
-readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
+readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      lastvalue := nullE;
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
@@ -86,14 +86,14 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-	       if AbortIfError then return buildErrorPacket("--backtrace: parse error--");
+	       if stopIfError then return buildErrorPacket("--backtrace: parse error--");
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the semicolon
 	       if !(s.word == SemicolonW || s.word == NewlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
-		    if AbortIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE,false));
+		    if stopIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE,false));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
@@ -102,14 +102,17 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 			 lastvalue = eval(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
 			 when lastvalue is err:Error do (
-			      if AbortIfError then return lastvalue;
 			      if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then (
 				   if stopIfBreakReturnContinue then return lastvalue;
 				   printErrorMessage(err.position,"warning: unhandled " + err.message);
 				   );
-			      if err.message == unwindMessage 
-			      then lastvalue = nullE
-			      else setGlobalVariable(errorReportS, toExpr(err.report));
+			      if err.message == unwindMessage then (
+				   lastvalue = nullE;
+				   )
+			      else (
+			      	   if stopIfError then return lastvalue;
+				   setGlobalVariable(errorReportS, toExpr(err.report));
+				   );
 			      )
 			 else (
 			      if printout then (
@@ -120,20 +123,20 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 					     setGlobalVariable(errorReportS, toExpr(err2.report));
 					     )
 					else nothing;
-					if AbortIfError then return g;
+					if stopIfError then return g;
 					)
 				   else nothing)))
 		    else if isatty(file) 
 		    then flush(file)
 		    else return buildErrorPacket("error while loading file")))));
-readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
+readeval3(file:TokenFile,printout:bool,stopIfError:bool,dc:DictionaryClosure,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
       savecf := getGlobalVariable(currentFileName);
        savecd := getGlobalVariable(currentFileDirectory);
 	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
-	ret := readeval4(file,printout,AbortIfError,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
+	ret := readeval4(file,printout,stopIfError,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue);
        setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
      localFrame = saveLocalFrame;
@@ -284,6 +287,8 @@ export topLevel():bool := (
 commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",stopIfError,dc);
 commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 commandInterpreter(e:Expr):Expr := (
+     saveLoadDepth := loadDepth;
+     setLoadDepth(loadDepth+1);
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
@@ -298,6 +303,7 @@ commandInterpreter(e:Expr):Expr := (
        is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
+     setLoadDepth(saveLoadDepth);
      ret);
 setupfun("commandInterpreter",commandInterpreter);
 
@@ -384,7 +390,7 @@ export process():void := (
      stdout.outisatty =   0 != isatty(1) ;
      stderr.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
-     setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
+     setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
      ret := readeval(stringTokenFile("layout.m2",startupString1),false); -- we don't know the right directory!
      when ret is err:Error do (

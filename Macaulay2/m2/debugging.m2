@@ -101,7 +101,7 @@ select2 := (type,syms) -> apply(
 	  ),
      (h,s) -> s)
 
-ls = f -> reverse \\ flatten \\ sortByHash \ values \ localDictionaries f
+ls = f -> flatten \\ sortByHash \ values \ localDictionaries f
 localSymbols = method()
 localSymbols Pseudocode :=
 localSymbols Symbol :=

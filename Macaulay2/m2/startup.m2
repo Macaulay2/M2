@@ -189,7 +189,7 @@ if prefixDirectory === null and buildHomeDirectory =!= null then (
      prefixDirectory = buildHomeDirectory | "m2/tmp/Macaulay2-" | version#"VERSION" | "/";
      )
 
-if prefixDirectory === null and sourceHomeDirectory === null then stderr << "warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
+if prefixDirectory === null and sourceHomeDirectory === null then stderr << "--warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
 
 if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
      -- now get the second to last entry in the chain of symbolic links, which will be in the final prefix directory
@@ -255,6 +255,7 @@ dump := () -> (
 	  if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")	  
 	  );
      if fn === null then error "can't find cache directory for dumpdata file";
+     stderr << "--preparing to dump to " << fn << endl;
      runEndFunctions();
      collectGarbage();
      stderr << "--dumping to " << fn << endl;
@@ -300,6 +301,8 @@ action2 := hashTable {
      }
 
 processCommandLineOptions := phase0 -> (			    -- 3 passes
+     ld := loadDepth;
+     loadDepth = loadDepth + 1;
      phase = phase0;
      argno := 1;
      while argno < #commandLine do (
@@ -319,6 +322,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	  else if phase == 3 then load arg;
 	  argno = argno+1;
 	  );
+     loadDepth = ld;
      )
 
 if firstTime then processCommandLineOptions 1
@@ -336,7 +340,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  stderr << "--loading cached memory data from " << datafile << newline << flush;
 	  loaddata datafile
 	  ) else (
-	  stderr << "warning: can not load data from " << datafile << newline << flush;
+	  stderr << "--warning: can not load data from " << datafile << newline << flush;
 	  )
      )
 
@@ -347,14 +351,18 @@ if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYO
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})
 path = select(path, fileExists)
 normalPrompts()
-if firstTime and not nosetup then loadSetup()
-errorDepth = loadDepth = loadDepth + 1
+if firstTime and not nosetup then (
+     loadSetup();
+     )
 processCommandLineOptions 2
 runStartFunctions()
 tryLoad := fn -> if fileExists fn then (load fn; true) else false
 noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
-processCommandLineOptions 3
-n := interpreter()
+(
+     errorDepth = loadDepth+1;			    -- for debugging this can be overridden almost *immediately* with -e errorDepth=0
+     processCommandLineOptions 3;
+     )
+n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 debuggingMode = false

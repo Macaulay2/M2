@@ -1096,7 +1096,7 @@ export eval(c:Code):Expr := (
 	       err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
 	       err.position = p;
 	       if !err.printed || backtrace && localFrame != oldReportFrame || fullBacktrace then (
-		    if (! p.filename==="stdio") && debuggingMode && !stopIfError && stdIO.inisatty && stdIO.outisatty then (
+		    if debuggingMode && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger--");
 			 z := debuggerFun(err.report.code.frame,err.report.code.code);

@@ -1538,9 +1538,13 @@ export setDebuggingMode(b:bool):void := (
      debuggingMode = b;
      setGlobalVariable(debuggingModeS,toExpr(b));
      );
-export setloadDepth(b:int):void := (
+export setLoadDepth(b:int):void := (
      loadDepth = b;
      setGlobalVariable(loadDepthS,toExpr(b));
+     );
+export setErrorDepth(b:int):void := (
+     errorDepth = b;
+     setGlobalVariable(errorDepthS,toExpr(b));
      );
 export setLineNumber(b:int):void := (
      lineNumber = b;

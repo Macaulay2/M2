@@ -575,7 +575,7 @@ Module _ ZZ := Vector => (M,i) -> (
      else (
 	  -- if i < 0 or i >= M.numgens 
 	  -- then error ("subscript '", toString i, "' out of range");
-	  stderr << "warning: why don't we have M.generators set up?" << endl;
+	  stderr << "--warning: why don't we have M.generators set up?" << endl;
  	  new M from M.RawFreeModule_i
 	  )
      )

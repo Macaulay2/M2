@@ -18,7 +18,7 @@ assert = x -> if not x then error "assertion failed"
 addStartFunction(
      () -> (
 	  Function.GlobalReleaseHook = (X,x) -> (
-	       stderr << "warning: " << toString X << " redefined" << endl;
+	       stderr << "--warning: " << toString X << " redefined" << endl;
      	       remove(ReverseDictionary,x);
 	       );
 	  )
