@@ -261,11 +261,16 @@ export parallelAssignmentCode := {
      rhs:Code,
      position:Position};
 
+export nullCode := {};
+export realCode := {x:double,position:Position};
+export integerCode := {x:Integer,position:Position};
+export stringCode := {x:string,position:Position};
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
 
 export CodeSequence := array(Code);
+export sequenceCode := {x:CodeSequence, position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
      dictionary:Dictionary, position:Position} ;
@@ -273,7 +278,10 @@ export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
-export openDictionaryCode := {dictionary:Dictionary, body:Code};
+export openDictionaryCode := {
+     dictionary:Dictionary,				    -- soon to be obsolete
+     body:Code
+     };
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
      framesize:int,
@@ -289,6 +297,10 @@ export functionCode := {
      };
 export Code := (
      exprCode					      -- soon obsolete
+     or nullCode
+     or realCode
+     or stringCode
+     or integerCode
      or globalMemoryReferenceCode
      or localMemoryReferenceCode
      or globalAssignmentCode
@@ -298,7 +310,7 @@ export Code := (
      or localSymbolClosureCode
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
-     or CodeSequence or openDictionaryCode or functionCode
+     or sequenceCode or openDictionaryCode or functionCode
      );
 
 -- scopes

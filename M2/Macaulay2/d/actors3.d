@@ -1773,7 +1773,7 @@ adjacentfun(lhs:Code,rhs:Code):Expr := (
      when left
      is c:FunctionClosure do (
 	  when rhs
-	  is cs:CodeSequence do apply(c,cs)
+	  is cs:sequenceCode do apply(c,cs.x)
 	  else (
 	       e := eval(rhs);
 	       when e is Error do e
