@@ -80,6 +80,7 @@ TAGS: Makefile dumpseq
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
 				../emacs/emacs.hlp \
 				../packages/*.m2 \
+				../*/Makefile* \
 			        ../experiments/*.m2 \
 			        ../slides/*.m2 \
 			        ../slides/lib/*.m2 \
