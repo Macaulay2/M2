@@ -863,6 +863,12 @@ void GBRing::gbvector_combine_lead_terms_ZZ(
   mpz_gcdext(gab,u1,v1,MPZ_VAL(a),MPZ_VAL(b));
   ring_elem u = MPZ_RINGELEM(u1);
   ring_elem v = MPZ_RINGELEM(v1);
+  if (globalZZ->is_zero(u) || globalZZ->is_zero(v))
+    {
+      result = 0;
+      result_syz = 0;
+      return;
+    }
   gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
   gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
   exponent_syzygy(_EXP1,_EXP2,_EXP3,_EXP4);

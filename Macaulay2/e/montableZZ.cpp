@@ -333,16 +333,17 @@ void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
  * Minimalization ***********
  ****************************/
 
-struct sorter : public binary_function<int,int,bool> {
+struct montable_sorter_ZZ : public binary_function<int,int,bool> {
   int nvars;
   const vector<mpz_ptr,gc_alloc> &coeffs;
   const vector<exponents,gc_alloc> &exps;
   const vector<int,gc_alloc> &comps;
-  sorter(int nvars0, 
+  montable_sorter_ZZ(int nvars0, 
 	 const vector<mpz_ptr,gc_alloc> &coeffs0,
 	 const vector<exponents,gc_alloc> &exps0,
 	 const vector<int,gc_alloc> &comps0) 
     : nvars(nvars0), coeffs(coeffs0), exps(exps0), comps(comps0) {}
+
   bool operator()(int x, int y) {
     exponents xx = exps[x];
     exponents yy = exps[y];
@@ -352,8 +353,27 @@ struct sorter : public binary_function<int,int,bool> {
     if (comps[x] < comps[y]) return true;
     else if (comps[x] > comps[y]) return false;
     // Now order them in ascending order on the coeff (which should always be POSITIVE).
-    return (mpz_cmp(coeffs[x],coeffs[y]) > 0);
+    return (mpz_cmp(coeffs[x],coeffs[y]) < 0);
   }
+
+#if 0
+  bool operator()(int x, int y) {
+    int result = 0; // -1 is false, 1 is true
+    exponents xx = exps[x];
+    exponents yy = exps[y];
+    for (int i=0; i<nvars; i++)
+      if (xx[i] < yy[i]) {result = 1; break;}
+      else if (xx[i] > yy[i]) {result = -1; break;}
+    if (result == 0)
+      if (comps[x] < comps[y]) result = 1;
+      else if (comps[x] > comps[y]) result = -1;
+    if (result == 0)
+    // Now order them in ascending order on the coeff (which should always be POSITIVE).
+      result = (mpz_cmp(coeffs[x],coeffs[y]) > 0);
+    fprintf(stderr, "comparing %d and %d.  Result: %d\n",x,y,result);
+    if (result > 0) return true; else return false;
+  }
+#endif
 };
 
 void MonomialTableZZ::find_weak_generators(int nvars, 
@@ -379,7 +399,7 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 
   /* The following sorts in ascending lex order, considering the component, exp vector
      and finally the coefficient */
-  sort(positions.begin(), positions.end(), sorter(nvars,coeffs,exps,comps));
+  sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
   fprintf(stderr, "sorted terms: ");
   for (int i=0; i<positions.size(); i++)
@@ -414,7 +434,7 @@ void MonomialTableZZ::find_strong_generators(int nvars,
 
   /* The following sorts in ascending lex order, considering the component, exp vector
      and finally the coefficient */
-  sort(positions.begin(), positions.end(), sorter(nvars,coeffs,exps,comps));
+  sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
   fprintf(stderr, "sorted terms: ");
   for (int i=0; i<positions.size(); i++)
