@@ -59,7 +59,7 @@ reach2(TO      ) := (x) -> (
 --------------- body of book
 reach2 TO "Macaulay 2"
 --------------- appendix
-docDatabase = openDatabase "../cache/Macaulay2.doc"
+docDatabase = openDatabase "../cache/Macaulay2-doc"
 unreachedNodes = new MutableHashTable
 scanKeys(docDatabase, 
      node -> (

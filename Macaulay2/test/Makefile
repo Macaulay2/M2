@@ -8,7 +8,7 @@ endif
 
 all :: $(RESULTS)
 
-$(RESULTS) : ../bin/Macaulay2 ../cache/Macaulay2.doc ../cache/Macaulay2.made
+$(RESULTS) : ../bin/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
 ifdef DUMPDATA
 dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3

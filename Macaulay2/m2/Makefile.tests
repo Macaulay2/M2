@@ -8,7 +8,7 @@ all:: $(TESTRESULTS)
 ifdef DUMPDATA
 $(TESTRESULTS) : ../../cache/Macaulay2-$(ARCH)-data
 else
-$(TESTRESULTS) : ../../cache/Macaulay2.doc
+$(TESTRESULTS) : ../../cache/Macaulay2-doc
 endif
 
 ifdef DUMPDATA

@@ -194,7 +194,7 @@ document { quote phase,
      that we are running an example input file, and referring to Macaulay2.pre.
      The value 4 indicates that we are loading setup.m2, reading the
      example output files, and creating the final version of the help file,
-     called Macaulay2.doc.  The value 5 indicates that we are running the
+     called Macaulay2-doc.  The value 5 indicates that we are running the
      interpreter as usual, but reading the example output files when
      ", TO "document", " is used."
      }
