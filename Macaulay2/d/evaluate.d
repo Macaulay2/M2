@@ -797,30 +797,6 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
 
 -----------------------------------------------------------------------------
 
-evalAdjacentCode(lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
-     when left
-     is c:FunctionClosure do (
-	  when rhs
-	  is cs:sequenceCode do apply(c,cs.x)
-	  else (
-	       e := eval(rhs);
-	       when e is Error do e
-	       is v:Sequence do apply(c,v)
-	       else apply(c,e)))
-     is ff:CompiledFunction do (
-	  e := eval(rhs);
-	  when e is Error do e
-	  else ff.fn(e))
-     is ff:CompiledFunctionClosure do (
-	  e := eval(rhs);
-	  when e is Error do e
-	  else ff.fn(e,ff.env))
-     is Error do left
-     else binarymethod(left,rhs,AdjacentS));
-
------------------------------------------------------------------------------
-
 globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
      method := lookup(Class(oldvalue),GlobalReleaseE);
      sym := Expr(SymbolClosure(globalFrame,t));
@@ -1002,7 +978,27 @@ export eval(c:Code):Expr := (
 	  else when c
 	  is u:unaryCode do u.f(u.rhs)
 	  is b:binaryCode do b.f(b.lhs,b.rhs)
-	  is b:adjacentCode do evalAdjacentCode(b.lhs,b.rhs)
+	  is b:adjacentCode do (
+	       left := eval(b.lhs);
+	       when left
+	       is c:FunctionClosure do (
+	       	    rhs := b.rhs;
+		    when rhs is cs:sequenceCode do apply(c,cs.x)
+		    else (
+			 z := eval(rhs);
+			 when z is Error do z
+			 is v:Sequence do apply(c,v)
+			 else apply(c,z)))
+	       is ff:CompiledFunction do (
+		    z := eval(b.rhs);
+		    when z is Error do z
+		    else ff.fn(z))
+	       is ff:CompiledFunctionClosure do (
+		    z := eval(b.rhs);
+		    when z is Error do z
+		    else ff.fn(z,ff.env))
+	       is Error do left
+	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))
 	  is r:localMemoryReferenceCode do (
 	       f := localFrame;

@@ -193,6 +193,7 @@ export binop := function(Code,Code):Expr;
 export binopExpr := function(Expr,Expr):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
+
 export newLocalFrameCode := {
      frameID:int,
      framesize:int,
@@ -591,6 +592,49 @@ export (x:Symbol) === (y:Expr):bool := (
 export (x:Expr) === (y:Symbol):bool := (
      when x is z:SymbolClosure do y == z.symbol else false
      );
+
+-- operator names for the disassembler
+export dummyUnop(c:Code):Expr := nullE;
+export dummyBinop(c:Code,d:Code):Expr := nullE;
+export dummyTernop(c:Code,d:Code,e:Code):Expr := nullE;
+export dummyMultop(s:CodeSequence):Expr := nullE;
+export unopNameListCell := {f:unop,name:string,next:unopNameListCell};
+export binopNameListCell := {f:binop,name:string,next:binopNameListCell};
+export ternopNameListCell := {f:ternop,name:string,next:ternopNameListCell};
+export multopNameListCell := {f:multop,name:string,next:multopNameListCell};
+export unopNameList := unopNameListCell(dummyUnop,"--dummy unary operator--",self);
+export binopNameList := binopNameListCell(dummyBinop,"--dummy binnary operator--",self);
+export ternopNameList := ternopNameListCell(dummyTernop,"--dummy ternary operator--",self);
+export multopNameList := multopNameListCell(dummyMultop,"--dummy n-ary operator--",self);
+export getUnopName(f:unop):string := (
+     p := unopNameList;
+     while true do (
+	  if p == p.next then return "";
+	  if p.f == f then return p.name;
+	  p = p.next;
+	  ));
+export getBinopName(f:binop):string := (
+     p := binopNameList;
+     while true do (
+	  if p == p.next then return "";
+	  if p.f == f then return p.name;
+	  p = p.next;
+	  ));
+export getTernopName(f:ternop):string := (
+     p := ternopNameList;
+     while true do (
+	  if p == p.next then return "";
+	  if p.f == f then return p.name;
+	  p = p.next;
+	  ));
+export getMultopName(f:multop):string := (
+     p := multopNameList;
+     while true do (
+	  if p == p.next then return "";
+	  if p.f == f then return p.name;
+	  p = p.next;
+	  ));
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
