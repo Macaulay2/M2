@@ -531,7 +531,11 @@ getfun(e:Expr):Expr := (
      is f:file do (
 	  if f.infd == -1
 	  then WrongArg("an open input file")
-	  else Expr(readfile(f.infd))
+	  else (
+	       when readfile(f.infd)
+	       is s:string do Expr(s)
+	       else errorExpr("unable to read file: "+syserrmsg())
+	       )
 	  )
      is filename:string do (
 	  when get(filename)

@@ -99,7 +99,7 @@ int argc;
 char **argv;
 {
      startM2();
-     try("2+2");
+     try("2+2\n3+3");
      try("100!");
      try("R = ZZ/101[a..c]");
      try("I = ideal symmetricPower(2,vars R)");

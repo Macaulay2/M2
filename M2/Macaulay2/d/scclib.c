@@ -425,7 +425,7 @@ int fd;
 #ifdef EINTR
 		 if (errno == EINTR) break;
 #endif
-		 fatal("can't read file descriptor %d", fd);
+		 return NULL;
 		 }
 	    if (0 == n) break;
 	    size += n;
@@ -619,7 +619,7 @@ int system_errno() {
 }
 
 char const *system_strerror() {
-     char *msg =
+     char const *msg =
 #ifndef NO_HERROR
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
 #endif
