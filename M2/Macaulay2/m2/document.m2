@@ -69,7 +69,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
-toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
+-- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
 makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  FormattedKey => null,
 	  Package => null
@@ -335,7 +335,7 @@ fixup Sequence   := z -> fixup SEQ z
 -- fixup Option
 fixup UL         := z -> splice apply(nonnull z, i -> SEQ fixup if class i === TO then TOH {i#0} else i)
 -- fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
-fixup TO         := x -> TO if x#?1 then { toFinalDocumentTag makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { toFinalDocumentTag makeDocumentTag x#0 }
+fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
 fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
@@ -475,7 +475,7 @@ enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
      Key => identity,
-     symbol DocumentTag => toFinalDocumentTag,
+     symbol DocumentTag => identity,
      Usage => val -> fixup val,
      Function => val -> fixup val,
      FormattedKey => chkIsString FormattedKey,

@@ -65,7 +65,7 @@ html TO   := x -> concatenate(
      "\" title=\"",
      headline x#0,
      "\">",
-     htmlLiteral FinalDocumentTag.FormattedKey x#0,
+     htmlLiteral DocumentTag.FormattedKey x#0,
      "</a>",
      if x#?1 then x#1)
 html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlLiteral x#1, "</a>")
@@ -86,7 +86,7 @@ forward  := tag -> ( f := FORWARD  tag; if f =!= null then ( HREF { htmlFilename
 backward := tag -> ( b := BACKWARD tag; if b =!= null then ( HREF { htmlFilename b, backwardButton}, " | "))
 
 linkTitle := s -> concatenate( " title=\"", s, "\"" )
-linkTitleTag := tag -> concatenate( " title=\"", FinalDocumentTag.FormattedKey tag, commentize headline tag, "\"" )
+linkTitleTag := tag -> concatenate( " title=\"", DocumentTag.FormattedKey tag, commentize headline tag, "\"" )
 links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
@@ -164,7 +164,7 @@ commentize := s -> if s =!= null then concatenate(" -- ",s)
 
 -----------------------------------------------------------------------------
 
-checkIsTag := tag -> ( assert(class tag === FinalDocumentTag); tag )
+checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
 
 alpha := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 anchorPoint := 0
@@ -179,7 +179,7 @@ anchor := entry -> (
 packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
      apply(
      	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
-	  (nam,sym) -> toFinalDocumentTag makeDocumentTag(sym, Package => pkg)),
+	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
      apply(
 	  values pkg#"raw documentation",
 	  doc -> doc.DocumentTag),
@@ -191,11 +191,11 @@ packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
 -----------------------------------------------------------------------------
 
 -- make this first:
-linkTable = new MutableHashTable			    -- keys are FinalDocumentTags for a node, values are lists of FinalDocumentTags of descendents
+linkTable = new MutableHashTable			    -- keys are DocumentTags for a node, values are lists of DocumentTags of descendents
 
 -- assemble this next
 ForestNode = new Type of BasicList			    -- list of tree nodes, the descendent list
-TreeNode = new Type of BasicList			    -- first entry is FinalDocumentTag for this node, second entry is a forest node
+TreeNode = new Type of BasicList			    -- first entry is DocumentTag for this node, second entry is a forest node
 
 traverse := method()
 traverse(ForestNode,Function) := (n,f) -> scan(n,t -> traverse(t,f))
@@ -276,7 +276,7 @@ assembleTree := (pkg,nodes) -> (
      duplicateReferences = new MutableHashTable;
      linkTable = new HashTable from apply(nodes, tag -> (   -- collect links from each tag to its subnodes
 	       checkIsTag tag;
-	       fkey := FinalDocumentTag.FormattedKey tag;
+	       fkey := DocumentTag.FormattedKey tag;
 	       if pkg#"raw documentation"#?fkey then (
 		    doc := pkg#"raw documentation"#fkey;
 		    tag => first \ select(if doc.?Subnodes then toList doc.Subnodes else {}, x -> class x === TO))
@@ -354,7 +354,7 @@ makeMasterIndex := keylist -> (
 
 makeTableOfContents := () -> (
      fn := buildDirectory | htmlDirectory | tocFileName;
-     title := FinalDocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
+     title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
      << "--making  '" << title << "' in " << fn << endl;
      fn
      << html HTML {
@@ -481,7 +481,7 @@ installPackage Package := o -> pkg -> (
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topDocumentTag = toFinalDocumentTag makeDocumentTag(pkg#"title", Package => pkg);
+     topDocumentTag = makeDocumentTag(pkg#"title", Package => pkg);
      rawDoc := pkg#"raw documentation";
 
      -- check that we've read the raw documentation
@@ -597,7 +597,7 @@ installPackage Package := o -> pkg -> (
 	  );
      rawdocDatabase := openDatabaseOut rawdbnametmp;
      scan(nodes, tag -> (
-	       fkey := FinalDocumentTag.FormattedKey tag;
+	       fkey := DocumentTag.FormattedKey tag;
 	       if rawDoc#?fkey then (
 	       	    v := toExternalString rawDoc#fkey;
 		    if rawdocDatabase#?fkey then (
@@ -667,7 +667,7 @@ installPackage Package := o -> pkg -> (
      -- process documentation
      stderr << "--processing documentation nodes..." << endl;
      scan(nodes, tag -> (
-	       fkey := FinalDocumentTag.FormattedKey tag;
+	       fkey := DocumentTag.FormattedKey tag;
 	       if not o.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
 	       	    -- stderr << "--skipping   " << tag << endl;
 		    )
@@ -730,17 +730,17 @@ installPackage Package := o -> pkg -> (
 	  infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
 	  infofile << "END-INFO-DIR-ENTRY" << endl << endl;
 	  byteOffsets := new MutableHashTable;
-	  topNodeName := FinalDocumentTag.FormattedKey topDocumentTag;
+	  topNodeName := DocumentTag.FormattedKey topDocumentTag;
 	  chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
 	  infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
 	  traverse(unbag pkg#"table of contents", tag -> (
-		    fkey := FinalDocumentTag.FormattedKey tag;
+		    fkey := DocumentTag.FormattedKey tag;
 		    chk fkey;
 		    byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
 		    infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
-		    if NEXT#?tag then infofile << ", Next: " << infoTagConvert' FinalDocumentTag.FormattedKey NEXT#tag;
-		    if PREV#?tag then infofile << ", Prev: " << infoTagConvert' FinalDocumentTag.FormattedKey PREV#tag;
-		    if UP#?tag   then infofile << ", Up: " << infoTagConvert' FinalDocumentTag.FormattedKey UP#tag;
+		    if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
+		    if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
+		    if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
 		    infofile << endl << endl << info getPDoc fkey << endl));
 	  infofile << "\037" << endl << "Tag Table:" << endl;
 	  scan(values byteOffsets, b -> infofile << b << endl);
@@ -793,8 +793,8 @@ installPackage Package := o -> pkg -> (
      buildDirectory|htmlDirectory|".linkdir" << close;
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      scan(nodes, tag -> (
-	  -- key := FinalDocumentTag.Key tag;
-	  fkey := FinalDocumentTag.FormattedKey tag;
+	  -- key := DocumentTag.Key tag;
+	  fkey := DocumentTag.FormattedKey tag;
 	  fn := buildDirectory | htmlFilename tag;
 	  if fileExists fn and not o.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	  stderr << "--making html page for " << tag << endl;
@@ -814,7 +814,7 @@ installPackage Package := o -> pkg -> (
 	  << endl << close));
 
      -- make master.html with master index of all the html files
-     makeMasterIndex select(nodes,tag -> instance(FinalDocumentTag.Key tag,Symbol));
+     makeMasterIndex select(nodes,tag -> instance(DocumentTag.Key tag,Symbol));
 
      -- make table of contents
      makeTableOfContents();
