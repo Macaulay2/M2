@@ -94,7 +94,7 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
 	       mpz_init(x);
 	       for (int i = v.length() - 1; i >= 0; i--) {
 		    mpz_mul_ui(x,x,base); // x = x * base;
-		    mpz_add_ui(x,x,(unsigned)v[i]);
+		    mpz_add_ui(x,x,static_cast<unsigned>(v[i]));
 	       }
 	       if (sign == -1) mpz_neg(x,x); // x = -x;
 	       ring_elem ret = R->from_int(x);
@@ -287,7 +287,7 @@ void rawFactor(const RingElement *g,
   }
   int nfactors = q.length();
 
-  *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
+  *result_factors = reinterpret_cast<RingElement_array *>(getmem(sizeofarray((*result_factors),nfactors)));
   (*result_factors)->len = nfactors;
 
   *result_powers = makearrayint(nfactors);
@@ -367,13 +367,13 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 
      List<CFList> t = IrrCharSeries(I);
 
-     Matrix_array *result = (Matrix_array *) getmem(sizeofarray(result,t.length()));
+     Matrix_array *result = reinterpret_cast<Matrix_array *>(getmem(sizeofarray(result,t.length())));
      result->len = t.length();
      
      int next = 0;
      for (ListIterator<List<CanonicalForm> > ii = t; ii.hasItem(); ii++) {
 	  CFList u = ii.getItem();
-	  RingElement_array *result1 = (RingElement_array *) getmem(sizeofarray(result1,u.length()));
+	  RingElement_array *result1 = reinterpret_cast<RingElement_array *>(getmem(sizeofarray(result1,u.length())));
 	  result1->len = u.length();
 	  int next1 = 0;
 	  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
