@@ -7,7 +7,7 @@ errorDepth 0
 conceptTable = new MutableHashTable
 
 scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
-scandb(openDatabase "../bin/Macaulay2.doc",
+scandb(openDatabase "../cache/Macaulay2.doc",
      (key,doc) -> (
 	  filename := linkFilename key;
 	  conceptTable#key = filename;

@@ -1,7 +1,5 @@
 --		Copyright 1997 by Daniel R. Grayson
 
-if hypertex === quote hypertex then hypertex = false
-
 nodeTable = new MutableHashTable
 nodeTable2 = new MutableHashTable
 fileNumberTable = new MutableHashTable
@@ -56,7 +54,7 @@ reach2(TO      ) := (x) -> (
 --------------- body of book
 reach2 TO "Macaulay 2"
 --------------- appendix
-docDatabase = openDatabase "../bin/Macaulay2.doc"
+docDatabase = openDatabase "../cache/Macaulay2.doc"
 unreachedNodes = new MutableHashTable
 scanKeys(docDatabase, 
      node -> (
