@@ -33,7 +33,7 @@ newPackage("Markov",
 
 
 
-export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
+export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts, p,
        markovRing, marginMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, bayesBall, prob)
 exportMutable(dotBinary,jpgViewer)
 
