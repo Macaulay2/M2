@@ -194,7 +194,7 @@ makeit1 := (options) -> (
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
 	       M.generators / toString,
-	       (degreesMonoid degreeLength M).RawMonoid,
+	       raw degreesRing degreeLength M,
 	       flatten internalDegrees));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;

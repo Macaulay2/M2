@@ -302,10 +302,10 @@ extern "C" {
   const RingOrNull *IM2_Ring_bigCC(void); /* drg: connected rawBigCC */
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
-				      const Monoid *M); /* drg: connected rawPolynomialRing*/
+				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
   /* K can be either commutative or not. */
 
-  const Ring *IM2_Ring_trivial_polyring();
+  const Ring *IM2_Ring_trivial_polyring(); /* drg: connected rawPolynomialRing() */
   /* This returns the polynomial ring ZZ[], whose degree ring is itself */
 
   const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
