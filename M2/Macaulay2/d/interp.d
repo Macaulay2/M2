@@ -103,13 +103,13 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 				   if stopIfBreakReturnContinue then return lastvalue;
 				   printErrorMessage(err.position,"warning: unhandled " + err.message);
 				   );
-			      if !err.printed then (
-				   printErrorMessage(err.position,"warning: unprinted error message: " + err.message);
-				   );
 			      if err.message == unwindMessage then (
 				   lastvalue = nullE;
 				   )
 			      else (
+				   if !err.printed then (
+					printErrorMessage(err.position,"warning: unprinted error message: " + err.message);
+					);
 			      	   if stopIfError then return lastvalue;
 				   );
 			      )
