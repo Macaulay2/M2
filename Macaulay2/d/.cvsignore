@@ -11,3 +11,4 @@ tmp_init.c
 addresses
 probe
 c-files.tar
+gmon.out
