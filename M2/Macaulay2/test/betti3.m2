@@ -1,3 +1,13 @@
+assert ( toString infinity === "infinity" )
+assert ( toString(-infinity) === "-infinity" )
+assert ( (min {} .. max {}) === () )
+assert ( (infinity .. infinity) === () )
+assert ( (-infinity .. -infinity) === () )n
+if not (try ( -infinity .. infinity; false) else true) then error "oops"
+
+R = QQ[x]
+betti res R^0
+
 -- Date: Wed, 3 Mar 2004 21:28:06 -0800
 -- From: David Eisenbud <de@msri.org>
 -- To: Dan Grayson <dan@math.uiuc.edu>, Mike Stillman <mike@math.cornell.edu>
