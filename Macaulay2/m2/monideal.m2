@@ -23,7 +23,7 @@ codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
      else if isField R then 0
      else if R === ZZ then if M ** QQ == 0 then 1 else 0
      else (
-	  p := gens gb presentation M;
+	  p := generators gb presentation M;
 	  n := rank target p;
 	  c := infinity;
 	  for i from 0 to n-1 when c > 0 do c = min(c,codim monomialIdealOfRow(i,p));
@@ -35,7 +35,7 @@ toString MonomialIdeal := m -> if m.?name then m.name else "monomialIdeal " | to
 UnaryMonomialIdealOperation  := (operation) -> (m) -> newMonomialIdeal(ring m, operation raw m)
 BinaryMonomialIdealOperation := (operation) -> (m,n) -> newMonomialIdeal(ring m, operation(raw m, raw n))
 
--- net MonomialIdeal := I -> if I == 0 then "0" else "monomialIdeal " | net toSequence first entries gens I
+-- net MonomialIdeal := I -> if I == 0 then "0" else "monomialIdeal " | net toSequence first entries generators I
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 
@@ -166,7 +166,7 @@ MonomialIdeal.AfterPrint = MonomialIdeal.AfterNoPrint = (I) -> (
      << ring I << endl;
      )
 
-monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal gens gb I
+monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal generators gb I
 
 monomialIdeal Module := MonomialIdeal => (M) -> (
      if isSubmodule M and rank ambient M === 1 
@@ -179,12 +179,12 @@ monomialIdeal Ring := MonomialIdeal => R -> monomialIdeal {0_R}
 ring MonomialIdeal := I -> I.ring
 numgens MonomialIdeal := I -> I.numgens
 MonomialIdeal _ ZZ := (I,n) -> (generators I)_(0,n)
-module MonomialIdeal := Module => (I) -> image gens I
+module MonomialIdeal := Module => (I) -> image generators I
 
 isMonomialIdeal = method(TypicalValue => Boolean)
 isMonomialIdeal Thing := x -> false
 isMonomialIdeal MonomialIdeal := (I) -> true
-isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries gens I, r -> size r === 1)
+isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1)
 
 MonomialIdeal == Ideal := (I,J) -> ideal I == J
 Ideal == MonomialIdeal := (I,J) -> I == ideal J
@@ -208,13 +208,13 @@ MonomialIdeal * Module := Module => (I,M) -> ideal I * M
 MonomialIdeal * Ring := Ideal => (I,S) -> if ring I === S then I else monomialIdeal(I.generators ** S)
 Ring * MonomialIdeal := Ideal => (S,I) -> if ring I === S then I else monomialIdeal(I.generators ** S)
 
-Matrix % MonomialIdeal := Matrix => (f,I) -> f % forceGB gens I
-RingElement % MonomialIdeal := (r,I) -> r % forceGB gens I
-ZZ % MonomialIdeal := (r,I) -> r_(ring I) % forceGB gens I
+Matrix % MonomialIdeal := Matrix => (f,I) -> f % forceGB generators I
+RingElement % MonomialIdeal := (r,I) -> r % forceGB generators I
+ZZ % MonomialIdeal := (r,I) -> r_(ring I) % forceGB generators I
 
-Matrix // MonomialIdeal := Matrix => (f,I) -> f // forceGB gens I
-RingElement // MonomialIdeal := (r,I) -> r // forceGB gens I
-ZZ // MonomialIdeal := (r,I) -> r_(ring I) // forceGB gens I
+Matrix // MonomialIdeal := Matrix => (f,I) -> f // forceGB generators I
+RingElement // MonomialIdeal := (r,I) -> r // forceGB generators I
+ZZ // MonomialIdeal := (r,I) -> r_(ring I) // forceGB generators I
 
 dim MonomialIdeal := I -> dim ring I - codim I
 
@@ -222,12 +222,12 @@ degree MonomialIdeal := I -> degree cokernel generators I   -- maybe it's faster
 
 jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 
-resolution MonomialIdeal := ChainComplex => options -> I -> res ideal I
+resolution MonomialIdeal := ChainComplex => options -> I -> resolution ideal I
 betti MonomialIdeal := I -> betti ideal I
 
 
 lcmOfGens := (I) -> if I#?(local lcm) then I#(local lcm) else I#(local lcm) = (
-     max \ transpose apply(first entries gens I, i -> first exponents i)
+     max \ transpose apply(first entries generators I, i -> first exponents i)
      )
 
 
@@ -237,7 +237,7 @@ lcmOfGens := (I) -> if I#?(local lcm) then I#(local lcm) else I#(local lcm) = (
 
 dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      R := ring I;
-     X := gens R;
+     X := generators R;
      aI := lcmOfGens I;
      if aI =!= a then (
      	  if #aI =!= #a 
@@ -263,7 +263,7 @@ dual MonomialIdeal := (I) -> dual(I, lcmOfGens(I))
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := lcmOfGens I;
-     M := first entries gens dual I;
+     M := first entries generators dual I;
      L := unique apply(#M, i -> first exponents M_i);
      apply(L, i -> monomialIdeal apply(#i, j -> ( 
 		    if i#j === 0 then 0_R 
@@ -277,7 +277,7 @@ primaryDecomposition MonomialIdeal := List => o -> (I) -> (
 ass MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      a := lcmOfGens I + toList(numgens R:1);
-     L := first entries gens dual I;
+     L := first entries generators dual I;
      L = apply(L, i -> a - first exponents i);
      L = unique apply(L, i -> apply(#i, j -> if i#j === 0 or i#j === a#j then 0 else 1));
      apply(L, i -> monomialIdeal flatten apply(#i, j -> if i#j === 0 then 0_R else R_j )))
@@ -286,14 +286,14 @@ ass MonomialIdeal := List => o -> (I) -> (
 --  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
 -- isSquareFree Thing := x -> false
-isSquareFree MonomialIdeal := (I) -> all(first entries gens I, m -> all(first exponents m, i -> i<2))
+isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(first exponents m, i -> i<2))
 
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
 standardPairs = method()
 standardPairs(MonomialIdeal, List) := (I,D) -> (
      R := ring I;
-     X := gens R;
+     X := generators R;
      S := {};
      k := coefficientRing R;
      scan(D, L -> ( 
@@ -306,7 +306,7 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 	       -- changing global ring.
      	       A := k (monoid [Y]);
      	       phi := map(A, R, substitute(m, A));
-     	       J := ideal mingens ideal phi gens I;
+     	       J := ideal mingens ideal phi generators I;
      	       Jsat := saturate(J, ideal vars A);
      	       if Jsat != J then (
      	  	    B := flatten entries super basis (
@@ -317,9 +317,9 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
      S)
 
 Delta := (I) -> (
-     X := gens ring I;
-     d := #X - pdim coker gens I;
-     select( apply(ass I, J -> set X - set first entries gens J), Y -> #Y >= d ) / toList
+     X := generators ring I;
+     d := #X - pdim cokernel generators I;
+     select( apply(ass I, J -> set X - set first entries generators J), Y -> #Y >= d ) / toList
      )
 
 standardPairs MonomialIdeal := (I) -> standardPairs(I,Delta I)
@@ -329,15 +329,15 @@ monomialSubideal = method();				    -- needs a new name?
 monomialSubideal Ideal := (I) -> (
      t := local t;
      R := ring I;
-     X := gens R;
+     X := generators R;
      k := coefficientRing R;
      S := k( monoid [t, X, MonomialOrder => Eliminate 1]);
      J := substitute(I, S);
      scan(#X, i -> (
 	       w := {1} | toList(i:0) | {1} | toList(#X-i-1:0);
-	       J = ideal homogenize(gens gb J, (gens S)#0, w);
-	       J = saturate(J, (gens S)#0);
-	       J = ideal selectInSubring(1, gens gb J);
+	       J = ideal homogenize(generators gb J, (generators S)#0, w);
+	       J = saturate(J, (generators S)#0);
+	       J = ideal selectInSubring(1, generators gb J);
 	       ));
      monomialIdeal substitute(J, R)
      )

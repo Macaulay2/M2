@@ -90,10 +90,10 @@ minSatPPD = (I, facs) -> (
      R := ring I;
      facs = sortByDegree facs;
      F0 := product facs;
-     ret := quotMin(gens I,facs,F0);
+     ret := quotMin(generators I,facs,F0);
      facs0 := ret#1;
      F := 1_R;   -- will be s.t. sat(I,F0) = I:F
-     Iprev := gens I;
+     Iprev := generators I;
      while not fastequal(ret#0, Iprev) do (
 	  F = F * ret#2;
 	  Iprev = ret#0;
@@ -115,11 +115,11 @@ I = ideal(
     u*z+w*x,
     v*z+w*y)
 F = x*y*z
-time fastgb gens I
+time fastgb generators I
 time gb I
-time fastquotient(gens I,F)
+time fastquotient(generators I,F)
 time (I:F)
-time (quotMin(gens I,{x,y,z},F))
+time (quotMin(generators I,{x,y,z},F))
 time (minSatPPD(I,{x,y,z}))
 time (minSatPPDold(I,{x,y,z}))
 

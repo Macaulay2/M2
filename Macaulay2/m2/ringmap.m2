@@ -171,7 +171,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
 	  and coefficientRing R === coefficientRing F
 	  ) 
      then (
-	  JJ := gens graphIdeal(f,
+	  JJ := generators graphIdeal(f,
 	       MonomialOrder => Eliminate n1, 
 	       MonomialSize => 16,
 	       VariableBaseName => local X);

@@ -169,7 +169,7 @@ toExternalString Matrix := m -> concatenate (
 
 toString Matrix := m -> concatenate ( "matrix ", toString entries m )
 
-isIsomorphism Matrix := f -> coker f == 0 and ker f == 0
+isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 
 isHomogeneous Matrix := m -> (
      if m.cache.?isHomogeneous then m.cache.isHomogeneous 
@@ -540,7 +540,7 @@ relations Module := Matrix => M -> (
 
 degrees Matrix := f -> {degrees target f, degrees source f}
 
-coverMap(Module) := Matrix => (M) -> map(M, cover M, gens M)
+coverMap(Module) := Matrix => (M) -> map(M, cover M, generators M)
 
 ambient Matrix := Matrix => f -> (
      M := target f;
@@ -558,7 +558,7 @@ ambient Matrix := Matrix => f -> (
 	  )
      )
 
-degrees Ring := R -> degree \ gens R
+degrees Ring := R -> degree \ generators R
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

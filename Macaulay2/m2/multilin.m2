@@ -45,7 +45,7 @@ exteriorPower(ZZ,Module) := Module => options -> (p,M) -> (
 	       Fp := exteriorPower(p,F,options);
 	       h1 := m ** id_Fp1;
 	       h2 := wedgeProduct(1,p-1,F);
-	       coker (h2*h1))))
+	       cokernel (h2*h1))))
 
 exteriorPower(ZZ, Matrix) := Matrix => options -> (p,m) -> (
      R := ring m;

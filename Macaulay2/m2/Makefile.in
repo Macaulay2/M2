@@ -192,17 +192,16 @@ tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo "make: Leaving directory \`tmp'"
 	touch "$@"
 
-remake-all: remake1 remake2 remake3 remake0
-remake-nodes: remake1 remake2 remake0
-remake-failed-examples: remake4 remake0
-remake-doc: remake1 remake0
-remake0: all
-remake1:; @ set -x ; rm -f tmp/.documentation-made
-remake2:; @ set -x ; rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
+remake-all: remake-doc remake2 remake3
+remake-nodes: remake-doc remake2
+remake-doc:
+	@ set -x ; rm -f tmp/.documentation-made
+remake2:
+	@ set -x ; rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
 remake3:
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagehtmlRelDir) tmp/*/$(packagehtmlRelDir))
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir) tmp/*/$(packageexamplesRelDir))
-remake4:
+remake-failed-examples:;
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.tmp tmp/*/$(packageexamplesRelDir)/*.tmp)
 
 install::all install-main

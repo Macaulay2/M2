@@ -120,7 +120,7 @@ decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.c
      Psi = toList select(Psi,i -> i =!= null);
      components := apply(Psi, p -> ics#1 p);
      if A =!= R then (
-	  components = apply(components, I -> ideal(gens I ** R));
+	  components = apply(components, I -> ideal(generators I ** R));
 	  );
      components
      )

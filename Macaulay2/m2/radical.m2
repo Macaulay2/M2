@@ -30,12 +30,12 @@ removeLowestDimension Module := Module => (M) -> (
     else (
         -- use the annihilator of Ext to improve M
         I := ann E;
-        coker gens saturate(image presentation M,I))
+        cokernel generators saturate(image presentation M,I))
     )
 removeLowestDimension Ideal := Ideal => (I) -> (
      -- only works for polynomial rings...
     local E;
-    M := coker gens I;
+    M := cokernel generators I;
     R := ring M;
     c := codim M;
     p := pdim M;
@@ -59,7 +59,7 @@ removeLowestDimension Ideal := Ideal => (I) -> (
 top Ideal := Ideal => (I) -> (
      R := ring I;
      c := codim I;
-     ann Ext^c(coker gens I, R))
+     ann Ext^c(cokernel generators I, R))
      
 top Module := Module => (M) -> (
     R := ring M;

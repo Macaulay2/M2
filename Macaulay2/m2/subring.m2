@@ -36,7 +36,7 @@ pushtest := options -> (f,M) -> (
 		     ProductOrder{n1, numgens S}
 		 else
 		     Lex;
-	JJ := gens graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
+	JJ := generators graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
 	m := presentation M;
 	-- now map M to the new ring.
 	xvars := map(ring JJ, ring M, submatrix(vars ring JJ, toList(0..n1-1)));

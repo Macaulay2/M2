@@ -22,7 +22,7 @@ newdecompose(Ideal) := List => (I) -> (
      if I.cache.?decompose then I.cache.decompose
      else I.cache.decompose = (
        time I1 := ideal apply(numgens I, i -> squarefree(I_i));
-       time I2 := trim ideal gens gb I1;
+       time I2 := trim ideal generators gb I1;
        time if numgens I2 > 0 then decompose I2 else {}))
 
 -- Find the independent sets of the ideal I
@@ -57,13 +57,13 @@ flattener = (I, m) -> (
      n := numgens R;
      vars1 := variables m;
      d := #vars1;
-     vars2 := variables ((product gens R)//m);
+     vars2 := variables ((product generators R)//m);
      RU := (coefficientRing R) monoid([vars2,vars1,
 	  MonomialOrder=>ProductOrder{n-d,d},
 	  MonomialSize=>16]);
      J := substitute(I,RU);
      -- Collect lead coefficients of GB
-     leads := leadTerm(n-d,gens gb J);
+     leads := leadTerm(n-d,generators gb J);
      ret := coefficients(toList(0..n-d-1),transpose leads);
      -- coefficients returns two things.  The first is the
      -- list of coefficients.  The second is the 
@@ -77,7 +77,7 @@ flattener = (I, m) -> (
 	  transpose coeffmat);
      ones = map(RU^(numgens target coeffmat), 1, (i,j)->1);
      mm = ones | coeffmat;
-     F = gens gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
+     F = generators gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
      substitute(F_(0,0),R)
      )
      
@@ -99,7 +99,7 @@ factors := (F) -> (
 -- find, if any, an element of the GB of I which is
 -- NOT in the ideal J.
 findNonMember = (I,J) -> (
-     m := gens I;
+     m := generators I;
      n := gb J;
      sendgg(ggPush m, ggPush n, ggissubset);
      x := eePopInt();
@@ -195,7 +195,7 @@ fac1 = I_1
 fac2 = J_1
 F = fac1 * fac2
 minSat(L,F)
-quotMin(gens L,{fac1,fac2},F)
+quotMin(generators L,{fac1,fac2},F)
 quotMinold(L,{fac1,fac2},F)
 ///
 
@@ -378,12 +378,12 @@ PDdonode = (PDC) -> (
      done := false;
      if node#1 === PSEUDO then (
 	  ret = extract(node#0, node#4);
-	  if (gens PDC.H) % (ret#0) != 0 then (
+	  if (generators PDC.H) % (ret#0) != 0 then (
 	       -- add this component to answer
 	       PDC.U = append(PDC.U, {ret#0,node#4});
 	       PDC.H = intersect(PDC.H,ret#0);
 	       -- MES: special equality here of course:
-	       if gens PDC.H % PDC.ideal == 0 then (
+	       if generators PDC.H % PDC.ideal == 0 then (
 		    -- We have the final answer:
 		    done = true;
 		    PDC.W = {}));
@@ -475,7 +475,7 @@ L = intersect(I^2, J)
 time primaryDecomposition L
 
 -- By hand: 
---C1 = PD ideal flatten entries gens L
+--C1 = PD ideal flatten entries generators L
 --next C1
 --donode C1
 --peek C1
