@@ -28,8 +28,7 @@ reduceColGCD = (p,i,j,col) -> (
 	  b := e//g;
 	  (c,d) := toSequence gcdCoefficients(e,pivotelem);
 	  (a,b,c,d) = (raw (a_ZZ), raw(b_ZZ), raw(c_ZZ), raw(d_ZZ));
-	  if not rawMatrixColumnOperation2(p,col,j,a,b,c,d,false)
-	  then error "bad colop 2"
+	  rawMatrixColumnOperation2(p,col,j,a,b,c,d,false);
      ))
 reduceRowGCD = (p,i,j,row) -> (
      << "reduceRowGCD(" << i << ", " << j << ", " << row << ")" << endl;
@@ -41,8 +40,7 @@ reduceRowGCD = (p,i,j,row) -> (
 	  b := e//g;
 	  (c,d) := toSequence gcdCoefficients(e,pivotelem);
 	  (a,b,c,d) = (raw (a_ZZ), raw(b_ZZ), raw(c_ZZ), raw(d_ZZ));
-	  if not rawMatrixRowOperation2(p,row,i,a,b,c,d,false)
-	  then error "bad row op2"
+	  rawMatrixRowOperation2(p,row,i,a,b,c,d,false);
      ))
 
 reduceRowsColsGcd = (p,i,j) -> (

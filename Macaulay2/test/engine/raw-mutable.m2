@@ -36,7 +36,7 @@ net p
 
 
 p = rawMutableMatrix(raw R, 3,4,true)
-rawMatrixEntry(p, 1,3, raw(a+b))
+rawSetMatrixEntry(p, 1,3, raw(a+b))
 net toString p
 p1 = rawMutableMatrix (raw m, true)
 raw m === rawMatrix p1
@@ -44,7 +44,7 @@ p = rawMutableMatrix(raw ((transpose m) * m), true)
 net toString p
 
 p = rawMutableMatrix(raw R, 10, 20, true); net p      
-scan(50, i -> (rawMatrixEntry(p,random 10, random 20, raw (random 100)_R)))
+scan(50, i -> (rawSetMatrixEntry(p,random 10, random 20, raw (random 100)_R)))
 net p
 
 map(R, rawMatrix p)
@@ -59,11 +59,11 @@ rawMutableIdentity(raw R, 10, true)
 --------------------------------------------
 needs "raw-util.m2"
 p = rawMutableIdentity(raw RR, 10, true)
-rawMatrixEntry(p,3,5,rawFromNumber(raw RR, 3.5))
+rawSetMatrixEntry(p,3,5,rawFromNumber(raw RR, 3.5))
 net p
 
 p = rawMutableMatrix(raw RR, 10, 20, true); net p      
-scan(50, i -> (rawMatrixEntry(p,random 10, random 20, rawFromNumber(raw RR, random 1.0))))
+scan(50, i -> (rawSetMatrixEntry(p,random 10, random 20, rawFromNumber(raw RR, random 1.0))))
 net p
 map(RR,rawMatrix p)
 
@@ -74,7 +74,7 @@ needs "raw-util.m2"
 R = ZZ[a..d]
 p = rawMutableIdentity(raw R, 10, false)
 net p
-rawMatrixEntry(p,1,3,raw(a+b))
+rawSetMatrixEntry(p,1,3,raw(a+b))
 net p
 
 R = ZZ[vars(0..11)]
