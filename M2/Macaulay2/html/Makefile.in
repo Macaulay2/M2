@@ -50,8 +50,9 @@ Grayson2.jpg : @srcdir@/Grayson2.jpg ; cp $< $@
 clean ::; rm -f *.gif *.jpg
 endif
 
-$(TARGETDIR)/index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
-	rm -f $(TARGETDIR)/*.html
+$(TARGETDIR)/index.html : @srcdir@/html.m2 \
+		../cache/Macaulay2-made ../cache/Macaulay2-doc \
+		../libexec/Macaulay2
 	../../bin/M2 -q $< '-eexit(0)'
 check : $(TARGETDIR)/index.html
 	@ echo "make: Entering directory \`$(shell cd $(TARGETDIR) && pwd)'"

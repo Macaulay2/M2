@@ -14,6 +14,7 @@ linkFilename := s -> cacheFileName(prefix,s) | ".html";
 documentationMemo := memoize documentation		    -- for speed
 
 BUTTON := (s,alt) -> (
+     if not fileExists s then error ("file ", s, " doesn't exist");
      s = relativizeFilename(prefix,s);
      if alt === null
      then LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center>")
@@ -154,36 +155,47 @@ pass4 := () -> (
      )
 
 -----------------------------------------------------------------------------
--- interface
+-- making the html pages
 -----------------------------------------------------------------------------
 
-makeHTML = (topnode) -> (
-     haderror = false;
-     prefix = directoryPath {"..","m2","cache","doc"};
+checkDirectory := path -> (
+     if not fileExists (path | ".")		     -- what about Macintosh?
+     then (
+	  if fileExists path 
+	  then error ("directory ", path, " doesn't end with a path separator")
+	  else error ("directory ", path, " doesn't exist")
+	  )
+     )
+
+makeHTML = (topnode,gifpath,prefix0) -> (
+     prefix = prefix0;
+     checkDirectory prefix;
+     checkDirectory gifpath;
      documentationPath = unique prepend(prefix,documentationPath);
      topNodeName = topnode;
      topFileName = cacheFileName(prefix,topNodeName) | ".html";
-     topNodeButton = HREF { topFileName, BUTTON("top.gif","top") };
+     topNodeButton = HREF { topFileName, BUTTON(gifpath|"top.gif","top") };
      databaseFileName = "../cache/Macaulay2-doc";
-     nullButton = BUTTON("null.gif",null);
+     nullButton = BUTTON(gifpath|"null.gif",null);
      masterFileName = prefix | "master.html";
-     masterIndexButton = HREF { masterFileName, BUTTON("index.gif","index") };
-     NEXT = new MutableHashTable;
-     PREV = new MutableHashTable;
-     UP   = new MutableHashTable;
-     nextButton = BUTTON("next.gif","next");
-     prevButton = BUTTON("previous.gif","previous");
-     upButton = BUTTON("up.gif","up");
+     masterIndexButton = HREF { masterFileName, BUTTON(gifpath|"index.gif","index") };
+     nextButton = BUTTON(gifpath|"next.gif","next");
+     prevButton = BUTTON(gifpath|"previous.gif","previous");
+     upButton = BUTTON(gifpath|"up.gif","up");
      lastKey = null;
      thisKey = null;
      linkFollowedTable = new MutableHashTable;
      masterIndex = new MutableHashTable;
+     NEXT = new MutableHashTable;
+     PREV = new MutableHashTable;
+     UP   = new MutableHashTable;
      sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
      htmlDefaults#"BODY" = concatenate(
 	  "BACKGROUND=\"",				    -- "
 	  relativizeFilename(prefix,"recbg.jpg"),
 	  "\""						    -- "
 	  );
+     haderror = false;
      setrecursionlimit first (
 	  setrecursionlimit 4000,
      	  time pass1(),
