@@ -27,37 +27,7 @@ You have downloaded an unpacked a file with a name something like
 
 Untarring this file creates a directory called Macaulay2-0.9, where 0.9 may be
 replaced by the current version number, and whose subdirectories and files are
-organized as follows, where "." represents the toplevel directory "Macaulay2-0.9":
-
-    ./bin/M2
-	    - the shell script that starts Macaulay2.
-    ./bin/M2-help
-	    - a shell script that starts your web browser reading the online
-	      documentation in the form of html files
-    ./INSTALL
-	    - a one line pointer to this file
-    ./doc/Macaulay2/0.9/README
-	    - this file
-    ./lib/Macaulay2/0.9/
-	    - a directory for architecture dependent Macaulay 2 files
-    ./lib/Macaulay2/0.9/setup
-	    - a shell script that dumps pseudo-compiled Macaulay 2 code.
-    ./share/Macaulay2/0.9/
-	    - a directory for architecture independent Macaulay 2 files
-    ./share/doc/Macaulay2/0.9/
-	    - a directory for Macaulay 2 documentation
-    ./share/emacs/site-lisp/M2*.el
-	    - source files needed with the emacs interface to Macaulay2
-    ./share/man/man1/*.1
-	    - the man pages
-    ./encapinfo
-	    - a configuration file used by 'epkg' to install packages,
-	      not present in all tar files.
-    ./postinstall
-	    - a shell script used by 'epkg' when installing packages.
-	      It runs 'setup' for you (see below) and edits the file bin/M2 to 
-	      record the location of Macaulay2's directory,
-	      not present in all tar files.
+organized as described in the file "LAYOUT".
 
 There are two ways to install the package:
 

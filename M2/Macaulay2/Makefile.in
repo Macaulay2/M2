@@ -8,11 +8,17 @@ justM2 all :: initialize config
 
 include ../include/config.Makefile
 VPATH = @srcdir@
-install :: $(docm2reldir)/COPYING $(docm2reldir)/CHANGES $(docm2reldir)/README
-$(docm2reldir)/COPYING : COPYING $(docm2reldir) ; $(INSTALL_DATA) $< "$@"
-$(docm2reldir)/CHANGES : CHANGES $(docm2reldir) ; $(INSTALL_DATA) $< "$@"
-$(docm2reldir)/README  : README  $(docm2reldir) ; $(INSTALL_DATA) $< "$@"
+################################# .
+install :: $(docm2reldir) \
+	   $(docm2reldir)/COPYING \
+	   $(docm2reldir)/CHANGES \
+	   $(docm2reldir)/README \
+	   $(docm2reldir)/LAYOUT
 $(docm2reldir):; $(INSTALL) -d "$@"
+$(docm2reldir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
+$(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
+$(docm2reldir)/README  : README  ; $(INSTALL_DATA) $< "$@"
+$(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
 ################################# libexec
 libexec :; mkdir $@
 clean ::; rm -rf libexec
