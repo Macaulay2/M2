@@ -427,7 +427,7 @@ applythem(obj:HashTable,fn:FunctionClosure):void := (
      );
 RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
      Ccode( void,
-     	  "GC_register_finalizer(__subfront__(",
+     	  "GC_REGISTER_FINALIZER(__subfront__(",
      	  h,
 	  "),(GC_finalization_proc)", 
 	  fn,
@@ -831,6 +831,7 @@ endlfun(e:Expr):Expr := (
      );
 setupfun("endl",endlfun);
 
+import CCVERSION:string;
 import VERSION:string;
 import OS:string;
 import ARCH:string;
@@ -851,6 +852,7 @@ storeInHashTable(x,Expr("VERSION"),Expr(VERSION));
 storeInHashTable(x,Expr("architecture"),Expr(ARCH));
 storeInHashTable(x,Expr("operating system"),Expr(OS));
 storeInHashTable(x,Expr("operating system release"),Expr(REL));
+storeInHashTable(x,Expr("compiler"),Expr(CCVERSION));
 storeInHashTable(x,Expr("compile time"),Expr(DATE+" "+TIME));
 storeInHashTable(x,Expr("compile node name"),Expr(NODENAME));
 storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));

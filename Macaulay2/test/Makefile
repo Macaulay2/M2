@@ -1,8 +1,6 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
-export LD_LIBRARY_PATH=../lib
-
 RESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2)) 
 ifndef NODUMPDATA
 RESULTS := $(RESULTS) dumpdata.okay

@@ -15,7 +15,7 @@ void usage(){
      exit(1);
      }
 
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
      int i;
      FILE *f;
      char *fn = NULL;

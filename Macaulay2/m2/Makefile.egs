@@ -1,8 +1,6 @@
 TOPDIR = ../../..
 include $(TOPDIR)/Makeconf
 
-export LD_LIBRARY_PATH=../../lib
-
 ifndef NODUMPDATA
 ARGS := -q -silent \
 	'-e loaddata "../../cache/Macaulay2-$(ARCH)-data"' \

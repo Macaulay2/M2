@@ -113,8 +113,9 @@ String | String := concatenate
 String | ZZ := (s,i) -> concatenate(s,string i)
 ZZ | String := (i,s) -> concatenate(string i,s)
 
-notify := false
+notify := true						    -- can change this for debugging
 loaded := new MutableHashTable
+
 markLoaded := (filename) -> ( 
      loaded#filename = true; 
      if notify then << "--loaded " << filename << endl;
@@ -123,6 +124,7 @@ markLoaded := (filename) -> (
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 
 tryload := (filename,load) -> (
+     -- if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
 	  if load filename then (
 	       markLoaded filename;
@@ -219,9 +221,8 @@ addStartFunction(
 	  if not member("-q",commandLine)
 	  then (
 	       tryload("init.m2",oldLoad)
-	       or 
-	       if getenv "HOME" =!= ""
-	       then tryload(concatenate(getenv "HOME", "/init.m2"),oldLoad)
+	       or
+	       getenv "HOME" =!= "" and tryload(concatenate(getenv "HOME", "/init.m2"),oldLoad)
 	       )
 	  )
      )

@@ -3,8 +3,6 @@ default : phase1
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
-export M2HOME := $(shell cd ..; pwd)
-
 all::
 
 ##############################
@@ -17,8 +15,6 @@ DUMPSEQUENCE = $(shell cat dumpseq)
 DOCSEQUENCE = $(shell cat docseq)
 
 MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
-
-export LD_LIBRARY_PATH=../lib
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -184,4 +180,3 @@ clean::
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
-

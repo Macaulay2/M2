@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/param.h>
 #include <sys/types.h>
@@ -210,11 +211,13 @@ int loaddata(char const *filename) {
 	fclose(f);
 	return ERROR;
       }
-      if (dumpedmap.checksum != currmap[j].checksum) { 
+      if (dumpedmap.checksum != currmap[j].checksum) {
 	warning("loaddata: checksum for map has changed from %u to %u\n",
 		dumpedmap.checksum, currmap[j].checksum);
-	fclose(f);
-	return ERROR;
+	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
+	  fclose(f);
+	  return ERROR;
+	}
       }
       j++;
     }

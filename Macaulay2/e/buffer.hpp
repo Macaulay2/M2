@@ -48,8 +48,10 @@ public:
   buffer &operator<<(long n) { put(n); return *this; }
   buffer &operator<<(unsigned int n) { put(n); return *this; }
   buffer &operator<<(unsigned long n) { put(n); return *this; }
+  buffer &operator<<(unsigned short n) { put((unsigned int) n); return *this; }
   buffer &operator<<(int n) { put(n); return *this; }
   buffer &operator<<(char c) { put(c); return *this; }
+  buffer &operator<<(unsigned char c) { put((char) c); return *this; }
 };
 
 #endif

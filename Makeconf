@@ -264,3 +264,6 @@ endif
 
 export CFLAGS += -DMACAULAY2
 export CXXFLAGS += -DMACAULAY2
+
+export M2HOME := $(shell cd $(TOPDIR)/Macaulay2; pwd)
+export LD_LIBRARY_PATH=$(M2HOME)/lib

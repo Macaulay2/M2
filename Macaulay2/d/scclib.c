@@ -14,37 +14,27 @@ char *getmem(n)
 unsigned int n;
 {
      char *p;
-#if 0
-     p = GC_malloc_ignore_off_page(n);
-#else
      p = GC_MALLOC(n);
-#endif
      if (p == NULL) outofmem();
      return p;
      }
 
+#if 0
 char *GC_malloc_clear(n)
 unsigned int n;
 {
-#if 0
-  char *p = GC_malloc_ignore_off_page(n);
-#else
   char *p = GC_MALLOC(n);
-#endif
   if (p == NULL) outofmem();
   memset(p,0,n);
   return p;
 }
+#endif
 
 char *getmem_atomic(n)
 unsigned int n;
 {
      char *p;
-#if 0
-     p = GC_malloc_atomic_ignore_off_page(n);
-#else
      p = GC_MALLOC_ATOMIC(n);
-#endif
      if (p == NULL) outofmem();
      return p;
      }
@@ -144,7 +134,7 @@ M2_string system_newline = &system_newline_contents;
 char *tocharstar(s)
 M2_string s;
 {
-     char *p = getmem_atomic(s->len + 1 + sizeof(int));
+     char *p = getmem_atomic(s->len + 1);
      memcpy(p,s->array,s->len);
      p[s->len] = 0;
      return p;
@@ -153,10 +143,11 @@ M2_string s;
 char **tocharstarstar(p)
 M2_stringarray p;
 {
-     char **s = (char **)getmem((1 + p->len)*sizeof(char *));
+     int n = p->len;
+     char **s = (char **)getmem((n + 1)*sizeof(char *));
      unsigned int i;
-     for (i=0; i<p->len; i++) s[i] = tocharstar(p->array[i]);
-     s[i] = NULL;
+     for (i=0; i<n; i++) s[i] = tocharstar(p->array[i]);
+     s[n] = NULL;
      return s;
      }
 
@@ -295,13 +286,25 @@ M2_string s;
 int system_strcmp(s,t)
 M2_string s,t;
 {
-     char *ss = tocharstar(s);
-     char *tt = tocharstar(t);
-     int r = strcmp(ss,tt);
-     GC_FREE(ss);
-     GC_FREE(tt);
-     return r;
-     }
+  int slen = s->len;
+  int tlen = t->len;
+  int i;
+  for (i=0;;i++) {
+    if (i < slen) {
+      if (i < tlen) {
+	unsigned char c = s->array[i];
+	unsigned char d = t->array[i];
+	if (c < d) return -1;
+	if (c > d) return 1;
+      }
+      else return 1;
+    }
+    else {
+      if (i < tlen) return -1;
+      else return 0;
+    }
+  }
+}
 
 int system_wait(pid)
 int pid;
@@ -327,7 +330,7 @@ M2_arrayint system_select(M2_arrayint v) {
   m = select(max+1,&r,&w,&e,NULL);
   z = (M2_arrayint)getmem_atomic(sizeofarray(z,m));
   z->len = m;
-  for (i=j=0; i<n; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
+  for (i=j=0; i<n && j<m; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
   return z;
 #endif
 }
