@@ -1,4 +1,4 @@
-newPackage("Eliminate"
+newPackage("Eliminate",
      Version => "1.0", 
      Date => "January 5, 2005",
      Author => "Michael E. Stillman <mike@math.cornell.edu>",
@@ -85,6 +85,10 @@ discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
 beginDocumentation()
 
 document {
+     Key => Eliminate
+     }
+
+document {
      Key => resultant,
      TT "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
      BR,NOINDENT, "  -- yields the Sylvester resultant of f and g with respect to the variable x.",
@@ -142,5 +146,5 @@ time eliminate(ideal(f1,f2),a)
 ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Eliminate.installed"
 -- End:

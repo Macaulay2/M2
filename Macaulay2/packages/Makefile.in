@@ -1,5 +1,5 @@
 # @configure_input@
-PACKAGES = minimal.m2 FirstPackage.m2 CacheFileName.m2 Dmodules.m2
+PACKAGES = minimal.m2 FirstPackage.m2 CacheFileName.m2 Elimination.m2 Dmodules.m2
 include ../../include/config.Makefile
 VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)
