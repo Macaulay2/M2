@@ -139,7 +139,7 @@ pass3 := () -> (
 
 pass4 := () -> (
      << "pass 4, writing html files" << endl;
-     scan(keys linkFollowedTable, fkey -> if linkFollowedTable#?fkey then (
+     scan(keys linkFollowedTable, fkey -> if linkFollowedTable#fkey then (
 	       linkFilename fkey
 	       << html HTML { 
 		    HEAD TITLE {fkey, headline fkey},
