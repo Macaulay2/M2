@@ -441,8 +441,7 @@ ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
 vowels := set characters "aeiouAEIOU"
 indefinite := s -> concatenate(if vowels#?(s#0) and match("^one ",s) then "an " else "a ", s)
-
-synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
+synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 synonymAndClass := X -> (
      if X.?synonym
