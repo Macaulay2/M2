@@ -75,11 +75,13 @@ newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      sym := value ("symbol " | title);
      removePackage title;
+     saveD := globalDictionaries;
      newdict := (
 	  if title === "Main" then first globalDictionaries
 	  else (
 	       d := new Dictionary;
-	       globalDictionaries = prepend(d,globalDictionaries);
+	       loadErrorHook = () -> globalDictionaries = saveD;
+	       globalDictionaries = {d,Main.Dictionary};    -- implement Using, too
 	       d));
      if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
      if not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
@@ -90,6 +92,7 @@ newPackage(String) := opts -> (title) -> (
 	  symbol Version => opts.Version,
 	  symbol WritableSymbols => opts.WritableSymbols,
 	  "previous package" => currentPackage,
+	  "previous dictionaries" => saveD,
 	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
@@ -153,6 +156,7 @@ closePackage = p -> (
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
+     globalDictionaries = prepend(d,p#"previous dictionaries");
      currentPackage = p#"previous package";
      debuggingMode = p#"old debugging mode";
      stderr << "--package " << p << " installed" << endl;
