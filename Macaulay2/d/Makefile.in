@@ -10,6 +10,7 @@ all :: compat.h
 all :: ../bin/M2$(EXE)
 
 gc_tested: gc_test; ./$<; touch $@
+clean ::; rm -f gc_tested gc_test
 
 ## standard options
 
@@ -293,6 +294,7 @@ clean::; rm -f ../bin/M2$(EXE)
 	mv "$@".tmp "$@"
 
 mapfile.demangled : mapfile ; demangle <$< >$@
+clean::; rm -f mapfile.demangled
 
 interpret.a : $(M2_OBJECTS); $(AR) rcs $@ $^
 ifeq "$(XCODE)" "yes"
