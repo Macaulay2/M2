@@ -101,7 +101,7 @@ M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo)
 	break;
       }
     }
-  // At this point every variables should be 1 or -1.
+  // At this point every variables' gt should be 1 or -1.
   sum = 0;
   for (i=0; i<nvars; i++)
     {
