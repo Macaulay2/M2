@@ -1,4 +1,3 @@
-a
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
 -- Computes the integral closure of a reduced ring (R/I where I is radical).  

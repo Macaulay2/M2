@@ -67,9 +67,9 @@ radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(rin
 
 MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
 
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
+saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
 
-saturate(MonomialIdeal, RingElement) := Ideal => (I,f) -> (
+saturate(MonomialIdeal, RingElement) := Ideal => o -> (I,f) -> (
      if size f === 1 and leadCoefficient f == 1 then saturate (I,monomialIdeal f)
      else saturate(ideal I, ideal f)
      )

@@ -3,7 +3,7 @@
 template <typename CoeffRing>
 M2_arrayint DMatOps<CoeffRing>::LU(DMat<CoeffRing> *A)
 {
-  CoeffRing *K = A->get_CoeffRing();
+  const CoeffRing *K = A->get_CoeffRing();
   int nrows = A->n_rows();
   int ncols = A->n_cols();
   elem *array = A->get_array();
