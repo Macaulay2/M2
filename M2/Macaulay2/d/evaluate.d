@@ -1021,7 +1021,7 @@ export eval(c:Code):Expr := (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger--");
 			 z := debuggerFun(err.report.code.frame,err.report.code.code);
-			 printErrorMessage(err.position,"--leaving debugger--");
+			 stderr << "--leaving debugger--" << endl;
 			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;

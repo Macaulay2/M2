@@ -467,7 +467,7 @@ ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
 vowels := set characters "aeiouAEIOU"
-indefinite := s -> concatenate(if vowels#?(s#0) and match("^one ",s) then "an " else "a ", s)
+indefinite := s -> concatenate(if vowels#?(s#0) and not match("^one ",s) then "an " else "a ", s)
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 synonymAndClass := X -> (
@@ -536,7 +536,7 @@ optargs Sequence := s -> (
      else optargs s#0)
 
 synopsis := method(SingleArgumentDispatch => true)
-synopsis Thing := synopsis Function := f -> (
+synopsis Thing := f -> (
      SYN := getSynopsis f;
      if SYN =!= null then (
 	  t := i -> if SYN#?(i+1) then (
@@ -715,9 +715,7 @@ seecode := x -> (
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> SEQ { 
-     title f, synopsis f, usage s, type s, ret f, fmeth f, optargs f, seecode f 
-     }
+documentationValue(Symbol,Function) := (s,f) -> SEQ { ret f, fmeth f, optargs f, seecode f }
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableTag key), (key,Y) -> key);
@@ -725,13 +723,9 @@ documentationValue(Symbol,Type) := (s,X) -> (
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
-	  title X, 
-	  synopsis X,
-     	  type s,
 	  if #b > 0 then SEQ {
 	       "Types of ", if X.?synonym then X.synonym else toString X, " :", PARA{},
 	       smenu b, PARA{}},
-	  usage s,
 	  if #a > 0 then SEQ {
 	       "Functions and methods returning ",
 	       indefinite synonym X, " :", PARA{},
@@ -745,27 +739,23 @@ documentationValue(Symbol,Type) := (s,X) -> (
 documentationValue(Symbol,HashTable) := (s,x) -> (
      c := documentableMethods x;
      SEQ {
-	  title x,
-	  synopsis x,
-	  usage s,
-     	  type s,
 	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, 
 	       SHIELD smenu c, PARA{}},
 	  })
-documentationValue(Symbol,Symbol) := (s,x) -> null
-documentationValue(Symbol,Thing) := (s,x) -> null
+documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
 
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
      b := documentableMethods S;
      SEQ {
 	  title S, 
+	  synopsis S,
 	  usage S,
 	  op S,
-     	  type S,
-	  if #a > 0 then SEQ {"Functions with optional argument named ", toString S, " :", PARA{}, SHIELD smenu a, PARA{}},
-	  if #b > 0 then SEQ {"Methods for ", toString S, " :", PARA{}, SHIELD smenu b, PARA{}},
-     	  documentationValue(S,value S)
+	  if #a > 0 then SEQ {"Functions with optional argument named ", toExternalString S, " :", PARA{}, SHIELD smenu a, PARA{}},
+	  if #b > 0 then SEQ {"Methods for ", toExternalString S, " :", PARA{}, SHIELD smenu b, PARA{}},
+     	  documentationValue(S,value S),
+	  type S
      	  }
      )
 

@@ -96,8 +96,6 @@ factor(f*g)
 
 rawCharSeries raw vars R
 
-end
-
 -- modules
 M'= raw monoid R
 F = R^3
@@ -189,6 +187,12 @@ assert( degrees source w == {{0}, {0}, {0}} )
 w = map(R^1,R^{-1,-2,-3},v)
 degrees source w
 assert( degrees source w == {{1}, {2}, {3}} )
+
+-- reshaping matrices
+
+f = matrix {{1,x,x^2}}
+g = matrix {{1,x^5}}
+assert ( adjoint1(dual f ** g, dual source f, target g) === g ** f )
 
 -- right multiplication:
 raw v * raw x

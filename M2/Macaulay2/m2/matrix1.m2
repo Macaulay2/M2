@@ -42,12 +42,12 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = makeRawTable(R,p);
-     h := rawMatrix1(raw cover M, rankN, apply(toSequence flatten p, r -> r.RawRingElement), false);
+     h := rawMatrix1(raw cover M, rankN, apply(toSequence flatten p, r -> r.RawRingElement), false, 0);
      map(M,newModule(R,rawSource h),h))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
-     f := rawMatrixRemake1(raw target p, raw p,false);
+     f := rawMatrixRemake1(raw target p, raw p,false,0);
      map(M, newModule(ring source p, rawSource f), f)
      )
 
@@ -81,7 +81,7 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	       then (degreeLength R : 0)
 	       else degreeCheck(options.Degree, R)
 	       );
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false,0)))))
 
 map(Module,Nothing,List) := 
 map(Module,Module,List) := Matrix => 
@@ -109,8 +109,8 @@ options -> (M,N,p) -> (
      rawM := M.RawFreeModule;
      h := (
 	  if N === null 
-	  then rawMatrix1(rawM, rankN, flatten p, false)
-	  else rawMatrix2(rawM, N.RawFreeModule, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false)
+	  then rawMatrix1(rawM, rankN, flatten p, false, 0)
+	  else rawMatrix2(rawM, N.RawFreeModule, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false,0)
 	  );
      new Matrix from {
 	  symbol target => M,
@@ -287,8 +287,7 @@ reshape = method()
 reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> (
      if not isFreeModule F or not isFreeModule G
      then error "expected source and target to be free modules";
-     sendgg(ggPush m, ggPush F, ggPush G, ggreshape);
-     getMatrix ring m)
+     map(F,G,rawReshape(raw m, raw F, raw G)))
 
 -- adjoint1:  m : F --> G ** H ===> F ** dual G --> H
 -- adjoint:   m : F ** G --> H ===> F --> dual G ** H

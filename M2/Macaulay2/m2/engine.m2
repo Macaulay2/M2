@@ -224,7 +224,7 @@ RawFreeModule.synonym = "raw ring"
 degrees RawFreeModule := rawMultiDegree
 
 ZZ _ RawFreeModule := (i,F) -> (
-     if i === 0 then rawZero F
+     if i === 0 then rawZero(F,F,false,0)
      else error "expected integer to be 0"
      )
 
