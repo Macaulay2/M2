@@ -57,7 +57,6 @@ gbA \
 gbasis \
 montable \
 schorder \
-freemod2 \
 monorder \
 GF \
 LLL \
@@ -78,7 +77,6 @@ gb_comp \
 gbinhom \
 gbring \
 gb2 \
-gbnod \
 hermite \
 hilb \
 int_bag \
@@ -130,6 +128,8 @@ gbbinom \
 
 
 COMMANDS = \
+        gbnod \
+        freemod2 \
 	engine \
 	x_factor \
 	factor \

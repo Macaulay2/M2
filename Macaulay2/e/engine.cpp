@@ -13,6 +13,8 @@
 #include "Z.hpp"
 #include "QQ.hpp"
 
+#include "M2-factory.h"
+
 unsigned long mutable_object::next_hash_sequence_number = 100000;
 
 template class array< char * >;
@@ -41,6 +43,7 @@ void IM2_initialize()
   ZZ = Z::create(Monoid::get_trivial_monoid());
   globalQQ = QQ::create(Monoid::get_trivial_monoid());
   Random::i_random();
+  factory_setup();
   i_factor_cmds();
 }
 
