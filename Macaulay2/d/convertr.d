@@ -148,7 +148,7 @@ export frame(frameID:int):Frame := (
      	  if f.frameID != frameID 
 	  then (
 	       stderr << "frame for dictionary " << frameID << " not found" << endl;
-	       stderr << "frames active for scopes: ";
+	       stderr << "frames active for dictionaries: ";
 	       f = localFrame;
 	       while f.frameID > -1 do (
 		    stderr << " " << f.frameID;
@@ -181,7 +181,7 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 export convert(e:ParseTree):Code := (
      when e
      is s:StartDictionary do (
-	  if s.dictionary.numsyms != 0
+	  if s.dictionary.framesize != 0
 	  then Code(openDictionaryCode(s.dictionary,convert(s.body)))
 	  else convert(s.body)
 	  )
@@ -654,14 +654,14 @@ export eval(c:Code):Expr := (
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
      is n:forCode do (
-	  localFrame = Frame(localFrame,n.dictionary.frameID,n.dictionary.numsyms,
-	       new Sequence len n.dictionary.numsyms do provide nullE);
+	  localFrame = Frame(localFrame,n.dictionary.frameID,n.dictionary.framesize,
+	       new Sequence len n.dictionary.framesize do provide nullE);
 	  x := ForFun(n);
 	  localFrame = localFrame.outerFrame;
 	  x)
      is n:openDictionaryCode do (
-	  localFrame = Frame(localFrame,n.dictionary.frameID,n.dictionary.numsyms,
-	       new Sequence len n.dictionary.numsyms do provide nullE);
+	  localFrame = Frame(localFrame,n.dictionary.frameID,n.dictionary.framesize,
+	       new Sequence len n.dictionary.framesize do provide nullE);
 	  x := eval(n.body);
 	  localFrame = localFrame.outerFrame;
 	  x)

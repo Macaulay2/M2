@@ -57,7 +57,7 @@ export Dictionary := {
      symboltable:SymbolHashTable,
      outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
      frameID:int,	        -- -1 for dummy, 0 for global, then 1,2,3,...
-     numsyms:int, -- why not just use symboltable.numEntries???  look out for dummy symbol below
+     framesize:int,	        -- one for each symbol, even the erased ones; for transient frames only
      transient:bool	        -- whether there can be multiple frames
      	       	    	        -- for the global dictionary and file scopes : no
 				-- for function closures : yes
@@ -140,7 +140,6 @@ export Frame := {
      valuesUsed:int,      -- sigh, we really need this only for static frames
      values:Sequence
      };
-export dummyFrame := Frame(self,-1,0,Sequence());   -- self pointer depended on by structure.d:apply()
 export FunctionClosure := { frame:Frame, model:functionCode };
 export SymbolClosure := {frame:Frame, symbol:Symbol};
 export List := {
@@ -259,27 +258,34 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
      do provide NULL,
      0);
 
+export dummyFrame := Frame(self,-1,0,Sequence());
+
 dummySymbolFrameIndex := 0;
-export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
-export globalFrame := Frame(dummyFrame,0,1,Sequence(
-	  nullE						    -- value for dummySymbol, the first symbol, which has to have a value somewhere...
+globalFramesize := dummySymbolFrameIndex+1;
+export globalFrame := Frame(dummyFrame, 0, globalFramesize, 
+     Sequence(
+	  nullE						    -- one value for dummySymbol
 	  ));
+
+export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false);
+
 export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false);
+
 export globalDictionary := Macaulay2Dictionary;
 
-numLocalScopes := 0;
+numLocalDictionaries := 0;
 export localFrame := dummyFrame;
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
-     numLocalScopes = numLocalScopes + 1;
-     Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalScopes,0,true));
+     numLocalDictionaries = numLocalDictionaries + 1;
+     Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true));
 export newLocalDictionary():Dictionary := (
-     numLocalScopes = numLocalScopes + 1;
-     Dictionary(nextHash(),newSymbolHashTable(),self,numLocalScopes,0,
+     numLocalDictionaries = numLocalDictionaries + 1;
+     Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,0,
 	  false						    -- the first local dictionary is usually (?) non-transient
 	  )
      );
 
-export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, dictionary.numsyms, new Sequence len dictionary.numsyms do provide nullE);
+export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, dictionary.framesize, new Sequence len dictionary.framesize do provide nullE);
 
 -- hash tables for exprs
 
@@ -306,8 +312,8 @@ export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary
 export dummyWord    := Word("--dummy word--",TCnone,0,newParseinfo());
 export dummySymbolHashTable := newSymbolHashTable();
 export dummyDictionary := (
-     numLocalScopes = numLocalScopes + 1;
-     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalScopes,0,false));
+     numLocalDictionaries = numLocalDictionaries + 1;
+     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false));
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
@@ -325,13 +331,6 @@ export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
      nullE);
 export emptySequenceE := Expr(emptySequence);
 export bucketEnd := KeyValuePair(nullE,0,nullE,self);
-export thingClass := HashTable(
-     array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
-	  -- we start with four empty buckets.  It is important for the 
-	  -- enlarge/shrink code in objects.d that the number of buckets
-	  -- here (four) is a power of two!
-     self,self,0,(HashCounter = HashCounter + 1;HashCounter),
-     true);
 export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
@@ -355,6 +354,13 @@ export newHashTable(class:HashTable,parent:HashTable):HashTable := (
 	  class,parent,0,HashCounter,
 	  true				  -- mutable by default!
 	  ));
+export thingClass := HashTable(
+     array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
+	  -- we start with four empty buckets.  It is important for the 
+	  -- enlarge/shrink code in objects.d that the number of buckets
+	  -- here (four) is a power of two!
+     self,self,0,(HashCounter = HashCounter + 1;HashCounter),
+     true);
 export hashTableClass := newHashTable(thingClass,thingClass);
 export mutableHashTableClass := newHashTable(thingClass,hashTableClass);
 export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
