@@ -24,6 +24,11 @@ protected:
   const Monoid *D;
   const PolynomialRing *HRing;	// Hilbert function ring, if D has >= 1 variables.
 				// Otherwise, this will be NULL.
+
+  ring_elem zero_divisor;
+  bool isfield;			// true means yes, or declared yes.
+				// If a zero divisor is found, isfield is set to false.
+
   stash *vecstash;		// Stash used to allocate vectors over this ring.
   stash *resstash;		// For resolutions
 
@@ -58,7 +63,6 @@ public:
   virtual       SchurRing * cast_to_SchurRing()       { return 0; }
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
 
-  virtual bool is_field() const = 0;
   virtual bool is_pid() const = 0;
   virtual bool has_gcd() const = 0;
   virtual bool is_Z() const = 0;
@@ -68,6 +72,10 @@ public:
   virtual bool is_expensive() const = 0;
   virtual bool is_quotient_poly_ring() const = 0;
   virtual bool is_commutative_ring() const { return true; }
+
+  bool is_field() const;
+  void declare_field();
+  ring_elem get_zero_divisor() const;
 
   virtual void text_out(buffer &o) const = 0;
 

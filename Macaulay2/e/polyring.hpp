@@ -27,7 +27,6 @@ protected:
   bool coefficients_are_ZZ;
   FreeModule *Rsyz;
   bool isgraded;
-  bool isfield;
 
   // These are local variables for the normal_form routine
   intarray normal_exp_a;
@@ -62,7 +61,6 @@ public:
   int        get_quotient_elem_length() const { return quotient_ideal.length(); }
 
 
-  virtual bool is_field() const     { return isfield; }
   virtual bool is_pid() const       { return (nvars == 1 && K->is_field())
 				       || (nvars == 0 && K->is_pid()); }
   virtual bool has_gcd() const      { return (nvars == 1 && K->is_field())

@@ -79,7 +79,6 @@ public:
   virtual FreeModule *make_FreeModule(int n) const;
 
   virtual bool is_commutative_ring() const { return false; }
-  virtual bool is_field() const     { return isfield; }
   virtual bool is_pid() const       { return false; }
   virtual bool has_gcd() const      { return false; }
 

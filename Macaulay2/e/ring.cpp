@@ -30,6 +30,9 @@ HRing(NULL)
   resstash = new stash("respoly", sizeof(resterm *) + sizeof(res_pair *)
 		     + sizeof(ring_elem)
 		     + sizeof(int) * M->monomial_size());
+
+  isfield = false;
+  zero_divisor = (Nterm *)0;
 }
 
 Ring::Ring(const Ring &R)
@@ -61,6 +64,20 @@ FreeModule *Ring::make_FreeModule(int n) const
 { 
   return new FreeModule(this,n);
 }
+
+bool Ring::is_field() const 
+{ 
+  return isfield; 
+}
+void Ring::declare_field() 
+{ 
+  isfield = true; 
+}
+ring_elem Ring::get_zero_divisor() const 
+{ 
+  return copy(zero_divisor); 
+}
+
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const
 {

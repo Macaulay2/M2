@@ -17,6 +17,8 @@ GF::GF(const RingElement prim)
   K(prim.get_ring()->cast_to_PolynomialRing()),
   primitive_element(prim)
 {
+  declare_field();
+
   int i,j;
   bump_up((Ring *) K);
 

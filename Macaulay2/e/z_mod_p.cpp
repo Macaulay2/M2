@@ -14,6 +14,7 @@ extern Z *ZZ;
 Z_mod::Z_mod(int p, const Monoid *D) 
 : Ring(p,0,0,this /* Visual C WARNING */, trivial_monoid, D)
 {
+  declare_field();
   int i,j,q,n;
 
   if (P==2)
