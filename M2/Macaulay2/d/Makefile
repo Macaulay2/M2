@@ -189,10 +189,13 @@ c-files.tar :: $(ALLC)
 # UTIL := $(PATHPARENT)util$(PATHSEP)
 UTIL := ../util/
 
+tmp_init.o : tmp_init.c
 tmp_init.c : Makefile $(TOPDIR)/Makeconf $(PROJECT)
 	 $(UTIL)timestmp >tmp
 	@echo "echoout '>>tmp' ..."
 	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
+	 $(UTIL)echoout '>>tmp' 'char current_date[] = __DATE__;'
+	 $(UTIL)echoout '>>tmp' 'char current_time[] = __TIME__;'
 	 $(UTIL)echoout '>>tmp' 'int main_inits() {'
 	@echo "echoout '>>tmp' ..."
 	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), '   $(f)__prepare();')

@@ -1360,20 +1360,18 @@ document { quote hold,
      for example, because the usual algebraic operations are available
      for ", TO "Expression", "s, but no simplification occurs.",
      PARA,
-     EXAMPLE "(hold 2)^5 * (hold 3)^3 * (hold 5) * (hold 11)^2"
+     EXAMPLE "(hold 2)^5 * (hold 3)^3 * (hold 5) * (hold 11)^2",
      PARA,
      "Here is example of a little function that expresses rational numbers
      as Egyptian fractions using ", TT "hold", ".",
      EXAMPLE {
 	  "egyptian = method();",
 	  ///egyptian QQ := x -> (
-    if numerator x == 1 
-    then hold x 
+    if x == 0 then 0
     else (
-         n := floor (1/x) + 1;
+         n := ceiling(1/x);
          hold(1/n) + egyptian(x - 1/n) 
-         );
-    )///,
+         ));///,
      	  "egyptian(30/31)"
      	  }
      }

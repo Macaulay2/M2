@@ -187,3 +187,6 @@ extern struct FINAL {
      void (*final)();
      struct FINAL *next;
      } *final_list, *pre_final_list;
+
+extern char current_date[];
+extern char current_time[];
