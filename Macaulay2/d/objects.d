@@ -365,11 +365,11 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 			 )
 		    else return(
 			 errorExpr(
-			      "'mapPairs' expected return value to be a pair or 'null'"));
+			      "'applyPairs' expected return value to be a pair or 'null'"));
 		    )
 	       else return(
 		    errorExpr(
-			 "'mapPairs' expected return value to be a pair or 'null'"));
+			 "'applyPairs' expected return value to be a pair or 'null'"));
 	       p = p.next;
 	       ));
      sethash(newobj,obj.mutable);
