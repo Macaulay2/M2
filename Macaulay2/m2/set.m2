@@ -62,7 +62,7 @@ unique List := x -> (
      seen := new MutableHashTable;
      select(x, i -> if seen#?i then false else seen#i = true))
 
-member(Thing,Set) := Boolean => (a,s) -> s#?a
+Thing in Set := member(Thing,Set) := Boolean => (a,s) -> s#?a
 
 isSubset(Set,Set) := Boolean => (S,T) -> all(S, (k,v) -> T#?k)
 
