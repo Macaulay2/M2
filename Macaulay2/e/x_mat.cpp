@@ -546,6 +546,13 @@ const MatrixOrNull * IM2_Matrix_tensor(const Matrix *M,
   return M->tensor(N);
 }
 
+
+const MatrixOrNull * rawModuleTensor(const Matrix *M,
+				     const Matrix *N)
+{
+  return M->module_tensor(N);
+}
+
 const Matrix * IM2_Matrix_transpose(const Matrix *M)
 {
   return M->transpose();
