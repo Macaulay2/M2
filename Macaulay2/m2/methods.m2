@@ -127,7 +127,7 @@ setup := (args, symbols) -> (
 setup((), { 
 	  entries, borel, prune, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
-	  koszul, symmetricPower, basis, coefficientRing, trace, target, source,
+	  koszul, symmetricPower, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, top, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
@@ -142,10 +142,16 @@ setup((), {
 
 use Thing := identity
 
-status = method (Options => new OptionTable from {
+status = method (
+     Options => new OptionTable from {
      	  TotalPairs => true,
      	  PairsRemaining => false,
      	  Monomials => false
+     	  })
+
+basis = method(
+     Options => new OptionTable from {
+	  
      	  })
 
 mopts := Options => {
