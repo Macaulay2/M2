@@ -1,4 +1,4 @@
-error "this test not working yet, after re-implementation"
+errorDepth = 0 ; error "this test not working yet, after re-implementation"
 
 -- Copyright 1995. Michael E. Stillman
 -- local variables in the variables added October 27, 1995 (David Eisenbud)

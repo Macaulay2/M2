@@ -49,7 +49,7 @@ Thing .. Thing := (a,z) -> (
 	  )
      else nometh2(symbol .., a,z);
      if a === aa and z === zz then nometh2(symbol .., a,z);
-     toSequence apply(aa .. zz, value)
+     apply(aa .. zz, s -> if class s === Symbol then value s else s)
      )
 
 

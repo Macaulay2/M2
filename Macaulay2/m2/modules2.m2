@@ -585,8 +585,8 @@ Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.?class.components then error "expected a direct sum module";
-     if M.?indexComponents then (
-	  ic := M.indexComponents;
+     if M.cache.?indexComponents then (
+	  ic := M.cache.indexComponents;
 	  w = apply(w, i -> if ic#?i 
 		    then ic#i 
 		    else error "expected an index of a component of a direct sum"));
@@ -600,8 +600,8 @@ Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.?class.components then error "expected a direct sum module";
-     if M.?indexComponents then (
-	  ic := M.indexComponents;
+     if M.cache.?indexComponents then (
+	  ic := M.cache.indexComponents;
 	  w = apply(w, i -> if ic#?i 
 		    then ic#i 
 		    else error "expected an index of a component of a direct sum"));
@@ -636,6 +636,7 @@ basis(List,Module) := Matrix => (deg,M) -> (
      k := coefficientRing A;
      bottom := generators gb presentation M;
      top := id_(target bottom);
+     error "kbasis has not been re-implemented yet";
      sendgg(ggPush top, ggPush bottom, ggPush deg, ggkbasis);
      map(M,,getMatrix R))
 
@@ -688,10 +689,7 @@ truncate(List,Module) := Module => (deg,M) -> (
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
 truncate(ZZ,Ideal) := Ideal => (deg,M) -> truncate({deg},M)
 
-issub := (f,g) -> (
-     g = gb g;
-     sendgg(ggPush f, ggPush g, ggissubset);
-     -1 == ZZ.pop())
+issub := (f,g) -> -1 === rawGBContains(raw f, raw gb g)
 
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!

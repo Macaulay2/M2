@@ -146,8 +146,22 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(R.RawRing,M.RawMonoid),diffs0,diffs1,h)
 	       )
 	  else if Skew then (
-	       error "IM2_Ring_skew_polyring not implemented yet"
-	       -- new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
+	       skews := (
+		    if M.Options.SkewCommutative === true
+		    then toList (0 .. numgens M - 1)
+		    else if class M.Options.SkewCommutative === List
+		    then indices(M,M.Options.SkewCommutative)
+		    else error "expected SkewCommutative option to be 'true' or a list of variables"
+		    );
+	       new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skews)
+-- 		    (
+-- 		    	 ggPush degRing, 
+-- 		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust), <<<<< ---- do we have to do something with this???
+-- 		    	 ggPush R, 
+-- 		    	 ggPush M,
+-- 		    	 ggPush skews,
+-- 		    	 ggskewpolyring
+-- 		    )
 	       )
 	  else new PolynomialRing from rawPolynomialRing(R.RawRing, M.RawMonoid);
 	  RM.baseRings = append(R.baseRings,R);
