@@ -555,7 +555,7 @@ installPackage Package := o -> pkg -> (
      stderr << "--making test input files in " << testsDir << endl;
      makeDirectory testsDir;
      testsDir|".linkdir" << close;
-     scan(pairs pkg#"test inputs", (key,str) -> (
+     scan(pairs pkg#"test inputs", (key,str) -> if class str === String then (
 	       (n,fn) := key;
 	       inf := infn2 n;
 	       val := "-- " | fn | "\n" | str | "\n";
@@ -610,6 +610,13 @@ installPackage Package := o -> pkg -> (
      rawkey := "raw documentation database";
      pkg#rawkey = openDatabase rawdbname;
      addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
+
+     -- run tests that are functions
+     stderr << "--running tests that are functions " << exampleDir << endl;
+     scan(pairs pkg#"test inputs", (key,str) -> if class str === Function then (
+	       stderr << "--  running test " << key << ", function " << str << endl;
+	       str();
+	       ));
 
      -- make example output files
      stderr << "--making example result files in " << exampleDir << endl;

@@ -1,18 +1,19 @@
+newPackage("eliminate"
+     Version => "1.0", 
+     Date => "January 5, 2005",
+     Author => "Michael E. Stillman <mike@math.cornell.edu>",
+     Headline => "a package for elimination of variables"
+     )
+
+export(eliminate, sylvesterMatrix, discriminant, resultant)
+
 ---------------------
 --- Preliminaries  --
 ---------------------
-getIndex = (R,x) -> (
-     M := try monoid R else error "expected a polynomial ring or quotient of one";
-     if class x =!= R then error "expected an element of the ring";
-     x = try baseName x else error "expected a variable of the ring";
-     M.index#x)
 
-getIndices = (R,v) -> unique apply(v, a -> getIndex(R,a))
+getIndices = (R,v) -> unique apply(v, a -> index(R,a))
 
-degree (RingElement, RingElement) := (f,x) -> (
-     v := getIndex(ring f,x);
-     mm := coefficients({v},f);
-     (max degrees source mm#0)_0)
+degree (RingElement, RingElement) := (f,x) -> first max degrees source first coefficients({index(ring f,x)},f)
 
 ------------------------------
 -- Elimination of variables --
@@ -45,21 +46,6 @@ eliminate (Ideal, List) := (I,v) -> (
 
 eliminate (Ideal, RingElement) := (I,v) -> eliminate(I,{v})
 
-document {
-     Key => eliminate,
-     EXAMPLE {
-	  ///needs "eliminate.m2"///,
-	  "R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}];",
-	  "f = x^2+a*x+b",
-	  "g = x^2+c*x+d",
-	  "time eliminate(ideal(f,g),x)",
-	  "time ideal resultant(f,g,x)",
-	  "sylvesterMatrix(f,g,x)",
-	  "discriminant(f,x)"
-	  },
-     SeeAlso => "sylvesterMatrix"
-     }
-
 -----------------------------------------------
 -- Sylvester matrix, resultant, discriminant --
 -----------------------------------------------
@@ -68,7 +54,7 @@ sylvesterMatrix = method()
 sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      R := ring f;
      if R =!= ring g then error "expected same ring";
-     v := getIndex(R,x);  -- just to check if x is a variable in the polyring R.
+     v := index(R,x);  -- just to check if x is a variable in the polyring R.
      if f == 0 or g == 0 
      then map(R^1,R^1,0)
      else (
@@ -92,17 +78,22 @@ resultant(RingElement, RingElement, RingElement) := (f,g,x) ->
 discriminant = method()
 discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
 
+-----------------------------------------------
+-- documentation and tests
+-----------------------------------------------
+
+beginDocumentation()
+
 document {
      Key => resultant,
      TT "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
      BR,NOINDENT, "  -- yields the Sylvester resultant of f and g with respect to the variable x.",
      PARA,
-"The elements 'f' and 'g' should be polynomials in the same ring, and 'x' should be
+"The elements ", TT "f", " and ", TT "g", " should be polynomials in the same ring, and ", TT "x", " should be
 a variable in that ring.  The result is the determinant of the Sylvester matrix, 
 ", TT "sylvesterMatrix(f,g,x)", ".  The resultant of f and its derivative with respect to x is the
 discriminant, ", TT "discriminant(f,x).",
      EXAMPLE {
-	  ///needs "eliminate.m2"///,
 	  "R = ZZ[x,a,b,c,d];",
 	  "f = x^2+a*x+b",
 	  "g = x^2+c*x+d",
@@ -114,8 +105,21 @@ discriminant, ", TT "discriminant(f,x).",
      }
 
 
+document {
+     Key => eliminate,
+     EXAMPLE {
+	  "R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}];",
+	  "f = x^2+a*x+b",
+	  "g = x^2+c*x+d",
+	  "time eliminate(ideal(f,g),x)",
+	  "time ideal resultant(f,g,x)",
+	  "sylvesterMatrix(f,g,x)",
+	  "discriminant(f,x)"
+	  },
+     SeeAlso => "sylvesterMatrix"
+     }
+
 TEST ///
-needs "eliminate.m2"
 R = ZZ/101[a..d]
 time I = monomialCurveIdeal(R,{1,3,4})
 time eliminate(I,{b})
