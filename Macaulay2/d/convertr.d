@@ -89,14 +89,14 @@ fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
 	  is u:Unary do (
 	       if u.operator.word == commaW
 	       then ( 
-		    v.m = exprCode(nullE,treePosition(e));
+		    v.m = Code(nullCode());
 		    m = m + 1; 
 		    e = u.rhs )
 	       else ( v.m = convert(e); return(m+1)))
 	  is p:EmptyParentheses do (
 	       (v.m = convert(e); return(m+1)))
 	  is dummy do (
-	       v.m = exprCode(nullE,treePosition(e));
+	       v.m = Code(nullCode());
 	       return(m+1);
 	       )
 	  is p:Parentheses do (
@@ -305,11 +305,11 @@ export convert(e:ParseTree):Code := (
 	  wrd := token.word;
 	  pos := token.position;
 	  if wrd.typecode == TCdouble
-	  then Code(exprCode(Real(parseDouble(wrd.name)),pos))
+	  then Code(realCode(parseDouble(wrd.name),pos))
 	  else if wrd.typecode == TCint
-	  then Code(exprCode(parseInt(wrd.name),pos))
+	  then Code(integerCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
-	  then Code(exprCode(parseString(wrd.name), pos))
+	  then Code(stringCode(parseString(wrd.name), pos))
 	  else (
 	       if var.frameID == 0
 	       then Code(globalMemoryReferenceCode(var.frameindex,pos))
@@ -328,20 +328,10 @@ export convert(e:ParseTree):Code := (
      is p:Parentheses do (
 	  if p.left.word == leftparen then convert(p.contents)
 	  else if p.left.word == leftbrace 
-	  then (
-	       cs := makeCodeSequence(p.contents);
-	       if allExprCodes(cs)
-	       then Code(exprCode(list(combine(cs)),treePosition(e)))
-	       else Code(multaryCode(braceFun,cs,treePosition(e)))
-	       )
+	  then Code(multaryCode(braceFun,makeCodeSequence(p.contents),treePosition(e)))
 	  else 
 	  if p.left.word == leftbracket 
-	  then (
-	       cs := makeCodeSequence(p.contents);
-	       if allExprCodes(cs)
-	       then Code(exprCode(Array(combine(cs)),treePosition(e)))
-	       else Code(multaryCode(bracketFun,cs,treePosition(e)))
-	       )
+	  then Code(multaryCode(bracketFun,makeCodeSequence(p.contents),treePosition(e)))
 	  else 
 	  dummyCode			  -- should not happen
 	  )
@@ -370,12 +360,7 @@ export convert(e:ParseTree):Code := (
 	       else dummyCode		  -- should not occur
 	       )
 	  else if b.operator.word == commaW
-	  then (
-	       cs := makeCodeSequence(e);
-	       if allExprCodes(cs)
-	       then Code(exprCode(Expr(combine(cs)),treePosition(e)))
-	       else Code(cs)
-	       )
+	  then Code(sequenceCode(makeCodeSequence(e),treePosition(e)))
 	  else if b.operator.word == EqualW
 	  then (
 	       when b.lhs
@@ -526,12 +511,7 @@ export convert(e:ParseTree):Code := (
 	       ))
      is u:Unary do (
 	  if u.operator.word == commaW
-	  then (
-	       cs := makeCodeSequence(e);
-	       if allExprCodes(cs)
-	       then Code(exprCode(Expr(combine(cs)),treePosition(e)))
-	       else Code(cs)
-	       )
+	  then Code(sequenceCode(makeCodeSequence(e),treePosition(e)))
 	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (
 	  token := q.rhs;
@@ -567,22 +547,26 @@ export convert(e:ParseTree):Code := (
 	  ));
 export codePosition(e:Code):Position := (
      when e
-     is f:globalSymbolClosureCode do f.position
-     is f:localSymbolClosureCode do f.position
+     is f:binaryCode do f.position
+     is f:exprCode do f.position
+     is f:forCode do f.position
+     is f:functionCode do codePosition(f.parms)
      is f:globalAssignmentCode do f.position
+     is f:globalMemoryReferenceCode do f.position
+     is f:globalSymbolClosureCode do f.position
+     is f:integerCode do f.position
      is f:localAssignmentCode do f.position
      is f:localMemoryReferenceCode do f.position
-     is f:globalMemoryReferenceCode do f.position
-     is f:parallelAssignmentCode do f.position
-     is f:exprCode do f.position
-     is f:unaryCode do f.position
-     is f:binaryCode do f.position
-     is f:ternaryCode do f.position
+     is f:localSymbolClosureCode do f.position
      is f:multaryCode do f.position
-     is f:forCode do f.position
+     is f:nullCode do dummyPosition
      is f:openDictionaryCode do codePosition(f.body)
-     is f:functionCode do codePosition(f.parms)
-     is v:CodeSequence do codePosition(v.0)-- it would be better to get the surrounding parens...
+     is f:parallelAssignmentCode do f.position
+     is f:realCode do f.position
+     is f:sequenceCode do f.position
+     is f:stringCode do f.position
+     is f:ternaryCode do f.position
+     is f:unaryCode do f.position
      );
 
 export returnMessage := "return value";
@@ -769,7 +753,11 @@ export eval(c:Code):Expr := (
 	  x := eval(n.body);
 	  localFrame = localFrame.outerFrame;
 	  x)
-     is v:CodeSequence do evalSequence(v);
+     is nullCode do nullE
+     is v:realCode do Expr(Real(v.x))
+     is v:integerCode do Expr(v.x)
+     is v:stringCode do Expr(v.x)
+     is v:sequenceCode do evalSequence(v.x);
      when e is err:Error do (
 	  -- stderr << "err: " << err.position << " : " << err.message << endl;
 	  if err.message == returnMessage || err.message == breakMessage then return(e);

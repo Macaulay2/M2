@@ -1055,7 +1055,11 @@ locate(e:Code):void := (
 	  )
      is f:openDictionaryCode do locate(f.body)
      is f:functionCode do (locate(f.parms);locate(f.body);)
-     is v:CodeSequence do foreach c in v do locate(c)
+     is v:sequenceCode do foreach c in v.x do locate(c)
+     is nullCode do nothing
+     is v:realCode do lookat(v.position)
+     is v:stringCode do lookat(v.position)
+     is v:integerCode do lookat(v.position)
      );
 
 locate(e:Expr):Expr := (
