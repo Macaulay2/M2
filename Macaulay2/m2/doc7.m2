@@ -1532,7 +1532,7 @@ document {
      See: ", TO "use", ".",
      PARA,
      "Warning: quotient rings are bulky objects, because they contain 
-     a Groebner basis for their ideals, so only quotients of ", TT "ZZ", " 
+     a Groebner basis for their ideals, so only quotients of ", TO "ZZ", " 
      are remembered forever.  Typically the ring created by ", TT "R/I", " 
      will be a brand new ring, and its elements will be incompatible with 
      the elements of previously created quotient rings for the same ideal.",
@@ -2279,7 +2279,7 @@ document {
 	  "M = coker matrix{{a,b},{c,d}}",
 	  "codim M"
 	  },
-     Caveat => ("If ", TT "R", " is ", TT "ZZ", ", then the computation effectively tensors first with the
+     Caveat => ("If ", TT "R", " is ", TO "ZZ", ", then the computation effectively tensors first with the
 	  rational numbers, yielding the wrong answers in some cases.  The ring ", TT "R", " must be a quotient of a commutative polynomial ring.")
      }
 document {

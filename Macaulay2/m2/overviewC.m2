@@ -96,7 +96,7 @@ document {
 	  },
      "Groebner bases, and all related computations work in these rings.",
      PARA,
-     "The prime finite fields can be made easily as quotient rings of ", TT "ZZ", ".",
+     "The prime finite fields can be made easily as quotient rings of ", TO "ZZ", ".",
      EXAMPLE "ZZ/101",
      "In general, to make a finite field with ", TT "q", " elements, we use
      ", TO "GF", ".",

@@ -256,7 +256,7 @@ document {
      	       are desired in the usual format for input of an ideal, the 
      	       function ", TO "toString", " is very useful. 
      	       (Note:  We are changing rings because ", TO "monomialCurveIdeal", " 
-	       	    is not implemented for rings over ", TT "ZZ", ".)",
+	       	    is not implemented for rings over ", TO "ZZ", ".)",
      	       EXAMPLE {
 	       	    "R = QQ[a..d];",
 	       	    "I = monomialCurveIdeal(R,{1,2,3});",

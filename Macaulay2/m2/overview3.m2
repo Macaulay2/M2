@@ -815,9 +815,9 @@ document {
      "Most computations with polynomials take place in rings that may be specified in usual mathematical notation.",
      EXAMPLE "R = ZZ/5[x,y,z];",
      "(We reserve single letter symbols such as ", TT "Z", " for use as variables in rings,
-     hence we must use something like ", TT "ZZ", " to stand for the ring of integers.
+     hence we must use something like ", TO "ZZ", " to stand for the ring of integers.
      It may remind you of the \"blackboard bold\" font of AMSTeX.  If you prefer
-     ", TT "Z", " to ", TT "ZZ", ", you may put ", TT "Z=ZZ", " in your
+     ", TT "Z", " to ", TO "ZZ", ", you may put ", TT "Z=ZZ", " in your
      ", TO "initialization file", ".  The symbols ", TT "ZZ/5", "
      represent the quotient ring ", TT "Z/5Z", ", and then ", TT "ZZ/5[x,y,z]", "
      represents the ring of polynomials in the variables x,y, and z with coefficients 

@@ -80,7 +80,7 @@ makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey key;
      verifyKey nkey;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
-     pkg := if opts#Package =!= null then opts#Package else packageTag nkey;
+     pkg := if opts#Package =!= null then opts#Package else packageKey nkey;
      if pkg === null then error ("can't determine correct package for document tag '",nkey,"'");
      title := if pkg === null then "" else pkg#"title";
      new DocumentTag from {nkey,fkey,pkg,title})
@@ -171,16 +171,16 @@ record      := f -> x -> (
 -- If we don't find it in another package, then we assume it's in the current package (which might be null)
 -- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
 -- Missing documentation can be detected when the package is closed, or later.
-packageTag = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
-packageTag DocumentTag := DocumentTag.Package
-packageTag   Symbol := key -> package key
-packageTag   String := key -> (
+packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
+packageKey DocumentTag := DocumentTag.Package
+packageKey   Symbol := key -> package key
+packageKey   String := key -> (
      r := scan(packages, pkg -> if fetchRawDocumentation(pkg,key) =!= null then break pkg);
      if r === null then currentPackage else r)
-packageTag  Package := identity
-packageTag    Array := key -> youngest \\ package \ toSequence key
-packageTag Sequence := key -> youngest \\ package \ key
-packageTag    Thing := key -> ( p := package key; if p === null then currentPackage else p)
+packageKey  Package := identity
+packageKey    Array := key -> youngest \\ package \ toSequence key
+packageKey Sequence := key -> youngest splice apply(key, i -> if class i === Sequence then apply(i,package) else package i)
+packageKey    Thing := key -> ( p := package key; if p === null then currentPackage else p)
 -- here is an alternative method -- it's fishy that we have both!
 getPackage := fkey -> scan(value \ values PackageDictionary, pkg -> if null =!= fetchRawDocumentation(pkg,fkey) then break pkg)
 -----------------------------------------------------------------------------
@@ -532,7 +532,7 @@ headline DocumentTag := tag -> (
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
      d := fetchRawDocumentation(pkg,fkey);
-     if d === null then return null;
+     if d === null then return "missing documentation";
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
@@ -542,24 +542,14 @@ commentize := s -> if s =!= null then concatenate(" -- ",s)
 --   the first member fo the pair is the string to use for sorting
 --   the second member is the corresponding hypertext entry in the UL list
 optTO := i -> (
-     if getDoc i =!= null then (
-     	  r := fixup TOH{i};
-	  (DocumentTag.FormattedKey first r, SEQ r))
-     else (
-	  (formatDocumentTag i, SEQ formatDocumentTagTO i)
-	  )
-     )
+     r := fixup TOH{i};
+     (DocumentTag.FormattedKey first r, SEQ r))
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
-     if getDoc i =!= null then (
-	  -- we might want a new type of TO so that in info mode this would look like this:
-	  --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
-	  -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
-	  r := fixup TOH{i};
-	  (DocumentTag.FormattedKey first r, SEQ r))
-     else (
-	  (formatDocumentTag i, SEQ formatDocumentTagTO i)
-	  )
-     )
+     -- we might want a new type of TO so that in info mode this would look like this:
+     --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
+     -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
+     r := fixup TOH{i};
+     (DocumentTag.FormattedKey first r, SEQ r))
 
 menu       := s -> UL (last \         optTO      \ s)
 smenu      := s -> UL (last \ sort \\ optTO      \ s)
@@ -723,6 +713,7 @@ briefSynopsis := key -> (
 			 ))));
      (inp',out') := types key;
      inp' = select(inp', T -> T =!= Nothing);
+     out' = select(out', T -> T =!= Nothing);
      if out' === {Thing} then out' = {};		    -- not informative enough
      if #inp === 0 then (
 	  inp = apply(inp', T -> T => "");
@@ -866,8 +857,9 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types
+     -- this doesn't get the methods of the form f T := ... :
      m := unique flatten apply(b, T -> select(keys value T, 
-	       i -> class i === Sequence and ( instance(i#0, Symbol) or class i#0 === Function ) and isDocumentableMethod i)); -- methods
+	       i -> class i === Sequence and #i > 1 and ( instance(i#0, Symbol) and i#1 =!= symbol = or class i#0 === Function ) and isDocumentableMethod i)); -- methods
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c);	    -- other things
      fn := pkg#"title" | ".m2";

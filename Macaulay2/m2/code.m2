@@ -144,7 +144,8 @@ methods Thing := F -> (
 		    seen#x = true;
 		    scan(pairs x, (key,meth) -> (
 			      if class meth === Function then
-			      if key === F then found#(F,x) = true
+			      if key === F or class key === Sequence and #key === 2 and (key#0 === F or F === symbol =) and key#1 === symbol =
+			      then found#(key,x) = true
 			      else if class key === Sequence and (
 				   member(F,key) 
 				   or 
