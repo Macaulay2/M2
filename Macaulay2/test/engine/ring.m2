@@ -219,7 +219,7 @@ status G
 
 -- rawGBContains
 
--- i = rawGBContains( raw gb matrix {{x,y}} , raw matrix {{0,0,x,y,0,0}} )
+i = rawGBContains( raw gb matrix {{x,y}} , raw matrix {{0,0,x,y,0,0}} )
 assert ( i == -1 )
 
 end

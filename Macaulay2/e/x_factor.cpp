@@ -152,7 +152,7 @@ CanonicalForm convert(const RingElement &g) {
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
-#warning "check that the rings of f and g both polynomial rings:
+#warning check that the rings of f and g both polynomial rings:
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl

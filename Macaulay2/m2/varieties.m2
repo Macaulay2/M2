@@ -98,7 +98,7 @@ CoherentSheaf.AfterPrint = F -> (
      << endl;
      )
 
-sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M#?(sheaf,X) then M#(sheaf,X) else M#(sheaf,X) = (
+sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M.cache#?(sheaf,X) then M.cache#(sheaf,X) else M.cache#(sheaf,X) = (
      if ring M =!= ring X then error "expected module and variety to have the same ring";
      if instance(X,ProjectiveVariety) and not isHomogeneous M
      then error "expected a homogeneous module";

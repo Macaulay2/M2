@@ -451,9 +451,7 @@ prune(Matrix) := Matrix => (m) -> (
 
 dual Module := Module => F -> if F.?dual then F.dual else F.dual = (
      if not isFreeModule F then kernel transpose presentation F
-     else (
-	  sendgg (ggPush F, ggtranspose); 
-	  new Module from ring F))
+     else newModule(ring F,rawDual raw F))
 
 -----------------------------------------------------------------------------
 Hom(Ideal, Ideal) := Module => (I,J) -> Hom(module I, module J)
@@ -585,7 +583,7 @@ Module _ ZZ := Vector => (M,i) -> (
 Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
-     if not M.?cache.components then error "expected a direct sum module";
+     if not M.cache.?components then error "expected a direct sum module";
      if M.cache.?indexComponents then (
 	  ic := M.cache.indexComponents;
 	  w = apply(w, i -> if ic#?i 
@@ -600,7 +598,7 @@ Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else
 Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else M#(symbol _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
-     if not M.?cache.components then error "expected a direct sum module";
+     if not M.cache.?components then error "expected a direct sum module";
      if M.cache.?indexComponents then (
 	  ic := M.cache.indexComponents;
 	  w = apply(w, i -> if ic#?i 

@@ -125,11 +125,14 @@ setupfun("rawRadical",rawRadical);
 export rawGCD(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
-     when s.0 is x:RawMonomial do
-     when s.1 is y:RawMonomial do Expr(Ccode(RawMonomial, "rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
-     else WrongArg(2,"a raw monomial")
-     else WrongArg(1,"a raw monomial")
-     else WrongArg("a pair of raw monomials")
+     when s.0 is x:RawMonomial do (
+     	  when s.1 is y:RawMonomial do Expr(Ccode(RawMonomial, "rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
+     	  else WrongArg(2,"a raw monomial"))
+     is x:RawRingElement do (
+     	  when s.1 is y:RawRingElement do toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawGCDRingElement((RingElement *)",x,",","(RingElement *)",y,")"))
+     	  else WrongArg(2,"a raw ring element"))
+     else WrongArg(1,"a raw monomial or ring element")
+     else WrongNumArgs(2)
      );
 setupfun("rawGCD",rawGCD);
 
