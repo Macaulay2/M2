@@ -15,8 +15,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _primitive_element = prim;
   _originalR = prim->get_ring()->cast_to_PolynomialRing();
   initialize_ring(_originalR->charac(),
-		  1,
-		  1,
+		  0,
 		  _originalR->get_degree_ring());
 
 

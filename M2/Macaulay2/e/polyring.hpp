@@ -23,19 +23,14 @@ class PolyRing : public PolynomialRing
   friend class FreeModule;
 
   void initialize_poly_ring(const Ring *K, const Monoid *M, 
-			    const Ring *originalK, const Monoid *originalM, 
 			    const PolynomialRing *deg_ring);
   // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring
 
-  static const PolyRing *create_poly_ring(const Ring *K, const Monoid *M,
-				   const Ring *originalK, const Monoid *originalM);
 protected:
-  virtual const PolyRing *createPolyRing(const Monoid *M) const;
-  // Create the PolyRing this[M].  This is virtual, since it must be the same type of noncomm
-  // as 'this'.  e.g., if K has skew comm variables, so does the result.
-
-  void initialize_poly_ring(const Ring *K, const Monoid *M,
-			    const Ring *originalK, const Monoid *originalM);
+  void initialize_poly_ring(const Ring *K, const Monoid *M);
+  // Called by subclasses (e.g. skew comm, Weyl, solvable.
+  // After this, set the information for the special multiplication.
+  // Then set the gb_ring
 
   virtual ~PolyRing();
   PolyRing() {}
@@ -48,8 +43,6 @@ public:
 protected:
   const Ring *K_;
   const Monoid *M_;
-  const Ring *logicalK_;
-  const Monoid *logicalM_;
 
   int _poly_size;
 
@@ -77,15 +70,19 @@ public:
   // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
   // is another PolyRing.
 
+#if 0
   virtual const Ring *getLogicalCoefficients() const { return logicalK_; }
   // The logical coefficient ring of 'this'.  
   // This is either a non polynomial ring, or it is a PolyRing.
+#endif
 
   virtual const Monoid *getMonoid() const { return M_; }
   // The implementation monoid of this ring.
 
+#if 0
   virtual const Monoid *getLogicalMonoid() const { return logicalM_; }
   // The logical monoid of this polynomial ring.
+#endif
 
   static const PolyRing *get_trivial_poly_ring();
 
@@ -118,7 +115,7 @@ public:
   { return Ncoeffs()->coefficient_type(); }
 
   virtual int n_fraction_vars() const
-  { return Ncoeffs()->n_fraction_vars(); }
+  { return 0; }
 
   virtual void text_out(buffer &o) const;
 

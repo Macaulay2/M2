@@ -20,7 +20,6 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
   PolyRingQuotient *result = new PolyRingQuotient;
   result->initialize_ring(R->charac(),
 			  R->n_vars(),
-			  R->total_n_vars(),
 			  R->get_degree_ring());
   result->R_ = R;
 

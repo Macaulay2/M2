@@ -128,7 +128,9 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
-  return SkewPolynomialRing::create(P,skewvars); // returns 0 if P is not commutative
+  return SkewPolynomialRing::create(P->getCoefficients(),
+				    P->getMonoid(),
+				    skewvars);
 }
 
 const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
@@ -142,8 +144,11 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
-  // returns 0 if P is not commutative:
-  return WeylAlgebra::create(P,diff_vars, comm_vars, homog_var);
+  return WeylAlgebra::create(P->getCoefficients(),
+			     P->getMonoid(),
+			     diff_vars, 
+			     comm_vars, 
+			     homog_var);
 }
 
 const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
@@ -155,8 +160,7 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
-  // returns 0 if P is not commutative:
-  return SolvableAlgebra::create(P,Q);
+  return SolvableAlgebra::create(P, Q);
 }
 
 const RingOrNull *IM2_Ring_frac(const Ring *R)

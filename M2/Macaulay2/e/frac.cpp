@@ -32,14 +32,13 @@ int FractionField::n_fraction_vars() const
   const PolynomialRing *A = R_->cast_to_PolynomialRing();
   assert(A != 0);
   const Ring *K = A->Ncoeffs();
-  return A->n_vars() + K->n_fraction_vars();
+  return A->n_vars();
 }
 
 bool FractionField::initialize_frac(const Ring *R) 
 {
   initialize_ring(R->charac(),
-		  R->total_n_vars(),
-		  R->total_n_vars(),
+		  R->n_vars(),
 		  R->get_degree_ring());
 
   R_ = R;

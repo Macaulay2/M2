@@ -10,18 +10,6 @@
 
 class WeylAlgebra : public PolyRing
 {
-  static WeylAlgebra *create(const Ring *K,
-			     const Monoid *M,
-			     const Ring *originalK,
-			     const Monoid *originalM,
-			     M2_arrayint derivs,
-			     M2_arrayint comms,
-			     int homog_var);
-
-  virtual const WeylAlgebra *createPolyRing(const Monoid *M) const;
-  // creates this[M], which is commutative in M variables, but Weyl in
-  // (some of) the variables of this
-
   int _nderivatives;
   bool _homogeneous_weyl_algebra;
   int _homog_var;		// Only used if 'homogeneous_weyl_algebra' is true.
@@ -79,9 +67,10 @@ protected:
 	  const FreeModule *Fg, // Free module of g, unless g is a ring element
 	  const gbvector *g) const;  // An entire polynomial
 public:
-  static WeylAlgebra *create(const PolynomialRing *R,
-			     M2_arrayint derivatives,
-			     M2_arrayint commutatives,
+  static WeylAlgebra *create(const Ring *K,
+			     const Monoid *M,
+			     M2_arrayint derivs,
+			     M2_arrayint comms,
 			     int homog_var);
 
   virtual bool is_pid() const       { return false; }
