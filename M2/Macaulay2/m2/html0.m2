@@ -99,6 +99,7 @@ LABEL      = new MarkUpType of MarkUpList
 BOLD       = new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
+LINK       = new MarkUpType of MarkUpList
 ANCHOR     = new MarkUpType of MarkUpList
 Hypertext  = new MarkUpType of MarkUpList		    -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
 UL         = new MarkUpType of MarkUpListParagraph

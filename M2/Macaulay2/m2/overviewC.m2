@@ -1140,15 +1140,12 @@ document {
      "There are two basic types of modules over a ring R: submodules of R^n
      and quotients of R^n.  Macaulay 2's notion of a module includes both
      of these.  Macaulay 2 represents every module as a quotient image(f)/image(g),
-     where f and g are both homomorphisms from free modules to F: 
-     f : F --> G, and g : H --> G.  The columns of f represent the generators of
-     M, and the columns of g represent the relations of the module M.",
+     where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
+     The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
      EXAMPLE {
 	  "R = ZZ/32003[a,b,c,d,e];",
 	  },
      "Include here: generators, relations."
-
-
      }
 
 document {
