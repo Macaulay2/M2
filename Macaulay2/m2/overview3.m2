@@ -110,7 +110,6 @@ document {
 
 document {
      Key => "operators",
-     Headline => "an overview",
      "Here is a list of unary and binary operators in the language.  Many
      of them can have methods installed for handling arguments of specific
      types.",
@@ -225,21 +224,6 @@ document {
      }
 
 document {
-     Key => "Writing documentation",
-     "How to write documentation yourself:",
-     UL {
-	  TOH "document",
-	  TOH "hypertext",
-	  },
-     "Output formatting routines:",
-     UL {
-	  TOH "html",
-	  TOH "mathML",
-	  TOH "tex"
-	  },
-     }
-
-document {
      Key => "Preface",
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
@@ -319,8 +303,7 @@ document {
      }
 
 document {
-     Key => "Mathematical Tutorials",
-     Headline => "several extended examples",
+     Key => "Mathematical Examples",
      "In this section we present some tutorials which aim to introduce
      the user to some mathematical ways of using Macaulay 2.  The tutorials
      are relatively independent of each other, and each one introduces the use
@@ -359,12 +342,55 @@ document {
 	  TO "Preface",
 	  TO "Getting started",
 	  TO "Mathematical Overview",
- 	  TO "Mathematical Tutorials",
-	  TO "Language and Programming Overview",
-	  TO "Writing documentation",
-	  TO "replacements for commands and scripts from Macaulay",
+ 	  TO "Mathematical Examples",
+	  TO "Programming Overview",
+	  TO "Programming Examples",
+	  TO "Packages",
+	  TO "Replacements for commands and scripts from Macaulay",
 	  }
      }
+
+document { Key => "Programming Examples"
+     }
+
+document { Key => "Packages",
+     Subnodes => {
+	  TO "Using packages",
+	  TO "Writing packages"
+	  }
+     }
+
+document { Key => "Using packages" }
+
+document { Key => "Writing packages",
+     Subnodes => {
+	  TO "newPackage",
+	  TO "export",
+	  TO "exportMutable",
+	  TO "Writing documentation"
+	  }
+     }
+
+document {
+     Key => "Writing documentation",
+     "How to write documentation yourself:",
+     UL {
+	  TOH "document",
+	  TOH "hypertext",
+	  },
+     "Output formatting routines:",
+     UL {
+	  TOH "html",
+	  TOH "mathML",
+	  TOH "tex",
+	  TOH "info",
+	  TOH "net"
+	  },
+     }
+
+document { Key => "newPackage" }
+document { Key => "export" }
+document { Key => "exportMutable" }
 
 document {
      Key => "specifying typical values",
@@ -459,7 +485,6 @@ document {
 
 document {
      Key => "syntax",
-     Headline => "an overview",
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",
      EXAMPLE "2+\n3+\n4",
@@ -507,7 +532,6 @@ document {
 
 document {
      Key => "debugging",
-     Headline => "an overview",
      "Here are some debugging tools.",
      UL {
 	  TO "assert",
@@ -544,7 +568,6 @@ document {
 
 document {
      Key => "system",
-     Headline => "an overview",
      "Loading files:",
      UL {
 	  TO "autoload",
@@ -616,7 +639,6 @@ document {
 
 document {
      Key => "combinatorial functions",
-     Headline => "an overview",     
      UL {
 	  TO "random",
 	  TO "binomial",
@@ -848,7 +870,6 @@ document {
 
 document {
      Key => "executing other programs",
-     Headline => "an overview",
      "The ", TO "run", " command can be used to execute another program,
      after which control will return to Macaulay 2.",
      PARA,
