@@ -1,5 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+<< "--loading documentation files..." << endl
+
 document { quote length,
      TT "length C", " -- returns the length of a graded module or a chain
      complex.",
@@ -681,7 +683,6 @@ document { quote &,
 	  }
      }
 
-ZZ & ZZ := lookup(quote &, ZZ, ZZ)
 document { (quote &, ZZ, ZZ),
      TT "m & n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
@@ -827,7 +828,6 @@ document { quote ^,
      will be called."
      }
 
-Thing /^ ZZ := (x,n) -> x^n/n!
 document { quote /^,
      TT "x/^  y", " -- a binary operator, used for divided powers.",
      PARA,

@@ -22,3 +22,5 @@ Thing ^ QQ := (x,r) -> (
      then x^(numerator r)
      else error "expected pair to have a method for '^'"
      )
+
+Thing /^ ZZ := (x,n) -> x^n/n!

@@ -125,9 +125,10 @@ $(SCRIPTS) : makeM2.m2 ../../Makeconf.h
 endif
 
 ../cache/Macaulay2-pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
-      # phase 2 makes the example and test files
-	rm -rf ../cache/Macaulay2-tmp ../tmp/Examples ../tmp/Tests
-	@ mkdir ../tmp/Examples ../tmp/Tests
+	 # phase 2 makes the example and test files
+	rm -rf ../cache/Macaulay2-tmp
+	 # rm -rf ../tmp/Examples ../tmp/Tests
+	 # @ mkdir ../tmp/Examples ../tmp/Tests
 	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
