@@ -13,11 +13,11 @@ use err;
 use stdiop;
 
 -----------------------------------------------------------------------------
--- first, the global symbol dictionary and functions for making symbols
-append(hashTable:SymbolHashTable,entry:Symbol):void := (
-     h := entry.word.hash & (length(hashTable)-1);
-     when hashTable.h
-     is null do hashTable.h = SymbolListCell(entry,NULL)
+-- first, the global symbol table and functions for making symbols
+append(buckets:array(SymbolList),entry:Symbol):void := (
+     h := entry.word.hash & (length(buckets)-1);
+     when buckets.h
+     is null do buckets.h = SymbolListCell(entry,NULL)
      is e:SymbolListCell do (
 	  while true do (
 	       when e.next 
@@ -25,26 +25,26 @@ append(hashTable:SymbolHashTable,entry:Symbol):void := (
 	       is null do (
 		    e.next = SymbolListCell(entry,NULL);
 		    break))));
-enlarge(dictionary:Dictionary):void := (
-     newTable := newSymbolHashTable(2*length(dictionary.hashTable));
-     foreach e in dictionary.hashTable do (
+enlarge(table:SymbolHashTable):void := (
+     newbuckets := new array(SymbolList) len 2*length(table.buckets) do provide NULL;
+     foreach e in table.buckets do (
 	  entryList := e;
 	  while true do
 	  when entryList
 	  is null do break
 	  is entryListCell:SymbolListCell do (
-	       append(newTable, entryListCell.entry);
+	       append(newbuckets, entryListCell.entry);
 	       entryList = entryListCell.next;
 	       )
 	  );
-     dictionary.hashTable = newTable;
+     table.buckets = newbuckets;
      );
-insert(entry:Symbol,dictionary:Dictionary):void := (
-     dictionary.numEntries = dictionary.numEntries + 1;
-     if 3 * dictionary.numEntries > 2 * length(dictionary.hashTable) + 1
-     then enlarge(dictionary);
-     h := entry.word.hash & (length(dictionary.hashTable)-1);
-     dictionary.hashTable.h = SymbolListCell(entry,dictionary.hashTable.h);
+insert(entry:Symbol,table:SymbolHashTable):void := (
+     table.numEntries = table.numEntries + 1;
+     if 3 * table.numEntries > 2 * length(table.buckets) + 1
+     then enlarge(table);
+     h := entry.word.hash & (length(table.buckets)-1);
+     table.buckets.h = SymbolListCell(entry,table.buckets.h);
      );
 export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
      frameindex := scope.framesize;
@@ -80,7 +80,7 @@ export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
 			 )));
 	  -- localFrame.values.frameindex = nullE;
 	  );
-     insert(entry,scope.dictionary);
+     insert(entry,scope.symboltable);
      entry);
 export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
      s := makeEntry(word,position,scope);
@@ -335,10 +335,10 @@ cleanGlobalFrame():void := globalFrame.values = emptySequence;
 atend(cleanGlobalFrame);
 -----------------------------------------------------------------------------
 lookupCountIncrement := 1;
-lookup(word:Word,dictionary:Dictionary):(null or Symbol) := (
-     if dictionary == dummyDictionary then error("dummy dictionary used");
-     entryList := dictionary.hashTable.(
-	  word.hash & (length(dictionary.hashTable)-1)
+lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
+     if table == dummyDictionary then error("dummy table used");
+     entryList := table.buckets.(
+	  word.hash & (length(table.buckets)-1)
 	  );
      while true do
      when entryList
@@ -351,12 +351,10 @@ lookup(word:Word,dictionary:Dictionary):(null or Symbol) := (
 	       return(e);
 	       );
 	  entryList = entryListCell.next));
-lookup(
-     word:Word,criterion:function(Symbol):bool,dictionary:Dictionary
-     ):(null or Symbol) := (
-     if dictionary == dummyDictionary then error("dummy dictionary used");
-     entryList := dictionary.hashTable.(
-	  word.hash & (length(dictionary.hashTable)-1)
+lookup( word:Word,criterion:function(Symbol):bool,table:SymbolHashTable ):(null or Symbol) := (
+     if table == dummyDictionary then error("dummy table used");
+     entryList := table.buckets.(
+	  word.hash & (length(table.buckets)-1)
 	  );
      while true do
      when entryList
@@ -372,7 +370,7 @@ lookup(
 	  entryList = entryListCell.next));
 export lookup(word:Word,scope:Scope):(null or Symbol) := (
      while true do (
-	  when lookup(word,scope.dictionary)
+	  when lookup(word,scope.symboltable)
 	  is null do (
 	       if scope.outerScope == scope 
 	       then return(NULL)
@@ -385,7 +383,7 @@ lookup(
      scope:Scope
      ):(null or Symbol) := (
      while true do (
-	  when lookup(word,criterion,scope.dictionary)
+	  when lookup(word,criterion,scope.symboltable)
 	  is null do (
 	       if scope.outerScope == scope
 	       then return(NULL)
@@ -676,7 +674,7 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  bind(q.operator,scope);
 	  tok := q.rhs;
 	  tok.scope = scope;
-	  r := lookup(tok.word,scope.dictionary);
+	  r := lookup(tok.word,scope.symboltable);
 	  when r
 	  is entry:Symbol do ( tok.entry = entry; )
 	  else ( makeSymbol(tok); );

@@ -10,7 +10,7 @@ currentPackage = null
 
 packages = new VerticalList from {}
 
-Dictionary = new Type of MutableHashTable		    -- temporary fiction
+PseudoDictionary = new Type of MutableHashTable		    -- temporary fiction, obsolete now
 
 Package = new Type of MutableHashTable
 Package.synonym = "package"
@@ -29,7 +29,7 @@ newPackage(String,String) := opts -> (title,vers) -> (
 	  "restore" => restore,
 	  "package title" => title,
 	  "package version" => vers,
-     	  "dictionary" => currentDictionary = new Dictionary, -- ! make dictionaries first class objects
+     	  "dictionary" => currentDictionary = new PseudoDictionary, -- ! make dictionaries first class objects
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => doctable,
 	  "example inputs" => new MutableHashTable,
@@ -44,7 +44,7 @@ newPackage(String,String) := opts -> (title,vers) -> (
 
 end Package := p -> (
      if p =!= currentPackage then error ("package not open");
-     p#"dictionary" = new Dictionary from (
+     p#"dictionary" = new PseudoDictionary from (
 	  apply(keys (set values symbolTable() - set p#"initial global symbols"), 
 	       s -> toString s => s));
      remove(p,"initial global symbols");

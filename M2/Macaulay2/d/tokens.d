@@ -32,7 +32,7 @@ export Word := {		-- a word
      hash:int,	    		--   the hash value
      parse:parseinfo		--   parsing information
      };
-export Symbol := {		    -- dictionary entry for a symbol
+export Symbol := {		    -- symbol table entry for a symbol
      word:Word,			    --   the word
      hash:int,			    --   just a counter, unique, unchanging
      position:Position,	    	    --   the position where the definition was made
@@ -48,16 +48,12 @@ export Symbol := {		    -- dictionary entry for a symbol
      };
 export SymbolListCell := {entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
-export SymbolHashTable := array(SymbolList);-- length always a power of 2
-export newSymbolHashTable(size:int):SymbolHashTable := (
-     new array(SymbolList) len size do provide NULL
-     );
-export Dictionary := { 
-     hashTable:SymbolHashTable, 
+export SymbolHashTable := { 
+     buckets:array(SymbolList),	 -- length always a power of 2
      numEntries:int 
      };
 export Scope := {
-     dictionary:Dictionary,
+     symboltable:SymbolHashTable,
      outerScope:Scope,
      seqno:int,			-- -1 for dummy, 0 for global, then 1,2,3,...
      framesize:int,
@@ -69,7 +65,7 @@ export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
      position:Position,		--   the location where it was encountered
      scope:Scope,		--   the scope in which it was encountered
-     entry:Symbol,     	  	--   the dictionary entry
+     entry:Symbol,     	  	--   the symbol table entry
      followsNewline:bool        --   whether it followed white space with a newline in it
      };
 
@@ -143,6 +139,7 @@ export Frame := {
      values:Sequence
      };
 export dummyFrame := Frame(self,-1,Sequence());   -- self pointer depended on by structure.d:apply()
+export Dictionary := { hash:int, scope:Scope, frame:Frame };	    -- for global scopes, one for each package
 export FunctionClosure := { frame:Frame, model:functionCode };
 export SymbolClosure := {frame:Frame, symbol:Symbol};
 export List := {
@@ -173,6 +170,7 @@ export Expr := (
      CompiledFunctionClosure or
      Complex or
      Database or
+     Dictionary or 
      Error or
      FunctionClosure or
      HashTable or
@@ -254,8 +252,7 @@ export Code := (exprCode or variableCode
 
 -- scopes
 
-export newDictionary():Dictionary := (
-     Dictionary( new SymbolHashTable len 10 do provide NULL, 0));
+export newDictionary():SymbolHashTable := SymbolHashTable( new array(SymbolList) len 10 do provide NULL, 0);
 export ScopeList := null or ScopeListCell;
 export ScopeListCell := {scope:Scope, next:ScopeList};
 export allScopes := ScopeList(NULL);
@@ -375,8 +372,8 @@ export errorClass := newbasictype();
 export netClass := newbasictype();
 export stringClass := newtypeof(netClass);
 export booleanClass := newbasictype();
+export dictionaryClass := newbasictype();
 export dbClass := newbasictype();
-export symboltableClass := newtypeof(hashTableClass);
 
 export visibleListClass := newtypeof(basicListClass);
 export listClass := newtypeof(visibleListClass);

@@ -66,9 +66,12 @@ benchmark = (s) -> (
 Descent := new Type of MutableHashTable
 net Descent := x -> stack sort apply(pairs x,
      (k,v) -> (
-	  if #v === 0
+	  r := if #v === 0
 	  then net k
-	  else net k | " : " | net v))
+	  else net k | " : " | net v;
+	  << "r = " << r << endl;
+	  r
+	  ))
 select1 := syms -> select(apply(syms, value), s -> instance(s, Type))
      
 show1 := method(SingleArgumentDispatch => true)

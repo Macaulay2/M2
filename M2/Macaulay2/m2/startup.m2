@@ -20,6 +20,7 @@ if firstTime then (
      Boolean.name = "Boolean";
      CacheTable.name = "CacheTable";
      Database.name = "Database";
+     Dictionary.name = "Dictionary";
      File.name = "File";
      Function.name = "Function";
      HashTable.name = "HashTable";
@@ -31,11 +32,12 @@ if firstTime then (
      Option.name = "Option";
      QQ.name = "QQ";
      RR.name = "RR";
+     RR.name = "RR";
+     CCC.name = "CCC";					    -- new internal complex number class, to replace CC later
      Ring.name = "Ring";
      Sequence.name = "Sequence";
      String.name = "String";
      Symbol.name = "Symbol";
-     SymbolTable.name = "SymbolTable";
      Thing.name = "Thing";
      Time.name = "Time";
      Type.name = "Type";

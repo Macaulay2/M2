@@ -227,6 +227,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is file do False
      is CompiledFunction do False
      is CompiledFunctionClosure do False
+     is Dictionary do False
      is x:Rational do (
 	  when rhs
 	  is y:Rational do (
@@ -692,6 +693,7 @@ export Class(e:Expr):HashTable := (
      is Real do doubleClass
      is Complex do complexClass
      is file do fileClass
+     is Dictionary do dictionaryClass
      is string do stringClass
      is FunctionClosure do functionClass
      is Net do netClass
@@ -734,6 +736,7 @@ setupfun("class",classfun);
 setupconst("Type",Expr(typeClass));
 setupconst("Thing",Expr(thingClass));
 setupconst("HashTable",Expr(hashTableClass));
+setupconst("Dictionary",Expr(dictionaryClass));
 setupconst("MutableHashTable",Expr(mutableHashTableClass));
 setupconst("CacheTable",Expr(cacheTableClass));
 setupconst("BasicList",Expr(basicListClass));
@@ -771,7 +774,6 @@ setupconst("Database",Expr(dbClass));
 setupconst("Sequence",Expr(sequenceClass));
 setupconst("VisibleList",Expr(visibleListClass));
 setupconst("Array",Expr(arrayClass));
-setupconst("SymbolTable",Expr(symboltableClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
 setupconst("LMatrixRR",Expr(LMatrixRRClass));
@@ -815,8 +817,8 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 setup(LeftArrowW,assigntofun);
 
 symbols(e:Expr):Expr := (
-     o := newHashTable(symboltableClass,nothingClass);
-     foreach bucket in globalScope.dictionary.hashTable do (
+     o := newHashTable(hashTableClass,nothingClass);
+     foreach bucket in globalScope.symboltable.buckets do (
 	  p := bucket;
 	  while true do (
 	       when p
@@ -851,7 +853,7 @@ extract(v:varstringarray):array(string) := new array(string) len v.n do foreach 
 export completions(s:string):array(string) := (
      n := length(s);
      v := newvarstringarray(6);
-     foreach bucket in globalScope.dictionary.hashTable do (
+     foreach bucket in globalScope.symboltable.buckets do (
 	  p := bucket;
 	  while true do when p
 	  is null do break
