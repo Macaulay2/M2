@@ -33,4 +33,5 @@ source .gdb-files
 # handle SIGINT pass
 # b rawCharSeries
 # b IrrCharSeries
+b ERROR
 source .gdb-run-it
