@@ -1,5 +1,3 @@
-# see also ./aclocal.m4
-
 AC_INIT(Makefile-configuration)
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
