@@ -44,7 +44,7 @@ addStartFunction(
 
 addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory|"m2/" )
 
-addStartFunction( () -> if not member("-q",commandLine) then makePackageIndex() )
+addStartFunction( () -> if not member("-q",commandLine) and prefixDirectory =!= null then makePackageIndex() )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

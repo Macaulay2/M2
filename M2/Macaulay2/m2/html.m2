@@ -31,7 +31,7 @@ htmlDirectory := ""					    -- relative path to the html directory, depends on t
 
 absoluteLinks := false
 
-isAbsolute := url -> match( "^(#|mailto:|[a-z]+://)", url )
+isAbsolute := url -> match( "^(#|/|mailto:|[a-z]+://)", url )
 
 rel := url -> (
      if isAbsolute url 
@@ -990,6 +990,10 @@ Michael R. Stillman <mike@math.cornell.edu>
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePath
 makePackageIndex List := packagePath -> (
+     if prefixDirectory === null then (
+	  stderr << "warning: can't make package index" << endl;
+	  return;
+	  );
      absoluteLinks = true;
      key := "Macaulay 2";
      htmlDirectory = userMacaulay2Directory();		    -- links are relative to this directory
@@ -1007,7 +1011,7 @@ makePackageIndex List := packagePath -> (
 		    },
 	       HEADER3 "Documentation",
 	       UL splice {
-               	    HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2" | "index.html", "Macaulay 2" },
+               	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2" | "index.html", "Macaulay 2" },
 		    apply(toSequence packagePath, prefixDirectory -> (
 			      p := prefixDirectory | LAYOUT#"docm2";
 			      if isDirectory p then (

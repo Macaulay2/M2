@@ -208,14 +208,6 @@ if fileExists (bindir | "../c/scc1") then (
 	  else null);
      ) else setPrefixFromBindir bindir
 
-
-if prefixDirectory === null and buildHomeDirectory =!= null then (
-     -- see Makefile.in, too, for the directory installPackage is run in
-     prefixDirectory = buildHomeDirectory | "m2/tmp/Macaulay2-" | version#"VERSION" | "/";
-     )
-
-if prefixDirectory === null and sourceHomeDirectory === null then stderr << "--warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
-
 if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
      -- now get the second to last entry in the chain of symbolic links, which will be in the final prefix directory
      encapDirectory = prefixDirectory;
@@ -225,7 +217,7 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
      if prev =!= null then setPrefixFromBindir dir prev)
 
-packagePath = { prefixDirectory }
+if prefixDirectory =!= null then packagePath = { prefixDirectory } else packagePath = { }
 
 phase := 1
 
