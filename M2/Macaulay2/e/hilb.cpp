@@ -215,12 +215,12 @@ static void iquotient_and_sum(MonomialIdeal &I,
   array< queue<Bag *> *> bins;
   sum = MonomialIdeal(I.get_ring());
   quot = MonomialIdeal(I.get_ring());
-  Bag *bmin = new Bag(0);
+  Bag *bmin = new Bag();
   varpower::copy(m, bmin->monom());
   sum.insert_minimal(bmin);
   for (Index<MonomialIdeal> i = I.first(); i.valid(); i++)
     {
-      Bag *b = new Bag(0);
+      Bag *b = new Bag();
       varpower::divide(I[i]->monom().raw(), m, b->monom());
       if (varpower::divides(m, I[i]->monom().raw()))
 	quot.insert_minimal(b);
