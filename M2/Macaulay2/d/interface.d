@@ -444,6 +444,18 @@ setupfun("rawBigRR",rawBigRR);
 rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_bigCC()" )) else WrongNumArgs(0);
 setupfun("rawBigCC",rawBigCC);
 
+rawIndexIfVariable(e:Expr):Expr := (
+     when e is f:RawRingElement do (
+	  i := Ccode(int, "IM2_RingElement_index_if_var(", "(RingElement *)", f, ")" );
+	  if i == -1 then nullE else toExpr(i))
+     else WrongArg("a raw ring element"));
+setupfun("rawIndexIfVariable",rawIndexIfVariable);
+
+rawIndices(e:Expr):Expr := (
+     when e is f:RawRingElement do toExpr(Ccode(array(int), "(engine_RawArrayInt)IM2_RingElement_indices(", "(RingElement *)", f, ")" ))
+     else WrongArg("a raw ring element"));
+setupfun("rawIndices",rawIndices);
+
 rawPolynomialRing(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 

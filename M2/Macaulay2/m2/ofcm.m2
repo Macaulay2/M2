@@ -224,7 +224,7 @@ makeit1 := (options) -> (
 	  );
      M * M := (x,y) -> new M from x.RawMonomial * y.RawMonomial;
      M#1 = new M from rawMonomialMake{};
-     degree M := x -> degree x.RawMonomial;
+     degree M := x -> notImplemented();
      baseName M := x -> (
 	  m := x.RawMonomial;
 	  if 1 === degree x

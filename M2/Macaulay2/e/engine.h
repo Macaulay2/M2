@@ -492,11 +492,11 @@ extern "C" {
 
   ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f); /* drg: connected rawPairs */
 
-  int IM2_RingElement_index_if_var(const RingElement *f);
+  int IM2_RingElement_index_if_var(const RingElement *f); /* drg: connected rawIndexIfVariable */
   /* if f is a variable of its ring, then the index of that variable is returned.
      If f isnot a variable, then -1 is returned. */
 
-  M2_arrayint IM2_RingElement_indices(const RingElement *f);
+  M2_arrayint IM2_RingElement_indices(const RingElement *f); /* drg: connected rawIndices */
   /* The list of indices of variables which occur in f is returned. */
 
   /**************************************************/

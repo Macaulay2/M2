@@ -15,6 +15,25 @@ assert ( 3 == a )
 
 -- poly rings
 R = ZZ[x,y,z]
+assert ( degree x == {1} )
+assert ( degree (x*y*z^8) == {10} )
+
+assert( 1 === rawIndexIfVariable raw y )
+assert( null === rawIndexIfVariable raw (x*y^2))
+assert( null === rawIndexIfVariable raw (3*x) )
+assert( null === rawIndexIfVariable raw (y*z) )
+assert( null === rawIndexIfVariable raw (x*y) )
+assert( null === rawIndexIfVariable raw (x*y) )
+
+assert( rawIndices raw (x+y) == {0, 1} )
+assert( rawIndices raw (x+y^2) == {0, 1} )
+assert( rawIndices raw (x+y*z) == {0, 1, 2} )
+
+size x
+rawMultiDegree raw x
+baseName x
+exponents x
+
 R'= raw R
 M' = raw monoid R
 2_R
@@ -30,6 +49,23 @@ n = leadMonomial (x * y * z)
 n' = raw n
 rawCompare(M',m',n')
 m ? n
+
+rawMonomialSparseListForm raw m
+
+exponents(3,raw m)
+exponents(3,raw n)
+
+end
+exponents m
+listForm m
+standardForm m
+
+f = (x+y+1)^3
+
+listForm f
+standardForm f
+
+end
 
 -- modules
 M'= raw monoid R
@@ -111,8 +147,8 @@ S = ZZ[X,Y,WeylAlgebra => {X=>Y}]
 
 X*Y
 Y*X
-matrix {{X}} * matrix {{Y}}
-matrix {{Y}} * matrix {{X}}
+matrix {{X}} * matrix {{Y}}				    -- oops
+-- assert( matrix {{X}} * matrix {{Y}} == matrix {{Y*X}} )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
