@@ -102,9 +102,17 @@ w = map(R^1,R^{-1,-2,-3},v)
 degrees source w
 assert( degrees source w == {{1}, {2}, {3}} )
 
--- eventually:
+-- right multiplication:
 raw v * raw x
 v*x
+
+-- noncommutative rings:
+S = ZZ[X,Y,WeylAlgebra => {X=>Y}]
+
+X*Y
+Y*X
+matrix {{X}} * matrix {{Y}}
+matrix {{Y}} * matrix {{X}}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
