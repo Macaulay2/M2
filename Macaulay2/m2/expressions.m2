@@ -494,15 +494,15 @@ net Adjacent := net FunctionApplication := m -> (
 		   precedence Sum := x -> 20
 	       precedence Product := x -> 30
  precedence NonAssociativeProduct := x -> 30
+					  MinusPrecedence := 30
+		 precedence Minus := x -> MinusPrecedence
    precedence FunctionApplication := x -> 40
-    precedence Adjacent := x -> 40
+              precedence Adjacent := x -> 40
 		precedence Divide := x -> 50
-					  MinusPrecedence := 55
-		 precedence Minus := x -> 55
 	     precedence Subscript := x -> 60
 	   precedence Superscript := x -> 60
 					  PowerPrecedence = 60
-		 precedence Power := x -> if x#1 === 1 then precedence x#0 else 60
+		 precedence Power := x -> if x#1 === 1 then precedence x#0 else PowerPrecedence
 		    precedence ZZ := x -> if x>=0 then 70 else MinusPrecedence
 		    precedence RR := x -> 70
 	      precedence Function := x -> 70
@@ -657,7 +657,7 @@ net NonAssociativeProduct := v -> (
 net Minus := x -> (
      term := x#0;
      horizontalJoin
-     if precedence term <= precedence x 
+     if precedence term < precedence x 
      then ("-", "(", net term, ")")
      else ("-", net term))
 

@@ -850,28 +850,10 @@ tostringfun(e:Expr):Expr := (
 	  then q.symbol.word.name
 	  else internalName(q.symbol.word.name)
 	  )
-     is f:file do Expr(
-	  if f == stdIO then "stdio"
-	  else if f == stdin then "stdin"
-	  else if f == stdout then "stdout"
-	  else if f == stderr then "stderr"
-	  else if f.listener then "--listener "+f.filename + "--"
-	  else if f.numconns == 0 then (
-	       if f.input && f.output then "--input output file "+f.filename+"--"
-	       else if f.input then "--input file "+f.filename+"--"
-	       else if f.output then "--output file "+f.filename+"--"
-	       else "--closed file--"
-	       )
-	  else (
-	       if f.input && f.output then "--input output file "+f.filename+" [" + tostring(f.numconns) + "]--"
-	       else if f.input then "--input file "+f.filename+" [" + tostring(f.numconns) + "]--"
-	       else if f.output then "--output file "+f.filename+" [" + tostring(f.numconns) + "]--"
-	       else "--closed file--"
-	       )
-	  )
+     is f:file do Expr(f.filename)
      is b:Boolean do Expr(if b.v then "true" else "false")
      is b:Nothing do Expr("null")
-     is f:Database do Expr("--database "+f.filename+"--")
+     is f:Database do Expr(f.filename)
      is n:Net do Expr("--net--")
      is f:CompiledFunction do Expr("--compiled function--")
      is f:CompiledFunctionClosure do Expr("--compiled function closure--")
@@ -882,6 +864,13 @@ tostringfun(e:Expr):Expr := (
      is l:List do Expr("--list--")
      );
 setupfun("string",tostringfun);
+
+connectionCount(e:Expr):Expr := (
+     when e is f:file do if f.listener then Expr(toInteger(f.numconns))
+     else WrongArg(1,"an open socket listening for connections")
+     else WrongArg(1,"a file")
+     );
+setupfun("connectionCount", connectionCount);
 
 presentfun(e:Expr):Expr := (
      when e
