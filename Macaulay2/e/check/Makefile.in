@@ -1,4 +1,6 @@
+# @configure_input@
 include ../../../include/config.Makefile
+VPATH = @srcdir@
 
 TESTS = test_monomial.o
 CTESTS = check_monomial.o
@@ -6,20 +8,16 @@ CTESTS = check_monomial.o
 #test_monordering test_monoid test_ring test_freemodule test_vector \
 #	test_matrix test_sparsemat test_lapack
 
-CPPFLAGS += -I./.. -I../../util
+CPPFLAGS += -I@srcdir@/.. -I../../util
 LIBRARYFILES += ../libgb.a
+
+ifeq "$(OS)" "Darwin"
 LDFLAGS += -multiply_defined suppress
-LDLIBS += $(LIBRARYFILES) -framework vecLib -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ #-lcheck
-#                   -llapack -lcblas -lf77blas -latlas -lg2c -lcheck
+endif
+
+LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++
 
 CFLAGS += -g -ansi
-
-
-#CPPFLAGS = -I/sw/include -I..
-#LDFLAGS +=  ../libgb.a  -multiply_defined suppress ../../d/M2types.o
-#LDLIBS += $(LIBRARYFILES) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ \
-#                   -llapack -lcblas -lf77blas -latlas -lg2c -lcheck
-#
 
 all :: check checkc
 

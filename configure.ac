@@ -181,6 +181,17 @@ AC_ARG_WITH(libgmp,
     LIBGMP="-lgmp"
     )
 
+AC_SUBST(LAPACKLIBS)
+AC_ARG_WITH(lapacklibs,
+    AC_HELP_STRING(--with-lapacklibs=...,lapack libraries (-llapack -lcblas -lf77blas -latlas -lg2c)),
+    LAPACKLIBS="$withval",
+    LAPACKLIBS="-llapack -lcblas -lf77blas -latlas -lg2c"
+    )
+AC_ARG_WITH(veclib,
+    AC_HELP_STRING(--with-veclib...,replace lapack libraries by "-framework vecLib"),
+    LAPACKLIBS="-framework vecLib"
+    )
+
 AC_SUBST(GC_FOR_NEW)
 AC_ARG_ENABLE(gc_for_new,
     AC_HELP_STRING(--enable-gc-for-new,use gc instead of malloc for c++ 'new' and 'delete' operators),

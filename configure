@@ -310,7 +310,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE STRIP encap LAPACK encapsrc LIBGMP GC_FOR_NEW CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE STRIP encap LAPACK encapsrc LIBGMP LAPACKLIBS GC_FOR_NEW CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -886,6 +886,9 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-encapsrc=...     encap directory (PREFIX/encap)
   --with-libgmp=...       libgmp option (-lgmp)
+  --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -latlas
+                          -lg2c)
+  --with-veclib...        replace lapack libraries by "-framework vecLib"
 
 Some influential environment variables:
   CFLAGS      C compiler flags, default: -g -O2
@@ -3817,6 +3820,24 @@ else
 fi;
 
 
+
+# Check whether --with-lapacklibs or --without-lapacklibs was given.
+if test "${with_lapacklibs+set}" = set; then
+  withval="$with_lapacklibs"
+  LAPACKLIBS="$withval"
+else
+  LAPACKLIBS="-llapack -lcblas -lf77blas -latlas -lg2c"
+
+fi;
+
+# Check whether --with-veclib or --without-veclib was given.
+if test "${with_veclib+set}" = set; then
+  withval="$with_veclib"
+  LAPACKLIBS="-framework vecLib"
+
+fi;
+
+
 # Check whether --enable-gc_for_new or --disable-gc_for_new was given.
 if test "${enable_gc_for_new+set}" = set; then
   enableval="$enable_gc_for_new"
@@ -5580,9 +5601,9 @@ _ACEOF
 
           ac_config_headers="$ac_config_headers include/config.h"
 
-CONFIGURED_FILES="Macaulay2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/compat/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/e/tests/Makefile Macaulay2/emacs/M2-init.el Macaulay2/emacs/Makefile Macaulay2/html-check-links/Makefile Macaulay2/images/Makefile Macaulay2/m2/Makefile Macaulay2/m2/Makefile.egs Macaulay2/packages/ComputationsBook/Makefile Macaulay2/packages/Makefile Macaulay2/probe/Makefile Macaulay2/setup Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/util/Makefile Makefile encap/Makefile encap/postinstall include/config.Makefile man/M2-help.1 man/M2.1 man/Makefile "
+CONFIGURED_FILES="Macaulay2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/compat/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/e/tests/Makefile Macaulay2/e/check/Makefile Macaulay2/e/check/src_test/Makefile Macaulay2/emacs/M2-init.el Macaulay2/emacs/Makefile Macaulay2/html-check-links/Makefile Macaulay2/images/Makefile Macaulay2/m2/Makefile Macaulay2/m2/Makefile.egs Macaulay2/packages/ComputationsBook/Makefile Macaulay2/packages/Makefile Macaulay2/probe/Makefile Macaulay2/setup Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/util/Makefile Makefile encap/Makefile encap/postinstall include/config.Makefile man/M2-help.1 man/M2.1 man/Makefile "
 
-                                                                                                                                                                                                                                                                                                  ac_config_files="$ac_config_files Macaulay2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/compat/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/e/tests/Makefile Macaulay2/emacs/M2-init.el Macaulay2/emacs/Makefile Macaulay2/html-check-links/Makefile Macaulay2/images/Makefile Macaulay2/m2/Makefile Macaulay2/m2/Makefile.egs Macaulay2/packages/ComputationsBook/Makefile Macaulay2/packages/Makefile Macaulay2/probe/Makefile Macaulay2/setup Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/util/Makefile Makefile encap/Makefile encap/postinstall include/config.Makefile man/M2-help.1 man/M2.1 man/Makefile"
+                                                                                                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Macaulay2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/compat/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/e/tests/Makefile Macaulay2/e/check/Makefile Macaulay2/e/check/src_test/Makefile Macaulay2/emacs/M2-init.el Macaulay2/emacs/Makefile Macaulay2/html-check-links/Makefile Macaulay2/images/Makefile Macaulay2/m2/Makefile Macaulay2/m2/Makefile.egs Macaulay2/packages/ComputationsBook/Makefile Macaulay2/packages/Makefile Macaulay2/probe/Makefile Macaulay2/setup Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/util/Makefile Makefile encap/Makefile encap/postinstall include/config.Makefile man/M2-help.1 man/M2.1 man/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6117,6 +6138,8 @@ do
   "Macaulay2/dumpdata/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/dumpdata/Makefile" ;;
   "Macaulay2/e/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/e/Makefile" ;;
   "Macaulay2/e/tests/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/e/tests/Makefile" ;;
+  "Macaulay2/e/check/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/e/check/Makefile" ;;
+  "Macaulay2/e/check/src_test/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/e/check/src_test/Makefile" ;;
   "Macaulay2/emacs/M2-init.el" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/emacs/M2-init.el" ;;
   "Macaulay2/emacs/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/emacs/Makefile" ;;
   "Macaulay2/html-check-links/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/html-check-links/Makefile" ;;
@@ -6270,6 +6293,7 @@ s,@encap@,$encap,;t t
 s,@LAPACK@,$LAPACK,;t t
 s,@encapsrc@,$encapsrc,;t t
 s,@LIBGMP@,$LIBGMP,;t t
+s,@LAPACKLIBS@,$LAPACKLIBS,;t t
 s,@GC_FOR_NEW@,$GC_FOR_NEW,;t t
 s,@CONFIGURED_FILES@,$CONFIGURED_FILES,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
