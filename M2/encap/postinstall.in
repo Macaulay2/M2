@@ -11,11 +11,6 @@ cd bin
     mv $TMP M2
     chmod 0755 M2
 
-    <M2-help >$TMP sed "$EDIT"
-    mv $TMP M2-help
-    chmod 0755 M2-help
-
-
 cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"
 cd lib/@PACKAGE_TARNAME@/@PACKAGE_VERSION@
 

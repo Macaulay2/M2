@@ -1,13 +1,8 @@
 dump = filename -> (
      -- load dumpdata.m2 and then execute dump(), so dumpdata.m2 is closed when the dump occurs
      if not version#"dumpdata" then error "can't dump data with this version of Macaulay 2";
-     -- if version#"operating system" === "Linux" then (
-     --	  << "open files : " << stack lines get("!ls -l /proc/"|toString processID()|"/fd") << endl;
-     --   );
-     fn := if class filename === String then "../" | filename else concatenate("Macaulay2-",
-	  try first lines get "!uname -m | sed s=/=-=g" 
-	  else version#"architecture", 
-	  "-data");
+     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
+     fn := if class filename === String then "../" | filename concatenate("Macaulay2-", arch, "-data");
      << "--dumping to " << fn << endl << flush;
      runEndFunctions();
      erase symbol dump;

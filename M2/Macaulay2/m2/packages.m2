@@ -6,10 +6,6 @@ saveValues = varlist -> (
 
 addStartFunction( () -> path = join({"./", sourceHomeDirectory|"packages/"},path) )
 
-load "layout.m2"					    -- defines LAYOUT
-
-layout = new Command from ( () -> applyValues(LAYOUT, f -> if Function === class f then f "@PACKAGE_NAME@" else f) )
-
 currentPackage = null
 
 packages = new VerticalList from {}
