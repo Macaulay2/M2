@@ -145,8 +145,8 @@ export TooManyArgs(name:string,m:int):Expr := (
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
 export errorDepth := 0;
-export report(c:Code):CodeClosureList := CodeClosureList(CodeClosure(localFrame,c),self);
-export report(c:Code,x:CodeClosureList):CodeClosureList := CodeClosureList(CodeClosure(localFrame,c),x);
+export report(c:Code):CodeClosureList := CodeClosureList(CodeClosure(noRecycle(localFrame),c),self);
+export report(c:Code,x:CodeClosureList):CodeClosureList := CodeClosureList(CodeClosure(noRecycle(localFrame),c),x);
 export printErrorMessage(e:Code,message:string):Expr := (
      p := codePosition(e);
      if int(p.loadDepth) >= errorDepth

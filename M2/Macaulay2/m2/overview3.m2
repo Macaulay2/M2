@@ -502,7 +502,6 @@ document { "debugging",
      "Here are some debugging tools.",
      SHIELD MENU {
 	  TO "assert",
-	  TO "backtrace",
 	  TO "benchmark",
 	  TO "browse",
 	  TO "code",

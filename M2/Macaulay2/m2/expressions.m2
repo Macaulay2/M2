@@ -1170,15 +1170,6 @@ FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
 toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
-backtrace = () -> apply(toList deepSplice errorReport, 
-     i -> (
-	  if class i#0 === String then new FilePosition from i
-	  else if class i#0 === Function then new FunctionApplication from i
-	  else if class i#0 === Symbol and #i === 3 then new BinaryOperation from i
-	  else i
-	  )
-     )
-
 -----------------------------------------------------------------------------
 
 Entity = new HeaderType of HashTable
