@@ -49,8 +49,7 @@
   (set (make-local-variable 'comment-start-skip) "-- *")
   (set (make-local-variable 'comint-input-autoexpand) nil)
   (set (make-local-variable 'transient-mark-mode) t)
-  (set (make-local-variable 'font-lock-keywords) M2-mode-font-lock-keywords)
-  (set (make-local-variable 'font-lock-defaults) `( M2-mode-font-lock-keywords ))
+  (setq font-lock-defaults '( M2-mode-font-lock-keywords ))
   (setq truncate-lines t)
   (setq case-fold-search nil)
   )
@@ -68,7 +67,6 @@
   (local-set-key "}" 'M2-electric-right-brace)
   (local-set-key ";" 'M2-electric-semi)
   (local-set-key "\^Cd" 'M2-find-documentation)
-  (put 'M2-mode 'font-lock-defaults '(M2-mode-font-lock-keywords nil t))
   )
 
 (define-derived-mode M2-comint-mode comint-mode "Macaulay 2 shell"
@@ -93,11 +91,8 @@
   (local-set-key [ f8 ] 'switch-to-completions)
   (local-set-key [ (control C) c ] 'switch-to-completions)
   (local-set-key [ (control C) d ] 'M2-find-documentation)
-  (put 'M2-comint-mode 'font-lock-defaults '(M2-mode-font-lock-keywords nil t))
-  (setq comint-dynamic-complete-functions 
-	'(
-	  M2-dynamic-complete-symbol
-	  comint-dynamic-complete-filename)))
+  (setq comint-dynamic-complete-functions '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
+  )
 
 (defvar M2-history nil "The history of recent Macaulay2 command lines.")
 (defvar M2-command "M2 " "*The default Macaulay2 command line.")
@@ -137,12 +132,16 @@
 	  )
   "Regular expression used to recognize the Macaulay 2 prompt."
   )
+
 (defun M2-left-hand-column () (window-hscroll))
+
 (defun M2-right-hand-column () (+ (window-hscroll) (window-width) -1))
+
 (defun M2-on-screen ()
   (and 
    (< (M2-left-hand-column) (current-column)) 
    (< (current-column) (M2-right-hand-column))))
+
 (defun M2-position-point (pos)
   "Scroll display horizontally so point ends up at center of screen, or
   at column position given by prefix argument."
@@ -152,6 +151,7 @@
       (setq pos (/ (window-width) 2))
     (if (< pos 0) (setq pos (+ pos (window-width)))))
   (set-window-hscroll (selected-window) (+ 1 (- (current-column) pos))))
+
 (defun M2-jog-right (arg)
   "Move point right and scroll display so it remains visible.  Optional
   prefix argument tells how far to move."
@@ -162,6 +162,7 @@
        (+ (point) arg)
      (min (save-excursion (end-of-line) (point)) (+ (point) M2-usual-jog))))
   (if (not (M2-on-screen)) (M2-position-point -2)))
+
 (defun M2-jog-left (arg)
   "Move point left and scroll display so it remains visible.  Optional
   prefix argument tells how far to move."
@@ -172,12 +173,14 @@
        (- (point) arg)
      (max (save-excursion (beginning-of-line) (point)) (- (point) M2-usual-jog))))
   (if (not (M2-on-screen)) (M2-position-point 1)))
+
 (defun M2-visible-horizontally ()
   (save-excursion
     (and
      (<= 0 (- (current-column) (window-hscroll (selected-window))))
      (< (- (current-column) (window-hscroll (selected-window))) 
 	(window-width (selected-window))))))
+
 (defun M2-toggle-truncate-lines ()
   "Toggle the value of truncate-lines, the variable which determines whether 
   long lines are truncated or wrapped on the screen."
@@ -304,6 +307,7 @@ can be executed with \\[M2-send-to-program]."
 		 (end-of-line)
 		 (insert "\n")))
 	   (M2-to-end-of-prompt))))
+
 (defun M2-set-demo-buffer()
   "Set the variable M2-demo-buffer to the current buffer, so that later,
 M2-send-to-prorgram can obtain lines from this buffer."
