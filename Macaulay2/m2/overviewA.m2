@@ -89,7 +89,7 @@ document {
 	  TO "minimal primes of an ideal",
 	  TO "associated primes of an ideal",
 	  TO "primary decomposition",
-	  TO "Groebner bases and related computations",
+	  -- TO "Groebner bases and related computations", -- already referred to in the Mathematical Overview
 	  },
      PARA,
      "For those operations where we consider an ideal as a module, such
@@ -277,7 +277,7 @@ document {
 	  "construction of modules",
 	  TO "free modules",
 	  TO "matrices to and from modules",
-	  TO "ideals to and from modules",
+	  -- TO "ideals to and from modules", -- already referred to in the section on ideals
 	  TO "Hilbert functions and free resolutions",
 	  TO "operations on modules",
 	  TO "homomorphisms (maps) between modules",
