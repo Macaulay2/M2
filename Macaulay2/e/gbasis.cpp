@@ -199,7 +199,6 @@ void GBasis::remainder(POLY &f, int degf)
 	}
     }
   h.f = head.next;
-  const Ring *K = R->get_flattened_coefficients();
   R->gbvector_remove_content(h.f, h.fsyz);
   f.f = h.f;
   f.fsyz = h.fsyz;
@@ -279,7 +278,6 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
 	}
     }
   h.f = head.next;
-  // This needs to be changed
   R->gbvector_remove_content(h.f, h.fsyz,denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
