@@ -156,14 +156,14 @@ document {
      }
 
 document {
-     Key => Schur,
+     Key => schurRing,
      Headline => "make a Schur ring",
-     TT "Schur n", " -- creates a Schur ring of degree n.",
+     TT "schurRing(x,n)", " -- creates a Schur ring of degree n with variables based on the symbol x",
      PARA,
-     "This is the representation ring for the general linear group of n by n
-     matrices.",
+     "This is the representation ring for the general linear group of n by n matrices.",
      PARA,
      SeeAlso => {"SchurRing"}}
+
 document {
      Key => SchurRing,
      Headline => "the class of all Schur rings",
@@ -178,15 +178,16 @@ document {
      EXAMPLE "dim R_{3,2,1}",
      "Multiplication in the ring comes from tensor product of representations.",
      EXAMPLE "R_{3,2,1} * R_{1,1}",
-     SeeAlso => {"_", SchurRing, List}}
-document {
-     Key => (symbol _, SchurRing, List),
-     Headline => "make an element of a Schur ring",
-     TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
-     to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
-     PARA,
-     "The row lengths should be in decreasing order.",
-     SeeAlso => "SchurRing"}
+     SeeAlso => {schurRing}}
+
+-- document {
+--      Key => (symbol _, SchurRing, List),
+--      Headline => "make an element of a Schur ring",
+--      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
+--      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
+--      PARA,
+--      "The row lengths should be in decreasing order.",
+--      SeeAlso => "SchurRing"}
 
 -----------------------------------------------------------------------------
 -- the rest of this file used to be schur.m2

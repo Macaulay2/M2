@@ -11,6 +11,7 @@ PACKAGES += GenericInitialIdeal.m2
 PACKAGES += Markov.m2
 PACKAGES += PrimaryDecomposition.m2
 PACKAGES += minimal.m2
+# PACKAGES += SchurRings.m2
 ##
 
 include ../../include/config.Makefile

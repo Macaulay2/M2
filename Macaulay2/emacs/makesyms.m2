@@ -1,4 +1,4 @@
-symbols := unique values Macaulay2.Dictionary;
+symbols := unique join(values Macaulay2.Dictionary, {symbol Macaulay2});
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)
