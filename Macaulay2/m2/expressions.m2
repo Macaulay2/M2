@@ -943,11 +943,33 @@ expression RR := x -> (
 
 net String := format
 net Function := name
-net Boolean := net Symbol := net File := net ZZ :=
+net Boolean := net File := net ZZ :=
      net Handle := net Database := string
 
 net Nothing := null -> "" -- we need a way to put blank spots in matrix expressions
+-----------------------------------------------------------------------------
+alphabet := new MutableHashTable
+scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     c -> alphabet#c = true)
+symbols := new MutableHashTable
+scan(values symbolTable(), s -> if not alphabet#?((string s)#0) then symbols#s=true)
+alphabet = null
 
+-- name Symbol := s -> (
+--      if symbols#?s or value s =!= s 
+--      then concatenate("quote ", string s)
+--      else string s
+--      )
+-- we could re-install this if we get rid of S.syms in quotring.m2
+
+name Symbol := string
+
+net Symbol := s -> (
+     if symbols#?s
+     then concatenate("quote ", string s)
+     else string s
+     )
+-----------------------------------------------------------------------------
 hold = x -> new Held from {x}
 
 expression Boolean := expression Symbol := expression File := 
@@ -955,7 +977,20 @@ expression Boolean := expression Symbol := expression File :=
      expression Function := x -> new Held from {x}
 
 net Held := v -> net v#0
-name Held := v -> name v#0
+
+name Held := v -> (
+     if class v#0 === Symbol
+     then string v#0
+     else name v#0
+     )
+
+TEST ///
+R=ZZ[a]
+assert( name a === "a" )
+assert( name a^2 === "a^2" )
+-- assert( name (quote Tally, Tally) === "(quote Tally,Tally)" )
+///
+
 -----------------------------------
 
 document { quote hold,

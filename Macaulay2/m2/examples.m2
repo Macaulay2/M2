@@ -79,8 +79,10 @@ document { "getting started",
      EXAMPLE "\"hi there\"",
      "A value can be assigned to a variable with ", TO "=", ".",
      EXAMPLE "s = \"hi there\"",
-     "Strings may be concatenated with ", TO "|", ".",
+     "Strings may be concatenated horizontally with ", TO "|",
      EXAMPLE "s | \" - \" | s",
+     "or vertically with ", TO "||", ":",
+     EXAMPLE "s || \" - \" || s",
      "A list of expressions can be formed with braces.
      (See ", TO "lists, arrays, and sequences", ".)",
      EXAMPLE "{1, 2, s}",
@@ -127,8 +129,8 @@ document { "getting started",
      EXAMPLE "describe R",
      "A free module can be created as follows.",
      EXAMPLE "F = R^3",
-     "The i-th basis element of F can be obtained as F_i.  In this example, the
-     valid values for i are 0, 1, and 2.",
+     "The i-th basis element of ", TT "F", " can be obtained as ", TT "F_i", ".  In
+     this example, the valid values for ", TT "i", " are 0, 1, and 2.",
      EXAMPLE "F_1",
      "Using a list of indices instead will produce the homomorphism corresponding
      to the basis vectors indicated.",

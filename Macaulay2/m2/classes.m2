@@ -104,63 +104,72 @@ document { quote installMethod,
      }
  
 document { "new",
-     TT "new A of b from c", " -- make a hash table of class AA and parent b initialized from c.", BR,
+     TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
+     parent ", TT "b", " initialized from ", TT "c", ".", BR,
      NOINDENT,
-     TT "new A of b", "        -- make a hash table of class AA and parent b.", BR,
+     TT "new A of b", "        -- make a hash table of class ", TT "A", " 
+     and parent ", TT "b", ".", BR,
      NOINDENT,
-     TT "new A from c", "      -- make a hash table or list of class AA initialized from c.", BR,
+     TT "new A from c", "      -- make a hash table or list of class ", TT "A", " 
+     initialized from ", TT "c", ".", BR,
      NOINDENT,
-     TT "new A", "             -- makes a hash table or list n of class AA.", BR,
+     TT "new A", "             -- makes a hash table or list ", TT "n", " 
+     of class ", TT "A", ".", BR,
      PARA,
      HR,
      NOINDENT,
-     TT "new A of b from c", " -- make a hash table n of class AA and parent b initialized from c.",
+     TT "new A of b from c", " -- make a hash table ", TT "n", " of
+     class ", TT "AA", " and parent ", TT "b", " initialized from ", TT "c", ".",
      PARA,
      "One may use this to model the mathematical notion
-     that x is an element of A and a subset of b.
-     Here A and b are Objects, and c is any expression.
-     Let b be an instance of B, c be an instance of C, and let
-     AA be any ancestor of A.  Then use",
+     that ", TT "x", " is an element of ", TT "A", " and a subset of ", TT "b", ".
+     Here ", TT "A", " and ", TT "b", " are hash tables, and ", TT "c", " is
+     any expression.  Let ", TT "b", " be an instance of ", TT "B", ", ", TT "c", "
+     be an instance of ", TT "C", ", and let ", TT "AA", " be an
+     ancestor of ", TT "A", ".  Then use",
      PRE "          new AA of B from C := (A,b,c) -> ... ",
      "to install the corresponding optional creation routine -- the
-     value it returns will be converted so its class is A and its
-     parent is b; this will involve copying unless the returned value 
-     is mutable and objects of class A are mutable.",
+     value it returns will be converted so its class is ", TT "A", " and its
+     parent is ", TT "b", "; this will involve copying unless the returned value 
+     is mutable and objects of class ", TT "A", " are mutable.",
      PARA,
-     "If no installation routine has been installed, then c should be
+     "If no installation routine has been installed, then ", TT "c", " should be
      a hash table or a list, and it will be converted directly.",
      HR,
      NOINDENT,
-     TT "new A of b", "        -- make a hash table of class A and parent b.",
+     TT "new A of b", "        -- make a hash table of class ", TT "A", "
+     and parent ", TT "b", ".",
      PARA,
-     "Same as above, except c is missing.  Use ",
+     "Same as above, except ", TT "c", " is missing.  Use ",
      PRE "          new AA of B := (A,b) -> ... ",
      "to install the initialization routine.",
      HR,
      NOINDENT,
-     TT "new A from c", "      -- make a hash table or list n of class A initialized from c.",
+     TT "new A from c", "      -- make a hash table or list ", TT "n", " of 
+     class ", TT "A", " initialized from ", TT "c", ".",
      PARA,
-     "The same as above except b is missing.  Use ",
+     "The same as above except ", TT "b", " is missing.  Use ",
      PRE "          new AA from C := (A,c) -> ... ",
      "to install the corresponding initialization routine.",
      PARA,
-     "Since no parent b has been provided, the value returned by the
+     "Since no parent ", TT "b", " has been provided, the value returned by the
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
      HR,
      NOINDENT,
-     TT "new A", "             -- make a hash table or list n of class A.",
+     TT "new A", "             -- make a hash table or list ", TT "n", " of 
+     class ", TT "A", ".",
      PARA,
-     "Same as above, except b and c are missing.
+     "Same as above, except ", TT "b", " and ", TT "c", " are missing.
      Use ", TT "new AA := A -> ... ", " to install the initialization routine.",
      PARA,
-     "Since no parent b has been provided, the value returned by the
+     "Since no parent ", TT "b", " has been provided, the value returned by the
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
      PARA,
-     "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", TO "NewFromMethod", ",
-     and ", TO "NewOfFromMethod", " are used for installation of the initialization
-     routines.",
+     "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
+     TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used for 
+     installation of the initialization routines.",
      SEEALSO "classes"
      }
 

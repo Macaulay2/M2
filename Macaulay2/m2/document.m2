@@ -444,7 +444,7 @@ exportDocumentation = () -> (
 		    docBody = processExamples docBody;
 		    storeDoc docBody;
 		    Documentation#key = nodeName;
-		    Documentation#(z#1) = nodeName;
+		    Documentation#(z#1) = key;
 		    )
 	       )
 	  )
