@@ -348,14 +348,17 @@ FreeModule *FreeModule::symm(int n) const
     // n th symmetric power
 {
   symm1_result = new_free();
-  symm1_deg = degree_monoid()->make_one();
-  if (M != NULL)
-    symm1_base = M->make_one();
-
-  symm1(0, n);
-
-  degree_monoid()->remove(symm1_deg);
-  if (M != NULL) M->remove(symm1_base);
+  if (n >= 0)
+    {
+      symm1_deg = degree_monoid()->make_one();
+      if (M != NULL)
+	symm1_base = M->make_one();
+      
+      symm1(0, n);
+      
+      degree_monoid()->remove(symm1_deg);
+      if (M != NULL) M->remove(symm1_base);
+    }
   FreeModule *result = symm1_result;
   symm1_result = NULL;
   return result;

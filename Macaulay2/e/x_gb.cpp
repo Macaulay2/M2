@@ -4,6 +4,9 @@
 
 #include "gb.hpp"
 #include "gbinhom.hpp"
+#if 0
+#include "gbbinom.hpp"
+#endif
 #include "comp.hpp"
 #include "hilb.hpp"
 #include "hermite.hpp"
@@ -366,8 +369,62 @@ void cmd_res(object &om, object &oalg, object &olength, object &odegree, object 
     break;
   }
 }
+#if 0
+void cmd_binomialGB_make(object &oR)
+{
+  const Ring *R = oR->cast_to_Ring();
+  gStack.insert(new binomialGB(R));
+}
 
-
+void cmd_binomialGB_addgens(object &og, object &om)
+{
+  Matrix m = om->cast_to_Matrix();
+  gb_comp *g = og->cast_to_gb_comp();
+  binomialGB *gb = g->cast_to_binomialGB();
+  if (gb == NULL)
+    {
+      *gError << "expected binomialGB computation";
+      return;
+    }
+  gb->add_generators(m);
+}
+void cmd_binomialGB_enlarge(object &og, object &oR)
+{
+  const Ring *R = oR->cast_to_Ring();
+  gb_comp *g = og->cast_to_gb_comp();
+  binomialGB *gb = g->cast_to_binomialGB();
+  if (gb == NULL)
+    {
+      *gError << "expected binomialGB computation";
+      return;
+    }
+  gb->enlarge(R);
+}
+void cmd_binomialGB_subring(object &og, object &on)
+{
+  gb_comp *g = og->cast_to_gb_comp();
+  binomialGB *gb = g->cast_to_binomialGB();
+  if (gb == NULL)
+    {
+      *gError << "expected binomialGB computation";
+      return;
+    }
+  int n = on->int_of();
+  gStack.insert(gb->subring(n));
+}
+void cmd_binomialGB_subringGB(object &og, object &on)
+{
+  gb_comp *g = og->cast_to_gb_comp();
+  binomialGB *gb = g->cast_to_binomialGB();
+  if (gb == NULL)
+    {
+      *gError << "expected binomialGB computation";
+      return;
+    }
+  int n = on->int_of();
+  gStack.insert(gb->subringGB(n));
+}
+#endif
 void i_NGB_cmds(void)
 {
   // New NGB commands
@@ -393,7 +450,14 @@ void i_NGB_cmds(void)
 
   // Computation display/statistics
   install(ggtracing, cmd_NGB_tracing, TY_INT);
-
+#if 0
+  // binomial GB's
+  install(ggbinomialGB, cmd_binomialGB_make, TY_RING);
+  install(ggbinomialGBaddgens, cmd_binomialGB_addgens, TY_GB_COMP, TY_MATRIX);
+  install(ggbinomialGBenlarge, cmd_binomialGB_enlarge, TY_GB_COMP, TY_RING);
+  install(gggetsubring, cmd_binomialGB_subring, TY_GB_COMP, TY_INT);
+  install(gggetsubringGB, cmd_binomialGB_subringGB, TY_GB_COMP, TY_INT);
+#endif
   // Performing the computation (for dets/pfaffians)
   install(ggcalc, cmd_comp_calc, TY_COMP, TY_INT);
   install(ggcalc, cmd_comp_calc2, TY_COMP, TY_INT, TY_INT, TY_INTARRAY, TY_INTARRAY);

@@ -83,7 +83,7 @@ wc ::;  $(MAKE) -C m2 wc
 ################################# schubert
 tests ::; -$(MAKE) -C schubert tests
 ################################# slides
-allfiles ::; $(MAKE) NODEPENDS=1 -C e allfiles
+allfiles ::; $(MAKE) NODEPENDS=1 -C slides allfiles
 tests ::; -$(MAKE) -k -C slides
 ################################# test
 allfiles ::; $(MAKE) -C test allfiles

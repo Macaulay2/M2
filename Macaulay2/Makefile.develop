@@ -2,7 +2,7 @@ ifndef MAKEFILE_DEVELOP
 MAKEFILE_DEVELOP = TRUE
 export CC = gcc
 #################################
-export VERSION     := 0.8.26
+export VERSION     := 0.8.28
 export VERSIONDATE := April 29, 1997
 export ARCH        := $(shell uname -m | sed s=/=-=g )
 export OS          := $(shell uname -s | sed s=/=-=g )

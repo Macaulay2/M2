@@ -1,6 +1,7 @@
 // (c) 1995  Michael E. Stillman
 
 #include "style.hpp"
+#include "handles.hpp"
 
 static int allocated_amount = 0;
 static int deleted_amount = 0;
@@ -160,10 +161,8 @@ void stash::stats(ostream &o)
     if (p->n_allocs > 0)
       p->text_out(o);
 
-  extern int hash_allocated;
-  extern unsigned int hash_highwater;
-  o << "hashtable: highwater = " << hash_highwater << ", current = " 
-    << hash_allocated << endl;
+  o << "handles: highwater = " << gHandles.highwater() << ", current = " 
+    << gHandles.current() << endl;
 }
 
 //--------- Doubling Stashes -----------------------------------------

@@ -454,6 +454,7 @@ RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::=
 
 freeHandle(obj:Handle,i:int):void := (
      gbforget(obj.handle);
+     obj.handle = -1;			  -- mainly for debugging
      );
 toHandle(e:Expr):Expr := (
      when e

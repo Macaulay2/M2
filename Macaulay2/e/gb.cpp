@@ -773,11 +773,13 @@ int GB_comp::computation_complete(const int *stop_degree,
 {
   if (state == GB_COMP_DONE) 
     {
+#if 0
       if (stop_degree != NULL && n_computed != n_pairs)
 	{
 	  state = GB_COMP_NEWDEGREE;
 	  return COMP_DONE_DEGREE_LIMIT;
 	}
+#endif
       return COMP_DONE;
     }
   if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;

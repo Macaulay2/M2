@@ -141,7 +141,8 @@ loads.m2 : Makefile
 	@../bin/echoout '>loads.m2' $(foreach i, $(DUMPSEQUENCE), 'load "$(i)"')
 
 version.m2 : ../Makefile.develop makeVersion.awk ../bin/Macaulay2 $(DUMPEDGFILES)
-	gawk -f makeVersion.awk </dev/null >$@
+	gawk -f makeVersion.awk </dev/null >version.tmp
+	mv version.tmp $@
 
 TUTORIALS = $(wildcard ../tutorial/final/*.out)
 tutorials.m2 : Makefile

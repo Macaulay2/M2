@@ -5,6 +5,8 @@
 
 #include "object.hpp"
 
+class binomialGB;
+
 extern char system_interrupted;
 extern int comp_printlevel;
 
@@ -96,6 +98,9 @@ public:
   // These can be overridden by the specific computation
   const char * type_name      () const { return "GB computation"; }
   void text_out(ostream &o) const { o << "GB computation"; }
+
+  virtual binomialGB * cast_to_binomialGB() { return 0; }
+  virtual const binomialGB * cast_to_binomialGB() const { return 0; }
 };
 
 #endif

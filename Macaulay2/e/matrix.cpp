@@ -1057,9 +1057,12 @@ Matrix Matrix::symm(int n) const
   Matrix result(rows(), G, deg);
   degree_monoid()->remove(deg);
 
-  vec f = rows()->e_sub_i(0);
-  symm1_next = 0;
-  symm1(result, f, 0, n);	  // consumes f
+  if (n >= 0)
+    {
+      vec f = rows()->e_sub_i(0);
+      symm1_next = 0;
+      symm1(result, f, 0, n);	  // consumes f
+    }
   return result;
 }
 
