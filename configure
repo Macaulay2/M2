@@ -310,7 +310,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE encap XCODE ALTIVEC LAPACK encapsrc LIBGMP LAPACKLIBS CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE STRIP DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE encap XCODE ALTIVEC LAPACK LIBGMP LAPACKLIBS CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -883,7 +883,6 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-encapsrc=...     encap directory (PREFIX/encap)
   --with-libgmp=...       libgmp option (-lgmp)
   --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -lg2c)
   --with-veclib...        replace lapack libraries by "-framework vecLib"
@@ -3815,14 +3814,6 @@ _ACEOF
 
 
 
-# Check whether --with-encapsrc or --without-encapsrc was given.
-if test "${with_encapsrc+set}" = set; then
-  withval="$with_encapsrc"
-  encapsrc="$withval"
-fi;
-
-
-
 # Check whether --with-libgmp or --without-libgmp was given.
 if test "${with_libgmp+set}" = set; then
   withval="$with_libgmp"
@@ -6298,7 +6289,6 @@ s,@encap@,$encap,;t t
 s,@XCODE@,$XCODE,;t t
 s,@ALTIVEC@,$ALTIVEC,;t t
 s,@LAPACK@,$LAPACK,;t t
-s,@encapsrc@,$encapsrc,;t t
 s,@LIBGMP@,$LIBGMP,;t t
 s,@LAPACKLIBS@,$LAPACKLIBS,;t t
 s,@CONFIGURED_FILES@,$CONFIGURED_FILES,;t t

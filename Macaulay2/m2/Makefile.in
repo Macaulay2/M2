@@ -1,5 +1,5 @@
 # @configure_input@
-justM2 default :: initialize phase1
+justM2 all default :: initialize phase1
 quick-install : justM2 install
 include ../../include/config.Makefile
 VPATH = @srcdir@:../tutorial/final
@@ -118,55 +118,13 @@ EGFLAGS = -k
 EGMORE = || true
 endif
 
-phase3 : initialize phase1 cache/doc/sample cache/doc/expression
-	 #------ phase 3: running new example input files: cache/doc/*.example
-	$(MAKE) -C cache/doc -f ../../Makefile.egs srcdir=$(srcdir)
-	touch $@
-clean::; rm -rf phase3
-
-all :: phase4
-phase4 : phase3 ../cache/Macaulay2-doc
-../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
-	 #------ phase 4: making $@
-	rm -f ../cache/Macaulay2-tmp
-	../bin/M2 -q --silent --stop \
-		-e 'phase = 4' \
-		-e 'errorDepth = 0' \
-		-e 'DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
-		Macaulay2-doc.m2 -e 'exit(0)'
-	mv ../cache/Macaulay2-tmp $@
-	touch $@
-
-install:: phase1
 
 $(htmldocdir) : ; install -d $@
 
-phase5 : phase4 $(htmldocdir) $(htmldocdir)/index.html always
-$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/M2
-	 #------ phase 5: making html documentation
-	../bin/M2 -q --silent --stop \
-		-e 'phase = 5; errorDepth = 0' \
-		-e 'makeHTML("$(prefix)/","@prefix@")' \
-		-e 'exit 0'
-install:: "$(docm2dir)" "$(htmldocdir)" install-html
-"$(htmldocdir)" "$(docm2dir)" :; $(INSTALL) -d "$@"
-install-html :
-	 # cd SOMEWHERE && tar cf - *.html | tar xf - -C "$(htmldocdir)"
-
-HOMEDIR := $(shell cd .. && pwd)
-check :: check-links
-check-links :
-	@ echo "make: Entering directory \`$(shell cd $(htmldocdir) && pwd)'"
-	 #------ checking the links in the html documentation
-	@ cd $(htmldocdir) && $(HOMEDIR)/html-check-links/html-check-links *.html
-	@ echo "make: Leaving directory \`$(shell cd $(htmldocdir) && pwd)'"
-
-ifdef NEWENGINE
 check:: test1
 test1 : test.m2 phase1
 	../bin/M2 -e 'errorDepth = 0' -q test.m2 -e '<< "--test succeeded" << endl' -e 'exit 0'
 	touch $@
-endif
 
 check:: test2
 test2: phase1 ../bin/M2$(EXE)

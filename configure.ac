@@ -180,12 +180,6 @@ LAPACK=yes
 AC_SUBST(LAPACK)
 AC_DEFINE(LAPACK,,whether to use LAPACK)
 
-AC_SUBST(encapsrc)
-AC_ARG_WITH(encapsrc,
-    AC_HELP_STRING(--with-encapsrc=...,encap directory (PREFIX/encap)),
-    encapsrc="$withval",
-    )
-
 AC_SUBST(LIBGMP)
 AC_ARG_WITH(libgmp,
     AC_HELP_STRING(--with-libgmp=...,libgmp option (-lgmp)),

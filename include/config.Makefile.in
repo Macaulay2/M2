@@ -53,7 +53,6 @@ LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
 LAPACKLIBS = @LAPACKLIBS@
 encap = @encap@
-encapsrc = @encapsrc@
 LIBGMP = @LIBGMP@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
