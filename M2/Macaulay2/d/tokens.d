@@ -286,6 +286,7 @@ export Boolean := {v:bool};
 export Nothing := {nothing:void};
 export Real := {v:double};
 export Complex := { re:double, im:double };
+export ComplexOrNull := Complex or null;
 
 export Expr := (
      BigComplex or

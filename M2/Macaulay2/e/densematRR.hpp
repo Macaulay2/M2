@@ -130,6 +130,15 @@ public:
   virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
 
   virtual MutableMatrix * submatrix(const M2_arrayint cols) const;
+
+
+  ///////////////////////////////
+  // Lapack operations //////////
+  ///////////////////////////////
+
+  DenseMutableMatrixRR * solve(DenseMutableMatrixRR *b, 
+			       DenseMutableMatrixRR *x);
+
 };
 
 #endif

@@ -5,6 +5,8 @@
 #include "relem.hpp"
 #include "LLL.hpp"
 #include "fractionfreeLU.hpp"
+#include "ring.hpp"
+#include "densematRR.hpp"
 
 typedef MutableMatrix MutableMatrixOrNull;
 
@@ -466,7 +468,37 @@ M2_bool rawSolve(MutableMatrix *A,
 		 MutableMatrix *b,
 		 MutableMatrix *x)
 {
-  ERROR("not re-implemented yet");
+  /* Check: A, b, x all have the same ring, either RR or CC */
+  /* Check: if all of these are dense mutable matrices, then 
+     call the correct routine */
+  /* Otherwise: give error: 
+     OR: make mutable matrices of the correct size, call the correct routine
+     and afterwords, copy to x. */
+
+  const Ring *R = A->get_ring();
+  if (b->get_ring() != R || x->get_ring() != R)
+    {
+      ERROR("expected same ring");
+      return false;
+    }
+  if (R->cast_to_RR())
+    {
+      DenseMutableMatrixRR *A1 = A->cast_to_DenseMutableMatrixRR();
+      DenseMutableMatrixRR *b1 = b->cast_to_DenseMutableMatrixRR();
+      DenseMutableMatrixRR *x1 = x->cast_to_DenseMutableMatrixRR();
+      if (!A1 || !b1 || !x1)
+	{
+	  ERROR("expected dense matrices");
+	  return false;
+	}
+      DenseMutableMatrixRR *result_x = A1->solve(b1,x1);
+      return result_x != 0;
+    }
+  if (R->cast_to_CC())
+    {
+      return true;
+    }
+  ERROR("expected base ring to be RR or CC");
   return false;
 }
 

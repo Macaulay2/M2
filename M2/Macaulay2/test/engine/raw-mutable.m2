@@ -283,3 +283,19 @@ r5 = rawIdentity(R^5,0) -- mutable r5
   -------------------------------
   -- rawColumnChange-------------
   -------------------------------
+
+  -------------------------------
+  -- rawSolve -------------------
+  -------------------------------
+  load "raw-util.m2"
+  m = mat table(4,4, (i,j) -> rawFromNumber(raw RR, random 1.0))
+  b0 = mat table(4,1, (i,j) -> rawFromNumber(raw RR, random 1.0))
+  A = rawMutableMatrix(m,true)
+  b = rawMutableMatrix(b0,true)
+  x = rawMutableMatrix(b0,true)
+  net p
+  rawSolve(A,b,x)
+  net x
+  x1 = rawMatrix b
+  m*(rawMatrix x)
+  rawMinors(4,m,0)

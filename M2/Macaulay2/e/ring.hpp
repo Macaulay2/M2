@@ -133,6 +133,8 @@ public:
   virtual       QQ * cast_to_QQ()               { return 0; }
   virtual const RR * cast_to_RR() const         { return 0; }
   virtual       RR * cast_to_RR()               { return 0; }
+  virtual const CC * cast_to_CC() const         { return 0; }
+  virtual       CC * cast_to_CC()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
   virtual const GF * cast_to_GF() const         { return 0; }
