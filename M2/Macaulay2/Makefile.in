@@ -21,7 +21,7 @@ $(docm2reldir)/README  : README  ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
 ################################# srcdir
 initialize :: srcdir
-srcdir :; ln -s "@srcdir@" srcdir
+srcdir :; echo "@srcdir@" >$@
 clean::; rm -f srcdir
 ################################# cache
 initialize :: cache
@@ -55,11 +55,8 @@ distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 all clean distclean ::; $(MAKE) -C compat $@
 ################################# d
 initialize ::; $(MAKE) DEPENDS=no -C d compat.h
-####
-# let's try it without "restart"
-# justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
-justM2 all ::; $(MAKE) -C d all
-####
+### util/restart and util/update cooperate here:
+justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
 check ::; $(MAKE) -C basictests -k

@@ -11,6 +11,8 @@ use nets;
 use gmp;
 use engine;
 
+export debugLevel := 0;
+
 export parsefuns := {
      unary:function(Token,TokenFile,int,bool):ParseTree,
      binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree
@@ -571,5 +573,3 @@ export (x:Symbol) === (y:Expr):bool := (
 export (x:Expr) === (y:Symbol):bool := (
      when x is z:SymbolClosure do y == z.symbol else false
      );
-
-export debugLevel := 0;

@@ -162,6 +162,20 @@ AC_ARG_ENABLE(encap,
     encap="$enableval",
     encap=no)
 
+AC_SUBST(XCODE)
+AC_ARG_ENABLE(xcode,
+    AC_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode),
+    XCODE="$enableval",
+    XCODE="no"
+    )
+
+AC_SUBST(ALTIVEC)
+AC_ARG_ENABLE(altivec,
+    AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option),
+    ALTIVEC="$enableval",
+    ALTIVEC="no"
+    )
+
 LAPACK=yes
 AC_SUBST(LAPACK)
 AC_DEFINE(LAPACK,,whether to use LAPACK)
@@ -188,19 +202,6 @@ AC_ARG_WITH(lapacklibs,
 AC_ARG_WITH(veclib,
     AC_HELP_STRING(--with-veclib...,replace lapack libraries by "-framework vecLib"),
     LAPACKLIBS="-framework vecLib"
-    )
-
-AC_SUBST(GC_FOR_NEW)
-AC_ARG_ENABLE(gc_for_new,
-    AC_HELP_STRING(--enable-gc-for-new,use gc instead of malloc for c++ 'new' and 'delete' operators),
-    GC_FOR_NEW="$enableval",
-    GC_FOR_NEW=no)
-
-AC_SUBST(ALTIVEC)
-AC_ARG_ENABLE(altivec,
-    AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option),
-    ALTIVEC="$enableval",
-    ALTIVEC="no"
     )
 
 AC_CHECK_DECL(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing),[#include <math.h>])

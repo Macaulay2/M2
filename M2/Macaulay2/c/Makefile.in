@@ -10,7 +10,7 @@ VPATH = @srcdir@
 	mv y.tab.c $*.c
 	rm -f y.tab.h y.output
 ############################################################
-.PHONY : clean all install
+.PHONY : clean all install tags
 YFLAGS := -vdlt
 LOADLIBES += -lm -lgc
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
@@ -24,8 +24,10 @@ scc1 : $(OFILES)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
 grammar.o : grammar.c; $(CC) $(CPPFLAGS) -c $< $(OUTPUT_OPTION)
-############################## miscellaneous
-TAGS: $(SRCFILES); etags $^
+############################## tags
+all :: tags
+tags : @srcdir@/TAGS
+@srcdir@/TAGS: $(SRCFILES); cd @srcdir@ && etags $(SRCFILES)
 ############################## cleaning
 clean :
 	rm -f *.o scc1 scc.a grammar.output grammar.tab.h \

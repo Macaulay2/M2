@@ -61,8 +61,7 @@ $(Dtestresults) : ../bin/M2$(EXE) ../cache/Macaulay2-doc ../cache/Macaulay2-made
 	../bin/M2 -q -e 'path = prepend( "D-modules/", path )' -e 'input "$<"' -e 'exit 0'
 	touch $@
 ################################# srcdir
-initialize :: srcdir
-srcdir :; ln -s "@srcdir@" srcdir
+clean :: ; rm -f srcdir
 #############################################################################
 clean check distclean ::
 	$(MAKE) -C ComputationsBook $@
