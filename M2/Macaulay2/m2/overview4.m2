@@ -703,7 +703,7 @@ document { "computing syzygies",
      }
 
 document { "computing resolutions",
-     "Use the function ", TO "resolution", ", often abbreviated as ", TO "res", ",
+     "Use the function ", TO "resolution", ", often abbreviated as ", TT "res", ",
      to compute a free resolution of a module.",
      EXAMPLE {
 	  "R = QQ[x..z];",

@@ -286,8 +286,7 @@ document { "LAYOUT",
      PARA {
 	  "Let's apply the functions above to the name of a fictional package named \"", TT "FOO", "\" to see what paths are returned."
      	  },
-     EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///,
-     SEEALSO "How Macaulay 2 finds its files"
+     EXAMPLE ///applyValues (LAYOUT, f -> if instance(f,Function) then f "FOO" else f)///
      }
 
 document { "Main",

@@ -698,7 +698,7 @@ document { Command,
      EXAMPLE {
 	  "(f = Command ( () -> 2^30 );)",
 	  "f",
-	  "(c = Command ( () -> \"date\" );)",
+	  "(c = Command \"date\";)",
 	  "c"
 	  },
      SEEALSO {"run", "AfterEval"}

@@ -100,17 +100,17 @@ formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
 
 after := (w,s) -> mingle(w,#w:s)
---formatDocumentTag Option   := record(
---     s -> concatenate (
---	  if class s#0 === Sequence 
---	  then (
---	       if class s#0#0 === Symbol
---	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
---	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
---	       )
---	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
---	  )
---     )
+formatDocumentTag Option   := record(
+     s -> concatenate (
+	  if class s#0 === Sequence 
+	  then (
+	       if class s#0#0 === Symbol
+	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
+	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
+	       )
+	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
+	  )
+     )
 
 fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
@@ -179,7 +179,7 @@ formatDocumentTagTO Sequence := (
 	  if fSeqTO === null then (
 	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
 	       );
-	  (
+	  toList (
 	       if #s == 0                               then toString
 	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
 	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
