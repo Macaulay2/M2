@@ -1713,9 +1713,9 @@ MonomialIdeal *Matrix::make_skew_monideal(int n) const
 
 MonomialIdeal *Matrix::make_basis_monideal(int n) const
 {
-#warning "make_basis_monideal doesn't handle fractions well"
+#warning "make_basis_monideal doesn't handle fractions"
 #warning "include the squares of the skew communting vars?"
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  const PolyRing *P = get_ring()->cast_to_PolyRing();
   if (P == 0)
     {
       ERROR("expected polynomial ring");
@@ -1732,10 +1732,11 @@ MonomialIdeal *Matrix::make_basis_monideal(int n) const
     {
       vec v = elem(i);
       if (v == 0) continue;
-      if (v->comp != n) continue;
-      if (coeffsZZ && !globalZZ->is_unit(P->lead_flat_coeff(v->coeff)))
+      const vecterm * w = P->vec_find_lead_term(rows(), v);
+      if (w->comp != n) continue;
+      if (coeffsZZ && !globalZZ->is_unit(P->lead_flat_coeff(w->coeff)))
 	continue;
-      M->to_expvector(P->lead_flat_monomial(v->coeff), exp);
+      M->to_expvector(P->lead_flat_monomial(w->coeff), exp);
       if (!ntuple::is_one(nothers, exp + nlogical))
 	continue;
       vp.shrink(0);
