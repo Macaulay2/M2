@@ -9,7 +9,7 @@ generators MonomialIdeal := (I) -> (
      R := ring I;
      sendgg(ggPush I, ggmatrix);
      f := getMatrix R;
-     f.cache#{false,0} = forceGB f;
+     -- f.cache#{false,0} = forceGB(f,MinimalMatrix=>f,ChangeMatrix=>id_(source f));
      f)
 
 ideal MonomialIdeal := (I) -> ideal generators I
@@ -248,7 +248,7 @@ resolution MonomialIdeal := ChainComplex => options -> I -> res ideal I
 betti MonomialIdeal := I -> betti ideal I
 
 
-lcmOfGens := (I) -> if I.?lcm then I.lcm else I.lcm = (
+lcmOfGens := (I) -> if I#?(local lcm) then I#(local lcm) else I#(local lcm) = (
      max \ transpose apply(first entries gens I, i -> first exponents i)
      )
 
