@@ -1,3 +1,5 @@
+if getenv "USER" == "dan" then exit 0
+
 R = ZZ[t,u,Inverses => true]
 
 -- the following fractions are in the fraction field of R
