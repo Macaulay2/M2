@@ -164,11 +164,12 @@ hilbertSeries Module := options -> (M) -> (
      else error "expected infinity or an integer as value of Order option";
      A := ring M;
      num := poincare M;
-     -- stderr << "num = " << num << endl;
      T := degreesRing A;
      denom := tally (degree \ generators A);
-     -- stderr << "denom = " << denom << endl;
-     if class ord === ZZ then (
+     if ord === infinity then (
+	  y := flatten apply(pairs denom, (i,e) -> Power {(1 - T_i),e});
+	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
+     else if class ord === ZZ then (
 	  s := if num == 0 then 0_T else (
 	       m := min min(listForm num / first);
 	       n := ord;
@@ -179,59 +180,22 @@ hilbertSeries Module := options -> (M) -> (
 		    );
 	       trimm(f,n));
 	  M.cache#"approximate hilbertSeries" = (ord,s);
-	  return s;)
-     else if ord === infinity then (
-	  y := flatten apply(pairs denom,
-	       (i,e) -> (
-		    f := 1 - T_i;			    -- f^e is a factor of the denominator
-		    while true do (
-			 -- stderr << toExternalString num << " / " << toExternalString f << " = " << flush;
-			 -- q := num/f; -- might go into an infinite loop, sigh
-			 q := null;
-			 -- stderr << toExternalString q << endl;
-			 if false			    -- temporary bypass
-			 and denominator q == 1 then (
-			      num = numerator q;
-			      e = e-1;
-			      if e == 0 then break {};
-			      )
-			 else (
-			      if #i > 0 and same i and first i > 1 
-			      and false		    -- bypass
-			      then (
-				   -- we factor f as f1 * f2
-				   i0 := first i;
-				   t := product generators T;
-				   f1 := 1 - t;
-				   e1 := e;
-				   f2 := sum(i0,j->t^j);
-				   e2 := e;
-				   while true do (
-					q = num/f1;
-					if denominator q != 1 then break;
-					num = numerator q;
-					e1 = e1 - 1;
-					if e1 == 0 then break);
-				   while true do (
-					q = num/f2;
-					if denominator q != 1 then break;
-					num = numerator q;
-					e2 = e2 - 1;
-					if e2 == 0 then break);
-				   if e1 == e2 then break{Power{f,e}}
-				   else (
-					e = min(e1,e2);
-					if e > 0
-					then if e1 > e
-					then break{Power{f,e},Power{f1,e1-e}}
-					else break{Power{f,e},Power{f2,e2-e}}
-					else if e1 > e
-					then break{Power{f1,e1-e}}
-					else break{Power{f2,e2-e}}
-					)
-				   )
-			      else break{Power{f,e}}))));
-	  M.cache#"exact hilbertSeries" = Divide{num, Product sort y}))
+	  s))
+
+nonnull := x -> select(x, i -> i =!= null)
+reduceHilbert = method()
+reduceHilbert Divide := ser -> (
+     num := numerator ser;				    -- an element of the degrees ring
+     den := denominator ser;				    -- a Product of Powers
+     newden := Product nonnull apply(toList den, pwr -> (
+	       fac := pwr#0;				    -- 1-T_i
+	       ex  := pwr#1;	 			    -- exponent
+	       while ex > 0 and num % fac == 0 do (
+		    num = num // fac;
+		    ex = ex - 1;
+		    );
+	       if ex > 0 then Power {fac,ex}));
+     Divide {num, newden})
 
 ProjectiveHilbertPolynomial = new Type of HashTable
 ProjectiveHilbertPolynomial.synonym = "projective Hilbert polynomial"

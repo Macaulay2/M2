@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
+     	symbol reduceHilbert,
         symbol packagePrefixPath,
 	symbol backtrace,
 	symbol backupFileRegexp,

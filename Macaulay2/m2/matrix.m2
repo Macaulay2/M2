@@ -13,9 +13,10 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 map(Module,Nothing,RawMatrix) := opts -> (tar,nullsrc,f) -> map(tar,newModule(ring tar,rawSource f),f,opts)
 map(Ring,RawMatrix) := opts -> (R,f) -> map(newModule(R,rawTarget f),newModule(R,rawSource f),f,opts)
 
-reduce = (tar,f) -> (					    -- we erase this later
+reduce = (tar,f) -> (
      if isFreeModule tar then f
      else f % raw gb presentation tar)
+protect symbol reduce					    -- we won't export this
 
 -- QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m		    -- this is wrong when the ring of m is QQ!
 
