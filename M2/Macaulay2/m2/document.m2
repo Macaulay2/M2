@@ -395,7 +395,7 @@ checkForNodeBaseFilename := nodeName -> (
      nodeBaseFilename = (
 	  if #nodeBaseFilename == 0 then (
 	       if writingExampleInputFiles()
-	       then cacheFileName(first documentPath, nodeName)
+	       then cacheFileName(first documentationPath, nodeName)
 	       else null)
 	  else first nodeBaseFilename
      	  );
@@ -1546,3 +1546,22 @@ html TOC := x -> (
 	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i }
 	  }
      )
+
+
+end
+
+-- here is an idea for making the html pages, too:
+
+
+scan(cacheFileNameKeys(""), key -> cacheFileName("",key) | ".html" 
+     << html HTML { 
+	       HEAD TITLE {key, headline key},
+	       BODY { 
+		    -- buttonBar key, 
+		    HR{}, 
+		    documentation key,
+		    HR{}, 
+		    -- buttonBar key 
+		    }
+	       }
+     << close)
