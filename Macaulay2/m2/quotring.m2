@@ -93,7 +93,7 @@ ZZquotient := (R,I) -> (
 	  S.presentation = matrix{{n}};
 	  S.order = S.char = n;
 	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
-	  expression S := x -> hold rawToInteger raw x;
+	  expression S := x -> expression rawToInteger raw x;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
 	  savedQuotients#n = S;
 	  S))
