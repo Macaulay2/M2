@@ -911,7 +911,7 @@ document { Command,
      }
 
 
-document{symbol monomialCurve, 
+document { monomialCurve, 
     TT "monomialCurve(R,a)", " -- yields the defining ideal of the projective
     curve given parametrically on an affine piece by 
     t |---> (t^a1, ..., t^an).",

@@ -213,6 +213,7 @@ bump();
      export RightArrowW := binaryright("->",arrowop);
      makeProtectedSymbolClosure(RightArrowW);
      export DoubleArrowS := makeProtectedSymbolClosure(binaryright("=>"));
+     export LongDoubleArrowS := makeProtectedSymbolClosure(binaryright("==>"));
 bump();
      newscope := prec;
      ofW = token("of");
@@ -477,7 +478,7 @@ bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, TildeS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS);

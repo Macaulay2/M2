@@ -410,14 +410,14 @@ document { "using functions with optional arguments",
 document { "making new functions with optional arguments",
      "Let's consider an example where we wish to construct a linear function of ", TT "x", " 
      called ", TT "f", ", with the slope and y-intercept of the graph being optional
-     arguments of ", TT "f", ".  We use the ", TT "@", " operator to attach the default
+     arguments of ", TT "f", ".  We use the ", TO "==>", " operator to attach the default
      values to our function, coded in a special way.",
      EXAMPLE {
-	  "f = {Slope => 1, Intercept => 1} @ 
-    (opts -> x -> x * opts.Slope + opts.Intercept)",
+	  "opts = {Slope => 1, Intercept => 1}",
+	  "f = opts ==> o -> x -> x * o.Slope + o.Intercept",
 	  "f 5",
-	  "f(5,Slope => 100)",
-	  "f(5,Slope => 100, Intercept => 1000)",
+	  "f(5, Slope => 100)",
+	  "f(5, Slope => 100, Intercept => 1000)",
 	  },
      "In the example the function body is the code ", TT "x * opts.Slope + opts.Intercept", ".
      When it is evaluated, a hash table is assigned to ", TT "opts", "; its
@@ -430,7 +430,7 @@ document { "making new functions with optional arguments",
      but handling multiple arguments is just as easy.  Here is an example with two
      arguments.",
      EXAMPLE {
-	  "f = {a => 1000} @ (o -> (x,y) -> x * o.a + y);",
+	  "f = {a => 1000} ==> o -> (x,y) -> x * o.a + y;",
 	  "f(3,7)",
 	  "f(5,11,a=>10^20)",
 	  },
@@ -457,53 +457,10 @@ document { "conditional execution",
      (i -> if i < 0 then "neg" 
 	  else if i == 0 then "zer")///
 	  },
-     "There is a variety of predicate functions (such as ", TT "<", ") that yield
-     ", TT "true", " or ", TT "false", " and can be used as the predicate in 
-     an ", TT "if", " expression. They include ",
-     TO "==", ", ",
-     TO "!=", ", ",
-     TO "===", ", ",
-     TO "=!=", ", ",
-     TO "<", ", ",
-     TO ">", ", ",
-     TO "<=", ", ",
-     TO ">=", ", ",
-     TO ".?", ", ",
-     TO "#?", ", ",
-     TO "even", ", ",
-     TO "odd", ", ",
-     TO "member", ", ",
-     TO "mutable", ", ",
-     TO "isAffineRing", ", ",
-     TO "isBorel", ", ",
-     TO "isCommutative", ", ",
-     TO "isDirectSum", ", ",
-     TO "isField", ", ",
-     TO "isFreeModule", ", ",
-     TO "isHomogeneous", ", ",
-     TO "isIdeal", ", ",
-     TO "isInjective", ", ",
-     TO "isIsomorphism", ", ",
-     TO "isModule", ", ",
-     TO "isOpenFile", ", ",
-     TO "isInputFile", ", ",
-     TO "isOutputFile", ", ",
-     TO "isListener", ", ",
-     TO "isPolynomialRing", ", ",
-     TO "isPrime", ", ",
-     TO "isPrimitive", ", ",
-     TO "isQuotientModule", ", ",
-     TO "isQuotientOf", ", ",
-     TO "isQuotientRing", ", ",
-     TO "isReady", ", ",
-     TO "isRing", ", ",
-     TO "isSubmodule", ", ",
-     TO "isSubset", ", ",
-     TO "isSurjective", ", ",
-     TO "isTable", ", ",
-     TO "isUnit", ", and ",
-     TO "isWellDefined", ".  Results of these tests may be combined with 
-     ", TO "not", ", ", TO "and", ", and ", TO "or", "."
+     "There are a variety of predicate functions (such as ", TT "<", ", used above)
+     that yield ", TT "true", " or ", TT "false", " and can be used as the predicate 
+     in an ", TT "if", " expression. For a list, see ", TO "Boolean", ".  Boolean
+     results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
      }
 
 document { "loops",

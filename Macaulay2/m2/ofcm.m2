@@ -354,17 +354,13 @@ makeMonoid := (options) -> (
      options = new OptionTable from options;
      makeit1 options)
 
-makeit2 := options -> args -> (
-     if options.Variables === null then (
-     	  options = new MutableHashTable from options;
-	  options.Variables = splice sequence args;
-     	  options = new OptionTable from options;
-	  );
-     makeMonoid options)
+monoid Array := Monoid => (
+     monoidDefaults ==> options -> args -> (
+	  if options.Variables === null
+	  then options = merge(options, new OptionTable from {Variables => splice sequence args}, last);
+	  makeMonoid options)
+     ) @@ toSequence 
 
-monoid Array := Monoid => (args) -> processArgs(
-     toSequence args,					    -- e.g., changes [x,Inverses=>true] to (x,Inverses=>true)
-     monoidDefaults,makeit2)
 OptionsRegistry#monoid = monoidDefaults
 monoid Ring := Monoid => R -> R.monoid
 

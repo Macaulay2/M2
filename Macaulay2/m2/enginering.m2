@@ -83,6 +83,7 @@ coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
 		 else net new FunctionApplication from { frac, F.baseRings#-1 }
 		 )
 
+frac = method(TypicalValue => FractionField)
 frac Ring := R -> (
      if R.?frac then R.frac 
      else error "no method found"
@@ -301,7 +302,8 @@ leadTerm RingElement := RingElement => (f) -> (
 
 RingElement % RingElement := RingElement => 
 QQ % RingElement := RingElement % QQ :=
-ZZ % RingElement := RingElement % ZZ := (f,g) -> (
+ZZ % RingElement := RingElement % ZZ :=
+(f,g) -> (
      R := class f;
      S := class g;
      R % S := (
@@ -323,7 +325,8 @@ ZZ % RingElement := RingElement % ZZ := (f,g) -> (
 
 RingElement // RingElement := RingElement => 
 QQ // RingElement := RingElement // QQ :=
-ZZ // RingElement := RingElement // ZZ := (f,g) -> (
+ZZ // RingElement := RingElement // ZZ := 
+(f,g) -> (
      R := class f;
      S := class g;
      R // S := (
@@ -359,7 +362,8 @@ RingElement - QQ := (f,g) -> (
 
 RingElement - RingElement := RingElement =>
 ZZ - RingElement := 
-RingElement - ZZ := (f,g) -> (
+RingElement - ZZ := 
+(f,g) -> (
      R := class f;
      S := class g;
      R - S := (
@@ -394,7 +398,8 @@ RingElement * QQ := (f,g) -> (
      f * g)
 
 RingElement * RingElement := RingElement =>
-ZZ * RingElement := RingElement * ZZ := (f,g) -> (
+ZZ * RingElement := RingElement * ZZ :=
+(f,g) -> (
      R := class f;
      S := class g;
      R * S := (
@@ -429,7 +434,8 @@ RingElement + QQ := (f,g) -> (
      f + g)
 
 RingElement + RingElement := RingElement =>
-ZZ + RingElement := RingElement + ZZ := (f,g) -> (
+ZZ + RingElement := RingElement + ZZ := 
+(f,g) -> (
      R := class f;
      S := class g;
      R + S := (
@@ -508,7 +514,8 @@ RingElement / QQ := (f,g) -> (
      f / g)
 
 RingElement / RingElement := RingElement =>
-ZZ / RingElement := RingElement / ZZ := (f,g) -> (
+ZZ / RingElement := RingElement / ZZ :=
+(f,g) -> (
      R := class f;
      S := class g;
      R / S := (

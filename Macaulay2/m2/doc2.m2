@@ -31,6 +31,7 @@ document { Time,
      }
 
 document { null,
+     HEADLINE "nothingness",
      TT "null", " -- a symbol that represents the presence of nothing.",
      PARA,
      "When it is the value of an expression entered into the interpreter, the
@@ -48,14 +49,17 @@ document { null,
      }
 
 document { "then",
+     HEADLINE "condition testing",
      TT "then", " -- a keyword used with ", TO "if", "."
      }
 
 document { "else",
+     HEADLINE "condition testing",
      TT "else", " -- a keyword used with ", TO "if", "."
      }
 
 document { "if",
+     HEADLINE "condition testing",
      TT "if p then x else y", " -- computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
      else the value of ", TT "y", " is provided.",
@@ -68,6 +72,7 @@ document { "if",
      }
 
 document { "while",
+     HEADLINE "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ".",
      PARA,
@@ -79,10 +84,12 @@ document { "while",
      }
 
 document { "do",
+     HEADLINE "loop control",
      TT "do", " -- a keyword used with ", TO "while", "."
      }
 
 document { "try",
+     HEADLINE "catch an error",
      TT "try x else y ", " -- returns the value of x unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
      returns the value of y.", BR, NOINDENT,
@@ -295,6 +302,7 @@ document { getc,
      }
 
 document { "<",
+     HEADLINE "less than",
      TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
      PARA,
@@ -302,6 +310,7 @@ document { "<",
      }
 
 document { "<=",
+     HEADLINE "less than or equal",
      TT "x <= y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
      PARA,
@@ -309,6 +318,7 @@ document { "<=",
      }
 
 document { ">",
+     HEADLINE "greater than",
      TT "x > y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
      PARA,
@@ -316,6 +326,7 @@ document { ">",
      }
 
 document { ">=",
+     HEADLINE "greater than or equal",
      TT "x >= y", " -- yields ", 
      TO "true", " or ", 
      TO "false", " depending on whether x >= y.",
@@ -353,6 +364,7 @@ document { symbol "?",
      }
 
 document { ";",
+     HEADLINE "statement separator",
      TT "(e;f;...;g;h)", " -- the semicolon can be used for evaluating a sequence of 
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
@@ -364,6 +376,7 @@ document { ";",
      }
 
 document { "<-",
+     HEADLINE "assignment",
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
      "If the value of x is a symbol, then the value of y is assigned as the
@@ -384,6 +397,7 @@ document { "<-",
      }
 
 document { "=",
+     HEADLINE "assignment",
      TT "x = e", "      -- assigns the value e to the variable x.",
      PARA,
      NOINDENT,
@@ -398,6 +412,7 @@ document { "=",
 
 
 document { ":=",
+     HEADLINE "assignment to a new local variable",
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
      TT "f X := (x) -> ( ... )", " -- install a method for the method function
@@ -697,6 +712,7 @@ document { unique,
      }
 
 document { Ring,
+     HEADLINE "the class of all rings",
      TT "Ring", " -- the class of all rings.",
      PARA,
      "A ring is a set together with operations +, -, * and elements 0, 1 
@@ -1108,9 +1124,10 @@ document { "operators",
           (TO ":", " -- ideal quotient, repetitions"),
           (TO "\\", " -- applying a function to elements of a list"),
           (TO "/", " -- applying a function to elements of a list"),
-          (TO "@", " -- attaching options to a function"),
+          (TO "==>", " -- attaching options to a function"),
           (TO "@@", " -- composing functions"),
           -- (TO "::", " -- "),
+          (TO "@", " -- "),
           (TO "&&", " -- "),
           (TO "^^", " -- "),
           (TO "~", " -- ")

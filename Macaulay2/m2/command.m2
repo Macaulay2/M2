@@ -15,7 +15,7 @@ GlobalReleaseHook Command := (X,x) -> (
      remove(Symbols,x);
      )
 new Command from Function := Command => (command,f) -> command {f}
-new Command from String   := Comamnd => (command,cmdname) -> command {
+new Command from String   := Command => (command,cmdname) -> command {
      x -> (
 	  if x === ()
 	  then run cmdname

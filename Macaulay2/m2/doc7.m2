@@ -267,27 +267,16 @@ document { (map,Module,Module,Function),
 
 
 document { matrix,
-  TT "matrix(...)", " -- create a matrix.",
-  PARA,
-  "This function can be used to create a matrix or map (homomorphism) between
-  modules, but it is complicated because there are many different ways it can
-  be used.  The entries of the matrix can be provided as a list of lists of ring
-  elements, or as a function which accepts row and column indices.  The ring of
-  the matrix can be provided explicitly, or the source and target modules can be 
-  provided.  There are other alternatives.",
-  PARA,
-  "Various ways to use ", TT "matrix", ":",
-  MENU {
-       TO (matrix, List),
-       TO (matrix,Matrix),
-       TO (matrix,Ring,List)
-       },
-  "Optional arguments, valid with each form above:",
-  MENU {
-       (TO "Degree", " -- specify the degree of the resulting map."),
-       },
-  SEEALSO {"map"}
-  }
+     HEADLINE "make a matrix",
+     "This function can be used to create a matrix or map (homomorphism) between
+     modules, but it is complicated because there are many different ways it can
+     be used.  The entries of the matrix can be provided as a list of lists of ring
+     elements, or as a function which accepts row and column indices.  The ring of
+     the matrix can be provided explicitly, or the source and target modules can be 
+     provided.  There are other alternatives.",
+     PARA,
+     SEEALSO {"map"}
+     }
 
 document { "making module maps",
      "There are several different ways to use ", TO "map", " to make maps

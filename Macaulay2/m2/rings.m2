@@ -33,6 +33,8 @@ vars Ring := Matrix => R -> (
 
 numgens Ring := R -> #generators R
 
+ring = method(TypicalValue => Ring)
+
 ring Thing := x -> (
      if x.?ring then x.ring 
      else if instance(class x,Ring) then class x

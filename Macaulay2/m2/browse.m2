@@ -26,7 +26,7 @@ showit := (ITEMS,SAME,DEFAULT) -> (
      ITEMS#i#1)
 
 menu(Thing,Thing) := (x,back) -> (
-     << toString x << endl;
+     << x << endl;
      showit(
 	  {
 	       ("BACK",back),
@@ -36,7 +36,7 @@ menu(Thing,Thing) := (x,back) -> (
 	  (x,back),
 	  0))
 
-menu(RUNME,Thing) := (x,back) -> ((x#0)(); back)
+menu(RUNME,Thing) := (x,back) -> (x#0(); back)
 
 menu(METHODS,Thing) := (x,back) -> (
      showit(
@@ -55,7 +55,7 @@ menu(METHODS,Thing) := (x,back) -> (
 	  0))
 
 menu(Function,Thing) := (x,back) -> (
-     << toString x << endl;
+     << x << endl;
      items := {
 	  ("BACK",back),
 	  ("class=>" | toString class x,(class x,(x,back))),
@@ -65,16 +65,20 @@ menu(Function,Thing) := (x,back) -> (
      try (
 	  if (locate x)#0 === "stdio" then error "";
 	  items = join(items,{
-		    ("SOURCE",(RUNME{()->(<< code x << endl;read "press return: ";)},(x,back))),
+		    ("CODE",(RUNME{()->(<< code x << endl;read "press return: ";)},(x,back))),
 	  	    ("EDIT",(RUNME{()->edit x},(x,back)))});
 	  );
+     items = join(items, apply(#(frame x), i -> (
+		    "frame#" | toString i | "[" | toString class (frame x)#i | "]",
+		    ((frame x)#i, (x,back))
+		    )));
      try items = append(items,("ORIGINAL", (original x,(x,back))));
      if documentation x =!= null
-     then items = append(items,("DOC",(RUNME{()->help x},(x,back))));
+     then items = append(items,("DOC",(RUNME{()-><< help x << endl},(x,back))));
      showit(items, (x,back), 0))
 
 menu(Symbol,Thing) := (x,back) -> (
-     << toString x << endl;
+     << x << endl;
      items := {
 	  ("BACK",back),
 	  ("class=>" | toString class x,(class x,(x,back))),
@@ -82,15 +86,15 @@ menu(Symbol,Thing) := (x,back) -> (
      try (
 	  if (locate x)#0 === "stdio" then error "";
 	  items = append(items,
-	       ("SOURCE",(RUNME {() -> (<< code x << endl;read "press return: ";)},(x,back)))
+	       ("CODE",(RUNME {() -> (<< code x << endl;read "press return: ";)},(x,back)))
 	       );
 	  );
      items = append(items,("METHODS", (METHODS {x}, (x,back))));
      showit(items, (x,back), 0))
 
 menu(HashTable,Thing) := (x,back) -> (
-     << toString x << endl;
-     KEYS := sort apply(keys x, k -> {toString k,k});
+     << x << endl;
+     KEYS := sort apply(pairs x, (k,v) -> {toString (k => v), k});
      showit(
 	  join({
 		    ("BACK",back),
@@ -102,7 +106,7 @@ menu(HashTable,Thing) := (x,back) -> (
 	  0))
 
 menu(BasicList,Thing) := (x,back) -> (
-     << toString x << endl;
+     << x << endl;
      showit(
 	  join(apply(# x,k -> (toString x#k,(x#k,(x,back)))),
 	       {
@@ -114,7 +118,7 @@ menu(BasicList,Thing) := (x,back) -> (
 	  # x))
 
 menu(Sequence,Thing) := (x,back) -> (
-     << toString x << endl;
+     << x << endl;
      showit(
 	  join(apply(# x,k -> (toString x#k,(x#k,(x,back)))),
 	       {

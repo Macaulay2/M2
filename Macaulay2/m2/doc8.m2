@@ -267,15 +267,7 @@ document { gb,
 
 document { StopBeforeComputation,
      TT "StopBeforeComputation", " -- an option used certain functions to cause
-     the computation to be initialized but not begun.",
-     PARA,
-     MENU {
-	  TO (gb => StopBeforeComputation),
-	  TO (pushForward => StopBeforeComputation),
-	  TO (pushForward1 => StopBeforeComputation),
-	  TO (resolution => StopBeforeComputation),
-	  TO (syz => StopBeforeComputation),
-	  }
+     the computation to be initialized but not begun."
      }
 
 document { gb => StopBeforeComputation,
@@ -291,14 +283,7 @@ document { gb => StopBeforeComputation,
 document { DegreeLimit,
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      various functions which specifies that the computation should halt after dealing 
-     with degree n.",
-     PARA,
-     MENU {
-	  TO (gb => DegreeLimit),
-	  TO (pushForward1 => DegreeLimit),
-	  TO (resolution => DegreeLimit),
-	  TO (saturate => DegreeLimit),
-	  }
+     with degree n."
      }
 
 document { gb => DegreeLimit, 
@@ -336,11 +321,6 @@ document { SyzygyLimit,
      TT "SyzygyLimit", " -- keyword for an optional argument which specifies
      that the computation should stop after a certain number of syzygies 
      have computed.",
-     PARA,
-     MENU {
-	  TO (gb => SyzygyLimit),
-	  TO (resolution => SyzygyLimit)
-	  }
      }
 
 document { gb => SyzygyLimit, 
@@ -368,11 +348,7 @@ document { PairLimit,
      TT "PairLimit", " -- keyword for an optional argument used with
      certain functions which specifies that the
      computation should be stopped after a certain number of S-pairs
-     have been reduced.",
-     MENU {
-	  TO (gb => PairLimit),
-	  TO (resolution => PairLimit)
-	  }
+     have been reduced."
      }
 
 document { gb => PairLimit, 
@@ -562,12 +538,6 @@ document { forceGB,
      constitute a Groebner basis, and returns a Groebner basis object
      encapsulating that assertion.",
      PARA,
-     "Optional arguments for providing additional information:",
-     MENU {
-	  TO "MinimalMatrix",
-	  TO "SyzygyMatrix",
-	  TO (forceGB => ChangeMatrix)
-	  },
      "We should probably rename this function or incorporate it into
      ", TO "gb", " somehow."
      }
@@ -918,11 +888,6 @@ document { sortColumns,
      arguments may be given to specify whether the ordering is ascending, descending,
      or ignored.  The default ordering is ascending.",
      PARA,
-     "Optional arguments:",
-     MENU {
-	  TO (sortColumns => DegreeOrder),
-	  TO (sortColumns => MonomialOrder)
-	  },
      EXAMPLE {
 	  "R = ZZ/101[a..c];",
       	  "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",

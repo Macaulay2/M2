@@ -134,6 +134,7 @@ document { "programming",
      "Miscellaneous items:",
      MENU {
 	  (TO "--", "                -- introducing comments"),
+	  (TO "==>", "               -- process optional arguments to functions"),
 	  (TO "addEndFunction", "    -- do something upon exiting"),
 	  (TO "addStartFunction", "  -- do something after loading dumped data"),
 	  (TO "clearOutput", "       -- release some memory"),
@@ -144,7 +145,6 @@ document { "programming",
 	  (TO "memoize", "           -- memoizing functions"),
 	  (TO "using methods", "     -- using methods"),
 	  (TO "notImplemented", "    -- 'not implemented yet' error message"),
-	  (TO "processArgs", "       -- process optional arguments to functions"),
 	  (TO "protect", "           -- protecting the value of a symbol"),
 	  (TO "runEndFunctions", "   -- run the ending functions"),
 	  (TO "runStartFunctions", " -- run the starting functions"),
@@ -524,6 +524,13 @@ document { symbol "++",
 document { symbol "@@",
      }
 
+document { symbol "==>",
+     "This operator is right associative.",
+     PARA,
+     "New methods must be installed with ", TO "installMethod", ", because the
+     parsing precedence is so low!  This will be fixed eventually."
+     }
+
 document { symbol "@",
      "This operator is right associative."
      }
@@ -775,20 +782,6 @@ document { "assignment",
 	  }
      }
 
-document { "comparison",
-     MENU {
-	  (TO "===", "        -- strict equality"),
-	  (TO "=!=", "        -- strict inequality"),
-	  (TO "==", "         -- equality"),
-	  (TO "!=", "         -- inequality"),
-	  (TO "<", "          -- less than"),
-	  (TO "<=", "         -- less than or equal"),
-	  (TO ">", "          -- greater than"),
-	  (TO ">=", "         -- greater than or equal"),
-	  (TO "?", "          -- comparison")
-	  }
-     }
-
 document { "combinatorial functions",
      MENU {
 	  (TO "random", "               -- random real number or integer"),
@@ -866,14 +859,6 @@ document { Boolean,
      PARA,
      "Predicate functions return these as values, and the logical connectives 
      expect to receive them as arguments.",
-     PARA,
-     EXAMPLE "3 == 4",
-     PARA,
-     "Boolean constants:",
-     MENU {
-	  TO "false",
-	  TO "true"
-	  },
      PARA,
      "Functions dealing with truth values.",
      MENU {

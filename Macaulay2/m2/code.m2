@@ -100,4 +100,3 @@ methods = F -> (
 				   else if class key === Sequence and member(F,key)
 				   then found#key = true))))));
      sort keys found)
-

@@ -3,15 +3,13 @@
 << "--loading documentation files..." << endl
 
 document { length,
+     HEADLINE "length of a chain complex",
      TT "length C", " -- returns the length of a graded module or a chain
-     complex.",
-     PARA,
-     MENU {
-	  TO (length,ChainComplex)
-	  }
+     complex."
      }
 
 document { sendgg,
+     HEADLINE "send command to engine",
      TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the  string ", TT "s", " 
      of data and commands to the engine.  The first byte of the result is examined 
      for an error indication, and then an error is raised or the remainder of the 
@@ -21,6 +19,7 @@ document { sendgg,
      }
 
 document { parent,
+     HEADLINE "parent type of an object",
      TT "parent X", " -- yields the parent P of X.",
      PARA,
      "Methods for the ", TO {"instance", "s"}, " of X which are not found
@@ -38,6 +37,7 @@ document { parent,
      }
 
 document { Array,
+     HEADLINE "class of all arrays",
      TT "Array", " -- the class of all arrays.",
      PARA,
      "An array is like a list, except that brackets are used instead of
@@ -50,12 +50,14 @@ document { Array,
      }
 
 document { Sequence,
+     HEADLINE "class of all sequences",
      TT "Sequence", " -- the class of all sequences.",
      PARA,
      SEEALSO "sequences"
      }
 
 document { singleton,
+     HEADLINE "make a sequence of length one",
      TT "singleton x", " -- returns a sequence of length one whose single 
      element is ", TT "x", ".",
      PARA,
@@ -67,89 +69,21 @@ document { singleton,
      }
 
 document { List,
-     TT "List", " -- the class of all lists.",
-     PARA,
-     "Creating new lists or sequences:",
-     MENU {
-	  TO "..",
-	  TO (symbol :, ZZ, Thing),	  -- was ":"
-	  TO "toList",
-	  TO "newClass",
-	  TO "sequence",
-	  TO "singleton",
-	  },
-     "Selecting elements of lists:",
-     MENU {
-	  TO (symbol _, List, ZZ),
-	  TO "#",
-	  TO "first",
-	  TO "last"
-	  },
-     "Manipulating lists:",
-     MENU {
-	  TO "accumulate",
- 	  TO "append",
-	  TO "between",
-	  TO "copy",
-	  TO "deepSplice",
-	  TO "delete",
-	  TO "drop",
-     	  TO "join",
-	  TO "mingle",
- 	  (TO "pack", "       -- pack a list into a table"),
-	  TO "prepend",
-	  TO "reverse",
-	  TO "rsort",
-	  TO "sort",
-	  TO "splice",
-	  TO "take",
-	  TO "unique",
-	  TO "toSequence"
-	  },
-     "Examining lists:",
-     MENU {
-	  TO "all",
-	  TO "any",
-	  {TO "#", " -- length of a list"},
-	  TO "max",
-	  TO "maxPosition",
-	  TO "member",
-	  TO "min",
-	  TO "minPosition",
-	  TO "position",
-	  TO "same"
-	  },
-     "Combining lists:",
-     MENU {
-	  TO (symbol +,List,List),
-	  TO "demark",
-	  TO "fold",
-	  TO "mergePairs"
-	  },
-     "Mapping functions:",
-     MENU {
-	  (TO "apply", "      -- apply function to entries in list or hash table"),
- 	  (TO "applyTable", " -- apply a function to entries in a table"),
-	  TO "number",
-	  TO "product",
-	  TO "scan",
-	  TO "select",
- 	  (TO "subtable", "   -- extract a subtable"),
-	  TO "sum",
- 	  (TO "table", "      -- make a table")
-	  }
+     HEADLINE "class of all lists",
+     TT "List", " -- the class of all lists."
      }
 
 document { Type,
+     HEADLINE "class of all types",
      TT "Type", " -- the class of all types.",
      PARA, 
-     "A type is a hash table intended to contain methods for 
-     its instances.",
+     "A type is a hash table intended to contain methods for its instances.",
      PARA,
      SEEALSO {"parent",  "class", "using methods"}
      }
 
 document { Print,
+     HEADLINE "top level method for printing results",
      TT "Print", " -- a method applied at top level to print the result, 
      ", TT "r", " of an evaluation.",
      PARA,
@@ -164,6 +98,7 @@ document { Print,
      }
 
 document { NoPrint,
+     HEADLINE "top level method for non-printing results",
      TT "NoPrint", " -- a method applied at top level to a result suppression of
      whose printing has been indicated by a semicolon.",
      PARA,
@@ -176,12 +111,14 @@ document { NoPrint,
      }
 
 document { BeforePrint,
+     HEADLINE "top level method applied before printing results",
      TT "BeforePrint", " -- a method applied at top level to the result of an evaluation,
      whose result supplants the original for printing.",
      SEEALSO "Print"
      }
 
 document { AfterEval,
+     HEADLINE "top level method applied before printing results",
      TT "AfterEval", " -- a method applied at top level to the result of an evaluatino,
      whose result replaces the original for storing in the output variable and for
      printing.",
@@ -189,18 +126,21 @@ document { AfterEval,
      }
 
 document { AfterPrint,
+     HEADLINE "top level method applied after printing",
      TT "AfterPrint", " -- a method applied at top level to the result of an evalution
      after printing.",
      SEEALSO "Print"
      }
 
 document { AfterNoPrint,
+     HEADLINE "top level method applied after not printing",
      TT "AfterNoPrint", " -- a method applied at top level to the result of an 
      evalution when printing of the result has been suppressed by a semicolon.",
      SEEALSO "Print"
      }
 
 document { setrecursionlimit,
+     HEADLINE "set the limit on recursion",
      TT "setrecursionlimit n", " -- sets the recursion limit to n.",
      PARA,
      " It returns the old value.  The recursion limit governs the nesting level
@@ -208,22 +148,26 @@ document { setrecursionlimit,
      }
 
 document { "commandLine",
+     HEADLINE "the command line arguments",
      TT "commandLine", " -- a constant whose value is the list of arguments 
      passed to the interpreter, including argument 0, the name of the program.",
      }
 
 document { "environment",
+     HEADLINE "the environment variables",
      TT "environment", " -- a constant whose value is the list containing the
      environment strings for the process."
      }
 
 document { Function,
+     HEADLINE "the class of all functions",
      TT "Function", " -- the class of all functions.",
      PARA,
      SEEALSO "functions"
      }
 
 document { "->",
+     HEADLINE "makes a function",
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -257,11 +201,13 @@ document { "->",
      }
 
 document { "path",
+     HEADLINE "list of directories to look in",
      TT "path", " -- a list of strings containing names of directories in which\n", 
      TO "load", " and ", TO "input", " should seek files."
      }
 
 document { HashTable,
+     HEADLINE "the class of all hash tables",
      TT "HashTable", " -- the class of all hash tables.",
      PARA,
      "A hash table consists of: a class type, a parent type, and a
@@ -315,12 +261,6 @@ document { HashTable,
 	  TO "browse",
 	  TO "peek",
 	  TO "peek2",
-	  },
-     "Types of hash tables:",
-     MENU {
-	  TO "MutableHashTable",
-	  TO Set,
-	  TO Tally
 	  }
      }
 
@@ -515,6 +455,7 @@ document { describe,
      }
 
 document { input,
+     HEADLINE "read Macaulay 2 commands and echo",
      TT "input \"f\"", " -- reads and executes the commands found in the 
      file named f, echoing the input, printing the values, and incrementing
      the line number.",
@@ -526,6 +467,7 @@ document { input,
      }
 
 document { load,
+     HEADLINE "read Macaulay 2 commands",
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
      PARA,
@@ -538,6 +480,7 @@ document { load,
      }
 
 document { needs,
+     HEADLINE "read Macaulay 2 commands if necessary",
      TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
      been loaded yet.",
      PARA,
@@ -545,6 +488,7 @@ document { needs,
      }
 
 document { plus,
+     HEADLINE "addition",
      TT "plus(x,y,...)", " -- yields the sum of its arguments.",
      PARA,
      "If the arguments are strings, they are concatenated.  If there
@@ -552,6 +496,7 @@ document { plus,
      }
 
 document { times,
+     HEADLINE "multiplication",
      TT "times(x,y,...)", " -- yields the product of its arguments.",
      PARA,
      "If there are no arguments, the value is the integer 1."
@@ -574,6 +519,7 @@ document { minus,
      }
 
 document { append,
+     HEADLINE "append to a list",
      TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -583,6 +529,7 @@ document { append,
      }
 
 document { prepend,
+     HEADLINE "prepend to a list",
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -715,6 +662,7 @@ document { (symbol /^, Thing, ZZ),
      }
 
 document { substring,
+     HEADLINE "extract part of a string",
      TT "substring(s,i,n)", " -- yields the substring of the string s starting at 
      position i with length n.",
      PARA,
@@ -730,6 +678,7 @@ document { substring,
      }
 
 document { reverse,
+     HEADLINE "reverse a list",
      TT "reverse v", " -- yields a list containing the elements of the 
      list ", TT "v", " in reverse order.",
      PARA,
@@ -737,6 +686,7 @@ document { reverse,
      }
 
 document { read,
+     HEADLINE "read from a file",
      TT "read f", "  -- yields a string obtained by reading bytes from the input file
      ", TT "f", ".",BR,
      NOINDENT, 
@@ -751,6 +701,7 @@ document { read,
      }
 
 document { get,
+     HEADLINE "get an entire file",
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
      PARA,
@@ -803,6 +754,7 @@ document { "!",
      }
 
 document { "not",
+     HEADLINE "negation",
      TT "not x", " -- yields the negation of x, which must be true or false.",
      SEEALSO{ "and", "or" }
      }
@@ -887,6 +839,7 @@ document { (symbol ||, Matrix, Matrix),
      }
 
 document { "===",
+     HEADLINE "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
      PARA,
@@ -913,6 +866,7 @@ document { "===",
      }
 
 document { "=!=",
+     HEADLINE "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
      PARA,
@@ -920,6 +874,7 @@ document { "=!=",
      }
 
 document { symbol "==",
+     HEADLINE "equality",
      TT "x == y", " -- a binary operator for testing mathematical equality.",
      PARA,
      "A test for mathematical equality will typically involve doing a computation
@@ -944,6 +899,7 @@ document { symbol "==",
      }
 
 document { "!=",
+     HEADLINE "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
      SEEALSO{ "==" }
@@ -972,45 +928,36 @@ document { set,
      }
 
 document { random,
-     TT "random n", " -- for n an integer, yields a random integer in the range 0 .. n-1.",
-     BR,
-     NOINDENT, 
-     TT "random x", " -- for real x, yields a random real number in the range 0 .. x.",
-     BR,
-     NOINDENT, 
-     TT "random R", " -- yields a random element of the ring R.",
-     BR,
-     NOINDENT, 
-     TT "random(n,R)", " -- yields a random homogeneous element of degree n 
-     in the ring R, where n is an integer or a list of integers.",
-     BR,
-     NOINDENT, 
-     TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
-     module G to the free module F.",
+     HEADLINE "get a random element",
+     "This function can be used to get random elements of various sorts."
+     }
+document { (random, ZZ), TT "random n", " -- yields a random integer in the range 0 .. n-1.",
      PARA,
      "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
-     EXAMPLE {
-	  "tally apply(100, i -> random 10)",
-	  },
-     EXAMPLE {
-	  "R = ZZ/101[t];",
-      	  "sum(7,i->random 101 * t^i)",
-	  },
+     EXAMPLE "tally apply(100, i -> random 10)"
+     }
+document { (random, RR), TT "random x", " -- yields a random real number in the range 0 .. x." }
+document { (random, Ring), TT "random R", " -- yields a random element of the ring ", TT "R", ".",
+     PARA,
+     "Currently implemented only for rings of the form ", TT "ZZ/n", "."
+     }
+document { (random, ZZ, Ring),
+     TT "random(n,R)", " -- yields a random homogeneous element of degree ", TT "n", " 
+     in the ring ", TT "R", "."
+     }
+document { (random, List, Ring),
+     TT "random(n,R)", " -- yields a random homogeneous element of degree ", TT "n", " 
+     in the ring ", TT "R", ", where ", TT "n", " is a list of integers."
+     }
+document { (random, Module, Module),
+     TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
+     module G to the free module F.",
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "random(R^{1,2,3},R^{1,2,3})"
-	  },
+	  }
      }
 
-document { true,
-     PARA,
-     "true -- a value indicating truth.",
-     SEEALSO{"false", "Boolean"}
-     }
-
-document { false,
-     PARA,
-     "false -- a value indicating falsity.",
-     SEEALSO{"true", "Boolean"}
-     }
+document { true, TT "true", " -- a value indicating truth." }
+document { false, TT "false", " -- a value indicating falsity." }
