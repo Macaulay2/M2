@@ -278,7 +278,7 @@ document { returnCode,
      stored the return code from the engine for the computation."
      }
 
-document { gbTrace,
+document { symbol gbTrace,
      Headline => "provide tracing output during various computations in the 	 engine.",
      TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
      level ", TT "n", ".  Meaningful values for the user ", TT "n", " are

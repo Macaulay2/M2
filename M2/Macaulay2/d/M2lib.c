@@ -79,7 +79,7 @@ static void interrupt_handler(int sig)
 	            }
 	       if (buf[0]=='y' || buf[0]=='Y') {
      		    trap();
-		    if (!actors5_stopIfError && abort_jump_set) {
+		    if (!tokens_stopIfError && abort_jump_set) {
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 system_interrupted = FALSE;
@@ -123,7 +123,7 @@ static void interrupt_handler(int sig)
 
 void outofmem(){
      static int count = 0;
-     if (!actors5_stopIfError && out_of_memory_jump_set && count++ < 5) {
+     if (!tokens_stopIfError && out_of_memory_jump_set && count++ < 5) {
      	  fprintf(stderr,"out of memory, returning to top level");
      	  fflush(stderr);
      	  siglongjmp(out_of_memory_jump,1);

@@ -1017,15 +1017,16 @@ export eval(c:Code):Expr := (
 	       err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
 	       err.position = p;
 	       if backtrace && localFrame != oldReportFrame || fullBacktrace then (
-	       	    printError(err);
-		    if debuggingMode && stdIO.inisatty && stdIO.outisatty then (
+		    if debuggingMode && !stopIfError && stdIO.inisatty && stdIO.outisatty then (
+			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering break loop--");
 			 when breakLoopFun(err.report.code.frame,err.report.code.code) is z:Error do (
 			      if err.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if err.message == returnMessage then return err.value;
 			      if err.message == continueMessage then return eval(c);
 			      )
-			 else nothing)));
+			 else nothing)
+		    else printError(err)));
 	  e)
      else e);
 
