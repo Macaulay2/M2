@@ -50,7 +50,8 @@ u = id_F
 assert ( u == 1 )
 assert ( u-u == 0 )
 
-end
+u0 = map(F,F,0)
+assert( u0 == 0 )
 
 v = vars R
 
@@ -79,6 +80,11 @@ assert( submatrix(t,{1,2}) == matrix {{y,z},{z,x},{x,y}} )
 assert( submatrix(t,{1,2},{2,0}) == matrix {{x, y}, {y, z}} )
 assert( submatrix(t,,{2,0}) == matrix {{z, x}, {x, y}, {y, z}} )
 
+-- making modules from matrices
+N = coker v
+L = image v
+N ++ L
+     
 -- remaking matrices
 w = map(R^1,,v)
 degrees source w

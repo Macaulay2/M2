@@ -260,7 +260,7 @@ RawMatrix ** RawMatrix := rawTensor
 
 rawConcatColumns = (mats) -> rawConcat toSequence mats
 rawConcatRows = (mats) -> rawDual rawConcat apply(toSequence mats,rawDual)
-rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat row)
+rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat toSequence (raw \ row))
 
 -- ring maps
 
