@@ -26,7 +26,7 @@ endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ ulimit -t 120; ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
 
 clean  :	
