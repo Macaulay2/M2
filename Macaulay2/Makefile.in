@@ -74,7 +74,9 @@ install :: $(packagedir)/libexec
 $(packagedir)/libexec:; $(INSTALL) -d "$@"
 install ::; $(INSTALL_PROGRAM) libexec/Macaulay2 $(packagedir)/libexec
 ifeq "$(DUMPDATA)" "yes"
-# install ::; $(INSTALL) $(DUMPDATAFILE) $(packagedir)/$(DUMPDATAFILE)
+ifeq "$(encap)" "no"
+install ::; $(INSTALL) $(DUMPDATAFILE) $(packagedir)/$(DUMPDATAFILE)
+endif
 endif
 #################################
 distclean::; rm -f Makefile

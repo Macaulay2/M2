@@ -40,7 +40,7 @@ DOCTARGET := Macaulay2-$(PACKAGE_VERSION)-doc.tar.gz
 endif
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
-all :: $(TARGET)
+distribution :: all $(TARGET)
 check : ; $(MAKE) -C Macaulay2 check
 MACAULAY2:; $(MAKE) -C Macaulay2 all
 justM2 distclean::; $(MAKE) -C Macaulay2 $@
@@ -94,7 +94,7 @@ Macaulay2-$(PACKAGE_VERSION)-doc.zip : $(DOCFILES)
 MACAULAY2.doc:
 	$(MAKE) -C Macaulay2 doc
 doc:: MACAULAY2.doc 
-doc:: $(DOCTARGET)
+distribution:: doc $(DOCTARGET)
 ################################# final status messages
 justM2 all doc::
 	@echo "--------------------- done making '$@' --------------------"

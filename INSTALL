@@ -104,8 +104,9 @@ Quick and easy:
 	make doc
 
     The resulting shell script, ./Macaulay2/bin/M2, can then be installed in
-    /usr/local/bin.  The resulting files distributions/Macaulay2-*-tar.gz
-    can be distributed.
+    /usr/local/bin.  The command
+	make distribution
+    will produce files Macaulay2-*-tar.gz that can be distributed.
 
     Eventually 'make install' will do something, but not yet!
 
