@@ -23,11 +23,22 @@ instructions in a later section of this document.
 
 You have downloaded an unpacked a file with a name something like
 
-     Macaulay2-0.8.46-i586-Linux-2.1.121.tar.gz
+    Macaulay2-0.9-i686-Linux.tar.gz
 
-Untarring this file created a directory called Macaulay2, and in that
-directory you will find a shell script called 'setup' or, under Windows, an
-executable file called 'setup.exe'.  The first step is to run this program.
+Untarring this file creates a directory called Macaulay2-0.9, whose
+subdirectories and files are organized as follows:
+
+    Macaulay2-0.9/bin/M2
+		the shell script that starts Macaulay2
+		edit it if you change the location of Macaulay2's files
+    Macaulay2-0.9/lib/Macaulay2-0.9/
+		the directory containing Macaulay2's files
+    Macaulay2-0.9/lib/Macaulay2-0.9/setup
+		a shell script that dumps pseudo-compiled Macaulay 2 code
+    Macaulay2-0.9/encapinfo
+		a configuration file used by 'epkg' to install packages
+    Macaulay2-0.9/postinstall
+		a shell script used by 'epkg' when installing packages
 
 Run this command:
 
@@ -86,7 +97,7 @@ files will differ.  If you have both of these types of machines, you can run
 Make sure you also download and install the manual.  It is kept in a separate
 file at our web site, the name of which is something like this:
 
-	Macaulay2-0.8.46-doc.tar.gz
+	Macaulay2-0.9-doc.tar.gz
 
 Unpack it in the same directory.
 
@@ -178,9 +189,11 @@ address will get forwarded to both of us.
 8. Notes on Windows 95/NT installation
 ------------------------------------------------------------------
 
+    ** this section may be out of date **
+
     You will have downloaded a file with a name like this:
 
-              Macaulay2-0.8.46-i586-Windows-95-98-NT.zip
+              Macaulay2-0.9-i586-Windows-95-98-NT.zip
 
     This file contains the files you need to run the program, as well as the
     html documentation files.  If you want the dvi file containing the book
