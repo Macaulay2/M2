@@ -56,7 +56,7 @@ newPackage(String) := opts -> (title) -> (
      	  symbol Dictionary => newdict,
 	  symbol Version => opts.Version,
 	  symbol WritableSymbols => opts.WritableSymbols,
-	  "outerPackage" => currentPackage,
+	  "previous package" => currentPackage,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
@@ -64,7 +64,11 @@ newPackage(String) := opts -> (title) -> (
 	  "example outputs" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
-	  "file directory" => currentFileDirectory
+	  "file directory" => currentFileDirectory,
+	  "package prefix" => (
+	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
+	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
+	       ),
 	  };
      globalAssignFunction(sym,p);
      sym <- p;
@@ -121,8 +125,8 @@ closePackage = p -> (
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
-     currentPackage = p#"outerPackage";
-     remove(p,"outerPackage");
+     currentPackage = p#"previous package";
+     remove(p,"previous package");
      stderr << "--package " << p << " installed" << endl;
      p)
 

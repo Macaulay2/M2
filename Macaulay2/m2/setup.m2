@@ -114,4 +114,5 @@ notify = true
 newPackage Output
 protect symbol Output
 newPackage User
+User#"file directory" = null
 protect Macaulay2.Dictionary

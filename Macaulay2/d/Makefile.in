@@ -323,7 +323,8 @@ ifneq "$(CC)" "cl"
 LOADLIBES += -lm
 endif
 
-LDLIBS += -lc ../compat/compat.a
+# maybe every system now has all the unix routines we use:
+# LDLIBS += -lc ../compat/compat.a
 
 MADEFILES += ../bin/M2$(EXE)
 ../bin/M2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)

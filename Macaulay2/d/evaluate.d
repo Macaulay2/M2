@@ -1015,7 +1015,8 @@ export eval(c:Code):Expr := (
 	  p := codePosition(c);
      	  if int(p.loadDepth) >= errorDepth then (
 	       if err.position == dummyPosition then (err.position = p; printErrorMessage(err); );
-	       if localFrame != err.report.code.frame then (
+	       -- if localFrame != err.report.code.frame then 
+	       (
 		    err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
 		    if debuggingMode && stdIO.inisatty && stdIO.outisatty then (
 			 printErrorMessage(p,"--break loop--");

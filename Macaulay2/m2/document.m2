@@ -1,27 +1,12 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
------------------------------------------------------------------------------
--- configuration
------------------------------------------------------------------------------
 maximumCodeWidth := 120
-TestsPrefix := "cache/tests/"
------------------------------------------------------------------------------
--- the phase encoding, obsolete
------------------------------------------------------------------------------
-writingInputFiles         := () -> phase === 2
-readingExampleOutputFiles := () -> phase === 4
-writingFinalDocDatabase   := () -> phase === 4
-writing                   := () -> phase === 2 or phase === 4 or phase === 5
------------------------------------------------------------------------------
--- initialization and finalization
------------------------------------------------------------------------------
 
 DocDatabase = null
 
-local nodeBaseFilename
-local exampleOutputFilename				    -- nodeBaseFilename | ".out"
+local exampleBaseFilename
+local exampleOutputFilename
 local exampleCounter
-local exampleInputFile
 local exampleResultsFound
 local exampleResults
 local currentNodeName
@@ -242,48 +227,35 @@ file := null
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
-makeFileName := (key,filename) -> (			 -- may return 'null'
-null
--- obsolete?
---     prefix := "cache/doc/";
---     if filename =!= null then (
---	  if writing() then cacheFileName(prefix, key, filename)
---	  else prefix | filename
---	  )
---     else (
---     	  t := cacheFileName("cache/doc/", key);
---	  if #t > 1 then (
---	       stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
---	       apply(t, fn -> stderr << "    " << fn << endl );
---	       );
---	  if #t > 0 then first t)
-     )
+
+separateRegexp = method()
+separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
+separateRegexp(String,ZZ,String) := (re,n,s) -> (
+     m := matches(re,s);
+     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
+
+M2outputRE := "(\n\n)i+[1-9][0-9]* : "
+M2outputREindex := 1
+separateM2output = method()
+separateM2output String := r -> (
+     while r#0 == "\n" do r = substring(1,r);
+     while r#-1 == "\n" do r = substring(0,#r-1,r);
+     separateRegexp(M2outputRE,M2outputREindex,r))
 
 checkForExampleOutputFile := () -> (
      exampleResultsFound = false;
      exampleOutputFilename = null;
-     if nodeBaseFilename =!= null then (
-	  if fileExists (nodeBaseFilename | ".out")
-	  then exampleOutputFilename = nodeBaseFilename | ".out" 
-	  else (
-	       if readingExampleOutputFiles() then (
-		    -- we don't insist, but we do warn.
-		    -- we depend on the Makefile to stop 'make' if the file didn't get made
-		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'"
-		    << endl;
-		    );
-	       );
-	  if exampleOutputFilename =!= null then (
-	       exampleResults = separate("\1", get exampleOutputFilename);
+     error "break";
+     if exampleBaseFilename =!= null then (
+	  exampleOutputFilename = exampleBaseFilename | ".out";
+	  if fileExists exampleOutputFilename then (
+	       -- read, separate, and store example output
+	       exampleResults = currentPackage#"example outputs"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
+	       stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl;
 	       exampleResultsFound = true;
 	       );
 	  );
      )
-
--- checkForExampleInputFile := () -> exampleInputFile = (
---      if writingInputFiles() then openOut(nodeBaseFilename | ".example")
---      else null
---      )
 
 extractExamples            := method(SingleArgumentDispatch => true)
 extractExamples Thing      := x -> {}
@@ -291,8 +263,7 @@ extractExamples EXAMPLE    := toList
 extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
 
 processExample := x -> (
-     exampleCounter = exampleCounter + 1;
-     if exampleInputFile =!= null then exampleInputFile << x << endl;
+     a :=
      if exampleResultsFound and exampleResults#?exampleCounter
      then {x, CODE exampleResults#exampleCounter}
      else (
@@ -300,8 +271,11 @@ processExample := x -> (
 	       stderr << "warning : input file " << exampleOutputFilename 
 	       << " terminates prematurely" << endl;
 	       );
-	  {x, CODE concatenate("i", toString exampleCounter, " = ",x)}
-	  ))
+	  {x, CODE concatenate("i", toString (exampleCounter+1), " : ",x)}
+	  );
+     exampleCounter = exampleCounter + 1;
+     a)
+
 processExamplesLoop := s -> (
      if class s === EXAMPLE then {
 	  PARA{},
@@ -316,12 +290,10 @@ processExamples := (docBody) -> (
      exampleCounter = 0;
      examples := extractExamples docBody;
      if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
--- obsolete?
---     	  checkForExampleOutputFile();
---     	  checkForExampleInputFile();
---	  docBody = apply(docBody,processExamplesLoop);
---	  if exampleInputFile =!= null then close exampleInputFile;
+     checkForExampleOutputFile();
+     docBody = apply(docBody,processExamplesLoop);
      docBody)
+
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
@@ -329,6 +301,11 @@ processExamples := (docBody) -> (
 getFileName := body -> (
      x := select(1, body, i -> class i === Option and #i === 2 and first i === FileName);
      if #x > 0 then x#0#1 else null
+     )
+
+makeFileName := (key,filename) -> (			 -- may return 'null'
+     if currentPackage#"package prefix" =!= null 
+     then currentPackage#"package prefix" | LAYOUT#"packageexamples" currentPackage.name | if filename =!= null then filename else toFilename key
      )
 
 document = method()
@@ -339,7 +316,7 @@ document List := z -> (
      body := drop(z,1);
      if unDocumentable key then error("undocumentable type of thing: '",class key,"'");
      currentNodeName = formatDocumentTag key;
-     nodeBaseFilename = makeFileName(currentNodeName,getFileName body);
+     exampleBaseFilename = makeFileName(currentNodeName,getFileName body);
      d := currentPackage#"raw documentation";
      if d#?currentNodeName then duplicateDocWarning();
      d#currentNodeName = toExternalString processExamples fixup body;
@@ -1422,16 +1399,6 @@ undocumentedSymbols = () -> select(
 	       undocErr x;
 	       dummyDoc x;
 	       true)))
-
-addEndFunction(
-     () -> (
-	  if writingFinalDocDatabase() and #(undocumentedSymbols()) > 0
-	  then (
-	       stderr << "ignoring undocumented symbol errors" << endl;
-	       -- error "undocumented symbols";
-	       )
-	  )
-     )
 
 -----------------------------------------------------------------------------
 
