@@ -22,5 +22,10 @@ $(TESTRESULTS) : ../libexec/Macaulay2
 clean  :	
 	rm -f *.okay
 
+LDLIBS += -lgc
+all:: testgc
+	./testgc
+
+Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/basictests/Makefile
 distclean ::; rm -f Makefile
 
