@@ -452,6 +452,7 @@ localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- fram
      newvalue);
 
 globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
+     if t.protected then return(buildErrorPacket("assignment to protected variable"));
      vals := globalFrame.values;
      r := globalAssignmentHook(t,vals.frameindex,newvalue);
      when r is Error do return(r) else nothing;
@@ -471,14 +472,13 @@ LocalAssignmentFun = localAssignmentFun;
 
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
-     if t.protected then return(buildErrorPacket("assignment to protected variable"));
      newvalue := eval(x.rhs);
      when newvalue is Error do return(newvalue) else nothing;
      globalAssignment(t.frameindex,t,newvalue));
 GlobalAssignmentFun = globalAssignmentFun;
 
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
-     syms := x.lhs;					    -- becoming obsolete
+     syms := x.lhs;
      nestingDepth := x.nestingDepth;
      frameindex := x.frameindex;
      nlhs := length(frameindex);
@@ -490,22 +490,39 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 	  nvals := length(values);
 	  if nlhs == nvals
 	  then (
-	       for i from 0 to nlhs-1 do assignment(nestingDepth.i,frameindex.i,syms.i,values.i)
+	       for i from 0 to nlhs-1 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+		    when r is Error do return(r) else nothing;
+		    )
 	       )
 	  else if nlhs < nvals
 	  then (
-	       for i from 0 to nlhs-2 do assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+	       for i from 0 to nlhs-2 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+		    when r is Error do return(r) else nothing;
+		    );
 	       m := nlhs-1;
-	       assignment(nestingDepth.m,frameindex.m,syms.m, Expr(new Sequence len nvals-nlhs+1 do for i from nlhs-1 to nvals-1 do provide values.i));
+	       r := assignment(nestingDepth.m,frameindex.m,syms.m, Expr(new Sequence len nvals-nlhs+1 do for i from nlhs-1 to nvals-1 do provide values.i));
+	       when r is Error do return(r) else nothing;
 	       )
 	  else (
-	       for i from 0     to nvals-1 do assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-	       for i from nvals to nlhs-1 do assignment(nestingDepth.i,frameindex.i,syms.i,nullE)
+	       for i from 0     to nvals-1 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
+		    when r is Error do return(r) else nothing;
+		    );
+	       for i from nvals to nlhs-1 do (
+		    r := assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
+		    when r is Error do return(r) else nothing;
+		    );
 	       )
 	  )
      else (
-	  assignment(nestingDepth.0,frameindex.0,syms.0,value);
-	  for i from 1 to nlhs-1 do assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
+	  r := assignment(nestingDepth.0,frameindex.0,syms.0,value);
+	  when r is Error do return(r) else nothing;
+	  for i from 1 to nlhs-1 do (
+	       r = assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
+	       when r is Error do return(r) else nothing;
+	       );
 	  );
      value);
 ParallelAssignmentFun = parallelAssignmentFun;

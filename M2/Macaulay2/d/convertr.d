@@ -131,14 +131,14 @@ makeSymbolSequence(e:ParseTree):SymbolSequence := (	    -- but replace local sym
      	  is b:Binary do (
 	       when b.rhs is t:Token do (
 		    m = m-1;
-		    if t.entry.frameID == 0 then v.m = t.entry;
+		    v.m = t.entry;
 		    )
 	       else nothing;				    -- shouldn't happen
 	       e = b.lhs;
 	       )
 	  is t:Token do (
 	       m = m-1;
-	       if t.entry.frameID == 0 then v.m = t.entry;
+	       v.m = t.entry;
 	       break;
 	       )
 	  else break;					    -- shouldn't happen
@@ -223,7 +223,7 @@ combine(cs:CodeSequence):Sequence := (
 	  ));
 
 nestingDepth(frameID:int,d:Dictionary):int := (
-     if frameID == 0 then return(0);
+     if frameID == 0 then return(-1);
      n := 0;
      while d.frameID != frameID do (
 	  if !d.transient || d.framesize != 0 then n = n+1; -- empty transient frames will not appear at runtime
@@ -242,12 +242,15 @@ tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
      );
 
 parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
-     s := makeSymbolSequence(b.lhs);
-     n := length(s);
+     symbols := makeSymbolSequence(b.lhs);
+     n := length(symbols);
+     nd := new array(int) len n do foreach x in symbols do provide nestingDepth(x.frameID,b.operator.dictionary);
+     fr := new array(int) len n do foreach x in symbols do provide x.frameindex;
+     foreach x in symbols do if x.frameID != 0 then x = dummySymbol;
      Code(parallelAssignmentCode(
-	       new array(int) len n do foreach x in s do provide nestingDepth(x.frameID,b.operator.dictionary),
-	       new array(int) len n do foreach x in s do provide x.frameindex,
-	       s,
+	       nd,
+	       fr,
+	       symbols,
 	       convert(b.rhs),
 	       treePosition(e)
 	       ))
