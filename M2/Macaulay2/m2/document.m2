@@ -207,7 +207,8 @@ packageKey   String := fkey -> (
      r := scan(packages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
      if r === null then (
 	  if debugLevel > 0 then error "debug me";
-	  value PackageDictionary#"Missing"
+	  -- value PackageDictionary#"Missing"
+	  currentPackage
 	  )
      else r)
 --packageKey  Package := identity
