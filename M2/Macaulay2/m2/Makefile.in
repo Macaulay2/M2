@@ -1,8 +1,5 @@
 justM2 default :: initialize phase1
-
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
-
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -125,7 +122,7 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	 # phase 1: read *.m2 and dump data
 	rm -f ../$(DUMPDATAFILE)
-	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' \
+	time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty '-ephase=1' \
 		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
@@ -142,7 +139,7 @@ $(SCRIPTS) : ../util/setup.exe
 else
 $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
-	../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
+	env M2HOME=.. ../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
 endif
 
 phase2 :: initialize
@@ -154,7 +151,7 @@ phase2 :: ../cache/Macaulay2-pre
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	../libexec/Macaulay2 -q -silent '-ephase=2' @srcdir@/setup.m2 '-eexit(0)'
+	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=2' @srcdir@/setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
 all:: .gdbinit
@@ -173,7 +170,7 @@ CVS/Entries : $(M2FILES)
 	umount /a.ext2
 
 profile : gmon.out
-	gprof ../libexec/Macaulay2 >profile
+	env M2HOME=.. gprof ../libexec/Macaulay2 >profile
 clean ::; rm -f profile
 
 INPUTS := cache/doc/sample cache/doc/expression
@@ -190,7 +187,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
 	 # phase 4: make $@
-	../libexec/Macaulay2 -q -silent '-ephase=4' @srcdir@/setup.m2 '-eexit(0)'
+	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=4' @srcdir@/setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
 ifdef NEWENGINE
@@ -220,7 +217,7 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-gdb :; gdb ../libexec/Macaulay2
+gdb :; env M2HOME=.. gdb ../libexec/Macaulay2
 
 install::
 	rm -rf $(datadir)/Macaulay2/m2

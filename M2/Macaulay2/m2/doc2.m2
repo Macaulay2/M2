@@ -882,7 +882,8 @@ document { getenv,
 
 document { currentDirectory,
      Headline => "current working directory",
-     TT "currentDirectory()", " -- returns the name of the current directory."
+     TT "currentDirectory()", " -- returns the name of the current directory,
+     together with an extra slash (or appropriate path separator)."
      }
 
 document { symbol "~",

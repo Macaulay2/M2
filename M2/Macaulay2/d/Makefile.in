@@ -1,5 +1,4 @@
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -448,4 +447,4 @@ distclean : clean
 	rm -f Makefile
 
 Makefile : Makefile.in
-	cd $(TOPDIR); ./config.status Macaulay2/d/Makefile
+	cd ../..; ./config.status Macaulay2/d/Makefile

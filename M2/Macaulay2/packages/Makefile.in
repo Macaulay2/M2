@@ -1,5 +1,4 @@
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -13,7 +12,7 @@ TEST=cache/tests
 all :: initialize
 
 Makefile : Makefile.in
-	cd $(TOPDIR); config.status Macaulay2/packages/Makefile
+	cd ../..; config.status Macaulay2/packages/Makefile
 
 #############################################################################
 all :: doc

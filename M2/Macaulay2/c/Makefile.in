@@ -1,8 +1,7 @@
 # this makefile is readable only by the gnu make program
 ############################## main target
 all:: scc1
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 INSTALL = @INSTALL@

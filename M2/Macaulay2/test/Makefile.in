@@ -1,5 +1,4 @@
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -17,14 +16,14 @@ $(RESULTS) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 ifneq "$(DUMPDATA)" "no"
 dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ echo testing dumpdata
-	@ ../libexec/Macaulay2 -q \
+	@ env M2HOME=.. ../libexec/Macaulay2 -q \
 		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
 		-- '-epath=append(path,"../m2")' '-erunStartFunctions()' \
 		   '-eerrorDepth(0)' \
 		   -silent @srcdir@/dumpdata.1 \
 		   '-eexit(0)'
 	@ echo exit 0 \
-	  | ../libexec/Macaulay2 -q \
+	  | env M2HOME=.. ../libexec/Macaulay2 -q \
 		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
 		-- '-epath=append(path,"../m2")' \
 		   '-erunStartFunctions()' '-eerrorDepth(0)' \
@@ -41,7 +40,7 @@ endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 600; time ../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ ulimit -t 600; time env M2HOME=.. ../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
 
 clean  :	
