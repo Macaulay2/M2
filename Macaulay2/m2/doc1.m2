@@ -277,6 +277,8 @@ document {
      	  ("help \"Your first input prompt\"", "   -- "),
      	  ("help x", "                           -- display the documentation for ", TT "x"),
 	  ("printWidth = 80", "                  -- set the print width to 80 characters"),
+     	  ("viewHelp x", "                       -- view documentation for ", TT "x", " in a browser"),
+     	  ("viewHelp", "                         -- view all documentation in a browser"),
 	  },
      "To read the documentation in info form, in case you happen to be running Macaulay 2 in a 
      terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands 

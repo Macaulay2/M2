@@ -124,6 +124,10 @@
   (M2-comint-mode)
   )
 
+(defun Macaulay2 ()
+  "Run Macaulay 2 in a buffer, non-interactive."
+  (M2 M2-command))
+
 (defvar M2-usual-jog 30 
   "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp

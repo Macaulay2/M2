@@ -495,7 +495,7 @@ installPackage Package := opts -> pkg -> (
      currentPackage = pkg;
      topDocumentTag = makeDocumentTag(pkg#"title", Package => pkg);
      rawDoc := pkg#"raw documentation";
-
+     
      -- check that we've read the raw documentation
      if #rawDoc > 0 then null
      else (
@@ -507,34 +507,34 @@ installPackage Package := opts -> pkg -> (
 	       )
 	  else reloadPackage(pkg#"title",opts)
 	  );
-
+     
      -- here's where we get the list of nodes from the raw documentation
      nodes := packageTagList(pkg,topDocumentTag);
-
-     buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
-     buildPackage = minimizeFilename buildPackage;
-
+     
+     buildPackage = pkg#"title";
+     
      buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
      if opts.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
-
+     
      installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
-
+     
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
+     
+     currentSourceDir := pkg#"source directory";
+     stderr << "--using package sources found in " << currentSourceDir << endl;
 
-     if pkg =!= Macaulay2 then (				    -- Macaulay2 sources are handled separately
+     -- copy package source file
+     pkgDirectory := LAYOUT#"packages";
+     makeDirectory (buildDirectory|pkgDirectory);
+     bn := buildPackage | ".m2";
+     fn := currentSourceDir|bn;
+     if not fileExists fn then error("file ", fn, " not found");
+     copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 0);
 
-	  currentSourceDir := pkg#"source directory";
-	  stderr << "--using package sources found in " << currentSourceDir << endl;
-
-	  -- copy source file
-	  pkgDirectory := LAYOUT#"packages";
-	  makeDirectory (buildDirectory|pkgDirectory);
-	  bn := buildPackage | ".m2";
-	  fn := currentSourceDir|bn;
-	  if not fileExists fn then error("file ", fn, " not found");
-	  copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 0);
-
-	  -- copy source subdirectory
+     if pkg === Macaulay2 then (
+	  ) else (
+     	  
+	  -- copy package source subdirectory
 	  srcDirectory := LAYOUT#"packagesrc" pkg#"title";
 	  dn := realpath(currentSourceDir|buildPackage);
 	  if fileExists dn
@@ -544,7 +544,6 @@ installPackage Package := opts -> pkg -> (
 	       buildDirectory|srcDirectory|".linkdir" << close;
 	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose => debugLevel > 0, Exclude => {"CVS"});
 	       );
-
      	  );
 
      -- This is a bit of a fiction: we've copied the files for our package into the build directory,
@@ -562,8 +561,10 @@ installPackage Package := opts -> pkg -> (
      stderr << "--making example input files in " << exampleDir << endl;
      makeDirectory exampleDir;
      exampleDir|".linkdir" << close;
+     exampleInputFiles := new MutableHashTable;
      scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 	       inf := infn fkey;
+	       exampleInputFiles#inf = true;
 	       val := concatenate apply(inputs, s -> s|"\n");
 	       if fileExists inf and get inf === val
 	       then (
@@ -572,6 +573,14 @@ installPackage Package := opts -> pkg -> (
 	       else (
 		    if debugLevel > 1 then stderr << "--making example input file for " << fkey << endl;
 		    inf << val << close;
+		    )));
+
+     -- check for obsolete example input files and remove them
+     scan(readDirectory exampleDir, fn -> (
+	       fn = exampleDir | fn;
+	       if match("\\.m2$",fn) and not exampleInputFiles#?fn then (
+	       	    stderr << "--warning: removing obsolete example input file: " <<  fn << endl;
+		    removeFile fn;
 		    )));
 
 --     -- make test input files
@@ -928,7 +937,10 @@ userMacaulay2Directory := () -> (
 PATH=/// << absPrefixDirectory << ///bin:$PATH
 export PATH
 
-MANPATH=/// << absPrefixDirectory << ///bin:$MANPATH
+MANPATH=/// << absPrefixDirectory << ///man:$MANPATH
+export MANPATH
+
+MANPATH=/// << absPrefixDirectory << ///share/man:$MANPATH
 export MANPATH
 
 LD_LIBRARY_PATH=/// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
@@ -1019,13 +1031,14 @@ runnable := fn -> 0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|f
 check := ret -> if ret != 0 then error "--error: external command failed"
 
 viewHTML = url -> (
-     if runnable "firefox" then check run("firefox "|url) else
+     if runnable "firefox" then check run("firefox "|url|"&") else
      if runnable "open" then check run("open "|url) else
      if runnable "netscape" then check run("netscape -remote \"openURL("|url|")") else
      error "can't find firefox, open, or netscape"
      )
 
-viewDocumentation = key -> viewHTML ( prefixDirectory | htmlFilename key )
+viewHelp = key -> viewHTML if key === () then homeDirectory | packageSuffix | "index.html" else prefixDirectory | htmlFilename key
+viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (
      if not isDirectory dir then error "expected a directory";

@@ -58,7 +58,7 @@ export (
         symbol simpleLoad,
         symbol filesLoaded,
         symbol loadedFiles,
-        symbol viewDocumentation,
+        symbol viewHelp,
         symbol RemakeAllDocumentation,
         symbol DegreeRank,
         symbol dismiss,

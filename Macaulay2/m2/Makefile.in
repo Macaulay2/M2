@@ -219,7 +219,7 @@ remake5:;
 
 install::all install-main
 install-main:; tar cf - -C tmp/$(package) . | tar xf - -C $(encapdir)
-clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
+clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles Macaulay2-doc.m2 loads.m2 docloads.m2 mpcodes.m2 version.m2 core
 distclean : clean; rm -f Makefile
 always:
 
