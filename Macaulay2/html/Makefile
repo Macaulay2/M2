@@ -2,7 +2,7 @@ TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
 
-all : index.html
+all :: index.html
 index.html : ../cache/Macaulay2-$(ARCH).data html.m2
 	rm -f ./*.html
 	../bin/M2 html.m2 '-eexit(0)'
