@@ -8,7 +8,7 @@ TESTS := test_monomial test_monordering test_monoid test_ring test_freemodule te
 CPPFLAGS += -I@srcdir@/..
 LIBRARYFILES += ../libgb.a
 LDFLAGS += -multiply_defined suppress
-LDLIBS += $(LIBRARYFILES) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ \
+LOADLIBES += $(LIBRARYFILES) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ \
                    -llapack -lcblas -lf77blas -latlas -lg2c
 
 CFLAGS += -g -ansi

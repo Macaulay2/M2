@@ -166,17 +166,28 @@ files and uses them to decide what to do at installation time.)
 To use a different prefix, say /mnt/local, for finding libraries and include
 files installed in a nonstandard location:
 
-	LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ../configure ...
+	../configure LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ...
 
 where ... represents the remaining arguments, as above.  As an example, if
 you have compiled the libraries with fink, then you could use this line:
 
-        LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ./configure ...
+        ../configure LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ...
 
-To specify other libraries to link against, use the LIBS environment
-variable, as described in documentation for autoconf.  Example:
+To specify libraries to link against during configuration, use the
+LIBS environment variable, as described in documentation for autoconf.
+Example:
 
-	LIBS=-lfoo ./configure ...
+	../configure LIBS=-lfoo ...
+
+To see descriptions of all the environement variables that influence
+configuration, run this command and look at the section of the output
+entitled "Some influential environment variables":
+
+	../configure --help
+
+The only one of these variables with a nonempty default value is
+CFLAGS, and its default value is "-g -O2".  That will be supplanted if
+you override it.
 
 -----------------------
 Windows 95, 98 and NT notes

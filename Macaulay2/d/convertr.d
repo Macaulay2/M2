@@ -220,7 +220,7 @@ export convert(e:ParseTree):Code := (
  	  else if wrd.typecode == TCstring
 	  then (
 	       s := parseString(wrd.name);
-	       Code(stringCode(s, hash(s), pos))
+	       Code(stringCode(s, pos))
 	       )
 	  else (
 	       if var.frameID == 0

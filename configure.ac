@@ -32,13 +32,22 @@ AC_DEFUN(M2_CONFIGURED_FILES,patsubst(m4_include(config/files),[
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
-test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
-test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
 test "$CXX"        && echo "   CXX=$CXX"
+test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
+dnl -- autoconf default is: -g -O2
+test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
+dnl -- autoconf default is: -g -O2
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
-test "$LIBS"       && echo "   LIBS=$LIBS"
-test "$LD_LIBRARY_PATH"   && echo "   LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+
+AC_ARG_VAR(CFLAGS,[C compiler flags, default: -g -O2])
+
+AC_ARG_VAR(LOADLIBES,[first path for linker to search for libraries])
+test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
+AC_ARG_VAR(LDLIBS,[second path for linker to search for libraries])
+test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
+AC_ARG_VAR(LIBS,[path for linker to search for libraries during configuration])
+test "$LIBS"     && echo "   LIBS=$LIBS"
 
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
@@ -231,7 +240,8 @@ LIBS="$SAVELIBS"
 
 AC_CHECK_HEADERS(wordexp.h)
 AC_CHECK_FUNCS(wordexp)
-M2_SHOW_CONFDEFS()
+
+dnl -- M2_SHOW_CONFDEFS()
 
 # the next three are obsolete:
 M2_IS_THERE(sys_errlist)

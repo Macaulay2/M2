@@ -309,7 +309,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE STRIP encap LAPACK encapsrc GC_FOR_NEW CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CFLAGS LOADLIBES LDLIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE STRIP encap LAPACK encapsrc GC_FOR_NEW CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -750,6 +750,22 @@ ac_env_target_alias_set=${target_alias+set}
 ac_env_target_alias_value=$target_alias
 ac_cv_env_target_alias_set=${target_alias+set}
 ac_cv_env_target_alias_value=$target_alias
+ac_env_CFLAGS_set=${CFLAGS+set}
+ac_env_CFLAGS_value=$CFLAGS
+ac_cv_env_CFLAGS_set=${CFLAGS+set}
+ac_cv_env_CFLAGS_value=$CFLAGS
+ac_env_LOADLIBES_set=${LOADLIBES+set}
+ac_env_LOADLIBES_value=$LOADLIBES
+ac_cv_env_LOADLIBES_set=${LOADLIBES+set}
+ac_cv_env_LOADLIBES_value=$LOADLIBES
+ac_env_LDLIBS_set=${LDLIBS+set}
+ac_env_LDLIBS_value=$LDLIBS
+ac_cv_env_LDLIBS_set=${LDLIBS+set}
+ac_cv_env_LDLIBS_value=$LDLIBS
+ac_env_LIBS_set=${LIBS+set}
+ac_env_LIBS_value=$LIBS
+ac_cv_env_LIBS_set=${LIBS+set}
+ac_cv_env_LIBS_value=$LIBS
 ac_env_CC_set=${CC+set}
 ac_env_CC_value=$CC
 ac_cv_env_CC_set=${CC+set}
@@ -758,10 +774,6 @@ ac_env_CXX_set=${CXX+set}
 ac_env_CXX_value=$CXX
 ac_cv_env_CXX_set=${CXX+set}
 ac_cv_env_CXX_value=$CXX
-ac_env_CFLAGS_set=${CFLAGS+set}
-ac_env_CFLAGS_value=$CFLAGS
-ac_cv_env_CFLAGS_set=${CFLAGS+set}
-ac_cv_env_CFLAGS_value=$CFLAGS
 ac_env_LDFLAGS_set=${LDFLAGS+set}
 ac_env_LDFLAGS_value=$LDFLAGS
 ac_cv_env_LDFLAGS_set=${LDFLAGS+set}
@@ -874,9 +886,12 @@ Optional Packages:
   --with-encapsrc=...     encap directory PREFIX/encap
 
 Some influential environment variables:
+  CFLAGS      C compiler flags, default: -g -O2
+  LOADLIBES   first path for linker to search for libraries
+  LDLIBS      second path for linker to search for libraries
+  LIBS        path for linker to search for libraries during configuration
   CC          C compiler to use
   CXX         C++ compiler to use
-  CFLAGS      C compiler flags
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   CPPFLAGS    C/C++ preprocessor flags, e.g. -I<include dir> if you have
@@ -1314,13 +1329,20 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
+test "$CXX"        && echo "   CXX=$CXX"
 test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
 test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
-test "$CXX"        && echo "   CXX=$CXX"
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
-test "$LIBS"       && echo "   LIBS=$LIBS"
-test "$LD_LIBRARY_PATH"   && echo "   LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+
+
+
+
+test "$LOADLIBES"  && echo "   LOADLIBES=$LOADLIBES"
+
+test "$LDLIBS"     && echo "   LDLIBS=$LDLIBS"
+
+test "$LIBS"     && echo "   LIBS=$LIBS"
 
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
@@ -4585,9 +4607,6 @@ fi
 done
 
 
-  echo contents of confdefs.h: >&6
-  sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
-
 
 # the next three are obsolete:
 
@@ -5787,6 +5806,9 @@ s,@ECHO_C@,$ECHO_C,;t t
 s,@ECHO_N@,$ECHO_N,;t t
 s,@ECHO_T@,$ECHO_T,;t t
 s,@LIBS@,$LIBS,;t t
+s,@CFLAGS@,$CFLAGS,;t t
+s,@LOADLIBES@,$LOADLIBES,;t t
+s,@LDLIBS@,$LDLIBS,;t t
 s,@MAKE@,$MAKE,;t t
 s,@NODENAME@,$NODENAME,;t t
 s,@REL@,$REL,;t t
@@ -5808,7 +5830,6 @@ s,@INSTALL_PROGRAM@,$INSTALL_PROGRAM,;t t
 s,@INSTALL_SCRIPT@,$INSTALL_SCRIPT,;t t
 s,@INSTALL_DATA@,$INSTALL_DATA,;t t
 s,@AWK@,$AWK,;t t
-s,@CFLAGS@,$CFLAGS,;t t
 s,@LDFLAGS@,$LDFLAGS,;t t
 s,@CPPFLAGS@,$CPPFLAGS,;t t
 s,@ac_ct_CC@,$ac_ct_CC,;t t

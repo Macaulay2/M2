@@ -48,12 +48,19 @@ CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FFLAGS = @FFLAGS@
-DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
+LOADLIBES = @LOADLIBES@
+LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
 encap = @encap@
 encapsrc = @encapsrc@
+
+# See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
+# Hence we have to use it, too.
+LDLIBS += @LIBS@
+
+# See the autoconf documentation for a description of DEFS; we use incldue/config.h instead, to keep command lines short
+DEFS = @DEFS@
 
 M2PKGNAME = PackageName
 

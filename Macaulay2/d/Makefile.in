@@ -10,7 +10,6 @@ all-c-files ::
 remove-c-files ::
 ##############################
 .PHONY : all-c-files remove-c-files
-.PRECIOUS : ../bin/M2$(EXE)
 ############################## files
 # the names on these lines should be in sequence from most dependent to
 # least dependent so that "make" can remake the *.dep makefiles
@@ -128,7 +127,7 @@ endif
 
 ifdef includeX11
 CPPFLAGS += -DincludeX11
-LDLIBS += -lX11
+LOADLIBES += -lX11
 endif
 
 ## we use one of these in scclib.c
@@ -138,7 +137,7 @@ endif
 
 # hopefully, this will prevent us from getting the buggy version of 
 # __underflow
-# LDLIBS+= -lc
+# LOADLIBES+= -lc
 
 ifeq "$(STATIC)" "yes"
 LDFLAGS += -static
@@ -149,7 +148,7 @@ endif
 endif
 
 ifeq ($(OS),SunOS)
-LDLIBS += -lsocket -lnsl
+LOADLIBES += -lsocket -lnsl
 endif
 
 ifeq "$(STATIC)" "yes"
@@ -160,18 +159,18 @@ endif
 endif
 
 #ifeq ($(OS),Linux)
-#LDLIBS += -lieee
+#LOADLIBES += -lieee
 #endif
 
 # -lsunmath makes suns obey ieee for floating point operations, at
 # -liberty is /usr/local/lib/libiberty.a, and it has random() in it
 # least under solaris
 ifeq ($(OS),SunOS)
-# LDLIBS += -lsunmath -liberty
+# LOADLIBES += -lsunmath -liberty
 endif
 
 ifeq ($(OS),MS-DOS)
-LDLIBS += -lgpp
+LOADLIBES += -lgpp
 else
 
 #	We used to -lc in here, but it's for a good reason.
@@ -185,7 +184,7 @@ endif
 
 # but on some machines, with non-gnu ld being used, libiostream is
 # not used automatically, so put it in anyway.
-# LDLIBS += -liostream
+# LOADLIBES += -liostream
 
 ############################## compiling
 
@@ -195,7 +194,7 @@ compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 else
 compat.c compat.h : configure ../../include/config.h
-	FLAGS="$(LDFLAGS) $(LDLIBS)" @srcdir@/configure
+	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 endif
 
 M2types.o : M2types.h
@@ -229,7 +228,7 @@ startup.c : ../m2/startup.m2 layout.m2
 ALLOBJ += ../e/libgb.a
 
 ifeq "$(DUMPDATA)" "yes"
-LDLIBS += -L../dumpdata
+LOADLIBES += -L../dumpdata
 LIBRARYFILES += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
 endif
@@ -314,7 +313,7 @@ endif
 # ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
 # 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
 
-LDLIBS := $(LIBRARYOPTIONS) $(LDLIBS)
+LOADLIBES := $(LIBRARYOPTIONS) $(LOADLIBES)
 
 ifeq "$(CC)" "cl"
 LINK_OUTPUT_OPTION = -link -out:$@.exe
@@ -323,22 +322,20 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 endif
 
 ifneq "$(CC)" "cl"
-LDLIBS += -lm
+LOADLIBES += -lm
 endif
-
-LDLIBS += $(LIBS)
 
 LDLIBS += -lc ../compat/compat.a
 
 MADEFILES += ../bin/M2$(EXE)
 ../bin/M2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
-	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
 
 t_main.o : types.h
 t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) $(OUTPUT_OPTION)
+	$(CC) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 all:: TAGS
 
