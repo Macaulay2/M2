@@ -1,0 +1,24 @@
+typedef void (* gcFinalizationProc)(void *);
+
+#define GC_free                             gcFree
+extern void gcFree(void *);
+
+#define GC_register_finalizer(obj,f,cd,xx,yy) gcRegisterFinalizer(obj,f,cd)
+extern void gcRegisterFinalizer(void *, gcFinalizationProc, void *);
+
+#define GC_free_space_divisor               ..gone..
+
+#define GC_malloc_uncollectable             gcMallocManual
+extern void * gcMallocManual(size_t);
+
+#define GC_malloc_atomic                    gcMallocLeaf
+extern void * gcMallocLeaf(size_t);
+
+#define GC_realloc                          gcRealloc
+extern void * gcRealloc(void *, size_t);
+
+#define GC_malloc                           gcMalloc
+extern void * gcMalloc(size_t size_in_bytes);
+
+#define GC_gcollect                         gcCollect
+extern void gcCollect(void);
