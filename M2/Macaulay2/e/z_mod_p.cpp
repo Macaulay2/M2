@@ -21,34 +21,34 @@ bool Z_mod::initialize_Z_mod(int p, const Monoid *D)
   declare_field();
   int i,j,q,n;
 
-  if (_P==2)
+  if (P==2)
     _minus_one = 0;
   else
-    _minus_one = (_P-1)/2;
+    _minus_one = (P-1)/2;
 
-  if (_P==2)
+  if (P==2)
     _prim_root = 1;
   else
     {
       j=1;
-      for (i=2; (i<_P && j<_P-1); i++)
-        for (q=i,j=1; (q!=1 && j<_P); q=(q*i)%_P,j++);
+      for (i=2; (i<P && j<P-1); i++)
+        for (q=i,j=1; (q!=1 && j<P); q=(q*i)%P,j++);
       _prim_root = i-1;
     }
 
-  // cerr << "z_mod_p: creating table for _P = " << _P << endl;
-  _log_table = new int[_P];
-  _exp_table = new int[_P];
-  for (i=0, n=1; i<_P-1; i++, n=(n*_prim_root)%_P)
+  // cerr << "z_mod_p: creating table for P = " << P << endl;
+  _log_table = new int[P];
+  _exp_table = new int[P];
+  for (i=0, n=1; i<P-1; i++, n=(n*_prim_root)%P)
     {
       _log_table[n] = i;  // i = log_(base _prim_root)(n)
       _exp_table[i] = n;  // n = (_prim_root)^i 
     }
-  _ZERO            = _P-1;
+  _ZERO            = P-1;
   _exp_table[_ZERO] = 0;
   _log_table[0]    = _ZERO;
 
-  _P1 = _P-1;
+  _P1 = P-1;
   return true;
 }
 
@@ -64,13 +64,13 @@ Z_mod *Z_mod::create(int p, const Monoid *D)
 
 void Z_mod::text_out(buffer &o) const
 {
-  o << "ZZ/" << _P;
+  o << "ZZ/" << P;
 }
 
 int Z_mod::to_int(int f) const
 {
   int n = _exp_table[f];
-  if (n > _P/2) n -= _P;
+  if (n > P/2) n -= P;
   return n;
 }
 
@@ -93,8 +93,8 @@ static inline int modulus_sub(int a, int b, int p)
 
 inline int Z_mod::int_to_exp(int a) const
 {
-  int n = a % _P;
-  return _log_table[(n < 0 ? n+_P : n)];
+  int n = a % P;
+  return _log_table[(n < 0 ? n+P : n)];
 }
 
 void Z_mod::elem_text_out(buffer &o, ring_elem a) const
@@ -112,8 +112,8 @@ void Z_mod::elem_text_out(buffer &o, ring_elem a) const
 
 ring_elem Z_mod::from_int(int n) const
 {
-  int m = n % _P;
-  if (m < 0) m += _P;
+  int m = n % P;
+  if (m < 0) m += P;
   m = _log_table[m];
   return ring_elem(m);
 }
@@ -125,10 +125,10 @@ ring_elem Z_mod::from_int(mpz_ptr n) const
 //  cout << ") = " << endl;
   mpz_t result;
   mpz_init(result);
-  mpz_mod_ui(result, n, _P);
+  mpz_mod_ui(result, n, P);
   int m = mpz_get_si(result);
 //  cout << m << endl;
-  if (m < 0) m += _P;
+  if (m < 0) m += P;
   m = _log_table[m];
   return ring_elem(m);
 }
@@ -199,7 +199,7 @@ void Z_mod::add_to(ring_elem &f, ring_elem &g) const
     f = g;
   else
     {
-      int n = modulus_add(_exp_table[f.int_val], _exp_table[g.int_val], _P);
+      int n = modulus_add(_exp_table[f.int_val], _exp_table[g.int_val], P);
       f = _log_table[n];
     }
 }
@@ -211,7 +211,7 @@ void Z_mod::subtract_to(ring_elem &f, ring_elem &g) const
     f = negate(g);
   else
     {
-      int n = modulus_sub(_exp_table[f.int_val], _exp_table[g.int_val], _P);
+      int n = modulus_sub(_exp_table[f.int_val], _exp_table[g.int_val], P);
       f = _log_table[n];
     }
 }
@@ -228,7 +228,7 @@ ring_elem Z_mod::add(const ring_elem f, const ring_elem g) const
   if (g == _ZERO)  return f;
   if (f == _ZERO)  return g;
   
-  int n = modulus_add(_exp_table[f.int_val], _exp_table[g.int_val], _P);
+  int n = modulus_add(_exp_table[f.int_val], _exp_table[g.int_val], P);
   return _log_table[n];
 }
 
@@ -237,7 +237,7 @@ ring_elem Z_mod::subtract(const ring_elem f, const ring_elem g) const
   if (g == _ZERO)  return f;
   if (f == _ZERO)  return negate(g);
   
-  int n = modulus_sub(_exp_table[f.int_val], _exp_table[g.int_val], _P);
+  int n = modulus_sub(_exp_table[f.int_val], _exp_table[g.int_val], P);
   return _log_table[n];
 }
 
@@ -268,7 +268,7 @@ ring_elem Z_mod::invert(const ring_elem f) const
   // MES: error if f == _ZERO
   int a = f.int_val;
   if (a == 0) return 0; // this is the case f == ONE
-  return ring_elem(_P - 1 - a);
+  return ring_elem(P - 1 - a);
 }
 
 ring_elem Z_mod::divide(const ring_elem f, const ring_elem g) const
@@ -348,7 +348,7 @@ ring_elem Z_mod::eval(const RingMap *map, const ring_elem f) const
 
 ring_elem Z_mod::random() const
 {
-  int exp = Random::random0(_P);
+  int exp = Random::random0(P);
   return ring_elem(exp);
 }
 bool Z_mod::is_homogeneous(const ring_elem) const

@@ -184,16 +184,16 @@ public:
 class GRType_POLY : public GRType
 {
   friend class GRType;
-  const PolynomialRing *_P;
+  const PolynomialRing *P;
   int _n_orig_vars;
   int *_MONOM1;
 
-  GRType_POLY(const PolynomialRing *P) : GRType(0), _P(P)
+  GRType_POLY(const PolynomialRing *P) : GRType(0), P(P)
   {
     const Ring *R = P->Ncoeffs();
     _next = R->get_GRType();
     _n_orig_vars = R->n_vars();
-    _MONOM1 = _P->Nmonoms()->make_one();
+    _MONOM1 = P->Nmonoms()->make_one();
   }
 public:
   GRType::tag type() const { return POLY; }
@@ -202,8 +202,8 @@ public:
 			const int *exp) const
   {
     ring_elem a = _next->to_ringelem(coeff, exp + _n_orig_vars);
-    _P->Nmonoms()->from_expvector(exp, _MONOM1);
-    Nterm *t = _P->term(a, _MONOM1);
+    P->Nmonoms()->from_expvector(exp, _MONOM1);
+    Nterm *t = P->term(a, _MONOM1);
     return t;
   }
 
@@ -212,8 +212,8 @@ public:
 			      int *exp) const
   {
     ring_elem a = _next->to_ringelem_denom(coeff, denom, exp + _n_orig_vars);
-    _P->Nmonoms()->from_expvector(exp, _MONOM1);
-    Nterm *t = _P->term(a, _MONOM1);
+    P->Nmonoms()->from_expvector(exp, _MONOM1);
+    Nterm *t = P->term(a, _MONOM1);
     return t;
   }
 
@@ -223,7 +223,7 @@ public:
 		     int *exp,
 		     int firstvar) const
   {
-    const Monoid *M = _P->Nmonoms();
+    const Monoid *M = P->Nmonoms();
     Nterm *t = coeff;
     for ( ; t != 0; t=t->next)
       {

@@ -28,7 +28,7 @@ class GRType; // Used in GBRing, but each ring is tagged with a GBType
 class Ring : public mutable_object
 {
 protected:
-  int _P;
+  int P;
   int _nvars;
   int _totalvars;		// The total number of variables, inclduing all base rings
   const Ring *_K;		// For a base ring, this will point to self
@@ -58,7 +58,7 @@ protected:
 public:
   virtual ~Ring();
 
-  int charac() const { return _P; }
+  int charac() const { return P; }
   int n_vars() const { return _nvars; }
   int total_n_vars() const { return _totalvars; }
 

@@ -33,14 +33,14 @@ bool GF::initialize_GF(const RingElement *prim)
 
   int n = _originalR->primary_degree(f);
 
-  _Q = _P;
-  for (i=1; i<n; i++) _Q *= _P;
+  _Q = P;
+  for (i=1; i<n; i++) _Q *= P;
 
   _Qexp = n;
   _Q1 = _Q-1;
   _ZERO = 0;
   _ONE = _Q1;
-  _MINUS_ONE = (_P == 2 ? _ONE : _Q1/2);
+  _MINUS_ONE = (P == 2 ? _ONE : _Q1/2);
 
   // Get ready to create the 'one_table'
   array<ring_elem> polys;
@@ -84,10 +84,10 @@ bool GF::initialize_GF(const RingElement *prim)
     }
 
   // Create the Z/P ---> GF(Q) inclusion map
-  _from_int_table = new int[_P];
+  _from_int_table = new int[P];
   int a = _ONE;
   _from_int_table[0] = _ZERO;
-  for (i=1; i<_P; i++)
+  for (i=1; i<P; i++)
     {
       _from_int_table[i] = a;
       a = _one_table[a];
@@ -169,8 +169,8 @@ ring_elem GF::eval(const RingMap *map, const ring_elem f) const
 
 ring_elem GF::from_int(int n) const
 {
-  int m = n % _P;
-  if (m < 0) m += _P;
+  int m = n % P;
+  if (m < 0) m += P;
   m = _from_int_table[m];
   return ring_elem(m);
 }
@@ -179,9 +179,9 @@ ring_elem GF::from_int(mpz_ptr n) const
 {
   mpz_t result;
   mpz_init(result);
-  mpz_mod_ui(result, n, _P);
+  mpz_mod_ui(result, n, P);
   int m = mpz_get_si(result);
-  if (m < 0) m += _P;
+  if (m < 0) m += P;
   m = _from_int_table[m];
   return ring_elem(m);
 }
@@ -212,7 +212,7 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
       ring_elem coef = from_int(_originalR->Ncoeffs()->coerce_to_int(t->coeff));
       _originalR->Nmonoms()->to_expvector(t->monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a quotient,
-      // this degree is < n (where _Q = _P^n).
+      // this degree is < n (where _Q = P^n).
       ring_elem g = power(_x_exponent, exp[0]);
       g = mult(g, coef);
       add_to(result, g);
@@ -296,7 +296,7 @@ void GF::add_to(ring_elem &f, ring_elem &g) const
 	}
       else 
 	{
-	  if (_P == 2) 
+	  if (P == 2) 
 	    f = _ZERO;
 	  else
 	    f = modulus_add(a, _one_table[_ONE], _Q1);
