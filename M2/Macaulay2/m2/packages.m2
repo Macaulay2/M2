@@ -114,7 +114,7 @@ newPackage(String) := opts -> (title) -> (
 	  );
      globalDictionaries = join(
 	  if title === "Macaulay2" then {} else {newpkg#"private dictionary"},
-	  {Macaulay2.Dictionary, PackageDictionary},
+	  {Macaulay2.Dictionary, OutputDictionary, PackageDictionary},
 	  apply(opts.Using,pkg->pkg.Dictionary)
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
@@ -155,7 +155,7 @@ exportMutable {
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks, symbol debugError,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
-	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
+	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth, symbol backupFileRegexp
 	  }
 
 findSynonyms = method()

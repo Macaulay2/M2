@@ -360,20 +360,28 @@ exampleResults := {}
 exampleCounter := 0
 checkForExampleOutputFile := (node,pkg) -> (
      exampleCounter = 0;
-     exampleResults = {};
-     exampleResultsFound = false;
-     exampleOutputFilename = null;
-     if debugLevel > 1 then stderr << "exampleBaseFilename = " << exampleBaseFilename << endl;
-     if exampleBaseFilename =!= null then (
+     if pkg#"example results"#?node then (
+	  exampleResults = pkg#"example results"#node;
+	  exampleResultsFound = true;
 	  exampleOutputFilename = exampleBaseFilename | ".out";
-	  if debugLevel > 0 then (
-	       if debugLevel > 1 then stderr << "checking for example results in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
-	       );
-	  if fileExists exampleOutputFilename then (
-	       -- read, separate, and store example results
-	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
-	       if debugLevel > 1 then stderr << "node " << node << " : " << boxList \\ net \ exampleResults << endl;
-	       exampleResultsFound = true)))
+	  )
+     else (
+	  exampleResults = {};
+	  exampleResultsFound = false;
+	  exampleOutputFilename = null;
+	  ))
+--      exampleOutputFilename = null;
+--      if debugLevel > 1 then stderr << "exampleBaseFilename = " << exampleBaseFilename << endl;
+--      if exampleBaseFilename =!= null then (
+-- 	  exampleOutputFilename = exampleBaseFilename | ".out";
+-- 	  if debugLevel > 0 then (
+-- 	       if debugLevel > 1 then stderr << "checking for example results in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
+-- 	       );
+-- 	  if fileExists exampleOutputFilename then (
+-- 	       -- read, separate, and store example results
+-- 	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
+-- 	       if debugLevel > 1 then stderr << "node " << node << " : " << boxList \\ net \ exampleResults << endl;
+-- 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
      if exampleResultsFound and exampleResults#?exampleCounter

@@ -65,7 +65,10 @@ mathML MarkUpList := defop(concatenate,mathML)
 
 info TITLE := net TITLE := x -> ""
 
-Hop := (op,filler) -> x -> ( r := horizontalJoin apply(x,op); r || concatenate( width r : filler ) )
+Hop := (op,filler) -> x -> ( 
+     r := horizontalJoin apply(x,op);
+     if width r === 1 then r = horizontalJoin(r," ");
+     r || concatenate( width r : filler ) )
 net  HEADER1 := Hop(net,"*")
 net  HEADER2 := Hop(net,"=")
 net  HEADER3 := Hop(net,"-")
@@ -386,10 +389,22 @@ tex TO := x -> (
 net TO  := x -> concatenate( "\"",     DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
 net TO2 := x -> x#1
 
+-- node names in info files are delimited by commas and parentheses somehow...
+infoLiteral := new MutableHashTable
+scan(characters ascii(0 .. 255), c -> infoLiteral#c = c)
+infoLiteral#"(" = "_lp"
+infoLiteral#"_" = "_us"
+infoLiteral#")" = "_rp"
+infoLiteral#"," = "_cm"
+infoLiteral#"*" = "_st"
+infoTagConvert = memoize(n -> if n === " " then "_sp" else concatenate apply(characters n, c -> infoLiteral#c));
+
 info TO := x -> (
      fkey := DocumentTag.FormattedKey x#0;
-     concatenate(fkey, if x#?1 then x#1, " (*Note ", fkey, "::)"))
-info TO2:= x -> concatenate( x#1, " (*Note ", DocumentTag.FormattedKey x#0, "::)")
+     concatenate(fkey, if x#?1 then x#1, " (*Note ", infoTagConvert fkey, "::)"))
+info TO2:= x -> (
+     fkey := DocumentTag.FormattedKey x#0;
+     concatenate( x#1, " (*Note ", infoTagConvert fkey, "::)"))
 
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x

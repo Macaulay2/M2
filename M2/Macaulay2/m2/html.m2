@@ -2,16 +2,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
--- info output
------------------------------------------------------------------------------
--- node names in info files are delimited by commas and parentheses somehow...
-infoLiteral := new MutableHashTable
-scan(characters ascii(0 .. 255), c -> infoLiteral#c = c)
-infoLiteral#"(" = "_lp"
-infoLiteral#"_" = "_us"
-infoLiteral#")" = "_rp"
-infoLiteral#"," = "_cm"
------------------------------------------------------------------------------
 -- html output
 -----------------------------------------------------------------------------
 
@@ -517,17 +507,17 @@ installPackage Package := o -> pkg -> (
      infofile << "END-INFO-DIR-ENTRY" << endl << endl;
      byteOffsets := new MutableHashTable;
      topNodeName := DocumentTag.FormattedKey topDocumentTag;
-     infoConvert := memoize(n -> if n === topNodeName then "Top" else concatenate apply(characters n, c -> infoLiteral#c));
      chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
+     infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
      traverse(unbag pkg#"table of contents", tag -> (
 	       key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
 	       chk fkey;
-	       byteOffsets# #byteOffsets = concatenate("Node: ",infoConvert fkey,"\177",toString length infofile);
-	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoConvert fkey;
-	       if NEXT#?tag then infofile << ", Next: " << infoConvert DocumentTag.FormattedKey NEXT#tag;
-	       if PREV#?tag then infofile << ", Prev: " << infoConvert DocumentTag.FormattedKey PREV#tag;
-	       if UP#?tag   then infofile << ", Up: " << infoConvert DocumentTag.FormattedKey UP#tag;
+	       byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
+	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
+	       if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
+	       if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
+	       if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
      	       infofile << endl << endl << info documentation key << endl));
      infofile << "\037" << endl << "Tag Table:" << endl;
      scan(values byteOffsets, b -> infofile << b << endl);
