@@ -186,7 +186,7 @@ void Ring::mult(vec &v, const ring_elem r, bool opposite_mult) const
   v = head.next;
 }
 
-void Ring::mult_row(vec &v, int i, const ring_elem r, bool opposite_mult) const
+void Ring::mult_row(vec &v, const ring_elem r, int i, bool opposite_mult) const
 {
   vecterm head;
   head.next = v;
@@ -209,6 +209,7 @@ void Ring::mult_row(vec &v, int i, const ring_elem r, bool opposite_mult) const
 	  }
 	break;
       }
+  v = head.next;
 }
 
 vec Ring::mult_vec_matrix(const Matrix *m,
@@ -401,7 +402,7 @@ void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) con
   vec p;
   vec vec2 = 0;
   for (p = v; p != 0; p=p->next)
-    if (p->comp == i)
+    if (p->comp == j)
       {
 	vec2 = p;
 	break;
@@ -416,20 +417,19 @@ void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) con
 #warning "BUG??? check that r1 is zero!!"
   head.next = v;
   for (p = &head; p->next != 0; p=p->next)
-    if (p->next->comp <= j)
+    if (p->next->comp <= i)
       break;
-  if (p->next == 0 || p->next->comp < j)
+  if (p->next == 0 || p->next->comp < i)
     {
       // Make a new node
       vec w = new_vec();
       w->next = p->next;
-      w->comp = j;
+      w->comp = i;
       w->coeff = r1;
       p->next = w;
     }
   else
     {
-      this->add_to(p->next->coeff, r1);
       p->next->coeff = this->add(p->next->coeff, r1);
       if (this->is_zero(p->next->coeff))
 	{

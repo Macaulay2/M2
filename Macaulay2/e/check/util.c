@@ -1,14 +1,18 @@
 #include "util.h"
 #include "string.h"
+#include "../../d/M2mem.h"
 /*******************************************************************/
 /* Stuff needed from M2lib.c, scclib.c in order to link */
 int system_interrupted = 0;
 
+#if 0
 void outofmem(void)
 {
   printf("Out of memory\n");
   exit(1);
 }
+#endif
+
 /***********************************************************/
 
 

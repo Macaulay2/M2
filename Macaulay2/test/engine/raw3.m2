@@ -382,6 +382,34 @@ m * ch
 -------------------------------
 load "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol f))
+m = rawMatrix1(R^3,3,(3_R,2_R,17_R,1_R,-5_R,13_R,0_R,2_R,1_R),true)
+assert(3_R === rawMatrixEntry(m,0,0))
+rawMatrixEntry(m,1,2,15_R)
+assert(15_R === rawMatrixEntry(m,1,2))
+m
+-- now let's do row and column operations on this
+m1 = rawConcat(m,rawIdentity(R^3))
+m = rawMatrixRemake1(R^3,m1,true)
+rawMatrixRowScale(m,3_R,1,true)  -- OK now
+m
+rawMatrixRowChange(m,1,-1_R,0,true) -- OK now
+m
+rawMatrixRowChange(m,1,9_R,2,true) -- OK now
+m
+rawMatrixRowChange(m,2,-1_R,1,true) -- OK now
+rawMatrixRowChange(m,2,-1_R,1,true) -- OK now
+m
+rawMatrixRowSwap(m,1,2)
+rawMatrixRowSwap(m,1,2)
+m
+
+
+
+rawMatrixRowScale(m,2_R,0,true)  -- OK now
+m
+rawMatrixRowChange(m,0,-17_R,2,true) -- still messed up?
+m
+m
 m = rawMatrix1(R^3,3,(a,b,c,a^2,b^2,c^2,a*b-1,b*c-1,c*d-1),true)
 assert(a === rawMatrixEntry(m,0,0))
 rawMatrixEntry(m,1,2,c^3)
@@ -406,7 +434,10 @@ rawMatrixColumnChange(m,1,a^5,0,true) --
 m
 rawMatrixRowScale(m,f,2,true) -- wrong error message
 rawMatrixColumnScale(m,f,2,true) -- wrong error message
-
+m
+m1 = rawMatrixRemake1(rawTarget m,m,false)
+m * m1
+assert try (rawMatrixEntry(m1,2,1,0_R); false) else true
 ------------------
 -- rawGCD --------
 ------------------
@@ -498,8 +529,8 @@ testfactor f
 
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
---time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
---testfactor f
+time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
+testfactor f
 
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;

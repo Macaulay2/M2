@@ -14,18 +14,19 @@ CTESTS = \
 
 #	check_lapack.o
 
-CPPFLAGS += -I@srcdir@/.. -I../../util
+CPPFLAGS += -I@srcdir@/.. -I../../util -I..
 LIBRARYFILES += ../libgb.a 
 
 ifeq "$(OS)" "Darwin"
 LDFLAGS += -multiply_defined suppress
 endif
 
-LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl $(LIBGMP) -lgc -lm -lc -lstdc++
+LDLIBS += ../../d/M2inits1.o $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl \
+     $(LIBGMP) -lgc -lm -lc -lstdc++ ../../d/M2mem.o ../../d/M2inits2.o
 CFLAGS += -g -ansi
 
-COBJ = ../../d/M2types.o ../../d/M2inits.o util.o src_test/Ctest.o src_test/Csuite.o
-CCOBJ = ../../d/M2types.o ../../d/M2inits.o util.o src_test/test.o src_test/suite.o
+COBJ = ../../d/debug.o ../../d/M2types.o ../../d/M2inits.o util.o src_test/Ctest.o src_test/Csuite.o
+CCOBJ = ../../d/debug.o ../../d/M2types.o ../../d/M2inits.o util.o src_test/test.o src_test/suite.o
 
 all :: check
 check_cc : $(CCTESTS) $(CCOBJ) ../libgb.a

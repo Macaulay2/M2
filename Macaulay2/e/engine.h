@@ -1172,7 +1172,7 @@ enum Algorithms
 
 enum gbTraceValues
   {
-    // The printlevel flags
+    /* The printlevel flags */
     PRINT_SPAIR_TRACKING=1024
   };
   
