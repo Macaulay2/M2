@@ -50,14 +50,14 @@ export SymbolListCell := {entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
 export SymbolHashTable := { 
      buckets:array(SymbolList),	 -- length always a power of 2
-     numEntries:int 
+     numEntries:int
      };
 export Dictionary := {
      hash:int,						    -- assigned sequentially
      symboltable:SymbolHashTable,
      outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
      frameID:int,	        -- -1 for dummy, 0 for global, then 1,2,3,...
-     numsyms:int,
+     numsyms:int, -- why not just use symboltable.numEntries???  look out for dummy symbol below
      transient:bool	        -- whether there can be multiple frames
      	       	    	        -- for the global dictionary and file scopes : no
 				-- for function closures : yes
@@ -262,7 +262,7 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
 dummySymbolFrameIndex := 0;
 export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
 export globalFrame := Frame(dummyFrame,0,1,Sequence(
-	  nullE						    -- value for dummySymbol, the first symbol
+	  nullE						    -- value for dummySymbol, the first symbol, which has to have a value somewhere...
 	  ));
 export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false);
 export globalDictionary := Macaulay2Dictionary;

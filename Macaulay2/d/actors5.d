@@ -589,6 +589,7 @@ erase(s:Symbol,table:SymbolHashTable):bool := (
      is entryListCell:SymbolListCell do (
 	  if entryListCell.entry == s
 	  then (
+	       table.numEntries = table.numEntries - 1;
 	       table.buckets.i = entryListCell.next;
 	       return(true);
 	       );
@@ -599,6 +600,7 @@ erase(s:Symbol,table:SymbolHashTable):bool := (
 	       is entryListCell:SymbolListCell do (
 	  	    if entryListCell.entry == s
 	  	    then (
+	       		 table.numEntries = table.numEntries - 1;
 		    	 lastCell.next = entryListCell.next;
 		    	 return(true);
 		    	 );
