@@ -22,6 +22,9 @@ document { quote ChainComplex,
      "Here are some functions for producing or manipulating chain complexes.",
      MENU {
 	  (TO (quote ++, ChainComplex, ChainComplex), " -- direct sum"),
+	  (TO (quote **, ChainComplex, ChainComplex), " -- tensor product"),
+	  (TO (quote **, ChainComplex, GradedModule), " -- tensor product"),
+	  (TO (quote **, GradedModule, ChainComplex), " -- tensor product"),
 	  (TO quote dd, " -- obtain the differentials."),
 	  (TO (quote " ", ChainComplex, Array), " -- shift a chain complex"),
 	  (TO "betti", "        -- display degrees in a free resolution"),
@@ -701,7 +704,8 @@ document { quote chainComplex,
      "See:",
      MENU {
 	  TO (chainComplex,Matrix),
-	  TO (chainComplex,Sequence)
+	  TO (chainComplex,Sequence),
+	  TO (chainComplex,GradedModule)
 	  }
      }
 
@@ -1110,4 +1114,64 @@ document { (NewMethod, ChainComplex),
       	  "C",
       	  "C.dd"
 	  },
+     }
+-----------------------------------------------------------------------------
+chainComplex GradedModule := (M) -> (
+     C := new ChainComplex from M;
+     b := C.dd = new ChainComplexMap;
+     b.degree = -1;
+     b.source = b.target = C;
+     C)
+document { (chainComplex,GradedModule),
+     TT "chainComplex M", " -- convert a graded module to a chain complex by
+     installing the zero map as differential.",
+     PARA,
+     SEEALSO ("GradedModule", "ChainComplex")
+     }
+-----------------------------------------------------------------------------
+
+ChainComplex ** ChainComplex := (C,D) -> (
+     E := chainComplex (lookup(quote **, GradedModule, GradedModule))(C,D);
+     e := spots E;
+     scan(e, i -> if E#?i and E#?(i-1) then (
+	       E.dd#i = matrix table(
+		    sort keys E#(i-1).indexComponents,
+		    sort keys E#i.indexComponents,
+		    (j,k) -> (
+			 if j#0 === k#0 and j#1 === k#1 - 1 then (
+			      (-1)^(k#0) * map(C#(j#0),C#(k#0),1) ** D.dd_(k#1)
+			      )
+			 else 
+			 if j#0 === k#0 - 1 and j#1 === k#1 then (
+			      C.dd_(k#0) ** map(D#(j#1),D#(k#1),1)
+			      )
+			 else (
+			      map(C#(j#0),C#(k#0),0) ** map(D#(j#1),D#(k#1),0)
+			      )
+			 )
+		    )
+	       )
+	  );
+     E)
+
+document { (quote **, ChainComplex, ChainComplex),
+     TT "C**D", " -- the tensor product of two chain complexes.",
+     PARA,
+     "The result is a chain complex."
+     }
+
+ChainComplex ** GradedModule := (C,D) -> C ** chainComplex D
+
+document { (quote **, ChainComplex, GradedModule),
+     TT "C**D", " -- the tensor product of a chain complex with a graded module.",
+     PARA,
+     "The result is a chain complex."
+     }
+
+GradedModule ** ChainComplex := (C,D) -> chainComplex C ** D
+
+document { (quote **, GradedModule, ChainComplex),
+     TT "C**D", " -- the tensor product of a graded module with a chain complex.",
+     PARA,
+     "The result is a chain complex."
      }

@@ -319,7 +319,6 @@ GradedModule ** GradedModule := (C,D) -> (
      E
      )
 
-
 gradedModuleMap = method(SingleArgumentDispatch=>true)
 
 document { quote gradedModuleMap,

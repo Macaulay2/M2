@@ -1361,6 +1361,21 @@ document { quote hold,
      for ", TO "Expression", "s, but no simplification occurs.",
      PARA,
      EXAMPLE "(hold 2)^5 * (hold 3)^3 * (hold 5) * (hold 11)^2"
+     PARA,
+     "Here is example of a little function that expresses rational numbers
+     as Egyptian fractions using ", TT "hold", ".",
+     EXAMPLE {
+	  "egyptian = method();",
+	  ///egyptian QQ := x -> (
+    if numerator x == 1 
+    then hold x 
+    else (
+         n := floor (1/x) + 1;
+         hold(1/n) + egyptian(x - 1/n) 
+         );
+    )///,
+     	  "egyptian(30/31)"
+     	  }
      }
 
 Position = new Type of BasicList
