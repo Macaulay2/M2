@@ -626,6 +626,17 @@ SOURCE=.\vector.hpp
 # Begin Source File
 
 SOURCE=.\x_factor.cpp
+
+!IF  "$(CFG)" == "e - Win32 Release"
+
+# ADD CPP /I "../../libfac" /I "../../WindowsNT/factory"
+
+!ELSEIF  "$(CFG)" == "e - Win32 Debug"
+
+# ADD CPP /I "../../WindowsNT/factory" /I "../../libfac"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
