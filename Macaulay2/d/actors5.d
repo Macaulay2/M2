@@ -1130,20 +1130,46 @@ setupfun("mkdir",mkdir);
 --     );
 --setupfun("setFactorySeed",setFactorySeed);
 
+export printWidth := 80;
+
 wrap(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
-     when s.0 is wid:Integer do
-     if !isInt(wid) then WrongArgSmallInteger(1) else (
-	  width := toInt(wid);
-	  if width <= 0 then WrongArg(1,"a positive integer") else 
-	  when s.1
-	  is t:Net do Expr(wrap(width,'-',t))
-	  is str:string do if length(str) <= width then Expr(str) else Expr(wrap(width,'-',toNet(str)))
-	  else WrongArg(2,"a net"))
-     else WrongArgInteger(1)
-     else WrongNumArgs(2)
-     );
+     wid := printWidth;
+     sep := '-';
+     net := dummyNet;
+     when e
+     is s:Sequence do (
+	  if length(s) == 3 then (
+	       when s.0 
+	       is Wid:Integer do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
+	       is Sep:string do if length(Sep) == 0 then sep = char(0) else if length(Sep) == 1 then sep = Sep.0 else return WrongArg(1,"a string of length 0 or 1")
+	       else return WrongArg(1,"a string or an integer");
+	       when s.1
+	       is Wid:Integer do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
+	       is Sep:string do if length(Sep) == 0 then sep = char(0) else if length(Sep) == 1 then sep = Sep.0 else return WrongArg(1,"a string of length 0 or 1")
+	       else return WrongArg(1,"a string or an integer");
+	       when s.2
+	       is t:Net do net = t 
+	       is s:string do net = toNet(s)
+	       else return WrongArg(3,"a net or a string");
+	       )
+	  else if length(s) == 2 then (
+	       when s.0 
+	       is Wid:Integer do if !isInt(Wid) then return WrongArgSmallInteger(1) else wid = toInt(Wid)
+	       is Sep:string do if length(Sep) == 0 then sep = char(0) else if length(Sep) == 1 then sep = Sep.0 else return WrongArg(1,"a string of length 0 or 1")
+	       else return WrongArg(1,"a string or an integer");
+	       when s.1
+	       is t:Net do net = t 
+	       is s:string do net = toNet(s)
+	       else return WrongArg(2,"a net or a string");
+	       )
+	  else return WrongNumArgs(1,3))
+     is s:string do net = toNet(s)
+     is n:Net do net = n
+     else return WrongArg("a string or a net");
+     if wid < 0 then wid = -wid;
+     if wid == 0 then wid = printWidth;
+     if wid == 0 then wid = 80;
+     Expr(wrap(wid,sep,net)));
 setupfun("wrap",wrap);
 
 minimizeFilename(e:Expr):Expr := (
@@ -1360,6 +1386,7 @@ loadDepthS := dummySymbol;
 printingPrecisionS := dummySymbol;
 recursionLimitS := dummySymbol;
 stopIfErrorS := dummySymbol;
+printWidthS := dummySymbol;
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
@@ -1373,7 +1400,8 @@ syms := SymbolSequence(
      (  loadDepthS = setupvar("loadDepth",toExpr(loadDepth));  loadDepthS  ),
      (  printingPrecisionS = setupvar("printingPrecision",toExpr(printingPrecision));  printingPrecisionS  ),
      (  recursionLimitS = setupvar("recursionLimit",toExpr(recursionlimit));  recursionLimitS  ),
-     (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  )
+     (  stopIfErrorS = setupvar("stopIfError",toExpr(stopIfError));  stopIfErrorS  ),
+     (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  )
      );
 
 export setDebuggingMode(b:bool):void := (
@@ -1428,6 +1456,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === lineNumberS then (lineNumber = n; e)
 	       else if sym === printingPrecisionS then (printingPrecision = n; e)
 	       else if sym === gbTraceS then (gbTrace = n; e)
+	       else if sym === printWidthS then (printWidth = n; e)
 	       else buildErrorPacket(msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));
