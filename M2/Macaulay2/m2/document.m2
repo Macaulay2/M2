@@ -416,6 +416,7 @@ getOption := (s,tag) -> (
 getOptionList := (s,tag) -> (
      r := getOption(s,tag);
      if class r === List then r
+     else if class r === SEQ then toList r
      else if r === null then {}
      else {r}
      )
@@ -599,6 +600,26 @@ protect Usage
 protect Inputs
 protect Outputs
 protect Results
+istype := X -> parent X =!= Nothing
+alter := x -> (
+     if class x === Option and #x === 2 then (
+	  if istype x#0 then (
+	       SEQ { justSynonym x#0, ": ", SEQ x#1 }
+	       )
+	  else if class x#0 === String then (
+	       y := x#1;
+	       if class y === Option and #y === 2 then (
+		    if istype y#0 then (
+			 if y#1 =!= null and y#1 =!= ""
+			 then SEQ { TT x#0, ", ", justSynonym y#0, ": ", SEQ y#1 }
+			 else SEQ { TT x#0, ", ", justSynonym y#0 }
+			 )
+		    else error "expected type to left of '=>' in synopsis"
+		    )
+	       )
+	  else error "expected string or type to left of '=>' in synopsis"
+	  )
+     else x)
 
 newSynopsis := method(SingleArgumentDispatch => true)
 newSynopsis Thing := f -> (
@@ -610,6 +631,9 @@ newSynopsis Thing := f -> (
      inp = select(inp, x -> not iso x);
      out := getOptionList(SYN,Outputs);
      res := getOptionList(SYN,Results);
+     inp = alter \ inp;
+     ino = alter \ ino;
+     out = alter \ out;
      if SYN =!= null then (
 	  SEQ {						    -- to be implemented
      	       BOLD "New synopsis",
