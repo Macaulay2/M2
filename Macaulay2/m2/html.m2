@@ -461,12 +461,21 @@ installPackage Package := o -> pkg -> (
 	       ));
 
      -- cache processed documentation in database
+     stderr << "--storing processed documentation" << endl;
      docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
      makeDirectory docDir;
-     docDatabase := openDatabaseOut(docDir | "documentation.db");
+     tmpname := docDir | "documentation.db.tmp";
+     dbname := docDir | "documentation.db";
+     if fileExists tmpname then unlink tmpname;
+     docDatabase := openDatabaseOut tmpname;
      scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
      close docDatabase;
-     stderr << "--stored processed documentation in " << docDatabase << endl;
+     if fileExists dbname then unlink dbname;
+     link(tmpname,dbname);
+     unlink tmpname;
+     stderr << "--stored processed documentation in " << dbname << endl;
+     pkg#"processed documentation database" = openDatabase dbname;
+     addEndFunction(() -> if pkg#?"processed documentation database" and isOpen pkg#"processed documentation database" then close pkg#"processed documentation database");
 
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;

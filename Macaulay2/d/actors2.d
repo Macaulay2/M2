@@ -489,11 +489,12 @@ openListener(filename:Expr):Expr := (
      is Error do filename
      else WrongArgString());
 setupfun("openListener",openListener);
-isOpenFile(e:Expr):Expr := (
+isOpen(e:Expr):Expr := (
      when e
      is f:file do toExpr(f.listener || f.input || f.output)
+     is x:Database do toExpr(x.isopen)
      else False);
-setupfun("isOpenFile",isOpenFile);
+setupfun("isOpen",isOpen);
 isInputFile(e:Expr):Expr := (
      when e
      is f:file do toExpr(f.input)

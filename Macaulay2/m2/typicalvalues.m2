@@ -69,7 +69,8 @@ applyValues(HashTable,Function) := HashTable => applyValues
 atEndOfFile(File) := Boolean => atEndOfFile
 isInputFile(File) := Boolean => isInputFile
 isListener(File) := Boolean => isListener
-isOpenFile(File) := Boolean => isOpenFile
+isOpen(File) := Boolean => isOpen
+isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
 isReady(File) := Boolean => isReady
 mutable(Thing) := Boolean => mutable

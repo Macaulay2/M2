@@ -340,9 +340,10 @@ document {
      }
 
 document {
-     Key => isOpenFile,
-     Headline => "whether a file is open",
-     TT "isOpenFile f", " -- whether ", TT "f", " is an open file.",
+     Key => isOpen,
+     Headline => "whether a file or database is open",
+     TT "isOpen f", " -- whether ", TT "f", " is an open file or an
+     open database.",
      PARA,
      "An open file is either an input file, an output file, an
      input output file, or a listener.",
