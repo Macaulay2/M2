@@ -373,8 +373,7 @@ document { "manipulating polynomials",
      come from the same ring.",
      EXAMPLE "ring f === ring g",
      "Notice that in the comparison above, the strict equality operator ", TO "===", "
-     is used.  For clarification about whether to use ", TO "===", " or ", TO "==", "
-     in such situations, see ", TO "comparison operators", ".",
+     is used.",     
      PARA,
      "The coefficient of a monomial in a polynomial can be obtained with ", TO "_", ".",
      EXAMPLE {

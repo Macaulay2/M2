@@ -48,7 +48,7 @@ reach2(MarkUpList) := x -> scan(x,reach2)
 reach2(List    ) := x -> scan(x,reach2)
 reach2(SHIELD  ) := reach1
 reach2(TO      ) := (x) -> (
-     node := toString x#0;
+     node := formatDocumentTag x#0;
      if not fileNumberTable#?node
      then (
 	  record node;
@@ -134,7 +134,7 @@ crossReference := (key,text) -> (
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO  := x -> crossReference(toString x#0, formatDocumentTag x#0)
+booktex TO  := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0)
 
 menuLevel := 2
 
@@ -249,6 +249,8 @@ booktex H6 := x -> concatenate (
      ///\endgroup\par\smallskip%
 ///
      )
+
+booktex ExampleTABLE := x -> concatenate apply(x,y -> booktex y#1)
 
 booktex CODE :=
 booktex PRE := x -> concatenate (
