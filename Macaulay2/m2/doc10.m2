@@ -188,10 +188,14 @@ assert (HH_4 C == 0)
 "
 
 document { (resolution, Module),
-     OldSynopsis => {
-	  "C = resolution M",
-	  "M" => "a module",
-	  "C" => {"a free resolution of ", TT "M"}
+     Synopsis => {
+	  Usage => "C = resolution M",
+	  Inputs => {
+	       "M" => "",
+	       },
+	  Outputs => {
+	       {"a free resolution of ", TT "M"}
+	       }
 	  },
      "For an abbreviation, use ", TO "res", ".",
      EXAMPLE {

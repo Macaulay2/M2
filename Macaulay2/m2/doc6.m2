@@ -990,10 +990,14 @@ document { isSubmodule,
      Headline => "whether a module is evidently a submodule of a free module"
      }
 document { (isSubmodule, Module),
-     OldSynopsis => {
-	  "b = isSubmodule(M)",
-	  "M" => null,
-	  "b" => {"whether ", TT "M", " is evidently a submodule of a free module."}
+     Synopsis => {
+	  Usage => "isSubmodule M",
+	  Inputs => {
+	       "M" => "",
+	       },
+	  Outputs => {
+	       {"whether ", TT "M", " is evidently a submodule of a free module."}
+	       }
 	  },
      "No computation is done, so the module may be isomorphic to a submodule
      of a free module but we don't detect it.",

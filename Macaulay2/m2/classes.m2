@@ -3,7 +3,7 @@
 Option.synonym = "option"
 Net.synonym = "net"
 Time.synonym = "timing result"
-Boolean.synonym = "boolean value"
+Boolean.synonym = "Boolean value"
 MutableHashTable.synonym = "mutable hash table"
 CacheTable.synonym = "cache table"
 Function.synonym = "function"
