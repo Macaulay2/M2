@@ -135,7 +135,7 @@ void SPairSet::insert(SPairSet::spair *p)
   p->next = heap;
   heap = p;
 }
-int SPairSet::find_new_pairs(const std::vector<gbelem, gc_allocator<gbelem> > &gb,
+int SPairSet::find_new_pairs(const gb_array &gb,
 			     bool remove_disjoints)
   // returns the number of new pairs found
 {
@@ -190,8 +190,8 @@ void SPairSet::display()
 SPairConstructor::pre_spair *SPairConstructor::create_pre_spair(int i)
 {
   // Construct the pre_spair (gb.size()-1, i)
-  monomial m0 = gb[gb.size()-1].f.monoms[0];
-  monomial m1 = gb[i].f.monoms[0];
+  monomial m0 = gb[gb.size()-1]->f.monoms[0];
+  monomial m1 = gb[i]->f.monoms[0];
   uninterned_monomial m = MonomialOps::quotient(B, m1, m0);
 #if 0
   int len = MONOMIAL_LENGTH(m1);
@@ -210,7 +210,7 @@ SPairConstructor::pre_spair *SPairConstructor::create_pre_spair(int i)
 
 SPairConstructor::SPairConstructor(MonomialSet* H0,
 				   SPairSet *S0,
-				   const std::vector<gbelem, gc_allocator<gbelem> > &gb0,
+				   const gb_array &gb0,
 				   bool remove_disjoints0)
   : H(H0),
     S(S0),
@@ -248,12 +248,12 @@ void SPairConstructor::send_spair(pre_spair *p)
   H->find_or_insert(p->quot, quot1);
   int i = gb.size()-1;
   int j = p->first_gb_num;
-  int deg = monomial_simple_degree(quot1) + gb[i].deg;
-  monomial lcm = MonomialOps::mult(H,gb[i].f.monoms[0], quot1);
+  int deg = monomial_simple_degree(quot1) + gb[i]->deg;
+  monomial lcm = MonomialOps::mult(H,gb[i]->f.monoms[0], quot1);
   monomial first = quot1;
   monomial second = MonomialOps::quotient(H,
-					  gb[i].f.monoms[0],
-					  gb[j].f.monoms[0]);
+					  gb[i]->f.monoms[0],
+					  gb[j]->f.monoms[0]);
   SPairSet::spair *result = SPairSet::make_spair(deg, lcm, first, i, second, j);
 
   // Now ship off to the spair set
@@ -268,7 +268,7 @@ int SPairConstructor::construct_pairs()
   // Loop through each element of gb, and create the pre_spair
   for (int i=0; i<gb.size()-1; i++)
     {
-      if (!gb[i].is_minimal) continue;
+      if (!gb[i]->is_minimal) continue;
       // Normally: need to check the component here
       pre_spair *p = create_pre_spair(i);
       new_set.push_back(p);
@@ -330,7 +330,7 @@ int SPairConstructor::construct_pairs()
 
 int SPairConstructor::make(MonomialSet* H0,
 			   SPairSet *S0,
-			   const std::vector<gbelem, gc_allocator<gbelem> > &gb0,
+			   const gb_array &gb0,
 			   bool remove_disjoints0)
 {
   SPairConstructor C(H0,S0,gb0,remove_disjoints0);

@@ -58,7 +58,7 @@ class SPairSet : public our_new_delete
 
   static spair *make_spair_gen(int deg, poly *f, int column);
 
-  int find_new_pairs(const std::vector<gbelem, gc_allocator<gbelem> > &gb,
+  int find_new_pairs(const gb_array &gb,
 		    bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
 
@@ -107,8 +107,7 @@ class SPairConstructor : public our_new_delete
 
   SPairConstructor(MonomialSet *H0,
 		   SPairSet *S0,
-		   const std::vector<gbelem, 
-                                     gc_allocator<gbelem> > &gb,
+		   const gb_array &gb,
 		   bool remove_disjoints);
 
   int construct_pairs();
@@ -118,14 +117,13 @@ class SPairConstructor : public our_new_delete
   MemoryBlock B;
   SPairSet *S;
 
-  const std::vector<gbelem, gc_allocator<gbelem> > &gb;
+  const gb_array &gb;
   bool remove_disjoints;
 
  public:
   static int make(MonomialSet *H0,
 		  SPairSet *S0,
-	          const std::vector<gbelem, 
-                                     gc_allocator<gbelem> > &gb,
+		  const gb_array &gb,
 		  bool remove_disjoints);
 };
 

@@ -13,11 +13,12 @@
 
 void from_M2_vec(MonomialSet *H,
 		 const FreeModule *F, 
-		 vec v, 
+		 vec v,
+		 int &deg,
+		 int &alpha, // difference in degree of lead term with 
+		             // highest degree of a term
 		 poly &result)
 {
-#warning "problems: free module orders, copy of coeffs"
-
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
   int n = 0;
@@ -48,13 +49,13 @@ void from_M2_vec(MonomialSet *H,
 
 void from_M2_matrix(const Matrix *m, 
 		    MonomialSet *H,
-		    std::vector<poly,gc_allocator<poly> > &result_polys)
+		    gb_array &result_polys)
 {
   const FreeModule *F = m->rows();
   for (int i=0; i<m->n_cols(); i++)
     {
-      poly g;
-      from_M2_vec(H,F,m->elem(i),g);
+      gbelem *g = new gbelem;
+      from_M2_vec(H,F,m->elem(i),g->deg,g->alpha,g->f);
       result_polys.push_back(g);
     }
 }
@@ -89,28 +90,25 @@ vec to_M2_vec(poly &f,
   return R->make_vec(0, head.next);
 }
 
-Matrix *to_M2_matrix(std::vector<poly,gc_allocator<poly> > &polys, const FreeModule *F)
+Matrix *to_M2_matrix(gb_array &polys, const FreeModule *F)
 {
   MatrixConstructor result(F,polys.size());
   for (int i=0; i<polys.size(); i++)
-    result.set_column(i, to_M2_vec(polys[i], F));
+    result.set_column(i, to_M2_vec(polys[i]->f, F));
   return result.to_matrix();
 }
 
 void spair_testing(MonomialSet *H,
-		   std::vector<poly,gc_allocator<poly> > &polys)
+		   gb_array &polys)
 {
   SPairSet *S = new SPairSet(H);
-  std::vector<gbelem, gc_allocator<gbelem> > gb;
+  gb_array gb;
   for (int i=0; i<polys.size(); i++)
     {
       // First make a gbelem, and insert it into gb
-      gbelem g;
-      g.f = polys[i]; // this isn't really correct.  If it were not a
-                       // debugging routine, this should be copied.
-      // Want the degree to be the max degree of any term of f
-      g.deg = monomial_simple_degree(polys[i].monoms[0]);
-      g.is_minimal = 1;
+      gbelem *g;
+      *g = *(polys[i]);
+      g->is_minimal = 1;
       gb.push_back(g);
 
       // Now call spair update
