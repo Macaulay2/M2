@@ -24,31 +24,8 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
   return true;
 }
 
-bool LLLoperations::setThreshold(const RingElement *threshold, ring_elem& num, ring_elem &den)
-{
-  const Ring *R = threshold->get_ring();
-  if (R == globalZZ)
-    {
-      num = globalZZ->copy(threshold->get_value());
-      den = globalZZ->from_int(1);
-      return true;
-    }
-  const FractionField *KK = R->cast_to_FractionField();
-  if (KK != 0)
-    {
-      const Ring *K = KK->get_ring();
-      if (K == globalZZ)
-	{
-	  num = globalZZ->copy(KK->numerator(threshold->get_value()));
-	  den = globalZZ->copy(KK->denominator(threshold->get_value()));
-	  return true;
-	}
-    }
-  return false;
-}
-
 bool LLLoperations::initializeLLL(const MutableMatrix *A,
-			    const RingElement *threshold,
+			    const M2_Rational threshold,
 			    MutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
@@ -58,13 +35,12 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
       return false;
     }
 
+  ring_elem num = globalZZ->from_int(mpq_numref(threshold));
+  ring_elem den = globalZZ->from_int(mpq_denref(threshold));
   // Check that 'threshold' is in range, and set the numerator, denom
-  ring_elem num;
-  ring_elem den;
-  if (!setThreshold(threshold, num, den))
-    return false;
   if (!checkThreshold(num,den))
     {
+      ERROR("LLL threshold should be in the range (1/4, 1]");
       globalZZ->remove(num);
       globalZZ->remove(den);
       return false;
@@ -92,7 +68,7 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
 }
 
 bool LLLoperations::initializeLLL(const Matrix *m,
-				  const RingElement *threshold,
+				  const M2_Rational threshold,
 				  bool useChangeOfBasisMatrix,
 				  MutableMatrix *& A,
 				  MutableMatrix *& LLLstate)
@@ -393,7 +369,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
   return COMP_INTERRUPTED;
 }
 
-bool LLLoperations::LLL(MutableMatrix *A, const RingElement *threshold)
+bool LLLoperations::LLL(MutableMatrix *A, const M2_Rational threshold)
 {
   MutableMatrix *LLLstate;
   if (!initializeLLL(A,threshold,LLLstate))
@@ -407,7 +383,7 @@ bool LLLoperations::LLL(MutableMatrix *A, const RingElement *threshold)
   return true;
 }
 
-bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis)
+bool LLLoperations::LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis)
 {
   MutableMatrix *A;
   MutableMatrix *LLLstate;
@@ -424,7 +400,7 @@ bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&
   return true;
 }
 
-bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis, Matrix *&ChangeOfBasis)
+bool LLLoperations::LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis, Matrix *&ChangeOfBasis)
 {
   MutableMatrix *A;
   MutableMatrix *LLLstate;

@@ -11,7 +11,6 @@
 class LLLoperations
 {
   static bool checkThreshold(ring_elem num, ring_elem den);
-  static bool setThreshold(const RingElement *threshold, ring_elem& num, ring_elem &den);
 
   static bool Lovasz(MutableMatrix *lambda,
 		     int k,
@@ -26,12 +25,12 @@ class LLLoperations
 		    MutableMatrix *lambda);
 public:
   static bool initializeLLL(const Matrix *m,
-			    const RingElement *threshold,
+			    const M2_Rational threshold,
 			    bool useChangeOfBasisMatrix,
 			    MutableMatrix *& A,
 			    MutableMatrix *& LLLstate);
   static bool initializeLLL(const MutableMatrix *A,
-			    const RingElement *threshold,
+			    const M2_Rational threshold,
 			    MutableMatrix *& LLLstate);
   // Returns false if there is an error, and sets gError.
 
@@ -41,20 +40,20 @@ public:
   // Return values: COMP_DONE, COMP_DONE_STEPS, COMP_INTERRUPTED
 
   static void setMultipliers(const MutableMatrix *A, MutableMatrix *lambda);
-  static bool isLLL(const Matrix *m, const RingElement *threshold);
-  static bool isLLL(const MutableMatrix *A, const RingElement *threshold);
+  static bool isLLL(const Matrix *m, const M2_Rational threshold);
+  static bool isLLL(const MutableMatrix *A, const M2_Rational threshold);
 
   ///////////////////////////
   // packaged LLL routines //
   ///////////////////////////
   
   // These routines return false if the computation is interrupted
-  static bool LLL(MutableMatrix *M, const RingElement *threshold);
+  static bool LLL(MutableMatrix *M, const M2_Rational threshold);
   // M is replaced with the LLL basis. false is returned if there was an 
   // error or an interrupt.
 
-  static bool LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis);
-  static bool LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis, Matrix * &ChangeOfBasis);
+  static bool LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis);
+  static bool LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis, Matrix * &ChangeOfBasis);
 };
 #endif
 

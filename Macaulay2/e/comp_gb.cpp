@@ -37,6 +37,10 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
   if (R2 == 0)
     {
       // Look for the correct computation type here.
+      if (R1 == globalZZ)
+	{
+	  return new HermiteComputation(m, collect_syz, n_rows_to_keep);
+	}
 #warning "handle non polynomial rings"
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
       return 0;

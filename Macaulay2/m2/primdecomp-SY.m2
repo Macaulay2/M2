@@ -101,7 +101,7 @@ independentSets = (I) -> (
 
 -- Make a list of the variables which occur in the lead 
 -- monomial of f.
-variables := (f) -> apply(positions(exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
+variables = (f) -> apply(positions(exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
  
 -- Compute the flattener with respect to the 
 -- variables in a monomial
@@ -139,6 +139,7 @@ flattener = (I, m) -> (
      )
      
 TEST ///
+debug Macaulay2
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 IS = independentSets I
@@ -249,7 +250,7 @@ fac1 = I_1
 fac2 = J_1
 F = fac1 * fac2
 minSat(L,F)
-quotMin(generators L,{fac1,fac2},F)
+quotMin(L,{fac1,fac2},F)
 -- quotMinold(L,{fac1,fac2},F)
 ///
 
@@ -284,6 +285,7 @@ extract = (I,P) -> (
      )
 
 TEST ///
+debug Macaulay2
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 L = I^2
@@ -301,7 +303,7 @@ PPD(L,{I})
 -- #3: minimal divisor of the sep, as computed by minSat
 --     (list of polynomials, which are the factors).
 
-PPD := (I,PP) -> (
+PPD = (I,PP) -> (
      R := ring I;
      if #PP === 1 then 
          {{{I, PP#0, 1_R, {1_R}}}, ideal(1_R)}
@@ -320,6 +322,7 @@ PPD := (I,PP) -> (
           {PPP, I'}))
 
 TEST ///
+debug Macaulay2
 R = ZZ/32003[a..d]
 I = ideal(a,b,c-1)
 J = ideal(c,d,a-1)
@@ -329,7 +332,7 @@ PPD(L,{I,J})
 
 PPDcharSets := (I) -> PPD(I, newdecompose I)
 
-PPDSpecialCharSets := (I, PP) -> (
+PPDSpecialCharSets = (I, PP) -> (
      -- PP is a list of pairs (prime ideal P_i, a list of factors of a polynomial f_i).
      -- assumption: rad I = intersection(rad(P_i,f_i), all i)
      -- returns a PPD of I.
@@ -362,7 +365,7 @@ PPDSpecialCharSets := (I, PP) -> (
      )
 
 TEST ///
-
+debug Macaulay2
 R = ZZ/32003[a..d]
 I = ideal(a,b,c-1)
 J = ideal(c,d,a-1)
@@ -535,14 +538,6 @@ time primaryDecomposition L
 --peek C1
 
 ///
-
--- These are used as fields of the PDC data type.
--- But they can be erased here...
--- We also use 'depth', 'ideal', but these are OK to protect...
-erase global H
-erase global W
-erase global U
-erase global thisNode
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -7,6 +7,13 @@
 
 extern ZZ *globalZZ;
 
+int HermiteComputation::complete_thru_degree() const
+  // The computation is complete up through this degree.
+{
+  if (status() == COMP_DONE) return 0;
+  return -1;
+}
+
 hm_elem *HermiteComputation::new_gen(int i)
 {
   hm_elem *result = new hm_elem;
@@ -62,8 +69,7 @@ HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
   if (nsyz < 0 || nsyz > m->n_cols())
     nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
-#warning "this syz needs to be replaced, assuming we are keeping this code"
-  //  const FreeModule *F = m->cols()->sub_space(nsyz);  
+  Fsyz = m->cols()->sub_space(nsyz);  
   //  syz = new Matrix(F);
 
   for (i=0; i<m->n_cols(); i++)
@@ -255,7 +261,7 @@ void HermiteComputation::reduce(hm_elem *&p, hm_elem *q)
   insert(q);
 }
 
-int HermiteComputation::calc(const int *, const intarray &/*stop*/)
+void HermiteComputation::start_computation()
 {
   // ngb = stop[0]
   // nsyz = stop[1]
@@ -278,7 +284,7 @@ int HermiteComputation::calc(const int *, const intarray &/*stop*/)
       GB_list = p;
       n_gb++;
     }
-  return COMP_DONE;
+  set_status(COMP_DONE);
 }
 
 
@@ -326,13 +332,6 @@ const MatrixOrNull *HermiteComputation::get_initial(int nparts)
   return result;
 #endif
   return 0;
-}
-
-enum ComputationStatusCode HermiteComputation::gb_status(int *degree)
-  // The computation is complete up through this degree.
-{
-#warning "set *degree correctly"
-  return status();
 }
 
 void HermiteComputation::text_out(buffer &o)
