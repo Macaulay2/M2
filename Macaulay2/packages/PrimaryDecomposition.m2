@@ -14,7 +14,6 @@ export (
      minSatPPD,
      primaryComponent,
      primdecComputation,
-     printExamples,
      quotMin,
      radicalContainment,
      sortByDegree

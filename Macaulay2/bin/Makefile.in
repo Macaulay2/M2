@@ -13,5 +13,5 @@ install-strip :: $(bindir); $(INSTALL_PROGRAM) -s M2$(EXE) $(bindir)/M2$(EXE)
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin install"
 # End:

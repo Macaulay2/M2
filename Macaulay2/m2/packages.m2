@@ -169,7 +169,7 @@ export Sequence := v -> (
 		    nam = toString sym;
 		    );
 	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
-	       if not pd#?(toString sym) or pd#(toString sym) =!= sym then error ("symbol ",sym," not first defined in current package: ", currentPackage);
+	       if not pd#?(toString sym) or pd#(toString sym) =!= sym then error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       ));
