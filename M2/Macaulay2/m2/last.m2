@@ -25,7 +25,7 @@ writableGlobals := set (
      symbol documentationPath, symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
      symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
      symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, 
-     symbol errorDepth, symbol recursionLimit
+     symbol errorDepth, symbol recursionLimit, symbol globalDictionaries
      )
 
 scan(pairs Macaulay2.Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)

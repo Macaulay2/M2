@@ -1258,15 +1258,38 @@ newDictionaryFun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("newDictionary", newDictionaryFun);
 
+
+localDictionaries(f:Frame):Expr := Expr(
+     list(
+	  new Sequence len numFrames(f) do (
+	       while f.frameID > 0
+	       && ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame )
+	       do f = f.outerFrame)));
+
+localDictionaries(e:Expr):Expr := (
+     when e
+     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
+     is sc:SymbolClosure do localDictionaries(sc.frame)
+     is fc:FunctionClosure do localDictionaries(fc.frame)
+     is cfc:CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
+     is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
+     else WrongArg("a function, a symbol, or ()"));
+setupfun("localDictionaries", localDictionaries);
+
+
+-----------------------------------------------------------------------------
+
+globalDictionaryList():Expr := (		    -- get the current globalDictionary list
+     g := globalDictionary;
+     n := 0;
+     while ( n = n+1; g != g.outerDictionary ) do g = g.outerDictionary;
+     g = globalDictionary;
+     Expr(list(new Sequence len n do while true do ( provide Expr(DictionaryClosure(globalFrame,g)); g = g.outerDictionary ))));
+
 globalDictionaries(e:Expr):Expr := (
      when e
      is a:Sequence do (
-	  if length(a) == 0 then (		    -- get the current globalDictionary list
-	       g := globalDictionary;
-	       n := 0;
-	       while ( n = n+1; g != g.outerDictionary ) do g = g.outerDictionary;
-	       g = globalDictionary;
-	       Expr(list(new Sequence len n do while true do ( provide Expr(DictionaryClosure(globalFrame,g)); g = g.outerDictionary ))))
+	  if length(a) == 0 then globalDictionaryList()
      	  else WrongNumArgs(0))
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
@@ -1290,21 +1313,37 @@ globalDictionaries(e:Expr):Expr := (
 	  globalDictionary = a.0;
 	  e)
      else WrongNumArgs(0));
-setupfun("globalDictionaries", globalDictionaries);
-
-localDictionaries(f:Frame):Expr := Expr(
-     list(
-	  new Sequence len numFrames(f) do (
-	       while f.frameID > 0
-	       && ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame )
-	       do f = f.outerFrame)));
-
-localDictionaries(e:Expr):Expr := (
+globalDictionariesS := setupvar("globalDictionaries",globalDictionaryList());
+storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
-     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
-     is sc:SymbolClosure do localDictionaries(sc.frame)
-     is fc:FunctionClosure do localDictionaries(fc.frame)
-     is cfc:CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
-     is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
-     else WrongArg("a function, a symbol, or ()"));
-setupfun("localDictionaries", localDictionaries);
+     is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+	  sym := s.0;
+	  if !(sym === globalDictionariesS)
+	  then buildErrorPacket("global assignment hook encountered unknown symbol")
+	  else globalDictionaries(s.1))
+     else WrongNumArgs(2));
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,globalDictionariesS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
+
+loadDepthS := setupvar("loadDepth",Expr(toInteger(LoadDepth)));
+recursionLimitS := setupvar("recursionLimit",Expr(toInteger(recursionlimit)));
+errorDepthS := setupvar("errorDepth",Expr(toInteger(ErrorDepth)));
+storeIntegerVariable(e:Expr):Expr := (			    -- called with (symbol,newvalue)
+     when e
+     is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+	  sym := s.0;
+	  when s.1
+	  is i:Integer do (
+	       if !isInt(i) then buildErrorPacket("expected new value to be a small integer")
+	       else (
+		    n := toInt(i);
+		    if sym === loadDepthS then (LoadDepth = n; nullE)
+		    else if sym === errorDepthS then (ErrorDepth = n; nullE)
+		    else if sym === recursionLimitS then (recursionlimit = n; nullE)
+		    else buildErrorPacket("global assignment hook encountered unknown symbol"))
+	       )
+	  else buildErrorPacket("expected new value to be an integer"))
+     else WrongNumArgs(2));
+f := Expr(CompiledFunction(storeIntegerVariable,nextHash()));
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,loadDepthS)),f);
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,errorDepthS)),f);
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,recursionLimitS)),f);
