@@ -331,6 +331,21 @@ M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
+  int nrows = M->n_rows();
+  if (start < 0 || start + perm->len > nrows)
+    {
+      ERROR("row indices out of range");
+      return false;
+    }
+  for (int i=0; i<perm->len; i++)
+    {
+      int r = start + perm->array[i];
+      if (r < 0 || r >= nrows)
+	{
+	  ERROR("row indices out of range");
+	  return false;
+	}
+    }
   return M->row_permute(start,perm);
 }
 
@@ -340,6 +355,21 @@ M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
+  int ncols = M->n_cols();
+  if (start < 0 || start + perm->len > ncols)
+    {
+      ERROR("column indices out of range");
+      return false;
+    }
+  for (int i=0; i<perm->len; i++)
+    {
+      int r = start + perm->array[i];
+      if (r < 0 || r >= ncols)
+	{
+	  ERROR("column indices out of range");
+	  return false;
+	}
+    }
   return M->column_permute(start,perm);
 }
 

@@ -40,6 +40,8 @@ exportMutable (
 	)
 
 export (
+	symbol rowPermute,
+	symbol columnPermute,
         symbol Partition,
         symbol inverse,
         symbol LinearAlgebra,

@@ -20,6 +20,7 @@ class DMat : public our_new_delete
                 // columns stored one after another
 
 
+  void copy_elems(int n_to_copy, elem *target, int target_stride, elem *source, int stride);
 public:
   DMat(const RingType *R0, int nrows, int ncols); // Makes a zero matrix
 
