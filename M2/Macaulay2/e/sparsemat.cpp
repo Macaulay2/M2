@@ -156,7 +156,7 @@ bool SparseMutableMatrix::divide_row(int i, ring_elem r, bool do_recording)
   for (int c=0; c<n_cols(); c++)
     R->divide_row(columns_[c], i, r);
   if (do_recording && rowOps != 0)
-    rowOps->divide_column(r,i,false);
+    rowOps->divide_column(i,r,false);
   return true;
 }
 
@@ -166,7 +166,7 @@ bool SparseMutableMatrix::divide_column(int i, ring_elem r, bool do_recording)
   if (error_column_bound(i)) return false;
   R->divide_vec_to(columns_[i], r);
   if (do_recording && colOps != 0)
-    colOps->divide_column(r,i,false);
+    colOps->divide_column(i,r,false);
   return true;
 }
 

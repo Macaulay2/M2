@@ -16,6 +16,7 @@ union ring_elem
   Nterm * poly_val;
 
   ring_elem() : poly_val(0) {}
+  //explicit ring_elem(int a) : int_val(a) {} // really want this version...
   ring_elem(int a) : int_val(a) {}
   ring_elem(Nterm *a) : poly_val(a) {}
 

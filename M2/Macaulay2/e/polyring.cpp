@@ -1062,8 +1062,7 @@ void PolyRing::syzygy(const ring_elem a, const ring_elem b,
 
 ring_elem PolyRing::random() const
 {
-  ERROR("not yet implemented");
-  return 0;
+  return make_flat_term(K_->random(), M_->make_one());
 }
 
 void PolyRing::elem_text_out(buffer &o, const ring_elem f) const

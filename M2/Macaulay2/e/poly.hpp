@@ -376,7 +376,7 @@ class PolyRingFlat : public PolynomialRing
 // The class of polynomial rings implemented as a pointer (single value).
 {
 public:
-  virtual Nterm * numerator(ring_elem f) const { return f; }
+  virtual Nterm * numerator(ring_elem f) const { return f.poly_val; }
 };
 
 
