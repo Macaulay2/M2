@@ -228,15 +228,13 @@ endif
 
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBCF_PG)" "yes"
-LIBRARYOPTIONS += -lcf-pg
+LIBRARYOPTIONS += -lcf-pg -lcfmem-pg
 else
-LIBRARYOPTIONS += -lcf
+LIBRARYOPTIONS += -lcf -lcfmem
 endif
 else
-LIBRARYOPTIONS += -lcf
+LIBRARYOPTIONS += -lcf -lcfmem
 endif
-
-LIBRARYOPTIONS += -lcfmem
 
 LIBRARYDEPS    += factory_setup.o
 LIBRARYOPTIONS += factory_setup.o
