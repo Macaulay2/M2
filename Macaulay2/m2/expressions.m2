@@ -922,7 +922,7 @@ document { quote tex,
 	  "R = ZZ[a..f]",
       	  "tex matrix {{a^2+2,b,c},{d,e,f^3-a}}",
 	  },
-     SEEALSO {"TeX", "hypertex", "texMath"}
+     SEEALSO {"TeX", "texMath"}
      }
 
 document { quote texMath,
@@ -936,7 +936,7 @@ document { quote texMath,
 	  "R = ZZ[x]",
       	  "texMath (x-1)^6",
 	  },
-     SEEALSO {"TeX", "hypertex", "tex"}
+     SEEALSO {"TeX", "tex"}
      }
 
 texMath Expression := v -> (
@@ -1216,7 +1216,9 @@ document { quote TeX,
 print = x -> (<< net x << endl; null)
 
 document { quote print,
-     TT "print x", " -- prints x on the standard output followed by a new line",
+     TT "print x", " -- prints ", TT "x", " on the standard output followed by a new line",
+     PARA,
+     "The return value is ", TO "null", "."
      }
 -----------------------------------------------------------------------------
 
@@ -1385,7 +1387,7 @@ net Entity := x -> if x.?net then x.net else x.name
 expand Entity := x -> if x.?value then x.value else x
 use Entity := x -> if x.?use then x.use x else x
 
-RightArrow = hold Entity {
+RightArrow = Entity {
      quote texMath => ///\rightarrow{}///,
      quote html    => ///<IMG SRC="RightArrow.gif">///,
      quote name    => "RightArrow",
@@ -1398,7 +1400,7 @@ document { quote RightArrow,
      rightward pointing arrow."
      }
 
-DownArrow = hold Entity {
+DownArrow = Entity {
      quote texMath => ///\downarrow{}///,
      quote html    => ///<IMG SRC="DownArrow.gif">///,
      quote name    => "DownArrow",

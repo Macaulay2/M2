@@ -857,7 +857,7 @@ annihilator Module := M -> (
      f := presentation M;
      image f : target f )
 document { quote annihilator,
-     TT "annihilator M", " -- produce the annihilator ideal of a module M.",
+     TT "annihilator M", " -- produce the annihilator ideal of a module or coherent sheaf.",
      PARA,
      "For an abbreviation, use ", TO "ann", "."
      }

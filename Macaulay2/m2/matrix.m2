@@ -1969,7 +1969,7 @@ kernel Matrix := (g,options) -> if g.?kernel then g.kernel else g.kernel = (
 
 kernel RingElement := (g,options) -> kernel (matrix {{g}},options)
 
-homology(Matrix,Matrix) := (g,f) -> (
+homology(Matrix,Matrix) := (g,f,opts) -> (
      R := ring f;
      M := source f;
      N := target f;

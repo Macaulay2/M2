@@ -581,7 +581,7 @@ hathatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,HatHatS);
 setup(HatHatS,hathatfun);
 
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
-setup(TildeS,Tildefun);
+setuppostfix(TildeS,Tildefun);
 
 underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
 setup(UnderscoreS,underscorefun);

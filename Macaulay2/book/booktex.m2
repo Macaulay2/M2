@@ -86,7 +86,7 @@ document { "Combined Index",
 ///,
      apply(
 	  sort join(keys docDatabase, {"Appendix"}), 
-	  node -> (NOINDENT, TO node, PARA)),
+	  node -> (NOINDENT{}, TO node, PARA{})),
      TEX ///
 \endtwocolumn
 ///,
@@ -179,15 +179,15 @@ booktex HREF := s -> (
      )
 
 booktex TEX := identity
-(class NOINDENT)#booktex = (x) -> ///\noindent\ignorespaces
+booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///
 
-(class HR)#booktex   = (x) -> ///\par
+booktex HR := (x) -> ///\par
 \line{\leaders\hrule\hfill}
 ///
 
-(class PARA)#booktex = (x) -> concatenate(newline,newline)
-(class BR)#booktex  = (x) -> ///\hfil\break
+booktex PARA := (x) -> concatenate(newline,newline)
+booktex BR := (x) -> ///\hfil\break
 ///
 booktex IMG := x -> ""
 booktex Nothing := x -> ""

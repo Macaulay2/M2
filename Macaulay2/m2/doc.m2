@@ -1633,9 +1633,16 @@ document { quote currentDirectory,
      }
 
 document { quote ~,
-     TT "~ x", " -- unary operator available to the user.  A method may
+     TT "~ x", " -- a postfix unary operator available to the user.  A method may
      be installed with code such as ", 
-     PRE "          ~ X := x -> ... ",
+     PRE "           X ~ := x -> ... ",
+     PARA,
+     NOINDENT,
+     "Here are the methods associated with this operator:",
+     MENU {
+	  TO (quote ~, Module),
+	  TO (quote ~, Ring),
+     	  }
      }
 
 document { quote copy,
@@ -1851,20 +1858,13 @@ document { "reading the documentation",
      is the best way to view it.",
      PARA,
      "The directory ", TT "Macaulay2/book", " contains the code for producing
-     the documentation in TeX form, which can be printed or viewed with
-     ", TT "xdvi", ".  A hyperTeX form of the book is also makeable there
-     which can be viewed with ", TT "xhdvi", ", the most recent version of
-     which is available (May, 1995) at ",
-     PARA,
-     HREF "ftp://ftp.duke.edu/tex-archive/support/hypertex/hypertex/index.html",
-     PARA,
-     " in the file ",
-     PARA,
-     HREF "ftp://ftp.duke.edu/tex-archive/support/hypertex/hypertex/xhdvi_0.8a.tar.gz",
-     PARA,
-     " with needed WWW library routines at ",
-     PARA,
-     HREF "http://publish.aps.org/eprint/reports/hypertex/WWWLibrary.tar.Z",
+     the documentation in TeX form, which can be printed with ", TT "dvips", " 
+     or viewed on yoru screen with ", TT "xdvi", ".  The hypertext links 
+     in the book can be followed if you get ", TT "xdvi", " version 20a
+     or later.  The source code for ", TT "xdvi", " can
+     be obtained at one of the CTAN mirror sites in the directory
+     ", TT "dviware/xdvik", ".  Obtain a list of CTAN mirror sites by
+     fingering ", TT "ctan@ftp.tex.ac.uk", ".",
      PARA,
      "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."
@@ -1873,7 +1873,10 @@ document { "reading the documentation",
 document { "Macaulay 2",
      IMG "9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
-     algebraic geometry and commutative algebra.",
+     algebraic geometry and commutative algebra.  The current version is 
+     ", version#"VERSION", ".  The program is still under development, but
+     most of the main features are working.  We are eager to help new users
+     get started with it.",
      MENU {
 	  {
 	       H2 "User's Guide",
@@ -1882,6 +1885,7 @@ document { "Macaulay 2",
 		    TO "acknowledgements",
 		    TO "copyright and license",
 		    TO "how to get this program",
+		    TO "resources required",
 		    TO "reading the documentation",
 		    TO "getting started",
 		    TO "mathematical overview",
@@ -2201,6 +2205,12 @@ document { "Michael E. Stillman",
      algebra system for algebraic geometry and the predecessor of this program."
      }
 
+document { "resources required",
+     "You will need about 12 megabytes of disk space to install Macaulay 2, though
+     this may vary.  It will need about 12 megabytes of RAM to run modest size problems,
+     and can benefit from any additional memory."
+     }
+
 document { "how to get this program",
      "The program is available over the web at the Macaulay 2 home page",
      PARA, 
@@ -2512,7 +2522,9 @@ document { "mathematics",
 	  TO "GradedModule",
 	  TO "ChainComplex",
 	  TO "GroebnerBasis",
-	  TO "MonomialIdeal"
+	  TO "MonomialIdeal",
+	  TO "Variety",
+	  TO "CoherentSheaf",
 	  }
      }
 
@@ -4338,19 +4350,6 @@ document { quote toList,
 	  },
      }
 
-document { quote hypertex,
-     "hypertex", " -- a variable which indicates whether the function 
-     ", TO "tex", " should incorporate hypertext links into its output.",
-     PARA,
-     "The convention adopted by ", TT "xhdvi", " is the one used.",
-     EXAMPLE {
-	  ///n = HREF {"http://www.uiuc.edu","UIUC"};///,
-      	  ///<< tex n;///,
-      	  ///hypertex = false;///,
-      	  ///<< tex n;///
-	  }
-     }
-
 document { quote saturate,
     TT "saturate(I,J,options)", " -- computes the saturation ", TT "(I : J^*)", " 
     of I with respect to ", TT "J", ".  If ", TT "J", " is not given, the 
@@ -4587,13 +4586,7 @@ document { quote Entity,
 	  "peek (DownArrow,2)"
 	  },
      "Here is a list of all entities.",
-     MENU apply(
-	  select(
-	       values symbolTable(),
-	       v -> class value v === Holder and (value v)#?0 and class (value v)#0 === Entity
-	       ),
-	  v -> TO string v
-	  )
+     MENU apply( select( values symbolTable(), v -> class value v === Entity ), v -> TO string v )
      }
 
 document { quote netRows,

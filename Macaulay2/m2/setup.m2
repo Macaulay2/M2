@@ -231,8 +231,10 @@ document { quote Options,
       	  "f(5.,Slope=>100)",
 	  },
      PARA,
-     "Here is a complete list of symbols which are used as names of options: ",
-     between( ", ",
+     "Here is a complete list of symbols which are used as names of options:
+     ",
+     between( ",
+     ",
      	  (i -> TO i) \ rsort keys set flatten (keys \ values OptionsRegistry)
 	  ),
      ".",

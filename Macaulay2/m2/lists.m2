@@ -207,8 +207,7 @@ document { quote product,
 	  TO {(product, ZZ, Function), " -- product consecutive values of a function"},
 	  TO {(product, Tally), " -- product elements of a tally"},
 	  TO {(product, Set), " -- product elements of a tally"}
-	  },
-     SEEALSO "product"
+	  }
      }
 document { (product, List),
      TT "product v", " -- yields the product of the elements in the list v.",

@@ -26,7 +26,8 @@ document { "mathematical overview",
 		    TO "exterior algebras",
 		    TO "symmetric algebras",
 		    TO "Weyl algebras",
-		    TO "associative algebras"
+		    TO "associative algebras",
+		    TO "algebraic varieties",
 		    }
 	       ),
 	  (
@@ -46,7 +47,8 @@ document { "mathematical overview",
 		    TO "making modules from matrices", -- coker, ker, image, etc.
 		    TO "manipulating modules",
 		    TO "maps between modules",
-		    TO "bases of parts of modules"
+		    TO "bases of parts of modules",
+		    TO "coherent sheaves",
 		    }
 	       ),
 	  (
@@ -1002,6 +1004,7 @@ document { "making generic matrices",
      }
 
 document { "manipulating matrices",
+     "This node has not been  written yet."
      }
 
 document { "Groebner bases",
@@ -1023,35 +1026,52 @@ document { "Groebner bases",
      }
 
 document { "free modules",
+     "This node has not been  written yet."
      }
 
 document { "making modules from matrices",
+     "This node has not been  written yet."
      }
 
 document { "manipulating modules",
 	  -- document the way to get maps between a module M and its
 	  -- version as a cokernel in the overview
+     "This node has not been  written yet."
      }
 
 document { "maps between modules",
      	  -- (R^5)_{0}
+     "This node has not been  written yet."
      }
 
 document { "bases of parts of modules",
+     "This node has not been  written yet."
      }
 
 document { "free resolutions of modules",
+     "This node has not been  written yet."
      }
 
 document { "making chain complexes by hand",
+     "This node has not been  written yet."
      }
 
 document { "extracting information from chain complexes",
+     "This node has not been  written yet."
      }
 
 document { "manipulating chain complexes",
+     "This node has not been  written yet."
      }
 
 document { "maps between chain complexes",
+     "This node has not been  written yet."
      }
 
+document { "algebraic varieties",
+     "This node has not been  written yet."
+     }
+
+document { "coherent sheaves",
+     "This node has not been  written yet."
+     }

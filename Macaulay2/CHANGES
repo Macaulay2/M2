@@ -2,6 +2,8 @@ Changes made, most recent ones first:
 
 New in 0.8.42:
 
+The variable 'hypertex' has been removed.
+
 'Held' renamed to 'Holder'
 
 'net String' now does not put quotes around the string, and

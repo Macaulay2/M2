@@ -1,9 +1,11 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+hypertex = true
+
 load "booktex.m2"
 
 --------------------------------------------------- make the tex file
-bk = openOut (if hypertex then "M2hbook.tmp" else "M2book.tmp")
+bk = openOut "M2book.tmp"
 --------------------------------------------
 bk << ///
 %% Macaulay 2 manual

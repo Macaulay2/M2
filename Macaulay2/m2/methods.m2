@@ -178,7 +178,7 @@ scan({
 	  hilbertFunction, content,
 	  isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
 	  leadComponent, expand, degreesRing, degrees, annihilator,
-	  chainComplex, assign, cohomology, homology, numgens,
+	  chainComplex, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
 	  frac, betti, det, ring, presentation, quote use, degreesMonoid, submatrix,
 	  truncate, fraction
@@ -215,6 +215,12 @@ net = method(SingleArgumentDispatch=>true)
 vars = method(SingleArgumentDispatch=>true)
 expression = method(SingleArgumentDispatch=>true)
 factor = method( Options => { } )
+
+cohomology = method( Options => { 
+	  Degree => 0		  -- for local cohomology and sheaf cohomology
+	  } )
+homology = method( Options => { } )
+
 trim    = method ( Options => {
 	  -- DegreeLimit => {}
 	  } )
@@ -687,24 +693,22 @@ html CODE   := x -> concatenate(
      "</CODE>"
      )
 
-hypertex = true
-
 html HREF := x -> (
      "<A HREF=\"" | x#0 | "\">" | x#-1 | "</A>"
      )
 text HREF := x -> "\"" | x#-1 | "\""
 tex HREF := x -> (
-     if hypertex 
-     then concatenate(
+--   if hypertex then 
+     concatenate(
 	  ///\special{html:<A href="///, ttLiteral x#0, ///">}///,
 	  tex x#-1,
 	  ///\special{html:</A>}///
 	  )
-     else (
-	  if #x == 2
-	  then concatenate(tex x#1, " (the URL is ", tex TT x#0, ")")
-	  else tex TT x#0
-	  )
+--     else (
+--	  if #x == 2
+--	  then concatenate(tex x#1, " (the URL is ", tex TT x#0, ")")
+--	  else tex TT x#0
+--	  )
      )
 
 html SHIELD := x -> concatenate apply(x,html)
