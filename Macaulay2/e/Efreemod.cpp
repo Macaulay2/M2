@@ -93,6 +93,11 @@ EVector *EFreeModule::makeTerm(const field a, const monomial *m, int x) const
 
 EVector *EFreeModule::basisElement(int x) const
 {
+  if (x < 0 || x >= rank())
+    {
+      gError << "index out of range";
+      return zero();
+    }
   return getRing()->makeTerm(this,getCoefficientRing()->one(),getMonoid()->one(),x);
 }
 

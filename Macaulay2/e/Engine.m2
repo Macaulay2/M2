@@ -193,38 +193,22 @@ skewpolyring = (K,M,skews,ZD,degs) -> engine(ggskewpolyring, ZD, degs, K, M, ske
 -- EFreeModule --
 -----------------
 
-ERing ^ ZZ := (R,n) -> engine(ggfree, R, n, EFreeModule)
-ERing ^ List := (R,a) -> engine(ggfree, R, a, EFreeModule)
-ERing ^ EMatrix := (R,m) -> engine(ggfree, R, m, EFreeModule)
+ERing ^ ZZ                 := (R,n) -> engine(ggfree, R, n, EFreeModule)
+ERing ^ List               := (R,a) -> engine(ggfree, R, a, EFreeModule)
+ERing ^ EMatrix            := (R,m) -> engine(ggfree, R, m, EFreeModule)
 
-rank EFreeModule := (F) -> engine(ggrank, F, ZZ)
-ring EFreeModule := (F) -> engine(gggetring, F, ERing)
-degrees EFreeModule := (F) -> engine(ggdegree, F, Intarray)
-inducedOrder EFreeModule := (F) -> engine(gggetcols, F, EMatrix)
+rank EFreeModule           := (F) -> engine(ggrank, F, ZZ)
+ring EFreeModule           := (F) -> engine(gggetring, F, ERing)
+degrees EFreeModule        := (F) -> engine(ggdegree, F, Intarray)
+inducedOrder EFreeModule   := (F) -> engine(gggetcols, F, EMatrix)
 EFreeModule == EFreeModule := (F,G) -> engine(ggisequal, F, G, Boolean)
-EFreeModule ++ EFreeModule := (F,G) -> (
-    sendgg(ggPush F, ggPush G, ggadd);
-	newEFreeModule())
-EFreeModule ** EFreeModule := (F,G) -> (
-    sendgg(ggPush F, ggPush G, ggmult);
-	newEFreeModule())
-dual EFreeModule := (F) -> (
-    sendgg(ggPush F, ggtranspose);
-	newEFreeModule())
-submod(EFreeModule,List) := (F,a) -> (
-    -- check: a is a list of integers
-	sendgg(ggPush F, ggPush a, ggsubmodule);
-	newEFreeModule())
-symm (ZZ, EFreeModule) := (p,F) -> (
-    sendgg(ggPush F, ggPush p, ggsymm);
-	newEFreeModule())
-exterior (ZZ, EFreeModule) := (p,F) -> (
-    sendgg(ggPush F, ggPush p, ggexterior);
-	newEFreeModule())
-	
-EFreeModule _ ZZ := (F,x) -> (
-     sendgg(ggPush F, ggPush x, ggbasisElement);
-     newEVector())
+EFreeModule ++ EFreeModule := (F,G) -> engine(ggadd, F, G, EFreeModule)
+EFreeModule ** EFreeModule := (F,G) -> engine(ggmult, F, G, EFreeModule)
+dual EFreeModule           := (F) -> engine(ggtranspose, F, EFreeModule)
+submod(EFreeModule,List)   := (F,a) -> engine(ggsubmodule, F, a, EFreeModule)
+symm (ZZ, EFreeModule)     := (p,F) -> engine(ggsymm,F,p,EFreeModule)
+exterior (ZZ, EFreeModule) := (p,F) -> engine(ggexterior,F,p,EFreeModule)
+EFreeModule _ ZZ           := (F,x) -> engine(ggbasisElement,F,x,EVector)
 
 EFreeModule _ Sequence := (F,arg) -> (
      if #arg =!= 2 then error "expected (Integer Array, Integer)";
@@ -234,39 +218,30 @@ EFreeModule _ Sequence := (F,arg) -> (
        then error "expected (Integer Array, Integer)";
      if class arg#1 =!= ZZ 
        then error "expected (Integer Array, Integer)";
-     sendgg(ggPush F, ggPush toList(arg#0), ggPush arg#1, ggterm);
-     newEVector())
+     engine(ggterm, F, toList(arg#0), arg#1, EVector))
 
 -------------------
 -- Ring Elements --
 -------------------
 
-ZZ _ ERing := (n,R) -> (
-     sendgg(ggPush R, ggPush n, ggfromint);
-     newERingElement())
+ZZ _ ERing := (n,R) -> engine(ggfromint, R, n, ERingElement)
 
 ERing _ Sequence := (R,a) -> (
      if class (a#1) === ZZ then
-       callgg(ggvar,a#0,a#1,R)
+       engine(ggvar,a#0,a#1,R,ERingElement)
      else
-       callgg(ggterm,R,a#0,a#1);
-     newERingElement())
+       engine(ggterm,R,a#0,a#1,ERingElement))
 
 ERing _ List := (R,a) -> (
      -- check: a is a list of integers of even length.
-     sendgg(ggPush R, ggPush 1_EZ, ggPush a, ggterm);
-     newERingElement())
+     one := 1_EZ;
+     engine(ggterm, R, one, a, ERingElement))
 
 -------------
 -- EVector --
 -------------
-ambient EVector := (v) -> (
-    sendgg(ggPush v, gggetFreeModule);
-	newEFreeModule())
-
-EVector == EVector := (v,w) -> (
-     sendgg(ggPush v, ggPush w, ggisequal);
-     eePopBool())
+ambient EVector := (v) -> engine(gggetFreeModule, v, EFreeModule)
+EVector == EVector := (v,w) -> engine(ggisequal, v, w, Boolean)
 EVector == ZZ := (v,n) -> (
      if n =!= 0 then error "cannot compare vector to non-zero integer";
      sendgg(ggPush v, ggiszero);
