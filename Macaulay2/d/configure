@@ -3,14 +3,18 @@
 TMP=tmp$$.c
 
 cat <<EOF >compat.h
-/* this file produced automatically by configure, do not edit */
+/* This file produced automatically by configure, do not edit. */
+/* It is included in each C file produced by the D compiler, scc1. */
 #include <stdlib.h>
 #include <math.h>
 #include <gc.h>
 #include <string.h>
 #include <gmp.h>
 #include "memdebug.h"
+#include "config.h"
 EOF
+
+exit 0 # experiment with doing without all the junk below, inlcuding compat.c
 
 cat <<EOF >compat.c
 /* this file produced automatically by configure, do not edit */
@@ -26,17 +30,6 @@ then :
 else echo "can't compile at all!" >&2
      exit 1
 fi
-
-cat <<'EOF' >$TMP
-#include <math.h>
-int main(){
-	double x;
-	__isinf(x);
-	return 0;
-	}
-EOF
-$CC $TMP -lm >/dev/null 2>&1 || echo '#define __isinf isinf' >>compat.h
-
 
 cat >>compat.c <<'EOF'
 #ifndef ENOSYS
@@ -135,31 +128,11 @@ $CC $TMP $FLAGS >/dev/null 2>&1 ||
 	>>compat.c
 
 cat <<'EOF' >$TMP
-int main(){ extern char *sys_errlist; char *p = sys_errlist; return -1; }
-EOF
-gcc $TMP $FLAGS >/dev/null 2>&1 || 
-	echo '#define NO_SYS_ERRLIST 1' \
-	>>compat.h
-
-cat <<'EOF' >$TMP
 #include <netinet/in.h>
 int main(){ htons(0); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'short htons(short x) { return x; }' \
 	>>compat.c
-
-cat <<'EOF' >$TMP
-#include <netdb.h>
-extern int h_nerr;
-int main(){ 
-    int i = h_nerr;
-    herror((char *)0); 
-    return 0;
-    }
-EOF
-$CC $TMP $FLAGS >/dev/null 2>&1 || 
-	echo '#define NO_HERROR 1' \
-	>>compat.h
 
 rm $TMP

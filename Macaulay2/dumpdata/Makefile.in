@@ -1,7 +1,14 @@
 default: all2 tests2
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = $(srcdir)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
 include $(TOPDIR)/Makeconf
+
 CFLAGS := -Wall -g
 LDFLAGS := 
 check: check.o libdump.a
@@ -25,7 +32,7 @@ libdump.a: libdump.a(file.o warning.o map.o dumpdata.o $(LIBS))
 tests2: check
 	./check dump "hi there"
 	./check load "look!"
-ifdef NODUMPDATA
+ifeq "$(DUMPDATA)" "no"
 all::
 tests:
 else

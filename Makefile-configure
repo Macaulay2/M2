@@ -1,9 +1,12 @@
 # -*- Mode: Makefile -*-
 
 CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2
+CONFIGURE_ENVIRON = CFLAGS="-O3 -fexpensive-optimizations"
+
+# for CC=cl we want CXXFLAGS and CFLAGS = -O2 -Zi -nologo -G5 -W3 -GR -GX
 
 ## to build:
-##	edit the CONFIGURE_OPTIONS line above
+##	edit the lines above
 ##	make -f Makefile-configure
 ##	make
 ##      make install
@@ -19,7 +22,6 @@ CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2
 #############################################################################
 # this list is the same as the one in configure.in
 export CONFIGURED_FILES := \
-	include/config.h \
 	config.Makefile \
 	Makefile \
 	Macaulay2/Makefile \
@@ -69,6 +71,7 @@ export CONFIGURED_FILES := \
 	Macaulay2/texmacs/Makefile \
 	Macaulay2/thread/Makefile \
 	Macaulay2/tutorial/Makefile \
+	Macaulay2/setup \
 	Macaulay2/util/Makefile
 #############################################################################
 
@@ -79,14 +82,15 @@ configure : configure.in aclocal.m4
 	autoconf
 include/config.h.in : configure.in aclocal.m4
 	autoheader
-#	touch $@
+	touch $@
 
 stage2 : Makefile include/config.h
 config.status : configure Makefile-configure
-	./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
-$(CONFIGURED_FILES) : $(CONFIGURED_FILES:=.in) config.status
+	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
+
+$(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status include/config.h.in
 	./config.status
-#	touch include/config.h
+	touch include/config.h
 
 TARGETS = all install dist check clean distclean uninstall
 

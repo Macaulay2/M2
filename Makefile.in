@@ -318,21 +318,6 @@ ifdef FACTORYVERSION
 else
 	echo '#undef FACTORYVERSION' >>tmp.tmp
 endif
-ifdef DUMPDATA
-	echo '#define DUMPDATA' >>tmp.tmp
-else
-	echo '#undef DUMPDATA' >>tmp.tmp
-endif
-ifdef NEWDUMPDATA
-	echo '#define NEWDUMPDATA' >>tmp.tmp
-else
-	echo '#undef NEWDUMPDATA' >>tmp.tmp
-endif
-ifdef MP
-	echo '#define MP' >>tmp.tmp
-else
-	echo '#undef MP' >>tmp.tmp
-endif
 ifdef SOCKS
 	echo '#define SOCKS' >>tmp.tmp
 else

@@ -1,6 +1,6 @@
-
 #include "../../Makeconf.h"	/* MP, FACTORY, and DUMPDATA are defined here */
 #include "config.h"		/* VERSION is defined here */
+#include "compat.h"		/* same include files seen by *.c files produced from *.d files */
 
 #include "../c2/targettypes.h"
 
@@ -102,8 +102,6 @@ extern char *libfac_version;
 #include <X11/Xlib.h>
 #endif
 
-#include "compat.h"
-#include "config.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0		/* for non msdos systems */

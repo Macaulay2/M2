@@ -1,15 +1,18 @@
 #! /bin/sh
+
+DUMPDATA="@DUMPDATA@"
+
 cd m2
 ARCH=`uname -m`
 export ARCH
-if %DUMPDATA%
+if [ "$DUMPDATA" != no ]
 then echo =======================================================
      echo Dumping data
      ../bin/Macaulay2 '-e phase=1' setup.m2 dumpdata.m2  '-edump()' '-e exit 0' || exit 1
 fi
 echo =======================================================
 echo Making bin/M2
-if   %DUMPDATA%
+if [ "$DUMPDATA" != no ]
 then ../bin/Macaulay2 "-e loaddata \"../cache/Macaulay2-`uname -m | sed s=/=-=g `-data\"" \
             -- -q '-e runStartFunctions()' makeM2.m2 '-e exit 0' || exit 1
 else ../bin/Macaulay2 -q \
