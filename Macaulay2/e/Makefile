@@ -6,5 +6,5 @@ tar ::; $(MAKE) -f Makefile.secondary NODEPENDS=1 tar
 TAGS :: Makefile.secondary; $(MAKE) -f Makefile.secondary NODEPENDS=1 TAGS
 allfiles :: Makefile.secondary; $(MAKE) -f Makefile.secondary NODEPENDS=1 allfiles
 e.tgz ::; tar czf e.tgz `cat allfiles`
-wc ::; wc -l *.hh *.cc
+wc ::; wc -l *.hpp *.cpp 
 

@@ -1874,7 +1874,10 @@ expression Ideal := (I) -> new FunctionApplication from {
      	  if #v === 1 then v#0 else v
 	  )
      }
-net Ideal := (I) -> net expression I
+net Ideal := (I) -> (
+     if numgens I === 0 then "0"
+     else net expression I
+     )
 name Ideal := (I) -> name expression I
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
