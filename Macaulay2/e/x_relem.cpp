@@ -423,22 +423,23 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
      coefficient ring of R.  Returns a*m, if this is a valid
      element of R.  Returns NULL if not (with an error message). */
 {
-  if (R->Ncoeffs() != a->get_ring())
-    {
-      ERROR("term: expected same ring");
-      return 0;
-    }
-  if (R->cast_to_PolynomialRing() == 0)
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
     {
       ERROR("requires a polynomial ring");
       return 0;
     }
+  if (P->Ncoeffs() != a->get_ring())
+    {
+      ERROR("term: expected same ring");
+      return 0;
+    }
 
-  int *mon = R->Nmonoms()->make_one();
-  R->Nmonoms()->from_varpower(m->ints(), mon);
+  int *mon = P->Nmonoms()->make_one();
+  P->Nmonoms()->from_varpower(m->ints(), mon);
   /* Caution: I am considering ringelem's which live in RingElement's to
      be immutable, and so to not need copying */
-  ring_elem val = R->term(a->get_value(), mon);
+  ring_elem val = P->term(a->get_value(), mon);
   
   return RingElement::make_raw(R,val);
 }

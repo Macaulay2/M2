@@ -5,6 +5,7 @@
 #include "monomial.hpp"
 #include "frac.hpp"
 #include "QQ.hpp"
+#include "polyring.hpp"
 
 ZZ *globalZZ;
 QQ *globalQQ;
@@ -190,20 +191,32 @@ RingElement *RingElement::get_terms(int lo, int hi) const
 
 RingElement *RingElement::lead_coeff() const
 {
-  const Ring *K = R->Ncoeffs();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  const Ring *K = P->Ncoeffs();
   if (is_zero())
     {
       ERROR("zero polynomial has no lead coefficient");
       return 0;
     }
   else
-    return new RingElement(K, R->lead_coeff(val));
+    return new RingElement(K, P->lead_coeff(val));
 }
 
 RingElement *RingElement::get_coeff(const Monomial *m) const
 {
-  const Ring *K = R->Ncoeffs();
-  return new RingElement(K, R->get_coeff(get_value(), m->ints()));
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  const Ring *K = P->Ncoeffs();
+  return new RingElement(K, P->get_coeff(get_value(), m->ints()));
 }
 
 Monomial *RingElement::lead_monom() const
@@ -213,10 +226,16 @@ Monomial *RingElement::lead_monom() const
       ERROR("zero polynomial has no lead monomial");
       return 0;
     }
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
   intarray resultvp;
 
   Nterm *t = get_value();
-  R->Nmonoms()->to_varpower(t->monom, resultvp);
+  P->Nmonoms()->to_varpower(t->monom, resultvp);
   return Monomial::make(resultvp.raw());
 }
 

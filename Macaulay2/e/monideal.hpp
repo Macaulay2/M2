@@ -7,6 +7,7 @@
 #include "varpower.hpp"
 #include "int_bag.hpp"
 #include "ring.hpp"
+#include "polyring.hpp"
 
 class Nmi_node : public our_new_delete // monomial ideal internal node ///
 {
@@ -52,7 +53,7 @@ protected:
 class MonomialIdeal : public mutable_object
 {
 
-  const Ring *R;
+  const PolynomialRing *R;
   Nmi_node *mi;
   int count;
 
@@ -73,12 +74,12 @@ private:
   void k_basis1(int topvar) const;
 
 public:
-  MonomialIdeal(const Ring *RR) : mutable_object(), R(RR), mi(0), count(0) {}
+  MonomialIdeal(const PolynomialRing *RR) : mutable_object(), R(RR), mi(0), count(0) {}
   virtual ~MonomialIdeal() { deleteitem(mi); }
   int length_of() const { return count; }
 
-  MonomialIdeal(const Ring *R, queue<Bag *> &elems);
-  MonomialIdeal(const Ring *R, queue<Bag *> &elems, queue<Bag *> &rejects);
+  MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems);
+  MonomialIdeal(const PolynomialRing *R, queue<Bag *> &elems, queue<Bag *> &rejects);
 
   MonomialIdeal * copy() const;
 
@@ -90,8 +91,12 @@ public:
   int topvar() const { return (mi == NULL ? -1 : mi->var); }
   void text_out(buffer &o) const;
 
-  const Ring * get_ring() const { return R; }
-  const Monoid* degree_monoid() const { return get_ring()->degree_monoid(); }
+  const PolynomialRing * get_ring() const { return R; }
+  const Monoid* degree_monoid() const 
+  { 
+    const Ring *S = R;
+    return S->degree_monoid(); 
+  }
   
   // Insertion of new monomials.  
   void insert_minimal(Bag *b);
@@ -157,7 +162,7 @@ struct monideal_pair : public our_new_delete
   MonomialIdeal * mi;
   MonomialIdeal * mi_search;
   
-  monideal_pair(const Ring *R) : mi(new MonomialIdeal(R)), 
+  monideal_pair(const PolynomialRing *R) : mi(new MonomialIdeal(R)), 
     mi_search(new MonomialIdeal(R)) {}
 };
 

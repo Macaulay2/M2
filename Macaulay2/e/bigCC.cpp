@@ -14,9 +14,7 @@ mpf_ptr bigCC::_epsilon = NULL;
 
 bool bigCC::initialize_bigCC() 
 {
-  initialize_ring(0,0,0,this,
-		  Monoid::get_trivial_monoid(),
-		  Monoid::get_trivial_monoid());
+  initialize_ring(0,0,0,Monoid::get_trivial_monoid());
   _elem_size = sizeof(M2_BigComplex_struct);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {

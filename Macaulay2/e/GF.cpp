@@ -17,8 +17,6 @@ bool GF::initialize_GF(const RingElement *prim)
   initialize_ring(_originalR->charac(),
 		  1,
 		  1,
-		  this,
-		  Monoid::get_trivial_monoid(),
 		  _originalR->degree_monoid());
 
   zeroV = from_int(0);

@@ -17,7 +17,7 @@ Nmi_node::~Nmi_node()
     deleteitem(baggage());
 }
 
-MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems, queue<Bag *> &rejects)
+MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queue<Bag *> &rejects)
   : R(R0), mi(0), count(0)
 {
   array< queue<Bag *> *> bins;
@@ -51,7 +51,7 @@ MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems, queue<Bag *> &
       }
 }
 
-MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems)
+MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems)
   : R(R0), mi(0), count(0)
 {
   array< queue<Bag *> *> bins;
@@ -491,17 +491,20 @@ int MonomialIdeal::insert(Bag *b)
 
 void MonomialIdeal::text_out(buffer &o) const
 {
-  int *m = get_ring()->Nmonoms()->make_one();
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  assert(P != 0);
+  const Monoid *M = P->Nmonoms();
+  int *m = M->make_one();
   for (Index<MonomialIdeal> j = last(); j.valid(); j--)
     {
       const int *n = operator[](j)->monom().raw();
-      get_ring()->Nmonoms()->from_varpower(n, m);
-      get_ring()->Nmonoms()->elem_text_out(o, m);
+      M->from_varpower(n, m);
+      M->elem_text_out(o, m);
       if (gbTrace > 0)
 	o << '(' << operator[](j)->basis_elem() << ")";
       o << ' ';
     }
-  get_ring()->Nmonoms()->remove(m);
+  M->remove(m);
 }
 
 MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const

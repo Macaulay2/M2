@@ -1424,7 +1424,7 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 
   MatrixConstructor mat(F, c->cols(), false);
 
-  int nvars = F->get_ring()->n_vars();
+  int nvars = P->n_vars();
   int nrows = r->n_cols();
   int ncols = c->n_cols();
   int *aexp = newarray(int,nvars);
@@ -1889,7 +1889,13 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const M2_arrayint monoms) const
 
 
   // Step 0: Do some error checking
-  int nvars = get_ring()->n_vars();
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  int nvars = P->n_vars();
   int nelements = monoms->len / vars->len;
   if (nelements * vars->len != monoms->len)
     {
@@ -1914,7 +1920,7 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const M2_arrayint monoms) const
   // Step 2: for each vector column of 'this'
   //     create a column, and put this vector into result.
 
-  MatrixConstructor mat(get_ring()->make_FreeModule(nelements), 0 , false);
+  MatrixConstructor mat(P->make_FreeModule(nelements), 0 , false);
   for (int i=0; i<n_cols(); i++)
     mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
 
@@ -1955,17 +1961,19 @@ MonomialIdeal *Matrix::make_monideal(int n) const
     }
 #endif
 
-  MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  MonomialIdeal *result = new MonomialIdeal(P, new_elems);
   return result;
 }
 
 MonomialIdeal *Matrix::make_skew_monideal(int n) const
 {
   MonomialIdeal *result = make_monideal(n);
-  const Monoid *M = get_ring()->Nmonoms();
+  if (result == 0) return 0;
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P != 0 && P->is_skew_commutative())
+  assert(P != 0);
+  if (P->is_skew_commutative())
     {
+      const Monoid *M = P->Nmonoms();
       intarray vp;
       for (int i=0; i<M->n_vars(); i++)
 	if (P->is_skew_var(i))
@@ -1984,13 +1992,13 @@ MonomialIdeal *Matrix::make_skew_monideal(int n) const
 int Matrix::dimension() const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  const Ring *K = get_ring()->Ncoeffs();
+  const Ring *K = (P != 0 ? P->Ncoeffs() : get_ring());
   bool is_ZZ = K->is_ZZ();
   int base = (is_ZZ ? 1 : 0);
   int result = -1;
   if (P != 0)
     {
-      int n = get_ring()->n_vars();
+      int n = P->n_vars();
       for (int i=0; i<n_rows(); i++)
 	{
 	  MonomialIdeal *mi = make_skew_monideal(i);

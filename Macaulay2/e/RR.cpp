@@ -27,8 +27,7 @@ RR::~RR()
 
 bool RR::initialize_RR(double epsilon) 
 {
-  initialize_ring(0,0,0,this,
-		  Monoid::get_trivial_monoid(),
+  initialize_ring(0,0,0,
 		  Monoid::get_trivial_monoid());
   _epsilon = epsilon;
 
@@ -50,6 +49,12 @@ RR *RR::create(double epsilon)
 void RR::text_out(buffer &o) const
 {
   o << "RR";
+}
+
+ring_elem RR::from_int(int n) const
+{
+  double a = n;
+  return RR::from_double(a);
 }
 
 RR::RRelem RR::new_elem() const
@@ -126,11 +131,6 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
     }
 }
 
-ring_elem RR::from_int(int n) const
-{
-  double a = n;
-  return RR::from_double(a);
-}
 
 ring_elem RR::from_int(mpz_ptr n) const
 {

@@ -32,8 +32,7 @@ protected:
   int P;
   int _nvars;
   int _totalvars;		// The total number of variables, including all base rings
-  const Ring *K_;		// For a base ring, this will point to self
-  const Monoid *M_;
+                                // BUT: not including basic fields.
   const Monoid *D_;
   const PolynomialRing *_HRing;	// Hilbert function ring, if D has >= 1 variables.
 				// Otherwise, this will be NULL.
@@ -42,29 +41,19 @@ protected:
   bool _isfield;		// true means yes, or declared yes.
 				// If a zero divisor is found, isfield is set to false.
 
-  bool _is_ZZ_quotient;		// true if this is a quotient of a polynomial ring over ZZ, AND
-				// there is an integer in the factored ideal.
-  ring_elem _ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
-
   ring_elem zeroV;              // Three generally useful values in a ring.
   ring_elem oneV;
   ring_elem minus_oneV;
 
-  void initialize_ring(int charac, int nvars, int totalvars, const Ring *K, 
-	const Monoid *M, const Monoid *D);
+  void initialize_ring(int charac, int nvars, int totalvars, const Monoid *D);
   Ring() {}
 public:
   virtual ~Ring();
 
   int charac() const { return P; }
-  int n_vars() const { return _nvars; }
+  int n_vars() const { return _nvars; } // This will be 0 except for frac fields and poly rings.
   int total_n_vars() const { return _totalvars; }
 
-
-
-  const Ring * get_ring() const { return this; }
-  const Ring *  Ncoeffs()       const { return K_; }
-  const Monoid * Nmonoms()       const { return M_; }
   const Monoid * degree_monoid() const { return D_; }
   const PolynomialRing *HilbertRing() const { return _HRing; }
 

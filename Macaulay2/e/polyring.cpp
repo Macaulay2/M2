@@ -30,9 +30,10 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   initialize_ring(K->charac(),
 		  M->n_vars(),
 		  M->n_vars() + K->total_n_vars(),
-		  K,
-		  M,
 		  M->degree_monoid());
+
+  K_ = K;
+  M_ = M;
 
   _poly_size = 
     sizeof(Nterm) + sizeof(int) * (M_->monomial_size() - 1);
@@ -53,6 +54,9 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   _EXP1 = newarray(int,_nvars);
   _EXP2 = newarray(int,_nvars);
   _EXP3 = newarray(int,_nvars);
+
+  _is_ZZ_quotient = false;
+  _ZZ_quotient_value = ZERO_RINGELEM;
 
   zeroV = from_int(0);
   oneV = from_int(1);
@@ -781,23 +785,7 @@ ring_elem PolynomialRing::imp_mult_by_term(const ring_elem f,
   return head.next;
 }
 
-void PolynomialRing::imp_subtract_multiple_to(ring_elem &f, 
-				 ring_elem a, const int *m, const ring_elem g) const
-{
-  ring_elem b = K_->negate(a);
-  ring_elem h = imp_mult_by_term(g, b, m);
-  add_to(f, h);
-}
-
-ring_elem PolynomialRing::mult_by_term(const ring_elem f, 
-			       const ring_elem c, const int *m) const
-   // return f*c*m
-{
-  Nterm *result = imp_mult_by_term(f, c, m);
-  if (_base_ring != NULL) normal_form(result);
-  return result;
-}
-
+#if 0
 void PolynomialRing::subtract_multiple_to(ring_elem &f, 
 				 ring_elem a, const int *m, const ring_elem g) const
 {
@@ -830,6 +818,7 @@ void PolynomialRing::make_monic(ring_elem &f) const
       t->coeff = K_->mult(a, tmp);
     }
 }
+#endif
 void PolynomialRing::mult_coeff_to(ring_elem a, ring_elem &f) const
 {
   Nterm *t = f;
@@ -1091,30 +1080,23 @@ ring_elem PolynomialRing::divide(const ring_elem f, const ring_elem g) const
   return result;
 }
 
-void PolynomialRing::imp_cancel_lead_term(ring_elem &f, 
-					  ring_elem g, 
-					  ring_elem &coeff, 
-					  int *monom) const
+void PolynomialRing::imp_subtract_multiple_to(ring_elem &f, 
+				 ring_elem a, const int *m, const ring_elem g) const
 {
-  Nterm *t = f;
-  Nterm *s = g;
-  if (t == NULL || s == NULL) return;
-  coeff = K_->divide(t->coeff, s->coeff); // exact division
-  if (_is_skew)
-    {
-      M_->to_expvector(t->monom, _EXP1);
-      M_->to_expvector(s->monom, _EXP2);
-      int sign = _skew.divide(_EXP1, _EXP2, _EXP3);
-      M_->from_expvector(_EXP3, monom);
-      if (sign < 0) K_->negate_to(coeff);
-      imp_subtract_multiple_to(f, coeff, monom, g);
-    }
-  else
-    {
-      M_->divide(t->monom, s->monom, monom);
-      imp_subtract_multiple_to(f, coeff, monom, g);
-    }
+  ring_elem b = K_->negate(a);
+  ring_elem h = imp_mult_by_term(g, b, m);
+  add_to(f, h);
 }
+
+ring_elem PolynomialRing::mult_by_term(const ring_elem f, 
+			       const ring_elem c, const int *m) const
+   // return f*c*m
+{
+  Nterm *result = imp_mult_by_term(f, c, m);
+  if (_base_ring != NULL) normal_form(result);
+  return result;
+}
+
 bool PolynomialRing::imp_attempt_to_cancel_lead_term(ring_elem &f, 
 						     ring_elem g, 
 						     ring_elem &coeff, 
@@ -1144,6 +1126,32 @@ bool PolynomialRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
     }
   return result;
 }
+
+#if 0
+void PolynomialRing::imp_cancel_lead_term(ring_elem &f, 
+					  ring_elem g, 
+					  ring_elem &coeff, 
+					  int *monom) const
+{
+  Nterm *t = f;
+  Nterm *s = g;
+  if (t == NULL || s == NULL) return;
+  coeff = K_->divide(t->coeff, s->coeff); // exact division
+  if (_is_skew)
+    {
+      M_->to_expvector(t->monom, _EXP1);
+      M_->to_expvector(s->monom, _EXP2);
+      int sign = _skew.divide(_EXP1, _EXP2, _EXP3);
+      M_->from_expvector(_EXP3, monom);
+      if (sign < 0) K_->negate_to(coeff);
+      imp_subtract_multiple_to(f, coeff, monom, g);
+    }
+  else
+    {
+      M_->divide(t->monom, s->monom, monom);
+      imp_subtract_multiple_to(f, coeff, monom, g);
+    }
+}
 void PolynomialRing::cancel_lead_term(ring_elem &f, 
 				       ring_elem g, 
 				       ring_elem &coeff, 
@@ -1168,7 +1176,7 @@ void PolynomialRing::cancel_lead_term(ring_elem &f,
       subtract_multiple_to(f, coeff, monom, g);
     }
 }
-
+#endif
 ring_elem PolynomialRing::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
 {
   Nterm *quot;
@@ -1225,7 +1233,10 @@ ring_elem PolynomialRing::gcd(const ring_elem ff, const ring_elem gg) const
       f = g;
       g = rem;
     }
+#if 0
+#warning commented out make monic in gcd
   make_monic(f);
+#endif
   return f;
 }
 
@@ -1587,10 +1598,11 @@ ring_elem PolynomialRing::eval(const RingMap *map, const ring_elem f) const
   // is a polynomial ring: if so, use a heap structure.  If not, just add to the result.
 
   const Ring *target = map->get_ring();
-  if (target->is_poly_ring())
+  const PolynomialRing *targetP = target->cast_to_PolynomialRing();
+  if (targetP != 0)
     {
       intarray vp;
-      polyheap H(target);
+      polyheap H(targetP);
       
       for (Nterm *t = f; t != NULL; t = t->next)
 	{
