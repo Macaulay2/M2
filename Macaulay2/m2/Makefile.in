@@ -218,7 +218,7 @@ clean::; rm -f test3
 ifeq ($(OS),Linux)
 check:: test4
 test4: ../util/screen
-	echo 2+3 | ../util/screen M2
+	echo 2+3 | ../util/screen ../bin/M2
 	touch $@
 clean::; rm -f test4
 endif
