@@ -261,11 +261,11 @@ Matrix == ZZ := (m,i) -> (
      )
 ZZ == Matrix := (i,m) -> m == i
 
-Matrix + Matrix := BinaryMatrixOperationSame ggadd
-Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
-RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
-ZZ + Matrix := (i,f) -> if i === 0 then f else i*1_(ring f) + f
-Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*1_(ring f)
+Matrix + Matrix := {Matrix, BinaryMatrixOperationSame ggadd}
+Matrix + RingElement := {Matrix, (f,r) -> if r == 0 then f else f + r*id_(target f)}
+RingElement + Matrix := {Matrix, (r,f) -> if r == 0 then f else r*id_(target f) + f}
+ZZ + Matrix := {Matrix, (i,f) -> if i === 0 then f else i*1_(ring f) + f}
+Matrix + ZZ := {Matrix, (f,i) -> if i === 0 then f else f + i*1_(ring f)}
 
 Matrix - Matrix := BinaryMatrixOperationSame ggsubtract
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
@@ -1550,7 +1550,9 @@ Ideal * Ideal := (I,J) -> ideal flatten (generators I ** generators J)
 Ideal * Module := (I,M) -> subquotient (generators I ** generators M, relations M)
 dim Ideal := I -> dim cokernel generators I
 codim Ideal := I -> codim cokernel generators I
-Ideal + Ideal := (I,J) -> ideal (generators I | generators J)
+Ideal + Ideal := {Ideal,
+     (I,J) -> ideal (generators I | generators J),
+     TT "I + J", " -- the sum of two ideals."}
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := (I,options) -> ideal trim(module I, options)
 map(Ideal) := (I,options) -> map(module I,options)

@@ -132,12 +132,12 @@ name Equation := v -> (
 	  concatenate between(" == ", 
 	       apply(v, e -> if precedence e <= p then ("(", name e, ")") else name e))))
 
-ZeroExpression := new Type of Expression
+ZeroExpression = new Type of Expression
 ZeroExpression.name = quote ZeroExpression
 ZERO := new ZeroExpression
 name ZeroExpression := net ZeroExpression := x -> "0"
 
-OneExpression := new Type of Expression
+OneExpression = new Type of Expression
 OneExpression.name = quote OneExpression
 ONE := new OneExpression
 name OneExpression := net OneExpression := x -> "1"
@@ -269,27 +269,27 @@ Expression == Equation      := prepend
 Expression == Expression    := (x,y) -> new Equation from {x,y}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
-ZeroExpression + Expression := (x,y) -> y
-Expression + ZeroExpression := (x,y) -> x
-Sum + Sum                   := join
-Sum + Expression            := append
-Expression + Sum            := prepend
-Expression + Expression := (x,y) -> new Sum from {x,y}
-Expression + Thing      := (x,y) -> x + expression y
-     Thing + Expression := (x,y) -> expression x + y
-       - ZeroExpression := identity
-	   - Minus      := x -> x#0
-           - Expression := x -> new Minus from {x}
-Expression - Expression := (x,y) -> x + -y
-Expression - Thing      := (x,y) -> x - expression y
-     Thing - Expression := (x,y) -> expression x - y
-Expression * OneExpression := (x,y) -> x
-OneExpression * Expression := (x,y) -> y
+ZeroExpression + Expression := { Expression, (x,y) -> y }
+Expression + ZeroExpression := { Expression, (x,y) -> x }
+Sum + Sum                   := { Sum, join }
+Sum + Expression            := { Sum, append }
+Expression + Sum            := { Sum, prepend }
+Expression + Expression     := { Sum, (x,y) -> new Sum from {x,y} }
+Expression + Thing          := { Expression, (x,y) -> x + expression y }
+     Thing + Expression     := { Expression, (x,y) -> expression x + y }
+       - ZeroExpression     := identity
+	   - Minus          := x -> x#0
+           - Expression     := x -> new Minus from {x}
+Expression - Expression     := (x,y) -> x + -y
+Expression - Thing          := (x,y) -> x - expression y
+     Thing - Expression     := (x,y) -> expression x - y
+Expression * OneExpression  := (x,y) -> x
+OneExpression * Expression  := (x,y) -> y
 Expression * ZeroExpression := (x,y) -> y
 ZeroExpression * Expression := (x,y) -> x
-Product * Product       := join
-Product * Expression    := append
-Expression * Product    := prepend
+Product * Product           := join
+Product * Expression        := append
+Expression * Product        := prepend
 Expression * Expression := (x,y) -> new Product from {x,y}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
@@ -903,12 +903,7 @@ AfterPrint Thing := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x;
      << endl;
-     d := doc x;
-     if d =!= null then (
-     	  i := 0;
-     	  while i < #d and d#i =!= PARA do i = i+1;
-     	  if i > 0 then << endl << text take(d,i) << endl;
-	  );
+     if doc x =!= null then briefHelp x;
      )
 AfterPrint Expression := x -> (
      << endl;				  -- double space

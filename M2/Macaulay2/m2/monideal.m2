@@ -113,8 +113,8 @@ assert(monomialIdeal vars R != 0)
 assert(monomialIdeal map(R^1,0) == 0)
 "
 
-MonomialIdeal +  MonomialIdeal := BinaryMonomialIdealOperation ggadd
-MonomialIdeal *  MonomialIdeal := BinaryMonomialIdealOperation ggmult
+MonomialIdeal +  MonomialIdeal := {MonomialIdeal, BinaryMonomialIdealOperation ggadd}
+MonomialIdeal *  MonomialIdeal := {MonomialIdeal, BinaryMonomialIdealOperation ggmult}
 
 
 radical MonomialIdeal := (I,options) -> (UnaryMonomialIdealOperation ggradical) I

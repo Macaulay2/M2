@@ -320,7 +320,7 @@ export convert(e:ParseTree):Code := (
 	       then Code(exprCode(Expr(combine(cs)),treePosition(e)))
 	       else Code(cs)
 	       )
-	  else if b.operator.word == assignW || b.operator.word == ColonEqualW
+	  else if b.operator.word == EqualW || b.operator.word == ColonEqualW
 	  then (
 	       when b.lhs
 	       is n:New do (
