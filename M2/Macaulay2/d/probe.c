@@ -58,9 +58,6 @@ int strarrlen(char **p) {
 void *a_function();
 int an_int;
 extern char **environ;
-#ifndef no__environ
-extern char **__environ;
-#endif
 int main(int argc, char **argv, char **envp){
      int i1;
      char c1;
@@ -145,12 +142,6 @@ int main(int argc, char **argv, char **envp){
 #if !defined(__MWERKS__)
      printf("%08x   envp\n",(int)envp);
      printf("%08x   environ\n",(int)environ);
-#if !defined(__CYGWIN__)
-#ifndef no__environ
-     printf("%08x   __environ\n",(int)__environ);
-     printf("%08x   &__environ\n",&__environ);
-#endif
-#endif
      for (i=0,pp=envp; *pp; i++,pp++) printf("%08x   envp[%d] : %s\n",(int)*pp,i,*pp);
      printf("%08x   null pointer at end of envp\n",(int)pp);
      if (envp[0] != 0) {
