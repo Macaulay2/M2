@@ -1,6 +1,6 @@
 #include "../polyring.hpp"
 #include "../freemod.hpp"
-#include "monomials.h"
+#include "Monomials.h"
 #include "MonomialSet.h"
 #include "SPairSet.h"
 #include "monoms.h"
