@@ -174,7 +174,7 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
   const PolyRing *P1 = P->cast_to_PolyRing();
   if (P1 == 0)
     {
-      ERROR("quotients of fraction polynomial rings, or other polynomial rins is not handled yet");
+      ERROR("quotients of fraction polynomial rings, or other polynomial rings is not handled yet");
       return 0;
     }
   if (I->get_ring() != P1)
