@@ -17,14 +17,13 @@
 
 whichway := symbol >
 compare := (a,b) -> (
-     c := (try a ? b else 
-     	  if class a === class b 
-     	  then hash a ? hash b 
-     	  else try toString class a ? toString class b 
-	  else hash class a ? hash class b
-	  );
-     if c === incomparable then error "incomparable elements encountered in sort";
-     c =!= whichway			-- this relation better be transitive
+     A := class a;
+     B := class b;
+     if A =!= B and mutable A and mutable B then return (hash A ? hash B) =!= whichway;
+     if a === b then return false;
+     meth := lookup(symbol ?, A, B);
+     if meth =!= null then return ( meth(a,b) =!= whichway );
+     error "incomparable elements encountered in sort"
      )
 
 basicsort := (v) -> if #v <= 1 then v else (	      -- quick sort algorithm

@@ -467,10 +467,11 @@ document {
      global scope, meaning they are visible from every line of code,
      or local scope, with visibility restricted to a single file or
      function body.",
-     PARA,
-     EXAMPLE "ab12345cde",
-     PARA,
-     SeeAlso => {"local", "global", "symbol", ":="}
+     Examples => EXAMPLE {
+	  "x",
+	  "ab12"
+	  },
+     SeeAlso => {":="}
      }
 
 document {

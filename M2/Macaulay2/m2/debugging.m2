@@ -153,13 +153,15 @@ usage := () -> (
      << endl
      << " -- useful debugger commands:" << endl
      << " --     break                   leave the debugger, returning to top level" << endl
-     << " --     end                     restart debugger one step earlier" << endl
+     << " --     end                     abandon the code, enter debugger one level up" << endl
      << " --     listLocalSymbols        display local symbols and their values" << endl
      << " --     listUserSymbols         display user symbols and their values" << endl
-     << " --     continue                execute the code again" << endl
-     << " --     continue n              execute the code again, stop after n steps" << endl
-     << " --     return                  return 'null' as the value of the code" << endl
-     << " --     return x                return 'x' as the value of the code" << endl
+     << " --     continue                execute the code and continue" << endl
+     << " --     continue n              execute the code, stop after n microsteps" << endl
+     << " --     return                  bypass code, return 'null', and continue" << endl
+     << " --     return x                bypass code, return 'x', and continue" << endl
+     << " --     disassemble errorCode   examine the code microsteps" << endl
+     << " --     value errorCode         execute the code, returning its value" << endl
      )
 
 firstTime := true

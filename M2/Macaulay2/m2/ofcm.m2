@@ -261,6 +261,7 @@ makeMonoid := (options) -> (
 			 preX := "        ";
 			 pw := max(printWidth,80) - promptWidth();
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
+     if length unique options.Variables < length options.Variables then error "at least one variable listed twice";
 
      -- Check the degree list
      n := # options.Variables;

@@ -184,7 +184,7 @@ tmp/.documentation-made : $(DOCSEQUENCE)
 	@ cd tmp && \
 	        echo "make: Entering directory \`tmp'" >&2 \
 		&& \
-		(set -x ; ../../bin/M2 $(EXAMPLEOPTIONS)) \
+		(set -x ; time ../../bin/M2 $(EXAMPLEOPTIONS)) \
 		|| \
 		(echo "make: Leaving directory \`tmp'" >&2 ; false )
 	@ echo "make: Leaving directory \`tmp'"

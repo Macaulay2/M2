@@ -114,7 +114,8 @@ methods Type := F -> (
 			      if key === F then found#(F,x) = true
 			      else if class key === Sequence and member(F,key)
 			      then found#key = true)))));
-     sort keys found)
+     -- sort -- too slow
+     keys found)
 
 methods Sequence := F -> (
      seen := new MutableHashTable;
@@ -129,7 +130,8 @@ methods Sequence := F -> (
 			      if class meth === Function 
 			      and class key === Sequence and tallyF <= tally key
 			      then found#key = true)))));
-     sort keys found)
+     -- sort -- too slow
+     keys found)
 
 methods Thing := F -> (
      if F === HH then return join(methods homology, methods cohomology);
@@ -149,7 +151,8 @@ methods Thing := F -> (
 				   key#?0 and class key#0 === Sequence and member(F,key#0)
 				   )
 			      then found#key = true)))));
-     sort keys found)
+     -- sort -- too slow
+     keys found)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
