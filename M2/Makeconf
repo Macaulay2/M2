@@ -99,8 +99,13 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# LIBC        := -glibc' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
+
 include $(TOPDIR)/Makeconf.lcl
-export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)$(LIBC)
+
+export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
+ifndef NOSTATIC
+export DESC           := $(DESC)-static
+endif
 
 #################################
 
