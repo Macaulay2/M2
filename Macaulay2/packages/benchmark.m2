@@ -1,28 +1,32 @@
-newPackage "benchmark"
+newPackage (
+     "benchmark",
+     Headline => "a standard Macaulay 2 benchmark"
+     )
 export benchmark
 
-<< "-- beginning computation " << get "!date"
-<< "-- " << first lines get "!uname -a" << endl
-<< "-- Macaulay2 " << version#"VERSION"
-<< ", compiled with " << version#"compiler"
-<< endl
+benchmark = () -> (
+     << "-- beginning computation " << get "!date";
+     << "-- " << first lines get "!uname -a" << endl;
+     << "-- Macaulay2 " << version#"VERSION";
+     << ", compiled with " << version#"compiler";
+     << endl;
 
-rr = ZZ/101[a..Z, MonomialSize => 16];
-ti = first timing (re = res coker genericMatrix(rr,a,3,9))
+     rr = ZZ/101[a..Z, MonomialSize => 16];;
+     ti = first timing (re = res coker genericMatrix(rr,a,3,9));
 
-vv = apply(8,i->rank re_i)
-assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
+     vv = apply(8,i->rank re_i);
+     assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} );
 
-<< "-- res39: " <<  toString ti << " seconds" << endl
+     << "-- res39: " <<  toString ti << " seconds" << endl;
 
-SS = ZZ/101[a..t, MonomialSize => 16]
-MM = SS^1/Grassmannian(2,5,SS)
-ti = first timing (re = res MM)
-vv = apply(11,i->rank re_i)
-assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
+     SS = ZZ/101[a..t, MonomialSize => 16];
+     MM = SS^1/Grassmannian(2,5,SS);
+     ti = first timing (re = res MM);
+     vv = apply(11,i->rank re_i);
+     assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} );
 
-<< "-- resG25: " <<  toString ti << " seconds" << endl
-
+     << "-- resG25: " <<  toString ti << " seconds" << endl;
+     )
 
 -- Results:
 

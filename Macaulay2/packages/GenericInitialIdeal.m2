@@ -1,5 +1,6 @@
 newPackage("GenericInitialIdeal", 
      Version => "0.1", 
+     Headline => "computing generic initial ideals of ideals in a polynomial ring",
      DebuggingMode => true
      )
 

@@ -16,12 +16,15 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+We've made the functions associated with Schur rings into a separate
+package called SchurRings.
+
 New function "fileLength", takes an open file, or a string containing
 the name of a file.
 
 All the routines connected with primary decomposition of ideals are
-now in a package called "PrimaryDecomposition".  Load the package if
-you wish to use those routines.
+now in a package called "PrimaryDecomposition".  The package is
+pre-loaded.
 
 New symbol 'packagePath' -- provides a list of top-level directories
 in which the directory trees for isntalled packages have been installed.
