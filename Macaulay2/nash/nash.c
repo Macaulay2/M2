@@ -154,6 +154,10 @@ int main (int _argc, char **_argv) {
     setenv("SHELL",getenv("OLDSHELL"),TRUE);
     unsetenv("OLDSHELL");
   }
+  if (NULL != getenv("OLDARG0")) {
+    xargv[0] = getenv("OLDARG0");
+    unsetenv("OLDARG0");
+  }
   execvp(xargv[0],xargv);
   fprintf(stderr,"%s: failed to exec \"%s\"\n", argv[0], xargv[0]);
   return 1;
