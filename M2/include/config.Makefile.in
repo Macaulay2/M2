@@ -52,23 +52,19 @@ DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 
-# Macaulay 2 file system layout definitions :
+encap = @encap@
+encapdir = @encapdir@
+
+ifeq "$(encap)" "yes"
+prefix = $(encapdir)/$(package)
+else
+prefix = @prefix@
+endif
+
+# Macaulay 2 file system layout definitions, dependent on $(prefix) defined above :
 #  see http://www.pathname.com/fhs/
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
-
-# prologue
-
-prefix = @prefix@
-encapdir = @encapdir@
-encap = @encap@
-ifeq "$(encap)" "yes"
-target = $(encapdir)/$(package)
-else
-target = $(prefix)
-endif
-
-# common layout
 
 binRelDir = bin
 libRelDir = lib
@@ -84,6 +80,7 @@ docpackagesRelDir = $(docm2RelDir)/packages
 packagesrcRelDir = $(packagesRelDir)/PackageName
 packagedocRelDir = $(docpackagesRelDir)/PackageName
 packageimagesRelDir = $(packagedocRelDir)/images
+packagetestsRelDir = $(packagedocRelDir)/tests
 packagehtmlRelDir = $(packagedocRelDir)/html
 libm2RelDir = $(libRelDir)/Macaulay2/$(PACKAGE_VERSION)
 cacheRelDir = $(libm2RelDir)/cache
@@ -98,82 +95,87 @@ imagesRelDir = $(docm2relRelDir)/images
 
 LAYOUT := {
 
-bindir = $(target)/$(binRelDir)
+bindir = $(prefix)/$(binRelDir)
 LAYOUT += "bin"=>"$(binRelDir)/",
 
-libdir = $(target)/$(libRelDir)
+libdir = $(prefix)/$(libRelDir)
 LAYOUT += "lib"=>"$(libRelDir)/",
 
-datadir = $(target)/$(dataRelDir)
+datadir = $(prefix)/$(dataRelDir)
 LAYOUT += "data"=>"$(dataRelDir)/",
 
-mandir = $(target)/$(manRelDir)
+mandir = $(prefix)/$(manRelDir)
 LAYOUT += "man"=>"$(manRelDir)/",
 
-man1dir = $(target)/$(man1RelDir)
+man1dir = $(prefix)/$(man1RelDir)
 LAYOUT += "man1"=>"$(man1RelDir)/",
 
-man3dir = $(target)/$(man3RelDir)
+man3dir = $(prefix)/$(man3RelDir)
 LAYOUT += "man3"=>"$(man3RelDir)/",
 
-emacsdir = $(target)/$(emacsRelDir)
+emacsdir = $(prefix)/$(emacsRelDir)
 LAYOUT += "emacs"=>"$(emacsRelDir)/",
 
-docdir = $(target)/$(docRelDir)
+docdir = $(prefix)/$(docRelDir)
 LAYOUT += "doc"=>"$(docRelDir)/",
 
-docm2dir = $(target)/$(docm2RelDir)
+docm2dir = $(prefix)/$(docm2RelDir)
 LAYOUT += "docm2"=>"$(docm2RelDir)/",
 
-packagesdir = $(target)/$(packagesRelDir)
+packagesdir = $(prefix)/$(packagesRelDir)
 LAYOUT += "packages" => "$(packagesRelDir)/",
 
-docpackagesdir = $(target)/$(docpackagesRelDir)
+docpackagesdir = $(prefix)/$(docpackagesRelDir)
 LAYOUT += "docpackages"=>"$(docpackagesRelDir)/",
 
-MAKEFUN = "$(1)" => PackageName -> "$(subst PackageName,"|PackageName|",$($(1)RelDir))/"
-
-packagesrcdir = $(target)/$(packagesrcRelDir)
-LAYOUT += $(call MAKEFUN,packagesrc),
-
-packagedocdir = $(target)/$(packagedocRelDir)
-LAYOUT += $(call MAKEFUN,packagedoc),
-
-packageimagesdir = $(target)/$(packageimagesRelDir)
-LAYOUT += $(call MAKEFUN,packageimages),
-
-packagehtmldir = $(target)/$(packagehtmlRelDir)
-LAYOUT += $(call MAKEFUN,packagehtml),
-
-libm2dir = $(target)/$(libm2RelDir)
+libm2dir = $(prefix)/$(libm2RelDir)
 LAYOUT += "libm2"=>"$(libm2RelDir)/",
 
-cachedir = $(target)/$(cacheRelDir)
+cachedir = $(prefix)/$(cacheRelDir)
 LAYOUT += "cache"=>"$(cacheRelDir)/",
 
-libexecdir = $(target)/$(libexecRelDir)
+libexecdir = $(prefix)/$(libexecRelDir)
 LAYOUT += "libexec"=>"$(libexecRelDir)/",
 
-datam2dir = $(target)/$(datam2RelDir)
+datam2dir = $(prefix)/$(datam2RelDir)
 LAYOUT += "datam2"=>"$(datam2RelDir)/",
 
-sharedir = $(target)/$(shareRelDir)
+sharedir = $(prefix)/$(shareRelDir)
 LAYOUT += "share"=>"$(shareRelDir)/",
 
-m2dir = $(target)/$(m2RelDir)
+m2dir = $(prefix)/$(m2RelDir)
 LAYOUT += "m2"=>"$(m2RelDir)/",
 
-docm2reldir = $(target)/$(docm2relRelDir)
+docm2reldir = $(prefix)/$(docm2relRelDir)
 LAYOUT += "docm2rel"=>"$(docm2relRelDir)/",
 
-emacsdocdir = $(target)/$(emacsdocRelDir)
+emacsdocdir = $(prefix)/$(emacsdocRelDir)
 LAYOUT += "emacsdoc"=>"$(emacsdocRelDir)/",
 
-htmldocdir = $(target)/$(htmldocRelDir)
+htmldocdir = $(prefix)/$(htmldocRelDir)
 LAYOUT += "htmldoc"=>"$(htmldocRelDir)/",
 
-imagesdir = $(target)/$(imagesRelDir)
-LAYOUT += "images"=>"$(imagesRelDir)/"
+imagesdir = $(prefix)/$(imagesRelDir)
+LAYOUT += "images"=>"$(imagesRelDir)/",
+
+# options for packages are functions
+MAKEFUN = "$(1)" => PackageName -> "$(subst PackageName,"|PackageName|",$($(1)RelDir))/"
+
+packagesrcdir = $(prefix)/$(packagesrcRelDir)
+LAYOUT += $(call MAKEFUN,packagesrc),
+
+packagedocdir = $(prefix)/$(packagedocRelDir)
+LAYOUT += $(call MAKEFUN,packagedoc),
+
+packageimagesdir = $(prefix)/$(packageimagesRelDir)
+LAYOUT += $(call MAKEFUN,packageimages),
+
+packagetestsdir = $(prefix)/$(packagetestsRelDir)
+LAYOUT += $(call MAKEFUN,packagetests),
+
+packagehtmldir = $(prefix)/$(packagehtmlRelDir)
+LAYOUT += $(call MAKEFUN,packagehtml)
+# no comma on the last one (just above)
 
 LAYOUT += }
 

@@ -56,9 +56,9 @@ tutorials.m2 : $(TUTORIALS)
 	@ ls $^ |awk '{printf "load \"%s\"\n", $$0}' >$@
 
 ################################# cache
-cache cache/doc cache/images cache/tests ../tutorial/final/cache/doc :; mkdir $@
+cache cache/doc ../tutorial/final/cache/doc :; mkdir $@
 clean ::; rm -rf cache
-initialize :: cache cache/tests cache/doc ../tutorial/final/cache/doc
+initialize :: cache cache/doc ../tutorial/final/cache/doc
 ################################# temporary directories for examples
 initialize :: cache/doc/cache/doc cache/doc/tmp
 cache/doc/cache/doc cache/doc/tmp :; mkdir -p $@
@@ -77,7 +77,7 @@ TAGS.doc : docseq
 clean::; rm -f TAGS.doc
 
 layout.m2 : ../../include/config.Makefile
-	echo 'LAYOUT = new HashTable from $(LAYOUT)' >$@
+	echo 'LAYOUT = new HashTable from $(LAYOUT)' | sed 's/,/,%     /g' | tr % '\n' >$@
 
 default:: TAGS
 clean::; rm -f TAGS
@@ -124,10 +124,10 @@ phase1 :: ../cache/Macaulay2-made
 
 phase2 :: initialize
 phase2 :: phase1
-phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
+phase2 :: ../cache/Macaulay2-pre cache/doc/.made 
 	touch $@
 
-../cache/Macaulay2-pre cache/doc/.made cache/tests/.made : \
+../cache/Macaulay2-pre cache/doc/.made : \
 		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq docloads.m2
 	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
@@ -191,25 +191,17 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	mv ../cache/Macaulay2-tmp $@
 	touch $@
 
-all :: phase5
+install :: phase5
 
-# this directory must be the same as the prefix in makeHTML() in html.m2:
+$(htmldocdir) : ; install -d $@
 
-# override config.Makefile.in
-target = .
-builddir = tmp/$(package)
-
-cache/html : ; install -d $@
-
-phase5 : cache/html $(builddir)/$(htmldocdir)/index.html
-$(builddir)/$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
+phase5 : phase4 $(htmldocdir) $(htmldocdir)/index.html always
+$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
 	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
-		'-e phase = 5' \
-		'-e errorDepth 0' \
-		'-e buildDirectory = "$(builddir)/"' \
-		'-e htmlDirectory = "$(htmldocdir)/"' \
-		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
+		'-e phase = 5; errorDepth 0' \
+		'-e makeHTML "$(prefix)/"' \
+		'-e exit 0'
 install ::
 	install -d $(docm2dir)
 	ln -s $(PACKAGE_VERSION) $(docm2dir)/currentVersion

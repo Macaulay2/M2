@@ -185,9 +185,6 @@ scan((
 	  symbol path,
 	  symbol phase,
 	  symbol currentDirectory,
-	  symbol htmlDirectory,
-	  symbol buildPackage,
-	  symbol buildDirectory,
 	  symbol documentationPath,			    -- being removed...
 	  symbol DocDatabase,
 	  symbol currentFileName,
