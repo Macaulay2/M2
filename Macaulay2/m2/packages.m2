@@ -122,7 +122,7 @@ newPackage("Main",
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol packages, symbol notify, symbol loadDepth, symbol printingPrecision,
+	  symbol packages, symbol notify, symbol loadDepth, symbol printingPrecision, symbol loadErrorHook,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  })
