@@ -56,4 +56,5 @@ import dbmstrerror():string;
 import readfile(fd:int):(null or string);
 import fileLength(fd:int):int;
 import fileExists(name:string):bool;
+import directoryExists(name:string):bool;
 import readlink(filename:string):string;

@@ -899,7 +899,7 @@ openIn(filename:Expr):Expr := (
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("openIn",openIn);
 openOut(filename:Expr):Expr := (
      when filename
@@ -912,7 +912,7 @@ openOut(filename:Expr):Expr := (
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("openOut",openOut);
 openInOut(filename:Expr):Expr := (
      when filename
@@ -925,7 +925,7 @@ openInOut(filename:Expr):Expr := (
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("openInOut",openInOut);
 openListener(filename:Expr):Expr := (
      when filename
@@ -934,7 +934,7 @@ openListener(filename:Expr):Expr := (
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("openListener",openListener);
 isOpenFile(e:Expr):Expr := (
      when e

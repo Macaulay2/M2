@@ -232,7 +232,7 @@ fakeMenu := x -> (
 
 makeHtmlNode = fkey -> (
      -- stderr << "--fkey=" << fkey << endl;		    --  debugging
-     fn := buildDirectory | "/" | htmlFilename fkey;
+     fn := buildDirectory | htmlFilename fkey;
      fn << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
@@ -281,12 +281,9 @@ pass5 := () -> (
 -----------------------------------------------------------------------------
 
 checkDirectory := path -> (
-     -- if not fileExists (path | ".")		     -- what about Macintosh?
-     -- then (
-     --	  if fileExists path 
-     --	  then error ("directory ", path, " doesn't end with a path separator")
-     --	  else error ("directory ", path, " doesn't exist")
-     --	  )
+     path = minimizeFilename (path | "/");
+     if not directoryExists path then error ("directory ", path, " doesn't exist");
+     path
      )
 
 checkFile := filename -> (
@@ -297,8 +294,9 @@ cacheVars := varlist -> (
      valuelist := apply(varlist, x -> value x);
      () -> apply(varlist, valuelist, (x,n) -> x <- n))
 
-makeHTML = builddir -> (
+makeHTML = (builddir,finaldir) -> (
      buildDirectory = minimizeFilename(builddir | "/");
+     finalDirectory = minimizeFilename(finaldir | "/");
      docdatabase = DocDatabase;				    -- used to be an argument
      topNodeName = "Macaulay 2";			    -- used to be an argument
      htmlDirectory = LAYOUT#"htmldoc";
@@ -306,8 +304,6 @@ makeHTML = builddir -> (
      restore := cacheVars{symbol documentationPath};
      gifpath := LAYOUT#"images";
      prefix = htmlDirectory;
-     checkDirectory prefix;
-     checkDirectory gifpath;
      topNodeButton = HREF { topFileName, BUTTON (checkFile(gifpath|"top.gif"),"top") };
      nullButton = BUTTON(checkFile(gifpath|"null.gif"),null);
      masterIndexButton = HREF { masterFileName, BUTTON(checkFile(gifpath|"index.gif"),"index") };
@@ -349,14 +345,19 @@ makeHTML = builddir -> (
 -- the code above for making html for Macaulay 2 itself
 -----------------------------------------------------------------------------
 
-makeHTMLPages = method(Options => { TemporaryDirectory => "tmp/" })
+makeHTMLPages = method(Options => { 
+	  TemporaryDirectory => "tmp/", 
+	  FinalDirectory => "/usr/local/"		    -- should be able to discover this!
+	  })
 makeHTMLPages Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
-     buildDirectory = o.TemporaryDirectory | pkg.name | "-" | pkg.version | "/";
+     buildDirectory = minimizeFilename(o.TemporaryDirectory | "/" | pkg.name | "-" | pkg.version | "/");
+     finalDirectory = minimizeFilename(o.FinalDirectory | "/");
      htmlDirectory = LAYOUT#"packagehtml" pkg.name;
      keys := unique join(pkg#"symbols",pkg#"docs");
      stderr << "making html pages in " << buildDirectory << htmlDirectory << endl;
+     checkDirectory (buildDirectory|htmlDirectory);
      ret := makeHtmlNode \ keys;
      "pages " | stack keys | " in " | htmlDirectory
      )

@@ -712,7 +712,7 @@ substrfun(e:Expr):Expr := (
      else WrongArgInteger(3)
      else WrongArgSmallInteger(2)
      else WrongArgInteger(2)
-     else WrongArg(1,"a string")
+     else WrongArgString(1)
      else if length(args) == 2
      then when args . 0 is s:string
      do when args . 1 is i:Integer
@@ -722,7 +722,7 @@ substrfun(e:Expr):Expr := (
 	  Expr(substr(s,ii)))
      else WrongArgSmallInteger(2)
      else WrongArgInteger(2)
-     else WrongArg(1,"a string")
+     else WrongArgString(1)
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
@@ -795,8 +795,8 @@ linesfun(e:Expr):Expr := (
      when a.1
      is s:string do 
      when a.0 is ch:string do lines(s,ch)
-     else WrongArg(1,"a string")
-     else WrongArg(2,"a string")
+     else WrongArgString(1)
+     else WrongArgString(2)
      else WrongNumArgs(2)
      is s:string do linesE(s)
      else WrongArgString());
@@ -839,7 +839,7 @@ setupfun("connectionCount", connectionCount);
 presentfun(e:Expr):Expr := (
      when e
      is s:string do Expr("\"" + present(s) + "\"")
-     else WrongArg(1,"a string"));
+     else WrongArgString(1));
 setupfun("format",presentfun);
 
 numfun(e:Expr):Expr := (
@@ -962,7 +962,7 @@ exec(a:Sequence):Expr := (
      foreach x at i in a do (
 	  when x
 	  is s:string do newargv.i = s
-	  else return(WrongArg(i+1,"a string")));
+	  else return(WrongArgString(i+1)));
      exec(newargv);
      buildErrorPacket("exec failed"));
 exec(e:Expr):Expr := (

@@ -42,7 +42,7 @@ openlink1(a:Sequence):Expr := (
      foreach x at i in a do (
 	  when x
 	  is s:string do newargv.i = s
-	  else return(WrongArg(i+1,"a string")));
+	  else return(WrongArgString(i+1)));
      Expr(toInteger(OpenLink(newargv))));
 
 openlink(e:Expr):Expr := (
@@ -304,7 +304,7 @@ putOperatorPacket(e:Expr):Expr := (
      else WrongArg(5,"an integer")
      else WrongArg(4,"a small integer")
      else WrongArg(4,"an integer")
-     else WrongArg(3,"a string")
+     else WrongArgString(3)
      else WrongArg(2,"a small integer")
      else WrongArg(2,"an integer")
      else WrongArg(1,"a small integer")
