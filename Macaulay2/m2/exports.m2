@@ -38,6 +38,7 @@ exportMutable (
 	)
 
 export (
+        symbol dismiss,
         symbol examplePrompts,
         symbol RunDirectory,
         symbol monomials,
@@ -417,8 +418,6 @@ export (
 	symbol Up,
 	symbol Usage,
 	symbol UseHilbertFunction,
-	symbol UserDictionary,
-	symbol Using,
 	symbol Variable,
 	symbol VariableBaseName,
 	symbol VariableOrder,
@@ -942,7 +941,6 @@ export (
 	symbol removeDirectory,
 	symbol removeFile,
 	symbol removeLowestDimension,
-	symbol removePackage,
 	symbol reorganize,
 	symbol replaceContents,
 	symbol reshape,

@@ -131,10 +131,6 @@ betti fano
 -- is just as well to write the documentation
 -- at this point .
 --
-
-newPackage "tutorial"
-export (Fano2, Grassmannian2);
-
 -- The documentation has the following form:
 --$
 document {
@@ -269,9 +265,6 @@ Grassmannian2(ZZ,ZZ) := (r,k) -> (
                     ];
         Grassmannian2(k,r,R)
                      )
-
-closePackage "tutorial"
-
 -- As a first example we can try
 -- the Fano of lines on the nonsingular quadric
 -- in $\P^3$
