@@ -181,23 +181,23 @@ export backtr(z:Expr,report:Expr):Expr := (
 export backtrFunction(z:Expr):Expr := (
      when z is err:Error do (
 	  if err.message == returnMessage 
-	  then err.report
+	  then err.value
 	  else backtr(z))
      else z);
 export backtrFunction(z:Expr,report:Expr):Expr := (
      when z is err:Error do (
 	  if err.message == returnMessage 
-	  then err.report
+	  then err.value
 	  else backtr(z,report))
      else z);
 export backtrLoop(z:Expr):Expr := (
      when z is err:Error do (
-	  if err.message == breakMessage then err.report
+	  if err.message == breakMessage then err.value
 	  else backtr(z))
      else z);
 export backtrLoop(z:Expr,report:Expr):Expr := (
      when z is err:Error do (
-	  if err.message == breakMessage then err.report
+	  if err.message == breakMessage then err.value
 	  else backtr(z,report))
      else z);
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (

@@ -71,7 +71,7 @@ seeParsing = args -> (
      t := (p,s) -> if x#?p then x#p = append(x#p,s) else x#p = {s};
      q := getParsing symbol seeParsing;
      scanValues(symbolTable(), s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
-     t(getParsing symbol s  , "<SYMBOLS>"  );
+     t(getParsing symbol args, "<SYMBOLS>"  );
      t(getParsing symbol " ", "<ADJACENCY>");
      new Table from prepend(
 	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },

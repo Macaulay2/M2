@@ -52,8 +52,20 @@ r = assert( 44 === (() -> scan(3, (x) -> (7*break 44; error "oops")))())
 assert(null === r)
 r = assert( 44 === (() -> scan({(1,2),(1,2)}, (x,y) -> (7*break 44; error "oops")))())
 assert(null === r)
+
 i = 1
 r = assert( 44 === while i < 3 do (break 44; i = i+1) )
+assert( i == 1 )
+assert(null === r)
+
+i = 1
+r = assert( 44 === for i from 1 to 3 do (break 44; i = i+1) )
+assert( i == 1 )
+assert(null === r)
+
+i = 1
+r = assert( 44 === for i from 1 to 3 list (break 44; i = i+1) )
+assert( i == 1 )
 assert(null === r)
 
 r = assert( 44 === scan({3,5,7,44,11,13,15}, j -> if j === 44 then 4 * break j))
