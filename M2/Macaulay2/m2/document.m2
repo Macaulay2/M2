@@ -17,7 +17,7 @@ addStartFunction(
      () -> (
 	  fn := docFilename();
 	  if fn =!= null then DocDatabase = try openDatabase fn else (
-	       if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
+	       if phase != 3 then stderr << "warning: couldn't open help file " << docFilename() << endl;
 	       new HashTable)))
 
 -- Documentation = new MutableHashTable

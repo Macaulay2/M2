@@ -171,7 +171,7 @@ package TO := x -> (
 	  pkg := package key;
 	  if pkg =!= User then (
 	       if not warned#?key then (
-		    stderr << "--warning: documentation for symbol " << key << " in package " << pkg.name << " not found" << endl;
+		    stderr << "warning: documentation for symbol " << key << " in package " << pkg.name << " not found" << endl;
 		    warned#key = true;
 		    );
 	       return pkg;
@@ -182,7 +182,7 @@ package TO := x -> (
 	  p = apply(toList key, package);
 	  -- now find the youngest of the packages involved by checking for the largest hash code
 	  pkg = last last sort(apply(p, P -> (hash P,P)));
-	  stderr << "--warning: documentation for method " << fkey << " not found, assuming it will be found in package " << pkg.name << " eventually" << endl;
+	  stderr << "warning: documentation for method " << fkey << " not found, assuming it will be found in package " << pkg.name << " eventually" << endl;
 	  return pkg;
 	  );
      error("documentation for \"",fkey,"\" not found among current packages (", concatenate between(", ",apply(pkgs,P -> P.name)),")");

@@ -1841,7 +1841,10 @@ export rawMatrixRowSwap(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
-     when s.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else ( Ccode(void, "IM2_MutableMatrix_row_swap(", "(Matrix *)", M, ",", toInt(i), ",", toInt(j), ")" ); nullE)
+     when s.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else (
+	  if Ccode(bool, "IM2_MutableMatrix_row_swap(", "(Matrix *)", M, ",", toInt(i), ",", toInt(j), ")" )
+	  then nullE
+	  else buildErrorPacket(EngineError("error swapping raw matrix rows")))
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw matrix")
@@ -1852,7 +1855,10 @@ export rawMatrixColumnSwap(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
-     when s.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else ( Ccode(void, "IM2_MutableMatrix_column_swap(", "(Matrix *)", M, ",", toInt(i), ",", toInt(j), ")" ); nullE)
+     when s.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else (
+	  if Ccode(bool, "IM2_MutableMatrix_column_swap(", "(Matrix *)", M, ",", toInt(i), ",", toInt(j), ")" )
+	  then nullE
+	  else buildErrorPacket(EngineError("error swapping raw matrix columns")))
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw matrix")
@@ -1874,7 +1880,7 @@ export rawMatrixRowChange(e:Expr):Expr := (
      else WrongArg(3,"a raw ring element")
      else WrongArgInteger(2)
      else WrongArg(1,"a raw matrix")
-     else WrongNumArgs(4));
+     else WrongNumArgs(5));
 setupfun("rawMatrixRowChange",rawMatrixRowChange);
 
 export rawMatrixColumnChange(e:Expr):Expr := (
@@ -1898,33 +1904,33 @@ setupfun("rawMatrixColumnChange",rawMatrixColumnChange);
 export rawMatrixRowScale(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
-     when s.1 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(2) else
-     when s.2 is r:RawRingElement do 
+     when s.1 is r:RawRingElement do 
+     when s.2 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(3) else
      when s.3 is opposite:Boolean do (
 	  if Ccode(bool, "IM2_MutableMatrix_row_scale(", "(Matrix *)", M, ",", "(RingElement *)", r, ",", toInt(targetRow), ",", opposite.v, ")" )
 	  then nullE
 	  else buildErrorPacket(EngineError("error scaling raw matrix row")))
      else WrongArgBoolean(4)
-     else WrongArg(3,"a raw ring element")
-     else WrongArgInteger(2)
+     else WrongArgInteger(3)
+     else WrongArg(2,"a raw ring element")
      else WrongArg(1,"a raw matrix")
      else WrongNumArgs(4));
 setupfun("rawMatrixRowScale",rawMatrixRowScale);
 
 export rawMatrixColumnScale(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
-     when s.1 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(2) else
-     when s.2 is r:RawRingElement do
+     when s.1 is r:RawRingElement do
+     when s.2 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(3) else
      when s.3 is opposite:Boolean do (
 	  if Ccode(bool, "IM2_MutableMatrix_column_scale(", "(Matrix *)", M, ",", "(RingElement *)", r, ",", toInt(targetColumn), ",", opposite.v, ")" )
 	  then nullE
 	  else buildErrorPacket(EngineError("error scaling raw matrix column")))
      else WrongArgBoolean(4)
-     else WrongArg(3,"a raw ring element")
-     else WrongArgInteger(2)
+     else WrongArgInteger(3)
+     else WrongArg(2,"a raw ring element")
      else WrongArg(1,"a raw matrix")
-     else WrongNumArgs(3));
+     else WrongNumArgs(4));
 setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 
 -----------------------------------------------------------------------------

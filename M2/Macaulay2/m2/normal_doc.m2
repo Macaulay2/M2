@@ -55,7 +55,7 @@ document { (integralClosure,Ring),
      the integral closure.  Unfortunately, all of the added features 
      currently only work on affine domains.
      The map and the corresponding fractions are obtained as 
-     a matrix using the function", TO "ICfractions R", " where R is 
+     a matrix using the function", TO (ICfractions,Ring), " where R is 
      an affine domain.  This function can be run without first 
      using ", TT "integralClosure", ".  The natrual map from ", TT "R", " into 
      its integral closure is obtained using the function ", TO "ICmap", " and 
