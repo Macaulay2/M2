@@ -17,6 +17,8 @@ class SparseMutableMatrix : public MutableMatrix
 		   ring_elem b1, ring_elem b2,
 		   bool opposite_mult) const;
 
+  void setSizes(int c_lo, int c_hi, int *rowSize, int *colSize);
+
   SparseMutableMatrix(const Ring *R);
 
   virtual ~SparseMutableMatrix() {}
@@ -136,6 +138,12 @@ public:
   virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
 
   virtual MutableMatrix * submatrix(const M2_arrayint cols) const;
+
+  /////////////////////////////////////////////////
+  // Routines special to sparse mutable matrices //
+  /////////////////////////////////////////////////
+
+  void reducePivots(); // Harrison Tsai's routine
 };
 
 #endif

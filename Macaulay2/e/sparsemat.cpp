@@ -459,6 +459,186 @@ MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint cols) const
   return result;
 }
 
+void SparseMutableMatrix::setSizes(int c_lo, int c_hi, int *rowSize, int *colSize)
+{
+  assert(c_lo >= 0);
+  assert(c_lo <= c_hi);
+  assert(c_hi < n_cols());
+
+  // Sets the arrays rowSize and colSize
+  int i;
+  for (i=0; i<ncols; i++) colSize[i] = 0;
+  for (i=0; i<nrows; i++) rowSize[i] = 0;
+  for (i=c_lo; i<=c_hi; i++)
+    for (vec p=columns_[i]; p != 0; p=p->next)
+      {
+	colSize[i]++;
+	rowSize[p->comp]++;
+      }
+#if 0
+  buffer o;
+  o << "Column sizes = ";
+  for (i=0; i<ncols; i++)
+    {
+      if (i%10 == 0) o << newline;
+      o << colSize[i] << " ";
+    }
+  o << newline;
+  o << "Row sizes = ";
+  for (i=0; i<nrows; i++)
+    {
+      if (i%10 == 0) o << newline;
+      o << rowSize[i] << " ";
+    }
+  o << newline;
+  emit(o.str());
+#endif    
+}
+
+
+// Harry's routines
+
+// this routine finds units (aka pivots) in a sparse matrix, 
+// clears out other columns by the pivot, and then sticks the
+//  pivot into the "current" last column and last row of the matrix.
+
+void SparseMutableMatrix::reducePivots()
+{
+  const Ring *K = get_ring();
+  ring_elem one = K->one();
+  ring_elem minus_one = K->minus_one();
+  int *rowSize = newarray(int, n_rows());
+  int *colSize = newarray(int, n_cols());
+  setSizes(0,n_cols()-1,rowSize,colSize);
+
+  // keeps track of last row and column which are not the output of a pivot
+  int rowPivot = nrows-1;  
+  int columnPivot = ncols-1;
+
+  // first reduce 1's and -1's
+  int i;
+  for (i = 0; i < ncols; i++) 
+    { 
+      for (vec p = columns_[i]; p != 0; p = p->next) 
+	{
+	  bool oneFlag = K->is_equal(one, p->coeff);
+	  
+	  if ( oneFlag || K->is_equal(minus_one, p->coeff)) 
+	    {
+
+	      int r = p->comp;
+	      
+	      // case 1: pivot is only elt in its column and row
+	      if (colSize[i] == 1 && rowSize[r] == 1) 
+		{
+		  if (oneFlag == false)
+		    {
+		      K->remove(columns_[i]->coeff);
+		      columns_[i]->coeff = K->copy(one);
+		    }
+		  if (i == columnPivot && r == rowPivot)
+		    {
+		      columnPivot--;
+		      rowPivot--;
+		    }
+		  else if (i < columnPivot || r < rowPivot)
+		    {
+		      interchange_columns(i, columnPivot);
+		      interchange_rows(r, rowPivot);
+		      columnPivot--;
+		      rowPivot--;
+		      i = i-1;  //test column i again
+		    }
+		}
+	      
+	      // case 2: other elements exist in pivot's row or column
+	      else
+		{
+		  for (int j = 0; j < ncols; j++) 
+		    {
+		      if (j != i) 
+			{
+			  for (vec q = columns_[j]; q != 0 
+				 && q->comp >= r; q = q->next) 
+			    {
+			      if (q->comp == r)
+				{
+				  if (oneFlag) {
+				    ring_elem f = K->negate(q->coeff);
+				    column_op(i, f, j, false);
+				    K->remove(f);
+				  }
+				  else {
+				    column_op(i, q->coeff, j, false);
+				  }
+				  break;
+				}
+			    }
+			}
+		    }
+		  p = columns_[i];
+		  K->remove_vec(columns_[i]->next);
+		  columns_[i]->next = 0;
+		  columns_[i]->comp = r;
+		  K->remove(columns_[i]->coeff);
+		  columns_[i]->coeff = K->copy(one);
+		  colSize[i] = 1;
+		  rowSize[r] = 1;
+		  interchange_columns(i, columnPivot);
+		  interchange_rows(r, rowPivot);
+		  columnPivot--;
+		  rowPivot--;
+		  i = -1; //start over at the 1st column
+		}
+	    }
+	}
+    }
+
+  // now reduce other units
+  for (i = 0; i < ncols; i++) 
+    { 
+      for (vec p = columns_[i]; p != 0; p = p->next) 
+	{
+	  if ( K->is_unit(p->coeff) && 
+	       ( (colSize[i] > 1 || rowSize[p->comp] > 1) ||
+		 (K->is_equal(one,p->coeff) == false) ) ) 
+	    {
+	      divide_column(i, p->coeff);
+	      int r = p->comp;
+	      for (int j = 0; j < ncols; j++) 
+		{
+		  if (j != i) 
+		    {
+		      for (vec q = columns_[j]; q != 0 
+			     && q->comp >= r; q = q->next) 
+			{
+			  if (q->comp == r)
+			    {
+			      ring_elem f = K->negate(q->coeff);
+			      column_op(i, f, j, false);
+			      K->remove(f);
+			      break;
+			    }
+			}
+		    }
+		}
+	      p = columns_[i];
+	      K->remove_vec(columns_[i]->next);
+	      columns_[i]->next = 0;
+	      columns_[i]->comp = r;
+	      K->remove(columns_[i]->coeff);
+	      columns_[i]->coeff = K->copy(one);
+	      colSize[i] = 1;
+	      rowSize[r] = 1;
+	      interchange_columns(i, columnPivot);
+	      interchange_rows(r, rowPivot);
+	      columnPivot--;
+	      rowPivot--;
+	      i = -1; //start over at the 1st column
+	    }
+	}
+    }
+}
 
 
 #if 0
