@@ -310,7 +310,7 @@ html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 info CODE := net CODE := x -> stack lines concatenate x
 html CODE   := x -> concatenate( 
      "<pre class=\"examples\">", 
-     demark( ("<br>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
+     demark(newline, apply(lines concatenate x, htmlExtraLiteral) ),
      "</pre>"
      )
 

@@ -268,7 +268,7 @@ document {
      computation, and several associated matrices. Normally you don't
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more
-     information, see ", TO "Groebner bases and related computations", " or
+     information, see ", TO "Groebner bases", " or
      ", TO "computing Groebner bases", "."
      }
 

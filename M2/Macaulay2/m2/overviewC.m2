@@ -1271,7 +1271,7 @@ document {
      }
 
 document {
-     Key => "fibers of maps",
+     Key => "fibers of a map between varieties",
      }
 
 document {

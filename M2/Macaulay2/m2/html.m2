@@ -45,7 +45,17 @@ html IMG  := x -> concatenate("<img src=\"", rel first x, "\">")
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
-html TO   := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral DocumentTag.FormattedKey x#0, "</a>", if x#?1 then x#1)
+html TO   := x -> concatenate(
+     "<a",
+     " href=\"",
+     rel htmlFilename x#0,
+     "\"",
+     " title=\"",
+     headline x#0,
+     "\">",
+     htmlExtraLiteral DocumentTag.FormattedKey x#0,
+     "</a>",
+     if x#?1 then x#1)
 html TO2  := x -> concatenate("<a href=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</a>")
 
 next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NEXT#tag, nextButton } } else nullButton

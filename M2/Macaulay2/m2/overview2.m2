@@ -437,27 +437,6 @@ document {
      }
 
 document {
-     Key => "Programming Overview",
-     "In this section we give a comprehensive overview of the user
-     language and the main programming features of Macaulay 2.",
-     Subnodes => {
-	  TO "syntax",
-	  TO "variables and symbols",
-	  TO "functions",
-     	  TO "basic types",
-	  TO "control structures",
-	  TO "classes and types",
-	  TO "input and output",
-	  TO "combinatorial functions",
-	  TO "system",
-     	  TO "Using the debugger",
-	  TO "debugging",
-	  TO "operators",
-	  TO "executing other programs",
-	  }
-     }
-
-document {
      Key => "variables and symbols",
      Subnodes => {
 	  TO "valid names",
@@ -475,12 +454,12 @@ document {
      PARA,
      Subnodes => {
 	  TO "using functions",
+	  TO "using functions with optional inputs",
 	  TO "making functions",
 	  TO "local variables in a function",
 	  TO "making functions with a variable number of arguments",
-	  TO "Optional inputs",
 	  TO "making new functions with optional arguments",
-	  TO "Function"
+	  TO "Function"					    -- should become a cross-reference
 	  }
      }
 
@@ -507,7 +486,7 @@ document {
 	  TO "mapping over lists",
 	  TO "mapping over hash tables",
 	  TO "conditional execution",
-	  TO "alarm",
+	  TO "setting an alarm",
 	  TO "error handling",
 	  }
      }
@@ -519,7 +498,14 @@ document {
 	  TO "reading files",
 	  TO "getting input from the user",
 	  TO "creating and writing files",
+	  TO "saving polynomials and matrices in files",
 	  TO "two dimensional formatting",
+	  }
+     }
+
+document {
+     Key => "advanced input and output",
+     Subnodes => {
 	  TO "communicating with programs",
 	  TO "using sockets",
 	  }
@@ -535,8 +521,8 @@ document {
 	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
 	  TO "making a new method function",
-	  TO [method, SingleArgumentDispatch],
-	  TO [method, Options],
+	  TO [method, SingleArgumentDispatch], -- this is an actual key!
+	  TO [method, Options],		     -- this is an actual key!
 	  }
      }
 

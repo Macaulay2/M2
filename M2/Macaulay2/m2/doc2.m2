@@ -192,20 +192,25 @@ document {
 document {
      Key => "try",
      Headline => "catch an error",
-     TT "try x then y else z", " -- returns the value of y unless an error or
-     ", TO "alarm", " occurs during the evaluation of x, in which case it 
-     returns the value of z.", BR, NOINDENT,
-     TT "try x else y", " -- returns the value of x unless an error or
-     ", TO "alarm", " occurs during the evaluation of x, in which case it 
-     returns the value of y.", BR, NOINDENT,
-     TT "try x", " -- returns the value of x unless an error or
-     ", TO "alarm", " occurs during the evaluation of x, in which case it 
-     returns ", TO "null", ".",
+     Usage => "try x then y else z",
+     Inputs => {
+	  "x" => "code",
+	  "y" => "code",
+	  "z" => "code"
+	  },
+     Consequences => {
+	  {"the code ", TT "x", " is run; if no error or ", TO "alarm", " occurs, then the code ", TT "y", " is run; otherwise, the code ", TT "z", " is run"}
+	  },
+     "The return value is the value returned by ", TT "y", " or ", TT "z", ", as the case may be.",
+     PARA,
+     "The clause '", TT "then y", "' may be ommitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
+     PARA,
+     "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
+     alarm occurs, in which case ", TO "null", " is returned.",
      PARA,
      "The behavior of interrupts (other than alarms) is unaffected.",
      EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
-     Caveat => "We will change the behavior of this function soon so that it will be
-     possible to catch errors of a particular type.  Meanwhile, users are
+     Caveat => "We will change the behavior of this function soon so that it will be possible to catch errors of a particular type.  Meanwhile, users are
      recommended to use this function sparingly, if at all."
      }
 

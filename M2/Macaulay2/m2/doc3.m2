@@ -93,21 +93,20 @@ document {
 document {
      Key => alarm,
      Headline => "set an alarm",
-     TT "alarm n", " -- arrange for an interrupt to occur in ", TT "n", "
-     seconds, cancelling any previously set alarm.",
+     Usage => "alarm n",
+     Inputs => {
+	  "n" => ZZ => "",
+	  },
+     Consequences => {
+	  { "the alarm will be sounded after ", TT "n", " seconds; it can be intercepted with ", TO "try" }
+	  },
+     "If ", TT "n", " is zero, then no alarm is scheduled, and any previously scheduled alarm is cancelled.
+     Any pending alarm will be cancelled when any other error occurs, or when the top level loop offers an input prompt to the user.",
      PARA,
-     "If ", TT "n", " is zero, then no alarm is scheduled, and any
-     previously scheduled alarm is cancelled.",
-     PARA,
-     "The value returned is the number of seconds  remaining  until  any
-     previously  scheduled  alarm  was  due to be delivered, or
+     "The value returned is the number of seconds remaining until any previously scheduled alarm was due to be delivered, or
      zero if there was no previously scheduled alarm.",
      PARA,
-     "This command could be used in concert with ", TO "try", " in order
-     to abandon a computation that is taking too long.",
-     PARA,
-     "This command may interfere with ", TO "time", " on some systems,
-     causing it to provide incorrect answers."
+     "This command may interfere with ", TO "time", " or ", TO "sleep", " on some systems."
      }
 
 document {
@@ -568,7 +567,7 @@ document {
      }
 
 document {
-     Key => "Optional inputs",
+     Key => "using functions with optional inputs",
      "Some functions accept optional inputs in addition to their required inputs.  In the documentation,
      such an optional input is indicated by writing ", TT "NAME => ...", ", where ", TT "NAME", " is the
      name of the optional input, and the dots indicate the place where the user will provide the
