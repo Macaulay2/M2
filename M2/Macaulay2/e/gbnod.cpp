@@ -752,6 +752,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	      emit(o.str());
 	    }
 
+#warning "there is an error here somewhere"
 	  n_gb_syz = hilb_comp::coeff_of(h, this_degree);
 	  if (error())
 	    return COMP_ERROR;
@@ -899,14 +900,13 @@ RingElementOrNull *gb2_comp::hilbertNumerator()
   hf_numgens_F = F->rank();
   hf_numgens_gb = n_gb;
 
-#if 0  
   emit("hilbert function of ");
   dfree(hf_matrix->rows());
+  emit("\n");
   dmatrix(hf_matrix);
-  emit("\n  is ");
+  emit("  is ");
   drelem(hf);
   emit("\n");
-#endif
 
   return hf;
 }
