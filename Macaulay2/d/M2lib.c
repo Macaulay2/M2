@@ -326,6 +326,8 @@ double system_etime(){
 
 #if defined(__sun__) || defined(_WIN32)
 #define __environ _environ
+#elif defined(__FreeBSD__)
+#define __environ environ
 #endif
 
 extern char **__environ;

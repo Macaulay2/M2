@@ -39,10 +39,9 @@ toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then 
 toString Thing := string
 -----------------------------------------------------------------------------
 toExternalString String := format
+toString Net :=
 toExternalString Net := x -> (
-     s := concatenate( "stack(", between(",",apply(netRows x, format)), ")" );
-     if height x === 1 then s
-     else concatenate( "((", s, ")^", string(height x - 1), ")" )
+     concatenate(format concatenate between("\n",netRows x), "^", toString(height x - 1))
      )
 toExternalString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
      toExternalString class s,

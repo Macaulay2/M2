@@ -2,11 +2,9 @@
 
 -- this file has an unusual name so it will be done last.
 
-end -- disable this test
-
 if class documentation "Macaulay 2" =!= SEQ then (
      stderr
-     << ///Can't get started on checking documentation, top node missing, key Macaulay 2.///
+     << ///Can't get started on checking documentation, top node missing, key: "Macaulay 2".///
      << endl;
      if class documentation "\"Macaulay 2\"" === SEQ then (
      	  stderr << ///Hmm, the quoted key "Macaulay 2" is there!/// << endl;
@@ -69,7 +67,7 @@ scan(keys DocumentationProvided,
 	  ))
 reachable#"Macaulay 2" = true
 
-assert( class doc "Macaulay 2" === SEQ )
+assert( class documentation "Macaulay 2" === SEQ )
 
 topName = "Macaulay 2"
 reach documentation topName

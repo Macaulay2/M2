@@ -101,11 +101,21 @@ clean::; rm -f gc/base_lib
 
 all:: GMP
 
-ifeq "$(CC)" "cl"
-# lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
-gmp/.libs/gmp.lib : make-gmp
-GMPlibs = gmp/.libs/gmp.lib
+ifeq "$(OS)" "FreeBSD"
+GMP : 	lib/libgmp.a
+lib/libgmp.a : /usr/lib/libgmp.a
+	ln -sf $< $@
 else
+ifeq "$(CC)" "cl"
+GMP : 	gmp include/gmp.h $(GMPlibs)
+
+GMPlibs = lib/gmp.lib
+lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
+gmp/gmp.lib : make-gmp
+else
+GMP : 	gmp include/gmp.h $(GMPlibs)
+
+GMPnames := gmp
 # GMPnames += mpn mpz mpq mpf 
 GMPFLAGS := -g -O2
 # lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
@@ -120,8 +130,7 @@ GMPFLAGS := -g -O2
 gmp/.libs/libgmp.a : make-gmp
 GMPlibs := gmp/.libs/libgmp.a
 endif
-
-GMP : 	gmp include/gmp.h $(GMPlibs)
+endif
 
 include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
 

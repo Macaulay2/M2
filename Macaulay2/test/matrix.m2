@@ -206,8 +206,7 @@ opsTest = () -> (
   -- use the 'm' above.
   fliptranspose := m -> (
     F = source m; G = target m;
-    reshape(dual F, dual G, (flatten m) (flip(F, dual G))))
-
+    reshape(dual F, dual G, (flatten m) (flip(F, dual G))));
   assert(transpose m == fliptranspose m);
   )
 

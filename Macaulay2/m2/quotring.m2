@@ -46,6 +46,10 @@ expression QuotientRing := S -> (
 	  expression pretty S.relations 
 	  }
      )
+
+tex QuotientRing := S -> "$" | texMath S | "$"
+texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
+
 net QuotientRing := S -> net expression S
 dim QuotientRing := S -> if S.?dim then S.dim else S.dim = dim S^1
 
