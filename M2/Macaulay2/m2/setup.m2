@@ -33,10 +33,8 @@ applyMethod := (m,x) -> if x === null then x else (
      if method === null then x else method x
      )
 
-MainDictionary = first globalDictionaries
 OutputDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,OutputDictionary)
-UserDictionary = new Dictionary
 
 commonProcessing := x -> (
      x = applyMethod(AfterEval,x);
@@ -115,6 +113,7 @@ input = (filename) -> tryload(filename,simpleInput,false)
 needs = s -> if not loaded#?s then load s
 
 currentPackage = null
+UserDictionary = new Dictionary				    -- no package comes with this dictionary
 
 load "loads.m2"
 stderr << "--loaded setup.m2" << endl

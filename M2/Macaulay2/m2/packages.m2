@@ -34,6 +34,7 @@ reverseDictionaryRemove = (X,x) -> (
 
 toString Dictionary := d -> (
      if ReverseDictionary#?d then return toString ReverseDictionary#d;
+     if PrintNames#?d then return PrintNames#d;
      if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
      )
 
@@ -105,6 +106,7 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
+     PrintNames#newdict = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
      globalAssignFunction(sym,p);
      sym <- p;
