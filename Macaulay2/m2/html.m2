@@ -13,8 +13,7 @@ local prefix, local topNodeButton
 local haderror, local nullButton, local masterIndexButton
 local NEXT, local PREV, local UP
 local nextButton, local prevButton, local upButton
-local lastKey, local thisKey
-local linkFollowedTable, local masterIndex
+local masterIndex
 
 buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
@@ -78,6 +77,8 @@ html TO := x -> (
      	  )
      )
 
+text TO2 := x -> text x#2
+
 html TO2 := x -> (
      key := normalizeDocumentTag x#0;
      formattedKey := formatDocumentTag key;
@@ -119,92 +120,6 @@ LITERAL ///
 
 -- produce html form of documentation, for Macaulay 2 and for packages
 
-documentationMemo := memoize documentation		    -- for speed
-
-BUTTON := (s,alt) -> (
-     s = rel s;
-     if alt === null
-     then error "required attribute: ALT"
-     else LITERAL concatenate("<IMG class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
-     )
-
-upAncestors := key -> reverse (
-     n := 0;
-     while UP#?key and n < 20 list (n = n+1; key = UP#key)
-     )
-
-next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
-prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
-up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
-
-scope := method(SingleArgumentDispatch => true)
-scope2 := method(SingleArgumentDispatch => true)
-scope1 := method(SingleArgumentDispatch => true)
-
-follow := key -> (
-     key = normalizeDocumentTag key;
-     fkey := formatDocumentTag key;
-     -- stderr << "key     = " << key << endl;
-     -- stderr << "fkey    = " << fkey << endl; 
-     -- stderr << "prefix  = " << prefix << endl; 
-     -- stderr << "linkFollowedTable#?key  = " << linkFollowedTable#?key << endl; 
-     if not linkFollowedTable#?key then (
-	  fn := htmlFilename key;
-	  if true or prefix == substring(fn,0,#prefix) then (	    -- don't stray outside this package???
-	       linkFollowedTable#key = true;
-	       if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
-	       saveThisKey := thisKey;
-	       saveLastKey := lastKey;
-	       thisKey = fkey;
-	       lastKey = null;
-	       scope documentationMemo key;
-	       thisKey = saveThisKey;
-	       lastKey = saveLastKey;
-	       )
-	  else (
-	       linkFollowedTable#key = false;
-	       )
-	  )
-     )
-
--- scanning at top level
-scope Thing := x -> null
-scope Sequence := scope BasicList := x -> scan(x,scope)
-scope SHIELD := x -> scan(x,scope1)
-scope UL := x -> scan(x,scope2)
-scope TO := scope TOH := x -> follow x#0
-
--- scanning inside a SHIELD
-scope1 Thing := x -> null
-scope1 Sequence := scope1 BasicList := x -> scan(x,scope1)
-scope1 TO := scope1 TOH := x -> follow x#0
-
--- scanning inside a UL not inside a SHIELD
-scope2 Thing := scope
-scope2 SEQ := x -> scan(x,scope2)
-scope2 SHIELD := x -> scan(x,scope1)
-scope2 TO := scope2 TOH := x -> (
-     -- here we construct the ordered tree needed for presentation in book format,
-     -- with UP, NEXT, and PREVIOUS pointers.
-     key := normalizeDocumentTag x#0;
-     fkey := formatDocumentTag key;
-     if UP#?key 
-     then (
-	  stderr << "error: links to '" << fkey << "' from two nodes: '"
-	  << UP#key << "' and '" << thisKey << "'" << endl
-	  )
-     else if fkey == thisKey then stderr << "error: node " << fkey << " links to itself" << endl
-     else (
-	  UP#fkey = thisKey;
-	  if lastKey =!= null then (
-	       PREV#fkey = lastKey;
-	       NEXT#lastKey = fkey;
-	       );
-	  lastKey = fkey;
-	  );
-     follow key;
-     )
-
 buttonBar := (key) -> TABLE { { 
 
 	  LITERAL concatenate (///
@@ -233,20 +148,23 @@ buttonBar := (key) -> TABLE { {
 
 	  } }
 
-pass1 := () -> (
-     << "pass 1, finding undocumented symbols" << endl;
-     scan(undocumentedSymbols(), 
-	  x -> (
-	       haderror = true;
-	       follow toString x;
-	       )
-	  )
+documentationMemo := memoize documentation		    -- for speed
+
+BUTTON := (s,alt) -> (
+     s = rel s;
+     if alt === null
+     then error "required attribute: ALT"
+     else LITERAL concatenate("<IMG class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
      )
 
-pass2 := () -> (
-     << "pass 2, descending through documentation tree" << endl;
-     follow topNodeName;
+upAncestors := key -> reverse (
+     n := 0;
+     while UP#?key and n < 20 list (n = n+1; key = UP#key)
      )
+
+next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
+prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
+up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
 
 fakeMenu := x -> (
      --   o  item 1
@@ -282,10 +200,6 @@ makeHtmlNode = key -> (
 	  }
      << endl << close)
 
-pass4 := () -> (
-     << "pass 4, writing html files" << endl;
-     scan(keys linkFollowedTable, key -> if linkFollowedTable#key then makeHtmlNode key))
-
 -----------------------------------------------------------------------------
 
 alpha := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -295,6 +209,114 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      anchorPoint = anchorPoint + #s;
      SEQ apply(s, c -> ANCHOR {c, ""})
      )
+
+packageNodes := (pkg,topNodeName) -> unique join(
+     select(keys pkg.Dictionary,s -> not match ( "\\$" , s )),
+     keys pkg#"documentation",{topNodeName})
+
+-----------------------------------------------------------------------------
+-- constructing the tree-structure for the documentation nodes in a package
+-----------------------------------------------------------------------------
+
+-- make this first:
+linkTable := new MutableHashTable			    -- keys are fkeys for a node, values are ordinary lists of descendants
+
+-- assemble this next
+DescendentList = new Type of BasicList			    -- list of formatted keys for descendents
+TreeNode = new Type of BasicList			    -- first entry is formatted key for this node, second entry is a descendent list
+
+net DescendentList := x -> stack apply(toList x,net)
+net TreeNode := x -> net x#0 || (stack (#x#1 : " |  ")) | net x#1
+
+local visitedNodes
+local foundLoop
+
+makeNode = x -> (
+     visited := visitedNodes#?x;
+     if visited then (
+	  if not foundLoop then stderr << "warning: loop found in documentation tree" << endl;
+	  foundLoop = true;
+	  );
+     new TreeNode from { x, new DescendentList from if visited then { "-- node visited already --" } else apply(linkTable#x,makeNode) })
+
+makeTree = topNode -> (
+     visitedNodes = new MutableHashTable;
+     foundLoop = false;
+     makeNode topNode)
+
+--
+
+
+scope := method()
+scope2 := method()
+scope1 := method()
+
+externalReferences := new MutableHashTable
+showExternalReferences = () -> sort keys externalReferences
+
+local nodesToScope
+follow := (f,key) -> (
+     key = normalizeDocumentTag key;
+     fkey := formatDocumentTag key;
+     if currentPackage#"documentation"#?fkey or fkey == topNodeName -- there are other ways to deduce a node belongs in our package...
+     then (
+     	  if not linkTable#?fkey then (
+	       nodesToScope#(f,key) = true;
+	       linkTable#fkey = {};
+	       -- scope(fkey,documentationMemo key);
+	       ))
+     else externalReferences#fkey = true)
+
+-- scanning at top level
+scope (String, Thing    ) := (f,x) -> null
+scope (String, Sequence ) :=
+scope (String, BasicList) := (f,x) -> scan(x,y -> scope(f,y))
+scope (String, SHIELD   ) := (f,x) -> scan(x,y -> scope1(f,y))
+scope (String, UL       ) := (f,x) -> scan(x,y -> scope2(f,y))
+scope (String, TO       ) :=
+scope (String, TOH      ) := (f,x) -> follow(f,x#0)
+
+-- scanning inside a SHIELD
+scope1 (String, Thing    ) := (f,x) -> null
+scope1 (String, Sequence ) :=
+scope1 (String, BasicList) := (f,x) -> scan(x,y -> scope1(f,y))
+scope1 (String, TO       ) :=
+scope1 (String, TOH      ) := (f,x) -> follow(f,x#0)
+
+-- scanning inside a UL not inside a SHIELD
+scope2 (String, Thing    ) := scope
+scope2 (String, SEQ      ) := (f,x) -> scan(x,y -> scope2(f,y))
+scope2 (String, SHIELD   ) := (f,x) -> scan(x,y -> scope1(f,y))
+scope2 (String, TO       ) :=
+scope2 (String, TOH      ) := (f,x) -> (
+      key := normalizeDocumentTag x#0;
+      fkey := formatDocumentTag key;
+      linkTable#f = append(linkTable#f,fkey);
+      follow(f,key);
+      )
+
+follow = on (follow, Name => "follow")
+
+assembleTree = method()
+assembleTree Package := pkg -> (
+     oldpkg := currentPackage;
+     currentPackage = pkg;
+     nodesToScope = new MutableHashTable;
+     topNodeName = pkg#"title";
+     nodes := packageNodes(pkg,topNodeName);
+     linkTable = new MutableHashTable from { };
+     UP = new MutableHashTable;
+     NEXT = new MutableHashTable;
+     PREV = new MutableHashTable;
+     while (
+     	  follow("--root--",topNodeName);			    -- no parent node!
+	  #nodesToScope > 0)
+     do (
+	  m := keys nodesToScope;
+	  scan(m, (f,x) -> scope(f,x));
+	  nodesToScope = new MutableHashTable from keys (set keys nodesToScope - set m);
+	  );
+     makeTree topNodeName)
 
 -----------------------------------------------------------------------------
 -- making the html pages
@@ -362,6 +384,7 @@ installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
      topNodeName = pkg#"title";
+     nodes := packageNodes(pkg,topNodeName);
      buildPackage = if pkg === Main then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
@@ -457,7 +480,6 @@ installPackage Package := o -> pkg -> (
      htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
-     nodes := unique join(select(keys pkg.Dictionary,s -> not match ( "\\$" , s )),keys pkg#"documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
 
