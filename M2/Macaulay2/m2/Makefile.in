@@ -32,10 +32,10 @@ endif
 DUMPEDM2FILES := $(LOADSEQUENCE) @srcdir@/setup.m2 @srcdir@/startup.m2 $(MADEM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
-DUMPEDM2FILES := $(DUMPEDM2FILES) @srcdir@/dumpdata.m2
+DUMPEDM2FILES := $(DUMPEDM2FILES)
 endif
 
-OTHERM2FILES = $(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2)
+OTHERM2FILES = $(patsubst %, @srcdir@/%, eg.m2 sagbi.m2)
 
 NONDOCM2FILES = @srcdir@/startup.m2 @srcdir@/setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
@@ -97,7 +97,7 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/M2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	time ../bin/M2 -q --silent --stop ../../../Macaulay2/m2/dumpdata.m2 -e 'dump "$(DUMPDATAFILE)"'
+	time ../bin/M2 -q --stop --dumpdata
 endif
 
 phase1 :: ../cache/Macaulay2-made

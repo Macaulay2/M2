@@ -231,19 +231,18 @@ loadSetup := () -> (
      )
 
 dump := () -> (
-     -- load dumpdata.m2 and then execute dump(), so dumpdata.m2 is closed when the dump occurs
      if not version#"dumpdata" then error "can't dump data with this version of Macaulay 2";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
-	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "Macaulay2-", arch, "-data") else 
+	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 
 	  if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")	  
 	  );
      if fn === null then error "can't find cache directory for dumpdata file";
      runEndFunctions();
      collectGarbage();
-     << "--dumping to " << fn << endl << flush;
+     stderr << "--dumping to " << fn << endl;
      dumpdata fn;
-     << "--dumped to " << fn << endl << flush;
+     stderr << "--success" << endl;
      exit 0;
      )
 
@@ -255,7 +254,7 @@ action := hashTable {
      "-q" => silence,					    -- implemented in setup.m2
      "--silent" => arg -> nobanner = true,
      "--debug" => arg -> debuggingMode = true,
-     "--dumpdata" => arg -> dump(),
+     "--dumpdata" => arg -> (noloaddata = true; if not preload then dump()),
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
@@ -341,7 +340,7 @@ if firstTime and not nosetup then loadSetup()
 runStartFunctions()
 errorDepth = loadDepth
 stopIfError = false					    -- this is also set in interp.d
-processCommandLineOptions()
+processCommandLineOptions()				    -- the second time, with preload === false
 n := interpreter()
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
