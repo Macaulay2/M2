@@ -2,6 +2,7 @@ factory-1.2c.h
 factoryconf.h
 gmp.h
 config.h
+config.h.in
 factory.h
 gc.h
 templates
