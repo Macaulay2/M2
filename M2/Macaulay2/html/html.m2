@@ -38,9 +38,12 @@ process := (key,doc) -> (
 
 scandb(openDatabase databaseFileName, process) 
 
+missing := false;
+
 scan(linkFilenameKeys(),
      key -> if not masterIndex#?key then (
 	  title := formatDocumentTag key;
+	  missing = true;
 	  stderr << "Documentation for '" << key << "' missing." << endl;
 	  linkFilename key << html HTML { 
 	       HEAD TITLE title,
@@ -81,7 +84,9 @@ run concatenate (
      if version#OS === "Windows NT" then "copy" else 
      if version#OS === "CYGWIN32-95" then "copy" else 
      if version#OS === "CYGWIN32-NT" then "copy" else 
-	 "ln -s",
+	 "ln -f",
      " ",
      masterIndex#(format "Macaulay 2"),
      " index.html")
+
+if missing then exit 1
