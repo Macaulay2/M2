@@ -571,7 +571,6 @@ setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
 setupconst("LMatrixRR",Expr(LMatrixRRClass));
 setupconst("LMatrixCC",Expr(LMatrixCCClass));
-setupconst("CCC",Expr(complexClass));			    -- to be changed to CC later
 
 varstringarray := { a:array(string), n:int };
 newvarstringarray(m:int):varstringarray := varstringarray( new array(string) len m do provide "", 0 );
