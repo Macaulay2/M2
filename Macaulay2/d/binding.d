@@ -535,7 +535,7 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	       )
 	  else (
 	       if ! opHasPostfixMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator, "cna't assign a value for this postfix operator")
+	       then makeErrorTree(assn.operator, "can't assign a value for this postfix operator")
 	       )
 	  )
      is binary:Binary do (
