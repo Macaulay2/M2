@@ -97,7 +97,7 @@ minSatPPD = (I, facs) -> (
      while not fastequal(ret#0, Iprev) do (
 	  F = F * ret#2;
 	  Iprev = ret#0;
-	  ret = quotMin unlist ret;
+	  ret = quotMin toSequence ret;
 	  );
      {ideal ret#0, F0, F, facs0}
      )
