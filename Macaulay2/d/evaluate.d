@@ -534,22 +534,20 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 				   previousFrame = c2.frame;
 				   model = c2.model;
 				   desc = model.desc;
-				   framesize2 := desc.framesize;
 				   if desc.numparms != 1 then return wrongModel1(model);
-				   if framesize2 > framesize || f.notrecyclable then (
+				   if desc.framesize > framesize || f.notrecyclable then (
 					-- get or make a new frame
-					-- we already know that framesize < length(recycleBin)
-					framesize = framesize2;
-					f = recycleBin.framesize;
-					if f == f.outerFrame then (		    -- self-pointer distinguishes the last one, so ignore it and make a new one
-					     f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
-					     )
-					else (
+					framesize = desc.framesize;
+					if framesize < length(recycleBin) && recycleBin.framesize.outerFrame != recycleBin.framesize then (
 					     -- use a stashed one
+					     f = recycleBin.framesize;
 					     recycleBin.framesize = f.outerFrame;
 					     f.outerFrame = previousFrame;
 					     f.frameID = desc.frameID;
-					     f.values.0 = e;))
+					     f.values.0 = e;)
+					else (		    -- self-pointer distinguishes the last one, so ignore it and make a new one
+					     f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
+					     ))
 				   else (
 					-- clean up the old one
 					-- leave framesize as is, the actual size of f

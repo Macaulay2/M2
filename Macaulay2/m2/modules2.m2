@@ -548,7 +548,12 @@ annihilator RingElement := Ideal => f -> annihilator ideal f
 
 -----------------------------------------------------------------------------
 ZZ _ Module := Vector => (i,M) -> new Vector from map(M,(ring M)^1,0)
-Module _ ZZ := Vector => (M,i) -> new Vector from M_{i}
+Module _ ZZ := Vector => (M,i) -> (
+     R := ring M;
+     p := M_{i};
+     d := first degrees source p;
+     p = map(M,R^1,p,Degree => d);
+     new Vector from p)
 -----------------------------------------------------------------------------
 Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
