@@ -60,55 +60,42 @@ static void cmd_EMO_clone(object &o1)
 }
 static void cmd_EMO_revlex(object &o1, object &o2)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  int nvars = o2->int_of();
+  int nvars = o1->int_of();
+  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
   mo->revlex(nvars);
 }
 static void cmd_EMO_lex(object &o1, object &o2)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  int nvars = o2->int_of();
+  int nvars = o1->int_of();
+  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
   mo->lex(nvars);
 }
 static void cmd_EMO_revlexWeights(object &o1, object &o2)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  intarray *a = o2->intarray_of();
+  intarray *a = o1->intarray_of();
+  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
   mo->revlexWeights(a->length(),a->raw());
-}
-static void cmd_EMO_lexWeights(object &o1, object &o2)
-{
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  intarray *a = o2->intarray_of();
-  mo->lexWeights(a->length(),a->raw());
 }
 static void cmd_EMO_revlex1(object &o1, object &o2, object &o3)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  int nvars = o2->int_of();
-  int isgroup = o3->int_of();
+  int nvars = o1->int_of();
+  int isgroup = o2->int_of();
+  EMonomialOrder *mo = o3->cast_to_EMonomialOrder();
   mo->revlex(nvars, isgroup);
 }
 static void cmd_EMO_lex1(object &o1, object &o2, object &o3)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  int nvars = o2->int_of();
-  int isgroup = o3->int_of();
+  int nvars = o1->int_of();
+  int isgroup = o2->int_of();
+  EMonomialOrder *mo = o3->cast_to_EMonomialOrder();
   mo->lex(nvars,isgroup);
 }
 static void cmd_EMO_revlexWeights1(object &o1, object &o2, object &o3)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  intarray *a = o2->intarray_of();
-  int isgroup = o3->int_of();
+  intarray *a = o1->intarray_of();
+  int isgroup = o2->int_of();
+  EMonomialOrder *mo = o3->cast_to_EMonomialOrder();
   mo->revlexWeights(a->length(),a->raw(),isgroup);
-}
-static void cmd_EMO_lexWeights1(object &o1, object &o2, object &o3)
-{
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  intarray *a = o2->intarray_of();
-  int isgroup = o3->int_of();
-  mo->lexWeights(a->length(),a->raw(),isgroup);
 }
 static void cmd_EMO_component(object &o1)
 {
@@ -117,8 +104,8 @@ static void cmd_EMO_component(object &o1)
 }
 static void cmd_EMO_weightFunction(object &o1, object &o2)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  intarray *a = o2->intarray_of();
+  intarray *a = o1->intarray_of();
+  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
   mo->weightFunction(a->length(),a->raw());
 }
 static void cmd_EMO_product(object &o1, object &o2)
@@ -129,8 +116,8 @@ static void cmd_EMO_product(object &o1, object &o2)
 }
 static void cmd_EMO_NClex(object &o1, object &o2)
 {
-  EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
-  int nvars = o2->int_of();
+  int nvars = o1->int_of();
+  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
   mo->NClex(nvars);
 }
 
@@ -1233,18 +1220,16 @@ void i_Ecommands(void)
 
   install(ggMOinit, cmd_EMO_init);
   install(ggMOclone, cmd_EMO_clone, TY_EMonomialOrder);
-  install(ggMOrevlex, cmd_EMO_revlex, TY_EMonomialOrder, TY_INT);
-  install(ggMOrevlex, cmd_EMO_revlexWeights, TY_EMonomialOrder, TY_INTARRAY);
-  install(ggMOlex, cmd_EMO_lex, TY_EMonomialOrder, TY_INT);
-  install(ggMOlex, cmd_EMO_lexWeights, TY_EMonomialOrder, TY_INTARRAY);
-  install(ggMOrevlex, cmd_EMO_revlex1, TY_EMonomialOrder, TY_INT, TY_INT);
-  install(ggMOrevlex, cmd_EMO_revlexWeights1, TY_EMonomialOrder, TY_INTARRAY, TY_INT);
-  install(ggMOlex, cmd_EMO_lex1, TY_EMonomialOrder, TY_INT, TY_INT);
-  install(ggMOlex, cmd_EMO_lexWeights1, TY_EMonomialOrder, TY_INTARRAY, TY_INT);
+  install(ggMOrevlex, cmd_EMO_revlex, TY_INT, TY_EMonomialOrder);
+  install(ggMOrevlex, cmd_EMO_revlexWeights, TY_INTARRAY, TY_EMonomialOrder);
+  install(ggMOlex, cmd_EMO_lex, TY_INT, TY_EMonomialOrder);
+  install(ggMOrevlex, cmd_EMO_revlex1, TY_INT, TY_INT, TY_EMonomialOrder);
+  install(ggMOrevlex, cmd_EMO_revlexWeights1, TY_INTARRAY, TY_INT, TY_EMonomialOrder);
+  install(ggMOlex, cmd_EMO_lex1, TY_INT, TY_INT, TY_EMonomialOrder);
   install(ggMOcomponent, cmd_EMO_component, TY_EMonomialOrder);
-  install(ggMOwtfcn, cmd_EMO_weightFunction, TY_EMonomialOrder, TY_INTARRAY);
+  install(ggMOwtfcn, cmd_EMO_weightFunction, TY_INTARRAY, TY_EMonomialOrder);
   install(ggMOproduct, cmd_EMO_product, TY_EMonomialOrder, TY_EMonomialOrder);
-  install(ggMONClex, cmd_EMO_NClex, TY_EMonomialOrder, TY_INT);
+  install(ggMONClex, cmd_EMO_NClex, TY_INT, TY_EMonomialOrder);
 
   // Monomial order query functions
   // MES: this needs to be done...

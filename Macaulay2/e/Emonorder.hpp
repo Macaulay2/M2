@@ -80,7 +80,6 @@ public:
   EMonomialOrder *component();
   EMonomialOrder *weightFunction(int nvars, const int *wts);
   EMonomialOrder *lex(int nvars, bool isgroup=false);
-  EMonomialOrder *lexWeights(int nvars, const int *wts, bool isgroup=false);
   EMonomialOrder *product(const EMonomialOrder *mo2);
 
   EMonomialOrder *NClex(int nvars);

@@ -90,3 +90,37 @@ document { quote ggEcharp,
        will be removed soon."
      }
      
+document { quote ggpolyring,
+     TT "ggpolyring(K:ERing, M:EMonoid, ZD:ERing, d:IntegerList):ERing", " -- create a polynomial ring",
+     PARA,
+     "Create the polynomial ring,", TT "R = K[M]", " with the grading 
+      given by the last two arguments.  If the monoid is non-commutative, then
+      the result is a non-commutative polynomial ring.",
+     PARA,
+     "The grading is given by a commutative group monoid, ", TT "D", " which is 
+      the monoid of the polynomial ring ", TT "ZD", ".  The degree of each
+      variable of ", TT "R", " is a list of integers of length the number of
+      variables of ", TT "ZD", ".  The argument ", TT "d", " should be the
+      integer list obtained by flattening the degrees of the variables.",
+     PARA,
+     "For example, if the ring has two variables x and y, and ZD has three
+      variables, and if degree(x) = {-1,0,1}, degree(y) = {0,0,1}, then
+      d should be the list {-1,0,1, 0,0,1}.",
+     PARA,
+      "If no grading is desired, use ggEZZ() for the degree ring, and {} for d,
+       as in ", TT "ggpolyring(K,M,ZZZ,{})", ".",
+     PARA,
+      "Known problems, restrictions or caveats: Currently, the coefficient ring K
+      must be ZZ or ZZ/p.  In particular, polynomial rings over polynomial rings
+      are not yet allowed.  This restriction will be gone soon."
+      }
+ 
+document { quote ggweylalg,
+     TT "ggweylalg(K:ERing, M:Monoid, comm:IntegerList, deriv:IntegerList, homog:ZZ, ",BR,NOINDENT,
+     TT "    ZD:ERing, d:IntegerList):ERing)", " -- Create a Weyl algebra",
+     PARA,
+      "Known problems, restrictions or caveats: Currently, the coefficient ring K
+      must be ZZ or ZZ/p.  In particular, polynomial rings over polynomial rings
+      are not yet allowed.  This restriction will be gone soon."
+     } 
+
