@@ -4,6 +4,7 @@ justM2 ::
 tests ::
 install ::
 doc::
+distclean::
 ################################# prologue
 justM2 all :: initialize config
 
@@ -44,15 +45,15 @@ install ::; $(MAKE) -C m2 $@
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
-clean ::; rm -rf cache
+distclean clean ::; rm -rf cache
 ################################# lib
 ifeq "$(SHARED)" "yes"
 justM2 all :: lib
 lib :; mkdir $@
 endif
-clean ::; rm -rf lib
+distclean clean ::; rm -rf lib
 ################################# tmp
-clean ::; rm -rf tmp
+distclean clean ::; rm -rf tmp
 ################################# util
 initialize ::; $(MAKE) -C util all
 clean ::; $(MAKE) NODEPENDS=1 -C util clean
@@ -126,7 +127,7 @@ clean ::; $(MAKE) -C book clean
 ################################# ComputationsBook
 doc :: ComputationsBook
 ComputationsBook ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook all; fi
-clean ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook clean; fi
+clean distclean  ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook $@; fi
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 clean ::; $(MAKE) -C emacs clean
