@@ -52,7 +52,7 @@ the package "D-modules".
 		man1/                                   [ man1dir ]
 		     *.1
 		man3/                                   [ man3dir ]
-		     M2::*.3
+		     M2::*.3				( man pages for Macaulay 2 subroutines )
 	    emacs/site-lisp/                            [ emacsdir ]
 			    M2.el
 			    M2-*.el
