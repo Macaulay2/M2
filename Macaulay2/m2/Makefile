@@ -1,6 +1,8 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
+export M2HOME := $(shell cd ..; pwd)
+
 all::
 
 ##############################

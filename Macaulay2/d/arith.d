@@ -473,6 +473,7 @@ twopower64 := expt(2.,64);
 twopower(n:int):Integer := toInteger(1) << n;
 roundshift(x:Integer,n:int):Integer := (
      if n==0 then return(x);
+     if length(x.body) == 0 then return(x);
      m := numbits(x);
      if m < n then zeroInteger
      else if m == n then if x.negative then toInteger(-1) else toInteger(1)
