@@ -3,15 +3,27 @@
 
 document {
      Key => "hypertext",
-     "All the online documentation for Macaulay 2 is maintained in
-     hypertext form in a special internal format which can be easily
-     manipulated or examined.  The function ", TO "html", " can be used to 
-     convert it to standard world-wide web format, suitable for use with
-     a world-wide web server such as netscape.  The function ", TO "net", "
-     can be used to convert it to straight ascii text, suitable for
-     viewing on an ascii terminal, but in most circumstances, that conversion
-     will be done automatically when hypertext is displayed.",
-     SeeAlso => {"MarkUpList", "MarkUpType"}
+     Usage => "hypertext x",
+     Inputs => {
+	  "x" => List => {"a list of strings and hypertext mark-up lists"}
+	  },
+     Outputs => {
+	  Hypertext => {"a new list of mark-up lists obtained from the old by making the format more suitable for
+	       ultimate display"}
+	  },
+     "Here is a list of some of the transformations that are performed.",
+     UL {
+	  {"occurrences of ", TT "null", ", such as those that might have been produced by the insertion of an extra comma, are removed"},
+	  {TO2 {Sequence,"sequences"}, ", such as those produced by extra sets of parentheses, are ", TO2{ "splice","spliced"}, " into the lists containing them"},
+	  {TO2 {List,"lists"}, " are converted into mark-up lists of type ", TT "SEQ"},
+	  {"mark-up lists of type ", TO "TO", " occurring a mark-up list of type ", TO "UL", " are converted to lists of type ", TO "TOH", ", so the headlines of 
+	       the items will appear in the resulting menu"},
+	  {"the targets of the links in mark-up lists of type TO, TOH, and TO2, are converted into ", TO2 {"DocumentTag", "document tags"}},
+	  {"mark-up types, such as ", TO "PARA", ", are converted into lists of length 0 of that type"},
+	  {"strings spanning multiple lines are wrapped into one long line after appropriately trimming the spaces at the beginning and end of each line"},
+	  {"an error message is produced if something not recognizable as documentation is encountered"},
+	  },
+     SeeAlso => {"MarkUpList"}
      }
 
 document {
