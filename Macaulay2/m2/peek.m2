@@ -9,7 +9,7 @@ peek2(BasicList,ZZ) := (s,depth) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
-	  "{", horizontalJoin between (",", apply(s, value -> peek2(value,depth-1))), "}" ) )
+	  "{", horizontalJoin between (",", apply(toList s, value -> peek2(value,depth-1))), "}" ) )
 peek2(List,ZZ) := (s,depth) -> (
      if depth === 0 then net s
      else horizontalJoin(

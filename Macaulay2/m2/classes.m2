@@ -99,8 +99,6 @@ exit = exit1
 
 erase symbol [
 
-between = (m,v) -> mingle(v,#v-1:m)
-
 -- miscellaneous stuff:
 
 Function @@ Function := Function => (f,g) -> x -> f g x

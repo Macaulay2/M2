@@ -25,7 +25,7 @@ document { numeric,
      "See also ", TO "RR", "."
      }
 
-document { symbol "pi",
+document { "pi",
      HEADLINE => "the number 'pi'",
      TT "pi", " -- the numerical value of the arithmetic quantity pi."
      }

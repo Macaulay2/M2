@@ -177,12 +177,14 @@ flatten = method(SingleArgumentDispatch=>true)
 flatten VisibleList := VisibleList => oldflatten
 coker = cokernel
 
-source = (h) -> (
+source = method()
+source Thing := (h) -> (
      if h#?(symbol source) then h.source
      else if (class h)#?(symbol source) then (class h)#?(symbol source)
      else error ( toString h, " of class ", toString class h, " has no source" ))
 
-target = (h) -> (
+target = method()
+target Thing := (h) -> (
      if h.?target then h.target
      else if (class h)#?(symbol target) then (class h)#?(symbol target)
      else error (toString h | " of class " | toString class h | " has no target"))
@@ -262,3 +264,8 @@ ultimate(Function,Thing) := (f,x) -> (
 lines = x -> (
      l := separate x;
      if l#-1 === "" then drop(l,-1) else l)
+
+
+between = method()
+between(Thing,VisibleList) := List => (m,v) -> mingle(v,#v-1:m)
+
