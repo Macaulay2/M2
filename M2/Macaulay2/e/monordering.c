@@ -76,15 +76,15 @@ M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo)
       case MO_GREVLEX4_WTS:
       case MO_LAURENT:
       case MO_NC_LEX:
-	for (j=0; j<p->nvars; j++)
+	for (j=0; j<p->nvars; j++, nextvar++)
 	  if (gt[nextvar] == 0)
-	    gt[nextvar++] = 1;
+	    gt[nextvar] = 1;
 	break;
       case MO_LAURENT_REVLEX:
       case MO_REVLEX:
-	for (j=0; j<p->nvars; j++)
+	for (j=0; j<p->nvars; j++, nextvar++)
 	  if (gt[nextvar] == 0)
-	    gt[nextvar++] = -1;
+	    gt[nextvar] = -1;
 	break;
       case MO_WEIGHTS:
 	for (j=nextvar; j<p->nvars; j++)
