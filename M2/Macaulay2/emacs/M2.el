@@ -96,7 +96,10 @@
 
 (defvar M2-history nil "The history of recent Macaulay2 command lines.")
 (defvar M2-command 
-  (concat "M2  --print-width " (number-to-string (- (screen-width) 1)) " ")
+  (concat "M2  --print-width " 
+	  (number-to-string (- (- (screen-width) 1) 
+			       7	; allows for prompts up to "i999 = ", which has 7 characters
+			       )) " ")
   "*The default Macaulay2 command line.")
 
 

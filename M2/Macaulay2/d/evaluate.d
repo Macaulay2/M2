@@ -1119,26 +1119,28 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	       when value is Error do return value else nothing;
 	       q.frame.values.(q.symbol.frameindex) = value;
 	       value))
-     is o:HashTable do (
-	  if o.mutable then (
-	       y := eval(rhs);
-	       when y is p:HashTable do (
-		    o.table = copy(p.table);
-		    o.numEntries = p.numEntries;
-		    left)
-	       is Error do y
-	       else printErrorMessageE(rhs,"expected hash table on right"))
-	  else printErrorMessageE(lhs,"encountered read only hash table"))
-     is l:List do (
-	  if l.mutable then (
-	       y := eval(rhs);
-	       when y
-	       is p:List do ( l.v = copy(p.v); left)
-	       is s:Sequence do ( l.v = copy(s); left)
-	       is Error do y
-	       else printErrorMessageE(rhs,"'<-' expected list or sequence on right"))
-	  else printErrorMessageE(lhs,"'<-' encountered read-only list"))
+--let's see whether this is obsolete, so we can lookup up a method for assignment instead!
+--      is o:HashTable do (
+-- 	  if o.mutable then (
+-- 	       y := eval(rhs);
+-- 	       when y is p:HashTable do (
+-- 		    o.table = copy(p.table);
+-- 		    o.numEntries = p.numEntries;
+-- 		    left)
+-- 	       is Error do y
+-- 	       else printErrorMessageE(rhs,"expected hash table on right"))
+-- 	  else printErrorMessageE(lhs,"encountered read only hash table"))
+--      is l:List do (
+-- 	  if l.mutable then (
+-- 	       y := eval(rhs);
+-- 	       when y
+-- 	       is p:List do ( l.v = copy(p.v); left)
+-- 	       is s:Sequence do ( l.v = copy(s); left)
+-- 	       is Error do y
+-- 	       else printErrorMessageE(rhs,"'<-' expected list or sequence on right"))
+-- 	  else printErrorMessageE(lhs,"'<-' encountered read-only list"))
      is Error do left
+--   else printErrorMessageE(lhs,"'<-' expected symbol")
      else printErrorMessageE(lhs,"'<-' expected symbol or hash table on left")
      );
 setup(LeftArrowS,assigntofun);

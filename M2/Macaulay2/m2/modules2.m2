@@ -71,10 +71,11 @@ Module ** Matrix := Matrix => (M,f) -> (
 -- base change
 -----------------------------------------------------------------------------
 Module ** Ring := Module => (M,R) -> (
-     P := youngest(M,R);
-     key := (M,R,symbol **);
-     if P#?key then P#key
-     else M**R = (
+--      P := youngest(M,R);
+--      key := (M,R,symbol **);
+--      if P#?key then P#key
+--      else M**R = 
+     (
 	  k := ring M;
 	  if k === R then M
 	  else (

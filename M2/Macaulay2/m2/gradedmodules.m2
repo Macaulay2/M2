@@ -221,19 +221,21 @@ GradedModuleMap * GradedModuleMap := GradedModuleMap => (g,f) -> (
 	  i -> h#i = g_(i+f.degree) * f_i);
      h)
 GradedModule ** Module := GradedModule => (C,M) -> (
-     P := youngest(C,M);
-     key := (C,M,symbol **);
-     if P#?key then P#key
-     else C**M = (
+--      P := youngest(C,M);
+--      key := (C,M,symbol **);
+--      if P#?key then P#key
+--      else C**M = 
+     (
 	  D := new GradedModule;
 	  D.ring = C.ring;
 	  scan(spots C, i -> D#i = C#i ** M);
 	  D))
 Module ** GradedModule := GradedModule => (M,C) -> (
-     P := youngest(M,C);
-     key := (M,C,symbol **);
-     if P#?key then P#key
-     else M**C = (
+--      P := youngest(M,C);
+--      key := (M,C,symbol **);
+--      if P#?key then P#key
+--      else M**C = 
+     (
 	  D := new GradedModule;
 	  D.ring = C.ring;
 	  scan(spots C, i -> D#i = M ** C#i);
@@ -275,10 +277,11 @@ GradedModule Array := GradedModule => (C,A) -> (
      D)
 
 GradedModule ** GradedModule := GradedModule => (C,D) -> (
-     P := youngest(C,D);
-     key := (C,D,symbol **);
-     if P#?key then P#key
-     else C**D = (
+--      P := youngest(C,D);
+--      key := (C,D,symbol **);
+--      if P#?key then P#key
+--      else C**D = 
+     (
 	  R := C.ring;
 	  if R =!= D.ring then error "expected graded modules over the same ring";
 	  c := spots C;

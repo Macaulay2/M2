@@ -342,6 +342,13 @@ length VisibleList := s -> #s
 
 match(String,String) := X -> 0 < length matches X
 
+-- installationg of assignment methods
+installAssignmentMethod := method()
+installAssignmentMethod(Symbol,HashTable,HashTable,Option) := 
+installAssignmentMethod(Symbol,HashTable,HashTable,Function) := (op,X,Y,f) -> installMethod((op,symbol =),X,Y,f)
+installAssignmentMethod(Symbol,HashTable,Option) := 
+installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> installMethod((op,symbol =),Y,f)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

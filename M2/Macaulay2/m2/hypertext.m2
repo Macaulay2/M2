@@ -276,7 +276,7 @@ tex PRE := x -> concatenate ( VERBATIM,
 ///
      )
 
-info TT := net TT := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
+info TT := net TT := x -> horizontalJoin splice (net  \ toSequence x)
 
 htmlDefaults = new MutableHashTable from {
      -- "BODY" => "bgcolor='#e4e4ff'"

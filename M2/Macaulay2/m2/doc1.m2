@@ -63,7 +63,8 @@ document {						    -- rewrite this!
 	  },
      PARA {
 	  "Here is an outline or template of a typical documentation node.",
-	  PRE ///document { x,
+	  PRE ///document {
+     Key => x,
      Headline => "",
      Usage => "",
      Inputs => {
@@ -71,8 +72,6 @@ document {						    -- rewrite this!
      Outputs => {
 	  },
      Results => {
-	  },
-     PARA {
 	  },
      EXAMPLE { },
      Caveat => { },
