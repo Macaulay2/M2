@@ -56,10 +56,6 @@ here, as some of the later ones depend on some of the earlier ones.
      get at: ftp://ftp.gnu.org/gnu/gmp
     license: gmp/COPYING.LIB
       notes: on Solaris, gmp will use both cc and gcc; don't worry
-	     Also, make sure you patch the source with the diffs in INSTALL.gmp-4.1-patch
-		or else it gets confused when including modern versions of gmp.h.
-	 	Do it this way:
-			patch -p1 < ...../INSTALL.gmp-4.1-patch
 
     library: Singular-factory (libcf libcfmem)
     release: factory-2.0.4b
