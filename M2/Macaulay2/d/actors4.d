@@ -775,11 +775,7 @@ tostringfun(e:Expr):Expr := (
      is z:Complex do Expr(tostring(z.re) + " + ii * " + tostring(z.im))
      is x:Rational do Expr(tostring(x))
      is s:string do e
-     is q:SymbolClosure do Expr(
-	  if q.frame == globalFrame
-	  then q.symbol.word.name
-	  else internalName(q.symbol.word.name)
-	  )
+     is q:SymbolClosure do Expr( if q.frame == globalFrame then q.symbol.word.name else internalName(q.symbol.word.name) )
      is f:file do Expr(f.filename)
      is b:Boolean do Expr(if b.v then "true" else "false")
      is Nothing do Expr("null")
@@ -795,31 +791,16 @@ tostringfun(e:Expr):Expr := (
      is Sequence do Expr("--sequence--")
      is HashTable do Expr("--hash table--")
      is List do Expr("--list--")
-     is x:LMatrixRR do (
-	  Expr(Ccode(string, "LP_LMatrixRR_to_string((LMatrixRR*)",x,")" ))
-	  )
-     is x:LMatrixCC do (
-	  Expr(Ccode(string, "LP_LMatrixCC_to_string((LMatrixCC*)",x,")" ))
-	  )
+     is x:LMatrixRR do Expr(Ccode(string, "LP_LMatrixRR_to_string((LMatrixRR*)",x,")" ))
+     is x:LMatrixCC do Expr(Ccode(string, "LP_LMatrixCC_to_string((LMatrixCC*)",x,")" ))
      is x:RawMonomial do Expr(Ccode(string, "IM2_Monomial_to_string((Monomial*)",x,")" ))
      is x:RawFreeModule do Expr(Ccode(string, "IM2_FreeModule_to_string((FreeModule*)",x,")" ))
-     is x:RawVector do Expr(Ccode(string, "IM2_Vector_to_string((Vector*)",x,")" ))
-     is x:RawMatrix do (
-	  Expr(Ccode(string, "IM2_Matrix_to_string((Matrix*)",x,")" ))
-	  )
-     is x:RawMutableMatrix do (
-	  Expr(Ccode(string, "IM2_MutableMatrix_to_string((MutableMatrix*)",x,")" ))
-	  )
-     is x:RawRingMap do (
-	  Expr(Ccode(string, "IM2_RingMap_to_string((RingMap*)",x,")" ))
-	  )
-     is x:RawMonomialOrdering do Expr(Ccode(string,
-	       "IM2_MonomialOrdering_to_string((MonomialOrdering*)",x,")" ))
+     is x:RawMatrix do Expr(Ccode(string, "IM2_Matrix_to_string((Matrix*)",x,")" ))
+     is x:RawRingMap do Expr(Ccode(string, "IM2_RingMap_to_string((RingMap*)",x,")" ))
+     is x:RawMonomialOrdering do Expr(Ccode(string, "IM2_MonomialOrdering_to_string((MonomialOrdering*)",x,")" ))
      is x:RawMonoid do Expr(Ccode(string, "IM2_Monoid_to_string((Monoid*)",x,")" ))
      is x:RawRing do Expr(Ccode(string, "IM2_Ring_to_string((Ring*)",x,")" ))
-     is x:RawRingElement do Expr(
-	  Ccode(string, "IM2_RingElement_to_string((RingElement*)",x,")" )
-	  )
+     is x:RawRingElement do Expr( Ccode(string, "IM2_RingElement_to_string((RingElement*)",x,")" ) )
      is x:RawMonomialIdeal do Expr(
 	  "--raw monomial ideal--"
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )

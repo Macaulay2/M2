@@ -309,14 +309,6 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is x:RawVector do (
-	  when rhs
-	  is y:RawVector do (
-	       if Ccode(bool, "IM2_Vector_is_equal((Vector *)",x,",(Vector *)",y,")")
-	       then True else False
-	       )
-	  else False
-	  )
      is x:LMatrixRR do (
 	  when rhs
 	  is y:LMatrixRR do (
@@ -336,7 +328,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:RawMatrix do (
 	  when rhs
 	  is y:RawMatrix do (
-	       toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
+	       toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")")) -- reminder: mutable things are unequal
 	       )
 	  else False
 	  )
@@ -348,7 +340,6 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is x:RawMutableMatrix do False			    -- mutable things are unequal
      is x:RawRingMap do (
 	  when rhs
 	  is y:RawRingMap do toExpr(Ccode(bool, "IM2_RingMap_is_equal((RingMap *)",x,",(RingMap *)",y,")"))
@@ -506,9 +497,7 @@ export Class(e:Expr):HashTable := (
      is RawRingElement do rawRingElementClass
      is RawRingMap do rawRingMapClass
      is RawFreeModule do rawFreeModuleClass
-     is RawVector do rawVectorClass
      is RawMatrix do rawMatrixClass
-     is RawMutableMatrix do rawMutableMatrixClass
      is LMatrixRR do LMatrixRRClass
      is LMatrixCC do LMatrixCCClass
      );
@@ -545,9 +534,7 @@ setupconst("RawMonomialOrdering",Expr(rawMonomialOrderingClass));
 setupconst("RawMonoid",Expr(rawMonoidClass));
 setupconst("RawRing",Expr(rawRingClass));
 setupconst("RawFreeModule",Expr(rawFreeModuleClass));
-setupconst("RawVector",Expr(rawVectorClass));
 setupconst("RawMatrix",Expr(rawMatrixClass));
-setupconst("RawMutableMatrix",Expr(rawMutableMatrixClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));
 setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));

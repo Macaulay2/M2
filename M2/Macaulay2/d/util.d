@@ -59,24 +59,6 @@ export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
 	  provide -333;
 	  ));
 
-export isListOfSmallIntegers(e:Expr) : bool := (
-     when e is l:List do (
-     	  foreach i in l.v do (
-	       when i is a:Integer do (
-		    if !isInt(a) then return false;
-		    )
-	       else return false);
-	  true)
-     else false);
-export getListOfSmallIntegers(e:Expr) : array(int) := (
-     when e is l:List do 
-     new array(int) len length(l.v) do (
-	  foreach i in l.v do when i is a:Integer do provide toInt(a) else nothing;
-	  provide 0;
-	  )
-     else array(int)(-333)
-     );
-
 export isSequenceOfSmallIntegers(s:Sequence) : bool := (
      foreach i in s do (
 	  when i is a:Integer do (
@@ -84,6 +66,18 @@ export isSequenceOfSmallIntegers(s:Sequence) : bool := (
 	       )
 	  else return false);
      true);
+export isSequenceOfSmallIntegers(e:Expr) : bool := (
+     when e
+     is s:Sequence do isSequenceOfSmallIntegers(s)
+     is l:List do (
+     	  foreach i in l.v do (
+	       when i is a:Integer do (
+		    if !isInt(a) then return false;
+		    )
+	       else return false);
+	  true)
+     else false);
+
 export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
      new array(int) len length(s) do (
 	  foreach i in s do 
@@ -93,31 +87,13 @@ export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
 	  abort("internal error: getSequenceOfSmallIntegers");
 	  )
      );
-
-export isSequenceOfSmallIntegers(e:Expr) : bool := (
-     when e
-     is s:Sequence do (
-	  foreach i in s do (
-	       when i is a:Integer do (
-		    if !isInt(a) then return false;
-		    )
-	       else return false);
-	  true)
-     is a:Integer do isInt(a)
-     else false);
 export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
      when e
-     is s:Sequence do (
-	  new array(int) len length(s) do (
-	       foreach i in s do 
-	       when i 
-	       is a:Integer do provide toInt(a) 
-	       else abort("internal error: getSequenceOfSmallIntegers");
-	       abort("internal error: getSequenceOfSmallIntegers");
-	       )
-	  )
-     is a:Integer do array(int)(toInt(a))
-     else array(int)());
+     is l:List do getSequenceOfSmallIntegers(l.v)
+     is s:Sequence do getSequenceOfSmallIntegers(s)
+     else (
+	  abort("internal error: getSequenceOfSmallIntegers.");
+	  array(int)()));
 
 export isListOfStrings(e:Expr) : bool := (
      when e is l:List do (
@@ -142,23 +118,6 @@ export getSequenceOfMonomialOrderings(s:Sequence) : RawMonomialOrderingArray := 
 	  when i 
 	  is a:RawMonomialOrdering do provide a 
 	  else abort("internal error : getSequenceOfMonomialOrderings")));
-
-export isSequenceOfVectors(e:Expr) : bool := (
-     when e is s:Sequence do (
-	  foreach i in s do when i is RawVector do nothing else return false;
-	  true)
-     is RawVector do true
-     else false);
-export getSequenceOfVectors(e:Expr) : RawVectorArray := (
-     when e
-     is s:Sequence do (
-	  new RawVectorArray len length(s) do (
-	       foreach i in s do 
-	       when i 
-	       is a:RawVector do provide a 
-	       else abort("internal error : getSequenceOfVectors")))
-     is a:RawVector do RawVectorArray(a)
-     else RawVectorArray());
 
 export isSequenceOfRingElements(e:Expr) : bool := (
      when e is s:Sequence do (
@@ -254,11 +213,6 @@ export toExpr(x:RawRingElementOrNull):Expr := (
 export toExpr(x:RawFreeModuleOrNull):Expr := (
      when x
      is r:RawFreeModule do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw ring element engine error"))
-     );
-export toExpr(x:RawVectorOrNull):Expr := (
-     when x
-     is r:RawVector do Expr(r)
      is null do buildErrorPacket(EngineError("unknown raw ring element engine error"))
      );
 export toExpr(x:RawMatrixOrNull):Expr := (

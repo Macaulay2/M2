@@ -71,15 +71,6 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  is y:Real do Expr(Real(x.v+y.v))
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
-     is x:RawVector do (
-	  when rhs
-	  is y:RawVector do (
-	       when x+y
-	       is t:RawVector do Expr(t)
-	       is null do buildErrorPacket(EngineError("vector addition failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
      is x:RawMatrix do (
 	  when rhs
 	  is y:RawMatrix do (
@@ -146,7 +137,6 @@ export - (rhs:Expr) : Expr := (
      is x:BigReal do Expr(-x)
      is x:Rational do Expr(-x)
      is x:RawRingElement do Expr(-x)
-     is x:RawVector do Expr(-x)
      is x:RawMatrix do Expr(-x)
      is x:LMatrixRR do Expr(-x)
      is x:LMatrixCC do Expr(-x)
@@ -199,15 +189,6 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
      	  is y:Rational do Expr(x - toBigReal(y))
 	  is y:Real do Expr(x - toBigReal(y.v))
 	  is y:BigReal do Expr(x - y)
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
-     is x:RawVector do (
-	  when rhs
-	  is y:RawVector do (
-	       when x-y
-	       is t:RawVector do Expr(t)
-	       is null do buildErrorPacket(EngineError("vector subtraction failed"))
-	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawMatrix do (
@@ -338,26 +319,12 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is null do buildErrorPacket(EngineError("monomial ideal multiplication failed"))
 	       )
 	  else binarymethod(lhs,rhs,StarS))
-     is x:RawVector do (
-	  when rhs
-	  is y:RawRingElement do (
-	       when x*y
-	       is t:RawVector do Expr(t)
-	       is null do buildErrorPacket(EngineError("vector scalar multiplication failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
      is x:RawMatrix do (
 	  when rhs
 	  is y:RawMatrix do (
 	       when x*y
 	       is t:RawMatrix do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
-	       )
-	  is y:RawVector do (
-	       when x*y
-	       is t:RawVector do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix vector multiplication failed"))
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))

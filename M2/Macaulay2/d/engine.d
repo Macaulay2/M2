@@ -21,17 +21,12 @@ export RawMonomialIdeal := {MonomialIdeal:void};
 export RawMonomialIdealOrNull := RawMonomialIdeal or null;
 export RawFreeModule := {Module:void};
 export RawFreeModuleOrNull := {Module:void} or null;
-export RawVector := {Vector:void};
-export RawVectorOrNull := {Vector:void} or null;
 export RawMatrix := {Matrix:void};
 export RawMatrixOrNull := {Matrix:void} or null;
-export RawMutableMatrix := {MutableMatrix:void};
-export RawMutableMatrixOrNull := {MutableMatrix:void} or null;
 export IntegerPair := {a:Integer,b:Integer};
 export IntegerPairOrNull := IntegerPair or null;
 export IntegerOrNull := Integer or null;
 export RawMonomialOrderingArray := array(RawMonomialOrdering);
-export RawVectorArray := array(RawVector);
 export RawMatrixArray := array(RawMatrix);
 export RawRingElementArray := array(RawRingElement);
 export RawArrayPair := { monoms:array(RawMonomial), coeffs:array(RawRingElement) };
@@ -93,28 +88,6 @@ export (x:RawRingElement) ^ (y:Integer) : RawRingElementOrNull := (
      Ccode(RawRingElementOrNull, 
 	  "(engine_RawRingElementOrNull)IM2_RingElement_power(",
 	  "(RingElement *)", x, ",(M2_Integer)", y, ")" ) );
-export (x:RawVector) + (y:RawVector) : RawVectorOrNull := (
-     Ccode(RawVectorOrNull,
-	  "(engine_RawVectorOrNull)IM2_Vector_add(",
-	  "(Vector *)", x, ",(Vector *)", y,
-	  ")" ));
-export - (y:RawVector) : RawVector := (
-     Ccode(RawVector, 
-	  "(engine_RawVector)IM2_Vector_negate(",
-	  "(Vector *)", y, ")" ) );
-export (x:RawVector) - (y:RawVector) : RawVectorOrNull := (
-     Ccode(RawVectorOrNull, 
-	  "(engine_RawVectorOrNull)IM2_Vector_subtract(",
-	  "(Vector *)", x, ",(Vector *)", y, ")" ) );
--- export (x:RawRingElement) * (y:RawVector) : RawVectorOrNull := (
---      Ccode(RawVectorOrNull,
--- 	  "(engine_RawVectorOrNull)IM2_Vector_scalar_mult(",
--- 	  "(RingElement *)", x, ",(Vector *)", y, ")" ));
-export (x:RawVector) * (y:RawRingElement) : RawVectorOrNull := (
-     Ccode(RawVectorOrNull,
-	  "(engine_RawVectorOrNull)IM2_Vector_scalar_right_mult(",
-	  "(Vector *)", x, ",(RingElement *)", y, ")" ));
-
 export (x:RawMatrix) + (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull,
 	  "(engine_RawMatrixOrNull)IM2_Matrix_add(",
@@ -136,11 +109,6 @@ export (x:RawRingElement) * (y:RawMatrix) : RawMatrixOrNull := (
 --      Ccode(RawMatrixOrNull,
 -- 	  "(engine_RawMatrixOrNull)IM2_Matrix_scalar_right_mult(",
 -- 	  "(Matrix *)", x, ",(RingElement *)", y, ")" ));
-
-export (x:RawMatrix) * (y:RawVector) : RawVectorOrNull := (
-     Ccode(RawVectorOrNull,
-	  "(engine_RawVectorOrNull)IM2_Matrix_scalar_mult_vec(",
-	  "(Matrix *)", x, ",(Vector *)", y, ")" ));
 
 export (x:RawMatrix) * (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull,
