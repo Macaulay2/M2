@@ -484,12 +484,12 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
   return result;
 }
 
-#include "linalgGB/MonomialSet.h"
+#include "linalgGB/MonomialSet.hpp"
 #if 0
-#include "linalgGB/MonomialHeap.h"
+#include "linalgGB/MonomialHeap.hpp"
 #endif
-#include "linalgGB/MonomialTable.h"
-#include "linalgGB/interface.h"
+#include "linalgGB/MonomialTable.hpp"
+#include "linalgGB/interface.hpp"
 MonomialLookupTable *make_monideal(const Matrix *M, MonomialSet &H)
 {
   const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();

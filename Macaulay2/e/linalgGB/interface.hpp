@@ -1,8 +1,8 @@
 #ifndef __interface_h_
 #define __interface_h_
 
-#include "Monomials.h"
-#include "MonomialSet.h"
+#include "Monomials.hpp"
+#include "MonomialSet.hpp"
 #include "../freemod.hpp"
 #include <vector>
 

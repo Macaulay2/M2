@@ -1,5 +1,5 @@
 #include "monoms.h"
-#include "MonomialSet.h"
+#include "MonomialSet.hpp"
 #include <cstdio>
 
 #define ORD(m) ((m)[-1])

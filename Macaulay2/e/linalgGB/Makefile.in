@@ -4,11 +4,22 @@ VPATH = @srcdir@
 DEPENDS = yes
 include @srcdir@/../make.include
 
+%.dep: %.cpp
+	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+
+%.dep: %.c
+	@ echo "$(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+
 .PHONY : all place_into_lib
 
-LINALGGB_FILES := interface MonomialOps Monomials MonomialSet MonomialTable monoms
+CCFILES := interface MonomialOps Monomials MonomialSet MonomialTable
+CFILES := monoms
+LINALGGB_FILES := $(CCFILES) $(CFILES)
 # MonomialHeap 
-
 LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
 
 all :: $(LINALGGB_OBJECT_FILES)
@@ -18,8 +29,13 @@ check_it : $(LINALGGB_OBJECT_FILES) check_it.o
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/linalgGB/Makefile
-clean :; rm -f *.o
+clean ::; rm -f *.o
 distclean: clean; rm -f Makefile
+
+clean::; rm -f *.dep dep-*.tmp
+ifeq "$(DEPENDS)" "yes"
+include $(CFILES:=.dep) $(CCFILES:=.dep)
+endif
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "

@@ -1,12 +1,12 @@
 // Copyright 2004 Michael E. Stillman
 
 #include "lingb.hpp"
-#include "SPairSet.h"
+#include "SPairSet.hpp"
 #include "monoms.h"
 #include <functional>
 #include <algorithm>
-#include "MonomialTable.h"
-#include "MonomialOps.h"
+#include "MonomialTable.hpp"
+#include "MonomialOps.hpp"
 
 SPairSet::SPairSet(MonomialSet *H0)
   : H(H0),
