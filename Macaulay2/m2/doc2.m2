@@ -109,7 +109,7 @@ document { "while",
      Headline => "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning 
-     ", TT "null", ".",
+     ", TO "null", ".",
      BR,NOINDENT,
      TT "while p list x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning a
@@ -516,11 +516,11 @@ document { "=",
      TT "(a,b,c) = x", "    -- assigns the members of the sequence ", TT "x", " as
      values of the variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
      has too few elements, then the trailing symbols on the left
-     side are given the value ", TT "null", ".  If ", TT "x", " has too
+     side are given the value ", TO "null", ".  If ", TT "x", " has too
      many elements, then the last symbol on the left hand side is given
      as value a sequence containing the trailing elements of the right hand side.
      If the right hand side is not a sequence, then ", TT "a", " gets the value, and
-     ", TT "b", " and ", TT "c", " get ", TT "null", ".",
+     ", TT "b", " and ", TT "c", " get ", TO "null", ".",
      SEEALSO {"HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook"}
      }
 
@@ -540,11 +540,11 @@ document { ":=",
      TT "(a,b,c) := x", "    -- assigns the members of the sequence ", TT "x", " as
      values of the local variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
      has too few elements, then the trailing symbols on the left
-     side are given the value ", TT "null", ".  If ", TT "x", " has too
+     side are given the value ", TO "null", ".  If ", TT "x", " has too
      many elements, then the last symbol on the left hand side is given
      as value a sequence containing the trailing elements of the right hand side.
      If the right hand side is not a sequence, then ", TT "a", " gets the value, and
-     ", TT "b", " and ", TT "c", " get ", TT "null", ".",
+     ", TT "b", " and ", TT "c", " get ", TO "null", ".",
      PARA,
      "This operator is slightly schizophrenic in its function, as the installation
      of a method has global effect if the classes involved are globally known,
@@ -797,7 +797,7 @@ document { "local",
      Headline => "get a local symbol",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
-     symbol is ", TT "null", ".",
+     symbol is ", TO "null", ".",
      EXAMPLE {
 	  "f = () -> ZZ[local t]",
       	  "f()",
@@ -1085,7 +1085,7 @@ document { applyPairs,
      each key ", TT "k", ", where ", TT "v", " is the value stored in
      ", TT "x", " as ", TT "x#k", ".  Thus ", TT "f", " should be a function of 
      two variables which returns either a pair ", TT "(kk,vv)", " which is 
-     placed into ", TT "y", ", or it returns ", TT "null", ", which 
+     placed into ", TT "y", ", or it returns ", TO "null", ", which 
      signifies that no action be performed.",
      PARA,
      "It is an error for the function ", TT "f", " to return two pairs with the 

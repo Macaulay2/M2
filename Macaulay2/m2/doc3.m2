@@ -517,7 +517,7 @@ document { printString,
      "The argument ", TT "s", " may also be a sequence or list, in which case
      its elements are printed.  If an integer is encountered, then
      it specifies a number of spaces to be printed.  If a symbol
-     or indeterminate is encountered, its name is printed.  If ", TT "null", "
+     or indeterminate is encountered, its name is printed.  If ", TO "null", "
      is encountered, nothing is printed.",
      PARA,
      EXAMPLE ///printString(stdio, (a,10,"b",20,c))///

@@ -32,12 +32,18 @@ document { "Invoking the program",
      ", TO "end", ", or the end of file character."
      }
 
+document { "Macaulay2/COPYING",
+     "This is the text of the license agreement under which Macaulay 2 is distributed.",
+     PARA,
+     PRE get "../COPYING"
+     }
+
 document { "Copyright and license",
      "Macaulay 2, its object code and source code, and its documentation,
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
      you to use it under the terms of the GNU General Public License, version
      2, as published by the Free Software Foundation; see the file
-     ", TT "Macaulay2/COPYING", ".",
+     ", TO "Macaulay2/COPYING", ".",
      PARA,
      "Various free libraries have been compiled into Macaulay 2.",
      SHIELD MENU {
@@ -49,10 +55,10 @@ document { "Copyright and license",
      }
 
 document { "GC garbage collector",
-     "Macaulay 2 uses the excellent garbage collector 'GC' written by Hans-J. Boehm
-     and Alan J. Demers and generously provided to the public.  The copyright is 
-     contained in its README file which we provide in the 
-     file ", TT "Macaulay2/licenses/gc.lic", ".",
+     "Macaulay 2 uses the excellent garbage collector GC, version ", version#"gc version", ",
+     written by Hans-J. Boehm and Alan J. Demers and generously licensed
+     to the public.  It is available at
+     ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
      SEEALSO {"collectGarbage" 
 	  -- , "gcDump"
 	  }
@@ -62,32 +68,30 @@ document { "Factory library",
      "With the kind permission of the authors of Singular, 
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
-     a free library of polynomial routines which provides for factorization of polynomials. 
-     It is distributed under the terms of the GNU General Public License.",
+     version ", version#"factory version", ", a free library of polynomial routines
+     which provides for factorization of polynomials.  It is distributed under the
+     terms of the GNU General Public License and is available at 
+     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory",".",
      SEEALSO {"factor", "gcd"}
      }
 
 document { "Factorization and characteristic sets library",
      "With the kind permission of the author, Michael Messollen, Macaulay 2
-     incorporates ", TT "Singular-Libfac", " a free library of routines which
-     provides factorization of multivariate polynomials over 
-     finite fields and computation of the minimal associated primes of ideals via
-     characteristic sets.  It is distributed under the terms of the
-     GNU General Public License.",
+     incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
+     a free library of routines which provides factorization of multivariate
+     polynomials over finite fields and computation of the minimal associated primes 
+     of ideals via characteristic sets.  It is distributed under the terms of the
+     GNU General Public License, and is available at 
+     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac",".",
      SEEALSO {"factor", "gcd", "decompose", "irreducibleCharacteristicSeries"}
      }
 
 document { "GNU MP",
-     "The GNU MP library provides routines for arbitrary precision
-     integer and floating point arithmetic.  Version 2.0 of the library
-     is provided to us under the GNU LIBRARY GENERAL PUBLIC LICENSE,
-     a copy of which is provided to you as part of the Macaulay 2
-     package in the file ", TT "Macaulay2/licenses/gnulib.lic", ".  
-     Macaulay 2 contains no derivative of GNU MP, and works with it by 
-     being linked with it, and hence the Macaulay2 executable is covered 
-     by section 6 of the GNU license.  We fulfill the terms of its license 
-     by offering you the source code of the program, available at our
-     web site and our anonymous ftp site.",
+     "The GNU MP library, gmp, version ", version#"gmp version", " provides
+     routines for arbitrary precision integer and floating point arithmetic,
+     and is distributed under the terms of the GNU Lesser General Public License.
+     It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
+     ", HREF "http://www.swox.com/gmp/", ".",
      SEEALSO "How to get this program"
      }
 

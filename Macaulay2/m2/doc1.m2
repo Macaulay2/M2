@@ -236,7 +236,7 @@ document { lookup,
      the parent of ", TT "C", ", and so on.",
      NOINDENT, TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
      PARA,
-     "If no method is found, then ", TT "null", " is returned.",
+     "If no method is found, then ", TO "null", " is returned.",
      PARA,
      SEEALSO {"#", "classes and types", "installMethod", "youngest"}
      }
@@ -1031,9 +1031,9 @@ document { options,
 
 document { (symbol <<, Nothing, Thing),
      Headline => "dummy file output",
-     "null << x", " -- does nothing and returns ", TT "null", ".",
+     "null << x", " -- does nothing and returns ", TO "null", ".",
      PARA,
-     "The intention here is that you can use ", TT "null", " as a dummy
+     "The intention here is that you can use ", TO "null", " as a dummy
      output file, but a bit of time is wasted converting ", TT "x", " to
      a net."
      }
