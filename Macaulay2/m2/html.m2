@@ -48,6 +48,7 @@ html HREF := x -> (
      | html last x 
      | "</A>"
      )
+net HREF := x -> net last x
 tex HREF := x -> (
      concatenate(
 	  ///\special{html:<A href="///, 		    -- "

@@ -1169,6 +1169,7 @@ html CODE   := x -> concatenate(
 html ANCHOR := x -> (
      "<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
      )
+net ANCHOR := x -> net last x
 tex ANCHOR := x -> (
      concatenate(
 	  ///\special{html:<A name="///, texLiteral x#0, ///">}///,
@@ -1353,29 +1354,26 @@ html HEADER6 := x -> concatenate (
 ///
      )
 
-html SECTION := x -> html SEQ {
-     HEADER2 take(toList x,1),
-     SEQ drop(toList x,1)
-     }
-tex SECTION := x -> tex SEQ {
-     HEADER2 take(toList x,1),
-     SEQ drop(toList x,1)
-     }
+redoSECTION := x -> SEQ { HEADER2 take(toList x,1), SEQ drop(toList x,1) }
+html SECTION := html @@ redoSECTION
+net SECTION := net @@ redoSECTION
+tex SECTION := tex @@ redoSECTION
 
-html TOC := x -> (
+redoTOC := x -> (
      x = toList x;
      if not all(apply(x,class), i -> i === SECTION)
      then error "expected a list of SECTIONs";
      title := i -> x#i#0;
      tag := i -> "sec:" | toString i;
-     html SEQ {
+     SEQ {
 	  SECTION {
 	       "Sections:",
 	       UL for i from 0 to #x-1 list HREF { "#" | tag i, title i }
 	       },
-	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i }
-	  }
-     )
+	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i } } )
+html TOC := html @@ redoTOC
+net TOC := net @@ redoTOC
+tex TOC := tex @@ redoTOC
 
 -----------------------------------------------------------------------------
 
