@@ -486,6 +486,7 @@ export codePosition(e:Code):Position := (
      );
 
 export returnMessage := "return value";
+export breakMessage := "break value";
 
 export errorExpr(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence));
 export errorExpr(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report));
@@ -632,9 +633,7 @@ export eval(c:Code):Expr := (
 	  x)
      is v:CodeSequence do evalSequence(v);
      when e is err:Error do (
-	  if err.message == returnMessage then (
-	       return(e);
-	       );
+	  if err.message == returnMessage || err.message == breakMessage then return(e);
 	  p := codePosition(c);
 	  err.report = seq(
 	       list(Expr(p.filename),
@@ -746,3 +745,8 @@ returnFun(a:Code):Expr := (
      e := eval(a);
      when e is Error do e else Expr(Error(dummyPosition,returnMessage,e)));
 setupop(returnS,returnFun);
+
+breakFun(a:Code):Expr := (
+     e := eval(a);
+     when e is Error do e else Expr(Error(dummyPosition,breakMessage,e)));
+setupop(breakS,breakFun);

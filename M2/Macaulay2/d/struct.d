@@ -178,6 +178,28 @@ export backtr(z:Expr,report:Expr):Expr := (
 	  err.report = Expr(Sequence(report,err.report));
 	  backtr(z))
      else z);
+export backtrFunction(z:Expr):Expr := (
+     when z is err:Error do (
+	  if err.message == returnMessage 
+	  then err.report
+	  else backtr(z))
+     else z);
+export backtrFunction(z:Expr,report:Expr):Expr := (
+     when z is err:Error do (
+	  if err.message == returnMessage 
+	  then err.report
+	  else backtr(z,report))
+     else z);
+export backtrLoop(z:Expr):Expr := (
+     when z is err:Error do (
+	  if err.message == breakMessage then err.report
+	  else backtr(z))
+     else z);
+export backtrLoop(z:Expr,report:Expr):Expr := (
+     when z is err:Error do (
+	  if err.message == breakMessage then err.report
+	  else backtr(z,report))
+     else z);
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
      errorpos(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
@@ -217,11 +239,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       foreach x in f.values do x = nullE;
 	       f.next = stash.framesize;
 	       stash.framesize = f;
-	       when ret is err:Error do (
-		    if err.message == returnMessage then err.report
-		    else backtr(ret,report(c,v))
-		    )
-	       else ret
+	       when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 	       )
 	  else (
 	       recursiondepth = recursiondepth + 1;
@@ -234,11 +252,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
-	       when ret is err:Error do (
-		    if err.message == returnMessage then err.report
-		    else backtr(ret,report(c,v))
-		    )
-	       else ret
+	       when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 	       )
 	  )
      else if desc.numparms != length(v)
@@ -251,11 +265,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
-	       when ret is err:Error do (
-		    if err.message == returnMessage then err.report
-		    else backtr(ret,report(c,v))
-		    )
-	       else ret
+	       when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 	       )
 	  else (
      	       if (!desc.hasClosure) && framesize < length(stash) then (
@@ -283,11 +293,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    foreach x in f.values do x = nullE;
 		    f.next = stash.framesize;
 		    stash.framesize = f;
-		    when ret is err:Error do (
-		    	 if err.message == returnMessage then err.report
-		    	 else backtr(ret,report(c,v))
-		    	 )
-	       	    else ret
+		    when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 		    )
 	       else (
 		    recursiondepth = recursiondepth + 1;
@@ -300,11 +306,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    ret := eval(model.body);
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
-		    when ret is err:Error do (
-		    	 if err.message == returnMessage then err.report
-		    	 else backtr(ret,report(c,v))
-		    	 )
-		    else ret
+		    when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 		    )
 	       )
 	  )
@@ -350,12 +352,8 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  f.next = stash.framesize;
 	  stash.framesize = f;
 	  recursiondepth = recursiondepth - 1;
-	  when ret is err:Error	     -- this check takes time, too!
-	  do (
-	       if err.message == returnMessage then err.report
-	       else backtr(ret,report(c,e))
-	       )
-	  else ret
+	  when ret is err:Error do backtrFunction(ret,report(c,e)) else ret
+	  	     -- this check takes time, too!
 	  )
      else (
 	  f := Frame(previousFrame,desc.scopenum,
@@ -367,12 +365,8 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  ret := eval(model.body);
 	  localFrame = saveLocalFrame;
 	  recursiondepth = recursiondepth - 1;
-	  when ret is err:Error    -- this check takes time, too!
-	  do (
-	       if err.message == returnMessage then err.report
-	       else backtr(ret,report(c,e))
-	       )
-	  else ret
+	  when ret is err:Error do backtrFunction(ret,report(c,e)) else ret
+	      -- this check takes time, too!
 	  )
      );
 
@@ -408,10 +402,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       saveLocalFrame := localFrame;
 	       localFrame = previousFrame;
 	       ret := eval(model.body);
-	       when ret is err:Error do ret = (
-		    if err.message == returnMessage then err.report
-		    else backtr(ret,report(c,emptySequence))
-		    ) 
+	       when ret is err:Error do ret = backtrFunction(ret,report(c,emptySequence))
 	       else nothing;
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
@@ -427,7 +418,8 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 			      new Sequence len framesize do (
 				   foreach code in cs do (
 					codevalue := eval(code);
-					when codevalue is err:Error do (
+					when codevalue
+					is Error do (
 					     haderror = true;
 					     errorreturn = codevalue;
 					     while true do provide nullE;
@@ -444,7 +436,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 			 foreach code at i in cs do (
 			      codevalue := eval(code);
 			      when codevalue
-			      is err:Error do return(backtr(codevalue))
+			      is Error do return(backtr(codevalue))
 			      else f.values.i = codevalue;
 			      );
 			 );
@@ -452,11 +444,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do (
-			 if err.message == returnMessage
-			 then ret = err.report
-			 else ret = backtr(ret,report(c,length(cs)))
-			 )
+		    when ret is err:Error do ret = backtrFunction(ret,report(c,length(cs)))
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -474,7 +462,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 			      foreach code in cs do (
 				   codevalue := eval(code);
 				   when codevalue 
-				   is err:Error do (
+				   is Error do (
 					haderror = true;
 					errorreturn = codevalue;
 					while true do provide nullE;
@@ -485,11 +473,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    if haderror then return(backtr(errorreturn));
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do (
-		    	 ret = 
-			 if err.message == returnMessage then err.report
-			 else backtr(ret,report(c,length(cs)))
-			 )
+		    when ret is err:Error do ret = backtrFunction(ret,report(c,length(cs)))
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -568,9 +552,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do (
-			 ret = if err.message == returnMessage then err.report else backtr(ret,report(c,2)) 
-			 )
+		    when ret is err:Error do ret = backtrFunction(ret,report(c,2)) 
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -591,9 +573,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    if haderror then return(backtr(errorreturn));
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do (
-			 ret = if err.message == returnMessage then err.report else backtr(ret,report(c,2)) 
-			 )
+		    when ret is err:Error do ret = backtrFunction(ret,report(c,2)) 
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -647,9 +627,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do (
-			 ret = if err.message == returnMessage then err.report else backtr(ret,report(c,3)) 
-			 )
+		    when ret is err:Error do ret = backtrFunction(ret,report(c,3)) 
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -671,9 +649,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    if haderror then return(backtr(errorreturn));
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do (
-			 ret = if err.message == returnMessage then err.report else backtr(ret,report(c,3)) 
-			 )
+		    when ret is err:Error do ret = backtrFunction(ret,report(c,3)) 
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;

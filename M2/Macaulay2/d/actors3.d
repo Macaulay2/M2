@@ -562,10 +562,15 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      while true do provide nullE);
 			 localFrame = Frame(previousFrame,scopenum,values);
 			 tmp := eval(body);
-			 when tmp is Error do (
-			      errret = tmp;
-			      while true do provide nullE; )
-			 else provide tmp
+			 when tmp is err:Error do (
+			      if err.message == returnMessage
+			      then provide err.report
+			      else (
+				   errret = tmp;
+			      	   while true do provide nullE;
+				   )
+			      )
+			 else provide tmp;
 			 );
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -583,9 +588,13 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   );
 			      localFrame = Frame(previousFrame,scopenum,values);
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   errret = tmp; 
-				   while true do provide nullE;
+			      when tmp is err:Error do (
+				   if err.message == returnMessage
+				   then provide err.report
+				   else (
+					errret = tmp;
+					while true do provide nullE;
+					)
 				   )
 			      else provide tmp;
 			      );
@@ -605,9 +614,14 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 		    ret := new Sequence len newlen at i do (
 			 values.0 = Sequence(a1.i,a2.i);
 			 tmp := eval(body);
-			 when tmp is Error do (
-			      errret = tmp;
-			      while true do provide nullE;)
+			 when tmp is err:Error do (
+			      if err.message == returnMessage
+			      then provide err.report
+			      else (
+				   errret = tmp;
+			      	   while true do provide nullE;
+				   )
+			      )
 			 else provide tmp;
 			 for i from 1 to framesize - 1 do values.i = nullE;
 			 );
@@ -626,9 +640,14 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      values.0 = a1.i;
 			      values.1 = a2.i;
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   errret = tmp;
-				   while true do provide nullE)
+			      when tmp is err:Error do (
+				   if err.message == returnMessage
+				   then provide err.report
+				   else (
+					errret = tmp;
+					while true do provide nullE;
+					)
+				   )
 			      else provide tmp;
 			      -- it would be faster to do a byte copy here:
 			      for i from 2 to framesize - 1 do values.i = nullE;
@@ -694,9 +713,15 @@ map(a:Sequence,f:Expr):Expr := (
 				   provide arg; while true do provide nullE);
 			      localFrame = Frame(previousFrame,scopenum,values);
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   errret = tmp; while true do provide nullE; )
-			      else provide tmp
+			      when tmp is err:Error do (
+				   if err.message == returnMessage
+				   then provide err.report
+				   else (
+					errret = tmp;
+					while true do provide nullE;
+					)
+				   )
+			      else provide tmp;
 			      )
 			 );
 		    localFrame = saveLocalFrame;
@@ -724,9 +749,14 @@ map(a:Sequence,f:Expr):Expr := (
 					localFrame = Frame(previousFrame,scopenum,values);
 					);
 				   tmp := eval(body);
-				   when tmp is Error do (
-					errret = tmp; 
-					while true do provide nullE;)
+				   when tmp is err:Error do (
+					if err.message == returnMessage
+					then provide err.report
+					else (
+					     errret = tmp;
+					     while true do provide nullE;
+					     )
+					)
 				   else provide tmp;
 				   )
 			      );
@@ -751,9 +781,14 @@ map(a:Sequence,f:Expr):Expr := (
 					errret = WrongNumArgs(model.parms,numparms,1);
 					while true do provide nullE;);
 				   tmp := eval(body);
-				   when tmp is Error do (
-					errret = tmp; 
-					while true do provide nullE;)
+				   when tmp is err:Error do (
+					if err.message == returnMessage
+					then provide err.report
+					else (
+					     errret = tmp;
+					     while true do provide nullE;
+					     )
+					)
 				   else provide tmp;
 				   )
 			      );
@@ -774,9 +809,14 @@ map(a:Sequence,f:Expr):Expr := (
 			 foreach arg in a do (
 			      values.0 = arg;
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   errret = tmp;
-				   while true do provide nullE;)
+			      when tmp is err:Error do (
+				   if err.message == returnMessage
+				   then provide err.report
+				   else (
+					errret = tmp;
+					while true do provide nullE;
+					)
+				   )
 			      else provide tmp;
 			      for i from 1 to framesize - 1 do values.i = nullE;
 			      )
@@ -803,9 +843,14 @@ map(a:Sequence,f:Expr):Expr := (
 					     )
 					else values.0 = arg;
 					tmp := eval(body);
-					when tmp is Error do (
-					     errret = tmp;
-					     while true do provide nullE;)
+					when tmp is err:Error do (
+					     if err.message == returnMessage
+					     then provide err.report
+					     else (
+						  errret = tmp;
+						  while true do provide nullE;
+						  )
+					     )
 					else provide tmp;
 					)
 				   )
@@ -820,9 +865,14 @@ map(a:Sequence,f:Expr):Expr := (
 					     )
 					else values.0 = arg;
 					tmp := eval(body);
-					when tmp is Error do (
-					     errret = tmp;
-					     while true do provide nullE;)
+					when tmp is err:Error do (
+					     if err.message == returnMessage
+					     then provide err.report
+					     else (
+						  errret = tmp;
+						  while true do provide nullE;
+						  )
+					     )
 					else provide tmp;
 					for i from 1 to framesize - 1 do values.i = nullE;
 					)
@@ -850,10 +900,16 @@ map(a:Sequence,f:Expr):Expr := (
 					     while true do provide nullE;
 					     );
 					tmp := eval(body);
-					when tmp is Error do (
-					     errret = tmp;
-					     while true do provide nullE)
-					else provide tmp)
+					when tmp is err:Error do (
+					     if err.message == returnMessage
+					     then provide err.report
+					     else (
+						  errret = tmp;
+						  while true do provide nullE;
+						  )
+					     )
+					else provide tmp;
+					)
 				   );
 			      localFrame = saveLocalFrame;
 			      recursiondepth = recursiondepth - 1;
@@ -879,9 +935,14 @@ map(a:Sequence,f:Expr):Expr := (
 					     while true do provide nullE;
 					     );
 					tmp := eval(body);
-					when tmp is Error do (
-					     errret = tmp;
-					     while true do provide nullE)
+					when tmp is err:Error do (
+					     if err.message == returnMessage
+					     then provide err.report
+					     else (
+						  errret = tmp;
+						  while true do provide nullE;
+						  )
+					     )
 					else provide tmp;
 					for i from numparms to framesize - 1 do values.i = nullE;
 					));
@@ -952,9 +1013,14 @@ map(n:int,f:Expr):Expr := (
 			      while true do provide nullE);
 			 localFrame = Frame(previousFrame,scopenum,values);
 			 tmp := eval(body);
-			 when tmp is Error do (
-			      errret = tmp; 
-			      while true do provide nullE;)
+			 when tmp is err:Error do (
+			      if err.message == returnMessage
+			      then provide err.report
+			      else (
+				   errret = tmp;
+			      	   while true do provide nullE;
+				   )
+			      )
 			 else provide tmp;
 			 )
 		    )
@@ -967,9 +1033,14 @@ map(n:int,f:Expr):Expr := (
 			 for i from 0 to n-1 do (
 			      values.0 = toInteger(i);
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   errret = tmp;
-				   while true do provide nullE;)
+			      when tmp is err:Error do (
+				   if err.message == returnMessage
+				   then provide err.report
+				   else (
+					errret = tmp;
+					while true do provide nullE;
+					)
+				   )
 			      else provide tmp;
 			      )
 			 )
@@ -977,9 +1048,14 @@ map(n:int,f:Expr):Expr := (
 			 for i from 0 to n-1 do (
 			      values.0 = toInteger(i);
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   errret = tmp;
-				   while true do provide nullE;)
+			      when tmp is err:Error do (
+				   if err.message == returnMessage
+				   then provide err.report
+				   else (
+					errret = tmp;
+					while true do provide nullE;
+					)
+				   )
 			      else provide tmp;
 			      for i from 1 to framesize - 1 do values.i = nullE;
 			      )
@@ -1019,8 +1095,7 @@ map(e:Expr,f:Expr):Expr := (
 --	  if ancestor(obj.class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
 	  c := map(b.v,f);
-	  when c
-	  is Error do c
+	  when c is err:Error do if err.message == breakMessage then err.report else c
 	  is v:Sequence do list(b.class,v,b.mutable)
 	  else nullE			  -- will not happen
 	  )
@@ -1036,7 +1111,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	  is a2:Sequence do map(a1,a2,f)
 	  is b2:List do (
 	       c := map(a1,b2.v,f);
-	       when c is Error do c
+	       when c is err:Error do if err.message == breakMessage then err.report else c
 	       is v:Sequence do list(b2.class,v,b2.mutable)
 	       else nullE		  -- will not happen
 	       )
@@ -1045,7 +1120,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	  when e2
 	  is a2:Sequence do (
 	       c := map(b1.v,a2,f);
-	       when c is Error do c
+	       when c is err:Error do if err.message == breakMessage then err.report else c
 	       is v:Sequence do list(b1.class,v,b1.mutable)
 	       else nullE		  -- will not happen
 	       )
@@ -1057,7 +1132,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 		    class = listClass;
 		    );
 	       c := map(b1.v,b2.v,f);
-	       when c is Error do c
+	       when c is err:Error do if err.message == breakMessage then err.report else c
 	       is v:Sequence do list(class,v,mutable)
 	       else nullE		  -- will not happen
 	       )
@@ -1103,10 +1178,12 @@ scan(n:int,f:Expr):Expr := (
 			 );
 		    localFrame = Frame(previousFrame,scopenum,values);
 		    tmp := eval(body);
-		    when tmp is Error do (
-     			 recursiondepth = recursiondepth - 1;
-     			 localFrame = saveLocalFrame;
-			 return(backtr(tmp)); 
+		    when tmp is err:Error do (
+			 if err.message != returnMessage then (
+     			      recursiondepth = recursiondepth - 1;
+     			      localFrame = saveLocalFrame;
+			      return(backtrLoop(tmp)); 
+			      )
 			 )
 		    else nothing;
 		    )
@@ -1120,10 +1197,12 @@ scan(n:int,f:Expr):Expr := (
 		    for i from 0 to n-1 do (
 			 values.0 = toInteger(i);
 			 tmp := eval(body);
-			 when tmp is Error do (
-     			      recursiondepth = recursiondepth - 1;
-     			      localFrame = saveLocalFrame;
-			      return(backtr(tmp)); 
+			 when tmp is err:Error do (
+			      if err.message != returnMessage then (
+     			      	   recursiondepth = recursiondepth - 1;
+     			      	   localFrame = saveLocalFrame;
+			      	   return(backtrLoop(tmp)); 
+				   )
 			      )
 			 else nothing;
 			 )
@@ -1132,10 +1211,12 @@ scan(n:int,f:Expr):Expr := (
 		    for i from 0 to n-1 do (
 			 values.0 = toInteger(i);
 			 tmp := eval(body);
-			 when tmp is Error do (
-     			      recursiondepth = recursiondepth - 1;
-     			      localFrame = saveLocalFrame;
-			      return(backtr(tmp)); 
+			 when tmp is err:Error do (
+			      if err.message != returnMessage then (
+     			      	   recursiondepth = recursiondepth - 1;
+     			      	   localFrame = saveLocalFrame;
+			      	   return(backtrLoop(tmp)); 
+				   )
 			      )
 			 else nothing;
 			 for i from 1 to framesize - 1 do values.i = nullE;
@@ -1204,10 +1285,12 @@ scan(a:Sequence,f:Expr):Expr := (
 			      provide arg; while true do provide nullE);
 			 localFrame = Frame(previousFrame,scopenum,values);
 			 tmp := eval(body);
-			 when tmp is Error do (
-	  		      recursiondepth = recursiondepth - 1;
-     			      localFrame = saveLocalFrame;
-			      return(backtr(tmp));
+			 when tmp is err:Error do (
+			      if err.message != returnMessage then (
+	  		      	   recursiondepth = recursiondepth - 1;
+     			      	   localFrame = saveLocalFrame;
+			      	   return(backtrLoop(tmp));
+				   )
 			      )
 			 else nothing);)
 	       else (				  -- (x,y) -> ...
@@ -1231,10 +1314,12 @@ scan(a:Sequence,f:Expr):Expr := (
 				   localFrame = Frame(previousFrame,scopenum,values);
 				   );
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   recursiondepth = recursiondepth - 1;
-				   localFrame = saveLocalFrame;
-				   return(backtr(tmp));
+			      when tmp is err:Error do (
+			 	   if err.message != returnMessage then (
+				   	recursiondepth = recursiondepth - 1;
+				   	localFrame = saveLocalFrame;
+				   	return(backtrLoop(tmp));
+					)
 				   )
 			      else nothing;
 			      )
@@ -1258,10 +1343,12 @@ scan(a:Sequence,f:Expr):Expr := (
 				   return(backtr(WrongNumArgs(model.parms,numparms,1)));
 				   );
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   recursiondepth = recursiondepth - 1;
-				   localFrame = saveLocalFrame;
-				   return(backtr(tmp));
+			      when tmp is err:Error do (
+			 	   if err.message != returnMessage then (
+				   	recursiondepth = recursiondepth - 1;
+				   	localFrame = saveLocalFrame;
+				   	return(backtrLoop(tmp));
+				   	)
 				   )
 			      else nothing;
 			      )
@@ -1277,10 +1364,12 @@ scan(a:Sequence,f:Expr):Expr := (
 		    foreach arg in a do (
 			 values.0 = arg;
 			 tmp := eval(body);
-			 when tmp is Error do (
-			      recursiondepth = recursiondepth - 1;
-			      localFrame = saveLocalFrame;
-			      return(backtr(tmp));
+			 when tmp is err:Error do (
+			      if err.message != returnMessage then (
+			      	   recursiondepth = recursiondepth - 1;
+			      	   localFrame = saveLocalFrame;
+			      	   return(backtrLoop(tmp));
+				   )
 			      )
 			 else nothing;
 			 for i from 1 to framesize - 1 do values.i = nullE;
@@ -1302,10 +1391,12 @@ scan(a:Sequence,f:Expr):Expr := (
 					)
 				   else values.0 = arg;
 				   tmp := eval(body);
-				   when tmp is Error do (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
-					return(backtr(tmp));
+				   when tmp is err:Error do (
+			 		if err.message != returnMessage then (
+	  				     recursiondepth = recursiondepth - 1;
+     					     localFrame = saveLocalFrame;
+					     return(backtrLoop(tmp));
+					     )
 					)
 				   else nothing;
 				   )
@@ -1322,10 +1413,12 @@ scan(a:Sequence,f:Expr):Expr := (
 					)
 				   else values.0 = arg;
 				   tmp := eval(body);
-				   when tmp is Error do (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
-					return(backtr(tmp));
+				   when tmp is err:Error do (
+			 		if err.message != returnMessage then (
+	  				     recursiondepth = recursiondepth - 1;
+     					     localFrame = saveLocalFrame;
+					     return(backtrLoop(tmp));
+					     )
 					)
 				   else nothing;
 				   for i from 1 to framesize - 1 do values.i = nullE;
@@ -1349,10 +1442,12 @@ scan(a:Sequence,f:Expr):Expr := (
 					return(backtr(WrongNumArgs(model.parms,numparms,1)));
 					);
 				   tmp := eval(body);
-				   when tmp is Error do (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
-					return(backtr(tmp));
+				   when tmp is err:Error do (
+			 		if err.message != returnMessage then (
+	  				     recursiondepth = recursiondepth - 1;
+     					     localFrame = saveLocalFrame;
+					     return(backtrLoop(tmp));
+					     )
 					)
 				   else nothing))
 			 else (	  -- framesize != 0
@@ -1375,10 +1470,12 @@ scan(a:Sequence,f:Expr):Expr := (
 					return(backtr(WrongNumArgs(model.parms,numparms,1)));
 					);
 				   tmp := eval(body);
-				   when tmp is Error do (
-	  				recursiondepth = recursiondepth - 1;
-     					localFrame = saveLocalFrame;
-					return(backtr(tmp));
+				   when tmp is err:Error do (
+			 		if err.message != returnMessage then (
+	  				     recursiondepth = recursiondepth - 1;
+     					     localFrame = saveLocalFrame;
+					     return(backtrLoop(tmp));
+					     )
 					)
 				   else nothing;
 				   for i from numparms to framesize - 1 do values.i = nullE;
@@ -1446,10 +1543,12 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      while true do provide nullE);
 			 localFrame = Frame(previousFrame,scopenum,values);
 			 tmp := eval(body);
-			 when tmp is Error do (
-			      localFrame = saveLocalFrame;
-			      recursiondepth = recursiondepth - 1;
-			      return(backtr(tmp));
+			 when tmp is err:Error do (
+			      if err.message != returnMessage then (
+			      	   localFrame = saveLocalFrame;
+			      	   recursiondepth = recursiondepth - 1;
+			      	   return(backtrLoop(tmp));
+				   )
 			      )
 			 else nothing;
 			 );
@@ -1468,10 +1567,12 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   );
 			      localFrame = Frame(previousFrame,scopenum,values);
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   localFrame = saveLocalFrame;
-				   recursiondepth = recursiondepth - 1;
-				   return(backtr(tmp));
+			      when tmp is err:Error do (
+			 	   if err.message != returnMessage then (
+				   	localFrame = saveLocalFrame;
+				   	recursiondepth = recursiondepth - 1;
+				   	return(backtrLoop(tmp));
+					)
 				   )
 			      else nothing;
 			      );
@@ -1488,11 +1589,13 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 		    for i from 0 to newlen - 1 do (
 			 values.0 = Sequence(a1.i,a2.i);
 			 tmp := eval(body);
-			 when tmp is Error do (
-			      -- stash
-			      localFrame = saveLocalFrame;
-			      recursiondepth = recursiondepth - 1;
-			      return(backtr(tmp));
+			 when tmp is err:Error do (
+			      if err.message != returnMessage then (
+			      	   -- stash
+			      	   localFrame = saveLocalFrame;
+			      	   recursiondepth = recursiondepth - 1;
+			      	   return(backtrLoop(tmp));
+				   )
 			      )
 			 else nothing;
 			 for i from 1 to framesize - 1 do values.i = nullE;
@@ -1511,11 +1614,13 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      values.0 = a1.i;
 			      values.1 = a2.i;
 			      tmp := eval(body);
-			      when tmp is Error do (
-				   -- stash
-				   localFrame = saveLocalFrame;
-				   recursiondepth = recursiondepth - 1;
-				   return(backtr(tmp));
+			      when tmp is err:Error do (
+			 	   if err.message != returnMessage then (
+				   	-- stash
+				   	localFrame = saveLocalFrame;
+				   	recursiondepth = recursiondepth - 1;
+				   	return(backtrLoop(tmp));
+					)
 				   )
 			      else nothing;
 			      -- it would be faster to do a byte copy here:

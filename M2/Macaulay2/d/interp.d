@@ -107,6 +107,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 			 if lastvalue == EndOfInput then return(lastvalue);
 			 when lastvalue is err:Error do (
 			      if err.message == returnMessage
+			      || err.message == breakMessage
 			      then lastvalue = err.report;
 			      )
 			 else nothing;

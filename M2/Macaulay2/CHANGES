@@ -3,6 +3,8 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+new keyword 'return' -- use it for returning from functions
+
 new keywords 'for', 'when' and 'to', and a new control structure:
 	for i from a to b when c list x do y
 This repeatedly evaluates x and y, letting i run over a..b, as long as

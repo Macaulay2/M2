@@ -127,6 +127,19 @@ document { "while",
      SEEALSO { "for", "return" }
      }
 
+document { "break",
+     Headline => "break from a loop",
+     TT "break x", " -- interrupts execution of a loop, returning
+     ", TT "x", " as the value of the loop currently being evaluated.",BR,
+     TT "break;", " -- interrupts execution of a loop, returning
+     ", TO "null", " as the value of the function currently being evaluated.",
+     PARA,
+     EXAMPLE {
+	  "scan({3,5,7,11,44,55,77}, i -> if even i then break i)"
+	  },
+     SEEALSO { "return" }
+     }
+
 document { "return",
      Headline => "return from a function",
      TT "return x", " -- returns ", TT "x", " as the value of the function currently
@@ -140,7 +153,8 @@ document { "return",
 	  "g = x -> (3 + 4 * return; 5);",
 	  "g 101",
 	  "g 101 === null"
-	  }
+	  },
+     SEEALSO { "break" }
      }
 
 document { "list",
