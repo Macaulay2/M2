@@ -25,7 +25,7 @@ newMatrix(Module,Module,RawMatrix) := (tar,src,f) -> (     -- we erase this late
 	  symbol RawMatrix => f,
 	  symbol cache => new CacheTable
 	  })
-newMatrix(Ring,RawMatrix) := (R,f) -> (			    -- replaces getMatrix
+newMatrix(Ring,RawMatrix) := (R,f) -> (			    -- replaces getMatrix =
      newMatrix(newModule(R,rawTarget f),newModule(R,rawSource f),f)
      )
 
@@ -79,8 +79,6 @@ Matrix _ Sequence := RingElement => (m,ind) -> (
 	  new R from rawMatrixEntry(m.RawMatrix, ind#0, ind#1))
      else error "expected a sequence of length two"
      )
-
-Matrix _ ZZ := Vector => (m,i) -> new m.target from rawMatrixColumn(raw m, i)
 
 Matrix == Matrix := (m,n) -> target m == target n and source m == source n and raw m === raw n
 Matrix == RingElement := (m,f) -> m - f == 0
@@ -358,53 +356,23 @@ Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
 ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
 Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 
-listZ := v -> (
-     if not all(v,i -> class i === ZZ) then error "expected list of integers";
-     )
+listZ := v -> ( if not all(v,i -> class i === ZZ) then error "expected list of integers"; v )
+Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)
+Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,)
 
-Matrix _ List := Matrix => (f,v) -> (
-     v = splice v;
-     listZ v;
-     submatrix(f,v)
-     )
-
-Matrix ^ List := Matrix => (f,v) -> (
-     v = splice v;
-     listZ v;
-     submatrix(f,v,)
-     )
-
-submatrix(Matrix,List,Nothing) := (m,rows,cols) -> (
-     submatrix(m, rows, 0 .. numgens source m - 1)
-     )
-
-submatrix(Matrix,Nothing,List) := (m,rows,cols) -> (
-     submatrix(m, 0 .. numgens target m - 1, cols)
-     )
+Matrix _ ZZ := Vector => (m,i) -> error "vectors not re-implemented yet"
 
 submatrix(Matrix,Sequence,Sequence) := 
 submatrix(Matrix,Sequence,List) := 
 submatrix(Matrix,List,Sequence) := 
 submatrix(Matrix,List,List) := Matrix => (m,rows,cols) -> (
-     if not isFreeModule source m or not isFreeModule target m
-     then error "expected a homomorphism between free modules";
-     rows = toList splice rows;
-     listZ rows;
-     cols = toList splice cols;
-     listZ cols;
-     error "IM2_Matrix_submatrix not re-implemented yet";
-     sendgg(ggPush m, 
-	  ggINTARRAY, gg rows, ggINTARRAY, gg cols, ggsubmatrix);
-     getMatrix ring m)
-
+     if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
+     newMatrix(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols)))
 submatrix(Matrix,List) := Matrix => (m,cols) -> (
-     cols = toList splice cols;
-     listZ cols;
-     error "IM2_Matrix_submatrix not re-implemented yet";
-     sendgg(ggPush m, 
-	  ggINTARRAY, gg cols, 
-	  ggsubmatrix);
-     getMatrix ring m)
+     if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
+     newMatrix(ring m,rawSubmatrix(raw m, listZ toList splice cols)))
+submatrix(Matrix,Nothing,List) := (m,rows,cols) -> submatrix(m,cols)
+submatrix(Matrix,List,Nothing) := (m,rows,cols) -> submatrix(m, rows, 0 .. numgens source m - 1)
 
 diff(Matrix, Matrix) := Matrix => (
      (f,g) -> newMatrix(target f, source f, rawMatrixDiff(f.RawMatrix, g.RawMatrix))

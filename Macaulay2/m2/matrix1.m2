@@ -42,7 +42,6 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = makeRawTable(R,p);
-     p = transpose p; -- later we won't transpose
      h := rawMatrix1(raw cover M, rankN, apply(toSequence flatten p, r -> r.RawRingElement), false);
      newMatrix(M,newModule(R,rawSource h),h))
 
@@ -106,7 +105,7 @@ options -> (M,N,p) -> (
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      if N === null and options.Degree =!= null
      then error "Degree option given with indeterminate source module";
-     p = toSequence transpose makeRawTable(R,p);	    -- eventually remove 'transpose'
+     p = toSequence makeRawTable(R,p);
      rawM := M.RawFreeModule;
      h := (
 	  if N === null 
