@@ -66,7 +66,7 @@ reach3 MENU := x -> scan(x,reach1)
 --------------- body of book
 reach1 documentationMemo "Macaulay 2"
 --------------- appendix
-sectionNumber = {"A"}
+-- sectionNumber = {"A"}
 document { "Appendix",
      "We present various footnotes in this appendix.",
      }

@@ -14,15 +14,17 @@ bookFile << ///
 %% some macros
 
 \documentclass{amsbook}
-\usepackage{hyperref} \hypersetup{
-        bookmarks=true,
+
+% we are using hyperref.sty version: 1999/10/14 v6.66m Hypertext links for LaTeX]
+% available from /ftp@sunsite.unc.edu:/pub/packages/TeX/macros/latex/contrib/supported/hyperref
+\usepackage[
 	bookmarksnumbered=true,
-        pdftitle=Macaulay 2,
-        pdfsubject=symbolic algebra,
-        pdfkeywords=syzygy Groebner resolution polynomials,
-        pdfauthor=Daniel R. Grayson and Michael E. Stillman,
+        pdftitle={Macaulay 2},
+        pdfsubject={symbolic algebra},
+        pdfkeywords={syzygy Groebner resolution polynomials},
+        pdfauthor={Daniel R. Grayson and Michael E. Stillman},
     	colorlinks=true
-        }
+        ]{hyperref}
 
 \setcounter{secnumdepth}{10}
 \catcode`\@=11
