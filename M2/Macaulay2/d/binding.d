@@ -46,56 +46,56 @@ insert(entry:Symbol,table:SymbolHashTable):void := (
      h := entry.word.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(entry,table.buckets.h);
      );
-export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
-     frameindex := scope.framesize;
-     scope.framesize = scope.framesize + 1;
+export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
+     frameindex := dictionary.framesize;
+     dictionary.framesize = dictionary.framesize + 1;
      entry := Symbol(
 	  word, 
 	  nextHash(), 
 	  position,
 	  dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-	  scope.frameID, 
+	  dictionary.frameID, 
 	  frameindex,
 	  1,				  -- first lookup is now
 	  false,			  -- not protected
-	  scope.transient,
+	  dictionary.transient,
 	  false
 	  );
-     if scope == globalScope then (
+     if dictionary == globalDictionary then (
 	  -- this allows the global frame to grow
-	  if globalScope.framesize > length(globalFrame.values) then (
+	  if globalDictionary.framesize > length(globalFrame.values) then (
 	       globalFrame.values = (
-		    new Sequence len 2 * globalScope.framesize + 1 do (
+		    new Sequence len 2 * globalDictionary.framesize + 1 do (
 			 foreach y in globalFrame.values do provide y;
 			 while true do provide nullE;
 			 ))))
-     else if scope.frameID == localFrame.frameID then (
+     else if dictionary.frameID == localFrame.frameID then (
 	  -- this should take care of scopes which span a file,
 	  -- and have a single frame which ought to be allowed to grow
-	  if scope.framesize > length(localFrame.values) then (
+	  if dictionary.framesize > length(localFrame.values) then (
 	       localFrame.values = (
-		    new Sequence len 2 * scope.framesize + 1 do (
+		    new Sequence len 2 * dictionary.framesize + 1 do (
 			 foreach y in localFrame.values do provide y;
 			 while true do provide nullE;
 			 )));
 	  -- localFrame.values.frameindex = nullE;
 	  );
-     insert(entry,scope.symboltable);
+     insert(entry,dictionary.symboltable);
      entry);
-export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
-     s := makeEntry(word,position,scope);
-     if scope == globalScope && isalnum(word.name)
+export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
+     s := makeEntry(word,position,dictionary);
+     if dictionary == globalDictionary && isalnum(word.name)
      then globalFrame.values.(s.frameindex) = Expr(SymbolClosure(globalFrame,s));
      s);
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
-     entry := makeSymbol(w,dummyPosition,globalScope);
+     entry := makeSymbol(w,dummyPosition,globalDictionary);
      entry.protected = true;
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
 makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
-     entry := makeEntry(w,dummyPosition,globalScope);
+     entry := makeEntry(w,dummyPosition,globalDictionary);
      entry.protected = true;
      SymbolClosure(globalFrame,entry));
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
@@ -139,8 +139,8 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
 
 -- Keep in mind that a "Word" is determined by a string token, and has attributes 
 -- that determine how it is parsed, but a "Symbol" or "SymbolClosure" is a Word together
--- with a binding done in a particular way depending on the current scope.  The symbols
--- created below are all in the global scope.
+-- with a binding done in a particular way depending on the current dictionary.  The symbols
+-- created below are all in the global dictionary.
 
      parseEOF.precedence = prec;
      parseEOF.binaryStrength = prec;
@@ -312,7 +312,7 @@ export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 -----------------------------------------------------------------------------
 export makeSymbol(token:Token):Symbol := (
-     e := makeSymbol(token.word,token.position,token.scope);
+     e := makeSymbol(token.word,token.position,token.dictionary);
      token.entry = e;
      e);
 HadError := false;
@@ -324,10 +324,10 @@ export makeErrorTree(e:Token,message:string):void := (
      HadError = true;
      printErrorMessage(e.position,message);
      );
-makeSymbol(e:ParseTree,scope:Scope):void := (
+makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is token:Token do (
-	  token.scope = scope;
+	  token.dictionary = dictionary;
 	  makeSymbol(token);)
      else makeErrorTree(e,"expected single identifier"));
 -----------------------------------------------------------------------------
@@ -351,52 +351,31 @@ lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
 	       return(e);
 	       );
 	  entryList = entryListCell.next));
-lookup( word:Word,criterion:function(Symbol):bool,table:SymbolHashTable ):(null or Symbol) := (
-     if table == dummySymbolHashTable then error("dummy table used");
-     entryList := table.buckets.(
-	  word.hash & (length(table.buckets)-1)
-	  );
-     while true do
-     when entryList
-     is null do return(NULL)
-     is entryListCell:SymbolListCell do (
-	  if entryListCell.entry.word == word
-	  then if criterion(entryListCell.entry)
-	  then (
-	       e := entryListCell.entry;
-	       e.lookupCount = e.lookupCount + lookupCountIncrement;
-	       return(e);
-	       );
-	  entryList = entryListCell.next));
-export lookup(word:Word,scope:Scope):(null or Symbol) := (
+
+globalLookup(word:Word):(null or Symbol) := (
+     dictionary := globalDictionary;
      while true do (
-	  when lookup(word,scope.symboltable)
+	  when lookup(word,dictionary.symboltable)
+	  is e:Symbol do return(e)
 	  is null do (
-	       if scope.outerScope == scope 
+	       if dictionary.outerDictionary == dictionary 		    -- e.g.: dummyDictionary, globalDictionary, and the first in a chain of local scopes
 	       then return(NULL)
-	       else scope = scope.outerScope;
-	       )
-	  is e:Symbol do return(e)));
-lookup(
-     word:Word,
-     criterion:function(Symbol):bool,  	  -- used for overloading
-     scope:Scope
-     ):(null or Symbol) := (
+	       else dictionary = dictionary.outerDictionary; )));
+export lookup(word:Word,dictionary:Dictionary):(null or Symbol) := (
      while true do (
-	  when lookup(word,criterion,scope.symboltable)
+	  when lookup(word,dictionary.symboltable)
+	  is e:Symbol do return(e)
 	  is null do (
-	       if scope.outerScope == scope
-	       then return(NULL)
-	       else scope = scope.outerScope
-	       )
-	  is e:Symbol do return(e)));
+	       if dictionary.outerDictionary == dictionary 		    -- e.g.: dummyDictionary, globalDictionary, and the first in a chain of local scopes
+	       then return(globalLookup(word))
+	       else dictionary = dictionary.outerDictionary; )));
 lookup(token:Token,forcedef:bool):void := (
      n := length(token.word.name);
      if n >= 1 && isdigit(token.word.name.0) 
      || n >= 2 && token.word.name.0 == '.' && isdigit(token.word.name.1)
      then nothing
      else (
-     	  when lookup(token.word,token.scope)
+     	  when lookup(token.word,token.dictionary)
      	  is entry:Symbol do (
 	       token.entry = entry;
 	       if entry.flagLookup then (
@@ -406,7 +385,8 @@ lookup(token:Token,forcedef:bool):void := (
      	  else (
 	       if forcedef
 	       then (
-	       	    token.scope = globalScope;
+		    -- undefined variables are defined as global and static here
+	       	    token.dictionary = globalDictionary;
 	       	    makeSymbol(token);
 		    )
 	       else (
@@ -415,46 +395,46 @@ lookup(token:Token,forcedef:bool):void := (
 lookup(token:Token):void := lookup(token,true);
 lookuponly(token:Token):void := lookup(token,false);
 -----------------------------------------------------------------------------
-bind(token:Token,scope:Scope):void := (
-     token.scope = scope;
+bind(token:Token,dictionary:Dictionary):void := (
+     token.dictionary = dictionary;
      lookup(token););
-bindop(token:Token,scope:Scope):void := (
-     token.scope = scope;
+bindop(token:Token,dictionary:Dictionary):void := (
+     token.dictionary = dictionary;
      lookuponly(token););
-export bind(e:ParseTree,scope:Scope):void;
-bindFormalParm(e:ParseTree,scope:Scope,desc:functionDescription):void := (
+export bind(e:ParseTree,dictionary:Dictionary):void;
+bindFormalParm(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e
      is t:Token do (
-	  if t.word.typecode == TCid then makeSymbol(e,scope)
+	  if t.word.typecode == TCid then makeSymbol(e,dictionary)
 	  else makeErrorTree(t,"expected symbol");
 	  desc.numparms = desc.numparms + 1;
 	  )
      else makeErrorTree(e,"syntax error"));
-bindFormalParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
+bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is binary:Binary do (
 	  if binary.operator.word == commaW
 	  then (
-	       bindFormalParmList(binary.lhs,scope,desc);
-	       bindop(binary.operator,scope);
-	       bindFormalParm(binary.rhs,scope,desc);)
+	       bindFormalParmList(binary.lhs,dictionary,desc);
+	       bindop(binary.operator,dictionary);
+	       bindFormalParm(binary.rhs,dictionary,desc);)
 	  else makeErrorTree(e,"syntax error"))
-     else bindFormalParm(e,scope,desc));
-bindSingleParm(e:ParseTree,scope:Scope):void := (
+     else bindFormalParm(e,dictionary,desc));
+bindSingleParm(e:ParseTree,dictionary:Dictionary):void := (
      when e 
      is t:Token do (
-	  if t.word.typecode == TCid then makeSymbol(e,scope)
+	  if t.word.typecode == TCid then makeSymbol(e,dictionary)
 	  else makeErrorTree(t,"expected symbol")
 	  )
      else makeErrorTree(e,"expected symbol"));
-bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
+bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is t:Token do (
-	  bindFormalParm(e,scope,desc);
+	  bindFormalParm(e,dictionary,desc);
 	  desc.restargs = true;
 	  )
      is p:Parentheses do (
-	  bindFormalParmList(p.contents,scope,desc)
+	  bindFormalParmList(p.contents,dictionary,desc)
 	  )
      is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
@@ -485,63 +465,63 @@ opHasPostfixMethod(o:Symbol):bool := (
      foreach s in opsWithPostfixMethod do if s.symbol == o then return(true);
      return(false);
      );
-bindTokenLocally(token:Token,scope:Scope):void := (
+bindTokenLocally(token:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 0;
-     r := lookup(token.word,scope);
+     r := lookup(token.word,dictionary);
      lookupCountIncrement = 1;
      when r
      is entry:Symbol do (
-	  if scope.frameID == entry.frameID
+	  if dictionary.frameID == entry.frameID
 	  then printErrorMessage(token.position, "warning: local declaration of " + token.word.name
 	       + " shields variable with same name" );
 	  )
      else nothing;
-     token.scope = scope;
+     token.dictionary = dictionary;
      makeSymbol(token);
      );
-bindToken(token:Token,scope:Scope,colon:bool):void := (
-     if colon then bindTokenLocally(token,scope) else bind(token,scope);
+bindToken(token:Token,dictionary:Dictionary,colon:bool):void := (
+     if colon then bindTokenLocally(token,dictionary) else bind(token,dictionary);
      );
-bindParallelAssignmentItem(e:ParseTree,scope:Scope,colon:bool):void := (
+bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is token:Token do (
 	  if token.word.typecode != TCid then makeErrorTree(token,"expected symbol")
-	  else bindToken(token,scope,colon);
+	  else bindToken(token,dictionary,colon);
 	  )
      else makeErrorTree(e,"syntax error"));
-bindParallelAssignmentList(e:ParseTree,scope:Scope,colon:bool):void := (
+bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is binary:Binary do (
 	  if binary.operator.word == commaW
 	  then (
-	       bindParallelAssignmentList(binary.lhs,scope,colon);
-	       bindop(binary.operator,scope);
-	       bindParallelAssignmentItem(binary.rhs,scope,colon);
+	       bindParallelAssignmentList(binary.lhs,dictionary,colon);
+	       bindop(binary.operator,dictionary);
+	       bindParallelAssignmentItem(binary.rhs,dictionary,colon);
 	       )
      	  else makeErrorTree(e,"syntax error")
 	  )
-     else bindParallelAssignmentItem(e,scope,colon));
-bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
-     bindop(assn.operator,scope);
+     else bindParallelAssignmentItem(e,dictionary,colon));
+bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
+     bindop(assn.operator,dictionary);
      body := assn.rhs;
      when assn.lhs
      is p:Parentheses do (
-	  bindParallelAssignmentList(p.contents,scope,colon);
-	  bind(body,scope);
+	  bindParallelAssignmentList(p.contents,dictionary,colon);
+	  bind(body,dictionary);
 	  )
      is token:Token do (
-	  bindToken(token,scope,colon);
-	  bind(body,scope);
+	  bindToken(token,dictionary,colon);
+	  bind(body,dictionary);
 	  )
      is a:Adjacent do (
-	  bind(a.lhs,scope);
-	  bind(a.rhs,scope);
-	  bind(body,scope);
+	  bind(a.lhs,dictionary);
+	  bind(a.rhs,dictionary);
+	  bind(body,dictionary);
 	  )
      is unary:Unary do (
-	  bindop(unary.operator,scope);
-	  bind(unary.rhs,scope);
-	  bind(body,scope);
+	  bindop(unary.operator,dictionary);
+	  bind(unary.rhs,dictionary);
+	  bind(body,dictionary);
 	  if colon
 	  then (
 	       if ! opHasUnaryMethod(unary.operator.entry)
@@ -553,9 +533,9 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	       )
 	  )
      is unary:Postfix do (
-	  bind(unary.lhs,scope);
-	  bindop(unary.operator,scope);
-	  bind(body,scope);
+	  bind(unary.lhs,dictionary);
+	  bindop(unary.operator,dictionary);
+	  bind(body,dictionary);
 	  if colon
 	  then (
 	       if ! opHasPostfixMethod(unary.operator.entry)
@@ -567,10 +547,10 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	       )
 	  )
      is binary:Binary do (
-	  bind(binary.lhs,scope);
-	  bindop(binary.operator,scope);
-	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalScope else scope );
-	  bind(body,scope);
+	  bind(binary.lhs,dictionary);
+	  bindop(binary.operator,dictionary);
+	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalDictionary else dictionary );
+	  bind(body,dictionary);
 	  if colon then (
 	       if ! opHasBinaryMethod(binary.operator.entry)
 	       then makeErrorTree( assn.operator, "can't assign a method for this binary operator");
@@ -593,58 +573,58 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	  )
      is n:New do (
 	  if colon then (
-	       bind(n.newclass,scope);
-	       bind(n.newparent,scope);
-	       bind(n.newinitializer,scope);
-	       bind(body,scope))
+	       bind(n.newclass,dictionary);
+	       bind(n.newparent,dictionary);
+	       bind(n.newinitializer,dictionary);
+	       bind(body,dictionary))
 	  else makeErrorTree(assn.operator, 
 	       "left hand side of assignment inappropriate"))
      else makeErrorTree(assn.operator, 
 	  "left hand side of assignment inappropriate"));
-bindnewscope(e:ParseTree,scope:Scope):ParseTree := (
-     n := newLocalScope(scope);
+bindnewdictionary(e:ParseTree,dictionary:Dictionary):ParseTree := (
+     n := newLocalDictionary(dictionary);
      bind(e,n);
-     ParseTree(StartScope(n,e)));
+     ParseTree(StartDictionary(n,e)));
 SawClosure := false;
-export bind(e:ParseTree,scope:Scope):void := (
+export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
-     is s:StartScope do bind(s.body,scope)
+     is s:StartDictionary do bind(s.body,dictionary)
      is i:IfThen do (
-	  bind(i.predicate,scope);
-	  -- i.thenclause = bindnewscope(i.thenclause,scope);
-	  bind(i.thenclause,scope);
+	  bind(i.predicate,dictionary);
+	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
+	  bind(i.thenclause,dictionary);
 	  )
      is i:IfThenElse do (
-	  bind(i.predicate,scope);
-	  -- i.thenclause = bindnewscope(i.thenclause,scope);
-	  bind(i.thenclause,scope);
-	  -- i.elseClause = bindnewscope(i.elseClause,scope);
-	  bind(i.elseClause,scope);
+	  bind(i.predicate,dictionary);
+	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
+	  bind(i.thenclause,dictionary);
+	  -- i.elseClause = bindnewdictionary(i.elseClause,dictionary);
+	  bind(i.elseClause,dictionary);
 	  )
      is token:Token do (
-	  if token.word.typecode == TCid then bind(token,scope);
+	  if token.word.typecode == TCid then bind(token,dictionary);
 	  )
      is adjacent:Adjacent do (
-	  bind(adjacent.lhs,scope); 
-	  bind(adjacent.rhs,scope))
+	  bind(adjacent.lhs,dictionary); 
+	  bind(adjacent.rhs,dictionary))
      is binary:Binary do (
 	  if binary.operator.word == EqualW
-	  then bindassignment(binary,scope,false)
+	  then bindassignment(binary,dictionary,false)
 	  else if binary.operator.word == ColonEqualW
-	  then bindassignment(binary,scope,true)
+	  then bindassignment(binary,dictionary,true)
 	  else if binary.operator.word == orS.symbol.word
 	       || binary.operator.word == andS.symbol.word
 	  then (
-	       bind(binary.lhs,scope);
-	       bindop(binary.operator,scope);
-	       -- binary.rhs = bindnewscope(binary.rhs,scope);
-	       bind(binary.rhs,scope);
+	       bind(binary.lhs,dictionary);
+	       bindop(binary.operator,dictionary);
+	       -- binary.rhs = bindnewdictionary(binary.rhs,dictionary);
+	       bind(binary.rhs,dictionary);
 	       )
 	  else if binary.operator.word == DotS.symbol.word
 	  then (
-	       bind(binary.lhs,scope);
-	       bindop(binary.operator,scope);
-	       bind(binary.rhs,globalScope);
+	       bind(binary.lhs,dictionary);
+	       bindop(binary.operator,dictionary);
+	       bind(binary.rhs,globalDictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
@@ -654,9 +634,9 @@ export bind(e:ParseTree,scope:Scope):void := (
 	       )
 	  else if binary.operator.word == DotQuestionS.symbol.word
 	  then (
-	       bind(binary.lhs,scope);
-	       bindop(binary.operator,scope);
-	       bind(binary.rhs,globalScope);
+	       bind(binary.lhs,dictionary);
+	       bindop(binary.operator,dictionary);
+	       bind(binary.rhs,globalDictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
@@ -665,34 +645,34 @@ export bind(e:ParseTree,scope:Scope):void := (
 	       else makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
 	       )
 	  else (
-	       bind(binary.lhs,scope);
-	       bindop(binary.operator,scope);
-	       bind(binary.rhs,scope);
+	       bind(binary.lhs,dictionary);
+	       bindop(binary.operator,dictionary);
+	       bind(binary.rhs,dictionary);
 	       );
 	  )
      is q:LocalQuote do (
-	  bind(q.operator,scope);
+	  bind(q.operator,dictionary);
 	  tok := q.rhs;
-	  tok.scope = scope;
-	  r := lookup(tok.word,scope.symboltable);
+	  tok.dictionary = dictionary;
+	  r := lookup(tok.word,dictionary.symboltable);
 	  when r
 	  is entry:Symbol do ( tok.entry = entry; )
 	  else ( makeSymbol(tok); );
 	  SawClosure = true; 
 	  )
      is q:GlobalQuote do (
-	  bind(q.operator,scope);
-	  bind(q.rhs,globalScope);
+	  bind(q.operator,dictionary);
+	  bind(q.rhs,globalDictionary);
 	  )
      is q:Quote do (
-	  bind(q.operator,scope);
-	  bind(q.rhs,scope);
+	  bind(q.operator,dictionary);
+	  bind(q.rhs,dictionary);
 	  if q.rhs.entry.frameID != globalFrame.frameID 
 	  then SawClosure = true; 
 	  )
      is a:Arrow do (
 	  SawClosure = false;
-	  newscop := newLocalScope(scope);
+	  newscop := newLocalDictionary(dictionary);
 	  a.desc = functionDescription(newscop.frameID,0,0,false,false);
 	  bindParenParmList(a.lhs,newscop,a.desc);
 	  bind(a.rhs,newscop);
@@ -700,59 +680,59 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  a.desc.hasClosure = SawClosure;
 	  SawClosure = true; )
      is unary:Unary do (
-	  bindop(unary.operator,scope);
-	  bind(unary.rhs,scope);)
+	  bindop(unary.operator,dictionary);
+	  bind(unary.rhs,dictionary);)
      is postfix:Postfix do (
-	  bind(postfix.lhs,scope);
-	  bindop(postfix.operator,scope);)
-     is ee:Parentheses do bind(ee.contents,scope)
+	  bind(postfix.lhs,dictionary);
+	  bindop(postfix.operator,dictionary);)
+     is ee:Parentheses do bind(ee.contents,dictionary)
      is EmptyParentheses do nothing
      is dummy do nothing
      is w:WhileDo do (
-	  bind(w.predicate,scope);
-	  -- w.body = bindnewscope(w.body,scope);
-	  bind(w.doClause,scope);
+	  bind(w.predicate,dictionary);
+	  -- w.body = bindnewdictionary(w.body,dictionary);
+	  bind(w.doClause,dictionary);
 	  )
      is w:For do (
-	  newscop := newLocalScope(scope);
+	  newscop := newLocalDictionary(dictionary);
 	  bindSingleParm(w.variable,newscop);
-	  bind(w.fromClause,scope);
-	  bind(w.toClause,scope);
+	  bind(w.fromClause,dictionary);
+	  bind(w.toClause,dictionary);
 	  bind(w.whenClause,newscop);
 	  bind(w.listClause,newscop);
 	  bind(w.doClause,newscop);
-	  w.scope = newscop;
+	  w.dictionary = newscop;
 	  )
      is w:WhileList do (
-	  bind(w.predicate,scope);
-	  bind(w.listClause,scope);
+	  bind(w.predicate,dictionary);
+	  bind(w.listClause,dictionary);
 	  )
      is w:WhileListDo do (
-	  bind(w.predicate,scope);
-	  bind(w.listClause,scope);
-	  bind(w.doClause,scope);
+	  bind(w.predicate,dictionary);
+	  bind(w.listClause,dictionary);
+	  bind(w.doClause,dictionary);
 	  )
      is n:New do (
-     	  bind(n.newclass,scope);
-     	  bind(n.newparent,scope);
-     	  bind(n.newinitializer,scope);)
+     	  bind(n.newclass,dictionary);
+     	  bind(n.newparent,dictionary);
+     	  bind(n.newinitializer,dictionary);)
      is i:TryElse do (
-	  -- i.primary = bindnewscope(i.primary,scope);
-	  bind(i.primary,scope);
-	  -- i.alternate = bindnewscope(i.alternate,scope);
-	  bind(i.alternate,scope);
+	  -- i.primary = bindnewdictionary(i.primary,dictionary);
+	  bind(i.primary,dictionary);
+	  -- i.alternate = bindnewdictionary(i.alternate,dictionary);
+	  bind(i.alternate,dictionary);
 	  )
      is i:Try do (
-	  bind(i.primary,scope);
+	  bind(i.primary,dictionary);
 	  )
      );
 export bind(e:ParseTree):bool := (
      HadError = false;
-     bind(e,globalScope);
+     bind(e,globalDictionary);
      !HadError
      );
-export localBind(e:ParseTree,scope:Scope):bool := (
+export localBind(e:ParseTree,dictionary:Dictionary):bool := (
      HadError = false;
-     bind(e,scope);
+     bind(e,dictionary);
      !HadError
      );

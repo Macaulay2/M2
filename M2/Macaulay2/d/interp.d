@@ -77,7 +77,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      );
 errorReportS := setupconst("report",Expr(emptySequence));
 errorReportS.protected = false;
-readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
+readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):Expr := (
      returnvalue := nullE;
      lastvalue := nullE;
      while true do (
@@ -109,7 +109,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 		    then return(Expr(Error(s.position,"syntax error",emptySequence,nullE)));
 		    )
 	       else (
-		    if localBind(parsed,scope) -- assign scopes to tokens, look up
+		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up
 		    then (		  
 			 f := convert(parsed); -- convert to runnable code
 			 lastvalue = eval(f);	  -- run it
@@ -145,24 +145,22 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
      -- now we let filbuf handle all prompting:
      -- if isatty(file) then stdout << endl;
      returnvalue);
-readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
+readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):Expr := (
      savecf := getGlobalVariable(currentFileName);
       savecd := getGlobalVariable(currentFileDirectory);
        setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
        setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
-       ret := readeval4(file,printout,AbortIfError,scope);
+       ret := readeval4(file,printout,AbortIfError,dictionary);
       setGlobalVariable(currentFileDirectory,savecd);
      setGlobalVariable(currentFileName,savecf);
      ret);
      
 readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
-     -- wrap a new scope around the file
+     -- wrap a new dictionary around the file
      saveLocalFrame := localFrame;
-     scope := newLocalScope(globalScope);	  -- don't nest the scopes of files loaded.
-     scope.transient = false;
-     localFrame = Frame(globalFrame,scope.frameID,
-	  new Sequence len scope.framesize do provide nullE);
-     ret := readeval3(file,printout,AbortIfError,scope);
+     dictionary := newLocalDictionary();	  -- don't nest the scopes of files loaded; (dictionary.transient is set to false)
+     localFrame = newLocalFrame(dictionary);
+     ret := readeval3(file,printout,AbortIfError,dictionary);
      localFrame = saveLocalFrame;
      ret);
 readeval(file:TokenFile):Expr := readeval2(file,false,true);
@@ -192,7 +190,7 @@ loadprint(s:string,StopIfError:bool):Expr := (
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,StopIfError,globalScope);
+	  r := readeval3(file,true,StopIfError,newLocalDictionary());
 	  t := if !(s==="-") then close(file) else 0;
 	  when r is Error do r 
 	  else (

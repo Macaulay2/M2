@@ -10,7 +10,6 @@ import interruptPending:bool;
 import alarmed:bool;
 import setspinspan(x:int):int;
 import spincursor():void;
-import returncode:int;
 import write(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int, offset:int):int;

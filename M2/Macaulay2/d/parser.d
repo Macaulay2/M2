@@ -350,7 +350,7 @@ export unaryfor(
      if token2.word == doW then (
 	  doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	  if doClause == errorTree then return(errorTree);
-	  r := ParseTree(For( forToken, var, fromClause, toClause, whenClause, listClause,doClause, dummyScope ));
+	  r := ParseTree(For( forToken, var, fromClause, toClause, whenClause, listClause,doClause, dummyDictionary ));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listClause = parse(file,listW.parse.unaryStrength,obeylines);
@@ -360,7 +360,7 @@ export unaryfor(
 	       doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	       if doClause == errorTree then return(errorTree);
 	       );
-	  r := ParseTree(For(forToken, var, fromClause, toClause,whenClause, listClause, doClause, dummyScope));
+	  r := ParseTree(For(forToken, var, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
 	  accumulate(r,file,prec,obeylines))
      else (
 	  printErrorMessage(token2.position,"syntax error : expected 'do' or 'list'");
@@ -369,7 +369,7 @@ export unaryfor(
 
 unstringToken(q:Token):Token := (
      if q.word.typecode == TCstring 
-     then Token(makeUniqueWord(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry,q.followsNewline)
+     then Token(makeUniqueWord(parseString(q.word.name),q.word.parse),q.position,q.dictionary,q.entry,q.followsNewline)
      else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -467,7 +467,7 @@ export treePosition(e:ParseTree):Position := (
      	  is w:WhileDo do return(w.whileToken.position)
      	  is w:WhileList do return(w.whileToken.position)
      	  is w:WhileListDo do return(w.whileToken.position)
-     	  is s:StartScope do e = s.body
+     	  is s:StartDictionary do e = s.body
 	  is n:New do return(n.newtoken.position)
 	  )
      );

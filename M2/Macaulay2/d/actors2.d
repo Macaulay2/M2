@@ -138,8 +138,8 @@ keys(f:Database):Expr := (
      keys(x));
 keys(o:Dictionary):Expr := Expr(
      list(
-	  new Sequence len o.scope.symboltable.numEntries do
-	  foreach bucket in o.scope.symboltable.buckets do (
+	  new Sequence len o.symboltable.numEntries do
+	  foreach bucket in o.symboltable.buckets do (
 	       p := bucket;
 	       while true do (
 		    when p
@@ -171,8 +171,8 @@ setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e
      is o:Dictionary do list(
-	  new Sequence len o.scope.symboltable.numEntries do
-	  foreach bucket in o.scope.symboltable.buckets do (
+	  new Sequence len o.symboltable.numEntries do
+	  foreach bucket in o.symboltable.buckets do (
 	       p := bucket;
 	       while true do (
 		    when p
@@ -192,8 +192,8 @@ setupfun("values",values);
 pairs(e:Expr):Expr := (
      when e
      is o:Dictionary do list(
-	  new Sequence len o.scope.symboltable.numEntries do
-	  foreach bucket in o.scope.symboltable.buckets do (
+	  new Sequence len o.symboltable.numEntries do
+	  foreach bucket in o.symboltable.buckets do (
 	       p := bucket;
 	       while true do (
 		    when p
@@ -280,7 +280,7 @@ subvalue(left:Expr,right:Expr):Expr := (
 	  else buildErrorPacket("array index not an integer"))
      is d:Dictionary do (
 	  when right is s:string do (
-	       when lookup(s,d.scope.symboltable)
+	       when lookup(s,d.symboltable)
 	       is x:Symbol do Expr(SymbolClosure(globalFrame,x))
 	       else nullE
 	       )
@@ -320,7 +320,7 @@ subvalueQ(left:Expr,right:Expr):Expr := (
 	  else False)
      is x:HashTable do if lookup1Q(x,right) then True else False
      is d:Dictionary do (
-	  when right is s:string do when lookup(s,d.scope.symboltable) is Symbol do True else False
+	  when right is s:string do when lookup(s,d.symboltable) is Symbol do True else False
 	  else buildErrorPacket("expected subscript to be a string")
 	  )
      is x:Database do (
@@ -368,7 +368,7 @@ lengthFun(rhs:Code):Expr := (
      is Error do e
      is x:HashTable do Expr(toInteger(x.numEntries))
      is x:Sequence do Expr(toInteger(length(x)))
-     is x:Dictionary do Expr(toInteger(x.scope.symboltable.numEntries))
+     is x:Dictionary do Expr(toInteger(x.symboltable.numEntries))
      is x:List do Expr(toInteger(length(x.v)))
      is f:file do (
 	  if f.input || f.output then (

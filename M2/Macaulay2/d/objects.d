@@ -837,7 +837,7 @@ extract(v:varstringarray):array(string) := new array(string) len v.n do foreach 
 export completions(s:string):array(string) := (
      n := length(s);
      v := newvarstringarray(6);
-     foreach bucket in globalScope.symboltable.buckets do (
+     foreach bucket in globalDictionary.symboltable.buckets do (
 	  p := bucket;
 	  while true do when p
 	  is null do break

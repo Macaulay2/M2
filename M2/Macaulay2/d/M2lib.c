@@ -162,8 +162,6 @@ char *funname;
      return 0;
      }
 
-int system_returncode;
-
 M2_string actors5_CCVERSION;
 M2_string actors5_VERSION;
 M2_string actors5_OS;
@@ -331,6 +329,7 @@ int argc;
 char **argv;
 {
      char dummy;
+     int returncode = 0;
      extern char *GC_stackbottom;
      char **x;
      char **saveenvp = NULL;
@@ -341,7 +340,8 @@ char **argv;
      void main_inits();
      static void *reserve = NULL;
      extern void actors4_setupargv();
-     extern void interp_process(), interp_process2(), interp_topLevel();
+     extern void interp_process(), interp_process2();
+     extern int interp_topLevel();
 
      //MES     GC_stackbottom = &dummy;
 
@@ -527,7 +527,7 @@ char **argv;
 #endif
 	  fprintf(stderr,"\n");
 	  fflush(stderr);
-          interp_topLevel();
+          returncode = ! interp_topLevel();
 	  }
      else {
           out_of_memory_jump_set = TRUE;
@@ -538,8 +538,8 @@ char **argv;
      fprintf(stderr,"heap size = %d, divisor = %ld, collections = %ld\n", 
 	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
 #endif
-     exit(system_returncode);
-     return(system_returncode);
+     exit(returncode);
+     return(returncode);
      }
 
 static void clean_up() {
