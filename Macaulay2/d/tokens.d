@@ -234,19 +234,23 @@ export staticMemoryReferenceCode := {
      frameindex:int,
      position:Position
      };
-export assignmentCode := {
-     nestingDepth:int,					    -- new
-     frameindex:int,					    -- new
-     lhs:Symbol,					    -- becoming obsolete
+export localAssignmentCode := {
+     nestingDepth:int,
+     frameindex:int,
+     rhs:Code,
+     position:Position
+     };
+export globalAssignmentCode := {
+     lhs:Symbol,
      rhs:Code,
      position:Position
      };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {
-     nestingDepth:array(int),				    -- new
-     frameindex:array(int),				    -- new
-     lhs:SymbolSequence,			  -- becoming obsolete
+     nestingDepth:array(int), -- spots corresponding to local variables are filled with -1
+     frameindex:array(int),
+     lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
      rhs:Code,
      position:Position};
 
@@ -277,12 +281,13 @@ export functionCode := {
      desc:functionDescription
      };
 export Code := (
-     exprCode 						    -- soon obsolete
-     or variableCode or localMemoryReferenceCode or staticMemoryReferenceCode
+     exprCode					      -- soon obsolete
+     or variableCode				      -- soon obsolete
+     or localMemoryReferenceCode or staticMemoryReferenceCode
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
      or CodeSequence or openDictionaryCode or functionCode
-     or assignmentCode or parallelAssignmentCode
+     or localAssignmentCode or globalAssignmentCode or parallelAssignmentCode
      );
 
 -- scopes
@@ -411,7 +416,9 @@ export bucketEnd := KeyValuePair(nullE,0,nullE,self);
 export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-     Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,true,true,false
+     Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
+     false,						    -- not protectes, so we can use it in parallelAssignmentFun
+     true,false
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);

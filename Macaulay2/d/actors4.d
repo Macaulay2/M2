@@ -1029,7 +1029,8 @@ lookat(p:Position):void := (
 
 locate(e:Code):void := (
      when e
-     is f:assignmentCode do (lookat(f.position); locate(f.rhs);)
+     is f:localAssignmentCode do (lookat(f.position); locate(f.rhs);)
+     is f:globalAssignmentCode do (lookat(f.position); locate(f.rhs);)
      is f:parallelAssignmentCode do (lookat(f.position); locate(f.rhs);)
      is f:exprCode do lookat(f.position)
      is f:variableCode do lookat(f.position)

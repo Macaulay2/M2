@@ -21,14 +21,18 @@ dummyMultaryFun(c:CodeSequence):Expr := (
 dummyForFun(c:forCode):Expr := (
      error("dummy for function called");
      nullE);
-dummyAssignmentFun(x:assignmentCode):Expr := (
-     error("dummy assignment function called");
+dummyGlobalAssignmentFun(x:globalAssignmentCode):Expr := (
+     error("dummy global assignment function called");
+     nullE);
+dummyLocalAssignmentFun(x:localAssignmentCode):Expr := (
+     error("dummy local assignment function called");
      nullE);
 dummyParallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      error("dummy parallel assignment function called");
      nullE);
 
-export AssignmentFun := dummyAssignmentFun;	-- filled in later in actors2.d
+export LocalAssignmentFun := dummyLocalAssignmentFun;	-- filled in later in actors2.d
+export GlobalAssignmentFun := dummyGlobalAssignmentFun;	-- filled in later in actors2.d
 export ParallelAssignmentFun := dummyParallelAssignmentFun;	-- filled in later in actors2.d
 export AdjacentFun := dummyBinaryFun;	-- filled in later in actors.d
 export AssignElemFun := dummyTernaryFun;	-- filled in later in actors.d
@@ -118,7 +122,7 @@ SymbolSequenceLength(e:ParseTree):int := (
 	       )
 	  )
      );
-makeSymbolSequence(e:ParseTree):SymbolSequence := (
+makeSymbolSequence(e:ParseTree):SymbolSequence := (	    -- but replace local symbols by dummySymbol
      m := SymbolSequenceLength(e);
      v := new SymbolSequence len m do provide dummySymbol;
      while true do (
@@ -127,14 +131,14 @@ makeSymbolSequence(e:ParseTree):SymbolSequence := (
      	  is b:Binary do (
 	       when b.rhs is t:Token do (
 		    m = m-1;
-		    v.m = t.entry;
+		    if t.entry.frameID == 0 then v.m = t.entry;
 		    )
 	       else nothing;				    -- shouldn't happen
 	       e = b.lhs;
 	       )
 	  is t:Token do (
 	       m = m-1;
-	       v.m = t.entry;
+	       if t.entry.frameID == 0 then v.m = t.entry;
 	       break;
 	       )
 	  else break;					    -- shouldn't happen
@@ -232,7 +236,9 @@ nestingDepth(frameID:int,d:Dictionary):int := (
      n);
 
 tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
-     Code(assignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry.frameindex,t.entry,convert(b.rhs),treePosition(e)))
+     if t.entry.frameID == 0
+     then Code(globalAssignmentCode(t.entry,convert(b.rhs),treePosition(e)))
+     else Code(localAssignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry.frameindex,convert(b.rhs),treePosition(e)))
      );
 
 parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
@@ -241,7 +247,7 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
      Code(parallelAssignmentCode(
 	       new array(int) len n do foreach x in s do provide nestingDepth(x.frameID,b.operator.dictionary),
 	       new array(int) len n do foreach x in s do provide x.frameindex,
-	       s,					    -- becoming obsolete
+	       s,
 	       convert(b.rhs),
 	       treePosition(e)
 	       ))
@@ -559,7 +565,8 @@ export convert(e:ParseTree):Code := (
 	  ));
 export codePosition(e:Code):Position := (
      when e
-     is f:assignmentCode do f.position
+     is f:globalAssignmentCode do f.position
+     is f:localAssignmentCode do f.position
      is f:localMemoryReferenceCode do f.position
      is f:staticMemoryReferenceCode do f.position
      is f:parallelAssignmentCode do f.position
@@ -719,7 +726,8 @@ export eval(c:Code):Expr := (
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)
      is m:functionCode do Expr(FunctionClosure(localFrame, m))
-     is a:assignmentCode do AssignmentFun(a)
+     is a:localAssignmentCode do LocalAssignmentFun(a)
+     is a:globalAssignmentCode do GlobalAssignmentFun(a)
      is p:parallelAssignmentCode do ParallelAssignmentFun(p)
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
