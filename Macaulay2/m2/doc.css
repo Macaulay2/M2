@@ -33,7 +33,7 @@ table.examples td {
      border-style: solid;
      border-top-color: #50b0b0;     border-bottom-color: #c0ffff;
      border-left-color: #50b0b0;    border-right-color: #a0ffff;
-     padding: 12pt;
+     padding: 1ex;
      border-width: 1px;
 }
 table.examples pre {
