@@ -863,11 +863,13 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 		    if length(bcd) == 2 then (
 			 when bcd.0
 			 is bb:HashTable do
-			 if !ancestor(bb.class,typeClass)
+			 -- if !ancestor(bb.class,typeClass)
+			 if bb.parent == nothingClass
 			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
-			 if ancestor(cc.class,typeClass)
+			 -- if ancestor(cc.class,typeClass)
+			 if cc.parent != nothingClass
 			 then installMethod(a,bb,cc,eval(args.3))
 			 else buildErrorPacket("expected second parameter to be a type")
 			 else buildErrorPacket("expected second parameter to be a hash table")
@@ -876,15 +878,18 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 		    else if length(bcd) == 3 then (
 			 when bcd.0
 			 is bb:HashTable do
-			 if !ancestor(bb.class,typeClass)
+			 -- if !ancestor(bb.class,typeClass)
+			 if bb.parent == nothingClass
 			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
-			 if !ancestor(cc.class,typeClass)
+			 -- if !ancestor(cc.class,typeClass)
+			 if cc.parent == nothingClass
 			 then buildErrorPacket("expected second parameter to be a type") else 
 			 when bcd.2
 			 is dd:HashTable do
-			 if ancestor(dd.class,typeClass)
+			 -- if ancestor(dd.class,typeClass)
+			 if dd.parent != nothingClass
 			 then installMethod(a,bb,cc,dd,eval(args.3))
 			 else buildErrorPacket("expected third parameter to be a type") 
 			 else buildErrorPacket("expected third parameter to be a hash table")
@@ -893,7 +898,8 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 )
 		    else buildErrorPacket("expected two or three parameter types"))
 	       is bb:HashTable do (
-		    if ancestor(bb.class,typeClass)
+		    -- if ancestor(bb.class,typeClass)
+		    if bb.parent != nothingClass
 		    then installMethod(a,bb,eval(args.3))
 		    else buildErrorPacket("expected right hand parameter to be a type"))
 	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
@@ -908,14 +914,16 @@ installMethodFun(args:CodeSequence):Expr := (
      is CompiledFunctionClosure do installFun2(a,args)
      is FunctionClosure do installFun2(a,args)
      is aa:HashTable do (
-	  if !ancestor(aa.class,typeClass)
+	  -- if !ancestor(aa.class,typeClass)
+	  if aa.parent == nothingClass
 	  then installFun2(a,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
 	  else (
 	       b := eval(args.2);
 	       when b
 	       is Error do b 
 	       is bb:HashTable do (
-		    if ancestor(bb.class,typeClass)
+		    -- if ancestor(bb.class,typeClass)
+		    if bb.parent != nothingClass
 		    then (
 			 opr := eval(args.0);
 			 when opr is Error do opr

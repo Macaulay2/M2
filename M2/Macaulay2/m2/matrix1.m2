@@ -320,30 +320,49 @@ subquotient = method(TypicalValue => Module)
 subquotient(Nothing,Matrix) := Module => (null,relns) -> (
      R := ring relns;
      E := target relns;
-     M := newModule(R,E.RawFreeModule);
+     rE := E.RawFreeModule;
+     Mparts := {
+	  symbol cache => new CacheTable,
+	  symbol RawFreeModule => rE,
+	  symbol ring => R,
+	  symbol numgens => rawRank rE,
+	  0 => somethingElse					    -- zero vector!
+	  };
      relns = align matrix relns;
      if E.?generators then (
-	  M.generators = E.generators;
+	  Mparts = append(Mparts, symbol generators => E.generators);
 	  relns = E.generators * relns;
 	  );
      if E.?relations then relns = relns | E.relations;
-     if relns != 0 then M.relations = relns;
-     M)
+     if relns != 0 then (
+	  Mparts = append(Mparts, symbol relations => relns);
+	  );
+     new Module of Vector from Mparts)
 subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
      R := ring subgens;
      E := target subgens;
-     M := newModule(R,E.RawFreeModule);
+     rE := E.RawFreeModule;
      subgens = align matrix subgens;
      if E.?generators then subgens = E.generators * subgens;
-     M.generators = subgens;
-     if E.?relations then M.relations = E.relations;
-     M)
+     Mparts := {
+	  symbol cache => new CacheTable,
+	  symbol RawFreeModule => rE,
+	  symbol ring => R,
+	  symbol numgens => rawRank rE,
+	  0 => somethingElse,					    -- zero vector!
+     	  symbol generators => subgens
+	  };
+     if E.?relations then (
+	  Mparts = append(Mparts, symbol relations => E.relations);
+	  );
+     new Module of Vector from Mparts)
 subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
      if E != target relns then error "expected maps with the same target";
-     M := newModule(R,E.RawFreeModule);
-     if M == 0 then M
+     rE := E.RawFreeModule;
+     n := rawRank rE;
+     if n == 0 then newModule(R,rE)
      else (
 	  relns = align matrix relns;
 	  subgens = align matrix subgens;
@@ -352,9 +371,18 @@ subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
 	       subgens = E.generators * subgens;
 	       );
 	  if E.?relations then relns = relns | E.relations;
-	  M.generators = subgens;
-	  if relns != 0 then M.relations = relns;
-	  M))
+	  Mparts := {
+	       symbol cache => new CacheTable,
+	       symbol RawFreeModule => rE,
+	       symbol ring => R,
+	       symbol numgens => rawRank rE,
+	       0 => somethingElse,					    -- zero vector!
+	       symbol generators => subgens
+	       };
+	  if relns != 0 then (
+	       Mparts = append(Mparts, symbol relations => relns);
+	       );
+	  new Module of Vector from Mparts))
 
 Matrix ** Matrix := Matrix => (f,g) -> (
      R := ring target f;

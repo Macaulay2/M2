@@ -175,22 +175,11 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      f.cache.type = G;
      G)
 
-mingens GroebnerBasis := Matrix => options -> (g) -> (
-     sendgg(ggPush g, gggetmingens);
-     getMatrix ring g			  -- we're losing information here! MES
-     )
-
-syz = method(Options => options gb)
-
-syz GroebnerBasis := Matrix => options -> (g) -> (
-     sendgg(ggPush g, gggetsyz);
-     getMatrix ring g )
-
+mingens GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,true))
 generators GroebnerBasis := Matrix => (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,false))
-
-getChangeMatrix GroebnerBasis := Matrix => (g) -> (
-     sendgg(ggPush g, gggetchange);
-     getMatrix ring g)
+getChangeMatrix GroebnerBasis := Matrix => (G) -> map(ring G,rawGBGetChange(G.RawComputation,1))
+syz = method(Options => options gb)
+syz GroebnerBasis := Matrix => options -> (G) -> map(ring G,rawGBGetMatrix(G.RawComputation,2,false))
 
 forceGB = method(
      TypicalValue => GroebnerBasis,

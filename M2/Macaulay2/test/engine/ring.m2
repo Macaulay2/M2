@@ -1,3 +1,4 @@
+gbTrace = 5
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
 
@@ -72,9 +73,16 @@ f = (x+y+1)^3
 -- modules
 M'= raw monoid R
 F = R^3
+
+assert ( degrees F == {{0}, {0}, {0}} )
+assert not mutable F
+
+assert ( F === R^3 )
+
 assert(raw F == raw R^3)
 assert(raw F != raw R^4)
-G = F**F
+
+G = F**F						    -- we no longer cache the results of tensor products of modules
 raw G
 assert( rank G == 9 )
 
@@ -177,6 +185,7 @@ oops()
 -- g = gens gb I
 
 G = gb (I, DegreeLimit => 100)
+raw G
 g = gens G
 
 G2 = gb vars R2
@@ -192,6 +201,10 @@ matrix {{x^2,y}} % G
 assert ( gens G == f )
 assert ( target gens G === target f )
 assert ( source gens G == source f )
+
+syz f
+
+peek f.cache
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "

@@ -53,8 +53,8 @@ simplify (Matrix, ZZ) := (m,n) -> (
 newdecompose = method()
 ///
 newdecompose Ideal := (I) -> (
-     if I.?components then I.components
-     else I.components = decompose ideal mingens I)
+     if I.cache.?components then I.cache.components
+     else I.cache.components = decompose ideal mingens I)
 ///
 newdecompose Ideal := (I) -> (
      -- print "decomposing I";

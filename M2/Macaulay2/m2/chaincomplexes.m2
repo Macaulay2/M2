@@ -281,14 +281,14 @@ ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      complete f;
      complete g;
      scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
-     h.components = {f,g};
+     h.cache.components = {f,g};
      h)
 
 isHomogeneous ChainComplexMap := f -> all(spots f, i -> isHomogeneous f_i)
 isHomogeneous ChainComplex := C -> isHomogeneous C.dd
 
-isDirectSum ChainComplex := (C) -> C.?components
-components ChainComplexMap := f -> if f.?components then f.components else {f}
+isDirectSum ChainComplex := (C) -> C.cache.?components
+components ChainComplexMap := f -> if f.cache.?components then f.cache.components else {f}
 ChainComplexMap _ Array := ChainComplexMap => (f,v) -> f * (source f)_v
 ChainComplexMap ^ Array := ChainComplexMap => (f,v) -> (target f)^v * f
 
@@ -521,7 +521,7 @@ betti Module := M -> (
 
 ChainComplex.directSum = args -> (
      C := new ChainComplex;
-     C.components = toList args;
+     C.cache.components = toList args;
      C.ring = ring args#0;
      scan(args,D -> (complete D; complete D.dd;));
      scan(unique flatten (args/spots), n -> C#n = directSum apply(args, D -> D_n));
@@ -529,7 +529,7 @@ ChainComplex.directSum = args -> (
      C)
 ChainComplex ++ ChainComplex := ChainComplex => (C,D) -> directSum(C,D)
 
-components ChainComplex := C -> if C.?components then C.components else {C}
+components ChainComplex := C -> if C.cache.?components then C.cache.components else {C}
 
 ChainComplex Array := ChainComplex => (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";
@@ -707,8 +707,8 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 				   else if j#0 === k#0 - 1 and j#1 === k#1 
 				   then tens(R, matrix C.dd_(k#0), map cover D#(k#1))
 				   else map(
-					E#(i-1).components#(E#(i-1).indexComponents#j),
-					E#i.components#(E#i.indexComponents#k),
+					E#(i-1).cache.components#(E#(i-1).indexComponents#j),
+					E#i.cache.components#(E#i.indexComponents#k),
 					0))))));
 	  E))
 
@@ -742,7 +742,7 @@ ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
 	  scan(spots E, n -> if F#?(n+deg) then (
 		    E' := E#n;
 		    E'i := E'.indexComponents;
-		    E'c := E'.components;
+		    E'c := E'.cache.components;
 		    F' := F#(n+deg);
 		    F'i := F'.indexComponents;
 		    h#n = map(F',E', matrix {
@@ -788,8 +788,8 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
 					* tensorAssociativity(A#a,B#b,C#c)
 					* (A#a ** BC#bc^[(b,c)])
 					)
-				   else map(F_k.components#(F_k.indexComponents#(ab,c)),
-					     E_k.components#(E_k.indexComponents#(a,bc)),
+				   else map(F_k.cache.components#(F_k.indexComponents#(ab,c)),
+					     E_k.cache.components#(E_k.indexComponents#(a,bc)),
 					     0))))))
 	       ))
 
@@ -819,19 +819,19 @@ trans := (C,v) -> (
 	  Ci := C.indexComponents;
 	  apply(v, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
      else (
-     	  if not C.?components then error "expected a direct sum of chain complexes";
-	  Cc := C.components;
+     	  if not C.cache.?components then error "expected a direct sum of chain complexes";
+	  Cc := C.cache.components;
 	  apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
 	  v)
      )
 ChainComplex _ Array := ChainComplexMap => (C,v) -> if C#?(symbol _,v) then C#(symbol _,v) else C#(symbol _,v) = (
      v = trans(C,v);
-     D := directSum apply(toList v, i -> C.components#i);
+     D := directSum apply(toList v, i -> C.cache.components#i);
      map(C,D,k -> C_k_v))
 
 ChainComplex ^ Array := ChainComplexMap => (C,v) -> if C#?(symbol ^,v) then C#(symbol ^,v) else C#(symbol ^,v) = (
      v = trans(C,v);
-     D := directSum apply(toList v, i -> C.components#i);
+     D := directSum apply(toList v, i -> C.cache.components#i);
      map(D,C,k -> C_k^v))
 
 map(ChainComplex,ChainComplex,Function) := ChainComplexMap => options -> (C,D,f) -> (

@@ -228,10 +228,10 @@ Matrix.directSum = args -> (
 	  })
 
 isDirectSum = method()
-isDirectSum Module := (M) -> M.?components
+isDirectSum Module := (M) -> M.?cache.components
 
-components Module := M -> if M.?components then M.components else {M}
-components Matrix := f -> if f.?components then f.components else {f}
+components Module := M -> if M.cache.?components then M.cache.components else {M}
+components Matrix := f -> if f.cache.?components then f.cache.components else {f}
 
 Module.directSum = args -> (
 	  R := ring args#0;
@@ -250,7 +250,7 @@ Module.directSum = args -> (
 	       else subquotient(
 		    directSum apply(args,generators), 
 		    directSum apply(args,relations)));
-	  N.components = toList args;
+	  N.cache.components = toList args;
 	  N)
 
 single := v -> (
@@ -259,9 +259,10 @@ single := v -> (
      v#0)
 
 indices = method()
-indices MutableHashTable := X -> (
-     if not X.?components then error "expected an object with components";
-     if X.?indices then X.indices else toList ( 0 .. #X.components - 1 ) )
+indices HashTable := X -> (
+     if X.cache.?components then if X.cache.?indices then X.cache.indices else toList ( 0 .. #X.cache.components - 1 )
+     else error "expected an object with components"
+     )
 
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
