@@ -533,7 +533,7 @@ info MENU := r -> stack join(
 	  x -> not ( class x === TO ),
 	  x -> stack("",x),			    -- we can assume x is a String
 	  v -> stack apply(v, i -> (
-		    t := concatenate("* ",formatDocumentTag i#0,"::");
+		    t := concatenate("* ", DocumentTag.FormattedKey i#0,"::");
 		    h := headline i#0;
 		    if h === null then t else concatenate(t,30-#t:" ","  ",h)))))
 

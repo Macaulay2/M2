@@ -9,6 +9,7 @@ DocDatabase = null
 local exampleBaseFilename
 local exampleOutputFilename
 local currentNodeName
+fixup := method(SingleArgumentDispatch => true)
 
 -----------------------------------------------------------------------------
 -- sublists, might be worthy making public
@@ -45,16 +46,29 @@ record      := f -> x -> (
    -- or
    --	             TO symbol sin
    -- and have them all get recorded the same way
-normalizeDocumentTag           = method(SingleArgumentDispatch => true)
+normalizeDocumentTag := method(SingleArgumentDispatch => true)
+isDocumentableThing  := method(SingleArgumentDispatch => true)
+isDocumentableMethod := method(SingleArgumentDispatch => true)
 normalizeDocumentTag   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
+isDocumentableThing    String := key -> true
 normalizeDocumentTag   Symbol := identity
+isDocumentableThing    Symbol := key -> true
 normalizeDocumentTag Sequence := identity
+isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
+isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod)
 normalizeDocumentTag  Nothing := key -> symbol null
+isDocumentableThing   Nothing := key -> true
 normalizeDocumentTag    Thing := key -> (
      if key.?Symbol and value key.Symbol === key then return key.Symbol;
      if ReverseDictionary#?key then return ReverseDictionary#key;
      error("encountered unidentifiable document tag: ",key);
      )
+isDocumentableMethod    Thing := key -> false
+isDocumentableMethod Function := 
+isDocumentableThing     Thing := key -> (
+     if key.?Symbol and value key.Symbol === key then return true;
+     if ReverseDictionary#?key then return true;
+     false)
 -----------------------------------------------------------------------------
 -- identifying the package of a document tag
 -----------------------------------------------------------------------------
@@ -69,14 +83,6 @@ packageTag   String := key -> (
 packageTag  Package := identity
 packageTag Sequence := key -> youngest \\ package \ key
 packageTag    Thing := key -> ( p := package key; if p === null then currentPackage else p)
------------------------------------------------------------------------------
-isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
------------------------------------------------------------------------------
-isDocumentableTag = method(SingleArgumentDispatch => true)  -- assume the input key has been normalized
-isDocumentableTag   Symbol := s -> null =!= packageTag s
-isDocumentableTag   String := s -> true
-isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
-isDocumentableTag    Thing := s -> false
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -145,7 +151,7 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
 
-fSeqTO := fSeqInitialize(i -> TO makeDocumentTag i, i -> TO makeDocumentTag i)
+fSeqTO := fSeqInitialize(i -> fixup TO i, i -> fixup TO i)
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Sequence := (
@@ -213,6 +219,11 @@ net DocumentTag := x -> concatenate ( DocumentTag.FormattedKey x, " [", Document
 toString DocumentTag := x -> error "who wants a string?"
 package DocumentTag := DocumentTag.Package
 packageTag DocumentTag := DocumentTag.Package
+hasDocumentation := key -> isDocumentableThing key and (
+     tag := makeDocumentTag key;
+     pkg := DocumentTag.Package tag;
+     pkg =!= null and pkg#"documentation"#?(DocumentTag.FormattedKey tag))
+
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
@@ -221,7 +232,6 @@ trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
 trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
 
-fixup := method(SingleArgumentDispatch => true)
 flat := method()
 flat Thing := identity
 flat SEQ := x -> toSequence x
@@ -386,7 +396,7 @@ fixupTable := new HashTable from {
      Headline => identity,
      Description => extractExamples @@ hypertext,
      Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ makeDocumentTag \ enlist v) },
+     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
 	       else if class x === TOH then TO x#0
@@ -426,20 +436,10 @@ document Sequence := args -> (
 	       ));
      args = select(args, arg -> class arg =!= Option);
      if not opts.?Key then error "missing Key";
-     -- new:
      opts.DocumentTag = tag := makeDocumentTag(opts.Key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
      currentNodeName = DocumentTag.FormattedKey tag;
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
-     -- old:
-     -- key := normalizeDocumentTag opts.Key;
-     -- verifyTag key;
-     -- if not isDocumentableTag key then error("undocumentable item encountered");
-     -- opts.FormattedKey = currentNodeName = formatDocumentTag key;
-     -- pkg := packageTag key;
-     -- if pkg =!= currentPackage then error("documentation for \"",key,"\" seems to belong in package ",pkg," but current package is ",currentPackage);
-     -- end so far
-     -- can we put this in opts, too?
      exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
      if currentPackage#"documentation"#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
      opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val));
@@ -536,13 +536,13 @@ commentize := s -> if s =!= null then concatenate(" -- ",s)
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO makeDocumentTag n, commentize headline n }
+     if n =!= null then fixup SEQ { "Next more general method: ", TO n, commentize headline n }
      )
 
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then SEQ{ TO makeDocumentTag i, commentize headline i } else formatDocumentTagTO i
-optTOCLASS := i -> if getDoc i =!= null then SEQ{ TO makeDocumentTag i, " (", OFCLASS class value i, ")", commentize headline i } else formatDocumentTagTO i
+optTO := i -> if getDoc i =!= null then fixup SEQ{ TO i, commentize headline i } else formatDocumentTagTO i
+optTOCLASS := i -> if getDoc i =!= null then fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i } else formatDocumentTagTO i
 
 smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
 smenuCLASS := s -> UL (optTOCLASS \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
@@ -553,17 +553,17 @@ indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " e
 indefinite := s -> concatenate(indefiniteArticle s, s)
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
-synonymAndClass := X -> (
-     if X.?synonym then SEQ {indefinite X.synonym, " (of class ", TO makeDocumentTag X, ")"}
-     else SEQ {"an object of class ", TO makeDocumentTag X}
+synonymAndClass := X -> fixup (
+     if X.?synonym then SEQ {indefinite X.synonym, " (of class ", TO X, ")"}
+     else SEQ {"an object of class ", TO X}
      )     
 
-justClass := X -> SEQ {"an instance of class ", TO makeDocumentTag X}
+justClass := X -> fixup SEQ {"an instance of class ", TO X}
 
-OFCLASS = X -> (
+OFCLASS = X -> fixup (
      if parent X === Nothing then error "expected a class";
-     if X.?synonym then SEQ {indefiniteArticle X.synonym, TO2 {makeDocumentTag X, X.synonym}}
-     else SEQ {"an object of class ", TO makeDocumentTag X}
+     if X.?synonym then SEQ {indefiniteArticle X.synonym, TO2 {X, X.synonym}}
+     else SEQ {"an object of class ", TO X}
      )
 
 makeDocBody := method(SingleArgumentDispatch => true)
@@ -581,16 +581,14 @@ makeDocBody Thing := key -> (
 
 title := s -> PARA { STRONG formatDocumentTag s, commentize headline s }
 
-inlineMenu := x -> between(", ", TO \ makeDocumentTag \ x)
-
-type := S -> (
+type := S -> fixup (
      s := value S;
-     PARA { "The object ", TO makeDocumentTag S, " is ", OFCLASS class s,
+     PARA { "The object ", TO S, " is ", OFCLASS class s,
      	  if parent s =!= Nothing then (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
 	       SEQ splice {
 		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
-		    toSequence between(" < ", f / (T -> TO makeDocumentTag T)) 
+		    toSequence between(" < ", f / (T -> TO T)) 
 		    }
 	       ),
 	  "."
@@ -697,10 +695,10 @@ synopsis Thing := key -> (
      ino := select(inp, x -> iso x);
      opt := optin key;
      ino = new HashTable from toList ino;
-     ino = apply(sort pairs opt, (tag,dft) -> (
+     ino = apply(sort pairs opt, (tag,dft) -> fixup (
 	       if ino#?tag 
-	       then SEQ { TO makeDocumentTag toString tag, " => ", alter1 ino#tag, " [", net dft, "]" }
-	       else SEQ { TO makeDocumentTag toString tag, " => ... [", net dft, "]" }
+	       then SEQ { TO toString tag, " => ", alter1 ino#tag, " [", toString dft, "]" }
+	       else SEQ { TO toString tag, " => ... [", toString dft, "]" }
 	       ));	       
      inp = select(inp, x -> not iso x);
      (inp',out') := types key;
@@ -723,15 +721,15 @@ synopsis Thing := key -> (
      inp = alter \ inp;
      out = alter \ out;
      if #inp > 0 or #ino > 0 or #out > 0 then (
-	  SEQ {						    -- to be implemented
+	  fixup SEQ {				  -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
      	       	    if usa =!= null then PARA { "Usage: ", if class usa === String then TT usa else usa},
-		    if fun =!= null then SEQ { "Function: ", TO makeDocumentTag fun }
+		    if fun =!= null then SEQ { "Function: ", TO fun }
 		    else if class key === Sequence and key#?0 then (
 	       		 if class key#0 === Function 
-			 then SEQ { "Function: ", TO makeDocumentTag key#0 }
-			 else SEQ { "Operator: ", TO makeDocumentTag key#0 }
+			 then SEQ { "Function: ", TO key#0 }
+			 else SEQ { "Operator: ", TO key#0 }
 			 ),
 		    if inp#?0 then PARA { "Inputs:", UL inp },
 		    if ino#?0 then PARA { "Optional inputs:", UL ino },
@@ -741,7 +739,7 @@ synopsis Thing := key -> (
 	       }
 	  ))
 
-documentableMethods := s -> select(methods s, isDocumentableTag)
+documentableMethods := s -> select(methods s,isDocumentableMethod)
 
 fmeth := f -> (
      b := documentableMethods f;
@@ -788,10 +786,10 @@ other := set otherOperators; erase symbol otherOperators
 operatorSet = binary + prefix + postfix + other
 op := s -> if operatorSet#?s then (
      ss := toString s;
-     SEQ {
+     fixup SEQ {
 	  if binary#?s then PARA {
 	       "This operator may be used as a binary operator in an expression \n",
-	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO makeDocumentTag "binary methods", " \n",
+	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO "binary methods", " \n",
 	       "for handling such expressions with code such as ",
 	       if ss == " "
 	       then PRE ("         X Y := (x,y) -> ...")
@@ -820,7 +818,7 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then PARA {"Class of returned value: ", TO makeDocumentTag t, commentize headline t}
+     if t =!= Thing then fixup PARA {"Class of returned value: ", TO t, commentize headline t}
      )
 seecode := x -> (
      f := lookup x;
@@ -839,7 +837,7 @@ documentationValue(Symbol,Function) := (s,f) -> SEQ {
      }
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
-     a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableTag key), (key,Y) -> key);
+     a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
@@ -885,7 +883,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      )
 
 documentation Symbol := S -> (
-     a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
+     a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> f => S);
      b := documentableMethods S;
      Hypertext {
 	  title S, 
@@ -914,10 +912,10 @@ documentation Sequence := key -> (
 	       makeDocBody key,
 	       caveat key,
 	       PARA BOLD "Further information", 
-	       UL {
-		    SEQ{ "Default value: ", if hasDocumentation default then TOH makeDocumentTag default else TT default },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH makeDocumentTag fn },
-		    SEQ{ "Option name: ", TOH makeDocumentTag opt }
+	       fixup UL {
+		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT toString default },
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
+		    SEQ{ "Option name: ", TOH opt }
 		    },
 	       seealso key,
 	       theMenu key
@@ -936,11 +934,6 @@ documentation Sequence := key -> (
 	  ))
 
 documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
-
-hasDocumentation = x -> (
-     fkey := formatDocumentTag x;
-     p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey);
-     0 < #p)
 
 pager = x -> (
      if height stdio > 0
