@@ -428,7 +428,7 @@ net FunctionApplication := m -> (
      	       	      precedence Sequence := x -> (
 			   if #x === 0 then 70
 			   else if #x === 1 then 40
-			   else 5
+			   else 70
 			   )
 -----------------------------------------------------------------------------
      	       	      precedence Equation := x -> 10
@@ -903,7 +903,12 @@ AfterPrint Thing := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x;
      << endl;
-     if doc x =!= null then briefHelp x;
+     d := doc x;
+     if d =!= null then (
+     	  i := 0;
+     	  while i < #d and d#i =!= PARA do i = i+1;
+     	  if i > 0 then << endl << text take(d,i) << endl;
+	  );
      )
 AfterPrint Expression := x -> (
      << endl;				  -- double space
