@@ -364,8 +364,9 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
+packageSuffix = ".Macaulay2/"
 installPackage = method(Options => { 
-	  Prefix => "./tmp/",
+	  Prefix => () -> getenv "HOME" | "/" | packageSuffix,
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
 	  MakeInfo => true,
@@ -403,7 +404,9 @@ installPackage Package := o -> pkg -> (
      nodes := packageTagList(pkg,topDocumentTag);
 
      buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
-     buildDirectory = minimizeFilename(o.Prefix | "/");
+     pref := o.Prefix;
+     if class pref === Function then pref = pref();
+     buildDirectory = minimizeFilename(pref | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
      buildPackage = minimizeFilename buildPackage;
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
