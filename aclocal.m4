@@ -10,6 +10,11 @@ AC_DEFUN(M2_IS_DECLARED,[
       m2_cv_$2_is_declared=yes,
       m2_cv_$2_is_declared=no))
   if test "$m2_cv_$2_is_declared" = yes
-  then AC_DEFINE($2_IS_DECLARED,,whether $2 is declared in errno.h or stdio.h)
+  then AC_DEFINE(translit($2_IS_DECLARED, `a-z', `A-Z'),,whether $2 is declared in errno.h or stdio.h)
   fi
 ])
+
+AC_DEFUN(M2_SHOW_CONFDEFS,[
+  echo contents of confdefs.h: >&6
+  sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
+  ])

@@ -748,17 +748,18 @@ EOF
 fi
 
 
-echo contents of confdefs.h: >&6
-sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
 
+  echo contents of confdefs.h: >&6
+  sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
+  
 
   echo $ac_n "checking whether sys_errlist is declared""... $ac_c" 1>&6
-echo "configure:757: checking whether sys_errlist is declared" >&5
+echo "configure:758: checking whether sys_errlist is declared" >&5
 if eval "test \"`echo '$''{'m2_cv_sys_errlist_is_declared'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 762 "configure"
+#line 763 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -768,7 +769,7 @@ int main() {
 char ** x = sys_errlist
 ; return 0; }
 EOF
-if { (eval echo configure:772: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:773: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   m2_cv_sys_errlist_is_declared=yes
 else
@@ -783,19 +784,19 @@ fi
 echo "$ac_t""$m2_cv_sys_errlist_is_declared" 1>&6
   if test "$m2_cv_sys_errlist_is_declared" = yes
   then cat >> confdefs.h <<\EOF
-#define sys_errlist_IS_DECLARED 
+#define SYS_ERRLIST_IS_DECLARED 
 EOF
 
   fi
 
 
   echo $ac_n "checking whether h_errlist is declared""... $ac_c" 1>&6
-echo "configure:794: checking whether h_errlist is declared" >&5
+echo "configure:795: checking whether h_errlist is declared" >&5
 if eval "test \"`echo '$''{'m2_cv_h_errlist_is_declared'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 799 "configure"
+#line 800 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -805,7 +806,7 @@ int main() {
 char ** x = h_errlist
 ; return 0; }
 EOF
-if { (eval echo configure:809: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:810: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   m2_cv_h_errlist_is_declared=yes
 else
@@ -820,7 +821,7 @@ fi
 echo "$ac_t""$m2_cv_h_errlist_is_declared" 1>&6
   if test "$m2_cv_h_errlist_is_declared" = yes
   then cat >> confdefs.h <<\EOF
-#define h_errlist_IS_DECLARED 
+#define H_ERRLIST_IS_DECLARED 
 EOF
 
   fi

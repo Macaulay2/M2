@@ -3,6 +3,15 @@
 /* version number */
 #undef VERSION
 
-/* package name */
-#undef PACKAGE
+/* if __finite is missing */
+#undef __finite
+
+/* if __isnan is missing */
+#undef __isnan
+
+/* whether sys_errlist is declared in errno.h or stdio.h */
+#undef SYS_ERRLIST_IS_DECLARED
+
+/* whether h_errlist is declared in errno.h or stdio.h */
+#undef H_ERRLIST_IS_DECLARED
 
