@@ -65,8 +65,8 @@ public:
     int nslabs = 1;
     for (SLAB *p = oldies; p != 0; p=p->next)
       nslabs++;
-    fprintf(stderr, "number of requests       = %d\n", nrequests);
-    fprintf(stderr, "number of monomial slabs = %d\n", nslabs);
+    fprintf(stdout, "number of requests       = %d\n", nrequests);
+    fprintf(stdout, "number of monomial slabs = %d\n", nslabs);
   }
 };
 
@@ -130,10 +130,10 @@ public:
 	else if (nelems[i] > maxpernode)
 	  maxpernode = nelems[i];
       }
-    fprintf(stderr, "total #mons = %d\n", total);
-    fprintf(stderr, "max per bin = %d\n", maxpernode);
-    fprintf(stderr, "min per bin = %d\n", minpernode);
-    fprintf(stderr, "# zero bins = %d\n", nzeros);
+    fprintf(stdout, "total #mons = %d\n", total);
+    fprintf(stdout, "max per bin = %d\n", maxpernode);
+    fprintf(stdout, "min per bin = %d\n", minpernode);
+    fprintf(stdout, "# zero bins = %d\n", nzeros);
     buffer o;
     for (i=0; i<len; i++)
       {

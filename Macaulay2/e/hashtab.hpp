@@ -103,8 +103,8 @@ public:
        exit(1);
        }
   void showshape() {
-    fprintf(stderr, "used = %d\n", used);
-    fprintf(stderr, "size = %d\n", size);
+    fprintf(stdout, "used = %d\n", used);
+    fprintf(stdout, "size = %d\n", size);
     unsigned int i;
     for (i=0; i<size; i++) {
 	 unsigned int n = 0;
@@ -112,10 +112,10 @@ public:
 	 putchar('\n');
       }
     for (i=0; i<size; i++) if (bin[i].occupied) {
-      fprintf(stderr," i=%08x", i);
-      fprintf(stderr," key=%08lx", bin[i].key);
-      fprintf(stderr," hashup=%08lx", hashup(bin[i].key,size));
-      fprintf(stderr," distance=%d", (int)((hashup(bin[i].key,size)-i)&(size-1)));
+      fprintf(stdout," i=%08x", i);
+      fprintf(stdout," key=%08lx", bin[i].key);
+      fprintf(stdout," hashup=%08lx", hashup(bin[i].key,size));
+      fprintf(stdout," distance=%d", (int)((hashup(bin[i].key,size)-i)&(size-1)));
       putchar('\n');
       }
     }

@@ -32,7 +32,12 @@
   (make-local-variable 'comment-start-skip)
   (setq comment-start-skip "-- *")
   (local-set-key "\^C\t" 'M2-dynamic-complete-symbol)
-  (turn-on-font-lock)
+  (turn-on-font-lock)			; shouldn't have to do this!
+  (put 'M2-mode 'font-lock-defaults '(M2-mode-font-lock-keywords nil t))
+  (make-local-variable 'font-lock-defaults)
+  (setq font-lock-defaults '(
+			     M2-mode-font-lock-keywords
+			     ))
   (run-hooks 'M2-mode-hook)
   )
 

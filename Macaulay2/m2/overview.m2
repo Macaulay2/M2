@@ -1144,8 +1144,10 @@ document { "Groebner bases",
      setting up the ordering of the monomials.",
      PARA,
      "Many routines in Macaulay 2 will compute and use Groebner bases silently, so
-     ordinarily the user will not have to explicitly compute them.  Occasionally,
-     the user will need to exercise closer control over the computations, and
+     ordinarily the user will not have to explicitly compute them.  Recomputation 
+     is avoided, in that if a Groebner basis has already been partially
+     computed, then it will be used whenever possible.  Occasionally, the
+     user will need to exercise closer control over the computations, and
      may need to compute the Groebner bases directly.",
      PARA,
      "To demonstrate, we set up a polynomial ring.  (The default ordering used here
@@ -1173,7 +1175,7 @@ document { "Groebner bases",
      "Here is another example, which illustrates the use of another monomial
      ordering convenient for the elimination of variables.",
      EXAMPLE {
-	  "A = QQ[t];",
+	  "A = ZZ/101[t];",
 	  "f = t^3 + t^2 + 1;",
 	  "g = t^4 - t;"
 	  },
@@ -1181,8 +1183,7 @@ document { "Groebner bases",
      so we set up a new ring with a monomial ordering tailored for the
      elimination of its first variable.  (See ", TO "Eliminate", ").",
      EXAMPLE {
-	  "compactMatrixForm = false;",
-	  "B = QQ[t,F,G,MonomialOrder => Eliminate 1];",
+	  "B = ZZ/101[t,F,G,MonomialOrder => Eliminate 1];",
 	  "I = ideal(F - (t^3 + t^2 + 1), G - (t^4 - t))",
 	  "transpose gens gb I",
 	  },
@@ -1192,7 +1193,7 @@ document { "Groebner bases",
      Groebner basis for the submodule N.",
      EXAMPLE {
 	  "clearAll",
-	  "R = QQ[a..f];"
+	  "R = ZZ/101[a..f];",
 	  "N = image matrix {{a,b,c},{d,e,f}}",
 	  "gb N",
 	  },
