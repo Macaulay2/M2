@@ -211,6 +211,7 @@ public:
   // to/from monideals
   MonomialIdeal * make_monideal(int n) const;
   MonomialIdeal * make_skew_monideal(int n) const;
+  MonomialIdeal * make_basis_monideal(int n) const;
 
   // Matrix operations
   MatrixOrNull *sub_matrix(const M2_arrayint r, const M2_arrayint c) const;

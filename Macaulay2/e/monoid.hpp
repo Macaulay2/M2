@@ -10,6 +10,18 @@
 
 class PolynomialRing;
 
+typedef int * exponents;
+typedef int * graded_exponents;
+typedef int * partial_sums;
+typedef int * monomial;
+typedef int * varpower_monomial;
+
+typedef const int * const_exponents;
+typedef const int * const_graded_exponents;
+typedef const int * const_partial_sums;
+typedef const int * const_monomial;
+typedef const int * const_varpower;
+
 class monoid_info : our_new_delete
 {
   friend class Monoid;
@@ -17,7 +29,7 @@ class monoid_info : our_new_delete
   int nvars;
   M2_stringarray varnames;
   M2_arrayint degvals;
-  array<int *> degree_of_var;	// [0]..[nvars-1] are the multi-degrees of the 
+  array<const_monomial> degree_of_var;	// [0]..[nvars-1] are the multi-degrees of the 
 				// variables, and [nvars] = zero element in the 
 				// degree monoid.
   M2_arrayint primary_degree_of_var;
@@ -61,12 +73,11 @@ protected:
   int mon_bound;		// Entries this size or larger may not be 
 				// used.  
 
-  stash *monom_stash;
-  int *EXP1, *EXP2, *EXP3;	// allocated ntuples.
+  exponents EXP1, EXP2, EXP3;	// allocated ntuples.
 				// A local routine may use these ONLY if
 				// they call no other monoid routine, except
 				// to/from expvector.
-  int *MONlocal;		// To be used ONLY by to/from expvector.
+  monomial MONlocal;		// To be used ONLY by to/from expvector.
 
   static Monoid *trivial_monoid;
 
@@ -86,85 +97,90 @@ public:
 
   ~Monoid();
 
+  const PolynomialRing *get_degree_ring() const { return moninfo->degree_ring; }
+  const Monoid *degree_monoid() const { return moninfo->degree_monoid; }
+  const_monomial degree_of_var(int v) const { return moninfo->degree_of_var[v]; }
+  int primary_degree_of_var(int v) const { return moninfo->primary_degree_of_var->array[v]; }
+  const M2_arrayint primary_degree_of_vars() const { return moninfo->primary_degree_of_var; }
+
+  void text_out(buffer &o) const;
+
+  bool is_group() const { return moninfo->isgroup; }
+
+  int n_vars()        const { return nvars; }
+  int max_degree()    const { return mon_bound; }
+  int monomial_size() const { return nwords; }
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
   // ONLY to be called by PolyRing::get_trivial_poly_ring()
 
   static Monoid *get_trivial_monoid();
 
-  bool is_group() const { return moninfo->isgroup; }
+  /////////////////////////
+  // Monomial arithmetic //
+  /////////////////////////
+  void from_varpower(const_varpower vp, monomial result) const;
+  void to_varpower(const_monomial m, intarray &result_vp) const;
 
-  void from_varpower(const int *vp, int *result) const;
-  void to_varpower(const int *m, intarray &result_vp) const;
+  void from_expvector(const_exponents exp, monomial result) const;
+  void to_expvector(const_monomial m, exponents result_exp) const;
 
-  void from_expvector(const int *exp, int *result) const;
-  void to_expvector(const int *m, int *result_exp) const;
-
-  M2_arrayint to_arrayint(const int *monom) const; /* Returns an exponent vector representation 
+  M2_arrayint to_arrayint(const_monomial monom) const; /* Returns an exponent vector representation 
 						      of the monomial */
 
-  int in_subring(int n, const int *m) const;
-  int compare(int nslots, const int *m, const int *n) const;
+  int in_subring(int n, const_monomial m) const;
+  int compare(int nslots, const_monomial m, const_monomial n) const;
 
-  int *make_new(const int *d) const;
-  int *make_one() const;
-  void remove(int *d) const;
+  monomial make_new(const_monomial d) const;
+  monomial make_one() const;
+  void remove(monomial d) const;
 
-  int is_one(const int *m) const;
-  void one(int *result) const;
-  void copy(const int *m, int *result) const;
+  bool is_one(const_monomial m) const;
+  void one(monomial result) const;
+  void copy(const_monomial m, monomial result) const;
 
-  int n_vars()        const { return nvars; }
-  int max_degree()    const { return mon_bound; }
-  int monomial_size() const { return nwords; }
+  void mult(const_monomial m, const_monomial n, monomial result) const;
+  void power(const_monomial m, int n, monomial result) const;
+  int compare(const_monomial m, const_monomial n) const;
+  int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
+  bool divides(const_monomial m, const_monomial n) const;
+  void divide(const_monomial m, const_monomial n, monomial result) const;
+  void lcm(const_monomial m, const_monomial n, monomial result) const;
+  void gcd(const_monomial m, const_monomial n, monomial result) const;
+  void monsyz(const_monomial m, 
+	      const_monomial n, 
+	      monomial result_sm, 
+	      monomial result_sn) const;
 
-  void mult(const int *m, const int *n, int *result) const;
-  void power(const int *m, int n, int *result) const;
-  int compare(const int *m, const int *n) const;
-  int compare(const int *m, int mcomp, const int *n, int ncomp) const;
-  bool divides(const int *m, const int *n) const;
-  void divide(const int *m, const int *n, int *result) const;
-  void lcm(const int *m, const int *n, int *result) const;
-  void gcd(const int *m, const int *n, int *result) const;
-  void monsyz(const int *m, const int *n, int *sm, int *sn) const;
+  void elem_text_out(buffer &o, const_monomial m) const;
 
-  void elem_text_out(buffer &o, const int *m) const;
+  int primary_value(const_monomial m) const;
 
-  int primary_value(const int *m) const;
-
-  void multi_degree(const int *m, int *result) const;
-  int primary_degree(const int *m) const;
-  int degree_weights(const int *m, const M2_arrayint wts) const;
-  void degree_of_varpower(const int *vp, int *result) const;
-
-  const PolynomialRing *get_degree_ring() const { return moninfo->degree_ring; }
-  const Monoid *degree_monoid() const { return moninfo->degree_monoid; }
-  const int *degree_of_var(int v) const { return moninfo->degree_of_var[v]; }
-  int primary_degree_of_var(int v) const { return moninfo->primary_degree_of_var->array[v]; }
-
-  // Infrastructure here
-  void text_out(buffer &o) const;
+  void multi_degree(const_monomial m, monomial result) const;
+  int primary_degree(const_monomial m) const;
+  int degree_weights(const_monomial m, const M2_arrayint wts) const;
+  void degree_of_varpower(const_varpower vp, monomial result) const;
 
 };
 
 #if 0
 // These will become the unsafe versions, I guess, if they are still
 // needed...
-inline void Monoid::mult(const int *m, const int *n, int *result) const
+inline void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
     { for (int i=0; i<nwords; i++) *result++ = *m++ + *n++; }
 
-inline void Monoid::power(const int *m, int n, int *result) const
+inline void Monoid::power(const_monomial m, int n, monomial result) const
     { for (int i=0; i<nwords; i++) *result++ = *m++ * n; }
 #endif
 
 // WARNING!! 'divide' assumes that division is possible
-inline void Monoid::divide(const int *m, const int *n, int *result) const
+inline void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
     { 
       for (int i=nwords; i>0; i--) 
 	*result++ = *m++ - *n++; 
     }
 
-inline int Monoid::compare(const int *m, const int *n) const
+inline int Monoid::compare(const_monomial m, const_monomial n) const
 {
   int i = nwords;
   if (i == 0) return EQ;
@@ -177,7 +193,7 @@ inline int Monoid::compare(const int *m, const int *n) const
     }
 }
 
-inline int Monoid::compare(const int *m, int mcomp, const int *n, int ncomp) const
+inline int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const
 {
   int cmp = compare(m,n);
   if (cmp != EQ) return cmp;

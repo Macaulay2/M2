@@ -18,7 +18,7 @@ void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
   M->moninfo->degree_monoid = M;
 }
 
-// ONLY to be called by PolRing::get_trivial_poly_ring()
+// ONLY to be called by PolyRing::get_trivial_poly_ring()
 
 monoid_info::monoid_info()
 : nvars(0),
@@ -63,7 +63,7 @@ void monoid_info::set_degrees()
 {
   if (degree_monoid == NULL)
     {
-      degree_of_var.append(static_cast<int *>(NULL));
+      degree_of_var.append(static_cast<const_monomial>(NULL));
       return;
     }
 
@@ -76,7 +76,7 @@ void monoid_info::set_degrees()
   if (degvars > 0)
     for (int i=0; i<nvars; i++)
       {
-	int *m = degree_monoid->make_one();
+	monomial m = degree_monoid->make_one();
 	degree_monoid->from_expvector(t, m);
 	degree_of_var.append(m);
 	primary_degree_of_var->array[i] = t[0];
@@ -112,10 +112,6 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   nweights = moninfo->mo->n_weights();
   nwords = nweights + npacked_words;
 
-  // MES: will the next line work correctly if nwords == 0?
-  //  monom_stash = new stash("packed monoms", nwords*sizeof(int));
-  monom_stash = 0;
-
   if (nvars != 0 && moninfo->use_packing)
     {
       top_bits = 0;
@@ -138,7 +134,6 @@ Monoid::~Monoid()
   deletearray(EXP2);
   deletearray(EXP3);
   deletearray(MONlocal);
-  deleteitem(monom_stash);
   deleteitem(moninfo);  // This takes care of bump_down of degree monoid.
 }
 
@@ -374,7 +369,7 @@ void Monoid::text_out(buffer &o) const
   o << newline << "  ]";
 }
 
-void Monoid::pack(const int *exp, int *result) const
+void Monoid::pack(const_exponents exp, monomial result) const
 {
   for (int w=0; w<nweights; w++)
     *result++ = *exp++;
@@ -403,7 +398,7 @@ void Monoid::pack(const int *exp, int *result) const
     result[i] = this_word;
 }
 
-void Monoid::unpack(const int *m, int *result) const
+void Monoid::unpack(const_monomial m, exponents result) const
 {
   // WARNING: this ignores the weight vector values, and does NOT
   // place these into 'result'.
@@ -424,7 +419,7 @@ void Monoid::unpack(const int *m, int *result) const
     }
 }
 
-void Monoid::from_expvector(const int *exp, int *result) const
+void Monoid::from_expvector(const_exponents exp, monomial result) const
 {
   if (nvars == 0) return;
   if (!moninfo->use_packing)
@@ -438,14 +433,14 @@ void Monoid::from_expvector(const int *exp, int *result) const
     }
 }
 
-M2_arrayint Monoid::to_arrayint(const int *monom) const
+M2_arrayint Monoid::to_arrayint(const_monomial monom) const
 {
   M2_arrayint result = makearrayint(n_vars());
   to_expvector(monom, result->array);
   return result;
 }
 
-void Monoid::to_expvector(const int *m, int *result_exp) const
+void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 {
   if (nvars == 0) return;
   if (!moninfo->use_packing)
@@ -459,7 +454,7 @@ void Monoid::to_expvector(const int *m, int *result_exp) const
     }
 }
 
-void Monoid::mult(const int *m, const int *n, int *result) const
+void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
 #if 0
   for (int i=0; i<nwords; i++, m++, n++)
@@ -487,7 +482,7 @@ void Monoid::mult(const int *m, const int *n, int *result) const
 	ERROR("monomial overflow");
     }
 }
-int Monoid::in_subring(int n, const int *m) const
+int Monoid::in_subring(int n, const_monomial m) const
 {
   if (nvars == 0) return 1;
   if (n < 0) n = nweights+nvars;
@@ -511,7 +506,7 @@ int Monoid::in_subring(int n, const int *m) const
     }
   return 1;
 }
-int Monoid::compare(int n, const int *m1, const int *m2) const
+int Monoid::compare(int n, const_monomial m1, const_monomial m2) const
 {
   if (nvars == 0) return 1;
   if (n < 0) n = nweights+nvars;
@@ -539,41 +534,39 @@ int Monoid::compare(int n, const int *m1, const int *m2) const
   return EQ;  //0;
 }
 
-int *Monoid::make_new(const int *d) const
+monomial Monoid::make_new(const_monomial d) const
 {
   if (nvars == 0) return NULL;
-  //int *result = (int *) monom_stash->new_elem();
-  int *result = newarray(int,nwords);
+  monomial result = newarray(int,nwords);
   copy(d, result);
   return result;
 }
-int *Monoid::make_one() const
+monomial Monoid::make_one() const
 {
   if (nvars == 0) return NULL;
-  //int *result = (int *) monom_stash->new_elem();
-  int *result = newarray(int,nwords);
+  monomial result = newarray(int,nwords);
   one(result);
   return result;
 }
-void Monoid::remove(int *d) const
+void Monoid::remove(monomial d) const
 {
 #if 0
-  if (d != NULL) monom_stash->delete_elem(d);
+  deletearray(d);
 #endif
 }
 
-void Monoid::one(int *result) const
+void Monoid::one(monomial result) const
 {
   for (int i=0; i<nwords; i++) 
     *result++ = 0;
 }
 
-void Monoid::copy(const int *m, int *result) const
+void Monoid::copy(const_monomial m, monomial result) const
 {
   memcpy(result, m, nwords*sizeof(int));
 }
 
-bool Monoid::divides(const int *m, const int *n) const
+bool Monoid::divides(const_monomial m, const_monomial n) const
 // Does m divide n?
 {
   //if (!moninfo->isgroup)
@@ -588,7 +581,7 @@ bool Monoid::divides(const int *m, const int *n) const
 }
 
 #if 0
-void Monoid::divide(const int *m, const int *n, int *result) const
+void Monoid::divide(const_monomial m, const_monomial n, monomial result) const
 {
   if (nvars == 0) return;
   to_expvector(m, EXP1);
@@ -598,7 +591,7 @@ void Monoid::divide(const int *m, const int *n, int *result) const
 }
 #endif
 
-void Monoid::power(const int *m, int n, int *result) const
+void Monoid::power(const_monomial m, int n, monomial result) const
 {
   if (nvars == 0) return;
   to_expvector(m, EXP1);
@@ -606,7 +599,7 @@ void Monoid::power(const int *m, int n, int *result) const
   from_expvector(EXP1, result);
 }
 
-void Monoid::monsyz(const int *m, const int *n, int *sm, int *sn) const
+void Monoid::monsyz(const_monomial m, const_monomial n, monomial sm, monomial sn) const
 {
   if (nvars == 0) return;
   to_expvector(m, EXP1);
@@ -626,7 +619,7 @@ void Monoid::monsyz(const int *m, const int *n, int *sm, int *sn) const
   from_expvector(EXP2, sn);
 }
 
-void Monoid::gcd(const int *m, const int *n, int *p) const
+void Monoid::gcd(const_monomial m, const_monomial n, monomial p) const
 {
   if (nvars == 0) return;
   to_expvector(m, EXP1);
@@ -635,7 +628,7 @@ void Monoid::gcd(const int *m, const int *n, int *p) const
   from_expvector(EXP1, p);
 }
 
-void Monoid::lcm(const int *m, const int *n, int *p) const
+void Monoid::lcm(const_monomial m, const_monomial n, monomial p) const
 {
   if (nvars == 0) return;
   to_expvector(m, EXP1);
@@ -644,19 +637,19 @@ void Monoid::lcm(const int *m, const int *n, int *p) const
   from_expvector(EXP1, p);
 }
 
-void Monoid::elem_text_out(buffer &o, const int *m) const
+void Monoid::elem_text_out(buffer &o, const_monomial m) const
 {
   to_expvector(m, EXP1);
   ntuple::elem_text_out(o, nvars, EXP1, moninfo->varnames);
 }
 
-void Monoid::multi_degree(const int *m, int *result) const
+void Monoid::multi_degree(const_monomial m, monomial result) const
 {
   if (nvars == 0) return;
   if (degree_monoid()->n_vars() == 0) return;
 
   degree_monoid()->one(result);
-  int *mon1 = degree_monoid()->make_one();
+  monomial mon1 = degree_monoid()->make_one();
   to_expvector(m, EXP1);
 
   for (int i=0; i<nvars; i++)
@@ -668,13 +661,13 @@ void Monoid::multi_degree(const int *m, int *result) const
   degree_monoid()->remove(mon1);
 }
 
-void Monoid::degree_of_varpower(const int *vp, int *result) const
+void Monoid::degree_of_varpower(const_varpower vp, monomial result) const
 {
   if (nvars == 0) return;
   if (degree_monoid()->n_vars() == 0) return;
 
   degree_monoid()->one(result);
-  int *mon1 = degree_monoid()->make_one();
+  monomial mon1 = degree_monoid()->make_one();
 
   for (index_varpower j = vp; j.valid(); ++j)
       {
@@ -686,7 +679,7 @@ void Monoid::degree_of_varpower(const int *vp, int *result) const
   degree_monoid()->remove(mon1);
 }
 
-int Monoid::primary_value(const int *m) const
+int Monoid::primary_value(const_monomial m) const
 {
   // MES: rewrite!!
   if (nvars == 0) return 0;
@@ -695,33 +688,33 @@ int Monoid::primary_value(const int *m) const
   return result;
 }
 
-int Monoid::primary_degree(const int *m) const
+int Monoid::primary_degree(const_monomial m) const
 {
-  return degree_weights(m, moninfo->primary_degree_of_var);
+  return degree_weights(m, primary_degree_of_vars());
 }
 
-int Monoid::degree_weights(const int *m, const M2_arrayint wts) const
+int Monoid::degree_weights(const_monomial m, const M2_arrayint wts) const
 {
   if (nvars == 0) return 0;
   to_expvector(m, EXP1);
   return ntuple::weight(nvars, EXP1, wts);
 }
 
-int Monoid::is_one(const int *m) const
+bool Monoid::is_one(const_monomial m) const
 {
   for (int i=0; i<nwords; i++)
-    if (*m++ != 0) return 0;
-  return 1;
+    if (*m++ != 0) return false;
+  return true;
 }
 
-void Monoid::from_varpower(const int *vp, int *result) const
+void Monoid::from_varpower(const_varpower vp, monomial result) const
 {
   intarray a;
   varpower::to_ntuple(nvars, vp, a);
   from_expvector(a.raw(), result);
 }
 
-void Monoid::to_varpower(const int *m, intarray &result_vp) const
+void Monoid::to_varpower(const_monomial m, intarray &result_vp) const
 {
   to_expvector(m, EXP1);
   varpower::from_ntuple(nvars, EXP1, result_vp);

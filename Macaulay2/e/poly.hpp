@@ -91,7 +91,14 @@ public:
   int n_quotients() const { return quotient_ideal_.size(); }
   Nterm * quotient_element(int i) const { return quotient_ideal_[i]; }
   const gbvector * quotient_gbvector(int i) const { return quotient_gbvectors_[i]; }
-  
+
+  virtual const MonomialIdeal * make_basis_MonomialIdeal() const 
+  { return  get_quotient_monomials(); }
+  // Returns the monomial ideal consisting of monomials which are initial terms
+  // in this quotient ring.  IE, the set of all monomials outside of this 
+  // ideal form a generating set for the ring as a
+  // module over the ring getLogicalCoefficients().
+
   // skew commutativity 
   virtual bool is_skew_commutative() const { return false; }
   virtual int n_skew_commutative_vars() const { return 0; }
