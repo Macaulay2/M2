@@ -118,10 +118,12 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
      return RingElement::make_raw(R,result);
 }
 
-static enter_factory x;
+static enter_M2 b1;
+static enter_factory a1;
  static int base_set = 0;
  static CanonicalForm base;
-static enter_M2 y;
+static enter_factory a2;
+static enter_M2 b2;
 
 static CanonicalForm convert(const mpz_ptr p) {
      enter_factory a;
