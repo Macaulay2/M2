@@ -1,6 +1,6 @@
 -- Copyright 1995-2002 by Michael Stillman
 
-MonomialIdeal = new Type of HashTable
+MonomialIdeal = new Type of Ideal
 MonomialIdeal.synonym = "monomial ideal"
 monomialIdeal = method(TypicalValue => MonomialIdeal,SingleArgumentDispatch=>true)
 numgens MonomialIdeal := I -> I.numgens
