@@ -419,7 +419,7 @@ assemble Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    -- later we'll figure out how to start *this* version of M2!!!
-		    cmd := "M2 --silent -q -x -e 'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
+		    cmd := "M2 --silent -q -e 'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
