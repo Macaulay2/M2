@@ -23,12 +23,15 @@ DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 M2PATH=
 
 if [ -f "$DATA" ]
-then exec "$EXE" "-e loaddata \"$DATA\"" -- \
-	 "-e runStartFunctions()" \
+then exec "$EXE" \
+         "-e loaddata \"$DATA\"" \
+         -- \
 	 "-e path = join(path,{ \"$SRCHOME/m2/\", \"$SRCHOME/packages/\", \"$SRCHOME/experiments/\" })" \
+	 "-e runStartFunctions()" \
 	 "$@"
-else exec "$EXE" "-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
-         "-e phase=1" "$SETUP" "-e phase=0" \
+else exec "$EXE" \
+         "-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
+         "$SETUP" \
 	 "-e runStartFunctions()" \
 	 "$@"
 fi

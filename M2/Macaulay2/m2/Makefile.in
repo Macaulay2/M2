@@ -56,9 +56,9 @@ tutorials.m2 : $(TUTORIALS)
 cache cache/doc cache/tests ../tutorial/final/cache/doc :; mkdir $@
 clean ::; rm -rf cache
 initialize :: cache cache/tests cache/doc ../tutorial/final/cache/doc
-################################# temporary files for examples
-initialize :: cache/doc/tmp
-cache/doc/tmp :; mkdir $@
+################################# temporary directories for examples
+initialize :: cache/doc/cache/doc cache/doc/tmp
+cache/doc/cache/doc cache/doc/tmp :; mkdir -p $@
 #################################
 
 gbdoc.m2 : gbdoc.awk ../e/misc/cmdnames.input
@@ -128,6 +128,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
 	mkdir  cache/tests
 	../../bin/M2 -q -silent \
 		'-e phase = 2' \
+		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
 		docloads.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
@@ -176,6 +177,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	rm -f ../cache/Macaulay2-tmp
 	../../bin/M2 -q -silent \
 		'-e phase = 4' \
+		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
 		docloads.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp $@
@@ -184,6 +186,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 phase5 : phase4
 	 #------ phase 5: making cache/doc/*.html
 	../../bin/M2 -q -silent '-e phase = 5' \
+		'-e errorDepth 0' \
 		'-e DocDatabase = new MutableHashTable' \
 		docloads.m2 '-eexit(0)'
 	touch $@
