@@ -229,10 +229,10 @@ void cmd_Nvec_zero(object &oF)
   gStack.insert(Vector(F));
 }
 
-void cmd_Nvec_term(object &oF, object &or, object &on)
+void cmd_Nvec_term(object &oF, object &oelem, object &on)
 {
   const FreeModule *F = oF->cast_to_FreeModule();
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   int n = on->int_of();
   gStack.insert(Vector(F,r,n));
 }
@@ -308,19 +308,19 @@ void cmd_Nvec_multr(object &oa, object &ob)
     gStack.insert(b*a);
 }
 #endif
-void cmd_Nvec_getterms(object &or, object &om, object &on)
+void cmd_Nvec_getterms(object &ov, object &om, object &on)
 {
-  Vector r = or->cast_to_Vector();
+  Vector v = ov->cast_to_Vector();
   int m = om->int_of();
   int n = on->int_of();
-  gStack.insert(r.get_terms(m,n));
+  gStack.insert(v.get_terms(m,n));
 }
-void cmd_Nvec_subvector(object &or, object &oF, object &oa)
+void cmd_Nvec_subvector(object &ov, object &oF, object &oa)
 {
-  Vector r = or->cast_to_Vector();
+  Vector v = ov->cast_to_Vector();
   const FreeModule *F = oF->cast_to_FreeModule();
   intarray *a = oa->intarray_of();
-  gStack.insert(r.sub_vector(F,*a));
+  gStack.insert(v.sub_vector(F,*a));
 }
 
 void cmd_Nvec_ishomogeneous(object &ov)

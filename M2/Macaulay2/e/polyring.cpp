@@ -808,7 +808,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, int n) const
   if (base_ring != NULL) normal_form(t);
   result = t;
 
-  if (rest == NULL) return result;
+  if (rest == (Nterm *)NULL) return result;
   int *m = ma.alloc(M->monomial_size());
   M->one(m);
 
