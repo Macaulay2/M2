@@ -179,6 +179,8 @@ checkShadow = () -> (
 			 stderr << "--   new synonym provided for '" << nam << "': " << newsyn << endl;
 			 break)))))
 
+sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
+
 closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
@@ -186,11 +188,9 @@ closePackage String := title -> (
      scan(pkg#"mutable symbols", s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
      ws := set pkg#"mutable symbols";
      dict := pkg.Dictionary;
-     scan(values dict,
-	  s -> (
-	       if not ws#?s then protect s;
-	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s;
-	       ));
+     scan(sortByHash values dict, s -> if not ws#?s then (
+	       protect s;
+	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s));
      exportDict := pkg.Dictionary;
      if pkg =!= Main then (			    -- protect it later
 	  protect dict;					    -- maybe don't do this, as it will be private
