@@ -774,22 +774,22 @@ int GB_comp::computation_is_complete() const
   // This handles everything but _Stop.always, _Stop.degree_limit
   if (_state == GB_COMP_DONE)
     return COMP_DONE;
-  if (_Stop.basis_element_limit > 0 && _n_gb > _Stop.basis_element_limit) 
+  if (stop_.basis_element_limit > 0 && _n_gb > stop_.basis_element_limit) 
     return COMP_DONE_GB_LIMIT;
-  if (_Stop.syzygy_limit > 0 && _n_syz > _Stop.syzygy_limit)
+  if (stop_.syzygy_limit > 0 && _n_syz > stop_.syzygy_limit)
     return COMP_DONE_SYZ_LIMIT;
-  if (_Stop.pair_limit > 0 && _n_pairs_computed > _Stop.pair_limit)
+  if (stop_.pair_limit > 0 && _n_pairs_computed > stop_.pair_limit)
     return COMP_DONE_PAIR_LIMIT;
-  if (_Stop.just_min_gens && _n_gens_left == 0)
+  if (stop_.just_min_gens && _n_gens_left == 0)
     return COMP_DONE_MIN_GENS;
-  if (_Stop.subring_limit > 0 && _n_subring > _Stop.subring_limit)
+  if (stop_.subring_limit > 0 && _n_subring > stop_.subring_limit)
     return COMP_DONE_SUBRING_LIMIT;
-  if (_Stop.use_codim_limit)
+  if (stop_.use_codim_limit)
     {
       // Compute the codimension
       int c = 0;
       //int c = codim_of_lead_terms();
-      if (c >= _Stop.codim_limit)
+      if (c >= stop_.codim_limit)
 	return COMP_DONE_CODIM;
     }
   return COMP_COMPUTING;
@@ -902,8 +902,8 @@ int GB_comp::calc()
 	      break;
 	    }
 	  _this_degree = next_degree();
-	  if (_Stop.stop_after_degree 
-              && _this_degree > _Stop.degree_limit->array[0])
+	  if (stop_.stop_after_degree 
+              && _this_degree > stop_.degree_limit->array[0])
 	    {
 	      is_done = COMP_DONE_DEGREE_LIMIT;
 	      break;

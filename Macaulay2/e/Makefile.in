@@ -24,6 +24,9 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	comp_res \
+	res \
+	respoly \
 	minimalgb \
 	matrixcon \
 	computation \
@@ -86,8 +89,6 @@ INTERFACE = \
 
 
 STILLTOCOMPILE = \
-	res \
-	respoly \
 	respoly2 \
 	res2 \
 	newspair \

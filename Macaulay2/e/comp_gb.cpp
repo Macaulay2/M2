@@ -1,3 +1,4 @@
+// Copyright 2004 Michael E. Stillman.
 
 #include "comp_gb.hpp"
 

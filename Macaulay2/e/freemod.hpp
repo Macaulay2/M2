@@ -34,8 +34,8 @@ protected:
 
   virtual FreeModule *new_free() const;
 public:
-  FreeModule(const Ring *R);
-  FreeModule(const Ring *R, int n);
+  FreeModule(const Ring *R, int n, bool has_schreyer_order);
+  // if n>0, and has_schreyer_order is true, then all base monomials are set to 0.
 #if 0
   FreeModule(const Ring *RR, const FreeModule *F);
 #endif

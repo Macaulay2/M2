@@ -149,6 +149,7 @@ public:
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
 
   virtual FreeModule *make_FreeModule() const;
+  virtual FreeModule *make_Schreyer_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;
 
   virtual void text_out(buffer &o) const = 0;

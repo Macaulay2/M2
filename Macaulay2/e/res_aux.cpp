@@ -60,61 +60,65 @@ int res_comp::high_degree() const
   return hidegree;
 }
 
-void res_comp::betti_skeleton(intarray &result) const
+const M2_arrayint res_comp::get_betti(int type) const
 {
   int lo = low_degree();
   int hi = high_degree();
-  int len = max_level();
-  result.append(lo);
-  result.append(hi);
-  result.append(len);
-  for (int d=lo; d<=hi; d++)
+  int len = (type == 0 ? length_limit : max_level());
+  int totallen = 3 + (hi-lo+1)*(len+1);
+  M2_arrayint result = makearrayint(totallen);
+
+  result->array[0] = lo;
+  result->array[1] = hi;
+  result->array[2] = len;
+  int next = 3;
+  for (int d=0; d<=hi; d++)
     for (int lev=0; lev<=len; lev++)
-      result.append(n_pairs(lev, d));
+      {
+	int val = 0;
+	switch (type) {
+	case 0:
+	  val = n_minimal(lev,d);
+	  break;
+	case 1:
+	  val = n_pairs(lev,d);
+	  break;
+	case 2:
+	  val = n_left(lev,d);
+	  break;
+	case 3:
+	  val = n_monoms(lev,d);
+	  break;
+	default:
+	  val = -1;
+	  break;
+	}
+	result->array[next++] = val;
+      }
+
+  return result;
 }
 
-void res_comp::betti_remaining(intarray &result) const
+M2_arrayint res_comp::betti_skeleton() const
 {
-  int lo = low_degree();
-  int hi = high_degree();
-  int len = max_level();
-  result.append(lo);
-  result.append(hi);
-  result.append(len);
-  for (int d=lo; d<=hi; d++)
-    for (int lev=0; lev<=len; lev++)
-      result.append(n_left(lev, d));
+  return get_betti(1);
+}
+M2_arrayint res_comp::betti_remaining() const
+{
+  return get_betti(2);
+}
+M2_arrayint res_comp::betti_minimal() const
+{
+  return get_betti(0);
+}
+M2_arrayint res_comp::betti_nmonoms() const
+{
+  return get_betti(3);
 }
 
-void res_comp::betti_minimal(intarray &result) const
-    // Negative numbers represent upper bounds
+static void betti_display(buffer &o, const M2_arrayint ar)
 {
-  int lo = low_degree();
-  int hi = high_degree();
-  int len = length_limit;
-  result.append(lo);
-  result.append(hi);
-  result.append(len);
-  for (int d=lo; d<=hi; d++)
-    for (int lev=0; lev<=len; lev++)
-      result.append(n_minimal(lev, d));
-}
-
-void res_comp::betti_nmonoms(intarray &result) const
-{
-  int lo = low_degree();
-  int hi = high_degree();
-  int len = max_level();
-  result.append(lo);
-  result.append(hi);
-  result.append(len);
-  for (int d=lo; d<=hi; d++)
-    for (int lev=0; lev<=len; lev++)
-      result.append(n_monoms(lev, d));
-}
-
-static void betti_display(buffer &o, const intarray &a)
-{
+  const int *a = ar->array;
   int total_sum = 0;
   int lo = a[0];
   int hi = a[1];
@@ -194,7 +198,7 @@ void res_comp::text_out(buffer &o, const res_pair *p) const
     }
 #endif
   M->elem_text_out(o, p->base_monom);
-  if (comp_printlevel >= 3)
+  if (gbTrace >= 3)
     {
       // Display the vector
       o << " syz: ";
@@ -220,27 +224,23 @@ void res_comp::stats(buffer &o) const
 {
   o << "level/degree = " << n_level << '/' << n_degree << newline;
   o << "--- The total number of pairs in each level/slanted degree -----" << newline;
-  intarray a;
-  betti_skeleton(a);
+  M2_arrayint a = betti_skeleton();
   betti_display(o, a);
   o << "--- The number of pairs left to compute ------------------------" << newline;
-  a.shrink(0);
-  betti_remaining(a);
+  a = betti_remaining();
   betti_display(o, a);
   o << "--- (Lower bounds of) the minimal betti numbers ----------" << newline;
-  a.shrink(0);
-  betti_minimal(a);
+  a = betti_minimal();
   betti_display(o, a);
-  if (comp_printlevel >= 1)
+  if (gbTrace >= 1)
     {
       o << "--- Number of monomials  ---------------------------------" << newline;
-      a.shrink(0);
-      betti_nmonoms(a);
+      a = betti_nmonoms();
       betti_display(o, a);
     }
 
   // If the printlevel is high enough, display each element
-  if (comp_printlevel >= 2)
+  if (gbTrace >= 2)
     for (int lev=0; lev<resn.length(); lev++)
       {
 	o << "---- level " << lev << " ----" << newline;
@@ -259,13 +259,18 @@ void res_comp::stats(buffer &o) const
 
 }
 
+void res_comp::text_out(buffer &o)
+{
+  stats(o);
+}
+
 FreeModule *res_comp::free_of(int i) const
 {
   FreeModule *result;
-  result = P->make_FreeModule();
+  result = P->make_Schreyer_FreeModule();
   if (i < 0 || i >= resn.length())
     return result;
-  int *deg = degree_monoid()->make_one();
+  int *deg = P->degree_monoid()->make_one();
   int n = 0;
   res_level *lev = resn[i];
   for (int j=0; j<lev->bin.length(); j++)
@@ -274,11 +279,11 @@ FreeModule *res_comp::free_of(int i) const
       for (res_pair *p = mypairs->first; p != NULL; p = p->next)
 	{
 	  multi_degree(p, deg);
-	  result->append(deg, p->base_monom); // MES: add also p->compare_num as arg
+	  result->append_schreyer(deg, p->base_monom, p->compare_num);
 	  p->minimal_me = n++;
 	}
     }
-  degree_monoid()->remove(deg);
+  P->degree_monoid()->remove(deg);
   
   return result;
 }
@@ -288,7 +293,7 @@ FreeModule *res_comp::minimal_free_of(int i) const
   result = P->make_FreeModule();
   if (i < 0 || i > length_limit)
     return result;
-  int *deg = degree_monoid()->make_one();
+  int *deg = P->degree_monoid()->make_one();
   int nminimals = 0;
   res_level *lev = resn[i];
   for (int j=0; j<lev->bin.length(); j++)
@@ -302,7 +307,7 @@ FreeModule *res_comp::minimal_free_of(int i) const
 	    p->minimal_me = nminimals++;
 	  }
     }
-  degree_monoid()->remove(deg);
+  P->degree_monoid()->remove(deg);
 
   return result;
 }
@@ -382,6 +387,9 @@ Matrix *res_comp::make_minimal(int i) const
     }
   return result.to_matrix();
 }
+
+
+
 
 #if 0
 // This was commented out earlier than 2002

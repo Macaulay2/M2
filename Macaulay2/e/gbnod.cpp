@@ -476,10 +476,12 @@ void gb2_comp::schreyer_append(gbvector * f)
   if (orig_syz < 0)
     {
       int *d = R->degree_monoid()->make_one();
-      // F->degree(f, d); // MES Aug 2002
-      //      Ssyz->append(f->monom, Fsyz->rank());
-      // MES: Aug 2002 the previous line needs us to keep Ssyz
-      Fsyz->append(d);
+#warning "need to be able to find multidegree of a gbvector"
+#if 0
+      // Get this working (April 2004)
+      F->degree(f, d);
+#endif
+      Fsyz->append_schreyer(d, f->monom, Fsyz->rank());
       R->degree_monoid()->remove(d);
     }
 }

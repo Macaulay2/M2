@@ -5,7 +5,7 @@
 #include "text_io.hpp"
 
 extern char system_interruptedFlag;
-extern int comp_printlevel;
+extern int gbTrace;
 
 //////////////////////////////////////////////
 //  Initialization of a computation  /////////
@@ -261,7 +261,7 @@ void res_comp::multi_degree(const res_pair *p, int *deg) const
 {
   // MES: Is this correct?
   M->multi_degree(p->base_monom, deg);
-  degree_monoid()->mult(deg, generator_matrix->rows()->degree(p->base_comp->me), deg);
+  M->degree_monoid()->mult(deg, generator_matrix->rows()->degree(p->base_comp->me), deg);
 }
 
 void res_comp::insert_res_pair(int level, res_pair *p)
@@ -593,7 +593,7 @@ void res_comp::new_pairs(res_pair *p)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  if (comp_printlevel >= 10)
+  if (gbTrace >= 10)
     {
       buffer o;
       o << "Computing pairs with first = " << p->me << newline;
@@ -666,7 +666,7 @@ void res_comp::new_pairs(res_pair *p)
   while (rejects.remove(b))
     deleteitem(b);
 
-  if (comp_printlevel>= 11) mi->debug_out(1);
+  if (gbTrace>= 11) mi->debug_out(1);
 
   for (j = mi->first(); j.valid(); j++)
     {
@@ -842,11 +842,38 @@ void res_comp::reduce_gen(resterm * &f) const
 //  Toplevel calculation and state machine ///
 //////////////////////////////////////////////
 
-#define DO(CALL) {int result = CALL; if (result != COMP_COMPUTING) return result;}
+bool res_comp::stop_conditions_ok()
+{
+  if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
+    {
+      if (length_limit < stop_.length_limit->array[0])
+	{
+	  ERROR("resolution: cannot increase maximum level");
+	  return false;
+	}
+      else
+	length_limit = stop_.length_limit->array[0];
+    }
 
-static int SyzygyLimit;
-static int PairLimit;
+  if (stop_.stop_after_degree && stop_.degree_limit != 0)
+    {
+      ERROR("expected resolution stop degree");
+      return false;
+    }
+  return true;
+}
 
+int res_comp::res_complete_thru_degree()
+{
+  return n_degree-1;
+}
+
+//#define DO(CALL) {int result = CALL; if (result != COMP_COMPUTING) return result;}
+#define DO(CALL) {enum ComputationStatusCode result = CALL; \
+                  if (result != COMP_COMPUTING) \
+		     {set_status(result); return;}}
+
+#if 0
 int res_comp::calc(const int *DegreeLimit, 
 		   int LengthLimit, 
 		   int ArgSyzygyLimit,
@@ -854,29 +881,22 @@ int res_comp::calc(const int *DegreeLimit,
 		   int /*SyzLimitValue*/,
 		   int /*SyzLimitLevel*/,
 		   int /*SyzLimitDegree*/)
+#endif
+void res_comp::start_computation()
 {
-  SyzygyLimit = ArgSyzygyLimit;
-  PairLimit = ArgPairLimit;
-
-  if (LengthLimit >= 0)
-    {
-      if (length_limit < LengthLimit)
-	{
-	  ERROR("resolution: cannot increase maximum level");
-	  return COMP_ERROR;
-	}
-      else
-	length_limit = LengthLimit;
-    }
-
+  if (status() == COMP_DONE) return;
+  set_status(COMP_COMPUTING);
   DO(gens(lodegree));
   DO(pairs(1,lodegree));		// MES: Probably not needed...
 
   for ( ; n_degree <= hidegree; n_degree++, n_level = 2)
     {
-      if (DegreeLimit != NULL && *DegreeLimit < n_degree)
-	return COMP_DONE_DEGREE_LIMIT;
-      if (comp_printlevel >= 1) 
+      if (stop_.stop_after_degree && stop_.degree_limit->array[0] < n_degree)
+	{
+	  set_status(COMP_DONE_DEGREE_LIMIT);
+	  return;
+	}
+      if (gbTrace >= 1) 
 	{
 	  buffer o;
 	  o << '{' << n_degree << '}';
@@ -893,18 +913,18 @@ int res_comp::calc(const int *DegreeLimit,
 
       for ( ; n_level <= length_limit+1; n_level++)
 	{
-	  if (comp_printlevel >= 1) emit_wrapped(".");
+	  if (gbTrace >= 1) emit_wrapped(".");
 
 	  DO(pairs(n_level-1, n_degree));
 	  DO(pairs(n_level-1, n_degree+1));
 	  DO(reductions(n_level, n_degree));
 	}
     }
-  return COMP_DONE;
+  set_status(COMP_DONE);
 }
-int res_comp::gens(int deg)
+enum ComputationStatusCode res_comp::gens(int deg)
 {
-  if (comp_printlevel >= 5) 
+  if (gbTrace >= 5) 
     {
       buffer o;
       o << "gens(" << deg << ")" << newline;
@@ -923,9 +943,9 @@ int res_comp::gens(int deg)
 	  mypairs->nleft--;
 	  resn[1]->nleft--;
 	  nleft--;
-	  if (PairLimit >= 0 && npairs-nleft >= PairLimit)
+	  if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
 	    return COMP_DONE_PAIR_LIMIT;
-	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
+	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
 	    return COMP_DONE_SYZYGY_LIMIT;
 	  if (system_interruptedFlag) return COMP_INTERRUPTED;
 	}
@@ -935,13 +955,13 @@ int res_comp::gens(int deg)
   return COMP_COMPUTING;
 }
 
-int res_comp::pairs(int level, int deg)
+enum ComputationStatusCode res_comp::pairs(int level, int deg)
 {
   // Preconditions: pairs should be sorted
   // Cases: level=1: gens(deg), pairs(1,deg-1)
   //        level=2: pairs(1,deg)
   //        level>2: pairs(level-1,deg), pairs(level-2,deg+1)
-  if (comp_printlevel >= 5) 
+  if (gbTrace >= 5) 
     {
       buffer o;
       o << "pairs(" << level << ", " << deg << ")" << newline;
@@ -962,10 +982,10 @@ int res_comp::pairs(int level, int deg)
   return COMP_COMPUTING;
 }
 
-int res_comp::reductions(int level, int deg)
+enum ComputationStatusCode res_comp::reductions(int level, int deg)
 {
   res_pair *p;
-  if (comp_printlevel >= 5)
+  if (gbTrace >= 5)
     {
       buffer o;
       o << "reductions(" << level << ", " << deg << ")" << newline;
@@ -982,15 +1002,14 @@ int res_comp::reductions(int level, int deg)
 	mypairs->nleft--;
 	resn[level]->nleft--;
 	nleft--;
-	if (PairLimit >= 0 && npairs-nleft >= PairLimit)
+	if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
 	  return COMP_DONE_PAIR_LIMIT;
-	if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
+	if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
 	  return COMP_DONE_SYZYGY_LIMIT;
 	if (system_interruptedFlag) return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;
 }
-
 
 void res_comp::handle_gen(res_pair *p)
 {
@@ -1006,12 +1025,12 @@ void res_comp::handle_gen(res_pair *p)
       insert_res_pair(1, p);
       p->minimal_me = resn[1]->nminimal++;
       nminimal++;
-      if (comp_printlevel >= 2) emit_wrapped("z");
+      if (gbTrace >= 2) emit_wrapped("z");
     }
   else
     {
       remove_res_pair(p);
-      if (comp_printlevel >= 2) emit_wrapped("o");
+      if (gbTrace >= 2) emit_wrapped("o");
     }
 }
 void res_comp::handle_pair(res_pair *p)
@@ -1031,7 +1050,7 @@ void res_comp::handle_pair(res_pair *p)
       p->syz_type = SYZ_MINIMAL;
       p->minimal_me = resn[n_level]->nminimal++;
       nminimal++;
-      if (comp_printlevel >= 2) emit_wrapped("z");
+      if (gbTrace >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1041,7 +1060,7 @@ void res_comp::handle_pair(res_pair *p)
       // non-minimal syzygy
       q->syz = f;
       q->syz_type = SYZ_NOT_NEEDED;
-      if (comp_printlevel >= 2) emit_wrapped("m");
+      if (gbTrace >= 2) emit_wrapped("m");
       // MES: need to decrement nleft for 'q'.
     }
 }
@@ -1113,7 +1132,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  if (comp_printlevel >= 10)
+  if (gbTrace >= 10)
     {
       buffer o;
       o << "Computing pairs with first = " << p->me << newline;
@@ -1187,7 +1206,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   while (rejects.remove(b))
     deleteitem(b);
 
-  if (comp_printlevel>= 11) mi->debug_out(1);
+  if (gbTrace>= 11) mi->debug_out(1);
 
   for (j = mi->first(); j.valid(); j++)
     {
@@ -1238,13 +1257,20 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
     }
   
   // Now make an intarray so that we may just use betti_display
-  intarray betti;
-  betti.append(lodegree);
-  betti.append(maxdegree);
-  betti.append(maxlevel);
+  int lo = lodegree;
+  int hi = maxdegree;
+  int len = maxlevel;
+  int totallen = 3 + (hi-lo+1)*(len+1);
+  M2_arrayint betti = makearrayint(totallen);
+
+  betti->array[0] = lo;
+  betti->array[1] = hi;
+  betti->array[2] = len;
+  int next = 3;
+
   for (int d=0; d<=maxdegree-lodegree; d++)
     for (level=0; level<=maxlevel; level++)
-      betti.append(bettis[level + (maxlevel+1)*d]);
+      betti->array[next++] = bettis[level + (maxlevel+1)*d];
 
   betti_display(o, betti);
   deletearray(bettis);

@@ -15,32 +15,39 @@ Computation::set_stop_conditions(M2_bool always_stop,
 				 M2_bool just_min_gens,
 				 M2_arrayint length_limit)
 {
-  _Stop.always_stop = always_stop;
-  _Stop.stop_after_degree = stop_after_degree;
-  _Stop.degree_limit = degree_limit;
-  _Stop.basis_element_limit = basis_element_limit;
-  _Stop.syzygy_limit = syzygy_limit;
-  _Stop.pair_limit = pair_limit;
-  _Stop.use_codim_limit = (codim_limit >= 0);
-  _Stop.codim_limit = codim_limit;
-  _Stop.subring_limit = subring_limit;
-  _Stop.just_min_gens = just_min_gens;
-  _Stop.length_limit = length_limit;
-  return this;
+  stop_.always_stop = always_stop;
+  stop_.stop_after_degree = stop_after_degree;
+  stop_.degree_limit = degree_limit;
+  stop_.basis_element_limit = basis_element_limit;
+  stop_.syzygy_limit = syzygy_limit;
+  stop_.pair_limit = pair_limit;
+  stop_.use_codim_limit = (codim_limit >= 0);
+  stop_.codim_limit = codim_limit;
+  stop_.subring_limit = subring_limit;
+  stop_.just_min_gens = just_min_gens;
+  stop_.length_limit = length_limit;
+
+  if (stop_conditions_ok())
+    return this;
+  else
+    return 0;
 }
 
 Computation::Computation()
 {
-  set_stop_conditions(false,
-		      false,
-		      0,
-		      -1,
-		      -1,
-		      -1,
-		      -1,
-		      -1,
-		      false,
-		      0);
+  computation_status = COMP_NOT_STARTED;
+
+  stop_.always_stop = false;
+  stop_.stop_after_degree = false;
+  stop_.degree_limit = 0;
+  stop_.basis_element_limit = 0;
+  stop_.syzygy_limit = 0;
+  stop_.pair_limit = 0;
+  stop_.use_codim_limit = false;
+  stop_.codim_limit = 0;
+  stop_.subring_limit = 0;
+  stop_.just_min_gens = false;
+  stop_.length_limit = 0;
 }
 
 Computation::~Computation()

@@ -40,12 +40,17 @@ Ring::~Ring()
 
 FreeModule *Ring::make_FreeModule() const
 { 
-  return new FreeModule(this); 
+  return new FreeModule(this,0,false); 
+}
+
+FreeModule *Ring::make_Schreyer_FreeModule() const
+{ 
+  return new FreeModule(this,0,true); 
 }
 
 FreeModule *Ring::make_FreeModule(int n) const
 { 
-  return new FreeModule(this,n);
+  return new FreeModule(this,n,false);
 }
 
 bool Ring::is_field() const 

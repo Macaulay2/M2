@@ -34,14 +34,14 @@ protected:
     unsigned int subring_limit;
     M2_bool just_min_gens;
     M2_arrayint length_limit; // ignored for GB computations
-  } _Stop;
+  } stop_;
 
   Computation();
 
   void set_status(enum ComputationStatusCode c);
   
   virtual bool stop_conditions_ok() = 0;
-  // If the stop conditions in _Stop are inappropriate,
+  // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
   virtual ~Computation();

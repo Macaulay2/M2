@@ -455,7 +455,6 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 	T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
   /* We could return T if that is desired */
-  T->show(stderr);
   //  deleteitem(T);
 }
 

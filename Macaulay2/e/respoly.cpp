@@ -4,11 +4,14 @@
 #include "text_io.hpp"
 #include "polyring.hpp"
 #include "freemod.hpp"
+#include "geovec.hpp"
 
 res_poly::res_poly(PolynomialRing *RR)
 : R(RR), M(R->Nmonoms()), K(R->Ncoeffs())
 {
-  pstash = R->resstash;
+  element_size = sizeof(resterm *) + sizeof(res_pair *)
+		     + sizeof(ring_elem)
+		     + sizeof(int) * M->monomial_size();
 }
 
 res_poly::~res_poly()
@@ -27,7 +30,7 @@ inline int res_poly::compare(const resterm *a, const resterm *b) const
 
 resterm *res_poly::new_term() const
 {
-  resterm *result = (resterm *) pstash->new_elem();
+  resterm *result = GETMEM(resterm *, element_size);
   result->next = NULL;
   return result;
 }
@@ -79,7 +82,7 @@ void res_poly::remove(resterm *&f) const
       resterm *tmp = f;
       f = f->next;
       K->remove(tmp->coeff);
-      pstash->delete_elem(tmp);
+      deleteitem(tmp);
     }
 }
 
@@ -166,13 +169,13 @@ void res_poly::add_to(resterm * &f, resterm * &g) const
 	g = g->next;
 	K->add_to(tmf->coeff, tmg->coeff);
 	if (K->is_zero(tmf->coeff))
-	  pstash->delete_elem(tmf);
+	  deleteitem(tmf);
 	else
 	  {
 	    result->next = tmf;
 	    result = result->next;
 	  }
-	pstash->delete_elem(tmg);
+	deleteitem(tmg);
 	if (g == NULL) 
 	  {
 	    result->next = f; 
@@ -256,22 +259,20 @@ void res_poly::elem_text_out(buffer &o, const resterm *f) const
 vec res_poly::to_vector(const resterm *f, const FreeModule *F, 
 			    int /*to_minimal*/) const
 {
-  vecterm *result = NULL;
+  vecHeap H(F);
   int *mon = M->make_one();
   for (const resterm *tm = f; tm != NULL; tm = tm->next)
     {
 //    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);
       int x = tm->comp->minimal_me; // MES: Currently used for non-minimal as well...
       M->divide(tm->monom, tm->comp->base_monom, mon);
-      vecterm *tmp = F->new_term(x, K->copy(tm->coeff), mon);
-      M->mult(tmp->monom, F->base_monom(x), tmp->monom);
-      tmp->next = result;
-      result = tmp;
+
+      ring_elem a = R->term(tm->coeff, mon);
+      vec tmp = R->make_vec(x,a);
+      H.add(tmp);
     }
-  F->sort(result);
-  if (F->is_quotient_ring) F->normal_form(result);
   M->remove(mon);
-  return result;
+  return H.value();
 }
 
 resterm *res_poly::from_vector(const array<res_pair *> &base, const vec v) const
@@ -279,16 +280,20 @@ resterm *res_poly::from_vector(const array<res_pair *> &base, const vec v) const
   // The 'base' and the freemodule of 'v' are assumed to be the same: same monomial order,
   // same Schreyer monomials, etc.
 
+  // We will need to sort these after we collect them all...
   resterm head;
   resterm *result = &head;
-  for (vecterm *t = v; t != NULL; t = t->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->comp = base[t->comp];
-      result->coeff = K->copy(t->coeff);
-      M->copy(t->monom, result->monom);
+  for (vecterm *w = v; w != NULL; w = w->next)
+    for (Nterm *t = w->coeff; t != 0; t = t->next)
+      {
+	result->next = new_term();
+	result = result->next;
+	result->comp = base[w->comp];
+	result->coeff = t->coeff;
+	M->copy(t->monom, result->monom);
+	M->mult(result->monom, result->comp->base_monom, result->monom);
     }
+  // Now we must sort these
   result->next = NULL;
   return head.next;
 }
@@ -316,6 +321,35 @@ const resterm *res_poly::component_occurs_in(const res_pair *x,
   for (const resterm *tm = f; tm != NULL; tm = tm->next)
     if (tm->comp == x) return tm;
   return NULL;
+}
+
+void res_poly::sort(resterm *&f) const
+{
+  // Divide f into two lists of equal length, sort each,
+  // then add them together.  This allows the same monomial
+  // to appear more than once in 'f'.
+  
+  if (f == NULL || f->next == NULL) return;
+  resterm *f1 = NULL;
+  resterm *f2 = NULL;
+  while (f != NULL)
+    {
+      resterm *t = f;
+      f = f->next;
+      t->next = f1;
+      f1 = t;
+
+      if (f == NULL) break;
+      t = f;
+      f = f->next;
+      t->next = f2;
+      f2 = t;
+    }
+  
+  sort(f1);
+  sort(f2);
+  add_to(f1, f2);
+  f = f1;
 }
 
 
