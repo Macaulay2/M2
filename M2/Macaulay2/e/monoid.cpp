@@ -148,7 +148,7 @@ static mon_order *make_mon_order(MonomialOrdering *mo)
 	      prev_is_wt = false;
 	    }
 	}
-      if (p->type != MO_COMPONENT)
+      if (p->type != MO_POSITION_UP && p->type != MO_POSITION_DOWN)
 	last_non_component = i;
     }
 

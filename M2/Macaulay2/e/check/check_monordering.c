@@ -41,7 +41,7 @@ void test_monorderings(Test *pTest)
   mo12 = IM2_MonomialOrdering_revlex(100);
   mo13 = IM2_MonomialOrdering_laurent(3);
   mo14 = IM2_MonomialOrdering_NClex(10);
-  moc = IM2_MonomialOrdering_component();
+  moc = IM2_MonomialOrdering_position(1);
 
   n1 = monorder(5,mo4,mo9,mo12,mo14,moc);
 

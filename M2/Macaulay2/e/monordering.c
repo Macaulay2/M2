@@ -128,9 +128,9 @@ MonomialOrdering *IM2_MonomialOrdering_NClex(int nvars)
   result->array[0] = p;
   return result;
 }
-MonomialOrdering *IM2_MonomialOrdering_component()
+MonomialOrdering *IM2_MonomialOrdering_position(M2_bool up_or_down)
 {
-  mon_part p = mo_make(MO_COMPONENT, 0, NULL);
+  mon_part p = mo_make((up_or_down ? MO_POSITION_UP : MO_POSITION_DOWN), 0, NULL);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -383,8 +383,11 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
       case MO_NC_LEX:
 	sprintf(s, "NCLex => %d", p->nvars);
 	break;
-      case MO_COMPONENT:
-	sprintf(s, "Component");
+      case MO_POSITION_UP:
+	sprintf(s, "Position => Up");
+	break;
+      case MO_POSITION_DOWN:
+	sprintf(s, "Position => Down");
 	break;
       default:
 	sprintf(s, "UNKNOWN");
