@@ -771,7 +771,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
 	  << ///done/// << endl;
-	  if pkg#"title" == "Macaulay2" then (
+	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
 	       f << endl << ///(set -x ; "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin/M2 -q --stop --dumpdata)/// << endl;
 	       );
 	  fileChangeMode(f,octal "755");
