@@ -705,18 +705,6 @@ TEST ///
 
 
 TEST "
--- test product
-R = ZZ/101
-S = ZZ/103
-RS = R*S
-r = 23_R
-s = 47_S
-x = new RS from {r,s}
-assert( 2*x == new RS from {2*r,2*s} )
-assert( x + 1_RS == new RS from {r+1, s+1} )
-"
-
-TEST "
 assert (
      (0,0)..(2,3) == 
      ((0,0),(0,1),(0,2),(0,3),(1,0),(1,1),(1,2),(1,3),(2,0),(2,1),(2,2),(2,3))

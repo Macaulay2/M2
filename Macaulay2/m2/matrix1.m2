@@ -561,7 +561,7 @@ kernel Matrix := Module => options -> (g) -> if g.?kernel then g.kernel else g.k
 kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
-     if g == 0 then cokernel g
+     if g == 0 then cokernel f
      else if f == 0 then kernel g
      else (
 	  R := ring f;
