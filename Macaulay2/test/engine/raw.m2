@@ -223,26 +223,6 @@ assert( F =!= P )
 assert( rank F == 4 )
 assert( rank P == 7 )
 
-zer = 0_F
-assert( zer === 0_F )
-
-v = F_2 * x^3
-assert( module v === F )
-assert( ring v === R )
-assert( v + 0_F == v )
-assert( v + 0_F === v )
-w = F_1 * y^2
-assert( (v+w)*x == v*x + w*x )
-assert( (v+w)*x != v*x - w*x )
-assert( (v-w)*x == v*x - w*x )
-
-vv = rawVector(F,(x,y,z,0_R))
-assert( vv == F_0 * x + F_1 * y + F_2 * z )
-print toString vv
-assert( toString vv == "z<2>+y<1>+x<0>" ) -- was "x<0>+y<1>+z<2>" before
-
-show = v -> << v << " = " << value v << endl
-
 f = rawMatrix1(F,3,(x,y,z),false)
 show "entries f"
 show "f"

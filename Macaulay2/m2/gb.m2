@@ -20,29 +20,30 @@ checkListOfIntegers List := t -> (
      if not all(t, i -> class i === ZZ) then error "expected list of integers";
      t)
 
-gbDefaults := new OptionTable from {
-	  -- arguments to IM2_GB_make
-	  SyzygyRows => infinity,			    -- n_rows_to_keep (-1 if infinity)
-	  Syzygies => false,				    -- collect_syz parameter
-     	  HardDegreeLimit => null,			    -- use_max_degree and degree_limit
-     	  -- modifies the arguments tIM2_GB_makeo 
-	  ChangeMatrix => false,			    -- calculate change of basis matrix, too, for '//' operation
-     	  -- hints to GB_make
-	  Algorithm => null,				    -- Homogeneous (1) or Inhomogeneous (2)
-	  Strategy => {},				    -- strategy
-     	  GBDegrees => null,				    -- positive integers
-     	  Hilbert => null,				    -- also obtainable from f.cache.cokernel.poincare
-	  -- stopping conditions:
-	  StopBeforeComputation => false,		    -- stopping condition (always_stop)
-	  DegreeLimit => {},				    -- stopping condition (stop_after_degree and degree_limit) (not max_degree)
-	  BasisElementLimit => infinity,		    -- stopping condition (basis_element_limit)
-	  SyzygyLimit => infinity,			    -- stopping condition (syzygy_limit) (not for res computations)
-	  PairLimit => infinity,			    -- stopping condition (pair_limit)
-	  CodimensionLimit => infinity,			    -- stopping condition (codim_limit) (not for res computations)
-          SubringLimit => infinity,			    -- stopping condition (subring_limit) (not for res computations)
-	  StopWithMinimalGenerators => false		    -- stopping condition (just_min_gens) (not for res computations)
-	  -- LengthLimit is only for res computations
-	  }
+computationOptionDefaults := new OptionTable from {
+     SyzygyRows => infinity,			    -- n_rows_to_keep (-1 if infinity)
+     Syzygies => false,				    -- collect_syz parameter
+     HardDegreeLimit => null,			    -- use_max_degree and degree_limit
+     ChangeMatrix => false,			    -- calculate change of basis matrix, too, for '//' operation
+     Algorithm => null,				    -- Homogeneous (1) or Inhomogeneous (2)
+     Strategy => {},				    -- strategy
+     GBDegrees => null,				    -- positive integers
+     Hilbert => null				    -- also obtainable from f.cache.cokernel.poincare
+     };
+
+stoppingOptionDefaults := new OptionTable from {
+     StopBeforeComputation => false,		    -- stopping condition (always_stop)
+     DegreeLimit => {},				    -- stopping condition (stop_after_degree and degree_limit) (not max_degree)
+     BasisElementLimit => infinity,		    -- stopping condition (basis_element_limit)
+     SyzygyLimit => infinity,			    -- stopping condition (syzygy_limit) (not for res computations)
+     PairLimit => infinity,			    -- stopping condition (pair_limit)
+     CodimensionLimit => infinity,			    -- stopping condition (codim_limit) (not for res computations)
+     SubringLimit => infinity,			    -- stopping condition (subring_limit) (not for res computations)
+     StopWithMinimalGenerators => false		    -- stopping condition (just_min_gens) (not for res computations)
+     -- LengthLimit => null -- is only for res computations
+     }
+
+gbDefaults := merge(computationOptionDefaults,stoppingOptionDefaults, x -> error "overlap")
 
 computationIsComplete := (f,type) -> f.cache#?type and f.cache#type.?returnCode and f.cache#type.returnCode === 0
 getComputation := (f,type) -> f.cache#?type
@@ -101,34 +102,38 @@ gb Module := GroebnerBasis => options -> (M) -> (
 	  -- handle the Hilbert numerator later, which might be here:
 	  -- 
 
+gbGetHilbertHint := (f,opts) -> (
+     if opts.Hilbert =!= null then opts.Hilbert
+     else if f.cache.?cokernel and f.cache.cokernel.?poincare then f.cache.cokernel.poincare
+     )
 
-gb Matrix := GroebnerBasis => opts -> (f) -> (
-     R := ring target f;
-     if ring source f =!= R then error "expected module map with source and target over the same ring";
-     if not isFreeModule target f then error "Groebner bases of subquotient modules not yet implemented";
-     if not isFreeModule source f then f = ambient f * generators source f;   -- sigh
-     if isPolynomialRing R and not (isField coefficientRing R or coefficientRing R === ZZ) then error "expected coefficient ring to be ZZ or a field"; -- remove later
-     type := gbTypeCode opts;
-     G := gbGetSuitable(f,type);
-     if G === null then (
-	  G = new GroebnerBasis;
-	  G.matrix = f;
-	  G.ring = ring f;
-	  G.target = target f;
-	  G.RawComputation = rawGB(
-	       raw f,
-	       type.Syzygies,
-	       toEngineNat type.SyzygyRows,
-	       checkListOfIntegers {},			    -- later: gb degree list
-	       opts.HardDegreeLimit =!= null,
-	       if opts.HardDegreeLimit =!= null then opts.HardDegreeLimit else 0,
-	       processAlgorithm opts.Algorithm,
-	       processStrategy opts.Strategy
-	       );
-	  f.cache#type = G;			  -- do this last, in case of an interrupt
+ifSomething := method()
+ifSomething(Thing  ,Function) := (x,f) -> f x
+ifSomething(Nothing,Function) := (x,f) -> null
+
+elseSomething := method()
+elseSomething(Thing  ,Function) := (x,f) -> x
+elseSomething(Nothing,Function) := (x,f) -> f()
+
+newGB := (f,type,opts) -> (
+     G := new GroebnerBasis;
+     G.matrix = f;
+     G.ring = ring f;
+     G.target = target f;
+     G.RawComputation = rawGB(
+	  raw f,
+	  type.Syzygies,
+	  toEngineNat type.SyzygyRows,
+	  checkListOfIntegers {},			    -- later: gb degree list
+	  opts.HardDegreeLimit =!= null,
+	  if opts.HardDegreeLimit =!= null then opts.HardDegreeLimit else 0,
+	  processAlgorithm opts.Algorithm,
+	  processStrategy opts.Strategy
 	  );
-     if opts.Hilbert =!= null then rawGBSetHilbertFunction(G.RawComputation,raw opts.Hilbert)
-     else if f.cache.?cokernel and f.cache.cokernel.?poincare then rawGBSetHilbertFunction(G.RawComputation,f.cache.cokernel.poincare); 
+     f.cache#type = G;			  -- do this last, in case of an interrupt
+     G)
+
+setStopGB := (G,opts) -> (
      rawGBSetStop(G.RawComputation,
 	  opts.StopBeforeComputation,
 	  opts.DegreeLimit =!= null,
@@ -141,17 +146,23 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      	  toEngineNat opts.StopWithMinimalGenerators,
 	  {}						    -- not used, just for resolutions
 	  );
-     runGB(G, (
-	       ggPush checkListOfIntegers opts.DegreeLimit,
-	       ggPush {
-		    toEngineNat opts.BasisElementLimit,
-		    toEngineNat opts.SyzygyLimit,
-		    toEngineNat opts.PairLimit,
-		    toEngineNat opts.CodimensionLimit,
-		    toEngineBool opts.StopWithMinimalGenerators,
-		    toEngineNat opts.SubringLimit,
-		    strat
-		    }));
+     )
+
+checkArgGB := f -> (
+     R := ring target f;
+     if ring source f =!= R then error "expected module map with source and target over the same ring";
+     if not isFreeModule target f then error "Groebner bases of subquotient modules not yet implemented";
+     if not isFreeModule source f then f = ambient f * generators source f;   -- sigh
+     if isPolynomialRing R and not (isField coefficientRing R or coefficientRing R === ZZ) then error "expected coefficient ring to be ZZ or a field"; -- remove later
+     )
+
+gb Matrix := GroebnerBasis => opts -> (f) -> (
+     checkArgGB f;
+     type := gbTypeCode opts;
+     G := elseSomething( gbGetSuitable(f,type), () -> newGB(f,type,opts) );
+     ifSomething( gbGetHilbertHint(f,opts), hil -> rawGBSetHilbertFunction(G.RawComputation,raw hil) );
+     setStopGB(G,opts);
+     rawStartComputation G.RawComputation;
      G)
 
 mingens GroebnerBasis := Matrix => options -> (g) -> (

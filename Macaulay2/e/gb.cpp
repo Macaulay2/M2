@@ -1355,9 +1355,7 @@ void GB_comp::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */
 {
-  o << "# pairs computed = " << _n_pairs_computed << newline;
-  emit(o.str());
-  o.reset();
+  o << "--GB computation[";
   _spairs->stats();
   if (gbTrace >= 5 && gbTrace % 2 == 1)
     for (int i=0; i<_gb.length(); i++)
@@ -1366,6 +1364,7 @@ void GB_comp::text_out(buffer &o)
 	_GR->gbvector_text_out(o, _F, _gb[i]->f);
 	o << newline;
       }
+  o << "]--";
 }
 
 
