@@ -21,7 +21,7 @@ boxNets = method(SingleArgumentDispatch => true)
 boxNets List := boxNets Sequence := nets -> (
      nets = net \ nets;
      wid := if #nets === 0 then 0 else max \\ width \ nets;
-     side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|")) ^ (height n - 1)));
+     side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|"^-1)) ^ (height n)));
      w := side | stack between(concatenate (wid:"-"), nets) | side;
      top := concatenate("+", width w - 2 : "-", "+");
      w = stack(top,w,top);
