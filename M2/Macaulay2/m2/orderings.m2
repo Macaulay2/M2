@@ -71,7 +71,8 @@ monomialOrdering = args -> (
      hasComponent = false;
      mo = new MonomialOrdering;
      mo.handle = newHandle ggMOinit;
-     scan(sequence args, val -> (
+     if class args =!= List and class args =!= Sequence then args = {args};
+     scan(args, val -> (
 	       if tags#?val then tags#val()
 	       else if types#?(class val) then types#(class val) val
 	       else error ("unknown ordering option: ", name val)));

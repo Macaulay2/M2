@@ -266,7 +266,9 @@ monoidDefaults := new OptionTable from {
      Degrees => null,
      Inverses => false,
      MonomialOrder => null,
+     NewMonomialOrder => null,
      MonomialSize => 8,
+     PrintOrder => null,
      SkewCommutative => false,
      VariableOrder => null,		  -- not implemented yet
      WeylAlgebra => {}
@@ -346,32 +348,25 @@ makeit1 := (options) -> (
      M.degrees = degs;
      M.degreeLength = if degs#?0 then # degs#0 else 0;
      order := transpose degs;
-     mo := options.MonomialOrder;
      firstdeg := transpose degs;
-     if # firstdeg === 0 then
-	firstdeg = toList(n:1)
-     else
-        firstdeg = firstdeg#0;
-     if mo === null then
-	mo = MOgrlex firstdeg
-     else if mo === quote RevLex then
-	mo = MOrlex firstdeg
-     else if mo === quote GRevLex then
-	mo = MOgrlex firstdeg
-     else if mo === quote Lex then
-	mo = MOlex firstdeg
-     else if mo === quote GLex then
-	mo = MOglex firstdeg
-     else if instance(mo, Eliminate) then
-	mo = MOelim(firstdeg, mo#0)
-     else if instance(mo, ProductOrder) then
-	mo = MOproduct(firstdeg, toList mo)
---     else if mo === Weights wts then
---	mo = MOwtfcn(firstdeg, wts)
---     else if mo === General then
---	mo = MOgeneral(firstdeg, order, invorder, invdegs)
-     else error("invalid MonomialOrder option: ", name mo);
-     M.MonomialOrder = mo;
+     firstdeg = if #firstdeg === 0 then toList(n:1) else firstdeg#0;
+     printOrder := toList (0 .. n-1);
+     if options.NewMonomialOrder =!= null then (
+	  M.MonomialOrder = monomialOrdering options.NewMonomialOrder;
+	  )
+     else (
+	  mo := options.MonomialOrder;
+	  M.MonomialOrder = (
+	       if mo === null then MOgrlex firstdeg
+	       else if mo === quote RevLex then MOrlex firstdeg
+	       else if mo === quote GRevLex then MOgrlex firstdeg
+	       else if mo === quote Lex then MOlex firstdeg
+	       else if mo === quote GLex then MOglex firstdeg
+	       else if instance(mo, Eliminate) then MOelim(firstdeg, mo#0)
+	       else if instance(mo, ProductOrder) then MOproduct(firstdeg, toList mo)
+	       else error("invalid MonomialOrder option: ", name mo)
+	       )
+	  );
 
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
@@ -514,13 +509,15 @@ makeit1 := (options) -> (
 	  );
      M.handle = newHandle (
 	  ggPush M.MonomialOrder,
-	  ggPush betwNames(" ",M.generators),-- or "" to omit them
-	  if degreeLength M === 0 then ggzeromonoid
-	  else ggPush degreesMonoid degreeLength M,
-	  ggPush flatten M.degrees,
-	  ggPush {if options.Inverses then 1 else 0, 
-                  options.MonomialSize,
-                  if options.SkewCommutative then 1 else 0},
+	  if options.NewMonomialOrder =!= null then ggPush printOrder,
+	  ggPush betwNames(" ",M.generators),		    -- or "" to omit them
+	  if not options.NewMonomialOrder =!= null then (
+	       if degreeLength M === 0 then ggzeromonoid else ggPush degreesMonoid degreeLength M,
+	       ggPush flatten M.degrees,
+	       ggPush {if options.Inverses then 1 else 0, 
+		       options.MonomialSize,
+		       if options.SkewCommutative then 1 else 0}
+	       ),
 	  ggmonoid) ;
      M.use = x -> scan(M.generatorSymbols,M.vars,assign);
      M)
