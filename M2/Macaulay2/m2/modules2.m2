@@ -794,6 +794,20 @@ document { (quote /, Module, Module),
      "The modules should be submodules of the same module."
      }
 
+document { (quote /, Module, Ideal),
+     TT "M/I", " -- computes the quotient module ", TT "M/IM", ",
+     where ", TT "M", " is a module and ", TT "I", " is an ideal.",
+     PARA,
+     "The module and ideal should belong to the same ring."
+     }
+
+document { (quote /, Ideal, Ideal),
+     TT "I/J", " -- produces the quotient module ", TT "(I+J)/J", ", where
+     ", TT "I", " and ", TT "J", " are ideals in a ring.",
+     PARA,
+     SEEALSO "Module"
+     }
+
 Module / RingElement := (M,x) -> M / (x * M)
 Module / Sequence := Module / List := (M,v) -> (
      R := ring M;

@@ -93,6 +93,24 @@ document { resolution => StopBeforeComputation,
      the partially computed resolution contained in an interrupted computation."
      }
 
+document { quote LengthLimit,
+     TT "LengthLimit", " -- a keyword for an optional argument used with
+     ", TO "resolution", ".",
+     PARA,
+     MENU {
+	  TO (resolution => LengthLimit),
+	  }
+     }
+
+document { quote Algorithm,
+     TT "Algorithm", " -- a keyword for an optional argument used with
+     ", TO "resolution", ".",
+     PARA,
+     MENU {
+	  TO (resolution => Algorithm),
+	  }
+     }
+
 document { resolution => LengthLimit,
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
@@ -134,19 +152,28 @@ document { resolution => Algorithm,
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",
      MENU {
-	  ("0", " -- Compute syzygies on the Groebner bases of each syzygy
+	  (TT "Algorithm => 0", " -- Compute syzygies on the Groebner bases of each syzygy
 	       module.  The algorithm uses important speedups due to R. Lascala.
 	       This algorithm appears to be on the average the fastest."),
-	  ("1", " -- An older version of algorithm 0, which doesn't allow as 
+	  (TT "Algorithm => 1", " -- An older version of algorithm 0, which doesn't allow as 
 	       much experimentation, but can sometimes be marginally faster."),
-	  ("2", " -- Compute syzygies on the minimal generators of each 
+	  (TT "Algorithm => 2", " -- Compute syzygies on the minimal generators of each 
 	       matrix in the resolution.  Over quotient rings, preferred."),
-	  ("3", " -- Same as algorithm 2, but compute those Hilbert functions 
+	  (TT "Algorithm => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
 	       which allow removal of s-pairs (a la Robbiano, et al.).  
 	       Sometimes this improvement can be very dramatic.")
 	  },
      "All algorithms use induced monomial orders (Schreyer orders), since 
      this makes an enormous improvement to the efficiency of the algorithm."
+     }
+
+document { quote SortStrategy,
+     TT "SortStrategy", " -- an keyword for an optional argument which 
+     specifies the strategy to be used for sorting S-pairs.",
+     PARA,
+     MENU {
+	  TO (resolution => SortStrategy),
+	  }
      }
 
 document { resolution => SortStrategy,

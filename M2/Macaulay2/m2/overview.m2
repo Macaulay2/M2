@@ -610,7 +610,15 @@ document { "Weyl algebras",
      variable.  The evident commutation relation takes the form 
      ", TT "dx*x == x*dx + 1", ".",
      PARA,
-     "The code for creating these algebras is under development."
+     "We can give any names we like to the variables in a Weyl algebra, provided
+     we specify the correspondence between the variables and the derivatives, which
+     we do with the ", TO "WeylAlgebra", " option, as follows.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,dx,t,WeylAlgebra => {x=>dx}]",
+	  "dx*x",
+	  "dx*x^5"
+	  }
      }
 
 document { "associative algebras",

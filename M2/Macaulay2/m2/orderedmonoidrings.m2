@@ -340,14 +340,32 @@ Ring OrderedMonoid := (			  -- no memoize
 	  )
      )
 
+document { (quote " ",Ring, OrderedMonoid),
+     TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
+     ", TT "M", ".",
+     SEEALSO {"Ring", "OrderedMonoid"}
+     }
+
+document { quote WeylAlgebra,
+     TT "WeylAlgebra", " -- an option used when creating a polynomial ring
+     to specify that a Weyl algebra is to be produced.",
+     PARA,
+     "A Weyl algebra is an algebra in which some of the variables behave
+     as derivatives with respect to the other variables.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}]",
+     "The list ", TT "{x=>dx, y=>dy}", " indicates that the variable ", TT "dx", "
+     is to play the role of the derivative with respect to ", TT "x", ", and
+     that ", TT "y", " is to play the role of the derivative with respect
+     to ", TT "y", ".",
+     EXAMPLE "dx*x",
+     EXAMPLE "dx*x^10",
+     EXAMPLE "dx*y^10"
+     }
+
 samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
      )
-
-document { (quote " ", Ring, OrderedMonoid),
-     TT "R M", " -- makes a monoid ring from a ring and a monoid.",
-     SEEALSO {"Ring", "OrderedMonoid"}
-     }
 
 Ring Array := (R,variables) -> use R monoid variables
 

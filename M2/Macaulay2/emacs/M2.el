@@ -12,20 +12,25 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
   "local key map for Macaulay 2 command interpreter buffers")
 (define-key M2-map [ f2 ] 'M2-position-point)
 
+(defun M2-comint-run (program &rest args)
+  "Run PROGRAM in a comint buffer with ARGS and switch to it."
+  (let ((name (file-name-nondirectory program)))
+    (switch-to-buffer (apply 'make-comint (append (list name program nil) args)))
+    (run-hooks (intern-soft (concat "comint-" name "-hook")))))
+
 (defun M2()
   "Run Macaulay 2 in a buffer."
   (interactive)
-  (comint-run "M2")
+  (M2-comint-run "M2" "-tty")
   )
+
 (defvar M2-usual-jog 30 
   "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp
   (concat "^"
 	  "[ \t]*"
 	  "\\("
-	  "i[0-9]+ [:=] "
-	  "\\|"
-	  "o[0-9]+ [:=] "
+	  "[io][0-9]+ [:=] "
 	  "\\)"
 	  "?"
 	  )

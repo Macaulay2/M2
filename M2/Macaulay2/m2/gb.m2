@@ -278,7 +278,7 @@ document { quote gb,
      "Optional arguments and flags:",
      MENU {
 	  (TO (gb => DegreeLimit), "   -- compute only up to this degree"),
-	  (TO (gb => BasisElementLimit), "   -- stop when this number of minimal generators is obtained"),
+	  (TO "BasisElementLimit", "   -- stop when this number of minimal generators is obtained"),
 	  (TO (gb => SyzygyLimit), "   -- stop when this number of syzygies is obtained"),
 	  (TO (gb => PairLimit), " -- stop when this number of pairs is handled"),
 	  (TO (gb => CodimensionLimit), "    -- stop when this codimension is reached"),
@@ -295,12 +295,25 @@ document { quote gb,
 	  },
      SEEALSO "GroebnerBasis"
      }
-document { gb => StopBeforeComputation,
-     TT "StopBeforeComputation", " -- keyword for an optional argument used with
-     ", TO "gb", ".",
+
+document { quote StopBeforeComputation,
+     TT "StopBeforeComputation", " -- an option used certain functions to cause
+     the computation to be initialized but not begun.",
      PARA,
-     "Tells whether to start the computation, with the default value
-     being ", TT "true", ".  This can be useful when you want to obtain
+     MENU {
+	  TO (gb => StopBeforeComputation),
+	  TO (pushForward => StopBeforeComputation),
+	  TO (pushForward1 => StopBeforeComputation),
+	  TO (resolution => StopBeforeComputation),
+	  TO (syz => StopBeforeComputation),
+	  }
+     }
+
+document { gb => StopBeforeComputation,
+     TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
+     PARA,
+     "Tells whether not to start the computation, with the default value
+     being ", TT "false", ".  This can be useful when you want to obtain
      the partially computed Groebner basis contained in an interrupted
      computation."
      }
@@ -332,9 +345,9 @@ document { gb => DegreeLimit,
 
 document { quote BasisElementLimit,
      TT "BasisElementLimit", " -- keyword for an optional argument used with
-     ", TO "gb", ", which can be used to specify that the computation should
-     stop after a certain number of Groebner basis elements have been 
-     discovered.",
+     ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
+     and ", TO "syz", ", which can be used to specify that the computation should
+     stop after a certain number of Groebner basis elements have been discovered.",
      EXAMPLE "R = ZZ/101[x,y,z,w]",
      EXAMPLE "I = ideal(x*y-z^2,y^2-w^2,w^4)",
      EXAMPLE "gb(I,BasisElementLimit => 2)",
@@ -396,8 +409,25 @@ document { gb => PairLimit,
      }
 
 document { quote CodimensionLimit,
-     TT "CodimensionLimit", " -- keyword for an optional argument used with
-     ", TO "gb", ", which specifies that the computation should stop when
+     TT "CodimensionLimit => n", " -- keyword for an optional argument used with
+     certain functions which specifies that the computation should stop when
+     the codimension of the zero set of the ideal (or submodule) generated
+     by the leading terms of the Groebner basis elements found so far reaches 
+     a certain limit.",
+     PARA,
+     "This option has not been implemented yet.",
+     PARA,
+     "Eventually the codimension of the ideal of leading terms is the
+     codimension of the original ideal.",
+     MENU {
+	  TO (gb => CodimensionLimit),
+	  TO (syz => CodimensionLimit),
+	  }
+     }
+
+document { gb => CodimensionLimit,
+     TT "CodimensionLimit => n", " -- keyword for an optional argument used with
+     ", TO "gb", " which specifies that the computation should stop when
      the codimension of the zero set of the ideal (or submodule) generated
      by the leading terms of the Groebner basis elements found so far reaches 
      a certain limit.",
@@ -407,6 +437,21 @@ document { quote CodimensionLimit,
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal."
      }
+
+document { quote StopWithMinimalGenerators,
+     TT "StopWithMinimalGenerators", " -- an option used with certain
+     functions to specify that the computation should stop as soon as a
+     complete list of minimal generators for the submodule or ideal has been
+     determined.",
+     PARA,
+     MENU {
+	  TO (gb => StopWithMinimalGenerators),
+	  TO (pushForward => StopWithMinimalGenerators),
+	  TO (pushForward1 => StopWithMinimalGenerators),
+	  TO (syz => StopWithMinimalGenerators),
+	  }
+     }
+
 document { gb => StopWithMinimalGenerators,
      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
      with ", TO "gb", ", which, if the value provided is ", TT "true", "
@@ -422,6 +467,7 @@ document { gb => StopWithMinimalGenerators,
      "This option is for internal use only.  Use ", TO "mingens", "
      instead."
      }
+
 document { quote Strategy,
      TT "Strategy => v", " -- an optional argument used with various routines 
      to suggest a strategy for efficient computation.",
@@ -474,13 +520,21 @@ document { quote Syzygies,
      }
 
 document { quote ChangeMatrix,
-     TT "ChangeMatrix => p", " -- optional argument for ", TO "forceGB", "
-     which specifies that the change of basis matrix is p.",
-     BR,NOINDENT,
-     TT "ChangeMatrix => true", " -- optional argument for ", TO "gb", "
-     which specifies whether to compute the change of basis matrix."
+     TT "ChangeMatrix", " -- a keyword for optional arguments to certain functions
+     which concern a change of basis matrix.",
+     PARA,
+     MENU {
+	  TO (forceGB => ChangeMatrix),
+	  TO (gb => ChangeMatrix),
+	  TO (syz => ChangeMatrix),
+     	  }
      }
 
+document { gb => ChangeMatrix,
+     TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
+     specifies whether to compute the change of basis matrix."
+     }
+     
 document { quote SyzygyRows,
      TT "SyzygyRows", " -- keyword for an optional argument used with
      ", TO "gb", " and ", TO "syz", ", which specifies how many rows of 
@@ -565,10 +619,15 @@ document { quote forceGB,
      MENU {
 	  TO "MinimalMatrix",
 	  TO "SyzygyMatrix",
-	  TO "ChangeMatrix"
+	  TO (forceGB => ChangeMatrix)
 	  },
      "We should probably rename this function or incorporate it into
      ", TO "gb", " somehow."
+     }
+
+document { forceGB => ChangeMatrix,
+     TT "ChangeMatrix => p", " -- an optional argument for ", TO "forceGB", " which
+     which specifies that the change of basis matrix is ", TT "p", "."
      }
 
 document { quote MinimalMatrix,

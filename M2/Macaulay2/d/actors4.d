@@ -714,7 +714,12 @@ tostringfun(e:Expr):Expr := (
 	  then q.symbol.word.name
 	  else internalName(q.symbol.word.name)
 	  )
-     is f:file do Expr("--file "+f.filename+"--")
+     is f:file do Expr(
+	  if f == stdin then "stdin"
+	  else if f == stdout then "stdout"
+	  else if f == stderr then "stderr"
+	  else "--file "+f.filename+"--"
+	  )
      is b:Boolean do Expr(if b.v then "true" else "false")
      is b:Nothing do Expr("null")
      is f:Database do Expr("--database "+f.filename+"--")

@@ -48,12 +48,28 @@ document { quote Ext,
      EXAMPLE "E = Ext(N,N)",
      EXAMPLE "rank source basis( E.adjust {-3,-2}, E)",
      EXAMPLE "rank source basis( {-3}, Ext^2(N,N) )",
-     SEEALSO{"ScriptedFunctor"}
+     SEEALSO{"ScriptedFunctor", "adjust"}
+     }
+
+document { quote adjust,
+     TT "adjust", " -- a symbol used as a key under which to store a degree
+     adjustment function used by ", TO "Ext", ".",
+     PARA,
+     "This use of this symbol will eventually not be needed."
      }
 
 document { quote dd,
-     TT "C.dd", " -- provides the differential map associated with a
-     chain complex C.",
+     TT "dd", " -- a symbol used as a key in a chain complex, under which
+     are stored the differentials.",
+     PARA,
+     "The differentials are stored as the members in a chain complex
+     map of degree ", TT "-1", ".  The map ", TT "C.dd_i", " is the
+     one whose source is the module ", TT "C_i", ", and it is arranged to
+     be zero if no map has been stored in that spot.",
+     EXAMPLE "R = ZZ/101[a,b];",
+     EXAMPLE "C = resolution cokernel vars R",
+     EXAMPLE "C.dd",
+     EXAMPLE "C.dd_2",
      SEEALSO "ChainComplex"
      }
 	  

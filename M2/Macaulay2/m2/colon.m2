@@ -552,6 +552,25 @@ saturate(Module) := (M,options) -> saturate(M,ideal vars ring M, options)
 saturate(Vector) := (v,options) -> saturate(submodule v, options)
 
 document { quote MinimalGenerators,
+     TT "MinimalGenerators => true", " -- an option for certain functions
+     which specifies whether to compute minimal generators for the result.",
+     PARA,
+     MENU {
+	  TO (quotient => MinimalGenerators),
+	  TO (saturate => MinimalGenerators),
+	  },
+     PARA,
+     "The default value is ", TT "true", "."
+     }
+
+document { quotient => MinimalGenerators,
+     TT "MinimalGenerators => true", " -- an option for ", TO "quotient", "
+     which specifies whether to compute minimal generators for the result.",
+     PARA,
+     "The default value is ", TT "true", "."
+     }
+
+document { saturate => MinimalGenerators,
      TT "MinimalGenerators => true", " -- an option for ", TO "saturate", "
      which specifies whether to compute minimal generators for the result.",
      PARA,

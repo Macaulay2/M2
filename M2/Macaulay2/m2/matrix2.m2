@@ -81,12 +81,35 @@ syz Matrix := (f,options) -> (
      else mingens image syz gb (f, options, Syzygies=>true)
      )
 
+document { syz => StopWithMinimalGenerators,
+     TT "StopWithMinimalGenerators => true", " -- an optional argument used 
+     with ", TO "syz", " that specifies that the computation should stop as soon as a
+     complete list of minimal generators for the submodule or ideal has been
+     determined.",
+     PARA,
+     "The value provided is simply passed on to ", TO "gb", ": see 
+     ", TO (gb => StopWithMinimalGenerators), " for details."
+     }
+
 document { syz => Strategy,
      TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The value of the option is simply passed to ", TO "gb", ", so see the
      documentation there for details."
+     }
+
+document { syz => CodimensionLimit,
+     TT "CodimensionLimit => n", " -- keyword for an optional argument used with
+     ", TO "syz", " which specifies that the computation should stop when
+     the codimension of the zero set of the ideal (or submodule) generated
+     by the leading terms of the Groebner basis elements found so far reaches 
+     a certain limit.",
+     PARA,
+     "This option has not been implemented yet.",
+     PARA,
+     "Eventually the codimension of the ideal of leading terms is the
+     codimension of the original ideal.",
      }
 
 document { quote syz,
@@ -98,8 +121,21 @@ document { quote syz,
      calculation, or if the computation was not continued to a high enough degree.",
      PARA,
      "This function takes the same optional arguments as ", TT "gb", ".",
-     PARA,
      SEEALSO "GroebnerBasis"
+     }
+
+document { syz => StopBeforeComputation,
+     TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
+     PARA,
+     "Tells whether not to start the computation, with the default value
+     being ", TT "false", ".  This can be useful when you want to obtain
+     the partially computed Groebner basis contained in an interrupted
+     computation."
+     }
+
+document { syz => ChangeMatrix,
+     TT "ChangeMatrix => true", " -- an optional argument for ", TO "syz", " which
+     specifies whether to compute the change of basis matrix."
      }
 
 modulo = method()

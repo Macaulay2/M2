@@ -1,4 +1,4 @@
--- Tutorial:Homological Algebra 2
+-- Homological Algebra 2
 --
 -- \font\xmplbx = cmbx10 scaled \magstephalf
 -- \font\xmplbxti = cmbxti10 scaled \magstephalf

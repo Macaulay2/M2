@@ -1,4 +1,4 @@
--- Tutorial:Fano varieties
+-- Fano varieties
 
 -- \def\P{\bf P}
 -- Given a variety $X$ in projective

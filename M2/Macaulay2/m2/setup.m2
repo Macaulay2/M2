@@ -158,7 +158,7 @@ userSymbols = type -> (			  -- last symbol introduced
 	       and instance(value symb,type)
 	       )
 	  );
-     w := select(tab#"a" .. tab#"Y", 
+     w := select(tab#"a" .. tab#"Z", 
 	  symb -> (
 	       value symb =!= symb
 	       and instance(value symb,type)
@@ -235,7 +235,7 @@ document { quote Options,
      SEEALSO "method"
      }
 
-if phase===1 or phase===2 or phase===4 then exportDocumentation()
+-- if phase===1 or phase===2 or phase===4 then exportDocumentation()
 
 -- the last function restarted
 addStartFunction(

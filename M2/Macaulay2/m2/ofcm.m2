@@ -118,8 +118,15 @@ document { quote GeneralOrderedMonoid,
 
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
-GeneralOrderedMonoid _ ZZ := (M,i) -> M.generators#i
-GeneralOrderedMonoid _ List := (M,v) -> (
+
+Monoid _ ZZ := (M,i) -> M.generators#i
+document { (quote _, Monoid,ZZ),
+     TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
+     PARA,
+     SEEALSO { "Monoid", "_" }
+     }
+
+Monoid _ List := (M,v) -> (
      if #v === 0 then 1_M
      else product(take(M.generators,#v),v,(x,i)->x^i)
      )

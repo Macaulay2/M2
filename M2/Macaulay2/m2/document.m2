@@ -11,6 +11,8 @@ erase quote exit
 exit = exit1
 protect quote exit
 
+erase quote [
+
 between = (m,v) -> mingle(v,#v-1:m)
 
 -----------------------------------------------------------------------------
@@ -42,13 +44,15 @@ if phase === 1 then addStartFunction(
 
 if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
 
+Documentation = new MutableHashTable
+
 GlobalAssignHook Function := (X,x) -> if not Documentation#?x then Documentation#x = X
+
+
 
 --GlobalReleaseHook Function := (F,f) -> (
 --     stderr << "warning: " << string F << " redefined" << endl;
 --     )
-
-Documentation = new MutableHashTable
 
 DocumentableValueType := new MutableHashTable
 DocumentableValueType#HashTable = true
@@ -291,7 +295,7 @@ TEST = (e) -> if phase === 2 then (
 
 extractExamples := x -> (
      if class x === EXAMPLE
-     then {x#0}
+     then toList x
      else if basictype x === BasicList or basictype x === Sequence
      then join apply(toSequence x, extractExamples)
      else {})
@@ -336,22 +340,25 @@ makeBaseFilename := () -> (
 -- exampleBox := x -> PRE x
 exampleBox := x -> TABLE {{CODE x}}
 
+processExample := x -> (
+     exampleCounter = exampleCounter + 1;
+     exampleOutputFile << x << endl;
+     if exampleResults#?exampleCounter
+     then exampleBox exampleResults#exampleCounter
+     else (
+	  if #exampleResults === exampleCounter then (
+	       stderr << "warning : input file " << nodeBaseFilename 
+	       << ".out terminates prematurely" << endl;
+	       );
+	  exampleBox concatenate("in = ",x)
+	  ))
+
 processExamplesLoop := s -> (
-     if class s === EXAMPLE then (
-	  exampleCounter = exampleCounter + 1;
-	  exampleOutputFile << s#0 << endl;
-	  if exampleResults#?exampleCounter
-	  then exampleBox exampleResults#exampleCounter
-	  else (
-	       if #exampleResults === exampleCounter then (
-		    stderr << "warning : input file " << nodeBaseFilename 
-		    << ".out terminates prematurely" << endl;
-		    );
-	       exampleBox concatenate("in = ",s#0)
-	       ))
+     if class s === EXAMPLE then SEQ apply(toList s,processExample)
      else if class s === Sequence or basictype s === List
      then apply(s,processExamplesLoop)
      else s)
+
 processExamples := (docBody) -> (
      examples := extractExamples docBody;
      if phase > 1 and #examples > 0 then (
@@ -409,27 +416,28 @@ document = z -> (
      storeDoc docBody;
      )
 
-exportDocumentation = () -> (
-     scan(keys Documentation, key -> (
-	       if class key === Sequence
-	       and (#key === 3 or #key === 4)
-	       and class Documentation#key === List
-	       and #(Documentation#key) > 2
-	       then (
-		    nodeName = name key;
-		    nodeBaseFilename = makeBaseFilename();
-		    z := Documentation#key;
-		    docBody := drop(z,2);
-		    docBody = join({ concatenate(formatDocumentTag key, " --> ", name z#0), PARA}, docBody);
-		    docBody = repl docBody;
-		    docBody = processExamples docBody;
-		    storeDoc docBody;
-		    Documentation#key = nodeName;
-		    Documentation#(z#1) = key;
-		    )
-	       )
-	  )
-     )
+--exportDocumentation = () -> (
+--     scan(keys Documentation, key -> (
+--	       if class key === Sequence
+--	       and (#key === 3 or #key === 4)
+--	       and class Documentation#key === List
+--	       and #(Documentation#key) > 2
+--	       then (
+--		    nodeName = name key;
+--		    << "export " << nodeName << endl;
+--		    nodeBaseFilename = makeBaseFilename();
+--		    z := Documentation#key;
+--		    docBody := drop(z,2);
+--		    docBody = join({ concatenate(formatDocumentTag key, " --> ", name z#0), PARA}, docBody);
+--		    docBody = repl docBody;
+--		    docBody = processExamples docBody;
+--		    storeDoc docBody;
+--		    Documentation#key = nodeName;
+--		    Documentation#(z#1) = key;
+--		    )
+--	       )
+--	  )
+--     )
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
@@ -489,8 +497,15 @@ document { quote help,
      TT "help methods X", " -- displays help messages about the methods usable
      with things of type ", TT "X", ".",
      BR, NOINDENT,
+     TT "help methods res", " -- displays help messages about the methods 
+     usable with the function ", TT "res", ".",
+     BR, NOINDENT,
      TT "help methods quote **", " -- displays help messages about the methods 
      usable with the operator ", TT "**", ".",
+     BR, NOINDENT,
+     TT "help methods (res, X)", " -- displays help messages about the 
+     methods usable with the function ", TT "res", " and a thing of
+     class ", TT "X", ".",
      BR, NOINDENT,
      TT "help methods (quote **, X)", " -- displays help messages about the 
      methods usable with the operator ", TT "**", " and a thing of
@@ -560,7 +575,7 @@ document { quote Documentation,
      pointers to documentation of functions, symbols, and methods.",
      PARA,
      "This hash table is used by the routines that display 
-     documentation, and its format may change.",
+     documentation, is intended for internal use only, and its format may change.",
      PARA,
      "The documentation is stored both in a hash table in memory, and in a 
      database file.  Combined, the two look like a single hash table, but
@@ -577,7 +592,7 @@ document { quote Documentation,
      when printing the thing), and the search for 
      documentation continues with the symbol.",
      PARA,
-     "The key may be a string.  If the value is a database, then the
+     "The key may be a string: if the value is a database, then the
      documentation is to be found there.  If the value is a list of
      type ", TO "SEQ", " then it's the documentation itself.",
      PARA,
@@ -587,7 +602,18 @@ document { quote Documentation,
      defined.  In this case the value is the list presented at that time,
      i.e., a list of the form ", TT "{Z, (x,y) -> ... , documentation ... }",
      ".",
+     PARA,
+     "The function ", TO "getDocumentationTag", " is used to chase through this
+     hash table to the final key.",
      SEEALSO ":="
+     }
+
+document { quote getDocumentationTag,
+     TT "getDocumentationTag s", " -- chase through the pointers in 
+     the hash table ", TO "Documentation", " and return the final key, which
+     is a string which can be used as a key into the documentation database.",
+     PARA,
+     "This function is intended for internal use only."
      }
 
 TEST ///
