@@ -94,7 +94,7 @@ ttLiteralTable = new MutableHashTable
 scan(characters ascii(0 .. 255), 
      c -> ttLiteralTable#c = concatenate(///{\char///, string first ascii c, "}"))
 scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~#", 
+scan(characters "\\{}$&#^_%~", 
      c -> ttLiteralTable#c = concatenate("{\\char", string first ascii c, "}"))
 scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
 ttLiteralTable#"\n" = "\n"
@@ -104,11 +104,12 @@ ttLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 ttLiteral = s -> concatenate apply(characters s, c -> ttLiteralTable#c)
 ---------------
 cmrLiteralTable = copy ttLiteralTable
-cmrLiteralTable#"<" = "$<$"
-cmrLiteralTable#">" = "$>$"
-cmrLiteralTable#"|" = "$|$"
-cmrLiteralTable#"{" = "$\\{$"
-cmrLiteralTable#"}" = "$\\}$"
+cmrLiteralTable#"\\" = "{\\tt\\char`\\\\}"
+cmrLiteralTable# "<" = "{\\tt\\char`\\<}"
+cmrLiteralTable# ">" = "{\\tt\\char`\\>}"
+cmrLiteralTable# "|" = "{\\tt\\char`\\|}"
+cmrLiteralTable# "{" = "{\\tt\\char`\\{}"
+cmrLiteralTable# "}" = "{\\tt\\char`\\}}"
 cmrLiteral = s -> apply(characters s, c -> cmrLiteralTable#c)
 ---------------
 crossReference := (key,text) -> (
@@ -129,19 +130,26 @@ booktex = method(SingleArgumentDispatch=>true)
 booktex TO  := x -> crossReference(x#0, concatenate x)
 booktex TOMETHOD := x -> crossReference(x, name x)
 
-booktex MENU := x -> (
-     ///
+menuLevel := 0
 
-\begingroup\parindent=40pt
+booktex MENU := x -> (
+     apply(x, x -> (
+	       (menuLevel = menuLevel + 1;),
+	       ///
 
 ///,
-     apply(x, x -> (
-	       ///\item{$\bullet$}///,
+	       apply(menuLevel-1, i -> ///\indent///),
+	       ///\hangindent///, string menuLevel, ///\parindent 
+		  \textindent{$\bullet$}///,
 	       booktex x,
-	       "\n"
+	       (menuLevel = menuLevel - 1;),
+	       ///
+
+///	       
 	       )
-	  ),
-     "\\endgroup\n\n")
+	  )
+     )
+
 booktex HREF := s -> (
      if hypertex then concatenate(
 	  "\\special{html:<A href=\"",
@@ -152,6 +160,7 @@ booktex HREF := s -> (
 	  )
      else booktex {s#1, " (the URL is ", TT s#0, ")"}
      )
+
 booktex TEX := identity
 (class NOINDENT)#booktex = (x) -> ///
 \noindent\ignorespaces

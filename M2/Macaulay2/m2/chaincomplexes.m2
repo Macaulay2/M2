@@ -119,6 +119,8 @@ ChainComplex _ ZZ := { ChainComplex,
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
 
+rank ChainComplex := C -> sum(spots C, i -> rank C_i)
+
 length ChainComplex := { ChainComplex,
      (C) -> (
 	  complete C;

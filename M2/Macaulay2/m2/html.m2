@@ -41,11 +41,12 @@ ttLiteral := s -> concatenate apply(characters s, c -> ttLiteralTable#c)
 cmrLiteralTable#"\n" = "\n"
 cmrLiteralTable#"\r" = "\r"
 cmrLiteralTable#"\t" = "\t"
-cmrLiteralTable#"<" = "$<$"
-cmrLiteralTable#">" = "$>$"
-cmrLiteralTable#"|" = "$|$"
-cmrLiteralTable#"{" = "$\\{$"
-cmrLiteralTable#"}" = "$\\}$"
+cmrLiteralTable#"\\" = "{\\tt\\char`\\\\}"
+cmrLiteralTable# "<" = "{\\tt\\char`\\<}"
+cmrLiteralTable# ">" = "{\\tt\\char`\\>}"
+cmrLiteralTable# "|" = "{\\tt\\char`\\|}"
+cmrLiteralTable# "{" = "{\\tt\\char`\\{}"
+cmrLiteralTable# "}" = "{\\tt\\char`\\}}"
 cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 -----------------------------------------------------------------------------
 

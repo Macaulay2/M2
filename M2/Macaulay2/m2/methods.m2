@@ -367,7 +367,7 @@ scan({
 	  leadComponent, expand, degreesRing, degrees, annihilator,
 	  chainComplex, assign, cohomology, homology, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
-	  frac, betti, det, ring, presentation, use, degreesMonoid, submatrix,
+	  frac, betti, det, ring, presentation, quote use, degreesMonoid, submatrix,
 	  truncate, fraction
 	  },
      n -> (
@@ -376,6 +376,8 @@ scan({
 	  n <- f;
 	  )
      )
+
+use Thing := x -> null
 
 radical = method( Options=>{
 	  Unmixed=>false,

@@ -528,7 +528,7 @@ document { "fraction fields",
      with the function ", TO "frac", ".",
      EXAMPLE "frac ZZ",
      EXAMPLE "R = ZZ/101[x,y]/(x^3 + 1 + y^3)",
-     EXAMPLE "F = frac R",
+     EXAMPLE "frac R",
      "At the moment, it is also required that the coefficient ring be finite.",
      PARA,
      "After defining such a ring, fractions in it can be obtained by writing them
@@ -538,7 +538,7 @@ document { "fraction fields",
      EXAMPLE "x/1",
      "Alternatively, after applying the function ", TO "use", " the symbols you used
      become associated with the corresponding elements of the fraction field.",
-     EXAMPLE "use F",
+     EXAMPLE "use frac R",
      EXAMPLE "x",
      "Fractions are reduced to the extent possible.  This is done by computing the
      syzygies between the numerator and denominator, and picking one of low degree.",

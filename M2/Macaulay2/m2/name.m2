@@ -5,8 +5,11 @@
 Function \ Sequence := Function \ List := (f,v) -> apply(v,f)
 Sequence / Function := List / Function := (v,f) -> apply(v,f)
 
+use = identity				  -- just temporary, until methods.m2
+
 GlobalAssignHook Type := (X,x) -> (
-     if not x#?(quote name) then x.name = X
+     if not x#?(quote name) then x.name = X;
+     use x;
      )
 
 GlobalReleaseHook Type := (X,x) -> (

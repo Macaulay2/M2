@@ -17,12 +17,18 @@ assert( s1^2 == 0 )
 assert( s2^2 == 0 )
 assert( s2*s1 + s1*s2 == 0 )
 
-S = ZZ/101[a,b,X1,X2]/(a^3,b^4)
+S = ZZ/101[a,b,X1,X2,Degrees=>{1,1,2,2}]/(a^3,b^4)
 
 d = substitute(sum E.dd, S)
 S1 = substitute(sum s1, S)
 S2 = substitute(sum s2, S)
 
-D = d - X1 * S1 - X2 * S2
+D = transpose( d - X1 * S1 - X2 * S2 )
+
+D = substitute(D, {a=>0, b=>0})
+
+n = rank E
+
+D = map(S^n, S^n, entries D, Degree => 2)
 
 -- res homology(D,D)

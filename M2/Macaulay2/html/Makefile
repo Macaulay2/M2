@@ -3,7 +3,7 @@ include $(TOPDIR)/Makeconf
 
 
 all :: index.html
-index.html : html.m2
+index.html : html.m2 ../cache/Macaulay2.made
 	rm -f ./*.html
 	../bin/M2 html.m2 '-eexit(0)'
 view :

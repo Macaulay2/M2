@@ -180,7 +180,9 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
 		    ));
 	       );
 	  );
-     if not R.?name and all(predecessors R, A -> not A.?name) then use S;
+     -- we can't do 'use S' here, because some subroutines (such as 'radical') operate
+     -- by creating a quotient ring of a ring the user has made!
+     -- if not R.?name and all(predecessors R, A -> not A.?name) then use S;
      S)
 
 Ring / ZZ := Ring / RingElement := Ring / List := Ring / Sequence := (R,f) -> R / ideal f
