@@ -681,7 +681,11 @@ char const *system_strerror() {
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
 #endif
 #if !defined(__MWERKS__) && !defined(__CYGWIN__)
+#if 0
      errno > 0 && errno < sys_nerr ? sys_errlist[errno] :
+#else
+     errno > 0 ? strerror(errno) :
+#endif
 #endif
      "no system error (scclib.c)";
 #ifndef NO_HERROR
