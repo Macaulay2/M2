@@ -105,6 +105,7 @@ COMMANDS = \
 	x_monoid \
 	x_relem \
 	M2-factory \
+	x_factor \
 	x_free \
 	x_lapack \
 	x_mat \

@@ -13,12 +13,7 @@
 #include "ZZ.hpp"
 #include "frac.hpp"
 
-#warning "most of this file commented out temporarily"
-#if 0
-
-#define divides ignore_this_symbol /* bits/stl_function.h contains a generic one, sigh, gcc 3.0 */
-#include "interp.hpp"
-#undef divides
+#include "relem.hpp"
 
 // debugging display routines to be called from gdb
 // void showvar(Variable &t) { cout << t << endl; }
@@ -26,7 +21,7 @@
 // void showcfl(CFList &t) { cout << t << endl; }
 // void showcffl(CFFList &t) { cout << t << endl; }
 
-static RingElement convert(const Ring *R, CanonicalForm h) {
+const RingElement * convert(const Ring *R, CanonicalForm h) {
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (R->charac() == 0) {
@@ -50,34 +45,29 @@ static RingElement convert(const Ring *R, CanonicalForm h) {
 		    mpz_add_ui(x,x,(unsigned)v[i]);
 	       }
 	       if (sign == -1) mpz_neg(x,x); // x = -x;
-	       RingElement ret(R,x);
+	       ring_elem ret = R->from_int(x);
 	       mpz_clear(x);
-	       return ret;
+	       return RingElement::make_raw(R, ret);
 	  }
 	  else {
-	       return RingElement(R,h.intval());
+	    return RingElement::make_raw(R, R->from_int(h.intval()));
 	  }
      }
-     RingElement q(R,0);
+     ring_elem result = R->from_int(0);
      for (int j = 0; j <= h.degree(); j++) {
-	  q = q + (
-		   convert(R,
-			   h[j]		// coefficient
-			   )
-		   * 
-		   RingElement(R,
-			       (n-1)-(h.level()-1), // which variable, REVERSE!
-			       j		    // exponent
-			       )
-		   );
+       const RingElement *r = convert(R, h[j]);
+       ring_elem r1 = r->get_value();
+       ring_elem v = R->var((n-1) - (h.level()-1), j);
+       r1 = R->mult(r1,v);
+       R->add_to(result,r1);
      }
-     return q;
+     return RingElement::make_raw(R,result);
 }
 
 static int base_set = 0;
 static CanonicalForm base;
 
-static CanonicalForm convert(const mpz_ptr p) {
+CanonicalForm convert(const mpz_ptr p) {
      int size = p -> _mp_size;
      int sign = size < 0 ? -1 : 1;
      if (size < 0) size = -size;
@@ -101,26 +91,25 @@ static CanonicalForm convert(const mpz_ptr p) {
      m = m * sign;
      return m;
 }
-
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 
-static CanonicalForm convert(const RingElement &g) {
+CanonicalForm convert(const RingElement &g) {
      const Ring *R = g.get_ring();
      const int n = R->n_vars();
      const Ring *F = R->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
-     const Z *Z0 = F->cast_to_Z();
+     const ZZ *Z0 = F->cast_to_ZZ();
      const FractionField *Q = (
 			       NULL != F->cast_to_FractionField()
 			       &&
-			       NULL != F->cast_to_FractionField()->get_ring()->cast_to_Z()
+			       NULL != F->cast_to_FractionField()->get_ring()->cast_to_ZZ()
 			       ?
 			       F->cast_to_FractionField()
 			       :
 			       (FractionField*) NULL
 			       );
      if (Zn == NULL && Z0 == NULL && Q == NULL) {
-	  gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
+	  ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
 	  return 0;
      }
      const Monoid *M = R->Nmonoms();
@@ -160,6 +149,18 @@ static CanonicalForm convert(const RingElement &g) {
      if (Q != NULL) Off( SW_RATIONAL );
      return f;
 }
+
+const RingElementOrNull *rawGCD(const RingElement *f, const RingElement *g)
+{
+  CanonicalForm p = convert(*f);
+  CanonicalForm q = convert(*g);
+  //     cerr << "p = " << p << endl
+  //          << "q = " << q << endl;
+  CanonicalForm h = gcd(p,q);
+  return convert(f->get_ring(),h);
+}
+
+#if 0
 
 static void gcd_ring_elem(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
@@ -303,7 +304,6 @@ void i_factor_cmds() {
 #else
 
 #endif
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
