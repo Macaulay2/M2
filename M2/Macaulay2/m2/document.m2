@@ -262,12 +262,6 @@ extractExamples := (docBody) -> (
      if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
      docBody)
 
-separateRegexp = method()
-separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
-separateRegexp(String,ZZ,String) := (re,n,s) -> (
-     m := matches(re,s);
-     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
-
 M2outputRE := "(\n\n)i+[1-9][0-9]* : "
 M2outputREindex := 1
 separateM2output = method()

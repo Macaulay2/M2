@@ -1,5 +1,21 @@
 --		Copyright 1996-2000 by Daniel R. Grayson
 
+-- strings
+
+separateRegexp = method()
+separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
+separateRegexp(String,ZZ,String) := (re,n,s) -> (
+     m := matches(re,s);
+     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
+
+selectRegexp = method()
+selectRegexp(String,String) := (re,s) -> selectRegexp(re,0,s)
+selectRegexp(String,ZZ,String) := (re,n,s) -> (
+     m := matches(re,s);
+     if m#?n then substring(m#n#0,m#n#1,s))
+
+-- nets
+
 Net.AfterPrint = identity
 
 toString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
