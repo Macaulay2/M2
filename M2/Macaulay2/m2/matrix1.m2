@@ -636,7 +636,8 @@ dual(Matrix) := Matrix => f -> (
 inverse Matrix := 
 Matrix.InverseMethod = m -> if m.cache#?-1 then m.cache#-1 else m.cache#-1 = (
      i := id_(target m);
-     if i % m != 0 then error "matrix not invertible";
+     -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't check this way
+     -- if i % m != 0 then error "matrix not invertible";
      i // m
      )
 

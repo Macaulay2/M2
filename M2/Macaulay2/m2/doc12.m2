@@ -361,8 +361,8 @@ assert( subsets({a,b,c,d},2) === {{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}} )
 assert( 
      set subsets(set {a,b,c,d},2) === 
      set apply({{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}},set) )
-assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} )
-assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} )
+assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
+assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
 "
 
 document {
@@ -390,8 +390,7 @@ document {
      }
 
 TEST ///
-     assert( class examples MutableList === List )
-     assert( # examples MutableList > 0 )
+     assert( class examples MutableList === Net )
 ///
 
 document {

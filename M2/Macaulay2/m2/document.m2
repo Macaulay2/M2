@@ -874,7 +874,7 @@ documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
      if #c > 0 then (DIV {"Functions installed in ", toString x, " :"}, smenu c))
 documentationValue(Symbol,Thing) := (s,x) -> ()
-documentationValue(Symbol,Package) := (s,pkg) -> (
+documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2 then (
      e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types
