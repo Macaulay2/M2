@@ -294,8 +294,11 @@ assembleTree Package := pkg -> (
      fkey := formatDocumentTag key;			    -- same as topNodeName
      nodes := packageNodes(pkg,topNodeName);
      linkTable = new HashTable from apply(
-	  pairs pkg#"documentation", (fkey,doc) -> fkey => if doc.?Menu then doc.Menu else {}
-	  );
+	  pairs pkg#"documentation", (fkey,doc) -> fkey => (
+	       if doc.?Menu
+	       then formatDocumentTag \ normalizeDocumentTag \ first \ select(doc.Menu, x -> class x === TO)
+	       else {}
+	       ));
      CONT = getTrees();
      buildLinks CONT;
      )
