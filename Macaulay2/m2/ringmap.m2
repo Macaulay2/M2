@@ -38,15 +38,20 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	       e -> d
 	       ));
      n := 0;
-     ultimate( A -> (
-	       r := numgens source m;
-	       if r === n 
-	       then m = vars A ** R | m
-	       else if r < n
-	       then error ("encountered values for ", toString r, " variables");
-	       n = n + numgens A;
-	       coefficientRing A),
-	  S);
+     A := S;
+     while (
+	  r := numgens source m;
+	  if r === n 
+	  then (
+	       if numgens A > 0 then m = vars A ** R | m;
+	       )
+	  else if r < n
+	  then error ("encountered values for ", toString r, " variables");
+	  n = n + numgens A;
+	  try (coefficientRing A; true) else false)
+     do (
+	  A = coefficientRing A;
+	  );
      if n != numgens source m 
      then error ("encountered values for ", toString numgens source m," variables");
      new RingMap from {
@@ -63,11 +68,10 @@ map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
 
 map(Ring,Ring) := RingMap => options -> (S,R) -> (
      A := R; v := {}; while (
-	  if A.?generators then (
-	       v = join(apply(A.generators, x -> (
-			      x = toString x;
-			      if S#?x then S#x else 0_S
-			      )), v));
+	  v = join(apply(generators A, x -> (
+			 x = toString x;
+			 if S#?x then S#x else 0_S
+			 )), v);
 	  A.?ring) do A = A.ring;
      map(S,R,matrix (S,{v})))
 
@@ -149,8 +153,8 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
 	  S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
 	       MonomialOrder => Eliminate (n1 + 1),
 	       Degrees => join(
-		    apply(C.generators, degree), {{1}}, 
-		    apply(R.generators, degree), {{1}})];
+		    apply(generators C, degree), {{1}}, 
+		    apply(generators R, degree), {{1}})];
 	  in1 := map(S,C,matrix {take (generators S, n1)});
 	  in2 := map(S,R,matrix {take (generators S, {n1 + 1, n1 + n2})});
 	  back := map(R,S,map(R^1,R^(n1 + 1),0) | vars R | 1 );

@@ -74,7 +74,10 @@ public:
   ~RingMap();
 
   const Ring *get_ring() const { return R; }
-  const ring_elem elem(int i) const { return _elem[i].bigelem; }
+  const ring_elem elem(int i) const { 
+    assert(i < nvars);
+    return _elem[i].bigelem; 
+  }
   
   ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff, 
 		      const int *vp) const;
