@@ -51,7 +51,6 @@ public:
   virtual bool is_zero(const ring_elem f) const;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const;
 
-  virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
   virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 

@@ -353,10 +353,6 @@ ring_elem Z_mod::random() const
   int exp = Random::random0(P);
   return ring_elem(exp);
 }
-bool Z_mod::is_homogeneous(const ring_elem) const
-{
-  return true;
-}
 
 void Z_mod::degree(const ring_elem, int *d) const
 {
