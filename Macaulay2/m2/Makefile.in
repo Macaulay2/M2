@@ -99,7 +99,7 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/M2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	../bin/M2 --dumpdata
+	../bin/M2 --stop --dumpdata
 endif
 
 phase1 :: ../cache/Macaulay2-made
