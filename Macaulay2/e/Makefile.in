@@ -1,6 +1,5 @@
 #ARING = true
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -302,7 +301,7 @@ clean:
 	rm -f TAGS
 
 Makefile : Makefile.in
-	cd $(TOPDIR); config.status Macaulay2/e/Makefile
+	cd ../..; config.status Macaulay2/e/Makefile
 
 # should remake these two manually once in a while -- not all systems have makedepend
 Makefile-o.depends: $(CFILES) $(CCFILES)

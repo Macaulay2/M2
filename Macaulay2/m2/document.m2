@@ -26,12 +26,22 @@ docFilename := () -> (
      progname := commandLine#0;
      if substring(progname,0,1) === "\"" then progname = substring(progname,1);
      if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
-     else concatenate(homeDirectory, "cache", pathSeparator, "Macaulay2", docExtension())
+     else (
+	  if getenv "M2HOME" === "" 
+	  then error "environment variable M2HOME not set";
+	  concatenate(getenv "M2HOME", pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension())
+	  )
      )
+
 if phase === 1 then addStartFunction( 
      () -> DocDatabase = (
-	  try openDatabase docFilename()
-	  else ( stderr << "--warning: couldn't open help file " << docFilename() << endl; new MutableHashTable)))
+	  t := docFilename();
+	  try openDatabase t
+	  else ( 
+	       stderr << "--warning: couldn't open help file " << t << endl;
+	       new MutableHashTable))
+     )
+
 if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
 Documentation = new MutableHashTable
 duplicateDocError := nodeName -> (

@@ -1,21 +1,20 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2001 by Daniel R. Grayson
 
 -- this file should be mentioned *last* in dumpseq
 
 if phase > 1 then load "docloads.m2"
 
 addStartFunction(
-     () -> path = append(path, homeDirectory | "packages" | pathSeparator)
-     )
-
-addStartFunction(
-     () -> documentationPath = (
-     	  { 
+     () -> (
+	  if getenv "M2HOME" === "" 
+	  then error "environment variable M2HOME not set";
+	  path = append(path, getenv "M2HOME" | pathSeparator | "packages" | pathSeparator);
+	  documentationPath = { 
 	       "", 
 	       "cache/doc/" , 
-	       homeDirectory | "packages/cache/doc/",
-	       homeDirectory | "m2/cache/doc/"
-	       }
+	       getenv "M2HOME" | pathSeparator | "packages/cache/doc/",
+	       getenv "M2HOME" | pathSeparator | "m2/cache/doc/"
+	       };
 	  )
      )
 

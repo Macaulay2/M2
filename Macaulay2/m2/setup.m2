@@ -65,23 +65,10 @@ pathSeparator = (
 	else "/"
 	)
 
-progname := commandLine#0
--- under Windows when run from M2.bat the quotation marks are not removed.
--- quotation marks are needed because the path may contain spaces
-if substring(progname,0,1) === "\"" then progname = substring(progname,1)
-
-path = { currentFileDirectory, "" }
-
-homeDirectory = null
-
-dir := splice(apply(separate("/",progname), i -> toSequence separate("\\", i)))
-if #dir > 1
-then (
-     homeDirectory = concatenate apply(#dir-2, i -> (dir#i,pathSeparator));
-     packagedir := concatenate(homeDirectory, "packages", pathSeparator);
-     ) else (
-     error "no way to set homeDirectory";
-     )
+path = { 
+     currentFileDirectory, 
+     ""
+     }
 
 isAbsolutePath := (
      if version#"operating system" === "MACOS"

@@ -112,7 +112,7 @@ export openPosIn(filename:string):(PosFile or errmsg) := (
 	  PosFile(f,0,Position(
 		    if isAbsolutePath(f.filename)
 		    then f.filename
-		    else getcwd() + '/' + f.filename,
+		    else getcwd() + f.filename,
 		    ushort(1),ushort(0),uchar(reloaded))))
      is s:errmsg do (PosFile or errmsg)(s)
      );

@@ -285,11 +285,17 @@ M2_string interp_dirname(M2_string s) {
 
 M2_string system_getcwd()
 {
+     /* this function now adds a terminal / to the directory name */
      char buf[700];
-     char *x = getcwd(buf,sizeof(buf));
+     char *x = getcwd(buf,sizeof(buf)-1);
 #if defined(_WIN32)
      char *p;
      for (p=x; *p; p++) if (*p == '\\') *p = '/';
+#endif
+#if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
+     strcat(buf,":");
+#else
+     strcat(buf,"/");
 #endif
      if (x != NULL) return tostring(x);
      return tostring("");

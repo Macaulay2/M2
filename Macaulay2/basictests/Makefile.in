@@ -1,5 +1,4 @@
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -17,7 +16,7 @@ $(TESTRESULTS) : ../libexec/Macaulay2
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../libexec/Macaulay2 -silent $< '-e exit 0'
+	@ env M2HOME=.. ../libexec/Macaulay2 -silent $< '-e exit 0'
 	@ touch $@
 
 clean  :	
