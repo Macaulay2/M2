@@ -266,6 +266,11 @@ rawConcatColumns = (mats) -> rawConcat toSequence mats
 rawConcatRows = (mats) -> rawDual rawConcat apply(toSequence mats,rawDual)
 rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat toSequence (raw \ row))
 
+-- computations
+
+RawComputation.name = "RawComputation"
+RawComputation.synonym = "raw computation"
+
 -- ring maps
 
 RawRingMap.name = "RawRingMap"
