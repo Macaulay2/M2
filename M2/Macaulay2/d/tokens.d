@@ -227,7 +227,6 @@ export variableCode := {v:Symbol,position:Position};
 export localMemoryReferenceCode := {
      nestingDepth:int,
      frameindex:int,
-     frameID:int,					    -- soon to be obsolete
      position:Position
      };
 export staticMemoryReferenceCode := {
@@ -305,7 +304,7 @@ export dummyFrame := Frame(self,
 
 dummySymbolFrameIndex := 0;
 globalFramesize := dummySymbolFrameIndex+1;
-export globalFrame := Frame(dummyFrame, 0, globalFramesize, 
+export globalFrame := Frame(self, 0, globalFramesize, 
      Sequence(
 	  nullE						    -- one value for dummySymbol
 	  ));
@@ -358,7 +357,7 @@ export newStaticLocalDictionary():Dictionary := (
      d);
 export emptyLocalDictionary := newStaticLocalDictionary();
 
-export newLocalFrame(d:Dictionary):Frame := Frame(dummyFrame, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
+export newLocalFrame(d:Dictionary):Frame := Frame(self, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
 export newLocalFrame(outerFrame:Frame,d:Dictionary):Frame := Frame(outerFrame, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
 export newLocalDictionaryClosure(d:Dictionary):DictionaryClosure := DictionaryClosure(newLocalFrame(d),d);
 export newStaticLocalDictionaryClosure():DictionaryClosure := (

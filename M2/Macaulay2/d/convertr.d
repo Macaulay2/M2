@@ -313,7 +313,12 @@ export convert(e:ParseTree):Code := (
 	  then Code(exprCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
 	  then Code(exprCode(parseString(wrd.name), pos))
-	  else Code(variableCode(var,pos)))
+	  else (
+	       if var.frameID == 0
+	       then Code(staticMemoryReferenceCode(var.frameindex,pos))
+	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,pos))
+	       )
+	  )
      is a:Adjacent do Code(
 	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
 	       treePosition(e)))
@@ -724,7 +729,18 @@ export eval(c:Code):Expr := (
 	  --couldtrace=false; 
 	  n.v)
      is var:variableCode do frame(var.v.frameID).values.(var.v.frameindex)
-     is r:localMemoryReferenceCode do frameWithNestingDepth(r.frameID,r.nestingDepth).values.(r.frameindex)
+     is r:localMemoryReferenceCode do (
+	  f := localFrame;
+	  nd := r.nestingDepth;
+	  if nd == 0 then nothing
+	  else if nd == 1 then f = f.outerFrame
+	  else if nd == 2 then f = f.outerFrame.outerFrame
+	  else (
+	       f = f.outerFrame.outerFrame.outerFrame;
+	       nd = nd - 3;
+	       while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
+	       );
+	  f.values.(r.frameindex))
      is r:staticMemoryReferenceCode do globalFrame.values.(r.frameindex)
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)

@@ -68,17 +68,11 @@ peek2(Dictionary,ZZ) := (s,depth) -> (
      if depth === 0 
      then net s
      else horizontalJoin(
-	  net class s,
-	  if parent s =!= Nothing 
-	  then horizontalJoin(" of ", net parent s)
-	  else "",
-	  "{",
+	  "Dictionary{",
 	  stack sort apply(
-	       apply(values s, s -> (s,value s)),
+	       apply(pairs s, (n,s) -> (n,value s)),
 	       (key,value) -> horizontalJoin splice (
-		    if precedence key < precOption
-		    then ("(",peek2(key,depth-1),")")
-		    else peek2(key,depth-1),
+		    key,
 		    " => ",
 		    if precedence value < precOption
 		    then ("(",peek2(value,depth-1),")")
