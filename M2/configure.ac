@@ -1,5 +1,3 @@
- -*- Mode: sh -*-
-
 # see also ./aclocal.m4
 
 AC_INIT(Macaulay2.LSM)
@@ -22,9 +20,9 @@ else echo "`basename $0`: make: GNU make is required" >&2
      exit 1
 fi
 
-VERSION="`cat $srcdir/version`"
-AC_SUBST(VERSION)
-AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
+PACKAGE_NAME=Macaulay2
+PACKAGE_VERSION="`cat $srcdir/version`"
+AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION",version number)
 
 NODENAME="`uname -n`"
 AC_SUBST(NODENAME)
@@ -58,19 +56,6 @@ AC_SUBST(GCC)
 AC_PROG_CXX()
 AC_PROG_YACC()
 
-# 'with' options
-
-SOCKS=no
-AC_SUBST(SOCKS)
-AC_ARG_WITH(socks,[  --with-socks		  compile and link with socks5],SOCKS="$withval")
-case "$SOCKS" in
-   no) ;;
-   yes) AC_DEFINE(SOCKS,,whether to compile and link with socks5) ;;
-   *) echo configure: error: unrecognized value --with-socks="$withval" >&2; exit 1 ;;
-esac
-
-# 'enable' options
-
 DUMPDATA=yes
 AC_SUBST(DUMPDATA)
 AC_ARG_ENABLE(dumpdata,
@@ -87,37 +72,65 @@ case "$DUMPDATA" in
    yes|old) AC_DEFINE(DUMPDATA,,whether to use dumpdata) ;;
 esac
 
-PROFILE=no
 AC_SUBST(PROFILE)
-AC_ARG_ENABLE(profile,[  --enable-profile        enable profiling (and disable stripping)],PROFILE="$enableval")
+AC_ARG_ENABLE(profile,
+    AC_HELP_STRING(--enable-profile,enable profiling (and disable stripping)),
+    PROFILE="$enableval",
+    PROFILE=no)
 
-DEBUG=no
 AC_SUBST(DEBUG)
-AC_ARG_ENABLE(debug,[  --enable-debug          enable debugging],DEBUG="$enableval")
+AC_ARG_ENABLE(debug,
+    AC_HELP_STRING(--enable-debug,enable debugging),
+    DEBUG="$enableval",
+    DEBUG=no)
 
-VERBOSE=no
 AC_SUBST(VERBOSE)
-AC_ARG_ENABLE(verbose,[  --enable-verbose        enable verbose memory allocation],VERBOSE="$enableval")
+AC_ARG_ENABLE(verbose,
+    AC_HELP_STRING(--enable-verbose,enable verbose memory allocation),
+    VERBOSE="$enableval",
+    VERBOSE=no)
 
-STATIC=no
 AC_SUBST(STATIC)
-AC_ARG_ENABLE(static,[  --enable-static         enable static linking],STATIC="$enableval")
+AC_ARG_ENABLE(static,
+    AC_HELP_STRING(--enable-static,enable static linking),
+    STATIC="$enableval",
+    STATIC=no)
 
-MEMDEBUG=no
 AC_SUBST(MEMDEBUG)
-AC_ARG_ENABLE(memdebug,[  --enable-memdebug       enable memory allocation debugging],MEMDEBUG="$enableval")
+AC_ARG_ENABLE(memdebug,
+    AC_HELP_STRING(--enable-memdebug,enable memory allocation debugging),
+    MEMDEBUG="$enableval",
+    MEMDEBUG=no)
 
-OPTIMIZE=yes
 AC_SUBST(OPTIMIZE)
-AC_ARG_ENABLE(optimize,[  --disable-optimize      disable optimization],OPTIMIZE="$enableval")
+AC_ARG_ENABLE(optimize,
+    AC_HELP_STRING(--disable-optimize,disable optimization),
+    OPTIMIZE="$enableval",
+    OPTIMIZE=yes)
 
-STRIP=yes
 AC_SUBST(STRIP)
-AC_ARG_ENABLE(strip,   [  --disable-strip         do not strip the Macaulay 2 binary],STRIP="$enableval")
+AC_ARG_ENABLE(strip,
+    AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary),
+    STRIP="$enableval",
+    STRIP=yes)
 
-GC_FOR_NEW=yes
+AC_SUBST(encap)
+AC_ARG_ENABLE(encap,
+    AC_HELP_STRING(--enable-encap,create an encap package),
+    encap="$enableval",
+    encap=no)
+
+AC_SUBST(encapdir)
+AC_ARG_WITH(encapdir,
+    AC_HELP_STRING(--with-encapdir=...,encap source directory [/usr/local/encap]),
+    encapdir="$withval",
+    encapdir=/usr/local/encap)
+
 AC_SUBST(GC_FOR_NEW)
-AC_ARG_ENABLE(gc_for_new,[  --disable-gc-for-new     use builtin_new instead of gc],GC_FOR_NEW="$enableval")
+AC_ARG_ENABLE(gc_for_new,
+    AC_HELP_STRING(--enable-gc-for-new,use gc instead of builtin_new),
+    GC_FOR_NEW="$enableval",
+    GC_FOR_NEW=no)
 
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))
@@ -133,3 +146,8 @@ CONFIGURED_FILES="M2_CONFIGURED_FILES()"
 AC_SUBST(CONFIGURED_FILES)
 dnl AC_CONFIG_SUBDIRS(gmp factory libfac)
 AC_OUTPUT(M2_CONFIGURED_FILES())
+
+dnl -- Local Variables:
+dnl -- mode: sh
+dnl -- compile-command: "make -f Makefile-configuration"
+dnl -- End:

@@ -1,3 +1,4 @@
+# @configure_input@
 ############################### targets to use
 .PHONY: check all clean config initialize doc html book distclean justM2
 ################################# prologue
@@ -6,10 +7,6 @@ justM2 all :: initialize config
 
 include ../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
 ################################# bin
 libexec bin :; mkdir $@
 clean ::; rm -rf bin libexec

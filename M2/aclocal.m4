@@ -24,6 +24,9 @@ AC_DEFUN(M2_SHOW_CONFDEFS,[
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-AC_DEFUN(M2_CONFIGURED_FILES,m4_patsubst(m4_include(config.files),[
+AC_DEFUN(M2_CONFIGURED_FILES,m4_patsubst(m4_include(config/files),[
 ],[ ]))
 
+dnl -- Local Variables:
+dnl -- compile-command: "make -f Makefile-configuration"
+dnl -- End:

@@ -85,10 +85,10 @@ depend on some of the earlier ones.
 		error messages about duplicate declarations.
 	     Also, ignore the warning message about factory.h being missing, if you think you've put
 		it in $prefix/include.
-	     Also, make sure you patch the source with the diffs in README.libfac-0.3.2,
+	     Also, make sure you patch the source with the diffs in INSTALL.libfac-0.3.2-diffs,
 		or else it gets confused about the NOSTREAMIO option.  Do it this way:
 			cd libfac
-			patch -p1 < ...../README.libfac-0.3.2
+			patch -p1 < ...../INSTALL.libfac-0.3.2-diffs
 			make DEFS=-DHAVE_SINGULAR_ERROR
 			make prefix=/usr/local/... install
 

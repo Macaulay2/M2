@@ -1,12 +1,9 @@
-# this makefile is readable only by the gnu make program
+# @configure_input@
 ############################## main target
 all:: scc1
 include ../../config.Makefile
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
 ############################################
 %.c        : %.y
 	$(YACC) $(YFLAGS) $^

@@ -1,9 +1,6 @@
+# @configure_input@
 include ../../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
 EXES := echoout timestmp restart update targettypes
 
 ifeq ($(OS),Linux)

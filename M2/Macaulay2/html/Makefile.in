@@ -1,8 +1,5 @@
+# @configure_input@
 include ../../config.Makefile
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
 all :: Macaulay2-button.scm \
 	up.gif next.gif previous.gif top.gif index.gif null.gif \
 	recbg.jpg 9planets.gif \

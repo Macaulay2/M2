@@ -1,3 +1,4 @@
+# @configure_input@
 
 # every makefile that includes this one should use 'all' as the
 # default (first) target
@@ -6,12 +7,13 @@ all::
 # cygwin 'make' might get confused by setting SHELL
 # SHELL = @SHELL@
 
-VERSION = @VERSION@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
 ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
 
-DESC    = @VERSION@-@host_cpu@-@OS@-@REL@
+DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
 # we used to use @ARCH@ instead of @host_cpu@ here, but for DEC alphas,
 # and perhaps other machines, it gives more information.  The script
 # config.guess assembles host_cpu from /proc/cpuinfo, and can be something
@@ -19,7 +21,6 @@ DESC    = @VERSION@-@host_cpu@-@OS@-@REL@
 # by the 'configure' script, will be simply "alpha".
 
 DUMPDATA = @DUMPDATA@
-SOCKS = @SOCKS@
 NODENAME = @NODENAME@
 PROFILE = @PROFILE@
 STRIP = @STRIP@
@@ -35,6 +36,9 @@ GCC = @GCC@
 CXX = @CXX@
 YACC = @YACC@
 AWK = @AWK@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
@@ -43,20 +47,19 @@ DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 prefix = @prefix@
-exec_prefix = @exec_prefix@
-program_transform_name = @program_transform_name@
-bindir = @bindir@
-sbindir = @sbindir@
-libexecdir = @libexecdir@
-datadir = @datadir@
-sysconfdir = @sysconfdir@
-sharedstatedir = @sharedstatedir@
-localstatedir = @localstatedir@
-libdir = @libdir@
-includedir = @includedir@
-oldincludedir = @oldincludedir@
-infodir = @infodir@
-mandir = @mandir@
+encap = @encap@
+encapdir = @encapdir@
+package = Macaulay2-$(PACKAGE_VERSION)
+
+ifeq "$(encap)" "yes"
+target = $(encapdir)/$(package)
+else
+target = $(prefix)
+endif
+
+packagedir = $(target)/lib/$(package)
+bindir = $(target)/bin
+
 RANLIB = @RANLIB@
 AR = ar
 
@@ -133,3 +136,7 @@ DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
 endif
 
 CPPFLAGS += -I$(prefix)/include
+
+# Local Variables:
+# compile-command: "make -f Makefile-configuration"
+# End:

@@ -1,10 +1,7 @@
+# @configure_input@
 justM2 default :: initialize phase1
 include ../../config.Makefile
 VPATH = @srcdir@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
-
 all:: initialize
 emacs html: all; $(MAKE) -C ../$@
 
