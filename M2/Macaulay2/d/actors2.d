@@ -601,6 +601,7 @@ getcfun(e:Expr):Expr := (
      is Error do e
      else buildErrorPacket("expected an input file"));
 setupfun("getc",getcfun);
+
 leftshiftfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
@@ -617,6 +618,24 @@ leftshiftfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(Expr(LessLessS),integerClass,integerClass,
      Expr(CompiledFunction(leftshiftfun,nextHash()))
+     );
+
+rightshiftfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do (
+	  if length(a) == 2 then (
+	       when a.0 
+	       is x:Integer do (
+		    when a.1 is y:Integer do (
+			 if isInt(y) 
+			 then Expr(x >> toInt(y))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgInteger(2))
+	       else  WrongArgInteger(1))
+	  else WrongNumArgs(2))
+     else WrongNumArgs(2));
+installMethod(Expr(GreaterGreaterS),integerClass,integerClass,
+     Expr(CompiledFunction(rightshiftfun,nextHash()))
      );
 
 unSingleton(e:Expr):Expr := (
