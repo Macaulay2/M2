@@ -213,7 +213,7 @@ tryload := (filename,loadfun,notify) -> (
 	       ret = loadfun filename;
 	       markLoaded(filename,filename,notify);
 	       ret)
-	  else error("file doesn't exist: ", filename))
+	  else error("file doesn't exist: \"", filename, "\""))
      else (
           if class path =!= List then error "expected 'path' to be a list (of strings)";
 	  loaded := false;
@@ -227,7 +227,7 @@ tryload := (filename,loadfun,notify) -> (
 		    	 markLoaded(fullfilename,filename,notify);
 			 loaded = true;
 			 break)));
-	  if loaded then ret else error("file doesn't exist: ", filename)))
+	  if loaded then ret else error("file not found on path: \"", filename, "\"")))
 
 simpleLoad := load
 load = (filename) -> tryload(filename,simpleLoad,notify)
