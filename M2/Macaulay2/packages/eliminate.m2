@@ -140,3 +140,7 @@ f2 = a^2 + d*a + e
 time resultant(f1,f2,a)
 time eliminate(ideal(f1,f2),a)
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+-- End:

@@ -129,7 +129,7 @@ document {
 	  "This strategy uses a separator polynomial - a polynomial in all of 
 	  the associated primes of ", TT "I", " but ", TT "P", " and those 
 	  contained in ", TT "P", ".  In this strategy, the assasinator of the 
-	  ideal will be recalled, or recomputed using ", TO (ass,Strategy) ,
+	  ideal will be recalled, or recomputed using ", TO [ass,Strategy] ,
 	  " = 1, if unknown.  The separator 
 	  polynomial method is described in  
 	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",

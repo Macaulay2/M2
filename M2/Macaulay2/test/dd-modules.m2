@@ -1,4 +1,4 @@
-load "D-modules.m2"
+loadPackage "Dmodules"
 -- Dtrace 666
 R = QQ[x,y]
 A = deRhamAll(x^2+y^3)

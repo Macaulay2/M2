@@ -386,8 +386,8 @@ document {
      }
 
 document {
-     Key => "D-modules",
-     Headline => "D-modules.m2",
+     Key => "Dmodules",
+     Headline => "Dmodules.m2",
      }
 
 document {

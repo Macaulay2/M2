@@ -9,12 +9,9 @@ document {
      Headline => "algorithms for D-modules",
      INSERTUSAGE {
 	  "Load the package by typing: ", 
-	  TT ///load "D-modules.m2"///, 
+	  TT ///needsPackage "Dmodules"///, 
 	  "."
 	  },
-     OldSynopsis => {
-	  "Provides a collection of algorithms for D-modules"
-	  },     
      FileName => "index",
      PARA,
      HEADER3 "How to make Weyl algebras:",
@@ -98,7 +95,7 @@ document {
      Headline => "external product of modules or complexes"
      }
 document {
-     Key => (ExternalProduct,TwistMap),
+     Key => [ExternalProduct,TwistMap],
      Headline => "indicates whether TwistMap should be computed"
      }
 document {
@@ -183,12 +180,14 @@ document {
 	  TT "bFunction(I,w)", " -- find the b-function of ", EM "I", 
 	  " with respect to weight vector ", EM "w"
 	  },
-     OldSynopsis => {
-     	  "b = bFunction(I,w)",
+     Usage => "b = bFunction(I,w)",
+     Inputs => {
 	  "I" => {"a holonomic ideal in the Weyl algebra ", 
 	       EM {"A", SUB "n", "(K)"}, "."},
 	  "w" => {"a list of integer weights corresponding 
-	       to the differential variables in the Weyl algebra."},
+	       to the differential variables in the Weyl algebra."}
+	       },
+    Outputs => {
 	  "b" => {"a polynomial ", EM "b(s)", " which is the b-function of ", 
 	       EM "I", " with respect to ", EM "w"}
 	  },
@@ -205,7 +204,6 @@ document {
 	  SUB "n", "t", SUB "n", "]"}, 
      " (here ", EM {"t", SUB "i", " = x", SUB "i", "D", SUB "i"}, ").", 
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      	  "I = ideal(x_1, D_2-1)",
      	  "bFunction(I,{1, 0})",
@@ -215,7 +213,7 @@ document {
      	  it should be a pure Weyl algebra. Similarly, this ring 
 	  should not be a homogeneous ", TO "WeylAlgebra"
 	  },
-     SEEALSO { "globalBFunction", "factorBFunction" }
+     SeeAlso => { "globalBFunction", "factorBFunction" }
      }
 
 document {
@@ -226,14 +224,16 @@ document {
 	  " with respect to weight vector ", EM "w", " and shift vector ", 
 	  EM "m"
 	  },
-     OldSynopsis => {
-	  "b = bFunction(M,w,m)",
+     Usage => "b = bFunction(M,w,m)",
+     Inputs => {
 	  "M" => {"a holonomic module over a Weyl algebra ", 
 	       EM {"A", SUB "n", "(K)"}},
 	  "w" => {"a list of integer weights corresponding 
 	       to the differential variables in the Weyl algebra"},
 	  "m" => {"a list of integers, each of which is 
-	       the shift for the corresponding component"},
+	       the shift for the corresponding component"}
+	       },
+     Outputs => {
 	  "b" => {"a polynomial ", EM "b(s)", " which is the b-function of ", 
 	       	EM "M", " with respect to ", EM "w", 
 	       	" and ", EM "m"}
@@ -248,7 +248,6 @@ document {
      EM {"lcm{ b", SUB "i", "(s-m", SUB "i",") }"},
      PARA,
      EXAMPLE{
-	"needs \"D-modules.m2\"",
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
 	  "M = cokernel matrix {{x^2, 0, 0}, {0, dx^3, 0}, {0, 0, x^3}}",
 	  "factorBFunction bFunction(M, {1}, {0,0,0})",
@@ -258,7 +257,7 @@ document {
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
-     SEEALSO { "globalBFunction", "factorBFunction" }
+     SeeAlso => { "globalBFunction", "factorBFunction" }
      }
 
 
@@ -268,7 +267,7 @@ document {
      UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
 	       " -- passed to ", TO "bFunction",  ", see ", 
-	       TO (bFunction,Strategy) },
+	       TO [bFunction,Strategy] },
 	  {BOLD "ViaAnnFs", " -- computes ", 
 	       EM "J(s)=Ann(f", SUP "s", EM ")", " and then intersects ", 
 	       EM "J(s)+D[s]f}", " with ", EM "K[s]"},
@@ -297,10 +296,12 @@ document {
      INSERTUSAGE {
 	  TT "globalBFunction f", " -- find the global b-function of ", TT "f"
 	  },
-     OldSynopsis => {
-     	  "b = globalBFunction(f)",
+     Usage => "b = globalBFunction(f)",
+     Inputs => {
 	  "f" => {"a polynomial in a Weyl algebra 
-	       (should not contain differential variables)"},
+	       (should not contain differential variables)"}
+	       },
+     Outputs => {
 	  "b" => {"the b-function ", EM "b(s)",  " in ", EM "Q[s]"}
 	  },
      PARA,
@@ -320,7 +321,6 @@ document {
      " where 1 in the weight that corresponds to ", EM "dt. ", 
      "Then the global b-function is ", EM "b_f = B(-s-1)",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^10",
     	  "globalBFunction f"
@@ -329,7 +329,7 @@ document {
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
-     SEEALSO { "bFunction", "factorBFunction" }
+     SeeAlso => { "bFunction", "factorBFunction" }
      }
                
 document {
@@ -339,15 +339,16 @@ document {
      INSERTUSAGE {
 	  TT "factorBFunction b", " -- factor polynomial ", TT "b"
 	  },
-     OldSynopsis => {
-     	  "f = bFunction b",
-	  "b" => {"a polynomial obtained via one of the b-function routines"},
+     Usage => "f = bFunction b",
+     Inputs => {
+	  "b" => {"a polynomial obtained via one of the b-function routines"}
+	  },
+     Outputs => {
 	  "f" => {"the factorization of ", TT "b"}
 	  },
      PARA,
      BOLD "Fact. ", "The roots of any b-function are rational.",
      EXAMPLE {
-  	"needs \"D-modules.m2\"",
 	"R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^10",
      	  "b = globalBFunction f",
@@ -356,7 +357,7 @@ document {
      Caveat => {
 	  "f should be an output of one of the b-function routines"
      	  },
-     SEEALSO { 
+     SeeAlso => { 
 	  "bFunction",
 	  "globalBFunction"
 	  }
@@ -376,11 +377,13 @@ document {
 	  TT "globalB(I,f)", " -- find global b-function and b-operator 
           for a D-module and a polynomial"
 	  },
-     OldSynopsis => {
-	  "H = globalB(I,f)", 
+     Usage => "H = globalB(I,f)", 
+     Inputs => {
 	  "I" => {"a holonomic ideal"},
 	  "f" => {"a polynomial in a Weyl algebra 
-	       (should not contain differential variables)"},
+	       (should not contain differential variables)"}
+	       },
+     Outputs => {
 	  "H" => {"a hashtable containing the fields ",  
 	       TT "Bpolynomial", " and ", TT "Boperator"}
 	  },
@@ -388,18 +391,17 @@ document {
      "The algorithm used here is a modification of the original
      algorithm of Oaku for computing Bernstein-Sato polynomials",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^7",
      	  "b = globalB(ideal dx, f)",
      	  "factorBFunction b.Bpolynomial" 
      	  },
-     SEEALSO { "bFunction", "globalBFunction", "factorBFunction" }
+     SeeAlso => { "bFunction", "globalBFunction", "factorBFunction" }
      }  
 document {
      Key => (Boperator),
      Headline => "a key attached by globalB and Dlocalize",
-     SEEALSO { "globalB", "Dlocalize" }
+     SeeAlso => { "globalB", "Dlocalize" }
      }
 document {
      Key => (Bpolynomial),
@@ -409,7 +411,7 @@ document {
 document {
      Key => (globalBoperator),
      Headline => "compute a b-operator of a polynomial",
-     SEEALSO{"globalB"}
+     SeeAlso => {"globalB"}
      } 
 
 document {
@@ -420,19 +422,20 @@ document {
 	  TT "AnnFs(f)", " -- find the annihilator ideal of ", 
 	  EM {"f", SUP "s"}, " in the ring ", EM {"A", SUB "n", "[s]"}
 	  },
-     OldSynopsis => {
-	  "I = AnnFs(f)",
+     Usage => "I = AnnFs(f)",
+     Inputs => {
 	  "f" => { 
 	       "a polynomial in a Weyl algebra ", EM {"A", SUB "n"},  
 	       " (should contain no differential variables)" 
-	       },
+	       }
+	  },
+     Outputs => {
 	  "I" => {"an ideal of ", EM {"A", SUB "n", "[s]"}}
 	  },
      "The annihilator ideal is needed to compute a D-module 
      representation of the localization of ", 
      EM {"k[x", SUB "1", ",...,x", SUB "n", "]"}, " at ", EM "f", ".",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
      	  "R = QQ[x_1..x_4, z, d_1..d_4, Dz, ", 
 	  "       WeylAlgebra => (toList(1..4)/(i -> (x_i=>d_i)) | {z=>Dz})]",
      	  "f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3",
@@ -442,7 +445,7 @@ document {
 	  The ring of f should not have any parameters, 
      	  i.e. it should be a pure Weyl algebra. 
 	  Also this ring should not be a homogeneous Weyl algebra."},
-     SEEALSO {"AnnIFs", "WeylAlgebra"}
+     SeeAlso => {"AnnIFs", "WeylAlgebra"}
      }  
 
 document {
@@ -454,17 +457,18 @@ document {
 	  EM {"f", SUP "s", " \\otimes 1", SUB {"A", SUB "n", "/I"}}, 
 	  " in the ring ", EM {"A", SUB "n", "[s]"}
 	  },
-     OldSynopsis => {
-	  "J = AnnIFs(I,f)",
+     Usage => "J = AnnIFs(I,f)",
+     Inputs => {
 	  "I" => {
 	       "represents a holonomic D-module ", 
 	       EM {"A", SUB "n", "/I"}
 	       },
-	  "f" => {"an element of Weyl algebra", EM {"A", SUB "n"}},
+	  "f" => {"an element of Weyl algebra", EM {"A", SUB "n"}}
+	  },
+     Outputs => {
 	  "J" => {"the annihilating ideal"}
 	  },
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "W = QQ[x,dx, WeylAlgebra=>{x=>dx}]",
 	  "AnnIFs (ideal dx, x^2)"
 	  }, 
@@ -473,24 +477,26 @@ document {
 	  parameters: it should be a pure Weyl algebra. Similarly, 
 	  this ring should not be a homogeneous Weyl algebra."
      	  },
-     SEEALSO {"AnnFs", "WeylAlgebra"}
+     SeeAlso => {"AnnFs", "WeylAlgebra"}
      }  
 
 document {
      Key => (Dtrace--, ZZ
 	  ),
      Headline => "set the depth of comments made by D-module routines",
-     OldSynopsis => {
-	  "o = Dtrace n",
-	  "n" => { "new level" },
+     Usage => "o = Dtrace n",
+     Inputs => {
+	  "n" => { "new level" }
+	  },
+     Outputs => {
 	  "o" => { "old level" }
 	  },
-     SEEALSO {"getDtrace"}
+     SeeAlso => {"getDtrace"}
      }  
 document {
      Key => getDtrace,
      Headline => "(internal) -- get the INFOLEVEL switch",
-     SEEALSO {"Dtrace"}
+     SeeAlso => {"Dtrace"}
      }  
 
 document {
@@ -500,18 +506,20 @@ document {
      INSERTUSAGE {"sets the switch that determines whether homogenized 
 	  ", TO "WeylAlgebra", 
 	  " is used in certain D-module algorithms"},
-     OldSynopsis => {
-	  "o = setHomSwitch n",
-	  "n" => { "new value" },
+     Usage => "o = setHomSwitch n",
+     Inputs => {
+	  "n" => { "new value" }
+	  },
+     Outputs => {
 	  "o" => { "old value" }
 	  },
-     SEEALSO {"getHomSwitch"}
+     SeeAlso => {"getHomSwitch"}
      }  
 
 document {
      Key => getHomSwitch,
      Headline => "(internal) -- get the HOMOGENIZATION switch",
-     SEEALSO {"setHomSwitch"}
+     SeeAlso => {"setHomSwitch"}
      }  
 
 document {
@@ -565,12 +573,12 @@ document {
 document {
      Key => [localCohom,LocStrategy],
      Headline => "specify localization strategy for local cohomology",
-     "See ", TO (localCohom,Strategy)
+     "See ", TO [localCohom,Strategy]
      }
 document {
      Key => (OaTaWa),
      Headline => "an option for localCohom => LocStrategy",
-     SEEALSO "localCohom"
+     SeeAlso => "localCohom"
      }
 document {
      Key => (localCohom),
@@ -596,19 +604,20 @@ document {
 	  EM {"H", SUB "I", "(R)"}, " where ", EM "I", 
 	  " is an ideal of ", EM "R", ", which is a ring of polynomials" 
 	  },
-     OldSynopsis => { 
-	  "H = localCohom I", 
+     Usage => "H = localCohom I", 
+     Inputs => {
 	  "I" => {
 	       "an ideal of ", 
 	       EM {"R = k[x", SUB "1", ",...,x", SUB "n", "]"}
-	       },
+	       }
+	  },
+     Outputs => {
 	  "H" => {
 	       "each entry of ", TT "H", " has an integer key and 
 	       contains the cohomology module in the corresponding degree."
 	       }
 	  },
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
      	  "h = localCohom I",
@@ -627,7 +636,6 @@ document {
 	  },
      "See ", TO "localCohom Ideal", " for the full description.",
      EXAMPLE { 
-	"needs \"D-modules.m2\"",
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
      	  "h = localCohom({1,2}, I)",
@@ -644,7 +652,6 @@ document {
 	  },
      "See ", TO "localCohom Ideal", " for the full description.",
      EXAMPLE { 
-	"needs \"D-modules.m2\"",
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom (2,I)",
@@ -660,8 +667,8 @@ document {
 	  EM {"H", SUB "I", "(M)"}, " where ", EM "I", 
 	  " is an ideal in a polynomial ring and ", EM "M", " is a D-module"
 	  },
-     OldSynopsis => { 
-	  "H = localCohom(I,M)", 
+     Usage => "H = localCohom(I,M)", 
+     Inputs => {
 	  "I" => {
 	       "an ideal of ", 
 	       EM {"R = k[x", SUB "1", ",...,x", SUB "n", "]"}
@@ -669,14 +676,15 @@ document {
 	  "M" => {
 	       "a holonomic module over Weyl algebra ", 
 	       EM{"A", SUB "n", "(k)"}
-	       },
+	       }
+	  },
+     Outputs => {
 	  "H" => {
 	       "each entry of ", TT "H", " has an integer key and 
 	       contains the cohomology module in the corresponding degree."
 	       }
 	  },
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
      	  "h = localCohom(I, W^1 / ideal{dX,dY,dZ})",
@@ -696,7 +704,6 @@ document {
 	  },     
      "See ", TO "localCohom(Ideal,Module)", " for the full description.",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom(2, I, W^1 / ideal{dX,dY,dZ})",
@@ -715,7 +722,6 @@ document {
 	  },     
      "See ", TO "localCohom(Ideal,Module)", " for the full description.",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom({1,2}, I, W^1 / ideal{dX,dY,dZ})",
@@ -726,10 +732,10 @@ document {
 document {
      Key => (pruneLocalCohom),
      Headline => "prunes local cohomology modules",
-     SEEALSO {"localCohom"} 
+     SeeAlso => {"localCohom"} 
      }
 document {
-     Key => (paramBpoly,GroundField),
+     Key => [paramBpoly,GroundField],
      Headline => "characteristic for modular computation"
      }
 document {(GroundField)}
@@ -737,18 +743,19 @@ document {
      Key => (paramBpoly),
      Headline => "compute the list of all possible Bernstein-Sato polynomials 
      for a polynomial with parametric coefficients",
-     OldSynopsis => { 
-	  "L = paramBpoly(f,filename)", 	  
+     Usage => "L = paramBpoly(f,filename)", 	  
+     Inputs => {
      	  "f" => {
 	       "a polynomial in Weyl algebra ", EM "A_n(Q)"
 	       },
-	  "filename" => {"the base name for the output files"},
+	  "filename" => {"the base name for the output files"}
+	  },
+     Outputs => {
 	  "L" => {"Bernstein-Sato polynomials"}
 	  },
      "Also the file <filename.tex> that contains the list of 
      the BS-polynomials and the corresponding constructible sets.",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	  "A =  (QQ [a,b,c]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      	  "paramBpoly(a*x^2 + b*x*y + c*y^2, \"quadratic\")"
 	  },
@@ -762,12 +769,14 @@ document {
 document {
      Key => (makeCyclic),
      Headline => "finds a cyclic generator of a D-module",
-     OldSynopsis => {
-     	  "H = makeCyclic M", 
+     Usage => "H = makeCyclic M", 
+     Inputs => {
 	  "M" => {
 	       "a map such that ", TT "coker M", " is a 
 	       holonomic D-module"
-	       },
+	       }
+	  },
+     Outputs => {
 	  "H" => {TT "H.Generator", " is a cyclic generator
 	       and ", TT "H.AnnG", " is the annihilator ideal 
 	       of this generator"} 
@@ -775,13 +784,12 @@ document {
      "It is proven that every holonomic module is cyclic and 
      there is an algorithm for computing a cyclic generator.",
      EXAMPLE{
-	"needs \"D-modules.m2\"",
 	  "W = QQ[x, dx, WeylAlgebra => {x=>dx}]",
 	  "M = matrix {{dx,0,0},{0,dx,0},{0,0,dx}} -- coker M = QQ[x]^3", 
 	  "h = makeCyclic M"
 	  },
      Caveat => {"The module ", EM "M", " must be holonomic."},
-     SEEALSO {"isHolonomic"}
+     SeeAlso => {"isHolonomic"}
      }  
 document {(Generator),
      Headline => "a key created by makeCyclic",
@@ -798,7 +806,7 @@ document {(isHolonomic),
 document {
      Key => [DHom,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 }
 document {
      Key => (DHom),
@@ -828,7 +836,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      	"M = W^1/ideal(D-1)",
      	"N = W^1/ideal((D-1)^2)",
@@ -838,27 +845,39 @@ document {
      Caveat => {"Input modules ", EM "M", ", ", EM "N", ", ", 
 	  EM "D/I", " and ", EM "D/J",
 	  " should be holonomic."},
-     SEEALSO {"DExt", "Drestriction"}
+     SeeAlso => {"DExt", "Drestriction"}
      }
 
 document {
      Key => [DExt,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 }
-document {(DExt=>Special)}
-document {(Special),
-     SEEALSO "DExt"}
-document {(None),
-     Headline => "an option for DExt=>Special",
-     SEEALSO "DExt"
-     }
-document {(DExt=>Output)}
-document {(Output)}
-document {(DExt=>Info)}
-document {(Info)}
 document {
-     Key => (DExt),
+     Key => [DExt,Special]
+     }
+document {
+     Key => Special,
+     SeeAlso => "DExt"
+     }
+document {
+     Key => None,
+     Headline => "an option for DExt=>Special",
+     SeeAlso => "DExt"
+     }
+document {
+     Key => [DExt,Output]}
+document {
+     Key => Output
+     }
+document {
+     Key => [DExt,Info]
+     }
+document {
+     Key => Info
+     }
+document {
+     Key => DExt,
      Headline => "dimensions of Ext groups between holonomic modules",
      INSERTUSAGE {
      TT "DExt (M, N)", " -- 
@@ -881,7 +900,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      	"M = W^1/ideal(x*(D-1))",
      	"N = W^1/ideal((D-1)^2)",
@@ -892,11 +910,11 @@ document {
 	  "Does not yet compute explicit reprentations of Ext groups
 	  such as Yoneda representation."},
 
-     SEEALSO {"DHom", "Drestriction"}
+     SeeAlso => {"DHom", "Drestriction"}
      }
 
 document {
-     Key => (PolySols,Alg),
+     Key => [PolySols,Alg],
      Headline => "algorithm for finding polynomial solutions",
      UL {
 	  {BOLD "GD", " -- uses Groebner deformations"},
@@ -908,12 +926,12 @@ document {
 document {
      Key => (GD),
      Headline => "an option for PolySols=>Alg",
-     SEEALSO "PolySols" 
+     SeeAlso => "PolySols" 
      }
 document {
      Key => (Duality),
      Headline => "an option for PolySols=>Alg",
-     SEEALSO "PolySols" 
+     SeeAlso => "PolySols" 
      }
 document {
      Key => (PolySols),
@@ -945,19 +963,18 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      	"I = ideal(D^2, (x-1)*D-1)",
      	"PolySols I"
 	},
      PARA,
-     SEEALSO {"RatSols", "Dintegration"}
+     SeeAlso => {"RatSols", "Dintegration"}
      },
 
 document {
      Key => [PolyExt,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 }
 document {
      Key => (PolyExt),
@@ -985,14 +1002,13 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      	"M = W^1/ideal(x^2*D^2)",
      	"PolyExt(M)"},
      PARA,
      Caveat =>{"Does not yet compute explicit representations of
 	  Ext groups such as Yoneda representation."},
-     SEEALSO {"PolySols", "RatExt", "DExt", "Dintegration"}
+     SeeAlso => {"PolySols", "RatExt", "DExt", "Dintegration"}
      }
 
 document {
@@ -1027,7 +1043,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      	"I = ideal((x+1)*D+5)",
      	"RatSols I"
@@ -1039,13 +1054,13 @@ document {
 	  should be generic enough so that the PolySols routine
 	  will not complain of a non-generic weight vector."},
      
-     SEEALSO {"PolySols", "RatExt", "DHom"} 
+     SeeAlso => {"PolySols", "RatExt", "DHom"} 
      },
 
 document {
      Key => [RatExt,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 }
 document {
      Key => (RatExt),
@@ -1082,14 +1097,13 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      	"M = W^1/ideal(x*D+5)",
      	"RatExt(M)"},
      PARA,
      Caveat =>{"Input modules M or D/I should be holonomic."},
 
-     SEEALSO {"Dresolution", "Dintegration"}
+     SeeAlso => {"Dresolution", "Dintegration"}
      }
 
 --document {
@@ -1137,14 +1151,13 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"createDpairs W", 
      	"W.dpairVars",
      	"W.dpairInds"
 	},
      PARA,
-     SEEALSO {"WeylAlgebra"}
+     SeeAlso => {"WeylAlgebra"}
      },
 
 document {
@@ -1175,12 +1188,11 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
      	"Fourier L"
 	},
-     SEEALSO {"WeylAlgebra"}
+     SeeAlso => {"WeylAlgebra"}
      },
 
 document {
@@ -1204,7 +1216,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
      	"Dtransposition L"
@@ -1214,7 +1225,7 @@ document {
 	  ideal, however M2 currently doesn't support right modules.
 	  Thus the output is left ideal generated by the transposition
 	  of the previous generators."},
-     SEEALSO {"WeylAlgebra"}
+     SeeAlso => {"WeylAlgebra"}
      },
 
 document {
@@ -1242,13 +1253,12 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      	"singLocus I"
 	},
      PARA,
-     SEEALSO {"charIdeal", "Drank", "Ddim"}
+     SeeAlso => {"charIdeal", "Drank", "Ddim"}
      },
 
 document {
@@ -1285,13 +1295,12 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      	"charIdeal I"
 	},
 
-     SEEALSO {"Ddim", "singLocus", "Drank"}
+     SeeAlso => {"Ddim", "singLocus", "Drank"}
      },
 
 document {
@@ -1322,13 +1331,12 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      	"Drank I"
 	},
      PARA,
-     SEEALSO {"charIdeal", "singLocus", "Ddim"}
+     SeeAlso => {"charIdeal", "singLocus", "Ddim"}
      },
 
 document {
@@ -1349,12 +1357,11 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      	"Ddim I"
 	},
-     SEEALSO {"charIdeal", "Drank", "singLocus"}
+     SeeAlso => {"charIdeal", "Drank", "singLocus"}
      },
 
 document {
@@ -1371,7 +1378,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x,y,z]",
      	"W = makeWeylAlgebra R"
 	},
@@ -1379,7 +1385,7 @@ document {
      "Abbreviations :",
      UL{"makeWA"},
      Caveat =>{"The polynomial ring R must be commutative."},
-     SEEALSO {"WeylAlgebra"}
+     SeeAlso => {"WeylAlgebra"}
      }
 
 document {
@@ -1404,14 +1410,13 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"I = AppellF1({1,0,-3,2})",
      	"Ddual I"
 	},
      PARA,
      Caveat =>{"The input module ", EM "M", " should be holonomic.  The user should
 	  check this manually with the script ", TT "Ddim", "."},
-     SEEALSO {"Ddim", "Dtransposition"}
+     SeeAlso => {"Ddim", "Dtransposition"}
      }
 
 document {
@@ -1476,7 +1481,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"M = W^1/(ideal(x*Dx+1, Dy))", 
      	"f = x^2-y^3",
@@ -1486,7 +1490,7 @@ document {
      "Other names :",
      UL{"Dlocalization"},
      
-     SEEALSO {"AnnFs", "Dintegration"}
+     SeeAlso => {"AnnFs", "Dintegration"}
      }
 document {
      Key => (Dlocalization),
@@ -1600,7 +1604,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      	"I = ideal(x_1*D_1+3*x_2*D_2-1, D_1^3-D_2)", 
      	"Dresolution(I,{-1,-1,1,1})"
@@ -1609,18 +1612,18 @@ document {
      "Abbreviations :",
      UL{"Dres"},
 
-     SEEALSO {"gbw", "Drestriction"}
+     SeeAlso => {"gbw", "Drestriction"}
      }
 document {
      Key => (Dres),
      Headline => "abbreviation for Dresolution",
-     SEEALSO{"Dresolution"}
+     SeeAlso =>{"Dresolution"}
      }	
 
 document {
      Key => [Drestriction,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 	  }
 document {
      Key => (Drestriction),
@@ -1694,7 +1697,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      	"I = ideal(x_1, D_2-1)", 
      	"Drestriction(I,{1,0})"
@@ -1709,92 +1711,92 @@ document {
      "Abbreviations :",
      UL{"Drestrict"},
      
-     SEEALSO {"Dresolution", "Dintegration"}
+     SeeAlso => {"Dresolution", "Dintegration"}
      }
 document {
      Key => (Drestrict),
      Headline => "abbreviation for Drestrict",
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }	
 document {
      Key => (DrestrictionClasses),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictClasses),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictIdeal),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictAll),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictionComplex),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictionAll),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictionIdeal),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (DrestrictComplex),
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 
 document {
      Key => (HomologyModules),
      Headline => "a key in a hashtable; an option of DExt",
-     SEEALSO {"Drestriction", "Dintegration", "DExt" }
+     SeeAlso => {"Drestriction", "Dintegration", "DExt" }
      }
 document {
      Key => (GenCycles),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
-     SEEALSO {"Drestriction", "Dintegration" }
+     SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
      Key => (Exponents),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
-     SEEALSO {"Drestriction", "Dintegration" }
+     SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
      Key => (Cycles),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
-     SEEALSO {"Drestriction", "Dintegration" }
+     SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
      Key => (Boundaries),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
-     SEEALSO {"Drestriction", "Dintegration" }
+     SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
      Key => (VResolution),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
-     SEEALSO {"Drestriction", "Dintegration" }
+     SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
      Key => (Explicit),
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
-     SEEALSO {"Drestriction", "Dintegration" }
+     SeeAlso => {"Drestriction", "Dintegration" }
      }
 
 document {
      Key => (IntegrateComplex),
      Headline => "a key in the hashtable created by Dintegration",
-     SEEALSO {"Dintegration" }
+     SeeAlso => {"Dintegration" }
      }
 
 document {
      Key => [Dintegration,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 }
 document {
      Key => (Dintegration),
@@ -1868,7 +1870,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
     	"I = ideal(x_1, D_2-1)", 
      	"Dintegration(I,{1,0})"
@@ -1882,48 +1883,48 @@ document {
      "Abbreviations :",
      UL{"Dintegrate"},
      
-     SEEALSO{"Drestriction"}
+     SeeAlso =>{"Drestriction"}
      }
 document {
      Key => (Dintegrate),
      Headline => "abbreviation for Dintegration",
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }	
 document {
      Key => (DintegrateIdeal),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }	
 document {
      Key => (DintegrationIdeal),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }	
 document {
      Key => (DintegrationComplex),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }	
 document {
      Key => (DintegrateClasses),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }
 document {
      Key => (DintegrateComplex),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }
 document {
      Key => (DintegrationClasses),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }
 document {
      Key => (DintegrateAll),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }
 document {
      Key => (DintegrationAll),
-     SEEALSO{"Dintegration"}
+     SeeAlso =>{"Dintegration"}
      }
 
 document {
-     Key => (gkz=>Vars) }
+     Key => [gkz,Vars] }
 document {
      Key => (Vars) }
 document {
@@ -1958,7 +1959,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"A = matrix{{1,1,1},{0,1,2}}",
      	"b = {3,4}", 
      	"I = gkz (A,b)"
@@ -1967,7 +1967,7 @@ document {
      Caveat =>{"gkz always returns a different ring and will use variables
 	  x_1,...,x_n, D_1,...D_n."},
 
-     SEEALSO {"AppellF1"}
+     SeeAlso => {"AppellF1"}
      },
 
 document {
@@ -1981,7 +1981,6 @@ document {
 
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"w = {1,4/5,-2,3/2}",
      	"I = AppellF1(w)"
 	},
@@ -1990,7 +1989,7 @@ document {
 	  use variables x and y. Input should be a List of 4
 	  numbers."},
 
-     SEEALSO {"gkz"}
+     SeeAlso => {"gkz"}
      }
 
 document {
@@ -2003,7 +2002,6 @@ document {
 
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      	"f = x^2-y^3",
      	"I = PolyAnn f"
@@ -2013,7 +2011,7 @@ document {
 	  and not an element of a commutative polynomial ring.
 	  However, f should only involve commutative variables."},
 
-     SEEALSO {"RatAnn"}
+     SeeAlso => {"RatAnn"}
      }
 
 document {
@@ -2031,7 +2029,6 @@ document {
 
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      	"f = x^2-y^3",
      	"g = 2*x*y",
@@ -2042,7 +2039,7 @@ document {
 	  and not elements of a commutative polynomial ring.
 	  However, f and g should only use the commutative variables."},
 
-     SEEALSO {"PolyAnn"}
+     SeeAlso => {"PolyAnn"}
      }
 document {
      Key => (WeylClosure),
@@ -2075,7 +2072,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]",
      	"I = ideal(x*Dx-2)",
      	"WeylClosure I"
@@ -2085,12 +2081,12 @@ document {
 	  manually by Drank.", "The Weyl closure of non-finite rank
 	  ideals or arbitrary submodules has not been implemented."},
 	  
-     SEEALSO {"Dlocalize", "singLocus", "Drank"}
+     SeeAlso => {"Dlocalize", "singLocus", "Drank"}
      }
 document {
      Key => [deRham,Strategy],
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution,Strategy)
+	  TO [Dresolution,Strategy]
 }
 document {
      Key => (deRham),
@@ -2122,12 +2118,11 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x,y]",
      	"f = x^2-y^3", 
      	"deRham(f)"
 	},
-     SEEALSO {"Dlocalization", "Dintegration"}
+     SeeAlso => {"Dlocalization", "Dintegration"}
      }
 document {
      Key => (deRhamAll),
@@ -2136,22 +2131,22 @@ document {
 document {
      Key => (TransferCycles),
      Headline => "a key in the hashtable created by deRham",
-     SEEALSO "deRham"
+     SeeAlso => "deRham"
      }
 document {
      Key => (CohomologyGroups),
      Headline => "a key in the hashtable created by deRham",
-     SEEALSO "deRham"
+     SeeAlso => "deRham"
      }
 document {
      Key => (PreCycles),
      Headline => "a key in the hashtable created by deRham",
-     SEEALSO "deRham"
+     SeeAlso => "deRham"
      }
 document {
      Key => (OmegaRes),
      Headline => "a key in the hashtable created by deRham",
-     SEEALSO "deRham"
+     SeeAlso => "deRham"
      }
 
 document {
@@ -2186,25 +2181,24 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x,y,z]",
      	"I = ideal(x^2-y*z)", 
      	"diffOps(I, 3)"
 	},
      PARA,
-     SEEALSO {"putWeylAlgebra"}
+     SeeAlso => {"putWeylAlgebra"}
 
      },
 
 document {
      Key => (PolyGens),
      Headline => "a key of the hashtable generated by diffOps",
-     SEEALSO "diffOps"
+     SeeAlso => "diffOps"
      }
 document {
      Key => (BasisElts),
      Headline => "a key of the hashtable generated by diffOps",
-     SEEALSO "diffOps"
+     SeeAlso => "diffOps"
      }
 
 document {
@@ -2225,14 +2219,13 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"R = QQ[x,y,z]",
      	"I = ideal(x^2-y*z)", 
      	"m = diffOps(I, 3)",
      	"putWeylAlgebra m"
 	},
      PARA,
-     SEEALSO {"diffOps"}
+     SeeAlso => {"diffOps"}
 
      }
 
@@ -2270,7 +2263,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      	"inw(I, {1,3,3,-1})",
@@ -2279,7 +2271,7 @@ document {
      PARA,
      Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
-     SEEALSO {"gbw", "setHomSwitch"}
+     SeeAlso => {"gbw", "setHomSwitch"}
      },
 
 document {
@@ -2309,7 +2301,6 @@ document {
      PARA,
      "A simple example:",
      EXAMPLE {
-	"needs \"D-modules.m2\"",
 	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      	"I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      	"gbw(I, {1,3,3,-1})",
@@ -2318,7 +2309,7 @@ document {
      PARA,
      Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
-     SEEALSO {"inw", "setHomSwitch"}
+     SeeAlso => {"inw", "setHomSwitch"}
      }
 
 document {
@@ -2326,7 +2317,7 @@ document {
      Headline => "prints tracing info",
      "Prints tracing information according to the level set by ", 
 	TT "Dtrace", ".",
-     SEEALSO { "Dtrace" }
+     SeeAlso => { "Dtrace" }
      }
 ----------------------------------------------------------------------------
 -- (better docs needed)
@@ -2384,7 +2375,7 @@ document {
      Headline => "prunes a matrix over a Weyl algebra (phased out)"
      }
 document {
-     Key => (Dprune,optGB),
+     Key => [Dprune,optGB],
      Headline => "indicates whether Grobner basis should be computed"
      }
 document {

@@ -311,10 +311,12 @@ document {
 document {
      Key => (depth,Ideal,Module),
      Headline => "the I-depth of M",
-     OldSynopsis => {
-	  "d = depth(I,M)",
+     Usage => 	  "d = depth(I,M)",
+     Inputs => {
 	  "I" => null,
-	  "M" => null,
+	  "M" => null
+	  },
+     Outputs => {
 	  "d" => null
 	  }
      }
