@@ -1,6 +1,14 @@
 #include "linalgGB.hpp"
 #include <vector>
 #include "../text_io.hpp"
+#include "monoms.h"
+
+void LinearAlgebraGB::allocate_poly(poly &result, size_t len)
+{
+  result.len = len;
+  result.coeffs = newarray(COEFF_TYPE, len);
+  result.monoms = newarray(monomial, len);
+}
 
 void LinearAlgebraGB::append_row(monomial m, int elem)
 {
@@ -14,6 +22,43 @@ void LinearAlgebraGB::append_row(monomial m, int elem)
   rows.push_back(r);
 }
 
+void LinearAlgebraGB::append_column(monomial m)
+{
+  column_elem c;
+  c.monom = m;
+  c.gb_divisor = -2;
+  c.ord = 0;
+  columns.push_back(c);
+}
+
+int LinearAlgebraGB::column(monomial m)
+{
+  int next_column = columns.size();
+  std::pair<const monomial, int> p(m, next_column);
+  monomial_map::iterator i = H0.find(m);
+  if (i != H0.end())
+    return (*i).second;
+  H0.insert(p);
+  append_column(m);
+  return next_column;
+}
+
+monomial LinearAlgebraGB::mult_monomials(monomial m, monomial n)
+{
+  // Multiply the two monomials m and n, using the monomial set H.
+  // Then, look in thisH to see if it exists already.
+  // If so: return the corresponding key (which is the column number)
+  // If not: insert it into thisH, do an append_column
+  // and return that column number.
+  
+  uninterned_monomial mn;
+  monomial result;
+  H.reserve(MONOMIAL_LENGTH(m) + MONOMIAL_LENGTH(n));
+  monomial_mult(m,n,mn);
+  H.find_or_insert(mn,result);
+  return result;
+}
+
 void LinearAlgebraGB::process_row(int r)
 {
   /* Do the multiplication, and process the 
@@ -24,12 +69,39 @@ void LinearAlgebraGB::process_row(int r)
        choose the largest t.  now process (m/t, newelem):
          special multiplication routine?  since newelem uses diff monomial encoding.
  */
+
+  row_elem &re = rows[r];
+  poly &g = gb[re.elem]->f;
+  
+  // step 1: find size of the polynomial, allocate a new polynomial
+  poly mg;
+  allocate_poly(mg, g.len);
+
+  // step 2: do the multiplication.  Note that this does not need
+  // multiplication in the base field/ring.
+  // This will also insert monomials into the column hash table,
+  // and also append columns to 'columns'.
+  // Weyl: this will be more complicated
+  // Skew: just need to modify signs, don't put elements in that
+  //   have squares.  mg.len will decrease.
+  
+  // It would be interesting to see if using iterators changes speed at all
+#if 0
+  for (int i=0; i<g.len; i++)
+    coeffK->init_set(mg.coeffs[i], g.coeffs[i]);
+#endif
+  for (int i=0; i<g.len; i++)
+    {
+      mg.monoms[i] = mult_monomials(re.monom, g.monoms[i]);
+      // the above routine creates a new column if it is not there yet
+    }
 }
 
 void LinearAlgebraGB::import_vector(vec f)
 {
   /* Creates a sparse_matrix row, and appends it to the current
      matrix being made */
+
 }
 
 void LinearAlgebraGB::process_column(int c)
@@ -39,16 +111,38 @@ void LinearAlgebraGB::process_column(int c)
      divides this monomial, and either mark this colum
      as not an initial element, OR append a row
   */
-}
 
-void LinearAlgebraGB::append_column(monomial m, int elem, bool islead)
-{
-  /* Make a new column, insert it.  Also put m into the table of all
-     monomials */
+  column_elem &ce = columns[c];
+  if (ce.gb_divisor >= -1)
+    return;
+  tagged_monomial *b;
+  bool found = lookup->search(ce.monom, b);
+  if (found)
+    {
+      ce.gb_divisor = reinterpret_cast<int>(b->bag);
+      uninterned_monomial um = H.reserve(MONOMIAL_LENGTH(ce.monom));
+      monomial m;
+      monomial_quotient(ce.monom, gb[ce.gb_divisor]->f.monoms[0], um);
+      H.find_or_insert(um, m);
+      append_row(m,ce.gb_divisor);
+    }
+  else 
+    ce.gb_divisor = -1;
 }
 
 void LinearAlgebraGB::process_s_pair(SPairSet::spair *p)
 {
+  switch (p->type) {
+  case SPairSet::SPAIR_SPAIR:
+    append_row(p->s.spair.first_monom, p->s.spair.first_gb_num);
+    append_row(p->s.spair.second_monom, p->s.spair.second_gb_num);
+    break;
+  case SPairSet::SPAIR_GEN:
+    break;
+  default:
+    break;
+  }
+    
   /*
     3 cases:
     (a) an spair or ringpair
@@ -82,8 +176,8 @@ void LinearAlgebraGB::make_matrix()
   SPairSet::spair *p;
   while (p = S.get_next_pair())
     {
-      // Append left half, append right half
-      // remove pair
+      process_s_pair(p);
+      //remove_s_pair(p);
     }
 
   for (;;)

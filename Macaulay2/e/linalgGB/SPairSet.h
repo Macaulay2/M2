@@ -15,14 +15,32 @@ class SPairSet : public our_new_delete
   int determine_next_degree(int &result_number);
   
  public:
+  enum spair_type {
+    SPAIR_SPAIR,
+    SPAIR_GCD_ZZ,
+    SPAIR_RING,
+    SPAIR_SKEW,
+    SPAIR_GEN,
+    SPAIR_ELEM
+  };
+
   struct spair : public our_new_delete {
     spair * next;
+    spair_type type;
     int deg; /* sugar degree of this spair */
     monomial lcm;
-    monomial first_monom;
-    int first_gb_num;
-    monomial second_monom;
-    int second_gb_num;
+    union {
+      struct {
+	monomial first_monom;
+	int first_gb_num;
+	monomial second_monom;
+	int second_gb_num;
+      } spair;
+      struct {
+	poly * gen;
+	int column; // original column
+      } poly;
+    } s;
   };
 
   typedef spair * spair_list;
@@ -30,6 +48,15 @@ class SPairSet : public our_new_delete
   SPairSet(MonomialSet *H0);
 
   ~SPairSet();
+
+  static spair *make_spair(int deg, 
+		    monomial lcm, 
+		    monomial first_monom,
+		    int first_gb_num,
+		    monomial second_monom,
+		    int second_gb_num);
+
+  static spair *make_spair_gen(int deg, poly *f, int column);
 
   int find_new_pairs(const std::vector<gbelem, gc_allocator<gbelem> > &gb,
 		    bool remove_disjoints);

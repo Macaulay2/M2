@@ -7,6 +7,7 @@
 #include "interface.h"
 #include "SPairSet.h"
 #include "MonomialTable.h"
+#include <map>
 
 enum gbelem_type { 
   ELEM_IN_RING,  // These are ring elements
@@ -26,14 +27,6 @@ struct gbelem : public our_new_delete {
 
 class LinearAlgebraGB : public GBComputation {
 public:
-  enum spair_type {
-    SPAIR_SPAIR,
-    SPAIR_GCD_ZZ,
-    SPAIR_RING,
-    SPAIR_SKEW,
-    SPAIR_GEN,
-    SPAIR_ELEM
-  };
 
   struct row_elem : public our_new_delete {
     monomial monom;
@@ -50,11 +43,18 @@ public:
 
 private:
   const PolynomialRing *originalR;
+  const FreeModule *F; // determines whether the monomial order is a Schreyer order
+                       // Also determines degrees of elements in F.
+  
   int n_subring; // number of GB elements in the first subring
   int n_pairs_computed;
   int n_gens_left;
 
   MonomialSet H; // Hash table of monomials in the ring
+  //  HashTable<int,int,int> thisH; // Hash table (monom,int) --> int
+  typedef std::map<monomial, int> monomial_map;
+  monomial_map H0; // Hash table (well...  sort of) of
+                         // monomial --> int
   SPairSet S;
 
   MonomialLookupTable *lookup; // This should be the monomial ideal type
@@ -70,7 +70,7 @@ private:
   // Need: allocator for vectors in the matrix
   // Need: GB itself.
 
-  std::vector<poly *, gc_allocator<poly *> > gb;
+  std::vector<gbelem *, gc_allocator<gbelem *> > gb;
 
   // The matrix
   std::vector<row_elem, gc_allocator<row_elem> > rows;
@@ -78,6 +78,10 @@ private:
 
   int next_col_to_process;
   int next_row_to_process;
+
+  void allocate_poly(poly &result, size_t len);
+  monomial mult_monomials(monomial m, monomial n);
+  int column(monomial m);
 
   void append_row(monomial m, int gbelem);
   // Make a new row.  Should we also do
@@ -102,9 +106,8 @@ private:
        as not an initial element, OR append a row
     */
 
-  void append_column(monomial m, int gbelem, bool islead);
-    /* Make a new column, insert it.  Also put m into the table of all
-       monomials */
+  void append_column(monomial m);
+    /* Make a new column, insert it. */
 
   void process_s_pair(SPairSet::spair *p);
     /*
