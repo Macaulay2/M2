@@ -209,7 +209,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 
   this_block = 0;
   nvars = 0;
-  for (i=0; i<mo->len; i++, this_block++)
+  for (i=0; i<mo->len; i++)
     {
       struct mon_part_rec_ *t = mo->array[i];
       if (t->type != MO_WEIGHTS)
@@ -229,43 +229,43 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 	}
       switch (t->type) {
       case MO_REVLEX:
-	mo_block_revlex(result->blocks + this_block, t->nvars);
+	mo_block_revlex(result->blocks + this_block++, t->nvars);
 	break;
       case MO_GREVLEX:
-	mo_block_grevlex(result->blocks + this_block, t->nvars);
+	mo_block_grevlex(result->blocks + this_block++, t->nvars);
 	break;
       case MO_GREVLEX2:
-	mo_block_grevlex2(result->blocks + this_block, t->nvars);
+	mo_block_grevlex2(result->blocks + this_block++, t->nvars);
 	break;
       case MO_GREVLEX4:
-	mo_block_grevlex4(result->blocks + this_block, t->nvars);
+	mo_block_grevlex4(result->blocks + this_block++, t->nvars);
 	break;
       case MO_GREVLEX_WTS:
-	mo_block_grevlex_wts(result->blocks + this_block, t->nvars);
+	mo_block_grevlex_wts(result->blocks + this_block++, t->nvars);
 	break;
       case MO_GREVLEX2_WTS:
-	mo_block_grevlex2_wts(result->blocks + this_block, t->nvars);
+	mo_block_grevlex2_wts(result->blocks + this_block++, t->nvars);
 	break;
       case MO_GREVLEX4_WTS:
-	mo_block_grevlex4_wts(result->blocks + this_block, t->nvars);
+	mo_block_grevlex4_wts(result->blocks + this_block++, t->nvars);
 	break;
       case MO_LEX:
-	mo_block_lex(result->blocks + this_block, t->nvars);
+	mo_block_lex(result->blocks + this_block++, t->nvars);
 	break;
       case MO_LEX2:
-	mo_block_lex2(result->blocks + this_block, t->nvars);
+	mo_block_lex2(result->blocks + this_block++, t->nvars);
 	break;
       case MO_LEX4:
-	mo_block_lex4(result->blocks + this_block, t->nvars);
+	mo_block_lex4(result->blocks + this_block++, t->nvars);
 	break;
       case MO_WEIGHTS:
-	mo_block_wt_function(result->blocks + this_block, t->nvars, wts);
+	mo_block_wt_function(result->blocks + this_block++, t->nvars, wts);
 	break;
       case MO_LAURENT:
-	mo_block_group_lex(result->blocks + this_block, t->nvars);
+	mo_block_group_lex(result->blocks + this_block++, t->nvars);
 	break;
       case MO_LAURENT_REVLEX:
-	mo_block_group_revlex(result->blocks + this_block, t->nvars);
+	mo_block_group_revlex(result->blocks + this_block++, t->nvars);
 	break;
       case MO_NC_LEX:
 	/* MES */
@@ -361,6 +361,7 @@ extern void monomialOrderFree(MonomialOrder *mo)
 {
 }
 
+#if 0
 union pack4 {
   long i;
   struct {
@@ -368,6 +369,33 @@ union pack4 {
     unsigned char b;
     unsigned char c;
     unsigned char d;
+  } ch;
+};
+
+union pack2 {
+  long i;
+  struct {
+    unsigned short a;
+    unsigned short b;
+  } ch;
+};
+#endif
+
+union pack4 {
+  long i;
+  struct {
+    unsigned char d;
+    unsigned char c;
+    unsigned char b;
+    unsigned char a;
+  } ch;
+};
+
+union pack2 {
+  long i;
+  struct {
+    unsigned short b;
+    unsigned short a;
   } ch;
 };
 	  
@@ -409,6 +437,20 @@ static void MO_pack4(int nvars, const int *expon, int *slots)
     }
 }
 
+static void MO_pack2(int nvars, const int *expon, int *slots)
+{
+  union pack2 w;
+  while (nvars > 0)
+    {
+      w.i = 0;
+      if (--nvars >= 0) {
+	w.ch.b = *expon++;
+	if (--nvars >= 0) w.ch.a = *expon++;
+      }
+      *slots++ = w.i;
+    }
+}
+
 #if 0
 static void MO_unpack4(int nvars, const int *slots, int *expon)
 {
@@ -441,6 +483,19 @@ static void MO_unpack4(int nvars, const int *slots, int *expon)
 	    *expon++ = w.ch.b;
 	    if (--nvars >= 0) *expon++ = w.ch.a;
 	  }}}
+    }
+}
+
+static void MO_unpack2(int nvars, const int *slots, int *expon)
+{
+  union pack2 w;
+  while (nvars > 0)
+    {
+      w.i = *slots++;
+      if (--nvars >= 0) {
+	*expon++ = w.ch.b;
+	if (--nvars >= 0) *expon++ = w.ch.a;
+      }
     }
 }
 
@@ -496,13 +551,28 @@ void monomialOrderEncode(const MonomialOrder *mo,
       break;
     case MO_GREVLEX2:
     case MO_GREVLEX2_WTS:
-      /* handle this case yet */
+      nvars = b->nvars;
+      p1 = tmpexp + b->nvars;
+      *--p1 = *e++;
+      for (j=1; j<nvars; j++)
+	{
+	  --p1;
+	  *p1 = *e++ + p1[1];
+	}
+      MO_pack2(nvars,p1,p);
+      p += b->nslots;
       break;
     case MO_LEX4:
-      /* handle this case yet */
+      nvars = b->nvars;
+      MO_pack4(nvars,e,p);
+      p += b->nslots;
+      e += nvars;
       break;
     case MO_LEX2:
-      /* handle this case yet */
+      nvars = b->nvars;
+      MO_pack2(nvars,e,p);
+      p += b->nslots;
+      e += nvars;
       break;
     case MO_WEIGHTS:
       s = 0;
@@ -597,13 +667,23 @@ void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponent
       break;
     case MO_GREVLEX2:
     case MO_GREVLEX2_WTS:
-      /* handle this case yet */
+      nvars = b->nvars;
+      MO_unpack2(nvars, psums + b->first_slot, tmpexp);
+      p = tmpexp + nvars - 1;
+      e = expon + b->first_exp;
+      *e++ = *p--;
+      for (j=nvars-1; j>=1; --j, --p)
+	*e++ = *p - p[1];
       break;
     case MO_LEX4:
-      /* handle this case yet */
+      nvars = b->nvars;
+      e = expon + b->first_exp;
+      MO_unpack4(nvars, psums + b->first_slot, e);
       break;
     case MO_LEX2:
-      /* handle this case yet */
+      nvars = b->nvars;
+      e = expon + b->first_exp;
+      MO_unpack2(nvars, psums + b->first_slot, e);
       break;
     case MO_WEIGHTS:
       break;
