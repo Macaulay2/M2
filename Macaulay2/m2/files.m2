@@ -22,6 +22,15 @@ copyFile(String,String) := opts -> (src,tar) -> (
      tar << get src << close;
      fileChangeMode(tar,fileMode src))
 
+moveFile = method(Options => fileOptions)
+moveFile(String,String) := opts -> (src,tar) -> (
+     if opts.Verbose then stderr << "--moving: " << src << " -> " << tar << endl;
+     if not fileExists src then error("file '",src,"' doesn't exist");
+     if fileExists tar then unlink tar;
+     link(src,tar);
+     unlink src;
+     )
+
 baseFilename = fn -> (
      fn = separate("/",fn);
      while #fn > 0 and fn#-1 === "" do fn = drop(fn,-1);

@@ -405,72 +405,37 @@ installPackage Package := o -> pkg -> (
 
      -- make example input files
      exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
-     infn := nodename -> exampleDir|toFilename nodename|".m2";
-     outfn := nodename -> exampleDir|toFilename nodename|".out";
-     tmpfn := nodename -> exampleDir|toFilename nodename|".tmp";
+     infn := fkey -> exampleDir|toFilename fkey|".m2";
+     outfn := fkey -> exampleDir|toFilename fkey|".out";
+     tmpfn := fkey -> exampleDir|toFilename fkey|".tmp";
      stderr << "--making example input files in " << exampleDir << endl;
      makeDirectory exampleDir;
-     scan(pairs pkg#"example inputs", (nodename,inputs) -> (
-	       inf := infn nodename;
+     scan(pairs pkg#"example inputs", (fkey,inputs) -> (
+	       inf := infn fkey;
 	       val := concatenate apply(inputs, s -> s|"\n");
 	       if fileExists inf and get inf === val
 	       then (
-		    -- stderr << "--leaving example input file for " << nodename << endl;
+		    -- stderr << "--leaving example input file for " << fkey << endl;
 		    )
 	       else (
-		    stderr << "--making example input file for " << nodename << endl;
+		    stderr << "--making example input file for " << fkey << endl;
 		    inf << val << close;
 		    )));
-
-     -- make example output files
-     stderr << "--making example result files in " << exampleDir << endl;
-     haderror := false;
-     scan(pairs pkg#"example inputs", (nodename,inputs) -> (
-	       inf := infn nodename;
-	       outf := outfn nodename;
-	       tmpf := tmpfn nodename;
-	       if fileExists outf and fileTime outf >= fileTime inf
-	       then (
-		    -- stderr << "--leaving example results file for " << nodename << endl
-		    )
-	       else (
-		    stderr << "--making example results file for " << nodename << endl;
-		    loadargs := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
-		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf | " 2>&1";
-		    stderr << cmd << endl;
-		    r := run cmd;
-		    if r != 0 then (
-			 stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
-			 stderr << "--example error output visible in file: " << tmpf << endl;
-			 if r == 131 then (
-			      stderr << "subprocess terminated abnormally, exiting" << endl;
-			      exit r;
-			      );
-			 if r == 2 then (
-			      stderr << "subprocess interrupted with INT, exiting, too" << endl;
-			      exit r;
-			      );
-			 haderror = true;
-			 )
-		    else (
-			 if fileExists outf then unlink outf;
-			 link(tmpf,outf);
-			 unlink tmpf;
-			 ));
-	       -- read, separate, and store example output
-	       if fileExists outf then pkg#"example results"#nodename = drop(separateM2output get outf,-1)
-	       else stderr << "--warning: missing file " << outf << endl;
-	       ));
-     if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- cache raw documentation in database, and check for changes
      rawDocUnchanged := new MutableHashTable;
      docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
      rawdbname := docDir | "rawdocumentation.db";
+     rawdbnametmp := rawdbname | ".tmp";
      stderr << "--storing raw documentation in " << rawdbname << endl;
      makeDirectory docDir;
-     if isOpen pkg#"raw documentation database" then close pkg#"raw documentation database";
-     rawdocDatabase := openDatabaseOut rawdbname;
+     if fileExists rawdbnametmp then unlink rawdbnametmp;
+     if fileExists rawdbname then (
+	  tmp := openDatabaseOut rawdbname;   -- just to make sure the database file isn't open for writing
+	  copyFile(rawdbname,rawdbnametmp);
+	  close tmp;
+	  );
+     rawdocDatabase := openDatabaseOut rawdbnametmp;
      scan(nodes, tag -> (
 	       fkey := DocumentTag.FormattedKey tag;
 	       if rawDoc#?fkey then (
@@ -489,9 +454,50 @@ installPackage Package := o -> pkg -> (
 		    else rawDocUnchanged#fkey = true
 		    )));
      close rawdocDatabase;
+     moveFile(rawdbnametmp,rawdbname);
      rawkey := "raw documentation database";
      pkg#rawkey = openDatabase rawdbname;
      addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
+
+     -- make example output files
+     stderr << "--making example result files in " << exampleDir << endl;
+     haderror := false;
+     scan(pairs pkg#"example inputs", (fkey,inputs) -> (
+	       inf := infn fkey;
+	       outf := outfn fkey;
+	       tmpf := tmpfn fkey;
+	       if fileExists outf and fileTime outf >= fileTime inf
+	       then (
+		    -- stderr << "--leaving example results file for " << fkey << endl
+		    )
+	       else (
+		    remove(rawDocUnchanged,fkey);
+		    stderr << "--making example results file for " << fkey << endl;
+		    loadargs := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
+		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf | " 2>&1";
+		    stderr << cmd << endl;
+		    r := run cmd;
+		    if r != 0 then (
+			 stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
+			 stderr << "--example error output visible in file: " << tmpf << endl;
+			 if r == 131 then (
+			      stderr << "subprocess terminated abnormally, exiting" << endl;
+			      exit r;
+			      );
+			 if r == 2 then (
+			      stderr << "subprocess interrupted with INT, exiting, too" << endl;
+			      exit r;
+			      );
+			 haderror = true;
+			 )
+		    else (
+			 moveFile(tmpf,outf);
+			 ));
+	       -- read, separate, and store example output
+	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
+	       else stderr << "--warning: missing file " << outf << endl;
+	       ));
+     if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- process documentation
      stderr << "--processing documentation nodes..." << endl;
@@ -508,12 +514,20 @@ installPackage Package := o -> pkg -> (
 
      -- cache processed documentation in database
      dbname := docDir | "documentation.db";
+     dbnametmp := dbname | ".tmp";
+     if fileExists dbnametmp then unlink dbnametmp;
+     if fileExists dbname then (
+	  tmp2 := openDatabaseOut dbname;   -- just to make sure the database file isn't open for writing
+	  copyFile(dbname,dbnametmp);
+	  close tmp2;
+	  );
      stderr << "--storing processed documentation in " << dbname << endl;
      prockey := "processed documentation database";
      if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
      docDatabase := openDatabaseOut dbname;
      scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
      close docDatabase;
+     moveFile(dbnametmp,dbname);
      pkg#prockey = openDatabase dbname;
      addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
@@ -566,9 +580,7 @@ installPackage Package := o -> pkg -> (
 	  scan(values byteOffsets, b -> infofile << b << endl);
 	  infofile << "\037" << endl << "End Tag Table" << endl;
 	  infofile << close;
-	  if fileExists(infodir|infobasename) then unlink(infodir|infobasename);
-	  link(infodir|tmpinfobasename,infodir|infobasename);
-	  unlink(infodir|tmpinfobasename);
+	  moveFile(infodir|tmpinfobasename,infodir|infobasename);
 	  stderr << "--completed info file moved to " << infodir|infobasename << endl;
 	  printWidth = savePW;
 	  )

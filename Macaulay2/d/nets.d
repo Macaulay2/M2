@@ -189,6 +189,8 @@ min(x:int,y:int):int := if x<y then x else y;
 -- export (s:Net) <= (t:Net) : bool := !(t<s);
 
 export netcmp(s:Net, t:Net):int := (
+     if s.height > t.height then return 1;
+     if s.height < t.height then return -1;
      sbody := s.body;
      tbody := t.body;
      slen := length(sbody);
@@ -225,6 +227,8 @@ export netcmp(s:Net, t:Net):int := (
 	  );
      0);
 export netcmp(s:Net, t:string):int := (
+     if s.height > 1 then return 1;
+     if s.height < 1 then return -1;
      sbody := s.body;
      slen := length(sbody);
      si := 0;
@@ -255,6 +259,8 @@ export netcmp(s:Net, t:string):int := (
 	  );
      0);
 export netcmp(s:string, t:Net):int := (
+     if 1 > t.height then return 1;
+     if 1 < t.height then return -1;
      tbody := t.body;
      tlen := length(tbody);
      ti := 0;
