@@ -537,10 +537,10 @@ html HEADER6 := x -> concatenate (
      )
 
 redoMENU := r -> SEQ prepend(
-     PARA BOLD "Menu",
+     HEADER3 "Menu",
      sublists(toList r, 
 	  x -> not ( class x === TO ),
-	  x -> PARA{x},
+	  x -> HEADER4 {x},
 	  v -> UL apply(v, i -> TOH i#0 )))
 net MENU := x -> net redoMENU x
 html MENU := x -> html redoMENU x

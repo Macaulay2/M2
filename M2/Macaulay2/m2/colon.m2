@@ -156,16 +156,6 @@ quotientAnn := options -> (I,J) -> (
      	 IJ = (quotann0 options)(I,J);
      if domins then trim IJ else IJ)
 
-quotient = method(
-     Options => {
-	  --DegreeLimit => {},
-	  --BasisElementLimit => infinity,
-	  --PairLimit => infinity,
-	  MinimalGenerators => true,
-	  Strategy => null
-	  }
-     )
-
 quotient(Ideal ,Ideal      ) := Ideal  => options -> (I,J) -> (quotientIdeal options)(I,J)
 quotient(Ideal ,RingElement) := Ideal  => options -> (I,f) -> (quotientIdeal options)(I,ideal(f))
 quotient(Module,Ideal      ) := Module => options -> (M,I) -> (quotientModule options)(M,I)

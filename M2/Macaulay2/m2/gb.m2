@@ -220,11 +220,21 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
      f.cache#type = g;
      g)
 
-Matrix // GroebnerBasis := Matrix => (n,g) -> (
+Matrix // GroebnerBasis := Matrix => (n,g) -> quotient(n,g)
+quotient(Matrix,GroebnerBasis) := Matrix => opts -> (n,g) -> (
      -- this gb might not be one with change of basis matrix attached...
      -- so it is best for the user not to use it
      R := ring g;
      map(R, last rawGBMatrixLift(raw g, raw n)))
+
+quotientRemainder(Matrix,GroebnerBasis) := Matrix => (n,g) -> (
+     -- this gb might not be one with change of basis matrix attached...
+     -- so it is best for the user not to use it
+     R := ring g;
+     (rem,quo) := rawGBMatrixLift(raw g, raw n);
+     (map(R, quo),map(R, rem)))
+
+
 RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
 Matrix % GroebnerBasis := Matrix => (n,g) -> (
