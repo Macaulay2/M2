@@ -1,13 +1,12 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-makeDir := name -> if not fileExists name then mkdir name
+makeDir := name -> if name != "" and (not fileExists name or not isDirectory name) then mkdir name
 
 makeDirectory = method()
-makeDirectory String := name -> (
+makeDirectory String := name -> (			    -- make the whole path, too
      name = minimizeFilename name;
      parts := separate("/", name);
      if last parts === "" then parts = drop(parts,-1);
-     if first parts === "" then parts = prepend("/"|first parts, drop(parts,1));
      makeDir fold((a,b) -> ( makeDir a; a|"/"|b ), parts))
 
 fileOptions := new OptionTable from { 
@@ -122,14 +121,18 @@ tt#"(" = "_lp"					       -- has a meaning in sh
 tt#")" = "_rp"					       -- has a meaning in sh
 tt#"<" = "_lt"					       -- has a meaning in sh
 tt#">" = "_gt"					       -- has a meaning in sh
-tt#"&" = "_am"					       -- has a meaning in sh
+tt#"&" = "_am"				   -- has a meaning in sh and in URLs
+tt#"@" = "_at"					     -- has a meaning in URLs
+tt#"=" = "_eq"					     -- has a meaning in URLs
+tt#"," = "_cm"					     -- has a meaning in URLs
 tt#"#" = "_sh"					     -- has a meaning in URLs
-tt#"$" = "_do"					-- has a meaning for gnu make
+tt#"+" = "_pl"					     -- has a meaning in URLs
+tt#"$" = "_do"		       -- has a meaning for gnu make, sh, and in URLs
 tt#"%" = "_pc"					     -- has a meaning in URLs
 tt#"'" = "_sq"					   -- has a meaning for xargs
-tt#"/" = "_sl"				  -- can't occur in a file name: unix
+tt#"/" = "_sl"			   -- has a meaning in file names and in URLs
 tt#":" = "_co"			    -- has a meaning for gnu make and in URLs
-tt#";" = "_se"					-- has a meaning for gnu make
+tt#";" = "_se"			    -- has a meaning for gnu make and in URLs
 tt#"?" = "_qu"				      -- has a meaning in URLs and sh
 tt#"\""= "_dq"					 -- " has a meaning for xargs
 tt#"\\"= "_bs"			  -- can't occur in a file name: MSDOS and sh
