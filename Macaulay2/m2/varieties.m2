@@ -127,3 +127,9 @@ dim ProjectiveVariety := X -> dim ring X - 1
 AffineVariety * AffineVariety := AffineVariety => (X,Y) -> Spec(ring X ** ring Y)
 AffineVariety ** Ring := AffineVariety => (X,R) -> Spec(ring X ** R)
 ProjectiveVariety ** Ring := ProjectiveVariety => (X,R) -> Proj(ring X ** R)
+
+singularLocus(ProjectiveVariety) := X -> (
+     R := ring X;
+     f := presentation R;
+     A := ring f;
+     Proj(A / saturate (minors(codim R, jacobian f) + ideal f)))

@@ -181,7 +181,7 @@ document { GroebnerBasis,
       a local ring",
       PARA,
       "Each of the operations dealing with Groebner bases may be
-      interrupted or stopped (by typing CNTRL-C).  The computation
+      interrupted or stopped (by typing CTRL-C).  The computation
       is continued by re-issuing the same command.",
       PARA,
       "To obtain information from a Groebner basis, use one of the

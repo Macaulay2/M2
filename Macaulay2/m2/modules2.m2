@@ -337,7 +337,7 @@ dim Module := M -> (
      then M = cokernel leadTerm gens gb presentation M;
      if poincare M == 0
      then -1
-     else 1 + dim hilbertPolynomial M
+     else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
      )
 
 codim Module := M -> dim ring M - dim M

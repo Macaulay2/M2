@@ -65,8 +65,18 @@ document { submatrix,
      of range."
      }
 
+document { (diff,Matrix),
+     TT "diff m", " -- differentiate the matrix ", TT "m", " with respect to the variables
+     of its ring."
+     }
+
+document { (diff,RingElement),
+     TT "diff f", " -- differentiate the ring element ", TT "f", " with respect to 
+     the variables of its ring."
+     }
+
 document { diff,
-     TT "diff(m,n)", " -- differentiate the matrix n by the matrix m",
+     TT "diff(m,n)", " -- differentiate the matrix ", TT "n", " by the matrix ", TT "m", "",
      BR,NOINDENT,
      TT "diff P", " -- compute the difference polynomial for a projective
      Hilbert polynomial, see ", TO "ProjectiveHilbertPolynomial", ".",
@@ -1298,6 +1308,9 @@ document { codim,
 	  "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
       	  "codim (R^1/(x,y))"
 	  },
+     PARA,
+     "Warning: over the integers, the computation effectively tensors first with the
+     rational numbers, yielding the wrong answer in some cases."
      }
 
 document { dim,
@@ -1309,6 +1322,9 @@ document { dim,
      BR,NOINDENT,
      TT "dim r", " -- calculate the dimension of the virtual representation
      corresponding to an element of a Schur ring.",
+     PARA,
+     "Warning: over the integers, the computation effectively tensors first with the
+     rational numbers, yielding the wrong answer in some cases.",
      PARA,
      SEEALSO {"Schur"}
      }
