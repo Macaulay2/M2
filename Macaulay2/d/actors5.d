@@ -191,9 +191,7 @@ exitfun(e:Expr):Expr := (
      else WrongArgInteger(1));
 setupfun("exit",exitfun).protected = false;
 
-applythem(obj:HashTable,fn:FunctionClosure):void := (
-     apply(fn,Expr(obj));
-     );
+applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
 
 -- match(subject:string,i:int,pattern:string,j:int):bool := (
 --      while true do (
@@ -747,7 +745,7 @@ method1(e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup
      -- env.1 : the function to call if no method found
      f := lookup(Class(e),env.0);
-     apply(if f == nullE then env.1 else f,e)
+     applyEE(if f == nullE then env.1 else f,e)
      );
 newmethod1(e:Expr):Expr := (
      env := Sequence(nullE,e);
@@ -763,28 +761,28 @@ method123(e:Expr,env:Sequence):Expr := (
 	  if length(args) == 2 then (
 	       f := lookupBinaryMethod(Class(args.0),Class(args.1),env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args))
+	       applyES(f, args))
 	  else if length(args) == 3 then (
 	       f := lookupTernaryMethod(Class(args.0),Class(args.1),Class(args.2),env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args))
+	       applyES(f, args))
 	  else if length(args) == 1 then (
 	       f := lookup(Class(args.0),env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args.0))
+	       applyEE(f, args.0))
 	  else if length(args) == 0 then (
 	       f := lookup(env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, emptySequence))
+	       applyES(f, emptySequence))
 	  else if length(args) == 4 then (
 	       f := lookupQuaternaryMethod(Class(args.0),Class(args.1),Class(args.2),Class(args.3),env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args))
-	  else apply(env.1, args))
+	       applyES(f, args))
+	  else applyES(env.1, args))
      else (
 	  f := lookup(Class(e),env.0);
 	  if f == nullE then f = env.1;
-     	  apply(f,e)));
+     	  applyEE(f,e)));
 
 anonymousClass := newHashTable(thingClass,thingClass);
 method123c(e:Expr,env:Sequence):Expr := (
@@ -809,7 +807,7 @@ method123c(e:Expr,env:Sequence):Expr := (
 		    else when args.1 is o:HashTable do o else anonymousClass);
 	       f := lookupBinaryMethod(a0,a1,env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args))
+	       applyES(f, args))
 	  else if length(args) == 3 then (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
@@ -825,7 +823,7 @@ method123c(e:Expr,env:Sequence):Expr := (
 		    else when args.2 is o:HashTable do o else anonymousClass);
 	       f := lookupTernaryMethod(a0,a1,a2,env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args))
+	       applyES(f, args))
 	  else if length(args) == 1 then (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
@@ -833,7 +831,7 @@ method123c(e:Expr,env:Sequence):Expr := (
 		    else when args.0 is o:HashTable do o else anonymousClass);
 	       f := lookup(a0,env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args.0))
+	       applyEE(f, args.0))
 	  else if length(args) == 4 then (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
@@ -853,8 +851,8 @@ method123c(e:Expr,env:Sequence):Expr := (
 		    else when args.3 is o:HashTable do o else anonymousClass);
 	       f := lookupQuaternaryMethod(a0,a1,a2,a3,env.0);
 	       if f == nullE then f = env.1;
-	       apply(f, args))
-	  else apply(env.1, args)
+	       applyES(f, args))
+	  else applyES(env.1, args)
 	  else (
 	       a0 := (
 		    if length(useClass) <= 0 || useClass.0 == False
@@ -862,7 +860,7 @@ method123c(e:Expr,env:Sequence):Expr := (
 		    else when e is o:HashTable do o else anonymousClass);
 	       f := lookup(Class(e),env.0);
 	       if f == nullE then f = env.1;
-	       apply(f,e)))
+	       applyEE(f,e)))
      else buildErrorPacket("invalid list"));
 newmethod123c(e:Expr):Expr := (
      when e is env:Sequence do (

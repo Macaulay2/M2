@@ -48,7 +48,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      method := lookup(Class(g),methodname);
      if method == nullE 
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
-     else apply(method,g)
+     else applyEE(method,g)
      );
 
 readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
@@ -129,7 +129,7 @@ readeval(file:TokenFile,returnLastvalue:bool):Expr := (
      hadexiterror := false;
      hook := getGlobalVariable(fileExitHooks);
      when hook is x:List do foreach f in x.v do (
-	  r := apply(f,haderror);
+	  r := applyEE(f,haderror);
 	  when r is err:Error do (
 	       if err.position == dummyPosition then stderr << "error in file exit hook: " << err.message << endl;
 	       hadexiterror = true;
@@ -145,7 +145,7 @@ InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt")
 topLevelPrompt():string := (
      method := lookup(integerClass,if lineNumber == previousLineNumber then InputContinuationPrompt else (previousLineNumber = lineNumber; InputPrompt));
      if method == nullE then ""
-     else when apply(method,toExpr(lineNumber)) is s:string do s
+     else when applyEE(method,toExpr(lineNumber)) is s:string do s
      is n:Integer do if isInt(n) then blanks(toInt(n)) else ""
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
@@ -296,7 +296,7 @@ debugger(f:Frame,c:Code):Expr := (
        setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
-		r := apply(debuggerHook,emptySequence);
+		r := applyES(debuggerHook,emptySequence);
 		when r is Error do return r else nothing;
 		);
 	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true);

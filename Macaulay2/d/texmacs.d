@@ -36,7 +36,7 @@ export topLevelTexmacs():bool := (
 		    stderr << "no method for TeXmacsEvaluate" << endl;
 		    )
 	       else (
-		    apply(method,Expr(item));
+		    applyEE(method,Expr(item));
 		    )
 	       )));
 topLevelTexmacs(e:Expr):Expr := toExpr(topLevelTexmacs());

@@ -363,9 +363,9 @@ export evalSequence(v:CodeSequence):Sequence := (
 	  r));
 
 export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr;
-export apply(c:FunctionClosure,cs:CodeSequence):Expr;
+export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr;
 
-export apply(c:FunctionClosure,v:Sequence):Expr := (
+export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
      previousFrame := c.frame;
      model := c.model;
      desc := model.desc;
@@ -482,10 +482,140 @@ wrongModel1(model:functionCode):Expr := printErrorMessageE(
      "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
      );
 
-export apply(c:FunctionClosure,e:Expr):Expr := (
-     -- single argument 'e' provided not a sequence, so framesize > 0
-     previousFrame := c.frame;
-     model := c.model;
+export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
+     previousFrame := fc.frame;
+     model := fc.model;
+     desc := model.desc;
+     framesize := desc.framesize;
+     when ec is cs:sequenceCode do applyFCCS(fc,cs.x)
+     else (
+	  e := eval(ec);
+	  when e is Error do return e 
+	  is v:Sequence do applyFCS(fc,v)
+	  else (
+	       -- this is the case where the argument is one Expr, not a Sequence
+	       if desc.numparms != 1 then return wrongModel1(model);
+	       if recursionDepth > recursionLimit then return RecursionLimit();
+	       recursionDepth = recursionDepth + 1;
+	       saveLocalFrame := localFrame;
+	       if framesize < length(recycleBin) then (
+		    f := recycleBin.framesize;
+		    if f == f.outerFrame then (		    -- self-pointer distinguishes the last one
+			 f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
+			 )
+		    else (
+			 recycleBin.framesize = f.outerFrame;
+			 f.outerFrame = previousFrame;
+			 f.frameID = desc.frameID;
+			 f.values.0 = e;
+			 );
+		    ret := nullE;
+		    while true do (
+			 localFrame = f;
+			 tailCode := evalAllButTail(model.body);
+			 -- formerly, just ret := eval(model.body); now do tail recursion instead
+			 when tailCode
+			 is e:Error do (
+			      ret = Expr(e);
+			      break;)
+			 is b:adjacentCode do (			    -- this bit as in eval below, except for the tail recursion case
+			      left := eval(b.lhs);
+			      when left
+			      is c2:FunctionClosure do (
+				   rhs := b.rhs;
+				   when rhs is cs:sequenceCode do (
+					ret = applyFCCS(c2,cs.x);
+					break)
+				   else (
+					e = eval(rhs);
+					when e is Error do (
+					     ret = e;
+					     break;)
+					is v:Sequence do (
+					     ret = applyFCS(c2,v);
+					     break)
+					else (			    -- here is the tail recursion
+					     -- get a new local frame, if necessary -- examine the new FunctionClosure to see
+					     -- this repeats the code at the opening of this function.
+					     previousFrame = c2.frame;
+					     model = c2.model;
+					     desc = model.desc;
+					     if desc.numparms != 1 then return wrongModel1(model);
+					     if desc.framesize > framesize || f.notrecyclable then (
+						  -- get or make a new frame
+						  framesize = desc.framesize;
+						  if framesize < length(recycleBin) && recycleBin.framesize.outerFrame != recycleBin.framesize then (
+						       -- use a stashed one
+						       f = recycleBin.framesize;
+						       recycleBin.framesize = f.outerFrame;
+						       f.outerFrame = previousFrame;
+						       f.frameID = desc.frameID;
+						       f.values.0 = e;)
+						  else (		    -- self-pointer distinguishes the last one, so ignore it and make a new one
+						       f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
+						       ))
+					     else (
+						  -- clean up the old one
+						  -- leave framesize as is, the actual size of f
+						  foreach x in f.values do x = nullE;
+						  f.outerFrame = previousFrame;
+						  f.frameID = desc.frameID;
+						  f.values.0 = e;
+						  );
+					     -- was apply(c2,e), before
+					     -- no break, looping
+					     )))
+			      is ff:CompiledFunction do (
+				   z := eval(b.rhs);
+				   when z is Error do (
+					ret = z;
+					break)
+				   else (
+					ret = ff.fn(z);
+					break))
+			      is ff:CompiledFunctionClosure do (
+				   z := eval(b.rhs);
+				   when z is Error do (
+					ret = z;
+					break)
+				   else (
+					ret = ff.fn(z,ff.env);
+					break))
+			      is Error do (
+				   ret = left;
+				   break)
+			      else (
+				   ret = binarymethod(left,b.rhs,AdjacentS);
+				   break))
+			 else (
+			      ret = eval(tailCode);
+			      break));
+		    localFrame = saveLocalFrame;
+		    if !f.notrecyclable then (
+			 -- clean it and recycle it
+			 foreach x in f.values do x = nullE;
+			 f.outerFrame = recycleBin.framesize;
+			 f.frameID = -2;				    -- just to be tidy, not really needed
+			 recycleBin.framesize = f;
+			 );
+		    recursionDepth = recursionDepth - 1;
+		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
+		    )
+	       else (
+		    f := Frame(previousFrame,desc.frameID,framesize,false,
+			 new Sequence len framesize do (
+			      provide e;
+			      while true do provide nullE));
+		    localFrame = f;
+		    ret := eval(model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
+		    localFrame = saveLocalFrame;
+		    recursionDepth = recursionDepth - 1;
+		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
+		    ))));
+export applyFCE(fc:FunctionClosure,e:Expr):Expr := (
+     -- single argument 'e' provided not a sequence, so framesize > 0 -- or should we check, for safety??
+     previousFrame := fc.frame;
+     model := fc.model;
      desc := model.desc;
      framesize := desc.framesize;
      if desc.numparms != 1 then return wrongModel1(model);
@@ -503,87 +633,8 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	       f.frameID = desc.frameID;
 	       f.values.0 = e;
 	       );
-	  ret := nullE;
-     	  while true do (
-	       localFrame = f;
-	       tailCode := evalAllButTail(model.body);
-	       -- formerly, just ret := eval(model.body); now do tail recursion instead
-	       when tailCode
-	       is e:Error do (
-		    ret = Expr(e);
-		    break;)
-	       is b:adjacentCode do (			    -- this bit as in eval below, except for the tail recursion case
-		    left := eval(b.lhs);
-		    when left
-		    is c2:FunctionClosure do (
-			 rhs := b.rhs;
-			 when rhs is cs:sequenceCode do (
-			      ret = apply(c2,cs.x);
-			      break)
-			 else (
-			      e = eval(rhs);
-			      when e is Error do (
-				   ret = e;
-				   break;)
-			      is v:Sequence do (
-				   ret = apply(c2,v);
-				   break)
-			      else (			    -- here is the tail recursion
-				   -- get a new local frame, if necessary -- examine the new FunctionClosure to see
-				   -- this repeats the code at the opening of this function.
-				   previousFrame = c2.frame;
-				   model = c2.model;
-				   desc = model.desc;
-				   if desc.numparms != 1 then return wrongModel1(model);
-				   if desc.framesize > framesize || f.notrecyclable then (
-					-- get or make a new frame
-					framesize = desc.framesize;
-					if framesize < length(recycleBin) && recycleBin.framesize.outerFrame != recycleBin.framesize then (
-					     -- use a stashed one
-					     f = recycleBin.framesize;
-					     recycleBin.framesize = f.outerFrame;
-					     f.outerFrame = previousFrame;
-					     f.frameID = desc.frameID;
-					     f.values.0 = e;)
-					else (		    -- self-pointer distinguishes the last one, so ignore it and make a new one
-					     f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
-					     ))
-				   else (
-					-- clean up the old one
-					-- leave framesize as is, the actual size of f
-					foreach x in f.values do x = nullE;
-					f.outerFrame = previousFrame;
-					f.frameID = desc.frameID;
-					f.values.0 = e;
-					);
-				   -- was apply(c2,e), before
-				   -- no break, looping
-				   )))
-		    is ff:CompiledFunction do (
-			 z := eval(b.rhs);
-			 when z is Error do (
-			      ret = z;
-			      break)
-			 else (
-			      ret = ff.fn(z);
-			      break))
-		    is ff:CompiledFunctionClosure do (
-			 z := eval(b.rhs);
-			 when z is Error do (
-			      ret = z;
-			      break)
-			 else (
-			      ret = ff.fn(z,ff.env);
-			      break))
-		    is Error do (
-			 ret = left;
-			 break)
-		    else (
-			 ret = binarymethod(left,b.rhs,AdjacentS);
-			 break))
-	       else (
-		    ret = eval(tailCode);
-		    break));
+	  localFrame = f;
+	  ret := eval(model.body);
 	  localFrame = saveLocalFrame;
 	  if !f.notrecyclable then (
 	       -- clean it and recycle it
@@ -607,8 +658,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 	  )
      );
-
-export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
+export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
      -- in this version we try to avoid allocating an array of exprs to
      -- hold the parameters, preferring to stuff them into the frame
      -- directly
@@ -617,7 +667,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
      if desc.restargs
      then (
 	  v := evalSequence(cs);
-	  if evalSequenceHadError then evalSequenceErrorMessage else apply(c,v)
+	  if evalSequenceHadError then evalSequenceErrorMessage else applyFCS(c,v)
 	  )
      else if desc.numparms != length(cs)
      then WrongNumArgs(model.arrow,desc.numparms,length(cs))
@@ -713,26 +763,25 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       )
 	  )
      );
-export apply(f:Expr,v:Sequence):Expr := (
+export applyES(f:Expr,v:Sequence):Expr := (
      when f
      is ff:CompiledFunction do ff.fn(Expr(v))
      is ff:CompiledFunctionClosure do ff.fn(Expr(v),ff.env)
-     is c:FunctionClosure do apply(c,v)
+     is c:FunctionClosure do applyFCS(c,v)
      else buildErrorPacket("expected a function"));
-export apply(f:Expr,e:Expr):Expr := (
+export applyEE(f:Expr,e:Expr):Expr := (
      when f
      is ff:CompiledFunction do ff.fn(e)
      is ff:CompiledFunctionClosure do ff.fn(e,ff.env)
      is c:FunctionClosure do (
 	  when e
-	  is v:Sequence do apply(c,v)
-	  else apply(c,e)
+	  is v:Sequence do applyFCS(c,v)
+	  else applyFCE(c,e)
 	  )
      else buildErrorPacket("expected a function"));
-export apply2 := apply;
 --------
 -- could optimize later
-export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
+export applyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
      -- was simply apply(f,Expr(Sequence(e0,e1)))
      when g
      is ff:CompiledFunction do ff.fn(Expr(Sequence(e0,e1)))
@@ -741,7 +790,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 	  model := c.model;
 	  desc := model.desc;
 	  if desc.restargs
-	  then apply(c,Expr(Sequence(e0,e1)))
+	  then applyFCS(c,Sequence(e0,e1))
 	  else if desc.numparms != 2
 	  then WrongNumArgs(model.arrow,desc.numparms,2)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
@@ -803,7 +852,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 	       )
 	  )
      else buildErrorPacket("expected a function"));     
-export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
+export applyEEE(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
      -- was simply apply(f,Expr(Sequence(e0,e1,e2)));
      when g
      is ff:CompiledFunction do ff.fn(Expr(Sequence(e0,e1,e2)))
@@ -812,7 +861,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	  model := c.model;
 	  desc := model.desc;
 	  if desc.restargs
-	  then apply(c,Expr(Sequence(e0,e1,e2)))
+	  then applyFCS(c,Sequence(e0,e1,e2))
 	  else if desc.numparms != 3
 	  then WrongNumArgs(model.arrow,desc.numparms,3)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
@@ -881,7 +930,7 @@ export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
      else (
 	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
 	  if method == nullE then MissingMethod(methodkey)
-	  else apply(method,right)));
+	  else applyEE(method,right)));
 export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
      left := eval(lhs);
      when left is Error do left
@@ -892,7 +941,7 @@ export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
 		    methodkey.symbol.hash);
 	       if method == nullE then MissingMethodPair(methodkey,left,right)
-	       else apply(method,left,right))));
+	       else applyEEE(method,left,right))));
 export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
      right := eval(rhs);
      when right is Error do right
@@ -905,7 +954,7 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       else MissingMethodPair(methodkey,left,right)
 	       else MissingMethodPair(methodkey,left,right)
 	       )
-	  else apply(method,left,right)));
+	  else applyEEE(method,left,right)));
 
 -----------------------------------------------------------------------------
 
@@ -918,23 +967,23 @@ globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
 	  y := when g
 	  is s:List do (
 	       foreach f in s.v do (
-		    r := apply(f,sym,newvalue);
+		    r := applyEEE(f,sym,newvalue);
 		    when r is Error do return r else nothing;
 		    );
 	       nullE)
-	  is f:CompiledFunction do apply(g,sym,newvalue)
-	  is f:CompiledFunctionClosure do apply(g,sym,newvalue)
-	  is f:FunctionClosure do apply(g,sym,newvalue)
+	  is f:CompiledFunction do applyEEE(g,sym,newvalue)
+	  is f:CompiledFunctionClosure do applyEEE(g,sym,newvalue)
+	  is f:FunctionClosure do applyEEE(g,sym,newvalue)
 	  else buildErrorPacket("expected global assignment hook for " + t.word.name + " to be a function or list of functions");
 	  when y is Error do return y else nothing;
 	  );
      if method != nullE then (
-	  y := apply(method,sym,oldvalue);
+	  y := applyEEE(method,sym,oldvalue);
 	  when y is Error do return y else nothing;
 	  );
      method = lookup(Class(newvalue),GlobalAssignE);
      if method != nullE then (
-	  y := apply(method,sym,newvalue);
+	  y := applyEEE(method,sym,newvalue);
 	  when y is Error do return y else nothing;
 	  );
      nullE
@@ -1092,14 +1141,7 @@ export eval(c:Code):Expr := (
 	  is b:adjacentCode do (
 	       left := eval(b.lhs);
 	       when left
-	       is c:FunctionClosure do (
-	       	    rhs := b.rhs;
-		    when rhs is cs:sequenceCode do apply(c,cs.x)
-		    else (
-			 z := eval(rhs);
-			 when z is Error do z
-			 is v:Sequence do apply(c,v)
-			 else apply(c,z)))
+	       is fc:FunctionClosure do applyFCC(fc,b.rhs)
 	       is ff:CompiledFunction do (
 		    z := eval(b.rhs);
 		    when z is Error do z
@@ -1321,7 +1363,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	  else (
 	       value := eval(rhs);
 	       when value is Error do return value else nothing;
-	       apply(method,left,value))));
+	       applyEEE(method,left,value))));
 setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
@@ -1331,7 +1373,7 @@ scanpairs(f:Expr,obj:HashTable):Expr := (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := apply(f,p.key,p.value);
+	       v := applyEEE(f,p.key,p.value);
 	       when v is Error do return v else nothing;
 	       p = p.next;
 	       ));
@@ -1355,7 +1397,7 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := apply(f,p.key,p.value);
+	       v := applyEEE(f,p.key,p.value);
 	       when v 
 	       is Error do return v 
 	       is Nothing do nothing
@@ -1395,7 +1437,7 @@ export mapkeys(f:Expr,obj:HashTable):Expr := (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       newkey := apply(f,p.key);
+	       newkey := applyEE(f,p.key);
 	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
 	       when newkey is Error do return newkey else nothing;
 	       storeInHashTableNoClobber(newobj,newkey,p.value);
@@ -1426,7 +1468,7 @@ export mapvalues(f:Expr,obj:HashTable):Expr := (
 	       p := bucket;
 	       q := bucketEnd;
 	       while p != p.next do (
-		    newvalue := apply(f,p.value);
+		    newvalue := applyEE(f,p.value);
 		    when newvalue is Error do (
 			 errm = newvalue;
 			 hadError = true;
@@ -1471,7 +1513,7 @@ merge(e:Expr):Expr := (
 		    while q != q.next do (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
-			      t := apply(g,val,q.value);
+			      t := applyEEE(g,val,q.value);
 			      when t is Error do return t else nothing;
 			      storeInHashTable(z,q.key,q.hash,t);
 			      )
@@ -1498,7 +1540,7 @@ merge(e:Expr):Expr := (
 		    while q != q.next do (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
-			      t := apply(g,q.value,val);
+			      t := applyEEE(g,q.value,val);
 			      when t is Error do return t else nothing;
 			      storeInHashTable(z,q.key,q.hash,t);
 			      )
@@ -1530,9 +1572,9 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 	       foreach qq in y.table do (
 		    q := qq;
 		    while q != q.next do (
-			 pqkey := apply(f,p.key,q.key);
+			 pqkey := applyEEE(f,p.key,q.key);
 			 when pqkey is Error do return pqkey else nothing;
-			 pqvalue := apply(g,p.value,q.value);
+			 pqvalue := applyEEE(g,p.value,q.value);
 			 when pqvalue is Error do return pqvalue else nothing;
 			 pqhash := hash(pqkey);
 			 previous := lookup1(z,pqkey,pqhash);
@@ -1540,7 +1582,7 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 			      if previous == notfoundE
 			      then pqvalue
 			      else (
-				   t := apply(h,previous,pqvalue);
+				   t := applyEEE(h,previous,pqvalue);
 				   when t is Error do return t else nothing;
 				   t));
 			 when r is Error do return r else nothing;
@@ -1568,12 +1610,12 @@ setupfun("combine",combine);
 export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
      if method == nullE then MissingMethod(methodkey)
-     else apply(method,right));
+     else applyEE(method,right));
 
 export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);
      if method == nullE then MissingMethodPair(methodkey,left,right)
-     else apply(method,left,right));
+     else applyEEE(method,left,right));
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

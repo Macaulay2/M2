@@ -71,7 +71,7 @@ select(a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
      found := 0;
      foreach x at i in a do (
-	  y := apply(f,x);
+	  y := applyEE(f,x);
 	  when y is Error do return y else nothing;
 	  if y == True then (
 	       b.i = true;
@@ -87,7 +87,7 @@ select(e:Expr,f:Expr):Expr := (
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       while p != p.next do (
-		    newvalue := apply(f,p.value);
+		    newvalue := applyEE(f,p.value);
 		    when newvalue 
 		    is Error do return newvalue
 		    else if newvalue == True 
@@ -110,7 +110,7 @@ select(n:int,a:Sequence,f:Expr):Expr := (
      found := 0;
      foreach x at i in a do (
 	  if found < n then (
-	       y := apply(f,x);
+	       y := applyEE(f,x);
 	       when y is Error do return y else nothing;
 	       if y == True then (
 		    b.i = true;
@@ -131,7 +131,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       while nval > 0 && p != p.next do (
-		    newvalue := apply(f,p.value);
+		    newvalue := applyEE(f,p.value);
 		    when newvalue 
 		    is Error do return newvalue
 		    else if newvalue == True 
@@ -169,7 +169,7 @@ any(f:Expr,obj:HashTable):Expr := (
 	  p := bucket;
 	  while true do (
 	       if p == p.next then break;
-	       v := apply(f,p.key,p.value);
+	       v := applyEEE(f,p.key,p.value);
 	       when v is Error do return v else nothing;
 	       if v == True then return True;
 	       p = p.next;
@@ -177,7 +177,7 @@ any(f:Expr,obj:HashTable):Expr := (
      False);
 any(f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
-	  y := apply(f,x);
+	  y := applyEE(f,x);
 	  when y is Error do return y else nothing;
 	  if y == True then return True);
      False);
