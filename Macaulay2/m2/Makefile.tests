@@ -34,8 +34,6 @@ all:: $(TESTRESULTS)
 
 ifneq "$(DUMPDATA)" "no"
 $(TESTRESULTS) : ../../../$(DUMPDATAFILE)
-else
-$(TESTRESULTS) : ../../../cache/Macaulay2-doc
 endif
 
 # Local Variables:
