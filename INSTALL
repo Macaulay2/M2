@@ -47,7 +47,7 @@ depend on some of the earlier ones.
 		the installed files, so change BINOWN and BINGRP to suit you.
 
     library: gmp
-    release: gmp-4.0.1
+    release: gmp-4.1
      author: Torbjorn Granlund <tege@nada.kth.se>
     bugs to: <bug-gmp@prep.ai.mit.edu>
      get at: ftp://ftp.gnu.org/gnu/gmp
