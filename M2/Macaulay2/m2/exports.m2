@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+     	symbol independentSets,
         symbol MakeDocumentation,
 	symbol rowPermute,
 	symbol columnPermute,

@@ -46,3 +46,19 @@ annihilator (x_1*x_1)
 
 --x_1*x_4 has annihiltor I1+I3.
 annihilator (x_1*x_4)
+
+end
+-- Mike's playing code:
+S = ZZ/103[x_1 ..x_5]
+I1 = ideal(x_1, x_2, x_3)
+I2 = ideal(x_1, x_2, x_4)
+I3 = ideal(x_1, x_5)
+P = I1*I2*I3
+C = primaryDecomposition(P, Strategy=>SY)
+
+J2 = top P
+L2 = P : J2
+primaryDecomposition(L2,Strategy=>SY)
+C2 = apply(C, p -> p : J2)
+intersect C2 == L2
+C2/toString/print

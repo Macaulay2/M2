@@ -2335,6 +2335,19 @@ export rawAssociatedPrimes(e:Expr):Expr := (
      else WrongArg("a raw monomial ideal"));
 setupfun("rawAssociatedPrimes",rawAssociatedPrimes);
 
+export rawMaximalIndependentSets(e:Expr):Expr := (
+     when e is s:Sequence do
+     when s.0 is m:RawMonomialIdeal do
+     when s.1 is n:Integer do 
+     if !isInt(n) then WrongArgSmallInteger(2) else 
+     toExpr(Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdeal)",
+	       "rawMaximalIndependentSets(", "(MonomialIdeal *)", m, ",", toInt(n), ")" ) )
+     else WrongArgInteger(2)
+     else WrongArg("a raw monomial ideal")
+     else WrongNumArgs(2)
+     );
+setupfun("rawMaximalIndependentSets",rawMaximalIndependentSets);
+
 -----------------------------------------------------------------------------
 -- ring maps
 

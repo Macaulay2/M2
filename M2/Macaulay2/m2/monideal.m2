@@ -138,8 +138,26 @@ poincare MonomialIdeal := M -> (
      M.cache.poincare
      )
 
-minprimes MonomialIdeal := MonomialIdeal => m -> (
-     newMonomialIdeal(ring m, rawAssociatedPrimes m.RawMonomialIdeal))
+-- OBSOLETE
+--minprimes MonomialIdeal := MonomialIdeal => m -> (
+--     newMonomialIdeal(ring m, rawAssociatedPrimes m.RawMonomialIdeal))
+
+independentSets = method(Options => { Limit => Infinity })
+independentSets MonomialIdeal := o -> (M) -> (
+     result := newMonomialIdeal(ring M, 
+	  rawMaximalIndependentSets(M.RawMonomialIdeal, 
+	       if o.Limit === Infinity then -1 else o.Limit));
+     result = flatten entries generators result;
+     if #result === 1 and result#0 == 1_(ring M) then 
+         {}
+	 -- result#0=1 means the single isolated 
+	 -- prime is the maximal ideal
+     else
+         result
+     )
+independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
+     
+     
 
 -----------------------------------------------------------------------------
 -- this code below here is by Greg Smith

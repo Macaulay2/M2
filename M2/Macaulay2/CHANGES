@@ -16,6 +16,13 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The routine 'independentSets', which takes a monomial ideal, and an
+optional Limit, and returns a list whose elements encode
+the maximal independent sets of the ideal.  The encoding is done as
+follows: a max indep set is given as the product of the variables in
+the set.  This routine replaces and slightly generalizes the poorly
+named 'minprimes', which is now obsolete.
+
 The routine 'autoReduce' is now obsolete because all gb's are
 auto-reduced now, so it's been removed.
 

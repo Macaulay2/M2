@@ -242,7 +242,8 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
   f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
-  g->alpha = f_wt - f_leadweight;
+  //g->alpha = f_wt - f_leadweight; // DOESN"T PRODUCE CORRECT DEGREES
+  g->alpha = deg - weightInfo_->gbvector_term_weight(f);
   g->minlevel = minlevel;
   return g;
 }
@@ -275,6 +276,8 @@ gbA::spair *gbA::spair_make(int i, int j)
   result->type = SPAIR_SPAIR;
   result->lcm = R->exponents_make();
     exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, gb_weights, result->deg);
+    if (g2->alpha > g1->alpha)
+      result->deg += g2->alpha - g1->alpha;
   result->x.pair.i = i;
   result->x.pair.j = j;
 
@@ -900,6 +903,7 @@ bool gbA::reduce(spair *p)
 {
   /* Returns false iff we defer computing this spair. */
   /* If false is returned, this routine has grabbed the spair 'p'. */
+  int tmf;
   int count = 0;
   compute_s_pair(p); /* Changes the type, possibly */
   if (gbTrace >= 10)
@@ -908,6 +912,15 @@ bool gbA::reduce(spair *p)
       o << "reducing ";
       R->gbvector_text_out(o, _F, p->f());
       emit_line(o.str());
+    }
+  if (gbTrace >= 5)
+    {
+      if (weightInfo_->gbvector_weight(p->f(), tmf) > _this_degree)
+	{
+	  buffer o;
+	  o << "ERROR: degree of polynomial is too high"  << newline;
+	  emit(o.str());
+	}
     }
   while (!R->gbvector_is_zero(p->f()))
     {
@@ -997,6 +1010,16 @@ bool gbA::reduce(spair *p)
 				       p->f(), p->fsyz(), /* modifies these */
 				       g.f, g.fsyz);
 	}
+
+      if (gbTrace >= 5)
+	{
+	  if (weightInfo_->gbvector_weight(p->f(), tmf) > _this_degree)
+	    {
+	      buffer o;
+	      o << "ERROR: degree of polynomial is too high"  << newline;
+	      emit(o.str());
+	    }
+	}
       _stats_nreductions++;
       if (gbTrace >= 10)
 	{
@@ -1015,7 +1038,7 @@ bool gbA::reduce(spair *p)
 	  if (gbTrace >= 10)
 	    {
 	      buffer o;
-	      o << "deferring B spair ";
+	      o << "deferring B spair old deg " << p->deg-alpha << " new deg " << p->deg << " ";
 	      spair_text_out(o,p);
 	      emit_line(o.str());
 	    }
@@ -1377,7 +1400,21 @@ void gbA::insert(POLY f, gbelem_type minlevel)
   /* Reduce this element as far as possible.  This either removes content, 
      makes it monic, or at least negates it so the lead coeff is positive. */
   ring_elem junk;
+
+  int fwt;
+  int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
+  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
+	  gb.size(), 
+	  _this_degree,
+	  fdeg,
+	  fdeg-fwt);
+
   remainder(f,_this_degree,false,junk);
+
+  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
+  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
+	  fdeg,
+	  fdeg-fwt);
 
   _stats_ngb++;
 
@@ -1409,6 +1446,16 @@ void gbA::insert(POLY f, gbelem_type minlevel)
     update_pairs(me);
 
   auto_reduce_by(me);
+
+  for (int i=0; i<gb.size(); i++)
+    {
+      fdeg = weightInfo_->gbvector_weight(gb[i]->g.f, fwt);
+      fprintf(stderr, "    after auto reduce gb %d deg %d actualdeg %d alpha %d\n", 
+	      i, 
+	      gb[i]->deg,
+	      fdeg,
+	      fdeg-fwt);
+    }
 
   if (_use_hilb)
     {

@@ -1440,6 +1440,14 @@ extern "C" {
      is x1 ... xn /(x_i1 ... x_ir), i.e. the complement of the support of
      the monomial generates the monomial minimal prime. */
 
+  const MonomialIdeal *rawMaximalIndependentSets(const MonomialIdeal *I,
+						 int count); 
+  /* drg: connected rawMaximalIndependentSets */
+  /* Returns a monomial ideal where each generator encodes a maximal independent set
+     of variables of I.  If 'count' is positive, only collect this number.
+     A maximal independent set is encoded as a squarefree monomial of the product
+     of all of the independent variables in the set. */
+
   const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I); /* connected to rawHilbert */
   /* This routine computes the numerator of the Hilbert series
      for coker I.  NULL is returned if the ring is not appropriate for

@@ -90,16 +90,16 @@ newdecompose(Ideal) := List => (I) -> (
 
 -- Find the independent sets of the ideal I
 -- This doesn't necessarily find them all
-independentSets = (I) -> (
-     inI := monomialIdeal leadTerm I;
-     result := flatten entries generators minprimes inI;
-     if #result === 1 and result#0 == 1_(ring I) then 
-         {}
-	 -- result#0=1 means the single isolated 
-	 -- prime is the maximal ideal
-     else
-         result
-     )
+--independentSets = (I) -> (
+--     inI := monomialIdeal leadTerm I;
+--     result := flatten entries generators minprimes inI;
+--     if #result === 1 and result#0 == 1_(ring I) then 
+--         {}
+--	 -- result#0=1 means the single isolated 
+--	 -- prime is the maximal ideal
+--     else
+--         result
+--     )
 
 -- Make a list of the variables which occur in the lead 
 -- monomial of f.

@@ -8,7 +8,6 @@ export (
      extract,
      findNonMember,
      flattener,
-     independentSets,
      localize,
      minSat,
      primaryComponent,
