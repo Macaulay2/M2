@@ -18,6 +18,8 @@ ifeq "$(CC)" "gcc"
 CFLAGS += -Wall
 endif
 
+.PHONY : all clean distclean wc
+
 all:: $(EXES)
 update.o : restart.h
 clean :; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj)

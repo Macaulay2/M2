@@ -1,6 +1,7 @@
 TOPDIR = ../../..
 include $(TOPDIR)/config.Makefile
-VPATH = @srcdir@
+srcdir = @srcdir@
+VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
@@ -21,23 +22,27 @@ CHAPTERS = completeIntersections \
 Makefile : Makefile.in
 	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
 
-tests: $(CHAPTERS:=.test)
+tests : $(CHAPTERS:=.test)
+
+.PHONY: clean changes distclean all tests run-1-test
+
 %.test :
-	$(MAKE) -C $* -f ../Makefile TOPDIR=../$(TOPDIR) run-1-test
+	mkdir -p $*
+	$(MAKE) -C $* -f ../Makefile TOPDIR=../$(TOPDIR) srcdir=../@srcdir@/$* run-1-test
 
 run-1-test: test.out.expected.trim test.out.trim
 	diff -u $^
 
 test.out.trim : test.out patterns ../patterns
-	sed -f ../patterns -f patterns <$< >$@
+	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
 
 test.out.expected.trim : test.out.expected patterns ../patterns
-	sed -f ../patterns -f patterns <$< >$@
+	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
 
 changes:
 	-for i in $(CHAPTERS); \
-	do diff -u $$i/chapter.m2 $$i/test.m2 ;\
-	   diff -u $$i/chapter.out.expected $$i/test.out.expected ;\
+	do diff -u @srcdir@/$$i/chapter.m2 @srcdir@/$$i/test.m2 ;\
+	   diff -u @srcdir@/$$i/chapter.out.expected @srcdir@/$$i/test.out.expected ;\
 	done
 
 clean::
@@ -47,7 +52,9 @@ test.out : test.m2 \
 		../../../bin/M2 ../../../libexec/Macaulay2 \
 		../../../cache/Macaulay2-doc ../../../cache/Macaulay2-made
 	ulimit -v 320000 && \
-	time nice -18 ../../../bin/M2 -x -s -q <test.m2 >test.out.tmp && \
+	time nice -18 ../../../bin/M2 -x -s -q \
+		"-e path = prepend(\"$(srcdir)/\",path)" \
+		<$(srcdir)/test.m2 >test.out.tmp && \
 	mv test.out.tmp test.out
 
 clean::

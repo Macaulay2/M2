@@ -8,6 +8,8 @@ INSTALL_DATA = $(INSTALL)
 DOC=cache/doc
 TEST=cache/tests
 
+.PHONY : all test-D-modules doc tests initialize clean distclean install
+
 all :: initialize
 
 Makefile : Makefile.in
@@ -18,9 +20,9 @@ all :: doc
 doc : $(DOC) $(TEST)
 	../bin/M2 -q '-e phase=2' StateTable.m2 '-e exit 0'
 	../bin/M2 -q '-e phase=2' eliminate.m2  '-e exit 0'
-	$(MAKE) -k -C $(DOC) -f ../../../m2/Makefile.egs
+	$(MAKE) -k -C $(DOC) -f ../../@srcdir@/../m2/Makefile.egs
 tests :: doc
-	$(MAKE) -k -C $(TEST) -f ../../../m2/Makefile.tests
+	$(MAKE) -k -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests
 #############################################################################
 Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)

@@ -57,7 +57,7 @@ announce.doc ::
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
 all :: $(TARGET)
-check :: $(MAKE) -C Macaulay2 tests
+check : ; $(MAKE) -C Macaulay2 tests
 MACAULAY2:; $(MAKE) -C Macaulay2 all
 justM2 distclean::; $(MAKE) -C Macaulay2 $@
 DISTFILES_MADE:= \

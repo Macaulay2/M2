@@ -96,6 +96,15 @@ Quick and easy:
 
     Eventually 'make install' will do something, but not yet!
 
+To compile in another directory, for example, in a subdirectory:
+
+	mkdir COMPILE
+	cd COMPILE
+	../configure
+	make
+	make check
+	make doc
+
 Useful make targets:
 
     Use

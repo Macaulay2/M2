@@ -1,3 +1,6 @@
+
+.PHONY : all clean distclean wc install tests default all2 tests2
+
 default: all2 tests2
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
