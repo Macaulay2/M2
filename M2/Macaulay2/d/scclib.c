@@ -591,17 +591,24 @@ M2_string serv;
      return sd;
      }
 
+extern int errno, sys_nerr;
+#ifndef NO_HERROR
+extern int h_nerr;
+#ifdef SYS_ERRLIST_NOT_CONST
+extern char * h_errlist[];
+#else
+extern const char * const h_errlist[];
+#endif
+#endif
+
+#ifdef SYS_ERRLIST_NOT_CONST
+extern char * sys_errlist[];
+#else
+extern const char * const sys_errlist[];
+#endif
+
 M2_string system_syserrmsg()
 {
-     extern int errno, sys_nerr;
-     extern int h_nerr;
-#ifdef SYS_ERRLIST_NOT_CONST
-     extern char * sys_errlist[];
-     extern char * h_errlist[];
-#else
-     extern const char * const sys_errlist[];
-     extern const char * const h_errlist[];
-#endif
 #if defined(__MWERKS__)
      return tostring("");
 #else

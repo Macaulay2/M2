@@ -20,6 +20,9 @@ cat <<EOF >compat.c
 #include <errno.h>
 EOF
 
+cat <<EOF >compat.mak
+EOF
+
 cat <<'EOF' >$TMP
 #include <math.h>
 main(){
@@ -56,12 +59,15 @@ cat >>compat.c <<'EOF'
 #endif
 EOF
 
-cat <<'EOF' >$TMP
-main(){ }
-EOF
-if $CC $TMP $LDFLAGS -lsocket >/dev/null 2>&1
-then LDFLAGS="$LDFLAGS -lsocket"
-fi
+# cat <<'EOF' >$TMP
+# main(){ }
+# EOF
+# if $CC $TMP $LDFLAGS -lsocket >/dev/null 2>&1
+# then LDFLAGS="$LDFLAGS -lsocket"
+#      cat <<EOF >compat.mak
+# SOCKET_LIB := TRUE
+# EOF
+# fi
 
 cat <<'EOF' >$TMP
 main(){ getprotobyname(); }

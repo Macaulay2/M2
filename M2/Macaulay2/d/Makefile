@@ -1,6 +1,7 @@
 ############################## includes
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
+include compat.mak
 ############################## main target
 all :: compat.h ../bin/Macaulay2
 ############################## useful targets
@@ -207,8 +208,9 @@ endif
 ifeq "$(CC)" "cl"
 compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
+compat.mak : ; echo >$@
 else
-compat.c compat.h : configure; ./configure
+compat.c compat.h compat.mak : configure; ./configure
 endif
 
 M2lib.o scclib.o M2lib.lo scclib.lo : \
