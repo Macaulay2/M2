@@ -37,6 +37,12 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- res39: 0.38 seconds
 -- resG25: 6.05 seconds
 
+-- beginning computation Tue Sep 30 22:05:23 CDT 2003
+-- Linux rhodium 2.4.20 #2 Mon Mar 17 22:02:15 PST 2003 i686 unknown
+-- Macaulay2 0.9.2, compiled with gcc 3.2
+-- res39: 0.37 seconds
+-- resG25: 6.1 seconds
+
 -- beginning computation Sat May 25 17:27:49 CDT 2002
 -- Linux lisboa.ks.uiuc.edu 2.4.16 #9 Tue Feb 19 14:11:28 CST 2002 i686 unknown
 -- model name      : Intel(R) Pentium(R) 4 CPU 1700MHz
