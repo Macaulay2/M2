@@ -35,6 +35,7 @@ import getenv(s:string):string;
 import stime():void;
 import etime():double;
 import strcmp(s:string,t:string):int;
+import strnumcmp(s:string,t:string):int;
 import gc:bool;
 import randomint():int;
 import wait(pid:int):int;
