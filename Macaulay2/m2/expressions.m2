@@ -1100,6 +1100,8 @@ Thing.AfterPrint = x -> (
      briefDocumentation x;
      )
 
+Nothing.AfterPrint = identity
+
 Expression.AfterPrint = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << class x

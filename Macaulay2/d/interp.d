@@ -43,7 +43,6 @@ previousLineNumber := -1;
 
 AfterEval := makeProtectedSymbolClosure("AfterEval");
 BeforePrint := makeProtectedSymbolClosure("BeforePrint");
-BeforeNoPrint := makeProtectedSymbolClosure("BeforeNoPrint");
 Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
 AfterPrint := makeProtectedSymbolClosure("AfterPrint");
@@ -118,7 +117,7 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 				   when g is err:Error do ( g = update(err,"after eval",f); if stopIfError then return g; ) else nothing;
 				   lastvalue = g;
 				   -- result of BeforePrint is printed instead
-				   g = runmethod(if s.word == SemicolonW then BeforeNoPrint else BeforePrint,lastvalue,f);
+				   g = runmethod(BeforePrint,lastvalue,f);
 				   when g is err:Error do ( g = update(err,"before print",f); if stopIfError then return g; ) else nothing;
 				   printvalue := g;
 				   -- result of Print is ignored
