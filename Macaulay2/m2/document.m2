@@ -1254,10 +1254,10 @@ html CODE   := x -> concatenate(
      )
 
 isAbsolute := url -> (
-     "#" != substring(url,0,1) and
-     "http://" != substring(url,0,7) and
-     "ftp://" != substring(url,0,6) and
-     "mailto:" != substring(url,0,7)
+     "#" == substring(url,0,1) or
+     "http://" == substring(url,0,7) or
+     "ftp://" == substring(url,0,6) or
+     "mailto:" == substring(url,0,7)
      )
 
 htmlFilename := key -> (
@@ -1268,7 +1268,7 @@ htmlFilename := key -> (
 rel := url -> (
      if isAbsolute url 
      then url
-     else relativizeFilename(first documentationPath, htmlFilename formattedKey)
+     else relativizeFilename(first documentationPath, url)
      )
 
 html HREF := x -> (

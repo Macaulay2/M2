@@ -3,8 +3,10 @@ include ../../include/config.Makefile
 IMAGES = \
 	up.gif next.gif previous.gif top.gif index.gif null.gif \
 	recbg.jpg 9planets.gif Grayson2.jpg
+TARGETDIR = ../m2/cache/doc
+HOMEDIR := $(shell cd .. && pwd)
 all :: $(IMAGES)
-all :: index.html
+all :: $(TARGETDIR)/index.html
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
@@ -48,13 +50,14 @@ Grayson2.jpg : @srcdir@/Grayson2.jpg ; cp $< $@
 clean ::; rm -f *.gif *.jpg
 endif
 
-index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
-	rm -f ../m2/cache/doc/*.html
+$(TARGETDIR)/index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
+	rm -f $(TARGETDIR)/*.html
 	../../bin/M2 -q $< '-eexit(0)'
-	cd ../m2/cache/doc \
-		&& ../../../html-check-links/html-check-links *.html && ret=$? \
-		| head -200; \
-		exit $ret
+check : $(TARGETDIR)/index.html
+	@ echo "make: Entering directory \`$(shell cd $(TARGETDIR) && pwd)'"
+	cd $(TARGETDIR) && $(HOMEDIR)/html-check-links/html-check-links *.html
+	@ echo "make: Leaving directory \`$(shell cd $(TARGETDIR) && pwd)'"
+all :: check
 view:; netscape index.html &
 clean::; rm -f ./*.html
 clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct Macaulay2-index-cache
