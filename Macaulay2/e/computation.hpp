@@ -76,7 +76,7 @@ public:
   virtual MinorsComputation * cast_to_MinorsComputation() { return 0; }
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return 0; }
 
-  virtual void text_out(buffer &o);
+  virtual void text_out(buffer &o) const;
 };
 
 /* computations which cannot be continued if interrupted */

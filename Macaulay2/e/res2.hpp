@@ -202,7 +202,7 @@ public:
 	    int SlantedDegreeLimit,
 	    int SortStrategy);
 
-  ~res2_comp();
+  virtual ~res2_comp();
 
   void resize(const Ring *new_ring);
 
@@ -278,12 +278,10 @@ public:
 
   void display_order(buffer &o, int sortval) const;
   void text_out(const res2_pair *p) const;
-  void text_out() const;
-
   void text_out(buffer &o, const res2_pair *p) const;
-  void stats();
+  void stats() const;
 
-  void text_out(buffer &o);
+  void text_out(buffer &o) const;
 
 //////////////////////////////////////////////
 //  Infrastructure ///////////////////////////

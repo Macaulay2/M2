@@ -3,6 +3,7 @@
 #include "comp_res.hpp"
 #include "res.hpp"
 #include "res2.hpp"
+#include "gb2.hpp"
 
 ResolutionComputation::ResolutionComputation()
 {
@@ -21,6 +22,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 							 int strategy
 							 )
 {
+  int origsyz;
   switch (algorithm) {
   case 1 : 
     if (!resolve_cokernel)
@@ -36,7 +38,15 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	return 0;
       }
     return new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
+  case 2 : 
+    origsyz = m->n_cols();
+    return new gbres_comp(m, max_level+1, origsyz, strategy);
+  case 3: 
+    origsyz = m->n_cols();
+    return new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
+
   }
+
   ERROR("unknown resolution algorithm");
   return 0;
 }

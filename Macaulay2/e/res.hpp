@@ -233,9 +233,7 @@ public:
   void stats() const;
 
   void text_out(buffer &o, const res_pair *p) const;
-  void stats(buffer &o) const;
-
-  void text_out(buffer &o);
+  void text_out(buffer &o) const;
 };
 #endif
 

@@ -25,7 +25,19 @@ gb_emitter::~gb_emitter()
   deletearray(these);
 }
 
-int gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
+enum ComputationStatusCode gb_emitter::hilbertNumerator(RingElement *&)
+{
+  assert(0); // This routine should NEVER be called
+  return COMP_DONE;
+}
+
+enum ComputationStatusCode gb_emitter::hilbertNumeratorCoefficient(int, int &)
+{
+  assert(0); // This routine should NEVER be called
+  return COMP_DONE;
+}
+
+enum ComputationStatusCode gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
 {
   // This is when we ship off the elements in this degree.  This should NEVER
   // be called if elements of lower degree have not been sent.
@@ -50,7 +62,7 @@ int gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
       n_left--;
     }
 }
-int gb_emitter::calc_gens(int degree, const intarray &stop)
+enum ComputationStatusCode gb_emitter::calc_gens(int degree, const intarray &stop)
 {
   return calc_gb(degree, stop);
 }
@@ -80,6 +92,10 @@ bool gb_emitter::is_done()
   return (n_left == 0);
 }
 void gb_emitter::stats() const
+{
+}
+
+void gb_emitter::text_out(buffer &o) const
 {
 }
 
@@ -127,6 +143,7 @@ void gbres_comp::setup(const Matrix *m,
     }
 
   lo_degree = m->cols()->lowest_primary_degree();
+  last_completed_degree = lo_degree-1;
 
   n_nodes = length + 1;
   nodes = newarray(gb_node_ptr,n_nodes);
@@ -183,9 +200,31 @@ gbres_comp::~gbres_comp()
 
 //---- state machine (roughly) for the computation ----
 
-int gbres_comp::calc(const int *stop_degree, const intarray &stop)
+bool gbres_comp::stop_conditions_ok()
 {
-  int ret;
+  if (stop_.length_limit <= 0)
+    {
+      ERROR("length limit out of range");
+      return false;
+    }
+
+  if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
+    {
+      ERROR("cannot change length of resolution using this algorithm");
+      return false;
+    }
+
+  if (stop_.stop_after_degree && stop_.degree_limit != 0)
+    {
+      ERROR("expected resolution stop degree");
+      return false;
+    }
+  return true;
+}
+
+void gbres_comp::start_computation()
+{
+  intarray stop;
   int old_compare_type = compare_type;
   compare_type = (strategy_flags >> 10);
   if (gbTrace >= 4) 
@@ -196,10 +235,11 @@ int gbres_comp::calc(const int *stop_degree, const intarray &stop)
     }
   for (int i=lo_degree; !is_done(); i++)
     {
-      if (stop_degree != NULL && i > *stop_degree)
+      if (stop_.stop_after_degree && stop_.degree_limit->array[0] < i)
 	{
-	  ret = COMP_DONE_DEGREE_LIMIT;
-	  break;
+	  set_status(COMP_DONE_DEGREE_LIMIT);
+	  compare_type = old_compare_type;
+	  return;
 	}
       if (gbTrace >= 1)	
 	{
@@ -207,11 +247,17 @@ int gbres_comp::calc(const int *stop_degree, const intarray &stop)
 	  o << "{" << i << "}";
 	  emit(o.str());
 	}
-      ret = nodes[n_nodes-1]->calc_gens(i+n_nodes-3, stop);
-      if (ret != COMP_DONE) break;
+      enum ComputationStatusCode ret = nodes[n_nodes-1]->calc_gens(i+n_nodes-3, stop);
+      if (ret != COMP_DONE)
+	{
+	  set_status(ret);
+	  compare_type = old_compare_type;
+	  return;
+	}
+      last_completed_degree = i;
     }
   compare_type = old_compare_type;
-  return COMP_DONE;
+  set_status(COMP_DONE);
 }
 
 bool gbres_comp::is_done()
@@ -221,6 +267,12 @@ bool gbres_comp::is_done()
       return false;
   return true;
 }
+
+int gbres_comp::complete_thru_degree() const
+{
+  return last_completed_degree;
+}
+
 //--- Reduction --------------------------
 
 
@@ -259,41 +311,42 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
 // Obtaining matrices as output //
 //////////////////////////////////
 
-FreeModule *gbres_comp::free_module(int level)
+const FreeModule *gbres_comp::free_module(int level) const
 {
   if (level >= 0 && level <= n_nodes-1)
     return const_cast<FreeModule *>(nodes[level]->output_free_module());
   return nodes[0]->output_free_module()->get_ring()->make_FreeModule();
 
 }
-Matrix *gbres_comp::min_gens_matrix(int level)
+const Matrix *gbres_comp::min_gens_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
     return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->min_gens_matrix();
 }
-Matrix *gbres_comp::get_matrix(int level)
+const Matrix *gbres_comp::get_matrix(int level)
 {
+#warning "if the matrix could change in the future, we MUST copy it"
   if (level <= 0 || level >= n_nodes)
     return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->get_matrix();
 }
 
-Matrix *gbres_comp::initial_matrix(int n, int level)
+const Matrix *gbres_comp::initial_matrix(int n, int level)
 {
   if (level <= 0 || level >= n_nodes)
     return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->initial_matrix(n);
 }
 
-Matrix *gbres_comp::gb_matrix(int level)
+const Matrix *gbres_comp::gb_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
     return Matrix::zero(free_module(level-1), free_module(level), false);
   return nodes[level]->gb_matrix();
 }
 
-Matrix *gbres_comp::change_matrix(int level)
+const Matrix *gbres_comp::change_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
     return Matrix::zero(free_module(level-1), free_module(level), false);
@@ -306,8 +359,14 @@ void gbres_comp::stats() const
   for (int i=1; i<n_nodes; i++)
     nodes[i]->stats();
 }
+void gbres_comp::text_out(buffer &o) const
+{
+  o << "  #gb #pair #comp     m     z     o     u #hilb  #gcd #mons  #chg";
+  for (int i=1; i<n_nodes; i++)
+    nodes[i]->text_out(o);
+}
 
-void gbres_comp::betti_minimal(intarray &result)
+M2_arrayint gbres_comp::betti_minimal() const
     // Negative numbers represent upper bounds
 {
   int lev, i, j, d, k;
@@ -349,17 +408,32 @@ void gbres_comp::betti_minimal(intarray &result)
     for (j=degs[lev].length(); j<=hi-lo; j++)
       degs[lev].append(0);
 
-  result.append(lo);
-  result.append(hi);
-  result.append(len);
+  M2_arrayint result = makearrayint(3 + (hi-lo+1)*(len+1));
+
+  result->array[0] = lo;
+  result->array[1] = hi;
+  result->array[2] = len;
+
+  int next = 3;
   for (d=lo; d<=hi; d++)
     for (lev=0; lev<=len; lev++)
-      result.append(degs[lev][d-lo]);
+      result->array[next++] = degs[lev][d-lo];
 
   deletearray(degs);
+  return result;
 }
 
+const M2_arrayint gbres_comp::get_betti(int type) const
+// Only type = 0 (minimal) is supported by this type.
+// Should we do the other types as well?
+  // type is documented under rawResolutionBetti, in engine.h
+{
+  if (type == 0)
+    return betti_minimal();
 
+  ERROR("received unsupported betti type for this algorithm");
+  return 0;
+}
 /////////////////////////////////////////
 // Commands for using this computation //
 /////////////////////////////////////////
