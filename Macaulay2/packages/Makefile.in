@@ -4,7 +4,6 @@ VPATH = @srcdir@
 
 ## here is the list of those package files to install with Macaulay2
 PACKAGES = M2doc
-PACKAGES += Images
 PACKAGES += Style
 PACKAGES += PrimaryDecomposition
 PACKAGES += CacheFileName
@@ -20,13 +19,15 @@ PACKAGES += minimal
 
 TMPPREFIX = tmp-packages
 
+REMAKE = false
+
 %.installed : %.m2
 	../bin/M2 \
 		-q \
 		--stop \
 		--prefix $(TMPPREFIX) \
 		-e errorDepth=0 \
-		-e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => false, MakeInfo => true, PackagePrefix => \"./$(TMPPREFIX)/\")" \
+		-e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"./$(TMPPREFIX)/\")" \
 		-e "exit 0"
 	touch "$@"
 

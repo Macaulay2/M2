@@ -106,8 +106,8 @@ links := tag -> (
 	       LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
 	       },
 	  if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
-	  LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
-	  LINK { LAYOUT#"style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
+	  LINK { LAYOUT #"packagesrc" "Style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
+	  LINK { LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
 	  }
      )
 

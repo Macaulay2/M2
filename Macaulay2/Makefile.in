@@ -74,9 +74,6 @@ distclean clean ::; $(MAKE) -C test $@
 all install clean distclean ::; $(MAKE) -C packages $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
-################################# images
-doc :: images
-install distclean clean ::; $(MAKE) -C images $@
 ################################# book
 # doc :: book
 book ::;  $(MAKE) -C book all
