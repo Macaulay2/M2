@@ -43,9 +43,9 @@ loadPackage String := opts -> pkgtitle -> (
      )
 
 needsPackage = method(Options => options loadPackage)
-needsPackage String := opts -> s -> (
+needsPackage String := opts -> pkg -> (
      if PackageDictionary#?s then use value PackageDictionary#s
-     else loadPackage(s | ".m2", opts)
+     else loadPackage(pkg, opts)
      )
 
 newPackage = method( 
