@@ -16,7 +16,7 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-changed SEEALSO to SeeAlso, and now it's option to "document" instead
+changed SEEALSO to SeeAlso, and now it's an option to "document" instead
 of a function.
 
 reversed the order of arguments for 'columnate'
@@ -78,7 +78,9 @@ instead of typing "gbTrace 1" you would type "gbTrace = 1".
 The variable "Symbols" has been removed, in favor of a reverse
 dictionary for each immutable symbol in each package.
 
-The variable 'documentationPath' has been removed.
+The variable 'documentationPath' has been removed.  All documentation
+is associate with packages now, and the list of packages is in
+'packages'.
 
 The function 'backtrace' has been eliminated in favor of a new
 variable, 'errorReport', which is a list of pseudocodes gathered while
@@ -89,7 +91,8 @@ function and show you the pseudo-code that implements it.  Refer to
 the source code in Macaulay2/d/ to understand what it means.
 
 New system for 3rd party packages: see 'Package'.  Related items:
-'newPackage', closePackage', 'assemble', 'check', 'LAYOUT', 'layout'.
+'newPackage', 'closePackage', 'installPackage', 'check', 'LAYOUT',
+'loadPackage', 'removePackage', 'packages'.
 
 The internal symbol tables of the interpreters are now available at
 top level as members of the new class 'Dictionary'.  Both local and
