@@ -424,15 +424,6 @@ getDoc := key -> (
      )
 if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
  
-getDocBody := key -> (
-     fkey := formatDocumentTag key;
-     pkg := getPackage fkey;
-     if pkg =!= null then (
-	  docBody := value getRecord(pkg,fkey);
-	  docBody = select(docBody, s -> class s =!= Option);
-	  docBody = processExamples(pkg, fkey, docBody);
-	  docBody))
-
 getHeadline := key -> (
      d := getOption(getDoc key, Headline);
      if d =!= null then SEQ join( {"  --  ", SEQ d} ))
@@ -482,10 +473,15 @@ justSynonym := X -> (
      else SEQ {"an object of class ", TO X}
      )
 
-usage := s -> (
-     o := getDocBody s;
-     if o =!= null then PARA {o}
-     )
+getDocBody := method(Options => {Examples => true}, SingleArgumentDispatch => true)
+getDocBody Thing := opts -> key -> (
+     fkey := formatDocumentTag key;
+     pkg := getPackage fkey;
+     if pkg =!= null then (
+	  docBody := value getRecord(pkg,fkey);
+	  docBody = select(docBody, s -> class s =!= Option);
+	  if opts.Examples then docBody = processExamples(pkg, fkey, docBody);
+	  PARA {docBody}))
 
 title := s -> PARA { STRONG formatDocumentTag s, headline s }
 
@@ -635,14 +631,14 @@ briefDocumentation HashTable := x -> (
 		    s := fmeth x;
 		    if s =!= null then << endl << text s << endl;))))
 
-documentation = method(SingleArgumentDispatch => true)
-documentation String := s -> (
+documentation = method(SingleArgumentDispatch => true, Options => {Examples => true})
+documentation String := opts -> s -> (
      if unformatTag#?s then documentation unformatTag#s 
      else if isGlobalSymbol s then (
 	  t := getGlobalSymbol s;
-	  documentation t
+	  documentation(t,opts)
 	  )
-     else SEQ { title s, PARA getDocBody s }
+     else SEQ { title s, PARA getDocBody(s,opts) }
      )
 
 binary := set binaryOperators; erase symbol binaryOperators
@@ -736,13 +732,13 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 	  }
      )
 
-documentation Symbol := S -> (
+documentation Symbol := opts -> S -> (
      a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
      b := documentableMethods S;
      SEQ {
 	  title S, 
 	  synopsis S,
-	  usage S,
+	  getDocBody(S,opts),
 	  op S,
 	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", SHIELD smenu a},
 	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", SHIELD smenu b},
@@ -751,14 +747,14 @@ documentation Symbol := S -> (
      	  }
      )
 
-documentation Option := v -> (
+documentation Option := opts -> v -> (
      (fn, opt) -> (
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
 	  SEQ { 
 	       title v,
 	       synopsis v,
-	       usage v,
+	       getDocBody(v,opts),
 	       PARA BOLD "See also:",
 	       SHIELD UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
@@ -769,12 +765,12 @@ documentation Option := v -> (
 	  )
      ) toSequence v
 
-documentation Sequence := s -> (
+documentation Sequence := opts -> s -> (
      if null === lookup s then error("expected ", toString s, " to be a method");
      SEQ {
 	  title s, 
 	  synopsis s,
-	  usage s,
+	  getDocBody(s,opts),
 	  seecode s
 	  }
      )
