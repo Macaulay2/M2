@@ -3,6 +3,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+WARNING: The functions 'separate' and 'lines' which separate strings into
+pieces, now take the two arguments in the reverse order.
+
 The degrees rings (used for return values from 'hilbertSeries' and
 'poincare') now have a new monomial order : RevLex.  This way, polynomials
 are displayed with the powers of t in increasing order, which is the usual
