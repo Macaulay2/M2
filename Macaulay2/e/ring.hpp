@@ -239,6 +239,64 @@ public:
 
   ////////////////////////////////////////////////////////  
 
+
+  //////////////////////////////////////////
+  /// vector operations ////////////////////
+  //////////////////////////////////////////
+  // These routines all act on linked lists
+  // of vecterm's, sorted by descending component.
+  // We always assume that ringelem's are immutable:
+  // The same value might be shared in several vecterms.
+  //
+  // These routines are implemented in ring-vec.cpp
+  //////////////////////////////////////////
+protected:
+  vec new_vec() const;
+  void remove_vec_node(vec n) const;
+
+  void sort(vecterm *&f) const;
+public:
+  vec make_vec(int r, ring_elem a) const;
+  vec copy(const vecterm * v) const;
+  void remove(vec v) const;
+
+  bool is_equal(const vecterm * a, const vecterm * b) const;
+  bool get_entry(const vecterm * v, int r, ring_elem &result) const;
+  vec sub_vector(const vecterm * v, const M2_arrayint r) const;
+  int n_nonzero_terms(const vecterm * v) const;
+  void elem_text_out(buffer &o, const vecterm * v) const;
+
+  void row2by2(vec &, int r1, int r2,
+	       ring_elem a1, ring_elem a2,
+	       ring_elem b1, ring_elem b2) const;
+  void mult(vec &v, const ring_elem a) const;
+  void mult_row(vec &v, int r, const ring_elem a) const;
+  void divide(vec &v, const ring_elem a) const;
+  void divide_row(vec &v, int r, const ring_elem a) const;
+  void interchange_rows(vec &v, int r1, int r2) const;
+  void add(vec &v, vec &w) const;
+  void add_row_multiple(vec &v, int r1, ring_elem a, int r) const;
+  ring_elem dot_product(const vecterm *v, const vecterm *w) const;
+  void set_entry(vec &v, int r, ring_elem a) const;
+
+  // Other operations desired:
+  // assemble a vector from ring elements
+  // get the entries, non-zero entries.
+
+  // negate, subtract, _to routines as well
+  // mult/divide on the right
+  // component shift (all components > a are incremented by b)
+
+  // diff
+
+  // given degrees of the components:
+  //   degree
+
+  // polynomial routines (vectors of polynomials)
+  //   degree_weights
+  //   is_homogeneous
+  //   homogenize (2 forms).
+
 };
 
 #include "ZZ.hpp"

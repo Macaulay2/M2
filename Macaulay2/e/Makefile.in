@@ -94,6 +94,7 @@ STILLTOCOMPILE = \
 	gbbinom
 
 COMMANDS = \
+	ring-vecs \
         gbnod \
         freemod2 \
 	engine \

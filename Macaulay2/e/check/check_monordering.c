@@ -51,7 +51,7 @@ void test_monorderings(Test *pTest)
 	       "    GRevLex => {1,1,2,2,2},\n"
 	       "    RevLex => 100,\n"
 	       "    NCLex => 10,\n"
-	       "    Component\n"
+	       "    Position => Up\n"
 	       "    }"));
 }
 

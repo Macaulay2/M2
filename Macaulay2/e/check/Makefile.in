@@ -9,8 +9,9 @@ CTESTS = check_monomial.o \
 	check_freemodule.o \
 	check_matrix.o \
 	check_vector.o \
-	check_sparsemat.o \
-	check_lapack.o
+	check_sparsemat.o
+
+#	check_lapack.o
 
 #test_monordering test_monoid test_ring test_freemodule test_vector \
 #	test_matrix test_sparsemat test_lapack

@@ -56,7 +56,66 @@ const Vector * IM2_Matrix_get_column(const Matrix *M, int c)
   return Vector::make_raw(M->rows(), (*M)[c]);
 }
 
+const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
+				      int ncols,
+				      const RingElement_array *M,
+				      M2_bool is_mutable)
+{
+  return Matrix::make(target, ncols, M, is_mutable);
+}
 
+const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
+				      const FreeModule *source,
+				      const M2_arrayint deg,
+				      const RingElement_array *M,
+				      M2_bool is_mutable)
+{
+  return Matrix::make(target, source, deg, M, is_mutable);
+}
+
+const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
+					     int ncols,
+					     const M2_arrayint rows,
+					     const M2_arrayint cols,
+					     const RingElement_array *entries,
+					     M2_bool is_mutable)
+{
+  return Matrix::make_sparse(target, ncols, rows, cols, entries, is_mutable);
+}
+  
+const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
+					     const FreeModule *source,
+					     const M2_arrayint deg,
+					     const M2_arrayint rows,
+					     const M2_arrayint cols,
+					     const RingElement_array *entries,
+					     M2_bool is_mutable)
+{
+  return Matrix::make_sparse(target, source, deg, rows, cols, entries, is_mutable);
+}
+
+M2_bool IM2_Matrix_is_mutable(const Matrix *M)
+  /* Is the matrix M mutable? */ /* TO BE CONNECTED */
+{
+  return M->is_mutable();
+}
+ 
+
+const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
+				      const FreeModule *source,
+				      const M2_arrayint deg,
+				      const Matrix *M,
+				      M2_bool is_mutable
+				      )
+  /* Create a new matrix (mutable or immutable), from M, with new target,
+     source, deg and/or mutable-ness. The new free modules must have 
+     the expected rank. 
+  */
+{
+  return M->make_copy(target, source, deg, is_mutable);
+}
+
+#if 0
 const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 				      const Vector_array *V)
 {
@@ -78,6 +137,7 @@ const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
 {
   return Matrix::make(target, source, deg, M);
 }
+#endif
 
 const M2_bool IM2_Matrix_is_zero(const Matrix *M)
 {

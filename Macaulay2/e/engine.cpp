@@ -15,7 +15,8 @@
 
 extern void factory_setup(); // M2-factory.cpp
 
-unsigned long mutable_object::next_hash_sequence_number = 100000;
+unsigned long mutable_object::next_hash_sequence_number = 1000;
+int object::next_hash_sequence_number = -7;
 
 template class array< char * >;
 template class queue< int >;
