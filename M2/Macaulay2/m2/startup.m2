@@ -154,12 +154,9 @@ nosetup := false
 noinitfile := false
 interpreter := commandInterpreter
 
-getRealPath := fn -> (
-     s := realpath fn;
-     if s =!= null then s
-     else (
-     	  while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
-     	  fn))
+getRealPath := fn -> (					    -- use this later if realpath doesn't work
+     while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
+     fn)
 
 pathsearch := e -> (
      if not isAbsoluteExecPath e then (
@@ -172,15 +169,15 @@ pathsearch := e -> (
 
 exe := (
      processExe := "/proc/" | toString processID() | "/exe";  -- this is a reliable way to get the executable in linux
-     if fileExists processExe then getRealPath processExe
-     else getRealPath pathsearch commandLine#0)
+     if fileExists processExe then realpath processExe
+     else realpath pathsearch commandLine#0)
 bindir := dir exe
 bindirsuffix := LAYOUT#"bin";
 
 setPrefixFromBindir := bindir -> if bindir =!= null then (
      if bindirsuffix === substring(bindir,-#bindirsuffix) then (
 	  prefixdir := substring(bindir,0,#bindir-#bindirsuffix);
-	  if fileExists(prefixdir | LAYOUT#"share") then prefixDirectory = prefixdir))
+	  if fileExists(prefixdir | LAYOUT#"share") then prefixDirectory = realpath prefixdir | "/"))
 
 if fileExists (bindir | "../c/scc1") then (
      -- we're running from the build directory

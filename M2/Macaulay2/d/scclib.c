@@ -345,7 +345,7 @@ M2_string system_realpath(M2_string filename) {
   char buf[PATH_MAX];
   char *r = realpath(fn,buf);
   GC_FREE(fn);
-  return r == NULL ? system_tostring("") : system_tostring(buf);
+  return r == NULL ? filename : system_tostring(buf);
 }
 
 M2_string system_errfmt(M2_string filename, int lineno, int colno) {
