@@ -11,6 +11,7 @@ all::
 
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
+package = $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
@@ -48,19 +49,36 @@ FFLAGS = @FFLAGS@
 DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-prefix = @prefix@
-encap = @encap@
-encapdir = @encapdir@
-package = Macaulay2-$(PACKAGE_VERSION)
 
+# file system layout:
+#  see http://www.pathname.com/fhs/
+#      http://fink.sourceforge.net/doc/packaging/fslayout.php
+#      http://cr.yp.to/unix.html, the section on "Filesystem layout"
+
+prefix = @prefix@
+encapdir = @encapdir@
+encap = @encap@
 ifeq "$(encap)" "yes"
 target = $(encapdir)/$(package)
 else
 target = $(prefix)
 endif
-
-packagedir = $(target)/lib/$(package)
 bindir = $(target)/bin
+# obsolete : packagedir = $(target)/lib/$(package)
+libdir = $(target)/lib
+libm2dir = $(libdir)/$(PACKAGE_NAME)/$(PACKAGE_VERSION)
+packagedir = $(libdir)/packages
+datadir = $(target)/share
+mandir = $(datadir)/man
+man1dir = $(mandir)/man1
+emacsdir = $(datadir)/emacs/site-lisp
+sharedir = $(datadir)/$(PACKAGE_NAME)/$(PACKAGE_VERSION)
+m2dir = $(sharedir)/m2
+docdir = $(target)/doc
+docm2dir = $(docdir)/$(PACKAGE_NAME)
+docm2reldir = $(docm2dir)/$(PACKAGE_VERSION)
+
+# end file system layout
 
 RANLIB = @RANLIB@
 AR = ar

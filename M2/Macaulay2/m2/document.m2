@@ -1566,10 +1566,15 @@ undocErr := x -> (
 
 undocumentedSymbols = () -> select(
      values symbolTable(), 
-     x -> if not DocDatabase#?(toString x) and not Documentation#?(toString x) then (
-	  undocErr x;
-	  dummyDoc x;
-	  true))
+     x -> (
+	  if (
+	       x =!= value x        -- ignore symbols with no value assigned
+     	       not DocDatabase#?(toString x) and not Documentation#?(toString x) 
+	       ) 
+     	  then (
+	       undocErr x;
+	       dummyDoc x;
+	       true)))
 
 addEndFunction(
      () -> (

@@ -137,6 +137,17 @@ pass3 := () -> (
 		    haderror = true;
 		    stderr << "error: documentation node '" << key << "' not reachable" << endl ) ) ) )
 
+fakeMenu := x -> (
+     --   o  item 1
+     --     o  item 2
+     --       o  item 3
+     SEQ { BR,
+	  SEQ for i from 0 to #x-1 list SEQ {
+	       LITERAL ( 3*i+2 : "&nbsp;", "&#149;", 2 : "&nbsp;"), x#i, BR
+	       }
+	  }
+     )
+
 pass4 := () -> (
      << "pass 4, writing html files" << endl;
      scan(keys linkFollowedTable, fkey -> if linkFollowedTable#fkey then (
@@ -147,7 +158,7 @@ pass4 := () -> (
 			 buttonBar fkey,
 			 if UP#?fkey then SEQ {
 			      "Parent headings:",
-			      MENU apply(upAncestors fkey, i -> TOH i)
+			      fakeMenu apply(upAncestors fkey, i -> TOH i)
 			      },
 			 HR{}, 
 			 documentationMemo fkey,
