@@ -390,7 +390,8 @@ euler(Ring) := (R) -> euler R^1
 
 genera(Module) := (M) -> (
      e := euler M;
-     apply(#e, i -> (-1)^i * (1 - e#i)))
+     d := dim M - 1;
+     apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
 genera(Ring) := (R) -> genera R^1
 
 rank Module := M -> (

@@ -23,7 +23,7 @@ else
 WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
 	   -Wparentheses -Wreturn-type -Wswitch -Wtrigraphs -Wuninitialized \
 	   -Wreorder -Wtemplate-debugging
-WARNINGS = -Wall -Wno-non-template-friend
+WARNINGS = -Wall #-Wno-non-template-friend
 endif
 
 CPPFLAGS += -I$(INCDIR) #-DNDEBUG  #MES

@@ -454,8 +454,8 @@ manufactured.tgz : Makefile
 		Macaulay2/m2/gbfunctions.m2 \
 		Macaulay2/m2/loads.m2 \
 		Macaulay2/d/*.c \
-		Macaulay2/tmp/Examples/*.m2 \
-		Macaulay2/tmp/Tests/*.m2 \
+		Macaulay2/m2/cache-tmp/Examples/*.m2 \
+		Macaulay2/m2/cache-tmp/Tests/*.m2 \
 		Macaulay2/html
 ################################# automated compilation
 update:
