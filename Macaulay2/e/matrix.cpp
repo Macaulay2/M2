@@ -259,7 +259,7 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
   return result;
 }
 
-const MatrixOrNull * Matrix::make_copy(const FreeModule *target,
+const MatrixOrNull * Matrix::remake(const FreeModule *target,
 				 const FreeModule *source,
 				 const M2_arrayint deg,
 				 M2_bool is_mutable_flag) const
@@ -291,8 +291,8 @@ const MatrixOrNull * Matrix::make_copy(const FreeModule *target,
   return result;
 }
 
-const MatrixOrNull * Matrix::make_copy(const FreeModule *target,
-				       M2_bool is_mutable_flag) const
+const MatrixOrNull * Matrix::remake(const FreeModule *target,
+				    M2_bool is_mutable_flag) const
 {
   if (n_rows() != target->rank())
     {

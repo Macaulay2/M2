@@ -83,12 +83,12 @@ public:
 					  const RingElement_array *entries,
 					  M2_bool is_mutable);
 
-  const MatrixOrNull * make_copy(const FreeModule *target,
+  const MatrixOrNull * remake(const FreeModule *target,
 				 const FreeModule *source,
 				 const M2_arrayint deg,
 				 M2_bool is_mutable) const;
 
-  const MatrixOrNull * make_copy(const FreeModule *target,
+  const MatrixOrNull * remake(const FreeModule *target,
 				 M2_bool is_mutable) const;
 
   static const Matrix * make(const MonomialIdeal * mi);

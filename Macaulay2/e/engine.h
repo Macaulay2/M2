@@ -713,7 +713,7 @@ extern "C" {
   M2_bool IM2_Matrix_is_mutable(const Matrix *M);
   /* Is the matrix M mutable? */ /* drg : connected rawIsMutable */
 
-  const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
+  const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					 const Matrix *M,
 					 M2_bool is_mutable
 					 ); /* drg: connected rawMatrixRemake NOT YET */
