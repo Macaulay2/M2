@@ -1114,7 +1114,56 @@ document { "Tor and Ext",
 -- GB nodes -------
 -------------------
 
+
+document { "monomial orderings v1.0",
+     "This section is only valid for Macaulay2, versions 1.0 and higher.",
+     PARA,
+     "Each ring in Macaulay2 comes equipped with an ordering on the
+monomials.  This orering is used in the display and storing of polynomials.
+The choice of ordering can make a difference in the time taken in various
+computations.  Groebner bases performed on ideals and modules will use the
+chosen monomial ordering.",
+     PARA,
+     "The default is to use the graded lexicographic order.  This order is defined 
+     as follows: x^A > x^B "
+     }
+
+
 document { "what is a Groebner basis?",
+     "A Groebner basis is a specific generating set
+     of an ideal or submodule over a polynomial ring, not usually minimal, 
+     which has extremely nice properties, from which 
+     it is reasonably easy to extract information about the ideal or submodule.",
+     "We first define and describe Groebner bases in the important special case
+     of an ideal in a polynomial ring.  We then
+     describe Groebner bases of submodules, and over more general rings.",
+     PARA,
+     TEX "Let $R = k[x_1, ..., x_n]$ be a polynomial ring, over a field k,
+     and let I \\subset R be an ideal.  A term order on R is, by definition, a total
+     order, >,  on the monomials of R, which satsifies two conditions: (1) 
+     m > 1, for every monomial m \\neq 1, and (2) the order is multiplicative:
+     m > n implies that mp > np, for all monomials m,n,p.",
+     PARA,
+     "In Macaulay 2, each ring has a multiplicative order associated with it.
+     The default is the graded reverse lexicographic order:",
+     EXAMPLE "R = QQ[a..d,MonomialOrder=>GRevLex]",
+     EXAMPLE "F = a^3 + d^2 + a*d + b*c + 1",
+     EXAMPLE "-- R = QQ[a..d,MonomialOrder=>RevLex] -- THIS FAILS",
+     EXAMPLE "substitute(F,R)",
+     EXAMPLE "R = QQ[a..d,MonomialOrder=>Lex]",
+     EXAMPLE "substitute(F,R)",
+     EXAMPLE "R = QQ[a..d,Weights=>{1,1,0,0}]",
+     EXAMPLE "substitute(F,R)",
+     EXAMPLE "R = QQ[a..d,Weights=>{-1,0,0,0}]",
+     EXAMPLE "substitute(F,R)",
+     EXAMPLE "R = QQ[a..d,Weights=>{-1,-1,-1,-1}]",
+     EXAMPLE "substitute(F,R)",
+     EXAMPLE "R = QQ[a..d,MonomialOrder=>ProductOrder{1,3}]",
+     EXAMPLE "substitute(F,R)",
+
+     "Given a term order, the lead monomial is the term whose monomial is greatest
+     in this order.",
+     EXAMPLE "leadTerm F"          
      }
 
 document { "finding a Groebner basis",
@@ -1179,3 +1228,50 @@ document { "fine control of a Groebner basis computation",
 	 }
      }
 
+TEST ///
+-- document these routines DO THIS
+
+-- Create a free module with an induced (Schreyer) order
+Ring ^ Matrix := (R,m) -> (sendgg(ggPush m, ggfree); new Module from R)
+-- schreyerMatrix F -- DO THIS
+
+leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
+  -- leadTerm should call a ggleadterm routine?  DO THIS
+  
+gbSnapshot = (obj) -> (m := gens gb(obj,StopBeforeComputation => true);
+     map(target m, source m, entries m))
+     -- PROBLEM: have 'gens gb' return a snapshot matrix: not the live one.
+     -- same with syz, change...
+     -- DO THIS
+     
+installHilbertFunction = method()
+installHilbertFunction(Module,RingElement) := (M,hf) -> (
+     -- we need to place hf into the degree ring of M.
+     hf = substitute(hf,degreesRing M);
+     M.poincare = hf;
+     )
+
+installGroebner = method()
+-- DO THIS
+
+gbRemove = method()
+gbRemove Module := (M) -> remove((generators M).cache, {false,0})
+gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
+  -- PROBLEM: what about the other GB
+  
+R = QQ[a..d,Weights=>{-1,0,0,0}]
+f = a+b^2+c^3-2*d^4+1+a*b*c*d
+leadTerm f
+leadCoefficient f
+leadTerm(1,f)
+
+M = image vars R
+gbSnapshot(M)
+gb(M,PairLimit=>2)
+m1 = gbSnapshot(M)
+--gb(M,PairLimit=>4)
+--m1  -- This has changed!  We probably don't want that
+    -- BUG: segmentation fault!!
+
+
+///
