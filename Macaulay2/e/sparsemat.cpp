@@ -536,9 +536,8 @@ void SparseMutableMatrix::reduce_pivots()
   int *colSize = newarray(int, n_cols());
   setSizes(0,n_cols()-1,rowSize,colSize);
 
-  // keeps track of last row and column which are not the output of a pivot
-  int rowPivot = nrows-1;  
-  int columnPivot = ncols-1;
+  // After using the pivot element, it is moved to [nrows-1,ncols-1]
+  // and nrows and ncols are decremented.
 
   // first reduce 1's and -1's
   int i;
@@ -561,17 +560,15 @@ void SparseMutableMatrix::reduce_pivots()
 		      K->remove(columns_[i]->coeff);
 		      columns_[i]->coeff = K->copy(one);
 		    }
-		  if (i == columnPivot && r == rowPivot)
+		  if (i == ncols-1 && r == nrows-1)
 		    {
-		      columnPivot--;
-		      rowPivot--;
+		      nrows--;
+		      ncols--;
 		    }
-		  else if (i < columnPivot || r < rowPivot)
+		  else if (i < ncols-1 || r < nrows-1)
 		    {
-		      interchange_columns(i, columnPivot);
-		      interchange_rows(r, rowPivot);
-		      columnPivot--;
-		      rowPivot--;
+		      interchange_columns(i, --ncols);
+		      interchange_rows(r, --nrows);
 		      i = i-1;  //test column i again
 		    }
 		}
@@ -609,10 +606,8 @@ void SparseMutableMatrix::reduce_pivots()
 		  columns_[i]->coeff = K->copy(one);
 		  colSize[i] = 1;
 		  rowSize[r] = 1;
-		  interchange_columns(i, columnPivot);
-		  interchange_rows(r, rowPivot);
-		  columnPivot--;
-		  rowPivot--;
+		  interchange_columns(i, --ncols);
+		  interchange_rows(r, --nrows);
 		  i = -1; //start over at the 1st column
 		}
 	    }
@@ -655,10 +650,8 @@ void SparseMutableMatrix::reduce_pivots()
 	      columns_[i]->coeff = K->copy(one);
 	      colSize[i] = 1;
 	      rowSize[r] = 1;
-	      interchange_columns(i, columnPivot);
-	      interchange_rows(r, rowPivot);
-	      columnPivot--;
-	      rowPivot--;
+	      interchange_columns(i, --ncols);
+	      interchange_rows(r, --nrows);
 	      i = -1; //start over at the 1st column
 	    }
 	}

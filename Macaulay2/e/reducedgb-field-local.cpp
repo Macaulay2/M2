@@ -20,6 +20,7 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     T1(0),
     wt(wt0)
 {
+  fprintf(stderr, "creating GB with local order\n");
   T1 = MonomialTable::make(R->n_vars());
   if (wt == 0)
     wt = new GBWeight(F0, 0);
@@ -234,7 +235,10 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 	  if (g_alpha > h_alpha)
 	    {
 	      // place h into T1, and store its (value,deg,alpha) values.
-	      store_in_table(h, h_exp, h_comp, h_alpha);
+	      POLY h_copy;
+	      h_copy.f = R->gbvector_copy(h.f);
+	      h_copy.fsyz = R->gbvector_copy(h.fsyz);
+	      store_in_table(h_copy, h_exp, h_comp, h_alpha);
 	      h_deg += g_alpha - h_alpha;
 	      h_exp = R->exponents_make();
 	    }
