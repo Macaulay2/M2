@@ -13,7 +13,7 @@ newPackage(
 
 export (schurRing, SchurRing, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott)
 
-debug Macaulay2
+debug Macaulay2Core
 
 SchurRing = new Type of EngineRing
 SchurRing.synonym = "Schur ring"
