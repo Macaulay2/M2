@@ -38,6 +38,9 @@ endif
 clean  :	
 	rm -f *.okay allfiles
 
+distclean: clean
+	rm -f Makefile
+
 allfiles : *.m2 Makefile COPYRIGHT dumpdata.1 dumpdata.2 dumpdata.3
 	echo $^ |tr ' ' \\012 >allfiles
 
