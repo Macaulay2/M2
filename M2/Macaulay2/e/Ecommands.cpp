@@ -1510,7 +1510,8 @@ static void cmd_EMatrix_directSumSeveral(object &o1)
   gStack.insert(result);
   delete [] matrices;
 }
-static void cmd_EMatrix_concatenate(object &o1)
+// The following is NOT static, since it is called from x_mat.cpp
+void cmd_EMatrix_concatenate(object &o1)
 {
   int i;
   int n = o1->int_of();
@@ -1876,7 +1877,7 @@ void i_Ecommands(void)
   install(ggmodtensor, cmd_EMatrix_moduleTensor, TY_EMatrix, TY_EMatrix);
   install(ggexteriorproduct, cmd_EMatrix_exteriorProduct,
 	  TY_INT, TY_INT, TY_EFreeModule);
-  install(ggconcat, cmd_EMatrix_concatenate, TY_INT);
+  //install(ggconcat, cmd_EMatrix_concatenate, TY_INT);  : replace once x_mat.cpp is gone.
   install(gghomogenize, cmd_EMatrix_homogenize, TY_EMatrix, TY_INT, TY_INTARRAY);
 
   install(ggmult, cmd_EMatrix_smult, TY_ERingElement, TY_EMatrix);

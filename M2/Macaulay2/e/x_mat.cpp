@@ -234,6 +234,8 @@ void cmd_Matrix_add(object &oa, object &ob)
   gStack.insert(a+b);
 }
 
+extern void cmd_EMatrix_concatenate(object &o1);
+
 void cmd_Matrix_concat(object &on)
 {
   int i, j;
@@ -241,6 +243,11 @@ void cmd_Matrix_concat(object &on)
   if (n <= 0)
     {
       gError << "concat: expected at least one matrix";
+      return;
+    }
+  if (gStack[0]->type_id() == TY_EMatrix)
+    {
+      cmd_EMatrix_concatenate(on);
       return;
     }
   for (i=0; i<n; i++)
