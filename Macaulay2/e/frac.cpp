@@ -18,7 +18,6 @@ bool FractionField::initialize_frac(const Ring *R)
 		  Monoid::get_trivial_monoid(),
 		  R->degree_monoid());
 
-  _flattened_ring = R->get_flattened_ring();
   _elem_size = sizeof(frac_elem);
   _MINUS_ONE = R->from_int(-1);
   declare_field();

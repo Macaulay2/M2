@@ -9,7 +9,7 @@
 #include "ntuple.hpp"
 #include "termideal.hpp"
 #include "gbring.hpp"
-
+#include "frac.hpp"
 #include "geopoly.hpp"
 
 #include "gb_comp.hpp"
@@ -55,14 +55,15 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
 
   trans_MONOM1 = M->make_one(); // Used in gbvector <--> vec translation
   trans_EXP1 = new int[_nvars];
+
+  flattened_ring = make_flattened_ring();
 }
 
 PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 {
   PolynomialRing *result = new PolynomialRing;
   result->initialize_poly_ring(K,MF);
-  result->_flattened_ring = result->make_flattened_ring();
-  const PolynomialRing *flatR = result->_flattened_ring;
+  const PolynomialRing *flatR = result->get_flattened_ring();
   result->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), flatR->Nmonoms());
   return result;
 }
@@ -74,33 +75,39 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
   if (K_->is_basic_ring())
     return this;
   else {
-    const Ring *A = K_->get_flattened_ring();
-    // A is either a base ring or a polynomial ring
-    // Also: A may be non-commutative.  In which case we must
-    // make a polynomial ring, and then make a skew, weyl or solvable algebra.
-	  
-    const PolynomialRing *PP = A->cast_to_PolynomialRing();
-    if (PP == 0)
+    // If K is not basic, then it can be one of:
+    //    QQ 
+    //    frac(R) (possibly has flattened ring)
+    //    poly ring (has flattened ring)
+    //    skew poly ring (has flattened ring)
+    //    Weyl algebra (has flattened ring)
+    //    quotient ring  (has flattened ring)
+    const Ring *Q = (const Ring *) globalQQ;
+    if (K_ == Q) return PolynomialRing::create(ZZ,Nmonoms());
+    
+    const PolynomialRing *R1;
+    const FractionField *F;
+    if ((F=K_->cast_to_FractionField()) != 0)
       {
-	// K is not a polynomial ring, but is not basic either.
-	// So we must make a simple polynomial ring over A.
-	return PolynomialRing::create(A,Nmonoms());
+	R1 = F->get_ring()->cast_to_PolynomialRing();
+	if (R1 == 0) { ERROR("internal error: cannot create flattened ring"); exit(1);}
       }
     else
       {
-	// A is a polynomial ring.
-	// Make sure it is commutative (otherwise, this operation is not
-	// permitted).  If so, make the tensor product ring.
-	const Monoid *M0 = PP->Nmonoms();
-	const Monoid *newM = Monoid::tensor_product(Nmonoms(), M0);
-	const PolynomialRing *P1 = PolynomialRing::create(PP->Ncoeffs(), newM);
-#if 0
-	if (!A->is_commutative_ring())
-	  A->create_polynomial_ring(P1);
-#endif
+	R1 = K_->cast_to_PolynomialRing();
+	if (R1 == 0) { ERROR("internal error: cannot create flattened ring"); exit(1);}
+	R1 = R1->get_flattened_ring();
+	// Now we must make the poly ring R1[M], where M is the current monoid.
+	const Monoid *M1 = R1->Nmonoms();
+	const Monoid *newM = Monoid::tensor_product(Nmonoms(), M1);
+	const PolynomialRing *P1 = PolynomialRing::create(R1->Ncoeffs(), newM);
+
+	// P1 is the result, unless R1 is not commutative, or this is non-commutative.
+#warning "make this ring non-commutative, if needed"
 	return P1;
       }
   }
+  return 0;
 }
 
 PolynomialRing *PolynomialRing::create_quotient_ring(Computation *G)
@@ -2218,7 +2225,8 @@ gbvector * PolynomialRing::translate_gbvector_from_vec(const FreeModule *F,
       trans_from_ringelem(H, w->coeff, w->comp+1, trans_EXP1, 0);
     }
 
-  const Ring *K = _flattened_ring->Ncoeffs();
+#warning "denominator should be allowed to be in larger ring"
+  const Ring *K = get_flattened_ring()->Ncoeffs();
   result_denominator = K->from_int(1);
   return H.value();
 }

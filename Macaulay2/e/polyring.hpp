@@ -32,7 +32,7 @@ protected:
   int _poly_size;
 
   GBRing *_gb_ring;
-
+  const PolynomialRing *flattened_ring;
   // Quotient ring information
   const PolynomialRing *_base_ring; // == NULL iff this is not a quotient ring
   Computation *_quotient_gb;
@@ -60,6 +60,7 @@ public:
 
   virtual bool is_basic_ring() const { return false; }
   GBRing *get_gb_ring() const { return _gb_ring; }
+  const PolynomialRing * get_flattened_ring() const {  return flattened_ring; }
 
   // Queries for quotient ring
   bool        is_quotient_ring() const { return (_base_ring != NULL); }

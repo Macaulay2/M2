@@ -32,8 +32,6 @@ void Ring::initialize_ring(int P0,
   else
     _HRing = 0;
 
-  _flattened_ring = this; // WARNING: this is the default.  Polynomial
-                          // rings, fraction fields, QQ will change this.
   _zero_divisor = (Nterm*)0;
   _isfield = false;
   _isquotientring = false;
