@@ -6,7 +6,6 @@ scan({sendgg,ggPush,ConvertJoin,ConvertRepeat,ConvertApply,newHandle},
 
 unlist = X -> error "'unlist' has been replaced by toSequence"
 elements = X -> error "'elements' has been replace by toList"
-expand = X -> error "'expand' has been replaced by 'value'"
 evaluate = X -> error "'evaluate' has been replaced by 'value'"
 seq = X -> error "'seq' has been replaced by 'singleton'"
 verticalJoin = X -> error "'verticalJoin' has been replaced by 'stack'"
