@@ -500,10 +500,10 @@ I=ideal(-b*d^2*f*h^2+a*b*d*g*h^2,
 	-a*b*d^2*e^2+c^2*g^2*h^2,
 	-d^2*f*g^3+a*b*d*e^2*h)
 dec = decompose I
-assert(dec#-1 == ideal ( d*f-a*g,  g^4-b*e^2*h, a*d^2*g^2-c^2*h^3,
+assert(dec#0 == ideal ( d*f-a*g,  g^4-b*e^2*h, a*d^2*g^2-c^2*h^3,
  	  a*b*d^2*e^2-c^2*g^2*h^2, a^2*b*d*e^2-c^2*f*g*h^2, 
 	  a^3*b*e^2-c^2*f^2*h^2 ))
-assert(dec == {
+   E = {
 	  ideal(c,d),
 	  ideal(h,d),
 	  ideal(g,d),
@@ -519,7 +519,11 @@ assert(dec == {
 	  ideal(h,g,e),
 	  ideal(-d*f+a*g,g^4-b*e^2*h,-d^3*f*g+c^2*h^3,-a^3*b*e^2+c^2*f^2*h^2,-a^2*b*d*e^2+c^2*f*g*h^2,-a*b*d^2*e^2+c^2*g^2*h^2)
 	  }
-     )
+
+    Ds = set apply(D, I -> gens gb I)
+    Es = set apply(E, I -> gens gb I)
+    assert(Ds === Es)
+
 ///
 
 TEST ///
@@ -536,7 +540,7 @@ TEST ///
 			-- used 6.87 seconds, cygnus32
      			-- used 5.19 seconds, linux
 			-- 82 seconds in Singular
-    assert(D == {
+    E = {
 	      ideal(u,r,y,x,z,t*v+s*w),
 	      ideal(z,x,y,w,u,v),
 	      ideal(v,u,s,w,y,t*x+r*z),
@@ -552,7 +556,10 @@ TEST ///
 	      ideal(z,y,w,t,s,v),
 	      ideal(w,t,r,s,u,v),
 	      ideal(t,w,y,x,z,s*u+r*v)
-	      })
+	      }
+    Ds = set apply(D, I -> gens gb I)
+    Es = set apply(E, I -> gens gb I)
+    assert(Ds === Es)
 ///
 
 TEST "
@@ -596,7 +603,7 @@ TEST "
 TEST "
 R = ZZ/31991[x,y]
 assert( (x^2-10748*y*x+y^2)*(y^2+x^2)*(x^2+10748*y*x+y^2) == x^6 + y^6 )
-assert ( # factor (x^6 + y^6) == 3 )
+assert ( # factor (x^6 + y^6) == 4 )
 "
 
 document {
