@@ -1,0 +1,6 @@
+ -*- Mode: sh -*-
+AC_INIT(Makeconf)
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+AC_CONFIG_HEADER(config.h)
+AC_OUTPUT(config.Makefile Makefile)
