@@ -85,9 +85,8 @@ ZZquotient := (R,I) -> (
 	  if n > 32767 then error "large characteristics not implemented yet";
 	  if n > 1 and not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
-	  G := degreesMonoid 0;
-	  sendgg(ggPush n, ggPush G, ggcharp);
 	  S := new QuotientRing from newHandle();
+     	  S.RawRing = rawZZp n;
 	  S.ideal = I;
 	  S.baseRings = {R};
 	  S.relations = gensI;
@@ -95,9 +94,7 @@ ZZquotient := (R,I) -> (
 	  S.presentation = gensgbI;
 	  S.order = S.char = n;
 	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
-	  expression S := x -> convert(
-	       S.ConvertToExpression, sendgg(ggPush x, ggtonet)
-	       );
+	  expression S := x -> hold rawToInteger raw x;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
 	  savedQuotients#n = S;
 	  S))

@@ -98,7 +98,7 @@ degreesMonoid GeneralOrderedMonoid := Monoid => M -> degreesMonoid degreeLength 
 
 standardForm(MonoidElement) := (m) -> (
      M := class m;
-     convert(M.standardForm, sendgg(ggPush m, ggtonet)))
+     somethingElse())
      
 exponents(MonoidElement) :=
 listForm(MonoidElement) := (m) -> (
@@ -166,7 +166,7 @@ makeit1 := (options) -> (
 	       if Symbol =!= basictype sym 
 	       and IndexedVariable =!= class sym
 	       then error "expected variable or symbol"));
-     M.standardForm = something;
+     M.standardForm = somethingElse;
      expression M := x -> new Product from apply( 
 	  rawMonomialSparseListForm x.RawMonomial,
 	  (k,v) -> Power{M.generatorExpressions#k, v} );
@@ -249,7 +249,8 @@ makeit1 := (options) -> (
 	  then (M.generatorSymbols) # ( first first rawMonomialSparseListForm m )
 	  else error "expected a generator"
 	  );
-     M / M := (x,y) -> new M from x.RawMonomial / y.RawMonomial;
+     M / M := (x,y) -> new M from somethingElse();		    -- there will be no remainder, and it will depend on the monoid, too!
+     M : M := (x,y) -> new M from x.RawMonomial : y.RawMonomial;
      M ^ ZZ := (x,n) -> new M from x.RawMonomial ^ n;
      M.use = x -> scan(M.generatorSymbols,M.vars,assign);
      M)

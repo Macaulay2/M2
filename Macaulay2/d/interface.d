@@ -161,10 +161,7 @@ rawSyzygy(e:Expr):Expr := (
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do (
-	  r := Ccode(RawMonomialPair, 
-	       "(engine_RawMonomialPair)IM2_Monomial_syz((Monomial*)",
-	       x,",","(Monomial*)",y,
-	       ")");
+	  r := Ccode(RawMonomialPair, "(engine_RawMonomialPair)IM2_Monomial_syz((Monomial*)", x,",","(Monomial*)",y, ")");
 	  Expr(list(Expr(r.a), Expr(r.b))))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
@@ -172,27 +169,21 @@ rawSyzygy(e:Expr):Expr := (
      );
 setupfun("rawSyzygy",rawSyzygy);
 
-rawQuotient(e:Expr):Expr := (
+rawColon(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawMonomial do 
-     when a.1 is y:RawMonomial do toExpr(
-	  Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)IM2_Monomial_quotient(",
-	       "(Monomial *)", x, ",", "(Monomial *)", y, ")" ))
+     when a.1 is y:RawMonomial do toExpr( Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)IM2_Monomial_quotient(", "(Monomial *)", x, ",", "(Monomial *)", y, ")" ))
      else WrongArg(2,"a raw monomial")
      else when a.0 is I:RawMonomialIdeal do 
      when a.1
-     is y:RawMonomial do Expr(
-	  Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)IM2_MonomialIdeal_quotient1(",
-	       "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
-     is J:RawMonomialIdeal do toExpr(
-	  Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)IM2_MonomialIdeal_quotient(",
-	       "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
+     is y:RawMonomial do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)IM2_MonomialIdeal_quotient1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
+     is J:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)IM2_MonomialIdeal_quotient(", "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
      else WrongArg(2,"a raw monomial or monomial ideal")
      else WrongArg(1,"a raw monomial or monomial ideal")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-setupfun("rawQuotient",rawQuotient);
+setupfun("rawColon",rawColon);
 
 -----------------------------------------------------------------------------
 -- monomial orderings

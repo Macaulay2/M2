@@ -13,7 +13,7 @@ rbigCC = rawBigCC(trivmonoid) -- NOT FUNCTIONAL
 rawSolvableAlgebra -- NOT FUNCTIONAL
 rawFractionRing -- not quite functional, needs gb's
 rawLocalRing -- NOT FUNCTIONAL, needs gb's?
-rawQuotientRing -- NOT FUNCTIONAL, needs gbs.
+rawColonRing -- NOT FUNCTIONAL, needs gbs.
 ///
 
 --  
