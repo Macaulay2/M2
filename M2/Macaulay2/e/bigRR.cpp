@@ -17,11 +17,11 @@
 
 mpf_ptr bigRR::_epsilon = NULL;
 
-bool bigRR::initialize_bigRR(const Monoid *D) 
+bool bigRR::initialize_bigRR() 
 {
   initialize_ring(0,0,0,this,
 		  Monoid::get_trivial_monoid(),
-		  D);
+		  Monoid::get_trivial_monoid());
   _elem_size = sizeof(mpf_t);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {
@@ -31,10 +31,10 @@ bool bigRR::initialize_bigRR(const Monoid *D)
   return true;
 }
 
-bigRR *bigRR::create(const Monoid *D)
+bigRR *bigRR::create()
 {
   bigRR *result = new bigRR;
-  result->initialize_bigRR(D);
+  result->initialize_bigRR();
   return result;
 }
 

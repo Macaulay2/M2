@@ -34,7 +34,6 @@ void Ring::initialize_ring(int P0,
 
   _zero_divisor = (Nterm*)0;
   _isfield = false;
-  _isquotientring = false;
   _is_ZZ_quotient = false;
   _ZZ_quotient_value = (Nterm*)0;
 

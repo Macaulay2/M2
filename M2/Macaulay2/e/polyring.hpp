@@ -15,6 +15,35 @@ class Matrix;
 class GBRing;
 class GBRingSkew;
 
+#if 0
+class QuotientInfo
+{
+public:
+  bool is_quotient() const;
+  vector <gbvector *> elements;
+  const PolynomialRing *ambient_ring;
+#if 0
+  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
+  TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
+#endif
+};
+#endif
+
+#if 0
+// These were in PolynomialRing
+  static PolynomialRing *create_quotient_ring(const PolynomialRing *R, const array<ring_elem> &I);
+  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
+  const TermIdeal *get_quotient_monomials_ZZ() const { return _RidealZZ; }
+  const FreeModule *get_Rsyz() const;
+
+  Matrix     get_ideal() const;
+  ring_elem get_quotient_elem(int i) const { return _quotient_ideal[i]; }
+  int        get_quotient_elem_length() const { return _quotient_ideal.length(); }
+
+
+  void initialize_quotients(const array<ring_elem> &I);
+#endif
+
 class PolynomialRing : public Ring
 {
   friend class GBRingSkew;
@@ -22,7 +51,6 @@ class PolynomialRing : public Ring
 protected:
   const PolynomialRing * make_flattened_ring();
   void initialize_poly_ring(const Ring *K, const Monoid *M);
-  void initialize_quotients(const array<ring_elem> &I);
   virtual ~PolynomialRing();
   PolynomialRing() {}
 public:
@@ -33,11 +61,14 @@ protected:
 
   GBRing *_gb_ring;
   const PolynomialRing *flattened_ring;
+
   // Quotient ring information
   const PolynomialRing *_base_ring; // == NULL iff this is not a quotient ring
   Computation *_quotient_gb;
 
 #if 0
+  QuotientInfo Quotient;
+
   array<ring_elem> _quotient_ideal;
   MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
   TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
@@ -66,16 +97,6 @@ public:
   bool        is_quotient_ring() const { return (_base_ring != NULL); }
   const PolynomialRing * get_base_poly_ring() const { return _base_ring; }
   
-#if 0
-  static PolynomialRing *create_quotient_ring(const PolynomialRing *R, const array<ring_elem> &I);
-  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
-  const TermIdeal *get_quotient_monomials_ZZ() const { return _RidealZZ; }
-  const FreeModule *get_Rsyz() const;
-
-  Matrix     get_ideal() const;
-  ring_elem get_quotient_elem(int i) const { return _quotient_ideal[i]; }
-  int        get_quotient_elem_length() const { return _quotient_ideal.length(); }
-#endif
 
   bool is_skew_commutative() const { return _is_skew; }
   bool is_skew_var(int v) const { return _skew.is_skew_var(v); }

@@ -20,9 +20,9 @@ class Z_mod : public Ring
 protected:
   Z_mod() {}
   virtual ~Z_mod() {}
-  bool initialize_Z_mod(int p, const Monoid *D);
+  bool initialize_Z_mod(int p);
 public:
-  static Z_mod * create(int p, const Monoid *D);
+  static Z_mod * create(int p);
 
   Z_mod * cast_to_Z_mod() { return this; }
   const Z_mod * cast_to_Z_mod() const { return this; }

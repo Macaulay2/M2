@@ -17,8 +17,6 @@
 
 #define POLY(q) ((q).poly_val)
 
-buffer debugo;
-
 PolynomialRing::~PolynomialRing()
 {
   // Nothing to do

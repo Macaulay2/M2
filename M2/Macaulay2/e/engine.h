@@ -219,11 +219,11 @@ extern "C" {
   MonomialOrdering *IM2_MonomialOrdering_join(MonomialOrdering_array mo); /* drg: connected rawMonomialOrdering*/
     /* default, when making monoids and polynomial rings */
 
-  int IM2_MonomialOrdering_nvars(MonomialOrdering *mo); /* drg: connected rawNumberOfVariables*/
+  int IM2_MonomialOrdering_nvars(const MonomialOrdering *mo); /* drg: connected rawNumberOfVariables*/
 
-  int IM2_MonomialOrdering_n_invertible_vars(MonomialOrdering *mo); /* drg: connected rawNumberOfInvertibleVariables*/
+  int IM2_MonomialOrdering_n_invertible_vars(const MonomialOrdering *mo); /* drg: connected rawNumberOfInvertibleVariables*/
 
-  M2_string IM2_MonomialOrdering_to_string(MonomialOrdering *mo); /* drg: connected */
+  M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo); /* drg: connected */
 
   unsigned long IM2_MonomialOrdering_hash(MonomialOrdering *mo); /* drg: connected hash */
     /* Assigned sequentially */
@@ -245,7 +245,7 @@ extern "C" {
   unsigned long IM2_Monoid_hash(Monoid *M);  /* drg: connected hash */
     /* Assigned sequentially */
 
-  M2_string IM2_Monoid_to_string(Monoid *M);  /* drg: connected */
+  M2_string IM2_Monoid_to_string(const Monoid *M);  /* drg: connected */
     /* For debugging purposes */
 
   /**************************************************/
@@ -262,7 +262,7 @@ extern "C" {
   const Ring *IM2_Ring_QQ(void);  /* drg: connected rawQQ */
     /* always returns the same object */
 
-  const RingOrNull *IM2_Ring_ZZp(int p, const Monoid *deg_monoid); /* drg: connected rawZZp*/
+  const RingOrNull *IM2_Ring_ZZp(int p); /* drg: connected rawZZp*/
     /* Expects a prime number p in range 2 <= p <= 32749 */
 
   const RingOrNull *IM2_Ring_GF(const RingElement *f);
@@ -272,15 +272,13 @@ extern "C" {
        However, currently, NONE of this is checked...
     */
 
-  const RingOrNull *IM2_Ring_RR(double precision, 
-				const Monoid *deg_monoid); /* drg: connected rawRR */
+  const RingOrNull *IM2_Ring_RR(double precision); /* drg: connected rawRR */
 
-  const RingOrNull *IM2_Ring_CC(double precision, 
-				const Monoid *deg_monoid); /* drg: connected rawCC */
+  const RingOrNull *IM2_Ring_CC(double precision); /* drg: connected rawCC */
 
-  const RingOrNull *IM2_Ring_bigRR(const Monoid *deg_monoid); /* drg: connected rawBigRR */
+  const RingOrNull *IM2_Ring_bigRR(void); /* drg: connected rawBigRR */
 
-  const RingOrNull *IM2_Ring_bigCC(const Monoid *deg_monoid); /* drg: connected rawBigCC */
+  const RingOrNull *IM2_Ring_bigCC(void); /* drg: connected rawBigCC */
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing*/

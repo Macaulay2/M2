@@ -10,13 +10,14 @@
 
 extern ZZ *globalZZ;
 
-bool Z_mod::initialize_Z_mod(int p, const Monoid *D)
+bool Z_mod::initialize_Z_mod(int p)
 {
 
   initialize_ring(p, 0,0, 
 		  this,
 		  Monoid::get_trivial_monoid(),
-		  D);
+		  Monoid::get_trivial_monoid());
+		  
 
   declare_field();
   int i,j,q,n;
@@ -52,10 +53,10 @@ bool Z_mod::initialize_Z_mod(int p, const Monoid *D)
   return true;
 }
 
-Z_mod *Z_mod::create(int p, const Monoid *D)
+Z_mod *Z_mod::create(int p)
 {
   Z_mod *result = new Z_mod;
-  if (!result->initialize_Z_mod(p,D)) return 0;
+  if (!result->initialize_Z_mod(p)) return 0;
 
   return result;
 }

@@ -20,19 +20,19 @@ CC::~CC()
 {
 }
 
-bool CC::initialize_CC(const Monoid *D, double epsilon) 
+bool CC::initialize_CC(double epsilon) 
 {
   initialize_ring(0,0,0,this,
 		  Monoid::get_trivial_monoid(),
-		  D);
+		  Monoid::get_trivial_monoid());
   _epsilon = epsilon;
   return true;
 }
 
-CC *CC::create(const Monoid *D, double epsilon)
+CC *CC::create(double epsilon)
 {
   CC *result = new CC;
-  result->initialize_CC(D, epsilon);
+  result->initialize_CC(epsilon);
   return result;
 }
 
