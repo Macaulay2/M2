@@ -197,16 +197,16 @@ public:
 				  const ring_elem c, const int *m) const;
 
   virtual int n_flat_terms(const ring_elem f) const;
-  virtual int n_logical_terms(const ring_elem f) const;
+  virtual int n_logical_terms(int nvars0,const ring_elem f) const;
 
-  virtual ring_elem get_coeff(const ring_elem f, const int *vp) const;
-  virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
+  virtual ring_elem get_coeff(const Ring *coeffR,const ring_elem f, const int *vp) const;
+  virtual ring_elem get_terms(int nvars0, const ring_elem f, int lo, int hi) const;
 
   virtual ring_elem make_flat_term(const ring_elem a, const int *m) const;
   virtual ring_elem make_logical_term(const ring_elem a, const int *m) const;
 
   virtual ring_elem lead_flat_coeff(const ring_elem f) const;
-  virtual ring_elem lead_logical_coeff(const ring_elem f) const;
+  virtual ring_elem lead_logical_coeff(const Ring *coeffR, const ring_elem f) const;
 
   virtual const int * lead_flat_monomial(const ring_elem f) const;
   virtual const int * lead_logical_monomial(const ring_elem f) const;
@@ -214,7 +214,7 @@ public:
   ring_elem lead_term(const ring_elem f) const; // copies the lead term
   int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
 
-  virtual ArrayPairOrNull list_form(const ring_elem f) const;
+  virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
 

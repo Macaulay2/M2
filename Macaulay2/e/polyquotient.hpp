@@ -224,12 +224,12 @@ public:
     return R_->PolyRing::n_flat_terms(f);
   }
 
-  virtual int n_logical_terms(const ring_elem f) const {
-    return R_->PolyRing::n_logical_terms(f);
+  virtual int n_logical_terms(int nvars0,const ring_elem f) const {
+    return R_->PolyRing::n_logical_terms(nvars0,f);
   }
 
-  virtual ArrayPairOrNull list_form(const ring_elem f) const {
-    return R_->PolyRing::list_form(f);
+  virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const {
+    return R_->PolyRing::list_form(coeffR,f);
   }
 
   virtual ring_elem make_flat_term(const ring_elem a, const int *m) const {
@@ -249,21 +249,21 @@ public:
     return R_->PolyRing::lead_flat_coeff(f);
   }
 
-  virtual ring_elem lead_logical_coeff(const ring_elem f) const {
-    return R_->PolyRing::lead_logical_coeff(f);
+  virtual ring_elem lead_logical_coeff(const Ring *coeffR, const ring_elem f) const {
+    return R_->PolyRing::lead_logical_coeff(coeffR,f);
   }
 
-  virtual ring_elem get_coeff(const ring_elem f, const int *vp) const {
-    return R_->PolyRing::get_coeff(f,vp);
+  virtual ring_elem get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const {
+    return R_->PolyRing::get_coeff(coeffR, f,vp);
   }
   // vp is a varpower monomial, in the logical monoid.
   // The result will be an element in the logical coefficient ring.
 
-  virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const {
-    return R_->PolyRing::get_terms(f,lo,hi);
+  virtual ring_elem get_terms(int nvars0,const ring_elem f, int lo, int hi) const {
+    return R_->PolyRing::get_terms(nvars0,f,lo,hi);
   }
   // get the (logical) terms from lo to hi in f.  A negative value means count from
-  // the end.  get_terms(f,0,0) is the logical lead term of f.
+  // the end.  get_terms(--,f,0,0) is the logical lead term of f.
 
   virtual const int * lead_flat_monomial(const ring_elem f) const {
     return R_->PolyRing::lead_flat_monomial(f);

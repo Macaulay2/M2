@@ -121,10 +121,10 @@ public:
   virtual bool is_quotient_poly_ring() const { return false; }
 
   virtual CoefficientType coefficient_type() const
-  { return Ncoeffs()->coefficient_type(); }
+  { return getCoefficients()->coefficient_type(); }
 
   virtual int n_fraction_vars() const
-  { return Ncoeffs()->n_fraction_vars(); }
+  { return getCoefficients()->n_fraction_vars(); }
 
   virtual void text_out(buffer &o) const = 0;
 
@@ -196,9 +196,9 @@ public:
 				  const ring_elem c, const int *m) const = 0;
 
   virtual int n_flat_terms(const ring_elem f) const = 0;
-  virtual int n_logical_terms(const ring_elem f) const = 0;
+  virtual int n_logical_terms(int nvars0, const ring_elem f) const = 0;
 
-  virtual ArrayPairOrNull list_form(const ring_elem f) const = 0;
+  virtual ArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const = 0;
 
   int n_terms(const ring_elem f) const { return n_flat_terms(f); }
   // This is here mainly because geopoly requires n_terms.
@@ -208,15 +208,15 @@ public:
   //  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
 
   virtual ring_elem lead_flat_coeff(const ring_elem f) const = 0;
-  virtual ring_elem lead_logical_coeff(const ring_elem f) const = 0;
+  virtual ring_elem lead_logical_coeff(const Ring *coeffR, const ring_elem f) const = 0;
 
-  virtual ring_elem get_coeff(const ring_elem f, const int *vp) const = 0;
+  virtual ring_elem get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const = 0;
   // vp is a varpower monomial, in the logical monoid.
   // The result will be an element in the logical coefficient ring.
 
-  virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const = 0;
+  virtual ring_elem get_terms(int nvars0, const ring_elem f, int lo, int hi) const = 0;
   // get the (logical) terms from lo to hi in f.  A negative value means count from
-  // the end.  get_terms(f,0,0) is the logical lead term of f.
+  // the end.  get_terms(--,f,0,0) is the logical lead term of f.
 
   virtual const int * lead_flat_monomial(const ring_elem f) const = 0;
   virtual const int * lead_logical_monomial(const ring_elem f) const = 0;

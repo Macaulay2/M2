@@ -454,27 +454,6 @@ ring_elem GF::homogenize(const ring_elem f, int, const M2_arrayint) const
   return f;
 }
 
-int GF::n_terms(const ring_elem) const
-{
-  return 1;
-}
-ring_elem GF::term(const ring_elem a, const int *) const
-{
-  return copy(a);
-}
-ring_elem GF::lead_coeff(const ring_elem f) const
-{
-  return f;
-}
-ring_elem GF::get_coeff(const ring_elem f, const int *) const
-{
-  return f;
-}
-ring_elem GF::get_terms(const ring_elem f, int, int) const
-{
-  return f;
-}
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -297,7 +297,7 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
       const int *lead = lead_logical_monomial(f);
       if (!logicalM_->is_one(lead))
 	return false;
-      result = lead_logical_coeff(f);
+      result = lead_logical_coeff(logicalK_,f);
       return true;
     }
   return false;
@@ -1417,26 +1417,26 @@ const int * PolyRing::lead_logical_monomial(const ring_elem f) const
   return result;
 }
 
-ring_elem PolyRing::lead_logical_coeff(const ring_elem f) const
+ring_elem PolyRing::lead_logical_coeff(const Ring *coeffR, const ring_elem f) const
 {
   const Nterm *t = f;
-  return get_logical_coeff(logicalK_, t);
+  return get_logical_coeff(coeffR, t);
 }
 
-int PolyRing::n_logical_terms(const ring_elem f) const
+int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
 {
-  if (logicalK_ == K_) return n_terms(f);
+  // nvars0 is the number of variables in the outer monoid
+  if (nvars0 == n_vars()) return n_terms(f);
   Nterm *t = f;
   if (t == 0) return 0;
   int *exp1 = newarray(int,n_vars());
   int *exp2 = newarray(int,n_vars());
   M_->to_expvector(t->monom, exp1);
   int result = 1;
-  int nvars = logicalM_->n_vars();
   for ( ; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp2);
-      if (EQ == ntuple::lex_compare(nvars, exp1, exp2))
+      if (EQ == ntuple::lex_compare(nvars0, exp1, exp2))
 	  continue;
       int *temp = exp1;
       exp1 = exp2;
@@ -1448,9 +1448,10 @@ int PolyRing::n_logical_terms(const ring_elem f) const
   return result;
 }  
 
-ArrayPairOrNull PolyRing::list_form(const ring_elem f) const
+ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
 {
-  int n = n_logical_terms(f);
+  int nvars0 = n_vars() - coeffR->n_vars();
+  int n = n_logical_terms(nvars0,f);
   Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
   RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
   monoms->len = n;
@@ -1465,10 +1466,10 @@ ArrayPairOrNull PolyRing::list_form(const ring_elem f) const
   for (int next = 0; next < n; next++)
     {
       getMonoid()->to_expvector(t->monom, exp);
-      ring_elem c = get_logical_coeff(logicalK_, t); // increments t to the next term of f.
-      varpower::from_ntuple(getLogicalMonoid()->n_vars(), exp, resultvp);
+      ring_elem c = get_logical_coeff(coeffR, t); // increments t to the next term of f.
+      varpower::from_ntuple(nvars0, exp, resultvp);
       monoms->array[next] = Monomial::make(resultvp.raw());
-      coeffs->array[next] = RingElement::make_raw(logicalK_, c);
+      coeffs->array[next] = RingElement::make_raw(coeffR, c);
       resultvp.shrink(0);
 
       assert( monoms->array[next] != NULL );
@@ -1502,9 +1503,9 @@ ring_elem PolyRing::make_logical_term(const ring_elem a, const int *m) const
   return head.next;
 }
 
-ring_elem PolyRing::get_terms(const ring_elem f, int lo, int hi) const
+ring_elem PolyRing::get_terms(int nvars0, const ring_elem f, int lo, int hi) const
 {
-  int nterms = n_logical_terms(f);
+  int nterms = n_logical_terms(nvars0,f);
   if (lo < 0) lo = nterms + lo;
   if (hi < 0) hi = nterms + hi;
 
@@ -1515,7 +1516,6 @@ ring_elem PolyRing::get_terms(const ring_elem f, int lo, int hi) const
   int *exp1 = newarray(int,n_vars());
   int *exp2 = newarray(int,n_vars());
   M_->to_expvector(t->monom, exp1);
-  int nvars = logicalM_->n_vars();
   int n = 0;
   while (t != NULL)
     {
@@ -1528,7 +1528,7 @@ ring_elem PolyRing::get_terms(const ring_elem f, int lo, int hi) const
       t = t->next;
       if (t == 0) break;
       M_->to_expvector(t->monom, exp2);
-      if (EQ == ntuple::lex_compare(nvars, exp1, exp2))
+      if (EQ == ntuple::lex_compare(nvars0, exp1, exp2))
 	continue;
       int *temp = exp1;
       exp1 = exp2;
@@ -1571,22 +1571,22 @@ const int * PolyRing::lead_flat_monomial(const ring_elem f) const
   return t->monom;
 }
 
-ring_elem PolyRing::get_coeff(const ring_elem f, const int *vp) const
+ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const
   // note: vp is a varpower monomial.
 {
 #warning "uses flat monomials"
 
-  int nvars = logicalM_->n_vars();
-  int *exp = newarray(int, nvars);
+  int nvars0 = n_vars() - coeffR->n_vars();
+  int *exp = newarray(int, nvars0);
   int *exp2 = newarray(int, n_vars()); // FLAT number of variables
-  varpower::to_ntuple(nvars, vp, exp);
+  varpower::to_ntuple(nvars0, vp, exp);
 
   // Now loop thru f until exponents match up.
   const Nterm *t = f;
   for ( ; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp2);
-      if (EQ == ntuple::lex_compare(nvars, exp, exp2))
+      if (EQ == ntuple::lex_compare(nvars0, exp, exp2))
 	break;
     }
 

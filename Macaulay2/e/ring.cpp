@@ -198,11 +198,6 @@ ring_elem Ring::preferred_associate(ring_elem f) const
   return invert(f);
 }
 
-ring_elem Ring::get_terms(const ring_elem f, int, int) const
-{
-  return f;
-}
-
 void Ring::monomial_divisor(const ring_elem a, int *exp) const
 {
   // Do nothing
