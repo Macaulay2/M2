@@ -1059,6 +1059,7 @@ document { isAffineRing, Headline => "whether something is an affine ring",
 
 document { RingMap,
      Headline => "the class of all ring maps",
+     SEEALSO "maps between rings",
      "Common ways to make a ring map:",
      MENU {
 	  },

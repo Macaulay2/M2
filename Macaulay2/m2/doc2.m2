@@ -788,9 +788,7 @@ document { unique,
 
 document { Ring,
      Headline => "the class of all rings",
-     "See ", TO "basic rings", " or ", TO "polynomial rings", " for an
-     introduction to making and using rings.",
-     PARA,
+     SEEALSO "rings",
      "Common ways to make a ring:",
      MENU {
 	  TO (symbol /, Ring, Ideal),
