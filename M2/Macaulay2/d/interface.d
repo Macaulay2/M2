@@ -408,12 +408,7 @@ rawZZp(e:Expr):Expr := (
      if length(a) == 2 then 
      when a.0 is p:Integer do 
      if !isInt(p) then WrongArgSmallInteger(1) else
-     when a.1 is M:RawMonoid do toExpr(Ccode(RawRingOrNull,
-	       "(engine_RawRingOrNull)IM2_Ring_ZZp(",
-	       toInt(p), ",",
-	       "(Monoid *)", M,
-	       ")"
-	       ))
+     when a.1 is M:RawMonoid do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_ZZp(", toInt(p), ")" ))
      else WrongArg(2,"a raw (degree) monoid")
      else WrongArgInteger(1)
      else WrongNumArgs(2)
@@ -424,9 +419,7 @@ rawRR(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is precision:Real do 
-     when a.1 is M:RawMonoid do toExpr(Ccode(RawRingOrNull,
-	       "(engine_RawRingOrNull)IM2_Ring_RR(", precision.v, ",", "(Monoid *)", M, ")"
-	       ))
+     when a.1 is M:RawMonoid do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RR(", precision.v, ")" ))
      else WrongArg(2,"a monoid")
      else WrongArg(1,"a real number")
      else WrongNumArgs(2)
@@ -434,16 +427,12 @@ rawRR(e:Expr):Expr := (
 setupfun("rawRR",rawRR);
 
 rawBigRR(e:Expr):Expr := (
-     when e is M:RawMonoid do toExpr(Ccode(RawRingOrNull,
-	       "(engine_RawRingOrNull)IM2_Ring_bigRR((Monoid *)", M, ")"
-	       ))
+     when e is M:RawMonoid do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_bigRR()" ))
      else WrongArg("a monoid"));
 setupfun("rawBigRR",rawBigRR);
 
 rawBigCC(e:Expr):Expr := (
-     when e is M:RawMonoid do toExpr(Ccode(RawRingOrNull,
-	       "(engine_RawRingOrNull)IM2_Ring_bigCC((Monoid *)", M, ")"
-	       ))
+     when e is M:RawMonoid do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_bigCC()" ))
      else WrongArg("a monoid"));
 setupfun("rawBigCC",rawBigCC);
 
@@ -452,7 +441,7 @@ rawCC(e:Expr):Expr := (
      if length(a) == 2 then 
      when a.0 is precision:Real do 
      when a.1 is M:RawMonoid do toExpr(Ccode(RawRingOrNull,
-	       "(engine_RawRingOrNull)IM2_Ring_CC(", precision.v, ",", "(Monoid *)", M, ")"
+	       "(engine_RawRingOrNull)IM2_Ring_CC(", precision.v, ")"
 	       ))
      else WrongArg(2,"a monoid")
      else WrongArg(1,"a real number")

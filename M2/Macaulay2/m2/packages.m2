@@ -81,7 +81,7 @@ newPackage("Main",
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
-	  symbol stopIfError, symbol debugLevel, symbol lineNumber
+	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol interpreterHook
 	  })
 reverseDictionary = x -> scan(packages, pkg -> (
 	  d := pkg#"reverse dictionary";
