@@ -16,6 +16,12 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The functions 'examine', 'frame', which were used mainly for
+debugging by the developers, have been removed or hidden from view.
+
+The function 'summary', which displayed some debugging information
+about Groebner bases and resolutions, has been removed.
+
 Inner interpreter has been sped up, and the stack depth has been
 reduced, for code like (a;b;c;d): faster by a factor of 4 for long
 sequences.

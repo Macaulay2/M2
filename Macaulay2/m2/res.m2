@@ -185,15 +185,9 @@ resolution Ideal := ChainComplex => options -> (I) -> resolution(
      options)
 
 -----------------------------------------------------------------------------
-getpairs := g -> (
-    sendgg(ggPush g, ggpairs);
-    eePopIntarray())
-remaining := g -> (
-    sendgg(ggPush g, ggremaining);
-    eePopIntarray())
-nmonoms := g -> (
-    sendgg(ggPush g, ggnmonoms);
-    eePopIntarray())
+getpairs := g -> rawGBBetti(raw g,1)
+remaining := g -> rawGBBetti(raw g,2)
+nmonoms := g -> rawGBBetti(raw g,3)
 
 status Resolution := options -> (r) -> (
      v := {};
