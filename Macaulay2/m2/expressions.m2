@@ -1112,7 +1112,7 @@ Holder.AfterPrint = x -> (
      briefDocumentation x;
      )
 
--- ZZ.AfterPrint = identity
+ZZ.AfterPrint = identity
 -- Boolean.AfterPrint = identity
 -- AfterPrint String := identity
 -----------------------------------
