@@ -338,23 +338,30 @@ tensor = method( Options => tensorDefaults)
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 
 tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
-     M = M.Options;
-     N = N.Options;
+     Mopts := M.Options;
+     Nopts := N.Options;
      opts := new MutableHashTable from options;
      if opts.Variables === null 
-     then opts.Variables = join(M.Variables, N.Variables)
+     then opts.Variables = join(Mopts.Variables, Nopts.Variables)
      else opts.Variables = splice opts.Variables;
      if opts.VariableBaseName =!= null then (
 	  x := opts.VariableBaseName;
 	  opts.Variables = apply(#opts.Variables, i -> x_i);
 	  );
      if opts.MonomialOrder === null 
-     then opts.MonomialOrder = join(M.MonomialOrder,N.MonomialOrder); -- product order
-     processDegrees(opts.Degrees, M.DegreeRank, length opts.Variables);	-- just for the error messages
+     then opts.MonomialOrder = join(Mopts.MonomialOrder,Nopts.MonomialOrder); -- product order
+     processDegrees(opts.Degrees, Mopts.DegreeRank, length opts.Variables);	-- just for the error messages
      if opts.Degrees === null then (
-	  nil := apply(M.DegreeRank, i -> 0);
-          opts.Degrees = join(M.Degrees, apply(N.Degrees, v -> nil)));
-     opts.Inverses = if opts.Inverses === null then M.Inverses or N.Inverses else opts.Inverses;
+	  nil := apply(Mopts.DegreeRank, i -> 0);
+          opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, v -> nil)));
+     opts.Inverses = if opts.Inverses === null then Mopts.Inverses or Nopts.Inverses else opts.Inverses;
+     opts.WeylAlgebra = join(Mopts.WeylAlgebra, Nopts.WeylAlgebra);
+     skews := Mopts -> (
+	  sk := Mopts.Options.SkewCommutative;
+	  if sk === true then sk = generators Mopts;
+	  if sk === false then sk = {};
+	  sk);
+     opts.SkewCommutative = join(skews M, skews N);
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
