@@ -1,3 +1,13 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+local localCohomUli
+local localCohomOT
+local localCohomILOaku
+local computeLocalCohomOT
+local localCohomRegular
+local preimage
+local localCohomILOTW
+local Generator
 ------------------------------------------------------------------
 -- LOCAL COHOMOLOGY
 -- 
@@ -161,7 +171,7 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
 		    else first select(1, subISets, u -> #u == k-1 
 			 and isSubset(u,theta));
 		    i := first toList (set theta - set theta');
-		    papa := L#theta'.LocModule;
+		    papa := L#theta'#LocModule;
 		    pInfo(666, {"iterated localization: ", theta', " => ", theta});
 		    locPapa := computeLocalization(papa, f_i, 
 			 {GeneratorPower, annFS}, 
@@ -176,9 +186,9 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
 		    locIdeal := ideal subMap gens I; 
 		    L#theta = new HashTable from {
 			 LocModule => W^1/locIdeal, 
-			 Generator => L#theta'.Generator * (f_i)^(-FPower#i)
+			 Generator => L#theta'#Generator * (f_i)^(-FPower#i)
 			 };
-		    theta => L#theta.LocModule
+		    theta => L#theta#LocModule
 		    ));
 	  C#k = directSum dsArgs;
 	            	       	       
@@ -189,8 +199,8 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
 			      if flagOK and isSubset(i0, j0)  
 			      then (
 				   l := first toList (set j0 - set i0);
-				   gi := ((L#i0).Generator);
-				   gj := ((L#j0).Generator);
+				   gi := ((L#i0)#Generator);
+				   gj := ((L#j0)#Generator);
 				   if gj % gi !=0 
 				   then ( 
 					-- Have to recompute the previous component
@@ -200,7 +210,7 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
 					);
 				   TempM = TempM 
 				   + (C#k)_[j0] -- injection from j0-th component
-				   * map(L#j0.LocModule, L#i0.LocModule, 
+				   * map(L#j0#LocModule, L#i0#LocModule, 
 					(-1)^(position(j0, u -> u == l)) 
 					* (gj//gi) -- (-1)^(...) id
 					)
@@ -251,17 +261,17 @@ localCohomILOTW(List, Ideal, Module) := (l, I, M) -> (
 		    else first select(1, subISets, u -> #u == k-1 
 			 and isSubset(u,theta));
 		    i := first toList (set theta - set theta');
-		    papa := L#theta'.LocModule;
+		    papa := L#theta'#LocModule;
 		    pInfo(666, {"iterated localization: ", theta', " => ", theta});
 		    locPapa := computeLocalization(papa, f_i, 
 			 {LocModule, GeneratorPower}, 
 			 new OptionTable from {Strategy =>OTW});
 		    L#theta = new HashTable from {
-			 LocModule => locPapa.LocModule, 
-			 Generator => L#theta'.Generator * 
+			 LocModule => locPapa#LocModule, 
+			 Generator => L#theta'#Generator * 
 			 (f_i)^(-locPapa.GeneratorPower)
 			 };
-		    theta => L#theta.LocModule
+		    theta => L#theta#LocModule
 		    ));
 	  C#k = directSum dsArgs;
 	       	       	       
@@ -271,14 +281,14 @@ localCohomILOTW(List, Ideal, Module) := (l, I, M) -> (
 			      if isSubset(i0, j0) 
 			      then (
 				   l := first toList (set j0 - set i0);
-				   gi := ((L#i0).Generator);
-				   gj := ((L#j0).Generator);
+				   gi := ((L#i0)#Generator);
+				   gj := ((L#j0)#Generator);
 				   if gj % gi !=0 
 				   then error ("Bad luck: " | toString gj | 
 					" is not divisible by " | toString gi);
 				   TempM = TempM 
 				   + (C#k)_[j0] -- injection from j0-th component
-				   * map(L#j0.LocModule, L#i0.LocModule, 
+				   * map(L#j0#LocModule, L#i0#LocModule, 
 					(-1)^(position(j0, u -> u == l)) * (gj//gi) 
 					-- (-1)^(...) id
 					)
@@ -326,11 +336,11 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
 	       LOC := DlocalizationAll(M, Ftheta);
 	       L#theta = new HashTable from {
 		    LocModule => LOC.LocModule, 
-		    generator => Power(Ftheta, LOC.GeneratorPower)
+		    Generator => Power(Ftheta, LOC.GeneratorPower)
 		    };	       
 	       pInfo(666, {"localization: ", theta, " => ", L#theta});
 	       ));
-     L#{} = new HashTable from {LocModule => M, generator => Power(1_(ring M), 0)};
+     L#{} = new HashTable from {LocModule => M, Generator => Power(1_(ring M), 0)};
      
      -- Compute the Chech complex 
      pInfo(1, "Constructing Cech complex...");
@@ -339,7 +349,7 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
      C#0 = directSum { {} => M };
      scan(toList(1..r), k->(
 	       dsArgs := select(subISets, u -> #u == k) / (theta -> 
-		    theta => (L#theta).LocModule
+		    theta => L#theta#LocModule
 		    );
 	       C#k = directSum dsArgs;
 	       TempM := map (C#k, C#(k-1), 0);
@@ -348,8 +358,8 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
 				   if isSubset(i0, j0) 
 			 	   then (
 					l := first toList (set j0 - set i0);
-					gi := (L#i0).generator;
-					gj := (L#j0).generator;
+					gi := (L#i0)#Generator;
+					gj := (L#j0)#Generator;
 					if gj#1 > gi#1
 					then error "Bad luck!"; 
 					-- have to fix that: go back and recalculate 
@@ -421,7 +431,7 @@ localCohomOT(Ideal, Module) := (I, M) -> (
      )
 
 localCohomOT(List, Ideal, Module) := (l, I, M) -> (
-     locOut = computeLocalCohomOT(I, M, min l, max l);
+     locOut := computeLocalCohomOT(I, M, min l, max l);
      locOut = hashTable apply(keys locOut, 
 	  i -> if member(i, l) then i => locOut#i);
      locOut)
@@ -442,7 +452,7 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
      N := presentation M;
      -- create the auxilary D_(n+d) ring
      t := symbol t;
-     Dt = symbol Dt;
+     Dt := symbol Dt;
      LCW := (coefficientRing W)[(entries vars W)#0,
 	  t_0 .. t_(d-1), Dt_0 .. Dt_(d-1),
 	  WeylAlgebra => join(W.monoid.Options.WeylAlgebra,

@@ -1,6 +1,4 @@
--- version glitch control
-if class getChangeMatrix === Symbol 
-then getChangeMatrix = getchange
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 path = prepend("Dmodules",path)
 -- Harry's basic files

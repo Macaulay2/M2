@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -------------------------------------------------------------------------
 -- bFunction (M, w, m) -> bf
 -- M = finitely generated D-module 

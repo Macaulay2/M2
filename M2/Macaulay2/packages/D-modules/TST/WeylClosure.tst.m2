@@ -1,6 +1,6 @@
 clearAll()
 path = join (path, {"../"})
-load "Dloadfile.m2"
+load "D-modules.m2"
 
 -- test 1: annihilator 1/t-t^2-x
 W = QQ[x,t,Dx,Dt, WeylAlgebra => {x=>Dx, t=>Dt}];

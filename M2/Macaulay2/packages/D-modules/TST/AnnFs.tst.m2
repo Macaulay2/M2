@@ -1,6 +1,6 @@
 -- AnnFs
 clearAll()
-load "Dloadfile.m2"
+load "D-modules.m2"
 Dtrace 1
 pInfo(1, "testing AnnFs...")
 
@@ -25,7 +25,7 @@ assert ( Ann == ideal {
 
 -- AnnFIs
 clearAll()
-load "Dloadfile.m2"
+load "D-modules.m2"
 W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
 Ann = AnnIFs(ideal dx, x^2)
 WS = ring Ann

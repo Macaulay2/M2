@@ -4,6 +4,7 @@ load "b-function.ideal.tst.m2"
 load "b-function.module.tst.m2"
 load "localCohom.tst.m2"
 load "makeCyclic.tst.m2"
+load "paramBpoly.tst.m2"
 
 -- Harry's tests
 load "Dbasic.tst.m2"

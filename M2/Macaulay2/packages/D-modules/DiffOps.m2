@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 ------------------------------------------------------------------------
 -- This function computes the differential operators of order k or less
 -- on an affine variety defined by an ideal I in a polynomial ring

@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 
 -- this routine computes an initial basis of an ideal or matrix with respect
 -- a weight vector w.

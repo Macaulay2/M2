@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -- This routine returns the GKZ hypergeometric system of PDE's associated
 -- to the matrix A and the parameter vector b.
 gkz = method(Options => {Vars => Global} )
@@ -49,7 +51,9 @@ gkz(Matrix, List) := options -> (A, b) -> (
      	  out := (StoR J) + ideal(tempList);
 	  )
      else (
-     	  R = QQ[symbol x_1 .. symbol x_n, symbol D_1 .. symbol D_n,
+	  D := symbol D;
+	  x := symbol x;
+     	  R = QQ[x_1 .. x_n, D_1 .. D_n,
 	       WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i))];  
      	  StoR = map(R, S, (vars R)_{n..numgens R - 1});
      	  i = 0;
@@ -92,8 +96,9 @@ gkz Matrix := A -> (
 	  );
      -- should do smarter saturation in future
      J := saturate ( ideal(tempList), product toList(y_1..y_n) );
-     R := QQ[symbol s_1 .. symbol s_d, symbol x_1 .. symbol x_n, 
-	  symbol D_1 .. symbol D_n,
+     D := symbol D; s := symbol s; x := symbol x;
+     R := QQ[s_1 .. s_d, x_1 .. x_n, 
+	  D_1 .. D_n,
 	  WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i)),
 	  MonomialOrder => Eliminate d];
      StoR := map(R, S, (vars R)_{d+n..numgens R - 1});
@@ -122,7 +127,8 @@ AppellF1 List := options -> w -> (
 	       (u-v)*Du*Dv - w#2*Du + w#1*Dv);
 	  )
      else (
-     	  W = QQ[symbol x, symbol y, symbol Dx, symbol Dy, 
+	  x := symbol x; y := symbol y; Dx := symbol Dx; Dy := symbol Dy; 
+     	  W = QQ[x, y, Dx, Dy, 
 	       WeylAlgebra => {x=>Dx, y=>Dy}];
      	  I = ideal(x*Dx*(x*Dx+y*Dy+w#3-1) - x*(x*Dx+y*Dy+w#0)*(x*Dx+w#1),
 	       y*Dy*(x*Dx+y*Dy+w#3-1) - y*(x*Dx+y*Dy+w#0)*(y*Dy+w#2),
@@ -177,7 +183,7 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
      error "Expect all degrees in a Weyl algebra to be 1";
 
      -- get min root of b-function
-     a = min getIntRoots globalBFunction f;
+     a := min getIntRoots globalBFunction f;
 
      IFs := AnnFs f;
      WFs := ring IFs;
@@ -186,7 +192,7 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
      
      if a == -1 and g == 1_W then Ia
      else (
-	  compensate = -1 - a;
-	  F = map(W^1/Ia, W^1, matrix{{g*f^compensate}});
+	  compensate := -1 - a;
+	  F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
 	  ideal mingens kernel F)
      )

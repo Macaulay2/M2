@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 new QQ := QQ -> QQ.pop()
 
 -------------------------
@@ -105,28 +107,28 @@ getEntry(SparseMutableMatrix,ZZ,ZZ) := (m,r,c) -> (
 -- Row/Column change of basis matrices --
 -----------------------------------------
 
-getRowChange = (m) -> (sendgg(ggPush m, gggetRowChange); newSparseMatrix ring m)
-getColumnChange = (m) -> (sendgg(ggPush m, gggetColChange); newSparseMatrix ring m)
-setRowChange = (m,n) -> (sendgg(ggPush m, ggPush n, ggsetRowChange);)
-setColumnChange = (m,n) -> (sendgg(ggPush m, ggPush n, ggsetColChange);)
+getRowChange := (m) -> (sendgg(ggPush m, gggetRowChange); newSparseMatrix ring m)
+getColumnChange := (m) -> (sendgg(ggPush m, gggetColChange); newSparseMatrix ring m)
+setRowChange := (m,n) -> (sendgg(ggPush m, ggPush n, ggsetRowChange);)
+setColumnChange := (m,n) -> (sendgg(ggPush m, ggPush n, ggsetColChange);)
 
 -------------------------------
 -- Row and column operations --
 -------------------------------
 
-rscale = (m,a,r) -> (sendgg(ggPush m, ggPush r, ggPush a, ggRowScale);)
-cscale = (m,a,c) -> (sendgg(ggPush m, ggPush c, ggPush a, ggColumnScale);)
+rscale := (m,a,r) -> (sendgg(ggPush m, ggPush r, ggPush a, ggRowScale);)
+cscale := (m,a,c) -> (sendgg(ggPush m, ggPush c, ggPush a, ggColumnScale);)
 
-raxy = (m,a,r1,r) -> (sendgg(ggPush m, ggPush r1, ggPush a, ggPush r, ggRowAddMultiple);)
-caxy = (m,a,c1,c) -> (sendgg(ggPush m, ggPush c1, ggPush a, ggPush c, ggColumnAddMultiple);)
+raxy := (m,a,r1,r) -> (sendgg(ggPush m, ggPush r1, ggPush a, ggPush r, ggRowAddMultiple);)
+caxy := (m,a,c1,c) -> (sendgg(ggPush m, ggPush c1, ggPush a, ggPush c, ggColumnAddMultiple);)
 
-rflip = (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggRowInterchange);)
-cflip = (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggColumnInterchange);)
+rflip := (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggRowInterchange);)
+cflip := (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggColumnInterchange);)
 
-creduce = (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggPush 0, ggreduce);)
-cgcdreduce = (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggPush 1, ggreduce);)
+creduce := (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggPush 0, ggreduce);)
+cgcdreduce := (m,i,j) -> (sendgg(ggPush m, ggPush i, ggPush j, ggPush 1, ggreduce);)
 
-csort = method()
+csort := method()
 csort(SparseMutableMatrix,ZZ,ZZ) := (m,lo,hi) -> (
      sendgg(ggPush m, ggPush lo, ggPush hi, ggsortcolumns))
 
@@ -134,13 +136,13 @@ csort(SparseMutableMatrix,ZZ,ZZ) := (m,lo,hi) -> (
 -- Multiplication --
 --------------------
 
-dot = (m,i,j) -> (
+dot := (m,i,j) -> (
      sendgg(ggPush m, ggPush i, ggPush j, ggmult);
      new ring m)
 
 
 
-findOne = (m,clo,chi) -> (
+findOne := (m,clo,chi) -> (
      sendgg(ggPush m, ggPush clo, ggPush chi, ggfindGoodUnitPivot);
      best := eePopInt();
      c := eePopInt();

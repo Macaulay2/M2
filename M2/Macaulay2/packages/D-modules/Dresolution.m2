@@ -1,3 +1,6 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- The routine shifts returns the vector of degree shifts of matrix
@@ -28,6 +31,10 @@ Ring ^ Matrix := (R,m) -> (
     new Module from R)
 
 
+local fix
+fix = method()
+fix Matrix := m -> map(target m, (ring m)^m, m)
+
 kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
@@ -37,9 +44,6 @@ kerGB := m -> (
      m.cache.kerGBstatus = eePopInt();
      sendgg(ggPush m.cache.kerGB, gggetsyz);
      fix getMatrix ring m)
-
-fix = method()
-fix Matrix := m -> map(target m, (ring m)^m, m)
 
 
 --------------------------------------------------------------------------------
@@ -208,13 +212,13 @@ Dresolution (Module, List) := options -> (M, w) -> (
      pInfo (2, "\t Degree 0...");
      pInfo (2, "\t\t\t Rank = " | t | "\t time = 0 seconds");
      pInfo (3, "\t Degree 1...");
-     tInfo = toString first timing (
+     tInfo := toString first timing (
 	  Jgb := gens gb homogenize(tempMap, homVar, Hwt);
 	  if options.Strategy == Schreyer then Jgb = fix Jgb
 	  else if options.Strategy == Vhomogenize
 	  then Jgb = autoReduce Jgb;
 	  if options.Strategy == Schreyer then (
-	       tempMat = map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
+	       tempMat := map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
 	       shiftvec = shifts(homogenize(HWtoVW Jgb, hvwVar, HVWwt),
 		    VWwt, shiftvec);
 	       )
@@ -242,7 +246,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
      	     	    Jgb = autoReduce gens gb homogenize(Jsyzmap, homVar, Hwt);
 	     	    );
 	       if options.Strategy == Schreyer then (
-	       	    tempMat := map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
+	       	    tempMat = map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
 	       	    shiftvec = shifts(homogenize(tempMat, hvwVar, HVWwt), 
 		       	 VWwt, shiftvec);
 	       	    )

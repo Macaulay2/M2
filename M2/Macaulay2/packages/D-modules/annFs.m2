@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 ---------------------------------------------------------------------------------
 -- Returns Ann f^s in K[s].
 -- Input:   f: Polynomial in A_n(K).

@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- These local routines are also used in Drestriction
@@ -34,10 +36,10 @@ divideOutGCD = method()
 divideOutGCD RingElement := L -> (
      W := ring L;
      createDpairs W;
-     LCMexps = apply(toList(0..numgens W-1), j -> (
+     LCMexps := apply(toList(0..numgens W-1), j -> (
 	       if member(j, W.dpairInds#1) then 0
 	       else min apply(exponents L, i -> i#j)) );
-     newlistForm = apply(listForm L, i -> (i#0 - LCMexps, i#1));
+     newlistForm := apply(listForm L, i -> (i#0 - LCMexps, i#1));
      sum(newlistForm, i -> (i#1)*( ((entries vars W)#0)^(i#0) ) )
      )
 
@@ -80,7 +82,7 @@ PolySols(Module, List) := options -> (M, w) -> (
      createDpairs W;
      n := #W.dpairVars#0;
 
-     if options.Alg == GD then (
+     if options#Alg == GD then (
 	  -- error checking
 	  if not isQuotientModule M then error "expected
 	  input to be a quotient module";
@@ -109,8 +111,9 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       degBound := -(min intRoots);
 	       if degBound < 0 then answer = {0_W}
 	       else (
-		    possExps = findExps(w, -1, degBound);
-		    nUnknowns = #possExps;
+		    possExps := findExps(w, -1, degBound);
+		    nUnknowns := #possExps;
+		    a := symbol a;
 		    S := (coefficientRing W)[a_1..a_nUnknowns];
 	       	    SW := S[(entries vars W)#0, WeylAlgebra =>
 	    	    	 W.monoid.Options.WeylAlgebra];
@@ -120,12 +123,12 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       	    createDpairs SW;
 		    monBasis := matrix{ apply(possExps, i -> 
 			      (W.dpairVars#0)^i) };
-	       	    testPoly = (vars S)*(transpose WtoSW monBasis);
+	       	    testPoly := (vars S)*(transpose WtoSW monBasis);
 	       	    testIdeal := ideal SW.dpairVars#1;
 	       	    resultPolys := substitute(testPoly*matI,
 		    	 apply(SW.dpairVars#1, i -> i => 0));
-	       	    linEqns = SWtoS (coefficients resultPolys_(0,0))#1;
-	       	    i = 1;
+	       	    linEqns := SWtoS (coefficients resultPolys_(0,0))#1;
+	       	    i := 1;
 	       	    while i < numgens source resultPolys do (
 		    	 linEqns = linEqns |
 		    	 SWtoS (coefficients resultPolys_(0,i))#1;
@@ -136,9 +139,9 @@ PolySols(Module, List) := options -> (M, w) -> (
 		    dummyEqn := sum((entries vars S)#0);
 	       	    linEqns = (gens gb (linEqns, DegreeLimit 
 			      => 1)) | matrix{{dummyEqn}};
-		    coeffs = substitute(
+		    coeffs := substitute(
 			 (coefficients transpose linEqns)#1, QQ);
-		    kerCoeffs = kernel (coeffs^{0..(rank target coeffs - 2)});
+		    kerCoeffs := kernel (coeffs^{0..(rank target coeffs - 2)});
 		    answer = (entries (monBasis*(gens kerCoeffs)))#0;
 		    );
 	       );
@@ -387,7 +390,7 @@ TwistOperator(RingElement, List, List) := (L, f, k) -> (
 	  currPoly := (substitute(contract(matrix{{currDiff}}, matrix{{currL}}), 
 		    diffSub))_(0,0);
 	  multFactor := (degree currDiff)#0;
-	  currExp = (exponents currDiff)#0;
+	  currExp := (exponents currDiff)#0;
 	  currk := multFactor-1;
 	  currNew := fprod^(ordL - multFactor);
 	  i := 0;
@@ -537,7 +540,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      pInfo(1, "Computing resolution of M");
      FM := Dres(M, LengthLimit => n+1);
      pInfo(1, "Dualizing (slow for now) ... ");
-     tInfo = toString first timing (FM = Dtransposition dual FM);
+     tInfo := toString first timing (FM = Dtransposition dual FM);
      pInfo(2, "\t\t\t time = " | tInfo | " seconds");
      
      pInfo(1, "Computing resolution of N");
@@ -572,7 +575,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
 	  chainMap.degree = 0;
 	  chainMap#0 = map(C#0, F#0, Ker);
      	  pInfo(1, "computing chain map 1 ... ");
-	  tInfo := toString first timing (
+	  tInfo = toString first timing (
 	  bottomCompose := (Ker)*F.dd#1;
 	  if (zeroize bottomCompose)%(zeroize C.dd#1) != 0 then 
 	  error "expected reduction to 0 -- possible lack of gb problem?";
@@ -594,7 +597,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
                pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	       );
 	  answer = WW.twistInvMap(nextLiftMap*restrictTable#n);
-	  temp = answer;
+	  temp := answer;
      	  chainMap = new ChainComplexMap from chainMap;
 	  );
      
@@ -830,7 +833,7 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 	  );
 
 -- MAKE F (external tensor) G
-     FW = incMap1 F;
-     GW = incMap2 G;
+     FW := incMap1 F;
+     GW := incMap2 G;
      FW**GW
      )

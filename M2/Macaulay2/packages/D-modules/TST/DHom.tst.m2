@@ -1,6 +1,6 @@
 clearAll();
 path = join(path, {"../"});
-load "Dloadfile.m2";
+load "D-modules.m2";
 
 ----------------------- TESTS for PolySols -------------------------
 
@@ -46,3 +46,6 @@ I = gkz(A, {2});
 J = substitute(gkz(A, {1}), ring I);
 B = DHom(I,J);
 assert( (matrix{{B#0_(0,0)}})*(gens I)%(gens J) == 0 )
+
+
+

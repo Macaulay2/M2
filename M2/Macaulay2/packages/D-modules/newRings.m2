@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -- this function associates to a Weyl algebra W
 -- the Weyl algebra W[h], where h is used for homogenizing purposes
 createHomWeylAlgebra = method()
