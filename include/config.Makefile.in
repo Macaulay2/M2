@@ -34,7 +34,6 @@ DEBUG = @DEBUG@
 MEMDEBUG = @MEMDEBUG@
 VERBOSE = @VERBOSE@
 STATIC = @STATIC@
-GC_FOR_NEW = @GC_FOR_NEW@
 
 CC = @CC@
 GCC = @GCC@
@@ -257,6 +256,8 @@ LDFLAGS += -faltivec
 CFLAGS += -faltivec
 CXXFLAGS += -faltivec
 endif
+
+XCODE = @XCODE@
 
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"

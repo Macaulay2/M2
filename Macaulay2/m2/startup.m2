@@ -112,6 +112,10 @@ if firstTime then (
 
      first = x -> x#0;
      last = x -> x#-1;
+     lines = x -> (
+	  l := separate x;
+	  if l#-1 === "" then drop(l,-1) else l);
+
      isAbsoluteExecPath = filename -> (
 	  -- this is the way execvp(3) decides whether to search the path for an executable
 	  match("/", filename)
@@ -174,12 +178,14 @@ exe := (
 	  getRealPath e))
 bindir := dir exe
 bindirsuffix := LAYOUT#"bin";
+
 if fileExists (bindir | "../c/scc1") then (
      -- we're running from the build directory
      buildHomeDirectory = minimizeFilename(bindir|"../");
      sourceHomeDirectory = (
-	  if fileExists (buildHomeDirectory|"m2/setup.m2"       ) then buildHomeDirectory 
-	  else if fileExists (buildHomeDirectory|"srcdir/m2/setup.m2") then getRealPath(buildHomeDirectory|"srcdir")|"/" 
+	  if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
+	  else if fileExists(buildHomeDirectory|"srcdir") and fileExists(buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir")) | "/m2/setup.m2")
+	  then buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir"))|"/" 
 	  else null);
      ) else
 if bindirsuffix === substring(bindir,-#bindirsuffix) then (

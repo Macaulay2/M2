@@ -10,20 +10,16 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install html distclean check default initialize prep always
+.PHONY: clean all install html distclean check default initialize prep always tags
 
-LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
-DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
+LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
+DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
 
 # there is a parallel list of tutorials in overview3.m2
-TUTORIALS = $(patsubst %, @srcdir@/../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
+TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
 MADEM2FILES := loads.m2 Macaulay2-doc.m2
-
-initialize:: srcdir
-srcdir:; ln -s @srcdir@ srcdir
-clean::; rm -f srcdir
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -32,15 +28,15 @@ all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
 
-DUMPEDM2FILES := $(LOADSEQUENCE) @srcdir@/setup.m2 @srcdir@/startup.m2 $(MADEM2FILES)
+DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
 DUMPEDM2FILES := $(DUMPEDM2FILES)
 endif
 
-OTHERM2FILES = $(patsubst %, @srcdir@/%, eg.m2 sagbi.m2)
+OTHERM2FILES = eg.m2 sagbi.m2
 
-NONDOCM2FILES = @srcdir@/startup.m2 @srcdir@/setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
+NONDOCM2FILES = startup.m2 setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
 loads.m2 : loads.awk loadsequence
 	@echo making $@
@@ -66,33 +62,17 @@ TAGS.doc : docseq
 	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
 clean::; rm -f TAGS.doc
 
-default:: TAGS
-clean::; rm -f TAGS
-TAGS: loadsequence
+all default justM2:: tags
+tags: @srcdir@/TAGS
+clean::; rm -f TAGS @srcdir@/TAGS
+@srcdir@/TAGS: loadsequence Makefile
 	@echo making $@
-	@../util/echoout '>$@' $(foreach i, \
-			      $(NONDOCM2FILES) $(DOCSEQUENCE) \
-			      $(wildcard \
-				@srcdir@/*.awk \
-				@srcdir@/../basictests/*.m2 \
-				@srcdir@/../test/*.m2 \
-				@srcdir@/../test/engine/*.m2 \
-				@srcdir@/../html/*.m2 \
-				@srcdir@/../book/*.m2 \
-				@srcdir@/../packages/*.m2 \
-				@srcdir@/../packages/*/*.m2 \
-				@srcdir@/../emacs/makehlp.m2 \
-				@srcdir@/../emacs/makem2.m2 \
-				@srcdir@/../*/COPYRIGHT \
-				@srcdir@/../emacs/makesyms.m2 \
-				@srcdir@/../tutorial/prelim/*.m2 \
-				@srcdir@/../tutorial/final/*.m2 \
-				@srcdir@/../*/Makefile \
-				@srcdir@/../*/Makefile.in \
-				@srcdir@/Makefile.tests \
-				@srcdir@/../CHANGES), \
-			       $(i),0)
-
+	set -e ; \
+	cd @srcdir@ && \
+	for i in $(NONDOCM2FILES) $(DOCSEQUENCE0) *.awk ../basictests/*.m2 ../test/*.m2 ../test/engine/*.m2 \
+		../book/*.m2 ../packages/*.m2 ../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
+		../*/COPYRIGHT ../emacs/makesyms.m2 ../tutorial/prelim/*.m2 ../tutorial/final/*.m2 ../*/Makefile ../*/Makefile.in Makefile.tests ../CHANGES ; \
+	do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 prep :: $(DUMPEDM2FILES)
 
 phase1 :: prep
@@ -114,7 +94,6 @@ justM2 all:: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb ../bin/M2$(EXE)
 .gdbinit: .gdbinit.$(USER); cp $< $@
 clean::; rm -f .gdbinit
-.gdbinit.$(USER):; cp @srcdir@/.gdbinit.dan $@
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
 	echo 'file ../bin/M2' >>$@
