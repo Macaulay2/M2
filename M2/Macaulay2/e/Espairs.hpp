@@ -17,12 +17,12 @@
 #define exponent_vector int
 
 struct egb_elem;
-
+struct ering_elem;
 struct es_pair
 {
   es_pair *next;
   int degree;
-  const monomial *lcm;  // exponent vector??
+  monomial *lcm;  // exponent vector??
   int type; // SP_SYZ, SP_RING, SP_SKEW, SP_GEN
   union {
     struct {  // SP_SYZ
@@ -31,7 +31,7 @@ struct es_pair
     } syz;
     struct {  // SP_RING
       egb_elem *i;
-      int j;
+      ering_elem *j;
     } ringsyz;
     struct {  // SP_SKEW
       egb_elem *i;
@@ -52,6 +52,7 @@ struct es_pair
 
 class ESPairSet
 {
+  friend class EGB1;
   es_pair *heap;
   int nelems;
 public:

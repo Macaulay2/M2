@@ -6,90 +6,6 @@
 
 stash *RingMap::mystash;
 
-#if 0
-RingMap::RingMap(const Matrix &m)
-: R(m.Ring_of())
-{
-  bump_up(R);
-  // possibly expand out elements here, into: coef, mon, poly?
-  for (int i=0; i<m.n_cols(); i++)
-    map.append(m.elem(0,i));
-}
-
-RingMap::~RingMap()
-{
-  for (int i=0; i<map.length(); i++)
-    R->remove(map[i]);
-  bump_down(R);
-}
-
-ring_elem RingMap::eval_term(const Ring *K,
-			      const ring_elem a, const int *vp) const
-{
-  int i;
-  int first_var = K->total_n_vars();
-  int npairs = *vp++ - 1;
-  for (i=0; i<npairs; i++)
-    {
-      int v = first_var + varpower::var(vp[i]);
-      if (v >= map.length() || R->is_zero(elem(v)))
-	return R->from_int(0);	// This is zero.
-    }
-
-  ring_elem result = K->eval(this, a);
-  if (R->is_zero(result)) return result;
-
-  for (i=0; i<npairs; i++)
-    {
-      int v = varpower::var(vp[i]);
-      int e = varpower::exponent(vp[i]);
-      ring_elem thispart = R->power(elem(first_var + v), e);
-      R->mult_to(result, thispart);
-      R->remove(thispart);
-      if (R->is_zero(result)) break;
-    }
-  return result;
-}
-
-RingElement RingMap::eval(const RingElement &r) const
-{
-  RingElement result(Ring_of(), r.Ring_of()->eval(this, r.get_value()));
-  return result;
-}
-
-Vector RingMap::eval(const FreeModule *F, const Vector &v) const
-{
-  Vector result(F, v.free_of()->eval(this, F, v.get_value()));
-  return result;
-}
-
-Matrix RingMap::eval(const FreeModule *F, const Matrix &m) const
-{
-  Matrix result(F);
-  for (int i=0; i<m.n_cols(); i++)
-    result.append(m.rows()->eval(this, F, m[i]));
-  return result;
-}
-
-void RingMap::bin_out(buffer &o) const
-{
-  bin_int_out(o, map.length());
-  for (int i=0; i<map.length(); i++)
-    R->elem_text_out(o, map[i]);
-}
-
-void RingMap::text_out(buffer &o) const
-{
-  o << "(";
-  for (int i=0; i<map.length(); i++)
-    {
-      if (i > 0) o << ", ";
-      R->elem_text_out(o, map[i]);
-    }
-  o << ")";
-}
-#endif
-
 
 RingMap::RingMap(const Matrix &m)
 : R(m.Ring_of())
@@ -202,39 +118,56 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   ring_elem result_coeff = R->Ncoeffs()->from_int(1);
   int *result_monom = R->Nmonoms()->make_one();
   int *temp_monom = R->Nmonoms()->make_one();
-  
-  for (i=0; i<npairs; i++)
+
+  if (!R->is_commutative_ring())
     {
-      int v = first_var + varpower::var(vp[i]);
-      int e = varpower::exponent(vp[i]);
-      if (_elem[v].bigelem_is_one)
+      // This is the only non-commutative case so far
+      for (i=0; i<npairs; i++)
 	{
-	  if (!_elem[v].coeff_is_one)
+	  int v = first_var + varpower::var(vp[i]);
+	  int e = varpower::exponent(vp[i]);
+	  for (int j=0; j<e; j++)
 	    {
-	      ring_elem tmp = R->Ncoeffs()->power(_elem[v].coeff, e);
-	      R->Ncoeffs()->mult_to(result_coeff, tmp);
-	      R->Ncoeffs()->remove(tmp);
+	      ring_elem tmp = R->mult(_elem[v].bigelem,result);
+	      R->remove(result);
+	      result = tmp;
 	    }
-	  if (!_elem[v].monom_is_one)
-	    {
-	      R->Nmonoms()->power(_elem[v].monom, e, temp_monom);
-	      R->Nmonoms()->mult(result_monom, temp_monom, result_monom);
-	    }
-	}
-      else
-	{
-	  ring_elem thispart = R->power(_elem[v].bigelem, e);
-	  R->mult_to(result, thispart);
-	  R->remove(thispart);
-	  if (R->is_zero(result)) break;
 	}
     }
-  ring_elem temp = R->term(result_coeff, result_monom);
-  R->Ncoeffs()->remove(result_coeff);
-  R->Nmonoms()->remove(result_monom);
-  R->Nmonoms()->remove(temp_monom);
-  R->mult_to(result,temp);
-  R->remove(temp);
+  else {
+    for (i=0; i<npairs; i++)
+      {
+	int v = first_var + varpower::var(vp[i]);
+	int e = varpower::exponent(vp[i]);
+	if (_elem[v].bigelem_is_one)
+	  {
+	    if (!_elem[v].coeff_is_one)
+	      {
+		ring_elem tmp = R->Ncoeffs()->power(_elem[v].coeff, e);
+		R->Ncoeffs()->mult_to(result_coeff, tmp);
+		R->Ncoeffs()->remove(tmp);
+	      }
+	    if (!_elem[v].monom_is_one)
+	      {
+		R->Nmonoms()->power(_elem[v].monom, e, temp_monom);
+		R->Nmonoms()->mult(result_monom, temp_monom, result_monom);
+	      }
+	  }
+	else
+	  {
+	    ring_elem thispart = R->power(_elem[v].bigelem, e);
+	    R->mult_to(result, thispart);
+	    R->remove(thispart);
+	    if (R->is_zero(result)) break;
+	  }
+      }
+    ring_elem temp = R->term(result_coeff, result_monom);
+    R->Ncoeffs()->remove(result_coeff);
+    R->Nmonoms()->remove(result_monom);
+    R->Nmonoms()->remove(temp_monom);
+    R->mult_to(result,temp);
+    R->remove(temp);
+  }
   return result;
 }
 

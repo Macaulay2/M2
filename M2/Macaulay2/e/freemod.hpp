@@ -15,6 +15,8 @@ struct index_type
   index_type(int i) : compare_num(i) {}
 };
 
+class EInterface;
+
 class FreeModule : public type
 {
   friend class NGB_comp;
@@ -25,6 +27,8 @@ class FreeModule : public type
   friend class res_poly;
   friend class res2_poly;
   friend class TermIdeal;
+
+  friend class EInterface;
 protected:
 
   // free module part

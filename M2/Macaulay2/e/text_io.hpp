@@ -5,6 +5,7 @@
 #include <gmp.h>
 #include "buffer.hpp"
 
+extern int comp_printlevel;
 extern int p_one;
 extern int p_plus;
 extern int p_parens;
@@ -16,6 +17,9 @@ void bignum_text_out(buffer &o, mpz_t a);
 
 void clear_emit_size();
 void emit_wrapped(char *s);
+inline void emit_wrapped(int prlevel, char *s) {
+  if (comp_printlevel >= prlevel) emit_wrapped(s);
+}
 
 void emit(char *s); // print onto stderr, or cerr.
 void emit_line(char *s); // print onto stderr, or cerr.

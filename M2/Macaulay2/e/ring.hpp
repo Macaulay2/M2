@@ -67,6 +67,7 @@ public:
   virtual bool is_graded() const = 0;
   virtual bool is_expensive() const = 0;
   virtual bool is_quotient_poly_ring() const = 0;
+  virtual bool is_commutative_ring() const { return true; }
 
   // Only valid for polynomial rings, and their quotients: otherwise returns the zero ideal
   virtual MonomialIdeal get_quotient_monomials() const;

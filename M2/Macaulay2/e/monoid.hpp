@@ -54,6 +54,8 @@ private:
   int nvars;
   int nbits;
   int n_per_word;
+  int npacked_words;
+  int nweights;
   int nwords;
   int top_bits;			// Only needed for 'divides'.
   int bit_mask;

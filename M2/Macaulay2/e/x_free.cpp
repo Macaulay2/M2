@@ -40,6 +40,44 @@ void cmd_FreeModule1(object &oR, object &on)
   gStack.insert(R->make_FreeModule(n));
 }
 
+FreeModule *makeSchreyerFreeModule(Ring *R, int rank, 
+				   const int **degrees,  
+				   const int **ordering, 
+				   const int *tiebreaks) 
+{
+  FreeModule *F = R->make_FreeModule();
+  for (int i=0; i<rank; i++)
+    F->append(degrees[i],ordering[i],tiebreaks[i]);
+  return F;
+}
+
+FreeModule *makeSchreyerFreeModule(const Matrix &m)
+{
+  int i;
+  const Ring *R = m.Ring_of();
+  const Monoid *M = R->Nmonoms();
+  FreeModule *F = R->make_FreeModule();
+  int rk = m.n_cols();
+  int *base = M->make_one();
+  int *tiebreaks = new int[rk];
+  for (i=0; i<rk; i++)
+    tiebreaks[i] = i;  // NEED TO FIND REAL TIEBREAKS
+  for (i=0; i<rk; i++)
+    {
+      vec v = m[i];
+      if (v == NULL) 
+	M->one(base);
+      else 
+	M->copy(v->monom, base);
+
+      F->append(m.cols()->degree(i), base, tiebreaks[i]);
+    }
+
+  M->remove(base);
+  delete [] tiebreaks;
+  return F;
+}
+
 void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
 {
   const Ring *R = oR->cast_to_Ring();
@@ -92,6 +130,11 @@ void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
   gStack.insert(F);
 }
 
+void cmd_FreeModule3(object &om)
+{
+  Matrix m = om->cast_to_Matrix();
+  gStack.insert(makeSchreyerFreeModule(m));
+}
 void cmd_Nfree_sum(object &oV, object &oW)
 {
   const FreeModule *V = oV->cast_to_FreeModule();
@@ -424,6 +467,7 @@ void i_Vector_cmds(void)
   install(ggfree, cmd_FreeModule, TY_RING, TY_INTARRAY);
   install(ggfree, cmd_FreeModule1, TY_RING, TY_INT);
   install(ggfree, cmd_FreeModule2, TY_RING, TY_INTARRAY, TY_MATRIX, TY_INTARRAY);
+  install(ggfree, cmd_FreeModule3, TY_MATRIX);
 
   install(ggisequal, cmd_Nfree_isequal, TY_FREEMODULE, TY_FREEMODULE);
   install(ggadd, cmd_Nfree_sum, TY_FREEMODULE, TY_FREEMODULE);

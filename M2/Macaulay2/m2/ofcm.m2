@@ -133,6 +133,7 @@ monoidDefaults := if OLDENGINE then (
 	  VariableBaseName => null,
 	  Variables => null,
 	  Degrees => null,
+	  Weights => {},
 	  Inverses => false,
 	  MonomialOrder => null,
 	  NewMonomialOrder => null,
@@ -175,7 +176,7 @@ makeit1 := (options) -> (
      wts := flatten options.Weights;
      if not all(wts,i -> class i === ZZ)
      then error "expected Weights option to be a list or list of lists of integers";
-     if #wts % n != 0 
+     if n =!= 0 and #wts % n != 0 
      then error "expected Weights option length to be a multiple of the number of variables";
      if options.?NewMonomialOrder and options.NewMonomialOrder =!= null then (
 	  M.newEngine = true;

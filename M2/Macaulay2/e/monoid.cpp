@@ -124,7 +124,9 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
       mon_bound = (1 << (nbits-1));
     }
   n_per_word = (sizeof(int) * 8) / nbits;
-  nwords = (nvars+n_per_word-1)/n_per_word;
+  npacked_words = (nvars+n_per_word-1)/n_per_word;
+  nweights = moninfo->mo->n_weights();
+  nwords = nweights + npacked_words;
 
   // MES: will the next line work correctly if nwords == 0?
   monom_stash = new stash("packed monoms", nwords*sizeof(int));
@@ -207,7 +209,9 @@ void Monoid::text_out(buffer &o) const
 
 void Monoid::pack(const int *exp, int *result) const
 {
-  int i = nwords-1;
+  for (int w=0; w<nweights; w++)
+    *result++ = *exp++;
+  int i = npacked_words-1;
   int n = 0;
   int this_word = 0;
   for (int k=nvars-1; k>=0; k--)
@@ -234,8 +238,11 @@ void Monoid::pack(const int *exp, int *result) const
 
 void Monoid::unpack(const int *m, int *result) const
 {
+  // WARNING: this ignores the weight vector values, and does NOT
+  // place these into 'result'.
+  m += nweights;
   int n = 0;
-  int i = nwords-1;
+  int i = npacked_words - 1;
   int this_word = m[i];
   for (int k=nvars-1; k>=0; k--)
     {
@@ -295,8 +302,10 @@ void Monoid::mult(const int *m, const int *n, int *result) const
 	}
     }
 #endif
+  for (int w=0; w<nweights; w++)
+    *result++ = *m++ + *n++;
   // Now for the packed part
-  for (int i=0; i<nwords; i++)
+  for (int i=0; i<npacked_words; i++)
     {
       *result = *m++ + *n++;
       // Overflow is checked by using the bit mask
@@ -307,22 +316,53 @@ void Monoid::mult(const int *m, const int *n, int *result) const
 int Monoid::in_subring(int n, const int *m) const
 {
   if (nvars == 0) return 1;
-  unpack(m, EXP1);
-  if (n >= nvars || n < 0) n = nvars;
-  for (int i=0; i<n; i++)
-    if (EXP1[i] != 0) return 0;
+  if (n < 0) n = nweights+nvars;
+  int rest = 0;
+  int mwts;
+  if (n <= nweights)
+    mwts = n;
+  else 
+    {
+      mwts = nweights;
+      rest = n - nweights;
+      if (rest >= nvars) rest = nvars;
+    }
+  for (int w=0; w<mwts; w++)
+    if (m[w] != 0) return 0;
+  if (rest > 0)
+    {
+      unpack(m, EXP1);
+      for (int i=0; i<rest; i++)
+	if (EXP1[i] != 0) return 0;
+    }
   return 1;
 }
 int Monoid::compare(int n, const int *m1, const int *m2) const
 {
   if (nvars == 0) return 1;
-  unpack(m1, EXP1);
-  unpack(m2, EXP2);
-  if (n >= nvars || n < 0) n = nvars;
-  for (int i=0; i<n; i++)
-    if (EXP1[i] > EXP2[i]) return -1;
-    else if (EXP1[i] < EXP2[i]) return 1;
-  return 0;
+  if (n < 0) n = nweights+nvars;
+  int rest = 0;
+  int mwts;
+  if (n <= nweights)
+    mwts = n;
+  else 
+    {
+      mwts = nweights;
+      rest = n - nweights;
+      if (rest >= nvars) rest = nvars;
+    }
+  for (int w=0; w<mwts; w++)
+    if (m1[w] > m2[w]) return GT;
+    else if (m1[w] < m2[w]) return LT;
+  if (rest > 0)
+    {
+      unpack(m1, EXP1);
+      unpack(m2, EXP2);
+      for (int i=0; i<rest; i++)
+	if (EXP1[i] > EXP2[i]) return GT; //-1;
+	else if (EXP1[i] < EXP2[i]) return LT; //1;
+    }
+  return EQ;  //0;
 }
 
 int *Monoid::make_new(const int *d) const

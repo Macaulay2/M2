@@ -67,70 +67,76 @@ int check_all_positive(const intarray &degs)
       }
   return 1;
 }
-void cmd_mo_grevlex(object &oa)
+void cmd_mo_grevlex(object &ow, object &oa)
 {
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
-  const mon_order *mo = mon_order::grlex(*a);
+  intarray *wts = ow->intarray_of();
+  const mon_order *mo = mon_order::grlex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
-void cmd_mo_revlex(object &oa)
+void cmd_mo_revlex(object &ow, object &oa)
 {
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
-  const mon_order *mo = mon_order::rlex(*a);
+  intarray *wts = ow->intarray_of();
+  const mon_order *mo = mon_order::rlex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
-void cmd_mo_glex(object &oa)
+void cmd_mo_glex(object &ow, object &oa)
 {
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
-  const mon_order *mo = mon_order::glex(*a);
+  intarray *wts = ow->intarray_of();
+  const mon_order *mo = mon_order::glex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
-void cmd_mo_lex(object &oa)
+void cmd_mo_lex(object &ow, object &oa)
 {
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
-  const mon_order *mo = mon_order::lex(*a);
+  intarray *wts = ow->intarray_of();
+  const mon_order *mo = mon_order::lex(*a,*wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
-void cmd_mo_elim(object &oa, object &on)
+void cmd_mo_elim(object &ow, object &oa, object &on)
 {
   intarray *a = oa->intarray_of();
   if (!check_all_positive(*a)) return;
+  intarray *wts = ow->intarray_of();
   int n = on->int_of();
-  const mon_order *mo = mon_order::elim(*a, n);
+  const mon_order *mo = mon_order::elim(*a, n, *wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
-void cmd_mo_product1(object &oa, object &on)
+void cmd_mo_product1(object &ow, object &oa, object &on)
 {
   intarray *a = oa->intarray_of();
   intarray *n = on->intarray_of();
   if (!check_all_positive(*a)) return;
   if (!check_all_positive(*n)) return;
-  const mon_order *mo = mon_order::product(*a, *n);
+  intarray *wts = ow->intarray_of();
+  const mon_order *mo = mon_order::product(*a, *n, *wts);
   if (mo == NULL)
     gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
-
+#if 0
 void cmd_mo_product(object &om1, object &om2)
 {
   const mon_order *m1 = om1->cast_to_mon_order()->mon_order_of();
@@ -159,7 +165,7 @@ void cmd_mo_general(object &odegs, object &oorder, object &oinv, object &oinvdeg
   else
     gStack.insert(new object_mon_order(mo));
 }
-
+#endif
 void cmd_mo_make(object &oa)
 {
   intarray *a = oa->intarray_of();
@@ -172,15 +178,17 @@ void i_monoid_cmds(void)
   bump_up((Monoid *)trivial_monoid);
 
   // Construction of monomial orders
-  install(ggMOgrevlex, cmd_mo_grevlex, TY_INTARRAY);
-  install(ggMOrevlex, cmd_mo_revlex, TY_INTARRAY);
-  install(ggMOglex, cmd_mo_glex, TY_INTARRAY);
-  install(ggMOlex, cmd_mo_lex, TY_INTARRAY);
-  install(ggMOelim, cmd_mo_elim, TY_INTARRAY, TY_INT);
-  install(ggMOproduct, cmd_mo_product1, TY_INTARRAY, TY_INTARRAY);
-  install(ggMOproduct, cmd_mo_product, TY_MON_ORDER, TY_MON_ORDER);
-  install(ggMOgeneral, cmd_mo_general, 
+  install(ggMOgrevlex, cmd_mo_grevlex, TY_INTARRAY, TY_INTARRAY);
+  install(ggMOrevlex, cmd_mo_revlex, TY_INTARRAY, TY_INTARRAY);
+  install(ggMOglex, cmd_mo_glex, TY_INTARRAY, TY_INTARRAY);
+  install(ggMOlex, cmd_mo_lex, TY_INTARRAY, TY_INTARRAY);
+  install(ggMOelim, cmd_mo_elim, TY_INTARRAY, TY_INTARRAY, TY_INT);
+  install(ggMOproduct, cmd_mo_product1, TY_INTARRAY, TY_INTARRAY, TY_INTARRAY);
+#if 0
+    install(ggMOproduct, cmd_mo_product, TY_MON_ORDER, TY_MON_ORDER);
+    install(ggMOgeneral, cmd_mo_general, 
 	  TY_INTARRAY, TY_INTARRAY, TY_INTARRAY, TY_INTARRAY);
+#endif
 #if 0
   install(ggMOelim, cmd_mo_elim, TY_MON_ORDER, TY_MON_ORDER);
   install(ggMOgproduct, cmd_mo_gproduct, TY_MON_ORDER, TY_MON_ORDER);

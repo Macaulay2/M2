@@ -72,7 +72,7 @@ const int STOP_MIN_GENS = 5;
 class gb_comp : public type
 {
 protected:
-  int _kind;  // GB_comp:1, GBinhom_comp:2
+  int _kind;  // GB_comp:1, GBinhom_comp:2, EGB1:13
 public:
   gb_comp(int kind) : _kind(kind) {}
   virtual ~gb_comp() {}

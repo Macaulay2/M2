@@ -99,9 +99,11 @@ ESTUFF = \
 	Eio \
 	EGB \
 	Ecommands \
+	Espairs \
+	EGB1 \
+	Einterface \
+	Elookup
 
-#	Espairs \
-#	EGB1
 #	Emonlookup \
 #	Emonideal
 

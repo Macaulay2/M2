@@ -120,6 +120,7 @@ void i_stashes()
   binomialGB_comp::mystash = new stash("binomialGB", sizeof(binomialGB_comp));
   sagbi_comp::mystash = new stash("sagbi", sizeof(sagbi_comp));
 
+
 }
 
 

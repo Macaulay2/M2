@@ -21,14 +21,18 @@ class geobucket
   const Ring *K;		// The coefficient ring
   VECTYPE heap[GEOHEAP_SIZE];
   int top_of_heap;
-
+  int mLead;			// set after a call to get_lead_term.
+				// set negative after each call to add, 
+				// or remove_lead_term
 public:
   geobucket(const FREEMODULETYPE *F);
   ~geobucket();
 
   void add(VECTYPE p);
+  const VECTYPE get_lead_term(); // Returns NULL if none.
   VECTYPE remove_lead_term();	// Returns NULL if none.
 
+  const FREEMODULETYPE *get_target() { return F; }
   VECTYPE value();		// Returns the linearized value, and resets the geobucket.
 
   VECTYPE debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
@@ -42,7 +46,8 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 inline geobucket::geobucket(const FREEMODULETYPE *FF)
 : F(FF),
   K(FF->Ring_of()->Ncoeffs()),
-  top_of_heap(-1)
+  top_of_heap(-1),
+  mLead(-1)
 {
   // set K
   int i;
@@ -59,6 +64,7 @@ inline geobucket::~geobucket()
 
 inline void geobucket::add(VECTYPE p)
 {
+  mLead = -1;
   int len = F->n_terms(p);
   int i= 0;
   while (len >= heap_size[i]) i++;
@@ -76,7 +82,7 @@ inline void geobucket::add(VECTYPE p)
     top_of_heap = i;
 }
 
-inline VECTYPE geobucket::remove_lead_term()
+inline const VECTYPE geobucket::get_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -112,9 +118,17 @@ inline VECTYPE geobucket::remove_lead_term()
 	  i = -1;
 	}
     }
+  mLead = lead_so_far;
   if (lead_so_far < 0) return NULL;
   VECTYPE result = heap[lead_so_far];
-  heap[lead_so_far] = result->next;
+  return result;
+}
+inline VECTYPE geobucket::remove_lead_term()
+{
+  if (mLead < 0) get_lead_term();
+  if (mLead < 0) return NULL;
+  VECTYPE result = heap[mLead];
+  heap[mLead] = result->next;
   result->next = NULL;
   return result;
 }
