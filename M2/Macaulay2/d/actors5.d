@@ -1131,6 +1131,7 @@ setupfun("readDirectory",readDirectory);
 
 isDirectory(e:Expr):Expr := (
      when e is name:string do (
+	  if !fileExists(name) then return False;
 	  r := isDirectory(name);
 	  if r == -1 then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
 	  else if r == 1 then True else False)
