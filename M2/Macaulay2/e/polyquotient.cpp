@@ -12,112 +12,6 @@ PolyRingQuotient::~PolyRingQuotient()
 {
 }
 
-void PolyRingQuotient::makeQuotientIdeal(const vector<Nterm *, gc_alloc> &quotients)
-// This constructs the quotient ideal, and sets the MonomialIdeal.
-// A subset of 'quotients' must be a minimal GB, and any non-minimal elements
-// should be writable in terms of previous ones.
-// IE, in constructing (R/I)/J, the GB elements of J (mod I), together with the
-// GB elements of I, form a GB, but the GB elements of I might not be minimal.
-// In this case, 'quotients' should be the list of GB elements of J followed by those
-// of I.
-//
-// The ideal may be in a tower of polynomial rings, in which case it needs to be
-// a GB over the flattened ring.
-{
-  Rideal_ = new MonomialIdeal(getAmbientRing());
-  ringtable_ = MonomialTable::make(n_vars());
-  intarray vp;
-  int *exp = newarray(int,n_vars());
-  for (int i=0; i<quotients.size(); i++)
-    {
-      // Make a varpower element.  See if it is in Rideal_.
-      // If not, place it into quotient_elements_.
-
-      Nterm *f = quotients[i];
-      getMonoid()->to_expvector(f->monom, exp);
-
-      Bag *not_used;
-
-      if (!Rideal_->search_expvector(exp, not_used))
-	{
-	  // The element is part of a minimal GB
-	  int index = n_quotients();
-	  gbvector *g = R_->translate_gbvector_from_ringelem(f);
-	  appendQuotientElement(f, g);
-	  vp.shrink(0);
-	  getMonoid()->to_varpower(f->monom, vp);
-	  Bag *b = new Bag(index, vp);
-	  Rideal_->insert(b);
-	  ringtable_->insert(exp, 1, i); // consumes exp
-	  exp = newarray(int,n_vars());
-	}
-    }
-
-  // Now we need to set the homogeniety of this quotient ring.
-  for (int i=0; i<n_quotients(); i++)
-    {
-      if (!R_->is_homogeneous(quotient_element(i)))
-	{
-	  setIsGraded(false);
-	  break;
-	}
-    }
-  deletearray(exp);
-}
-
-void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quotients)
-// This constructs the quotient ideal, and sets ringtableZZ.
-// A subset of 'quotients' must be a minimal GB, and any non-minimal elements
-// should be writable in terms of previous ones.
-// IE, in constructing (R/I)/J, the GB elements of J (mod I), together with the
-// GB elements of I, form a GB, but the GB elements of I might not be minimal.
-// In this case, 'quotients' should be the list of GB elements of J followed by those
-// of I.
-//
-// The ideal may be in a tower of polynomial rings, in which case it needs to be
-// a GB over the flattened ring.
-{
-  ringtableZZ_ = MonomialTableZZ::make(n_vars());
-  int *exp = newarray(int,n_vars());
-  for (int i=0; i<quotients.size(); i++)
-    {
-      // Make a varpower element.  See if it is in Rideal_.
-      // If not, place it into quotient_elements_.
-
-      Nterm *f = quotients[i];
-      getMonoid()->to_expvector(f->monom, exp);
-
-      if (!ringtableZZ_->is_strong_member(MPZ_VAL(f->coeff), exp, 1))
-	{
-	  // The element is part of a minimal GB
-	  // Also, this grabs exp.
-	  int index = n_quotients();
-	  ringtableZZ_->insert(MPZ_VAL(f->coeff), exp, 1, index);
-	  gbvector *g = R_->translate_gbvector_from_ringelem(f);
-	  appendQuotientElement(f, g);
-	  exp = newarray(int,n_vars());
-
-	  if (f->next == 0 && getMonoid()->is_one(f->monom))
-	    {
-	      is_ZZ_quotient_ = true;
-	      ZZ_quotient_value_ = f->coeff;
-	    }
-	}
-    }
-
-  // Now we need to set the homogeniety of this quotient ring.
-  for (int i=0; i<n_quotients(); i++)
-    {
-      if (!R_->is_homogeneous(quotient_element(i)))
-	{
-	  setIsGraded(false);
-	  break;
-	}
-    }
-  deletearray(exp);
-}
-
-
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
 					   std::vector<Nterm *, gc_alloc> &elems)
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
@@ -132,13 +26,19 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
 
   result->overZZ_ = R->getCoefficients()->is_ZZ();
   if (result->overZZ_)
-    result->makeQuotientIdealZZ(elems);
+    result->setQuotientInfo(new QRingInfo_ZZ(R,elems));
   else
-    result->makeQuotientIdeal(elems);
+    result->setQuotientInfo(new QRingInfo_field(R,elems));
 
-  result->EXP1_ = newarray(int, R->n_vars());
-  result->EXP2_ = newarray(int, R->n_vars());
-  result->MONOM1_ = R->getMonoid()->make_one();
+  for (int i=0; i<result->n_quotients(); i++)
+    {
+      if (!R->is_homogeneous(result->quotient_element(i)))
+	{
+	  result->setIsGraded(false);
+	  break;
+	}
+    }
+
   return result;
 }
 
@@ -229,121 +129,6 @@ bool PolyRingQuotient::promote(const Ring *Rf, const ring_elem f, ring_elem &res
       return true;
     }
   return R_->PolyRing::promote(Rf,f,result);
-}
-
-void PolyRingQuotient::reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const
-// Assumes that g is monic, and that getCoefficients() is a (basic) field.
-{
-  getMonoid()->divide(f->monom, g->monom, MONOM1_);
-  ring_elem c = getCoefficients()->negate(f->coeff);
-  if (is_skew_commutative())
-    {
-      // We need to determine the sign
-      getMonoid()->to_expvector(g->monom, EXP2_);
-      getMonoid()->to_expvector(MONOM1_, EXP1_);
-      if (R_->getSkewInfo().mult_sign(EXP1_, EXP2_) < 0)
-	getCoefficients()->negate_to(c);
-    }
-  ring_elem g1 = const_cast<Nterm *>(g);
-  g1 = R_->mult_by_term(g1,c,MONOM1_);
-  ring_elem f1 = f;
-  R_->internal_add_to(f1, g1);
-  f = f1;
-}
-
-void PolyRingQuotient::normal_form_basic_field(ring_elem& f) const
-// This handles the case of monic GB over a small field
-// It must handle skew multiplication too
-{
-  Nterm head;
-  Nterm *result = &head;
-  Nterm *t = f;
-  while (t != NULL)
-    {
-      getMonoid()->to_expvector(t->monom, EXP1_);
-      int_bag *b;
-      if (Rideal_->search_expvector(EXP1_, b))
-	{
-	  Nterm *s = quotient_element(b->basis_elem());
-	  // Now we must replace t with 
-	  // t + c*m*s, where in(t) = in(c*m*s), and c is 1 or -1.
-	  reduce_lead_term_basic_field(t, s);
-	}
-      else
-	{
-	  result->next = t;
-	  t = t->next;
-	  result = result->next;
-	}
-    }
-  result->next = NULL;
-  f = head.next;
-}
-
-bool PolyRingQuotient::reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const
-  // Never multiplies f by anything.  IE before(f), after(f) are equiv. mod g.
-  // this should ONLY be used if K is globalZZ.
-{
-  const ring_elem a = f->coeff;
-  const ring_elem b = g->coeff;
-  ring_elem u,v,rem;
-  rem = globalZZ->remainderAndQuotient(a,b,v);
-  if (globalZZ->is_zero(v)) return false;
-  v = globalZZ->negate(v);
-  bool result = globalZZ->is_zero(rem);
-  getMonoid()->divide(f->monom, g->monom, MONOM1_);
-  if (R_->is_skew_commutative())
-    {
-      // We need to determine the sign
-      getMonoid()->to_expvector(g->monom, EXP2_);
-      getMonoid()->to_expvector(MONOM1_, EXP1_);
-      if (R_->getSkewInfo().mult_sign(EXP1_, EXP2_) < 0)
-	getCoefficients()->negate_to(v);
-    }
-
-  // now mult g to cancel
-  ring_elem g1 = const_cast<Nterm *>(g);
-  g1 = R_->mult_by_term(g1, v, MONOM1_);
-  ring_elem f1 = f;
-  R_->internal_add_to(f1,g1);
-  f = f1;
-  return result;
-}
-
-void PolyRingQuotient::normal_form_ZZ(ring_elem& f) const
-// This handles the case of monic GB over a small field
-// It must handle skew multiplication too
-{
-  Nterm head;
-  Nterm *result = &head;
-  Nterm *t = f;
-  while (t != NULL)
-    {
-      getMonoid()->to_expvector(t->monom, EXP1_);
-      int w = ringtableZZ_->find_smallest_coeff_divisor(EXP1_, 1);
-      if (w >= 0)
-	{
-	  // reduce lead term as much as possible
-	  // If the lead monomial reduces away, continue,
-	  //   else tack the monomial onto the result
-	  Nterm *g = quotient_element(w);
-	  if (reduce_lead_term_ZZ(t,g))
-	    continue;
-	}
-      result->next = t;
-      t = t->next;
-      result = result->next;
-    }
-  result->next = NULL;
-  f = head.next;
-}
-
-void PolyRingQuotient::normal_form(ring_elem &f) const
-{
-  if (overZZ_)
-    normal_form_ZZ(f);
-  else
-    normal_form_basic_field(f);
 }
 
 ring_elem PolyRingQuotient::power(const ring_elem f, mpz_t n) const

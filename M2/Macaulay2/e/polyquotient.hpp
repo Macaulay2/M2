@@ -5,32 +5,14 @@
 
 #include "polyring.hpp"
 #include "monideal.hpp"
+#include "qring.hpp"
 
 class PolyRingQuotient : public PolynomialRing
 {
   const PolyRing *R_;
   bool overZZ_;
-
-  MonomialIdeal *Rideal_;
-  MonomialTable *ringtable_;
-  MonomialTableZZ *ringtableZZ_;
-
-  bool is_ZZ_quotient_;		// true if this is a quotient of a polynomial ring over ZZ, AND
-				// there is an integer in the factored ideal.
-  ring_elem ZZ_quotient_value_;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
-
-  int *MONOM1_;
-  int *EXP1_, *EXP2_;
 protected:
-  void makeQuotientIdeal(const vector<Nterm *, gc_alloc> &quotients);
-  void makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quotients);
-
-  bool reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const;
-  void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
-
-  void normal_form(ring_elem &f) const;
-  void normal_form_basic_field(ring_elem &f) const;
-  void normal_form_ZZ(ring_elem &f) const;
+  void normal_form(ring_elem &f) const { return qinfo_->normal_form(f); }
 
   virtual ~PolyRingQuotient();
   PolyRingQuotient() {}
@@ -88,17 +70,6 @@ public:
 
   virtual bool is_quotient_poly_ring() const { return true; }
 
-  virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal_; }
-  // Each bag value is an "Nterm *".
-
-  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return ringtableZZ_; }
-  // Each id is an index into quotient_ideal_
-
-  virtual const MonomialTable * get_quotient_MonomialTable() const { return ringtable_; }
-  // Each id is an index into quotient_ideal_
-
-
-  
   virtual bool is_pid() const {
     return n_vars() == 1 && !getCoefficients()->is_ZZ() && n_quotients() == 1;
   }
