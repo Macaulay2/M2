@@ -469,6 +469,17 @@ extern "C" {
 						 const RingElement *b); /* drg: connected rawDivMod*/
 
 
+  int rawRingElementCompare(const RingElement *a,
+			    const RingElement *b);
+  /* Superficially compares two ring elements a,b from the same ring.  If the ring is
+     a polynomial ring, then the lead monomials are compared.  If the ring is ZZ or QQ
+     then a > b iff |a| > |b|.
+     -1 means that a < b
+     0 means that a == b (not equal, but this order does not distinguish them)
+     1 means that a > b
+     If the two rings are different, then 0 is silently reutrned.
+  */
+
   const M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */
 
   unsigned long IM2_RingElement_hash(const RingElement *a);/* TODO */

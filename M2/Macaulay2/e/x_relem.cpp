@@ -454,6 +454,19 @@ const RingElementOrNull *IM2_RingElement_power(const RingElement *a,
   return a->power(n);
 }
 
+int rawRingElementCompare(const RingElement *a,
+			  const RingElement *b)
+{
+  const Ring *R = a->get_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (R != b->get_ring() || P == 0)
+    return 0;
+  
+  const int *m = P->lead_logical_monomial(a->get_value());
+  const int *n = P->lead_logical_monomial(b->get_value());
+  return P->getLogicalMonoid()->compare(m,n);
+}
+
 const RingElement *IM2_RingElement_promote(const Ring *S, 
 					   const RingElement *f)
 {
