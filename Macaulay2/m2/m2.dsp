@@ -83,12 +83,27 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\e\misc\cmdnames.input
-USERDEP__CMDNA="gbdoc.awk"	"gbfuns.awk"	
 
 !IF  "$(CFG)" == "m2 - Win32 Release"
 
+# Begin Custom Build - Making files from cmdnames.input
+InputPath=..\e\misc\cmdnames.input
+
+BuildCmds= \
+	awk -f gbdoc.awk <$(InputPath)  >gbdoc.m2 \
+	awk -f gbfuns.awk <$(InputPath) >gbfunctions.m2 \
+	
+
+"gbdoc.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"gbfunctions.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "m2 - Win32 Debug"
 
+USERDEP__CMDNA="gbdoc.awk"	"gbfuns.awk"	
 # Begin Custom Build - Making files from cmdnames.input
 InputPath=..\e\misc\cmdnames.input
 
@@ -113,6 +128,14 @@ SOURCE=.\dumpseq
 USERDEP__DUMPS="loads.awk"	
 
 !IF  "$(CFG)" == "m2 - Win32 Release"
+
+# Begin Custom Build - Making loads.m2 from dumpseq
+InputPath=.\dumpseq
+
+"loads.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	awk -f loads.awk <dumpseq >loads.m2
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "m2 - Win32 Debug"
 
@@ -180,6 +203,14 @@ SOURCE=.\tutorial.awk
 
 !IF  "$(CFG)" == "m2 - Win32 Release"
 
+# Begin Custom Build - Making tutorials.m2
+InputPath=.\tutorial.awk
+
+"tutorials.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	ls ../tutorial/final/*.out | awk -f tutorial.awk >tutorials.m2
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "m2 - Win32 Debug"
 
 # Begin Custom Build - Making tutorials.m2
@@ -207,6 +238,14 @@ SOURCE=..\msdos\version.m2
 
 !IF  "$(CFG)" == "m2 - Win32 Release"
 
+# Begin Custom Build - Copying ../msdos/version.m2
+InputPath=..\msdos\version.m2
+
+"version.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy ..\msdos\version.m2 version.m2
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "m2 - Win32 Debug"
 
 # PROP Ignore_Default_Tool 1
@@ -214,9 +253,8 @@ SOURCE=..\msdos\version.m2
 InputPath=..\msdos\version.m2
 
 "version.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy ..\msdos\version.m2 version.m2 
-	echo copied version.m2 
-	
+	copy ..\msdos\version.m2 version.m2
+
 # End Custom Build
 
 !ENDIF 

@@ -87,6 +87,16 @@ SOURCE=.\final\canEmbed.m2
 
 !IF  "$(CFG)" == "tutorial - Win32 Release"
 
+# Begin Custom Build - Translating tutorial
+InputPath=.\final\canEmbed.m2
+InputName=canEmbed
+
+"final/$(InputName).out" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	translate <$(InputPath) >final/$(InputName).out 
+	echo made final/$(InputName).out 
+	
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "tutorial - Win32 Debug"
 
 # Begin Custom Build - Translating tutorial
@@ -111,6 +121,16 @@ SOURCE=.\final\canEmbed.out
 SOURCE=.\final\divisors.m2
 
 !IF  "$(CFG)" == "tutorial - Win32 Release"
+
+# Begin Custom Build - Translating tutorial
+InputPath=.\final\divisors.m2
+InputName=divisors
+
+"final/$(InputName).out" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	translate <$(InputPath) >final/$(InputName).out 
+	echo made final/$(InputName).out 
+	
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "tutorial - Win32 Debug"
 
@@ -137,6 +157,16 @@ SOURCE=.\final\elementary.m2
 
 !IF  "$(CFG)" == "tutorial - Win32 Release"
 
+# Begin Custom Build - Translating tutorial
+InputPath=.\final\elementary.m2
+InputName=elementary
+
+"final/$(InputName).out" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	translate <$(InputPath) >final/$(InputName).out 
+	echo made final/$(InputName).out 
+	
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "tutorial - Win32 Debug"
 
 # Begin Custom Build - Translating tutorial
@@ -162,6 +192,16 @@ SOURCE=.\final\Fano.m2
 
 !IF  "$(CFG)" == "tutorial - Win32 Release"
 
+# Begin Custom Build - Translating tutorial
+InputPath=.\final\Fano.m2
+InputName=Fano
+
+"final/$(InputName).out" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	translate <$(InputPath) >final/$(InputName).out 
+	echo made final/$(InputName).out 
+	
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "tutorial - Win32 Debug"
 
 # Begin Custom Build - Translating tutorial
@@ -186,6 +226,16 @@ SOURCE=.\final\Fano.out
 SOURCE=.\final\HomAlg2.m2
 
 !IF  "$(CFG)" == "tutorial - Win32 Release"
+
+# Begin Custom Build - Translating tutorial
+InputPath=.\final\HomAlg2.m2
+InputName=HomAlg2
+
+"final/$(InputName).out" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	translate <$(InputPath) >final/$(InputName).out 
+	echo made final/$(InputName).out 
+	
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "tutorial - Win32 Debug"
 

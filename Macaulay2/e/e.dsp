@@ -116,9 +116,31 @@ SOURCE=.\misc\cmdnames.input
 
 !IF  "$(CFG)" == "e - Win32 Release"
 
+# Begin Custom Build - Processing cmdnames.input
+InputPath=.\misc\cmdnames.input
+
+BuildCmds= \
+	gawk -f misc/cmdh.awk < misc\cmdnames.input > cmdnames.hpp \
+	echo made cmdnames.hpp \
+	gawk -f misc/cmdinst.awk <misc\cmdnames.input >cmdinst.hpp \
+	echo made cmdinst.hpp \
+	gawk -f misc/cmdg.awk <misc\cmdnames.input >..\m2\cmdnames.m2 \
+	echo made ..\m2\cmdnames.m2 \
+	
+
+"cmdnames.hpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"cmdinst.hpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"../m2/cmdnames.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "e - Win32 Debug"
 
-# Begin Custom Build
+# Begin Custom Build - Processing cmdnames.input
 InputPath=.\misc\cmdnames.input
 
 BuildCmds= \
@@ -342,6 +364,15 @@ SOURCE=.\mem.hpp
 # Begin Source File
 
 SOURCE=.\monideal.cpp
+
+!IF  "$(CFG)" == "e - Win32 Release"
+
+# ADD CPP /Od
+
+!ELSEIF  "$(CFG)" == "e - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -350,6 +381,15 @@ SOURCE=.\monideal.hpp
 # Begin Source File
 
 SOURCE=.\monoid.cpp
+
+!IF  "$(CFG)" == "e - Win32 Release"
+
+# ADD CPP /O2
+
+!ELSEIF  "$(CFG)" == "e - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -586,15 +626,6 @@ SOURCE=.\vector.hpp
 # Begin Source File
 
 SOURCE=.\x_factor.cpp
-
-!IF  "$(CFG)" == "e - Win32 Release"
-
-# ADD CPP /I "../../include"
-
-!ELSEIF  "$(CFG)" == "e - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
