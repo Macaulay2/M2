@@ -499,15 +499,17 @@ Ring ^ List := (
 	       if # fdegs === 0 
 	       then (
 		    n := #degs;
-		    if R#?(quote ^,n)
-		    then R#(quote ^,n)
-		    else R#(quote ^,n) = (
+		    -- if R#?(quote ^,n)
+		    -- then R#(quote ^,n)
+		    -- else R#(quote ^,n) = 
+		    (
 			 sendgg( ggPush R, ggPush n, ggfree);
 	       		 new Module from R))
 	       else (
-		    if R#?(quote ^, fdegs)
-		    then R#(quote ^, fdegs)
-		    else R#(quote ^, fdegs) = (
+		    -- if R#?(quote ^, fdegs)
+		    -- then R#(quote ^, fdegs)
+		    -- else R#(quote ^, fdegs) = 
+		    (
 			 sendgg(ggPush R, ggPush fdegs, ggfree);
 	       		 new Module from R)))
 	  else error "non-engine free modules with degrees not implemented yet"
@@ -544,8 +546,10 @@ Ring ^ ZZ := (
      (R,n) -> (
 	  if R.?Engine and R.Engine
 	  then (
-	       if R#?(quote ^,n) then R#(quote ^,n)
-	       else R#(quote ^,n) = (
+	       -- if R#?(quote ^,n) 
+	       -- then R#(quote ^,n)
+	       -- else R#(quote ^,n) = 
+	       (
 	       	    sendgg(ggPush R, ggPush n, ggfree);
      	       	    new Module from R)
 	       )

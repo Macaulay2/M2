@@ -36,8 +36,8 @@ GC:: lib/libgc.a
 endif
 
 GC_TARGETS := gc.a
-GC_CFLAGS := -DLARGE_CONFIG -DNO_SIGNALS -O \
-	 -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
+GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS $(DEBUGFLAGS)
+GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
 ifndef VERBOSE
 GC_CFLAGS += -DSILENT
 endif
@@ -125,7 +125,7 @@ factory/config.status factory/GNUmakefile : factory/GNUmakefile.in factory/confi
 	CXXFLAGS="$(CXXFLAGS)" \
 	LDFLAGS="$(LDFLAGS)" \
 	./configure --cache-file=../config.cache --prefix=.. --with-memman --with-optimize
-FACTORYmade:; $(MAKE) -C factory
+FACTORYmade:; $(MAKE) -C factory CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
 lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
 	$(MAKE) -C factory install
 	ranlib lib/libcfmem.a
@@ -184,6 +184,11 @@ ifdef MP
 	echo '#define MP' >>tmp.tmp
 else
 	echo '#undef MP' >>tmp.tmp
+endif
+ifdef GCMALLOC
+	echo '#define GCMALLOC' >>tmp.tmp
+else
+	echo '#undef GCMALLOC' >>tmp.tmp
 endif
 ifdef FACTORY
 	echo '#define FACTORY' >>tmp.tmp

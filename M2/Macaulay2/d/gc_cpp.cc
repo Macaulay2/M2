@@ -29,8 +29,11 @@ Authors: John R. Ellis and Jesse Hull
 /* #define GC_DEBUG */
 
 #include "gc_cpp.h"
+#include "../../Makeconf.h"
 
 extern "C" void outofmem();
+
+#ifdef GCMALLOC
 
 #if !defined(__MWERKS__)
 
@@ -81,5 +84,7 @@ void* __builtin_vec_new( unsigned int size ) {
 void __builtin_vec_delete( void* obj ) {
     if (obj != NULL) GC_FREE( obj );
     }
+
+#endif
 
 #endif

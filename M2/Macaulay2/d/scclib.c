@@ -466,6 +466,8 @@ void system_atend(void (*f)()){
      pre_final_list = this_final;
      }
 
+#ifdef GCMALLOC
+
 void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
      p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
@@ -482,6 +484,27 @@ void *GC_realloc3 (void *s, size_t old, size_t new) {
 void GC_free2 (void *s, size_t old) {
      GC_FREE(s);
      }
+
+#else
+
+void *malloc1 (size_t size_in_bytes) {
+     void *p;
+     p = malloc(size_in_bytes);
+     if (p == NULL) outofmem();
+     return p;
+     }
+
+void *realloc3 (void *s, size_t old, size_t new) {
+     void *p = realloc(s,new);
+     if (p == NULL) outofmem();
+     return p;
+     }
+
+void free2 (void *s, size_t old) {
+     free(s);
+     }
+
+#endif
 
 #if 0
 
