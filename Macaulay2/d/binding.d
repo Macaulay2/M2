@@ -175,6 +175,8 @@ bump();
      export GreaterGreaterS := makeKeyword(binaryright(">>"));
 -- logic:
 bump();
+     export LongLongDoubleArrowS := makeKeyword(binaryright("===>"));
+bump();
      export DeductionS := makeKeyword(unaryleft("|-"));	    -- also binary
 bump();
      export LongBiDoubleArrowS := makeKeyword(binaryright("<==>"));
@@ -443,7 +445,8 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, GreaterGreaterGreaterS, LongBiDoubleArrowS, DeductionS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
+     LongLongDoubleArrowS, GreaterGreaterGreaterS, LongBiDoubleArrowS, DeductionS,
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
