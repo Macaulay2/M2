@@ -31,37 +31,45 @@ next = key -> if NEXT#?key then HREF { linkFilename NEXT#key, nextButton } else 
 prev = key -> if PREV#?key then HREF { linkFilename PREV#key, prevButton } else prevButton
 up   = key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton } else   upButton
 
-scope = method()
-scope2 = method()
+scope = method(SingleArgumentDispatch => true)
+scope2 = method(SingleArgumentDispatch => true)
 
-this := null
-last := null
+lastKey := null
+thisKey := null
 
 scope Sequence := scope BasicList := x -> scan(x,scope)
 scope Thing := x -> null
 scope MENU := x -> scan(x,scope2)
 scope2 Thing := x -> null
-scope2 Sequence := scope BasicList := x -> scan(x,scope2)
+scope2 Sequence := scope2 BasicList := x -> scan(x,scope2)
 scope2 SHIELD := x -> null
 scope2 TO := x -> (
      key := getDocumentationTag x#0;
-     if last =!= null then (
-	  PREV#key = last;
-	  NEXT#last = key;
-	  );
-     UP#key = this;
-     last = key;
+     if UP#?key then (
+	  stderr
+	  << "key '" << key << "' already encountered" << endl
+	  << "    previous menu was in '" << UP#key << "'" << endl
+	  << "         this menu is in '" << thisKey << "'" << endl
+	  )
+     else (
+	  UP#key = thisKey;
+	  if lastKey =!= null then (
+	       PREV#key = lastKey;
+	       NEXT#lastKey = key;
+	       );
+	  lastKey = key;
+	  )
      )
 	  
 preprocess = (key,doc) -> (
-     doc = try value doc else error ("value ", doc);
-     this = key;
-     last = null;
-     scope doc;
+     thisKey = key;
+     lastKey = null;
+     scope try value doc else error ("value ", doc);
      )
-scandb(openDatabase databaseFileName, preprocess) 
 
-error ""
+docFile := openDatabase databaseFileName
+
+scandb(docFile, preprocess) 
 
 process := (key,doc) -> (
      -- stderr << key << endl;
@@ -82,7 +90,9 @@ process := (key,doc) -> (
 		    }
 	       }
 	  } << endl << close)
-scandb(openDatabase databaseFileName, process) 
+scandb(docFile, process) 
+
+close docFile
 
 missing := false;
 

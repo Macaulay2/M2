@@ -797,8 +797,10 @@ document { quote substring,
      }
 
 document { quote reverse,
-     TT "reverse v", " -- yields a list containing the elements of the list v in reverse 
-     order."
+     TT "reverse v", " -- yields a list containing the elements of the 
+     list ", TT "v", " in reverse order.",
+     PARA,
+     EXAMPLE "reverse {a,b,c,d}"
      }
 
 document { quote read,
@@ -1189,16 +1191,13 @@ document { quote "if",
      }
 
 document { quote "while",
-     TT "while p do x", " -- repeatedly evaluates x as long as the value of p remains 
-     ", TO "true", ".",
+     TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
+     as the value of ", TT "p", " remains ", TO "true", ".",
      PARA,
-     "This construction is more powerful than might appear at first glance, 
-     even though there is no explicit construction in the language that allows one to
-     break out of a loop, because ", TT "p", " may be a conjunction of several
-     compound statements.  For example, the expression",
-     PRE "     while (a(); not b()) and (c(); not d()) do e()",
-     "might be used to replace C code that looks like this:",
-     PRE "     while (TRUE) { a(); if (b()) break; c(); if (d()) break; e(); }",
+     "The value of the whole expression is always ", TT "null", ".",
+     EXAMPLE {
+	  ///i = 1; while i < 50000 do (<< i << " "; i = 2*i); << endl///
+	  },
      SEEALSO "do"
      }
 
@@ -1767,9 +1766,12 @@ document { quote ancestor,
 document { quote unique,
      TT "unique v", " -- yields the elements of the list v, without duplicates.",
      PARA,
+     EXAMPLE {
+	  "unique {3,2,1,3,2,4,3,2,3,-2,1,2,4}"
+	  },
      "The order of elements is not necessarily maintained.",
      PARA,
-     "See also ", TO "Set", " and ", TO "set", "."
+     SEEALSO {"sort"}
      }
 
 document { quote Ring,
@@ -2788,23 +2790,9 @@ document { quote String,
      PARA,
      "A string is thing which contains a sequence of characters (bytes).
      A string is normally entered as a sequence of characters surrounded 
-     by double quotation marks.",
+     by quotation marks.",
      PARA,
      EXAMPLE "\"abcd\"",
-     PARA,
-     "Newline characters can be included.  There are escape sequences which
-     make it possible to enter special characters:",  PRE 
-"        \\n             newline
-        \\f             form feed
-        \\r             return
-        \\\\             \\ 
-        \\\"             \"
-        \\t             tab
-        \\xxx           ascii character with octal value xxx",
-     EXAMPLE {
-	  "\"abc\\001\\002\\n\\f\\t\"",
-      	  "ascii oo",
-	  },
      PARA,
      "For an alternate method of entering strings which does not involve
      any escape sequences, see ", TO "///", ".",
@@ -2848,7 +2836,7 @@ document { quote Net,
      PARA,
      "Operations on nets also accept strings by interpreting a string as a rectangle
      of height one with the baseline just below it.  In fact, the parent of
-     ", TO "String", " is ", TT "net", ".",
+     ", TO "String", " is ", TO "Net", ".",
      PARA,
      "Multiple nets per line can be sent to an output file with ", TO "<<", "
      but care must be taken to use ", TO "endl", " to end lines, for nets with
@@ -3170,34 +3158,6 @@ document { "lists, arrays, and sequences",
       	  "# v",
 	  },
      PARA,
-     "A list is created by surrounding a sequence with braces.
-     Use ", TO "{}", " to create a list of length zero.
-     The class of all lists is ", TO "List", ".",
-     EXAMPLE {
-	  "w = {3,4,5}",
-      	  "# w",
-      	  "# {}",
-	  },
-     PARA,
-     "The elements of a list can be lists or sequences.",
-     EXAMPLE {
-	  "x = {(3,4,5)}",
-      	  "# x",
-      	  "y = {(3,4,5),7}",
-      	  "# y",
-	  },
-     PARA,
-     "Lists can be used as vectors.",
-     EXAMPLE "10000*{3,4,5} + {1,2,3}",     
-     "A table is a list whose elemensts are lists all of the same length.  
-     The inner lists are regarded as rows when the table is displayed as a
-     two-dimensional array.",
-     PARA,
-     EXAMPLE {
-	  "z = {{a,1},{b,2},{c,3}}",
-      	  "MatrixExpression z",
-	  },
-     PARA,
      "An array is created by surrounding a sequence with brackets.
      Use ", TO "[]", " to create a list of length zero.
      Arrays and lists are a type of basic list, which means that the class
@@ -3211,10 +3171,6 @@ document { "lists, arrays, and sequences",
       	  "class f",
       	  "parent class f",
 	  },
-     "Omitting an element of a sequence, list, or array, causes the
-     symbol ", TO "null", " to be inserted in its place.",
-     PARA,
-     EXAMPLE "g = (3,4,,5)",
      PARA,
      "Sequences are used for calling functions with multiple arguments.
      One calls a function with the notation ", TT "f(x,y,z)", "; here you may 
@@ -3806,14 +3762,13 @@ document { quote mingle,
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
      and so on.",
-     PARA,
+     BR, NOINDENT,
      TT "mingle (v,w,...)", " -- does the same.",
      PARA,
-     "When one of the lists is exhausted, it is ignored.",
-     PARA,
+     "After one of the lists is exhausted, it is silently ignored.",
      EXAMPLE {
 	  "mingle({1,2,3,4},{a},{F,F,F,F,F,F,F,F,F,F})",
-      	  "concatenate mingle( apply(5,name) , apply(4,i->\",\") )",
+      	  "concatenate mingle( {"a","b","c"} , {",",","} )",
       	  "pack(mingle {{1,2,3},{4,5,6}}, 2)"
 	  }
      }
@@ -4634,12 +4589,11 @@ document { quote netRows,
      TT "netRows x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA,
-     EXAMPLE {
-	  "R = ZZ[x,y];",
-	  "n = net (x+y)^3",
-	  "peek2(n,2)",
-	  "netRows n"
-	  }
+     "The orginal net, adjusted so its height is 1, may be recovered
+     with ", TO "verticalJoin", ". The individual strings will have 
+     all trailing spaces removed, unless this would make all of them 
+     narrower than the original net, in which case the first string
+     retains its trailing spaces."
      }
 
 -- these files are made at compile time
