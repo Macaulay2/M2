@@ -95,7 +95,7 @@ Matrix * PolyRingQuotient::getPresentation() const
 void PolyRingQuotient::text_out(buffer &o) const
 {
   o << "Quotient ring of ";
-  R_->text_out(o);
+  numerR_->text_out(o);
   o << newline << "quotient elements" << newline;
   for (int i=0; i<n_quotients(); i++)
     {
@@ -114,25 +114,25 @@ bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &resul
 // f is an element of 'this'.  Rg is the desired ring.
 {
   const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
-  if (Rg == R_ || (Rg1 != 0 && Rg1->getAmbientRing() == R_))
+  if (Rg == numerR_ || (Rg1 != 0 && Rg1->getAmbientRing() == numerR_))
     {
       result = f;
       return true;
     }
-  return R_->PolyRing::lift(Rg,f,result);
+  return numerR_->PolyRing::lift(Rg,f,result);
 }
 
 bool PolyRingQuotient::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 // f is an element of Rf.  result will be an element in 'this'.
 {
   const PolynomialRing *R1 = Rf->cast_to_PolynomialRing();
-  if (Rf == R_ || (R1 != 0 && R_ == R1->getAmbientRing()))
+  if (Rf == numerR_ || (R1 != 0 && numerR_ == R1->getAmbientRing()))
     {
       result = copy(f);
       normal_form(result);
       return true;
     }
-  return R_->PolyRing::promote(Rf,f,result);
+  return numerR_->PolyRing::promote(Rf,f,result);
 }
 
 ring_elem PolyRingQuotient::power(const ring_elem f, mpz_t n) const
@@ -194,7 +194,7 @@ ring_elem PolyRingQuotient::random() const
 
 ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f) const
 {
-  return R_->PolyRing::eval(map, f);
+  return numerR_->PolyRing::eval(map, f);
 }
 
 

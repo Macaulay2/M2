@@ -158,6 +158,17 @@ void QRingInfo_field_basic::normal_form(const FreeModule *F, gbvector *&f) const
   f = head.next;
 }
 
+QRingInfo_field_QQ::QRingInfo_field_QQ(const PolyRing *ambientR,
+		   const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients)
+  : QRingInfo_field(ambientR,quotients)
+{
+}
+
+
+QRingInfo_field_QQ::~QRingInfo_field_QQ()
+{
+}
+
 QRingInfo_ZZ::~QRingInfo_ZZ()
 {
 }

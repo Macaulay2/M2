@@ -13,6 +13,19 @@ class PolyQQ : public PolyFrac
   // Implementation: (Nterm *numer, mpz_ptr denom)
 
   friend class PolynomialRing;
+  struct elem {
+    Nterm *numer;
+    mpz_t denom;
+  };
+
+  elem *new_elem() const;
+  elem *make_fraction(Nterm *top) const;
+  elem *make_fraction(Nterm *top, mpz_ptr bottom) const;
+
+  mpz_ptr denom(ring_elem f) const;
+  void simplify(elem *f) const;
+  Nterm *mult_by_coeff(mpz_ptr c, Nterm *f) const;
+
 protected:
   virtual ~PolyQQ();
   PolyQQ() {}
@@ -36,7 +49,7 @@ public:
 
   virtual ring_elem preferred_associate(ring_elem f) const;
 
-  virtual bool is_unit(const ring_elem f) const; // TODO
+  virtual bool is_unit(const ring_elem f) const;
 
   virtual bool is_zero(const ring_elem f) const;
 
