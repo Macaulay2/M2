@@ -209,7 +209,7 @@ all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
 clean ::; $(MAKE) -C Macaulay2 clean
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
-	M2.dsw WindowsDistribution.dsw WindowsDistribution.dsp root.dsp \
+	M2.dsw WindowsDistribution.dsp root.dsp \
 	Macaulay2/Macaulay2.dsp Macaulay2/WindowsFixUps.dsp \
 	Macaulay2/setup.nodumpdata Macaulay2/setup.dumpdata \
 	Macaulay2/CVS \

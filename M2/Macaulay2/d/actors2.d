@@ -702,7 +702,10 @@ close(g:Expr):Expr := (
      is f:file do ( 
 	  if f.fd == -1 then return(errorExpr("file already closed"));
 	  if close(f) == 0 then nullE 
-	  else errorExpr("couldn't close the file"))
+	  else errorExpr(
+	       if f.pid != 0
+	       then "error closing pipe"
+	       else "error closing file"))
      is x:Database do dbmclose(x)
      else errorExpr("expected a file"));
 setupfun("close",close);

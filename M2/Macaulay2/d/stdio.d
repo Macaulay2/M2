@@ -155,19 +155,15 @@ export flushinput(o:file):void := (
      );
 
 simpleflush(o:file):int := (
-     if o.outindex > 0
-     then (
-	  if ERROR == write(o.fd,o.outbuffer,o.outindex) then return(ERROR);
-	  o.outindex = 0;
-	  o.outbol = 0;
-	  );
-     0);
+     r := if o.outindex > 0 then write(o.fd,o.outbuffer,o.outindex) else 0;
+     o.outindex = 0;
+     o.outbol = 0;
+     r);
 simpleout(o:file,c:char):int := (
+     r := if o.outindex == length(o.outbuffer) then simpleflush(o) else 0;
      o.outbuffer.(o.outindex) = c;
      o.outindex = o.outindex + 1;
-     if o.outindex == length(o.outbuffer) 
-     then simpleflush(o)
-     else 0);
+     r);
 simpleout(o:file,x:string):int := (
      foreach c in x do (
 	  if ERROR == simpleout(o,c) then return(ERROR);
@@ -212,12 +208,13 @@ export flush(o:file):int := (
 export close(o:file):int := (
      if o == stdin then if o.isatty then return(-1);
      if o.fd == -1 then return(-1);
-     flushinput(o);
-     if ERROR == flush(o) then return(ERROR);
-     r := close(o.fd);
+     if o.input then flushinput(o);
+     ret1 := flush(o) == ERROR;
+     ret2 := close(o.fd) == ERROR;
+     ret3 := o.pid != 0 && 0 != wait(o.pid);
      o.fd = -1;
      rmfile(o);
-     if o.pid != 0 then wait(o.pid) else r
+     if ret1 || ret2 || ret3 then ERROR else 0     
      );
 closem():void := (
      f := openfiles;
@@ -251,9 +248,10 @@ export (o:file) << (c:char) : file := (
      	       o.nets = NetList(o.nets,toNet(c));
 	       )
 	  else (
+	       if o.outindex == length(o.outbuffer) 
+	       then flush(o);		  -- possible error ignored!
 	       o.outbuffer.(o.outindex) = c;
 	       o.outindex = o.outindex + 1;
-	       if o.outindex == length(o.outbuffer) then flush(o);
 	       );
 	  );
      o
