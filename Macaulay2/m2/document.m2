@@ -78,17 +78,6 @@ doc = x -> (
 
 err := nodeName -> error("warning: documentation already provided for '", nodeName, "'")
 
-storeDoc := (nodeName,docBody) -> (
-     if phase === 0
-     then (
-	  if Documentation#?nodeName then err nodeName;
-	  Documentation#nodeName = docBody
-	  )
-     else if phase === 2 or phase === 4 then (
-	  if DocDatabase#?nodeName then err nodeName;
-	  DocDatabase#nodeName = name docBody;
-	  );
-     )
 keysDoc := () -> (
 	if DocDatabase === null
 	then keys Documentation
@@ -105,57 +94,58 @@ examples = x -> (
      if ExampleHashTable#?x then ExampleHashTable#x else {}
      )
 
-fm := (o,s) -> (
+fm1 := s -> concatenate (
      if class s === Sequence then (
 	  if #s === 4 then (
 	       if class s#0 === ScriptedFunctor
 	       then (
 		    if s#0 .? subscript
-		    then o << s#0 << "_" << s#1 << "(" << s#2 << "," << s#3 << ")"
-		    else o << s#0 << "^" << s#1 << "(" << s#2 << "," << s#3 << ")"
+		    then (name s#0, "_", name s#1, "(", name s#2, ",", name s#3, ")")
+		    else (name s#0, "^", name s#1, "(", name s#2, ",", name s#3, ")")
 		    )
 	       else if s#0 === NewOfFromMethod
-	       then o << "new " << s#1 << " of " << s#2 << " from " << s#3
+	       then ("new ", name s#1, " of ", name s#2, " from ", name s#3)
 	       else if s#0 === cohomology
-	       then o << "HH_" << s#1 << "^" << s#2 << " " << s#3
+	       then ("HH_", name s#1, "^", name s#2, " ", name s#3)
 	       else if s#0 === homology
-	       then o << "HH^" << s#1 << "_" << s#2 << " " << s#3
-	       else o << s#0 << "(" << s#1 << "," << s#2 << "," << s#3 << ")"
+	       then ("HH^", name s#1, "_", name s#2, " ", name s#3)
+	       else (s#0, "(", name s#1, ",", name s#2, ",", name s#3, ")")
 	       )
 	  else if #s === 3 then (
 	       if class s#0 === Symbol then (
 		    if s#0 === NewFromMethod
-		    then o << "new " << s#1 << " from " << s#2
+		    then ("new ", name s#1, " from ", name s#2)
 		    else if s#0 === NewOfMethod
-		    then o << "new " << s#1 << " of " << s#2
+		    then ("new ", name s#1, " of ", name s#2)
 		    else if string s#0 === " "
-		    then o << s#1 << " " << s#2
-		    else o << s#1 << " " << s#0 << " " << s#2
+		    then (name s#1, " ", name s#2)
+		    else (name s#1, " ", name s#0, " ", name s#2)
 		    )
 	       else if s#0 === homology
-	       then o << "HH_" << s#1 << " " << s#2
+	       then ("HH_", name s#1, " ", name s#2)
 	       else if s#0 === cohomology
-	       then o << "HH^" << s#1 << " " << s#2
-     	       else o << s#0 << "(" << s#1 << "," << s#2 << ")"
+	       then ("HH^", name s#1, " ", name s#2)
+     	       else (name s#0, "(", name s#1, ",", name s#2, ")")
 	       )
 	  else if #s === 2 then (
 	       if class s#0 === ScriptedFunction then (
 		    hh := s#0;
 		    if hh.?subscript and hh.?superscript
 		    then (
-			 o << s#0 << " _ " << s#1
-			 << "  or  " << s#0 << " ^ " << s#1
+			 (name s#0, " _ ", name s#1, "  or  ", name s#0, " ^ ", name s#1)
 			 )
-		    else if hh.?subscript then o << s#0 << " _ " << s#1
-		    else o << s#0 << " ^ " << s#1
+		    else if hh.?subscript then (name s#0, " _ ", name s#1)
+		    else (name s#0, " ^ ", name s#1)
 		    )
-	       else if s#0 === NewMethod then o << "new " << s#1
-	       else o << s#0 << " " << s#1
+	       else if s#0 === NewMethod then ("new ", name s#1)
+	       else (name s#0, " ", name s#1)
 	       )
-	  else o << s
+	  else (name s)
 	  )
-     else o << s
+     else (name s)
      )
+
+fm := (o,s) -> o << fm1 s
 
 hr := (o) -> o << "-----------------------------------------------------------------------------" << endl
 
@@ -163,13 +153,11 @@ briefHelp := (o,s) -> (
      d := doc s;
      if d === null 
      then (
-	  fm (o,s);
-	  o << " --> Thing" << endl;		  -- no documentation available
+	  o << fm1 s << " --> Thing" << endl;		  -- no documentation available
 	  false
 	  )
      else if class d === List then (
-	  fm (o,s);
-	  o << " --> " << d#0 << endl;
+	  o << fm1 s << " --> " << d#0 << endl;
 	  d = drop(d,2);
      	  i := 0;
      	  while i < #d and d#i =!= PARA do i = i+1;
@@ -196,12 +184,10 @@ help2 := (o,s) -> (
      d := doc s;
      if d === null 
      then (
-	  fm (o,s);
-	  o << " --> Thing" << endl;		  -- no documentation available
+	  o << fm1 s << " --> Thing" << endl;		  -- no documentation available
 	  )
      else if class d === List then (
-	  fm (o,s);
-	  o << " --> " << d#0 << endl;
+	  o << fm1 s << " --> " << d#0 << endl;
 	  if #d > 2 then o << endl << text repl drop(d,2) << endl;
 	  )
      else o << text d << endl;
@@ -291,7 +277,6 @@ scan((
 
 testFileCounter := 0
 exprCounter := 0
-filename := ""
 file := null
 
 fourDigits := i -> (
@@ -339,11 +324,6 @@ if phase === 2 then (
 	       ));
      )
 
-err1 := () -> (
-     stderr << "warning : input file " 
-     << filename 
-     << ".out terminates prematurely" << endl;
-     )
 
 documentOption = z -> (
      if class z != List then error "expected a list";
@@ -357,79 +337,117 @@ documentOption = z -> (
      Documentation#(fn,opt) = doc;
      )
 
-document = z -> (
-     if class z != List then error "expected a list";
-     if #z === 0 then error "expected a nonempty list";
-     label := z#0;
-     if not ( class label === Symbol or class label === String )
-     then error "expected first element of list to be a symbol";
-     nodeName := string label;
-     filename = (
-	  if (NameHashTable())#?nodeName
-	  then (NameHashTable())#nodeName
-	  else (
-	       if phase === 4 then error(
-		    "documentation node '", nodeName, "' has no sequence number");
-	       (NameHashTable())#nodeName = concatenate(
-		    "../tmp/Examples/", fourDigits (#(NameHashTable()))
-		    )
+DocumentableValueType := new MutableHashTable
+DocumentableValueType#HashTable = true
+DocumentableValueType#Function = true
+DocumentableValueType#BasicList = true
+DocumentableValueType#Nothing = true
+
+UndocumentableLabel := new MutableHashTable
+UndocumentableLabel.environment = true
+UndocumentableLabel.commandLine = true
+
+nodeName := ""
+nodeBaseFilename := ""
+exampleCounter := 0
+exampleOutputFile := null
+exampleResults := {}
+makeBaseFilename := () -> (
+     if (NameHashTable())#?nodeName
+     then (NameHashTable())#nodeName
+     else (
+	  if phase === 4 then error(
+	       "documentation node '", nodeName, "' has no sequence number");
+	  (NameHashTable())#nodeName = concatenate(
+	       "../tmp/Examples/", fourDigits (#(NameHashTable()))
 	       )
-	  );
-     docBody := repl toList apply(1 .. #z - 1, i -> z#i);
-     -- drop isn't defined yet
-     if phase === 1 and not writableGlobals#?label and class label === Symbol 
-     then protect label;
+	  )
+     );
+processExamplesLoop := s -> (
+     if class s === EXAMPLE then (
+	  exampleCounter = exampleCounter + 1;
+	  exampleOutputFile << s#0 << endl;
+	  if exampleResults#?exampleCounter
+	  then PRE exampleResults#exampleCounter
+	  else (
+	       if #exampleResults === exampleCounter then (
+		    stderr << "warning : input file " << nodeBaseFilename 
+		    << ".out terminates prematurely" << endl;
+		    );
+	       PRE concatenate("in = ",s#0)
+	       ))
+     else if class s === Sequence or basictype s === List
+     then apply(s,processExamplesLoop)
+     else s)
+processExamples := (docBody) -> (
      examples := extractExamples docBody;
      if phase > 1 and #examples > 0 then (
-	  if phase === 2 then (
-	       -- write example input to file
-	       file := openOut (filename | ".m2");
-	       file << "-- " << nodeName << endl;
-	       if phase === 0 and file =!= null then (
-		    << "-- " << nodeName << " -- " << filename << ".m2" << endl;
-		    );
-	       );
-	  result := try get (filename | ".out") else (
+	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
+	  exampleOutputFile << "-- " << nodeName << endl;
+	  exampleResults = try get (nodeBaseFilename | ".out") else (
 	       if phase === 4 or phase === 5 then (
 		    stderr << "warning : can't open input file '" 
-	       	    << filename << ".out'" << endl;
+	       	    << nodeBaseFilename << ".out'" << endl;
 		    );
 	       ""
 	       );
-	  result = lines(result,"\1");
-	  exprCounter := 0;
-	  fun1 := s -> (
-	       if class s === EXAMPLE then (
-		    if phase === 2 then file << s#0 << endl;
-		    exprCounter = exprCounter + 1;
-		    if phase === 2 then PRE concatenate("in = ",s#0)
-		    else if exprCounter < #result
-		    then PRE result#exprCounter
-		    else (
-			 if exprCounter === #result then err1();
-			 PRE concatenate("in = ",s#0)
-			 ))
-	       else if class s === Sequence or basictype s === List
-	       then apply(s,fun1)
-	       else s);
-	  docBody = apply(docBody,fun1);
-	  close file;
+	  exampleResults = lines(exampleResults,"\1");
+	  exampleCounter = 0;
+	  docBody = apply(docBody,processExamplesLoop);
+	  close exampleOutputFile;
 	  );
-     storeDoc(nodeName,docBody);
      if #examples > 0 then ExampleHashTable#nodeName = examples;
-     if value label =!= label 
-     and not mutable label
-     and label =!= quote environment
-     and label =!= quote commandLine
-     and ( 
-	  basictype value label === HashTable
-	  or basictype value label === Function
-	  or basictype value label === BasicList
-	  or basictype value label === Nothing
-	  )
+     docBody
+     )
+storeDoc := (docBody) -> (
+     if phase === 0
      then (
-	  Documentation#(value label) = nodeName;
+	  if Documentation#?nodeName then err nodeName;
+	  Documentation#nodeName = docBody
+	  )
+     else if phase === 2 or phase === 4 then (
+	  if DocDatabase#?nodeName then err nodeName;
+	  DocDatabase#nodeName = name docBody;
 	  );
+     )
+document = z -> (
+     if class z != List then error "expected a list";
+     if #z === 0 then error "expected a nonempty list";
+     key := z#0;
+     if not ( class key === Symbol or class key === String )
+     then error "expected first element of list to be a symbol or string";
+     nodeName = string key;
+     nodeBaseFilename = makeBaseFilename();
+     docBody := repl toList apply(1 .. #z - 1, i -> z#i); -- drop isn't defined yet
+     docBody = processExamples docBody;
+     storeDoc docBody;
+     if phase === 1 and not writableGlobals#?key and class key === Symbol 
+     then protect key;
+     if class key === Symbol and value key =!= key and not mutable key
+     and not UndocumentableLabel#?key and DocumentableValueType#?(basictype value key)
+     then Documentation#(value key) = nodeName;
+     )
+
+exportDocumentation = () -> (
+     scan(keys Documentation, key -> (
+	       if class key === Sequence
+	       and (#key === 3 or #key === 4)
+	       and class Documentation#key === List
+	       and #(Documentation#key) > 2
+	       then (
+		    nodeName = name key;
+		    nodeBaseFilename = makeBaseFilename();
+		    z := Documentation#key;
+		    docBody := drop(z,2);
+		    docBody = join({ concatenate(fm1 key, " --> ", name z#0), PARA}, docBody);
+		    docBody = repl docBody;
+		    docBody = processExamples docBody;
+		    storeDoc docBody;
+		    Documentation#key = nodeName;
+		    Documentation#(z#1) = nodeName;
+		    )
+	       )
+	  )
      )
 
 SEEALSO = v -> (
@@ -444,6 +462,14 @@ SEEALSO = v -> (
 	       append(#v-2 : ", ", ", and ")
 	       ),
      	  "."))
+
+Nothing << Thing := { Nothing,
+     (x,y) -> null,
+     "null << x", " -- does nothing and returns ", TT "null", ".",
+     PARA,
+     "The intention here is that you can use ", TT "null", " as a dummy
+     output file."
+     }
 
 document { quote document,
      TT "document {quote s, d}", " -- install documentation d for symbol s.",

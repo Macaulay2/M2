@@ -3906,14 +3906,6 @@ document { quote profileSummary,
      accumulated by running functions produced with ", TO "profile", "."
      }
 
-Nothing << Thing := { Nothing,
-     (x,y) -> null
-     "null << x", " -- does nothing and returns ", TT "null", ".",
-     PARA,
-     "The intention here is that you can use ", TT "null", " as a dummy
-     output file."
-     }
-
 -- these files are made at compile time
 load "gbdoc.m2"
 load "gbfunctions.m2"

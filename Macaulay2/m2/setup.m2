@@ -207,6 +207,8 @@ document { quote clearAll,
      retained by the output line symbols."
      }
 
+if phase===1 or phase===2 or phase===4 then exportDocumentation()
+
 -- the last function restarted
 addStartFunction(
      () -> (

@@ -79,7 +79,7 @@ $(SCRIPTS) : makeM2.m2 ../cache/Macaulay2-$(ARCH).data
 	../bin/Macaulay2 -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' \
 			-- '-erunStartFunctions()' makeM2.m2 '-eexit(0)'
 
-all:: ../cache/Macaulay2-$(ARCH).data
+it all:: ../cache/Macaulay2-$(ARCH).data
 ../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) \
 			version.m2 ../bin/Macaulay2
 	rm -f ../cache/Macaulay2-$(ARCH).data
