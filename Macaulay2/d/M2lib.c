@@ -149,7 +149,7 @@ static bool out_of_memory_jump_set = FALSE, abort_jump_set = FALSE;
 static void interrupt_handler(int sig)
 {
      if (system_interrupted || system_interruptPending) {
-	  if (isatty(STDIN)) while (TRUE) {
+	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];
 	       printf("Abort (y/n)? ");
 	       fgets(buf,sizeof(buf),stdin);

@@ -1180,16 +1180,17 @@ document { (quote **, Module, Ring),
      }
 
 document { (quote **, Matrix, Ring),
-     TT "f ** R", " -- form the tensor product of a module map f with a ring R",
+     TT "f ** R", " -- form the tensor product of a module map ", TT "f", " with 
+     a ring ", TT "R", ".",
      PARA,
-     "The ring of f should be a base ring of R.  The degree of the map is
-     preserved.",
+     "The ring of ", TT "f", " should be a base ring of ", TT "R", ".  The degree 
+     of the map is preserved.",
      EXAMPLE {
-	  "R = ZZ/101[a..c]",
-      	  "f = basis(2,R)",
+	  "R = ZZ[a..c];",
+	  "S = R/(a+b+c);",
+      	  "f = vars R",
+	  "f ** S",
 	  },
-     "A map of R-modules can be obtained by tensoring.",
-     EXAMPLE "f ** R"
      }
 
 document { poincareComputation,

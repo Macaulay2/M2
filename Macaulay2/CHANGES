@@ -1,5 +1,13 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.55:
+
+x==y will now return the result of strict equality testing with x===y if no
+method is installed for mathematical equality.
+
+'describe' now returns an Expression, to which one may apply 'net' if a 2-dimensional
+display is desired, or 'toString' if a 1-dimensional display is desired.
+-----------------------------------------------------------------------------
 New in 0.8.54:
 
 Fixed a bug where openDatabaseOut would fail the second time it was used

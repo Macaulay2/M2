@@ -346,6 +346,9 @@ ZZ ++ RingElement :=
 RingElement ++ ZZ :=
 RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
+RingElement  | RingElement := (r,s) -> matrix {{r}}  | matrix {{s}}
+RingElement || RingElement := (r,s) -> matrix {{r}} || matrix {{s}}
+
 concatCols = mats -> (					    -- we erase this later
      mats = select(toList mats,m -> m =!= null);
      if # mats === 1 

@@ -724,7 +724,7 @@ document { (quote //, Matrix, Matrix),
      PARA,
      "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
      satisfies the equation ", TT "f = g * (f//g)", ".",
-     SEEALSO {"%", "\\\\"}
+     SEEALSO {(quote %, Matrix, Matrix)}
      } 
 
 TEST "
