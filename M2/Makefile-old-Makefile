@@ -144,7 +144,10 @@ FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/libcf.a lib/FACTORYins
 ifdef SHAREDLIBS
 FACTORY:: Macaulay2/lib/libcf.so
 Macaulay2/lib/libcf.so : lib/libcf.a
-	ld -shared --whole-archive $< $(OUTPUT_OPTION)
+	rm -rf tmplib
+	mkdir tmplib
+	(cd tmplib; ar x ../$<; $(CC) -shared *.o -o ../$@)
+	rm -rf tmplib
 endif
 
 FACTORYexports := \
@@ -225,7 +228,10 @@ LIBFAC:: libfac libfac/OPTOBJ libfac/config.status libfac/libfac.a include/facto
 ifdef SHAREDLIBS
 LIBFAC:: Macaulay2/lib/libfac.so
 Macaulay2/lib/libfac.so : libfac/libfac.a
-	ld -shared --whole-archive $^ $(OUTPUT_OPTION)
+	rm -rf tmplib
+	mkdir tmplib
+	(cd tmplib; ar x ../$<; $(CC) -shared *.o -o ../$@)
+	rm -rf tmplib
 else
 LIBFAC:: lib/libfac.a
 endif
