@@ -501,7 +501,8 @@ borel Matrix := Matrix => m -> (
 --------------------------------------------------------------------------
 
 mopts := Options => {
-     Degree => null
+     Degree => null,					    -- for use with matrices
+     DegreeMap => null					    -- for use in ring maps
      }
 
 matrix = method mopts

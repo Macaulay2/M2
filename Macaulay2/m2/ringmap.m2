@@ -1,4 +1,4 @@
---		Copyright 1995 by Daniel R. Grayson
+--		Copyright 1995-2000 by Daniel R. Grayson
 
 RingMap = new Type of MutableHashTable
 RingMap.synonym = "ring map"
@@ -12,6 +12,24 @@ expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}
 
 map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
+     degmap := (
+	  if options.DegreeMap =!= null then (
+	       if degreeLength R =!= # (options.DegreeMap apply(degreeLength S, i -> 0))
+	       then error ("expected DegreeMap function to transform a degree of length ", 
+		    toString degreeLength S,
+		    " into a degree of length ", toString degreeLength R);
+	       options.DegreeMap
+	       )
+	  else if degreeLength R === degreeLength S then identity
+	  else (
+	       d := toList ( degreeLength R : 0 );
+	       e -> d
+	       ));
+     if (     ring m === (try coefficientRing R)
+     	  and ring m === (try coefficientRing S)
+     	  and isFreeModule target m
+     	  and isFreeModule source m
+	  ) then m = vars R * (m ** R);
      if isFreeModule target m
      and isFreeModule source m
      and 1 == numgens target m 
@@ -33,16 +51,10 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	       symbol source => S,
 	       symbol target => R,
 	       symbol matrix => m,
-	       symbol handle => newHandle(ggPush m, ggringmap)
+	       symbol handle => newHandle(ggPush m, ggringmap),
+	       symbol DegreeMap => degmap
 	       }
 	  )
-     else if (
-	  ring m === (try coefficientRing R)
-     	  and ring m === (try coefficientRing S)
-     	  and isFreeModule target m
-     	  and isFreeModule source m
-	  )
-     then map(R,S,vars R * (m ** R))
      else error (
 	  if try coefficientRing R === try coefficientRing S
 	  then (
@@ -85,11 +97,12 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
 RingMap QQ := RingMap ZZ := (p,m) -> fff(p, promote(m,source p))
 
 RingMap Vector := Vector => (p,m) -> (
+     M := class m;
      R := source p;
      S := target p;
      if R =!= ring m 
      then error "expected source of ring map to be the same as ring of matrix";
-     F := if S === R then class m else S^(numgens class m);
+     F := p M;
      sendgg(ggPush p, ggPush F, ggPush m, ggev);
      new F)
 
@@ -98,18 +111,11 @@ RingMap Matrix := Matrix => (p,m) -> (
      S := target p;
      if R =!= ring m 
      then error "expected source of ring map to be the same as ring of matrix";
-     F := if S === R then target m
-          else if degreeLength R == degreeLength S then S^(- degrees target m) 
-          else S^(numgens target m) ;
-     E := if S === R then source m
-          else if degreeLength R == degreeLength S then S^(- degrees source m) 
-          else S^(numgens source m) ;
+     F := p target m;
+     E := p source m;
      sendgg(ggPush p, ggPush F, ggPush m, ggev);
      f := getMatrix S;
-     if R === S or degreeLength R == degreeLength S
-     then map(F,E,f, Degree => degree m)
-     else map(F,E,f)
-     )
+     map(F,E,f, Degree => p.DegreeMap degree m))
 
 kernel RingMap := Ideal => options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
      R := source f;
@@ -194,13 +200,16 @@ RingMap * RingMap := RingMap => (g,f) -> (
 	  symbol source => source f,
 	  symbol target => target g,
 	  symbol matrix => m,
-	  symbol handle => newHandle(ggPush m, ggringmap)
+	  symbol handle => newHandle(ggPush m, ggringmap),
+	  symbol DegreeMap => g.DegreeMap @@ f.DegreeMap
 	  }
      )
+
 isHomogeneous RingMap := (f) -> (
-     isHomogeneous f.source and 
-     isHomogeneous f.target and
-     isHomogeneous f.matrix)
+     R := f.source;
+     S := f.target;
+     isHomogeneous R and isHomogeneous S and
+     all(allGenerators R, r -> degree f r === f.DegreeMap degree r))
 
 sub = substitute
 
@@ -273,18 +282,14 @@ RingMap Module := Module => (f,M) -> (
      R := source f;
      S := target f;
      if R =!= ring M then error "expected module over source ring";
-     if M.?generators or M.?relations 
-     then (
-	  if M.?generators and M.?relations 
-	  then error "warning: RingMap applied to Module is not the same as tensor product.";
-	  subquotient(
-	       if M.?generators then fixup f M.generators, 
-	       if M.?relations then fixup f M.relations))
-      else if degreesRing R === degreesRing S then
-          S^(-degrees M)
-      else
-          S^(numgens M))
--- replaced this line with the 4 above, MES 5/30/97
---     else S^(numgens M))     
+     if M.?relations then error "ring map applied to module with relations: use '**' instead";
+     if M.?generators then cokernel f M.generators
+     else S^-(f.DegreeMap \ degrees M))
+
+RingMap ** Module := Module => (f,M) -> (
+     R := source f;
+     S := target f;
+     if R =!= ring M then error "expected module over source ring";
+     cokernel f(presentation M));
 
 isInjective RingMap := (f) -> kernel f == 0

@@ -20,6 +20,8 @@ char Ring := R -> (
 
 generators Ring := R -> {}
 
+allGenerators Ring := R -> generators R
+
 numgens Ring := R -> #generators R
 
 ring = method(TypicalValue => Ring)

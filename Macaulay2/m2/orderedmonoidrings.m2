@@ -73,8 +73,11 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
      else degreesRing degreeLength R)
 
 generators PolynomialRing := R -> R.generators
-isHomogeneous PolynomialRing := R -> true
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
+allGenerators PolynomialRing := R -> join(
+     apply(allGenerators coefficientRing R, a -> a * 1_R),
+     generators R)
+isHomogeneous PolynomialRing := R -> isHomogeneous coefficientRing R
 
 standardForm = method()
 standardForm RingElement := (f) -> (
