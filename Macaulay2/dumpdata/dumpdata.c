@@ -1,3 +1,5 @@
+/*		Copyright 1999 by Daniel R. Grayson		*/
+
 #include <stddef.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -11,6 +13,8 @@
 #include "warning.h"
 #include "std.h"
 
+#define DRYRUN 0
+
 #if !defined(PAGESIZE)
 #if defined(EXEC_PAGESIZE)
 #define PAGESIZE EXEC_PAGESIZE
@@ -18,10 +22,6 @@
 #define PAGESIZE 4096
 #endif
 #endif
-
-/* start configuration section */
-#define DRYRUN 0
-/* end configuration section */
 
 static char mapfmt[] = "%p-%p %c%c %u\n";
 
@@ -83,6 +83,7 @@ static int extend_memory(void *newbreak) {
 static int install(int fd, map m, long *pos) {
   void *start = m->from, *finish = m->to;
   int len = finish - start;
+  void *ret;
   int prot = (m->r ? PROT_READ : 0) | (m->w ? PROT_WRITE : 0) ;
   int offset = *pos;
   int flags = MAP_FIXED | MAP_PRIVATE;
@@ -92,7 +93,8 @@ static int install(int fd, map m, long *pos) {
 	 start,start+len,len,prot,flags,fd,offset);
   return OKAY;
 #else
-  return MAP_FAILED == mmap(start, len, prot, flags, fd, offset) ? ERROR : OKAY;
+  ret = mmap(start, len, prot, flags, fd, offset);
+  return MAP_FAILED == ret ? ERROR : OKAY;
 #endif
 }
 
@@ -225,12 +227,15 @@ int loaddata(char const *filename) {
   }
   {
     long pos = ftell(f);
+    /* now we must stop using static memory and the heap! */
     pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
     if (ERROR == extend_memory(newbreak)) return ERROR;
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
-	if (installed_one)
-	  fatal("loaddata: failed to map memory completely\n");
+	if (installed_one) {
+	  warning("loaddata: failed to map memory completely\n");
+	  _exit(1);
+	}
 	else {
 	  warning("loaddata: failed to map any memory\n");
 	  fclose(f);

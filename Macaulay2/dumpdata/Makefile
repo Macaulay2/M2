@@ -14,7 +14,8 @@ TAGS:; etags *.h *.c
 clean:; rm -f *.o check core check-data *.a libdump.a
 wc:; wc -l *.c *.h
 all2: check
-libdump.a : libdump.a(file.o warning.o map.o dumpdata.o)
+close.o write.o mmap.o: /usr/lib/libc.a; $(AR) x $< $@	
+libdump.a: libdump.a(file.o warning.o map.o dumpdata.o mmap.o write.o close.o)
 	ranlib libdump.a
 tests2: check
 	check dump "hi there"
