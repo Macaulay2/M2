@@ -237,7 +237,7 @@ UndocumentableValue := hashTable { symbol environment => true, symbol commandLin
 documentableValue := key -> (
      class key === Symbol and value key =!= key
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
-scan(pairs first globalDictionaryList(), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
+scan(pairs first dictionaries(), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
 fixup := method(SingleArgumentDispatch => true)
 fixup Nothing    := z -> z				    -- null
@@ -705,7 +705,7 @@ op := s -> if operatorSet#?s then (
 	  }
      )
 
-optionFor := s -> unique select( value \ values first globalDictionaryList(), f -> class f === Function and (options f)#?s)
+optionFor := s -> unique select( value \ values first dictionaries(), f -> class f === Function and (options f)#?s)
 
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
@@ -728,7 +728,7 @@ documentation Symbol := s -> (
      )
 
 documentation Type := X -> (
-     syms := values first globalDictionaryList();
+     syms := values first dictionaries();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);

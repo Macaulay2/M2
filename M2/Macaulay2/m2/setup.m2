@@ -54,7 +54,6 @@ endl = new Manipulator from simpleEndl; erase symbol simpleEndl
 
 ---------------------------------
 
-notify := false						    -- can change this for debugging
 if notify then stderr << "--loading setup.m2" << endl
 
 match := X -> 0 < #(matches X)				    -- defined as a method later
@@ -146,10 +145,10 @@ load = (filename) -> (
      )
 
 input = (filename) -> (
-     oldnotify := notify;
+     savenotify := notify;
      notify = false;
      if not tryload(filename,simpleInput) then error ("can't open file ", filename);
-     notify = oldnotify;
+     notify = savenotify;
      )
 erase symbol simpleInput
 
@@ -163,10 +162,12 @@ stderr << "--loaded loads.m2" << endl
 lastSystemSymbol = local newPrivateSymbol
 
 addStartFunction(
-     () -> scan(pairs first globalDictionaryList(), (name,sym) -> if not writableGlobals#?sym then protect sym)
+     () -> scan(pairs first dictionaries(), (name,sym) -> if not writableGlobals#?sym then protect sym)
      )
 
-notify = true
+notify = true						    -- notify after initialization
+
+erase symbol notify					    -- this symbol was made global in startup.m2
 
 addStartFunction(
      () -> (

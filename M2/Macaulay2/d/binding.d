@@ -363,27 +363,13 @@ lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
 
 export globalLookup(word:Word):(null or Symbol) := (
      p := globalDictionaryList;
-     while true do (
-	  d := p.dictionary;
-	  while true do (
-	       when lookup(word,d.symboltable)
-	       is e:Symbol do return(e)
-	       is null do (
-		    if d.outerDictionary == d
-		    then (break;)
-		    else d = d.outerDictionary));
-	  if p == p.next
-	  then (break;)
-	  else p = p.next);
+     while ( when lookup(word,p.dictionary.symboltable) is null do nothing is e:Symbol do return(e) ; p != p.next ) do p = p.next;
      NULL);
 export lookup(w:Word,d:Dictionary):(null or Symbol) := (
-     while true do (
-	  when lookup(w,d.symboltable)
-	  is e:Symbol do return(e)
-	  is null do (
-	       if d == d.outerDictionary
-	       then return(globalLookup(w))
-	       else d = d.outerDictionary)));
+     while (
+	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return(e);
+	  d != d.outerDictionary ) do d = d.outerDictionary;
+     globalLookup(w));
 lookup(token:Token,forcedef:bool):void := (
      n := length(token.word.name);
      if n >= 1 && isdigit(token.word.name.0) 

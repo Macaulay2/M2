@@ -233,7 +233,7 @@ export convert(e:ParseTree):Code := (
 	  then Code(exprCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
 	  then Code(exprCode(parseString(wrd.name), pos))
-	  else if var.protected && !var.valueCouldChange
+	  else if var.protected && !var.transient
 	  then Code(exprCode(frame(var.frameID).values.(var.frameindex), pos))
 	  else Code(variableCode(var,pos)))
      is a:Adjacent do Code(

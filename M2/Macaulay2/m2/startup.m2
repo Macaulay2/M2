@@ -44,6 +44,7 @@ if firstTime then (
      VisibleList.name = "VisibleList";
      ZZ.name = "ZZ";
      erase symbol Error;
+     notify = false;
 
      normalPrompts = () -> (
 	  lastprompt := "";
@@ -160,6 +161,7 @@ usage := arg -> (
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --notify           notify when loading source files during initialization" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
@@ -198,6 +200,7 @@ action := hashTable {
      "-tty" => notyet,
      "-n" => obsolete,
      "--no-prompts" => arg -> noPrompts(),
+     "--notify" => arg -> notify = true,
      "-x" => obsolete,
      "--example-prompts" => arg -> examplePrompts(),
      "-s" => obsolete,
