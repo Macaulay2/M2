@@ -11,7 +11,7 @@ addEndFunction(() -> (
 	  )
      )
 
--- try to wrap long lines intelligently, could be improved:
+-- try to wrap long lines intelligently
 RawMatrix.BeforePrint =
 Matrix.BeforePrint =
 RingElement.BeforePrint =
