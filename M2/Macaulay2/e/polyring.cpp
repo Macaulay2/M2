@@ -1901,22 +1901,41 @@ Nterm * PolynomialRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm
   Nterm *divt = &divhead;
   Nterm *remt = &remhead;
   Nterm *nextterm = new_term();
-  int gval, flast;
+  int gval = 0, flast = 0;
+  int EXP1[nvars];
 
   if (a != 0)
     {
       Nterm *z = a;
       for ( ; z->next != 0; z = z->next);
-      flast = M->primary_degree(z->monom);
+
+      if (degree_monoid()->n_vars() != 0) flast = M->primary_degree(z->monom);
+      else {
+	M->to_expvector(z->monom, EXP1);
+	flast = ntuple::degree(nvars, EXP1);
+      }
+
     }
 
   if (g != 0)
     {
       int gfirst, glast;
       Nterm *z = b;
-      gfirst = M->primary_degree(z->monom);
+
+      if (degree_monoid()->n_vars() != 0) gfirst = M->primary_degree(z->monom);
+      else {
+	M->to_expvector(z->monom, EXP1);
+	gfirst = ntuple::degree(nvars, EXP1);
+      }
+
       for ( ; z->next != 0; z = z->next);
-      glast = M->primary_degree(z->monom);
+
+      if (degree_monoid()->n_vars() != 0) glast = M->primary_degree(z->monom);
+      else {
+	M->to_expvector(z->monom, EXP1);
+	glast = ntuple::degree(nvars, EXP1);
+      }
+
       gval = abs(gfirst-glast);
     }
 
@@ -1924,7 +1943,14 @@ Nterm * PolynomialRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm
   //  buffer o;
   while (t != NULL)
     {
-      int ffirst = M->primary_degree(t->monom);
+      int ffirst;
+      
+      if (degree_monoid()->n_vars() != 0) ffirst = M->primary_degree(t->monom);
+      else {
+	M->to_expvector(t->monom, EXP1);
+	ffirst = ntuple::degree(nvars, EXP1);
+      }
+
       int fval = abs(ffirst-flast);
       if (fval >= gval)
 	{
