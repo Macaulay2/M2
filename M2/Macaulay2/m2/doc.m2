@@ -50,6 +50,14 @@ document { quote Sequence,
      SEEALSO "lists, arrays, and sequences"
      }
 
+document { quote singleton,
+     TT "singleton x", " -- returns a sequence of length one whose single 
+     element is ", TT "x", ".",
+     PARA,
+     EXAMPLE "singleton 3",
+     SEEALSO "Sequence"
+     }
+
 document { quote List,
      TT "List", " -- the class of all lists.",
      PARA,
@@ -324,8 +332,8 @@ document { quote deepSplice,
      SEEALSO "splice"
      }
 
-document { quote seq,
-     TT "seq x", " -- encloses x in a sequence of length 1, even if x is already a 
+document { quote singleton,
+     TT "singleton x", " -- encloses x in a sequence of length 1, even if x is already a 
      sequence.  This is needed because the convention about commas can
      produce only sequences of length 2 and greater, and the convention about 
      empty pairs of parentheses can produce only sequences of length zero.",
@@ -443,9 +451,10 @@ document { quote any,
      }
 
 document { quote describe,
-     TT "describe x", " -- prints the real name of ", TT "x", ", bypassing the
-     feature which causes certian types of things to acquire the names of
-     global variables to which they ar assigned.",
+     TT "describe x", " -- returns a string containing the real
+     name of ", TT "x", ", bypassing the feature which causes certian
+     types of things to acquire the names of global variables to which
+     they are assigned.",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[a,b,c,d];",
@@ -1929,22 +1938,27 @@ document { "Macaulay 2",
      most of the main features are working.  We are eager to help new users
      get started with it.",
      MENU {
+     	  {
+     	       H2 "Preface",
+	       MENU {
+		    TO "how to get this program",
+		    TO "resources required",
+		    TO "reading the documentation",
+		    TO "copyright and license",
+		    TO "acknowledgements",
+		    TO "the authors",
+		    }
+	       },
 	  {
 	       H2 "User's Guide",
 	       "Here are the basic concepts needed to use Macaulay 2 effectively.",
 	       MENU {
-		    TO "acknowledgements",
-		    TO "copyright and license",
-		    TO "how to get this program",
-		    TO "resources required",
-		    TO "reading the documentation",
 		    TO "getting started",
 		    TO "mathematical overview",
+		    TO "general overview",
 		    TO "programming overview",
 		    TO "translating programs from Macaulay",
-		    TO "plans for the future",
-		    TO "the authors",
-		    }
+		    },
 	       },
 	  {
 	       H2 "Mathematical Vignettes",
@@ -2011,30 +2025,6 @@ document { "acknowledgements",
      intellectual debt to David Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
      geometry and the predecessor of this program."
-     }
-
-document { "plans for the future",
-     "We welcome advice and comments from users about possible improvements
-     to Macaulay 2.  Hopefully we have settled upon most of the main points
-     of program design, such as the names of functions already constructed,
-     but new features can still be added.",
-     PARA,
-     "Here are some of the things we plan to work on:",
-     MENU {
-	  "A way to keep global symbols in separate packages from colliding",
-	  "Better control of global and local symbols",
-	  "Improved documentation",
-	  "The ability to trap errors by type",
-	  "Ensure that all routines handle inhomogeneous modules."
-	  },
-     "Here are some known problems.",
-     MENU {
-	  SHIELD ("The ", TO "DegreeLimit", " option doesn't work with ", TO "saturate", "
-	  or ", TO "quotient", ".  This will be fixed soon."),
-	  SHIELD ("There is an upper bound on the size of an exponent in a polynomial, and
-	  overflow can occur silently, producing incorrect results.  The size of
-	  the upper bound is affected by the option ", TO "MonomialSize", ".")
-	  }
      }
 
 document { "copyright and license",
@@ -2539,7 +2529,6 @@ document { "classes",
 	  },
      "For related topics, see one of the following.",
      MENU {
-	  TO "use",
 	  TO "uniform",
 	  TO "Thing",
 	  TO "Nothing",
@@ -2667,7 +2656,7 @@ document { "initialization file",
      program is started.",
      PARA,
      "The file is sought in each of the directories of the ", TO "path", ",
-     and also in the home directory of the user.",
+     and also in the home directory of the user.  At most one file is loaded.",
      SEEALSO "load"
      }
 
@@ -2824,6 +2813,9 @@ document { quote String,
      "For an alternate method of entering strings which does not involve
      any escape sequences, see ", TO "///", ".",
      PARA,
+     "A net is a two-dimensional array of characters, and strings are regarded
+     as a type of net.  See ", TO "Net", ".",
+     PARA,
      "Operations on strings:",
      MENU {
 	  (TO "String # ZZ", " -- getting a character from a string"),
@@ -2835,8 +2827,7 @@ document { quote String,
  	  (TO "characters", " -- extraction of characters"),
  	  (TO "transnet", "   -- convert integers into network order"),
 	  (TO "match", "      -- match patterns")
- 	  },
-     SEEALSO "Net"
+ 	  }
      }
 
 document { "///",
@@ -2860,7 +2851,8 @@ document { quote Net,
      array of characters subdivided horizontally by an imaginary baseline.",
      PARA,
      "Operations on nets also accept strings by interpreting a string as a rectangle
-     of height one with the baseline just below it.",
+     of height one with the baseline just below it.  In fact, the parent of
+     ", TO "String", " is ", TT "net", ".",
      PARA,
      "Multiple nets per line can be sent to an output file with ", TO "<<", "
      but care must be taken to use ", TO "endl", " to end lines, for nets with
@@ -3169,7 +3161,7 @@ document { "lists, arrays, and sequences",
      EXAMPLE "# t",
      PARA,
      "Sequences of length zero and one cannot be created with commas,
-     so there are special constructions for them.  Use ", TO "seq", " to
+     so there are special constructions for them.  Use ", TO "singleton", " to
      create a sequence of length one, and ", TO "()", " to create a sequence
      of length zero.",
      PARA,
@@ -3178,7 +3170,7 @@ document { "lists, arrays, and sequences",
       	  "# u",
 	  },
      EXAMPLE {
-	  "v = seq 45",
+	  "v = singleton 45",
       	  "# v",
 	  },
      PARA,
@@ -3249,8 +3241,8 @@ document { "lists, arrays, and sequences",
 	  TO (quote :, ZZ, Thing),	  -- was ":"
 	  TO "toList",
 	  TO "newClass",
-	  TO "seq",
-	  TO "sequence"
+	  TO "sequence",
+	  TO "singleton",
 	  },
      "Selecting elements of lists:",
      MENU {
@@ -3804,7 +3796,7 @@ document { quote sequence,
       	  "sequence (4,5)",
 	  },
      PARA,
-     "See also ", TO "seq", " and ", TO "lists, arrays, and sequences", "."
+     "See also ", TO "singleton", " and ", TO "lists, arrays, and sequences", "."
      }
 
 document { quote xor,
@@ -4629,9 +4621,6 @@ document { quote symbol,
      SEEALSO "globalAssignFunction"
      }
 
-document { "programming overview",
-     }
-
 document { quote Entity,
      TT "Entity", " -- the class of all entities, special typsettable objects which have
      different realizations in various typesetting systems.",
@@ -4651,8 +4640,9 @@ document { quote netRows,
      PARA,
      EXAMPLE {
 	  "R = ZZ[x,y];",
-	  "net (x+y)^3",
-	  "peek2(oo,2)",
+	  "n = net (x+y)^3",
+	  "peek2(n,2)",
+	  "netRows n"
 	  }
      }
 

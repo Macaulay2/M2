@@ -11,8 +11,8 @@ document { quote toString,
 
 net Option := z -> net expression z
 
-Net | Net := Net | String := String | Net := horizontalJoin
-String || String := Net || Net := Net || String := String || Net := verticalJoin
+Net | Net := horizontalJoin
+Net || Net := verticalJoin
 String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
 Net ^ ZZ := raise; erase quote raise
 
@@ -34,7 +34,7 @@ comma := ", "
 
 net Sequence := x -> horizontalJoin deepSplice (
      if #x === 0 then "()"
-     else if #x === 1 then ("seq ", net x#0)
+     else if #x === 1 then ("singleton ", net x#0)
      else ("(", toSequence between(comma,apply(x,net)), ")"))
 
 net List := x -> horizontalJoin deepSplice (
@@ -68,3 +68,12 @@ net MutableHashTable := x -> (
      then string x.name
      else horizontalJoin ( net class x, "{...}" )
      )
+
+tex Net := n -> concatenate(
+     ///\vtop{///,
+	  newline,
+	  apply(netRows n, x -> (///\hbox{///, tex TT x, ///}///, newline)),
+	  ///}///,
+     newline
+     )
+     

@@ -5,7 +5,7 @@ include $(TOPDIR)/Makeconf
 all :: index.html
 index.html : html.m2 ../cache/Macaulay2.made ../cache/Macaulay2.doc
 	rm -f ./*.html
-	../bin/M2 html.m2 '-eexit(0)'
+	../bin/M2 -q html.m2 '-eexit(0)'
 view :
 	netscape index.html &
 clean :

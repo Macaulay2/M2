@@ -12,7 +12,7 @@ ifeq "$(OS)" "MS-DOS"
 else
 
 ifdef DUMPDATA
-ARGS := -silent \
+ARGS := -q -silent \
 	'-e loaddata "../../cache/Macaulay2-$(ARCH).data"' \
 	-- -x -s ../../m2/eg.m2 -- -x -s ../../m2/eg.m2
 else
@@ -24,7 +24,6 @@ endif
 	 then touch $*.out ; \
 	 else \
 	   echo "run example $* `head -1 $*.m2`"; \
-	   echo "../../bin/Macaulay2 $(ARGS)"; \
 	   sed 1d <$*.m2 >$*.trim; \
 	   ../../bin/Macaulay2 $(ARGS) <$*.trim >$*.tmp \
 		&& \

@@ -1179,7 +1179,7 @@ scan(a:Sequence,f:Expr):Expr := (
 	  framesize := desc.framesize;
 	  if desc.hasClosure then (
 	       -- since the function closure has code inside it somewhere that makes a 
-	       -- a closure, we can t re-use its frame.
+	       -- a closure, we can not re-use its frame.
 	       if desc.restargs then (	  -- x -> ...
 		    foreach arg in a do (
 			 values := new Sequence len framesize do (

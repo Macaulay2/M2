@@ -2,10 +2,10 @@
 
 RingMap = new Type of MutableHashTable
 name RingMap := f -> concatenate(
-     "map(", name target f, ",", name source f, ",", name f.matrix, ")"
+     "map(", name target f, ",", name source f, ",", name first entries f.matrix, ")"
      )
 net RingMap := f -> horizontalJoin(
-     "map(", net target f, ",", net source f, ",", net f.matrix, ")"
+     "map(", net target f, ",", net source f, ",", net first entries f.matrix, ")"
      )
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}

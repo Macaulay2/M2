@@ -79,6 +79,7 @@ TAGS: Makefile
 				../basictests/*.m2 ../emacs/*.m2 \
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
 				../emacs/emacs.hlp \
+				../packages/*.m2 \
 			        ../experiments/*.m2 \
 			        ../slides/*.m2 \
 			        ../slides/lib/*.m2 \
@@ -95,11 +96,11 @@ all :: phase1
 phase1 :: $(DUMPEDGFILES)
 
 ifdef DUMPDATA
-ARGS := -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-erunStartFunctions()' 
+ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-erunStartFunctions()' 
 phase1 :: ../cache/Macaulay2-$(ARCH).data
 ../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) ../bin/Macaulay2
 	rm -f ../cache/Macaulay2-$(ARCH).data
-	../bin/Macaulay2 -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
+	../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
 else
 ARGS := -silent setup.m2
 endif
@@ -115,7 +116,7 @@ $(SCRIPTS) : makeM2.m2
 
 ../cache/Macaulay2.pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	rm -f ../cache/Macaulay2.tmp
-	../bin/Macaulay2 -silent '-ephase=2' setup.m2 '-eexit(0)'
+	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre
 
 backup : CVS/Entries
@@ -136,7 +137,7 @@ all :: ../cache/Macaulay2.doc
 ../cache/Macaulay2.doc : ../cache/Macaulay2.pre $(MADEGFILES)
 	$(MAKE) -k -C ../tmp/Examples -f ../../m2/Makefile.egs
 	rm -f ../cache/Macaulay2.tmp
-	../bin/Macaulay2 -silent '-ephase=4' setup.m2 '-eexit(0)'
+	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.doc
 
 tests: $(SCRIPTS)

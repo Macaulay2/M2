@@ -1271,7 +1271,7 @@ document { quote processArgs,
 
 document { "using methods",
      "The method to be used for computing an expression such as ", TT "-x", " depends 
-     on the type of Algorithm => x.  For example, the method for negating a polynomial
+     on the type of ", TT "x", ".  For example, the method for negating a polynomial
      differs from the method for negating an integer modulo 111.  Each
      method is a function of one variable, and is stored in the class 
      of ", TT "x", " under a key which is referred to as the name of the method.

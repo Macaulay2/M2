@@ -218,7 +218,7 @@ document {
      hypertext form in a special internal format which can be easily
      manipulated or examined.  The function ", TO "html", " can be used to 
      convert it to standard world-wide web format, suitable for use with
-     a world-wide web server such as Mosaic.  The function ", TO "text", "
+     a world-wide web server such as netscape.  The function ", TO "text", "
      can be used to convert it to straight ascii text, suitable for
      viewing on an ascii terminal.",
      PARA,
@@ -327,7 +327,7 @@ document {
      "html x -- convert ", TO "hypertext", " to html format",
      PARA,
      "The return value is a string which is suitable for use in an
-     html file, readable by a wolrd wide web client such as Mosaic.",
+     html file, readable by a world wide web client such as netscape.",
      PARA,
      "The function ", TO "linkFilename", " is used internally by the
      code that generates html files from hypertext.",

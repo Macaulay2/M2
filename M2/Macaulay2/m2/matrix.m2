@@ -81,12 +81,13 @@ document { quote Matrix,
 	  (TO (quote ||, Matrix, Matrix), " -- vertical concatenation"),
 	  (TO (quote ++, Matrix, Matrix), " -- direct sum"),
 	  (TO (quote **,Matrix, Matrix), " -- tensor product of matrices"),
-	  (TO (quote **, Matrix, Module), " -- tensor product, degree shifting"),
+	  (TO (quote **, Matrix, Module), " -- tensor product, e.g., degree shifting"),
 	  (TO (quote **,Matrix,Ring), " -- tensor product, base change"),
 	  TO ":",
 	  TO "adjoint",
 	  TO "adjoint1",
 	  TO "ambient",
+	  (TO "basis", "               -- k-basis of a module in a given degree"),
 	  (TO "borel", " m              -- smallest Borel submodule containing lead
 		monomials of m"),
 	  TO "codim",
@@ -114,7 +115,6 @@ document { quote Matrix,
 	  (TO "homogenize", "          -- homogenize a matrix"),
 	  (TO "jacobian", "            -- Jacobian matrix of a matrix"),
 	  (TO "koszul", "              -- i-th Koszul matrix of a matrix"),
-	  (TO "basis", "               -- k-basis of a module in a given degree"),
           (TO "leadTerm", "            -- lead monomial matrix of the columns of a matrix"),
  	  (TO "minors", "              -- ideal minors of a matrix"),
 	  TO "modulo",
@@ -135,7 +135,7 @@ document { quote Matrix,
  	  (TO "transpose", "           -- transpose a matrix")
 	  },
      PARA,
-     "Operations which produce modules:",
+     "Operations which produce modules from matrices:",
      MENU {
 	  (TO "cokernel", "            -- the cokernel of a map"),
 	  TO "homology",
@@ -150,6 +150,10 @@ document { quote Matrix,
 	  TO "gb",
 	  TO "mingens",
 	  TO "syz"
+	  },
+     "Printing matrices:",
+     MENU {
+	  TO "compactMatrixForm",
 	  }
      }
 
@@ -1388,7 +1392,8 @@ document { quote matrix,
   MENU {
        (TO "Degree", " -- specify the degree of the resulting map."),
        },
-  SEEALSO {"map", "Matrix" }
+  RETURNS "Matrix",
+  SEEALSO {"map"}
   }
 
 document { "making module maps",
@@ -1842,16 +1847,35 @@ AfterPrint Matrix := AfterNoPrint Matrix := f -> (
 
 precedence Matrix := x -> precedence quote x
 
+compactMatrixForm = true
+
+document { quote compactMatrixForm,
+     TT "compactMatrixFormat", " -- a global flag which specifies whether to display
+     matrices in compact form.",
+     PARA,
+     "The default value is ", TT "true", ".  The compact form is the form used by
+     ", ITALIC "Macaulay", ", in which the multiplication and exponentiation operators
+     are suppressed from the notation.",
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "f = random(R^{2},R^2)",
+	  "compactMatrixForm = false;",
+	  "f"
+	  }
+     }
+
 net Matrix := f -> (
      if f == 0 
      then "0"
-     else (
+     else if compactMatrixForm then (
 	  R := ring target f;
 	  m := verticalJoin toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  if degreeLength R > 0 -- and isHomogeneous f
 	  then m = horizontalJoin(verticalJoin(degrees cover target f / name), " ", m);
-	  m))
+	  m)
+     else net expression f				    -- add row labels somehow
+     )
 
 image Matrix := f -> (
      if f.?image then f.image else f.image = subquotient(f,)

@@ -159,6 +159,8 @@ saturate(MonomialIdeal, MonomialIdeal) := (I,J,options) -> (
 
 int := BinaryMonomialIdealOperation ggintersect
 
+intersect(List) := x -> intersect toSequence x
+
 intersect(Sequence) := args -> (
     -- first check that all modules have the same target
     -- and the same base ring

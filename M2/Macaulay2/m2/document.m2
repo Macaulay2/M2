@@ -281,7 +281,8 @@ scan((
 	  quote path,
 	  -- quote writeExamples,
 	  -- quote readExamples,
-	  quote phase
+	  quote phase,
+	  quote compactMatrixForm
 	  ), x -> writableGlobals#x = true)
 
 testFileCounter := 0
@@ -461,6 +462,11 @@ SEEALSO = v -> (
 	       append(#v-2 : ", ", ", and ")
 	       ),
      	  "."))
+
+RETURNS = s -> (
+     "The return value is of type ", TT s, ".  See ", TO s, " for information
+     about how to use such values."
+     )
 
 Nothing << Thing := (x,y) -> null
 

@@ -1,5 +1,6 @@
 -- 	Copyright 1994 by Daniel R. Grayson
 
+flag quote sequence
 
 if class path =!= List then path = { "." }
 
@@ -274,5 +275,3 @@ addStartFunction(
      )
 
 notify = true
-
-

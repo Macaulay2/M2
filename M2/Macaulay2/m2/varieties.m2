@@ -399,3 +399,9 @@ TEST ///
      assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
      print new MatrixExpression from result
      ///
+
+dim AffineVariety := X -> dim ring X
+dim ProjectiveVariety := X -> dim ring X - 1
+AffineVariety * AffineVariety := (X,Y) -> Spec(ring X ** ring Y)
+AffineVariety ** Ring := (X,R) -> Spec(ring X ** R)
+ProjectiveVariety ** Ring := (X,R) -> Proj(ring X ** R)

@@ -606,7 +606,9 @@ int spincount = 10000;		/* this one is decremented during loops */
 
 void spincursor(){
      /*spincount = SPINCOUNT;*/
+#ifdef __MWERKS__
      SpinCursor();
+#endif
      }
 
 void system_setspinspan(int n){

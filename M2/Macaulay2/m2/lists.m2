@@ -1,5 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+singleton = x -> toSequence {x}
+
 List _ ZZ     := (x,i) -> x#i
 ggPush List  := v -> (ggINTARRAY, gg v)
 List | List  := join
