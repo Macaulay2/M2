@@ -115,7 +115,7 @@ esac
 
 PROFILE=no
 AC_SUBST(PROFILE)
-AC_ARG_ENABLE(profile,[  --enable-profile        enable profiling],PROFILE="$enableval")
+AC_ARG_ENABLE(profile,[  --enable-profile        enable profiling (and disable stripping)],PROFILE="$enableval")
 
 DEBUG=no
 AC_SUBST(DEBUG)

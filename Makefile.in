@@ -47,7 +47,6 @@ clean::; rm -f config.cache
 clean::; rm -f core
 clean::; rm -f Makefile-configure.overrides config.log config.status configure
 distclean:: clean
-rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
 ################################# configure
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.h.in
 ################################ SETUP
@@ -133,10 +132,12 @@ GMP : 	gmp include/gmp.h $(GMPlibs)
 lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
 gmp/gmp.lib : make-gmp
 else
-GMPFLAGS := -g -O2
 GMPlibs := gmp/.libs/libgmp.a
 GMP : 	gmp include/gmp.h $(GMPlibs)
 GMPFLAGS := -g -O2
+ifeq "$(PROFILE)" "yes"
+GMPFLAGS := $(GMPFLAGS) -pg
+endif
 gmp/.libs/libgmp.a : make-gmp
 endif
 endif
@@ -146,7 +147,7 @@ include/gmp.h: gmp/gmp.h ; cp $< $@
 make-gmp :: GMPconfigure
 make-gmp ::
 	@echo we wanted to use: CFLAGS="$(GMPFLAGS)"
-	$(MAKE) -C gmp
+	$(MAKE) -C gmp AM_CFLAGS="$(GMPFLAGS)"
 
 ifeq "$(CC)" "cl"
 GMPconfigure : gmp/Makefile
@@ -337,13 +338,14 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/m2/*.m2 \
 		Macaulay2/m2/Makefile \
 		Macaulay2/emacs \
-		Macaulay2/tutorial/final/*.out
+		$(patsubst %.m2,%.out,$(wildcard Macaulay2/tutorial/final/*.m2))
+
 ifeq "$(SHARED)" "yes"
 DISTFILES += Macaulay2/lib
 endif
 distributions :; mkdir $@
 clean ::; rm -rf distributions
-distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores distributions
+distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) distributions
 	tar cf - $(DISTFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
@@ -356,11 +358,7 @@ distributions/Macaulay2-$(DESC).zip : Makefile $(DISTFILES) distributions
 install clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
-	M2.dsw WindowsDistribution.dsp root.dsp \
-	Macaulay2/Macaulay2.dsp Macaulay2/WindowsFixUps.dsp \
-	Macaulay2/setup.template \
 	Macaulay2/CVS \
-	Macaulay2/Vasconcelos-appendix \
 	Macaulay2/basictests \
 	Macaulay2/book \
 	Macaulay2/c \
@@ -376,23 +374,26 @@ PORTING := CVS \
 	Macaulay2/m2 \
 	Macaulay2/msdos \
 	Macaulay2/packages \
-	Macaulay2/schubert \
 	Macaulay2/test \
 	Macaulay2/tutorial \
 	Macaulay2/util \
 	WindowsNT \
-	bin factory gc gcStatic gmp libfac config
+	bin factory gc gcStatic gmp libfac config include
+portfilenames:
+	Export3 $(PORTING)
 port: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
-distributions/Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile rmcores distributions
+distributions/Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile distributions
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 testport: testport-clean testport-files testport-go testport-clean
 testport-clean:
 	rm -rf tmp/M2
+clean :: testport-clean
 testport-files: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
 	mkdir -p tmp/M2
 	gunzip <$< |tar xf - -C tmp/M2
 testport-go:
-	@echo '## testing poritng source'
+	@echo '## testing porting source'
+	cd tmp/M2; ./configure
 	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
@@ -401,7 +402,7 @@ DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
 DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
 DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
 
-distributions/Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores distributions
+distributions/Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) distributions
 	tar cf - $(DOCFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"
