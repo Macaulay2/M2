@@ -71,9 +71,7 @@ document { "if",
      PARA,
      TT "if p then x", " --  computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
-     else the symbol ", TO "null", " is provided.",
-     PARA,
-     SEEALSO {"then", "else"}
+     else ", TO "null", " is provided."
      }
 
 document { "while",
@@ -84,8 +82,7 @@ document { "while",
      "The value of the whole expression is always ", TT "null", ".",
      EXAMPLE {
 	  ///i = 1; while i < 50000 do (<< i << " "; i = 2*i); << endl///
-	  },
-     SEEALSO "do"
+	  }
      }
 
 document { "do",
@@ -157,7 +154,7 @@ document { openInOut,
      TT "openInOut \"fff\"", "  -- opens an input output file whose 
      filename is ", TT "fff", ".",
      BR,NOINDENT,
-     TT "openInOut \"!cmd\"", " -- opens an input file which corresponds to a pipe 
+     TT "openInOut \"!cmd\"", " -- opens an input output file which corresponds to a pipe 
      receiving the output from the shell command ", TT "cmd", ".",
      BR,NOINDENT,
      TT "openInOut \"$hostname:service\"", " -- opens an input output file
@@ -205,18 +202,21 @@ document { protect,
      }
 
 document { isInputFile,
+     HEADLINE "whether a file is open for input",
      TT "isInputFile f", " -- whether ", TT "f", " is an input file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
 document { isOutputFile,
+     HEADLINE "whether a file is open for output",
      TT "isOutputFile f", " -- whether ", TT "f", " is an output file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
 document { isOpenFile,
+     HEADLINE "whether a file is open",
      TT "isOpenFile f", " -- whether ", TT "f", " is an open file.",
      PARA,
      "An open file is either an input file, an output file, an
@@ -226,6 +226,7 @@ document { isOpenFile,
      }
 
 document { isListener,
+     HEADLINE "whether a file is open for listening",
      TT "isListener f", " -- whether ", TT "f", " is a listener.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
@@ -273,7 +274,7 @@ document { (symbol <<, Thing),
      SEEALSO {"<<"}
      }
 
-document { ">>",
+document { symbol ">>",
      TT "i >> j", " -- shifts the bits in the integer i rightward j places."
      }
 
@@ -302,7 +303,7 @@ document { getc,
      "Bug: the name is cryptic and should be changed."
      }
 
-document { "<",
+document { symbol "<",
      HEADLINE "less than",
      TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
@@ -310,7 +311,7 @@ document { "<",
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { "<=",
+document { symbol "<=",
      HEADLINE "less than or equal",
      TT "x <= y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
@@ -318,7 +319,7 @@ document { "<=",
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { ">",
+document { symbol ">",
      HEADLINE "greater than",
      TT "x > y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
@@ -326,7 +327,7 @@ document { ">",
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { ">=",
+document { symbol ">=",
      HEADLINE "greater than or equal",
      TT "x >= y", " -- yields ", 
      TO "true", " or ", 
@@ -376,7 +377,7 @@ document { ";",
 	  }
      }
 
-document { "<-",
+document { symbol "<-",
      HEADLINE "assignment",
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
@@ -611,7 +612,7 @@ document { currentDirectory, HEADLINE "current working directory",
      TT "currentDirectory()", " -- returns the name of the current directory."
      }
 
-document { "~" }
+document { symbol "~" }
 
 document { copy,
      TT "copy x", " -- yields a copy of x.",
@@ -683,6 +684,7 @@ document { combine,
      }
 
 document { ancestor,
+     HEADLINE "whether one type is an ancestor of another",
      TT "ancestor(x,y)", " -- tells whether y is an ancestor of x.",
      PARA,
      "The ancestors of x are x, parent x, parent parent x, and so on.",
@@ -847,7 +849,7 @@ document { setSpin,
      "The value returned is the previous interval."
      }
 
-document { "=>",
+document { symbol "=>",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
      }

@@ -766,19 +766,21 @@ document { methods,
      EXAMPLE "methods drop"
      }
 
-document { isTable,
-     TT "isTable m", " -- yields the value true if m is a rectangular matrix 
-     represented as a list of lists, otherwise yields the value false.",
+document { isTable, HEADLINE "whether something is a rectangular list of lists",
      PARA,
-     "Warning: notice that it is not possible to represent a 0-by-k matrix 
-     as a list of lists."
+     "Warning: it is not possible to represent a 0-by-k matrix 
+     as a list of lists.",
+     EXAMPLE {
+	  "isTable {{1,2,3},{4,5}}",
+	  "isTable {{1,2,3},{4,5,6}}",
+	  }
      }
 
-document { Monoid,
-     TT "Monoid", " -- denotes the class of all monoids.",
-     PARA,
+document { Monoid, HEADLINE "the class of all monoids",
      "A monoid is a set with a multiplicative operation on
-     it and an identity element."
+     it and an identity element.  A typical monoid is the set
+     of monomials in a polynomial ring, which we consider to be
+     created before the polynomial ring is created."
      }
 
 document { (symbol _, ZZ, Monoid),

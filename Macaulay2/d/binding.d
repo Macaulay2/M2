@@ -275,6 +275,7 @@ bump();
      export PercentS := makeProtectedSymbolClosure(binaryleft("%"));
      export SlashSlashS := makeProtectedSymbolClosure(binaryleft("//"));
 bump();
+     export SharpSharpS := makeProtectedSymbolClosure(binaryright("##"));
      export AtS := makeProtectedSymbolClosure(binaryright("@"));
 bump();
      export AdjacentS:=makeProtectedSymbolClosure(binaryright(" "));

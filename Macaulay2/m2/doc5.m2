@@ -391,32 +391,10 @@ document { (symbol -, Set, Set),
      SEEALSO {"Set", "-"}
      }
 
-document { (isSubset,Set,Set),
-     TT "isSubset(X,Y)", " -- tells whether X is a subset of Y.",
-     PARA,
-     SEEALSO "isSubset"
-     }
-document { isSubset,
-     TT "isSubset(x,y)", " -- whether ", TT "x", " is a subset of ", TT "y", ".",
-     PARA,
-     MENU {
-	  TO (isSubset,Set,Set)
-	  }
-     }
-
-document { (symbol ++, Set, Set),
-     TT "x ++ y", " -- the disjoint union of two sets.",
-     PARA,
-     EXAMPLE "set {a,b,c} ++ set {b,c,d}",
-     SEEALSO {"Set", "++"}
-     }
-
-document { (symbol *, Set, Set),
-     TT "x * y", " -- the intersection of two sets.",
-     PARA,
-     EXAMPLE "set {1,2,3} * set {2,3,4}",
-     SEEALSO {"Set", "*"}
-     }
+document { (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
+document { isSubset, HEADLINE "whether something is a subset of another" }
+document { (symbol ++, Set, Set), HEADLINE "disjoint union of sets", EXAMPLE "set {a,b,c} ++ set {b,c,d}" }
+document { (symbol *, Set, Set), HEADLINE "intersection of sets", EXAMPLE "set {1,2,3} * set {2,3,4}" }
 
 TEST "
 x = set {1,2,3}

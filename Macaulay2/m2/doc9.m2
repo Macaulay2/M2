@@ -190,11 +190,7 @@ document { intersect,
      submodules of the same free module, or of monomial ideals."
      }
 
-document { isBorel,
-     TT "isBorel I", " -- determine whether a ", TO "MonomialIdeal", " I
-     is fixed by the action of the Borel subgroup of upper triangular
-     matrices acting on the variables."
-     }
+document { isBorel, HEADLINE "whether an ideal is fixed by upper triangular changes of coordinates" }
 
 document { minprimes,
      TT "minprimes I", " -- compute the minimal primes of a monomial ideal I.",

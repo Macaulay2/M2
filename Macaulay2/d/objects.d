@@ -300,6 +300,20 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
      x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
      value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
+export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+     if !x.mutable then return(errorExpr("attempted to modify an immutable hash table"));
+     hmod := int(h & (length(x.table)-1));
+     p := x.table.hmod;
+     while p != bucketEnd do (
+	  if p.key == key || equal(p.key,key)==True 
+	  then (
+	       p.value = value; 
+	       return(value));
+	  p = p.next);
+     errorExpr("encountered an unknown key or option"));
+export storeInHashTableMustClobber(x:HashTable,key:Expr,value:Expr):Expr := (
+     storeInHashTableMustClobber(x,key,hash(key),value)
+     );
 export assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      when i
      is var:variableCode do (

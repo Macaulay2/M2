@@ -350,7 +350,7 @@ document { same,
      The comparison is done with ", TO "==", "."
      }
 
-document { member,
+document { member, HEADLINE "whether something is a member",
      TT "member(e,x)", " -- whether ", TT "e", " is an element of the list, set, or 
      sequence ", TT "x", ".",
      PARA,

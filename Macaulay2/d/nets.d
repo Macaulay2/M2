@@ -129,10 +129,10 @@ export VerticalJoin(v:array(Net)):Net := (
 	       )));
 
 export (x:Net) === (y:Net) : bool := (
-     if x.height != y.height || x.width != y.width then return(false);
-     foreach s at i in x.body do (
-	  if !(s === y.body.i) then return(false);
-	  );
+     if x.height != y.height
+     || x.width != y.width
+     || length(x.body) != length(y.body) then return(false);
+     foreach s at i in x.body do if !(s === y.body.i) then return(false);
      true);
 
 export NetList := {

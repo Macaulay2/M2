@@ -256,6 +256,7 @@ document { (inducedMap => Verify),
 
 
 document { inducesWellDefinedMap,
+     HEADLINE "whether a map is well defined",
      TT "inducesWellDefinedMap(M,N,f)", " -- tells whether the matrix ", TT "f", " would
      induce a well defined map from ", TT "N", " to ", TT "M", ".",
      SEEALSO "inducedMap"
@@ -590,7 +591,7 @@ ZZ[t]
 assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
 "
 
-document { "compactMatrixForm",
+document { symbol "compactMatrixForm",
      HEADLINE "global flag for compact printing",
      TT "compactMatrixForm", " -- a global flag which specifies whether to display
      matrices in compact form.",
@@ -654,7 +655,7 @@ document { ideal,
 	  },
      }
 
-document { "ker",
+document { symbol "ker",
      "See ", TO "kernel", "."
      }
 
@@ -805,17 +806,8 @@ time D = resolution cokernel leadTerm generators G
 -- betti D
 "
 
-document { isInjective,
-     TT "isInjective f", " -- tells whether the ring map or module
-     map f is injective.",
-     SEEALSO "isSurjective"
-     }
-
-document { isSurjective,
-     TT "isSurjective f", " -- tells whether the map f of modules is
-     surjective",
-     SEEALSO "isInjective"
-     }
+document { isInjective, HEADLINE "whether a map is injective", SEEALSO "isSurjective" }
+document { isSurjective, HEADLINE "whether a map is surjective", SEEALSO "isInjective" }
 
 TEST "
 R = ZZ/101[a]
@@ -834,14 +826,8 @@ document { content,
      }
 
 document { QuotientRing, HEADLINE "the class of all quotient rings" }
-document { isQuotientOf,
-     TT "isQuotientOf(S,R)", " -- tells whether S is a quotient ring of R."
-     }
-
-document { isQuotientRing,
-     TT "isQuotientRing R", " -- tells whether R is provided as a quotient
-     ring."
-     }
+document { isQuotientOf, HEADLINE "whether A is a quotient of B" }
+document { isQuotientRing, HEADLINE "whether something is a quotient ring" }
 
 TEST "
 assert( ZZ/2 === ZZ/(4,6) )
