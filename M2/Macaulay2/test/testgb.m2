@@ -163,3 +163,6 @@ sortcols = (m) -> m_(sortColumns m)
 --           (E == cokernel map(B^{3,3}, , 
 --                   {{0, y, -z, t^2, 0, x}, {z, 0, y, 0, x, t^2}})))
 
+-- Local Variables:
+-- compile-command: "make testgb.okay"
+-- End:

@@ -50,3 +50,6 @@ assert(
      so matrix g - so h3^{1,0} == 0 
      )
 
+-- Local Variables:
+-- compile-command: "make extmap.okay"
+-- End:

@@ -83,3 +83,6 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
      )
 decompose I
 assert ( 25 == # decompose I )
+-- Local Variables:
+-- compile-command: "make decompose.okay"
+-- End:

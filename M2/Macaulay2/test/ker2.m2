@@ -11,3 +11,6 @@ A = R/j2
 use A
 phi = map(A,S,{x,y,s,t})
 ker phi
+-- Local Variables:
+-- compile-command: "make ker2.okay"
+-- End:

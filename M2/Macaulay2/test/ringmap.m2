@@ -10,3 +10,6 @@ f = map(ZZ/5,ZZ)
 assert(class f 4 === ZZ/5)
 assert(f 4 == -1)
 kernel f
+-- Local Variables:
+-- compile-command: "make ringmap.okay"
+-- End:

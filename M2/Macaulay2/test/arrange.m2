@@ -7,3 +7,6 @@ S = R/I
 k = coker vars S
 m = product(numgens R, i -> R_i)
 Tor_2(k,k)				  -- this used to crash
+-- Local Variables:
+-- compile-command: "make arrange.okay"
+-- End:

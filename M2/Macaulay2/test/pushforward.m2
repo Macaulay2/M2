@@ -11,3 +11,6 @@ try (
      stderr << "pushForward not implemented yet for inhomogeous maps" << endl;
      )
 
+-- Local Variables:
+-- compile-command: "make pushforward.okay"
+-- End:

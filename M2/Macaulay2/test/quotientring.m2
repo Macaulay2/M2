@@ -8,3 +8,6 @@ f-g
 assert( f-g == 0 )
 f==g
 assert( f == g )
+-- Local Variables:
+-- compile-command: "make quotientring.okay"
+-- End:

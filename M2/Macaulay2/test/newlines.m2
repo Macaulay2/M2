@@ -24,3 +24,6 @@ a/// )
 assert ( "a\n\na" === "a
 
 a" )
+-- Local Variables:
+-- compile-command: "make newlines.okay"
+-- End:

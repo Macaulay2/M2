@@ -9,3 +9,6 @@ betti m
 S = ZZ[x,Degrees => {-3} ]
 T = ZZ[x,Degrees => {3} ]
 assert( betti vars S =!= betti vars T )
+-- Local Variables:
+-- compile-command: "make betti.okay"
+-- End:

@@ -4,3 +4,6 @@ f = matrix{{a*b-c,b^2-d}}
 I = ideal f
 S = R/I
 gb f
+-- Local Variables:
+-- compile-command: "make gb2.okay"
+-- End:

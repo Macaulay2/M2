@@ -61,3 +61,6 @@ o = "docStructure.out" << world << endl
 --      )
 o << close
 << "Documentation structure written to file " << o << endl
+-- Local Variables:
+-- compile-command: "make docStructure.okay"
+-- End:

@@ -110,3 +110,6 @@ unset := sort select (values tab, s ->
 scan(unset, s -> warning(s,"symbol '"|toString s|"' seen only once"))
 
 if haderror then exit 1
+-- Local Variables:
+-- compile-command: "make ZZdoc.okay"
+-- End:

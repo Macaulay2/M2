@@ -77,3 +77,6 @@ assert(mypromote(g,C) == C_0)
 --F = GF(2,5)
 
 
+-- Local Variables:
+-- compile-command: "make testpromote.okay"
+-- End:

@@ -3,3 +3,6 @@ R=kk[x,y,z,SkewCommutative=>true]
 p1=matrix{{x,0}}
 H=res(coker p1, LengthLimit=>2)
 betti H
+-- Local Variables:
+-- compile-command: "make betti2.okay"
+-- End:

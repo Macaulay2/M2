@@ -7,3 +7,6 @@ assert( 2 === min ( 3,2,4 ) )
 assert( -infinity === max {} )
 assert( 4 === max (3,4,2) )
 assert( 4 === max {3,4,2} )
+-- Local Variables:
+-- compile-command: "make C05.okay"
+-- End:

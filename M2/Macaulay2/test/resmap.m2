@@ -8,3 +8,6 @@ D = target g
 assert( g * C.dd == D.dd * g )
 h = Hom(g,R^1)
 assert( h * (source h).dd == (target h).dd * h )
+-- Local Variables:
+-- compile-command: "make resmap.okay"
+-- End:

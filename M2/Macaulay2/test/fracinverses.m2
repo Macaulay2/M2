@@ -1,0 +1,3 @@
+-- Local Variables:
+-- compile-command: "make fracinverses.okay"
+-- End:

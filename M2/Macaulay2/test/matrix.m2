@@ -299,3 +299,6 @@ randomMatrix2 = (F,G) -> (
 -- testMatrix()
 
 
+-- Local Variables:
+-- compile-command: "make matrix.okay"
+-- End:

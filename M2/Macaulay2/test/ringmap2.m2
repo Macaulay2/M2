@@ -77,3 +77,6 @@ time assert(m == F7inv m7)
                 -- 11/13/97:  1.01 seconds
 		-- 11/14/97:   .75 seconds
 ------------------------------------------------------
+-- Local Variables:
+-- compile-command: "make ringmap2.okay"
+-- End:

@@ -49,3 +49,6 @@ alternategb = (m) -> (
 time alternategb M
 
 
+-- Local Variables:
+-- compile-command: "make resskew.okay"
+-- End:

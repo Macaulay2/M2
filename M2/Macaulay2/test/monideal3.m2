@@ -5,3 +5,6 @@ J' = ideal matrix entries gens I
 mingens J
 mingens J'
 assert ( mingens J == mingens J' )
+-- Local Variables:
+-- compile-command: "make monideal3.okay"
+-- End:

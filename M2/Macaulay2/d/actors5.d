@@ -620,6 +620,9 @@ setup(BarS,barfun);
 SlashHatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,SlashHatS);
 setup(SlashHatS,SlashHatfun);
 
+PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
+setup(PowerStarStarS,PowerStarStarfun);
+
 colonfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,ColonS);
 setup(ColonS,colonfun);
 

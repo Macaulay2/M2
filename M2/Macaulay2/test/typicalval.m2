@@ -5,4 +5,6 @@ if #a > 0 then (
      assert(#a == 0)
      )
 
-     
+     -- Local Variables:
+-- compile-command: "make typicalval.okay"
+-- End:

@@ -15,3 +15,6 @@ image M1 == image M2   -- since M1 fails above, this should fail, but
 gens gb M2 -- is zero right now...
 leadTerm M
 M
+-- Local Variables:
+-- compile-command: "make schorder.okay"
+-- End:

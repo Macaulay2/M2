@@ -21,3 +21,6 @@ assert(numerator (f/g) == x)
 
 -- we should have canonical forms for fractions
 assert(numerator((-f)/(-g)) == numerator(f/g))
+-- Local Variables:
+-- compile-command: "make frac.okay"
+-- End:

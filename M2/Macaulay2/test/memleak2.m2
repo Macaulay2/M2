@@ -32,3 +32,6 @@ engineHeap
 engineMemory
 assert ( K < k + n - 10 )
 assert ( K'< k'+ n - 10 )
+-- Local Variables:
+-- compile-command: "make memleak2.okay"
+-- End:

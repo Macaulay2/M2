@@ -197,3 +197,6 @@ checkremquot(x^2,y^2+2*z^2)
 
 -- NOT CONSIDERED YET (11/13/00 MES)
 -- rings of the form A[x,y,z].
+-- Local Variables:
+-- compile-command: "make engine-div.okay"
+-- End:

@@ -72,3 +72,6 @@ y(1234567, 2^63)
 y(123, 2^15)
 y(123, 2^31)
 y(123, 2^63)
+-- Local Variables:
+-- compile-command: "make integer.okay"
+-- End:

@@ -1,0 +1,3 @@
+-- Local Variables:
+-- compile-command: "make lucho.okay"
+-- End:
