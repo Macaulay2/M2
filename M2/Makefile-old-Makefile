@@ -59,6 +59,8 @@ portfloppy:
 		tgz/MP-$(MPVERSION).tar.gz \
 		-C Macaulay2 tgz/Macaulay2-$(VERSION)-src-dev.tgz
 
+clean::; rm -f config.cache
+
 ################################ GC
 GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
 # GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
@@ -92,7 +94,7 @@ gmp/libgmp.a : make-gmp
 make-gmp : gmp/config.status
 	$(MAKE) -C gmp
 gmp/config.status: gmp/configure
-	cd gmp; ./configure >/dev/null
+	cd gmp; ./configure --cache-file=../config.cache
 
 ###################### FACTORY
 
@@ -121,7 +123,7 @@ factory/config.status factory/GNUmakefile : factory/GNUmakefile.in
 	cd factory;\
 	GMP_INCLUDE_PATH=../include;\
 	export GMP_INCLUDE_PATH;\
-	./configure --prefix=.. --with-memman --with-optimize
+	./configure --cache-file=../config.cache --prefix=.. --with-memman --with-optimize
 
 FACTORYmade:; $(MAKE) -C factory
 
@@ -134,7 +136,7 @@ lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
 LIBFAC:		libfac \
 		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
 libfac/config.status :
-	cd libfac; ./configure --includedir=../include
+	cd libfac; ./configure --cache-file=../config.cache --includedir=../include
 libfac/libfac.a : always
 	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac libfac
 include/factor.h: libfac/factor.h include/.exists; cp $< $@
@@ -144,7 +146,7 @@ lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 MP:	mp mp/config.status mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
 mp/config.status:
-	cd mp; ./configure --prefix=$(TOPDIR) # --with-debug
+	cd mp; ./configure --cache-file=../config.cache --prefix=$(TOPDIR) # --with-debug
 mp/libMP.a:
 	$(MAKE) -C mp libMP.a
 lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
