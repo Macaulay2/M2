@@ -1,8 +1,8 @@
-file ../libexec/Macaulay2
 #set environment LD_LIBRARY_PATH /home/geometry/dan/src/M2/Macaulay2/lib
 #set environment LOADDATA_IGNORE_CHECKSUMS yes
-dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp
+#dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp
 #handle SIGSEGV nostop pass noprint
+
 
 # this breakpoint is where smashed objects are detected
 # b dbg_mlc.c:530
@@ -13,3 +13,19 @@ dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp
 
 # this breakpoint is where bad handles are detected
 # b x_system.cpp:59
+
+#directory ~/local/share/capybara/packages/libfac/TMP/libfac/
+#directory ~/local/share/capybara/packages/libfac/TMP/libfac/factor/
+#directory ~/local/share/capybara/packages/factory/TMP/factory/
+#directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/
+#directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpn/
+#directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpz/
+#directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpq/
+#directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpf/
+#directory ~/local/share/capybara/packages/gc/TMP/gc6.3alpha2/
+#directory ~/local/share/capybara/packages/gdbm/TMP/gdbm-1.8.3/
+#directory ~/local/share/capybara/packages/readline/TMP/readline-4.3:
+source .gdb-files
+cd ~/src/M2/Macaulay2/test/engine
+run -q --no-loaddata --debug
+#source .gdb-run-it
