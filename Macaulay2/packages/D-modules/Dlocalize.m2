@@ -81,7 +81,7 @@ computeLocalization = (M, f, output, options) -> (
 	toString options.Strategy | " strategy...");
    
    if (options.Strategy == Oaku) then (
-	pInfo(0, "localize: Warning: Oaku's strategy requires 
+	pInfo(1, "localize: Warning: Oaku's strategy requires 
 	     module to be f-saturated");
 	I := ideal relations M;
      	tInfo := toString first timing (AnnI := AnnIFs2 (I,f););
