@@ -61,6 +61,8 @@ public:
 
   virtual Matrix *to_matrix() const;
 
+  virtual MutableMatrix *copy(bool prefer_dense) const;
+
   virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return 0; }
   virtual DenseMutableMatrix * cast_to_DenseMutableMatrix() { return 0; }
   virtual DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() { return 0; }
@@ -75,40 +77,73 @@ public:
   // The following routines return false if one of the row or columns given
   // is out of range.
 
-  virtual bool get_entry(int r, int c, ring_elem &result) const;
+  virtual bool get_entry(int r, int c, ring_elem &result) const = 0;
   // Returns false if (r,c) is out of range.
 
-  virtual bool get_nonzero_entry(int r, int c, ring_elem &result) const;
+  virtual bool get_nonzero_entry(int r, int c, ring_elem &result) const = 0;
   // Returns false if (r,c) entry is either zero or out of range.
   // Otherwise, returns true, and sets result to be the matrix entry at (r,c)
 
-  virtual bool set_entry(int r, int c, const ring_elem a);
+  virtual bool set_entry(int r, int c, const ring_elem a) = 0;
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
-  virtual bool interchange_rows(int i, int j, bool do_recording=true);
+  virtual bool interchange_rows(int i, int j, bool do_recording=true) = 0;
   /* swap rows: row(i) <--> row(j) */
 
-  virtual bool interchange_columns(int i, int j, bool do_recording=true);
+  virtual bool interchange_columns(int i, int j, bool do_recording=true) = 0;
   /* swap columns: column(i) <--> column(j) */
 
-  virtual bool scale_row(ring_elem r, int i, bool opposite_mult, bool do_recording=true);
+  virtual bool scale_row(ring_elem r, int i, bool opposite_mult, bool do_recording=true) = 0;
   /* row(i) <- r * row(i) */
 
-  virtual bool scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording=true);
+  virtual bool scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording=true) = 0;
   /* column(i) <- r * column(i) */
 
-  virtual bool row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true);
+  virtual bool row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true) = 0;
   /* row(i) <- row(i) + r * row(j) */
 
-  virtual bool column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true);
+  virtual bool column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true) = 0;
   /* column(i) <- column(i) + r * column(j) */
 
-  virtual ring_elem dot_product(int i, int j, ring_elem &result) const;
+  virtual ring_elem dot_product(int i, int j, ring_elem &result) const = 0;
 
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
 
+  virtual bool is_zero() const = 0;
+
+  virtual bool is_equal(const MutableMatrix *B) const = 0;
+
+  virtual bool set_values(M2_arrayint rows,
+			  M2_arrayint cols,
+			  RingElement_array *values) = 0;
+
+  virtual MutableMatrixOrNull * add(const MutableMatrix *B) const = 0; 
+  // return this + B.  return NULL of sizes or types do not match.
+  // note: can add a sparse + dense
+  //       can add a matrix over RR and one over CC and/or one over ZZ.
+
+  virtual MutableMatrixOrNull * subtract(const MutableMatrix *B) const = 0; 
+  // return this - B.  return NULL of sizes or types do not match.
+  // note: can subtract a sparse + dense
+  //       can subtract a matrix over RR and one over CC and/or one over ZZ.
+
+  virtual MutableMatrixOrNull * mult(const MutableMatrix *B,
+				     M2_bool opposite_mult) const = 0; 
+  // return this * B.  return NULL of sizes or types do not match.
+  // note: can mult a sparse + dense
+  //       can mult a matrix over RR and one over CC and/or one over ZZ.
+
+  virtual MutableMatrixOrNull * mult(const RingElement *f,
+				     M2_bool opposite_mult) const = 0; 
+  // return f*this.  return NULL of sizes or types do not match.
+
+  virtual MutableMatrix * negate() const = 0;
+
+  virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const = 0;
+
+  virtual MutableMatrix * submatrix(const M2_arrayint cols) const = 0;
 };
 
 class SparseMutableMatrix : public MutableMatrix
