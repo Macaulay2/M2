@@ -38,10 +38,10 @@ CFG=Macaulay2 - Win32 Debug
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Cmd_Line "NMAKE /f Macaulay2.mak"
-# PROP Rebuild_Opt "/a"
-# PROP Target_File "Macaulay2.exe"
-# PROP Bsc_Name "Macaulay2.bsc"
+# PROP Cmd_Line ""
+# PROP Rebuild_Opt ""
+# PROP Target_File "d/Debug/Macaulay2.exe"
+# PROP Bsc_Name ""
 # PROP Target_Dir ""
 
 !ELSEIF  "$(CFG)" == "Macaulay2 - Win32 Debug"
@@ -76,5 +76,9 @@ CFG=Macaulay2 - Win32 Debug
 
 !ENDIF 
 
+# Begin Source File
+
+SOURCE=..\README.WINNT
+# End Source File
 # End Target
 # End Project

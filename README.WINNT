@@ -1,0 +1,20 @@
+The workspace M2.dsw is set up for Microsoft Visual C++ 5.0
+to produce the executable
+
+	Macaulay2/d/Release/Macaulay2.exe
+
+Test it by running it in the directory
+
+	Macaulay2/m2
+
+with the command line argument
+
+	setup.m2
+
+I think it's a bug in Microsoft's development environment that the information
+above is save in the file M2.opt instead of in Macaulay2/Macaulay2.dsp, sigh.
+
+The active project for the build is "Macaulay2".
+
+The optimized version produced by the Release configuration is much faster than
+the Debug configuration!
