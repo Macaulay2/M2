@@ -446,7 +446,7 @@ diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 
-contract(Matrix, Matrix) := Matrix => BinaryMatrixOperation ggcontract
+contract (Matrix, Matrix) := Matrix => BinaryMatrixOperation ggcontract
 contract(RingElement, RingElement) := RingElement => (f,g) -> (
      (contract(matrix{{f}},matrix{{g}}))#(0,0)
      )
@@ -457,6 +457,10 @@ contract(RingElement, Vector) := (f,v) -> contract(matrix{{f}},transpose matrix{
 contract(Vector, Vector) := (v,w) -> contract(matrix{v}, transpose matrix{w})
 contract(Matrix, Vector) := (m,w) -> contract(m,transpose matrix {w})
 contract(Vector, Matrix) := (v,m) -> contract(matrix {v}, m)
+
+contract'(Matrix, Matrix) := Matrix => (m,n) -> (
+     flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n)
+     )
 
 jacobian = method()
 jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)

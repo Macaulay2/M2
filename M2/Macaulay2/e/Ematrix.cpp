@@ -467,12 +467,13 @@ EMatrix *EMatrix::reduceByGB(const EGroebnerComputation *gb, EMatrix * &result_l
 EMatrix *EMatrix::flip(const EFreeModule *F, const EFreeModule *G)
 {
   const EFreeModule *H = F->tensor(G);
+  const EFreeModule *K = G->tensor(F);
   EVector *newcols = allocate_columns(H->rank());
   int next = 0;
   for (int g=0; g<G->rank(); g++)
     for (int f=0; f<F->rank(); f++)
       newcols[next++] = H->basisElement(f * G->rank() + g);
-  return make(H,H,newcols,EMatrix_both);
+  return make(K,H,newcols,EMatrix_both);
 }
 
 EMatrix *EMatrix::reshape(const EFreeModule *F, const EFreeModule *G) const

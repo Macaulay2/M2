@@ -47,7 +47,7 @@ AssociativeNoOptions := () -> (
      ;
      methodFunction)
 
-SingleArgWithOptions := () -> (
+SingleArgWithOptions := opts -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts ==> 
      options -> arg -> (
@@ -114,7 +114,7 @@ setup((), {
 	  borel, codim, 
 	  lcmDegree, gcdDegree, prune, euler, genera, gcdCoefficients,
 	  singularLocus, 
-	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
+	  dim, Hom, diff, contract, contract', exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial,
 	  getchange, poincare, cover, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
