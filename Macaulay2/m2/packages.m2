@@ -253,16 +253,6 @@ closePackage String := title -> (
      stderr << "--package " << pkg << " installed" << endl;
      pkg)
 
-pushDictionary = () -> (
-     d := new Dictionary;
-     globalDictionaries = prepend(d,globalDictionaries);
-     d)
-
-popDictionary = d -> (
-     if d =!= first globalDictionaries then error "expected argument to be current dictionary";
-     globalDictionaries = drop(globalDictionaries,1);
-     d)
-
 package = method ()
 package Dictionary := d -> (
      if currentPackage =!= null and (currentPackage.Dictionary === d or currentPackage#?"private dictionary" and currentPackage#"private dictionary" === d)
