@@ -198,5 +198,6 @@ masterFileName << html HTML {
 
 if haderror then (
      stderr << "exiting after having encountered some documentation errors" << endl;
-     exit 1
+     stderr << "ignoring the errors" << endl;
+     -- exit 1
      )

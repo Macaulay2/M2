@@ -6,7 +6,6 @@ install ::
 doc::
 ################################# prologue
 justM2 all :: initialize config
-doc:: html book ComputationsBook Vasconcelos-appendix
 
 TOPDIR = ..
 include $(TOPDIR)/config.Makefile
@@ -117,18 +116,22 @@ all   ::; if [ -d experiments ]; then $(MAKE) -C experiments all; fi
 clean ::; if [ -d slides ]; then $(MAKE) -k -C slides clean; fi
 tests ::; if [ -d slides ]; then $(MAKE) -k -C slides; fi
 ################################# html
+doc :: html
 html ::; $(MAKE) -C html all
 clean ::; $(MAKE) -C html clean
 ################################# book
+# doc :: book
 book ::;  $(MAKE) -C book all
 clean ::; $(MAKE) -C book clean
 ################################# ComputationsBook
+doc :: ComputationsBook
 ComputationsBook ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook all; fi
 clean ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook clean; fi
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 clean ::; $(MAKE) -C emacs clean
 ################################# appendix to Vasconcelos' book
+doc :: Vasconcelos-appendix
 Vasconcelos-appendix ::; $(MAKE) -C Vasconcelos-appendix all
 clean ::; $(MAKE) -C Vasconcelos-appendix clean
 ################################# socket

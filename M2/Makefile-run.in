@@ -400,9 +400,9 @@ testport-go:
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
 DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
-DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
-DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
-DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
+# DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
+# DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
+# DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
 
 distributions/Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) distributions
 	tar cf - $(DOCFILES) | gzip >$@
@@ -416,7 +416,7 @@ distributions/Macaulay2-$(VERSION)-doc.zip : $(DOCFILES) distributions
 	@echo "-----------------------------------------------------------------------------"
 MACAULAY2.doc:
 	$(MAKE) -C Macaulay2 doc
-doc:: # MACAULAY2
+# doc:: MACAULAY2
 doc:: MACAULAY2.doc 
 doc:: $(DOCTARGET)
 ################################# nondist

@@ -1,4 +1,4 @@
-stderr << currentFile << ": test deferred" << endl
+stderr << currentFileName << ": test deferred" << endl
 exit 0
 
 -- errorDepth 0
