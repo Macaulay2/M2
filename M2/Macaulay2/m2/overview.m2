@@ -1,23 +1,10 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { "Mathematical Overview",
-     "In this section we give a comprehensive overview of the main 
-     mathematical features of Macaulay 2.",
-     PARA,
-     MENU {
-	  TO "rings",
-	  TO "maps between rings",
-	  TO "matrices",
-	  TO "ideals and modules",
-	  TO "chain complexes",
-	  TO "varieties",
-	  TO "computations"
-	  }
-     }
 
+///
 document { "rings",
      Headline => "an overview",
-     "In this section we present an overview of rings.  For details, 
+     "In this section we present an overview of rings.",
      see ", TO "Ring", ".",
      MENU {
 	  TO "basic rings",
@@ -35,6 +22,9 @@ document { "rings",
 	  TO "associative algebras",
 	  }
      }
+///
+
+
 
 document { "basic rings",
      "The following rings are initially present in every session with
@@ -795,7 +785,7 @@ document { "algebraic varieties",
      "For more details about varieties, see ", TO "Variety", "."
      }
 
-document { "matrices",
+document { "matrices--old",
      Headline => "an overview",
      "In this section we present an overview of matrices.
      For details, see ", TO "Matrix", ".",

@@ -48,6 +48,14 @@ promote(ZZ,EngineRing) := RingElement => (i,R) -> (
      new R from {( symbol handle, newHandle (ggPush R, ggINT, gg i, ggfromint) )}
      )
 
+-- MES: added 5/11/2001.  Should we allow silent rounding to occur when
+-- promoting to a ring which is not based on RR?  For example, what if the
+-- base is a field of characteristic p > 0?
+RR _ EngineRing := 
+promote(RR,EngineRing) := RingElement => (i,R) -> (
+     new R from {( symbol handle, newHandle (ggPush R, ggDOUBLE, gg i, ggfromdouble) )}
+     )
+
 -----------------------------------------------------------------------------
 
 ZZZ = new EngineRing of RingElement

@@ -1,21 +1,9 @@
 --load "primdecomp-SY.m2"
 --load "primdecomp-EHV.m2"
 
-isMonomialIdeal = (I) -> false
-monomialIdealPD = (I) -> {}
 binomialCD = (I) -> {}
---EHVprimaryDecomposition = (I,printlevel) -> {}
---SYprimaryDecomposition = (I,printlevel) -> {}
---HprimaryDecomposition = (I,printlevel) -> {}
 
 Hybrid = new SelfInitializingType of BasicList
-
--- This is just used for testing...
-clear = method()
-clear Ideal := (I) -> ideal clear gens I
-clear Matrix := (m) -> matrix entries m
-
-
 
 primaryDecomposition = method(
      Options => {
@@ -39,7 +27,7 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 	  );
      -- Now call the correct algorithm
      if opt === Monomial then (
-	  monomialIdealPD I
+	  primaryDecomposition monomialIdeal I
 	  )
      else if opt === Binomial then (
 	  binomialCD (I,o.PrintLevel)
