@@ -438,7 +438,6 @@ export filbuf(o:file):int := (
 	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
 	  o.inindex = 0;
 	  );
-     o.bol = false;
      n := length(o.inbuffer) - o.insize;
      r := if o.promptq then (
 	  if o.infd == STDIN && o.inisatty
@@ -446,7 +445,7 @@ export filbuf(o:file):int := (
 	       flush(stdout);
 	       readline(o.inbuffer,n,o.insize,o.prompt()))
 	  else (
-	       stdout << o.prompt();
+	       if o.bol then maybeprompt(o);
 	       flush(stdout);
 	       read(o.infd,o.inbuffer,n,o.insize)))
      else read(o.infd,o.inbuffer,n,o.insize);

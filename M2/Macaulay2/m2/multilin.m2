@@ -1,7 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
 koszul(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawKoszul(i, raw m))
-symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m)
+symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
 
 MinorsComputation = new SelfInitializingType of BasicList
 MinorsComputation.synonym = "minors computation"
