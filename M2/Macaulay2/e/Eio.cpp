@@ -274,12 +274,12 @@ void EMonomialOrder::text_out(buffer &o) const
 {
   int j;
   o << "EMonomialOrder[";
+  if (componentloc == nslots)
+    o << "c,";
+
   for (int i=nblocks-1; i>=0; i--)
     {
       mon_order_node *b = order[i];
-      if (b->first_slot == componentloc)
-	  o << "c,";
-	    
       switch (b->typ)
 	{
 	case MO_LEX:
@@ -336,10 +336,10 @@ void EMonomialOrder::text_out(buffer &o) const
 	  o << ")";
 	  break;
 	}
+      if (b->first_slot == componentloc)
+	o << ",c";
       if (i >= 1) o << ",";
     }
-  if (componentloc == nslots)
-    o << ",c";
   o << "]";
 }
 

@@ -231,7 +231,7 @@ int ECommMonoid::compare(const monomial *m, int mcomponent,
   const int *n1 = get_partial_sums(n);
   m1 += nslots;
   n1 += nslots;
-  for (i=nslots-1; i>=componentloc; i++) {
+  for (i=nslots-1; i>=componentloc; i--) {
     cmp = *--m1 - *--n1;
     if (cmp < 0) return LT;
     if (cmp > 0) return GT;
@@ -239,7 +239,7 @@ int ECommMonoid::compare(const monomial *m, int mcomponent,
   cmp = mcomponent - ncomponent;
   if (cmp < 0) return LT;
   if (cmp > 0) return GT;
-  for ( ; i<nslots; i++) {
+  for ( ; i>=0; i--) {
     cmp = *--m1 - *--n1;
     if (cmp < 0) return LT;
     if (cmp > 0) return GT;
@@ -257,7 +257,7 @@ int ECommMonoid::compare(const monomial *a,
   b1 += nslots;
   for (int i=0; i<m; i++)
     {
-      int cmp = *a1-- - *b1--;
+      int cmp = *--a1 - *--b1;
       if (cmp < 0) return LT;
       if (cmp > 0) return GT;
     }

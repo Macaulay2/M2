@@ -472,7 +472,7 @@ void FreeModule::text_out(buffer &o) const
       degree_monoid()->elem_text_out(o, degree(i));
     }
   o << "}";
-//  if (ty == FREE_SCHREYER)
+  if (ty == FREE_SCHREYER)
     for (i=0; i<rk; i++)
       {
 	if (i != 0) o << ' ';
