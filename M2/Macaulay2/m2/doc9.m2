@@ -472,7 +472,6 @@ document {
 
 document {
      Key => isBorel,
-     Headline => "whether an ideal is Borel fixed",
      Headline => "whether an ideal is fixed by upper triangular changes of coordinates"
      }
 
