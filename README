@@ -1,0 +1,98 @@
+				 Macaulay 2
+		by Daniel R. Grayson and Michael E. Stillman
+
+Macaulay 2 preliminary porting instructions and notes
+
+    We use gcc/g++ version 2.7.2 or 2.7.2.1, gnu make version 3.74, and gawk
+3.0; you should install these yourself.  We use various other libraries,
+whose sources are included in this distribution for your convenience,
+although you may prefer to pick up more recent versions of these libraries.
+These libraries have their own copying licenses.  The copying license for
+Macaulay 2 is in ./Macaulay2/licenses/README.
+
+library: Macaulay2
+ author: Daniel R. Grayson <dan@math.uiuc.edu>
+	 Michael E. Stillman <mike@math.cornell.edu>
+ get at: http://www.math.uiuc.edu/Macaulay2
+license: Macaulay2/licenses/README
+
+library: factory
+release: factory-1.2c
+ author: G-M. Greuel <greuel@mathematik.uni-kl.de>
+	 R. Stobbe <stobbe@mathematik.uni-kl.de>
+ get at: 
+license: available soon
+
+library: libfac
+release: libfac-0.2.3
+ author: Michael Messollen <michael@math.uni-sb.de>
+ get at:
+license: libfac/00README
+
+library: gmp
+release: gmp-2.0.2
+ author: Torbjorn Granlund <tege@nada.kth.se>
+bugs to: <bug-gmp@prep.ai.mit.edu>
+ get at: prep.ai.mit.edu:pub/gnu
+license: gmp-2.0/COPYING.LIB
+
+library: gc
+release: gc4.12alpha2
+ author: Hans Boehm <boehm@mti.sgi.com>
+ get at: http://reality.sgi.com/employees/boehm_mti/gc.html
+license: gc/README
+
+library: libc
+release: 5.3.12
+ get at: prep.ai.mit.edu:pub/gnu
+license: Macaulay2/licenses/gnulib.lic
+
+library: libg++
+release:
+ get at: prep.ai.mit.edu:pub/gnu
+license: Macaulay2/licenses/gnulib.lic
+
+To compile Macaulay 2 type 'make' in this directory.  The resulting shell
+script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.
+
+----------------------
+MS-DOS notes
+----------------------
+Install DJGPP v2, available from /ftp@ftp.coast.net:SimTel/vendors/djgpp.
+Install all the applications, too: make, ranlib, gawk, ar, sed, ...
+
+Remember to use utod to convert all the *.m2 files in m2, m2/scriptde, and
+tutorial/final to the msdos newline conventions.  This will ensure that
+embedded strings containing newlines will have the right newline characters
+there.
+
+crt0.s: The source is in djlsr201.zip, and needs to be modified according to
+	the file Macaulay2/msdos/crt0-diffs to support gc.  Do this manually
+	and replace %DJGPP%/lib/crt0.o.
+	The variable _go32_info_block is defined in src/libc/go32/infostrc.c.
+gmp: Use the file make.bat that comes with it to compile it.
+gc: Still needs a bit of work.
+factory: Run 
+		GMP_INCLUDE_PATH=../include
+		export GMP_INCLUDE_PATH
+		configure msdos --prefix=../lib --with-memman --with-optimize
+	under Linux and then move Makefile and conf.h over.
+libfac: The include files factor.h and Factor.h tend to get confused for each
+	other.  One thing to try is to remove -I. from IFLAGS in libfac-0.2/Makefile.
+	
+----------------------
+Linux notes
+----------------------
+You may have to remove the option -lieee from Macaulay2/d/Makefile if the
+library doesn't exist on your system.  It exists in Slackware Linux, at least
+old versions, but not in RedHat Linux.
+
+-----------------------------------------------------------------------------
+
+Macaulay 2 is copyright 1993-1997 by Daniel R. Grayson and Michael
+E. Stillman, all rights reserved.
+
+Daniel R. Grayson 	<dan@math.uiuc.edu>
+Michael E. Stillman	<mike@math.cornell.edu>
+
+-----------------------------------------------------------------------------
