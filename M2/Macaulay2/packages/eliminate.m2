@@ -115,7 +115,7 @@ discriminant, ", TT "discriminant(f,x).",
 TEST ///
 needs "eliminate.m2"
 R = ZZ/101[a..d]
-time I = monomialCurve(R,{1,3,4})
+time I = monomialCurveIdeal(R,{1,3,4})
 time eliminate(I,{b})
 
 R = ZZ[a,b,c,d,e]

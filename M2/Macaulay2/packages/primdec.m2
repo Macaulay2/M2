@@ -108,7 +108,7 @@ flattener = (I, m) -> (
      
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 IS = independentSets I
 F1 = IS#0
 variables F1
@@ -159,7 +159,7 @@ findNonMember = (I,J) -> (
 
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 J = I + ideal(a^5-b^5)
 findNonMember(I,J)
 findNonMember(J,I)
@@ -221,8 +221,8 @@ quotMinold = (I, facs, F) -> (
 --quotMinold = timefun(quotMinold,"quotMinold")
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
-J = monomialCurve(R,{1,2,3})
+I = monomialCurveIdeal(R,{1,3,4})
+J = monomialCurveIdeal(R,{1,2,3})
 L = I^2 * J^3
 fac1 = I_1
 fac2 = J_1
@@ -251,8 +251,8 @@ minSatPPDold = (I, facs) -> (
 --minSatPPDold = timefun(minSatPPDold,"minSatPPDold")
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
-J = monomialCurve(R,{1,2,3})
+I = monomialCurveIdeal(R,{1,3,4})
+J = monomialCurveIdeal(R,{1,2,3})
 L = I^2 * J^3
 fac1 = I_1
 fac2 = J_1
@@ -293,7 +293,7 @@ extract = (I,P) -> (
 
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 L = I^2
 extract(L,I)
 PPD(L,{I})

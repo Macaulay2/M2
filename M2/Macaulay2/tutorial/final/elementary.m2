@@ -62,10 +62,10 @@ J = gens gb I
 
 R = KK[a..d]
 
--- and then using a function {\tt monomialCurve}, which we shall
+-- and then using a function {\tt monomialCurveIdeal}, which we shall
 -- treat for now as a black box
 
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 
 -- From Macaulay's point of view, $I$ is an
 -- ideal, and the codimension of its support

@@ -308,7 +308,7 @@ normalization Ring := (R) -> (
      )
 ///
 S = ZZ/101[a..d]
-I = monomialCurve(S,{1,3,4})
+I = monomialCurveIdeal(S,{1,3,4})
 R = S/I
 normalization R
 peek R.IC

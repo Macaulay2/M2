@@ -1,17 +1,17 @@
 # -*- Mode: Makefile -*-
 
 ## to build:
-##	add overrides to the file Makefile-configure.overrides
-##		example: CONFIGURE_OPTIONS += --disable-dumpdata
-##	make -f Makefile-configure
-##	make
-##      make install
-## or
+## the usual way:
 ##      ./configure --prefix=/usr/local ...
 ##      make 
 ##      make install
+## or
+##	make Makefile.configure
+##	select overrides in the file Makefile.overrides, and add some of your own
+##	make
+##      make install
 
-## to rebuild configure script without using this makefile:
+## to rebuild configure script without using the makefile:
 ##	autoconf
 ##	autoheader
 

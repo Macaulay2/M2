@@ -13,7 +13,7 @@
 -- This is a smooth curve, but is not S2.
 
 RC = Z/32003[a..d]
-IC = monomialCurve({1,3,4},RC)
+IC = monomialCurveIdeal({1,3,4},RC)
 SC = RC/IC
 
 -- Def. Define e(X) to be the degree of non-saturation

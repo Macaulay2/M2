@@ -11,7 +11,7 @@ INSTALL_DATA = $(INSTALL)
 # CFLAGS =
 
 CPPFLAGS += -I../include
-EXES := echoout timestmp restart update 
+EXES := echoout timestmp restart update ../bin/linkexec
 ifeq ($(OS),Linux)
 EXES += screen
 endif
@@ -23,6 +23,7 @@ endif
 all:: $(EXES)
 update.o : restart.h
 clean :; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj)
+../bin/linkexec : linkexec ; cp -a $< $@
 
 ifeq "$(OS)" "Windows-95-98-NT"
 all:: ../setup.exe
