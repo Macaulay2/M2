@@ -156,7 +156,7 @@ AC_SUBST(LAPACK)
 AC_ARG_ENABLE(lapack,
     AC_HELP_STRING(--enable-lapack,use experimental LAPACK interface),
     [ LAPACK="$enableval" ; AC_DEFINE(LAPACK,,whether to use LAPACK) ],
-    LAPACK=no)
+    LAPACK=yes)
 
 AC_SUBST(encapdir)
 AC_ARG_WITH(encapdir,
