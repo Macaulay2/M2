@@ -220,7 +220,7 @@ usage := arg -> (
      << "    --no-backtrace     print no backtrace after error" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
-     << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
+     << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
@@ -252,7 +252,7 @@ loadSetup := () -> (
      )
 
 dump := () -> (
-     if not version#"dumpdata" then error "can't dump data with this version of Macaulay 2";
+     if not version#"dumpdata" then error "not configured for dumping data with this version of Macaulay 2";
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (
 	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "cache/", "Macaulay2-", arch, "-data") else 

@@ -92,7 +92,7 @@ the source code in Macaulay2/d/ to understand what it means.
 
 New system for 3rd party packages: see 'Package'.  Related items:
 'newPackage', 'closePackage', 'installPackage', 'check', 'LAYOUT',
-'loadPackage', 'removePackage', 'packages'.
+'loadPackage', 'removePackage', 'packages', 'needsPackage'.
 
 The internal symbol tables of the interpreters are now available at
 top level as members of the new class 'Dictionary'.  Both local and

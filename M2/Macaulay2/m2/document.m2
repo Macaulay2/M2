@@ -270,6 +270,12 @@ fixup String     := s -> (				       -- remove clumsy newlines within strings
      if not ln#?1 then return s;
      concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
+fixup1 := method(SingleArgumentDispatch => true)
+fixup1 Thing := identity
+fixup1 Nothing := x -> ()
+fixup1 Hypertext := fixup1 SEQ := toSequence
+fixuptop := s -> Hypertext deepSplice apply(toList s, fixup1)
+
 new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
 hypertext = x -> Hypertext fixup x
 
@@ -409,8 +415,8 @@ fixupTable := new HashTable from {
      FileName => identity,
      Headline => identity,
      Description => extractExamples @@ hypertext,
-     Caveat => v -> if v =!= null then fixup SEQ { HEADER2 "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { HEADER2 "See also", UL (TO \ enlist v) },
+     Caveat => v -> if v =!= null then fixup SEQ { HEADER3 "Caveat", SEQ v },
+     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { HEADER3 "See also", UL (TO \ enlist v) },
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
 	       else if class x === TOH then TO x#0
@@ -592,19 +598,19 @@ makeDocBody Thing := key -> (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then PARA {docBody}
-	       else SEQ { HEADER2 "Description", PARA {docBody} })))
+	       else SEQ { HEADER3 "Description", PARA {docBody} })))
 
-title := s -> ( HEADER1 formatDocumentTag s, PARA headline s )
+title := s -> ( HEADER1 formatDocumentTag s, HEADER2 headline s )
 
 type := S -> fixup (
      s := value S;
      PARA { "The object ", TO S, " is ", OFCLASS class s,
      	  if parent s =!= Nothing then (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
-	       SEQ splice {
+	       splice (
 		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
 		    toSequence between(" < ", f / (T -> TO T)) 
-		    }
+		    )
 	       ),
 	  "."
      	  }
@@ -745,7 +751,7 @@ synopsis Thing := key -> (
      out = alter \ out;
      if #inp > 0 or #ino > 0 or #out > 0 then (
 	  fixup SEQ {				  -- to be implemented
-     	       HEADER2 "Synopsis",
+     	       HEADER3 "Synopsis",
 	       UL {
      	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
 		    if fun =!= null then SEQ { "Function: ", TO fun }
@@ -800,7 +806,7 @@ documentation String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then b = ();
-	  Hypertext splice(title key, b, caveat key, seealso key, theMenu key)))
+	  Hypertext fixuptop (title key, b, caveat key, seealso key, theMenu key)))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -849,11 +855,11 @@ seecode := x -> (
      if n =!= null 
      -- and height n + depth n <= 10 
      and width n <= maximumCodeWidth
-     then ( HEADER2 "Code", PRE demark(newline,unstack n) )
+     then ( HEADER3 "Code", PRE demark(newline,unstack n) )
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> splice ( ret f, fmeth f )
+documentationValue(Symbol,Function) := (s,f) -> ( ret f, fmeth f )
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
@@ -882,11 +888,11 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c);	    -- other things
      fn := pkg#"title" | ".m2";
-     splice (
-	  HEADER2 "Version", "This documentation describes version ", pkg.Options.Version, " of the package.",
-	  HEADER2 "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
+     (
+	  HEADER3 "Version", "This documentation describes version ", pkg.Options.Version, " of the package.",
+	  HEADER3 "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
 	  if #pkg#"exported symbols" > 0 then (
-	       HEADER2 "Exports",
+	       HEADER3 "Exports",
 	       UL {
 		    if #b > 0 then SEQ {"Types", smenu b},
 		    if #a > 0 then SEQ {"Functions", smenu a},
@@ -897,9 +903,9 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> f => S);
      b := documentableMethods S;
-     Hypertext splice ( title S, synopsis S, makeDocBody S, op S,
-	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", smenu a},
-	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", smenu b},
+     Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
+	  if #a > 0 then (PARA {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),
+	  if #b > 0 then (PARA {"Methods for ", toExternalString S, " :"}, smenu b),
      	  documentationValue(S,value S),
 	  type S, caveat S, seealso S, theMenu S ))
 
@@ -909,7 +915,7 @@ documentation Sequence := key -> (
 	  opt := key#-1;
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
-	  Hypertext splice ( title key, synopsis key, makeDocBody key, caveat key,
+	  Hypertext fixuptop ( title key, synopsis key, makeDocBody key, caveat key,
 	       PARA BOLD "Further information", 
 	       fixup UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT toString default },
@@ -919,7 +925,7 @@ documentation Sequence := key -> (
 	       seealso key, theMenu key ))
      else (						    -- method key
 	  if null === lookup key then error("expected ", toString key, " to be a method");
-	  Hypertext splice ( title key, synopsis key, makeDocBody key, caveat key, seealso key, theMenu key )))
+	  Hypertext fixuptop ( title key, synopsis key, makeDocBody key, caveat key, seealso key, theMenu key )))
 
 documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
 

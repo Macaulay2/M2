@@ -25,6 +25,7 @@ Macaulay2/util/Makefile
 Makefile
 encap/Makefile
 encap/postinstall
+encap/preremove
 include/config.Makefile
 man/M2-help.1
 man/M2.1

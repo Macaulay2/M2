@@ -2,6 +2,8 @@
 
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
+length File := f -> #f
+
 makeDirectory = method()
 makeDirectory String := name -> (			    -- make the whole path, too
      name = minimizeFilename name;
