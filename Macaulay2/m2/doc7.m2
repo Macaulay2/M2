@@ -1760,7 +1760,7 @@ document { homomorphism,
      "This element should be a matrix ", TT "f : Hom(M,N) <--- R^1", ", where ", TT "Hom(M,N)", " 
      has been previously computed, and ", TT "R", " is the ring of ", TT "M", " and ", TT "N", ".",
      PARA,
-     "When ", TT "A := Hom(M,N)", " is computed, enough information is stored in ", TT "A.Hom", "
+     "When ", TT "A := Hom(M,N)", " is computed, enough information is stored in ", TT "A.cache.Hom", "
      to compute this correspondence.",
      PARA,
      SEEALSO "Hom"

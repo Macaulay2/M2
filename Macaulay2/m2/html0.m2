@@ -15,6 +15,10 @@ MarkUpList.synonym = "mark-up list"
 
      MarkUpType = new Type of Type
 MarkUpType.synonym = "mark-up type"
+
+FormattedMarkUpType = new Type of MarkUpType
+FormattedMarkUpType.synonym = "formatted mark-up type"
+
 EmptyMarkUpType = new Type of MarkUpType
 EmptyMarkUpType.synonym = "empty mark-up type"
      MarkUpType List := (h,y) -> new h from y
@@ -48,12 +52,12 @@ new MarkUpType := theMarkUpType -> new theMarkUpType of MarkUpList
 BR         = new EmptyMarkUpType
 NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
-PARA       = new MarkUpType
+PARA       = new FormattedMarkUpType
 EXAMPLE    = new MarkUpType
 new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
 TABLE      = new MarkUpType
-ExampleTABLE = new MarkUpType
-PRE        = new MarkUpType
+ExampleTABLE = new FormattedMarkUpType
+PRE        = new FormattedMarkUpType
 TITLE      = new MarkUpType
 BASE	   = new MarkUpType
 HEAD       = new MarkUpType

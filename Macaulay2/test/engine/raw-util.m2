@@ -46,6 +46,6 @@ mat = (tab) -> (
      nrows := #tab;
      ncols := #tab#0;
      F := rawFreeModule(R,nrows);
-     result := rawMatrix1(F,ncols,toSequence flatten tab,false);
+     result := rawMatrix1(F,ncols,toSequence flatten tab,false,0);
      result
      )

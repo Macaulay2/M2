@@ -50,12 +50,12 @@ Module ** Module := Module => (M,N) -> (
 		    cokernel getMatrix R))))
 
 Matrix ** Module := Matrix => (f,M) -> (
-     P := youngest(f,M);
-     key := (f,M,symbol **);
-     if P#?key then P#key
-     else f**M = (
+     -- P := youngest(f,M);
+     -- key := (f,M,symbol **);
+     -- if P#?key then P#key else 
+     -- f**M = (
      	  f ** id_M
-	  )
+     --	  )
      )
 Module ** Matrix := Matrix => (M,f) -> (
 --      P := youngest(M,f);
@@ -449,7 +449,7 @@ prune(Matrix) := Matrix => (m) -> (
 
 -----------------------------------------------------------------------------
 
-dual Module := Module => F -> if F.?dual then F.dual else F.dual = (
+dual Module := Module => F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
      if not isFreeModule F then kernel transpose presentation F
      else newModule(ring F,rawDual raw F))
 
@@ -480,16 +480,16 @@ Hom(Module, Module) := Module => (M,N) -> (
      -- Now we store the information that 'homomorphism'
      -- will need to reconstruct the map corresponding to
      -- an element.
-     MN.Hom = {M,N,source mdual,target n};
+     MN.cache.Hom = {M,N,source mdual,target n};
      MN)
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
      if not isFreeModule(source f) or 
         numgens source f =!= 1 or
-        not (target f).?Hom
+        not (target f).cache.?Hom
 	then error "homomorphism may only be determined for maps R --> Hom(M,N)";
-     MN := (target f).Hom;
+     MN := (target f).cache.Hom;
      M := MN#0;
      N := MN#1;
      M0 := MN#2;

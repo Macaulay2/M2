@@ -139,7 +139,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       );
 	  if R.?Adjust then deg = R.Adjust deg;
 	  f := m.RawMatrix * n.RawMatrix;
-	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, false);
+	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, false, 0);
 	  map(M,N,reduce(M,f))))
 
 Matrix ^ ZZ := Matrix => (f,n) -> (
@@ -428,7 +428,7 @@ map(Module,Module) := Matrix => options -> (M,N) -> (
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      R := ring M;
      if r == 0 then new Matrix from {
-     	  symbol RawMatrix => rawZero(raw cover M, raw cover N),
+     	  symbol RawMatrix => rawZero(raw cover M, raw cover N,false,0),
 	  symbol source => N,
 	  symbol target => M,
 	  symbol ring => ring M,
@@ -439,7 +439,7 @@ map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
 
 map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
      if i === 0 then new Matrix from {
-     	  symbol RawMatrix => rawZero(raw cover M, raw cover N),
+     	  symbol RawMatrix => rawZero(raw cover M, raw cover N, false, 0),
 	  symbol source => N,
 	  symbol target => M,
 	  symbol ring => ring M,
@@ -460,7 +460,7 @@ map(Module,RingElement) := Matrix => options -> (M,r) -> (
 map(Module) := Matrix => options -> (M) -> (
      R := ring M;
      if options.Degree =!= null then error "Degree option encountered with identity matrix";
-     map(M, M, reduce(M, rawIdentity(M.RawFreeModule))))
+     map(M, M, reduce(M, rawIdentity(M.RawFreeModule,false,0))))
 
 map(Module,ZZ) := Matrix => options -> (M,i) -> (
      if i === 0 then map(M,M,0)

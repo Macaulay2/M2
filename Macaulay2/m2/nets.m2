@@ -69,21 +69,33 @@ toExternalString String := format
 toString Net := x -> concatenate between("\n",unstack x)
 toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
 
-toExternalString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
-     toExternalString class s,
-     if parent s =!= Nothing then (" of ", toExternalString parent s),
-     "{...", toString(#s), "...}"
+toExternalString MutableHashTable := s -> (
+     if s.?name and class s.name === String then return s.name;
+     r := reverseDictionary s;
+     if r =!= null then return toString r;
+     error "anonymous mutable hash table cannot be converted to external string";
+--     concatenate (
+--	  toExternalString class s,
+--	  if parent s =!= Nothing then (" of ", toExternalString parent s),
+--	  "{...", toString(#s), "...}"
+--	  )
      )
-toExternalString HashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
-     "new ", toExternalString class s,
-     if parent s =!= Nothing then (" of ", toExternalString parent s),
-     " from {",
-     if # s > 0
-     then demark(", ", apply(pairs s, (k,v) -> toExternalString k | " => " | toExternalString v) )
-     else "",
-     "}")
-toExternalString MutableList := s -> concatenate("new ",toExternalString class s, 
-     " from {...", toString(#s), "...}" )
+toExternalString HashTable := s -> (
+     if s.?name and class s.name === String then return s.name;
+     r := reverseDictionary s;
+     if r =!= null then return toString r;
+     concatenate (
+	  "new ", toExternalString class s,
+	  if parent s =!= Nothing then (" of ", toExternalString parent s),
+	  " from {",
+	  if # s > 0
+	  then demark(", ", apply(pairs s, (k,v) -> toExternalString k | " => " | toExternalString v) )
+	  else "",
+	  "}"))
+toExternalString MutableList := s -> (
+     error "anonymous mutable list cannot be converted to external string";
+     -- concatenate("new ",toExternalString class s, " from {...", toString(#s), "...}" )
+     )
 toExternalString BasicList := s -> concatenate(
      (if class s === List then "{" else ("new ", toExternalString class s," from {")),
      between(", ",apply(toList s,toExternalString)),

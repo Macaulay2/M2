@@ -999,10 +999,14 @@ document { combine,
      }
 
 document { ancestor,
-     Headline => "whether one type is an ancestor of another",
-     TT "ancestor(x,y)", " -- tells whether y is an ancestor of x.",
-     PARA,
-     "The ancestors of x are x, parent x, parent parent x, and so on.",
+     Headline => "whether one thing is an ancestor of another",
+     Synopsis => {
+	  "b = ancestor(x,y)",
+	  "x" => null,
+	  "y" => null,
+	  "b" => {" -- tells whether ", TT "y", " is an ancestor of ", TT "x", "."},
+	  },
+     "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on.",
      PARA,
      SEEALSO "classes and types"
      }

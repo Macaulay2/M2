@@ -1,7 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-stderr << "--loading documentation files..." << endl
-
 document { length,
      Headline => "length"
      }
@@ -898,8 +896,7 @@ document { (read,Sequence),
      Synopsis => {
 	  "s = read()",
      	  "()" => null,
-	  "s" => { "a string obtained by reading from the standard input 
-	       file ", TO "stdio", "." }
+	  "s" => { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
 	  }
      }
 

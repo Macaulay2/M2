@@ -224,7 +224,7 @@ assert( F =!= P )
 assert( rank F == 4 )
 assert( rank P == 7 )
 
-f = rawMatrix1(F,2,(x^3,y*z,x,y^2,x^3),false)
+f = rawMatrix1(F,2,(x^3,y*z,x,y^2,x^3),false,0)
 
 show "entries f"
 show "f"
@@ -251,10 +251,10 @@ assert( -f == (-1) * f )
 -- mutable matrix
 
 assert not rawIsMutable f
-h = rawMatrixRemake1 (rawTarget f, f, true)		    -- mutable!
+h = rawMatrixRemake1 (rawTarget f, f, true, 0)		    -- mutable!
 assert rawIsMutable h
 << "h = " << h << endl
-assert( f == rawMatrixRemake2(rawTarget h,rawSource h, rawMultiDegree h, h, false ) )
+assert( f == rawMatrixRemake2(rawTarget h,rawSource h, rawMultiDegree h, h, false, 0) )
 assert( y^2 == rawMatrixEntry(f,1,1) )
 assert( x^3 == rawMatrixEntry(f,2,0) )
 assert( y^2 == rawMatrixEntry(h,1,1) )
@@ -422,5 +422,5 @@ assert(x*x == 0)
 assert(x^2 == 0)
 
 -- Local Variables:
--- compile-command: "M2 --debug-M2 --stop -e 'input \"raw.m2\"' -e 'exit 0' "
+-- compile-command: "M2 -e errorDepth=0 --stop -e 'input \"raw.m2\"' -e 'exit 0' "
 -- End:
