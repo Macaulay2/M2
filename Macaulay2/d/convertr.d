@@ -1,9 +1,10 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -240,7 +241,7 @@ export convert(e:ParseTree):Code := (
 	       treePosition(e)))
      is p:EmptyParentheses do (
 	  if p.left.word == leftparen then Code(exprCode(emptySequenceE,treePosition(e)))
-	  else if p.left.word == leftbrace then Code(exprCode(emptylist,treePosition(e)))
+	  else if p.left.word == leftbrace then Code(exprCode(emptyList,treePosition(e)))
 	  else if p.left.word == leftbracket then Code(exprCode(emptyArray, treePosition(e)))
 	  else dummyCode			  -- should not happen
 	  )
@@ -522,11 +523,13 @@ export WrongArg(desc:string):Expr := buildErrorPacket("expected " + desc);
 export WrongArg(n:int,desc:string):Expr := (
      buildErrorPacket("expected argument " + tostring(n) + " to be " + desc));
 export WrongArgInteger():Expr := WrongArg("an integer");
-export WrongArgString():Expr := WrongArg("a string");
-export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgInteger(n:int):Expr := WrongArg(n,"an integer");
-export WrongArgString(n:int):Expr := WrongArg(n,"a string");
+export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
+export WrongArgString():Expr := WrongArg("a string");
+export WrongArgString(n:int):Expr := WrongArg(n,"a string");
+export WrongArgBoolean():Expr := WrongArg("true or false");
+export WrongArgBoolean(n:int):Expr := WrongArg(n,"true or false");
 export ArgChanged(name:string,n:int):Expr := (
      buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
 	  + " not to change its type during execution"));
@@ -579,6 +582,8 @@ export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,report,nullE)))
      else buildErrorPacket(message));
+use engine;
+
 export eval(c:Code):Expr;
 hadError := false;
 errm := nullE;
