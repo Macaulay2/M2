@@ -42,16 +42,13 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = makeRawTable(R,p);
-     rawM := (cover M).RawFreeModule;
-     p = if # p === 0 then splice {rankN:{}} else transpose p;
-     h := rawMatrix(rawM, 
-	  apply(toSequence p, col -> rawVector(rawM, apply(toSequence col, r -> r.RawRingElement)))
-	  );
+     p = transpose p; -- later we won't transpose
+     h := rawMatrix1(raw cover M, rankN, apply(toSequence flatten p, r -> r.RawRingElement), false);
      newMatrix(M,newModule(R,rawSource h),h))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
-     f := rawMatrix(raw target p, rawMatrixColumns raw p);
+     f := rawMatrixRemake1(raw target p, rawMatrixColumns raw p);
      newMatrix(M, newModule(ring source p, rawSource f), f)
      )
 
@@ -85,7 +82,7 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	       then (degreeLength R : 0)
 	       else degreeCheck(options.Degree, R)
 	       );
-	  newMatrix(M,N,reduce(M,rawMatrix(raw cover M, raw N', deg, raw f)))))
+	  newMatrix(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false)))))
 
 map(Module,Nothing,List) := 
 map(Module,Module,List) := Matrix => 

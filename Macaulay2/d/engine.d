@@ -105,10 +105,12 @@ export (x:RawRingElement) * (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull,
 	  "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(",
 	  "(RingElement *)", x, ",(Matrix *)", y, ")" ));
--- export (x:RawMatrix) * (y:RawRingElement) : RawMatrixOrNull := (
+export (x:RawMatrix) * (y:RawRingElement) : RawMatrixOrNull := RawMatrixOrNull(
+     null()
 --      Ccode(RawMatrixOrNull,
 -- 	  "(engine_RawMatrixOrNull)IM2_Matrix_scalar_right_mult(",
--- 	  "(Matrix *)", x, ",(RingElement *)", y, ")" ));
+-- 	  "(Matrix *)", x, ",(RingElement *)", y, ")" )
+);
 
 export (x:RawMatrix) * (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull,

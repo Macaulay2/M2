@@ -1168,7 +1168,19 @@ rawMatrix2(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrix2",rawMatrix2);
 
-rawMatrixRemake(e:Expr):Expr := (
+rawMatrixRemake1(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is target:RawFreeModule do 
+     when s.1 is M:RawMatrix do
+     when s.2 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_remake1(", "(FreeModule*)", target, ",", "(Matrix*)", M, ",", mutable == True, ")"))
+     else WrongArgBoolean(3)
+     else WrongArg(2,"a raw matrix")
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(3));
+setupfun("rawMatrixRemake1",rawMatrixRemake1);
+
+rawMatrixRemake2(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is target:RawFreeModule do 
@@ -1176,7 +1188,7 @@ rawMatrixRemake(e:Expr):Expr := (
      if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
      when s.3 is M:RawMatrix do
      when s.4 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, 
-	       "(engine_RawMatrixOrNull)IM2_Matrix_remake(",
+	       "(engine_RawMatrixOrNull)IM2_Matrix_remake2(",
 	       "(FreeModule*)", target, ",",
 	       "(FreeModule*)", source, ",",
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2), ",", -- deg
@@ -1187,7 +1199,7 @@ rawMatrixRemake(e:Expr):Expr := (
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw free module")
      else WrongNumArgs(5));
-setupfun("rawMatrixRemake",rawMatrixRemake);
+setupfun("rawMatrixRemake2",rawMatrixRemake2);
 
 rawSparseMatrix1(e:Expr):Expr := (
      when e is s:Sequence do 
@@ -1630,6 +1642,13 @@ setupfun("rawHilbert",rawHilbert);
 -----------------------------------------------------------------------------
 -- monomial ideals
 
+rawMonomialIdealToMatrix(e:Expr):Expr := (
+     when e
+     is I:RawMonomialIdeal do Expr(Ccode(RawMatrix, "(engine_RawMatrix)", "IM2_MonomialIdeal_to_matrix(", "(MonomialIdeal *)", I, ")" ))
+     else WrongArg("a raw monomial ideal")
+     );
+setupfun("rawMonomialIdealToMatrix",rawMonomialIdealToMatrix);
+
 rawMonomialIdeal(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is m:RawMatrix do
@@ -1838,7 +1857,7 @@ rawMatrixRowScale(e:Expr):Expr := (
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(2) else
      when s.2 is r:RawRingElement do (
-	  if Ccode(bool, "IM2_MutableMatrix_row_scale(", "(Matrix *)", M, ",", toInt(targetRow), ",", "(RingElement *)", r, ")" )
+	  if Ccode(bool, "IM2_MutableMatrix_row_scale(", "(Matrix *)", M, ",", "(RingElement *)", r, ",", toInt(targetRow), ")" )
 	  then nullE
 	  else buildErrorPacket(EngineError("error scaling raw matrix row")))
      else WrongArg(3,"a raw ring element")
@@ -1852,7 +1871,7 @@ rawMatrixColumnScale(e:Expr):Expr := (
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(2) else
      when s.2 is r:RawRingElement do (
-	  if Ccode(bool, "IM2_MutableMatrix_column_scale(", "(Matrix *)", M, ",", toInt(targetColumn), ",", "(RingElement *)", r, ")" )
+	  if Ccode(bool, "IM2_MutableMatrix_column_scale(", "(Matrix *)", M, ",", "(RingElement *)", r, ",", toInt(targetColumn), ")" )
 	  then nullE
 	  else buildErrorPacket(EngineError("error scaling raw matrix column")))
      else WrongArg(3,"a raw ring element")

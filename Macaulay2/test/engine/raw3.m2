@@ -293,8 +293,8 @@ assert rawIsZero(m - m1)
 
 m = rawSparseMatrix2(F,G,{7},{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
 assert(rawMultiDegree m  === {7})
-m1 = rawMatrixRemake(F,G,rawMultiDegree m, m, true)
-m2 = rawMatrixRemake(F,G,{13}, m, false)
+m1 = rawMatrixRemake2(F,G,rawMultiDegree m, m, true)
+m2 = rawMatrixRemake2(F,G,{13}, m, false)
 assert(rawMultiDegree m2 === {13})
 
 elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))

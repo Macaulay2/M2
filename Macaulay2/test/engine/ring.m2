@@ -32,8 +32,7 @@ rawCompare(M',m',n')
 m ? n
 
 -- modules
-M = monoid R
-M'= raw M
+M'= raw monoid R
 F = R^3
 assert(raw F == raw R^3)
 assert(raw F != raw R^4)
@@ -43,6 +42,7 @@ assert( rank G == 9 )
 
 --matrices
 v = vars R
+
 v
 v_(0,0)
 v_(0,1)
@@ -54,6 +54,20 @@ w | w
 v ++ v
 v' ++ v
 v ** v
+v ** v'
+
+2*v
+v*2
+raw x * raw v
+x*v
+
+
+-- remaking matrices
+-- w = map(R^1,,v)						    -- Mike will make remake1
+
+-- eventually:
+-- raw v * raw x
+-- v*x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
