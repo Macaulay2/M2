@@ -40,6 +40,11 @@ dnl -- autoconf default is: -g -O2
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 
+if test "$CXX" = gcc
+then echo oops, CXX=gcc, should use CXX=g++
+     exit 1
+fi
+
 AC_ARG_VAR(CFLAGS,[C compiler flags, default: -g -O2])
 
 AC_ARG_VAR(LOADLIBES,[first path for linker to search for libraries])
