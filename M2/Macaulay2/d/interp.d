@@ -229,6 +229,7 @@ export process():void := (
 		    )
 	       else if arg === "-silent" then nothing
 	       else if arg === "" then nothing
+	       else if arg === "-q" then nothing  -- pass through to top level
 	       else if arg === "-h" then (
 		    usageMessage();
 		    exit(1))

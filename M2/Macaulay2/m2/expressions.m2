@@ -414,7 +414,9 @@ name FunctionApplication := m -> (
      fun := m#0;
      args := m#1;
      if class args === Sequence
-     then concatenate(name fun, name args)
+     then if #args === 1
+     then concatenate(name fun, " ", name args)  -- f seq x
+     else concatenate(name fun, name args)       -- f(x,y) or f(), ...
      else if precedence args >= precedence m
      then concatenate(name fun, " ", name args)
      else concatenate(name fun, "(", name args, ")"))
