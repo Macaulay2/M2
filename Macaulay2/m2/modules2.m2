@@ -534,9 +534,15 @@ assert( dim (R/a) == 5 )
 
 codim Module := M -> dim ring M - dim M
 document { quote codim,
-     TT "codim M", " -- calculate the codimension of the support of a module M.",
+     TT "codim M", " -- calculate the codimension of the support of a module ", TT "M", ".",
      BR,NOINDENT,
-     TT "codim I", " -- calculate the codimension of the quotient ring R/I."
+     TT "codim I", " -- calculate the codimension of the quotient ring ", TT "R/I", ".",
+     PARA,
+     "If ", TT "M", " is an ", TT "R", "-module, then the number return by this 
+     routine is ", TT "dim R - dim M", ".  This does not agree with the usual
+     definition of codimension unless ", TT "Spec R", " is irreducible.",
+     EXAMPLE "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
+     EXAMPLE "codim (R^1/(x,y))"
      }
 
 document { quote dim,
