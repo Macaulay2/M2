@@ -156,6 +156,8 @@ frac Ring := R -> (
 
 freduce := (f) -> (numerator f)/(denominator f)
 
+isHomogeneous FractionField := (F) -> isHomogeneous F.baseRings#-1
+
 frac EngineRing := R -> (
      if R.?frac then R.frac
      else (
