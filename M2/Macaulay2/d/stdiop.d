@@ -50,7 +50,6 @@ isAbsolutePath(s:string):bool := (
 export minimizeFilename(filename:string):string := (
      ofilename := shorten(filename);
      s := getcwd();
-     if !(s === "/") then s = s + "/";
      if !isAbsolutePath(filename) then filename = s + filename;
      filename = shorten(filename);
      i := 0;
