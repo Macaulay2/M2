@@ -1,3 +1,5 @@
+needs "D-modules.m2"
+
 --document { symbol WeylAlgebra,
 --     TT "WeylAlgebra", " --
 --     name for an optional argument for a monoid that
@@ -40,6 +42,7 @@ document { symbol createDpairs,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "createDpairs W", 
      EXAMPLE "W.dpairVars",
@@ -70,6 +73,7 @@ document { symbol Fourier,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
      EXAMPLE "Fourier L",
@@ -106,6 +110,7 @@ document { symbol Dtransposition,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
      EXAMPLE "Dtransposition L",
@@ -158,6 +163,7 @@ document { symbol singLocus,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "singLocus I",
@@ -204,6 +210,7 @@ document { symbol charIdeal,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "charIdeal I",
@@ -257,6 +264,7 @@ document { symbol Drank,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "Drank I",
@@ -288,6 +296,7 @@ document { symbol Ddim,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "Ddim I",
@@ -317,6 +326,7 @@ document { symbol makeWeylAlgebra,
      
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y,z]",
      EXAMPLE "W = makeWeylAlgebra R",
 

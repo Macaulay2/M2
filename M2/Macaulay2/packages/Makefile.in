@@ -15,11 +15,16 @@ Makefile : Makefile.in
 #############################################################################
 all :: doc
 distclean :: clean
-doc : $(DOC) $(TEST) phase2
-	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
-phase2: StateTable.m2 eliminate.m2
+DOCFILES := StateTable.m2 eliminate.m2 D-modules/DMODdoc.m2 $(wildcard @srcdir@/D-modules/DOC/*.m2)
+phase2: $(DOCFILES)
 	for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0'; done
-	echo tests done >$@
+	touch "$@"
+phase3: $(DOC) $(TEST) phase2
+	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
+phase4: $(DOCFILES)
+	for i in $^ ; do ../../bin/M2 -q '-e phase=4' $$i '-e exit 0'; done
+	touch "$@"
+doc : phase4
 clean::; rm -f phase2
 check:: doc
 	$(MAKE) -C $(TEST) -f $(srcdir)/../m2/Makefile.tests srcdir=$(srcdir)

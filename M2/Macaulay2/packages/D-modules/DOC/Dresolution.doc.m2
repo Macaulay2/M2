@@ -1,16 +1,15 @@
+needs "D-modules.m2"
+
 document { symbol Dresolution,
      TT "Dresolution (M)", " -- 
      computes a Schreyer resolution of the D-module M",
-     BR, NOINDENT, TT
-     "Dresolution (I, w)", " -- 
-     computes a Schreyer resolution of the quotient module D/I",
-
+     BR, NOINDENT, TT "Dresolution (I, w)", " -- computes
+     a Schreyer resolution of the quotient module D/I",
      PARA,
      TT "Dresolution (M, w)", "-- 
      computes a resolution of M adapted to a weight vector w
      of the form (-u,u)",
-     BR, NOINDENT, TT
-     "Dresolution (I, w)", "-- 
+     BR, NOINDENT, TT "Dresolution (I, w)", "-- 
      computes a resolution of D/I adapted to a weight vector w
      of the form (-u,u)",
 
@@ -39,6 +38,7 @@ document { symbol Dresolution,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      EXAMPLE "I = ideal(x_1*D_1+3*x_2*D_2-1, D_1^3-D_2)", 
      EXAMPLE "Dresolution(I,{-1,-1,1,1})",
