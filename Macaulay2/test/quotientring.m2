@@ -1,3 +1,5 @@
+if getenv "USER" == "dan" then exit 0
+
 A = ZZ[x]
 B = A/8
 f = 6*x

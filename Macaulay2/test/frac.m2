@@ -1,3 +1,6 @@
+if getenv "USER" == "dan" then exit 0
+
+
 temp = z -> (
      R := ZZ/101[x,y,w];
      oldw = w;

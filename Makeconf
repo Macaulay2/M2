@@ -13,14 +13,7 @@ ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
-export NODENAME       := $(shell uname -n)
-export REL            := $(shell uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g' )
-
 export SYSTEM         := $(ARCH) $(OS) $(REL)
-export LIBDIR	      := ../../lib
-export INCDIR	      := ../../include
-
-AR = ar
 
 ifeq "$(OS)" "CYGWIN32_95"
 export CYGWIN32 = TRUE
@@ -71,44 +64,6 @@ export EXESUFFIX
 all:: announce
 announce ::
 	@echo '## making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) ##'
-
-################################# Makeconf.lcl
-
-$(TOPDIR)/Makeconf.lcl :
-	echo '# -*- Mode: Makefile -*-' >$@
-	echo '# This file generated automatically, but may be edited to set local options.' >>$@
-	echo '#' >>$@
-	(echo -n "# uname -a => "; uname -a) >>$@
-	echo '#' >>$@
-	echo '# PROFILE     := TRUE' >>$@
-	echo '# NOSTRIP     := TRUE' >>$@
-	echo '# NOOPTIM     := TRUE' >>$@
-	echo '# MEMDEBUG    := TRUE' >>$@
-	echo '# DEBUG       := TRUE' >>$@
-	echo '# VERBOSE     := TRUE' >>$@
-	echo 'export OLDENGINE := TRUE' >>$@
-	echo 'NOMP          := TRUE' >>$@
-	echo '# NOFACTORY   := TRUE' >>$@
-	echo '# SOCKS       := TRUE' >>$@
-	echo '# if you change CC or CXX, then remove config.cache' >>$@
-	echo '# SHAREDLIBS  := TRUE' >>$@
-	echo 'NOSTATIC      := TRUE' >>$@
-	echo '# set LIBC manually for Linux' >>$@
-	echo '# LIBC        := -glibc' >>$@
-	echo 'CC            := gcc' >>$@
-	echo 'CXX           := g++' >>$@
-
-include $(TOPDIR)/Makeconf.lcl
-ifdef NEWDUMPDATA
-        An error on this line means you should remove the definition of
-        NEWDUMPDATA from your Makeconf.lcl, as 'configure' now takes care
-        of that.
-endif
-ifdef NODUMPDATA
-        An error on this line means you should remove the definition of
-        NODUMPDATA from your Makeconf.lcl, as 'configure' now takes care
-        of that.
-endif
 
 export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 ifndef NOSTATIC
@@ -170,35 +125,22 @@ COMPILE.cc = $(CXX) -TP $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 
 endif
 
-export MP := TRUE
-ifdef CYGWIN32
-MP :=
-endif
-ifdef NOMP
-MP :=
-endif
-
-export FACTORY := TRUE
-ifdef NOFACTORY
-FACTORY :=
-endif
-
 export DEBUGFLAGS :=
 
-ifdef DEBUG
+ifeq "$(DEBUG)" "yes"
 DEBUGFLAGS += -g -DDEBUG
 else
 DEBUGFLAGS += -DNDEBUG
 endif
 
-ifdef PROFILE
+ifeq "$(PROFILE)" "yes"
 export CFLAGS   += -pg
 export CXXFLAGS += -pg
 export LDFLAGS  += -pg
-NOSTRIP := TRUE
+STRIP := no
 endif
 
-ifdef NOSTRIP
+ifeq "$(STRIP)" "no"
 export STRIPCMD := :
 else
 ifneq "$(CC)" "cl"
@@ -208,52 +150,12 @@ export LDFLAGS  += -s
 export STRIPCMD := strip
 endif
 
-ifeq "$(CC) $(ARCH)" "pgcc i586"
-# export CFLAGS   += -mpentium
-endif
-
-ifeq "$(CC) $(ARCH)" "pgcc i686"
-# export CFLAGS   += -mpentiumpro
-endif
-
-ifeq "$(CXX) $(ARCH)" "pg++ i586"
-# export CXXFLAGS += -mpentium
-endif
-
-ifeq "$(CXX) $(ARCH)" "pg++ i686"
-# export CXXFLAGS += -mpentiumpro
-endif
-
-ifeq "$(CC) $(ARCH)" "gcc i586"
-# export CFLAGS   += -mpentium
-endif
-
-ifeq "$(CC) $(ARCH)" "gcc i686"
-# export CFLAGS   += -mpentiumpro
-endif
-
-ifeq "$(CXX) $(ARCH)" "g++ i586"
-# export CXXFLAGS += -mpentium
-endif
-
-ifeq "$(CXX) $(ARCH)" "g++ i686"
-# export CXXFLAGS += -mpentiumpro
-endif
 
 endif
 
-ifdef MEMDEBUG
+ifeq "$(MEMDEBUG)" "yes"
 DEBUGFLAGS += -DMEM_DEBUG
 endif
-
-################################# Makeconf.ver
-ifdef FACTORY
-$(TOPDIR)/Makeconf.ver : $(TOPDIR)/Makeconf
-	egrep '^factory_version=' $(TOPDIR)/factory/configure.in > $@
-include $(TOPDIR)/Makeconf.ver
-export FACTORYVERSION := $(factory_version)
-endif
-#################################
 
 MAKEFLAGS += -w
 
@@ -262,10 +164,12 @@ export CXXFLAGS += -DMACAULAY2
 
 export M2HOME := $(shell cd $(TOPDIR)/Macaulay2; pwd)
 
+ifeq "$(SHAREDLIBS)" "yes"
 ifdef LD_LIBRARY_PATH
 export LD_LIBRARY_PATH:=$(M2HOME)/lib:$(LD_LIBRARY_PATH)
 else
 export LD_LIBRARY_PATH:=$(M2HOME)/lib
+endif
 endif
 
 endif

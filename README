@@ -58,6 +58,10 @@ release:
  get at: prep.ai.mit.edu:pub/gnu
 license: Macaulay2/licenses/gnulib.lic
 
+To configure Macaulay 2 type 'make -f Makefile-configure' in this directory,
+or run 'configure' yourself.  See what options are available with
+'configure --help'.
+
 To compile Macaulay 2 type 'make' in this directory.  The resulting shell
 script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  Local
 options (governing profiling, stripping, etc) can be set in the file

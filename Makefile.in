@@ -78,7 +78,7 @@ GC_TARGETS := gc.a
 
 GC_CFLAGS := $(CFLAGS)
 GC_CFLAGS += -DLARGE_CONFIG -DNO_SIGNALS
-ifeq "$(DEBUG)" "TRUE"
+ifeq "$(DEBUG)" "yes"
 # Hans Boehm has verified that -DALL_INTERIOR_POINTERS is not needed with -DGC_DEBUG
 GC_CFLAGS += -DGC_DEBUG
 endif
@@ -90,7 +90,7 @@ ifndef VERBOSE
 GC_CFLAGS += -DSILENT
 endif
 
-ifdef DEBUG
+ifeq "$(DEBUG)" "yes"
 else
 # GC_dump() will not be compiled!
 # GC_CFLAGS += -DNO_DEBUGGING
@@ -294,7 +294,7 @@ LIBFACclean clean::
 distclean::; -$(MAKE) -C libfac distclean
 
 ###################### MP
-
+# we don't use this, usually
 # warning: perl is needed to recreate mp/MP/MP.h - but this file is
 # provided with the distribution.
 ifdef MP
@@ -311,36 +311,6 @@ include/MP.h: mp/MP/MP.h ; cp $< $@
 include/MP_Config.h: mp/MP/MP_Config.h ; cp $< $@
 distclean clean::; -$(MAKE) -C mp $@
 clean::; rm -f 'mp/&'
-################################# Makeconf.h
-justM2 all:: Makeconf.h
-Makeconf.h : Makeconf Makeconf.var Makeconf.lcl config.Makefile
-	echo "/* This file created automatically, don't edit. */" >tmp.tmp
-	echo '#define NODENAME "$(NODENAME)"' >>tmp.tmp
-	echo '#define OS "$(OS)"' >>tmp.tmp
-	echo '#define ARCH "$(ARCH)"' >>tmp.tmp
-	echo '#define REL "$(REL)"' >>tmp.tmp
-	echo '#define SHAREDLIBS "$(SHAREDLIBS)"' >>tmp.tmp
-ifdef FACTORYVERSION
-	echo '#define FACTORYVERSION $(FACTORYVERSION)' >>tmp.tmp
-else
-	echo '#undef FACTORYVERSION' >>tmp.tmp
-endif
-ifdef SOCKS
-	echo '#define SOCKS' >>tmp.tmp
-else
-	echo '#undef SOCKS' >>tmp.tmp
-endif
-ifdef FACTORY
-	echo '#define FACTORY' >>tmp.tmp
-else
-	echo '#undef FACTORY' >>tmp.tmp
-endif
-	echo '#undef GCMALLOC' >>tmp.tmp
-ifdef GCMALLOC
-	echo '#define GCMALLOC' >>tmp.tmp
-endif
-	mv tmp.tmp $@
-clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
 all :: $(TARGET)
@@ -362,17 +332,18 @@ DISTFILES := 	Macaulay2/README.txt \
 ifdef SHAREDLIBS
 DISTFILES += Macaulay2/lib
 endif
-Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores
+distributions :; mkdir $@
+distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores distributions
 	tar cf - $(DISTFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
-Macaulay2-$(DESC).zip : Makefile $(DISTFILES)
+distributions/Macaulay2-$(DESC).zip : Makefile $(DISTFILES) distributions
 	winzip32 -u -r -p $@ @WindowsNT/DistributionFiles.lst
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
-clean ::; rm -f Macaulay2-$(DESC).tar.gz Macaulay2-$(DESC).zip
+clean ::; rm -f distributions
 install clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
@@ -402,13 +373,13 @@ PORTING := CVS \
 	Macaulay2/util \
 	WindowsNT \
 	bin factory gc gcStatic gmp libfac config
-port: Macaulay2-$(VERSION)-porting-src.tar.gz
-Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile rmcores
+port: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
+distributions/Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile rmcores distributions
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 testport: testport-clean testport-files testport-go testport-clean
 testport-clean:
 	rm -rf tmp/M2
-testport-files: Macaulay2-$(VERSION)-porting-src.tar.gz
+testport-files: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
 	mkdir -p tmp/M2
 	gunzip <$< |tar xf - -C tmp/M2
 testport-go:
@@ -425,12 +396,12 @@ DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
 DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
 endif
 
-Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores
+distributions/Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores distributions
 	tar cf - $(DOCFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"
 	@echo "-----------------------------------------------------------------------------"
-Macaulay2-$(VERSION)-doc.zip : $(DOCFILES)
+distributions/Macaulay2-$(VERSION)-doc.zip : $(DOCFILES) distributions
 	winzip32 -u -r -p $@ $(DOCFILES)
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"

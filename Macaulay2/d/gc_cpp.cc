@@ -30,12 +30,9 @@ Authors: John R. Ellis and Jesse Hull
 
 #include <stdlib.h>
 #include "gc_cpp.h"
-#include "../../Makeconf.h"
 #include "config.h"
 
 extern "C" void outofmem();
-
-#ifdef GCMALLOC
 
 #if !defined(__MWERKS__)
 
@@ -128,4 +125,3 @@ void operator delete[]( void* p ) {
 
 #endif
 
-#endif
