@@ -163,6 +163,15 @@ loaddepthfun(e:Expr):Expr := (
 	  else WrongArgSmallInteger())
      else WrongArgInteger());
 setupfun("loadDepth",loaddepthfun);
+
+debugging(e:Expr):Expr := (
+     when e
+     is b:Boolean do (
+	  debuggingMode = b.v;
+	  nullE)
+     else WrongArgBoolean());
+setupfun("debuggingMode",debugging);
+
 export backtr(z:Expr):Expr := (
      when z is err:Error do 
      if err.position == dummyPosition 
@@ -236,6 +245,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       recursiondepth = recursiondepth - 1;
 	       foreach x in f.values do x = nullE;
 	       f.outerFrame = stash.framesize;
+	       f.frameID = -2;				    -- just to be tidy, not really needed
 	       stash.framesize = f;
 	       when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 	       )
@@ -290,6 +300,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
 		    f.outerFrame = stash.framesize;
+	       	    f.frameID = -2;				    -- just to be tidy, not really needed
 		    stash.framesize = f;
 		    when ret is err:Error do backtrFunction(ret,report(c,v)) else ret
 		    )
@@ -348,6 +359,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  localFrame = saveLocalFrame;
 	  foreach x in f.values do x = nullE;
 	  f.outerFrame = stash.framesize;
+	  f.frameID = -2;				    -- just to be tidy, not really needed
 	  stash.framesize = f;
 	  recursiondepth = recursiondepth - 1;
 	  when ret is err:Error do backtrFunction(ret,report(c,e)) else ret
@@ -448,6 +460,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
 		    f.outerFrame = stash.framesize;
+	       	    f.frameID = -2;				    -- just to be tidy, not really needed
 		    stash.framesize = f;
 		    ret
 		    )
@@ -556,6 +569,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
 		    f.outerFrame = stash.framesize;
+	       	    f.frameID = -2;				    -- just to be tidy, not really needed
 		    stash.framesize = f;
 		    ret
 		    )
@@ -631,6 +645,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    recursiondepth = recursiondepth - 1;
 		    foreach x in f.values do x = nullE;
 		    f.outerFrame = stash.framesize;
+	       	    f.frameID = -2;				    -- just to be tidy, not really needed
 		    stash.framesize = f;
 		    ret
 		    )

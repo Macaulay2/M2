@@ -1308,18 +1308,18 @@ globalDictionaries(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("globalDictionaries", globalDictionaries);
 
-localDictionary(f:Frame):DictionaryClosure := DictionaryClosure(f,getLocalDictionary(f.frameID));
-
 localDictionary(e:Expr):Expr := (
-     f := localFrame;
+     f := dummyFrame;
      when e
-     is a:Sequence do if length(a) == 0 then f = localFrame else return(WrongNumArgs(0,1))
+     is a:Sequence do if length(a) == 0 
+     then f = localFrame				    -- warning: the frame could get recycled and put back in the 'stash'
+     else return(WrongNumArgs(0,1))
      is sc:SymbolClosure do f = sc.frame
      is fc:FunctionClosure do f = fc.frame
-     is cfc:CompiledFunctionClosure do f = dummyFrame	    -- some values are there, but no symbols
-     is CompiledFunction do f = dummyFrame		    -- no values or symbols are there
+     is cfc:CompiledFunctionClosure do f = emptyFrame	    -- some values are there, but no symbols
+     is CompiledFunction do f = emptyFrame		    -- no values or symbols are there
      else return(WrongArg("a function, a symbol, or ()"));
-     Expr(localDictionary(f)));
+     Expr(localDictionaryClosure(f)));
 setupfun("localDictionary", localDictionary);
 
 localDictionaries(e:Expr):Expr := (
@@ -1335,6 +1335,6 @@ localDictionaries(e:Expr):Expr := (
 	  list(
 	       new Sequence len numFrames(f) do (
 		    while f.frameID > 0
-		    && ( provide Expr(localDictionary(f)); f != f.outerFrame )
+		    && ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame )
 		    do f = f.outerFrame))));
 setupfun("localDictionaries", localDictionaries);
