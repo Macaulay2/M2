@@ -96,9 +96,8 @@
 
 (defvar M2-command 
   (concat "M2  --print-width " 
-	  (number-to-string (- (- (screen-width) 1) 
-			       7	; allows for prompts up to "i999 = ", which has 7 characters
-			       )) " ")
+	  (number-to-string (- (screen-width) 1))
+	  " ")
   "*The default Macaulay2 command line.")
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 
@@ -441,3 +440,6 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer." )
 
 (provide 'M2)				;last thing to do
 
+; Local Variables:
+; compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
+; End:
