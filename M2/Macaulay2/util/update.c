@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "restart.h"
 #define ERROR (-1)
 #define FALSE 0

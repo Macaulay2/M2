@@ -306,7 +306,7 @@ GradedModule ** GradedModule := (C,D) -> (
      E := new GradedModule;
      E.ring = R;
      scan(keys pairs, k -> (
-	       p = pairs#k;
+	       p := pairs#k;
 	       E#k = directSum	    apply(p, v -> C#(v#0) ** D#(v#1));
 	       E#k.indexComponents = new HashTable from apply(#p, i -> p#i => i);
 	       ));

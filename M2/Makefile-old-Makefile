@@ -4,14 +4,12 @@ include Makeconf
 
 FILES := Makefile Makeconf README patches
 
-SUBDIRS := gc$(GCVERSION) gmp-$(GMPVERSION) \
-		factory-$(FACTORYVERSION) libfac-$(LIBFACVERSION) \
-		Macaulay2
+SUBDIRS := gc gmp factory libfac Macaulay2
 
 .PHONY : all always dirs clean port
 
-all: dirs GC GMP FACTORY LIBFAC MP MACAULAY2
-dirs: lib include
+all: GC GMP FACTORY LIBFAC MP MACAULAY2
+
 lib:; mkdir lib
 include:; mkdir include
 
@@ -59,56 +57,46 @@ portfloppy:
 		-C Macaulay2 tgz/Macaulay2-$(VERSION)-src-dev.tgz
 
 ################################ GC
-GC: gc$(GCVERSION) lib/libgc.a include/gc.h include/gc_cpp.h
+GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
 # GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
 GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS
-lib/libgc.a: 	  gc$(GCVERSION)/gc.a;	 	cp $< $@; ranlib $@
-include/gc.h:	  gc$(GCVERSION)/gc.h;		cp $< $@
-include/gc_cpp.h: gc$(GCVERSION)/gc_cpp.h;	cp $< $@
-gc$(GCVERSION)/gc.a: 	  always
-	$(MAKE) -C gc$(GCVERSION) CC=gcc AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
-	$(MAKE) -C gc$(GCVERSION) CXX=gcc CFLAGS='$(GC_CFLAGS)' -nostdinc++ c++
-gc$(GCVERSION): tgz/gc$(GCVERSION).tar.gz
-	rm -rf $@ gc
-	gunzip <tgz/gc$(GCVERSION).tar.gz |tar xf -
-	patch -p0 <patches/gc$(GCVERSION)
-	echo '#undef DYNAMIC_LOADING' >> gc/config.h
-	echo 'int one_more_symbol;' >> gc/checksums.c
-	mv gc gc$(GCVERSION)
+lib/libgc.a: 	  gc/gc.a lib;	 	cp $< $@; ranlib $@
+include/gc.h:	  gc/gc.h include;	cp $< $@
+include/gc_cpp.h: gc/gc_cpp.h include;	cp $< $@
+gc/gc.a: 	  always
+	$(MAKE) -C gc CC=gcc AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
+	$(MAKE) -C gc CXX=gcc CFLAGS='$(GC_CFLAGS)' -nostdinc++ c++
+
+#	echo '#undef DYNAMIC_LOADING' >> gc/config.h
+#	echo 'int one_more_symbol;' >> gc/checksums.c
 
 ###################### GMP
-GMP : gmp-$(GMPVERSION) \
-	include/gmp.h \
+GMP : 	gmp include/gmp.h \
 	lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
-include/gmp.h: gmp-$(GMPVERSION)/gmp.h; cp $< $@
-lib/libmpn.a: gmp-$(GMPVERSION)/mpn/libmpn.a; cp $< $@; ranlib $@
-lib/libmpz.a: gmp-$(GMPVERSION)/mpz/libmpz.a; cp $< $@; ranlib $@
-lib/libmpq.a: gmp-$(GMPVERSION)/mpq/libmpq.a; cp $< $@; ranlib $@
-lib/libmpf.a: gmp-$(GMPVERSION)/mpf/libmpf.a; cp $< $@; ranlib $@
-lib/libgmp.a: gmp-$(GMPVERSION)/libgmp.a; cp $< $@; ranlib $@
+include/gmp.h: gmp/gmp.h include; cp $< $@
+lib/libmpn.a: gmp/mpn/libmpn.a lib; cp $< $@; ranlib $@
+lib/libmpz.a: gmp/mpz/libmpz.a lib; cp $< $@; ranlib $@
+lib/libmpq.a: gmp/mpq/libmpq.a lib; cp $< $@; ranlib $@
+lib/libmpf.a: gmp/mpf/libmpf.a lib; cp $< $@; ranlib $@
+lib/libgmp.a: gmp/libgmp.a lib; cp $< $@; ranlib $@
 
-gmp-$(GMPVERSION)/mpn/libmpn.a : make-gmp
-gmp-$(GMPVERSION)/mpz/libmpz.a : make-gmp
-gmp-$(GMPVERSION)/mpq/libmpq.a : make-gmp
-gmp-$(GMPVERSION)/mpf/libmpf.a : make-gmp
-gmp-$(GMPVERSION)/libgmp.a : make-gmp
+gmp/mpn/libmpn.a : make-gmp
+gmp/mpz/libmpz.a : make-gmp
+gmp/mpq/libmpq.a : make-gmp
+gmp/mpf/libmpf.a : make-gmp
+gmp/libgmp.a : make-gmp
 
-make-gmp : gmp-$(GMPVERSION)/config.status
-	$(MAKE) -C gmp-$(GMPVERSION)
-gmp-$(GMPVERSION)/config.status: gmp-$(GMPVERSION)/configure
-	cd gmp-$(GMPVERSION); ./configure >/dev/null
-gmp-$(GMPVERSION):
-	gunzip <tgz/gmp-$(GMPVERSION).tar.gz |tar xf -
-	touch $@
+make-gmp : gmp/config.status
+	$(MAKE) -C gmp
+gmp/config.status: gmp/configure
+	cd gmp; ./configure >/dev/null
 
 ###################### FACTORY
-factory-$(FACTORYVERSION): tgz/factory-$(FACTORYVERSION).tar.gz
-	rm -rf $@
-	gunzip <$< |tar xf -
-	touch $@
-	patch -p0 <patches/factory-$(FACTORYVERSION)
-	if [ -f $@/config.status ]; then echo $@/config.status found; exit 1; fi
-FACTORY: factory-$(FACTORYVERSION) factory-$(FACTORYVERSION)/config.status \
+
+# when importing a new version of factory, make sure the directory is clean,
+# (look to see if factory/config.status is there)
+
+FACTORY: factory factory/config.status \
 		makeFACTORY \
 		lib/factory/$(FACTORYVERSION)/libcf-optimize.a \
 		include/templates \
@@ -116,17 +104,17 @@ FACTORY: factory-$(FACTORYVERSION) factory-$(FACTORYVERSION)/config.status \
 		include/templates/functions.h \
 		include/templates/list.h \
 		include/templates/matrix.h
-include/templates:; mkdir $@
-include/templates/factor.h: factory-$(FACTORYVERSION)/templates/factor.h; cp $< $@
-include/templates/functions.h: factory-$(FACTORYVERSION)/templates/functions.h; cp $< $@
-include/templates/list.h: factory-$(FACTORYVERSION)/templates/list.h; cp $< $@
-include/templates/matrix.h: factory-$(FACTORYVERSION)/templates/matrix.h; cp $< $@
-makeFACTORY:; $(MAKE) -C factory-$(FACTORYVERSION)
-factory-$(FACTORYVERSION)/libcf-optimize.a: factory-$(FACTORYVERSION)
-	$(MAKE) -C factory-$(FACTORYVERSION)
+include/templates: include ; mkdir $@
+include/templates/factor.h: factory/templates/factor.h; cp $< $@
+include/templates/functions.h: factory/templates/functions.h; cp $< $@
+include/templates/list.h: factory/templates/list.h; cp $< $@
+include/templates/matrix.h: factory/templates/matrix.h; cp $< $@
+makeFACTORY:; $(MAKE) -C factory
+factory/libcf-optimize.a: factory
+	$(MAKE) -C factory
 
 ifeq ($(OS),MS-DOS)
-lib/factory/$(FACTORYVERSION)/libcf-optimize.a:
+lib/factory/$(FACTORYVERSION)/libcf-optimize.a: lib
 	- mkdir lib/factory
 	- mkdir lib/factory/$(FACTORYVERSION)
 	- mkdir lib/factory/$(FACTORYVERSION)/templates
@@ -144,17 +132,13 @@ lib/factory/$(FACTORYVERSION)/libcf-optimize.a:
 			templates/functions.h \
 		lib/factory/$(FACTORYVERSION)/templates
 else
-lib/factory/$(FACTORYVERSION)/libcf-optimize.a: factory-$(FACTORYVERSION)/libcf-optimize.a
-	$(MAKE) -C factory-$(FACTORYVERSION) install
+lib/factory/$(FACTORYVERSION)/libcf-optimize.a: lib factory/libcf-optimize.a
+	$(MAKE) -C factory install
 	ranlib lib/libcfmem.a
 endif
 
-# factory:; mkdir factory
-# factory/$(FACTORYVERSION):factory
-#	ln -s ../factory-$(FACTORYVERSION) factory/$(FACTORYVERSION)
-
-factory-$(FACTORYVERSION)/config.status :
-	cd factory-$(FACTORYVERSION);\
+factory/config.status :
+	cd factory;\
 	GMP_INCLUDE_PATH=../include;\
 	export GMP_INCLUDE_PATH;\
 	./configure \
@@ -163,53 +147,33 @@ factory-$(FACTORYVERSION)/config.status :
 		--with-optimize
 
 ###################### LIBFAC
-libfac-$(LIBFACVERSION): tgz/libfac-$(LIBFACVERSION).tgz
-	rm -rf $@
-	gunzip <$< |tar xf -
-	touch $@
-LIBFAC: libfac-$(LIBFACVERSION) \
-		libfac-$(LIBFACVERSION)/config.status \
-		libfac-$(LIBFACVERSION)/libfac.a \
-		include/factor.h lib/libfac.a
-libfac-$(LIBFACVERSION)/config.status :
-	cd libfac-$(LIBFACVERSION); ./configure --includedir=../include
-libfac-$(LIBFACVERSION)/libfac.a : always
-	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac-$(LIBFACVERSION) libfac
-include/factor.h: libfac-$(LIBFACVERSION)/factor.h; cp $< $@
-lib/libfac.a: libfac-$(LIBFACVERSION)/libfac.a; cp $< $@; ranlib $@
+LIBFAC:		libfac \
+		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
+libfac/config.status :
+	cd libfac; ./configure --includedir=../include
+libfac/libfac.a : always
+	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac libfac
+include/factor.h: libfac/factor.h include; cp $< $@
+lib/libfac.a: libfac/libfac.a lib; cp $< $@; ranlib $@
 
 ###################### MP
-MP-$(MPVERSION): tgz/MP-$(MPVERSION).tar.gz
-	rm -rf $@
-	gunzip <$< |tar xf -
-	touch $@
-	rm -rf $@/gmp
-MP: MP-$(MPVERSION) \
-	MP-$(MPVERSION)/config.status \
-	MP-$(MPVERSION)/libMP.a \
+MP:	mp mp/config.status mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
-MP-$(MPVERSION)/config.status:
-	cd MP-$(MPVERSION); ./configure --prefix=$(TOPDIR) # --with-debug
-MP-$(MPVERSION)/libMP.a:
-	$(MAKE) -C MP-$(MPVERSION) libMP.a
-lib/libMP.a: MP-$(MPVERSION)/MP/libMP.a; cp $< $@; ranlib $@
-include/MP.h: MP-$(MPVERSION)/MP/MP.h; cp $< $@
-include/MP_Config.h: MP-$(MPVERSION)/MP/MP_Config.h; cp $< $@
+mp/config.status:
+	cd mp; ./configure --prefix=$(TOPDIR) # --with-debug
+mp/libMP.a:
+	$(MAKE) -C mp libMP.a
+lib/libMP.a: mp/MP/libMP.a lib; cp $< $@; ranlib $@
+include/MP.h: mp/MP/MP.h include; cp $< $@
+include/MP_Config.h: mp/MP/MP_Config.h include; cp $< $@
 
 ###################### Macaulay 2
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all install tests dist
 MACAULAY2.all: Macaulay2
 	$(MAKE) -C Macaulay2 all
-
-Macaulay2:
-	gunzip <tgz/Macaulay2-$(VERSION)-src-limited.tgz |tar xf -
-	touch $@
-	rm -f Macaulay2
-
 Macaulay2/tgz/Macaulay2-${VERSION}-src-limited.tgz:
 	$(MAKE) -C Macaulay2 srcdist
-
 Macaulay2/tgz/Macaulay2-${VERSION}-src-dev.tgz:
 	$(MAKE) -C Macaulay2 devdist
 

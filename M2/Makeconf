@@ -8,13 +8,9 @@ else
 PATHSEP := /
 endif
 
-export VERSION	      := 0.8.33
-export VERSIONDATE    := July 25, 1997
-export GMPVERSION     := 2.0.2
-export LIBFACVERSION  := 0.2.3
-export GCVERSION      := 4.12alpha2
+export VERSION	      := 0.8.34
 export FACTORYVERSION := 1.2c
-export MPVERSION      := 1.1.2
+export VERSIONDATE    := August 7, 1997
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
