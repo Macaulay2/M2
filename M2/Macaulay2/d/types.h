@@ -139,7 +139,7 @@ int brk();		/* not really ansi standard, sigh */
 
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
-void M2_init_gmp();
+void M2_inits();
 
 extern unsigned GC_version;		/* in libgc.a */
 void *GC_malloc1 (size_t size_in_bytes);
