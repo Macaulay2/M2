@@ -105,17 +105,17 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 		    if AbortIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE));
 		    )
 	       else (
-		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up
+		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
 		    then (		  
 			 f := convert(parsed); -- convert to runnable code
 			 lastvalue = eval(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
 			 when lastvalue is err:Error do (
-			      if err.message == returnMessage then return lastvalue
-			      else if err.message == breakMessage then lastvalue = nullE
-			      else (
-				   setGlobalVariable(errorReportS, toExpr(err.report));
-				   if AbortIfError then return lastvalue))
+			      if AbortIfError || err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then return lastvalue;
+			      if err.message == unwindMessage 
+			      then lastvalue = nullE
+			      else setGlobalVariable(errorReportS, toExpr(err.report));
+			      )
 			 else (
 			      if printout then (
 				   g := PrintOut(lastvalue,s.word == semicolonW,f);
