@@ -269,7 +269,7 @@ getFileName := body -> (
 
 makeFileName := (key,filename,pkg) -> (			 -- may return 'null'
      if pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | LAYOUT#"packageexamples" pkg.name | if filename =!= null then filename else toFilename key
+     then pkg#"package prefix" | LAYOUT#"packageexamples" pkg#"title" | if filename =!= null then filename else toFilename key
      )
 
 exampleResultsFound := false

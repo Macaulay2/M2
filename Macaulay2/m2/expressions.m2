@@ -124,12 +124,10 @@ toString Equation := v -> (
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
-ZeroExpression.name = "ZeroExpression"
 ZERO := new ZeroExpression from {0}
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
 OneExpression.synonym = "one expression"
-OneExpression.name = "OneExpression"
 ONE := new OneExpression from {1}
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
@@ -529,7 +527,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 	      precedence Sequence := x -> if #x === 0 then 70 else if #x === 1 then 40 else 70
 	   precedence DoubleArrow := x -> 5
 	      precedence Equation := x -> 10
-	     precedence HashTable := x -> if x.?name then precedence x.name else 20
+	     precedence HashTable := x -> 20		    -- some things might print out as symbols though...
 		 precedence Thing := x -> 20
 		   precedence Sum := x -> 20
 	       precedence Product := x -> 30
@@ -1184,10 +1182,10 @@ toString FilePosition := net FilePosition := i -> concatenate(i#0,":",toString i
 
 Entity = new HeaderType of HashTable
 Entity.synonym = "entity"
+globalAssignment Entity
 tex Entity := x -> if x.?tex then x.tex else "$" | texMath x | "$"
-texMath Entity := x -> if x.?texMath then x.texMath else x.name
-html Entity := x -> if x.?html then x.html else x.name
-toString Entity := x -> x.name
+texMath Entity := x -> if x.?texMath then x.texMath else toString x
+html Entity := x -> if x.?html then x.html else toString x
 net Entity := x -> if x.?net then x.net else x.name
 value Entity := x -> if x.?value then x.value else x
 use Entity := x -> if x.?use then x.use x else x
@@ -1195,7 +1193,6 @@ use Entity := x -> if x.?use then x.use x else x
 RightArrow = Entity {
      symbol texMath => ///\rightarrow{}///,
      symbol html    => ///<IMG SRC="RightArrow.gif">///,
-     symbol name    => "RightArrow",
      symbol net     => "--->",
      symbol symbol  => symbol RightArrow
      }
@@ -1203,7 +1200,6 @@ RightArrow = Entity {
 DownArrow = Entity {
      symbol texMath => ///\downarrow{}///,
      symbol html    => ///<IMG SRC="DownArrow.gif">///,
-     symbol name    => "DownArrow",
      symbol net     => "|" || "|" || "V",
      symbol symbol  => symbol DownArrow
      }

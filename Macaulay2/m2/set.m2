@@ -1,6 +1,5 @@
 -- Copyright 1994 by Daniel R. Grayson
 
-Tally.name = "Tally"
 toString Tally := x -> (
      "new Tally from {"
      | demark(", ", apply(pairs x, (v,i) -> toString v | " => " | toString i))
@@ -29,8 +28,6 @@ Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -
      
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
-
-Set.name = "Set"
 
 new Set from List := Set => (X,x) -> set x
 

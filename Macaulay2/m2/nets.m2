@@ -19,17 +19,11 @@ selectRegexp(String,ZZ,String) := (re,n,s) -> (
 Net.AfterPrint = identity
 
 toString MutableHashTable := s -> (
-     if s.?name and class s.name === String then return s.name;
-     if s.?Symbol and class s.Symbol === Symbol then return toString s.Symbol;
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
 toString Type := X -> (
-     if X.?name and class X.name === String then return X.name;
-     if X.?Symbol and class X.Symbol === Symbol then return toString X.Symbol;
      if ReverseDictionary#?X then return toString ReverseDictionary#X;
      concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
 toString HashTable := s -> (
-     if s.?name and class s.name === String then return s.name;
-     if s.?Symbol and class s.Symbol === Symbol then return toString s.Symbol;
      concatenate (
 	  "new ", toString class s,
 	  if parent s =!= Nothing then (" of ", toString parent s),
@@ -177,8 +171,6 @@ net BasicList := x -> horizontalJoin deepSplice (
       "}")
 net MutableList := x -> horizontalJoin ( net class x, "{...", toString(#x), "...}" )
 net HashTable := x -> (
-     if x.?name and class x.name === String then return x.name;
-     if x.?Symbol and class x.Symbol === Symbol then return toString x.Symbol;
      horizontalJoin flatten ( 
      	  net class x,
 	  "{", 
@@ -189,12 +181,8 @@ net HashTable := x -> (
      	  ))
 
 net MutableHashTable := x -> (
-     if x.?name and class x.name === String then return x.name;
-     if x.?Symbol and class x.Symbol === Symbol then return toString x.Symbol;
      horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
 net Type := X -> (
-     if X.?name and class X.name === String then return X.name;
-     if X.?Symbol and class X.Symbol === Symbol then return toString X.Symbol;
      if ReverseDictionary#?X then return toString ReverseDictionary#X;
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
