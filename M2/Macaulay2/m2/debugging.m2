@@ -160,7 +160,7 @@ listUserSymbols = Command ( type -> listSymbols userSymbols type )
 usage := () -> (
      << endl
      << " -- useful debugger commands:" << endl
-     << " --     break                   leave the debugger" << endl
+     << " --     break                   leave the debugger, returning to top level" << endl
      << " --     end                     restart debugger one step earlier" << endl
      << " --     listLocalSymbols        display local symbols and their values" << endl
      << " --     listUserSymbols         display user symbols and their values" << endl

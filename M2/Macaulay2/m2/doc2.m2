@@ -126,13 +126,15 @@ document { "while",
 document { "break",
      Headline => "break from a loop",
      TT "break x", " -- interrupts execution of a loop controled by ",
-     TO "for", ", ", TO "while", ", or ", TO "scan", ", returning ",
+     TO "for", ", ", TO "while", ", ", TO "apply", ", or ", TO "scan", ", returning ",
      TT "x", " as the value of the loop currently being
      evaluated.",BR,
      TT "break", " -- interrupts execution of a loop, returning
      ", TO "null", " as the value of the function currently being evaluated.",
      PARA,
-     "Warning: it doesn't break out of loops controled by ", TO "apply", ".",
+     "Warning: trying to break from a loop controlled by ", TO "table", " will
+     probably not do what you expect, since ", TO "table", " is implemented by two nested
+     loops controlled to ", TT "apply", ", and only the innter one will stop.",
      SEEALSO { "scan", "while", "for" }
      }
 
