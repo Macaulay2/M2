@@ -173,6 +173,7 @@ static CanonicalForm convert(const RingElement &g) {
 #endif
 			  : CanonicalForm(0) // shouldn't happen
 			  );
+       factory_setup();
        for (int l = 1; l < vp[0] ; l++) {
 	 m *= power(
 		    Variable(1 + (
@@ -245,32 +246,36 @@ void rawFactor(const RingElement *g,
 	       M2_arrayint_OrNull *result_powers)
 {
 #ifdef FACTORY
-  factoryseed(23984729);
-  const Ring *R = g->get_ring();
-  CanonicalForm h = convert(*g);
-  // displayCF(R,h);
-  CFFList q;
-  if (R->charac() == 0) {
+  {
+    factoryseed(23984729);
+    const Ring *R = g->get_ring();
+    CanonicalForm h = convert(*g);
+    // displayCF(R,h);
+    CFFList q;
+    if (R->charac() == 0) {
+      factory_setup();
+      q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
+      M2_setup();
+    }
+    else {
+      factory_setup();
+      q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
+      M2_setup();
+    }
+    int nfactors = q.length();
+
+    *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
+    (*result_factors)->len = nfactors;
+
+    *result_powers = makearrayint(nfactors);
+
+    int next = 0;
     factory_setup();
-    q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
-    M2_setup();
-  }
-  else {
-    factory_setup();
-    q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
-    M2_setup();
-  }
-  int nfactors = q.length();
-
-  *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
-  (*result_factors)->len = nfactors;
-
-  *result_powers = makearrayint(nfactors);
-
-  int next = 0;
-  for (CFFListIterator i = q; i.hasItem(); i++) {
-    (*result_factors)->array[next] = convert(R,i.getItem().factor());
-    (*result_powers)->array[next++] = i.getItem().exp();
+    for (CFFListIterator i = q; i.hasItem(); i++) {
+      (*result_factors)->array[next] = convert(R,i.getItem().factor());
+      (*result_powers)->array[next++] = i.getItem().exp();
+      factory_setup();
+    }
   }
   M2_setup();
 #else
