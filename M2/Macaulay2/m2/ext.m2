@@ -110,16 +110,12 @@ Ext(Module,Module) := Module => (N,M) -> (
     k := coefficientRing Q;
     -- Make a linear transformation of the degrees to ensure
     -- the first component of each degree is positive.
-    adjust := (
-      if #f > 0
-      then (
-	fudge := 1 + max(first \ degree \ f) // 2;
-  	v -> {- fudge * v#1 + v#0, - v#1}
-	)
-      else identity);
+    fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
+    adjust := v -> {- fudge * v#0 + v#1, - v#0};
+    abjust := w -> {- w#1, - fudge * w#1 + w#0};
     degs := splice {
-      apply(0 .. c-1,i -> adjust { - first degree f_i, -2}), 
-      n : adjust {1,0}
+      apply(0 .. c-1,i -> adjust {-2, - first degree f_i}), 
+      n : adjust {0,1}
       };
     T := k[X_0 .. X_(c-1), toSequence Q.generatorSymbols, 
       Degrees => degs];
@@ -158,16 +154,18 @@ Ext(Module,Module) := Module => (N,M) -> (
 	      )))));
     -- make a free module whose basis elements have the right degrees
     DMT := T^(apply(spots E, 
-	i -> toSequence apply(degrees E_i, d -> adjust {first d,i})));
+	i -> toSequence apply(degrees E_i, d -> adjust {i,first d})));
     -- assemble the matrix from its blocks
     DT := map(DMT, DMT, 
       transpose sum ( keys Delta, m -> T_m * toT sum Delta#m),
-      Degree => adjust {0,-1});
+      Degree => adjust {-1,0});
     D := DT ** toT M';
     -- now compute the total Ext as a single homology module
     ext := prune homology(D,D);
     -- stash the 'adjust' function we used
     ext.adjust = adjust;
+    ext.abjust = abjust;
     ext))
 
 adjust					  -- just use it again
+abjust					  -- just use it again

@@ -95,7 +95,19 @@ expression Module := M -> (
      else new Superscript from {expression ring M, numgens M}
      )
 
-net Module := M -> net expression M
+-- net Module := M -> net expression M
+
+net Module := M -> (
+     -- we want compactMatrixForm to govern the matrix here, also.
+     if M.?relations 
+     then if M.?generators
+     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
+     else net new FunctionApplication from { cokernel, net M.relations }
+     else if M.?generators
+     then net new FunctionApplication from { image, net M.generators }
+     else if numgens M === 0 then 0
+     else net new Superscript from {net ring M, numgens M}
+     )
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

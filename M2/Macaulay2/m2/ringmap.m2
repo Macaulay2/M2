@@ -197,6 +197,10 @@ isHomogeneous RingMap := (f) -> (
      isHomogeneous f.matrix)
 
 
+substitute(Power,Thing) := (v,s) -> Power{substitute(v#0,s),v#1}
+substitute(Divide,Thing) := (v,s) -> Divide{substitute(v#0,s),substitute(v#1,s)}
+substitute(Sum,Thing) := substitute(Product,Thing) := (v,s) -> apply(v,t -> substitute(t,s))
+
 substitute(RingElement,Matrix) := RingElement => (r,f) -> (map(ring f,ring r,f)) r
 substitute(Vector,Matrix) := Vector => (v,f) -> (map(ring f,ring v,f)) v
 substitute(Matrix,Matrix) := Matrix => (m,f) -> (map(ring f,ring m,f)) m

@@ -169,32 +169,54 @@ hilbertSeries Module := options -> (M) -> (
 	  A := ring M;
 	  num := poincare M;
 	  T := degreesRing A;
-	  denom := new MutableHashTable from (
-	       sort pairs tally apply(generators A, x -> degree x));
+	  denom := tally (degree \ generators A);
 	  if options.Order === infinity 
 	  then M#{hilbertSeries} = (
-	       uf := 0;
-	       while 0 == substitute(num, T_0 => 1)
-	       do (
-		    num = num // (1 - T_0);
-		    if denom#?{1} and denom#{1} > 0
-		    then (
-			 denom#{1} = denom#{1} - 1;
-			 if denom#{1} == 0 then remove(denom,{1});
-			 )
-		    else (
-			 uf = uf + 1;
-			 )
-		    );
-	       Divide {
-		    if uf == 0 
-		    then num
-		    else Product {num, Power{1 - T_0, uf}},
-		    Product apply(
-			 sort pairs denom,
-			 (i,e) -> Power{ 1 - product(#i, j -> T_j ^ (i_j)), e }
-			 )
-		    }
+	       y := flatten apply(pairs denom,
+		    (i,e) -> (
+			 f := 1 - T_i;			    -- f^e is a factor of the denominator
+			 while true do (
+			      q := num/f;		    -- // and % go into an infinite loop, sigh
+			      if denominator q == 1 then (
+				   num = numerator q;
+			      	   e = e-1;
+			      	   if e == 0 then break {};
+				   )
+			      else (
+				   if #i > 0 and same i and first i > 1 then (
+					-- we factor f as f1 * f2
+					i0 := first i;
+					t := product gens T;
+					f1 := 1 - t;
+					e1 := e;
+					f2 := sum(i0,j->t^j);
+					e2 := e;
+					while true do (
+					     q = num/f1;
+					     if denominator q != 1 then break;
+					     num = numerator q;
+					     e1 = e1 - 1;
+					     if e1 == 0 then break);
+					while true do (
+					     q = num/f2;
+					     if denominator q != 1 then break;
+					     num = numerator q;
+					     e2 = e2 - 1;
+					     if e2 == 0 then break);
+					if e1 == e2 then break{Power{f,e}}
+					else (
+					     e = min(e1,e2);
+					     if e > 0
+					     then if e1 > e
+					     then break{Power{f,e},Power{f1,e1-e}}
+					     else break{Power{f,e},Power{f2,e2-e}}
+					     else if e1 > e
+					     then break{Power{f1,e1-e}}
+					     else break{Power{f2,e2-e}}
+					     )
+					)
+				   else break{Power{f,e}}))));
+	       Divide{num, Product sort y }
 	       )
 	  else if class options.Order === ZZ 
 	  then first (
