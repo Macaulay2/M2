@@ -122,7 +122,7 @@ int rawStatus2(Computation *C)
 {
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
-    return G->complete_up_through_this_degree();
+    return G->gb_complete_thru_degree();
   ERROR("computation type unknown or not implemented");
   return 0;
 }
