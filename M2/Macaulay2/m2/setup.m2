@@ -1,5 +1,7 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+assert = x -> if not x then error "assertion failed"
+
 show = (msg) -> x -> (stderr << msg << x << endl; x)
 
 if class oooo =!= Symbol then error "setup.m2 already loaded"
@@ -10,8 +12,6 @@ OutputDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,OutputDictionary)
 
 --
-
-assert = x -> if not x then error "assertion failed"
 
 PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)

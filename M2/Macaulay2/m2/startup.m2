@@ -219,6 +219,7 @@ notyet := arg -> if phase == 1 then (
      )
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
+
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -336,7 +337,9 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
      )
 
 if firstTime then processCommandLineOptions 1
+
 if firstTime and not nobanner then stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush
+
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
@@ -367,6 +370,7 @@ if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYO
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})
 path = select(path, fileExists)
 normalPrompts()
+
 if firstTime and not nosetup then (
      loadSetup();
      )
