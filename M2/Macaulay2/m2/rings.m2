@@ -10,8 +10,8 @@ ZZ == Ring := (i,R) -> R == i
 poincare Ring := R -> poincare R^1
 
 dim Ring := R -> (
-     if R.?dim
-     then R.dim
+     if R.?dim then R.dim
+     else if isField R then 0
      else error("dimension of ring ", toString R, " unknown"))
 
 char Ring := R -> (
