@@ -13,3 +13,21 @@ assert(g == 1)
 h = Ext^3(K,matrix {{d}})
 assert(h == d)
 
+R = ZZ/101[a..d]
+I = ideal (a*b,c*d)
+M = R^1/I
+J = ideal (a^2*b^2,c^2*d^2)
+N = R^1/J
+f = map(M,N)
+g = Ext^2(f,R)
+assert( g - a*b*c*d == 0 )
+
+I = intersect(ideal(a,b), ideal(c,d))
+J = ideal apply(first entries gens I, r -> r^2)
+M = R^1/I
+N = R^1/J
+f = map(M,N)
+g = Ext^2(f,R)
+assert( presentation target g - matrix{{d^2,c^2,0,0},{0,0,b^2,a^2}} == 0 )
+assert( presentation source g - matrix {{d, c, 0, 0}, {0, 0, b, a}} == 0 )
+assert( matrix g - matrix {{c*d, 0}, {0, a*b}} == 0 )

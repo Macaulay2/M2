@@ -26,7 +26,15 @@ clean::; rm -f config.cache
 clean::; rm -f core
 ################################ GC
 all:: GC
-GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
+clean::; rm -f gc/*.obj gc/*.lib
+GC:: gc include/gc.h include/gc_cpp.h
+
+ifdef CYGWIN32
+GC:: lib/gc.lib
+else
+GC:: lib/libgc.a
+endif
+
 GC_TARGETS := gc.a
 GC_CFLAGS := -DLARGE_CONFIG -DNO_SIGNALS -O \
 	 -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
@@ -38,11 +46,22 @@ ifdef DEBUG
 else
 GC_CFLAGS += -DNO_DEBUGGING
 endif
+
 lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
+lib/gc.lib: 	  gc/gc.lib lib/.exists;	 cp $< $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
+
+ifdef CYGWIN32
+gc/gc.lib:	  always
+	cd gc; nmake -nologo -f NT_MAKEFILE
+else
 gc/gc.a: 	  always
-	$(MAKE) -C gc CXX='$(CXX)' CC='$(CC)' AS='$(AS)' CFLAGS='$(GC_CFLAGS)' $(GC_TARGETS)
+	$(MAKE) -C gc CXX='$(CXX)' CC='$(CC)' AS='$(AS)' \
+		AR='$(AR)' RANLIB='$(RANLIB)' \
+		CFLAGS='$(CFLAGS) $(GC_CFLAGS)' $(GC_TARGETS)
+endif
+
 clean::; $(MAKE) -C gc clean
 clean::; rm -f gc/base_lib
 ###################### GMP
@@ -190,6 +209,9 @@ all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
 clean ::; $(MAKE) -C Macaulay2 clean
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
+	M2.dsw WindowsDistribution.dsw WindowsDistribution.dsp root.dsp \
+	Macaulay2/Macaulay2.dsp Macaulay2/WindowsFixUps.dsp \
+	Macaulay2/setup.nodumpdata Macaulay2/setup.dumpdata \
 	Macaulay2/CVS \
 	Macaulay2/Vasconcelos-appendix \
 	Macaulay2/basictests \

@@ -1249,7 +1249,7 @@ void PolynomialRing::read_element(object_reader &i, ring_elem &result) const
       Nterm *t = new_term();
       f->next = t;
       f = t;
-      M->read_element(i, t->monom);
+     // M->read_element(i, t->monom);
       K->read_element(i, t->coeff);
     }
   f->next = NULL;

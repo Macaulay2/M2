@@ -156,6 +156,10 @@ SOURCE=.\lex.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\M2lib.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\mp.c
 # End Source File
 # Begin Source File

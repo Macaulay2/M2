@@ -79,13 +79,14 @@ int DetComputation::hash() const
 
 void DetComputation::write_object(object_writer &o) const
 {
+  int i;
   o << class_id()
     << p
     << do_exterior
     << done;
-  for (int i=0; i<p; i++)
+  for (i=0; i<p; i++)
     o << row_set[i];
-  for (int i=0; i<p; i++)
+  for (i=0; i<p; i++)
     o << col_set[i];
   o << this_row << this_col << *M << *result;
 }

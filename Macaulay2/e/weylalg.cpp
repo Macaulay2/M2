@@ -14,12 +14,13 @@ WeylAlgebra::WeylAlgebra(const Ring *K,
 {
   _derivative = new int[nvars];
   _commutative = new int [nvars];
-  for (int i=0; i<nvars; i++)
+  int i;
+  for (i=0; i<nvars; i++)
     {
       _derivative[i] = -1;
       _commutative[i] = -1;
     }
-  for (int i=0; i<a.length(); i+=2)
+  for (i=0; i<a.length(); i+=2)
     {
       if (a[i] >= 0)
 	_derivative[a[i]] = a[i+1];

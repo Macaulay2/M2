@@ -142,6 +142,10 @@ SOURCE=.\lex.d
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Makeconf.lcl
+# End Source File
+# Begin Source File
+
 SOURCE=.\Makefile
 # End Source File
 # Begin Source File

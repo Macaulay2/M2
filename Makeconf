@@ -18,6 +18,9 @@ export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 
+AR = ar
+RANLIB = ranlib
+
 ifeq "$(OS)" "CYGWIN32-95"
 export CYGWIN32 = TRUE
 endif
@@ -62,7 +65,6 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '#' >$@
 	(echo -n "# uname -a => "; uname -a) >>$@
 	echo '#' >$@
-	echo '# COMPILER    := microsoft' >>$@
 	echo '# PROFILE     := TRUE' >>$@
 	echo '# NOSTRIP     := TRUE' >>$@
 	echo '# NOSTATIC    := TRUE' >>$@
@@ -98,17 +100,23 @@ ifdef CYGWIN32
 #	eval `eval "echo $ac_compile"`
 endif
 
-ifeq "$(COMPILER)" "microsoft"
+ifeq "$(CC)" "cl"
 
 # 'make -p' shows the database of rules
 
-CC = cl -TC
-CXX = cl -TP
-
 OUTPUT_OPTION = -Fo$@
 
+export AR = lib
+export ARFLAGS = -MACHINE:i386 -nologo -verbose
+(%): %;  $(AR) $(ARFLAGS) /out:$@ $<
+
+export RANLIB = true
+
+CFLAGS   =     -O2 -Zi -nologo -G5 -W3
+CXXFLAGS = -TP -O2 -Zi -nologo -G5 -W3
+
 LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
-%: %.c;  $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+%: %.c;  $(LINK.c) $^ $(LOADLIBES) -link $(LDLIBS) -out:$@.exe
 
 LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
 %: %.o;  $(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
@@ -116,7 +124,10 @@ LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
 LINK.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 %: %.cc; $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
-COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+%.o: %.c; $(COMPILE.c) $< $(OUTPUT_OPTION)
+
+COMPILE.cc = $(CXX) -TP $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 %.o: %.cc; $(COMPILE.cc) $< $(OUTPUT_OPTION)
 %.o: %.cpp; $(COMPILE.cc) $< $(OUTPUT_OPTION)
 
@@ -161,7 +172,11 @@ else
 # don't omit frame pointers, because it adds 1MB to the executable size!
 # export CFLAGS += -fomit-frame-pointer
 # export CXXFLAGS += -fomit-frame-pointer
+
+ifneq "$(CC)" "cl"
 export LDFLAGS += -s
+endif
+
 # we should be able to do away with these:
 STRIPFLAG := -s
 STRIPCMD := strip
