@@ -922,7 +922,6 @@ document { vector,
 
 document { Module,
      Headline => "the class of all modules",
-     SEEALSO "ideals and modules",
      PARA,
      "Common ways to make a module:",
      SHIELD MENU {
