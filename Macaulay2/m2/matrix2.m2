@@ -77,10 +77,8 @@ Matrix // Matrix := Matrix => (f,g) -> (
      g = matrix g;
      map(N, L, f //
 	  if M.?relations 
-	  then gb(g | presentation M, 
-	       ChangeMatrix => true, SyzygyRows => rank source g)
-	  else gb(g,
-	       ChangeMatrix => true),
+	  then gb(g | presentation M, ChangeMatrix => true, SyzygyRows => rank source g)
+	  else gb(g,                  ChangeMatrix => true),
 	  Degree => degree f - degree g  -- do this in the engine instead
 	  ))
 
@@ -196,11 +194,13 @@ oldCoefficients(RingElement) := (m) -> (
 
 coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
 
-coefficients(List, Matrix) := (v,m) -> (
-     R := ring m;
-     v = splice v;
-     error "IM2_Matrix_coeffs not implemented yet";
-     sendgg(ggPush m, ggPush v, ggcoeffs); 
+coefficients(List, Matrix) := (v,f) -> (
+     R := ring f;
+     n := numgens R;
+     m := new RawMatrix from raw f;
+     monoms := rawMonomials(splice v, m);
+     error "coefficients' not re-implemented yet";
+     sendgg(ggPush f, ggPush v, ggcoeffs); 
      {getMatrix R, getMatrix R})
 
 coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
@@ -224,17 +224,15 @@ sortColumns = method (
      )
 
 sortColumns Matrix := options -> (f) -> (
-     callgg(ggsortcolumns, f,
-	  (
+     	  rawSortColumns(
+	       raw f,
 	       if options.DegreeOrder === Ascending then 1 else
 	       if options.DegreeOrder === Descending then -1 else
 	       if options.DegreeOrder === null then 0 else
-	       error "expected DegreeOrder option value to be Ascending, Descending, or null"),
-	  (
+	       error "expected DegreeOrder option value to be Ascending, Descending, or null",
 	       if options.MonomialOrder === Ascending then 1 else
 	       if options.MonomialOrder === Descending then -1 else
-	       error "expected MonomialOrder option value to be Ascending or Descending"));
-     eePopIntarray())
+	       error "expected MonomialOrder option value to be Ascending or Descending"))
 
 -----------------------------
 -- Matrix utility routines --
