@@ -400,7 +400,7 @@ checkForExampleOutputFile := (node,pkg) -> (
      if pkg#"example results"#?node then (
 	  exampleResults = pkg#"example results"#node;
 	  exampleResultsFound = true)
-     else if fileExists (exampleBaseFilename | ".out") then (
+     else if exampleBaseFilename =!= null and fileExists (exampleBaseFilename | ".out") then (
      	  if debugLevel > 1 then stderr << "--reading example results from " << (exampleBaseFilename | ".out") << endl;
 	  exampleResults = pkg#"example results"#node = drop(separateM2output get (exampleBaseFilename | ".out"),-1);
  	  exampleResultsFound = true))
@@ -705,8 +705,8 @@ synopsisOpts := new OptionTable from {			    -- old
      Outputs => {},
      Results => {}
      }
-synopsis := method(SingleArgumentDispatch => true)
-synopsis Thing := key -> (
+
+briefSynopsis := key -> (
      -- we still want to put
      --	       moreGeneral s
      -- back somewhere....
@@ -756,7 +756,6 @@ synopsis Thing := key -> (
      out = alter \ out;
      if #inp > 0 or #ino > 0 or #out > 0 then (
 	  fixup SEQ {				  -- to be implemented
-     	       SUBSECTION "Synopsis",
 	       UL {
      	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
 		    if fun =!= null then SEQ { "Function: ", TO fun }
@@ -772,6 +771,8 @@ synopsis Thing := key -> (
 		    }
 	       }
 	  ))
+
+synopsis := key -> PARA { SUBSECTION "Synopsis", briefSynopsis key }
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
@@ -794,7 +795,7 @@ briefDocumentation Thing :=
 -- briefDocumentation HashTable := 
 x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
-     r := synopsis x;
+     r := briefSynopsis x;
      if r =!= null then << endl << r << endl
      else (
 	  if headline x =!= null then << endl << commentize headline x << endl;

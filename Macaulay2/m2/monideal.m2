@@ -175,8 +175,6 @@ monomialIdeal Module := MonomialIdeal => (M) -> (
      )
 
 monomialIdeal RingElement := MonomialIdeal => v -> monomialIdeal {v}
-monomialIdeal ZZ := MonomialIdeal => v -> monomialIdeal {v}
-monomialIdeal QQ := MonomialIdeal => v -> monomialIdeal {v}
 monomialIdeal Ring := MonomialIdeal => R -> monomialIdeal {0_R}
 ring MonomialIdeal := I -> I.ring
 numgens MonomialIdeal := I -> I.numgens

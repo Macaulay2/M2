@@ -11,9 +11,7 @@ addEndFunction(() -> (
 	  )
      )
 
-addStartFunction(() -> (
-	  printWidth = width stdio; -- later, we should adjust this when a window resizing interrupt occurs; "wrap" uses 80 if printWidth == 0
-	  ))
+addStartFunction(() -> printWidth = width stdio)
 
 lastLN := 0
 lastWI := 0
