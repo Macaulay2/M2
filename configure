@@ -1369,6 +1369,11 @@ test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 
+if test "$CXX" = gcc
+then echo oops, CXX=gcc, should use CXX=g++
+     exit 1
+fi
+
 
 
 
