@@ -138,6 +138,7 @@ setup(TypicalValue => ZZ,
 setup(TypicalValue => List,
      {euler, genera})
 
+
 use Thing := identity
 
 use HashTable := x -> (
@@ -145,6 +146,16 @@ use HashTable := x -> (
      x)
 
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
+ass = method(
+     TypicalValue => List,
+     Options =>{
+	  PrintLevel => 0,
+	  Strategy => 2})
+primaryDecomposition = method(
+     TypicalValue => List,
+     Options => {
+	  PrintLevel => 0,
+	  Strategy => null})
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
 options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)

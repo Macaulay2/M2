@@ -72,10 +72,6 @@ ass2 := (I,printlevel) -> (
      ))
 
 
-ass = method(Options =>{
-	  PrintLevel => 0,
-	  Strategy => 2})
-
 ass Ideal := List => o -> (I) -> (
      if I.cache.?Assasinator then I.cache.Assasinator else I.cache.Assasinator = (
      	  if o.Strategy === 1 then (
@@ -90,11 +86,35 @@ ass Ideal := List => o -> (I) -> (
 
 
 TEST ///
+-- This last little code is to check if two lists are the
+-- same up to permutation.
+
+isSameList = (L1,L2) ->(
+     ret := null;
+     ret1 := true;
+     counter1 := 0;
+     counter2 := 0;
+     if #L1 =!= #L2 then ret = false else(
+     	  while counter1 < #L1 and ret1 == true do (
+	     ret2 := false;
+	     counter2 = 0;
+	     while counter2 < #L2 and ret2 == false do(
+		    if L1#counter1 == L2#counter2 
+		    then ret2 = true;
+		    counter2 = counter2 + 1;
+		    );
+	       if ret2 == false then ret1 = false;
+	       counter1 = counter1 + 1;);
+	  ret = ret1;
+	  );
+     ret	       
+     )     	    
+
 R=ZZ/(101)[x,y,z];
 I=ideal (x^2,x*y);
 assoutcome = ass(I,Strategy=>1,PrintLevel=>2)
 trueass = {ideal(x),ideal(x,y)};
-isSameList(assoutcome,trueass)
+assert(isSameList(assoutcome,trueass))
 
 I=ideal (x^2,x*y);
 assoutcome = ass(I,Strategy=>2,PrintLevel=>2)
@@ -103,7 +123,7 @@ S=R/I;
 J=ideal(0_S);	
 assoutcome = ass J
 trueass = {ideal(x),ideal(x,y)};
-isSameList(assoutcome, trueass)
+assert(isSameList(assoutcome, trueass))
 
 R=ZZ/31991[x,y,z]
 I1 = ideal(x^3,x*y,z^2);
@@ -112,7 +132,7 @@ I3 = ideal(x^5*z,y^3*z^2);
 K=intersect(I1,I2,I3)
 assoutcome = ass K
 trueass = {ideal(z), ideal(y,x), ideal(z,x), ideal(y+z,x)}     
-isSameList(assoutcome, trueass)
+assert(isSameList(assoutcome, trueass))
 ///
 
 
@@ -344,7 +364,7 @@ ass(I,Strategy=>1,PrintLevel=>2)
 ass(I,Strategy=>2,PrintLevel=>2)
 S=R/I;
 J=ideal(0_S);
-EHVprimaryDecompostion J
+primaryDecomposition(J,Strategy=>EHV)
 ass J
 P=ideal(x);
 
@@ -353,8 +373,8 @@ J=ideal (x*y^2,x*z^2);
 P2=ideal(y,z);
 ass(J)
 localize (J,P2)
-assocprimary(J,P2)
-EHVprimaryDecompostion J
+primaryComponent(J,P2)
+primaryDecomposition(J,Strategy=>EHV)
 
 R = ZZ/101[a..d]
 S = R/(a*b-c^2)
@@ -366,26 +386,3 @@ J1 = J1 + ideal(R_3^5)
 trim substitute(J1,T)
 ///
 
--- This last little code is to check if two lists are the
--- same up to permutation.
-
-isSameList = (L1,L2) ->(
-     ret := null;
-     ret1 := true;
-     counter1 := 0;
-     counter2 := 0;
-     if #L1 =!= #L2 then ret = false else(
-     	  while counter1 < #L1 and ret1 == true do (
-	     ret2 := false;
-	     counter2 = 0;
-	     while counter2 < #L2 and ret2 == false do(
-		    if L1#counter1 == L2#counter2 
-		    then ret2 = true;
-		    counter2 = counter2 + 1;
-		    );
-	       if ret2 == false then ret1 = false;
-	       counter1 = counter1 + 1;);
-	  ret = ret1;
-	  );
-     ret	       
-     )     	    

@@ -5,13 +5,6 @@ binomialCD = (I) -> {}
 
 Hybrid = new SelfInitializingType of BasicList
 
-primaryDecomposition = method(
-     Options => {
-	  PrintLevel => 0,
-	  Strategy => null
-	  }
-     )
-
 primaryDecomposition Ideal := List => o -> (I) -> (
      -- Determine the strategy to use.
      opt := SY;
@@ -30,6 +23,7 @@ primaryDecomposition Ideal := List => o -> (I) -> (
 	  primaryDecomposition monomialIdeal I
 	  )
      else if opt === Binomial then (
+	  error "not implemented yet";
 	  binomialCD (I,o.PrintLevel)
 	  )
      else if opt === EHV then (

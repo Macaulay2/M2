@@ -282,8 +282,7 @@ dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
 dual MonomialIdeal := (I) -> dual(I, lcmOfGens(I))    
 
 --  PRIMARY DECOMPOSITION  ---------------------------------
-primaryDecomposition = method();
-primaryDecomposition MonomialIdeal := (I) -> (
+primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := lcmOfGens I;
      M := first entries gens dual I;
@@ -297,8 +296,7 @@ primaryDecomposition MonomialIdeal := (I) -> (
 
 
 --  ASSOCIATED PRIMES  -------------------------------------
-ass = method()
-ass MonomialIdeal := (I) -> (
+ass MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      a := lcmOfGens I + toList(numgens R:1);
      L := first entries gens dual I;

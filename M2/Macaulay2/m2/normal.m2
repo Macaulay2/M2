@@ -1,3 +1,7 @@
+-- Notes for Amelia, from Mike:
+-- I have changed ICnode to ICComputation
+-- and have used ICComputation instead of IC
+
 -- Computes the integral closure of a reduced ring (R/I where I is radical).  
 -- integralClosure takes R/I as input and outputs a sequence of ideals, 
 -- I_1,..., I_n such that the integral closure of R/I is the direct product 
@@ -55,7 +59,7 @@ isSinglyGraded := (R) -> (
      if n===1 then true else false)
 
 
--- The idea of ICnode is to keep track of where we are in the process
+-- The idea of ICComputation is to keep track of where we are in the process
 -- and the various maps and fractions we generate.  It is particularly 
 -- important in the reduced-not-domain case since we have to divide the 
 -- the ring into pieces and keep track of those we have normalized.
@@ -74,7 +78,7 @@ isSinglyGraded := (R) -> (
 -- generator of J that is not in I works.
 
 
--- ICnode is a mutable hash table that allows us to collect all of the 
+-- ICComputation is a mutable hash table that allows us to collect all of the 
 -- necessary information throughout this process.  Most of the elements 
 -- in the hash table are clear, however, C.todo, C.pending, C.storing and 
 -- C.answer are the key pieces to working through the algorithm.  C.todo is
@@ -87,12 +91,12 @@ isSinglyGraded := (R) -> (
 -- the algorithm can begin again with that ideal and I:I:f is placed in 
 -- C.storing.  Once the integral closure of R_i/I_i for some I_i is obtained, 
 -- then the defining ideal of theis integral closure is placed in C.answer.
-if ICnode === symbol ICnode then
-    ICnode = new Type of MutableHashTable;
+if ICComputation === symbol ICComputation then
+    ICComputation = new Type of MutableHashTable;
 
-newICnode := (R) -> (
+newICComputation := (R) -> (
      I := ideal presentation R;
-     C := new ICnode;
+     C := new ICComputation;
      C.todo = {{I,null}};
      C.pending = null;
      C.storing = {};
@@ -106,7 +110,7 @@ newICnode := (R) -> (
      C.fractions = {}; 
      C.map = null;
      C.rings = R;
-     R.IC = C;
+     R.ICComputation = C;
      C)
 
 -- Tells us when to stop the algorithm.  Moves ideals from C.todo to C.pending.
@@ -267,8 +271,8 @@ normal0 := (C) -> (
 
 integralClosure = method(Options=>{VarName => symbol w})
 integralClosure Ring := o -> (R) -> (
-     if not R.?IC then newICnode R;
-     C := R.IC;
+     if not R.?ICComputation then newICComputation R;
+     C := R.ICComputation;
      while next C do (
       	  if C.pending#1 === null 
      	  then normal0 C       --Compute J defining the NNL.
@@ -281,17 +285,17 @@ integralClosure Ring := o -> (R) -> (
 
 --------------------------------------------------------------------
 
--- R.IC.map is needed to find the conductor
+-- R.ICComputation.map is needed to find the conductor
 ICmap = method()
 ICmap(Ring) := (R) -> (
      if isNormal R then (map(R,R))
      else (
-	  if not R.?IC then V := integralClosure(R);
-	  S := (R.IC.answer#0)#0/(R.IC.answer#0)#1;
-	  U := R.IC.map;
-     	  if U === null then R.IC.map = map(S,S)
-     	  else R.IC.map = map(S,R,substitute((U).matrix,S));
-	       R.IC.map))
+	  if not R.?ICComputation then V := integralClosure(R);
+	  S := (R.ICComputation.answer#0)#0/(R.ICComputation.answer#0)#1;
+	  U := R.ICComputation.map;
+     	  if U === null then R.ICComputation.map = map(S,S)
+     	  else R.ICComputation.map = map(S,R,substitute((U).matrix,S));
+	       R.ICComputation.map))
 
 --------------------------------------------------------------------
 
@@ -304,17 +308,18 @@ ICfractions(Ring) := (R) -> (
 	  I := ideal(R);
 	  map(frac(ring I),frac(ring I)))
      else (
-	  if not R.?IC then V := integralClosure(R);
-	  K := (R.IC.basefield)[join(flatten R.IC.newvars,R.generatorSymbols)];
+	  if not R.?ICComputation then V := integralClosure(R);
+	  K := (R.ICComputation.basefield)[
+	          join(flatten R.ICComputation.newvars,R.generatorSymbols)];
 	  KF := frac(K);
      	  M1 := first entries substitute(vars R,KF);
-	  M2 := apply(R.IC.fractions, i->matrix{{i}});
+	  M2 := apply(R.ICComputation.fractions, i->matrix{{i}});
      	  M2' := apply(M2, i->substitute(i,KF));
      	  M3 := flatten apply(M2', j-> first entries j);
      	  G := map(KF,KF,matrix{join(M3,M1)});
-	  if M3 === {} then R.IC.fractions = {G,G.matrix}
-	  else R.IC.fractions = {G,transpose G (matrix{M3})};
-	  R.IC.fractions))
+	  if M3 === {} then R.ICComputation.fractions = {G,G.matrix}
+	  else R.ICComputation.fractions = {G,transpose G (matrix{M3})};
+	  R.ICComputation.fractions))
 
 --------------------------------------------------------------------
 ICfractionMap = method()
@@ -326,19 +331,20 @@ ICfractionMap(Ring) := (R) -> (
 	  I := ideal(R);
 	  map(frac(ring I),frac(ring I)))
      else (
-	  if not R.?IC then V := integralClosure(R);
+	  if not R.?ICComputation then V := integralClosure(R);
 	  n := #gens V - #gens R;
-	--K := (R.IC.basefield)[join(flatten R.IC.newvars,R.generatorSymbols)];
+	--K := (R.ICComputation.basefield)[
+	--        join(flatten R.ICComputation.newvars,R.generatorSymbols)];
 	  KF := frac(V);
      	  M1 := first entries substitute(vars R,KF);
-	  F := R.IC.fractions_{0..n-1};
+	  F := R.ICComputation.fractions_{0..n-1};
 	  M2 := apply(F, i->matrix{{i}});
      	  M2' := apply(M2, i->substitute(i,KF));
      	  M3 := flatten apply(M2', j-> first entries j);
      	  map(KF,V,matrix{join(M3,M1)}) ))
-	  --if M3 === {} then R.IC.fractions = {G,G.matrix}
-	  --else R.IC.fractions = {G,transpose G (matrix{M3})};
-	  --R.IC.fractions))
+	  --if M3 === {} then R.ICComputation.fractions = {G,G.matrix}
+	  --else R.ICComputation.fractions = {G,transpose G (matrix{M3})};
+	  --R.ICComputation.fractions))
 
 --------------------------------------------------------------------
 conductor = method()
@@ -347,7 +353,7 @@ conductor(RingMap) := (F) -> (
      --module over the source.
      --Output: The conductor of the target into the source.
      --NOTE:  If using this in conjunction with the command normalization,
-     --then the input is R.IC.map where R is the name of the ring used as 
+     --then the input is R.ICComputation.map where R is the name of the ring used as 
      --input into normalization.  
      if isSinglyGraded (source F) and isHomogeneous (source F)
      	  then(M := presentation pushForward(F, (target F)^1);

@@ -43,6 +43,7 @@ fastgb = (m) -> (
 
 -- This is much faster than (I:f), even with the first line.
 fastquotient = (I,f) -> (
+     -- I should be a matrix
      m := f | I;
      m = m ** (ring I)^{degree f};
      sendgg(ggPush m, 
@@ -101,7 +102,7 @@ minSatPPD = (I, facs) -> (
      {ideal ret#0, F0, F, facs0}
      )
 
-///
+TEST ///
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
 I = ideal(
     b*v+s*u,
@@ -120,7 +121,6 @@ time fastquotient(gens I,F)
 time (I:F)
 time (quotMin(gens I,{x,y,z},F))
 time (minSatPPD(I,{x,y,z}))
-load "primdec.m2"
 time (minSatPPDold(I,{x,y,z}))
 
 I1 = I + ideal(v*w*y, u*v*x, s*v*y, s*t*y, b*s*x, x*y*z, s*t*v, u*v*w, 

@@ -168,17 +168,6 @@ quotMinold = (I, facs, F) -> (
      {J,facs,F}
      )
 
-TEST ///
-R = ZZ/32003[a..d]
-I = monomialCurveIdeal(R,{1,3,4})
-J = monomialCurveIdeal(R,{1,2,3})
-L = I^2 * J^3
-fac1 = I_1
-fac2 = J_1
-F = fac1 * fac2
-quotMinold(L,{fac1,fac2},F)
-///
-
 minSat = (I, F) -> minSatPPD(I, factors F)
 
 minSatPPDold = (I, facs) -> (
@@ -201,11 +190,12 @@ TEST ///
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 J = monomialCurveIdeal(R,{1,2,3})
-L = I^2 * J^3
+L = I^2 * J^3;
 fac1 = I_1
 fac2 = J_1
 F = fac1 * fac2
-minSatold(L,F)
+minSat(L,F)
+quotMin(gens L,{fac1,fac2},F)
 quotMinold(L,{fac1,fac2},F)
 ///
 
@@ -460,10 +450,6 @@ SYprimaryDecomposition = (I,printlevel) -> (
 	  );
      if C.H != I then error "algorithm missed components!";
      apply(C.U, i -> trim(i#0)))
-
---primaryDecomposition = method()
---primaryDecomposition Ideal := List => (I) ->
---    SYprimaryDecomposition(I,1)
 
 TEST ///
 -- Simple examples

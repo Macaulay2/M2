@@ -2,6 +2,7 @@
 
 #include "RR.hpp"
 #include <stdio.h>
+#include <math.h>
 #include "text_io.hpp"
 #include "bin_io.hpp"
 #include "monoid.hpp"
@@ -158,6 +159,11 @@ bool RR::lift(const Ring *, const ring_elem, ring_elem &) const
   return false;
 }
 
+bool RR::is_zero_RR(double a) const
+{
+  return compare_RR(a,0.0,epsilon) == EQ;
+}
+
 bool RR::is_zero(const ring_elem f) const
 {
   return compare_RR(RR_VAL(f),0.0,epsilon) == EQ;;
@@ -271,7 +277,7 @@ ring_elem RR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   // If g != 0.0 then rem = 0, return f/g
   double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (RR::is_zero(g))
+  if (RR::is_zero_RR(a))
     {
       rem = RR::from_double(b);
       return RR::from_double(0.0);
@@ -300,7 +306,7 @@ ring_elem RR::quotient(const ring_elem f, const ring_elem g) const
   // If g != 0.0 then rem = 0, return f/g
   double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (RR::is_zero(g))
+  if (RR::is_zero_RR(a))
     return RR::from_double(0.0);
   else
     return RR::from_double(b/a);
@@ -319,7 +325,7 @@ ring_elem RR::gcd(const ring_elem f, const ring_elem g) const
 {
   double a1 = RR_VAL(f);
   double b1 = RR_VAL(g);
-  if (RR::is_zero(b1) && RR::is_zero(a1))
+  if (RR::is_zero_RR(b1) && RR::is_zero_RR(a1))
     return RR::from_double(0.0);
   else
     return RR::from_double(1.0);
@@ -330,13 +336,13 @@ ring_elem RR::gcd_extended(const ring_elem f, const ring_elem g,
 {
   double a1 = RR_VAL(f);
   double b1 = RR_VAL(g);
-  if (!RR::is_zero(b1))
+  if (!RR::is_zero_RR(b1))
     {
       u = RR::from_double(0.0);
       v = RR::from_double(1/b1);
       return RR::from_double(1.0);
     }
-  else if (!RR::is_zero(a1))
+  else if (!RR::is_zero_RR(a1))
     {
       u = RR::from_double(1/a1);
       v = RR::from_double(0.0);
@@ -355,7 +361,7 @@ void RR::syzygy(const ring_elem a, const ring_elem b,
 {
   double a1 = RR_VAL(a);
   double b1 = RR_VAL(b);
-  if (RR::is_zero(b1))
+  if (RR::is_zero_RR(b1))
     {
       x = RR::from_double(0);
       y = RR::from_double(1);
