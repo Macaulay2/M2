@@ -179,8 +179,7 @@ newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
      symbol cache => new CacheTable,
      symbol RawFreeModule => rM,
      symbol ring => R,
-     symbol numgens => rawRank rM,
-     0 => somethingElse					    -- zero vector!
+     symbol numgens => rawRank rM
      }
 
 degrees Module := M -> if M.?degrees then M.cache.degrees else M.cache.degrees = (

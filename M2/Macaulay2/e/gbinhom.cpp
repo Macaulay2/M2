@@ -797,7 +797,6 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 
       if (error())
 	{
-	  ERROR(error_message());
 	  is_done = COMP_ERROR;
 	  break;
 	}

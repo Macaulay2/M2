@@ -11,7 +11,6 @@ extern "C" {
   void INTERNAL_ERROR(char *s, ...); /* Exits the program with an error code */
   int error(); /* returns 0 for false, 1 for true */
   char *error_message();
-  void clear_error();
 
 #if defined(__cplusplus)
 }

@@ -151,30 +151,6 @@ userSymbols = type -> (
 
 listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
-usage := () -> (
-     << endl
-     << " -- useful debugger commands:" << endl
-     << " --     break                   leave the debugger, returning to top level" << endl
-     << " --     end                     abandon the code, enter debugger one level up" << endl
-     << " --     listLocalSymbols        display local symbols and their values" << endl
-     << " --     listUserSymbols         display user symbols and their values" << endl
-     << " --     continue                execute the code and continue" << endl
-     << " --     continue n              execute the code, stop after n microsteps" << endl
-     << " --     return                  bypass code, return 'null', and continue" << endl
-     << " --     return x                bypass code, return 'x', and continue" << endl
-     << " --     disassemble errorCode   examine the code microsteps" << endl
-     << " --     value errorCode         execute the code, returning its value" << endl
-     )
-
-firstTime := true
-debuggerHook = () -> 
-     -- if interpreterDepth > 1 then 
-     (
-     -- << listLocalSymbols errorCode << endl;
-     if firstTime then ( usage(); firstTime = false; );
-     << endl << " -- code just attempted: " << code errorCode << endl
-     )
-
 clearOutput = Command (() -> (
 	  global oo <- global ooo <- global oooo <- null;
 	  scan(values OutputDictionary, s -> ( s <- null; erase s ));
