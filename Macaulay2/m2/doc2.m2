@@ -218,7 +218,9 @@ document { openListener,
      host at the Macaulay2 port (2500).",
      PARA,
      "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
-     returning a new input output file which serves as the connection."
+     returning a new input output file which serves as the connection.  The function
+     ", TT "isReady", " can be used to determine whether an incoming connection has
+     arrived, without blocking."
      }
 
 document { openIn,

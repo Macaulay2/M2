@@ -282,7 +282,10 @@ leadCoefficient RingElement := RingElement => (f) -> (
 
 degree RingElement := f -> if f == 0 then -infinity else (
      sendgg(ggPush f, ggdegree);
-     eePopIntarray())
+     d := eePopIntarray();
+     R := ring f;
+     if R.?Repair then R.Repair d else d
+     )
 
 -- delayed installation of methods
 

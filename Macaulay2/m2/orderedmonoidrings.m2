@@ -162,7 +162,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 			 );
 	       	    new PolynomialRing from (
 		    	 ggPush degRing, 
-		    	 ggPush flatten (options M).Degrees, 
+		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust), 
 			 ggPush R, ggPush M, 
 			 ggPush diffs0,
 			 ggPush diffs1,
@@ -199,7 +199,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 			 );
 		    new PolynomialRing from (
 		    	 ggPush degRing, 
-		    	 ggPush flatten (options M).Degrees, 
+		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust),
 		    	 ggPush R, 
 		    	 ggPush M,
 		    	 ggPush skews,
@@ -211,7 +211,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if M.?newEngine
 	       then new PolynomialRing from (
 		    ggPush degRing, 
-		    ggPush flatten (options M).Degrees, 
+      	 	    ggPush flatten apply((options M).Degrees, (options M).Adjust), 
 		    ggPush R, 
 		    ggPush M, 
 		    ggpolyring
@@ -221,6 +221,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  if M.?newEngine then RM.newEngine = true;
 	  RM.monoid = M;
+	  RM.Adjust = (options M).Adjust;
+	  RM.Repair = (options M).Repair;
 	  RM.degreesRing = degRing;
 	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
      	  ONE := RM#1;
