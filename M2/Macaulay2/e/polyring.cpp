@@ -255,7 +255,12 @@ void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
   for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++)
     {
       ring_elem f = (Nterm *) Rideal[j]->basis_ptr();
-      quotient_ideal.append(f);
+
+      // The following line adds the element to f, it is not already there.
+      // Over ZZ, RidealZ has been set, and at the same time, quotient_ideal
+      // was set too.
+      if (RidealZ == 0)
+	quotient_ideal.append(f);
     }
 }
 

@@ -695,6 +695,7 @@ int GBZZ_comp::computation_complete(const int * /* stop_degree */,
 
 int GBZZ_comp::calc(const int *deg, const intarray &stop)
 {
+
   int n_in_degree, d;
 
   if (stop.length() != 7) 
