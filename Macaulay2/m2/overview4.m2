@@ -30,7 +30,7 @@ document {
      details about how to get it, as well as information about how to swap your
      caps lock and control keys.",
      PARA,
-     UL {
+     Subnodes => {
 	  TO "running Macaulay 2 in emacs",
 	  TO "editing Macaulay 2 code with emacs",
 	  },

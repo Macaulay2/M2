@@ -37,11 +37,9 @@ document {
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
      you to use it under the terms of the GNU General Public License, version
      2, as published by the Free Software Foundation, and as contained in the file ", TT "COPYING", " accompanying the program.",
-     UL {
-     	  TOH "COPYING"
-	  },
-     PARA "The following free libraries have been compiled into Macaulay 2.",
-     UL {
+     Subnodes => {
+     	  TOH "COPYING",
+      	  "The following free libraries have been compiled into Macaulay 2.",
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "GNU MP",
@@ -122,7 +120,7 @@ document {
           SEQ (TO ";", " -- statement separator"),
           SEQ (TO "=", " -- assignment"),
           SEQ (TO "<-", " -- assignment with left hand side evaluated"),
-	  TO "->",
+	  SEQ (TO "->"),
           SEQ (TO ":=", " -- assignment of method or new local variable"),
           SEQ (TO "==", " -- equal"),
           SEQ (TO "!=", " -- not equal"),
@@ -165,10 +163,17 @@ document {
           SEQ (TO "\\", " -- applying a function to elements of a list"),
           SEQ (TO ">>>", " -- attaching options to a function"),
           SEQ (TO "@@", " -- composing functions"),
-          TO "@",
-          TO "&&",
-          TO "^^",
-          SEQ (TO "~", " -- making a coherent sheaf")
+          SEQ (TO "@"),
+          SEQ (TO "&&"),
+          SEQ (TO "^^"),
+          SEQ (TO "~", " -- making a coherent sheaf"),
+          SEQ (TO "##", " -- uncurrying"),
+          SEQ (TO "in"),
+          SEQ (TO "|-"),
+          SEQ (TO "<==>"),
+          SEQ (TO "===>"),
+          SEQ (TO "==>"),
+          SEQ (TO "(*)"),
      	  }
      }
 
@@ -240,7 +245,7 @@ document {
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  We are eager to help new users
      get started with it.",
-     UL {
+     Subnodes => {
 	  TOH "Copyright and license",
 	  TOH "Acknowledgements",
 	  TOH "The authors",
@@ -322,7 +327,7 @@ document {
      of some features of Macaulay 2 in a slow and leisurely way, assuming the
      reader is already familiar with the mathematical concepts involved.  
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
-     UL {
+     Subnodes => {
 	  TO "Tutorial: Elementary uses of Groebner bases",
 	  TO "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
 	  TO "Tutorial: Fano varieties",
@@ -337,7 +342,7 @@ load "elementary.out"
 
 document {
      Key =>  "Developer's Corner",
-     UL {
+     Subnodes => {
 	  TO "engine",
 	  TO "internals",
 	  }
@@ -350,7 +355,7 @@ document {
      PARA {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
 	  },
-     UL {
+     Subnodes => {
 	  TOH "Preface",
 	  TOH "Getting started",
 	  TOH "Mathematical Overview",
@@ -397,18 +402,16 @@ document {
 
 document {
      Key => "The authors",
-     "The authors of Macaulay 2 and the bulk of this manual:",
-     UL {
+     PARA,
+     "To communicate with the authors about the program, use this email address:
+     ", HREF {"mailto:Macaulay2@math.uiuc.edu", "<Macaulay2@math.uiuc.edu>"}, ".",
+     Subnodes => {
+     	  "The authors of Macaulay 2 and the bulk of this manual:",
 	  TO "Daniel R. Grayson",
-	  TO "Michael E. Stillman"
-	  },
-     "Our co-author for the tutorials:",
-     UL {
+	  TO "Michael E. Stillman",
+     	  "Our co-author for the tutorials:",
 	  TO "David Eisenbud",
-	  },
-     "To communicate with us about the program, use this email address:
-     ", HREF {"mailto:Macaulay2@math.uiuc.edu", "<Macaulay2@math.uiuc.edu>"}, "."
-     
+	  }
      }
 
 document {
@@ -653,7 +656,7 @@ document {
      	  this may vary.  It will need about 50 megabytes of RAM to run modest size problems,
      	  and can benefit from any additional memory."
 	  },     
-     UL {
+     Subnodes => {
 	  TOH "Invoking the program",
 	  TOH "emacs",
 	  TOH "Your first interaction with Macaulay 2",

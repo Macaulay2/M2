@@ -831,6 +831,7 @@ document {
 
 document {
      Key => "Schur rings",
+     Headline => "monomials representing irreducible representations of GL(n)",
      "Given a positive integer ", TT "n", ", 
      we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
      monomials correspond to the irreducible representations of GL(n), and where 
@@ -921,6 +922,7 @@ document {
 
 document {
      Key => "matrices to and from modules",
+     Headline => "including kernel, cokernel and image",
      TOC {
 	  SECTION { "matrices to modules (kernel, image, cokernel)",
      	       "Let's make a matrix.",
@@ -944,6 +946,7 @@ document {
 
 document {
      Key => "Hilbert functions and free resolutions",
+     Headline => "including degree and betti numbers",
      "In this section, we give examples of common operations
      involving modules.  Throughout this section, we suppose that the base
      ring ", TT "R", " is graded, with each variable having degree one, and that  ",
@@ -1021,14 +1024,17 @@ document {
 
 document {
      Key => "operations on modules",
+     Headline => "including direct sum, tensor products, and annihilators"
      }
 
 document {
      Key => "homomorphisms (maps) between modules",
+     Headline => "including elements of modules"
      }
 
 document {
      Key => "subquotient modules",
+     Headline => "the way Macaulay 2 represents modules"
      }
 
 

@@ -178,7 +178,7 @@ fakeMenu := x -> (
 
 makeHtmlNode = key -> (
      fn := buildDirectory | htmlFilename key;
-     stderr << "--making html page for " << key << endl;
+     if debugLevel > 1 then stderr << "--making html page for " << key << endl;
      fn
      << encoding << endl
      << doctype << endl
@@ -231,27 +231,29 @@ toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
 toDoc TreeNode := x -> SEQ { TOH x#0, toDoc x#1 }
 
 local visitCount
-local missingReferences
-showExternalReferences = () -> sort keys missingReferences
 local duplicateReferences
 local nodesToScope
+local missingReferences
+local repeatedReferences
 
 makeTree := x -> (
      visits := if visitCount#?x then visitCount#x else 0;
      visitCount#x = visits + 1;
-     if linkTable#?x 
-     then (
+     if linkTable#?x then (
 	  if visits > 0
-     	  then new TreeNode from { x | " -- repeated reference" , new ForestNode from { }  }
-     	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree) }
-	  )
+     	  then (
+	       if not repeatedReferences#?x then (
+		    repeatedReferences#x = true;
+		    stderr << "--error: repeated reference(s) to documentation as subnode: " << x << endl;
+		    );
+	       new TreeNode from { x | " -- repeated reference" , new ForestNode})
+     	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree)})
      else (
-	  if missingReferences#?x
-     	  then new TreeNode from { x | " -- missing reference", new ForestNode from { } }
-	  else new TreeNode from { x | " -- internal error", new ForestNode from { } }
-	  )
-     )
-
+	  if not missingReferences#?x then (
+	       missingReferences#x = true;
+	       stderr << "--error: missing reference to documentation as subnode: " << x << endl;
+	       );
+	  new TreeNode from { x | " -- missing reference", new ForestNode}))
 makeForest := x -> new ForestNode from makeTree \ x
 
 leaves := () -> keys set flatten values linkTable
@@ -285,9 +287,10 @@ buildLinks ForestNode := x -> (
 
 assembleTree = method()
 assembleTree Package := pkg -> (
+     missingReferences = new MutableHashTable;
+     repeatedReferences = new MutableHashTable;
      oldpkg := currentPackage;
      currentPackage = pkg;
-     missingReferences = new MutableHashTable;
      duplicateReferences = new MutableHashTable;
      topNodeName = pkg#"top node name";
      key := normalizeDocumentTag topNodeName;
@@ -416,7 +419,7 @@ installPackage Package := o -> pkg -> (
 	  then (
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
-	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
+	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose => debugLevel > 0, Exclude => {"CVS"});
 	       );
 
      	  );

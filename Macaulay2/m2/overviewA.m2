@@ -7,27 +7,23 @@ document {
      "In this section we give a comprehensive overview of the main 
      mathematical types of Macaulay 2, their construction and most common
      operations. WARNING: this overview is currently under construction.",
-     UL {
+     Subnodes => {
 	  TO "rings",
 	  TO "ideals",
 	  TO "matrices",
 	  TO "substitution and maps between rings",
-	  SEQ ("modules",
-	       UL {
-		    SEQ (TO "modules: part I", " -- getting started"),
-		    SEQ (TO "modules: part II", " -- homological and multilinear algebra")
-		    }
-	       ),
+	  "Modules",
+	  TO "modules: part I",
+	  TO "modules: part II",
+     	  "Other topics",
 	  TO "Groebner bases and related computations",
 	  TO "chain complexes",
 	  TO "varieties",
+	  "An unrelated topic",
 	  TO "using external libraries",
-	  SEQ ("specialized routines",
-	       UL {
-		    TO "commutative algebra",
-		    TO "algebraic geometry"
-		    }
-	       )
+	  "Specialized routines",
+	  TO "commutative algebra",
+	  TO "algebraic geometry",
 	  }
      }
 
@@ -43,41 +39,30 @@ document {
      before making polynomials or matrices, you must create a ring where
      you give the variables that you want, and the kinds of coefficients
      you want (e.g. rational numbers, or integers modulo a prime number).",
-     UL {
-	  SEQ (TO "basic rings",
-	       UL {
-		    TO "finite fields"
-		    }
-	       ),
-	  SEQ (TO "polynomial rings",
-	       UL {
-		    TO "monomial orderings",
-		    TO "quasi- and multi-graded polynomial rings",
-		    TO "quotient rings",
-		    TO "manipulating polynomials",
-		    TO "factoring polynomials"
-		    }
-	       ),
-	  SEQ ("fields",
-	       UL {
-		    TO "finite fields, part II",
-		    TO "fraction fields",
-		    TO "finite field extensions"
-		    }
-	       ),
-	  SEQ ("other algebras",
-	       UL {
-		    TO "exterior algebras",
-		    TO "symmetric algebras",
-		    TO "tensor products of rings",
-		    TO "Weyl algebras",
-		    SEQ (TO "Schur rings", 
-			 " -- monomials represent irreducible representations of GL(n)"),
-		    TO "associative algebras"
-		    }
-	       )
-       },
-      "For additional common operations and a comprehensive list of all routines
+     Subnodes => {
+	  "Rings",
+	  TO "basic rings",
+	  TO "finite fields",
+	  TO "polynomial rings",
+	  TO "monomial orderings",
+	  TO "quasi- and multi-graded polynomial rings",
+	  TO "quotient rings",
+	  TO "manipulating polynomials",
+	  TO "factoring polynomials",
+	  "Fields",
+	  TO "finite fields, part II",
+	  TO "fraction fields",
+	  TO "finite field extensions",
+	  "Other algebras",
+	  TO "exterior algebras",
+	  TO "symmetric algebras",
+	  TO "tensor products of rings",
+	  TO "Weyl algebras",
+	  TO "Schur rings", 
+	  TO "associative algebras",
+       	  },
+     PARA,
+     "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use rings, see ", TO "Ring", "."
      }
 
@@ -87,34 +72,26 @@ document {
      "In Macaulay 2, once a ring (see ",TO "rings", 
      ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
-     UL {
+     Subnodes => {
 	  TO "creating an ideal",
-	  SEQ ("conversions",
-	       UL {
-		    TO "ideals to and from matrices",
-		    TO "ideals to and from modules"
-		    }
-	       ),
-	  SEQ ("basic operations on ideals",
-	       UL {
-		    TO "sums, products, and powers of ideals",
-		    TO "equality and containment",
-		    TO "extracting generators of an ideal",
-		    TO "dimension, codimension, and degree"
-		    }
-	       ),
-	  SEQ ("components of ideals",
-	       UL {
-		    TO "intersection of ideals",
-		    TO "ideal quotients and saturation",
-		    TO "radical of an ideal",
-		    TO "minimal primes of an ideal",
-		    TO "associated primes of an ideal",
-		    TO "primary decomposition"
-		    }
-	       ),
+	  "conversions",
+	  TO "ideals to and from matrices",
+	  TO "ideals to and from modules",
+	  "basic operations on ideals",
+	  TO "sums, products, and powers of ideals",
+	  TO "equality and containment",
+	  TO "extracting generators of an ideal",
+	  TO "dimension, codimension, and degree",
+	  "components of ideals",
+	  TO "intersection of ideals",
+	  TO "ideal quotients and saturation",
+	  TO "radical of an ideal",
+	  TO "minimal primes of an ideal",
+	  TO "associated primes of an ideal",
+	  TO "primary decomposition",
 	  TO "Groebner bases and related computations",
-          },
+	  },
+     PARA,
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",
      TO "modules: part I", ".",
@@ -251,37 +228,26 @@ document {
      HEADER2 "An overview",     
      "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay 2.",
-     UL {
-	  SEQ ("making matrices", 
-	       UL {
-		    TO "input a matrix",
-		    TO "random and generic matrices",
-		    TO "concatenating matrices"
-		    }
-	       ),
-	  SEQ ("operations involving matrices",
-	       UL {
-		    TO "simple information about a matrix",
-		    TO "basic arithmetic of matrices",
-		    TO "kernel, cokernel and image of a matrix",
-		    TO "differentiation"
-		    }
-	       ),
-	  SEQ ("determinants and related computations",
-	       UL {
-		    TO "rank of a matrix",
-		    TO "determinants and minors",
-		    TO "Pfaffians",
-		    TO "exterior power of a matrix"
-		    }
-	       ),
-	  SEQ ("display of matrices and saving matrices to a file",
-	       UL {
-		    TO "format and display of matrices in Macaulay 2",
-		    TO "importing and exporting matrices"
-		    }
-	       )
+     Subnodes => {
+	  "making matrices", 
+	  TO "input a matrix",
+	  TO "random and generic matrices",
+	  TO "concatenating matrices",
+	  "operations involving matrices",
+	  TO "simple information about a matrix",
+	  TO "basic arithmetic of matrices",
+	  TO "kernel, cokernel and image of a matrix",
+	  TO "differentiation",
+	  "determinants and related computations",
+	  TO "rank of a matrix",
+	  TO "determinants and minors",
+	  TO "Pfaffians",
+	  TO "exterior power of a matrix",
+	  "display of matrices and saving matrices to a file",
+	  TO "format and display of matrices in Macaulay 2",
+	  TO "importing and exporting matrices",
 	  },
+     PARA,
      "For an overview of matrices as homomorphisms between modules, 
      see ", TO "modules: part I", ".  
      For additional common operations and a comprehensive list of all routines
@@ -291,92 +257,62 @@ document {
 document {
      Key => "substitution and maps between rings",
      HEADER2 "An overview",
-     UL {
+     Subnodes => {
 	  TO "substitute values for variables",
 	  TO "working with multiple rings",
-	  SEQ ("ring maps",
-	       UL {
-		    TO "basic construction, source and target of a ring map",
-	       	    TO "evaluation and composition of ring maps",
-		    TO "kernel and image of a ring map"
-		    }
-	       ),
+	  "ring maps",
+	  TO "basic construction, source and target of a ring map",
+	  TO "evaluation and composition of ring maps",
+	  TO "kernel and image of a ring map",
 	  },
+     PARA,
       "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use ring maps, see ", TO "RingMap", "."
      }
      
 document {
      Key => "modules: part I",
-     HEADER2 "Getting started",
-     UL {
-	  SEQ ("construction of modules",
-	       UL {
-		    TO "free modules",
-		    SEQ (TO "matrices to and from modules", " (including kernel, cokernel and image)"),
-		    TO "ideals to and from modules"
-		    }
-	       ),
-	  SEQ (TO "Hilbert functions and free resolutions",
-	       UL {
-		    "including degree and betti numbers"
-		    }
-	       ),
-	  SEQ (TO "operations on modules",
-	       UL {
-		    "including direct sum, tensor products, and annihilators"
-		    }
-	       ),
-	  SEQ (TO "homomorphisms (maps) between modules",
-	       UL {
-		    "including elements of modules"
-		    }
---	       UL {
+     Headline => "getting started",
+     Subnodes => {
+	  "construction of modules",
+	  TO "free modules",
+	  TO "matrices to and from modules",
+	  TO "ideals to and from modules",
+	  TO "Hilbert functions and free resolutions",
+	  TO "operations on modules",
+	  TO "homomorphisms (maps) between modules",
 --		    TO "constructing maps between modules",
 --		    TO "information about a map of modules",
---		    TO "kernel, cokernel and image of a map of modules"
---		    }
-	       ),
---	  ("graded modules",
---	       UL {
+--		    TO "kernel, cokernel and image of a map of modules",
+--	  "graded modules",
 --		    TO "degrees of elements and free modules",
 --		    TO "degree and multiplicity of a module",
 --		    TO "Hilbert functions and polynomials",
 --		    TO "homogenization",
---		    TO "truncation and homogeneous components of a graded module"
---		    }
---	       ),
-	  SEQ (TO "subquotient modules", " -- the way Macaulay 2 represents modules",
-	       UL {
-		    "Macaulay 2 has handed you a subquotient module.  What now?"
-		    }
---	       UL {
+--		    TO "truncation and homogeneous components of a graded module",
+	  TO "subquotient modules",
+	  "Macaulay 2 has handed you a subquotient module.  What now?",
 --		    TO "what is a subquotient module?",
 --		    TO "extracting parts of a subquotient module",
---		    TO "quotients of modules"
---		    }
-	       )
+--		    TO "quotients of modules",
 	  },
+     PARA,
      "See ", TO "modules: part II", " for more operations on modules."
      }
 
 document {
      Key => "modules: part II",
-     UL {
-	  SEQ ("multilinear algebra",
-	       UL {
-		    TO "exterior power of a module",
-		    TO "Fitting ideals",
-		    TO "adjoints of maps"
-		    }
-	       ),
-	  SEQ ("homological algebra",
-	       UL {
-		    TO "Hom module",
-		    TO "Tor and Ext"
-		    },
-	       )
+     Headline => "homological and multilinear algebra",
+     Subnodes => {
+	  "multilinear algebra",
+	  TO "exterior power of a module",
+	  TO "Fitting ideals",
+	  TO "adjoints of maps",
+	  "homological algebra",
+	  TO "Hom module",
+	  TO "Tor and Ext",
 	  },
+     PARA,
      "For more operations in homological algebra, see ", TO "chain complexes", ".  For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use modules, see ", TO "Module", "."
      }
@@ -384,20 +320,17 @@ document {
 document {
      Key => "Groebner bases and related computations",
      HEADER2 "An overview",
-     UL {
+     Subnodes => {
 	  TO "what is a Groebner basis?",
 	  TO "finding a Groebner basis",
 	  TO "rings that are available for Groebner basis computations",
-	  SEQ ("a few applications of Groebner bases",
-	       UL {
-		    TO "elimination of variables",
-		    TO "Hilbert functions",
-		    TO "syzygies",
-		    TO "saturation",
-		    TO "fibers of maps",
-		    TO "solving systems of polynomial equations"
-		    }
-	       ),
+	  "A few applications of Groebner bases",
+	  TO "elimination of variables",
+	  TO "Hilbert functions",
+	  TO "syzygies",
+	  TO "saturation",
+	  TO "fibers of maps",
+	  TO "solving systems of polynomial equations",
 	  TO "fine control of a Groebner basis computation"
 	  }
      }
@@ -405,13 +338,14 @@ document {
 document {
      Key => "chain complexes",
      HEADER2 "An overview",
-     UL {
+     Subnodes => {
 	  TO "free resolutions of modules",
 	  TO "extracting information from chain complexes",
 	  TO "making chain complexes by hand",
 	  TO "manipulating chain complexes",
 	  TO "maps between chain complexes"
 	  },
+     PARA,
       "For additional common operations and a comprehensive list of all routines
       in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 
       TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
@@ -420,29 +354,28 @@ document {
 document {
      Key => "varieties",
      HEADER2 "An overview",
-     UL {
+     Subnodes => {
 	  TO "algebraic varieties",
 	  TO "coherent sheaves",
+	  TO "Variety"
 	  },
-     "For details, see ", TO "Variety", ".",
      }
 
 document {
      Key => "using external libraries",
-     UL {
+     "This node will be rewritten using packages.",
+     Subnodes => {
      	  TO "loading a library",
      	  TO "how to get documentation on a library",
-     	  SEQ ("available libraries",
-	       UL {
-	       	    SEQ (TO "blow ups", ""),
-	       	    SEQ (TO "convex hulls and polar cones", " -- polarCone.m2"),
-	       	    SEQ (TO "D-modules", " -- D-modules.m2"),
-	       	    SEQ (TO "elimination theory", " -- eliminate.m2"),
-	       	    SEQ (TO "graphing curves and surfaces via 'surf'", ""),
-	       	    SEQ (TO "invariants of finite groups", " -- invariants.m2"),
-	       	    SEQ (TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction", " -- LLL.m2"),
-	       	    SEQ (TO "SAGBI bases", " -- sagbi.m2")
-	       	    })
+     	  "available libraries",
+	  TO "blow ups",
+	  TO "convex hulls and polar cones",
+	  TO "D-modules",
+	  TO "elimination theory",
+	  TO "graphing curves and surfaces via 'surf'",
+	  TO "invariants of finite groups",
+	  TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
+	  TO "SAGBI bases",
 	  }
      }
 
@@ -454,7 +387,7 @@ document {
      Key => "rings that are available for Groebner basis computations",
      "In Macaulay 2, Groebner bases can be computed for ideals and submodules over many
      different rings.",
-     UL {
+     Subnodes => {
 	  TO "over fields",
           TO "over the ring of integers",
           TO "over polynomial rings over a field",
@@ -510,14 +443,17 @@ document {
 
 document {
      Key => "convex hulls and polar cones",
+     Headline => "polarCone.m2"
      }
 
 document {
      Key => "D-modules",
+     Headline => "D-modules.m2",
      }
 
 document {
      Key => "elimination theory",
+     Headline => "eliminate.m2",
      }
 
 document {
@@ -526,14 +462,17 @@ document {
 
 document {
      Key => "invariants of finite groups",
+     Headline => "invariants.m2",
      }
 
 document {
      Key => "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
+     Headline => "LLL.m2",
      }
 
 document {
      Key => "SAGBI bases",
+     Headline => "sagbi.m2",
      }
 
 -------------------

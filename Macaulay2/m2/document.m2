@@ -10,21 +10,7 @@ local exampleBaseFilename
 local exampleOutputFilename
 local currentNodeName
 
-docFilename := () -> null
-
-addStartFunction( 
-     () -> (
-	  fn := docFilename();
-	  if fn =!= null then DocDatabase = try openDatabase fn else (
-	       stderr << "warning: couldn't open help file " << docFilename() << endl;
-	       new HashTable)))
-
--- Documentation = new MutableHashTable
-
-duplicateDocWarning := () -> (
-     error ("warning: documentation already provided for '", currentNodeName, "'");
-     -- stderr << concatenate ("warning: documentation already provided for '", currentNodeName, "'") << newline << flush;
-     )
+duplicateDocWarning := () -> error ("warning: documentation already provided for '", currentNodeName, "'")
 
 -----------------------------------------------------------------------------
 -- sublists, might be worthy making public
@@ -59,6 +45,7 @@ fixup Sequence   :=
 fixup List       := z -> SEQ fixflat z
 fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
 fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
+fixup UL         := z -> UL apply(z, i -> fixup if class i === TO then TOH i#0 else i)
 fixup PRE        := 
 fixup CODE       := 
 fixup TO         := 
@@ -105,7 +92,7 @@ normalizeDocumentTag  Nothing := x -> symbol null
 normalizeDocumentTag    Thing := x -> (
      if x.?Symbol and value x.Symbol === x then return x.Symbol;
      if ReverseDictionary#?x then return ReverseDictionary#x;
-     error "encountered unidentifiable document tag";
+     error("encountered unidentifiable document tag: ",x);
      )
 
 isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
@@ -221,10 +208,7 @@ verifyTag Sequence := s -> (
 	       );
 	  if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
      else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
-	  if class lookup s =!= Function then (
-	       error("documentation provided for '", formatDocumentTag s, "' but no method installed");
-	       -- stderr << "warning: documentation provided for '" << formatDocumentTag s << "' but no method installed" << endl ;
-	  )))
+	  if class lookup s =!= Function then error("documentation provided for '", formatDocumentTag s, "' but no method installed")))
 verifyTag Option   := s -> error "old style option documentation tag"
 
 -----------------------------------------------------------------------------
@@ -311,16 +295,16 @@ checkForExampleOutputFile := (node,pkg) -> (
      exampleResults = {};
      exampleResultsFound = false;
      exampleOutputFilename = null;
-     if debugLevel > 0 then stderr << "exampleBaseFilename = " << exampleBaseFilename << endl;
+     if debugLevel > 1 then stderr << "exampleBaseFilename = " << exampleBaseFilename << endl;
      if exampleBaseFilename =!= null then (
 	  exampleOutputFilename = exampleBaseFilename | ".out";
 	  if debugLevel > 0 then (
-	       stderr << "checking for example results in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
+	       if debugLevel > 1 then stderr << "checking for example results in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
 	       );
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example results
 	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
-	       if debugLevel > 0 then stderr << "node " << node << " : " << boxList \\ net \ exampleResults << endl;
+	       if debugLevel > 1 then stderr << "node " << node << " : " << boxList \\ net \ exampleResults << endl;
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -1427,9 +1411,7 @@ dummyDoc := x -> document {
 undocErr := x -> (
      pos := locate x;
      pos = if pos === null then "error: " else pos#0 | ":" | toString pos#1 | ": ";
-     stderr << pos << x;
-     stderr << " undocumented " << synonym class value x;
-     stderr << endl;
+     stderr << pos << x << " undocumented " << synonym class value x << endl;
      )
 
 undocumentedSymbols = () -> select(
