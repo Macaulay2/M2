@@ -148,7 +148,9 @@ inline
 int ntuple::weight(int nvars, const int *a, const M2_arrayint wt)
 {
   int sum = 0;
-  for (int i=0; i<nvars; i++)
+  int top = wt->len;
+  if (nvars < top) top = nvars;
+  for (int i=0; i<top; i++)
     sum += a[i] * wt->array[i];
   return sum;
 }

@@ -46,9 +46,9 @@ apply(1..24, i -> x^i)
 -----------------------------
 R = Schur 4
 f = R_{1,1}
-dimension f
+dim f
 g = f*f
-assert(dimension g == (dimension f)^2)
+assert(dim g == (dim f)^2)
 
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw2.okay "
 -- End:
