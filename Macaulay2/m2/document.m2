@@ -30,18 +30,14 @@ addStartFunction(
 -----------------------------------------------------------------------------
 -- the phase encoding
 -----------------------------------------------------------------------------
-writingExampleInputFiles  := () -> phase === 2
-writingTestInputFiles     := () -> phase === 2
+writingInputFiles         := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
 writingHtmlFiles          := () -> phase === 5
-writingDocDatabase        := () -> phase === 2 or phase === 4
-readingDocFiles           := () -> phase === 2 or phase === 4 or phase === 5
-readingDocDatabase        := () -> not readingDocFiles()
-readingPreDocDatabase     := () -> phase === 3
 writing                   := () -> phase === 2 or phase === 4 or phase == 5
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------
+DocDatabase = null
 local nodeBaseFilename
 local exampleOutputFilename				    -- nodeBaseFilename | ".out"
 local exampleCounter
@@ -192,27 +188,27 @@ formatDocumentTag Sequence := record(
 						      else toString) s))
 
 fSeqTO := null
--- formatDocumentTagTO := method(SingleArgumentDispatch => true)
--- formatDocumentTagTO Thing := x -> TT formatDocumentTag x
--- formatDocumentTagTO Option := x -> (
---      if #x === 2 and getDoc x#1 =!= null 
---      then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
---      else TT formatDocumentTag x
---      )
--- formatDocumentTagTO Sequence := (
---      s -> SEQ (
--- 	  if fSeqTO === null then (
--- 	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
--- 	       );
--- 	  (
--- 	       if #s == 0                               then toString
--- 	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
--- 	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
--- 	       else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) 
--- 	       					        then fSeqTO#(#s, class, class s#0, s#1)
--- 	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
--- 	       else if fSeqTO#?#s                       then fSeqTO#(#s)
--- 						        else toString) s))
+formatDocumentTagTO := method(SingleArgumentDispatch => true)
+formatDocumentTagTO Thing := x -> TT formatDocumentTag x
+formatDocumentTagTO Option := x -> (
+     if #x === 2 and getDoc x#1 =!= null 
+     then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
+     else TT formatDocumentTag x
+     )
+formatDocumentTagTO Sequence := (
+     s -> SEQ (
+	  if fSeqTO === null then (
+	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
+	       );
+	  (
+	       if #s == 0                               then toString
+	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
+	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
+	       else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) 
+	       					        then fSeqTO#(#s, class, class s#0, s#1)
+	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
+	       else if fSeqTO#?#s                       then fSeqTO#(#s)
+						        else toString) s))
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -383,7 +379,7 @@ checkForNodeBaseFilename := nodeName -> (
 	  );
      nodeBaseFilename = (
 	  if #t > 0 then first t
-	  else if writingExampleInputFiles() or writingHtmlFiles()
+	  else if writingInputFiles() or writingHtmlFiles()
 	  then cacheFileName(first documentationPath, nodeName)
 	  else null
      	  );
@@ -410,7 +406,7 @@ checkForExampleOutputFile := () -> (
      )
 
 checkForExampleInputFile := () -> exampleInputFile = (
-     if writingExampleInputFiles() then openOut(nodeBaseFilename | ".example")
+     if writingInputFiles() then openOut(nodeBaseFilename | ".example")
      else null
      )
 
@@ -586,8 +582,7 @@ moreGeneral := s -> (
      )
 -----------------------------------------------------------------------------
 
--- optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
-optTO := i -> SEQ{ TO i, headline i }
+optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
 
 smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> MENU (optTO \ s)
@@ -851,8 +846,7 @@ documentation Symbol := s -> (
 documentation Type := X -> (
      syms := values symbolTable();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
-     b := toString \ select(syms, 
-	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
+     b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
@@ -949,7 +943,7 @@ help Thing := s -> (
 
 numtests := 0
 
-TEST = (e) -> if writingTestInputFiles() then (
+TEST = (e) -> if writingInputFiles() then (
      TestsPrefix | toString numtests | ".m2" << e << endl << close;
      numtests = numtests + 1;
      null

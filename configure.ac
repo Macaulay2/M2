@@ -1,4 +1,4 @@
-AC_INIT(Makefile-configuration)
+AC_INIT(Macaulay2, 0.9.3, Macaulay2@math.uiuc.edu, Macaulay2)
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -49,10 +49,6 @@ then echo "yes" >&6
 else echo "`basename $0`: $MAKE: GNU make is required" >&2
      exit 1
 fi
-
-PACKAGE_NAME=Macaulay2
-PACKAGE_VERSION="`cat $srcdir/version`"
-AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION",version number)
 
 NODENAME="`uname -n`"
 AC_SUBST(NODENAME)

@@ -21,10 +21,14 @@ phase2: $(DOCFILES)
 	touch "$@"
 phase3: $(DOC) $(TEST)
 	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
+	touch "$@"
 phase4: $(DOCFILES)
 	for i in $^ ; do ../../bin/M2 -q '-e phase=4; errorDepth 0' $$i '-e exit 0' || exit 1; done
 	touch "$@"
-doc : phase2 phase3 phase4
+phase5: $(DOCFILES)
+	for i in $^ ; do ../../bin/M2 -q '-e phase=5; errorDepth 0' $$i '-e exit 0' || exit 1; done
+	touch "$@"
+doc : phase2 phase3 phase4 phase5
 clean::; rm -f phase2
 check:: doc
 	$(MAKE) -C $(TEST) -f $(srcdir)/../m2/Makefile.tests srcdir=$(srcdir)

@@ -208,8 +208,6 @@ scan((
 	  symbol ooo,
 	  symbol oo,
 	  symbol path,
-	  -- symbol writeExamples,
-	  -- symbol readExamples,
 	  symbol phase,
 	  symbol currentDirectory,
 	  symbol documentationPath,
@@ -227,6 +225,10 @@ addStartFunction = g -> (
 runStartFunctions = () -> scan(startFunctions, f -> f())
 OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
+
+addStartFunction( () -> (
+	  scanPairs(symbolTable(), (name,sym) -> if not writableGlobals#?sym then protect sym)
+	  ))
 
 load "loads.m2"
 
@@ -255,10 +257,6 @@ if OLDENGINE then (
 erase symbol OLDENGINE
 erase symbol outputSymbols
 erase symbol lastSystemSymbol
-
-if phase === 1 then scanPairs(symbolTable(),
-     (name,sym) -> if not writableGlobals#?sym then protect sym
-     )
 
 Function.GlobalReleaseHook = (X,x) -> (
      stderr << "warning: " << toString X << " redefined" << endl;
