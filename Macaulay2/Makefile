@@ -66,7 +66,7 @@ all ::; $(MAKE) -C dumpdata all
 tests ::; $(MAKE) -C dumpdata tests
 endif
 clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
-wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
+wc ::;  $(MAKE) -C dumpdata NODEPENDS=1 wc
 ################################# d
 config ::; $(MAKE) NODEPENDS=1 -C d compat.h
 all ::; util/restart d/restart.tmp $(MAKE) -C d all
@@ -123,9 +123,3 @@ clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
 backup ::; $(MAKE) -C m2 backup
 backup ::; if [ -d docs ]; then $(MAKE) -C docs backup; fi
 backup ::; if [ -d experiments ]; then $(MAKE) -C experiments backup; fi
-################################# tar manufactured files
-manufactured.tgz :
-	tar cfz $@ \
-		e/geovec.hpp e/geores.hpp e/cmdnames.m2 e/cmdnames.hpp e/cmdinst.hpp \
-		m2/tutorials.m2 tutorial/final/*.out \
-		m2/gbdoc.m2 m2/gbfunctions.m2

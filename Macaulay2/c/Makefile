@@ -26,7 +26,7 @@ CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c \
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
-OTHERS := makefile.dos scc.template Makefile README COPYRIGHT
+OTHERS := makefile.dos scc.template Makefile COPYRIGHT
 ALLFILES := $(SRCFILES) $(OTHERS) grammar.c
 OPTIMIZE := -Winline -finline-functions -O2
 INCLUDES := -I${INCDIR}

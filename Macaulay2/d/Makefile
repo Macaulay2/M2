@@ -51,7 +51,7 @@ WRAPPERS := scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h
 SRCFILES := $(WRAPPERS) $(DNAMES)
 SCRIPTS := reverse
 WC1FILES := $(SCRIPTS) $(SRCFILES) \
-	Makefile abc grxwrap.c g scc.gdb README COPYRIGHT \
+	Makefile abc grxwrap.c g scc.gdb COPYRIGHT \
 	bench sets.m bignum.h bignum.c alloca.h \
 	configure remake probe.c sizes.c mp.d
 ALLFILES := $(WC1FILES) $(PROJECT:.d=.dep) $(PROJECT:.d=.sig)
