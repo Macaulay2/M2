@@ -36,9 +36,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   spairs = new s_pair_heap(M);
 
-#if 0
-  gbmatrix = new Matrix(F);
-#endif
+  hf_matrix = const_cast<Matrix *>(Matrix::make(F, 0, 0, true));
 
   n_gb = n_mingens = n_subring = 0;
   n_gb_first = 0;
@@ -64,7 +62,6 @@ void gb2_comp::setup(FreeModule *FFsyz,
   use_hilb = 0;
   n_hf = -1;			// This will enable the initial computation of HF.
 				// If use_hilb is set.
-  hf_comp = NULL;
   n_gb_syz = -1;
 
   strategy_flags = strategy;
@@ -480,11 +477,7 @@ void gb2_comp::schreyer_append(gbvector * f)
   if (orig_syz < 0)
     {
       int *d = R->degree_monoid()->make_one();
-#warning "need to be able to find multidegree of a gbvector"
-#if 0
-      // Get this working (April 2004)
-      F->degree(f, d);
-#endif
+      GR->gbvector_multidegree(F, f, d);
       Fsyz->append_schreyer(d, f->monom, Fsyz->rank());
       R->degree_monoid()->remove(d);
     }
@@ -512,15 +505,18 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   gb.append(p);
   M->remove(f_m);
-  // Now we must be a bit careful about this next, but we only want one
-  // copy of a GB element, since the whole thing can be quite large.
-  // Just make sure that when the GB is deleted at the end, that the 'f'
-  // field of the gb_elem's is not removed.
 
-#if 0
-  // MES Aug 2002: what to do with this gbmatrix?
-  gbmatrix->append(p->f);
-#endif
+  if (use_hilb)
+    {
+      // Make the element 1 * m * comp, as an element of _hilb_matrix->get_ring().
+      // and append it as the last column of _hilb_matrix.
+
+      gbvector *new_f = p->f;
+      ring_elem a = originalR->get_flattened_ring()->term(originalR->Ncoeffs()->one(), 
+							  new_f->monom);
+      hf_matrix->append_column(0);
+      hf_matrix->set_entry(new_f->comp-1,hf_matrix->n_cols()-1, a);
+    }
 
   // Now do auto-reduction of previous elements using this one.
   // MES: possible fix: only do this if the current element is not minimal
@@ -734,7 +730,6 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
     {
       if (use_hilb)
 	{
-	  //int n1,n2;
 	  if (syz != NULL)
 	    {
 	      ret = syz->hilbertNumeratorCoefficient(this_degree, n1);
@@ -850,24 +845,11 @@ enum ComputationStatusCode gb2_comp::hilbertNumerator(RingElement *&result)
       return COMP_DONE;
     }
 
-#warning "do hilb comp elsewhere"
-#if 0
-  if (hf_comp == NULL)
-    hf_comp = new hilb_comp(R->get_degree_ring(), gbmatrix);
-#endif
-
-#if 1
-#warning code commented out
-  enum ComputationStatusCode retval;
-#else
-  enum ComputationStatusCode retval = hf_comp->calc(-1);
-#endif
-
-  if (retval != COMP_DONE) return retval;
-  hf = hf_comp->value();
+  hf = hilb_comp::hilbertNumerator(hf_matrix);
+  // hf is NULL if the computation was interrupted
+  if (hf == 0)
+    return COMP_INTERRUPTED;
   result = hf;
-  deleteitem(hf_comp);
-  hf_comp = NULL;
   n_hf = n_gb;
   return COMP_DONE;
 }

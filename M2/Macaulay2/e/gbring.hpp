@@ -180,6 +180,8 @@ public:
   bool is_weyl_algebra() const { return is_weyl; }
   // returns true if this is a Weyl algebra OR a homog Weyl algebra
 
+  // Schreyer order information
+  bool is_schreyer_encoded() const { return _schreyer_encoded; }
 
   //////////////////////
   // exponents support //
@@ -199,6 +201,9 @@ public:
 
   gbvector * gbvector_term(const FreeModule *F, ring_elem coeff, int comp);
   // Returns coeff*e_sub_i in F, the monomial is set to 1.
+
+  gbvector * gbvector_term_exponents(const FreeModule *F, ring_elem coeff, const int *exp, int comp);
+  // Returns coeff*exp*e_sub_i in F, where exp is an exponent vector.
 
   gbvector * gbvector_zero() const { return 0; }
 
@@ -223,6 +228,11 @@ public:
 
   int gbvector_degree(const FreeModule *F, 
 		      const gbvector *f);
+
+  void gbvector_multidegree(const FreeModule *F, 
+			    const gbvector *f,
+			    int *&result_degree);
+  // Places the multidegree of the first term of the non-zero poly f into result_degree.
 
   int gbvector_compare(const FreeModule *F,
 		       const gbvector *f,

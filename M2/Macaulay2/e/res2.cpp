@@ -293,13 +293,15 @@ void res2_comp::start_computation()
 
   if (status() == COMP_DONE) return;
   set_status(COMP_COMPUTING);
- 
- if (length_limit < stop_.length_limit->array[0])
-    // this also sets length_limit
-    increase_level(stop_.length_limit->array[0]);
-  else
-    length_limit = stop_.length_limit->array[0];
 
+  if (stop_.length_limit->len > 0)
+    {
+      if (length_limit < stop_.length_limit->array[0])
+	// this also sets length_limit
+	increase_level(stop_.length_limit->array[0]);
+      else
+	length_limit = stop_.length_limit->array[0];
+    }
   int compute_level = COMPUTE_RES;
 
   for (level=1; level<=length_limit+1; level++)

@@ -112,24 +112,29 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
   // each vector in V is over same ring.
 
   const Ring *R = target->get_ring();
-  for (unsigned int i=0; i<M->len; i++)
-    {
-      if (R != M->array[i]->get_ring())
-	{
-	  ERROR("expected vectors in the same ring");
-	  return 0;
-	}
-    }
+
+  if (M != 0)
+    for (unsigned int i=0; i<M->len; i++)
+      {
+	if (R != M->array[i]->get_ring())
+	  {
+	    ERROR("expected vectors in the same ring");
+	    return 0;
+	  }
+      }
 
   MatrixConstructor mat(target, ncols, is_mutable_flag);
-  unsigned int next = 0;
-  for (int r=0; r <target->rank(); r++)
-    for (int c=0; c < ncols && next < M->len; c++)
-      {
-	mat.set_entry(r,c,M->array[next]->get_value());
-	next++;
-      }
-  mat.compute_column_degrees();
+  if (M != 0)
+    {
+      unsigned int next = 0;
+      for (int r=0; r <target->rank(); r++)
+	for (int c=0; c < ncols && next < M->len; c++)
+	  {
+	    mat.set_entry(r,c,M->array[next]->get_value());
+	    next++;
+	  }
+      mat.compute_column_degrees();
+    }
   return mat.to_matrix();
 }
 const MatrixOrNull * Matrix::make(const FreeModule *target,
@@ -150,25 +155,32 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 	    R->degree_monoid()->n_vars());
       return 0;
     }
-  for (unsigned int i=0; i<M->len; i++)
+
+  if (M != 0)
     {
-      if (R != M->array[i]->get_ring())
+      for (unsigned int i=0; i<M->len; i++)
 	{
-	  ERROR("expected vectors in the same ring");
-	  return 0;
+	  if (R != M->array[i]->get_ring())
+	    {
+	      ERROR("expected vectors in the same ring");
+	      return 0;
+	    }
 	}
     }
 
   MatrixConstructor mat(target, source, is_mutable_flag, deg->array);
 
-  unsigned int next = 0;
-  for (int r=0; r <target->rank(); r++)
+  if (M != 0)
     {
-      for (int c=0; c < source->rank(); c++)
+      unsigned int next = 0;
+      for (int r=0; r <target->rank(); r++)
 	{
-	  mat.set_entry(r,c,M->array[next]->get_value());
-	  next++;
-	  if (next >= M->len) break;
+	  for (int c=0; c < source->rank(); c++)
+	    {
+	      mat.set_entry(r,c,M->array[next]->get_value());
+	      next++;
+	      if (next >= M->len) break;
+	    }
 	}
     }
   return mat.to_matrix();
