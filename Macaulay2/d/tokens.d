@@ -141,6 +141,10 @@ export Frame := {
      valuesUsed:int,      -- sigh, we really need this only for static frames
      values:Sequence
      };
+export FrameLocation := {
+     frame:Frame,
+     frameindex:int
+     };
 export DictionaryClosure := {
      frame:Frame,					    -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
@@ -220,10 +224,21 @@ export notfoundE := Expr(Nothing());			    -- internal use only, not visible to 
 
 export exprCode := {v:Expr,position:Position};
 export variableCode := {v:Symbol,position:Position};
-export assignmentCode := {nestingDepth:int,lhs:Symbol,rhs:Code,position:Position};
+export assignmentCode := {
+     nestingDepth:int,					    -- new
+     frameindex:int,					    -- new
+     lhs:Symbol,					    -- becoming obsolete
+     rhs:Code,
+     position:Position
+     };
 
 export SymbolSequence := array(Symbol);
-export parallelAssignmentCode := {lhs:SymbolSequence,rhs:Code,position:Position};
+export parallelAssignmentCode := {
+     nestingDepth:array(int),				    -- new
+     frameindex:array(int),				    -- new
+     lhs:SymbolSequence,			  -- becoming obsolete
+     rhs:Code,
+     position:Position};
 
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};

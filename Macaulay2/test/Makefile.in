@@ -26,7 +26,7 @@ ARGS := --silent --stop -q -e 'path=join(path,{"@srcdir@/","@srcdir@/../packages
 # this version redirects the input (some bugs are detectable only this way
 %.okay : %.m2-input
 	@ echo testing $<
-	@ ulimit -t 600; time ../bin/M2 $(ARGS) <$<
+	@ ulimit -t 600; time ../bin/M2 $(ARGS) <$< >$*.out
 	@ touch $@
 
 clean  :	

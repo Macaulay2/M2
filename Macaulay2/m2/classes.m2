@@ -35,9 +35,11 @@ uniform = (x) -> same apply(x,class)
 
 -- Now some extra stuff:
 
-Function \ VisibleList := VisibleList => (f,v) -> apply(v,f)
+Function  \ VisibleList := VisibleList => (f,v) -> apply(v,f)
+Function \\ VisibleList := VisibleList => (f,v) -> f v
        List / Function :=        List => (v,f) -> apply(v,f) -- just because of conflict with List / Thing!
-VisibleList / Function := VisibleList => (v,f) -> apply(v,f)
+VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
+VisibleList // Function := VisibleList => (v,f) -> f v
 
 use = identity				  -- just temporary, until methods.m2
 
