@@ -178,6 +178,10 @@ endif
 
 ALLOBJ :=
 
+ifeq ($(OS),SunOS)
+LDLIBS += -lsocket -lnsl
+endif
+
 ifdef SHAREDLIBS
 # This next bit is really needed only for gnu libc6 (glibc-2.0.7)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
@@ -232,7 +236,8 @@ compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 compat.mak : ; echo >$@
 else
-compat.c compat.h compat.mak : configure ../../Makeconf.h ; ./configure
+compat.c compat.h compat.mak : configure ../../Makeconf.h Makefile
+	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" ./configure
 endif
 
 M2lib.o scclib.o M2lib.lo scclib.lo : \
