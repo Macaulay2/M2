@@ -300,6 +300,19 @@ void gbA::spair_text_out(buffer &o, spair *p)
 {
   char s[100]; // enough room for all of the non polynomial cases.
   switch (p->type) {
+  case SPAIR_GCD_ZZ:
+    sprintf(s, "spairgcd(%d,%d)", p->x.pair.i, p->x.pair.j);
+    o << s;
+    sprintf(s, " deg(%d)", p->deg);
+    o << s;
+    o << " lcm[";
+    for (int i=0; i<_nvars+2; i++)
+      {
+	sprintf(s, "%d ", p->lcm[i]);
+	o << s;
+      }
+    o << "]";
+    break;
   case SPAIR_SPAIR:
     sprintf(s, "spair(%d,%d)", p->x.pair.i, p->x.pair.j);
     o << s;
@@ -582,7 +595,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
       spair_set_insert(p);
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
-      if (p->type != SPAIR_SKEW && !(mpz_cmp_si(u,1) || mpz_cmp_si(v,1) || mpz_cmp_si(v,-1)))
+      if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
 	{
 	  spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
 	  spair_set_insert(p2);
@@ -1537,11 +1550,21 @@ void gbA::start_computation()
 void gbA::poly_auto_reduce(vector<POLY,gc_alloc> &mat)
 {
   for (vector<POLY,gc_alloc>::iterator i = mat.begin(); i != mat.end(); i++)
-    for (vector<POLY,gc_alloc>::iterator j = mat.begin(); j != i; j++)
+    //    for (vector<POLY,gc_alloc>::iterator j = mat.begin(); j != i; j++)
+    for (vector<POLY,gc_alloc>::iterator j = i-1; j >= mat.begin(); j--)
       {
-	R->gbvector_auto_reduce(_F,_Fsyz,
-				(*i).f, (*i).fsyz,
-				(*j).f, (*j).fsyz);
+	if (over_ZZ())
+	  {
+	    R->gbvector_auto_reduce_ZZ(_F,_Fsyz,
+				       (*i).f, (*i).fsyz,
+				       (*j).f, (*j).fsyz);
+	  }
+	else
+	  {
+	    R->gbvector_auto_reduce(_F,_Fsyz,
+				    (*i).f, (*i).fsyz,
+				    (*j).f, (*j).fsyz);
+	  }
       }
 }
 
