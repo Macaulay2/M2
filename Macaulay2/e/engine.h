@@ -1318,6 +1318,11 @@ extern "C" {
      is x1 ... xn /(x_i1 ... x_ir), i.e. the complement of the support of
      the monomial generates the monomial minimal prime. */
 
+  const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I); /* Dan: please connect */
+  /* This routine computes the numerator of the Hilbert series
+     for coker I.  NULL is returned if the ring is not appropriate for
+     computing Hilbert series, or the computation was interrupted. */
+
 #if 0
   Monomial *IM2_MonomialIdeal_remove(MonomialIdeal *I); /* CAN WE REMOVE THIS?? */
   MonomialIdeal *IM2_MonomialIdeal_copy(MonomialIdeal *I); /* and THIS? */

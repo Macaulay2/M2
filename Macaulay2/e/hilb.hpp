@@ -57,10 +57,12 @@ class hilb_comp : public mutable_object
   const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
 
   // Collected values from the matrix
-  const Matrix *input_mat;             // The input matrix
+  const Matrix *input_mat;	// The input matrix
   ring_elem result_poincare;	// The result poincare polynomial from components
 				// 0..this_comp-1
   int this_comp;
+  int n_components; 		// If input_mat is not NULL, 
+                                // this is the number of rows
 
   // The recursion stack is the following:
   hilb_step *current;
@@ -88,6 +90,7 @@ class hilb_comp : public mutable_object
   
 public:
   hilb_comp(const PolynomialRing *R, const Matrix * M);
+  hilb_comp(const PolynomialRing *R, const MonomialIdeal * I);
   ~hilb_comp();
 
   void reset();
@@ -115,6 +118,11 @@ public:
 
   static RingElement *hilbertNumerator(const FreeModule *F);
 
+  static RingElementOrNull *hilbertNumerator(const MonomialIdeal *I);
+  /* This routine computes the numerator of the Hilbert series
+     for coker I.   NULL is returned if the ring is not appropriate for
+     computing Hilbert series, or the computation was interrupted. */
+
 };
 
 #if 0
@@ -140,10 +148,12 @@ class hilb_comp : public mutable_object
   const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
 
   // Collected values from the matrix
-  const Matrix *input_mat;             // The input matrix
+  const Matrix *input_mat;	// The input matrix
   ring_elem result_poincare;	// The result poincare polynomial from components
 				// 0..this_comp-1
   int this_comp;
+  int n_components; 		// If input_mat is not NULL, 
+                                // this is the number of rows
 
   // The recursion stack is the following:
   hilb_step *current;

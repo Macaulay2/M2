@@ -321,7 +321,7 @@ R = polyring(rawZZp(101), (symbol x, symbol y, symbol z, symbol w))
 G = mat{{(3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp;
+m = rawGBGetMatrix Gcomp;  -- CRASHES
 h = rawHilbert m
 -- redo the computation, using this HF.
 Gcomp = rawGB(G,false,0,{},false,0,0,0)

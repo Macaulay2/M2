@@ -4,6 +4,7 @@
 #include "monideal.hpp"
 #include "matrix.hpp"
 #include "engine.h"
+#include "hilb.hpp"
 
 const MonomialIdeal *IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
@@ -99,6 +100,13 @@ const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I)
   return I->assprimes();
 }
 
+const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I)
+/* This routine computes the numerator of the Hilbert series
+   for coker I.  NULL is returned if the ring is not appropriate for
+   computing Hilbert series, or the computation was interrupted. */
+{
+  return hilb_comp::hilbertNumerator(I);
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
