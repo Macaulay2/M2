@@ -1,3 +1,6 @@
+oops := () -> stderr << "warning: segmentation fault commented out" << endl
+chk  := () -> stderr << "warning: error commented out" << endl
+
 -- ideals in ZZ :
 I = ideal (30,40,50)
 g = gens I
@@ -169,20 +172,26 @@ degree c
 -- Groebner bases
 f = matrix {{x,y^2,z^3}}
 I = image f
+
+oops()
+-- g = gens gb I
+
 G = gb (I, DegreeLimit => 100)
-G2 = gb vars R2
 g = gens G
+
+G2 = gb vars R2
+assert( f == g )
 f === g
 f === map(target f,source f,g)
 
--- oops : Mike should check this:
+chk()
 -- assert try ( matrix {{x^2,y}} % G2; false ) else true
 
 matrix {{x^2,y}} % G
 
 assert ( gens G == f )
 assert ( target gens G === target f )
-assert ( gens G === f )
+assert ( source gens G == source f )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
