@@ -59,3 +59,7 @@ subduction(Matrix, Matrix) := (f,m) -> (
 subduction(RingElement, Matrix) := (f,m) -> (subduction(matrix{{f}},m))_(0,0)
 ///
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

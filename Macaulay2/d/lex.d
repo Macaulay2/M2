@@ -287,3 +287,7 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
 	       )
 	  else return w;
 	  ));
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

@@ -83,3 +83,7 @@ QQ == CC := (i,z) -> z#0 == i and z#1 == 0
 CC == RR := (z,i) -> z#0 == i and z#1 == 0
 RR == CC := (i,z) -> z#0 == i and z#1 == 0
 isConstant CC := i -> true
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

@@ -890,3 +890,7 @@ document { "executing other programs",
      ", TO "get", " with a file name consisting of the character '!' 
      followed by the command."
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

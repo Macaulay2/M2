@@ -1351,3 +1351,7 @@ export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);
      if method == nullE then MissingMethodPair(methodkey,left,right)
      else apply(method,left,right));
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

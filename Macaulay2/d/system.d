@@ -68,3 +68,7 @@ import regexmatch(pattern:string, text:string):array(int);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

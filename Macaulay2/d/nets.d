@@ -248,3 +248,7 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 		    provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j);
 	       	    j = j+2;
 		    ))));
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

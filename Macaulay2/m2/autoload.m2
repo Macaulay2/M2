@@ -13,3 +13,7 @@ autoload(Symbol,String) := (sym,filename) -> (
 autoload(Function,String) := (sym,filename) -> null
 
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

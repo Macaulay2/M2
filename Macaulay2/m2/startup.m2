@@ -356,3 +356,7 @@ if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 stderr << "can't interpret return value as an exit code" << endl
 exit 1
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

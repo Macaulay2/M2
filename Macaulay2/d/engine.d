@@ -235,3 +235,7 @@ export - (y:LMatrixCC) : LMatrixCC := (
 
 -- initialization
 Ccode(void,"IM2_initialize()");
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

@@ -20,3 +20,7 @@ submodule = X -> error "'submodule' has been removed"
 stats = X -> error "'stats' has been replaced by 'summary'"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

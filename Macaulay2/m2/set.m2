@@ -76,3 +76,7 @@ isSubset(List    ,Sequence) := Boolean => (S,T) -> isSubset(S,set T)
 
 isSubset(Set,List    ) := 
 isSubset(Set,Sequence) := Boolean => (S,T) -> isSubset(S,set T)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

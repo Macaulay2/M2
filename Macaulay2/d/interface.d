@@ -3004,3 +3004,7 @@ rawLeastSquaresDeficient(e:Expr):Expr := (
      else WrongArg(1, "a raw matrixRR or raw matrixCC")
      else WrongNumArgs(3));
 setupfun("rawLeastSquaresDeficient", rawLeastSquaresDeficient);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

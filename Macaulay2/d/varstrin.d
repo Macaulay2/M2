@@ -62,3 +62,7 @@ export takereversestring(v:varstring):string := (
      s);
 -- export addchar(v:varstring,c:char):void := v<<c;
 -- export addstring(v:varstring,s:string):void := v<<s;
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

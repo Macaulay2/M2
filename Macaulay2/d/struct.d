@@ -128,3 +128,7 @@ export basictype(o:HashTable):HashTable := (
 	  o = o.parent;
 	  ));
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

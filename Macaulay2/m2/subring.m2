@@ -127,3 +127,7 @@ pushForward(RingMap, Module) := Module => options -> (f,M) -> (
      else error "not implemented yet for inhomogeneous modules or maps"
      )
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

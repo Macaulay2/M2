@@ -413,3 +413,7 @@ export convert(e:ParseTree):Code := (
      is u:Postfix do Code(unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
      is d:dummy do dummyCode
      );
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

@@ -19,3 +19,7 @@ setRandomSeed ZZ := seed -> (
      (callgg(ggrandomseed, seed);)
      )
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

@@ -112,3 +112,7 @@ integrate = (f,a,b) -> (
 	  "'integrate' expected argument 3 to be a number");
      gauss(f,a,b,4,6)
      )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

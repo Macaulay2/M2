@@ -22,3 +22,7 @@ RR == QQ := (x,r) -> x === r+0.
 QQ == RR := (r,x) -> x === r+0.
 
 isConstant RR := i -> true
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

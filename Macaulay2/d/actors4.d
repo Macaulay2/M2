@@ -1154,3 +1154,7 @@ locate(e:Expr):Expr := (
 	  locate1())
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

@@ -292,3 +292,7 @@ length String := s -> #s
 length VisibleList := s -> #s
 
 match(String,String) := X -> 0 < length matches X
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

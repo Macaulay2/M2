@@ -38,3 +38,7 @@ export topLevelTexmacs():bool := (
 	       )));
 topLevelTexmacs(e:Expr):Expr := toExpr(topLevelTexmacs());
 setupfun("topLevelTexmacs",topLevelTexmacs);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

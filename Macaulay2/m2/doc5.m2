@@ -392,3 +392,7 @@ document { truncateOutput,
      "This function works by assigning a value to ", TT "Thing.BeforePrint", ", which
      may conflict with other ", TO "BeforePrint", " methods installed by the user.",
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

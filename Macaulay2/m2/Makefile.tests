@@ -37,3 +37,7 @@ $(TESTRESULTS) : ../../../$(DUMPDATAFILE)
 else
 $(TESTRESULTS) : ../../../cache/Macaulay2-doc
 endif
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+# End:

@@ -1399,3 +1399,7 @@ storeE := Expr(CompiledFunction(store,nextHash()));
 foreach s in syms do storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,s)),storeE);
 storeE = nullE;
 syms = SymbolSequence();
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

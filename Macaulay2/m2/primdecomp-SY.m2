@@ -489,3 +489,7 @@ erase global H
 erase global W
 erase global U
 erase global thisNode
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

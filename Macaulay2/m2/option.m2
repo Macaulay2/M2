@@ -16,3 +16,7 @@ installMethod(symbol ==>, OptionTable, Function, Function =>
 installMethod(symbol ==>, List, Function, Function =>
      (o,f) -> new OptionTable from o ==> f
      )
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

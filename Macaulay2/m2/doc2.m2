@@ -1210,3 +1210,7 @@ document { (symbol _, RingElement, Ring),
 	       the same as that of ", TT "x", "." },
 	  }
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

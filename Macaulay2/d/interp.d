@@ -372,3 +372,7 @@ export process():void := (
      value(Expr("exit 0"));				    -- try to exit the user's way
      exit(1);				   -- if that doesn't work, try harder and indicate an error
      );
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

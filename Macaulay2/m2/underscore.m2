@@ -7,3 +7,7 @@ String _ Sequence := String => (s,i) -> ((j,k) -> substring(j,k,s)) i
 
 
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

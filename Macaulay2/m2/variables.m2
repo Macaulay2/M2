@@ -69,3 +69,7 @@ assign(IndexedVariable,Thing) := (x,val) -> (x#0)#(x#1) = val
 assign(Symbol,Thing) := (x,val) -> x <- val
 
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- End:

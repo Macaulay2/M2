@@ -1500,3 +1500,7 @@ iteratedApply(lhs:Code,rhs:Code):Expr := (
 	  else apply(f,arg)));
 setup(SharpSharpS,iteratedApply);
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:

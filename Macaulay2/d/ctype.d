@@ -51,3 +51,7 @@ export isquote    (c:int ):bool := (chartype(c) & QUOTE    ) != 0;
 export isalnum  (s:string):bool := (
      foreach c in s do if !isalnum(c) then return false;
      true);
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- End:
