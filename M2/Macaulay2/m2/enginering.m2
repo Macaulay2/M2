@@ -362,7 +362,7 @@ name RingElement := x -> name expression x
 net RingElement := x -> net expression x
 
 someTerms(RingElement,ZZ,ZZ) := (f,i,n) -> (
-     S := ring S;
+     S := ring f;
      if n <= 0
      then 0_S
      else (

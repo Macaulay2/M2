@@ -97,6 +97,12 @@ public:
   EVector add(const EVector &g) const;
   EVector subtract(const EVector &g) const; // return this - g
 
+  ////////////////////
+  // Change of ring //
+  ////////////////////
+  bool promote(const EFreeModule *newF, EVector &result) const;
+  bool lift(const EFreeModule *newF, EVector &result) const;
+
   /////////////////////////////////////
   // Obtaining parts of a vector //////
   /////////////////////////////////////

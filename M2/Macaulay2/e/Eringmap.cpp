@@ -265,3 +265,214 @@ EVector EPolynomialRing::vec_evaluate(const ERingMap *map,
     }
   return H.value();
 }
+
+///////////////////
+// promote, lift //
+///////////////////
+
+///////////////////
+// Target is EZZ //
+///////////////////
+bool EZZ::promote(const ERing *Rf, const ERingElement f, ERingElement &result) const
+{
+  return false;
+}
+
+bool EZZ::lift(const ERing *Rg, const ERingElement f, ERingElement &result) const
+{
+  return false;
+}
+
+bool EZZ::vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const
+{
+  return false;
+}
+
+bool EZZ::vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const
+{
+  return false;
+}
+
+////////////////////
+// Target is EZZp //
+////////////////////
+bool EZZp::promote(const ERing *Rf, const ERingElement f, ERingElement &result) const
+  // Rf --> A = this, f in Rf.
+{
+  if (Rf == EZ)
+    {
+      result = from_int(ZZVAL(f));
+      return true;
+    }
+  return false;
+}
+
+bool EZZp::lift(const ERing *Rg, const ERingElement f, ERingElement &result) const
+  // Rg --> A = this, f in A.
+{
+  if (Rg == EZ)
+    {
+      // map is ZZ --> ZZ/p.  Lift to an integer
+      int a = ZZPVAL(f);
+      if (a >= P/2) a -= P;
+      result = Rg->from_int(a);
+      return true;
+    }
+  return false;
+}
+
+bool EZZp::vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const
+  // Rf = ring(v) --> A=this=ZZ/p, resultF over A.
+{
+  if (v.getRing() == EZ)
+    {
+      // loop through the vector, promoting each element:
+      EVector::collector H(resultF);
+      for (EVector::iterator t = v; t.valid(); ++t)
+	{
+	  ERingElement a = from_int(ZZVAL(t->coeff));
+	  if (is_zero(a)) continue;
+	  evec * tm = vec_new_term();
+	  tm->coeff = a;
+	  tm->component = t->component;
+	  H.append(tm);
+	}
+      result = H.value();
+      return true;
+    }
+  return false;
+}
+
+bool EZZp::vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const
+{
+  if (resultF->getRing() == EZ)
+    {
+      // loop through the vector, promoting each element:
+      EVector::collector H(resultF);
+      for (EVector::iterator t = v; t.valid(); ++t)
+	{
+	  ERingElement a;
+	  lift(EZ, t->coeff, a);
+	  evec * tm = vec_new_term();
+	  tm->coeff = a;
+	  tm->component = t->component;
+	  H.append(tm);
+	}
+      result = H.value();
+      return true;
+    }
+  return false;
+}
+
+/////////////////////////////////
+// Target is a polynomial ring //
+/////////////////////////////////
+// Here the possible maps are
+// Rf --> A = Rf[x]/I
+// Rf[x]/J --> A = Rf[x]/I
+// In either of these cases, A may be non-commutative.
+  // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
+  // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
+
+bool EPolynomialRing::promote(const ERing *Rf, const ERingElement f, ERingElement &result) const
+  // Rf --> A = this
+{
+  //if (getCover() == Rf->getCover())
+  //{
+  //result = getCover()->clone(f);
+  ////normal_form(result);  // In the ring A.  MES: put this in when quotients are ready.
+  //return true;
+  //}
+  if (K == Rf)
+    {
+      const monomial *m = getMonoid()->one();
+      result = make_term(f, m);
+      return true;
+    }
+  return false;
+}
+
+bool EPolynomialRing::lift(const ERing *Rg, const ERingElement f, ERingElement &result) const
+  // Rg --> A = this
+{
+  //if (getCover() == Rg->getCover())
+  //{
+  //result = getCover()->clone(f);
+  //// Rg->normal_form(result);  // In the ring Rg  MES: put this in when quotients are ready.
+  //return true;
+  //}
+  if (K == Rg)
+    {
+      epoly *f1 = POLYVAL(f);
+      if (f1 == 0)
+	{
+	  result = K->from_int(0);
+	  return true;
+	}
+      if (f1->next != 0) return false;
+      if (!getMonoid()->is_one(f1->monom))
+	return false;
+      result = K->clone(f1->coeff);
+      return true;
+    }
+  return false;
+}
+
+bool EPolynomialRing::vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const
+  // Rf --> A = this
+  // ring(v) = Rf, ring(resultF)=A.
+{
+  //if (getCover() == v.getRing()->getCover())
+  //{
+  //result = v.translate(resultF);
+  ////resultF->normal_form(result);  MES: once quotients are ready.
+  //return true;
+  //}
+  if (K == v.getRing())
+    {
+      const monomial *m = getMonoid()->one();
+      EVectorHeap H(resultF);
+      for (EVector::iterator p = v; p.valid(); ++p)
+	{
+	  evec *tm = vec_new_term();
+	  tm->coeff = K->vec_term_to_ring(*p);
+	  tm->monom = m;
+	  tm->component = p->component;
+	  tm->next = 0;
+	  H.add(tm);
+	}
+      result = H.value();
+      //result.normal_form();
+      return true;
+    }
+  return false;
+}
+
+bool EPolynomialRing::vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const
+  // Rg --> A = this
+  // Rg = ring(resultF), A = ring(v).
+{
+  //  if (getCover() == resultF->getRing()->getCover())
+  //{
+  //  result = v.translate(resultF);
+  ////resultF->normal_form(result);  MES: once quotients are ready.
+  //return true;
+  //}
+  if (K == resultF->getRing())
+    {
+      // Lift iff each term has monomial = 1.
+      EVectorHeap H(resultF);
+      for (EVector::iterator p = v; p.valid(); ++p)
+	{
+	  if (!getMonoid()->is_one(p->monom))
+	    {
+	      return false;  // H is automatically freed...
+	    }
+	  EVector tm = K->vec_make(resultF, K->clone(p->coeff), p->component);
+	  H.add(tm);
+	}
+      result = H.value();
+      return true;
+    }
+  return false;
+}

@@ -145,6 +145,7 @@ void EZZp::elem_text_out(buffer &o, int a) const
 
 void EZZp::elem_bin_out(buffer &o, int a) const
 {
+  if (a > P/2) a -= P;
   bin_int_out(o, a);
 }
 
@@ -703,6 +704,18 @@ void EFreeModule::text_out(buffer &o) const
           o << _tiebreaks[i];
         }
       o << " ";
+    }
+}
+
+void EFreeModule::bin_out(buffer &o) const
+{
+  const EMonoid *D = getDegreeMonoid();
+  bin_int_out(o, D->n_vars() * rank());
+  for (int i=0; i<rank(); i++)
+    {
+      const int *exp = D->to_exponents(getDegree(i));
+      for (int j=0; j < D->n_vars(); j++)
+	bin_int_out(o, exp[j]);
     }
 }
 

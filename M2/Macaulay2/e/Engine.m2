@@ -136,7 +136,7 @@ monomialOrder = args -> (
          args = sequence args;
      scan(args, val -> (
 	 if class val === ZZ then (
-	      sendgg(ggPush val, ggPush mo, ggMOrevlex)
+	      sendgg(ggPush val, ggPush 0, ggPush mo, ggMOrevlex)
 	      )
 	 else if val === Component then (
 	      if hasComponent then
@@ -147,9 +147,9 @@ monomialOrder = args -> (
 	 else if class val === Option then (
 	      if val#0 === Lex then (
 		   if class val#1 === ZZ then 
-		       sendgg(ggPush val#1,ggPush mo, ggMOlex)
+		       sendgg(ggPush val#1,ggPush 0, ggPush mo, ggMOlex)
 		   else if class val#1 === List and all(val#1,i->class i === ZZ) then
-		       sendgg(ggPush val#1,ggPush mo,ggMOlex)
+		       sendgg(ggPush val#1,ggPush 0, ggPush mo,ggMOlex)
 		   else
 		       error "Expected Lex argument to be an integer or list of integers")
 	      else if val#0 === GroupLex then (
@@ -161,9 +161,9 @@ monomialOrder = args -> (
 		       error "Expected Lex argument to be an integer or list of integers")
 	      else if val#0 === RevLex then (
 		   if class val#1 === ZZ then 
-		       sendgg(ggPush val#1, ggPush mo,ggMOrevlex)
+		       sendgg(ggPush val#1,ggPush 0, ggPush mo,ggMOrevlex)
 		   else if class val#1 === List and all(val#1,i->class i === ZZ) then
-		       sendgg(ggPush val#1,ggPush mo,ggMOrevlex)
+		       sendgg(ggPush val#1,ggPush 0, ggPush mo,ggMOrevlex)
 		   else
 		       error "Expected RevLex argument to be an integer or list of integers")
 	      else if val#0 === NCLex then (
@@ -193,10 +193,10 @@ stats EMonoid := (M) -> sendgg(ggPush M, ggstats)
 ------------------------------------------------------------
 polyring = (K,M,ZD,degs) -> engine(ggpolyring, ZD, degs, K, M, ERing)
 
-weyl = (K,M,diffs,comms,ZD,degs) -> engine(ggweylalgebra, ZD, degs, K, M, diffs, comms, -1, ERing)
+weyl = (K,M,comms,diffs,ZD,degs) -> engine(ggweylalgebra, ZD, degs, K, M, comms, diffs, -1, ERing)
 
-weylhom = (K,M,diffs,comms,homvar,ZD,degs) ->
-    engine(ggweylalgebra, ZD, degs, K, M, diffs, comms, homvar, ERing)
+weylhom = (K,M,comms,diffs,homvar,ZD,degs) ->
+    engine(ggweylalgebra, ZD, degs, K, M, comms, diffs, homvar, ERing)
 skewpolyring = (K,M,skews,ZD,degs) -> engine(ggskewpolyring, ZD, degs, K, M, skews, ERing)
 
 -----------------
@@ -301,6 +301,8 @@ size ERingElement := (v) -> (
 getTerms (ERingElement, ZZ, ZZ) := (v,lo,hi) ->
     engine(gggetterms, v, lo, hi, ERingElement)
 
+promote(ERingElement, ERing) := (f,R) -> engine(ggpromote,R,f,ERingElement)
+lift(ERingElement, ERing) := (f,R) -> engine(gglift,R,f,ERingElement)
 -------------
 -- EVector --
 -------------
@@ -389,6 +391,9 @@ homogenize(EVector,List,List) := (v,var'd,wts) -> (
     -- check: wts is of length #vars in ring
     sendgg(ggPush v, ggPush var'd#0, ggPush var'd#1, ggPush wts, gghomogenize);
     newEVector())
+
+promote(EVector, EFreeModule) := (v,F) -> engine(ggpromote,F,v,EVector)
+lift(EVector, EFreeModule) := (v,F) -> engine(gglift,F,v,EVector)
 
 --------------
 -- ERingMap --
@@ -530,6 +535,9 @@ coefficients(List, EMatrix) := (a,m) -> (
      res1 := newEMatrix();
      res2 := newEMatrix();
      {res1, res2})
+
+promote(EMatrix,EFreeModule) := (m,F) -> engine(ggpromote,F,m,EMatrix)
+lift(EMatrix,EFreeModule) := (m,F) -> engine(gglift,F,m,EMatrix)
 ---------------------------
 -- Useful little diddies --
 ---------------------------

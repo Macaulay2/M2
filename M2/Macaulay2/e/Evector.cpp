@@ -504,6 +504,32 @@ EVector EVector::strip_vector(const bool *vars,
   return result.value();
 }
 
+////////////////////
+// Change of ring //
+////////////////////
+
+bool EVector::promote(const EFreeModule *newF, EVector &result) const
+  // Rf --> A, ring(this) = Rf, ring(newF) = A
+{
+  if (getRing() == newF->getRing())
+    {
+      result = translate(newF);
+      return true;
+    }
+  return newF->getRing()->vec_promote(*this, newF, result);
+}
+
+bool EVector::lift(const EFreeModule *newF, EVector &result) const
+  // Rg --> A, ring(this)=A, ring(newF) = Rg.
+{
+  if (getRing() == newF->getRing())
+    {
+      result = translate(newF);
+      return true;
+    }
+  return getRing()->vec_lift(*this, newF, result);
+}
+
 
 
 /////////////////

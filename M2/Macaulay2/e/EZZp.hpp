@@ -156,6 +156,23 @@ public:
   bool isGraded(ERingElement f, const monomial *&deg) const;
   virtual ERingElement evaluate(const ERingMap *map, const ERingElement r) const = 0;
 
+  // In each of the four routines below, if the two rings are identical, 'false' is returned.
+
+  virtual bool promote(const ERing *Rf, const ERingElement f, ERingElement &result) const = 0;
+  // If there is a 'natural' map Rf --> A=this, and f in Rf; then place its image in A 
+  // into 'result', and return true.  Otherwise return false.
+  virtual bool lift(const ERing *Rg, const ERingElement f, ERingElement &result) const = 0;
+  // If there is a 'natural' map Rg --> A=this, and f is in A; place a (hopefully natural)
+  // inverse image (element of Rg) into 'result', and return true.  Otherwise return false.
+  virtual bool vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const = 0;
+  // If there is a 'natural' map Rf --> A=this, and v is a vector over Rf, return its image in 
+  // 'resultF', which should be a free module of the same rank as v's, and whose base ring is A.
+  // Return true in this case, otherwise return false.
+  virtual bool vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const = 0;
+  // If there is a 'natural' map Rg --> A=this, and v is a vector over A, return a preimage
+  // of v in the free module 'resultF', which should be a freemodule over Rg, of the same rank as
+  // the free module of v.
+
   // Vector operations
   evec *vec_new_term() const;  // Virtual not needed here
   void vec_remove_term(evec *t) const;
@@ -434,6 +451,10 @@ public:
     { elem_bin_out(o, ZZVAL(a)); }
 
   virtual ERingElement evaluate(const ERingMap *map, const ERingElement r) const;
+  virtual bool promote(const ERing *Rf, const ERingElement f, ERingElement &result) const;
+  virtual bool lift(const ERing *Rg, const ERingElement g, ERingElement &result) const;
+  virtual bool vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const;
+  virtual bool vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const;
 };
 
 class EZZp : public ERing
@@ -580,6 +601,11 @@ public:
     { elem_bin_out(o, ZZPVAL(a)); }
 
   virtual ERingElement evaluate(const ERingMap *map, const ERingElement r) const;
+
+  virtual bool promote(const ERing *Rf, const ERingElement f, ERingElement &result) const;
+  virtual bool lift(const ERing *Rg, const ERingElement g, ERingElement &result) const;
+  virtual bool vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const;
+  virtual bool vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const;
 };
 
 class object_ERingElement : public object_element

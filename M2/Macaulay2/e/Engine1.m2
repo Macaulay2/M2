@@ -133,6 +133,44 @@ assert(getTerms(f,1,1) == leadTerm(f - leadTerm f))
 assert(getTerms(f,1,-1) == f - leadTerm f)
 assert(sum(size f, i -> getTerms(f,i,i)) == f)
 
+-------------------
+-- promote, lift --
+-------------------
+-- Annoying to test, since we want to create non-trivial rings.
+  K = ZmodP 101
+  mo1 = monomialOrder (RevLex=>3)
+  M = emonoid(mo1, toList(0..2), "a b c");
+  A = polyring(K, M, degreeRing 0, {})
+  a = A_(1_K,{0,1});
+  b = A_(1_K,{1,1});
+  c = A_(1_K,{2,1});
+  mo2 = monomialOrder (RevLex=>3)
+  M2 = emonoid(mo2, toList(0..2), "x y z")
+  B = polyring(A,M2, degreeRing 1, {1,1,1})
+  x = B_(1_A,{0,1})
+  y = B_(1_A,{1,1})
+  z = B_(1_A,{2,1})
+
+f = promote(a*b,B)
+ring f
+f = a*b+c+1_A
+g = promote(f,B)
+h = lift(g,A)
+assert(f == h)
+assert(lift(100_A, K) == -1_K)
+
+F = A^4
+G = B^4
+v = a*F_0 + (b+c)*F_2
+w = promote(v,G)  -- display is not good...
+v2 = lift(w,F)
+
+f = promote(a,B)*x
+assert try lift(f,A) else true
+assert(v == v2)
+
+m = ematrix(A,{{a,b^2-c},{2*c^5,c-1_A}})
+engine(ggpromote,B^2,m,EMatrix)
 ---------------------------------------------------
 -- Rings with more complicated coefficient rings --
 ---------------------------------------------------

@@ -47,6 +47,12 @@ public:
 	  int type = both,
 	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
 
+  static EMatrix *make(const EFreeModule *F,
+	  const EFreeModule *G,
+	  const EMatrix *elements, // Take the columns from 'elements'
+	  int type = both,
+	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
+
   void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
   void binary_out(ostream &o) const;
@@ -103,7 +109,10 @@ public:
 
   EMatrix *reshape(const EFreeModule *G, const EFreeModule *H) const;
 
+  // Changing rings
   EMatrix *evaluate(const ERingMap *f, const EFreeModule *newTarget) const;
+  bool promote(const EFreeModule *newTarget, EMatrix * & result) const;
+  bool lift(const EFreeModule *newTarget, EMatrix * & result) const;
 
   // New matrices
   static EMatrix *identity(const EFreeModule *F);
