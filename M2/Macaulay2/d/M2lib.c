@@ -1412,7 +1412,15 @@ M2_string oper1;
 void C__prepare() {}
 
 int actors4_isReady(int fd) {
+#if 0
+  static fd_set r, w, e;
+  FD_SET(fd,&r);
+  select(1,&r,&w
+#else
+  return -1
+#endif
 }
+
 
 int actors5_WindowWidth(int fd) {
 #if defined(__DJGPP__) || defined(__alpha) || defined(__MWERKS__) || defined(_WIN32)

@@ -549,7 +549,7 @@ import isReady(fd:int):bool;
 isReadyFun(e:Expr):Expr := (
      when e
      is f:file do (
-	  if f.input then Expr(isReady(f.infd))
+	  if f.input then Expr(if isReady(f.infd) then True else False)
 	  else WrongArg("an input file")
 	  )
      else WrongArg("an input file"));
