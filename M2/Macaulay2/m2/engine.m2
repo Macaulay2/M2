@@ -254,18 +254,20 @@ RawMatrix.synonym = "raw matrix"
 RawMutableMatrix.name = "RawMutableMatrix"
 RawMutableMatrix.synonym = "raw mutable matrix"
 
-RawMatrix == RawMatrix := (v,w) -> rawIsEqual(v,w)
+RawMutableMatrix _ Sequence := RawMatrix _ Sequence := (m,rc) -> ((r,c) -> rawMatrixEntry(m,r,c)) rc
 
-RawMatrix == ZZ := (v,n) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
+RawMutableMatrix == RawMutableMatrix := RawMatrix == RawMatrix := rawIsEqual
 
-ZZ == RawMatrix := (v,n) -> n == v
+RawMatrix == ZZ := RawMutableMatrix == ZZ := (v,n) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
+ZZ == RawMatrix := ZZ == RawMutableMatrix := (n,v) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
 
 net RawMatrix := o -> stack lines toString o
+net RawMutableMatrix := o -> stack lines toString o
 target RawMatrix := o -> rawTarget o
 source RawMatrix := o -> rawSource o
 transposeSequence := t -> pack(#t, mingle t)
 isHomogeneous RawMatrix := rawIsHomogeneous
-entries RawMatrix := m -> table(rawNumberOfRows m,rawNumberOfColumns m,(i,j)->rawMatrixEntry(m,i,j))
+entries RawMutableMatrix := entries RawMatrix := m -> table(rawNumberOfRows m,rawNumberOfColumns m,(i,j)->rawMatrixEntry(m,i,j))
 
 ZZ * RawMatrix := (n,f) -> (
      R := rawRing rawTarget f;
@@ -283,6 +285,8 @@ rawConcatRows = (mats) -> rawDual rawConcat apply(toSequence mats,rawDual)
 rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat toSequence (raw \ row))
 
 new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(ring f,1),1,1:f,0)
+new RawMatrix from RawMutableMatrix := rawMatrix
+new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
 -- computations
 

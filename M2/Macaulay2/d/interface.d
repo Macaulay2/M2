@@ -1525,22 +1525,7 @@ setupfun("rawConcat",rawConcat);
 
 export rawMatrixEntry(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) == 4 then 
-     when s.0 is M:RawMutableMatrix do
-     when s.1 is r:Integer do if !isInt(r) then WrongArgSmallInteger(2) else
-     when s.2 is c:Integer do if !isInt(c) then WrongArgSmallInteger(3) else 
-     when s.3 is x:RawRingElement do (
-	  if Ccode(bool, 
-	       "IM2_MutableMatrix_set_entry(", "(MutableMatrix *)", M, ",", 
-	       toInt(r), ",", toInt(c), ",", "(RingElement *)", x, ")" 
-	       )
-	  then nullE
-	  else buildErrorPacket(EngineError("error setting raw matrix entry")))
-     else WrongArg(4,"an raw ring element")
-     else WrongArgInteger(3)
-     else WrongArgInteger(2)
-     else WrongArgMutableMatrix(1)
-     else if length(s) != 3 then WrongNumArgs(3) else
+     if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is r:Integer do 
      if !isInt(r) then WrongArgSmallInteger(2) else
@@ -1559,7 +1544,7 @@ export rawMatrixEntry(e:Expr):Expr := (
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw matrix or mutable matrix")
-     else WrongNumArgs(3,4)
+     else WrongNumArgs(3)
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
 
@@ -1841,7 +1826,13 @@ export rawMutableIdentity(e:Expr):Expr := (
 setupfun("rawMutableIdentity",rawMutableIdentity);
 
 export rawMutableMatrix(e:Expr):Expr := (
-     when e is s:Sequence do 
+     when e 
+     is M:RawMatrix do Expr(Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)",
+	       "IM2_MutableMatrix_from_matrix(",
+	       "(Matrix *)", M, ",",
+	       false,					    -- preferDense
+	       ")"))
+     is s:Sequence do 
      if length(s) == 4 then
      when s.0 is R:RawRing do
      when s.1 is nrows:Integer do if !isInt(nrows) then WrongArgSmallInteger(2) else
@@ -1875,8 +1866,8 @@ export rawMutableMatrix(e:Expr):Expr := (
 	       preferDense == True, ")"))
      else WrongArgBoolean(2)
      else WrongArg(1,"a raw matrix or mutable matrix")
-     else WrongArg("2 or 4 arguments")
-     else WrongArg("2 or 4 arguments"));
+     else WrongArg("1, 2, or 4 arguments")
+     else WrongArg("1, 2, or 4 arguments"));
 setupfun("rawMutableMatrix",rawMutableMatrix);
 
 export rawMatrix(e:Expr):Expr := (
@@ -2395,7 +2386,7 @@ export rawRowChange(e:Expr):Expr := (
      toExpr(Ccode( RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)", "IM2_MutableMatrix_get_row_change(", "(MutableMatrix *)", M, ")" ))
      is s:Sequence do
      when s.0 is M:RawMutableMatrix do
-     when s.1 is rowChange:RawMutableMatrix do toExpr(Ccode( bool, "IM2_MutableMatrix_set_row_change(", "(MutableMatrix *)", M, ",", "(MutableMatrix *)", rowChange, ")" ))
+     when s.1 is rowChange:RawMutableMatrix do possibleEngineError(Ccode( bool, "IM2_MutableMatrix_set_row_change(", "(MutableMatrix *)", M, ",", "(MutableMatrix *)", rowChange, ")" ))
      else WrongArgMutableMatrix()
      else WrongArgMutableMatrix()
      else WrongNumArgs(1,2));
@@ -2407,7 +2398,7 @@ export rawColumnChange(e:Expr):Expr := (
      toExpr(Ccode( RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)", "IM2_MutableMatrix_get_col_change(", "(MutableMatrix *)", M, ")" ))
      is s:Sequence do
      when s.0 is M:RawMutableMatrix do
-     when s.1 is colChange:RawMutableMatrix do toExpr( Ccode( bool, "IM2_MutableMatrix_set_col_change(", "(MutableMatrix *)", M, ",", "(MutableMatrix *)", colChange, ")" ))
+     when s.1 is colChange:RawMutableMatrix do possibleEngineError( Ccode( bool, "IM2_MutableMatrix_set_col_change(", "(MutableMatrix *)", M, ",", "(MutableMatrix *)", colChange, ")" ))
      else WrongArgMutableMatrix()
      else WrongArgMutableMatrix()
      else WrongNumArgs(1,2));
@@ -2965,7 +2956,6 @@ export rawNumberOfColumnsRR(e:Expr):Expr := (
 setupfun("rawNumberOfColumnsRR", rawNumberOfColumnsRR);
 
 export rawSetMatrixEntry(e:Expr):Expr := (
-     -- rawSetEntry(M, r, c, double)
      when e is s:Sequence do
      if length(s) == 4 then 
      when s.0 is M:RawMutableMatrix do
