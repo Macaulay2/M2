@@ -966,7 +966,6 @@ bool SparseMutableMatrix::findGoodUnitPivot(int c_lo, int c_hi, int &r, int &c, 
 
 void SparseMutableMatrix::reducePivots()
 {
-
   // keeps track of last row and column which are not the output of a pivot
   int rowPivot = nrows-1;  
   int columnPivot = ncols-1;

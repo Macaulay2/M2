@@ -136,6 +136,20 @@ void Matrix::set_degree_shift(const intarray &deg)
   degree_monoid()->from_expvector(deg.raw(), degree_shift());
 }
 
+void Matrix::schreyer_append(vec v)
+{
+  if (! rows()->is_zero(v)) 
+    {
+      int *d = degree_monoid()->make_one();
+      rows()->degree(v, d);
+      cols()->append(d, v->monom, cols()->rank());
+      degree_monoid()->remove(d);
+      obj->entries.append(v);
+    }
+  else
+    append(v);
+}
+
 Matrix Matrix::zero(const FreeModule *F, const FreeModule *G)
 {
   Matrix result(F,G);
@@ -612,7 +626,7 @@ void Matrix::minimal_lead_terms(intarray &result) const
   array<MonomialIdeal> mis;
   const array<vec> vecs = obj->entries;
   rows()->sort(vecs, degs, 0, 1, indices);
-  for (int x=0; x<n_cols(); x++)
+  for (int x=0; x<n_rows(); x++)
     mis.append(MonomialIdeal(get_ring()));
   for (int i=0; i<vecs.length(); i++)
     {

@@ -1844,14 +1844,14 @@ void FreeModule::degree_weights(const vec f, const int *wts, int &lo, int &hi) c
 vec FreeModule::homogenize(const vec f, 
 				int v, int d, const int *wts) const
 {
+  vecterm head;
+  vecterm *result = &head;
   assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.
 
   intarray expa;
   int *exp = expa.alloc(R->n_vars());
 
-  vecterm head;
-  vecterm *result = &head;
   for (vecterm *a = f ; a != NULL; a = a->next)
     {
       M->to_expvector(a->monom, exp);

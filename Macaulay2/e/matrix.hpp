@@ -96,6 +96,7 @@ public:
 
   void append(vec v);
   void append(vec v, const int *d);
+  void schreyer_append(vec v);
 
   // The degree shift
   const int *degree_shift() const { return obj->degree_shift; }

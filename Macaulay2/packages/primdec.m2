@@ -51,9 +51,16 @@ simplify (Matrix, ZZ) := (m,n) -> (
 
 -- New decompose routine that stashes the answer
 newdecompose = method()
+///
 newdecompose Ideal := (I) -> (
      if I.?components then I.components
      else I.components = decompose ideal mingens I)
+///
+newdecompose Ideal := (I) -> (
+     print "decomposing I";
+     c := time decompose I;
+     if c === {} then error "bad decompose";
+     c)
 --newdecompose = timefun(newdecompose,"decompose")
 
 -- Find the independent sets of the ideal I
@@ -78,7 +85,7 @@ variables = (f) -> (
 -- Compute the flattener with respect to the variables in a monomial
 flattener = (I, m) -> (
      -- First create a new ring with correct order
-     local RU, J, vars1, vars2, leads, ret, coeffmat, ones, mm, F;
+     local RU, local J, local vars1, local vars2, local leads, local ret, local coeffmat, local ones, local mm, localF;
      R := ring I;
      n := numgens R;
      vars1 = variables m;
@@ -88,7 +95,7 @@ flattener = (I, m) -> (
      J = substitute(I,RU);
      -- Collect lead coefficients of GB
      leads = leadTerm(n-d,gens gb J);
-     ret = coefficients(elements(0..n-d-1),transpose leads);
+     ret = coefficients(toList(0..n-d-1),transpose leads);
      coeffmat = ret#1;
      -- Intersect these ideals, taking first element found
      coeffmat = map(RU^(numgens source coeffmat),, transpose coeffmat);
@@ -309,8 +316,8 @@ PPD = (I,PP) -> (
      else (
 	  -- compute the separators
 	  I' = I;
-	  PPP := apply(elements(0..#PP-1), i -> (
-	       ss = apply(elements(0..#PP-1), j -> if i == j then 0_R
+	  PPP := apply(toList(0..#PP-1), i -> (
+	       ss = apply(toList(0..#PP-1), j -> if i == j then 0_R
 		    else findNonMember(PP#j, PP#i));
 	       -- the following throws out zeros, and elements which are 
 	       -- not constant multiples of others.
@@ -338,7 +345,7 @@ PPDSpecialCharSets = (I, PP) -> (
      -- the correct dimension.
      -- Then call PPD with this list.
      R := ring I;
-     PPP = apply(PP, P1 -> (
+     time PPP = apply(PP, P1 -> (
 	       P := P1#0;
 	       II := apply(P1#1, f -> (
 			 I := P + ideal(f);
@@ -349,7 +356,7 @@ PPDSpecialCharSets = (I, PP) -> (
      PPP = flatten flatten PPP;
      -- The following removes redundant prime ideals from this list
      PPP = new MutableList from PPP;
-     scan(0..#PPP-1, i -> (
+     time scan(0..#PPP-1, i -> (
         if PPP#i =!= null then 
 	scan(i+1..#PPP-1, j -> (
 	    if PPP#i =!= null and PPP#j =!= null 
@@ -370,9 +377,9 @@ L = intersect(I^2, J)
 PPDSpecialCharSets(L, {{I,{d}},{J,{a}}})
 ///
 
-ROOT := 1
-PSEUDO := 2
-REMAIN := 3
+--ROOT := 1
+--PSEUDO := 2
+--REMAIN := 3
 
 -- Nodes have the following structure
 -- #0  ideal at this node
@@ -532,7 +539,7 @@ donode C1
 peek C1
 
 ///
-
+end
 flattener = profile("flattener",flattener)
 minSatPPD = profile("minSatPPD", minSatPPD)
 extract = profile("extract", extract)

@@ -155,13 +155,15 @@ NAMES = \
 	gbZZ \
 	gb2 \
 	res2 \
-	respoly2
+	respoly2 \
 
 NOT_USED_YET = \
-	EEGBmemory \
+	EEhilbtrack \
 	EEGB1 \
-	EEGB \
 	EEspairs \
+	EEbasics \
+	EElookup \
+	EEGB \
 	Emonlookup \
 	Emonideal \
 	newmonorder \
