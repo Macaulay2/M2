@@ -9,13 +9,15 @@ documentationMemo := memoize documentation
 databaseFileName = "../cache/Macaulay2-doc"
 errorDepth 0
 
+prefix = directoryPath {"..","m2","cache","doc"}
+
 BUTTON = (s,alt) -> (
+     s = relativizeFilename(prefix,s);
      if alt === null
      then LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center>")
      else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
      )
 
-prefix = directoryPath {"..","m2","cache","doc"}
 documentationPath = unique prepend(prefix,documentationPath)
 topNodeName = "Macaulay 2"
 topFileName = cacheFileName(prefix,topNodeName) | ".html"
@@ -25,7 +27,7 @@ topNodeButton = HREF { topFileName, BUTTON("top.gif","top") }
 
 nullButton = BUTTON("null.gif",null)
 
-masterFileName = "master.html"
+masterFileName = prefix | "master.html"
 masterNodeName = "master index"
 masterIndexButton = HREF { masterFileName, BUTTON("index.gif","index") }
 

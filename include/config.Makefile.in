@@ -7,6 +7,8 @@ all::
 # cygwin 'make' might get confused by setting SHELL
 # SHELL = @SHELL@
 
+.DELETE_ON_ERROR :
+
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 ARCH    = @ARCH@

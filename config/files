@@ -17,6 +17,7 @@ Macaulay2/test/Makefile
 Macaulay2/tutorial/Makefile
 Macaulay2/setup
 Macaulay2/util/Makefile
+Macaulay2/html-check-links/Makefile
 bin/Makefile
 bin/M2-help
 bin/M2.bat

@@ -1,5 +1,5 @@
 # @configure_input@
-# DEBUG = TRUE
+# FULLDEBUG = TRUE
 include ../../include/config.Makefile
 VPATH = @srcdir@
 all::
@@ -21,7 +21,7 @@ CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
 YFLAGS += --verbose
 LOADLIBES += -lgc
-ifdef DEBUG
+ifdef FULLDEBUG
 LDFLAGS := -g
 CPPFLAGS += -DDEBUG
 LFLAGS += -d
