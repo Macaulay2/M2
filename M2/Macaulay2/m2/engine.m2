@@ -164,7 +164,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      ordering = join(weights / (i -> Weights => i), ordering);
      t := toList splice fixup ordering;
      if varcount < nvars then t = append(t,fixup(GRevLex => nvars - varcount));
-     rawMonomialOrdering t)
+     (t,rawMonomialOrdering t))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
 

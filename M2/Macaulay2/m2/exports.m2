@@ -38,6 +38,7 @@ exportMutable (
 	)
 
 export (
+        symbol DegreeRank,
         symbol dismiss,
         symbol examplePrompts,
         symbol RunDirectory,
@@ -784,7 +785,6 @@ export (
 	symbol lookupCount,
 	symbol makeDirectory,
 	symbol makeDocumentTag,
-	symbol makeMonomialOrdering,
 	symbol makePackageIndex,
 	symbol map,
 	symbol match,

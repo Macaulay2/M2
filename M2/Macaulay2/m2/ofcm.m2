@@ -36,9 +36,20 @@ parts := (M) -> (
 	       / (key -> if o#key =!= O#key then key => o#key),
 	       i -> i =!= null)))
 
-expression GeneralOrderedMonoid := M -> if M.?name then hold M.name else new Array from apply(parts M,expression)
-toString GeneralOrderedMonoid := M -> toString expression M
-net GeneralOrderedMonoid := M -> net expression M
+toExternalString GeneralOrderedMonoid := M -> toString new Array from apply(parts M,expression)
+
+expression GeneralOrderedMonoid := M -> (
+     if ReverseDictionary#?M then return toString ReverseDictionary#M;
+     if M.?generatorExpressions then new Array from M.generatorExpressions else []
+     )
+toString GeneralOrderedMonoid := M -> (
+     if ReverseDictionary#?M then return toString ReverseDictionary#M;
+     toString if M.?generatorExpressions then new Array from M.generatorExpressions else []
+     )
+net GeneralOrderedMonoid := M -> (
+     if ReverseDictionary#?M then return toString ReverseDictionary#M;
+     net if M.?generatorExpressions then new Array from M.generatorExpressions else []
+     )
 
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
@@ -89,6 +100,24 @@ monoidDefaults = (
 	  }
      )
 
+tensorDefaults = (
+     new OptionTable from {
+	  VariableBaseName => null,
+	  Variables => null,
+	  Degrees => null,
+	  Weights => {},
+	  Inverses => false,
+	  MonomialOrder => null,
+	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
+	  SkewCommutative => false,
+	  VariableOrder => null,		  -- not implemented yet
+	  WeylAlgebra => {},
+	  Adjust => identity,
+	  Repair => identity,
+	  DegreeRank => null
+	  }
+     )
+
 monoid = method(SingleArgumentDispatch => true)
 options PolynomialRing := options @@ monoid
 
@@ -128,31 +157,31 @@ RingElement _ Ring := RingElement => (x,R) -> (
      else error "failed to interpret ring element in ring"
      )
 
-makeit1 := (options) -> (
+makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M.Engine = true;
-     varlist := baseName \ options.Variables;
+     varlist := baseName \ opts.Variables;
      n := # varlist;
-     externalDegrees := options.Degrees;
+     externalDegrees := opts.Degrees;
      M.degrees = externalDegrees;
      M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
-     internalDegrees := apply(externalDegrees,options.Adjust);
+     internalDegrees := apply(externalDegrees,opts.Adjust);
      order := transpose internalDegrees;
 --     primaryDegrees := if #order === 0 then toList(n:1) else order#0;
 --     if not all(primaryDegrees, d -> d>0) then (
 --	  if all(primaryDegrees, d -> d<0) then (
 --	       -- I wonder whether this attempt at an easy adjustment was ever used
---	       adjust := if options.Adjust === identity then minus else minus @@ options.Adjust;
---	       repair := if options.Repair === identity then minus else minus @@ options.Repair;
---	       options = new OptionTable from join ( pairs options, {Adjust => adjust, Repair => repair} );
---	       internalDegrees = apply(externalDegrees,options.Adjust);
+--	       adjust := if opts.Adjust === identity then minus else minus @@ opts.Adjust;
+--	       repair := if opts.Repair === identity then minus else minus @@ opts.Repair;
+--	       opts = new OptionTable from join ( pairs opts, {Adjust => adjust, Repair => repair} );
+--	       internalDegrees = apply(externalDegrees,opts.Adjust);
 --	       order = transpose internalDegrees;
 --	       primaryDegrees = order#0;
 --	       )
 --	  else error "first component of each degree should be positive" -- this error message will go away
 --	  );
      variableOrder := toList (0 .. n-1);
-     wts := splice flatten options.Weights;
+     wts := splice flatten opts.Weights;
      if not all(wts,i -> class i === ZZ)
      then error "expected Weights option to be a list or list of lists of integers";
      if n != 0 and #wts % n != 0 or n == 0 and #wts != 0
@@ -170,7 +199,6 @@ makeit1 := (options) -> (
      expression M := x -> new Product from apply( 
 	  rawSparseListFormMonomial x.RawMonomial,
 	  (k,v) -> Power{M.generatorExpressions#k, v} );
-     M.Options = options;
      w := reverse applyTable(order, minus);
      w = if # w === 0 then apply(n,i -> {}) else transpose w;
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));
@@ -179,14 +207,18 @@ makeit1 := (options) -> (
      M.generatorsTable = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
-     M.RawMonomialOrdering = makeMonomialOrdering(
-     	  options.MonomialSize,
-	  options.Inverses,
+     (MOopts,rawMO) := makeMonomialOrdering(
+     	  opts.MonomialSize,
+	  opts.Inverses,
      	  #varlist,
 	  if degreeLength M > 0 then internalDegrees/first else {},
 	  wts,
-	  options.MonomialOrder
+	  opts.MonomialOrder
 	  );
+     M.RawMonomialOrdering = rawMO;
+     opts = new MutableHashTable from opts;
+     opts.MonomialOrder = MOopts;
+     M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
      M.RawMonoid = (
 	  if n == 0 
@@ -302,7 +334,7 @@ monoid Array := Monoid => (
 
 monoid Ring := Monoid => R -> R.monoid
 
-tensor = method( Options => monoidDefaults)
+tensor = method( Options => tensorDefaults)
 
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 
