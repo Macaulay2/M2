@@ -9,8 +9,8 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I)
     mi(I.radical()),
     ass_primes(I.get_ring())
 {
-  exps = new int *[nvars+1];
-  for (int i=0; i<=nvars; i++)
+  exps = new int *[nvars+2];
+  for (int i=0; i<=nvars+1; i++)
     exps[i] = 0;
 }
 
@@ -21,13 +21,13 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I, int cod)
     mi(I.radical()),
     ass_primes(I.get_ring())
 {
-  exps = new int *[nvars+1];
-  for (int i=0; i<=nvars; i++)
+  exps = new int *[nvars+2];
+  for (int i=0; i<=nvars+1; i++)
     exps[i] = 0;
 }
 AssociatedPrimes::~AssociatedPrimes()
 {
-  for (int i=0; i<=nvars; i++)
+  for (int i=0; i<=nvars+1; i++)
     if (exps[i] != 0) delete [] exps[i];
   delete [] exps;
 }

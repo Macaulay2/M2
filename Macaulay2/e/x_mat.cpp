@@ -628,6 +628,11 @@ void cmd_Matrix_autoreduce(object &om)
   Matrix M = om->cast_to_Matrix();
   gStack.insert(M.auto_reduce());
 }
+void cmd_Matrix_dim(object &om)
+{
+  Matrix M = om->cast_to_Matrix();
+  gStack.insert(make_object_int(M.dimension()));
+}
 void cmd_Matrix_var_coeffs(object &om)
 {
   Matrix M = om->cast_to_Matrix();
@@ -1503,6 +1508,8 @@ void i_Matrix_cmds(void)
   install(ggsimplify, cmd_Matrix_simplify, TY_MATRIX, TY_INT);
   install(ggsortcolumns, cmd_Matrix_sort, TY_MATRIX, TY_INT, TY_INT);
   install(ggautoreduce, cmd_Matrix_autoreduce, TY_MATRIX);
+
+  install(ggdim, cmd_Matrix_dim, TY_MATRIX);
 
   // ring map routines
   install(ggringmap, cmd_RingMap, TY_MATRIX);
