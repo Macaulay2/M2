@@ -1,7 +1,0 @@
-err.oo : err.d
-err.oo err.sig : system.sig
-err.oo err.sig : strings.sig
-err.oo err.sig : C.sig
-err.oo err.sig : varstrings.sig
-err.oo err.sig : nets.sig
-err.oo err.sig : stdio.sig

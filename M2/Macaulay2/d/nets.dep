@@ -1,4 +1,0 @@
-nets.oo : nets.d
-nets.oo nets.sig : system.sig
-nets.oo nets.sig : strings.sig
-nets.oo nets.sig : varstrings.sig
