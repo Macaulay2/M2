@@ -266,3 +266,16 @@ GroebnerBasis == GroebnerBasis := (g,h) -> (
      and (
      	  sendgg(ggPush g, ggPush h, ggisequal);
      	  eePopBool()))
+
+-- Auto-reduction
+autoReduce = method()
+autoReduce Matrix := (m) -> (
+     sendgg(ggPush m, ggautoreduce);
+     getMatrix ring m)
+
+///
+TEST
+R = ZZ/101[a..f]
+m = matrix{{a^2-b-c,b^2-c-d,c^4-b^3-2*d}}
+autoReduce m
+///     
