@@ -26,15 +26,6 @@ protected:
   static int **binomtable;
   static int **diffcoeffstable;
 
-  int *_derivative;		// a value _derivative[i] = r >= 0 means that i is diff(r).
-				// If < 0 : the variable i does not have a diff op.
-  int *_commutative;		// Same as above, but in opposite direction.
-
-  WeylAlgebra(const Ring *K, const Monoid *MF, const intarray &a);
-	// 'a' is a list [i1, d1, i2, d2, ...], where i1 is the index of the
-	// first commuting variable, and d1 is the corresponding operator.
-	// If there is no counterpart to ij, then set dj to -1.
-
   WeylAlgebra(const Ring *KK, 
 	      const Monoid *MF, 
 	      int npairs, 
@@ -72,8 +63,6 @@ protected:
 	  const int *derivatives, 
 	  const Nterm *g) const;  // An entire polynomial
 public:
-  static WeylAlgebra *create(const Ring *K, const Monoid *MF, const intarray &a);
-
   static WeylAlgebra *create(const Ring *K, const Monoid *MF, 
 			     int npairs,
 			     const int *derivative,
@@ -114,7 +103,6 @@ public:
 #endif
 
   ring_elem multinomial(const int *exptop, const int *exp) const;
-  void diff_subtract(const int *exp1, const int *exp2, int *result) const;
   
 public:
   virtual ring_elem imp_mult_by_term(const ring_elem f, 
