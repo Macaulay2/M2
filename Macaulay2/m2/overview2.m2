@@ -1397,7 +1397,11 @@ document { "communicating with programs",
 	  },
      "We also allow for bidirectional communication
      through sockets over the internet.  See ", TO "openInOut", "
-     and ", TO "openListener", ", or the next section."
+     and ", TO "openListener", ", or the next section.",
+     PARA,
+     "Another useful function is ", TO "wait", ", which can be used
+     to wait for input to be available from any of a list of input
+     files."
      }
 
 document { "using sockets",

@@ -1025,7 +1025,8 @@ document { quote File,
      MENU {
           {TO "close", "    -- close a file"},
           {TO "closeIn", "  -- close a file for input"},
-          {TO "closeOut", " -- close a file for output"}
+          {TO "closeOut", " -- close a file for output"},
+	  {TO "kill", "     -- kill a process associated with a file"},
 	  },
      "Information about files",
      MENU { 

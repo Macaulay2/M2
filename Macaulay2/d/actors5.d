@@ -1284,3 +1284,18 @@ echoOff(e:Expr):Expr := (
      else WrongArg("a file or ()")
      );
 setupfun("echoOff",echoOff);
+kill(e:Expr):Expr := (
+     when e 
+     is f:file do (
+	  if f.pid != 0 then (
+	       if kill(f.pid,9) == ERROR
+	       then errorExpr("can't kill process")
+	       else (
+		    if ERROR != wait(f.pid) then f.pid = 0;
+		    nullE
+		    )
+	       )
+	  else WrongArg("a file with a process associated to it")
+	  )
+     else WrongArg("a file"));
+setupfun("kill",kill);
