@@ -347,8 +347,8 @@ expression Vector := v -> (
 	       convert(
 		    ConvertRepeat ConvertJoin(ConvertInteger,R.ConvertToExpression),
 		    callgg(ggtonet, v))}))
-name Vector := x -> name expression x
-net Vector := x -> net expression x
+name Vector := x -> if (ring x).?newEngine then see x else name expression x
+net Vector := x -> if (ring x).?newEngine then see x else net expression x
 Vector + Vector := (x,y) -> (
      M := class x;
      if M != class y then error "no method for '+'";
@@ -466,6 +466,7 @@ new Module from Ring := (Module,R) -> (
      M := new Module of Vector;
      M.handle = newHandle ggdup;
      M.ring = R;
+     if R.?newEngine then M.newEngine = true;
      M.numgens = (sendgg if R.?newEngine then ggrank else gglength; eePopInt());
      M#0 = (sendgg(ggPush M, ggzero); new M);
      M)

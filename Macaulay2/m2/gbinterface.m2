@@ -18,11 +18,7 @@ eePop = format -> convert(format, sendgg ggtonet)
 
 ZZ.pop = eePopInt = () -> eePop ConvertInteger
 ZZ.handle = newHandle ggZ
-
-ZZZ = new Ring
-ZZZ.pop = eePopInt = () -> eePop ConvertInteger
-ZZZ.handle = newHandle ggEZZ
-ZZZ.newEngine = true
+ggPush ZZ := i -> (ggINT, gg i)
 
 eePopBool = () -> eePop ConvertInteger === 1
 eePopIntarray = () -> eePop ConvertList ConvertInteger

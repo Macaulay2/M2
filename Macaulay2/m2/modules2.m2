@@ -942,7 +942,7 @@ Module _ ZZ := (M,i) -> (
      else (
 	  if i < 0 or i >= M.numgens 
 	  then error ("subscript '", name i, "' out of range");
-     	  sendgg(ggPush M, ggPush i, ggfromint);
+     	  sendgg(ggPush M, ggPush i, if M.?newEngine then ggbasisElement else ggfromint);
      	  new M)
      )
 

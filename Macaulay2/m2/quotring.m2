@@ -85,67 +85,72 @@ Ring / Module := (R,I) -> (
 savedQuotients := new MutableHashTable
 savedEQuotients := new MutableHashTable
 
+ZZZquotient := (R,I) -> (
+     if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
+     EgensI := I.generators;
+     EgensgbI := generators gb EgensI;
+     En := if EgensgbI == 0 then 0 else EgensgbI_(0,0);
+     if En < 0 then En = -En;
+     if En === 0 then ZZ
+     else if savedEQuotients#?En 
+     then savedEQuotients#En
+     else (
+	  if En > 32767 then error "large characteristics not implemented yet";
+	  if En > 1 and not isPrime En
+	  then error "ZZZ/n not implemented yet for composite n";
+	  ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
+	  ES.baseRings = {R};
+	  ES.newEngine = true;
+	  installEngineRingUnits ES;
+	  ES.relations = EgensI;
+	  ES.ConvertToExpression = R.ConvertToExpression;
+	  ES.isCommutative = R.isCommutative;
+	  ES.presentation = EgensgbI;
+	  ES.char = En;
+	  if En === 1 then ES.dim = -1 else if En === 0 then ES.dim = 1 else ES.dim = 0;
+	  ES.ConvertToExpression = ConvertApply(expression, ConvertInteger);
+	  expression ES := x -> convert(
+	       ES.ConvertToExpression, sendgg(ggPush x, ggtonet)
+	       );
+	  ES.frac = ES;		  -- ZZ/n with n PRIME!
+	  savedEQuotients#En = ES;
+	  ES))
+
+ZZquotient := (R,I) -> (
+     if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
+     gensI := I.generators;
+     gensgbI := generators gb gensI;
+     n := if gensgbI == 0 then 0 else gensgbI_(0,0);
+     if n < 0 then n = -n;
+     if n === 0 then ZZ
+     else if savedQuotients#?n 
+     then savedQuotients#n
+     else (
+	  if n > 32767 then error "large characteristics not implemented yet";
+	  if n > 1 and not isPrime n
+	  then error "ZZ/n not implemented yet for composite n";
+	  G := degreesMonoid 0;
+	  sendgg(ggPush n, ggPush G, ggcharp);
+	  S := new QuotientRing from newHandle();
+	  S.baseRings = {R};
+	  installEngineRingUnits S;
+	  S.relations = gensI;
+	  S.ConvertToExpression = R.ConvertToExpression;
+	  S.isCommutative = R.isCommutative;
+	  S.presentation = gensgbI;
+	  S.char = n;
+	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
+	  S.ConvertToExpression = ConvertApply(expression, ConvertInteger);
+	  expression S := x -> convert(
+	       S.ConvertToExpression, sendgg(ggPush x, ggtonet)
+	       );
+	  S.frac = S;		  -- ZZ/n with n PRIME!
+	  savedQuotients#n = S;
+	  S))
+
 Ring / Ideal := (R,I) -> if I == 0 then R else (
-     if R === ZZZ then (
-	  if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
-	  EgensI := I.generators;
-	  EgensgbI := generators gb EgensI;
-	  En := if EgensgbI == 0 then 0 else EgensgbI_(0,0);
-	  if En < 0 then En = -En;
-	  if En === 0 then ZZ
-	  else if savedEQuotients#?En 
-	  then savedEQuotients#En
-	  else (
-	       if En > 32767 then error "large characteristics not implemented yet";
-	       if En > 1 and not isPrime En
-	       then error "ZZZ/n not implemented yet for composite n";
-	       -- EG := degreesMonoid 0;
-	       ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
-	       ES.relations = EgensI;
-	       ES.ConvertToExpression = R.ConvertToExpression;
-	       ES.isCommutative = R.isCommutative;
-	       ES.presentation = EgensgbI;
-	       ES.char = En;
-	       if En === 1 then ES.dim = -1 else if En === 0 then ES.dim = 1 else ES.dim = 0;
-	       ES.ConvertToExpression = ConvertApply(expression, ConvertInteger);
-	       expression ES := x -> convert(
-		    ES.ConvertToExpression, sendgg(ggPush x, ggtonet)
-		    );
-	       ES.frac = ES;		  -- ZZ/n with n PRIME!
-	       ES.baseRings = {ZZ};
-	       savedEQuotients#En = ES;
-	       ES.newEngine = true;
-	       ES))
-     else if R === ZZ then (
-	  if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
-	  gensI := I.generators;
-	  gensgbI := generators gb gensI;
-	  n := if gensgbI == 0 then 0 else gensgbI_(0,0);
-	  if n < 0 then n = -n;
-	  if n === 0 then ZZ
-	  else if savedQuotients#?n 
-	  then savedQuotients#n
-	  else (
-	       if n > 32767 then error "large characteristics not implemented yet";
-	       if n > 1 and not isPrime n
-	       then error "ZZ/n not implemented yet for composite n";
-	       G := degreesMonoid 0;
-	       sendgg(ggPush n, ggPush G, ggcharp);
-	       S := new QuotientRing from newHandle();
-	       S.relations = gensI;
-	       S.ConvertToExpression = R.ConvertToExpression;
-	       S.isCommutative = R.isCommutative;
-	       S.presentation = gensgbI;
-	       S.char = n;
-	       if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
-	       S.ConvertToExpression = ConvertApply(expression, ConvertInteger);
-	       expression S := x -> convert(
-		    S.ConvertToExpression, sendgg(ggPush x, ggtonet)
-		    );
-	       S.frac = S;		  -- ZZ/n with n PRIME!
-	       S.baseRings = {ZZ};
-	       savedQuotients#n = S;
-	       S))
+     if R === ZZZ then ZZZquotient(R,I)
+     else if R === ZZ then ZZquotient(R,I)
      else (
 	  error "can't form quotient of this ring"
 	  )
@@ -180,18 +185,20 @@ predecessors := method()
 predecessors Ring := R -> {R}
 predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 
-EngineRing / Ideal := (R,I) -> if I == 0 then R else (
-     -- recall that ZZ in NOT an engine ring.
+EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotient(R,I) else (
+     -- recall that ZZ is NOT an engine ring.
      A := R;
      while class A === QuotientRing do A = A.baseRings#-1;
      gensI := I.generators ** R;
      gensgbI := generators gb gensI;
      sendgg(ggPush gensgbI, ggqring);
      S := new QuotientRing from newHandle();
+     if R.?newEngine then S.newEngine = true;
+     S.baseRings = append(R.baseRings,R);
+     installEngineRingUnits S;
      S.relations = gensI;
      S.ConvertToExpression = R.ConvertToExpression;
      S.isCommutative = R.isCommutative;
-     S.baseRings = append(R.baseRings,R);
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then (
 	  S.generatorExpressions = R.generatorExpressions;
