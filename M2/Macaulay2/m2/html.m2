@@ -36,7 +36,7 @@ htmlFilename = key -> (				   -- returns the relative path from the PREFIX to th
      fkey := formatDocumentTag key;
      pkg := package TO key;
      if pkg === null then toFilename fkey|".html"
-     else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"title" then topFileName else toFilename fkey|".html" )
+     else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
 text IMG  := x -> ""
@@ -230,7 +230,7 @@ net TreeNode := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode := x -> SEQ { TO x#0, toDoc x#1 }
+toDoc TreeNode := x -> SEQ { TOH x#0, toDoc x#1 }
 
 local visitCount
 local externalReferences
@@ -333,7 +333,7 @@ assembleTree Package := pkg -> (
      currentPackage = pkg;
      externalReferences = new MutableHashTable;
      duplicateReferences = new MutableHashTable;
-     topNodeName = pkg#"title";
+     topNodeName = pkg#"top node name";
      key := normalizeDocumentTag topNodeName;
      fkey := formatDocumentTag key;			    -- same as topNodeName
      nodes := packageNodes(pkg,topNodeName);
@@ -439,7 +439,7 @@ installPackage Symbol := opts -> pkg -> (
 installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topNodeName = pkg#"title";
+     topNodeName = pkg#"top node name";
      nodes := packageNodes(pkg,topNodeName);
      buildPackage = if pkg === Main then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");

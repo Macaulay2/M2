@@ -37,7 +37,8 @@ newPackage = method(
      Options => { 
 	  Using => {}, 
 	  Version => "0.0", 
-	  DebuggingMode => false
+	  DebuggingMode => false,
+	  TopNodeName => null
 	  }
      )
 newPackage(Package) := opts -> p -> (
@@ -73,6 +74,7 @@ newPackage(String) := opts -> (title) -> (
 	  "raw documentation" => new MutableHashTable,
 	  "documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
+	  "top node name" => if opts.TopNodeName === null then title else opts.TopNodeName,
 	  "exported symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
@@ -112,10 +114,10 @@ exportMutable List := v -> (
 
 addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
 
-newPackage("Main", DebuggingMode => debuggingMode, Version => version#"VERSION" )
+newPackage("Main", DebuggingMode => debuggingMode, Version => version#"VERSION", TopNodeName => "Macaulay 2" )
 
 exportMutable {
-	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
+	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks, symbol doExamples,
