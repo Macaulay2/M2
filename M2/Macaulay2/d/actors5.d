@@ -1024,12 +1024,19 @@ clearEcho(e:Expr):Expr := (
      else nullE);
 setupfun("clearEcho",clearEcho);
 
-readlink(e:Expr):Expr := (
+readlinkfun(e:Expr):Expr := (
      when e is filename:string do (
 	  v := readlink(filename);
 	  if length(v) == 0 then nullE else Expr(v))
      else WrongArgString());
-setupfun("readlink",readlink);
+setupfun("readlink",readlinkfun);
+
+realpathfun(e:Expr):Expr := (
+     when e is filename:string do (
+	  v := realpath(filename);
+	  if length(v) == 0 then nullE else Expr(v))
+     else WrongArgString());
+setupfun("realpath",realpathfun);
 
 setupconst("typicalValues", Expr(typicalValues));
 setupconst("binaryOperators",Expr(new array(Expr) len length(opsWithBinaryMethod) do (

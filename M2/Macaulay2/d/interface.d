@@ -2393,6 +2393,14 @@ rawGBMatrixLift(e:Expr):Expr := (
 	       "(Matrix*)", m, ",",
 	       "(Matrix**)&", resultRemainder, ",",
 	       "(Matrix**)&", resultQuotient,
+     	       -- I'm ignoring these messages for now:
+	       --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
+	       --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
+	       --  similar error messages come from "gcc -O3 -Wall" on this:
+	       --  struct A;
+	       --  struct B;
+	       --  extern void h();
+	       --  void f(struct B *p) { h((struct A**)&p); }
 	       ")" );
 	  toList(resultQuotient,resultRemainder))
      else WrongArgBoolean(3)
