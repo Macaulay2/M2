@@ -316,6 +316,26 @@ document { ExampleTABLE,
      a list of examples."
      }
 
+document { SECTION,
+     Headline => "hypertext section",
+     Synopsis => {
+	  ///SECTION { "title of the section", ... contents of the section ... }///
+	  },
+     SEEALSO { "TOC" }
+     }
+
+document { TOC,
+     Headline => "table of contents for sections",
+     Synopsis => {
+	  ///TOC {
+     SECTION { "section title 1", ... },
+     SECTION { "section title 2", ... },
+     SECTION { "section title 3", ... }
+     }///
+     	  },
+     SEEALSO { "SECTION" }
+     }
+
 document { VAR,
      Headline => "HTML VAR item",
      TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
