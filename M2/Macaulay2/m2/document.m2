@@ -245,7 +245,7 @@ separateM2output String := r -> (
 checkForExampleOutputFile := () -> (
      exampleResultsFound = false;
      exampleOutputFilename = null;
-     error "break";
+     -- error "break";
      if exampleBaseFilename =!= null then (
 	  exampleOutputFilename = exampleBaseFilename | ".out";
 	  if fileExists exampleOutputFilename then (
