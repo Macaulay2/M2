@@ -216,6 +216,14 @@ void Z::remove(ring_elem &f) const
   f = MPZ_RINGELEM(NULL);
 }
 
+ring_elem Z::preferred_associate(ring_elem f) const
+{
+  mpz_ptr a = MPZ_VAL(f);
+  if (mpz_sgn(a) >= 0)
+    return from_int(1);
+  return from_int(-1);
+}
+
 void Z::negate_to(ring_elem &f) const
 {
   mpz_sub(MPZ_VAL(f), zero_elem, MPZ_VAL(f));

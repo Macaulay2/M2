@@ -117,3 +117,10 @@ ring_elem Ring::random(int /*homog*/, const int * /*deg*/) const
   gError << "random non-scalar elements for this ring are not implemented";
   return 0;
 }
+
+ring_elem Ring::preferred_associate(ring_elem f) const
+{
+  // Here we assume that 'this' is a field:
+  if (is_zero(f)) return from_int(1);
+  return invert(f);
+}

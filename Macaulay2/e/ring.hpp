@@ -87,6 +87,11 @@ public:
   virtual ring_elem from_int(mpz_ptr n) const = 0;
   virtual ring_elem var(int v, int n) const = 0;
 
+  virtual ring_elem preferred_associate(ring_elem f) const;
+  // Returns an invertible element c of the same ring such that c*f is the
+  // preferred associate of the element f.
+  // WARNING: The default implementation is for a field.
+
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const = 0;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const = 0;
 

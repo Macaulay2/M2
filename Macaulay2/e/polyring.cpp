@@ -361,6 +361,18 @@ bool PolynomialRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) 
   return false;
 }
 
+ring_elem PolynomialRing::preferred_associate(ring_elem ff) const
+{
+  Nterm *f = ff;
+  if (f == NULL) return from_int(1);
+  ring_elem c = K->preferred_associate(f->coeff);
+  Nterm *t = new_term();
+  t->coeff = c;
+  M->one(t->monom);
+  t->next = 0;
+  return t;
+}
+
 bool PolynomialRing::is_unit(const ring_elem ff) const
 {
   Nterm *f = ff;
@@ -1439,7 +1451,14 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
 #endif
       x = s.elem(0,0);
       y = s.elem(1,0);
-
+      ring_elem c = preferred_associate(x);
+      ring_elem x1 = mult(c,x);
+      ring_elem y1 = mult(c,y);
+      remove(x);
+      remove(y);
+      remove(c);
+      x = x1;
+      y = y1;
 #if 0
   o << "result: x = ";
   elem_text_out(o,x);
