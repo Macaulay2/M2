@@ -215,6 +215,11 @@ const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
 					    const Matrix *M,
 					    M2_bool opposite_mult)
 {
+  if (f->get_ring() != M->get_ring())
+    {
+      ERROR("ring element and matrix should have the same base ring");
+      return 0;
+    }
   return M->scalar_mult(f->get_value(), opposite_mult);
 }
 
