@@ -30,12 +30,12 @@ int rawCompareMonomial(const Monoid *M, const Monomial *a, const Monomial *b)
   return a->compare(M,*b);
 }
 
-M2_bool IM2_Monomial_divides(const Monoid *M, const Monomial *a, const Monomial *b)
+M2_bool rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b)
 {
   return a->divides(M,*b);
 }
 
-MonomialOrNull *IM2_Monomial_divide(const Monoid *M, const Monomial *a, const Monomial *b)
+MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Monomial *b)
 {
   if (a->divides(M,*b))
     return (*a)/(*b);
