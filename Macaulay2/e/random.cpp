@@ -29,13 +29,14 @@ void Random::i_random()
   gmp_randinit_default(_st);
 }
 
-void Random::set_seed(int32 s)
+void Random::set_seed(M2_Integer newseed)
 {
+  int32 s = mpz_get_si(newseed);
   s = s & 0x7fffffff; // Used to be dome in cmd_random_seed
   if (s == MASK) s = 0;
   seed = s ^ MASK;
 
-  gmp_randseed_ui(_st, static_cast<unsigned long int>(seed));
+  gmp_randseed(_st, newseed);
 }
 
 int32 Random::random0()
