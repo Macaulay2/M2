@@ -508,12 +508,12 @@ char **argv;
 #              endif
 	       if (GC_ALPHA_VERSION == GC_NOT_ALPHA) {
 		 sprintf(buf,
-			 "--GC %d.%d, copyright, H-J. Boehm, A. oDemers",
+			 "--GC %d.%d, copyright, H-J. Boehm, A. J. Demers",
 			 GC_VERSION_MAJOR, GC_VERSION_MINOR);
 	       }
 	       else {
 		 sprintf(buf,
-			 "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. Demers",
+			 "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. J. Demers",
 			 GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION);
 	       }
 	       putstderr(buf);
