@@ -551,7 +551,7 @@ Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
      b := D.dd;
      scan(spots c, i -> (
 	       j := - i + 1;
-	       f := b#j = (-1)^i * Hom(c_i,N);		    -- this is the right sign!
+	       f := b#j = (-1)^j * Hom(c_i,N);
 	       D#j = source f;
 	       D#(j-1) = target f;
 	       ));
@@ -577,7 +577,10 @@ Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
      d := g.degree = f.degree;
      g.source = Hom(target f, N);
      g.target = Hom(source f, N);
-     scan(spots f, i -> g#(-i-d) = Hom(f#i,N));
+     scan(spots f, i -> (
+	       j := -i-d;
+	       g#j = (-1)^(j*d) * Hom(f#i,N);
+	       ));
      g)
 
 Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (

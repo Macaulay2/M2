@@ -288,6 +288,16 @@ ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b,h) -> (
      else applyValues(h,c -> b*c)
      )
 
+hilbertSeries ProjectiveHilbertPolynomial := options -> h -> (
+     T := degreesRing 1;
+     t := T_0;
+     d := max keys h;
+     new Divide from {
+	  sum( apply( pairs h, (n,a) -> a * (1-t)^(d-n) ) ),
+	  new Power from {1-t,d+1}
+	  }
+     )
+
 PPP := new Holder from {"P"}
 expression ProjectiveHilbertPolynomial := (h) -> (
      sum(sort pairs h, (n,c) -> c * new Subscript from {PPP, n})

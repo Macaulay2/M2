@@ -104,6 +104,10 @@ isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 frac EngineRing := R -> (
      if R.?frac then R.frac
      else (
+	  o := options R;
+	  if o.Inverses then error "not implemented : fraction fields of rings with inverses";
+	  if o.WeylAlgebra or o.SkewCommutative
+	  then error "fraction field of non-commutative ring requested";
 	  R.frac = F := new FractionField from (ggPush R, ggfractionfield);
 	  F.baseRings = append(R.baseRings,R);
      	  if R.?newEngine then F.newEngine = true;

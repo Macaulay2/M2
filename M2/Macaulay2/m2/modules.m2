@@ -461,3 +461,4 @@ isHomogeneous Module := Boolean => (M) -> ring M === ZZ or (
 	  )
      ))
 
+degreesRing Module := M -> degreesRing ring M

@@ -153,10 +153,12 @@ Ext(Module,Module) := Module => (M,N) -> (
     spots := C -> sort select(keys C, i -> class i === ZZ);
     Cstar := S^(apply(spots C,
 	i -> toSequence apply(degrees C_i, d -> {i,first d})));
-    -- assemble the matrix from its blocks
+    -- assemble the matrix from its blocks.
+    -- We omit the sign (-1)^(n+1) which would ordinarily be used,
+    -- which does not affect the homology.
     toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i));
     Delta := map(Cstar, Cstar, 
-      transpose sum ( keys blks, m -> S_m * toS sum blks#m),
+      transpose sum(keys blks, m -> S_m * toS sum blks#m),
       Degree => {-1,0});
     DeltaBar := Delta ** toS N';
     assert(isHomogeneous DeltaBar);
