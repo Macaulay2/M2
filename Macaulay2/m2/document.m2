@@ -7,7 +7,6 @@ maximumCodeWidth := 120
 DocDatabase = null
 
 local exampleBaseFilename
-local exampleOutputFilename
 local currentNodeName
 fixup := method(SingleArgumentDispatch => true)
 
@@ -376,35 +375,24 @@ exampleResults := {}
 exampleCounter := 0
 checkForExampleOutputFile := (node,pkg) -> (
      exampleCounter = 0;
+     exampleResults = {};
+     exampleResultsFound = false;
      if pkg#"example results"#?node then (
 	  exampleResults = pkg#"example results"#node;
-	  exampleResultsFound = true;
-	  exampleOutputFilename = exampleBaseFilename | ".out";
-	  )
-     else (
-	  exampleResults = {};
-	  exampleResultsFound = false;
-	  exampleOutputFilename = null;
-	  ))
---      exampleOutputFilename = null;
---      if debugLevel > 1 then stderr << "exampleBaseFilename = " << exampleBaseFilename << endl;
---      if exampleBaseFilename =!= null then (
--- 	  exampleOutputFilename = exampleBaseFilename | ".out";
--- 	  if debugLevel > 0 then (
--- 	       if debugLevel > 1 then stderr << "checking for example results in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
--- 	       );
--- 	  if fileExists exampleOutputFilename then (
--- 	       -- read, separate, and store example results
--- 	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
--- 	       if debugLevel > 1 then stderr << "node " << node << " : " << boxList \\ net \ exampleResults << endl;
--- 	       exampleResultsFound = true)))
+	  exampleResultsFound = true)
+     else if fileExists (exampleBaseFilename | ".out") then (
+     	  if debugLevel > 1 then stderr << "reading example results from " << (exampleBaseFilename | ".out") << endl;
+	  exampleResults = pkg#"example results"#node = drop(separateM2output get (exampleBaseFilename | ".out"),-1);
+ 	  exampleResultsFound = true))
+
+currentExampleKey := ""
 processExample := x -> (
      a :=
      if exampleResultsFound and exampleResults#?exampleCounter
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "warning : example results file " << exampleOutputFilename << " terminates prematurely" << endl;
+	       stderr << "warning : example results terminate prematurely: " << currentExampleKey << endl;
 	       );
 	  {x, CODE concatenate("i", toString (exampleCounter+1), " : ",x)}
 	  );
@@ -418,7 +406,10 @@ processExamplesLoop := s -> (
 processExamples := (pkg,fkey,docBody) -> (
      exampleBaseFilename = makeFileName(fkey,getFileName docBody,pkg);
      checkForExampleOutputFile(fkey,pkg);
-     processExamplesLoop docBody)
+     currentExampleKey = fkey;
+     r := processExamplesLoop docBody;
+     currentExampleKey = "";
+     r)
 
 -----------------------------------------------------------------------------
 -- 'document' function
