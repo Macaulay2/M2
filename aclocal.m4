@@ -50,6 +50,7 @@ AC_DEFUN(M2_CONFIGURED_FILES,
  Macaulay2/m2/Makefile\
  Macaulay2/ComputationsBook/Makefile\
  Macaulay2/ComputationsBook/book/Makefile\
+ Macaulay2/ComputationsBook/chapters/Makefile\
  Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile\
  Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile\
  Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile\

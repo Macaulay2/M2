@@ -840,3 +840,27 @@ document { (cotangentSheaf, ZZ, ProjectiveVariety),
      the cotangent sheaf of a variety ", TT "X", "."
      }
 
+document { (symbol _, RingElement, ZZ),
+     Synopsis => {
+	  "g = f_d",
+	  "f" => "a polynomial",
+	  "d" => null,
+	  "g" => { "the sum of those terms of ", TT "f", " whose total degree is
+	       ", TT "d", "."
+	       }
+	  },
+     SEEALSO (symbol _, RingElement, List)
+     }
+
+document { (symbol _, RingElement, List),
+     Synopsis => {
+	  "g = f_d",
+	  "f" => "a polynomial",
+	  "d" => "a list of integers",
+	  "g" => { "the sum of those terms of ", TT "f", " whose multi-degree is
+	       ", TT "d", "."
+	       }
+	  },
+     "The length of ", TT "d", " should be the same as the degree length of ", TT "f", ".",
+     SEEALSO {(symbol _, RingElement, ZZ), "degreeLength"}
+     }

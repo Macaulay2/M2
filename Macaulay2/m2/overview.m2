@@ -297,6 +297,16 @@ document { "manipulating polynomials",
 	  "select(terms g, i -> degree i == {2})",
       	  "sum oo",
 	  },
+     "Of course, if the list of selected terms is empty, the sum would turn out
+     to be the zero integer, rather than the zero element of the ring ", TT "R", ".
+     Fortunately, we have another way to select the elements of given degree
+     or multi-degree (see ", TO (symbol _, RingElement, ZZ), ").",
+     EXAMPLE {
+	  "g_0",
+	  "g_1",
+	  "g_2",
+	  "g_3"
+	  },
      "A string representing the polynomial, suitable for entry into other programs,
      can be obtained with ", TO "toString", ".",
      EXAMPLE {

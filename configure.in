@@ -1,6 +1,6 @@
  -*- Mode: sh -*-
 AC_INIT(Makeconf)
-VERSION="$(cat version)"
+VERSION="$(cat $srcdir/version)"
 AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
 AC_CONFIG_AUX_DIR(config)
@@ -24,4 +24,5 @@ M2_IS_DECLARED(char **,h_errlist)
 AC_CONFIG_HEADER(include/config.h)
 CONFIGURED_FILES="M2_CONFIGURED_FILES()"
 AC_SUBST(CONFIGURED_FILES)
-AC_OUTPUT(M2_CONFIGURED_FILES)
+dnl AC_CONFIG_SUBDIRS(gmp factory libfac)
+AC_OUTPUT(M2_CONFIGURED_FILES())

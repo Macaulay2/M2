@@ -158,6 +158,7 @@ frac EngineRing := R -> (
 -- methods for all ring elements
 
 degreeLength Ring := R -> R.degreeLength
+degreeLength RingElement := f -> degreeLength ring f
 
 use Ring := R -> (
      if R.?ring then use R.ring;
@@ -181,13 +182,27 @@ RingElement _ RingElement := RingElement => (f,m) -> (
 	  );
      f _ m)
 
-RingElement _ ZZ := RingElement => (f,m) -> (
-     R := ring f;
-     R _ ZZ := (f,m) -> (
-     	  if m =!= 1 then error "expected index to be 1 or a monomial";
-     	  f_(1_(monoid R))
-	  );
-     f _ m)
+-- RingElement _ ZZ := RingElement => (f,m) -> (
+--      R := ring f;
+--      R _ ZZ := (f,m) -> (
+--      	  if m =!= 1 then error "expected index to be 1 or a monomial";
+--      	  f_(1_(monoid R))
+-- 	  );
+--      f _ m)
+
+RingElement _ ZZ := RingElement => (f,d) -> (
+     u := select(terms f, t -> d === sum degree t);
+     if #u === 0 then 0_(ring f)
+     else sum u
+     )
+
+RingElement _ List := RingElement => (f,d) -> (
+     if degreeLength ring f =!= #d
+     then error ("degree length of ring element doesn't match specified degree");
+     u := select(terms f, t -> d === degree t);
+     if #u === 0 then 0_(ring f)
+     else sum u
+     )
 
 Ring _ ZZ := RingElement => (R,i) -> (
      if R.?generators 
