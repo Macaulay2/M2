@@ -106,13 +106,11 @@ extern char *libfac_version;
 #define O_BINARY 0		/* for non msdos systems */
 #endif
 
-#if !defined(__FreeBSD__)
 #ifndef PAGESIZE
-#if !defined(__linux__) && !defined(__osf__) && !defined(__FreeBSD__)
+#if !defined(__linux__) && !defined(__osf__) && !defined(__FreeBSD__) && !defined(__hpux__)
 extern size_t getpagesize();
 #endif
 #define PAGESIZE getpagesize()
-#endif
 #endif
 
 #define RUP(x) ((((x) + PAGESIZE - 1) / PAGESIZE) * PAGESIZE)
