@@ -2,7 +2,8 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-############################## main target
+############################## main targets
+all :: tags
 all :: compat.h
 all :: ../bin/M2$(EXE)
 ############################## files
@@ -42,10 +43,11 @@ ALLOBJ += $(PROJECT:.d=.oo)
 
 DNAMES := $(PROJECT)
 DNAMES += t.d u.d optim.d actorsX.d gr.d grx.d testall.d pp.d redblk.d
+HFILES := M2types.h getpagesize.h memdebug.h types.h
 CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c M2inits.c gdbm_interface.c
 MADECFILES := tmp_init.c startup.c
 CCFILES := version.cc initgmp.cc
-SRCFILES := getpagesize.h memdebug.c memdebug.h gmp_aux.c types.h $(PROJECT) $(CFILES)
+SRCFILES := $(PROJECT) $(CFILES) memdebug.c gmp_aux.c $(HFILES)
 ALLOBJ += $(CFILES:.c=.o) $(MADECFILES:.c=.o) $(CCFILES:.cc=.o)
 
 clean::; rm -f $(DNAMES:.d=.c)
@@ -199,7 +201,6 @@ t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o
 	$(CC) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 ###
 
-all:: tags
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
 @srcdir@/TAGS: Makefile $(SRCFILES)
