@@ -14,11 +14,12 @@ Tally _ Thing := (a,b) -> if a#?b then a#b else 0
 Tally ** Tally := Tally => (x,y) -> combine(x,y,identity,times,)
 
 Tally ? Tally := (x,y) -> (
-     w := values (x-y);
+     w := values (x-y); -- warning: if x and y are both sets, then x-y isn't as expected here
      if #w === 0 then symbol ==
      else if all(w,i -> i>0) then symbol >
      else if all(w,i -> i<0) then symbol <
      else incomparable)
+Set ? Set := (x,y) -> (new Tally from x) ? (new Tally from y)
 
 Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
 
