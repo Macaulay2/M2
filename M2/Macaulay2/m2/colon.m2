@@ -343,5 +343,5 @@ saturate(Module,Ideal) := Module => options -> (M,I) -> (
     M)
 saturate(Module,RingElement) := Module => options -> (M,f) -> saturate(M,ideal(f),options)
 saturate(Module) := Module => options -> (M) -> saturate(M,ideal vars ring M, options)
-saturate(Vector) := Module => options -> (v) -> saturate(image matrix toList v, options)
+saturate(Vector) := Module => options -> (v) -> saturate(image matrix {v}, options)
 
