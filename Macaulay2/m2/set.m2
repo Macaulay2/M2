@@ -53,7 +53,12 @@ Set - Set := Set => (x,y) -> applyPairs(x, (i,v) -> if not y#?i then (i,v))
 sum Set := s -> sum toList s
 product Set := s -> product toList s
 
-unique = x -> keys set x
+unique = method()
+unique List := x -> (
+     -- old faster way: keys set x
+     -- new way preserves order:
+     seen := new MutableHashTable;
+     select(x, i -> if seen#?i then false else seen#i = true))
 typicalValues#unique = List
 
 member(Thing,Set) := Boolean => (a,s) -> s#?a
