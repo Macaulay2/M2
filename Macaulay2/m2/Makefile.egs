@@ -17,6 +17,7 @@ else
 	   ../../bin/Macaulay2 -silent \
 		'-e loaddata "../../bin/Macaulay2-$(ARCH).data"' \
 		-- -x -s ../eg.m2 -- -x -s ../eg.m2 >tmp \
+		 2>&1 |sed "s/^stdin:/$*.m2:/" \
 		&& \
 	   mv tmp $*.out && \
 	   cp $*.m2 $*.old ; \

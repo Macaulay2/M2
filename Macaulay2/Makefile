@@ -52,7 +52,7 @@ wc ::;  $(MAKE) -C e NODEPENDS=1 wc
 ################################# dbm
 all ::; $(MAKE) -C dbm all
 install ::; $(MAKE) -C dbm install
-tests ::; -$(MAKE) -C dbm tests
+tests ::; $(MAKE) -C dbm tests
 allfiles ::; $(MAKE) NODEPENDS=1 -C dbm allfiles
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 uninstall ::; $(MAKE) -C dbm uninstall
@@ -65,7 +65,7 @@ uninstall ::; $(MAKE) -C d uninstall
 wc ::;  $(MAKE) -C d NODEPENDS=1 wc
 ################################# basictests
 allfiles ::; $(MAKE) -C basictests allfiles
-all ::; -$(MAKE) -C basictests -k
+all ::; $(MAKE) -C basictests -k
 clean ::; $(MAKE) -C basictests clean
 ################################# thread
 allfiles.dev ::; $(MAKE) NODEPENDS=1 -C thread allfiles
@@ -84,14 +84,14 @@ tests ::;  $(MAKE) -C m2 tests
 clean ::; $(MAKE) -C m2 clean
 wc ::;  $(MAKE) -C m2 wc
 ################################# schubert
-tests ::; -$(MAKE) -C schubert tests
+tests ::; $(MAKE) -C schubert tests
 ################################# slides
 allfiles ::; $(MAKE) NODEPENDS=1 -C slides allfiles
 clean ::; -$(MAKE) -k -C slides clean
-tests ::; -$(MAKE) -k -C slides
+tests ::; $(MAKE) -k -C slides
 ################################# test
 allfiles ::; $(MAKE) -C test allfiles
-tests ::; -$(MAKE) -C test -k
+tests ::; $(MAKE) -C test -k
 clean ::; $(MAKE) -C test clean
 ################################# screen
 allfiles.dev ::; $(MAKE) -C screen allfiles

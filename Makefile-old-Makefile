@@ -8,7 +8,11 @@ SUBDIRS := gc gmp factory libfac Macaulay2
 
 .PHONY : all always dirs clean port FACTORYmade FACTORYconfigured
 
-all: GC GMP FACTORY LIBFAC MP MACAULAY2
+all:: GC GMP FACTORY LIBFAC
+ifdef MP
+all:: MP
+endif
+all:: MACAULAY2
 
 lib/.exists:; mkdir -p lib; touch $@
 include/.exists:
@@ -65,6 +69,7 @@ clean::; rm -f config.cache
 GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
 # GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
 GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS
+
 lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
