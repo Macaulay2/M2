@@ -242,7 +242,7 @@ export TooManyArgs(name:string,m:int):Expr := (
 	  + tostring(m) + " arguments"));
 export errorDepth := 0;
 export report(c:Code):CodeClosureList := CodeClosureList(CodeClosure(noRecycle(localFrame),c),self);
-export report(c:Code,x:CodeClosureList):CodeClosureList := CodeClosureList(CodeClosure(noRecycle(localFrame),c),x);
+export report(c:Code,x:CodeClosureList):CodeClosureList := if localFrame != x.code.frame then CodeClosureList(CodeClosure(noRecycle(localFrame),c),x) else x;
 export printErrorMessage(e:Code,message:string):Expr := (
      p := codePosition(e);
      if int(p.loadDepth) >= errorDepth
@@ -250,41 +250,10 @@ export printErrorMessage(e:Code,message:string):Expr := (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,report(e),nullE)))
      else buildErrorPacket(message));
-export backtr(z:Expr):Expr := (
-     when z is err:Error do 
-     if err.position == dummyPosition 
-     || int(err.position.loadDepth) < errorDepth
-     || SuppressErrors
-     then z
-     else buildErrorPacket("--backtrace--",err.report)
-     else z);
-export backtr(z:Expr,report:CodeClosure):Expr := (
-     when z is err:Error do (
-	  err.report = CodeClosureList(report,err.report);
-	  backtr(z))
-     else z);
-export backtrFunction(z:Expr):Expr := (
-     when z is err:Error do (
-	  if err.message == returnMessage 
-	  then err.value
-	  else backtr(z))
-     else z);
-export backtrFunction(z:Expr,report:CodeClosure):Expr := (
-     when z is err:Error do (
-	  if err.message == returnMessage 
-	  then err.value
-	  else backtr(z,report))
-     else z);
-export backtrLoop(z:Expr):Expr := (
-     when z is err:Error do (
-	  if err.message == breakMessage then err.value
-	  else backtr(z))
-     else z);
-export backtrLoop(z:Expr,report:CodeClosure):Expr := (
-     when z is err:Error do (
-	  if err.message == breakMessage then err.value
-	  else backtr(z,report))
-     else z);
+
+export backtrFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
+export backtrLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then err.value else z else z;
+
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
      printErrorMessage(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
@@ -299,12 +268,7 @@ export MissingMethodPair(method:string):Expr := (
 export MissingMethodPair(method:SymbolClosure):Expr := (
      buildErrorPacket("expected pair to have a method for "+
 	  quoteit(method.symbol.word.name)));
-export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := (
-     backtr(
-	  buildErrorPacket(
-	       "expected pair to have a method for "
-	       +quoteit(method.symbol.word.name)
-	       )));
+export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := buildErrorPacket( "expected pair to have a method for " + quoteit(method.symbol.word.name) );
 
 -----------------------------------------------------------------------------
 -- Database stuff

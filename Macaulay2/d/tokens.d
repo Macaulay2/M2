@@ -259,7 +259,12 @@ export List := {
      };
 export CodeClosureList := {code:CodeClosure, next:CodeClosureList};
 
-export Error := {position:Position, message:string, report:CodeClosureList, value:Expr};
+export Error := {
+     position:Position,					    -- dummyPosition here indicates message not displayed yet
+     message:string,
+     report:CodeClosureList,
+     value:Expr
+     };
 export printErrorMessage(err:Error):void := printErrorMessage(err.position,err.message);
 export Database := {
      filename:string,
