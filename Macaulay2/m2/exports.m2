@@ -40,6 +40,7 @@ exportMutable (
 
 export (
         symbol filesLoaded,
+        symbol loadedFiles,
         symbol viewDocumentation,
         symbol RemakeAllDocumentation,
         symbol DegreeRank,

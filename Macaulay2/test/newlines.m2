@@ -28,5 +28,5 @@ assert ( "a\n\na" === "a
 
 a" )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test newlines.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test newlines.out"
 -- End:

@@ -1,6 +1,6 @@
 # @configure_input@
 DOTS = ..
-LIMIT = ulimit -t 30 -m 60000 -v 60000
+LIMIT = ulimit -t 30 -m 60000 -v 60000 2>/dev/null
 include $(DOTS)/../include/config.Makefile
 VPATH = @srcdir@
 RESULTS := $(notdir $(patsubst %.m2, %.out, $(wildcard @srcdir@/*.m2))) $(notdir $(patsubst %.m2-input, %.out, $(wildcard @srcdir@/*.m2-input)))

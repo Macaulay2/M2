@@ -15,5 +15,5 @@ F = (x*y*z)^3
 s = time syz matrix {{F}};
 s
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test moty.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test moty.out"
 -- End:

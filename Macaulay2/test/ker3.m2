@@ -4,5 +4,5 @@ f = map(S,R,{x^2,x*y,y^2})
 I = ker f
 assert( {{2}} == degrees source generators I )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker3.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker3.out"
 -- End:

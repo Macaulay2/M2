@@ -64,5 +64,5 @@ exponents(a^2+b^2+c^3)
 code(exponents,RingElement)
 code(listForm,RingElement)
 
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw2.out"
 -- End:

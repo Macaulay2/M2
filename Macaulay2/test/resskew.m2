@@ -42,5 +42,5 @@ cc = betti (fnt.dd_3)
 assert ( bb == cc)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test resskew.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test resskew.out"
 -- End:

@@ -9,5 +9,5 @@ assert(
      comp == { ideal(y,x+z), ideal(y,x-z) } 
      )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test singular.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test singular.out"
 -- End:

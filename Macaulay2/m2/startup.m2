@@ -19,6 +19,7 @@ if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
      filesLoaded = new MutableHashTable;
+     loadedFiles = new MutableHashTable;
      ReverseDictionary = new MutableHashTable;
      PrintNames = new MutableHashTable;
      scan(
@@ -253,10 +254,22 @@ usage := arg -> (
      << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
      ;exit 0)
 
+markLoaded = (filename,origfilename,notify) -> ( 
+     filename = minimizeFilename filename;
+     filesLoaded#origfilename = filename; 
+     loadedFiles##loadedFiles = filename; 
+     if notify then stderr << "--loaded " << filename << endl;
+     )
+
+tryLoad := (ofn,fn) -> if fileExists fn then (
+     simpleLoad fn;
+     markLoaded(fn,ofn,notify);
+     true) else false
+
 loadSetup := () -> (
      -- try to load setup.m2
-     if sourceHomeDirectory =!= null then load minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
-     else if prefixDirectory =!= null then load minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2")
+     if sourceHomeDirectory =!= null then tryLoad("setup.m2", minimizeFilename(sourceHomeDirectory | "/m2/setup.m2"))
+     else if prefixDirectory =!= null then tryLoad("setup.m2", minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2"))
      else error ("can't find file setup.m2; exe = ",exe,"; commandLine#0 = ",commandLine#0)
      )
 
@@ -378,12 +391,11 @@ if firstTime and not nosetup then (
      )
 processCommandLineOptions 2
 runStartFunctions()
-tryLoad := (ofn,fn) -> if fileExists fn then (
-     load fn;
-     filesLoaded#ofn = fn;
-     true) else false
 errorDepth = loadDepth+1
-noinitfile or tryLoad ("init.m2", getenv "HOME" | "/" | packageSuffix | "init.m2")
+if not noinitfile then (
+     tryLoad ("init.m2", getenv "HOME" | "/" | packageSuffix | "init.m2");
+     tryLoad ("init.m2", "init.m2");
+     );
 processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n

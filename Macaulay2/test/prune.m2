@@ -38,5 +38,5 @@ assert ( M' == F )
 
 -----------------------------------------------------------------------------
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test prune.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test prune.out"
 -- End:

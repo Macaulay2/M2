@@ -18,5 +18,5 @@ c2 = new CacheTable from { b => 3 }
 assert( c1 === c2 )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests A10.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests A10.out"
 -- End:

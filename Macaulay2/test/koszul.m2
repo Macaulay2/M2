@@ -9,5 +9,5 @@ assert( f - g == 0 )
 end
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test koszul.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test koszul.out"
 -- End:

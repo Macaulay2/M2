@@ -20,5 +20,5 @@ p = poincare (R^1)
 T = (ring p)_0
 p // (1-T)^4
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testskew.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testskew.out"
 -- End:

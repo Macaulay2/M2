@@ -556,5 +556,5 @@ rawIdealReorder I
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw3.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw3.out"
 -- End:

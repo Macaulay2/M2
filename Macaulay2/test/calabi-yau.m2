@@ -6,5 +6,5 @@ assert(
      ((1, 0), (0, 1), (0, 101), (1, 0))
      )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test calabi-yau.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test calabi-yau.out"
 -- End:

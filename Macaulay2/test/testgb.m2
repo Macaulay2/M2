@@ -161,5 +161,5 @@ sortcols = (m) -> m_(sortColumns m)
 --                   {{0, y, -z, t^2, 0, x}, {z, 0, y, 0, x, t^2}})))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testgb.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testgb.out"
 -- End:

@@ -10,5 +10,5 @@ res coker matrix {
 }
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res.out"
 -- End:

@@ -9,5 +9,5 @@ assert( g * C.dd == D.dd * g )
 h = Hom(g,R^1)
 assert( h * (source h).dd == (target h).dd * h )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test resmap.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test resmap.out"
 -- End:
