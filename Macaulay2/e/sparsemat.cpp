@@ -21,22 +21,22 @@ SparseMutableMatrix::zero_matrix(const Ring *R,
 
 void SparseMutableMatrix::initialize(int nrows0, int ncols0, vec * columns)
 {
-  nrows = nrows0;
-  ncols = ncols0;
-  columns_ = newarray(vec,ncols);
+  nrows_ = nrows0;
+  ncols_ = ncols0;
+  columns_ = newarray(vec,ncols_);
   if (columns == 0)
-    for (int i=0; i<ncols; i++)
+    for (int i=0; i<ncols_; i++)
       columns_[i] = 0;
   else
-    for (int i=0; i<ncols; i++)
+    for (int i=0; i<ncols_; i++)
       columns_[i] = R->copy_vec(columns[i]);
 }
 
 Matrix *SparseMutableMatrix::to_matrix() const
 {
-  FreeModule *F = R->make_FreeModule(nrows);
-  MatrixConstructor mat(F,ncols);
-  for (int c=0; c<ncols; c++)
+  FreeModule *F = R->make_FreeModule(nrows_);
+  MatrixConstructor mat(F,ncols_);
+  for (int c=0; c<ncols_; c++)
     mat.set_column(c, R->copy_vec(columns_[c]));
   mat.compute_column_degrees();
   return mat.to_matrix();
@@ -45,7 +45,7 @@ Matrix *SparseMutableMatrix::to_matrix() const
 MutableMatrix *SparseMutableMatrix::copy(bool prefer_dense) const
 {
   SparseMutableMatrix *result = new SparseMutableMatrix(R);
-  result->initialize(nrows,ncols,columns_);
+  result->initialize(nrows_,ncols_,columns_);
   return result;
 }
 
@@ -85,7 +85,7 @@ bool SparseMutableMatrix::get_entry(int r, int c, ring_elem &result) const
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
 {
   bool isnonzero;
-  if (r >= 0 && r < nrows && c >= 0 && c < ncols)
+  if (r >= 0 && r < nrows_ && c >= 0 && c < ncols_)
     isnonzero = R->get_entry(columns_[c],r,result);
   else
     isnonzero = false;
@@ -266,7 +266,7 @@ bool SparseMutableMatrix::row2by2(int r1, int r2,
   if (error_row_bound(r1)) return false;
   if (error_row_bound(r2)) return false;
 
-  for (int i=0; i<ncols; i++)
+  for (int i=0; i<ncols_; i++)
     vec_row2by2(columns_[i],r1,r2,a1,a2,b1,b2,opposite_mult);
 
   if (doRecording && rowOps != 0)
@@ -325,7 +325,7 @@ bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
 
 bool SparseMutableMatrix::is_zero() const
 {
-  for (int i=0; i<ncols; i++)
+  for (int i=0; i<ncols_; i++)
     if (columns_[i] != 0) return false;
   return true;
 }
@@ -333,11 +333,11 @@ bool SparseMutableMatrix::is_zero() const
 bool SparseMutableMatrix::is_equal(const MutableMatrix *B) const
 {
   if (R != B->get_ring()) return false;
-  if (nrows != B->n_rows() || ncols != B->n_cols()) return false;
+  if (nrows_ != B->n_rows() || ncols_ != B->n_cols()) return false;
   const SparseMutableMatrix *B1 = B->cast_to_SparseMutableMatrix();
   if (B1 != 0)
     {
-      for (int i=0; i<ncols; i++)
+      for (int i=0; i<ncols_; i++)
 	if (!R->is_equal(columns_[i], B1->columns_[i])) return false;
       return true;
     }
@@ -364,16 +364,16 @@ MutableMatrixOrNull * SparseMutableMatrix::add(const MutableMatrix *B) const
       ERROR("matrices have different base rings");
       return 0;
     }
-  if (nrows != B->n_rows() || ncols != B->n_cols())
+  if (nrows_ != B->n_rows() || ncols_ != B->n_cols())
     {
       ERROR("matrices have different shape");
       return 0;
     }
   const SparseMutableMatrix *B1 = B->cast_to_SparseMutableMatrix();
-  SparseMutableMatrix *result = zero_matrix(R,nrows,ncols);
+  SparseMutableMatrix *result = zero_matrix(R,nrows_,ncols_);
   if (B1 != 0)
     {  
-      for (int i=0; i<ncols; i++)
+      for (int i=0; i<ncols_; i++)
 	{
 	  vec v = R->copy_vec(columns_[i]);
 	  vec w = R->copy_vec(B1->columns_[i]);
@@ -414,8 +414,8 @@ MutableMatrixOrNull * SparseMutableMatrix::mult(const RingElement *f,
 
 MutableMatrix * SparseMutableMatrix::negate() const
 {
-  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(R,nrows,ncols);
-  for (int i=0; i<ncols; i++)
+  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(R,nrows_,ncols_);
+  for (int i=0; i<ncols_; i++)
     result->columns_[i] = R->negate_vec(columns_[i]);
   return result;
 }
@@ -425,18 +425,18 @@ MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint rows,
 {
   int *trans = newarray(int,n_rows());
 
-  for (int i=0; i<nrows; i++)
+  for (int i=0; i<nrows_; i++)
     trans[i] = -1;
 
   for (unsigned j=0; j<rows->len; j++)
-    if (rows->array[j] >= 0 && rows->array[j] < nrows)
+    if (rows->array[j] >= 0 && rows->array[j] < nrows_)
       trans[rows->array[j]] = j;
 
   SparseMutableMatrix *result = zero_matrix(R,rows->len,cols->len);
 
   for (unsigned int i=0; i<cols->len; i++)
     {
-      if (cols->array[i] < 0 || cols->array[i] >= ncols) continue;
+      if (cols->array[i] < 0 || cols->array[i] >= ncols_) continue;
       vec v = columns_[cols->array[i]];
       vec w = 0;
       for ( ; v != NULL; v = v->next)
@@ -452,9 +452,9 @@ MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint rows,
 
 MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint cols) const
 {
-  SparseMutableMatrix *result = zero_matrix(R,nrows,cols->len);
+  SparseMutableMatrix *result = zero_matrix(R,nrows_,cols->len);
   for (unsigned int i=0; i<cols->len; i++)
-    if (cols->array[i] >= 0 && cols->array[i] < ncols)
+    if (cols->array[i] >= 0 && cols->array[i] < ncols_)
       result->columns_[i] = R->copy_vec(columns_[cols->array[i]]);
   return result;
 }
@@ -467,8 +467,8 @@ void SparseMutableMatrix::setSizes(int c_lo, int c_hi, int *rowSize, int *colSiz
 
   // Sets the arrays rowSize and colSize
   int i;
-  for (i=0; i<ncols; i++) colSize[i] = 0;
-  for (i=0; i<nrows; i++) rowSize[i] = 0;
+  for (i=0; i<ncols_; i++) colSize[i] = 0;
+  for (i=0; i<nrows_; i++) rowSize[i] = 0;
   for (i=c_lo; i<=c_hi; i++)
     for (vec p=columns_[i]; p != 0; p=p->next)
       {
@@ -504,6 +504,8 @@ void SparseMutableMatrix::setSizes(int c_lo, int c_hi, int *rowSize, int *colSiz
 
 void SparseMutableMatrix::reduce_pivots()
 {
+  int nrows = n_rows();
+  int ncols = n_cols();
   const Ring *K = get_ring();
   ring_elem one = K->one();
   ring_elem minus_one = K->minus_one();

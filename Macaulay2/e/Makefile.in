@@ -47,6 +47,10 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	lapack \
+	dmat \
+	dmatrix \
+	coeffrings \
 	Eschreyer \
 	ntl_interface \
 	gbweight \
@@ -99,15 +103,11 @@ INTERFACE = \
 	int_bag \
 	intarray \
 	matrix \
-	matrixRR \
-	matrixCC \
 	mem \
 	monideal \
 	monoid2 \
 	monomial \
 	mutablemat \
-	densemat \
-	densematRR \
 	ntuple \
 	polyring \
 	pfaff \
@@ -140,7 +140,6 @@ STILLTOCOMPILE = \
 	lattice # lattice has been replaced with fractionfreeLU, one other?
 
 COMMANDS = \
-	densemat-lapack \
 	mat-kbasis \
 	mat-symm \
 	mat-sort \
@@ -155,7 +154,6 @@ COMMANDS = \
 	M2-factory \
 	x_factor \
 	x_free \
-	x_lapack \
 	x_mat \
 	x_monideal \
 	x_gb \

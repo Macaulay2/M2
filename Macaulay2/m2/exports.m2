@@ -174,6 +174,7 @@ export (
 	symbol DegreeMap,
 	symbol DegreeOrder,
 	symbol Degrees,
+	symbol Dense,
 	symbol Descending,
 	symbol Description,
 	symbol Dictionary,

@@ -1,42 +1,49 @@
-// Copyright 2004  Michael E. Stillman
+// Copyright 2005  Michael E. Stillman
 
-#ifndef _densemat_hpp_
-#define _densemat_hpp_
+#ifndef _dmatrix_hpp_
+#define _dmatrix_hpp_
 
 #include "mutablemat.hpp"
+#include "dmat.hpp"
 
-class DenseMutableMatrixRing : public DenseMutableMatrix
+template<typename CoeffRing>
+class DMatrix : public DenseMutableMatrix
 {
-  int nrows_;
-  int ncols_;
-  ring_elem *array_; // array has length nrows*ncols
-                     // columns stored one after another
+  typedef typename CoeffRing::ring_type RingType;
+  typedef typename CoeffRing::elem elem;
+  DMat<CoeffRing> *mat;
 
-  void initialize(int nrows, int ncols, ring_elem *array);
+  DMatrix(const RingType *R, int nrows, int ncols);
 
-  DenseMutableMatrixRing(const Ring *R);
+  DMatrix(DMat<CoeffRing> *mat0); // grabs this matrix
 
-  virtual ~DenseMutableMatrixRing() {}
+  virtual ~DMatrix() {}
 public:
-  static DenseMutableMatrixRing *zero_matrix(const Ring *R, int nrows, int ncols);
+  static DMatrix<CoeffRing> *zero_matrix(const RingType *R0, int nrows, int ncols);
 
-  virtual DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() { return this; }
-  virtual const DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() const { return this; }
+  virtual DMatrix<CoeffRing> * cast_to_DMatrix() { return this; }
+  virtual const DMatrix<CoeffRing> * cast_to_DMatrix() const { return this; }
 
+  DMat<CoeffRing> * get_DMat() { return mat; }
+
+  virtual DMat<CoefficientRingRR> * get_DMatRR() const { return 0; }
+  virtual DMat<CoefficientRingCC> * get_DMatCC() const { return 0; }
+  virtual DMat<CoefficientRingZZp> * get_DMatZZp() const { return 0; }
 public:
   virtual Matrix *to_matrix() const;
+  
+  virtual DMatrix<CoeffRing> *copy(bool prefer_dense) const;
 
-  virtual MutableMatrix *copy(bool prefer_dense) const;
+  virtual int n_rows() const { return mat->n_rows(); }
 
-  virtual int n_rows() const { return nrows_; }
-
-  virtual int n_cols() const { return ncols_; }
+  virtual int n_cols() const { return mat->n_cols(); }
 public:
   virtual int lead_row(int col) const;
   /* returns the largest index row which has a non-zero value in column 'col'.
      returns -1 if the column is 0 */
 
   virtual int lead_row(int col, ring_elem &result) const;
+
   /* returns the largest index row which has a non-zero value in column 'col'.
      Also sets result to be the entry at this index.
      returns -1 if the column is 0, or if col is out of range
@@ -111,6 +118,11 @@ public:
 			  M2_arrayint cols,
 			  RingElement_array *values);
 
+  virtual DMatrix<CoeffRing> * submatrix(const M2_arrayint rows, 
+					 const M2_arrayint cols) const;
+
+  virtual DMatrix<CoeffRing> * submatrix(const M2_arrayint cols) const;
+
   virtual MutableMatrixOrNull * add(const MutableMatrix *B) const; 
   // return this + B.  return NULL of sizes or types do not match.
   // note: can add a sparse + dense
@@ -133,13 +145,9 @@ public:
 
   virtual MutableMatrix * negate() const;
 
-  virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
-
-  virtual MutableMatrix * submatrix(const M2_arrayint cols) const;
 };
 
 #endif
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

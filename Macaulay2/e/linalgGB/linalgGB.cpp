@@ -1,4 +1,5 @@
 #include "linalgGB.hpp"
+#include "../z_mod_p.hpp"
 #include "../matrix.hpp"
 #include "MonomialTable.h"
 #include <map>
@@ -14,9 +15,10 @@ GBComputation *createLinearAlgebraGB(const Matrix *m,
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
   GBComputation *G;
-  if (K->cast_to_Z_mod() != 0)
+  const Z_mod *KZZp = K->cast_to_Z_mod();
+  if (KZZp != 0)
     {
-      CoefficientRingZZp *L = new CoefficientRingZZp(K->charac());
+      CoefficientRingZZp *L = KZZp->get_CoeffRing();
       G = new LinAlgGB<CoefficientRingZZp>(L,m,
 					   collect_syz,
 					   n_rows_to_keep,
@@ -130,7 +132,7 @@ void LinAlgGB<CoefficientRing>::load_gen(int which)
   allocate_sparse_row(r, g.len);
 
   for (int i=0; i<g.len; i++)
-    coeffK->init_set(r.coeffs+i, g.coeffs+i);
+    coeffK->init_set(r.coeffs[i], g.coeffs[i]);
   for (int i=0; i<g.len; i++)
     r.comps[i] = find_or_append_column(g.monoms[i]);
 
@@ -149,7 +151,7 @@ void LinAlgGB<CoefficientRing>::load_row(monomial monom, int which)
 
 
   for (int i=0; i<g.len; i++)
-    coeffK->init_set(r.coeffs+i, g.coeffs+i);
+    coeffK->init_set(r.coeffs[i], g.coeffs[i]);
 
   for (int i=0; i<g.len; i++)
     {
@@ -360,7 +362,7 @@ void LinAlgGB<CoefficientRing>::sparse_row_to_poly(row_elem &r, poly &g)
   allocate_poly(g, r.len);
   for (int i=0; i<r.len; i++)
     {
-      coeffK->init_set(g.coeffs+i, r.coeffs+i);
+      coeffK->init_set(g.coeffs[i], r.coeffs[i]);
       g.monoms[i] = mat->columns[r.comps[i]].monom;
     }
 }

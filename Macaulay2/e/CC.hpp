@@ -6,6 +6,8 @@
 #include "engine.h"
 #include "ring.hpp"
 
+class CoefficientRingCC;
+
 class CC : public Ring
 // Elements of this ring are two real numbers: 'double's representing real and imaginary parts
 {
@@ -17,7 +19,8 @@ class CC : public Ring
 
   bool is_zero_CC(double a) const;
   int compare_CC(double a, double b) const;
-  
+
+  CoefficientRingCC *coeffR;
 protected:
   CC() {}
   virtual ~CC();
@@ -27,6 +30,8 @@ public:
 
   CC * cast_to_CC() { return this; }
   const CC * cast_to_CC() const { return this; }
+
+  CoefficientRingCC *get_CoeffRing() const { return coeffR; }
 
   ring_elem from_doubles(double r, double s) const;
 
