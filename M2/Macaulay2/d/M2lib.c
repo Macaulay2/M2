@@ -323,6 +323,8 @@ static void testgc () {
        (void *)0);
 }
 
+extern void init_readline_variables();
+
 int main(argc,argv)
 int argc; 
 char **argv;
@@ -502,6 +504,7 @@ char **argv;
      font = XLoadFont(display,"6x13");
 #endif
      factory_setup();
+     init_readline_variables();
      main_inits();		/* run all the startup code in the *.d files, see tmp_init.c */
      actors4_setupargv();
      if (reserve == NULL) {

@@ -12,5 +12,6 @@ directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpq/
 directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpf/
 directory ~/local/share/capybara/packages/gc/TMP/gc6.3alpha2/
 directory ~/local/share/capybara/packages/gdbm/TMP/gdbm-1.8.3/
+directory ~/local/share/capybara/packages/readline/TMP/readline-4.3:
 source .gdb-files
 source .gdb-run-it

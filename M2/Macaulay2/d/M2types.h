@@ -48,11 +48,13 @@ extern "C" {
   extern M2_string strings_substr_1(M2_string x, int start);
   extern M2_string strings_join(M2_string x,M2_string y);
   extern char *tocharstar(M2_string);
+  extern char *tocharstar_malloc(M2_string);
   
   extern M2_arrayint toarrayint(int n,int *p);
   extern M2_arrayint makearrayint(int n); /* Make an array of n 0's */
   
   extern char **tocharstarstar(M2_stringarray);
+  extern char **tocharstarstar_malloc(M2_stringarray);
   extern M2_stringarray tostrings(int,char **);
   
   extern void outofmem(void);
