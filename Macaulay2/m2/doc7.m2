@@ -481,7 +481,7 @@ document { (map,Module,ZZ,Function),
 
 document { (map,Module,ZZ,List),
      TT "map(M,n,v)", " -- construct a map from a free graded module of
-     rank n to M whose entries are in the doubly nested list v.",
+     rank n to M whose entries are in the doubly nested list ", TT "v", ".",
      PARA,
      "The degrees of the basis elements of the source module are chosen
      in an attempt to ensure that the resulting map is homogeneous of

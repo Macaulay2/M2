@@ -44,7 +44,10 @@ document { (fold, Function, Thing, VisibleList),
      }
 document { (fold, Function, VisibleList),
      TT "fold(f,{x0,x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     EXAMPLE "fold(identity, {a,b,c,d,e})"
+     EXAMPLE {
+	  "fold(identity, {a,b,c,d,e})",
+	  "fold(plus, {1,2,3,4,5})"
+	  }
      }
 document { (fold, VisibleList, Thing, Function),
      TT "fold({xn,...,x1},x0,f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",

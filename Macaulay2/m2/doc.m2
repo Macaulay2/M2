@@ -9,7 +9,7 @@ document { (length, GradedModule),
 
 document { sendgg,
      Headline => "send commands to engine",
-     TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the  string ", TT "s", " 
+     TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the string ", TT "s", " 
      of data and commands to the engine.  The first byte of the result is examined 
      for an error indication, and then an error is raised or the remainder of the 
      string is returned.",
@@ -17,26 +17,30 @@ document { sendgg,
      SEEALSO "engine communication protocol"
      }
 
-document { parent,
+document { (parent,Thing),
      Headline => "parent type of an object",
-     TT "parent X", " -- yields the parent ", TT "P", " of ", TT "X", ".",
+     Synopsis => {
+	  "P = parent X",
+	  "X" => "anything",
+	  "P" => { "the parent class of ", TT "X" }
+	  },
      PARA,
-     "Methods for the ", TO {"instance", "s"}, " of ", TT "X", " which are not found
-     in ", TT "X", " itself are sought in ", TT "P", ", and its parent, and so on.",
-     PARA,
-     "The mathematical notion of a set ", TT "z", " and a subset ", TT "y", " can modeled
-     in this way, with ", TT "z", " being the parent of ", TT "y", ".",
+     "Methods for the instances of ", TT "X", " which are not found
+     in ", TT "X", " itself are sought in ", TT "P", ", and its parent, and so on.
+     Thus the mathematical notion of a set ", TT "P", " and a subset ", TT "X", " 
+     can modeled in this way.",
      PARA,
      "Things which don't have instances have the empty class, called
-     ", TO "Nothing", " as their parent.",
+     ", TO "Nothing", " as their parent.  The parent of ", TO "Thing", "
+     is ", TO "Thing", " itself (because every thing is a thing).",
      PARA,
-     "The parent of ", TO "Thing", " is ", TO "Thing", " itself (because every thing
-     is a thing).",
+     "The entire structure of types and their parents can be displayed
+     with ", TO "showStructure", ".",
      SEEALSO "classes and types"
      }
 
 document { Array,
-     Headline => "class of all arrays -- [...]",
+     Headline => "the class of all arrays -- [...]",
      "An array is like a list, except that brackets are used instead of
      braces when entering or displaying an array, and arrays can't be used
      as vectors.  Their main use is notational: for example, they appear
@@ -50,7 +54,7 @@ document { Array,
      }
 
 document { Sequence,
-     Headline => "class of all sequences -- (...)",
+     Headline => "the class of all sequences -- (...)",
      "A sequence is an ordered collection of things enclosed by parentheses
      and separated by commas.  Use ", TO "#", " to get the length of a
      sequence of to get one of the elements.",
@@ -77,7 +81,7 @@ document { singleton,
      }
 
 document { List,
-     Headline => "class of all lists -- {...}",
+     Headline => "the class of all lists -- {...}",
      SEEALSO "lists",
      PARA,
      "Common operations on lists:",
@@ -115,7 +119,7 @@ document { List,
      }
 
 document { VisibleList,
-     Headline => "class of all visible lists",
+     Headline => "the class of all visible lists",
      "There are three types of lists that can be entered directly from
      the keyboard, as follows.",
      EXAMPLE {
@@ -128,7 +132,7 @@ document { VisibleList,
      }
 
 document { Type,
-     Headline => "class of all types",
+     Headline => "the class of all types",
      "Everything in the system is classified, and the class that a thing
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
@@ -150,15 +154,14 @@ document { Print,
      to ", TT "r", ", and prints its result instead.  The actual printing
      will be done with ", TO "<<", ".  It will then apply the appropriate
      ", TO "AfterPrint", " method to ", TT "r", ", which is normally used to 
-     provide auxiliary information to the user about the type of the result.",
-     SEEALSO "NoPrint"
+     provide auxiliary information to the user about the type of the result."
      }
 
 document { NoPrint,
      Headline => "top level method for non-printing results",
      Synopsis => {
 	  "X.NoPrint = f",
-	  "f" => { "a function to be used a top-level evaluation
+	  "f" => { "a function to be applied if a top-level evaluation
 	       result ", TT "r", " of type ", TT "X", " is not to
 	       be printed, as indicated by a semicolon."},
      	  null
@@ -168,44 +171,80 @@ document { NoPrint,
      one, and replace ", TT "r", " by the result.  It will then
      apply the appropriate ", TO "AfterNoPrint", " method to
      ", TT "r", ", which is normally used to provide auxiliary 
-     information to the user about the type of the result.",
-     SEEALSO "Print"
+     information to the user about the type of the result."
      }
 
 document { BeforePrint,
      Headline => "top level method applied before printing results",
-     TT "Applied at top level to the result of an evaluation,
-     whose result supplants the original for printing.",
-     SEEALSO "Print"
+     Synopsis => {
+	  "X.BeforePrint = f",
+	  "f" => { "a function to be applied before printing a 
+	       top-level evaluation result ", TT "r", " of 
+	       type ", TT "X", "."},
+     	  null
+	  },
+     "The value returned supplants the original for printing."
      }
 
 document { AfterEval,
-     Headline => "top level method applied before printing results",
-     TT "Applied at top level to the result of an evaluation, whose
-     result replaces the original for storing in the output variable and 
-     for printing.",
-     SEEALSO "Print"
+     Headline => "top level method applied after evaluation",
+     Synopsis => {
+	  "X.AfterEval = f",
+	  "f" => { "a function to be applied after evaluating a 
+	       top-level evaluation result ", TT "r", " of 
+	       type ", TT "X", "."},
+     	  null
+	  },
+     "The value returned result replaces the original for
+     storing in the output variables and for printing."
      }
 
 document { AfterPrint,
      Headline => "top level method applied after printing",
-     TT "Applied at top level to the result of an evaluation after printing.",
-     SEEALSO "Print"
+     Synopsis => {
+	  "X.AfterPrint = f",
+	  "f" => { "a function to be applied after printing a 
+	       top-level evaluation result ", TT "r", " of 
+	       type ", TT "X", "."},
+     	  null
+	  },
+     "This is used currently to print the type of the result of
+     a computation.",
+     EXAMPLE {
+	  "3/4"
+	  },
+     "We could suppress that output for a single type as
+     follows.",
+     EXAMPLE {
+	  "QQ.AfterPrint = r -> r;",
+	  "3/4"
+	  }
      }
 
 document { AfterNoPrint,
      Headline => "top level method applied after not printing",
-     "Applied at top level to the result of an evalution when printing of the
-     result has been suppressed by a semicolon.",
-     SEEALSO "Print"
+     Synopsis => {
+	  "X.AfterNoPrint = f",
+	  "f" => { "a function to be applied after not printing a 
+	       top-level evaluation result ", TT "r", " of 
+	       type ", TT "X", "."},
+     	  null
+	  },
+     "The function ", TT "f", " will be applied at top level to the 
+     result of an evalution when printing of the result has
+     been suppressed by a semicolon."
      }
 
-document { setrecursionlimit,
+document { (setrecursionlimit,ZZ),
      Headline => "set the limit on recursion",
-     TT "setrecursionlimit n", " -- sets the recursion limit to ", TT "n", ".",
-     PARA,
-     "It returns the old value.  The recursion limit governs the nesting level
-     permissible for calls to functions."
+     Synopsis => {
+	  "m = setrecursionlimit n",
+	  "n" => "the desired limit on recursion depth",
+	  "m" => "the previous limit"
+	  },
+     "Each time a function is called, the recursion depth is incremented by
+     1, and each time a function returns, the recursion depth is decremented.
+     This limit on recursion depth is a way to detect infinite loops."
      }
 
 document { toString symbol commandLine,
@@ -307,24 +346,48 @@ document { HashTable,
 
 document { maxPosition,
      Headline => "position of largest element",
-     TT "maxPosition x", " -- yields the position of the largest element in the list.",
-     PARA,
-     "If it occurs more than once, then the first occurrence
-     is used.  If x has length zero an error results."
+     }
+
+document { (maxPosition,BasicList),
+     Synopsis => {
+	  "n = maxPosition x",
+	  "x" => null,
+	  "n" => { "the position of the largest element in the list ", TT "x", "." },
+	  },
+     "If the largest element occurs more than once, then the first occurrence
+     is used.  If ", TT "x", " has length 0 an error results.",
+     SEEALSO {
+	  (minPosition,BasicList)
+	  }
      }
 
 document { minPosition,
-     Headline => "position of smallest element",
-     TT "minPosition x", " -- yields the position of the smallest element in the list.",
-     PARA,
-     "If it occurs more than once, then the first occurrence
-     is used.  If x has length zero an error results."
+     Headline => "position of smallest element"
+     }
+
+document { (minPosition,BasicList),
+     Synopsis => {
+	  "n = minPosition x",
+	  "x" => null,
+	  "n" => { "the position of the smallest element in the list ", TT "x", "." },
+	  },
+     "If the smallest element occurs more than once, then the first occurrence
+     is used.  If ", TT "x", " has length 0 an error results.",
+     SEEALSO {
+	  (maxPosition,BasicList)
+	  }
      }
 
 document { keys,
-     Headline => "keys used in a hash table",
-     TT "keys t", " -- yields a list of the keys occurring in the hash table t.",
-     PARA,
+     Headline => "keys used in a hash table"
+     }
+
+document { (keys,HashTable),
+     Synopsis => {
+	  "x = keys t",
+	  "t" => null,
+	  "x" => {"a list of the keys occurring in the hash table ", TT "t", "."}
+	  },
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
 	  "keys x",
@@ -332,9 +395,15 @@ document { keys,
      }
 
 document { values,
-     Headline => "values in a hash table",
-     TT "values t", " -- yields a list of the values occurring in the hash table t.",
-     PARA,
+     Headline => "values in a hash table"
+     }
+
+document { (values,HashTable),
+     Synopsis => {
+	  "x = values t",
+	  "t" => null,
+	  "x" => {"a list of the values occurring in the hash table ", TT "t", "."}
+	  },
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
 	  "values x",
@@ -417,12 +486,12 @@ document { (apply,ZZ,Function),
      }
 document { apply,
      Headline => "apply a function to each element",
-     SEEALSO{ "scan", "select",  "any",  "all", "member"}
+     SEEALSO { "mapping over lists"}
      }
 
 document { scan,
      Headline => "apply a function to each element",
-     SEEALSO { "select", "any", "all", "member"}
+     SEEALSO { "mapping over lists"}
      }
 
 document { (scan,BasicList,Function),

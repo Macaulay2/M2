@@ -589,6 +589,7 @@ document { "initialization file",
      }
 
 document { "combinatorial functions",
+     Headline => "an overview",     
      MENU {
 	  TO "random",
 	  TO "binomial",

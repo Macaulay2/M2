@@ -706,10 +706,10 @@ briefDocumentation = x -> (
 	       r = synopsis x;
 	       if r =!= null then << endl << text r << endl
 	       else (
-		    s := if class x === Function then fmeth x;
-		    if s =!= null then << endl << text s << endl
-		    else (
-			 if headline x =!= null then << endl << headline x << endl)))))
+		    if headline x =!= null then << endl << headline x << endl;
+		    if class x === Function then (
+			 s := fmeth x;
+		    	 if s =!= null then << endl << text s << endl;)))))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (

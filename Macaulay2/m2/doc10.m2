@@ -597,9 +597,9 @@ document { showStructure,
      PARA,
      "Each such type is displayed to the right of its parent.",
      PARA,
-     "A type is an instance ", TO "Type", ".",
+     "A type is an instance of ", TO "Type", ", by definition.",
      EXAMPLE {
-	  "showStructure {List, Array, Sequence, MutableHashTable, ZZ, Ring, Monoid}",
+	  "showStructure",
 	  },
      SEEALSO { "showUserStructure", "parent"}
      }
@@ -846,26 +846,3 @@ document { (cotangentSheaf, ZZ, ProjectiveVariety),
      the cotangent sheaf of a variety ", TT "X", "."
      }
 
-document { Options,
-     Headline => "specify optional arguments for a method",
-     TT "Options", " -- an option used with ", TO "method", " to specify
-     names of optional arguments and their default values.",
-     PARA,
-     NOINDENT,
-     TT "f = method(Options => w)", " -- creates a method which accepts
-     optional arguments.  Here 'w' is a list ", TT "{A=>a,B=>b,...}", " of
-     optional argument names A,B,... and corresponding default values a,b,...",
-     PARA,
-     "The methods installed for this method function should be written in
-     the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
-     will be assigned a hash table of type ", TO "OptionTable", " containing 
-     the optional argument names and their values.  The default table can
-     be recovered with the function ", TO "options", ".",
-     EXAMPLE {
-	  "f = method(Options => {Slope => 1, Intercept => 1})",
-      	  "f RR := o -> x -> o.Slope * x + o.Intercept",
-      	  "f(5.,Slope=>100)",
-	  "options f",
-	  },
-     SEEALSO "method"
-     }

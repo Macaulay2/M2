@@ -152,18 +152,25 @@ document { char,
      }
 
 document { basictype,
-     Headline => "the basic type",
-     TT "basictype x", " -- yields the class representing the basic type of ", TT "x", ".",
-     PARA,
+     Headline => "the basic type of an object",
+     Synopsis => {
+	  "T = basictype x",
+	  "x" => "anything",
+	  "T" => { "class representing the basic type of ", TT "x" }
+	  },
      "Every thing has basic type which tells what sort of thing it
-     really is, internally.  It is not possible for the user to create 
-     new basic types.",
+     really is, internally.",
      PARA,
      "The parent of a basic type is ", TO "Thing", ", and this property
-     characterizes the basic types.",
+     characterizes the basic types.  The basic type of an object ", TT "x", "
+     is defined to be the ancestor of the class of ", TT "x", " that is a
+     basic type.",
      PARA,
-     EXAMPLE "select(values symbolTable(), i -> parent value i === Thing)",
-     SEEALSO "Thing"
+     "Let's compute a list of all the basic types:",
+     EXAMPLE ///stack sort (toString \
+     select(values symbolTable(), i -> parent value i === Thing)
+     )///,
+     SEEALSO "basic types"
      }
 
 document { symbol "++",

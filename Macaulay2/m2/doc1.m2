@@ -481,12 +481,24 @@ document { (symbol "==>", OptionTable, Function),
      }
 
 document { method => SingleArgumentDispatch,
-     Headline => "a method for handling multiple arguments as a sequence",
-     TT "SingleArgumentDispatch=>true", " -- an option to ", TO "method", "
-     which specifies whether the method function should treat several
-     arguments as a single argument, i.e., as a sequence.",
+     Headline => "method functions with a variable number of arguments",
+     Synopsis => {
+	  "f = method(SingleArgumentDispatch => true)",
+	  "f" => "a method function that treats several arguments as
+	  a single argument, i.e., as a sequence."
+	  },
      PARA,
-     SEEALSO "method functions with a variable number of arguments"
+     "Here is an example.",
+     EXAMPLE {
+	  "f = method(SingleArgumentDispatch=>true);",
+	  "f ZZ := i -> -i;",
+	  "f Sequence := S -> reverse S;",
+	  "f 44",
+	  "f(3,4,5,6)"
+	  },
+     PARA,
+     "Normally, at most three arguments could be handled by such a method
+     function, and the types would have to be considered separately."
      }
 
 document { symbol "typicalValues",
@@ -521,12 +533,12 @@ document { method,
      PRE "     f(X,Y) := (x,y) -> ...",
      "where '...' represents the body of the function you wish to install.
      The syntax for one or three arguments is analogous.  For a single
-     argument x of class X, one could also write:",
+     argument ", TT "x", " of class ", TT "X", ", one could omit the parentheses, and write:",
      PRE "     f X := (x) -> ...",
      "the effect of which happens to be the same as that of",
      PRE "     X#f := (x) -> ...",
      PARA,
-     SEEALSO {"Options", "methods" }
+     SEEALSO {"methods" }
      }
 
 document { method => Associative,

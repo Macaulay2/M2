@@ -16,7 +16,10 @@ List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with L
 
 VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
-maxPosition = x -> (
+maxPosition = method(SingleArgumentDispatch => true)
+minPosition = method(SingleArgumentDispatch => true)
+
+maxPosition BasicList := ZZ => x -> (
      if # x === 0 then error "expected a nonempty list" 
      else (
      	  m := x#0; 
@@ -24,15 +27,13 @@ maxPosition = x -> (
 	  scan(1 .. # x-1, i -> if x#i>m then (m=x#i;pos=i));
 	  pos))
 
-
-minPosition = x -> (
+minPosition BasicList := ZZ => x -> (
      if # x === 0 then error "expected a nonempty list" 
      else (
      	  m := x#0; 
 	  pos := 0;
 	  scan(1 .. # x-1, i -> if x#i>m then (m=x#i;pos=i));
 	  pos))
-
 
 number = x -> # select x
 

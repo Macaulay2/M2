@@ -39,6 +39,8 @@ expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
 
+value Expression := e -> error "no method for 'value'"
+
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"
 --new AssociativeExpression from Sequence := 
