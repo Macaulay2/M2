@@ -1065,7 +1065,6 @@ texMath RR := toString
 texMath ZZ := toString
 texMath Thing := x -> texMath expression x
 texMath Symbol := toString
-texMath String := identity
 
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x

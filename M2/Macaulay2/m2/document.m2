@@ -935,7 +935,7 @@ cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 html String := htmlLiteral
 mathML String := htmlLiteral
 tex String := cmrLiteral
-texMath String := cmrLiteral
+texMath String := s -> concatenate("\\text{", cmrLiteral s, "}")
 text String := identity
 
 text Thing := toString
