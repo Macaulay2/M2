@@ -73,6 +73,49 @@ MutableMatrix *MutableMatrix::getColumnChangeMatrix()
 }
 
 
+void MutableMatrix::text_out(buffer &o) const
+{
+  buffer *p = newarray(buffer,nrows);
+  int r;
+  for (int c=0; c<ncols; c++)
+    {
+      int maxcount = 0;
+      for (r=0; r<nrows; r++)
+	{
+	  ring_elem f;
+	  get_entry(r,c,f);
+	  if (!R->is_zero(f))
+	    R->elem_text_out(p[r], f);
+	  else 
+	    p[r] << ".";
+	  if (p[r].size() > maxcount)
+	    maxcount = p[r].size();
+	}
+      for (r=0; r<nrows; r++)
+	for (int k=maxcount+1-p[r].size(); k > 0; k--)
+	  p[r] << ' ';
+    }
+  for (r=0; r<nrows; r++)
+    {
+      p[r] << '\0';
+      char *s = p[r].str();
+      o << s << newline;
+    }
+  deletearray(p);
+}
+
+MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
+{
+  MutableMatrix *result = zero_matrix(m->get_ring(), m->n_rows(), m->n_cols(), prefer_dense);
+
+  // Now loop through and get all (non-zero) entries.
+#warning "uses internal vec knowledge"
+  for (int c=0; c<m->n_cols(); c++)
+    for (vec v = m->elem(c); v!=0; v=v->next)
+      result->set_entry(v->comp, c, v->coeff);
+  return result;
+}
+
 SparseMutableMatrix *
 SparseMutableMatrix::zero_matrix(const Ring *R, 
 				 int nrows, 
@@ -82,13 +125,16 @@ SparseMutableMatrix::zero_matrix(const Ring *R,
   return 0;
 }
 
+
+
+
 DenseMutableMatrixRing *
 DenseMutableMatrixRing::zero_matrix(const Ring *R, 
 				    int nrows, 
 				    int ncols)
 {
-#warning "implement this one"
-  return 0;
+  DenseMutableMatrixRing *result = new DenseMutableMatrixRing(R,nrows,ncols);
+  return result;
 }
 
 DenseMutableMatrixRR *

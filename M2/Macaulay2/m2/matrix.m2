@@ -401,7 +401,7 @@ map(Module,Module) := Matrix => options -> (M,N) -> (
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      R := ring M;
      if r == 0 then new Matrix from {
-     	  symbol RawMatrix => rawZero(raw cover M, raw cover N,false,0),
+     	  symbol RawMatrix => rawZero(raw cover M, raw cover N,0),
 	  symbol source => N,
 	  symbol target => M,
 	  symbol ring => ring M,
@@ -412,13 +412,13 @@ map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
 
 map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
      if i === 0 then new Matrix from {
-     	  symbol RawMatrix => rawZero(raw cover M, raw cover N, false, 0),
+     	  symbol RawMatrix => rawZero(raw cover M, raw cover N, 0),
 	  symbol source => N,
 	  symbol target => M,
 	  symbol ring => ring M,
 	  symbol cache => new CacheTable
 	  }
-     else if M === N then map(M, M, reduce(M, rawIdentity(raw cover M,false,0)))
+     else if M === N then map(M, M, reduce(M, rawIdentity(raw cover M,0)))
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
