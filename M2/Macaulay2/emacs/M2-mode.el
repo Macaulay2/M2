@@ -9,6 +9,8 @@
 (autoload 'M2-dynamic-complete-symbol "M2.el"
   "Dynamic completion function for Macaulay 2 symbols." t)
 
+(defun m2-mode() (M2-mode))		;setting file variables lowers the case
+
 (defun M2-mode()
   "Major mode used for editing contents of a Macaulay 2 source file.
 
