@@ -40,9 +40,9 @@ BE = DExt(M,N);
 BE' = DExt(N,M);
 assert( all (keys BE, i -> BE#i == BE'#i) );
 
--- Example 2: small GKZ -- takes a while
---A = matrix{{1,2}};
---I = gkz(A, {2});
---J = substitute(gkz(A, {1}), ring I);
---B = DHom(I,J);
---assert( (matrix{{B#0_(0,0)}})*(gens I)%(gens J) == 0 )
+--Example 2: small GKZ -- takes a while
+A = matrix{{1,2}};
+I = gkz(A, {2});
+J = substitute(gkz(A, {1}), ring I);
+B = DHom(I,J);
+assert( (matrix{{B#0_(0,0)}})*(gens I)%(gens J) == 0 )

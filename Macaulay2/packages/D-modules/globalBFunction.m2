@@ -10,8 +10,12 @@
 
 globalBFunction = method(Options => {Strategy => TryGeneric})
 
--- makes a polinomial monic (internal) 
-makeMonic := f -> ( (1 / (leadCoefficient f)) * f );
+-- makes polynomial f monic (internal) 
+makeMonic := f -> ( if coefficientRing ring f === QQ 
+     then (1 / (leadCoefficient f)) * f 
+     else (1 // (leadCoefficient f)) * f
+     );
+
 
 --------------------------------------------------------
 -- version that uses bFunction

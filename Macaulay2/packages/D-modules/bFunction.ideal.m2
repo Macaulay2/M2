@@ -11,19 +11,30 @@
  
 bFunction = method(Options => {Strategy => TryGeneric})
 
--- makes a polinomial monic (internal) 
-makeMonic := f -> ( (1 / (leadCoefficient f)) * f );
+-- makes polynomial f monic (internal) 
+makeMonic := f -> ( if coefficientRing ring f === QQ 
+     then (1 / (leadCoefficient f)) * f 
+     else (1 // (leadCoefficient f)) * f
+     );
 
 -- lifts the coeffs of a polynomial to QQ,
 -- returns error if QQ is not a subring of a coefficient ring
 -- (internal)
 makeQQ := f -> (
+     local R;
      s := symbol s;
-     R := QQ[s];
-     if not member(QQ, R.baseRings) then
-     error "QQ is not a base ring of R";
-     if f == 0 then 0_R 
-     else sum(listForm f, u -> lift(u#1, QQ) * s^(sum u#0))
+     if ring f === QQ then (
+	  R = QQ[s];
+	  if not member(QQ, R.baseRings) then
+	  error "QQ is not a base ring of R";
+	  if f == 0 then 0_R 
+	  else sum(listForm f, u -> lift(u#1, QQ) * s^(sum u#0))
+	  )
+     else (
+	  R = (coefficientRing ring f)[s];
+	  if f == 0 then 0_R 
+	  else sum(listForm f, u -> u#1 * s^(sum u#0))
+	  )
      );
 
 -- trivial intersection strategy (internal)
@@ -161,13 +172,15 @@ bfGenericOrNonGeneric(Ideal, List) := o -> (I, w) -> (
 	  );
      	  pInfo(2, " time = " | tInfo);
 	  );
-     pInfo(3, " intIdeal = " | toString intIdeal); 
+     pInfo(3, " intIdeal = " | toString (intIdeal)); 
      
      -- compute J = intIdeal \cap K[\theta]
      pInfo(2, "computing elimIdealGB... ");  
      use T;
+     intIdealGens := first entries gens intIdeal;
      tInfo = toString first timing(
-	  elimIdeal := (T.RtoIR  ideal (first entries gens intIdeal / W.WtoT ))
+	  elimIdeal := (T.RtoIR  (if #intIdealGens==0 then ideal T 
+		    else ideal ( intIdealGens/ W.WtoT )))
      	  + ideal(TI_(numgens TI - 1) - T.RtoIR W.WtoT eulerOp);
      	  elimIdealGB := gens gb elimIdeal;
 	  );
@@ -176,7 +189,7 @@ bfGenericOrNonGeneric(Ideal, List) := o -> (I, w) -> (
      -- take the generator of J and cook up the b-function 
      bGen := selectInSubring(1,elimIdealGB);
      bfcn := (
-	  if numgens source bGen == 0 then 0
+	  if numgens source bGen == 0 then 0_TI
      	  else makeMonic (mingens ideal bGen)_(0,0)
 	  );
      makeQQ bfcn     	
