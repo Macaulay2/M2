@@ -466,18 +466,6 @@ globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
 export dummyCodeClosureList := CodeClosureList(dummyCodeClosure,self);
-num(x:CodeClosureList):int := (
-     n := 0;
-     while (
-	  if x.code != dummyCodeClosure then n = n+1;
-	  x != x.next
-	  ) do x = x.next;
-    n);
-export toExpr(x:CodeClosureList):Expr := Expr(
-     new Sequence len num(x)
-     do while (
-	  if x.code != dummyCodeClosure then provide x.code;
-	  x != x.next) do x = x.next);
 export dummyToken   := Token(dummyWord,
      dummyPosition.filename,
      dummyPosition.line,

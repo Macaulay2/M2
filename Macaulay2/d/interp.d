@@ -76,6 +76,20 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      );
 errorReportS := setupconst("errorReport",Expr(emptySequence));
 errorReportS.protected = false;
+
+num(x:CodeClosureList):int := (
+     n := 0;
+     while (
+	  if x.code != dummyCodeClosure then n = n+1;
+	  x != x.next
+	  ) do x = x.next;
+    n);
+toExpr(x:CodeClosureList):Expr := Expr(list(
+	  new Sequence len num(x)
+	  do while (
+	       if x.code != dummyCodeClosure then provide x.code;
+	       x != x.next) do x = x.next));
+
 readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
      lastvalue := nullE;
      while true do (
