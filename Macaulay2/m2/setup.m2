@@ -127,10 +127,10 @@ tryload := (filename,loadfun) -> (
      -- if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
 	  -- stderr << "trying to load " << filename << endl;		    -- debugging
-	  if loadfun filename then (
-	       markLoaded(filename,filename);
-	       true)
-	  else false)
+	  if not fileExists filename then return false;
+	  loadfun filename;
+	  markLoaded(filename,filename);
+	  true)
      else (
           if class path =!= List then error "expected 'path' to be a list (of strings)";
           {} =!= select(1,
@@ -168,20 +168,22 @@ addStartFunction(
      )
 
 load "loads.m2"
+stderr << "--loaded *.m2" << endl
 
 lastSystemSymbol = local newPrivateSymbol
 notify = true
 
--- the last function restarted
 addStartFunction(
      () -> (
 	  if not member("-q",commandLine)
 	  then (
-	       tryload("init.m2",simpleLoad)
+	       tryload("init.m2", simpleLoad)
 	       or
-	       getenv "HOME" =!= "" and tryload(concatenate(getenv "HOME", "/init.m2"),simpleLoad)
-	       )
-	  )
-     )
+	       getenv "HOME" =!= "" and (
+		    tryload(getenv "HOME" | "/init.m2", simpleLoad)
+		    or
+		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
+
+addStartFunction( () -> ( loadDepth (1 + loadDepth()); errorDepth (1 + errorDepth()); ) )
 
 erase symbol simpleLoad

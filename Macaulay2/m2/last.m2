@@ -16,11 +16,7 @@ addEndFunction(() -> (
 	  )
      )
 
-addStartFunction( () -> ( loadDepth (1 + loadDepth()); errorDepth (1 + errorDepth()); ) )
-
-lastSystemSymbol = local privateSymbol
 erase symbol outputSymbols
-erase symbol lastSystemSymbol
 
 -- make sure this is after all global symbols are defined or erased
 end Macaulay2
