@@ -69,7 +69,6 @@ newPackage(String) := opts -> (title) -> (
 	  "mutable symbols" => {},
 	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
-	  "reverse dictionary" => new MutableHashTable,
 	  "print names" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
 	  "documentation" => new MutableHashTable,

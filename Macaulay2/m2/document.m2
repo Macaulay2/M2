@@ -27,6 +27,42 @@ duplicateDocWarning := () -> (
      )
 
 -----------------------------------------------------------------------------
+-- fixing up hypertext
+-----------------------------------------------------------------------------
+
+trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
+trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
+trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
+addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
+
+fixup := method(SingleArgumentDispatch => true)
+flat := method()
+flat Thing := identity
+flat SEQ := x -> toSequence x
+flat Nothing := x -> ()
+fixflat := z -> splice apply(z, i -> flat fixup i)
+fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
+fixup Nothing    := identity				       -- null
+fixup Sequence   := 
+fixup List       := z -> SEQ fixflat z
+fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
+fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
+fixup PRE        := 
+fixup CODE       := 
+fixup TO         := 
+fixup TO2        := 
+fixup TOH        := identity
+fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
+fixup Function   := z -> z				       -- allow Function => f in Synopsis
+fixup String     := s -> (				       -- remove clumsy newlines within strings
+     ln := lines s;
+     if not ln#?1 then return s;
+     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+
+new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
+hypertext = x -> Hypertext fixup x
+
+-----------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
 -- we need to be able to do this only for the document tags we have shown to the user in formatted form 
@@ -35,15 +71,6 @@ record      := f -> x -> (
      val := f x; 
      if val =!= x then unformatTag#val = x; 
      val)
------------------------------------------------------------------------------
--- getting database records
------------------------------------------------------------------------------
-getPackage := key -> scan(value \ values PackageDictionary,
-     pkg -> (
-	  d := pkg#"documentation";
-	  if d#?key then break pkg))
-
-getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
 
 -----------------------------------------------------------------------------
 -- normalizing document tags
@@ -216,34 +243,37 @@ file := null
 -- getting database records
 -----------------------------------------------------------------------------
 
-getOption := (s,tag) -> (
-     if class s === SEQ then (
-     	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
-     	  if #x > 0 then x#0#1 else null)
-     else null
-     )
-
-getOptionList := (s,tag) -> (
+makeRecord := (opts,body) -> (opts,body)
+extractOptions := x -> x#0
+extractBody := x -> x#1
+getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
+getPackage := key -> scan(
+     value \ values PackageDictionary,
+     pkg -> (
+	  d := pkg#"documentation";
+	  if d#?key then break pkg))
+getDoc := key -> (
+     fkey := formatDocumentTag key;
+     pkg := getPackage fkey;
+     if pkg =!= null then getRecord(pkg,fkey))
+if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
+getOption := (key,tag) -> (
+     s := getDoc key;
+     if s =!= null then s#0#tag)
+getOptionList := (key,tag) -> (
+     s := getDoc key;
      r := getOption(s,tag);
      if class r === List then r
      else if class r === SEQ then toList r
      else if r === null then {}
-     else {r}
-     )
-
-getDoc := key -> (
-     fkey := formatDocumentTag key;
-     pkg := getPackage fkey;
-     if pkg =!= null then getRecord(pkg,fkey)
-     )
-if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
- 
+     else {r})
 getHeadline := key -> (
-     d := getOption(getDoc key, Headline);
+     d := getOption(key, Headline);
      if d =!= null then SEQ join( {"  --  ", SEQ d} ))
-
-getSynopsis := key -> getOption(getDoc key, Synopsis)
-
+getSynopsis := key -> getOption(key, Synopsis)
+getBody := key -> (
+     s := getDoc key;
+     if s =!= null then s#1)
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
@@ -321,8 +351,17 @@ processExamples := (pkg,fkey,docBody) -> (
 -- 'document' function
 -----------------------------------------------------------------------------
 
-document = method()
-document List := z -> (
+document = method(
+     Options => {
+	  Synopsis => null,
+	  OldSynopsis => null,
+	  FileName => null,
+	  Headline => null,
+	  Menu => null
+	  })
+document List := opts -> z -> document append(toSequence z,opts)
+document Thing := opts -> z -> (1:z,opts)
+document Sequence := opts -> z -> (
      if #z === 0 then error "expected a nonempty list";
      key := normalizeDocumentTag z#0;
      pkg := packageTag key;
@@ -335,7 +374,8 @@ document List := z -> (
      if currentPackage === null then error "documentation encountered outside a package";
      d := currentPackage#"documentation";
      if d#?currentNodeName then duplicateDocWarning();
-     d#currentNodeName = extractExamples hypertext body;
+     opts = applyValues(opts,fixup);
+     d#currentNodeName = makeRecord(opts,extractExamples hypertext body);
      currentNodeName = null;
      )
 
@@ -444,14 +484,13 @@ OFCLASS = X -> (
      else SEQ {"an object of class ", NOCONTENTS TO X}
      )
 
-getDocBody := method(SingleArgumentDispatch => true)
+makeDocBody := method(SingleArgumentDispatch => true)
 doExamples = true					    -- sigh, another global variable???
-getDocBody Thing := key -> (
+makeDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
      if pkg =!= null then (
-	  docBody := getRecord(pkg,fkey);
-	  docBody = select(docBody, s -> class s =!= Option);
+	  docBody := extractBody getRecord(pkg,fkey);
 	  if #docBody > 0 then (
 	       if doExamples then docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
@@ -476,6 +515,7 @@ type := S -> (
      	  }
      )
 
+protect Menu
 protect Usage
 protect Inputs
 protect Outputs
@@ -668,7 +708,7 @@ documentation String := s -> (
 	  t := getGlobalSymbol s;
 	  documentation t)
      else (
-	  b := getDocBody(s);
+	  b := makeDocBody(s);
 	  if b === null then null
 	  else prepend(title s, b)))
 
@@ -781,7 +821,7 @@ documentation Symbol := S -> (
      Hypertext {
 	  title S, 
 	  synopsis S,
-	  getDocBody(S),
+	  makeDocBody(S),
 	  op S,
 	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", NOCONTENTS smenu a},
 	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", NOCONTENTS smenu b},
@@ -799,7 +839,7 @@ documentation Sequence := s -> (
 	  Hypertext { 
 	       title s,
 	       synopsis s,
-	       getDocBody(s),
+	       makeDocBody(s),
 	       PARA BOLD "See also",
 	       NOCONTENTS UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
@@ -813,7 +853,7 @@ documentation Sequence := s -> (
 	  Hypertext {
 	       title s, 
 	       synopsis s,
-	       getDocBody s,
+	       makeDocBody s,
 	       -- seecode s
 	       }
 	  ))
