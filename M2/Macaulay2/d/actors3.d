@@ -190,35 +190,41 @@ compareop(lhs:Code,rhs:Code):Expr := (
 	  else compare(x,y)));
 setup(QuestionS,compareop);
 
-lessfun(lhs:Code,rhs:Code):Expr := (
+lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
+lessfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
      else if LessS.symbol === e then True else False
      );
-setup(LessS,lessfun);
-greaterequalfun(lhs:Code,rhs:Code):Expr := (
+setup(LessS,lessfun1,lessfun2);
+
+greaterequalfun1(rhs:Code):Expr := unarymethod(rhs,GreaterEqualS);
+greaterequalfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
      else if GreaterS.symbol === e || EqualEqualS.symbol === e then True else False
      );
-setup(GreaterEqualS,greaterequalfun);
+setup(GreaterEqualS,greaterequalfun1,greaterequalfun2);
 
-greaterfun(lhs:Code,rhs:Code):Expr := (
+greaterfun1(rhs:Code):Expr := unarymethod(rhs,GreaterS);
+greaterfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
      else if GreaterS.symbol === e then True else False
      );
-setup(GreaterS,greaterfun);
-lessequalfun(lhs:Code,rhs:Code):Expr := (
+setup(GreaterS,greaterfun1,greaterfun2);
+
+lessequalfun1(rhs:Code):Expr := unarymethod(rhs,LessEqualS);
+lessequalfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
      else if LessS.symbol === e || EqualEqualS.symbol === e then True else False
      );
-setup(LessEqualS,lessequalfun);
+setup(LessEqualS,lessequalfun1,lessequalfun2);
 
 mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
      when xx is xl:List do
