@@ -241,12 +241,12 @@ makeNode := x -> (
      if linkTable#?x 
      then (
 	  if visits > 0
-     	  then new TreeNode from { x | " [" | toString visits | "]" , new ForestNode from { }  }
+     	  then new TreeNode from { x | " -- repeated reference" , new ForestNode from { }  }
      	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeNode) }
 	  )
      else (
 	  if externalReferences#?x
-     	  then new TreeNode from { x | " -- external reference", new ForestNode from { } }
+     	  then new TreeNode from { x | " -- external or missing reference", new ForestNode from { } }
 	  else new TreeNode from { x | " -- internal error", new ForestNode from { } }
 	  )
      )
@@ -306,11 +306,6 @@ follow = key -> (
 	       ))
      else externalReferences#fkey = true)
 
--- follow = on (follow, Name => "follow")
--- scope = on (scope, Name => "scope")
--- scope1 = on (scope1, Name => "scope1")
--- scope2 = on (scope2, Name => "scope2")
-
 assembleTree = method()
 assembleTree Package := pkg -> (
      doExamples = false;
@@ -334,7 +329,7 @@ assembleTree Package := pkg -> (
 	  m := keys nodesToScope;
 	  scan(m, (fkey,key) -> (
 		    linkTable#fkey = {};
-		    stderr << "scanning documentation for  '" << fkey << "'" << endl;
+		    -- stderr << "scanning documentation for  '" << fkey << "'" << endl;
 		    scope(fkey,documentationMemo key)));
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
