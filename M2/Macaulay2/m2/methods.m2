@@ -354,7 +354,7 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> installMethod(
 -----------------------------------------------------------------------------
 
 TEST = method()
-testnumber := 0
+testnumber = 0
 TEST Function := TEST String := s -> (
      currentPackage#"test inputs"#(testnumber,currentFileName) = s;
      testnumber = testnumber + 1;

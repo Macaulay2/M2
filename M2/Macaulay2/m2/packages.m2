@@ -87,6 +87,7 @@ newPackage(String) := opts -> (title) -> (
 	  "previous dictionaries" => saveD,
 	  "previous packages" => saveP,
 	  "old debuggingMode" => debuggingMode,
+	  "old testnumber" => testnumber,
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
@@ -102,6 +103,7 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
+     testnumber = 0;
      if newpkg#"package prefix" =!= null then (
 	  -- these assignments might be premature, for any package which is loaded before dumpdata, as the "package prefix" might change:
 	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "rawdocumentation.db";
@@ -258,8 +260,8 @@ closePackage String := title -> (
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
      global currentPackage <- pkg#"previous currentPackage";
      remove(pkg,"previous currentPackage");
-     debuggingMode = pkg#"old debuggingMode";
-     remove(pkg,"old debuggingMode");
+     debuggingMode = pkg#"old debuggingMode"; remove(pkg,"old debuggingMode");
+     testnumber = pkg#"old testnumber"; remove(pkg,"old testnumber");
      stderr << "--package \"" << pkg << "\" loaded" << endl;
      pkg)
 
