@@ -29,6 +29,12 @@ release: libfac-0.2.3
  get at:
 license: libfac/00README
 
+library: MP
+release: 1.1.3
+ author: S. Gray, N. Kajler, P. Wang 
+ get at: ftp.mcs.kent.edu:dist/MP
+license: mp/README
+
 library: gmp
 release: gmp-2.0.2
  author: Torbjorn Granlund <tege@nada.kth.se>
