@@ -17,8 +17,8 @@ peek2(List,ZZ) := (s,depth) -> (
 
 peek2(String, ZZ) := (s,depth) -> if depth === 0 then s else format s
 
-boxNets = method()
-boxNets List := nets -> (
+boxNets = method(SingleArgumentDispatch => true)
+boxNets List := boxNets Sequence := nets -> (
      nets = net \ nets;
      wid := if #nets === 0 then 0 else max \\ width \ nets;
      side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|")) ^ (height n - 1)));
