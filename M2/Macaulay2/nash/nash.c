@@ -3,6 +3,9 @@
  a replacement for bash designed just to do commands like this:
 	/bin/nash -c "exec command arg1 arg2 ..."
  Hopefully we can use it to make gdb more transparent.
+
+ No globbing, for now.
+
 */
 
 #include <stdlib.h>
@@ -13,21 +16,70 @@
 #define TRUE 1
 #define FALSE 0
 
-int argc, xargc;
-char **argv, **xargv;
+static int argc, xargc;
+static char **argv, **xargv;
 
-void parse(char *args) {
-  xargc = 1;
-  xargv = malloc((xargc + 1) * sizeof (*xargv));
-  if (xargv == NULL) {
+static void *getmem(int n) {
+  char *p = malloc(n);
+  if (p == NULL) {
     fprintf(stderr,"%s: out of memory\n",argv[0]);
     exit(1);
   }
-  xargv[0] = args;
-  xargv[xargc] = NULL;
+  return p;
 }
 
-void usage() {
+static void parse(char *args) {
+  char *p = args;
+  int quote = FALSE, dquote = FALSE, inarg = FALSE, inc = 1;
+  xargc = 0;
+  for (;*p;p++) {
+    switch (*p) {
+    case ' ': case '\t': if (inarg && !dquote && !quote) inarg = FALSE; break;
+    case '"': if (!quote) dquote = !dquote; goto x;
+    case '\'': if (!dquote) quote = !quote; goto x;
+    default: 
+      x: if (!inarg) {inarg = TRUE; xargc++;} break;
+    }
+  }
+  xargv = (char **)getmem((xargc+1)*sizeof *xargv);
+  quote = FALSE, dquote = FALSE, inarg = FALSE;
+  p = args;
+  xargc = 0;
+  for (;*p;p+=inc,inc=1) {
+    switch (*p) {
+      case ' ': case '\t':
+	if (inarg && !dquote && !quote) {
+	  inarg = FALSE;
+	  *p = 0;
+	  }
+	break;
+      case '"': 
+	if (!quote) {
+	  dquote = !dquote;
+	  goto z;
+	}
+	goto y;
+      case '\'': 
+	if (!dquote) {
+	  quote = !quote; 
+	  goto z;
+	}
+	goto y;
+      z:
+	strcpy(p,p+1);
+	inc = 0;
+      default: 
+      y:
+	if (!inarg) {
+	  inarg = TRUE;
+	  xargv[xargc] = p;
+	  xargc++;
+	}
+    }
+  }
+}  
+    
+static void usage() {
   fprintf(stderr,"usage: %s -c \"exec command arg1 arg2 ...\"\n",argv[0]);
   exit(1);
 }
