@@ -419,15 +419,6 @@ M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
   return true;
 }
 
-MutableMatrixOrNull * IM2_kernel_of_GB(const MutableMatrix *G)
-  /* Assuming that the columns of G form a GB, this computes
-     a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
-     source of G. */
-{
-#warning "put the Eschreyer call here"
-  return const_cast<MutableMatrix *>(G);
-}
-
 MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the addition is performed.  If the targets are not equal, the target 

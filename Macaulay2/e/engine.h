@@ -1068,6 +1068,12 @@ extern "C" {
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 
+  Matrix * IM2_kernel_of_GB(const Matrix *G); /* connected rawKernelOfGB */
+  /* Assuming that the columns of G form a GB, this computes
+     a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
+     source of G. */
+
+
   /**************************************************/
   /**** RingMap routines ****************************/
   /**************************************************/
@@ -1297,11 +1303,6 @@ extern "C" {
   M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M); /* connected rawReduceByPivots */
   /* Using row and column operations, use unit pivots to reduce the matrix */
   /* A return value of false means that the computation was interrupted */
-
-  MutableMatrixOrNull * IM2_kernel_of_GB(const MutableMatrix *G); /* connected rawKernelOfGB */
-  /* Assuming that the columns of G form a GB, this computes
-     a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
-     source of G. */
 
   /***************************************************
    ***** Lapack routines for dense mutable matrices **
