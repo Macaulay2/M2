@@ -777,8 +777,8 @@ documentation String := key -> (
 	  documentation t)
      else (
 	  b := makeDocBody key;
-	  if b === null then null
-	  else Hypertext join({title key}, b, {caveat key, seealso key, theMenu key})))
+	  if b === null then b = {};
+	  Hypertext join({title key}, b, {caveat key, seealso key, theMenu key})))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -790,7 +790,7 @@ op := s -> if operatorSet#?s then (
      fixup SEQ {
 	  if binary#?s then PARA {
 	       "This operator may be used as a binary operator in an expression \n",
-	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO "binary methods", " \n",
+	       "like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", " \n",
 	       "for handling such expressions with code such as ",
 	       if ss == " "
 	       then PRE ("         X Y := (x,y) -> ...")
@@ -800,7 +800,7 @@ op := s -> if operatorSet#?s then (
 	       },
 	  if prefix#?s then PARA {
 	       "This operator may be used as a prefix unary operator in an expression \n",
-	       "like ", TT (ss|" y"), ".  The user may install a method for handling \n",
+	       "like ", TT (ss|"y"), ".  The user may install a method for handling \n",
 	       "such expressions with code such as \n",
 	       PRE ("           "|ss|" Y := (y) -> ..."),
 	       "where ", TT "Y", " is the class of ", TT "y", "."
