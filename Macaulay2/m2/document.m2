@@ -293,7 +293,7 @@ checkForExampleOutputFile := (node,pkg) -> (
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example results
 	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
-	       if debugLevel > 0 then stderr << "node " << node << " : " << boxNets \\ net \ exampleResults << endl;
+	       if debugLevel > 0 then stderr << "node " << node << " : " << boxList \\ net \ exampleResults << endl;
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -835,7 +835,7 @@ hasDocumentation = x -> (
 help = method(SingleArgumentDispatch => true)
 help List := v -> (
      printWidth = printWidth - 2;
-     r := boxNets apply(v, help);
+     r := boxList apply(v, help);
      printWidth = printWidth + 2;
      r)
 help Thing := s -> net (
@@ -970,7 +970,6 @@ tex  BR := x -> ///
 ///
 
 html NOINDENT := x -> ""
-net NOINDENT := x -> ""
 tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
@@ -1021,7 +1020,7 @@ tex PARA := x -> concatenate(///
 
 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
-net ExampleTABLE := x -> "    " | boxNets apply(toList x, y -> net y#1)
+net ExampleTABLE := x -> "    " | boxList apply(toList x, y -> net y#1)
 net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -1042,6 +1041,7 @@ texMath TABLE := x -> concatenate (
 
 tex ExampleTABLE := x -> concatenate apply(x,y -> tex y#1)
 
+net TABLE := x -> boxTable applyTable(toList x,net)
 html TABLE := x -> concatenate(
      newline,
      "<table>",

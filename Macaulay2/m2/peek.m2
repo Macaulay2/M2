@@ -25,8 +25,8 @@ peek'(ZZ,List) := (depth,s) -> (
 	  "{", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), "}" ) )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
-boxNets = method(SingleArgumentDispatch => true)
-boxNets List := boxNets Sequence := nets -> (
+boxList = method(SingleArgumentDispatch => true)
+boxList List := boxList Sequence := nets -> (
      nets = net \ nets;
      wid := if #nets === 0 then 0 else max \\ width \ nets;
      side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|"^-1)) ^ (height n)));
@@ -35,20 +35,25 @@ boxNets List := boxNets Sequence := nets -> (
      w = stack(top,w,top);
      if #nets > 0 then w = w ^ (height first nets);
      w)
+upWidth := (wid,n) -> if width n == wid then n else n|concatenate(wid - width n : " ")
+joinRow := x -> (
+     maxht := max(height \ x);
+     maxdp := max(depth  \ x);
+     vbar := (stack (maxht + maxdp : "|"^-1)) ^ maxht;
+     horizontalJoin mingle(#x+1:vbar,x))
+boxTable = method(SingleArgumentDispatch => true)
+boxTable List :=
+boxTable Sequence := x -> (
+     if not isTable x then error "expected a table";
+     if #x == 0 or #x#0 == 0 then return boxList x;
+     x = applyTable(x,net);
+     colwids := max \ transpose applyTable(x,width);
+     x = apply(x, row -> apply(colwids,row,upWidth));
+     x = joinRow \ x;
+     hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
+     stack mingle(#x+1:hbar,x))
 
--- boxNet := x -> ( 
---      s := concatenate("+", width x : "-", "+");
---      n := height x + depth x;
---      if n === 0 then (
---      	  (s || x || s) ^ (height x)
--- 	  )
---      else (
---      	  t := (stack (n : "|")) ^ (height x - 1);
---      	  (s || t | x | t || s) ^ (height x)
--- 	  )
---      )
-
-peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxNets {s}
+peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxList {s}
 peek'(ZZ,Sequence) := (depth,s) -> (
      if depth === 0 then net s
      else horizontalJoin(
