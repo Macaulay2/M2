@@ -150,7 +150,7 @@ mgb = rawGBGetMatrix Gcomp
 assert(mgb === mat{{z,y-1,x-1}})
 -----------------------------
 needs "raw-util.m2"
-R2 = rawPolynomialRing(rawZZp(101), lex{x,y,z})
+R2 = rawPolynomialRing(rawZZp(101), lex(x,y,z))
 x = rawRingVar(R2,0,1)
 y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
@@ -163,7 +163,7 @@ assert(mgb === mat{{z,y-1,x-1}})
 -----------------------------
 needs "raw-util.m2"
 algorithm = 1
-R2 = rawPolynomialRing(rawZZp(101), lex{x,y,z})
+R2 = rawPolynomialRing(rawZZp(101), lex(x,y,z))
 x = rawRingVar(R2,0,1)
 y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
@@ -176,7 +176,7 @@ assert(mgb === mat{{y^7-2*y^5+y^4+y^3-2*y^2-y+1, x-y^6+y^4-y^3+y+1}})
 -----------------------------
 needs "raw-util.m2"
 algorithm = 1
-R2 = rawPolynomialRing(rawZZp(101), lex{x,y,z})
+R2 = rawPolynomialRing(rawZZp(101), lex(x,y,z))
 x = rawRingVar(R2,0,1)
 y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
@@ -203,7 +203,7 @@ assert(f2 * ch2 - gb2 == 0)
 assert(f2 * f3 == 0) 
 -----------------------------
 needs "raw-util.m2"
-R2 = rawPolynomialRing(rawZZp(101), lex{x,y,z})
+R2 = rawPolynomialRing(rawZZp(101), lex(x,y,z))
 x = rawRingVar(R2,0,1)
 y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
@@ -226,7 +226,7 @@ syz2m = rawGBSyzygies Gcomp
 assert(syzm * syz2m == 0)
 -----------------------------
 needs "raw-util.m2"
-R2 = rawPolynomialRing(rawZZp(101), lex{x,y,z})
+R2 = rawPolynomialRing(rawZZp(101), lex(x,y,z))
 x = rawRingVar(R2,0,1)
 y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
@@ -258,7 +258,7 @@ assert(m2 * m3 == 0)
 -----------------------------
 needs "raw-util.m2"
 algorithm = 0
-R1 = rawPolynomialRing(rawZZp(101), elim({t},{a,b,c,d}))
+R1 = rawPolynomialRing(rawZZp(101), elim(1:t,(a,b,c,d)))
 t = rawRingVar(R1,0,1)
 a = rawRingVar(R1,1,1)
 b = rawRingVar(R1,2,1)
@@ -272,7 +272,7 @@ m = rawGBGetMatrix Gcomp
 -----------------------------
 needs "raw-util.m2"
 algorithm = 0
-R2 = rawPolynomialRing(rawZZp(101), lex{u,v,x,y,z})
+R2 = rawPolynomialRing(rawZZp(101), lex(u,v,x,y,z))
 u = rawRingVar(R2,0,1)
 v = rawRingVar(R2,1,1)
 x = rawRingVar(R2,2,1)
@@ -390,7 +390,7 @@ m = rawGBGetMatrix Gcomp
 assert(m == mat{{24336_R, 2*y, 4*x-7800, y^2+2*x-3900, x^2+2*x-3900}})
 ------------------------------     
 needs "raw-util.m2"
-R = rawPolynomialRing(rawZZ(), lex{symbol y, symbol x})
+R = rawPolynomialRing(rawZZ(), lex(symbol y, symbol x))
 y = rawRingVar(R,0,1)
 x = rawRingVar(R,1,1)
 G = mat{{-3*x^2+50*x-156,  2*y, -x^3+25*x^2+y^2-156*x}}
@@ -400,7 +400,7 @@ m = rawGBGetMatrix Gcomp
 assert(m == mat{{24336_R, 4*x-7800, x^2+2*x-3900, 2*y, y^2+2*x-3900}})
 ------------------------------
 needs "raw-util.m2"
-R = rawPolynomialRing(rawZZ(), lex{symbol x, symbol y})
+R = rawPolynomialRing(rawZZ(), lex(symbol x, symbol y))
 y = rawRingVar(R,1,1)
 x = rawRingVar(R,0,1)
 G = mat{{-3*x^2+50*x-156,  2*y, -x^3+25*x^2+y^2-156*x}}
