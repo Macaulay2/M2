@@ -364,6 +364,39 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
+runMacaulay2 = (inf,outf,tmpf,desc,M2args,changefun) -> (
+     if fileExists outf and fileTime outf >= fileTime inf
+     then (
+	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
+	  )
+     else if fileExists tmpf and fileTime tmpf >= fileTime inf
+     then (
+	  if debugLevel > 0 then stderr << "--leaving error report from " << desc << " in file " << tmpf << endl;
+	  )
+     else (
+	  changefun();
+	  stderr << "--making " << desc << " in file " << outf << endl;
+	  cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | M2args | " <" | inf | " >" | tmpf | " 2>&1";
+	  stderr << cmd << endl;
+	  r := run cmd;
+	  if r == 0 then (
+	       moveFile(tmpf,outf);
+	       )
+	  else (
+	       stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
+	       stderr << "--error output left in file: " << tmpf << endl;
+	       if r == 131 then (
+		    stderr << "subprocess terminated abnormally, exiting" << endl;
+		    exit r;
+		    );
+	       if r == 2 then (
+		    stderr << "subprocess interrupted with INT, exiting, too" << endl;
+		    exit r;
+		    );
+	       haderror = true;
+	       )))
+	  
+
 runfun := o -> if class o === Function then o() else o
 
 installPackage = method(Options => { 
@@ -471,7 +504,7 @@ installPackage Package := o -> pkg -> (
      exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
      infn := fkey -> exampleDir|toFilename fkey|".m2";
      outfn := fkey -> exampleDir|toFilename fkey|".out";
-     tmpfn := fkey -> exampleDir|toFilename fkey|".tmp";
+     tmpfn := fkey -> exampleDir|toFilename fkey|".errors";
      stderr << "--making example input files in " << exampleDir << endl;
      makeDirectory exampleDir;
      scan(pairs pkg#"example inputs", (fkey,inputs) -> (
@@ -532,40 +565,14 @@ installPackage Package := o -> pkg -> (
      stderr << "--making example result files in " << exampleDir << endl;
      haderror := false;
      scan(pairs pkg#"example inputs", (fkey,inputs) -> (
+     	       -- args:
 	       inf := infn fkey;
 	       outf := outfn fkey;
 	       tmpf := tmpfn fkey;
-	       if fileExists outf and fileTime outf >= fileTime inf
-	       then (
-		    -- stderr << "--leaving example results file for " << fkey << endl
-		    )
-	       else if fileExists tmpf and fileTime tmpf >= fileTime inf
-	       then (
-		    if debugLevel > 0 then stderr << "--leaving example error report for " << fkey << " in file " << tmpf << endl
-		    )
-	       else (
-		    remove(rawDocUnchanged,fkey);
-		    stderr << "--making example results file for " << fkey << endl;
-		    loadargs := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
-		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf | " 2>&1";
-		    stderr << cmd << endl;
-		    r := run cmd;
-		    if r != 0 then (
-			 stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
-			 stderr << "--example error output visible in file: " << tmpf << endl;
-			 if r == 131 then (
-			      stderr << "subprocess terminated abnormally, exiting" << endl;
-			      exit r;
-			      );
-			 if r == 2 then (
-			      stderr << "subprocess interrupted with INT, exiting, too" << endl;
-			      exit r;
-			      );
-			 haderror = true;
-			 )
-		    else (
-			 moveFile(tmpf,outf);
-			 ));
+	       desc := "example results for " | fkey;
+	       M2args := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
+	       changefun := () -> remove(rawDocUnchanged,fkey);
+	       runMacaulay2(inf,outf,tmpf,desc,M2args,changefun);
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 	       else (
