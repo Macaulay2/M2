@@ -27,14 +27,6 @@ f = i -> (
      b := B_0; -- by itself, leaks nothing.
      c := B_1;
      d := b+b; -- by itself, leaks one int.
-     --sendgg(ggPush b, ggPush b, ggmult, ggpop);
-     --g := b * b; -- leaks an integer (a coefficient?)
-     --g := a * b;
-     --sendgg(ggPush B, ggPush 23, ggfromint, ggpop);
-     --g := matrix{{23*B_0,42141241241*B_1,-648734583433*B_2}}; (3 ZZ?)
-     --syz g;
-     --I := ideal g;
-     --G := gb I;
      )
 scan(n, f)
 collectGarbage()

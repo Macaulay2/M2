@@ -272,12 +272,9 @@ testMatrix = () -> (
   )
 
 randomElement2 = (m) -> (
-    -- m should have a single row
-    rand := apply(numgens source m, i -> (
-       sendgg(ggPush ring m, ggPush random char ring m, ggfromint);
-       new ring m));
-    rand1 := matrix table(rank ambient source m, 1, (i,j) -> rand#i);
-    (m * rand1)_(0,0))
+     R := ring m;
+     p := char R;
+     (m * matrix table(rank ambient source m, 1, (i,j) -> i -> (random p)_R))_(0,0))
 
 randomMatrix2 = (F,G) -> (
     kb := new MutableHashTable;

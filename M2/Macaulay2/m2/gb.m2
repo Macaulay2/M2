@@ -210,12 +210,7 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
      g.ring = ring f;
      g.target = target f;
      g.returnCode = 0;
-     g.handle = newHandle(
-          ggPush minmat,
-          ggPush f, 
-          ggPush changemat, 
-          ggPush syzmat, 
-          gggb);
+     notImplemented();
      f.cache#type = g;
      g)
 

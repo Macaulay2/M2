@@ -1,3 +1,5 @@
+-- Mike will rewrite this package
+
 new QQ := QQ -> QQ.pop()
 
 -------------------------
