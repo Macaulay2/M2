@@ -3,6 +3,16 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+Assignment can now be done in parallel with a statement like
+	(a,b,c) = (4,5,6)
+If the right hand side has too few elements, then the trailing symbols
+on the left side are given the value 'null'.
+If the right hand side has too many elements, then the last symbol on
+the left hand side is given as value a sequence containing the
+trailing elements of the right hand side.
+If the right hand side is not a sequence, then 'a' gets the value, and
+'b' and 'c' get null.
+
 'decompose' now works over polynomial rings over QQ
 
 'decompose' now works over quotient rings.  A bug which caused it to

@@ -325,52 +325,70 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
      is Error do ival
      else printErrorMessage(i,"expected integer as subscript")
      );
-assignfun(lhs:Code,rhs:Code):Expr := (
-     when lhs
-     is var:variableCode do (
-	  if var.v.protected then (
-	       printErrorMessage(lhs,"assignment to protected variable")
-	       )
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return(value) else nothing;
-	       frame(var.v.scopenum).values.(var.v.frameindex) = value;
-	       value))
-     else printErrorMessage(lhs,"left side of assignment should be symbol")
-     );
-AssignFun = assignfun;
 
-globalassignfun(lhs:Code,rhs:Code):Expr := (
-     when lhs
-     is var:variableCode do (
-	  if var.v.protected then (
-	       printErrorMessage(lhs,"assignment to protected variable")
+globalAssignment(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
+     method := lookup(Class(oldvalue),GlobalReleaseE);
+     if method != nullE then (
+	  y := apply(method,Expr(makeSymbolClosure(t)),oldvalue);
+	  when y is Error do return(y) else nothing;
+	  );
+     method = lookup(Class(newvalue),GlobalAssignE);
+     if method != nullE then (
+	  y := apply(method,Expr(makeSymbolClosure(t)),newvalue);
+	  when y is Error do return(y) else nothing;
+	  );
+     nullE
+     );
+
+assignment(t:Symbol,newvalue:Expr):Expr := (
+     f := frame(t.scopenum).values;
+     i := t.frameindex;
+     if t.scopenum == globalScope.seqno then (
+	  r := globalAssignment(t,f.i,newvalue);
+	  when r is Error do return(r) else nothing;
+	  );
+     f.i = newvalue;
+     newvalue);
+
+assignmentFun(x:assignmentCode):Expr := (
+     t := x.lhs;
+     if t.protected then return(buildErrorPacket("assignment to protected variable"));
+     newvalue := eval(x.rhs);
+     when newvalue is Error do return(newvalue) else nothing;
+     assignment(t,newvalue));
+AssignmentFun = assignmentFun;
+
+parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
+     syms := x.lhs;
+     nsyms := length(syms);
+     foreach sym in syms do if sym.protected then return(buildErrorPacket("assignment to protected variable"));
+     value := eval(x.rhs);
+     when value 
+     is Error do return(value) 
+     is values:Sequence do (
+	  nvals := length(values);
+	  if nsyms == nvals
+	  then (
+	       for i from 0 to nsyms-1 do assignment(syms.i,values.i)
+	       )
+	  else if nsyms < nvals
+	  then (
+	       for i from 0 to nsyms-2 do assignment(syms.i,values.i);
+	       assignment(syms.(nsyms-1),
+		    Expr(new Sequence len nvals-nsyms+1 do for i from nsyms-1 to nvals-1 do provide values.i));
 	       )
 	  else (
-	       value := eval(rhs);
-	       when value is Error do return(value) else nothing;
-	       f := frame(var.v.scopenum).values;
-	       i := var.v.frameindex;
-	       oldvalue := f.i;
-	       method := lookup(Class(oldvalue),GlobalReleaseE);
-	       if method != nullE then (
-		    y := apply(method,Expr(makeSymbolClosure(var.v)),oldvalue);
-		    when y 
-		    is Error do return(y)
-		    else nothing;
-		    );
-	       method = lookup(Class(value),GlobalAssignE);
-	       if method != nullE then (
-		    y := apply(method,Expr(makeSymbolClosure(var.v)),value);
-		    when y 
-		    is Error do return(y)
-		    else nothing;
-		    );
-	       f.i = value;
-	       value))
-     else printErrorMessage(lhs,"left side of assignment should be symbol")
-     );
-GlobalAssignFun = globalassignfun;
+	       for i from 0     to nvals-1 do assignment(syms.i,values.i);
+	       for i from nvals to nsyms-1 do assignment(syms.i,nullE)
+	       )
+	  )
+     else (
+	  assignment(syms.0,value);
+	  for i from 1 to nsyms-1 do assignment(syms.i,nullE);
+	  );
+     value);
+ParallelAssignmentFun = parallelAssignmentFun;
+
 assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x

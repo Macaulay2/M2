@@ -437,7 +437,7 @@ bindFormalParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
 	       bindFormalParmList(binary.lhs,scope,desc);
 	       bindop(binary.operator,scope);
 	       bindFormalParm(binary.rhs,scope,desc);)
-	  else bindFormalParm(e,scope,desc))
+	  else makeErrorTree(e,"syntax error"))
      else bindFormalParm(e,scope,desc));
 bindSingleParm(e:ParseTree,scope:Scope):void := (
      when e 
@@ -482,30 +482,49 @@ opHasPostfixMethod(o:Symbol):bool := (
      foreach s in opsWithPostfixMethod do if s.symbol == o then return(true);
      return(false);
      );
+bindTokenLocally(token:Token,scope:Scope):void := (
+     lookupCountIncrement = 0;
+     r := lookup(token.word,scope);
+     lookupCountIncrement = 1;
+     when r
+     is entry:Symbol do (
+	  if scope.seqno == entry.scopenum
+	  then printErrorMessage(token.position, "warning: local declaration of " + token.word.name
+	       + " shields variable with same name" );
+	  )
+     else nothing;
+     token.scope = scope;
+     makeSymbol(token);
+     );
+bindToken(token:Token,scope:Scope,colon:bool):void := (
+     if colon then bindTokenLocally(token,scope) else bind(token,scope);
+     );
+bindParallelAssignmentItem(e:ParseTree,scope:Scope,colon:bool):void := (
+     when e
+     is token:Token do (
+	  if token.word.typecode != TCid then makeErrorTree(token,"expected symbol")
+	  else bindToken(token,scope,colon);
+	  )
+     else makeErrorTree(e,"syntax error - 1"));
+bindParallelAssignmentList(e:ParseTree,scope:Scope,colon:bool):void := (
+     when e
+     is binary:Binary do (
+	  if binary.operator.word == commaW
+	  then (
+	       bindParallelAssignmentList(binary.lhs,scope,colon);
+	       bindop(binary.operator,scope);
+	       bindParallelAssignmentItem(binary.rhs,scope,colon);
+	       )
+     	  else makeErrorTree(e,"syntax error - 2")
+	  )
+     else bindParallelAssignmentItem(e,scope,colon));
 bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
      bindop(assn.operator,scope);
      body := assn.rhs;
      when assn.lhs
+     is p:Parentheses do bindParallelAssignmentList(p.contents,scope,colon)
      is token:Token do (
-	  if colon 
-	  then (
-	       lookupCountIncrement = 0;
-	       r := lookup(token.word,scope);
-	       lookupCountIncrement = 1;
-	       when r
-	       is entry:Symbol do (
-		    if scope.seqno == entry.scopenum
-		    then printErrorMessage(token.position,
-			 "warning: local declaration of " 
-			 + token.word.name
-			 + " shields variable with same name"
-			 );
-		    )
-	       else nothing;
-	       token.scope = scope;
-	       makeSymbol(token);
-	       )
-	  else bind(token,scope);
+	  bindToken(token,scope,colon);
 	  bind(body,scope);)
      is a:Adjacent do (
 	  bind(a.lhs,scope);
