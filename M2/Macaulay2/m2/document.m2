@@ -32,10 +32,15 @@ docExtension := () -> (
      else "-doc"			  -- reading
      )
 
+progname := commandLine#0
+-- under Windows when run from M2.bat the quotation marks are not removed.
+-- quotation marks are needed because the path may contain spaces
+if substring(progname,0,1) === "\"" then progname = substring(progname,1)
+
 docFilename := () -> (
      if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
      else (
-     	  v := lines(commandLine#0,pathSeparator);
+     	  v := lines(progname,pathSeparator);
      	  v = apply(#v-2, i -> v#i);		  -- drop isn't defined yet
      	  concatenate(between(pathSeparator,v),
 	       pathSeparator, "cache",

@@ -137,7 +137,7 @@ static void alarm_handler(int sig)
 
 extern bool interp_StopIfError;
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #define sigjmp_buf jmp_buf
 #define siglongjmp(j,c) longjmp(j,c)
 #define sigsetjmp(j,m) setjmp(j)

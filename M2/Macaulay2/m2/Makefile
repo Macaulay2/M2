@@ -63,7 +63,7 @@ docloads.m2 : docseq loads.awk
 #	../../Makeconf-m2 >version.tmp
 #	mv version.tmp $@
 
-tutorials.m2 :
+tutorials.m2 : ../tutorial/final/*.out
 	@ echo making tutorials.m2
 	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
 

@@ -1,7 +1,9 @@
 ############################## includes
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
+ifndef NODEPENDS
 include compat.mak
+endif
 ############################## main target
 all :: compat.h ../bin/Macaulay2
 ############################## useful targets
@@ -124,6 +126,11 @@ LDLIBS  += -L${LIBDIR}
 endif
 
 ifeq ($(OS),Linux)
+## - use this to get a memory map listing from the gnu linker
+LDFLAGS  += -Wl,-Map,mapfile
+endif
+
+ifeq ($(OS) $(CC),Windows-95-98-NT gcc)
 ## - use this to get a memory map listing from the gnu linker
 LDFLAGS  += -Wl,-Map,mapfile
 endif

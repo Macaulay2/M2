@@ -17,7 +17,7 @@ all:: $(EXES)
 update.o : restart.h
 clean :; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj)
 
-ifeq "$(CC)" "cl"
+ifeq "$(OS)" "Windows-95-98-NT"
 all:: ../setup.exe
 ../setup.exe : setup
 	cp setup.exe ..

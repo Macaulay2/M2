@@ -31,6 +31,10 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.27 seconds, Macaulay 2 version 0.8.50
 
+-- CYGWIN_NT-4.0 GEOMETRY 20.1 (0.3/1/1) 1998-12-3 20:39:18 i586 unknown
+-- 4.327 seconds, Macaulay 2 version 0.8.52
+-- gcc version egcs-2.91.60 19981201 (egcs-1.1.1 release)
+
 -- IRIX illi 5.3 12201932 IP22 mips
 -- 	5.49 seconds		0.8.10
 

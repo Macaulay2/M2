@@ -3,7 +3,10 @@
 ############################### targets to use
 all ::				# everything needed for the distribution
 tests ::
-doc : html book Vasconcelos-appendix
+doc:: html book 
+ifndef CYGWIN32
+doc:: Vasconcelos-appendix
+endif
 ################################# prologue
 all :: initialize config
 TOPDIR = ..
