@@ -169,7 +169,8 @@ export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine
 
 export toExpr(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMonomialIdealOrNull):Expr := when x is r:RawMonomialIdeal do Expr(r) is null do engineErrorMessage();
-export toExpr(x:RawArrayInt):Expr := Expr(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i)));
+export toExprSeq(x:RawArrayInt):Expr := Expr(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i)));
+export toExpr(x:RawArrayInt):Expr := Expr(list(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i))));
 export toExpr(e:RawArrayIntOrNull):Expr := when e is x:RawArrayInt do toExpr(x) is null do engineErrorMessage();
 export toExpr(x:RawMatrixAndInt):Expr := Expr(new Sequence len 2 do ( provide Expr(x.M); provide Expr(toInteger(x.i)); ));
 export toExpr(x:IntegerPair):Expr := Expr(new Sequence len 2 do (provide x.a; provide x.b));
@@ -182,9 +183,9 @@ export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr
 export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is null do engineErrorMessage();
 export toExpr(x:IntegerOrNull):Expr := when x is i:Integer do Expr(i) is null do engineErrorMessage();
-export toExpr(x:RawMatrixArray):Expr := Expr( new Sequence len length(x) do foreach m in x do provide Expr(m));
+export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(m) ) );
 export toExpr(x:RawMatrixArrayOrNull):Expr := when x is r:RawMatrixArray do toExpr(r) is null do engineErrorMessage();
-export toExpr(x:array(string)):Expr := Expr( new Sequence len length(x) do foreach s in x do provide Expr(s) );
+export toExpr(x:array(string)):Expr := Expr( list( new Sequence len length(x) do foreach s in x do provide Expr(s) ) );
 export toExpr(x:RawComputationOrNull):Expr := when x is r:RawComputation do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawArrayPairOrNull):Expr := (
      when x
