@@ -81,7 +81,7 @@ document { quote List,
      "Selecting elements of lists:",
      MENU {
 	  TO (quote _, List, ZZ),
-	  TO quote #,
+	  TO "#",
 	  TO "first",
 	  TO "last"
 	  },
@@ -110,7 +110,7 @@ document { quote List,
      MENU {
 	  TO "all",
 	  TO "any",
-	  {TO quote #, " -- length of a list"},
+	  {TO "#", " -- length of a list"},
 	  TO "max",
 	  TO "maxPosition",
 	  TO "member",
@@ -302,16 +302,16 @@ document { quote HashTable,
      PARA,
      "Access functions:",
      MENU {
- 	  TO quote #,
- 	  TO quote .,
+ 	  TO "#",
+ 	  TO ".",
  	  TO "pairs",
  	  TO "keys",
  	  TO "values"
  	  },
      "Query functions:",
      MENU {
- 	  TO quote #?,
- 	  TO quote .?,
+ 	  TO "#?",
+ 	  TO ".?",
 	  TO "mutable"
  	  },
      "Structural functions:",

@@ -56,9 +56,9 @@ if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
 
 Documentation = new MutableHashTable
 
-GlobalAssignHook Function := (X,x) -> if not Documentation#?x then Documentation#x = X
+Symbols = new MutableHashTable
 
-
+GlobalAssignHook Function := (X,x) -> if not Symbols#?x then Symbols#x = X
 
 --GlobalReleaseHook Function := (F,f) -> (
 --     stderr << "warning: " << string F << " redefined" << endl;
@@ -83,18 +83,10 @@ documentableValue := key -> (
      )
 
 scanPairs(symbolTable(),
-     (name,symbol) -> if documentableValue symbol then Documentation#(value symbol) = symbol
+     (name,symbol) -> if documentableValue symbol then Symbols#(value symbol) = symbol
      )
 
-name Function := f -> (
-     if Documentation#?f then (
-	  s := Documentation#f;
-	  if class s === String then s
-	  else if class s === Symbol then string s
-	  else "--function--"
-	  )
-     else "--function--"
-     )
+name Function := f -> if Symbols#?f then string Symbols#f else "--function--"
 
 repl := z -> (
      if class z === List or class z === Sequence then SEQ apply(toList z, repl)
@@ -105,15 +97,20 @@ repl := z -> (
      )
 
 getDocumentationTag = x -> (
-     while Documentation#?x and not class Documentation#x === SEQ do x = Documentation#x;
-     if class x === Symbol then x = string x;
-     x)
+     if class x === Symbol then string x else toString x
+     --while Documentation#?x and not class Documentation#x === SEQ do x = Documentation#x;
+     --if class x === Symbol then x = string x;
+     --x
+     )
 
 doc = x -> (
      x = getDocumentationTag x;
      if Documentation#?x and class Documentation#x === SEQ then Documentation#x
      else if DocDatabase#?x then value DocDatabase#x
-     else null
+     else (
+	  x = name x;
+	  if DocDatabase#?x then value DocDatabase#x else null
+	  )
      )
 
 err := nodeName -> (
@@ -133,7 +130,7 @@ keysDoc := () -> (
 
 topicList = () -> sort select(keysDoc(), i -> class i === String)
 
-getExampleInputs = t -> (
+getExampleInputs := t -> (
      if instance(t, ExampleTABLE) then apply(toList t, first)
      else if instance(t,BasicList) then join apply(toSequence t, getExampleInputs)
      else {})
@@ -416,8 +413,8 @@ document = z -> (
      if class key === Sequence and class lookup key =!= Function then (
 	  error("expected a method for ", formatDocumentTag key);
 	  );
-     if documentableValue key then Documentation#(value key) = key;
-     nodeName = name key;
+     -- if documentableValue key then Symbols#(value key) = key;
+     nodeName = getDocumentationTag key;
      Documentation#key = nodeName;
      if substring(nodeName,0,6) === "quote " then Documentation#(substring(nodeName,6)) = nodeName;
      nodeBaseFilename = makeBaseFilename();
@@ -425,29 +422,6 @@ document = z -> (
      docBody = processExamples docBody;
      storeDoc docBody;
      )
-
---exportDocumentation = () -> (
---     scan(keys Documentation, key -> (
---	       if class key === Sequence
---	       and (#key === 3 or #key === 4)
---	       and class Documentation#key === List
---	       and #(Documentation#key) > 2
---	       then (
---		    nodeName = name key;
---		    << "export " << nodeName << endl;
---		    nodeBaseFilename = makeBaseFilename();
---		    z := Documentation#key;
---		    docBody := drop(z,2);
---		    docBody = join({ concatenate(formatDocumentTag key, " --> ", name z#0), PARA}, docBody);
---		    docBody = repl docBody;
---		    docBody = processExamples docBody;
---		    storeDoc docBody;
---		    Documentation#key = nodeName;
---		    Documentation#(z#1) = key;
---		    )
---	       )
---	  )
---     )
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};

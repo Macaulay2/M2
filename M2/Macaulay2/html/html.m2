@@ -116,7 +116,6 @@ process := (key,doc) -> (
      -- stderr << key << endl;
      filename := linkFilename key;
      masterIndex#key = filename;
-     vkey := value key;
      title := formatDocumentTag key;
      filename << html HTML { 
 	  HEAD TITLE title,
@@ -167,7 +166,7 @@ masterFileName << html HTML {
 run concatenate ( 
      if version#"operating system" === "Windows-95-98-NT" then "copy" else "ln -f",
      " ",
-     masterIndex#(format "Macaulay 2"),
+     masterIndex#"Macaulay 2",
      " index.html")
 
 if missing then error "missing some nodes"

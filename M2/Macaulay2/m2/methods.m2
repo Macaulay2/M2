@@ -133,7 +133,7 @@ scan({
 	  },
      n -> (
 	  f := method();
-	  Documentation#f = n;
+	  Symbols#f = n;
 	  n <- f;
 	  )
      )

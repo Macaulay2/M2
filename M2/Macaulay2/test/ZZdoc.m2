@@ -9,7 +9,7 @@ if class doc "Macaulay 2" =!= SEQ then (
      if class doc "\"Macaulay 2\"" === SEQ then (
      	  stderr << ///Hmm, the quoted key "Macaulay 2" is there!/// << endl;
 	  );
-     exit 1;
+     error "top documentation node missing"
      )
 
 setrecursionlimit 1000
@@ -42,16 +42,16 @@ verify Sequence := verify MarkUpList := x -> scan(x,verify)
 reach Thing := x -> null
 reach Sequence := reach MarkUpList := x -> scan(x,reach)
 
-DocumentationProvided := set apply(topicList(), getDocumentationTag)
+DocumentationProvided := set topicList()
 
 verify TO := x -> (
-     s := getDocumentationTag x#0;
+     s := toString x#0;
      if not DocumentationProvided#?s and not DocumentationMissing#?s 
      then DocumentationMissing#s = currentPage;
      )
 
 reach TO := x -> (
-     s := getDocumentationTag x#0;
+     s := toString x#0;
      if not reachable#?s or not reachable#s
      then (
 	  reachable#s = true;
@@ -92,7 +92,7 @@ DocumentationNotNeeded#(quote{) = true
 DocumentationNotNeeded#(quote() = true
 
 scan(sort pairs tab, (n,s) -> (
-     tag := getDocumentationTag s;
+     tag := string s;					    -- getDocumentationTag
      if not DocumentationProvided#?tag and not DocumentationNotNeeded#?tag
      then warning(s,"no documentation for symbol '"|n|"'")))
 

@@ -8,6 +8,8 @@ File << String := printString
 File << Symbol := printString	   		      -- provisional
 File << Thing := (x,y) -> printString(x,string y)     -- provisional
 
+if class Manipulator =!= Symbol then error ///attempted to load "setup.m2" a second time///
+
 Manipulator = new Type of BasicList
 new Manipulator from Function := (Manipulator,f) -> new Manipulator from {f}
 Manipulator.name = "Manipulator"
