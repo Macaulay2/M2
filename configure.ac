@@ -175,7 +175,7 @@ AC_ARG_WITH(encapsrc,
     )
 
 AC_SUBST(LIBGMP)
-AC_ARG_WITH(LIBGMP,
+AC_ARG_WITH(libgmp,
     AC_HELP_STRING(--with-libgmp=...,libgmp option (-lgmp)),
     LIBGMP="$withval",
     LIBGMP="-lgmp"
