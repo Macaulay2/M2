@@ -72,11 +72,11 @@ void FF_LUComputation::do_pivots(int lo, int hi, int pivotCol)
 	  R->negate_to(a);
 	  M->scale_column(pivot,i,false/*opposite mult*/);
 	  // M->addColumnMultiple(pivotCol,a,i);
-	  M->row_op(i,a,pivotCol,false/*opposite mult*/);
+	  M->column_op(i,a,pivotCol,false/*opposite mult*/);
 	}	  
 
       if (need_div[i])
-	M->divide_column(lastpivot,i);
+	M->divide_column(i,lastpivot);
 
       need_div[i] = (r == pivot_row);
     }

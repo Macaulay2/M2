@@ -77,6 +77,9 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
   _SKEW2 = newarray(int,_nvars);
   _MONOM1 = M->make_one();
   _MONOM2 = M->make_one();
+  MONOMlead_exp1_ = M->make_one();
+  EXPskew_mult1_ = newarray(int,_nvars+2);
+  EXPskew_mult2_ = newarray(int,_nvars+2);
 
   gbvector *used_to_determine_size = 0;
   gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
@@ -166,12 +169,12 @@ gbvector *GBRingSkew::mult_by_term1(const FreeModule *F,
   gbvector head;
   gbvector *inresult = &head;
 
-  M->to_expvector(m, _EXP1);
+  M->to_expvector(m, EXPskew_mult1_);
 
   for (const gbvector *s = f; s != NULL; s = s->next)
     {
-      gbvector_get_lead_exponents(F, s, _EXP2);
-      int sign = _skew.mult_sign(_EXP1, _EXP2);
+      gbvector_get_lead_exponents(F, s, EXPskew_mult2_);
+      int sign = _skew.mult_sign(EXPskew_mult1_, EXPskew_mult2_);
       if (sign == 0) continue;
 
       gbvector *t = new_raw_term();
@@ -523,8 +526,8 @@ void GBRing::gbvector_get_lead_exponents(const FreeModule *F,
       && (S=F->get_schreyer_order()) != 0
       && f->comp > 0)
     {
-      S->schreyer_down(f->monom, f->comp-1, _MONOM1);
-      M->to_expvector(_MONOM1, result);
+      S->schreyer_down(f->monom, f->comp-1, MONOMlead_exp1_);
+      M->to_expvector(MONOMlead_exp1_, result);
     }
   else 
     M->to_expvector(f->monom, result);

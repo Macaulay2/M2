@@ -5,6 +5,7 @@
 #include "respoly.hpp"
 #include "respoly2.hpp"
 #include "hermite.hpp"
+#include "mutablemat.hpp"
 
 void dmatrix(const Matrix *M)
 {
@@ -75,6 +76,13 @@ void dhermite(HermiteComputation *G)
 {
   buffer o;
   G->text_out(o);
+  emit(o.str());
+}
+
+void dmutablemat(MutableMatrix *m)
+{
+  buffer o;
+  m->text_out(o);
   emit(o.str());
 }
 

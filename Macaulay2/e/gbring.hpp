@@ -97,6 +97,8 @@ protected:
   int * _EXP1, *_EXP2, *_EXP3, *_EXP4;
   int * _SKEW1, *_SKEW2;
   int * _MONOM1, *_MONOM2;
+  int * MONOMlead_exp1_; // monomial in M, only used in gbvector_get_lead_exponents
+  int * EXPskew_mult1_,  * EXPskew_mult2_; // exponents used in skew mult only
 
   //////////////////////////////
   // Private support routines //

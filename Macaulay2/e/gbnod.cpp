@@ -7,6 +7,10 @@
 #include "comp_gb.hpp"
 #include "matrixcon.hpp"
 
+#warning "gbres: over QQ, is this OK implemented over ZZ?"
+#warning "gbres: quotient rings -- need to do normal form of fsyz's"
+#warning "gbres: HF -- matrix creation is incorrect"
+
 void gb2_comp::setup(FreeModule *FFsyz,
 		     gb_node *ggens,
 		     int lodeg,
@@ -389,6 +393,7 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 
 void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 {
+#warning "noet tested yet"
   gbvector head;
   gbvector *result = &head;
   result->next = 0;
@@ -464,6 +469,7 @@ void gb2_comp::flush_pairs()
     }
 }
 
+#warning" schreyer append: wrong if not encoded order"
 void gb2_comp::schreyer_append(gbvector * f)
 {
   if (orig_syz < 0)
@@ -876,6 +882,7 @@ Matrix *gb2_comp::make_lead_term_matrix()
       gb_elem *g = gb[i];
       gbvector *f = g->f;
       int x = f->comp-1;
+#warning "the f->monom on the next line is WRONG"
       ring_elem a = originalR->make_flat_term(one, f->monom);
       result.set_entry(x,i,a);
     }
@@ -1040,14 +1047,19 @@ void gb2_comp::stats() const
 
   spairs->stats();
   if (gbTrace >= 5 && gbTrace % 2 == 1)
-    for (int i=0; i<gb.length(); i++)
-      {
-	o.reset();
-	o << i << '\t';
-	GR->gbvector_text_out(o, F, gb[i]->f);
-	o << newline;
-	emit(o.str());
-      }
+    {
+      o << "free module is ";
+      F->text_out(o);
+      o << newline;
+      for (int i=0; i<gb.length(); i++)
+	{
+	  o.reset();
+	  o << i << '\t';
+	  GR->gbvector_text_out(o, F, gb[i]->f);
+	  o << newline;
+	  emit(o.str());
+	}
+    }
 
   dfree(F);
 }

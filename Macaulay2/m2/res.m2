@@ -92,8 +92,8 @@ resolutionInEngine := options -> (M) -> (
 	       maxlevel,				    -- how long a resolution to make
 	       false,					    -- useMaxSlantedDegree
 	       0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
-	       1,					    -- algorithm
-	       0					    -- strategy (is this the same as options.SortStrategy?)
+	       options.Strategy,			    -- algorithm
+	       options.SortStrategy			    -- strategy (is this the same as options.SortStrategy?)
 	       );
 	  W.returnCode = rawStatus1 W.RawComputation;
 	  C = new ChainComplex;
