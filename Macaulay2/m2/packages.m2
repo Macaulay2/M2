@@ -62,7 +62,7 @@ newPackage(String) := opts -> (title) -> (
      if substituteOptions#?filename and substituteOptions#filename#Title =!= null then title = substituteOptions#filename#Title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      if class opts.Using =!= List or not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
-     stderr << "--package " << title << " loading" << endl;
+     stderr << "--package \"" << title << "\" loading" << endl;
      removePackage title;
      saveD := globalDictionaries;
      saveP := packages;
@@ -256,7 +256,7 @@ closePackage String := title -> (
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode";
      remove(pkg,"old debuggingMode");
-     stderr << "--package " << pkg << " loaded" << endl;
+     stderr << "--package \"" << pkg << "\" loaded" << endl;
      pkg)
 
 package = method ()
