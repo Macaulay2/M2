@@ -307,7 +307,7 @@ needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a^2,b^2,a*c}}
 F = rawFreeModule m
-m = rawMatrix1(F,1,(b,a,0_R),false,0)
+m = rawMatrix1(F,1,(b,a,0_R),0)
 G = rawGB(m,false,0,{},false,0,0,0)
 rawStartComputation G 
 rawGBGetLeadTerms(G,10)
