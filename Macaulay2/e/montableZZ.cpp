@@ -171,13 +171,14 @@ bool MonomialTableZZ::is_weak_member(mpz_ptr c, exponents exp, int comp) const
 	  }
 	else
 	  mpz_gcd(g,g,t->_coeff);
+	/* g is set */
 	if (mpz_divisible_p(c,t->_coeff))
 	  {
 	    mpz_clear(g);
 	    return true;
 	  }
       }
-  mpz_clear(g);
+  if (g_is_set) mpz_clear(g);
   return false;
 }
 
