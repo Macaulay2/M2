@@ -549,80 +549,7 @@ M2_bool rawLeastSquares(MutableMatrix *A,
   return false;
 }
 
-
 #if 0
-const MutableMatrixOrNull * 
-IM2_MutableMatrixSolve(MutableMatrix *A,
-		       MutableMatrix *b)
-  // returns NULL if an error occurs, else returns solutions to 'Ax=b'
-  // where A is an invertible n by n matrix , and b is an n by m matrix.
-  // Assumptions: A and b are dense mutable matrices over RR or CC.
-{
-}
-
-const MutableMatrixOrNull *
-IM2_MutableMatrixLU(MutableMatrix *M,
-		    MutableMatrix *L, /* result value */
-		    MutableMatrix *U, /* result value */
-		    MutableMatrix *P) /* result value */
-  // returns NULL if an error occurs, else returns the matrix 'U'
-  // in the LU decomposition of 'M = PLU', where 'L' is lower triangular
-  // with 1's on diagonal, 'U' is upper triangular, and 'P is permutation.
-  // The matrices 'L', 'U', and 'P' are set to these matrices.
-{
-}
-
-
-M2_bool 
-rawLeastSquares(MutableMatrix *A, 
-		MutableMatrix *b, 
-		MutableMatrix *x, /* return value: argument modified */
-		M2_bool assume_full_rank)
-// Case 1: A is a dense matrix over RR.  Then so are b,x.
-// Case 2: A is a dense matrix over CC.  Then so are b,x.
-{
-}
-
-M2_bool
-rawSVD(MutableMatrix *A,
-       MutableMatrix *Sigma,
-       MutableMatrix *U,
-       MutableMatrix *VT,
-       M2_bool use_divide_and_conquer)
-{
-}
-
-M2_bool
-rawSolve(MutableMatrix *A,
-	 MutableMatrix *b,
-	 MutableMatrix *x)
-{
-}
-
-M2_bool
-rawLU(MutableMatrix *A,
-      MutableMatrix *L,
-      MutableMatrix *U,
-      MutableMatrix *P)
-{
-}
-
-M2_bool
-rawEigenvalues(MutableMatrix *A,
-	       MutableMatrix *eigenvalues,
-	       M2_bool is_symm_or_hermitian)
-{
-}
-
-M2_bool
-rawEigenvectors(MutableMatrix *A,
-		MutableMatrix *eigenvalues,
-		MutableMatrix *eigenvectors,
-		M2_bool is_symm_or_hermitian)
-{
-}
-
-
 M2_bool 
 rawMutableMatrixEigenvalues(MutableMatrix *M, MutableMatrix *result_eigenvalues)
 // M must be a dense mutable matrix over RR or over CC
@@ -648,8 +575,8 @@ rawMutableMatrixEigenvalues(MutableMatrix *M, MutableMatrix *result_eigenvalues)
     }
   return 0;
 }
-
 #endif
+
 #if 0
 const MutableMatrixOrNull *
 

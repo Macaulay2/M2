@@ -1307,25 +1307,25 @@ extern "C" {
 
   M2_bool rawSolve(MutableMatrix *A,
 		   MutableMatrix *b,
-		   MutableMatrix *x);
+		   MutableMatrix *x); /* Dan: please connect */
 
   M2_bool rawLU(MutableMatrix *A,
 		MutableMatrix *L,
 		MutableMatrix *U,
-		MutableMatrix *P);
+		MutableMatrix *P); /* Dan: please connect */
   /*
    */
 
   M2_bool rawEigenvalues(MutableMatrix *A,
 			 MutableMatrix *eigenvalues,
-			 M2_bool is_symm_or_hermitian);
+			 M2_bool is_symm_or_hermitian); /* Dan: please connect */
   /*
    */
 
   M2_bool rawEigenvectors(MutableMatrix *A,
 			  MutableMatrix *eigenvalues,
 			  MutableMatrix *eigenvectors,
-			  M2_bool is_symm_or_hermitian);
+			  M2_bool is_symm_or_hermitian); /* Dan: please connect */
   /*
    */
 
@@ -1333,14 +1333,14 @@ extern "C" {
 		 MutableMatrix *Sigma,
 		 MutableMatrix *U,
 		 MutableMatrix *VT,
-		 M2_bool use_divide_and_conquer);
+		 M2_bool use_divide_and_conquer); /* Dan: please connect */
   /* 
    */
 
   M2_bool rawLeastSquares(MutableMatrix *A, 
 			  MutableMatrix *b, 
 			  MutableMatrix *x, /* return value: argument modified */
-			  M2_bool assume_full_rank);
+			  M2_bool assume_full_rank); /* Dan: please connect */
   /* Case 1: A is a dense matrix over RR.  Then so are b,x.
      Case 2: A is a dense matrix over CC.  Then so are b,x. */
 
@@ -1439,54 +1439,6 @@ extern "C" {
   /* This routine computes the numerator of the Hilbert series
      for coker I.  NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
-
-#if 0
-  Monomial *IM2_MonomialIdeal_remove(MonomialIdeal *I); /* CAN WE REMOVE THIS?? */
-  MonomialIdeal *IM2_MonomialIdeal_copy(MonomialIdeal *I); /* and THIS? */
-#endif
-
-  /**************************************************/
-  /**** Groebner basis objects **********************/
-  /**************************************************/
-#if 0
-  GroebnerBasis *rawGBMake(const FreeModule *F, const FreeModule *Fsyz);
-
-  void rawGBAdd(GroebnerBasis *G, const Matrix *M, const Matrix *Msyz);
-  /* Add the columns of (M,Msyz) to the GB. */
-
-  GroebnerBasis *rawGBMinimalize(GroebnerBasis *G);
-  
-
-  rawGBRemainder(const GroebnerBasis *G, const Matrix *M);
-
-
-  const MatrixOrNull *rawGBGetMatrix(GroebnerBasis *G);
-  /* Get the matrix whose columns are the GB elements being used */
-
-  const MatrixOrNull *rawGBGetLeadTerms(GroebnerBasis *G, int nparts);
-  /* Get the matrix of lead terms of rawGBGetMatrix(G) */
-
-  const MatrixOrNull *rawGBChangeOfBasis(GroebnerBasis *G);
-  /* Yields the change of basis matrix from the Groebner basis to
-     the original generators, at least if n_rows_to_keep was set
-     when creating the GB computation.  This matrix, after the 
-     computation has run to completion, should satisfy:
-     (original matrix) = (GB matrix) * (change of basis matrix). */
-
-  const MatrixOrNull *rawGBMatrixRemainder(GroebnerBasis *G, 
-					   const Matrix *m); /* drg: connected rawGBMatrixRemainder */
-
-  void rawGBMatrixLift(GroebnerBasis *G,
-		       const Matrix *m,
-		       MatrixOrNull **result_remainder,
-		       MatrixOrNull **result_quotient
-		       ); /* Dan: please connect */
-
-  int rawGBMatrixContains(GroebnerBasis *G,
-			  const Matrix *m); /* Dan: please connect */
-  /* Returns the index of the first column of m which does not reduce to 0, if any,
-     otherwise -1 is returned. */
-#endif
 
   /**************************************************/
   /**** Groebner basis and resolution routines ******/
@@ -1684,7 +1636,7 @@ enum gbTraceValues
      If M has a column change of basis matrix attached, it will be modified accordingly. 
   */
 
-  M2_bool IM2_SmithNormalForm(MutableMatrix *M);
+  M2_bool IM2_SmithNormalForm(MutableMatrix *M); /* Dan: please connect */
   /* Given a mutable matrix over ZZ, compute the Smith normal form for M. (replaces
      M with this normal form.
      Currently the algorithm used makes computing the change of basis matrices
@@ -1692,7 +1644,7 @@ enum gbTraceValues
      If there is an error, then an error is flagged and false is returned.
   */
 
-  M2_bool IM2_HermiteNormalForm(MutableMatrix *M);
+  M2_bool IM2_HermiteNormalForm(MutableMatrix *M); /* Dan: please connect */
   /* Given a mutable matrix over ZZ, compute the Hermite normal form for M. (replaces
      M with this normal form.
      Currently the algorithm used makes computing the change of basis matrices
