@@ -1,54 +1,45 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-le := (a,b) -> (
+whichway := symbol >
+
+compare := (a,b) -> (
      c := a ? b;
      if c === incomparable then error "incomparable elements encountered in sort";
-     c =!= symbol >
+     c =!= whichway			-- this relation better be transitive
      )
 
-sort = (v) -> (
-     -- quick sort routine
-     if #v <= 1
-     then v
-     else (
-	  v = newClass(MutableList, v);
-	  subsort := (l,r) -> (
-	       c := v#l;
-	       i := l+1;
-	       j := r;
-	       while i <= j do (
-		    if le(v#i,c) then i=i+1
-		    else if le(c,v#j) then j=j-1
-		    else ( w := v#i; v#i = v#j; v#j = w ));
-	       if l<j then subsort(l+1,j);
-	       if i<=r then subsort(i,r);
-	       scan(l+1 .. j, k-> v#(k-1) = v#k);
-	       v#j = c;
-	       );
-	  subsort(0,#v - 1);
-	  toList v))
+basicsort := (v) -> if #v <= 1 then v else (	      -- quick sort algorithm
+     v = newClass(MutableList, v);
+     subsort := (l,r) -> (			     -- sort l .. r inclusive
+	  p := l + random(r+1-l);
+	  pivot := v#p;
+	  v#p = v#l;
+	  v#l = pivot;
+	  i := l+1;
+	  j := r;
+	  while i <= j do (
+	       -- spots 1 .. i-1 contain elements less or equal to the pivot
+	       -- spots j+1 .. r contain elements greater or equal to the pivot
+	       -- when i > j we've partitioned all the elements into two parts
+	       if compare(v#i,pivot) then i = i+1
+	       else if compare(pivot,v#j) then j = j-1
+	       else ( tmp := v#i; v#i = v#j; v#j = tmp; i = i+1; j = j-1 ));
+	  if l+1 < j then subsort(l+1,j);
+	  if j+1 < r then subsort(j+1,r);
+	  scan(l+1 .. j, k-> v#(k-1) = v#k);
+	  v#j = pivot;
+	  );
+     -- subsort = on subsort;				    -- debugging
+     subsort(0,#v - 1);
+     toList v)
 
 rsort = (v) -> (
-     -- quick rsort routine
-     if # v <= 1
-     then v
-     else (
-	  v = newClass(MutableList, v);
-	  subrsort := (l,r) -> (
-	       c := v#l;
-	       i := l+1;
-	       j := r;
-	       while i <= j do (
-		    if v#i >= c then i=i+1
-		    else if c >= v#j then j=j-1
-		    else ( w := v#i; v#i = v#j; v#j = w ));
-	       if l<j then subrsort(l+1,j);
-	       if i<=r then subrsort(i,r);
-	       scan(l+1 .. j, k-> v#(k-1) = v#k);
-	       v#j = c;
-	       );
-	  subrsort(0,#v - 1);
-	  toList v));
+     whichway = symbol <;
+     basicsort v)
+
+sort = (v) -> (
+     whichway = symbol >;
+     basicsort v)
 
 lexcompare := (v,w,i) -> (
      if i === # v
