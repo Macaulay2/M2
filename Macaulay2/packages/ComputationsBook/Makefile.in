@@ -1,6 +1,5 @@
 # @configure_input@
 include ../../../include/config.Makefile
-VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)
 CHAPTERS = completeIntersections \
 	   constructions \
@@ -15,10 +14,9 @@ CHAPTERS = completeIntersections \
 	   toricHilbertScheme \
 	   varieties
 
-Makefile : Makefile.in
+Makefile : @srcdir@/Makefile.in
 	cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
 distclean:; rm -f Makefile
-
 
 .PHONY: clean changes distclean all check
 
