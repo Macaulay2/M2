@@ -144,7 +144,7 @@ abbreviate := x -> (
 
 ll := f -> Table (
      prepend(
-	  {"symbol",, "type",, "value", "location"},
+	  {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
 	  apply (
 	       reverse \\ flatten \\ sortByHash \ values \ localDictionaries f,
 	       s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s})))

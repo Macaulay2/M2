@@ -386,7 +386,7 @@ topics = Command (
 	  )
      )
 
-apropos = (pattern) -> sort select( keys flatten(pairs \ globalDictionaries), i -> match(toString pattern,i))
+apropos = (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 -- more general methods
 -----------------------------------------------------------------------------
