@@ -23,7 +23,8 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 (defvar M2-command "M2 " "*The default Macaulay2 command line.")
 
 (defun M2 (command)
-  "Run Macaulay 2 in a buffer."
+  "Run Macaulay 2 in a buffer.  With a prefix argument, the command line that runs Macaulay 2
+  can be edited in the minibuffer."
   (interactive
    (list
     (if current-prefix-arg

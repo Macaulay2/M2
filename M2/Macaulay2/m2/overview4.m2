@@ -97,7 +97,8 @@ PARA,
 If you are reading this file with emacs, then use the keystrokes
 ", TT "C-x 2", " to divide the buffer containing this file into two windows.
 Then press the ", TT "F12", " function key to start up 
-Macaulay 2 in a buffer named ", TT "*M2*", ".",
+Macaulay 2 in a buffer named ", TT "*M2*", ".  (The command line used to
+start Macaulay 2 may be edited before being run if you press ", TT "C-U F12", " instead.)",
 PARA,
 "If this doesn't start up Macaulay 2, one reason may be that your function
 keys are not operable.  In that case press ", TT "C-C m", " instead.  (The 
