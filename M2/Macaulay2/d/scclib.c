@@ -959,7 +959,15 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     s_pattern = tocharstar(pattern);
     ret = regcomp(&regex, s_pattern, REG_EXTENDED);
     GC_FREE(s_pattern);
-    if (ret != 0) { regfree(&regex); return empty; }
+    if (ret != 0) {
+	 if (ret != REG_NOMATCH) {
+	      char message[1024];
+	      regerror(ret,&regex,message,sizeof message);
+	      system_regexmatchErrorMessage = tostring(message);
+	      }
+	 regfree(&regex);
+	 return empty;
+    }
     last_pattern = pattern;
   }
   {

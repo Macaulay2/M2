@@ -1378,7 +1378,7 @@ regexmatch(e:Expr):Expr := (
      when a.1 is text:string do (
 	  r := regexmatch(regexp,text);
 	  if length(r) == 0 && regexmatchErrorMessage != noErrorMessage
-	  then buildErrorPacket(regexmatchErrorMessage)
+	  then buildErrorPacket("'matches' (regexec) : "+regexmatchErrorMessage)
 	  else toPairs(r))
      else WrongArgString(2)
      else WrongArgString(1)
