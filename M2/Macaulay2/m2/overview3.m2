@@ -211,9 +211,9 @@ document { "Reading the Documentation",
      "The documentation is divided into the main parts, the ", TO "User's Guide", "
      and the ", TO "Reference Manual", ".  The reference manual is organized mainly
      according to the types of things, and reflects the particular way we've
-     programmed the system.  For example, if you want to find out about chain
-     complexes, then you might get there by clicking first on ", TO "Thing", ",
-     then click on ", TO "Type", ", and then on ", TO "ChainComplex", ".  The user's
+     programmed the system.  For example, if you want to find out about 
+     matrices, then you might get there by clicking first on ", TO "Thing", ",
+     then click on ", TO "Type", ", and then on ", TO "Matrix", ".  The user's
      guide is organized more according to mathematical topics that might occur to
      an initial user, and might be a good place to look first, except that it's
      not completely written yet.",
@@ -227,12 +227,11 @@ document { "Reading the Documentation",
      system administrator has already installed ", TT "htdig", ", which is a 
      free indexing package available at ", TT "http://www.htdig.org/", ".",
      PARA,
-     "The directory ", TT "Macaulay2/book", " contains
-     the documentation in TeX form, which can be printed with ", TT "dvips", " or
+     "The directory ", TT "Macaulay2/book", " contains the documentation in
+     TeX form, which can be printed with ", TT "dvips", " or
      viewed on your screen with a dvi previewer such as ", TT "xdvi", ".  There 
-     is also a ", TT "pdf", " version of the documentation which can be viewed 
-     with Acobe's Acrobat Reader or with ", TT "xpdf", ".  Currently, these
-     viewers do not offer the ability to cut and paste text.",
+     is also a searchable hyperlinked ", TT "pdf", " version of the documentation 
+     which can be viewed with Adobe's Acrobat Reader or with ", TT "xpdf", ".",
      PARA,
      "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."
@@ -400,7 +399,10 @@ document { "The authors",
      "Our co-author for the tutorials:",
      MENU {
 	  TO "David Eisenbud",
-	  }
+	  },
+     "To communicate with us about the program, use this email address:
+     ", HREF {"mailto:Macaulay2@math.uiuc.edu", "<Macaulay2@math.uiuc.edu>"}, "."
+     
      }
 
 document { "David Eisenbud",
