@@ -212,7 +212,7 @@ zeroize Matrix := m -> (
      )
 
 -- Auto-reduction
-autoReduce = method()
+-- autoReduce = method()
 autoReduce Matrix := m -> (
      sendgg(ggPush m, ggautoreduce);
      getMatrix ring m)

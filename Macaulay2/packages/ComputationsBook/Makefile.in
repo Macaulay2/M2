@@ -1,0 +1,50 @@
+TOPDIR = ../../..
+include $(TOPDIR)/config.Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = $(srcdir)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+CHAPTERS = completeIntersections \
+	   constructions \
+	   d-modules \
+	   exterior-algebra \
+	   geometry \
+	   monomialIdeals \
+	   preface \
+	   programming \
+	   schemes \
+	   solving \
+	   toricHilbertScheme \
+	   varieties
+
+Makefile : Makefile.in
+	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
+
+tests: Makefile
+	for i in $(CHAPTERS); \
+	do $(MAKE) -C $$i -f ../Makefile TOPDIR=../$(TOPDIR) run-1-test ; \
+	done
+
+run-1-test: chapter.out.expected.trim chapter.out.trim
+	diff -u $^
+
+chapter.out.trim : chapter.out
+	egrep -v -e '-- .*[0-9.][0-9.]* seconds' <$< >$@
+
+chapter.out.expected.trim : chapter.out.expected
+	egrep -v -e '-- .*[0-9.][0-9.]* seconds' <$< >$@
+
+clean::
+	rm -f */*.trim
+
+chapter.out : chapter.m2 ../../../bin/M2
+	ulimit -v 160000 && \
+	time nice -19 ../../../bin/M2 -x -s -q '-e errorDepth 0' <chapter.m2 >chapter.out.tmp && \
+	mv chapter.out.tmp chapter.out
+
+clean::
+	rm -f */*.out programming/foo
+
