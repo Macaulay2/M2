@@ -11,7 +11,7 @@
 
 local prefix, local topNodeButton
 local haderror, local nullButton, local masterIndexButton
-local NEXT, local PREV, local UP
+local NEXT, local PREV, local UP, local CONTENTS
 local nextButton, local prevButton, local upButton
 local masterIndex
 
@@ -320,8 +320,7 @@ buildLinks ForestNode := x -> (
      UP = new MutableHashTable;
      NEXT = new MutableHashTable;
      PREV = new MutableHashTable;
-     markLinks x;
-     (UP,PREV,NEXT))
+     markLinks x)
 
 -----------------------------------------------------------------------------
 
@@ -349,10 +348,10 @@ assembleTree Package := pkg -> (
 		    scope(fkey,documentationMemo key)));
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
-     t := getTrees();
-     buildLinks t;
+     CONTENTS = getTrees();
+     buildLinks CONTENTS;
      doExamples = true;					    -- wrong way
-     t)
+     )
 
 -----------------------------------------------------------------------------
 -- making the html pages
@@ -513,8 +512,9 @@ installPackage Package := o -> pkg -> (
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- make table of contents, including next, prev, and up links
-     stderr << "-- assembling table of contents" << endl;
-     pkg#"table of contents" = new Bag from {assembleTree pkg}; -- we bag it because it might be big!
+     stderr << "--assembling table of contents" << endl;
+     assembleTree pkg;
+     pkg#"table of contents" = new Bag from {CONTENTS}; -- we bag it because it might be big!
      pkg#"links up" = UP;
      pkg#"links next" = NEXT;
      pkg#"links prev" = PREV;
