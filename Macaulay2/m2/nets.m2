@@ -12,10 +12,10 @@ document { quote toString,
 net Option := z -> net expression z
 
 Net | Net := horizontalJoin
-Net || Net := verticalJoin
+Net || Net := stack
 String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
 Net ^ ZZ := raise; erase quote raise
-String ^ Sequence := (s,p) -> ((height,depth) -> (verticalJoin apply(height+depth,i->s))^(height-1))(p)
+String ^ Sequence := (s,p) -> ((height,depth) -> (stack apply(height+depth,i->s))^(height-1))(p)
 
 net Net := identity
 ---- this old routine draws a box around a net
@@ -26,7 +26,7 @@ net Net := identity
 --     	  (s || x || s) ^ (height x)
 --	  )
 --     else (
---     	  t := (verticalJoin (n : "|")) ^ (height x - 1);
+--     	  t := (stack (n : "|")) ^ (height x - 1);
 --     	  (s || t | x | t || s) ^ (height x)
 --	  )
 --     )
@@ -59,7 +59,7 @@ net HashTable := x -> (
      	  net class x,
 	  "{", 
 	  -- the first line prints the parts vertically, second: horizontally
- 	  verticalJoin sort apply(pairs x,(k,v) -> horizontalJoin(net k, " => ", net v)),
+ 	  stack sort apply(pairs x,(k,v) -> horizontalJoin(net k, " => ", net v)),
 	  -- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
 	  "}" 
      	  )

@@ -1,11 +1,6 @@
 -- taken from:
 -- Bernd Sturmfels, FOUR COUNTEREXAMPLES IN COMBINATORIAL ALGEBRAIC GEOMETRY.
 
--- warning : these tests require 84MB of memory, so if your machine doesn't
--- have that, just skip them
-
--- 
-
 R = QQ[v,w,x,y,z]
 S = QQ[a,b,c,d,e,f,g,h,i]
 p = map(R,S, {z, v*z, w*z, x*z, v*w*x*y*z, v*w*x^2*y^2*z,

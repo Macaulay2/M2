@@ -42,7 +42,7 @@ matrix(SparseMutableMatrix) := options -> (m) -> (
 -------------
 net SparseMutableMatrix := f -> (
 	  R := ring f;
-	  m := verticalJoin toSequence apply(
+	  m := stack toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  m)
 

@@ -142,7 +142,7 @@ net ChainComplex := C -> if C.?name then C.name else (
 	  a := s#0;
 	  b := s#-1;
 	  horizontalJoin 
-	  between(" <-- ", apply(a .. b,i -> verticalJoin (net C_i,"",net i)))))
+	  between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of MutableHashTable
 document { quote ChainComplexMap,
@@ -218,7 +218,7 @@ net ChainComplexMap := f -> (
 	       )
 	  );
      if # v === 0 then "0"
-     else verticalJoin v)
+     else stack v)
 ring ChainComplexMap := (f) -> ring source f
 ChainComplexMap _ ZZ := (f,i) -> (
      if f#?i 
@@ -997,7 +997,7 @@ betti ChainComplex := C -> (
 			      ))));
 	  v = prepend(leftside,v);
 	  v = transpose v;
-	  verticalJoin apply(v, concatenate))
+	  stack apply(v, concatenate))
      else (
 	  betti := BettiNumbers C;
 	  mincol = betti#"mincol";
@@ -1013,7 +1013,7 @@ betti ChainComplex := C -> (
 			 ) k 
 		    ) 
 	       );
-	  verticalJoin apply(splice {"total", minrow .. maxrow},
+	  stack apply(splice {"total", minrow .. maxrow},
 	       row -> (
 		    concatenate(pad(5,string row), ":",
 		    toList apply(mincol .. maxcol,

@@ -448,6 +448,13 @@ nmonoms := g -> (
     sendgg(ggPush g, ggnmonoms);
     eePopIntarray())
 
+statusDefaults := new OptionTable from {
+     TotalPairs => true,
+     PairsRemaining => false,
+     Monomials => false
+     }
+status = method (Options => statusDefaults)
+
 status Resolution := options -> (r) -> (
      v := {};
      lab := {};
@@ -498,14 +505,9 @@ status Resolution := options -> (r) -> (
      v = transpose v;
      v = apply(v, row -> (row,"\n"));
      << lab << endl;
-     printString(stdout,v);
+     printString(stdio,v);
      )
-statusDefaults := new OptionTable from {
-     TotalPairs => true,
-     PairsRemaining => false,
-     Monomials => false
-     }
-status = method (Options => statusDefaults)
+
 status ChainComplex := options -> (C) -> status(C.Resolution, options)
 document { quote status,
      TT "status C", " -- displays the status of the computation of a

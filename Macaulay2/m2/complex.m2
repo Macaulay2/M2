@@ -132,5 +132,5 @@ TEST ///
      assert( x == 2 )
      assert( x == 2. )
      assert( x == 2/1 )
-     assert( net (2-3*ii) === "2 - 3*ii"^0 )
+     assert( net ( 2 - 3 * ii ) === "2 - 3ii"^0 )
      ///

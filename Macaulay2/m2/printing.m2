@@ -28,7 +28,7 @@ columnate = (s,w) -> (
 	  ncols = newcols;
 	  nrows = newrows;
 	  );
-     horizontalJoin between(" ", apply(pack(s,nrows), col -> verticalJoin col)))
+     horizontalJoin between(" ", apply(pack(s,nrows), col -> stack col)))
 
 document { quote columnate,
      TT "columnate(s,w)", " -- arranges the strings in the list s in columns, returning

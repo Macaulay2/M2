@@ -547,7 +547,7 @@ html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> CODE x)
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y, newline)))
-net ExampleTABLE := x -> verticalJoin between("",apply(toList x, net))
+net ExampleTABLE := x -> stack between("",apply(toList x, net))
 
 net TABLE := x -> net MatrixExpression toList x
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -669,7 +669,7 @@ html SEQ := x -> concatenate(apply(x, html))
 net SEQ := x -> (
      x = toList x;
      p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
-     verticalJoin apply(#p - 1, 
+     stack apply(#p - 1, 
 	  i -> horizontalJoin join(
 	       if i > 0 then apply(toList x#(p#i), net) else {},
 	       apply(take(x,{p#i+1, p#(i+1)-1}), net)
@@ -688,7 +688,7 @@ html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 texMath TT := tex TT := x -> concatenate(///{\tt {}///, ttLiteral concatenate x, "}")
 text TT := net TT := x -> concatenate("'", x, "'")
 
-net CODE := x -> verticalJoin lines concatenate x
+net CODE := x -> stack lines concatenate x
 
 html CODE   := x -> concatenate( 
      "<CODE>", 

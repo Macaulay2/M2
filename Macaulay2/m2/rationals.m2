@@ -67,3 +67,8 @@ document { quote QQ,
      }
 
 isUnit QQ := x -> x != 0
+
+TEST ///
+     assert( net (2/1) === "2" )
+     assert( net (1/1) === "1" )
+///

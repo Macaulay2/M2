@@ -37,7 +37,7 @@ net GradedModule := C -> if C.?name then C.name else (
      if # s === 0 then "0"
      else (
 	  horizontalJoin 
-	  between("  ", apply(s, i -> verticalJoin (net C_i,"",net i)))))
+	  between("  ", apply(s, i -> stack (net C_i,"",net i)))))
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
@@ -57,7 +57,7 @@ net GradedModuleMap := f -> (
 	       )
 	  );
      if # v === 0 then "0"
-     else verticalJoin v)
+     else stack v)
 document { quote GradedModuleMap,
      TT "GradedModuleMap", " -- the class of all maps between graded modules.",
      PARA,

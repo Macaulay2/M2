@@ -3,9 +3,9 @@
 Descent = new Type of MutableHashTable
 stars = n -> (
      d := depth n + height n;
-     if d == 0 then n else (verticalJoin ( d : " " )) ^ (height n - 1) | n
+     if d == 0 then n else (stack ( d : " " )) ^ (height n - 1) | n
      )
-net Descent := x -> stars verticalJoin apply(values x.index, k -> "  " | k || net x#k )
+net Descent := x -> stars stack apply(values x.index, k -> "  " | k || net x#k )
 new Descent := Descent -> (
      r := new MutableHashTable;
      r.index = new MutableHashTable;

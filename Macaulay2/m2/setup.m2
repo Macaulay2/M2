@@ -55,10 +55,7 @@ endl = new Manipulator from oldendl
 
 erase quote "--newline--"
 
-stdout = stdio
-stdin = stdio
-
-<< Thing := x -> stdout << x
+<< Thing := x -> stdio << x
 File << Net := printString
 File << String := printString
 File << Symbol := printString	   		      -- provisional
@@ -190,7 +187,7 @@ document { quote userSymbols,
      }
 
 listUserSymbols = new Command from (
-     type -> verticalJoin apply(userSymbols type, s ->  string s | ": " | name class value s)
+     type -> stack apply(userSymbols type, s ->  string s | ": " | name class value s)
      )
 
 document { quote listUserSymbols,

@@ -52,25 +52,27 @@ export stderr := file( "stderr", 0,
      false,-1,false,          "",        0,0,false,noprompt,true,false,
      true,  2,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList);
 export errmsg := { message:string };
+opensocket(filename:string):int := (
+     host := substr(filename,1);
+     serv := "2500";		  -- Macaulay 2 default port
+     foreach c at j in filename do if c == ':' then (
+	  host = substr(filename,1,j-1);
+	  serv = substr(filename,j+1);
+	  break;
+	  );
+     opensocket(host,serv));
 export fopenin(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdin)
      else if length(filename) > 0 && filename . 0 == '$'
      then (
-	  host := substr(filename,1);
-	  serv := "2500";		  -- Macaulay 2 default port
-	  foreach c at j in filename do if c == ':' then (
-	       host = substr(filename,1,j-1);
-	       serv = substr(filename,j+1);
-	       break;
-	       );
-	  sd := opensocket(host,serv);
+	  sd := opensocket(filename);
 	  if sd == ERROR
 	  then (file or errmsg)(errmsg("can't open socket"))
 	  else (file or errmsg) (file(
 	       	    filename, 0,
 	       	    true, sd, false, newbuffer(), 0, 0, false, noprompt,true,false,
-	       	    false,-1, false, newbuffer(), 0, 0, false, dummyNetList)))
+	       	    false,-1, false, "",          0, 0, false, dummyNetList)))
      else if length(filename) > 0 && filename . 0 == '!'
      then (
 	  fildes := array(int)(-1,-1);
@@ -119,6 +121,15 @@ if gc then (
 export fopenout(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdout)
+     else if length(filename) > 0 && filename . 0 == '$'
+     then (
+	  sd := opensocket(filename);
+	  if sd == ERROR
+	  then (file or errmsg)(errmsg("can't open socket"))
+	  else (file or errmsg) (file(
+	       	    filename, 0, 
+		    false,-1, false, "",          0, 0, false, noprompt,true,false,
+	       	    true, sd, false, newbuffer(), 0, 0, false, dummyNetList)))
      else if length(filename) > 0 && filename . 0 == '!'
      then (
 	  fildes := array(int)(-1,-1);
@@ -569,14 +580,7 @@ export fopeninout(filename:string):(file or errmsg) := (
      then (file or errmsg)(stdIO)
      else if length(filename) > 0 && filename . 0 == '$'
      then (
-	  host := substr(filename,1);
-	  serv := "2500";		  -- Macaulay 2 default port
-	  foreach c at j in filename do if c == ':' then (
-	       host = substr(filename,1,j-1);
-	       serv = substr(filename,j+1);
-	       break;
-	       );
-	  sd := opensocket(host,serv);
+	  sd := opensocket(filename);
 	  if sd == ERROR
 	  then (file or errmsg)(errmsg("can't open socket"))
 	  else (file or errmsg) (file(

@@ -1,11 +1,6 @@
 -- taken from:
 -- Bernd Sturmfels, FOUR COUNTEREXAMPLES IN COMBINATORIAL ALGEBRAIC GEOMETRY.
 
--- warning : these tests require 84MB of memory, so if your machine doesn't
--- have that, just skip them
-
---
-
 S = ZZ/101[a,b,c,d,e,f]
 I = ideal( a*(c+d) - b*f,
      b*(b+f) - c*e,
