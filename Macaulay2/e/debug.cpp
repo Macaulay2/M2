@@ -4,6 +4,7 @@
 #include "gbring.hpp"
 #include "respoly.hpp"
 #include "respoly2.hpp"
+#include "hermite.hpp"
 
 void dmatrix(const Matrix *M)
 {
@@ -67,6 +68,13 @@ void drespoly2(const res2_poly *R, const res2term *f)
 {
   buffer o;
   R->elem_text_out(o,f);
+  emit(o.str());
+}
+
+void dhermite(HermiteComputation *G)
+{
+  buffer o;
+  G->text_out(o);
   emit(o.str());
 }
 
