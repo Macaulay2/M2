@@ -182,7 +182,8 @@ M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int i, int j)
 M2_bool IM2_MutableMatrix_row_operation(Matrix *M, 
 					int i,
 					const RingElement *r, 
-					int j)
+					int j,
+					M2_bool left_mult)
   /* row(i) <- row(i) + r * row(j) */
 {
   const Ring *R = M->get_ring();
@@ -197,14 +198,15 @@ M2_bool IM2_MutableMatrix_row_operation(Matrix *M,
       return 0;
     }
 
-  M->row_op(i,r->get_value(),j);
+  M->row_op(i,r->get_value(),j, left_mult);
   return 1;
 }
 
 M2_bool IM2_MutableMatrix_column_operation(Matrix *M, 
 					   int i,
 					   const RingElement *r, 
-					   int j)
+					   int j,
+					   M2_bool left_mult)
   /* column(i) <- column(i) + r * column(j) */
 {
   const Ring *R = M->get_ring();
@@ -219,11 +221,14 @@ M2_bool IM2_MutableMatrix_column_operation(Matrix *M,
       return 0;
     }
 
-  M->column_op(i,r->get_value(),j);
+  M->column_op(i,r->get_value(),j, left_mult);
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_row_scale(Matrix *M, const RingElement *r, int i)
+M2_bool IM2_MutableMatrix_row_scale(Matrix *M, 
+				    const RingElement *r, 
+				    int i,
+				    M2_bool left_mult)
   /* row(i) <- r * row(i) */
 {
   const Ring *R = M->get_ring();
@@ -237,11 +242,14 @@ M2_bool IM2_MutableMatrix_row_scale(Matrix *M, const RingElement *r, int i)
       ERROR("row index out of range");
       return 0;
     }
-  M->scale_row(r->get_value(),i);
+  M->scale_row(r->get_value(),i, left_mult);
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_column_scale(Matrix *M, const RingElement *r, int i)
+M2_bool IM2_MutableMatrix_column_scale(Matrix *M, 
+    const RingElement *r, 
+    int i,
+    M2_bool left_mult)
   /* column(i) <- r * column(i) */
 {
   const Ring *R = M->get_ring();
@@ -255,7 +263,7 @@ M2_bool IM2_MutableMatrix_column_scale(Matrix *M, const RingElement *r, int i)
       ERROR("column index out of range");
       return 0;
     }
-  M->scale_column(r->get_value(),i);
+  M->scale_column(r->get_value(),i,left_mult);
   return 1;
 }
 
@@ -322,19 +330,19 @@ const Matrix * IM2_Matrix_negate(const Matrix *M)
   return - (*M);
 }
 
-const MatrixOrNull * IM2_Matrix_mult(const Matrix *M, const Matrix *N)
+const MatrixOrNull * IM2_Matrix_mult(const Matrix *M, 
+				     const Matrix *N, 
+				     M2_bool left_mult)
 {
   return (*M) * (*N);
 }
 
 const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
-					    const Matrix *M)
+					    const Matrix *M,
+					    M2_bool left_mult)
 {
   return (*M) * (f->get_value());
 }
-
-const MatrixOrNull * IM2_Matrix_scalar_right_mult(const Matrix *M, 
-						  const RingElement *f); /* TODO */
 
 const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
 {
