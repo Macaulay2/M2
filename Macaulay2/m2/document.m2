@@ -242,6 +242,8 @@ OL         = new MarkUpType
 NL         = new MarkUpType
 DL 	   = new MarkUpType
 TO         = new MarkUpType
+optionalTO = new class TO of TO
+remove(optionalTO,html)			    -- to counteract MarkUpType.GlobalAssignHook
 TOH        = new MarkUpType
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
@@ -434,7 +436,7 @@ getHeadline := key -> (
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
      if t === null and class key === Sequence then key#0 else t)
-headline := memoize (
+headline = memoize (
      key -> (
 	  key = unformat key;
 	  while ( d := getHeadline key ) === null and ( key = evenMoreGeneral key ) =!= null do null;
@@ -442,7 +444,7 @@ headline := memoize (
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO n, headline n, PARA{} }
+     if n =!= null then SEQ { "Next more general method: ", optionalTO n, headline n, PARA{} }
      )
 -----------------------------------------------------------------------------
 
@@ -453,8 +455,8 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU (TO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
- menu := s -> MENU (TO \ s)
+smenu := s -> MENU (optionalTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
+ menu := s -> MENU (optionalTO \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -471,10 +473,22 @@ usage = s -> (
      )
 
 title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
+
+inlineMenu := x -> between(", ", TO \ x)
+
 type := s -> SEQ {
-     "The object ", TT toExternalString s, " is a member of each of the
-     following classes, most specific first:", PARA{}, 
-     SHIELD menu ancestors1 class s, PARA{}
+     "The object ", TT toExternalString s, " is a member of each of the following
+     classes, most specific first: ", inlineMenu ancestors1 class s, ".\n",
+     if instance(s,Type) then (
+     	  d := ancestors s;
+	  SEQ {
+	       if s.?synonym then SEQ {
+	       	    "     Each object of class ", toString s, " is also called ", indefinite s.synonym, ".\n",},
+	       if #d > 0 then SEQ {
+		    "     Each ", synonym s, " is also a: ", inlineMenu d, "."},
+	       PARA{}
+	       }
+	  )
      }
 
 documentation = method(SingleArgumentDispatch => true)
@@ -553,17 +567,12 @@ documentation Type := X -> (
      c := apply(
 	  select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X),
 	  formatDocumentTag);
-     d := ancestors X;
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
 	  title X, 
 	  usage X,
      	  type X,
-	  if X.?synonym then SEQ {
-	       "Each object of class ", toString X, 
-	       " is also called ", indefinite X.synonym, ".", PARA{}},
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
-	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, SHIELD menu d, PARA{}},
 	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, SHIELD smenu a, PARA{}},
 	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
@@ -614,13 +623,7 @@ ret := k -> (
 seecode := x -> (
      f := lookup x;
      n := code f;
-     SEQ { "Code:",
-	  if n =!= null
-	  then PRE concatenate between(newline,netRows n)
-	  else MENU {
-	       SEQ { "code for ", if unDocumentable f then "this function" else TO toString f, " not available" }
-	       }
-	  }
+     if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
      )
 documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
 
@@ -653,7 +656,7 @@ documentation Sequence := s -> (
 	  if #s==2 and not instance(s#1,Type)
 	  then SHIELD MENU {
 	       SEQ {"Hash table: ", TO s#1 },
-	       SEQ {"Key: ", TO s#0 },
+	       SEQ {"Key: ", optionalTO s#0 },
 	       }
 	  else SHIELD MENU {
 	       SEQ {"Operator: ", TO s#0 },
@@ -1030,7 +1033,7 @@ net SHIELD := x -> horizontalJoin apply(x,net)
 
 html TEX := x -> x#0
 
-addHeadlines := x -> apply(x, i -> if class i === TO then SEQ{ new TO from i, headline i#0 } else i)
+addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
 html MENU := x -> concatenate (
      "<MENU>", newline,
@@ -1038,7 +1041,7 @@ html MENU := x -> concatenate (
      "</MENU>", newline, 
      "<P>", newline)
 
-addHeadlines1 := x -> apply(x, i -> if class i === TO then SEQ{ "help ", new TO from i, headline i#0 } else i)
+addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
 
 text MENU := x -> concatenate(
      newline,

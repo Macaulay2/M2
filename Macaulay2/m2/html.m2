@@ -446,5 +446,8 @@ html TO   := x -> concatenate (
 
 tex TO := x -> tex TT formatDocumentTag x#0
 
+optionalTO := new class TO of TO
+remove(optionalTO,html)			    -- to counteract MarkUpType.GlobalAssignHook
+
 html Function := x -> name x
 
