@@ -1224,43 +1224,21 @@ document {
      }
 
 document {
-     Key => Elimination,
-     Headline => "compute the saturation by elimination",
-     TT "Strategy => Elimination", " -- an option value for ", TO "saturate", " 
-     which indicates that the saturation of (I:f) should be computed by
-     eliminating z from (I,f*z-1), where z is a new variable."
-     }
-
-document {
      Key => Bayer,
-     Headline => "use the method in Bayer's thesis",
-     TT "Strategy => Bayer", " -- an option value for ", TO "saturate", " which
-     indicates that the method of Bayer's thesis should be used.",
-     PARA,
-     "The method is to compute saturate(I,f) for I and f homogeneous,
-     add a new variable z, compute a groebner basis of (I,f-z) in reverse lex order,
-     divide by z, and finally replace z by f."
+     Headline => "a Strategy option value for saturate",
+     SeeAlso => {[saturate,Strategy]}
      }
 
 document {
      Key => Iterate,
-     Headline => "use successive ideal quotients (the default)",
-     TT "Strategy => Iterate", " -- an option value for ", TO "saturate", " which
-     indicates that successive ideal or module quotients should be used.",
-     PARA,
-     "This value is the default."
+     Headline => "a Strategy option value for saturate",
+     SeeAlso => {[saturate,Strategy]}
      }
 
 document {
      Key => Linear,
-     Headline => "use the reverse lex order",
-     TT "Strategy => Linear", " -- an option value for ", TO "saturate", " which
-     indicates that the reverse lex order should be used to compute the saturation.",
-     PARA,
-     "This presumes that J is a single, linear polynomial, and that I 
-     is homogeneous.",
-     PARA,
-     "This is also an option value for ", TO "pushForward1", "."
+     Headline => "a Strategy option value for saturate",
+     SeeAlso => {[saturate,Strategy]}
      }
      
 
@@ -1277,13 +1255,13 @@ time saturate(J,a,Strategy=>Bayer)
 time saturate(J,a,Strategy=>Linear)
 time saturate(J,a,Strategy=>Iterate)
 time saturate(J,a,Strategy=>Default)
-time saturate(J,a,Strategy=>Elimination)
+time saturate(J,a,Strategy=>Eliminate)
 
 time saturate(J,Strategy=>Default)
 time saturate(J,Strategy=>Iterate)
 assert(try saturate(J,Strategy=>Bayer) else true)
 assert(try saturate(J,Strategy=>Linear) else true)
-assert(try saturate(J,Strategy=>Elimination) else true)
+assert(try saturate(J,Strategy=>Eliminate) else true)
 "
 
 TEST "
@@ -1294,7 +1272,7 @@ M = subquotient(matrix{{a^2,b^2},{a*d,c^2}}, matrix{{c},{d}})
 time saturate(M,a)
 time saturate(M,a,Strategy=>Bayer)
 time saturate(M,a,Strategy=>Linear)
-time saturate(M,a,Strategy=>Elimination)
+time saturate(M,a,Strategy=>Eliminate)
 time saturate(M,a,Strategy=>Iterate)
 "
 
@@ -1336,7 +1314,7 @@ F = row2_(0,0)
   -- best time: 21.76 seconds
 time saturate(J, F)
 time saturate(J, F, Strategy=>Bayer)  -- 21.76
-time saturate(J, F, Strategy=>Elimination) -- 26.08
+time saturate(J, F, Strategy=>Eliminate) -- 26.08
 "
 
 TEST "

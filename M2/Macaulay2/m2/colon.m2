@@ -271,16 +271,16 @@ satideal4 := options -> (I,f) -> (
      f = f_0;
      R := ring I;
      n := numgens R;
-     time R1 := (coefficientRing R)[Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
-     time fto := map(R1,R,genericMatrix(R1,R1_1,1,n));
-     time f1 := fto f;
-     time R2 := R1/(f1*R1_0-1);
-     time fback := map(R,R2,matrix{{0_R}} | vars R);
-     time fto =  map(R2,R,genericMatrix(R2,R2_1,1,n));
-     time II := ideal fto generators I;
-     time g := gb(II,options);
-     time p1 := selectInSubring(1, time generators g);
-     time ideal fback p1)
+     R1 := (coefficientRing R)[Variables=>n+1,MonomialOrder=>Eliminate 1,MonomialSize=>16];
+     fto := map(R1,R,genericMatrix(R1,R1_1,1,n));
+     f1 := fto f;
+     R2 := R1/(f1*R1_0-1);
+     fback := map(R,R2,matrix{{0_R}} | vars R);
+     fto =  map(R2,R,genericMatrix(R2,R2_1,1,n));
+     II := ideal fto generators I;
+     g := gb(II,options);
+     p1 := selectInSubring(1, generators g);
+     ideal fback p1)
 
 removeOptions := (options, badopts) -> (
     options = new MutableHashTable from options;
@@ -320,12 +320,12 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
         f = satideal3;
 	if gbTrace > 0 then << "colon ideal: using Bayer strategy" << endl;	
       )
-    else if strategy === Elimination then
+    else if strategy === Eliminate then
       (
 	if n =!= 1
-	then error "'Elimination' method requires a single element";
+	then error "'Eliminate' strategy for 'saturate' expected argument 2 to be a principal ideal";
         f = satideal4;
-	if gbTrace > 0 then << "colon ideal: using Elimination strategy" << endl;
+	if gbTrace > 0 then << "colon ideal: using Eliminate strategy" << endl;
 	)
     else if strategy === Iterate then (
 	f = satideal0;

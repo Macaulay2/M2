@@ -1,4 +1,4 @@
-newPackage("Eliminate",
+newPackage("Elimination",
      Version => "1.0", 
      Date => "January 5, 2005",
      Author => "Michael E. Stillman <mike@math.cornell.edu>",
@@ -11,9 +11,9 @@ export(eliminate, sylvesterMatrix, discriminant, resultant)
 --- Preliminaries  --
 ---------------------
 
-getIndices = (R,v) -> unique apply(v, a -> index(R,a))
+getIndices = (R,v) -> unique apply(v, index)
 
-degree (RingElement, RingElement) := (f,x) -> first max degrees source first coefficients({index(ring f,x)},f)
+degree (RingElement, RingElement) := (f,x) -> first max degrees source first coefficients({index x},f)
 
 ------------------------------
 -- Elimination of variables --
@@ -54,7 +54,7 @@ sylvesterMatrix = method()
 sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      R := ring f;
      if R =!= ring g then error "expected same ring";
-     v := index(R,x);  -- just to check if x is a variable in the polyring R.
+     v := index x;  -- just to check if x is a variable in the polyring R.
      if f == 0 or g == 0 
      then map(R^1,R^1,0)
      else (
@@ -85,7 +85,7 @@ discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
 beginDocumentation()
 
 document {
-     Key => Eliminate
+     Key => Elimination
      }
 
 document {
@@ -123,6 +123,34 @@ document {
      SeeAlso => "sylvesterMatrix"
      }
 
+document {
+     Key => discriminant,
+     Usage => "d = discriminant(f,x)",
+     Inputs => {
+	  "f" => "a polynomial",
+	  "x" => "a variable"
+	  },
+     Outputs => {
+     	  "d" => {"the discriminant of ", TT "f", " with respect to ", TT "x"}
+	  }
+     }
+
+document {
+     Key => sylvesterMatrix,
+     Usage => "s = sylvesterMatrix(f,g,x)",
+     Inputs => {
+	  "f" => "a polynomial",
+	  "g" => "a polynomial",
+	  "x" => "a variable"
+	  },
+     Outputs => {
+     	  "s" => {"the Sylvester matrix of ", TT "f", " and ", TT "g", " with respect to ", TT "x"}
+	  },
+     "Its determinant is the resultant of ", TT "f", " and ", TT "g", ".",
+     SeeAlso => "resultant"
+     }
+
+
 TEST ///
 R = ZZ/101[a..d]
 time I = monomialCurveIdeal(R,{1,3,4})
@@ -146,5 +174,5 @@ time eliminate(ideal(f1,f2),a)
 ///
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Eliminate.installed"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Elimination.installed"
 -- End:

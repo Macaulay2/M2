@@ -170,7 +170,6 @@ export (
 	symbol EM,					    -- cryptic
 	symbol EXAMPLE,
 	symbol Eliminate,
-	symbol Elimination,
 	symbol EliminationOrder,
 	symbol EmptyMarkUpType,
 	symbol Encapsulate,

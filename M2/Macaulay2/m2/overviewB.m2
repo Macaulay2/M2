@@ -347,7 +347,7 @@ document {
 	  	    },
 	       "The function ", TT "saturate", " has three optional arguments.  First 
 	       a strategy for computation can be chosen.  The options are , ", TO "Linear",
-	       ", ", TO "Iterate", ", ", TO "Bayer", ", and ", TO "Elimination", ".  We 
+	       ", ", TO "Iterate", ", ", TO "Bayer", ", and ", TO "Eliminate", ".  We 
 	       leave descriptions of the options to their links, but give an example of the
 	       syntax for optional arguments.",
 	       EXAMPLE {
