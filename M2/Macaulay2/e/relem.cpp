@@ -230,8 +230,7 @@ RingElementOrNull *RingElement::lead_coeff(const Ring *coeffR) const
     }
   if (is_zero())
     {
-      ERROR("zero polynomial has no lead coefficient");
-      return 0;
+      return new RingElement(coeffR, coeffR->zero());
     }
   return new RingElement(coeffR, P->lead_logical_coeff(coeffR,val));
 }

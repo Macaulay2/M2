@@ -5,6 +5,8 @@ Ring == ZZ := (R,i) -> (
      else error "comparison of ring with nonzero integer encountered"
      )
 
+Ring == Ring := (R,S) -> R === S
+
 ZZ == Ring := (i,R) -> R == i
 
 poincare Ring := R -> poincare R^1
