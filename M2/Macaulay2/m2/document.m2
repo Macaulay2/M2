@@ -18,7 +18,7 @@ addStartFunction(
 	  )
      )
 -----------------------------------------------------------------------------
--- the phase encoding
+-- the phase encoding, obsolete
 -----------------------------------------------------------------------------
 writingInputFiles         := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
@@ -287,6 +287,11 @@ NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
 PARA       = new MarkUpType
 EXAMPLE    = new MarkUpType
+--new EXAMPLE from List := x -> (
+--     tbl := currentPackage#"test inputs";
+--     inputs := if not tbl#?nodeName then tbl#nodeName = new MutableHashTable;
+--     scan(x, example -> inputs# #inputs = example);
+--     x)
 TABLE      = new MarkUpType
 ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
@@ -422,15 +427,16 @@ checkForExampleOutputFile := () -> (
 	  );
      )
 
-checkForExampleInputFile := () -> exampleInputFile = (
-     if writingInputFiles() then openOut(nodeBaseFilename | ".example")
-     else null
-     )
+-- checkForExampleInputFile := () -> exampleInputFile = (
+--      if writingInputFiles() then openOut(nodeBaseFilename | ".example")
+--      else null
+--      )
 
-extractExamples            := method(SingleArgumentDispatch => true)
-extractExamples Thing      := x -> {}
-extractExamples EXAMPLE    := x -> toList x
-extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
+-- obsolete
+-- extractExamples            := method(SingleArgumentDispatch => true)
+-- extractExamples Thing      := x -> {}
+-- extractExamples EXAMPLE    := x -> toList x
+-- extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
 
 processExample := x -> (
      exampleCounter = exampleCounter + 1;
@@ -454,16 +460,17 @@ processExamplesLoop := s -> (
      else s)
 
 processExamples := (docBody) -> (
-     exampleResults = {};
-     exampleCounter = 0;
-     examples := extractExamples docBody;
-     if #examples > 0 then (
-     	  checkForExampleOutputFile();
-     	  checkForExampleInputFile();
-	  docBody = apply(docBody,processExamplesLoop);
-	  if exampleInputFile =!= null then close exampleInputFile;
-	  );
-     docBody)
+-- obsolete?
+--      exampleResults = {};
+--      exampleCounter = 0;
+--      examples := extractExamples docBody;
+--      if #examples > 0 then (
+--      	  checkForExampleOutputFile();
+--      	  checkForExampleInputFile();
+-- 	  docBody = apply(docBody,processExamplesLoop);
+-- 	  if exampleInputFile =!= null then close exampleInputFile;
+-- 	  );
+      docBody)
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------

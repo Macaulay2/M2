@@ -147,6 +147,10 @@ net List := x -> horizontalJoin deepSplice (
      "{",
      toSequence between(comma,apply(x,net)),
      "}")
+
+VerticalList = new Type of List
+net List := x -> "{" | stack toSequence apply(x,net) | "}"
+
 net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,net)),

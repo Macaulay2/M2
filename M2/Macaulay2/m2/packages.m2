@@ -22,7 +22,7 @@ addStartFunction(
 currentPackage = null
 writableGlobals.currentPackage = true
 
-packages = {}
+packages = new VerticalList from {}
 writableGlobals.packages = true
 
 Dictionary = new Type of MutableHashTable		    -- temporary fiction
