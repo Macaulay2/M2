@@ -199,7 +199,7 @@ do:
 -- files:
 --    factor.m2
 	gggcdextended
-	rawTopCoefficients -- can start debugging 'decompose' after this is connected.
+	rawTopCoefficients -- DONE
 --    galois.m2
 	GF Ring
 --    gb.m2
@@ -215,7 +215,7 @@ do:
 	matrix(List)
 --    matrix2.m2
 	oldCoefficients
-	compress -- rawMatrixCompress
+	compress -- DONE
 --    modules2.m2
 	truncate(List,Module)
 --    monideal.m2

@@ -123,8 +123,7 @@ public:
   /* The following 5 routines will go away, or change name */
   vec &operator[](int i) { return _entries[i]; }
   const vec &operator[](int i) const { return _entries[i]; }
-  ring_elem elem(int i, int j) const 
-    { return rows()->get_coefficient(elem(j), i); }
+  ring_elem elem(int i, int j) const;
   vec &elem(int i) { return _entries[i]; }
   const vec &elem(int i) const { return _entries[i]; }
   /*****************************************/

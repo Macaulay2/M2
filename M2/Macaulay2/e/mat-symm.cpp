@@ -58,7 +58,7 @@ private:
     
     if (p >= 0)
       {
-	vec f = m->rows()->e_sub_i(0);
+	vec f = R->e_sub_i(0);
 	symm1(f, 0, p);	  // consumes f
       }
   }
@@ -144,7 +144,7 @@ SymmMatrix::SymmMatrix(const Matrix *m0, int p)
 
   if (p >= 0)
     {
-      vec f = m->rows()->e_sub_i(0);
+      vec f = R->e_sub_i(0);
       symm1(f, 0, p);	  // consumes f
     }
 }

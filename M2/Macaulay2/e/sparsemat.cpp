@@ -506,6 +506,7 @@ SparseMutableMatrix::~SparseMutableMatrix()
 Matrix *SparseMutableMatrix::toMatrix() const
 {
   FreeModule *F = K->make_FreeModule(nrows);
+  const Ring *R = F->get_ring();
   MatrixConstructor mat(F,0,false);
   for (int c=0; c<ncols; c++)
     {
@@ -513,8 +514,8 @@ Matrix *SparseMutableMatrix::toMatrix() const
       vec v = 0;
       for (sparse_vector *w = matrix[c]; w!=0; w=w->next)
 	{
-	  vec tmp = F->raw_term(K->copy(w->coefficient), w->component);
-	  F->add_to(v,tmp);
+	  vec tmp = R->make_vec(w->component, K->copy(w->coefficient));
+	  R->add_vec_to(v,tmp);
 	}
       mat.append(v);
     }

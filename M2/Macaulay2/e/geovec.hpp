@@ -63,21 +63,29 @@ inline vecHeap::~vecHeap()
 inline void vecHeap::add(vecterm * p)
 {
   mLead = -1;
-  int len = F->n_terms(p);
+  int len = K->n_nonzero_terms(p);
   int i= 0;
   while (len >= heap_size[i]) i++;
-  F->add_to(heap[i], p);
-  len = F->n_terms(heap[i]);
+  K->add_vec_to(heap[i], p);
+  len = K->n_nonzero_terms(heap[i]);
   p = NULL;
   while (len >= heap_size[i])
     {
       i++;
-      F->add_to(heap[i], heap[i-1]);
-      len = F->n_terms(heap[i]);
+      K->add_vec_to(heap[i], heap[i-1]);
+      len = K->n_nonzero_terms(heap[i]);
       heap[i-1] = NULL;
     }
   if (i > top_of_heap)
     top_of_heap = i;
+}
+
+static int compare(const vecterm *t, const vecterm *s)
+{
+  int cmp = t->comp - s->comp;
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
+  return EQ;
 }
 
 inline const vecterm * vecHeap::get_lead_term()
@@ -91,7 +99,7 @@ inline const vecterm * vecHeap::get_lead_term()
 	  lead_so_far = i;
 	  continue;
 	}
-      int cmp = F->compare(heap[lead_so_far], heap[i]);
+      int cmp = compare(heap[lead_so_far], heap[i]);
       if (cmp == GT) continue;
       if (cmp == LT)
 	{
@@ -103,7 +111,7 @@ inline const vecterm * vecHeap::get_lead_term()
       vecterm * tmp = heap[i];
       heap[i] = tmp->next;
       tmp->next = NULL;
-      F->remove(tmp);
+      K->remove_vec(tmp);
 
       if (K->is_zero(heap[lead_so_far]->coeff))
 	{
@@ -111,7 +119,7 @@ inline const vecterm * vecHeap::get_lead_term()
 	  tmp = heap[lead_so_far];
 	  heap[lead_so_far] = tmp->next;
 	  tmp->next = NULL;
-	  F->remove(tmp);
+	  K->remove_vec(tmp);
 	  lead_so_far = -1;
 	  i = -1;
 	}
@@ -138,7 +146,7 @@ inline vecterm * vecHeap::value()
   for (int i=0; i<=top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;
-      F->add_to(result, heap[i]);
+      K->add_vec_to(result, heap[i]);
       heap[i] = NULL;
     }
   top_of_heap = -1;
@@ -150,8 +158,8 @@ inline vecterm * vecHeap::current_value() const
   for (int i=0; i<=top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;
-      vecterm * tmp = F->copy(heap[i]);
-      F->add_to(result, tmp);
+      vecterm * tmp = K->copy_vec(heap[i]);
+      K->add_vec_to(result, tmp);
     }
   return result;
 }

@@ -18,10 +18,10 @@ hm_elem *HermiteComputation::new_gen(int i)
   else
     {
       mpz_abs(result->lead, MPZ_VAL((*gens)[i]->coeff));
-      result->f = gens->rows()->copy((*gens)[i]);
+      result->f = globalZZ->copy_vec(gens->elem(i));
     }
   if (i < n_comps_per_syz)
-    result->fsyz = syz->rows()->e_sub_i(i);
+    result->fsyz = globalZZ->e_sub_i(i);
   else
     result->fsyz = NULL;
   result->next = NULL;
@@ -76,8 +76,8 @@ HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
 void HermiteComputation::remove_hm_elem(hm_elem *&p)
 {
   mpz_clear(p->lead);
-  gens->rows()->remove(p->f);
-  syz->rows()->remove(p->fsyz);
+  globalZZ->remove_vec(p->f);
+  globalZZ->remove_vec(p->fsyz);
   deleteitem(p);
   p = NULL;
 }
@@ -140,17 +140,17 @@ hm_elem *HermiteComputation::merge(hm_elem *f, hm_elem *g)
 	// In this case, we remove one, and re-insert:
 	if (mpz_cmp(MPZ_VAL(f->f->coeff), MPZ_VAL(g->f->coeff)) == 0)
 	  {
-	    vec f1 = gens->rows()->copy(f->f);
-	    vec f2 = syz->rows()->copy(f->fsyz);
-	    gens->rows()->subtract_to(g->f, f1);
-	    syz->rows()->subtract_to(g->fsyz, f2);
+	    vec f1 = globalZZ->copy_vec(f->f);
+	    vec f2 = globalZZ->copy_vec(f->fsyz);
+	    globalZZ->subtract_vec_to(g->f, f1);
+	    globalZZ->subtract_vec_to(g->fsyz, f2);
 	  }
 	else
 	  {
-	    vec f1 = gens->rows()->copy(f->f);
-	    vec f2 = syz->rows()->copy(f->fsyz);
-	    gens->rows()->add_to(g->f, f1);
-	    syz->rows()->add_to(g->fsyz, f2);
+	    vec f1 = globalZZ->copy_vec(f->f);
+	    vec f2 = globalZZ->copy_vec(f->fsyz);
+	    globalZZ->add_vec_to(g->f, f1);
+	    globalZZ->add_vec_to(g->fsyz, f2);
 	  }
 
 	h = g;
@@ -216,26 +216,26 @@ void HermiteComputation::reduce(hm_elem *&p, hm_elem *q)
   ring_elem b = globalZZ->divide(p->f->coeff, g); // exact
   globalZZ->negate_to(b);
 
-  vec p1 = gens->rows()->mult(u, p->f);
-  vec p2 = gens->rows()->mult(v, q->f);
-  gens->rows()->add_to(p1, p2);
+  vec p1 = globalZZ->mult_vec(u, p->f);
+  vec p2 = globalZZ->mult_vec(v, q->f);
+  globalZZ->add_vec_to(p1, p2);
 
-  vec syz1 = syz->rows()->mult(u, p->fsyz);
-  vec syz2 = syz->rows()->mult(v, q->fsyz);
-  syz->rows()->add_to(syz1, syz2);
+  vec syz1 = globalZZ->mult_vec(u, p->fsyz);
+  vec syz2 = globalZZ->mult_vec(v, q->fsyz);
+  globalZZ->add_vec_to(syz1, syz2);
 
-  vec q1 = gens->rows()->mult(a, p->f);
-  vec q2 = gens->rows()->mult(b, q->f);
-  gens->rows()->add_to(q1, q2);
+  vec q1 = globalZZ->mult_vec(a, p->f);
+  vec q2 = globalZZ->mult_vec(b, q->f);
+  globalZZ->add_vec_to(q1, q2);
 
-  vec qsyz1 = syz->rows()->mult(a, p->fsyz);
-  vec qsyz2 = syz->rows()->mult(b, q->fsyz);
-  syz->rows()->add_to(qsyz1, qsyz2);
+  vec qsyz1 = globalZZ->mult_vec(a, p->fsyz);
+  vec qsyz2 = globalZZ->mult_vec(b, q->fsyz);
+  globalZZ->add_vec_to(qsyz1, qsyz2);
   
-  gens->rows()->remove(p->f);
-  gens->rows()->remove(q->f);
-  syz->rows()->remove(p->fsyz);
-  syz->rows()->remove(q->fsyz);
+  globalZZ->remove_vec(p->f);
+  globalZZ->remove_vec(q->f);
+  globalZZ->remove_vec(p->fsyz);
+  globalZZ->remove_vec(q->fsyz);
   globalZZ->remove(a);
   globalZZ->remove(b);
   globalZZ->remove(g);
@@ -291,7 +291,7 @@ const MatrixOrNull *HermiteComputation::get_gb()
 {
   MatrixConstructor mat(gens->rows(), 0, false);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    mat.append(gens->rows()->copy(p->f));
+    mat.append(globalZZ->copy_vec(p->f));
   return mat.to_matrix();
 }
 
@@ -305,7 +305,7 @@ const MatrixOrNull *HermiteComputation::get_change()
 {
   MatrixConstructor mat(syz->rows(), 0, false);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    mat.append(syz->rows()->copy(p->fsyz));
+    mat.append(globalZZ->copy_vec(p->fsyz));
   return mat.to_matrix();
 }
 
@@ -347,9 +347,9 @@ void HermiteComputation::text_out(buffer &o)
 	  {
 	    bignum_text_out(o, p->lead);
 	    o << " ## ";
-	    gens->rows()->elem_text_out(o, p->f);
+	    globalZZ->elem_text_out(o, p->f);
 	    o << " ## ";
-	    syz->rows()->elem_text_out(o, p->fsyz);
+	    globalZZ->elem_text_out(o, p->fsyz);
 	    o << newline;
 	  }
       }
@@ -442,11 +442,11 @@ void HermiteComputation::matrix_lift(const Matrix *m,
   }
   for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = gens->rows()->copy((*m)[i]);
+      vec f = globalZZ->copy_vec(m->elem(i));
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
-      syz->rows()->negate_to(fsyz);
+      globalZZ->negate_vec_to(fsyz);
       mat_remainder.set_column(i, f);
       mat_quotient.set_column(i, fsyz);
     }
@@ -463,13 +463,13 @@ int HermiteComputation::contains(const Matrix *m)
   // Reduce each column of m one by one.
   for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = gens->rows()->translate(m->rows(),(*m)[i]);
+      vec f = globalZZ->copy_vec(m->elem(i));
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
-      syz->rows()->remove(fsyz);
+      globalZZ->remove_vec(fsyz);
       if (f != NULL)
 	{
-	  gens->rows()->remove(f);
+	  globalZZ->remove_vec(f);
 	  return i;
 	}
     }
