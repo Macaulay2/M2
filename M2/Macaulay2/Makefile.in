@@ -60,7 +60,7 @@ distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 check ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
 ################################# tutorial
-#### keep this before 'm2' so the final/*.out files get made
+	gg#### keep this before 'm2' so the final/*.out files get made
 justM2::; $(MAKE) -C tutorial all
 install all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2
@@ -86,6 +86,9 @@ all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
 ################################# bin
 install install-strip distclean clean ::; $(MAKE) -C bin $@
+################################# man
+all install :: ; $(MAKE) -C man $@
+install-strip :: ; $(MAKE) -C man install
 ################################# cache
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(ENCAP)" "no"
