@@ -16,6 +16,11 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New features for nets: if n is a Net, then #n is the number of rows,
+n#i gives the i-th row (well, actually, i=0 gives the first row), and
+n#-i gives the i-th row from the end.  This will make it more
+convenient to regard a net as a vertical array of strings.
+
 User input is now obtained through the GNU readline routine, with
 history.  It's a versatile mechanism for editing the current input
 line and retrieving previous input lines using emacs-like

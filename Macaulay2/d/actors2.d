@@ -237,6 +237,17 @@ subvalue(left:Expr,right:Expr):Expr := (
 		    else Expr(string(x.rr)))
 	       else buildErrorPacket("string index out of bounds"))
 	  else buildErrorPacket("expected subscript to be an integer"))
+     is n:Net do (
+	  x := n.body;
+	  when right is r:Integer do (
+	       if isInt(r) then (
+		    rr := toInt(r);
+		    if rr < 0 then rr = rr + length(x);
+		    if rr < 0 || rr >= length(x) 
+		    then buildErrorPacket("net row index out of bounds")
+		    else Expr(x.rr))
+	       else buildErrorPacket("net row index out of bounds"))
+	  else buildErrorPacket("expected subscript to be an integer"))
      else buildErrorPacket("expected a list, hash table, or sequence"));
 subvalueQ(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalue above
@@ -270,6 +281,16 @@ subvalueQ(left:Expr,right:Expr):Expr := (
 		    else True)
 	       else False)
 	  else False)
+     is n:Net do (
+	  x := n.body;
+	  when right is r:Integer do (
+	       if isInt(r) then (
+		    rr := toInt(r);
+		    if rr < 0 || rr >= length(x) 
+		    then False
+		    else True)
+	       else False)
+	  else False)
      else False);
 subvalue(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
@@ -294,6 +315,7 @@ lengthFun(rhs:Code):Expr := (
 	  else buildErrorPacket("file not open")
 	  )
      is s:string do Expr(toInteger(length(s)))
+     is n:Net do Expr(toInteger(length(n.body)))
      else buildErrorPacket("expected a list, sequence, hash table, file, or string"));
 setup(SharpS,lengthFun,subvalue);
 subvalueQ(lhs:Code,rhs:Code):Expr := (
