@@ -36,7 +36,7 @@ S = ZZ/101[x,y]
 F = map(R,S,{a-b, b^2-c^2})
 inF = map(R,S,leadTerm (F.matrix))
 J = graphIdeal(inF, MonomialOrder=>ProductOrder{3,2})
-gens gb J
+generators gb J
 
 subduction(m, F, J)
 ///

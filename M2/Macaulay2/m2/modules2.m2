@@ -80,7 +80,7 @@ Module ** Ring := Module => (M,R) -> (
 	  if k === R then M
 	  else (
 	       try promote(1_k, R) else error "can't tensor by this ring";
-	       if M.?generators then coker presentation M ** R
+	       if M.?generators then cokernel presentation M ** R
 	       else if M.?relations then cokernel (M.relations ** R)
 	       else if isQuotientOf(R,k) then R^(- degrees M)
 	       else R^(rank M)
@@ -107,7 +107,7 @@ poincare Module := M -> (
      R := ring M;
      n := degreeLength R;
      if n == 0 then error "expected nonzero degree length";
-     M = coker presentation M;
+     M = cokernel presentation M;
      -- if not isHomogeneous relations M then error "expected a homogeneous module";
      ZZn := degreesRing R;
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
@@ -205,7 +205,7 @@ hilbertSeries Module := options -> (M) -> (
 				   then (
 					-- we factor f as f1 * f2
 					i0 := first i;
-					t := product gens T;
+					t := product generators T;
 					f1 := 1 - t;
 					e1 := e;
 					f2 := sum(i0,j->t^j);
@@ -386,7 +386,7 @@ Module == ZZ := (M,n) -> (
 --      if degreeLength ring M === 0 
 --      then error "can't compute dimension over a ring with zero degree length";
 --      if not isHomogeneous M
---      then M = cokernel leadTerm gens gb presentation M;
+--      then M = cokernel leadTerm generators gb presentation M;
 --      if poincare M == 0
 --      then -1
 --      else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
@@ -433,7 +433,7 @@ prune(Module) := Module => M -> (
 	       N.pruningMap = map(M,N,g);
 	       N)
 	  else (
-	       f = gens gb presentation M;
+	       f = generators gb presentation M;
 	       -- MES: can't it do more here?
 	       N = cokernel f;
 	       N.pruningMap = map(M,N,id_(cover M));
@@ -699,9 +699,9 @@ isSubset(Module,Module) := (M,N) -> (
      if M.?relations and N.?relations then (
 	  image M.relations == image N.relations
 	  and
-	  issub(M.relations | gens M, N.relations | gens N))
+	  issub(M.relations | generators M, N.relations | generators N))
      else if not M.?relations and not N.?relations then (
-	  issub(gens M, gens N))
+	  issub(generators M, generators N))
      else false
      )
 isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)

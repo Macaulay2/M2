@@ -77,7 +77,7 @@ resolutionInEngine := options -> (M) -> (
 	  then error "expected coefficient ring to be a field";
 	  g := presentation M;
 	  if options.Strategy === 0 then
-	      g = gens gb g;  -- this is needed since the (current)
+	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
 	  harddegreelimit := (

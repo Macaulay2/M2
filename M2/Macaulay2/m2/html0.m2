@@ -80,7 +80,6 @@ LISTING    = new MarkUpType of MarkUpListParagraph
 LITERAL    = new MarkUpType of MarkUpList
 XMP        = new MarkUpType of MarkUpList
 BLOCKQUOTE = new MarkUpType of MarkUpList
-VAR        = new MarkUpType of MarkUpList
 DFN        = new MarkUpType of MarkUpList
 STRONG     = new MarkUpType of MarkUpList
 BIG        = new MarkUpType of MarkUpList

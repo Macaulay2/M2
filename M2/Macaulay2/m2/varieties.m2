@@ -164,7 +164,7 @@ globalSectionsModule := (G,bound) -> (
      if S != 0 then M = M/S;
      F := presentation A;
      R := ring F;
-     N := coker lift(presentation M,R) ** coker F;
+     N := cokernel lift(presentation M,R) ** cokernel F;
      r := numgens R;
      wR := R^{-r};
      if bound < infinity and pdim N >= r-1 then (
@@ -207,7 +207,7 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       p := presentation R;
 	       A := ring p;
 	       n := numgens A;
-	       M := coker lift(presentation module F,A) ** coker p;
+	       M := cokernel lift(presentation module F,A) ** cokernel p;
 	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
@@ -351,7 +351,7 @@ Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (m,F,G') -> (
           S := ring f;
           n := numgens S -1;
           l := min(dim N, m);
-	  P := res(coker lift(presentation N,S) ** coker f);
+	  P := resolution(cokernel lift(presentation N,S) ** cokernel f);
 	  p := length P;
 	  if p < n-l then E = Ext^m(M, N)
 	  else (
@@ -400,7 +400,7 @@ TEST ///
      X = variety ideal(w*x+y*z,w*y+x*z);
      R = ring X;
      omega = OO_X^{-1};
-     G = sheaf coker genericSymmetricMatrix(R,R_0,2);
+     G = sheaf cokernel genericSymmetricMatrix(R,R_0,2);
      assert(Ext^2(G,omega) == dual HH^0(G))
      assert(Ext^1(G,omega) == dual HH^1(G))
      assert(Ext^0(G,omega) == dual HH^2(G))

@@ -16,7 +16,7 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-Hypertext format items removed for lack of use: BASE.
+Hypertext format items removed for lack of use: BASE, VAR.
 
 The sort order for symbols has been changed to the normal way, for
 agreement with the sort order for strings.  Formerly, we mimicked the

@@ -24,7 +24,7 @@ isNormal(Ring) := Boolean => (R) -> (
      --of Ext^i(S/I,S) where R = S/I and i>codim I. If 
      --the codimensions are >= i+2 then return true.
      I := ideal (R);
-     M := coker gens I;
+     M := cokernel generators I;
      n := codim I;
      m := dim ring I;    -- 11 June 01 -- Write this so that it checks
      m2:= dim R;         -- S2 first and prints "is S2".  Then checks
@@ -42,7 +42,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- generators, radical computes it in about 4 or 5 sec and 
 -- radical0 does not finish.
 radical0 := (I) -> (
-     I = ideal mingens ideal gens gb I;
+     I = ideal mingens ideal generators gb I;
      comps := decompose I;
      result := if #comps === 1 then comps#0
                else intersect toSequence comps;
@@ -104,7 +104,7 @@ newICnode := (R) -> (
      C#"vars" = toSequence (ring I).generatorSymbols;
      C#"numgens" = 0;
      C#"newvars" = {};
-     C#"fractions" = gens R;
+     C#"fractions" = generators R;
      C#"fraclong" = {};
      C#"map" = null;
      C#"rings" = R;
@@ -129,7 +129,7 @@ idealizer0 := (C,w) -> (
      -- easier.  It also facilitates handling the non prime case.
      I := C#"pending"#0;
      J := C#"pending"#1;
-     Jc := ideal compress (gens J % gens I);
+     Jc := ideal compress (generators J % generators I);
      -- Find an element of J, a nzd in S/I.  Need to make sure we donot 
      -- choose an element in I, so first we reduce J mod I.
      J1 := I:Jc_0;
@@ -145,9 +145,9 @@ idealizer0 := (C,w) -> (
      	  -- Compute Hom_R(J,J), with R = S/I.
      	  -- From now on, we work in this quotient:
      	  R := (ring I)/I;
-     	  JR := ideal (gens J ** R);
+     	  JR := ideal (generators J ** R);
      	  fR := substitute(f, R);
-     	  idJ := mingens ideal gens gb (fR * JR : JR);
+     	  idJ := mingens ideal generators gb (fR * JR : JR);
      	  if ideal(idJ) == ideal(fR)  then (
 	       -- We have the answer for this ideal!
 	       C#"answer" = append(C#"answer", {ring I,I});
@@ -162,7 +162,7 @@ idealizer0 := (C,w) -> (
      	       H := compress (idJ % fR);
 	       C#"fractions" = join((apply(first entries H,i->i/fR)),C#"fractions");
 	       C#"fraclong" = join((apply(first entries H,i->i/fR)),C#"fraclong");
-     	       Ha := (fR // gens JR);  
+     	       Ha := (fR // generators JR);  
 	       -- MES: what is this Ha all about: the problem is that
 	       -- although f is a minimal generator of (fJ:J) mod I,
 	       -- it might not be given immediately as one of the elements.
@@ -189,7 +189,7 @@ idealizer0 := (C,w) -> (
 	       newvars := (vars A)_{0..n-1};
 	       C#"newvars" = join(entries newvars,C#"newvars");
      	       RtoA := map(A,R,(vars A)_{n..numgens R + n - 1});
-	       IA := ideal ((map(A,ring I,RtoA.matrix)) (gens I));
+	       IA := ideal ((map(A,ring I,RtoA.matrix)) (generators I));
 	       XX := newvars | matrix{{1_A}};
      	       -- Linear relations in the new variables
      	       lins := XX * RtoA syz Hf; 
@@ -198,7 +198,7 @@ idealizer0 := (C,w) -> (
 	       tails := (symmetricPower(2,H) // fR) // Hf;
 	       tails = RtoA tails;
 	       quads := matrix(A, entries (symmetricPower(2,newvars) - XX * tails));
-	       newI1 := trim ideal matrix entries gens (
+	       newI1 := trim ideal matrix entries generators (
 		    ideal lins + ideal quads + IA);
 	       newJ1 := newI1 + RtoA JR;
 	       newI := minPresIdeal(newI1);
@@ -237,7 +237,7 @@ normal0 := (C) -> (
      SI := jacobian I;
      R := (ring I)/I;
      SIR := substitute(SI,R);
-     if isHomogeneous I and #(first entries gens I)+#(gens ring I) <= 20 then (
+     if isHomogeneous I and #(first entries generators I)+#(generators ring I) <= 20 then (
 	  SIdets := minors(codim I, SIR);
 	   -- the codimension of the singular locus.
 	  cs := codim SIdets + codim R;  -- codim of SIdets in poly ring. 
@@ -323,7 +323,7 @@ ICfractions(Ring) := RingMap => (R) -> (
 	  done := false;
 	  while done == false do (
 	       L2 = G(L2);
-	       done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(gens K , {#(gens K)-#(R.generatorSymbols),#(gens K)}));
+	       done = isSubset(ideal apply(first entries L2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
 	       );
 	  K3 := frac R;
 	  substitute(L2,K3)
@@ -358,7 +358,7 @@ ICfractionsLong(Ring) := RingMap => (R) -> (
      	  done := false;
 	  while done == false do (
 	       G2 = Map(G2);
-	       done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(gens K , {#(gens K)-#(R.generatorSymbols),#(gens K)}));
+	       done = isSubset(ideal apply(first entries G2,i->numerator i), ideal take(generators K , {#(generators K)-#(R.generatorSymbols),#(generators K)}));
 	       );
 	  K2 := frac R;
 	  substitute(G2,K2))

@@ -19,7 +19,7 @@ ass1 := (I,printlevel) -> (
      i := codim I1;
      d := dim polyRing;
      local currentext;
-     C := resolution(coker gens I, LengthLimit => d+1);
+     C := resolution(cokernel generators I, LengthLimit => d+1);
      --here we look at the associated primes of the i-th
      --ext and pick out the height i components ala EHV
      while i <= d do ( 
@@ -163,7 +163,7 @@ SYlocalize := (assroutine) -> (I,P,printlevel) ->(
      else (
 	  if printlevel >= 1 then (<< endl << 
 	       "Finding a separator polynomial" << endl);
-	  f := lift((flatten entries gens gb IOPrp)#0,
+	  f := lift((flatten entries generators gb IOPrp)#0,
 	       polyRing);
 	  if printlevel >= 2 then (<< endl << "It equals "
 	       << f << endl);

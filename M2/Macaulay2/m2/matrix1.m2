@@ -468,7 +468,7 @@ toString Ideal := (I) -> if I.cache.?name then I.cache.name else toString expres
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 
-degrees Ideal := I -> degrees source gens I
+degrees Ideal := I -> degrees source generators I
 
 genera(Ideal) := (I) -> genera ((ring I)^1/I)
 euler(Ideal) := (I) -> euler ((ring I)^1/I)

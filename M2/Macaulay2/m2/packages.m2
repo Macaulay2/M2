@@ -157,6 +157,7 @@ export Sequence := v -> (
 	       if class sym === Option then (
 		    nam = sym#0;			    -- synonym
      	       	    if class nam =!= String then error("expected a string: ", nam);
+		    if pd#?nam then error("symbol intended as exported synonym already used internally: ",format nam, ", at ", symbolLocation pd#nam);
 		    sym = sym#1;
 		    )
 	       else (

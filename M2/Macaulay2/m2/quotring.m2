@@ -73,7 +73,7 @@ savedQuotients := new MutableHashTable
 savedEQuotients := new MutableHashTable
 
 ZZquotient := (R,I) -> (
-     gensI := gens I;
+     gensI := generators I;
      if ring gensI =!= ZZ then error "expected an ideal of ZZ";
      n := gcd flatten entries gensI;
      if n < 0 then n = -n;
@@ -159,9 +159,9 @@ Ring / RingElement := Ring / List := Ring / Sequence := QuotientRing => (R,f) ->
 presentation QuotientRing := Matrix => R -> (
      if R.?presentation then R.presentation else R.presentation = (
 	  S := ambient R;
-	  f := gens ideal R;
+	  f := generators ideal R;
 	  while class S === QuotientRing do (		    -- untested code
-	       f = lift(f,ambient S) | gens ideal S;
+	       f = lift(f,ambient S) | generators ideal S;
 	       S = ambient S;
 	       );
 	  f
@@ -191,7 +191,7 @@ dim QuotientRing := (R) -> (
      )
 
 hilbertSeries QuotientRing := options -> (S) -> (
-     hilbertSeries(coker presentation S,options)
+     hilbertSeries(cokernel presentation S,options)
      )
 
 monoid QuotientRing := (S) -> (

@@ -88,7 +88,7 @@ showStructure = Command(types -> show1 if types === () then select1 flatten(valu
 
 typicalValues#frame = MutableList
 
-pos := s -> (
+symbolLocation = s -> (
      t := locate s;
      if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4
      else "")
@@ -141,7 +141,7 @@ listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> (
      netTable prepend(
 	  {"symbol"||"------","", "type"||"----","", "value"||"-----", "location"||"--------"},
-	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, pos s})))
+	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, symbolLocation s})))
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
 

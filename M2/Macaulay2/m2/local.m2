@@ -18,7 +18,7 @@ cohomology(ZZ,Module) := Module => opts -> (i,M) -> (
      if not isAffineRing A then error "expected a module over an affine ring";
      F := presentation A;
      R := ring F;
-     M = coker lift(presentation M,R) ** coker F;
+     M = cokernel lift(presentation M,R) ** cokernel F;
      n := numgens R;
      ww := R^{-n};
      E := prune Ext^(n-i)(M,ww);

@@ -311,21 +311,6 @@ document {
      }
 
 document {
-     Key => VAR,
-     Headline => "HTML VAR item",
-     TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
-     "Here is an example.",
-     PARA,
-     VAR "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
      Key => DFN,
      Headline => "HTML DFN item",
      TT "DFN x", " -- encloses ", TT "x", " in a hypertext DFN item.",

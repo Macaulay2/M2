@@ -7,7 +7,7 @@
 quot0 := options -> (I,J) -> (
     -- this is the version when I, J are ideals,
     R := (ring I)/I;
-    mR := transpose gens J ** R;
+    mR := transpose generators J ** R;
     g := syz gb(mR,
            options,
            Strategy=>LongPolynomial,
@@ -24,7 +24,7 @@ quot1 := options -> (I,J) -> (
     M1 := ideal(1_R);
     scan(numgens J, i -> (
        f := J_i;
-       if gens(f*M1) % (gens I) != 0 then (
+       if generators(f*M1) % (generators I) != 0 then (
 	    M2 := quotient(I,f);
 	    M1 = intersect(M1,M2);)));
     M1)
@@ -35,11 +35,11 @@ quot2 := options -> (I,J) -> (
      )
 
 quotmod0 := options -> (M,J) -> (
-     m := gens M;
+     m := generators M;
      F := target m;
      mm := generators M;
      if M.?relations then mm = mm | M.relations;
-     j := transpose gens J;
+     j := transpose generators J;
      g := (j ** F) | (target j ** mm);
      -- We would like to be able to inform the engine that
      -- it is not necessary to compute various of the pairs
@@ -59,10 +59,10 @@ quotmod1 := options -> (I,J) -> (
     -- This is the iterative version, where I is a 
     -- submodule of F/K, or ideal, and J is an ideal.
     M1 := super I;
-    m := gens I | relations I;
+    m := generators I | relations I;
     scan(numgens J, i -> (
        f := J_i;
-       if gens(f*M1) % m != 0 then (
+       if generators(f*M1) % m != 0 then (
 	    M2 := quotient(I,f);
 	    M1 = intersect(M1,M2);)));
     M1)
@@ -74,11 +74,11 @@ quotmod2 := options -> (I,J) -> (
      )
 
 quotann0 := options -> (M,J) -> (
-     m := gens M;
+     m := generators M;
      if M.?relations then m = m | M.relations;
-     j := adjoint(gens J, (ring J)^1, source gens J);
+     j := adjoint(generators J, (ring J)^1, source generators J);
      F := target m;
-     g := j | (source gens J ** m);
+     g := j | (source generators J ** m);
      -- << g << endl;
      -- We would like to be able to inform the engine that
      -- it is not necessary to compute various of the pairs
@@ -93,10 +93,10 @@ quotann0 := options -> (M,J) -> (
 quotann1 := options -> (I,J) -> (
     R := ring I;
     M1 := ideal(1_R);
-    m := gens I | relations I;
+    m := generators I | relations I;
     scan(numgens J, i -> (
        f := image (J_{i});
-       if gens(f**M1) % m != 0 then (
+       if generators(f**M1) % m != 0 then (
 	    M2 := quotient(I,f);
 	    M1 = intersect(M1,M2);)));
     M1)
@@ -194,7 +194,7 @@ saturate = method(
 satideal0old := options -> (I,J) -> (
     R := ring I;
     I = lift(I,ring presentation R);
-    m := transpose gens J;
+    m := transpose generators J;
     while I != 0 do (
 	S := (ring I)/I;
 	m = m ** S;
@@ -205,7 +205,7 @@ satideal0old := options -> (I,J) -> (
     )
 satideal0 := options -> (I,J) -> (
     R := ring I;
-    m := transpose gens J;
+    m := transpose generators J;
     while (
 	S := (ring I)/I;
 	m = m ** S;
@@ -221,7 +221,7 @@ satideal1 := options -> (I,f) -> (
     f = f_0;
     while not(I1 == I) do (
 	I1 = I;
-	I = ideal syz gb(matrix{{f}}|gens I,
+	I = ideal syz gb(matrix{{f}}|generators I,
                 SyzygyRows=>1,Syzygies=>true););
     I)
 
@@ -237,9 +237,9 @@ satideal2 := options -> (I,f) -> (
 	res := newCoordinateSystem(R,matrix{{f}});
 	fto := res#1;
 	fback := res#0;
-	J := fto gens I;
+	J := fto generators I;
 	gb(J,options);
-	m := divideByVariable(gens gb J, R_(numgens R-1));
+	m := divideByVariable(generators gb J, R_(numgens R-1));
 	ideal fback m)
     )
 
@@ -254,11 +254,11 @@ satideal3 := options -> (I,f) -> (
      R1 := (coefficientRing R)[Variables=>n+1,Degrees=>degs,MonomialSize=>16];
      i := map(R1,R,(vars R1)_{0..n-1});
      f1 := i f;
-     I1 := ideal (i gens I);
+     I1 := ideal (i generators I);
      A := R1/(f1-R1_n);
      iback := map(R,A,vars R | f);
-     IA := gens I1 ** A;
-     g := gens gb(IA,options);
+     IA := generators I1 ** A;
+     g := generators gb(IA,options);
      g = divideByVariable(g, A_n);
      ideal iback g
      )
@@ -273,9 +273,9 @@ satideal4 := options -> (I,f) -> (
      R2 := R1/(f1*R1_0-1);
      fback := map(R,R2,matrix{{0_R}} | vars R);
      fto =  map(R2,R,genericMatrix(R2,R2_1,1,n));
-     II := ideal fto gens I;
+     II := ideal fto generators I;
      g := gb(II,options);
-     p1 := selectInSubring(1, gens g);
+     p1 := selectInSubring(1, generators g);
      ideal fback p1)
 
 removeOptions := (options, badopts) -> (

@@ -6,7 +6,7 @@
 --These 3 functions are called in that code.
 mytrim := (I) -> (
      if isHomogeneous I then (trim I)
-     else (ideal gens gb I)
+     else (ideal generators gb I)
      )
 
 checkpoly:=(f)->(
@@ -33,8 +33,8 @@ minMap := (I) -> (
      --then that variable is mapped to the negative of that generator
      --minus the linear term.  
      A := ring I;              
-     xmap := new MutableList from gens A;	
-     M := first entries gens I;
+     xmap := new MutableList from generators A;	
+     M := first entries generators I;
      tried := new MutableList from splice {#M : NOTCHECKED};
      findnext := () -> (
      	  p := {};
@@ -89,11 +89,11 @@ minPresIdeal(Ideal) := o -> (I) -> (
      	  var := splice{y_0..y_(#l-1)};
      	  S = (coefficientRing R)[var,Degrees => degreesS];
      	  vv = map(S,R2,vars S);
-     	  J := substitute (ideal(compress gens F(I)),S);
+     	  J := substitute (ideal(compress generators F(I)),S);
      	  FmatS = vv(substitute(F.matrix,R2)););
      I.cache.minPresMap = map(S,R,FmatS);
      I.cache.minPresMapInv = map(R,S,varsR);
-     mytrim vv(substitute (ideal compress gens F(I),S))
+     mytrim vv(substitute (ideal compress generators F(I),S))
      )
 
 minPres = method(Options=>{Variable => null})
