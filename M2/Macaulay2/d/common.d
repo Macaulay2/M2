@@ -48,6 +48,7 @@ export codePosition(c:Code):Position := (
      is f:listCode do f.position
      is f:arrayCode do f.position
      is f:semiCode do f.position
+     is f:Error do f.position
      is f:stringCode do dummyPosition
      is f:ternaryCode do f.position
      is f:unaryCode do f.position
@@ -55,6 +56,7 @@ export codePosition(c:Code):Position := (
 
 export tostring(c:Code):string := (
      when c
+     is x:Error do concatenate(array(string)( "(error \"", x.message, "\")"))
      is x:semiCode do concatenate(array(string)( "(semi ", between(" ",new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
      is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
      is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f)," ",tostring(x.lhs)," ",tostring(x.rhs),")"))

@@ -223,6 +223,7 @@ export Code := (
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
+     or Error						    -- for tail recursion
      or newLocalFrameCode				    -- soon obsolete
      );
 export CodeClosure := { frame:Frame, code:Code };
@@ -330,6 +331,7 @@ export toExpr(v:bool):Expr := if v then True else False;
 
 export nullE := Expr(Nothing());
 export notfoundE := Expr(Nothing());			    -- internal use only, not visible to user
+export dummyExpr := Expr(Nothing());
 
 -- scopes
 
