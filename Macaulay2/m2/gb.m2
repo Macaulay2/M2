@@ -83,6 +83,7 @@ processStrategy := (v) -> (
 processAlgorithm := (a) -> (
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
+     else if a === LinearAlgebra then 3
      else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )

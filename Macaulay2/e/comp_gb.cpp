@@ -9,6 +9,7 @@
 #include "gbA.hpp"
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
+#include "linalgGB/linalgGB.hpp"
 
 GBComputation::~GBComputation()
 {
@@ -55,15 +56,29 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 #warning "unused variables commented out"
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
-  //  if (algorithm == 2)
-  GBComputation *result = gbA::create(m, 
-				      collect_syz, 
-				      n_rows_to_keep,
-				      gb_weights,
-				      strategy,
-				      use_max_degree,
-				      max_degree);
+  GBComputation *result;
+
+  switch (algorithm) {
+  case 3: // LinearAlgebraGB.  Must match value in m2/gb.m2
+    result = LinearAlgebraGB::create(m, 
+			 collect_syz, 
+			 n_rows_to_keep,
+			 gb_weights,
+			 strategy,
+			 use_max_degree,
+			 max_degree);
+  default:
+    result = gbA::create(m, 
+			 collect_syz, 
+			 n_rows_to_keep,
+			 gb_weights,
+			 strategy,
+			 use_max_degree,
+			 max_degree);
+  }
   return new GBProxy(result);
+
+
 #if 0
   if (is_graded)
     return GB_comp::create(m, 

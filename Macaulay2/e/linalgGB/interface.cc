@@ -3,6 +3,7 @@
 #include "Monomials.h"
 #include "MonomialSet.h"
 #include "SPairSet.h"
+#include "linalgGB.hpp"
 #include "monoms.h"
 
 #include "interface.h"
@@ -100,11 +101,11 @@ void spair_testing(MonomialSet *H,
 		   std::vector<poly,gc_allocator<poly> > &polys)
 {
   SPairSet *S = new SPairSet(H);
-  std::vector<gb_elem, gc_allocator<gb_elem> > gb;
+  std::vector<gbelem, gc_allocator<gbelem> > gb;
   for (int i=0; i<polys.size(); i++)
     {
       // First make a gbelem, and insert it into gb
-      gb_elem g;
+      gbelem g;
       g.f = polys[i]; // this isn't really correct.  If it were not a
                        // debugging routine, this should be copied.
       // Want the degree to be the max degree of any term of f
