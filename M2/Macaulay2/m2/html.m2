@@ -293,15 +293,9 @@ assembleTree Package := pkg -> (
      currentPackage = pkg;
      duplicateReferences = new MutableHashTable;
      topNodeName = pkg#"top node name";
-     key := normalizeDocumentTag topNodeName;
-     fkey := formatDocumentTag key;			    -- same as topNodeName
-     nodes := packageNodes(pkg,topNodeName);
      linkTable = new HashTable from apply(
 	  pairs pkg#"documentation", (fkey,doc) -> fkey => (
-	       if doc.?Subnodes
-	       then formatDocumentTag \ normalizeDocumentTag \ first \ select(doc.Subnodes, x -> class x === TO)
-	       else {}
-	       ));
+	       if not doc.?Subnodes then {} else formatDocumentTag \ normalizeDocumentTag \ first \ select(doc.Subnodes, x -> class x === TO)));
      CONT = getTrees();
      buildLinks CONT;
      )

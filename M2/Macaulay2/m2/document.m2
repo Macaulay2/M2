@@ -332,7 +332,8 @@ processExamples := (pkg,fkey,docBody) -> (
 -- 'document' function
 -----------------------------------------------------------------------------
 
-fixupList := x -> apply(select(x,t->t=!=null),fixup)
+nonNull := x -> select(x,t->t=!=null)
+fixupList := x -> apply(nonNull x,fixup)
 enlist := x -> if class x === List then x else {x}
 fixupTable := new HashTable from {
      Key => identity,
@@ -348,7 +349,11 @@ fixupTable := new HashTable from {
      Description => extractExamples @@ hypertext,
      Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
-     Subnodes => identity
+     Subnodes => v -> apply(nonNull enlist v, x -> (
+	       if class x === TO then x
+	       else if class x === TOH then TO x#0
+	       else if class x === String then x
+	       else error ("unrecognizable Subnode list item: ",x," in node ",fkey)))
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
