@@ -497,8 +497,15 @@ opsWithUnaryMethod := array(Symbol)(
      TildeS.symbol,
      LessLessS.symbol
      );
+opsWithPostfixMethod := array(Symbol)(
+     TildeS.symbol
+     );
 opHasUnaryMethod(o:Symbol):bool := (
      foreach s in opsWithUnaryMethod do if s == o then return(true);
+     return(false);
+     );
+opHasPostfixMethod(o:Symbol):bool := (
+     foreach s in opsWithPostfixMethod do if s == o then return(true);
      return(false);
      );
 bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
@@ -547,6 +554,21 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	  else (
 	       makeErrorTree(assn.operator,
 	       	    "left hand of assignment involves invalid unary operator")
+	       )
+	  )
+     is unary:Postfix do (
+	  if colon
+	  then (
+	       bind(unary.lhs,scope);
+	       bindop(unary.operator,scope);
+	       bind(body,scope);
+	       if ! opHasPostfixMethod(unary.operator.entry)
+	       then makeErrorTree(assn.operator,
+	       	    "left hand of assignment involves invalid postfix operator");
+	       )
+	  else (
+	       makeErrorTree(assn.operator,
+	       	    "left hand of assignment involves invalid postfix operator")
 	       )
 	  )
      is binary:Binary do (

@@ -282,9 +282,12 @@ export convert(e:ParseTree):Code := (
 			      treePosition(e))))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallFun,
-			 Code(exprCode(makeSymbolClosure(u.operator.entry),
-				   dummyPosition)),
+			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
 			 convert(u.rhs), convert(b.rhs), treePosition(e)))
+	       is u:Postfix do Code(ternaryCode(
+			 UnaryInstallFun,
+			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
+			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
 		    if c.operator.entry == SharpS.symbol
 		    then Code(ternaryCode( AssignElemFun, convert(c.lhs),

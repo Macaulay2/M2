@@ -60,18 +60,24 @@ protect argument
 protect subscript
 protect superscript
 
+args := method()
+args(Thing,Sequence) := (i,args) -> prepend(i,args)
+args(Thing,Thing) := identity
+args(Thing,Thing,Sequence) := (i,j,args) -> prepend(i,prepend(j,args))
+args(Thing,Thing,Thing) := identity
+
 HH = new ScriptedFunctor from {
      subscript => (
 	  i -> new ScriptedFunctor from {
 	       superscript => (
 		    j -> new ScriptedFunctor from {
 	       	    	 argument => (
-			      X -> cohomology(i,j,X)
+			      X -> cohomology args(i,j,X)
 			      )
 	       	    	 }
 		    ),
 	       argument => (
-		    X -> homology(i,X)
+		    X -> homology args(i,X)
 		    )
 	       }
 	  ),
@@ -80,20 +86,20 @@ HH = new ScriptedFunctor from {
 	       subscript => (
 		    i -> new ScriptedFunctor from {
 	       	    	 argument => (
-			      X -> homology(j,i,X)
+			      X -> homology args(j,i,X)
 			      )
 	       	    	 }
 		    ),
 	       argument => (
-		    X -> cohomology(j,X)
+		    X -> cohomology args(j,X)
 		    )
 	       }
 	  ),
      argument => homology
      }
 
-cohomology(ZZ,Sequence) := (i,X) -> ((M,N) -> cohomology(i,M,N)) X
-  homology(ZZ,Sequence) := (i,X) -> ((M,N) ->   homology(i,M,N)) X
+cohomology(ZZ,Sequence) := (i,X) -> cohomology prepend(i,X)
+  homology(ZZ,Sequence) := (i,X) ->   homology prepend(i,X)
 
 document { quote ScriptedFunctor,
      TT "ScriptedFunctor", " -- the class of all functors which accept a 
@@ -131,7 +137,9 @@ document { quote HH,
 	  (TO (homology, ZZ, ChainComplexMap), "   -- homology as a functor"),
 	  (TO (homology, Matrix, Matrix), "        -- homology of a pair of maps"),
 	  (TO (cohomology, ZZ, ChainComplex), "    -- cohomology of a chain complex"),
-	  (TO (cohomology, ZZ, ChainComplexMap), " -- cohomology as a functor")
+	  (TO (cohomology, ZZ, ChainComplexMap), " -- cohomology as a functor"),
+	  (TO (cohomology, ZZ, Module), "          -- local cohomology"),
+	  (TO (cohomology, ZZ, CoherentSheaf), "   -- sheaf cohomology"),
 	  }
      }
 
@@ -152,7 +160,7 @@ document { quote cohomology,
      PARA,
      "If it is intended that i be of class ZZ, M be of class A, and N be of 
      class B, then the method can be installed with ",
-     PRE "   cohomology(ZZ, A, B) := (i,M,N) -> ...",
+     PRE "   cohomology(ZZ, A, B) := (i,M,N,opts) -> ...",
      SEEALSO {"homology", "ScriptedFunctor"}
      }
 
@@ -164,6 +172,6 @@ document { quote homology,
      PARA,
      "If it is intended that i be of class ZZ, M be of class A, and N be of
      class B, then the method can be installed with ",
-     PRE "   homology(ZZ, A, B) := (i,M,N) -> ...",
+     PRE "   homology(ZZ, A, B) := (i,M,N,opts) -> ...",
      SEEALSO {"cohomology", "ScriptedFunctor"}
      }

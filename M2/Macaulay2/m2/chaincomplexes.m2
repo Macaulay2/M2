@@ -617,7 +617,7 @@ Module ** ChainComplex := (M,C) -> (
      D)
 -----------------------------------------------------------------------------
 
-homology(ZZ,ChainComplex) := (i,C) -> homology(C.dd_i, C.dd_(i+1))
+homology(ZZ,ChainComplex) := (i,C,opts) -> homology(C.dd_i, C.dd_(i+1))
 document { (homology,ZZ,ChainComplex),
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      EXAMPLE {
@@ -640,18 +640,18 @@ assert ( 0 == HH_4 res M )
 "
 
 
-cohomology(ZZ,ChainComplex) := (i,C) -> homology(-i, C)
+cohomology(ZZ,ChainComplex) := (i,C,opts) -> homology(-i, C)
 document { (cohomology,ZZ,ChainComplex),
      TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
      "By definition, this is the same as HH_(-i) C."
      }
 
-  homology(ZZ,ChainComplexMap) := (i,f) -> (
+  homology(ZZ,ChainComplexMap) := (i,f,opts) -> (
        inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
        )
 
-cohomology(ZZ,ChainComplexMap) := (i,f) -> homology(-i,f)
+cohomology(ZZ,ChainComplexMap) := (i,f,opts) -> homology(-i,f)
 document { (homology,ZZ,ChainComplexMap),
      TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
      by a map ", TT "f", " of chain complexes.",
@@ -665,7 +665,7 @@ document { (cohomology,ZZ,ChainComplexMap),
      SEEALSO {"cohomology", "HH"}
      }
 
-homology(ChainComplex) := (C) -> (
+homology(ChainComplex) := (C,opts) -> (
      H := new GradedModule;
      H.ring = ring C;
      complete C;
@@ -685,7 +685,7 @@ gradedModule(ChainComplex) := (C) -> (
      scan(spots C, i -> H#i = C#i);
      H)
 
-homology(ChainComplexMap) := (f) -> (
+homology(ChainComplexMap) := (f,opts) -> (
      g := new GradedModuleMap;
      g.degree = f.degree;
      g.source = HH f.source;

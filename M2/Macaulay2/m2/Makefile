@@ -30,7 +30,7 @@ ifdef DUMPDATA
 DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
 endif
 
-GFILES = $(DUMPSEQUENCE) setup.m2 dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
+GFILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
 
 ##############################
 

@@ -172,6 +172,7 @@ formatDocumentTag = s -> concatenate (
 		    else (name s#0, " ^ ", name s#1)
 		    )
 	       else if s#0 === NewMethod then ("new ", name s#1)
+	       else if s#0 === quote ~ then (name s#1, " ", string s#0) -- postfix!
 	       else if class s#0 === Symbol then (string s#0, " ", name s#1)
 	       else (name s#0, " ", name s#1)
 	       )
@@ -271,10 +272,9 @@ scan((
 	  quote ooo,
 	  quote oo,
 	  quote path,
-	  quote phase,
 	  -- quote writeExamples,
 	  -- quote readExamples,
-	  quote hypertex
+	  quote phase
 	  ), x -> writableGlobals#x = true)
 
 testFileCounter := 0
