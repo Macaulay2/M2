@@ -111,10 +111,10 @@ const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
      the expected rank. 
   */
 {
-  return M->make_copy(target, source, deg, is_mutable);
+  return M->remake(target, source, deg, is_mutable);
 }
 
-const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
+const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 				       const Matrix *M,
 				       M2_bool is_mutable
 				       )
@@ -124,7 +124,7 @@ const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
      columns of the matrix.
   */
 {
-  return M->make_copy(target, is_mutable);
+  return M->remake(target, is_mutable);
 }
 
 M2_bool IM2_MutableMatrix_set_entry(Matrix *M, 
