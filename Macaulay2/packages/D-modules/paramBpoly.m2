@@ -250,15 +250,16 @@ loadVTree(String) := filename -> (
 
 toString(Option) := o -> (toString o#0 | "=>" | toString o#1);
 
-search4ABigGuy := (V, I, parentNODE) -> (
-     grandpa := (V#tempN#parentNODE)#parentNODE;
-     pInfo(3, {"grandpa: ideal =", I, " parent = ", parentNODE});
+search4ABigGuy := (V, I, pNODE) -> (
+     dad := V#tempN#pNODE;
+     grandpa := dad#parentNODE;
+     pInfo(3, {"grandpa: ideal =", I, " parent = ", pNODE});
      if grandpa < 0 then NOTCOMPUTED
      else (
 	  pInfo(3, "grandpa children: " | 
 	       toString ((V#tempN#grandpa)#children / (i->
 			 (i, isSubset((V#tempN#i)#tempI, I)))));
-	  temp := select(1,  (V#tempN#grandpa)#children, 
+	  temp := select(1, (V#tempN#grandpa)#children, 
 	       i-> (i < parentNODE) and isSubset((V#tempN#i)#tempI, I) ); 
 	  if #temp > 0 then temp#0
 	  else search4ABigGuy(V, I, grandpa)
@@ -266,6 +267,7 @@ search4ABigGuy := (V, I, parentNODE) -> (
      );
 
 add2VTree := (V, II, p) -> (
+     pInfo(3, "add2VTree"|toString {V,II,p});
      new HashTable from {
 	  coeff => V#coeff,
 	  ringOpts => V#ringOpts,
@@ -394,8 +396,7 @@ VTree2bSet2 := V -> (
      scan(V#tempN, node->( 
 	       if node#Itype == COMPUTED then 
 	       (
-		    t := position(r, u ->( 
-			      u#tempBF == node#tempBF ));
+		    t := position(r, u ->u#tempBF == node#tempBF);
 		    r = (
 			 if t =!= null 
 		    	 then take(r, t) | { 
@@ -859,7 +860,8 @@ takeCareOf(HashTable, ZZ) := (V, num) -> (
 	       sum(listForm V#poly / (u->promote(u#1,TK) * TA_(u#0))) !=0
 	       )
      	  );
-     modifyNODE(V, num, {listForm bf, assocPrimes, assocPrimes, timeSpent#0})
+     modifyNODE(V, num, {apply(listForm bf, u->(u#0,substitute(u#1,ZZ))), 
+	       assocPrimes, assocPrimes, timeSpent#0})
      );
 
 ----------
@@ -897,7 +899,7 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      bs := VTree2bSet2 V;
      BSet2tex(bs, (fname | ".tex"));
      use ring f;
-     apply(bs, u->(
+     ret := apply(bs, u->(
 	       s := symbol s;
 	       RZ := (ZZ/DBIGPRIME)[s];
 	       factorBFunctionZmodP(
@@ -908,7 +910,9 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
 			     -- original hashtable
 			     else substitute(v#1,ZZ)) 
 			* RZ_(v#0))) 
-	       ))
+	       ));
+     use R;
+     ret
      );
 
 
