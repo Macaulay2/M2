@@ -184,7 +184,7 @@ s_pair *GBinhom_comp::new_ring_pair(gb_elem *p, const int *lcm)
   result->fsyz = NULL;
 
   result->lcm = M->make_new(lcm);
-
+  M->mult(result->lcm, F->base_monom(p->f->comp), result->lcm);
   return result;
 }
 
@@ -201,8 +201,8 @@ s_pair *GBinhom_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
   result->f = NULL;
   result->fsyz = NULL;
 
-  result->lcm = M->make_one();
-  M->lcm(p->f->monom, q->f->monom, result->lcm);
+  result->lcm = M->make_new(lcm);
+  M->mult(result->lcm, F->base_monom(p->f->comp), result->lcm);
 
   return result;
 }
@@ -289,17 +289,19 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   intarray vplcm;
   s_pair *q;
   int nvars = M->n_vars();
+  int *f_m = M->make_one();
   int *find_pairs_exp = new int[nvars];
   int *find_pairs_lcm = new int[nvars];
-  int *find_pairs_mon = new int[nvars];
+  int *find_pairs_mon = M->make_one();
   int *pi = new int [nvars];
   int *pj = new int [nvars];
   int *pij = new int [nvars];
 
+  M->divide(p->f->monom, F->base_monom(p->f->comp), f_m);
   if (M->is_skew())
     {
       int *skewvars = new int[M->n_vars()];
-      M->to_expvector(p->f->monom, find_pairs_exp);
+      M->to_expvector(f_m, find_pairs_exp);
       int nskew = M->exp_skew_vars(find_pairs_exp, skewvars);
       
       // Add in syzygies arising from exterior variables
@@ -327,7 +329,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
       for (j = Rideal.first(); j.valid(); j++)
 	{
 	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
-	  M->lcm(f->monom, p->f->monom, find_pairs_lcm);
+	  M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
 	  q = new_ring_pair(p, find_pairs_lcm);
@@ -339,7 +341,11 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   for (gb_elem *s = gb->next_min; s != NULL; s = s->next_min)
     {
       if (p->f->comp != s->f->comp) continue;
-      M->lcm(p->f->monom, s->f->monom, find_pairs_lcm);
+
+      M->divide(s->f->monom, F->base_monom(p->f->comp), s->f->monom);
+      M->lcm(f_m, s->f->monom, find_pairs_lcm);
+      M->mult(s->f->monom, F->base_monom(p->f->comp), s->f->monom);      
+
       vplcm.shrink(0);
       M->to_varpower(find_pairs_lcm, vplcm);
       q = new_s_pair(p, s, find_pairs_lcm);
@@ -413,11 +419,14 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   for (s_pair *s1 = p->pair_list; s1 != NULL; s1 = s1->next_same)
     {    
       if (s1->syz_type != SPAIR_PAIR) continue;
-      M->divide(s1->lcm, s1->second->f->monom, pi);
+
+      M->divide(s1->second->f->monom, F->base_monom(s1->second->f->comp), f_m);
+      M->divide(s1->lcm, f_m, pi);
       for (s_pair *t1 = s1->next_same; t1 != NULL; t1 = t1->next_same)
 	{
 	  if (t1->syz_type != SPAIR_PAIR) continue;
-	  M->divide(t1->lcm, t1->second->f->monom, pj);
+	  M->divide(t1->second->f->monom, F->base_monom(t1->second->f->comp), f_m);
+	  M->divide(t1->lcm, f_m, pj);
 	  M->gcd(pi, pj, pij);
 	  if (M->is_one(pij))
 	    {
@@ -432,10 +441,11 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   delete [] find_pairs_exp;
   delete [] find_pairs_lcm;
-  delete [] find_pairs_mon;
   delete [] pi;
   delete [] pj;
   delete [] pij;
+  M->remove(find_pairs_mon);
+  M->remove(f_m);
 }
 
 void GBinhom_comp::compute_s_pair(s_pair *p)
@@ -445,8 +455,7 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
       int *s = M->make_one();
       ring_elem one = R->Ncoeffs()->from_int(1);
       M->divide(p->lcm, p->first->f->monom, s);
-      //p->f = F->mult_by_monomial(s, p->first->f);
-      //p->fsyz = Fsyz->mult_by_monomial(s, p->first->fsyz);
+
       p->f = F->imp_mult_by_term(one, s, p->first->f);
       p->fsyz = Fsyz->imp_mult_by_term(one, s, p->first->fsyz);
       if (Fsyz->is_quotient_ring) Fsyz->normal_form(p->fsyz);
@@ -456,12 +465,6 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
 	  F->imp_cancel_lead_term(p->f, p->second->f, coeff, s);
 	  Fsyz->subtract_multiple_to(p->fsyz, coeff, s, p->second->fsyz);
 	  R->Ncoeffs()->remove(coeff);
-
-	  //ring_elem a = R->Ncoeffs()->from_int(1);
-	  //M->divide(p->lcm, p->second->f->monom, s);
-	  //F->imp_subtract_multiple_to(p->f, a, s, p->second->f);
-	  //Fsyz->subtract_multiple_to(p->fsyz, a, s, p->second->fsyz);
-	  //R->Ncoeffs()->remove(a);
 	}
       M->remove(s);
       R->Ncoeffs()->remove(one);
@@ -481,18 +484,18 @@ int GBinhom_comp::gb_reduce(vec &f, vec &fsyz)
   int *div_totalexp = a_totalexp.alloc(M->n_vars());
   int *reduce_ndiv = a_reduce_ndiv.alloc(M->n_vars());
   int count = 0;
+  int *s = M->make_one();
   while (f != NULL)
     {
       Bag *b;
-      M->to_expvector(f->monom, div_totalexp);
+      M->divide(f->monom, F->base_monom(f->comp), s);
+      M->to_expvector(s, div_totalexp);
       if (R->is_quotient_ring() 
 	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
 	  R->Ncoeffs()->remove(coeff);
-	  //M->divide(f->monom, g->monom, reduce_ndiv);
-	  //F->imp_subtract_ring_multiple_to(f, f->coeff, reduce_ndiv, g);
 	  count++;
 	}
       //else if (monideals[f->comp].search_expvector(div_totalexp, b))
@@ -501,12 +504,6 @@ int GBinhom_comp::gb_reduce(vec &f, vec &fsyz)
 	  F->imp_cancel_lead_term(f, q->f, coeff, reduce_ndiv);
 	  Fsyz->subtract_multiple_to(fsyz, coeff, reduce_ndiv, q->fsyz);
 	  R->Ncoeffs()->remove(coeff);
-
-	  //ring_elem c = f->coeff;
-	  //M->divide(f->monom, q->f->monom, reduce_ndiv);
-	  //Fsyz->subtract_multiple_to(fsyz, c, reduce_ndiv, q->fsyz);
-	  //F->subtract_multiple_to(f, c, reduce_ndiv, q->f);
-	  // Don't remove c: it is (or was) part of f!
 	  count++;
 	}
       else
@@ -525,6 +522,7 @@ int GBinhom_comp::gb_reduce(vec &f, vec &fsyz)
 
   result->next = NULL;
   f = head.next;
+  M->remove(s);
   return 1;
 }
 int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
@@ -543,10 +541,12 @@ int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
   fb.add(f);
   fsyzb.add(fsyz);
   const vecterm *lead;
+  int *s = M->make_one();
   while ((lead = fb.get_lead_term()) != NULL)
     {
       Bag *b;
-      M->to_expvector(lead->monom, div_totalexp);
+      M->divide(lead->monom, F->base_monom(lead->comp), s);
+      M->to_expvector(s, div_totalexp);
       if (R->is_quotient_ring()
 	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
@@ -586,6 +586,7 @@ int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
+  M->remove(s);
   return 1;
 }
 
@@ -624,13 +625,15 @@ int GBinhom_comp::search(const int *exp, int comp, gb_elem *&result)
 }
 void GBinhom_comp::gb_insert(vec f, vec fsyz, int forced)
 {
+  int *f_m = M->make_one();
   gb_elem *p = new gb_elem(f, fsyz, 1);
   p->me = last_gb_num++;
   p->lead_exp = new int[R->n_vars()];
-  M->to_expvector(f->monom, p->lead_exp);
+  M->divide(p->f->monom, F->base_monom(p->f->comp), f_m);
+  M->to_expvector(f_m, p->lead_exp);
 
   F->make_monic(p->f, p->fsyz);
-  if (M->in_subring(1,p->f->monom))
+  if (M->in_subring(1,f_m))
     n_subring++;
 
 #if 0
@@ -661,6 +664,7 @@ void GBinhom_comp::gb_insert(vec f, vec fsyz, int forced)
       q = q->next;
     }
 
+  M->remove(f_m);
   if (forced) return;
 
   // At this point 'p' has been inserted.  Now we need to remove the 

@@ -1235,7 +1235,7 @@ int EGB1::contains(const Matrix &m)
 	result = i;
       I.remove_vector(F,f);
     }
-  return -1;
+  return result;
 }
 bool EGB1::is_equal(const gb_comp * /*q*/)
 {

@@ -296,6 +296,9 @@ void cmd_res(object &om, object &oalg, object &olength, object &odegree, object 
     p2 = new gbres_comp(m, maxlev+1, origsyz, strategy | USE_HILB);
     gStack.insert(p2);
     break;
+  default:
+    gError << "Unknown algorithm for computing resolutions";
+    break;
   }
 }
 
