@@ -135,10 +135,7 @@ not(z:Expr):Expr := (
 
 notequalmethod(x:Expr,y:Expr):Expr := (
      method := lookupBinaryMethod(Class(x),Class(y),NotEqualS);
-     if method == nullE then (
-	  eqmeth := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
-	  if eqmeth == nullE then MissingMethodPair(NotEqualS,x,y) else notFun(apply(eqmeth,x,y))
-	  )
+     if method == nullE then notFun(EqualEqualfun(x,y))
      else apply(method,x,y));
 NotEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
