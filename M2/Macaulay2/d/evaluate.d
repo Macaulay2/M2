@@ -418,7 +418,7 @@ export eval(c:Code):Expr := (
 	  if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	  );
      when e is err:Error do (
-	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then return e;
+	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
 	  p := codePosition(c);
 	  err.report = CodeClosureList(CodeClosure(localFrame,c), err.report);
      	  if err.position == dummyPosition && int(p.loadDepth) >= errorDepth && !SuppressErrors then (
@@ -435,7 +435,7 @@ export eval(c:Code):Expr := (
 		    stderr << "..." << endl;);
 	       err.position = p;
 	       if debuggingMode then when breakLoopFun(localFrame,c) is z:Error do (
-		    if z.message == breakMessage then return Expr(z);
+		    if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 		    if z.message == returnMessage then return z.value;
 		    if z.message == continueMessage then return eval(c);
 		    )

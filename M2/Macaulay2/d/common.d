@@ -89,6 +89,7 @@ setup(commaW,dummyBinaryFun);
 export returnMessage := "return message";
 export continueMessage := "continue message";
 export breakMessage := "break message";
+export unwindMessage := "unwind message";
 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE));
 export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE));
