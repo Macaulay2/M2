@@ -1848,6 +1848,25 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
   return result->sub_matrix(perm);
 }
 
+static void get_part_of_expvector(M2_arrayint vars, 
+				  exponent big, 
+				  int comp, 
+				  exponent result)
+// sets result[0..vars->len-1] with the corresponding exponents in 'big'
+// sets result[vars->len] to be the component
+// zeros out any variables in big which are placed into result.
+//
+// private routine for 'coeffs'.
+{
+  for (int j=0; j<vars->len; j++)
+    {
+      int v = vars->array[j];
+      result[j] = big[v];
+      big[v] = 0;
+    }
+  result[vars->len] = comp;
+}
+
 static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 			 const FreeModule *F, vec f)
     // private routine for 'coeffs'.
@@ -1862,7 +1881,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
   // At this point, we know that we have a polynomial ring
   int nvars = M->n_vars();
   int *exp = newarray(int,nvars);
-  int *scratch_exp = newarray(int,nvars);
+  int *scratch_exp = newarray(int,1+vars->len);
 
   vec result = 0;
   for (vec g = f ; g != 0; g = g->next)
@@ -1870,12 +1889,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
       for (Nterm *h = g->coeff; h != 0; h = h->next)
 	{
 	  M->to_expvector(h->monom, exp);
-	  for (unsigned int i=0; i<vars->len; i++)
-	    {
-	      int v = vars->array[i];
-	      scratch_exp[i] = exp[v];
-	      exp[v] = 0;
-	    }
+	  get_part_of_expvector(vars, exp, g->comp, scratch_exp);
 	  int val = exponent_table_get(E, scratch_exp);
 	  if (val > 0)
 	    {
@@ -1893,6 +1907,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
   F->sort(result);
   return result;
 }
+
 
 MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 {
@@ -1913,9 +1928,9 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
     }
   int nvars = P->n_vars();
   int nelements = monoms->n_cols();
-  if (monoms->n_rows() != 1)
+  if (monoms->n_rows() != n_rows())
     {
-      ERROR("expected a matrix with one row");
+      ERROR("expected matrices with the same number of rows");
       return 0;
     }
   for (unsigned int i=0; i<vars->len; i++)
@@ -1929,69 +1944,27 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
   // We set the value of the i th monomial to be 'i+1', since 0
   // indicates a non-existent entry.
 
-  exponent_table *E = exponent_table_new(nelements, vars->len);
+  // The extra size in monomial refers to the component:
+  exponent_table *E = exponent_table_new(nelements, 1 + vars->len); 
+  exponent EXP = newarray(int,nvars);
   for (int i=0; i<nelements; i++)
     {
-      ring_elem f = monoms->elem(0,i);
-      if (P->is_zero(f))
+      vec v = monoms->elem(i);
+      if (v == 0)
 	{
-	  ERROR("expected non-zero polynomials");
+	  ERROR("expected non-zero column");
 	  return 0;
 	}
+      int x = v->comp;
+      ring_elem f = v->coeff;
       const int *m = P->lead_flat_monomial(f);
-      exponent e = newarray(int, nvars);
-      P->getMonoid()->to_expvector(m, e);
+      P->getMonoid()->to_expvector(m, EXP);
+
+      // grab only that part of the monomial we need
+      exponent e = newarray(int, 1 + vars->len);
+      get_part_of_expvector(vars, EXP, v->comp, e);
       exponent_table_put(E, e, i+1);
     }
-
-  // Step 2: for each vector column of 'this'
-  //     create a column, and put this vector into result.
-
-  MatrixConstructor mat(P->make_FreeModule(nelements), 0 , false);
-  for (int i=0; i<n_cols(); i++)
-    mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
-
-  return mat.to_matrix();
-}
-
-MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const M2_arrayint monoms) const
-{
-  // Given an array of variable indices, 'vars', and given
-  // that 'monoms' and 'this' both have one row, makes a matrix
-  // having number of rows = ncols(monoms), 
-  //        number of cols = ncols(this),
-  // whose (r,c) entry is the coefficient (in the other variables)
-  // of this[0,c] in the monomial monoms[0,r].
-
-
-  // Step 0: Do some error checking
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-  int nvars = P->n_vars();
-  int nelements = monoms->len / vars->len;
-  if (nelements * vars->len != monoms->len)
-    {
-      ERROR("coeffs: expected an array of exponents");
-      return 0;
-    }
-  for (unsigned int i=0; i<vars->len; i++)
-    if (vars->array[i] < 0 || vars->array[i] >= nvars)
-      {
-	ERROR("coeffs: expected a set of variable indices");
-	return 0;
-      }
-
-  // Step 1: Make an exponent_table of all of the monoms.
-  // We set the value of the i th monomial to be 'i+1', since 0
-  // indicates a non-existent entry.
-
-  exponent_table *E = exponent_table_new(nelements, vars->len);
-  for (int i=0; i<nelements; i++)
-    exponent_table_put(E, monoms->array + i*(vars->len), i+1);
 
   // Step 2: for each vector column of 'this'
   //     create a column, and put this vector into result.

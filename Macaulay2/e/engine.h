@@ -900,25 +900,28 @@ extern "C" {
   const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars) ;/* TODO */
 
 
-  /* Dan: This version can be removed from the d code */
-  const MatrixOrNull * IM2_Matrix_get_coeffs(const M2_arrayint vars,
-					     const M2_arrayint monoms,
-					     const Matrix *M); /* drg: connected rawCoefficients*/
-  /* Given a list of variable indices, 'vars', and a flattened list of exponent vectors 'monoms'
-     each exponent vector of length = #vars, AND a matrix with one row, returns a matrix
-     of size #monoms/#vars by #cols(M), where the i th column consists of the polynomials
-     in the other variables which is the coeff of the i th monomial in monoms.
-     WARNING DAN: this has never been run before (new routine).  In particular,
-     should the second argument instead be a one row matrix, and the monoms are the lead 
-     exponent vectors of the columns?? */
-
   const MatrixOrNull * rawCoefficients(const M2_arrayint vars,
 				       const Matrix *monoms,
-				       const Matrix *M); /* TODO drg: to be connected as rawCoefficients*/
-  /* Given a list of variable indices, 'vars', and a one row matrix 'monoms' over a polynomial 
-     ring, AND a matrix with one row, returns a matrix
-     of size #cols(monoms) by #cols(M), where the i th column consists of the polynomials
-     in the other variables which is the coeff of the lead monomial of monoms(0,i). */
+				       const Matrix *M); /* drg: connected as rawCoefficients*/
+  /* Given:
+   *  vars : a list of variable indices in the (common) ring R of monoms and M 
+   *  monoms : a map R^b --> R^a such that each column has exactly one monomial
+   *      which is only in the variables in 'vars'.
+   *  M : a map R^c --> R^a such that every (module) monomial of each column of M
+   *      matches one of the columns of 'monoms', in the variables 'vars'.
+   *
+   * Returns: a matrix C : R^c --> R^b such that 
+   *      (i) the entries of C do not involve the variables in 'vars', and
+   *      (ii) monoms * C == M
+   *
+   * Assumptions on rings: if R is non-commutative, then the variables in 'vars'
+   *      should commute with the variables outside of 'vars'.
+   * 
+   * If each column of monoms has more than one monomial, or if variables other than
+   *      those in 'vars' occur, then only the first monomial is used, and the other
+   *      variables are ignored.
+   * If a monomial occurs twice, then one of them will be used (which one is left undefined)
+   */
 
   const MatrixOrNull * IM2_Matrix_monomials(const M2_arrayint vars, const Matrix *M); /* drg: connected rawMonomials*/
 
@@ -949,17 +952,34 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_module_tensor(const Matrix *M,
 						const Matrix *N); /* TODO */
 
-  const MatrixOrNull * IM2_Matrix_kbasis(const Matrix *M,
-					 const Matrix *N,
-					 M2_arrayint lo_deg,
-					 M2_arrayint hi_deg); /* TODO */
-
-  const MatrixOrNull * IM2_Matrix_kbasis_all(const Matrix *M,
-					     const Matrix *N); /* TODO */
-
-  const MatrixOrNull * IM2_Matrix_truncate(const Matrix *M,
-					   const Matrix *N,
-					   M2_arrayint deg); /* TODO */
+  const MatrixOrNull * rawBasis(const Matrix *M,
+				M2_arrayint lo_degree, /* possibly length 0 */
+				M2_arrayint hi_degree,
+				M2_arrayint wt,
+				M2_arrayint vars,
+				M2_bool do_truncation,
+				int limit); /* TODO: Dan: please connect to interface.d */
+  /* Yields a monomial basis of part of the graded R-module cokernel(M).
+   * Returns a matrix of monomials which maps to the target of M, such that
+   *  (i) The image spans the sum of M_i, for lo_degree <= i <= hi_degree 
+   *       where M_i is the degree i piece of M.
+   * Notes:
+   *  -- 'vars' is a list of variables.  The entries of the result will only involve
+   *     these variables.
+   *  -- 'wt' should be a list of integers of length <= number of degrees,
+   *     with the property that each variable in 'vars' has (its degree) dot wt > 0.
+   *  -- if lo_degree has length 0, then it is assumed to be -infinity
+   *  -- if hi_degree has length 0, then it is assumed to be infinity
+   *  -- in either of these cases, or if lo_degree is not equal to hi_degree, then
+   *     the degree ring of R must have one variable.
+   *  -- if limit >= 0, then only the first 'limit' monomials are placed into the result.
+   *  -- if do_truncation is set, then monomials of degree higher than hi_degree will be
+   *     placed into .
+   * 
+   * If R is a quotient ring, then the monomial order had better be a product order
+   * such that the first block (or blocks) consists of the variables in 'vars'.
+   * 
+   */
 
   int IM2_Matrix_dimension(const Matrix *M); /* TODO */
 

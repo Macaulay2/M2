@@ -113,8 +113,7 @@ f = (x+y^2+z^3)^9
 rawTermCount f
 rawGetTerms(f,2,4)
 rawGetTerms(f,-2,-1)
--- rawCoefficients(f, rawMakeMonomial{(2,21),(0,2)}) -- expects 3 arguments
-<< "rawCoefficients(f, rawMakeMonomial{(2,21),(0,2)}) -- expects 3 arguments" << endl;
+rawCoefficient(f, rawMakeMonomial{(0,2),(2,21)})
 assert(1231212 == rawLeadCoefficient(1231212*f))
 rawLeadMonomial(y*z*f) -- strange: comes out with indets a,b,c.
 (cs,ms) = rawPairs(f)
@@ -306,14 +305,6 @@ assert(x^4 == 0)
 assert(2*x^3 == 0)
 assert(312*x == 0)
 
-5*x*x
-5*x^2
-
-5*x^2
-3*x^2
-assert(x^2 + x^2 == -x^2 + y*z + 1)
-assert(x^2 + x^2 + x^2 == y*z+1)
-assert(2*x^2 == x^2 + x^2)
 --------------------------
 -- free module routines --
 --------------------------
