@@ -216,6 +216,8 @@ Ring OrderedMonoid := (			  -- no memoize
 	  then error "expected ordered monoid handled by the engine";
 	  if not (R.?Engine and R.Engine) 
 	  then error "expected coefficient ring handled by the engine";
+	  if R.?newEngine != M.?newEngine
+	  then error "expected both ring and monoid to be handled by new engine routines";
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  degRing := (
 	       if M.?newEngine or R.?newEngine
@@ -297,11 +299,20 @@ Ring OrderedMonoid := (			  -- no memoize
 	       sendgg(ggPush f, ggPush m, gggetcoeff);
 	       R.pop()
 	       );
-	  RM.ConvertToExpression = ConvertApply(
-	       args -> if #args === 1 then args#0 else new Sum from toList args,
-	       ConvertRepeat ConvertApply ( 
-		    (m,r) -> r * m,
-		    ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
+	  if RM.?newEngine then (
+	       RM.ConvertToExpression = ConvertApply(
+		    args -> if #args === 1 then args#0 else new Sum from toList args,
+		    ConvertRepeat ConvertApply ( 
+			 (c,m,r) -> r * m,			    -- ignore the component c
+			 ConvertJoin(ConvertInteger, M.ConvertToExpression, R.ConvertToExpression)));
+	       )
+	  else (
+	       RM.ConvertToExpression = ConvertApply(
+		    args -> if #args === 1 then args#0 else new Sum from toList args,
+		    ConvertRepeat ConvertApply ( 
+			 (m,r) -> r * m,
+			 ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
+	       );
 	  expression RM := f -> convert( RM.ConvertToExpression, sendgg(ggPush f, ggtonet) );
 	  name RM := x -> name expression x;
 	  net RM := x -> net expression x;

@@ -466,7 +466,7 @@ void ECommMonoid::elem_bin_out(buffer &o, const monomial *a) const
   intarray vp;
   to_variable_exponent_pairs(a, vp);
   bin_int_out(o, vp.length()/2);
-  for (int i=0; i<nvars; i++)
+  for (int i=0; i<vp.length(); i++)
     bin_int_out(o, vp[i]);
 }
 

@@ -326,7 +326,7 @@ EngineRing _ ZZ := (R,i) -> (
      if R.?generators 
      then R.generators#i
      else (
-     	  sendgg(ggPush R, ggPush i, ggPush 1, ggvar);
+     	  sendgg(ggPush i, ggPush 1, ggPush R, ggvar);
      	  new R)
      )
 
