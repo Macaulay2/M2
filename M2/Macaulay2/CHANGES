@@ -16,6 +16,17 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+WARNING: the (broken) POSIX regular expression library under Mac OS X
+forbids the use of empty subexpressions.  So, however natural it may
+be to use an expression like "X|" to match the subexpression X or the
+empty string, you should replace it by "X?" to ensure portability.
+Parentheses may needed, as in "(X)?", because the parsing precedence
+of "|" is high and the parsing precedence of "?" is low.
+
+assignment as in x#i=y to a MutableList x with an index i out of
+bounds in the positive direction will now enlarge the list to
+accomodate the new element, inserting "null" in the other positions
+
 error messages for missing methods much improved and more bullet proof
 
 indexed variables are now done a much better way.  In particular,

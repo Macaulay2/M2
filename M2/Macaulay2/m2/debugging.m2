@@ -2,9 +2,7 @@
 
 olderror := error
 erase symbol error
-error = args -> olderror apply(
-     sequence args, x -> if class x === String then x else toString x
-     )
+error = args -> olderror apply(sequence args, x -> if class x === String then x else silentRobustString(20,3,x))
 protect symbol error
 
 on = { CallLimit => 100000, Name => null } >>> opts -> f -> (
@@ -127,15 +125,14 @@ abbreviate := x -> (
 
 vbar := (ht,dp) -> " "^(ht-1)
 upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
-joinRow := x -> horizontalJoin mingle(#x+1:vbar(max\\height\x,max\\depth\x),x)
+joinRow := x -> horizontalJoin mingle(x,#x-1:vbar(max\\height\x,max\\depth\x))
 robustNetTable := x -> (
      if not isTable x then error "expected a table";
      if #x == 0 or #x#0 == 0 then return stack();
      x = applyTable(x,y -> silentRobustNet(25,4,3,y)); -- fix
      colwids := max \ transpose applyTable(x,width);
      x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
-     hbar := "";
-     (stack mingle(#x+1:hbar,x))^(height x#0))
+     (stack mingle(x,#x-1:""))^(height x#0))
 
 listSymbols = x -> (
      if #x == 0 then "--no local variables"

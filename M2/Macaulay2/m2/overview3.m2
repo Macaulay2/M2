@@ -344,14 +344,17 @@ document {
 	  TO "Mathematical Overview",
  	  TO "Mathematical Examples",
 	  TO "Programming Overview",
-	  TO "Programming Examples",
+     	  TO "Frequently encountered problems",
 	  TO "Packages",
 	  TO "Replacements for commands and scripts from Macaulay",
 	  }
      }
 
-document { Key => "Programming Examples"
+document { Key => "Frequently encountered problems",
+     Subnodes => {
+	  }
      }
+
 
 document { Key => "Packages",
      Subnodes => {

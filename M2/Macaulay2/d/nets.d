@@ -13,6 +13,17 @@ export Net := {
      body:array(string)			  -- one string for each row, read-only
      };
 
+export toString(n:Net):string := (
+     b := n.body;
+     if length(b) == 0 then return "";
+     m := length(b) - 1;
+     foreach s in b do n = n + length(s);
+     new string len m do (
+	  foreach s in b do (
+	       foreach c in s do provide c;
+	       provide '\n';
+	       )));
+
 anytabs(s:string):bool := (
      foreach c in s do if c == '\t' then return true;
      false);

@@ -64,9 +64,9 @@ robustNet := y -> (
      fun := () -> net y;
      try timelimit(printingTimeLimit, fun) else (
 	  global debugError <- fun;
-	  stderr << "--error or time limit reached in conversion of output to net: type 'debugError()' to run it again; will try conversion to string" << endl << endl ;
+	  stderr << endl << "--error or time limit reached in conversion of output to net: type 'debugError()' to run it again; will try conversion to string" << endl ;
 	  try timelimit(errorPrintingTimeLimit, () -> toString y) else (
-	       stderr << "--error in conversion of output to string" << endl << endl;
+	       stderr << endl << "--error in conversion of output to string" << endl;
 	       simpleToString y)))
 Thing.Print = x -> (
      x = commonProcessing x;
@@ -93,9 +93,11 @@ trunc := (wid,ht,s) -> (
      s)
 checkNet := n -> if class n === Net or class n === String then n else error "didn't format correctly"
 checkString := n -> if class n === String then n else error "didn't format correctly"
+Nothing.Format = toString
+String.Format = format
 silentRobustNet = (wid,ht,sec,y) -> (
      trunc(wid,ht,
-	  try timelimit (sec, () -> checkNet net y)
+	  try timelimit (sec, () -> checkNet if lookup(symbol Format,class y) =!= null then (lookup(symbol Format,class y)) y else net y)
 	  else 
 	  try timelimit (sec, () -> checkString toString y)
 	  else
@@ -109,6 +111,10 @@ silentRobustString = (wid,sec,y) -> (
 	  try timelimit (sec, () -> checkString toString y)
 	  else
 	  simpleToString y))
+silentRobustStringWithClass = (wid,sec,y) -> (
+     part2 := horizontalJoin(" (of class ", silentRobustString(wid//2,           sec,class y), ")");
+     part1 :=                               silentRobustString(wid - width part2,sec,      y);
+     concatenate(part1, part2));
 
 hush := false
 scan(binaryOperators, op -> (
