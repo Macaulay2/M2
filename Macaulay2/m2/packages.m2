@@ -88,6 +88,8 @@ newPackage(String) := opts -> (title) -> (
 	       d := new Dictionary;
 	       globalDictionaries = prepend(d,globalDictionaries);
 	       d));
+     if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
+     if not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
      p := global currentPackage <- new Package from {
           symbol name => title,
 	  symbol Symbol => sym,
@@ -123,9 +125,9 @@ newPackage("Main",
      Version => version#"VERSION",
      WritableSymbols => {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
-	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, symbol User,
+	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol packages, symbol currentDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
+	  symbol packages, symbol notify, symbol loadDepth, symbol printingPrecision,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  })
@@ -144,13 +146,15 @@ Command.GlobalReleaseHook = (X,x) -> (
 
 closePackage = p -> (
      if p =!= currentPackage then error ("package not open");
+     scan(p.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
      ws := set p.WritableSymbols;
-     scan(values p.Dictionary,
+     d := p.Dictionary;
+     scan(values d,
 	  s -> (
 	       if not ws#?s then protect s;
 	       if value s =!= s and not p#"reverse dictionary"#?(value s) then p#"reverse dictionary"#(value s) = s;
 	       ));
-     if p =!= Main then (			    -- protect it later, after package User is open
+     if p =!= Main then (			    -- protect it later
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
@@ -197,8 +201,7 @@ package TO := x -> (
      key := normalizeDocumentTag x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
-     pkgs := select(packages, P -> P =!= User);
-     p := select(pkgs, P -> P#"documentation"#?fkey);
+     p := select(packages, P -> P#"documentation"#?fkey);
      if #p == 1 then (
 	  p = p#0;
 	  if pkg =!= p then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
