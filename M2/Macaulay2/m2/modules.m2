@@ -173,7 +173,8 @@ target Matrix := f -> f.target
 
 Vector = new Type of Matrix				    -- used to be MutableHashTable!
 Vector.synonym = "vector"
-Vector _ ZZ := (v,i) -> (new Matrix from v)_(i,0)
+Vector _ ZZ := (v,i) -> (ambient v)_(i,0)
+net Vector := v -> net ambient v
 
 RingElement * Vector := (r,v) -> new Vector from (lookup(symbol *,RingElement,Matrix))(r,v)
 Vector + Vector := (v,w) -> new Vector from (lookup(symbol +,Matrix,Matrix))(v,w)
