@@ -144,7 +144,7 @@ greaterequalfun(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
-     else if !(LessS.symbol === e) then True else False
+     else if GreaterS.symbol === e || EqualEqualS.symbol === e then True else False
      );
 setup(GreaterEqualS,greaterequalfun);
 
@@ -159,7 +159,7 @@ lessequalfun(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
-     else if !(GreaterS.symbol === e) then True else False
+     else if LessS.symbol === e || EqualEqualS.symbol === e then True else False
      );
 setup(LessEqualS,lessequalfun);
 

@@ -414,16 +414,21 @@ directSumMatrix := args -> (
      if not all(args, f -> ring f === R) 
      then error "expected matrices all over the same ring";
      sendgg(apply(args, ggPush), ggPush (#args), ggdirectsum);
-     newMatrix(directSum apply(args,target),directSum apply(args,source)))
+     f := newMatrix(directSum apply(args,target),directSum apply(args,source));
+     f.components = elements args;
+     f)
+
+components Module := M -> if M.?components then M.components else {M}
+components Matrix := f -> if f.?components then f.components else {f}
 
 directSumModule := args -> (
 	  R := ring args#0;
 	  if not all(args, f -> ring f === R) 
 	  then error "expected modules all over the same ring";
-	  if all(args, M -> not M.?generators) then (
-	       if all(args, M -> not M.?relations) then (
-		    R ^ (- join unlist apply(args, degrees))
-		    )
+	  N := if all(args, M -> not M.?generators) 
+	  then (
+	       if all(args, M -> not M.?relations) 
+	       then R ^ (- join unlist apply(args, degrees))
 	       else subquotient( null, directSum apply(args,relations) )
 	       )
 	  else (
@@ -432,7 +437,9 @@ directSumModule := args -> (
 		    )
 	       else subquotient(
 		    directSum apply(args,generators), 
-		    directSum apply(args,relations))))
+		    directSum apply(args,relations)));
+	  N.components = elements args;
+	  N)
 
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
@@ -440,18 +447,21 @@ directSum Sequence := args -> (
      else if all(args,M -> class M === Module) then directSumModule args
      else error "expected modules or maps"
      )
+directSum List := args -> directSum unlist args
 Matrix ++ Matrix := directSum
 Module ++ Module := directSum
 
 document { quote directSum,
      TT "directSum(m,n,...)", " -- forms the direct sum of matrices or modules.",
-     SEEALSO "++"
+     PARA,
+     "The components can be recovered later with ", TO "components", ".",
+     SEEALSO ("++", "components")
      }
 Matrix ++ RingElement := (f,r) -> f ++ matrix {{r}}
 RingElement ++ Matrix := (r,f) -> matrix {{r}} ++ f
 RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
-concatCols := mats -> (
+concatCols = mats -> (
      mats = select(elements mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -464,7 +474,7 @@ concatCols := mats -> (
 	  then error "unequal targets";
 	  ggConcatCols(targets#0, directSumModule apply(mats,source), mats)))
 
-concatRows := mats -> (
+concatRows = mats -> (
      mats = select(elements mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -525,8 +535,9 @@ submatrix(Matrix,List) := (m,cols) -> (
      getMatrix ring m)
      
 document { quote submatrix,
-     TT "submatrix(m, rows, cols)", " -- yields a submatrix of the matrix 
-     ", TT "m", "",
+     TT "submatrix(m, rows, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
+     BR,NOINDENT,
+     TT "submatrix(m, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
      PARA,
      "Yields an r by c matrix, where r is the length of the list of integers
      ", TT "rows", ", and c is the length of the list of integers ", TT "cols", ".  
@@ -1742,6 +1753,9 @@ TEST "
      assert( dim singularLocus ideal { a^2 + b^2 + c^2 + d^2, a^2 + 5*b^2 + 3*c^2 + 2*d^2 } === 0 )
      "
 
+Matrix _ Array := (f,v) -> f * (source f)_v
+Matrix ^ Array := (f,v) -> (target f)^v * f
+
 Matrix _ List := (f,v) -> (
      v = splice v;
      listZ v;
@@ -1753,7 +1767,7 @@ document { "f_{i,j}",
      PARA,
      "Repetitions of the indices are allowed.",
      PARA,
-     "If the list if column indices is a permutation of 0 .. n-1, where n is
+     "If the list of column indices is a permutation of 0 .. n-1, where n is
      the number of columns, then the result is the corresponding permutation
      of the columns of f.",
      PARA,
@@ -1763,6 +1777,28 @@ document { "f_{i,j}",
      EXAMPLE "p_{1,1,2}",
      EXAMPLE "p_{2,1,0}",
      SEEALSO "_"
+     }
+
+Matrix ^ List := (f,v) -> (
+     v = splice v;
+     listZ v;
+     submatrix(f,v,)
+     )
+document { "f^{i,j}",
+     TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
+     rows numbered i, j, k, ... .",
+     PARA,
+     "Repetitions of the indices are allowed.",
+     PARA,
+     "If the list of row indices is a permutation of 0 .. n-1, where n is
+     the number of rows, then the result is the corresponding permutation
+     of the rows of f.",
+     PARA,
+     EXAMPLE "R = ZZ/101[a..f]",
+     EXAMPLE "p = matrix {{a,b,c},{d,e,f}}",
+     EXAMPLE "p^{1}",
+     EXAMPLE "p^{1,0}",
+     SEEALSO "^"
      }
 
 entries = method()
