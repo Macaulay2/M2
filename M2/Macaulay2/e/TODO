@@ -11,3 +11,11 @@ Get quotient rings functional: this includes getting fraction rings functional,
 Polynomial rings should take a degree ring instead of a degree monoid.  Then we need a
 way of specifying the trivial ring.
 
+Go back to having a MutableMatrix class, which does not have free module information.
+All mutable operations must be switched back.  Need a routine: map(Module,Module,MutableMatrix)
+  - Write the remaining mutable matrix operations.
+  - Change the interface to some of the rawMatrix commands.
+
+statistics routine for Computation
+  summary or stats for a computation should be in the toString.
+  -- rawSummary(computation)
