@@ -1,6 +1,6 @@
 # see also ./aclocal.m4
 
-AC_INIT(Macaulay2.LSM)
+AC_INIT(Makefile-configuration)
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
