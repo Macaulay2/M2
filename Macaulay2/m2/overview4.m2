@@ -728,14 +728,79 @@ document { "computing Groebner bases",
      "The computation turns out to be substantially faster."
      }
 
+document { "diff and contract",
+     "We may use the function ", TO "diff", " to differentiate polynomials:
+     the first argument is the variable to differentiate with respect to,
+     and the second argument is the polynomial to be differentiated.",
+     EXAMPLE {
+	  "R = QQ[x,y];",
+	  "f = x^7 * y^11;",
+	  "diff(x,f)",
+	  "diff(y,f)",
+	  },
+     "We indicate higher derivatives by simply multiplying the variables
+     to differentiate by.",
+     EXAMPLE {
+	  "diff(x^2,f)",
+	  "diff(x*y,f)",
+	  "diff(y^2,f)",
+     	  },
+     "The first argument can also be a sum, in which case the sum of
+     the answers provided by each of its terms is returned.",
+     EXAMPLE {
+	  "diff(x+y,f)",
+	  "diff(x^2+x*y+y^2,f)",
+	  },
+     "Remark: the operation ", TT "diff", " is useful, but it's not a 
+     natural one: it's not invariant under linear coordinate changes;
+     in effect, we've identified the a free module with its dual.",
+     PARA,
+     "The second argument can be a matrix, in which case each of
+     its entries gets differentiated.",
+     EXAMPLE {
+	  "m = matrix {{x^3, x^4},{x^5,x^6}}",
+	  "diff(x,m)",
+	  "diff(x^2,m)",
+	  },
+     "The first argument can also be a matrix, in which case
+     the matrices obtained from each of its entries, acting upon
+     the second argument, are concatenated.  Thus the shape of
+     the first matrix plays the major role.",
+     EXAMPLE {
+	  "diff(matrix {{x,x^2,x^3,x^4}}, m)",
+	  "diff(matrix {{x,x^2},{x^3,x^4}}, m)",
+	  },
+     "The function ", TO "contract", " is the same as ", TO "diff", ",
+     except the multiplication by integers that occurs during
+     differentiation is omitted.",
+     EXAMPLE {
+	  "contract(x,m)",
+	  "contract(x^2,m)",
+	  "contract(matrix {{x,x^2,x^3,x^4}}, m)",
+	  "contract(matrix {{x,x^2},{x^3,x^4}}, m)",
+	  },
+     "The function ", TO "diff'", " is the same as ", TO "diff", ",
+     except that the first argument is differentiated by the second;
+     the shape of the first argument still plays the major role.",
+     EXAMPLE {
+	  "diff'(m, matrix {{x,x^2,x^3,x^4}})",
+	  "diff'(m, matrix {{x,x^2},{x^3,x^4}})",
+	  },
+     "The function ", TO "contract'", " is the same as ", TO "contract", ",
+     except that the first argument is contracted by the second;
+     the shape of the first argument still plays the major role.",
+     EXAMPLE {
+	  "contract'(m, matrix {{x,x^2,x^3,x^4}})",
+	  "contract'(m, matrix {{x,x^2},{x^3,x^4}})",
+	  },
+     "All four of these operators are engineered so that the result is
+     a homogeneous matrix if the arguments are."
+     }
+
 document { "computing syzygies",
      "This node has not been written yet."
      }
 
 document { "computing resolutions",
-     "This node has not been written yet."
-     }
-
-document { "diff and contract",
      "This node has not been written yet."
      }

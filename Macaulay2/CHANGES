@@ -3,6 +3,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+The function 'flip' was returning an incorrect matrix, the transpose of
+the correct one.  This has been fixed.
+
 new funtion 'toField' can be used to declare that a ring is a field, after
 which polynomial rings over it will support groebner basis computattions.
 See also 'getNonUnit' and 'getZeroDivisor'.
