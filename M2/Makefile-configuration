@@ -1,21 +1,5 @@
 # -*- Mode: Makefile -*-
 
-## to build:
-## the usual way:
-##      ./configure --prefix=/usr/local ...
-##      make 
-##      make install
-## or
-##	make configure.options
-##	select options in the file configure.options, and add some of your own
-##	make
-##      make install
-
-## to rebuild configure script without using the makefile:
-##	autoconf
-##	autoheader
-
-
 TARGETS = all install dist check clean distclean uninstall doc port justM2 testport FACTORY LIBFAC GMP GC
 
 #############################################################################
@@ -26,7 +10,7 @@ ifdef XYZZY
 endif
 #############################################################################
 
-default : all doc
+default : configure include/config.h.in
 
 include configure.options
 configure.options :
@@ -36,7 +20,6 @@ configure.options :
 	echo "# CONFIGURE_OPTIONS += --disable-dumpdata" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-dumpdata=old" >>$@
 	echo "# CONFIGURE_OPTIONS += --with-socks" >>$@
-	echo "# CONFIGURE_OPTIONS += --enable-shared" >>$@
 	echo "# CONFIGURE_OPTIONS += --disable-strip" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-profile" >>$@
 	echo "# CONFIGURE_OPTIONS += --disable-optimize" >>$@

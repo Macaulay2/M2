@@ -30,8 +30,6 @@ export PATH := bin:$(PATH)
 all:: announce
 announce::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
 always:
-all:: lib/.exists
-lib/.exists:; mkdir lib; touch $@
 clean::; rm -rf lib
 clean::; rm -f core
 distclean::; rm -f config.cache config.log config.status configure.options
@@ -42,8 +40,8 @@ justM2 all:: ;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
 DOCTARGET := Macaulay2-$(VERSION)-doc.zip
 else
-TARGET := distributions/Macaulay2-$(DESC).tar.gz
-DOCTARGET := distributions/Macaulay2-$(VERSION)-doc.tar.gz
+TARGET := Macaulay2-$(DESC).tar.gz
+DOCTARGET := Macaulay2-$(VERSION)-doc.tar.gz
 endif
 justM2 all:: announce
 announce ::
@@ -71,17 +69,15 @@ DISTFILES_SRC := \
 		Macaulay2/CHANGES \
 	 	Macaulay2/README.txt
 DISTFILES := $(DISTFILES_SRC) $(DISTFILES_MADE)
-distributions :; mkdir $@
-clean ::; rm -rf distributions
 install :
 	@echo no install method yet >&2
 	@exit 1
-distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) distributions
+Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 	tar cf - $(DISTFILES_MADE) -C @srcdir@ $(DISTFILES_SRC) |gzip >"$@"
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
-# distributions/Macaulay2-$(DESC).zip : Makefile $(DISTFILES) distributions
+# Macaulay2-$(DESC).zip : Makefile $(DISTFILES)
 # 	winzip32 -u -r -p $@ @WindowsNT/DistributionFiles.lst
 # 	@echo "-----------------------------------------------------------------------------"
 # 	@echo "  $@ contains everything but the documentation"
@@ -111,14 +107,14 @@ PORTING := CVS \
 	bin factory gc gcStatic gmp libfac config include
 portfilenames:
 	Export3 $(PORTING)
-port: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
-distributions/Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile distributions
+port: Macaulay2-$(VERSION)-porting-src.tar.gz
+Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 testport: testport-clean testport-files testport-go testport-clean
 testport-clean:
 	rm -rf tmp/M2
 clean :: testport-clean
-testport-files: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
+testport-files: Macaulay2-$(VERSION)-porting-src.tar.gz
 	mkdir -p tmp/M2
 	gunzip <$< |tar xf - -C tmp/M2
 testport-go:
@@ -131,12 +127,12 @@ DOCFILES = Macaulay2/html
 # DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
 # DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
 
-distributions/Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) distributions
+Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES)
 	tar cf - $(DOCFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"
 	@echo "-----------------------------------------------------------------------------"
-distributions/Macaulay2-$(VERSION)-doc.zip : $(DOCFILES) distributions
+Macaulay2-$(VERSION)-doc.zip : $(DOCFILES)
 	winzip32 -u -r -p $@ $(DOCFILES)
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains the documentation"
@@ -162,7 +158,7 @@ clean::
 justM2 all doc::
 	@echo "--------------------- done making '$@' --------------------"
 ################################# tar manufactured files
-distributions/manufactured.tgz : Makefile
+manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files
 	make -C Macaulay2/tutorial
 	tar cfz $@ \

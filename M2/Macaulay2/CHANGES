@@ -4,6 +4,8 @@ Changes made, most recent ones first:
 
 New in 0.9.0:
 
+Compile-time option --enable-shared removed.
+
 The function currentDirectory() now returns a directory path with an
 extra / at the end.
 

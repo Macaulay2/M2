@@ -1,7 +1,7 @@
 #include "config.h"
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
 
-#include "../c2/targettypes.h"
+#include "targettypes.h"
 
 #include <stdio.h>
 

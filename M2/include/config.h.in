@@ -30,9 +30,6 @@
 /* operating system release, obtained with uname -r */
 #undef REL
 
-/* whether to use shared libraries */
-#undef SHARED
-
 /* whether to compile and link with socks5 */
 #undef SOCKS
 

@@ -154,15 +154,21 @@ phase2 :: ../cache/Macaulay2-pre
 	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=2' @srcdir@/setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
-all:: .gdbinit
-.gdbinit : .gdbinit.$(USER)
-	if [ -f ".gdbinit.$(USER)" ] ;\
-	then cp ".gdbinit.$(USER)" $@ ;\
-	else cp .gdbinit.dan $@ ;\
-	fi
-.gdbinit.$(USER) :
-	cp .gdbinit.dan $@
+## .gdbinit
+justM2 all:: .gdbinit .gdb-files .gdb-run-it
+gdb: .gdbinit .gdb-files; env M2HOME=.. gdb ../libexec/Macaulay2
+.gdbinit: .gdbinit.$(USER); cp $< $@
+clean::; rm -f .gdbinit
+.gdbinit.$(USER):; cp .gdbinit.dan $@
+.gdb-files:
+	echo 'file ../libexec/Macaulay2' >$@
+	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@
+	echo 'set environment M2HOME ..' >>$@
+.gdb-run-it:
+	echo 'echo \n' >$@
+	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\",\"@srcdir@/../experiments/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
 
+##
 backup : CVS/Entries
 CVS/Entries : $(M2FILES)
 	mount /a.ext2
@@ -216,8 +222,6 @@ test4: ../util/screen
 	touch $@
 clean::; rm -f test4
 endif
-
-gdb :; env M2HOME=.. gdb ../libexec/Macaulay2
 
 install::
 	rm -rf $(datadir)/Macaulay2/m2

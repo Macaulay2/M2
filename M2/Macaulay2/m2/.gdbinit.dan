@@ -1,5 +1,2 @@
-file ../libexec/Macaulay2
-dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp
-b GB_gbforget
-b freeHandle
-run -ephase=1 setup.m2 -ephase=0 "-e runStartFunctions()"
+source .gdb-files
+source .gdb-run-it

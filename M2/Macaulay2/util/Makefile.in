@@ -13,7 +13,7 @@ ifeq ($(OS),Linux)
 EXES += screen
 endif
 
-ifeq "$(CC)" "gcc"
+ifeq "$(GCC)" "yes"
 CFLAGS += -Wall
 endif
 
