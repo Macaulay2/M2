@@ -9,6 +9,22 @@ endif
 include include/config.Makefile
 VPATH = @srcdir@
 
+.PRECIOUS test-configuration install all clean distclean:: @srcdir@/configure config.status
+
+@srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
+	$(MAKE) -C @srcdir@ -f Makefile-configuration
+	@echo '-----------------------------------------------------------------------------'
+	@echo '| $@ has just been remade                                                   |'
+	@echo '| exiting so you can run it again the same way you did before               |'
+	@echo '-----------------------------------------------------------------------------'
+	@exit 1
+config.status : @srcdir@/configure
+	@echo '-----------------------------------------------------------------------------'
+	@echo '| error: $^ newer than $@                                                   |'
+	@echo '| exiting so you can run it again the same way you did before               |'
+	@echo '-----------------------------------------------------------------------------'
+	@exit 1
+
 # announcement only:
 install all clean distclean::
 	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
@@ -22,7 +38,8 @@ distclean:: clean
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
-all install clean :: ; $(MAKE) -C bin $@
+all :: initialize
+all install clean initialize :: ; $(MAKE) -C bin $@
 all install :: ; $(MAKE) -C man $@
 all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
