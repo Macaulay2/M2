@@ -360,8 +360,8 @@ basicsort2(e:Expr,ww:Expr):Expr := (
      else WrongArg("a list or sequence"));
 sortfun(e:Expr):Expr := basicsort2(e,GreaterE);
 rsortfun(e:Expr):Expr := basicsort2(e,LessE);
-setupfun("sort",sortfun);
-setupfun("rsort",rsortfun);
+setupfun("internalsort",sortfun);
+setupfun("internalrsort",rsortfun);
 
 lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
 lessfun2(lhs:Code,rhs:Code):Expr := (

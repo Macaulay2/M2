@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New method for 'sort' -- it will now sort a matrix.  See 'sortMatrix'
+for the options.  Same for 'rsort'.
+
 Function 'getZeroDivisor' removed.
 
 New function 'symlinkDirectory'.  It works like copyDirectory, except
