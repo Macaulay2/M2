@@ -1,6 +1,8 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
+export LD_LIBRARY_PATH=../lib
+
 TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 
 all:: $(TESTRESULTS)

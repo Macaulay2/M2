@@ -62,8 +62,14 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
        FILENAME := "../bin/M2";
        FILENAME
        << "#! /bin/sh" << endl
-       << "M2HOME=" << M2HOME << endl
+       << "M2HOME='" << M2HOME << "'" << endl
        << "export M2HOME" << endl
+       << ///if [ "" = "$LD_LIBRARY_PATH" ]/// << endl
+       << ///then LD_LIBRARY_PATH="$M2HOME/lib"/// << endl
+       << ///else LD_LIBRARY_PATH="$M2HOME/lib:$LD_LIBRARY_PATH"/// << endl
+       << ///fi/// << endl
+       << ///export LD_LIBRARY_PATH/// << endl
+       << ///# reminder: root ignores LD_LIBRARY_PATH/// << endl
        -- << "if [ \"$EMACS\" = t ]; then TTY=-tty; else TTY=; fi" << endl
        << "if [ $# = 0 ]" << endl
        << "then " << args << endl

@@ -42,6 +42,7 @@ initialize :: tmp tmp/Tests tmp/Examples
 ################################# util
 initialize ::; $(MAKE) -C util all
 clean ::; $(MAKE) NODEPENDS=1 -C util clean
+wc ::; $(MAKE) NODEPENDS=1 -C util wc
 ################################# c
 all ::; $(MAKE) -C c all
 clean ::; $(MAKE) NODEPENDS=1 -C c clean
@@ -54,6 +55,11 @@ wc ::;  $(MAKE) -C e NODEPENDS=1 wc
 all ::; $(MAKE) -C dbm all
 tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
+wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
+################################# dumpdata
+all ::; $(MAKE) -C dumpdata
+clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
+tests ::; $(MAKE) -C dumpdata tests
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# d
 config ::; $(MAKE) NODEPENDS=1 -C d compat.h

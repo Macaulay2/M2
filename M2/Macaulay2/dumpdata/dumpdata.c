@@ -68,9 +68,19 @@ static void fdprintmap(int fd, map m) {
   write(fd,buf,strlen(buf));
 }
 
+
+static void extend_memory(void *newbreak) {
+  if (ERROR == brk(newbreak)) {
+    char buf[200];
+    sprintf(buf,"loaddata: out of memory (extending break from 0x%p to 0x%p)", sbrk(0), newbreak);
+    perror(buf);
+    _exit(1);
+  }
+}
+
 static int install(int fd, map m, long *pos) {
-  char *start = m->from;
-  int len = m->to - m->from;
+  void *start = m->from, *finish = m->to;
+  int len = finish - start;
   int prot = (
 		    (m->r == 'r' ? PROT_READ : 0)
 		    |
@@ -89,6 +99,7 @@ static int install(int fd, map m, long *pos) {
   printf("start=%p end=%p len=%x prot=%x flags=%x fd=%d offset=%x\n",start,m->to,len,prot,flags,fd,offset);
   return OKAY;
 #else
+  if (finish - sbrk(0) > 0 && sbrk(0) - start >= 0) extend_memory(finish);
   return MAP_FAILED == mmap(start, len, prot, flags, fd, offset) ? ERROR : OKAY;
 #endif
 }
@@ -99,7 +110,7 @@ static int dumpmap(int fd, map m) {
 
 static char mapfilename[] = "/proc/self/maps";
 
-#define NDUMPS 20
+#define NDUMPS 40
 
 static int getfile(char *filename, char buf[], int maxlen) {
   int len = 0;
@@ -268,12 +279,13 @@ int loaddata(const char *filename) {
 	fprintf(stderr, "loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
 	return ERROR;
       }
-      if (fmap.chksum != map.chksum) { 
-	fprintf(stderr, "loaddata: map checksum has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
-	return ERROR;
-      }
       if (0 != strcmp(fmap.filename,map.filename)) { 
 	fprintf(stderr, "loaddata: map filename has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
+	return ERROR;
+      }
+      if (fmap.chksum != map.chksum) { 
+	fprintf(stderr, "loaddata: checksum for map %s has changed from %u to %u\n",
+		fmap.filename, fmap.chksum, map.chksum);
 	return ERROR;
       }
     }
@@ -293,12 +305,12 @@ int loaddata(const char *filename) {
   for (i=0; i<ndumps; i++) {
     if (ERROR == install(fd,&dumpmaps[i],&pos)) {
       if (installed_one) {
-	char *p = "loaddata: failed to map memory, aborting\n";
+	char *p = "loaddata: failed to map memory completely\n";
 	write(STDERR,p,strlen(p));
-	abort();
+	_exit(1);
       }
       else {
-	fprintf(stderr,"loaddata: failed to map memory\n");
+	fprintf(stderr,"loaddata: failed to map any memory\n");
 	fclose(maps);
 	fclose(f);
 	return ERROR;

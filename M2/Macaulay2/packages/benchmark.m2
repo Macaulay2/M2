@@ -18,6 +18,14 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.17 seconds, Macaulay 2 version 0.8.50
 
+----- with SHAREDLIBS, including engine and interpeter:
+-- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
+-- 4.81 seconds, Macaulay 2 version 0.8.50
+
+----- with SHAREDLIBS, including interpeter but not engine:
+-- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
+-- 4.27 seconds, Macaulay 2 version 0.8.50
+
 -- IRIX illi 5.3 12201932 IP22 mips
 -- 	5.49 seconds		0.8.10
 

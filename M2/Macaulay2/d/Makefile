@@ -212,15 +212,23 @@ allc : $(PROJECT:.d=.c) tmp_init.c
 ALLOBJ :=
 MISCO := M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o
 
+ifeq ($(OS),Linux)
+ALLOBJ += ../dumpdata/dumpdata.o
+endif
+
 ifdef SHAREDLIBS
-ALLOBJ += $(wildcard ../lib/engine*.so)
 LOADLIBES += -L../lib
 LDFLAGS += -rdynamic
-ALLOBJ += ../lib/interpreter.so
-../lib/interpreter.so : $(PROJECT:.d=.loo) $(MISCO:.o=.lo)
+LIBRARYFILES += ../lib/libengine1.so
+LIBRARYOPTIONS += -lengine1
+LIBRARYFILES += ../lib/libengine2.so
+LIBRARYOPTIONS += -lengine2
+LIBRARYFILES += ../lib/libinterpreter.so
+LIBRARYOPTIONS += -linterpreter
+../lib/libinterpreter.so : $(PROJECT:.d=.loo) $(MISCO:.o=.lo)
 	$(CC) -shared $^ $(OUTPUT_OPTION)
 else
-ALLOBJ += $(wildcard ../e/*.so)
+ALLOBJ += $(wildcard ../e/*.o)
 ALLOBJ += $(PROJECT:.d=.oo) 
 ALLOBJ += $(MISCO)
 endif
@@ -294,28 +302,41 @@ endif
 ###################### libraries
 
 ifeq "$(CC)" "cl"
-LIBRARIES += ../dbm/dbm2.lib
-LIBRARIES += ../../lib/gc.lib
-LIBRARIES += ../../lib/gmp.lib
-LIBRARIES += ../../lib/libfac.lib
-LIBRARIES += ../../lib/cf.lib
+LIBRARYFILES += ../dbm/dbm2.lib
+LIBRARYOPTIONS += ../dbm/dbm2.lib
+LIBRARYFILES += ../../lib/gc.lib
+LIBRARYOPTIONS += ../../lib/gc.lib
+LIBRARYFILES += ../../lib/gmp.lib
+LIBRARYOPTIONS += ../../lib/gmp.lib
+LIBRARYFILES += ../../lib/libfac.lib
+LIBRARYOPTIONS += ../../lib/libfac.lib
+LIBRARYFILES += ../../lib/cf.lib
+LIBRARYOPTIONS += ../../lib/cf.lib
 else
-LIBRARIES += ../dbm/libdbm2.a
+LIBRARYFILES += ../dbm/libdbm2.a
+LIBRARYOPTIONS += ../dbm/libdbm2.a
 ifdef MP
-LIBRARIES += ../../lib/libMP.a
+LIBRARYFILES += ../../lib/libMP.a
+LIBRARYOPTIONS += ../../lib/libMP.a
 endif
 ifdef SHAREDLIBS
-LIBRARIES += ../lib/libfac.so
-LIBRARIES += ../lib/libcf.so
+LIBRARYFILES += ../lib/libfac.so
+LIBRARYOPTIONS += -lfac
+LIBRARYFILES += ../lib/libcf.so
+LIBRARYOPTIONS += -lcf
 else
-LIBRARIES += ../../lib/libfac.a
-LIBRARIES += ../../lib/libcf.a
+LIBRARYFILES += ../../lib/libfac.a
+LIBRARYOPTIONS += ../../lib/libfac.a
+LIBRARYFILES += ../../lib/libcf.a
+LIBRARYOPTIONS += ../../lib/libcf.a
 endif
-LIBRARIES += ../../lib/libgmp.a
-LIBRARIES += ../../lib/libgc.a
+LIBRARYFILES += ../../lib/libgmp.a
+LIBRARYOPTIONS += ../../lib/libgmp.a
+LIBRARYFILES += ../../lib/libgc.a
+LIBRARYOPTIONS += ../../lib/libgc.a
 endif
 
-LDLIBS := $(LIBRARIES) $(LDLIBS)
+LDLIBS := $(LIBRARYOPTIONS) $(LDLIBS)
 
 ######################
 
@@ -329,7 +350,7 @@ ifneq "$(CC)" "cl"
 LDLIBS += -lm
 endif
 
-../bin/Macaulay2 : $(ALLOBJ) $(LIBRARIES)
+../bin/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LDLIBS)'
 	@ time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
