@@ -742,18 +742,6 @@ document { "associative algebras",
      commutative."
      }
 
-document { "varieties",
-     Headline => "an overview",
-     "In this section we present an overview of algebraic varieties.
-     For details, see ", TO "Variety", ".",
-     MENU {
-	  TO "algebraic varieties",
-	  TO "coherent sheaves",
-	  }
-     }
-
-
-
 document { "algebraic varieties",
      "We may use ", TO "Spec", " to create an affine scheme (or algebraic variety) with
      a specified coordinate ring and ", TO "ring", " to recover the ring.",

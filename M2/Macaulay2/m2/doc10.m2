@@ -181,7 +181,22 @@ document { (resolution, Module),
 	  "C" => {"a free resolution of ", TT "M"}
 	  },
      "For an abbreviation, use ", TO "res", ".",
-     SEEALSO {"computing resolutions"}
+     EXAMPLE {
+	  "R = ZZ/32003[a..d]/(a^2+b^2+c^2+d^2);",
+	  "M = coker vars R",
+	  "C = resolution(M, LengthLimit=>6)"
+	  },
+     "For an overview of resolutions, in order of increasing detail, see",
+     SHIELD MENU {
+	  (TO "Hilbert functions and free resolutions"),
+	  TO "free resolutions of modules",
+	  (TO "computing resolutions", " -- most detailed")
+	  },
+     "Some useful related functions",
+     SHIELD MENU {
+	  TO (betti,ChainComplex),
+	  TO (status,Resolution),
+	  }
      }
 
 document { (resolution, Matrix),
