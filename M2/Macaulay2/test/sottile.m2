@@ -1,3 +1,5 @@
+end -- it doesn't work yet, sigh
+
 S = QQ[p,q,r,s,t];
 R = QQ[x,y,z,p,q,r,s,t];
 POLY = -2*y*p*t^2+t^2*x^2+y^2*t^2+p^2*t^2-2*s*y*t*z+2*s*p*t*z+2*q*t*x-2*s*p*t*q-2*z*t*x+
