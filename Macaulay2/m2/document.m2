@@ -441,7 +441,7 @@ headline := memoize (
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
+     if n =!= null then SHIELD SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
      )
 -----------------------------------------------------------------------------
 
@@ -452,8 +452,8 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU (TOH \ sort (formatDocumentTag \ s))
- menu := s -> MENU (TOH \ formatDocumentTag \ s)
+smenu := s -> MENU (SHIELD \ TOH \ sort (formatDocumentTag \ s))
+ menu := s -> MENU (SHIELD \ TOH \ formatDocumentTag \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -580,7 +580,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, smenu b, PARA{}} )     
+     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, smenu b, PARA{}} )
 
 optargs := method(SingleArgumentDispatch => true)
 
@@ -629,9 +629,13 @@ documentation Option := v -> (
 	       usage v,
 	       "See also:",
 	       MENU {
-		    SEQ{ "Default value: ", TOH toString (options fn)#opt },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH formatDocumentTag fn },
-		    SEQ{ "Option name: ", TOH formatDocumentTag opt }
+		    SEQ{ "Default value: ",
+			 if class (options fn)#opt =!= ZZ
+			 then SHIELD TOH toString (options fn)#opt 
+			 else            toString (options fn)#opt 
+			 },
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", SHIELD TOH formatDocumentTag fn },
+		    SEQ{ "Option name: ", SHIELD TOH formatDocumentTag opt }
 		    }
 	       }
 	  )
@@ -646,15 +650,15 @@ documentation Sequence := s -> (
 	  "See also:",
 	  if #s==2 and not instance(s#1,Type)
 	  then MENU {
-	       SEQ {"Hash table: ", TO formatDocumentTag s#1 },
-	       SEQ {"Key: ", TO formatDocumentTag s#0 },
+	       SHIELD SEQ {"Hash table: ", TO formatDocumentTag s#1 },
+	       SHIELD SEQ {"Key: ", TO formatDocumentTag s#0 },
 	       }
 	  else MENU {
-	       SEQ {"Operator: ", TO formatDocumentTag s#0 },
-	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1 }, if #s > 2 then 
-	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2 }, if #s > 3 then
-	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3 }, if t =!= Thing then
-	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, PARA{}},
+	       SHIELD SEQ {"Operator: ", TO formatDocumentTag s#0 },
+	       SHIELD SEQ {"Class of argument 1: ", TO formatDocumentTag s#1 }, if #s > 2 then 
+	       SHIELD SEQ {"Class of argument 2: ", TO formatDocumentTag s#2 }, if #s > 3 then
+	       SHIELD SEQ {"Class of argument 3: ", TO formatDocumentTag s#3 }, if t =!= Thing then
+	       SHIELD SEQ {"Class of typical returned value: ", TO formatDocumentTag t, PARA{}},
 	       optargs s,
 	       moreGeneral s
      	       },
@@ -690,7 +694,7 @@ TEST = (e) -> if phase === 2 then (
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA{}, "See also:", MENU (TOH \ v) })
+     if #v > 0 then SEQ { PARA{}, "See also:", MENU (SHIELD \ TOH \ v) })
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1021,6 +1025,7 @@ tex HREF := x -> (
 
 html SHIELD := x -> concatenate apply(x,html)
 text SHIELD := x -> concatenate apply(x,text)
+net SHIELD := x -> horizontalJoin apply(x,net)
 
 html TEX := x -> x#0
 

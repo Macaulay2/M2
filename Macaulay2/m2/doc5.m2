@@ -313,7 +313,7 @@ document { Tally,
 	  (TO (symbol -,Tally,Tally), "  -- difference"),
 	  (TO (symbol ?,Tally,Tally), "  -- comparison"),
 	  (TO (symbol _,Tally,Thing), "  -- access"),
-	  (TO "tally", "                -- tally the elements of a list"),
+	  (SHIELD TOH "tally"),
 	  (TO "toList", "               -- a list of the elements"),
 	  (TO (sum,Tally), "           -- add the elements"),
 	  (TO (product,Tally), "       -- multiply the elements")
@@ -360,6 +360,7 @@ document { (symbol -, Tally, Tally),
      }
 
 document { tally,
+     HEADLINE "tally the elements of a list",
      TT "tally x", " -- tallies the frequencies of items in a list x.",
      PARA,
      "It produces an hash table (multiset) y which tallies the

@@ -162,7 +162,8 @@ assert ( rank cokernel f == 0 )
 assert(R^{0,0} == R^2)
 assert(R^{0,0} != R^{0,1})
 "
-document { GroebnerBasis, HEADLINE "the class of all Groebner bases",
+document { GroebnerBasis,
+     HEADLINE "the class of all Groebner bases",
      "A Groebner basis in Macaulay 2 consists of a
       Groebner basis computation, and several associated matrices. 
       Normally you don't need to refer to these objects directly, as many
@@ -189,34 +190,48 @@ document { GroebnerBasis, HEADLINE "the class of all Groebner bases",
       basis will ", EM "not", " change matrices previously obtained from
       these routines.",
       MENU {
-       	   (TO {"generators", " G"}, " -- the Groebner basis matrix"),
-       	   (TO {"mingens", " G", }, " -- a matrix whose columns are minimal generators
-         	of the corresponding submodule"
-		),
-	   (TO {"syz", " G"}, " -- the syzygy matrix: the columns are the syzygies on 'original G'")
+       	   SHIELD TOH (generators, GroebnerBasis),
+       	   SHIELD TOH (mingens, GroebnerBasis),
+	   SHIELD TOH (syz, GroebnerBasis),
        	   },
       "Status of the computation can be determined by the following
       routines",
       MENU {
-       	   (TO {"stats", " G"}, " -- display some statistics about the computation"),
-       	   (TO "gbTrace", " -- provide tracing output during Groebner basis computations")
+       	   SHIELD TOH (stats, GroebnerBasis),
+       	   SHIELD TOH "gbTrace"
        	   },
       PARA,
       "Keys used:",
       MENU {
 	   TOH "GBtype",
-	   TOH "ring",
+	   SHIELD TOH "ring",
 	   TOH "returnCode"
 	   },
-      PARA,
-      SEEALSO "gbTrace"
       }
+
+document { (stats, GroebnerBasis),
+     HEADLINE " -- display some statistics about the computation",
+     }
+
+document { (generators, GroebnerBasis),
+     HEADLINE " -- the Groebner basis matrix",
+     }
+
+document { (mingens, GroebnerBasis),
+     HEADLINE " -- a matrix whose columns are minimal generators of the submodule",
+     }
+
+document { (syz, GroebnerBasis),
+     HEADLINE " -- a matrix whose columns are the syzygies on the columns of the original matrix",
+     }
+
 document { returnCode,
      TT "returnCode", " --  a key for a ", TO "GroebnerBasis", " under which is
      stored the return code from the engine for the computation."
      }
 
 document { gbTrace,
+     HEADLINE " -- provide tracing output during Groebner basis computations",
      TT "gbTrace n", " -- set the tracing level for the ", TO "engine", " to
      level n.  Meaningful values for n are 0, 1, 2, and 3.",
      PARA,
@@ -426,10 +441,10 @@ document { gb => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TOH "EGB",
-	  TOH "GBinhom",
-	  TOH "LongPolynomial",
-	  TOH "Sort"
+	  SHIELD TOH "EGB",
+	  SHIELD TOH "GBinhom",
+	  SHIELD TOH "LongPolynomial",
+	  SHIELD TOH "Sort"
 	  }
      }
 
@@ -1203,8 +1218,8 @@ document { pushForward1 => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TOH "NonLinear",
-     	  TOH "Linear"
+	  SHIELD TOH "NonLinear",
+     	  SHIELD TOH "Linear"
 	  },
      PARA,
      "The default is for the code to select the best strategy heuristically."

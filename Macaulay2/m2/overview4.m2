@@ -78,7 +78,7 @@ document { "functions",
      PARA,
      "Operations on functions:",
      MENU {
- 	  (TO "@@", " -- composition"),
+ 	  (SHIELD TO "@@", " -- composition"),
 	  (TO "ultimate", " -- ultimate value for an iteration")
  	  },
      "Particular functions:",

@@ -59,6 +59,7 @@ document { dumpdata,
      maintain their new values when the data is reloaded later with 
      ", TO "loaddata", "."
      }
+
 document { loaddata,
      TT "loaddata s", " -- load all data segments for the current process from 
      the file whose name is stored in the string ", TT "s", ".  The file must have been
@@ -67,11 +68,10 @@ document { loaddata,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
      MENU {
-	  {TO "reloaded", ", which counts how many times data has been 
-	       dumped and restored."},
-	  {TO "environment", ", which now reflects the current environment."},
-	  {TO "commandLine", ", which now reflects the current command line."},
-	  "Whether the standard input is echoed and prompts to the 
+	  SHIELD TOH "reloaded",
+	  SHIELD TOH "environment",
+	  SHIELD TOH "commandLine",
+	  "whether the standard input is echoed and prompts to the 
 	  standard output are properly flushed, which depends on whether 
 	  the standard input is a terminal."
 	  },
@@ -83,6 +83,7 @@ document { loaddata,
      }
 
 document { symbol "reloaded",
+     HEADLINE "count of how many times data has been dumped and restored",
      TT "reloaded", " -- a constant whose value is the number of 
      times ", TO "loaddata", " has been executed by the current process.  Since
      loaddata completely resets the state of the system, something like this
@@ -611,10 +612,10 @@ document { saturate,
 document { saturate => Strategy,
      "The strategy option value should be one of the following:",
     MENU {
-        (TOH "Linear", "      -- use the reverse lex order"),
-	(TOH "Iterate", "     -- use successive ideal quotients (the default)"),
-	(TOH "Bayer", "       -- use the method in Bayer's thesis"),
-	(TOH "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
+        (SHIELD TOH "Linear", "      -- use the reverse lex order"),
+	(SHIELD TOH "Iterate", "     -- use successive ideal quotients (the default)"),
+	(SHIELD TOH "Bayer", "       -- use the method in Bayer's thesis"),
+	(SHIELD TOH "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
         },
      }
 

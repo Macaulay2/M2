@@ -34,8 +34,8 @@ document { pushForward => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TOH "NonLinear",
-     	  TOH "Linear"
+	  SHIELD TOH "NonLinear",
+     	  SHIELD TOH "Linear"
 	  }
      }
 
@@ -496,11 +496,6 @@ document { quotient,
       	  "I : J",
 	  },
      PARA,
-     "Allowable options :",
-     MENU {
-	  TOH (quotient => Strategy),
-	  TOH (quotient => MinimalGenerators)
-	  },
      "The computation is currently not stored anywhere: this means
      that the computation cannot be continued after an interrupt.
      This will be changed in a later version."
@@ -512,8 +507,8 @@ document { quotient => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TOH "Iterate",
-          TOH "Linear"
+	  SHIELD TOH "Iterate",
+          SHIELD TOH "Linear"
           }
      }
 
