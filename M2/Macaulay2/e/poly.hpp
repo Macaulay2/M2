@@ -47,7 +47,7 @@ public:
 
   static PolynomialRing *create_quotient_ring(const Matrix *M);
 
-  QRingInfo *get_quotient_info() { return qinfo_; }
+  QRingInfo *get_quotient_info() const { return qinfo_; }
 
   const Ring *  Ncoeffs() const { return getCoefficients(); }
   const Monoid * Nmonoms() const { return getMonoid(); }
