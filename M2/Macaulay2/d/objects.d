@@ -739,15 +739,12 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	  );
      nullE);
 export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
-     key2.0 = meth;
+     key2.0 = Expr(lhs);
+     key2.1 = Expr(rhs);
+     key2.2 = meth;
      -- the big numbers here are the same as in hash() for sequences in structure.d
-     key2.1 = Expr(lhs);
-     lefthash := lhs.hash;
-     keyhash1 := ;
-     key2.2 = Expr(rhs);
-     righthash := ;
-     keyhash := ((27449 * 27457 + methhash) * 27457 + lefthash) * 27457 + rhs.hash;
-     lookup1(if lefthash > righthash then lhs else rhs, key2E, keyhash));
+     keyhash := ((27449 * 27457 + lhs.hash) * 27457 + rhs.hash) * 27457 + methhash;
+     lookup1(if lhs.hash > rhs.hash then lhs else rhs, key2E, keyhash));
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr):Expr := (
      lookupBinaryMethod(lhs,rhs,meth,hash(meth)));
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:SymbolClosure):Expr := (

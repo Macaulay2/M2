@@ -1807,7 +1807,7 @@ document { quote subquotient,
      SEEALSO {"generators", "relations"}
      }
 
-Matrix ** Matrix := (f,g) -> f ** g := (
+Matrix ** Matrix := (f,g) -> (
      R := ring f;
      if ring g =!= R then error "expected matrices over the same ring";
      sendgg (ggPush f, ggPush g, ggtensor);
@@ -1852,6 +1852,9 @@ net Matrix := f -> (
 
 image Matrix := f -> (
      if f.?image then f.image else f.image = subquotient(f,)
+     )
+coimage Matrix := f -> (
+     if f.?coimage then f.coimage else f.coimage = cokernel map(source f, kernel f)
      )
 cokernel Matrix := m -> (
      if m.?cokernel then m.cokernel else m.cokernel = subquotient(,m)
