@@ -56,7 +56,7 @@ document { clearOutput,
      }
 
 document { clearAll,
-     HEADLINE => "forget evertything",
+     HEADLINE => "forget everything",
      TT "clearAll", " -- a command which attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
      PARA,

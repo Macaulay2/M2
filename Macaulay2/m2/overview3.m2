@@ -242,7 +242,6 @@ document { "Preface",
 	  TO "How to get this program",
 	  TO "Resources required",
 	  TO "Invoking the program",
-	  TO "Getting started",
 	  TO "Copyright and license",
 	  TO "Acknowledgements",
 	  TO "The authors",
@@ -253,6 +252,7 @@ document { "User's Guide",
      "Here are the basic concepts needed to use Macaulay 2 effectively.",
      MENU {
 	  TO "Preface",
+	  TO "Getting started",
 	  TO "Reading the Documentation",
 	  TO "Mathematical Overview",
 	  TO "Language and Programming Overview",
@@ -332,10 +332,10 @@ document { "Macaulay 2",
      most of the main features are working.  We are eager to help new users
      get started with it.",
      MENU {
-	  TO "User's Guide",
- 	  TO "Mathematical Vignettes",
-	  TO "Reference Manual",
-	  TO "Developer's Corner"
+	  (TO "User's Guide", " -- This is the place to get started"),
+ 	  (TO "Mathematical Vignettes", " -- Several extended examples"),
+	  (TO "Reference Manual", " -- Complete documentation for every type and function in Macaulay 2"),
+	  (TO "Developer's Corner", " -- For experts only")
 	  }
      }
 

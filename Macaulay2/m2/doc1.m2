@@ -650,6 +650,23 @@ document { flatten,
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
      }
 
+///
+document docTemplate {
+     Header => (flatten,Matrix),
+     Briefly => "produce a row matrix with the same entries as a given matrix",
+     Usage => "g = flatten f",
+     Input => {("f",Matrix) => { "An m by n matrix" }},
+     Output => {("g",Matrix) => { "The 1 by mn matrix with the same entries as f" }},
+     Description => {"The matrix produced consists of the first column followed by
+	  the second, and so on.  Both the target and the source of the matrix ", 
+	  TT "f", " must be free modules."},
+     Example => {
+       "R = QQ[a..f]; m = matrix{{a,b,c},{d,e,f}}",
+       "flatten m"
+       }
+     }
+///
+	  
 document { symbol "coker",
      HEADLINE => "cokernel of a map",
      "An abbreviation for ", TO "cokernel", "."
