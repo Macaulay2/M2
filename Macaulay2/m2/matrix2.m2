@@ -2,7 +2,7 @@
 
 complement = method()
 
-mingens Module := Matrix => options -> (M) -> if M.?mingens then M.mingens else M.mingens = (
+mingens Module := Matrix => options -> (M) -> if M.cache.?mingens then M.cache.mingens else M.cache.mingens = (
      if M.?generators then (
 	  if M.?relations then (
 	       c := mingens gb (M.generators|M.relations,

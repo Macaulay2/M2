@@ -304,7 +304,7 @@ makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------
 
 errt (newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type as prospective class");
-errtt(newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type of Type as prospective class");
+errtt(newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type of HashTable as prospective class");
 errp (newParentCode:Code):Expr := printErrorMessage(newParentCode,"'new' expected a Type as prospective parent");
 
 newfun(newClassCode:Code):Expr := (
@@ -312,7 +312,8 @@ newfun(newClassCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  if ancestor(class.class,typeClass)
+	  -- if ancestor(class.class,typeClass)
+	  if class.parent != nothingClass
 	  then (
 	       method := lookup(class,NewS);
 	       if method != nullE
@@ -326,15 +327,17 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  if !ancestor(class.class,typeClass)
-	  || !ancestor(class,typeClass) 
+     	  -- here is where we become less stringent with the new definition, so any hash table can be a type!
+	  -- if !ancestor(class.class,typeClass) || !ancestor(class,typeClass) 
+	  if class.parent == nothingClass || !ancestor(class,hashTableClass) 
 	  then errtt(newClassCode)
 	  else (
 	       newParentExpr := eval(newParentCode);
 	       when newParentExpr
 	       is Error do newParentExpr
 	       is parent:HashTable do (
-		    if !ancestor(parent.class,typeClass)
+		    -- if !ancestor(parent.class,typeClass)
+		    if parent.parent == nothingClass
 		    then errp(newParentCode)
 		    else (
 			 method := lookupBinaryMethod(class,parent.class,NewOfS);
@@ -349,7 +352,8 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  if !ancestor(class.class,typeClass)
+	  -- if !ancestor(class.class,typeClass)
+	  if class.parent == nothingClass
 	  then errt(newClassCode)
 	  else (
 	       newInitExpr := eval(newInitCode);
@@ -378,15 +382,17 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  if !ancestor(class.class,typeClass)
-	  && !ancestor(class,typeClass)
+     	  -- here is where we become less stringent with the new definition, so any hash table can be a type!
+	  -- if !ancestor(class.class,typeClass) && !ancestor(class,typeClass)
+	  if class.parent == nothingClass && !ancestor(class,hashTableClass)
 	  then errtt(newClassCode)
 	  else (
 	       newParentExpr := eval(newParentCode);
 	       when newParentExpr
 	       is Error do newParentExpr
 	       is parent:HashTable do (
-		    if !ancestor(parent.class,typeClass)
+		    -- if !ancestor(parent.class,typeClass)
+		    if parent.parent == nothingClass
 		    then errp(newParentCode)
 		    else (
 			 newInitExpr := eval(newInitCode);

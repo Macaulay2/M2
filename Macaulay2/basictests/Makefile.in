@@ -28,3 +28,7 @@ Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/basictests/Makefi
 distclean ::; rm -f Makefile
 check :: check-return-code
 check-return-code :; if echo 'error "foo"' | ../bin/M2 $(ARGS) ; then false ; else true ; fi
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests "
+# End:

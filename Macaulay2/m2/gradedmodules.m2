@@ -201,12 +201,12 @@ GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
      h.target = f.target ++ g.target;
      h.degree = f.degree;
      scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
-     h.components = {f,g};
+     h.cache.components = {f,g};
      h)
 
 
-isDirectSum GradedModule := (M) -> M.?components
-components GradedModuleMap := f -> if f.?components then f.components else {f}
+isDirectSum GradedModule := (M) -> M.?cache.components
+components GradedModuleMap := f -> if f.?cache.components then f.cache.components else {f}
 GradedModuleMap _ Array := GradedModuleMap => (f,v) -> f * (source f)_v
 GradedModuleMap ^ Array := GradedModuleMap => (f,v) -> (target f)^v * f
 
@@ -258,13 +258,13 @@ GradedModule ++ GradedModule := GradedModule => (C,D) -> (
      R := E.ring = C.ring;
      if R =!= D.ring then error "expected graded modules over the same ring";
      scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
-     E.components = {C,D};
+     E.cache.components = {C,D};
      E)
 
 GradedModule ++ Module := GradedModule => (C,M) -> C ++ gradedModule M
 Module ++ GradedModule := GradedModule => (M,C) -> gradedModule M ++ C
 
-components GradedModule := C -> if C.?components then C.components else {C}
+components GradedModule := C -> if C.cache.?components then C.cache.components else {C}
 
 GradedModule Array := GradedModule => (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";
@@ -428,8 +428,8 @@ tensorAssociativity(GradedModule,GradedModule,GradedModule) := GradedModuleMap =
 					* tensorAssociativity(A#a,B#b,C#c)
 					* (A#a ** BC#bc^[(b,c)])
 					)
-				   else map(F_k.components#(F_k.indexComponents#(ab,c)),
-					     E_k.components#(E_k.indexComponents#(a,bc)),
+				   else map(F_k.cache.components#(F_k.indexComponents#(ab,c)),
+					     E_k.cache.components#(E_k.indexComponents#(a,bc)),
 					     0))))))
 	  ))
 

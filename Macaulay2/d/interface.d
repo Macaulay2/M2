@@ -2195,14 +2195,14 @@ export rawGBMatrixRemainder(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGBMatrixRemainder", rawGBMatrixRemainder);
 
-toList(a:RawMatrixOrNull,b:RawMatrixOrNull):Expr := (
+toSequence(a:RawMatrixOrNull,b:RawMatrixOrNull):Expr := (
      when a
      is null do buildErrorPacket(EngineError("unknown raw matrix lift engine error"))
      is A:RawMatrix do
      when b
      is null do buildErrorPacket(EngineError("unknown raw matrix lift engine error"))
      is B:RawMatrix do
-     list(Expr(A),Expr(B)));     
+     Expr(Sequence(Expr(A),Expr(B))));
 
 export rawGBMatrixLift(e:Expr):Expr := (
      when e is a:Sequence do 
@@ -2228,7 +2228,7 @@ export rawGBMatrixLift(e:Expr):Expr := (
 	       --  extern void h();
 	       --  void f(struct B *p) { h((struct A**)&p); }
 	       ")" );
-	  toList(resultQuotient,resultRemainder))
+	  toSequence(resultQuotient,resultRemainder))
      else WrongArgBoolean(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")

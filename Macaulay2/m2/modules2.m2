@@ -17,10 +17,12 @@ Module + Module := Module => (M,N) -> (
 
 tensor(Module, Module) := Module => options -> (M,N) -> M**N
 Module ** Module := Module => (M,N) -> (
-     P := youngest(M,N);
-     key := (M,N,symbol **);
-     if P#?key then P#key
-     else M**N = (
+-- don't cache it any more
+--      P := youngest(M,N);
+--      key := (M,N,symbol **);
+--      if P#?key then P#key
+--      else M**N = 
+     (
 	  if M.?generators and not isFreeModule N
 	  or N.?generators and not isFreeModule M then (
 	       if M.?generators then M = cokernel presentation M;
@@ -106,7 +108,7 @@ poincare Module := M -> (
      M = coker presentation M;
      -- if not isHomogeneous relations M then error "expected a homogeneous module";
      ZZn := degreesRing R;
-     if M.?poincare then M.poincare else M.poincare = (
+     if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
 	if not M.?poincareComputation then (
             g := generators gb presentation M;
 	    sendgg(ggPush ZZn, ggPush g, gghilb);
@@ -405,7 +407,7 @@ degree Module := M -> (
 -----------------------------------------------------------------------------
 
 presentation(Module) := Matrix => M -> (
-     if M.?presentation then M.presentation else M.presentation = (
+     if M.cache.?presentation then M.cache.presentation else M.cache.presentation = (
 	  if M.?generators then (
 	       modulo( M.generators, if M.?relations then M.relations)
 	       )
@@ -581,7 +583,7 @@ Module _ ZZ := Vector => (M,i) -> (
 Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
-     if not M.?components then error "expected a direct sum module";
+     if not M.?class.components then error "expected a direct sum module";
      if M.?indexComponents then (
 	  ic := M.indexComponents;
 	  w = apply(w, i -> if ic#?i 
@@ -590,13 +592,13 @@ Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else
      -- if the components of M have 3,4,5 generators, then
      -- we want to construct { (0,1,2), (3,4,5,6), (7,8,9,10,11) } for quick access
      k := 0;
-     v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
-     map(directSum M.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
+     v := apply(M.cache.components, N -> k .. (k = k + numgens N) - 1);
+     map(directSum M.cache.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
 
 Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else M#(symbol _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
-     if not M.?components then error "expected a direct sum module";
+     if not M.?class.components then error "expected a direct sum module";
      if M.?indexComponents then (
 	  ic := M.indexComponents;
 	  w = apply(w, i -> if ic#?i 
@@ -605,8 +607,8 @@ Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else
      -- if the components of M have 3,4,5 generators, then
      -- we want to construct { (0,1,2), (3,4,5,6), (7,8,9,10,11) } for quick access
      k := 0;
-     v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
-     map(M, directSum M.components_w, (cover M)_(splice apply(w, i -> v#i))))
+     v := apply(M.cache.components, N -> k .. (k = k + numgens N) - 1);
+     map(M, directSum M.cache.components_w, (cover M)_(splice apply(w, i -> v#i))))
 
 -----------------------------------------------------------------------------
 Module ^ List := Matrix => (M,rows) -> submatrix(id_M,rows,)

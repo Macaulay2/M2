@@ -655,7 +655,7 @@ export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
 
 export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
      if ! rhs.mutable && !lhs.mutable
-     then return buildErrorPacket("value installation attempted, but neither hash tables is mutable");
+     then return buildErrorPacket("value installation attempted, but neither hash table is mutable");
      storeInHashTable(
 	  if !lhs.mutable then rhs
 	  else if rhs.mutable then ( if lhs.hash > rhs.hash then lhs else rhs )

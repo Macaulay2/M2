@@ -221,7 +221,9 @@ IM2_GB_to_string(Computation *G)
   /* TODO */
 {
   buffer o;
+  o << "--RawGroebnerBasis[";
   G->text_out(o);
+  o << "]--";
   return o.to_string();
 }
 

@@ -21,7 +21,9 @@ vector = (v) -> (
 
 -----------------------------------------------------------------------------
 -- BasicModule = new Type of Type
-Module = new Type of Type
+ImmutableType = new Type of HashTable
+Module = new Type of ImmutableType
+new Module of HashTable from List := (Module,Type,v) -> hashTable v
 Module.synonym = "module"
 raw Module := M -> M.RawFreeModule
 
@@ -173,15 +175,15 @@ Vector = new Type of HashTable				    -- used to be MutableHashTable!
 Vector _ ZZ := (v,i) -> notImplemented()		    -- we have this just because there is a possible obsolete documentation about it
 
 newModule = method(TypicalValue => Module)
-newModule(Ring,RawFreeModule) := (R,rM) -> (
-     M := new Module of Vector;
-     M.RawFreeModule = rM;
-     M.ring = R;
-     M.numgens = rawRank rM;
-     M#0 = somethingElse;					    -- zero vector!
-     M)
+newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
+     symbol cache => new CacheTable,
+     symbol RawFreeModule => rM,
+     symbol ring => R,
+     symbol numgens => rawRank rM,
+     0 => somethingElse					    -- zero vector!
+     }
 
-degrees Module := M -> if M.?degrees then M.degrees else M.degrees = (
+degrees Module := M -> if M.?degrees then M.cache.degrees else M.cache.degrees = (
      if not isFreeModule M then M = cover M;
      rk := numgens M;
      R := ring M;
@@ -312,9 +314,9 @@ RingElement * Module := Module => ZZ * Module := (r,M) -> subquotient (r ** gene
 
 isHomogeneous Module := Boolean => (M) -> ring M === ZZ or (
      isHomogeneous ring M and (
-     if M.?isHomogeneous 
-     then M.isHomogeneous 
-     else M.isHomogeneous = (
+     if M.cache.?isHomogeneous 
+     then M.cache.isHomogeneous 
+     else M.cache.isHomogeneous = (
      	  (not M.?generators or isHomogeneous M.generators)
      	  and
      	  (not M.?relations or isHomogeneous M.relations)

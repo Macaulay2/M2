@@ -8,27 +8,27 @@ endif
 
 LATERESULTS := missingDoc.okay
 
-all check :: ; $(MAKE) -C engine $@
 all check :: $(RESULTS)
+all check :: ; $(MAKE) -C engine $@
 
 $(RESULTS) : ../bin/M2
 $(LATERESULTS) : ../bin/M2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
-ARGS := --silent --stop -q -e 'path=join(path,{"@srcdir@/","@srcdir@/../packages/"})'
+ARGS := --silent --stop --debug-M2 -q -e 'path=join(path,{"@srcdir@/","@srcdir@/../packages/"})'
 
 # uncomment this for further debugging:
 # ARGS += -e 'errorDepth = 0'
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 600; time ../bin/M2 $(ARGS) $< -e 'exit(0)'
-	@ touch $@
+	ulimit -t 600; time ../bin/M2 $(ARGS) -e 'input "$<"' -e 'exit(0)'
+	touch $@
 
 # this version redirects the input (some bugs are detectable only this way
 %.okay : %.m2-input
 	@ echo testing $<
-	@ ulimit -t 600; time ../bin/M2 $(ARGS) <$< >$*.out
-	@ touch $@
+	ulimit -t 600; time ../bin/M2 $(ARGS) <$< >$*.out
+	touch $@
 
 clean::; rm -f *.okay *.out core
 distclean:: clean; rm -f Makefile
