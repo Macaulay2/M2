@@ -14,6 +14,7 @@
 #define deleteitem(x) GC_FREE(x)
 
 #include <gc.h>
+#include "../d/memdebug.h"
 struct our_new_delete {
   inline void* operator new( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
   inline void* operator new []( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }

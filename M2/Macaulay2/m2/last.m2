@@ -12,22 +12,15 @@ addEndFunction(() -> (
      )
 
 -- try to wrap long lines intelligently
-RawMatrix.BeforePrint =
-Matrix.BeforePrint =
-RingElement.BeforePrint =
-List.BeforePrint = 
-Sequence.BeforePrint = x -> (
+
+wr := (x,sep) -> (
      w := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 80;
      if w == 0 then x else (
      	  i := - width stack lines ZZ.InputPrompt lineNumber + w;
-     	  if i > 20 then wrap(i, net x) else net x))
+     	  if i > 20 then wrap(i, sep, net x) else net x))
 
-String.BeforePrint = Net.BeforePrint = x -> (
-     w := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 80;
-     if w == 0 then x else (
-     	  i := - width stack lines ZZ.InputPrompt lineNumber + w;
-     	  if i > 20 then wrap(i, "", net x) else net x))
-
+RawMatrix.BeforePrint = Matrix.BeforePrint = RingElement.BeforePrint = List.BeforePrint = Sequence.BeforePrint = x -> wr(x,"-")
+String.BeforePrint = x -> wr(x,"")
 
 -- make sure this is after all global symbols are defined or erased
 Main#"reverse dictionary"#null = symbol null

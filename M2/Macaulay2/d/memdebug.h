@@ -1,55 +1,53 @@
-/* Copyright 1997 by Daniel R. Grayson */
+/* Copyright 1997,2004 by Daniel R. Grayson */
 
-				/* don't forget FixUp in freeHandle in actors5.d, and the 
-				   subfront version of RegisterFinalizer, too! */
-
-#ifdef MEM_DEBUG
-
-void debug_delete(void *);
-void* debug_new(size_t size);
-void* debug_new_atomic(size_t size);
-void* debug_new_uncollectable(size_t size);
-
-#ifndef MEM_DEBUG_INTERNAL
-
-#undef GC_MALLOC_UNCOLLECTABLE
-#define GC_MALLOC_UNCOLLECTABLE(n) debug_new_uncollectable(n)
-
-#undef GC_MALLOC_ATOMIC
-#define GC_MALLOC_ATOMIC(n) debug_new_atomic(n)
-
-#undef GC_MALLOC
-#define GC_MALLOC(n) debug_new(n)
-
-#undef GC_FREE
-#define GC_FREE(n) debug_delete(n)
-
+#ifndef MEMDEBUG_H
+#define MEMDEBUG_H
+#ifdef MEMDEBUG
+#warning : using memdebug.h debugging code
+#if defined(__cplusplus)
+extern "C" {
 #endif
 
-#define FREE_DELAY       10
-#define FENCE_INTS 	 2
-#define FRONT_FENCE      0xaaaaaaaa
-#define FRONT_FENCE_GONE 0xa0a0a0a0
-#define BODY_PART        0xbbbbbbbb
-#define BODY_PART_GONE   0xb0b0b0b0
-#define REAR_FENCE       0xcccccccc
-#define REAR_FENCE_GONE  0xc0c0c0c0
+    void M2_debug_free(void *);
+    void* M2_debug_malloc(size_t size);
+    void* M2_debug_malloc_atomic(size_t size);
+    void* M2_debug_malloc_atomic_uncollectable(size_t size);
+    void* M2_debug_realloc(void *,size_t size);
+    void* M2_debug_malloc_uncollectable(size_t size);
 
-typedef struct FRONT {
-     int trapcount;
-     size_t size;
-     unsigned int fence[FENCE_INTS];
-     } front;
+#if defined(__cplusplus)
+}
+#endif
 
-typedef struct REAR {
-     unsigned int fence[FENCE_INTS];
-     size_t size;
-     int trapcount;
-     } rear;
+#ifndef MEMDEBUG_INTERNAL
 
-#define __addfront__(x) (((void *) x) + sizeof(front))
-#define __subfront__(x) (((void *) x) - sizeof(front))
+#undef GC_MALLOC_UNCOLLECTABLE
+#define GC_MALLOC_UNCOLLECTABLE M2_debug_malloc_uncollectable
+#define GC_malloc_uncollectable M2_debug_malloc_uncollectable
+
+#define GC_malloc_atomic_uncollectable M2_debug_malloc_atomic_uncollectable
+
+#undef GC_MALLOC_ATOMIC
+#define GC_MALLOC_ATOMIC M2_debug_malloc_atomic
+#define GC_malloc_atomic M2_debug_malloc_atomic
+
+#undef GC_MALLOC
+#define GC_MALLOC M2_debug_malloc
+#define GC_malloc M2_debug_malloc
+#define GC_debug_malloc M2_debug_malloc
+
+#undef GC_REALLOC
+#define GC_REALLOC M2_debug_realloc
+#define GC_realloc M2_debug_realloc
+#define GC_debug_realloc M2_debug_realloc
+
+#undef GC_FREE
+#define GC_FREE M2_debug_free
+#define GC_free M2_debug_free
+#define GC_debug_free M2_debug_free
+
+#endif
+#endif
 #else
-#define __addfront__(x) (x)
-#define __subfront__(x) (x)
+#warning : including memdebug.h a second time
 #endif

@@ -9,6 +9,7 @@
 #include "M2types.h"
 #include "M2inits.h"
 #include "M2mem.h"
+#include "memdebug.h"
 #include "debug.h"
 #include "gmp_init.h"
 #define TRUE 1
@@ -20,7 +21,7 @@ char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {
-     GC_all_interior_pointers = TRUE;
+     GC_all_interior_pointers = TRUE; /* especially important if MEMDEBUG is on, call first */
      GC_free_space_divisor = 2;
      GC_INIT();
      if (getenv("GC_free_space_divisor")) {
@@ -90,7 +91,7 @@ void M2inits(void) {
   /* this routine gets called twice, once by M2inits1 and once by M2inits2 -- the other constructors are called in between */
   if (M2inits_run) return;
 # ifdef DEBUG
-  trap();
+  trap();			/* we call trap() once so variables (such as trapset) can be set */
 # endif
   init_gc();
 # ifdef FACTORY

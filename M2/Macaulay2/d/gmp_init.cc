@@ -1,4 +1,5 @@
 #include <gc.h>
+#include "memdebug.h"
 #include "gmp_init.h"
 #include "config.h"
 

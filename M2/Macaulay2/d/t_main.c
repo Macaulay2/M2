@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gc.h>
+#include "memdebug.h"
 #include <gmp.h>
 #include "types.h"
 

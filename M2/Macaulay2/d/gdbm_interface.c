@@ -6,6 +6,7 @@
 #include <string.h>
 #include <gdbm.h>
 #include "M2types.h"
+#include "M2mem.h"
 
 #define TRUE 1
 #define FALSE 0

@@ -1,4 +1,5 @@
 #include <gc.h>
+#include "memdebug.h"
 #include <string.h>
 
 /* this is code from factory's file memutil.c, slightly sped up */

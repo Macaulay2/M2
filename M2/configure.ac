@@ -138,7 +138,7 @@ AC_ARG_ENABLE(strip,
 AC_SUBST(DEBUG)
 AC_ARG_ENABLE(debug,
     AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)),
-    DEBUG=yes; STRIP=no,
+    DEBUG="$enableval",
     DEBUG=no)
 
 AC_SUBST(VERBOSE)

@@ -15,7 +15,7 @@ gc_tested: gc_test; ./$<; touch $@
 M2_LDFLAGS := $(LDFLAGS)
 M2_LOADLIBES := $(LOADLIBES)
 M2_LDLIBS := $(LDLIBS)
-LDFLAGS += -lgc
+LDFLAGS += -lgc -ldl
 
 ## files
 

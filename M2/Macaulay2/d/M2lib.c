@@ -377,9 +377,6 @@ char **argv;
 #      endif
      }
 
-#    ifndef NDEBUG
-     trap();
-#    endif
      arginits(argc,saveargv);
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
