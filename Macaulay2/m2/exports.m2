@@ -1,7 +1,6 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
-     symbol valueString,
 	symbol backtrace,
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,
@@ -12,6 +11,7 @@ exportMutable (
 	symbol debugError,
 	symbol debuggerHook,
 	symbol debugLevel,
+	symbol engineDebugLevel,
 	symbol debuggingMode,
 	symbol encapDirectory,
 	symbol errorCode,

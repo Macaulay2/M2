@@ -289,6 +289,12 @@ beginDocumentation = () -> (
 	  );
      )
 
+debugPackage := method()
+debugPackage Package := pkg -> (
+     d := pkg#"private dictionary";
+     if not member(d,globalDictionaries) then globalDictionaries = prepend(d,globalDictionaries));
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -8,6 +8,8 @@
 extern char newline[];
 extern char startupString1[];
 extern char startupString2[];
+extern int tokens_debugLevel;
+extern int tokens_engineDebugLevel;
 
 typedef struct M2_string_struct {
     unsigned int len;

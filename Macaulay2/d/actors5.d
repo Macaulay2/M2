@@ -1511,6 +1511,7 @@ export debuggerHook := nullE;
 
 backtraceS := dummySymbol;
 debugLevelS := dummySymbol;
+engineDebugLevelS := dummySymbol;
 debuggingModeS := dummySymbol;
 errorDepthS := dummySymbol;
 fullBacktraceS := dummySymbol;
@@ -1526,6 +1527,7 @@ printWidthS := dummySymbol;
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
      (  debugLevelS = setupvar("debugLevel",toExpr(debugLevel));  debugLevelS  ),
+     (  engineDebugLevelS = setupvar("engineDebugLevel",toExpr(engineDebugLevel));  engineDebugLevelS  ),
      (  debuggingModeS = setupvar("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
      (  fullBacktraceS = setupvar("fullBacktrace",toExpr(fullBacktrace));  fullBacktraceS  ),
@@ -1591,6 +1593,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       if sym === loadDepthS then (loadDepth = n; e)
 	       else if sym === errorDepthS then (errorDepth = n; e)
 	       else if sym === debugLevelS then (debugLevel = n; e)
+	       else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 	       else if sym === recursionLimitS then (recursionLimit = n; e)
 	       else if sym === lineNumberS then (lineNumber = n; e)
 	       else if sym === printingPrecisionS then (printingPrecision = n; e)

@@ -256,10 +256,7 @@ dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictiona
 oldvalue := value
 value = method()
 value Symbol := value Pseudocode := oldvalue
-
-value String := x -> (
-     valueString = x;   
-     oldvalue x)
+value String := x -> oldvalue x
 value Nothing := x -> null
 -----------------------------------------------------------------------------
 

@@ -12,6 +12,7 @@ use gmp;
 use engine;
 
 export debugLevel := 0;
+export engineDebugLevel := 0;
 
 export parsefuns := {
      unary:function(Token,TokenFile,int,bool):ParseTree,
