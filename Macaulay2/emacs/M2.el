@@ -265,10 +265,11 @@ M2-send-to-prorgram can obtain lines from this buffer."
 		  (width . 67)
 		  (visiblity . t)
 		  (minibuffer . nil)
+		  ;; (reverse . t)
+		  (modeline . nil);; doesn't work
 		  (name . "DEMO"))))
 	      (toggle-scroll-bar 0)
-	      ; use (w32-select-font) to get good font names under windows
-	      (set-default-font 
+	      (set-frame-font ; use (w32-select-font) to get good font names under windows
 	       (cond ((eq window-system 'w32) "-*-Lucida Console-bold-r-*-*-19-142-*-*-c-*-*-ansi-")
 		     ((eq window-system 'x) "-adobe-courier-bold-r-normal--24-240-75-75-m-150-iso8859-1")
 		     (t "12x24")))))

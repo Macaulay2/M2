@@ -1,5 +1,11 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+le := (a,b) -> (
+     c := a ? b;
+     if c === incomparable then error "incomparable elements encountered in sort";
+     c =!= quote >
+     )
+
 sort = (v) -> (
      -- quick sort routine
      if #v <= 1
@@ -11,8 +17,8 @@ sort = (v) -> (
 	       i := l+1;
 	       j := r;
 	       while i <= j do (
-		    if v#i <= c then i=i+1
-		    else if c <= v#j then j=j-1
+		    if le(v#i,c) then i=i+1
+		    else if le(c,v#j) then j=j-1
 		    else ( w := v#i; v#i = v#j; v#j = w ));
 	       if l<j then subsort(l+1,j);
 	       if i<=r then subsort(i,r);

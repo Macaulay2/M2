@@ -219,13 +219,13 @@ UTIL := ../util/
 tmp_init.o : tmp_init.c
 tmp_init.c : Makefile $(TOPDIR)/Makeconf $(PROJECT)
 	 $(UTIL)timestmp >tmp
-	@echo "echoout '>>tmp' ..."
-	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
+	@ echo "echoout '>>tmp' ..."
+	@ $(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
 	 $(UTIL)echoout '>>tmp' 'char current_date[] = __DATE__;'
 	 $(UTIL)echoout '>>tmp' 'char current_time[] = __TIME__;'
 	 $(UTIL)echoout '>>tmp' 'int main_inits() {'
-	@echo "echoout '>>tmp' ..."
-	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), '   $(f)__prepare();')
+	@ echo "echoout '>>tmp' ..."
+	@ $(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), '   $(f)__prepare();')
 	 $(UTIL)echoout '>>tmp' '   return 0;}'
 	mv tmp tmp_init.c
 
@@ -298,13 +298,13 @@ t : t_main.o gmp.oo stdio.oo strings.oo system.oo varstrin.oo nets.oo scclib.o C
 all:: TAGS
 
 TAGS: Makefile
-	@echo making TAGS
-	@$(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES),  $(i),0)
+	@ echo making TAGS
+	@ $(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES),  $(i),0)
 allfiles: Makefile
-	@echo making allfiles
-	@$(UTIL)echoout '>allfiles.tmp' $(ALLFILES)
-	@<allfiles.tmp sort|uniq >allfiles
-	@rm allfiles.tmp
+	@ echo making allfiles
+	@ $(UTIL)echoout '>allfiles.tmp' $(ALLFILES)
+	@ <allfiles.tmp sort|uniq >allfiles
+	@ rm allfiles.tmp
 
 backup : CVS/Entries
 CVS/Entries : $(ALLFILES)
