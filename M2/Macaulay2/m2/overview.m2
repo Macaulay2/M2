@@ -1453,11 +1453,8 @@ document { "making new functions with optional arguments",
      arguments of ", TT "f", ".  We use the ", TT "@", " operator to attach the default
      values to our function, coded in a special way.",
      EXAMPLE {
-	  "f = (
-     (opts -> x -> x * opts.Slope + opts.Intercept)
-     @
-     {Slope => 1, Intercept => 1}
-     )",
+	  "f = {Slope => 1, Intercept => 1} @ 
+    (opts -> x -> x * opts.Slope + opts.Intercept)",
 	  "f 5",
 	  "f(5,Slope => 100)",
 	  "f(5,Slope => 100, Intercept => 1000)",
@@ -1467,5 +1464,14 @@ document { "making new functions with optional arguments",
      keys are the names of the optional arguments, and the values
      are the corresponding current values, obtained either from the default values 
      specified in the definition of ", TT "f", ", or from the options specified at 
-     the time ", TT "f", " is called."
+     the time ", TT "f", " is called.",
+     PARA,
+     "In the example above, the inner function has just one argument, ", TT "x", ",
+     but handling multiple arguments is just as easy.  Here is an example with two
+     arguments.",
+     EXAMPLE {
+	  "f = {a => 1000} @ (o -> (x,y) -> x * o.a + y);",
+	  "f(3,7)",
+	  "f(5,11,a=>10^20)",
+	  },
      }
