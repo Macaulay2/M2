@@ -85,7 +85,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# MEMDEBUG    := TRUE' >>$@
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
-	echo '# export OLDENGINE := TRUE' >>$@
+	echo 'export OLDENGINE := TRUE' >>$@
 	echo 'GCMALLOC    := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo '# NEWDUMPDATA  := TRUE' >>$@
