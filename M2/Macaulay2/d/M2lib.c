@@ -321,6 +321,8 @@ int main(argc,argv)
 int argc; 
 char **argv;
 {
+     char dummy[1];
+     extern char *GC_stackbottom;
      char *p, **x;
      char **saveenvp = NULL;
      int envc = 0;
@@ -462,6 +464,7 @@ char **argv;
 	  environ = environ0;
 #endif
 	  }
+
      system_stime();
      signal(SIGINT,interrupt_handler);
 
@@ -476,6 +479,8 @@ char **argv;
      trap();
      progname = saveargv[0];
      for (p=progname; *p; p++) if (*p=='/') progname = p+1;
+
+     GC_stackbottom = dummy;	
      if (getenv("GC_free_space_divisor")) {
 	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
 	  if (GC_free_space_divisor <= 0) {
@@ -643,13 +648,17 @@ extern int etext, end;
 
 static jmp_buf jumpbuffer;
 
+static int sig = -1;
+
 static void handler(int k) 
 {
+     sig = 1;
      longjmp(jumpbuffer,1);
      }
 
 static void handler2(int k) 
 {
+     sig = 2;
      longjmp(jumpbuffer,2);
      }
 
@@ -741,8 +750,8 @@ static void extend_memory(void *newbreak) {
 #endif
 
 #ifdef DUMPDATA
+
 static int probe() {
-     int sig = -1;
      char c, *p, readable=FALSE, writable=FALSE;
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
 
@@ -760,14 +769,14 @@ static int probe() {
 #ifdef SIGBUS
      	  signal(SIGBUS,handler2);
 #endif
-	  if (0 == (sig = setjmp(jumpbuffer)))  {
+	  if (0 == setjmp(jumpbuffer))  {
 	       c = *p;		/* try reading a byte */
 	       readable = TRUE;
      	       signal(SIGSEGV,handler);
 #ifdef SIGBUS
      	       signal(SIGBUS,handler2);
 #endif
-	       if (0 == (sig = setjmp(jumpbuffer))) {
+	       if (0 == setjmp(jumpbuffer)) {
 		    *p = c;	/* try writing a byte */
 		    writable = TRUE;
 		    }

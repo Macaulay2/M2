@@ -146,7 +146,16 @@ endif
 endif
 
 ifeq ($(OS),Linux)
-LDFLAGS += -Wl,-defsym,_DYNAMIC=0
+
+# this is for gc somehow, see the end of gc/config.h
+# LDFLAGS += -Wl,-defsym,_DYNAMIC=0
+
+# This next bit is really needed only for gnu libc6 (glibc-2.0.6)
+# Without it, it does dynamic linking at run time and breaks our dumpdata scheme
+# Don't link statically, so that these libraries actually get loaded at run time.
+# If we must link statically, we should find out how to link all members.
+LDFLAGS += -lnss_compat -lnss_db -lnss_dns -lnss_nis
+
 endif
 
 #ifeq ($(OS),Linux)
@@ -196,7 +205,7 @@ gc_cpp.o : ../../Makeconf.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
-ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o ../e/*.o
+ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o $(wildcard ../e/*.o)
 
 ifneq "$(CC)" "cl"
 ALLOBJ += compat.o
@@ -205,7 +214,7 @@ endif
 ifeq ($(OS),Linux)
 # The maintainers of linux' libstdc++ unwisely decided to incorporate
 # their own private versions of routines from libc in their library!
-# Unforgiveable!
+# Unforgiveable, since the symbols defined differ (of course).
 ALLOBJ += putc.o
 putc.o : /usr/lib/libc.a; ar x $^ $@
 endif

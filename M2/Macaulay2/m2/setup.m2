@@ -7,18 +7,23 @@ if class path =!= List then path = { "." }
 OS := "operating system"
 
 pathSeparator = (
-	if version#OS === "MACOS"	    then ":" 
+	if version#"operating system" === "MACOS" then ":" 
 	else "/"
 	)
 
 dir:= splice(apply(lines(commandLine#0, "/"), i -> toSequence lines(i, "\\")))
 if #dir > 2 
-then path = join({concatenate (apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
-
---isAbsolutePath := filename -> pathSeparator === substring(filename,0,#pathSeparator)
+then path = join({concatenate (
+	       pathSeparator,				    -- this one not needed for MACOS ?
+	       apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
 
 hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
-isAbsolutePath := filename -> hasColon filename and substring(filename,0,1) =!= ":"
+
+isAbsolutePath := (
+     if version#"operating system" === "MACOS" 
+     then filename -> hasColon filename and substring(filename,0,1) =!= ":"     
+     else filename -> pathSeparator === substring(filename,0,#pathSeparator)
+     )
 
 if class phase === Symbol then phase = 0
 
@@ -135,7 +140,7 @@ tryload := (filename,load) -> (
 		    if result then markLoaded fn;
 		    result))))
 ///
-if version#OS === "MACOS"
+if version#"operating system" === "MACOS"
 then tryload = (filename,load) -> (
      if isAbsolutePath filename then (
 	  if load filename then (
