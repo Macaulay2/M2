@@ -327,7 +327,7 @@ document {  "Developer's Corner",
 
 document { "Macaulay 2",
      FileName => "index",
-     IMG (LAYOUT#"images" | "9planets.gif"), PARA,		    -- see LAYOUT for final location
+     PARA IMG (LAYOUT#"images" | "9planets.gif"),
      PARA {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
 	  },

@@ -312,6 +312,7 @@ leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
 setup(LeftDivideS,leftDividefun);
 
 import WindowWidth(fd:int):int;
+import WindowHeight(fd:int):int;
 fileWidth(e:Expr):Expr := (
      when e
      is o:file do (
@@ -321,6 +322,15 @@ fileWidth(e:Expr):Expr := (
 	  )
      else WrongArg("a file"));
 setupfun("fileWidth",fileWidth);
+fileHeight(e:Expr):Expr := (
+     when e
+     is o:file do (
+	  if o.infd == -1 && o.outfd == -1
+	  then WrongArg("an open file")
+	  else Expr(toInteger(WindowHeight(if o.infd != -1 then o.infd else o.outfd)))
+	  )
+     else WrongArg("a file"));
+setupfun("fileHeight",fileHeight);
 
 horizontalJoin(s:Sequence):Expr := (
      s = deepsplice(s);

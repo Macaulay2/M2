@@ -922,12 +922,12 @@ document { pad,
 
 document { columnate,
      Headline => "arrange strings in columns",
-     TT "columnate(s,w)", " -- arranges the strings in the list ", TT "s", " in
+     TT "columnate(w,s)", " -- arranges the strings in the list ", TT "s", " in
      columns, returning a ", TO "Net", " suitable for output to a terminal 
      with a linewidth of ", TT "w", ".",
      PARA,
      EXAMPLE {
-	  "columnate(characters ascii (65 .. 90) , 12)",
+	  "columnate(12, characters ascii (65 .. 90))",
 	  }
      }
 

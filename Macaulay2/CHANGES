@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+reversed the order of arguments for 'columnate'
+
 renamed SHIELD to NOCONTENTS and introduced its converse, CONTENTS
 
 renamed peek2 to peek', and order of arguments reversed, so the depth of peeking is the

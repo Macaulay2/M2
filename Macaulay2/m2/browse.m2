@@ -13,8 +13,9 @@ METHODS.name = "METHODS"
 showit := (ITEMS,SAME,DEFAULT) -> (
      wid := if # ITEMS < 10 then 1 else if # ITEMS < 100 then 2 else 3;
      << columnate(
-	  apply(#ITEMS, i -> concatenate {pad(wid,toString i), ":", ITEMS#i#0}),
-	  if width stdio != 0 then width stdio - 1 else 79) << endl;
+	  if printWidth != 0 then printWidth - 1 else 79,
+	  apply(#ITEMS, i -> concatenate {pad(wid,toString i), ":", ITEMS#i#0})
+	  ) << endl;
      while (
      	  i := value read concatenate("menu item [",toString DEFAULT,"]: ");
      	  if i === null then i = DEFAULT;

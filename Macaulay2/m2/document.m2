@@ -352,12 +352,7 @@ getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 
 examples = x -> getExampleInputs documentation x
 printExamples = f -> scan(examples f, i -> << i << endl)
-
-topics = Command (
-     () -> (
-	  wid := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 80;
-	  columnate( format \ topicList(), wid)))
-
+topics = Command (() -> pager columnate(if printWidth != 0 then printWidth else 80, format \ topicList()))
 apropos = (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 -- more general methods
@@ -998,6 +993,8 @@ tex  HR := x -> ///
 \hfill\break
 \hbox to\hsize{\leaders\hrule\hfill}
 ///
+
+html Hypertext := x -> concatenate("<P>",apply(x,html))
 
 html PARA := x -> (
      if #x === 0 
