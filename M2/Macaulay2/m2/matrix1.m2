@@ -633,9 +633,13 @@ dual(Matrix) := Matrix => f -> (
      Hom(f,R^1)
      )
 
+inverse Matrix := 
 Matrix.InverseMethod = m -> if m.cache#?-1 then m.cache#-1 else m.cache#-1 = (
-     id_(target m) // m
+     i := id_(target m);
+     if i % m != 0 then error "matrix not invertible";
+     i // m
      )
+
 
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
