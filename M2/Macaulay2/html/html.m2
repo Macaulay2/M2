@@ -11,8 +11,8 @@ scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
 process := (key,doc) -> (
 	  filename := linkFilename key;
 	  conceptTable#key = filename;
-	  openOut filename << html SEQ { 
-	       TITLE key, H1 key,
+	  filename << html SEQ { 
+	       TITLE key, H2 key,
 	       try evaluate doc else error ("evaluate ", doc),
 	       if key != "index" then SEQ {
 		    PARA,
@@ -27,8 +27,21 @@ try scandb(openDatabase "../cache/Macaulay2.doc", process) else
 		if class v === SEQ then process (k,name v)
 		))
 
+scan(linkFilenameKeys(),
+     key -> if not conceptTable#?key then linkFilename key << html SEQ { 
+	   TITLE key, H2 key,
+	   PARA,
+	   "The text for this node has not been written yet.",
+	   if key != "index" then SEQ {
+		PARA,
+		"Go to ", HREF {"index.html", "main index"}, "."
+		},
+	   PARA,
+	   "Go to ", HREF {"concepts.html", "concepts index"}, "."
+	   } << endl << close)
+
 concepts = openOut "concepts.html";
-concepts << html SEQ { TITLE "Concepts Index", H1 "Concepts Index" }
+concepts << html SEQ { TITLE "Concepts Index", H2 "Concepts Index" }
 concepts << "<MENU>\n";
 scan(sort keys conceptTable,
      key -> (
