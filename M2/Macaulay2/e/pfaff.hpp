@@ -6,17 +6,20 @@
 #include "comp.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"
+#include "matrixcon.hpp"
+
+class MatrixConstructor;
 
 class PfaffianComputation : public computation
 {
   const Ring *R;
   const Matrix *M;
-  Matrix *pfaffs;			// One row matrix collecting non-zero 
+  MatrixConstructor pfaffs;
+  //  Matrix *pfaffs;		// One row matrix collecting non-zero 
 				// pfaffians.
-  //hashtable<ring_elem> table;	// Only up through size p-1 by p-1.
   int p;
 
-  int I;			// I (resp. J) is row_set (col_set) encoded
+  int I;			// row_set encoded
   intarray row_set;
   int endI;
 
@@ -32,7 +35,7 @@ public:
 	// increments I and/or J and updates 'pfaffs', 'table'.
   int calc(int nsteps);
   
-  Matrix *pfaffians() { return pfaffs; }
+  Matrix *pfaffians() { return pfaffs.to_matrix(); }
 
   const Ring * get_ring () const { return R; }
 };

@@ -219,7 +219,7 @@ public:
   MatrixOrNull *module_tensor(const Matrix *m) const;
   MatrixOrNull *tensor(const Matrix *m) const;
   MatrixOrNull *diff(const Matrix *m, int use_coef) const;
-  MatrixOrNull *symm(int n) const;
+  MatrixOrNull *symm(int n) const; // in symm.cpp
 
   MatrixOrNull *coeffs(const int *vars, Matrix * &result_monoms) const;
   MatrixOrNull *coeffs(M2_arrayint vars, const M2_arrayint monoms) const;
@@ -232,7 +232,7 @@ public:
 
   Matrix *exterior(int p,int strategy) const;
   Matrix *minors(int p,int strategy) const;
-  Matrix *pfaffians(int p) const;
+  Matrix *pfaffians(int p) const;  // in pfaff.cpp
   static Matrix *wedge_product(int p, int q, const FreeModule *F);
 //  static Matrix wedge_dual(int p, const FreeModule *F);
 

@@ -7,7 +7,6 @@
 #include "matrix.hpp"
 #include "comb.hpp"
 #include "det.hpp"
-#include "pfaff.hpp"
 #include "polyring.hpp"
 #include "termideal.hpp"
 #include "assprime.hpp"
@@ -1457,33 +1456,6 @@ Matrix *Matrix::koszul(const Matrix *r, const Matrix *c)
   deletearray(aexp);
   deletearray(bexp);
   deletearray(result_exp);
-  return result;
-}
-
-Matrix *Matrix::exterior(int p,int strategy) const
-{
-  DetComputation *d = new DetComputation(this,p,1,strategy);
-  d->calc(-1);
-  Matrix *result = d->determinants();
-  deleteitem(d);
-  return result;
-}
-
-Matrix *Matrix::minors(int p,int strategy) const
-{
-  DetComputation *d = new DetComputation(this,p,0,strategy);
-  d->calc(-1);
-  Matrix *result = d->determinants();
-  deleteitem(d);
-  return result;
-}
-
-Matrix *Matrix::pfaffians(int p) const
-{
-  PfaffianComputation *d = new PfaffianComputation(this,p);
-  d->calc(-1);
-  Matrix *result = d->pfaffians();
-  deleteitem(d);
   return result;
 }
 

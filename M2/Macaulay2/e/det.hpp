@@ -6,6 +6,7 @@
 #include "comp.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"
+#include "matrixcon.hpp"
 
 const int DET_BAREISS = 0;
 const int DET_COFACTOR = 1;
@@ -14,11 +15,14 @@ class DetComputation : public computation
 {
   const Ring *R;
   const Matrix *M;
-  Matrix *result;  // Either:One row matrix collecting non-zero 
+  const FreeModule *F; // target free module of the result
+  //  Matrix *result;  // Either:One row matrix collecting non-zero 
+		  // determinants, or the resulting
+		  // exterior power; depending on 'do_exterior'
+  MatrixConstructor result;// Either:One row matrix collecting non-zero 
 		  // determinants, or the resulting
 		  // exterior power; depending on 'do_exterior'
 
-  //hashtable<ring_elem> table;	// Only up through size p-1 by p-1.
   bool done;
   int p;
 
@@ -69,7 +73,7 @@ public:
   void discard() { clear(); }
   void set_next_minor(const int* rows, const int* cols);
   
-  Matrix *determinants() { return result; }
+  Matrix *determinants() { return result.to_matrix(); }
 };
 
 #endif
