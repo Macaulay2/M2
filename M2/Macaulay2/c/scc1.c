@@ -149,6 +149,7 @@ char file_header[] = "\
 extern char *getmem();\n\
 extern void flush();\n\
 extern void fatalrefctcheck();\n\
+extern void fatalarraylen();\n\
 extern void fatalarrayindex();\n\
 extern void destroy();\n\
 extern void outofmem();\n\

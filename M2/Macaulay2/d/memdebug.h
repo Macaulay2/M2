@@ -1,11 +1,9 @@
 /* Copyright 1997 by Daniel R. Grayson */
 
-#define MEM_DEBUG 0				/* edit this line */
-
 				/* don't forget FixUp in freeHandle in actors5.d, and the 
 				   subfront version of RegisterFinalizer, too! */
 
-#if MEM_DEBUG
+#ifdef MEM_DEBUG
 
 void debug_delete(void *);
 void* debug_new(size_t size);
@@ -28,7 +26,7 @@ void* debug_new_uncollectable(size_t size);
 
 #endif
 
-#define FREE_DELAY       0
+#define FREE_DELAY       10
 #define FENCE_INTS 	 2
 #define FRONT_FENCE      0xaaaaaaaa
 #define FRONT_FENCE_GONE 0xa0a0a0a0

@@ -2,10 +2,11 @@
 
 #include <gc.h>
 #include <stdio.h>
+#include <unistd.h>
 #define MEM_DEBUG_INTERNAL
 #include "memdebug.h"
 
-#if MEM_DEBUG
+#ifdef MEM_DEBUG
 
 extern void outofmem(void);
 extern void trap(void);
@@ -18,7 +19,7 @@ int delay_chain_index;
 
 void* debug_new(size_t size) {
      front *f;
-     void *p;
+     char *p;
      rear *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
@@ -26,11 +27,10 @@ void* debug_new(size_t size) {
 	  sizeof(front) + sizeof(int)*INTS_BODY + sizeof(rear)
 	  );
      if (f == NULL) outofmem();
-     p = (void *)f + sizeof(front);
+     p = (char *)f + sizeof(front);
      r = (rear *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
-     ++trapcount;
-     f->trapcount = r->trapcount = trapcount;
+     f->trapcount = r->trapcount = ++trapcount;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
      for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
@@ -40,7 +40,7 @@ void* debug_new(size_t size) {
 
 void* debug_new_uncollectable(size_t size) {
      front *f;
-     void *p;
+     char *p;
      rear *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
@@ -48,11 +48,10 @@ void* debug_new_uncollectable(size_t size) {
 	  sizeof(front) + sizeof(int)*INTS_BODY + sizeof(rear)
 	  );
      if (f == NULL) outofmem();
-     p = (void *)f + sizeof(front);
+     p = (char *)f + sizeof(front);
      r = (rear *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
-     ++trapcount;
-     f->trapcount = r->trapcount = trapcount;
+     f->trapcount = r->trapcount = ++trapcount;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
      for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
@@ -62,7 +61,7 @@ void* debug_new_uncollectable(size_t size) {
 
 void* debug_new_atomic(size_t size) {
      front *f;
-     void *p;
+     char *p;
      rear *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
@@ -73,8 +72,7 @@ void* debug_new_atomic(size_t size) {
      p = (void *)f + sizeof(front);
      r = (rear *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
-     ++trapcount;
-     f->trapcount = r->trapcount = trapcount;
+     f->trapcount = r->trapcount = ++trapcount;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
      for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
