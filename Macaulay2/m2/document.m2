@@ -736,6 +736,8 @@ getOptionDefaultValues Sequence := s -> (
      o := options s;
      if o =!= null then o else if class s#0 === Function then getOptionDefaultValues s#0 else emptyOptionTable)
 
+sortByName := v -> last \ sort \\ (i -> (toString i, i)) \ v
+
 synopsisOpts := new OptionTable from {			    -- old
      Usage => null,
      Function => null,
@@ -759,7 +761,7 @@ synopsis Thing := key -> (
      ino := new HashTable from select(inp, x -> iso x);
      inp = select(inp, x -> not iso x);
      opt := getOptionDefaultValues key;
-     ino = apply(sort unique join(keys opt,keys ino),
+     ino = apply(sortByName unique join(keys opt,keys ino),
 	  optionName -> (
 	       fixup (
 		    if opt#?optionName

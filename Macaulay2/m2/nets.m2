@@ -176,7 +176,11 @@ net BasicList := x -> horizontalJoin deepSplice (
       "{",
       toSequence between(comma,apply(toList x,net)),
       "}")
-net MutableList := x -> horizontalJoin ( net class x, "{...", toString(#x), "...}" )
+net MutableList := x -> (
+     if #x > 0 
+     then horizontalJoin ( net class x, "{...", toString(#x), "...}")
+     else horizontalJoin ( net class x, "{}")
+     )
 net HashTable := x -> (
      horizontalJoin flatten ( 
      	  net class x,

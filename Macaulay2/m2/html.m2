@@ -455,7 +455,10 @@ installPackage Package := o -> pkg -> (
 
      -- process documentation
      stderr << "--processing documentation nodes" << endl;
-     scan(nodes, tag -> pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag);
+     scan(nodes, tag -> time (
+	       stderr << "processing " << tag << endl;
+	       pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag;
+	       ));
 
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;
@@ -489,6 +492,9 @@ installPackage Package := o -> pkg -> (
      traverse(unbag pkg#"table of contents", tag -> (
 	       key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
+	       if not pkg#"processed documentation"#?fkey then (
+		    stderr << "--warning: skipping missing documentation node: " << fkey << endl;
+		    return);
 	       chk fkey;
 	       byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
 	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
