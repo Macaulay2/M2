@@ -52,6 +52,7 @@ bool Z_mod::initialize_Z_mod(int p)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+  coeffR = new CoefficientRingZZp(P,_log_table, _exp_table);
   return true;
 }
 

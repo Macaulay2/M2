@@ -14,6 +14,8 @@ CC#0 = new CC from (0.,0.)
 CC#1 = new CC from (1.,0.)
 CC.degreeLength = 0
 degree CC := i -> {}
+raw CC := x -> rawFromNumber(raw CC, x)
+new CC from RawRingElement := (CC,n) -> rawToComplex n
 
 CCC.isBasic = true
 CCC.synonym = "big complex number"

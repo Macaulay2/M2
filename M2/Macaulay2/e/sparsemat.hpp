@@ -7,6 +7,8 @@
 
 class SparseMutableMatrix : public MutableMatrix
 {
+  int nrows_;
+  int ncols_;
   vec *columns_;
 
   void initialize(int nrows, int ncols, vec *array);
@@ -34,6 +36,9 @@ public:
   virtual MutableMatrix *copy(bool prefer_dense) const;
 
   virtual bool is_dense() const { return false; }
+
+  virtual int n_rows() const { return nrows_; }
+  virtual int n_cols() const { return ncols_; }
 public:
   virtual int lead_row(int col) const;
   /* returns the largest index row which has a non-zero value in column 'col'.

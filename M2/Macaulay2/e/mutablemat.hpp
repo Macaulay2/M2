@@ -4,6 +4,8 @@
 #define _mutablemat_hpp_
 
 #include "matrix.hpp"
+#include "coeffrings.hpp"
+#include "dmat.hpp"
 
 class SparseMutableMatrix;
 class DenseMutableMatrix;
@@ -16,14 +18,11 @@ class MutableMatrix : public mutable_object
 protected:
   const Ring *R;
 
-  int nrows;  // These can change, but in doing so, extra space will be allocated?
-  int ncols;
-
   MutableMatrix *rowOps;
   MutableMatrix *colOps;	// Transpose of column matrix
 
-  MutableMatrix() : R(0), nrows(0), ncols(0) {}
-  MutableMatrix(const Ring *R0) : R(R0), nrows(0), ncols(0) {}
+  MutableMatrix() : R(0), rowOps(0), colOps(0) {}
+  MutableMatrix(const Ring *R0) : R(R0), rowOps(0), colOps(0) {}
 
   bool error_column_bound(int c) const; // Sets an error if false is returned.
 
@@ -32,8 +31,9 @@ protected:
   virtual ~MutableMatrix() {}
 public:
   const Ring * get_ring() const { return R; }
-  int n_rows() const { return nrows; }
-  int n_cols() const { return ncols; }
+
+  virtual int n_rows() const = 0;
+  virtual int n_cols() const = 0;
 
   bool setRowChangeMatrix(MutableMatrix *rops);
   // Returns false if the ring is wrong, 
@@ -76,6 +76,10 @@ public:
   virtual const DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() const { return 0; }
   virtual const DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() const { return 0; }
   virtual const DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() const { return 0; }
+
+  virtual DMat<CoefficientRingRR> * get_DMatRR() const { return 0; }
+  virtual DMat<CoefficientRingCC> * get_DMatCC() const { return 0; }
+  virtual DMat<CoefficientRingZZp> * get_DMatZZp() const { return 0; }
 
   virtual bool is_dense() const = 0;
   virtual void text_out(buffer &o) const;
@@ -193,7 +197,7 @@ normalizeColumn
 
 inline bool MutableMatrix::error_column_bound(int c) const
 {
-  if (c < 0 || c >= ncols)
+  if (c < 0 || c >= n_cols())
     {
       ERROR("column out of range");
       return true;
@@ -203,7 +207,7 @@ inline bool MutableMatrix::error_column_bound(int c) const
 
 inline bool MutableMatrix::error_row_bound(int r) const
 {
-  if (r < 0 || r >= nrows)
+  if (r < 0 || r >= n_rows())
     {
       ERROR("row out of range");
       return true;

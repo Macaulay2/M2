@@ -51,6 +51,30 @@ flatt = (I, m) -> (
      scan(p, i -> monset#(monslist#i) = substitute(ideal(compress transpose (cs_{i})),R));
      monset)
 
+sortPolys = (facs) -> (
+     x := apply(facs, f -> (degree f, size f, f));
+     x = sort x;
+     apply(x, i -> i#2))
+
+greedySat = method()
+greedySat(Ideal,RingElement) := (I,F) -> (
+     R := ring I;
+     facs := factors F;
+     facs = sortPolys facs;
+     G := 1_R;
+     satI := I; -- will be the saturation
+     i := 0;
+     while i < #facs do (
+	  g = facs_i;
+	  newI := satI : g;
+	  if satI != newI then (
+	       G = g * G;
+	       satI = newI;
+	  ) else (
+	     i = i+1;
+	  ));
+     (satI, G))   
+     
 saturation = method()
 saturation(Ideal,RingElement) := (I,F) -> (
      facs := factors F;
@@ -371,6 +395,7 @@ J = trim Isat;
 gens J;
 
 Irest = I : Isat;
+
 codim Irest
 gens Irest;
 Irest = trim Irest;
@@ -383,5 +408,47 @@ factor oo
 satI = I : ideal(x,y,u,s,t);
 L = satI : ideal(x,y,u,s,t);
 satI == L
+
+--------------------------
+R = ZZ/3[x,y,u,s,t]
+I = ideal(
+    x^9,
+    y^9,
+    u^9,
+    u^5-x*y*(x-y)*(s*x-t*y))
+GTZ1 I
+
+restart
+load "Elimination.m2"
+load "GTZ.m2"
+R = ZZ/3[x,y,u,s,t]
+I = ideal(
+    x^27,
+    y^27,
+    u^27,
+    u^5-x*y*(x-y)*(s*x-t*y))
+CoeffList = {t, s, s-t, s+t, s^2+t^2, s^2+s*t-t^2, s^2-s*t-t^2,
+       s^3-s^2*t+t^3, s^3+s^2*t+s*t^2-t^3, s^3+s^2*t-s*t^2+t^3,
+       s^4+s^3*t-t^4, s^4-s^3*t-s^2*t^2+s*t^3-t^4,
+       s^4+s^3*t+s^2*t^2-s*t^3-t^4, s^4-s^3*t+s^2*t^2+s*t^3-t^4,
+       s^4-s^3*t+s^2*t^2-s*t^3+t^4, s^4-s^3*t+s^2*t^2+t^4,
+       s^4-s^2*t^2-t^4, s^4+s^2*t^2-s*t^3+t^4, s^4+s^2*t^2-t^4,
+       s^6+s^5*t-s^4*t^2-s^3*t^3+t^6, s^6-s^5*t+s^3*t^3-s^2*t^4+t^6,
+       s^6-s^5*t+s^3*t^3+s^2*t^4+s*t^5+t^6, s^6+s^5*t+s^3*t^3+s*t^5+t^6,
+       s^6-s^5*t-s^4*t^2-s^3*t^3+s^2*t^4-t^6,
+       s^6-s^5*t-s^4*t^2+s^3*t^3-t^6,
+       s^6-s^5*t+s^4*t^2-s^3*t^3+s^2*t^4-s*t^5+t^6,
+       s^6-s^4*t^2+s^3*t^3+s^2*t^4+s*t^5-t^6,
+       s^6-s^3*t^3-s^2*t^4+s*t^5+t^6,
+       s^6+s^5*t+s^4*t^2+s^3*t^3-s*t^5+t^6,
+       s^8-s^7*t-s^6*t^2+s^5*t^3-s^4*t^4-t^8,
+       s^9+s^8*t-s^7*t^2-s^6*t^3+s^5*t^4-s^4*t^5+t^9,
+       s^14-s^13*t+s^12*t^2+s^11*t^3+s^9*t^5-s^8*t^6-s^5*t^9-s^2*t^12-t^14,
+       s^16+s^15*t+s^14*t^2+s^13*t^3+s^11*t^5+s^9*t^7-s^8*t^8+s^7*t^9+s^5*t^11+s^3*t^13+s^2*t^14+s*t^15+t^16}
+
+gbTrace = 1  
+time greedySat(I,product CoeffList);
+use ring J
+time greedySat(J,t);
 
 ///

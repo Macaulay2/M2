@@ -10,6 +10,7 @@
 #include "random.hpp"
 #include "gbring.hpp"
 #include "../d/M2mem.h"
+#include "coeffrings.hpp"
 
 #if 0
 #define RRELEM_VAL(f) (RRelem ((f).poly_val))
@@ -34,6 +35,7 @@ bool RR::initialize_RR(double epsilon)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+  coeffR = new CoefficientRingRR;
   return true;
 }
 
@@ -118,9 +120,9 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
   bool is_one = compare_RR(a,1.0) == EQ;
 
   if (!is_neg && p_plus) o << '+';
+  if (is_neg) o << '-';
   if (is_one) 
     {  
-      if (is_neg) o << '-';
       if (p_one) o << '1'; 
     }
   else

@@ -1,16 +1,90 @@
 #include "mutablemat.hpp"
 #include "sparsemat.hpp"
-#include "densematRR.hpp"
-#include "densematCC.hpp"
+
 #include "RR.hpp"
 #include "CC.hpp"
 #include "text_io.hpp"
-#include "densemat.hpp"
+#include "coeffrings.hpp"
+#include "dmatrix.hpp"
 
 ///////////////////
 // MutableMatrix //
 ///////////////////
 
+MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
+					  int nrows, 
+					  int ncols, 
+					  bool dense)
+  // If the ring is RR or CC, and dense is true, then MutableMatrixRR or 
+  // MutableMatrixCC will be used.
+{
+  const Z_mod *KZZp = R->cast_to_Z_mod();
+  if (KZZp != 0)
+    {
+      if (dense)
+	{
+	  fprintf(stderr, "doing DMatrix zero matrix\n");
+	  return DMatrix<CoefficientRingZZp>::zero_matrix(KZZp, nrows, ncols);
+	}
+      //      return SMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
+    }
+  if (R == globalRR)
+    {
+      if (dense)
+	{
+	  fprintf(stderr, "doing DMatrix<RR> zero matrix\n");
+	  return DMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
+	}
+      //      return SMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
+    }
+  if (R == globalCC)
+    {
+      if (dense)
+	{
+	  fprintf(stderr, "doing DMatrix<CC> zero matrix\n");
+	  return DMatrix<CoefficientRingCC>::zero_matrix(globalCC, nrows, ncols);
+	}
+      //      return SMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
+    }
+  if (dense)
+    {
+#if 0
+      if (R == globalCC)
+	return DenseMutableMatrixCC::zero_matrix(nrows,ncols);
+      return DenseMutableMatrixRing::zero_matrix(R,nrows,ncols);
+#endif
+    }
+  return SparseMutableMatrix::zero_matrix(R,nrows,ncols);
+#if 0
+  const GF *KGF = R->cast_to_GF();
+  if (KGF != 0)
+    {
+      if (dense)
+	return DenseMutableMatrix<CoefficientRingGF>(KGF, nrows, ncols);
+      return SparseMutableMatrix<CoefficientRingGF>(KGF, nrows, ncols);
+    }
+  if (R == globalZZ)
+    {
+    }
+  if (R == globalQQ)
+    {
+    }
+  if (R == globalRR)
+    {
+    }
+  if (R == globalCC)
+    {
+    }
+  if (R == globalRRR)
+    {
+    }
+  if (R == globalCCC)
+    {
+    }
+#endif
+}
+
+#if 0
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
 					  int nrows, 
 					  int ncols, 
@@ -28,6 +102,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     }
   return SparseMutableMatrix::zero_matrix(R,nrows,ncols);
 }
+#endif
 
 MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
 {
@@ -94,6 +169,8 @@ MutableMatrix *MutableMatrix::getColumnChangeMatrix()
 
 void MutableMatrix::text_out(buffer &o) const
 {
+  int nrows = n_rows();
+  int ncols = n_cols();
   buffer *p = newarray(buffer,nrows);
   int r;
   for (int c=0; c<ncols; c++)
@@ -121,14 +198,6 @@ void MutableMatrix::text_out(buffer &o) const
       o << s << newline;
     }
   deletearray(p);
-}
-
-DenseMutableMatrixCC *
-DenseMutableMatrixCC::zero_matrix(int nrows, 
-				  int ncols)
-{
-#warning "implement this"
-  return 0;
 }
 
 

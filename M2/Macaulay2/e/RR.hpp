@@ -5,6 +5,8 @@
 
 #include "ring.hpp"
 
+class CoefficientRingRR;
+
 class RR : public Ring
 // Elements of this ring are real numbers: 'double's
 {
@@ -21,6 +23,7 @@ class RR : public Ring
   bool is_zero_RR(double a) const;
   int compare_RR(double a, double b) const;
 
+  CoefficientRingRR *coeffR;
 protected:
   RR() {}
   virtual ~RR();
@@ -30,6 +33,8 @@ public:
 
   RR * cast_to_RR() { return this; }
   const RR * cast_to_RR() const { return this; }
+
+  CoefficientRingRR *get_CoeffRing() const { return coeffR; }
 
   double to_double(ring_elem a);
 

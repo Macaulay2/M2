@@ -6,8 +6,10 @@
 #include "LLL.hpp"
 #include "fractionfreeLU.hpp"
 #include "ring.hpp"
-#include "densematRR.hpp"
 #include "sparsemat.hpp"
+#include "coeffrings.hpp"
+#include "dmatrix.hpp"
+#include "lapack.h"
 
 typedef MutableMatrix MutableMatrixOrNull;
 
@@ -485,6 +487,45 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
   /* Each of the following routines accepts honest MutableMatrix arguments,
      and returns false if there is an error.  The return values are placed into
      some of the (already existing) parameters of the routine */
+typedef DMat<CoefficientRingRR> LMatrixRR;
+typedef DMat<CoefficientRingCC> LMatrixCC;
+
+M2_bool rawLU(MutableMatrix *A,
+	      MutableMatrix *L,
+	      MutableMatrix *U,
+	      MutableMatrix *P)
+{
+  const Ring *R = A->get_ring();
+  if (R == globalRR)
+    {
+      LMatrixRR *A2 = A->get_DMatRR();
+      LMatrixRR *P2 = P->get_DMatRR();
+      if (A2 == 0 || P2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over RR");
+	  return false;
+	}
+      return Lapack::LU(A2,P2);
+    }
+  if (R == globalCC)
+    {
+      LMatrixCC *A2 = A->get_DMatCC();
+      LMatrixRR *P2 = P->get_DMatRR();
+      if (A2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over CC");
+	  return false;
+	}
+      if (P2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over RR");
+	  return false;
+	}
+      return Lapack::LU(A2,P2);
+    }
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 M2_bool rawSolve(MutableMatrix *A,
 		 MutableMatrix *b,
@@ -503,33 +544,31 @@ M2_bool rawSolve(MutableMatrix *A,
       ERROR("expected same ring");
       return false;
     }
-  if (R->cast_to_RR())
+  if (R == globalRR)
     {
-      DenseMutableMatrixRR *A1 = A->cast_to_DenseMutableMatrixRR();
-      DenseMutableMatrixRR *b1 = b->cast_to_DenseMutableMatrixRR();
-      DenseMutableMatrixRR *x1 = x->cast_to_DenseMutableMatrixRR();
-      if (!A1 || !b1 || !x1)
+      LMatrixRR *A2 = A->get_DMatRR();
+      LMatrixRR *b2 = b->get_DMatRR();
+      LMatrixRR *x2 = x->get_DMatRR();
+      if (A2 == 0 || b2 == 0 || x2 == 0)
 	{
-	  ERROR("expected dense matrices");
+	  ERROR("requires dense mutable matrices over RR");
 	  return false;
 	}
-      DenseMutableMatrixRR *result_x = A1->solve(b1,x1);
-      return result_x != 0;
+      return Lapack::solve(A2,b2,x2);
     }
-  if (R->cast_to_CC())
+  if (R == globalCC)
     {
-      return true;
+      LMatrixCC *A2 = A->get_DMatCC();
+      LMatrixCC *b2 = b->get_DMatCC();
+      LMatrixCC *x2 = x->get_DMatCC();
+      if (A2 == 0 || b2 == 0 || x2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over CC");
+	  return false;
+	}
+      return Lapack::solve(A2,b2,x2);
     }
   ERROR("expected base ring to be RR or CC");
-  return false;
-}
-
-M2_bool rawLU(MutableMatrix *A,
-	      MutableMatrix *L,
-	      MutableMatrix *U,
-	      MutableMatrix *P)
-{
-  ERROR("not re-implemented yet");
   return false;
 }
 
@@ -537,6 +576,65 @@ M2_bool rawEigenvalues(MutableMatrix *A,
 		       MutableMatrix *eigenvalues,
 		       M2_bool is_symm_or_hermitian)
 {
+  const Ring *R = A->get_ring();
+  if (R == globalRR)
+    {
+      LMatrixRR *A2 = A->get_DMatRR();
+      if (A2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over RR");
+	  return false;
+	}
+      if (is_symm_or_hermitian)
+	{
+	  LMatrixRR *eigen2 = eigenvalues->get_DMatRR();
+	  if (eigen2 == 0)
+	    {
+	      ERROR("requires dense mutable matrix over RR");
+	      return false;
+	    }
+	  return Lapack::eigenvalues_symmetric(A2,eigen2);
+	}
+      else
+	{
+	  LMatrixCC *eigen2 = eigenvalues->get_DMatCC();
+	  if (eigen2 == 0)
+	    {
+	      ERROR("requires dense mutable matrix over CC");
+	      return false;
+	    }
+	  return Lapack::eigenvalues(A2,eigen2);
+	}
+    }
+  if (R == globalCC)
+    {
+      LMatrixCC *A2 = A->get_DMatCC();
+      if (A2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over CC");
+	  return false;
+	}
+      if (is_symm_or_hermitian)
+	{
+	  LMatrixRR *eigen2 = eigenvalues->get_DMatRR();
+	  if (eigen2 == 0)
+	    {
+	      ERROR("requires dense mutable matrix over RR");
+	      return false;
+	    }
+	  return Lapack::eigenvalues_hermitian(A2,eigen2);
+	}
+      else
+	{
+	  LMatrixCC *eigen2 = eigenvalues->get_DMatCC();
+	  if (eigen2 == 0)
+	    {
+	      ERROR("requires dense mutable matrix over CC");
+	      return false;
+	    }
+	  return Lapack::eigenvalues(A2,eigen2);
+	}
+    }
   ERROR("not re-implemented yet");
   return false;
 }
@@ -546,6 +644,64 @@ M2_bool rawEigenvectors(MutableMatrix *A,
 			MutableMatrix *eigenvectors,
 			M2_bool is_symm_or_hermitian)
 {
+  const Ring *R = A->get_ring();
+  if (R == globalRR)
+    {
+      LMatrixRR *A2 = A->get_DMatRR();
+      if (is_symm_or_hermitian)
+	{
+	  LMatrixRR *eigvals2 = eigenvalues->get_DMatRR();
+	  LMatrixRR *eigvecs2 = eigenvectors->get_DMatRR();
+	  if (eigvals2 == 0 || eigvecs2 == 0)
+	    {
+	      ERROR("requires dense mutable matrices over RR");
+	      return false;
+	    }
+	  return Lapack::eigenvectors_symmetric(A2,eigvals2,eigvecs2);
+	}
+      else
+	{
+	  LMatrixCC *eigvals2 = eigenvalues->get_DMatCC();
+	  LMatrixCC *eigvecs2 = eigenvectors->get_DMatCC();
+	  if (eigvals2 == 0 || eigvecs2 == 0)
+	    {
+	      ERROR("requires dense mutable matrices over CC");
+	      return false;
+	    }
+	  return Lapack::eigenvectors(A2,eigvals2,eigvecs2);
+	}
+    }
+  if (R == globalCC)
+    {
+      LMatrixCC *A2 = A->get_DMatCC();
+      if (is_symm_or_hermitian)
+	{
+	  LMatrixRR *eigvals2 = eigenvalues->get_DMatRR();
+	  LMatrixCC *eigvecs2 = eigenvectors->get_DMatCC();
+	  if (eigvals2 == 0)
+	    {
+	      ERROR("requires dense mutable matrix over RR");
+	      return false;
+	    }
+	  if (eigvecs2 == 0)
+	    {
+	      ERROR("requires dense mutable matrix over CC");
+	      return false;
+	    }
+	  return Lapack::eigenvectors_hermitian(A2,eigvals2,eigvecs2);
+	}
+      else
+	{
+	  LMatrixCC *eigvals2 = eigenvalues->get_DMatCC();
+	  LMatrixCC *eigvecs2 = eigenvectors->get_DMatCC();
+	  if (eigvals2 == 0 || eigvecs2 == 0)
+	    {
+	      ERROR("requires dense mutable matrices over CC");
+	      return false;
+	    }
+	  return Lapack::eigenvectors(A2,eigvals2,eigvecs2);
+	}
+    }
   ERROR("not re-implemented yet");
   return false;
 }
@@ -556,6 +712,54 @@ M2_bool rawSVD(MutableMatrix *A,
 	       MutableMatrix *VT,
 	       M2_bool use_divide_and_conquer)
 {
+  const Ring *R = A->get_ring();
+  if (R == globalRR)
+    {
+      LMatrixRR *A2 = A->get_DMatRR();
+      LMatrixRR *Sigma2 = Sigma->get_DMatRR();
+      LMatrixRR *U2 = U->get_DMatRR();
+      LMatrixRR *VT2 = VT->get_DMatRR();
+      if (A2 == 0 || Sigma2 == 0 || U2 == 0 || VT2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over RR");
+	  return false;
+	}
+      
+      if (use_divide_and_conquer)
+	{
+	  return Lapack::SVD_divide_conquer(A2,Sigma2,U2,VT2);
+	}
+      else
+	{
+	  return Lapack::SVD(A2,Sigma2,U2,VT2);
+	}
+    }
+  if (R == globalCC)
+    {
+      LMatrixCC *A2 = A->get_DMatCC();
+      LMatrixRR *Sigma2 = Sigma->get_DMatRR();
+      LMatrixCC *U2 = U->get_DMatCC();
+      LMatrixCC *VT2 = VT->get_DMatCC();
+      if (Sigma2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over RR");
+	  return false;
+	}
+      if (A2 == 0 || U2 == 0 || VT2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over CC");
+	  return false;
+	}
+      
+      if (use_divide_and_conquer)
+	{
+	  return Lapack::SVD_divide_conquer(A2,Sigma2,U2,VT2);
+	}
+      else
+	{
+	  return Lapack::SVD(A2,Sigma2,U2,VT2);
+	}
+    }
   ERROR("not re-implemented yet");
   return false;
 }
@@ -567,40 +771,54 @@ M2_bool rawLeastSquares(MutableMatrix *A,
 /* Case 1: A is a dense matrix over RR.  Then so are b,x.
    Case 2: A is a dense matrix over CC.  Then so are b,x. */
 {
+  const Ring *R = A->get_ring();
+  if (R == globalRR)
+    {
+      LMatrixRR *A2 = A->get_DMatRR();
+      LMatrixRR *b2 = b->get_DMatRR();
+      LMatrixRR *x2 = x->get_DMatRR();
+
+      if (A2 == 0 || b2 == 0 || x2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over RR");
+	  return false;
+	}
+      
+      if (assume_full_rank)
+	{
+	  return Lapack::least_squares(A2,b2,x2);
+	}
+      else
+	{
+	  return Lapack::least_squares_deficient(A2,b2,x2);
+	}
+    }
+  if (R == globalCC)
+    {
+      LMatrixCC *A2 = A->get_DMatCC();
+      LMatrixCC *b2 = b->get_DMatCC();
+      LMatrixCC *x2 = x->get_DMatCC();
+
+      if (A2 == 0 || b2 == 0 || x2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over CC");
+	  return false;
+	}
+      
+      if (assume_full_rank)
+	{
+	  return Lapack::least_squares(A2,b2,x2);
+	}
+      else
+	{
+	  return Lapack::least_squares_deficient(A2,b2,x2);
+	}
+    }
   ERROR("not re-implemented yet");
   return false;
 }
 
 #if 0
-M2_bool 
-rawMutableMatrixEigenvalues(MutableMatrix *M, MutableMatrix *result_eigenvalues)
-// M must be a dense mutable matrix over RR or over CC
-// result_eigenvalues must be a dense mutable matrix over CC
-{
-  DenseMutableMatrixCC *eig = result_eigenvalues->cast_to_DenseMutableMatrixCC();
-  if (eig == 0)
-    {
-      ERROR("expected dense MutableMatrix over RR");
-      return false;
-    }
-  DenseMutableMatrixRR *MR = M->cast_to_DenseMutableMatrixRR();
-  if (MR)
-    {
-      DenseMutableMatrixCC *result = MR->eigenvalues(eig);
-      return (result != 0);
-    }
-  DenseMutableMatrixCC *MC = M->cast_to_DenseMutableMatrixCC();
-  if (MC)
-    {
-      DenseMutableMatrixCC *result = MC->eigenvalues(eig);
-      return (result != 0);
-    }
-  return 0;
-}
-#endif
-
-#if 0
-const MutableMatrixOrNull *
 
   LMatrixCCOrNull * eigenvalues(LMatrixCC *eigenvalues);
   // returns NULL if an error occurs, else returns eigenvalues matrix,

@@ -3,6 +3,7 @@
 #define _z_mod_p_hh_
 
 #include "ring.hpp"
+#include "coeffRings.hpp"
 
 class Z_mod : public Ring
 {
@@ -17,6 +18,7 @@ class Z_mod : public Ring
 
   int int_to_exp(int a) const;
 
+  CoefficientRingZZp *coeffR;
 protected:
   Z_mod() {}
   virtual ~Z_mod() {}
@@ -27,6 +29,7 @@ public:
   Z_mod * cast_to_Z_mod() { return this; }
   const Z_mod * cast_to_Z_mod() const { return this; }
 
+  CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
   virtual int coerce_to_int(ring_elem a) const;
 
   int to_int(int a) const;

@@ -9,6 +9,7 @@
 #include <vector>
 #include "MonomialSet.h"
 #include "SPairSet.h"
+#include "../coeffrings.hpp"
 
 class MonomialLookupTable;
 typedef int * monomial;
@@ -21,6 +22,7 @@ struct mypoly : public our_new_delete
   monomial *monoms;
 };
 
+#if 0
 class CoefficientRingZZp
 {
   int p;
@@ -36,6 +38,7 @@ public:
   void subtract_multiple(elem &result, elem a, elem b);
     // result -= a*b
 };
+#endif
 
 enum gbelem_type { 
   ELEM_IN_RING,  // These are ring elements

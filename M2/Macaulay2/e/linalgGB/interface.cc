@@ -37,7 +37,7 @@ void M2Interface<CoefficientRing>::from_M2_vec(CoefficientRing *K,
 	{
 	  vp.shrink(0);
 	  COEFF_TYPE a = t->coeff;
-	  K->init_set(result.coeffs+n, &a);
+	  K->init_set(result.coeffs[n], a);
 	  //result.coeffs[n] = t->coeff; // COPY THIS
 	  M->to_varpower(t->monom, vp);
 	  vp[0] = (vp[0]-1)/2;

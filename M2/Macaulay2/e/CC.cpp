@@ -10,6 +10,7 @@
 #include "random.hpp"
 #include "gbring.hpp"
 #include "../d/M2mem.h"
+#include "coeffrings.hpp"
 
 #if 0
 #define CCELEM_VAL(f) (M2_CC ((f).poly_val))
@@ -36,6 +37,7 @@ bool CC::initialize_CC(double epsilon)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+  coeffR = new CoefficientRingCC;
   return true;
 }
 
