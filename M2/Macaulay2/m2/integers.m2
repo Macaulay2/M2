@@ -11,6 +11,7 @@ ZZ.baseRings = {}
 ZZ.ConvertToExpression = ConvertInteger
 ZZ.degreeLength = 0
 ZZ.frac = QQ
+degree ZZ := i -> {}
 promote(ZZ,ZZ) := (i,ZZ) -> i
 lift(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = () -> random 21 - 10

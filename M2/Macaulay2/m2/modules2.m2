@@ -348,18 +348,30 @@ Module == ZZ := (M,n) -> (
 	  )
      )
 
+-- dim Module := M -> (
+--      if degreeLength ring M === 0 
+--      then error "can't compute dimension over a ring with zero degree length";
+--      if not isHomogeneous M
+--      then M = cokernel leadTerm gens gb presentation M;
+--      if poincare M == 0
+--      then -1
+--      else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
+--      )
 
-dim Module := M -> (
-     if degreeLength ring M === 0 
-     then error "can't compute dimension over a ring with zero degree length";
-     if not isHomogeneous M
-     then M = cokernel leadTerm gens gb presentation M;
-     if poincare M == 0
-     then -1
-     else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
+codim Module := M -> if M.?codim then M.codim else M.codim = (
+     R := ring M;
+     if M == 0 then infinity
+     else if isField R then 0
+     else if R === ZZ then if M ** QQ == 0 then 1 else 0
+     else (
+	  p := gens gb presentation M;
+	  n := rank target p;
+	  c := infinity;
+	  for i from 0 to n-1 when c > 0 do c = min(c,codim monomialIdeal(i,p));
+	  c - codim R)
      )
 
-codim Module := M -> dim ring M - dim M
+dim Module := M -> dim ring M - codim M
 
 degree Module := M -> (
   hf := poincare M;

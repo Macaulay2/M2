@@ -64,13 +64,15 @@ export minimizeFilename(filename:string):string := (
      );
 
 export tostring(w:Position) : string := (
-	 errfmt(minimizeFilename(w.filename),int(w.line),int(w.column + 1))
+     if w == dummyPosition 
+     then "--dummy position--"
+     else errfmt(minimizeFilename(w.filename),int(w.line),int(w.column + 1))
      );
 export (o:file) << (w:Position) : file := (
      o << tostring(w)
      );
 export SuppressErrors := false;
-export errorpos(position:Position,message:string):void := (
+export printErrorMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  flush(stdout);
      	  stderr << position << ' ' << message << endl;

@@ -97,28 +97,41 @@ makeKeyword(w:Word):SymbolClosure := (
      entry := makeEntry(w,dummyPosition,globalScope);
      entry.protected = true;
      SymbolClosure(globalFrame,entry));
-export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(unique(s,parseWORD));
-makeKeyword(s:string):SymbolClosure := makeKeyword(unique(s,parseWORD));
+export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
+makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
 prec := 0;
 bump():void := prec = prec + 1;
 
 -- helper functions for setting up words with various methods for parsing them
 foreach p in array(parseinfo)( parseEOF, parseWORD ) do p.funs = parsefuns(defaultunary, defaultbinary);
-unary(s:string)         :Word := install(s,unique(s,parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
-unaryword(s:string)     :Word :=           unique(s,parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
-biunary(s:string)       :Word := install(s,unique(s,parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
-postfix(s:string)       :Word := install(s,unique(s,parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
-unaryleft(s:string)     :Word := install(s,unique(s,parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
-unaryright(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
-binaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
-binaryleftword(s:string):Word :=           unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
-nleft(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
-nleftword(s:string)     :Word :=           unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
-nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
-token(s:string)         :Word :=           unique(s,parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
+unary(s:string)         :Word := install(s,makeUniqueWord(s,
+	  parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
+unaryword(s:string)     :Word :=           makeUniqueWord(s,
+          parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
+biunary(s:string)       :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
+postfix(s:string)       :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
+unaryleft(s:string)     :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
+unaryright(s:string)    :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
+binaryleft(s:string)    :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
+binaryleftword(s:string):Word :=           makeUniqueWord(s,
+          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
+nleft(s:string)         :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
+nleftword(s:string)     :Word :=           makeUniqueWord(s,
+          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
+nunaryleft(s:string)    :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
+token(s:string)         :Word :=           makeUniqueWord(s,
+          parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
 binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree)
-                        :Word := install(s,unique(s,parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
+                        :Word := install(s,makeUniqueWord(s,
+          parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
 binaryright(s:string)   :Word := binaryright(s,binaryop);
 
 -- Now the symbols and operators:
@@ -230,8 +243,10 @@ bump();
      export ExclamationS := makeKeyword(postfix("!"));
 -----------------------------------------------------------------------------
 parens(left:string,right:string,prec:int,binaryStrength:int,unaryStrength:int):Word := (
-     l := unique(left, parseinfo(prec          ,nopr,unaryStrength,parsefuns(unaryparen, defaultbinary)));
-     r := unique(right,parseinfo(precRightParen,nopr,nopr,         parsefuns(errorunary, errorbinary  )));
+     l := makeUniqueWord(left,
+	  parseinfo(prec          ,nopr,unaryStrength,parsefuns(unaryparen, defaultbinary)));
+     r := makeUniqueWord(right,
+          parseinfo(precRightParen,nopr,nopr,         parsefuns(errorunary, errorbinary  )));
      left = l.name;
      right = r.name;
      install(left,l);
@@ -247,7 +262,7 @@ parens(left:string,right:string,prec:int,binaryStrength:int,unaryStrength:int):W
 -----------------------------------------------------------------------------
 bump();
 special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):SymbolClosure := (
-     makeKeyword(unique(s, parseinfo(precSpace, nopr, prec, parsefuns(f, defaultbinary)))));
+     makeKeyword(makeUniqueWord(s, parseinfo(precSpace, nopr, prec, parsefuns(f, defaultbinary)))));
 
      special("new",unarynew,narrow);
      special("for",unaryfor,narrow);
@@ -300,11 +315,11 @@ export makeSymbol(token:Token):Symbol := (
 HadError := false;
 export makeErrorTree(e:ParseTree,message:string):void := (
      HadError = true;
-     errorpos(treePosition(e),message);
+     printErrorMessage(treePosition(e),message);
      );
 export makeErrorTree(e:Token,message:string):void := (
      HadError = true;
-     errorpos(e.position,message);
+     printErrorMessage(e.position,message);
      );
 makeSymbol(e:ParseTree,scope:Scope):void := (
      when e
@@ -384,7 +399,7 @@ lookup(token:Token,forcedef:bool):void := (
      	  is entry:Symbol do (
 	       token.entry = entry;
 	       if entry.flagLookup then (
-		    errorpos(token.position,"flagged symbol encountered");
+		    printErrorMessage(token.position,"flagged symbol encountered");
 		    );
 	       )
      	  else (
@@ -394,7 +409,7 @@ lookup(token:Token,forcedef:bool):void := (
 	       	    makeSymbol(token);
 		    )
 	       else (
-	       	    errorpos(token.position,"undefined token " + token.word.name);
+	       	    printErrorMessage(token.position,"undefined token " + token.word.name);
 	       	    HadError=true;))));
 lookup(token:Token):void := lookup(token,true);
 lookuponly(token:Token):void := lookup(token,false);
@@ -480,7 +495,7 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	       when r
 	       is entry:Symbol do (
 		    if scope.seqno == entry.scopenum
-		    then errorpos(token.position,
+		    then printErrorMessage(token.position,
 			 "warning: local declaration of " 
 			 + token.word.name
 			 + " shields variable with same name"

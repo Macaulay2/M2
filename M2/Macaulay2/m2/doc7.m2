@@ -1503,6 +1503,9 @@ document { dim,
      TT "dim r", " -- calculate the dimension of the virtual representation
      corresponding to an element of a Schur ring.",
      PARA,
+     "Warning: if you want the dimension of a vector space, you should use
+     ", TO "rank", ".",
+     PARA,
      "Warning: over the integers, the computation effectively tensors first with the
      rational numbers, yielding the wrong answer in some cases.",
      PARA,

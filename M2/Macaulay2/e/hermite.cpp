@@ -345,7 +345,7 @@ void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
   // (in absolute value).
   vecterm head;
   vecterm *result = &head;
-  gError << "not implemented yet";
+  gError << "reduction over ZZ not implemented yet";
 #if 0
   ring_elem coeff;
   while (f != NULL)

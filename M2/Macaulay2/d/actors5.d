@@ -108,7 +108,7 @@ getmantissa():int := (
 		    (ln << 7) + (0x7f & c)))));
 getinteger():Expr := (
      if cvtpos + 1 > cvtlen 
-     then return(errorExpr("encountered end of string prematurely"));
+     then return(buildErrorPacket("encountered end of string prematurely"));
      sgn := 0 != (0x40 & int(uchar(cvtstr.cvtpos)));
      oldpos := cvtpos;
      i := getlength6();
@@ -122,7 +122,7 @@ getinteger():Expr := (
      else (
 	  ln := getlength();
 	  if cvtpos + ln > cvtlen 
-	  then return(errorExpr("encountered end of string prematurely"));
+	  then return(buildErrorPacket("encountered end of string prematurely"));
 	  while ln > 0 do (
 	       c := 0xff & int(cvtstr.cvtpos);
 	       x = (x << 8) + c;
@@ -135,11 +135,11 @@ convert(format:Expr):Expr := (
      when format
      is a:Sequence do (
 	  l := length(a);
-	  if l==0 then return(errorExpr("encountered a sequence of length 0"));
+	  if l==0 then return(buildErrorPacket("encountered a sequence of length 0"));
 	  f := a.0;
 	  if l==1 then (
 	       if cvtpos >= cvtlen
-	       then errorExpr("encountered end of string prematurely")
+	       then buildErrorPacket("encountered end of string prematurely")
 	       else (
 		    haderror := false;
 		    ln := getlength();
@@ -156,7 +156,7 @@ convert(format:Expr):Expr := (
 	  else when f 
 	  is j:Integer do (
 	       if !isInt(j)
-	       then errorExpr("expected repetition count to be a small integer")
+	       then buildErrorPacket("expected repetition count to be a small integer")
 	       else (
 		    ln := toInt(j);
 		    if ln >= 0
@@ -166,7 +166,7 @@ convert(format:Expr):Expr := (
 			 haderror := false;
 			 ln = ln * (l-1);
 			 if cvtpos + ln > cvtlen
-			 then return(errorExpr("encountered end of string prematurely"));
+			 then return(buildErrorPacket("encountered end of string prematurely"));
 			 t := new Sequence len ln do (
 			      k := 1;
 			      while k < l do (
@@ -179,7 +179,7 @@ convert(format:Expr):Expr := (
 				   else provide r;
 				   ));
 			 if haderror then r else Expr(t))
-		    else errorExpr("expected repetition count nonnegative")))
+		    else buildErrorPacket("expected repetition count nonnegative")))
 	  is c:FunctionClosure do (
 	       haderror := false;
 	       if l == 2
@@ -249,16 +249,16 @@ convert(format:Expr):Expr := (
 		    if haderror then r else c.fn(Expr(t))
 		    )
 	       )
-	  else errorExpr("encountered invalid format")
+	  else buildErrorPacket("encountered invalid format")
 	  )
      is w:SymbolClosure do (
 	  if w.symbol == ConvertInteger.symbol then getinteger()
-	  else errorExpr("encountered a unrecognized format symbol")
+	  else buildErrorPacket("encountered a unrecognized format symbol")
 	  )
      is c:FunctionClosure do apply(c,emptySequence)
      is f:CompiledFunction do f.fn(Expr(emptySequence))
      is f:CompiledFunctionClosure do f.fn(Expr(emptySequence),f.env)
-     else errorExpr("expected a valid format item"));
+     else buildErrorPacket("expected a valid format item"));
 convertfun(e:Expr):Expr := (
      when e
      is a:Sequence do
@@ -277,7 +277,7 @@ convertfun(e:Expr):Expr := (
 	       is Error do nothing
 	       else (
 		    if cvtlen != cvtpos
-	       	    then r = errorExpr("did not exhaust its input")
+	       	    then r = buildErrorPacket("did not exhaust its input")
 		    );
 	       cvtpos = savecvtpos;
 	       cvtstr = savecvtstr;
@@ -362,7 +362,7 @@ dumpdatafun(e:Expr):Expr := (
 	  stdin.eof = p;
 	  stdin.inindex = q;
 	  if 0 == r then nullE
-	  else errorExpr("failed to dump data to '" + s + "'"))
+	  else buildErrorPacket("failed to dump data to '" + s + "'"))
      else WrongArg(0+1,"a string")
      );
 setupfun("dumpdata",dumpdatafun);
@@ -371,7 +371,7 @@ loaddatafun(e:Expr):Expr := (
      when e
      is s:string do (
 	  loaddata(s);			  -- should not return
-	  errorExpr("failed to load data from '" + s + "'")
+	  buildErrorPacket("failed to load data from '" + s + "'")
 	  )
      else WrongArg(0+1,"a string")
      );
@@ -581,7 +581,7 @@ integermod(e:Expr):Expr := (
 	  	    when a.1
 	  	    is y:Integer do (
 	       		 if y === 0
-	       		 then errorExpr("division by zero")
+	       		 then buildErrorPacket("division by zero")
 	       		 else Expr(x % y))
 	  	    else WrongArg(2,"an integer"))
      	       else WrongArg(1,"an integer"))
@@ -635,7 +635,7 @@ dotfun(lhs:Code,rhs:Code):Expr := (
      is x:HashTable do (
 	  when rhs
 	  is r:exprCode do lookup1force(x, r.v)
-	  else errorpos(rhs,"expected a symbol"))
+	  else printErrorMessage(rhs,"expected a symbol"))
      else WrongArg(1,"a hash table")
      );
 setup(DotS,dotfun);
@@ -646,7 +646,7 @@ dotQfun(lhs:Code,rhs:Code):Expr := (
      is x:HashTable do (
 	  when rhs
 	  is r:exprCode do if lookup1Q(x,r.v) then True else False
-	  else errorpos(rhs,"expected a symbol"))
+	  else printErrorMessage(rhs,"expected a symbol"))
      else False);
 setup(DotQuestionS,dotQfun);
 
@@ -967,7 +967,7 @@ erase(s:Symbol,dictionary:Dictionary):bool := (
 erase(e:Expr):Expr := (
      when e is s:SymbolClosure do (
 	  --if s.symbol.protected
-	  --then errorExpr("attempt to erase a protected symbol")
+	  --then buildErrorPacket("attempt to erase a protected symbol")
 	  --else 
 	  if erase(s.symbol,globalScope.dictionary)
 	  then e
@@ -1134,7 +1134,7 @@ method123c(e:Expr,env:Sequence):Expr := (
 	       f := lookup(Class(e),env.0);
 	       if f == nullE then f = env.1;
 	       apply(f,e)))
-     else errorExpr("invalid list"));
+     else buildErrorPacket("invalid list"));
 newmethod123c(e:Expr):Expr := (
      when e is env:Sequence do (
 	  -- env.0 : the primary method function, used as key for lookup
@@ -1353,7 +1353,7 @@ kill(e:Expr):Expr := (
      is f:file do (
 	  if f.pid != 0 then (
 	       if kill(f.pid,9) == ERROR
-	       then errorExpr("can't kill process")
+	       then buildErrorPacket("can't kill process")
 	       else (
 		    if ERROR != wait(f.pid) then f.pid = 0;
 		    nullE
