@@ -390,28 +390,28 @@ singLocus Module := M -> (
 -- computing a GB and removing any column whose leadterm is a constatnt
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-GBprune = method()
-GBprune Matrix := M -> (
-     Mgb := gens gb M;
-     n := numgens source Mgb;
-     columnList := {};
-     i := 0;
-     while i < n do (
-     	  lc := leadComponent Mgb_i;
-	  if Mgb_(lc,i) != 1 then
-	       columnList = append(columnList, i);
-	  i = i+1;
-	  );
-     if columnList == {} then Mnew := 0
-     else Mnew = transpose compress matrix apply(columnList, 
-     	  i -> ( (entries transpose Mgb_{i})#0 ) );
-     Mnew
-     )
-
-GBprune Module := M -> (
-     if not isQuotientModule M then error "GBprune expected a quotient module";
-     cokernel GBprune relations M
-     )
+-- GBprune = method()
+-- GBprune Matrix := M -> (
+--      Mgb := gens gb M;
+--      n := numgens source Mgb;
+--      columnList := {};
+--      i := 0;
+--      while i < n do (
+--      	  lc := leadComponent Mgb_i;
+-- 	  if Mgb_(lc,i) != 1 then
+-- 	       columnList = append(columnList, i);
+-- 	  i = i+1;
+-- 	  );
+--      if columnList == {} then Mnew := 0
+--      else Mnew = transpose compress matrix apply(columnList, 
+--      	  i -> ( (entries transpose Mgb_{i})#0 ) );
+--      Mnew
+--      )
+-- 
+-- GBprune Module := M -> (
+--      if not isQuotientModule M then error "GBprune expected a quotient module";
+--      cokernel GBprune relations M
+--      )
 
 
 --------------------------------------------------------------------------------
