@@ -103,6 +103,7 @@ extern char *libfac_version;
 #endif
 
 #include "compat.h"
+#include "config.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0		/* for non msdos systems */

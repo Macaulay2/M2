@@ -18,10 +18,6 @@ cat <<EOF >compat.c
 #include <errno.h>
 EOF
 
-cat <<EOF >compat.mak
-# this file was machine generated
-EOF
-
 cat <<'EOF' >$TMP
 int main(){ return 0; }
 EOF
@@ -30,28 +26,6 @@ then :
 else echo "can't compile at all!" >&2
      exit 1
 fi
-
-cat <<'EOF' >$TMP
-#include <math.h>
-int main(){
-	double x;
-	__finite(x);
-	return 0;
-	}
-EOF
-$CC $TMP -lm >/dev/null 2>&1 || echo '#define __finite finite' >>compat.h
-
-
-cat <<'EOF' >$TMP
-#include <math.h>
-int main(){
-	double x;
-	__isnan(x);
-	return 0;
-	}
-EOF
-$CC $TMP -lm >/dev/null 2>&1 || echo '#define __isnan isnan' >>compat.h
-
 
 cat <<'EOF' >$TMP
 #include <math.h>
@@ -69,16 +43,6 @@ cat >>compat.c <<'EOF'
 #define ENOSYS 0
 #endif
 EOF
-
-# cat <<'EOF' >$TMP
-# main(){ }
-# EOF
-# if $CC $TMP $FLAGS -lsocket >/dev/null 2>&1
-# then FLAGS="$FLAGS -lsocket"
-#      cat <<EOF >compat.mak
-# SOCKET_LIB := TRUE
-# EOF
-# fi
 
 cat <<'EOF' >$TMP
 int main(){ getprotobyname(); }
@@ -155,36 +119,6 @@ EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'void *xdrmem_create() { errno = ENOSYS; return (void *)0; }' \
 	>>compat.c
-
-cat <<'EOF' >$TMP
-#include <errno.h>
-#include <stdio.h>
-extern const int * sys_errlist;	/* the wrong type, to provoke the compiler */
-int main(){return 0;}
-EOF
-$CC $TMP $FLAGS >/dev/null 2>&1 || 
-	echo '#define SYS_ERRLIST_IS_DECLARED' \
-	>>compat.h
-
-cat <<'EOF' >$TMP
-#include <errno.h>
-#include <stdio.h>
-extern const int * h_errlist;	/* the wrong type, to provoke the compiler */
-int main(){return 0;}
-EOF
-$CC $TMP $FLAGS >/dev/null 2>&1 || 
-	echo '#define H_ERRLIST_IS_DECLARED' \
-	>>compat.h
-
-cat <<'EOF' >$TMP
-#include <errno.h>
-#include <stdio.h>
-extern const char * const sys_errlist[];
-int main(){return 0;}
-EOF
-$CC $TMP $FLAGS >/dev/null 2>&1 || 
-	echo '#define SYS_ERRLIST_NOT_CONST' \
-	>>compat.h
 
 cat <<'EOF' >$TMP
 int main(){ connect(); return 0; }

@@ -4,7 +4,14 @@
 ############################## includes
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = $(srcdir)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
 include $(TOPDIR)/Makeconf
+
 ifndef NODEPENDS
 include compat.mak
 endif
