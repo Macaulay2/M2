@@ -14,14 +14,11 @@ extern int32 RandomSeed;
 class Random
 {
   static RingElement *maxint;
-  static int32 maxint32;		// At the moment, this is the max bignum random
-				// number that can be generated...
-
   // gmp random routines
   static gmp_randstate_t state;
   static mpz_t maxN;
   static bool maxNisSmall;
-  static int maxNint;
+  static int32 maxNint;
 public:
   static void i_random();
   static RingElement *get_max_int();
