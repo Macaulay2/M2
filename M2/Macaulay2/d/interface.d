@@ -35,7 +35,7 @@ export rawGetErrorMessage(e:Expr):Expr := (
 setupfun("rawGetErrorMessage",rawGetErrorMessage);
 
 -----------------------------------------------------------------------------
--- random numbes
+-- random numbers
 
 export rawSetRandomSeed(e:Expr):Expr := (
      when e is n:Integer do Expr(toInteger(Ccode(int, "rawSetRandomSeed(", "(M2_Integer)", n, ")")))
@@ -2199,6 +2199,15 @@ export rawMatrixCompress(e:Expr):Expr := (
      is x:RawMatrix do Expr( Ccode( RawMatrix, "(engine_RawMatrix)rawMatrixCompress(", "(Matrix *)",x, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawMatrixCompress",rawMatrixCompress);
+
+export rawRemoveMonomialFactors(e:Expr):Expr := (
+     when e is s:Sequence do 
+     when s.0 is m:RawMatrix do 
+     if isBoolean(s.1) then Expr(Ccode(RawMatrix, "(engine_RawMatrix)rawRemoveMonomialFactors(", "(Matrix *)", m, ",", toBoolean(s.1), ")" ))
+     else WrongArg(1,"true or false")
+     else WrongArg(0,"a raw matrix")
+     else WrongNumArgs(2));
+setupfun("rawRemoveMonomialFactors",rawRemoveMonomialFactors);
 
 -----------------------------------------------------------------------------
 -- monomial ideals

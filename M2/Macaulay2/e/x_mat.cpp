@@ -568,7 +568,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
   //return M->compress();
 }
 
-const Matrix * rawRemoveMonomialFactors(const Matrix *m, bool make_squarefree_only)
+const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only)
 {
   return m->remove_monomial_factors(make_squarefree_only);
 }

@@ -80,9 +80,6 @@ Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
 -- total ext over complete intersections
 
 Ext(Module,Module) := Module => (M,N) -> (
-  cacheModule := youngest(M,N);
-  cacheKey := (Ext,M,N);
-  if cacheModule#?cacheKey then return cacheModule#cacheKey;
   B := ring M;
   if B =!= ring N
   then error "expected modules over the same ring";
@@ -168,7 +165,7 @@ Ext(Module,Module) := Module => (M,N) -> (
     assert isHomogeneous DeltaBar;
     assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
-    cacheModule#cacheKey = prune homology(DeltaBar,DeltaBar)))
+    prune homology(DeltaBar,DeltaBar)))
 
 Adjust					  -- just use it again
 Repair					  -- just use it again
