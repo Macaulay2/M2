@@ -120,7 +120,7 @@ String | String := concatenate
 String | ZZ := (s,i) -> concatenate(s,string i)
 ZZ | String := (i,s) -> concatenate(string i,s)
 
-notify := true						    -- can change this for debugging
+notify := false						    -- can change this for debugging
 loaded := new MutableHashTable
 
 markLoaded := (filename) -> ( 
