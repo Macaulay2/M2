@@ -82,6 +82,7 @@ CC == QQ := (z,i) -> (realPart z) == i and (imaginaryPart z) == 0
 QQ == CC := (i,z) -> (realPart z) == i and (imaginaryPart z) == 0
 CC == RR := (z,i) -> (realPart z) == i and (imaginaryPart z) == 0
 RR == CC := (i,z) -> (realPart z) == i and (imaginaryPart z) == 0
+CC == CC := (w,z) -> w === z
 isConstant CC := i -> true
 
 -- Local Variables:

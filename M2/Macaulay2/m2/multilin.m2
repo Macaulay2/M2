@@ -63,9 +63,18 @@ wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
      else map(exteriorPower(p+q,M),exteriorPower(p,M)**exteriorPower(q,M),wedgeProduct(p,q,cover M)))
 
 minors(ZZ,Matrix) := Ideal => opts -> (j,m) -> (
-     if opts.First =!= null then error "optional argument 'First' not re-implemented yet"; -- minors used to do more in version 0.9.2
-     if opts.Limit =!= infinity then error "optional argument 'Limit' not re-implemented yet";
-     ideal map(ring m, rawMinors(j,raw m, getMinorsStrategy(ring m,opts))))
+     f := opts.First;
+     if not (
+	  f === null or (
+	       class f === List
+	       and #f == 2
+	       and all(f, s -> class s === List)
+	       )
+	  ) then error "expected a list of 2 lists of integers";
+     ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m,opts), 
+	       if opts.Limit === infinity then -1 else opts.Limit,
+	       if f =!= null then f#0, 
+	       if f =!= null then f#1)))
 
 pfaffians = method(TypicalValue => Ideal)
 pfaffians(ZZ,Matrix) := Ideal => (j,m) -> (
