@@ -353,7 +353,7 @@ scan({
 	  isWellDefined, isInjective, isSurjective, singularLocus, isSubset,
 	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial, subquotient,
-	  getchange, poincare, cover, super,
+	  getchange, poincare, cover, super, poincareN,
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, stats, options,
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,
@@ -367,7 +367,11 @@ scan({
 	  frac, betti, det, ring, presentation, use, degreesMonoid, submatrix,
 	  truncate, fraction
 	  },
-     n -> n <- method()
+     n -> (
+	  f := method();
+	  Documentation#f = n;
+	  n <- f;
+	  )
      )
 
 radical = method( Options=>{
@@ -409,9 +413,6 @@ document { quote size,
      a rough indication of memory space required to store the object ", TT "x", ".",
      PARA,
      "For a polynomial, the size is the number of terms."
-     }
-document { quote length,
-     TT "length C", " -- the length of a chain complex."
      }
 document { quote baseName,
      TT "baseName x", " -- returns the variable or symbol upon which a generator of a
