@@ -41,6 +41,7 @@ RRR.char = 0
 RRR.Engine = true
 degree RRR := i -> {}
 isConstant RRR := i -> true
+round = x -> floor(x + 0.5)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New variable 'homeDirectory' contains the path to the user's home
+directory.
+
 Documentation option "Filename" removed.
 
 The strategy called "Elimination" for "saturate" has been renamed to

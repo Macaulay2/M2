@@ -431,8 +431,8 @@ check Package := pkg -> (
 runfun := o -> if class o === Function then o() else o
 
 installPackage = method(Options => { 
-	  PackagePrefix => () -> getenv "HOME" | "/" | packageSuffix | "encap/",
-          InstallPrefix => () -> getenv "HOME" | "/" | packageSuffix | "local/",
+	  PackagePrefix => () -> homeDirectory | packageSuffix | "encap/",
+          InstallPrefix => () -> homeDirectory | packageSuffix | "local/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
 	  MakeInfo => true,
@@ -836,16 +836,74 @@ installPackage Package := opts -> pkg -> (
      currentPackage = oldpkg;
      )
 
+userMacaulay2Directory := () -> (
+     dir := homeDirectory | packageSuffix;
+     if not isDirectory dir then (
+	  stderr << "--initializing user Macaulay 2 directory \"" << dir << "\"" << endl;
+	  makeDirectory(dir);
+	  makeDirectory(dir|"encap/");
+	  makeDirectory(dir|"local/");
+	  makeDirectory(dir|"code/");
+	  -- make sample init.m2 file
+	  dir|"init.m2" << ///-- This is a sample init.m2 file provided with Macaulay2.
+-- It contains Macaulay 2 code and is automatically loaded upon
+-- startup of Macaulay2, unless you use the "-q" option.
+
+-- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
+-- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
+
+-- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
+-- source code files the load path.  Terminate each directory name with a "/".
+-- path = join( { homeDirectory | "src/singularities/", "/usr/local/src/M2/" }, path )
+
+-- Uncomment the following line if you prefer Macaulay2's larger 2-dimensional display form for matrices.
+-- compactMatrixForm = false
+
+-- Uncomment and edit the following line if you would like to set the variable kk to your favorite field.
+-- kk = ZZ/101
+
+-- Uncomment and edit the following line if you don't need to be informed of the class of a sequence 
+-- after it is printed by M2.  This works for other classes, too.
+-- Sequence.AfterPrint = Sequence.AfterNoPrint = identity
+
+-- Uncomment and edit the following line to set a default printwidth for situations where M2 doesn't know the width
+-- of your terminal.
+-- if printWidth == 0 then printWidth = 100
+
+-- Uncomment and edit the following line to preload your favorite package.
+-- needsPackage "StateTables"
+
+/// << close;	  
+	  -- make README file
+	  dir|"README" << ///This directory is used to contain data and code specific to Macaulay2.  For example, your initialization
+file, init.m2, is in this directory, and is automatically loaded upon startup of Macaulay2, unless you use
+the "-q" option.  You may edit it to meet your needs.
+
+The file "index.html" in this directory contains a list of installed packages, and is updated every time
+you start Macaulay2, unless you use the "-q" option.  To update it manually, use "makePackageIndex()".
+Point your web browser at that file and bookmark it.
+
+You may place Macaulay 2 source files in the subdirectory "code/".  It's on your "path", so Macaulay2's
+"load" and "input" commands will automatically look there for your files.
+
+You may obtain source code for Macaulay 2 packages and install them yourself with the function
+"installPackage".  Behind the scenes, Macaulay 2 will use the subdirectory "encap/" to house the code for
+those packages in separate subdirectories.  The subdirectory "local/" will hold a single merged directory
+tree for those packages, with symbolic links to the files of the packages.
+
+Good luck!
+
+Daniel R. Grayson <dan@math.uiuc.edu>,
+Michael R. Stillman <mike@math.cornell.edu>/// << close;
+	  );
+     dir)
+
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
 makePackageIndex List := packagePrefixPath -> (
-     -- this code is still experimental
      absoluteLinks = true;
-     htmlDirectory = getenv "HOME" | "/" | packageSuffix;
      key := "package index";
-     dir := getenv "HOME" | "/" | packageSuffix;
-     if not isDirectory dir then makeDirectory dir;
-     fn := dir | "index.html";
+     fn := userMacaulay2Directory() | "index.html";
      stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
 	  HEAD {
