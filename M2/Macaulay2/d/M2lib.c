@@ -1,6 +1,8 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#ifndef NO_GNU_GET_LIBC_VERSION
 char *gnu_get_libc_version();
+#endif
 
 #include "readline.h"
 #include "types.h"
@@ -516,8 +518,10 @@ char **argv;
 		       GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION
 		       );
 	       putstderr(buf);
+#ifndef NO_GNU_GET_LIBC_VERSION
 	       sprintf(buf,"--GNU C Library (glibc-%s), copyright, Free Software Foundation", gnu_get_libc_version());
 	       putstderr(buf);
+#endif
 	       sprintf(buf,"--GNU MP Library (gmp-%s), copyright, Free Software Foundation",__gmp_version);
 	       putstderr(buf);
 	       break;
