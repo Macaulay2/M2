@@ -294,7 +294,7 @@ extern "C" {
   const RingOrNull *IM2_Ring_ZZp(int p); /* drg: connected rawZZp*/
     /* Expects a prime number p in range 2 <= p <= 32749 */
 
-  const RingOrNull *IM2_Ring_GF(const RingElement *f);
+  const RingOrNull *rawGaloisField(const RingElement *f); /* drg: connected to rawGaloisField */
     /* f should be a primitive element in a ring
        R = ZZ/p[x]/(g(x)), some p, some variable x, g irreducible, 
        monic, deg >= 2.
