@@ -2,6 +2,13 @@ Changes made, most recent ones first:
 
 new type : AbstractSet
 
+-----------------------------------------------------------------------------
+New in 0.8.37:
+
+'unlist' changed to 'toSequence'
+'elements' changed to 'toList'
+
+-----------------------------------------------------------------------------
 New in 0.8.36:
 
 In emacs, you may use now M-f10 to move back to the previous expression

@@ -308,7 +308,7 @@ makeit1 := (options) -> (
      mo := options.MonomialOrder;
      firstdeg := transpose degs;
      if # firstdeg === 0 then
-	firstdeg = elements(n:1)
+	firstdeg = toList(n:1)
      else
         firstdeg = firstdeg#0;
      if mo === null then
@@ -324,7 +324,7 @@ makeit1 := (options) -> (
      else if instance(mo, Eliminate) then
 	mo = MOelim(firstdeg, mo#0)
      else if instance(mo, ProductOrder) then
-	mo = MOproduct(firstdeg, elements mo)
+	mo = MOproduct(firstdeg, toList mo)
 --     else if mo === Weights wts then
 --	mo = MOwtfcn(firstdeg, wts)
 --     else if mo === General then
@@ -340,20 +340,20 @@ makeit1 := (options) -> (
 	       then error "expected variable or symbol"));
      ggPush M := x -> (
 	  x = select(x, (k,v) -> k<n);
-	  x = unlist x;
+	  x = toSequence x;
 	  (ggMONOMIAL, gg (# x), apply(x, (k,v) -> (gg k, gg v)))
 	  );
      M.standardForm = ConvertApply(
-	  v -> new HashTable from elements v,
+	  v -> new HashTable from toList v,
 	  ConvertRepeat( 
 	       ConvertApply(
 	       	    (i,e) -> i => e,
 	       	    ConvertJoin(ConvertInteger, ConvertInteger))));
-     iv := elements( n : 0 );
+     iv := toList( n : 0 );
      toVec := p -> (
 	  s := new MutableList from iv;
 	  scan(p, (i,e) -> s#i = e);
-	  elements s);
+	  toList s);
      M.listForm = ConvertApply(
 	  toVec,
 	  ConvertRepeat ConvertJoin(ConvertInteger, ConvertInteger));
@@ -367,7 +367,7 @@ makeit1 := (options) -> (
 	  args -> (
 	       if #args === 1 then args#0
 	       else if #args === 0 then expression 1
-	       else new Product from elements args
+	       else new Product from toList args
 	       ),
 	  ConvertRepeat ConvertApply (
 	       (v,i) -> if i != 1 then (expression v)^(expression i) else expression v,
@@ -377,7 +377,7 @@ makeit1 := (options) -> (
      expression M := x -> (
 	  x = select(x, (k,v) -> k < n);
 	  x = new Product from apply(
-	       elements x,
+	       toList x,
 	       (k,v) -> new Power from {expression M.syms#k, v}
 	       );
 	  if #x === 0 then expression 1 else x
@@ -415,7 +415,7 @@ makeit1 := (options) -> (
 	  if # x != n then error (
 	       "expected a list of length ", name n
 	       );
-	  x = flatten elements x;
+	  x = flatten toList x;
 	  product(m, (k,v) -> if k < n then x#k^v else 1)
 	  );
      M == ZZ := (m,i) -> (
@@ -439,7 +439,7 @@ makeit1 := (options) -> (
      degree M := x -> (
 	  if # x === 0
 	  then apply(M.degreeLength,i->0)
-	  else sum(select(elements x, (v,e)->v<n), (v,e) -> e * degs#v)
+	  else sum(select(toList x, (v,e)->v<n), (v,e) -> e * degs#v)
 	  );
      baseName M := x -> (
 	  if 1 === number(x, (v,e) -> v<n) and x#0#1 === 1
@@ -491,12 +491,12 @@ makeMonoid := (options) -> (
      if class options.Variables === ZZ 
      then (
 	 x := quote x;
-         options.Variables = elements (x_0 .. x_(options.Variables - 1)))
+         options.Variables = toList (x_0 .. x_(options.Variables - 1)))
      else (
          options.Variables =
-	    apply(flatten elements 
+	    apply(flatten toList 
 	       apply(options.Variables,
-		    x->if class x === MutableList then elements x else x), 
+		    x->if class x === MutableList then toList x else x), 
 	       i -> (
 		    try baseName i
 		    else error ("'", name i, "'", " can't be used as a variable" )
@@ -525,7 +525,7 @@ makeit2 := (args,options) -> (
      options = new OptionTable from options;
      makeMonoid options)
 
-monoid Array := (args) -> use processArgs(unlist args,monoidDefaults,makeit2)
+monoid Array := (args) -> use processArgs(toSequence args,monoidDefaults,makeit2)
 OptionsRegistry#monoid = monoidDefaults
 monoid Ring := R -> R.monoid
 

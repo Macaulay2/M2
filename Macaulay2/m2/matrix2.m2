@@ -446,7 +446,7 @@ compress = method()
 --     getMatrix R)
 compress Matrix := (m) -> (
      R := ring m;
-     submatrix(m, select(elements(0..numgens source m-1), i -> m_i != 0)))
+     submatrix(m, select(toList(0..numgens source m-1), i -> m_i != 0)))
 
 document { quote compress,
      TT "compress m", " -- provides the matrix obtained from the matrix ", TT "m", "
@@ -502,10 +502,10 @@ lift(Ideal,Ring) := (I,S) -> (
      if T === S then I
      else ideal lift(I.generators,S) + ideal presentation(S,T));
 
-promote(Matrix,Ring) := (f,S) -> (
-     error "this use of 'promote' has been replaced by '**'";
-     );
-
-promote(Ideal,Ring) := (I,S) -> (
-     error "this use of 'promote' has been replaced by '*'";
-     );
+-- promote(Matrix,Ring) := (f,S) -> (
+--      error "this use of 'promote' has been replaced by '**'";
+--      );
+-- 
+-- promote(Ideal,Ring) := (I,S) -> (
+--      error "this use of 'promote' has been replaced by '*'";
+--      );

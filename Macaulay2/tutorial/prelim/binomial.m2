@@ -187,14 +187,14 @@ scan(isolateds, print)
 cods = apply(isolateds, i -> codim i)
 tally cods
 -- Intersecting all of these gives the radical
-Irad = intersect unlist isolateds
+Irad = intersect toSequence isolateds
 
 betti Irad
 
 -- The codimension $3$ part is the hardest computationally.
 -- We already have the isolated primes of codim $3$.
 isolated3 = select(isolateds, i -> codim i == 3)
-rad3 = intersect unlist isolated3
+rad3 = intersect toSequence isolated3
 I3 = ann Ext^3(M,R)
 codim I3
 -- We now remove the isolated components, leaving

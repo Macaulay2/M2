@@ -20,7 +20,7 @@ sort = (v) -> (
 	       v#j = c;
 	       );
 	  subsort(0,#v - 1);
-	  elements v))
+	  toList v))
 
 document { quote sort,
      TT "sort v", " -- produces a sorted version of the list v.",
@@ -51,7 +51,7 @@ rsort = (v) -> (
 	       v#j = c;
 	       );
 	  subrsort(0,#v - 1);
-	  elements v));
+	  toList v));
 
 
 document { quote rsort,

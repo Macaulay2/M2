@@ -10,6 +10,7 @@
 ################################# all
 all::
 #################################
+TOPDIR = .
 include Makeconf
 FILES := Makefile Makeconf README patches
 SUBDIRS := gc gmp factory libfac Macaulay2

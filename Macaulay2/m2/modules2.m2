@@ -179,7 +179,7 @@ assert( hilbertFunction(10,R) === 286 )
 geometricSeries := (x,n) -> sum(n, i -> x^i)
 
 trimm := (f,n) -> (
-     ff := coefficients(elements(0 .. numgens ring f - 1), f);
+     ff := coefficients(toList(0 .. numgens ring f - 1), f);
      fm := ff#0;			  -- the monomials
      fc := ff#1;			  -- the coefficients
      p := positions(first entries fm, m -> max first exponents m < n);
@@ -767,7 +767,7 @@ Module / Module := (M,N) -> (
 Module / RingElement := (M,x) -> M / (x * M)
 Module / Sequence := Module / List := (M,v) -> (
      R := ring M;
-     v = elements v;
+     v = toList v;
      if all(v, w -> class w === M)
      then M / image matrix v
      else if all(v, w -> class w == R)
@@ -832,7 +832,7 @@ Module ^ Array := (M,rows) -> (
      rows = splice rows;
      if not M.?components
      then (
-	  if isFreeModule M then M ^ (elements rows)
+	  if isFreeModule M then M ^ (toList rows)
 	  else error "expected a direct sum module"
 	  )
      else (
@@ -846,16 +846,16 @@ Module ^ Array := (M,rows) -> (
 	       -- quick access
 	       k := 0;
 	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
-	       M ^ (apply(elements rows, i -> v#i))
+	       M ^ (apply(toList rows, i -> v#i))
 	       )
-	  else matrix apply(elements rows, i -> 
+	  else matrix apply(toList rows, i -> 
 	       apply(#M.components, j -> 
 		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
 Module _ Array := (M,cols) -> (
      cols = splice cols;
      if not M.?components
      then (
-	  if isFreeModule M then M _ (elements cols)
+	  if isFreeModule M then M _ (toList cols)
 	  else error "expected a direct sum module"
 	  )
      else (
@@ -869,10 +869,10 @@ Module _ Array := (M,cols) -> (
 	       -- quick access
 	       k := 0;
 	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
-	       M _ (apply(elements cols, i -> v#i))
+	       M _ (apply(toList cols, i -> v#i))
 	       )
 	  else matrix apply(#M.components, i -> 
-	       apply(elements cols, j -> 
+	       apply(toList cols, j -> 
 		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
 -----------------------------------------------------------------------------
 Module ^ List := (M,rows) -> submatrix(id_M,rows,)

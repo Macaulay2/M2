@@ -65,7 +65,7 @@ vars QuotientRing := S -> (
 numgens QuotientRing := S -> numgens S.baseRings#-1
 
 pretty := relns -> (
-     s := unlist flatten entries relns;
+     s := toSequence flatten entries relns;
      if #s === 1 then s = first s;
      s)
 

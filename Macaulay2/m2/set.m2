@@ -27,7 +27,7 @@ document { quote Tally,
      "Operations:",
      MENU {
 	  (TO "tally", "               -- tally the elements of a list"),
-	  (TO "elements", "            -- a list of the elements"),
+	  (TO "toList", "            -- a list of the elements"),
 	  (TO "apply(Tally,Function)", " -- apply a function to the elements."),
 	  (TO "sum(Tally)", "          -- add the elements"),
 	  (TO "product(Tally)", "      -- multiply the elements")
@@ -56,6 +56,18 @@ Tally ** Tally := { Tally,
      SEEALSO ("Tally", "tally")
      }
 
+Tally ? Tally := { Thing,
+     (x,y) -> (
+	  w := values (x-y);
+	  if #w === 0 then quote ==
+	  else if all(w,i -> i>0) then quote >
+	  else if all(w,i -> i<0) then quote <
+	  else incomparable),
+     TT "x ? y", " -- compares two tallies, returning ", TT "quote <", ", ",
+     TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
+     SEEALSO "Tally"
+     }
+
 Tally + Tally := { Tally, 
      (x,y) -> merge(x,y,plus),
      TT "x + y", " -- produces the union of two tallies.",
@@ -68,18 +80,25 @@ Tally + Tally := { Tally,
      SEEALSO ("Tally", "tally")
      }
 
-document { "apply(Tally,Function)",
-     TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
-     tally ", TT "x", ", accumulating the results in a tally.",
-     PARA,
-     EXAMPLE "x = tally {-1,-1,-2,1}",
-     EXAMPLE "apply(x,abs)",
-     SEEALSO ("Tally", "tally")
-     }
+--document { "apply(Tally,Function)",
+--     TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
+--     tally ", TT "x", ", accumulating the results in a tally.",
+--     PARA,
+--     EXAMPLE "x = tally {-1,-1,-2,1}",
+--     EXAMPLE "apply(x,abs)",
+--     SEEALSO ("Tally", "tally")
+--     }
 
 singleton := tally {0}
 
-Tally - Tally := (x,y) -> select(merge(x,apply(y,minus),plus),i -> i =!= 0)
+Tally - Tally := {Tally,
+     (x,y) -> select(merge(x,applyPairs(y,(k,v)->(k,-v)),plus),i -> i =!= 0),
+     TT "x - y", " -- produces the difference of two tallies.",
+     PARA,
+     EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
+     SEEALSO "Tally"
+     }
+     
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
 
@@ -119,7 +138,7 @@ document { quote Set,
 	  (TO "**", "         -- Cartesian product"),
 	  (TO "#", "          -- the number of elements"),
 	  (TO "apply(Set,Function)", "  -- applying a function to elements"),
-	  (TO "elements", "   -- a list of the elements"),
+	  (TO "toList", "   -- a list of the elements"),
 	  (TO "member", "     -- whether something is a member"),
 	  (TO "product", "    -- multiply the elements"),
 	  (TO "isSubset", "   -- whether a set is a subset of another"),
@@ -154,8 +173,8 @@ Set * Set := (x,y) -> (
      else set select(keys y, k -> x#?k)
      )
 Set - Set := (x,y) -> applyKeys(x, i -> if not y#?i then i)
-sum Set := s -> sum elements s
-product Set := s -> product elements s
+sum Set := s -> sum toList s
+product Set := s -> product toList s
 unique = (x) -> keys set x
 
 member(Thing,Set) := (a,s) -> s#?a

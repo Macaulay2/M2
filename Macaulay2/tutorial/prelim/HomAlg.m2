@@ -118,7 +118,7 @@ boundarymap = (i,delta) -> (
 --$
 simplicialChainComplex = (delta) -> (
      bds := apply(2..4, i -> boundarymap(i,delta));
-     chainComplex unlist bds)
+     chainComplex toSequence bds)
 --
 boundarymap(1,torus)
 boundarymap(2,torus)

@@ -154,7 +154,7 @@ elements(e:Expr):Expr := (
 		    	 0, false),
 	       	    false)))
      else WrongArg("a hash table"));
-setupfun("elements",elements);
+setupfun("toList",elements);
 values(e:Expr):Expr := (
      when e
      is o:HashTable do list(

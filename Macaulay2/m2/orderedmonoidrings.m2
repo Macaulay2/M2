@@ -234,18 +234,18 @@ Ring OrderedMonoid := (			  -- no memoize
 	       R.pop()
 	       );
 	  RM.standardForm = ConvertApply(
-	       v -> new HashTable from elements v,
+	       v -> new HashTable from toList v,
 	       ConvertRepeat ConvertApply ( 
 	       	    (m,r) -> m => r,
 	       	    ConvertJoin(M.standardForm, R.ConvertToExpression)));
 	  RM.listForm = ConvertApply(
-	       elements,
+	       toList,
 	       ConvertRepeat ConvertJoin(M.listForm, R.ConvertToExpression));
 	  RM.ConvertToExpression = ConvertApply(
 	       args -> (
 		    if # args === 1 
 		    then args#0
-		    else new Sum from elements args
+		    else new Sum from toList args
 		    ),
 	       ConvertRepeat ConvertApply ( 
 		    (m,r) -> r * m,

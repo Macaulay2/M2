@@ -162,7 +162,7 @@ decompose(Ideal) := (I) -> if I.?decompose then I.decompose else I.decompose = (
 	       if Psi#i =!= null and Psi#j =!= null then
 	       if isSubset(Psi#i, Psi#j) then Psi#j = null else
 	       if isSubset(Psi#j, Psi#i) then Psi#i = null));
-     Psi = elements select(Psi,i -> i =!= null);
+     Psi = toList select(Psi,i -> i =!= null);
      apply(Psi, p -> ics#1 p)
      )
 

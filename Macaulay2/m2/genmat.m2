@@ -63,7 +63,7 @@ random(Module, Module) := (F,G) -> (
      if p === 0 then error "not implemented yet for characteristic 0";
      if R =!= ring G then error "modules over different rings";
      degreesTable := table(degrees F, degrees G, 
-	  (i,j) -> elements apply(j,i,difference));
+	  (i,j) -> toList apply(j,i,difference));
      degreesTally := tally flatten degreesTable;
      if #degreesTally === 0 then map(F,G,0)
      else if #degreesTally === 1 then (

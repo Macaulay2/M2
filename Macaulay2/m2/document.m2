@@ -58,7 +58,7 @@ name Function := f -> (
 
 repl := z -> (
      if class z === List or class z === Sequence 
-     then SEQ apply(elements z, repl)
+     then SEQ apply(toList z, repl)
      else if instance(z,BasicList)
      then apply(z,repl)
      else z
@@ -164,7 +164,7 @@ briefHelp := (o,s) -> (
      if d === null 
      then (
 	  fm (o,s);
-	  o << " : no documentation available" << endl;
+	  o << " --> Thing" << endl;		  -- no documentation available
 	  false
 	  )
      else if class d === List then (
@@ -197,7 +197,7 @@ help2 := (o,s) -> (
      if d === null 
      then (
 	  fm (o,s);
-	  o << " : no documentation available" << endl;
+	  o << " --> Thing" << endl;		  -- no documentation available
 	  )
      else if class d === List then (
 	  fm (o,s);
@@ -205,21 +205,21 @@ help2 := (o,s) -> (
 	  if #d > 2 then o << endl << text repl drop(d,2) << endl;
 	  )
      else o << text d << endl;
-     if class s =!= Sequence then (
-	  m := methods s;
-	  if #m > 0 then (
-	       scan(m, meth -> (
-			 hr o; 
-			 if briefHelp(o,meth) then (
-			      o << endl
-			      << "Type 'help "
-			      << saveMethod meth 
-			      << "' for more help." << endl;
-			      );
-			 ));
-	       hr o;
-	       );
-	  );
+--     if class s =!= Sequence then (
+--	  m := methods s;
+--	  if #m > 0 then (
+--	       scan(m, meth -> (
+--			 hr o; 
+--			 if briefHelp(o,meth) then (
+--			      o << endl
+--			      << "Type 'help "
+--			      << saveMethod meth 
+--			      << "' for more help." << endl;
+--			      );
+--			 ));
+--	       hr o;
+--	       );
+--	  );
      if # options value s > 0 then (
 	  o << "Options and default values:" << endl;
 	  hr o;
@@ -248,7 +248,6 @@ help = s -> (
      if class s === List
      then (
 	  scan(s, i -> ( hr o; help2 (o,i); ));
-	  hr o;
 	  )
      else if class s === ZZ then (
 	  if 0 <= s and s < #previousMethods then (
@@ -317,7 +316,7 @@ extractExamples := x -> (
      if class x === EXAMPLE
      then {x#0}
      else if basictype x === BasicList or basictype x === Sequence
-     then join apply(unlist x, extractExamples)
+     then join apply(toSequence x, extractExamples)
      else {})
 
 NameFile := "../tmp/Examples/FileNames"
@@ -376,7 +375,7 @@ document = z -> (
 		    )
 	       )
 	  );
-     docBody := repl elements apply(1 .. #z - 1, i -> z#i);
+     docBody := repl toList apply(1 .. #z - 1, i -> z#i);
      -- drop isn't defined yet
      if phase === 1 and not writableGlobals#?label and class label === Symbol 
      then protect label;
@@ -489,8 +488,8 @@ document { quote help,
      TT "help methods X", " -- displays help messages about the methods usable
      with things of type ", TT "X", ".",
      BR, NOINDENT,
-     TT "help methods quote **", " -- displays help messages about the accessible
-     with the operator ", TT "**", ".",
+     TT "help methods quote **", " -- displays help messages about the methods 
+     usable with the operator ", TT "**", ".",
      BR, NOINDENT,
      TT "help methods (quote **, X)", " -- displays help messages about the 
      methods usable with the operator ", TT "**", " and a thing of

@@ -63,7 +63,7 @@ assert (
      )
 "
 
-List .. List := (v,w) -> apply(unlist v .. unlist w, elements)
+List .. List := (v,w) -> apply(toSequence v .. toSequence w, toList)
 
 IndexedVariable .. IndexedVariable := (v,w) -> (
      x := v#0;
@@ -72,7 +72,7 @@ IndexedVariable .. IndexedVariable := (v,w) -> (
 	  name v#0,"_",name v#1,
 	  " .. ",
 	  name w#0,"_",name w#1);
-     unlist apply(v#1 .. w#1, s -> x_s))	  
+     toSequence apply(v#1 .. w#1, s -> x_s))	  
 
 expression IndexedVariable := (
      x -> new Subscript from { expression x#0, expression x#1 }

@@ -763,7 +763,7 @@ firstDegrees Module := M -> (
      else M#(quote firstDegrees) = (
 	  rk := numgens M;
 	  nd := degreeLength R;
-	  if nd == 0 then elements (rk : 0)
+	  if nd == 0 then toList (rk : 0)
 	  else (
 	       sendgg ggPush M;
 	       eePop ConvertList
@@ -823,7 +823,7 @@ betti ChainComplex := C -> (
 	  totals := apply(transpose v, sum);
 	  v = prepend(totals,v);
 	  v = transpose v;
-	  -- v = applyTable(v, unlist); -- why did we have this?
+	  -- v = applyTable(v, toSequence); -- why did we have this?
 	  t := 0;
 	  while t < #v and sum v#(-t-1) === 0 do t = t + 1;
 	  v = drop(v,-t);
@@ -857,7 +857,7 @@ betti ChainComplex := C -> (
 	  apply(splice {"total", minrow .. maxrow},
 	       row -> (
 		    << pad(9,string row) << ":";
-		    elements apply(mincol .. maxcol,
+		    toList apply(mincol .. maxcol,
 			 col -> << pad(
 			      1+colwids#(col-mincol),
 			      if not betti#?(row,col) then "." else betti#(row,col)
@@ -959,7 +959,7 @@ ResolutionStatus := (r,options) -> (
      totals := apply(transpose v, sum);
      v = prepend(totals,v);
      v = transpose v;
-     v = applyTable(v, unlist);
+     v = applyTable(v, toSequence);
      if numops === 1
      then v = applyTable(v,(i) -> if i === 0 then "." else name i)
      else v = applyTable(v,args -> concatenate("(", between(",",apply(args,name)), ")" ));

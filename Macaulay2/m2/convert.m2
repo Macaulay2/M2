@@ -6,7 +6,7 @@ ConvertApply = x -> x			  -- (f,T1,...,Tm)
 ConvertJoin = x -> if class x === Sequence then prepend (identity, x) else (identity, x)
 ConvertRepeat = T -> seq T
 ConvertFixedRepeat = x -> x		  -- (n,T1,...,Tm)
-ConvertList  = T -> (elements, ConvertRepeat T)
+ConvertList  = T -> (toList, ConvertRepeat T)
 
 document { "engine communication protocol",
      "Here is a description of the protocol for communication between the 

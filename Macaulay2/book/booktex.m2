@@ -173,7 +173,7 @@ booktex Nothing := x -> ""
 booktex Boolean := booktex Symbol := string
 booktex BasicList := booktex Sequence := x -> apply(x,booktex)
 booktex String := cmrLiteral
-booktex ITALIC := x -> ("{\\sl ",booktex elements x,"}")
+booktex ITALIC := x -> ("{\\sl ",booktex toList x,"}")
 verbatim = x -> ("\\beginverbatim%\n", ttLiteral concatenate x, "\\endverbatim{}")
 booktex TT := verbatim
 shorten := s -> (

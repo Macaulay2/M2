@@ -39,7 +39,7 @@ pushtest := (f,M,options) -> (
 	JJ := graphIdeal(f,MonomialOrder => order, VariableBaseName => local X);
 	m := presentation M;
 	-- now map M to the new ring.
-	xvars := map(ring JJ, ring M, submatrix(vars ring JJ, elements(0..n1-1)));
+	xvars := map(ring JJ, ring M, submatrix(vars ring JJ, toList(0..n1-1)));
 	m1 := xvars m;
 	m1 = presentation ((cokernel m1) ** (cokernel JJ));
 	mapback := map(S, ring JJ, map(S^1, S^n1, 0) | vars S);

@@ -216,7 +216,7 @@ export process():void := (
 		    when readeval(
 			 stringTokenFile(
 			      "command line argument " + tostring (1+i) + " ",
-			      substr(arg,2)+"\n"))
+			      substr(arg,2)+newline))
 		    is Error do exit(2)
 		    else nothing;
 		    )	       
@@ -251,7 +251,7 @@ export process():void := (
 eval(e:Expr):Expr := (
      when e
      is s:string do (
-	  r := readeval(stringTokenFile("a string", s+"\n"));
+	  r := readeval(stringTokenFile("a string", s+newline));
 	  when r 
 	  is err:Error do (
 	       if err.position == dummyPosition

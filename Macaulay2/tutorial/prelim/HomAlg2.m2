@@ -116,7 +116,7 @@ f0 = id0_{0}
 g0 = submatrix(id0,{1},null)
 -- To find b1 we must lift
 lambda0 = id_(PC_0) // (gdot | PC.dd_1)
-lambda0 = submatrix(lambda0,elements (0..numgens source gdot-1),null)
+lambda0 = submatrix(lambda0,toList (0..numgens source gdot-1),null)
 b0 = fdot | lambda0
 bbar1 = modulo(b0, presentation B)
 
