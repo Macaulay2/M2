@@ -1422,6 +1422,14 @@ fileExists(e:Expr):Expr := (
      );
 setupfun("fileExists",fileExists);
 
+readDirectory(e:Expr):Expr := (
+     when e is name:string do (
+	  r := readDirectory(name);
+	  when r is null do buildErrorPacket("can't read directory '" + name + "' : " + syserrmsg())
+	  is x:array(string) do Expr(new Sequence len length(x) do foreach i in x do provide(Expr(i))))
+     else WrongArgString());
+setupfun("readDirectory",readDirectory);
+
 directoryExists(e:Expr):Expr := (
      when e is name:string do toBoolean(directoryExists(name))
      else WrongArgString()
@@ -1432,7 +1440,7 @@ fileTime(e:Expr):Expr := (
      when e is name:string do (
 	  r := fileTime(name);
 	  if r == 0 && errno != 0
-	  then buildErrorPacket("can't make directory : " + syserrmsg())
+	  then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
 	  else Expr(toInteger(r))
 	  )
      else WrongArgString());
@@ -1441,7 +1449,7 @@ setupfun("fileTime",fileTime);
 mkdir(e:Expr):Expr := (
      when e is name:string do (
 	  r := mkdir(name);
-	  if r == -1 then buildErrorPacket("can't make directory : " + syserrmsg())
+	  if r == -1 then buildErrorPacket("can't make directory '" + name + "' : " + syserrmsg())
 	  else nullE)
      else WrongArgString());
 setupfun("mkdir",mkdir);

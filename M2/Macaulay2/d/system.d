@@ -60,3 +60,4 @@ import fileTime(name:string):int;
 import mkdir(name:string):int;
 import directoryExists(name:string):bool;
 import readlink(filename:string):string;
+import readDirectory(name:string):(null or array(string));
