@@ -1,5 +1,4 @@
-#define NEWNEW 1		// adds 1.4 seconds to 7.5 sec running time
-
+#include "factor.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
