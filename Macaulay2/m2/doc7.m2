@@ -63,8 +63,18 @@ TEST ///
      M1 = (target f)/(y * target f)
      M2 = (source f)/(y * source f)
      g = map(target f,M2,f)
-     assert(try (g_{1,2}; false) else true)
-     submatrix(g, {1})
+     h = map(M1,M2,f)
+     k = submatrix(g, {1})
+     assert(target k === target g)
+     l = submatrix(h, {1})
+     assert(target l === target h)
+     assert(source l === R^{-1})
+     m = submatrix(h, {1,2},{2,3})
+     assert(target m === R^2)
+     assert(source m === R^{2:-1})
+     n = submatrix(h, {1,2}, )
+     assert(target n === R^2)
+     assert(source n === source h)
 ///
 document {
      Key => (submatrix,Matrix,VisibleList,VisibleList),
