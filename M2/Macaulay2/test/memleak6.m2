@@ -1,3 +1,6 @@
+-- version 0.9.5 doesn't keep track of memory any longer, so we can't check for memory leaks
+end
+
  -- From: Fabio Tonoli <Fabio.Tonoli@uni-bayreuth.de>
  -- To: Daniel R Grayson <dan@math.uiuc.edu>
  -- Subject: M2 bugs..

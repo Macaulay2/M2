@@ -6,7 +6,6 @@ I = ideal(a*b-c^2, a*b*c-c*d^2)
 C = res(coker gens I, Strategy=>2)
 M = C.dd_2
 F = target M
-see F
 gbTrace = 3
 M1 = syz M
 M2 = C.dd_3
