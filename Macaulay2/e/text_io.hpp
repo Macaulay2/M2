@@ -10,7 +10,7 @@ extern int p_plus;
 extern int p_parens;
 extern int i_text_io();
 
-extern char newline[];
+extern "C" char newline[];
 
 void bignum_text_out(buffer &o, mpz_t a);
 

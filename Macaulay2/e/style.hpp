@@ -11,7 +11,7 @@
 
 #include <gmp.h>
 
-extern char newline[];
+extern "C" char newline[];
 
 #if defined(__MWERKS__)
 #define Random RandomFoo

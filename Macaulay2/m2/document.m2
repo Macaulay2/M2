@@ -89,7 +89,11 @@ storeDoc := (nodeName,docBody) -> (
 	  DocDatabase#nodeName = name docBody;
 	  );
      )
-keysDoc := () -> join(keys DocDatabase, keys Documentation)
+keysDoc := () -> (
+	if DocDatabase === null
+	then keys Documentation
+	else join(keys DocDatabase, keys Documentation)
+	)
 
 -----------------------------------------------------------------------------
 
@@ -237,7 +241,8 @@ help2 := (o,s) -> (
 help = s -> (
      pager := getenv "PAGER";
      if pager === "" then pager = "more";
-     if getenv "TERM" === "emacs" or version#"OS" === "Windows NT" 
+     if getenv "TERM" === "emacs" 
+     or version#"OS" === "Windows NT" 
      then pager = null;
      o := if pager === null then stdout else openOut concatenate("!", pager );
      if class s === List
@@ -586,8 +591,8 @@ document { quote Documentation,
      }
 
 TEST ///
-help sin
-help "sin"
-help quote sin
+assert( null =!= doc sin)
+assert( null =!= doc "sin")
+assert( null =!= doc quote sin)
 ///
 

@@ -2,6 +2,7 @@
 
 typedef char bool;
 
+extern char posfmt[];
 extern char errfmt[];
 extern char errfmtnc[];
 
