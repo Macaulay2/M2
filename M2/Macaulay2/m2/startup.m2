@@ -230,7 +230,7 @@ usage := arg -> (
      << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
-     << "    --int              accept interrupts" << newline -- handled by M2lib.c
+     << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
