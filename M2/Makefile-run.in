@@ -64,7 +64,7 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/packages/*.m2 \
-		Macaulay2/libexec/Macaulay2 \
+		Macaulay2/libexec/Macaulay2@EXEEXT@ \
 		Macaulay2/m2/*.m2 \
 		Macaulay2/m2/Makefile \
 		Macaulay2/emacs \
