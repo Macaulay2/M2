@@ -642,7 +642,7 @@ documentation String := s -> (
 	  t := getGlobalSymbol s;
 	  documentation t
 	  )
-     else SEQ { title s, getDocBody s }
+     else SEQ { title s, PARA getDocBody s }
      )
 
 binary := set binaryOperators; erase symbol binaryOperators
