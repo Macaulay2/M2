@@ -1,9 +1,9 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 << "--loading documentation files..." << endl
 
 document { length, HEADLINE "length" }
-document { (length, GradedModule), HEADLINE "length of a chain complex" }
+document { (length, GradedModule), HEADLINE "length of a graded module" }
 
 document { sendgg,
      HEADLINE "send commands to engine",
@@ -193,7 +193,7 @@ document { "->",
 document { "path",
      HEADLINE "list of directories to look in",
      "A list of strings containing names of directories in
-     which", TO "load", " and ", TO "input", " should seek files."
+     which ", TO "load", " and ", TO "input", " should seek files."
      }
 
 document { HashTable,
@@ -522,7 +522,7 @@ document { minus,
      }
 
 document { append,
-     HEADLINE "append to a list",
+     HEADLINE "add to the end of a list",
      TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -532,7 +532,7 @@ document { append,
      }
 
 document { prepend,
-     HEADLINE "prepend to a list",
+     HEADLINE "add to the beginning of a list",
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -541,8 +541,7 @@ document { prepend,
      SEEALSO{ "append", "join"}
      }
 
-document { "--",
-     HEADLINE "comment",
+document { "--", HEADLINE "comment",
      TT "--", " introduces a comment in the text of a program.  The comment runs from
      the double hyphen to the end of the line."
      }
@@ -573,8 +572,8 @@ document { transnet,
      SEEALSO{ "String" }
      }
 
-document { symbol " ",
-     SEEALSO(symbol " ", Function, Thing),
+document { symbol " ", 
+     SEEALSO(symbol " ", Function, Thing)		    -- not really a method
      }
 
 document { (symbol " ", Function, Thing),

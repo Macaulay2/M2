@@ -64,12 +64,7 @@ document { "mathematical overview",
 document { "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
-     MENU {
-	  (TO "ZZ", ", the ring of integers."),
-	  (TO "QQ", ", the field of rational numbers."),
-	  (TO "RR", ", the field of real (floating point) numbers."),
-	  (TO "CC", ", the field of complex (floating point) numbers.")
-	  },
+     MENU { TOH "ZZ", TOH "QQ", TOH "RR", TOH "CC" },
      NOINDENT,
      "(The names of these rings are double letters so the corresponding symbols
      with single letters can be used as variables in rings.)  Entries of these
@@ -161,7 +156,7 @@ document { "polynomial rings",
 	  "liftable(sc,QQ)",
       	  "liftable(c^3,QQ)",
 	  },
-     "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
+     "A random homogeneous element can be obtained with ", TO "random", ".",
      EXAMPLE "random(2,R)",
      "We may construct polynomial rings over polynomial rings.",
      EXAMPLE "ZZ[a,b,c][d,e,f];",
@@ -212,6 +207,7 @@ document { "polynomial rings",
       	  "random(5,S)",
       	  "hilbertSeries S"
 	  },
+     "For more information see ", TO "PolynomialRing", "."
      SEEALSO "polynomial rings with other monomial orderings"
      }
 
@@ -600,6 +596,7 @@ document { "quotient rings",
 	  "R = ZZ/101[x,y,z]/(x-y,y-z,z-x)",
       	  "trim R"
 	  },
+     "For more information see ", TO "QuotientRing", "."
      }
 
 document { "finite fields",
@@ -651,7 +648,8 @@ document { "finite fields",
      to the quotient ring with ", TO "lift", ".",
      EXAMPLE "lift(k_0, ring T)",
      "We can even lift it back to the polynomial ring.",
-     EXAMPLE "lift(k_0, ambient ring T)"
+     EXAMPLE "lift(k_0, ambient ring T)",
+     "For more information see ", TO "GaloisField", "."
      }
 
 document { "fraction fields",
@@ -694,6 +692,7 @@ document { "fraction fields",
       	  "liftable(f,R)",
       	  "lift(1/f,R)"
 	  },
+     "For more information see ", TO "FractionField", "."
      }
 
 document { "tensor products of rings",
@@ -793,7 +792,9 @@ document { "algebraic varieties",
 	  },
      "The most important reason for introducing the notion of algebraic variety into a computer
      algebra system is to support the notion of coherent sheaf.  See ", TO "coherent sheaves", "
-     for further information."
+     for information about that.",
+     PARA,
+     "For more details about varieties, see ", TO "Variety", "."
      }
 
 document { "ideals",
@@ -900,15 +901,7 @@ document { "ideals",
 	  },
      NOINDENT, "(Here ", TO "oo", " refers to the result on the previous line.",
      PARA,
-     "Other useful functions for dealing with ideals include ", 
-     TO "annihilator", ", ", 
-     TO "decompose", ", ",
-     TO "fittingIdeal", ", ", 
-     TO "module", ", ",
-     TO "quotient", ", ", 
-     TO "radical", ", ",
-     TO "removeLowestDimension", ", and ",
-     TO "top", "."
+     "For more information see ", TO "Ideal", "."
      }
 
 document { "making matrices",
@@ -1013,6 +1006,7 @@ document { "making matrices",
       	  "degrees source h",
       	  "isHomogeneous h"
 	  },
+     "For more information about matrices, see ", TO "Matrix", "."
      }
 
 document { "making random matrices",
@@ -1085,7 +1079,6 @@ document { "displaying matrices",
      EXAMPLE "toExternalString f"
      }
      
-
 document { "manipulating matrices",
      "In previous sections we have learned various ways to make matrices.  Now
      we discuss methods for manipulating matrices.",
@@ -1132,7 +1125,7 @@ document { "manipulating matrices",
 	  "diff(transpose r,r)",
 	  "contract(transpose r,r)",
 	  },
-     "See ", TO "Matrix", " for the complete list of operations on matrices."
+     "For more information about matrices, see ", TO "Matrix", "."
      }
 
 document { "Groebner bases",
@@ -1150,123 +1143,10 @@ document { "Groebner bases",
      NOINDENT, "We intend to change the behavior of ", TO "gb", " so that it
      will return a matrix immediately rather than a special Groebner basis object.
      For now, beware that a Groebner basis object prints out just like a matrix, but
-     can't be used as one."
-     }
-///
-document { "free modules",
-     "This node has not been  written yet."
-     }
-
-document { "making modules from matrices",
-     "This node has not been  written yet."
-     }
-
-document { "manipulating modules",
-	  -- document the way to get maps between a module M and its
-	  -- version as a cokernel in the overview
-     "This node has not been  written yet."
-     }
-
-document { "maps between modules",
-     	  -- (R^5)_{0}
-     "This node has not been  written yet."
-     }
-
-document { "bases of parts of modules",
-     "This node has not been  written yet."
-     }
-
-document { "free resolutions of modules",
-     "This node has not been  written yet."
-     }
-
-document { "making chain complexes by hand",
-     "This node has not been  written yet."
-     }
-
-document { "extracting information from chain complexes",
-     "This node has not been  written yet."
-     }
-
-document { "manipulating chain complexes",
-     "This node has not been  written yet."
-     }
-
-document { "maps between chain complexes",
-     "This node has not been  written yet."
-     }
-
-document { "algebraic varieties",
-     "This node has not been  written yet."
-     }
-
-document { "coherent sheaves",
-     "This node has not been  written yet."
-     }
-
-document { "programming overview",
-     "In this section we give a comprehensive overview of the main 
-     programming features of Macaulay 2.",
+     can't be used as one.",
      PARA,
-     MENU {
-     	  (
-	       "variables and symbols",
-	       MENU {
-     	       	    TO "valid names",
-		    TO "assigning values",
-		    TO "local variables in a file",
-		    }
-	       ),
-	  (
-	       "overview of functions",
-	       MENU {
-		    TO "making functions",
-		    TO "parameters",
-		    TO "local variables in a function",
-		    TO "functions with a variable number of arguments",
-		    }
-	       ),
-	  (
-	       "control structures",
-	       MENU {
-		    TO "loops",
-		    TO "mapping over lists",
-		    TO "conditional execution",
-		    TO "error handling",
-		    }
-	       ),
-	  (
-	  	"operators and reserved words",
-	  	MENU {
-	  	    }
-	       ),
-	  }
+     "For more information see ", TO "GroebnerBasis", "."
      }
-
-document { "valid names",
-     "Valid names for symbols may be constructed using letters, digits, and
-     the apostrophe, and should not begin with a digit.",
-     EXAMPLE {
-	  "x",
-	  "q0r55",
-	  "f'"
-	  }
-     }
-
-document { "reserved words",
-     "The list of reserved words:",
-     TO "new", "do", "else", "then", "of", "from", "or",
-     "and", "not", "symbol", "global", "local", "while",
-     "try", "if", "time", "timing", "shield"
-     }
-
-document { "operators",
-     "The list of binary operators",
-     "+", "-",
-     "*", "... This list already exists."}
-
-
-///
 
      
      
