@@ -932,7 +932,7 @@ locate(e:Expr):Expr := (
 	       code.maxcol = 0;
 	       );
 	  Expr(Sequence(
-		    Expr(code.filename),
+		    Expr(minimizeFilename(code.filename)),
 		    Expr(toInteger(code.minline)),
 		    Expr(toInteger(code.maxline))
 		    )))
