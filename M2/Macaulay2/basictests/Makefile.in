@@ -4,7 +4,7 @@ VPATH = @srcdir@
 
 # export LD_LIBRARY_PATH=../lib
 
-TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2))
+TESTRESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 
 .PHONY : all clean distclean install check default
 

@@ -104,6 +104,19 @@ aa.d = 4
 ( d -> aa.d = 5 ) ()
 assert( aa.d === 5 )
 
+-- test hash tables and #
+x = hashTable { "asdf" => 2 }
+assert( x#?"asdf" )
+assert( not x#?"df" )
+assert( x#"asdf" === 2 )
+
+-- test method installation and lookup
+String | String := concatenate
+assert( lookup(symbol |, String, String ) =!= null )
+assert( class lookup(symbol <<, String, String ) === Function )
+assert( lookup(symbol |, String, String ) === concatenate )
+assert( "asdf" | "adsf" === "asdfadsf" )
+
 -- test |
 assert( 12|5 === 13 )
 
