@@ -2,22 +2,11 @@ restart
 load "D-modules.m2"
 A =  (QQ [a,b,c,d]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 
-Dtrace 666
-paramBpoly(
-     a*x^2,
-     "quadratic2" 
-     )
-
-paramBpoly(
-     a*x^2 + b*x*y + c*y^2,
-     "quadratic" 
-     )
-
+Dtrace 1
 paramBpoly(
      a*x^2 + b*x*y + c*y^2,
      "quadratic2" 
      )
-
 paramBpoly(
      a*x^3 + b*x^2*y + c*x*y^2 + d*y^3,
      "n2d3.case1" 
