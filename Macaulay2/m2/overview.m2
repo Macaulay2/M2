@@ -1,6 +1,6 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { "mathematical overview",
+document { "Mathematical Overview",
      "In this section we give a comprehensive overview of the main 
      mathematical features of Macaulay 2.",
      PARA,

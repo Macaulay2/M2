@@ -324,7 +324,7 @@ assert( a == 3 )
 
 document { (symbol _, Tally, Thing),     
      TT "t_x", " -- returns the number of times ", TT "x", " is counted
-     by ", TT "x", ".",
+     by ", TT "t", ".",
      SEEALSO "Tally"
      }
 

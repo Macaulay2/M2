@@ -170,11 +170,12 @@ quotient(Ideal ,Ideal      ) := Ideal  => options -> (I,J) -> (quotientIdeal opt
 quotient(Ideal ,RingElement) := Ideal  => options -> (I,f) -> (quotientIdeal options)(I,ideal(f))
 quotient(Module,Ideal      ) := Module => options -> (M,I) -> (quotientModule options)(M,I)
 quotient(Module,RingElement) := Module => options -> (M,f) -> (quotientModule options)(M,ideal(f))
-quotient(Module,Module     ) := Ideal  => options -> (M,I) -> (quotientAnn options)(M,I)
-
-Ideal : Ideal := Ideal : RingElement := Ideal => quotient
-Module : Ideal := Module : RingElement := Module => quotient
-Module : Module := Ideal => quotient
+quotient(Module,Module     ) := Ideal  => options -> (M,N) -> (quotientAnn options)(M,N)
+Ideal : Ideal := Ideal => (I,J) -> quotient(I,J)
+Ideal : RingElement := Ideal => (I,r) -> quotient(I,r)
+Module : Ideal := Module => (M,I) -> quotient(M,I)
+Module : RingElement := Module => (M,r) -> quotient(M,r)
+Module : Module := Ideal => (M,N) -> quotient(M,N)
     
 ----------------
 -- saturation --

@@ -47,7 +47,7 @@ document { "coherent sheaves",
      "This node has not been written yet."
      }
 
-document { "language and programming overview",
+document { "Language and Programming Overview",
      "In this section we give a comprehensive overview of the user
      language and the main programming features of Macaulay 2.",
      PARA,

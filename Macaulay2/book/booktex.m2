@@ -158,7 +158,7 @@ booktex MENU := x -> concatenate(
 \begingroup
 \parskip=0pt
 ///,
-     apply(x, x -> (
+     apply(x, x -> if x =!= null then (
 	       (menuLevel = menuLevel + 1;),
 	       ///%
 \par
