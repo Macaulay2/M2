@@ -128,6 +128,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name gmp
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name factory
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -140,6 +143,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name factory2cpp
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -188,6 +194,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name libfac2cpp
+    End Project Dependency
 }}}
 
 ###############################################################################
