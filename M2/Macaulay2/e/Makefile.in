@@ -303,14 +303,11 @@ Makefile : Makefile.in
 	cd $(TOPDIR); config.status Macaulay2/e/Makefile
 
 # should remake these two manually once in a while -- not all systems have makedepend
-Makefile-c.depends: $(CFILES)
-	$(CC) -M $(CPPFLAGS) $(CFLAGS) $^ >"$@"
-Makefile-cc.depends: $(CCFILES) 
-	$(CC) -M $(CPPFLAGS) $(CXXFLAGS) $^ >"$@"
+Makefile-o.depends: $(CFILES) $(CCFILES)
+	$(CC) -M $(CPPFLAGS) $^ >"$@"
 
 ifndef NODEPENDS
-include Makefile-c.depends
-include Makefile-cc.depends
+include Makefile-o.depends
 endif
 
 allfiles: Makefile
