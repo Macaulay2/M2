@@ -81,6 +81,9 @@ saturation(Ideal,RingElement) := (I,F) -> (
      ret := minSatPPD(I,facs);
      (ret#0, ret#2))
 
+saturation = method()
+saturation(Ideal,RingElement) := (I,F) -> greedySat(I,F)
+
 GTZ0 = method()
 GTZ0 Ideal := (I) -> (
      ms := independentSets(I, Limit=>1);
@@ -95,7 +98,7 @@ GTZ1 = method()
 GTZ1 Ideal := (I) -> (
      R := ring I;
      L := ideal(1_R); -- intersection of all components found so far
-     comps = {};
+     comps := {};
      while I != 0 do (
 	  (I1,J1) := GTZ0 I;
 	  if gens L % I1 != 0 then (
@@ -104,8 +107,9 @@ GTZ1 Ideal := (I) -> (
 	       comps = append(comps, I1);
 	       );
 	  I = J1;
-	  ));
-     
+	  );
+     comps
+     )
      
 ///
 restart
@@ -177,7 +181,7 @@ I = ideal(
     -2*x^2*y+x*y^4+y*z^4-3)
 codim I
 degree I
-J = eliminate(I,{x,y}) -- degree 54
+time J = eliminate(I,{x,y}) -- degree 54
 factor J_0
 factors J_0 -- 2 factors, therefore 2 components, both prime
 --------------------------------------
@@ -421,11 +425,12 @@ I = ideal(
     y^9,
     u^9,
     u^5-x*y*(x-y)*(s*x-t*y))
-GTZ1 I
+time GTZ1 I;
+
 
 restart
 load "Elimination.m2"
-load "GTZ.m2"
+load "PrimaryDecomposition/GTZ.m2"
 R = ZZ/3[x,y,u,s,t]
 I = ideal(
     x^27,
@@ -456,4 +461,5 @@ time greedySat(I,product CoeffList);
 use ring J
 time greedySat(J,t);
 
+time C = GTZ1 I;
 ///

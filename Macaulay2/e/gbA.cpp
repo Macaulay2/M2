@@ -903,7 +903,7 @@ bool gbA::reduce(spair *p)
 {
   /* Returns false iff we defer computing this spair. */
   /* If false is returned, this routine has grabbed the spair 'p'. */
-  int tmf;
+  int tmf, wt;
   int count = 0;
   compute_s_pair(p); /* Changes the type, possibly */
   if (gbTrace >= 10)
@@ -913,17 +913,21 @@ bool gbA::reduce(spair *p)
       R->gbvector_text_out(o, _F, p->f());
       emit_line(o.str());
     }
-  if (gbTrace >= 5)
-    {
-      if (weightInfo_->gbvector_weight(p->f(), tmf) > _this_degree)
-	{
-	  buffer o;
-	  o << "ERROR: degree of polynomial is too high"  << newline;
-	  emit(o.str());
-	}
-    }
   while (!R->gbvector_is_zero(p->f()))
     {
+      if (gbTrace >= 5)
+	{
+	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > _this_degree)
+	    {
+	      buffer o;
+	      o << "ERROR: degree of polynomial is too high: deg " <<  wt 
+		<< " termwt " << tmf 
+		<< " expectedeg " << _this_degree
+		<< newline;
+	      emit(o.str());
+	    }
+	}
+
       int alpha,w;
       R->gbvector_get_lead_exponents(_F, p->f(), EXP_);
       int x = p->f()->comp;
@@ -1011,15 +1015,6 @@ bool gbA::reduce(spair *p)
 				       g.f, g.fsyz);
 	}
 
-      if (gbTrace >= 5)
-	{
-	  if (weightInfo_->gbvector_weight(p->f(), tmf) > _this_degree)
-	    {
-	      buffer o;
-	      o << "ERROR: degree of polynomial is too high"  << newline;
-	      emit(o.str());
-	    }
-	}
       _stats_nreductions++;
       if (gbTrace >= 10)
 	{
@@ -1087,24 +1082,29 @@ int gbA::find_good_monomial_divisor_ZZ(
   /* Now find the minimal alpha value */
   if (n == 0) 
     return -1;
-  MonomialTableZZ::mon_term *t = divisors[0];
-  gbelem *tg = gb[t->_val];
+  int result = divisors[0]->_val;
+  gbelem *tg = gb[result];
   alpha = tg->alpha - ealpha;
   if (alpha <= 0) 
     alpha = 0;
   else
     for (i=1; i<n; i++)
       {
-	t = divisors[i];
-	tg = gb[t->_val];
+	int new_val = divisors[i]->_val;
+	tg = gb[new_val];
 	newalpha = tg->alpha - ealpha;
 	if (newalpha <= 0) {
 	  alpha = 0;
+	  result = new_val;
 	  break;
-	} else if (newalpha < alpha) alpha = newalpha;
+	} else if (newalpha < alpha) 
+	  {
+	    result = new_val;
+	    alpha = newalpha;
+	  }
       }
   result_alpha = alpha;
-  return t->_val;
+  return result;
 }
 
 int gbA::find_good_term_divisor_ZZ(
@@ -1132,24 +1132,29 @@ int gbA::find_good_term_divisor_ZZ(
   /* Now find the minimal alpha value */
   if (n == 0) 
     return -1;
-  MonomialTableZZ::mon_term *t = divisors[0];
-  gbelem *tg = gb[t->_val];
+  int result = divisors[0]->_val;
+  gbelem *tg = gb[result];
   alpha = tg->alpha - ealpha;
   if (alpha <= 0) 
     alpha = 0;
   else
     for (i=1; i<n; i++)
       {
-	t = divisors[i];
-	tg = gb[t->_val];
+	int new_val = divisors[i]->_val;
+	tg = gb[new_val];
 	newalpha = tg->alpha - ealpha;
 	if (newalpha <= 0) {
 	  alpha = 0;
+	  result = new_val;
 	  break;
-	} else if (newalpha < alpha) alpha = newalpha;
+	} else if (newalpha < alpha) 
+	  {
+	    result = new_val;
+	    alpha = newalpha;
+	  }
       }
   result_alpha = alpha;
-  return t->_val;
+  return result;
 }
 
 int gbA::find_good_divisor(exponents e,
@@ -1176,24 +1181,29 @@ int gbA::find_good_divisor(exponents e,
   /* Now find the minimal alpha value */
   if (n == 0) 
     return -1;
-  MonomialTable::mon_term *t = divisors[0];
-  gbelem *tg = gb[t->_val];
+  int result = divisors[0]->_val;
+  gbelem *tg = gb[result];
   alpha = tg->alpha - ealpha;
   if (alpha <= 0) 
     alpha = 0;
   else
     for (i=1; i<n; i++)
       {
-	t = divisors[i];
-	tg = gb[t->_val];
+	int new_val = divisors[i]->_val;
+	tg = gb[new_val];
 	newalpha = tg->alpha - ealpha;
 	if (newalpha <= 0) {
 	  alpha = 0;
+	  result = new_val;
 	  break;
-	} else if (newalpha < alpha) alpha = newalpha;
+	} else if (newalpha < alpha) 
+	  {
+	    result = new_val;
+	    alpha = newalpha;
+	  }
       }
   result_alpha = alpha;
-  return t->_val;
+  return result;
 }
 
 void gbA::remainder(POLY &f, int degf, bool use_denom, ring_elem &denom)
@@ -1403,18 +1413,18 @@ void gbA::insert(POLY f, gbelem_type minlevel)
 
   int fwt;
   int fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
-	  gb.size(), 
-	  _this_degree,
-	  fdeg,
-	  fdeg-fwt);
+  //  fprintf(stderr, "inserting GB element %d, thisdeg %d deg %d alpha %d\n", 
+  //	  gb.size(), 
+  //	  _this_degree,
+  //	  fdeg,
+  //	  fdeg-fwt);
 
   remainder(f,_this_degree,false,junk);
 
-  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
-  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
-	  fdeg,
-	  fdeg-fwt);
+  //  fdeg = weightInfo_->gbvector_weight(f.f, fwt);
+  //  fprintf(stderr, "    after remainder deg %d alpha %d\n", 
+  //	  fdeg,
+  //	  fdeg-fwt);
 
   _stats_ngb++;
 
@@ -1447,15 +1457,15 @@ void gbA::insert(POLY f, gbelem_type minlevel)
 
   auto_reduce_by(me);
 
-  for (int i=0; i<gb.size(); i++)
-    {
-      fdeg = weightInfo_->gbvector_weight(gb[i]->g.f, fwt);
-      fprintf(stderr, "    after auto reduce gb %d deg %d actualdeg %d alpha %d\n", 
-	      i, 
-	      gb[i]->deg,
-	      fdeg,
-	      fdeg-fwt);
-    }
+  //  for (int i=0; i<gb.size(); i++)
+  //    {
+  //      fdeg = weightInfo_->gbvector_weight(gb[i]->g.f, fwt);
+  //      fprintf(stderr, "    after auto reduce gb %d deg %d actualdeg %d alpha %d\n", 
+  //	      i, 
+  //	      gb[i]->deg,
+  //	      fdeg,
+  //	      fdeg-fwt);
+  //    }
 
   if (_use_hilb)
     {

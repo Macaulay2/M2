@@ -2341,7 +2341,7 @@ export rawMaximalIndependentSets(e:Expr):Expr := (
      when s.1 is n:Integer do 
      if !isInt(n) then WrongArgSmallInteger(2) else 
      toExpr(Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdeal)",
-	       "rawMaximalIndependentSets(", "(MonomialIdeal *)", m, ",", toInt(n), ")" ) )
+	       "rawMaximalIndependentSets(", "(const MonomialIdeal *)", m, ",", toInt(n), ")" ) )
      else WrongArgInteger(2)
      else WrongArg("a raw monomial ideal")
      else WrongNumArgs(2)
