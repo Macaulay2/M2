@@ -1370,8 +1370,10 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
       f = f->next;
       return result;
     }
-  const PolyRing *K = coeffR->cast_to_PolyRing();
-  assert(K);
+#warning "this cast should be to polynomial ring w/o fractions"
+  const PolynomialRing *KR = coeffR->cast_to_PolynomialRing();
+  assert(KR);
+  const PolyRing *K = KR->getAmbientRing();
   Nterm head;
   Nterm *inresult = &head;
   inresult->next = 0;
@@ -1471,7 +1473,7 @@ ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
 
 ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp0) const
 {
-  const PolynomialRing *logicalK = coeffR->cast_to_PolyRing();
+  const PolynomialRing *logicalK = coeffR->cast_to_PolynomialRing();
 
   int nvars0 = n_vars();
   if (logicalK == 0)
