@@ -139,19 +139,19 @@ extern "C" {
    * exponents.  Monomials are immutable objects.
    */
 
-  const MonomialOrNull *IM2_Monomial_var(int v, int e); /* drg: connected 'rawVar' */
+  const MonomialOrNull *rawVarMonomial(int v, int e); /* drg: connected 'rawVarMonomial' */
   /* return the monomial v^e */
 
-  const MonomialOrNull *IM2_Monomial_make(const M2_arrayint m); /* drg: connected rawMonomialMake */
+  const MonomialOrNull *rawMakeMonomial(const M2_arrayint m); /* drg: connected rawMakeMonomial */
     /* Takes an array of the form [n, v1, e1, v2, e2, ..., vn, en]
        and returns the monomial v1^e1*v2^e2*...vn^en.
        ASSUMPTION: v1 > v2 > ... > vn >= 0, each en is not 0. */
 
   M2_bool IM2_Monomial_is_equal(const Monomial *a, const Monomial *b); /* drg: connected to === */
 
-  M2_bool IM2_Monomial_is_one(const Monomial *a); /* drg: connected rawMonomialIsOne */
+  M2_bool rawMonomialIsOne(const Monomial *a); /* drg: connected rawMonomialIsOne */
 
-  int IM2_Monomial_compare(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected to rawCompare */
+  int rawCompareMonomial(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected to rawCompareMonomial */
   /* returns -1, 0, or 1, if a < b, a==b, a > b respectively, in the monomial ordering
    * in the monoid M 
    */
@@ -172,73 +172,73 @@ extern "C" {
   const MonomialOrNull *IM2_Monomial_mult(const Monomial *a, 
 					  const Monomial *b); /* drg: connected * */
 
-  const Monomial *IM2_Monomial_colon(const Monomial *a, 
+  const Monomial *rawColonMonomial(const Monomial *a, 
 				     const Monomial *b); /* drg: connected rawColon */
   /* returns the monomial whose i th exponent is max(ai-bi,0) */
 
   const MonomialOrNull *IM2_Monomial_power(const Monomial *a, int n); /* drg: connected ^ */
   /* return a^n, n is any integer, null is returned on overflow. */
 
-  const Monomial *IM2_Monomial_lcm(const Monomial *a, 
+  const Monomial *rawLCM(const Monomial *a, 
 				   const Monomial *b); /* drg: connected rawLCM*/
   /* return the monomial whose i th exponent is max(ai,bi) */
 
-  const Monomial *IM2_Monomial_gcd(const Monomial *a, 
+  const Monomial *rawGCD(const Monomial *a, 
 				   const Monomial *b); /* drg: connected rawGCD */
   /* return the monomial whose i th exponent is min(ai,bi) */
 
-  const Monomial *IM2_Monomial_sat(const Monomial *a, 
-				   const Monomial *b); /* drg: connected rawSaturate */
+  const Monomial *rawSaturateMonomial(const Monomial *a, 
+				   const Monomial *b); /* drg: connected rawSaturateMonomialIdeal */
   /* return the monomial whose i th exponent is ai if bi is 0, 0 if bi != 0 */
 
-  const Monomial *IM2_Monomial_radical(const Monomial *a); /* drg: connected rawRadical*/
+  const Monomial *rawRadicalMonomial(const Monomial *a); /* drg: connected rawRadicalMonomialIdeal*/
   /* return the monomial whose i th exponent is 1 if ai != 0 */
 
-  const Monomial_pair *IM2_Monomial_syz(const Monomial *a, 
+  const Monomial_pair *rawSyzygy(const Monomial *a, 
 					const Monomial *b); /* drg: connected rawSyzygy */
   /* */
 
   unsigned long IM2_Monomial_hash(const Monomial *a); /* drg: connected hash */
 
-  const M2_arrayint IM2_Monomial_to_arrayint(const Monomial *a); /* drg: connected rawMonomialSparseListForm */
+  const M2_arrayint rawSparseListFormMonomial(const Monomial *a); /* drg: connected rawSparseListFormMonomial */
 
   const M2_string IM2_Monomial_to_string(const Monomial *a); /* drg: connected intrinsic */
 
   /**************************************************/
   /**** MonomialOrdering routines *******************/
   /**************************************************/
-  MonomialOrdering *IM2_MonomialOrdering_lex(int nvars, int packing); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing); /* drg: connected rawMonomialOrdering*/
     /* Lex, LexSmall, LexTiny */
 
-  MonomialOrdering *IM2_MonomialOrdering_grevlex(M2_arrayint degs, int packing); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing); /* drg: connected rawMonomialOrdering*/
     /* GRevLex, GrevLexSmall, GRevLexTiny */
 
-  MonomialOrdering *IM2_MonomialOrdering_revlex(int nvars); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawRevLexMonomialOrdering(int nvars); /* drg: connected rawMonomialOrdering*/
     /* RevLex => n */
 
-  MonomialOrdering *IM2_MonomialOrdering_weights(M2_arrayint wts); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawWeightsMonomialOrdering(M2_arrayint wts); /* drg: connected rawMonomialOrdering*/
     /* Weights => {...} */
 
-  MonomialOrdering *IM2_MonomialOrdering_laurent(int nvars); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawGroupLexMonomialOrdering(int nvars); /* drg: connected rawMonomialOrdering*/
     /* GroupLex => n */
 
-  MonomialOrdering *IM2_MonomialOrdering_NClex(int nvars); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawNClexMonomialOrdering(int nvars); /* drg: connected rawMonomialOrdering*/
     /* NCLex => n */
 
-  MonomialOrdering *IM2_MonomialOrdering_position(M2_bool up_or_down); /* drg: connected rawMonomialOrdering */
+  MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down); /* drg: connected rawMonomialOrdering */
     /* argument of true:  Position => Up, (should be the default)
      * argument of false: Position => Down
      */
 
-  MonomialOrdering *IM2_MonomialOrdering_product(MonomialOrdering_array mo); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawProductMonomialOrdering(MonomialOrdering_array mo); /* drg: connected rawMonomialOrdering*/
     /* for tensor products */
 
-  MonomialOrdering *IM2_MonomialOrdering_join(MonomialOrdering_array mo); /* drg: connected rawMonomialOrdering*/
+  MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array mo); /* drg: connected rawMonomialOrdering*/
     /* default, when making monoids and polynomial rings */
 
-  int IM2_MonomialOrdering_nvars(const MonomialOrdering *mo); /* drg: connected rawNumberOfVariables*/
+  int rawNumberOfVariables(const MonomialOrdering *mo); /* drg: connected rawNumberOfVariables*/
 
-  int IM2_MonomialOrdering_n_invertible_vars(const MonomialOrdering *mo); /* drg: connected rawNumberOfInvertibleVariables*/
+  int rawNumberOfInvertibleVariables(const MonomialOrdering *mo); /* drg: connected rawNumberOfInvertibleVariables*/
 
   M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo); /* drg: connected */
 
@@ -1083,7 +1083,7 @@ extern "C" {
   /* Returns the number of minimal generators of I */
 
   
-  const MonomialIdeal *IM2_MonomialIdeal_radical(const MonomialIdeal *I); /* drg: connected rawRadical*/
+  const MonomialIdeal *rawRadicalMonomialIdeal(const MonomialIdeal *I); /* drg: connected rawRadicalMonomialIdeal*/
   /* The radical of the monomial ideal, that is, the monomial ideal 
      generated by the square-free parts of the each monomial of I. */
 
@@ -1096,23 +1096,23 @@ extern "C" {
   const MonomialIdealOrNull *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
 							 const MonomialIdeal *J); /* drg: connected rawIntersect*/
   
-  const MonomialIdeal *IM2_MonomialIdeal_colon1(const MonomialIdeal *I, 
+  const MonomialIdeal *rawColonMonomialIdeal1(const MonomialIdeal *I, 
 						   const Monomial *a); /* drg: connected rawColon*/
   /* If I = (m1, ..., mr),
      Form the monomial ideal (I : a) = (m1:a, ..., mr:a) */
 
-  const MonomialIdealOrNull *IM2_MonomialIdeal_colon(const MonomialIdeal *I, 
+  const MonomialIdealOrNull *rawColonMonomialIdeal2(const MonomialIdeal *I, 
 						      const MonomialIdeal *J); /* drg: connected rawColon*/
   /* Form the monomial ideal (I : J) = intersect(I:m1, ..., I:mr),
      where J = (m1,...,mr) */
 
-  const MonomialIdeal *IM2_MonomialIdeal_sat1(const MonomialIdeal *I, 
-					      const Monomial *a); /* drg: connected rawSaturate*/
+  const MonomialIdeal *rawSaturateMonomialIdeal1(const MonomialIdeal *I, 
+					      const Monomial *a); /* drg: connected rawSaturateMonomialIdeal*/
   /* Form I:a^\infty.  IE, set every variable which occurs in 'a' to '1' in
      every generator of I. */
 
-  const MonomialIdealOrNull *IM2_MonomialIdeal_sat(const MonomialIdeal *I,
-						   const MonomialIdeal *J); /* drg: connected rawSaturate*/
+  const MonomialIdealOrNull *rawSaturateMonomialIdeal2(const MonomialIdeal *I,
+						   const MonomialIdeal *J); /* drg: connected rawSaturateMonomialIdeal*/
   /* Form (I : J^\infty) = intersect(I:m1^\infty, ..., I:mr^\infty),
      where J = (m1,...,mr). */
 
@@ -1279,6 +1279,6 @@ extern "C" {
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
 */

@@ -40,5 +40,5 @@ assert(isHomogeneous flip(R^{0,1},R^{0,5,10,15}))
 assert(isHomogeneous flip(R^{0,1,2,3},R^{0,5,10}))
 assert(isHomogeneous flip(R^{0,1,2,3,4},R^{0,5,10}))
 -- Local Variables:
--- compile-command: "make flip.okay"
+-- compile-command: "make flip.okay "
 -- End:

@@ -34,7 +34,7 @@ int arrayint_is_eq(M2_arrayint a, M2_arrayint b);
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */
 

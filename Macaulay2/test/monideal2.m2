@@ -139,5 +139,5 @@ M = monomialSubideal(I)
 J = intersect(ideal leadTerm I, I)
 assert( monomialIdeal J == J )
 -- Local Variables:
--- compile-command: "make monideal2.okay"
+-- compile-command: "make monideal2.okay "
 -- End:

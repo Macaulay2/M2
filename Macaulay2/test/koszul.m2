@@ -9,5 +9,5 @@ assert( f - g == 0 )
 end
 
 -- Local Variables:
--- compile-command: "make koszul.okay"
+-- compile-command: "make koszul.okay "
 -- End:

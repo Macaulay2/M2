@@ -135,5 +135,5 @@ vec WeylFreeModule::imp_mult_by_term(const ring_elem c,
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

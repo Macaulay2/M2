@@ -16,13 +16,13 @@ RawMonomial : RawMonomial := (x,y) -> rawColon(x,y)
 ZZ == RawMonomial := (i,x) -> x == i
 
 expression RawMonomial := x -> (
-     v := rawMonomialSparseListForm x;
+     v := rawSparseListFormMonomial x;
      if #v === 0 then expression 1
      else new Product from apply(v, (i,e) -> new Power from {vars i, e})
      )
 exponents(ZZ,RawMonomial) := (nvars,x) -> (
      z := new MutableList from (nvars : 0);
-     scan(rawMonomialSparseListForm x, (i,e) -> z#i = z#i + e);
+     scan(rawSparseListFormMonomial x, (i,e) -> z#i = z#i + e);
      toList z)
 net RawMonomial := x -> net expression x
 degree RawMonomial := x -> error "degree of raw monomial not defined (no monoid)"
@@ -158,7 +158,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      if varcount < nvars then t = append(t,fixup(GRevLex => nvars - varcount));
      rawMonomialOrdering t)
 
-RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawMonomialOrderingProduct
+RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
 
 -- monoids
 
@@ -297,5 +297,5 @@ net LMatrixCC := o -> stack lines toString o
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

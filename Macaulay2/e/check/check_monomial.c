@@ -26,26 +26,26 @@ void test_monomials(Test *pTest)
   c1 = IM2_Monomial_mult(a,b);
   c2 = IM2_Monomial_quotient(a,b);
   c3 = IM2_Monomial_power(a,143);
-  c4 = IM2_Monomial_lcm(a,b);
-  c5 = IM2_Monomial_gcd(a,b);
-  c6 = IM2_Monomial_sat(a,b);
-  c7 = IM2_Monomial_radical(a);
-  /*  p  = IM2_Monomial_syz(a,b); */
+  c4 = rawLCM(a,b);
+  c5 = rawGCD(a,b);
+  c6 = rawSaturateMonomial(a,b);
+  c7 = rawRadicalMonomial(a);
+  /*  p  = rawSyzygy(a,b); */
 
   ct_test(pTest,IM2_Monomial_degree(a) == 6);
   ct_test(pTest,IM2_Monomial_hash(a) == IM2_Monomial_hash(a2));
   ct_test(pTest,
     IM2_Monomial_degree(a) + IM2_Monomial_degree(b) == IM2_Monomial_degree(c1));
-  ct_test(pTest,!IM2_Monomial_is_one(a));
+  ct_test(pTest,!rawMonomialIsOne(a));
   ct_test(pTest,IM2_Monomial_is_equal( IM2_Monomial_mult(c4,c5), c1));
   /*  m1 = toarrayint(6, (int[]){8,3,4,1,3,2});*/
   m1 = arrayint(6,  8,3,4,1,3,2);
 
-  a = IM2_Monomial_make(m1);
+  a = rawMakeMonomial(m1);
   a = monom(8, 6,5,4,3,1,1,0,8);
   ct_test(pTest,is_eq(IM2_Monomial_to_string(a), "a8be3g5"));
 
-  one = IM2_Monomial_make(toarrayint(0,0));
+  one = rawMakeMonomial(toarrayint(0,0));
 }
 
 Test * monomial_test(void)
@@ -57,7 +57,7 @@ Test * monomial_test(void)
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */
 

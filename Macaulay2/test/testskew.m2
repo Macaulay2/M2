@@ -20,5 +20,5 @@ p = poincare (R^1)
 T = (ring p)_0
 p // (1-T)^4
 -- Local Variables:
--- compile-command: "make testskew.okay"
+-- compile-command: "make testskew.okay "
 -- End:

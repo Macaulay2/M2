@@ -5,5 +5,5 @@ a' = a + 0_R
 leadMonomial a'
 baseName a'
 -- Local Variables:
--- compile-command: "make subst4.okay"
+-- compile-command: "make subst4.okay "
 -- End:

@@ -26,12 +26,12 @@ monoid_info::monoid_info(MonomialOrdering *mo2,
 			 M2_stringarray s,
 			 const Monoid *deg_monoid,
 			 M2_arrayint degs)
-  : nvars(IM2_MonomialOrdering_nvars(mo2)),
+  : nvars(rawNumberOfVariables(mo2)),
   varnames(s),
   degvals(degs),
   degree_monoid(deg_monoid), _mo(mo2), mo(mmo)
 { 
-  int ngroup = IM2_MonomialOrdering_n_invertible_vars(mo2);
+  int ngroup = rawNumberOfInvertibleVariables(mo2);
     
   use_packing = (ngroup == 0);
   isgroup = (ngroup == nvars);
@@ -129,7 +129,7 @@ Monoid *Monoid::get_trivial_monoid()
 
 static mon_order *make_mon_order(MonomialOrdering *mo)
 {
-  unsigned int nvars = IM2_MonomialOrdering_nvars(mo);
+  unsigned int nvars = rawNumberOfVariables(mo);
   unsigned int nwt_blocks = 0;
   unsigned int first_non_weight = 0;
   unsigned int last_non_component = 0;
@@ -242,7 +242,7 @@ Monoid *Monoid::create(MonomialOrdering *mo,
 		       const Monoid *deg_monoid,
 		       M2_arrayint degs)
 {
-  unsigned int nvars = IM2_MonomialOrdering_nvars(mo);;
+  unsigned int nvars = rawNumberOfVariables(mo);;
   unsigned int eachdeg = deg_monoid->n_vars();
   if (degs->len != nvars * eachdeg)
     {
@@ -281,7 +281,7 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
   M12->len = 2;
   M12->array[0] = m1->_mo;
   M12->array[1] = m2->_mo;
-  MonomialOrdering *M = IM2_MonomialOrdering_product(M12);
+  MonomialOrdering *M = rawProductMonomialOrdering(M12);
 
   int n1 = M1->n_vars();
   int n2 = M2->n_vars();
@@ -700,5 +700,5 @@ void Monoid::to_varpower(const int *m, intarray &result_vp) const
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -17,5 +17,5 @@ M = ideal(d*e*f,c*e*f,c*d*f,c*d*e,b*e*f,b*c*d,a*c*f,a*d*e)
 assert( regularity module M == 3 )
 assert( regularity module M^2 == 7 )
 -- Local Variables:
--- compile-command: "make 4a.okay"
+-- compile-command: "make 4a.okay "
 -- End:

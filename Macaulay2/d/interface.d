@@ -33,12 +33,12 @@ use common;
 -----------------------------------------------------------------------------
 -- monomials
 
-rawVar(a:Expr):Expr := (
+export rawVarMonomial(a:Expr):Expr := (
      when a
      is v:Integer do 
      if isInt(v) then toExpr(
 	  Ccode(RawMonomialOrNull, 
-	       "(engine_RawMonomialOrNull)IM2_Monomial_var(", toInt(v), ",1)" ))
+	       "(engine_RawMonomialOrNull)rawVarMonomial(", toInt(v), ",1)" ))
      else WrongArgSmallInteger()
      is s:Sequence do 
      if length(s) == 2 then 
@@ -46,7 +46,7 @@ rawVar(a:Expr):Expr := (
      if isInt(v) then 
      when s.1 is e:Integer do 
      if isInt(e) then toExpr(Ccode(RawMonomialOrNull, 
-	       "(engine_RawMonomialOrNull)IM2_Monomial_var(",
+	       "(engine_RawMonomialOrNull)rawVarMonomial(",
 	       toInt(v), ",", toInt(e), ")" ))
      else WrongArgSmallInteger(2)
      else WrongArgInteger(2)
@@ -55,12 +55,12 @@ rawVar(a:Expr):Expr := (
      else WrongArg("an integer or a pair of integers")
      else WrongArg("an integer or a pair of integers")
      );
-setupfun("rawVar",rawVar);
+setupfun("rawVarMonomial",rawVarMonomial);
 
-rawMonomialSparseListForm(e:Expr):Expr := (
+export rawSparseListFormMonomial(e:Expr):Expr := (
      when e 
      is x:RawMonomial do (
-	  y := Ccode(RawArrayInt, "(engine_RawArrayInt)IM2_Monomial_to_arrayint((Monomial*)",x,")" );
+	  y := Ccode(RawArrayInt, "(engine_RawArrayInt)rawSparseListFormMonomial((Monomial*)",x,")" );
 	  n := length(y)/2;
 	  list(new Sequence len n do (
 		    for i from length(y)-2 to 0 by -2 do (  -- we reverse the engine order
@@ -69,101 +69,96 @@ rawMonomialSparseListForm(e:Expr):Expr := (
 			      provide Expr(toInteger(y.(i+1))))))))
      else WrongArg("a raw monomial")
      );
-setupfun("rawMonomialSparseListForm",rawMonomialSparseListForm);
+setupfun("rawSparseListFormMonomial",rawSparseListFormMonomial);
 
-rawMonomialMake(e:Expr):Expr := (
+export rawMakeMonomial(e:Expr):Expr := (
      -- accepts a list of pairs : {(2, 1), (3, 7), (5, 4)}
      -- we reverse the list before giving it to the engine
      when e
      is l:List do (
 	  when isSequenceOfPairsOfSmallIntegers(l.v) is s:string do return WrongArg(s) else nothing;
 	  when Ccode(RawMonomialOrNull, 
-	       "(engine_RawMonomialOrNull)IM2_Monomial_make(",
+	       "(engine_RawMonomialOrNull)rawMakeMonomial(",
 	          "(M2_arrayint)", getReverseSequenceOfPairsOfSmallIntegers(l.v), 
 	       ")" )
 	  is x:RawMonomial do Expr(x)
 	  is null do buildErrorPacket(EngineError("raw monomial overflow"))
 	  )
      else WrongArg("a list of pairs of integers"));
-setupfun("rawMonomialMake",rawMonomialMake);
+setupfun("rawMakeMonomial",rawMakeMonomial);
 
-rawMonomialIsOne(e:Expr):Expr := (
+export rawMonomialIsOne(e:Expr):Expr := (
      when e is s:Sequence 
      do if length(s) == 2 
      then when s.0 is x:RawMonomial 
      do when s.1 is t:Integer 
      do if t === 1 
-     then if Ccode(bool, "IM2_Monomial_is_one((Monomial*)",x,")") then True else False
+     then if Ccode(bool, "rawMonomialIsOne((Monomial*)",x,")") then True else False
      else WrongArg(2,"the integer 1")
      else WrongArgInteger(2)
      else WrongArg(1,"a raw monomial")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-installMethod(Expr(EqualEqualS), rawMonomialClass,integerClass,
-     Expr(CompiledFunction(rawMonomialIsOne,nextHash())));
+installMethod(Expr(EqualEqualS), rawMonomialClass,integerClass, Expr(CompiledFunction(rawMonomialIsOne,nextHash())));
 
-rawCompare(e:Expr):Expr := (
+export rawCompareMonomial(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMonoid do
      when s.1 is x:RawMonomial do
      when s.2 is y:RawMonomial do (
-	  r := Ccode(int, "IM2_Monomial_compare((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")");
+	  r := Ccode(int, "rawCompareMonomial((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")");
 	  if r < 0 then LessE else if r > 0 then GreaterE else EqualE
 	  )
      else WrongArg(3,"a raw monomial")
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monoid")
      else WrongNumArgs(3));
-setupfun("rawCompare",rawCompare);
+setupfun("rawCompareMonomial",rawCompareMonomial);
 
-rawRadical(e:Expr):Expr := (
+export rawRadical(e:Expr):Expr := (
      when e
-     is x:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)",
-	       "IM2_Monomial_radical(", "(Monomial*)", x, ")" ) )
-     is I:RawMonomialIdeal do Expr(
-	  Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)",
-	       "IM2_MonomialIdeal_radical(", "(MonomialIdeal *)", I, ")" ) )
+     is x:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)", "rawRadicalMonomial(", "(Monomial*)", x, ")" ) )
+     is I:RawMonomialIdeal do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)", "rawRadicalMonomialIdeal(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial or monomial ideal"));
 setupfun("rawRadical",rawRadical);
 
-rawGCD(e:Expr):Expr := (
+export rawGCD(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
-     when s.1 is y:RawMonomial do Expr(
-	       Ccode(RawMonomial, "IM2_Monomial_gcd((Monomial*)",x,",","(Monomial*)",y,")"))
+     when s.1 is y:RawMonomial do Expr(Ccode(RawMonomial, "rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
      else WrongArg("a pair of raw monomials")
      );
 setupfun("rawGCD",rawGCD);
 
-rawLCM(e:Expr):Expr := (
+export rawLCM(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do Expr(
-	       Ccode(RawMonomial, "IM2_Monomial_lcm((Monomial*)",x,",","(Monomial*)",y,")"))
+	       Ccode(RawMonomial, "rawLCM((Monomial*)",x,",","(Monomial*)",y,")"))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
      else WrongArg("a pair of raw monomials")
      );
 setupfun("rawLCM",rawLCM);
 
-rawSaturate(e:Expr):Expr := (
+export rawSaturate(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do Expr(
-	       Ccode(RawMonomial, "IM2_Monomial_sat((Monomial*)",x,",","(Monomial*)",y,")"))
+	       Ccode(RawMonomial, "rawSaturateMonomial((Monomial*)",x,",","(Monomial*)",y,")"))
      else WrongArg(2,"a raw monomial")
      else when s.0 is I:RawMonomialIdeal do 
      when s.1
      is y:RawMonomial do Expr(
-	  Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)IM2_MonomialIdeal_sat1(",
+	  Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)rawSaturateMonomialIdeal1(",
 	       "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
      is J:RawMonomialIdeal do toExpr(
-	  Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)IM2_MonomialIdeal_sat(",
+	  Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)rawSaturateMonomialIdeal2(",
 	       "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
      else WrongArg(2,"a raw monomial or monomial ideal")
      else WrongArg(1,"a raw monomial or monomial ideal")
@@ -171,12 +166,12 @@ rawSaturate(e:Expr):Expr := (
      );
 setupfun("rawSaturate",rawSaturate);
 
-rawSyzygy(e:Expr):Expr := (
+export rawSyzygy(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do (
-	  r := Ccode(RawMonomialPair, "(engine_RawMonomialPair)IM2_Monomial_syz((Monomial*)", x,",","(Monomial*)",y, ")");
+	  r := Ccode(RawMonomialPair, "(engine_RawMonomialPair)rawSyzygy((Monomial*)", x,",","(Monomial*)",y, ")");
 	  Expr(list(Expr(r.a), Expr(r.b))))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
@@ -184,16 +179,16 @@ rawSyzygy(e:Expr):Expr := (
      );
 setupfun("rawSyzygy",rawSyzygy);
 
-rawColon(e:Expr):Expr := (
+export rawColon(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawMonomial do 
-     when a.1 is y:RawMonomial do toExpr( Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)IM2_Monomial_colon(", "(Monomial *)", x, ",", "(Monomial *)", y, ")" ))
+     when a.1 is y:RawMonomial do toExpr( Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)rawColonMonomial(", "(Monomial *)", x, ",", "(Monomial *)", y, ")" ))
      else WrongArg(2,"a raw monomial")
      else when a.0 is I:RawMonomialIdeal do 
      when a.1
-     is y:RawMonomial do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)IM2_MonomialIdeal_colon1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
-     is J:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)IM2_MonomialIdeal_colon(", "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
+     is y:RawMonomial do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)rawColonMonomialIdeal1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
+     is J:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)rawColonMonomialIdeal2(", "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
      else WrongArg(2,"a raw monomial or monomial ideal")
      else WrongArg(1,"a raw monomial or monomial ideal")
      else WrongNumArgs(2)
@@ -206,44 +201,37 @@ setupfun("rawColon",rawColon);
 PositionS := makeProtectedSymbolClosure("Position");
 UpS := makeProtectedSymbolClosure("Up");
 DownS := makeProtectedSymbolClosure("Down");
-PositionFun(b:bool):RawMonomialOrdering := (		    -- b is true for Up, false for Down
-     Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_position(",b,")")
+PositionMO(b:bool):RawMonomialOrdering := (		    -- b is true for Up, false for Down
+     Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawPositionMonomialOrdering(",b,")")
      );
 
-Lex      := makeProtectedSymbolClosure("Lex");
-LexSmall := makeProtectedSymbolClosure("LexSmall");
-LexTiny  := makeProtectedSymbolClosure("LexTiny");
-LexFun     (n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_lex(",n,",1)");
-LexSmallFun(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_lex(",n,",2)");
-LexTinyFun (n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_lex(",n,",4)");
+LexS      := makeProtectedSymbolClosure("Lex");
+LexSmallS := makeProtectedSymbolClosure("LexSmall");
+LexTinyS  := makeProtectedSymbolClosure("LexTiny");
+LexMO     (n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawLexMonomialOrdering(",n,",1)");
+LexSmallMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawLexMonomialOrdering(",n,",2)");
+LexTinySMO (n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawLexMonomialOrdering(",n,",4)");
 
-RevLex := makeProtectedSymbolClosure("RevLex");
-RevLexFun(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_revlex(",n,")");
+RevLexS := makeProtectedSymbolClosure("RevLex");
+RevLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawRevLexMonomialOrdering(",n,")");
 
-GroupLex := makeProtectedSymbolClosure("GroupLex");
-GroupLexFun(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_laurent(",n,")");
+GroupLexS := makeProtectedSymbolClosure("GroupLex");
+GroupLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGroupLexMonomialOrdering(",n,")");
 
-NCLex := makeProtectedSymbolClosure("NCLex");
-NCLexFun(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_NClex(",n,")");
+NCLexS := makeProtectedSymbolClosure("NCLex");
+NCLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawNClexMonomialOrdering(",n,")");
 
-GRevLex := makeProtectedSymbolClosure("GRevLex");
-GRevLexSmall := makeProtectedSymbolClosure("GRevLexSmall");
-GRevLexTiny := makeProtectedSymbolClosure("GRevLexTiny");
-GRevLexFun(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering,
-     "(engine_RawMonomialOrdering)IM2_MonomialOrdering_grevlex((M2_arrayint)",n,",1)");
-GRevLexSmallFun(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering,
-     "(engine_RawMonomialOrdering)IM2_MonomialOrdering_grevlex((M2_arrayint)",n,",2)");
-GRevLexTinyFun(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering,
-     "(engine_RawMonomialOrdering)IM2_MonomialOrdering_grevlex((M2_arrayint)",n,",4)");
+GRevLexS := makeProtectedSymbolClosure("GRevLex");
+GRevLexSmallS := makeProtectedSymbolClosure("GRevLexSmall");
+GRevLexTinyS := makeProtectedSymbolClosure("GRevLexTiny");
+GRevLexMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGRevLexMonomialOrdering((M2_arrayint)",n,",1)");
+GRevLexSmallMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGRevLexMonomialOrdering((M2_arrayint)",n,",2)");
+GRevLexTinySMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGRevLexMonomialOrdering((M2_arrayint)",n,",4)");
 
-Weights := makeProtectedSymbolClosure("Weights");
-WeightsFun(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering,
-     "(engine_RawMonomialOrdering)IM2_MonomialOrdering_weights((M2_arrayint)",n,")");
+WeightsS := makeProtectedSymbolClosure("Weights");
+WeightsMO(n:array(int)):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawWeightsMonomialOrdering((M2_arrayint)",n,")");
 
-join(s:RawMonomialOrderingArray):RawMonomialOrdering := (
-     Ccode(RawMonomialOrdering,
-     	  "(engine_RawMonomialOrdering)IM2_MonomialOrdering_join((MonomialOrdering_array)",s,")")
-     );
+joinMO(s:RawMonomialOrderingArray):RawMonomialOrdering := ( Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawJoinMonomialOrdering((MonomialOrdering_array)",s,")") );
 
 arrayint := array(int);
 funtype := fun1 or fun2 or fun3 or fun4;
@@ -256,17 +244,17 @@ fun4 := function(bool):RawMonomialOrdering;;
 Maker := { sym:SymbolClosure, fun:funtype };
 
 makers := array(Maker)(
-     Maker(PositionS,PositionFun),
-     Maker(Lex,LexFun),
-     Maker(LexSmall,LexSmallFun),
-     Maker(LexTiny,LexTinyFun),
-     Maker(RevLex,RevLexFun),
-     Maker(GroupLex,GroupLexFun),
-     Maker(NCLex,NCLexFun),
-     Maker(GRevLex,GRevLexFun),
-     Maker(GRevLexSmall,GRevLexSmallFun),
-     Maker(GRevLexTiny,GRevLexTinyFun),
-     Maker(Weights,WeightsFun)
+     Maker(PositionS,PositionMO),
+     Maker(LexS,LexMO),
+     Maker(LexSmallS,LexSmallMO),
+     Maker(LexTinyS,LexTinySMO),
+     Maker(RevLexS,RevLexMO),
+     Maker(GroupLexS,GroupLexMO),
+     Maker(NCLexS,NCLexMO),
+     Maker(GRevLexS,GRevLexMO),
+     Maker(GRevLexSmallS,GRevLexSmallMO),
+     Maker(GRevLexTinyS,GRevLexTinySMO),
+     Maker(WeightsS,WeightsMO)
      );
 
 getmaker(sym:SymbolClosure):funtypeornull := (
@@ -280,13 +268,13 @@ getmaker(sym:SymbolClosure):funtypeornull := (
      null());
 
 -- trivialMonomial := Ccode(RawMonomial, 
---      "(engine_RawMonomial)IM2_Monomial_make(", "(M2_arrayint)", array(int)(), ")" 
+--      "(engine_RawMonomial)rawMakeMonomial(", "(M2_arrayint)", array(int)(), ")" 
 --      );
 
-rawMonomialOrdering(e:Expr):Expr := (
+export rawMonomialOrdering(e:Expr):Expr := (
      -- This routine gets an expression like this:
-     -- { GRevLexSmall => {1,2,3}, PositionS, LexTiny => 4, Lex => 5, Weights => {1,2,3} }
-     -- For GRevLex, the weights are already provided by top level code.
+     -- { GRevLexSmallS => {1,2,3}, PositionS, LexTinyS => 4, LexS => 5, WeightsS => {1,2,3} }
+     -- For GRevLexS, the weights are already provided by top level code.
      -- Each member of the sequence results in one monomial ordering, and they sequence
      -- is then "joined".
      -- The weights for grevlex have to be > 0.
@@ -312,7 +300,7 @@ rawMonomialOrdering(e:Expr):Expr := (
 			 then return buildErrorPacket("expected option value to be a sequence of small integers");
 			 )
 		    is g:fun4 do (
-			 if g == PositionFun then (
+			 if g == PositionMO then (
 			      if !(sp.v.1 == UpS || sp.v.1 == DownS)
 			      then return buildErrorPacket("expected option value to be Up or Down");
 			      )
@@ -320,13 +308,13 @@ rawMonomialOrdering(e:Expr):Expr := (
 			      if !(sp.v.1 == True || sp.v.1 == False)
 			      then return buildErrorPacket("expected option value to be true or false");
 			      ))
-		    is null do return buildErrorPacket("expected option key to be a monomial ordering key")
+		    is null do return buildErrorPacket("expected option key '"+sym.symbol.word.name+"' to be a monomial ordering key")
 		    )
 	       else return buildErrorPacket("expected option key to be a symbol")
 	       else return WrongArg("a list of options")
 	       else return WrongArg("a list of options"));
 	  -- then accumulate it
-     	  Expr(join(new RawMonomialOrderingArray len length(s.v) do (
+     	  Expr(joinMO(new RawMonomialOrderingArray len length(s.v) do (
 	       foreach spec in s.v do
 	       when spec is sp:List do
 	       when sp.v.0 is sym:SymbolClosure do (
@@ -334,17 +322,17 @@ rawMonomialOrdering(e:Expr):Expr := (
 		    is g:fun1 do provide g()
 		    is g:fun2 do provide g(getSmallInt(sp.v.1))
 		    is g:fun3 do provide g(getSequenceOfSmallIntegers(sp.v.1))
-		    is g:fun4 do provide g(if g == PositionFun then sp.v.1 == UpS else sp.v.1 == True)
+		    is g:fun4 do provide g(if g == PositionMO then sp.v.1 == UpS else sp.v.1 == True)
 		    is null do nothing
 		    )
 	       else nothing
 	       else nothing;
-	       provide PositionFun(true);		    -- just in case, to prevent a loop
+	       provide PositionMO(true);		    -- just in case, to prevent a loop
 	       ))))
      else WrongArg("a list of options"));
 setupfun("rawMonomialOrdering",rawMonomialOrdering);
 
-rawMonomialOrderingProduct(e:Expr):Expr := (
+export rawProductMonomialOrdering(e:Expr):Expr := (
      when e
      is m:RawMonomialOrdering do e
      is s:Sequence do 
@@ -352,29 +340,29 @@ rawMonomialOrderingProduct(e:Expr):Expr := (
      then WrongArg("a sequence of raw monomial orderings") 
      else Expr(Ccode(
 	       RawMonomialOrdering, 
-	       "(engine_RawMonomialOrdering)IM2_MonomialOrdering_product(",
+	       "(engine_RawMonomialOrdering)rawProductMonomialOrdering(",
 	       "(MonomialOrdering_array)", getSequenceOfMonomialOrderings(s),
 	       ")"
 	       ))
      else WrongArg("a sequence of raw monomial orderings"));
-setupfun("rawMonomialOrderingProduct",rawMonomialOrderingProduct);
+setupfun("rawProductMonomialOrdering",rawProductMonomialOrdering);
 
-rawNumberOfVariables(e:Expr):Expr := (
+export rawNumberOfVariables(e:Expr):Expr := (
      when e
-     is m:RawMonomialOrdering do toExpr(Ccode( int, "IM2_MonomialOrdering_nvars(", "(MonomialOrdering *)", m, ")" ))
+     is m:RawMonomialOrdering do toExpr(Ccode( int, "rawNumberOfVariables(", "(MonomialOrdering *)", m, ")" ))
      else WrongArg("a monomial ordering"));
 setupfun("rawNumberOfVariables",rawNumberOfVariables);
 
-rawNumberOfInvertibleVariables(e:Expr):Expr := (
+export rawNumberOfInvertibleVariables(e:Expr):Expr := (
      when e
-     is m:RawMonomialOrdering do toExpr(Ccode( int, "IM2_MonomialOrdering_n_invertible_vars(", "(MonomialOrdering *)", m, ")" ))
+     is m:RawMonomialOrdering do toExpr(Ccode( int, "rawNumberOfInvertibleVariables(", "(MonomialOrdering *)", m, ")" ))
      else WrongArg("a monomial ordering"));
 setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 
 -----------------------------------------------------------------------------
 -- monoids
 
-rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesMonoid:RawMonoid,degs:array(int)):Expr := (
+export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesMonoid:RawMonoid,degs:array(int)):Expr := (
      when Ccode(RawMonoidOrNull, 
 	  "(engine_RawMonoidOrNull)IM2_Monoid_make(",
 	      "(MonomialOrdering *)", mo, ",",
@@ -385,7 +373,7 @@ rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesMonoid:RawMonoid,deg
      is m:RawMonoid do Expr(m)
      is null do buildErrorPacket(EngineError("internal error: unexplained failure to make raw monoid"))
      );
-rawMonoid(e:Expr):Expr := (
+export rawMonoid(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then Expr(Ccode(RawMonoid,"(engine_RawMonoid)IM2_Monoid_trivial()"))
      else if length(s) == 4 then 
@@ -408,7 +396,7 @@ setupfun("rawMonoid",rawMonoid);
 -----------------------------------------------------------------------------
 -- rings
 
-rawZZ(e:Expr):Expr := (
+export rawZZ(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
      then Expr(Ccode(RawRing,"(engine_RawRing)IM2_Ring_ZZ()"))
      else WrongNumArgs(0)
@@ -416,7 +404,7 @@ rawZZ(e:Expr):Expr := (
      );
 setupfun("rawZZ", rawZZ);
 
-rawQQ(e:Expr):Expr := (
+export rawQQ(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
      then Expr(Ccode(RawRing,"(engine_RawRing)IM2_Ring_QQ()"))
      else WrongNumArgs(0)
@@ -424,17 +412,17 @@ rawQQ(e:Expr):Expr := (
      );
 setupfun("rawQQ", rawQQ);
 
-rawZZp(e:Expr):Expr := (
+export rawZZp(e:Expr):Expr := (
      when e is p:Integer do if !isInt(p) then WrongArgSmallInteger(1) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_ZZp(", toInt(p), ")" ))
      else WrongArgInteger());
 setupfun("rawZZp", rawZZp);
 
-rawRR(e:Expr):Expr := (
+export rawRR(e:Expr):Expr := (
      when e is epsilon:Real do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RR(", epsilon.v, ")" ))
      else WrongArg("a real number"));
 setupfun("rawRR",rawRR);
 
-rawCC(e:Expr):Expr := (
+export rawCC(e:Expr):Expr := (
      when e is epsilon:Real do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CC(", epsilon.v, ")" ))
      else WrongArg("a real number"));
 setupfun("rawCC",rawCC);
@@ -445,19 +433,19 @@ setupfun("rawBigRR",rawBigRR);
 rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_bigCC()" )) else WrongNumArgs(0);
 setupfun("rawBigCC",rawBigCC);
 
-rawIndexIfVariable(e:Expr):Expr := (
+export rawIndexIfVariable(e:Expr):Expr := (
      when e is f:RawRingElement do (
 	  i := Ccode(int, "IM2_RingElement_index_if_var(", "(RingElement *)", f, ")" );
 	  if i == -1 then nullE else toExpr(i))
      else WrongArg("a raw ring element"));
 setupfun("rawIndexIfVariable",rawIndexIfVariable);
 
-rawIndices(e:Expr):Expr := (
+export rawIndices(e:Expr):Expr := (
      when e is f:RawRingElement do toExpr(Ccode(array(int), "(engine_RawArrayInt)IM2_RingElement_indices(", "(RingElement *)", f, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawIndices",rawIndices);
 
-rawPolynomialRing(e:Expr):Expr := (
+export rawPolynomialRing(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is K:RawRing do 
@@ -473,7 +461,7 @@ rawPolynomialRing(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawPolynomialRing",rawPolynomialRing);
 
-rawSkewPolynomialRing(e:Expr):Expr := (
+export rawSkewPolynomialRing(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -489,7 +477,7 @@ rawSkewPolynomialRing(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSkewPolynomialRing",rawSkewPolynomialRing);
 
-rawWeylAlgebra(e:Expr):Expr := (
+export rawWeylAlgebra(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 4 then 
      when a.0 is R:RawRing do 
@@ -509,7 +497,7 @@ rawWeylAlgebra(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawWeylAlgebra",rawWeylAlgebra);
 
-rawSolvableAlgebra(e:Expr):Expr := (
+export rawSolvableAlgebra(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -557,7 +545,7 @@ rawQuotientRing(e:Expr):Expr := (			    -- localization at a prime ideal
      else WrongNumArgs(2));
 setupfun("rawQuotientRing",rawQuotientRing);
 
-rawFractionRing(e:Expr):Expr := (
+export rawFractionRing(e:Expr):Expr := (
      when e is R:RawRing do Expr(
 	  Ccode(RawRing,"(engine_RawRing)IM2_Ring_frac(",
 	       "(Ring *)", R,
@@ -566,24 +554,24 @@ rawFractionRing(e:Expr):Expr := (
      );
 setupfun("rawFractionRing", rawFractionRing);
 
-rawSchurRing(e:Expr):Expr := (
+export rawSchurRing(e:Expr):Expr := (
      when e is R:RawRing do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_schur(", "(Ring *)", R, ")" ) )
      else WrongArg("a raw ring"));
 setupfun("rawSchurRing",rawSchurRing);
 
-rawIsField(e:Expr):Expr := (
+export rawIsField(e:Expr):Expr := (
      when e is K:RawRing do toExpr(Ccode(bool, "IM2_Ring_is_field(", "(Ring *)", K, ")" ))
      else WrongArg("a raw ring"));
 setupfun("rawIsField",rawIsField);
 
-rawDeclareField(e:Expr):Expr := (
+export rawDeclareField(e:Expr):Expr := (
      when e is K:RawRing do (
 	  Ccode(void, "IM2_Ring_declare_field(", "(Ring *)", K, ")" );
 	  nullE)
      else WrongArg("a raw ring"));
 setupfun("rawDeclareField",rawDeclareField);
 
-rawGetZeroDivisor(e:Expr):Expr := (
+export rawGetZeroDivisor(e:Expr):Expr := (
      when e is K:RawRing do Expr(Ccode(RawRingElement, 
 	       "(engine_RawRingElement)IM2_Ring_get_zero_divisor(", "(Ring *)", K, ")" ))
      else WrongArg("a raw ring"));
@@ -592,7 +580,7 @@ setupfun("rawGetZeroDivisor",rawGetZeroDivisor);
 -----------------------------------------------------------------------------
 -- ring elements
 
-rawRingVar(e:Expr):Expr := (
+export rawRingVar(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do
@@ -627,7 +615,7 @@ rawRingVar(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("rawRingVar",rawRingVar);
 
-rawFromNumber(e:Expr):Expr := (
+export rawFromNumber(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 2 then
      when s.0
      is R:RawRing do
@@ -657,7 +645,7 @@ rawFromNumber(e:Expr):Expr := (
      );
 setupfun("rawFromNumber", rawFromNumber);
 
-rawMultiDegree(e:Expr):Expr := (
+export rawMultiDegree(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr(
 	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_RingElement_multidegree(",
@@ -672,7 +660,7 @@ rawMultiDegree(e:Expr):Expr := (
      );
 setupfun("rawMultiDegree",rawMultiDegree);
 
-rawDegree(e:Expr):Expr := (
+export rawDegree(e:Expr):Expr := (
      when e
      -- is x:RawMonomial do Expr(toInteger(Ccode(int, "IM2_Monomial_degree((Monomial*)",x,")")))
      is s:Sequence do 
@@ -690,14 +678,14 @@ rawDegree(e:Expr):Expr := (
      );
 setupfun("rawDegree",rawDegree);
 
-rawTermCount(e:Expr):Expr := (
+export rawTermCount(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( int, "IM2_RingElement_n_terms(", "(RingElement*)",x, ")" ))
      else WrongArg("a raw ring element or vector")
      );
 setupfun("rawTermCount",rawTermCount);
 
-rawIsHomogeneous(e:Expr):Expr := (
+export rawIsHomogeneous(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_graded(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_graded(", "(Matrix*)",x, ")" ))
@@ -708,7 +696,7 @@ setupfun("rawIsHomogeneous",rawIsHomogeneous);
 rawIsMutable(e:Expr):Expr := when e is x:RawMatrix do toExpr(isMutable(x)) else WrongArg("a raw ring element or vector");
 setupfun("rawIsMutable",rawIsMutable);
 
-rawIsZero(e:Expr):Expr := (
+export rawIsZero(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_zero(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_zero(", "(Matrix*)",x, ")" ))
@@ -716,7 +704,7 @@ rawIsZero(e:Expr):Expr := (
      );
 setupfun("rawIsZero",rawIsZero);
 
-rawToInteger(e:Expr):Expr := (
+export rawToInteger(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( IntegerOrNull, "(engine_IntegerOrNull)IM2_RingElement_to_Integer(", "(RingElement*)",x, ")" ))
@@ -724,7 +712,7 @@ rawToInteger(e:Expr):Expr := (
      );
 setupfun("rawToInteger",rawToInteger);
 
-rawLeadCoefficient(e:Expr):Expr := (
+export rawLeadCoefficient(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
@@ -733,7 +721,7 @@ rawLeadCoefficient(e:Expr):Expr := (
      );
 setupfun("rawLeadCoefficient",rawLeadCoefficient);
 
-rawLeadMonomial(e:Expr):Expr := (
+export rawLeadMonomial(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawMonomialOrNull, 
@@ -744,7 +732,7 @@ rawLeadMonomial(e:Expr):Expr := (
      );
 setupfun("rawLeadMonomial",rawLeadMonomial);
 
-rawPairs(e:Expr):Expr := (
+export rawPairs(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawArrayPairOrNull, "(engine_RawArrayPairOrNull)IM2_RingElement_list_form(",
@@ -754,7 +742,7 @@ rawPairs(e:Expr):Expr := (
      );
 setupfun("rawPairs",rawPairs);
 
-ringElementMod(e:Expr):Expr := (
+export ringElementMod(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
@@ -765,7 +753,7 @@ ringElementMod(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(PercentS,rawRingElementClass,rawRingElementClass,ringElementMod);
 
-rawDivMod(e:Expr):Expr := (
+export rawDivMod(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
@@ -784,7 +772,7 @@ rawDivMod(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawDivMod",rawDivMod);
 
-rawPromote(e:Expr):Expr := (
+export rawPromote(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -800,7 +788,7 @@ rawPromote(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawPromote", rawPromote);
 
-rawLift(e:Expr):Expr := (
+export rawLift(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -816,7 +804,7 @@ rawLift(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawLift", rawLift);
 
-rawRing(e:Expr):Expr := (
+export rawRing(e:Expr):Expr := (
      when e
      is x:RawRingElement do Expr(
 	  Ccode(RawRing, "IM2_RingElement_ring(", "(RingElement *)",x, ")" ))
@@ -826,7 +814,7 @@ rawRing(e:Expr):Expr := (
      );
 setupfun("rawRing", rawRing);
 
-rawHomogenize(e:Expr):Expr := (
+export rawHomogenize(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then (
 	  when s.0
@@ -878,7 +866,7 @@ rawHomogenize(e:Expr):Expr := (
      else buildErrorPacket("expected 3 or 4 arguments"));
 setupfun("rawHomogenize",rawHomogenize);
 
-rawTerm(e:Expr):Expr := (
+export rawTerm(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is R:RawRing do 
@@ -893,7 +881,7 @@ rawTerm(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawTerm",rawTerm);
 
-rawGetTerms(e:Expr):Expr := (
+export rawGetTerms(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is f:RawRingElement do (
@@ -909,7 +897,7 @@ rawGetTerms(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGetTerms",rawGetTerms);
 
-rawCoefficient(e:Expr):Expr := (
+export rawCoefficient(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
@@ -925,7 +913,7 @@ rawCoefficient(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawCoefficient",rawCoefficient);
 
-rawNumerator(e:Expr):Expr := (
+export rawNumerator(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
@@ -934,7 +922,7 @@ rawNumerator(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawNumerator",rawNumerator);
 
-rawDenominator(e:Expr):Expr := (
+export rawDenominator(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
@@ -944,7 +932,7 @@ rawDenominator(e:Expr):Expr := (
      );
 setupfun("rawDenominator",rawDenominator);
 
-rawFraction(e:Expr):Expr := (
+export rawFraction(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is F:RawRing do 
@@ -962,14 +950,14 @@ setupfun("rawFraction",rawFraction);
 -----------------------------------------------------------------------------
 -- free modules
 
-rawRank(e:Expr):Expr := (
+export rawRank(e:Expr):Expr := (
      when e
      is x:RawFreeModule do toExpr( Ccode( int, "IM2_FreeModule_rank(", "(FreeModule*)",x, ")" ))
      else WrongArg("a raw free module")
      );
 setupfun("rawRank",rawRank);
 
-rawFreeModule(e:Expr):Expr := (
+export rawFreeModule(e:Expr):Expr := (
      when e
      is m:RawMatrix do toExpr(
 	  Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)IM2_FreeModule_make_schreyer(",
@@ -999,14 +987,14 @@ rawFreeModule(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawFreeModule",rawFreeModule);
 
-rawGetSchreyer(e:Expr):Expr := (
+export rawGetSchreyer(e:Expr):Expr := (
      when e
      is F:RawFreeModule do Expr(
 	  Ccode(RawMatrix, "(engine_RawMatrix)IM2_FreeModule_get_schreyer(", "(FreeModule *)", F, ")" ) )
      else WrongArg("a raw free module"));
 setupfun("rawGetSchreyer",rawGetSchreyer);
 
-rawZero(e:Expr):Expr := (
+export rawZero(e:Expr):Expr := (
      when e
      is s:Sequence do
      if length(s) != 2 then WrongNumArgs(1,2) else
@@ -1021,7 +1009,7 @@ rawZero(e:Expr):Expr := (
      else WrongArg("a raw free module"));
 setupfun("rawZero",rawZero);
 
-rawExteriorPower(e:Expr):Expr := (
+export rawExteriorPower(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 2 then
      when s.0 is n:Integer do
@@ -1052,7 +1040,7 @@ rawExteriorPower(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("rawExteriorPower",rawExteriorPower);
 
-rawSymmetricPower(e:Expr):Expr := (
+export rawSymmetricPower(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is n:Integer do
      if !isInt(n) then WrongArgSmallInteger(1) else
@@ -1072,7 +1060,7 @@ rawSymmetricPower(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSymmetricPower",rawSymmetricPower);
 
-rawDual(e:Expr):Expr := (
+export rawDual(e:Expr):Expr := (
      when e
      is F:RawFreeModule do Expr(Ccode(RawFreeModule, "(engine_RawFreeModule)",
 	       "IM2_FreeModule_dual(", "(FreeModule *)", F, ")" ))
@@ -1081,7 +1069,7 @@ rawDual(e:Expr):Expr := (
      else WrongArg("a raw free module or matrix"));
 setupfun("rawDual",rawDual);
 
-rawDirectSum(e:Expr):Expr := (
+export rawDirectSum(e:Expr):Expr := (
      if isSequenceOfMatrices(e) then toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
 	       "IM2_Matrix_direct_sum(", 
 	       "(Matrix_array *)", getSequenceOfMatrices(e),
@@ -1098,7 +1086,7 @@ rawDirectSum(e:Expr):Expr := (
      );
 setupfun("rawDirectSum",rawDirectSum);
 
-rawSubmodule(e:Expr):Expr := (
+export rawSubmodule(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawFreeModule do
@@ -1116,7 +1104,7 @@ setupfun("rawSubmodule",rawSubmodule);
 -----------------------------------------------------------------------------
 -- matrices
 
-rawIsEqual(e:Expr):Expr := (
+export rawIsEqual(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMatrix do
      when s.1 is y:RawMatrix do
@@ -1126,14 +1114,14 @@ rawIsEqual(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawIsEqual",rawIsEqual);
 
-rawSource(e:Expr):Expr := (
+export rawSource(e:Expr):Expr := (
      when e
      is M:RawMatrix do Expr( Ccode( RawFreeModule, "IM2_Matrix_get_source(", "(Matrix*)",M, ")" ))
      else WrongArg("a raw matrix")
      );
 setupfun("rawSource",rawSource);
 
-rawTarget(e:Expr):Expr := (
+export rawTarget(e:Expr):Expr := (
      when e
      is M:RawMatrix do Expr( Ccode( RawFreeModule, "IM2_Matrix_get_target(", "(Matrix*)",M, ")" ))
      is F:RawRingMap do Expr( Ccode( RawRing, "IM2_RingMap_target(", "(RingMap *)",F, ")" ))
@@ -1141,7 +1129,7 @@ rawTarget(e:Expr):Expr := (
      );
 setupfun("rawTarget",rawTarget);
 
-rawMatrix1(e:Expr):Expr := (
+export rawMatrix1(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is target:RawFreeModule do 
@@ -1161,7 +1149,7 @@ rawMatrix1(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawMatrix1",rawMatrix1);
 
-rawMatrix2(e:Expr):Expr := (
+export rawMatrix2(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is target:RawFreeModule do 
@@ -1181,7 +1169,7 @@ rawMatrix2(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrix2",rawMatrix2);
 
-rawMatrixRemake1(e:Expr):Expr := (
+export rawMatrixRemake1(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is target:RawFreeModule do 
@@ -1193,7 +1181,7 @@ rawMatrixRemake1(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMatrixRemake1",rawMatrixRemake1);
 
-rawMatrixRemake2(e:Expr):Expr := (
+export rawMatrixRemake2(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is target:RawFreeModule do 
@@ -1214,7 +1202,7 @@ rawMatrixRemake2(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrixRemake2",rawMatrixRemake2);
 
-rawSparseMatrix1(e:Expr):Expr := (
+export rawSparseMatrix1(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is target:RawFreeModule do 
@@ -1240,7 +1228,7 @@ rawSparseMatrix1(e:Expr):Expr := (
      else WrongNumArgs(6));
 setupfun("rawSparseMatrix1",rawSparseMatrix1);
 
-rawSparseMatrix2(e:Expr):Expr := (
+export rawSparseMatrix2(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) != 7 then WrongNumArgs(7) else
      when s.0 is target:RawFreeModule do 
@@ -1269,7 +1257,7 @@ rawSparseMatrix2(e:Expr):Expr := (
      else WrongNumArgs(7));
 setupfun("rawSparseMatrix2",rawSparseMatrix2);
 
-rawConcat(e:Expr):Expr := (
+export rawConcat(e:Expr):Expr := (
      if isSequenceOfMatrices(e) then
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
 	       "IM2_Matrix_concat(", 
@@ -1279,7 +1267,7 @@ rawConcat(e:Expr):Expr := (
      );
 setupfun("rawConcat",rawConcat);
 
-rawMatrixEntry(e:Expr):Expr := (
+export rawMatrixEntry(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 4 then 
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
@@ -1310,7 +1298,7 @@ rawMatrixEntry(e:Expr):Expr := (
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
 
-rawSortColumns(e:Expr):Expr := (
+export rawSortColumns(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do
@@ -1334,7 +1322,7 @@ rawSortColumns(e:Expr):Expr := (
      );
 setupfun("rawSortColumns",rawSortColumns);
 
-rawEliminateVariables(e:Expr):Expr := (
+export rawEliminateVariables(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is nparts:Integer do if !isInt(nparts) then WrongArgSmallInteger(1) else 
@@ -1350,7 +1338,7 @@ rawEliminateVariables(e:Expr):Expr := (
      );
 setupfun("rawEliminateVariables",rawEliminateVariables);
 
-rawKeepVariables(e:Expr):Expr := (
+export rawKeepVariables(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is nparts:Integer do if !isInt(nparts) then WrongArgSmallInteger(1) else 
@@ -1375,7 +1363,7 @@ setupfun("rawKeepVariables",rawKeepVariables);
 --      else WrongArg("a raw matrix"));
 -- setupfun("rawRemoveContent",rawRemoveContent);
 
-rawDivideByVariable(e:Expr):Expr := (
+export rawDivideByVariable(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do
@@ -1396,7 +1384,7 @@ rawDivideByVariable(e:Expr):Expr := (
      );
 setupfun("rawDivideByVariable",rawDivideByVariable);
 
-rawMinors(e:Expr):Expr := (
+export rawMinors(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is p:Integer do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -1419,7 +1407,7 @@ rawMinors(e:Expr):Expr := (
      );
 setupfun("rawMinors",rawMinors);
 
-rawInitial(e:Expr):Expr := (
+export rawInitial(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is p:Integer do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -1438,7 +1426,7 @@ rawInitial(e:Expr):Expr := (
      );
 setupfun("rawInitial",rawInitial);
 
-rawPfaffians(e:Expr):Expr := (
+export rawPfaffians(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is p:Integer do if !isInt(p) then WrongArgSmallInteger(1) else
@@ -1451,7 +1439,7 @@ rawPfaffians(e:Expr):Expr := (
      );
 setupfun("rawPfaffians",rawPfaffians);
 
-rawTensor(e:Expr):Expr := (
+export rawTensor(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0
      is f:RawMatrix do
@@ -1481,7 +1469,7 @@ rawTensor(e:Expr):Expr := (
      );
 setupfun("rawTensor",rawTensor);
 
-rawMatrixDiff(e:Expr):Expr := (
+export rawMatrixDiff(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is f:RawMatrix do
      when s.1 is g:RawMatrix do (
@@ -1499,7 +1487,7 @@ rawMatrixDiff(e:Expr):Expr := (
      );
 setupfun("rawMatrixDiff",rawMatrixDiff);
 
-rawMatrixContract(e:Expr):Expr := (
+export rawMatrixContract(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is f:RawMatrix do
      when s.1 is g:RawMatrix do (
@@ -1517,14 +1505,14 @@ rawMatrixContract(e:Expr):Expr := (
      );
 setupfun("rawMatrixContract",rawMatrixContract);
 
-rawIdentity(e:Expr):Expr := (
+export rawIdentity(e:Expr):Expr := (
      when e
      is F:RawFreeModule do Expr(Ccode(RawMatrix, "(engine_RawMatrix)",
 	       "IM2_Matrix_identity(", "(FreeModule *)", F, ")" ))
      else WrongArg("a raw free module"));
 setupfun("rawIdentity",rawIdentity);
 
-rawMonomials(e:Expr):Expr := (
+export rawMonomials(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      if !isSequenceOfSmallIntegers(s.0) then WrongArg(1,"a sequence of small integers") else 
@@ -1540,7 +1528,7 @@ rawMonomials(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawMonomials",rawMonomials);
 
-rawCoefficients(e:Expr):Expr := (
+export rawCoefficients(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      if !isSequenceOfSmallIntegers(s.0) then WrongArg(1,"a sequence of small integers") else
@@ -1559,7 +1547,7 @@ rawCoefficients(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawCoefficients",rawCoefficients);
 
-rawSubmatrix(e:Expr):Expr := (
+export rawSubmatrix(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.0 is M:RawMatrix do 
@@ -1588,7 +1576,7 @@ rawSubmatrix(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("rawSubmatrix",rawSubmatrix);
 
-rawReshape(e:Expr):Expr := (
+export rawReshape(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 
      when s.0 is M:RawMatrix do 
@@ -1603,7 +1591,7 @@ rawReshape(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawReshape",rawReshape);
 
-rawFlip(e:Expr):Expr := (
+export rawFlip(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 2 then 
      when s.0 is F:RawFreeModule do
@@ -1616,7 +1604,7 @@ rawFlip(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawFlip",rawFlip);
 
-rawKoszul(e:Expr):Expr := (
+export rawKoszul(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is n:Integer do
      if !isInt(n) then WrongArgSmallInteger(1) else
@@ -1628,7 +1616,7 @@ rawKoszul(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawKoszul",rawKoszul);
 
-rawKoszulMonomials(e:Expr):Expr := (
+export rawKoszulMonomials(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is F:RawMatrix do 
      when s.1 is G:RawMatrix do 
@@ -1640,7 +1628,7 @@ rawKoszulMonomials(e:Expr):Expr := (
 setupfun("rawKoszulMonomials",rawKoszulMonomials);
 
 
-rawHilbert(e:Expr):Expr := (
+export rawHilbert(e:Expr):Expr := (
      when e is M:RawMatrix do (
 	  toExpr(Ccode(RawRingElementOrNull,"(engine_RawRingElementOrNull)",
 		    "IM2_Matrix_Hilbert(",
@@ -1653,14 +1641,14 @@ setupfun("rawHilbert",rawHilbert);
 -----------------------------------------------------------------------------
 -- monomial ideals
 
-rawMonomialIdealToMatrix(e:Expr):Expr := (
+export rawMonomialIdealToMatrix(e:Expr):Expr := (
      when e
      is I:RawMonomialIdeal do Expr(Ccode(RawMatrix, "(engine_RawMatrix)", "IM2_MonomialIdeal_to_matrix(", "(MonomialIdeal *)", I, ")" ))
      else WrongArg("a raw monomial ideal")
      );
 setupfun("rawMonomialIdealToMatrix",rawMonomialIdealToMatrix);
 
-rawMonomialIdeal(e:Expr):Expr := (
+export rawMonomialIdeal(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is m:RawMatrix do
      when s.1 is n:Integer do 
@@ -1673,14 +1661,14 @@ rawMonomialIdeal(e:Expr):Expr := (
      );
 setupfun("rawMonomialIdeal",rawMonomialIdeal);
 
-rawNumgens(e:Expr):Expr := (
+export rawNumgens(e:Expr):Expr := (
      when e
      is I:RawMonomialIdeal do Expr( toInteger(
 	       Ccode(int, "IM2_MonomialIdeal_n_gens(", "(MonomialIdeal *)", I, ")" )))
      else WrongArg("a raw free module"));
 setupfun("rawNumgens",rawNumgens);
 
-rawIntersect(e:Expr):Expr := (
+export rawIntersect(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is I:RawMonomialIdeal do
      when s.1 is J:RawMonomialIdeal do
@@ -1697,26 +1685,26 @@ rawIntersect(e:Expr):Expr := (
      );
 setupfun("rawIntersect",rawIntersect);
 
-rawStronglyStableClosure(e:Expr):Expr := (
+export rawStronglyStableClosure(e:Expr):Expr := (
      when e is I:RawMonomialIdeal do Expr(
 	  Ccode(RawMonomialIdeal,"(engine_RawMonomialIdeal)",
 	       "IM2_MonomialIdeal_borel(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial ideal"));
 setupfun("rawStronglyStableClosure",rawStronglyStableClosure);
 
-rawIsStronglyStable(e:Expr):Expr := (
+export rawIsStronglyStable(e:Expr):Expr := (
      when e is I:RawMonomialIdeal do toExpr(
 	  Ccode(bool, "IM2_MonomialIdeal_is_borel(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial ideal"));
 setupfun("rawIsStronglyStable",rawIsStronglyStable);
 
-rawCodimension(e:Expr):Expr := (
+export rawCodimension(e:Expr):Expr := (
      when e is I:RawMonomialIdeal do toExpr(
 	  Ccode(int, "IM2_MonomialIdeal_codim(", "(MonomialIdeal *)", I, ")" ) )
      else WrongArg("a raw monomial ideal"));
 setupfun("rawCodimension",rawCodimension);
 
-rawAssociatedPrimes(e:Expr):Expr := (
+export rawAssociatedPrimes(e:Expr):Expr := (
      when e is I:RawMonomialIdeal do Expr(
 	  Ccode(RawMonomialIdeal,"(engine_RawMonomialIdeal)",
 	       "IM2_MonomialIdeal_assprimes(", "(MonomialIdeal *)", I, ")" ) )
@@ -1726,14 +1714,14 @@ setupfun("rawAssociatedPrimes",rawAssociatedPrimes);
 -----------------------------------------------------------------------------
 -- ring maps
 
-rawRingMap(e:Expr):Expr := (
+export rawRingMap(e:Expr):Expr := (
      when e
      is M:RawMatrix do Expr( Ccode( RawRingMap, "IM2_RingMap_make1(", "(Matrix*)",M, ")" ))
      else WrongArg("a raw matrix")
      );
 setupfun("rawRingMap",rawRingMap);
 
-rawRingMapEval(e:Expr):Expr := (
+export rawRingMapEval(e:Expr):Expr := (
      when e
      is s:Sequence do
      if length(s) == 2 then 
@@ -1773,19 +1761,19 @@ rawRingMapEval(e:Expr):Expr := (
      );
 setupfun("rawRingMapEval",rawRingMapEval);
 
-rawNumberOfRows(e:Expr):Expr := (
+export rawNumberOfRows(e:Expr):Expr := (
      when e
      is M:RawMatrix do toExpr(Ccode( int, "IM2_Matrix_n_rows(", "(Matrix *)", M, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawNumberOfRows",rawNumberOfRows);
 
-rawNumberOfColumns(e:Expr):Expr := (
+export rawNumberOfColumns(e:Expr):Expr := (
      when e
      is M:RawMatrix do toExpr(Ccode( int, "IM2_Matrix_n_cols(", "(Matrix *)", M, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawNumberOfColumns",rawNumberOfColumns);
 
-rawRowChange(e:Expr):Expr := (
+export rawRowChange(e:Expr):Expr := (
      when e
      is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      Expr(Ccode( RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_get_row_change(", "(Matrix *)", M, ")" ))
@@ -1797,7 +1785,7 @@ rawRowChange(e:Expr):Expr := (
      else WrongNumArgs(1,2));
 setupfun("rawRowChange",rawRowChange);
 
-rawColumnChange(e:Expr):Expr := (
+export rawColumnChange(e:Expr):Expr := (
      when e
      is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      Expr(Ccode( RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_get_col_change(", "(Matrix *)", M, ")" ))
@@ -1809,7 +1797,7 @@ rawColumnChange(e:Expr):Expr := (
      else WrongNumArgs(1,2));
 setupfun("rawColumnChange",rawColumnChange);
 
-rawMatrixRowSwap(e:Expr):Expr := (
+export rawMatrixRowSwap(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
@@ -1820,7 +1808,7 @@ rawMatrixRowSwap(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMatrixRowSwap",rawMatrixRowSwap);
 
-rawMatrixColumnSwap(e:Expr):Expr := (
+export rawMatrixColumnSwap(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
@@ -1831,7 +1819,7 @@ rawMatrixColumnSwap(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawMatrixColumnSwap",rawMatrixColumnSwap);
 
-rawMatrixRowChange(e:Expr):Expr := (
+export rawMatrixRowChange(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(2) else
@@ -1849,7 +1837,7 @@ rawMatrixRowChange(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawMatrixRowChange",rawMatrixRowChange);
 
-rawMatrixColumnChange(e:Expr):Expr := (
+export rawMatrixColumnChange(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(2) else
@@ -1867,7 +1855,7 @@ rawMatrixColumnChange(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMatrixColumnChange",rawMatrixColumnChange);
 
-rawMatrixRowScale(e:Expr):Expr := (
+export rawMatrixRowScale(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(2) else
@@ -1883,7 +1871,7 @@ rawMatrixRowScale(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawMatrixRowScale",rawMatrixRowScale);
 
-rawMatrixColumnScale(e:Expr):Expr := (
+export rawMatrixColumnScale(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
      when s.1 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(2) else
@@ -1903,7 +1891,7 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 -- Groebner bases and resolutions
 -----------------------------------------------------------------------------
 
-rawGB(e:Expr):Expr := (
+export rawGB(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 8 then WrongNumArgs(8) else
      when s.0 is m:RawMatrix do
@@ -1941,7 +1929,7 @@ rawGB(e:Expr):Expr := (
      );
 setupfun("rawGB",rawGB);
 
-rawResolution(e:Expr):Expr := (
+export rawResolution(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 7 then WrongNumArgs(7) else
      when s.0 is m:RawMatrix do
@@ -1976,7 +1964,7 @@ rawResolution(e:Expr):Expr := (
      );
 setupfun("rawResolution",rawResolution);
 
-rawGBSetHilbertFunction(e:Expr):Expr := (
+export rawGBSetHilbertFunction(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -1992,7 +1980,7 @@ rawGBSetHilbertFunction(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBSetHilbertFunction", rawGBSetHilbertFunction);
 
-rawGBForce(e:Expr):Expr := (
+export rawGBForce(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is m:RawComputation do 
@@ -2011,7 +1999,7 @@ rawGBForce(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBForce", rawGBForce);
 
-rawGBSetStop(e:Expr):Expr := (
+export rawGBSetStop(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 11 then WrongNumArgs(11) else
      when s.0 is G:RawComputation do
@@ -2059,7 +2047,7 @@ rawGBSetStop(e:Expr):Expr := (
      );
 setupfun("rawGBSetStop", rawGBSetStop);
 
-rawGBGetMatrix(e:Expr):Expr := (
+export rawGBGetMatrix(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
@@ -2079,7 +2067,7 @@ rawGBGetMatrix(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGBGetMatrix", rawGBGetMatrix);
 
-rawGBStatus(e:Expr):Expr := (
+export rawGBStatus(e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
 	  stoppingReason := 0;
@@ -2096,7 +2084,7 @@ rawGBStatus(e:Expr):Expr := (
      );
 setupfun("rawGBStatus", rawGBStatus);
 
-rawResolutionStatusLevel(e:Expr):Expr := (
+export rawResolutionStatusLevel(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is G:RawComputation do
@@ -2121,7 +2109,7 @@ rawResolutionStatusLevel(e:Expr):Expr := (
      );
 setupfun("rawResolutionStatusLevel", rawResolutionStatusLevel);
 
-rawGBGetChange(e:Expr):Expr := (
+export rawGBGetChange(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -2139,7 +2127,7 @@ rawGBGetChange(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBGetChange", rawGBGetChange);
 
-rawGBGetLeadTerms(e:Expr):Expr := (
+export rawGBGetLeadTerms(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
@@ -2161,7 +2149,7 @@ rawGBGetLeadTerms(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
 
-rawGBGetFree(e:Expr):Expr := (
+export rawGBGetFree(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
@@ -2181,7 +2169,7 @@ rawGBGetFree(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGBGetFree", rawGBGetFree);
 
-rawGBMatrixRemainder(e:Expr):Expr := (
+export rawGBMatrixRemainder(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
@@ -2210,7 +2198,7 @@ toList(a:RawMatrixOrNull,b:RawMatrixOrNull):Expr := (
      is B:RawMatrix do
      list(Expr(A),Expr(B)));     
 
-rawGBMatrixLift(e:Expr):Expr := (
+export rawGBMatrixLift(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
@@ -2242,7 +2230,7 @@ rawGBMatrixLift(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGBMatrixLift", rawGBMatrixLift);
 
-rawGBContains(e:Expr):Expr := (
+export rawGBContains(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
@@ -2262,7 +2250,7 @@ rawGBContains(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawGBContains", rawGBContains);
 
-rawGBBetti(e:Expr):Expr := (
+export rawGBBetti(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is G:RawComputation do 
@@ -2280,7 +2268,7 @@ rawGBBetti(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
 
-rawGBverbose(e:Expr):Expr := (
+export rawGBverbose(e:Expr):Expr := (
      when e is level:Integer do
      if !isInt(level) then WrongArgSmallInteger() 
      else toExpr(Ccode(int, "IM2_GB_verbose(", toInt(level), ")"))
@@ -2306,7 +2294,7 @@ M2CC(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("M2CC", M2CC);
 
-rawMatrixRR(e:Expr):Expr := (
+export rawMatrixRR(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 2 then
      when s.0 is nrows:Integer do if !isInt(nrows) then WrongArgSmallInteger(1) else
@@ -2321,7 +2309,7 @@ rawMatrixRR(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawMatrixRR", rawMatrixRR);
 
-rawMatrixCC(e:Expr):Expr := (
+export rawMatrixCC(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 2 then
      when s.0 is nrows:Integer do if !isInt(nrows) then WrongArgSmallInteger(1) else
@@ -2336,7 +2324,7 @@ rawMatrixCC(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawMatrixCC", rawMatrixCC);
 
-rawGetEpsilonMatrixRR(e:Expr):Expr := (
+export rawGetEpsilonMatrixRR(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
      then Expr(Ccode(Real,"LP_LMatrixRR_get_epsilon()"))
      else WrongNumArgs(0)
@@ -2344,7 +2332,7 @@ rawGetEpsilonMatrixRR(e:Expr):Expr := (
      );
 setupfun("rawGetEpsilonMatrixRR", rawGetEpsilonMatrixRR);
 
-rawGetEpsilonMatrixCC(e:Expr):Expr := (
+export rawGetEpsilonMatrixCC(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
      then Expr(Ccode(Real,"LP_LMatrixCC_get_epsilon()"))
      else WrongNumArgs(0)
@@ -2352,7 +2340,7 @@ rawGetEpsilonMatrixCC(e:Expr):Expr := (
      );
 setupfun("rawGetEpsilonMatrixCC", rawGetEpsilonMatrixCC);
 
-rawSetEpsilonMatrixRR(e:Expr):Expr := (
+export rawSetEpsilonMatrixRR(e:Expr):Expr := (
      when e is eps:Real do (
      	Ccode(void,"LP_LMatrixRR_set_epsilon(", eps.v, ")");
 	nullE
@@ -2361,7 +2349,7 @@ rawSetEpsilonMatrixRR(e:Expr):Expr := (
      );
 setupfun("rawSetEpsilonMatrixRR", rawSetEpsilonMatrixRR);
 
-rawSetEpsilonMatrixCC(e:Expr):Expr := (
+export rawSetEpsilonMatrixCC(e:Expr):Expr := (
      when e is eps:Real do (
      	Ccode(void,"LP_LMatrixCC_set_epsilon(", eps.v, ")");
 	nullE
@@ -2370,7 +2358,7 @@ rawSetEpsilonMatrixCC(e:Expr):Expr := (
      );
 setupfun("rawSetEpsilonMatrixCC", rawSetEpsilonMatrixCC);
 
-rawNumberOfRowsRR(e:Expr):Expr := (
+export rawNumberOfRowsRR(e:Expr):Expr := (
      when e is M:LMatrixRR do
 	  toExpr(
 	       Ccode(int, "LP_LMatrixRR_nrows(", "(LMatrixRR *)", M, ")") 
@@ -2378,7 +2366,7 @@ rawNumberOfRowsRR(e:Expr):Expr := (
      else WrongArg(1, "a raw matrixRR"));
 setupfun("rawNumberOfRowsRR", rawNumberOfRowsRR);
 
-rawNumberOfColumnsRR(e:Expr):Expr := (
+export rawNumberOfColumnsRR(e:Expr):Expr := (
      when e is M:LMatrixRR do
 	  toExpr(
 	       Ccode(int, "LP_LMatrixRR_ncols(", "(LMatrixRR *)", M, ")") 
@@ -2386,7 +2374,7 @@ rawNumberOfColumnsRR(e:Expr):Expr := (
      else WrongArg(1, "a raw matrixRR"));
 setupfun("rawNumberOfColumnsRR", rawNumberOfColumnsRR);
 
-rawNumberOfRowsCC(e:Expr):Expr := (
+export rawNumberOfRowsCC(e:Expr):Expr := (
      when e is M:LMatrixCC do
 	  toExpr(
 	       Ccode(int, "LP_LMatrixCC_nrows(", "(LMatrixCC *)", M, ")") 
@@ -2394,7 +2382,7 @@ rawNumberOfRowsCC(e:Expr):Expr := (
      else WrongArg(1, "a raw matrixCC"));
 setupfun("rawNumberOfRowsCC", rawNumberOfRowsCC);
 
-rawNumberOfColumnsCC(e:Expr):Expr := (
+export rawNumberOfColumnsCC(e:Expr):Expr := (
      when e is M:LMatrixCC do
 	  toExpr(
 	       Ccode(int, "LP_LMatrixCC_ncols(", "(LMatrixCC *)", M, ")") 
@@ -2402,7 +2390,7 @@ rawNumberOfColumnsCC(e:Expr):Expr := (
      else WrongArg(1, "a raw matrixCC"));
 setupfun("rawNumberOfColumnsCC", rawNumberOfColumnsCC);
 
-rawSetMatrixEntryRR(e:Expr):Expr := (
+export rawSetMatrixEntryRR(e:Expr):Expr := (
      -- rawSetEntry(M, r, c, double)
      when e is s:Sequence do
      if length(s) == 4 then 
@@ -2424,7 +2412,7 @@ rawSetMatrixEntryRR(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawSetMatrixEntryRR", rawSetMatrixEntryRR);
 
-rawSetMatrixEntryCC(e:Expr):Expr := (
+export rawSetMatrixEntryCC(e:Expr):Expr := (
      -- rawSetEntry(M, r, c, Complex)
      when e is s:Sequence do
      if length(s) == 4 then 
@@ -2446,7 +2434,7 @@ rawSetMatrixEntryCC(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawSetMatrixEntryCC", rawSetMatrixEntryCC);
 
-rawGetMatrixEntryRR(e:Expr):Expr := (
+export rawGetMatrixEntryRR(e:Expr):Expr := (
      -- rawGetEntry(M, r, c, double)
      when e is s:Sequence do
      if length(s) == 4 then 
@@ -2468,7 +2456,7 @@ rawGetMatrixEntryRR(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawGetMatrixEntryRR", rawGetMatrixEntryRR);
 
-rawGetMatrixEntryCC(e:Expr):Expr := (
+export rawGetMatrixEntryCC(e:Expr):Expr := (
      -- rawGetEntry(M, r, c, complex)
      when e is s:Sequence do
      if length(s) == 4 then 
@@ -2490,7 +2478,7 @@ rawGetMatrixEntryCC(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawGetMatrixEntryCC", rawGetMatrixEntryCC);
 
-rawSetMatrixValues(e:Expr):Expr := (
+export rawSetMatrixValues(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.1 is l:List do (
@@ -2528,7 +2516,7 @@ rawSetMatrixValues(e:Expr):Expr := (
      );
 setupfun("rawSetMatrixValues",rawSetMatrixValues);
 
-rawGetSubmatrix(e:Expr):Expr := (
+export rawGetSubmatrix(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.0
@@ -2562,7 +2550,7 @@ rawGetSubmatrix(e:Expr):Expr := (
      );
 setupfun("rawGetSubmatrix",rawGetSubmatrix);
 
-rawSolve(e:Expr):Expr := (
+export rawSolve(e:Expr):Expr := (
      -- rawSolve(A, b, x)
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -2591,7 +2579,7 @@ rawSolve(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawSolve", rawSolve);
 
-rawLU(e:Expr):Expr := (
+export rawLU(e:Expr):Expr := (
      -- rawLU(M, L, U, P)
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4) else
@@ -2626,7 +2614,7 @@ rawLU(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawLU", rawLU);
 
-rawEigenvalues(e:Expr):Expr := (
+export rawEigenvalues(e:Expr):Expr := (
      -- rawEigenvalues(M, eigs)
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
@@ -2649,7 +2637,7 @@ rawEigenvalues(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawEigenvalues", rawEigenvalues);
 
-rawEigenvectors(e:Expr):Expr := (
+export rawEigenvectors(e:Expr):Expr := (
      -- rawEigenvalues(M, eigvals, eigvecs)
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -2676,7 +2664,7 @@ rawEigenvectors(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawEigenvectors", rawEigenvectors);
 
-rawEigenvaluesSymmetric(e:Expr):Expr := (
+export rawEigenvaluesSymmetric(e:Expr):Expr := (
      -- rawEigenvaluesSymmetric(M, eigs)
      when e is s:Sequence do
      if length(s) == 2 then
@@ -2693,7 +2681,7 @@ rawEigenvaluesSymmetric(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawEigenvaluesSymmetric", rawEigenvaluesSymmetric);
 
-rawEigenvectorsSymmetric(e:Expr):Expr := (
+export rawEigenvectorsSymmetric(e:Expr):Expr := (
      -- rawEigenvectorsSymmetric(M, eigvals, eigvecs)
      when e is s:Sequence do
      if length(s) == 3 then
@@ -2712,7 +2700,7 @@ rawEigenvectorsSymmetric(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawEigenvectorsSymmetric", rawEigenvectorsSymmetric);
 
-rawEigenvaluesHermitian(e:Expr):Expr := (
+export rawEigenvaluesHermitian(e:Expr):Expr := (
      -- rawEigenvaluesHermitian(M, eigs)
      when e is s:Sequence do
      if length(s) == 2 then
@@ -2728,7 +2716,7 @@ rawEigenvaluesHermitian(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawEigenvaluesHermitian", rawEigenvaluesHermitian);
 
-rawEigenvectorsHermitian(e:Expr):Expr := (
+export rawEigenvectorsHermitian(e:Expr):Expr := (
      -- rawEigenvectorsHermitian(M, eigvals, eigvecs)
      when e is s:Sequence do
      if length(s) == 3 then
@@ -2746,7 +2734,7 @@ rawEigenvectorsHermitian(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawEigenvectorsHermitian", rawEigenvectorsHermitian);
 
-rawSVD(e:Expr):Expr := (
+export rawSVD(e:Expr):Expr := (
      -- rawSVD(M, Sigma, U, VT)
      when e is s:Sequence do
      if length(s) != 4 then WrongNumArgs(4) else
@@ -2779,7 +2767,7 @@ rawSVD(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawSVD", rawSVD);
 
-rawLeastSquares(e:Expr):Expr := (
+export rawLeastSquares(e:Expr):Expr := (
      -- rawLeastSquares(M, b, x)
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -2806,7 +2794,7 @@ rawLeastSquares(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawLeastSquares", rawLeastSquares);
 
-rawLeastSquaresDeficient(e:Expr):Expr := (
+export rawLeastSquaresDeficient(e:Expr):Expr := (
      -- rawLeastSquaresDeficient(M, b, x)
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -2836,5 +2824,5 @@ rawLeastSquaresDeficient(e:Expr):Expr := (
 setupfun("rawLeastSquaresDeficient", rawLeastSquaresDeficient);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

@@ -41,5 +41,5 @@ truncateOutput ZZ := maxwidth -> (
 truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

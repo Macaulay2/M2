@@ -18,5 +18,5 @@ inIX' = ideal leadTerm gens gb IX'
 assert( codim inIX' == 4 )
 assert( pdim coker gens inIX' == 4 )
 -- Local Variables:
--- compile-command: "make 4d.okay"
+-- compile-command: "make 4d.okay "
 -- End:

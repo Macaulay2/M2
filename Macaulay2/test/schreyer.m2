@@ -55,5 +55,5 @@ p = 101
 -- Frank is interested in the set of (d,n) such that computations of resolution I,
 -- for the last s, can be done in less than time T, for various T, 1min, 1hr, 1day.
 -- Local Variables:
--- compile-command: "make schreyer.okay"
+-- compile-command: "make schreyer.okay "
 -- End:

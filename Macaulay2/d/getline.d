@@ -21,5 +21,5 @@ export getline(o:file):(string or errmsg) := (
      (string or errmsg)(takestring(tokenbuf)));
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

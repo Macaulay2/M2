@@ -4,5 +4,5 @@ f = homogenize(f,z)
 T = R/f
 dim T
 -- Local Variables:
--- compile-command: "make crash2.okay"
+-- compile-command: "make crash2.okay "
 -- End:

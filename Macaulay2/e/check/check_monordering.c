@@ -10,14 +10,14 @@ void test_monorderings(Test *pTest)
     *mo7, *mo8, *mo9, *mo10, *mo11, *mo12, *mo13, *mo14, *moc,
     *n1;
 
-  mo1 = IM2_MonomialOrdering_lex(8,1);
-  ct_test(pTest,IM2_MonomialOrdering_nvars(mo1) == 8);
+  mo1 = rawLexMonomialOrdering(8,1);
+  ct_test(pTest,rawNumberOfVariables(mo1) == 8);
   ct_test(pTest,is_eq(IM2_MonomialOrdering_to_string(mo1),
 	       "MonomialOrdering => {\n"
 	       "    Lex => 8\n"
 	       "    }"));
 
-  mo2 = IM2_MonomialOrdering_weights(arrayint(4,1,4,7,13));
+  mo2 = rawWeightsMonomialOrdering(arrayint(4,1,4,7,13));
   ct_test(pTest,is_eq(IM2_MonomialOrdering_to_string(mo2),
 	       "MonomialOrdering => {\n"
 	       "    Weights => {1,4,7,13}\n"
@@ -30,18 +30,18 @@ void test_monorderings(Test *pTest)
 	       "    Lex => 8\n"
 	       "    }"));
 
-  mo4 = IM2_MonomialOrdering_lex(4,2);
-  mo5 = IM2_MonomialOrdering_lex(7,4);
-  mo6 = IM2_MonomialOrdering_grevlex(arrayint(13, 1,1,1,1,1,1,1,1,1,1,1,1,1),1);
-  mo7 = IM2_MonomialOrdering_grevlex(arrayint(13, 1,1,1,1,1,1,1,1,1,1,1,1,2),1);
-  mo8 = IM2_MonomialOrdering_grevlex(arrayint(13, 1,1,1,1,1101,1,1,1,1,1,1,123,1),1);
-  mo9 = IM2_MonomialOrdering_grevlex(arrayint(5, 1,1,2,2,2), 1);
-  mo10 = IM2_MonomialOrdering_grevlex(arrayint(5, 1,1,1,1,1), 2);
-  mo11 = IM2_MonomialOrdering_grevlex(arrayint(5, 1,3,4,5,6), 4);
-  mo12 = IM2_MonomialOrdering_revlex(100);
-  mo13 = IM2_MonomialOrdering_laurent(3);
-  mo14 = IM2_MonomialOrdering_NClex(10);
-  moc = IM2_MonomialOrdering_position(1);
+  mo4 = rawLexMonomialOrdering(4,2);
+  mo5 = rawLexMonomialOrdering(7,4);
+  mo6 = rawGRevLexMonomialOrdering(arrayint(13, 1,1,1,1,1,1,1,1,1,1,1,1,1),1);
+  mo7 = rawGRevLexMonomialOrdering(arrayint(13, 1,1,1,1,1,1,1,1,1,1,1,1,2),1);
+  mo8 = rawGRevLexMonomialOrdering(arrayint(13, 1,1,1,1,1101,1,1,1,1,1,1,123,1),1);
+  mo9 = rawGRevLexMonomialOrdering(arrayint(5, 1,1,2,2,2), 1);
+  mo10 = rawGRevLexMonomialOrdering(arrayint(5, 1,1,1,1,1), 2);
+  mo11 = rawGRevLexMonomialOrdering(arrayint(5, 1,3,4,5,6), 4);
+  mo12 = rawRevLexMonomialOrdering(100);
+  mo13 = rawGroupLexMonomialOrdering(3);
+  mo14 = rawNClexMonomialOrdering(10);
+  moc = rawPositionMonomialOrdering(1);
 
   n1 = monorder(5,mo4,mo9,mo12,mo14,moc);
 
@@ -64,6 +64,6 @@ Test * monordering_test(void)
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */

@@ -10,5 +10,5 @@ res coker matrix {
 }
 
 -- Local Variables:
--- compile-command: "make res.okay"
+-- compile-command: "make res.okay "
 -- End:

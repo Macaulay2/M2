@@ -70,5 +70,5 @@ import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

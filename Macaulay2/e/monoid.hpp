@@ -179,5 +179,5 @@ inline int Monoid::compare(const int *m, int mcomp, const int *n, int ncomp) con
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

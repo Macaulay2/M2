@@ -251,5 +251,5 @@ time m = rawGBGetMatrix(Gcomp,1,false); -- Groebner basis
 m
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "
 -- End:

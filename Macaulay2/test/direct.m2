@@ -5,5 +5,5 @@ assert( M =!= N )
 assert( N === P )
 assert( directSum{M,N} === directSum{M,N} )
 -- Local Variables:
--- compile-command: "make direct.okay"
+-- compile-command: "make direct.okay "
 -- End:

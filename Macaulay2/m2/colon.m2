@@ -347,5 +347,5 @@ saturate(Vector) := Module => options -> (v) -> saturate(image matrix {v}, optio
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

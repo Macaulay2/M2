@@ -21,7 +21,7 @@ void test_monoids(Test *pTest)
 	       "  ]"));
 
   /* Now another simple one */
-  mo = IM2_MonomialOrdering_lex(8,1);
+  mo = rawLexMonomialOrdering(8,1);
   names = tostrings(8, s);
   degs = arrayint(8, 1,1,1,1,1,1,1,1);
   degs = arrayint(0);
@@ -35,7 +35,7 @@ void test_monoids(Test *pTest)
 	       "  ]"));
 
   /* Now make a "degrees 1" monoid */
-  mo = IM2_MonomialOrdering_laurent(1);
+  mo = rawGroupLexMonomialOrdering(1);
   names = tostrings(1, (char *[]){"t"});
   degs = arrayint(0);
   M1 = IM2_Monoid_make(mo, names, M0, degs);
@@ -47,7 +47,7 @@ void test_monoids(Test *pTest)
 	       "    }\n"
 	       "  ]"));
 
-  mo = IM2_MonomialOrdering_grevlex(arrayint(4,1,3,7,9),1);
+  mo = rawGRevLexMonomialOrdering(arrayint(4,1,3,7,9),1);
   names = tostrings(4, (char *[]){"a","b","c","d"});
   degs = arrayint(4, 1,6, 3, 168);
   M2 = IM2_Monoid_make(mo, names, M1, degs);
@@ -69,6 +69,6 @@ Test * monoid_test(void)
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */

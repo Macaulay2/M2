@@ -30,7 +30,7 @@ static MonomialOrdering *make_mon_order(int n)
   return z; /* Note that getmem_atomic returns zeroed memory */
 }
 
-int IM2_MonomialOrdering_nvars(const MonomialOrdering *mo)
+int rawNumberOfVariables(const MonomialOrdering *mo)
 {
   int i, sum = 0;
   for (i=0; i<mo->len; i++)
@@ -39,7 +39,7 @@ int IM2_MonomialOrdering_nvars(const MonomialOrdering *mo)
   return sum;
 }
 
-int IM2_MonomialOrdering_n_invertible_vars(const MonomialOrdering *mo)
+int rawNumberOfInvertibleVariables(const MonomialOrdering *mo)
 {
   int i, sum = 0;
   for (i=0; i<mo->len; i++)
@@ -48,7 +48,7 @@ int IM2_MonomialOrdering_n_invertible_vars(const MonomialOrdering *mo)
   return sum;
 }
 
-MonomialOrdering *IM2_MonomialOrdering_lex(int nvars, int packing)
+MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing)
 {
   MonomialOrdering *result;
   mon_part p;
@@ -64,7 +64,7 @@ MonomialOrdering *IM2_MonomialOrdering_lex(int nvars, int packing)
   return result;
 }
 
-MonomialOrdering *IM2_MonomialOrdering_grevlex(M2_arrayint degs, int packing)
+MonomialOrdering *rawGRevLexMonomialOrdering(M2_arrayint degs, int packing)
 {
   MonomialOrdering *result;
   mon_part p;
@@ -99,7 +99,7 @@ MonomialOrdering *IM2_MonomialOrdering_grevlex(M2_arrayint degs, int packing)
   return result;
 }
 
-MonomialOrdering *IM2_MonomialOrdering_revlex(int nvars)
+MonomialOrdering *rawRevLexMonomialOrdering(int nvars)
 {
   mon_part p = mo_make(MO_REVLEX, nvars, NULL);
   MonomialOrdering *result = make_mon_order(1);
@@ -107,28 +107,28 @@ MonomialOrdering *IM2_MonomialOrdering_revlex(int nvars)
   return result;
 }
 
-MonomialOrdering *IM2_MonomialOrdering_weights(M2_arrayint wts)
+MonomialOrdering *rawWeightsMonomialOrdering(M2_arrayint wts)
 {
   mon_part p = mo_make(MO_WEIGHTS, wts->len, wts->array);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
-MonomialOrdering *IM2_MonomialOrdering_laurent(int nvars)
+MonomialOrdering *rawGroupLexMonomialOrdering(int nvars)
 {
   mon_part p = mo_make(MO_LAURENT, nvars, 0);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
-MonomialOrdering *IM2_MonomialOrdering_NClex(int nvars)
+MonomialOrdering *rawNClexMonomialOrdering(int nvars)
 {
   mon_part p = mo_make(MO_NC_LEX, nvars, 0);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
-MonomialOrdering *IM2_MonomialOrdering_position(M2_bool up_or_down)
+MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down)
 {
   mon_part p = mo_make((up_or_down ? MO_POSITION_UP : MO_POSITION_DOWN), 0, NULL);
   MonomialOrdering *result = make_mon_order(1);
@@ -159,7 +159,7 @@ static MonomialOrdering *M2_mo_offset(MonomialOrdering *mo, int offset)
 }
 
 
-MonomialOrdering *IM2_MonomialOrdering_join(MonomialOrdering_array M)
+MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
 {
   MonomialOrdering *result;
   int i,j,sum,next;
@@ -178,7 +178,7 @@ MonomialOrdering *IM2_MonomialOrdering_join(MonomialOrdering_array M)
   return result;
 }
 
-MonomialOrdering *IM2_MonomialOrdering_product(MonomialOrdering_array M)
+MonomialOrdering *rawProductMonomialOrdering(MonomialOrdering_array M)
 {
   MonomialOrdering *result;
   int i,j,sum,next,offset;
@@ -191,7 +191,7 @@ MonomialOrdering *IM2_MonomialOrdering_product(MonomialOrdering_array M)
   offset = 0;
   for (i=0; i<M->len; i++)
     {
-      int nvars = IM2_MonomialOrdering_nvars(M->array[i]);
+      int nvars = rawNumberOfVariables(M->array[i]);
       MonomialOrdering *mo = M2_mo_offset(M->array[i], offset);
       for (j=0; j<mo->len; j++)
 	result->array[next++] = mo->array[j];
@@ -217,56 +217,56 @@ extern MonomialOrdering IM2_MonomialOrdering_read_xml(FILE *f)
       if (strcmp("lex",str) == 0)
 	{
 	  fscanf(f, "%d", &nv);
-	  mo = IM2_MonomialOrdering_lex(nv);
+	  mo = rawLexMonomialOrdering(nv);
 	}
       else if (strcmp("lex2",str) == 0)
 	{
 	  fscanf(f, "%d", &nv);
-	  mo = IM2_MonomialOrdering_lex2(nv);
+	  mo = rawLexMonomialOrdering2(nv);
 	}
       else if (strcmp("lex4",str) == 0)
 	{
 	  fscanf(f, "%d", &nv);
-	  mo = IM2_MonomialOrdering_lex4(nv);
+	  mo = rawLexMonomialOrdering4(nv);
 	}
       else if (strcmp("grevlex",str) == 0)
 	{
 	  wts = intarray_read(f, &nv);
-	  mo = IM2_MonomialOrdering_grevlex(nv,wts);
+	  mo = rawGRevLexMonomialOrdering(nv,wts);
 	  FREE(wts);
 	}
       else if (strcmp("grevlex2",str) == 0)
 	{
 	  wts = intarray_read(f, &nv);
-	  mo = IM2_MonomialOrdering_grevlex2(nv,wts);
+	  mo = rawGRevLexMonomialOrdering2(nv,wts);
 	  FREE(wts);
 	}
       else if (strcmp("grevlex4",str) == 0)
 	{
 	  wts = intarray_read(f, &nv);
-	  mo = IM2_MonomialOrdering_grevlex4(nv,wts);
+	  mo = rawGRevLexMonomialOrdering4(nv,wts);
 	  FREE(wts);
 	}
       else if (strcmp("revlex",str) == 0)
 	{
 	  fscanf(f, "%d", &nv);
-	  mo = IM2_MonomialOrdering_revlex(nv);
+	  mo = rawRevLexMonomialOrdering(nv);
 	}
       else if (strcmp("weights",str) == 0)
 	{
 	  wts = intarray_read(f, &nv);
-	  mo = IM2_MonomialOrdering_weights(nv,wts);
+	  mo = rawWeightsMonomialOrdering(nv,wts);
 	  FREE(wts);
 	}
       else if (strcmp("laurent",str) == 0)
 	{
 	  fscanf(f, "%d", &nv);
-	  mo = IM2_MonomialOrdering_laurent(nv);
+	  mo = rawGroupLexMonomialOrdering(nv);
 	}
       else if (strcmp("NClex",str) == 0)
 	{
 	  fscanf(f, "%d", &nv);
-	  mo = IM2_MonomialOrdering_NClex(nv);
+	  mo = rawNClexMonomialOrdering(nv);
 	}
       else if (strcmp("component",str) == 0)
 	{
@@ -405,6 +405,6 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
 */

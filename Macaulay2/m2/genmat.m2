@@ -102,5 +102,5 @@ random(Module, Module) := Matrix => (F,G) -> (
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

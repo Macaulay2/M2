@@ -180,5 +180,5 @@ Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
 Ext(Ideal, Module) := (I,N) -> Ext(module I,N)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -18,5 +18,5 @@ Sequence == Sequence := (x,y) -> (
     -- this is a bit experimental, installed 7/15/99, deleted 3/20/2000
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -13,5 +13,5 @@ assert( unique {4,4,5,5,3,3} === {4, 5, 3} )
 assert( unique {3,4,4,5,5,3,3} === {3, 4, 5} )
 
 -- Local Variables:
--- compile-command: "make C05.okay"
+-- compile-command: "make C05.okay "
 -- End:

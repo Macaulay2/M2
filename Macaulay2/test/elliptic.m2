@@ -16,5 +16,5 @@ B = A/I
 M = M ** B
 ideal syz gb(M, Syzygies=>true)
 -- Local Variables:
--- compile-command: "make elliptic.okay"
+-- compile-command: "make elliptic.okay "
 -- End:

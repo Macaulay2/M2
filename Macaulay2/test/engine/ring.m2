@@ -48,10 +48,10 @@ m = leadMonomial (x^2 * y)
 m' = raw m
 n = leadMonomial (x * y * z)
 n' = raw n
-rawCompare(M',m',n')
+rawCompareMonomial(M',m',n')
 m ? n
 
-rawMonomialSparseListForm raw m
+rawSparseListFormMonomial raw m
 
 exponents(3,raw m)
 exponents(3,raw n)
@@ -170,6 +170,6 @@ I = ideal vars R
 gb I
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
--- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"' -e 'exit 0'"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"' -e 'exit 0' "
 -- End:

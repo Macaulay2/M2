@@ -179,6 +179,6 @@ extern M2_bool tokens_stopIfError;
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 // End:
 */

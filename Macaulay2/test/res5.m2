@@ -17,5 +17,5 @@ assert( dx * x == x*dx + 1 )
 
 
 -- Local Variables:
--- compile-command: "make res5.okay"
+-- compile-command: "make res5.okay "
 -- End:

@@ -421,6 +421,6 @@ void QQ::trans_from_ringelem(gbvectorHeap &H,
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
 

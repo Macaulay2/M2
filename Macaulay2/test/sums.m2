@@ -11,5 +11,5 @@ assert( rank N_[b] == 3 )
 assert( rank O_[a] == 3 )
 assert( rank O_[b] == 2 )
 -- Local Variables:
--- compile-command: "make sums.okay"
+-- compile-command: "make sums.okay "
 -- End:

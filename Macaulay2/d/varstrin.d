@@ -64,5 +64,5 @@ export takereversestring(v:varstring):string := (
 -- export addstring(v:varstring,s:string):void := v<<s;
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

@@ -15,5 +15,5 @@ F = (x*y*z)^3
 s = time syz matrix {{F}};
 s
 -- Local Variables:
--- compile-command: "make moty.okay"
+-- compile-command: "make moty.okay "
 -- End:

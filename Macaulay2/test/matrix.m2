@@ -300,5 +300,5 @@ randomMatrix2 = (F,G) -> (
 
 
 -- Local Variables:
--- compile-command: "make matrix.okay"
+-- compile-command: "make matrix.okay "
 -- End:
