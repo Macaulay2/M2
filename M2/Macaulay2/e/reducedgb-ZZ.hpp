@@ -14,12 +14,12 @@ class ReducedGB_ZZ : public ReducedGB
 
   enum divisor_type find_divisor(exponents exp, int comp, int &result_loc);
 
-public:
-
   ReducedGB_ZZ(GBRing *R0,
 	       const PolynomialRing *originalR0,
 	       const FreeModule *F0,
 	       const FreeModule *Fsyz0);
+
+public:
 
   virtual ~ReducedGB_ZZ();
 
