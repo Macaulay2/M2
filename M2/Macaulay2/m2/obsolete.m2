@@ -1,9 +1,7 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
--- old internal engine routines:
-scan({ConvertJoin,ConvertRepeat,ConvertApply},
+scan({autoReduce,ConvertJoin,ConvertRepeat,ConvertApply},
      s -> s <- X -> error ("'", s, "' has been removed"))
-
 unlist = X -> error "'unlist' has been replaced by toSequence"
 elements = X -> error "'elements' has been replace by toList"
 evaluate = X -> error "'evaluate' has been replaced by 'value'"

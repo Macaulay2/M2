@@ -235,13 +235,6 @@ ensureQuotientModule(Module, String) := (M,errorString) -> (
    then error errorString;
    )
 
--- Auto-reduction
--- autoReduce = method()
-autoReduce Matrix := m -> (
-     sendgg(ggPush m, ggautoreduce);
-     getMatrix ring m)
-
-
 -- This routine computes the dimension of a D-module
 Ddim = method()
 Ddim Ideal := I -> (

@@ -26,14 +26,6 @@ shifts := (m, w, oldshifts) -> (
 -- The following routines are needed to use Mike's new engine schreyer code.
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-Ring ^ Matrix := (R,m) -> (
-    sendgg(ggPush m, ggfree);
-    new Module from R)
-
-
-local fix
-fix = method()
-fix Matrix := m -> map(target m, (ring m)^m, m)
 
 kerGB := m -> (
      -- m should be a matrix which is a GB, and
@@ -43,7 +35,7 @@ kerGB := m -> (
      sendgg(ggPush m.cache.kerGB, ggcalc);
      m.cache.kerGBstatus = eePopInt();
      sendgg(ggPush m.cache.kerGB, gggetsyz);
-     fix getMatrix ring m)
+     schreyerOrder getMatrix ring m)
 
 
 --------------------------------------------------------------------------------
@@ -96,7 +88,7 @@ Dresolution Module := options -> M -> (
      pInfo (2, "\t Degree " | 0 | "...");
      pInfo (2, "\t\t\t Rank = " | rank target N | "\t time = 0. seconds");
      pInfo (2, "\t Degree " | 1 | "...");
-     tInfo := toString first timing (m := fix gens gb N);
+     tInfo := toString first timing (m := schreyerOrder gens gb N);
      pInfo (2, "\t\t\t Rank = " | rank source N | "\t time = " |
 	  tInfo | " seconds");
 
@@ -214,9 +206,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
      pInfo (3, "\t Degree 1...");
      tInfo := toString first timing (
 	  Jgb := gens gb homogenize(tempMap, homVar, Hwt);
-	  if options.Strategy == Schreyer then Jgb = fix Jgb
-	  else if options.Strategy == Vhomogenize
-	  then Jgb = autoReduce Jgb;
+	  if options.Strategy == Schreyer then Jgb = schreyerOrder Jgb;
 	  if options.Strategy == Schreyer then (
 	       tempMat := map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
 	       shiftvec = shifts(homogenize(HWtoVW Jgb, hvwVar, HVWwt),
@@ -243,7 +233,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
 	     	    -- put syzygies in the free module with the correct degree shifts
 	     	    Jsyzmap := map(HW^(-shiftvec), HW^(numgens source Jsyz), Jsyz);
 	     	    -- compute an adapted (-w,w)-GB of the syzygies module
-     	     	    Jgb = autoReduce gens gb homogenize(Jsyzmap, homVar, Hwt);
+     	     	    Jgb = gens gb homogenize(Jsyzmap, homVar, Hwt);
 	     	    );
 	       if options.Strategy == Schreyer then (
 	       	    tempMat = map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
