@@ -12,7 +12,7 @@ ARGS += -e 'path = prepend("@srcdir@/",path)'
 
 %.okay : %.m2
 	@ echo testing $<
-	ulimit -t 600; echo 'input "$<"' | ../../bin/M2 $(ARGS) 
+	ulimit -t 600 -m 60000 -v 60000; echo 'input "$<"' | ../../bin/M2 $(ARGS) 
 	@ touch $@
 
 clean::; rm -f *.okay core
