@@ -119,7 +119,7 @@ document { quote syz,
      ", TO "Matrix", " ", TT "f", ".",
      PARA,
      "syz G -- retrieve the ", TO "Matrix", " of syzygies from the Groebner
-     basis G.  The result may be empty if syzygies were not to be retained during the
+     basis ", TT "G", ".  The result may be empty if syzygies were not to be retained during the
      calculation, or if the computation was not continued to a high enough degree.",
      PARA,
      "This function takes the same optional arguments as ", TT "gb", ".",
@@ -153,11 +153,12 @@ modulo(Matrix,Matrix) := (m,n) -> (
      syz(m|n, SyzygyRows => numgens source m)
      )
 document { quote modulo,
-     "modulo(f,g) - given homomorphisms f and g of free modules with the same target,
-     produces a homomorphism of free modules whose target is the source of f, and
-     whose image is the pre-image (under f) of the image of g.",
+     "modulo(f,g) - given homomorphisms ", TT "f", " and ", TT "g", " of free 
+     modules with the same target, produces a homomorphism of free modules whose 
+     target is the source of ", TT "f", ", and whose image is the pre-image (under
+     ", TT "f", ") of the image of ", TT "g", ".",
      PARA,
-     "If f is null, then it's taken to be the identity.  If g is null, it's
+     "If ", TT "f", " is null, then it's taken to be the identity.  If ", TT "g", " is null, it's
      taken to be zero."
      }
 
@@ -178,8 +179,9 @@ Matrix // Matrix := (f,g) -> (
 	  Degree => degree f - degree g  -- do this in the engine instead
 	  ))
 document { (quote //, Matrix, Matrix),
-     TT "f//g", " -- yields a matrix h from matrices f and g such that f - g*h 
-     is the reduction of f modulo a Groebner basis for the image of g.",
+     TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
+     such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
+     for the image of ", TT "g", ".",
      SEEALSO "%"
      } 
 
@@ -372,10 +374,11 @@ homogenize(Vector, RingElement) := (f,n) -> (
 
 document { quote homogenize,
      TT "homogenize(m,v)", " -- homogenize the ring element, vector,
-     matrix, or module m using the variable v in the ring of m.",
-     PARA,
-     TT "homogenize(m,v,w)", " -- homogenize m using the variable v,
-     so that the result is homogeneous with respect to the given list w of
+     matrix, or module ", TT "m", " using the variable ", TT "v", " in the ring of ", TT "m", ".",
+     BR,
+     NOINDENT,     
+     TT "homogenize(m,v,w)", " -- homogenize ", TT "m", " using the variable ", TT "v", ",
+     so that the result is homogeneous with respect to the given list ", TT "w", " of
      integers provided as weights for the variables.",
      PARA,
      EXAMPLE {

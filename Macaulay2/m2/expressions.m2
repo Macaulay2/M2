@@ -80,7 +80,7 @@ document { quote Held,
      }
 
 Held#expandFunction = first
-tex Held := v -> "{" | (if class v#0 === Symbol then string v#0 else name v#0) | "}"
+texMath Held := v -> "{" | (if class v#0 === Symbol then string v#0 else name v#0) | "}"
 html Held := v -> if class v#0 === Symbol then string v#0 else name v#0
 
 HeldString = new Type of Expression
@@ -853,7 +853,7 @@ net MatrixExpression := x -> (
      else (
      	  x = applyTable(x,net);
      	  w := apply(transpose x, 
-	       col -> 1 + max apply(col, i -> width i));
+	       col -> 2 + max apply(col, i -> width i));
 	  m := verticalJoin between("",
 	       apply(#x,
 		    i -> (
@@ -866,22 +866,36 @@ net MatrixExpression := x -> (
 -----------------------------------------------------------------------------
 -- tex stuff
 document { quote tex,
-     TT "tex x", " -- convert x to TeX format.",
+     TT "tex x", " -- convert ", TT "x", " to TeX format.",
      PARA,
      EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "p = matrix {{a^2+2,b,c},{d,e,f^3-a}}",
-      	  "tex p",
+	  "R = ZZ[a..f]",
+      	  "tex matrix {{a^2+2,b,c},{d,e,f^3-a}}",
 	  },
-     SEEALSO {"TeX", "hypertex"}
+     SEEALSO {"TeX", "hypertex", "texMath"}
      }
-tex Expression := v -> (
+
+document { quote texMath,
+     TT "texMath x", " -- convert ", TT "x", " to TeX format
+     for use in TeX math mode.",
+     PARA,
+     "The main difference between this and ", TO "tex", " is that the
+     surrouding dollar signs aren't there.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ[x]",
+      	  "texMath (x-1)^6",
+	  },
+     SEEALSO {"TeX", "hypertex", "tex"}
+     }
+
+texMath Expression := v -> (
      op := class v;
      p := precedence v;
      names := apply(v,term -> (
 	       if precedence term <= p
-	       then ("{(", tex term, ")}")
-	       else ("{", tex term, "}") ) );
+	       then ("{(", texMath term, ")}")
+	       else ("{", texMath term, "}") ) );
      if # v === 0 then op#EmptyName 
      else concatenate between(op#operator,names)
      )
@@ -897,14 +911,14 @@ html Expression := v -> (
      else concatenate between(op#operator,names)
      )
 
-tex HeldString := v -> "{" | v#0 | "}"
+texMath HeldString := v -> "{" | v#0 | "}"
 html HeldString := v -> v#0
 
-tex Minus := v -> (
+texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
-     then "{-(" | tex term | ")}"
-     else "{-" | tex term | "}"
+     then "{-(" | texMath term | ")}"
+     else "{-" | texMath term | "}"
      )
 
 html Minus := v -> (
@@ -914,7 +928,7 @@ html Minus := v -> (
      else "-" | html term
      )
 
-tex Divide := x -> "{" | tex x#0 | " \\over " | tex x#1 | "}"
+texMath Divide := x -> "{" | texMath x#0 | " \\over " | texMath x#1 | "}"
 html Divide := x -> (
      p := precedence x;
      a := html x#0;
@@ -924,9 +938,9 @@ html Divide := x -> (
      a | " / " | b)     
 
 html OneExpression := html ZeroExpression :=
-tex OneExpression := tex ZeroExpression := name
+texMath OneExpression := texMath ZeroExpression := name
 
-tex Sum := v -> (
+texMath Sum := v -> (
      n := # v;
      if n === 0 then "0"
      else (
@@ -939,8 +953,8 @@ tex Sum := v -> (
 		    else v#i ));
 	  names := apply(n, i -> (
 		    if precedence v#i <= p 
-		    then "(" | tex v#i | ")"
-		    else tex v#i ));
+		    then "(" | texMath v#i | ")"
+		    else texMath v#i ));
 	  concatenate mingle ( seps, names )))
 html Sum := v -> (
      n := # v;
@@ -959,17 +973,18 @@ html Sum := v -> (
 		    else html v#i ));
 	  concatenate mingle ( seps, names )))
 
-tex Product := v -> (
+texMath Product := v -> (
      n := # v;
      if n === 0 then "1"
      else (
      	  p := precedence v;
-     	  concatenate between( "\\cdot ", apply(#v,
+     	  concatenate between( " ",	  -- could also try \cdot in case there are integers together.
+	        apply(#v,
 		    i -> (
 			 term := v#i;
 			 if precedence term <= p 
-			 then "(" | tex term | ")"
-			 else tex term
+			 then "(" | texMath term | ")"
+			 else texMath term
 			 )
 		    )
 	       )
@@ -991,19 +1006,19 @@ html Product := v -> (
 	  )
      )
 
-tex Power := v -> (
-     if v#1 === 1 then tex v#0
+texMath Power := v -> (
+     if v#1 === 1 then texMath v#0
      else (
 	  p := precedence v;
-	  x := tex v#0;
-	  y := tex v#1;
+	  x := texMath v#0;
+	  y := texMath v#1;
 	  if precedence v#0 <  p then x = "(" | x | ")";
 	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
 
-tex Subscript := tex Superscript := v -> (
+texMath Subscript := texMath Superscript := v -> (
      p := precedence v;
-     x := tex v#0;
-     y := tex v#1;
+     x := texMath v#0;
+     y := texMath v#1;
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
@@ -1030,25 +1045,25 @@ html Subscript := v -> (
      if precedence v#0 <  p then x = "(" | x | ")";
      concatenate(x,"<sub>",y,"</sub>"))
 
-tex SparseVectorExpression := v -> (
+texMath SparseVectorExpression := v -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
-     scan(v#1,(i,x)->w#i=tex x);
+     scan(v#1,(i,x)->w#i=texMath x);
      concatenate("\\pmatrix{", between("\\cr ",w),"\\cr}")
      )
 
-tex SparseMonomialVectorExpression := v -> (
-     tex sum(v#1,(i,m,a) -> 
+texMath SparseMonomialVectorExpression := v -> (
+     texMath sum(v#1,(i,m,a) -> 
 	  expression a * 
 	  expression m * 
 	  new HeldString from concatenate("<",name i,">"))
      )
 
-tex MatrixExpression := m -> concatenate(
+texMath MatrixExpression := m -> concatenate(
      "\\pmatrix{",
      apply(m,
 	  row->(
-	       between("&"|newline,apply(row,tex)),
+	       between("&"|newline,apply(row,texMath)),
  	       "\\cr"|newline)),
      "}"
      )
@@ -1059,14 +1074,14 @@ TeX = x -> (
      f := tmpname "tx" | string ctr;
      f | ".tex" 
      << "\\magnification = \\magstep 0" << endl
-     << "$" << tex x << "$" << endl
+     << tex x << endl
      << "\\end" << endl << close;
      if 0 === run("cd /tmp; tex " | f)
      then run("(xdvi -s 4 "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log)&")
      else run("rm -f "|f|".tex "|f|".dvi "|f|".log");
      )
 document { quote TeX,
-     TT "TeX x", " -- convert x to TeX format, and display it on the screen.",
+     TT "TeX x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
      PARA,
      "The code for this function is Unix dependent at the moment.",
      PARA,
@@ -1103,7 +1118,9 @@ document { quote print,
      }
 -----------------------------------------------------------------------------
 
-tex ZZ := string
+texMath ZZ := string
+texMath Thing := x -> texMath expression x
+tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x
 
 html ZZ := string

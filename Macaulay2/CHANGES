@@ -2,6 +2,10 @@ Changes made, most recent ones first:
 
 New in 0.8.42:
 
+type 'HtmlList' renamed to 'MarkUpList'
+
+type 'ListHead' renamed to 'MarkUpType'
+
 SEEALSO now takes a list of items instead of a sequence of items
 
 graphIdeal now returns an ideal instead of a matrix
