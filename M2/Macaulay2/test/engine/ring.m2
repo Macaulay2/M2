@@ -45,6 +45,13 @@ degrees H
 assert ( degrees H == {{1}, {2}, {3}} )
 
 --matrices
+
+u = id_F
+assert ( u == 1 )
+assert ( u-u == 0 )
+
+end
+
 v = vars R
 
 v
@@ -72,8 +79,6 @@ assert( submatrix(t,{1,2}) == matrix {{y,z},{z,x},{x,y}} )
 assert( submatrix(t,{1,2},{2,0}) == matrix {{x, y}, {y, z}} )
 assert( submatrix(t,,{2,0}) == matrix {{z, x}, {x, y}, {y, z}} )
 
-end
-
 -- remaking matrices
 w = map(R^1,,v)
 degrees source w
@@ -92,5 +97,5 @@ assert( degrees source w == {{1}, {2}, {3}} )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
--- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"'" -e 'exit 0'
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"' -e 'exit 0'"
 -- End:
