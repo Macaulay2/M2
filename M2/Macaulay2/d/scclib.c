@@ -482,3 +482,32 @@ void *GC_realloc3 (void *s, size_t old, size_t new) {
 void GC_free2 (void *s, size_t old) {
      GC_FREE(s);
      }
+
+#if 0
+
+/* This routine is obtained by merging the code from
+   versions of it found in the source for the new libg++ 2.0.8 and the old libc 5.4.23.
+   The crucial line missing from the modern code was the one that initialized _fileno. */
+
+void _IO_init(register _IO_FILE *fp, int flags) {
+  fp->_flags = _IO_MAGIC|flags;
+  fp->_IO_buf_base = NULL;
+  fp->_IO_buf_end = NULL;
+  fp->_IO_read_base = NULL;
+  fp->_IO_read_ptr = NULL;
+  fp->_IO_read_end = NULL;
+  fp->_IO_write_base = NULL;
+  fp->_IO_write_ptr = NULL;
+  fp->_IO_write_end = NULL;
+  fp->_chain = NULL; /* Not necessary. */
+  fp->_IO_save_base = NULL;
+  fp->_IO_backup_base = NULL;
+  fp->_IO_save_end = NULL;
+  fp->_markers = NULL;
+  fp->_cur_column = 0;
+  fp->_fileno = -1;
+#ifdef _IO_MTSAFE_IO
+  _IO_lock_init (*fp->_lock);
+#endif
+}
+#endif

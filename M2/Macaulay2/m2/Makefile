@@ -110,9 +110,7 @@ $(SCRIPTS) : makeM2.m2
 
 backup : CVS/Entries
 CVS/Entries : $(GFILES)
-	mount /a.ext2
-	tar cfz /a.ext2/m2.tgz $?
-	umount /a.ext2
+	tar cfzv /f/dan/backups/m2-$$$$.tgz $?
 
 all :: bare
 

@@ -301,6 +301,9 @@ substitute(Matrix,ZZ) := (m,i) -> (
 sub2 := (R,v) -> (
      m := new MutableList from generators R;
      scan(v, opt -> (
+	       if class opt =!= Option 
+	       or #opt =!= 2
+	       then error "expected a list of options";
 	       x := opt#0;
 	       y := opt#1;
 	       s := try baseName x else error(
