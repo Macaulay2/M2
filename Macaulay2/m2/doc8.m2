@@ -1180,7 +1180,7 @@ document { (map,Ring,Ring,Matrix),
 	  "S = ZZ[a,b,c];",
 	  "f = map(R,S,matrix {{x^2,x*y,y^2}})",
 	  "f(a+b+c^2)",
-	  "g = map(R,S,matrix {{1,2,3},{4,5,6}})"
+	  "g = map(R,S,matrix {{1,2,3},{4,5,6}})",
 	  "g(x+y)"
 	  },
      "If the coefficient ring of ", TT "S", " is itself a polynomial ring, then

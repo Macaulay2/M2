@@ -100,6 +100,10 @@ fillseq(e:ParseTree,v:CodeSequence,m:int):int := (
 	       --then (return(m))
 	       --else
 	       (v.m = convert(e); return(m+1)))
+	  is dummy do (
+	       v.m = exprCode(nullE,treePosition(e));
+	       return(m+1);
+	       )
 	  is p:Parentheses do (
 	       --if p.left.word == leftparen
 	       --then e = p.contents
@@ -467,7 +471,8 @@ export convert(e:ParseTree):Code := (
      is u:Postfix do Code(
 	  unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
      is d:dummy do (
-     	  Code(exprCode(nullE,d.position))
+     	  -- was Code(exprCode(nullE,d.position)), but forfun() is looking for dummyCode
+	  dummyCode
 	  ));
 export codePosition(e:Code):Position := (
      when e
@@ -744,11 +749,11 @@ shieldfun(a:Code):Expr := (
 setupop(shieldS,shieldfun);     
 
 returnFun(a:Code):Expr := (
-     e := eval(a);
+     e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,returnMessage,emptySequenceE,e)));
 setupop(returnS,returnFun);
 
 breakFun(a:Code):Expr := (
-     e := eval(a);
+     e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,emptySequenceE,e)));
 setupop(breakS,breakFun);

@@ -901,6 +901,7 @@ TEST "
     I1 = I*B
     I2 = lift(I1,A)
     assert(trim I2 == ideal(a,b,d^2))
+    use B
     C = B/(b^3-c^3)
     I3 = I2*C
     I3a = I*C
@@ -1221,7 +1222,7 @@ assert( lift(v^7,M) == (lift(v,M))^7 )
 
 TEST "
 R=ZZ/101[a,b,c]
-f = map(R,R,matrix(ZZ/101,{{1,2,3},{4,5,6},{7,8,9}}))
+f = map(R,R,matrix{{1,2,3},{4,5,6},{7,8,9}})
 assert( f(a) == a + 4*b + 7*c )
 assert( kernel f == ideal ( a-2*b+c ) )
 "

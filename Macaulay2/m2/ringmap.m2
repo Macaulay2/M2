@@ -37,8 +37,8 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	       }
 	  )
      else if (
-	  ring m === try coefficientRing R
-     	  and ring m === try coefficientRing S
+	  ring m === (try coefficientRing R)
+     	  and ring m === (try coefficientRing S)
      	  and isFreeModule target m
      	  and isFreeModule source m
 	  )
