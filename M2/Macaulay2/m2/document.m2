@@ -12,13 +12,13 @@ addStartFunction(
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
 	  path = unique apply(
-	       join( path, { home | "m2/", home | "packages/" }),
+	       join( path, { home | "/m2/", home | "/packages/" }),
 	       minimizeFilename);
 	  documentationPath = unique apply(
 	       {
 		    "cache/doc/",	-- this is where new documentation is written
-		    home | "m2/cache/doc/",
-		    home | "packages/cache/doc/"
+		    home | "/m2/cache/doc/",
+		    home | "/packages/cache/doc/"
 		    },
 	       minimizeFilename);
 	  )
