@@ -28,8 +28,10 @@ distclean::; rm -f Makefile
 
 all :: $(PACKAGES:.m2=.installed)
 
+MAKEINFO = true
+
 %.installed : %.m2
-	../bin/M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => true, PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
+	../bin/M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => true, MakeInfo => $(MAKEINFO), PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
 	touch "$@"
 
 clean::; rm -rf tmp tmp-packages *.installed
