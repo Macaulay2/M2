@@ -131,6 +131,16 @@ getinteger():Expr := (
 	       );
 	  if sgn then -Expr(x) else Expr(x)));
 ConvertInteger := makeProtectedSymbolClosure("ConvertInteger");
+import sizeofDouble():int;
+import convertnettodouble(str:string,pos:int):double;
+getreal():Expr := (
+     n := sizeofDouble();
+     if cvtpos + n > cvtlen 
+     then return(buildErrorPacket("encountered end of string prematurely"));
+     r := Expr(Real(convertnettodouble(cvtstr,cvtpos)));
+     cvtpos = cvtpos + n;
+     r);
+ConvertReal := makeProtectedSymbolClosure("ConvertReal");
 convert(format:Expr):Expr := (
      when format
      is a:Sequence do (
@@ -253,6 +263,7 @@ convert(format:Expr):Expr := (
 	  )
      is w:SymbolClosure do (
 	  if w.symbol == ConvertInteger.symbol then getinteger()
+	  else if w.symbol == ConvertReal.symbol then getreal()
 	  else buildErrorPacket("encountered a unrecognized format symbol")
 	  )
      is c:FunctionClosure do apply(c,emptySequence)
@@ -301,8 +312,10 @@ formatseq(v:Sequence):Expr := (
 	       );
 	  );
      Expr(stringcatseq(b)));
+import convertdoubletonet(x:double):string;
 formatfun(e:Expr):Expr := (
      when e
+     is r:Real do Expr(convertdoubletonet(r.v))
      is i:Integer do Expr(converttonet(i))
      is h:Handle do Expr(converttonet(toInteger(h.handle)))
      is v:Sequence do formatseq(v)
