@@ -21,34 +21,34 @@ tags := new HashTable from {
 opts := new HashTable from {
      Lex => (
 	  x -> (
-	       if class x === ZZ then sendgg(ggPush mo,ggPush x, ggMOlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush mo,ggPush x,ggMOlex)
+	       if class x === ZZ then sendgg(ggPush x,ggPush mo, ggMOlex)
+	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOlex)
 	       else error "expected Lex argument to be an integer or list of integers"
      	       )
 	  ),
      GroupLex => (
 	  x -> (
-	       if class x === ZZ then sendgg(ggPush mo,ggPush x, ggPush 1, ggMOlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush mo,ggPush x, ggPush 1, ggMOlex)
+	       if class x === ZZ then sendgg(ggPush x, ggPush 1, ggPush mo, ggMOlex)
+	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x, ggPush 1, ggPush mo, ggMOlex)
 	       else error "expected Lex argument to be an integer or list of integers"
 	       )
 	  ),
      RevLex => (
 	  x -> (
-	       if class x === ZZ then sendgg(ggPush mo,ggPush x, ggMOrevlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush mo,ggPush x,ggMOrevlex)
+	       if class x === ZZ then sendgg(ggPush x, ggPush mo, ggMOrevlex)
+	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOrevlex)
 	       else error "expected RevLex argument to be an integer or list of integers"
 	       )
 	  ),
      NCLex => (
 	  x -> (
-	       if class x === ZZ then sendgg(ggPush mo,ggPush x, ggMONClex)
+	       if class x === ZZ then sendgg(ggPush x, ggPush mo,ggMONClex)
 	       else error "expected NCLex argument to be an integer"
 	       )
 	  ),
      Weights => (
 	  x -> (
-	       if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush mo,ggPush x,ggMOwtfcn)
+	       if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOwtfcn)
 	       else error "expected 'Weights' argument to be a list of integers"
 	       )
 	  )
@@ -63,7 +63,7 @@ types := new HashTable from {
 	       )
 	  ),
      Eliminate => (
-	  x -> sendgg(ggPush mo,ggPush toList (x#0 : 1), ggMOwtfcn)
+	  x -> sendgg(ggPush toList (x#0 : 1), ggPush mo,ggMOwtfcn)
 	  )
      }
 
