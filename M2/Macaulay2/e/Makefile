@@ -346,8 +346,12 @@ ifeq "$(CC)" "cl"
 $(LIB): $(OFILES)
 	$(AR) $(ARFLAGS) /out:$@ $^	
 else
-$(LIB): $(LIB)($(OFILES))
+#$(LIB): $(LIB)($(OFILES))
+#	-$(RANLIB) $(LIB)
+$(LIB): $(OFILES)
+	$(AR) $(ARFLAGS) $@ $?
 	-$(RANLIB) $(LIB)
+
 endif
 
 %.dd: %.cpp
