@@ -135,8 +135,8 @@ bookFile << ///
 	      bookFile << endl << endl
 	      << "\\hypertarget{" << n << "}{}" << endl
 	      << sectionType n << "{" << cmrLiteral formatDocumentTag node << "}"
-	      << "\\label{" << n << "}" << endl
-	      << " (label: " << n << ") " << endl	    -- just for debugging the numbers
+	      << "\\label{" << n << "}" << endl;
+	      if getenv "DEBUG" != "" then << " (label: " << n << ") " << endl;
 	      << concatenate booktex d << endl;
 	      )
 	 )
