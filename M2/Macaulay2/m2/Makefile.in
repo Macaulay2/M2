@@ -159,7 +159,7 @@ justM2 all:: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; env M2HOME=.. gdb ../libexec/Macaulay2
 .gdbinit: .gdbinit.$(USER); cp $< $@
 clean::; rm -f .gdbinit
-.gdbinit.$(USER):; cp .gdbinit.dan $@
+.gdbinit.$(USER):; cp @srcdir@/.gdbinit.dan $@
 .gdb-files:
 	echo 'file ../libexec/Macaulay2' >$@
 	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@

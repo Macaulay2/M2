@@ -344,6 +344,9 @@ LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 
+# we avoid successfully using streamio, but we need the personality function
+LIBRARYOPTIONS += -lstdc++
+
 ifeq "$(CC) $(STATIC)" "gcc no"
 LIBRARYOPTIONS += -Wl,-Bdynamic
 endif
