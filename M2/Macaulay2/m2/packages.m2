@@ -1,5 +1,82 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+PREFIX := ""
+addStartFunction(
+     () -> (
+          PREFIX = getenv "M2PREFIX";
+	  if PREFIX =!= "" then path = append( path, 
+	       minimizeFilename ( PREFIX | "/share/Macaulay2/packages/" )
+	       )))
+
+isAbsolute := url -> (					    -- drg: replace with regexp after merging the branch
+     "#" == substring(url,0,1) or
+     "http://" == substring(url,0,7) or
+     "ftp://" == substring(url,0,6) or
+     "mailto:" == substring(url,0,7)
+     )
+
+buildDirectory = "tmp/"					    -- buildDirectory is one possible PREFIX
+     	       	    	      	   	     	       	    -- set, for example, in packages.m2
+
+buildPackage = ""					    -- name of the package currently being built
+
+
+rel := url -> (
+     -- stderr << "url           = " << url << endl;
+     -- stderr << "htmlDirectory = " << htmlDirectory << endl;
+     if isAbsolute url 
+     then url
+     else relativizeFilename(htmlDirectory, url)
+     )
+
+
+htmlFilename = method()
+htmlFilename(String) := (nodename) -> (	-- returns the path from the PREFIX to the file
+     basename := toFilename nodename | ".html";
+     fn0 := "share/doc/Macaulay2/currentVersion/html/"|basename;
+     if PREFIX =!= "" and fileExists (PREFIX|"/"|fn0) -- depends on M2 being installed there
+     then fn0
+     else concatenate("share/doc/Macaulay2/packages/", buildPackage, "/html/", basename)
+     )
+
+html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
+text IMG  := x -> ""
+tex  IMG  := x -> ""
+
+html HREF := x -> (
+     "<A HREF=\"" 					    -- "
+     | rel first x 
+     | "\">" 						    -- "
+     | html last x 
+     | "</A>"
+     )
+text HREF := x -> "\"" | last x | "\""
+tex HREF := x -> (
+     concatenate(
+	  ///\special{html:<A href="///, 		    -- "
+	       texLiteral rel first x,
+	       ///">}///,				    -- "
+	  tex last x,
+	  ///\special{html:</A>}///
+	  )
+     )
+
+html TO := x -> (
+     key := x#0;
+     formattedKey := formatDocumentTag key;
+     concatenate ( 
+     	  ///<A HREF="///,				    -- "
+	  rel htmlFilename formattedKey,
+	  ///">///, 					    -- "
+     	  htmlExtraLiteral formattedKey,
+     	  "</A>",
+     	  drop(toList x,1) 
+     	  )
+     )
+html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
+
+-----------------------------------------------------------------------------
+
 currentPackage = null
 writableGlobals.currentPackage = true
 
