@@ -10,7 +10,8 @@ newSchur := (R,M) -> (
      then error "expected ordered monoid handled by the engine";
      if not (R.?Engine and R.Engine) 
      then error "expected coefficient ring handled by the engine";
-     SR := new SchurRing from rawSchurRing(R.RawRing,M.RawMonoid);
+     RM := R M;
+     SR := new SchurRing from rawSchurRing(RM.RawRing);
      SR.baseRings = append(R.baseRings,R);
      ONE := SR#1;
      if degreeLength M != 0 then (

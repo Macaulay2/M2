@@ -41,5 +41,14 @@ B = rawGaloisField raw x
 x = B_0
 apply(1..24, i -> x^i)
 
+-----------------------------
+-- Test of SchurRing --------
+-----------------------------
+R = Schur 4
+f = R_{1,1}
+dimension f
+g = f*f
+assert(dimension g == (dimension f)^2)
+
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw2.okay "
 -- End:
