@@ -1,27 +1,3 @@
-----------------------------
--- The granddaddy node -----
-----------------------------
-
-document {
-     Key => "Mathematical Overview",
-     "In this part of the manual we give an overview of the various types of mathematical objects
-     that Macaulay 2 can handle.",
-     Subnodes => {
-	  TO "rings",
-	  TO "ideals",
-	  TO "matrices and free modules",
-	  TO "substitution and maps between rings",
-	  TO "modules",
-	  TO "free resolutions, chain complexes, and homological algebra",
-	  TO "varieties",
-	  TO "commutative algebra",
-	  TO "algebraic geometry",
-	  }
-     }
-
-----------------------------
--- Top level nodes ---------
-----------------------------
 
 document {
      Key => "rings",
@@ -80,7 +56,7 @@ document {
 	  TO "minimal primes of an ideal",
 	  TO "associated primes of an ideal",
 	  TO "primary decomposition",
-	  -- TO "Groebner bases and related computations", -- already referred to in the Mathematical Overview
+	  -- TO "Groebner bases", -- already referred to in the Mathematical Overview
 	  },
      PARA,
      "For those operations where we consider an ideal as a module, such
@@ -305,19 +281,11 @@ document {
      }
 
 document {
-     Key => "Groebner bases and related computations",
-     HEADER2 "An overview",
+     Key => "Groebner bases",
      Subnodes => {
 	  TO "what is a Groebner basis?",
 	  TO "finding a Groebner basis",
 	  TO "rings that are available for Groebner basis computations",
-	  "A few applications of Groebner bases",
-	  TO "elimination of variables",
-	  TO "Hilbert functions",
-	  TO "syzygies",
-	  TO "saturation",
-	  TO "fibers of maps",
-	  TO "solving systems of polynomial equations",
 	  TO "fine control of a Groebner basis computation"
 	  }
      }

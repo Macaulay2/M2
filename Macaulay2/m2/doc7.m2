@@ -956,7 +956,6 @@ document {
      Usage => "map(M,n,v)",
      Inputs => {
 	  "M" => null,
-	  "" => null,
 	  "v" => null
 	  },
      Outputs => {
@@ -1504,8 +1503,8 @@ document {
      OldSynopsis => {
 	  "S = R/f",
 	  "R" => null,
-	  "f" => { "an element of ", TT "R", "" },
-	  "S" => { "the quotient ring ", TT "R/Rf", "."}
+	  "f" => { "an element of ", TT "R" },
+	  "S" => { "the quotient ring ", TT "R/Rf"}
 	  }
      }
 document {
@@ -1514,8 +1513,8 @@ document {
      OldSynopsis => {
 	  "S = R/(f,g,h,...)",
 	  "R" => null,
-	  "(f,g,h,...)" => { "a sequence of elements of ", TT "R", "" },
-	  "S" => { "the quotient ring ", TT "R/(Rf+Rg+Rh+...)", "."}
+	  "(f,g,h,...)" => { "a sequence of elements of ", TT "R" },
+	  "S" => { "the quotient ring ", TT "R/(Rf+Rg+Rh+...)"}
 	  }
      }
 document {

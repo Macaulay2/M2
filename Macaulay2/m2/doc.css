@@ -24,7 +24,7 @@ table.examples {
      border-width: 3px;
      background-color: #80ffff;
      border-spacing: 0px;
-     line-height: 10pt;
+     /* line-height: 10pt; */
      margin-left: 2em;
 }
 td.examples {

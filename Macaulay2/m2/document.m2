@@ -754,7 +754,7 @@ briefSynopsis := key -> (
 		    if inp#?0 then PARA1 { "Inputs:", UL inp },
 		    if out#?0 then PARA1 { "Outputs:", UL out },
 		    if res#?0 then PARA1 { "Consequences:", UL res },
-		    if ino#?0 then PARA1 { TO "Optional inputs", ":", UL ino }
+		    if ino#?0 then PARA1 { TO2{ "using functions with optional inputs", "Optional inputs"}, ":", UL ino }
 		    }
 	       }
 	  ))
