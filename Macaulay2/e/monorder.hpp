@@ -24,22 +24,28 @@ class mon_order
 protected:
   mon_order_types ty;
   int n;
+
+  int nweights;
+  int *weights;  // array 0..n*nweights-1.
+
   int *degs;
   int **order;
   int **inv_order;
   int *inv_degs;
 
-  mon_order(mon_order_types ty, const intarray &degs);
+  mon_order(mon_order_types ty, const intarray &degs, const intarray &wts);
+  void set_weights(const int *exp, int *m) const;
 public:
   virtual ~mon_order();
 
   static mon_order *trivial();
-  static mon_order *grlex(const intarray &degs);
-  static mon_order *rlex(const intarray &degs);
-  static mon_order *glex(const intarray &degs);
-  static mon_order *lex(const intarray &degs);
-  static mon_order *elim(const intarray &degs, int i);
-  static mon_order *product(const intarray &degs, const intarray &blocks);
+  static mon_order *grlex(const intarray &degs,const intarray &wts);
+  static mon_order *rlex(const intarray &degs,const intarray &wts);
+  static mon_order *glex(const intarray &degs,const intarray &wts);
+  static mon_order *lex(const intarray &degs,const intarray &wts);
+  static mon_order *elim(const intarray &degs, int i,const intarray &wts);
+  static mon_order *product(const intarray &degs, const intarray &blocks,
+			    const intarray &wts);
 
   static mon_order *product(const mon_order *m1, const mon_order *m2);
   static mon_order *elim_product(const mon_order *m1, const mon_order *m2);
@@ -52,6 +58,8 @@ public:
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
 
+  int n_weights() const { return nweights; }
+
   int degree(int v) const { return degs[v]; }
   mon_order_types type() const { return ty; }
   int n_vars() const { return n; }
@@ -61,7 +69,7 @@ public:
 class grlex_mon_order : public mon_order
 {
 public:
-  grlex_mon_order(const intarray &degs);
+  grlex_mon_order(const intarray &degs, const intarray &weights);
   ~grlex_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -72,7 +80,7 @@ public:
 class grlex1_mon_order : public mon_order
 {
 public:
-  grlex1_mon_order(const intarray &degs);
+  grlex1_mon_order(const intarray &degs, const intarray &weights);
   ~grlex1_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -84,7 +92,8 @@ class product_mon_order : public mon_order
   int nblocks;
   int *blocks;
 public:
-  product_mon_order(const intarray &degs, const intarray &blocks);
+  product_mon_order(const intarray &degs, const intarray &blocks,
+		    const intarray &weights);
   ~product_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -95,7 +104,7 @@ class elim_mon_order : public mon_order
 {
   int nelim;			// Number of variables to eliminate
 public:
-  elim_mon_order(const intarray &degs, int n);
+  elim_mon_order(const intarray &degs, int n, const intarray &weights);
   ~elim_mon_order();
 
   virtual void encode(const int *exp, int *m) const;

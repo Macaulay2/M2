@@ -2,123 +2,117 @@
 
 #include "style.hpp"
 #include "EGB1.hpp"
+#include "polyring.hpp"
 #include "matrix.hpp"
 #include "text_io.hpp"
+#include "ntuple.hpp"
+#include "interp.hpp"
 extern char system_interrupted;
-extern int comp_printlevel;
 
 stash *EGB1::mystash;
-
-////////////////////////////////
-// EMonomialLinearLookupTable //
-////////////////////////////////
-EMonomialLinearLookupTable::EMonomialLinearLookupTable()
+stash *egb_elem::mystash;
+void i_EGB()
 {
-  // What to set here??
+  egb_elem::mystash = new stash("egb_elem", sizeof(egb_elem));
+  EGB1::mystash = new stash("EGB1", sizeof(EGB1));
+  es_pair::mystash = new stash("es_pair", sizeof(es_pair));
 }
-int EMonomialLinearLookupTable::monomial_mask(const int *exp) const
+void make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy)
 {
-  int result = 0;
-  int i,j;
-  for (i=0, j=0; i<nvars; i++, j++)
+  EGB1 *p = new EGB1(m,dosyz,nsyz,strategy);
+  gStack.insert(p);
+}
+
+ERingTable *EGB1::create_ring_table() const
+{
+  // Loop through all quotient elements, make ering_elem's, and insert into the
+  // result table.
+  ERingTable *ring_table = new ERingTable(I);
+  array< ering_elem * > junk;
+
+  for (int i=0; i<I.n_quotients(); i++)
     {
-      if (j == 8*sizeof(int)) j=0;
-      if (exp[i] > 0)
-	result |= (1 << j);
+      ering_elem *r = new ering_elem;
+      r->f = I.get_quotient_element(i);
+      r->lcm = new_exponent_vector();
+      I.to_exponents(I.lead_monomial_of_polynomial(r->f), r->lcm);
+      r->degree = ntuple::weight(nvars,r->lcm,heuristicWeightVector);
+      ring_table->insert(r, junk);  // We are guaranteed that all the 'r' s are minimal.
     }
-  return result;
+  return ring_table;
 }
 
-int EMonomialLinearLookupTable::exp_divides(const int *e, const int *f) const
+///////////////////////
+// ESPairLookupTable //
+///////////////////////
+
+ESPairLookupTable::ESPairLookupTable(int nvars, es_pair *pairs)
+  : nvars(nvars), table(0), last(0)
 {
-  for (int i=0; i<nvars; i++)
-    if (e[i] > f[i]) return 0;
-  return 1;
+  table = new node;  // A list header
+  table->next = 0;
+  last = table;
+  append_list(pairs);
 }
-
-int EMonomialLinearLookupTable::compare(node *p, node *q) const
+ESPairLookupTable::~ESPairLookupTable()
 {
-  return EQ;
+  last = 0;
+  delete table;
+  table = 0;
 }
-
-void EMonomialLinearLookupTable::insert(egb_elem *g, const int *exponents,
-					array<egb_elem *> &nonminimals)
+void ESPairLookupTable::append(es_pair *&p)
 {
-  // 'table' is sorted in increasing monomial order (actual degree first)
-  // So: search to the point where 'p' should be inserted, then remove elements
-  // past that which are divisible by 'p'.
-
+  if (p == 0) return;
   node *t = new node;
+  t->elem = p;
+  t->mask = ntuple::mask(nvars, p->lcm);
   t->next = 0;
-  t->elem = g;
-  t->exponents = exponents;
-  t->mask = monomial_mask(t->exponents);
-  // MES  t->degree = actual_degree(t->exponents);
-  node *p;
-  node head;
-  head.next = table;
-  for (p = &head; p->next != 0; p = p->next)
-    {
-      int cmp = compare(p, t);
-      if (cmp == LT) continue;
-      // note that cmp == EQ should NOT happen
-      break;
-    }
-  t->next = p->next;
-  p->next = t;
-  table = head.next;
-
-  // Now we must check and remove those which are divisible by 't'.
-  for (p = t; p->next != 0; p = p->next)
-    {
-      if (exp_divides(t->exponents, p->next->exponents))
-	{
-	  node *tmp = p->next;
-	  p->next = tmp->next;
-	  tmp->next = 0;
-	  nonminimals.append(tmp->elem);
-	  tmp->elem = 0;
-	  delete tmp;
-	}
-    }
+  last->next = t;
+  last = t;
+  p = 0;
 }
-
-bool EMonomialLinearLookupTable::find_divisor(
-	      const int *exp,
-	      egb_elem * & result) const
+void ESPairLookupTable::append_list(es_pair *&pairs)
 {
-  int expmask = ~(monomial_mask(exp));
+  while (pairs != 0) {
+    es_pair *tmp = pairs;
+    pairs = pairs->next;
+    append(tmp);
+  }
+}
+bool ESPairLookupTable::find_divisor(const exponent_vector *exp, 
+				     es_pair *&result) const
+{
+  unsigned int expmask = ~(ntuple::mask(nvars,exp));
 
-  // Need to consider ring elements here?
-
-  for (node *p = table; p != 0; p = p->next)
+  for (node *p = table->next; p != 0; p = p->next)
     if ((expmask & p->mask) == 0)
       {
-	for (int i=0; i<nvars; i++)
-	  if (exp_divides(p->exponents, exp))
-	    {
-	      result = p->elem;
-	      return true;
-	    }
+	if (ntuple::divides(nvars, p->elem->lcm, exp))
+	  {
+	    result = p->elem;
+	    return true;
+	  }
       }
   return false;
 }
-bool EMonomialLinearLookupTable::find_all_divisors(const int *exp, 
-						   array<egb_elem *> &result) const
-  // Return value: true means that a monomial divisor with lead coeff '1' was found.
+es_pair *ESPairLookupTable::value()
+  // Returns a list of es_pair's.
 {
-  int expmask = ~(monomial_mask(exp));
-
-  // Need to consider ring elements here?
-
-  for (node *p = table; p != 0; p = p->next)
-    if ((expmask & p->mask) == 0)
-      {
-	for (int i=0; i<nvars; i++)
-	  if (exp_divides(p->exponents, exp))
-	    result.append(p->elem);
-      }
-  return (result.length() > 0);
+  es_pair head;
+  es_pair *q = &head;
+  node *p = table->next;
+  table->next = 0;
+  last = table;
+  while (p != 0)
+    {
+      node *tmp;
+      tmp = p;
+      p = p->next;
+      q->next = tmp->elem;
+      q = q->next;
+      delete tmp;
+    }
+  return head.next;
 }
 ///////////////////////////////////////////////////////////////
 
@@ -127,14 +121,19 @@ bool EGB1::set_up(const Matrix &m, int csyz, int nsyz, int strat)
 {
   // Returns false if an error is found.  That is, if the ring of 'm' is not
   // appropriate.
-  
-  R = m.Ring_of()->cast_to_PolynomialRing();
-  if (R == NULL)
-    {
-      gError << "ring is not a polynomial ring";
-      return false;
-    }
-  M = m.Ring_of()->Nmonoms();
+  int i;
+  nvars = I.n_vars();
+  exponent_stash = new stash("exponents", nvars * sizeof(int));
+  heuristicWeightVector = new_exponent_vector();
+  for (i=0; i<nvars; i++)
+    heuristicWeightVector[i] = 1;
+  mSkewVars = new_exponent_vector();
+  mReduceExp = new_exponent_vector();
+
+  if (I.ring_is_quotient())
+    ring_table = create_ring_table();
+  else
+    ring_table = 0;
 
   spairs = new ESPairSet;
   this_set = 0;
@@ -153,20 +152,18 @@ bool EGB1::set_up(const Matrix &m, int csyz, int nsyz, int strat)
   bump_up(Fsyz);
 
   for (int i=0; i<nrows; i++)
-    {
-      gb[i].gb = 0;
-      gb[i].mi = new EMonomialLookupTable();
-    }
+    gb[i] = new EGBLookupTable(I);
+
   moreGenerators(0, ncols - 1, m);
 
   strategy = strat;
 
-  is_ideal = (nrows == 1 && !csyz);
+  is_ideal = (nrows == 1 && !csyz) && (!I.ring_is_weyl_algebra());
 
   n_gb = n_subring = 0;
   n_pairs = n_computed = 0;
   n_saved_gcd = n_saved_lcm = 0;
-
+  next_gb_num = 1;
   return true;
 }
 
@@ -195,16 +192,79 @@ void EGB1::increment(egb_elem *p) const
 void EGB1::decrement(egb_elem *p) const
 {
   p->npairs--;
-  if (p->npairs > 0 || p->is_min_GB) return;
-  F->remove(p->f);
-  Fsyz->remove(p->fsyz);
+  if (p->npairs > 0 || p->me > 0) return;
+  I.remove_vector(F,p->f);
+  I.remove_vector(Fsyz,p->fsyz);
+}
+int EGB1::F_degree(int i) const
+{
+  // HOW TO HANDLE THIS??
+  return 0;
+}
+int EGB1::lead_component(es_pair *p) const
+{
+  switch (p->type) {
+  case SP_GEN:
+    return I.lead_component(p->s.gen.f);
+  case SP_SYZ:
+    return I.lead_component(p->s.syz.i->f);
+  case SP_SKEW:
+    return I.lead_component(p->s.ringsyz.i->f);
+  case SP_RING:
+    return I.lead_component(p->s.ringsyz.i->f);
+  default:
+    emit_line("internal error: unknown spair type");
+    abort();
+  }
+
+}
+exponent_vector *EGB1::make_skew_lcm(const exponent_vector *exp,
+				     int v,
+				     int deg_of_exp,
+				     int & result_degree) const
+{
+  result_degree = deg_of_exp + heuristicWeightVector[v];
+  exponent_vector *result = new_exponent_vector();
+  ntuple::copy(nvars, exp, result);
+  result[v]++;
+  return result;
+}
+exponent_vector *EGB1::make_lcm(const exponent_vector *exp1,
+				const exponent_vector *exp2,
+				int deg_of_exp1,
+				int deg_of_exp2,
+				int & result_degree) const
+{
+  exponent_vector *result = new_exponent_vector();
+  int deg1 = deg_of_exp1;
+  int deg2 = deg_of_exp2;
+  for (int i=0; i<nvars; i++)
+    {
+      int a = exp1[i] - exp2[i];
+      if (a == 0)
+	result[i] = 0;
+      else if (a > 0)
+	{
+	  result[i] = exp1[i];
+	  deg2 += heuristicWeightVector[i] * a;
+	}
+      else
+	{
+	  result[i] = exp2[i];
+	  deg1 += heuristicWeightVector[i] * (-a);
+	}
+    }
+  if (deg1 > deg2)
+    result_degree = deg1;
+  else
+    result_degree = deg2;
+  return result;
 }
 
 egb_elem *EGB1::make_gb_elem(int degree,
 			     EVector &f, 
 			     EVector &fsyz,
-			     bool maybe_minimal, 
-			     bool maybe_subring_minimal) const
+			     bool minimal)
 {
   egb_elem *result = new egb_elem;
   result->degree = degree;  // This may be the actual degree of 'f' or the 'sugar'.
@@ -212,20 +272,26 @@ egb_elem *EGB1::make_gb_elem(int degree,
   result->fsyz = fsyz;
   result->npairs = 0;
   int *e = new_exponent_vector();
-  M->to_expvector(f->monom, e);
+  I.to_exponents(I.lead_monomial(f), e);
   result->lcm = e;
-  // Set other fields MES
+  result->me = next_gb_num++;
+  result->is_minimal = minimal;
   return result;
 }
 
-es_pair *EGB1::make_ring_s_pair(egb_elem *p, int j) const
+es_pair *EGB1::make_ring_s_pair(egb_elem *p, ering_elem *r) const
 {
   es_pair *result = new es_pair;
   result->next = NULL;
   result->type = SP_RING;
   result->s.ringsyz.i = p;
-  result->s.ringsyz.j = j;
+  result->s.ringsyz.j = r;
   increment(p);
+
+  const exponent_vector *m1 = p->lcm;
+  const exponent_vector *m2 = r->lcm;
+  int deg2 = F_degree(I.lead_component(p->f) + r->degree);
+  result->lcm = make_lcm(m1, m2, p->degree, deg2, result->degree);
 
   return result;
 }
@@ -239,6 +305,10 @@ es_pair *EGB1::make_skew_s_pair(egb_elem *p, int v) const
   result->s.skewsyz.v = v;
   increment(p);
 
+  result->lcm = make_skew_lcm(p->lcm,
+			      v,
+			      p->degree,
+			      result->degree);
   return result;
 }
 
@@ -251,7 +321,11 @@ es_pair *EGB1::make_s_pair(egb_elem *a, egb_elem *b) const
   result->s.syz.j = b;
   increment(a);
   increment(b);
-
+  result->lcm = make_lcm(a->lcm,
+			 b->lcm,
+			 a->degree,
+			 b->degree,
+			 result->degree); // sets result->degree.
   return result;
 }
 
@@ -260,11 +334,11 @@ es_pair *EGB1::make_gen_pair(int i, const EVector &f)
   vec fsyz;
 
   if (i < n_comps_per_syz)
-    fsyz = Fsyz->e_sub_i(i);
+    fsyz = I.e_sub_i(Fsyz,i);
   else
-    fsyz = Fsyz->zero();
+    fsyz = I.zero_vector(Fsyz);
 
-  if (F->is_zero(f))
+  if (I.is_zero_vector(F,f))
     {
       collect_syzygy(fsyz);
       return 0;
@@ -273,9 +347,14 @@ es_pair *EGB1::make_gen_pair(int i, const EVector &f)
   es_pair *result = new es_pair;
   result->next = NULL;
   result->type = SP_GEN;
-  result->s.gen.f = F->copy(f);
+  result->s.gen.f = I.copy_vector(F,f);
   result->s.gen.fsyz = fsyz;
 
+  result->lcm = new_exponent_vector();
+  I.to_exponents(I.lead_monomial(f), result->lcm);
+  result->degree = F_degree(I.lead_component(f)) 
+                        + ntuple::weight(nvars,result->lcm,
+					 heuristicWeightVector);
   return result;
 }
 
@@ -294,17 +373,34 @@ void EGB1::remove_pair(es_pair *& p) const
     decrement(p->s.syz.j);
     break;
   case SP_GEN:
-    F->remove(p->s.gen.f);
-    Fsyz->remove(p->s.gen.fsyz);
+    // There are times when these should be removed though... MES
+    //    F->remove(p->s.gen.f);
+    //    Fsyz->remove(p->s.gen.fsyz);
     break;
   }
 
   delete p;
   p = NULL;
 }
-
-void EGB1::compute_s_pair(es_pair *p, EVectorHeap &f, EVectorHeap &fsyz)
+bool EGB1::is_gcd_one_pair(es_pair *p) const
 {
+  if (p->type != SP_SYZ) return false;
+  const exponent_vector *e1 = p->s.syz.i->lcm;
+  const exponent_vector *e2 = p->s.syz.j->lcm;
+  for (int i=0; i<nvars; i++)
+    if (e1[i] > 0 && e2[i] > 0)
+      return false;
+  return true;
+}
+
+void EGB1::compute_s_pair(es_pair *p, vector_heap &f, vector_heap &fsyz)
+{
+  egb_elem *g1, *g2;
+  ering_elem *r2;
+  ringelement a,b;
+  int sign = 1;
+  exponent_vector *e1 = new_exponent_vector();
+  exponent_vector *e2 = new_exponent_vector();
   switch (p->type)
     {
     case SP_GEN:
@@ -312,17 +408,174 @@ void EGB1::compute_s_pair(es_pair *p, EVectorHeap &f, EVectorHeap &fsyz)
       fsyz.add(p->s.gen.fsyz);
       break;
     case SP_SYZ:
-      // WRITE
+      // First determine the syzygy on the monomial, and coefficients
+      g1 = p->s.syz.i;
+      g2 = p->s.syz.j;
+      I.coefficient_syzygy(I.lead_coefficient(g1->f),
+			   I.lead_coefficient(g2->f),
+			   a, b);
+      I.exponent_syzygy(g1->lcm, g2->lcm, e1, e2, sign);
+      if (sign == 1)
+	{
+	  ringelement c = I.negate_coefficient(b);
+	  I.remove_coefficient(b);
+	  b = c;
+	}
+
+      I.add_multiple_to(f, a, e1, g1->f);
+      I.add_multiple_to(fsyz, a, e1, g1->fsyz);
+
+      I.add_multiple_to(f, b, e2, g2->f);
+      I.add_multiple_to(fsyz, b, e2, g2->fsyz);
+
+      I.remove_coefficient(a);
+      I.remove_coefficient(b);
       break;
     case SP_SKEW:
-      // WRITE
+      ntuple::one(nvars, e1);
+      e1[p->s.skewsyz.v] = 1;
+      I.add_multiple_to(f, I.one(), e1, p->s.skewsyz.i->f);
+      I.add_multiple_to(fsyz, I.one(), e1, p->s.skewsyz.i->fsyz);
       break;
     case SP_RING:
-      // WRITE
+      g1 = p->s.ringsyz.i;
+      r2 = p->s.ringsyz.j;
+      I.coefficient_syzygy(I.lead_coefficient(g1->f),
+			   I.lead_coefficient_of_polynomial(r2->f),
+			   a, b);
+      I.exponent_syzygy(g1->lcm, r2->lcm, e1, e2, sign);
+      if (sign == 1)
+	{
+	  ringelement c = I.negate_coefficient(b);
+	  I.remove_coefficient(b);
+	  b = c;
+	}
+
+      I.add_multiple_to(f, a, e1, g1->f);
+      I.add_multiple_to(fsyz, a, e1, g1->fsyz);
+
+      I.add_ring_multiple_to(f, b, e2, I.lead_component(g1->f), r2->f);
+
+      I.remove_coefficient(a);
+      I.remove_coefficient(b);
       break;
     };
+  remove_exponent_vector(e1);
+  remove_exponent_vector(e2);
+}
+///////////////////////
+// S-pair operations //
+///////////////////////
+void EGB1::remove_pairs(es_pair *&pair_list) const
+{
+  while (pair_list != 0)
+    {
+      es_pair *tmp = pair_list;
+      pair_list = tmp->next;
+      remove_pair(tmp);
+    }
+}
+int EGB1::compare_pairs(es_pair *f, es_pair *g) const
+{
+  // These pairs all have the same degree lcm's.
+  int cmp = ntuple::lex_compare(nvars, f->lcm, g->lcm);
+  return cmp;
 }
 
+es_pair *EGB1::merge_pairs(es_pair *f, es_pair *g) const
+{
+  // Sort in ascending degree order, then ascending monomial order
+  if (g == NULL) return f;
+  if (f == NULL) return g;
+  es_pair head;
+  es_pair *result = &head;
+  while (1)
+    switch (compare_pairs(f, g))
+      {
+      case LT:
+	result->next = g;
+	result = result->next;
+	g = g->next;
+	if (g == NULL) 
+	  {
+	    result->next = f;
+	    return head.next;
+	  }
+	break;
+      case GT:
+      case EQ:
+	result->next = f;
+	result = result->next;
+	f = f->next;
+	if (f == NULL) 
+	  {
+	    result->next = g; 
+	    return head.next;
+	  }
+	break;
+      }
+}
+
+void EGB1::sort_pairs(es_pair *&p) const
+{
+  if (p == NULL || p->next == NULL) return;
+  es_pair *p1 = NULL;
+  es_pair *p2 = NULL;
+  while (p != NULL)
+    {
+      es_pair *tmp = p;
+      p = p->next;
+      tmp->next = p1;
+      p1 = tmp;
+
+      if (p == NULL) break;
+      tmp = p;
+      p = p->next;
+      tmp->next = p2;
+      p2 = tmp;
+    }
+
+  sort_pairs(p1);
+  sort_pairs(p2);
+  p = merge_pairs(p1, p2);
+}
+
+void EGB1::choose_nice_pair(es_pair *&p) const
+{
+  if (comp_printlevel >= 4)
+    {
+      int len = 0; 
+      for (es_pair *a = p; a!=0; a=a->next) len++;
+      buffer o;
+      o << "sp" << len;
+      emit(o.str());
+    }
+  es_pair *answer = p;
+  p = p->next;
+  answer->next = 0;
+  remove_pairs(p);
+  p = answer;
+}
+void EGB1::choose_unique_pairs(es_pair *&p) const
+{
+  if (p == 0) return;
+  es_pair head;
+  head.next = 0;
+  es_pair *last = &head;
+  while (p != 0)
+    {
+      es_pair *first = p;
+      es_pair *q = first;
+      while (q->next != 0 && ntuple::lex_compare(nvars ,p->lcm, q->next->lcm) == EQ)
+	q = q->next;
+      p = q->next;
+      q->next = 0;
+      choose_nice_pair(first);
+      last->next = first;  // Other elements have been removed
+      last = first;
+    }
+  p = head.next;
+}
 //////////////////
 // Pair updates //
 //////////////////
@@ -332,13 +585,13 @@ bool EGB1::pair_not_needed(es_pair *p, egb_elem *m) const
   // If so: check if lcm(p1,m) == lcm(p)  (if so, return false)
   //        check if lcm(p2,m) == lcm(p)  (if so, return false)
   // If still here, return true.
+  if (p->type != SP_SYZ && p->type != SP_RING) return false;
   if (lead_component(p) != lead_component(m)) return false;
   const int *mexp = m->lcm;
   const int *lcm = p->lcm;
   const int *p1exp = p->s.syz.i->lcm;
   const int *p2exp = p->s.syz.j->lcm;  // WRONG FOR others kinds of pairs!!!
   int i;
-  int nvars = M->n_vars();
   for (i=0; i<nvars; i++)
     if (mexp[i] > lcm[i]) return false;
       
@@ -360,7 +613,7 @@ bool EGB1::pair_not_needed(es_pair *p, egb_elem *m) const
   return false;
 }
 
-void EGB1::minimalize_pairs(es_pair *p) const
+void EGB1::minimalize_pairs(es_pair *&p) const
 {
   int d;
   if (p == 0) return;
@@ -373,8 +626,7 @@ void EGB1::minimalize_pairs(es_pair *p) const
     {
       es_pair *tmp = p;
       p = p->next;
-      // MES int d = actual_degree(tmp);
-      d = -124124124;
+      int d = ntuple::degree(nvars,tmp->lcm);
       if (d >= bins.length())
 	{
 	  for (int i=bins.length(); i<=d; i++)
@@ -389,7 +641,7 @@ void EGB1::minimalize_pairs(es_pair *p) const
   for (d=0; bins[d] == 0; d++);
   sort_pairs(bins[d]);
   choose_unique_pairs(bins[d]);
-  ESPairLookupTable table(bins[d]);
+  ESPairLookupTable table(nvars, bins[d]);
   bins[d] = 0;
 
   for (d++; d<bins.length(); d++)
@@ -401,7 +653,8 @@ void EGB1::minimalize_pairs(es_pair *p) const
 
       // Check divisibility by previous stuff.  If not minimal
       // remove that pair.
-      for (es_pair *b = &head; b->next != 0; b = b->next)
+      es_pair *b = &head;
+      while (b->next != 0)
 	if (table.find_divisor(b->next->lcm, c))
 	  {
 	    // Remove element:
@@ -409,6 +662,8 @@ void EGB1::minimalize_pairs(es_pair *p) const
 	    b->next = tmp->next;
 	    remove_pair(tmp);
 	  }
+	else
+	  b = b->next;
       a = head.next;
 
       // Sort the list of remaining elements
@@ -421,9 +676,10 @@ void EGB1::minimalize_pairs(es_pair *p) const
       table.append(a);
     }
 
+
   // Step 3:
-  p = table.getList(); // This list of pairs.
-  
+  p = table.value(); // This list of pairs.
+
 }
 
 void EGB1::update_pairs(egb_elem *m)
@@ -432,7 +688,8 @@ void EGB1::update_pairs(egb_elem *m)
   // NOTE: we don't need to check the elements of the current degree?
   es_pair head;
   head.next = spairs->heap;
-  for (es_pair *p = &head; p->next != 0; p = p->next)
+  es_pair *p = &head;
+  while (p->next != 0)
     if (pair_not_needed(p->next, m))
       {
 	es_pair *tmp = p->next;
@@ -441,16 +698,18 @@ void EGB1::update_pairs(egb_elem *m)
 	remove_pair(tmp);
 	n_saved_lcm++;
       }
+  else
+    p = p->next;
+
   spairs->heap = head.next;
 
   // Step 2: find the possible new s-pairs
   es_pair *new_set = 0;
   
   // S-pairs from skew commuting variables
-#if 0
-  if (Rskew != 0)
+  if (I.ring_is_skew_commutative())
     {
-      int nskew = Rskew->skew_vars(m_monom, mSkewVars);
+      int nskew = I.exp_skew_vars(m->lcm, mSkewVars);
       for (int v=0; v<nskew; v++)
 	{
 	  es_pair *s = make_skew_s_pair(m,mSkewVars[v]);
@@ -458,25 +717,24 @@ void EGB1::update_pairs(egb_elem *m)
 	  new_set = s;
 	}
     }
-#endif
 
   // S-pairs from monomial syzygies involving ring elements.
-#if 0
-  if (Rcover != 0)
+  if (I.ring_is_quotient())
     {
-      for (int i=0; i < R->n_quotient(); i++)
+      for (ERingTable::iterator p = ring_table->first(); p.valid(); ++p)
 	{
-	  es_pair *s = make_ring_s_pair(m,i);
+	  ering_elem *r = *p;
+	  es_pair *s = make_ring_s_pair(m, r);
 	  s->next = new_set;
 	  new_set = s;
 	}
     }
-#endif
 
   // S-pairs from the vectors themselves.
   int x = lead_component(m);
-  for (egb_elem *g = gb[x].mi->first(); g != 0; g = g->next)
+  for (EGBLookupTable::iterator p = gb[x]->first(); p.valid(); ++p)
     {
+      egb_elem *g = *p;
       es_pair *s = make_s_pair(m, g);
       s->next = new_set;
       new_set = s;
@@ -486,8 +744,24 @@ void EGB1::update_pairs(egb_elem *m)
   //     intelligent way
   minimalize_pairs(new_set);
 
-  // Step 4: insert these into the SPairSet.
-  spairs->insert(new_set);
+  // Step 4: insert these into the SPairSet, removing gcd=1 pairs if possible
+  while (new_set != 0)
+    {
+      es_pair *tmp = new_set;
+      new_set = new_set->next;
+      tmp->next = 0;
+      if (is_ideal && is_gcd_one_pair(tmp))
+	{
+	  // can we remove this pair??
+	  n_saved_gcd++;
+	  remove_pair(tmp);
+	}
+      else
+	{
+	  n_pairs++;
+	  spairs->insert(tmp);
+	}	
+    }
 }
 
 ///////////////
@@ -495,89 +769,101 @@ void EGB1::update_pairs(egb_elem *m)
 ///////////////
 
 
-int EGB1::gb_reduce(EVectorHeap &fh, EVectorHeap &fsyzh, EVector &f, EVector &fsyz)
+int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fsyz) const
 {
-  int *exp;  // INITIALIZE THIS!!
-  vecterm head;
-  vec inresult;
-  inresult = &head;
+  vector_collector freduced = I.start_collection(F);
 
-  vecterm *lead;
-  bool ret = true;
-  while ((lead = fh.get_lead_term()) != 0)
+  ringelement coeff;  // This is just 'visited'
+  monomial *mon;      // Same here: so don't free these elements
+  int comp = 0;
+  ering_elem *r = 0;
+  egb_elem *g = 0;
+  while (I.get_lead_term_from_heap(fh,coeff,mon,comp) != 0)
     {
-      M->to_expvector(lead->monom, exp);
-      egb_elem *g;
-      bool reduces = gb[lead->comp].mi->find_divisor(exp, g);
-      if (reduces)
-	cancel_lead_term(fh,fsyzh,lead,g);
+      I.to_exponents(mon, const_cast<int *&>(mReduceExp));
+      if (I.ring_is_quotient() && ring_table->find_divisor(mReduceExp, r))
+	{
+	  I.ring_cancel_lead_terms(fh,fsyzh,
+				  coeff, mReduceExp, comp,
+				  r->f);
+	}
+      else if (gb[comp]->find_divisor(mReduceExp, g))
+	{
+	  I.cancel_lead_terms(fh,fsyzh,
+			     coeff,mReduceExp,
+			     g->lcm, g->f, g->fsyz);
+	}
       else
 	{
-	  ret = false;
-	  vec t = fh.remove_lead_term();
-	  inresult->next = t;
-	  inresult = inresult->next;
+	  term t;
+	  I.remove_lead_term_from_heap(fh,t);
+	  I.append_to_collection(freduced, t);
 	}
     }
-  fsyz = fsyzh.get_value();
-  inresult->next = 0;
-  f = head.next;
-  head.next = 0;
-  return ret;
+  fsyz = I.end_heap(fsyzh);
+  f = I.end_collection(freduced);
+  return true;  // NOT deferred...
 }
 ///////////////////////
 // Insertion into GB //
 ///////////////////////
 
-void EGB1::make_monic(EVector &f, EVector &fsyz) const
-{
-  // TO BE WRITTEN
-}
 void EGB1::auto_reduce_by(egb_elem *new_elem)
 {
-  // TO BE WRITTEN
-}
-
-
-void EGB1::insert_and_minimalize(egb_elem *new_elem)
-{
-  array< egb_elem * > nonminimals;
-  // Step 1: Place into gbLarge.
-  gbLarge.append(new_elem);
-
-  // Step 2: Insert into the gb
-  gb[lead_component(new_elem)].mi->insert(new_elem, nonminimals);
-
-  // Step 3: Change all of these nonminimals:
-  for (int i=0; i<nonminimals.length(); i++)
+  // The particular strategy to use is unclear,
+  // and might depend alot on the kind of problem.
+  // Technique 1: Only loop through the elements of the same sugar degree,
+  //    and only do K-operations to remove exactly the lead term.
+  // Technique 2: Do the same, but on all GB elements of the same sugar degree
+  //    (even ones that have been made not-minimal).
+  //    problem: it might be that a lead term of a previous element can be reduced.
+  //    This should be avoided?
+  // Technique 3: Do a full reduction of the elements of the same sugar degree.
+  // Technique 4: Do a full reduction.
+  // What to do with lead terms?
+  
+  for (int i=gbLarge.length()-2; i >= 0 && gbLarge[i]->degree == new_elem->degree; --i)
     {
-      nonminimals[i]->is_min_GB = false;
-      if (nonminimals[i]->npairs == 0) decrement(nonminimals[i]);
+      I.auto_reduce(F,Fsyz,gbLarge[i]->f,gbLarge[i]->fsyz,
+		    new_elem->f, new_elem->fsyz);
     }
+
 }
 
-void gb_insert(int degree, EVector &f, EVector &fsyz, 
-	       bool maybe_minimal, 
-	       bool maybe_subring_minimal)
+void EGB1::gb_insert(int degree, EVector &f, EVector &fsyz, 
+	       bool minimal)
   // Insert the element 'f' as a new element in the GB.
 {
-  make_monic(f,fsyz);
-  egb_elem *p = make_gb_elem(degree,f,fsyz,maybe_minimal,maybe_subring_minimal);
-  update_pairs(p);
-  insert_and_minimalize(p);
-  auto_reduce_by(p);
+  I.make_monic(F,Fsyz,f,fsyz);
+  egb_elem *new_elem = make_gb_elem(degree,f,fsyz,minimal);
+  update_pairs(new_elem);
+
+  array< egb_elem * > nonminimals;
+  gbLarge.append(new_elem);
+
+  gb[lead_component(new_elem)]->insert(new_elem, nonminimals);
+  n_gb++;
+
+  for (int i=0; i<nonminimals.length(); i++)
+    {
+      n_gb--;
+      nonminimals[i]->me = - nonminimals[i]->me;
+      if (nonminimals[i]->npairs == 0) decrement(nonminimals[i]);
+    }
+
+  auto_reduce_by(new_elem);
 }
 
 void EGB1::collect_syzygy(EVector &fsyz)
 {
-  if (collect_syz && !Fsyz->is_zero(fsyz))
+  if (collect_syz && !I.is_zero_vector(Fsyz,fsyz))
     {
       syz.append(fsyz);
       emit_wrapped(3,"z");
     }
   else
     {
-      Fsyz->remove(fsyz);
+      I.remove_vector(Fsyz,fsyz);
       emit_wrapped(3,"o");
     }
 }
@@ -585,10 +871,12 @@ void EGB1::collect_syzygy(EVector &fsyz)
 void EGB1::s_pair_step(es_pair *p)
 {
   EVector f, fsyz;
-  EVectorHeap fh, fsyzh;
+  vector_heap fh(F);
+  vector_heap fsyzh(Fsyz);
   n_computed++;
-  bool is_gen = p->is_gen;
+  bool is_gen = (p->type == SP_GEN);
   int degree = p->degree;
+  n_computed++;
   compute_s_pair(p, fh, fsyzh);
   remove_pair(p);
   bool ok = gb_reduce(fh,fsyzh,f,fsyz);
@@ -597,7 +885,7 @@ void EGB1::s_pair_step(es_pair *p)
       // call a 'deferred' routine...
       emit_wrapped(3,"d"); // deferred
     }
-  else if (!F->is_zero(f))
+  else if (!I.is_zero_vector(F,f))
     {
       gb_insert(degree,f,fsyz,is_gen);
       emit_wrapped(3,"m");
@@ -610,7 +898,7 @@ int EGB1::is_computation_complete(const EStopConditions &stop) const
   // Test whether the current computation is done.
 {
   if (stop.gb_limit > 0 && n_gb >= stop.gb_limit) return COMP_DONE_GB_LIMIT;
-  if (stop.syz_limit > 0 && syz->n_cols() >= stop.syz_limit) return COMP_DONE_SYZ_LIMIT;
+  if (stop.syz_limit > 0 && syz.length() >= stop.syz_limit) return COMP_DONE_SYZ_LIMIT;
   if (stop.pair_limit > 0 && n_computed >= stop.pair_limit) return COMP_DONE_PAIR_LIMIT;
   if (stop.subring_limit > 0 && n_subring >= stop.subring_limit) return COMP_DONE_SUBRING_LIMIT;
   return COMP_COMPUTING;
@@ -623,7 +911,7 @@ int EGB1::calc(const int *deg, const intarray &stop)
       gError << "inappropriate stop conditions for GB computation";
       return COMP_ERROR;
     }
-  StopConditions s;
+  EStopConditions s;
   if (deg == 0)
     s.degree = false;
   else {
@@ -660,7 +948,7 @@ int EGB1::new_calc(const EStopConditions &stop)
 	  // This would be the place to auto-reduce the old guys?
 	  // Also: where to sort the GB?
 	  // Also: if delayed spair finding: do it here.
-	  int npairs = spairs->get_pair_set(this_degree, this_set);
+	  int npairs = spairs->get_next_degree(this_degree, this_set);
 	  sort_pairs(this_set);
 	  if (this_set == 0)
 	    {
@@ -677,7 +965,7 @@ int EGB1::new_calc(const EStopConditions &stop)
 	      buffer o;
 	      o << '{' << this_degree << '}';
 	      o << '(';
-	      if (use_hilb) 
+	      if (use_hilb_function) 
 		o << n_in_degree << ',';
 	      o << npairs << ',' << spairs->n_elems_left() << ')';
 	      emit(o.str());
@@ -694,8 +982,8 @@ int EGB1::new_calc(const EStopConditions &stop)
   if (comp_printlevel >= 4)
     {
       buffer o;
-      o << "Number of pairs             = " << n_pairs << newline;
       o << "Number of gb elements       = " << n_gb << newline;
+      o << "Number of pairs             = " << n_pairs << newline;
       o << "Number of gcd=1 pairs       = " << n_saved_gcd << newline;
       o << "Number of gcd tails=1 pairs = " << n_saved_lcm << newline;
       o << "Number of pairs computed    = " << n_computed << newline;
@@ -708,16 +996,17 @@ int EGB1::new_calc(const EStopConditions &stop)
 // Interface routines //
 ////////////////////////
 
-EGB1::EGB1(const Matrix &m, int csyz, int nsyz, int strategy)
+EGB1::EGB1(const Matrix &m, int csyz, int nsyz, int strat)
+  : gb_comp(13), I(m.Ring_of())
 {
   set_up(m, csyz, nsyz, strat);
 }
 
-bool EGB1::moreGenerators(int lo, int hi, const Matrix &m)
+void EGB1::moreGenerators(int lo, int hi, const Matrix &m)
 {
   for (int i=hi; i>=lo; i--)
     {
-      es_pair *p = new_gen(i, m[i]);  // MES MES: use what 'i' here??
+      es_pair *p = make_gen_pair(i, m[i]);  // MES MES: use what 'i' here??
       if (p != 0)
 	spairs->insert(p);
       n_pairs++;
@@ -727,23 +1016,35 @@ bool EGB1::moreGenerators(int lo, int hi, const Matrix &m)
 EGB1::~EGB1()
 {
   // remove any remaining s-pairs
-  s_pair *p;
-  while ((p = spairs->remove()) != NULL)
-    remove_pair(p);
+  while (this_set != 0)
+    {
+      es_pair *tmp = this_set;
+      this_set = tmp->next;
+      remove_pair(tmp);
+    }
+  while (spairs->heap != 0)
+    {
+      es_pair *tmp = spairs->heap;
+      spairs->heap = tmp->next;
+      remove_pair(tmp);
+    }
   delete spairs;
 
   // remove the gb_elem's
-  while (gbLarge != NULL)
-    {
-      gb_elem *tmp = gbLarge;
-      gbLarge = tmp->next;
+  for (int i=0; i < gb.length(); i++)
+    delete gb[i];
 
-      // remove gb_elem fields, and itself
-      F->remove(tmp->f);
-      Fsyz->remove(tmp->fsyz);
-      delete [] tmp->lead_exp;
-      delete tmp;
+  for (int i=0; i < gbLarge.length(); i++)
+    {
+      remove_exponent_vector(const_cast<int *&>(gbLarge[i]->lcm));
+      I.remove_vector(F,gbLarge[i]->f);
+      I.remove_vector(Fsyz,gbLarge[i]->fsyz);
+      delete gbLarge[i];
     }
+
+  // Remove the syzygies
+  for (int i=0; i<syz.length(); i++)
+    I.remove_vector(Fsyz,syz[i]);
 
   // Finally, decrement ref counts
   bump_down(F);
@@ -756,8 +1057,8 @@ EGB1::~EGB1()
 
 void EGB1::gb_reduce(EVector &f, EVector &fsyz) const
 {
-  EVectorHeap fh(F);
-  EVectorHeap fsyzh(Fsyz);
+  vector_heap fh(F);
+  vector_heap fsyzh(Fsyz);
 
   fh.add(f);
   fsyzh.add(fsyz);
@@ -768,12 +1069,12 @@ Matrix EGB1::reduce(const Matrix &m, Matrix &lift)
 {
   Matrix red(m.rows(), m.cols());
   lift = Matrix(Fsyz, m.cols());
-  EVectorHeap fh(F);
-  EVectorHeap fsyzh(Fsyz);
+  vector_heap fh(F);
+  vector_heap fsyzh(Fsyz);
 
   for (int i=0; i<m.n_cols(); i++)
     {
-      vec f = F->copy(m[i]);
+      vec f = I.copy_vector(F,m[i]);
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
       Fsyz->negate_to(fsyz);
@@ -790,7 +1091,7 @@ Vector EGB1::reduce(const Vector &v, Vector &lift)
       gError << "reduce: vector is in incorrect free module";
       return Vector(F, NULL);
     }
-  vec f = F->copy(v.get_value());
+  vec f = I.copy_vector(F,v.get_value());
   vec fsyz = NULL;
 
   gb_reduce(f, fsyz);
@@ -800,27 +1101,27 @@ Vector EGB1::reduce(const Vector &v, Vector &lift)
   return Vector(F, f);
 }
 
-int GBinhom_comp::contains(const Matrix &m)
+int EGB1::contains(const Matrix &m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
   // Reduce each column of m one by one.
-  for (int i=0; i<m.n_cols(); i++)
+  int result = -1;
+  for (int i=0; result == -1 && i<m.n_cols(); i++)
     {
       vec f = F->translate(m.rows(),m[i]);
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
-      Fsyz->remove(fsyz);
-      if (f != NULL)
-	{
-	  F->remove(f);
-	  return i;
-	}
+      I.remove_vector(Fsyz,fsyz);
+      result = i;
+      if (!I.is_zero_vector(F,f))
+	result = i;
+      I.remove_vector(F,f);
     }
   return -1;
 }
-bool GBinhom_comp::is_equal(const gb_comp * /*q*/)
+bool EGB1::is_equal(const gb_comp * /*q*/)
 {
   gError << "== not yet implemented for inhomogeneous GB's";
   return false;
@@ -829,52 +1130,52 @@ bool GBinhom_comp::is_equal(const gb_comp * /*q*/)
 //--- Obtaining matrices as output -------
 Matrix EGB1::min_gens_matrix()
 {
-  array< EVector > columns;
+  array< vec > columns;
   for (iterator i = first(); i.valid(); ++i)
     {
       egb_elem *q = *i;
-      if (q->is_min)
-	columns.append(F->copy(q->f));
+      if (q->is_minimal)
+	columns.append(I.copy_vector(F,q->f));
     }
-  return make_matrix(F, columns);
+  return I.make_matrix(F, columns);
 }
 
 Matrix EGB1::initial_matrix(int n)
 {
-  array< EVector > columns;
+  array< vec > columns;
   for (iterator i = first(); i.valid(); ++i)
     {
       egb_elem *q = *i;
       columns.append(F->lead_term(n,q->f));
     }
-  return make_matrix(F, columns);
+  return I.make_matrix(F, columns);
 }
 
 Matrix EGB1::gb_matrix()
 {
-  array< EVector > columns;
+  array< vec > columns;
   for (iterator i = first(); i.valid(); ++i)
     {
       egb_elem *q = *i;
-      columns.append(F-copy(q->f));
+      columns.append(I.copy_vector(F,q->f));
     }
-  return make_matrix(F, columns);
+  return I.make_matrix(F, columns);
 }
 
 Matrix EGB1::change_matrix()
 {
-  array< EVector > columns;
+  array< vec > columns;
   for (iterator i = first(); i.valid(); ++i)
     {
       egb_elem *q = *i;
-      columns.append(Fsyz-copy(q->fsyz));
+      columns.append(I.copy_vector(Fsyz,q->fsyz));
     }
-  return make_matrix(Fsyz, columns);
+  return I.make_matrix(Fsyz, columns);
 }
 
 Matrix EGB1::syz_matrix()
 {
-  return make_matrix(Fsyz, syz);
+  return I.make_matrix(Fsyz, syz);
 }
 
 #if 0
@@ -914,7 +1215,7 @@ EMatrix *EGB1::getGenerators() const
 {
   EMutableMatrix *m = EMutableMatrix::make(F);
   for (egb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    if (q->is_min)
+    if (q->is_minimal)
       m->appendColumn(q->f.clone());
   EMatrix *result = m->sort()->toMatrix();
   delete m;
@@ -982,58 +1283,25 @@ EMatrix *getSubringGB(int n) const
 ////////////////////
 // Debugging code //
 ////////////////////
-void EGB1::debug_out(s_pair *q) const
+void EGB1::debug_out(es_pair *q) const
 {
   buffer o;
   debug_out(o,q);
   emit(o.str());
 }
 
-void EGB1::debug_out(buffer &o, s_pair *q) const
+void EGB1::debug_out(buffer &o, es_pair *q) const
 {
-  if (q == NULL) return;
-  int *m = M->make_one();
-  o << "(";
-  if (q->first != NULL) o << q->first->me; else o << ".";
-  o << " ";
-  if (q->second != NULL) o << q->second->me; else o << ".";
-  o << " ";
-  if (q->first != NULL)
-    {
-      M->divide(q->lcm, q->first->f->monom, m);
-      M->elem_text_out(o, m);
-      o << ' ';
-    }
-  if (q->second != NULL)
-    {
-      M->divide(q->lcm, q->second->f->monom, m);
-      M->elem_text_out(o, m);
-      o << ' ';
-    }
-  M->elem_text_out(o, q->lcm);
-  M->remove(m);
-  if (q->compare_num < 0)
-    o << " marked";
-  o << ") ";
 }
 
-void EGB1::debug_pairs_out(gb_elem *p) const
+void EGB1::debug_pairs_out(egb_elem *p) const
 {
   buffer o;
   debug_pairs_out(o,p);
   emit(o.str());
 }
-void EGB1::debug_pairs_out(buffer &o, gb_elem *p) const
+void EGB1::debug_pairs_out(buffer &o, egb_elem *p) const
 {
-  s_pair *q;
-  int n = 0;
-  for (q = p->pair_list; q != NULL; q = q->next_same)
-    {
-      debug_out(o,q);
-      n++;
-      if (n % 10 == 0) o << newline;
-    }
-  o << newline;
 }
 
 void EGB1::debug_pairs() const
@@ -1044,23 +1312,6 @@ void EGB1::debug_pairs() const
 }
 void EGB1::debug_pairs(buffer &o) const
 {
-  for (gb_elem *p = gbLarge->next; p != NULL; p = p->next)
-    debug_pairs_out(o,p);
-
-  for (int i=0; i<NHEAP; i++)
-    {
-      s_pair *q = spairs->debug_list(i);
-      if (q == NULL) continue;
-      o << "---- pairs in bin " << i << " -----" << newline;
-      int n = 0;
-      for ( ; q != NULL; q = q->next)
-	{
-	  debug_out(o,q);
-	  n++;
-	  if (n % 10 == 0) o << newline;
-	}
-      o << newline;
-    }
 }
 void EGB1::stats() const
 {
@@ -1069,8 +1320,9 @@ void EGB1::stats() const
   if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
     {
       int i = 0;
-      for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
+      for (iterator p = first(); p.valid(); ++p)
 	{
+	  egb_elem *q = *p;
 	  o << i << '\t';
 	  i++;
 	  F->elem_text_out(o, q->f);
@@ -1084,161 +1336,6 @@ void EGB1::stats() const
 
 #if 0
 
-void EGB1::find_pairs(gb_elem *p)
-  // compute min gen set of {m | m lead(p) is in (p1, ..., pr, f1, ..., fs)}
-  // (includes cases m * lead(p) = 0).
-  // Returns a list of new s_pair's.
-{
-  queue<Bag *> elems;
-  Index<MonomialIdeal> j;
-  intarray vplcm;
-  s_pair *q;
-  int nvars = M->n_vars();
-  int *find_pairs_exp = new int[nvars];
-  int *find_pairs_lcm = new int[nvars];
-  int *find_pairs_mon = new int[nvars];
-  int *pi = new int [nvars];
-  int *pj = new int [nvars];
-  int *pij = new int [nvars];
-
-  if (M->is_skew())
-    {
-      int *skewvars = new int[M->n_vars()];
-      M->to_expvector(p->f->monom, find_pairs_exp);
-      int nskew = M->exp_skew_vars(find_pairs_exp, skewvars);
-      
-      // Add in syzygies arising from exterior variables
-      for (int v=0; v < nskew; v++)
-	{
-	  int w = skewvars[v];
-
-	  find_pairs_exp[w]++;
-	  M->from_expvector(find_pairs_exp, find_pairs_lcm);
-	  find_pairs_exp[w]--;
-	      
-	  vplcm.shrink(0);
-	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q, vplcm));
-	}
-      delete [] skewvars;
-    }
-
-  // Add in syzygies arising from a base ring
-
-  if (F->is_quotient_ring)
-    for (j = R->Rideal.first(); j.valid(); j++)
-      {
-	Nterm * f = (Nterm *) R->Rideal[j]->basis_ptr();
-	M->lcm(f->monom, p->f->monom, find_pairs_lcm);
-	vplcm.shrink(0);
-	M->to_varpower(find_pairs_lcm, vplcm);
-	q = new_ring_pair(p, find_pairs_lcm);
-	elems.insert(new Bag(q, vplcm));
-      }
-
-  // Add in syzygies arising as s-pairs
-  for (gb_elem *s = gb->next_min; s != NULL; s = s->next_min)
-    {
-      if (p->f->comp != s->f->comp) continue;
-      M->lcm(p->f->monom, s->f->monom, find_pairs_lcm);
-      vplcm.shrink(0);
-      M->to_varpower(find_pairs_lcm, vplcm);
-      q = new_s_pair(p, s, find_pairs_lcm);
-      elems.insert(new Bag(q, vplcm));
-    }
-
-  // Now minimalize these elements, and insert the minimal ones
-
-  queue<Bag *> rejects;
-  Bag *b;
-  MonomialIdeal mi(R, elems, rejects);
-  while (rejects.remove(b))
-    {
-      s_pair *q = (s_pair *) b->basis_ptr();
-      remove_pair(q);
-      delete b;
-    }
-
-  s_pair head;
-  s_pair *nextsame = &head;
-  int len = 0;
-  for (j = mi.first(); j.valid(); j++)
-    {
-      q = (s_pair *) mi[j]->basis_ptr();
-      nextsame->next = q;
-      nextsame = q;
-      len++;
-      if (is_ideal && q->syz_type == SP_SYZ)
-	{
-	  M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_mon);
-	  if (M->is_one(find_pairs_mon))
-	    {
-	      n_saved_gcd++;
-	      q->compare_num = -1; // MES: change name of field!!
-				    // This means: don't compute spair.
-	      if (comp_printlevel >= 8)
-		{
-		  buffer o;
-		  o << "removed pair[" << q->first->me << " " 
-		    << q->second->me << "]";
-		  emit_line(o.str());
-		}
-	    }
-	}
-    }
-  n_pairs += len;
-  nextsame->next = NULL;
-  p->pair_list = head.next;
-  spairs->sort_list(p->pair_list);
-  if (comp_printlevel >= 8)
-    {
-      buffer o;
-      for (q = p->pair_list; q != NULL; q = q->next)
-	{
-	  o << "insert ";
-	  debug_out(o,q);
-	  o << newline;
-	}
-      emit(o.str());
-    }
-  for (q = p->pair_list; q != NULL; q = q->next)
-    q->next_same = q->next;
-  spairs->insert(p->pair_list, len);
-
-  // remove those pairs (i,j) for which gcd(p:i, p:j) = 1
-  // and for which (p,i), (p,j) are both in the previous list of add-ons.
-  // MES: this does not catch all of the un-necessary pairs...
-  // Also much optimization might be able to be done, as far as removing
-  // keeping the 'correct' minimal generator of the lcms.
-
-  for (s_pair *s1 = p->pair_list; s1 != NULL; s1 = s1->next_same)
-    {    
-      if (s1->syz_type != SP_SYZ) continue;
-      M->divide(s1->lcm, s1->second->f->monom, pi);
-      for (s_pair *t1 = s1->next_same; t1 != NULL; t1 = t1->next_same)
-	{
-	  if (t1->syz_type != SPAIR_PAIR) continue;
-	  M->divide(t1->lcm, t1->second->f->monom, pj);
-	  M->gcd(pi, pj, pij);
-	  if (M->is_one(pij))
-	    {
-	      if (mark_pair(s1->second, t1->second))
-		{
-		  n_saved_lcm++;
-		}
-	    }
-	}
-    }
-
-  // Remove the local variables
-  delete [] find_pairs_exp;
-  delete [] find_pairs_lcm;
-  delete [] find_pairs_mon;
-  delete [] pi;
-  delete [] pj;
-  delete [] pij;
-}
 int EGB1::compare(const gb_elem *p, const gb_elem *q) const
 {
   int cmp = M->compare(p->f->monom, q->f->monom);

@@ -21,14 +21,18 @@ class respolyHeap
   const Ring *K;		// The coefficient ring
   res2term * heap[GEOHEAP_SIZE];
   int top_of_heap;
-
+  int mLead;			// set after a call to get_lead_term.
+				// set negative after each call to add, 
+				// or remove_lead_term
 public:
   respolyHeap(const res2_poly *F);
   ~respolyHeap();
 
   void add(res2term * p);
+  const res2term * get_lead_term(); // Returns NULL if none.
   res2term * remove_lead_term();	// Returns NULL if none.
 
+  const res2_poly *get_target() { return F; }
   res2term * value();		// Returns the linearized value, and resets the respolyHeap.
 
   res2term * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
@@ -42,7 +46,8 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 inline respolyHeap::respolyHeap(const res2_poly *FF)
 : F(FF),
   K(FF->Ring_of()->Ncoeffs()),
-  top_of_heap(-1)
+  top_of_heap(-1),
+  mLead(-1)
 {
   // set K
   int i;
@@ -59,6 +64,7 @@ inline respolyHeap::~respolyHeap()
 
 inline void respolyHeap::add(res2term * p)
 {
+  mLead = -1;
   int len = F->n_terms(p);
   int i= 0;
   while (len >= heap_size[i]) i++;
@@ -76,7 +82,7 @@ inline void respolyHeap::add(res2term * p)
     top_of_heap = i;
 }
 
-inline res2term * respolyHeap::remove_lead_term()
+inline const res2term * respolyHeap::get_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -112,9 +118,17 @@ inline res2term * respolyHeap::remove_lead_term()
 	  i = -1;
 	}
     }
+  mLead = lead_so_far;
   if (lead_so_far < 0) return NULL;
   res2term * result = heap[lead_so_far];
-  heap[lead_so_far] = result->next;
+  return result;
+}
+inline res2term * respolyHeap::remove_lead_term()
+{
+  if (mLead < 0) get_lead_term();
+  if (mLead < 0) return NULL;
+  res2term * result = heap[mLead];
+  heap[mLead] = result->next;
   result->next = NULL;
   return result;
 }

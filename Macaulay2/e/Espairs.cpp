@@ -53,8 +53,10 @@ int ESPairSet::get_next_degree(int &deg, es_pair *&elems)
   if (len == 0) return 0;
   es_pair head;
   head.next = heap;
-  for (es_pair *p = &head; p->next != 0; p=p->next)
-    if (p->next->degree != deg) continue;
+  es_pair *p = &head;
+  while (p->next != 0)
+    if (p->next->degree != deg)
+      p = p->next;
     else
       {
 	es_pair *tmp = p->next;

@@ -24,6 +24,8 @@
 extern int comp_printlevel;
 extern Z *ZZ;
 
+extern void make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy);
+
 void cmd_NGB_tracing(object &on)
 {
   int n = on->int_of();
@@ -51,6 +53,12 @@ void cmd_gb_make(object &om,
     gStack.insert(new HermiteComputation(m, dosyz, nsyz));
   else if (R->is_poly_ring() && R->Ncoeffs()->is_field())
     {
+      if ((strategy & 3) == 3)
+	{
+	  // This next inserts the computation onto the stack.
+	  make_EGB_comp(m, dosyz, nsyz, strategy);
+	  return;
+	}
       if (R->is_graded() && m.is_homogeneous())
 	{
 	  if ((strategy & 3) == 1)

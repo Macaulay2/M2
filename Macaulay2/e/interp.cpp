@@ -28,7 +28,7 @@ extern void i_factor_cmds();
 extern int i_res_cmds();
 extern int i_res2_cmds();
 extern int i_gbres_cmds();
-
+extern void i_EGB();
 void GB_gbforget(int h)
 {
   gHandles.forget(h);
@@ -61,6 +61,7 @@ void GB_gbstart(void)
   extern void i_ARING();
   i_ARING();
 #endif
+  i_EGB();
 }
 
 void *GBgbprocess(char *instream, int inlen)

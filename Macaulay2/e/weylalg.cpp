@@ -72,8 +72,6 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF,
 				 const int *comm,
 				 int homog_var)
 {
-  // emit("entering create");
-  
   int nvars = MF->n_vars();
   if (homog_var >= nvars)
     return 0;

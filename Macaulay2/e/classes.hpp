@@ -256,7 +256,7 @@ class EPolynomialRing;
   class ESkewCommPolynomialRing;
   class ENCPolynomialRing;
 class object_ERingElement;
-class EMonomialLookupTable;
+template <class T> class EMonomialLookupTable;
 class EMonomialIdeal;
 class EFreeModule;
 class EVector;
