@@ -1521,6 +1521,13 @@ void gbA::start_computation()
   int npairs;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
 
+  if (stop_.stop_after_degree && _this_degree > stop_.degree_limit->array[0])
+    {
+      // Break out now if we don't have anything else to compute in this degree.
+      set_status(COMP_DONE_DEGREE_LIMIT);
+      return;
+    }
+
   for (;;)
     {
       if (system_interruptedFlag) 
