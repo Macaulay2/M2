@@ -110,18 +110,32 @@ expression Eliminate := v -> (
      else new FunctionApplication from {Eliminate, toList v})
 ProductOrder = new SelfInitializingType of BasicList
 
-monoidDefaults := new OptionTable from {
-     VariableBaseName => null,
-     Variables => null,
-     Degrees => null,
-     Inverses => false,
-     MonomialOrder => null,
-     NewMonomialOrder => null,
-     MonomialSize => 8,
-     SkewCommutative => false,
-     VariableOrder => null,		  -- not implemented yet
-     WeylAlgebra => {}
-     }
+monoidDefaults := if OLDENGINE then (
+     new OptionTable from {
+	  VariableBaseName => null,
+	  Variables => null,
+	  Degrees => null,
+	  Inverses => false,
+	  MonomialOrder => null,
+	  MonomialSize => 8,
+	  SkewCommutative => false,
+	  VariableOrder => null,		  -- not implemented yet
+	  WeylAlgebra => {}
+	  }
+     ) else ( 
+     new OptionTable from {
+	  VariableBaseName => null,
+	  Variables => null,
+	  Degrees => null,
+	  Inverses => false,
+	  MonomialOrder => null,
+	  NewMonomialOrder => null,
+	  MonomialSize => 8,
+	  SkewCommutative => false,
+	  VariableOrder => null,		  -- not implemented yet
+	  WeylAlgebra => {}
+	  }
+     )
 
 generators GeneralOrderedMonoid := M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
@@ -152,7 +166,7 @@ makeit1 := (options) -> (
      firstdeg := transpose degs;
      firstdeg = if #firstdeg === 0 then toList(n:1) else firstdeg#0;
      variableOrder := toList (0 .. n-1);
-     if options.NewMonomialOrder =!= null then (
+     if options.?NewMonomialOrder and options.NewMonomialOrder =!= null then (
 	  M.newEngine = true;
 	  M.MonomialOrder = monomialOrdering options.NewMonomialOrder;
 	  )

@@ -897,7 +897,7 @@ document { quote group,
 	     variables listed, ungraded.",
      PARA,
      "The class of all groups created this way is ",
-     TO "GeneralOrderedMonoid", ".",
+     TO "GeneralOrderedGroup", ".",
      PARA,
      SEEALSO { "Degrees", "OrderedMonoid", "monoid" }
      }

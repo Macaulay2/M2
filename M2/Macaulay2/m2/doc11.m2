@@ -1021,3 +1021,49 @@ document { quote methods,
      PARA,
      EXAMPLE "methods drop"
      }
+
+document { quote isTable,
+     TT "isTable m", " -- yields the value true if m is a rectangular matrix 
+     represented as a list of lists, otherwise yields the value false.",
+     PARA,
+     "Warning: notice that it is not possible to represent a 0-by-k matrix 
+     as a list of lists."
+     }
+
+document { quote Monoid,
+     TT "Monoid", " -- denotes the class of all monoids.",
+     PARA,
+     "A monoid is a set with a multiplicative operation on
+     it and an identity element.",
+     MENU {
+          TO "OrderedMonoid",
+          TO "GeneralOrderedMonoid",
+          TO "GeneralOrderedGroup"
+          },
+     "Methods for creating monoids:",
+     MENU {
+          TO "group",
+          TO "monoid"
+          },
+     "Operations on monoids:",
+     MENU {
+          (TO (quote **,Monoid,Monoid), " -- product of monoids."),
+          (TO "generators", "        -- get the generators of the monoid"),
+          (TO (quote _, ZZ, Monoid), "         -- get the unit element"),
+          (TO (quote _, Monoid, ZZ), "         -- get a generator from a monoid"),
+          (TO (quote " ",Ring, OrderedMonoid), " -- make a monoid ring")
+          },
+     PARA,
+     "Keys:",
+     MENU {
+          TO "index",
+          TO "generatorExpressions",
+          TO "generatorSymbols"
+          }
+     }
+
+document { (quote _, ZZ, Monoid),
+     TT "1_M", " -- provides the unit element of a group or monoid
+     ", TT "M", "."
+     }
+

@@ -81,7 +81,7 @@ applyMethod := (m,x) -> if x === null then x else (
      if method === null then x else method x
      )
 
-outputSymbols := new MutableHashTable
+outputSymbols = new MutableHashTable
 
 Print Thing := x -> (
      o := concatenate("o",string lineNumber());
@@ -188,10 +188,29 @@ addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
      g)
 runStartFunctions = () -> scan(startFunctions, f -> f())
+OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
 << "--loading source code..." << endl
 load "loads.m2"
+notify = true
 lastSystemSymbol = local privateSymbol
+if OLDENGINE then (
+     erase quote ZZZ;
+     erase quote NewMonomialOrder;
+     erase quote Component;
+     erase quote GroupLex;
+     erase quote GroupRevLex;
+     erase quote MonomialOrdering;
+     erase quote NCLex;
+     erase quote Weights;
+     erase quote newDegreesMonoid;
+     erase quote newDegreesRing;
+     erase quote newEngine;
+     erase quote monomialOrdering;
+     erase quote clone;
+     )
+erase quote OLDENGINE
+erase quote outputSymbols
 erase quote lastSystemSymbol
 
 -- the last function restarted

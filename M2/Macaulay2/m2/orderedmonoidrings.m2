@@ -37,8 +37,9 @@ newDegreesRing2 := memoize(
 	  Zn := newDegreesMonoid n;
 	  ZZn := ZZZ Zn;
 	  ZZn.name = "ZZ[" | Zn.name | "]";
-     	  use ZZn
-	  ))
+	  use ZZn
+	  )
+     )
 
 newDegreesRing ZZ := n -> newDegreesRing2 n
 
