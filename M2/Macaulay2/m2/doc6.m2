@@ -996,6 +996,7 @@ document { (symbol _, Vector, ZZ),
      }
 
 document { degrees,
+     HEADLINE "get degrees of basis elements",
      TT "degrees M", " -- provides a list of multi-degrees for the basis
      elements of a free module M.",
      PARA,
@@ -1009,6 +1010,7 @@ document { degrees,
      }
 
 document { (symbol ^, Ring, List),
+     HEADLINE "make a free module",
      TT "R^{i,j, k, ...}", " -- produce a free module over R whose generators have
      degrees -i, -j, -k, ...",
      PARA,
@@ -1024,6 +1026,7 @@ document { (symbol ^, Ring, List),
      }
 
 document { components,
+     HEADLINE "list the components of a direct sum",
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
      BR,NOINDENT,
@@ -1038,12 +1041,14 @@ document { components,
      }
 
 document { (symbol ^, Ring, ZZ),
+     HEADLINE "make a free module",
      TT "R^n", " -- produce a free module of rank ", TT "n", " over the ring ", TT "R", "",
      PARA,
      SEEALSO{"^", "isFreeModule", (symbol ^, Ring, List)}
      }
 
 document { euler,
+     HEADLINE "list the sectional Euler characteristics",
      TT "euler M", " -- provide a list of the successive sectional Euler 
      characteristics of a module, ring, or ideal.",
      PARA,
@@ -1052,6 +1057,7 @@ document { euler,
      }
 
 document { genera,
+     HEADLINE "list the sectional arithmetic genera",
      TT "genera M", " -- provide a list of the successive sectional 
      arithmetic genera of a module, ring, or ideal.",
      PARA,
@@ -1069,6 +1075,7 @@ assert ( euler R == {0,3} )
 ///
 
 document { rank,
+     HEADLINE "compute the rank",
      TT "rank M", " -- computes the rank of the module M.",
      PARA,
      EXAMPLE {
@@ -1080,6 +1087,7 @@ document { rank,
      }
 
 document { cover,
+     HEADLINE "get the covering free module",
      TT "cover M", " -- yields the free module whose basis elements correspond
      to the generators of M.",
      PARA,
@@ -1087,6 +1095,7 @@ document { cover,
      }
 
 document { super,
+     HEADLINE "get the ambient module",
      TT "super M", " -- yields the module which the module M is a submodule of.",
      BR, NOINDENT,
      TT "super f", " -- if f is a map whose target is a submodule of M, yields the
@@ -1096,6 +1105,7 @@ document { super,
      }
 
 document { End,
+     HEADLINE "module of endomorphisms",
      TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."
      }
 document { ModuleMap,
@@ -1143,22 +1153,31 @@ document { Matrix,
 
 document { gcdDegree,
      TT "gcdDegree F", " -- I don't know what this is supposed to do.",
+     PARA,
+     "This function should be removed."
      }
 
 document { lcmDegree,
      TT "lcmDegree F", " -- I don't know what this is supposed to do.",
+     PARA,
+     "This function should be removed."
      }
 
 document { getMatrix,
+     HEADLINE "get a matrix from the engine's stack",
      TT "getMatrix R", " -- pops a matrix over ", TT "R", " from the top of 
-     the engine's stack and returns it."
+     the engine's stack and returns it.",
+     PARA,
+     "Intended for internal use only."
      }
+
 document { (symbol _, Matrix, Sequence),
      HEADLINE "get an entry",
      TT "f_(i,j)", " -- provide the element in row ", TT "i", " and
      column ", TT "j", " of the matrix ", TT "f", ".",
      SEEALSO {"_", "Matrix"}
      }
+
 document { (symbol _, Matrix, ZZ),
      HEADLINE "get a column from a matrix",
      TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
@@ -1182,11 +1201,13 @@ assert isDirectSum (QQ^1 ++ QQ^2)
 "
 
 document { youngest,
+     HEADLINE "the youngest member of a sequence",
      TT "youngest s", " -- return the youngest mutable hash table in the sequence
      ", TT "s", ", if any, else ", TT "null", "."
      }
 
 document { (symbol ++,Module,Module),
+     HEADLINE "direct sum of modules",
      TT "M++N", " -- computes the direct sum of two modules.",
      PARA,
      EXAMPLE {
@@ -1202,6 +1223,7 @@ document { (symbol ++,Module,Module),
      }
 
 document { (symbol ++,Matrix,Matrix),
+     HEADLINE "direct sum of maps",
      TT "f++g", " -- computes the direct sum of two maps between modules.",
      PARA,
      "If an argument is a ring element or integer, it is promoted
@@ -1221,6 +1243,7 @@ document { (symbol ++,Matrix,Matrix),
      }
 
 document { directSum,
+     HEADLINE "direct sum of modules or maps",
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA,
      "The components can be recovered later with ", TO "components", ".",
