@@ -81,9 +81,33 @@ you can compile and link Macaulay 2.  We always compile with gcc.
 Compiling
 -----------------------
 
-To compile Macaulay 2 type 'make' in this directory.  The resulting shell
-script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  The
-resulting files distributions/Macaulay2-*-tar.gz file can be distributed.
+Quick and easy:
+
+    To compile Macaulay 2 type 'make' in this directory.  The resulting shell
+    script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  The
+    resulting files distributions/Macaulay2-*-tar.gz can be distributed.
+
+Useful intermediate make targets:
+
+    Use
+	    make configure.options
+    to make a file containing possible options for the 'configure' script.
+    Comment out the ones you want, or install some of your own.  An example of
+    one you might want to add is
+	    CONFIGURE_OPTIONS += --prefix=$HOME/local
+    You don't have to do it this way; you could also run 'configure' manually.
+
+    Use
+	    make configuration
+    to do that and also to run the 'configure' script.
+
+    Use
+	    make all
+    to do configure and compile Macaulay 2.
+
+    Use
+	    make doc
+    to do configure and make the documentation.
 
 -----------------------
 Windows 95, 98 and NT notes
