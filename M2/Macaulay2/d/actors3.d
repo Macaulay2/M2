@@ -116,6 +116,7 @@ notequalfun(lhs:Code,rhs:Code):Expr := not(EqualEqualfun(lhs,rhs));
 setup(NotEqualS,notequalfun);
 
 compare(left:Expr,right:Expr):Expr := (
+     if left == right then EqualE else
      when left
      is x:Integer do (
 	  when right
