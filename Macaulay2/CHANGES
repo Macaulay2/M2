@@ -21,6 +21,9 @@ identical, even if no method for the comparison is defined.  That was
 a misfeature -- now the method is called even in that case, so, for
 example, equations of the form x == x can be considered explicitly.
 
+Changed '!=' to call the method for the unary 'not' operator when the
+result of == is not Boolean.
+
 The function "remove" can now be used to remove an element from a list
 or sequence, like this: remove({a,b,c},1).
 
