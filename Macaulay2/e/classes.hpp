@@ -72,6 +72,7 @@ enum class_identifier {
   CLASS_EZZ,
   CLASS_EZZp,
   CLASS_EMonomialOrder,
+  CLASS_EMonomialIdeal,
   CLASS_EMonoid,
   CLASS_ECommMonoid,
   CLASS_ENCMonoid,
@@ -133,6 +134,7 @@ enum type_identifier {
     TY_ERingElement,
     TY_EVector,
     TY_EFreeModule,
+    TY_EMonomialIdeal,
     TY_EMatrix,
     TY_ERingMap,
     TY_EGroebnerComputation,
@@ -254,6 +256,8 @@ class EPolynomialRing;
   class ESkewCommPolynomialRing;
   class ENCPolynomialRing;
 class object_ERingElement;
+class EMonomialLookupTable;
+class EMonomialIdeal;
 class EFreeModule;
 class EVector;
 class ERingMap;

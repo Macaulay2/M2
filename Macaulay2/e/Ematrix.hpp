@@ -26,19 +26,20 @@ class EMatrix : public type
 				// The columns are always the image vectors, but multiplication
 				// is affected by this setting.
   EGroebnerComputation *gb;	// A GB computation for the columns, if not NULL.
-private:
-  static EVector *allocate_columns(int c);
-  static EVector *initialize_columns(const EFreeModule *F, int c);
-
-  const EMonoid *getDegreeMonoid() const { return target->getDegreeMonoid(); }
 public:
+  //////////////////////////
+  // Creation of matrices //
+  //////////////////////////
+protected:
   EMatrix(const EFreeModule *F,
 	  const EFreeModule *G,
 	  EVector *elements,
 	  int type,  // left,right,both.
 	  const monomial *d);  // GRABS the array and elements in 'elements'.
+public:
+  static EVector *allocate_columns(int c);
 
-  virtual ~EMatrix();
+  static EVector *initialize_columns(const EFreeModule *F, int c);
 
   static EMatrix *make(const EFreeModule *F,
 	  const EFreeModule *G,
@@ -51,6 +52,14 @@ public:
 	  const EMatrix *elements, // Take the columns from 'elements'
 	  int type = EMatrix_both,
 	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
+
+  static EMatrix *make(const EFreeModule *F,
+	  int ncols,
+	  EVector *elements,
+	  int type = EMatrix_both,
+	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
+
+  virtual ~EMatrix();
 
   // void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
@@ -70,6 +79,7 @@ public:
   const EFreeModule *getSource() const { return source; }
   const monomial *getMapDegree() const { return mapdegree; }
   const int getMatrixType() const { return theType; }
+  const EMonoid *getDegreeMonoid() const { return target->getDegreeMonoid(); }
 
   EGroebnerComputation *getGB() const { return gb; }
 
@@ -150,6 +160,7 @@ public:
 
   // To/From monomial ideals ??/* TODO */
 };
+
 class ESortColumnAlgorithm
 {
 private:

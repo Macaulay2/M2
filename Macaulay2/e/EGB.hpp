@@ -88,7 +88,7 @@ public:
   virtual EMatrix *getSubring(int n=-1)    { return 0; }
   virtual EMatrix *getSubringGB(int n=-1)  { return 0; }
 
-  virtual void stats() {}
+  virtual void stats() const {}
 
   // Read/write from disk. [checkpoint, retrieve].
 

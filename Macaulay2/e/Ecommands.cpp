@@ -9,6 +9,9 @@
 #include "Evector.hpp"
 #include "Ematrix.hpp"
 #include "Eringmap.hpp"
+#if 0
+#include "Emonideal.hpp"
+#endif
 #include "EGB.hpp"
 
 #include "interp.hpp"
@@ -1176,7 +1179,7 @@ EVector *getVectorsFromStack(const EFreeModule *F, int ncols)
 {
   int i;
   bool bad = false;
-  EVector *result = new EVector [ncols];
+  EVector *result = EMatrix::allocate_columns(ncols);
     
   for (i=ncols-1; i >= 0 ; i--) 
     {
@@ -1257,10 +1260,7 @@ static void cmd_EMatrix1(object &orows, object &ocols, object &otype, object &om
     }
   const monomial *mapdegree = monomialFromIntarray(F->getDegreeMonoid(),*mapdeg);
   if (mapdegree != 0)
-    {
-      EFreeModule *G = EFreeModule::makeFreeModuleFromDegrees(F->getRing(),ncols,newcols);
-      gStack.insert(EMatrix::make(F,G,newcols,newtype,mapdegree));
-    }
+    gStack.insert(EMatrix::make(F,ncols,newcols,newtype,mapdegree));
   else
     delete [] newcols;
 }
@@ -1680,6 +1680,26 @@ static void cmd_EMatrix_divideByVariables(object &oM, object &on, object &omax)
 #endif
 }
 
+////////////////////
+// EMonomialIdeal //
+////////////////////
+#if 0
+static void cmd_EMI_toMatrix(object &o1)
+{
+  EMonomialIdeal *mi = o1->cast_to_EMonomialIdeal();
+  EMatrix *m = mi->toMatrix();
+  gStack.insert(m);
+}
+static void cmd_EMI_fromMatrix(object &o1,  object &o2)
+{
+  EMatrix *m = o1->cast_to_EMatrix();
+  EMonomialIdeal *mi = new EMonomialIdeal(m,o2->int_of());
+  gStack.insert(mi);
+}
+#endif
+////////////////////
+// EGB's ///////////
+////////////////////
 static void cmd_EGB_declareGB(object &ogens, object &ogb, object &ochange)
 {
   EMatrix *gens = ogens->cast_to_EMatrix();
@@ -1755,6 +1775,12 @@ static void cmd_EGB_reduceMatrix(object &op, object &ov)
 }
 void i_Ecommands(void)
 {
+#if 0
+  EMonomialIdeal::mystash = new stash("EMonomialIdeal", sizeof(EMonomialIdeal));
+  EMonomialLookupTable::mystash = new stash("EMonomialLookupTable",
+					    sizeof(EMonomialLookupTable));
+  EMInode::mystash = new stash("EMInode", sizeof(EMInode));
+#endif
   EUniqueObjects = new EHashTable;
   EZ = EZZ::make();
   install(ggEZZ, cmd_EZZ);
@@ -1997,6 +2023,32 @@ void i_Ecommands(void)
   install(gglift, cmd_EMatrix_lift, TY_EFreeModule, TY_EMatrix);
   install(gglift, cmd_EVector_lift, TY_EFreeModule, TY_EVector);
 
+  //////////////////////
+  // Monomial Ideals ///
+  //////////////////////
+#if 0
+  install(ggmatrix, cmd_EMI_toMatrix, TY_EMonomialIdeal);
+  install(ggmonideal, cmd_EMI_fromMatrix, TY_EMatrix, TY_INT);
+
+  install(ggcopy, cmd_EMI_copy, TY_MONIDEAL);
+  install(ggisequal, cmd_EMI_isequal, TY_MONIDEAL, TY_MONIDEAL);
+  install(ggradical, cmd_EMI_radical, TY_MONIDEAL);
+  install(ggadd, cmd_EMI_add, TY_MONIDEAL, TY_MONIDEAL);
+  install(ggmult, cmd_EMI_product, TY_MONIDEAL, TY_MONIDEAL);
+  install(ggintersect, cmd_EMI_intersect, TY_MONIDEAL, TY_MONIDEAL);
+  install(ggdiv, cmd_EMI_quotient1, TY_MONIDEAL, TY_MONOMIAL);
+  install(ggdiv, cmd_EMI_quotient, TY_MONIDEAL, TY_MONIDEAL);
+  install(ggsat, cmd_EMI_sat1, TY_MONIDEAL, TY_MONOMIAL);
+  install(ggsat, cmd_EMI_sat, TY_MONIDEAL, TY_MONIDEAL);
+
+  install(ggremove, cmd_EMI_remove, TY_MONIDEAL);
+
+  install(ggborel, cmd_EMI_borel, TY_MONIDEAL);
+  install(ggisborel, cmd_EMI_isborel, TY_MONIDEAL);
+
+  install(ggcodim, cmd_EMI_codim, TY_MONIDEAL);
+  install(ggprimes, cmd_EMI_assprimes, TY_MONIDEAL);
+#endif
   //////////////////////
   // Groebner bases ////
   //////////////////////

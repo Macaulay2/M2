@@ -372,6 +372,27 @@ void cmd_WeylAlgebra(object &oK, object &oMF, object &oa)
   const intarray *a = oa->intarray_of();
   gStack.insert(WeylAlgebra::create(K, MF, *a));
 }
+static void cmd_WeylAlgebra1(object &o1, object &o2, object &o3, object &o4, object &o5)
+{
+  const Ring *K = o1->cast_to_Ring();
+  const Monoid *M = o2->cast_to_Monoid();
+  intarray *comms = o3->intarray_of();
+  intarray *diffs = o4->intarray_of();
+  if (diffs->length() != comms->length())
+    {
+      gError << "Weyl algebra: expected same length arrays";
+      return;
+    }
+  int homog_var = o5->int_of();
+  if (homog_var < 0) homog_var = -1;
+
+  WeylAlgebra *W = WeylAlgebra::create(K,M,
+			   diffs->length(),
+			   diffs->raw(),
+			   comms->raw(),
+			   homog_var);
+  gStack.insert(W);
+}
 void cmd_fraction_field(object &oR)
 {
   const Ring *R = oR->cast_to_Ring();
@@ -473,6 +494,8 @@ void i_ring_elem_cmds(void)
   install(ggpolyring, cmd_PolynomialRing, TY_RING, TY_MONOID);
   install(ggweylalgebra, cmd_WeylAlgebra, TY_RING, TY_MONOID, 
 	  TY_INTARRAY);
+  install(ggweylalgebra, cmd_WeylAlgebra1, TY_RING, TY_MONOID, 
+	  TY_INTARRAY, TY_INTARRAY, TY_INT);
 
   install(ggschur, cmd_schur, TY_RING, TY_MONOID);
   install(ggqring, cmd_qring, TY_MATRIX);

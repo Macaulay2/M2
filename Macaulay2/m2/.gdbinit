@@ -1,8 +1,8 @@
-file ../bin/Macaulay2
-set environment LD_LIBRARY_PATH /home/geometry/dan/src/M2/Macaulay2/lib
-set environment LOADDATA_IGNORE_CHECKSUMS yes
+#file ../bin/Macaulay2
+#set environment LD_LIBRARY_PATH /home/geometry/dan/src/M2/Macaulay2/lib
+#set environment LOADDATA_IGNORE_CHECKSUMS yes
 dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp
-handle SIGSEGV nostop pass noprint
+#handle SIGSEGV nostop pass noprint
 
 # this breakpoint is where smashed objects are detected
 # b dbg_mlc.c:530
