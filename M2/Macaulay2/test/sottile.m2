@@ -1,4 +1,4 @@
-end -- it doesn't work yet, sigh
+-- it doesn't work yet, sigh
 
 S = QQ[p,q,r,s,t];
 R = QQ[x,y,z,p,q,r,s,t];
