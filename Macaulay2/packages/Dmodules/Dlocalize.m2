@@ -70,8 +70,8 @@ computeLocalization = (M, f, output, options) -> (
    W := ring M;
    r := numgens target gens M; 
    -- case 1: M is a proper submodule of (D_n)^r/N
-   if gens M != map(W^r) 
-   then error "expected input to be a cokernel";
+   -- MES: the original version did not use zeroize.
+   ensureQuotientModule(M, "expected input to be a cokernel");
    -- case 2: M is a cokernel
    if r > 1 then error "non-cyclic modules not yet supported";
 

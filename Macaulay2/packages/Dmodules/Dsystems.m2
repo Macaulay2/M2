@@ -13,17 +13,18 @@ gkz(Matrix, List) := options -> (A, b) -> (
      tempList := {};
      i := 0;
      Ker := kernel A;
+     B := generators Ker;
      while i < numgens Ker do (
 	  posComp := {};
 	  negComp := {};
 	  j := 0;
 	  while j < n do (
-	       if Ker_i_j >= 0 then (
-		    posComp = append(posComp, Ker_i_j);
+	       if B_i_j >= 0 then (
+		    posComp = append(posComp, B_i_j);
 		    negComp = append(negComp, 0);)
 	       else (
 		    posComp = append(posComp, 0);
-		    negComp = append(negComp, -Ker_i_j);
+		    negComp = append(negComp, -B_i_j);
 		    );
 	       j = j+1;
 	       );
@@ -75,17 +76,18 @@ gkz Matrix := A -> (
      tempList := {};
      i := 0;
      Ker := kernel A;
+     B := generators Ker;
      while i < numgens Ker do (
 	  posComp := {};
 	  negComp := {};
 	  j := 0;
 	  while j < n do (
-	       if Ker_i_j >= 0 then (
-		    posComp = append(posComp, Ker_i_j);
+	       if B_i_j >= 0 then (
+		    posComp = append(posComp, B_i_j);
 		    negComp = append(negComp, 0);)
 	       else (
 		    posComp = append(posComp, 0);
-		    negComp = append(negComp, -Ker_i_j);
+		    negComp = append(negComp, -B_i_j);
 		    );
 	       j = j+1;
 	       );

@@ -306,7 +306,7 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
   return ndivisors;
 }
 
-gbvector * GBKernelComputation::s_pair(gbvector * gsyz) const
+gbvector * GBKernelComputation::s_pair(gbvector * gsyz)
 {
   gbvector * result = NULL;
   int *si = M->make_one();
@@ -314,6 +314,7 @@ gbvector * GBKernelComputation::s_pair(gbvector * gsyz) const
     {
       SG->schreyer_down(f->monom, f->comp-1, si);
       gbvector * h = GR->mult_by_term(F, gb[f->comp-1], f->coeff, si, 0);
+      wipe_unneeded_terms(h);
       GR->gbvector_add_to(F,result, h);
     }
   M->remove(si);
@@ -325,32 +326,112 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
   // Remove every term of f (except the lead term)
   // which is NOT divisible by an element of mi.
   int *exp = newarray(int,GR->n_vars());
-  int nterms = 0;
+  int nterms = 1;
   int nsaved = 0;
-  for (gbvector *g = f; g->next != 0; g=g->next)
+  gbvector *g = f;
+  while (g->next != 0)
     {
       // First check to see if the term g->next is in the monideal
       nterms++;
       Bag *b;
-      GR->gbvector_get_lead_exponents(F,f,exp);
-      if (mi[f->comp-1]->search(exp,b))
-        continue;
-	nsaved++;
-      // Otherwise, remove the term
-      gbvector *tmp = g->next;
-      g->next = tmp->next;
-      tmp->next = 0;
-      GR->gbvector_remove(tmp);
+      GR->gbvector_get_lead_exponents(F,g->next,exp);
+      if (mi[g->next->comp-1]->search_expvector(exp,b))
+	{
+	  // Want to keep the monomial
+	  g = g->next;
+	}
+      else
+	{
+	  // Want to dump this term
+	  nsaved++;
+	  gbvector *tmp = g->next;
+	  g->next = tmp->next;
+	  tmp->next = 0;
+	  GR->gbvector_remove(tmp);
+	}
     }
-    if (gbTrace >= 5) 
-      {
-        buffer o;
-	o << "[" << nterms << ",s" << nsaved << "]";
-	emit(o.str());
-      }
+#if 0
+  if (gbTrace >= 5) 
+    {
+      buffer o;
+      o << "[" << nterms << ",s" << nsaved << "]";
+      emit_wrapped(o.str());
+    }
+#endif
 }
 
 void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
+{
+  gbvector * lastterm = fsyz;  // fsyz has only ONE term.
+  const gbvector * r;
+  int q;
+
+  int nhits = 0;
+  int nremoved = 0;
+  int max_len = GR->gbvector_n_terms(f);
+
+  int count = 0;
+  if (gbTrace >= 4)
+    emit_wrapped(",");
+
+  while (f != NULL)
+    {
+      if (SF)
+	{
+	  SF->schreyer_down(f->monom, f->comp-1, REDUCE_mon);
+	  M->to_expvector(REDUCE_mon, REDUCE_exp);
+	}
+      else
+	M->to_expvector(f->monom, REDUCE_exp);
+      if (find_ring_divisor(REDUCE_exp, r))
+	{
+	  // Subtract off f, leave fsyz alone
+	  M->divide(f->monom, r->monom, REDUCE_mon);
+	  ring_elem c = K->negate(f->coeff);
+	  gbvector * h = GR->mult_by_term(F, r, c, REDUCE_mon, f->comp);
+	  GR->gbvector_add_to(F,f,h);
+	  K->remove(c);
+	  total_reduce_count++;
+	  count++;
+	}
+      else if (find_divisor(mi[f->comp-1], REDUCE_exp, q))
+	{
+	  ring_elem c = K->negate(f->coeff);
+	  M->divide(f->monom, gb[q]->monom, REDUCE_mon);
+	  gbvector * h = GR->mult_by_term(F, gb[q], c, REDUCE_mon, 0);
+	  int n1 = GR->gbvector_n_terms(h);
+	  wipe_unneeded_terms(h);
+	  int n2 = GR->gbvector_n_terms(h);
+	  nremoved += (n1-n2);
+	  lastterm->next = make_syz_term(c, f->monom, q+1); // grabs c.
+	  lastterm = lastterm->next;
+	  K->remove(c);
+	  int n3 = GR->gbvector_n_terms(f);
+	  GR->gbvector_add_to(F,f,h);
+	  int n4 = GR->gbvector_n_terms(f);
+	  if (n4 > max_len) max_len = n4;
+	  nhits += (n2+n3-n4);
+	  total_reduce_count++;
+	  count++;
+	}
+      else
+	{
+	  // To get here is an ERROR!
+	  f = f->next; // Just to not have an infinite loop
+	  emit_line("error in Schreyer reduction: element does not reduce to zero!");
+	}
+    }
+
+  if (gbTrace >= 4)
+    {
+      buffer o;
+      o << count;
+      o << "[" << max_len << " " << nhits << " " << nremoved << "]";
+      emit_wrapped(o.str());
+    }
+}
+
+void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
 {
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
   const gbvector * r;
@@ -389,6 +470,7 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 	  ring_elem c = K->negate(lead->coeff);
 	  M->divide(lead->monom, gb[q]->monom, REDUCE_mon);
 	  gbvector * h = GR->mult_by_term(F, gb[q], c, REDUCE_mon, 0);
+	  wipe_unneeded_terms(h);
 	  lastterm->next = make_syz_term(c, lead->monom, q+1); // grabs c.
 	  lastterm = lastterm->next;
 	  fb.add(h);
