@@ -34,8 +34,6 @@ isDocumentableThing   Nothing := key -> true
 
 isDocumentableMethod := method(SingleArgumentDispatch => true)
 isDocumentableMethod Sequence := key -> (
-     fn := lookup key;
-     if fn === null then error "key doesn't appear to be a method";
      if methodDispatchFunctions#?fn then return false;
      all(key,isDocumentableMethod)
      )

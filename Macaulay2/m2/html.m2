@@ -431,7 +431,7 @@ installPackage Package := o -> pkg -> (
      makeDirectory docDir;
      if fileExists rawdbnametmp then unlink rawdbnametmp;
      if fileExists rawdbname then (
-	  tmp := openDatabaseOut rawdbname;   -- just to make sure the database file isn't open for writing
+	  tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
 	  copyFile(rawdbname,rawdbnametmp);
 	  close tmp;
 	  );
@@ -517,7 +517,7 @@ installPackage Package := o -> pkg -> (
      dbnametmp := dbname | ".tmp";
      if fileExists dbnametmp then unlink dbnametmp;
      if fileExists dbname then (
-	  tmp2 := openDatabaseOut dbname;   -- just to make sure the database file isn't open for writing
+	  tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
 	  copyFile(dbname,dbnametmp);
 	  close tmp2;
 	  );
