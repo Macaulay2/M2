@@ -32,11 +32,12 @@ AC_DEFUN(M2_CONFIGURED_FILES,patsubst(m4_include(config/files),[
 
 echo "any environment variables set:"
 test "$CC"         && echo "   CC=$CC"
-test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
-test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
+test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
 test "$CXX"        && echo "   CXX=$CXX"
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
+test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
+test "$LIBS"       && echo "   LIBS=$LIBS"
 test "$LD_LIBRARY_PATH"   && echo "   LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 
 # 5 compiler messages saved in config.log

@@ -99,6 +99,38 @@ here, as some of the later ones depend on some of the earlier ones.
       notes: The version available through Singular, mentioned above, has had unneeded routines that
 	     use iostreams stripped out.
 
+Other unusual libraries needed, with --enable-lapack (well, actually, you need these, currently!):
+
+    library: blas
+    release: 
+     author: 
+  home page: 
+     get at: 
+    license: 
+      notes: 
+
+    library: lapack
+    release: 
+     author: 
+  home page: 
+     get at: 
+    license: 
+      notes: 
+
+    library: cblas
+    release: 
+     author: 
+  home page: 
+     get at: 
+    license: 
+      notes: 
+
+Other common libraries that we assume are on your system already:
+
+	g2c (gnu fortran support routines, provided by gcc with the fortran option)
+	GNU readline (provides libreadline.so and libhistory.so)
+	GNU ncurses (provides libcurses.so)
+
 -----------------------
 Compiling
 -----------------------
@@ -136,6 +168,11 @@ where ... represents the remaining arguments, as above.  As an example, if
 you have compiled the libraries with fink, then you could use this line:
 
         LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ./configure ...
+
+To specify other libraries to link against, use the LIBS environment
+variable, as described in documentation for autoconf.  Example:
+
+	LIBS=-lreadline ./configure ...
 
 -----------------------
 Windows 95, 98 and NT notes

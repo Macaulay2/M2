@@ -192,7 +192,7 @@ compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 else
 compat.c compat.h : configure ../../include/config.h
-	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
+	FLAGS="$(LDFLAGS) $(LDLIBS)" @srcdir@/configure
 endif
 
 M2types.o : M2types.h
@@ -224,7 +224,7 @@ startup.c : ../m2/startup.m2
 ALLOBJ += ../e/libgb.a
 
 ifeq "$(DUMPDATA)" "yes"
-LOADLIBES += -L../dumpdata
+LDLIBS += -L../dumpdata
 LIBRARYFILES += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
 endif
@@ -296,6 +296,7 @@ LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
+LIBRARYOPTIONS += -lreadline -lhistory -lcurses
 # we avoid successfully using streamio, but we need the personality function
 LIBRARYOPTIONS += -lstdc++
 
@@ -319,12 +320,14 @@ ifneq "$(CC)" "cl"
 LDLIBS += -lm
 endif
 
+LDLIBS += $(LIBS)
+
 LDLIBS += -lc ../compat/compat.a
 
 MADEFILES += ../bin/Macaulay2$(EXE)
 ../bin/Macaulay2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
-	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
 
 t_main.o : types.h

@@ -383,6 +383,64 @@ int offset;
      return read(fd,buffer->array+offset,len);
      }
 
+#include <readline/readline.h>
+#include <readline/history.h>
+
+static int readPrompt(int fd,char *buf,int len,char *prompt) {
+  static char *p;		/* buffer, NULL if newline has already been returned */
+  static int plen;		/* number of chars in p */
+  static int i;			/* number of chars in p already returned */
+  int r;			/* number of chars to return this time */
+  if (fd != STDIN) {
+    return read(fd,buf,len);
+  }
+  if (p == NULL) {
+    p = readline(prompt);
+    if (p == NULL) return 0;	/* EOF */
+    i = 0;
+    plen = strlen(p);
+    if (*p) add_history(p);
+  }
+  r = plen - i;
+  if (r > len) r = len;
+  memmove(buf,p+i,r), i+=r;
+  if (i == plen && r < len) {
+    free(p);
+    p = NULL;
+    buf[r++] = '\n';
+  }
+  return r;
+}
+
+int system_readPrompt(fd,buffer,len,prompt)
+int fd;
+M2_string buffer;
+int len;
+M2_string prompt;
+{
+  char *p = tocharstar(prompt);
+  int r;
+  if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
+  r = readPrompt(fd,buffer->array,len,p);
+  free(p);
+  return r;
+}
+
+int system_readPrompt_1(fd,buffer,len,offset,prompt)
+int fd;
+M2_string buffer;
+int len, offset;
+M2_string prompt;
+{
+  char *p = tocharstar(prompt);
+  int r;
+  if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
+  r = readPrompt(fd,buffer->array + offset,len,p);
+  free(p);
+  return r;
+}
+
+
 /* stupid ANSI forces some systems to put underscores in front of useful identifiers */
 #if !defined(S_ISREG)
 #if defined(_S_ISREG)
@@ -690,8 +748,10 @@ char const *system_strerror() {
 #endif
 #if !defined(__MWERKS__) && !defined(__CYGWIN__)
 #if 0
+       /* old way: sys_errlist is deprecated */
      errno > 0 && errno < sys_nerr ? sys_errlist[errno] :
 #else
+       /* to be thread safe, use strerror_r instead */
      errno > 0 ? strerror(errno) :
 #endif
 #endif

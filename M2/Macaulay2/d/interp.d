@@ -176,16 +176,14 @@ setupfun("stopIfError",stopIfError);
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
-prompt(o:file):void := (
-     if stmtno == laststmtno 
-     then (
-	  method := lookup(integerClass,InputContinuationPrompt);
-	  if method != nullE then apply(method,toExpr(stmtno));
-     	  )
-     else (
-     	  laststmtno = stmtno;
-	  method := lookup(integerClass,InputPrompt);
-	  if method != nullE then apply(method,toExpr(stmtno))));
+prompt():string := (
+     method := lookup(integerClass,if stmtno == laststmtno then InputContinuationPrompt else (laststmtno = stmtno; InputPrompt));
+     if method == nullE then ""
+     else when apply(method,toExpr(stmtno)) is s:string do s
+     is n:Integer do if isInt(n) then blanks(toInt(n)) else ""
+     else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
+     );
+
 loadprint(s:string,StopIfError:bool):Expr := (
      when openTokenFile(s)
      is errmsg do False
