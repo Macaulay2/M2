@@ -68,9 +68,11 @@ static struct select {
      } Selection, SelectionResult;
 static void (*Handler[NOFILE])(	/* fd */ );   /* for EventManager() */
 static int ChildPID;
-static int ttyparmsaved = FALSE;
-static terminal ttyparmsave;
-static int master_ttyparmsaved = FALSE;
+static int stdin_tty_parmsaved = FALSE;
+static terminal stdin_tty_parmsave;
+static int stdout_tty_parmsaved = FALSE;
+static terminal stdout_tty_parmsave;
+static int master_stdin_tty_parmsaved = FALSE;
 static terminal master_ttyparm;
 static char *progname;
 static char *slavename;
@@ -82,12 +84,12 @@ warning(char *s)
 {
      if (errno != 0) {
      	  char t[100];
-     	  sprintf(t,"%s : %s ",progname,s);
+     	  sprintf(t,"%s:%s ",__FILE__,s);
 	  perror(t);
 	  fprintf(stderr,endl);
 	  }
      else {
-     	  fprintf(stderr,"%s : %s%s",progname,s,endl);
+     	  fprintf(stderr,"%s:%s%s",__FILE__,s,endl);
 	  }
      }
 
@@ -136,7 +138,7 @@ terminate(int s){
      if (firsttime) {
 	  firsttime = FALSE;
 	  if (isatty(STDIN)) {
-	       setttystate(STDIN,&ttyparmsave);
+	       setttystate(STDIN,&stdin_tty_parmsave);
 	       }
 	  if (termmsg != NULL) {
 	       puts("");
@@ -226,11 +228,11 @@ volatile void runchild()
 	       warning("TIOCSPGRP ioctl fails");
 	       }
 	  }
-     if (ttyparmsaved) {
-	  setttystate(slave,&ttyparmsave);
+     if (stdin_tty_parmsaved) {
+	  setttystate(slave,&stdin_tty_parmsave);
 	  }
-     else {
-	  /* here we should put in a useful tty state */
+     else if (stdout_tty_parmsaved) {
+	  setttystate(slave,&stdout_tty_parmsave);
 	  }
      close(STDIN);
      close(STDOUT);
@@ -458,7 +460,13 @@ volatile void show()
 {
      /* if (!isatty(STDIN) || !isatty(STDOUT)) error("not a tty"); */
      getpty(&masterfd,&slavename);
-     getttystate(masterfd,&master_ttyparm), master_ttyparmsaved = TRUE;
+     if (stdin_tty_parmsaved) {
+	  setttystate(masterfd,&stdin_tty_parmsave);
+	  }
+     else if (stdout_tty_parmsaved) {
+	  setttystate(masterfd,&stdout_tty_parmsave);
+	  }
+     getttystate(masterfd,&master_ttyparm), master_stdin_tty_parmsaved = TRUE;
      signal(SIGCHLD,HandleSIGCHLD);
      ChildPID = fork();
      if (ChildPID == 0) {
@@ -494,8 +502,12 @@ int main(int ARGC, char **ARGV)
      progname = BaseName(argv[0]);
      if (argc < 2) usage();
      if (isatty(STDIN)) {
-	  ttyparmsaved = TRUE;
-	  getttystate(STDIN,&ttyparmsave);
+	  stdin_tty_parmsaved = TRUE;
+	  getttystate(STDIN,&stdin_tty_parmsave);
+	  }
+     if (isatty(STDOUT)) {
+	  stdout_tty_parmsaved = TRUE;
+	  getttystate(STDOUT,&stdout_tty_parmsave);
 	  }
      show();
      return 0;
