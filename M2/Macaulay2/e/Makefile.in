@@ -11,6 +11,10 @@ INSTALL_DATA = $(INSTALL)
 %.o : %.cpp
 	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 
+ifeq "$(GCC)" "yes"
+CXXFLAGS += -Wno-shadow
+endif
+
 ifeq "$(CC)" "cl"
 WARNINGS = -W3
 else
