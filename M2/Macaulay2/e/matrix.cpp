@@ -372,28 +372,28 @@ bool Matrix::interchange_columns(int i, int j)
   return true;
 }
 
-bool Matrix::scale_row(ring_elem r, int i)
+bool Matrix::scale_row(ring_elem r, int i, bool left_mult)
   /* row(i) <- r * row(i) */
 {
   if (is_immutable()) return false;
   if (error_row_bound(i)) return false;
   const Ring *R = get_ring();
   for (int c=0; c<n_cols(); c++)
-    R->mult_row(_entries[c], r, i);
+    R->mult_row(_entries[c], r, i, left_mult);
   return true;
 }
 
-bool Matrix::scale_column(ring_elem r, int i)
+bool Matrix::scale_column(ring_elem r, int i, bool left_mult)
   /* column(i) <- r * column(i) */
 {
   if (is_immutable()) return false;
   if (error_column_bound(i)) return false;
   const Ring *R = get_ring();
-  R->mult(_entries[i], r);
+  R->mult(_entries[i], r, left_mult);
   return true;
 }
 
-bool Matrix::row_op(int i, ring_elem r, int j)
+bool Matrix::row_op(int i, ring_elem r, int j, bool left_mult)
   /* row(i) <- row(i) + r * row(j) */
 {
   if (is_immutable()) return false;
@@ -402,12 +402,12 @@ bool Matrix::row_op(int i, ring_elem r, int j)
   const Ring *R = get_ring();
 
   for (int c=0; c<n_cols(); c++)
-    R->vec_row_op(_entries[c], i, r, j);
+    R->vec_row_op(_entries[c], i, r, j, left_mult);
 
   return true;
 }
 
-bool Matrix::column_op(int i, ring_elem r, int j)
+bool Matrix::column_op(int i, ring_elem r, int j, bool left_mult)
   /* column(i) <- column(i) + r * column(j) */
 {
   if (is_immutable()) return false;
@@ -416,7 +416,7 @@ bool Matrix::column_op(int i, ring_elem r, int j)
   const Ring *R = get_ring();
 
   vec tmp = R->copy(_entries[j]);
-  R->mult(tmp, r); // replaces tmp by r*tmp
+  R->mult(tmp, r, left_mult); // replaces tmp by r*tmp or tmp*r
   R->add(_entries[i], tmp);
 
   return true;
@@ -676,6 +676,23 @@ Matrix *Matrix::transpose() const
   return result;
 }
 
+Matrix *Matrix::scalar_mult(const ring_elem r, bool left_mult) const
+{
+  const Ring *R = get_ring();
+  int *deg = degree_monoid()->make_one();
+  if (!R->is_zero(r))
+    R->degree(r, deg);
+  degree_monoid()->mult(deg, degree_shift(), deg);
+  Matrix *result = new Matrix(rows(), cols(), deg);
+  for (int i=0; i<n_cols(); i++)
+    {
+      vec w = R->copy(elem(i));
+      R->mult(w,r,left_mult);
+      (*result)[i] = w;
+    }
+  return result;
+}
+
 Matrix *Matrix::operator*(const ring_elem r) const
 {
   int *deg = degree_monoid()->make_one();
@@ -738,6 +755,31 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   for (i=0; i<nc; i++) (*result)[i] = F->copy(elem(i));
   for (i=0; i<m->n_cols(); i++)
     (*result)[nc+i] = F->component_shift(nr, m->rows(), (*m)[i]);
+  return result;
+}
+
+Matrix *Matrix::mult(const Matrix *m, bool left_mult) const
+{
+  const Ring *R = get_ring();
+  if (R != m->get_ring())
+    {
+      ERROR("matrix mult: different base rings");
+      return 0;
+    }
+  if (n_cols() != m->n_rows())
+    {
+      ERROR("matrix mult: matrix sizes don't match");
+      return 0;
+    }
+
+  int *deg = degree_monoid()->make_new(degree_shift());
+  degree_monoid()->mult(deg, m->degree_shift(), deg);
+
+  Matrix *result = new Matrix(rows(), m->cols(), deg);
+  degree_monoid()->remove(deg);
+
+  for (int i=0; i<m->n_cols(); i++)
+    (*result)[i] = R->mult_vec_matrix(this, elem(i), left_mult);
   return result;
 }
 

@@ -27,8 +27,6 @@ private:
   // an array of vec's of length ncols.
   // caller now owns the resulting array
 
-  vec &elem(int i) { return _entries[i]; }
-  const vec &elem(int i) const { return _entries[i]; }
 
   // These two routines are private to 'coeffs'
   vec strip_vector(vec &f, const int *vars, 
@@ -100,6 +98,8 @@ public:
   const vec &operator[](int i) const { return _entries[i]; }
   ring_elem elem(int i, int j) const 
     { return rows()->get_coefficient(elem(j), i); }
+  vec &elem(int i) { return _entries[i]; }
+  const vec &elem(int i) const { return _entries[i]; }
 
   FreeModule *rows() { return _rows; }
   FreeModule *cols() { return _cols; }
@@ -133,16 +133,16 @@ public:
   bool interchange_columns(int i, int j);
   /* swap columns: column(i) <--> column(j) */
 
-  bool scale_row(ring_elem r, int i);
+  bool scale_row(ring_elem r, int i, bool left_mult);
   /* row(i) <- r * row(i) */
 
-  bool scale_column(ring_elem r, int i);
+  bool scale_column(ring_elem r, int i, bool left_mult);
   /* column(i) <- r * column(i) */
 
-  bool row_op(int i, ring_elem r, int j);
+  bool row_op(int i, ring_elem r, int j, bool left_mult);
   /* row(i) <- row(i) + r * row(j) */
 
-  bool column_op(int i, ring_elem r, int j);
+  bool column_op(int i, ring_elem r, int j, bool left_mult);
   /* column(i) <- column(i) + r * column(j) */
 
   ///////////////////////////////////////////
@@ -163,6 +163,8 @@ public:
   Matrix *operator+(const Matrix &m) const;
   Matrix *operator-() const;
   Matrix *operator-(const Matrix &m) const;
+  Matrix *scalar_mult(const ring_elem r, bool left_mult) const;
+  Matrix *mult(const Matrix *m, bool left_mult) const;
   Matrix *operator*(const ring_elem r) const;
   Matrix *operator*(const Matrix &r) const;
   Matrix *concat(const Matrix &m) const;
