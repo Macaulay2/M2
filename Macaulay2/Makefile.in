@@ -68,11 +68,6 @@ install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
 check ::; $(MAKE) -C test -k
 distclean clean ::; $(MAKE) -C test $@
-################################# setup
-all :: setup
-	[ -x $< ] || chmod a+x $<
-install ::; $(INSTALL_PROGRAM) setup $(libm2dir)
-distclean ::; rm -f setup
 ################################# packages
 # from now on, all packages will be separate entities
 # all install check ::; $(MAKE) -C packages $@
