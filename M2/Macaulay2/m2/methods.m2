@@ -237,7 +237,13 @@ dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictiona
 addSynonym = method()
 addSynonym(Symbol,String) := (X,nam) -> (dictionary X)#nam = X
 
-{(symbol cokernel, "coker"), (symbol kernel, "ker"), (symbol substitute, "sub"), (symbol resolution, "res")} / addSynonym
+{
+     (symbol cokernel, "coker"),
+     (symbol generators, "gens"),
+     (symbol kernel, "ker"),
+     (symbol substitute, "sub"),
+     (symbol resolution, "res")
+     } / addSynonym
 
 -----------------------------------------------------------------------------
 oldvalue := value
