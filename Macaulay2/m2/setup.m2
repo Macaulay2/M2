@@ -57,6 +57,8 @@ commonProcessing := x -> (
 
 simpleToString := toString
 
+debugError = identity
+
 Thing.Print = x -> (
      x = commonProcessing x;
      y := applyMethod(BeforePrint,x);
@@ -65,10 +67,11 @@ Thing.Print = x -> (
 	  << concatenate(interpreterDepth:"o") << lineNumber << " = " 
 	  << (
 	       try net y else (
-		    stderr << "warning: got error when converting output to net" << endl;
+		    global debugError <- x -> net y;
+		    stderr << "--error in conversion of output to net: type 'debugError()' to see it; will try conversion to string" << endl << endl ;
 		    try toString y else (
-		    	 stderr << "warning: got error when converting output to string" << endl;
-			 try simpleToString y else "--something--"))) << endl;
+		    	 stderr << "--error in converstion of output to string" << endl << endl;
+			 try simpleToString y else "--something unprintable--"))) << endl;
 	  );
      applyMethod(AfterPrint,x);
      )
