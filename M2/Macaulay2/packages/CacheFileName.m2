@@ -67,6 +67,12 @@ cacheFileName(String,List,String) := (head,path,key) -> (
      )
 cacheFileName(Nothing,List,String) := (head,path,key) -> cacheFileName(path,key)
 
+beginDocumentation()
+
+document {
+     Key => CacheFileName
+     }
+
 document {
      Key => cacheFileName,
      Headline => "produce the name of a cache file",
@@ -109,7 +115,7 @@ document {
 	  "fn" => "a new file name"
 	  },
      "A file name ", TT "fn", " is constructed by concatenating ", TT "prefix", " and
-     ", TT "base", " and associate with the key for future retrieval with
+     ", TT "base", " and associated with ", TT "key", " for future retrieval with
      ", TT "cacheFileName", ".  The prefix should be the path to a directory,
      together with a terminating path component
      separator.  When the program terminates, a file called
