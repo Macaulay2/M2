@@ -224,7 +224,7 @@ document { (quote ++, CoherentSheaf, CoherentSheaf),
 
 CoherentSheaf ** CoherentSheaf := (F,G) -> sheaf(F.module ** G.module)
 document { (quote **, CoherentSheaf, CoherentSheaf),
-     TT "F ** G", " -- direct sum of coherent sheaves.",
+     TT "F ** G", " -- tensor product of coherent sheaves.",
      PARA,
      SEEALSO "CoherentSheaf"
      }
@@ -232,7 +232,7 @@ document { (quote **, CoherentSheaf, CoherentSheaf),
 CoherentSheaf ZZ := (F,n) -> sheaf(F.module ** (ring F)^{n})
 document { (quote " ", CoherentSheaf, ZZ),
      TT "F(n)", " -- twist a coherent sheaf F on a projective variety by
-     the n-th power of the canonical line bundle.",
+     the n-th power of the hyperplane line bundle.",
      PARA,
      EXAMPLE {
 	  "X = Proj(QQ[x,y,z])",

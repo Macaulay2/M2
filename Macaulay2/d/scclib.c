@@ -162,11 +162,15 @@ int system_openout(filename)
 M2_string filename;
 {
      char *fname = tocharstar(filename);
+#if defined(__BUILDING_MPW__)
+     int fd = open(fname, O_WRONLY);
+#else
      int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_TRUNC
 #ifndef __MWERKS__
 	  , 0644
 #endif
 	  );
+#endif
      GC_free(fname);
      return fd;
      }
@@ -516,6 +520,64 @@ void system_atend(void (*f)()){
      this_final -> next = pre_final_list;
      pre_final_list = this_final;
      }
+
+#if defined(__MWERKS__) && defined(__BUILDING_MPW__)
+/* There appears to be a bug in the open/close routines when linking with MPW stuff.
+   So here we define these routines in a somewhat different way.
+ */
+
+int M2open(char *name, int flags)
+{
+    FILE *fil;
+//    fprintf(stderr, "about to open file %s...", name);
+    if ((flags & O_RDONLY) != 0) {
+    	fil = fopen(name,"rb");
+    } else {
+    	fil = fopen(name, "wb");
+    }
+//    fprintf(stderr, "returned %d\n", (int)fil);
+    if (fil == NULL)
+        return -1; // ERROR, stdio_ERROR
+    return (int)fil;	
+}
+
+int M2read(int fd, char *buffer, int len)
+{
+    char * result;
+    switch (fd) {
+    case 0:
+    	result = fgets(buffer, len, stdin);
+    	return strlen(result);
+    case 1:
+    	return fread(buffer, 1, len, stdout);
+    case 2:
+    	return fread(buffer, 1, len, stderr);
+    default:
+        return fread(buffer, 1, len, (FILE *)fd);
+    }
+}
+int M2write(int fd, char *buffer, int len)
+{
+    switch (fd) {
+    case 0:
+    	fprintf(stderr, "error: attempt to write to stdin\n");
+    	return fwrite(buffer, 1, len, stdin);
+    case 1:
+//    	return fprintf(stdout, buffer);
+    	return fwrite(buffer, 1, len, stdout);
+    case 2:
+//  	return fprintf(stderr, buffer);
+    	return fwrite(buffer, 1, len, stderr);
+    default:
+        return fwrite(buffer, 1, len, (FILE *)fd);
+    }
+}
+int M2close(int fd)
+{
+    if (fd >= 0 && fd <= 2) return 0;
+    return fclose((FILE *)fd);
+}
+#endif
 
 #ifdef GCMALLOC
 

@@ -610,8 +610,9 @@ bool gb2_comp::s_pair_step()
 	  if (comp_printlevel >= 3) emit("u");
 	}
     }
-  else 
+  else
     {
+      if (fsyz != NULL) Fsyz->remove(fsyz);
       n_pairs_zero++;
       if (comp_printlevel >= 3) emit("o");
     }

@@ -605,7 +605,8 @@ int SPINCOUNT = 10000;
 int spincount = 10000;		/* this one is decremented during loops */
 
 void spincursor(){
-     spincount = SPINCOUNT;
+     /*spincount = SPINCOUNT;*/
+     SpinCursor();
      }
 
 void system_setspinspan(int n){
