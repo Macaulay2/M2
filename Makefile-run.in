@@ -47,7 +47,7 @@ clean::; rm -f core
 distclean::; rm -f config.cache Makefile-configure.overrides config.log config.status configure
 distclean:: clean
 ################################# configure
-distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.h.in
+distclean ::; rm -f $(CONFIGURED_FILES) include/config.h include/config.h.in
 ################################ SETUP
 ifeq "$(CC)" "cl"
 justM2 all:: ;	$(MAKE) -C WindowsNT
@@ -468,3 +468,7 @@ PATH:
 ################################# lsm
 lsm:
 	sendmail lsm@execpc.com <Macaulay2.LSM
+
+## Local Variables:
+## Mode: Makefile
+## End:

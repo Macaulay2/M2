@@ -17,7 +17,7 @@ R = KK[a..d,
 -- We use the 'monomialCurve' script to find
 -- the ideal of the rational quartic curve in P^3
 
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 M = coker gens I
 
 H = poincare coker gens I

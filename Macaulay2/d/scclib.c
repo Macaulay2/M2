@@ -382,6 +382,14 @@ double x;
      return h;
      }
 
+M2_string system_readlink(M2_string filename) {
+	char *fn = tocharstar(filename);
+	char buf[5000];
+	M2_string s = readlink(fn,buf,sizeof buf) == -1 ? filename : tostring(buf);
+	GC_FREE(fn);
+	return s;
+}
+
 M2_string system_errfmt(M2_string filename, int lineno, int colno) {
 	char *s = getmem_atomic(filename->len+strlen(posfmt)+10);
 	char *fn = tocharstar(filename);

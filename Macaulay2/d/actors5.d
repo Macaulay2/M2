@@ -1392,6 +1392,11 @@ clearEcho(e:Expr):Expr := (
      else nullE);
 setupfun("clearEcho",clearEcho);
 
+readlink(e:Expr):Expr := (
+     when e is filename:string do Expr(readlink(filename))
+     else WrongArg("a string"));
+setupfun("readlink",readlink);
+
 setupconst("typicalValues", Expr(typicalValues));
 setupconst("binaryOperators",Expr(new array(Expr) len length(opsWithBinaryMethod) do (
      foreach s in opsWithBinaryMethod do provide Expr(s))));
