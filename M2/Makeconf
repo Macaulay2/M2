@@ -205,8 +205,8 @@ ifdef NOSTRIP
 export STRIPCMD := :
 else
 ifneq "$(CC)" "cl"
-export CFLAGS   += -fomit-frame-pointer
-export CXXFLAGS += -fomit-frame-pointer
+# export CFLAGS   += -fomit-frame-pointer
+# export CXXFLAGS += -fomit-frame-pointer
 export LDFLAGS  += -s
 export STRIPCMD := strip
 endif

@@ -582,7 +582,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, SHIELD smenu b} )
+     if #b > 0 then SEQ {"Ways to use ", TT toString f," :", PARA{}, SHIELD smenu b} )
 
 optargs := method(SingleArgumentDispatch => true)
 

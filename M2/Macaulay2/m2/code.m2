@@ -29,27 +29,27 @@ isOptionedFunction := f -> sameFunctionBody(f,optionedFunction)
 isComposedFunction := f -> sameFunctionBody(f,composedFunction)
 isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
 
-codeFunction := (f,depth) -> if depth > limit then "" else stack (
-     if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
-     getSourceLines locate f,
-     if isOptionedFunction f then (
-	  "-- original function f without options processing:", codeFunction(last frame f,depth+1)
-	  )
-     else if isComposedFunction f then (
-	  "-- left hand function f:" , codeFunction((frame f)#0,depth+1),
-	  "-- right hand function g:", codeFunction((frame f)#1,depth+1)
-	  )
-     else if isMemoizedFunction f then (
-	  "-- original function f before being memoized:", codeFunction(first frame f,depth+1)
+codeFunction := (f,depth) -> (
+     if depth <= limit and locate f =!= null then stack(
+	  if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
+	  getSourceLines locate f,
+	  if isOptionedFunction f then (
+	       "-- original function f without options processing:", codeFunction(last frame f,depth+1)
+	       )
+	  else if isComposedFunction f then (
+	       "-- left hand function f:" , codeFunction((frame f)#0,depth+1),
+	       "-- right hand function g:", codeFunction((frame f)#1,depth+1)
+	       )
+	  else if isMemoizedFunction f then (
+	       "-- original function f before being memoized:", codeFunction(first frame f,depth+1)
+	       )
 	  )
      )
 code = method(SingleArgumentDispatch=>true)
 code Nothing := null -> null
 code Symbol := s -> getSourceLines locate s
 code Sequence := s -> code lookup s
-code Function := f -> (
-     n := codeFunction(f,0);
-     if height n + depth n =!= 0 then n)
+code Function := f -> codeFunction(f,0)
 code List := v -> stack apply(v,code)
 code Command := cmd -> code cmd#0
 
