@@ -2240,8 +2240,22 @@ setupfun("rawRemoveMonomialFactors",rawRemoveMonomialFactors);
 export rawRemoveScalarMultiples(e:Expr):Expr := (
      when e is m:RawMatrix 
      do Expr(Ccode(RawMatrix, "(engine_RawMatrix)rawRemoveScalarMultiples(", "(Matrix *)", m, ")" ))
-     else WrongArgMatrix(0));
+     else WrongArgMatrix());
 setupfun("rawRemoveScalarMultiples",rawRemoveScalarMultiples);
+
+export rawReduceByPivots(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrix
+     do toExpr(Ccode(bool, "IM2_MutableMatrix_reduce_by_pivots(", "(MutableMatrix *)", m, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawReduceByPivots",rawReduceByPivots);
+
+export rawKernelOfGB(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrix
+     do toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)", "IM2_kernel_of_GB(", "(MutableMatrix *)", m, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawKernelOfGB",rawKernelOfGB);
 
 -----------------------------------------------------------------------------
 -- monomial ideals
