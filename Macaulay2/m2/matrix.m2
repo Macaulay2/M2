@@ -117,14 +117,14 @@ ZZ == Matrix := (i,m) -> m == i
 Matrix + Matrix := Matrix => BinaryMatrixOperationSame ggadd
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
-ZZ + Matrix := (i,f) -> if i === 0 then f else i*1_(ring f) + f
-Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*1_(ring f)
+ZZ + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
+Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
 Matrix - Matrix := Matrix => BinaryMatrixOperationSame ggsubtract
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
-ZZ - Matrix := (i,f) -> if i === 0 then -f else i*1_(ring f) - f
-Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*1_(ring f)
+ZZ - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
+Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
 
 - Matrix := Matrix => f -> (
      h := new Matrix;

@@ -2,42 +2,94 @@
 
 getWWW = method()
 
-getWWW String := (url) -> (
-     if substring(url,0,7) == "http://" then (
-	  url = substring(url,7);
-	  host := (lines(url,"/"))#0;
-	  url = substring(url, # host);
-	  if url == "" then url = "/";
-	  f := openInOut( "$" | host | ":80" )
-	  << "GET " << url << " HTTP/1.0" << endl
-	  << "User-Agent: Macaulay2" << endl
-	  << "Host: " << host << endl
-	  << endl << flush;
-	  s := get f;
-	  close f;
-	  s)
-     else ""
+GET := (host,url,connection) -> (
+     connection = 
+     openInOut connection
+     << "GET " << url << " HTTP/1.0" << endl
+     << "User-Agent: Macaulay2" << endl
+     << "Host: " << host << endl
+     << endl << flush;
+     ret := get connection;
+     close connection;
+     ret
      )
 
-getWWW(String, String) := (url,content) -> (
-     if substring(url,0,7) == "http://" then (
-	  url = substring(url,7);
-	  host := first separate (url,"/");
-	  url = substring(url, # host);
-	  if url == "" then url = "/";
-	  f := openInOut( "$" | host | ":80" );
-	  f << "POST " << url << " HTTP/1.0" << endl
-	  << "User-Agent: Macaulay2" << endl
-	  << "Host: " << host << endl
-	  << "Content-type: application/x-www-form-urlencoded" << endl
-	  << "Content-length: " << # content << endl << endl
-	  << content << endl
-	  << endl << flush;
-	  s := get f;
-	  close f;
-	  s)
-     else ""
+POST := (host,url,body,connection) -> (
+     connection = 
+     openInOut connection
+     << "POST " << url << " HTTP/1.0" << endl
+     << "User-Agent: Macaulay2" << endl
+     << "Host: " << host << endl
+     << "Content-type: application/x-www-form-urlencoded" << endl
+     << "Content-length: " << # body << endl << endl
+     << body << endl
+     << endl << flush;
+     ret := get connection;
+     close connection;
+     ret)
+
+getpost := (host,url,body,connection) -> (
+     if body === null
+     then GET(host,url,connection)
+     else POST(host,url,body,connection)
      )
+
+protocols := {
+     ("http://" , (host,port,url,body) -> getpost(host, url, body, (
+		    "$" | host | ":" | (if port =!= null then port else "80")
+		    ))),
+     ("https://", (host,port,url,body) -> getpost(host, url, body, (
+	       	    "!openssl s_client -quiet -verify 1 -CApath ~/.w3/certs/" |
+	       	    " -host " | host | " -port " | (if port =!= null then port else "443")
+	       	    )))
+     }
+
+getWWW String := url -> getWWW(url,)
+
+getWWW (String,String) :=
+getWWW (String,Nothing) := (url,body) -> (
+     ret := "";
+     select(1,protocols,(prot,meth) -> (
+     	       if substring(url,0,#prot) == prot 
+	       then (
+		    url = substring(url,#prot);
+		    host := (separate(url,"/"))#0;
+		    url = substring(url,#host);
+		    if url == "" then url = "/";
+		    port := null;
+		    x := separate(host,":");
+		    if #x == 2 then (host = x#0; port = x#1);
+		    ret = meth(host,port,url,body);
+		    true)
+	       else false));
+     ret)
+
+-----------------------------------------------------------------------------
+
+-- test POST method like this:
+
+--    i1 : getWWW("http://qs.secapl.com/cgi-bin/qs","tick=VTSMX")
+--    
+--    o1 = HTTP/1.0 200 OK
+--         Server: Netscape-Commerce/1.1
+--         Date: Friday, 24-Dec-99 23:15:06 GMT
+--         Content-type: text/html
+--         
+--         <html><head>
+--         <title>CheckFree Investment Services Quote Server</title>
+--         </head>
+--         <body background="http://www.secapl.com/images/bkgrnd_tile.gif">
+--     	       ...
+--         <hr width=200 size=3 noshade>
+--         <center><font face="arial,helvetica" size="-1">
+--         <i><a href=http://www.secapl.com/HOMELink>CheckFree Investment Services</a><br>
+--         <a href="mailto:g.apl@secapl.com">g.apl@secapl.com</a></i>
+--         </font></center></body></html>
+--         
+--    
+--    o1 : String
+
+-----------------------------------------------------------------------------
 
 --  
 --  
