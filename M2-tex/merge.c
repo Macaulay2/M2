@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #define true 1
@@ -24,24 +25,9 @@ static void usage() {
 
 static bool neednewline = false;
 
-static int LINEWIDTH = 66;
+static int LINEWIDTH = 74;
 
-static char BEGINVERBATIM[] = "\\par
-\\vskip 5 pt
-\\begingroup
-\\advance\\parindent by 12 pt
-\\tteight
-\\baselineskip=7.4pt
-\\lineskip=0pt
-\\obeyspaces
-";
-
-static char ENDVERBATIM[] = "\\endgroup
-\\par
-\\vskip 1 pt
-\\noindent";
-
-static char *translate[256];
+static char *translateTable[256];
 
 static char *getmem(unsigned int n) {
      char *p = malloc(n);
@@ -51,38 +37,71 @@ static char *getmem(unsigned int n) {
 
 static void setup() {
      int i;
-     char *special = "%&#$\\^~_{}";	/* special characters */
-     char *special2 = " ";	/* special characters X for which \X is defined */
+     char *special = "\\%";	/* special characters */
+     char *special2 = " ${}";	/* special characters X for which \X is defined */
      char *p;
      for (i = 0; i< 256; i++) {
 	  p = getmem(11);
 	  sprintf(p,"{\\char%d}", i);
-	  translate[i] = p;
+	  translateTable[i] = p;
 	  }
      for (i = 32; i < 127; i++) {
 	  p = getmem(2);
 	  sprintf(p,"%c", i);
-	  translate[i] = p;
+	  translateTable[i] = p;
 	  }
      for (; *special; special++) {
 	  p = getmem(11);
 	  sprintf(p,"{\\char`\\%c}", *special);
-	  translate[(int)*special] = p;
+	  translateTable[(int)*special] = p;
 	  }
      for (; *special2; special2++) {
 	  p = getmem(3);
 	  sprintf(p,"\\%c", *special2);
-	  translate[(int)*special2] = p;
+	  translateTable[(int)*special2] = p;
 	  }
-     translate['\n'] = "\\leavevmode\\hss\\endgraf\n";
-     translate['\r'] = "\r";
-     translate['\t'] = "\t";
+     translateTable['\n'] = "\\\\\n";
+     translateTable['\r'] = "\r";
+     translateTable['\t'] = "\t";
      }
+
+static char *translate(int c) {
+  static int column = 0;
+  char *r = column > 0 && c == ' ' ? " " : translateTable[(int)c];
+  if (c == '\n') column = 0; else column++;
+  return r;
+}
+
+static char delay_buf[4];
+static int  delay_n = 0;
+static int delay_putc(char c, FILE *o) { /* only works with one FILE at a time */
+  int ret = 0;
+  if (delay_n == sizeof delay_buf) {
+    ret = fputs(translate((int)delay_buf[0]),o);
+    memmove(delay_buf,delay_buf+1,sizeof delay_buf - 1);
+    delay_n --;
+  }
+  delay_buf[delay_n++] = c;
+  return ret;
+}
+
+static void delay_clear() {
+  delay_n = 0;
+}
+
+static int delay_flush(FILE *o) {
+  int r = 0;
+  int i;
+  for (i=0; i<delay_n; i++) r |= fputs(translate((int)delay_buf[i]),o);
+  delay_n = 0;
+  return r;
+}
 
 static int passverbatim(char *s, FILE *f, FILE *o) {
      char *p;
-     int c, column = 0;
-     fputs(BEGINVERBATIM,stdout);
+     int c;
+     int column = 0;
+     fputs("\\beginOutput\n",stdout);
      for (p=s; *p;) {
 	  c = getc(f);
 	  if (c == EOF) break;
@@ -91,27 +110,36 @@ static int passverbatim(char *s, FILE *f, FILE *o) {
 	       }
 	  else {
 	       char *q;
-	       for (q=s; q<p; q++) putc(*q,o), column++;
+	       for (q=s; q<p; q++) {
+		 delay_putc(*q,o);
+		 column++;
+	       }
 	       if (c == '\n') {
 		    if (column == 0) {
-			 fputs("\\penalty-500",stdout);
+		         delay_flush(stdout);
+			 fputs("\\emptyLine\n",stdout);
 			 }
-		    fputs(translate[c],stdout);
+		    else {
+		         delay_putc(c,stdout);
+		         }
 		    column = 0;
 		    }
 	       else {
 		    if (column == LINEWIDTH) {
-			 fputs(" ...",stdout);
+		         delay_clear();
+			 fputs(" $\\cdot\\cdot\\cdot$",stdout);	/* ... */
+			 column += 4;
 			 }
 		    else if (column < LINEWIDTH) {
-			 fputs(translate[c],stdout);
+			 delay_putc(c,stdout);
+			 column++;
 			 }
-		    column++;
 		    }
 	       p = s;
 	       }
 	  }
-     fputs(ENDVERBATIM,stdout);
+     delay_flush(stdout);
+     fputs("\\endOutput",stdout);
      neednewline = true;
      return true;
      }
@@ -167,9 +195,8 @@ int main(int argc, char **argv) {
 	  perror(buf);
 	  exit(1);
 	  }
+     fputs("\\input merge.tex\n",stdout);
      pass("\1",M2infile,NULL);
-     fputs("{\\obeyspaces\\global\\let =\\ }\n", stdout);
-     fputs("\\font\\tteight=cmtt8\n",stdout);
      while (true) {
      	  int c = pass(delim1,TeXinfile,stdout);
 	  if (c == EOF) exit(0);

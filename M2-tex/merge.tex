@@ -1,0 +1,60 @@
+% these macros are needed by the output of the 'merge' program:
+
+{\obeyspaces\global\let =\ }
+\font\tteight=cmtt8
+
+\newdimen\outputBaseLineSkip
+         \outputBaseLineSkip = 9pt
+\newskip\beginOutputSkip
+        \beginOutputSkip = 4.5 pt plus .5 pt minus .5 pt
+\newskip\endOutputSkip
+        \endOutputSkip   = 2.5 pt plus .25 pt minus .25 pt
+
+\def\looserOutput#1{%
+  \advance\beginOutputSkip by #1
+  \advance\endOutputSkip by #1
+}
+\def\tighterOutput#1{%
+  \advance\beginOutputSkip by -#1
+  \advance\endOutputSkip by -#1
+}
+
+\def\beginOutput{%
+    \par
+    \penalty -150
+    \vskip \beginOutputSkip
+    \penalty -150
+    \begingroup
+      \def\\{%
+          \leavevmode
+          \hss
+          \endgraf
+          \penalty 150
+          }
+      \tteight
+      \baselineskip = \outputBaseLineSkip
+      \def\${\char`\$}
+      \def\{{\char`\{}
+      \def\}{\char`\}}
+      \catcode`\_=\the\catcode`a
+      \catcode`\^=\the\catcode`a
+      \catcode`\#=\the\catcode`a
+      \catcode`\~=\the\catcode`a
+      \catcode`\&=\the\catcode`a
+      \parskip=0pt
+      \lineskip=0pt
+      \obeyspaces
+      }
+\def\emptyLine{%
+    \penalty -100
+    \vskip \endOutputSkip
+    \vskip \beginOutputSkip
+    \penalty -100
+    }
+\def\endOutput{%
+    \endgroup
+    \par
+    \penalty -150
+    \vskip \endOutputSkip
+    \penalty -150
+    \noindent}
