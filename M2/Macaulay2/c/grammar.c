@@ -1,5 +1,6 @@
 
-/*  A Bison parser, made from grammar.y with Bison version GNU Bison version 1.22
+/*  A Bison parser, made from grammar.y
+ by  GNU Bison version 1.25
   */
 
 #define YYBISON 1  /* Identify Bison output.  */
@@ -70,23 +71,6 @@ node parservalue;
 static void yyerror(char *);
 static int yylex(void);
 #define end_of_input 0
-
-#ifndef YYLTYPE
-typedef
-  struct yyltype
-    {
-      int timestamp;
-      int first_line;
-      int first_column;
-      int last_line;
-      int last_column;
-      char *text;
-   }
-  yyltype;
-
-#define YYLTYPE yyltype
-#endif
-
 #ifndef YYSTYPE
 #define YYSTYPE int
 #endif
@@ -220,16 +204,21 @@ static const short yyrline[] = { 0,
    166,   167,   171,   175,   176,   177,   180,   183,   186,   189,
    192,   195,   198,   201,   202,   203
 };
+#endif
 
-static const char * const yytname[] = {   "$","error","$illegal.","NUMBER","IDENTIFIER",
-"STRINGCONST","SELF","OP","SUPER","';'","')'","whiledo","PROVIDE","ifte","infix1",
-"prefix1","IMPORT","EXPORT","COLON","infix2","prefix2","infix3","prefix3","infix3r",
-"OROR","ANDAND","OR","infix4","prefix4","infix5","prefix5","infix6","prefix6",
-"'-'","infix7","prefix7","SPACE","infix8","infix9","prefix9","infix10","prefix10",
-"'('","IF","THEN","ELSE","WHEN","IS","FOR","FOREACH","WHILE","DO","UNTIL","PACKAGE",
-"USE","SIGNATURE","AT","IN","BY","FROM","TO","FUNCTION","NEW","LEN","BREAK",
-"','","'{'","'}'","wrappedprogram","program","exprlistsemi","exprlist","reverseexprlistsemi",
-"reverseexprlist","arglistornull","arglist","typecasen","expr",""
+
+#if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
+
+static const char * const yytname[] = {   "$","error","$undefined.","NUMBER",
+"IDENTIFIER","STRINGCONST","SELF","OP","SUPER","';'","')'","whiledo","PROVIDE",
+"ifte","infix1","prefix1","IMPORT","EXPORT","COLON","infix2","prefix2","infix3",
+"prefix3","infix3r","OROR","ANDAND","OR","infix4","prefix4","infix5","prefix5",
+"infix6","prefix6","'-'","infix7","prefix7","SPACE","infix8","infix9","prefix9",
+"infix10","prefix10","'('","IF","THEN","ELSE","WHEN","IS","FOR","FOREACH","WHILE",
+"DO","UNTIL","PACKAGE","USE","SIGNATURE","AT","IN","BY","FROM","TO","FUNCTION",
+"NEW","LEN","BREAK","','","'{'","'}'","wrappedprogram","program","exprlistsemi",
+"exprlist","reverseexprlistsemi","reverseexprlist","arglistornull","arglist",
+"typecasen","expr", NULL
 };
 #endif
 
@@ -728,11 +717,11 @@ static const short yycheck[] = {     0,
 
 
 /* Skeleton output parser for bison,
-   Copyright (C) 1984, 1989, 1990 Bob Corbett and Richard Stallman
+   Copyright (C) 1984, 1989, 1990 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 1, or (at your option)
+   the Free Software Foundation; either version 2, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -744,6 +733,10 @@ static const short yycheck[] = {     0,
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+/* As a special exception, when this file is copied by Bison into a
+   Bison output file, you may use that output file without restriction.
+   This special exception was added by the Free Software Foundation
+   in version 1.24 of Bison.  */
 
 #ifndef alloca
 #ifdef __GNUC__
@@ -817,10 +810,18 @@ while (0)
 
 #ifdef YYPURE
 #ifdef YYLSP_NEEDED
+#ifdef YYLEX_PARAM
+#define YYLEX		yylex(&yylval, &yylloc, YYLEX_PARAM)
+#else
 #define YYLEX		yylex(&yylval, &yylloc)
+#endif
+#else /* not YYLSP_NEEDED */
+#ifdef YYLEX_PARAM
+#define YYLEX		yylex(&yylval, YYLEX_PARAM)
 #else
 #define YYLEX		yylex(&yylval)
 #endif
+#endif /* not YYLSP_NEEDED */
 #endif
 
 /* If nonreentrant, generate the variables here */
@@ -868,16 +869,16 @@ int yyparse (void);
 #endif
 
 #if __GNUC__ > 1		/* GNU C and GNU C++ define this.  */
-#define __yy_bcopy(FROM,TO,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
+#define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
 #else				/* not GNU C or C++ */
 #ifndef __cplusplus
 
 /* This is the most reliable way to avoid incompatibilities
    in available built-in functions on various systems.  */
 static void
-__yy_bcopy (from, to, count)
-     char *from;
+__yy_memcpy (to, from, count)
      char *to;
+     char *from;
      int count;
 {
   register char *f = from;
@@ -893,7 +894,7 @@ __yy_bcopy (from, to, count)
 /* This is the most reliable way to avoid incompatibilities
    in available built-in functions on various systems.  */
 static void
-__yy_bcopy (char *from, char *to, int count)
+__yy_memcpy (char *to, char *from, int count)
 {
   register char *f = from;
   register char *t = to;
@@ -907,8 +908,29 @@ __yy_bcopy (char *from, char *to, int count)
 #endif
 
 
+
+/* The user can define YYPARSE_PARAM as the name of an argument to be passed
+   into yyparse.  The argument should have type void *.
+   It should actually point to an object.
+   Grammar actions can access the variable by casting it
+   to the proper pointer type.  */
+
+#ifdef YYPARSE_PARAM
+#ifdef __cplusplus
+#define YYPARSE_PARAM_ARG void *YYPARSE_PARAM
+#define YYPARSE_PARAM_DECL
+#else /* not __cplusplus */
+#define YYPARSE_PARAM_ARG YYPARSE_PARAM
+#define YYPARSE_PARAM_DECL void *YYPARSE_PARAM;
+#endif /* not __cplusplus */
+#else /* not YYPARSE_PARAM */
+#define YYPARSE_PARAM_ARG
+#define YYPARSE_PARAM_DECL
+#endif /* not YYPARSE_PARAM */
+
 int
-yyparse()
+yyparse(YYPARSE_PARAM_ARG)
+     YYPARSE_PARAM_DECL
 {
   register int yystate;
   register int yyn;
@@ -1024,12 +1046,12 @@ yynewstate:
       if (yystacksize > YYMAXDEPTH)
 	yystacksize = YYMAXDEPTH;
       yyss = (short *) alloca (yystacksize * sizeof (*yyssp));
-      __yy_bcopy ((char *)yyss1, (char *)yyss, size * sizeof (*yyssp));
+      __yy_memcpy ((char *)yyss, (char *)yyss1, size * sizeof (*yyssp));
       yyvs = (YYSTYPE *) alloca (yystacksize * sizeof (*yyvsp));
-      __yy_bcopy ((char *)yyvs1, (char *)yyvs, size * sizeof (*yyvsp));
+      __yy_memcpy ((char *)yyvs, (char *)yyvs1, size * sizeof (*yyvsp));
 #ifdef YYLSP_NEEDED
       yyls = (YYLTYPE *) alloca (yystacksize * sizeof (*yylsp));
-      __yy_bcopy ((char *)yyls1, (char *)yyls, size * sizeof (*yylsp));
+      __yy_memcpy ((char *)yyls, (char *)yyls1, size * sizeof (*yylsp));
 #endif
 #endif /* no yyoverflow */
 
