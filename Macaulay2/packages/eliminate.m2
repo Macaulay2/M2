@@ -108,7 +108,7 @@ discriminant, ", TT "discriminant(f,x).",
 	  "sylvesterMatrix(f,g,x)",
 	  "discriminant(f,x)"
 	  },
-     SEEALSO ("sylvesterMatrix", "discriminant", "eliminate")
+     SEEALSO {"sylvesterMatrix", "discriminant", "eliminate"}
      }
 
 

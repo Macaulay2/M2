@@ -53,20 +53,15 @@ LAST := "-- last key assigned --"
 indexTable := memoize(
      prefix -> (
 	  fn := prefix | "Macaulay2-index-cache.db";
-	  local tb;
-	  try (
-	       tb = openDatabaseOut fn;
-	       ) 
-	  else try (
-	       tb = openDatabase fn;
-	       )
-	  else tb = new HashTable;
+	  tb := try openDatabaseOut fn else try openDatabase fn else new HashTable ;
 	  store := (key,val) -> (
 	       if #key > 300 then error "suspiciously long key";
 	       if not mutable tb then error (
 		    if class tb === HashTable 
-	       	    then ("failed to open database file for writing or reading: ", fn)
-	       	    else ("database file ", fn, " is read-only or in use by another process")
+	       	    then if fileExists fn 
+		    then ("failed to open existing database file for writing or reading: ", fn)
+		    else ("failed to create database file: ", fn)
+	       	    else ("failed to write to database file ", fn, ", read-only or in use by another process")
 		    );
 	       tb#key = val
 	       );
@@ -109,10 +104,12 @@ cacheFileName(String,String) := (prefix,key) -> (
 cacheFileName(String,String,String) := (prefix,key,val) -> (
      (indexTable prefix)#setFun(key,val)
      )
-cacheFileName(List,String) := (path,key) -> (
-     w := apply(
-	  select(path, prefix -> (indexTable prefix)#queryFun key),
-	  prefix -> (indexTable prefix)#getFun key
-	  );
-     if #w === 0 then {cacheFileName(first path, key)} else w
+cacheFileName(List,String) := (path,key) -> apply(
+     select(path, prefix -> (indexTable prefix)#queryFun key),
+     prefix -> (indexTable prefix)#getFun key
      )
+cacheFileName(String,List,String) := (head,path,key) -> (
+     w := cacheFileName(path,key);
+     if #w === 0 then {cacheFileName(head, key)} else w
+     )
+cacheFileName(Nothing,List,String) := (head,path,key) -> cacheFileName(path,key)
