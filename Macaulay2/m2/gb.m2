@@ -237,6 +237,8 @@ Matrix % GroebnerBasis := Matrix => (n,g) -> (
 RingElement % GroebnerBasis := RingElement =>
 ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 
+leadTerm GroebnerBasis := (g) -> map(ring g, rawGBGetLeadTerms(raw g,-1))
+
 -- Auto-reduction
 autoReduce = method()
 autoReduce Matrix := (m) -> notImplemented "IM2_Matrix_auto_reduce"
