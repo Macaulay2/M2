@@ -127,7 +127,7 @@ C. In book form
 4. Other documentation
 ----------------------
 
-The file emacs/emacs.hlp gives a brief tutorial introduction to the use of
+The file emacs/emacs-hlp.txt gives a brief tutorial introduction to the use of
 emacs with Macaulay 2, and includes some lines of emacs code to put into your
 .emacs file.  One nice feature of emacs' Macaulay 2 mode is command
 completion.
