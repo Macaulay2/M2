@@ -237,7 +237,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       false,	       	    	  -- hadNet
 	       dummyNetList,   	      	  -- nets
 	       0,		          -- bytesWritten
-	       -1		          -- lastCharOut
+	       -1,		          -- lastCharOut
+	       false                      -- readline
 	       )),
 	  NULL));
 
@@ -362,6 +363,7 @@ export process():void := (
      stderr.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
+     everytimeRun();
      ret := readeval(stringTokenFile("layout.m2",startupString1),false); -- we don't know the right directory!
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
