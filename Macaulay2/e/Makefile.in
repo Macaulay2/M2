@@ -19,6 +19,7 @@ endif
 
 CPPFLAGS += -I../../include
 CPPFLAGS += -I../c2
+CPPFLAGS += -I.
 
 ifdef ARING
 CPPFLAGS += -DARING
