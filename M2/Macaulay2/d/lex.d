@@ -37,7 +37,6 @@ export makeUniqueWord(s:string,p:parseinfo):Word := (
      hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
      newWord);
 
-export SemicolonW := dummyWord;	    	  -- filled in by keywords.d
 export NewlineW := dummyWord;	    	  -- filled in by keywords.d
 export equal(t:ParseTree,w:Word):bool := (
      when t is u:Token do u.word == w else false

@@ -38,29 +38,29 @@ export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
 export convert(e:ParseTree):Code;
-CodeSequenceLength(e:ParseTree):int := (
+CodeSequenceLength(e:ParseTree,separator:Word):int := (
      i := 0;
      while true do (
      	  when e
      	  is b:Binary do (
-	       if b.operator.word == CommaW
-	       then ( i = i + CodeSequenceLength(b.lhs); e = b.rhs )
+	       if b.operator.word == separator
+	       then ( i = i + CodeSequenceLength(b.lhs,separator); e = b.rhs )
 	       else return i+1)
 	  is u:Unary do (
-	       if u.operator.word == CommaW
+	       if u.operator.word == separator
 	       then ( i = i + 1; e = u.rhs )
 	       else return i+1)
 	  else return i+1));
-fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
+fillCodeSequence(e:ParseTree,v:CodeSequence,m:int,separator:Word):int := (
      -- starts filling v at position m, returns the next available position
      while true do (
      	  when e
      	  is b:Binary do (
-	       if b.operator.word == CommaW
-	       then ( m = fillCodeSequence(b.lhs,v,m); e = b.rhs )
+	       if b.operator.word == separator
+	       then ( m = fillCodeSequence(b.lhs,v,m,separator); e = b.rhs )
 	       else ( v.m = convert(e); return m+1))
 	  is u:Unary do (
-	       if u.operator.word == CommaW
+	       if u.operator.word == separator
 	       then ( 
 		    v.m = Code(nullCode());
 		    m = m + 1; 
@@ -75,9 +75,9 @@ fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
 	  is p:Parentheses do (
 	       ( v.m = convert(e); return m+1))
 	  else ( v.m = convert(e); return m+1)));
-makeCodeSequence(e:ParseTree):CodeSequence := (
-     v := new CodeSequence len CodeSequenceLength(e) do provide dummyCode;
-     fillCodeSequence(e,v,0);
+makeCodeSequence(e:ParseTree,separator:Word):CodeSequence := (
+     v := new CodeSequence len CodeSequenceLength(e,separator) do provide dummyCode;
+     fillCodeSequence(e,v,0,separator);
      v);
 SymbolSequenceLength(e:ParseTree):int := (
      i := 0;
@@ -207,10 +207,10 @@ export convert(e:ParseTree):Code := (
      is p:Parentheses do (
 	  if p.left.word == leftparen then convert(p.contents)
 	  else if p.left.word == leftbrace 
-	  then Code(listCode(makeCodeSequence(p.contents),treePosition(e)))
+	  then Code(listCode(makeCodeSequence(p.contents,CommaW),treePosition(e)))
 	  else 
 	  if p.left.word == leftbracket 
-	  then Code(arrayCode(makeCodeSequence(p.contents),treePosition(e)))
+	  then Code(arrayCode(makeCodeSequence(p.contents,CommaW),treePosition(e)))
 	  else 
 	  dummyCode			  -- should not happen
 	  )
@@ -237,7 +237,9 @@ export convert(e:ParseTree):Code := (
 	       else dummyCode		  -- should not occur
 	       )
 	  else if b.operator.word == CommaW
-	  then Code(sequenceCode(makeCodeSequence(e),treePosition(e)))
+	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))
+	  else if b.operator.word == SemicolonW
+	  then Code(semiCode(makeCodeSequence(e,SemicolonW),treePosition(e)))
 	  else if b.operator.word == EqualW
 	  then (
 	       when b.lhs
@@ -388,7 +390,9 @@ export convert(e:ParseTree):Code := (
 	       ))
      is u:Unary do (
 	  if u.operator.word == CommaW
-	  then Code(sequenceCode(makeCodeSequence(e),treePosition(e)))
+	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))
+	  else if u.operator.word == SemicolonW
+	  then Code(semiCode(makeCodeSequence(e,SemicolonW),treePosition(e)))
 	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (
 	  token := q.rhs;

@@ -189,6 +189,7 @@ export CodeSequence := array(Code);
 export sequenceCode := {x:CodeSequence, position:Position};
 export listCode     := {y:CodeSequence, position:Position};
 export arrayCode    := {z:CodeSequence, position:Position};
+export semiCode     := {w:CodeSequence, position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code, frameID:int, framesize:int, position:Position} ;
 export unop := function(Code):Expr;
@@ -218,7 +219,7 @@ export Code := (
      nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
      or localAssignmentCode or parallelAssignmentCode or globalSymbolClosureCode or localSymbolClosureCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
-     or sequenceCode or listCode or arrayCode
+     or sequenceCode or listCode or arrayCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode

@@ -1073,10 +1073,32 @@ export eval(c:Code):Expr := (
 	  is v:realCode do return Expr(Real(v.x))
 	  is v:integerCode do return Expr(v.x)
 	  is v:stringCode do return Expr(v.x)
+	  is v:semiCode do (
+	       w := v.w;
+	       n := length(w);				    -- at least 2
+	       r := eval(w.0);
+	       when r is Error do r else (
+	       	    r = eval(w.1);
+	       	    when r is Error do r else (
+	       		 if n == 2 then return r;
+	       		 r = eval(w.2);
+	       		 when r is Error do r else (
+			      if n == 3 then return r;
+			      r = eval(w.3);
+			      when r is Error do r else (
+				   if n == 4 then return r;
+				   r = eval(w.4);
+				   when r is Error do r else (
+					i := 5;
+					while i < n do (
+					     r = eval(w.i);
+					     i = when r is Error do n else i+1;
+					     );
+					r))))))
 	  is v:sequenceCode do (
 	       if length(v.x) == 0 then return emptySequence;
 	       r := evalSequence(v.x);
-	       if evalSequenceHadError then evalSequenceErrorMessage else Expr(r))
+	       if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)) -- speed up
 	  is v:listCode do (
 	       if length(v.y) == 0 then return emptyList;
 	       r := evalSequence(v.y);
