@@ -231,9 +231,7 @@ Matrix // GroebnerBasis := Matrix => (n,g) -> (
      -- this gb might not be one with change of basis matrix attached...
      -- so it is best for the user not to use it
      R := ring g;
-     if R =!= ring n then error "expected matrix over the same ring";
-     sendgg(ggPush g, ggPush n, ggreduce, ggPush 1, ggpick, ggpop);
-     getMatrix R)
+     map(R, last rawGBMatrixLift(raw g, raw n)))
 RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
 Matrix % GroebnerBasis := Matrix => (n,g) -> (

@@ -37,8 +37,8 @@ Hom(Module,Module) := Module => (M,N) -> (
 conditionalTrim = method();
 
 conditionalTrim(Module) := Module => (M) -> (
-     if not M#?trim then M.trim=trim M;
-     if ambient M.trim == ambient M then M.trim else M
+     if not M#?trim then M.cache.trim = trim M;
+     if ambient M.cache.trim == ambient M then M.cache.trim else M
      );
 
 prePrune = method();

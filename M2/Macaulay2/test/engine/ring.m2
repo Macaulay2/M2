@@ -217,6 +217,11 @@ peek f.cache
 
 status G
 
+-- rawGBContains
+
+assert( rawGBContains( raw gb matrix {{x,y}} , raw matrix {{0,0,x,y,0,0}} ) )
+
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "

@@ -1,14 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
-koszul(ZZ, Matrix) := Matrix => (i,m) -> (
-     error "IM2_Matrix_koszul not implemented yet";
-     sendgg(ggPush m, ggINT, gg i, ggkoszul);
-     getMatrix ring m)
-
-symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> (
-     error "IM2_Matrix_symm not implemented yet";
-     sendgg(ggPush m, ggINT, gg i, ggsymm);
-     getMatrix ring m)
+koszul(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawKoszul(i, raw m))
+symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m)
 
 MinorsComputation = new SelfInitializingType of BasicList
 MinorsComputation.synonym = "minors computation"

@@ -207,6 +207,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       ) rawPairs f.RawRingElement;
 	  toString RM := toExternalString RM := x -> toString expression x;
 	  fac := options -> f -> (
+	       error "factoring not re-implemented yet";
 	       sendgg(ggPush f, ggfactor);
 	       v := apply(eePopInt(), i -> ( exp := eePopInt(); new Power from {RM.pop(),exp}));
 	       v = select(v, power -> first power != 1);
