@@ -16,7 +16,7 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-'peek2' -- order of arguments reversed, so the depth of peeking is the
+renamed peek2 to peek', and order of arguments reversed, so the depth of peeking is the
 first one.
 
 'text' function removed -- not needed.  Its functinality will be

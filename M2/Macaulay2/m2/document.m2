@@ -163,7 +163,7 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
 
-fSeqTO := fSeqInitialize(i -> TO i, i -> TO i)
+fSeqTO := fSeqInitialize(i -> SHIELD TO i, i -> SHIELD TO i)
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Sequence := (
@@ -786,10 +786,16 @@ documentationValue(Symbol,HashTable) := (s,x) -> (
 documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
 documentationValue(Symbol,Package) := (s,pkg) -> (
      e := pkg#"exported symbols";
-     a := select(e,x -> instance(value x,Function));
-     b := select(e,x -> instance(value x,Type));
-     c := select(e,x -> instance(value x,Symbol));
-     d := toList(set e - set a - set b - set c);
+     a := select(e,x -> instance(value x,Function));	    -- functions
+     b := select(e,x -> instance(value x,Type));	    -- types
+     m := unique flatten apply(b, T -> select(keys value T, 
+	       i -> class i === Sequence and (
+		    class i#0 === Symbol
+		    or
+		    class i#0 === Function and ReverseDictionary#?(i#0) -- some method functions are local to the package, thus not visible
+		    ))); -- methods
+     c := select(e,x -> instance(value x,Symbol));	    -- symbols
+     d := toList(set e - set a - set b - set c);	    -- other things
      fn := pkg#"title" | ".m2";
      SEQ {
 	  PARA BOLD "Version", PARA { "This documentation describes version ", pkg.Options.Version, " of the package." },
@@ -797,8 +803,9 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 	  if #pkg#"exported symbols" > 0 then PARA {
 	       BOLD "Exports",
 	       UL {
-		    if #a > 0 then SEQ {"Functions", smenu a},
 		    if #b > 0 then SEQ {"Types", smenu b},
+		    if #a > 0 then SEQ {"Functions", smenu a},
+		    if #m > 0 then SEQ {"Methods", smenu m},
 		    if #c > 0 then SEQ {"Symbols", smenu c},
 		    if #d > 0 then SEQ {"Other things", smenu d},
 		    }
