@@ -1,7 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "relem.hpp"
-#include "vector.hpp"
 #include "matrix.hpp"
 #include "matrixcon.hpp"
 

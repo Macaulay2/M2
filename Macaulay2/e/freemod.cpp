@@ -54,6 +54,7 @@ vec FreeModule::raw_term(ring_elem a, int e) const
   return result;
 }
 
+#if 0
 bool FreeModule::is_equal(vec a, vec b) const
 {
   for ( ;; a = a->next, b = b->next)
@@ -68,7 +69,7 @@ bool FreeModule::is_equal(vec a, vec b) const
       if (!R->is_equal(a->coeff, b->coeff)) return false;
     }
 }
-
+#endif
 
 vec FreeModule::copy(vec v) const
 {
@@ -182,11 +183,13 @@ vec FreeModule::get_terms(vec v, int lo, int hi) const
   return head.next;
 }
 
+#if 0
 int FreeModule::lead_component(vec v) const
 {
   if (v == NULL) return -1;
   return v->comp;
 }
+#endif
 
 ring_elem FreeModule::lead_coefficient(vec v) const
 {
@@ -365,38 +368,6 @@ vec FreeModule::rightmult(const vec w, const ring_elem f) const
 //////////////////////////////////////////////
 
 #if 0
-vec FreeModule::component_shift(int n, const FreeModule *F, 
-			  vec v) const
-{
-  vecterm head;
-  vecterm *result = &head;
-
-  for ( ; v != NULL; v = v->next)
-    {
-      result->next = copy_term(v);
-      result = result->next;
-      result->comp += n;
-    }
-  result->next = NULL;
-  return head.next;
-}
-
-vec FreeModule::tensor_shift(int n, int m, 
-		       const FreeModule *F,
-		       vec v) const
-{
-  vecterm head;
-  vecterm *result = &head;
-
-  for ( ; v != NULL; v = v->next)
-    {
-      result->next = copy_term(v);
-      result = result->next;
-      result->comp = n * result->comp + m;
-    }
-  result->next = NULL;
-  return head.next;
-}
 
 // NOT NEEDED ANYMORE
 

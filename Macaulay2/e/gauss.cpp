@@ -3,7 +3,6 @@
 #include "style.hpp"
 #include "gauss.hpp"
 #include "text_io.hpp"
-#include "vector.hpp"
 
 extern ZZ *globalZZ;
 

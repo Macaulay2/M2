@@ -622,13 +622,6 @@ void Ring::sort(vecterm *&f) const
   f = f1;
 }
 
-extern "C" void vecout(const Ring *R, const vec v)
-{
-  buffer o;
-  R->elem_text_out(o,v);
-  emit_line(o.str());
-}
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

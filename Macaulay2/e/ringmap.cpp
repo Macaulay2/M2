@@ -2,9 +2,9 @@
 
 #include "ringmap.hpp"
 #include "matrix.hpp"
-#include "vector.hpp"
 #include "matrixcon.hpp"
 #include "polyring.hpp"
+#include "relem.hpp"
 
 RingMap::RingMap(const Matrix *m)
 : immutable_object(0), R(m->get_ring())

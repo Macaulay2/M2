@@ -18,7 +18,6 @@
 #include "gb.hpp"
 #include "hilb.hpp"
 #include "text_io.hpp"
-#include "vector.hpp"
 #include "matrixcon.hpp"
 
 int gbTrace = 0;

@@ -5,7 +5,6 @@
 #include "geovec.hpp"
 #include "text_io.hpp"
 #include "termideal.hpp"
-#include "vector.hpp"
 
 extern char system_interruptedFlag;
 extern int comp_printlevel;

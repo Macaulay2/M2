@@ -33,7 +33,14 @@ void dringelem(const Ring *R, const ring_elem f)
   emit(o.str());
 }
 
-void dvec(const GBRing *R, gbvector *v)
+void dvec(const Ring *R, const vec v)
+{
+  buffer o;
+  R->elem_text_out(o,v);
+  emit_line(o.str());
+}
+
+void dgbvec(const GBRing *R, gbvector *v)
 {
   buffer o;
   const FreeModule *F = 0;

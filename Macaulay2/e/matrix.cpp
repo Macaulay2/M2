@@ -13,8 +13,9 @@
 #include "termideal.hpp"
 #include "assprime.hpp"
 #include "monideal.hpp"
+#include "relem.hpp"
+#include "freemod.hpp"
 
-#include "vector.hpp"
 #include "exptable.h"
 
 #include <vector>
@@ -440,7 +441,7 @@ void Matrix::append_column(vec v)
 {
   if (is_immutable()) return;
   int *d = degree_monoid()->make_one();
-  if (! rows()->is_zero(v)) rows()->degree(v, d);
+  if (v != 0) rows()->degree(v, d);
   append_column(v,d);
   degree_monoid()->remove(d);
 }
@@ -663,7 +664,7 @@ int Matrix::is_homogeneous() const
   int *d = degree_monoid()->make_one();
   for (int i=0; i<n_cols(); i++)
     {
-      if (rows()->is_zero(elem(i))) continue;
+      if (elem(i) == 0) continue;
       if (! rows()->is_homogeneous(elem(i)))
 	{
 	  degree_monoid()->remove(d);
@@ -2013,7 +2014,7 @@ MonomialIdeal *Matrix::make_monideal(int n) const
   for (int i=0; i<n_cols(); i++)
     {
       vec v = elem(i);
-      if (rows()->is_zero(v)) continue;
+      if (v == 0) continue;
       if (v->comp != n) continue;
       Bag *b = new Bag(i);
       M->to_varpower(P->lead_monomial(v->coeff), b->monom());

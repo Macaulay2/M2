@@ -1,7 +1,6 @@
 // Copyright 2002 Michael E. Stillman
 
 #include "relem.hpp"
-#include "vector.hpp"
 #include "matrix.hpp"
 #include "sparsemat.hpp"
 #include "lattice.hpp"

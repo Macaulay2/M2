@@ -4,6 +4,10 @@ class FreeModule;
 class Ring;
 class GBRing;
 class gbvector;
+class res_poly;
+class res2_poly;
+struct resterm;
+struct res2term;
 
 #include "ringelem.hpp"
 
@@ -15,7 +19,13 @@ void dfree(const FreeModule *F);
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);
 
-extern "C" void dvec(const GBRing *R, gbvector *v);
+extern "C" void dvec(const Ring *R, const vec v);
+
+extern "C" void dgbvec(const GBRing *R, gbvector *v);
+
+void drespoly(const res_poly *R, const resterm *f);
+
+void drespoly2(const res2_poly *R, const res2term *f);
 
 
 // Local Variables:

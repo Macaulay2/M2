@@ -4,13 +4,24 @@ random aspects of resolutions and GB's:
        matrices returned should NEVER be able to be changed by the computation.
        text_out, stats should maybe function for all these computations.
        quotients, skew commutative, Weyl: all needs to be done or checked.
-       Schreyer order for GB's
-       HF code
-       HF use in resolutions: this I think was not correct
+       DONE (I think): Schreyer order for GB's
+       DONE: HF code
+       DONE: HF use in resolutions: this I think was not correct
        MAYBE: Frank Schreyer's suggestions
        AT SOME POINT: minimalization routine for resolutions (over fraction rings, ZZ, 
          inhomog, etc).
        gb2: computation completion conditions are not used, except for degree...
+
+routines to implement: gin, lexideal, macaulayRep, noetherNormalization, routines for
+points, toric rings, LPP, what else?
+
+pushforward, pushforward1 should be stashed too, and should work functorially and with 
+inhomogeneous maps and modules.
+
+subring, quotient, and saturation computations need to be interruptable: so we must
+stash the results.
+
+factorization and decomposition from singular needs to be interruptable.
 
 Groebner bases todo: HF use, mingens, subring elements, elements sorted in 
 decreasing monomial order?
@@ -22,6 +33,8 @@ skew multiplication: does it still work?  Get it working, test it.
 leadTerm needs to be made to work again
 
 basis needs to be made to work again
+
+basis needs to be functorial
 
 rawMonomials needs to be connected to front end (this is the new version which 
 takes a matrix instead a list of exponent vectors)
