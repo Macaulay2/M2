@@ -1118,6 +1118,24 @@ document { (symbol ==, Module, Module),
 	  },
      }
 
+document { (symbol ==, Ideal, ZZ),
+     Synopsis => {
+	  "I == n",
+	  "I" => null,
+	  "n" => "either 0, or 1."
+	  },
+     PARA,
+     "If n==1, then determines whether I is the unit ideal.
+     If n==0, then determines whether I is the zero ideal.  Any other value
+     for n is an error.",
+     PARA,
+     EXAMPLE {
+	  "R = QQ[x];",
+      	  "ideal(x^2,x+1) == 1",
+      	  "ideal(0_R) == 0"
+	  },
+     }
+
 TEST "
 R = ZZ/101[a,b,c]
 M = cokernel matrix {{a,b^2,c^3}}

@@ -17,18 +17,18 @@ const bool GB_MAYBE_MINIMAL = true;
 
 struct GB_elem
 {
-  GB_elem *next;
   vec f;
   vec fsyz;
   int *lead_exp;
+  int sugar_degree;
   bool is_min;			// eventually: TY_MINIMAL, TY_SMALL_GB, TY_LARGE_GB, TY_REMOVED
   
   GB_elem()
-    : next(NULL),
-      f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0) {}
-  GB_elem(vec f, vec fsyz, int is_min) 
-    : next(NULL),
-      f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min) {}
+    : f(NULL), fsyz(NULL), lead_exp(NULL), 
+      sugar_degree(0), is_min(0) {}
+  GB_elem(vec f, vec fsyz, int sugar_degree, int is_min) 
+    : f(f), fsyz(fsyz), lead_exp(NULL), 
+      sugar_degree(sugar_degree), is_min(is_min) {}
 
   // infrastructure
   friend void i_stashes();

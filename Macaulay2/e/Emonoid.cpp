@@ -1,24 +1,161 @@
-// Copyright 1998 by Michael E. Stillman
-#include <string.h>
-#include <ctype.h>
+// Copyright 2000 by Michael E. Stillman
 #include "Emonoid.hpp"
-#include "Emontable.hpp"
-#include "random.hpp"
 
-ECommMonoid *ECommMonoid::_trivial = 0;
+#include <ctype.h>
+#include "text_io.hpp"
+#include "monoid.hpp"
+#include "varpower.hpp"
+#include "error.hpp"
+#include "ntuple.hpp"
 
-const ECommMonoid *ECommMonoid::getTrivialMonoid()
+/////////////////////
+// Monoid creation //
+/////////////////////
+
+Monoid *Monoid::trivial_monoid = 0;
+
+Monoid *Monoid::create(EMonomialOrder *mo,
+		       const int *print, 
+		       const char **names,
+		       const Monoid *D,
+		       const intarray &degs,
+		       const intarray &skewvars)  // This last should really go with the ring.
 {
-  if (_trivial == 0)
-    {
-      // We make a commutative monoid with no variables, by hand.
-      EMonomialOrder *mo = EMonomialOrder::make();
-      _trivial = ECommMonoid::make(mo,0,0);
-    }
-  return _trivial;
+  // MES: Probably not functional yet
+  Monoid *M = new Monoid(mo,print,names,D,degs,skewvars);
+  return M;
 }
 
-char ** EMonoid::setNames(int nvars, const char *s, int slength)
+Monoid *Monoid::create_trivial_monoid()
+{
+  if (trivial_monoid == 0)
+    {
+      trivial_monoid = new Monoid;
+      // Now we must set the degree monoid to be a circular link:
+      trivial_monoid->_D = trivial_monoid;
+      bump_up(trivial_monoid);
+    }
+  return trivial_monoid;
+}
+
+Monoid::Monoid()
+  : _nvars(0),
+    _nwords(0),
+    _varnames(0),
+    isgroup(false),
+    _monom_stash(0),
+    _one(0),
+    _primary_degree_of_var(0),
+    _D(0),
+    _mo(0),
+    _nskew(0),
+    _skew_vars(0),
+    _skew_list(0),
+    _skew_mvars(0),
+    _skew_nvars(0),
+    _EXP1(0),
+    _EXP2(0),
+    _EXP3(0)
+{
+}
+
+Monoid::Monoid(EMonomialOrder *mo, 
+	       const int *print, 
+	       const char **names,
+	       Monoid *deg_monoid,
+	       const intarray &degs,
+	       bool isgrp,
+	       bool isskew)
+  : _nvars(mo->n_vars()),
+    _nwords(mo->n_slots()),
+    _ncommvars(mo->n_commuting_vars()),
+    _componentloc(mo->component_loc()),
+    _mo(mo),
+    _print_order(0),
+    _var_names(0),
+    _one(0)
+{
+  int i;
+  if (_nvars == 0) return;
+  
+  // MES: will the next line work correctly if _nwords == 0?
+  _monom_stash = new stash("monomials", _nwords*sizeof(int));
+
+  // Set the print order array
+  _print_order = new int[_nvars];
+  for (i=0; i<_nvars; i++)
+    _print_order[i] = print[i];
+
+  // Set the variable names array
+  _var_names = new char *[_nvars];
+  for (i=0; i<_nvars; i++)
+    {
+      int len = strlen(names[i]);
+      _var_names[i] = new char[len+1];
+      strncpy(_var_names[i], names[i], len+1);
+    }
+
+  // Set the degree information.  WARNING: might remove degrees from monoids.
+  // Note: must always have a degree monoid, possibly the trivial one.
+  _D = deg_monoid;
+  set_degrees(degs);
+
+  // Set the _isnonnegativevar array
+  _isnonnegativevar = new bool[_nvars];
+  for (i=0; i<_nvars; i++)
+    _isnonnegativevar[i] = mo->isNonnegativeVariable(i);
+
+  // Set the skew commutative information.  WARNING: this will migrate to polynomial
+  // rings.
+  set_skew_info(isskew);
+
+  // Create the temporary exponent and monomial arrays.
+  int n = _nvars;
+  if (_nwords > _nvars) n = _nwords;
+  n++; // Some (which?) routines use nvars+1 spots.
+  _skew_mvars = new int[n];
+  _skew_nvars = new int[n];
+  _EXP1 = new int[n];
+  _EXP2 = new int[n];
+  _EXP3 = new int[n];
+
+  // Create _one
+  if (_nvars == 0)
+    _one = NULL;
+  else 
+    {
+      _one = (int *) monom_stash->new_elem();;
+      for (int i=0; i<_nwords; i++)
+	_one[i] = 0;
+    }
+}
+
+void Monoid::set_skew_info(bool isskew)
+{
+  if (!isskew)
+    {
+      _n_skew = 0;
+      _skew_vars = NULL;
+      _skew_list = NULL;
+    }
+  else
+    {
+      _n_skew = 0;
+      _skew_vars = new int[_nvars];
+      _skew_list = new int[_nvars];
+      for (int i=0; i<_nvars; i++)
+	if (_primary_degree_of_var[i] % 2 == 0)
+	  _skew_vars[i] = 0;
+	else
+	  {
+	    _skew_vars[i] = 1;
+	    _skew_list[_n_skew++] = i;
+	  }
+    }
+}
+
+// The following (static) member function creates the input for 'create'
+char ** Monoid::make_name_array(int nvars, const char *s, int slength)
 {
   char thisstr[100];
   char *current;
@@ -50,584 +187,451 @@ char ** EMonoid::setNames(int nvars, const char *s, int slength)
   return result;
 }
 
-EMonoid::EMonoid(EMonomialOrder *mo, 
-		 const int *print, 
-		 const char **names)
-  : nvars(mo->n_vars()),
-    ncommvars(mo->n_commuting_vars()),
-    componentloc(mo->component_loc()),
-    nslots(mo->n_slots()),
-    monorder(mo),
-    print_order(0),
-    var_names(0),
-    _one(0)
+void Monoid::set_degrees(intarray &degvals)
 {
-  if (nvars == 0) return;
-  
+  // _D should be non-NULL here.
+  assert(_D != NULL);
+
+  // Set 'degree_of_var
+  int degvars = _D->n_vars();
+
+  // degvals should have the correct length
+  assert(degvars * _nvars == degvals.length());
+
+  int *t = degvals.raw();
+
+  _primary_degree_of_var = new int[_nvars];
+
+  for (int i=0; i<_nvars; i++)
+    {
+      int *m = _D->make_one();
+      _D->from_expvector(t, m);
+      _degree_of_var.append(m);
+      _primary_degree_of_var[i] = t[0];
+      t += degvars;
+    }
+  _degree_of_var.append(_D->make_one());
+}
+
+Monoid::~Monoid()
+{
+}
+
+void Monoid::write_object(object_writer &o) const
+{
+  // MESXX
+}
+Monoid *Monoid::read_object(object_reader &i)
+{
+  // MESXX
+  return 0;
+}
+
+void Monoid::text_out(buffer &o) const
+{
+  // MES: rewrite to match front-end input
   int i;
-  print_order = new int[nvars];
-  for (i=0; i<nvars; i++)
-    print_order[i] = print[i];
+  if (moninfo->isgroup)
+    o << "group ";
+  o << "[";
+  for (i=0; i<nvars-1; i++)
+    o << moninfo->varnames[i] << ",";
+  if (nvars > 0)
+    o << moninfo->varnames[nvars-1];
 
-  var_names = new char *[nvars];
-  for (i=0; i<nvars; i++)
+  o << "; Degrees => {";
+  int ndegrees = degree_monoid()->monomial_size();
+  if (ndegrees == 0)
+      o << "}";
+  else
     {
-      int len = strlen(names[i]);
-      var_names[i] = new char[len+1];
-      strncpy(var_names[i], names[i], len+1);
-    }
-
-  isnonnegativevar = new bool[nvars];
-  for (i=0; i<nvars; i++)
-    isnonnegativevar[i] = mo->isNonnegativeVariable(i);
-    
-  // Before using this class:
-  // Make a lookup table for monomials.
-  // Create _one. (done in the routine ECommMonoid::make, ENCMonoid::make)
-}
-
-EMonoid::~EMonoid()
-{
-  // Start deleting everything
-  delete [] print_order;
-  for (int i=0; i<nvars; i++)
-    delete [] var_names[i];
-  delete [] var_names;
-  delete [] isnonnegativevar;
-}
-
-int ECommMonoid::degree(const monomial *a, const int *wts) const
-{
-  const int *exp = a->monom;
-  int result = 0;
-  for (int i=0; i<nvars; i++)
-    result += exp[i] * wts[i];
-  return result;
-}
-
-ECommMonoid::ECommMonoid(EMonomialOrder *mo, 
-	       const int *print, 
-	       const char **names)
-  : EMonoid(mo,print,names)
-{
-  if (nvars == 0) return;
-
-  hash_multiplier = new uint32[nvars];
-  for (int i=0; i<nvars; i++)
-    hash_multiplier[i] = (uint32) Random::random0();
-
-  // Before using this class:
-  // Make a lookup table for monomials.
-  // Create _one. (done in the routine make_Monoid)
-}
-
-ECommMonoid *ECommMonoid::make(EMonomialOrder *mo, 
-		     const int *print, 
-		     const char **names)
-{
-  ECommMonoid *M = new ECommMonoid(mo,print,names);
-  ECommMonomialTable *T = new ECommMonomialTable(M,MONOMIAL_HASH_SIZE);
-  M->T = T;
-  intarray one;
-  M->_one = M->monomial_from_variable_exponent_pairs(one);
-  return M;
-}
-
-ECommMonoid::~ECommMonoid()
-{
-  delete [] hash_multiplier;
-  // Now delete all of the monomials
-  // MES
-}
-
-const int * ECommMonoid::to_exponents(const monomial *m) const
-{
-  return m->monom;
-}
-
-void ECommMonoid::copy_exponents(const monomial *m, int *&result) const
-{
-  for (int i=0; i<nvars; i++)
-    result[i] = m->monom[i];
-}
-
-const monomial *ECommMonoid::unchecked_monomial_from_exponents(int *exp) const
-  // This is a low level routine where 'exp' is expected to have been
-  // allocated via T->allocate_tentative_monomial(nvars+nslots).
-  // This routine will give back the space if needed.
-{
-  return T->lookup_and_insert_commutative(exp);
-}
-const monomial *ECommMonoid::monomial_from_exponents(const int *exp) const
-{
-  // First make sure that each exponent is >= 0, if it needs to be...
-  int *exp1 = T->allocate_tentative_monomial(nvars+nslots);
-  for (int i=0; i<nvars; i++)
-    {
-      if (isnonnegativevar[i] && exp[i] < 0) 
+      for (i=0; i<nvars; i++)
 	{
-	  gError << "expected non-negative exponent";
-	  T->give_back(exp1);
-	  return 0;
+	  if (i != 0) o << ", ";
+	  if (ndegrees > 1) o << '{';
+	  for (int j=0; j<ndegrees; j++)
+	    {
+	      if (j != 0) o << ", ";
+	      o << moninfo->degvals[i*ndegrees+j];
+	    }
+	  if (ndegrees > 1) o << '}';	  
 	}
-      exp1[i] = exp[i];
+      o << "}";
     }
-  return unchecked_monomial_from_exponents(exp1);
-}
 
-void ECommMonoid::to_variable_exponent_pairs(const monomial *m, intarray &result) const
-{
-  const int *exp = m->monom;
-  for (int i=0; i<nvars; i++)
-    if (exp[i] != 0)
-      {
-	result.append(i);
-	result.append(exp[i]);
-      }
+  o << "; MonomialOrder => ";
+  moninfo->mo->text_out(o);
+
+  o << "]";
 }
-const monomial *ECommMonoid::monomial_from_variable_exponent_pairs(const intarray &term) const
+/////////////////////////
+// Monomial operations //
+/////////////////////////
+
+void Monoid::from_expvector(const int *exp, int *result) const
 {
-  int *exp = new int[nvars];
-  for (int i=0; i<nvars; i++)
-    exp[i] = 0;
-  for (int j = 0; j < term.length()-1; j += 2)
+  if (inverses)
     {
-      int v = term[j];
-      int e = term[j+1];
-      if (v < 0 || v >= nvars)
-	{
-	  gError << "variable out of range";
-	  delete [] exp;
-	  return 0;
-	}
-      exp[v] += e;
+      // MES: write this
+      // Check whether the exponents are out of range?
     }
-  const monomial *result = monomial_from_exponents(exp);
-  delete [] exp;
-  return result;
-}
-uint32 ECommMonoid::hash(const int *exponents) const
-{
-  // !! TUNE THIS !!
-  uint32 result = 0;
-  for (int i=0; i<nvars; i++)
-    if (exponents[i] != 0) 
-      result += exponents[i] * hash_multiplier[i];
-  return result;
+  _mo->encode_commutative(exp, result);
 }
 
-const monomial *ECommMonoid::mult(const monomial *m, const monomial *n) const
+void Monoid::to_expvector(const int *m, int *result_exp) const
 {
-  const int *m1 = m->monom;
-  const int *n1 = n->monom;
-  int *result = T->allocate_tentative_monomial(nslots+nvars);
-  for (int i=0; i<nvars; i++)
-    result[i] = *m1++ + *n1++;
-  return unchecked_monomial_from_exponents(result);
+  _mo->decode(m, result_exp);
 }
 
-const monomial *ECommMonoid::power(const monomial *m, int n) const
+void Monoid::from_varpower(const int *vp, int *result) const
 {
-  const int *m1 = m->monom;
-  int *result = T->allocate_tentative_monomial(nslots+nvars);
-  for (int i=0; i<nvars; i++)
-    result[i] = (*m1++) * n;
-  return unchecked_monomial_from_exponents(result);
+  intarray a;
+  varpower::to_ntuple(nvars, vp, a);
+  from_expvector(a.raw(), result);
 }
 
-int ECommMonoid::compare(const monomial *m, int mcomponent,
-			 const monomial *n, int ncomponent) const
+void Monoid::to_varpower(const int *m, intarray &result_vp) const
 {
-  int i,cmp;
-  if (m == n) {
-    cmp = mcomponent - ncomponent;
-    if (cmp < 0) return LT;
-    if (cmp > 0) return GT;
-    return EQ;
-  }
-  const int *m1 = m->monom + nvars;  // This is where the 'slots' start
-  const int *n1 = n->monom + nvars;
-  for (i=0; i<componentloc; i++) {
-    cmp = *m1++ - *n1++;
-    if (cmp < 0) return LT;
-    if (cmp > 0) return GT;
-  }
-  cmp = mcomponent - ncomponent;
-  if (cmp < 0) return LT;
-  if (cmp > 0) return GT;
-  for ( ; i<nslots; i++) {
-    cmp = *m1++ - *n1++;
-    if (cmp < 0) return LT;
-    if (cmp > 0) return GT;
-  }
-  return EQ;  // Should never get to here...
+  to_expvector(m, EXP1);
+  varpower::from_ntuple(nvars, EXP1, result_vp);
 }
-int ECommMonoid::compare(const monomial *a,
-			 const monomial *b,
-			 int n) const
+
+bool Monoid::in_subring(int n, const int *m) const
 {
-  const int *a1 = a->monom + nvars;
-  const int *b1 = b->monom + nvars;
-  int m = monorder->n_slots(n);
-  for (int i=0; i<m; i++)
-    {
-      int cmp = *a1++ - *b1++;
-      if (cmp < 0) return LT;
-      if (cmp > 0) return GT;
-    }
+  if (nvars == 0) return true;
+  int nv = _mo->n_slots(n);
+  for (int i=0; i<nv; i++)
+    if (m[i] > 0) return false;
+  return true;
+}
+int Monoid::compare(int n, const int *m1, const int *m2) const
+{
+  if (nvars == 0) return EQ;
+  int nv = _mo->n_slots[n];
+  for (int i=0; i<nv; i++)
+    if (m1[i] > m2[i]) return GT;
+    else if (m1[i] < m2[i]) return LT;
   return EQ;
 }
 
-
-const monomial *ECommMonoid::lcm(const monomial *m, const monomial *n) const
+int *Monoid::make_new(const int *d) const
 {
-  const int *e1 = m->monom;
-  const int *e2 = n->monom;
-  int *result = T->allocate_tentative_monomial(nslots+nvars);
-  for (int i=0; i<nvars; i++)
-    if (e1[i] > e2[i])
-      result[i] = e1[i];
-    else
-      result[i] = e2[i];
-  return unchecked_monomial_from_exponents(result);
+  if (nvars == 0) return NULL;
+  int *result = (int *) monom_stash->new_elem();
+  copy(d, result);
+  return result;
+}
+int *Monoid::make_one() const
+{
+  return make_new(_one);
+}
+void Monoid::remove(int *d) const
+{
+  if (d != NULL) monom_stash->delete_elem(d);
 }
 
-const monomial *ECommMonoid::gcd(const monomial *m, const monomial *n) const
+void Monoid::one(int *result) const
 {
-  const int *e1 = m->monom;
-  const int *e2 = n->monom;
-  int *result = T->allocate_tentative_monomial(nslots+nvars);
-  for (int i=0; i<nvars; i++)
-    if (e1[i] < e2[i])
-      result[i] = e1[i];
-    else
-      result[i] = e2[i];
-  return unchecked_monomial_from_exponents(result);
-}
-const monomial *ECommMonoid::divide(const monomial *m, const monomial *n) const
-  // m/n  WARNING: only use if there exists a monomial r such that m = rn.
-  // Otherwise, the result will be NOT valid...
-{
-  const int *e1 = m->monom;
-  const int *e2 = n->monom;
-  int *result = T->allocate_tentative_monomial(nslots+nvars);
-  for (int i=0; i<nvars; i++)
-      result[i] = e1[i] - e2[i];
-  return unchecked_monomial_from_exponents(result);
+  for (int i=0; i<_nwords; i++) 
+    *result++ = 0;
 }
 
-bool ECommMonoid::divides(const monomial *m, const monomial *n) const
-  // does m divide n?
+bool Monoid::is_one(const int *m) const
 {
-  const int *e1 = m->monom;
-  const int *e2 = n->monom;
-  for (int i=0; i<nvars; i++)
-    if (e1[i] > e2[i])
-      return false;
+  for (int i=0; i<_nwords; i++)
+    if (*m++ != 0) return false;
   return true;
 }
 
-void ECommMonoid::stats() const
+void Monoid::copy(const int *m, int *result) const
 {
-  T->stats();
-}
-//////////////
-// ENCMonoid //
-//////////////
-
-ENCMonoid::ENCMonoid(EMonomialOrder *mo, 
-	       const int *print, 
-	       const char **names)
-  : EMonoid(mo,print,names)
-{
-  mo->set_noncommutative_parameters(
-         this->n_nc_blocks,
-	 this->nclength,
-	 this->is_nc_block,
-	 this->is_comm);
-
-  // Before using this class:
-  // Make a lookup table for monomials.
-  // Create _one. (done in the routine make_Monoid)
+  memcpy(result, m, _nwords*sizeof(int));
 }
 
-ENCMonoid *ENCMonoid::make(EMonomialOrder *mo, 
-		     const int *print, 
-		     const char **names)
+void Monoid::mult(const int *m, const int *n, int *result) const
 {
-  ENCMonoid *M = new ENCMonoid(mo,print,names);
-  ENCMonomialTable *T = new ENCMonomialTable(M,MONOMIAL_HASH_SIZE);
-  M->T = T;
-  intarray one;
-  M->_one = M->monomial_from_variable_exponent_pairs(one);
-  return M;
-}
-
-ENCMonoid::~ENCMonoid()
-{
-  delete [] nclength;
-  delete [] is_nc_block;
-
-  // Now delete all of the monomials
-  // MES
-}
-
-//////////////////////////////////////////
-// Format of a Non-Commutative monomial //
-//////////////////////////////////////////
-//
-// Each monomial is a pointer to a sequence of integers.
-//  a. length field (the length of the entire thing, including this int).
-//  b. nslots: one integer per slot.  Each non-commutative block
-//       has only one slot, and its value is the length of that non-comm part of
-//       the monomial.
-//  c. ncommvars: the exponent vector for commutative variables which appear.
-//  d. length-nslots-ncommvars: the non-commutative part of the monomial
-//       This is a variable length field, given by (variable,exponent),...
-// 
-
-void ENCMonoid::to_variable_exponent_pairs(const monomial *m, intarray &result) const
-{
-  int *encoded = m->monom;
-  // First put in the commutative part:
-  int len = *encoded++;
-  encoded += nslots;  // This is the location of the comm exponent vector part.
-  int i;
-  for (i=0; i<ncommvars; i++)
-    if (encoded[i] != 0)
-      {
-	result.append(i);
-	result.append(encoded[i]);
-      }
-  // Now do the non-commutative part
-  len -= 1+nslots+ncommvars;
-  encoded += ncommvars;  // This is the location of the non-comm var exp part.
-  for (i=0; i<len; i+=2)
+  for (int i=0; i<_nwords; i++, m++, n++)
     {
-      result.append(encoded[i]);
-      result.append(encoded[i+1]);
+      *result++ = *m + *n;
+      if (*m < 0)
+	{
+	  if (*n < 0 && *result > *m)
+	    ERROR("monomial overflow");
+	}
+      else if (*n > 0 && *m < *result)
+	{
+	  ERROR("monomial overflow");
+	}
     }
 }
 
-const monomial *ENCMonoid::monomial_from_variable_exponent_pairs(const intarray &mon) const
+bool Monoid::divides(const int *m, const int *n) const
+// Is every exponent of n/m non-negative?
 {
-  int *result = T->allocate_tentative_monomial(1 + nslots + ncommvars + mon.length());
-    // This is the max possible length.
-  // MES: PLACE this 'mon' into the proper order for encode_noncommutative
-  monorder->encode_noncommutative(mon, result);  
-  return T->lookup_and_insert_noncommutative(result);
+  if (nvars == 0) return true;
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
+  return ntuple::divides(nvars, EXP1, EXP2);
 }
 
-const monomial *ENCMonoid::mult(const monomial *m, const monomial *n) const
+#if 0
+void Monoid::divide(const int *m, const int *n, int *result) const
 {
-  int i,j,k;
-  const int *m1 = m->monom;
-  const int *n1 = n->monom;
-  int *result = T->allocate_tentative_monomial(*m1 + *n1);  // Way more than enough space
-  result++;  // We will set the length field at the end.
-  m1++;
-  n1++;
-  for (i=0; i<nslots+ncommvars; i++)
-    result[i] = m1[i] + n1[i];
-  // Now multiply the non-commutative part
-  int firstpast = nslots+ncommvars;
-  int mpast = firstpast;
-  int npast = firstpast;
-  for (j=0; j<n_nc_blocks; j++)
-    {
-      int slotlen = nclength[j];
-      int len1 = m1[slotlen];
-      int len2 = n1[slotlen];
-      for (k=0; k<len1; k++)
-	result[firstpast++] = m1[mpast++];
-      if (len1 > 0 && len2 > 0 && m1[mpast-2] == n1[npast])
-	{
-	  result[firstpast-1] += n1[npast+1];
-	  result[slotlen] -= 2;
-	  npast += 2;
-	  len2 -= 2;
-	}
-      for (k=0; k<len2; k++)
-	result[firstpast++] = n1[npast++];
-    }      
-  --result;
-  *result = firstpast+1;
-  return T->lookup_and_insert_noncommutative(result);
+  if (nvars == 0) return;
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
+  ntuple::divide(nvars, EXP1, EXP2, EXP1);
+  from_expvector(EXP1, result);
+}
+#endif
+
+void Monoid::power(const int *m, int n, int *result) const
+{
+  if (nvars == 0) return;
+  to_expvector(m, EXP1);
+  ntuple::power(nvars, EXP1, n, EXP1);
+  from_expvector(EXP1, result);
 }
 
-const monomial *ENCMonoid::divide(const monomial *m, const monomial *n) const
+void Monoid::monsyz(const int *m, const int *n, int *sm, int *sn) const
 {
-  gError << "division not implemented for non-comm monoids";
-  return clone(one());
-}
-
-const monomial *ENCMonoid::power(const monomial *a, int n) const
-{
-  // We can make this more efficient if it seems worth it later...
-  const monomial *result = one();
-  for (int i=0; i<n; i++)
-    result = mult(a,result);
-  return result;
-}
-
-int ENCMonoid::compare(const monomial *m, int mcomponent,
-		       const monomial *n, int ncomponent) const
-{
-  int cmp;
-  if (m == n) {
-    cmp = mcomponent - ncomponent;
-    if (cmp < 0) return LT;
-    if (cmp > 0) return GT;
-    return EQ;
-  }
-  const int *m1 = m->monom + 1;
-  const int *n1 = n->monom + 1;
-  int past = nslots+ncommvars;
-  for (int i=0; i<nslots; i++) {
-    if (i == componentloc)
-      {
-	cmp = mcomponent - ncomponent;
-	if (cmp < 0) return LT;
-	if (cmp > 0) return GT;
-      }
-    if (is_nc_block[i])
-      {
-	// Need to check the NC block of vars
-	int len1 = m1[i];
-	int len2 = n1[i];
-	int len = len1;
-	if (len2 < len) len = len2;
-	for (int j=0; j<len; j += 2)
-	  {
-	    cmp = m1[past] - n1[past];  // Variable
-	    if (cmp < 0) return GT;
-	    if (cmp > 0) return LT;
-	    past++;
-	    cmp = m1[past] - n1[past];  // Exponent
-	    if (cmp > 0) return GT;
-	    if (cmp < 0) return LT;
-	    past++;
-	  }
-	if (len1 > len2) return GT;
-	if (len2 > len1) return LT;
-      }
-    else
-      {
-	cmp = m1[i] - n1[i];
-	if (cmp < 0) return LT;
-	if (cmp > 0) return GT;
-      }
-  }
-  return EQ;  // Should never get to here...
-}
-
-int ENCMonoid::compare(const monomial *m,
-			 const monomial *n,
-			 int r) const
-{
-  int cmp;
-  if (m == n) return EQ;
-  int these_slots = monorder->n_slots(r);
-  const int *m1 = m->monom + 1;
-  const int *n1 = n->monom + 1;
-  int past = nslots+ncommvars;
-  for (int i=0; i<these_slots; i++) {
-    if (is_nc_block[i])
-      {
-	// Need to check the NC block of vars
-	int len1 = m1[i];
-	int len2 = n1[i];
-	int len = len1;
-	if (len2 < len) len = len2;
-	for (int j=0; j<len; j += 2)
-	  {
-	    cmp = m1[past] - n1[past];  // Variable
-	    if (cmp < 0) return GT;
-	    if (cmp > 0) return LT;
-	    past++;
-	    cmp = m1[past] - n1[past];  // Exponent
-	    if (cmp > 0) return GT;
-	    if (cmp < 0) return LT;
-	    past++;
-	  }
-	if (len1 > len2) return GT;
-	if (len2 > len1) return LT;
-      }
-    else
-      {
-	cmp = m1[i] - n1[i];
-	if (cmp < 0) return LT;
-	if (cmp > 0) return GT;
-      }
-  }
-  return EQ;  // Should never get to here...
-}
-
-int ENCMonoid::degree(const monomial *a, const int *wts) const
-{
-  int result = 0;
-  const int *exp = a->monom + 1 + nslots;
-  // First get the comm part
-  for (int i=0; i<ncommvars; i++)
-    result += exp[i] * wts[i];
-  // Now do the non-commutative part
-  const int *end = a->monom + *(a->monom);
-  const int *start = exp + ncommvars;
-  for (const int *v = start; v < end; v += 2)
-    result += wts[*v] * v[1];
-  return result;
-}
-
-uint32 ENCMonoid::hash(const int *encoded) const
-{
-  // WRITE THIS!!
-  int len = *encoded++;
-  uint32 result = 0;
-  for (int i=0; i<len; i++)
-    result += encoded[i] * (17*i); 
-  return result;
-}
-
-void ENCMonoid::stats() const
-{
-  T->stats();
-}
-
-// What about these routines?
-const monomial *ENCMonoid::monomial_from_exponents(const int *exp) const
-{
-  intarray varexp;
+  if (nvars == 0) return;
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
   for (int i=0; i<nvars; i++)
-    if (exp[i] != 0)
-      {
-	varexp.append(i);
-	varexp.append(exp[i]);
-      }
-  return monomial_from_variable_exponent_pairs(varexp);
+      if (EXP1[i] > EXP2[i])
+	{
+	  EXP2[i] = EXP1[i] - EXP2[i];
+	  EXP1[i] = 0;
+	}
+      else
+	{
+	  EXP1[i] = EXP2[i] - EXP1[i];
+	  EXP2[i] = 0;
+	}
+  from_expvector(EXP1, sm);
+  from_expvector(EXP2, sn);
 }
 
-void ENCMonoid::copy_exponents(const monomial *m, int *&result) const
+void Monoid::gcd(const int *m, const int *n, int *p) const
+{
+  if (nvars == 0) return;
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
+  ntuple::gcd(nvars, EXP1, EXP2, EXP1);
+  from_expvector(EXP1, p);
+}
+
+void Monoid::lcm(const int *m, const int *n, int *p) const
+{
+  if (nvars == 0) return;
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
+  ntuple::lcm(nvars, EXP1, EXP2, EXP1);
+  from_expvector(EXP1, p);
+}
+
+void Monoid::elem_text_out(buffer &o, const int *m) const
+{
+  to_expvector(m, EXP1);
+  if (moninfo->isgroup)
+    {
+      o << '{';
+      for (int i=0; i<nvars; i++)
+	{
+	  if (i > 0) o << ' ';
+	  o << EXP1[i];
+	}
+      o << '}';
+    }
+  else
+    ntuple::elem_text_out(o, nvars, EXP1, _varnames);
+}
+void Monoid::elem_bin_out(buffer &o, const int *m) const
+{
+  to_expvector(m, EXP1);
+  ntuple::elem_bin_out(o, nvars, EXP1);
+}
+
+void Monoid::write_element(object_writer &o, const int *m) const
+{
+  // MESXX
+}
+
+void Monoid::read_element(object_reader &i, int * &result) const
+{
+  // MESXX
+}
+
+////////////////////
+// The grading /////
+////////////////////
+
+void Monoid::multi_degree(const int *m, int *result) const
+{
+  if (nvars == 0) return;
+  if (degree_monoid()->n_vars() == 0) return;
+
+  degree_monoid()->one(result);
+  int *mon1 = degree_monoid()->make_one();
+  to_expvector(m, EXP1);
+
+  for (int i=0; i<nvars; i++)
+    if (EXP1[i] > 0)
+      {
+	degree_monoid()->power(degree_of_var(i), EXP1[i], mon1);
+	degree_monoid()->mult(result, mon1, result);
+      }
+  degree_monoid()->remove(mon1);
+}
+
+void Monoid::degree_of_varpower(const int *vp, int *result) const
+{
+  if (nvars == 0) return;
+  if (degree_monoid()->n_vars() == 0) return;
+
+  degree_monoid()->one(result);
+  int *mon1 = degree_monoid()->make_one();
+
+  for (index_varpower j = vp; j.valid(); ++j)
+      {
+	int v = j.var();
+	int e = j.exponent();
+	degree_monoid()->power(degree_of_var(v), e, mon1);
+	degree_monoid()->mult(result, mon1, result);
+      }
+  degree_monoid()->remove(mon1);
+}
+
+int Monoid::primary_value(const int *m) const
+{
+  // MES: rewrite!!
+  if (nvars == 0) return 0;
+  to_expvector(m, EXP1);
+  int result = EXP1[0];
+  return result;
+}
+
+int Monoid::primary_degree(const int *m) const
+{
+  return degree_weights(m, primary_degree_of_var);
+}
+
+int Monoid::degree_weights(const int *m, const int *wts) const
+{
+  if (nvars == 0) return 0;
+  to_expvector(m, EXP1);
+  return ntuple::weight(nvars, EXP1, wts);
+}
+
+///////////////////////////////
+// Skew commutative routines //
+///////////////////////////////
+// These should REALLY be with the polynomial ring...
+// MES: once packing of monomials is allowed, the mult
+// routines (ans others) are being inefficient: they will
+// cause several unpackings to occur.
+
+bool Monoid::is_skew() const
+{
+  return (_n_skew > 0);
+}
+
+int Monoid::is_skew_var(int v) const
+{
+  return (_skew_vars[v]);
+}
+
+static int sort_sign(int a, int *v1, int b, int *v2)
+{
+  if (a == 0 || b == 0) return 1;
+  int result = 0; // number of sign switches
+  a--;
+  b--;
+  for (;;)
+    {
+      if (v1[a] < v2[b])
+	{
+	  b--;
+	  if (b < 0)
+	    {
+	      return (result % 2 == 0 ? 1 : -1);
+	    }
+	}
+      else if (v1[a] > v2[b])
+	{
+	  result += b+1;
+	  a--;
+	  if (a < 0)
+	    {
+	      return (result % 2 == 0 ? 1 : -1);
+	    }
+	}
+      else 
+	return 0;
+    }
+}
+
+int Monoid::exp_skew_mult_sign(const int *exp1, const int *exp2) const
+{
+  int a = exp_skew_vars(exp1, _skew_mvars);
+  int b = exp_skew_vars(exp2, _skew_nvars);
+  return sort_sign(a,_skew_mvars, b, _skew_nvars);
+}
+
+int Monoid::skew_mult_sign(const int *m, const int *n) const
+{
+  int a = skew_vars(m, _skew_mvars);
+  int b = skew_vars(n, _skew_nvars);
+  return sort_sign(a,_skew_mvars, b, _skew_nvars);
+}
+
+int Monoid::skew_mult(const int *m, const int *n, int *result) const
+{
+  int sign = skew_mult_sign(m,n);
+  mult(m,n,result);
+  return sign;
+}
+
+int Monoid::skew_divide(const int *m, const int *n, int *result) const
+    // If the result is s (1,or -1), then m = s * result * n
+{
+  divide(m,n,result);
+  int sign = skew_mult_sign(result,n);
+  return sign;
+}
+
+int Monoid::exp_skew_vars(const int *exp, int *result) const
+    // The number s of skew variables in 'm' is returned, and their
+    // indices are placed in result[0], ..., result[s-1].
+    // The space that 'result' points to MUST hold at least 'nvars' ints.
 {
   int i;
-  for (i=0; i<nvars; i++)
-    result[i] = 0;
-
-  // First do commutative part:
-  const int *p = m->monom + 1 + nslots;
-  for (i=0; i<ncommvars; i++)
-    result[i] = p[i];
-
-  // Now do the non-commutative part
-  p += ncommvars;
-  int len = m->monom + (*m->monom) - p;
-  for (i=0; i<len; i += 2)
-    result[p[i]] += p[i+1];
+  int next = 0;
+  for (i=0; i<_n_skew; i++)
+    {
+      int v = _skew_list[i];
+      if (exp[v] > 0)
+	result[next++] = v;
+    }
+  return next;
 }
-
-const int * ENCMonoid::to_exponents(const monomial *m) const
+int Monoid::skew_vars(const int *m, int *result) const
+    // The number s of skew variables in 'm' is returned, and their
+    // indices are placed in result[0], ..., result[s-1].
+    // The space that 'result' points to MUST hold at least 'nvars' ints.
 {
-  assert(0);
-  // WHAT??
-  return NULL;
+  to_expvector(m, result);
+  return exp_skew_vars(result,result); // This aliasing is ok...
 }
 
+bool Monoid::skew_is_zero(const int *exp) const
+    // Return whether any skew variable in the exponent vector has exponent >= 2
+{
+  for (int i=0; i<_n_skew; i++)
+    {
+      int v = _skew_list[i];
+      if (exp[v] >= 2) return true;
+    }
+  return false;
+}

@@ -87,6 +87,7 @@ SchurRing::SchurRing(const Ring *KK, const Monoid *MMF)
 {
   part_exp = part_exp_a.alloc(nvars);
   SMtab.p = new int[nvars+1];
+  for (int i=0; i<nvars+1; i++) SMtab.p[i] = 0;
 }
 
 SchurRing::~SchurRing()

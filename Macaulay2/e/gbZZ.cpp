@@ -456,7 +456,7 @@ bool GBZZ_comp::gb_reduce(vec &f, vec &fsyz) const
 
 void GBZZ_comp::insert_gb_element(vec f, vec fsyz, bool ismin)
 {
-  GB_elem *p = new GB_elem(f, fsyz, ismin);
+  GB_elem *p = new GB_elem(f, fsyz, this_degree, ismin);
 
   if (!ZZ->is_positive(f->coeff))
     {

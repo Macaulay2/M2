@@ -543,19 +543,6 @@ int Monoid::degree_weights(const int *m, const int *wts) const
   return ntuple::weight(nvars, EXP1, wts);
 }
 
-int Monoid::is_non_negative(const int *m) const
-{
-  if (moninfo->isgroup)
-    {
-      // MES: rewrite!
-      to_expvector(m, EXP1);
-      int result = (EXP1[0] >= 0);
-      return result;
-    }
-
-  return 1;
-}
-
 int Monoid::is_one(const int *m) const
 {
   for (int i=0; i<nwords; i++)
@@ -642,6 +629,18 @@ int Monoid::skew_divide(const int *m, const int *n, int *result) const
 {
   divide(m,n,result);
   int sign = skew_mult_sign(result,n);
+  return sign;
+}
+
+int Monoid::skew_diff(const int *m, const int *n, int *result) const
+      // m acting as a differential operator on n is s * result, s = 0, 1, or -1.
+{
+  divide(n,m,result);
+  int a = skew_vars(result, skew_mvars);
+  int b = skew_vars(m, skew_nvars);
+  int sign = sort_sign(a,skew_mvars, b, skew_nvars);
+  int c = b % 4;
+  if (c == 2 || c == 3) sign = -sign;
   return sign;
 }
 

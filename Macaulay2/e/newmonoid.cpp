@@ -483,19 +483,6 @@ int Monoid::degree_weights(const int *m, const int *wts) const
   return ntuple::weight(nvars, EXP1, wts);
 }
 
-int Monoid::is_non_negative(const int *m) const
-{
-  if (moninfo->isgroup)
-    {
-      // MES: rewrite!
-      to_expvector(m, EXP1);
-      int result = (EXP1[0] >= 0);
-      return result;
-    }
-
-  return 1;
-}
-
 int Monoid::is_one(const int *m) const
 {
   for (int i=0; i<nwords; i++)

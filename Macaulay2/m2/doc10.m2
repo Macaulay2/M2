@@ -44,7 +44,7 @@ document { resolution => DegreeLimit,
      PARA,
      "This option is relevant only for homogeneous modules.",
      PARA,
-     "One might get some matrix entries of slightly higher degree than requested.",
+     CAVEAT "One might get some matrix entries of slightly higher degree than requested.",
      EXAMPLE {
 	  "R = ZZ/101[x,y,z,w];",
       	  "M = cokernel matrix {{x*y-z^2,y^2-w^2}}",

@@ -629,6 +629,7 @@ extern const char * const h_errlist[];
 #endif
 #endif
 
+//#ifdef 0 // SYS_ERRLIST_NOT_CONST
 #ifndef SYS_ERRLIST_IS_DECLARED
 extern const char * const sys_errlist[];
 #endif

@@ -1492,6 +1492,24 @@ document { codim,
      different dimension!"
      }
 
+document { (codim, Module),
+     Synopsis => {
+	  "c = codim M",
+	  "M" => {"A module over a ring ", TT "R", "."},
+	  "c" => {"The number ", TT "dim R - dim M", "."}
+	  },
+     PARA,
+     "The returned value is the usual codimension if R is an integral domain, or all
+     components have the same dimension.",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+	  "M = coker matrix{{a,b},{c,d}}",
+	  "codim M"
+	  },
+     CAVEAT ("If R is ZZ, then the computation effectively tensors first with the
+	  rational numbers, yielding the wrong answers in some cases.",
+	  "R must be a quotient of a commutative polynomial ring.")
+     }
 document { dim,
      Headline => "calculate the dimension",
      TT "dim M", " -- calculate the dimension of the support of a module M.",
