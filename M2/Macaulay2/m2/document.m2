@@ -382,20 +382,18 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -- process examples
 -----------------------------------------------------------------------------
 checkForNodeBaseFilename := nodeName -> (
-     nodeBaseFilename = cacheFileName(
+     t := cacheFileName(
 	  if writing() then take(documentationPath,1) else documentationPath,
-	  nodeName); -- returns a list
-     assert( class nodeBaseFilename === List );
-     if #nodeBaseFilename > 1 then (
+	  nodeName);
+     if #t > 1 then (
 	  stderr << "warning: documentation node '" << nodeName << "' occurs in multiple locations:" << endl;
-	  apply(nodeBaseFilename, fn -> stderr << "    " << fn << endl );
+	  apply(t, fn -> stderr << "    " << fn << endl );
 	  );
      nodeBaseFilename = (
-	  if #nodeBaseFilename == 0 then (
-	       if writingExampleInputFiles()
-	       then cacheFileName(first documentationPath, nodeName)
-	       else null)
-	  else first nodeBaseFilename
+	  if #t > 0 then first t
+	  else if writingExampleInputFiles() or writingHtmlFiles()
+	  then cacheFileName(first documentationPath, nodeName)
+	  else null
      	  );
      )
 checkForExampleOutputFile := () -> (
@@ -464,7 +462,7 @@ processExamples := (docBody) -> (
 -----------------------------------------------------------------------------
 -- produce html page
 -----------------------------------------------------------------------------
-writeHtmlPage := (nodeName,doc) -> (
+writeHtmlPage := nodeName -> (
      nodeBaseFilename | ".html" << html HTML { 
 	  HEAD TITLE {nodeName, headline nodeName},
 	  BODY { 
@@ -490,9 +488,8 @@ document List := z -> (
      -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
      checkForNodeBaseFilename nodeName;
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
-     body = processExamples fixup body;
-     storeDoc(skey,toExternalString body);
-     if writingHtmlFiles() then writeHtmlPage (nodeName, body);
+     storeDoc(skey,toExternalString processExamples fixup body);
+     if writingHtmlFiles() then writeHtmlPage nodeName;
      )
 
 -----------------------------------------------------------------------------
@@ -1406,7 +1403,7 @@ htmlFilename := fkey -> (
 html TO := x -> (
      fkey := formatDocumentTag x#0;
      concatenate ( 
-     	  "<A HREF=\"", htmlFilename fkey, "\">", 
+     	  "<A HREF=\"../../", htmlFilename fkey, "\">", 
      	  htmlExtraLiteral fkey,
      	  "</A>",
      	  drop(toList x,1) 

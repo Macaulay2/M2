@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
---document { symbol WeylAlgebra,
+--document { WeylAlgebra,
 --     TT "WeylAlgebra", " --
 --     name for an optional argument for a monoid that
 --     specifies that a PolynomialRing created from it will
@@ -27,7 +27,7 @@ needs "D-modules.m2"
 
 
 
-document { symbol createDpairs,
+document { createDpairs,
      TT "createDpairs W", " -- 
      attaches to a Weyl algebra W a pair of keys to help distinguish the
      coordinate variables from the derivation variables.",
@@ -60,7 +60,7 @@ document { symbol createDpairs,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}
      },
 
-document { symbol Fourier,
+document { Fourier,
      TT "Fourier L", " -- computes the Fourier transform of a ring element L",
      BR, NOINDENT,
      TT "Fourier I", " -- computes the Fourier transform of an ideal I",
@@ -92,7 +92,7 @@ document { symbol Fourier,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}     
      },
 
-document { symbol Dtransposition,
+document { Dtransposition,
      --BIG "Drestriction",
      TT "Dtransposition L", " -- computes the standard transposition of a ring element L",
      BR, NOINDENT,
@@ -135,7 +135,7 @@ document { symbol Dtransposition,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}
      },
 
-document { symbol singLocus,
+document { singLocus,
      TT "singLocus M", " -- 
      computes the singular locus of a D-module M",
      BR, NOINDENT,
@@ -179,7 +179,7 @@ document { symbol singLocus,
 --	  HREF{"/HOME/Drank.html","Drank"}}
      },
 
-document { symbol charIdeal,
+document { charIdeal,
      TT "charIdeal M", " -- 
      computes the characteristic ideal of a D-module M",
      BR, NOINDENT,
@@ -229,7 +229,7 @@ document { symbol charIdeal,
 --	  HREF{"/HOME/Drank.html","Drank"}}
      },
 
-document { symbol Drank,
+document { Drank,
      --BIG "Drestriction",
      TT "Drank M", "-- calculates the rank of a D-module M",
      BR, NOINDENT,
@@ -283,7 +283,7 @@ document { symbol Drank,
 --	  HREF{"/HOME/singLocus.html","singLocus"}}	  
      },
 
-document { symbol Ddim,
+document { Ddim,
      TT "Ddim M", "-- calculate the dimension of a D-module M ",
      BR, NOINDENT, 
      TT "Ddim I", "-- calculate the dimension of the quotient D/I",
@@ -314,7 +314,7 @@ document { symbol Ddim,
      --MENU{HREF{"/HOME/inw.html","inw"}}
      },
 
-document { symbol makeWeylAlgebra,
+document { makeWeylAlgebra,
      TT "makeWeylAlgebra R", " -- 
      makes the Weyl algebra corresponding to a commutative polynomial
      ring R.",

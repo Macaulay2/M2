@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol Dresolution,
+document { Dresolution,
      TT "Dresolution (M)", " -- 
      computes a Schreyer resolution of the D-module M",
      BR, NOINDENT, TT "Dresolution (I, w)", " -- computes

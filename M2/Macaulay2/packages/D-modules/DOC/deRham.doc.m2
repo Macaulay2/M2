@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol deRham,
+document { deRham,
      TT "deRham f", "-- 
      computes the deRham cohomology groups of the complement of the
      hypersurface {f = 0} ",

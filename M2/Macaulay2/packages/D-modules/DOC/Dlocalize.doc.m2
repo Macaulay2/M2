@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol Dlocalize,
+document { Dlocalize,
      TT "Dlocalize (M, f)", " -- 
      compute the localization of the D-module M with respect to the
      polynomial f",

@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol diffOps,
+document { diffOps,
      TT "diffOps (I, k)", " -- 
      compute differential operators of order less than or equal to k 
      of the quotient ring R/I",
@@ -37,7 +37,7 @@ document { symbol diffOps,
 
      },
 
-document { symbol putWeylAlgebra,
+document { putWeylAlgebra,
      TT "putWeylAlgebra m", " -- 
      given the output m of diffOps, represents
      the differential operators as elements of a Weyl algebra.",

@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol Ddual,
+document { Ddual,
      TT "Ddual M", " -- 
      computes the holonomic dual of a D-module M",
      BR, NOINDENT,
