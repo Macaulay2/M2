@@ -524,7 +524,7 @@ installPackage Package := o -> pkg -> (
      stderr << "--storing processed documentation in " << dbname << endl;
      prockey := "processed documentation database";
      if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
-     docDatabase := openDatabaseOut dbname;
+     docDatabase := openDatabaseOut dbnametmp;
      scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
      close docDatabase;
      moveFile(dbnametmp,dbname);
