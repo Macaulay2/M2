@@ -9,6 +9,7 @@
 #include "M2types.h"
 #include "M2inits.h"
 #include "M2mem.h"
+#include "debug.h"
 
 extern void IM2_initialize();
 
@@ -92,8 +93,6 @@ static void *GC_realloc3 (void *s, size_t old, size_t new) {
 
 #else
 
-#include "debug.h"
-
 static void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
      p = GC_MALLOC(size_in_bytes);
@@ -121,7 +120,11 @@ void drg_GC_malloc_free() {}
 #endif
 
 static void init_gmp(void) {
-     mp_set_memory_functions(GC_malloc,GC_realloc3,GC_free); /* mismatched function types okay here, just ignoring extra args */
+#ifdef GC_DEBUG
+     mp_set_memory_functions(GC_debug_malloc,GC_realloc3,GC_debug_free); /* mismatched function types okay here, just ignoring extra args */
+#else
+     mp_set_memory_functions(GC_malloc      ,GC_realloc3,GC_free      ); /* mismatched function types okay here, just ignoring extra args */
+#endif
      }
 
 #if 0
@@ -139,6 +142,9 @@ void     freeBlock ( void * block, size_t size                    ) { return GC_
 int M2inits_run;
 
 void M2inits(void) {
+#ifdef DEBUG
+  trap();
+#endif
   if (M2inits_run) return;
   init_gc();
 #if 0

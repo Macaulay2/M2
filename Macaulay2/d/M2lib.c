@@ -57,7 +57,9 @@ static void alarm_handler(int sig)
      if (system_interruptShield) system_interruptPending = TRUE;
      else {
 	  system_interrupted = TRUE;
+#         ifdef FACTORY
      	  libfac_interruptflag = TRUE;
+#         endif
 	  }
 #ifdef SIGALRM
      signal(SIGALRM,alarm_handler);
@@ -86,7 +88,9 @@ static void interrupt_handler(int sig)
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 system_interrupted = FALSE;
+#                        ifdef FACTORY
 			 libfac_interruptflag = FALSE;
+#                        endif
 			 system_interruptPending = FALSE;
 			 system_interruptShield = FALSE;
 			 system_alarmed = FALSE;
@@ -117,7 +121,9 @@ static void interrupt_handler(int sig)
 		    exit(interruptExit);
 	       }
 	       system_interrupted = TRUE;
+#ifdef FACTORY
 	       libfac_interruptflag = TRUE;
+#endif
 	       }
 	  }
      signal(SIGINT,interrupt_handler);
@@ -386,7 +392,11 @@ char **argv;
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
+#ifdef FACTORY
      actors5_LIBFACVERSION = tostring(get_libfac_version());
+#else
+     actors5_LIBFACVERSION = tostring("'factory' not installed");
+#endif
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      actors5_DATE = tostring(current_date);
      actors5_TIME = tostring(current_time);
