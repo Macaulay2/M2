@@ -878,6 +878,39 @@ userMacaulay2Directory := () -> (
 -- needsPackage "StateTables"
 
 /// << close;	  
+     	  --
+     	  absPrefixDirectory := "/" | relativizeFilename ("/", prefixDirectory);
+	  -- make dot-emacs file
+	  dir|"dot-emacs" << ///
+(setq load-path 
+      (append
+       '( "/// << absPrefixDirectory << ///share/emacs/site-lisp/" )
+       load-path
+       ))
+
+(load "M2-init.el" t)
+
+; comment out the following line with an initial semicolon if you want to use your f12 key for something else
+(global-set-key [ f12 ] 'M2)
+
+/// << close;
+	  -- make dot-profile file
+          dir|"dot-profile" << ///
+PATH=/// << absPrefixDirectory << ///bin:$PATH
+export PATH
+
+MANPATH=/// << absPrefixDirectory << ///bin:$MANPATH
+export MANPATH
+
+LD_LIBRARY_PATH=/// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+/// << close;
+	  -- make dot-cshrc file
+     	  dir|"dot-cshrc" << ///
+setenv PATH /// << absPrefixDirectory << ///bin:$PATH
+setenv MANPATH /// << absPrefixDirectory << ///bin:$MANPATH
+setenv LD_LIBRARY_PATH /// << absPrefixDirectory << ///lib:$LD_LIBRARY_PATH
+/// << close;
 	  -- make README file
 	  dir|"README" << ///Welcome to Macaulay2!
 			     
@@ -901,6 +934,15 @@ with the function "installPackage".  Behind the scenes, Macaulay 2 will use the
 subdirectory "encap/" to house the code for those packages in separate
 subdirectories.  The subdirectory "local/" will hold a single merged directory
 tree for those packages, with symbolic links to the files of the packages.
+
+Sometimes Macaulay 2 has been installed in a nonstandard location, and you
+will need to set up your environment correctly so the program can be found and
+will run, and so the documentation can be found.  The files "dot-profile" and
+"dot-cshrc" in this directory contain commands you can incorporate into your
+files ".profile" or ".cshrc" in your home directory.  Users of "bash" or "sh"
+will want to modify ".profile", and users of "csh" or "tcsh" will want to
+modify ".chsrc".  The file "dot-emacs" in this directory contains code you
+can incorporate into your file ".emacs" in your home directory.
 
 Good luck!
 

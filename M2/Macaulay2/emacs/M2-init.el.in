@@ -1,14 +1,7 @@
 ;; -*- emacs-lisp -*-
-;; possible global binding :
-;; (global-set-key [ f12 ] 'M2)
-
-;  enable syntax highlighting:
-(add-hook 'M2-mode-hook 'turn-on-font-lock) 
-(add-hook 'M2-comint-mode-hook 'turn-on-font-lock)
 
 (autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
 (autoload 'M2-mode "M2.el" "Macaulay 2 editing mode" t)
-
 (setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
 
 ;; Local Variables:
