@@ -299,6 +299,9 @@ FreeModule *FreeModule::tensor(const FreeModule *G) const
   return result;
 }
 
+#if 0
+// OLD (4/26/2001) version.  Buggy: comb::binom exits M2
+// if p >= 35. (or n is).
 FreeModule *FreeModule::exterior(int p) const
      // p th exterior power
 {
@@ -340,6 +343,54 @@ FreeModule *FreeModule::exterior(int p) const
 
   degree_monoid()->remove(deg);
   if (M != NULL) M->remove(base);
+
+  return result;
+}
+#endif
+
+FreeModule *FreeModule::exterior(int p) const
+     // p th exterior power
+{
+  FreeModule *result;
+
+  int rk = rank();
+
+  if (p == 0) 
+    result = get_ring()->make_FreeModule(1);
+  else
+    result = new_free();
+  if (p > rk || p < 0) return result;
+
+  int *a = new int[p];
+  for (int i=0; i<p; i++)
+    a[i] = i;
+
+  int *deg = degree_monoid()->make_one();
+  int *base = NULL;
+  if (M != NULL) base = M->make_one();
+
+  do
+    {
+      degree_monoid()->one(deg);
+
+      for (int r=0; r<p; r++)
+	degree_monoid()->mult(deg, degree(a[r]), deg);
+
+      // This part is only for Schreyer orders
+      if (M != NULL)
+	{
+	  M->one(base);
+	  for (int r=0; r<p; r++)
+	    M->mult(base, base_monom(a[r]), base);
+	}
+
+      result->append(deg, base);
+    }
+  while (comb::increment(p, rk, a));
+
+  degree_monoid()->remove(deg);
+  if (M != NULL) M->remove(base);
+  delete [] a;
 
   return result;
 }

@@ -142,7 +142,7 @@ public:
   Matrix k_basis(Matrix bot, const int *d, int do_trunc) const;
   Matrix k_basis(Matrix bot) const;
 
-  Matrix exterior(int p) const;
+  Matrix exterior(int p,int strategy) const;
   static Matrix wedge_product(int p, int q, const FreeModule *F);
 //  static Matrix wedge_dual(int p, const FreeModule *F);
 

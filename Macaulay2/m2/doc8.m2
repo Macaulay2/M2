@@ -1127,8 +1127,8 @@ document { toField, Headline => "declare that a ring is a field",
      engine.  Polynomial rings over rings declared to be fields support
      Groebner basis operations.",
      PARA,
-     "If the engine evenutually discovers that some nonzero element of ", TT "R", "
-     a unit, an error will be signalled.  The user may then use
+     "If the engine eventually discovers that some nonzero element of ", TT "R", "
+     is not a unit, an error will be signalled.  The user may then use
      ", TO "getNonUnit", " to obtain a non-invertible element of ", TT "R", ",
      or ", TO "getZeroDivisor", " to obtain a zero divisor in ", TT "R", ".
      If a ring is probably a field, it can be used as a field until a

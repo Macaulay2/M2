@@ -1,5 +1,5 @@
-load "primdecomp-SY.m2"
-load "primdecomp-EHV.m2"
+--load "primdecomp-SY.m2"
+--load "primdecomp-EHV.m2"
 
 isMonomialIdeal = (I) -> false
 monomialIdealPD = (I) -> {}

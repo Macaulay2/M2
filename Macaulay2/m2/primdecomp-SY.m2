@@ -5,7 +5,8 @@
 -- authors: W. Decker, G. Smith, M. Stillman, C. Yackel
 --
 
-needs "primdecomp-fastgb.m2"
+-- this next file loads before this:
+--needs "primdecomp-fastgb.m2"
 
 -- Auto-reduction
 autoReduce = method()
@@ -31,8 +32,8 @@ newdecompose(Ideal) := List => (I) -> (
      squarefree := (f) -> (
      	  g := factor f;
      	  value apply(g, i -> i#0));
-     if I.?decompose then I.decompose
-     else I.decompose = (
+     if I.cache.?decompose then I.cache.decompose
+     else I.cache.decompose = (
        time I1 := ideal apply(numgens I, i -> squarefree(I_i));
        time I2 := trim ideal gens gb I1;
        time if numgens I2 > 0 then decompose I2 else {}))
@@ -95,7 +96,7 @@ flattener = (I, m) -> (
      
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 IS = independentSets I
 F1 = IS#0
 variables F1
@@ -120,7 +121,7 @@ findNonMember = (I,J) -> (
 
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 J = I + ideal(a^5-b^5)
 findNonMember(I,J)
 findNonMember(J,I)
@@ -182,8 +183,8 @@ quotMinold = (I, facs, F) -> (
 
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
-J = monomialCurve(R,{1,2,3})
+I = monomialCurveIdeal(R,{1,3,4})
+J = monomialCurveIdeal(R,{1,2,3})
 L = I^2 * J^3
 fac1 = I_1
 fac2 = J_1
@@ -211,8 +212,8 @@ minSatPPDold = (I, facs) -> (
 
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
-J = monomialCurve(R,{1,2,3})
+I = monomialCurveIdeal(R,{1,3,4})
+J = monomialCurveIdeal(R,{1,2,3})
 L = I^2 * J^3
 fac1 = I_1
 fac2 = J_1
@@ -253,7 +254,7 @@ extract = (I,P) -> (
 
 TEST ///
 R = ZZ/32003[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 L = I^2
 extract(L,I)
 PPD(L,{I})
@@ -355,9 +356,9 @@ if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
 PDinitialize = (I,printlevel) -> (
-     if I.?PDC then (
-	  I.PDC.PrintLevel = printlevel;
-          I.PDC
+     if I.cache.?PDC then (
+	  I.cache.PDC.PrintLevel = printlevel;
+          I.cache.PDC
 	  )
      else (
      	  PDC := new primdecComputation;
@@ -369,7 +370,7 @@ PDinitialize = (I,printlevel) -> (
      	  PDC.U = {};
      	  PDC.W = {{I, ROOT, 0, 1_R, null, {ideal(0_R), 1_R}}};
 	  PDC.thisNode = null;
-     	  I.PDC = PDC;
+     	  I.cache.PDC = PDC;
      	  PDC
      ))
 
@@ -508,14 +509,10 @@ time primaryDecomposition L
 
 ///
 
-
-
-
-
-
-
-
-
-
-
-
+-- These are used as fields of the PDC data type.
+-- But they can be erased here...
+-- We also use 'depth', 'ideal', but these are OK to protect...
+erase global H
+erase global W
+erase global U
+erase global thisNode

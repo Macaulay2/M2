@@ -131,6 +131,7 @@ NAMES = \
 	vector \
 	z_mod_p \
 	Z \
+	RR \
 	GF \
 	schur \
 	monideal \

@@ -492,11 +492,12 @@ void cmd_Matrix_symm(object &oa, object &on)
   gStack.insert(a.symm(n));
 }
 
-void cmd_Matrix_exterior(object &oa, object &on)
+void cmd_Matrix_exterior(object &oa, object &on, object &ostrategy)
 {
   Matrix a = oa->cast_to_Matrix();
   int n = on->int_of();
-  gStack.insert(a.exterior(n));
+  int strategy = ostrategy->int_of();
+  gStack.insert(a.exterior(n,strategy));
 }
 void cmd_Matrix_exterior_product(object &op, object &oq,
 				 object &oF)
@@ -603,11 +604,12 @@ void cmd_Matrix_kbasis_in(object &oa, object &ob)
     gStack.insert(a.k_basis_in(b->raw()));
 }
 #endif
-void cmd_dets(object &om, object &op)
+void cmd_dets(object &om, object &op, object &ostrategy)
 {
   Matrix M = om->cast_to_Matrix();
   int p = op->int_of();
-  gStack.insert(new DetComputation(M,p,0));
+  int strat = ostrategy->int_of();  // 0 = bareiss, 1 = cofactor.
+  gStack.insert(new DetComputation(M,p,0,strat));
   engine_alloc(sizeof(DetComputation));
 }
 
@@ -1502,11 +1504,11 @@ void i_Matrix_cmds(void)
   install(ggtruncate, cmd_Matrix_truncate, TY_MATRIX, TY_MATRIX, TY_INTARRAY);
   install(ggkbasis, cmd_Matrix_kbasis, TY_MATRIX, TY_MATRIX);
 
-  install(ggexterior, cmd_Matrix_exterior, TY_MATRIX, TY_INT);
+  install(ggexterior, cmd_Matrix_exterior, TY_MATRIX, TY_INT, TY_INT);
   install(ggexteriorproduct, cmd_Matrix_exterior_product,
 	  TY_INT, TY_INT, TY_FREEMODULE);
 
-  install(ggdets, cmd_dets, TY_MATRIX, TY_INT);
+  install(ggdets, cmd_dets, TY_MATRIX, TY_INT, TY_INT);
   install(ggpfaffs, cmd_pfaffs, TY_MATRIX, TY_INT);
 
   install(ggcoeffs, cmd_Matrix_coeffs, TY_MATRIX, TY_INTARRAY);

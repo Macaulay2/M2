@@ -140,7 +140,8 @@ codim   CoherentSheaf := (F) -> codim module F
 rank    CoherentSheaf := (F) -> rank  module F
 degrees CoherentSheaf := (F) -> degrees module F
 
-exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => (i,F) -> sheaf(variety F, exteriorPower(i,F.module))
+exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => options -> (i,F) -> 
+    sheaf(variety F, exteriorPower(i,F.module,options))
 
 super   CoherentSheaf := CoherentSheaf => (F) -> sheaf super   module F
 ambient CoherentSheaf := CoherentSheaf => (F) -> sheaf ambient module F

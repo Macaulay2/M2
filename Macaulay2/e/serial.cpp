@@ -28,6 +28,12 @@ object_writer &object_writer::operator<<(int a)
   o << a;
   return *this;
 }
+object_writer &object_writer::operator<<(double a)
+{
+  // MES: rewrite?
+  o << a;
+  return *this;
+}
 
 object_writer &object_writer::operator<<(mpz_ptr a)
 {
@@ -57,6 +63,11 @@ object_writer &object_writer::operator<<(const object_element *obj)
 // object_reader //
 ///////////////////
 object_reader &object_reader::operator>>(int &a)
+{
+  i >> a;
+  return *this;
+}
+object_reader &object_reader::operator>>(double &a)
 {
   i >> a;
   return *this;

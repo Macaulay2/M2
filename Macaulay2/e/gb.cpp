@@ -643,6 +643,12 @@ int GB_comp::s_pair_step()
       return SPAIR_DONE;
     }
 
+  if (comp_printlevel == 100)
+    {
+      // Traces the computation, in its way
+      emit("Computing spair ");
+      debug_out(p);
+    }
   n_computed++;
   compute_s_pair(p);
   
@@ -655,6 +661,14 @@ int GB_comp::s_pair_step()
   gb_reduce(f, fsyz);
   if (f != NULL)
     {
+      if (comp_printlevel == 100)
+	{
+	  buffer o;
+	  o << "  inserting GB element " << n_gb;
+	  F->elem_text_out(o, f);
+	  o << newline;
+	  emit(o.str());
+	}
       gb_insert(f, fsyz, 0);
       return SPAIR_GB;
     }

@@ -63,6 +63,7 @@ enum class_identifier {
   CLASS_GF,
   CLASS_FractionField,
   CLASS_SchurRing,
+  CLASS_RR,
 
   CLASS_FreeModule,
   CLASS_WeylFreeModule,
@@ -172,6 +173,7 @@ class object_element;
     class ring;
       class Z;
       class Z_mod;
+      class RR;
 
     class Monoid;
       class exp_vector;

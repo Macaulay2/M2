@@ -10,4 +10,8 @@ void bin_mpz_in(mpz_t result, char *&s, int &len);
 
 void bin_int_out(buffer &o, int n);
 int bin_int_in(char *&s, int &len);
+
+void bin_double_out(buffer &o, double n);
+double bin_double_in(char *&s, int &len);
+
 #endif

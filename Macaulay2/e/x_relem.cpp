@@ -7,6 +7,7 @@
 #include "relem.hpp"
 #include "z_mod_p.hpp"
 #include "Z.hpp"
+#include "RR.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "matrix.hpp"
@@ -15,6 +16,7 @@
 #include "weylalg.hpp"
 
 Z *ZZ;			// set in the init routine below
+RR *RRR;
 
 object make_object_int(int n)
 {
@@ -23,6 +25,10 @@ object make_object_int(int n)
 object make_object_int(mpz_t n)
 {
   return RingElement(ZZ, n);
+}
+object make_object_double(double d)
+{
+  return RingElement(RRR, RRR->from_double(d));
 }
 
 void cmd_Ring_from_int(object &oF, object &on)
@@ -330,6 +336,12 @@ void cmd_Z()
 {
   gStack.insert(ZZ);
 }
+
+void cmd_RR()
+{
+  gStack.insert(RRR);
+}
+
 void cmd_GF(object &oprim)
 {
   
@@ -489,9 +501,11 @@ void i_ring_elem_cmds(void)
 {
   assert(trivial_monoid != NULL);
   ZZ = Z::create(trivial_monoid);
+  RRR = RR::create(trivial_monoid);
 
   // Ring Creation
   install(ggZ, cmd_Z);
+  install(ggRR, cmd_RR);
 
 #if !defined(MIKE_NEWENGINE)
   install(ggEZZ, cmd_Z);

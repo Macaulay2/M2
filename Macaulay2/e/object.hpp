@@ -311,5 +311,5 @@ inline void bump_down(const object_element *p)
 
 extern object make_object_int(int n);
 extern object make_object_int(mpz_t n);
-
+extern object make_object_double(double d);
 #endif

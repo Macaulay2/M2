@@ -54,11 +54,11 @@ makeGB := (f,type,strategy) -> (
 	       ggPush f,
 	       ggPush bool withSyz,
 	       ggPush rowsToKeep,
-	       if not withSyz and f.?cokernel and f.cokernel.?poincare then (
+	       if not withSyz and f.?cache and f.cache.?cokernel and f.cache.cokernel.?poincare then (
 		    -- if tracingLevel >= 3 then (
 			-- << "using Poincare polynomial " << f.cokernel.poincare << " as hint" << endl;
 			-- );
-	            ggPush f.cokernel.poincare		    -- the Poincare polynomial
+	            ggPush f.cache.cokernel.poincare		    -- the Poincare polynomial
 	            )
 	       else (
 		    -- if tracingLevel >= 3 then << "no Poincare polynomial as hint" << endl;
