@@ -29,7 +29,7 @@ YFLAGS += --debug
 endif
 all:: TAGS
 all:: html-check-links
-%.dep : %.c; $(PREPROCESS.S) -MM $< >$@
+%.dep : %.c; $(CC) -MM $(CPPFLAGS) $< >$@
 html-check-links : $(CFILES:.c=.o)
 ifneq ($(DEPENDS),no)
 include $(CFILES:.c=.dep)
