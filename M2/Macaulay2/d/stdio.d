@@ -709,6 +709,11 @@ export fileLength(o:file):int := (
      else if o.output then o.bytesWritten + o.outindex
      else -1);
 
+export fchmod(o:file,mode:int):int := (
+     if o.input && o.infd != -1 then if -1 == fchmod(o.infd,mode) then return -1;
+     if o.output && o.outfd != -1 then if -1 == fchmod(o.outfd,mode) then return -1;
+     0);
+
 lastCharWritten(o:file):int := if o.outindex > 0 then int(o.outbuffer.(o.outindex-1)) else o.lastCharOut;
 atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);
 export endLine(o:file):void := (

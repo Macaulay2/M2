@@ -525,21 +525,24 @@ installPackage Package := o -> pkg -> (
 
      -- make postinstall and preremove files, if encap
      if o.Encapsulate then (
+	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
 	  stderr << "--making postinstall and preremove files in " << buildDirectory << endl;
-	  buildDirectory | "postinstall" 
+	  f := buildDirectory | "postinstall" 
 	  << ///#! /bin/sh -e/// << endl
 	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
-	  << ///done/// << endl
-	  << close;
-     	  buildDirectory | "preremove"
+	  << ///done/// << endl;
+	  fileChangeMode(f,octal "755");
+	  f << close;
+     	  f = buildDirectory | "preremove"
 	  << ///#! /bin/sh -x/// << endl
 	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
-	  << ///done/// << endl
- 	  << close;
+	  << ///done/// << endl;
+	  fileChangeMode(f,octal "755");
+ 	  f << close;
 	  );
 
      -- make html files

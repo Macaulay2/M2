@@ -1554,6 +1554,46 @@ export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      storeInHashTable(fileDictionaries,Expr(filename),Expr(d));
      d);
 
+fchmod(e:Expr):Expr := (
+     when e is s:Sequence do (
+	  if length(s) != 2 
+	  then WrongNumArgs(2) 
+	  else (
+	       when s.0 
+	       is o:file do (
+	  	    when s.1
+		    is mode:Integer do (
+	  		 if !isInt(mode)
+			 then WrongArgSmallInteger(2) 
+			 else (
+	       		      r := fchmod(o,toInt(mode));
+	       		      if r == -1
+			      then buildErrorPacket(syscallErrorMessage("fchmod")) 
+			      else nullE))
+	  	    else WrongArgInteger(2))
+	       is filename:string do (
+		    when s.1 
+		    is mode:Integer do (
+			 if !isInt(mode)
+			 then WrongArgSmallInteger(2) 
+			 else (
+			      r := chmod(filename,toInt(mode));
+			      if r == -1
+			      then buildErrorPacket(syscallErrorMessage("chmod"))
+			      else nullE))
+		    else WrongArgInteger(2))
+	       else WrongArg(1,"a file")))
+     else WrongNumArgs(2));
+setupfun("fileChangeMode",fchmod);
+
+fileMode(e:Expr):Expr := (
+     when e is fn:string do (
+	  r := fileMode(fn);
+	  if r == -1 then buildErrorPacket(syscallErrorMessage("stat"))
+	  else Expr(toInteger(r)))
+     else WrongArgString());
+setupfun("fileMode",fileMode);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

@@ -475,6 +475,22 @@ int system_fileExists(M2_string name) {
   return r != ERROR;
 }
 
+int system_fileMode(M2_string name) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r = stat(cname,&buf);
+  GC_FREE(cname);
+  return r == ERROR ? -1 : buf.st_mode;
+}
+
+int system_chmod(M2_string name,int mode) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r = chmod(cname,mode);
+  GC_FREE(cname);
+  return r;
+}
+
 int system_isDirectory(M2_string name) {
   char *cname = tocharstar(name);
   struct stat buf;
