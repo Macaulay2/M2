@@ -142,7 +142,7 @@ for gmp prefers to use /usr/ccs/bin/cc.  So it is best to install gmp
 separately, making sure /usr/ccs/bin is before /usr/local/bin on the path
 (just in case gnu nm is in /usr/local/bin).  To use the previously installed
 version of gmp when compiling M2, specify the option --with-gmp to configure,
-or in Makefile.overrides.
+or in configure.options.
 
 Why don't we simply unset CC when automatically configuring gmp?  Because
 under other operating systems, it is desirable for the same compiler to be

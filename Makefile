@@ -6,8 +6,8 @@
 ##      make 
 ##      make install
 ## or
-##	make Makefile.overrides
-##	select overrides in the file Makefile.overrides, and add some of your own
+##	make configure.options
+##	select options in the file configure.options, and add some of your own
 ##	make
 ##      make install
 
@@ -28,8 +28,8 @@ endif
 
 default : all doc
 
-include Makefile.overrides
-Makefile.overrides :
+include configure.options
+configure.options :
 	echo "# -*- Mode: Makefile -*-" > $@
 	echo "# CONFIGURE_ENVIRON = " >>$@
 	echo "# CONFIGURE_OPTIONS = " >>$@
@@ -59,7 +59,7 @@ include/config.h.in : configure.in aclocal.m4
 	touch $@
 
 stage2 : include/config.h
-config.status : configure Makefile.overrides version
+config.status : configure configure.options version
 	unset CONFIG_SITE; \
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
 
