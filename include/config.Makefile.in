@@ -53,13 +53,8 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 LAPACK = @LAPACK@
 encap = @encap@
-encapdir = @encapdir@
+encapsrc = @encapsrc@
 
-ifeq "$(encap)" "yes"
-prefix = $(encapdir)/$(package)
-else
-prefix = @prefix@
-endif
 M2PKGNAME = PackageName
 
 # Macaulay 2 file system layout definitions, dependent on $(prefix) defined
@@ -95,6 +90,7 @@ emacsdocRelDir = $(docm2relRelDir)/emacs
 htmldocRelDir = $(docm2relRelDir)/html
 imagesRelDir = $(docm2relRelDir)/images
 
+prefix = @prefix@
 bindir = $(prefix)/$(binRelDir)
 libdir = $(prefix)/$(libRelDir)
 datadir = $(prefix)/$(dataRelDir)

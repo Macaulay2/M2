@@ -111,13 +111,12 @@ software such as ", TT "Dr. Solomon's", ", which can interfere with emacs
 when it tries to run a subprocess.",
 PARA,
 "You may wish to bind the emacs function ", TT "M2-send-to-program", "
-to a keystroke for ease of use.  For example, the following emacs code
-will bind it to the function key ", TT "f11", ".  We assume now that
-you have done that, or that you have done the equivalent thing with
-", TT "M-x global-set-key", "."
+to a global keystroke for ease of use; this is done automatically for
+in Macaulay 2 buffers.  For example, the following emacs code
+will bind it to the function key ", TT "f11", ".",
 PARA,
-CODE ///
-///
+CODE ///(global-set-key [ f11 ] 'M2-send-to-program)
+///,
 PARA,
 "You may use ", TT "C-x o", " freely to switch from one window to the other.
 Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  

@@ -10,14 +10,14 @@ LATERESULTS := missingDoc.okay
 
 all :: $(RESULTS)
 
-$(RESULTS) : ../bin/Macaulay2
-$(LATERESULTS) : ../bin/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
+$(RESULTS) : ../bin/M2
+$(LATERESULTS) : ../bin/M2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
-ARGS := -q '-epath=append(path,"@srcdir@/../packages/")' '-eerrorDepth(0)' --silent
+ARGS := -q -e 'path=append(path,"@srcdir@/../packages/")' -e 'errorDepth(0)' --silent
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 600; time ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ ulimit -t 600; time ../bin/M2 $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
 clean  :	

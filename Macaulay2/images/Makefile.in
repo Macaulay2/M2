@@ -9,7 +9,8 @@ clean::
 distclean: clean; rm -f Makefile
 install:: $(imagesdir)
 $(imagesdir):; $(INSTALL) -d "$@"
-install:: $(IMAGES) ; $(INSTALL_DATA) $^ $(imagesdir)
+install:: $(IMAGES)
+	$(INSTALL_DATA) $^ $(imagesdir)
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")

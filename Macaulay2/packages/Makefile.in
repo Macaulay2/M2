@@ -29,13 +29,13 @@ phase3: $(DOC) $(TEST)
 	touch "$@"
 
 phase4: $(DOCFILES)
-	@ set -x; for i in $^ ; do ../../bin/M2 -q -e 'phase=4; errorDepth 0' $$i -e 'exit 0' || exit 1; done
+	@ set -x; for i in $^ ; do ../bin/M2 -q -e 'phase=4; errorDepth 0' $$i -e 'exit 0' || exit 1; done
 	touch "$@"
 TARGETDIR = cache/doc
 phase5 : $(TARGETDIR)/index.html
-$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/Macaulay2
+$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/M2
 	 #------ phase 5: making html documentation
-	../../bin/M2 -q --silent \
+	../bin/M2 -q --silent \
 		-e 'phase = 5' \
 		-e 'load "D-modules.m2"' \
 		-e 'makeHTML("D-modules Package", Documentation)' -e 'exit 0'
@@ -56,10 +56,10 @@ Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)
 check:: test-D-modules
 test-D-modules : $(Dtestresults)
-$(Dtestresults) : ../bin/Macaulay2$(EXE) ../cache/Macaulay2-doc ../cache/Macaulay2-made
+$(Dtestresults) : ../bin/M2$(EXE) ../cache/Macaulay2-doc ../cache/Macaulay2-made
 %.okay : %.m2
 	@ echo running test file $<
-	../../bin/M2 -q -e 'path = prepend( "D-modules/", path )' -e 'input "$<"' -e 'exit 0'
+	../bin/M2 -q -e 'path = prepend( "D-modules/", path )' -e 'input "$<"' -e 'exit 0'
 	touch $@
 ################################# srcdir
 initialize :: srcdir
@@ -74,7 +74,8 @@ cache $(DOC) $(TEST) :; mkdir -p $@
 
 packagedir =? UNASSIGNED
 
-$(packagedir)/packages :; $(INSTALL) -d "$@"
+$(packagedir)/packages :
+	$(INSTALL) -d "$@"
 install :: $(packagedir)/packages
 	$(INSTALL_DATA) @srcdir@/*.m2 $<
 	tar cf - -C @srcdir@ D-modules ComputationsBook | tar xf - -C $<

@@ -38,7 +38,6 @@ distclean:: clean
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
-all :: initialize
 all install :: ; $(MAKE) -C man $@
 all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
@@ -47,7 +46,9 @@ install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
 distribution :
-	tar cf - -C $(encapdir) $(package) | gzip > "Macaulay2-$(DESC).tar.gz"
+	tar cf - -C $(encap) $(package) | gzip > "Macaulay2-$(DESC).tar.gz"
+
+Makefile : Makefile.in; ./config.status Makefile
 
 ################################# tar manufactured files
 # this probably isn't correct any longer:

@@ -159,10 +159,10 @@ AC_ARG_ENABLE(lapack,
     [ LAPACK="$enableval" ; AC_DEFINE(LAPACK,,whether to use LAPACK) ],
     LAPACK=yes)
 
-AC_SUBST(encapdir)
-AC_ARG_WITH(encapdir,
-    AC_HELP_STRING(--with-encapdir=...,encap directory [PREFIX/encap]),
-    encapdir="$withval",
+AC_SUBST(encapsrc)
+AC_ARG_WITH(encapsrc,
+    AC_HELP_STRING(--with-encapsrc=...,encap directory [PREFIX/encap]),
+    encapsrc="$withval",
     )
 
 AC_SUBST(GC_FOR_NEW)
