@@ -174,43 +174,43 @@ void cmd_PolynomialRing_term(object &oR, object &oa, object &om)
 
   gStack.insert(RingElement(R, a, m));
 }
-void cmd_PolynomialRing_getterms(object &or, object &om, object &on)
+void cmd_PolynomialRing_getterms(object &oelem, object &om, object &on)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   int m = om->int_of();
   int n = on->int_of();
   gStack.insert(r.get_terms(m,n));
 }
-void cmd_PolynomialRing_getcoeff(object &or, object &om)
+void cmd_PolynomialRing_getcoeff(object &oelem, object &om)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   Monomial m = om->cast_to_Monomial();
   gStack.insert(r.get_coeff(m));
 }
-void cmd_PolynomialRing_leadcoeff(object &or)
+void cmd_PolynomialRing_leadcoeff(object &oelem)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   gStack.insert(r.lead_coeff());
 }
-void cmd_PolynomialRing_leadmonom(object &or)
+void cmd_PolynomialRing_leadmonom(object &oelem)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   gStack.insert(r.lead_monom());
 }
-void cmd_PolynomialRing_ishomogeneous(object &or)
+void cmd_PolynomialRing_ishomogeneous(object &oelem)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   gStack.insert(make_object_int(r.is_homogeneous()));
 }
-void cmd_PolynomialRing_degree(object &or)
+void cmd_PolynomialRing_degree(object &oelem)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   
   gStack.insert(new object_intarray(r.degree()));
 }
-void cmd_PolynomialRing_homogenize(object &or, object &ov, object &owts)
+void cmd_PolynomialRing_homogenize(object &oelem, object &ov, object &owts)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   int v = ov->int_of();
   intarray *wts = owts->intarray_of();
   const Ring *R = r.Ring_of();
@@ -234,9 +234,9 @@ void cmd_PolynomialRing_homogenize(object &or, object &ov, object &owts)
   if (!error_exists())
     gStack.insert(rh);
 }
-void cmd_PolynomialRing_homogenize1(object &or, object &ov, object &odeg, object &owts)
+void cmd_PolynomialRing_homogenize1(object &oelem, object &ov, object &odeg, object &owts)
 {
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   int v = ov->int_of();
   int deg = odeg->int_of();
   intarray *wts = owts->intarray_of();

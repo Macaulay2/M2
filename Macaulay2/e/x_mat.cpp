@@ -666,10 +666,10 @@ void cmd_RingMap(object &om)
   RingMap f = m;
   gStack.insert(f);
 }
-void cmd_RingMap_eval_ringelem(object &omap, object &or)
+void cmd_RingMap_eval_ringelem(object &omap, object &oelem)
 {
   RingMap map = omap->cast_to_RingMap();
-  RingElement r = or->cast_to_RingElement();
+  RingElement r = oelem->cast_to_RingElement();
   gStack.insert(map.eval(r));
 }
 void cmd_RingMap_eval_vector(object &omap, object &oF, object &ov)
