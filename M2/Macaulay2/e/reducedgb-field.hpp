@@ -1,21 +1,22 @@
 // Copyright 2005, Michael E. Stillman
 
-#ifndef _minimalgb_field_
-#define _minimalgb_field_
+#ifndef _reducedgb_field_
+#define _reducedgb_field_
 
-#include "minimalgb.hpp"
+#include "reducedgb.hpp"
 
-class MinimalGB_Field : public MinimalGB
+class ReducedGB_Field : public ReducedGB
 {
+protected:
   MonomialTable *T;
   const MonomialIdeal *Rideal;
 public:
-  MinimalGB_Field(GBRing *R0,
+  ReducedGB_Field(GBRing *R0,
 		  const PolynomialRing *originalR0,
 		  const FreeModule *F0,
 		  const FreeModule *Fsyz0);
 
-  virtual ~MinimalGB_Field();
+  virtual ~ReducedGB_Field();
 
   virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0);
 

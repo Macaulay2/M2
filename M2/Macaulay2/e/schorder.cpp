@@ -45,8 +45,11 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 	M->one(base);
       else if (S == NULL)
 	M->copy(P->lead_flat_monomial(v->coeff), base);
-      else
-	M->mult(P->lead_flat_monomial(v->coeff), S->base_monom(i), base);
+      else 
+	{
+	  int x = v->comp;
+	  M->mult(P->lead_flat_monomial(v->coeff), S->base_monom(x), base);
+	}
 
       result->append(ties[i], base);
     }
@@ -59,6 +62,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 
 SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
 {
+#warning "the logic in SchreyerOrder creation is WRONG!"
   int i;
   const FreeModule *F = m->get_free_module();
   const Ring *R = F->get_ring();

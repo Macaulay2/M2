@@ -4,7 +4,7 @@
 #define _comp_gb_declared_hpp_
 
 #include "comp_gb.hpp"
-#include "minimalgb.hpp"
+#include "reducedgb.hpp"
 
 class GBDeclared : public GBComputation
 // This contains a GBComputation, which can be changed.
@@ -12,7 +12,7 @@ class GBDeclared : public GBComputation
 // after it is done, we can jettison it, and consider only
 // the GB object itself.
 {
-  MinimalGB *G;
+  ReducedGB *G;
   const Matrix *trimmed_gens;
   const Matrix *syz;
 protected:

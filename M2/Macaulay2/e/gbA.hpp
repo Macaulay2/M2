@@ -8,7 +8,7 @@
 #include "gbring.hpp"
 #include "montable.hpp"
 #include "montableZZ.hpp"
-#include "minimalgb.hpp"
+#include "reducedgb.hpp"
 
 class GBWeight;
 
@@ -92,7 +92,7 @@ private:
 
   vector<gbelem *, gc_allocator<gbelem *> > gb; // Contains any quotient ring elements
 
-  MinimalGB *minimal_gb;
+  ReducedGB *minimal_gb;
   //vector<POLY, gc_allocator<POLY> > minimal_gb; // Contains NO quotient ring elements
   bool minimal_gb_valid;
 

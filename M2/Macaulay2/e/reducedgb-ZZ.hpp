@@ -1,11 +1,11 @@
 // Copyright 2005, Michael E. Stillman
 
-#ifndef _minimalgb_ZZ_hpp_
-#define _minimalgb_ZZ_hpp_
+#ifndef _reducedgb_ZZ_hpp_
+#define _reducedgb_ZZ_hpp_
 
-#include "minimalgb.hpp"
+#include "reducedgb.hpp"
 
-class MinimalGB_ZZ : public MinimalGB
+class ReducedGB_ZZ : public ReducedGB
 {
   enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE};
 
@@ -16,12 +16,12 @@ class MinimalGB_ZZ : public MinimalGB
 
 public:
 
-  MinimalGB_ZZ(GBRing *R0,
+  ReducedGB_ZZ(GBRing *R0,
 	       const PolynomialRing *originalR0,
 	       const FreeModule *F0,
 	       const FreeModule *Fsyz0);
 
-  virtual ~MinimalGB_ZZ();
+  virtual ~ReducedGB_ZZ();
 
   virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0);
 

@@ -6,6 +6,7 @@
 #include "respoly2.hpp"
 #include "hermite.hpp"
 #include "mutablemat.hpp"
+#include "monideal.hpp"
 
 void dmatrix(const Matrix *M)
 {
@@ -86,6 +87,12 @@ void dmutablemat(MutableMatrix *m)
   emit(o.str());
 }
 
+void dmonideal(MonomialIdeal *m)
+{
+  buffer o;
+  m->text_out(o);
+  emit(o.str());
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -1,7 +1,7 @@
 // Copyright 2004 Michael E. Stillman.
 
-#ifndef _minimalgb_hpp_
-#define _minimalgb_hpp_
+#ifndef _reducedgb_hpp_
+#define _reducedgb_hpp_
 
 #include "comp_gb.hpp"
 #include <vector>
@@ -9,7 +9,7 @@
 #include "montable.hpp"
 #include "montableZZ.hpp"
 
-class MinimalGB : public GBComputation
+class ReducedGB : public GBComputation
 {
 protected:
   GBRing *R;
@@ -23,12 +23,12 @@ protected:
   // return false, and use ERROR(...) to provide an error message.
 
 public:
-  MinimalGB(GBRing *R0,
+  ReducedGB(GBRing *R0,
 	    const PolynomialRing *originalR0,
 	    const FreeModule *F0,
 	     const FreeModule *Fsyz0);
 
-  virtual ~MinimalGB();
+  virtual ~ReducedGB();
 
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 

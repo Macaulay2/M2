@@ -1,7 +1,7 @@
 #include "comp_gb_declared.hpp"
 #include "matrix.hpp"
-#include "minimalgb-field.hpp"
-#include "minimalgb-ZZ.hpp"
+#include "reducedgb-field.hpp"
+#include "reducedgb-ZZ.hpp"
 #include "poly.hpp"
 
 GBDeclared::GBDeclared(const Matrix *m0,
@@ -24,11 +24,11 @@ GBDeclared::GBDeclared(const Matrix *m0,
   // Then make one
   switch (typ) {
   case Ring::COEFF_ZZ:
-    G = new MinimalGB_ZZ(GR,P,F,Fsyz);
+    G = new ReducedGB_ZZ(GR,P,F,Fsyz);
     break;
   case Ring::COEFF_QQ:
   case Ring::COEFF_BASIC:
-    G = new MinimalGB_Field(GR,P,F,Fsyz);
+    G = new ReducedGB_Field(GR,P,F,Fsyz);
     break;
   }
 

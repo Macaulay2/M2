@@ -14,8 +14,8 @@
 #include "hilb.hpp"
 
 #include "gbweight.hpp"
-#include "minimalgb-field.hpp"
-#include "minimalgb-ZZ.hpp"
+#include "reducedgb-field.hpp"
+#include "reducedgb-ZZ.hpp"
 
 /*************************
  * Initialization ********
@@ -99,9 +99,9 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
     lookup = MonomialTable::make(R->n_vars());
 
   if (over_ZZ())
-    minimal_gb = new MinimalGB_ZZ(R,originalR,_F,_Fsyz);
+    minimal_gb = new ReducedGB_ZZ(R,originalR,_F,_Fsyz);
   else
-    minimal_gb = new MinimalGB_Field(R,originalR,_F,_Fsyz);
+    minimal_gb = new ReducedGB_Field(R,originalR,_F,_Fsyz);
   minimal_gb_valid = true;
   EXP_ = R->exponents_make();
 
