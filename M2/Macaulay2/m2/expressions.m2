@@ -567,7 +567,7 @@ padto := (s,n) -> (
 --      are summed.  Additionally, an integer may be used to represent a
 --      number of spaces.",
 --      PARA,
---      SEEALSO {"String", "concatenate", "#" }
+--      SeeAlso => {"String", "concatenate", "#" }
 --      }
 
 erase symbol stringlen

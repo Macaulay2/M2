@@ -342,9 +342,10 @@ processExamples := (pkg,fkey,docBody) -> (
 -----------------------------------------------------------------------------
 
 fixupList := x -> apply(select(x,t->t=!=null),fixup)
-
+enlist := x -> if class x === List then x else {x}
 fixupTable := new HashTable from {
      	  Key => identity,
+     	  FormattedKey => identity,
 	  Usage => fixup,
 	  Function => fixup,
 	  Inputs => fixupList,
@@ -354,13 +355,14 @@ fixupTable := new HashTable from {
 	  FileName => fixup,
 	  Headline => fixup,
 	  Discussion => extractExamples @@ hypertext,
-	  Menu => fixup
-	  }
-
+     	  Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
+     	  SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
+	  Menu => fixup }
 document = method(
      SingleArgumentDispatch => true,
      Options => {
      	  Key => null,
+     	  FormattedKey => null,
 	  Usage => null,
 	  Function => null,
 	  Inputs => {},
@@ -370,8 +372,9 @@ document = method(
 	  FileName => null,
 	  Headline => null,
 	  Discussion => null,				    -- the "body"
-	  Menu => null
-	  })
+     	  SeeAlso => null,
+     	  Caveat => null,
+	  Menu => null })
 
 document List := opts -> z -> document prepend(opts,toSequence z)
 document Thing := opts -> z -> document (1:z,opts)
@@ -774,7 +777,7 @@ seecode := x -> (
 documentationValue := method()
 documentationValue(Symbol,Function) := (s,f) -> SEQ { 
      ret f, 
-     fmeth f, 
+     fmeth f,
      -- seecode f 
      }
 documentationValue(Symbol,Type) := (s,X) -> (
@@ -903,12 +906,6 @@ TEST Function := TEST String := s -> (
      x# #x = s;
      )
 TEST List := y -> TEST \ y
-
-SEEALSO = v -> (
-     if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA BOLD "See also", UL (TO \ v) })
-
-CAVEAT = v -> SEQ { PARA BOLD "Caveat", UL { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output

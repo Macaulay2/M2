@@ -12,7 +12,7 @@ document {
      are called, unless a nonzero return value has been provided.  Another
      way to exit is to type the end of file character, which is typically
      set to Control-D in unix systems, and is Control-Z under Windows.",
-     SEEALSO {"quit"}
+     SeeAlso => {"quit"}
      }
 
 document {
@@ -23,7 +23,7 @@ document {
      "Files are flushed and closed.  Another way to exit is to type the end of
      file character, which is typically set to Control-D in unix systems, and is
      Control-Z under MS-DOS.",
-     SEEALSO "exit"
+     SeeAlso => "exit"
      }
 
 document {
@@ -54,7 +54,7 @@ document {
      "The technique depends in a standard way on the binary expansion of ", TT "n", ",
      hence the name.",
      PARA,
-     SEEALSO "SimplePowerMethod"
+     SeeAlso => "SimplePowerMethod"
      }
 
 document {
@@ -62,7 +62,7 @@ document {
      Headline => "compute powers by multiplying",
      TT "SimplePowerMethod(x,n)", " -- computes x^n using repeated multiplication",
      PARA,
-     SEEALSO "BinaryPowerMethod"
+     SeeAlso => "BinaryPowerMethod"
      }
 
 document {
@@ -179,7 +179,7 @@ document {
 	  ///match ("asdf*", "--asdffff--")///,
 	  ///match ("asdf*", "--asffff--")///
 	  },
-     SEEALSO "matches"
+     SeeAlso => "matches"
      }
 
 document {
@@ -198,7 +198,7 @@ document {
 	  ///matches ("asd((f)*)", "--asdffff--")///,
 	  ///matches ("asd((f)*)", "--asffff--")///
 	  },
-     SEEALSO "match"
+     SeeAlso => "match"
      }
 
 document {
@@ -225,7 +225,7 @@ document {
       	  "sequence (4,5)",
 	  },
      PARA,
-     SEEALSO { "singleton", "sequences" }
+     SeeAlso => { "singleton", "sequences" }
      }
 
 document {
@@ -271,7 +271,7 @@ document {
 	  },
      PARA,
      TO "Command", " is an example of a self initializing type.",
-     SEEALSO {"HeaderType", "WrapperType"}
+     SeeAlso => {"HeaderType", "WrapperType"}
      }
 
 document {
@@ -384,7 +384,7 @@ document {
      incorporated into a string with the escape sequence ", TT "\\n", ",
      and it always has ASCII code 10.",
      EXAMPLE ///ascii "\n"///,
-     SEEALSO "Net"
+     SeeAlso => "Net"
      }
 
 document {
@@ -392,7 +392,7 @@ document {
      Headline => "collect the garbage in memory",
      TT "collectGarbage()", " -- attempt a garbage collection.",
      PARA,
-     SEEALSO "GC garbage collector"
+     SeeAlso => "GC garbage collector"
      }
 
 --document { gcDump,
@@ -403,7 +403,7 @@ document {
 --     function ", TT "GC_dump", " in the garbage collector, and the output can
 --     be used to debug problems with memory allocation.",
 --     PARA,
---     SEEALSO "GC garbage collector"
+--     SeeAlso => "GC garbage collector"
 --     }
 
 document {
@@ -442,7 +442,7 @@ document {
       	  ///close x///,
       	  ///unlink filename///,
 	  },
-     SEEALSO {"HashTable", "String"}
+     SeeAlso => {"HashTable", "String"}
      }
 
 document {
@@ -450,7 +450,7 @@ document {
      Headline => "reorganize a database file",
      TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
      PARA,
-     SEEALSO "Database"
+     SeeAlso => "Database"
      }
 
 document {
@@ -475,7 +475,7 @@ document {
      PARA,
      "Returns ", TO "null", " if none.",
      PARA,
-     SEEALSO "Database"
+     SeeAlso => "Database"
      }
 
 document {
@@ -486,7 +486,7 @@ document {
      PARA,
      "Returns ", TO "null", " if none.",
      PARA,
-     SEEALSO "Database"
+     SeeAlso => "Database"
      }
 
 document {
@@ -495,7 +495,7 @@ document {
      TT "addStartFunction (() -> ...)", " -- record a function for later 
      execution, when the program is restarted after loading dumped data.",
      PARA,
-     SEEALSO "runStartFunctions"
+     SeeAlso => "runStartFunctions"
      }
 
 document {
@@ -504,7 +504,7 @@ document {
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited.",
      PARA,
-     SEEALSO "runEndFunctions"
+     SeeAlso => "runEndFunctions"
      }
 
 document {
@@ -532,7 +532,7 @@ document {
      Headline => "the last output value",
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
-     SEEALSO { "oo", "ooo", "oooo" }
+     SeeAlso => { "oo", "ooo", "oooo" }
      }
 
 document {
@@ -540,7 +540,7 @@ document {
      Headline => "the next to the last output value",
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
-     SEEALSO { "oo", "oooo" }
+     SeeAlso => { "oo", "oooo" }
      }
 
 document {
@@ -548,7 +548,7 @@ document {
      Headline => "the third to the last output value",
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",
-     SEEALSO { "oo", "ooo" }
+     SeeAlso => { "oo", "ooo" }
      }
 
 document {
@@ -568,7 +568,7 @@ document {
      is true.",
      PARA,
      "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
-     SEEALSO{ "and", "not" }
+     SeeAlso =>{ "and", "not" }
      }
 
 document {
@@ -578,7 +578,7 @@ document {
      is true.",
      PARA,
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
-     SEEALSO{ "or", "not" }
+     SeeAlso =>{ "or", "not" }
      }
 
 document {
@@ -612,7 +612,7 @@ document {
       	  "x # 20",
       	  "x #? 40",
 	  },
-     SEEALSO "HashTable"
+     SeeAlso => "HashTable"
      }
 
 document {
@@ -630,7 +630,7 @@ document {
      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
      the printing routines.",
      PARA,
-     SEEALSO {"Expression", "net", "toString"}
+     SeeAlso => {"Expression", "net", "toString"}
      }
 
 document {
@@ -779,7 +779,7 @@ document {
      PARA,
      "A obsolete function called ", TO "name", " has been replaced by
      ", TO "toExternalString", " and ", TO "toString", ".",
-     SEEALSO{ "describe"}
+     SeeAlso =>{ "describe"}
      }
 
 document {
@@ -811,7 +811,7 @@ document {
       	  "t",
       	  "code globalAssignFunction",
 	  },
-     SEEALSO { "name", "symbol", "SelfInitializingType" }
+     SeeAlso => { "name", "symbol", "SelfInitializingType" }
      }
 
 document {
@@ -823,7 +823,7 @@ document {
      been assigned, will lose that name when a different value is assigned to
      the variable.",
      PARA,
-     SEEALSO "globalAssignFunction"
+     SeeAlso => "globalAssignFunction"
      }
 
 document {

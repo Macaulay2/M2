@@ -26,13 +26,13 @@ document {
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-     CAVEAT ("This function uses ", TT "decompose", 
+     Caveat => ("This function uses ", TT "decompose", 
 	  ", which currently only works
           over finite ground fields, not the rationals or integers."),
      PARA,
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June 2000.",
-     SEEALSO {(primaryDecomposition,Ideal), 
+     SeeAlso => {(primaryDecomposition,Ideal), 
      	       radical, decompose, top, 
 	       removeLowestDimension}
      }
@@ -106,10 +106,10 @@ document {
 	  "P2 = ideal(x,z);",
 	  "localize(I,P2)",
 	  },
-     CAVEAT "The ideal P is not checked to be prime.",
+     Caveat => "The ideal P is not checked to be prime.",
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June 2000.",
-     SEEALSO {(primaryDecomposition,Ideal), radical, decompose, top, 
+     SeeAlso => {(primaryDecomposition,Ideal), radical, decompose, top, 
 	  removeLowestDimension}
      }
 ///
@@ -174,13 +174,9 @@ document {
     is primary is given in 
     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
     "However, we use", TO (localize,Ideal,Ideal), ".",
-    EXAMPLE {
-	 },
-    CAVEAT "",
-    PARA,
     BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
     Last modified June 2000.",
-    SEEALSO {(ass,Ideal),
+    SeeAlso => {(ass,Ideal),
 	 (primaryDecomposition,Ideal), 
 	 radical, decompose, top, 
 	 removeLowestDimension}
@@ -239,11 +235,11 @@ document {
      "Give examples here.",
      PARA,
      "Give references to algorithms used here.",
-     CAVEAT "put possible problems here.  e.g. over QQ.",
+     Caveat => "put possible problems here, e.g., over QQ.",
      BOLD "Authors:", " W. Decker, G. Smith, M. Stillman, C. Yackel.", BR,
      BOLD "Maintainer:", " C. Yackel cyackel@math.indiana.edu.  ",
      "Last modified June 2000.",
-     SEEALSO {(ass,Ideal), 
+     SeeAlso => {(ass,Ideal), 
 	  radical, decompose, top, 
 	  removeLowestDimension}
      }

@@ -58,7 +58,7 @@ document {
 	  as ", TT "I.cache.minPresMapInv", ".  There are times when it is 
 	  advantageous to have the input be an ideal as opposed to the 
 	  quotient ring."},
-     SEEALSO {"minPres"},
+     SeeAlso => {"minPres"},
      EXAMPLE {
 	  "C = ZZ/101[x,y,z,u,w];",
 	  "I = ideal(x-x^2-y,z+x*y,w^2-u^2);",

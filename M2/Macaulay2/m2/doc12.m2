@@ -33,7 +33,7 @@ document {
 document {
      Key => accumulate,
      Headline => "apply binary operator repeatedly",
-     SEEALSO {"fold"}
+     SeeAlso => {"fold"}
      }
 
 TEST ///
@@ -69,7 +69,7 @@ document {
 document {
      Key => fold,
      Headline => "apply binary operator repeatedly",
-     SEEALSO {"accumulate"}
+     SeeAlso => {"accumulate"}
      }
 
 TEST ///
@@ -147,7 +147,7 @@ document {
      "Note: we have modified the sort order for strings so that symbols come
      before alphanumeric characters, and upper and lower case characters are
      sorted together.",
-     SEEALSO { "rsort", "<=", "?" }
+     SeeAlso => { "rsort", "<=", "?" }
      }
 
 document {
@@ -164,7 +164,7 @@ document {
      "Note: we have modified the sort order for strings so that symbols come
      before alphanumeric characters, and upper and lower case characters are
      sorted together.",
-     SEEALSO { "sort", "<=", "?" }
+     SeeAlso => { "sort", "<=", "?" }
      }
 
 document {
@@ -221,7 +221,7 @@ document {
 document {
      Key => take,
      Headline => "take some elements from a list",
-     SEEALSO "drop"
+     SeeAlso => "drop"
      }
 
 document {
@@ -246,7 +246,7 @@ document {
      TT "positions(v,f)", " -- yields a list of integers giving the positions of the
      elements of the list ", TT "v", " which yield the value ", TT "true", " when
      the function ", TT "f", " is applied.",
-     SEEALSO "position"
+     SeeAlso => "position"
      }
 
 TEST "
@@ -258,7 +258,7 @@ document {
      Headline => "find first element of a list satisfying a condition",
      TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
      the condition ", TT "f", ", or ", TO "null", " if there is none.",
-     SEEALSO "positions"
+     SeeAlso => "positions"
      }
 
 document {
@@ -272,7 +272,7 @@ document {
      EXAMPLE {
 	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
 	  },
-     SEEALSO "member"
+     SeeAlso => "member"
      }
 
 TEST "
@@ -326,7 +326,7 @@ document {
      subsets of ", TT "{0, ..., n-1}", " which have ", TT "j", " elements.",
      PARA,
      EXAMPLE "subsets(3,2)",
-     SEEALSO "subsets"
+     SeeAlso => "subsets"
      }
 
 document {
@@ -335,7 +335,7 @@ document {
      set ", TT "s", " which have ", TT "j", " elements.",
      PARA,
      EXAMPLE "subsets(set {a,b,c},2)",
-     SEEALSO "subsets"
+     SeeAlso => "subsets"
      }
 
 document {
@@ -344,7 +344,7 @@ document {
      PARA,
      "The subsets are returned as lists whose elements are in the same order.",
      EXAMPLE "subsets {1,2,3}",
-     SEEALSO "subsets"
+     SeeAlso => "subsets"
      }
 
 document {
@@ -352,7 +352,7 @@ document {
      TT "subsets s", " -- yields a list of the subsets of the set ", TT "s", ".",
      PARA,
      EXAMPLE "subsets set {a,b,c}",
-     SEEALSO "subsets"
+     SeeAlso => "subsets"
      }
 
 TEST "
@@ -386,7 +386,7 @@ document {
      TT "examples f", " -- returns a list of strings containing examples
      of code using the function ", TT "f", " provided in the documentation
      of ", TT "f", ".",
-     SEEALSO {"document", "printExamples"}
+     SeeAlso => {"document", "printExamples"}
      }
 
 TEST ///
@@ -444,7 +444,7 @@ document {
      TT "number(x,f)", " -- the number of elements ", TT "e", " of the list ", TT "x", " 
      for which ", TT "f(e)", " is true.",
      PARA,
-     SEEALSO { "positions", "select" }
+     SeeAlso => { "positions", "select" }
      }
 
 document {
@@ -458,7 +458,7 @@ document {
      false.  For hash tables, the function is applied to all its key/value
      pairs (k,v), just as with ", TO "any", ".",
      PARA,
-     SEEALSO { "scan", "apply", "select", "any", "member" }
+     SeeAlso => { "scan", "apply", "select", "any", "member" }
      }
 
 document {
@@ -479,7 +479,7 @@ document {
       	  "member(c,x)",
       	  "member(f,x)"
 	  },
-     SEEALSO {"positions"}
+     SeeAlso => {"positions"}
      }
 
 document {
@@ -495,7 +495,7 @@ document {
      TT "sum v", " -- yields the sum of the elements in the list ", TT "v", ".",
      PARA,
      EXAMPLE "sum {1,2,3,4,5}",
-     SEEALSO "sum"
+     SeeAlso => "sum"
      }
 document {
      Key => (sum, List, List, Function),
@@ -509,7 +509,7 @@ document {
 	  "R = ZZ[x,y,z];",
       	  "sum({2,3,4},{x,y,z},(i,j)->j^i)",
 	  },
-     SEEALSO "sum"
+     SeeAlso => "sum"
      }
 document {
      Key => (sum, List, Function),
@@ -518,7 +518,7 @@ document {
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
      PARA,
      EXAMPLE "sum(1 .. 10, i -> i^2)",
-     SEEALSO "sum"
+     SeeAlso => "sum"
      }
 document {
      Key => (sum, ZZ, Function),
@@ -526,7 +526,7 @@ document {
      TT "sum(n,f)", " -- compute the sum ", TT "f(0) + f(1) + ... + f(n-1)", ".",
      PARA,
      EXAMPLE "sum(10, i -> i^2)",
-     SEEALSO "sum"
+     SeeAlso => "sum"
      }
 document {
      Key => (sum, Tally),
@@ -537,7 +537,7 @@ document {
 	  "a = tally{1,1,1,1,1,10,10,10,100,100}",
       	  "sum a",
 	  },
-     SEEALSO "sum"
+     SeeAlso => "sum"
      }
 document {
      Key => (sum, Set),
@@ -548,7 +548,7 @@ document {
 	  "a = set{1,100,10000}",
       	  "sum a",
 	  },
-     SEEALSO "sum"
+     SeeAlso => "sum"
      }
 
 document {
@@ -574,7 +574,7 @@ document {
 	  "M = monoid [x,y,z];",
       	  "product({2,3,4},{x,y,z},(i,j)->j^i)",
 	  },
-     SEEALSO "product"
+     SeeAlso => "product"
      }
 document {
      Key => (product, List, Function),
@@ -583,7 +583,7 @@ document {
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
      PARA,
      EXAMPLE "product(1 .. 5, i -> i^2)",
-     SEEALSO "product"
+     SeeAlso => "product"
      }
 document {
      Key => (product, ZZ, Function),
@@ -591,7 +591,7 @@ document {
      TT "product(n,f)", " -- compute the product ", TT "f(0) * f(1) * ... * f(n-1)", ".",
      PARA,
      EXAMPLE "product(5, i -> 2*i+1)",
-     SEEALSO "product"
+     SeeAlso => "product"
      }
 document {
      Key => (product, Tally),
@@ -602,7 +602,7 @@ document {
 	  "a = tally{2,2,2,2,2,3,3,3,5,5}",
       	  "product a",
 	  },
-     SEEALSO "product"
+     SeeAlso => "product"
      }
 document {
      Key => (product, Set),
@@ -612,7 +612,7 @@ document {
 	  "a = set select(1..50, isPrime)",
       	  "product a",
 	  },
-     SEEALSO "product"
+     SeeAlso => "product"
      }
 
 document {
@@ -649,7 +649,7 @@ document {
 	  "X = new HeaderType of BasicList",
 	  "X {a,b,c}"
 	  },
-     SEEALSO {"WrapperType", "SelfInitializingType"}
+     SeeAlso => {"WrapperType", "SelfInitializingType"}
      }
 
 document {
@@ -665,7 +665,7 @@ document {
 	  "X {a,b,c}",
 	  "X a"
 	  },
-     SEEALSO {"HeaderType", "SelfInitializingType"}
+     SeeAlso => {"HeaderType", "SelfInitializingType"}
      }
 
 document {
@@ -750,7 +750,7 @@ document {
 	  ///Table {{a,b,c},{a,bb,ccc}}///,
 	  ///value oo///,
 	  },
-     SEEALSO {"MatrixExpression"}
+     SeeAlso => {"MatrixExpression"}
      }
 
 document {
@@ -760,7 +760,7 @@ document {
      a matrix.",
      PARA,
      EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
-     SEEALSO {"Table"}
+     SeeAlso => {"Table"}
      }
 
 document {
@@ -878,7 +878,7 @@ document {
 	  "R = ZZ[a..f]",
       	  "tex matrix {{a^2+2,b,c},{d,e,f^3-a}}",
 	  },
-     SEEALSO {"texMath"}
+     SeeAlso => {"texMath"}
      }
 
 document {
@@ -894,7 +894,7 @@ document {
 	  "R = ZZ[x]",
       	  "texMath (x-1)^6",
 	  },
-     SEEALSO {"tex"}
+     SeeAlso => {"tex"}
      }
 
 document {
@@ -904,7 +904,7 @@ document {
      PARA,
      "The code for this function is Unix dependent at the moment.",
      PARA,
-     SEEALSO "tex"
+     SeeAlso => "tex"
      }
 
 document {
@@ -930,7 +930,7 @@ document {
 	  "x = 5",
       	  ///<< "the value of x is " << x << endl///,
 	  },
-     SEEALSO {"<<"}
+     SeeAlso => {"<<"}
      }     
 
 document {
@@ -979,7 +979,7 @@ document {
       	  "new MutableHashTable from {a=>3, b=>44}",
       	  "peek oo"
 	  },
-     SEEALSO "peek'"
+     SeeAlso => "peek'"
      }
 
 document {
@@ -1003,7 +1003,7 @@ document {
 	  also shows how to use ", TT "wrap", " with the output from ", TT "peek", "."
 	  },
      EXAMPLE "wrap_80 peek documentation resolution",
-     SEEALSO "peek"
+     SeeAlso => "peek"
      }
 
 document {
@@ -1034,7 +1034,7 @@ document {
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
-     SEEALSO {"subscript", "superscript", "argument"}
+     SeeAlso => {"subscript", "superscript", "argument"}
      }
 
 document {
@@ -1042,7 +1042,7 @@ document {
      Headline => "specify the function in a scripted functor for an argument",
      TT "argument", " -- a key used in scripted functors under which is
      stored the function that accepts the arguments.",
-     SEEALSO "ScriptedFunctor"
+     SeeAlso => "ScriptedFunctor"
      }
 
 document {
@@ -1051,7 +1051,7 @@ document {
      TT "subscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the subscript and
      returns a scripted functor that accepts the arguments.",
-     SEEALSO "ScriptedFunctor"
+     SeeAlso => "ScriptedFunctor"
      }
 
 document {
@@ -1060,7 +1060,7 @@ document {
      TT "superscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the superscript and
      returns a scripted functor that accepts the arguments.",
-     SEEALSO "ScriptedFunctor"
+     SeeAlso => "ScriptedFunctor"
      }
 
 document {
@@ -1095,7 +1095,7 @@ document {
      class ", TT "A", ", and ", TT "N", " be of 
      class ", TT "B", ", then the method can be installed with ",
      PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SEEALSO {"homology", "HH", "ScriptedFunctor"}
+     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
      }
 
 document {
@@ -1110,7 +1110,7 @@ document {
      ", TT "M", " be of class ", TT "A", ", and ", TT "N", " be of
      class ", TT "B", ", then the method can be installed with ",
      PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SEEALSO {"HH", "cohomology", "ScriptedFunctor"}
+     SeeAlso => {"HH", "cohomology", "ScriptedFunctor"}
      }
 
 document {

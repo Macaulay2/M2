@@ -26,7 +26,7 @@ document {
 document {
      Key => integralClosure,
      Headline => "compute the integral closure of a ring",
-     SEEALSO {"ICmap", "ICfractions", "conductor"}
+     SeeAlso => {"ICmap", "ICfractions", "conductor"}
      }
 
 document {
@@ -64,7 +64,7 @@ document {
      ring ", TT "R", " as input rather than the output 
      of ", TT "integralClosure", ".  In this way you can use these 
      functions without running ", TT "integralClosure", ".",
-     SEEALSO {"conductor"},
+     SeeAlso => {"conductor"},
      "The function ", TT "integralClosure", " is based on
      Theo De Jong's paper, An Algorithm for 
      Computing the Integral Closure, J. Symbolic Computation, 
@@ -140,7 +140,7 @@ document {
      or inhomogeneous.  If the source of the map ", TT "F", " is multigraded 
      or in homogeneous ", TT "conductor", " returns the message -- No conductor
      for ", TT "F", ".",
-     SEEALSO{"pushForward", "integralClosure"} 
+     SeeAlso =>{"pushForward", "integralClosure"} 
      }
 
 

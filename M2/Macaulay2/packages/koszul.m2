@@ -245,7 +245,7 @@ document {
      ", TT "KK^i(..)", " calls ", TO "cokoszul", ",
      ", TT "KK(..)", " calls ", TO "koszulComplex", ", and
      ", TT "KK^\"*\"", " calls ", TO "cokoszulComplex", ".",
-     SEEALSO {koszul, cokoszul, koszulComplex, cokoszulComplex, HK}
+     SeeAlso => {koszul, cokoszul, koszulComplex, cokoszulComplex, HK}
      }
 
 document {
@@ -305,7 +305,7 @@ document {
      ", 
      while ", TT "HK^i(..)", " and ", TT "HK^\"*\"(..)", " call ",
      TO "koszulCohomology", ".",
-     SEEALSO {koszulHomology, koszulCohomology, KK}
+     SeeAlso => {koszulHomology, koszulCohomology, KK}
      }
 
 document {

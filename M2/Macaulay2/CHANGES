@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+changed SEEALSO to SeeAlso, and now it's option to "document" instead
+of a function.
+
 reversed the order of arguments for 'columnate'
 
 removed 'SHIELD'

@@ -21,9 +21,9 @@ document {						    -- rewrite this!
 	  TOH "Results",
 	  TOH "FileName",
 	  TOH "Discussion",
-	  TOH "CAVEAT",
+	  TOH "Caveat",
 	  TOH "EXAMPLE",
-	  TOH "SEEALSO",
+	  TOH "SeeAlso",
 	  TOH "Menu"
 	  },
      Inputs => {
@@ -75,8 +75,8 @@ document {						    -- rewrite this!
      PARA {
 	  },
      EXAMPLE { },
-     CAVEAT { },
-     SEEALSO { }
+     Caveat => { },
+     SeeAlso => { }
      }///
      	  }
      }
@@ -91,7 +91,7 @@ document {
      Results => {
 	  { "the headline string will be used to annotate itemized lists of cross references to ", TT "x", " in the documentation" }
 	  },
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 document {
      Key => Usage, "See ", TO "document", "." }
@@ -120,13 +120,13 @@ document {
 	  }
      }
 document {
-     Key => SEEALSO,
+     Key => SeeAlso,
      Headline => "crossreferences in documentation",
-     TT "SEEALSO {a, b, ...}", " -- inserts, into a documentation page, a sentence
+     TT "SeeAlso => {a, b, ...}", " -- inserts, into a documentation page, a sentence
      instructing the reader to see some other topics.",
      PARA,
      "The topics may have the special forms used with ", TO "TO", ".",
-     SEEALSO "document"
+     SeeAlso => "document"
      }
 document {
      Key => briefDocumentation,
@@ -135,7 +135,7 @@ document {
      documentation for the topic ", TT "s", ", in internal ", TO "hypertext", "
      form, suitable for conversion to text with ", TO "net", " or to html 
      with ", TO "html", ".",
-     SEEALSO "documentation"
+     SeeAlso => "documentation"
      }
 document {
      Key => documentation,
@@ -180,7 +180,7 @@ document {
      "Intended to be used in programs.  Users will prefer 
      to use ", TO "topics", ".",
      PARA,
-     SEEALSO "help"
+     SeeAlso => "help"
      }
 document {
      Key => topics,
@@ -189,7 +189,7 @@ document {
      Results => {
 	  "This command displays a list of topics on which help is available, in columnated form."
 	  },
-     SEEALSO {"help"}
+     SeeAlso => {"help"}
      }
 document {
      Key => apropos,
@@ -206,7 +206,7 @@ document {
      ", TT "f", ".",
      PARA,
      EXAMPLE "printExamples partition",
-     SEEALSO {"examples", "document"}
+     SeeAlso => {"examples", "document"}
      }
 document {
      Key => symbol "Documentation",
@@ -219,7 +219,7 @@ document {
      PARA,
      "The documentation is stored both in a hash table in memory, and in a 
      database file.",
-     SEEALSO {":="}
+     SeeAlso => {":="}
      }
 document {
      Key => formatDocumentTag,
@@ -246,7 +246,7 @@ document {
      "If m is mutable, and instances of class N are also mutable, then
      copying is not required, and is not done.",
      PARA,
-     SEEALSO { "copy", "toList" }
+     SeeAlso => { "copy", "toList" }
      }
 document {
      Key => MutableList,
@@ -262,7 +262,7 @@ document {
 	  "s",
       	  "peek s",
 	  },
-     SEEALSO {"BasicList"}
+     SeeAlso => {"BasicList"}
      }
 document {
      Key => lookup,
@@ -285,7 +285,7 @@ document {
      PARA,
      "If no method is found, then ", TO "null", " is returned.",
      PARA,
-     SEEALSO {"#", "classes and types", "installMethod", "youngest"}
+     SeeAlso => {"#", "classes and types", "installMethod", "youngest"}
      }
 document {
      Key => installMethod,
@@ -315,7 +315,7 @@ document {
      ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
      and ", TT "C", ".",
      PARA,
-     SEEALSO{"#", "lookup",  "new", "classes and types"}
+     SeeAlso =>{"#", "lookup",  "new", "classes and types"}
      }
 document {
      Key => "new",
@@ -399,7 +399,7 @@ document {
      "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
      TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
      for installation of the initialization routines.",
-     SEEALSO {"classes and types"}
+     SeeAlso => {"classes and types"}
      }
 document {
      Key => "of",
@@ -467,7 +467,7 @@ document {
      "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then 
      ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",
      PARA,
-     SEEALSO {"classes and types", "=>"}
+     SeeAlso => {"classes and types", "=>"}
      }
 document {
      Key => (NewFromMethod, HashTable, List),
@@ -477,12 +477,12 @@ document {
      PARA,
      "Elements of ", TT "x", " which are options, ", TT "k => v", " cause
      the value ", TT "v", " to be stored in ", TT "x", " under the key ", TT "k", ".",
-     SEEALSO "hashTable"
+     SeeAlso => "hashTable"
      }
 document {
      Key => OptionTable,
      Headline => "the class of hash tables for optional arguments",
-     SEEALSO ">>>" }
+     SeeAlso => ">>>" }
 document {
      Key => (symbol ">>>", List, Function),
      Headline => "attaching options to a function",
@@ -521,7 +521,7 @@ document {
 	  "g(x,y,b=>66)",
 	  "g(t,u,a=>44,b=>77)",
 	  },
-     SEEALSO {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
+     SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 document {
      Key => (method, SingleArgumentDispatch),
@@ -551,7 +551,7 @@ document {
      PARA,
      "This information is used only to build documentation automatically.",
      EXAMPLE "typicalValues#isRing",
-     SEEALSO { "specifying typical values" }
+     SeeAlso => { "specifying typical values" }
      }
 document {
      Key => (method,TypicalValue),
@@ -562,7 +562,7 @@ document {
      PARA,
      "This information is used only to build documentation automatically, and
      is stored in the hash table ", TO "typicalValues", ".",
-     SEEALSO { "specifying typical values" }
+     SeeAlso => { "specifying typical values" }
      }
 document {
      Key => method,
@@ -581,7 +581,7 @@ document {
      "the effect of which happens to be the same as that of",
      PRE "     X#f := (x) -> ...",
      PARA,
-     SEEALSO {"methods" }
+     SeeAlso => {"methods" }
      }
 document {
      Key => (method,Associative),
@@ -644,7 +644,7 @@ document {
      PARA,
      "Here x may be a ring, in which case it returns the number of degrees
      (the length of the degree vector) used in grading the ring.",
-     SEEALSO "degree"
+     SeeAlso => "degree"
      }
 document {
      Key => coefficients,
@@ -753,7 +753,7 @@ document {
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
      or vector ", TT "f", ".",
      PARA,
-     SEEALSO {"leadTerm", "leadMonomial", "leadComponent"}
+     SeeAlso => {"leadTerm", "leadMonomial", "leadComponent"}
      }
 document {
      Key => leadComponent,
@@ -761,7 +761,7 @@ document {
      TT "leadComponent f", " -- return the leading component of the vector f,
      i.e., the integer i so that f_i is the first nonzero component of f.",
      PARA,
-     SEEALSO {"leadTerm", "leadCoefficient", "leadMonomial"}
+     SeeAlso => {"leadTerm", "leadCoefficient", "leadMonomial"}
      }
 document {
      Key => leadMonomial,
@@ -769,7 +769,7 @@ document {
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
      or vector f.",
      PARA,
-     SEEALSO {"leadTerm", "leadCoefficient", "leadCoefficient"}
+     SeeAlso => {"leadTerm", "leadCoefficient", "leadCoefficient"}
      }
 document {
      Key => flatten,
@@ -792,7 +792,7 @@ document {
      "The generators of the cokernel are provided by the generators of the target
      of ", TT "f", ".  In other words, ", TT "cover target f", " and ", TT "cover cokernel f", " are equal.",
      PARA,
-     SEEALSO {"kernel", "cover"}
+     SeeAlso => {"kernel", "cover"}
      }
 TEST ///
     R = QQ[x,y,z]
@@ -833,7 +833,7 @@ document {
      For a Galois field it yields the ring it was constructed from.",
      PARA,
      EXAMPLE "ambient(ZZ/101[a,b]/(a^3+b^3))",
-     SEEALSO {"cover", "super"}
+     SeeAlso => {"cover", "super"}
      }
 document {
      Key => (ambient,Module),
@@ -860,7 +860,7 @@ document {
       	  "ambient M",
       	  "ambient M == target generators M",
       	  "ambient M == target relations M"},
-     SEEALSO {(cover,Module), (super,Module), (generators,Module), (relations,Module)}
+     SeeAlso => {(cover,Module), (super,Module), (generators,Module), (relations,Module)}
      }     
 document {
      Key => Hom,
@@ -886,7 +886,7 @@ document {
      a module or Groebner basis are provided as the columns in a matrix.  
      The matrix is stored in a module M under M.generators, unless the matrix
      is the identity matrix.",
-     SEEALSO {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
+     SeeAlso => {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
      }
 document {
      Key => (generators,Module),
@@ -906,12 +906,12 @@ document {
       	  "generators(image f)",
       	  "generators(cokernel f)"
 	  },
-     CAVEAT {
+     Caveat => {
 	  "This function returns a matrix with the given generators.  This 
 	  set of generators may not be minimal, or sorted in any particular 
 	  order. Use ", TO (trim,Module), " or ", TO (mingens,Module), " instead."
 	  },
-     SEEALSO {(relations,Module)}
+     SeeAlso => {(relations,Module)}
      }
      
 document {
@@ -959,7 +959,7 @@ document {
 	  ///RR.GlobalAssignHook = (sym,val) -> << "--about to assign " << val << " to " << sym << endl;///,
           "a = 4.5",
 	  },
-     SEEALSO {"GlobalReleaseHook"}
+     SeeAlso => {"GlobalReleaseHook"}
      }
 document {
      Key => GlobalReleaseHook,
@@ -979,7 +979,7 @@ document {
           "a=4.5",
       	  "a=5.4",
 	  },
-     SEEALSO "GlobalAssignHook"
+     SeeAlso => "GlobalAssignHook"
      }
 document {
      Key => summary,
@@ -990,7 +990,7 @@ document {
 	  "ZZ/101[a..f]",
       	  "summary gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
 	  },
-     SEEALSO { "GroebnerBasis", "Resolution" }
+     SeeAlso => { "GroebnerBasis", "Resolution" }
      }
 document {
      Key => complete,
@@ -1031,7 +1031,7 @@ document {
 document {
      Key => drop,
      Headline => "drop some elements", 
-     SEEALSO "take" }
+     SeeAlso => "take" }
 document {
      Key => (options, Function),
      Headline => "get optional arguments and defaults",
@@ -1070,7 +1070,7 @@ document {
 	  "R = ZZ[x,y];",
 	  "mathML matrix {{x,y},{x^2+2,0}}"
 	  },
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 document {
      Key => symbol "#",
@@ -1078,7 +1078,7 @@ document {
      "The precedence of ", TT "#", " when used as a binary operator is high,
      as high as ", TT ".", ", but the precedence when used as a unary operator
      lower, as low as adjacency or function application.",
-     SEEALSO{ "#?" }
+     SeeAlso =>{ "#?" }
      }
 document {
      Key => (symbol #, BasicList),
@@ -1123,14 +1123,14 @@ document {
 	  "x#i = p",
 	  "x#i",
 	  },
-     SEEALSO {(symbol #?, HashTable, Thing), "hashing"}
+     SeeAlso => {(symbol #?, HashTable, Thing), "hashing"}
      }
 document {
      Key => (symbol #, Database, String),
      Headline => "get value from database",
      TT "x#i", " -- provides the value associated to the key ", TT "i", " in the database
      ", TT "x", ".",
-     SEEALSO {(symbol #?, Database, String)}
+     SeeAlso => {(symbol #?, Database, String)}
      }
 document {
      Key => (symbol #, String, ZZ),
@@ -1141,7 +1141,7 @@ document {
      "If ", TT "i", " is out of range, a string of length 0 is returned.
      If  ", TT "i", " is negative, then the ", TT "i", "-th character
      from the end is provided.",
-     SEEALSO {(symbol #?, String, ZZ)}
+     SeeAlso => {(symbol #?, String, ZZ)}
      }
 document {
      Key => (symbol #, BasicList, ZZ),
@@ -1166,14 +1166,14 @@ document {
      Headline => "check for value in hash table",
      TT "x#?i", " -- tells whether there is a value associated to the
      key ", TT "i", " stored in the hash table ", TT "x", ".",
-     SEEALSO {(symbol #, HashTable, Thing), "hashing"}
+     SeeAlso => {(symbol #, HashTable, Thing), "hashing"}
      }
 document {
      Key => (symbol #?, Database, String),
      Headline => "check for value in database",
      TT "x#?i", " -- tells whether there is a value associated to the string
      ", TT "i", " in the database ", TT "x", ".",
-     SEEALSO {(symbol #, Database, String)}
+     SeeAlso => {(symbol #, Database, String)}
      }
 document {
      Key => (symbol #?, String, ZZ),
@@ -1184,7 +1184,7 @@ document {
 	  ///"asdf" #? 2///,
 	  ///"asdf" #? 22///
 	  },
-     SEEALSO {(symbol #, String, ZZ)}
+     SeeAlso => {(symbol #, String, ZZ)}
      }
 document {
      Key => (symbol #?, BasicList, ZZ),
@@ -1195,19 +1195,19 @@ document {
 	  ///{a,b,c} #? 2///,
 	  ///{a,b,c} #? 22///
 	  },
-     SEEALSO {(symbol #, BasicList, ZZ)}
+     SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
      Key => (symbol #?, Sequence, ZZ),
      Headline => "check for element in sequence",
      TT "x#?i", " --tells whether there is an ", TT "i", "-th element in
      the sequence ", TT "x", ".",
-     SEEALSO {(symbol #, Sequence, ZZ)}
+     SeeAlso => {(symbol #, Sequence, ZZ)}
      }
 document {
      Key => symbol "#?",
      Headline => "check for presence of elements",
-     SEEALSO{ "#" }
+     SeeAlso =>{ "#" }
      }
 document {
      Key => symbol "_",
@@ -1221,7 +1221,7 @@ document {
      PARA,
      "This is merely a convenient synonym for ", TT "x#i", ".",
      PARA,
-     SEEALSO {(symbol #, BasicList, ZZ)}
+     SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
      Key => (symbol _, Sequence, ZZ),
@@ -1229,7 +1229,7 @@ document {
      TT "x_i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
      PARA,
      "This is merely a convenient synonym for ", TT "x#i", ".",
-     SEEALSO {(symbol #, BasicList, ZZ)}
+     SeeAlso => {(symbol #, BasicList, ZZ)}
      }
 document {
      Key => ".",
@@ -1246,7 +1246,7 @@ document {
       	  "x.k",
       	  "peek x",
 	  },
-     SEEALSO {"#", ".?", "global"}
+     SeeAlso => {"#", ".?", "global"}
      }
 document {
      Key => ".?",
@@ -1254,7 +1254,7 @@ document {
      TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
      available with ", TT "x.k", ".",
      PARA,
-     SEEALSO{ ".", "#?" }
+     SeeAlso =>{ ".", "#?" }
      }
 document {
      Key => autoload,

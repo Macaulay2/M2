@@ -1,21 +1,16 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
-
 document {
      Key => odd,
      Headline => "tell whether an integer is odd",
      TT "odd x", " -- returns true or false, tells whether x is an odd integer.",
      PARA,
-     "See also ", TO "even", "."
-     }
-
+     "See also ", TO "even", "."}
 document {
      Key => even,
      Headline => "tell whether an integer is even",
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
      PARA,
-     "See also ", TO "odd", "."
-     }
-
+     "See also ", TO "odd", "."}
 document {
      Key => numeric,
      Headline => "convert to floating point",
@@ -25,27 +20,19 @@ document {
      PARA,
      EXAMPLE "numeric {1,2,3}",
      PARA,
-     "See also ", TO "RR", "."
-     }
-
+     "See also ", TO "RR", "."}
 document {
      Key => "pi",
      Headline => "the number 'pi'",
-     TT "pi", " -- the numerical value of the arithmetic quantity pi."
-     }
-
+     TT "pi", " -- the numerical value of the arithmetic quantity pi."}
 document {
      Key => Engine,
      Headline => "specify whether a ring is handled by the engine",
      TT "Engine", " -- a key for rings which yields the value ", TT "true", " if this
-     ring is supported by the ", TO "engine", "."
-     }
-
+     ring is supported by the ", TO "engine", "."}
 document {
      Key => ring,
-     Headline => "get the associated ring"
-     }
-
+     Headline => "get the associated ring"}
 document {
      Key => coefficientRing,
      Headline => "get the coefficient ring",
@@ -59,21 +46,15 @@ document {
      EXAMPLE {
 	  "coefficientRing(ZZ/101[a][b])",
       	  "ultimate(coefficientRing,ZZ/101[a][b])"
-	  },
-     }
-
+	  },}
 document {
      Key => isCommutative,
      Headline => "whether a ring is commutative",
-     TT "isCommutative R", " -- tells whether the ring R is commutative."
-     }
-
+     TT "isCommutative R", " -- tells whether the ring R is commutative."}
 document {
      Key => isRing,
      Headline => "whether something is a ring",
-     TT "isRing x", " -- determines whether x is a ring."
-     }
-
+     TT "isRing x", " -- determines whether x is a ring."}
 document {
      Key => baseRings,
      Headline => "store the list of base rings of a ring",
@@ -84,9 +65,7 @@ document {
      construction of ", TT "R", ".  The natural ring homomorphism from ", TT "A", "
      to ", TT "R", " is implemented with ", TO "promote", ".",
      PARA,
-     "The base rings are presented in chronological order."
-     }
-
+     "The base rings are presented in chronological order."}
 document {
      Key => lift,
      Headline => "lift to another ring",
@@ -95,9 +74,7 @@ document {
      PARA,
      "The ring ", TT "R", " should be one of the base rings associated with the
      ring of ", TT "f", ".",
-     SEEALSO "baseRings"
-     }
-
+     SeeAlso => "baseRings"}
 document {
      Key => liftable,
      Headline => "whether a ring element can be lifted to another ring",
@@ -110,9 +87,7 @@ document {
 	  "R = ZZ[x]",
 	  "liftable ((x-1)*(x+1)-x^2, ZZ)",
 	  },
-     SEEALSO {"lift"}
-     }
-
+     SeeAlso => {"lift"}}
 document {
      Key => promote,
      Headline => "promote to another ring",
@@ -124,15 +99,11 @@ document {
      "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
      an algebra over ", TT "QQ", ", then an element of ", TT "R", " is provided
      by attempting the evident division.",
-     SEEALSO "baseRings"
-     }
-
+     SeeAlso => "baseRings"}
 document {
      Key => RingElement,
      Headline => "the class of all ring elements handled by the engine",
-     SEEALSO "engine"
-     }
-
+     SeeAlso => "engine"}
 document {
      Key => EngineRing,
      Headline => "the class of rings handled by the engine",
@@ -150,16 +121,12 @@ document {
 	  "a ring, in which case another top-level ring is formed as
 	  an interface to the same underlying engine ring.",
 	  "the handle of on engine ring"
-	  }
-     }
-
+	  }}
 document {
      Key => fraction,
      TT "fraction(f,g)", " -- manufactures the fraction ", TT "f/g", " in the fraction
      field of the ring containing ", TT "f", " and ", TT "g", " without reducing
-     it to lowest terms."
-     }
-
+     it to lowest terms."}
 TEST ///
 if getenv "USER" == "dan" then exit 0
 frac(QQ[a,b])
@@ -167,15 +134,12 @@ assert ( a == denominator(b/a) )
 assert ( b == numerator(b/a) )
 assert ( 1 == numerator(b/b) )
 ///
-
 document {
      Key => FractionField,
      Headline => "the class of all fraction fields",
      "Note: there is no way to reduce an element of an arbitrary
      fraction field to a normal form.  In other words, fractions
-     may be equal without displaying the same numerator and denominator."
-     }
-
+     may be equal without displaying the same numerator and denominator."}
 document {
      Key => frac,
      Headline => "construct a fraction field",
@@ -196,13 +160,10 @@ document {
 	  },
      PARA,
      "The symbol ", TT "frac", " is also used as a key under which is stored 
-     the fraction field of a ring."
-     }
-
+     the fraction field of a ring."}
 document {
      Key => ZZ,
      Headline => "the class of all integers" }
-
 TEST "
 assert (not isPrime 1333333)
 assert (not isPrime 3133333)
@@ -212,7 +173,6 @@ assert ( isPrime 3333133)
 assert ( isPrime 3333313)
 assert ( isPrime 3333331)
 "
-
 document {
      Key => isPrime,
      Headline => "tell whether an integer is a prime",
@@ -228,45 +188,34 @@ document {
      test (Rabin-Miller) to the base 2.",
      PARA,
      TT "isPrime f", " -- returns ", TT "true", " if the polynomial ", TT "f", "
-     is irreducible, otherwise ", TT "false", "."
-     }
-
+     is irreducible, otherwise ", TT "false", "."}
 document {
      Key => numerator,
      Headline => "numerator of a fraction",
      TT "numerator x", " -- provides the numerator of a fraction.",
      PARA,
-     EXAMPLE "numerator (4/6)"
-     }
-
+     EXAMPLE "numerator (4/6)"}
 document {
      Key => denominator,
      Headline => "denominator of a fraction",
      TT "denominator x", " -- provides the denominator of a fraction.",
      PARA,
-     EXAMPLE "denominator (4/6)"
-     }
-
+     EXAMPLE "denominator (4/6)"}
 document {
      Key => QQ,
      Headline => "the class of all rational numbers",
-     EXAMPLE "1/2 + 3/5"
-     }
-
+     EXAMPLE "1/2 + 3/5"}
 TEST ///
      assert( net (2/1) === "2" )
      assert( net (1/1) === "1" )
 ///
-
 document {
      Key => RR,
      Headline => "the class of all real numbers",
      "A real number is entered as a sequence of decimal digits with a point.",
      EXAMPLE "3.14159",
      PARA,
-     SEEALSO {"basictype"}
-     }
-
+     SeeAlso => {"basictype"}}
 document {
      Key => CC,
      Headline => "the class of all complex numbers",
@@ -276,31 +225,22 @@ document {
 	  "z = 3-4*ii",
       	  "z^5",
       	  "1/z",
-	  },
-     }
-
+	  },}
 document {
      Key => ii,
-     Headline => "square root of -1"
-     }
-
+     Headline => "square root of -1"}
 document {
      Key => realPart,
      Headline => "real part",
-     TT "realPart z", " -- return the real part of a complex number z."
-     }
+     TT "realPart z", " -- return the real part of a complex number z."}
 document {
      Key => imaginaryPart,
      Headline => "imaginary part",
-     TT "imaginaryPart z", " -- return the imaginary part of a complex number z."
-     }
-
+     TT "imaginaryPart z", " -- return the imaginary part of a complex number z."}
 document {
      Key => conjugate,
      Headline => "complex conjugate",
-     TT "conjugate z", " -- the complex conjugate of the complex number z."
-     }
-
+     TT "conjugate z", " -- the complex conjugate of the complex number z."}
 document {
      Key => gcdCoefficients,
      Headline => "gcd with coefficients",
@@ -309,17 +249,13 @@ document {
      and ", TT "b", ".",
      PARA,
      "Works for integers or elements of polynomial rings.",
-     SEEALSO "gcd"
-     }
-
+     SeeAlso => "gcd"}
 document {
      Key => mod,
      Headline => "reduce modulo an integer",
      TT "mod(i,n)", " -- reduce the integer ", TT "i", " modulo ", TT "n", ".",
      PARA,
-     "The result is an element of ", TT "ZZ/n", "."
-     }
-
+     "The result is an element of ", TT "ZZ/n", "."}
 document {
      Key => OrderedMonoid,
      Headline => "the class of all ordered monoids",
@@ -335,38 +271,29 @@ document {
      See ", TO "PolynomialRing", ".",
      PARA,
      "A free commutative ordered monoid can be created with ", TO "monoid", ".",
-     SEEALSO  {"Monoid"}
-     }
-
+     SeeAlso =>  {"Monoid"}}
 document {
      Key => binomial,
      Headline => "binomial coefficient",
      TT "binomial(n,i)", " -- returns the binomial coefficient, the coefficient
      of x^i in (1+x)^i.",
      PARA,
-     EXAMPLE "binomial(13,6)"
-     }
-
+     EXAMPLE "binomial(13,6)"}
 document {
      Key => isPolynomialRing,
      Headline => "whether something is a polynomial ring" }
-
 document {
      Key => PolynomialRing,
      Headline => "the class of all ordered monoid rings",
      "Every element of a polynomial ring is also a ", TO "RingElement", ".",
-     SEEALSO "polynomial rings"
-     }
-
+     SeeAlso => "polynomial rings"}
 document {
      Key => isUnit,
      Headline => "whether a ring element is a unit",
      EXAMPLE {
 	  "S = QQ[x,y]/(1-(x-1)*(y-1));",
 	  "isUnit (x^2 - 2*x + 1)"
-	  }
-     }
-
+	  }}
 document {
      Key => exponents,
      Headline => "list the exponents in a polynomial",
@@ -381,9 +308,7 @@ document {
       	  "exponents (f = x^2 - 7 + x*y*z^11 + y)",
 	  "leadMonomial f",
 	  "exponents leadMonomial f"
-	  },
-     }
-
+	  },}
 document {
      Key => degreesRing,
      Headline => "the ring of degrees",
@@ -400,9 +325,7 @@ document {
      "Note: the monomial ordering used in the degrees ring is ", TT "RevLex", ",
      so the polynomials in it will be displayed with the smallest exponents first,
      because such polynomials are often used as Hilbert series.",
-     SEEALSO { "poincare", "hilbertSeries" }
-     }
-
+     SeeAlso => { "poincare", "hilbertSeries" }}
 document {
      Key => standardForm,
      Headline => "convert to standard form",
@@ -419,9 +342,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
       	  "standardForm (x^2 - 7 + x*y*z^11 + y)"
-	  },
-     }
-
+	  },}
 document {
      Key => listForm,
      Headline => "convert to list form",
@@ -436,9 +357,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
       	  "listForm (x^2 - 7 + x*y*z^11 + y)"
-	  },
-     }
-
+	  },}
 document {
      Key => WeylAlgebra,
      Headline => "make a Weyl algebra",
@@ -457,9 +376,7 @@ document {
 	  "dx*x",
       	  "dx*x^10",
       	  "dx*y^10"
-	  }
-     }
-
+	  }}
 document {
      Key => (symbol _, RingElement, RingElement),
      Headline => "get a coefficient",
@@ -469,9 +386,7 @@ document {
 	  "ZZ[y];",
       	  "((1+y)^5) _ (y^2)",
 	  },
-     SEEALSO {"_"}
-     }
-
+     SeeAlso => {"_"}}
 document {
      Key => (symbol _, Ring, String),
      Headline => "get a variable by name",
@@ -483,9 +398,7 @@ document {
       	  ///R_"x"///,
 	  },
      PARA,
-     "Eventually we will implement this for monoids, too."
-     }
-
+     "Eventually we will implement this for monoids, too."}
 document {
      Key => (symbol _, Ring, ZZ),
      Headline => "get a variable by number",
@@ -497,9 +410,7 @@ document {
      EXAMPLE {
 	  "R = ZZ[a..d]",
       	  "R_2"
-	  }
-     }
-
+	  }}
 document {
      Key => (symbol _, Ring, List),
      Headline => "make a monomial from a list of exponents",
@@ -509,9 +420,7 @@ document {
      EXAMPLE {
 	  "R = ZZ[a..d]",
       	  "R_{1,2,3,4}"
-	  }
-     }
-
+	  }}
 TEST "
 -- test name
 R = ZZ/101[a..e]
@@ -519,7 +428,6 @@ f = symmetricPower(2,vars R)
 assert( f == value toExternalString f )
 assert( f == value toString f )
 "
-
 document {
      Key => Schur,
      Headline => "make a Schur ring",
@@ -528,9 +436,7 @@ document {
      "This is the representation ring for the general linear group of n by n
      matrices.",
      PARA,
-     SEEALSO {"SchurRing"}
-     }
-
+     SeeAlso => {"SchurRing"}}
 document {
      Key => SchurRing,
      Headline => "the class of all Schur rings",
@@ -545,9 +451,7 @@ document {
      EXAMPLE "dim R_{3,2,1}",
      "Multiplication in the ring comes from tensor product of representations.",
      EXAMPLE "R_{3,2,1} * R_{1,1}",
-     SEEALSO {"_", SchurRing, List}
-     }
-
+     SeeAlso => {"_", SchurRing, List}}
 document {
      Key => (symbol _, SchurRing, List),
      Headline => "make an element of a Schur ring",
@@ -555,9 +459,7 @@ document {
      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
      PARA,
      "The row lengths should be in decreasing order.",
-     SEEALSO "SchurRing"
-     }
-
+     SeeAlso => "SchurRing"}
 document {
      Key => IndexedVariableTable,
      Headline => "the class of indexed variable tables",
@@ -570,9 +472,7 @@ document {
       	  "t",
       	  "peek t",
 	  },
-     SEEALSO "IndexedVariable"
-     }
-
+     SeeAlso => "IndexedVariable"}
 document {
      Key => assign,
      Headline => "assign a value",
@@ -588,9 +488,7 @@ document {
      PARA,
      "Note: it would be better if we could arrange for ",
      PRE "          x <- v",
-     "to work with indexed variables.  See ", TO "<-", "."
-     }
-
+     "to work with indexed variables.  See ", TO "<-", "."}
 document {
      Key => IndexedVariable,
      Headline => "the class of all indexed variables",
@@ -609,15 +507,11 @@ document {
 	  "ZZ/101[t_0 .. t_4]",
       	  "(t_0 -  2*t_1)^3",
 	  },
-     SEEALSO "IndexedVariableTable"
-     }
-
+     SeeAlso => "IndexedVariableTable"}
 document {
      Key => MonoidElement,
      Headline => "the class of all monoid elements",
-     SEEALSO "monoid"
-     }
-
+     SeeAlso => "monoid"}
 document {
      Key => Degrees,
      Headline => "specify the degrees",
@@ -626,9 +520,7 @@ document {
      "Used as an option to ", TO "monoid", ", or when a polynomial ring
      is created.",
      PARA,
-     "See ", TO "monoid", " for details."
-     }
-
+     "See ", TO "monoid", " for details."}
 document {
      Key => SkewCommutative,
      Headline => "make a skewcommutative (alternating) ring",
@@ -640,9 +532,7 @@ document {
 	  "R = ZZ[x,y,SkewCommutative=>true]",
       	  "x*y",
       	  "y*x"
-	  }
-     }
-
+	  }}
 document {
      Key => MonomialSize,
      Headline => "specify maximum exponent size",
@@ -655,18 +545,14 @@ document {
      The default value is 8, allowing for exponents up to 127.  Currently
      the maximum value is 16, allowing for exponents up to 32767.",
      PARA,
-     "See ", TO "monoid", " for details."
-     }
-
+     "See ", TO "monoid", " for details."}
 document {
      Key => Inverses,
      Headline => "specify whether generators are invertible",
      TT "Inverses", " -- an option used in creating a monoid which tells
      whether negative exponents will be allowed, making the monoid into
      a group.",
-     SEEALSO "monoid"
-     }
-
+     SeeAlso => "monoid"}
 document {
      Key => GeneralOrderedMonoid,
      Headline => "the class of all ordered free commutative monoids",
@@ -674,34 +560,27 @@ document {
      the ", TO "engine", ".  Elements of such monoids are implemented
      as instances of ", TO "MonoidElement", ".",
      PARA,
-     SEEALSO { "monoid" }
+     SeeAlso => { "monoid" }
      }     
-
 document {
      Key => (symbol _, Monoid, ZZ),
      Headline => "get a generator of a monoid",
      TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
      PARA,
-     SEEALSO { "Monoid", "_" }
-     }
-
+     SeeAlso => { "Monoid", "_" }}
 document {
      Key => degreesMonoid,
      Headline => "get the monoid of degrees",
      TT "degreesMonoid n", " -- returns the monoid whose elements correspond
      to the multi-degrees of monomials in another monoid.",
      PARA,
-     "Also used as a key under which to store the result."
-     }
-
+     "Also used as a key under which to store the result."}
 document {
      Key => RevLex,
      Headline => "reverse lexicographic ordering",
      TT "RevLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the reverse lexicographic order."
-     }
-
+     indicate that the monomial order is the reverse lexicographic order."}
 document {
      Key => GRevLex,
      Headline => "reverse lexicographic ordering",
@@ -709,7 +588,7 @@ document {
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded reverse lexicographic order.",
      PARA,
-     CAVEAT "If the number of degree vectors is greater than one, this
+     Caveat => "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
@@ -720,19 +599,16 @@ document {
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded lexicographic order.",
      PARA,
-     CAVEAT "If the number of degree vectors is greater than one, this
+     Caveat => "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
-
 document {
      Key => Lex,
      Headline => "lexicographic ordering",
      TT "Lex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the (non-graded) lexicographic order."
-     }
-
+     indicate that the monomial order is the (non-graded) lexicographic order."}
 document {
      Key => Eliminate,
      Headline => "elimination ordering",
@@ -741,11 +617,10 @@ document {
      indicate that the monomial order is the elimination order eliminating the
      first n variables, refined by the graded reverse lexicographic order.",
      PARA,
-     CAVEAT "If the number of degree vectors is greater than one, this
+     Caveat => "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
-
 document {
      Key => ProductOrder,
      Headline => "product ordering",
@@ -754,19 +629,16 @@ document {
      indicate that the monomial order is the product of r graded reverse lex
      orders, each with n1, n2, ..., nr variables.",
      PARA,
-     CAVEAT "If the number of degree vectors is greater than one, the
+     Caveat => "If the number of degree vectors is greater than one, the
      grading in each block only uses the first degree vector. This will 
      eventually change."  -- MES
      }
-
 document {
      Key => VariableBaseName,
      Headline => "base name for variables",
      TT "VariableBaseName => x", " -- an optional argument used when creating
      monoids or rings to specify that the variables should be ",
-     TT "x_0, ..., x_n", "."
-     }
-
+     TT "x_0, ..., x_n", "."}
 document {
      Key => MonomialOrder,
      Headline => "monomial ordering",
@@ -783,18 +655,14 @@ document {
 	  TO "ProductOrder"
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
-     SEEALSO {"monomial orderings", "Weights"}
-     }
-
+     SeeAlso => {"monomial orderings", "Weights"}}
 document {
      Key => Weights,
      Headline => "specify monomial ordering by weights",
      TT "Weights => {...}", " -- a keyword for an option used in specifying
      monomial orderings.",
      PARA,
-     "This feature is currently under development."
-     }
-
+     "This feature is currently under development."}
 document {
      Key => Variables,
      Headline => "specify the variable names",
@@ -804,20 +672,15 @@ document {
      "This option is useful for those situations when one doesn't care about the
      names of the variables in a ring or monoid, or when one is creating a 
      tensor product ring, symmetric algebra, or other ring, and one wants control
-     over the names of the ring variables."
-     }
-
+     over the names of the ring variables."}
 document {
      Key => VariableOrder,
      TT "VariableOrder", " -- an option used when creating a monoid.",
      PARA,
      "Not implemented yet.",
-     SEEALSO "monoid"
-     }
-
+     SeeAlso => "monoid"}
 monoidOptions := first frame first frame lookup(monoid,Array)
 assert( monoidOptions #? MonomialOrder )
-
 document {
      Key => (monoid, Array),
      Headline => "make a polynomial ring or monoid ring",
@@ -825,9 +688,7 @@ document {
      PARA,
      "Optional arguments (placed between the brackets):",
      UL (TO \ keys monoidOptions),
-     SEEALSO {(symbol " ", Ring, Array)}
-     }
-
+     SeeAlso => {(symbol " ", Ring, Array)}}
 document {
      Key => (symbol " ", Ring, Array),
      Headline => "the standard way to make a polynomial ring",
@@ -838,17 +699,13 @@ document {
      PARA,
      "Optional arguments (placed inside the array):",
      UL (TO \ keys monoidOptions),
-     SEEALSO "polynomial rings"
-     }
-
+     SeeAlso => "polynomial rings"}
 document {
      Key => (symbol " ",Ring, OrderedMonoid),
      Headline => "make a polynomial ring",
      TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
      ", TT "M", ".",
-     SEEALSO "polynomial rings"
-     }
-
+     SeeAlso => "polynomial rings"}
 document {
      Key => (monoid, Ring),
      Headline => "get the monoid from a monoid ring",
@@ -857,9 +714,7 @@ document {
      EXAMPLE {
 	  "R = QQ[x,y]",
 	  "monoid R"
-	  }
-     }
-
+	  }}
 document {
      Key => monoid,
      Headline => "make a monoid",
@@ -881,17 +736,13 @@ document {
      PARA,
      "The class of all monoids created this way is ", TO "GeneralOrderedMonoid", ".",
      PARA,
-     SEEALSO {"OrderedMonoid","IndexedVariable","Symbol"}
-     }
-
+     SeeAlso => {"OrderedMonoid","IndexedVariable","Symbol"}}
 document {
      Key => (symbol **, Monoid, Monoid),
      Headline => "tensor product of monoids",
      TT "M ** N", " -- tensor product of monoids.",
      PARA,
-     "For complete documentation, see ", TO "tensor", "."
-     }
-
+     "For complete documentation, see ", TO "tensor", "."}
 document {
      Key => tensor,
      Headline => "tensor product",
@@ -915,9 +766,7 @@ document {
 	  },
      "Here is a similar example with rings.",
      EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",
-     SEEALSO "**"
-     }
-
+     SeeAlso => "**"}
 document {
      Key => table,
      Headline => "make a table (nested list)",
@@ -929,9 +778,7 @@ document {
      "table(m,n,f) -- yields, when m and n are integers, a table of size m by n
      whose entries are obtained by evaluating f() repeatedly.",
      PARA,
-     "See also ", TO "isTable", ", and ", TO "subtable", ".",
-     }
-
+     "See also ", TO "isTable", ", and ", TO "subtable", ".",}
 document {
      Key => applyTable,
      Headline => "apply a function to elements of a table",
@@ -939,9 +786,7 @@ document {
      PARA,
      "It yields a table of the same shape as m containing the resulting values.",
      PARA,
-     "See also ", TO "table", "."
-     }
-
+     "See also ", TO "table", "."}
 document {
      Key => subtable,
      Headline => "extract a subtable from a table",
@@ -951,24 +796,18 @@ document {
      EXAMPLE {
 	  "m = table(5,5,identity)",
       	  "subtable({1,3,4},toList(2..4), m)"
-	  },
-     }
-
+	  },}
 document {
      Key => transpose,
      Headline => "transpose",
-     TT "transpose m", " -- yields the transpose ", TT "n", " of the table or homomorphism ", TT "m", "."
-     }
-
+     TT "transpose m", " -- yields the transpose ", TT "n", " of the table or homomorphism ", TT "m", "."}
 document {
      Key => vector,
      Headline => "make a vector",
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
      PARA,
      "The elements a,b,c,... must be elements of the same ring, or be
-     convertible to elements of the same ring."
-     }
-
+     convertible to elements of the same ring."}
 document {
      Key => Module,
      Headline => "the class of all modules",
@@ -1037,14 +876,10 @@ document {
 	  TO (fittingIdeal, ZZ, Module),
 	  TO (isSubset, Module, Module),
 	  TO (exteriorPower,ZZ,Module),
-	  },
-     }
-
+	  },}
 document {
      Key => isModule,
-     Headline => "whether something is a module."
-     }
-
+     Headline => "whether something is a module."}
 document {
      Key => isFreeModule,
      Headline => "whether something is a free module",
@@ -1054,16 +889,12 @@ document {
 	  },
      Outputs => {
 	  Boolean => "whether the module ", TT "M", " is evidently a free module"
-	  }
-     }
-
+	  }}
 document {
      Key => (isFreeModule,Module),
-     OldSynopsis => {
-	  "b = isFreeModule(M)",
-	  "M" => null,
-	  "b" => {"whether ", TT "M", " is evidently a free module."}
-	  },
+     Usage => "b = isFreeModule(M)",
+     Inputs => {"M" => null},
+     Outputs => {"b" => {"whether ", TT "M", " is evidently a free module."}},
      "No computation is done, so the module may be free but we don't
      detect it.  To try to determine whether ", TT "M", " is isomorphic to a free 
      module, one may prune ", TT "M", " first.",
@@ -1073,13 +904,11 @@ document {
       	  "isFreeModule M",
       	  "isFreeModule prune M"
 	  },
-     SEEALSO {(prune,Module)}
-     }
+     SeeAlso => {(prune,Module)}}
      
 document {
      Key => isSubmodule,
-     Headline => "whether a module is evidently a submodule of a free module"
-     }
+     Headline => "whether a module is evidently a submodule of a free module"}
 document {
      Key => (isSubmodule, Module),
      Usage => "isSubmodule M",
@@ -1098,21 +927,15 @@ document {
 	  "isSubmodule N",
 	  "N1 = ideal(a,b) * (R^1 / ideal(a^2,b^2,c^2))",
 	  "isSubmodule N1"
-	  }
-     }
-
+	  }}
 document {
      Key => isQuotientModule,
-     Headline => "whether a module is evidently a quotient of a free module"
-     }
-
+     Headline => "whether a module is evidently a quotient of a free module"}
 document {
      Key => (isQuotientModule, Module),
-     OldSynopsis => {
-	  "b = isQuotientModule(M)",
-	  "M" => null,
-	  "b" => {"whether ", TT "M", " is evidently a quotient of a free module."}
-	  },
+     Usage => "b = isQuotientModule(M)",
+     Inputs => {"M" => null},
+     Outputs => {"b" => {"whether ", TT "M", " is evidently a quotient of a free module."}},
      "No computation is done.  This routine simply detects whether the given description
      of ", TT "M", " is such a quotient.",
      EXAMPLE {
@@ -1128,21 +951,15 @@ document {
      EXAMPLE {
 	  "isQuotientModule N",
 	  "M == N"
-	  }
-     }
-
+	  }}
 document {
      Key => isIdeal,
-     Headline => "whether something is an ideal"
-     }
-
+     Headline => "whether something is an ideal"}
 document {
      Key => (isIdeal, Module),
-     OldSynopsis => {
-	  "b = isIdeal(M)",
-	  "M" => null,
-	  "b" => {"whether ", TT "M", " is evidently an ideal."}
-	  },
+     Usage => "b = isIdeal(M)",
+     Inputs => {"M" => null,},
+     Outputs => {"b" => {"whether ", TT "M", " is evidently an ideal."}},
      "No computation is done.  This routine checks the given description
      of ", TT "M", " to see if it is an ideal.",
      EXAMPLE {
@@ -1151,9 +968,7 @@ document {
 	  "isIdeal I",
 	  "J = a^2 * R^2 + a*b * R^2",
 	  "isIdeal J"
-	  }
-     }
-
+	  }}
 document {
      Key => numgens,
      Headline => "the number of generators",
@@ -1163,9 +978,7 @@ document {
      "For a polynomial ring or quotient of one, this is also the number
      of variables.  For a free module, this is the same as the rank.  For
      a general module presented as a subquotient, it is the number of columns
-     in the matrix of generators."
-     }
-
+     in the matrix of generators."}
 document {
      Key => relations,
      Headline => "the defining relations",
@@ -1175,9 +988,7 @@ document {
      in the module under M.relations, the matrix is understood to be
      empty.",
      PARA,
-     SEEALSO {"generators","subquotient"}
-     }
-
+     SeeAlso => {"generators","subquotient"}}
 document {
      Key => (symbol ==, Module, Module),
      TT "M == N", " -- test whether two modules are equal.",
@@ -1189,28 +1000,21 @@ document {
 	  "R = ZZ/101[x]",
       	  "image matrix {{2,x},{1,5}} == R^2",
       	  "image matrix {{2,x},{0,5}} == R^2"
-	  },
-     }
-
+	  },}
 document {
      Key => (symbol ==, Ideal, ZZ),
-     OldSynopsis => {
-	  "I == n",
-	  "I" => null,
-	  "n" => "either 0, or 1."
-	  },
-     PARA,
+	  
+     Usage => "I == n",
+     Inputs => {"I" => null,},
+     Outputs => {"n" => "either 0, or 1."},
      "If n==1, then determines whether I is the unit ideal.
      If n==0, then determines whether I is the zero ideal.  Any other value
      for n is an error.",
-     PARA,
      EXAMPLE {
 	  "R = QQ[x];",
       	  "ideal(x^2,x+1) == 1",
       	  "ideal(0_R) == 0"
-	  },
-     }
-
+	  },}
 TEST "
 R = ZZ/101[a,b,c]
 M = cokernel matrix {{a,b^2,c^3}}
@@ -1223,9 +1027,7 @@ document {
      "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a free
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA,
-     SEEALSO {"engine", "Module"}
-     }
-
+     SeeAlso => {"engine", "Module"}}
 document {
      Key => (symbol _, Vector, ZZ),
      Headline => "get a component",
@@ -1236,88 +1038,51 @@ document {
       	  "v = vector {a,b,c}",
       	  "v_1",
 	  },
-     SEEALSO {"_"}
-     }
-
-document {
-     Key => degrees,
-     Headline => "degrees of generators"
-     }
-
+     SeeAlso => {"_"}}
+document { Key => degrees, Headline => "degrees of generators" }
 document {
      Key => (degrees, Ideal),
-     OldSynopsis => {
-	  "s = degrees I",
-	  "I" => null,
-	  "s" => { "the list of multi-degrees for the generators of the
-	       module ", TT "I", "."
-	       }
-	  }
-     }
-
+     Usage => "degrees I",
+     Inputs => {"I" => null},
+     Outputs => {{ "the list of multi-degrees for the generators of the module ", TT "I" }}}
 document {
      Key => (degrees, Matrix),
-     OldSynopsis => {
-	  "s = degrees f",
-	  "f" => null,
-	  "s" => { "a list ", TT "{x,y}", " where ", TT "x", " is the list
+     Usage => "degrees f",
+     Inputs => {"f" => null},
+     Outputs => {{ "a list ", TT "{x,y}", " where ", TT "x", " is the list
 	       of degrees of the target of ", TT "f", " and ", TT "y", " is the
-	       list of degrees of the source of ", TT "f", "."
-	       }
-	  }
-     }
-
+	       list of degrees of the source of ", TT "f", "." }}}
 document {
      Key => (degrees, Module),
-     OldSynopsis => {
-	  "s = degrees M",
-	  "M" => null,
-	  "s" => { "the list of multi-degrees for the generators of the
-	       module ", TT "M", "."
-	       }
-	  },
+     Usage => "degrees M",
+     Inputs => {"M" => null},
+     Outputs => {{ "the list of multi-degrees for the generators of the module ", TT "M" }},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "E = R^5",
       	  "degrees E",
       	  "F = R^{1,2,3,4}",
-      	  "degrees F"
-	  }
-     }
-
+      	  "degrees F" } }
 document {
      Key => (degrees, Ring),
-     OldSynopsis => {
-	  "s = degrees R",
-	  "R" => null,
-	  "s" => { "the list of multi-degrees for the generators (variables) of the
-	       ring ", TT "R", "."
-	       }
-	  },
+     Usage => "degrees R",
+     Inputs => {"R" => null},
+     Outputs => {},
+     Results => {{ "the list of multi-degrees for the generators (variables) of the ring ", TT "R"}},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "degrees R",
 	  "S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]",
-      	  "degrees S"
-	  }
-     }
-
+      	  "degrees S" } }
 document {
      Key => (symbol ^, Ring, List),
      Headline => "make a free module",
-     OldSynopsis => {
-	  "M = R^{i,j,k,...}",
-	  "R" => null,
-	  "{i,j,k, ...}" => {"a list of integers or lists of integers"},
-	  "M" => {"a free module over ", TT "R", " whose generators have
-     	       degrees ", TT "-i", ", ", TT "-j", ", ", TT "-k", ", ..."}
-	  },
-     PARA,
+     Usage => "M = R^{i,j,k,...}",
+     Inputs => {"R" => null,"{i,j,k, ...}" => {"a list of integers or a list of lists of integers"}},
+     Outputs => {{"a free module over ", TT "R", " whose generators have degrees ", TT "-i", ", ", TT "-j", ", ", TT "-k", ", ..."}},
      "If ", TT "i", ", ", TT "j", ", ... are lists of integers, then
      they represent multi-degrees, as in ", TO "multi-graded polynomial rings", ".",
-     SEEALSO {"degrees", "free modules"}
-     }
-
+     SeeAlso => {"degrees", "free modules"}}
 document {
      Key => components,
      Headline => "list the components of a direct sum",
@@ -1327,37 +1092,21 @@ document {
      TT "components M", " -- the list of components for a module ", TT "M", " which was
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
-     PARA,
-     UL {
-	  TO (components,ChainComplex)
-	  },
-     SEEALSO {"vector", "directSum", "++"}
-     }
-
+     SeeAlso => {"vector", "directSum", "++"}}
 document {
      Key => (symbol ^,Module,ZZ),
      Headline => "make a direct sum of several copies of a module",
-     OldSynopsis => {
-	  "Y = M^n",
-	  "M" => {"a module"},
-	  "n" => null,
-	  "Y" => {"the direct sum of ", TT "n", " copies of ", TT "M", ""}
-	  }
-     }
-
+     Usage => "M^n",
+     Inputs => {"M" => {"a module"}, "n" => null},
+     Outputs => {{"the direct sum of ", TT "n", " copies of ", TT "M"}}}
 document {
      Key => (symbol ^,Ring,ZZ),
      Headline => "make a free module",
-     OldSynopsis => {
-	  "F = R^n",
-	  "R" => {"a ring"},
-	  "n" => null,
-	  "F" => {"a new free ", TT "R", "-module of rank ", TT "n", "." }
-	  },
+     Usage => "R^n",
+     Inputs => {"R" => {"a ring"}, "n" => null},
+     Outputs => {{"a new free ", TT "R", "-module of rank ", TT "n", "." }},
      "The new free module has basis elements of degree zero.  To specify the
-     degrees explicitly, see ", TO (symbol ^,Ring,List), "."
-     }
-
+     degrees explicitly, see ", TO (symbol ^,Ring,List), "." }
 document {
      Key => euler,
      Headline => "list the sectional Euler characteristics",
@@ -1365,9 +1114,7 @@ document {
      characteristics of a module, ring, or ideal.",
      PARA,
      "The i-th one in the list is the Euler characteristic of the i-th
-     hyperplane section of M."
-     }
-
+     hyperplane section of M." }
 document {
      Key => genera,
      Headline => "list the sectional arithmetic genera",
@@ -1375,9 +1122,7 @@ document {
      arithmetic genera of a module, ring, or ideal.",
      PARA,
      "The i-th one in the list is the arithmetic genus of the i-th
-     hyperplane section of M."
-     }
-
+     hyperplane section of M."}
 TEST ///
 R = ZZ/101[a,b,c]/c^4
 assert ( genera R == {3,3} )
@@ -1386,7 +1131,6 @@ R = ZZ/101[a,b,c]/c^3
 assert ( genera R == {1,2} )
 assert ( euler R == {0,3} )
 ///
-
 document {
      Key => rank,
      Headline => "compute the rank",
@@ -1397,50 +1141,34 @@ document {
       	  "p = vars R;",
       	  "rank kernel p",
       	  "rank cokernel p"
-	  },
-     }
-
+	  },}
 document {
      Key => coverMap,
      Headline => "get the map to the module given by the generators of a module",
-     OldSynopsis => {
-	  "g = coverMap M",
-	  "M" => null,
-	  "g" => { "the map from a free module to ", TT "M", " given by the 
-	       generators of ", TT "M", "." 
-	       }
-	  },
-     SEEALSO { "cover" }
-     }
-
+     Usage => "coverMap M",
+     Inputs => {"M" => null},
+     Outputs => {{ "the map from a free module to ", TT "M", " given by the generators of ", TT "M"}},
+     SeeAlso => { "cover" }}
 document {
      Key => cover,
      Headline => "get the covering free module",
      TT "cover M", " -- yields the free module whose basis elements correspond
      to the generators of M.",
-     PARA,
-     SEEALSO {"ambient", "super"}
-     }
-
+     SeeAlso => {"ambient", "super"}}
 document {
      Key => (cover,Module),
-     OldSynopsis => {
-	  "F = cover M",
-	  "M" => null,
-	  "F" => {"the free module whose basis elements correspond
-	          to the generators of ", TT "M", "."}
-	  },
-     PARA,
+     Usage => "F = cover M",
+     Inputs => {"M" => null},
+     Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},
      "The free module ", TT "F", " is the source of the generator matrix 
      of ", TT "M", ".",
-     EXAMPLE "R = QQ[a..f];",
-     EXAMPLE "g = matrix{{a,b},{c,d},{e,f}}",
-     EXAMPLE "M = subquotient(g,matrix{{b},{c},{d}})",
-     EXAMPLE "cover M",
-     EXAMPLE "cover M == source generators M",
-     SEEALSO {(ambient,Module), (super,Module)}
-     }
-
+     EXAMPLE {
+	  "R = QQ[a..f];",
+	  "g = matrix{{a,b},{c,d},{e,f}}",
+	  "M = subquotient(g,matrix{{b},{c},{d}})",
+	  "cover M",
+	  "cover M == source generators M"},
+     SeeAlso => {(ambient,Module), (super,Module)}}
 document {
      Key => super,
      Headline => "get the ambient module",
@@ -1449,23 +1177,16 @@ document {
      TT "super f", " -- if ", TT "f", " is a map whose target is a submodule 
      of ", TT "M", ", yields the composite of ", TT "f", " with the inclusion into ", TT "M", ".",
      PARA,
-     SEEALSO { "cover", "ambient" }
-     }
-
+     SeeAlso => { "cover", "ambient" }}
 document {
      Key => End,
      Headline => "module of endomorphisms",
-     TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."
-     }
-
+     TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."}
 document {
      Key => ModuleMap,
      Headline => "the class of all maps between modules",
      "This class is experimental, designed to support graded modules.",
-     SEEALSO {"Matrix"}
-     }
-
-
+     SeeAlso => {"Matrix"}}
 document {
      Key => (symbol *, Matrix, Matrix),
      Headline => "matrix multiplication",
@@ -1481,8 +1202,7 @@ document {
      degrees of ", TT "Q", " by the same degree ", TT "d", ", then the degree
      of ", TT "f*g", " is adjusted by ", TT "d", " so it will have a good
      chance to be homogeneous, and the target and source of ", TT "f*g", "
-     are as before."
-     }
+     are as before."}
      
 document {
      Key => Matrix,
@@ -1494,7 +1214,7 @@ document {
      When the source or target modules are not free, the matrix is
      interpreted as a linear transformation in terms of the generators
      of the modules.",
-     SEEALSO "matrices",
+     SeeAlso => "matrices",
      PARA,
      "A matrix ", TT "f", " is an immutable object, so if you want to 
      cache information about it, put it in the hash table ", TT "f.cache", ".",
@@ -1524,7 +1244,7 @@ document {
 	  TO (symbol |, Matrix, Matrix),
 	  TO (symbol ||, Matrix, Matrix),
 	  TO (symbol ^, Matrix, List),
-	  TO (symbol _, Matrix, List),
+	  TO (symbol _, Matrix, List)
 	  },
      "Common ways to use a matrix:",
      UL {
@@ -1532,58 +1252,44 @@ document {
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
 	  TO (homology, Matrix, Matrix),
-	  },
-     }
-
+	  },}
 document {
      Key => getMatrix,
      Headline => "get a matrix from the engine's stack",
      TT "getMatrix R", " -- pops a matrix over ", TT "R", " from the top of 
      the engine's stack and returns it.",
      PARA,
-     "Intended for internal use only."
-     }
-
+     "Intended for internal use only."}
 document {
      Key => (symbol _, Matrix, Sequence),
      Headline => "get an entry",
      TT "f_(i,j)", " -- provide the element in row ", TT "i", " and
      column ", TT "j", " of the matrix ", TT "f", ".",
-     SEEALSO {"_", "Matrix"}
-     }
-
+     SeeAlso => {"_", "Matrix"}}
 document {
      Key => (symbol _, Matrix, ZZ),
      Headline => "get a column from a matrix",
      TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
      PARA,
      "Vectors are disparaged, so we may do away with this function in the future.",
-     SEEALSO "_"
-     }
-
+     SeeAlso => "_"}
 document {
      Key => isWellDefined,
      Headline => "whether a map is well defined" }
-
 document {
      Key => isDirectSum,
      Headline => "whether something is a direct sum",
      "Works for modules, graded modules, etc.  The components of the sum
-     can be recovered with ", TO "components", "."
-     }
-
+     can be recovered with ", TO "components", "."}
 TEST "
 assert isDirectSum (QQ^1 ++ QQ^2)
 assert isDirectSum (QQ^1 ++ QQ^2)
 "
-
 document {
      Key => youngest,
      Headline => "the youngest member of a sequence",
      TT "youngest s", " -- return the youngest mutable hash table in the sequence
-     ", TT "s", ", if any, else ", TO "null", "."
-     }
-
+     ", TT "s", ", if any, else ", TO "null", "."}
 document {
      Key => (symbol ++,Module,Module),
      Headline => "direct sum of modules",
@@ -1598,9 +1304,7 @@ document {
 	  TO (symbol ^,Module,Array),
 	  TO (symbol _,Module,Array)
 	  },
-     SEEALSO directSum
-     }
-
+     SeeAlso => directSum}
 document {
      Key => (symbol ++,Matrix,Matrix),
      Headline => "direct sum of maps",
@@ -1619,9 +1323,7 @@ document {
 	  TO (symbol ^,Matrix,Array),
 	  TO (symbol _,Matrix,Array)
 	  },
-     SEEALSO {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}
-     }
-
+     SeeAlso => {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}}
 document {
      Key => directSum,
      Headline => "direct sum of modules or maps",
@@ -1651,9 +1353,7 @@ document {
 	  ///F = (a => ZZ^1) ++ (b => ZZ^2)///,
 	  ///F_[b]///,
 	  },
-     SEEALSO {"++", "components", "indexComponents", "indices"}
-     }
-
+     SeeAlso => {"++", "components", "indexComponents", "indices"}}
 document {
      Key => indexComponents,
      Headline => "specify keys for components of a direct sum",
@@ -1661,9 +1361,7 @@ document {
      under which to store a hash table in which to register preferred keys used
      to index the components of the direct sum.",
      PARA,
-     SEEALSO {"directSum", "components", "indices"}
-     }
-
+     SeeAlso => {"directSum", "components", "indices"}}
 document {
      Key => indices,
      Headline => "specify keys for components of a direct sum",
@@ -1671,9 +1369,7 @@ document {
      under which to store a list of the preferred keys used
      to index the components of the direct sum.",
      PARA,
-     SEEALSO {"directSum", "components", "indexComponents"}
-     }
-
+     SeeAlso => {"directSum", "components", "indexComponents"}}
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

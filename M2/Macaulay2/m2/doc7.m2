@@ -20,7 +20,7 @@ document {
       	  "p_{1,1,2}",
       	  "p_{2,1,0}",
 	  },
-     SEEALSO "_"
+     SeeAlso => "_"
      }
 
 document {
@@ -41,7 +41,7 @@ document {
       	  "p^{1}",
       	  "p^{1,0}",
 	  },
-     SEEALSO "^"
+     SeeAlso => "^"
      }
 
      
@@ -117,7 +117,7 @@ document {
 	  has one row.  In this case the result ", TT "h", " is a matrix whose
 	  ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, "
 	  by the differential operator corresponding to ", TT {"m", SUB "i"}, "."},
-     SEEALSO "diff and contract"
+     SeeAlso => "diff and contract"
      }
 
 document {
@@ -153,7 +153,7 @@ document {
      the multiplication by integers that occurs during differentiation is
      omitted.",
      PARA,
-     SEEALSO "diff and contract"
+     SeeAlso => "diff and contract"
      }
 
 TEST "
@@ -188,7 +188,7 @@ document {
       	  "p = symmetricPower(2,vars R)",
       	  "jacobian p",
 	  },
-     CAVEAT {
+     Caveat => {
 	  "If a matrix or ideal over a quotient polynomial ring ", TT "S/J", "
      	  is given, then only the derivatives of the given elements are
      	  computed and NOT the derivatives of elements of ", TT "J", "."
@@ -215,7 +215,7 @@ document {
       	  "leadTerm matrix {{a,b},{c,d}}",
       	  "leadTerm matrix {{c,d},{a,b}}",
 	  },
-     SEEALSO {"leadCoefficient", "leadMonomial", "leadComponent"}
+     SeeAlso => {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 
 document {
@@ -243,7 +243,7 @@ document {
      "Here ", TT "M", " should be a subquotient module of the target of ", TT "f", ", and
      ", TT "N", " should be a subquotient module of the source of ", TT "f", ".",
      PARA,
-     SEEALSO "inducesWellDefinedMap"
+     SeeAlso => "inducesWellDefinedMap"
      }
 
 document {
@@ -276,7 +276,7 @@ document {
      Headline => "whether a map is well defined",
      TT "inducesWellDefinedMap(M,N,f)", " -- tells whether the matrix ", TT "f", " would
      induce a well defined map from ", TT "N", " to ", TT "M", ".",
-     SEEALSO "inducedMap"
+     SeeAlso => "inducedMap"
      }
 
 document {
@@ -325,7 +325,7 @@ document {
      the matrix can be provided explicitly, or the source and target modules can be 
      provided.  There are other alternatives.",
      PARA,
-     SEEALSO {"map"}
+     SeeAlso => {"map"}
      }
 
 
@@ -345,7 +345,7 @@ document {
      f itself.  Otherwise, the source and target will be replaced by
      the free modules whose basis elements correspond to the generators
      of the modules.",
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 
 document {
@@ -360,7 +360,7 @@ document {
 	  "R = ZZ/101[a..f]",
       	  "matrix(R, {{a,b,0},{d,0,f}})",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 
 document {
@@ -369,7 +369,7 @@ document {
      PARA,
      "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
      free module",
-     SEEALSO {"map", "isWellDefined"}
+     SeeAlso => {"map", "isWellDefined"}
      }
 
 document {
@@ -384,7 +384,7 @@ document {
       	  "degrees target q",
       	  "degrees source q",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 
 document {
@@ -398,7 +398,7 @@ document {
       	  "p = map(R^2,R^{-2,-2},{{x^2,0},{0,y^2}})",
       	  "isHomogeneous p",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => (map,Module,Module,Matrix),
@@ -412,7 +412,7 @@ document {
       	  "degrees source p",
       	  "degrees source q",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => (map,Module,Module,RingElement),
@@ -430,7 +430,7 @@ document {
       	  "isHomogeneous q",
 	  },
      PARA,
-     SEEALSO {(map,Module,Module,ZZ), "map", "matrix"}
+     SeeAlso => {(map,Module,Module,ZZ), "map", "matrix"}
      }
 document {
      Key => (map,Module,Module,ZZ),
@@ -459,14 +459,14 @@ document {
 	  "isWellDefined h",
 	  },
      PARA,
-     SEEALSO {(map,Module,Module,RingElement), "map", "matrix"}
+     SeeAlso => {(map,Module,Module,RingElement), "map", "matrix"}
      }
 document {
      Key => (map,Module),
      TT "map M", " -- construct the identity map from M to itself.",
      PARA,
      "This can also be accomplished with ", TT "id_M", " or ", TT "map(M,1)", ".",
-     SEEALSO {"map", "id"}
+     SeeAlso => {"map", "id"}
      }
 document {
      Key => (map,Module,RingElement),
@@ -477,7 +477,7 @@ document {
 	  "R = ZZ/101[x]",
       	  "map(R^2,x)",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => Degree,
@@ -495,7 +495,7 @@ document {
       	  "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
       	  "isHomogeneous q",
 	  },
-     SEEALSO {"map", "matrix", (inducedMap,Degree)}
+     SeeAlso => {"map", "matrix", (inducedMap,Degree)}
      }
 
 document {
@@ -535,7 +535,7 @@ document {
       	  "degrees source f",
       	  "isHomogeneous f",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => (matrix,List),
@@ -570,7 +570,7 @@ document {
 	  "F = R^3",
       	  "matrix {F_2, F_1, x*F_0 + y*F_1 + z*F_2}",
 	  },
-     SEEALSO {"map", "matrix"}
+     SeeAlso => {"map", "matrix"}
      }
 
 document {
@@ -607,7 +607,7 @@ document {
      TT "adjoint1 (f,G,H)", " -- if f is a homomorphism of free modules of the
      form F -> G ** H, then produce the adjoint homomorphism of the
      form F ** (dual G) -> H.",
-     SEEALSO "adjoint"
+     SeeAlso => "adjoint"
      }
 
 document {
@@ -616,7 +616,7 @@ document {
      TT "adjoint (f,F,G)", " -- if f is a homomorphism of free modules of the
      form F ** G -> H, then produce the adjoint homomorphism of the
      form F -> (dual G) ** H.",
-     SEEALSO "adjoint1"
+     SeeAlso => "adjoint1"
      }
 
 document {
@@ -646,7 +646,7 @@ document {
       	  "relations M",
       	  "prune M",
 	  },
-     SEEALSO {"generators", "relations", "prune"}
+     SeeAlso => {"generators", "relations", "prune"}
      }
 
 document {
@@ -654,7 +654,7 @@ document {
      Headline => "tensor product of matrices",
      TT "f ** g", " -- computes the tensor product of two matrices.",
      PARA,
-     SEEALSO "Matrix"
+     SeeAlso => "Matrix"
      }
 
 TEST "
@@ -695,7 +695,7 @@ assert( 2 == codim I )
 document {
      Key => Ideal,
      Headline => "the class of all ideals",
-     SEEALSO "ideals",
+     SeeAlso => "ideals",
      "Common ways to make an ideal:",
      UL {
 	  TO "ideal",
@@ -788,7 +788,7 @@ document {
      TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
      which can stop the computation after a certain number of basis elements in
      a subring have been found.",
-     SEEALSO "computing Groebner bases"
+     SeeAlso => "computing Groebner bases"
      }
 
 
@@ -806,7 +806,7 @@ document {
      PARA,
      "Here ", TT "g", " and ", TT "f", " should be composable maps with ", TT "g*f", "
      equal to zero.",
-     SEEALSO "homology"
+     SeeAlso => "homology"
      }
 
 document {
@@ -851,7 +851,7 @@ document {
       	  "f^[1]",
       	  "f^[1,0]",
 	  },
-     SEEALSO {submatrix, (symbol ^,Module,Array), (symbol _,Matrix,Array)}
+     SeeAlso => {submatrix, (symbol ^,Module,Array), (symbol _,Matrix,Array)}
      }
 
 document {
@@ -869,7 +869,7 @@ document {
       	  "f^[1]",
       	  "f^[1,0]",
 	  },
-     SEEALSO {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
+     SeeAlso => {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
      }
 
 document {
@@ -940,13 +940,13 @@ time D = resolution cokernel leadTerm generators G
 document {
      Key => isInjective,
      Headline => "whether a map is injective",
-     SEEALSO "isSurjective"
+     SeeAlso => "isSurjective"
      }
 
 document {
      Key => isSurjective,
      Headline => "whether a map is surjective",
-     SEEALSO "isInjective"
+     SeeAlso => "isInjective"
      }
 
 TEST "
@@ -1158,7 +1158,7 @@ document {
      ", TT "cover exteriorPower(i,M)", " and ", TT "exteriorPower(i,cover M)", " 
      will be equal.",
      PARA,
-     SEEALSO {"minors", "det", "wedgeProduct"}
+     SeeAlso => {"minors", "det", "wedgeProduct"}
      }
 
 TEST ///
@@ -1179,7 +1179,7 @@ document {
      TT "minors(p,m)", " -- produces the ideal generated by
      the determinants of the p-by-p submatrices of the matrix ", TT "m", ".",
      PARA,
-     SEEALSO {"det", "exteriorPower"}
+     SeeAlso => {"det", "exteriorPower"}
      }
 
 document {
@@ -1229,7 +1229,7 @@ apply({ (minors, Strategy), (det,Strategy), (exteriorPower,Strategy) },	-- let's
 	  polynomial ring, the ", TO "Bareiss", " algorithm is used.  If the polynomial ring is
 	  a quotient, and the ring has not been declared to be a field, (see ", TO "toField", "), then
 	  the ", TO "Cofactor", " algorithm is used.",
-	  CAVEAT "The Bareiss algorithm only returns
+	  Caveat => "The Bareiss algorithm only returns
 	  a ring element which differs from the actual determinant by a zero divisor in the ring.  Thus, 
 	  an INCORRECT answer may be computed if the ring contains zero divisors."
 	  }
@@ -1248,13 +1248,13 @@ document {
 	  "minors(2,M,First=>{{0,1},{0,2}})",
 	  "minors(2,M,First=>{{0,1},{0,2}},Limit=>1)",
 	  },
-     SEEALSO {minors, (minors,Limit)}
+     SeeAlso => {minors, (minors,Limit)}
      }
 
 document {
      Key => (minors,Limit),
      TT "Limit => n", " -- the number of minors to compute",
-     SEEALSO (minors,First)
+     SeeAlso => (minors,First)
      }
 
 TEST "
@@ -1279,7 +1279,7 @@ document {
       	  "pfaffians(4,m)",
 	  },
      PARA,
-     SEEALSO "PfaffiansComputation"
+     SeeAlso => "PfaffiansComputation"
      }
 
 TEST ///
@@ -1308,7 +1308,7 @@ document {
 document {
      Key => det,
      Headline => "determinant of a matrix",
-     SEEALSO {"minors", "exteriorPower"}
+     SeeAlso => {"minors", "exteriorPower"}
      }
 
 document {
@@ -1441,7 +1441,7 @@ document {
       	  "degrees source f",
       	  "degrees source (f ** R^{-3})",
 	  },
-     SEEALSO {"Matrix", "Module"}
+     SeeAlso => {"Matrix", "Module"}
      }
 
 document {
@@ -1479,7 +1479,7 @@ document {
      TT "poincareComputation", " -- a key used in a module or monomial
      ideal to store a computation of Poincare polynomial.",
      PARA,
-     SEEALSO {"poincare"}
+     SeeAlso => {"poincare"}
      }
 
 document {
@@ -1490,7 +1490,7 @@ document {
      PARA,
      "At the moment, the function is computed simply by calling ", TO "basis", "
      and extracting the number of basis elements.",
-     SEEALSO {"hilbertSeries", "hilbertPolynomial"}
+     SeeAlso => {"hilbertSeries", "hilbertPolynomial"}
      }
 
 TEST ///
@@ -1535,7 +1535,7 @@ document {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
       	  "hilbertSeries (R/x^2)",
 	  },
-     SEEALSO {"degreesRing", "Order"}
+     SeeAlso => {"degreesRing", "Order"}
      }
 
 document {
@@ -1563,7 +1563,7 @@ document {
 	  "P = projectiveHilbertPolynomial 2",
       	  "apply(0 .. 12, i -> P i)",
 	  },
-     SEEALSO ProjectiveHilbertPolynomial
+     SeeAlso => ProjectiveHilbertPolynomial
      }
 
 document {
@@ -1576,7 +1576,7 @@ document {
      Hilbert polynomial corresponding to the graded ring of projective space
      of dimension n, but with its generator in degree -d.",
      PARA,
-     SEEALSO "ProjectiveHilbertPolynomial"
+     SeeAlso => "ProjectiveHilbertPolynomial"
      }
 
 TEST "
@@ -1638,7 +1638,7 @@ document {
      PARA,
      "Note that the Hilbert polynomial of P^i is z |--> binomial(z + i, i).",
      PARA,
-     SEEALSO "ProjectiveHilbertPolynomial"
+     SeeAlso => "ProjectiveHilbertPolynomial"
      }
 
 document {
@@ -1685,9 +1685,8 @@ document {
 	  "M = coker matrix{{a,b},{c,d}}",
 	  "codim M"
 	  },
-     CAVEAT ("If R is ZZ, then the computation effectively tensors first with the
-	  rational numbers, yielding the wrong answers in some cases.",
-	  "R must be a quotient of a commutative polynomial ring.")
+     Caveat => ("If ", TT "R", " is ", TT "ZZ", ", then the computation effectively tensors first with the
+	  rational numbers, yielding the wrong answers in some cases.  The ring ", TT "R", " must be a quotient of a commutative polynomial ring.")
      }
 document {
      Key => dim,
@@ -1707,7 +1706,7 @@ document {
      "Warning: over the integers, the computation effectively tensors first with the
      rational numbers, yielding the wrong answer in some cases.",
      PARA,
-     SEEALSO {"Schur"}
+     SeeAlso => {"Schur"}
      }
 
 document {
@@ -1732,7 +1731,7 @@ document {
      PARA,
      "For a quotient ring R, the result is a matrix over the ultimate
      ambient polynomial ring, whose image is the ideal defining ", TT "R", ".",
-     SEEALSO {"cover"}
+     SeeAlso => {"cover"}
      }
 
 TEST ///
@@ -1761,7 +1760,7 @@ document {
 	       and target"
 	       }
 	  },
-     SEEALSO {"presentation", "trim"}
+     SeeAlso => {"presentation", "trim"}
      }
 
 document {
@@ -1778,7 +1777,7 @@ document {
      be obtained with as ", TT "g = N.pruningMap", " unless ", TT "M.pruningMap", "
      already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 
      the inverse isomorphism with ", TT "g^-1", ".",
-     SEEALSO { "pruningMap" }
+     SeeAlso => { "pruningMap" }
      }
 
 document {
@@ -1789,7 +1788,7 @@ document {
      PARA,
      "This map exists only after ", TT "N = prune M", " has been executed
      at least once, and then the map can be obtained with ", TT "N.pruningMap", ".",
-     SEEALSO "prune"
+     SeeAlso => "prune"
      }
 
 document {
@@ -1852,7 +1851,7 @@ document {
      "When ", TT "A := Hom(M,N)", " is computed, enough information is stored in ", TT "A.cache.Hom", "
      to compute this correspondence.",
      PARA,
-     SEEALSO "Hom"
+     SeeAlso => "Hom"
      }
 
 TEST ///

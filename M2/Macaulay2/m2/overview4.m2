@@ -11,7 +11,7 @@ document {
      can be used to convert it to straight ascii text, suitable for
      viewing on an ascii terminal, but in most circumstances, that conversion
      will be done automatically when hypertext is displayed.",
-     SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
+     SeeAlso => {"MarkUpList", "MarkUpType", "Entity"}
      }
 
 document {
@@ -675,7 +675,7 @@ document {
      ", TT "diff(m,n)", " are the same as those we would get from
      the tensor product ", TT "transpose m^-1 ** n", ", if 
      only ", TT "m", " were invertible.",
-     SEEALSO { (diff,Matrix,Matrix), (contract,Matrix,Matrix), "reshape", "adjoint" }
+     SeeAlso => { (diff,Matrix,Matrix), (contract,Matrix,Matrix), "reshape", "adjoint" }
      }
 
 document {
