@@ -177,6 +177,12 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      homogCheck(f,v,wts);
      map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
 
+homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
+     R := ring f;
+     wts = flatten wts;
+     homogCheck(f,v,wts);
+     new Vector from map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
+
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      wts := (transpose (monoid ring f).Options.Degrees)#0;
      homogenize(f,n,wts)
