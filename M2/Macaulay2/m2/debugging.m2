@@ -117,7 +117,7 @@ typicalValues#frame = MutableList
 
 pos := s -> (
      t := locate s;
-     if t =!= null then t#0 | ":" | toString t#1)
+     if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4)
 
 truncate := s -> (
      narrowed := false;
@@ -151,7 +151,7 @@ ll := f -> Table (
 
 listLocalVariables = Command(
      x -> if x === () then (
-	       if breakLoopCode === null then error "no break loop active";
-	       ll breakLoopCode
+	       if errorCode === null then error "no break loop active";
+	       ll errorCode
 	       )
 	  else ll x)

@@ -555,11 +555,11 @@ document { "and",
 document { locate,
      Headline => "locate source code",
      TT "locate f", " -- for a symbol interpreted function ", TT "f", " 
-     returns a sequence ", TT "(n,i,j)", " describing the location of
+     returns a sequence ", TT "(n,i,c,j,d)", " describing the location of
      the definition in the source code.  The name of the source file 
-     is ", TT "n", " and the code is occupies lines ", TT "i", " through
-     ", TT "j", ". If the ", TT "f", " is compiled, then the location 
-     is not available, and ", TO "null", " is returned.",
+     is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", " 
+     through line ", TT "j", " column ", TT "d", ". If the ", TT "f", " is compiled, 
+     then the location is not available, and ", TO "null", " is returned.",
      PARA,
      "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
      first, and then the location of the resulting function is provided.",

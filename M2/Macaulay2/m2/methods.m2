@@ -219,6 +219,7 @@ gens = generators
 oldvalue := value
 value = method()
 value Symbol := value String := value Pseudocode := oldvalue
+value Nothing := x -> null
 -----------------------------------------------------------------------------
 
 scanValues(HashTable,Function) := (x,f) -> scanPairs(x, (k,v) -> f v)

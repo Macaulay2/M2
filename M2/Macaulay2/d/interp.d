@@ -281,15 +281,15 @@ topLevel(e:Expr):Expr := (
      ret);
 setupfun("commandInterpreter",topLevel);
 
-breakLoopCodeS := setupconst("breakLoopCode",nullE);
+errorCodeS := setupconst("errorCode",nullE);
 breakLoop(f:Frame,c:Code):Expr := (
      setDebuggingMode(false);
-       oldBreakLoopCode := getGlobalVariable(breakLoopCodeS);
-       setGlobalVariable(breakLoopCodeS,Expr(CodeClosure(f,c)));
+       oldBreakLoopCode := getGlobalVariable(errorCodeS);
+       setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
 	 incrementInterpreterDepth();
 	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 	 decrementInterpreterDepth();
-       setGlobalVariable(breakLoopCodeS,oldBreakLoopCode);
+       setGlobalVariable(errorCodeS,oldBreakLoopCode);
      setDebuggingMode(true);
      ret);
 breakLoopFun = breakLoop;

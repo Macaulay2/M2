@@ -2,7 +2,7 @@
 
 getSourceLines := method(SingleArgumentDispatch=>true) 
 getSourceLines Nothing := null -> null
-getSourceLines Sequence := (filename,start,stop) -> if filename =!= "stdio" then (
+getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" then (
      wp := set characters " \t);";
      file := (
 	  if filename === "--startupString1--/layout.m2"
@@ -54,7 +54,7 @@ codeFunction := (f,depth) -> (
      )
 code = method(SingleArgumentDispatch=>true)
 code Nothing := null -> null
-code Symbol := s -> getSourceLines locate s
+code Symbol := code Pseudocode := s -> getSourceLines locate s
 code Sequence := s -> code lookup s
 code Function := f -> codeFunction(f,0)
 code List := v -> stack apply(v,code)
@@ -69,7 +69,7 @@ editMethod String := filename -> (
 	  editor, " ", filename))
 EDIT := method(SingleArgumentDispatch=>true)
 EDIT Nothing := arg -> (stderr << "source code not available" << endl;)
-EDIT Sequence := (filename,start,stop) -> (
+EDIT Sequence := (filename,start,startcol,stop,stopcol) -> (
      editor := EDITOR();
      run concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",

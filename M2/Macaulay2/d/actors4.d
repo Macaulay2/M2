@@ -1081,7 +1081,9 @@ locate1():Expr := (
      Expr(Sequence(
 	       Expr(minimizeFilename(code.filename)),
 	       Expr(toInteger(code.minline)),
-	       Expr(toInteger(code.maxline))
+	       Expr(toInteger(code.mincol)),
+	       Expr(toInteger(code.maxline)),
+	       Expr(toInteger(code.maxcol))
 	       )));
 
 locate(e:Expr):Expr := (
@@ -1096,7 +1098,7 @@ locate(e:Expr):Expr := (
 	  then nullE
 	  else Expr(
 	       Sequence(
-		    minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.line)))))
+		    minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.column)),toInteger(int(p.line)),toInteger(int(p.column)))))
      is c:CodeClosure do (
 	  locate0();
 	  locate(c.code);

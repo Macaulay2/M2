@@ -29,9 +29,9 @@ net Command := toString Command := toExternalString Command := f -> if Symbols#?
 net Function := toString Function := f -> (
      if Symbols#?f then toString Symbols#f 
      else (
-	  l := locate f;
-	  if l === null then "--Function--" 
-	  else ((fn,li,co) -> concatenate("--Function[", fn, ":", toString li, ":", toString co, "]--")) l
+	  t := locate f;
+	  if t === null then "--Function--" 
+	  else concatenate("--Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]--")
 	  )
      )
 

@@ -39,8 +39,6 @@ expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
 
-value Expression := e -> error "no method for 'value'"
-
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"
 --new AssociativeExpression from Sequence := 
@@ -399,7 +397,6 @@ Expression ^ Thing      := (x,y) -> x ^ (expression y)
 value Holder := x -> value x#0
 value OneExpression := v -> 1
 value ZeroExpression := v -> 0
-value Thing := identity
 -----------------------------------------------------------------------------
 SparseVectorExpression = new HeaderType of Expression
 SparseVectorExpression.synonym = "sparse vector expression"
