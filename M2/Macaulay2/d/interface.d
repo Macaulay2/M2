@@ -1621,21 +1621,24 @@ setupfun("rawDivideByVariable",rawDivideByVariable);
 
 export rawMinors(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 3 then WrongNumArgs(3) else
+     if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is p:Integer do if !isInt(p) then WrongArgSmallInteger(1) else
      when s.1 is M:RawMatrix do
-     when s.2 is strategy:Integer do 
-     if !isInt(strategy) then WrongArgSmallInteger(3) else (
-	  toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
-		    "IM2_Matrix_minors(",
-		    toInt(p), ",",
-		    "(Matrix *)", M, ",",
-		    toInt(strategy),
-		    ")"
-		    )
+     if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+     if !isSmallInt(s.3) then WrongArgSmallInteger(4) else
+     if !isNullOrSequenceOfSmallIntegers(s.4) then WrongArg(5,"null or a sequence of small integers") else
+     if !isNullOrSequenceOfSmallIntegers(s.5) then WrongArg(5,"null or a sequence of small integers") else
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
+	       "rawMinors(",
+	       toInt(p), ",",
+	       "(Matrix *)", M, ",",
+	       getSmallInt(s.2), ",",		   -- strategy
+	       getSmallInt(s.3), ",",	-- n_minors_to_compute
+	       "(M2_arrayint_OrNull)", getNullOrSequenceOfSmallIntegers(s.4), ",",   -- first_row_set
+	       "(M2_arrayint_OrNull)", getNullOrSequenceOfSmallIntegers(s.5), -- first_col_set
+	       ")"
 	       )
 	  )
-     else WrongArgInteger(3)
      else WrongArg(2,"a raw matrix")
      else WrongArgInteger(1)
      else WrongNumArgs(3)
