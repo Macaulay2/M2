@@ -1,56 +1,58 @@
 /* include/config.h.in.  Generated automatically from configure.in by autoheader.  */
 
-/* version number */
-#undef VERSION
-
-/* hostname used for compilation */
-#undef NODENAME
-
-/* operating system release, obtained with uname -r */
-#undef REL
-
 /* machine hardware type, obtained with uname -m */
 #undef ARCH
-
-/* operating system name, obtained with uname -s */
-#undef OS
-
-/* whether to compile and link with socks5 */
-#undef SOCKS
-
-/* factory version number */
-#undef FACTORYVERSION
-
-/* whether to link with factory */
-#undef FACTORY
-
-/* whether to use the new version of dumpdata */
-#undef NEWDUMPDATA
 
 /* whether to use dumpdata */
 #undef DUMPDATA
 
-/* whether to use shared libraries */
-#undef SHARED
+/* whether to link with factory */
+#undef FACTORY
 
-/* whether __finite is missing */
-#undef __finite
-
-/* whether __isnan is missing */
-#undef __isnan
-
-/* whether __isinf is missing */
-#undef __isinf
-
-/* whether sys_errlist is missing */
-#undef NO_SYS_ERRLIST
-
-/* whether herror is missing */
-#undef NO_HERROR
-
-/* whether sys_errlist is declared in errno.h or stdio.h */
-#undef SYS_ERRLIST_IS_DECLARED
+/* factory version number */
+#undef FACTORYVERSION
 
 /* whether h_errlist is declared in errno.h or stdio.h */
 #undef H_ERRLIST_IS_DECLARED
 
+/* whether to use the new version of dumpdata */
+#undef NEWDUMPDATA
+
+/* hostname used for compilation */
+#undef NODENAME
+
+/* whether gnu_get_libc_version is missing */
+#undef NO_GNU_GET_LIBC_VERSION
+
+/* whether herror is missing */
+#undef NO_HERROR
+
+/* whether sys_errlist is missing */
+#undef NO_SYS_ERRLIST
+
+/* operating system name, obtained with uname -s */
+#undef OS
+
+/* operating system release, obtained with uname -r */
+#undef REL
+
+/* whether to use shared libraries */
+#undef SHARED
+
+/* whether to compile and link with socks5 */
+#undef SOCKS
+
+/* whether sys_errlist is declared in errno.h or stdio.h */
+#undef SYS_ERRLIST_IS_DECLARED
+
+/* version number */
+#undef VERSION
+
+/* whether __finite is missing */
+#undef __finite
+
+/* whether __isinf is missing */
+#undef __isinf
+
+/* whether __isnan is missing */
+#undef __isnan
