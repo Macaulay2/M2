@@ -4,7 +4,7 @@ ConvertInteger
 ConvertMissing
 ConvertApply = x -> x			  -- (f,T1,...,Tm)
 ConvertJoin = x -> if class x === Sequence then prepend (identity, x) else (identity, x)
-ConvertRepeat = T -> seq T
+ConvertRepeat = T -> singleton T
 ConvertFixedRepeat = x -> x		  -- (n,T1,...,Tm)
 ConvertList  = T -> (toList, ConvertRepeat T)
 
@@ -42,7 +42,7 @@ document { quote convert,
      "The method named ", TO "ConversionFormat", " is used to provide
      a conversion format",
      PARA,
-     "A format of the form", PRE "          seq f",
+     "A format of the form", PRE "          singleton f",
      "specifies that a sequence has been transmitted, each element of
      which should be converted with the format ", TT "f", ".  
      See ", TO "transmitting a sequence", ".",

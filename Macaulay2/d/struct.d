@@ -26,7 +26,7 @@ reverse(e:Expr):Expr := (
      else WrongArg("a list or sequence"));
 setupfun("reverse",reverse);
 export seq(e:Expr):Expr := Expr(Sequence(e));
-setupfun("seq",seq);
+-- setupfun("singleton",seq);
 pairs(e:Expr):Expr := (
      when e
      is o:HashTable do list(

@@ -282,7 +282,7 @@ gradedModule Sequence := gradedModule List := modules -> (
 	       C#i = M;
 	       ));
      C)
-gradedModule Module := M -> gradedModule seq M
+gradedModule Module := M -> gradedModule singleton M
 
 GradedModule ++ GradedModule := (C,D) -> (
      E := new GradedModule;
@@ -350,7 +350,7 @@ gradedModuleMap Sequence := gradedModuleMap List := maps -> (
      f.target = gradedModule(target \ maps);
      f.degree = 0;
      f)
-gradedModuleMap ModuleMap := M -> gradedModuleMap seq M
+gradedModuleMap ModuleMap := M -> gradedModuleMap singleton M
 
 single := (v) -> (
      if not same v 

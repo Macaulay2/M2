@@ -2,7 +2,20 @@ Changes made, most recent ones first:
 
 New in 0.8.47:
 
+function 'seq' changed to 'singleton'
+
+'tex' works for nets now
+
 new function 'isUnit'
+
+new global flag compactMatrixForm which governs whether matrices are displayed
+in compact Macaulay form or in 2-d Macaulay2 form.
+
+String is now a subclass of Net - we intend every method applicable to nets
+to also work for strings, even though the internal representation of strings
+is different.
+
+-----------------------------------------------------------------------------
 
 New in 0.8.46:
 

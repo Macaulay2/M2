@@ -46,4 +46,4 @@ net Time := v -> (
      if x === null then t else net x || t
      )
 
-BeforePrint Net := BeforePrint String := net
+BeforePrint Net := net

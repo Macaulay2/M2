@@ -805,6 +805,7 @@ setupfun("netDepth",netDepth);
 netRows(e:Expr):Expr := (
      when e
      is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide Expr(s))
+     is s:string do seq(e)
      else WrongArg("a net"));
 setupfun("netRows",netRows);
 

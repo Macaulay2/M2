@@ -43,9 +43,6 @@ name = s -> (
 	  if f =!= null 
 	  then
 	  f(s)
---	  try f(s)			  -- mask out errors here because
---	       	    	      	   	  -- error printing routines often call us
---	  else concatenate("<<",name class s,":",name hash s,">>")
 	  else concatenate("<<",name class s,":",name hash s,">>")))
 
 name Thing := string
@@ -102,12 +99,10 @@ name BasicList := s -> concatenate(
      "}" )
 name Array := s -> concatenate ( "[", between(", ",name \ toList s), "]" )
 name Sequence := s -> (
-     if # s === 1 then concatenate("seq ",name s#0)
+     if # s === 1 then concatenate("singleton ",name s#0)
      else concatenate("(",between(",",name \ s),")")
      )
 
-describe = s -> (
-     << (lookupi(name,class s)) s << endl;
-     )
+describe = s -> (lookupi(name,class s)) s
 
 File << Thing := (o,x) -> o << name x	  -- provisional

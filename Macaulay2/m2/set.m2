@@ -2,16 +2,18 @@
 
 Tally.name = "Tally"
 name Tally := x -> (
-     "tally {"
-     | demark(", ", apply(pairs x, (v,i) -> string i | " : " | name v))
+     "new Tally from {"
+     | demark(", ", apply(pairs x, (v,i) -> name v | " => " | string i))
      | "}"
      )
 
-net Tally := x -> horizontalJoin flatten(
-     "tally splice {",
-     between(", ", apply(pairs x, (v,i) -> string i | " : " | net v)),
-     "}"
-     )
+--net Tally := x -> horizontalJoin flatten(
+--     "tally splice {",
+--     between(", ", apply(pairs x, (v,i) -> string i | " : " | net v)),
+--     "}"
+--     )
+
+net Tally := t -> peek t
 
 Tally _ Thing := (a,b) -> if a#?b then a#b else 0
 document { (quote _, Tally, Thing),     

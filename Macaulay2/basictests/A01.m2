@@ -14,9 +14,6 @@ assert( # {1,2,3} === 3 )
 assert( toSequence {1,2,3} === (1,2,3) )
 assert( toSequence (1,2,3) === (1,2,3) )
 
--- test seq
-assert( # seq (1,2,3) === 1 )
-assert( class seq 3 === Sequence )
 assert( (1,2,3,4) === (1,2,3,4) )
 assert( (1,2,3,4) =!= (1,2,4,3) )
 
@@ -24,7 +21,7 @@ assert( (1,2,3,4) =!= (1,2,4,3) )
 assert( 1 .. 5 === (1,2,3,4,5) )
 assert( 0 .. 5 === (0,1,2,3,4,5) )
 assert( -3 .. 1 === (-3,-2,-1,0,1) )
-assert( 1 .. 1 === seq 1 )
+assert( 1 .. 1 === toSequence{1} )
 
 -- test newClass
 aa = {1,2,3}

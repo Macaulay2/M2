@@ -487,7 +487,7 @@ name Adjacent := name FunctionApplication := m -> (
      args := m#1;
      if class args === Sequence
      then if #args === 1
-     then concatenate(name fun, " ", name args)  -- f seq x
+     then concatenate(name fun, " ", name args)  -- f singleton x
      else concatenate(name fun, name args)       -- f(x,y) or f(), ...
      else if precedence args >= p
      then if precedence fun > p

@@ -51,3 +51,11 @@ document { quote evaluate,
      PARA,
      "A function replaced by ", TO "value", "."
      }
+
+document { quote seq,
+     TT "seq",
+     PARA,
+     "A function replaced by ", TO "singleton", "."
+     }
+
+     

@@ -36,7 +36,7 @@ peek2(Sequence,ZZ) := (s,depth) -> (
 	  if #s === 0
 	  then "()"
 	  else if #s === 1 
-	  then ("seq (", peek2(s#0,depth), ")")
+	  then ("singleton (", peek2(s#0,depth), ")")
 	  else ("(", horizontalJoin between (",", apply(s, value -> peek2(value,depth))), ")" )))
 
 precOption := precedence ( 1 => 2 )
@@ -91,4 +91,3 @@ document { quote peek2,
 	  },
      SEEALSO "peek"
      }
-

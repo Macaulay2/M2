@@ -497,7 +497,9 @@ M2_string host,serv;
 M2_string system_syserrmsg()
 {
      extern int errno, sys_nerr;
+#if 0
      extern char * sys_errlist[];
+#endif
      return (
 	  errno == 0 && errno < sys_nerr 
 	  ? tostring("") 
