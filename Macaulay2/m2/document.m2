@@ -45,7 +45,7 @@ fixup Sequence   :=
 fixup List       := z -> SEQ fixflat z
 fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
 fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
-fixup UL         := z -> UL apply(z, i -> fixup if class i === TO then TOH i#0 else i)
+fixup UL         := z -> apply(z, i -> fixup if class i === TO then TOH i#0 else i)
 fixup PRE        := 
 fixup CODE       := 
 fixup TO         := 

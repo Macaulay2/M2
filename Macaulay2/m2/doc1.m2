@@ -149,12 +149,23 @@ document {
 document {
      Key => "initial help",				    -- display by the help command by default
      Headline => "initial help screen",
-     "Ways to get started:",
+     "Welcome to Macaulay 2",
+     PARA,
+     "Try entering '2+2' at your next input prompt, which begins with ", TT "i", ".
+     The two output prompts begin with ", TT "o", ".  The first one, with the
+     equal sign, '=', gives the value computed from your input, and the second one, with
+     the colon, ':', tells what type of thing the value is.",
+     PARA,
+     "Type one of these commands to get started reading the documentation:",
      UL {
-     	  (TT "copyright", " -- display the copyright"),
-     	  (TT "help \"Macaulay 2\"", " -- display the base of the documentation tree."),
-     	  (TT "help x", " -- display the documentation for ", TT "x"),
-	  }
+     	  ("copyright", "                        -- the copyright"),
+     	  ("help \"Macaulay 2\"", "                -- top node of the documentation."),
+     	  ("help \"Reading the documentation\"", " -- "),
+     	  ("help \"Getting started\"", "           -- "),
+     	  ("help \"Your first input prompt\"", "   -- "),
+     	  ("help x", "                           -- display the documentation for ", TT "x"),
+	  },
+     "Even better, read the documentation in html form or in info form ... "
      }
 document {
      Key => help,

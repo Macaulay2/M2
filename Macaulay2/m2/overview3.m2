@@ -659,14 +659,14 @@ document {
      Subnodes => {
 	  TOH "Invoking the program",
 	  TOH "emacs",
-	  TOH "Your first interaction with Macaulay 2",
+	  TOH "Your first input prompt",
 	  TOH "How Macaulay 2 finds its files",
 	  TOH "Reading the documentation",
 	  }
      }
 
 document {
-     Key => "Your first interaction with Macaulay 2",
+     Key => "Your first input prompt",
      PARA { "Your first input prompt will be ", TT "i1 : ", ".  In response to the prompt,
 	  type ", TT "2+2", " and press return.  The expression you entered will be
 	  evaluated - no punctuation is required at the end of the line."},
