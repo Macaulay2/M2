@@ -92,6 +92,7 @@ INTERFACE = \
 	gbinhom \
 	gbring \
 	gb2 \
+	gauss \
 	hermite \
 	hilb \
 	int_bag \

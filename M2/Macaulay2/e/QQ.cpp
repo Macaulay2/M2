@@ -12,6 +12,7 @@
 
 bool QQ::initialize_QQ() 
 {
+  declare_field();
   initialize_ring(0);
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
