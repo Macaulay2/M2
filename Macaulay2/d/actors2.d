@@ -251,7 +251,7 @@ subvalueQ(left:Expr,right:Expr):Expr := (
      is x:Database do (
 	  when right
 	  is key:string do dbmquery(x,key)
-	  else False)
+	  else buildErrorPacket("expected a string as key to database"))
      is x:List do (
 	  when right is r:Integer do (
 	       if isInt(r) then (
