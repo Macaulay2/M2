@@ -61,6 +61,7 @@ monomialIdeal MonomialIdeal := I -> (
           newMonomialIdeal ring I))
 
 monomialIdeal Matrix := MonomialIdeal => f -> (
+     if numgens target f =!= 1 then error "expected a matrix with 1 row";
      sendgg(ggPush f, ggPush 0, ggmonideal);
      newMonomialIdeal ring f)
 
@@ -298,7 +299,7 @@ ass MonomialIdeal := (I) -> (
 
 --  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
-isSquareFree Thing := x -> false
+-- isSquareFree Thing := x -> false
 isSquareFree MonomialIdeal := (I) -> all(first entries gens I, m -> all(first exponents m, i -> i<2))
 
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
@@ -333,14 +334,12 @@ Delta := (I) -> (
      select( apply(ass I, J -> set X - set first entries gens J), Y -> #Y >= d ) / toList
      )
 
-standardPairs(MonomialIdeal) := (I) -> (
-     standardPairs(I,Delta(I)))
-
-
+standardPairs MonomialIdeal := (I) -> standardPairs(I,Delta I)
 
 --  LARGEST MONOMIAL IDEAL CONTAINED IN A GIVEN IDEAL  -----
 monomialSubideal = method();				    -- needs a new name?
 monomialSubideal Ideal := (I) -> (
+     t := local t;
      R := ring I;
      X := gens R;
      k := coefficientRing R;
