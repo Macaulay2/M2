@@ -1012,7 +1012,7 @@ export eval(c:Code):Expr := (
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
 	  p := codePosition(c);
-     	  if int(p.loadDepth) >= errorDepth && ! err.position === p then (
+     	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.report.code.frame;
 	       err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
 	       err.position = p;
@@ -1026,7 +1026,8 @@ export eval(c:Code):Expr := (
 			      if err.message == continueMessage then return eval(c);
 			      )
 			 else nothing)
-		    else printError(err)));
+		    else printError(err))
+	       else if !err.printed then printError(err));
 	  e)
      else e);
 

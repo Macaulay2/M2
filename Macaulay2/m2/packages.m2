@@ -76,7 +76,7 @@ newPackage(String) := opts -> (title) -> (
 newPackage("Main",
      Version => version#"VERSION",
      WritableSymbols => {
-	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory, symbol fullBacktrace,
+	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory,
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,

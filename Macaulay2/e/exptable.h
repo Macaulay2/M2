@@ -33,6 +33,8 @@ const void ** exponent_table_to_array(exponent_table *E);
 #endif
 #endif
 
+/*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
 // End:
+*/
