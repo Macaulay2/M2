@@ -32,20 +32,18 @@ document { Time,
 
 document { null,
      HEADLINE "nothingness",
-     TT "null", " -- a symbol that represents the presence of nothing.",
-     PARA,
      "When it is the value of an expression entered into the interpreter, the
      output line doesn't appear.  Empty spots in a list are represented by
      it.",
      PARA,
-     "It is the only member of the class ", TO "Nothing", ".",
+     "It is the only member of the class ", TO "Nothing", ", which strictly
+     speaking, ought to have no members at all.",
      PARA,
      EXAMPLE {
 	  "x = {2,3,,4}",
       	  "x#2",
       	  "toString x#2",
-	  },
-     SEEALSO { "Nothing" }
+	  }
      }
 
 document { "then",
@@ -967,13 +965,25 @@ itemize := (sym) -> (
      )
 itemize \ values symbolTable()
 sortByName := v -> (i -> i#1) \ sort ((i -> (toString i, i)) \ v)
-document { "index by class",
-     MENU apply(sortByName keys types, type -> SEQ {
-	       TOH type, ":",
-	       MENU ((i -> TOH toString i) \ sortByName keys types#type)
+nm := type -> "index for class " | toString type
+document { "index by class", MENU apply(sortByName keys types, type -> TO nm type) }
+scan(sortByName keys types, type -> (
+	  if type === Symbol then (
+	       op := sym -> value sym === sym and toExternalString sym =!= toString sym;
+	       ops := v -> select(v,op);
+	       nonops := v -> select(v,i -> not op i);
+	       document { nm type,
+		    "Operators:",
+		    MENU ((i -> TOH i) \ toString \ sortByName    ops keys types#type),
+		    "Nonoperators:",
+		    MENU ((i -> TOH i) \ toString \ sortByName nonops keys types#type),
+		    }
+	       )
+	  else document { nm type,
+	       MENU ((i -> TOH i) \ toString \ sortByName keys types#type),
 	       }
 	  )
-     }
+     )
 types = null
 
 document { "miscellaneous topics",

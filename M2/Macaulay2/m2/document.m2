@@ -131,6 +131,8 @@ EmptyMarkUpType = new Type of MarkUpType
      MarkUpType List := (h,y) -> new h from y
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
      MarkUpType Thing := (h,y) -> new h from {y}
+     MarkUpType\List := (h,y) -> (i -> h i) \ y
+     List/MarkUpType := (y,h) -> y / (i -> h i)
 EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
 
 makeList := method()
@@ -367,8 +369,8 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU ((i -> SEQ{ TO i, headline i }) \ sort (formatDocumentTag \ s))
-menu := s -> MENU apply(s, i -> SEQ{ TO formatDocumentTag i, headline i } )
+smenu := s -> MENU (TOH \ sort (formatDocumentTag \ s))
+ menu := s -> MENU (TOH \ formatDocumentTag \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -391,7 +393,7 @@ documentation String := s -> (
      else getDoc toExternalString s
      )
 
-title := s -> if headline s =!= null then SEQ { " -- ", headline s, " -- " }
+title := s -> if headline s =!= null then SEQ { headline s, PARA{}}
 type := s -> SEQ {
      "The object ", TT toExternalString s, " is a member of each of the
      following classes, most specific first:", PARA{}, 
@@ -432,9 +434,14 @@ op := s -> if operator#?s then (
 	       },
 	  }
      )
+
+documentableMethods := s -> select(methods s, i -> not (
+	  class i === Sequence and #i > 0 and class i#0 === Function and toString i#0 === "--Function--"
+	  ))
+
 documentation Symbol := s -> (
      a := apply(options s, f -> f => s);
-     b := methods s;
+     b := documentableMethods s;
      SEQ {
 	  title s, 
 	  usage s,
@@ -445,15 +452,13 @@ documentation Symbol := s -> (
      	  }
      )
 
-anon := string (() -> ())
-
 documentation Type := X -> (
      syms := values symbolTable();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X), (key,Y) -> key);
      b := toString \ select(syms, 
 	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
      c := apply(
-	  select(methods X, key -> not typicalValues#?key or typicalValues#key =!= X and toString key#0 =!= anon),
+	  select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X),
 	  formatDocumentTag);
      d := ancestors X;
      e := toString \ select(syms, y -> not mutable y and class value y === X);
@@ -471,8 +476,17 @@ documentation Type := X -> (
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, smenu e, PARA{}},
 	  })
 
+documentation HashTable := x -> (
+     c := documentableMethods x;
+     SEQ {
+	  title x, 
+	  usage x,
+     	  type x,
+	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, smenu c, PARA{}},
+	  })
+
 fmeth := f -> (
-     b := methods f;
+     b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
      if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, smenu b, PARA{}} )     
@@ -495,8 +509,12 @@ ret := k -> (
      )
 
 seecode := x -> if (try locate x) =!= locate method then (
-     n := try code x;
-     if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
+     n := try code lookup x;
+     m := try code original lookup x;
+     SEQ {
+     	  if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) },
+     	  if m =!= null then SEQ { "Original memoized code:", PRE concatenate between(newline,netRows m) }
+	  }
      )
 
 documentation Function :=  f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
@@ -558,17 +576,22 @@ moreGeneral := s -> (
      )
 
 documentation Sequence := s -> if #s == 0 then null else (
-     t := typicalValue k;
+     t := typicalValue s;
      SEQ {
 	  title s, 
 	  usage s,
 	  "See also:",
-	  MENU {
-	       SEQ {"Operator: ", TO formatDocumentTag s#0, headline s#0 },
-	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1, headline s#1 }, if #s > 2 then 
-	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2, headline s#2 }, if #s > 3 then
-	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3, headline s#3 }, if t =!= Thing then
-	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}},
+	  if #s==2 and not instance(s#1,Type)
+	  then MENU {
+	       SEQ {"Hash table: ", TOH formatDocumentTag s#1 },
+	       SEQ {"Key: ", TOH formatDocumentTag s#0 },
+	       }
+	  else MENU {
+	       SEQ {"Operator: ", TOH formatDocumentTag s#0 },
+	       SEQ {"Class of argument 1: ", TOH formatDocumentTag s#1 }, if #s > 2 then 
+	       SEQ {"Class of argument 2: ", TOH formatDocumentTag s#2 }, if #s > 3 then
+	       SEQ {"Class of argument 3: ", TOH formatDocumentTag s#3 }, if t =!= Thing then
+	       SEQ {"Class of typical returned value: ", TOH formatDocumentTag t, PARA{}},
 	       optargs s#0,
 	       moreGeneral s
      	       },
@@ -1029,10 +1052,11 @@ net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop
 html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
 tex  TO := x -> tex TT formatDocumentTag x#0
 
-net  TOH := x -> net  SEQ{ new TO from x, headline x }
-text TOH := x -> text SEQ{ new TO from x, headline x }
-html TOH := x -> html SEQ{ new TO from x, headline x }
-tex  TOH := x -> tex  SEQ{ new TO from x, headline x }
+            toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
+net  TOH := toh net
+text TOH := toh text
+html TOH := toh html
+tex  TOH := toh tex
 
 html LITERAL := x -> x#0
 html EmptyMarkUpType := html MarkUpType := X -> html X{}

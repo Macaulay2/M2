@@ -73,7 +73,7 @@ scope MENU := x -> scan(x,scope2)
 scope2 Thing := x -> null
 scope2 Sequence := scope2 BasicList := x -> scan(x,scope2)
 scope2 SHIELD := x -> null
-scope2 TO := x -> (
+scope2 TO := scope2 TOH := x -> (
      key := formatDocumentTag x#0;
      linkFilename key;
      if not UP#?key then (

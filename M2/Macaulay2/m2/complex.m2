@@ -30,7 +30,7 @@ realPart CC := RR => z -> z#0
 imaginaryPart CC := RR => z -> z#1
 exprI := symbol ii
 expression CC := z -> z#0 + z#1 * hold exprI
-toString CC := z -> toString expression z
+toExternalString CC := toString CC := z -> toString expression z
 net CC := z -> net expression z
 
 CC + CC := (x,y) -> new CC from {x#0+y#0,x#1+y#1}

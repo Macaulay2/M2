@@ -66,37 +66,42 @@ editMethod Sequence := args -> (
 edit = Command editMethod
 
 -----------------------------------------------------------------------------
-methods = F -> (
+methods = method(SingleArgumentDispatch => true)
+methods HashTable := F -> (
      seen := new MutableHashTable;
      found := new MutableHashTable;
-     if instance(F,Type) then (
-	  seen#F = true;
-	  scan(pairs F, (key,meth) -> (
-		    if class meth === Function 
-		    then if class key === Sequence and member(F,key)
-		    then found#key = true
-		    else found#(key,F) = true
-		    )));
-     if class F === Sequence then (
-	  tallyF := tally F;
-	  scanPairs(symbolTable(),
-	       (Name,sym) -> (
-		    x := value sym;
-		    if instance(x,Type) and not seen#?x then (
-			 seen#x = true;
-			 scan(pairs x, (key,meth) -> (
-				   if class meth === Function 
-				   and class key === Sequence and tallyF <= tally key
-				   then found#key = true))))))
-     else (
-	  scanPairs(symbolTable(),
-	       (Name,sym) -> (
-		    x := value sym;
-		    if instance(x,Type) and not seen#?x then (
-			 seen#x = true;
-			 scan(pairs x, (key,meth) -> (
-				   if class meth === Function then
-				   if key === F then found#(F,x) = true
-				   else if class key === Sequence and member(F,key)
-				   then found#key = true))))));
+     seen#F = true;
+     scan(pairs F, (key,meth) -> (
+	       if class meth === Function 
+	       then if class key === Sequence and member(F,key)
+	       then found#key = true
+	       else found#(key,F) = true));
+     sort keys found)
+methods Sequence := F -> (
+     seen := new MutableHashTable;
+     found := new MutableHashTable;
+     tallyF := tally F;
+     scanPairs(symbolTable(),
+	  (Name,sym) -> (
+	       x := value sym;
+	       if instance(x,Type) and not seen#?x then (
+		    seen#x = true;
+		    scan(pairs x, (key,meth) -> (
+			      if class meth === Function 
+			      and class key === Sequence and tallyF <= tally key
+			      then found#key = true)))));
+     sort keys found)
+methods Thing := F -> (
+     seen := new MutableHashTable;
+     found := new MutableHashTable;
+     scanPairs(symbolTable(),
+	  (Name,sym) -> (
+	       x := value sym;
+	       if instance(x,Type) and not seen#?x then (
+		    seen#x = true;
+		    scan(pairs x, (key,meth) -> (
+			      if class meth === Function then
+			      if key === F then found#(F,x) = true
+			      else if class key === Sequence and member(F,key)
+			      then found#key = true)))));
      sort keys found)

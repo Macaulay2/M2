@@ -65,7 +65,9 @@ HH = new ScriptedFunctor from {
 		    )
 	       }
 	  ),
-     argument => homology
+     argument => (
+	  args -> homology args
+	  )
      }
 
 cohomology(ZZ,Sequence) := (i,X) -> cohomology prepend(i,X)

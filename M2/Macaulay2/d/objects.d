@@ -939,7 +939,8 @@ installfun(e:Expr):Expr := (
 setupfun("installMethod",installfun);
 -----------------------------------------------------------------------------
 lookupfun(e:Expr):Expr := (
-     when e is a:Sequence do
+     when e 
+     is a:Sequence do
      if length(a)== 2 then
      when a.1
      is s:HashTable do lookup(s,a.0)
@@ -952,16 +953,17 @@ lookupfun(e:Expr):Expr := (
      else nullE
      else nullE
      else if length(a) == 4 then
-     when a.1
-     is s1:HashTable do
-     when a.2 
-     is s2:HashTable do 
-     when a.3
-     is s3:HashTable do lookupTernaryMethod(s1,s2,s3,a.0)
+     when a.1 is s1:HashTable do
+     when a.2 is s2:HashTable do 
+     when a.3 is s3:HashTable do lookupTernaryMethod(s1,s2,s3,a.0)
      else nullE
      else nullE
      else nullE
      else nullE
+     is SymbolClosure do e
+     is CompiledFunctionClosure do e
+     is FunctionClosure do e
+     is CompiledFunction do e
      else nullE);
 setupfun("lookup",lookupfun);	  
 
