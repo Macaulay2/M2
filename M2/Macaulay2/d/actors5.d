@@ -1478,16 +1478,13 @@ globalDictionaries(e:Expr):Expr := (
 	  n := length(s);
 	  if n == 0 then return WrongArg("expected a nonempty list of globalDictionaries");
           sawUnprotected := false;
-	  sawM2dict := false;
 	  foreach x in s do 
 	  when x is dc:DictionaryClosure do (
 	       d := dc.dictionary;
-	       if d == Macaulay2Dictionary then sawM2dict = true;
 	       if !d.protected then sawUnprotected = true;
 	       if d.frameID != 0 || d.transient then return WrongArg("expected a list of global dictionaries")
 	       )
 	  else return WrongArg("expected a list of dictionaries");
-	  if !sawM2dict then return WrongArg("expected a list of dictionaries containing Macaulay2Dictionary");
           if !sawUnprotected then return WrongArg("expected a list of dictionaries, not all protected");
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);

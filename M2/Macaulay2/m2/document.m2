@@ -773,15 +773,9 @@ briefDocumentation = method(SingleArgumentDispatch => true)
 
 briefDocumentation VisibleList := x -> null
 
-briefDocumentation Thing :=
--- briefDocumentation File := 
--- briefDocumentation BasicList := 
--- briefDocumentation Function := 
--- briefDocumentation MutableHashTable := 
--- briefDocumentation HashTable := 
-x -> (
+briefDocumentation Thing := x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
-     r := briefSynopsis x;
+     r := briefSynopsis normalizeDocumentKey x;
      if r =!= null then << endl << r << endl
      else (
 	  if headline x =!= null then << endl << commentize headline x << endl;
@@ -871,7 +865,7 @@ documentationValue(Symbol,HashTable) := (s,x) -> splice (
      if #c > 0 then (PARA {"Functions installed in ", toString x, " :"}, smenu c))
 documentationValue(Symbol,Thing) := (s,x) -> ()
 documentationValue(Symbol,Package) := (s,pkg) -> (
-     e := pkg#"exported symbols";
+     e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types
      m := unique flatten apply(b, T -> select(keys value T, 
@@ -886,7 +880,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      (
 	  SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of the package.",
 	  SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
-	  if #pkg#"exported symbols" > 0 then (
+	  if #e > 0 then (
 	       SUBSECTION "Exports",
 	       UL {
 		    if #b > 0 then PARA1 {"Types", smenu b},

@@ -242,17 +242,6 @@ dictionary Symbol := s -> (				    -- eventually every symbol will know what dic
      scan(globalDictionaries, d -> if d#?n and d#n === s then break d))
 dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
-addSynonym = method()
-addSynonym(Symbol,String) := (X,nam) -> (dictionary X)#nam = X
-
-{
-     (symbol cokernel, "coker"),
-     (symbol generators, "gens"),
-     (symbol kernel, "ker"),
-     (symbol substitute, "sub"),
-     (symbol resolution, "res")
-     } / addSynonym
-
 -----------------------------------------------------------------------------
 oldvalue := value
 value = method()

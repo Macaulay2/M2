@@ -77,19 +77,20 @@ newPackage(String) := opts -> (title) -> (
      newpkg := new Package from {
           "title" => title,
 	  symbol Options => opts,
-     	  symbol Dictionary => if title === "Macaulay2" then first globalDictionaries else new Dictionary, -- this is the global one
+     	  symbol Dictionary => new Dictionary, -- this is the global one
+     	  "private dictionary" => if title === "Macaulay2" then first globalDictionaries else new Dictionary, -- this is the local one
      	  "close hook" => hook,
 	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
 	  "previous packages" => saveP,
-	  "mutable symbols" => {},
 	  "old debuggingMode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
 	  "example inputs" => new MutableHashTable,
 	  "top node name" => if opts.TopNodeName === null then title else opts.TopNodeName,
-	  "exported symbols" => {},
+	  "exported symbols" => new MutableList from {},
+	  "exported mutable symbols" => new MutableList from {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
 	  "undocumented keys" => new MutableHashTable,
@@ -125,11 +126,7 @@ newPackage(String) := opts -> (title) -> (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
-     if title =!= "Macaulay2" then (
-	  newpkg#"private dictionary" = new Dictionary; -- this is the local one
-      	  PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
-     	  newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
-	  );
+     newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
@@ -139,7 +136,7 @@ newPackage(String) := opts -> (title) -> (
 	  opts.Using
 	  );
      globalDictionaries = join(
-	  if title === "Macaulay2" then {} else {newpkg#"private dictionary"},
+	  {newpkg#"private dictionary"},
 	  {Macaulay2.Dictionary, OutputDictionary, PackageDictionary},
 	  apply(opts.Using,pkg->pkg.Dictionary)
 	  );
@@ -149,29 +146,35 @@ newPackage(String) := opts -> (title) -> (
 
 export = method(SingleArgumentDispatch => true)
 export Symbol := x -> export singleton x
-export Sequence := v -> export toList v
-export List := v -> (
-     if not all(v, x -> instance(x, Symbol)) then error "expected a list of symbols";
+export List := v -> export toSequence v
+export Sequence := v -> (
      if currentPackage === null then error "no current package";
-     scan(v, sym -> 
-	  if currentPackage =!= Macaulay2 and (
-	       not currentPackage#"private dictionary"#?(toString sym)
-	       or currentPackage#"private dictionary"#(toString sym) =!= sym
-	       )
-	  then error ("symbol ",sym," not defined in current package ", toString currentPackage)
-	  );
-     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
-     if currentPackage =!= Macaulay2 then scan(v, s -> (
-	       currentPackage.Dictionary#(toString s) = s;
-	       currentPackage.Dictionary#(currentPackage#"title" | "$" | toString s) = s;
+     pd := currentPackage#"private dictionary";
+     d := currentPackage.Dictionary;
+     title := currentPackage#"title";
+     scan(v, sym -> (
+	       local nam;
+	       if class sym === Option then (
+		    nam = sym#0;			    -- synonym
+     	       	    if class nam =!= String then error("expected a string: ", nam);
+		    sym = sym#1;
+		    )
+	       else (
+		    nam = toString sym;
+		    );
+	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
+	       if not pd#?(toString sym) or pd#(toString sym) =!= sym then error ("symbol ",sym," not defined in current package: ", currentPackage);
+	       syn := title | "$" | nam;
+	       d#syn = d#nam = sym;
 	       ));
+     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
      v)
 exportMutable = method(SingleArgumentDispatch => true)
 exportMutable Symbol := x -> exportMutable singleton x
-exportMutable Sequence := v -> exportMutable toList v
-exportMutable List := v -> (
+exportMutable List := v -> exportMutable toSequence v
+exportMutable Sequence := v -> (
      export v;
-     currentPackage#"mutable symbols" = join(currentPackage#"mutable symbols",v);
+     currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",v);
      v)
 
 addStartFunction( () -> if prefixDirectory =!= null then Macaulay2#"package prefix" = prefixDirectory )
@@ -182,12 +185,7 @@ newPackage("Macaulay2",
      TopNodeName => "Macaulay 2",
      Headline => "A computer algebra system designed to support algebraic geometry")
 
-exportMutable {
-	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace, symbol packages, symbol currentFileName, symbol compactMatrixForm, symbol
-	  gbTrace, symbol encapDirectory, symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage, symbol
-	  notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks, symbol debugError, symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol
-	  debuggingMode, symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth, symbol backupFileRegexp
-	  }
+load "exports.m2"
 
 findSynonyms = method()
 findSynonyms Symbol := x -> (
@@ -219,13 +217,13 @@ closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
-     scan(pkg#"mutable symbols", s -> (
+     scan(pkg#"exported mutable symbols", s -> (
 	       if value s === s
 	       and s =!= symbol oo
 	       and s =!= symbol ooo
 	       and s =!= symbol oooo
 	       then stderr << "--warning: unused writable symbol '" << s << "'" << endl));
-     ws := set pkg#"mutable symbols";
+     ws := set pkg#"exported mutable symbols";
      dict := pkg.Dictionary;
      scan(sortByHash values dict, s -> if not ws#?s then (
 	       protect s;
@@ -235,11 +233,15 @@ closePackage String := title -> (
 	  protect dict;					    -- maybe don't do this, as it will be private
 	  protect exportDict;
 	  );
-     if pkg#"title" =!= "Macaulay2" then (
+     if pkg#"title" === "Macaulay2" then (
+	  packages = {pkg};
+	  globalDictionaries = {UserDictionary, Macaulay2.Dictionary, OutputDictionary, PackageDictionary};
+	  )
+     else (
 	  packages = prepend(pkg,pkg#"previous packages");
 	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
-     	  checkShadow();
 	  );
+     checkShadow();
      remove(pkg,"previous dictionaries");
      remove(pkg,"previous packages");
      hook := pkg#"close hook";
