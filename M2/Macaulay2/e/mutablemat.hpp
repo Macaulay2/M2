@@ -25,9 +25,9 @@ protected:
   MutableMatrix() : R(0), nrows(0), ncols(0) {}
   MutableMatrix(const Ring *RR, int r, int c) : R(R), nrows(r), ncols(c) {}
 
-  bool errorColumnBound(int c) const; // Sets an error if false is returned.
+  bool error_column_bound(int c) const; // Sets an error if false is returned.
 
-  bool errorRowBound(int r) const; // Sets an error if false is returned.
+  bool error_row_bound(int r) const; // Sets an error if false is returned.
 public:
   const Ring * get_ring() const { return R; }
   int n_rows() const { return nrows; }
@@ -80,10 +80,6 @@ public:
   virtual bool get_entry(int r, int c, ring_elem &result) const = 0;
   // Returns false if (r,c) is out of range.
 
-  virtual bool get_nonzero_entry(int r, int c, ring_elem &result) const = 0;
-  // Returns false if (r,c) entry is either zero or out of range.
-  // Otherwise, returns true, and sets result to be the matrix entry at (r,c)
-
   virtual bool set_entry(int r, int c, const ring_elem a) = 0;
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
@@ -105,7 +101,8 @@ public:
   virtual bool column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true) = 0;
   /* column(i) <- column(i) + r * column(j) */
 
-  virtual ring_elem dot_product(int i, int j, ring_elem &result) const = 0;
+  virtual bool dot_product(int i, int j, ring_elem &result) const = 0;
+  /* dot product of columns i and j */
 
   ///////////////////////////////
   // Matrix operations //////////
@@ -146,6 +143,26 @@ public:
   virtual MutableMatrix * submatrix(const M2_arrayint cols) const = 0;
 };
 
+inline bool MutableMatrix::error_column_bound(int c) const
+{
+  if (c < 0 || c >= ncols)
+    {
+      ERROR("column out of range");
+      return true;
+    }
+  return false;
+}
+
+inline bool MutableMatrix::error_row_bound(int r) const
+{
+  if (r < 0 || r >= nrows)
+    {
+      ERROR("row out of range");
+      return true;
+    }
+  return false;
+}
+
 class SparseMutableMatrix : public MutableMatrix
 {
 public:
@@ -158,18 +175,6 @@ class DenseMutableMatrix : public MutableMatrix
 {
 public:
   virtual DenseMutableMatrix * cast_to_DenseMutableMatrix() { return this; }
-};
-
-class DenseMutableMatrixRing : public DenseMutableMatrix
-{
-  ring_elem *array_; // array has length nrows*ncols
-                     // columns stored one after another
-
-  void initialize(int nrows, int ncols, ring_elem *array);
-public:
-  static DenseMutableMatrixRing *zero_matrix(const Ring *R, int nrows, int ncols);
-
-  virtual DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() { return this; }
 };
 
 class DenseMutableMatrixRR : public DenseMutableMatrix
