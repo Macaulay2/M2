@@ -74,26 +74,39 @@ isHomogeneous PolynomialRing := R -> (
      k := coefficientRing R;
      isField k or isHomogeneous k)
 
-standardForm = method()
 standardForm RingElement := (f) -> (
-     RM := ring f;
-     if not isPolynomialRing RM then error "expected a polynomial";
-     -- was: convert(RM.standardForm, sendgg(ggPush f, ggtonet))
-     c := coefficients f;
-     new HashTable from apply(
-	  first entries c#0 / leadMonomial / standardForm,
-	  first entries lift(c#1, coefficientRing RM),
-	  identity))
+     R := ring f;
+     k := coefficientRing R;
+     (cc,mm) := rawPairs raw f;
+     new HashTable from toList apply(cc, mm, (c,m) -> (standardForm m, new k from c)))
+
+-- this way turns out to be much slower by a factor of 10
+-- standardForm RingElement := (f) -> (
+--      R := ring f;
+--      k := coefficientRing R;
+--      (mm,cc) := coefficients f;
+--      new HashTable from apply(
+-- 	  flatten entries mm / leadMonomial / raw / standardForm,
+-- 	  flatten entries lift(cc, k),
+-- 	  identity))
 
 listForm = method()
 listForm RingElement := (f) -> (
-     RM := ring f;
-     -- if not isPolynomialRing RM then error "expected a polynomial";
-     c := coefficients f;
-     apply(
-	  first entries c#0 / leadMonomial / exponents,
-	  first entries lift(c#1, coefficientRing RM),
-	  identity))
+     R := ring f;
+     n := numgens R;
+     k := coefficientRing R;
+     (cc,mm) := rawPairs raw f;
+     toList apply(cc, mm, (c,m) -> (exponents(n,m), new k from c)))
+
+-- this way turns out to be much slower by a factor of 10
+-- listForm RingElement := (f) -> (
+--      R := ring f;
+--      k := coefficientRing R;
+--      (mm,cc) := coefficients f;
+--      reverse apply(
+-- 	  flatten entries mm / leadMonomial / exponents,
+-- 	  flatten entries lift(cc, k),
+-- 	  identity))
 
 lcm2 := (x,y) -> x*y//gcd(x,y)
 lcm := args -> (

@@ -96,14 +96,13 @@ generators GeneralOrderedMonoid := M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
 degreesMonoid GeneralOrderedMonoid := Monoid => M -> degreesMonoid degreeLength M
 
-standardForm(MonoidElement) := (m) -> (
-     M := class m;
-     somethingElse())
-     
+standardForm(MonoidElement) := (m) -> new HashTable from rawSparseListFormMonomial raw m
 exponents(MonoidElement) :=
 listForm(MonoidElement) := (m) -> (
-     M := class m;
-     convert(M.listForm, sendgg(ggPush m, ggtonet)))
+     x := numgens class m : 0;
+     x = new MutableList from x;
+     scan(rawSparseListFormMonomial raw m, (i,e) -> x#i = e);
+     toList x)
 
 MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
 

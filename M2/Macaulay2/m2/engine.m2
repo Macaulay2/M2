@@ -15,6 +15,7 @@ RawMonomial == RawMonomial := (x,y) -> x === y
 RawMonomial : RawMonomial := (x,y) -> rawColon(x,y)
 ZZ == RawMonomial := (i,x) -> x == i
 
+standardForm RawMonomial := m -> new HashTable from toList rawSparseListFormMonomial m
 expression RawMonomial := x -> (
      v := rawSparseListFormMonomial x;
      if #v === 0 then expression 1
