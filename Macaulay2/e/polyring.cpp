@@ -287,17 +287,13 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
-  if (K_ == Rg)
+  const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
+  if (logicalK_ == Rg || Rg1 != 0 && Rg1->getAmbientRing() == logicalK_)
     {
-      Nterm *g = f;
-      if (g == NULL)
-	{
-	  result = K_->from_int(0);
-	  return true;
-	}
-      if (g->next != 0) return false;
-      if (!M_->is_one(g->monom)) return false;
-      result = K_->copy(g->coeff);
+      const int *lead = lead_logical_monomial(f);
+      if (!logicalM_->is_one(lead))
+	return false;
+      result = lead_logical_coeff(f);
       return true;
     }
   return false;

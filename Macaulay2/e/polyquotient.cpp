@@ -209,11 +209,10 @@ bool PolyRingQuotient::is_unit(ring_elem) const
 bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &result) const
 // f is an element of 'this'.  Rg is the desired ring.
 {
-#warning "lift and promote of quotient poly rings require ambient ring only..."
-  if (Rg == R_)
+  const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
+  if (Rg == R_ || (Rg1 != 0 && Rg1->getAmbientRing() == R_))
     {
-#warning "do we really need to copy f here?"
-      result = copy(f);
+      result = f;
       return true;
     }
   return R_->PolyRing::lift(Rg,f,result);
