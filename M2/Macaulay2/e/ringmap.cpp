@@ -27,7 +27,7 @@ RingMap::RingMap(const Matrix *m)
       _elem[i].coeff_is_one = true;
       _elem[i].monom_is_one = true;
       _elem[i].bigelem_is_one = true;
-      _elem[i].coeff = (Nterm *) NULL;
+      _elem[i].coeff = ZERO_RINGELEM;
       _elem[i].monom = NULL;
 
       ring_elem f = m->elem(0,i);  // This does a copy.

@@ -69,7 +69,7 @@ ring_elem SkewPolynomialRing::power(const ring_elem f, mpz_t n) const
   else 
     {
       ERROR("exponent too large");
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
 }
 

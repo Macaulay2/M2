@@ -15,7 +15,7 @@
 
 gbvector * GBRing::new_raw_term()
 {
-  gbvector * result = (gbvector *) GC_MALLOC(gbvector_size);
+  gbvector * result = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
   return result;
 }
 
@@ -266,8 +266,8 @@ void GBRing::gbvector_remove_term(gbvector *f)
 {
   // It is not clear whether we should try to free elements of K
   f->next = 0;
-  f->coeff = (Nterm*)0;
-  GC_FREE((char *)f);
+  f->coeff = ZERO_RINGELEM;
+  GC_FREE(reinterpret_cast<char *>(f));
 }
 
 void GBRing::gbvector_remove(gbvector *f)
@@ -284,7 +284,7 @@ void GBRing::gbvector_remove(gbvector *f)
 gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   // Returns coeff*e_sub_i in F, the monomial is set to 1.
 {
-  gbvector *v = (gbvector *) GC_MALLOC(gbvector_size);
+  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
   v->coeff = coeff;
   v->comp = comp;
   v->next = 0;
@@ -297,7 +297,7 @@ gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
 
 gbvector * GBRing::gbvector_copy_term(const gbvector *t)
 {
-  gbvector *v = (gbvector *) GC_MALLOC(gbvector_size);
+  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
   v->next = 0;
   v->coeff = t->coeff;
   v->comp = t->comp;
@@ -972,7 +972,7 @@ void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
   for ( ; f != 0; f=f->next)
     {
       mpz_gcd(content,content,MPZ_VAL(f->coeff));
-      if (mpz_cmp_si(content,1) == 0)
+      if (mask_mpz_cmp_si(content,1) == 0)
 	return;
     }
 }  
@@ -1009,7 +1009,7 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
   lower_content_ZZ(gsyz, content);
   
   mpz_abs(content,content);
-  if (mpz_cmp_si(content,1) == 0) 
+  if (mask_mpz_cmp_si(content,1) == 0) 
     {
       mpz_clear(content);
 

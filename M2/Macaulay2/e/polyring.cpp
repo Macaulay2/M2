@@ -16,6 +16,8 @@
 #include "vector.hpp"
 #include "../d/M2mem.h"
 
+#include "QQ.hpp"
+
 #define POLY(q) ((q).poly_val)
 
 PolynomialRing::~PolynomialRing()
@@ -85,7 +87,7 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
     //    skew poly ring (has flattened ring)
     //    Weyl algebra (has flattened ring)
     //    quotient ring  (has flattened ring)
-    const Ring *Q = (const Ring *) globalQQ;
+    const Ring *Q = globalQQ;
     if (K_ == Q) return PolynomialRing::create(globalZZ,Nmonoms());
     
     const PolynomialRing *R1;
@@ -233,7 +235,7 @@ void PolynomialRing::text_out(buffer &o) const
 
 Nterm *PolynomialRing::new_term() const
 {
-  Nterm *result = (Nterm *)getmem(_poly_size);
+  Nterm *result = GETMEM(Nterm *, _poly_size);
   result->next = NULL;
   result->coeff = 0;  // This value is never used, one hopes...
   // In fact, it gets used in the line below:       K->remove(tmp->coeff);
@@ -320,7 +322,7 @@ ring_elem PolynomialRing::from_int(int n) const
   ring_elem a = K_->from_int(n);
   if (K_->is_zero(a)) 
     {
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
   Nterm *result = new_term();
   result->coeff = a;
@@ -333,7 +335,7 @@ ring_elem PolynomialRing::from_int(mpz_t n) const
   ring_elem a = K_->from_int(n);
   if (K_->is_zero(a)) 
     {
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
   Nterm *result = new_term();
   result->coeff = a;
@@ -346,7 +348,7 @@ ring_elem PolynomialRing::from_double(double n) const
   ring_elem a = K_->from_double(n);
   if (K_->is_zero(a)) 
     {
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
   Nterm *result = new_term();
   result->coeff = a;
@@ -358,7 +360,7 @@ ring_elem PolynomialRing::from_double(double n) const
 ring_elem PolynomialRing::var(int v, int n) const
 {
   if (_is_skew && v >= 0 && v < _nvars && n > 1 && _skew.is_skew_var(v))
-    return (Nterm *)NULL;
+    return ZERO_RINGELEM;
 
   for (int i=0; i<_nvars; i++) _EXP1[i] = 0;
   if (v >= 0 && v < _nvars) _EXP1[v] = n;
@@ -663,7 +665,7 @@ void PolynomialRing::internal_add_to(ring_elem &ff, ring_elem &gg) const
 {
   Nterm *f = ff;
   Nterm *g = gg;
-  gg = (Nterm *)NULL;
+  gg = ZERO_RINGELEM;
   if (g == NULL) return;
   if (f == NULL) { ff = g; return; }
   Nterm head;
@@ -924,7 +926,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, mpz_t n) const
   bool isinverted = false;
 
   if (mpz_sgn(n) == 0) return from_int(1);
-  if (is_zero(f0)) return (Nterm*)NULL;
+  if (is_zero(f0)) return ZERO_RINGELEM;
 
   if (mpz_sgn(n) > 0)
     ff = f0;
@@ -953,7 +955,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, mpz_t n) const
       else 
 	{
 	  ERROR("exponent too large");
-	  result = (Nterm *)NULL;
+	  result = ZERO_RINGELEM;
 	}
     }
   else
@@ -985,7 +987,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, int n) const
   ring_elem coef1, coef2, coef3;
 
   Nterm *lead = ff;
-  if (lead == NULL) return (Nterm *)NULL;
+  if (lead == NULL) return ZERO_RINGELEM;
   if (_base_ring != NULL)
       return power2(ff,n);
 
@@ -1002,7 +1004,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, int n) const
   //  if (_base_ring != NULL) normal_form(t);  NOT NEEDED
   result = t;
 
-  if (rest == (Nterm *)NULL) return result;
+  if (POLY(rest) == 0) return result;
   int *m = ma.alloc(M_->monomial_size());
   M_->one(m);
 
@@ -1039,7 +1041,7 @@ ring_elem PolynomialRing::invert(const ring_elem f) const
   if (is_zero(f))
     {
       ERROR("cannot divide by zero");
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
   if (ft->next == NULL)
     if (M_->is_one(ft->monom))
@@ -1075,7 +1077,7 @@ ring_elem PolynomialRing::invert(const ring_elem f) const
 #endif
     {
       ERROR("division is not defined in this ring");
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
 }
 
@@ -1212,7 +1214,7 @@ ring_elem PolynomialRing::gcd(const ring_elem ff, const ring_elem gg) const
   if (_nvars != 1)
     {
       ERROR("multivariate gcd not yet implemented");
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
   ring_elem f = copy(ff);
   ring_elem g = copy(gg);
@@ -1234,7 +1236,7 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
   if (!has_gcd())
     {
       ERROR("cannot use gcd_extended in this ring");
-      return (Nterm *) NULL;
+      return ZERO_RINGELEM;
     }
   u = from_int(1);
   ring_elem result = copy(f);
@@ -1244,7 +1246,7 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
       v = from_int(0);
       return result;
     }
-  ring_elem v1 = (Nterm *)NULL;
+  ring_elem v1 = ZERO_RINGELEM;
   ring_elem v3 = copy(g);
   ring_elem t1, t3;
   ring_elem temp1, temp2, temp3;
@@ -1948,7 +1950,7 @@ Nterm * PolynomialRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm
 
 ring_elem PolynomialRing::term(const ring_elem a, const int *m) const
 {
-  if (K_->is_zero(a)) return (Nterm *)NULL;
+  if (K_->is_zero(a)) return ZERO_RINGELEM;
   Nterm *t = new_term();
   t->coeff = K_->copy(a);
   M_->copy(m, t->monom);

@@ -335,6 +335,8 @@ public:
 
 };
 
+#define ZERO_RINGELEM (ring_elem(reinterpret_cast<Nterm *>(0)))
+
 #include "ZZ.hpp"
 extern ZZ *globalZZ;
 extern QQ *globalQQ;

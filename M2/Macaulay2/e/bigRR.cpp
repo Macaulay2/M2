@@ -51,7 +51,7 @@ void bigRR::text_out(buffer &o) const
 
 mpf_ptr bigRR::new_elem() const
 {
-  mpf_ptr result = (mpf_ptr) getmem(_elem_size);
+  mpf_ptr result = reinterpret_cast<mpf_ptr>(getmem(_elem_size));
   mpf_init(result);
   return result;
 }
@@ -98,7 +98,7 @@ void bigRR::elem_text_out(buffer &o, const ring_elem ap) const
 void bigRR::set_epsilon(mpf_ptr epsilon)
 {
   if (_epsilon == NULL) {
-    _epsilon = (mpf_ptr) getmem(sizeof(mpf_t));
+    _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
     mpf_init(_epsilon);
   }  
   mpf_set(_epsilon, epsilon);
@@ -106,7 +106,7 @@ void bigRR::set_epsilon(mpf_ptr epsilon)
 
 mpf_ptr bigRR::get_epsilon()
 {
-  mpf_ptr epsilon = (mpf_ptr) getmem(sizeof(mpf_t));
+  mpf_ptr epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
   mpf_init(epsilon);
   mpf_set(epsilon, _epsilon);
   return epsilon;

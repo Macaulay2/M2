@@ -20,7 +20,7 @@ bool bigCC::initialize_bigCC()
   _elem_size = sizeof(M2_BigComplex_struct);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {
-    _epsilon = (mpf_ptr) getmem(sizeof(mpf_t));
+    _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
     mpf_init(_epsilon);
   }
 
@@ -45,14 +45,14 @@ void bigCC::text_out(buffer &o) const
 
 mpf_ptr bigCC::new_mpf() const
 {
-  mpf_ptr result = (mpf_ptr) getmem(_elem_size);
+  mpf_ptr result = reinterpret_cast<mpf_ptr>(getmem(_elem_size));
   mpf_init(result);
   return result;
 }
 
 M2_BigComplex bigCC::new_elem() const
 {
-  M2_BigComplex result = (M2_BigComplex) getmem(_elem_size);
+  M2_BigComplex result = reinterpret_cast<M2_BigComplex>(getmem(_elem_size));
   mpf_init(&result->re);
   mpf_init(&result->im);
   return result;
@@ -110,7 +110,7 @@ void bigCC::elem_text_out(buffer &o, const ring_elem ap) const
 void bigCC::set_epsilon(mpf_ptr epsilon)
 {
   if (_epsilon == NULL) {
-    _epsilon = (mpf_ptr) getmem(sizeof(mpf_t));
+    _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
     mpf_init(_epsilon);
   }
   mpf_set(_epsilon, epsilon);
@@ -118,7 +118,7 @@ void bigCC::set_epsilon(mpf_ptr epsilon)
 
 mpf_ptr bigCC::get_epsilon()
 {
-  mpf_ptr epsilon = (mpf_ptr) getmem(sizeof(mpf_t));
+  mpf_ptr epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
   mpf_init(epsilon);
   mpf_set(epsilon, _epsilon);
   return epsilon;

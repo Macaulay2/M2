@@ -144,7 +144,7 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
       ERROR("expected free modules over the same ring");
       return 0;
     }
-  if (R->degree_monoid()->n_vars() != (int)deg->len)
+  if (R->degree_monoid()->n_vars() != static_cast<int>(deg->len))
     {
       ERROR("expected degree of matrix to have %d entries", 
 	    R->degree_monoid()->n_vars());
@@ -416,6 +416,22 @@ bool Matrix::get_nonzero_entry(int r, int c, ring_elem &result) const
   return get_ring()->get_entry(_entries[c],r,result);
 }
 
+void Matrix::append_column(vec v, const int *d)
+{
+  if (is_immutable()) return;
+  _cols->append(d);
+  _entries.append(v);
+}
+
+void Matrix::append_column(vec v)
+{
+  if (is_immutable()) return;
+  int *d = degree_monoid()->make_one();
+  if (! rows()->is_zero(v)) rows()->degree(v, d);
+  append_column(v,d);
+  degree_monoid()->remove(d);
+}
+
 bool Matrix::set_entry(int r, int c, const ring_elem a)
   // Returns false if (r,c) is out of range.  It is assumed that the ring of
   // 'a' is the same as the ring of this.
@@ -588,6 +604,7 @@ ring_elem Matrix::dot_product(int i, int j, ring_elem &result) const
     result =  get_ring()->zero();
   else
     result = get_ring()->dot_product(_entries[i], _entries[j]);
+  return result;
 }
 
 
@@ -1796,7 +1813,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
   for (int i=0; i<nvars; i++) exp[i] = 0;
   for (int i=0; monoms[i] != 0; i += 2)
     {
-      const int * exp1 = (const int *) monoms[i];
+      const int * exp1 = reinterpret_cast<const int *>(monoms[i]);
       for (unsigned int j=0; j<vars->len; j++)
 	exp[vars->array[j]] = exp1[j];
       M->from_expvector(exp, mon);

@@ -32,14 +32,14 @@ void Ring::initialize_ring(int P0,
   else
     _HRing = 0;
 
-  _zero_divisor = (Nterm*)0;
+  _zero_divisor = ZERO_RINGELEM;
   _isfield = false;
   _is_ZZ_quotient = false;
-  _ZZ_quotient_value = (Nterm*)0;
+  _ZZ_quotient_value = ZERO_RINGELEM;
 
-  zeroV = (Nterm*)0;
-  oneV = (Nterm*)0;
-  minus_oneV = (Nterm*)0;
+  zeroV = ZERO_RINGELEM;
+  oneV = ZERO_RINGELEM;
+  minus_oneV = ZERO_RINGELEM;
 }
 
 Ring::~Ring()

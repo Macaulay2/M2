@@ -16,6 +16,13 @@ void factory_setup() {
 #endif
 }
 
+#ifdef FACTORY
+#define Matrix MaTrIx
+#include <factor.h>		// from Messollen's libfac
+#undef Matrix
+#include <templates/ftmpl_list.cc>
+#endif
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

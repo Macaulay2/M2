@@ -45,7 +45,7 @@ void ZZ::text_out(buffer &o) const
 
 mpz_ptr ZZ::new_elem() const
 {
-  mpz_ptr result = (mpz_ptr) getmem(_elem_size);
+  mpz_ptr result = reinterpret_cast<mpz_ptr>(getmem(_elem_size));
   mpz_init(result);
   return result;
 }
@@ -95,8 +95,8 @@ void ZZ::elem_text_out(buffer &o, const ring_elem ap) const
   char s[1000];
   char *str;
 
-  bool is_neg = (mpz_cmp_si(a, 0) == -1);
-  bool is_one = (mpz_cmp_si(a, 1) == 0 || mpz_cmp_si(a, -1) == 0);
+  bool is_neg = (mask_mpz_cmp_si(a, 0) == -1);
+  bool is_one = (mask_mpz_cmp_si(a, 1) == 0 || mask_mpz_cmp_si(a, -1) == 0);
 
   int size = mpz_sizeinbase(a, 10) + 2;
 
@@ -150,8 +150,8 @@ bool ZZ::lift(const Ring *, const ring_elem, ring_elem &) const
 bool ZZ::is_unit(const ring_elem f) const
 {
   mpz_ptr a = MPZ_VAL(f);
-  return (mpz_cmp_si(a, 1)==0 ||
-	  mpz_cmp_si(a, -1)==0);
+  return (mask_mpz_cmp_si(a, 1)==0 ||
+	  mask_mpz_cmp_si(a, -1)==0);
 }
 
 bool ZZ::is_zero(const ring_elem f) const
@@ -407,7 +407,7 @@ void ZZ::syzygy(const ring_elem a, const ring_elem b,
       y = ZZ::negate(a);
       return;
     }
-  if (mpz_cmp_si(bb,-1) == 0)
+  if (mask_mpz_cmp_si(bb,-1) == 0)
     {
       x = ZZ::from_int(1);
       y = ZZ::copy(a);

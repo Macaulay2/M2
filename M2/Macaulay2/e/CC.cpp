@@ -11,11 +11,17 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
+#if 0
 #define CCELEM_VAL(f) (M2_CC ((f).poly_val))
+#define CC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#endif
+
+#define CCELEM_VAL(f) (reinterpret_cast<M2_CC>((f).poly_val))
+#define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
 #define CC_IM(f) ((CCELEM_VAL(f))->im)
 #define CC_RE(f) ((CCELEM_VAL(f))->re)
 #define CC_NORM(f) (sqrt(CC_RE(f)*CC_RE(f) + CC_IM(f)*CC_IM(f)))
-#define CC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 
 CC::~CC()
 {
@@ -49,14 +55,14 @@ void CC::text_out(buffer &o) const
 
 M2_CC CC::new_elem() const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = 0.0;
   result->im = 0.0;
   return result;
 }
 ring_elem CC::from_double(double a) const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = a;
   result->im = 0.0;
   return CC_RINGELEM(result);
@@ -68,7 +74,7 @@ double CC::to_double(ring_elem a) const
 
 ring_elem CC::from_rational(mpq_ptr r) const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = mpq_get_d(r);
   result->im = 0.0;
   return CC_RINGELEM(result);
@@ -76,7 +82,7 @@ ring_elem CC::from_rational(mpq_ptr r) const
 
 ring_elem CC::from_BigReal(mpf_ptr a) const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = mpf_get_d(a);
   result->im = 0.0;
   return CC_RINGELEM(result);
@@ -84,7 +90,7 @@ ring_elem CC::from_BigReal(mpf_ptr a) const
 
 ring_elem CC::from_complex(M2_CC z) const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = z->re;
   result->im = z->im;
   return CC_RINGELEM(result);
@@ -92,7 +98,7 @@ ring_elem CC::from_complex(M2_CC z) const
 
 ring_elem CC::from_doubles(double a, double b) const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = a;
   result->im = b;
   return CC_RINGELEM(result);
@@ -100,7 +106,7 @@ ring_elem CC::from_doubles(double a, double b) const
 
 ring_elem CC::from_BigComplex(M2_BigComplex z) const
 {
-  M2_CC result = (M2_CC) getmem(sizeof(M2_CC_struct));
+  M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = mpf_get_d(&z->re);
   result->im = mpf_get_d(&z->im);
   return CC_RINGELEM(result);

@@ -96,7 +96,7 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
   set_up0(m, csyz, mchange->n_rows());
 
   Fsyz = mchange->rows();
-#pragma "put back syzygy module!"
+#warning "put back syzygy module!"
   //  syz = const_cast<Matrix *>(msyz);
 
   for (int i=0; i<gb0->n_cols(); i++)
@@ -343,7 +343,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   MonomialIdeal mi(originalR->get_flattened_ring(), elems, rejects);
   while (rejects.remove(b))
     {
-      s_pair *q2 = (s_pair *) b->basis_ptr();
+      s_pair *q2 = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q2);
       deleteitem(b);
     }
@@ -353,7 +353,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   int len = 0;
   for (j = mi.first(); j.valid(); j++)
     {
-      q = (s_pair *) mi[j]->basis_ptr();
+      q = reinterpret_cast<s_pair *>(mi[j]->basis_ptr());
       nextsame->next = q;
       nextsame = q;
       len++;
@@ -933,7 +933,7 @@ Matrix *GBinhom_comp::change_matrix()
 
 Matrix *GBinhom_comp::syz_matrix()
 {
-#pragma "this is not correct: this grabs the vectors, and so can't be called twice"
+#warning "this is not correct: this grabs the vectors, and so can't be called twice"
   return syz.to_matrix();
 }
 

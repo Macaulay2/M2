@@ -10,6 +10,8 @@
 #include "matrixcon.hpp"
 #include "polyring.hpp"
 #include "newdelete.hpp"
+#include "relem.hpp"
+#include "hilb.hpp"
 
 /*************************
  * Initialization ********
@@ -63,12 +65,13 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   if (R->is_weyl_algebra())
     _is_ideal = false;
 
-#if 0
   _use_hilb = false;
   _hilb_new_elems = false;
   _hilb_n_in_degree = 0;
   _n_saved_hilb = 0;
-#endif
+  _hf_orig = 0;
+  _hf_diff = 0;
+  _hilb_matrix = 0;
 
   // set local variables for certain time-critical routines
 
@@ -1142,56 +1145,6 @@ int gbA::find_good_divisor(exponents e,
   return t->_val;
 }
 
-#if 0
-int gbA::find_good_divisor_ZZ(mpz_ptr c,
-			      exponents e,
-			      int x,
-			      int degf, 
-			      int &result_alpha)
-  // Returns an integer w.
-  // if w >=0: gb[w]'s lead term divides [c,e,x].
-  // if w<0: no gb[w] has lead term dividing [c,e,x].
-{
-  int i, alpha, newalpha, ealpha;
-  int n = 0;
-
-  vector<MonomialTable::mon_term *,gc_alloc> divisors;
-  ealpha = degf - R->exponents_weight(e);
-
-  /* First search for ring divisors */
-#if 0
-  /* MES: removed until ringtable is functional */
-  n += ringtable->find_divisors(-1, e, 1, &divisors);
-#endif
-
-  /* Next search for GB divisors */
-  n += lookupZZ->find_divisors(-1, c, e, x, &divisors);
-
-  /***** MES!!!  It is still not clear the best way to choose a divisor here *****/
-  /* Now find the minimal alpha value */
-  if (n == 0) 
-    return -1;
-  MonomialTable::mon_term *t = divisors[0];
-  gbelem *tg = gb[t->_val];
-  alpha = tg->alpha - ealpha;
-  if (alpha <= 0) 
-    alpha = 0;
-  else
-    for (i=1; i<n; i++)
-      {
-	t = divisors[i];
-	tg = gb[t->_val];
-	newalpha = tg->alpha - ealpha;
-	if (newalpha <= 0) {
-	  alpha = 0;
-	  break;
-	} else if (newalpha < alpha) alpha = newalpha;
-      }
-  result_alpha = alpha;
-  return t->_val;
-}
-#endif
-
 void gbA::remainder(POLY &f, int degf, bool use_denom, ring_elem &denom)
 {
   if (over_ZZ())
@@ -1419,6 +1372,27 @@ void gbA::insert(POLY f, int minlevel)
 
   auto_reduce_by(me);
 
+  if (_hilb_matrix)
+    {
+      // _hilb_matrix is non-zero if codim test is set, or _use_hilb is set
+      // Make the element 1 * m * comp, as an element of _hilb_matrix->get_ring().
+      // and append it as the last column of _hilb_matrix.
+
+      ring_elem a = originalR->get_flattened_ring()->term(originalR->Ncoeffs()->one(), g->g.f->monom);
+      _hilb_matrix->append_column(0);
+      _hilb_matrix->set_entry(g->g.f->comp-1,_hilb_matrix->n_cols()-1, a);
+      
+      if (_use_hilb)
+	{
+	  _hilb_new_elems = true;
+	  if (--_hilb_n_in_degree == 0) flush_pairs();
+	}
+      else
+	{
+	  // codim test is set.  Compute the codimension now.
+	}
+    }
+
   if (gbTrace >= 10)
     {
       lookupZZ->showmontable();
@@ -1517,6 +1491,19 @@ void gbA::start_computation()
       /* If we need to move to the next degree, do it. */
       if (S.n_in_degree  == 0)
 	{
+	  if (_hilb_new_elems)
+	    {
+	      // Recompute h, _hf_diff
+	      RingElement *h = hilb_comp::hilbertNumerator(_hilb_matrix);
+	      if (h == 0)
+		{
+		  is_done = COMP_INTERRUPTED;
+		  break;
+		}
+	      _hf_diff = (*h) - (*_hf_orig);
+	      _hilb_new_elems = false;
+	    }
+
 	  int old_degree = _this_degree;
 	  npairs = spair_set_prepare_next_degree(_this_degree); // sets _this_degree
 	  if (old_degree < _this_degree)
@@ -1532,12 +1519,31 @@ void gbA::start_computation()
 	      is_done = COMP_DONE_DEGREE_LIMIT;
 	      break;
 	    }
+
+	  if (_use_hilb)
+	    {
+	      _hilb_n_in_degree = hilb_comp::coeff_of(_hf_diff, _this_degree);
+	      if (_hilb_n_in_degree == 0) flush_pairs();
+	    }
+
+	  if (gbTrace >= 1)
+	    {
+	      buffer o;
+	      o << '{' << _this_degree << '}';
+	      o << '(';
+	      if (_use_hilb) 
+		o << _hilb_n_in_degree << ',';
+	      o << npairs << ')';
+	      emit_wrapped(o.str());
+	    }
+#if 0
 	  if (gbTrace >= 1)
 	    {
 	      char s[100];
 	      sprintf(s, "%sDEGREE %d (npairs %d)\n%s", wrapping_prefix, _this_degree, npairs,wrapping_prefix);
 	      emit(s);
 	    }
+#endif
 	}
 
       s_pair_step();
@@ -1697,6 +1703,19 @@ void gbA::minimalize_gb()
 #endif
 }
 
+/*******************************
+ ** Hilbert function routines **
+ *******************************/
+
+void gbA::flush_pairs()
+{
+  spair *p;
+  while ((p = spair_set_next()) != 0)
+    {
+      _n_saved_hilb++;
+      spair_delete(p);
+    }
+}
 
 /*************************
  ** Top level interface **
@@ -1704,19 +1723,18 @@ void gbA::minimalize_gb()
 
 ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
 {
-#warning: "things to do here"
   // TODO Problems here:
   //  -- check that the ring is correct
   //  -- if the computation has already been started, this will fail
   //     So probably an error should be given, and 0 returned in this case.
-#if 0
+
   _hf_orig = hf;
-  _hf_diff = RingElement::make_raw(hf->get_ring(), (Nterm*)0);
+  _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
   _use_hilb = true;
   _hilb_new_elems = true;
+
+  _hilb_matrix = Matrix::make(_F, 0, 0, true);
   return this;
-#endif
-  return 0;
 }
 
 const MatrixOrNull *gbA::get_gb()

@@ -123,6 +123,18 @@ private:
   int _n_pairs_computed;
   int _n_gens_left;
   int _n_subring;
+
+  // Hilbert function information
+  bool _use_hilb;
+  bool _hilb_new_elems;	// True if any new elements since HF was last computed
+  int _hilb_n_in_degree; // The number of new elements that we expect to find
+			 // in this degree.
+  int _n_saved_hilb;
+  const RingElement *_hf_orig;	// The Hilbert function that we are given at the beginning
+  RingElement *_hf_diff;		// The difference between hf_orig and the computed hilb fcn
+  Matrix *_hilb_matrix; // non-null if Hilbert function is being used or if the codim us
+    // being used as a stop condition.
+
 private:
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   
@@ -179,6 +191,10 @@ private:
   void spairs_reverse(spair *&ps);
 
   /* Sorts the list of spairs 'list' (which has length 'len') */
+
+  /* Hilbert function handling */
+  void flush_pairs(); // Used to flush the rest of the pairs in the current degree.
+  RingElementOrNull *compute_hilbert_function(); // Compute the HF of _hilb_matrix.
 
   /* reduction */
   void auto_reduce_by(int id);

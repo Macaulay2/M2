@@ -40,7 +40,7 @@ void QQ::text_out(buffer &o) const
 
 M2_Rational QQ::new_elem() const
 {
-  M2_Rational result = (M2_Rational) getmem(_elem_size);
+  M2_Rational result = reinterpret_cast<M2_Rational>(getmem(_elem_size));
   mpq_init(result);
   return result;
 }
@@ -71,7 +71,7 @@ void QQ::elem_text_out(buffer &o, const ring_elem ap) const
   char *str;
 
   bool is_neg = (mpq_sgn(a) == -1);
-  bool is_one = (mpq_cmp_si(a, 1, 1) == 0 || mpq_cmp_si(a, -1, 1) == 0);
+  bool is_one = (mask_mpq_cmp_si(a, 1, 1) == 0 || mask_mpq_cmp_si(a, -1, 1) == 0);
 
   int size = mpz_sizeinbase (mpq_numref(a), 10)
     + mpz_sizeinbase (mpq_denref(a), 10) + 3;
@@ -151,7 +151,7 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   if (Rg->is_ZZ())
     {
       M2_Rational h = MPQ_VAL(f);
-      if (mpq_cmp_si(h,1,1) == 0)
+      if (mask_mpq_cmp_si(h,1,1) == 0)
 	{
 	  result = globalZZ->ZZ::from_int(mpq_numref(h));
 	  return true;

@@ -11,9 +11,15 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
+#if 0
 #define RRELEM_VAL(f) (RRelem ((f).poly_val))
 #define RR_VAL(f) ((RRELEM_VAL(f))->val)
 #define RR_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#endif
+
+#define RRELEM_VAL(f) (reinterpret_cast<RRelem>((f).poly_val))
+#define RR_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define RR_VAL(f) ((RRELEM_VAL(f))->val)
 
 RR::~RR()
 {
@@ -48,13 +54,13 @@ void RR::text_out(buffer &o) const
 
 RR::RRelem RR::new_elem() const
 {
-  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
+  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = 0.0;
   return result;
 }
 ring_elem RR::from_double(double a) const
 {
-  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
+  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = a;
   return RR_RINGELEM(result);
 }
@@ -65,13 +71,13 @@ double RR::to_double(ring_elem a)
 
 ring_elem RR::from_rational(mpq_ptr r) const
 {
-  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
+  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = mpq_get_d(r);
   return RR_RINGELEM(result);
 }
 ring_elem RR::from_BigReal(mpf_ptr a) const
 {
-  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
+  RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = mpf_get_d(a);
   return RR_RINGELEM(result);
 }

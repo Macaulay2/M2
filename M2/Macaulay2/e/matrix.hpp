@@ -169,6 +169,13 @@ public:
 
   Matrix *getColumnChangeMatrix();
 
+  void append_column(vec v, const int *d);
+  // If 'this' is mutable, add a new column.  If immutable, do NOTHING.
+
+  void append_column(vec v);
+  // If 'this' is mutable, add a new column.  If immutable, do NOTHING.
+
+
   // The following routines return false if one of the row or columns given
   // is out of range.
 
@@ -295,21 +302,6 @@ public:
   void text_out(buffer &o) const;
 };
 
-#if 0
-inline void Matrix::append(vec v, const int *d)
-{
-  _cols->append(d);
-  _entries.append(v);
-}
-
-inline void Matrix::append(vec v)
-{
-  int *d = degree_monoid()->make_one();
-  if (! rows()->is_zero(v)) rows()->degree(v, d);
-  append(v,d);
-  degree_monoid()->remove(d);
-}
-#endif
 #endif
 
 // Local Variables:

@@ -35,7 +35,7 @@ void Random::set_seed(int32 s)
   if (s == MASK) s = 0;
   seed = s ^ MASK;
 
-  gmp_randseed_ui(_st, (unsigned long int) seed);
+  gmp_randseed_ui(_st, static_cast<unsigned long int>(seed));
 }
 
 void Random::set_max_int(RingElement *a)
@@ -43,7 +43,7 @@ void Random::set_max_int(RingElement *a)
   maxint = a;
   // If maxint is larger than 2^29 (somewhat arbitrary bound, but
   // less than the 2^31-1 by a factor of several...
-  int cmp = mpz_cmp_si(MPZ_VAL(maxint->get_value()), IM/2);
+  int cmp = mask_mpz_cmp_si(MPZ_VAL(maxint->get_value()), IM/2);
   if (cmp <= 0)
     maxint32 = mpz_get_ui(MPZ_VAL(maxint->get_value()));
   else

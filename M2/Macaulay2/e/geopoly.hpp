@@ -103,7 +103,7 @@ inline Nterm * polyheap::remove_lead_term()
       Nterm * tmp = heap[i];
       heap[i] = tmp->next;
       tmp->next = NULL;
-      F->remove((ring_elem &)tmp);
+      F->remove(reinterpret_cast<ring_elem &>(tmp));
 
       if (K->is_zero(heap[lead_so_far]->coeff))
 	{
@@ -111,7 +111,7 @@ inline Nterm * polyheap::remove_lead_term()
 	  tmp = heap[lead_so_far];
 	  heap[lead_so_far] = tmp->next;
 	  tmp->next = NULL;
-	  F->remove((ring_elem &)tmp);
+	  F->remove(reinterpret_cast<ring_elem &>(tmp));
 	  lead_so_far = -1;
 	  i = -1;
 	}

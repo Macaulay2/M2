@@ -27,8 +27,8 @@ MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems, queue<Bag *> &
       int d = varpower::simple_degree(b->monom().raw());
       if (d >= bins.length())
 	for (int i=bins.length(); i<=d; i++)
-	  bins.append((queue<Bag *> *)NULL);
-      if (bins[d] == (queue<Bag *> *)NULL)
+	  bins.append(NULL);
+      if (bins[d] == NULL)
 	bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
@@ -61,8 +61,8 @@ MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems)
       int d = varpower::simple_degree(b->monom().raw());
       if (d >= bins.length())
 	for (int i=bins.length(); i<=d; i++)
-	  bins.append((queue<Bag *> *)NULL);
-      if (bins[d] == (queue<Bag *> *)NULL)
+	  bins.append(NULL);
+      if (bins[d] == NULL)
 	bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
@@ -197,7 +197,7 @@ Nmi_node *MonomialIdeal::next(Nmi_node *p) const
 
 void *MonomialIdeal::next(void *p) const
 {
-  return (void *) next((Nmi_node *) p);
+  return reinterpret_cast<void *>(next(reinterpret_cast<Nmi_node *>(p)));
 }
 
 Nmi_node *MonomialIdeal::prev(Nmi_node *p) const
@@ -215,7 +215,7 @@ Nmi_node *MonomialIdeal::prev(Nmi_node *p) const
 
 void *MonomialIdeal::prev(void *p) const
 {
-  return (void *) prev((Nmi_node *) p);
+  return reinterpret_cast<void *>(prev(reinterpret_cast<Nmi_node *>(p)));
 }
 
 void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
@@ -262,8 +262,7 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
 	  if (i.valid())
 	    {
 	      insert_node
-		= new Nmi_node(insert_var, insert_exp,
-					(Nmi_node *)NULL);
+		= new Nmi_node(insert_var, insert_exp, reinterpret_cast<Nmi_node *>(NULL));
 	      q->insert_to_left(insert_node);
 	      q = insert_node;
 	    }
@@ -282,7 +281,7 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
   if (one_element)
     {
       // insert a header node and a var/exp = 0/0 leaf
-      top = new Nmi_node(0, 0, (Nmi_node *) NULL);
+      top = new Nmi_node(0, 0, reinterpret_cast<Nmi_node *>(NULL));
       Nmi_node *leaf_node = new Nmi_node(0, 0, b);
       top->left = top->right = leaf_node;
       top->header = leaf_node->header 
@@ -346,7 +345,7 @@ void MonomialIdeal::remove1(Nmi_node *p)
 
 int MonomialIdeal::remove(Bag *&b)
 {
-  Nmi_node *p = (Nmi_node *) next(mi);
+  Nmi_node *p = reinterpret_cast<Nmi_node *>(next(mi));
   if (p == NULL) return 0;
   b = p->baggage();
   remove1(p);

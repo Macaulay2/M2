@@ -255,7 +255,7 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
 				    const int *m) const
 {
   // return c*m*f
-  ring_elem result = (Nterm *)NULL;
+  ring_elem result = ZERO_RINGELEM;
   for (Nterm *t = f; t != NULL; t = t->next)
     {
       ring_elem a = K_->mult(c, t->coeff);

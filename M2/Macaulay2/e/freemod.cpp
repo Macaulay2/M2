@@ -24,7 +24,7 @@ vec FreeModule::new_term() const
 {
   vec result = new vecterm;
   result->next = NULL;
-  result->coeff = (Nterm*)0;
+  result->coeff = ZERO_RINGELEM;
   return result;
 }
 vec FreeModule::copy_term(vec v) const
@@ -602,7 +602,7 @@ FreeModule::sort(const array<vec> &vecs,
   sort_vecs = &vecs;
   sort_degs = NULL;
   if (deg_ascending) {
-    if (degrees->len != (unsigned int)(vecs.length())) {
+    if (degrees->len != static_cast<unsigned int>(vecs.length())) {
 	ERROR("sort: specified degree order, without giving degrees");
 	return 0;
       }
