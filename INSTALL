@@ -47,14 +47,14 @@ depend on some of the earlier ones.
 		the installed files, so change BINOWN and BINGRP to suit you.
 
     library: gmp
-    release: gmp-3.1.1
+    release: gmp-4.0
      author: Torbjorn Granlund <tege@nada.kth.se>
     bugs to: <bug-gmp@prep.ai.mit.edu>
      get at: ftp://ftp.gnu.org/gnu/gmp
     license: gmp/COPYING.LIB
       notes: on Solaris, gmp will use both cc and gcc; don't worry
 
-    library: Singular-factory
+    library: Singular-factory (libcf libcfmem)
     release: factory-1.3b, tar file date 2001/06/25
      author: G-M. Greuel <greuel@mathematik.uni-kl.de>
 	     R. Stobbe <stobbe@mathematik.uni-kl.de>

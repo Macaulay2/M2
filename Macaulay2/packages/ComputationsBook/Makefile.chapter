@@ -14,7 +14,7 @@ test.out.expected.trim : test.out.expected $(srcdir)/../patterns $(srcdir)/patte
 
 test.out : test.m2 ../../../libexec/Macaulay2 \
 		../../../cache/Macaulay2-doc ../../../cache/Macaulay2-made
-	ulimit -v 320000 && \
+	ulimit -v 320000; \
 	time nice -18 ../../../../bin/M2 -x -s -q \
 		"-e path = join({\"$(srcdir)/\",\"$(srcdir)/../../\"},path)" \
 		<$(srcdir)/test.m2 >test.out.tmp && \

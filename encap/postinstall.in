@@ -1,0 +1,23 @@
+#! /bin/sh -x
+
+TMP=/tmp/M2.tmp.$$
+
+cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin
+
+<M2 >$TMP sed "s:^M2HOME=.*:M2HOME=$ENCAP_SOURCE/$ENCAP_PKGNAME/lib/Macaulay2-@PACKAGE_VERSION@:"
+mv $TMP M2
+chmod 0755 M2
+
+<M2-help >$TMP sed "s:^M2HOME=.*:M2HOME=$ENCAP_SOURCE/$ENCAP_PKGNAME/lib/Macaulay2-@PACKAGE_VERSION@:"
+mv $TMP M2-help
+chmod 0755 M2-help
+
+cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/lib/Macaulay2-@PACKAGE_VERSION@
+
+./setup
+
+cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/lib/Macaulay2-@PACKAGE_VERSION@/emacs
+
+<M2-init.el >$TMP sed \
+    "s:^(defvar M2HOME .*:(defvar M2HOME \"$ENCAP_SOURCE/$ENCAP_PKGNAME/lib/Macaulay2-@PACKAGE_VERSION@\"):"
+mv $TMP M2-init.el

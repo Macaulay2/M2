@@ -127,6 +127,12 @@ STRIPCMD := strip
 endif
 endif
 
+ifeq "$(OS)" "CYGWIN_NT-5.0"
+EXE := .exe
+else
+EXE :=
+endif
+
 ifeq "$(MEMDEBUG)" "yes"
 DEBUGFLAGS += -DMEM_DEBUG
 endif

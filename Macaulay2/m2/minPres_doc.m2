@@ -1,3 +1,5 @@
+-- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
+
 document{(minPres,ring),
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => {
@@ -18,8 +20,15 @@ document{(minPres,ring),
      the map from ", TT "R = S/I", " to ", TT "Q = S'/J", ".  The map is stored 
      as ", TT "R.minPresMap", " , where ", TT "I", " is the input
      ideal.  Similarly the inverse of this map is stored 
-     as ", TT "R.minPresMapInv", "."
+     as ", TT "R.minPresMapInv", ".",
+     EXAMPLE {
+	  "C = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
+	  "minPres(C)",
+	  "C.minPresMap",
+	  "C.minPresMapInv"
+	  }
      }
+
 
 document{ minPres => VarName,
      Headline=> "Rename the variables in the ring given so that the minimal 
@@ -48,7 +57,14 @@ document{(minPresIdeal,ideal),
      ideal.  Similarly the inverse of this map is stored 
      as ", TT "I.cache.minPresMapInv", ".  There are times when it is 
      advantageous to have the input be an ideal as opposed to the 
-     quotient ring.", SEEALSO {"minPres"} 
+     quotient ring.", SEEALSO {"minPres"},
+     EXAMPLE {
+	  "C = ZZ/101[x,y,z,u,w];",
+	  "I = ideal(x-x^2-y,z+x*y,w^2-u^2);",
+	  "minPresIdeal I",
+	  "I.cache.minPresMap",
+	  "I.cache.minPresMapInv"
+	  }
      }
 
 document{ minPresIdeal => VarName,

@@ -1,4 +1,0 @@
-#! /bin/sh -x
-cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/lib/Macaulay2-*
-./setup
-

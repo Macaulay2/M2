@@ -28,8 +28,8 @@ distribution :
 
 ################################# tar manufactured files
 manufactured.tgz : Makefile
-	make -C Macaulay2/d all-c-files
-	make -C Macaulay2/tutorial
+	$(MAKE) -C Macaulay2/d all-c-files
+	$(MAKE) -C Macaulay2/tutorial
 	tar cfz $@ \
 		Macaulay2/e/geovec.hpp \
 		Macaulay2/e/geores.hpp \

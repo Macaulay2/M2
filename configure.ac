@@ -40,10 +40,12 @@ test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
 
-echo $ECHO_N "checking for GNU make... " >&6
-if make -n --version nothing | grep GNU >/dev/null 2>&1
-then echo "found" >&6
-else echo "`basename $0`: make: GNU make is required" >&2
+AC_CHECK_PROGS(MAKE,gmake make)
+
+echo $ECHO_N "checking whether $MAKE is GNU make... " >&6
+if "$MAKE" -n --version nothing | grep GNU >/dev/null 2>&1
+then echo "yes" >&6
+else echo "`basename $0`: $MAKE: GNU make is required" >&2
      exit 1
 fi
 
@@ -165,6 +167,30 @@ AC_ARG_ENABLE(gc_for_new,
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))
 AC_CHECK_FUNC(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing))
+
+OLIBS="$LIBS"
+LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
+AC_TRY_LINK(
+    [#include <gc.h>],
+    [GC_malloc(1);],
+    ,AC_MSG_WARN(missing library: libgc))
+AC_TRY_LINK(
+    [#include <gmp.h>],
+    [__gmp_version;],
+    ,AC_MSG_WARN(missing library: libgmp))
+AC_TRY_LINK([#include <gdbm.h>],
+    [gdbm_close(0);],
+    ,AC_MSG_WARN(missing library: libgdbm))
+AC_TRY_LINK(
+    [#include <factoryconf.h>],
+    [FACTORYVERSION;],
+    ,AC_MSG_WARN(missing library: libcf))
+AC_TRY_LINK(
+    [extern const char * libfac_version;],
+    [libfac_version;],
+    ,AC_MSG_WARN(missing library: libfac))
+LIBS="$OLIBS"
+
 # M2_SHOW_CONFDEFS()
 M2_IS_THERE(sys_errlist)
 M2_IS_THERE(herror)
@@ -174,7 +200,6 @@ M2_IS_DECLARED(char **,h_errlist)
 AC_CONFIG_HEADER(include/config.h)
 CONFIGURED_FILES="M2_CONFIGURED_FILES()"
 AC_SUBST(CONFIGURED_FILES)
-dnl AC_CONFIG_SUBDIRS(gmp factory libfac)
 AC_OUTPUT(M2_CONFIGURED_FILES())
 
 dnl -- Local Variables:

@@ -22,7 +22,7 @@ f << "  " << format ///A list of the symbols available in Macaulay 2, for use wi
 f << "  )" << endl
 
 f << ///
-(defvar M2-mode-font-lock-keywords '(
+(defvar M2-mode-font-lock-keywords `(
 ///
 
 
@@ -36,7 +36,8 @@ add := (face,words) -> (
 add( "font-lock-keyword-face", toString \ select(symbols, isKeyword && isAlpha))
 add( "font-lock-type-face", toString \ select(symbols, is Type))
 add( "font-lock-function-name-face", toString \ select(symbols, is Function))
-add( "font-lock-constant-face", toString \ select(symbols, sym -> (
+add( ",(if (boundp 'font-lock-constant-face) 'font-lock-constant-face 'font-lock-function-name-face)",
+     toString \ select(symbols, sym -> (
 	       not (is Function) sym
 	       and not (is Type) sym
 	       and (sym === symbol null or value sym =!= null)
@@ -44,10 +45,13 @@ add( "font-lock-constant-face", toString \ select(symbols, sym -> (
 	       and isAlpha sym)))
 
 f << "    (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl
+f << "    (" << format "\"[^\"]*\"" << " . (0 font-lock-string-face t))" << endl
+
 f << "   )" << endl
 f << ///  )/// << endl
 
-f << "(font-lock-add-keywords 'M2-mode M2-mode-font-lock-keywords 'set)" << endl
+f << "(if (fboundp 'font-lock-add-keywords)
+    (font-lock-add-keywords 'M2-mode M2-mode-font-lock-keywords 'set))" << endl
 
 f << "(provide 'M2-symbols)" << endl
 

@@ -9,6 +9,7 @@ Macaulay2/d/Makefile
 Macaulay2/dumpdata/Makefile
 Macaulay2/e/Makefile
 Macaulay2/emacs/Makefile
+Macaulay2/emacs/M2-init.el
 Macaulay2/html/Makefile
 Macaulay2/packages/Makefile
 Macaulay2/packages/ComputationsBook/Makefile
@@ -17,4 +18,6 @@ Macaulay2/tutorial/Makefile
 Macaulay2/setup
 Macaulay2/util/Makefile
 bin/Makefile
+bin/M2-help
 encap/Makefile
+encap/postinstall

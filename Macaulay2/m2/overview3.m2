@@ -47,8 +47,8 @@ document { "Copyright and license",
      PARA,
      "Various free libraries have been compiled into Macaulay 2.",
      SHIELD MENU {
-	  TO "Factory library",
-	  TO "Factorization and characteristic sets library",
+	  TO "Singular-Factory",
+	  TO "Singular-Libfac",
 	  TO "GNU MP",
 	  TO "GC garbage collector"
 	  }
@@ -64,7 +64,7 @@ document { "GC garbage collector",
 	  }
      }
 
-document { "Factory library",
+document { "Singular-Factory",
      "With the kind permission of the authors of Singular, 
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
@@ -75,7 +75,7 @@ document { "Factory library",
      SEEALSO {"factor", "gcd"}
      }
 
-document { "Factorization and characteristic sets library",
+document { "Singular-Libfac",
      "With the kind permission of the author, Michael Messollen, Macaulay 2
      incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
      a free library of routines which provides factorization of multivariate
@@ -159,8 +159,8 @@ document { "operators",
 document { "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
-     incorporation of their ", TO "Factory library", ", Michael Messollen for
-     the incorporation of his ", TO "Factorization and characteristic sets library", ",
+     incorporation of their library ", TO "Singular-Factory", ", Michael Messollen for
+     the incorporation of his library ", TO "Singular-Libfac", ",
      and David Eisenbud, Wolfram Decker and Sorin Popescu for
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to David Bayer, who, with Michael Stillman,
@@ -199,19 +199,15 @@ document { "Reading the Documentation",
      an initial user, and might be a good place to look first.",
      PARA,
      "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT "Macaulay2/html", " contains the documentation in html
-     form, suitable for viewing with a web browser such as lynx or Netscape,
-     and this is the best way to view it.  Each documentation page has a text
+     The directory ", TT ("Macaulay2-" | version#"VERSION" | "/html"), " 
+     contains the documentation in html form, suitable for viewing with a web 
+     browser such as lynx or Netscape, and this is the best way to view 
+     it.  The command ", TT "M2-help", " will start your favorite web browser
+     and point direct it to the web pages there.  Each documentation page has a text
      box for entering a search string.  This will work if you view the documentation
      at our web site; it will work on your local machine only if you or your
      system administrator has already installed ", TT "htdig", ", which is a 
      free indexing package available at ", TT "http://www.htdig.org/", ".",
-     PARA,
-     "The directory ", TT "Macaulay2/book", " contains the documentation in
-     TeX form, which can be printed with ", TT "dvips", " or
-     viewed on your screen with a dvi previewer such as ", TT "xdvi", ".  There 
-     is also a searchable hyperlinked ", TT "pdf", " version of the documentation 
-     which can be viewed with Adobe's Acrobat Reader or with ", TT "xpdf", ".",
      PARA,
      "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."

@@ -2,7 +2,16 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
-New in 0.9.0:
+New in 0.9.1:
+
+Updated versions of files from Amelia Taylor : normal.m2 and minPres.m2, for
+computing integral closures.
+
+Linking with gmp version 4.0.
+
+-----------------------------------------------------------------------------
+
+New in 0.9:
 
 Compile-time option --enable-shared removed.
 

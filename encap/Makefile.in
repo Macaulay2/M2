@@ -1,6 +1,9 @@
 # @configure_input@
 include ../include/config.Makefile
 VPATH = @srcdir@
+
+install ::
+
 ifeq "$(encap)" "yes"
 
 install :: $(target)/encapinfo
@@ -12,5 +15,10 @@ install :: $(target)/postinstall
 $(target)/postinstall: postinstall
 	$(INSTALL_PROGRAM) $< "$@"
 endif
+
+install :: $(target)/INSTALL
+
+$(target)/INSTALL : INSTALL
+	cp $< $@
 
 endif

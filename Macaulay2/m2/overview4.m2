@@ -66,43 +66,30 @@ name is ", TT "xxx", ", then your home directory ", TT "c:/winnt/profiles/xxx", 
 under NT and ", TT "c:/windows/profiles/xxx", " under Windows 95/98.  In 
 any case, the name of the home directory is abbreviated to a single
 tilde ", TT "~", " under emacs.)  Insert into your initialization
-file the following lines of emacs-lisp code (which can also be found
+file the following line of emacs-lisp code (which can also be found
 in the file ", TT "emacs/emacs-hlp.txt", ", or obtained by running
 ", TT ///help "running Macaulay 2 in emacs"///, " in Macaulay 2).",
 PARA,
-CODE ///(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
-(autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)
-(global-set-key "\^Cm" 'M2) (global-set-key [ f12 ] 'M2)
-(global-set-key "\^Cm" 'M2) (global-set-key [ SunF37 ] 'M2)
-(autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
-(setq load-path (cons "/usr/local/Macaulay2/emacs" load-path))
-(make-variable-buffer-local 'transient-mark-mode)
-(add-hook 'M2-mode-hook '(lambda () (setq transient-mark-mode t)))
-(add-hook 'comint-M2-hook '(lambda () (setq transient-mark-mode t)))
-(defvar M2HOME "/home/dan/src/M2/Macaulay2")///,
+CODE ///(load "/usr/local/Macaulay2-0.9/lib/Macaulay2-0.9/emacs/M2-init.el")///,
 PARA,
-"The first two lines cause emacs to enter a special mode for editing Macaulay 2
-code whenever a file whose name has the form ", TT "*.m2", " is encountered.  
-The next three lines provide a special mode for running Macaulay 2 in an emacs buffer.
-The sixth line tells emacs where to find the emacs-lisp files provided in the
-Macaulay 2 emacs directory - you must edit the string in that line to
-indicate the correct path on your system to the Macaulay 2 emacs directory.
-(Even under Windows, the path may contain forward slashes '/' as separators.)
-The files needed from that directory are ", TT "M2-mode.el", ",
-", TT "M2-symbols.el", ", and ", TT "M2.el", ".  The seventh line sets
-the variable ", TT "transient-mark-mode", " so that it can
-have a different value in each buffer.  The eighth and ninth lines set
-hooks so that ", TT "transient-mark-mode", " will be set to ", TT "t", " 
-in M2 buffers.  The effect of this is that the mark is only active occasionally,
-and then emacs functions which act on a region of text will refuse to proceed 
-unless the mark is active.  The ", TT "set-mark", " function or the
-", TT "exchange-point-and-mark", " function will activate the mark, and it
-will remain active until some change occurs to the buffer.  The only reason
-we recommend the use of this mode is so the same key can be used to evaluate 
-a line or a region of code, depending on whether the region is active.  The
-tenth line tells emacs where to find the directory in which the Macaulay2
-files have been installed - you should change this to the appropriate
-directory for your installation, so emacs can find the Macaulay 2 documentation.",
+"Now edit that line and replace the path by the correct path to Macaulay2's
+files on your system.  To find out what that path is, run the following command",
+TT ///getenv "M2HOME"///, " in Macaulay 2.  Then append ", TT "/emacs/M2-init.el", "
+to the value returned and incorporate it into the ", TT "load", " command above.",
+PARA,
+"Loading the file will cause emacs to enter a special mode for editing
+Macaulay 2 code whenever a file whose name has the form ", TT "*.m2", " is
+encountered.  It will also provide a special mode for running Macaulay 2 in
+an emacs buffer.  It sets the variable ", TT "transient-mark-mode", " to have
+a different value in each buffer, and sets hooks so that ", 
+TT "transient-mark-mode", " will be set to ", TT "t", " in M2 buffers.  The
+effect of this is that the mark is only active occasionally, and then emacs
+functions which act on a region of text will refuse to proceed unless the
+mark is active.  The ", TT "set-mark", " function or the ", 
+TT "exchange-point-and-mark", " function will activate the mark, and it will
+remain active until some change occurs to the buffer.  The only reason we
+recommend the use of this mode is so the same key can be used to evaluate a
+line or a region of code, depending on whether the region is active.",
 PARA,
 "Exit and restart emacs with your new initialization file.  
 If you are reading this file with emacs, then use the keystrokes

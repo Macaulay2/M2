@@ -32,6 +32,9 @@ char *gnu_get_libc_version();
 # endif
 #endif
 
+/* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
+#define GDBM_STATIC
+
 #include <gdbm.h>
 #define DBM_REPLACE GDBM_REPLACE
 #define DBM_WRCREAT GDBM_WRCREAT
@@ -498,6 +501,7 @@ char **argv;
 	       sprintf(buf,"--PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
 	       putstderr(buf);
 #              endif
+# if 0
 	       if (GC_ALPHA_VERSION == GC_NOT_ALPHA) {
 		 sprintf(buf,
 			 "--GC %d.%d, copyright, H-J. Boehm, A. J. Demers",
@@ -515,6 +519,7 @@ char **argv;
 #endif
 	       sprintf(buf,"--GNU MP Library (gmp-%s), copyright, Free Software Foundation",__gmp_version);
 	       putstderr(buf);
+# endif
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;

@@ -1,3 +1,5 @@
+-- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
+
 
 --------------------------------------------------------------
 --This begins the code for minPres and minPresIdeal.  
@@ -65,7 +67,7 @@ minMap := (I) -> (
 	  );
      map(A,A,toList xmap))
 
-minPresIdeal = method(Options=>{VarName => null})
+minPresIdeal = method(Options=>{Variable => null})
 minPresIdeal(Ideal) := o -> (I) -> (
      --Input:  Any ideal.
      --Output:  An ideal where the generators that have a linear term where 
@@ -77,13 +79,13 @@ minPresIdeal(Ideal) := o -> (I) -> (
      l := positions(LF,f->(sum(sum exponents f))===1);
      varsR := apply(l,f->R_f);
      degreesS := apply(l,i->((monoid R).degrees)#i);
-     if o.VarName === null then (
+     if o.Variable === null then (
 	  S := (coefficientRing R)[varsR,Degrees => degreesS];
      	  FmatS := substitute(F.matrix,S);
 	  vv := map(S,S);)
      else (
 	  R2 := (coefficientRing R)[varsR2];
-	  y := o.VarName;
+	  y := o.Variable;
      	  var := splice{y_0..y_(#l-1)};
      	  S = (coefficientRing R)[var,Degrees => degreesS];
      	  vv = map(S,R2,vars S);
@@ -94,7 +96,7 @@ minPresIdeal(Ideal) := o -> (I) -> (
      mytrim vv(substitute (ideal compress gens F(I),S))
      )
 
-minPres = method(Options=>{VarName => null})
+minPres = method(Options=>{Variable => null})
 minPres(Ring) := o -> (R) -> (
      --Input:  Any ring R.
      --Output:  A ring R'that is the input simplified.  So
@@ -110,7 +112,7 @@ minPres(Ring) := o -> (R) -> (
      l := positions(LF,f->(sum(sum exponents f))===1);
      varsR := apply(l,f->R_f);
      degreesR := apply(l,i->((monoid R).degrees)#i);
-     if o.VarName === null then(
+     if o.Variable === null then(
      	  S := (coefficientRing R)[varsR,Degrees => degreesR];
      	  I := ideal(compress F(M));
      	  IS := mytrim(substitute(I,S));
@@ -119,10 +121,10 @@ minPres(Ring) := o -> (R) -> (
      	  R.minPresMap = map(S2,R,FmatS); 
      	  R.minPresMapInv = map(R,S2,varsR);
      	  S2)
-     else (R2 := (coefficientRing R)[varsR2];
-	  y := o.VarName;
+     else (R2 := (coefficientRing R)[varsR];
+	  y := o.Variable;
      	  var := splice{y_0..y_(#l-1)};
-     	  S = (coefficientRing R)[var,Degrees => degreesS];
+     	  S = (coefficientRing R)[var,Degrees => degreesR];
      	  vv := map(S,R2,vars S);
      	  I = substitute (ideal(compress F(M)),R2);
      	  IS = mytrim vv(I);
