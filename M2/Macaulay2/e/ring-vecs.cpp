@@ -369,7 +369,7 @@ void Ring::add(vec &v, vec &w) const
 	vec tmw = w;
 	v = v->next;
 	w = w->next;
-	this->add_to(tmv->coeff, tmw->coeff);
+	tmv->coeff = this->add(tmv->coeff, tmw->coeff);
 	if (this->is_zero(tmv->coeff))
 	  {
 	    remove_vec_node(tmv);
@@ -430,6 +430,7 @@ void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) con
   else
     {
       this->add_to(p->next->coeff, r1);
+      p->next->coeff = this->add(p->next->coeff, r1);
       if (this->is_zero(p->next->coeff))
 	{
 	  vec tmp = p->next;
@@ -475,8 +476,8 @@ void Ring::row2by2(vec &v,
       c4 = this->from_int(0);
     }
 
-  this->add_to(c1,c2);
-  this->add_to(c3,c4);
+  c1 = this->add(c1,c2);
+  c3 = this->add(c3,c4);
   set_entry(v,r1,c1);
   set_entry(v,r2,c3);
 }
@@ -495,7 +496,7 @@ ring_elem Ring::dot_product(const vecterm *v, const vecterm *w) const
       else
 	{
 	  ring_elem a = this->mult(v->coeff, w->coeff);
-	  this->add_to(result,a);
+	  result = this->add(result,a);
 	  v = v->next;
 	  w = w->next;
 	}

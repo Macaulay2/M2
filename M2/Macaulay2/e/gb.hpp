@@ -130,6 +130,8 @@ public:
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
 
+  virtual void compute();
+
   virtual const MatrixOrNull *get_matrix(int level, M2_bool minimize); 
 
   virtual const MatrixOrNull *get_change(int level);

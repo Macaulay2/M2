@@ -1035,6 +1035,10 @@ int GB_comp::calc()
   return is_done;
 }
 
+void GB_comp::compute()
+{
+  calc();
+}
 //--- Reduction --------------------------
 #if 0
 bool GB_comp::is_equal(const gb_comp *q)

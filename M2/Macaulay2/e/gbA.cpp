@@ -904,7 +904,7 @@ int gbA::computation_is_complete()
   return COMP_COMPUTING;
 }
 
-int gbA::compute()
+void gbA::compute()
 {
   int npairs;
   int is_done = COMP_COMPUTING;
@@ -946,7 +946,7 @@ int gbA::compute()
 
       s_pair_step();
     }
-  return is_done;
+  //  return is_done;
 }
 
 void gbA::poly_auto_reduce(vector<POLY> &mat)
