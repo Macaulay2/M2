@@ -367,11 +367,11 @@ makeTableOfContents := () -> (
 runFile := (inf,outf,tmpf,desc,pkg,announcechange) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
-	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
+	  stderr << "--leaving " << desc << " in file " << outf << endl;
 	  )
      else if fileExists tmpf and fileTime tmpf >= fileTime inf
      then (
-	  if debugLevel > 0 then stderr << "--leaving error report from " << desc << " in file " << tmpf << endl;
+	  stderr << "--leaving error report from " << desc << " in file " << tmpf << endl;
 	  )
      else (
 	  announcechange();
@@ -628,6 +628,20 @@ installPackage Package := o -> pkg -> (
 		    )
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
+
+     -- make test output files
+     stderr << "--making test result files in " << testsDir << endl;
+     haderror = false;
+     scan(pairs pkg#"test inputs", (key,inputs) -> (
+     	       -- args:
+	       (n,fn) := key;
+	       inf := infn2 n;
+	       outf := outfn2 n;
+	       tmpf := tmpfn2 n;
+	       desc := "test results for " | toString key;
+	       runFile(inf,outf,tmpf,desc,pkg,identity);
+	       ));
+     if haderror then error "error(s) occurred running test files";
 
      -- process documentation
      stderr << "--processing documentation nodes..." << endl;

@@ -16,6 +16,8 @@ beginDocumentation()
 
 TEST "assert( f() === null )"
 
+TEST "assert false"
+
 document { Key => "minimal",
      Headline => "a minimal example of a Macaulay 2 package",
      "This package is just a minimal example of a package."
