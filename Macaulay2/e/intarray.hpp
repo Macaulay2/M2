@@ -19,7 +19,7 @@ public:
     {
       int n = init_intarray_size;
       if (i_size > n) n = i_size;
-      entries = (int *) doubles->new_elem(sizeof(int)*n);
+      entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*n));
       len = doubles->allocated_size(entries)/sizeof(int);
     }
 
@@ -29,7 +29,7 @@ public:
 	{ entries = NULL; len = 0; }
       else
 	{
-	  entries = (int *) doubles->new_elem(sizeof(int)*a.max);
+	  entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*a.max));
 	  len = doubles->allocated_size(entries)/sizeof(int);
 	  for (int i=0; i<max; i++) entries[i] = a.entries[i];
 	}
@@ -105,7 +105,7 @@ public:
       int n = init_intarray_size;
       if (a.max > n) n = a.max;
       max = a.max;
-      entries = (int *) doubles->new_elem(sizeof(int)*n);
+      entries = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*n));
       len = doubles->allocated_size(entries)/sizeof(int);
       for (int i=0; i<max; i++) entries[i] = a.entries[i];
       return *this;

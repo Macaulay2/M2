@@ -1,5 +1,6 @@
 #include <gc.h>
 #include "gmp_init.h"
+#include "config.h"
 
 void initializeGMP(void);
 extern "C" void factory_gmp_init() { 
@@ -7,3 +8,9 @@ extern "C" void factory_gmp_init() {
   initializeGMP(); 		// factory's initialization routine for gmp memory functions
 #endif
 }
+
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+// End:
+*/

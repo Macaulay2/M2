@@ -35,7 +35,7 @@ class queue : public our_new_delete
 
   void obtain(const queue<T> &qq)
     {
-      queue<T> &q = (queue<T> &) qq;
+      queue<T> &q = const_cast<queue<T> &>(qq);
       if (q.ephemeral == 0)
 	copy(q);
       else

@@ -171,7 +171,7 @@ inline void MonomialIdeal::insert_minimal(Bag *b)
 
 inline Bag * MonomialIdeal::operator[](Index<MonomialIdeal > i) const
 {
-  Nmi_node *p = (Nmi_node *) i.val();
+  Nmi_node *p = reinterpret_cast<Nmi_node *>(i.val());
   return p->baggage();
 }
 
@@ -187,7 +187,7 @@ inline Nmi_node *MonomialIdeal::last_node() const
 
 inline Index<MonomialIdeal > MonomialIdeal::first() const 
 { 
-  return Index<MonomialIdeal >(next((void *)(mi)), this);
+  return Index<MonomialIdeal >(next(reinterpret_cast<void *>(mi)), this);
 }
 
 inline Index<MonomialIdeal > MonomialIdeal::last() const 

@@ -38,7 +38,7 @@ ALLOBJ += $(MADECFILES:.c=.o)
 
 ## *.cc files
 
-CCFILES := version.cc gmp_init.o
+CCFILES := version.cc gmp_init.cc
 ALLOBJ += $(CCFILES:.cc=.o)
 SRCFILES += $(CCFILES)
 
@@ -146,7 +146,7 @@ compat.c compat.h : configure ../../include/config.h
 
 M2types.o : M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h memdebug.h
-M2lib.o scclib.ogdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
+gmp_int.o M2lib.o scclib.ogdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
 memdebug.o scclib.o actors5.o : memdebug.h
 
 clean::; rm -f startup.c
