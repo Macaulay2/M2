@@ -170,6 +170,8 @@ notify = true
 
 addStartFunction(
      () -> (
+	  loadDepth (1 + loadDepth());
+	  errorDepth loadDepth();
 	  if not member("-q",commandLine)
 	  then (
 	       tryload("init.m2", simpleLoad)
@@ -180,6 +182,3 @@ addStartFunction(
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
 
 erase symbol simpleLoad
-
-addStartFunction( () -> ( loadDepth (1 + loadDepth()); errorDepth (1 + errorDepth()); ) )
-

@@ -132,13 +132,6 @@ files installed in a nonstandard location:
 
 	LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ../configure ...
 
-where ... represents the remaining arguments, as above.
-
-To use a different prefix, say /mnt/local, for finding libraries and include
-files installed in a nonstandard location:
-
-	LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ../configure ...
-
 where ... represents the remaining arguments, as above.  As an example, if
 you have compiled the libraries with fink, then you could use this line:
 
