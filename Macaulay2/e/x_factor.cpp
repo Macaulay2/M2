@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <iostream>
 
+#include "../d/M2inits.h"
+
 #ifdef FACTORY
 #define Matrix MaTrIx
 #include <factor.h>		// from Messollen's libfac
@@ -46,11 +48,13 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
 		    h = -h;
 	       }
 	       else sign = 1;
+	       factory_setup();
 	       while ( h != 0 ) {
 		    CanonicalForm k = h % base;
 		    v.append(k.intval());
 		    h /= base;
 	       }
+	       M2_setup();
 	       mpz_t x;
 	       mpz_init(x);
 	       for (int i = v.length() - 1; i >= 0; i--) {
@@ -63,6 +67,7 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
 	       return RingElement::make_raw(R, ret);
 	  }
 	  else {
+	    M2_setup();
 	    return RingElement::make_raw(R, R->from_int(h.intval()));
 	  }
      }
@@ -78,6 +83,7 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
        r1 = R->mult(r1,v);
        R->add_to(result,r1);
      }
+     M2_setup();
      return RingElement::make_raw(R,result);
 }
 
@@ -93,6 +99,7 @@ static CanonicalForm convert(const mpz_ptr p) {
 	  base = 1;
 	  for (int i = 0; i < mp_bits_per_limb; i++) base *= 2;
      }
+     factory_setup();
      CanonicalForm m = 0;
      for (int i = size - 1; i >= 0; i--) {
 	  mp_limb_t digit = p -> _mp_d[i];
@@ -106,6 +113,7 @@ static CanonicalForm convert(const mpz_ptr p) {
 	  }
      }
      m = m * sign;
+     M2_setup();
      return m;
 }
 
@@ -149,6 +157,7 @@ static CanonicalForm convert(const RingElement &g) {
      }
      const Monoid *M = R->Nmonoms();
      intarray vp;
+     factory_setup();
      setCharacteristic(R->charac());
      if (Q != NULL) On( SW_RATIONAL );
      CanonicalForm f = 0;
@@ -156,24 +165,13 @@ static CanonicalForm convert(const RingElement &g) {
        vp.shrink(0);
        M->to_varpower(t->monom,vp);
        CanonicalForm m = (
-			  Zn != NULL 
-			  ?
-			  CanonicalForm(Zn->to_int(t->coeff)) 
-			  :
-			  Z0 != NULL 
-			  ?
-			  convert(MPZ_VAL(t->coeff)) 
-			  :
-			  Q != NULL 
-			  ?
-			  convert(mpq_numref(MPQ_VAL(t->coeff)))
-			  / convert(mpq_denref(MPQ_VAL(t->coeff)))
+			  Zn != NULL ? CanonicalForm(Zn->to_int(t->coeff)) :
+			  Z0 != NULL ? convert(MPZ_VAL(t->coeff)) :
+			  Q != NULL ? convert(mpq_numref(MPQ_VAL(t->coeff))) / convert(mpq_denref(MPQ_VAL(t->coeff)))
 #if 0
-			  convert(MPZ_VAL(FRAC_VAL(t->coeff)->numer))
-			  / convert(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
+			  convert(MPZ_VAL(FRAC_VAL(t->coeff)->numer)) / convert(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
 #endif
-			  :
-			  CanonicalForm(0) // shouldn't happen
+			  : CanonicalForm(0) // shouldn't happen
 			  );
        for (int l = 1; l < vp[0] ; l++) {
 	 m *= power(
@@ -189,15 +187,18 @@ static CanonicalForm convert(const RingElement &g) {
        f += m;
      }
      if (Q != NULL) Off( SW_RATIONAL );
+     M2_setup();
      return f;
 }
 
 void displayCF(Ring *R, const CanonicalForm &h)
 {
   buffer o;
+  factory_setup();
   const RingElement *g = convert(R,h);
   o << IM2_RingElement_to_string(g);
   emit(o.str());
+  M2_setup();
 }
 #endif
 
@@ -209,8 +210,11 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
+  factory_setup();
   CanonicalForm h = gcd(p,q);
-  return convert(f->get_ring(),h);
+  const RingElement *r = convert(f->get_ring(),h);
+  M2_setup();
+  return r;
 #else
   ERROR("'factory' library not installed");
   return NULL;
@@ -225,8 +229,11 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
+  factory_setup();
   CanonicalForm h = Prem(p,q);
-  return convert(f->get_ring(),h);
+  const RingElement *r = convert(f->get_ring(),h);
+  M2_setup();
+  return r;
 #else
   ERROR("'factory' library not installed");
   return NULL;
@@ -244,10 +251,14 @@ void rawFactor(const RingElement *g,
   // displayCF(R,h);
   CFFList q;
   if (R->charac() == 0) {
+    factory_setup();
     q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
+    M2_setup();
   }
   else {
+    factory_setup();
     q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
+    M2_setup();
   }
   int nfactors = q.length();
 
@@ -261,6 +272,7 @@ void rawFactor(const RingElement *g,
     (*result_factors)->array[next] = convert(R,i.getItem().factor());
     (*result_powers)->array[next++] = i.getItem().exp();
   }
+  M2_setup();
 #else
   ERROR("'factory' library not installed");
 #endif

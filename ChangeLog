@@ -1,3 +1,46 @@
+2004-01-31  Dan Grayson  <dan@math.uiuc.edu>
+
+	* include/config.Makefile.in, include/config.h.in, include/config.h.in.stamp, Macaulay2/m2/Makefile.in, Macaulay2/test/engine/factor.m2, Macaulay2/test/engine/ring.m2:
+	*** empty log message ***
+
+	* Macaulay2/e/check/src_test/Main1.cpp, Macaulay2/e/check/src_test/stack.h, Macaulay2/e/check/src_test/suite.cpp, Macaulay2/e/check/src_test/suite.h, Macaulay2/e/x_relem.cpp, Macaulay2/e/z_mod_p.cpp, Macaulay2/e/monideal.cpp, Macaulay2/e/monideal.hpp, Macaulay2/e/monoid.cpp, Macaulay2/e/monoid.hpp, Macaulay2/e/monorder.cpp, Macaulay2/e/monorder.hpp, Macaulay2/e/montable.cpp, Macaulay2/e/montable.hpp, Macaulay2/e/newdelete.hpp, Macaulay2/e/newspair.cpp, Macaulay2/e/newspair.hpp, Macaulay2/e/polyring.cpp, Macaulay2/e/polyring.hpp, Macaulay2/e/queue.hpp, Macaulay2/e/relem.cpp, Macaulay2/e/res.cpp, Macaulay2/e/res2.cpp, Macaulay2/e/res_aux2.cpp, Macaulay2/e/respair2.hpp, Macaulay2/e/respoly.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ringelem.hpp, Macaulay2/e/ringmap.cpp, Macaulay2/e/ringmap.hpp, Macaulay2/e/sagbi.cpp, Macaulay2/e/schorder.cpp, Macaulay2/e/schorder.hpp, Macaulay2/e/schur.cpp, Macaulay2/e/skew.cpp, Macaulay2/e/skew.hpp, Macaulay2/e/spair.hpp, Macaulay2/e/sparsemat.cpp, Macaulay2/e/sparsemat.hpp, Macaulay2/e/termideal.cpp, Macaulay2/e/termideal.hpp, Macaulay2/e/text_io.cpp, Macaulay2/e/vector.cpp, Macaulay2/e/weylalg.cpp, Macaulay2/e/weylfree.cpp, Macaulay2/e/x_factor.cpp, Macaulay2/e/x_free.cpp, Macaulay2/e/x_mat.cpp, Macaulay2/e/freemod.cpp, Macaulay2/e/freemod2.cpp, Macaulay2/e/gauss.cpp, Macaulay2/e/gauss.hpp, Macaulay2/e/gb.cpp, Macaulay2/e/gb2.cpp, Macaulay2/e/gb2.hpp, Macaulay2/e/gbA.cpp, Macaulay2/e/gbA.hpp, Macaulay2/e/gbZZ.cpp, Macaulay2/e/gbasis.cpp, Macaulay2/e/gbasis.hpp, Macaulay2/e/gbbinom.cpp, Macaulay2/e/gbbinom.hpp, Macaulay2/e/gbinhom.cpp, Macaulay2/e/gbnod.cpp, Macaulay2/e/gbring.cpp, Macaulay2/e/gbring.hpp, Macaulay2/e/hash.hpp, Macaulay2/e/hermite.cpp, Macaulay2/e/hermite.hpp, Macaulay2/e/hilb.cpp, Macaulay2/e/hilb.hpp, Macaulay2/e/int_bag.hpp, Macaulay2/e/lattice.cpp, Macaulay2/e/matrix.cpp, Macaulay2/e/mem.cpp, Macaulay2/e/mem.hpp, Macaulay2/e/Eschreyer.cpp, Macaulay2/e/GF.cpp, Macaulay2/e/LLL.cpp, Macaulay2/e/M2-factory.cpp, Macaulay2/e/Makefile.in, Macaulay2/e/QQ.cpp, Macaulay2/e/ZZ.cpp, Macaulay2/e/array.hpp, Macaulay2/e/assprime.cpp, Macaulay2/e/bigCC.cpp, Macaulay2/e/bigRR.cpp, Macaulay2/e/buffer.cpp, Macaulay2/e/buffer.hpp, Macaulay2/e/det.cpp, Macaulay2/e/engine.h:
+	make the engine not use ::operator new/delete at all
+
+	* Macaulay2/d/M2inits.c, Macaulay2/d/M2lib.c, Macaulay2/d/Makefile.in, Macaulay2/d/debug.c, Macaulay2/d/version.cc:
+	new option --disable-factory, macro variable "FACTORY"
+
+	* configure, configure.ac:
+	new option --disable-factory, and now gc needs -ldl
+
+2004-01-30  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/factor-init.c, Macaulay2/test/engine/factor.m2, Macaulay2/e/x_factor.cpp, Macaulay2/m2/COPYRIGHT, Macaulay2/m2/image.mcly, Macaulay2/m2/mpcodes.sed, Macaulay2/m2/runexample.c, Macaulay2/d/M2inits.c, Macaulay2/d/Makefile.in, Macaulay2/test/engine/factor.h, Macaulay2/test/engine/factor.cc:
+	*** empty log message ***
+
+2004-01-29  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/factor-init.c, Macaulay2/test/engine/factor.cc, Macaulay2/test/engine/factor.h:
+	*** empty log message ***
+
+	* Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/factor-init.c, Macaulay2/test/engine/factor.cc:
+	factor.h
+
+	* Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/factor-init.c, Macaulay2/test/engine/factor.cc, Macaulay2/test/engine/factor.m2, INSTALL, Macaulay2/test/engine/.cvsignore, Macaulay2/test/engine/factor-init1.c, Macaulay2/test/engine/factor.poly:
+	*** empty log message ***
+
+2004-01-28  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/test/engine/factor.sing: *** empty log message ***
+
+2004-01-27  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/M2lib.c, Macaulay2/d/scclib.c, Macaulay2/test/engine/factor.sing, Macaulay2/m2/document.m2, include/config.Makefile.in, include/config.h.in.stamp, Macaulay2/d/Makefile.in, configure, configure.ac:
+	*** empty log message ***
+
+2004-01-26  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/test/engine/factor.sing: *** empty log message ***
+
 2004-01-26  Dan Grayson  <dan@math.uiuc.edu>
 
 	* Macaulay2/m2/orderedmonoidrings.m2, Macaulay2/m2/overview2.m2, Macaulay2/m2/packages.m2, Macaulay2/m2/setup.m2, Macaulay2/packages/normal.m2, Macaulay2/m2/doc.m2, Macaulay2/m2/doc1.m2, Macaulay2/m2/doc12.m2, Macaulay2/m2/doc2.m2, Macaulay2/m2/doc4.m2, Macaulay2/m2/document.m2, Macaulay2/m2/html.m2, Macaulay2/m2/methods.m2, Macaulay2/m2/nets.m2, Macaulay2/m2/normal.m2:
