@@ -28,10 +28,14 @@
 #include "../d/memdebug.h"
 
 struct our_new_delete {
-  inline void* operator new( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
-  inline void* operator new []( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
-  inline void operator delete( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
-  inline void operator delete []( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
+  inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
+  inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem(); return p; }
+
+  inline void* operator new    ( size_t size, void *&existing_memory ) { return existing_memory; }
+  inline void* operator new [] ( size_t size, void *&existing_memory ) { return existing_memory; }
+
+  inline void operator delete    ( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
+  inline void operator delete [] ( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
 };
 
 #include <gc/new_gc_alloc.h>

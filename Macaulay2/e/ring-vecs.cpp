@@ -156,7 +156,7 @@ vec Ring::mult_vec(int n, vec v) const
 
 vec Ring::mult_vec(const ring_elem f, const vec w) const
 {
-  if (f == NULL) return NULL;
+  if (is_zero(f)) return NULL;
   vecterm head;
   vec result = &head;
   for (vec v = w ; v != 0; v = v->next)
@@ -175,7 +175,7 @@ vec Ring::mult_vec(const ring_elem f, const vec w) const
 
 vec Ring::rightmult_vec(const vec w, const ring_elem f) const
 {
-  if (f == NULL) return NULL;
+  if (is_zero(f)) return NULL;
   vecterm head;
   vec result = &head;
   for (vec v = w ; v != 0; v = v->next)
