@@ -224,7 +224,7 @@ toExternalString Symbol := s -> (
 	  if value s === s then n
 	  else concatenate("symbol ",if n == " " then format n else n)
 	  )
-     else error("can't convert local variable or shadowed global variable '",n,"' to external string"))
+     else error("can't convert local variable or shadowed or invisible global variable '",n,"' to external string"))
 
 options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)
 setup(SingleArgumentDispatch=>true, {max,min,directSum,intersect,vars})

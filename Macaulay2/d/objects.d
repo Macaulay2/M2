@@ -541,8 +541,8 @@ setupconst("Error",Expr(errorMessageClass));
 setupconst("MissingMethod",Expr(missingMethodClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
-setupconst("LMatrixRR",Expr(LMatrixRRClass));
-setupconst("LMatrixCC",Expr(LMatrixCCClass));
+setupconst("RawMatrixRR",Expr(LMatrixRRClass));
+setupconst("RawMatrixCC",Expr(LMatrixCCClass));
 
 varstringarray := { a:array(string), n:int };
 newvarstringarray(m:int):varstringarray := varstringarray( new array(string) len m do provide "", 0 );

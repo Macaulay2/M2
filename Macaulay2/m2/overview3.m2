@@ -275,11 +275,6 @@ document {
      }
 
 document {
-     Key => "Macaulay2",
-     PARA { "This package is the main Macaulay 2 package.  Its dictionary contains all the global Macaulay 2 symbols." }
-     }
-
-document {
      Key => "mathematical examples",
      "In this section we present some tutorials which aim to introduce
      the user to some mathematical ways of using Macaulay 2.  The tutorials
@@ -308,7 +303,7 @@ document {
      }
 
 document {
-     Key => "Macaulay 2",
+     Key => "Macaulay2",
      FileName => "index",
      PARA IMG (LAYOUT#"images" | "9planets.gif", "image of nine planets"),
      PARA {
@@ -513,8 +508,7 @@ document {
 		Author => "author <email>",
 		HomePage => "url",
 		DebuggingMode => true,
-		InfoDirSection => ... , -- this option is not normally used
-		TopNodeName => ... , -- this option is not normally used
+		InfoDirSection => ...  -- this option is not normally used
 		)
 	///,
 	SeeAlso => {"writing packages"}

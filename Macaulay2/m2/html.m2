@@ -46,9 +46,12 @@ rel := url -> (
 htmlFilename = method(SingleArgumentDispatch => true)
 htmlFilename DocumentTag := tag -> (
      fkey := DocumentTag.FormattedKey tag;
+     pkgtitle := DocumentTag.Title tag;
+     -- do away with the next two lines eventually
      pkg := DocumentTag.Package tag;
-     if pkg === null then toFilename fkey|".html"
-     else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
+     assert( pkg =!= null);
+     -- if pkg === null then toFilename fkey|".html" else
+     LAYOUT#"packagehtml" pkgtitle | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\"", x#1, "\"/>")
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
@@ -237,7 +240,7 @@ makeForest := x -> new ForestNode from makeTree \ x
 leaves := () -> keys set flatten values linkTable
 roots := () -> (
      x := keys ( set keys linkTable - set leaves() );
-     if not member(topDocumentTag,x) then stderr << "--warning: top node name " << topDocumentTag << " not a root" << endl;
+     if not member(topDocumentTag,x) then stderr << "--warning: top node " << topDocumentTag << " not a root" << endl;
      x = select(x,k -> k =!= topDocumentTag);
      prepend(topDocumentTag, sort x))
 getTrees := topNode -> (
@@ -458,10 +461,17 @@ uninstallPackage Package := o -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
-     if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return installPackage(value getGlobalSymbol pkg, opts);
-     needsPackage pkg;
+     if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then (
+	  PKG := value PackageDictionary#pkg;
+	  if PKG#?"processed documentation database" and isOpen PKG#"processed documentation database"
+     	  then return installPackage(value PackageDictionary#pkg, opts);
+	  );
+     fl := forceLoadDocumentation;
+     forceLoadDocumentation = true;
+     loadPackage pkg;
+     forceLoadDocumentation = fl;
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then return installPackage(value PackageDictionary#pkg, opts);
-     error ("can't locate package '",pkg,"'");
+     error ("can't load or locate package '",pkg,"', unknown problem");
      )
 
 installPackage Package := o -> pkg -> (
@@ -469,7 +479,7 @@ installPackage Package := o -> pkg -> (
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
+     topDocumentTag = makeDocumentTag(pkg#"title", Package => pkg);
      rawDoc := pkg#"raw documentation";
 
      -- check that we've read the raw documentation
@@ -825,8 +835,9 @@ makePackageIndex List := packagePrefixPath -> (
      absoluteLinks = true;
      htmlDirectory = getenv "HOME" | "/" | packageSuffix;
      key := "package index";
-     getenv "HOME" | "/" | packageSuffix | "index.html"
-     << html HTML { 
+     fn := getenv "HOME" | "/" | packageSuffix | "index.html";
+     stderr << "--making index of installed packages in " << fn << endl;
+     fn << html HTML { 
 	  HEAD {
 	       TITLE {key, commentize headline key},
 	       links()
@@ -845,9 +856,8 @@ makePackageIndex List := packagePrefixPath -> (
 		    )
 	       }
 	  } << endl
-     << close
+     << close;
      )
-makePackageIndex = new Command from makePackageIndex
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

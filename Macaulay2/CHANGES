@@ -320,8 +320,9 @@ rewriting.  At least, I think that was the problem.
 
 New in 0.9.4:
 
-New basic types Complex and LMatrixRR introduced to support internal matrices
-of machine precision complex numbers and arbitrary precision real numbers.
+New basic types Complex introduced to support internal matrices of
+machine precision complex numbers and arbitrary precision real
+numbers.
 
 The interface to the gb engine consisting of a narrow two-way stream of bytes
 has been removed.  All the symbols whose names begin with "gg" have been
