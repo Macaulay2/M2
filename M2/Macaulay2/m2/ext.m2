@@ -113,7 +113,7 @@ Ext(Module,Module) := Module => (M,N) -> (
     -- compute the fudge factor for the adjustment of bidegrees
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
     S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
-      Degrees => splice {
+      Degrees => {
         apply(0 .. c-1, i -> {-2, - first degree f_i}),
 	apply(0 .. n-1, j -> { 0,   first degree A_j})
         },
