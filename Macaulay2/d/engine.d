@@ -42,10 +42,6 @@ export RawMonomialPair := { a:RawMonomial, b:RawMonomial };
 export RawRingElementPair := { a:RawRingElement, b:RawRingElement };
 export RawRingElementPairOrNull := RawRingElementPair or null;
 export RawMatrixAndInt := { M:RawMatrix, i:int };
-export LMatrixRR := { LMatrixRR:void };
-export LMatrixRROrNull := LMatrixRR or null;
-export LMatrixCC := { LMatrixCC:void };
-export LMatrixCCOrNull := LMatrixCC or null;
 export RawComputation := {RawComputation:void};
 export RawComputationOrNull := RawComputation or null;
 
@@ -135,77 +131,6 @@ export (x:RawMonomialIdeal) + (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
      Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_add((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
 export (x:RawMonomialIdeal) * (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
      Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_product((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
-
--- lapack code
-export (x:LMatrixRR) + (y:LMatrixRR) : LMatrixRROrNull := (
-     Ccode(LMatrixRROrNull,
-	  "(engine_LMatrixRROrNull)LP_LMatrixRR_add(",
-	  "(LMatrixRR *)", x, ",(LMatrixRR *)", y, ")" ));
-
-export (x:LMatrixRR) + (y:LMatrixCC) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixRC_add(",
-	  "(LMatrixRR *)", x, ",(LMatrixCC *)", y, ")" ));
-
-export (x:LMatrixCC) + (y:LMatrixRR) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixCR_add(",
-	  "(LMatrixCC *)", x, ",(LMatrixRR *)", y, ")" ));
-
-export (x:LMatrixCC) + (y:LMatrixCC) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixCC_add(",
-	  "(LMatrixCC *)", x, ",(LMatrixCC *)", y, ")" ));
-
-export (x:LMatrixRR) - (y:LMatrixRR) : LMatrixRROrNull := (
-     Ccode(LMatrixRROrNull,
-	  "(engine_LMatrixRROrNull)LP_LMatrixRR_subtract(",
-	  "(LMatrixRR *)", x, ",(LMatrixRR *)", y, ")" ));
-
-export (x:LMatrixRR) - (y:LMatrixCC) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixRC_subtract(",
-	  "(LMatrixRR *)", x, ",(LMatrixCC *)", y, ")" ));
-
-export (x:LMatrixCC) - (y:LMatrixRR) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixCR_subtract(",
-	  "(LMatrixCC *)", x, ",(LMatrixRR *)", y, ")" ));
-
-export (x:LMatrixCC) - (y:LMatrixCC) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixCC_subtract(",
-	  "(LMatrixCC *)", x, ",(LMatrixCC *)", y, ")" ));
-
-export (x:LMatrixRR) * (y:LMatrixRR) : LMatrixRROrNull := (
-     Ccode(LMatrixRROrNull,
-	  "(engine_LMatrixRROrNull)LP_LMatrixRR_mult(",
-	  "(LMatrixRR *)", x, ",(LMatrixRR *)", y, ")" ));
-
-export (x:LMatrixRR) * (y:LMatrixCC) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixRC_mult(",
-	  "(LMatrixRR *)", x, ",(LMatrixCC *)", y, ")" ));
-
-export (x:LMatrixCC) * (y:LMatrixRR) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixCR_mult(",
-	  "(LMatrixCC *)", x, ",(LMatrixRR *)", y, ")" ));
-
-export (x:LMatrixCC) * (y:LMatrixCC) : LMatrixCCOrNull := (
-     Ccode(LMatrixCCOrNull,
-	  "(engine_LMatrixCCOrNull)LP_LMatrixCC_mult(",
-	  "(LMatrixCC *)", x, ",(LMatrixCC *)", y, ")" ));
-
-export - (y:LMatrixRR) : LMatrixRR := (
-     Ccode(LMatrixRR, 
-	  "(engine_LMatrixRR)LP_LMatrixRR_negate(",
-	  "(LMatrixRR *)", y, ")" ) );
-
-export - (y:LMatrixCC) : LMatrixCC := (
-     Ccode(LMatrixCC, 
-	  "(engine_LMatrixCC)LP_LMatrixCC_negate(",
-	  "(LMatrixCC *)", y, ")" ) );
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

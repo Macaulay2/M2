@@ -51,6 +51,13 @@ export isSequenceOfPairsOfSmallIntegers(v:Sequence) : (string or null) := (
      else return "a list of pairs of integers";
      null());
 
+export isSequenceOfPairsOfSmallIntegers(e:Expr) : (string or null) := (
+     when e
+     is x:List do isSequenceOfPairsOfSmallIntegers(x.v)
+     is x:Sequence  do isSequenceOfPairsOfSmallIntegers(x)
+     else (string or null)("a list of pairs of integers")
+     );
+
 export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
      new array(int) len 2*length(v) do (
 	  foreach i in v do (
@@ -61,6 +68,13 @@ export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
 	       );
 	  provide -333;					    -- shouldn't happen
 	  ));
+
+export getSequenceOfPairsOfSmallIntegers(e:Expr) : array(int) := (
+     when e
+     is x:List do getSequenceOfPairsOfSmallIntegers(x.v)
+     is x:Sequence  do getSequenceOfPairsOfSmallIntegers(x)
+     else array(int)()
+     );
 
 export getReverseSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
      new array(int) len 2*length(v) do 
@@ -177,6 +191,7 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 -- helper routines for checking and converting return values
 
 export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine error"));
+export possibleEngineError(ret:bool):Expr := if ret then nullE else engineErrorMessage();
 
 export toExpr(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do engineErrorMessage();
 export toExprOrNull(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do nullE;
@@ -265,18 +280,6 @@ export getSequenceOfComplex(e:Expr) : array(Complex) := (
 	  foreach i in l do when i is a:Complex do provide a else nothing;
 	  )
      else array(Complex)()
-     );
-
-
-export toExpr(x:LMatrixRROrNull):Expr := (
-     when x
-     is M:LMatrixRR do Expr(M)
-     is null do engineErrorMessage()
-     );
-export toExpr(x:LMatrixCCOrNull):Expr := (
-     when x
-     is M:LMatrixCC do Expr(M)
-     is null do engineErrorMessage()
      );
 
 -- Local Variables:

@@ -60,14 +60,6 @@ export hash(e:Expr):int := (
 	  0
 	  -- int(Ccode(ulong, "IM2_RingMap_hash((RingMap*)",x,")" ))
 	  )
-     is x:LMatrixRR do (
-	  0
-	  -- int(Ccode(ulong, "LP_LMatrixRR_hash((LMatrixRR*)",x,")" ))
-	  )
-     is x:LMatrixCC do (
-	  0
-	  -- int(Ccode(ulong, "LP_LMatrixCC_hash((LMatrixCC*)",x,")" ))
-	  )
      is x:RawRingElement do 12345
      is x:RawMonomialIdeal do 12346
      is x:CompiledFunction do x.hash
