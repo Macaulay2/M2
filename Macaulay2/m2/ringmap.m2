@@ -289,7 +289,9 @@ substitute(RingElement,Ring) := (r,S) -> (map(S,ring r)) r
 substitute(Matrix,ZZ) := (m,i) -> (
      R := ring m;
      if i === 0 then (
-     	  if isPolynomialRing R then substitute(m,map(R^1, R^(numgens R), 0))
+     	  if isPolynomialRing R 
+	  or isQuotientRing R and isPolynomialRing ultimate(ambient,R)
+	  then substitute(m,map(R^1, R^(numgens R), 0))
      	  else m
 	  )
      else error "expected integer to be zero"
