@@ -4,3 +4,7 @@ restart
 update
 *.orig
 *.rej
+*.ilk
+*.pdb
+*.obj
+*.exe

@@ -4,3 +4,4 @@ allfiles
 cmdinst.hpp
 cmdnames.hpp
 cmdnames.m2
+*.pdb

@@ -5,3 +5,4 @@ y.output
 y.tab.h
 *.orig
 *.rej
+*.pdb
