@@ -31,8 +31,9 @@ assert( rawIndices raw (x+y*z) == {0, 1, 2} )
 
 size x
 rawMultiDegree raw x
-baseName x
-exponents x
+assert( symbol x == baseName x )
+assert( symbol y == baseName (monoid R)_1 )
+-- exponents x
 
 R'= raw R
 M' = raw monoid R
@@ -55,17 +56,14 @@ rawMonomialSparseListForm raw m
 exponents(3,raw m)
 exponents(3,raw n)
 
-end
-exponents m
-listForm m
-standardForm m
+-- exponents m
+-- listForm m
+-- standardForm m
 
 f = (x+y+1)^3
 
-listForm f
-standardForm f
-
-end
+-- listForm f
+-- standardForm f
 
 -- modules
 M'= raw monoid R
