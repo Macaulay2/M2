@@ -6,4 +6,5 @@ if phase === 2 or phase === 4 or phase == 5 then load "docloads.m2"
 
 setrecursionlimit 300
 
+addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))

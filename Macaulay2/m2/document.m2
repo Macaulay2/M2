@@ -11,15 +11,7 @@ addStartFunction(
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
-	  path = join( path, { home | "/m2/", home | "/packages/" }),
-	  path = unique apply( path, minimizeFilename);
-	  documentationPath = unique apply(
-	       {
-		    "cache/doc/",	-- this is where new documentation is written
-		    home | "/m2/cache/doc/",
-		    home | "/packages/cache/doc/"
-		    },
-	       minimizeFilename);
+	  path = join( path, { home | "/m2/" });
 	  )
      )
 -----------------------------------------------------------------------------
