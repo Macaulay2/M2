@@ -40,7 +40,7 @@ protected:
   void setQuotientInfo(QRingInfo *qinfo0) { qinfo_ = qinfo0; }
 
   virtual ~PolynomialRing();
-  PolynomialRing() : qinfo_(new QRingInfo) {}
+  PolynomialRing() : is_graded_(true), qinfo_(new QRingInfo) {}
 
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
