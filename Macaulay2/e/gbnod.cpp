@@ -760,7 +760,6 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
       for (;;)
 	{
 	  if (ret != COMP_COMPUTING) break;
-	  system_spincursor();
 	  if (system_interrupted) 
 	    {
 	      ret = COMP_INTERRUPTED;

@@ -7,7 +7,6 @@
 
 extern "C" char system_interrupted;
 extern int gbTrace;
-extern "C" void system_spincursor(void);
 
 enum comp_return_value
 {

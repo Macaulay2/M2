@@ -170,7 +170,7 @@ tmp_init.c : $(PROJECT)
 	mv tmp tmp_init.c
 
 interpret.a : $(ALLOBJ)
-	$(AR) rcs $@ $^ tmp_init.o
+	$(AR) rcs $@ $^
 
 ###################### libraries
 LIBRARYOPTIONS += -lfac

@@ -89,11 +89,11 @@ public:
 	entries[startval] = max - startval;
     }
 
-  int *copy(int len, const int *a)
+  int *copy(int length, const int *a)
     {
-      int *t = alloc(len);
+      int *t = alloc(length);
       int *result = t;
-      for (int i=0; i<len; i++)
+      for (int i=0; i<length; i++)
 	*t++ = *a++;
       return result;
     }

@@ -390,7 +390,7 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
 
 struct spair_sorter : public binary_function<gbA::spair *,gbA::spair *,bool> {
   int nvars;
-  spair_sorter(int nvars) : nvars(nvars) {}
+  spair_sorter(int nv) : nvars(nv) {}
   bool operator()(gbA::spair *a, gbA::spair *b)
     {
       /* Compare using degree, then type, then lcm */
@@ -893,7 +893,6 @@ int gbA::compute()
 
   for (;;)
     {
-      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;
@@ -949,8 +948,8 @@ struct gbelem_sorter : public binary_function<int,int,bool> {
   const vector<GBasis::gbelem *> &gb;
   gbelem_sorter(GBRing *R,
 		const FreeModule *F,
-		const vector<GBasis::gbelem *> &gb)
-    : R(R), F(F), gb(gb) {}
+		const vector<GBasis::gbelem *> &g)
+    : R(R), F(F), gb(g) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx]->g.f;
     gbvector *y = gb[yy]->g.f;
@@ -965,6 +964,7 @@ struct gbelem_sorter : public binary_function<int,int,bool> {
 
 ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
 {
+#warning: "things to do here"
   // TODO Problems here:
   //  -- check that the ring is correct
   //  -- if the computation has already been started, this will fail
@@ -985,6 +985,7 @@ const MatrixOrNull *gbA::get_matrix(int level, M2_bool minimize)
   // level 1, nonminimal: GB matrix
   // level 2, nonminimal: syz matrix (NOT a GB!!)
 
+#warning: "things to do here"
   // TODO
   if (level > 2 || (level == 2 && minimize))
     {
@@ -1112,9 +1113,11 @@ int gbA::status(int * complete_up_through_this_degree,
      4: finished the computation completely
   */
 {
+#warning: "things to do here"
   // TODO: what is this really supposed to do
   *complete_up_through_this_level = 1;
   *complete_up_through_this_degree = _this_degree-1;
+#warning: "things to do here"
   return -1; // TODO
 }
 
@@ -1123,7 +1126,8 @@ int gbA::status_level(int level,
 			   int * complete_up_through_this_degree)
   /* Same return values */
 {
-  // TODO
+#warning: "function unimplemented"
+  return -1;
 }
 
 const M2_arrayint gbA::betti(int type)
@@ -1133,7 +1137,9 @@ const M2_arrayint gbA::betti(int type)
      3:
   */
 {
+#warning: "function unimplemented"
   // TODO
+  return NULL;
 }
   
 void gbA::text_out(buffer &o)

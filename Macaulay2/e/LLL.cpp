@@ -306,7 +306,6 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
 
   while (k < n && nsteps != 0 && !system_interrupted)
     {
-      system_spincursor();
       if (gbTrace >= 1)
 	{
 	  o.reset();

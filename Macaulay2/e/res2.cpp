@@ -45,7 +45,6 @@ int res2_comp::skeleton(int level)
       // so this routine may be used to increase the degree bound
       // note: also need to redo monomial ideals...
       new_pairs(p);
-      system_spincursor();	  
       if (system_interrupted) return COMP_INTERRUPTED;	  
     }
   resn[level]->state = RES_MONORDER;
@@ -127,7 +126,6 @@ int res2_comp::do_pairs(int level, int degree)
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZ_LIMIT;
 	}
-      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
@@ -154,7 +152,6 @@ int res2_comp::do_pairs_by_level(int level)
       resn[level]->next_pair = p->next;
       handle_pair_by_level(p);
       if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
-      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
     }
 
@@ -232,7 +229,6 @@ int res2_comp::do_pairs_by_degree(int level, int degree)
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZ_LIMIT;
 	}
-      system_spincursor();
       if (system_interrupted) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;

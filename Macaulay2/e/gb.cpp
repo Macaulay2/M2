@@ -872,7 +872,6 @@ int GB_comp::calc()
       if (is_done != COMP_COMPUTING) break;
       is_done = computation_is_complete();
       if (is_done != COMP_COMPUTING) break;
-      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;
