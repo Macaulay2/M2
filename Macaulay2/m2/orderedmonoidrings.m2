@@ -124,6 +124,8 @@ indices := (M,vars) -> apply(vars, x -> (
 	  if M.index#?x then M.index#x
 	  else error "expected a variable of the ring"))
 
+isBasic := R -> R === ZZ or R === QQ or class R === GaloisField or R.?rawZZp
+
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
@@ -163,7 +165,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    if not x<dx
 		    then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
 		    );
-	       new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(R.RawRing,M.RawMonoid),diffs0,diffs1,h)
+	       if isBasic R then new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(R.RawRing,M.RawMonoid),diffs0,diffs1,h)
+	       else notImplemented()
 	       )
 	  else if Skew then (
 	       skews := (
@@ -173,12 +176,16 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    then indices(M,M.Options.SkewCommutative)
 		    else error "expected SkewCommutative option to be 'true' or a list of variables"
 		    );
-	       new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skews)
+	       if isBasic R then new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skews)
+	       else notImplemented()
 	       )
 	  else (
-	       rawRM := rawPolynomialRing(raw R, raw M);
-	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
-	       new PolynomialRing from rawRM
+	       if isBasic R then (
+		    rawRM := rawPolynomialRing(raw R, raw M);
+		    if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
+		    new PolynomialRing from rawRM
+		    )
+	       else notImplemented()
 	       );
 	  RM.baseRings = append(R.baseRings,R);
 	  RM.monoid = M;

@@ -85,6 +85,7 @@ ZZquotient := (R,I) -> (
 	  if n > 1 and not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
 	  S := new QuotientRing from rawZZp n;
+	  S.rawZZp = true;
 	  S.ideal = I;
 	  S.baseRings = {R};
 	  S.relations = gensI;
