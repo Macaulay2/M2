@@ -5,6 +5,8 @@
 #include "targettypes.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>		/* to get PATH_MAX */
 
 #ifdef SOCKS
 #include <socks.h>

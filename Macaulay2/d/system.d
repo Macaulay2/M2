@@ -65,5 +65,6 @@ import isRegularFile(name:string):int;
 export ArrayStringOrNull := null or array(string);
 import wordexp(word:string):ArrayStringOrNull;
 import readlink(filename:string):string;
+import realpath(filename:string):string;
 import regexmatch(pattern:string, text:string):array(int);
 import readDirectory(name:string):(null or array(string));

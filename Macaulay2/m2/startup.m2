@@ -76,9 +76,6 @@ if firstTime then (
      File << Net := File << Symbol := File << String := printString;
      << Thing := x -> stdio << x;
      String | String := String => concatenate;
-
-     if String #? (String => concatenate) then error "internal error: 1";
-
      Function _ Thing := Function => (f,x) -> y -> f splice (x,y);
      String | String := String => concatenate;
      String | ZZ := String => (s,i) -> concatenate(s,string i);
@@ -92,14 +89,16 @@ if firstTime then (
 
      first = x -> x#0;
      last = x -> x#-1;
-     isAbsoluteExecPath = filename -> match("/", filename);
-     isAbsolutePath = filename -> (
-	  match(
-	       (
-		    if version#"operating system" === "Windows-95-98-NT" then "^(.:|/)"
-		    else "^/"
-		    ),
-	       filename));
+     isAbsoluteExecPath = filename -> (
+	  -- this is the way execvp(3) decides whether to search the path for an executable
+	  match("/", filename)
+	  );
+     isAbsolutePathRegexp := (
+	  -- this is the way execvp decides whether to search the path for a Macaulay 2 source file
+	  if version#"operating system" === "Windows-95-98-NT" then "^(.:/|/)"
+	  else "^/"
+	  );
+     isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      sourceHomeDirectory = null; -- home directory of Macaulay 2
      buildHomeDirectory  = null; -- parent of the directory of the executable described in command line argument 0
      )
@@ -117,10 +116,15 @@ nosetup := false
 interpreter := topLevel
 
 getRealPath := fn -> (
-     -- look at realpath(3), which does even more
-     -- how standard is it?
-     while (s := readlink fn) =!= null do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
-     fn)
+     s := realpath fn;
+     if s =!= null then s
+     else (
+     	  while (
+	       s = readlink fn;
+	       s =!= null
+	       ) 
+	  do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
+     	  fn))
 
 exe := (
      processExe := "/proc/" | string processID() | "/exe";  -- this is a reliable way to get the executable in linux
@@ -132,14 +136,10 @@ exe := (
 	       PATH := separate(":",if "" =!= getenv "PATH" then getenv "PATH" else ".:/bin:/usr/bin");
 	       PATH = apply(PATH, x -> if x === "" then "." else x);
 	       scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
-	       )
-	  )
-     )
- 
+	       );
+	  getRealPath e))
 
-     -- search the PATH for our executable file and use getRealPath to locate our source files and use srcdir to locate more source files
-
-buildHomeDirectory = minimizeFilename(dir exe|"../");
+buildHomeDirectory = minimizeFilename(dir exe|"../")
 
 if fileExists (buildHomeDirectory|"m2/setup.m2"       ) then sourceHomeDirectory = buildHomeDirectory else
 if fileExists (buildHomeDirectory|"srcdir/m2/setup.m2") then sourceHomeDirectory = getRealPath(buildHomeDirectory|"srcdir")|"/"
@@ -201,6 +201,12 @@ setDefaultValues := () -> (
      errorDepth loadDepth();
      )
 
+loadSetup := () -> (
+     -- try to load setup.m2
+     if sourceHomeDirectory === null then error ("can't find file setup.m2; exe = ",exe,"; commandLine#0 = ",commandLine#0);
+     loadFile minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
+     )
+
 processCommandLineOptions := () -> (			    -- two passes
      argno := 1;
      while argno < #commandLine do (
@@ -242,7 +248,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  stderr << "--loading cached memory data from " << datafile << newline; simpleFlush stderr;
 	  loaddata datafile
 	  ) else (
-	  stderr << "warning: failed to load data from " << datafile << newline; simpleFlush stdio;
+	  stderr << "warning: failed to load data from " << datafile << newline; simpleFlush stderr;
 	  )
      )
 
@@ -255,13 +261,8 @@ path = select(path, fileExists);
 documentationPath = apply(path, d -> minimizeFilename(d|"/cache/doc/"))
     documentationPath = select(documentationPath, fileExists)
 
-if firstTime and not nosetup then (
-     -- try to load setup.m2
-     if sourceHomeDirectory === null then error "can't find file setup.m2";
-     loadFile minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
-     )
-
 setDefaultValues()
+if firstTime and not nosetup then loadSetup()
 runStartFunctions()
 processCommandLineOptions()
 interpreter()

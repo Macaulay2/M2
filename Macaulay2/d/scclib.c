@@ -340,6 +340,14 @@ M2_string system_readlink(M2_string filename) {
   return s;
 }
 
+M2_string system_realpath(M2_string filename) {
+  char *fn = tocharstar(filename);
+  char buf[PATH_MAX];
+  char *r = realpath(fn,buf);
+  GC_FREE(fn);
+  return r == NULL ? system_tostring("") : system_tostring(buf);
+}
+
 M2_string system_errfmt(M2_string filename, int lineno, int colno) {
 	char *s = getmem_atomic(filename->len+strlen(posfmt)+10);
 	char *fn = tocharstar(filename);
