@@ -160,7 +160,6 @@ document { quote format,
      characters to printable ones, or to escape sequences."
      }
 
-
 document { quote generatorSymbols,
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under
      which is stored a list of the symbols used as generators for the monoid."

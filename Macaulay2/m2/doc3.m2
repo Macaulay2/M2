@@ -235,6 +235,7 @@ document { "debugging",
 	  (TO "benchmark", "        -- benchmark some code"),
 	  (TO "browse", "           -- examine a list or hash table"),
 	  (TO "code", "             -- display source code for a function"),
+	  (TO "currentFile", "      -- name of current source file"),
 	  (TO "edit", "             -- edit source code for a function"),
 	  (TO "error", "            -- signalling an error"),
 	  (TO "errorDepth", "       -- set the error depth"),
@@ -258,6 +259,11 @@ document { "debugging",
 	  (TO "buckets", "   -- display contents of buckets in a hash table"),
 	  TO "seeParsing"
 	  }
+     }
+
+document { quote currentFile,
+     TT "currentFile", " -- a variable whose value is the name of the current
+     source file."
      }
 
 document { quote flag,
