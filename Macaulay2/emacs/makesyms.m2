@@ -30,7 +30,7 @@ f << ///
 ///
 
 
-add := (face,words) -> (
+add := (face,words) -> if #words > 0 then (
      f
      << "         (" 
      << ///,(concat "\\<\\(" (regexp-opt '(/// << demark(" ", format\words) << ///)) "\\)\\>")///
