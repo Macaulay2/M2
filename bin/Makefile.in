@@ -3,7 +3,9 @@ VPATH = @srcdir@
 include ../include/config.Makefile
 all:: M2
 M2 : M2-build.in
-	../config.status --file=$@:$<
+	cd ..   ; \
+	        case "$<" in /*) PREFIX= ;; *) PREFIX=bin/ ;; esac   ; \
+		./config.status --file=bin/$@:$$PREFIX$<
 	rm -f config.log
 	chmod 0755 $@
 
