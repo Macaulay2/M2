@@ -117,8 +117,6 @@ setColumnChange = (m,n) -> (sendgg(ggPush m, ggPush n, ggsetColChange);)
 rscale = (m,a,r) -> (sendgg(ggPush m, ggPush r, ggPush a, ggRowScale);)
 cscale = (m,a,c) -> (sendgg(ggPush m, ggPush c, ggPush a, ggColumnScale);)
 
--- raxy = (m,r1,a,r) -> (sendgg(ggPush m, ggPush r1, ggPush a, ggPush r, ggRowAddMultiple);)
--- caxy = (m,c1,a,c) -> (sendgg(ggPush m, ggPush c1, ggPush a, ggPush c, ggColumnAddMultiple);)
 raxy = (m,a,r1,r) -> (sendgg(ggPush m, ggPush r1, ggPush a, ggPush r, ggRowAddMultiple);)
 caxy = (m,a,c1,c) -> (sendgg(ggPush m, ggPush c1, ggPush a, ggPush c, ggColumnAddMultiple);)
 
