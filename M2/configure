@@ -3844,7 +3844,7 @@ fi;
 # Check whether --enable-altivec or --disable-altivec was given.
 if test "${enable_altivec+set}" = set; then
   enableval="$enable_altivec"
-  ALTIVEC="yes"
+  ALTIVEC="$enableval"
 else
   ALTIVEC="no"
 
