@@ -545,15 +545,38 @@ readpromptfun():void := (
      stdout << readprompt;
      flush(stdout));
 
-import isReady(fd:int):bool;
+import isReady(fd:int):int;
 isReadyFun(e:Expr):Expr := (
      when e
      is f:file do (
-	  if f.input then Expr(if isReady(f.infd) then True else False)
+	  if f.input then
+	  if f.eof then False
+	  else if f.insize > f.inindex then True
+	  else (
+	       ret := isReady(f.infd);
+	       if ret > 0 then True
+	       else if ret == 0 then False
+	       else errorExpr("'select' error occurred")
+	       )
 	  else WrongArg("an input file")
 	  )
      else WrongArg("an input file"));
 setupfun("isReady",isReadyFun);
+
+isEOFfun(e:Expr):Expr := (
+     when e
+     is f:file do (
+	  if !f.input then WrongArg("an input file")
+	  else if f.eof then True
+	  else if f.insize > f.inindex then False
+	  else (
+	       ret := isReady(f.infd);
+	       if ret > 0 then ( if filbuf(f) then False else True )
+	       else if ret == 0 then False
+	       else errorExpr("'select' error occurred")
+	       ))
+     else WrongArg("an input file"));
+setupfun("isEOF",isEOFfun);
 
 tokenbuf := newvarstring(100);
 getline(o:file):string := (

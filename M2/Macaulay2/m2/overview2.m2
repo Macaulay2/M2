@@ -492,6 +492,7 @@ document { "conditional execution",
      TO "isQuotientModule", ", ",
      TO "isQuotientOf", ", ",
      TO "isQuotientRing", ", ",
+     TO "isReady", ", ",
      TO "isRing", ", ",
      TO "isSubmodule", ", ",
      TO "isSubset", ", ",
@@ -1306,6 +1307,19 @@ document { "two dimensional formatting",
 	  },
      }
 
+document { quote isReady,
+     TT "isReady f", " -- tells whether an input file ", TT "f", " has data
+     available for reading, or it's at the end.",
+     PARA,
+     SEEALSO {"File"}
+     }
+
+document { quote isEOF,
+     TT "isEOF f", " -- tells whether an input file ", TT "f", " is at the end.",
+     PARA,
+     SEEALSO {"File"}
+     }
+
 document { "communicating with programs",
      "The most naive way to interact with another program is simply to run
      it, let it communicate directly with the user, and wait for it to
@@ -1341,6 +1355,28 @@ document { "communicating with programs",
 	  ///f << closeOut///,
 	  ///verticalJoin lines read f///,
 	  ///close f///,
+	  },
+     "With this form of bidirectional communication there is always a danger
+     of blocking, because the buffers associated with the communication
+     channels (pipes) typically hold only 4096 bytes.  In this example we
+     succeeded because the entire output from ", TT "egrep", " was smaller
+     than 4096 bytes.  In general, one should be careful to arrange things
+     so that the two programs take turns using the communication channel, so
+     that when one is writing data, the other is reading it.",
+     PARA,
+     "A useful function in this connection is ", TO "isReady", " which will
+     tell you whether an input file has any input available for reading, or
+     whether it has arrived at the end.  We illustrate that in the following
+     example by simulating a computation that takes 5 seconds to complete,
+     printing one dot per second while waiting.",
+     EXAMPLE {
+	  ///f = openIn "!sleep 5; echo -n the answer is 4"///,
+	  ///isReady f///,
+	  ///while not isReady f do (sleep 1; << "." << flush)///,
+	  ///read f///,
+	  ///isReady f///,
+	  ///isEOF f///,
+	  ///close f///
 	  },
      "We also allow for bidirectional communication
      through sockets over the internet.  We illustrate

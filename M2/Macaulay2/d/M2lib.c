@@ -1412,10 +1412,15 @@ M2_string oper1;
 void C__prepare() {}
 
 int actors4_isReady(int fd) {
-#if 0
+#if 1
+  int ret;
   static fd_set r, w, e;
+  struct timeval timeout;
   FD_SET(fd,&r);
-  select(1,&r,&w);
+  timerclear(&timeout);
+  ret = select(64,&r,&w,&e,&timeout);
+  FD_CLR(fd,&r);
+  return ret;
 #else
   return -1;
 #endif
