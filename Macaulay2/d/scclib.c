@@ -452,7 +452,7 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   int r;
   if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
   r = read_via_readline(buffer->array + offset,len,p);
-  GC_free(p);
+  GC_FREE(p);
   return r;
 }
 

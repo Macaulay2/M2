@@ -120,22 +120,30 @@ pos := s -> (
      if t =!= null then t#0 | ":" | toString t#1)
 
 truncate := s -> (
+     narrowed := false;
      if width s > 45
      then (
 	  s = stack ( apply( unstack s, l -> substring(l,0,45)));
-	  s = s | stack ( height s + depth s : "$" );
+	  s = s | (stack ( height s + depth s : "|" ))^(height s - 1);
+     	  narrowed = true;
 	  );
      if height s + depth s  > 4 
      then (
 	  s = stack take(unstack s,4);
-	  s = s || concatenate(width s : "$");
+	  if narrowed
+	  then s = s || concatenate(width s - 1 : "-", "+")
+	  else s = s || concatenate(width s : "-");
 	  );
      s)
 
 sortByHash := v -> last \ sort (v / (i -> (hash i, i)))
 
+abbreviate := x -> (
+     if class x === Function and match("^--Function.*--$", toString x) then "..."
+     else x)
+
 listLocalVariables = Command(
      x -> (
 	  if breakLoopFrame === null then error "no break loop active";
-	  Table (apply ( flatten (sortByHash \ values \ localDictionaries breakLoopFrame) , s -> {s,":",net class value s, "=", truncate net value s, pos s}))))
+	  Table (apply ( reverse flatten (sortByHash \ values \ localDictionaries breakLoopFrame) , s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
 
