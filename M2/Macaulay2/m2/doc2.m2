@@ -502,15 +502,25 @@ document { symbol "<-",
 
 document { "=",
      Headline => "assignment",
-     TT "x = e", "      -- assigns the value e to the variable x.",
+     TT "x = e", "      -- assigns the value ", TT "e", " to the variable ", TT "x", ".",
      PARA,
      NOINDENT,
-     TT "x#i = e", "    -- assigns the value e to the i-th member of the array x.  Here
-     i must be a nonnegative integer.",
+     TT "x#i = e", "    -- assigns the value ", TT "e", " to the ", TT "i", "-th member of the array ", TT "x", ".  Here
+     ", TT "i", " must be a nonnegative integer.",
      PARA,
      NOINDENT,
-     TT "x#k = e", "    -- assigns the value e to the key k in the hash table
-     x.  Here k can be any expression.",
+     TT "x#k = e", "    -- assigns the value ", TT "e", " to the key ", TT "k", " in the hash table
+     ", TT "x", ".  Here ", TT "k", " can be any expression.",
+     PARA,
+     NOINDENT,
+     TT "(a,b,c) = x", "    -- assigns the members of the sequence ", TT "x", " as
+     values of the variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
+     has too few elements, then the trailing symbols on the left
+     side are given the value ", TT "null", ".  If ", TT "x", " has too
+     many elements, then the last symbol on the left hand side is given
+     as value a sequence containing the trailing elements of the right hand side.
+     If the right hand side is not a sequence, then ", TT "a", " gets the value, and
+     ", TT "b", " and ", TT "c", " get ", TT "null", ".",
      SEEALSO {"HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook"}
      }
 
@@ -525,6 +535,16 @@ document { ":=",
      TT "X * Y := (x,y) -> ( ... )", " -- install a method for the operator
      ", TT "*", " applied to arguments of classes ", TT "X", " and ", TT "Y", ".
      Many other operators are allowed: see ", TO "operators", ".",
+     PARA,
+     NOINDENT,
+     TT "(a,b,c) := x", "    -- assigns the members of the sequence ", TT "x", " as
+     values of the local variables ", TT "a", ", ", TT "b", ", ", TT "c", ".  If ", TT "x", "
+     has too few elements, then the trailing symbols on the left
+     side are given the value ", TT "null", ".  If ", TT "x", " has too
+     many elements, then the last symbol on the left hand side is given
+     as value a sequence containing the trailing elements of the right hand side.
+     If the right hand side is not a sequence, then ", TT "a", " gets the value, and
+     ", TT "b", " and ", TT "c", " get ", TT "null", ".",
      PARA,
      "This operator is slightly schizophrenic in its function, as the installation
      of a method has global effect if the classes involved are globally known,
@@ -808,7 +828,7 @@ document { "symbol",
 
 document { gcd,
      Headline => "greatest common divisor",
-     TT "gcd(x,y)", " -- yields the greatest common divisor of x and y.",
+     TT "gcd(x,y,...)", " -- yields the greatest common divisor of ", TT "x", ", ", TT "y", ", ... .",
      SEEALSO "gcdCoefficients"
      }
 
@@ -1180,3 +1200,52 @@ document { symbol "=>",
      an ", TO "Option", "."
      }
 
+
+document { (symbol " ", RingElement, Array),
+     Headline => "substitution of variables",
+     Synopsis => {
+	  "r = f[a,b,c]",
+	  "f" => null,
+	  "[a,b,c]" => { "an array of ring elements" },
+	  "r" => { "the result of replacing the variables in ", TT "f", " by the ring
+	       elements provided in brackets."
+	       }
+	  },
+     EXAMPLE {
+	  "R = QQ[x,y];",
+	  "f = x^3 + 99*y;",
+	  "f[1000,3]"
+	  }
+     }
+     
+document { (symbol _, Symbol, Ring),
+     Headline => "generator of a ring with a given name",
+     Synopsis => {
+	  "r = x_R",
+	  "x" => null,
+	  "R" => null,
+	  "r" => { "the generator of the ring ", TT "R", " whose name is ", TT "x", "." },
+	  }
+     }
+     
+document { (symbol _, IndexedVariable, Ring),
+     Headline => "generator of a ring with a given name",
+     Synopsis => {
+	  "r = x_R",
+	  "x" => null,
+	  "R" => null,
+	  "r" => { "the generator of the ring ", TT "R", " whose name is
+	       the same as that of ", TT "x", "." },
+	  }
+     }
+     
+document { (symbol _, RingElement, Ring),
+     Headline => "generator of a ring with a given name",
+     Synopsis => {
+	  "r = x_R",
+	  "x" => null,
+	  "R" => null,
+	  "r" => { "the generator of the ring ", TT "R", " whose name is
+	       the same as that of ", TT "x", "." },
+	  }
+     }

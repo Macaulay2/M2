@@ -124,7 +124,9 @@ methods Sequence := F -> (
 			      and class key === Sequence and tallyF <= tally key
 			      then found#key = true)))));
      sort keys found)
+
 methods Thing := F -> (
+     if F === HH then return join(methods homology, methods cohomology);
      seen := new MutableHashTable;
      found := new MutableHashTable;
      scanPairs(symbolTable(),

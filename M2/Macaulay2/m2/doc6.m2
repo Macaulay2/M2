@@ -359,7 +359,11 @@ document { degreesRing,
      PARA,
      "Elements of this ring are used as Poincare polynomials for modules
      over R.",
-     SEEALSO "poincare"
+     PARA,
+     "Note: the monomial ordering used in the degrees ring is ", TT "RevLex", ",
+     so the polynomials in it will be displayed with the smallest exponents first,
+     because such polynomials are often used as Hilbert series.",
+     SEEALSO { "poincare", "hilbertSeries" }
      }
 
 document { standardForm,
@@ -1166,17 +1170,61 @@ document { (symbol _, Vector, ZZ),
      }
 
 document { degrees,
-     Headline => "get degrees of generators",
-     TT "degrees M", " -- provides a list of multi-degrees for the generators
-     of a module or ideal M.",
-     PARA,
+     Headline => "degrees of generators"
+     }
+
+document { (degrees, Ideal),
+     Synopsis => {
+	  "s = degrees I",
+	  "I" => null,
+	  "s" => { "the list of multi-degrees for the generators of the
+	       module ", TT "I", "."
+	       }
+	  }
+     }
+
+document { (degrees, Matrix),
+     Synopsis => {
+	  "s = degrees f",
+	  "f" => null,
+	  "s" => { "a list ", TT "{x,y}", " where ", TT "x", " is the list
+	       of degrees of the target of ", TT "f", " and ", TT "y", " is the
+	       list of degrees of the source of ", TT "f", "."
+	       }
+	  }
+     }
+
+document { (degrees, Module),
+     Synopsis => {
+	  "s = degrees M",
+	  "M" => null,
+	  "s" => { "the list of multi-degrees for the generators of the
+	       module ", TT "M", "."
+	       }
+	  },
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "E = R^5",
       	  "degrees E",
       	  "F = R^{1,2,3,4}",
       	  "degrees F"
+	  }
+     }
+
+document { (degrees, Ring),
+     Synopsis => {
+	  "s = degrees R",
+	  "R" => null,
+	  "s" => { "the list of multi-degrees for the generators (variables) of the
+	       ring ", TT "R", "."
+	       }
 	  },
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "degrees R",
+	  "S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]",
+      	  "degrees S"
+	  }
      }
 
 document { (symbol ^, Ring, List),
@@ -1357,6 +1405,10 @@ document { Matrix,
      interpreted as a linear transformation in terms of the generators
      of the modules.",
      SEEALSO "matrices",
+     PARA,
+     "A matrix ", TT "f", " is an immutable object, so if you want to 
+     cache information about it, put it in the hash table ", TT "f.cache", ".",
+     PARA,
      "Common ways to make a matrix:",
      MENU {
 	  TO "map",

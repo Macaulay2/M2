@@ -179,8 +179,8 @@ globalSectionsModule := (G,bound) -> (
      prune M)
 
 LowerBound = new SelfInitializingType of BasicList
->  InfiniteNumber := >  ZZ := i -> LowerBound{i+1}
->= InfiniteNumber := >= ZZ := i -> LowerBound{i}
+>  InfiniteNumber := >  ZZ := LowerBound => i -> LowerBound{i+1}
+>= InfiniteNumber := >= ZZ := LowerBound => i -> LowerBound{i}
 CoherentSheaf(*) := F -> F(>=-infinity)
 
 SumOfTwists = new Type of HashTable
@@ -226,10 +226,7 @@ OO = new ScriptedFunctor from { subscript => structureSheaf }
 --	  )
 --     }
 
-prune CoherentSheaf := F -> (
-     X := variety F;
-     sheaf_X prune HH^0 F(>=0)
-     )
+prune CoherentSheaf := F -> sheaf prune HH^0 F(>=0)
 
 cotangentSheaf = method()
 cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
@@ -319,6 +316,6 @@ sheafExt = new ScriptedFunctor from {
 	       }
 	  )
      }
-sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := (n,F,G) -> prune sheaf Ext^n(module F, module G)
+sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (n,F,G) -> prune sheaf Ext^n(module F, module G)
 Ext(ZZ,CoherentSheaf,CoherentSheaf) := Module => (n,F,G) -> error "global Ext not implemented yet"
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => (n,F,G') -> error "global Ext not implemented yet"

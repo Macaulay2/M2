@@ -477,6 +477,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 			 if mutable || o.mutable then copy(o.table) else o.table,
 			 class, parent, o.numEntries, 0, mutable);
 		    if mutable then (
+			 -- cache tables has hash code 0
 			 if !ancestor(class,cacheTableClass) then x.hash = nextHash();
 			 )
 		    else x.hash = hash(x);

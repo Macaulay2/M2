@@ -320,11 +320,13 @@ document { "->",
 document { "path",
      Headline => "list of directories to look in",
      "A list of strings containing names of directories in
-     which ", TO "load", " and ", TO "input", " should seek files.",
+     which ", TO "load", " and ", TO "input", " should seek files.  These strings
+     are simply concatenated with the filename being sought, so should include
+     any necessary terminal slashes.",
      PARA,
      EXAMPLE {
 	  "path",
-	  ///path = append(path, getenv "HOME" | pathSeparator | "resolutions")///
+	  ///path = append(path, getenv "HOME" | pathSeparator | "resolutions" | pathSeparator)///
 	  }
      }
 
@@ -631,7 +633,7 @@ document { describe,
 document { input,
      Headline => "read Macaulay 2 commands and echo",
      TT "input \"f\"", " -- reads and executes the commands found in the 
-     file named f, echoing the input, printing the values, and incrementing
+     file named ", TT "f", ", echoing the input, printing the values, and incrementing
      the line number.",
      PARA,
      "The file is sought along the ", TO "path", ", unless the name of the
@@ -639,6 +641,9 @@ document { input,
      PARA,
      "If one of the expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
+     PARA,
+     "If an error occurs while evaluating the expressions in the file,
+     reading is stopped.",
      PARA,
      SEEALSO{ "path", "needs", "load"}
      }
@@ -655,10 +660,11 @@ document { load,
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
      PARA,
-     "The file is sought along the ", TO "path", ", unless the name of the
-     file begins with the character(s) in ", TO "pathSeparator", ".  The
-     file is read without echoing the input, printing the values, or
-     incrementing the line number.",
+     "The file is sought in the directory containing the file in which
+     the call to ", TT "load", " is, and then along the ", TO "path", ",
+     unless the name of the file begins with the character(s) in
+     ", TO "pathSeparator", ".  The file is read without echoing the input, 
+     printing the values, or incrementing the line number.",
      PARA,
      SEEALSO{ "path", "needs", "input"}
      }

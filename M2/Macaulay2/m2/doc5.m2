@@ -643,3 +643,23 @@ document { symbol directSum,
      Headline => "specify method for forming direct sums",
      SEEALSO "directSum"
      }
+
+document { (symbol ^**, Module, ZZ),
+     Headline => "tensor power",
+     Synopsis => {
+	  "N = M^**i",
+	  "M" => null,
+	  "i" => null,
+	  "N" => { "the i-th tensor power of M" }
+	  }
+     }
+
+document { (symbol ^**, CoherentSheaf, ZZ),
+     Headline => "tensor power",
+     Synopsis => {
+	  "N = M^**i",
+	  "M" => null,
+	  "i" => null,
+	  "N" => { "the i-th tensor power of M" }
+	  }
+     }    

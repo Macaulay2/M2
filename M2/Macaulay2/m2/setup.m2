@@ -222,7 +222,7 @@ scan((
 	  symbol phase,
 	  symbol currentDirectory,
 	  symbol documentationPath,
-	  symbol currentFile,
+	  symbol currentFileName,
 	  symbol compactMatrixForm,
 	  symbol TeXmacsMode
 	  ), x -> writableGlobals#x = true)

@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
 -- configuration
 -----------------------------------------------------------------------------
-maximumCodeWidth := 59
+maximumCodeWidth := 200
 CachePrefix          := "cache/"
 DocumentationPrefix  := CachePrefix | "doc/"
 TestsPrefix          := CachePrefix | "tests/"
@@ -393,7 +393,7 @@ document List := z -> (
      body := drop(z,1);
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     -- stderr << "documenting " << nodeName << " in " << currentFile << " in " << currentFileDirectory << endl;
+     -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
      nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
      -- nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);

@@ -1008,3 +1008,16 @@ document { showHtml,
      PARA,
      "Try this example: ", TT ///showHtml documentation "loops"///, "."
      }
+
+document { sheafExt,
+     Headline => "sheaf Ext of coherent sheaves"
+     }
+
+document { (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
+     Synopsis => {
+	  "E = sheafExt^n(F,G)",
+	  "F" => null,
+	  "G" => null,
+	  "E" => { "the n-th sheaf Ext of ", TT "F", " and ", TT "G", "." }
+	  }
+     }
