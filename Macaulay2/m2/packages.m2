@@ -86,6 +86,7 @@ newPackage(Package) := opts -> p -> (
      newPackage(p.name,opts))
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
+     if not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
      stderr << "--package " << title << " loading" << endl;
      removePackage title;
      saveD := globalDictionaries;
@@ -95,15 +96,14 @@ newPackage(String) := opts -> (title) -> (
 	  else (
 	       d := new Dictionary;
 	       fileExitHooks = prepend(hook, fileExitHooks);
-	       globalDictionaries = {d,Main.Dictionary,PackageDictionary};    -- implement Using, too
+	       globalDictionaries = join({d,PackageDictionary,Main.Dictionary},apply(opts.Using,pkg->pkg.Dictionary));
 	       d));
      if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
      if not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
      p := currentPackageS <- new Package from {
           symbol name => title,
      	  symbol Dictionary => newdict,
-	  symbol Version => opts.Version,
-	  symbol WritableSymbols => opts.WritableSymbols,
+	  symbol Options => opts,
      	  "close hook" => hook,
 	  "previous package" => currentPackage,
 	  "previous dictionaries" => saveD,
@@ -126,6 +126,10 @@ newPackage(String) := opts -> (title) -> (
 	  };
      PrintNames#newdict = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
+     sym := getGlobalSymbol(PackageDictionary,title);
+     p.Symbol = sym;
+     globalAssignFunction(sym,p);
+     sym <- p;
      p)
 
 export = method(SingleArgumentDispatch => true)
@@ -167,12 +171,8 @@ closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage.name then error ("package not current: ",title);
      p := currentPackage;
-     sym := getGlobalSymbol(PackageDictionary,title);
-     p.Symbol = sym;
-     globalAssignFunction(sym,p);
-     sym <- p;
-     scan(p.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
-     ws := set p.WritableSymbols;
+     scan(p.Options.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
+     ws := set p.Options.WritableSymbols;
      d := p.Dictionary;
      scan(values d,
 	  s -> (
