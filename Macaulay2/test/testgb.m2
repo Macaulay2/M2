@@ -31,7 +31,7 @@ simplegb2 = () -> (
        "b2-ac a4b-c2 a5c-bc2 c3-ad2 a6d2-abcd2 " | newline))
 
 simplegb3 = () -> (
-    R = ZZ/101[quote r,quote s,quote t,quote a..quote f,
+    R = ZZ/101[symbol r,symbol s,symbol t,symbol a..symbol f,
               Degrees=>{1,1,1,3,3,3,3,3,3},
 	      MonomialOrder => Eliminate 3];
     m = matrix {{r^3, r^2*s, r^2*t, r*t^2, r*s*t, t^3}}
@@ -110,7 +110,7 @@ testgb5 = () -> (
 
 testquot1 = () -> (
     -- working over quotient rings
-    R = ZZ/101[quote a..quote d]/(a^2+b^2+c^2+d^2);
+    R = ZZ/101[symbol a..symbol d]/(a^2+b^2+c^2+d^2);
     m1 = vars R;
     m2 = syz(m1,Strategy=>strat);
     m3 = syz(m2,Strategy=>strat);
@@ -124,7 +124,7 @@ testquot1 = () -> (
 
 testquot2 = () -> (
     -- second test over quotient ring
-    A = ZZ/32003[quote x, quote y, quote z, quote t, Degrees => {2,1,1,1}];
+    A = ZZ/32003[symbol x, symbol y, symbol z, symbol t, Degrees => {2,1,1,1}];
     B = A/(x*y+z^3+z*t^2);
     I = symmetricPower(3,matrix{{y,z}});
     -- now compute E = Ext^1(I,B) 'by hand'
@@ -141,7 +141,7 @@ testquot2 = () -> (
 
 testquot3 = () -> (
     -- second test over quotient ring
-    A = ZZ/32003[quote x, quote y, quote z, quote t];
+    A = ZZ/32003[symbol x, symbol y, symbol z, symbol t];
     B = A/(x*y+z^3+z*t^2);
     I = symmetricPower(3,matrix{{y,z}});
     -- now compute E = Ext^1(I,B) 'by hand'

@@ -24,7 +24,7 @@ isCompleteIntersection Ideal := (I) -> (
      m := map(R^1, n, (i,j) -> R_j^((degree I_j)#0));
      (coker gens I).poincare = poincare coker m;
      gb (gens I, Strategy=>LongPolynomial);
-     remove(coker gens I, quote poincare);
+     remove(coker gens I, symbol poincare);
      codim I === n
      ))
 

@@ -17,7 +17,7 @@ Module + Module := Module => (M,N) -> (
 
 Module ** Module := Module => (M,N) -> (
      P := youngest(M,N);
-     key := (M,N,quote **);
+     key := (M,N,symbol **);
      if P#?key then P#key
      else M**N = (
 	  if M.?generators and not isFreeModule N
@@ -51,7 +51,7 @@ Module ** Module := Module => (M,N) -> (
 
 Matrix ** Module := Matrix => (f,M) -> (
      P := youngest(f,M);
-     key := (f,M,quote **);
+     key := (f,M,symbol **);
      if P#?key then P#key
      else f**M = (
      	  f ** id_M
@@ -59,7 +59,7 @@ Matrix ** Module := Matrix => (f,M) -> (
      )
 Module ** Matrix := Matrix => (M,f) -> (
      P := youngest(M,f);
-     key := (M,f,quote **);
+     key := (M,f,symbol **);
      if P#?key then P#key
      else M**f = (
      	  id_M ** f
@@ -71,7 +71,7 @@ Module ** Matrix := Matrix => (M,f) -> (
 -----------------------------------------------------------------------------
 Module ** Ring := Module => (M,R) -> (
      P := youngest(M,R);
-     key := (M,R,quote **);
+     key := (M,R,symbol **);
      if P#?key then P#key
      else M**R = (
 	  k := ring M;
@@ -87,7 +87,7 @@ Module ** Ring := Module => (M,R) -> (
 
 Matrix ** Ring := Matrix => (f,R) -> (
      P := youngest(f,R);
-     key := (f,R,quote **);
+     key := (f,R,symbol **);
      if P#?key then P#key
      else f**R = (
 	  k := ring source f;
@@ -261,7 +261,7 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
 	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
-i := quote i
+i := symbol i
 hilbertFunctionRing := QQ[i]
 
 hilbertFunctionQ := method()
@@ -474,7 +474,7 @@ Module / Vector := Module => (M,v) -> (
 --     R := ring M;
 --     c := codim M; 
 --     annihilator prune Ext^c(M, R))
---document { quote top,
+--document { symbol top,
 --     TT "top M", " -- produce the annihilator of Ext^c(M, R), where c
 --     is the codimension of the support of the module M."
 --     }
@@ -509,7 +509,7 @@ Module _ ZZ := Vector => (M,i) -> (
      )
 
 -----------------------------------------------------------------------------
-Module ^ Array := Matrix => (M,w) -> if M#?(quote ^,w) then M#(quote ^,w) else M#(quote ^,w) = (
+Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.?components then error "expected a direct sum module";
@@ -524,7 +524,7 @@ Module ^ Array := Matrix => (M,w) -> if M#?(quote ^,w) then M#(quote ^,w) else M
      v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
      map(directSum M.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
 
-Module _ Array := Matrix => (M,w) -> if M#?(quote _,w) then M#(quote _,w) else M#(quote _,w) = (
+Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else M#(symbol _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.?components then error "expected a direct sum module";

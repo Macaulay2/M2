@@ -24,7 +24,7 @@ toString Sequence := s -> (
      if # s === 1 then concatenate("singleton ",toString s#0)
      else concatenate("(",between(",",toString \ s),")")
      )
-toString Command  := f -> if Symbols#?f then string Symbols#f else "--Command--"
+toString Command := toExternalString Command := f -> if Symbols#?f then string Symbols#f else "--Command--"
 net Function := toString Function := f -> if Symbols#?f then string Symbols#f else "--Function--"
 toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then string Symbols#f else "--Manipulator--"
 toString Thing := string
@@ -65,7 +65,7 @@ describe Thing := net
 describe MutableHashTable := x -> (
      if x.?name then (
 	  n := x.name;
-	  remove(x, quote name);
+	  remove(x, symbol name);
 	  d := expression x;
 	  x.name = n;
 	  d)
@@ -78,26 +78,26 @@ net Thing := toString
     operators := new MutableHashTable
     alphabet := new MutableHashTable
     scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", c -> alphabet#c = true)
-    scan( { quote or, quote do, quote else, quote then, quote of, quote shield,
-	      quote from, quote and, quote not, quote if, quote try, 
-	      quote new, quote while, quote quote, quote global, quote local,
-	      quote timing, quote time
+    scan( { symbol or, symbol do, symbol else, symbol then, symbol of, symbol shield,
+	      symbol from, symbol and, symbol not, symbol if, symbol try, 
+	      symbol new, symbol while, symbol symbol, symbol global, symbol local,
+	      symbol timing, symbol time
 	      },
-	 i -> operators#i = concatenate("quote ", toString i))
+	 i -> operators#i = concatenate("symbol ", toString i))
     scan(pairs symbolTable(), (n,s) -> (
 	      if not alphabet#?(n#0) then (
-		   operators#s = concatenate("quote ",n);
+		   operators#s = concatenate("symbol ",n);
 		   )
 	      )
 	 )
     alphabet = null
-    operators#(quote " ") = ///quote " "///
+    operators#(symbol " ") = ///symbol " "///
 
 -- toExternalString Symbol := s -> if operators#?s then operators#s else toString s
 
 toExternalString Symbol := s -> (			    -- experimental
      if operators#?s then operators#s
-     else if value s =!= s then concatenate("quote ",string s)
+     else if value s =!= s then concatenate("symbol ",string s)
      else string s
      )
 
@@ -120,7 +120,7 @@ net Nothing := null -> ""
 Net | Net := Net => horizontalJoin
 Net || Net := Net => stack
 String ^ ZZ := Net => (s,i) -> raise(horizontalJoin s,i)
-Net ^ ZZ := Net => raise; erase quote raise
+Net ^ ZZ := Net => raise; erase symbol raise
 String ^ Sequence := Net => (s,p) -> ((height,depth) -> (stack apply(height+depth,i->s))^(height-1))(p)
 
 net Net := identity
@@ -179,4 +179,4 @@ tex Net := n -> concatenate(
      newline
      )
 
-erase quote string
+erase symbol string

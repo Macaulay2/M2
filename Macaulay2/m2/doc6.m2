@@ -204,8 +204,8 @@ document { ZZ,
      "Operations on integers:",
      MENU {
 	  TO "gcdCoefficients",
-	  TO (quote <<, ZZ, ZZ),
-	  TO (quote >>, ZZ, ZZ)
+	  TO (symbol <<, ZZ, ZZ),
+	  TO (symbol >>, ZZ, ZZ)
 	  }
      }
 
@@ -500,7 +500,7 @@ document { listForm,
 	  },
      }
 
-document { (quote " ",Ring, OrderedMonoid),
+document { (symbol " ",Ring, OrderedMonoid),
      TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
      ", TT "M", ".",
      SEEALSO {"Ring", "OrderedMonoid"}
@@ -525,7 +525,7 @@ document { WeylAlgebra,
 	  }
      }
 
-document { (quote _, RingElement, RingElement),
+document { (symbol _, RingElement, RingElement),
      TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",
      PARA,
      EXAMPLE {
@@ -535,7 +535,7 @@ document { (quote _, RingElement, RingElement),
      SEEALSO {"_"}
      }
 
-document { (quote _, Ring, String),
+document { (symbol _, Ring, String),
      TT "R_\"x\"", " -- produce the indeterminate of the polynomial ring R 
      whose name is x.",
      PARA,
@@ -547,7 +547,7 @@ document { (quote _, Ring, String),
      "Eventually we will implement this for monoids, too."
      }
 
-document { (quote _, Ring, ZZ),
+document { (symbol _, Ring, ZZ),
      TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
      PARA,
      EXAMPLE {
@@ -556,7 +556,7 @@ document { (quote _, Ring, ZZ),
 	  }
      }
 
-document { (quote _, Ring, List),
+document { (symbol _, Ring, List),
      TT "R_w", " -- produce the monomial of the ring ", TT "R", " by using the 
      integers in the list ", TT "w", " as exponents of the variables.",
      PARA,
@@ -600,7 +600,7 @@ document { SchurRing,
      SEEALSO {"_", SchurRing, List}
      }
 
-document { (quote _, SchurRing, List),
+document { (symbol _, SchurRing, List),
      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
      PARA,
@@ -725,7 +725,7 @@ document { GeneralOrderedMonoid,
      SEEALSO { "monoid", "Degrees", "MonoidElement"}
      }     
 
-document { (quote _, Monoid,ZZ),
+document { (symbol _, Monoid,ZZ),
      TT "M_i", " -- produces the i-th generator of a monoid ", TT "M", ".",
      PARA,
      SEEALSO { "Monoid", "_" }
@@ -915,7 +915,7 @@ document { group,
      SEEALSO { "Degrees", "OrderedMonoid", "monoid" }
      }
 
-document { (quote **, Monoid, Monoid),
+document { (symbol **, Monoid, Monoid),
      TT "M ** N", " -- tensor product of monoids.",
      PARA,
      "For complete documentation, see ", TO "tensor", "."
@@ -997,7 +997,7 @@ document { Module,
      PARA,
      "Functions which create modules:",
      MENU {
-	  TO (quote ^, Ring, ZZ),
+	  TO (symbol ^, Ring, ZZ),
 	  TO "cokernel",
 	  TO "homology",
 	  TO "ideal",
@@ -1017,16 +1017,16 @@ document { Module,
 	  },
      "Operations on modules:",
      MENU {
-	  TO (quote ==, Module, Module),
-	  (TO (quote _, Module, ZZ), " -- get a generator of a module"),
-	  TO (quote +,Module,Module),
-	  (TO (quote **,Module,Ring), " -- tensor product, base change."),
-	  (TO (quote ++, Module, Module), " -- direct sum"),
-	  (TO (quote **, Module, Module), " -- tensor product"),
-	  (TO (quote :, Module, Module), " -- the submodule quotient ", TT "M : N", ""),
-	  (TO (quote /, Module, Module), " -- the quotient module ", TT "(M+N)/N"),
-	  (TO (quote /, Module, Ideal), " -- the quotient module ", TT "M/IM"),
-	  (TO (quote /, Ideal, Ideal), " -- the quotient module ", TT "(I+J)/J"),
+	  TO (symbol ==, Module, Module),
+	  (TO (symbol _, Module, ZZ), " -- get a generator of a module"),
+	  TO (symbol +,Module,Module),
+	  (TO (symbol **,Module,Ring), " -- tensor product, base change."),
+	  (TO (symbol ++, Module, Module), " -- direct sum"),
+	  (TO (symbol **, Module, Module), " -- tensor product"),
+	  (TO (symbol :, Module, Module), " -- the submodule quotient ", TT "M : N", ""),
+	  (TO (symbol /, Module, Module), " -- the quotient module ", TT "(M+N)/N"),
+	  (TO (symbol /, Module, Ideal), " -- the quotient module ", TT "M/IM"),
+	  (TO (symbol /, Ideal, Ideal), " -- the quotient module ", TT "(I+J)/J"),
 	  TO "ambient",
 	  (TO "annihilator", " -- the annihilator of a module"),
 	  (TO "codim", " -- codimension of the support of a module"),
@@ -1071,7 +1071,7 @@ document { Module,
 	  TO "+",
 	  TO "-",
 	  TO "*",
-	  (TO (quote _, Vector, ZZ), " -- get a component of a vector"),
+	  (TO (symbol _, Vector, ZZ), " -- get a component of a vector"),
 	  TO "components",
 	  TO "leadCoefficient",
 	  TO "leadMonomial"
@@ -1134,7 +1134,7 @@ document { relations,
      SEEALSO {"generators","subquotient"}
      }
 
-document { (quote ==, Module, Module),
+document { (symbol ==, Module, Module),
      TT "M == N", " -- test whether two modules are equal.",
      PARA,
      "Two modules are equal if they are isomorphic as subquotients of the
@@ -1163,7 +1163,7 @@ document { Vector,
      SEEALSO "Module"
      }
 
-document { (quote _, Vector, ZZ),
+document { (symbol _, Vector, ZZ),
      TT "v_i", " -- produce the i-th entry of a vector or module element v.",
      PARA,
      EXAMPLE {
@@ -1187,7 +1187,7 @@ document { degrees,
 	  },
      }
 
-document { (quote ^, Ring, List),
+document { (symbol ^, Ring, List),
      TT "R^{i,j, k, ...}", " -- produce a free module over R whose generators have
      degrees -i, -j, -k, ...",
      PARA,
@@ -1216,10 +1216,10 @@ document { components,
      SEEALSO {"vector", "directSum", "++"}
      }
 
-document { (quote ^, Ring, ZZ),
+document { (symbol ^, Ring, ZZ),
      TT "R^n", " -- produce a free module of rank ", TT "n", " over the ring ", TT "R", "",
      PARA,
-     SEEALSO{"^", "isFreeModule", (quote ^, Ring, List)}
+     SEEALSO{"^", "isFreeModule", (symbol ^, Ring, List)}
      }
 
 document { euler,
@@ -1347,20 +1347,20 @@ document { Matrix,
 	  (TO "-", "                      -- difference"),
 	  (TO "*", "                      -- product"),
 	  (TO "^", "                      -- power"),
-	  (TO (quote ^, Matrix, List), "  -- extracting or permuting rows"),
-	  (TO (quote ^, Matrix, Array), " -- extracting or permuting blocks of rows"),
-	  (TO (quote %,Matrix,Matrix), "  -- remainder"),
-	  (TO (quote %,Matrix,RingElement), " -- remainder"),
-	  (TO (quote //,Matrix,Matrix), " -- quotient"),
-	  (TO (quote //,Matrix,RingElement), " -- quotient"),
-	  (TO (quote _, Matrix, List), " -- extracting or permuting columns"),
-	  (TO (quote _, Matrix, Array), " -- extracting or permuting blocks of columns"),
-	  (TO (quote |, Matrix, Matrix), " -- horizontal concatenation"),
-	  (TO (quote ||, Matrix, Matrix), " -- vertical concatenation"),
-	  (TO (quote ++, Matrix, Matrix), " -- direct sum"),
-	  (TO (quote **,Matrix, Matrix), " -- tensor product of matrices"),
-	  (TO (quote **, Matrix, Module), " -- tensor product, e.g., degree shifting"),
-	  (TO (quote **,Matrix,Ring), " -- tensor product, base change"),
+	  (TO (symbol ^, Matrix, List), "  -- extracting or permuting rows"),
+	  (TO (symbol ^, Matrix, Array), " -- extracting or permuting blocks of rows"),
+	  (TO (symbol %,Matrix,Matrix), "  -- remainder"),
+	  (TO (symbol %,Matrix,RingElement), " -- remainder"),
+	  (TO (symbol //,Matrix,Matrix), " -- quotient"),
+	  (TO (symbol //,Matrix,RingElement), " -- quotient"),
+	  (TO (symbol _, Matrix, List), " -- extracting or permuting columns"),
+	  (TO (symbol _, Matrix, Array), " -- extracting or permuting blocks of columns"),
+	  (TO (symbol |, Matrix, Matrix), " -- horizontal concatenation"),
+	  (TO (symbol ||, Matrix, Matrix), " -- vertical concatenation"),
+	  (TO (symbol ++, Matrix, Matrix), " -- direct sum"),
+	  (TO (symbol **,Matrix, Matrix), " -- tensor product of matrices"),
+	  (TO (symbol **, Matrix, Module), " -- tensor product, e.g., degree shifting"),
+	  (TO (symbol **,Matrix,Ring), " -- tensor product, base change"),
           (TO "borel", "                -- Borel submodule generated by a matrix"),
           (TO "complement", "           -- generators of cokernel"),
           (TO "compress", "             -- removal of zero columns"),
@@ -1390,8 +1390,8 @@ document { Matrix,
 	  },
      "Operations on matrices:",
      MENU {
-	  (TO (quote _, Matrix, Sequence), " -- getting an entry"),
-	  (TO (quote _, Matrix, ZZ), "  -- getting a column"),
+	  (TO (symbol _, Matrix, Sequence), " -- getting an entry"),
+	  (TO (symbol _, Matrix, ZZ), "  -- getting a column"),
           (TO "content", "              -- content of a matrix"),
           (TO "degree", "               -- degree of a matrix, as specified"),
           (TO "det", "                  -- determinant of a matrix"),
@@ -1433,12 +1433,12 @@ document { getMatrix,
      TT "getMatrix R", " -- pops a matrix over ", TT "R", " from the top of 
      the engine's stack and returns it."
      }
-document { (quote _, Matrix, Sequence),
+document { (symbol _, Matrix, Sequence),
      TT "f_(i,j)", " -- provide the element in row ", TT "i", " and
      column ", TT "j", " of the matrix ", TT "f", ".",
      SEEALSO {"_", "Matrix"}
      }
-document { (quote _, Matrix, ZZ),
+document { (symbol _, Matrix, ZZ),
      TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
      PARA,
      "Vectors are disparaged, so we may do away with this function in the future.",
@@ -1468,7 +1468,7 @@ document { youngest,
      ", TT "s", ", if any, else ", TT "null", "."
      }
 
-document { (quote ++,Module,Module),
+document { (symbol ++,Module,Module),
      TT "M++N", " -- computes the direct sum of two modules.",
      PARA,
      EXAMPLE {
@@ -1477,13 +1477,13 @@ document { (quote ++,Module,Module),
 	  },
      "Projection and inclusion maps for direct sums:",
      MENU {
-	  TO (quote ^,Module,Array),
-	  TO (quote _,Module,Array)
+	  TO (symbol ^,Module,Array),
+	  TO (symbol _,Module,Array)
 	  },
      SEEALSO directSum
      }
 
-document { (quote ++,Matrix,Matrix),
+document { (symbol ++,Matrix,Matrix),
      TT "f++g", " -- computes the direct sum of two maps between modules.",
      PARA,
      "If an argument is a ring element or integer, it is promoted
@@ -1496,10 +1496,10 @@ document { (quote ++,Matrix,Matrix),
 	  },
      "Selecting rows or columns of blocks:",
      MENU {
-	  TO (quote ^,Matrix,Array),
-	  TO (quote _,Matrix,Array)
+	  TO (symbol ^,Matrix,Array),
+	  TO (symbol _,Matrix,Array)
 	  },
-     SEEALSO {directSum, (quote |, Matrix, Matrix), (quote ||, Matrix, Matrix)}
+     SEEALSO {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}
      }
 
 document { directSum,
@@ -1509,10 +1509,10 @@ document { directSum,
      PARA,
      "Projection and inclusion maps for direct sums:",
      MENU {
-	  TO (quote ^,Module,Array),
-	  TO (quote _,Module,Array),
-	  TO (quote ^,Matrix,Array),
-	  TO (quote _,Matrix,Array)
+	  TO (symbol ^,Module,Array),
+	  TO (symbol _,Module,Array),
+	  TO (symbol ^,Matrix,Array),
+	  TO (symbol _,Matrix,Array)
 	  },
      PARA,
      "It sometimes happens that the user has indices for the components of

@@ -74,7 +74,7 @@ irreducibleCharacteristicSeries Ideal := I -> (
 	  );
      re := reorder I;
      n := #re;
-     x := quote x;
+     x := symbol x;
      f = substitute(f,apply(n,i -> R_(re#i) => R_i));
      sendgg(ggPush f, ggfactor2);
      ics := apply(eePopInt(), i -> apply(eePopInt(), j -> R.pop()));
@@ -84,7 +84,7 @@ irreducibleCharacteristicSeries Ideal := I -> (
 
 factor ZZ := options -> (n) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
 factor QQ := options -> (r) -> factor numerator r / factor denominator r
-erase quote factorInteger
+erase symbol factorInteger
 -----------------------------------------------------------------------------
 topCoefficients = method()
 topCoefficients Matrix := f -> (

@@ -73,7 +73,7 @@ Oldidealizer Ideal := (I) -> (
      R := ring I;
      n := numgens source H;
      -- MES: check here whether the arg to Degrees is stricty positive?
-     w = quote w;
+     w = symbol w;
      A1 := (coefficientRing R)[w_(numgens R) .. w_(numgens R + n - 1), 
                              Degrees=>degrees source H - toList(n:degree f)];
      A := R ** A1;
@@ -171,11 +171,11 @@ normalization Ring := (R) -> (
 -- An ICnode is this list.
 --
 
-if ICnode === quote ICnode then
+if ICnode === symbol ICnode then
     ICnode = new Type of MutableHashTable;
 
 newICnode = (R) -> (
-     w = quote w;
+     w = symbol w;
      I := ideal presentation R;
      C := new ICnode;
      C.todo = {{I,null}};
@@ -331,39 +331,39 @@ peek C
 time normalization R
 -- times: 6/4/97 first try: 1.91 sec
 
-R = ZZ/101[quote x..quote z,Degrees=>{2,2,1}]/(x^2-y*z^2)
+R = ZZ/101[symbol x..symbol z,Degrees=>{2,2,1}]/(x^2-y*z^2)
 time normalization R
 -- times: 6/4/97 first try: 2.36 sec
 -- 
-R = ZZ/101[quote x..quote z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
+R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time normalization R
 -- times: 6/4/97 first try: 5.55 sec
 
-R = ZZ/101[quote x..quote z,Degrees=>{2,5,14},MonomialSize=>16]/(z*y^2-x^5*z-x^12)
+R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,14},MonomialSize=>16]/(z*y^2-x^5*z-x^12)
 time normalization R
 -- times: 6/4/97 first try: 5.14 sec
 
-R = ZZ/101[quote x..quote z,Degrees=>{2,3,10}]/(z*(y^2-x^3)-x^8)
+R = ZZ/101[symbol x..symbol z,Degrees=>{2,3,10}]/(z*(y^2-x^3)-x^8)
 time normalization R
 -- times: 6/4/97 first try: 3.69 sec
 
-R = ZZ/101[quote x, quote y,Degrees=>{2,5}]/(y^2-x^5)
+R = ZZ/101[symbol x, symbol y,Degrees=>{2,5}]/(y^2-x^5)
 time normalization R
 -- times: 6/4/97 first try: 2.81 sec
 
-R = ZZ/101[quote x..quote z,Degrees=>{3,4,12}]/(z*y^3-x^4*z-x^8)
+R = ZZ/101[symbol x..symbol z,Degrees=>{3,4,12}]/(z*y^3-x^4*z-x^8)
 time normalization R
 -- times: 6/4/97 first try: 6.22 sec
 
-R = ZZ/101[quote x..quote z]/(x^2*y^2+x^2*z^2+y^2*z^2)
+R = ZZ/101[symbol x..symbol z]/(x^2*y^2+x^2*z^2+y^2*z^2)
 time normalization R
 -- times: 5/31/97 first try: 4.69 sec
 
-R = ZZ/101[quote x, quote y, quote z, Degrees=>{2,3,6}]/(z*y^2-z*x^3 + x^6)
+R = ZZ/101[symbol x, symbol y, symbol z, Degrees=>{2,3,6}]/(z*y^2-z*x^3 + x^6)
 time normalization R
 -- time: 6/18/97 3.19 sec
 
-R = ZZ/101[quote x, quote y, quote z, Degrees=>{3,5,9},MonomialSize=>16]/(z*y^3-z*x^5 + x^8)
+R = ZZ/101[symbol x, symbol y, symbol z, Degrees=>{3,5,9},MonomialSize=>16]/(z*y^3-z*x^5 + x^8)
 time normalization R
 -- time: 6/18/97 10.19 sec
 
@@ -396,7 +396,7 @@ codim IN1
 res coker gens IN1
 ///
 -- example that bernd sturmfels gave (this ideal is normal)
-x = quote x;
+x = symbol x;
 R = ZZ/101[x_0 .. x_14]
 S = ZZ/101[y_0 .. y_19]
 

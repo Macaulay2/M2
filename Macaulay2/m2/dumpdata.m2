@@ -11,7 +11,7 @@ dump = () -> (
 	  "-data");
      << "dumping to " << fn << endl << flush;
      runEndFunctions();
-     erase quote dump;
+     erase symbol dump;
      phase = 0;
      collectGarbage();
      dumpdata fn;

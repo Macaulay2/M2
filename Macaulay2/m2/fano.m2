@@ -16,8 +16,8 @@ Fano(ZZ,Ideal,Ring) := Ideal => (k,X,GR) -> (
   -- Next make private variables for our 
   -- intermediate rings, to avoid interfering
   -- with something outside:
-  t:=quote t;
-  p:=quote p;
+  t:=symbol t;
+  p:=symbol p;
   -- And rings
   S1 := KK[t_0..t_k];
   S2 := KK[p_0..p_(k*r+k+r)];

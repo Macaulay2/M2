@@ -56,7 +56,7 @@ time exteriorPower(3,m)
 time exteriorPower(4,m)
 time exteriorPower(5,m)
 
-x = quote x
+x = symbol x
 R = ZZ[x_1 .. x_36]
 m = genericMatrix(R,x_1,6,6)
 time exteriorPower(3,m)
@@ -64,7 +64,7 @@ time exteriorPower(4,m)
 time exteriorPower(5,m)
 time exteriorPower(6,m)
 
-x = quote x
+x = symbol x
 R = ZZ[x_1 .. x_49]
 m = genericMatrix(R,x_1,7,7)
 time exteriorPower(3,m);

@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 IndexedVariableTable = new Type of MutableHashTable
-expression IndexedVariableTable := x -> hold x.symbol
+expression IndexedVariableTable := x -> hold x.Symbol
 precedence IndexedVariableTable := x -> 70
 baseName IndexedVariableTable := x -> (
      if x.?name then x.name
@@ -12,8 +12,8 @@ IndexedVariable = new Type of BasicList
 toString IndexedVariable := v -> (
      x := v#0;
      i := v#1;
-     -- if x#?i then concatenate(toString x.symbol,"_",toString i) else 
-     concatenate(toString x.symbol,"_",toString i)
+     -- if x#?i then concatenate(toString x.Symbol,"_",toString i) else 
+     concatenate(toString x.Symbol,"_",toString i)
      )
 net IndexedVariable := v -> (
      x := v#0;
@@ -25,7 +25,7 @@ IndexedVariable ? IndexedVariable := (x,y) -> (
      if x#0 === y#0 then y#1 ? x#1
      else x#0 ? y#0)
 Symbol ? IndexedVariable := (x,y) -> (
-     if x === (y#0).name then quote > else x ? (y#0).name
+     if x === (y#0).name then symbol > else x ? (y#0).name
      )
 
 IndexedVariableTable _ Thing := IndexedVariable => (x,i) -> (
@@ -38,7 +38,7 @@ Symbol _ Thing := IndexedVariable => (v,i) -> (
      else (
      	  v <- x := new IndexedVariableTable;
      	  x.name = toString v;
-	  x.symbol = v;
+	  x.Symbol = v;
      	  new IndexedVariable from {x,i}
 	  )
      )

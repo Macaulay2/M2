@@ -7,7 +7,7 @@ alphaDenominator := 4
 ----------------------
 -- LLL computations --
 ----------------------
-if LLLComputation === quote LLLComputation
+if LLLComputation === symbol LLLComputation
 then LLLComputation = new Type of MutableHashTable
 
 setLLLthreshold := (result,alpha) -> (
@@ -192,7 +192,7 @@ LLL Matrix := options -> (M) -> (
 -- KernellLLL: kernel of a matrix using LLL --
 ----------------------------------------------
 
-if LLLKernelComputation === quote LLLKernelComputation
+if LLLKernelComputation === symbol LLLKernelComputation
 then LLLKernelComputation = new Type of MutableHashTable
 
 newLLLKernelComputation = (m) -> (
@@ -362,7 +362,7 @@ kernelLLL Matrix := options -> (M) -> (
 --
 -- Computes a Hermite normal form, along with a kernel, and small multiplier matrix.
 
-if LLLHermiteComputation === quote LLLHermiteComputation
+if LLLHermiteComputation === symbol LLLHermiteComputation
 then LLLHermiteComputation = new Type of MutableHashTable
 
 newLLLHermiteComputation = (m, threshold, hasChangeOfBasis) -> (
@@ -962,21 +962,21 @@ calcLLL = (A,LLLstate,nsteps) -> (
 
 testLLL = (m) -> (
   -- Test 1:
-  remove(m,quote LLL);
+  remove(m,symbol LLL);
   time m1 = matrix LLL(m,Engine=>true);
   --time assert(isLLL m1);
   -- Test 2:
-  remove(m,quote LLL);
+  remove(m,symbol LLL);
   time m2 = matrix LLL(m, Engine=>true,ChangeOfBasisMatrix=>true);
   assert(m1 == m2);
   h = matrix getColumnChange m.LLL.A;
   assert(m2 == m*h);
   -- Test 3:
-  remove(m,quote LLL);
+  remove(m,symbol LLL);
   time m3 = matrix LLL(m,Engine=>false);
   --time assert(isLLL m3);
   -- Test 4:
-  remove(m,quote LLL);
+  remove(m,symbol LLL);
   time m4 = matrix LLL(m, Engine=>false,ChangeOfBasisMatrix=>true);
   assert(m3 == m4);
   h2 = matrix getColumnChange m.LLL.A;
@@ -1058,7 +1058,7 @@ gbTrace 2
 assert(m1 * matrix mz == 0)
 assert(isLLL matrix mz)
 
-remove(m,quote LLL)
+remove(m,symbol LLL)
 mz = LLL(m,ChangeOfBasisMatrix=>true)
 h = getColumnChange m.LLL.A
 assert(m * matrix h == matrix mz)
@@ -1066,7 +1066,7 @@ assert(m * matrix h == matrix mz)
 testLLL = (m) -> (
   time m1 = matrix LLL m;
   time assert(isLLL m1);
-  remove(m,quote LLL);
+  remove(m,symbol LLL);
   time m2 = matrix LLL(m, ChangeOfBasisMatrix=>true);
   assert(m1 == m2);
   h = matrix getColumnChange m.LLL.A;

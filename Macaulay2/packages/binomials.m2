@@ -46,7 +46,7 @@ addgens = (m) -> (
 extendring = (m,newR,wts) -> (
      newm = substitute(m,newR);
      newm.binomialGB = m.binomialGB;
-     remove(m, quote binomialGB);
+     remove(m, symbol binomialGB);
      sendgg(ggPush m.binomialGB, ggPush newR, ggPush wts))
 
 getbinomialgb = (m) -> (
@@ -61,9 +61,9 @@ sortColumns := (m) -> (
 bernd = (n) -> (
      -- ideal is x_i - t^i * y_i, 1 <= i <= n
      -- order is: eliminate t.
-     t = quote t;
-     x = quote x;
-     y = quote y;
+     t = symbol t;
+     x = symbol x;
+     y = symbol y;
      R = ZZ/101[t, x_1 .. x_n, y_1 .. y_n, Degrees=>{1,2..n+1,n:1},MonomialOrder=>Eliminate 1,
 	  MonomialSize=>16];
      m = map(R^1, n, (i,j) -> x_(j+1) - t^(j+1) * y_(j+1));

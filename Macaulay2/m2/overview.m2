@@ -1243,7 +1243,7 @@ document { "valid names",
 document { "reserved words",
      "The list of reserved words:",
      TO "new", "do", "else", "then", "of", "from", "or",
-     "and", "not", "quote", "global", "local", "while",
+     "and", "not", "symbol", "global", "local", "while",
      "try", "if", "time", "timing", "shield"
      }
 

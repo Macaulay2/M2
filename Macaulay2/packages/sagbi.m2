@@ -258,7 +258,7 @@ F = Coordchange F
 
 -- ring of invariants of S_n
 n = 3;
-x = quote x;
+x = symbol x;
 R = kk[x_0 .. x_(n-1)]; 
 F = map(R^1, n, (j,i) -> sum apply(elements(x_0 .. x_(n-1)), x->x^(i+1)))
 time sagbi(F,10)
@@ -271,7 +271,7 @@ minorsize = 2;
 rowsize = 2;
 colsize = 10;
 matdim = rowsize * colsize - 1;
-x = quote x;
+x = symbol x;
 R = kk[x_0 .. x_matdim];
 F = gens minors(minorsize,genericMatrix(R,x_0,rowsize,colsize))
 time sagbi(F,100)
@@ -282,21 +282,21 @@ time sagbi(F,100)
 
 
 -- 'symmetric' quadratic artin ideal in 2x3 variables
-R = kk[quote a..quote f]
+R = kk[symbol a..symbol f]
 I = mingens ((ideal(a,b,c))^2 + (ideal(d,e,f))^2 + (ideal(a+d,b+e,c+f))^2)
 time sagbi(I,100) -- 
 
 
 -- example with both finite and infinite sagbi bases
-R = kk[quote x,quote y]   -- x>y gives infinite, y>x gives finite
+R = kk[symbol x,symbol y]   -- x>y gives infinite, y>x gives finite
 F = matrix{{x, x*y-y^2, x*y^2}}
 time sagbi(F,30)   -- MES, NEC 6200MX, 60.96 sec
 
-R = kk[quote y,quote x]   -- x>y gives infinite, y>x gives finite
+R = kk[symbol y,symbol x]   -- x>y gives infinite, y>x gives finite
 F = matrix{{x, x*y-y^2, x*y^2}}
 time sagbi(F,1000)
 
-R = kk[quote x,quote y]   -- Change of coordinates (i.e. random term order)
+R = kk[symbol x,symbol y]   -- Change of coordinates (i.e. random term order)
 F = matrix{{x, x*y-y^2, x*y^2}}
 G = random(R^1, R^(elements(2:-1)))
 Coordchange = map(R, R, G)
@@ -315,8 +315,8 @@ time sagbi(F,30) --
 
 
 -- Gr(2,5)
-x = quote x
-y = quote y
+x = symbol x
+y = symbol y
 R = kk[x_1 .. x_10]
 S = kk[y_1 .. y_10]
 F = map(R,S,exteriorPower(2,genericMatrix(R,x_1,2,5)))
@@ -324,13 +324,13 @@ F = map(R,S,exteriorPower(2,genericMatrix(R,x_1,2,5)))
 
 -- invariants of A^1, with a nilpotent action on A^n.
 
-x = quote x;
+x = symbol x;
 R = kk[t, x_1 .. x_n, MonomialOrder => Lex, 
      Degrees => append(1, elements reverse (1..n))];
 -- HAVE TO CODE IN EXPONENTIATION
 
 -- Invariants of A^1, with a nilpotent action on A^4.
-x = quote x
+x = symbol x
 R = kk[t,x_1 .. x_4, MonomialOrder => Lex]
 R = kk[t,x_1..x_4, MonomialOrder=>Lex, Degrees=>{1,4,3,2,1}]
 R = kk[t,x_1..x_4, MonomialOrder=>ProductOrder{1,4}, Degrees=>{1,4,3,2,1}]
@@ -341,7 +341,7 @@ F = matrix{{x_4,
 time sagbi(F,30) -- 32.36 sec
 
 -- Invariants of A^1, with a nilpotent action on A^5.
-x = quote x
+x = symbol x
 R = QQ[t,x_1..x_5, MonomialOrder=>Lex, Degrees=>{1,5,4,3,2,1}]
 R = kk[t,x_1..x_5, MonomialOrder=>Lex, Degrees=>{1,5,4,3,2,1}]
 F = matrix{{x_5, 
@@ -352,7 +352,7 @@ F = matrix{{x_5,
 time sagbi(F,30) -- seems to take ALOT of time...
 
 -- Invariants of A^1, with a nilpotent action on A^6.
-x = quote x
+x = symbol x
 R = kk[t,x_1..x_6, MonomialOrder=>Lex, Degrees=>{1,6,5,4,3,2,1}]
 F = matrix{{x_6, 
 	  t*x_6+x_5, 
@@ -363,8 +363,8 @@ F = matrix{{x_6,
 time sagbi(F,30) -- seems to take ALOT of time...
 
 -- Invariants of A^1, with a nilpotent action on A^3.
-x = quote x;
-t = quote t;
+x = symbol x;
+t = symbol t;
 R = kk[t,x_1,x_2,x_3, MonomialOrder=>Lex];
 R = kk[t,x_1..x_3, MonomialOrder=>Lex, Degrees=>{1,3,2,1}]
 F = matrix{{x_3, 
@@ -374,9 +374,9 @@ time sagbi(F,200)
 
 
 -- invariants of SL_2 on V + V + Sym^2(V)
-u = quote u;
-v = quote v;
-s = quote s;
+u = symbol u;
+v = symbol v;
+s = symbol s;
 R = kk[u_1,u_2,v_1,v_2,s_0,s_1,s_2];
 F = matrix{{u_2*v_1-u_1*v_2,
 	  s_1^2-4*s_0*s_2,

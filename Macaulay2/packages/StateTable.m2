@@ -30,7 +30,7 @@ document { StateTable,
      "Methods for creating or combining state tables:",
      MENU {
 	  TO "stateTable",
-	  TO (quote ||, StateTable, StateTable),
+	  TO (symbol ||, StateTable, StateTable),
 	  }
      }
 
@@ -59,7 +59,7 @@ document { stateTable,
 StateTable || StateTable := (x,y) -> merge(x,y,(f,g) -> c -> (f c; g c;))
 StateTable || List := (x,o) -> x || stateTable o
 List || StateTable := (o,x) -> stateTable o || x
-document { (quote ||, StateTable, StateTable),
+document { (symbol ||, StateTable, StateTable),
      TT "x || y", " -- merges two state tables.  If there is a key that appears in
      both tables, the two functions are merged into one which calls both.",
      PARA,
@@ -83,7 +83,7 @@ document { StateTableAlternative,
      }
 
 space = new StateTableAlternative from characters " \f\n\r\t"
-document { quote space,
+document { symbol space,
      TT "stateTable { space => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each white
      space ASCII character.",
@@ -96,7 +96,7 @@ document { quote space,
      }
 
 digit = new StateTableAlternative from characters "0123456789"
-document { quote digit,
+document { symbol digit,
      TT "stateTable { digit => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each ASCII character
      which is a decimal digit.",
@@ -110,7 +110,7 @@ document { quote digit,
      }
 
 upper = new StateTableAlternative from characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-document { quote upper,
+document { symbol upper,
      TT "stateTable { upper => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each upper case
      ASCII character.",
@@ -123,7 +123,7 @@ document { quote upper,
      }
 
 lower = new StateTableAlternative from characters "abcdefghijklmnopqrstuvwxyz"
-document { quote lower,
+document { symbol lower,
      TT "stateTable { lower => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each lower case
      ASCII character.",
@@ -136,7 +136,7 @@ document { quote lower,
      }
 
 alpha = join(upper,lower)
-document { quote alpha,
+document { symbol alpha,
      TT "stateTable { alpha => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each alphabetic
      ASCII character.",
@@ -149,7 +149,7 @@ document { quote alpha,
      }
 
 alphanum = join(alpha,digit)
-document { quote alphanum,
+document { symbol alphanum,
      TT "stateTable { alphanum => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each  
      ASCII character.",
@@ -162,7 +162,7 @@ document { quote alphanum,
      }
 
 protect default
-document { quote default,
+document { symbol default,
      TT "stateTable { default => f , ...}", " -- a symbol to be used as a key in a
      state table to specify that the function ", TT "f", " should be run if the current
      input doesn't appear elsewhere in the table.",

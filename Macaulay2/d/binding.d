@@ -291,7 +291,7 @@ bump();
 
      special("while",unarywhile);
 
-     special("quote",unaryquote);
+     special("symbol",unaryquote);
      special("global",unaryglobal);
      special("local",unarylocal);
 

@@ -730,7 +730,7 @@ document { "lists",
       	  "MatrixExpression z",
 	  },
      "Various other functions for manipulating lists include ",
-     TO (quote |, List, List), ", ",
+     TO (symbol |, List, List), ", ",
      TO "append", ", ",
      TO "between", ", ",
      TO "delete", ", ",
@@ -781,7 +781,7 @@ document { "sequences",
 	  "(1,1) .. (2,3)",
 	  "{a,1} .. {c,2}",
 	  },
-     "The operator ", TO (quote :, ZZ, Thing), " can be used to create sequences
+     "The operator ", TO (symbol :, ZZ, Thing), " can be used to create sequences
      by replicating something a certain number of times.",
      EXAMPLE "12:a",
      "Notice what happens when we try to construct a list using ", TO "..", " 

@@ -4,7 +4,7 @@
 -- new polynomial ring from old --
 ----------------------------------
 
-nothing := quote nothing
+nothing := symbol nothing
 
 mergeOptions := (x,y) -> merge(x, y, (a,b) -> if b === nothing then a else b)
 

@@ -338,16 +338,16 @@ Ring ^ List := Module => (
 	       if # fdegs === 0 
 	       then (
 		    n := #degs;
-		    -- if R#?(quote ^,n)
-		    -- then R#(quote ^,n)
-		    -- else R#(quote ^,n) = 
+		    -- if R#?(symbol ^,n)
+		    -- then R#(symbol ^,n)
+		    -- else R#(symbol ^,n) = 
 		    (
 			 sendgg( ggPush R, ggPush n, ggfree);
 	       		 new Module from R))
 	       else (
-		    -- if R#?(quote ^, fdegs)
-		    -- then R#(quote ^, fdegs)
-		    -- else R#(quote ^, fdegs) = 
+		    -- if R#?(symbol ^, fdegs)
+		    -- then R#(symbol ^, fdegs)
+		    -- else R#(symbol ^, fdegs) = 
 		    (
 			 sendgg(ggPush R, ggPush fdegs, ggfree);
 	       		 new Module from R)))
@@ -363,9 +363,9 @@ Ring ^ ZZ := Module => (
      (R,n) -> (
 	  if R.?Engine and R.Engine
 	  then (
-	       -- if R#?(quote ^,n) 
-	       -- then R#(quote ^,n)
-	       -- else R#(quote ^,n) = 
+	       -- if R#?(symbol ^,n) 
+	       -- then R#(symbol ^,n)
+	       -- else R#(symbol ^,n) = 
 	       (
 	       	    sendgg(ggPush R, ggPush n, ggfree);
      	       	    new Module from R)
@@ -378,7 +378,7 @@ Ring ^ ZZ := Module => (
 --      f := poincare M;
 --      R := ring M;
 --      N := numgens R - 1;
---      u := quote u;
+--      u := symbol u;
 --      G := group [u];
 --      U := u;
 --      use ZZ G;

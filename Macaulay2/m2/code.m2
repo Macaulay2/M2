@@ -80,8 +80,8 @@ methods = F -> (
      if class F === Sequence then (
 	  tallyF := tally F;
 	  scanPairs(symbolTable(),
-	       (Name,symbol) -> (
-		    x := value symbol;
+	       (Name,sym) -> (
+		    x := value sym;
 		    if instance(x,Type) and not seen#?x then (
 			 seen#x = true;
 			 scan(pairs x, (key,meth) -> (
@@ -90,8 +90,8 @@ methods = F -> (
 				   then found#key = true))))))
      else (
 	  scanPairs(symbolTable(),
-	       (Name,symbol) -> (
-		    x := value symbol;
+	       (Name,sym) -> (
+		    x := value sym;
 		    if instance(x,Type) and not seen#?x then (
 			 seen#x = true;
 			 scan(pairs x, (key,meth) -> (

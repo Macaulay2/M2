@@ -1,6 +1,6 @@
 -- Copyright 1995 by Michael Stillman
 
-R = ZZ/101[quote a..quote f]
+R = ZZ/101[symbol a..symbol f]
 T = (degreesRing R)_0
 mi = monomialIdeal matrix {{a^3, a*b*d^4, a*c*e, b*d*f^2, c^2*d^3, c^5}}
 mi2 = monomialIdeal matrix {{a^2, c^7, b*d*e*f}}

@@ -382,7 +382,7 @@ REMAIN := 3
 -- #4  (if type 2) associated prime  (null otherwise)
 -- #5  (if type 3) list of {associated prime ideal, {irred factors of extractor}}
 
-if primdecComputation === quote primdecComputation
+if primdecComputation === symbol primdecComputation
 then
 primdecComputation = new Type of MutableHashTable
 

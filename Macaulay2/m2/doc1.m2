@@ -1,9 +1,9 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 TEST ///
-assert( null =!= doc sin)
-assert( null =!= doc "sin")
-assert( null =!= doc quote sin)
+assert( null =!= documentation sin)
+assert( null =!= documentation "sin")
+assert( null =!= documentation symbol sin)
 ///
 
 document { document,
@@ -43,18 +43,20 @@ document { SEEALSO,
      SEEALSO "document"
      }
 
-document { RETURNS,
-     TT "RETURNS X", " -- inserts, into a documentation page, a sentence
-     explaining that the return type is ", TT "X", ", and referring the user to
-     the page for ", TT "X", "."
+document { briefDocumentation,
+     TT "briefDocumentation s", " -- provides the first paragraph of the online
+     documentation for the topic ", TT "s", ", in internal ", TO "hypertext", "
+     form, suitable for conversion to text with ", TO "text", " or to html 
+     with ", TO "html", ".",
+     SEEALSO "documentation"
      }
 
-document { doc,
-     TT "doc s", " -- provides the online documention for the topic s, in
+document { documentation,
+     TT "documentation s", " -- provides the online documention for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to
      text with ", TO "text", " or to html with ", TO "html", ".",
      PARA,
-     EXAMPLE "doc partitions"
+     EXAMPLE "documentation partitions"
      }
 
 document { help,
@@ -70,14 +72,14 @@ document { help,
      TT "help methods res", " -- displays help messages about the methods 
      usable with the function ", TT "res", ".",
      BR, NOINDENT,
-     TT "help methods quote **", " -- displays help messages about the methods 
+     TT "help methods symbol **", " -- displays help messages about the methods 
      usable with the operator ", TT "**", ".",
      BR, NOINDENT,
      TT "help methods (res, X)", " -- displays help messages about the 
      methods usable with the function ", TT "res", " and a thing of
      class ", TT "X", ".",
      BR, NOINDENT,
-     TT "help methods (quote **, X)", " -- displays help messages about the 
+     TT "help methods (symbol **, X)", " -- displays help messages about the 
      methods usable with the operator ", TT "**", " and a thing of
      class ", TT "X", ".",
      BR, NOINDENT,
@@ -969,7 +971,7 @@ document { options,
      PARA,
      SEEALSO {"method", "OptionsRegistry"}
      }
-document { (quote <<, Nothing, Thing),
+document { (symbol <<, Nothing, Thing),
      "null << x", " -- does nothing and returns ", TT "null", ".",
      PARA,
      "The intention here is that you can use ", TT "null", " as a dummy
@@ -1034,31 +1036,31 @@ document { "_",
      PARA,
      "Examples where methods have been installed:",
      MENU {
-	  SHIELD (TO (quote _, List, ZZ), " -- get an entry from a list"),
-	  SHIELD (TO (quote _, Sequence, ZZ), " -- get an entry from a sequence"),
-	  SHIELD (TO (quote _, List, List), " -- get a list of entries from a list or sequence"),
-	  SHIELD (TO (quote _, ChainComplex, ZZ), " -- get a module from a chain complex"),
-	  SHIELD (TO (quote _, Matrix, ZZ), " -- get a column from a matrix"),
-	  SHIELD (TO (quote _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes"),
-	  SHIELD (TO (quote _, Matrix, Sequence), " -- get an entry from a matrix"),
-	  SHIELD (TO (quote _, Matrix, List), " -- get some columns from a matrix"),
-	  SHIELD (TO (quote _, RingElement, RingElement), " -- get a coefficient from a polynomial"),
-	  SHIELD (TO (quote _, Ring, ZZ), " -- get a generator from a ring"),
-	  SHIELD (TO (quote _, Module, ZZ), " -- get a generator of a module"),
-	  SHIELD (TO (quote _, Monoid, ZZ), " -- get a generator from a monoid"),
-	  SHIELD (TO (quote _, Module, List), " -- get a map onto some generators of a module"),
+	  SHIELD (TO (symbol _, List, ZZ), " -- get an entry from a list"),
+	  SHIELD (TO (symbol _, Sequence, ZZ), " -- get an entry from a sequence"),
+	  SHIELD (TO (symbol _, List, List), " -- get a list of entries from a list or sequence"),
+	  SHIELD (TO (symbol _, ChainComplex, ZZ), " -- get a module from a chain complex"),
+	  SHIELD (TO (symbol _, Matrix, ZZ), " -- get a column from a matrix"),
+	  SHIELD (TO (symbol _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes"),
+	  SHIELD (TO (symbol _, Matrix, Sequence), " -- get an entry from a matrix"),
+	  SHIELD (TO (symbol _, Matrix, List), " -- get some columns from a matrix"),
+	  SHIELD (TO (symbol _, RingElement, RingElement), " -- get a coefficient from a polynomial"),
+	  SHIELD (TO (symbol _, Ring, ZZ), " -- get a generator from a ring"),
+	  SHIELD (TO (symbol _, Module, ZZ), " -- get a generator of a module"),
+	  SHIELD (TO (symbol _, Monoid, ZZ), " -- get a generator from a monoid"),
+	  SHIELD (TO (symbol _, Module, List), " -- get a map onto some generators of a module"),
 	  SHIELD (TO "Tor", " -- Tor functor"),
 	  SHIELD (TO "HH", " -- homology functor"),
-	  SHIELD (TO (quote _, Vector, ZZ), " -- get an component from a vector"),
-	  SHIELD (TO (quote _, SchurRing, List), " -- make an element of a Schur ring")
+	  SHIELD (TO (symbol _, Vector, ZZ), " -- get an component from a vector"),
+	  SHIELD (TO (symbol _, SchurRing, List), " -- make an element of a Schur ring")
 	  }
      }
 
-document { (quote _, List, ZZ),
+document { (symbol _, List, ZZ),
      TT "w_i", " -- selects an entry from a list."
      }
 
-document { (quote _, Sequence, ZZ),
+document { (symbol _, Sequence, ZZ),
      TT "w_i", " -- selects an entry from a sequence."
      }
 

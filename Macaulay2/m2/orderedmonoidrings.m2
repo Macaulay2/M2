@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-terms := quote terms
+terms := symbol terms
 PolynomialRing = new Type of EngineRing
 options PolynomialRing := R -> options monoid R
 
@@ -197,9 +197,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM ? RM := (f,g) -> (
 	       sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
 	       ret := ZZ.pop();
-	       if ret === 1 then quote >
-	       else if ret === 0 then quote ==
-	       else quote <
+	       if ret === 1 then symbol >
+	       else if ret === 0 then symbol ==
+	       else symbol <
 	       );
 	  R * M := (r,m) -> (
 	       sendgg(ggPush RM, ggPush r, ggPush m, ggterm);

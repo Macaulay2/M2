@@ -14,7 +14,7 @@ assert(image (super basis(3, image m)) ==
               c^2*d, c^2*e, c^2*f, b^3, b^2*c, b^2*d, b^2*e, 
               b^2*f, a^2*b, a*b^2, a*b*c, a*b*d, a*b*e, a*b*f}})
 
-R = ZZ/101[quote a..quote d]
+R = ZZ/101[symbol a..symbol d]
 assert(basis(0, R^{-1,0}) == map(R^{-1,0},,{{0}, {1}}))
 assert(basis(1, R^{-1,0}) == map(R^{-1,0},R^{5:-1}, {{1, 0, 0, 0, 0}, {0, a, b, c, d}}))
 assert(basis(2, R^{-1,0}) == map(R^{-1,0},R^{14:-2}, {
@@ -22,7 +22,7 @@ assert(basis(2, R^{-1,0}) == map(R^{-1,0},R^{14:-2}, {
       {0, 0, 0, 0, a^2, a*b, a*c, a*d, b^2, b*c, b*d, c^2, c*d, d^2}}))
 assert(basis(-1, R^{1,2}) == map(R^{1,2},R^{5:1}, {{1, 0, 0, 0, 0}, {0, a, b, c, d}}))
 
-R = ZZ/101[quote a..quote c]
+R = ZZ/101[symbol a..symbol c]
 I = image matrix {{a,b}}/ image matrix {{a^2, b^2, c^2}}
 assert(super basis(2,I) ==  map(super I,R^{3:-2},{{a*b, a*c, b*c}}))
 assert(super basis I == map(super I,R^{-1,-2,-3,-2,-1,-2}, {{a, a*b, a*b*c, a*c, b, b*c}}))
@@ -32,19 +32,19 @@ assert(super basis(2, M) == map(super M,R^{6:-2},
 	  { {a^2, a*b, a*c, b^2, b*c, 0}, {0, 0, 0, 0, 0, c^2}} ))
 
 -- test using multi degrees
-R = ZZ/101[quote a..quote f, Degrees => {{1, 0}, {1, -1}, {1, -2}, {1, -3}, {1, -4}, {2, 0}}];
+R = ZZ/101[symbol a..symbol f, Degrees => {{1, 0}, {1, -1}, {1, -2}, {1, -3}, {1, -4}, {2, 0}}];
 assert(basis({3,-3}, R) == matrix {{a^2*d, a*b*c, b^3, d*f}})
 
-R = ZZ/101[quote a..quote c]
+R = ZZ/101[symbol a..symbol c]
 R1 = R/(a^2, b^2, c^3)
 assert(basis R1 == matrix {{ 1, a, a*b, a*b*c, a*b*c^2, a*c, a*c^2, b, b*c, b*c^2, c, c^2}})
 
 -- now test using single grading, but 'funny' weights
-R = ZZ/101[quote a..quote f, Degrees => {1,3,5,7,9,11}];
+R = ZZ/101[symbol a..symbol f, Degrees => {1,3,5,7,9,11}];
 assert(basis(9,R) == matrix {{a^9, a^6*b, a^4*c, a^3*b^2, a^2*d, a*b*c, b^3, e}} )
 
 -- test using a matrix with more than one row
-R = ZZ/101[quote a..quote f, 
+R = ZZ/101[symbol a..symbol f, 
          Degrees => {{1, 0}, {1, -1}, {1, -2}, {1, -3}, {1, -4}, {2, 0}}];
 m = matrix {{a,b,c,0,0,0}, {0,0,0,d,e,f}};
 assert(basis({3,-3},cokernel m) == map( cokernel m,R^{3 : {-3,3}}, {{d*f, 0, 0}, {0, a*b*c, b^3}} ))

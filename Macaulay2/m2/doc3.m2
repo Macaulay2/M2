@@ -129,7 +129,7 @@ document { "programming",
 	  (TO ":=", "        -- assignment to and declaring a new local variable"),
 	  (TO "global", "    -- using global symbols which have values"),
 	  (TO "local", "     -- declaring new local symbols"),
-	  (TO "quote", "     -- using symbols which have values")
+	  (TO "symbol", "     -- using symbols which have values")
 	  },
      "Miscellaneous items:",
      MENU {
@@ -165,14 +165,14 @@ document { "programming",
 	  }
      }
 
--- document { quote readExamples,
+-- document { symbol readExamples,
 --      TT "readExamples", " -- a variable used to control the compilation
 --      of the interpreted code of the system.",
 --      PARA,
 --      SEEALSO "writeExamples"
 --      }
 
--- document { quote writeExamples,
+-- document { symbol writeExamples,
 --      TT "writeExamples", " -- a variable used to control the compilation
 --      of the interpreted code of the system.",
 --      PARA,
@@ -526,9 +526,9 @@ document { "++",
      class of ", TT "y", ".",
      PARA,
      MENU {
-	  TO (quote ++,ChainComplex,ChainComplex),
-	  TO (quote ++,Module,Module),
-	  TO (quote ++, Set, Set)
+	  TO (symbol ++,ChainComplex,ChainComplex),
+	  TO (symbol ++,Module,Module),
+	  TO (symbol ++, Set, Set)
 	  },
      SEEALSO {"classes", "directSum"}
      }
@@ -570,7 +570,7 @@ document { "\\",
      class of ", TT "y", "."
      }
 
-document { (quote /, List, Function),
+document { (symbol /, List, Function),
      TT "w / f", " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
@@ -578,10 +578,10 @@ document { (quote /, List, Function),
      "This operator is left associative, which means that ", TT "w / f / g", "
      is interpreted as meaning ", TT "(w / f) / g", ".",
      EXAMPLE "{1,2,3} / (i -> i+1) / (j -> j^2)",
-     SEEALSO {"apply", (quote \,Function, List)}
+     SEEALSO {"apply", (symbol \,Function, List)}
      }
 
-document { (quote \,Function, List),
+document { (symbol \,Function, List),
      TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
@@ -595,7 +595,7 @@ document { (quote \,Function, List),
 	  ///sin \ sin \ {1,2,3}///,
       	  ///sin @@ sin \ {1,2,3}///,
 	  },
-     SEEALSO {"apply", "@@", (quote /,List, Function)}
+     SEEALSO {"apply", "@@", (symbol /,List, Function)}
      }
 
 document { String,
@@ -617,7 +617,7 @@ document { String,
      MENU {
 	  (TO "String # ZZ", " -- getting a character from a string"),
 	  (TO "#", " -- length of a string"),
- 	  (TO (quote |, String, String), "        -- concatenation"),
+ 	  (TO (symbol |, String, String), "        -- concatenation"),
  	  (TO "ascii", " -- ASCII conversion"),
  	  (TO "substring", " -- substring extraction"),
  	  (TO "concatenate", " -- concatenation"),
@@ -680,9 +680,9 @@ document { Net,
      PARA,
      "Operations on nets:",
      MENU {
-	  TO (quote |, String, String),
-	  TO (quote ||, Net, Net),
-	  TO (quote ^,Net, ZZ),
+	  TO (symbol |, String, String),
+	  TO (symbol ||, Net, Net),
+	  TO (symbol ^,Net, ZZ),
 	  TO "depth",
 	  TO "height",
 	  TO "horizontalJoin",
@@ -735,7 +735,7 @@ document { horizontalJoin,
      PARA,
      "If there are no arguments, then the net returned has zero height and
      zero depth.  This might be unexpected.",
-     SEEALSO {"Net", (quote |, String, String)}
+     SEEALSO {"Net", (symbol |, String, String)}
      }
 
 document { stack,
@@ -750,10 +750,10 @@ document { stack,
      PARA,
      "Tab characters in any of the strings are first expanded into spaces,
      assuming tab stops at every eighth column.",
-     SEEALSO {"Net", (quote ||, Net, Net)}
+     SEEALSO {"Net", (symbol ||, Net, Net)}
      }
 
-document { (quote ^, Net, ZZ),
+document { (symbol ^, Net, ZZ),
      TT "n^i", " -- elevates a net or string ", TT "n", " by raising its
      characters by ", TT "i", " rows.",
      PARA,
@@ -956,7 +956,7 @@ document { Symbol,
      PARA,
      "Symbols are entered as an alphabetic character followed by a
      sequence of alphanumeric characters; case is significant.
-     The single quote character ' is regarded as alphabetic, so that
+     The single symbol character ' is regarded as alphabetic, so that
      symbols such as ", TT "x'", " may be used.",
      PARA,
      "Symbols are used as names for values to be preserved, as indeterminates
@@ -967,7 +967,7 @@ document { Symbol,
      PARA,
      EXAMPLE "ab12345cde",
      PARA,
-     SEEALSO {"symbolTable", "local", "global", "quote", ":="}
+     SEEALSO {"symbolTable", "local", "global", "symbol", ":="}
      }
 
 document { File,
@@ -1053,11 +1053,11 @@ document { connectionCount,
      }
 
 ccc := echoOn
-erase quote echoOn
+erase symbol echoOn
 echoOn = new Command from ccc
 
 ccc = echoOff
-erase quote echoOff
+erase symbol echoOff
 echoOff = new Command from ccc
 
 document { echoOn,
@@ -1088,7 +1088,8 @@ document { "help functions",
      "Functions for accessing the documentation:",
      MENU {
 	  TO "apropos",
-	  TO "doc",
+	  TO "briefDocumentation",
+	  TO "documentation",
 	  TO "examples",
 	  TO "help", 
 	  TO "topicList", 

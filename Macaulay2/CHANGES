@@ -2,6 +2,18 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+'doc' changed to 'documentation'
+
+New function: 'briefDocumentation'.
+
+'RETURNS' has been replaced as a method for documenting the type of thing
+returned by a function.  See 'typicalValues'.
+
+'quote' has been renamed 'symbol', and things stored under the key 'symbol'
+before are now stored under 'Symbol'.  Warning: if you have written a function
+that uses a variable called 'symbol', this function will now give an unusual
+syntax error.
+
 'ScriptedFunction' has been merged into 'ScriptedFunctor'.
 
 Changed the operator '=>' so methods for it cannot be installed by the user.

@@ -75,3 +75,13 @@ document { verticalJoin,
      }
 
 name = X -> error "'name' has been replaced by 'toString'"
+
+
+quote = X -> error "'quote' has been replaced by 'symbol'"
+quote
+
+document { symbol quote,
+     TT "quote",
+     PARA,
+     "A function replaced by ", TO "symbol", "."
+     }

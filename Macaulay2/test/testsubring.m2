@@ -26,8 +26,8 @@ test1a = () -> (
 test2 = () -> (
     -- image of an elliptic curve on the Veronese
     -- tests the quotient ring case
-    R = ZZ/101[quote x, quote y, quote z]/(y^2*z - x*(x+z)*(x-z));
-    S = ZZ/101[quote a..quote f];
+    R = ZZ/101[symbol x, symbol y, symbol z]/(y^2*z - x*(x+z)*(x-z));
+    S = ZZ/101[symbol a..symbol f];
     F = map(R,S,symmetricPower(2,vars R));
     time J0 = generators kernel F;
     --time J1 = subring1 F;
@@ -38,7 +38,7 @@ test2 = () -> (
 
 test3 = () -> (
     -- The middle monomial ribbon of genus 5
-    R = ZZ/101[quote s, quote t, quote y]/(y^2);
+    R = ZZ/101[symbol s, symbol t, symbol y]/(y^2);
     S = ZZ/101[vars(0..4)];
     f = map(R,S,matrix{{t^4, t^3*s, t^2*s^2, t*s^3-t^3*y, s^4-2*s*t^2*y}});
     time J0 = generators kernel f;
@@ -50,7 +50,7 @@ test3 = () -> (
 
 test4 = () -> (
     -- a simple example where one of the image values is 0
-    R = ZZ/101[quote a, quote b];
+    R = ZZ/101[symbol a, symbol b];
     f = map(R,R,map(R^1, R^{-1,-1}, {{a,0}}));
     time J0 = generators kernel f;
     -- time J1 = subring1 f;
@@ -61,7 +61,7 @@ test4 = () -> (
 
 test5 = () -> (
     -- a simple example where the entries are not linear independent
-    R = ZZ/101[quote a, quote b, quote c];
+    R = ZZ/101[symbol a, symbol b, symbol c];
     f = map(R,R,matrix{{a,b,a-b}});
     time J0 = generators kernel f;
     -- time J1 = subring1 f;
@@ -72,8 +72,8 @@ test5 = () -> (
     
 test6 = () -> (
     -- a simple example which caused a bug in Macaulay classic
-    R = ZZ/101[quote a]/(a^4);
-    S = ZZ/101[quote a];
+    R = ZZ/101[symbol a]/(a^4);
+    S = ZZ/101[symbol a];
     use R;
     f = map(R,S,matrix{{a}});
     time J0 = generators kernel f;
@@ -85,9 +85,9 @@ test6 = () -> (
 
 test7 = () -> (
     -- sheaves on P1 x P1
-    x = quote x;
-    y = quote y;
-    z = quote z;
+    x = symbol x;
+    y = symbol y;
+    z = symbol z;
     R = ZZ/32003[x_0, x_1, y_0, y_1];
     S = ZZ/32003[z_0 .. z_3];
     f = map(R,S,matrix{{x_0,x_1}} ** matrix{{y_0,y_1}});

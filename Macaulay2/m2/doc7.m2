@@ -1,7 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 
-document { (quote _, Matrix, List),
+document { (symbol _, Matrix, List),
      TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      columns numbered i, j, k, ... .",
      PARA,
@@ -21,7 +21,7 @@ document { (quote _, Matrix, List),
      SEEALSO "_"
      }
 
-document { (quote ^,Matrix,List),
+document { (symbol ^,Matrix,List),
      TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      rows numbered i, j, k, ... .",
      PARA,
@@ -286,7 +286,6 @@ document { matrix,
   MENU {
        (TO "Degree", " -- specify the degree of the resulting map."),
        },
-  RETURNS "Matrix",
   SEEALSO {"map"}
   }
 
@@ -612,7 +611,7 @@ document { subquotient,
      SEEALSO {"generators", "relations"}
      }
 
-document { (quote **, Matrix, Matrix),
+document { (symbol **, Matrix, Matrix),
      TT "f ** g", " -- computes the tensor product of two matrices.",
      PARA,
      SEEALSO "Matrix"
@@ -638,7 +637,7 @@ document { "compactMatrixForm",
 	  }
      }
 
-document { (quote +, Ideal, Ideal), 
+document { (symbol +, Ideal, Ideal), 
      TT "I + J", " -- the sum of two ideals."
      }
 
@@ -667,9 +666,9 @@ document { Ideal,
 	  },
      "Operations on ideals:",
      MENU {
-	  TO (quote +,Ideal,Ideal),
-	  TO (quote *,Ideal, Ideal),
-	  TO (quote ^,Ideal, ZZ),
+	  TO (symbol +,Ideal,Ideal),
+	  TO (symbol *,Ideal, Ideal),
+	  TO (symbol ^,Ideal, ZZ),
 	  TO "codim",
 	  TO "decompose",
 	  TO "dim",
@@ -681,11 +680,11 @@ document { Ideal,
 	  }
      }
 
-document { (quote *,Ideal,Ideal),
+document { (symbol *,Ideal,Ideal),
      TT "I * J", " -- the product of two ideals."
      }
 
-document { (quote ^,Ideal,ZZ),
+document { (symbol ^,Ideal,ZZ),
      TT "I^n", " -- the n-th power of an ideal I."
      }
 
@@ -765,7 +764,7 @@ TEST "
      assert( dim singularLocus ideal { a^2 + b^2 + c^2 + d^2, a^2 + 5*b^2 + 3*c^2 + 2*d^2 } === 0 )
      "
 
-document { (quote ^,Matrix,Array),
+document { (symbol ^,Matrix,Array),
      TT "f^[i,j,k]", " -- extract some rows of blocks from a matrix ", TT "f", ".",
      PARA,
      "The target of ", TT "f", " should be a direct sum, and the result is obtained by
@@ -778,10 +777,10 @@ document { (quote ^,Matrix,Array),
       	  "f^[1]",
       	  "f^[1,0]",
 	  },
-     SEEALSO {submatrix, (quote ^,Module,Array), (quote _,Matrix,Array)}
+     SEEALSO {submatrix, (symbol ^,Module,Array), (symbol _,Matrix,Array)}
      }
 
-document { (quote _,Matrix,Array),
+document { (symbol _,Matrix,Array),
      TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
      PARA,
      "The source of ", TT "f", " should be a direct sum, and the result is obtained by
@@ -794,7 +793,7 @@ document { (quote _,Matrix,Array),
       	  "f^[1]",
       	  "f^[1,0]",
 	  },
-     SEEALSO {submatrix, (quote _,Module,Array), (quote ^,Matrix,Array)}
+     SEEALSO {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
      }
 
 document { entries,
@@ -907,7 +906,7 @@ assert( ZZ/2 === ZZ/(4,6) )
 R = ZZ/101[t]
 "
 
-document { (quote /, Ring, Ideal),
+document { (symbol /, Ring, Ideal),
      TT "R/I", " -- form a quotient ring.",
      PARA,
      "Here ", TT "I", " may be: an element of ", TT "R", "; a sequence of elements of
@@ -1121,12 +1120,12 @@ document { genericSymmetricMatrix,
      with the variable x."
      }
 
-document { (quote +, Module, Module),
+document { (symbol +, Module, Module),
      TT "M + N", " -- the sum of two submodules.",
      PARA,
      "The two modules should be submodules of the same module."
      }
-document { (quote **, Module, Module),
+document { (symbol **, Module, Module),
      TT "M ** N", " -- produce the tensor product of two modules.",
      PARA,
      "Since M and N may be provided as submodules or subquotient modules, it
@@ -1149,7 +1148,7 @@ TEST ///
     table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
 ///
 
-document { (quote **, Matrix, Module),
+document { (symbol **, Matrix, Module),
      TT "f ** N", " -- tensor product of a matrix f and a module N.",
      BR,NOINDENT,
      TT "N ** f", " -- tensor product of a matrix f and a module N.",
@@ -1167,7 +1166,7 @@ document { (quote **, Matrix, Module),
      SEEALSO {"Matrix", "Module"}
      }
 
-document { (quote **, Module, Ring),
+document { (symbol **, Module, Ring),
      TT "M ** R", " -- form the tensor product of a module M with a ring
      R.",
      PARA,
@@ -1179,7 +1178,7 @@ document { (quote **, Module, Ring),
 	  },
      }
 
-document { (quote **, Matrix, Ring),
+document { (symbol **, Matrix, Ring),
      TT "f ** R", " -- form the tensor product of a module map ", TT "f", " with 
      a ring ", TT "R", ".",
      PARA,
@@ -1268,14 +1267,14 @@ document { ProjectiveHilbertPolynomial,
 	  (TO "+", "      -- add two projective Hilbert polynomials"),
 	  (TO "-", "      -- subtract two projective Hilbert polynomials"),
 	  (TO "*", "      -- multiply a projective Hilbert polynomial by an integer"),
-	  (TO (quote " ", ProjectiveHilbertPolynomial, ZZ), "   -- evaluate a projective Hilbert polynomial at an integer")
+	  (TO (symbol " ", ProjectiveHilbertPolynomial, ZZ), "   -- evaluate a projective Hilbert polynomial at an integer")
 	  },
      "The functions ", TO "degree", " and ", TO "dim", " are designed so they
      correspond the degree and dimension of the algebraic variety that may have
      been used to produce the Hilbert polynomial."
      }
 
-document { (quote " ", ProjectiveHilbertPolynomial, ZZ),
+document { (symbol " ", ProjectiveHilbertPolynomial, ZZ),
      TT "P i", " -- the value of a projective Hilbert polynomial ", TT "P", " at 
      an integer ", TT "i", ".",
      PARA,

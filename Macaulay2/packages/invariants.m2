@@ -4,7 +4,7 @@ needs "invariants2.m2"
 -- Finite groups --
 -------------------
 
-if Group === quote Group then (
+if Group === symbol Group then (
     Group = new Type of MutableHashTable
 )
 
@@ -168,7 +168,7 @@ document { molien,
 
 molien = method()
 molien1 = (G) -> (
-     z := quote z;
+     z := symbol z;
      A := (coefficientRing R)[z];
      one = (F) -> (
 	  m := substitute(jacobian F.matrix, A);
@@ -176,7 +176,7 @@ molien1 = (G) -> (
      sum(G.elements, F -> 1/(one(F)) // (#G.elements))
      )
 molien2 = (G) -> (
-     z := quote z;
+     z := symbol z;
      A := (coefficientRing R)[z];
      a := substitute(G.primitive,A);
      makeLogs a;
@@ -214,7 +214,7 @@ charpoly = (f,A) -> (
 charPolys = (G) -> (
      -- Create a hash table with all of the unique polynomials
      -- as keys, and the number of such elements as values.
-     z := quote z;
+     z := symbol z;
      A := (coefficientRing ring G)[z];
      H = new MutableHashTable;
      n := 0;
@@ -246,7 +246,7 @@ molien Group := (G) -> (
 	      G.molien = molien4 G
 	  else (
 	      MS = molien2 G;
-	      C = QQ[quote t];
+	      C = QQ[symbol t];
 	      G.molien = (substitute(numerator MS,C))/
 	          (substitute(denominator MS,C));
 	      )

@@ -6,7 +6,7 @@ new QQ := QQ -> QQ.pop()
 -- Routines to access this engine data type
 --
 
-if SparseMutableMatrix === quote SparseMutableMatrix
+if SparseMutableMatrix === symbol SparseMutableMatrix
 then SparseMutableMatrix = new Type of MutableHashTable
 
 

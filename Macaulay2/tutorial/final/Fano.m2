@@ -134,8 +134,8 @@ betti fano
 -- First, Fano and Grassmannian are commands in Macaulay 2, so
 -- are a protected symbol.  We remove its current
 -- meaning by
-erase quote Fano
-erase quote Grassmannian
+erase symbol Fano
+erase symbol Grassmannian
 
 -- The documentation has the following form:
 --$
@@ -167,7 +167,7 @@ document { Fano,
 -- itself if no ambient ring is given.
 
 --$
-document{quote Grassmannian, 
+document{symbol Grassmannian, 
     TT "Grassmannian(k,r,R) or 
         Grassmannian(k,r)",
        "-- Given natural numbers k <= r,
@@ -197,8 +197,8 @@ Fano(ZZ,Ideal,Ring) := (k,X,GR) -> (
   -- Next make private variables for our 
   -- intermediate rings, to avoid interfering
   -- with something outside:
-  t:=quote t;
-  p:=quote p;
+  t:=symbol t;
+  p:=symbol p;
   -- And rings
   S1 := KK[t_0..t_k];
   S2 := KK[p_0..p_(k*r+k+r)];

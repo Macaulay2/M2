@@ -15,9 +15,9 @@ Tally ** Tally := Tally => (x,y) -> combine(x,y,identity,times,)
 
 Tally ? Tally := (x,y) -> (
      w := values (x-y);
-     if #w === 0 then quote ==
-     else if all(w,i -> i>0) then quote >
-     else if all(w,i -> i<0) then quote <
+     if #w === 0 then symbol ==
+     else if all(w,i -> i>0) then symbol >
+     else if all(w,i -> i<0) then symbol <
      else incomparable)
 
 Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
@@ -44,7 +44,7 @@ toString Set := x -> (
 Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := Set => (x,y) -> combine(x,y,identity,(i,j)->i,)
-special := quote special
+special := symbol special
 Set * Set := Set => (x,y) -> (
      if # x < # y 
      then set select(keys x, k -> y#?k)

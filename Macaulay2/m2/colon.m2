@@ -118,9 +118,9 @@ quotientIdeal := options -> (I,J) -> (
      strat := options.Strategy;
      options = doQuotientOptions options;
      local IJ;
-     if strat === quote Iterate then
+     if strat === symbol Iterate then
          IJ = (quot1 options)(I,J)
-     else if strat === quote Linear then
+     else if strat === symbol Linear then
          IJ = (quot2 options)(I,J)
      else 
      	 IJ = (quot0 options)(I,J);
@@ -133,9 +133,9 @@ quotientModule := options -> (I,J) -> (
      strat := options.Strategy;
      options = doQuotientOptions options;
      local IJ;
-     if strat === quote Iterate then
+     if strat === symbol Iterate then
          IJ = (quotmod1 options)(I,J)
-     else if strat === quote Linear then
+     else if strat === symbol Linear then
          IJ = (quotmod2 options)(I,J)
      else 
      	 IJ = (quotmod0 options)(I,J);
@@ -148,9 +148,9 @@ quotientAnn := options -> (I,J) -> (
      strat := options.Strategy;
      options = doQuotientOptions options;
      local IJ;
-     if strat === quote Iterate then
+     if strat === symbol Iterate then
          IJ = (quotann1 options)(I,J)
-     else if strat === quote Linear then
+     else if strat === symbol Linear then
          error "'Linear' not allowable strategy"
      else
      	 IJ = (quotann0 options)(I,J);

@@ -76,17 +76,17 @@ runGB := (G,ggcmds) -> (
      G.returnCode = eePopInt();
      )
 
-protect quote StopBeforeComputation
-protect quote DegreeLimit
-protect quote BasisElementLimit
-protect quote SyzygyLimit
-protect quote PairLimit
-protect quote CodimensionLimit
-protect quote StopWithMinimalGenerators
-protect quote Syzygies
-protect quote ChangeMatrix
-protect quote SyzygyRows
-protect quote Strategy
+protect symbol StopBeforeComputation
+protect symbol DegreeLimit
+protect symbol BasisElementLimit
+protect symbol SyzygyLimit
+protect symbol PairLimit
+protect symbol CodimensionLimit
+protect symbol StopWithMinimalGenerators
+protect symbol Syzygies
+protect symbol ChangeMatrix
+protect symbol SyzygyRows
+protect symbol Strategy
 
 inf := t -> if t === infinity then -1 else t
 
@@ -97,6 +97,7 @@ cl List := t -> (
      t)
 
 gb = method(
+     TypicalValue => GroebnerBasis,
      Options => {
 	  StopBeforeComputation => false,
 	  DegreeLimit => {},
