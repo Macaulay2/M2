@@ -74,6 +74,7 @@ INTERFACE = \
 	monoid2 \
 	monomial \
 	mutablemat \
+	densemat \
 	ntuple \
 	polyring \
 	pfaff \

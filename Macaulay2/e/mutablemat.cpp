@@ -2,7 +2,7 @@
 #include "RR.hpp"
 #include "CC.hpp"
 #include "text_io.hpp"
-
+#include "densemat.hpp"
 
 ///////////////////
 // MutableMatrix //
@@ -72,25 +72,6 @@ MutableMatrix *MutableMatrix::getColumnChangeMatrix()
   return colOps;
 }
 
-inline bool MutableMatrix::errorColumnBound(int c) const
-{
-  if (c < 0 || c >= ncols)
-    {
-      ERROR("column out of range");
-      return true;
-    }
-  return false;
-}
-
-inline bool MutableMatrix::errorRowBound(int r) const
-{
-  if (r < 0 || r >= nrows)
-    {
-      ERROR("row out of range");
-      return true;
-    }
-  return false;
-}
 
 SparseMutableMatrix *
 SparseMutableMatrix::zero_matrix(const Ring *R, 
