@@ -26,6 +26,8 @@ mon_order::mon_order(mon_order_types t, const intarray &d,const intarray &wts)
       order = NULL;
       inv_order = NULL;
       inv_degs = NULL;
+      nweights = 0;
+      weights = 0;
       return;
     }
 
