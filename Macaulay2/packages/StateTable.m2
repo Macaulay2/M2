@@ -190,5 +190,15 @@ document { done,
      SEEALSO "StateTable"
      }
 
-scan(cacheFileNameKeys(""), key -> cacheFileName("",key) | ".html" << html documentation key << close)
-
+scan(cacheFileNameKeys(""), key -> cacheFileName("",key) | ".html" 
+     << html HTML { 
+	       HEAD TITLE {key, headline key},
+	       BODY { 
+		    -- buttonBar key, 
+		    HR{}, 
+		    documentation key,
+		    HR{}, 
+		    -- buttonBar key 
+		    }
+	       }
+     << close)
