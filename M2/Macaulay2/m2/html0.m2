@@ -69,7 +69,15 @@ IMG	   = new MarkUpType of MarkUpList
 HTML       = new MarkUpType of MarkUpList
 BIG        = new MarkUpType of MarkUpList
 HEADER1    = new MarkUpType of MarkUpListParagraph
+net HEADER1 := x -> (
+     r := "" || horizontalJoin apply(x,net);
+     r || concatenate( width r : "=" )
+     )
 HEADER2    = new MarkUpType of MarkUpListParagraph
+net HEADER2 := x -> (
+     r := "" || horizontalJoin apply(x,net);
+     r || concatenate( width r : "-" )
+     )
 HEADER3    = new MarkUpType of MarkUpListParagraph
 HEADER4    = new MarkUpType of MarkUpListParagraph
 HEADER5    = new MarkUpType of MarkUpListParagraph
@@ -91,22 +99,6 @@ ITALIC     = new MarkUpType of MarkUpList
 UNDERLINE  = new MarkUpType of MarkUpList
 TEX	   = new MarkUpType of MarkUpList
 SEQ	   = new MarkUpType of MarkUpList
-
-trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
-trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
-trimline1 := x -> selectRegexp ( "^ *(.*[^ ]|)$",1, x)
-addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-fix := s -> (						    -- remove clumsy newlines within strings
-     ln := lines s;
-     if not ln#?1 then return s;
-     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
-
-new SEQ from List := (seq,z) -> (
-     z = select(toList z, i -> i =!= null);
-     z = apply(z, i -> if class i === SEQ then toList i else i);
-     z = apply(z, i -> if class i === String then fix i else i);
-     flatten splice z)
-
 TT         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
 CITE       = new MarkUpType of MarkUpList
@@ -128,11 +120,27 @@ DL 	   = new MarkUpType of MarkUpListParagraph
 TO         = new MarkUpType of MarkUpList
 TO2        = new MarkUpType of MarkUpList
 TOH        = new MarkUpType of MarkUpList
-SECTION    = new MarkUpType of MarkUpList		    -- let's get rid of this
-TOC	   = new MarkUpType of MarkUpList		    -- let's get rid of this
+SECTION    = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
+TOC	   = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
 MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
+
+trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
+trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
+trimline1 := x -> selectRegexp ( "^ *(.*[^ ]|)$",1, x)
+addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
+fix := s -> (						    -- remove clumsy newlines within strings
+     ln := lines s;
+     if not ln#?1 then return s;
+     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+new PARA from List := 
+new SECTION from List := 
+new SEQ from List := (seq,z) -> (
+     z = select(toList z, i -> i =!= null);
+     z = apply(z, i -> if class i === SEQ then toList i else i);
+     z = apply(z, i -> if class i === String then fix i else i);
+     flatten splice z)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
