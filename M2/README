@@ -21,7 +21,7 @@ Here are the libraries you have to download and install on your system before
 you can compile and link Macaulay 2.
 
     library: Singular-factory
-    release: factory-1.3b
+    release: factory-1.3b, tar file date 2001/06/25
      author: G-M. Greuel <greuel@mathematik.uni-kl.de>
 	     R. Stobbe <stobbe@mathematik.uni-kl.de>
 	     J. Schmidt
@@ -31,7 +31,8 @@ you can compile and link Macaulay 2.
     license: GPL
 
     library: Singular-libfac
-    release: libfac-0.3.2  (in 00README, in configure.in it says 0.3.0)
+    release: libfac-0.3.2, tar file date 2001/06/28
+	     (that version number is in 00README; in configure.in it says 0.3.0)
      author: Michael Messollen <mmessollen@web.de>
      get at: /ftp@www.mathematik.uni-kl.de:/pub/Math/Singular/Libfac
     license: GPL
