@@ -92,8 +92,6 @@ public:
   const int *get_partial_sums(const monomial *m) const
     { return m->partial_sums; }
 
-  virtual void get_variable_exponent_pairs(const monomial *m, intarray &result) const = 0;
-
   virtual uint32 hash_exponents(const int *exponents) const = 0;
   virtual uint32 hash_encoded(const int *exponents) const = 0;
 
@@ -103,9 +101,23 @@ public:
 		      const monomial *b, 
 		      int n) const = 0;
   virtual monomial *monomial_from_exponents(const int *exp) const = 0;
-  virtual monomial *monomial_from_encoded(const int *encoded) const = 0;
+  virtual monomial *monomial_from_encoded(const int *encoded) const { return 0; }
   virtual monomial *monomial_from_variable_exponent_pairs(const intarray &term) const = 0;
+
   virtual const int * to_exponents(const monomial *m) const = 0;
+    // Returns a pointer to an exponent vector that WILL BE OVERWRITTEN by
+    // another such call.  To be used ONLY if all function calls made after this
+    // call clearly do not call any routines that might modify this value.
+
+  virtual void copy_exponents(const monomial *m, int *&result) const = 0;
+    // The result should point to an array of length = n_vars().
+    // This is the safe version of 'to_exponents'.
+    // This represents a loss of information for non-commutative monomials, so should be 
+    // used with care.
+
+  virtual void to_variable_exponent_pairs(const monomial *m, intarray &result) const = 0;
+    // Translate the monomial to an array of (variable,exponent) pairs.
+
   virtual int encoded_length(const int *encoded) const = 0;
 
   virtual monomial *mult(const monomial *a, const monomial *b) const = 0;
@@ -155,19 +167,23 @@ public:
   bool isCommutativeVariable(int v) const
     { return is_comm[v]; }
 
-  int encoded_length(const int *encoded) const;
-  void get_variable_exponent_pairs(const monomial *m, intarray &result) const;
-  monomial *monomial_from_encoded(const int *encoded) const;
-  monomial *monomial_from_exponents(const int *exp) const;
+  void to_variable_exponent_pairs(const monomial *m, intarray &result) const;
   monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
+
+  monomial *monomial_from_encoded(const int *encoded) const;
+
+  monomial *monomial_from_exponents(const int *exp) const;
   const int * to_exponents(const monomial *m) const;
-  
+  void copy_exponents(const monomial *m, int *&result) const;  
+
   int compare(const monomial *a, int acomponent,
 	      const monomial *b, int bcomponent) const;
   int compare(const monomial *a,
 	      const monomial *b,
 	      int n) const;
 
+
+  int encoded_length(const int *encoded) const;
   virtual uint32 hash_exponents(const int *exponents) const { return 0; }
   virtual uint32 hash_encoded(const int *encoded) const;
 
@@ -187,6 +203,21 @@ public:
   virtual const ENCMonoid *toNCMonoid() const { return this; }
 
   class_identifier class_id() const { return CLASS_ENCMonoid; }
+
+  // The format for non-commutative monomials (but, may have some blocks of 
+  // commutative variables)
+  // total length?
+  // [encoded slots, with length of the word for the varexp parts]
+  // [exponents of comm part only]
+  // [Non-comm (v,e) pairs]
+  // 
+  // 
+  // monomial_from_variable_exponent_pairs
+  // get_variable_exponents
+  // mult
+  // compare
+  // divide
+  // 
 };
 
 class ECommMonoid : public EMonoid
@@ -211,23 +242,19 @@ public:
   virtual void bin_out(buffer &o) const;
   static ECommMonoid *binary_in(istream &i);
   
-  int encoded_length(const int *) const
-    { return nslots; }
-
-  void get_variable_exponent_pairs(const monomial *m, intarray &result) const;
-  monomial *unchecked_monomial_from_exponents(const int *exp) const;
+  void copy_exponents(const monomial *m, int *&result) const;  
+  const int * to_exponents(const monomial *m) const;
   monomial *monomial_from_exponents(const int *exp) const;
-  monomial *monomial_from_encoded(const int *encoded) const;
+  monomial *unchecked_monomial_from_exponents(const int *exp) const;
+
   monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
+  void to_variable_exponent_pairs(const monomial *m, intarray &result) const;
 
   bool isCommutativeVariable(int) const 
     { return true; }
 
-  const int * to_exponents(const monomial *m) const;
-  int * to_product(const monomial *m) const;
-  // What about removing these elements?
-
-  // key operations
+  int encoded_length(const int *) const
+    { return nslots; }
   virtual uint32 hash_exponents(const int *exponents) const;
   virtual uint32 hash_encoded(const int *exponents) const { return 0; }
 

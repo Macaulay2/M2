@@ -665,7 +665,7 @@ static void cmd_EVector_leadMonomial(object &o1)
       gError << "zero vector has no lead monomial";
       return;
     }
-  v->getFreeModule()->getRing()->getMonoid()->get_variable_exponent_pairs(m,a);
+  v->getFreeModule()->getRing()->getMonoid()->to_variable_exponent_pairs(m,a);
   gStack.insert(new object_intarray(a));
 }
 static void cmd_EVector_leadTerm(object &o1, object &o2, object &o3)

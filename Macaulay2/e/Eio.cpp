@@ -444,7 +444,7 @@ ENCMonoid *ENCMonoid::binary_in(istream &i)
 void ECommMonoid::elem_text_out(buffer &o, const monomial *a) const
 {
   int len = 0;
-  int *exp = a->exponents;
+  const int *exp = to_exponents(a);;
   for (int pv=0; pv<nvars; pv++)
     {
       int v = print_order[pv];
@@ -463,35 +463,26 @@ void ECommMonoid::elem_text_out(buffer &o, const monomial *a) const
 
 void ECommMonoid::elem_bin_out(buffer &o, const monomial *a) const
 {
-  int *exp = a->exponents;
-  int i;
-  int len = 0;
-  for (i=0; i<nvars; i++)
-    if (exp[i] != 0) len++;
-
-  bin_int_out(o, len);
-  for (i=0; i<nvars; i++)
-    if (exp[i] != 0)
-      {
-	bin_int_out(o, i);
-	bin_int_out(o, exp[i]);
-      }
+  intarray vp;
+  to_variable_exponent_pairs(a, vp);
+  bin_int_out(o, vp.length()/2);
+  for (int i=0; i<nvars; i++)
+    bin_int_out(o, vp[i]);
 }
 
 monomial *ECommMonoid::elem_binary_in(istream &i) const
 {
   int j, len, v, e;
-  for (j=0; j<nvars; j++)
-    MULT_exp[j] = 0;
-
+  intarray vp;
   bin_int_in(i, len);
   for (j=0; j<len; j++)
     {
       bin_int_in(i, v);
       bin_int_in(i, e);
-      MULT_exp[v] = e;
+      vp.append(v);
+      vp.append(e);
     }
-  return monomial_from_exponents(MULT_exp);
+  return monomial_from_variable_exponent_pairs(vp);
 }
 
 /////////////////////////////////
@@ -528,37 +519,26 @@ void ENCMonoid::elem_text_out(buffer &o, const monomial *a) const
 
 void ENCMonoid::elem_bin_out(buffer &o, const monomial *a) const
 {
-  // MES: this is NOT VALID for NC monoids!!
-  int *exp = a->exponents;
-  int i;
-  int len = 0;
-  for (i=0; i<nvars; i++)
-    if (exp[i] != 0) len++;
-
-  bin_int_out(o, len);
-  for (i=0; i<nvars; i++)
-    if (exp[i] != 0)
-      {
-	bin_int_out(o, i);
-	bin_int_out(o, exp[i]);
-      }
+  intarray vp;
+  to_variable_exponent_pairs(a, vp);
+  bin_int_out(o, vp.length()/2);
+  for (int i=0; i<nvars; i++)
+    bin_int_out(o, vp[i]);
 }
 
 monomial *ENCMonoid::elem_binary_in(istream &i) const
 {
-  // MES: this is NOT VALID for NC monoids!!
   int j, len, v, e;
-  for (j=0; j<nvars; j++)
-    MULT_exp[j] = 0;
-
+  intarray vp;
   bin_int_in(i, len);
   for (j=0; j<len; j++)
     {
       bin_int_in(i, v);
       bin_int_in(i, e);
-      MULT_exp[v] = e;
+      vp.append(v);
+      vp.append(e);
     }
-  return monomial_from_exponents(MULT_exp);
+  return monomial_from_variable_exponent_pairs(vp);
 }
 
 //////////////////////
