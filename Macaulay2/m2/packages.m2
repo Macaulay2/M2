@@ -65,7 +65,6 @@ newPackage(String) := opts -> (title) -> (
 	  );
      newpkg := new Package from {
           "title" => title,
-     	  "private dictionary" => if title === "Main" then first globalDictionaries else new Dictionary, -- this is the local one
 	  symbol Options => opts,
      	  symbol Dictionary => if title === "Main" then first globalDictionaries else new Dictionary, -- this is the global one
      	  "close hook" => hook,
@@ -86,7 +85,9 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
+     if title =!= "Main" then newpkg#"private dictionary" = new Dictionary; -- this is the local one
      -- now change the global environment
+     if title =!= "Main" then PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      currentPackageS <- newpkg;
      pkgsym := getGlobalSymbol(PackageDictionary,title);
      ReverseDictionary#newpkg = pkgsym;
@@ -102,7 +103,6 @@ newPackage(String) := opts -> (title) -> (
 	  apply(opts.Using,pkg->pkg.Dictionary)
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
-     PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      debuggingMode = opts.DebuggingMode;
      newpkg)
 
@@ -185,10 +185,15 @@ closePackage String := title -> (
 	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
      	  checkShadow();
 	  );
+     remove(pkg,"previous dictionaries");
+     remove(pkg,"previous packages");
      hook := pkg#"close hook";
+     remove(pkg,"close hook");
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
      currentPackage = pkg#"previous currentPackage";
+     remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode";
+     remove(pkg,"old debuggingMode");
      stderr << "--package " << pkg << " installed" << endl;
      pkg)
 

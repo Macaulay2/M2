@@ -118,9 +118,9 @@ buttonBar := (tag) -> TABLE { {
 
 	  } }
 
-upAncestors := key -> reverse (
+upAncestors := tag -> reverse (
      n := 0;
-     prepend(key, while UP#?key and n < 20 list (n = n+1; key = UP#key)))
+     prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
 
 fakeMenu := x -> (
      --   o  item 1
@@ -151,7 +151,7 @@ makeHtmlNode DocumentTag := tag -> (
 	       },
 	  BODY { 
 	       buttonBar tag,
-	       if UP#?key then SEQ between(" > ", apply(upAncestors key, i -> TO i)),
+	       if UP#?tag then SEQ between(" > ", apply(upAncestors tag, i -> TO i)),
 	       HR{}, 
 	       documentation key,			    -- a better way??
 	       }
