@@ -790,11 +790,20 @@ examine(e:Expr):Expr := (
      else WrongArg("(), a function, or a symbol"));
 setupfun("examine",examine);
      
+listFrame(s:Sequence):Expr := Expr(
+     List(mutableListClass,
+	  if s == globalFrame.values 
+	  then emptySequence				    -- some variables in the global frame are protected!
+	  else s,
+	  nextHash(),
+	  true));	  
+
 frame(e:Expr):Expr := (
      when e
-     is sc:SymbolClosure do Expr(sc.frame.values)
-     is fc:FunctionClosure do Expr(fc.frame.values)
-     is cfc:CompiledFunctionClosure do Expr(cfc.env)
+     is sc:SymbolClosure do Expr(listFrame(sc.frame.values))
+     is fc:FunctionClosure do Expr(listFrame(fc.frame.values))
+     is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
+     is CompiledFunction do Expr(listFrame(emptySequence))
      else WrongArg("a function"));
 setupfun("frame", frame);
 

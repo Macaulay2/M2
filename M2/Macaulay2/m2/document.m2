@@ -78,6 +78,7 @@ fSeq := new HashTable from {
      (2,cohomology     ) => s -> ("HH ", toStr s#1),
      (2,NewMethod      ) => s -> ("new ", toString s#1),
      (2,symbol ~       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
+     (2,symbol !       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (3,class,Symbol   ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
      (2,class,Symbol   ) => s -> (toString s#0, " ", toStr s#1),-- prefix operator
      (2,class,ScriptedFunctor) => s -> (
@@ -432,8 +433,10 @@ usage := s -> (
      if o =!= null then SEQ {o, PARA{}}
      )
 
-documentation = method(SingleArgumentDispatch => true)
-documentation String := s -> (
+helpOptions := new OptionTable from {UsageOnly => false}
+
+documentation = method(SingleArgumentDispatch => true, Options => helpOptions)
+documentation String := opts -> s -> if opts.UsageOnly then usage s else (
      if unformatTag#?s
      then documentation unformatTag#s
      else getDoc toExternalString s
@@ -445,7 +448,7 @@ type := s -> SEQ {
      following classes, most specific first:", PARA{}, 
      menu ancestors1 class s, PARA{}
      }
-documentation Thing := s -> SEQ { title s, usage s, type s }
+documentation Thing := opts -> s -> if opts.UsageOnly then usage s else SEQ { title s, usage s, type s }
 binary := set binaryOperators
 prefix := set prefixOperators
 postfix := set postfixOperators
@@ -485,7 +488,7 @@ documentableMethods := s -> select(methods s, i -> not (
 	  class i === Sequence and #i > 0 and class i#0 === Function and toString i#0 === "--Function--"
 	  ))
 
-documentation Symbol := s -> (
+documentation Symbol := opts -> s -> if opts.UsageOnly then usage s else (
      a := apply(options s, f -> f => s);
      b := documentableMethods s;
      SEQ {
@@ -498,7 +501,7 @@ documentation Symbol := s -> (
      	  }
      )
 
-documentation Type := X -> (
+documentation Type := opts -> X -> if opts.UsageOnly then usage X else (
      syms := values symbolTable();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X), (key,Y) -> key);
      b := toString \ select(syms, 
@@ -522,7 +525,7 @@ documentation Type := X -> (
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, smenu e, PARA{}},
 	  })
 
-documentation HashTable := x -> (
+documentation HashTable := opts -> x -> if opts.UsageOnly then usage x else (
      c := documentableMethods x;
      SEQ {
 	  title x, 
@@ -572,8 +575,11 @@ seecode := x -> if (try locate x) =!= locate method then (
 	  }
      )
 
-documentation Function :=  f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
-documentation Option := v -> (
+documentation Function := opts -> f -> (
+     if opts.UsageOnly then usage f
+     else SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
+     )
+documentation Option := opts -> v -> if opts.UsageOnly then usage v else (
      (fn, opt) -> SEQ { 
 	  title v, 
 	  usage v,
@@ -586,7 +592,7 @@ documentation Option := v -> (
 	  }
      ) toSequence v
 
-documentation Sequence := s -> if #s == 0 then null else (
+documentation Sequence := opts -> s -> if opts.UsageOnly then usage s else if #s == 0 then null else (
      t := typicalValue s;
      SEQ {
 	  title s, 
@@ -610,23 +616,22 @@ documentation Sequence := s -> if #s == 0 then null else (
 	  }
      )
 
-help2 := s -> (
-     d := documentation s;
-     if d === null 
-     then "No documentation available for '" |formatDocumentTag s | "'."
-     else "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text d
- --  else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
-     )
-
     hr1 := newline | "-----------------------------------------------------------------------------" | newline
  -- hr1 := "-----------------------------------------------------------------------------"
 
     hr := v -> concatenate mingle(#v + 1 : hr1 , v)
  -- hr := v -> stack       mingle(#v + 1 : hr1 , v)
 
-help = method(SingleArgumentDispatch => true)
-help List := v -> hr apply(v, help2)
-help Thing := help2
+help = method(SingleArgumentDispatch => true, Options => helpOptions)
+help List := opts -> v -> hr apply(v, i -> help(i, opts))
+help Sequence :=					    -- this bit shouldn't be needed!
+help Thing := opts -> s -> (
+     d := documentation(s,opts);
+     if d === null 
+     then "No documentation available for '" |formatDocumentTag s | "'."
+     else "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text d
+ --  else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
+     )
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation

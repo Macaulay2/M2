@@ -16,7 +16,7 @@ GlobalAssignHook Function := (X,x) -> (
      )
 GlobalReleaseHook Function := (X,x) -> (
      -- error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
-     remove(Symbols,x);
+     if Symbols#x === X then remove(Symbols,x);
      )
 
 Manipulator = new Type of BasicList
@@ -25,7 +25,7 @@ Manipulator.name = "Manipulator"
 Manipulator Database := Manipulator File := (m,o) -> m#0 o
 
 GlobalAssignHook Manipulator := (X,x) -> if not Symbols#?x then Symbols#x = X
-GlobalReleaseHook Manipulator := (X,x) -> remove(Symbols,x)
+GlobalReleaseHook Manipulator := (X,x) -> if Symbols#x === X then remove(Symbols,x)
 
 Manipulator Nothing := (m,null) -> null
 File << Manipulator := (o,m) -> m#0 o
@@ -274,7 +274,7 @@ if phase === 1 then scanPairs(symbolTable(),
 
 GlobalReleaseHook Function := (X,x) -> (
      stderr << "warning: " << toString X << " redefined" << endl;
-     remove(Symbols,x);
+     if Symbols#x === X then remove(Symbols,x);
      )
 
 -- the last function restarted

@@ -326,57 +326,87 @@ document { ",",
 	  }
      }
 
-document { apply,
-     HEADLINE "apply a function to each element of a list",
+document { (apply,List,Function), HEADLINE "apply function to each element",
      TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ", returning the list of results. If ", TT "v", " is 
-     a sequence, then a sequence is returned.",
-     PARA,
-     EXAMPLE {
-	  "apply(1 .. 5, i->i^2)",
-      	  "apply({1,3,5,7}, i->i^2)",
-	  },
-     PARA,
-     NOINDENT,
-     TT "apply(v,w,f)", " -- produces, from lists or sequences ", TT "v", " and ", TT "w", ",
+     list ", TT "v", ", returning the list of results.",
+     EXAMPLE "apply({1,3,5,7}, i->i^2)",
+     SEEALSO {(symbol /,List, Function), (symbol \, Function, List)}
+     }
+document { (apply,List,List,Function), HEADLINE "apply function to elements in pairs",
+     TT "apply(v,w,f)", " -- produces, from lists ", TT "v", " and ", TT "w", ",
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
      by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
-     lists of the same class, then the result is also of
-     that class.  If ", TT "v", " and ", TT "w", " are sequences, then so
-     is the result.",
-     PARA,
-     EXAMPLE {
-      	  "apply({1,3,5,7}, i->i^2)",
-	  "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)",
-	  },
-     PARA,
-     NOINDENT,
-     TT "apply(n,f)", " -- equivalent to apply( toList(0 .. n-1),f), for an integer n.",
-     PARA,
-     SEEALSO{ "scan", "select",  "any",  "all", "member"},
-     PARA,
-     NOINDENT,
+     lists of the same class, then the result is also of that class.",
+     EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
+     }
+document { (apply,BasicList,Function), HEADLINE "apply function to each element",
+     TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     list ", TT "v", ", returning the list of results.  The result is of the same
+     class, for example, ", TO "Array", ".",
+     EXAMPLE "apply([1,3,5,7], i->i^2)",
+     }
+document { (apply,HashTable,Function), HEADLINE "apply function to each value",
      TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
      an hash table ", TT "x", " by applying the function
      ", TT "f", " to each of the values of ", TT "x", ".  This means that
-     if ", TT "x#k === v", " then ", TT "y#k === f(v)", ".",
-     SEEALSO {(symbol /,List, Function), (symbol \, Function, List)}
+     if ", TT "x#k === v", " then ", TT "y#k === f(v)", "."
+     }
+document { (apply,Sequence,Function), HEADLINE "apply function to each element",
+     TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     sequence ", TT "v", ", returning the list of results.",
+     EXAMPLE "apply((1,3,5,7), i->i^2)",
+     SEEALSO {(symbol /,Sequence, Function), (symbol \, Function, Sequence)}
+     }
+document { (apply,Sequence,Sequence,Function), HEADLINE "apply function to elements in pairs",
+     TT "apply(v,w,f)", " -- produces, from sequences ", TT "v", " and ", TT "w", ",
+     a sequencs ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
+     by evaluating ", TT "f(v_i,w_i)", ".",
+     EXAMPLE "apply((1,2,3),(a,b,c), identity)"
+     }
+document { (apply,ZZ,Function), HEADLINE "apply function to 0 .. n-1",
+     TT "apply(n,f)", " -- applies the function ", TT "f", " to each integer
+     in the range ", TT "0 .. n-1", " returning the sequence of results.
+     This is equivalent to ", TT "apply( toList(0 .. n-1),f)", ".",
+     EXAMPLE "apply(10, i -> i^2)"
+     }
+document { apply, HEADLINE "apply a function to each element",
+     SEEALSO{ "scan", "select",  "any",  "all", "member"}
      }
 
-document { scan,
-     HEADLINE "apply a function to each element of a list",
-     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ".  The function values are discarded.",
-     PARA,
-     EXAMPLE "scan({a,4,\"George\",2^100}, print)",
-     NOINDENT,
-     TT "scan(n,f)", " -- equivalent to scan(0 .. n-1, f), for an integer n.",
-     EXAMPLE "scan(3,print)",
+document { scan, HEADLINE "apply a function to each element",
      SEEALSO { "select", "any", "all", "member"}
      }
 
-document { scanPairs,
-     HEADLINE "apply a function to pair in a hash table",
+document { (scan,Sequence,Function), HEADLINE "apply a function to each element of a sequence",
+     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     sequence ", TT "v", ".  The function values are discarded.",
+     EXAMPLE {
+	  "v = 0 .. 3",
+	  "scan(v, print)"
+	  }
+     }
+
+document { (scan,List,Function), HEADLINE "apply a function to each element of a list",
+     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     list ", TT "v", ".  The function values are discarded.",
+     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
+     }
+
+document { (scan,ZZ,Function), HEADLINE "apply a function to 0 .. n-1",
+     TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
+     in the range ", TT "0 .. n-1", " discarding the results.",
+     PARA,
+     "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
+     EXAMPLE {
+	  "scan(3,print)",
+	  "v = {a,b,c}",
+	  "scan(#v, i -> print(i,v#i))"
+	  }
+     }
+
+document { scanPairs, HEADLINE "apply a function to pairs in a hash table" }
+
+document { (scanPairs,HashTable,Function), HEADLINE "apply a function to pairs in a hash table",
      TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
      pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
      table ", TT "x", " and ", TT "v", " is the corresponding 
@@ -388,30 +418,58 @@ document { scanPairs,
      SEEALSO "scan"
      }
 
-document { select,
-     HEADLINE "select elements from a list or hash table",
-     TT "select(v,f)", " -- select elements of the list or hash table
-     ", TT "v", " which yield ", TT "true", " when the function 
-     ", TT "f", " is applied.",
-     BR,NOINDENT,
-     TT "select(n,v,f)", " -- select at most ", TT "n", " elements of the
-     list or hash table ", TT "v", " which yield ", TT "true", " when
-     the function ", TT "f", " is applied.",
-     PARA,
-     "For a list, the order of the elements in the result will be the
-     same as in the original list ", TT "v", ".",
-     PARA,
-     "For a hash table, the function is applied to each value.  This may
-     change, for perhaps it should be applied to the key/value pair.  The
-     hash table should be immutable: to scan the values in a mutable hash
-     table, use ", TT "scan(values x, f)", ".",
-     PARA,
-     EXAMPLE {
-	  "select({1,2,3,4,5}, odd)",
-      	  "select(2,{1,2,3,4,5}, odd)",
-	  },
-     PARA,
+document { select, HEADLINE "select elements from a list or hash table",
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
+     }
+document { (select,Sequence,Function), HEADLINE "select elements from a sequence",
+     TT "select(v,f)", " -- select elements of the sequence
+     ", TT "v", " that yield ", TT "true", " when the function 
+     ", TT "f", " is applied.",
+     PARA,
+     "The order of the elements in the result will be the same as
+     in the original sequence ", TT "v", "."
+     }
+document { (select,List,Function), HEADLINE "select elements from a list",
+     TT "select(v,f)", " -- select elements of the list
+     ", TT "v", " that yield ", TT "true", " when the function 
+     ", TT "f", " is applied.",
+     PARA,
+     "The order of the elements in the result will be the same as
+     in the original list ", TT "v", ".",
+     EXAMPLE "select({1,2,3,4,5}, odd)"
+     }
+document { (select,HashTable,Function), HEADLINE "select from a hash table",
+     TT "select(v,f)", " -- select pairs of the hash table ", TT "v", "
+     that yield ", TT "true", " when the function ", TT "f", " is applied to
+     the value.",
+     PARA,
+     "The hash table should be immutable: to scan the values in a mutable hash
+     table, use ", TT "scan(values x, f)", "."
+     }
+document { (select,ZZ,Sequence,Function), HEADLINE "select elements from a sequence",
+     TT "select(n,v,f)", " -- select at most ", TT "n", " elements of 
+     the sequence ", TT "v", " that yield ", TT "true", " when the function 
+     ", TT "f", " is applied.",
+     PARA,
+     "The order of the elements in the result will be the same as
+     in the original sequence ", TT "v", "."
+     }
+document { (select,ZZ,List,Function), HEADLINE "select elements from a list",
+     TT "select(n,v,f)", " -- select at most ", TT "n", " elements of the list
+     ", TT "v", " that yield ", TT "true", " when the function 
+     ", TT "f", " is applied.",
+     PARA,
+     "The order of the elements in the result will be the same as
+     in the original list ", TT "v", ".",
+     EXAMPLE "select(2,{1,2,3,4,5}, odd)"
+     }
+document { (select,ZZ,HashTable,Function), HEADLINE "select from a hash table",
+     TT "select(n,v,f)", " -- select at most ", TT "n", " pairs of the hash 
+     table ", TT "v", " that yield ", TT "true", " when the function ", TT "f", " 
+     is applied to the value.",
+     PARA,
+     "The hash table should be immutable: to scan the values in a mutable hash
+     table, use ", TT "scan(values x, f)", "."
      }
 
 --document { find,

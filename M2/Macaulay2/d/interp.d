@@ -244,6 +244,7 @@ usageMessage():void := (
 
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
+     localFrame = globalFrame;
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));
      stdout.outisatty =   0 != isatty(1) ;

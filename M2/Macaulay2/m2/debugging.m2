@@ -107,3 +107,5 @@ clearOutput = new Command from (() -> (
 	       	    erase s))))
 
 clearAll = new Command from (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
+
+typicalValues#frame = MutableList
