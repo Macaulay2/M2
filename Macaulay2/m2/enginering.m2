@@ -71,13 +71,14 @@ net ZZZ := toString ZZZ := see
 expression ZZZ := n -> expression lift(n,ZZ)
 
 -----------------------------------------------------------------------------
+                FractionField = new Type of EngineRing
+
 frac = method(TypicalValue => FractionField)
 frac Ring := R -> (
      if R.?frac then R.frac 
      else error "no method found"
      )
 
-                FractionField = new Type of EngineRing
            frac FractionField := identity
 coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
