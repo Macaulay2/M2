@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 RingMap = new Type of MutableHashTable
+RingMap.synonym = "ring map"
 toString RingMap := f -> concatenate(
      "map(", toString target f, ",", toString source f, ",", toString first entries f.matrix, ")"
      )

@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 InfiniteNumber = new Type of HashTable
+InfiniteNumber.synonym = "infinite number"
 
 sign := symbol sign
 
@@ -17,6 +18,7 @@ mathML InfiniteNumber := i -> (
      )
 
 IndeterminateNumber = new Type of HashTable
+IndeterminateNumber.synonym = "indeterminate number"
 indeterminate = new IndeterminateNumber from {
      symbol name => "indeterminate",
      symbol symbol => symbol indeterminate

@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
 Resolution = new Type of MutableHashTable
+Resolution.synonym = "resolution"
 toString Resolution := g -> "<<resolution " | toString g.handle | ">>"
 
 resolution = method(

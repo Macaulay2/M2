@@ -988,6 +988,7 @@ document { (random, List, Ring),
      in the ring ", TT "R", ", where ", TT "n", " is a list of integers."
      }
 document { (random, Module, Module),
+     HEADLINE "make a random module map",
      TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
      module G to the free module F.",
      EXAMPLE {

@@ -1,6 +1,7 @@
 --		Copyright 1996 by Daniel R. Grayson
 
 SchurRing = new Type of EngineRing
+SchurRing.synonym = "Schur ring"
 
 toString SchurRing := S -> if S.?name then S.name else "Schur(" | toString (# (monoid S).generatorSymbols) | ")"
 

@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 MonoidElement = new Type of BasicList
+MonoidElement.synonym = "monoid element"
 
 ZZ _ Monoid := MonoidElement => (i,M) -> (
      if i === 1 then M#1
@@ -27,6 +28,7 @@ leadMonomial RingElement := MonoidElement => (f) -> (
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
 
 GeneralOrderedMonoid = new Type of OrderedMonoid
+GeneralOrderedMonoid.synonym = "general ordered monoid"
 GeneralOrderedMonoid.Engine = true
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
@@ -389,6 +391,7 @@ monoid Array := Monoid => (
 monoid Ring := Monoid => R -> R.monoid
 
 GeneralOrderedGroup = new Type of GeneralOrderedMonoid
+GeneralOrderedGroup.synonym = "general ordered group"
 GeneralOrderedGroup.Engine = true
 toString GeneralOrderedGroup := M -> if M.?name then M.name else (
      if not M.?generatorExpressions

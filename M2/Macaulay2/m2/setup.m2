@@ -20,6 +20,7 @@ Function.GlobalReleaseHook = (X,x) -> (
      )
 
 Manipulator = new Type of BasicList
+Manipulator.synonym = "manipulator"
 new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f}
 Manipulator.name = "Manipulator"
 Manipulator Database := Manipulator File := (m,o) -> m#0 o

@@ -154,9 +154,12 @@ texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
 mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
 
 MarkUpList = new Type of BasicList
+MarkUpList.synonym = "mark-up list"
 
      MarkUpType = new Type of Type
+MarkUpType.synonym = "mark-up type"
 EmptyMarkUpType = new Type of MarkUpType
+EmptyMarkUpType.synonym = "empty mark-up type"
      MarkUpType List := (h,y) -> new h from y
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
      MarkUpType Thing := (h,y) -> new h from {y}
@@ -362,7 +365,7 @@ document List := z -> (
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
      nodeBaseFilename = makeBaseFilename nodeName;
-     if nodeName != key then storeDoc(toExternalString nodeName,"goto "|skey);
+     if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
 
@@ -482,23 +485,19 @@ title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
 inlineMenu := x -> between(", ", TO \ x)
 
 type := s -> (
-     an := drop(ancestors1 class s, -1);
      SEQ {
-	  if #an === 0 then null else
-	  if #an === 1 then SEQ {
-     	       "The object ", TT toExternalString s, " is a member of the class ", TO first an, ".\n",
-	       }
-	  else SEQ {
-     	       "The object ", TT toExternalString s, " is a member of each of the following
-     	       classes, most specific first: ", inlineMenu an, ".\n"
+	  if class s =!= Thing then SEQ {
+	       "The object ", TT toExternalString s, " is a member of the class ", TO class s, ".\n"
 	       },
 	  if instance(s,Type) then (
-	       d := ancestors s;
 	       SEQ {
 		    if s.?synonym then SEQ {
-			 "     Each object of class ", toString s, " is also called ", indefinite s.synonym, ".\n",},
-		    if #d > 0 then SEQ {
-			 "     Each ", synonym s, " is also a: ", inlineMenu d, "."}
+			 "     Each object of class ", toString s,
+			 " is also called ", indefinite s.synonym, ".\n"
+			 },
+		    if parent s =!= Thing then SEQ {
+			 "     Each ", synonym s, " is also a: ", TO parent s, "."
+			 }
 		    }
 	       ),
 	  PARA{}

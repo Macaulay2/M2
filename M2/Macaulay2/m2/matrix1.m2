@@ -427,6 +427,7 @@ cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
 
 Ideal = new Type of MutableHashTable
+Ideal.synonym = "ideal"
 
 ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
 

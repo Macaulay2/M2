@@ -318,8 +318,8 @@ Vero = minors(2,MVero)
 -- of matrices that are made from 
 -- ``catalecticant'' blocks, that is, from
 -- matrices such as
--- $$\pmatrix{b & c & d & e \cr 
---             c & d & e & f \cr}$$
+-- $$\begin{pmatrix}b & c & d & e \\
+--             c & d & e & f \end{pmatrix}$$
 -- which are manufactured by
 
 --$

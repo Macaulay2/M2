@@ -3,18 +3,21 @@
 -----------------------------------------------------------------------------
 
 Monoid = new Type of Type
+Monoid.synonym = "monoid"
 
 options Monoid := x -> null
 
 baseName Symbol := identity
 
 OrderedMonoid = new Type of Monoid
+OrderedMonoid.synonym = "ordered monoid"
 degreeLength OrderedMonoid := M -> M.degreeLength
 
 -----------------------------------------------------------------------------
 
 terms := symbol terms
 PolynomialRing = new Type of EngineRing
+PolynomialRing.synonym = "polynomial ring"
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false

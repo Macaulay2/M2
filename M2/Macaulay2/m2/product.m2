@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 ProductRing = new Type of Ring
+ProductRing.synonym = "product ring"
 
 toString ProductRing := RS -> if RS.?name then RS.name else toString RS.baseRings#0 | " * " | toString RS.baseRings#1
 net ProductRing := (RS) -> net RS.baseRings#0 | " * " | net RS.baseRings#1

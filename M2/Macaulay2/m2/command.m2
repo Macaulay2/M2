@@ -3,6 +3,7 @@
 -- documentation is in doc.m2 because this file loaded early
 
 SelfInitializingType = new Type of Type
+SelfInitializingType.synonym = "self initializing type"
 SelfInitializingType.name = "SelfInitializingType"
 SelfInitializingType.Symbol = symbol SelfInitializingType
 SelfInitializingType Thing := (T,z) -> new T from z

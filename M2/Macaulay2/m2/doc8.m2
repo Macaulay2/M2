@@ -1,7 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 document { pdim,
-     TT "pdim M", " -- calculate the projective dimension of a module M.",
+     HEADLINE "calculate the projective dimension",
+     TT "pdim M", " -- calculate the projective dimension of a module ", TT "M", ".",
      PARA,
      "For now, the method is to measure the length of a projective resolution."
      }
@@ -61,7 +62,7 @@ document { (symbol ^,Module,Array),
      }
 
 document { (symbol _,Module,Array),
-     HEADLINE "get inclusion map into directo sum",
+     HEADLINE "get inclusion map into direct sum",
      TT "M_[i,j,k]", " -- get inclusion map of blocks from a module ", TT "M", ".",
      PARA,
      "The module ", TT "M", " should be a direct sum, and the result is the matrix

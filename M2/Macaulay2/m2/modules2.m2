@@ -221,6 +221,7 @@ hilbertSeries Module := options -> (M) -> (
 	  ))
 
 ProjectiveHilbertPolynomial = new Type of HashTable
+ProjectiveHilbertPolynomial.synonym = "projective Hilbert polynomial"
 
 ProjectiveHilbertPolynomial ZZ := (P,i) -> sum(pairs P, (n,c) -> c * binomial(n+i,n))
 

@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 IndexedVariableTable = new Type of MutableHashTable
+IndexedVariableTable.synonym = "indexed variable table"
 expression IndexedVariableTable := x -> hold x.Symbol
 precedence IndexedVariableTable := x -> 70
 baseName IndexedVariableTable := x -> (
@@ -9,6 +10,7 @@ baseName IndexedVariableTable := x -> (
      )
 
 IndexedVariable = new Type of BasicList
+IndexedVariable.synonym = "indexed variable"
 toString IndexedVariable := v -> (
      x := v#0;
      i := v#1;
