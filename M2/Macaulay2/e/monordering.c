@@ -240,6 +240,7 @@ MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
 {
   MonomialOrdering *result;
   int i,j,sum,next;
+  int nvars_so_far = 0;
   sum = 0;
   for (i=0; i<M->len; i++)
     sum += M->array[i]->len;
@@ -250,7 +251,23 @@ MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
     {
       MonomialOrdering *mo = M->array[i];
       for (j=0; j<mo->len; j++)
-	result->array[next++] = mo->array[j];
+	{
+	  mon_part p = mo->array[j];
+	  if (p->type != MO_WEIGHTS)
+	    nvars_so_far += p->nvars;
+	  else
+	    {
+	      /* Shift the weights over by nvars_so_far */
+	      mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
+	      q->wts = (int *) getmem_atomic(q->nvars * sizeof(int));
+	      for (j=0; j<nvars_so_far; j++)
+		q->wts[j] = 0;
+	      for ( ; j<q->nvars; j++)
+		q->wts[j] = p->wts[j-nvars_so_far];
+	      p = q;
+	    }
+	  result->array[next++] = p;
+	}
     }
   return result;
 }

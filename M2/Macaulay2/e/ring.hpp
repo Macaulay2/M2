@@ -37,8 +37,6 @@ class Ring : public mutable_object
 protected:
   int P;
   int _nvars;
-  int _totalvars;		// The total number of variables, including all base rings
-                                // BUT: not including basic fields.
   const PolynomialRing *degree_ring;
 
   ring_elem _zero_divisor;

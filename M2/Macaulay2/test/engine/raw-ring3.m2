@@ -15,6 +15,9 @@ assert(someTerms(f,1,1) == (a+b)*x)
 assert(a*x > b*x)
 assert((x ? y) === symbol>)
 
+C = B[t,u,v]
+f = (a+b)*(x+y)*t*u
+leadCoefficient f
 
 needs "raw-util.m2"
 errorDepth = 0
