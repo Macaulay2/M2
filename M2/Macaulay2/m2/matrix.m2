@@ -29,12 +29,8 @@ map(Module,Nothing,RawMatrix) := opts -> (tar,nullsrc,f) -> map(tar,newModule(ri
 map(Ring,RawMatrix) := opts -> (R,f) -> map(newModule(R,rawTarget f),newModule(R,rawSource f),f,opts)
 
 reduce = (tar,f) -> (					    -- we erase this later
-     if not isFreeModule tar then (
-	  g := gb presentation tar;
-     	  error "gb reduction not re-implemented yet";
-	  sendgg(ggPush g, ggPush 1, ggpick, ggreduce, ggpop);
-	  )
-     else f)
+     if isFreeModule tar then f
+     else f % raw gb presentation tar)
 
 QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m
 Matrix * QQ := (m,r) -> (r * 1_(ring m)) * m

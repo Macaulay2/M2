@@ -52,18 +52,10 @@ exteriorPower(ZZ, Matrix) := Matrix => options -> (p,m) -> (
      if p < 0 then map(R^0,R^0,0)
      else if p === 0 then map(R^1,R^1,1)
      else if p === 1 then m
-     else (
-	  -- h := prune m;
-	  h := m;			  -- DRG: disabled 'prune' here.
-	  h1 := matrix h;
-	  strat := getMinorsStrategy(R,options);
-	  error "IM2_Matrix_exterior not implemented yet";
-	  sendgg(ggPush h1, ggPush p, ggPush strat, ggexterior);
-	  hp := getMatrix R;
-	  map(exteriorPower(p, target h, options),
-	      exteriorPower(p, source h, options),
-	      hp))
-    )
+     else map(
+	  exteriorPower(p, target m, options),
+	  exteriorPower(p, source m, options),
+	  rawExteriorPower(p,raw m,getMinorsStrategy(R,options))))
 
 wedgeProduct = method()
 wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
