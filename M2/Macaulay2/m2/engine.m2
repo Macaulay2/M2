@@ -270,7 +270,7 @@ rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawD
 
 RawComputation.name = "RawComputation"
 RawComputation.synonym = "raw computation"
-status RawComputation := opts -> c -> rawStatus c
+status RawComputation := opts -> c -> rawStatus1 c
 
 -- ring maps
 

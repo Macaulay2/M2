@@ -5,8 +5,12 @@ load "statuscodes.m2"
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
 raw GroebnerBasis := G -> G.RawComputation
-status GroebnerBasis := opts -> G -> RawStatusCodes#(status raw G)
-toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[status: " | toString status g | "]"
+status GroebnerBasis := opts -> G -> (
+     s := toString RawStatusCodes#(rawStatus1 raw G);
+     "status: " | s | "; "|
+     (if s === "done" then "S-pairs encountered up to degree " else "all S-pairs handled up to degree ") | toString rawStatus2 raw G
+     )
+toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[" | status g | "]"
 
 summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
 

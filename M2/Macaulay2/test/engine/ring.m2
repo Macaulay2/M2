@@ -1,4 +1,4 @@
--- gbTrace = 5
+gbTrace = 5
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
 cmp = method()
@@ -193,6 +193,13 @@ degree c
 -- Groebner bases
 f = matrix {{x,y^2,z^3}}
 I = image f
+gb (I,DegreeLimit => -1)
+gb (I,DegreeLimit => 0)
+gb (I,DegreeLimit => 1)
+gb (I,DegreeLimit => 2)
+gb (I,DegreeLimit => 3)
+gb (I,DegreeLimit => 4)
+end
 G = gb I
 peek G
 g = gens G

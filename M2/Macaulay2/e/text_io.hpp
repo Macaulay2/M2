@@ -13,6 +13,8 @@ extern int i_text_io();
 
 extern "C" char newline[];
 
+#define wrapping_prefix "   -- "
+
 void bignum_text_out(buffer &o, mpz_t a);
 
 void clear_emit_size();
