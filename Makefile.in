@@ -450,6 +450,7 @@ TAGS: always
 		-o -name '*.S' \
 		-o -name '*.d' \
 		-o -name '*.in' -o -name '*.m2' \)`
+clean::; rm -f TAGS
 PATH:
 	printenv $@
 ################################# lsm
