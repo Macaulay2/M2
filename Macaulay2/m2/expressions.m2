@@ -968,3 +968,29 @@ backtrace = () -> apply(elements deepSplice report,
 	  )
      )
 erase quote report
+
+
+---------------------------------
+
+SelfNamer = new Type of MutableHashTable
+
+document { quote SelfNamer,
+     TT "SelfNamer", " -- the class of mutable hash tables which acquire
+     the name of the first global variable they get assigned to.",
+     PARA,
+     EXAMPLE "X = new Type of MutableHashTable",
+     EXAMPLE "x = new X",
+     EXAMPLE "Y = new Type of SelfNamer",
+     EXAMPLE "y = new Y"
+     }
+
+GlobalAssignHook SelfNamer := (X,x) -> (
+     if not x#?(quote name) then x.name = X
+     )
+
+GlobalReleaseHook SelfNamer := (X,x) -> (
+     if x#?(quote name) and X === x.name
+     then remove(x,quote name)
+     )
+
+expression SelfNamer := (x) -> hold x.name
