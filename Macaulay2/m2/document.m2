@@ -355,12 +355,58 @@ topics = Command (
 apropos = (pattern) -> (
      mat := "*" | toString pattern | "*";
      sort select( keys symbolTable(), i -> match(i,mat)))
-
+-----------------------------------------------------------------------------
+-- more general methods
+-----------------------------------------------------------------------------
+lookup1 := s -> (youngest s)#?s
+nextMoreGeneral2 := (f,A) -> if A =!= Thing then (
+     A' := A;
+     l := false;
+     while not l and A' =!= Thing do (
+	  A' = parent A';
+	  l = lookup1(f,A');
+	  );
+     if l then (f,A'))
+nextMoreGeneral3 := (f,A,B) -> if (A,B) =!= (Thing,Thing) then (
+     A' := A;
+     B' := B;
+     l := false;
+     while not l and (A',B') =!= (Thing,Thing) do (
+	  if B' =!= Thing then B' = parent B' else (
+	       B' = B;
+	       A' = parent A');
+	  l = lookup1(f,A',B'););
+     if l then (f,A',B'))
+nextMoreGeneral4 := (f,A,B,C) -> if (A,B,C) =!= (Thing,Thing,Thing) then (
+     A' := A;
+     B' := B;
+     C' := parent C;
+     l := false;
+     while not l and (A',B',C') =!= (Thing,Thing,Thing) do (
+	  if C' =!= Thing then C' = parent C'
+	  else (
+	       C' = C;
+	       if B' =!= Thing then B' = parent B'
+	       else (
+		    B' = B;
+		    A' = parent A'));
+	  l = lookup1(f,A',B',C');
+	  );
+     if l then (f,A',B',C'))
+nextMoreGeneral := s -> if class s === Sequence then (
+     if #s === 2 then nextMoreGeneral2 s else
+     if #s === 3 then nextMoreGeneral3 s else
+     if #s === 4 then nextMoreGeneral4 s)
 headline := memoize (
      key -> (
 	  d := getDoc formatDocumentTag key;
 	  if d =!= null and #d > 0 and class first d === HEADLINE 
 	  then SEQ join( {"  --  "}, toList first d ) ) )
+moreGeneral := s -> (
+     n := nextMoreGeneral s;
+     if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
+     )
+-----------------------------------------------------------------------------
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
@@ -508,12 +554,21 @@ ret := k -> (
      if t =!= Thing then SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}}
      )
 
+co := f -> (
+     n := try code f;
+     if n =!= null then PRE concatenate between(newline,netRows n)
+     else if toString f =!= "--Function--" 
+     then MENU { SEQ { "code for ", toString f, " not available" } }
+     else MENU { SEQ { "code for function not available" } }
+     )
+
 seecode := x -> if (try locate x) =!= locate method then (
-     n := try code lookup x;
-     m := try code original lookup x;
+     -- this could be improved a bit to handle f@@g, f==>g, etc, and put into 'code'
+     f := lookup x;
+     g := try original f;
      SEQ {
-     	  if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) },
-     	  if m =!= null then SEQ { "Original memoized code:", PRE concatenate between(newline,netRows m) }
+     	  SEQ { "Code:", co f },
+     	  if g =!= null then SEQ { "Original memoized code:", co g }
 	  }
      )
 
@@ -530,50 +585,6 @@ documentation Option := v -> (
 	       }
 	  }
      ) toSequence v
-
-lookup1 := s -> (youngest s)#?s
-nextMoreGeneral2 := (f,A) -> if A =!= Thing then (
-     A' := A;
-     l := false;
-     while not l and A' =!= Thing do (
-	  A' = parent A';
-	  l = lookup1(f,A');
-	  );
-     if l then (f,A'))
-nextMoreGeneral3 := (f,A,B) -> if (A,B) =!= (Thing,Thing) then (
-     A' := A;
-     B' := B;
-     l := false;
-     while not l and (A',B') =!= (Thing,Thing) do (
-	  if B' =!= Thing then B' = parent B' else (
-	       B' = B;
-	       A' = parent A');
-	  l = lookup1(f,A',B'););
-     if l then (f,A',B'))
-nextMoreGeneral4 := (f,A,B,C) -> if (A,B,C) =!= (Thing,Thing,Thing) then (
-     A' := A;
-     B' := B;
-     C' := parent C;
-     l := false;
-     while not l and (A',B',C') =!= (Thing,Thing,Thing) do (
-	  if C' =!= Thing then C' = parent C'
-	  else (
-	       C' = C;
-	       if B' =!= Thing then B' = parent B'
-	       else (
-		    B' = B;
-		    A' = parent A'));
-	  l = lookup1(f,A',B',C');
-	  );
-     if l then (f,A',B',C'))
-nextMoreGeneral := s -> (
-     if #s === 2 then nextMoreGeneral2 s else
-     if #s === 3 then nextMoreGeneral3 s else
-     if #s === 4 then nextMoreGeneral4 s)
-moreGeneral := s -> (
-     n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
-     )
 
 documentation Sequence := s -> if #s == 0 then null else (
      t := typicalValue s;
