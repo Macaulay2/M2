@@ -1,6 +1,8 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
 #include <factoryconf.h>
+#include "cxx-wrappers.h" 
+#include <NTL/version.h>
 
 extern int haveDumpdata();	/* in dumpdata/map.o */
 
@@ -212,6 +214,7 @@ M2_string actors5_DATE;
 M2_string actors5_TIME;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
+M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FACTORYVERSION;
 M2_bool actors5_DUMPDATA;
@@ -480,10 +483,10 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("--Copyright 1993-2002, D. R. Grayson and M. E. Stillman");
+	       putstderr("--Copyright 1993-2003, D. R. Grayson and M. E. Stillman");
 	       putstderr("--Singular-Factory " 
 		    FACTORYVERSION
-		    ", copyright 1991-2002, G.-M. Greuel et al.");
+		    ", copyright 1991-2003, G.-M. Greuel et al.");
 	       sprintf(buf,"--Singular-Libfac %s, copyright 1996-2001, M. Messollen",
 		    get_libfac_version());
 	       putstderr(buf);
@@ -509,6 +512,10 @@ char **argv;
 #endif
 	       sprintf(buf,"--GNU MP Library (gmp-%s), copyright, Free Software Foundation",__gmp_version);
 	       putstderr(buf);
+
+	       sprintf(buf,"--NTL Library (ntl-%s), copyright, Victor Shoup",NTL_VERSION);
+	       putstderr(buf);
+
 # endif
 	       break;
        	       }
@@ -603,6 +610,7 @@ char **argv;
 	  actors5_GCVERSION = tostring(buf);
 	  }
      actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_NTLVERSION = tostring(NTL_VERSION);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
 #if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
@@ -615,7 +623,8 @@ char **argv;
      display = XOpenDisplay(NULL);
      font = XLoadFont(display,"6x13");
 #endif
-     main_inits();
+     factory_setup();
+     main_inits();		/* run all the startup code in the *.d files, see tmp_init.c */
      actors4_setupargv();
      if (reserve == NULL) {
 	  reserve = GC_MALLOC_ATOMIC(102400);

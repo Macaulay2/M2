@@ -737,7 +737,7 @@ M2_string serv;
      }
 
 extern int errno;
-#if defined HAVE_DECL_SYS_NERR && !HAVE_DECL_SYS_NERR
+#if defined(HAVE_DECL_SYS_NERR) && !HAVE_DECL_SYS_NERR
 extern int sys_nerr;
 #endif
 

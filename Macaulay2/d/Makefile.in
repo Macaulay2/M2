@@ -192,7 +192,7 @@ compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 endif
 
-M2lib.o scclib.o : compat.h
+M2lib.o scclib.o : compat.h cxx-wrappers.h
 M2lib.o scclib.o : \
 	../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
 memdebug.o scclib.o actors5.o gc_cpp.o  : memdebug.h
@@ -202,8 +202,7 @@ allc : $(PROJECT:.d=.c) tmp_init.c
 
 
 MISCO := M2lib.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o
-
-# MISCO += factoryseed.o
+MISCO += cxx-wrappers.o
 
 ifeq ($(GC_FOR_NEW),yes)
 # replace the builtin c++ memory allocation routines by calls to gc.
@@ -289,28 +288,15 @@ addresses : probe
 	rm syms
 clean ::; rm -f addresses
 ###################### libraries
-
-ifneq ($(OS),Darwin)
-ifeq "$(GCC) $(STATIC)" "yes no"
-LIBRARYOPTIONS += -Wl,-Bstatic
-endif
-endif
-
-# statically linked libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
+LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
 
 # we avoid successfully using streamio, but we need the personality function
 LIBRARYOPTIONS += -lstdc++
-
-ifneq ($(OS),Darwin)
-ifeq "$(GCC) $(STATIC)" "yes no"
-LIBRARYOPTIONS += -Wl,-Bdynamic
-endif
-endif
 
 # ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
 # 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
