@@ -186,8 +186,11 @@ Ring OrderedMonoid := (			  -- no memoize
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
 	  RM ? RM := (f,g) -> (
-	       if f == g then quote ==
-	       else leadMonomial f ? leadMonomial g
+	       sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
+	       ret := ZZ.pop();
+	       if ret === 1 then quote >
+	       else if ret === 0 then quote ==
+	       else quote <
 	       );
 	  R * M := (r,m) -> (
 	       sendgg(ggPush RM, ggPush r, ggPush m, ggterm);

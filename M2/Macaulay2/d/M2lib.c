@@ -706,7 +706,7 @@ static void handler2(int k)
      }
 #endif
 
-#if !defined(__MWERKS__) && !defined(__CYGWIN32__) && defined(DUMPDATA)
+#if !defined(__MWERKS__) && !defined(__CYGWIN32__) && defined(DUMPDATA) && !defined(NEWDUMPDATA)
 static void *first_rw_page_after_etext() {
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
      char *p = (char *)RUP((intp)&etext);
@@ -798,7 +798,7 @@ int min(int i, int j) {
      return i<j ? i : j;
      }
 
-#ifdef DUMPDATA
+#if defined(DUMPDATA) && !defined(NEWDUMPDATA)
 static void extend_memory(void *newbreak) {
      if (ERROR == brk(newbreak)) {
 	  char buf[200];

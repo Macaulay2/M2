@@ -378,7 +378,7 @@ PORTING := CVS \
 	Macaulay2/c2 \
 	Macaulay2/d \
 	Macaulay2/dbm \
-	Macaulay2/dumpdata/Makefile Macaulay2/dumpdata/tagettypes.c  \
+	Macaulay2/dumpdata \
 	Macaulay2/e/CVS \
 	Macaulay2/e/misc \
 	Macaulay2/emacs \

@@ -1,5 +1,12 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.53:
+
+Comparison of monomials using '>' in rings with nonstandard monomial orderings 
+now works.
+
+-----------------------------------------------------------------------------
+
 New in 0.8.51:
 
 '#f' can now be used to give the length of a file.
