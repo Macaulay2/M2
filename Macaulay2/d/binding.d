@@ -158,7 +158,9 @@ export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
      entry := makeSymbol(w,dummyPosition,globalScope);
      entry.protected = true;
-     SymbolClosure(globalFrame,entry));
+     when globalFrame.values.(entry.frameindex)
+     is s:SymbolClosure do s
+     else SymbolClosure(globalFrame,entry));
 export makeProtectedSymbolClosure(s:string):SymbolClosure := (
      makeProtectedSymbolClosure(unique(s,parseWORD))
      );

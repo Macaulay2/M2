@@ -46,6 +46,7 @@ laststmtno := -1;
 -- SecondaryPrompt := makeProtectedSymbolClosure("SecondaryPrompt");
 Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
+EndOfInput := makeProtectedSymbolClosure("end");
 (x:Position) === (y:Position) : bool := (
      x == y || x.filename === y.filename && x.line == y.line && x.column == y.column
      );
@@ -93,6 +94,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 		    then (		  
 			 f := convert(parsed); -- convert to runnable code
 			 lastvalue = eval(f);	  -- run it
+			 if lastvalue == EndOfInput then return(lastvalue);
 			 when lastvalue is err:Error do (
 			      setvalue(errorReportS, err.report);
 			      if AbortIfError then return(lastvalue);
@@ -160,7 +162,7 @@ loadprint(s:string):Expr := (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,prompt);
 	  r := readevalprint(file);
-	  t := close(file);
+	  t := if !(s==="-") then close(file) else 0;
 	  when r is Error do r 
 	  else (
 	       if t == ERROR
@@ -171,7 +173,7 @@ load(s:string):Expr := (
      is errmsg do False
      is file:TokenFile do (
 	  r := readeval(file);
-	  t := close(file);
+	  t := if !(s==="-") then close(file) else 0;
 	  when r is Error do r
 	  else (
 	       if t == ERROR
