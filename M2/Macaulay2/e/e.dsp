@@ -589,6 +589,10 @@ SOURCE=.\schur.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\serial.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\spair.cpp
 # End Source File
 # Begin Source File
@@ -638,6 +642,14 @@ SOURCE=.\vector.cpp
 # Begin Source File
 
 SOURCE=.\vector.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\weylalg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\weylfree.cpp
 # End Source File
 # Begin Source File
 

@@ -38,11 +38,10 @@ Ext(ZZ, Module, Module) := (i,M,N) -> (
 	  C := resolution(M,LengthLimit=>i+1);
 	  b := C.dd;
 	  complete b;
+	  prune
 	  if b#?i then (
 	       if b#?(i+1) 
-	       then (
-		    prune homology(Hom(b_(i+1),N), Hom(b_i,N))
-		    )
+	       then homology(Hom(b_(i+1),N), Hom(b_i,N))
 	       else cokernel Hom(b_i,N))
 	  else (
 	       if b#?(i+1) 

@@ -3,7 +3,12 @@
 #ifndef _serial_hpp_
 #define _serial_hpp_
 
+#ifdef _WIN32
+#include <iostream.h>
+#else
 #include <stream.h>
+#endif
+
 #include "object.hpp"
 
 const int CLASS_Stub = 1000;

@@ -18,16 +18,14 @@ egresults : ../tmp/Examples/*.m2
 !endif
 EXE = ..\bin\Macaulay2.exe
 all : phase3 phase4
-..\cache\Macaulay2.pre : $(EXE) *.m2 scriptde/*.m2 ../tutorial/final/*.out
-	del ..\cache\Macaulay2.tmp
+..\cache\Macaulay2.pre : $(EXE) *.m2 ../tutorial/final/*.out
+	rm -f ../cache/Macaulay2.tmp
 	$(EXE) -ephase=2 setup.m2 -eexit(0)
-	del ..\cache\Macaulay2.pre
-	ren ..\cache\Macaulay2.tmp Macaulay2.pre
+	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre
 ..\cache\Macaulay2.doc : ..\cache\Macaulay2.pre ..\tmp\Examples\*.out
-	del ..\cache\Macaulay2.tmp
+	rm -f ../cache/Macaulay2.tmp
 	$(EXE) -ephase=4 setup.m2 -eexit(0)
-	del ..\cache\Macaulay2.doc
-	ren ..\cache\Macaulay2.tmp Macaulay2.doc
+	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.doc
 .m2.okay:
 	@ echo testing $<
 	@- $(EXE) -silent setup.m2 $< -eexit(0)

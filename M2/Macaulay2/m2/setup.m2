@@ -10,6 +10,8 @@ pathSeparator = (
 	else
 	if version#OS === "Windows NT"
 	or version#OS === "MS-DOS"
+	or version#OS === "CYGWIN32-NT"
+	or version#OS === "CYGWIN32-95"
 	then "\\"
 	else "/"
 	)
