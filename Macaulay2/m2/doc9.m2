@@ -276,7 +276,7 @@ document { ChainComplex, HEADLINE "the class of all chain complexes",
 	  },
      "In order to see the matrices of the differentials, examine 'C.dd'.",
      EXAMPLE "C.dd",
-     SEEALSO {"Resolution", "dd"}
+     SEEALSO {"Resolution", "dd", symbol Resolution}
      }
 
 document { (complete, ChainComplex),

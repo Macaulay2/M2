@@ -237,9 +237,9 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
 exitMethod := method(SingleArgumentDispatch => true)
 exitMethod ZZ := i -> exit i
 exitMethod Sequence := () -> exit 0
-quit = new Command from (() -> exit 0)
+quit = Command (() -> exit 0)
 erase symbol exit
-exit = new Command from exitMethod
+exit = Command exitMethod
 
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,

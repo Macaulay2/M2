@@ -79,6 +79,7 @@ unformat                   := s -> if unformatTag#?s then unformatTag#s else s
 record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 	  
 formatDocumentTag Thing    := s -> toString s
+formatDocumentTag Function := record toString
 formatDocumentTag Symbol   := record(s -> if value s =!= s then toExternalString s else toString s)
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
@@ -441,7 +442,7 @@ headline := memoize (
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
+     if n =!= null then SEQ { "Next more general method: ", TO n, headline n, PARA{} }
      )
 -----------------------------------------------------------------------------
 
@@ -581,7 +582,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, SHIELD smenu b, PARA{}} )
+     if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, SHIELD smenu b} )
 
 optargs := method(SingleArgumentDispatch => true)
 
@@ -591,13 +592,13 @@ optargs Function := f -> (
      o := options f;
      if o =!= null then SEQ {
 	  "Optional arguments :", PARA{},
-	  SHIELD smenu apply(keys o, t -> f => t), PARA{}})
+	  SHIELD smenu apply(keys o, t -> f => t)})
 
 optargs Sequence := s -> (
      o := options s;
      if o =!= null then SEQ {
 	  "Optional arguments :", PARA{}, 
-	  SHIELD smenu apply(keys o, t -> s => t), PARA{}}
+	  SHIELD smenu apply(keys o, t -> s => t)}
      else optargs s#0)
 
 typicalValue := k -> (
@@ -608,7 +609,7 @@ typicalValue := k -> (
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}}
+     if t =!= Thing then SEQ {"Class of typical returned value: ", TO t, headline t}
      )
 seecode := x -> (
      f := lookup x;
@@ -635,8 +636,8 @@ documentation Option := v -> (
 			 then TOH toString (options fn)#opt 
 			 else     toString (options fn)#opt 
 			 },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH formatDocumentTag fn },
-		    SEQ{ "Option name: ", TOH formatDocumentTag opt }
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
+		    SEQ{ "Option name: ", TOH opt }
 		    }
 	       }
 	  )
@@ -651,15 +652,15 @@ documentation Sequence := s -> (
 	  "See also:",
 	  if #s==2 and not instance(s#1,Type)
 	  then SHIELD MENU {
-	       SEQ {"Hash table: ", TO formatDocumentTag s#1 },
-	       SEQ {"Key: ", TO formatDocumentTag s#0 },
+	       SEQ {"Hash table: ", TO s#1 },
+	       SEQ {"Key: ", TO s#0 },
 	       }
 	  else SHIELD MENU {
-	       SEQ {"Operator: ", TO formatDocumentTag s#0 },
-	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1 }, if #s > 2 then 
-	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2 }, if #s > 3 then
-	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3 }, if t =!= Thing then
-	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, PARA{}},
+	       SEQ {"Operator: ", TO s#0 },
+	       SEQ {"Class of argument 1: ", TO s#1 }, if #s > 2 then 
+	       SEQ {"Class of argument 2: ", TO s#2 }, if #s > 3 then
+	       SEQ {"Class of argument 3: ", TO s#3 }, if t =!= Thing then
+	       SEQ {"Class of typical returned value: ", TO t},
 	       optargs s,
 	       moreGeneral s
      	       },

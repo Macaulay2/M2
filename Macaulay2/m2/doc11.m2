@@ -612,7 +612,7 @@ document { TO,
      as ", TT "TOH x", ", and headlines are added automatically.  See also ", TO "TOH", "."
      }
 
-document { Command, "the class of all commands",
+document { Command, HEADLINE "the class of all commands",
      "A command behaves as a function does if it is followed by an adjacent
      expression which can serve as its argument or argument list.  In addition,
      if it appears as the value of an expression typed by the user at top
@@ -620,10 +620,10 @@ document { Command, "the class of all commands",
      accomplished by installing a method for ", TO "AfterEval", ".",
      PARA,
      "Create a new command ", TT "f", " from a function ", TT "g", " with ", 
-     TT "f = new Command from g", ".",
+     TT "f = Command g", ".",
      PARA,
      "Create a new command ", TT "f", " from a shell command named g with
-     ", TT "f = new Command from \"g\"", ".  Arguments to f will be provided to g."
+     ", TT "f = Command \"g\"", ".  Arguments to f will be provided to g."
      }
 
 

@@ -16,7 +16,7 @@ profile(String,Function) := (n,f) -> (
 	  )
      )
 
-profileSummary = new Command from (() -> 
+profileSummary = Command (() -> 
      scan(sort pairs record, (n,v) -> 
 	  if v#0 != 0 then
 	  << n << ": "

@@ -23,15 +23,6 @@ masterFileName = "master.html"
 masterNodeName = "master index"
 masterIndexButton = HREF { masterFileName, BUTTON("index.gif","index") }
 
-
-missing = false
-missed = memoize(
-     key -> (
-	  missing = true;
-	  stderr << "Documentation for '" << toExternalString key << "' missing, needed by '" << thisKey << "'." << endl;
-	  )
-     )
-
 fourDigits = i -> (
      s := toString i;
      concatenate(4-#s:"0", s)
@@ -123,49 +114,39 @@ buttonBar = (key) -> CENTER {
      masterIndexButton
      }
 	  
--- get all documentation entries
--- allDoc = new MutableHashTable
--- docFile = openDatabase databaseFileName
--- << "loading documentation" << endl
--- time scanKeys(docFile,
---      key -> (
--- 	  doc := docFile#key;
--- 	  if not match(doc,"goto *") then (
---      	       fkey := formatDocumentTag value key;
--- 	       nkey := toExternalString fkey;
--- 	       if not allDoc#?fkey then(
--- 		    doc = (
--- 			 try value doc
--- 			 else error ("error evaluating documentation string for ", toExternalString key)
--- 			 );
--- 		    linkFilename fkey;
--- 		    allDoc#fkey = doc))))
--- allDocPairs = pairs allDoc
--- close docFile
+haderror = false
 
--- create one web page for each documentation entry
-
-<< "pass 1" << endl
--- time scan(allDocPairs, (key,doc) -> (
---      	  thisKey = key;
---      	  lastKey = null;
---      	  scope documentation key))
-
+<< "pass 1, descending through documentation tree" << endl
 time follow topNodeName
 
-<< "pass 2" << endl
+<< "pass 2, checking for unreachable documentation nodes" << endl
+docFile := openDatabase databaseFileName
+time scanKeys(docFile,
+     key -> (
+	  if not match(docFile#key,"goto *") then (
+	       fkey := formatDocumentTag value key;
+	       if not linkFollowedTable#?fkey then (
+	       	    haderror = true;
+	       	    stderr << "documentation node '" << key << "' not reachable" << endl;
+	       	    )
+	       )
+	  )
+     )
+close docFile
+
+<< "pass 3, writing html files" << endl
 masterIndex = new MutableHashTable
-time scan(keys linkFollowedTable, key -> (
-     	  masterIndex#key = true;
-	  linkFilename key
+time scan(keys linkFollowedTable, fkey -> (
+     	  masterIndex#fkey = true;
+	  linkFilename fkey
 	  << html HTML { 
-	       HEAD TITLE key,
+	       HEAD TITLE fkey,
 	       BODY { 
-		    buttonBar key, 
+		    buttonBar fkey, 
 		    HR{}, 
-		    documentationMemo key, 
+		    documentationMemo fkey,
 		    HR{}, 
-		    buttonBar key 
+		    buttonBar fkey 
 		    }
 	       }
 	  << endl
@@ -184,4 +165,4 @@ masterFileName << html HTML {
 	  }
      } << endl << close
 
-if missing then error "missing some nodes"
+if haderror then exit 1

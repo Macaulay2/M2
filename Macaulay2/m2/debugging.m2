@@ -95,18 +95,18 @@ userSymbols = type -> (
 	  );
      apply(sort(apply(v, symb -> (hash symb, symb))), (h,s) -> s))
 
-listUserSymbols = new Command from (
+listUserSymbols = Command (
      type -> stack apply(userSymbols type, s ->  toString s | ": " | toString class value s)
      )
 
 clearedSymbol := "-- cleared symbol --"
 
-clearOutput = new Command from (() -> (
+clearOutput = Command (() -> (
      	  scan(keys outputSymbols, s -> (
 	       	    remove(outputSymbols,s);
 		    s <- clearedSymbol;
 	       	    erase s))))
 
-clearAll = new Command from (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
+clearAll = Command (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
 
 typicalValues#frame = MutableList

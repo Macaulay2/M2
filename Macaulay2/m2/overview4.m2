@@ -289,7 +289,7 @@ document { "w3",
      "You may download the package ", TT "w3", ", by William M. Perry, from 
      ", TT "http://www.cs.indiana.edu/elisp/w3/docs.html", ".  It is an
      emacs package that implements a web browser that displays web pages
-     within emacs in emacs buffers."
+     within emacs."
      }
 
 document { "engine communication protocol",

@@ -459,11 +459,11 @@ document { connectionCount, HEADLINE "number of connections",
 
 ccc := echoOn
 erase symbol echoOn
-echoOn = new Command from ccc
+echoOn = Command ccc
 
 ccc = echoOff
 erase symbol echoOff
-echoOff = new Command from ccc
+echoOff = Command ccc
 
 document { echoOn, HEADLINE "turn on echoing",
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
