@@ -224,7 +224,6 @@ startup.c : ../m2/startup.m2
 	 echo ';' \
         ) <$^ >$@ 
 
-ALLOBJ += $(PROJECT:.d=.oo) 
 ALLOBJ += ../e/libgb.a
 
 ifeq "$(DUMPDATA)" "yes"
