@@ -162,6 +162,7 @@ NAMES = \
 	gb2 \
 	res2 \
 	respoly2 \
+	Emonorder \
 
 NOT_USED_YET = \
 	EEhilbtrack \
@@ -178,7 +179,6 @@ NOT_USED_YET = \
 
 OLDESTUFF = \
 	EZZp \
-	Emonorder \
 	Emonoid \
 	Epoly \
 	Ering \

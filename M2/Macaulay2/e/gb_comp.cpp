@@ -15,7 +15,8 @@ gb_comp *gb_comp::make(Matrix &m, bool dosyz, int nsyz, int strategy)
 
   // Dispatch according to the kind of computation we are
   // asked to do.
-  if (R->n_vars() == 0 && R->is_field())
+  if ((R->n_vars() == 0 && R->is_field())
+       || R->cast_to_GF())
     return new GaussElimComputation(m, dosyz, nsyz);
 
   if (R->is_Z()) // MES later: || R->is_pid())

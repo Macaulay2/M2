@@ -85,24 +85,24 @@ variables = (f) -> (
 -- Compute the flattener with respect to the variables in a monomial
 flattener = (I, m) -> (
      -- First create a new ring with correct order
-     local RU, local J, local vars1, local vars2, local leads, local ret, local coeffmat, local ones, local mm, localF;
+     --local RU, local J, local vars1, local vars2, local leads, local ret, local coeffmat, local ones, local mm, localF;
      R := ring I;
      n := numgens R;
      vars1 = variables m;
      d := #vars1;
      vars2 = variables ((product gens R)//m);
-     RU = (coefficientRing R)[vars2,vars1,MonomialOrder=>ProductOrder{n-d,d}];
+     RU := (coefficientRing R) monoid([vars2,vars1,MonomialOrder=>ProductOrder{n-d,d},MonomialSize=>16]);
      J = substitute(I,RU);
      -- Collect lead coefficients of GB
-     leads = leadTerm(n-d,gens gb J);
+     time leads = leadTerm(n-d,gens gb J);
      ret = coefficients(toList(0..n-d-1),transpose leads);
      coeffmat = ret#1;
      -- Intersect these ideals, taking first element found
      coeffmat = map(RU^(numgens source coeffmat),, transpose coeffmat);
      ones = map(RU^(numgens target coeffmat), 1, (i,j)->1);
-     mm = ones | coeffmat;
-     F = gens gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
-     substitute(F_(0,0),R)
+     time mm = ones | coeffmat;
+     time F = gens gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
+     time substitute(F_(0,0),R)
      )
 --flattener = timefun(flattener,"flattener")
      

@@ -92,7 +92,6 @@ public:
   int *make_one() const;
   void remove(int *d) const;
 
-  int is_non_negative(const int *m) const;
   int is_one(const int *m) const;
   void one(int *result) const;
   void copy(const int *m, int *result) const;
@@ -117,6 +116,8 @@ public:
   int skew_mult(const int *m, const int *n, int *result) const;
   int skew_divide(const int *m, const int *n, int *result) const;
       // If the result is s (1,or -1), then m = s * n * result
+  int skew_diff(const int *m, const int *n, int *result) const;
+      // m acting as a differential operator on n is s * result, s = 0, 1, or -1.
   int exp_skew_vars(const int *exp, int *result) const;
       // The number s of skew variables in 'exp' is returned, and their
       // indices are placed in result[0], ..., result[s-1].

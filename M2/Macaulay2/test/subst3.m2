@@ -8,7 +8,7 @@ assert( substitute ( c , {x => 0_R} ) == c )
 -- assert( substitute ( c , {x => 0_QQ} ) == c )
 
 -- the following fails (Macaulay2-0-8-58) since it tries to 
--- make a ring map from R to ZZ, instead of R to QQ, or R to R.
+-- make a ring map from R to ZZ, instead of R to QQ, or R to R:
 -- assert( substitute ( c , {x => 0} ) == c )
 
 -- Over a finite field this works

@@ -35,14 +35,14 @@ opts := new HashTable from {
      RevLex => (
 	  x -> (
 	       if class x === ZZ then sendgg(ggPush x, ggPush 0, ggPush mo, ggMOrevlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOrevlex)
+	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush 0,ggPush mo,ggMOrevlex)
 	       else error "expected RevLex argument to be an integer or list of integers"
 	       )
 	  ),
      GroupRevLex => (
 	  x -> (
 	       if class x === ZZ then sendgg(ggPush x, ggPush 1, ggPush mo, ggMOrevlex)
-	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush mo,ggMOrevlex)
+	       else if class x === List and all(x,i->class i === ZZ) then sendgg(ggPush x,ggPush 1,ggPush mo,ggMOrevlex)
 	       else error "expected GroupRevLex argument to be an integer or list of integers"
 	       )
 	  ),

@@ -389,7 +389,8 @@ document { (symbol :, ZZ, Thing),
      "Warning: such sequences do not get automatically spliced into lists
      containing them.",
      PARA,
-     EXAMPLE "{5:a,10:b}"
+     EXAMPLE "{5:a,10:b}",
+     EXAMPLE "splice {5:a,10:b}"
      }
 
 document { getc,

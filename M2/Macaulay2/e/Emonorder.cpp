@@ -1,6 +1,7 @@
 // Copyright 1998 by Michael Stillman
 
 #include "Emonorder.hpp"
+#include "bin_io.hpp"
 
 EMonomialOrder::EMonomialOrder()
   : nvars(0),
@@ -38,16 +39,16 @@ void EMonomialOrder::append_block(int nzeros, mon_order_node *b)
   int i;
   switch (b->typ)
     {
-    case MO_LEX:
+    case EMO_LEX:
       lex(b->n, b->isgroup);
       break;
-    case MO_REVLEX:
+    case EMO_REVLEX:
       revlex(b->n, b->isgroup);
       break;
-    case MO_WTREVLEX:
+    case EMO_WTREVLEX:
       revlexWeights(b->nweights, b->weights, b->isgroup);
       break;
-    case MO_WTFCN:
+    case EMO_WTFCN:
       wts = new int[nzeros+b->nweights];
       for (i=0; i<nzeros; i++)
 	wts[i] = 0;
@@ -56,7 +57,7 @@ void EMonomialOrder::append_block(int nzeros, mon_order_node *b)
       weightFunction(nzeros + b->nweights, wts);
       delete [] wts;
       break;
-    case MO_NC_LEX:
+    case EMO_NC_LEX:
       NClex(b->n);
       break;
     default:
@@ -100,7 +101,7 @@ EMonomialOrder *EMonomialOrder::revlex(int nvars, bool isgroup)
 {
   if (nvars == 0) return this;
   mon_order_node *b = new mon_order_node;
-  b->typ = MO_REVLEX;
+  b->typ = EMO_REVLEX;
   b->n = nvars;
   b->nslots = nvars;
   b->first_exp = this->nvars;
@@ -116,7 +117,7 @@ EMonomialOrder *EMonomialOrder::lex(int nvars, bool isgroup)
 {
   if (nvars == 0) return this;
   mon_order_node *b = new mon_order_node;
-  b->typ = MO_LEX;
+  b->typ = EMO_LEX;
   b->n = nvars;
   b->nslots = nvars;
   b->first_exp = this->nvars;
@@ -139,7 +140,7 @@ EMonomialOrder *EMonomialOrder::revlexWeights(int nvars, const int *wts, bool is
 	return this;
       }
   mon_order_node *b = new mon_order_node;
-  b->typ = MO_WTREVLEX;
+  b->typ = EMO_WTREVLEX;
   b->n = nvars;
   b->nslots = nvars;
   b->first_exp = this->nvars;
@@ -163,7 +164,7 @@ EMonomialOrder *EMonomialOrder::component()
 EMonomialOrder *EMonomialOrder::weightFunction(int nvars, const int *wts)
 {
   mon_order_node *b = new mon_order_node;
-  b->typ = MO_WTFCN;
+  b->typ = EMO_WTFCN;
   b->n = 0;
   b->nslots = 1;
   b->first_exp = -1;
@@ -181,7 +182,7 @@ EMonomialOrder *EMonomialOrder::NClex(int nvars)
 {
   if (nvars == 0) return this;
   mon_order_node *b = new mon_order_node;
-  b->typ = MO_NC_LEX;
+  b->typ = EMO_NC_LEX;
   b->n = nvars;
   b->nslots = 1;
   b->first_exp = this->nvars;
@@ -206,7 +207,7 @@ void EMonomialOrder::append_block(mon_order_node *b)
   this->nvars += b->n;
   this->ncommvars += b->n;
   this->nslots += b->nslots;
-  if (b->typ == MO_NC_LEX)
+  if (b->typ == EMO_NC_LEX)
     {
       this->n_nc_blocks++;
       this->ncommvars -= b->n;
@@ -226,14 +227,14 @@ void EMonomialOrder::encode_commutative(const int *exp, int *result_psums) const
       mon_order_node *b = order[i];
       switch (b->typ)
 	{
-	case MO_LEX:
+	case EMO_LEX:
 	  psum = result_psums + b->first_slot;
 	  expit = exp + b->first_exp;
 	  for (j=0; j<b->n; j++)
 	    *psum++ = *expit++;
 	  break;
 
-	case MO_REVLEX:
+	case EMO_REVLEX:
 	  psum = result_psums + b->first_slot + b->nslots;
 	  expit = exp + b->first_exp;
 	  *--psum = *expit++;
@@ -244,7 +245,7 @@ void EMonomialOrder::encode_commutative(const int *exp, int *result_psums) const
 	    }
 	  break;
 
-	case MO_WTREVLEX:
+	case EMO_WTREVLEX:
 	  psum = result_psums + b->first_slot + b->nslots;
 	  expit = exp + b->first_exp;
 	  *--psum = b->weights[0] * (*expit++);
@@ -255,14 +256,14 @@ void EMonomialOrder::encode_commutative(const int *exp, int *result_psums) const
 	    }
 	  break;
 
-	case MO_WTFCN:
+	case EMO_WTFCN:
 	  wtval = 0;
 	  for (j=0; j<b->nweights; j++)
 	    wtval += exp[j] * b->weights[j];
 	  result_psums[b->first_slot] = wtval;
 	  break;
 
-	case MO_NC_LEX:
+	case EMO_NC_LEX:
 	  assert(0);
 	  break;
 
@@ -303,14 +304,14 @@ void EMonomialOrder::encode_noncommutative(const intarray &varexp, int *result) 
       mon_order_node *b = order[i];
       switch (b->typ)
 	{
-	case MO_LEX:
+	case EMO_LEX:
 	  psum = result + b->first_slot;
 	  expit = commpart + b->first_exp;
 	  for (j=0; j<b->n; j++)
 	    *psum++ = *expit++;
 	  break;
 
-	case MO_REVLEX:
+	case EMO_REVLEX:
 	  psum = result + b->first_slot + b->nslots;
 	  expit = commpart + b->first_exp;
 	  *--psum = *expit++;
@@ -321,7 +322,7 @@ void EMonomialOrder::encode_noncommutative(const intarray &varexp, int *result) 
 	    }
 	  break;
 
-	case MO_WTREVLEX:
+	case EMO_WTREVLEX:
 	  psum = result + b->first_slot + b->nslots;
 	  expit = commpart + b->first_exp;
 	  *--psum = b->weights[0] * (*expit++);
@@ -332,7 +333,7 @@ void EMonomialOrder::encode_noncommutative(const intarray &varexp, int *result) 
 	    }
 	  break;
 
-	case MO_WTFCN:
+	case EMO_WTFCN:
 	  wtval = 0;
 	  for (j=0; j<varexp.length(); j += 2)
 	    if (varexp[j] < b->nweights)
@@ -340,7 +341,7 @@ void EMonomialOrder::encode_noncommutative(const intarray &varexp, int *result) 
 	  result[b->first_slot] = wtval;
 	  break;
 
-	case MO_NC_LEX:
+	case EMO_NC_LEX:
 	  sum = 0;
 	  for ( ; ncvar < varexp.length(); ncvar += 2)
 	    if (varexp[ncvar] >= b->first_exp + b->n) break;
@@ -374,39 +375,40 @@ void EMonomialOrder::decode(const int *psums, int *result_exp) const
       mon_order_node *b = order[i];
       switch (b->typ)
 	{
-	case MO_LEX:
+	case EMO_LEX:
 	  psum = psums + b->first_slot;
 	  expit = result_exp + b->first_exp;
 	  for (j=0; j<b->n; j++)
 	    *expit++ = *psum++;
 	  break;
 
-	case MO_REVLEX:
+	case EMO_REVLEX:
 	  psum = psums + b->first_slot + b->nslots;
 	  expit = result_exp + b->first_exp;
 	  *expit++ = *--psum;
 	  for (j=1; j<b->n; j++)
 	    {
-	      *expit++ = *psum - psum[1];
+	      // *expit++ = psum[-1] - *psum;
 	      --psum;
+	      *expit++ = *psum - psum[1];
 	    }
 	  break;
 
-	case MO_WTREVLEX:
+	case EMO_WTREVLEX:
 	  psum = psums + b->first_slot + b->nslots;
 	  expit = result_exp + b->first_exp;
 	  *expit++ = (*--psum) / (b->weights[0]);
 	  for (j=1; j<b->n; j++)
 	    {
-	      *expit++ = (*psum - psum[1])/b->weights[j];
 	      --psum;
+	      *expit++ = (*psum - psum[1])/b->weights[j];
 	    }
 	  break;
 
-	case MO_WTFCN:
+	case EMO_WTFCN:
 	  break;
 
-	case MO_NC_LEX:
+	case EMO_NC_LEX:
 	  // This represents a loss of information...
 	  n = psums[b->first_slot];
 	  for (j=0; j<n; j++)
@@ -471,7 +473,7 @@ void EMonomialOrder::set_noncommutative_parameters(
 
   int j = 0;
   for (i=0; i<nblocks; i++)
-    if (order[i]->typ == MO_NC_LEX)
+    if (order[i]->typ == EMO_NC_LEX)
       {
 	int whichslot = order[i]->first_slot;
 	nclengths[j++] = whichslot;
@@ -480,3 +482,221 @@ void EMonomialOrder::set_noncommutative_parameters(
 	  is_comm[order[i]->first_exp + k] = false;
       }
 }
+
+
+/////////////////////
+// Monomial orders //
+/////////////////////
+#if 0
+static bool check_mon_order(const int *moncodes)
+{
+  int j, m;
+  if (*moncodes++ != MAGIC_MONORDER) return false;
+  int len = *moncodes++;
+  if (len < 5) return false; // MAGIC_MONORDER, len, nvars, nblocks, MAGIC_MONORDER_END
+  int nvars = *moncodes++;
+  if (nvars < 0) return false;
+  int nblocks = *moncodes++;
+  if (nblocks < 0) return false;
+  len -= 4;
+
+  int total_nvars = nvars;
+  for (int i = nblocks-1; i >= 0; i--)
+    {
+      int ty = *moncodes++;
+      switch (ty)
+	{
+	case EMO_LEX:
+	case EMO_REVLEX:
+	  len -= 3;
+	  if (len <= 0) return false;
+	  m = *moncodes++;
+	  moncodes++;
+	  total_nvars -= m;
+	  if (m <= 0) return false;
+	  break;
+
+	case EMO_NC_LEX:
+	  len -= 2;
+	  if (len <= 0) return false;
+	  m = *moncodes++;
+	  total_nvars -= m;
+	  if (m <= 0) return false;
+	  break;
+
+	case EMO_WTFCN:
+	  len -= nvars+1;
+	  if (len <= 0) return false;
+	  moncodes += nvars;
+	  break;
+
+	case EMO_WTREVLEX:
+	  m = *moncodes++;
+	  total_nvars -= m;
+	  if (m <= 0) return false;
+	  moncodes++;  // isgroup flag
+	  len--;
+	  len -= m+2;
+	  if (len <= 0) return false;
+	  for (j=0; j<m; j++)
+	    if (*moncodes++ <= 0) return false;
+	  break;
+	}
+    }
+
+  if (len != 1) return false;
+  if (*moncodes != MAGIC_MONORDER_END) return false;
+  if (total_nvars != 0) return false;
+  return true;
+}
+#endif
+EMonomialOrder *EMonomialOrder::get_binary(const int *moncodes)
+{
+  int m,i,j;
+  int *wts;
+  bool isgroup;
+  moncodes++;			// get past MAGIC_MONORDER
+  moncodes++;			// get past length
+  int nvars = *moncodes++;
+  int nblocks = *moncodes++;
+  EMonomialOrder *result = make();
+  for (i = nblocks-1; i >= 0; i--)
+    {
+      int typ = *moncodes++;
+      switch (typ)
+	{
+	case EMO_LEX:
+	  m = *moncodes++;
+	  isgroup = (bool) *moncodes++;
+	  result->lex(m,isgroup);	// Append a lex block
+	  break;
+
+	case EMO_REVLEX:
+	  m = *moncodes++;
+	  isgroup = (bool) *moncodes++;
+	  result->revlex(m,isgroup);
+	  break;
+
+	case EMO_NC_LEX:
+	  m = *moncodes++;
+	  result->NClex(m);	// Append a lex block
+	  break;
+
+	case EMO_WTFCN:
+	  wts = new int[nvars];
+	  for (j=0; j<nvars; j++)
+	    wts[j] = *moncodes++;
+	  result->weightFunction(nvars, wts);
+	  delete [] wts;
+	  break;
+
+	case EMO_WTREVLEX:
+	  m = *moncodes++;
+	  isgroup = (bool) *moncodes++;
+	  wts = new int[m];
+	  for (j=0; j<m; j++)
+	    wts[j] = *moncodes++;
+	  result->revlexWeights(m,wts,isgroup);
+	  break;
+	}
+    }
+  return result;
+}
+
+void EMonomialOrder::text_out(buffer &o) const
+{
+  int j;
+  o << "EMonomialOrder[";
+
+  for (int i=0; i<nblocks; i++)
+    {
+      mon_order_node *b = order[i];
+      if (i >= 1) o << ",";
+      if (b->first_slot == componentloc)
+	o << "c,";
+      switch (b->typ)
+	{
+	case EMO_LEX:
+	  if (b->isgroup)
+	    o << "grouplex(" << b->n << ")";
+	  else 
+	    o << "lex(" << b->n << ")";
+	  break;
+
+	case EMO_REVLEX:
+	  if (b->isgroup)
+	    o << "grouprevlex(" << b->n << ")";
+	  else
+	    o << "revlex(" << b->n << ")";
+	  break;
+	  
+	case EMO_NC_LEX:
+	  o << "NClex(" << b->n << ")";
+	  break;
+
+	case EMO_WTFCN:
+	  o << "wt(";
+	  for (j=0; j<b->nweights; j++)
+	    {
+	      if (j > 0) o << " ";
+	      o << b->weights[j];
+	    }
+	  o << ")";
+	  break;
+
+	case EMO_WTREVLEX:
+	  if (b->isgroup)
+	    o << "groupwtrevlex(";
+	  else
+	    o << "wtrevlex(";
+	  for (j=0; j<b->nweights; j++)
+	    {
+	      if (j > 0) o << " ";
+	      o << b->weights[j];
+	    }
+	  o << ")";
+	  break;
+	}
+    }
+  if (componentloc == nslots)
+    o << ",c";
+  o << "]";
+}
+
+int *EMonomialOrder::put_binary() const
+{
+  // MESXX
+  return 0;
+}
+
+void EMonomialOrder::bin_out(buffer &o) const
+{
+  int *moncodes = put_binary();
+  if (moncodes == 0) return;  // WRITE put_binary()
+  int len = moncodes[1];
+  for (int i=0; i<len; i++)
+    bin_int_out(o, moncodes[i]);
+  delete [] moncodes;
+}
+#if 0
+EMonomialOrder *EMonomialOrder::binary_in(istream &i)
+{
+  int len;
+  if (!get_magic_number(i, MAGIC_MONORDER))
+    return 0;
+  bin_int_in(i, len);
+  int *moncodes = new int[len];
+  moncodes[0] = MAGIC_MONORDER;
+  moncodes[1] = len;
+  for (int j=2; j<len; j++)
+    bin_int_in(i, moncodes[j]);
+  if (!check_mon_order(moncodes))
+    {
+      delete [] moncodes;
+      return 0;
+    }
+  EMonomialOrder *result = get_binary(moncodes);
+  delete [] moncodes;
+  return result;
+}
+#endif

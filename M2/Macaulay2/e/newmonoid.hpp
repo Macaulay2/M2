@@ -75,7 +75,6 @@ public:
   int *make_one() const;
   void remove(int *d) const;
 
-  int is_non_negative(const int *m) const;
   int is_one(const int *m) const;
   void one(int *result) const;
   void copy(const int *m, int *result) const;

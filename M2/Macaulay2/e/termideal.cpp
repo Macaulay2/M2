@@ -162,7 +162,6 @@ mon_term *TermIdeal::new_mon_term_head() const
   result->next = result->prev = result;
   result->coeff_is_one = false;
   result->expmask = 0;
-  result->degree = 0;
   result->_lead_exp = NULL;
   result->t = NULL;
 
@@ -202,7 +201,6 @@ mon_term *TermIdeal::new_mon_term(tagged_term *t) const
 
   result->coeff_is_one = (K->is_equal(result->coeff(), one));
   result->expmask = monomial_mask(result->lead_exp());
-  result->degree = M->primary_degree(result->monom());
   return result;
 }
 

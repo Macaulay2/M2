@@ -55,6 +55,8 @@ public:
   virtual       Z * cast_to_Z()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
+  virtual const GF * cast_to_GF() const         { return 0; }
+  virtual       GF * cast_to_GF()               { return 0; }
   virtual const PolynomialRing * cast_to_PolynomialRing()  const      { return 0; }
   virtual       PolynomialRing * cast_to_PolynomialRing()             { return 0; }
   virtual const FractionField * cast_to_FractionField() const    { return 0; }

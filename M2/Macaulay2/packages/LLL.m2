@@ -407,13 +407,13 @@ doHermiteLLL = (C,count) -> (
      row2 = 0;
      scan(2..m, i -> scan(1..i-1, j-> lambda#(i,j) = 0));
      -- subroutines
-     leadRow = (a,i) -> (
+     leadRow0 := (a,i) -> (
 	  -- there are n rows
 	  x := n-1;
 	  while x >= 0 and getEntry(a,x,i) == 0 do x=x-1;
 	  if x < 0 then x=n+1;
 	  x);
-     leadRow = (a,i) -> (
+     leadRow := (a,i) -> (
 	  -- there are n rows
 	  x := 0;
 	  while x < n and getEntry(a,x,i) == 0 do x=x+1;
@@ -867,13 +867,13 @@ ahermiteLLL = (G) -> (
      lambda = new MutableHashTable;
      scan(2..m, i -> scan(1..i-1, j-> lambda#(i,j) = 0));
      -- subroutines
-     leadRow = (a,i) -> (
+     leadRow0 := (a,i) -> (
 	  -- there are n rows
 	  x := n-1;
 	  while x >= 0 and getEntry(a,x,i) == 0 do x=x-1;
 	  if x < 0 then x=n+1;
 	  x);
-     leadRow = (a,i) -> (
+     leadRow := (a,i) -> (
 	  -- there are n rows
 	  x := 0;
 	  while x < n and getEntry(a,x,i) == 0 do x=x+1;

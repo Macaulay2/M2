@@ -21,9 +21,12 @@ struct tagged_term
   int *_monom;
   vec _gsyz;
   vec _rsyz;
+  int _homog_degree;  //(homo var)^(_homog_degree) * monom has degree
+				//  equal to the sugar degree of this element.
 
   tagged_term(ring_elem c, int *m, vec g, vec r)
-    : _coeff(c), _monom(m), _gsyz(g), _rsyz(r) {}
+    : _coeff(c), _monom(m), _gsyz(g), _rsyz(r),
+    _homog_degree(0) {}
   ~tagged_term() {}
 
   ring_elem coeff() const { return _coeff; }
@@ -43,7 +46,6 @@ struct mon_term
 
   bool      coeff_is_one;
   int       expmask;
-  int       degree;
   int *     _lead_exp;
 
   ring_elem coeff() const { return t->_coeff; }

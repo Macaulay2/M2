@@ -1414,8 +1414,6 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
     {
       degree_monoid()->divide(e, rows()->degree(i), kb_deg);
       
-//      if (degree_monoid()->is_non_negative(kb_deg))
-//	{
 	  // get the two monomial ideals
 	  MonomialIdeal top = make_monideal(i);
 	  MonomialIdeal bottom = bot.make_monideal(i);

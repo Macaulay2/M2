@@ -12,17 +12,12 @@ document { "replacements for commands and scripts from Macaulay",
      MENU {
 	  ("Macaulay commands:",
 	  SHIELD MENU {
-	       (". -- not available"),
 	       ("ac -- such destructive changes are not allowed"),
 	       ("add -- ", TO "+"),
 	       ("ar -- ", TO "not documented yet"),
-	       ("args -- ", TO "not documented yet"),
 	       ("betti -- ", TO "betti"),
-	       ("binoms -- ", TO "not documented yet"),
-	       ("cache_mem -- ", TO "not documented yet"),
 	       ("calc -- ", TO "not documented yet"),
 	       ("cat -- ", TO "not documented yet"),
-	       ("cdir -- ", TO "not documented yet"),
 	       ("ce -- ", TO "not documented yet"),
 	       ("characteristic -- ", TO "char"),
 	       ("chcalc -- ", TO "not documented yet"),
@@ -44,11 +39,9 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("diff -- ", TO "diff"),
 	       ("dshift -- ", TO "not documented yet"),
 	       ("dsum -- ", TO "++"),
-	       ("echo -- ", TO "not documented yet"),
 	       ("edit -- ", TO "not documented yet"),
 	       ("edit_map -- ", TO "not documented yet"),
 	       ("elim -- ", TO "selectInSubring"),
-	       ("endmon -- ", TO "not documented yet"),
 	       ("ev -- ", TO "substitute", ",", TO "RingMap"),
 	       ("exit -- ", TO "quit"),
 	       ("fetch -- ", TO "substitute"),
@@ -66,8 +59,6 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("if -- ", TO "if"),
 	       ("imap -- ", TO "map"),
 	       ("in -- ", TO "leadTerm"),
-	       ("incoef -- ", TO "not documented yet"),
-	       ("incr_set -- ", TO "not documented yet"),
 	       ("inpart -- ", TO "not documented yet"),
 	       ("int -- ", TO "not documented yet"),
 	       ("intersect -- ", TO "intersect"),
@@ -326,7 +317,308 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("<rmap -- ", TO "not documented yet"),
 	       ("<symmetric_algebra -- ", TO "not documented yet")
 	       })
-	  }
+	  },
+     H3 "add <matrix> <matrix> <matrix>",
+     "Add matrices ", TT "m", " and ", TT "n", ", using ",
+     TT "result = m + n", ".  In general, arithmetic in Macaulay2 
+     is done using natural mathematical expressions.  See ", TO "+", ".",
+
+     H3 "betti <res>",
+     "Display the graded betti numbers of a chaincomplex or resolution ", 
+     TT "C",
+     " using ",  TT "betti C"     , ".  See ", TO "betti", ".",
+     
+     H3 "calc <computation> [hi degree]",
+     H3 "chcalc <computation> [new hi deg]",
+     "Compute the Groebner basis of ", 
+     TT "m", " up to a given degree, using ", TT "gb(m, DegreeLimit=>3)", 
+     ".  Similarly,
+     if a computation in Macaulay2 has been halted by pressing <CTRL>-C, 
+     the computation
+     can be restarted from where it left off, by giving the original 
+     command, e.g. ", 
+     TT "gb m", ".",
+     
+     H3 "cat <first var(0..numvars-1)> <result matrix>",
+     "Macaulay1 then also prompts for two lists of integers, say ", 
+     TT "rows", 
+     " and ", TT "cols", ".  The resulting catalecticant matrix can 
+     be obtained in
+     Macaulay2 in the following way.",
+     EXAMPLE "R = QQ[a..h]",
+     EXAMPLE "rows = {0,1,2}",
+     EXAMPLE "cols = {0,3}",
+     EXAMPLE "result = map(R^3, 2, (i,j) -> R_(rows_i + cols_j))",
+     --SEEALSO (genericMatrix, genericSymmetricMatrix, genericSkewMatrix),
+     
+     H3 "characteristic <ring> [result integer]",
+     "To obtain the characteristic of a ring ", TT "R", ", use ",
+     TT "char R", ".  See ", TO "char", ".",
+     
+     H3 "codim <standard basis> [integer result]",
+     "When computing the codimension of an ideal or module ", TT "M", 
+     ", a Groebner basis is computed automatically, if needed.  Use ", 
+     TT "codim M", ".",
+     "One use of this command in Macaulay1 was to compute the codimension 
+     of a partially
+     computed Groebner basis.  See ", TO "computing with partial results", 
+     " for examples of doing this.",
+
+     H3 "coef <matrix> <result monoms> <result coefs> [variable list]",
+     "To obtain the matrices of monomials and their coefficients, use ", 
+     TO "coefficients", ".  The following example obtains the coefficients 
+     of the variable ", TT "a", " (which is variable number 0)",
+     EXAMPLE "R = ZZ/101[a..d];",
+     EXAMPLE "m = matrix{{a^2+a^2*c+a*b+3*d}}",
+     EXAMPLE "result = coefficients({0}, m)",
+     EXAMPLE "result_0",
+     EXAMPLE "result_1",
+     
+     H3 "col_degree <matrix> <column> [result integer]",
+     "To obtain the degree of the ", TT "i", "th column of a matrix ", 
+     TT "m", ", use ", TT "(degrees source m)_i", ".  See ", TO "degrees",
+     ".  Note that in Macaulay2, one can use multi-degrees, so the result
+     is a list of integers.  Also all indices in Macaulay2 start at 0.",
+     EXAMPLE "R = QQ[a,b,Degrees=>{{1,0},{1,-1}}];",
+     EXAMPLE "m = matrix{{a*b, b^2}}",
+     EXAMPLE "(degrees source m)_0",
+     
+     H3 "col_degs <matrix> [column degrees]",
+     "Compute the list of degrees of the columns of a matrix ", TT "m",
+     " using ", TT "degrees source m", ".  The result is a list of degrees.
+     Each degree is itself a list of integers, since multi-degrees are 
+     allowed.",
+     
+     H3 "commands",
+     "Using Macaulay2 in emacs, type the first few letters of a command,
+     then hit <TAB>. The list of all commands starting with those letters
+     will be displayed, or if there is only one, emacs will complete the typing
+     for you.",
+
+     H3 "compress <matrix> <result matrix>",
+     "Remove columns of a matrix ", TT "m", " which are entirely zero
+     using ", TT "compress m", ". See ", TO "compress", ".",
+     
+     H3 "concat <matrix> <matrix2> ... <matrix n>",
+     "Concatenate matrices ", TT "m1", ", ", TT "m2", ", ..., ", TT "mn",
+     " using ", TT "m1 | m2 | ... | mn", ".  See ", TO "|", 
+     ".  The main difference is that
+     in Macaulay2 this command does not overwrite the first matrix.",
+     
+     H3 "continue",
+     "In Macaulay2, one interrupts a computation using <CTRL>-C, as in 
+     Macaulay1.  Restart the computation using the original command.  For 
+     Groebner basis and resolution commands, the computation starts off 
+     where it left off.",
+     
+     H3 "contract <ideal> <ideal> <result matrix>",
+     "To contract the matrix ", TT "n", " by the matrix ", TT "m", " use ",
+     TT "contract(m,n)", ".  See ", TO "contract", ".  In Macaulay2, the
+     arguments are not constrained to be matrices with one row.",
+     
+     H3 "copy <existing matrix> <copy of matrix>",
+     "Since matrices in Macaulay2 are immutable objects, this command is
+     no longer necessary.  One can still make a copy of a matrix.  For
+     example",
+     EXAMPLE "R = ZZ/101[a..d]",
+     EXAMPLE "m = matrix{{a,b},{c,d}}",
+     EXAMPLE "copym = map(target m, source m, entries m)",
+     
+     H3 "degree <standard basis> [integer codim] [integer degree]",
+     "When computing the degree of an ideal or module ", TT "M", 
+     ", a Groebner basis is computed automatically, if needed.  Use ", 
+     TT "degree M", ".  Note that in Macaulay2, ", TT "degree", " returns
+     only the degree.  Use ", TT "codim M", " to obtain the codimension.",
+     "One use of this command in Macaulay1 was to compute the degree
+     of a partially
+     computed Groebner basis.  See ", TO "computing with partial results", 
+     " for examples of doing this.",
+
+     H3 "determinants <matrix> <p> <result>",
+     "Use ", TT "minors(p,m)", " to compute the ideal of p by p minors
+     of the matrix ", TT "m", ".  See ", TO "minors", ".",
+     
+     H3 "diag <matrix> <result>",
+     "To make a diagonal matrix whose diagonal entries are taken from
+     a matrix ", TT "m", ", it is necessary to build the matrix directly, 
+     as in the following example.",
+     EXAMPLE "R = ZZ[a..d];",
+     EXAMPLE "m = matrix{{a^2,b^3,c^4,d^5}}",
+     EXAMPLE "map(R^(numgens source m), source m, 
+                 (i,j) -> if i === j then m_(0,i) else 0)",
+     
+     H3 "diff <ideal> <ideal> <result matrix>",
+     "To differentiate the matrix ", TT "n", " by the matrix ", TT "m", 
+     " use ",
+     TT "diff(m,n)", ".  See ", TO "diff", ".  In Macaulay2, the
+     arguments are not constrained to be matrices with one row.",
+     
+     H3 "dshift <matrix> <degree to shift by>",
+     "To shift the degrees of a matrix ", TT "m", " by an integer ", TT "d",
+     ", use ", TT "m ** (ring m)^{-d}", ".  See ", TO "**", ".  Note that this
+     returns a matrix with the degrees shifted, and does not modify the 
+     original matrix ", TT "m", ".  For example",
+     EXAMPLE "R = ZZ[a..d];",
+     EXAMPLE "m = matrix{{a,b^2},{c^2,d^3}}",
+     EXAMPLE "betti m",
+     EXAMPLE "n = m ** R^{-1}",
+     EXAMPLE "betti n",
+     
+     H3 "dsum <matrix> ... <matrix> <result>",
+     "To form the direct sum of matrices ", TT "m1, m2, ..., mn", ", use ",
+     TT "m1 ++ m2 ++ ... ++ mn", ".  See ", TO "++", ".",
+     
+     H3 "elim <standard basis> <result matrix> [n]",
+     "To select the columns of the matrix ", TT "m", " which lie in the
+     subring defined by the first ", TT "n", " slots of the monomial order
+     being zero, use ", TT "selectInSubring(n,m)", ".  Usually, one uses the
+     value of 1 for ", TT "n", ".",
+     
+     H3 "ev <ideal> <matrix> <changed matrix>",
+     "In Macaulay2, one uses ring maps, or ", TO "substitute", " to
+     substitute variables.  If ", TT "m", " is a matrix in a ring ", TT "R",
+     " having ", TT "n", " variables, and ", TT "f", " is a 1 by n matrix
+     over some ring, then use ", TT "substitute(m,f)", " to perform the
+     substitution.  For example,",
+     EXAMPLE "R = QQ[a..d]",
+     EXAMPLE "S = QQ[s,t]",
+     EXAMPLE "m = matrix{{a^2-d, b*c}}",
+     EXAMPLE "f = matrix{{s^4,s^3*t,s*t^3,t^4}}",
+     EXAMPLE "substitute(m,f)",
+     "In Macaulay2, one may also create and apply ring maps",
+     EXAMPLE "F = map(R,R,{b,c,d,a})",
+     EXAMPLE "m + F m + F F m + F F F m",
+     "Or one may substitute for only some variables",
+     EXAMPLE "substitute(m, {a=>1, b=>3})",
+     
+     H3 "exit",
+     "Use ", TO "exit", " to quit Macaulay2.",
+     
+     H3 "fetch <matrix> <result matrix> [ones, default=zeros]",
+     "In order to bring a matrix ", TT "m", " to a ring ", TT "S", " which
+     has ring variables of the same name, use ", TT "substitute(m,S)", ".",
+     EXAMPLE "R = ZZ[s,t]",
+     EXAMPLE "m = s^2+t^2",
+     EXAMPLE "S = R[a..d]",
+     EXAMPLE "substitute(m,S)",
+     
+     H3 "flatten <matrix> <result ideal of entries>",
+     "In order to form a one row matrix with the entries of a matrix ", 
+     TT "m", ", use ", TT "flatten m", ".  See ", TO "flatten", ".",
+
+     H3 "forcestd <matrix> <result standard basis> [change of basis]",
+     "In order to inform the system that the columns of the matrix ", TT "m",
+     " form a Groebner basis, use ", TT "forceGB m", ".  See ", TO "forceGB",
+     ".",
+     
+     H3 "hilb <standard basis>",
+     "WRITE THIS",
+     
+     H3 "hilb_numer <standard basis> <ideal> <result>",
+     "WRITE THIS",
+     
+     H3 "homog <matrix> <homog variable> <new matrix>",
+     "To homogenize a matrix ", TT "m", " with respect to a variable ",
+     TT "x", ", use ", TT "homogenize(m,x)", ". One may also homogenize
+     with respect to a given weight vector.  See ", TO "homogenize", ".",
+     
+     H3 "hulb <standard basis> <deg>",
+     "WRITE THIS",
+     
+     H3 "ideal <resulting matrix>",
+     "To enter a one row matrix, use e.g.",
+     EXAMPLE "R = ZZ[a..d]",
+     EXAMPLE "f = matrix{{a^2-b*c,3*b*c^4-1}}",
+     "Remember that ideals, modules, and matrices are all different in
+     Macaulay2.  One can easily change between them, as in:",
+     EXAMPLE "J = ideal f",
+     EXAMPLE "generators J",
+     EXAMPLE "image f",
+     EXAMPLE "cokernel f",
+     
+     H3 "iden <size> <result>",
+     "To make the identity map on a module ", TT "F", ", use ", 
+     TT "id_F", ", as in ",
+     EXAMPLE "id_(R^4)",
+     "See ", TO "id", ".",
+     
+     H3 "if <integer> <label1> [<label2>]",
+     "For conditional execution, use the if-then or if-then-else statement",
+     "WRITE MORE",
+     
+     H3 "imap <new ring map> <R> <S> [ones, default=zeros]",
+     "WRITE THIS",
+     
+     H3 "in <standard basis> [optional result matrix] [n]",
+     "WRITE THIS",
+     
+     H3 "inpart <standard basis> <result matrix> [variable list]",
+     "WRITE THIS",
+     
+     H3 "int <name> <new value>",
+     "To assign a value to a variable in Macaulay2, use ", TO "=", 
+     ".  For example,",
+     EXAMPLE "myanswer = 2*(numgens R) - 1",
+     "Warning: In Macaulay1, names of variables in rings, and user defined 
+     variables are completely separate.  In Macaulay2, if you assign something
+     to a ring variable, it will assume its new value. ",
+     EXAMPLE "R = ZZ/31991[a..d]",
+     EXAMPLE "a",
+     EXAMPLE "a = 43",
+     EXAMPLE "a",
+     EXAMPLE "use R",
+     EXAMPLE "a",
+     
+     H3 "intersect <mat 1> ... <mat n> <result computation>",
+     "To intersect ideals, or submodules ", TT "I1, I2, ..., In",
+     ", use ", TT "intersect(I1,I2,...,In)", ".  The main difference
+     is that these values cannot be matrices, they must be ideals or 
+     submodules.  A second difference is that the computation, if interrupted,
+     must be restarted at the beginning.  See ", TO "intersect", 
+     ".  For example,",
+     EXAMPLE "I = ideal(a^2-b,c-1,d^2-a*b)",
+     EXAMPLE "J = ideal(a*b-1, c*d-2)",
+     EXAMPLE "intersect(I,J)",
+
+     H3 "is_zero <poly> <result integer: 1 if zero, else 0>",
+     "To decide whether a polynomial, matrix, ideal, etc., ", TT "f", 
+     " is zero, use ", TT "f == 0", ".  The resulting value is a Boolean: 
+     either ", TT "true", ", or ", TT "false", ".  See ", TO "==", ".",
+     
+     H3 "jacob <ideal> <resulting jacobian> [variable list]",
+     "To find the Jacobian matrix of an ideal or one row matrix", 
+     TT "f", ", use ", TT "jacobian f", ".  If you only wish to differentiate
+     with some of the variables, use ", TO "diff", " instead.  See ",
+     TO "jacobian", ".",
+     
+     H3 "jump <label>",
+     "Macaulay2 has no go to statements.  Instead, you should use the
+     control structures.", "WRITE MORE",
+     
+     H3 "k_basis <matrix> <result matrix> [variable list]",
+     "WRITE THIS",
+     
+     H3 "keep <standard basis> <result matrix> [n]",
+     "WRITE THIS",
+     
+     H3 "kill <var1> ... <var n>",
+     "WRITE THIS",
+     
+     H3 "koszul <int n, or matrix> <p> <result matrix>",
+     "WRITE THIS",
+     
+     H3 "lift <standard basis> <matrix to lift> <result>",
+     "WRITE THIS",
+     
+     H3 "lift_std <matrix> <computation>",
+     "WRITE THIS",
+     
+     H3 "listvars",
+     "WRITE THIS",
+     
+     H3 "mat <result matrix> [optional: file name]",
+     "WRITE THIS",
+     
      }
 
 document { "not documented yet", 
@@ -347,5 +639,25 @@ R = ZZ/101[vars(0..4)]
 m = matrix{{a,b,c,d,e}}
 n = diag m
 isHomogeneous n
+
+     EXAMPLE "R = QQ[a..h]",
+     EXAMPLE "I = ideal(a,b^5,c^7-d^7-a^7)",
+     EXAMPLE "G = gb(I,StopBeforeComputation=>true)",
+     EXAMPLE "gens G",
+     "Note that no Groebner basis elements have been computed yet",
+     EXAMPLE "gb(I,PairLimit=>2)",
+     EXAMPLE "m = gens G",
+     "To find the codimension of the monomial ideal of lead terms so far computed,
+     we use:",
+     EXAMPLE "codim cokernel leadTerm m"
+
+	       (". -- not available"),
+	       ("args -- ", TO "not documented yet"),
+	       ("cache_mem -- ", TO "not documented yet"),
+	       ("cdir -- ", TO "not documented yet"),
+	       ("echo -- ", TO "not documented yet"),
+	       ("endmon -- ", TO "not documented yet"),
+	       ("incoef -- ", TO "not documented yet"),
+	       ("incr_set -- ", TO "not documented yet"),
 
 ///

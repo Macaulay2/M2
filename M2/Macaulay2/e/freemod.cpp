@@ -1480,7 +1480,7 @@ ring_elem FreeModule::diff_term(const int *m, const int *n,
   int sign = 0;
   if (!M->divides(m, n)) return K->from_int(0);
   if (M->is_skew() && use_coeff)
-    sign = M->skew_divide(n, m, resultmon);
+    sign = M->skew_diff(m,n, resultmon);
   else
     M->divide(n, m, resultmon);
   ring_elem result = K->from_int(1);
