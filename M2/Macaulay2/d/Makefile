@@ -203,10 +203,14 @@ test-probe : probe
 	rm syms
 ############################## miscellaneous
 
+ifdef MP
+LIBMP :=	../../lib/libMP.a
+endif
+
 ../bin/Macaulay2 : $(ALLOBJ) ../e/*.o tmp_init.o \
 		../../lib/libgc.a \
 		../../lib/libgmp.a \
-		../../lib/libMP.a \
+		$(LIBMP) \
 		../../lib/libcf.a ../../lib/libcfmem.a \
 		../../lib/libmpf.a \
 		../../lib/libmpn.a \
