@@ -16,8 +16,6 @@ DUMPDATA = @DUMPDATA@
 SOCKS = @SOCKS@
 NODENAME = @NODENAME@
 SHARED = @SHARED@
-FACTORY = @FACTORY@
-FACTORYVERSION = @FACTORYVERSION@
 PROFILE = @PROFILE@
 STRIP = @STRIP@
 OPTIMIZE = @OPTIMIZE@
@@ -25,10 +23,7 @@ DEBUG = @DEBUG@
 MEMDEBUG = @MEMDEBUG@
 VERBOSE = @VERBOSE@
 STATIC = @STATIC@
-GMP = @GMP@
-GMPLIB = @GMPLIB@
 GC_FOR_NEW = @GC_FOR_NEW@
-GC = @GC@
 
 CC = @CC@
 CXX = @CXX@
@@ -99,10 +94,13 @@ LDFLAGS  += -pg
 STRIP := no
 endif
 
-ifeq "$(OPTIMIZE)" "yes"
 ifeq "$(CC)" "gcc"
+ifeq "$(OPTIMIZE)" "yes"
 CFLAGS   += -fexpensive-optimizations -O3
 CXXFLAGS += -fexpensive-optimizations -O3
+else
+CFLAGS   += -O0
+CXXFLAGS += -O0
 endif
 endif
 

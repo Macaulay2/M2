@@ -2,21 +2,13 @@
 
 # Targets to use:
 #	all:	make a binary distribution
-#	justM2:	make Macalay2/libexec/Macaulay2 and Macaulay2/bin/M2, and setup
+#	justM2:	make Macalay2/libexec/Macaulay2 and Macaulay2/bin/M2, and set up
 #               for running it
 #	doc:	make the documentation
 #	port:   make a porting source distribution
 #	testport: test the porting source distribution in tmp/Macaulay2
 # The default is 'all' and 'doc'.
 
-# Warning: if you move the directory tree, then factory needs to be reconfigured
-
-#############################################################################
-ifdef XYZZY
-  If you get an error message on this line, it is because you are not using
-  the 'gnu' version of the 'make' program.  The source code for it is
-  available at ftp://ftp.gnu.org/pub/gnu/make.
-endif
 #############################################################################
 TOPDIR = .
 include $(TOPDIR)/config.Makefile
@@ -27,8 +19,7 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 #############################################################################
-.PHONY : all always dirs clean FACTORYmade FACTORYconfigured FACTORYexports \
-	announce MACAULAY2 MACAULAY2.doc doc port default
+.PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default
 ################################# default
 default: all # doc
 ################################# all
@@ -41,7 +32,8 @@ export PATH := bin:$(PATH)
 all:: announce
 announce::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
 always:
-lib/.exists:; mkdir -p lib; touch $@
+all:: lib/.exists
+lib/.exists:; mkdir lib; touch $@
 clean::; rm -rf lib
 clean::; rm -f core
 distclean::; rm -f config.cache Makefile-configure.overrides config.log config.status configure
@@ -61,270 +53,7 @@ announce ::
 doc:: announce.doc
 announce.doc ::
 	@echo '## making $(DOCTARGET)'
-################################ GC
-ifeq "$(GC)" "provided"
-justM2 all:: GC
-endif
 
-clean::; rm -f gc/*.obj gc/*.lib
-GC:: gc include/gc.h include/gc_cpp.h
-
-ifeq "$(CC)" "cl"
-GC:: lib/gc.lib
-else
-GC:: lib/libgc.a
-endif
-
-GC_TARGETS := gc.a
-GC_CFLAGS := $(CFLAGS)
-GC_CFLAGS += -DLARGE_CONFIG -DNO_SIGNALS
-GC_CFLAGS += -DATOMIC_UNCOLLECTABLE -DNO_EXECUTE_PERMISSION
-# we don't need -DALL_INTERIOR_POINTERS
-# GC_CFLAGS += -Iinclude
-
-ifeq "$(DEBUG)" "yes"
-# Hans Boehm has verified that -DALL_INTERIOR_POINTERS is not needed with -DGC_DEBUG
-GC_CFLAGS += -DGC_DEBUG
-else
-# GC_dump() will not be compiled.
-GC_CFLAGS += -DNO_DEBUGGING
-endif
-
-# The only reason to have ALL_INTERIOR_POINTERS on is if we are using GC_malloc for C++ routines.
-# GC_CFLAGS +=  -DALL_INTERIOR_POINTERS
-
-ifeq "$(VERBOSE)" "no"
-GC_CFLAGS += -DSILENT
-endif
-
-lib/libgc.a: 		gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
-lib/gc.lib: 		gc/gc.lib lib/.exists;	 	cp $< $@
-include/gc.h:		gc/include/gc.h ;		cp $< $@
-include/gc_cpp.h: 	gc/include/gc_cpp.h ;		cp $< $@
-
-ifeq "$(CC)" "cl"
-gc/gc.lib:	  always
-	cd gc; MAKEFLAGS= nmake /nologo /f NT_MAKEFILE
-else
-gc/gc.a: 	  always
-	$(MAKE) -C gc CXX='$(CXX)' CC='$(CC)' AS='$(AS)' \
-		AR='$(AR)' RANLIB='$(RANLIB)' \
-		CFLAGS='$(GC_CFLAGS)' $(GC_TARGETS)
-endif
-
-clean::; $(MAKE) -C gc clean
-clean::; rm -f gc/base_lib
-
-###################### GMP
-
-ifeq "$(GMP)" "provided"
-justM2 all:: GMP
-endif
-
-ifeq "$(OS)" "FreeBSD"
-GMP : 	lib/libgmp.a
-lib/libgmp.a : /usr/lib/libgmp.a
-	ln -sf $< $@
-else
-ifeq "$(CC)" "cl"
-GMPlibs = lib/gmp.lib
-GMP : 	gmp include/gmp.h $(GMPlibs)
-lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
-gmp/gmp.lib : make-gmp
-else
-GMPlibs := gmp/.libs/libgmp.a
-GMP : 	gmp include/gmp.h $(GMPlibs)
-GMPFLAGS := -g -O2
-ifeq "$(PROFILE)" "yes"
-GMPFLAGS := $(GMPFLAGS) -pg
-endif
-gmp/.libs/libgmp.a : make-gmp
-endif
-endif
-
-include/gmp.h: gmp/gmp.h ; cp $< $@
-
-make-gmp :: GMPconfigure
-make-gmp ::
-	@echo we wanted to use: CFLAGS="$(GMPFLAGS)"
-	$(MAKE) -C gmp AM_CFLAGS="$(GMPFLAGS)"
-
-ifeq "$(CC)" "cl"
-GMPconfigure : gmp/Makefile
-gmp/Makefile: WindowsNT/gmp/Makefile
-	cp WindowsNT/$@ $@
-else
-GMPconfigure : gmp/config.status
-gmp/config.status: gmp/configure
-	cd gmp; \
-	rm -f config.status; \
-	unset CC CFLAGS CONFIG_SITE; ./configure --silent --disable-shared
-#	gmp 3.1 configure has a bug -- can't accept CC=gcc hint.
-endif
-
-GMPclean clean::
-	-$(MAKE) -C gmp clean
-	rm -f lib/gmp.lib lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
-distclean::; -$(MAKE) -C gmp distclean
-
-###################### FACTORY
-
-# FACTORY = factory-1.3b
-FACTORY = factory
-
-# when importing a new version of factory, make sure the directory is clean,
-# (look to see if $(FACTORY)/config.status is there)
-
-justM2 all:: FACTORY
-
-FACTORYMFLAGS :=
-FACTORYINC :=
-
-FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/libcf.a lib/FACTORYinstalled
-
-ifeq "$(SHARED)" "yes"
-FACTORY:: Macaulay2/lib/libcf.so
-Macaulay2/lib/.exists:; mkdir -p Macaulay2/lib; touch $@
-Macaulay2/lib/libcf.so : lib/libcf.a Macaulay2/lib/.exists
-	rm -rf tmplib
-	mkdir tmplib
-	(cd tmplib; ar x ../$<; $(CC) -shared *.o -o ../$@)
-	rm -rf tmplib
-endif
-
-$(FACTORY)/clean :
-	$(MAKE) -C $(FACTORY) clean
-
-FACTORYexports := \
-		$(FACTORY)/factory.h \
-		$(FACTORY)/factoryconf.h \
-		$(FACTORY)/templates/array.cc     \
-		$(FACTORY)/templates/array.h      \
-		$(FACTORY)/templates/factor.cc    \
-		$(FACTORY)/templates/factor.h     \
-		$(FACTORY)/templates/functions.h  \
-		$(FACTORY)/templates/list.cc      \
-		$(FACTORY)/templates/list.h       \
-		$(FACTORY)/templates/matrix.cc    \
-		$(FACTORY)/templates/matrix.h     \
-		$(FACTORY)/tmpl_inst.cc
-
-FACFLAGS :=
-
-ifeq "$(CC)" "cl"
-FACTORYexports += $(FACTORY)/cf.lib
-clean::; rm -f $(FACTORY)/malloc.h
-FACTORYMAKEFLAGS += -f ../WindowsNT/$(FACTORY)/GNUmakefile
-FACTORYconfigured: $(FACTORY)/config.h $(FACTORY)/factoryconf.h
-FACTORYINC += -I../WindowsNT/factory
-$(FACTORY)/config.h : WindowsNT/$(FACTORY)/config.h
-	cp $< $@
-$(FACTORY)/factoryconf.h : WindowsNT/$(FACTORY)/factoryconf.h
-	cp $< $@
-else
-ifeq "$(SHARED)" "yes"
-FACFLAGS += -fPIC
-endif
-FACTORYexports += $(FACTORY)/libcf.a
-FACTORYconfigured: $(FACTORY)/config.status
-$(FACTORY)/config.status $(FACTORY)/GNUmakefile : \
-		$(FACTORY)/GNUmakefile.in $(FACTORY)/configure
-	cd $(FACTORY);\
-	GMP_INCLUDE_PATH=../include \
-	CFLAGS="$(CFLAGS) $(FACFLAGS)" \
-	CXXFLAGS="$(CXXFLAGS) $(FACFLAGS)" \
-	LDFLAGS="$(LDFLAGS)" \
-	unset CONFIG_SITE; ./configure --prefix=.. \
-			--with-memman --with-optimize --with-gmp=../gmp/.libs
-endif
-
-FACTORYmade:
-	$(MAKE) -C $(FACTORY) $(FACTORYMAKEFLAGS) \
-	   CFLAGS="$(CFLAGS) $(FACFLAGS)" \
-	   CXXFLAGS="$(CXXFLAGS) $(FACFLAGS)" \
-	   CPPFLAGS="$(CPPFLAGS) -I../include $(FACTORYINC)"
-
-lib/libcf.a lib/FACTORYinstalled: lib/.exists $(FACTORYexports)
-	$(MAKE) -C $(FACTORY) $(FACTORYMAKEFLAGS) install
-	rm -f lib/libcfmem.a
-	touch $@
-FACTORYclean clean::
-	-$(MAKE) -C $(FACTORY) $(FACTORYMAKEFLAGS) clean
-	cd $(FACTORY); rm -f *.cpp *.pdb
-	rm -f lib/cf.lib lib/libcf.a lib/FACTORYinstalled
-clean::; rm -rf share
-distclean::; -$(MAKE) -C $(FACTORY) $(FACTORYMAKEFLAGS) distclean
-
-###################### LIBFAC
-justM2 all:: LIBFAC
-
-ifeq "$(SHARED)" "yes"
-LIBFACFLAGS := -fPIC
-else
-LIBFACFLAGS := 
-endif
-
-libfac/clean :
-	$(MAKE) -C libfac clean
-
-ifeq "$(CC)" "cl"
-LIBFAC:: libfac libfac/Makefile lib/libfac.lib include/factor.h
-libfac/Makefile : WindowsNT/libfac/Makefile
-	cp WindowsNT/$@ $@
-lib/libfac.lib: libfac/libfac.lib lib/.exists; cp $< $@; ranlib $@
-libfac/libfac.lib : always
-	$(MAKE) -C libfac
-else
-LIBFAC:: libfac libfac/OPTOBJ libfac/config.status libfac/libfac.a include/factor.h
-ifeq "$(SHARED)" "yes"
-LIBFAC:: Macaulay2/lib/libfac.so
-Macaulay2/lib/libfac.so : libfac/libfac.a
-	rm -rf tmplib
-	mkdir tmplib
-	(cd tmplib; ar x ../$<; $(CC) -shared *.o -o ../$@)
-	rm -rf tmplib
-else
-LIBFAC:: lib/libfac.a
-endif
-libfac/OPTOBJ :; mkdir $@
-libfac/config.status : libfac/configure
-	cd libfac; \
-	CFLAGS="$(CFLAGS) $(LIBFACFLAGS)" \
-	CXXFLAGS="$(CXXFLAGS) $(LIBFACFLAGS)" \
-	LDFLAGS="$(LDFLAGS)" \
-	unset CONFIG_SITE; ./configure --silent --includedir=../include
-lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
-libfac/libfac.a : always
-	$(MAKE) -C libfac libfac
-#	$(MAKE) CXX=$(CXX) OPTCXX=$(CXX) \
-#		CXXFLAGS="$(CXXFLAGS) $(LIBFACFLAGS)" CFLAGS="$(CFLAGS) $(LIBFACFLAGS)" \
-#		-C libfac libfac
-endif
-
-include/factor.h: libfac/factor.h ; cp $< $@
-LIBFACclean clean::
-	-$(MAKE) -C libfac clean
-	rm -f lib/libfac.a lib/libfac.lib
-distclean::; -$(MAKE) -C libfac distclean
-
-###################### MP
-# we don't use this, usually
-# warning: perl is needed to recreate mp/MP/MP.h - but this file is
-# provided with the distribution.
-ifeq "$(MP)" "yes"
-all:: MP
-endif
-MP:	mp mp/config.status mp/Makefile mp/libMP.a \
-	lib/libMP.a include/MP.h include/MP_Config.h
-mp/config.status mp/Makefile : mp/configure
-	unset CONFIG_SITE; cd mp; ./configure --prefix=$(TOPDIR) # --with-debug
-mp/libMP.a: mp/Makefile
-	$(MAKE) -C mp libMP.a
-lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
-include/MP.h: mp/MP/MP.h ; cp $< $@
-include/MP_Config.h: mp/MP/MP_Config.h ; cp $< $@
-clean::; -$(MAKE) -C mp $@
-clean::; rm -f 'mp/&'
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
 all :: $(TARGET)
@@ -428,7 +157,7 @@ clean::
 		   -type f -name '.#*' \
 		-o -type d -name Release \
 		-o -name '*.pdb' \
-		\) -exec rm -r '{}' ';'
+		\) |xargs rm -rf
 	rm -f M2.ncb M2.opt
 ################################# final status messages
 justM2 all doc::
@@ -475,6 +204,6 @@ lsm:
 # make this one last
 distclean ::; rm -f $(CONFIGURED_FILES) include/config.h include/config.h.in
 
-## Local Variables:
-## mode: Makefile
-## End:
+# Local Variables:
+# mode: Makefile
+# End:

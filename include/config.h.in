@@ -6,12 +6,6 @@
 /* whether to use dumpdata */
 #undef DUMPDATA
 
-/* whether to link with factory */
-#undef FACTORY
-
-/* factory version number */
-#undef FACTORYVERSION
-
 /* whether h_errlist is declared in errno.h or stdio.h */
 #undef H_ERRLIST_IS_DECLARED
 

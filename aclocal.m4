@@ -41,6 +41,7 @@ AC_DEFUN(M2_CONFIGURED_FILES,
  Macaulay2/emacs/Makefile\
  Macaulay2/html/Makefile\
  Macaulay2/packages/Makefile\
+ Macaulay2/packages/ComputationsBook/Makefile\
  Macaulay2/test/Makefile\
  Macaulay2/tutorial/Makefile\
  Macaulay2/setup\
