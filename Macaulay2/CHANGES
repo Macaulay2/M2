@@ -3,6 +3,14 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+new keyword 'list' and new control structure:
+	while p list x
+which evaluates x repeatedly as long as p remains true, returning a list of the
+values of x encountered, and
+	while p list x do z
+which evaluates x and z repeatedly as long as p remains true, returning a list of 
+the values of x encountered
+
 documentation items:
 	HEADLINE is changed to Headline
 	USAGE is changed to Usage

@@ -80,11 +80,20 @@ document { "if",
 document { "while",
      Headline => "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
-     as the value of ", TT "p", " remains ", TO "true", ".",
+     as the value of ", TT "p", " remains ", TO "true", ", returning 
+     ", TT "null", ".",BR,
+     TT "while p list x", " -- repeatedly evaluates ", TT "x", " as long 
+     as the value of ", TT "p", " remains ", TO "true", ", returning a
+     list of the values of ", TT "x", " encountered.",
+     TT "while p list x do z", " -- repeatedly evaluates ", TT "x", " 
+     and ", TT "x", " as long as the value of ", TT "p", " remains
+     ", TO "true", ", returning a list of the values of ", TT "x", " 
+     encountered.",BR,
      PARA,
-     "The value of the whole expression is always ", TT "null", ".",
      EXAMPLE {
-	  ///i = 1; while i < 50000 do (<< i << " "; i = 2*i); << endl///
+	  ///i = 1; while i < 100 do (<< i << " "; i = 2*i); << endl///,
+	  ///i = 1; while (i = 2*i; i < 100) list i///,
+	  ///i = 1; while i < 100 list i do i = 2*i///
 	  }
      }
 

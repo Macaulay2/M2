@@ -96,11 +96,12 @@ export parseChar(s:string):char := (
 
 
 
-export thenW := dummyWord;		  -- filled in by keywords.d
-export elseW := dummyWord;		  -- filled in by keywords.d
-export ofW := dummyWord;		  -- filled in by keywords.d
-export doW := dummyWord;		  -- filled in by keywords.d
-export fromW := dummyWord;		  -- filled in by keywords.d
+export thenW := dummyWord;		  -- filled in by binding.d
+export elseW := dummyWord;		  -- filled in by binding.d
+export ofW := dummyWord;		  -- filled in by binding.d
+export doW := dummyWord;		  -- filled in by binding.d
+export listW := dummyWord;		  -- filled in by binding.d
+export fromW := dummyWord;		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
 export openTokenFile(filename:string):(TokenFile or errmsg) := (
@@ -333,16 +334,30 @@ export unarywhile(
      whiletoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,whiletoken.word.parse.scope,false);
      if predicate == errorTree then return(errorTree);
-     dotoken := gettoken(file,false);
-     if dotoken == errorToken then return(errorTree);
-     if dotoken.word != doW then (
-	  errorpos(dotoken.position,"syntax error : expected 'do'");
+     token2 := gettoken(file,false);
+     if token2 == errorToken then return(errorTree);
+     if token2.word == doW then (
+	  doclause := parse(file,token2.word.parse.scope,obeylines);
+	  if doclause == errorTree then return(errorTree);
+	  r := ParseTree(WhileDo(whiletoken,predicate,token2,doclause));
+	  accumulate(r,file,prec,obeylines))
+     else if token2.word == listW then (
+	  listclause := parse(file,listW.parse.scope,obeylines);
+	  if listclause == errorTree then return(errorTree);
+	  if peektoken(file,obeylines).word == doW then (
+	       dotoken := gettoken(file,obeylines);
+	       if dotoken == errorToken then return(errorTree);
+	       doclause := parse(file,doW.parse.scope,obeylines);
+	       if doclause == errorTree then return(errorTree);
+	       ret := ParseTree(WhileListDo(whiletoken,predicate,token2,listclause,dotoken,doclause));
+	       accumulate(ret,file,prec,obeylines))
+	  else (
+	       ret := ParseTree(WhileList(whiletoken,predicate,token2,listclause));
+	       accumulate(ret,file,prec,obeylines)))
+     else (
+	  errorpos(token2.position,"syntax error : expected 'do' or 'list'");
 	  errorpos(whiletoken.position," ... to match this 'while'");
-	  return(errorTree));
-     body := parse(file,dotoken.word.parse.scope,obeylines);
-     if body == errorTree then return(errorTree);
-     r := ParseTree(While(whiletoken,predicate,dotoken,body));
-     accumulate(r,file,prec,obeylines));
+	  errorTree));
 unstringToken(q:Token):Token := (
      if q.word.typecode == TCstring 
      then Token(unique(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry,q.followsNewline)

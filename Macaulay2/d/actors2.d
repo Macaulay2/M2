@@ -671,7 +671,7 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
      else errtt(newClassCode));
 NewOfFromFun = newoffromfun;
 -----------------------------------------------------------------------------
-whilefun(predicate:Code,body:Code):Expr := (
+whiledofun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);
 	  when p is Error do return(p)
@@ -682,7 +682,70 @@ whilefun(predicate:Code,body:Code):Expr := (
 	  else if p == False then break
 	  else return(errorpos(predicate,"expected true or false")));
      nullE);
-WhileFun = whilefun;
+WhileDoFun = whiledofun;
+
+whilelistfun(predicate:Code,body:Code):Expr := (
+     n := 1;
+     r := new Sequence len n do provide nullE;
+     i := 0;
+     while true do (
+	  p := eval(predicate);
+	  when p is Error do return(p)
+	  else if p == True then (
+	       b := eval(body);
+	       when b is Error do return(b) else (
+		    if i == n then (
+			 n = 2*n;
+			 r = new Sequence len n do (
+			      foreach x in r do provide x;
+			      while true do provide nullE;
+			      );
+			 );
+		    r.i = b;
+		    i = i+1;
+		    );
+	       )
+	  else if p == False then break
+	  else return(errorpos(predicate,"expected true or false")));
+     Expr(
+	  list(
+	       if i == 0 then emptySequence
+	       else if i == n then r
+	       else new Sequence len i do foreach x in r do provide x)));
+WhileListFun = whilelistfun;
+
+whilelistdofun(predicate:Code,listclause:Code,doclause:Code):Expr := (
+     n := 1;
+     r := new Sequence len n do provide nullE;
+     i := 0;
+     while true do (
+	  p := eval(predicate);
+	  when p is Error do return(p)
+	  else if p == True then (
+	       b := eval(listclause);
+	       when b is Error do return(b) else (
+		    if i == n then (
+			 n = 2*n;
+			 r = new Sequence len n do (
+			      foreach x in r do provide x;
+			      while true do provide nullE;
+			      );
+			 );
+		    r.i = b;
+		    i = i+1;
+		    );
+     	       c := eval(doclause);
+	       when c is Error do return(c) else nothing;
+	       )
+	  else if p == False then break
+	  else return(errorpos(predicate,"expected true or false")));
+     Expr(
+	  list(
+	       if i == 0 then emptySequence
+	       else if i == n then r
+	       else new Sequence len i do foreach x in r do provide x)));
+WhileListDoFun = whilelistdofun;
+
 untilfun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);

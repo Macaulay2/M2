@@ -489,9 +489,7 @@ getUsage := key -> (
      x := getOption(getDoc key, Usage);
      if x =!= null then SEQ x)
 
-getSynopsis := key -> (
-     x := getOption(getDoc key, Synopsis);
-     if x =!= null then SEQ x)
+getSynopsis := key -> getOption(getDoc key, Synopsis)
 
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
@@ -531,7 +529,7 @@ synonymAndClass := X -> (
      else SEQ {"an object of class ", TO X}
      )     
 
-justClass := X -> SEQ {"an object of class ", TO X}
+justClass := X -> SEQ {"an instance of class ", TO X}
 
 usage := s -> (
      o := getDocBody s;
@@ -544,13 +542,14 @@ title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
 inlineMenu := x -> between(", ", TO \ x)
 
 type := s -> (
+     X := class s;
      SEQ {
 	  if class s =!= Thing 
 	  and class s =!= Symbol
 	  and class s =!= Function
 	  then SEQ {
 	       "The ",
-	       if (class s).?synonym then (class s).synonym else "object",
+	       if X.?synonym then X.synonym else "object",
 	       " ", TT toExternalString s, " is a member of the class ", TO class s, ".\n"
 	       },
 	  if instance(s,Type) then (
@@ -559,13 +558,135 @@ type := s -> (
 			 "Each object of class ", toString s, " is called ", indefinite s.synonym, ".\n"
 			 },
 		    if parent s =!= Thing then SEQ {
-			 "Each ", synonym s, " is also a member of class ", TO parent s, "."
+			 "Each ", synonym s, " is also a member of class ", TO parent s, ".",
+			 PARA{},
+			 "More general types:",
+			 MENU (
+			      Y := parent s;
+			      while Y =!= Thing list Y do Y = parent Y
+			      )
 			 }
 		    }
 	       ),
 	  PARA{}
 	  }
      )
+
+optargs := method(SingleArgumentDispatch => true)
+
+optargs Thing := x -> null
+     
+optargs Function := f -> (
+     o := options f;
+     if o =!= null then SEQ {
+	  "Optional arguments :", PARA{},
+	  SHIELD smenu apply(keys o, t -> f => t)})
+
+optargs Sequence := s -> (
+     o := options s;
+     if o =!= null then SEQ {
+	  "Optional arguments :", PARA{}, 
+	  SHIELD smenu apply(keys o, t -> s => t)}
+     else optargs s#0)
+
+synopsis := method(SingleArgumentDispatch => true)
+synopsis Thing := synopsis Function := f -> (
+     SYN := getSynopsis f;
+     if SYN =!= null then (
+	  t := i -> if SYN#?(i+1) then (
+	       if class SYN#i === Option 
+	       then SEQ { TT SYN#i#0, if SYN#i#1 =!= null then SEQ {": ", SEQ SYN#i#1} }
+	       else SEQ SYN#i
+	       );
+	  SEQ {
+	       BOLD "Synopsis:",
+	       SHIELD MENU {
+		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
+		    if SYN#?1 then SEQ { "Input:", MENU { t 1, t 2, t 3 } },
+		    if SYN#?1 and SYN#-1 =!= null then SEQ { "Output:", MENU { t(-1) } }
+		    }
+	       }
+	  )
+     )
+
+typicalValue := k -> (
+     if typicalValues#?k then typicalValues#k 
+     else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
+     else Thing
+     )
+
+synopsis Sequence := s -> (
+     t := typicalValue s;
+     desc1 := desc2 := desc3 := descv := ".";
+     retv := arg1 := arg2 := arg3 := null;
+     SYN := getSynopsis s;
+     d := x -> if x === null then "." else SEQ { ": ", SEQ x };
+     if SYN =!= null then (
+	  if SYN#?1 and s#?1 then (
+	       if class SYN#1 === Option then (arg1 = TT SYN#1#0; desc1 = d SYN#1#1;)
+	       else desc1 = d SYN#1;
+	  if SYN#?2 and s#?2 then (
+	       if class SYN#2 === Option then (arg2 = TT SYN#2#0; desc2 = d SYN#2#1;)
+	       else desc2 = d SYN#2);
+	  if SYN#?3 and s#?3 then (
+	       if class SYN#3 === Option then (arg3 = TT SYN#3#0; desc3 = d SYN#3#1;)
+	       else desc3 = d SYN#3);
+     	  if SYN#?-1 then (
+	       if class SYN#-1 === Option then (retv = TT SYN#-1#0; descv = d SYN#-1#1;)
+	       else descv = d SYN#-1);
+	       );
+	  );
+     SEQ {
+	  BOLD "Synopsis:",
+	  SHIELD MENU {
+	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
+	       if s#0 =!= symbol " " then
+	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
+	       SEQ { "Input:",
+		    MENU {
+			 if arg1 === null
+			 then SEQ {justClass s#1, desc1 }
+			 else SEQ {arg1, ", ", justClass s#1, desc1 }, 
+			 if #s > 2 then
+			 if arg2 === null
+			 then SEQ {justClass s#2, desc2 } 
+			 else SEQ {arg2, ", ", justClass s#2, desc2 }, 
+			 if #s > 3 then
+			 if arg3 === null
+			 then SEQ {justClass s#3, desc3 }
+			 else SEQ {arg3, ", ", justClass s#3, desc3 }
+			 }
+		    },
+	       if t =!= Thing or retv =!= null or descv =!= "." 
+	       then SEQ {
+	       	    "Output:",
+	       	    MENU {
+		    	 if retv === null
+		    	 then SEQ {justClass t, descv}
+		    	 else SEQ {retv, ", ", justClass t  , descv}
+		    	 }
+		    },
+	       optargs s,
+	       moreGeneral s
+     	       }
+	  }
+     )
+
+noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
+noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
+briefDocumentation = x -> (
+     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
+     else (
+	  r := getUsage x;
+	  if r =!= null then << endl << text r << endl
+	  else (
+	       r = synopsis x;
+	       if r =!= null then << endl << text r << endl
+	       else (
+		    s := if class x === Function then fmeth x;
+		    if s =!= null then << endl << text s << endl
+		    else (
+			 if headline x =!= null then << endl << headline x << endl)))))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -646,9 +767,12 @@ documentation Type := X -> (
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
 	  title X, 
+	  synopsis X,
 	  usage X,
      	  type X,
-	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
+	  if #b > 0 then SEQ {
+	       "Types of ", if X.?synonym then X.synonym else toString X, " :", PARA{},
+	       smenu b, PARA{}},
 	  if #a > 0 then SEQ {
 	       "Functions and methods returning a ",
 	       indefinite synonym X, " :", PARA{},
@@ -661,7 +785,8 @@ documentation Type := X -> (
 documentation HashTable := x -> (
      c := documentableMethods x;
      SEQ {
-	  title x, 
+	  title x,
+	  synopsis x,
 	  usage x,
      	  type x,
 	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, SHIELD smenu c, PARA{}},
@@ -672,44 +797,6 @@ fmeth := f -> (
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
      if #b > 0 then SEQ {"Ways to use ", TT toString f," :", BR{}, SHIELD smenu b} )
-
-noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
-noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
-briefDocumentation = x -> (
-     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
-     else (
-	  r := getUsage x;
-	  if r =!= null then << endl << text r << endl
-	  else (
-	       s := if class x === Function then fmeth x;
-	       if s =!= null then << endl << text s << endl
- 	       else if headline x =!= null then << endl << headline x << endl
-	       )
-	  )
-     )
-
-optargs := method(SingleArgumentDispatch => true)
-
-optargs Thing := x -> null
-     
-optargs Function := f -> (
-     o := options f;
-     if o =!= null then SEQ {
-	  "Optional arguments :", PARA{},
-	  SHIELD smenu apply(keys o, t -> f => t)})
-
-optargs Sequence := s -> (
-     o := options s;
-     if o =!= null then SEQ {
-	  "Optional arguments :", PARA{}, 
-	  SHIELD smenu apply(keys o, t -> s => t)}
-     else optargs s#0)
-
-typicalValue := k -> (
-     if typicalValues#?k then typicalValues#k 
-     else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
-     else Thing
-     )
 
 ret := k -> (
      t := typicalValue k;
@@ -722,12 +809,16 @@ seecode := x -> (
      and height n + depth n <= 10 and width n <= maximumCodeWidth
      then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
      )
-documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
+
+documentation Function := f -> SEQ { 
+     title f, synopsis f, usage f, type f, ret f, fmeth f, optargs f, seecode f 
+     }
 
 documentation Option := v -> (
      (fn, opt) -> (
 	  SEQ { 
-	       title v, 
+	       title v,
+	       synopsis v,
 	       usage v,
 	       BOLD "See also:",
 	       SHIELD MENU {
@@ -745,60 +836,9 @@ documentation Option := v -> (
 
 documentation Sequence := s -> (
      if null === lookup s then error("expected ", toString s, " to be a method");
-     t := typicalValue s;
-     desc1 := desc2 := desc3 := descv := ".";
-     retv := arg1 := arg2 := arg3 := null;
-     SYN := getSynopsis s;
-     d := x -> SEQ { ": ", SEQ x };
-     if SYN =!= null then (
-	  if SYN#?1 and s#?1 then (
-	       if class SYN#1 == Option then (arg1 = TT SYN#1#0; desc1 = d SYN#1#1;)
-	       else desc1 = d SYN#1;
-	  if SYN#?2 and s#?2 then (
-	       if class SYN#2 == Option then (arg2 = TT SYN#2#0; desc2 = d SYN#2#1;)
-	       else desc2 = d SYN#2);
-	  if SYN#?3 and s#?3 then (
-	       if class SYN#3 == Option then (arg3 = TT SYN#3#0; desc3 = d SYN#3#1;)
-	       else desc3 = d SYN#3);
-     	  if SYN#?-1 then (
-	       if class SYN#-1 == Option then (retv = TT SYN#-1#0; descv = d SYN#-1#1;)
-	       else descv = d SYN#-1);
-	       );
-	  );
      SEQ {
 	  title s, 
-	  BOLD "Synopsis:",
-	  SHIELD MENU {
-	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
-	       if s#0 =!= symbol " " then
-	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
-	       SEQ { "Input:",
-		    MENU {
-			 if arg1 === null
-			 then SEQ {justClass s#1, desc1 }
-			 else SEQ {arg1, ", ", justClass s#1, desc1 }, 
-			 if #s > 2 then
-			 if arg2 === null
-			 then SEQ {justClass s#2, desc2 } 
-			 else SEQ {arg2, ", ", justClass s#2, desc2 }, 
-			 if #s > 3 then
-			 if arg3 === null
-			 then SEQ {justClass s#3, desc3 }
-			 else SEQ {arg3, ", ", justClass s#3, desc3 }
-			 }
-		    },
-	       if t =!= Thing or retv =!= null or descv =!= "." 
-	       then SEQ {
-	       	    "Output:",
-	       	    MENU {
-		    	 if retv === null
-		    	 then SEQ {justClass t, descv}
-		    	 else SEQ {retv, ", ", justClass t  , descv}
-		    	 },
-		    },
-	       optargs s,
-	       moreGeneral s
-     	       },
+	  synopsis s,
 	  usage s,
 	  seecode s
 	  }
@@ -1140,7 +1180,7 @@ html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 tex     TT := x -> concatenate   (///{\tt {}///, ttLiteral concatenate (tex     \ toList x), "}")
 texMath TT := x -> concatenate   (///{\tt {}///, ttLiteral concatenate (texMath \ toList x), "}")
 text    TT := x -> concatenate   ("'", text \ toList x, "'")
-net     TT := x -> horizontalJoin("'", net  \ toList x, "'")
+net     TT := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
 
 net CODE := x -> stack lines concatenate x
 
