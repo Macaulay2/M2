@@ -3,6 +3,8 @@
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
+net GaloisField := k -> toString raw k
+
 ambient GaloisField := Ring => R -> last R.baseRings
 coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
 
@@ -72,61 +74,45 @@ GF(ZZ) := GaloisField => options -> (q) -> (
 GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      if not isPrime f
      then error("expected ",toString S," to be a quotient ring by an irreducible polynomial");
-     g := options.PrimitiveElement;
-     if g === FindOne then (
+     primitiveElement := options.PrimitiveElement;
+     if primitiveElement === FindOne then (
 	  t := S_0;
-	  if isPrimitive t 
-	  then g = t
+	  if isPrimitive t then primitiveElement = t
 	  else while ( 
-	       g = sum(n, i -> random p * t^i); 
-	       not isPrimitive g
-	       ) do ();
-	  );
-     xx := options.Variable;
-     if xx =!= null
-     then xx = baseName xx
+	       primitiveElement = sum(n, i -> random p * t^i); 
+	       not isPrimitive primitiveElement
+	       ) do ())
      else (
-	  if g =!= null and g == S_0 
-	  then xx = S.generatorSymbols#0
-	  else xx = local a;
-	  );
-     if g === null
-     then (
-     	  sendgg(ggPush S, ggGF);
-     	  F := new GaloisField from newHandle();
-	  )
+	  if ring primitiveElement =!= S then error "expected primitive element in the right ring";
+     	  if not isPrimitive primitiveElement then error "expected ring element to be primitive";
+     	  );
+     var := options.Variable;
+     if var =!= null then var = baseName var
      else (
-	  d := p^n-1;
-	  if ring g =!= S
-	  then error "expected primitive element in the right ring";
-	  if not isPrimitive g
-	  then error "expected ring element to be primitive";
-     	  sendgg (ggPush g, ggGF);
-     	  F = new GaloisField from newHandle();
-	  toString F := h -> toString expression h;
-	  net F := h -> net expression h;
+	  if primitiveElement === S_0 
+	  then var = S.generatorSymbols#0
+	  else var = local a;
 	  );
+     d := p^n-1;
+     F := new GaloisField from rawGaloisField raw primitiveElement;
+     toString F := h -> toString expression h;
+     net F := h -> net expression h;
      F.baseRings = append(S.baseRings,S);
      F.isCommutative = true;
-     expression F := t -> convert(
-	  F.ConvertToExpression, sendgg(ggPush t, ggtonet)
-	  );
+     expression F := t -> expression lift(t, S);
      F.degreeLength = degreeLength R;
      F.char = p;
      F.frac = F;
-     F.generatorSymbols = {xx};
+     F.generatorSymbols = {var};
      F.generatorExpressions = apply( F.generatorSymbols,
 	  x -> if instance(x, Symbol) then x else expression x
 	  );
      F.generators = {F_0};
      baseName F := y -> (
-	  if F_0 == y then xx else error "expected a generator"
+	  if F_0 == y then var else error "expected a generator"
 	  );
      F.order = p^n;
-     F / F := (x,y) -> (
-	  sendgg ( ggPush x, ggPush y, ggdiv);
-	  new F);
-     -- F / F := (f,g) -> f // g;		  -- it is a field
+     F / F := (x,y) -> x // y;
      F))
 
 random GaloisField := F -> (
