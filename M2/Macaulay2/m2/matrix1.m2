@@ -36,16 +36,18 @@ makeRawTable := (R,p) -> (					    -- this is messy
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
+     R := ring M;
+     if ring p =!= R then error "expected matrix and new target module to have the same ring";
      if M.?generators then (
 	  M' := source M.generators;
 	  if numgens M' != numgens target p then error "expected matrix and new target module to agree";
      	  f := rawMatrixRemake1(raw M', raw p,0);
-     	  map(M, newModule(ring source p, rawSource f), f)
+     	  map(M, newModule(R, rawSource f), f)
 	  )
      else (
 	  if numgens M != numgens target p then error "expected matrix and new target module to agree";
      	  f = rawMatrixRemake1(raw M, raw p,0);
-     	  map(M, newModule(ring source p, rawSource f), f)
+     	  map(M, newModule(R, rawSource f), f)
 	  )
      )
 
