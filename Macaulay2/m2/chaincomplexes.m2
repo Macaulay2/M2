@@ -771,29 +771,16 @@ betti Matrix := f -> (
      betti chainComplex f
      )
 betti GroebnerBasis := G -> betti generators G
-betti Ideal := I -> (
-     << "generators:" << endl;
-     betti generators I;
-     )
+betti Ideal := I -> "generators: " | betti generators I
 betti Module := M -> (
      if M.?relations then (
 	  if M.?generators then (
-	       << "generators:" << endl;
-	       betti generators M;
-	       << "relations:" << endl;
-	       betti relations M;
+	       "generators: " | betti generators M || "relations : " | betti relations M
 	       )
-	  else (
-	       << "relations:" << endl;
-	       betti relations M;
-	       )
+	  else "relations : " | betti relations M
 	  )
-     else (
-	  << "generators:" << endl;
-	  betti generators M;
-	  )
+     else "generators: " | betti generators M
      )
-
 
 ChainComplex.directSum = args -> (
      C := new ChainComplex;
