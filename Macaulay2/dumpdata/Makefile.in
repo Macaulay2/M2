@@ -34,8 +34,8 @@ check:: test1
 endif
 
 test1: checkit
-	./check dump "hi there"
-	./check load "look!"
+	./checkit dump "hi there"
+	./checkit load "look!"
 	touch "$@"
 
 distclean : clean
