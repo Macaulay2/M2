@@ -408,6 +408,7 @@ toString SparseVectorExpression := v -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
      scan(v#1,(i,x)->w#i=toString x);
+     w = toList w;
      concatenate("{",between(",",w),"}")
      )
 -----------------------------------------------------------------------------
@@ -427,7 +428,7 @@ MatrixExpression.synonym = "matrix expression"
 value MatrixExpression := x -> matrix applyTable(toList x,value)
 toString MatrixExpression := m -> concatenate(
      "MatrixExpression {",		  -- ????
-     between(",",apply(m,row->("{", between(",",apply(row,toString)), "}"))),
+     between(",",apply(toList m,row->("{", between(",",apply(row,toString)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
@@ -435,7 +436,7 @@ Table.synonym = "table expression"
 value Table := x -> applyTable(toList x,value)
 toString Table := m -> concatenate(
      "Table {",
-     between(",",apply(m,row->("{", between(",",apply(row,toString)), "}"))),
+     between(",",apply(toList m,row->("{", between(",",apply(row,toString)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 

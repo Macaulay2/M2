@@ -188,7 +188,10 @@ TARGETDIR = cache/doc
 phase5 : $(TARGETDIR)/index.html
 $(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
-	../../bin/M2 -q -silent '-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
+	../../bin/M2 -q -silent \
+		'-e phase = 5' \
+		'-e errorDepth 0' \
+		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
 
 all :: phase6
 HOMEDIR := $(shell cd .. && pwd)

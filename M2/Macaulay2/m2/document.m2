@@ -29,7 +29,7 @@ addStartFunction(
 writingInputFiles         := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
 writingFinalDocDatabase   := () -> phase === 4
-writing                   := () -> phase === 2 or phase === 4
+writing                   := () -> phase === 2 or phase === 4 or phase === 5
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------

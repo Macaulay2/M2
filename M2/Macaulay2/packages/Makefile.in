@@ -15,20 +15,36 @@ Makefile : Makefile.in
 #############################################################################
 all :: doc
 distclean :: clean
-DOCFILES := StateTable.m2 eliminate.m2 D-modules/DMODdoc.m2 $(wildcard @srcdir@/D-modules/DOC/*.m2)
+DOCFILES := StateTable.m2 eliminate.m2 D-modules/DMODdoc.m2
+## DOCFILES += $(wildcard @srcdir@/D-modules/DOC/*.m2)
+
 phase2: $(DOCFILES)
-	set -x; for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0' || exit 1; done
+	@ set -v; for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0' || exit 1; done
 	touch "$@"
+
 phase3: $(DOC) $(TEST)
 	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
 	touch "$@"
+
 phase4: $(DOCFILES)
-	set -x; for i in $^ ; do ../../bin/M2 -q '-e phase=4; errorDepth 0' $$i '-e exit 0' || exit 1; done
+	@ set -v; for i in $^ ; do ../../bin/M2 -q '-e phase=4; errorDepth 0' $$i '-e exit 0' || exit 1; done
 	touch "$@"
-phase5: $(DOCFILES)
-	set -x; for i in $^ ; do ../../bin/M2 -q '-e phase=5; errorDepth 0' $$i '-e exit 0' || exit 1; done
-	touch "$@"
-doc : phase2 phase3 phase4 phase5
+
+TARGETDIR = cache/doc
+phase5 : $(TARGETDIR)/index.html
+$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
+	 #------ phase 5: making html documentation
+	../../bin/M2 -q -silent '-e makeHTML("D-modules Package", Documentation)' '-e exit 0'
+
+HOMEDIR := $(shell cd .. && pwd)
+phase6 :
+	@ echo "make: Entering directory \`$(shell cd $(TARGETDIR) && pwd)'"
+	 #------ phase 6: checking the links in the html documentation
+	@ set -v && cd $(TARGETDIR) && $(HOMEDIR)/html-check-links/html-check-links *.html
+	@ echo "make: Leaving directory \`$(shell cd $(TARGETDIR) && pwd)'"
+
+doc : phase2 phase3 phase4 phase5 phase6
+
 clean::; rm -f phase2
 check:: doc
 	$(MAKE) -C $(TEST) -f $(srcdir)/../m2/Makefile.tests srcdir=$(srcdir)
