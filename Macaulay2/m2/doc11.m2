@@ -16,7 +16,7 @@ document { MarkUpType,
      }
 
 document { EmptyMarkUpType,
-     HEADLINE "the class of empty mark-up types used with hypertext", 
+     HEADLINE "the class of empty mark-up types used with hypertext"
      }
 
 document { SHIELD,

@@ -105,10 +105,6 @@ Matrix ** Ring := Matrix => (f,R) -> (
 	  ))
 
 -----------------------------------------------------------------------------       
-gcdDegree Module := F -> (sendgg (ggPush F, gggcd); eePopIntarray());
-
-lcmDegree Module := F -> (sendgg (ggPush F, gglcm); eePopIntarray());
-
 poincare Module := M -> (
      R := ring M;
      if degreeLength R == 0

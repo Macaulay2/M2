@@ -511,7 +511,7 @@ Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
 module = method()
-module Ideal := submodule Ideal := Module => I -> image I.generators
+module Ideal := Module => I -> image I.generators
 
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
@@ -533,9 +533,7 @@ ideal Module := Ideal => (M) -> (
      else error "expected a submodule of a free module of rank 1"
      )
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
-submodule List := submodule Sequence := Module => v -> image matrix toList v
 ideal RingElement := Ideal => v -> ideal {v}
-submodule(Vector) := Module => (v) -> image matrix {v}
 ideal ZZ := v -> ideal {v}
 ideal QQ := v -> ideal {v}
 

@@ -31,11 +31,14 @@ document { symbol "pi",
      }
 
 document { Engine,
+     HEADLINE "specify whether a ring is handled by the engine",
      TT "Engine", " -- a key for rings which yields the value ", TT "true", " if this
      ring is supported by the ", TO "engine", "."
      }
 
-document { ring, HEADLINE "get the associated ring" }
+document { ring,
+     HEADLINE "get the associated ring"
+     }
 
 document { coefficientRing,
      HEADLINE "get the coefficient ring",
@@ -63,6 +66,7 @@ document { isRing,
      }
 
 document { baseRings,
+     HEADLINE "store the list of base rings of a ring",
      TT "baseRings", " -- a symbol used as a key in a ring ", TT "R", " under which is
      stored a list of base rings for ", TT "R", ".",
      PARA,
@@ -83,7 +87,8 @@ document { lift,
      SEEALSO "baseRings"
      }
 
-document { liftable, HEADLINE "whether a ring element can be lifted to another ring",
+document { liftable,
+     HEADLINE "whether a ring element can be lifted to another ring",
      TT "liftable(f,R)", " -- tells whether a ring element ", TT "f", " can be
      lifted to the ring ", TT "R", ".",
      PARA,
@@ -109,12 +114,13 @@ document { promote,
      SEEALSO "baseRings"
      }
 
-document { RingElement, HEADLINE "the class of all ring elements handled by the engine",
+document { RingElement,
+     HEADLINE "the class of all ring elements handled by the engine",
      SEEALSO "engine"
      }
 
 document { EngineRing,
-     HEADLINE "the class of rings handled by the engine (including most rings)",
+     HEADLINE "the class of rings handled by the engine",
      "The ", TO "engine", " handles most of the types of rings in the
      system.",
      PARA,
@@ -132,10 +138,10 @@ document { EngineRing,
 	  }
      }
 
-
 document { fraction,
-     TT "fraction(f,g)", " -- manufactures the fraction f/g in the fraction
-     ring of the ring containing f and g without reducing it to lowest terms."
+     TT "fraction(f,g)", " -- manufactures the fraction ", TT "f/g", " in the fraction
+     field of the ring containing ", TT "f", " and ", TT "g", " without reducing
+     it to lowest terms."
      }
 
 TEST "
@@ -145,7 +151,9 @@ assert ( b == numerator(b/a) )
 assert ( 1 == numerator(b/b) )
 "
 
-document { FractionField, HEADLINE "the class of all fraction fields" }
+document { FractionField,
+     HEADLINE "the class of all fraction fields"
+     }
 
 document { symbol frac,
      "A symbol used as a key under which is stored the fraction field of a ring."
@@ -170,7 +178,8 @@ document { frac,
 	  }
      }
 
-document { ZZ, HEADLINE "the class of all integers" }
+document { ZZ,
+     HEADLINE "the class of all integers" }
 
 TEST "
 assert (not isPrime 1333333)
@@ -242,7 +251,9 @@ document { CC,
 	  },
      }
 
-document { ii, HEADLINE "square root of -1" }
+document { ii,
+     HEADLINE "square root of -1"
+     }
 
 document { realPart,
      HEADLINE "real part",
@@ -275,7 +286,8 @@ document { mod,
      "The result is an element of ", TT "ZZ/n", "."
      }
 
-document { ProductRing, HEADLINE "the class of all product rings",
+document { ProductRing,
+     HEADLINE "the class of all product rings",
      "If R and S are rings, then R * S denotes their product ring.
      If r and s are elements of R and S respectively, then an element
      of the product is provided by ", 
@@ -283,7 +295,8 @@ document { ProductRing, HEADLINE "the class of all product rings",
      "This has to be rethought!"     
      }
 
-document { OrderedMonoid, HEADLINE "the class of all ordered monoids",
+document { OrderedMonoid,
+     HEADLINE "the class of all ordered monoids",
      "An ordered monoid is a multiplicative monoid together with an ordering of 
      its elements.  The ordering is required to be compatible with the 
      multiplication in the sense that if x < y then x z < y z.  The class
@@ -307,14 +320,17 @@ document { binomial,
      EXAMPLE "binomial(13,6)"
      }
 
-document { isPolynomialRing, HEADLINE "whether something is a polynomial ring" }
+document { isPolynomialRing,
+     HEADLINE "whether something is a polynomial ring" }
 
-document { PolynomialRing, HEADLINE "the class of all ordered monoid rings",
+document { PolynomialRing,
+     HEADLINE "the class of all ordered monoid rings",
      "Every element of a polynomial ring is also a ", TO "RingElement", ".",
      SEEALSO "polynomial rings"
      }
 
-document { isUnit, HEADLINE "whether a ring element is a unit",
+document { isUnit,
+     HEADLINE "whether a ring element is a unit",
      EXAMPLE {
 	  "S = QQ[x,y]/(1-(x-1)*(y-1));",
 	  "isUnit (x^2 - 2*x + 1)"
@@ -468,7 +484,8 @@ document { Schur,
      SEEALSO {"SchurRing"}
      }
 
-document { SchurRing, HEADLINE "the class of all Schur rings",
+document { SchurRing,
+     HEADLINE "the class of all Schur rings",
      "A Schur ring is the representation ring for the general linear group of 
      n by n matrices, and one can be constructed with ", TO "Schur", ".",
      EXAMPLE "R = Schur 4",
@@ -622,6 +639,7 @@ document { RevLex,
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the reverse lexicographic order."
      }
+
 document { GRevLex,
      HEADLINE "reverse lexicographic ordering",
      TT "GRevLex", " -- a symbol used as an optional argument of
@@ -642,12 +660,14 @@ document { GLex,
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
+
 document { Lex,
      HEADLINE "lexicographic ordering",
      TT "Lex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the (non-graded) lexicographic order."
      }
+
 document { Eliminate,
      HEADLINE "elimination ordering",
      TT "Eliminate", " n -- an optional argument of
@@ -659,6 +679,7 @@ document { Eliminate,
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
+
 document { ProductOrder,
      HEADLINE "product ordering",
      TT "ProductOrder", "{n1, ..., nr} -- an optional argument of
@@ -928,11 +949,16 @@ document { isFreeModule,
      }
 
 document { isSubmodule,
-     HEADLINE "whether a module is evidently a submodule of a free module" }
+     HEADLINE "whether a module is evidently a submodule of a free module"
+     }
+
 document { isQuotientModule,
-     HEADLINE "whether a module is evidently a quotient of a free module" }
+     HEADLINE "whether a module is evidently a quotient of a free module"
+     }
+
 document { isIdeal,
-     HEADLINE "whether something is an ideal" }
+     HEADLINE "whether something is an ideal"
+     }
 
 document { numgens,
      HEADLINE "the number of generators",
@@ -1096,10 +1122,10 @@ document { cover,
 
 document { super,
      HEADLINE "get the ambient module",
-     TT "super M", " -- yields the module which the module M is a submodule of.",
+     TT "super M", " -- yields the module which the module ", TT "M", " is a submodule of.",
      BR, NOINDENT,
-     TT "super f", " -- if f is a map whose target is a submodule of M, yields the
-     composite of f with the inclusion into M.",
+     TT "super f", " -- if ", TT "f", " is a map whose target is a submodule 
+     of ", TT "M", ", yields the composite of ", TT "f", " with the inclusion into ", TT "M", ".",
      PARA,
      SEEALSO { "cover", "ambient" }
      }
@@ -1108,11 +1134,13 @@ document { End,
      HEADLINE "module of endomorphisms",
      TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."
      }
+
 document { ModuleMap,
      HEADLINE "the class of all maps between modules",
      "This class is experimental, designed to support graded modules.",
      SEEALSO {"Matrix"}
      }
+
 document { Matrix,
      HEADLINE "the class of all matrices",
      "These are the matrices for which Groebner basis operations
@@ -1149,18 +1177,6 @@ document { Matrix,
      check equality of matrices.",
      PARA,
      "See also ", TO "compactMatrixForm", ", which governs printing matrices."
-     }
-
-document { gcdDegree,
-     TT "gcdDegree F", " -- I don't know what this is supposed to do.",
-     PARA,
-     "This function should be removed."
-     }
-
-document { lcmDegree,
-     TT "lcmDegree F", " -- I don't know what this is supposed to do.",
-     PARA,
-     "This function should be removed."
      }
 
 document { getMatrix,
@@ -1274,6 +1290,7 @@ document { directSum,
      }
 
 document { indexComponents,
+     HEADLINE "specify keys for components of a direct sum",
      TT "indexComponents", " -- a symbol used as a key in a direct sum
      under which to store a hash table in which to register preferred keys used
      to index the components of the direct sum.",
@@ -1282,6 +1299,7 @@ document { indexComponents,
      }
 
 document { indices,
+     HEADLINE "specify keys for components of a direct sum",
      TT "indices", " -- a symbol used as a key in a direct sum
      under which to store a list of the preferred keys used
      to index the components of the direct sum.",

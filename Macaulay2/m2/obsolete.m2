@@ -9,3 +9,5 @@ verticalJoin = X -> error "'verticalJoin' has been replaced by 'stack'"
 -- name = X -> error "'name' has been replaced by 'toString'"
 quote = X -> error "'quote' has been replaced by 'symbol'"
 Numeric = X -> error "'Numeric' has been replaced by 'numeric'"
+Algorithm = Strategy
+submodule = X -> error "'submodule' has been removed"

@@ -174,12 +174,18 @@ endif
 endif
 endif
 
+ALLOBJ :=
+
 ifdef SHAREDLIBS
 # This next bit is really needed only for gnu libc6 (glibc-2.0.7)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
 # Don't link statically, so that these libraries actually get loaded at run time.
 # If we must link statically, we should find out how to link all members.
 LDLIBS += -lnsl -lnss_files -ldb -lnss_compat -lnss_db -lnss_dns -lnss_nis -lresolv
+endif
+ifndef NOSTATIC
+# so I tried it, but it doesn't work...
+ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
 endif
 
 
@@ -234,7 +240,6 @@ allc : $(PROJECT:.d=.c) tmp_init.c
 
 $(PROJECT:.d=.loo) $(PROJECT:.d=.lo) : compat.h
 
-ALLOBJ :=
 MISCO := M2lib.o scclib.o tmp_init.o memdebug.o
 
 # The next line replaces the builtin c++ memory allocation routines by

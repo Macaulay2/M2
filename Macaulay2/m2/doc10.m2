@@ -92,8 +92,9 @@ document { LengthLimit,
      HEADLINE "stop when the resolution reaches this length",
      }
 
-document { Algorithm,
-     HEADLINE "which algorithm to use"
+document { "Algorithm",
+     HEADLINE "an obsolete synonym for Strategy",
+     SEEALSO "Strategy"
      }
 
 document { resolution => LengthLimit,
@@ -129,21 +130,21 @@ document { resolution => HardDegreeLimit,
      "Information above the specified degree is discarded."
      }
 
-document { resolution => Algorithm,
-     TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
-     which algorithm to use.  Algorithms are specified by number and the
+document { resolution => Strategy,
+     TT "Strategy => n", " -- an option for ", TO "resolution", " which specifies
+     which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
      MENU {
-	  (TT "Algorithm => 0", " -- Compute syzygies on the Groebner bases of each syzygy
-	       module.  The algorithm uses important speedups due to R. Lascala.
+	  (TT "Strategy => 0", " -- Compute syzygies on the Groebner bases of each syzygy
+	       module.  The algorithm uses important speedups due to R. La Scala.
 	       This algorithm appears to be on the average the fastest."),
-	  (TT "Algorithm => 1", " -- An older version of algorithm 0, which doesn't allow as 
+	  (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as 
 	       much experimentation, but can sometimes be marginally faster."),
-	  (TT "Algorithm => 2", " -- Compute syzygies on the minimal generators of each 
-	       matrix in the resolution.  Over quotient rings, preferred."),
-	  (TT "Algorithm => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
-	       which allow removal of S-pairs (a la Robbiano, et al.).  
-	       Sometimes this improvement can be very dramatic.")
+	  (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each 
+	       matrix in the resolution.  Over quotient rings, it's preferred."),
+	  (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
+	       which allow removal of S-pairs (a la Robbiano, et al.). Sometimes this
+	       improvement can be very dramatic.")
 	  },
      "All algorithms use induced monomial orders (Schreyer orders), since 
      this makes an enormous improvement to the efficiency of the algorithm."

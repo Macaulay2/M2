@@ -1,4 +1,13 @@
 Changes made, most recent ones first:
+
+New in 0.8.58:
+
+'Algorithm' changed to 'Strategy'
+
+'gcdDegree' and 'lcmDegree' removed
+
+'submodule' removed
+
 -----------------------------------------------------------------------------
 New in 0.8.56:
 

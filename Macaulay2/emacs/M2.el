@@ -130,8 +130,8 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 	     (local-set-key "\^Cd" 'M2-find-documentation)
 	     (set-syntax-table M2-mode-syntax-table)
 	     (turn-on-font-lock)
-	     ; (make-local-variable 'font-lock-keywords)
-	     ; (setq font-lock-keywords M2-mode-font-lock-keywords)
+	     (make-local-variable 'font-lock-keywords)
+	     (setq font-lock-keywords M2-mode-font-lock-keywords)
 	     (make-local-variable 'font-lock-defaults)
 	     (setq font-lock-defaults '(
 					M2-mode-font-lock-keywords

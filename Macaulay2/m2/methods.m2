@@ -114,8 +114,7 @@ setup := (args, symbols) -> (
 	  )))
 
 setup((), { 
-	  borel, codim, 
-	  lcmDegree, gcdDegree, prune, euler, genera, gcdCoefficients,
+	  borel, codim, prune, euler, genera, gcdCoefficients,
 	  singularLocus, 
 	  dim, Hom, diff, contract, contract', exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial,

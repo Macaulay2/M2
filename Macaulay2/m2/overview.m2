@@ -34,6 +34,7 @@ document { "Mathematical Overview",
 		    TO "making generic matrices",
 		    TO "displaying matrices",
 		    TO "manipulating matrices",
+		    TO "diff and contract",
 		    }
 	       ),
 	  (
@@ -1189,8 +1190,8 @@ document { "Groebner bases",
 	  },
      "The entry in the matrix above not involving ", TT "t", " is the desired relation.",
      PARA,
-     "Computations in a quotient module M/N can be done with the aid of a
-     Groebner basis for the submodule N.",
+     "Computations in a quotient module ", TT "M/N", " can be done with the aid of a
+     Groebner basis for the submodule ", TT "N", ".",
      EXAMPLE {
 	  "clearAll",
 	  "R = ZZ/101[a..f];",
