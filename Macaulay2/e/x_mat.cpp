@@ -125,29 +125,138 @@ const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
   return M->make_copy(target, source, deg, is_mutable);
 }
 
-#if 0
-const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
-				      const Vector_array *V)
+M2_bool IM2_MutableMatrix_set_entry(Matrix *M, 
+					int r, 
+					int c, 
+					const RingElement *a)
 {
-  return Matrix::make(target,V);
+  const Ring *R = M->get_ring();
+  if (R != a->get_ring())
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+  if (r < 0 || r >= M->n_rows())
+    {
+      ERROR("row index %d out of range 0..%d",r,M->n_rows());
+      return 0;
+    }
+  if (c < 0 || c >= M->n_cols())
+    {
+      ERROR("row index %d out of range 0..%d",r,M->n_cols());
+      return 0;
+    }
+
+  M->set_entry(r,c,a->get_value());
+  return 1;
 }
 
-const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
-				      const FreeModule *source,
-				      const M2_arrayint deg,
-				      const Vector_array *V)
+M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int i, int j)
+  /* swap rows: row(i) <--> row(j) */
 {
-  return Matrix::make(target,source,deg,V);
+  if (i < 0 || j < 0 || i >= M->n_rows() || j >= M->n_rows())
+    {
+      ERROR("row index out of range");
+      return 0;
+    }
+
+  M->interchange_rows(i,j);
+  return 1;
 }
 
-const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
-				      const FreeModule *source,
-				      const M2_arrayint deg,
-				      const Matrix *M)
+M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int i, int j)
+  /* swap columns: column(i) <--> column(j) */
 {
-  return Matrix::make(target, source, deg, M);
+  if (i < 0 || j < 0 || i >= M->n_cols() || j >= M->n_cols())
+    {
+      ERROR("column index out of range");
+      return 0;
+    }
+
+  M->interchange_columns(i,j);
+  return 1;
 }
-#endif
+
+M2_bool IM2_MutableMatrix_row_operation(Matrix *M, 
+					int i,
+					const RingElement *r, 
+					int j)
+  /* row(i) <- row(i) + r * row(j) */
+{
+  const Ring *R = M->get_ring();
+  if (R != r->get_ring())
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+  if (i < 0 || j < 0 || i >= M->n_rows() || j >= M->n_rows())
+    {
+      ERROR("row index out of range");
+      return 0;
+    }
+
+  M->row_op(i,r->get_value(),j);
+  return 1;
+}
+
+M2_bool IM2_MutableMatrix_column_operation(Matrix *M, 
+					   int i,
+					   const RingElement *r, 
+					   int j)
+  /* column(i) <- column(i) + r * column(j) */
+{
+  const Ring *R = M->get_ring();
+  if (R != r->get_ring())
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+  if (i < 0 || j < 0 || i >= M->n_cols() || j >= M->n_cols())
+    {
+      ERROR("column index out of range");
+      return 0;
+    }
+
+  M->column_op(i,r->get_value(),j);
+  return 1;
+}
+
+M2_bool IM2_MutableMatrix_row_scale(Matrix *M, const RingElement *r, int i)
+  /* row(i) <- r * row(i) */
+{
+  const Ring *R = M->get_ring();
+  if (R != r->get_ring())
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+  if (i < 0 || i >= M->n_rows())
+    {
+      ERROR("row index out of range");
+      return 0;
+    }
+  M->scale_row(r->get_value(),i);
+  return 1;
+}
+
+M2_bool IM2_MutableMatrix_column_scale(Matrix *M, const RingElement *r, int i)
+  /* column(i) <- r * column(i) */
+{
+  const Ring *R = M->get_ring();
+  if (R != r->get_ring())
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+  if (i < 0 || i >= M->n_cols())
+    {
+      ERROR("column index out of range");
+      return 0;
+    }
+  M->scale_column(r->get_value(),i);
+  return 1;
+}
+
 
 const M2_bool IM2_Matrix_is_zero(const Matrix *M)
 {

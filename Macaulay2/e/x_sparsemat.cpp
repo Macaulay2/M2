@@ -47,7 +47,7 @@ const RingElement * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, i
   return RingElement::make_raw(R, result);
 }
 
-VoidOrError IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a)
+M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a)
 {
   const Ring *R = M->getRing();
   if (R != a->get_ring())
@@ -70,7 +70,7 @@ void IM2_MutableMatrix_column_swap(MutableMatrix *M, int c1, int c2)
   M->interchangeColumns(c1,c2);
 }
 
-VoidOrError IM2_MutableMatrix_row_change(MutableMatrix *M, int row_to_change, const RingElement *a, int r)
+M2_bool IM2_MutableMatrix_row_change(MutableMatrix *M, int row_to_change, const RingElement *a, int r)
   /* Add a times row r to row 'row_to_change' */
 {
   const Ring *R = M->getRing();
@@ -83,7 +83,7 @@ VoidOrError IM2_MutableMatrix_row_change(MutableMatrix *M, int row_to_change, co
   return 1;
 }
 
-VoidOrError IM2_MutableMatrix_column_change(MutableMatrix *M, int col_to_change, const RingElement *a, int c)
+M2_bool IM2_MutableMatrix_column_change(MutableMatrix *M, int col_to_change, const RingElement *a, int c)
   /* Add a times column c to column 'col_to_change' */
 {
   const Ring *R = M->getRing();
@@ -96,7 +96,7 @@ VoidOrError IM2_MutableMatrix_column_change(MutableMatrix *M, int col_to_change,
   return 1;
 }
 
-VoidOrError IM2_MutableMatrix_row_scale(MutableMatrix *M, int row_to_change, const RingElement *a)
+M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M, int row_to_change, const RingElement *a)
   /* Multiply row 'row_to_change' by a, on the left */
 {
   const Ring *R = M->getRing();
@@ -109,7 +109,7 @@ VoidOrError IM2_MutableMatrix_row_scale(MutableMatrix *M, int row_to_change, con
   return 1;
 }
 
-VoidOrError IM2_MutableMatrix_column_scale(MutableMatrix *M, int col_to_change, const RingElement *a)
+M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M, int col_to_change, const RingElement *a)
   /* Multiply column 'col_to_change' by a, on the left */
 {
   const Ring *R = M->getRing();

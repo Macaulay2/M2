@@ -287,7 +287,32 @@ R2 = rawPolynomialRing(rawZZ(), singlemonoid toList (vars 0 .. vars 15))
 a = rawRingVar(R2,0,1)
 b = rawRingVar(R2,1,1)
 F = rawFreeModule(R2,4)
-m = rawMatrix(F,apply(0..3, j -> sum apply(4, i -> rawTerm(F,rawRingVar(R2,i+j,1),i))))
+elems = toList apply(0..3, j -> toList apply(0..3, i -> rawRingVar(R2,i+j,1)))
+m = rawMatrix1(F,4,toSequence flatten elems,false)
+
+  --------------------------
+  -- creation of matrices --
+  --------------------------
+
+R3 = polyring(rawQQ(), (symbol a .. symbol j))
+F = rawFreeModule(R3,5)
+G = rawFreeModule(R3,10)
+m = rawSparseatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),false)
+m = rawSparseatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
+rawTarget m
+rawSource m
+m = rawSparseatrix2(F,G,{7},{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
+assert(rawMultiDegree m  === {7})
+m1 = rawMatrixRemake(F,G,rawMultiDegree m, m, true)
+m2 = rawMatrixRemake(F,G,{13}, m, false)
+assert(rawMultiDegree m2 === {13})
+
+elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R3,i+j,1)))
+m = rawMatrix1(F,4,elems,false)
+p1 = rawMatrix1(F,5,toSequence flatten entries m,false)
+p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,false)
+p1 == p2
+
 2*m
 a*m
 
@@ -297,15 +322,19 @@ rawSource m
 rawMultiDegree m
 rawMatrixEntry(m,1,1)
 m2 = m*m
+
 rawMatrixColumn(m2,1)
 rawMatrixColumn(m2,2)
 assert(m2*m2 == m*m*m*m)
 m2-m
-rawIsHomogeneous(m)
+assert(rawIsHomogeneous(m) == true)
+assert(rawIsHomogeneous(m2-m) == false)
 (a+b^2+a*b)*m
+
 v = rawTerm(F,a,2)
 m * v
 m
+
 rawConcat(m,m,m)
 rawConcat(m,m2)
 
