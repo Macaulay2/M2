@@ -78,20 +78,36 @@ PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 }
 
 #if 0
+//////////////////////////////////////////////////////
+// Helper routines for creation of polynomial rings //
+//////////////////////////////////////////////////////
 
-  /**
-   *  @brief  The main routine for creating a polynomial ring
-   *  @param  K  The coefficient ring.  Can be a basic ring, fraction ring,
-   *             quotient ring, Weyl or skew-commutative algebra, etc.
-   *  @param  M  The monoid.
-   *  @return A new polynomial ring.  If there is an error, then NULL is returned
-   *             and an error is signalled.
-   *
-   * If one wants a Weyl algebra, quotient or skew-commutative ring, then after
-   * this ring has been created, call PolynomialRing::createWeylAlgebra(R,...)
-   * createSkew(R,...), or createQuotient(R,...), or for fractions, call
-   * createFractionRing(R,...).  
-  */
+void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
+{
+}
+
+void PolynomialRing::set_skew_info(M2_arrayint skewvars)
+{
+}
+
+void PolynomialRing::set_weyl_info(M2_arrayint derivatives,
+				   M2_arrayint commutatives,
+				   int homog_var)
+{
+}
+
+void PolynomialRing::set_solvable_info()
+{
+}
+
+void PolynomialRing::set_quotient_info(vector<ring_elem, gc_alloc> &quotients)
+{
+  // Question: do we need to copy the quotient elements?
+  
+  // We need to call a virtual routine which sets up Rideal or RidealZZ
+  // We need a way to merge quotients (e.g. from a quotient of a quotient,
+  // or if the base ring has quotient elements too (same situation)).
+}
 
 const PolynomialRing *PolynomialRing::create1(const Ring *K, const Monoid *M)
 {
@@ -117,6 +133,33 @@ const PolynomialRing *PolynomialRing::create1(const Ring *K, const Monoid *M)
     return new PolyFrac(newK, newM, nfrac, K,M);
 }
 
+PolynomialRing *PolynomialRing::clone() const
+{
+  // This should make a copy of the poly ring, with the intent that the multipliction
+  // will change.  The ring points to the old one.
+}
+
+void PolynomialRing::combine_quotients(vector<ring_elem, gc_alloc> &quotients)
+{
+}
+
+//////////////////////////////////////
+// Creation of new polynomial rings //
+//////////////////////////////////////
+
+  /**
+   *  @brief  The main routine for creating a polynomial ring
+   *  @param  K  The coefficient ring.  Can be a basic ring, fraction ring,
+   *             quotient ring, Weyl or skew-commutative algebra, etc.
+   *  @param  M  The monoid.
+   *  @return A new polynomial ring.  If there is an error, then NULL is returned
+   *             and an error is signalled.
+   *
+   * If one wants a Weyl algebra, quotient or skew-commutative ring, then after
+   * this ring has been created, call PolynomialRing::createWeylAlgebra(R,...)
+   * createSkew(R,...), or createQuotient(R,...), or for fractions, call
+   * createFractionRing(R,...).  
+  */
 const PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *M)
 {
   const PolynomialRing *R = create1(K,M);
@@ -153,37 +196,52 @@ const PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *M)
   return R;
 }
 
-PolynomialRing *PolynomialRing::clone() const
+const PolynomialRing *
+PolynomialRing::create_SkewCommutative(M2_arrayint skewvars)
 {
-  // This should make a copy of the poly ring, with the intent that the multipliction
-  // will change.  The ring points to the old one.
-}
-
-PolynomialRing *PolynomialRing::clone_SkewPolynomialRing(M2_arrayint skewvars) const
-{
-  if (is_skew() || is_weyl())
+  if (!is_commutative_ring())
     {
       ERROR("cannot create a skew commutative polynomial ring over another non-commutative ring");
       return 0;
     }
   PolynomialRing *S = clone();
-  S->initialize_skew(newvars);
+  S->set_skew_info(skewvars);
   return S;
 }
 
-PolynomialRing *PolynomialRing::clone_WeylAlgebra(M2_arrayint comm, 
-						  M2_arrayint derivs,
-						  int homog_var) const
+const PolynomialRing *
+PolynomialRing::create_WeylAlgebra(const PolynomialRing *R,
+				   M2_arrayint derivatives,
+				   M2_arrayint commutatives,
+				   int homog_var)
 {
-  if (is_skew() || is_weyl())
+  if (!is_commutative_ring())
     {
       ERROR("cannot create a Weyl algebra over another non-commutative ring");
       return 0;
     }
-  PolynomialRing *S = clone();
-  S->initialize_weyl(comm,derivs,homog_var);
+  PolynomialRing *S = R->clone();
+  S->set_weyl_info(derivatives, commutatives, homog_var);
   return S;
 }
+
+const PolynomialRing *
+PolynomialRing::create_Quotient(const PolynomialRing *R,
+				vector<ring_elem> &quotients)
+{
+  PolynomialRing *S = R->clone();
+  S->set_quotient_info(quotients); 
+    // If R is already a quotient,
+    // this will combine the quotient elements into one GB
+  return S;
+}
+
+
+//////////////////////////////////////////////
+// End of polynomial ring creation routines //
+//////////////////////////////////////////////
+
+
 
 // Each poly ring class should have its own normal form routine(s).
 // Informational routines: ??
