@@ -392,33 +392,36 @@ void cprintsomesizeof(node t, node arraylen){
      }
 
 void cprintgetmem(node g){
-     node s = CAR(g);
-     node t = type(s);
-     cprint(s);
-     put(" = ");
-     put("(");
-     cprint(t);
-     put(") ");
-     if (do_memstats) {
-	  put("getmem"); 
-	  put("(");
-	  cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
-	  put(")");
-	  }
-     else {
-	  if (gc) {
-	       if (atomic(t)) put("GC_malloc_atomic");
-	       else put("GC_malloc"); 
-	       }
-	  else put("malloc");
-	  put("(");
-	  cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
-	  put(");\n");
-	  put("     if (0 == ");
-	  cprint(s);
-	  put(") outofmem()");
-	  }
-     }
+  node s = CAR(g);
+  node t = type(s);
+  cprint(s);
+  put(" = ");
+  put("(");
+  cprint(t);
+  put(") ");
+  if (do_memstats) {
+    put("getmem"); 
+    put("(");
+    cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
+    put(")");
+  }
+  else {
+    if (gc) {
+      if (atomic(t)) put("GC_malloc_atomic");
+      else put("GC_malloc_clear"); /* see comment below! */
+    }
+    else put("malloc");
+    put("(");
+    cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
+    put(");\n");
+    if (!( gc && !atomic(t))) {
+      /* we write GC_malloc_clear to include a test for return value zero */
+      put("     if (0 == ");
+      cprint(s);
+      put(") outofmem()");
+    }
+  }
+}
 
 void cprintdestroy(node t) {
      node w;
