@@ -162,11 +162,9 @@ AC_ARG_ENABLE(encap,
     encap="$enableval",
     encap=no)
 
+LAPACK=yes
 AC_SUBST(LAPACK)
-AC_ARG_ENABLE(lapack,
-    AC_HELP_STRING(--enable-lapack,use experimental LAPACK interface),
-    [ LAPACK="$enableval" ; AC_DEFINE(LAPACK,,whether to use LAPACK) ],
-    LAPACK=yes)
+AC_DEFINE(LAPACK,,whether to use LAPACK)
 
 AC_SUBST(encapsrc)
 AC_ARG_WITH(encapsrc,
@@ -183,9 +181,9 @@ AC_ARG_WITH(libgmp,
 
 AC_SUBST(LAPACKLIBS)
 AC_ARG_WITH(lapacklibs,
-    AC_HELP_STRING(--with-lapacklibs=...,lapack libraries (-llapack -lcblas -lf77blas -latlas -lg2c)),
+    AC_HELP_STRING(--with-lapacklibs=...,lapack libraries (-llapack -lcblas -lf77blas -lg2c)),
     LAPACKLIBS="$withval",
-    LAPACKLIBS="-llapack -lcblas -lf77blas -latlas -lg2c"
+    LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
     )
 AC_ARG_WITH(veclib,
     AC_HELP_STRING(--with-veclib...,replace lapack libraries by "-framework vecLib"),

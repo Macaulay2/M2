@@ -51,7 +51,7 @@ DNAMES := $(PROJECT)
 DNAMES += t.d u.d optim.d actorsX.d gr.d grx.d testall.d pp.d redblk.d
 CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interface.c
 MADECFILES := tmp_init.c startup.c
-CCFILES := version.cc initgmp.cc tmpl_inst.cc
+CCFILES := version.cc initgmp.cc
 SRCFILES := getpagesize.h gc_cpp.cc memdebug.c memdebug.h gmp_aux.c types.h $(PROJECT) $(CFILES)
 MADEFILES += $(DNAMES:.d=.c)
 ALLOBJ += $(CFILES:.c=.o) $(MADECFILES:.c=.o) $(CCFILES:.cc=.o)
@@ -302,13 +302,8 @@ LIBRARYOPTIONS += -lreadline -lhistory -lcurses
 LIBRARYOPTIONS += -lstdc++
 
 ifeq "$(LAPACK)" "yes"
-#LIBRARYOPTIONS += -llapack -lcblas -lf77blas -lg2c
-#LIBRARYOPTIONS += -latlas
-#LIBRARYOPTIONS += -framework vecLib -bind_at_load
+LIBRARYOPTIONS += $(LAPACKLIBS)
 endif
-
-# ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
-# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
 
 LOADLIBES := $(LIBRARYOPTIONS) $(LOADLIBES)
 

@@ -131,6 +131,8 @@ gbbinom \
 
 COMMANDS = \
 	engine \
+	x_factor \
+	factor \
 	x_monom \
 	x_monoid \
 	x_relem \
@@ -224,7 +226,6 @@ COMMANDS_REDO = \
 	x_relem \
 	x_gb \
 	freemod2 \
-	x_factor \
 	x_borel \
 	gbnod
 

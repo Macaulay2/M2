@@ -52,6 +52,7 @@ LDFLAGS = @LDFLAGS@
 LOADLIBES = @LOADLIBES@
 LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
+LAPACKLIBS = @LAPACKLIBS@
 encap = @encap@
 encapsrc = @encapsrc@
 LIBGMP = @LIBGMP@
@@ -243,6 +244,11 @@ ifneq "$(prefix)" "/usr/local"
 CPPFLAGS += -I$(prefix)/include
 LDFLAGS += -L$(prefix)/lib
 endif
+endif
+
+ifeq "$(OS)" "Darwin"
+# we don't know what this does, but some apple documentation writers seem to like it:
+LDFLAGS += -bind_at_load
 endif
 
 # Local Variables:

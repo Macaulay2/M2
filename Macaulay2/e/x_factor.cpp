@@ -1,51 +1,30 @@
 // copyright Daniel R. Grayson, 1995
 
-//#if !defined(__MWERKS__)
-#if 1
+#define Matrix MaTrIx
+#include <factor.h>		// from Messollen's libfac
+#undef Matrix
+
+#include <templates/ftmpl_list.cc>
+
 #include <assert.h>
 #include <iostream>
-#define divides ignore_this_symbol /* bits/stl_function.h contains a generic one, sigh, gcc 3.0 */
-#include "interp.hpp"
-#undef divides
 #include "matrix.hpp"
 #include "z_mod_p.hpp"
 #include "Z.hpp"
 #include "frac.hpp"
 
+#warning "most of this file commented out temporarily"
 #if 0
-ostream &operator<<(ostream &o,const intarray &w) {
-#if defined(__GNUC__) && __GNUC__ >= 3
-     hex(o);
-#else
-     o << hex;
-#endif
-     for (int k = 0; ; ) {
-	  o << w[k];
-	  if (++k >= w.length()) break;
-	  o << ' ';
-     }
-#if defined(__GNUC__) && __GNUC__ >= 3
-     dec(o);
-#else
-     o << dec;
-#endif
-     return o;
-}
-#endif
 
-#define Matrix MaTrIx
-#include <factor.h>		// from Messollen's libfac
-#undef Matrix
+#define divides ignore_this_symbol /* bits/stl_function.h contains a generic one, sigh, gcc 3.0 */
+#include "interp.hpp"
+#undef divides
 
-#if 1
 // debugging display routines to be called from gdb
-void showvar(Variable &t) { cout << t << endl; }
-void showcf(CanonicalForm &t) { cout << t << endl; }
-void showcfl(CFList &t) { cout << t << endl; }
-#include <templates/ftmpl_list.cc>
-template class List<List<CanonicalForm> >;
-void showcffl(CFFList &t) { cout << t << endl; }
-#endif
+// void showvar(Variable &t) { cout << t << endl; }
+// void showcf(CanonicalForm &t) { cout << t << endl; }
+// void showcfl(CFList &t) { cout << t << endl; }
+// void showcffl(CFFList &t) { cout << t << endl; }
 
 static RingElement convert(const Ring *R, CanonicalForm h) {
      const int n = R->n_vars();
@@ -322,8 +301,5 @@ void i_factor_cmds() {
 }
 
 #else
-
-void i_factor_cmds() {
-}
 
 #endif
