@@ -207,7 +207,7 @@ test3:
 	echo 2+3 | ../bin/M2
 	touch $@
 
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 tests:: test4
 test4: ../util/screen
 	echo 2+3 | ../util/screen M2
