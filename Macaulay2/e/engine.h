@@ -1317,6 +1317,14 @@ enum gbTraceValues
 
   M2_arrayint_OrNull IM2_FF_LU_decomp(Matrix *M);
 
+
+  /**************************************************/
+  /**** Factory and libfac routines *****************/
+  /**************************************************/
+
+  const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g);
+
+
 #if defined(__cplusplus)
 }
 #endif
