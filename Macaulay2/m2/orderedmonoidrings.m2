@@ -143,7 +143,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    if not x<dx
 		    then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
 		    );
-	       new PolynomialRing from rawWeylAlgebra(R.RawRing,M.RawMonoid,diffs0,diffs1,h)
+	       new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(R.RawRing,M.RawMonoid),diffs0,diffs1,h)
 	       )
 	  else if Skew then (
 	       error "IM2_Ring_skew_polyring not implemented yet"
