@@ -200,7 +200,7 @@ lsm:
 
 ################################# configure
 # make this one last
-distclean ::; rm -f $(CONFIGURED_FILES) include/config.h include/config.h.in
+distclean ::; rm -f $(CONFIGURED_FILES) include/config.h
 
 # Local Variables:
 # mode: Makefile

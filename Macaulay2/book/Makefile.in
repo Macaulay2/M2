@@ -56,3 +56,5 @@ $(BOOKNAME).tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 
 clean :; rm -rf Macaulay2-*-book.*
 
+distclean : clean
+	rm -f Makefile
