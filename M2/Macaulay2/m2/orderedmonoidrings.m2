@@ -183,7 +183,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       )
 	  else (
 	       rawRM := rawPolynomialRing(raw R, raw M);
-	       if class R =!= PolynomialRing and R =!= ZZ and R =!= QQ then rawRM = rawQuotientRing(rawRM, raw R);
+	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
 	       new PolynomialRing from rawRM
 	       );
 	  RM.baseRings = append(R.baseRings,R);
