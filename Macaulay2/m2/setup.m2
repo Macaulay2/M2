@@ -1,6 +1,6 @@
 -- 	Copyright 1994 by Daniel R. Grayson
 
-load "version.m2"
+if not load "version.m2" then error "couldn't find file 'version.m2'"
 
 pathSeparator = if version#"OS" === "MACOS" then ":" else "/"
 

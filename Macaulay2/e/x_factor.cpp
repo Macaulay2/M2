@@ -1,6 +1,6 @@
 // copyright Daniel R. Grayson, 1995
 
-#if 1
+#if !defined(_WIN32)
 #include <assert.h>
 #include "interp.hpp"
 #include "matrix.hpp"
