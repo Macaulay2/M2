@@ -25,7 +25,7 @@ clean :;			rm -f nash printenv unsetenv \
 ci :;				cvs ci -m ''
 
 # libenv
-libenv.a : unsetenv3.o setenv3.o ; ar ru $@ $?
+libenv.a : unsetenv3.o setenv3.o ; ar ru $@ $? ; ranlib $@
 
 # bash always sets "_" to argv[0], so we simulate that when bash is out of the picture
 ENV = env _=./printenv
@@ -33,9 +33,8 @@ ENV = env _=./printenv
 # check whether the environment variables are undisturbed
 diff1 : env.nonash env.nash;	diff -u $^
 diff2 : env.nonash env.gdb;	diff -u $^
-env.nonash : $(PROGS);		./printenv >$@
-env.nash : $(PROGS);		$(ENV) $(NASH) -c "exec ./printenv" >$@
-env.gdb : $(PROGS);		$(ENV) $(TGDB) $(GDBARGS) ./printenv |$(GDBSED) >$@
+env.gdb env.nash env.nonash : $(PROGS)
+	$(ENV) ./printenv >env.nonash ; $(ENV) $(NASH) -c "exec ./printenv" >env.nash ; $(ENV) $(TGDB) $(GDBARGS) ./printenv |$(GDBSED) >env.gdb
 
 # check whether argv[0] is undisturbed
 ENV2 = env _=./printenv OLDARG0=./args

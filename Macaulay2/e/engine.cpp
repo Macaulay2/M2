@@ -19,7 +19,7 @@
 
 #include "polyring.hpp"
 
-extern void factory_setup(); // M2-factory.cpp
+extern void factory_setup_1(); // M2-factory.cpp
 
 unsigned long mutable_object::next_hash_sequence_number = 1000;
 int object::next_hash_sequence_number = -7;
@@ -57,7 +57,7 @@ void IM2_initialize()
   globalCCC = CCC::create();
 
   Random::i_random();
-  factory_setup();
+  factory_setup_1();
 }
 
 /** Engine error handling mechanism.
