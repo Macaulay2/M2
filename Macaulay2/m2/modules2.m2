@@ -889,7 +889,7 @@ document { (quote _, Module, ZZ),
 
 -----------------------------------------------------------------------------
 Module ^ Array := (M,rows) -> (
-     rows = splice rows;
+     -- rows = splice rows;
      if not M.?components
      then (
 	  if isFreeModule M then M ^ (toList rows)
@@ -915,7 +915,7 @@ Module ^ Array := (M,rows) -> (
 	       apply(#M.components, j -> 
 		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
 Module _ Array := (M,cols) -> (
-     cols = splice cols;
+     -- cols = splice cols;
      if not M.?components
      then (
 	  if isFreeModule M then M _ (toList cols)
