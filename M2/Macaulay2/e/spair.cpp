@@ -6,7 +6,7 @@ stash *gb_elem::mystash;
 stash *s_pair::mystash;
 
 int compare_type = 0;
-static int heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
+static int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
    65536, 262144, 1677721};
 
 s_pair_heap::s_pair_heap(const Monoid *MM)
@@ -151,7 +151,7 @@ void s_pair_heap::insert(s_pair *&p)
   n_in_heap[0]++;
   p = NULL;
   int i = 0;
-  while (n_in_heap[i] >= heap_size[i])
+  while (n_in_heap[i] >= spair_heap_size[i])
     {
       i++;
       heap[i] = merge(heap[i-1], heap[i]);
@@ -167,11 +167,11 @@ void s_pair_heap::insert(s_pair *&p)
 void s_pair_heap::insert(s_pair *p, int len)
 {
   int i= 0;
-  while (len >= heap_size[i]) i++;
+  while (len >= spair_heap_size[i]) i++;
   heap[i] = merge(p, heap[i]);
   n_in_heap[i] += len;
   p = NULL;
-  while (n_in_heap[i] >= heap_size[i])
+  while (n_in_heap[i] >= spair_heap_size[i])
     {
       i++;
       heap[i] = merge(heap[i-1], heap[i]);

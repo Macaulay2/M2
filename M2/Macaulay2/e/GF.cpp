@@ -406,6 +406,15 @@ ring_elem GF::gcd_extended(const ring_elem f, const ring_elem,
   return ONE;
 }
 
+void GF::syzygy(const ring_elem a, const ring_elem b,
+		ring_elem &x, ring_elem &y) const
+{
+  x = GF::from_int(1);
+  y = GF::divide(a,b);
+  GF::negate_to(y);
+}
+
+
 bool GF::is_homogeneous(const ring_elem) const
 {
   return true;

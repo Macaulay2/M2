@@ -111,6 +111,13 @@ public:
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
 				  ring_elem &u, ring_elem &v) const = 0;
 
+  virtual void syzygy(const ring_elem a, const ring_elem b,
+		      ring_elem &x, ring_elem &y) const = 0;
+  // Constructs elements x and y in the ring s.t. ax + by = 0.  This syzygy is
+  // chosen as simply as possible.  For example, over QQ, x is chosen 
+  // to be positive.  The routine must handle the case when a=0, but can
+  // ignore the case when b=0... (Really?)
+
   virtual ring_elem random() const;
   virtual ring_elem random(int homog, const int *deg) const;
 

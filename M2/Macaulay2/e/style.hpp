@@ -55,4 +55,10 @@ const int INCOMPARABLE = 2;
 
 typedef enum {FIRST, LAST} direction;
 
+// Used for all of the heap types: polynomial, vector, resolution vectors.
+#define GEOHEAP_SIZE 15
+
+extern int heap_size[GEOHEAP_SIZE];
+
+
 #endif

@@ -92,6 +92,9 @@ public:
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
 				  ring_elem &u, ring_elem &v) const;
 
+  virtual void syzygy(const ring_elem a, const ring_elem b,
+		      ring_elem &x, ring_elem &y) const;
+
   virtual ring_elem random() const;
   virtual ring_elem random(int homog, const int *deg) const;
 

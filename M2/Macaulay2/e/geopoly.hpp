@@ -13,7 +13,6 @@
 //    fields of this structure type should include:
 //    next, coeff
 
-const int GEOHEAP_SIZE = 15;
 
 class polyheap
 {
@@ -33,11 +32,6 @@ public:
 
   Nterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
-
-static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
-				    16384, 65536, 262144, 1048576, 4194304,
-				    16777216, 67108864, 268435456,
-				    1073741824};
 
 inline polyheap::polyheap(const Ring *FF)
 : F(FF),

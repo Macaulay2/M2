@@ -172,7 +172,7 @@ bool Z::is_unit(const ring_elem f) const
 {
   mpz_ptr a = MPZ_VAL(f);
   return (mpz_cmp_si(a, 1)==0 ||
-	  mpz_cmp_si(a, (unsigned)-1)==0);
+	  mpz_cmp_si(a, -1)==0);
 }
 
 bool Z::is_zero(const ring_elem f) const
@@ -346,6 +346,39 @@ ring_elem Z::gcd_extended(const ring_elem f, const ring_elem g,
   u = MPZ_RINGELEM(u1);
   v = MPZ_RINGELEM(v1);
   return MPZ_RINGELEM(result);
+}
+
+void Z::syzygy(const ring_elem a, const ring_elem b,
+	       ring_elem &x, ring_elem &y) const
+{
+  // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
+  if (Z::is_zero(a))
+    {
+      x = Z::from_int(1);
+      y = Z::from_int(0);
+      return;
+    }
+  mpz_ptr bb = MPZ_VAL(b);
+  if (mpz_cmp_ui(bb,1) == 0)
+    {
+      x = Z::from_int(1);
+      y = Z::negate(a);
+      return;
+    }
+  if (mpz_cmp_si(bb,-1) == 0)
+    {
+      x = Z::from_int(1);
+      y = Z::copy(a);
+      return;
+    }
+  ring_elem g = Z::gcd(a,b);
+  y = Z::divide(a,g);
+  x = Z::divide(b,g);
+  Z::remove(g);
+  if (mpz_sgn(MPZ_VAL(x)) > 0)
+    Z::negate_to(y);
+  else
+    Z::negate_to(x);
 }
 
 ring_elem Z::eval(const RingMap *map, const ring_elem f) const
