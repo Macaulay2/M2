@@ -612,13 +612,10 @@ erase(s:Symbol,table:SymbolHashTable):bool := (
      false
      );
 erase(s:Symbol):bool := (
-     p := globalDictionaryList;
+     d := globalDictionary;
      while (
-	  d := p.dictionary;
-	  while (
-	       if erase(s,d.symboltable) then return(true);
-	       d != d.outerDictionary ) do d = d.outerDictionary;
-	  p != p.next) do p = p.next;
+	  if erase(s,d.symboltable) then return(true);
+	  d != d.outerDictionary ) do d = d.outerDictionary;
      false);
 erase(e:Expr):Expr := (
      when e is s:SymbolClosure do if erase(s.symbol) then e
@@ -1191,7 +1188,7 @@ getGlobalSymbol(e:Expr):Expr := (
 	  w := makeUniqueWord(s,parseWORD);
 	  when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
 	  is null do (
-	       t := makeSymbol(w,dummyPosition,globalDictionaryList.dictionary);
+	       t := makeSymbol(w,dummyPosition,globalDictionary);
 	       globalFrame.values.(t.frameindex)))
      else WrongArgString());
 setupfun("getGlobalSymbol",getGlobalSymbol);
@@ -1271,14 +1268,14 @@ setupfun("frames", frames);
 dictionaries(e:Expr):Expr := (
      when e
      is a:Sequence do (
-	  if length(a) == 0 then (		    -- get the current globalDictionaryList
-	       g := globalDictionaryList;
+	  if length(a) == 0 then (		    -- get the current globalDictionary list
+	       g := globalDictionary;
 	       n := 0;
-	       while ( n = n+1; g != g.next ) do g = g.next;
-	       g = globalDictionaryList;
-	       Expr(list(new Sequence len n do while true do ( provide Expr(g.dictionary); g = g.next ))))
+	       while ( n = n+1; g != g.outerDictionary ) do g = g.outerDictionary;
+	       g = globalDictionary;
+	       Expr(list(new Sequence len n do while true do ( provide Expr(g); g = g.outerDictionary ))))
      	  else WrongNumArgs(0))
-     is t:List do (					    -- set the current globalDictionaryList
+     is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
 	  if n == 0 then return(WrongArg("expected a nonempty list of dictionaries"));
@@ -1289,9 +1286,10 @@ dictionaries(e:Expr):Expr := (
 	       )
 	  else return(WrongArg("expected a list of dictionaries"));
 	  if !sawM2dict then return(WrongArg("expected a list of dictionaries containing Macaulay2Dictionary"));
-     	  y := when s.(n-1) is d:Dictionary do DictionaryList(d,self) else dummyDictionaryList;
-	  for i from n-2 to 0 by -1 do when s.i is d:Dictionary do y = DictionaryList(d,y) else nothing;
-	  globalDictionaryList = y;
+     	  a := new array(Dictionary) len n do foreach x in s do when x is d:Dictionary do provide d else nothing;
+     	  a.(n-1).outerDictionary = a.(n-1);
+     	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);
+	  globalDictionary = a.0;
 	  e)
      else WrongNumArgs(0));
 setupfun("dictionaries", dictionaries);

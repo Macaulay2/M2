@@ -837,20 +837,17 @@ extract(v:varstringarray):array(string) := new array(string) len v.n do foreach 
 export completions(s:string):array(string) := (
      n := length(s);
      v := newvarstringarray(6);
-     p := globalDictionaryList;
+     d := globalDictionary;
      while (
-	  d := p.dictionary;
-	  while (
-	       foreach bucket in d.symboltable.buckets do (
-		    b := bucket;
-		    while true do when b
-		    is null do break
-		    is q:SymbolListCell do (
-			 t := q.entry.word.name;
-			 if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
-			 b = q.next; ));
-	       d != d.outerDictionary ) do d = d.outerDictionary;
-	  p != p.next ) do p = p.next;
+	  foreach bucket in d.symboltable.buckets do (
+	       b := bucket;
+	       while true do when b
+	       is null do break
+	       is q:SymbolListCell do (
+		    t := q.entry.word.name;
+		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
+		    b = q.next; ));
+	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));
 
 export commonAncestor(x:HashTable,y:HashTable):HashTable := (

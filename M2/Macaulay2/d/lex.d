@@ -193,7 +193,7 @@ skipwhite(file:PosFile):void := (
 
 -- this errorToken means there was a parsing error or an error reading the file!
 export errorToken := Token(dummyWord,dummyPosition,
-     globalDictionaryList.dictionary,			    -- should replace this by dummyDictionary, I think
+     globalDictionary,			    -- should replace this by dummyDictionary, I think
      dummySymbol,false);
 
 gettoken1(file:PosFile,sawNewline:bool):Token := (
@@ -202,17 +202,17 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  skipwhite(file);
 	  pos := copy(file.pos);
 	  ch := peek(file);
-     	  if iseof(ch) then return(Token(wordEOF,pos,globalDictionaryList.dictionary,dummySymbol,sawNewline))
+     	  if iseof(ch) then return(Token(wordEOF,pos,globalDictionary,dummySymbol,sawNewline))
      	  else if iserror(ch) then return(errorToken)
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return(Token(newlineW,pos,globalDictionaryList.dictionary,dummySymbol,sawNewline)))
+	       return(Token(newlineW,pos,globalDictionary,dummySymbol,sawNewline)))
 	  else if isalpha(ch) && ch != int('\'') then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return(Token(
 			 makeUniqueWord(takestring(tokenbuf),parseWORD),
-			 pos,globalDictionaryList.dictionary,dummySymbol,sawNewline)))
+			 pos,globalDictionary,dummySymbol,sawNewline)))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       while isdigit(peek(file)) do (
@@ -233,28 +233,28 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       s := takestring(tokenbuf);
 	       return(Token(
 			 Word(s,typecode,0, parseWORD),
-			 pos,globalDictionaryList.dictionary,dummySymbol,sawNewline))) 
+			 pos,globalDictionary,dummySymbol,sawNewline))) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
 	       when getstringslashes(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return(errorToken)
 		    )
-	       is word:Word do return(Token(word,pos,globalDictionaryList.dictionary,dummySymbol,sawNewline)))
+	       is word:Word do return(Token(word,pos,globalDictionary,dummySymbol,sawNewline)))
 	  else if isquote(ch) then (
 	       when getstring(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return(errorToken)
 		    )
-	       is word:Word do return(Token(word,pos,globalDictionaryList.dictionary,dummySymbol,sawNewline)))
+	       is word:Word do return(Token(word,pos,globalDictionary,dummySymbol,sawNewline)))
 	  else (
 	       when recognize(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return(errorToken)
 		    )
-	       is word:Word do return(Token(word,pos,globalDictionaryList.dictionary,dummySymbol,sawNewline)))));
+	       is word:Word do return(Token(word,pos,globalDictionary,dummySymbol,sawNewline)))));
 export gettoken(file:PosFile,obeylines:bool):Token := (
      sawNewline := false;
      while true do (
