@@ -4,48 +4,52 @@
 --
 -- 
 
-strat = {}
+strat = LongPolynomial;
 
 checkEngine := (f, str) -> (
   str2 := sendgg (ggPush f, ggsee);
   assert(str == str2);)
 
 -- Easy first case
-simplegb0 = () -> (
+
     R = ZZ/101[a..d];
     m = matrix{{a*b-c^2, c*b}};
-    assert(generators gb(m, Strategy=>strat) == matrix{{c*b, a*b-c^2, c^3}}))
+    assert(generators gb(m, Strategy=>strat) == matrix{{a*b-c^2, b*c, c^3}})
 
-simplegb1 = () -> (
+
     R = ZZ/101[a,b,c,d];
     m = matrix{{a*b - c^2, a*c - d^2, b*c - c*d}};
     checkEngine(generators gb(m, Strategy=>strat),
-       "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 " | newline);
+       -- "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 "
+          "ab-c2 ac-d2 bc-cd c3-d3 bd2-d3 c2d2-ad3 a2d3-cd4 "
+       | newline);
     assert(image m == image matrix 
-       {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}}))
+       {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}})
 
-simplegb2 = () -> (
+
     R = ZZ/101[a,b,c,d, Degrees => {1,2,3,4}];
     m = matrix{{a^4*b - c^2, a*c - b^2, c^3 - a*d^2}};
     checkEngine(generators gb(m, Strategy => strat),
-       "b2-ac a4b-c2 a5c-bc2 c3-ad2 a6d2-abcd2 " | newline))
+       "b2-ac a4b-c2 a5c-bc2 c3-ad2 a6d2-abcd2 " | newline)
 
-simplegb3 = () -> (
+
     R = ZZ/101[symbol r,symbol s,symbol t,symbol a..symbol f,
               Degrees=>{1,1,1,3,3,3,3,3,3},
 	      MonomialOrder => Eliminate 3];
-    m = matrix {{r^3, r^2*s, r^2*t, r*t^2, r*s*t, t^3}}
-          - matrix {{a,b,c,d,e,f}};
+    m = matrix {{r^3, r^2*s, r^2*t, r*t^2, r*s*t, t^3}} - matrix {{a,b,c,d,e,f}};
     n = selectInSubring(1,generators gb(m, Strategy=>strat));
-    checkEngine(n, "de-bf d2-cf cd-af bd-ce c2-ad bc-ae ce2-b2f ae3-b3f " | newline))
+    checkEngine(n, 
+	 "bc-ae c2-ad cd-af bd-ce de-bf d2-cf ce2-b2f ae3-b3f "
+   	 -- old one : "de-bf d2-cf cd-af bd-ce c2-ad bc-ae ce2-b2f ae3-b3f "
+	 | newline)
 
-simplegb4 = () -> (
+
     -- Easy first case computing minimal generators
     R = ZZ/101[a..d];
     m = matrix{{a*b-c^2, b*c, c^3}};
-    assert(mingens image m == matrix{{b*c, a*b-c^2}}))
+    assert(mingens image m == matrix{{a*b-c^2, b*c}})
 
-testgb1 = () -> (
+
     -- 3 by 3 commuting matrices
     R = ZZ/101[vars(0..17)];
     m1 = genericMatrix(R,R_0,3,3);
@@ -61,9 +65,9 @@ testgb1 = () -> (
 		{{2}, {3}, {3}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, 
 		{4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}, 
 		{4}, {4}, {4}, {4}, {4}, {4}, {4}, {4}});
- )
 
-testgb2 = () -> (
+
+
     -- test Hilbert-driven Groebner basis
     R = ZZ/101[vars(0..17)];
     m1 = genericMatrix(R,R_0,3,3);
@@ -73,9 +77,9 @@ testgb2 = () -> (
     h1 = poincare cokernel I;
     (cokernel J).poincare = h1;
     g = generators gb(J, Strategy=>strat);
-    assert(image g == image generators gb I))
+    assert(image g == image generators gb I)
   
-testgb3 = () -> (
+
     -- another Hilbert-driven test
     R = ZZ/101[a..f];
     h = poincare cokernel matrix{{a^2, b^2, c^2, d^2, e^2}};
@@ -83,14 +87,13 @@ testgb3 = () -> (
     g = generators gb I;
     J = matrix entries I;
     (cokernel J).poincare = h;
-    assert(image g == image generators gb(J,Strategy=>strat)))
+    assert(image g == image generators gb(J,Strategy=>strat))
 
-testgb4 = () -> (
+
     -- an elimination, first we compute using rlex, obtaining Hilbert function
     -- then we do the same computation with lex order.
     R = ZZ/101[r,s,t,a.. f,Degrees=>{1,1,1,2,2,2,2,2,2}];
-    I = matrix{{r^2, r*s, r*t, s^2, s*t, t^2}} -
-          genericMatrix(R,a,1,6);
+    I = matrix{{r^2, r*s, r*t, s^2, s*t, t^2}} - genericMatrix(R,a,1,6);
     h1 = poincare cokernel I;
     R1 = ZZ/101[r,s,t,a..f,
                Degrees=>{1,1,1,2,2,2,2,2,2},
@@ -98,17 +101,17 @@ testgb4 = () -> (
     J = substitute(I, R1);
     J.poincare = h1;
     g = gb(J, Strategy=>strat);
-    assert(image generators gb I == image substitute(generators g, R)))
+    assert(image generators gb I == image substitute(generators g, R))
 
-testgb5 = () -> (
+
     -- finding minimal generators
     R = ZZ/5[vars(0..4)];
     f = a*b^2 + c^3;
     g = (a+b+c)^3;
     m = matrix{{a*f + b*g, f, g}};
-    assert(mingens image m == matrix{{f,g+2*f}}))
+    assert(mingens image m == matrix{{g+2*f,f}})
 
-testquot1 = () -> (
+
     -- working over quotient rings
     R = ZZ/101[symbol a..symbol d]/(a^2+b^2+c^2+d^2);
     m1 = vars R;
@@ -120,9 +123,9 @@ testquot1 = () -> (
     assert(numgens source m4 == 8);
     assert(m1 * m2 == 0);
     assert(m2 * m3 == 0);
-    assert(m3 * m4 == 0))
+    assert(m3 * m4 == 0)
 
-testquot2 = () -> (
+
     -- second test over quotient ring
     A = ZZ/32003[symbol x, symbol y, symbol z, symbol t, Degrees => {2,1,1,1}];
     B = A/(x*y+z^3+z*t^2);
@@ -137,9 +140,9 @@ testquot2 = () -> (
                    {{z, 0, y, 0, x, t^2}, {0, y, -z, t^2, 0, x}}))
            or
            (E == cokernel map(B^{3,3}, , 
-                   {{0, y, -z, t^2, 0, x}, {z, 0, y, 0, x, t^2}}))))
+                   {{0, y, -z, t^2, 0, x}, {z, 0, y, 0, x, t^2}})))
 
-testquot3 = () -> (
+
     -- second test over quotient ring
     A = ZZ/32003[symbol x, symbol y, symbol z, symbol t];
     B = A/(x*y+z^3+z*t^2);
@@ -155,23 +158,4 @@ testquot3 = () -> (
 --           or
 --           (E == cokernel map(B^{3,3}, , 
 --                   {{0, y, -z, t^2, 0, x}, {z, 0, y, 0, x, t^2}})))
-    )
 
-testGB = () -> (
-    strat = LongPolynomial;
-    simplegb0();  -- make sure basic GB's are up
-    simplegb1();  -- make sure basic GB's are up
-    simplegb2(); -- similiar, but with quasi-degrees
-    simplegb3(); -- with other monomial order
-    simplegb4(); -- simple mingens test
-    testgb1();
-    testgb2();
-    testgb3();
-    testgb4();
-    testgb5();
-    testquot1();
-    testquot2();
-    testquot3();
-  )
-  
-testGB()
