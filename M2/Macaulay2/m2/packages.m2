@@ -54,7 +54,7 @@ globalReleaseFunction = (X,x) -> (
      )
 
 scan(
-     {Type,ScriptedFunctor}, 
+     {Type,ScriptedFunctor,Function,Command,Manipulator}, 
      X -> (
 	  X.GlobalAssignHook = globalAssignFunction; 
 	  X.GlobalReleaseHook = globalReleaseFunction;
@@ -163,18 +163,6 @@ exportMutable {
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  }
-
-Command.GlobalAssignHook = 
-Function.GlobalAssignHook = 
-Manipulator.GlobalAssignHook = (X,x) -> ReverseDictionary#X = x
-
-Function.GlobalReleaseHook = 
-Manipulator.GlobalReleaseHook = (X,x) -> remove(ReverseDictionary,x)
-
-Command.GlobalReleaseHook = (X,x) -> (
-     stderr << "warning: " << toString X << " redefined" << endl;
-     remove(ReverseDictionary,x);
-     )
 
 closePackage = method()
 closePackage String := title -> (

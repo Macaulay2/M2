@@ -42,7 +42,9 @@ texMath PolynomialRing := R -> (
      else (texMath last R.baseRings)|(texMath expression monoid R)
      )
 
-net PolynomialRing := R -> net expression R
+net PolynomialRing := R -> (
+     if ReverseDictionary#?R then toString ReverseDictionary#R
+     else net expression R)
 toString PolynomialRing := toExternalString PolynomialRing := R -> toString expression R
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
