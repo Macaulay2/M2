@@ -844,6 +844,8 @@ RingElementOrNull * GB_comp::compute_hilbert_function() const
   // using also the degrees of _F.
   // Don't forget the quotient monomials too!
   // Returns NULL if interrupted.
+#warning "not implemented yet"
+  return NULL;
 }
 
 //---- state machine (roughly) for the computation ----
@@ -1200,6 +1202,9 @@ const FreeModuleOrNull *GB_comp::get_free(int level, M2_bool minimal)
     return XXX;
   else
     return YYY;
+#else
+#warning "unimplemented"
+  return NULL;
 #endif
 }
 
@@ -1318,7 +1323,8 @@ int GB_comp::status_level(int level,
 			   int * complete_up_through_this_degree)
   /* Same return values */
 {
-  // TODO
+#warning "unimplemented"
+  return 0;
 }
 
 const M2_arrayint GB_comp::betti(int type)
@@ -1328,7 +1334,8 @@ const M2_arrayint GB_comp::betti(int type)
      3:
   */
 {
-  // TODO
+#warning "unimplemented"
+  return NULL;
 }
   
 void GB_comp::text_out(buffer &o)

@@ -17,8 +17,8 @@ Nmi_node::~Nmi_node()
     delete baggage();
 }
 
-MonomialIdeal::MonomialIdeal(const Ring *R, queue<Bag *> &elems, queue<Bag *> &rejects)
-  : R(R), mi(0), count(0)
+MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems, queue<Bag *> &rejects)
+  : R(R0), mi(0), count(0)
 {
   array< queue<Bag *> *> bins;
   Bag *b, *b1;
@@ -51,8 +51,8 @@ MonomialIdeal::MonomialIdeal(const Ring *R, queue<Bag *> &elems, queue<Bag *> &r
       }
 }
 
-MonomialIdeal::MonomialIdeal(const Ring *R, queue<Bag *> &elems)
-  : R(R), mi(0), count(0)
+MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems)
+  : R(R0), mi(0), count(0)
 {
   array< queue<Bag *> *> bins;
   Bag *b;
@@ -92,16 +92,16 @@ MonomialIdeal * MonomialIdeal::copy() const
   return result;
 }
 
-bool MonomialIdeal::is_equal(const MonomialIdeal &mi) const
+bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
 {
-  if (this == &mi) return true;
-  if (length() != mi.length()) return false;
+  if (this == &mi0) return true;
+  if (length() != mi0.length()) return false;
   Index<MonomialIdeal> i = first();
-  Index<MonomialIdeal> j = mi.first();
+  Index<MonomialIdeal> j = mi0.first();
   while (i.valid())
     {
       const int *m = operator[](i)->monom().raw();
-      const int *n = mi[j]->monom().raw();
+      const int *n = mi0[j]->monom().raw();
       if (!varpower::is_equal(m, n))
 	return false;
       i++;

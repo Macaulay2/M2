@@ -22,9 +22,9 @@ struct gb_elem
   gb_elem()
     : next(NULL), next_min(NULL), pair_list(NULL),
       f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0), me(0) {}
-  gb_elem(gbvector *f, gbvector *fsyz, int is_min) 
+  gb_elem(gbvector *f0, gbvector *fsyz0, int is_min0) 
     : next(NULL), next_min(NULL), pair_list(NULL),
-      f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min), me(0) {}
+      f(f0), fsyz(fsyz0), lead_exp(NULL), is_min(is_min0), me(0) {}
 };
 
 struct s_pair

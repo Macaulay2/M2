@@ -455,7 +455,7 @@ int HermiteComputation::contains(const Matrix *m)
 bool HermiteComputation::is_equal(const gb_comp *q1)
 {
   if (kind() != q1->kind()) return false;
-  HermiteComputation *qq = (HermiteComputation *) q1;
+  const HermiteComputation *qq = (const HermiteComputation *) q1;
   if (gens->rows()->rank() != qq->gens->rows()->rank()) return false;
 
   hm_elem *q = qq->GB_list;

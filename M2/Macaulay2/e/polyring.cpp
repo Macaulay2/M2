@@ -76,8 +76,8 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
     // Also: A may be non-commutative.  In which case we must
     // make a polynomial ring, and then make a skew, weyl or solvable algebra.
 	  
-    const PolynomialRing *P = A->cast_to_PolynomialRing();
-    if (P == 0)
+    const PolynomialRing *PP = A->cast_to_PolynomialRing();
+    if (PP == 0)
       {
 	// K is not a polynomial ring, but is not basic either.
 	// So we must make a simple polynomial ring over A.
@@ -88,9 +88,9 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
 	// A is a polynomial ring.
 	// Make sure it is commutative (otherwise, this operation is not
 	// permitted).  If so, make the tensor product ring.
-	const Monoid *M0 = P->Nmonoms();
+	const Monoid *M0 = PP->Nmonoms();
 	const Monoid *newM = Monoid::tensor_product(Nmonoms(), M0);
-	const PolynomialRing *P1 = PolynomialRing::create(P->Ncoeffs(), newM);
+	const PolynomialRing *P1 = PolynomialRing::create(PP->Ncoeffs(), newM);
 #if 0
 	if (!A->is_commutative_ring())
 	  A->create_polynomial_ring(P1);

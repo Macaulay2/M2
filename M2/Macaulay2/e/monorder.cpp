@@ -397,8 +397,8 @@ void mon_order::decode(const int *m, int *exp) const
     }
 }
 
-grlex_mon_order::grlex_mon_order(const M2_arrayint degs, const M2_arrayint weights)
-: mon_order(MO1_GRLEX, degs, weights)
+grlex_mon_order::grlex_mon_order(const M2_arrayint degs0, const M2_arrayint weights0)
+: mon_order(MO1_GRLEX, degs0, weights0)
 {
 }
 grlex_mon_order::~grlex_mon_order()
@@ -433,8 +433,8 @@ void grlex_mon_order::decode(const int *m, int *exp) const
     exp[i] = (m[n-i-1] - m[n-i]) / degs[i];
 }
 
-grlex1_mon_order::grlex1_mon_order(const M2_arrayint degs, const M2_arrayint weights)
-: mon_order(MO1_GRLEX, degs, weights)
+grlex1_mon_order::grlex1_mon_order(const M2_arrayint degs0, const M2_arrayint weights0)
+: mon_order(MO1_GRLEX, degs0, weights0)
 {
 }
 grlex1_mon_order::~grlex1_mon_order()
@@ -470,9 +470,9 @@ void grlex1_mon_order::decode(const int *m, int *exp) const
 
 //---- Product order of several rev lex blocks ---//
 
-product_mon_order::product_mon_order(const M2_arrayint degs, const M2_arrayint blk,
-				     const M2_arrayint weights)
-: mon_order(MO1_PRODUCT, degs, weights),
+product_mon_order::product_mon_order(const M2_arrayint degs0, const M2_arrayint blk,
+				     const M2_arrayint weights0)
+: mon_order(MO1_PRODUCT, degs0, weights0),
   nblocks(blk->len),
   blocks(new int[blk->len])
 {
@@ -536,11 +536,11 @@ void product_mon_order::decode(const int *m, int *exp) const
 
 //---- Elimination order refined by graded rev lex ---//
 
-elim_mon_order::elim_mon_order(const M2_arrayint degs, 
-			       unsigned int n, 
-			       const M2_arrayint weights)
-: mon_order(MO1_ELIM, degs, weights),
-  nelim(n)
+elim_mon_order::elim_mon_order(const M2_arrayint degs0, 
+			       unsigned int n0, 
+			       const M2_arrayint weights0)
+: mon_order(MO1_ELIM, degs0, weights0),
+  nelim(n0)
 {
 }
 elim_mon_order::~elim_mon_order()

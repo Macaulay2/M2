@@ -61,8 +61,9 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
   bool is_graded = (R->is_graded() && m->is_homogeneous());
   bool ring_is_base = R->is_basic_ring();
   bool base_is_ZZ = R->Ncoeffs()->is_ZZ(); 
-         // NOT QUITE!!  Need to know if it is ZZ or QQ
-  bool base_is_field = !R->Ncoeffs()->is_ZZ();
+#warning "NOT QUITE!!  Need to know if it is ZZ or QQ"
+#warning "unused variable commented out"
+  // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
   if (algorithm == 1)
     return gbA::create(m, 
@@ -162,6 +163,9 @@ ComputationOrNull *Computation::choose_res(const Matrix *m,
 	return gbres_comp::create(m, max_level, max_slanted_degree,
 				  !resolve_cokernel, strategy | USE_HILB);
       }
+#else
+#warning "unimplemented"
+      return NULL;
 #endif
 }
 

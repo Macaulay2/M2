@@ -2,16 +2,16 @@
 
 #include "vector.hpp"
 
-inline Vector::Vector(const FreeModule *F) : 
-  F(F), val(0)
+inline Vector::Vector(const FreeModule *F0) : 
+  F(F0), val(0)
 {
 }
-inline Vector::Vector(const FreeModule *F, const RingElement *r, int i) : 
-  F(F), val(F->raw_term(F->get_ring()->copy(r->get_value()),i))
+inline Vector::Vector(const FreeModule *F0, const RingElement *r, int i) : 
+  F(F0), val(F0->raw_term(F0->get_ring()->copy(r->get_value()),i))
 {
 }
-inline Vector::Vector(const FreeModule *F, const vec v) : 
-  F(F), val(v)
+inline Vector::Vector(const FreeModule *F0, const vec v) : 
+  F(F0), val(v)
 {
 }
 
@@ -192,7 +192,7 @@ M2_arrayint Vector::degree() const
       return 0;
     }
 
-  const FreeModule *F = free_of();
+  const FreeModule *F2 = free_of();
   const Ring *R = get_ring();
   const Monoid *D = R->degree_monoid();
 
@@ -200,7 +200,7 @@ M2_arrayint Vector::degree() const
 
   int *mon = new int[D->monomial_size()];
 
-  F->degree(get_value(), mon);
+  F2->degree(get_value(), mon);
   D->to_expvector(mon, result->array);
 
   delete [] mon;

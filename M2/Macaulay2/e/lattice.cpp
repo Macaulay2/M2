@@ -197,9 +197,9 @@ int MatrixComputation::getStatus() const
 // Fraction free gaussian elimination //
 ////////////////////////////////////////
 
-FF_LUComputation::FF_LUComputation(SparseMutableMatrix *M)
-  : R(M->getRing()),
-    M(M),
+FF_LUComputation::FF_LUComputation(SparseMutableMatrix *M0)
+  : R(M0->getRing()),
+    M(M0),
     col_perm(0),
     need_div(0)
 {
@@ -244,13 +244,13 @@ bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)
   return true;
 }
 
-void FF_LUComputation::do_pivots(int lo, int hi, int pivot_col)
+void FF_LUComputation::do_pivots(int lo, int hi, int pivotCol)
 {
   // Here we clear out row r in columns lo..hi, using the pivot.
   R->remove(lastpivot);
   lastpivot = pivot;
-  pivot = M->leadCoefficient(pivot_col);
-  int pivot_row = M->leadRow(pivot_col);
+  pivot = M->leadCoefficient(pivotCol);
+  int pivot_row = M->leadRow(pivotCol);
   
   for (int i=lo; i<=hi; i++)
     {
@@ -258,11 +258,11 @@ void FF_LUComputation::do_pivots(int lo, int hi, int pivot_col)
       if (r == pivot_row)
 	{
 	  // Need to modify column i:
-	  // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivot_col]
+	  // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivotCol]
 	  ring_elem a = M->leadCoefficient(i);  // This does a copy.
 	  R->negate_to(a);
 	  M->scaleColumn(i,pivot);
-	  M->addColumnMultiple(pivot_col,a,i);
+	  M->addColumnMultiple(pivotCol,a,i);
 	  R->remove(a);
 	}	  
 

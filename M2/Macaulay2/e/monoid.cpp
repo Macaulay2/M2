@@ -21,17 +21,17 @@ monoid_info::monoid_info()
 }
 
 
-monoid_info::monoid_info(MonomialOrdering *mo, 
+monoid_info::monoid_info(MonomialOrdering *mo2, 
 			 mon_order *mmo,
 			 M2_stringarray s,
 			 const Monoid *deg_monoid,
 			 M2_arrayint degs)
-  : nvars(IM2_MonomialOrdering_nvars(mo)),
+  : nvars(IM2_MonomialOrdering_nvars(mo2)),
   varnames(s),
   degvals(degs),
-  degree_monoid(deg_monoid), _mo(mo), mo(mmo)
+  degree_monoid(deg_monoid), _mo(mo2), mo(mmo)
 { 
-  int ngroup = IM2_MonomialOrdering_n_invertible_vars(mo);
+  int ngroup = IM2_MonomialOrdering_n_invertible_vars(mo2);
     
   use_packing = (ngroup == 0);
   isgroup = (ngroup == nvars);

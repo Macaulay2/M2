@@ -14,14 +14,14 @@ void gb2_comp::setup(FreeModule *FFsyz,
 {
   level = lev;
   int i;
-  const PolynomialRing *R = FFsyz->get_ring()->cast_to_PolynomialRing();
-  if (R == NULL)
+  const PolynomialRing *R2 = FFsyz->get_ring()->cast_to_PolynomialRing();
+  if (R2 == NULL)
     {
       ERROR("internal error - ring is not a polynomial ring");
       // MES: throw an error here.
       assert(0);
     }
-  GR = R->get_gb_ring();
+  GR = R2->get_gb_ring();
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
 
@@ -64,14 +64,14 @@ void gb2_comp::setup(FreeModule *FFsyz,
   state = STATE_GENS;
 }
 
-gb2_comp::gb2_comp(FreeModule *Fsyz,
-		   gb_node *gens,
+gb2_comp::gb2_comp(FreeModule *Fsyz0,
+		   gb_node *gens0,
 		   int lodegree,
 		   int origsyz,
-		   int level,
+		   int level0,
 		   int strat)
 {
-  setup(Fsyz,gens,lodegree,origsyz,level,strat);
+  setup(Fsyz0,gens0,lodegree,origsyz,level0,strat);
 }
 void gb2_comp::set_output(gb_node *p) 
 {
@@ -255,12 +255,12 @@ void gb2_comp::find_pairs(gb_elem *p)
       delete b;
     }
 
-  int is_ideal = (F->rank() == 1 && orig_syz == 0);
+  int is_ideal2 = (F->rank() == 1 && orig_syz == 0);
   for (j = mi->first(); j.valid(); j++)
     {
       n_pairs++;
       s_pair *q = (s_pair *) (*mi)[j]->basis_ptr();
-      if (is_ideal && q->syz_type == SPAIR_PAIR)
+      if (is_ideal2 && q->syz_type == SPAIR_PAIR)
 	{
 	  // MES: the following line is suspect, for Schreyer orders
 	  M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);
@@ -652,10 +652,10 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
     }
   else
     {
-      ring_elem denom;
+      ring_elem denom2;
       gb_reduce(f,fsyz);
       GR->gbvector_remove(fsyz);
-      GR->gbvector_remove_content(f,NULL,denom);
+      GR->gbvector_remove_content(f,NULL,denom2);
       if (f != NULL)
 	{
 	  //schreyer_append(f);

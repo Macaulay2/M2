@@ -26,7 +26,7 @@ int exponent_table_get(exponent_table *E, const exponent expon);
 /* Returns the value associated to 'expon', returning zero, if 'expon'
    is not in the table */
 
-void ** exponent_table_to_array(exponent_table *E);
+const void ** exponent_table_to_array(exponent_table *E);
 
 #if defined(__cplusplus)
 }

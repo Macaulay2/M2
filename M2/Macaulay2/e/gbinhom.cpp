@@ -86,7 +86,7 @@ void GBinhom_comp::add_gens(int lo, int hi, const Matrix *m)
     }
 }
 
-void GBinhom_comp::force(const Matrix *m, const Matrix *gb, const Matrix *mchange,
+void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchange,
 		    const Matrix *msyz)
 {
   int csyz = (msyz->n_cols() > 0);
@@ -95,11 +95,11 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb, const Matrix *mchang
   Fsyz = mchange->rows();
   syz = (Matrix *) msyz;
 
-  for (int i=0; i<gb->n_cols(); i++)
+  for (int i=0; i<gb0->n_cols(); i++)
     {
-      if ((*gb)[i] == NULL) continue;
+      if ((*gb0)[i] == NULL) continue;
       ring_elem denom1, denom2, u, v;
-      gbvector *f = GR->gbvector_from_vec(F, (*gb)[i], denom1);
+      gbvector *f = GR->gbvector_from_vec(F, (*gb0)[i], denom1);
       gbvector *fsyz = GR->gbvector_from_vec(Fsyz, (*mchange)[i], denom2);
       K->syzygy(denom1,denom2,u,v);
       GR->gbvector_mult_by_coeff_to(f,u);
@@ -115,11 +115,11 @@ GBinhom_comp::GBinhom_comp(const Matrix *m, int csyz, int nsyz, int strat)
   set_up(m, csyz, nsyz, strat);
 }
 
-GBinhom_comp::GBinhom_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
-		 const Matrix *syz)
+GBinhom_comp::GBinhom_comp(const Matrix *m, const Matrix *gb0, const Matrix *mchange, 
+		 const Matrix *syz0)
   : gb_comp(COMP_GBINHOM)
 {
-  force(m, gb, mchange, syz);
+  force(m, gb0, mchange, syz0);
 }
 
 void GBinhom_comp::remove_pair(s_pair *& p)
@@ -297,8 +297,8 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 	      
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q = new_var_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q, vplcm));
+	  s_pair *q2 = new_var_pair(p, find_pairs_lcm);
+	  elems.insert(new Bag(q2, vplcm));
 	}
     }
 
@@ -312,8 +312,8 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 	  M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
-	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
-	  elems.insert(new Bag(q, vplcm));
+	  s_pair *q2 = new_ring_pair(p, find_pairs_lcm);
+	  elems.insert(new Bag(q2, vplcm));
 	}
     }
 
@@ -338,8 +338,8 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   MonomialIdeal mi(GR->get_flattened_ring(), elems, rejects);
   while (rejects.remove(b))
     {
-      s_pair *q = (s_pair *) b->basis_ptr();
-      remove_pair(q);
+      s_pair *q2 = (s_pair *) b->basis_ptr();
+      remove_pair(q2);
       delete b;
     }
 

@@ -39,9 +39,9 @@ void Matrix::initialize(const FreeModule *r,
   _cols = (FreeModule *)c;
   _degree_shift = (int *) deg;
 
-  vec zero = NULL;
+  vec Zero = NULL;
   for (int i=0; i<c->rank(); i++) 
-    _entries.append(zero); 
+    _entries.append(Zero); 
 }
 
 Matrix::Matrix(const FreeModule *r, 
@@ -1308,7 +1308,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 
   // Take all of these monomials and make an array out of them
   Matrix *result = new Matrix(get_ring()->make_FreeModule(1));
-  void ** monoms = exponent_table_to_array(E);
+  const void ** monoms = exponent_table_to_array(E);
   for (int i=0; i<nvars; i++) exp[i] = 0;
   for (int i=0; monoms[i] != 0; i += 2)
     {

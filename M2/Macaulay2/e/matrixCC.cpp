@@ -141,11 +141,11 @@ extern "C" void cblas_zgemm(const int Order,   // how matrices are stored, by co
 			    void *C,           // matrix C; on output, alphaAB+betaC
 			    const int ldc);    // rows of C
 
-void LMatrixCC::initialize(int nrows, int ncols, double *array)
+void LMatrixCC::initialize(int nrows0, int ncols0, double *array)
 {
-  _nrows = nrows;
-  _ncols = ncols;
-  int len = 2 * nrows * ncols;
+  _nrows = nrows0;
+  _ncols = ncols0;
+  int len = 2 * nrows0 * ncols0;
   _array = (double *) getmem_atomic(sizeof(double) * len);
   if (array == 0)
     for (int i=0; i<len; i++) {
@@ -157,12 +157,12 @@ void LMatrixCC::initialize(int nrows, int ncols, double *array)
     }
 }
 
-LMatrixCC::LMatrixCC(int nrows, int ncols)
-  : _nrows(nrows),
-    _ncols(ncols)
+LMatrixCC::LMatrixCC(int nrows0, int ncols0)
+  : _nrows(nrows0),
+    _ncols(ncols0)
 {
-  initialize(nrows, ncols, 0);
-  // We assume that nrows, ncols >= 0.
+  initialize(nrows0, ncols0, 0);
+  // We assume that nrows0, ncols0 >= 0.
 }
 
 LMatrixCC::LMatrixCC(LMatrixRR *N)
@@ -550,7 +550,7 @@ bool LMatrixCC::is_close(const LMatrixCC &N, double tolerance) const
 }
 
 
-LMatrixCCOrNull * LMatrixCC::eigenvalues(LMatrixCC *eigenvalues)
+LMatrixCCOrNull * LMatrixCC::eigenvalues(LMatrixCC *eigvals)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -567,11 +567,11 @@ LMatrixCCOrNull * LMatrixCC::eigenvalues(LMatrixCC *eigenvalues)
   double *rwork = (double *) getmem_atomic(sizeof(double) * rsize);
   int info;
 
-  eigenvalues->resize(size,1);
+  eigvals->resize(size,1);
 
   zgeev_(&dont, &dont, 
 	 &size, copythis->_array, 
-	 &size, eigenvalues->_array,
+	 &size, eigvals->_array,
 	 (double *)0, &size,  /* left eigenvectors */
 	 (double *)0, &size,  /* right eigenvectors */
 	 workspace, &wsize, rwork,
@@ -584,15 +584,15 @@ LMatrixCCOrNull * LMatrixCC::eigenvalues(LMatrixCC *eigenvalues)
     }
   else if (info > 0) 
     {
-      ERROR("the QR algorithm in zgeev failed to compute all eigenvalues");
+      ERROR("the QR algorithm in zgeev failed to compute all eigvals");
       return 0;
     }
 
-  return eigenvalues;
+  return eigvals;
   
 }
 
-LMatrixCCOrNull * LMatrixCC::eigenvectors(LMatrixCC *eigenvalues, LMatrixCC *eigenvectors)
+LMatrixCCOrNull * LMatrixCC::eigenvectors(LMatrixCC *eigvals, LMatrixCC *eigvecs)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -610,14 +610,14 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors(LMatrixCC *eigenvalues, LMatrixCC *eig
   double *rwork = (double *) getmem_atomic(sizeof(double) * rsize);
   int info;
 
-  eigenvalues->resize(size,1);
-  eigenvectors->resize(size,size);
+  eigvals->resize(size,1);
+  eigvecs->resize(size,size);
 
   zgeev_(&dont, &doit, 
 	 &size, copythis->_array, 
-	 &size, eigenvalues->_array,
-	 (double *)0, &size,  /* left eigenvectors */
-	 eigenvectors->_array, &size,  /* right eigenvectors */
+	 &size, eigvals->_array,
+	 (double *)0, &size,  /* left eigvecs */
+	 eigvecs->_array, &size,  /* right eigvecs */
 	 workspace, &wsize, rwork,
 	 &info);
 
@@ -628,11 +628,11 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors(LMatrixCC *eigenvalues, LMatrixCC *eig
     }
   else if (info > 0) 
     {
-      ERROR("the QR algorithm in zgeev failed to compute all eigenvalues");
+      ERROR("the QR algorithm in zgeev failed to compute all eigvals");
       return 0;
     }
 
-  return eigenvectors;
+  return eigvecs;
 }
 
 LMatrixCCOrNull * LMatrixCC::solve(LMatrixCC *b, LMatrixCC *x)
@@ -756,7 +756,7 @@ LMatrixCCOrNull * LMatrixCC::LU(LMatrixCC *L, LMatrixCC *U, LMatrixRR *P)
   return U;
 }
 
-LMatrixRROrNull * LMatrixCC::eigenvalues_hermitian(LMatrixRR *eigenvalues)
+LMatrixRROrNull * LMatrixCC::eigenvalues_hermitian(LMatrixRR *eigvals)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -774,11 +774,11 @@ LMatrixRROrNull * LMatrixCC::eigenvalues_hermitian(LMatrixRR *eigenvalues)
   double *rwork = (double *) getmem_atomic(sizeof(double) * (3*size-2));
   int info;
 
-  eigenvalues->resize(size,1);
+  eigvals->resize(size,1);
 
   zheev_(&dont, &triangle, 
 	 &size, copythis->_array, 
-	 &size, eigenvalues->_array,
+	 &size, eigvals->_array,
 	 workspace, &wsize, rwork, &info);
 
   if (info < 0)
@@ -792,11 +792,11 @@ LMatrixRROrNull * LMatrixCC::eigenvalues_hermitian(LMatrixRR *eigenvalues)
       return 0;
     }
 
-  return eigenvalues;
+  return eigvals;
 }
 
-LMatrixCCOrNull * LMatrixCC::eigenvectors_hermitian(LMatrixRR *eigenvalues, 
-						    LMatrixCC *eigenvectors)
+LMatrixCCOrNull * LMatrixCC::eigenvectors_hermitian(LMatrixRR *eigvals, 
+						    LMatrixCC *eigvecs)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -812,12 +812,12 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors_hermitian(LMatrixRR *eigenvalues,
   double *rwork = (double *) getmem_atomic(sizeof(double) * (3*size-2));
   int info;
 
-  eigenvectors->set_matrix(this);
-  eigenvalues->resize(size,1);
+  eigvecs->set_matrix(this);
+  eigvals->resize(size,1);
 
   zheev_(&doit, &triangle, 
-	 &size, eigenvectors->_array, 
-	 &size, eigenvalues->_array,
+	 &size, eigvecs->_array, 
+	 &size, eigvals->_array,
 	 workspace, &wsize, rwork, &info);
 
   if (info < 0)
@@ -831,7 +831,7 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors_hermitian(LMatrixRR *eigenvalues,
       return 0;
     }
 
-  return eigenvectors;
+  return eigvecs;
 }
 
 

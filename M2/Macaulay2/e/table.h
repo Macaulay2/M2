@@ -33,7 +33,7 @@ extern void *Table_remove(T * table, const void *key);
 extern void   Table_map    (T * table,
 	void apply(const void *key, void **value, void *cl),
 	void *cl);
-extern void **Table_toArray(T * table, void *end);
+const extern void **Table_toArray(T * table, void *end);
 #if defined(__cplusplus)
 }
 #endif

@@ -10,10 +10,10 @@
 extern int gbTrace;
 // todo: minimalize_gb, remainder
 
-GBasis::GBasis(const FreeModule *F, const FreeModule *Fsyz)
+GBasis::GBasis(const FreeModule *F0, const FreeModule *Fsyz0)
   : mem(1000),
-    F(F),
-    Fsyz(Fsyz)
+    F(F0),
+    Fsyz(Fsyz0)
 {
   originalR = F->get_ring()->cast_to_PolynomialRing();
   if (originalR == NULL)
@@ -301,10 +301,10 @@ struct gbelem_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
   const vector<GBasis::gbelem *> &gb;
-  gbelem_sorter(GBRing *R,
-		const FreeModule *F,
-		const vector<GBasis::gbelem *> &gb)
-    : R(R), F(F), gb(gb) {}
+  gbelem_sorter(GBRing *R0,
+		const FreeModule *F0,
+		const vector<GBasis::gbelem *> &gb0)
+    : R(R0), F(F0), gb(gb0) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx]->g.f;
     gbvector *y = gb[yy]->g.f;
@@ -402,11 +402,13 @@ const Matrix *GBasis::get_leadterms(int nparts)
 const FreeModule *GBasis::get_free(M2_bool minimal)
 {
   // Do we really need to include this one?
+#warning "something to do here"
+  return NULL;
 }
 
 const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
 {
-  // NEEDS WORK!!!
+#warning "NEEDS WORK!!!"
   if (m->n_rows() != F->rank()) {
        ERROR("expected matrices to have same number of rows");
        return 0;
@@ -508,7 +510,7 @@ RingGBasis *RingGBasis::make(GBRing *R, vector<gbvector *> &elems)
   R->set_mem(_mem);
 #endif
   result->ringtable = MonomialTable::make(R->n_vars());
-  for (int i=0; i<elems.size(); i++)
+  for (unsigned int i=0; i<elems.size(); i++)
     {
       GBasis::gbelem *g = result->gbelem_make(elems[i]);
       result->ringtable->insert(g->lead, 0, i);
