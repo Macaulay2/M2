@@ -145,8 +145,8 @@ compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 
 M2types.o : M2types.h
-M2lib.o scclib.o : compat.h
-M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
+M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h memdebug.h
+M2lib.o scclib.ogdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
 memdebug.o scclib.o actors5.o : memdebug.h
 
 clean::; rm -f startup.c
@@ -164,7 +164,7 @@ startup.c : ../m2/startup.m2 layout.m2
 clean :: ; rm -f layout.m2 startup.c
 
 ifeq "$(DUMPDATA)" "yes"
-LOADLIBES += -L../dumpdata
+LDFLAGS += -L../dumpdata
 LIBRARYDEPS += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
 endif
@@ -190,7 +190,9 @@ tmp_init.c : $(DFILES)
 
 ###################### libraries
 
-# singular libraries
+ifeq "$(FACTORY)" "yes"
+
+# singular libraries: factory, libfac, ntl
 
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBFAC_PG)" "yes"
@@ -224,7 +226,8 @@ else
 LIBRARYOPTIONS += -lntl
 endif
 
-  # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
+endif
+
 LIBRARYOPTIONS += $(LAPACKLIBS)
 
 ## We put M2inits2.o here so (on some machines) its constructor gets run first, before those of libcf and libntl, placed above.
@@ -245,12 +248,12 @@ endif
 
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBGC_PG)" "yes"
-LIBRARYOPTIONS += -lgc-pg
+LIBRARYOPTIONS += -lgc-pg -ldl
 else
-LIBRARYOPTIONS += -lgc
+LIBRARYOPTIONS += -lgc -ldl
 endif
 else
-LIBRARYOPTIONS += -lgc
+LIBRARYOPTIONS += -lgc -ldl
 endif
 
 LIBRARYOPTIONS += -lgdbm
@@ -268,6 +271,8 @@ clean::; rm -f ../bin/M2$(EXE)
 	time $(CC) $(LDFLAGS) $(ALLOBJ) main.o ../e/libgb.a $(LOADLIBES) $(LDLIBS) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"
+
+mapfile.demangled : mapfile ; demangle <$< >$@
 
 interpret.a : $(ALLOBJ); $(AR) rcs $@ $^
 ifeq "$(XCODE)" "yes"
@@ -292,5 +297,5 @@ all :: .gdbinit
 clean::; rm -f .gdbinit
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 # End:
