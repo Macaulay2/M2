@@ -1503,7 +1503,7 @@ document { (symbol **, ChainComplexMap, ChainComplexMap),
      }
 
 document { (max,ChainComplex),
-     Headline => " -- maximum index in a chain complex",
+     Headline => "maximum index in a chain complex",
      TT "max C", " -- the maximum index occuring in a chain complex."
      }
 

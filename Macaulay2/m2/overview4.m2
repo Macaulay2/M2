@@ -858,9 +858,82 @@ document { "diff and contract",
      }
 
 document { "computing syzygies",
-     "This node has not been written yet."
+     "A syzygy among the columns of a matrix is, by definition, an
+     element of the kernel of the corresponding map between free modules,
+     and the easiest way to compute the syzygies applying the 
+     function ", TO "kernel", ".",
+     EXAMPLE {
+	  "R = QQ[x..z];",
+	  "f = vars R",
+	  "K = kernel f",
+	  },
+     "The answer is provided as a submodule of the source of ", TT "f", ".  The
+     function ", TO "super", " can be used to produce the module that ", TT "K", " is
+     a submodule of; indeed, this works for any module.",
+     EXAMPLE {
+	  "L = super K",
+	  "L == source f",
+	  },
+     "The matrix whose columns are the generators of ", TT "K", ", lifted to
+     the ambient free module of ", TT "L", " if necessary, can be obtained 
+     with the function ", TO "generators", ", an abbreviation for which is
+     ", TT "gens", ".",
+     EXAMPLE {
+	  "g = generators K",
+	  },
+     "We can check at least that the columns of ", TT "g", " are syzygies 
+     of the columns of ", TT "f", " by checking that ", TT "f*g", " is zero.",
+     EXAMPLE {
+	  "f*g",
+	  "f*g == 0",
+	  },
+     "Use the function ", TO "syz", " if you need detailed control over the
+     extent of the computation."
      }
 
 document { "computing resolutions",
-     "This node has not been written yet."
+     "Use the function ", TO "resolution", ", often abbreviated as ", TO "res", ",
+     to compute a free resolution of a module.",
+     EXAMPLE {
+	  "R = QQ[x..z];",
+	  "M = cokernel vars R",
+	  "C = res M",
+	  },
+     "See ", TO "chain complexes", " for further details about how to handle
+     and examine the result.",
+     PARA,
+     "A reference to the result is stored within the module ", TT "M", ", so that
+     requesting a computation of ", TT "res M", " a second time yields the formerly
+     computed result immediately.",
+     PARA,
+     "If the computation is interrupted or discontinued after the skeleton 
+     has been successfully computed, then the partially completed
+     resolution is available as ", TT "M.resolution", ", and can be
+     examined with ", TO "status", ".  The computation can be continued
+     with ", TT "res M", ".  Here is an example, with an alarm interrupting
+     the computation several times before it's complete.  (On my machine, 
+     the computation takes a total of 14 seconds.)",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/2[a..d];",
+	  "M = coker random(R^4, R^{5:-3,6:-4});",
+///while true do try (
+     alarm 3;
+     res M;
+     << "-- computation complete" << endl;
+     status M.resolution;
+     << res M << endl << endl;
+     break;
+     ) else (
+     << "-- computation interrupted" << endl;
+     status M.resolution;
+     << "-- continuing the computation" << endl;
+     )///
+	  },
+     "If the user has a chain complex in hand which is known to be a
+     projective resolution of ", TT "M", ", then it can be installed
+     with ", TT "M.resolution = C", ".",
+     PARA,
+     "There are various optional arguments associated with ", TO "res", "
+     which allow detailed control over the progress of the computation."
      }

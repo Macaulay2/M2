@@ -70,7 +70,7 @@ MonomialIdeal *  MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation 
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> (UnaryMonomialIdealOperation ggradical) I
 --document { radical,
---     TT "radical I", " -- compute the radical of a ", TO "MonomialIdeal", " I.",
+--     TT "radical I", "compute the radical of a ", TO "MonomialIdeal", " I.",
 --     PARA,
 --     EXAMPLE "R = ZZ/101[a,b,c];",
 --     EXAMPLE "I = monomialIdeal vars R",

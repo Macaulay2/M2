@@ -267,6 +267,7 @@ status Resolution := options -> (r) -> (
      v = apply(v, row -> (row,"\n"));
      << lab << endl;
      printString(stdio,v);
+     << endl;
      )
 
 status ChainComplex := options -> (C) -> status(C.Resolution, options)

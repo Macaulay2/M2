@@ -162,8 +162,14 @@ formatDocumentTag Sequence := record(
 
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 fSeqTO := null
+formatDocumentTagTO Thing := x -> TT formatDocumentTag x
+formatDocumentTagTO Option := x -> (
+     if #x === 2 and getDoc x#1 =!= null 
+     then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
+     else TT formatDocumentTag x
+     )
 formatDocumentTagTO Sequence := (
-     s -> (
+     s -> SEQ (
 	  if fSeqTO === null then (
 	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
 	       );
@@ -517,11 +523,7 @@ moreGeneral := s -> (
      )
 -----------------------------------------------------------------------------
 
-optTO := i -> (
-     if getDoc i =!= null then SEQ{ TO i, headline i }
-     else if class i === Sequence then SEQ formatDocumentTagTO i
-     else TT formatDocumentTag i
-     )
+optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
 
 smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> MENU (optTO \ s)
