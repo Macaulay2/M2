@@ -190,12 +190,10 @@ all :: phase5
 
 # this directory must be the same as the prefix in makeHTML() in html.m2:
 TARGETDIR = cache/doc
-IMAGESDIR = cache/images
 
-phase5 : $(TARGETDIR) $(IMAGESDIR) $(TARGETDIR)/index.html
+phase5 : $(TARGETDIR) $(TARGETDIR)/index.html
 $(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
-	cp ../html/*.gif ../html/*.jpg $(IMAGESDIR)
 	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
 		'-e phase = 5' \
 		'-e errorDepth 0' \

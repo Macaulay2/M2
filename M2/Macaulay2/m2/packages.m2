@@ -8,6 +8,12 @@ addStartFunction(
 	       minimizeFilename ( PREFIX | "/share/Macaulay2/packages/" )
 	       )))
 
+addStartFunction( 
+     () -> (
+	  home := getenv "M2HOME";
+	  path = append(path, home | "/packages/");
+	  ))
+
 isAbsolute := url -> (					    -- drg: replace with regexp after merging the branch
      "#" == substring(url,0,1) or
      "http://" == substring(url,0,7) or

@@ -56,9 +56,9 @@ endl = new Manipulator from oldendl
 notify := false						    -- can change this for debugging
 if notify then stderr << "--loading setup.m2" << endl
 
-if class path =!= List then path = { "" }
+if class path =!= List then path = { }
 savepath := path
-path = join({ currentFileDirectory, ""}, path)
+path = join({ currentFileDirectory }, path)
 
 pathSeparator = "/"
 
@@ -135,6 +135,10 @@ markLoaded := (filename,origfilename) -> (
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 
+unique := x -> (
+     seen := new MutableHashTable;
+     select(x, i -> if seen#?i then false else seen#i = true))
+
 tryload := (filename,load) -> (
      if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
@@ -146,7 +150,7 @@ tryload := (filename,load) -> (
      else (
           if class path =!= List then error "expected 'path' to be a list (of strings)";
           {} =!= select(1,
-	       prepend(currentFileDirectory, path),
+	       unique apply(prepend(currentFileDirectory, path), minimizeFilename),
 	       dir -> (
 		    if class dir =!= String 
 		    then error "member of 'path' not a string";
@@ -184,7 +188,7 @@ scan((
 	  symbol htmlDirectory,
 	  symbol buildPackage,
 	  symbol buildDirectory,
-	  symbol documentationPath,
+	  symbol documentationPath,			    -- being removed...
 	  symbol DocDatabase,
 	  symbol currentFileName,
 	  symbol compactMatrixForm,
