@@ -29,7 +29,7 @@ inline static void GC_free2 (void *s, size_t old) { GC_FREE(s); }
 #if GMP_TESTS_RETURN_VALUE_FROM_GC
 inline static void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
-     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
+     p = GC_MALLOC(size_in_bytes);
      if (p == NULL) outofmem();
      return p;
      }
@@ -39,7 +39,7 @@ inline static void *GC_realloc3 (void *s, size_t old, size_t new) {
      return p;
      }
 #else
-inline static void *GC_malloc1 (size_t size_in_bytes) { return GC_MALLOC_UNCOLLECTABLE(size_in_bytes); }
+inline static void *GC_malloc1 (size_t size_in_bytes) { return GC_MALLOC(size_in_bytes); }
 inline static void *GC_realloc3(void *s, size_t old, size_t new) { return GC_REALLOC(s,new); }
 #endif
 #endif
@@ -54,7 +54,7 @@ static void init_gmp(void) {
 #endif
 }
 
-#if FACTORY_USES_GC
+#if FACTORY_USES_GC_DIRECTLY
 #if FACTORY_TESTS_RETURN_VALUE_FROM_GC
 void*     getBlock ( size_t size                                  ) { return GC_malloc1(size); }
 void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_realloc3(block,oldsize,newsize); }
