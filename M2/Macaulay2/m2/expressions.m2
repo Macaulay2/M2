@@ -1140,7 +1140,8 @@ expression Type := x -> (
      if ReverseDictionary#?x then new Holder from {toString ReverseDictionary#x}
      else new Holder from {"--a type--"}
      )
-expression BasicList := x -> (
+expression Option := x -> hold x
+expression BasicList := x -> (				    -- is this really any good?
      new FunctionApplication from { 
 	  expression class x, 
 	  apply(toList x, expression) 

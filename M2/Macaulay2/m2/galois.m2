@@ -3,7 +3,13 @@
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-net GaloisField := k -> toString raw k
+toExternalString GaloisField := k -> toString expression k
+toString GaloisField := k -> (
+     if ReverseDictionary#?k then toString ReverseDictionary#k
+     else toExternalString k)
+net GaloisField := k -> (
+     if ReverseDictionary#?k then toString ReverseDictionary#k
+     else net expression k)
 
 ambient GaloisField := Ring => R -> last R.baseRings
 coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
