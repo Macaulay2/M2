@@ -112,6 +112,12 @@ public:
   virtual bool is_poly_ring() const { return true; }
   virtual bool is_quotient_poly_ring() const { return _base_ring != NULL; }
 
+  virtual CoefficientType coefficient_type() const 
+  { return Ncoeffs()->coefficient_type(); }
+
+  virtual int n_fraction_vars() const
+  { return Ncoeffs()->n_fraction_vars(); }
+
   virtual void text_out(buffer &o) const;
 
   virtual ring_elem from_double(double n) const;

@@ -325,6 +325,71 @@ time rawStartComputation Gcomp -- seems to be in an INFINITE LOOP!!
 m = rawGBGetMatrix Gcomp
 assert(m === mat{{7*a^2+a+1}})
 
+
+------------------------------
+-- Groebner bases over ZZ ----
+------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol x, symbol y))
+f = y^2 - x*(x-12_R)*(x-13_R)
+f = y^2 + y - (x^3 - x^2) -- conductor is 11 -- from SLN #476 (Swinnerton-Dyer)
+rawConcat(rawDual rawMatrixDiff(rawDual mat{{x,y}}, mat{{f}}), mat{{f}})  -- BUG in diff!!
+algorithm = 1
+
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol x, symbol y))
+G = mat{{2*y+1, 3*x^2+2*x, y^2 + y - (x^3 - x^2)}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+gbTrace = 10
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+
+
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol x, symbol y))
+G = mat{{-3*x^2+50*x-156,  2*y, -x^3+25*x^2+y^2-156*x}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+gbTrace = 10
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+
+
+
+f0 = 2*y
+f1 = 3*x^2-50*x+156                --gone(g1)
+f2 = x^3-x^2-y^2-244*x+1248        --gone(g2)
+f3 = -(3*f2-x*f1 - 16*f1 + 2*y*f0) --gone(g3)
+  -- x2-y2+88x-1248
+g2 = f2 - x*f3 + 89*f3 + 45*y*f0   --gone(g4)
+  -- xy2+8836x-109824
+g1 = -(f1 - 3*f3 - 2*y*f0)
+  -- y2+314x-3900
+g3 = f3 + g1
+  -- x2+402x-5148
+g4 = g2 - x*g1 + 314*g3           --gone(g6,g7)
+  -- 138964x-1726296             
+
+g5 = 2*g1-y*f0                    --gone(g6,g7)
+  -- 628x-7800
+g6 = 25*g4 - 5532*g5
+  -- 4x-7800
+g7 = 157*g4 - 34741*g5
+  -- -48672
+
+-- reduce g3:
+g8 = g3 - 100*g6
+  -- x2+2x+774852
+-- reduce g1:
+g9 = g1 - 78*g6
+  -- y2+2x+604500
+
+g10 = 2*g9-y*f0 - g6 + 25*g7  -- 0
+
+g7
+g8
+g9
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "
 -- compile-command: "M2 --debug-M2 --stop -e 'input \"raw4.m2\"' -e 'exit 0' "

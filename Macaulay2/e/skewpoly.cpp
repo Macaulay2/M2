@@ -23,7 +23,9 @@ SkewPolynomialRing *SkewPolynomialRing::create(const PolynomialRing *R,
   result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
   if (!result->initialize_skew(skewvars)) return 0;
   const PolynomialRing *flatR = R->get_flattened_ring()->cast_to_PolynomialRing();
-  result->_gb_ring = GBRing::create_SkewPolynomialRing(flatR->Ncoeffs(), flatR->Nmonoms(),result->_skew);
+  result->_gb_ring = GBRing::create_SkewPolynomialRing(flatR->Ncoeffs(), 
+						       flatR->Nmonoms(),
+						       result->_skew);
   return result;
 }
 

@@ -22,7 +22,9 @@ SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
   result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
   if (!result->initialize_solvable(Q)) return 0;
   const PolynomialRing *flatR = result->get_flattened_ring();
-  result->_gb_ring = GBRing::create_SolvableAlgebra(flatR->Ncoeffs(), flatR->Nmonoms(), result);
+  result->_gb_ring = GBRing::create_SolvableAlgebra(flatR->Ncoeffs(), 
+						    flatR->Nmonoms(), 
+						    result);
   return result;
 }
 

@@ -54,7 +54,8 @@ protected:
   bool _schreyer_encoded;
   const Monoid *M; // flattened monoid
   const Ring *K; // flattened coefficients
-  bool _coeffs_ZZ; 
+
+  bool _coeffs_ZZ; // is K == globalZZ?
 
   int gbvector_size;
 
@@ -317,7 +318,15 @@ public:
 				  gbvector *&result,
 				  gbvector *&result_syz);
 
-void GBRing::gbvector_combine_lead_terms_ZZ(
+  void gbvector_replace_2by2_ZZ(
+		    const FreeModule *F,
+		    const FreeModule *Fsyz,
+		    gbvector * &f,
+		    gbvector * &fsyz,
+		    gbvector * &g,
+		    gbvector * &gsyz);
+
+  void gbvector_combine_lead_terms_ZZ(
 		    const FreeModule *F,
 		    const FreeModule *Fsyz,
 		    const gbvector *f,

@@ -10,6 +10,18 @@
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define FRAC_RINGELEM(a) ((ring_elem) (Nterm *) (a))
 
+Ring::CoefficientType FractionField::coefficient_type() const
+{
+  if (Ncoeffs()->coefficient_type() == COEFF_ZZ)
+    return COEFF_QQ;
+  return Ncoeffs()->coefficient_type();
+}
+
+int FractionField::n_fraction_vars() const
+{
+  return R_->n_vars() + Ncoeffs()->n_fraction_vars();
+}
+
 bool FractionField::initialize_frac(const Ring *R) 
 {
   initialize_ring(R->charac(),

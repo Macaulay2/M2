@@ -60,6 +60,8 @@ public:
   int n_vars() const { return _nvars; }
   int total_n_vars() const { return _totalvars; }
 
+
+
   const Ring * get_ring() const { return this; }
   const Ring *  Ncoeffs()       const { return K_; }
   const Monoid * Nmonoms()       const { return M_; }
@@ -107,6 +109,14 @@ public:
   virtual bool has_gcd() const = 0;
   virtual bool is_graded() const = 0;
   virtual bool is_expensive() const = 0;
+
+  typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_SMALL} CoefficientType;
+  virtual  CoefficientType coefficient_type() const { return COEFF_SMALL; }
+  // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
+  // three values.  Fraction fields return their ultimate value, as do poly rings.
+
+  virtual int n_fraction_vars() const { return 0; }
+  // The ultimate number of fraction field variables.
 
   bool is_field() const;
   void declare_field();

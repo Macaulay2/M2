@@ -710,6 +710,8 @@ bool GBRing::gbvector_reduce_lead_term_ZZ(const FreeModule *F,
   ring_elem u,v,rem;
   assert(globalZZ == K);
   v = globalZZ->divide(a,b,rem);
+  if (globalZZ->is_zero(v)) return false;
+  v = globalZZ->negate(v);
   bool result = globalZZ->is_zero(rem);
   gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
   gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
@@ -784,6 +786,54 @@ void GBRing::gbvector_cancel_lead_terms(
       gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM2, comp);
       gbvector_add_to(Fsyz,result_syz,result_syz1);
     }
+}
+
+void GBRing::gbvector_replace_2by2_ZZ(
+				      const FreeModule *F,
+				      const FreeModule *Fsyz,
+				      gbvector * &f,
+				      gbvector * &fsyz,
+				      gbvector * &g,
+				      gbvector * &gsyz)
+{
+  // ASSUMPTIONS: coefficient ring is ZZ
+  //  lead monomial of f and g are the same (with possibly different coeffs)
+  // If u * leadcoeff(f) + v * leadcoeff(g) = gd is the gcd,
+  // then:
+  //  g <-- u * f + v * g
+  //  f <-- c * f - d * g, where c = leadcoeff(g)//gd, d = leadcoeff(f)//gd
+  mpz_t u,v,gd;
+  mpz_init(u);
+  mpz_init(v);
+  mpz_init(gd);
+  mpz_gcdext(gd,u,v,MPZ_VAL(f->coeff), MPZ_VAL(g->coeff));
+
+  gbvector *new_g = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
+  gbvector *g2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
+  gbvector_add_to(F,new_g,g2);
+
+  gbvector *new_gsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
+  gbvector *gsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+  gbvector_add_to(Fsyz,new_gsyz,gsyz2);
+
+  mpz_div(u,MPZ_VAL(g->coeff),gd);
+  mpz_div(v,MPZ_VAL(f->coeff),gd);
+  mpz_neg(v,v);
+  gbvector *new_f = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
+  gbvector *new_fsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
+  gbvector *f2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
+  gbvector *fsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+  gbvector_add_to(F,new_f,f2);
+  gbvector_add_to(Fsyz,new_fsyz,fsyz2);
+  
+  f = new_f;
+  fsyz = new_fsyz;
+  g = new_g;
+  gsyz = new_gsyz;
+
+  mpz_clear(u);
+  mpz_clear(v);
+  mpz_clear(gd);
 }
 
 void GBRing::gbvector_combine_lead_terms_ZZ(
@@ -1077,6 +1127,8 @@ void GBRing::gbvector_auto_reduce_ZZ(const FreeModule *F,
   if ((t = find_coeff(F,f,g)) != 0)
     {
       ring_elem v = globalZZ->quotient(t->coeff, g->coeff);
+      if (globalZZ->is_zero(v)) return;
+      v = globalZZ->negate(v);
       gbvector *g1 = gbvector_mult_by_coeff(g,v);
       gbvector *gsyz1 = gbvector_mult_by_coeff(gsyz,v);
       gbvector_add_to(F,f,g1);

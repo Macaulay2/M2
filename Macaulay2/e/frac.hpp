@@ -44,6 +44,9 @@ public:
   virtual bool is_graded() const    { return R_->is_graded(); }
   virtual bool is_expensive() const { return 1; }
 
+  virtual CoefficientType coefficient_type() const;
+  virtual int n_fraction_vars() const;
+
   virtual void text_out(buffer &o) const;
 
   virtual ring_elem from_int(int n) const;

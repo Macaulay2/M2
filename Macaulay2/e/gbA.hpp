@@ -87,6 +87,8 @@ private:
   const FreeModule *_F;
   const FreeModule *_Fsyz;
   int _nvars;
+  Ring::CoefficientType _coeff_type;
+  int _n_fraction_vars;
 
   vector<gbelem *,gc_alloc> gb; // Contains any quotient ring elements
 
@@ -106,10 +108,10 @@ private:
   int _n_rows_per_syz;
   bool _collect_syz;
   bool _is_ideal;
-  bool over_ZZ; /* true if the original coeff ring is ZZ, not QQ or a finite field */
   int _first_gb_element; /* First index past the skew variable squares, quotient elements,
 			   in the array in G */
-
+  int _first_in_degree; /* for the current 'sugar' degree, this is the first GB element
+			   inserted for this degree */
   int _complete_thru_this_degree; /* Used in reporting status to the user */
 
   /* stats */
@@ -125,6 +127,7 @@ private:
   int _n_gens_left;
   int _n_subring;
 private:
+  bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   
   /* initialization */
   void initialize(const Matrix *m, int csyz, int nsyz, int strat);
@@ -287,7 +290,7 @@ public:
   void debug_spair(spair *p);
   void debug_spairs(spair *spairlist);
   void debug_spair_array(spairs &spairlist);
-
+  void showgb();
 };  
 
 #endif

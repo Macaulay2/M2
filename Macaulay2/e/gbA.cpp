@@ -41,7 +41,9 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   R = origR->get_gb_ring();
 
   _nvars = R->get_flattened_monoid()->n_vars();
-  
+  _coeff_type = origR->coefficient_type();
+  _n_fraction_vars = origR->n_fraction_vars();
+
   if (nsyz < 0 || nsyz > m->n_cols())
     nsyz = m->n_cols();
   _n_rows_per_syz = nsyz;
@@ -49,6 +51,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   _F = m->rows();
   _Fsyz = m->cols()->sub_space(_n_rows_per_syz);  
 
+  _first_in_degree = 0;
   _n_syz = 0;
   _n_pairs_computed = 0;
   _n_gens_left = 0;
@@ -82,7 +85,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   // ZZZZ split
   lookup = 0;
   lookupZZ = 0;
-  if (over_ZZ)
+  if (over_ZZ())
     lookupZZ = MonomialTableZZ::make(R->n_vars());
   else
     lookup = MonomialTable::make(R->n_vars());
@@ -589,7 +592,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 
 void gbA::minimalize_pairs(spairs &new_set)
 {
-  if (over_ZZ)
+  if (over_ZZ())
     minimalize_pairs_ZZ(new_set);
   else
     minimalize_pairs_non_ZZ(new_set);
@@ -841,6 +844,7 @@ void gbA::compute_s_pair(spair *p)
     }
 }
 
+
 // ZZZZ split
 bool gbA::reduce(spair *p)
 {
@@ -861,10 +865,48 @@ bool gbA::reduce(spair *p)
       int alpha,w;
       R->gbvector_get_lead_exponents(_F, p->f(), _EXP);
       int x = p->f()->comp;
-      if (over_ZZ)
+      if (over_ZZ())
 	{
 	  mpz_ptr c = MPZ_VAL(p->f()->coeff);
 	  w = find_good_term_divisor_ZZ(c,_EXP,x,_this_degree,alpha);
+
+	  // If w < 0, then no divisor was found.  Is there a GB element of
+	  // the same degree as this one, and with the same exponent vector?
+	  // If so, use gcdextended to find (g,u,v), 
+	  if (w < 0)
+	  {
+	    MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(_EXP,
+									 x,
+									 _first_in_degree);
+	    if (t != 0)
+	      {
+		// f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
+		// p <-- c*p-d*f
+		gbelem *g = gb[t->_val];
+		if (gbTrace == 10)
+		  {
+		    buffer o;
+		    o << "swapping GB element\n    ";
+		    R->gbvector_text_out(o, _F, p->f());
+		    o << "\n    and ";
+		    R->gbvector_text_out(o, _F, g->g.f);
+		    o << "\n  giving\n    ";
+		    emit(o.str());
+		  }
+		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
+		lookupZZ->change_coefficient(t, MPZ_VAL(g->g.f->coeff));
+		if (gbTrace == 10)
+		  {
+		    buffer o;
+		    R->gbvector_text_out(o, _F, p->f());
+		    o << "\n    and ";
+		    R->gbvector_text_out(o, _F, g->g.f);
+		    o << "\n";
+		    emit(o.str());
+		  }
+		continue;
+	      }
+	  }
 	}
       else
 	{
@@ -891,7 +933,7 @@ bool gbA::reduce(spair *p)
 	}
       POLY g = gb[w]->g;
 
-      if (over_ZZ)
+      if (over_ZZ())
 	{
 	  R->gbvector_reduce_lead_term_ZZ(_F,_Fsyz,p->f(), p->fsyz(),
 					  g.f, g.fsyz);
@@ -1135,7 +1177,7 @@ int gbA::find_good_divisor_ZZ(mpz_ptr c,
 
 void gbA::remainder(POLY &f, int degf, bool use_denom, ring_elem &denom)
 {
-  if (over_ZZ)
+  if (over_ZZ())
     remainder_ZZ(f,degf,use_denom,denom);
   else
     remainder_non_ZZ(f,degf,use_denom,denom);
@@ -1190,6 +1232,12 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 	}
     }
   h.f = head.next;
+  // Negate these if needed
+  if (mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+    {
+      R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
+      R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());
+    }
   f.f = h.f;
   f.fsyz = h.fsyz;
   if (gbTrace == 3)
@@ -1299,7 +1347,7 @@ void gbA::auto_reduce_by(int id)
 	  o << "auto reduce " << id << " by " << i;
 	  emit_line(o.str());
 	}
-      if (over_ZZ)
+      if (over_ZZ())
 	{
 	  R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
 				  g->g.f, g->g.fsyz, // these are modified
@@ -1316,7 +1364,8 @@ void gbA::auto_reduce_by(int id)
 
 void gbA::insert(POLY f, int minlevel)
 {
-  /* Reduce this element as far as possible.  This removes content. */
+  /* Reduce this element as far as possible.  This either removes content, 
+     makes it monic, or at least negates it so the lead coeff is positive. */
   ring_elem junk;
   remainder(f,_this_degree,false,junk);
 
@@ -1332,7 +1381,7 @@ void gbA::insert(POLY f, int minlevel)
   int x = g->g.f->comp;
 
   // ZZZZ split
-  if (over_ZZ)
+  if (over_ZZ())
     lookupZZ->insert(MPZ_VAL(g->g.f->coeff),g->lead,x,me);
   else
     lookup->insert(g->lead, x, me);
@@ -1352,6 +1401,12 @@ void gbA::insert(POLY f, int minlevel)
     update_pairs(me);
 
   auto_reduce_by(me);
+
+  if (gbTrace >= 10)
+    {
+      lookupZZ->showmontable();
+      showgb();
+    }
 }
 
 void gbA::collect_syzygy(gbvector *f)
@@ -1445,7 +1500,10 @@ void gbA::start_computation()
       /* If we need to move to the next degree, do it. */
       if (S.n_in_degree  == 0)
 	{
+	  int old_degree = _this_degree;
 	  npairs = spair_set_prepare_next_degree(_this_degree); // sets _this_degree
+	  if (old_degree < _this_degree)
+	    _first_in_degree = gb.size();
 	  _complete_thru_this_degree = _this_degree-1;
 	  if (npairs == 0)
 	    {
@@ -1469,6 +1527,7 @@ void gbA::start_computation()
     }
   //  return is_done;
   set_status(is_done);
+  showgb();
 }
 
 
@@ -1524,7 +1583,7 @@ void gbA::minimalize_gb()
 	}
     }
 
-  if (over_ZZ)
+  if (over_ZZ())
     {
       vector<mpz_ptr,gc_alloc> coeffs;
       for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
@@ -1543,6 +1602,18 @@ void gbA::minimalize_gb()
 			      false,
 			      positions);
 
+  if (gbTrace >= 10)
+    {
+      buffer o;
+      for (unsigned int i=0; i<positions.size(); i++)
+	{
+	  o << i << '\t';
+	  R->gbvector_text_out(o, _F, gb[positions[i]]->g.f);
+	  o << newline;
+	}
+      emit_line(o.str());
+    }
+
   // Now sort 'positions'.
   sort(positions.begin(), positions.end(), gbelem_sorter(R,_F,gb));
 
@@ -1552,6 +1623,19 @@ void gbA::minimalize_gb()
       minimal_gb.push_back(gb[*i]->g);
     }
 
+  if (gbTrace >= 10)
+    {
+      buffer o;
+      for (unsigned int i=0; i<minimal_gb.size(); i++)
+	{
+	  o << i << '\t';
+	  R->gbvector_text_out(o, _F, minimal_gb[i].f);
+	  o << newline;
+	}
+      emit(o.str());
+    }
+
+  
   poly_auto_reduce(minimal_gb);
 
   minimal_gb_valid = true;
@@ -1797,6 +1881,18 @@ void gbA::debug_spair_array(spairs &spairlist)
 {
   for (int i=0; i<spairlist.size(); i++)
     debug_spair(spairlist[i]);
+}
+
+void gbA::showgb()
+{
+  buffer o;
+  for (unsigned int i=0; i<gb.size(); i++)
+    {
+      o << i << '\t';
+      R->gbvector_text_out(o, _F, gb[i]->g.f);
+      o << newline;
+    }
+  emit(o.str());
 }
 
 // Local Variables:

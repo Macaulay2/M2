@@ -75,6 +75,7 @@ MonomialTableZZ *MonomialTableZZ::make(int nvars)
 
 MonomialTableZZ::~MonomialTableZZ()
 {
+#if 0
   /* Loop through each component, and remove all mon_terms */
   for (unsigned int i=1; i<_head.size(); i++)
     {
@@ -89,6 +90,7 @@ MonomialTableZZ::~MonomialTableZZ()
       _head[i] = 0;
     }
   _count = 0;
+#endif
 }
 
 int MonomialTableZZ::find_term_divisors(int max,
@@ -191,7 +193,6 @@ int MonomialTableZZ::find_monomial_divisors(int max,
   if (comp >= (int)_head.size()) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
-  int i;
 
   int nmatches = 0;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
@@ -200,7 +201,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
     if ((expmask & t->_mask) == 0)
       {
 	bool is_div = 1;
-	for (i=0; i<_nvars; i++)
+	for (int i=0; i<_nvars; i++)
 	  if (exp[i] < t->_lead[i])
 	    {
 	      is_div = 0;
@@ -213,6 +214,17 @@ int MonomialTableZZ::find_monomial_divisors(int max,
 	    if (max >= 0 && nmatches >= max) break;
 	  }
       }
+
+  if (true)
+    {
+      fprintf(stderr, "find_monomial_divisors called with [");
+      for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
+      fprintf(stderr, "]%d\n", comp);
+      fprintf(stderr, "  %d matches: \n",nmatches);
+      if (result != 0)
+	for (int i=0; i<result->size(); i++)
+	  show_mon_term(stderr, (*result)[i]);
+    }
   return nmatches;
 }
 
@@ -241,6 +253,40 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact(mpz_ptr coeff,
 	  return t;
       }
   return 0;
+}
+
+MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp, 
+								int comp,
+								int first_val) const
+{
+  if (comp >= (int)_head.size()) return 0;
+  mon_term *head = _head[comp];
+  mon_term *t;
+  int i;
+
+  unsigned long expmask = monomial_mask(_nvars, exp);
+
+  for (t = head->_next; t != head; t = t->_next)
+    {
+      if (t->_val < first_val) continue;
+      if (expmask == t->_mask)
+	{
+	  bool is_eq = 1;
+	  for (i=0; i<_nvars; i++)
+	    if (exp[i] != t->_lead[i])
+	      {
+		is_eq = 0;
+		break;
+	      }
+	  if (is_eq) return t;
+	}
+    }
+  return 0;
+}
+
+void MonomialTableZZ::change_coefficient(mon_term *t, mpz_ptr new_coeff)
+{
+  t->_coeff = new_coeff;
 }
 
 void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
@@ -306,7 +352,7 @@ struct sorter : public binary_function<int,int,bool> {
     if (comps[x] < comps[y]) return true;
     else if (comps[x] > comps[y]) return false;
     // Now order them in ascending order on the coeff (which should always be POSITIVE).
-    return (mpz_cmp(coeffs[x],coeffs[y]) < 0);
+    return (mpz_cmp(coeffs[x],coeffs[y]) > 0);
   }
 };
 
@@ -335,6 +381,11 @@ void MonomialTableZZ::find_weak_generators(int nvars,
      and finally the coefficient */
   sort(positions.begin(), positions.end(), sorter(nvars,coeffs,exps,comps));
 
+  fprintf(stderr, "sorted terms: ");
+  for (int i=0; i<positions.size(); i++)
+    fprintf(stderr, "%d ", positions[i]);
+  fprintf(stderr, "\n");
+
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
   for (vector<int,gc_alloc>::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_weak_member(coeffs[*j], exps[*j], comps[*j]))
@@ -343,6 +394,7 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 	T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
   /* We could return T if that is desired */
+  T->show(stderr);
   deleteitem(T);
 }
 
@@ -364,6 +416,11 @@ void MonomialTableZZ::find_strong_generators(int nvars,
      and finally the coefficient */
   sort(positions.begin(), positions.end(), sorter(nvars,coeffs,exps,comps));
 
+  fprintf(stderr, "sorted terms: ");
+  for (int i=0; i<positions.size(); i++)
+    fprintf(stderr, "%d ", positions[i]);
+  fprintf(stderr, "\n");
+
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
   for (vector<int,gc_alloc>::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_strong_member(coeffs[*j], exps[*j], comps[*j]))
@@ -375,8 +432,15 @@ void MonomialTableZZ::find_strong_generators(int nvars,
   deleteitem(T);
 }
 
+void MonomialTableZZ::show_mon_term(FILE *fil, mon_term *t) const
+{
+  mpz_out_str(fil,10,t->_coeff);
+  fprintf(fil, " ");
+  exponents_show(fil,t->_lead,_nvars);
+  fprintf(fil," (%d)\n",t->_val);
+}
 
-void MonomialTableZZ::show(FILE *fil)
+void MonomialTableZZ::show(FILE *fil) const
 {
   mon_term *t,*head;
   /* Loop through each component, display monomials(val) 10 per line */
@@ -389,13 +453,15 @@ void MonomialTableZZ::show(FILE *fil)
       fprintf(fil,"  -- component %d --\n",i);
       for (t = head->_next; t != head; t = t->_next)
 	{
-	  mpz_out_str(fil,10,t->_coeff);
-	  fprintf(fil, " ");
-	  exponents_show(fil,t->_lead,_nvars);
-	  fprintf(fil," (%d)\n",t->_val);
+	  show_mon_term(fil, t);
 	}
     }
   fprintf(fil,"\n");
+}
+
+void MonomialTableZZ::showmontable()
+{
+  show(stdout);
 }
 
 // Local Variables:
