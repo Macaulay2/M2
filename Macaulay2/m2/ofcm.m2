@@ -393,8 +393,6 @@ makeit1 := (options) -> (
      M.Options = options;
      M)
 
-makeit1 = memoize makeit1
-
 makeMonoid := (options) -> (
      -- check the options for consistency, and set everything to the correct defaults
      options = new MutableHashTable from options;

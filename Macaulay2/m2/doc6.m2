@@ -1267,6 +1267,18 @@ document { rank,
 	  },
      }
 
+document { coverMap,
+     Headline => "get the map to the module given by the generators of a module",
+     Synopsis => {
+	  "g = coverMap M",
+	  "M" => null,
+	  "g" => { "the map from a free module to ", TT "M", " given by the 
+	       generators of ", TT "M", "." 
+	       }
+	  },
+     SEEALSO { "cover" }
+     }
+
 document { cover,
      Headline => "get the covering free module",
      TT "cover M", " -- yields the free module whose basis elements correspond

@@ -3,7 +3,7 @@
 R = ZZ/101[a..d]/(b*d)
 I = ideal(a*b-c^2, a*b*c-c*d^2, a*d^2-c*a*d)
 I = ideal(a*b-c^2, a*b*c-c*d^2)
-C = res(coker gens I, Algorithm=>2)
+C = res(coker gens I, Strategy=>2)
 M = C.dd_2
 F = target M
 see F

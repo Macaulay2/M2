@@ -96,11 +96,6 @@ document { LengthLimit,
      Headline => "stop when the resolution reaches this length",
      }
 
-document { "Algorithm",
-     Headline => "an obsolete synonym for Strategy",
-     SEEALSO "Strategy"
-     }
-
 document { resolution => LengthLimit,
      Headline => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with

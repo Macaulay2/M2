@@ -545,18 +545,18 @@ document { engineStack,
 	  },
      }
 
-document { heap,
+document { engineHeap,
      Headline => "display the engine's heap",
-     TT "heap()", " -- display the contents of the engine's heap.",
+     TT "engineHeap()", " -- display the contents of the engine's heap.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
-     as ", TT "heap", " if it's alone on the command line.",
+     as ", TT "engineHeap", " if it's alone on the command line.",
      PARA,
      "Used mainly for debugging the engine.",
      EXAMPLE {
 	  "ZZ/101[x,y,z];",
       	  "matrix {{x,y,z}}",
-      	  "heap"
+      	  "engineHeap"
 	  },
      }
      

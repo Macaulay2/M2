@@ -202,6 +202,7 @@ isHomogeneous RingMap := (f) -> (
      isHomogeneous f.target and
      isHomogeneous f.matrix)
 
+sub = substitute
 
 substitute(Power,Thing) := (v,s) -> Power{substitute(v#0,s),v#1}
 substitute(Divide,Thing) := (v,s) -> Divide{substitute(v#0,s),substitute(v#1,s)}
@@ -261,6 +262,8 @@ substitute(Module,Option) := (M,v) -> (sub2(ring M,{v})) M
 substitute(Ideal,Option) := (I,v) -> (sub2(ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(ring f,{v})) f
+
+RingElement Array := (r,v) -> substitute(r,matrix {toList v})
 
 RingMap Ideal := Ideal => (f,I) -> ideal f module I
 

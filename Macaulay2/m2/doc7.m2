@@ -1034,14 +1034,16 @@ document { (exteriorPower,ZZ,Matrix),
      }
 
 document { (symbol _,Function,Thing),
-     Headline => "attach the first argument to a function of two arguments",
+     Headline => "attach the first argument to a function of two or more arguments",
      Synopsis => {
 	  "g = f_x",
-	  "f" => "a function of two arguments",
+	  "f" => "a function of two or more arguments",
 	  "x" => "anything",
 	  "g" => {
-	       "a new function with the property that ", TT "g y", "
-	       returns the value of  ", TT "f(x,y)", "."
+	       "a new function with the property that ", TT "g(y)", "
+	       returns the value of  ", TT "f(x,y)", ", that
+	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
+	       so on."
 	       }
 	  },
      "This abbreviation allows us to save a bit of typing, and in some
@@ -1051,7 +1053,8 @@ document { (symbol _,Function,Thing),
 	  "f = genericMatrix(R,a,3,3)",
 	  "exteriorPower(2,f)",
 	  "exteriorPower_2 f"
-	  }
+	  },
+     SEEALSO { "splice" }
      }
 
 document { MinorsComputation,

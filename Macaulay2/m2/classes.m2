@@ -108,6 +108,6 @@ exit = exit1
 
 Function @@ Function := Function => (f,g) -> x -> f g x
 
-Function _ Thing := Function => (f,x) -> y -> f(x,y)
+Function _ Thing := Function => (f,x) -> y -> f splice (x,y)
 
 -----------------------------------------------------------------------------

@@ -2,6 +2,9 @@
 
 #define MEM_DEBUG 0				/* edit this line */
 
+				/* don't forget FixUp in freeHandle in actors5.d, and the 
+				   subfront version of RegisterFinalizer, too! */
+
 #if MEM_DEBUG
 
 void debug_delete(void *);
