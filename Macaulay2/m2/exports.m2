@@ -1,7 +1,6 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
-        symbol Truncate,
 	symbol backtrace,
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,
@@ -37,6 +36,7 @@ exportMutable (
 	)
 
 export (
+        symbol Truncate,
         symbol ExampleTABLE,
         symbol MissingMethod,
 	symbol Error,
