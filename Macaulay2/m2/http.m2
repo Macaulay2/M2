@@ -37,16 +37,6 @@ getWWW(String, String) := (url,content) -> (
      else ""
      )
 
-document { quote getWWW,
-     TT "getWWW URL", " -- obtain the contents of a URL from an http server.",
-     BR,NOINDENT,
-     TT "getWWW(URL,TEXT)", " -- obtain the contents of a URL from an 
-     http server, using the 'POST' method, provided with the TEXT.",
-     PARA,
-     "This doesn't work under solaris because Sun doesn't provide sockets
-     or name service to statically linked programs like this one."
-     }
-
 --  
 --  
 --  Here is the way netscape queries us:

@@ -112,9 +112,3 @@ integrate = (f,a,b) -> (
 	  "'integrate' expected argument 3 to be a number");
      gauss(f,a,b,4,6)
      )
-
-document { quote integrate,
-     TT "integrate(f,a,b)", " -- integrate f from a to b numerically, using
-     Gaussian quadrature.",
-     EXAMPLE "integrate(sin,0,pi)"
-     }

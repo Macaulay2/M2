@@ -14,11 +14,3 @@ ZZ == RR := (y,x) -> x === y+0.
 RR == QQ := (x,r) -> x === r+0.
 QQ == RR := (r,x) -> x === r+0.
 
-document { quote RR,
-     TT "RR", " -- the class of all real numbers.  It is a field.",
-     PARA,
-     "A real number is entered as a sequence of decimal digits with a point.",
-     EXAMPLE "3.14159",
-     PARA,
-     SEEALSO {"basictype", "numbers"}
-     }

@@ -128,15 +128,4 @@ browse = x -> (
      s := (x,null);
      while null =!= (s = menu s) do ( ))
 
-document { quote browse,
-     TT "browse x", " -- provides an interactive mechanism which allows the user
-     to explore the hash table or list ", TT "x", ".",
-     PARA,
-     "A menu of numbered items is presented to the user which allow the user to
-     inspect the ", TO "class", " or ", TO "parent", " of ", TT "x", ".  For a
-     hash table, the keys are presented so the user can visit the 
-     corresponding values, and for a list, the entries are presented so the user 
-     can visit them.  One of the menu items allows the user to go back to 
-     re-examine the previous item."
-     }
 

@@ -3,12 +3,6 @@
 
 QuotientRing = new Type of EngineRing
 
-document { quote QuotientRing,
-     TT "QuotientRing", " -- the class of all quotient rings.",
-     PARA,
-     SEEALSO {quote /, Ring, Ideal}
-     }
-
 isQuotientRing = method()
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
@@ -20,19 +14,6 @@ isQuotientOf(Ring,Ring) := (S,R) -> S === R
 isQuotientOf(QuotientRing,Ring) := (S,R) -> (
      S === R or isQuotientOf(S.baseRings#-1,R)
      )
-document { quote isQuotientOf,
-     TT "isQuotientOf(S,R)", " -- tells whether S is a quotient ring of R."
-     }
-
-document { quote isQuotientRing,
-     TT "isQuotientRing R", " -- tells whether R is provided as a quotient
-     ring."
-     }
-
-TEST "
-assert( ZZ/2 === ZZ/(4,6) )
-R = ZZ/101[t]
-"
 
 degreeLength QuotientRing := S -> degreeLength S.baseRings#-1
 vars QuotientRing := S -> (
@@ -155,31 +136,6 @@ Ring / Ideal := (R,I) -> if I == 0 then R else (
 	  )
      )
 
-document { (quote /, Ring, Ideal),
-     TT "R/I", " -- form a quotient ring.",
-     PARA,
-     "Here ", TT "I", " may be: an element of ", TT "R", "; a sequence of elements of
-     ", TT "R", "; or a submodule of ", TT "R^1", ".",
-     PARA,
-     "The names of the variables are assigned values in the new quotient ring
-     by automatically running ", TT "use R", ", unless R has a name,
-     or one of the rings R is a quotient ring of has a name.",
-     PARA,
-     "Quotient rings are bulky objects, because they contain a Groebner basis
-     for their ideals, so only quotients of ", TT "ZZ", " are remembered
-     forever.  Typically the ring created by ", TT "R/I", " will
-     be a brand new ring, and its elements will be incompatible with the
-     elements of previously created quotient rings for the same ideal.",
-     PARA,
-     EXAMPLE {
-	  "ZZ/2 === ZZ/(4,6)",
-      	  "R = ZZ/101[t]",
-      	  "R/t === R/t",
-	  },
-     PARA,
-     SEEALSO {"QuotientRing", "use"}
-     }
-
 predecessors := method()
 predecessors Ring := R -> {R}
 predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
@@ -248,14 +204,6 @@ presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
 	  S = S.baseRings#-1;
 	  );
      v)
-
-TEST "
-R = ZZ/101[a..d]
-f=1+a+b+c+d
-assert(size f == 5)
-S = R/a
-assert(size promote(f,S) == 4)
-"
 
 codim PolynomialRing := R -> 0
 codim QuotientRing := (R) -> codim cokernel presentation R

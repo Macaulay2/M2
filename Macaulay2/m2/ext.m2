@@ -21,62 +21,6 @@ Ext = new ScriptedFunctor from {
 	       }
 	  )
      }
-
-document { quote Ext,
-     TT "Ext^i(M,N)", " -- compute the Ext module of two modules M, N.",
-     PARA,
-     NOINDENT,
-     TT "Ext(M,N)", " -- compute the total Ext module of two modules M, N.",
-     PARA,
-     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as
-     a module in the evident way.",
-     PARA,
-     "The computation of the total Ext module is possible for modules over the
-     ring ", TT "R", " of a complete intersection, according the algorithm
-     of Shamash-Eisenbud-Avramov-Buchweitz.  The result is provided as a finitely
-     presented module over a new ring with one additional variable for each
-     equation of ", TT "R", ".  The variables in this new ring have degree
-     length 2; we would have liked to arrange for the degree ", TT "i", "-- 
-     part of ", TT "Ext^d(M,N)", " to appear as the degree ", TT "{i,-d}", "
-     part of ", TT "E = Ext(M,N)", ", but for technical and hopefully temporary
-     reasons, this wasn't possible.  So meanwhile, we provide a function 
-     ", TT "E.adjust", " in the result returned by ", TT "Ext", " which can
-     be used to convert ", TT "{i,-d}", " into the degree actually used.
-     This adjusted multi-degree can be used with ", TO "basis", ", as in the
-     example below.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y]/ideal(x^3,y^2);",
-      	  "N = cokernel random (R^1, R^{-2,-2})",
-      	  "E = Ext(N,N)",
-      	  "rank source basis( E.adjust {-3,-2}, E)",
-      	  "rank source basis( {-3}, Ext^2(N,N) )",
-	  },
-     SEEALSO{"ScriptedFunctor", "adjust"}
-     }
-
-document { quote adjust,
-     TT "adjust", " -- a symbol used as a key under which to store a degree
-     adjustment function used by ", TO "Ext", ".",
-     PARA,
-     "This use of this symbol will eventually not be needed."
-     }
-
-document { quote dd,
-     TT "dd", " -- a symbol used as a key in a chain complex, under which
-     are stored the differentials.",
-     PARA,
-     "The differentials are stored as the members in a chain complex
-     map of degree ", TT "-1", ".  The map ", TT "C.dd_i", " is the
-     one whose source is the module ", TT "C_i", ", and it is arranged to
-     be zero if no map has been stored in that spot.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b];",
-      	  "C = resolution cokernel vars R",
-      	  "C.dd",
-      	  "C.dd_2",
-	  },
-     SEEALSO "ChainComplex"
-     }
 	  
 Ext(ZZ, Module, Module) := (i,M,N) -> (
      R := ring M;
@@ -136,69 +80,6 @@ Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
 Ext(ZZ, Ring, Ring) := (i,S,R) -> Ext^i(S^1,R^1)
 Ext(ZZ, Ring, Ideal) := (i,S,J) -> Ext^i(S^1,module J)
 Ext(ZZ, Ring, Module) := (i,S,N) -> Ext^i(S^1,N)
-
-TEST "
-R = ZZ/101[a,b,c,d]
-f = matrix {{c^3-b*d^2, b*c-a*d, b^3-a^2*c, a*c^2-b^2*d}}
-M = cokernel f
-assert( codim M === 2 )
-assert( dim M === 2 )
-E = Ext^2(M, R^1)
-T = (degreesRing R)_0
-p = poincare E
-assert ( p == 3*T^(-3)-5*T^(-2)+1*T^(-1)+1 )
-assert( dim E === 2 )
-assert( dim Ext^1(M,R^1) === -1 )
--- assert ( poincare prune Ext^2(M,M) == (4T^-3 + 2T^-2 - 5T^-1 + 3) (1 - T)^2 )
-
-F = Ext^3(M, R^1)
-assert( dim F === 0 )
-assert( degree F === 1 )
-
-assert( Ext^4(M,R^1) == 0 )
-
-k = cokernel vars R
-N = cokernel matrix {{1_R}}
-assert( dim Ext^2(N,k) === -1 )
-
-g = vars R
-P = (image g) / (image matrix {{a^2, b^2, c^2, d^2}})
-
-assert( degree Hom(P,k) === 4 )
-assert( degree P === 15 )
-assert( dim P === 0 )
-assert( pdim P === 4 )
-
-assert( degree Ext^4(P,P) === 15 )
-
-image g / image(g**g**g)
-"
-
-TEST "
-eg1 = () -> (
-  R = ZZ/101[a..d];
-  m = matrix {{a*d - b*c, a^2*c - b^3, c^3 - b*d^2, a*c^2 - b^2*d}};
-  C = resolution cokernel m;
-  E2 = Ext^2(cokernel m, R)
-  )
-eg1()
-
-eg2 = () -> (
-  -- gbTrace 3;
-  R = ZZ/101[a..f];
-  m = matrix {{a*b*c - d*e*f, a*b*d - c*e*f, a*e*f - b*c*d}};
-  C = resolution cokernel m;
-  -- top m
-  )
-eg2()
-
-eg3 = () -> (
-  -- test newCoordinateSystem
-  R = ZZ/101[a..f];
-  m = matrix {{a-b+c, a-d-f}};
-  newCoordinateSystem(R, m))
---eg3()
-"
 
 -- total ext over complete intersections
 
@@ -275,18 +156,3 @@ Ext(Module,Module) := (N,M) -> (
 	  ext))
 
 adjust					  -- just use it again
-
-TEST ///
-     Q = ZZ/101[x,y]
-     I = ideal(x^3,y^5)
-     R = Q/I
-     N = cokernel random (R^3, R^{2:-2})
-     M = cokernel random (R^3, R^{2:-2})
-     E = Ext(N,M)
-     adj = E.adjust
-     scan(4, d -> (
-	  bd := basis Ext^d(N,M);
-	  assert(
-	       tally splice apply(-10..10,i -> rank source basis(adj {i,-d},E) : {i}) ===
-	       tally apply(rank source bd, i -> degree bd_i))))
-///

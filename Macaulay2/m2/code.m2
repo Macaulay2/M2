@@ -47,27 +47,6 @@ code = method(SingleArgumentDispatch=>true)
 code Symbol := code Sequence := code Function := args -> netLocation location args
 code List := v -> stack apply(v,i -> try code i else "-- source code not available : " | name i)
 code Command := cmd -> code cmd#0
-document { quote code,
-     TT "code f", " -- prints out the source code of the function f.",
-     BR, NOINDENT,
-     TT "code(f,X)", " -- prints out the source code of the particular 
-     method that would be applied if f were applied to an argument of 
-     class X.",
-     BR, NOINDENT,
-     TT "code(f,X,Y)", " -- prints out the source code of the particular 
-     method that would be applied if f were applied to arguments of
-     classes X and Y.",
-     BR, NOINDENT,
-     TT "code(f,X,Y,Z)", " -- prints out the source code of the 
-     particular method that would be applied if f were applied to 
-     arguments of classes X, Y, and Z.",
-     BR, NOINDENT,
-     TT "code {v,w,...}", " -- prints out the source code for each
-     of the items listed.",
-     PARA,
-     EXAMPLE "code methods use",
-     SEEALSO "methods"
-     }
 
 EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
 edit = method(SingleArgumentDispatch=>true)
@@ -96,14 +75,7 @@ edit Sequence := args -> (
      else EDIT location args
      )
 edit = Command edit
-document { quote edit,
-     TT "edit", " -- a command which starts the text editor",
-     BR,NOINDENT,
-     TT "edit f", " -- starts the text editor at the source code of the
-     function f.",
-     PARA,
-     "Multiple arguments are handled as ", TO "code", " handles them."
-     }
+
 -----------------------------------------------------------------------------
 methods = F -> (
      seen := new MutableHashTable;
@@ -140,25 +112,3 @@ methods = F -> (
 				   then found#key = true))))));
      sort keys found)
 
-document { quote methods,
-     TT "methods F", " -- produces a list of those methods associated with the
-     function or type F.",
-     BR, NOINDENT,
-     TT "methods quote **", " -- produces a list of the methods 
-     usable with the operator ", TT "**", ".",
-     BR, NOINDENT,
-     TT "methods (quote **, X)", " -- produces a list of the 
-     methods usable with the operator ", TT "**", " and a thing of
-     class ", TT "X", ".",
-     BR, NOINDENT,
-     TT "methods (X, Y)", " -- produces a list of the 
-     methods usable with a thing of class ", TT "X", " and a thing of class
-     ", TT "Y", ".",
-     PARA,
-     "This function operates by examining those types which are values of
-     global symbols for keys which appear to be storing references to
-     methods.  Types which don't appear as values of global variables will
-     not be examined, so perhaps not all methods will be found.",
-     PARA,
-     EXAMPLE "methods drop"
-     }

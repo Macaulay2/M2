@@ -14,8 +14,9 @@ all::
 # LDFLAGS = -s
 # LOADLIBES =
 DUMPSEQUENCE = $(shell cat dumpseq)
+DOCSEQUENCE = $(shell cat docseq)
 
-MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2
+MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
 export LD_LIBRARY_PATH=../lib
 
@@ -30,16 +31,19 @@ cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
-DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 $(MADEGFILES) $(TUTORIALS)
+DUMPEDGFILES := $(DUMPSEQUENCE) $(DOCSEQUENCE) setup.m2 $(MADEGFILES) $(TUTORIALS)
 
 ifdef DUMPDATA
 DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
 endif
 
-GFILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
+NONDOCGFILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
 
-##############################
+wc:
+	wc -l $(DOCSEQUENCE)
+	wc -l $(NONDOCGFILES)
 
+GFILES = $(NONDOCGFILES) $(DOCSEQUENCE)
 SCRIPTS = ../bin/M2
 
 ifeq "$(OS)" "MS-DOS"
@@ -50,10 +54,13 @@ ifeq "$(OS)" "Windows-95-98-NT"
 SCRIPTS = ../bin/M2.bat ../bin/M2
 endif
 
-wc:; wc -l $(GFILES)
 
 loads.m2 : dumpseq loads.awk
-	@echo making loads.m2
+	@echo making $@
+	@awk -f loads.awk <$< >$@
+
+docloads.m2 : docseq loads.awk
+	@echo making $@
 	@awk -f loads.awk <$< >$@
 
 #version.m2 : $(TOPDIR)/Makeconf ../../Makeconf-m2
@@ -111,12 +118,12 @@ phase1 :: ../cache/Macaulay2-made
 ../cache/Macaulay2-made : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	touch $@
 
-all:: $(SCRIPTS)
+phase1 :: $(SCRIPTS)
 ifeq "$(CC)" "cl"
 $(SCRIPTS) : ../util/setup.exe
 	cd ..; util/setup
 else
-$(SCRIPTS) : makeM2.m2
+$(SCRIPTS) : makeM2.m2 ../../Makeconf.h
 	rm -f $(SCRIPTS)
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 endif
@@ -172,6 +179,6 @@ clean::
 		../tmp/Examples ../tmp/Tests *.obj *.exe bare \
 		TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \
-		gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2 \
+		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
 

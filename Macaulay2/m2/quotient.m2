@@ -13,19 +13,6 @@ gcdCoefficients(ZZ,ZZ) := (a,b) -> (
 	  );
      {n#1,n#2});
 
-document { quote gcdCoefficients,
-     TT "gcdCoefficients(a,b)", " -- returns ", TT "{r,s}", " so that
-     ", TT"a*r + b*s", " is the greatest common divisor of ", TT "a", "
-     and ", TT "b", ".",
-     PARA,
-     "Works for integers or elements of polynomial rings.",
-     SEEALSO "gcd"
-     }
-
 mod = (i,n) -> i * 1_(ZZ/n)
 
-document { quote mod,
-     TT "mod(i,n)", " -- reduce the integer i modulo n, producing an
-     element of ZZ/n."
-     }
 

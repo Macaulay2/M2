@@ -6,32 +6,6 @@
 Fano = method()
 Grassmannian = method()
 
-document { quote Fano, 
-     TT "Fano(k,I,GR) or  Fano(k,I)", " -- computes 
-     the ideal of a Fano scheme in the Grassmannian.",
-     PARA,
-     "Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
-     in ", TT "P^r", ", a positive integer k<r, and optionally a 
-     ring ", TT "GR", " with (exactly) ", TT "r+1", " choose ", TT "k+1", " variables, 
-     representing the ambient space of the Grassmannian of 
-     k-planes in ", TT "P^r", ", this routine returns the ideal in
-     ", TT "GR", " of the Fano scheme that parametrizes the k-planes 
-     lying on ", TT "X", ".  If the optional third argument is not 
-     present, the routine fabricates its own ring, 
-     and returns an ideal in it."
-     }
-
-document{quote Grassmannian, 
-    TT "Grassmannian(k,r,R) or Grassmannian(k,r)", " -- given natural numbers
-     k <= r,
-        and optionally a ring R with at least binomial(r+1,k+1)
-        variables, the routine defines the ideal of the 
-        Grassmannian of projective k-planes in P^r, using 
-        the first binomial(r+1,k+1) variables of R. 
-        If R is not given, the routine makes and uses
-        ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
-        }
-
 Fano(ZZ,Ideal,Ring) := (k,X,GR) -> (
   -- Get info about the base ring of X:
   -- The coefficient ring (to make new rings of

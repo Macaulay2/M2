@@ -5,13 +5,6 @@ pad = method()
 pad(String,ZZ) := (s,n) -> concatenate(s,n-# s)
 pad(ZZ,String) := (n,s) -> concatenate(n-# s,s)
 
-document { quote pad,
-     TT "pad(s,n)", " -- pads the string s to length n with spaces on the right.",
-     BR,
-     NOINDENT, 
-     TT "pad(n,s)", " -- pads the string s to length n with spaces on the left."
-     }
-
 columnate = (s,w) -> (
      lens := apply(s,i -> #i);
      ncols := (w+1) // (max lens + 1);
@@ -29,16 +22,6 @@ columnate = (s,w) -> (
 	  nrows = newrows;
 	  );
      horizontalJoin between(" ", apply(pack(s,nrows), col -> stack col)))
-
-document { quote columnate,
-     TT "columnate(s,w)", " -- arranges the strings in the list s in columns, returning
-     a ", TO "Net", " suitable for output to a terminal with a linewidth of w.",
-     PARA,
-     EXAMPLE {
-	  "columnate(characters ascii (65 .. 90) , 12)",
-	  "<<oo;"
-	  }
-     }
 
 net Time := v -> (
      t := "-- " | string v#0 | " seconds";

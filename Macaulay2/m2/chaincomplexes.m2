@@ -8,82 +8,9 @@ new ChainComplex := (cl) -> (
      b.source = b.target = C;
      C)
 
-document { quote ChainComplex,
-     TT "ChainComplex", " -- the class of all chain complexes.",
-     PARA,
-     "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
-     the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
-     produce the differential whose source is ", TT "C_i", ".",
-     PARA,
-     "A new chain complex can be made with ", TT "C = new ChainComplex", ".  This will
-     automatically initialize ", TT "C.dd", ", in which the differentials are stored.
-     The modules can be installed with statements like ", TT "C#i=M", " and the 
-     differentials can be installed with statements like ", TT "C.dd#i=d", ".",
-     PARA,
-     "See also ", TO "ChainComplexMap", " for a discussion of maps between
-     chain complexes.  (The boundary map C.dd is regarded as one.)",
-     PARA,
-     "Here are some functions for producing or manipulating chain complexes.",
-     MENU {
-	  (TO (quote " ", Module, Array), " -- create a chain complex from a module"),
-	  (TO (quote ++, ChainComplex, ChainComplex), " -- direct sum"),
-	  (TO (quote **, ChainComplex, ChainComplex), " -- tensor product"),
-	  (TO (quote **, ChainComplex, GradedModule), " -- tensor product"),
-	  (TO (quote **, GradedModule, ChainComplex), " -- tensor product"),
-	  (TO "dd", " -- obtain the differentials."),
-	  (TO (quote " ", ChainComplex, Array), " -- shift a chain complex"),
-	  (TO "betti", "        -- display degrees in a free resolution"),
-	  (TO "chainComplex", " -- make a chain complex"),
-	  (TO "complete", "     -- complete the internal parts of a chain complex"),
-	  (TO "dual", "         -- dual complex"),
-	  (TO (Hom,ChainComplex,Module), " -- Hom"),
-	  (TO "length", "       -- length of a chain complex"),
-	  (TO (max,ChainComplex), " -- maximum index in a chain complex"),
-	  (TO (min,ChainComplex), " -- minimum index in a chain complex"),
-	  (TO "poincare", "     -- assemble degrees into polynomial"),
-	  TO "poincareN",
-	  (TO (NewMethod,ChainComplex), " -- make a new chain complex from scratch"),
-	  (TO "nullhomotopy", " -- produce a null homotopy"),
-	  (TO "regularity", "   -- compute the regularity"),
-	  (TO "resolution", "   -- make a projective resolution"),
-	  (TO "status", "       -- display the status of a resolution computation"),
-	  (TO "syzygyScheme", " -- construct the syzygy scheme from some syzygies"),
-	  (TO "tensorAssociativity", " -- associativity isomorphisms for tensor products"),
-	  },
-     PARA,
-     "The default display for a chain complex shows the modules and
-     the stage at which they appear.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "C = resolution cokernel matrix {{x,y,z}}",
-	  },
-     "In order to see the matrices of the differentials, examine 'C.dd'.",
-     EXAMPLE "C.dd",
-     SEEALSO {"Resolution", "dd"}
-     }
-
 complete ChainComplex := C -> (
      if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
      C)
-document { (complete, ChainComplex),
-     TT "complete C", " -- fills in the modules of a chain complex
-     obtained as a resolution with information from the engine.",
-     PARA,
-     "For the sake of efficiency, when a chain complex arises as
-     a resolution of a module, the free modules are not filled in until
-     they are needed.  This routine can be used to fill them all in, and
-     is called internally when a chain complex is printed.
-     Normally users will not need this function, unless they use ", TO "#", " to
-     obtain the modules of the chain complex, or use ", TO "keys", " to
-     see which spots are occupied by modules.",
-     EXAMPLE {
-	  "R = ZZ/101[a..d];",
-      	  "C = resolution cokernel vars R;",
-      	  "keys C",
-      	  "complete C;",
-      	  "keys C"
-	  }
-     }
 
 ChainComplex _ ZZ := (C,i) -> (
      if C#?i 
@@ -99,16 +26,6 @@ ChainComplex _ ZZ := (C,i) -> (
 
 ChainComplex ^ ZZ := (C,i) -> C_-i
 
-document { (quote _, ChainComplex, ZZ),
-     TT "C_i", " -- yields the i-th module in a chain complex C.",
-     PARA,
-     "Returns the zero module if no module has been stored in the
-     i-th spot.  You can use code like ", TT "C#?i", " to determine
-     if there is a module in the i-th spot, but if the chain complex
-     arose as a resolution, first use ", TO (complete, ChainComplex), " to 
-     fill all the spots with their modules."
-     }
-
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
 
@@ -119,13 +36,6 @@ length ChainComplex := (C) -> (
      s := spots C;
      if #s === 0 then 0 else max s - min s
      )
-document { (length, ChainComplex),
-     TT "length C", " -- the length of a chain complex.",
-     PARA,
-     "The length of a chain complex is defined to be the difference
-     between the smallest and largest indices of spots occupied by
-     modules, even if those modules happen to be zero."
-     }
 
 ChainComplex == ChainComplex := (C,D) -> (
      all(sort union(spots C, spots D), i -> C_i == D_i)
@@ -145,35 +55,6 @@ net ChainComplex := C -> if C.?name then C.name else (
 	  between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of MutableHashTable
-document { quote ChainComplexMap,
-     TT "ChainComplexMap", " -- the class of all maps between chain complexes.",
-     PARA,
-     "The usual algebraic operations are available: addition, subtraction,
-     scalar multiplication, and composition.  The identity map from a
-     chain complex to itself can be produced with ", TO "id", ".  An
-     attempt to add (subtract, or compare) a ring element to a chain complex
-     will result in the ring element being multiplied by the appropriate
-     identity map.",
-     PARA,
-     "Operations on maps of chain complexes:",
-     MENU {
-	  TO "!=",
-	  TO "==",
-	  TO "+",
-	  TO "-",
-	  (TO "*", "             -- composition"),
-	  (TO "^", "             -- power (repeated composition)"),
-	  (TO "++", "            -- direct sum"),
-	  (TO "cone", "          -- mapping cone"),
-	  (TO "extend", "        -- produce a map by lifting"),
-	  (TO "ring", "          -- get the base ring"),
-	  (TO "nullhomotopy", "  -- produce a null homotopy"),
-	  (TO (quote **, ChainComplexMap, ChainComplex), " -- tensor product"),
-	  (TO (quote **, ChainComplex, ChainComplexMap), " -- tensor product"),
-	  (TO (quote **, ChainComplexMap, ChainComplexMap), " -- tensor product"),
-	  (TO (quote _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes")
-	  }
-     }
 ring ChainComplexMap := C -> ring source C
 complete ChainComplexMap := f -> (
      if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
@@ -234,11 +115,6 @@ ChainComplexMap _ ZZ := (f,i) -> (
 	  then map((target f)_(i+f.degree),(source f)_i,0,Degree=>f.degree)
 	  else map((target f)_(i+f.degree),(source f)_i,0)
 	  ))
-document { (quote _, ChainComplexMap, ZZ),
-     TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
-     the component p_i : C_i -> D_(i+d).",
-     SEEALSO "ChainComplexMap"
-     }
 
 ChainComplex#id = (C) -> (
      complete C;
@@ -429,19 +305,6 @@ extend(ChainComplex,ChainComplex,Matrix) := (D,C,fi)-> (
 	  );
      f)
 
-document { quote extend,
-     TT "extend(D,C,f0)", " -- produces a lifting of a map f0 : D_0 <--- C_0
-     to a map f: D <--- C of chain complexes of degree 0."
-     }
-
-TEST "
-R = ZZ/101[a..c]
-I = image vars R
-J = image symmetricPower (2,vars R)
-g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
-E = cone g
-"
-
 cone ChainComplexMap := f -> (
      if f.degree =!= 0 then error "expected a map of chain complexes of degree zero";
      C := source f;
@@ -458,25 +321,7 @@ cone ChainComplexMap := f -> (
 	       map(C_(i-2),D_i,0)      |   - C.dd_(i-1)
 	       );
      E)
-document { quote cone,
-     TT "cone f", " -- produce the mapping cone of a map f of chain complexes",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "m = image vars R",
-      	  "m2 = image symmetricPower(2,vars R)",
-      	  "M = R^1/m2",
-      	  "N = R^1/m",
-      	  "C = cone extend(resolution N,resolution M,id_(R^1))",
-	  },
-     "Let's check that the homology is correct.  HH_0 should be 0.",
-     EXAMPLE "prune HH_0 C",
-     "HH_1 should be isomorphic to m/m2.",
-     EXAMPLE {
-	  "prune HH_1 C",
-      	  "prune (m/m2)"
-	  }
-     }
+
 nullhomotopy ChainComplexMap := f -> (
      s := new ChainComplexMap;
      s.ring = ring f;
@@ -509,29 +354,7 @@ nullhomotopy ChainComplexMap := f -> (
 	       )
 	  );
      s)
-document { quote nullhomotopy,
-     TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
-     chain complexes.",
-     PARA, 
-     "Whether f is null homotopic is not checked.",
-     PARA,
-     "Here is part of an example provided by Luchezar Avramov.  We
-     construct a random module over a complete intersection, resolve 
-     it over the polynomial ring, and produce a null homotopy for the
-     map which is multiplication by one of the defining equations
-     for the complete intersection.",
-     EXAMPLE {
-	  "A = ZZ/101[x,y];",
-      	  "M = cokernel random(A^3, A^{-2,-2})",
-      	  "R = cokernel matrix {{x^3,y^4}}",
-      	  "N = prune (M**R)",
-      	  "C = resolution N",
-      	  "d = C.dd",
-      	  "s = nullhomotopy (x^3 * id_C)",
-      	  "s*d + d*s",
-      	  "s^2"
-	  },
-     }
+
 -----------------------------------------------------------------------------
 poincare ChainComplex := C -> (
      R := ring C;
@@ -545,44 +368,6 @@ poincare ChainComplex := C -> (
 	       then scanPairs(tally degrees C_i, 
 		    (d,m) -> f = f + m * (-1)^i * product(# d, j -> G_j^(d_j)))));
      f)
-document { quote poincare,
-     TT "poincare C", " -- encodes information about the degrees of basis elements
-     of a free chain complex in a polynomial.",
-     BR,NOINDENT,
-     TT "poincare M", " -- the same information about the free resolution
-     of a module M.",
-     PARA,
-     "The polynomial has a term (-1)^i T_0^(d_0) ... T_(n-1)^(d_(n-1)) in it
-     for each basis element of C_i with multi-degree {d_0,...,d_(n-1)}.
-     When the multi-degree has a single component, the term is
-     (-1)^i T^(d_0).",
-     PARA,
-     "The variable ", TT "T", " is defined in a hidden local scope, so will print out
-     as ", TT "$T", " and not be directly accessible.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x_0 .. x_3,y_0 .. y_3]",
-      	  "m = matrix table (2, 2, (i,j) -> x_(i+2*j))",
-      	  "n = matrix table (2, 2, (i,j) -> y_(i+2*j))",
-      	  "f = flatten (m*n - n*m)",
-      	  "poincare cokernel f",
-	  },
-     PARA,
-     TT "(cokernel f).poincare = p", " -- inform the system that the Poincare 
-     polynomial of the cokernel of f is p.  This can speed the computation 
-     of a Groebner basis of f.",
-     EXAMPLE {
-	  "R = ZZ/101[t_0 .. t_17]",
-      	  "T = (degreesRing R)_0",
-      	  "f = genericMatrix(R,t_0,3,6)",
-      	  "(cokernel f).poincare = 3-6*T+15*T^2-20*T^3+15*T^4-6*T^5+T^6",
-      	  "gb f",
-	  },
-     "Keys used:",
-     MENU {
-	  TO "poincareComputation"
-	  }
-     }
 
 poincareN ChainComplex := (C) -> (
      s := local S;
@@ -598,18 +383,6 @@ poincareN ChainComplex := (C) -> (
 	       then scanPairs(tally degrees C_n, 
 		    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
      f )
-document { quote poincareN,
-     TT "poincareN C", " -- encodes information about the degrees of basis elements
-     of a free chain complex in a polynomial.",
-     PARA,
-     "The polynomial has a term S^i T_0^(d_0) ... T_(n-1)^(d_(n-1)) in it
-     for each basis element of C_i with multi-degree {d_0,...,d_(n-1)}.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "poincareN resolution cokernel vars R"
-	  },
-     }
 
 ChainComplex ** Module := (C,M) -> (
      P := youngest(C,M);
@@ -643,52 +416,13 @@ Module ** ChainComplex := (M,C) -> (
 -----------------------------------------------------------------------------
 
 homology(ZZ,ChainComplex) := opts -> (i,C) -> homology(C.dd_i, C.dd_(i+1))
-document { (homology,ZZ,ChainComplex),
-     TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
-     EXAMPLE {
-	  "R = ZZ/101[x,y]",
-      	  "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
-      	  "M = HH_1 C",
-      	  "prune M",
-	  },
-     }
-
-TEST "
-S = ZZ/101[x,y,z]
-M = cokernel vars S
-assert ( 0 == HH_-1 res M )
-assert ( M == HH_0 res M )
-assert ( 0 == HH_1 res M )
-assert ( 0 == HH_2 res M )
-assert ( 0 == HH_3 res M )
-assert ( 0 == HH_4 res M )
-"
-
 
 cohomology(ZZ,ChainComplex) := opts -> (i,C) -> homology(-i, C)
-document { (cohomology,ZZ,ChainComplex),
-     TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
-     PARA,
-     "By definition, this is the same as HH_(-i) C."
-     }
-
   homology(ZZ,ChainComplexMap) := opts -> (i,f) -> (
        inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
        )
 
 cohomology(ZZ,ChainComplexMap) := opts -> (i,f) -> homology(-i,f)
-document { (homology,ZZ,ChainComplexMap),
-     TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
-     by a map ", TT "f", " of chain complexes.",
-     PARA,
-     SEEALSO {"homology", "HH"}
-     }
-document { (cohomology,ZZ,ChainComplexMap),
-     TT "HH^i f", " -- provides the map on the ", TT "i", "-th cohomology module
-     by a map ", TT "f", " of chain complexes.",
-     PARA,
-     SEEALSO {"cohomology", "HH"}
-     }
 
 homology(ChainComplex) := opts -> (C) -> (
      H := new GradedModule;
@@ -696,12 +430,6 @@ homology(ChainComplex) := opts -> (C) -> (
      complete C;
      scan(spots C, i -> H#i = homology(i,C));
      H)
-document { (homology,ChainComplex),
-     TT "HH C", " -- produces the direct sum of the homology modules of the
-     chain complex ", TT "C", " as a graded module.",
-     PARA,
-     SEEALSO {"GradedModule", "HH"}
-     }
 
 gradedModule(ChainComplex) := (C) -> (
      H := new GradedModule;
@@ -720,22 +448,7 @@ homology(ChainComplexMap) := opts -> (f) -> (
 
 chainComplex = method(SingleArgumentDispatch=>true)
 
-document { quote chainComplex,
-     TT "chainComplex", " -- a method for creating chain complexes.",
-     PARA,
-     "See:",
-     MENU {
-	  TO (chainComplex,Matrix),
-	  TO (chainComplex,Sequence),
-	  TO (chainComplex,GradedModule)
-	  }
-     }
-
 chainComplex Matrix := f -> chainComplex {f}
-document { (chainComplex, Matrix),
-     TT "chainComplex f", " -- create a chain complex ", TT "C", " with
-     the map ", TT "f", " serving as the differential ", TT "C.dd_1", "."
-     }
 
 chainComplex Sequence := chainComplex List := maps -> (
      if #maps === 0 then error "expected at least one map";
@@ -756,13 +469,6 @@ chainComplex Sequence := chainComplex List := maps -> (
 	       C#(i+1) = source f;
 	       ));
      C)
-document { (chainComplex, Sequence),
-     TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
-     differentials are the maps ", TT "f", ", ", TT "g", ", ", TT "h", ".",
-     PARA,
-     "The map ", TT "f", " appears as ", TT "C.dd_1", ", the map ", TT "g", " appears
-     as ", TT "C.dd_2", ", and so on."
-     }
 
 betti Matrix := f -> (
      R := ring target f;
@@ -792,22 +498,7 @@ ChainComplex.directSum = args -> (
      C)
 ChainComplex ++ ChainComplex := (C,D) -> directSum(C,D)
 
-document { (quote ++,ChainComplex,ChainComplex),
-     TT "C++D", " -- direct sum of chain complexes.",
-     PARA,
-     EXAMPLE {
-	  "C = resolution cokernel matrix {{4,5}}",
-      	  "C ++ C[-2]"
-	  },
-     }
-
 components ChainComplex := C -> if C.?components then C.components else {C}
-document { (components, ChainComplex),
-     TT "components C", " -- returns from which C was formed, if C
-     was formed as a direct sum.",
-     PARA,
-     SEEALSO "isDirectSum"
-     }
 
 ChainComplex Array := (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";
@@ -823,12 +514,6 @@ ChainComplex Array := (C,A) -> (
      else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
      D)
 
-document { (quote " ", ChainComplex, Array),
-     TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
-     D in which D_j is C_(i+j).  The signs of the differentials are reversed
-     if i is odd."
-     }
-
 Hom(ChainComplex, Module) := (C,N) -> (
      c := C.dd;
      complete c;
@@ -842,10 +527,6 @@ Hom(ChainComplex, Module) := (C,N) -> (
 	       D#(j-1) = target f;
 	       ));
      D)
-document { (Hom,ChainComplex,Module),
-     TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
-     a module M."
-     }
 
 Hom(Module, ChainComplex) := (M,C) -> (
      complete C.dd;
@@ -861,9 +542,6 @@ Hom(Module, ChainComplex) := (M,C) -> (
 dual ChainComplex := (C) -> (
 	  R := ring C;
 	  Hom(C,R^1))
-document { (dual, ChainComplex),
-     TT "dual C", " -- the dual of a chain complex."
-     }
 
 Hom(ChainComplexMap, Module) := (f,N) -> (
      g := new ChainComplexMap;
@@ -895,13 +573,6 @@ regularity ChainComplex := C -> (
 			 ))));
      if maxrow===null then 0 else maxrow)
 regularity Module := (M) -> regularity resolution M
-document { quote regularity,
-     TT "regularity M", " -- computes the regularity of a module or chain complex C.",
-     PARA,
-     "For a free chain complex C, the regularity r is the smallest number so that 
-     each basis element of C_i has degree at most i+r.  For a module M, the
-     regularity is the regularity of a free minimal resolution of M."
-     }
 
 firstDegrees := method()
 firstDegrees Module := M -> (
@@ -1008,112 +679,12 @@ betti ChainComplex := C -> (
 			      1+colwids#(col-mincol),
 			      if not betti#?(row,col) then "." else betti#(row,col)
 			      )))))))
-document { quote betti,
-     TT "betti C", " -- display the graded Betti numbers for a ", TO "ChainComplex", " C.",
-     PARA,
-     NOINDENT,
-     TT "betti f", " -- display the graded Betti numbers for a ", TO "Matrix", " f,
-     regarding it as a complex of length one.",
-     PARA,
-     NOINDENT,
-     TT "betti G", " -- display the graded Betti numbers for the matrix of generators
-     of a ", TO "GroebnerBasis", " G.",
-     PARA,
-     "Here is a sample display:",
-     EXAMPLE {
-	  "R = ZZ/101[a..h]",
-      	  "p = genericMatrix(R,a,2,4)",
-      	  "q = generators gb p",
-      	  "C = resolution cokernel leadTerm q",
-      	  "betti C",
-	  },
-     "The top row of the display indicates the ranks of the free module C_j
-     in column j.  The entry below in row i column j gives the number of
-     basis elements of degree i+j.",
-     PARA,
-     "If these numbers are needed in a program, one way to get them is
-     with ", TO "tally", ".",
-     EXAMPLE {
-	  "degrees C_2",
-      	  "t2 = tally degrees C_2",
-      	  "peek t2",
-      	  "t2_{2}",
-      	  "t2_{3}"
-	  }
-     }
-
-TEST "
-R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
-f = vars R
-C = resolution cokernel f
-assert(regularity C === 7)
-M = kernel f
-assert( numgens source M.generators === 6 )
-assert( kernel presentation kernel f === kernel presentation kernel f )
-
-g = map(cokernel f, target f, id_(target f))
-N = kernel g
-assert( numgens source N.generators === 4 )
-assert( kernel g == image f )
-W = kernel f ++ cokernel f
-P = poincare W
-assert( P == poincare kernel f + poincare cokernel f )
-assert( P == poincare prune W )
-"
-
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (
      -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel
      -- by a minimal one.  The right way to fix it is to add an option to resolution.
      g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
      prune cokernel (C.dd_1  * transpose g_(i-1)))
-document { quote syzygyScheme,
-     TT "syzygyScheme(C,i,v)", " -- produce the syzygy scheme from a map
-     v : R^j ---> C_i which selects some syzygies from a resolution C."
-     }
-
-document { (sum, ChainComplex),
-     TT "sum C", " -- yields the sum of the modules in a chain complex.",
-     PARA,
-     "The degrees of the components are preserved.",
-     EXAMPLE {
-	  "R = ZZ/101[a..d];",
-      	  "C = res coker vars R",
-      	  "sum C",
-      	  "degrees oo",
-	  },
-     SEEALSO {"sum",(sum, ChainComplexMap)}
-     }
-document { (sum, ChainComplexMap),
-     TT "sum C", " -- yields the sum of the modules in a chain complex map.",
-     PARA,
-     "The degrees of the components are preserved.",
-     EXAMPLE {
-	  "R = ZZ/101[a..c];",
-      	  "C = res coker vars R",
-      	  "sum C.dd",
-      	  "betti oo",
-	  },
-     SEEALSO {"sum", (sum, ChainComplex)}
-     }
-
-document { (NewMethod, ChainComplex),
-     TT "C = new ChainComplex", " -- make a new chain complex.",
-     PARA,
-     "The new chain complex is initialized with a differential of
-     degree ", TT "-1", " accessible as ", TT "C.dd", " and of type
-     ", TO "ChainComplexMap", ".  You can take the new chain complex and
-     fill in the ring, the modules, and the differentials.",
-     EXAMPLE {
-	  "C = new ChainComplex;",
-      	  "C.ring = ZZ;",
-      	  "C#2 = ZZ^1;",
-      	  "C#3 = ZZ^2;",
-      	  "C.dd#3 = matrix {{3,-11}};",
-      	  "C",
-      	  "C.dd"
-	  },
-     }
 -----------------------------------------------------------------------------
 chainComplex GradedModule := (M) -> (
      C := new ChainComplex from M;
@@ -1121,12 +692,6 @@ chainComplex GradedModule := (M) -> (
      b.degree = -1;
      b.source = b.target = C;
      C)
-document { (chainComplex,GradedModule),
-     TT "chainComplex M", " -- convert a graded module to a chain complex by
-     installing the zero map as differential.",
-     PARA,
-     SEEALSO {"GradedModule", "ChainComplex"}
-     }
 -----------------------------------------------------------------------------
 
 ggConcatCols := (R,mats) -> (
@@ -1169,16 +734,6 @@ ChainComplex ** ChainComplex := (C,D) -> (
 					0))))));
 	  E))
 
-document { (quote **, ChainComplex, ChainComplex),
-     TT "C**D", " -- the tensor product of two chain complexes.",
-     PARA,
-     "The result, ", TT "E", ", is a chain complex.  Each module ", TT "E_k", " 
-     in it is a direct sum of modules of the form ", TT "C_i**D_j", " with
-     ", TT "i+j=k", ", and the preferred keys for the components of this direct
-     sum are the pairs ", TT "(i,j)", ", sorted increasing values of ", TT "i", ".  For
-     information about how to use preferred keys, see ", TT "directSum", "."
-     }
-
 ChainComplex ** GradedModule := (C,D) -> (
      P := youngest(C,D);
      key := (C,D,quote **);
@@ -1188,12 +743,6 @@ ChainComplex ** GradedModule := (C,D) -> (
 	  )
      )
 
-document { (quote **, ChainComplex, GradedModule),
-     TT "C**D", " -- the tensor product of a chain complex with a graded module.",
-     PARA,
-     "The result is a chain complex."
-     }
-
 GradedModule ** ChainComplex := (C,D) -> (
      P := youngest(C,D);
      key := (C,D,quote **);
@@ -1202,12 +751,6 @@ GradedModule ** ChainComplex := (C,D) -> (
      	  chainComplex C ** D
 	  )
      )
-
-document { (quote **, GradedModule, ChainComplex),
-     TT "C**D", " -- the tensor product of a graded module with a chain complex.",
-     PARA,
-     "The result is a chain complex."
-     }
 
 ChainComplexMap ** ChainComplexMap := (f,g) -> (
      P := youngest(f,g);
@@ -1248,34 +791,8 @@ ChainComplex ** ChainComplexMap := (C,f) -> (
 	  )
      )
 
-document { (quote **, ChainComplexMap, ChainComplex),
-     TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
-     PARA,
-     SEEALSO "ChainComplexMap"
-     }
-
-document { (quote **, ChainComplex, ChainComplexMap),
-     TT "C ** f", " -- tensor product of a chain complex with a map of chain complexes.",
-     PARA,
-     SEEALSO "ChainComplexMap"
-     }
-
-document { (quote **, ChainComplexMap, ChainComplexMap),
-     TT "f ** g", " -- tensor product of two maps of chain complexes.",
-     PARA,
-     SEEALSO "ChainComplexMap"
-     }
-
 min ChainComplex := C -> min spots C
 max ChainComplex := C -> max spots C
-
-document { (max,ChainComplex),
-     TT "max C", " -- the minimum index occuring in a chain complex."
-     }
-
-document { (min,ChainComplex),
-     TT "min C", " -- the minimum index occuring in a chain complex."
-     }
 
 tensorAssociativity = method()
 
@@ -1317,25 +834,6 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
      -- 			      * (A_a ** BC_bc^[(b,c)])
      -- 			      )) * E_k^[(a,bc)]))
 
-
-TEST ///
-     -- here we test the commutativity of the pentagon of associativities!
-     C = QQ^1[0] ++ QQ^1[-1]
-     assert(
-	  (tensorAssociativity(C,C,C) ** C) * tensorAssociativity(C,C**C,C) * (C ** tensorAssociativity(C,C,C))
-	  ==
-	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
-	  )
-     ///
-
-document { quote tensorAssociativity,
-     TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
-     A**(B**C) to (A**B)**C.",
-     PARA,
-     "Currently implemented for modules, graded modules, and chain complexes.",
-     SEEALSO {"ChainComplex", "Module"}
-     }
-
 Module Array := (M,v) -> (
      if #v =!= 1 then error "expected array of length 1";
      n := v#0;
@@ -1344,13 +842,6 @@ Module Array := (M,v) -> (
      C.ring = ring M;
      C#-n = M;
      C)
-
-document { (quote " ", Module, Array),
-     TT "M[n]", " -- create a chain complex with the module M concentrated
-     in degree -n.",
-     PARA,
-     SEEALSO "ChainComplex"
-     }
 
 ChainComplexMap _ Array := (f,v) -> f * (source f)_v
 ChainComplexMap ^ Array := (f,v) -> (target f)^v * f
@@ -1389,20 +880,6 @@ map(ChainComplex,ChainComplex,Function) := options -> (C,D,f) -> (
      )
 
 map(ChainComplex,ChainComplex,ChainComplexMap) := options -> (C,D,f) -> map(C,D,k -> f_k)
-
-document { (map,ChainComplex,ChainComplex,Function),
-     TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
-     complex ", TT "C", " which in degree ", TT "k", " is the map provided
-     as the value of ", TT "f(k)", ".",
-     PARA,
-     "As a convenience, the value returned by f(k) is used as the third argument
-     in ", TT "map(C_k,D_k,f(k))", ".",
-     PARA,
-     "The function ", TT "f", " is called only for those indices which represent spots
-     occupied in both the source and target chain complexes.",
-     PARA,
-     SEEALSO "ChainComplex"
-     }
 
 map(ChainComplex,ChainComplex) := options -> (C,D) -> (
      h := new ChainComplexMap;
@@ -1451,16 +928,6 @@ image ChainComplexMap := (f) -> (
      scan(spots D, k -> C#k = image f_(k-deg));
      scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix E.dd_(k-deg)));
      C)
-
-TEST ///
-     R = QQ[x,y,z]
-     C = res coker vars R
-     D = C ++ C
-     E = ker D_[0]
-     E = coker D_[0]
-     E = image D_[0]
-     E = coimage D_[0]
-///
 
 prune ChainComplex := (C) -> (
      D := new ChainComplex;

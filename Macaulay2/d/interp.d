@@ -25,6 +25,7 @@ use struct;
 
 setvalue(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
 getvalue(x:Symbol):Expr := globalFrame.values.(x.frameindex);
+currentFile := setupconst("currentFile", nullE);
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
      then errorpos(f,prefix + ": " + err.message)
@@ -57,7 +58,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      );
 errorReportS := setupconst("report",Expr(emptySequence));
 errorReportS.protected = false;
-readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
+readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
      returnvalue := nullE;
      lastvalue := nullE;
      while true do (
@@ -108,6 +109,13 @@ readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 	  lastvalue = nullE; );
      if isatty(file) then stdout << endl;
      returnvalue);
+readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
+     save := getvalue(currentFile);
+     setvalue(currentFile,Expr(file.posFile.file.filename));
+     ret := readeval4(file,printout,AbortIfError,scope);
+     setvalue(currentFile,save);
+     ret);
+     
 readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
      -- wrap a new scope around the file
      saveLocalFrame := localFrame;

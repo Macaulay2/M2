@@ -19,177 +19,36 @@ vector = (v) -> (
      M := R^(# v);
      new M from v)
 
-document { quote vector,
-     TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
-     PARA,
-     "The elements a,b,c,... must be elements of the same ring, or be
-     convertible to elements of the same ring."
-     }
-
 -----------------------------------------------------------------------------
 -- BasicModule = new Type of Type
 Module = new Type of Type
-document { quote Module,
-     TT "Module", " -- the class of all modules which are handled
-     by the ", TO "engine", ".",
-     PARA,
-     "The most general module M is represented as a submodule of a 
-     quotient module of a free module F.  The matrix of relations used to
-     produce the quotient module is stored as ", TT "M.relations", " and 
-     the matrix of generators is stored as ", TT "M.generators", ".",
-     PARA,
-     "Functions which create modules:",
-     MENU {
-	  TO (quote ^, Ring, ZZ),
-	  TO "cokernel",
-	  TO "homology",
-	  TO "ideal",
-	  TO "image",
-	  TO "kernel"
-	  },
-     PARA,
-     "Tests:",
-     MENU {
-	  TO "isDirectSum",
-	  TO "isFreeModule",
-	  TO "isIdeal",
-	  TO "isModule",
-	  TO "isQuotientModule",
-	  TO "isSubmodule",
-	  },
-     "Operations on modules:",
-     MENU {
-	  TO (quote ==, Module, Module),
-	  (TO (quote _, Module, ZZ), " -- get a generator of a module"),
-	  TO (quote +,Module,Module),
-	  (TO (quote **,Module,Ring), " -- tensor product, base change."),
-	  (TO (quote ++, Module, Module), " -- direct sum"),
-	  (TO (quote **, Module, Module), " -- tensor product"),
-	  (TO (quote :, Module, Module), " -- the submodule quotient ", TT "M : N", ""),
-	  (TO (quote /, Module, Module), " -- the quotient module ", TT "(M+N)/N"),
-	  (TO (quote /, Module, Ideal), " -- the quotient module ", TT "M/IM"),
-	  (TO (quote /, Ideal, Ideal), " -- the quotient module ", TT "(I+J)/J"),
-	  TO "ambient",
-	  (TO "annihilator", " -- the annihilator of a module"),
-	  (TO "codim", " -- codimension of the support of a module"),
-	  TO "cover",
-	  TO "degree",
-	  TO "degrees",
-	  TO "dim",
-	  TO "dual",
-	  TO "End",
-	  TO "euler",
-	  (TO {"fittingIdeal", "(i,m)"}, " -- the ", TT "i", "-th Fitting ideal of the module ", TT "M"),
-	  (TO {"Ext", "^i(M,N)"}, " -- Ext of two modules"),
-	  TO "gcdDegree",
-	  TO "genera",
-	  TO "generators",
-	  (TO {"poincare", "(M,t)", }, " -- the numerator of the Hilbert series of ", TT "M", "."),
-	  (TO {"hilbertFunction", "(d,M)"}, " -- the Hilbert function of a module."),
-	  (TO {"hilbertPolynomial", "(M)"}, " -- the Hilbert polynomial of a module"),
-	  (TO {"hilbertSeries", "(M)"}, " -- the Hilbert series of a module."),
-	  (TO {"Hom", "(M,N)"}, " -- the module of homomorphisms"),
-	  (TO {"intersect", "(I,J)"}, " -- intersection of modules or ideals"),
-	  TO "lcmDegree",
-	  TO "numgens",
-	  TO "mingens",
-	  TO "pdim",
-	  (TO "presentation", " M -- a presentation matrix for M"),
-	  (TO "prune", " M -- a minimal presentation for M"),
-	  TO "quotient",
-	  TO "rank",
-	  TO "relations",
-	  TO "removeLowestDimension",
-	  (TO "resolution", " M -- a finite free resolution of M"),
-	  TO "super",
-	  (TO "tensorAssociativity", " -- associativity isomorphisms for tensor products"),
-	  TO "top",
-  	  (TO {"Tor", "_i(M,N)"}, " -- Tor of two modules"),
-	  (TO "trim", " -- replace generators and relations by minimal sets"),
-	  TO "truncate"
-     	  },
-     "Operations on elements of modules (vectors):",
-     MENU {
-	  TO "+",
-	  TO "-",
-	  TO "*",
-	  (TO (quote _, Vector, ZZ), " -- get a component of a vector"),
-	  TO "components",
-	  TO "leadCoefficient",
-	  TO "leadMonomial"
-	  },
-     PARA,
-     SEEALSO{ "Vector"}
-     }
 
 isModule = method()
 isModule Thing := M -> false
 isModule Module := M -> true
 
-document { quote isModule,
-     TT "isModule M", " -- tells whether its argument is a module."
-     }
-
 isFreeModule = method()
 isFreeModule Thing := x -> false
 isFreeModule Module := M -> not M.?relations and not M.?generators
-
-document { quote isFreeModule,
-     TT "isFreeModule M", " -- determine whether M is evidently a free module.  No
-     computation is done.",
-     PARA,
-     "To determine whether M is isomorphic to a free module, one may prune
-     M first.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y]",
-      	  "M = kernel vars R",
-      	  "isFreeModule M",
-      	  "isFreeModule prune M"
-	  },
-     }
 
 isSubmodule = method()
 isSubmodule Thing := x -> false
 isSubmodule Module := M -> not M.?relations
 
-document { quote isSubmodule,
-     TT "isSubmodule M", " -- tells whether M is provided as a submodule
-     of a free module."
-     }
-
 isQuotientModule = method()
 isQuotientModule Thing := x -> false
 isQuotientModule Module := M -> not M.?generators
-
-document { quote isQuotientModule,
-     TT "isQuotientModule M", " -- tells whether M is provided as a
-     quotient module of a free module."
-     }
 
 isIdeal = method()
 isIdeal Thing := x -> false
 isIdeal Module := M -> isSubmodule M and rank ambient M === 1
 
-document { quote isIdeal,
-     TT "isIdeal I", " -- tells whether a module is an ideal.",
-     PARA,
-     "An ideal is a submodule of a free module of rank 1."
-     }
 
 numgens Module := M -> (
      if M.?generators then numgens M.generators.source
      else if M.?relations then numgens M.relations.target
      else M.numgens
      )
-document { quote numgens,
-     TT "numgens X", " -- yields the number of generators used to present
-     a module or ring.",
-     PARA,
-     "For a polynomial ring or quotient of one, this is also the number
-     of variables.  For a free module, this is the same as the rank.  For
-     a general module presented as a subquotient, it is the number of columns
-     in the matrix of generators."
-     }
 
 generators Module := M -> if M.?generators then M.generators else id_(ambient M)
 
@@ -200,15 +59,6 @@ relations Module := M -> (
 	  map(ambient M,R^0,0)
 	  )
      )
-document { quote relations,
-     TT "relations M", " -- produce the relations defining a module M.",
-     PARA,
-     "The relations are represented as a matrix, and if not stored
-     in the module under M.relations, the matrix is understood to be
-     empty.",
-     PARA,
-     SEEALSO {"generators","subquotient"}
-     }
 
 name Module := M -> (
      if M.?relations then (
@@ -298,37 +148,9 @@ Module == Module := (M,N) -> (
 		    isSubset(ambient M, image g))
 	       else true)))
 
-document { (quote ==, Module, Module),
-     TT "M == N", " -- test whether two modules are equal.",
-     PARA,
-     "Two modules are equal if they are isomorphic as subquotients of the
-     same ambient free module.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "image matrix {{2,x},{1,5}} == R^2",
-      	  "image matrix {{2,x},{0,5}} == R^2"
-	  },
-     }
-
-TEST "
-R = ZZ/101[a,b,c]
-M = cokernel matrix {{a,b^2,c^3}}
-N = image M_{0}
-assert( M == N )
-"
-
 Vector = new Type of MutableHashTable
 ring Vector := v -> ring class v
-document { quote Vector,
-     TT "Vector", " -- the class of all elements of free modules which
-     are handled by the ", TO "engine", ".",
-     PARA,
-     "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a free
-     module over ", TT "R", ", then M is a subclass of Vector.",
-     PARA,
-     SEEALSO "Module"
-     }
+
 expression Vector := v -> (
      F := class v;
      R := ring v;
@@ -415,16 +237,6 @@ Vector _ ZZ := (v,i) -> (
      if i < 0 or i >= n then error "subscript out of range for vector";
      sendgg( ggPush v, ggINT, gg i, ggelem);
      new R)
-document { (quote _, Vector, ZZ),
-     TT "v_i", " -- produce the i-th entry of a vector or module element v.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "v = vector {a,b,c}",
-      	  "v_1",
-	  },
-     SEEALSO {"_"}
-     }
 
 reduceit := M -> (
      if M.?relations then (
@@ -484,19 +296,6 @@ degrees Module := M -> (
 	  	    sendgg ggPush M;
 		    pack(eePopIntarray(), nd)))))
 
-document { quote degrees,
-     TT "degrees M", " -- provides a list of multi-degrees for the basis
-     elements of a free module M.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "E = R^5",
-      	  "degrees E",
-      	  "F = R^{1,2,3,4}",
-      	  "degrees F"
-	  },
-     }
-
 Module ^ ZZ := (M,i) -> directSum (i:M)
 
 Ring ^ List := (
@@ -537,36 +336,9 @@ Ring ^ List := (
 	       		 new Module from R)))
 	  else error "non-engine free modules with degrees not implemented yet"
 	  ))
-document { (quote ^, Ring, List),
-     TT "R^{i,j, k, ...}", " -- produce a free module over R whose generators have
-     degrees -i, -j, -k, ...",
-     PARA,
-     "The degrees i, j, ... may themselves be multi-degrees, represented
-     as lists of integers.  The operator ", TO ":", " may be used to
-     indicate repetitions.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "F = R^{1,4:2,3,3:4}",
-      	  "degrees F",
-	  },
-     SEEALSO {"degrees", "^"}
-     }
 
 components = method()
 components(Vector) := (x) -> apply(numgens class x,i->x_i)
-document { quote components,
-     TT "components x", " -- produces a list of the components of an element of a 
-     free module.",
-     BR,NOINDENT,
-     TT "components M", " -- the list of components for a module ", TT "M", " which was
-     formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
-     direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
-     PARA,
-     MENU {
-	  TO (components,ChainComplex)
-	  },
-     SEEALSO {"vector", "directSum", "++"}
-     }
 
 SparseDisplayThreshhold := 15
 
@@ -584,12 +356,6 @@ Ring ^ ZZ := (
 	  else notImplemented()
 	  )
      )
-
-document { (quote ^, Ring, ZZ),
-     TT "R^n", " -- produce a free module of rank ", TT "n", " over the ring ", TT "R", "",
-     PARA,
-     SEEALSO{"^", "isFreeModule", (quote ^, Ring, List)}
-     }
 
 -- euler(Module) := (M) -> (
 --      f := poincare M;
@@ -614,35 +380,10 @@ euler(Module) := (M) -> (
      apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
 euler(Ring) := (R) -> euler R^1
 
-document { quote euler,
-     TT "euler M", " -- provide a list of the successive sectional Euler 
-     characteristics of a module, ring, or ideal.",
-     PARA,
-     "The i-th one in the list is the Euler characteristic of the i-th
-     hyperplane section of M."
-     }
-
 genera(Module) := (M) -> (
      e := euler M;
      apply(#e, i -> (-1)^i * (1 - e#i)))
 genera(Ring) := (R) -> genera R^1
-
-document { quote genera,
-     TT "genera M", " -- provide a list of the successive sectional 
-     arithmetic genera of a module, ring, or ideal.",
-     PARA,
-     "The i-th one in the list is the arithmetic genus of the i-th
-     hyperplane section of M."
-     }
-
-TEST ///
-R = ZZ/101[a,b,c]/c^4
-assert ( genera R == {3,3} )
-assert ( euler R == {-2,4} )
-R = ZZ/101[a,b,c]/c^3
-assert ( genera R == {1,2} )
-assert ( euler R == {0,3} )
-///
 
 rank Module := M -> (
      if isFreeModule M then numgens M 
@@ -653,16 +394,6 @@ rank Module := M -> (
 	  substitute(f,{T=>1})
 	  )
      )
-document { quote rank,
-     TT "rank M", " -- computes the rank of the module M.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "p = vars R;",
-      	  "rank kernel p",
-      	  "rank cokernel p"
-	  },
-     }
 
 ambient Module := M -> (
      if M.?generators then M.generators.target
@@ -674,13 +405,6 @@ cover(Module) := (M) -> (
      else if M.?relations then M.relations.target
      else M)
 
-document { quote cover,
-     TT "cover M", " -- yields the free module whose basis elements correspond
-     to the generators of M.",
-     PARA,
-     SEEALSO {"ambient", "super"}
-     }
-
 super(Module) := (M) -> (
      if M.?generators then (
      	  if M.?relations then cokernel M.relations
@@ -689,19 +413,7 @@ super(Module) := (M) -> (
      else M
      )
 
-document { quote super,
-     TT "super M", " -- yields the module which the module M is a submodule of.",
-     BR, NOINDENT,
-     TT "super f", " -- if f is a map whose target is a submodule of M, yields the
-     composite of f with the inclusion into M.",
-     PARA,
-     SEEALSO { "cover", "ambient" }
-     }
-
 End = (M) -> Hom(M,M)
-document { quote End,
-     TT "End M", " -- constructs the module of endomorphisms of M."
-     }
 
 AfterPrint Module := M -> (
      << endl;				  -- double space

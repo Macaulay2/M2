@@ -13,15 +13,6 @@ genericMatrix = (R,first,nrows,ncols) -> (
      if first + nrows * ncols > numgens R
      then error "not enough variables in this ring";
      matrix table(nrows, ncols, (i,j)->R_(first + i + nrows*j)))
-document { quote genericMatrix,
-     TT "genericMatrix(R,x,m,n)", " -- produce an m by n matrix of variables drawn
-     from the ring R, starting with variable x.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "genericMatrix(R,a,2,2)"
-	  },
-     }
 
 genericSkewMatrix = (R,first,n) -> (
      first = getIndex(R,first);
@@ -34,11 +25,7 @@ genericSkewMatrix = (R,first,n) -> (
 	  if i>j then - vars#(j,i) 
 	  else if i<j then vars#(i,j)
 	  else 0_R))
-document { quote genericSkewMatrix,
-     TT "genericSkewMatrix(R,x,n)", " -- make a skew symmetric n by n 
-     matrix whose entries above the diagonal are the variables of R, starting 
-     with the variable x."
-     }
+
 genericSymmetricMatrix = (R,first,n) -> (
      first = getIndex(R,first);
      vars := new MutableHashTable;
@@ -47,11 +34,6 @@ genericSymmetricMatrix = (R,first,n) -> (
 		    vars#(i,j) = R_nextvar; 
 		    nextvar = nextvar+1)));
      matrix table(n,n, (i,j) -> if i>j then vars#(j,i) else vars#(i,j)))
-document { quote genericSymmetricMatrix,
-     TT "genericSymmetricMatrix(R,x,n)", " -- make a symmetric n by n matrix 
-     whose entries on and above the diagonal are the variables of R, starting 
-     with the variable x."
-     }
 
 randommat := (R,r,c) -> (sendgg(ggPush R, ggPush r, ggPush c, ggrandom); getMatrix R)
 
@@ -115,10 +97,3 @@ random(Module, Module) := (F,G) -> (
 				   numused = numused + 1;
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
-
-TEST "
-k = ZZ/101
-f = random(k^3,k^9)
-R = k[a,b,c]
-g = random(R^4,R^{-2,-2})
-"

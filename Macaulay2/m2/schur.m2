@@ -122,36 +122,3 @@ Schur(ZZ) := options -> n -> (
      S
      )
 
-document { quote Schur,
-     TT "Schur n", " -- creates a Schur ring of degree n.",
-     PARA,
-     "This is the representation ring for the general linear group of n by n
-     matrices.",
-     PARA,
-     SEEALSO {"SchurRing"}
-     }
-
-document { quote SchurRing,
-     TT "SchurRing", " -- the class of all Schur rings.",
-     PARA,
-     "A Schur ring is the representation ring for the general linear group of 
-     n by n matrices, and one can be constructed with ", TO "Schur", ".",
-     EXAMPLE "R = Schur 4",
-     "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
-     obtained as follows.",
-     EXAMPLE "R_{3,2,1}",
-     "The dimension of the underlying virtual representation can be obtained
-     with ", TO "dim", ".",
-     EXAMPLE "dim R_{3,2,1}",
-     "Multiplication in the ring comes from tensor product of representations.",
-     EXAMPLE "R_{3,2,1} * R_{1,1}",
-     SEEALSO {quote _, SchurRing, List}
-     }
-
-document { (quote _, SchurRing, List),
-     TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
-     to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
-     PARA,
-     "The row lengths should be in decreasing order.",
-     SEEALSO "SchurRing"
-     }

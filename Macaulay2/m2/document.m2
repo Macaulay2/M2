@@ -309,6 +309,7 @@ TEST = (e) -> if phase === 2 then (
      openOut concatenate("../tmp/Tests/", fourDigits testFileCounter, ".m2") 
      << e << endl << close;
      )
+
 -- writeExamples = false
 -- readExamples = false
 
@@ -481,10 +482,3 @@ RETURNS = s -> (
 Nothing << Thing := (x,y) -> null
 
 printExamples = f -> scan(examples f, i -> << i << endl)
-
-TEST ///
-assert( null =!= doc sin)
-assert( null =!= doc "sin")
-assert( null =!= doc quote sin)
-///
-

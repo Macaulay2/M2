@@ -35,15 +35,7 @@ else
 	 fi
 endif
 
-
-INFILES = $(wildcard *.m2)
-OUTFILES = $(INFILES:.m2=.out)
+INFILES  := $(wildcard *.m2)
+OUTFILES := $(INFILES:.m2=.out)
 
 all:: $(OUTFILES)
-
-
-# old stuff:
-#	   echo "run example $* `head -1 $*.m2`"; \
-#	   sed 1d <$*.m2 >$*.trim; \
-#	    ../../bin/Macaulay2 $(ARGS) <$*.trim >$*.tmp \
-#		&& \

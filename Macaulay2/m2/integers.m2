@@ -16,21 +16,6 @@ lift(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = () -> random 21 - 10
 new ZZ := ZZ -> ZZ.pop()		  -- new integers all come from the engine stack
 
-document { quote ZZ,
-     TT "ZZ", " -- denotes the class of all integers.",
-     PARA,
-     EXAMPLE {
-	  "1234 + 4",
-      	  "basictype 1234",
-	  },
-     "Operations on integers:",
-     MENU {
-	  TO "gcdCoefficients",
-	  TO (quote <<, ZZ, ZZ),
-	  TO (quote >>, ZZ, ZZ)
-	  }
-     }
-
 ZZ >> ZZ := (i,j) -> i << -j
 
 oldgcd := gcd
@@ -73,32 +58,6 @@ isPrime ZZ := n -> (
 	  )
      else isPrime1 n and (n == 2 or isPrime2 n)
      )
-
-TEST "
-assert (not isPrime 1333333)
-assert (not isPrime 3133333)
-assert (not isPrime 3313333)
-assert ( isPrime 3331333)
-assert ( isPrime 3333133)
-assert ( isPrime 3333313)
-assert ( isPrime 3333331)
-"
-
-document { quote isPrime,
-     TT "isPrime x", " -- tests for primality",
-     PARA,
-     NOINDENT,
-     TT "isPrime n", " -- returns ", TT "true", " if the integer ", TT "n", "
-     is probably a prime, and ", TT "false", " if ", TT "n", " is not a
-     prime.",
-     PARA,
-     "At the moment, for numbers larger than ", TT "2^31-1", " it checks for
-     divisibility by small primes, and then applies a strong pseudoprimality
-     test (Rabin-Miller) to the base 2.",
-     PARA,
-     TT "isPrime f", " -- returns ", TT "true", " if the polynomial ", TT "f", "
-     is irreducible, otherwise ", TT "false", "."
-     }
 
 random ZZ := x -> (
      if x <= 0 then error "expected a positive number";

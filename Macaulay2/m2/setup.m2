@@ -12,9 +12,9 @@ pathSeparator = (
 	)
 
 dir:= splice(apply(lines(commandLine#0, "/"), i -> toSequence lines(i, "\\")))
-if #dir > 2 
+if #dir > 2
 then path = join({concatenate (
-	       pathSeparator,				    -- this one not needed for MACOS ?
+	       if version#"operating system" =!= "MACOS" then pathSeparator,
 	       apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
 
 hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
@@ -185,122 +185,11 @@ addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
      g)
 runStartFunctions = () -> scan(startFunctions, f -> f())
-
+lastSystemSymbol = null
 << "--loading source code..." << endl
 load "loads.m2"
-
-path = (
-     if getenv "M2HOME" === "" 
-     then { "." }
-     else { "." , getenv "M2HOME" | "/packages" }
-     )
-
-setrecursionlimit 300
-
-userSymbols = type -> (			  -- last symbol introduced
-     if type === () then type = Thing;
-     tab := symbolTable();
-     v := select(values tab,
-	  symb -> (
-	       hash symb > hash quote listUserSymbols  -- hash codes of symbols are sequential
-	       and mutable symb
-	       and instance(value symb,type)
-	       )
-	  );
-     apply(sort(apply(v, symb -> (hash symb, symb))), (h,s) -> s))
-
-document { quote userSymbols,
-     TT "userSymbols ()", " -- provides a list of variables defined by
-     the user.",
-     BR,
-     NOINDENT, TT "userSymbols X", " -- limits the list to those variables whose
-     values are instances of the class X.",
-     PARA,
-     "Protected variables are excluded from the list.",
-     SEEALSO "listUserSymbols"
-     }
-
-listUserSymbols = new Command from (
-     type -> stack apply(userSymbols type, s ->  string s | ": " | name class value s)
-     )
-
-document { quote listUserSymbols,
-     TT "listUserSymbols", " -- a command which returns a display of the variables 
-     defined by the user, along with their types.",
-     BR,
-     NOINDENT, TT "listUserSymbols X", " -- limits the list to those variables whose
-     values are instances of X.",
-     PARA,
-     "This function is useful after using ", TO "loaddata", " to restore 
-     a previous session.",
-     SEEALSO {"userSymbols"}
-     }
-
-clearedSymbol := "-- cleared symbol --"
-
-clearOutput = new Command from (() -> (
-     	  scan(keys outputSymbols, s -> (
-	       	    remove(outputSymbols,s);
-		    s <- clearedSymbol;
-	       	    erase s))))
-
-clearAll = new Command from (() -> (
-     	  clearOutput();
-     	  scan(userSymbols(), i -> (
-		    i <- clearedSymbol;
-		    erase i))))
-
-document { quote clearOutput,
-     TT "clearOutput", " -- a command which attempts to release memory by 
-     clearing the values retained by the output line symbols.",
-     PARA,
-     SEEALSO { "clearAll" }
-     }
-
-document { quote clearAll,
-     TT "clearAll", " -- a command which attempts to release memory by clearing 
-     the values retained by the output line symbols and all the user symbols.",
-     PARA,
-     SEEALSO {"userSymbols", "clearOutput"}
-     }
-
--- leave this at the END of setup, to get a complete list of options
-
-document { quote Options,
-     TT "Options", " -- an option used with ", TO "method", " to specify
-     names of optional arguments and their default values.",
-     PARA,
-     NOINDENT,
-     TT "f = method(Options => w)", " -- creates a method which accepts
-     optional arguments.  Here 'w' is a list ", TT "{A=>a,B=>b,...}", " of
-     optional argument names A,B,... and corresponding default values a,b,...",
-     PARA,
-     "The methods installed for this method function should be written in
-     the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
-     will be assigned a hash table of type ", TO "OptionTable", " containing 
-     the optional argument names and their values.  The default table will
-     be stored in the ", TO "OptionsRegistry", " and can be recovered with the 
-     function ", TO "options", ".",
-     EXAMPLE {
-	  "f = method(Options => {Slope => 1, Intercept => 1})",
-      	  "f RR := o -> x -> o.Slope * x + o.Intercept",
-      	  "f(5.,Slope=>100)",
-	  "options f",
-	  },
-     PARA,
-     "Here is a complete list of symbols which are used as names of options:
-     ",
-     between( ",
-     ",
-     	  (i -> TO i) \ rsort keys set flatten (keys \ values OptionsRegistry)
-	  ),
-     ".",
-     SEEALSO "method"
-     }
-
--- if phase===1 or phase===2 or phase===4 then exportDocumentation()
-
-addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
+lastSystemSymbol = last sort apply( values symbolTable(), k -> (hash k, k))
+erase quote lastSystemSymbol
 
 -- the last function restarted
 addStartFunction(
@@ -314,5 +203,3 @@ addStartFunction(
 	       )
 	  )
      )
-
-notify = true

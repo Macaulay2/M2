@@ -689,6 +689,16 @@ index(s:string,offset:int,c:char):int := (
      i := offset;
      while i < length(s) do if c == s.i then return(i) else i=i+1;
      -1);     
+match(s:string,i:int,t:string):bool := (
+     m := length(s);
+     n := length(t);
+     j := 0;
+     while i < m && j < n do if s.i != t.j then return(false) else (i=i+1; j=j+1);
+     true);
+index(s:string,offset:int,sep:string):int := (
+     i := offset;
+     while i < length(s) do if match(s,i,sep) then return(i) else i=i+1;
+     -1);
 index(s:string,offset:int,c:char,d:char):int := (
      i := offset;
      while i+1 < length(s) do if c == s.i && d==s.(i+1) then return(i) else i=i+1;
@@ -789,6 +799,45 @@ linesfun(e:Expr):Expr := (
      is s:string do Expr(lines(s))
      else WrongArgString());
 setupfun("lines",linesfun);
+
+split(s:string,c:string):Expr := (
+     nlines := 0;
+     i := 0;
+     while true do (
+	  j := index(s,i,c);
+	  if j == -1 then (
+     	       if i != length(s) then nlines = nlines + 1;
+	       break;
+	       );
+	  i = j+1;
+	  nlines = nlines + 1;
+	  );
+     i = 0;
+     list(new Sequence len nlines do (
+	       while true do (
+		    j := index(s,i,c);
+		    if j == -1 then (
+			 if i != length(s) then provide Expr(substr(s,i));
+			 break;
+			 )
+		    else (
+			 provide Expr(substr(s,i,j-i));
+			 i = j+1;
+			 )))));
+
+splitfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do
+     if length(a) == 2 then
+     when a.0
+     is s:string do 
+     when a.1 is ch:string do lines(s,ch)
+     else WrongArg(2,"a string")
+     else WrongArg(1,"a string")
+     else WrongNumArgs(2)
+     else WrongArg("two strings"));
+setupfun("split",splitfun);
+
 tostringfun(e:Expr):Expr := (
      when e 
      is i:Integer do Expr(tostring(i))

@@ -12,8 +12,4 @@ autoload(Symbol,String) := (symbol,filename) -> (
 
 autoload(Function,String) := (symbol,filename) -> null
 
-document { quote autoload,
-     TT "autoload(f,\"x\")", " -- arranges for a function ", TT "f", " to be 
-     automatically loaded from the file named ", TT "x", " the first
-     time it is used."
-     }
+

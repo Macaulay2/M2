@@ -1,11 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 InfiniteNumber = new Type of HashTable
-document { quote InfiniteNumber,
-     TT "InfiniteNumber", " -- the class of all infinite numbers.",
-     PARA,
-     SEEALSO { "infinity", "-infinity" }
-     }
 
 sign := quote sign
 
@@ -13,11 +8,6 @@ infinity = new InfiniteNumber from {
      quote name => "infinity", 
      quote symbol => infinity,
      sign => 1
-     }
-document { quote infinity,
-     TT "infinity", " -- a representation of infinity.",
-     PARA,
-     SEEALSO { "-infinity", "InfiniteNumber" }
      }
 
 mathML InfiniteNumber := i -> (
@@ -30,12 +20,6 @@ IndeterminateNumber = new Type of HashTable
 indeterminate = new IndeterminateNumber from {
      quote name => "indeterminate",
      quote symbol => quote indeterminate
-     }
-document { quote IndeterminateNumber,
-     TT "IndeterminateNumber", " -- the class of indeterminate numbers (of
-     which there is only one).",
-     PARA,
-     SEEALSO "indeterminate"
      }
 
 InfiniteNumber + ZZ := (i,j) -> i
@@ -52,18 +36,6 @@ InfiniteNumber / InfiniteNumber := (x,y) -> indeterminate
 neginfinity := new InfiniteNumber from {
      quote name => "-infinity", 
      sign => -1
-     }
-
-document { quote indeterminate,
-     TT "indeterminate", " -- a representation of an indeterminat number, such as might
-     result from multiplying 0 by infinity.",
-     PARA,
-     SEEALSO "IndeterminateNumber"
-     }
-
-document { "-infinity",
-     TT "-infinity", " -- a representation of negative infinity.",
-     SEEALSO { "infinity", "InfiniteNumber" }
      }
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#sign ? y#sign
@@ -96,18 +68,3 @@ min Sequence := min List := x -> (
      m := infinity;
      scan(x, n -> if m > n then m = n);
      m)
-
-document { quote max,
-     TT "max x", " -- yields the maximum of the elements in the list or sequence x."
-     }
-
-document { quote min,
-     TT "min x", " -- yields the minimum of the elements in the list or sequence x."
-     }
-
-TEST ///
-assert(max{4,5,6} === 6)
-assert(min{4,5,6} === 4)
-assert(max(4,5,6) === 6)
-assert(min(4,5,6) === 4)
-///

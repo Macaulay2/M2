@@ -39,36 +39,4 @@ lift(QQ,ZZ) := (r,o) -> (
 promote(QQ,QQ) := (r,QQ) -> r
 lift(QQ,QQ) := (r,QQ) -> r
 QQ.degreeLength = 0
-
-document { quote numerator,
-     TT "numerator x", " -- provides the numerator of a fraction.",
-     PARA,
-     EXAMPLE "numerator (4/6)"
-     }
-
-document { quote denominator,
-     TT "denominator x", " -- provides the denominator of a fraction.",
-     PARA,
-     EXAMPLE "denominator (4/6)"
-     }
-
-document { quote QQ,
-     TT "QQ", " -- denotes the class of all rational numbers.",
-     PARA,
-     EXAMPLE "1/2 + 3/5",
-     PARA,
-     "Functions:",
-     MENU {
-	  TO "denominator",
-	  TO "numerator"
-	  },
-     PARA,
-     SEEALSO{"numbers", "arithmetic functions"}
-     }
-
 isUnit QQ := x -> x != 0
-
-TEST ///
-     assert( net (2/1) === "2" )
-     assert( net (1/1) === "1" )
-///

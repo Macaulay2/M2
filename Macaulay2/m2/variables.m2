@@ -7,19 +7,6 @@ baseName IndexedVariableTable := x -> (
      if x.?name then x.name
      else error "IndexedVarableTable with no name"
      )
-document { quote IndexedVariableTable,
-     TT "IndexedVariableTable", " -- the class of those hash tables which
-     are used to hold the values of those indexed variables sharing a given
-     base name.",
-     PARA,
-     EXAMPLE {
-	  "t_0",
-      	  "scan(3, i -> t#i = i^2)",
-      	  "t",
-      	  "peek t",
-	  },
-     SEEALSO "IndexedVariable"
-     }
 
 IndexedVariable = new Type of BasicList
 name IndexedVariable := v -> (
@@ -65,13 +52,6 @@ Sequence .. Sequence := (v,w) -> (
      then apply(first v .. first w, singleton)
      else splice table(first v .. first w, drop(v,1) .. drop(w,1), prepend))
 
-TEST "
-assert (
-     (0,0)..(2,3) == 
-     ((0,0),(0,1),(0,2),(0,3),(1,0),(1,1),(1,2),(1,3),(2,0),(2,1),(2,2),(2,3))
-     )
-"
-
 List .. List := (v,w) -> apply(toSequence v .. toSequence w, toList)
 
 IndexedVariable .. IndexedVariable := (v,w) -> (
@@ -90,40 +70,4 @@ baseName IndexedVariable := identity
 assign(IndexedVariable,Thing) := (x,val) -> (x#0)#(x#1) = val
 assign(Symbol,Thing) := (x,val) -> x <- val
 
-document { quote assign,
-     TT "assign(x,v)", " -- assigns v as the value of x.",
-     PARA,
-     "If the value of x is a symbol or indexed variable, then it
-     can be assigned the value v with ",
-     PRE "          assign(x,v)",
-     "When the value of x is an indexed variable y_i then what happens
-     is that the i-th element of the list y is replaced by v.",
-     PARA,
-     "Differs from x=v in that here x is evaluated.",
-     PARA,
-     "Note: it would be better if we could arrange for ",
-     PRE "          x <- v",
-     "to work with indexed variables.  See ", TO "<-", "."
-     }
-
-document { quote IndexedVariable,
-     TT "IndexedVariable", " -- the class of all indexed variables.",
-     PARA,
-     "Indexed variables provide the possibility of producing 
-     polynomial rings ", TT "R[x_0, x_1, ..., x_(n-1)]", " in n variables,
-     where n is not known in advance.  If ", TT "x", " is an symbol,
-     and i is an integer, then ", TT "x_i", " produces an indexed variable.
-     (What actually happens is a hash table been assigned to the
-     as the value of the symbol ", TT "x", ".
-     After this has been done, an assignment ", TT "x#i=v", " will assign a 
-     value to it.  A new sequence of indexed variables of
-     length n assigned to the symbol ", TT "x", " can be produced with ",
-     TT "x_1 .. x_n", " and that sequence can be used in constructing
-     a polynomial ring.",
-     EXAMPLE {
-	  "ZZ/101[t_0 .. t_4]",
-      	  "(t_0 -  2*t_1)^3",
-	  },
-     SEEALSO "IndexedVariableTable"
-     }
 

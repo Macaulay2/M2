@@ -1,3 +1,4 @@
+
 document { "replacements for commands and scripts from Macaulay",
      "Macaulay 2 aims to provide all of the functionality of Macaulay, but
      the names of the functions are not the same, and there are
