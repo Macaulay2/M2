@@ -175,7 +175,7 @@ ALLC := $(PROJECT:.d=.c)
 all-c-files :: $(ALLC)
 remove-c-files ::; rm -rf $(ALLC)
 ##############################
-tmp_init.c : Makefile ../util/timestmp
+tmp_init.c : Makefile ../util/timestmp ../../Makeconf
 	timestmp >>tmp
 	@echo "echoout '>>tmp' ..."
 	@echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
