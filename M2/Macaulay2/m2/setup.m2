@@ -185,7 +185,7 @@ scan((
 	  symbol oo,
 	  symbol path,
 	  symbol phase,
-	  symbol documentationPath,			    -- being removed...
+	  symbol documentationPath,
 	  symbol DocDatabase,
 	  symbol currentDictionary,
 	  symbol currentFileName,
@@ -202,37 +202,10 @@ runStartFunctions = () -> scan(startFunctions, f -> f())
 OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
 
-addStartFunction( () -> (
-	  scanPairs(symbolTable(), (name,sym) -> if not writableGlobals#?sym then protect sym)
-	  ))
-
 load "loads.m2"
 
 path = savepath
 notify = true
-lastSystemSymbol = local privateSymbol
-if OLDENGINE then (
-     erase symbol ZZZ;
-     erase symbol NewMonomialOrder;
-     erase symbol Component;
-     erase symbol GroupLex;
-     erase symbol GroupRevLex;
-     erase symbol MonomialOrdering;
-     erase symbol NCLex;
-     erase symbol newDegreesMonoid;
-     erase symbol newDegreesRing;
-     erase symbol newEngine;
-     erase symbol monomialOrdering;
-     remove(ZZ,newDegreesRing);
-     remove(Sequence,newDegreesRing);
-     remove(ZZ,newDegreesMonoid);
-     remove(Sequence,newDegreesMonoid);
-     erase symbol clone;
-     remove(Sequence,clone);
-     )
-erase symbol OLDENGINE
-erase symbol outputSymbols
-erase symbol lastSystemSymbol
 
 Function.GlobalReleaseHook = (X,x) -> (
      stderr << "warning: " << toString X << " redefined" << endl;
@@ -252,14 +225,3 @@ addStartFunction(
 	       )
 	  )
      )
-
-addStartFunction(
-     () -> (
-	  TeXmacsMode = member("--texmacs",commandLine);
-	  if TeXmacsMode then (
-	       << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
-	       );
-	  )
-     )
-
-addStartFunction( () -> ( loadDepth (1 + loadDepth()); errorDepth (1 + errorDepth()); ) )

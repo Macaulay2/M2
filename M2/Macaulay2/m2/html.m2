@@ -232,7 +232,7 @@ fakeMenu := x -> (
 
 makeHtmlNode = fkey -> (
      fn := buildDirectory | htmlFilename fkey;
-     stderr << "--making html page for " << fkey << " in " << fn << endl;
+     stderr << "--making html page for " << fkey << endl;
      fn << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
@@ -280,10 +280,6 @@ pass5 := () -> (
 -- making the html pages
 -----------------------------------------------------------------------------
 
-cacheVars := varlist -> (
-     valuelist := apply(varlist, x -> value x);
-     () -> apply(varlist, valuelist, (x,n) -> x <- n))
-
 makeHTML = (builddir,finaldir) -> (
      buildDirectory = minimizeFilename(builddir | "/");
      finalDirectory = minimizeFilename(finaldir | "/");
@@ -291,7 +287,6 @@ makeHTML = (builddir,finaldir) -> (
      topNodeName = "Macaulay 2";			    -- used to be an argument
      htmlDirectory = LAYOUT#"htmldoc";
      buildPackage = null;
-     restore := cacheVars{symbol documentationPath};
      gifpath := LAYOUT#"images";
      prefix = htmlDirectory;
      topNodeButton = HREF { topFileName, BUTTON (checkFile(gifpath|"top.gif"),"top") };
@@ -327,7 +322,6 @@ makeHTML = (builddir,finaldir) -> (
 	  stderr << "error: ignoring documentation errors" << endl;
 	  -- error "documentation errors occurred";
 	  );
-     restore();
      )     
 
 -----------------------------------------------------------------------------
@@ -362,7 +356,7 @@ assemble Package := o -> pkg -> (
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" pkg.name;
      makeDirectory (buildDirectory|htmlDirectory);     
-     nodes := unique join(values pkg#"dictionary",keys pkg#"raw documentation");
+     nodes := unique join(keys pkg#"dictionary",keys pkg#"raw documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
      )
