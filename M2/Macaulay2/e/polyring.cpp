@@ -181,6 +181,7 @@ Nterm *PolynomialRing::new_term() const
 {
   Nterm *result = (Nterm *)((PolynomialRing *) this)->pstash->new_elem();
   result->next = NULL;
+  result->coeff = NULL;
   return result;
 }
 

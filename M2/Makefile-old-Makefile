@@ -185,11 +185,6 @@ ifdef MP
 else
 	echo '#undef MP' >>tmp.tmp
 endif
-ifdef GCMALLOC
-	echo '#define GCMALLOC' >>tmp.tmp
-else
-	echo '#undef GCMALLOC' >>tmp.tmp
-endif
 ifdef FACTORY
 	echo '#define FACTORY' >>tmp.tmp
 else
