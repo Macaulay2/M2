@@ -163,6 +163,7 @@ M2_string actors5_startupString2;
 M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FACTORYVERSION;
+M2_string actors5_READLINEVERSION;
 M2_bool actors5_DUMPDATA;
 M2_bool actors5_FACTORY;
 M2_bool actors5_MP;
@@ -258,10 +259,13 @@ static bool gotArg(char *arg, char **argv) {
   return FALSE;
 }
 
+#include <readline/readline.h>
+
 int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
 {
+     char READLINEVERSION[8];	/* big enough for "255.255" */
      char dummy;
      int returncode = 0;
      char **x;
@@ -392,6 +396,8 @@ char **argv;
      actors5_LIBFACVERSION = tostring("'factory' not installed");
 #endif
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
+     sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
+     actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_DATE = tostring(current_date);
      actors5_TIME = tostring(current_time);
      actors5_startupString1 = tostring(startupString1);
