@@ -283,6 +283,7 @@ NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
 PARA       = new MarkUpType
 EXAMPLE    = new MarkUpType
+new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
 TABLE      = new MarkUpType
 ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
@@ -425,7 +426,7 @@ checkForExampleOutputFile := () -> (
 
 extractExamples            := method(SingleArgumentDispatch => true)
 extractExamples Thing      := x -> {}
-extractExamples EXAMPLE    := x -> select(toList x,e -> e =!= null)
+extractExamples EXAMPLE    := toList
 extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
 
 processExample := x -> (

@@ -1,3 +1,5 @@
+-*- text -*-
+
 Changes anticipated or in progress:
 
 New command line option --restricted disables the use of the following system
@@ -11,6 +13,11 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 
 New in 0.9.3:
+
+New system for 3rd party packages: see 'Package'.  Related items:
+'newPackage', 'end', 'assemble', 'check', 'LAYOUT', 'layout'.
+
+New type of list: VerticalList - it prints out vertically.
 
 When dumpdata/loaddata is not in use, the formerly copious backtrace messages
 in response to an error have now been trimmed down to 1 message.
