@@ -137,6 +137,15 @@ gcc $TMP $LDFLAGS >/dev/null 2>&1 ||
 	>>compat.c
 
 cat <<'EOF' >$TMP
+#include <errno.h>
+extern const char * const sys_errlist[];
+main(){}
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
+	echo '#define SYS_ERRLIST_NOT_CONST' \
+	>>compat.h
+
+cat <<'EOF' >$TMP
 main(){ connect(); }
 EOF
 gcc $TMP $LDFLAGS >/dev/null 2>&1 || 

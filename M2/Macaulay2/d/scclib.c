@@ -574,7 +574,7 @@ M2_string system_syserrmsg()
 {
      extern int errno, sys_nerr;
      extern int h_nerr;
-#if 0				/* figure out the criterion */
+#ifdef SYS_ERRLIST_NOT_CONST
      extern char * sys_errlist[];
      extern char * h_errlist[];
 #else
