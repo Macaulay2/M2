@@ -815,6 +815,8 @@ void EGB1::update_pairs(egb_elem *m)
 
 int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fsyz) const
 {
+  buffer o;
+
   vector_collector freduced = I.start_collection(F);
 
   ringelement hcoefficient;
@@ -824,6 +826,14 @@ int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fs
 
   ering_elem *r = 0;
   egb_elem *g = 0;
+
+  if (comp_printlevel >= 7)
+    {
+      buffer o;
+      o << "reducing ";
+      I.display_vector_heap(o,fh);
+      emit_line(o.truncate(100));
+    }
   while (I.get_lead_term_from_heap(fh,hcoefficient,hmonomial,hcomponent) != 0)
     {
       I.to_exponents(hmonomial, hexponents);
@@ -835,15 +845,46 @@ int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fs
 	}
       else if (gb[hcomponent]->find_divisor(hexponents, g))
 	{
+#if 0
+	  // The following is experimental
+	  array<egb_elem *> allg;
+	  gb[hcomponent]->find_all_divisors(hexponents, allg);
+	  buffer o;
+	  o << "found " << allg.length() << " elements are = ";
+	  for (int i=0; i<allg.length(); i++)
+	    o << allg[i]->me << " ";
+	  emit_line(o.str());
+	  // End of experimental section
+#endif
 	  I.cancel_lead_terms(fh,fsyzh,
 			      hcoefficient,hexponents,
 			      g->lcm, g->f, g->fsyz);
+	  if (comp_printlevel >= 7)
+	    {
+	      buffer o;
+	      o << "  by ";
+	      I.display_vector(o,F,g->f);
+	      emit_line(o.truncate(100));
+	      o.reset();
+	      o << "    obtaining ";
+	      I.display_vector_heap(o,fh);
+	      emit_line(o.truncate(100));
+	    }
 	}
       else
 	{
 	  term t;
 	  I.remove_lead_term_from_heap(fh,t);
 	  I.append_to_collection(freduced, t);
+
+	  if (comp_printlevel >= 7)
+	    {
+	      buffer o;
+	      o << "  keep term ";
+	      I.display_vector(o,F,t);
+	      emit_line(o.str());
+	    }
+
 	}
     }
   fsyz = I.end_heap(fsyzh);
@@ -887,6 +928,17 @@ void EGB1::gb_insert(int degree, EVector &f, EVector &fsyz,
 
   array< egb_elem * > nonminimals;
   gbLarge.append(new_elem);
+
+  if (comp_printlevel >= 6)
+    {
+      buffer o;
+      int lo,hi;
+      int first = I.term_degree(heuristicWeightVector,f);
+      I.degree_lohi(heuristicWeightVector,F,f,lo,hi);
+      o << "new gb element = (" << first << "," << hi << ") = ";
+      I.display_vector(o,F,f);
+      emit_line(o.truncate(130));
+    }
 
   gb[lead_component(new_elem)]->insert(new_elem, nonminimals);
   n_gb++;
@@ -992,6 +1044,13 @@ int EGB1::new_calc(const EStopConditions &stop)
 
       is_done = is_computation_complete(stop);
       if (is_done != COMP_COMPUTING) break;
+
+      if (error())
+	{
+	  gError << error_message();
+	  is_done = COMP_ERROR;
+	  break;
+	}
 
       if (this_set == 0)
 	{
@@ -1409,264 +1468,3 @@ void EGB1::stats() const
   emit(o.str());
 }
 
-#if 0
-/// MES: new linear algebra code.
-
-class LinearAlgebraGBMatrix
-{
-  struct column_info {
-    const int *monom;
-    int component;
-  };
-  struct row_info {
-    const int *monom;
-    int component;
-    int who_divides_me;
-    int compare_value;
-  };
-
-  vector< row_info > cols;
-  vector< column_info > rows;
-
-  // Also need a hash table of monomials, which links into 'rows'.
-
-  SparseMutableMatrix mat;
-
-  int nextrow;  // Next one to process
-  int nextcol;  // Next one to process
-
-public:
-  void append_row(int *monom, int component);
-  // Only appends this row if it is not already there.
-
-  void append_column(int *monom, int component);
-  // Doesn't bother to check whether the column is here.
-
-  void process_next_row();
-  // Takes the next row, determines who divides it, and appends the appropriate
-  // column.
-
-  void process_next_column();
-  // Takes the next column, performs the multiplication, and creates the
-  // sparse_vector, add it to 'mat'.  In the process, many new rows might be
-  // appended.
-
-public:
-  // Create the matrix, given a set of spairs, and a list of GB elements.
-
-  // LU Decompose the matrix
-
-  // Read off the new GB elements
-
-  // Read off the syzygies
-};
-
-void LinearAlgebraGBMatrix::append_row(int *monom, int component)
-{
-  row_info r;
-  r.monom = monom;
-  r.component = component;
-  if (MT[component]->find_divisor(monom, b))
-    r.who_divides_me = b->tag();
-  else
-    r.who_divides_me = -1;
-  r.compare_value = 0;
-  rows.push_back(r);
-}
-void LinearAlgebraGBMatrix::append_column(int *monom, int component)
-{
-  col_info c;
-  c.monom = monom;
-  c.component = component;
-}
-void LinearAlgebraGBMatrix::process_next_row()
-{
-  if (++next_row == rows.size())
-    return;
-  row_info &r = rows[next_row];
-  if (r.who_divides_me < 0)
-    return;
-  I.divide_monomials(r.monom
-  
-}
-
-#endif
-
-
-#if 0
-
-int EGB1::compare(const gb_elem *p, const gb_elem *q) const
-{
-  int cmp = M->compare(p->f->monom, q->f->monom);
-  if (cmp == -1) return LT;
-  if (cmp == 1) return GT;
-  cmp = p->f->comp - q->f->comp;
-  if (cmp < 0) return LT;
-  if (cmp > 0) return GT;
-  return EQ;
-}
-
-int EGB1::search(const int *exp, int comp, gb_elem *&result)
-{
-  int nvars = M->n_vars();
-  int *exp2;
-  for (gb_elem *p = gbLarge->next; p != NULL; p = p->next)
-    {
-      if (p->f->comp != comp) continue;
-      exp2 = p->lead_exp;
-      int is_div = 1;
-      for (int i=0; i<nvars; i++)
-	if (exp2[i] > exp[i])
-	  {
-	    is_div = 0;
-	    break;
-	  }
-      if (is_div)
-	{
-	  result = p;
-	  return 1;
-	}
-    }
-  return 0;
-}
-
-#endif
-
-#if 0
-  queue<SOMETHING *> elems;
-
-  int my_gb_num = p->me;
-  const monomial *m = p->f->monom;
-  if (Rskew != 0)
-    {
-      int nskew = Rskew->skew_vars(m, mSkewvars);
-      intarray exp;
-      exp.append(0);
-      exp.append(1);
-      for (int v=0; v<nskew; v++)
-	{
-	  exp[0] = mSkewvars[v];
-	  const monomial *m1 = M->monomial_from_variable_exponent_pairs(exp);
-
-	  evec *vsyz = Gsyz->make_term(my_gb_num, one, m1);
-	  // The following is the sugar degree:
-	  elems.insert(make_spair(vsyz, p->degree + R->degree(w)));
-	}
-    }
-  
-  if (R->isQuotientRing())
-    {
-      for (j=0; j<R->get_quotient_length(); j++)
-	{
-	  ERingElement &f = R->get_quotient_element(j);
-	  M->monomialSyzygy(f->monom, m, mon2, mon1);
-	  ERingElement g1 = K->one();
-	  ERingElement g2 = K->one();
-	  if (gb_monic)
-	    {
-	    }
-	  else
-	    {
-	    }
-	  evec *gsyz = Gsyz->make_term(my_gb_num, g1, mon1);
-	  gsyz->next = Gsyz->make_term(-j-1, g2, mon2);
-	  elems.insert(make_spair(gsyz, p->degree + M->degree(mon1)));
-	}
-    }
-
-  for (j=0; j<me; j++)
-    {
-      // Only consider those with the same component as me
-
-      M->monomialSyzygy(f->monom, m, mon2, mon1);
-      ERingElement g1 = K->one();
-      ERingElement g2 = K->one();  // NEGATE!!!!
-      if (gb_monic)
-	{
-	}
-      else
-	{
-	}
-      evec *gsyz = Gsyz->make_term(my_gb_num, g1, mon1);
-      gsyz->next = Gsyz->make_term(other_gb_num, g2, mon2);
-      elems.insert(make_spair(gsyz, p->degree + M->degree(mon1)));
-    }
-
-  // At this point we have made a generating set (awful, to be sure)
-  // of all of the syzygies on the lead terms.
-
-  // Now we need to minimalize.
-
-  // What about removing all those bad old elements??
-}
-int EGB1::gb_reduce_ZZ(EVectorHeap &f, EVectorHeap &fsyz)
-{
-  EVector::collector result(F);
-  EVectorHeap fb(F);
-  EVectorHeap fsyzb(Fsyz);
-  fb.add(f);
-  fsyzb.add(fsyz);
-
-  const evec *lead;
-  bool ret = true;
-  int count = 0;
-  while ((lead = fb.getLeadTerm()) != 0)
-    {
-      bool reduces = search(lead,gsyz);
-      if (gsyz != 0)
-	{
-	  // Reduce by the GB, and by ring elements
-	  apply_gb_elements(fb,fsyzb,gsyz);
-	  gsyz.remove();
-	}
-      if (!reduces)
-	{
-	  ret = false;
-	  evec *t = f.removeLeadTerm();
-	  result.append(t);
-	}
-      else
-	count++;
-    }
-  fsyz = fsyzb.getValue();
-  f = fb.getValue();
-  return ret;
-}
-void EGB1::apply_gb_elements(EVectorHeap &f, EVectorHeap &fsyz, evec *gsyz) const
-{
-  // f in F
-  // fsyz in Fsyz
-  // gsyz in Gsyz
-  // Modify f, fsyz using the GB elements in gsyz.
-  //int *s = M->make_one();
-  for (evec *t = gsyz; t != NULL; t = t->next)
-    {
-      int r = t->comp;
-      if (r >= 0)
-	{
-	  // Reduce by a GB element
-	  egb_elem *g = gb[r];
-	  ERingElement a = K->negate(t->coeff);
-	  evec *f1 = F->getCover()->mult_by_term(a,t->monom,g->f);
-	  evec *fsyz1 = Fsyz->getCover()->mult_by_term(a,t->monom,g->fsyz);
-	  if (R->isQuotientRing())
-	    Fsyz->normal_form(fsyz1);
-	  f.add(f1);
-	  fsyz.add(fsyz1);
-	  K->remove(a);
-	}
-      else
-	{
-	  // Reduce by a ring element
-	  r = -r-1;  // Indices start at 0.
-	  const ERingElement &h = R->getQuotientPolynomial(r);
-	  ERingElement a = K->negate(t->coeff);
-	  evec *f1 = F->getCover()->ring_mult_by_term(a,t->monom,fcomp,h);
-	  f.add(f1);
-	  K->remove(a);
-	  
-	}
-    }
-}
-
-#endif

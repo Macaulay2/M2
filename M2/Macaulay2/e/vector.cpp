@@ -113,7 +113,7 @@ Vector Vector::lead_term() const
 
 RingElement Vector::lead_coefficient() const
 {
-  RingElement result(get_ring(), free_of()->lead_coefficient(obj->val));
+  RingElement result(get_ring()->Ncoeffs(), free_of()->lead_coefficient(obj->val));
   return result;
 }
 

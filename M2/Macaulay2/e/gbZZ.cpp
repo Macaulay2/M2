@@ -402,11 +402,13 @@ void GBZZ_comp::compute_s_pair(vec gsyz, vec rsyz,
 
 bool GBZZ_comp::gb_reduce(vec &f, vec &fsyz) const
 {
+#if 0
   if (((strategy & USE_GEOBUCKET) != 0) && !M->is_skew())
     {
       // gb_geo_reduce(f,fsyz);
       return true;
     }
+#endif
   vecterm head;
   vecterm *result = &head;
 
@@ -470,9 +472,17 @@ void GBZZ_comp::insert_gb_element(vec f, vec fsyz, bool ismin)
   if (M->in_subring(1,p->f->monom))   // MESXX: also determine if this is a minimal gen in subring.
     n_subring++;
 
-
   n_gb++;
   gb.append(p);
+
+  if (comp_printlevel >= 5)
+    {
+      buffer o;
+      o << "new gb element #" << n_gb << " = ";
+      F->elem_text_out(o,p->f);
+      o << newline;
+      emit(o.str());
+    }
 
   TermIdeal *ti = termideals[p->f->comp];
   vec gsyz = Gsyz->e_sub_i(gb.length()-1);

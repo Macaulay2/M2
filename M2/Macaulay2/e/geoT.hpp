@@ -32,10 +32,12 @@ public:
   const VECTYPE get_lead_term(); // Returns NULL if none.
   VECTYPE remove_lead_term();	// Returns NULL if none.
 
-  const FREEMODULETYPE *get_target() { return F; }
+  const FREEMODULETYPE *get_target() const { return F; }
   VECTYPE value();		// Returns the linearized value, and resets the geobucket.
 
   VECTYPE debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
+  VECTYPE current_value() const; // Adds up all the elements and returns this value
+				 // Mainly used for debugging.
 };
 
 static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
@@ -144,5 +146,16 @@ inline VECTYPE geobucket::value()
       heap[i] = NULL;
     }
   top_of_heap = -1;
+  return result;
+}
+inline VECTYPE geobucket::current_value() const
+{
+  VECTYPE result = NULL;
+  for (int i=0; i<=top_of_heap; i++)
+    {
+      if (heap[i] == NULL) continue;
+      VECTYPE tmp = F->copy(heap[i]);
+      F->add_to(result, tmp);
+    }
   return result;
 }

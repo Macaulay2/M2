@@ -799,6 +799,12 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
       is_done = computation_complete(stop_gb, stop_syz, stop_pairs, stop_subring);
       if (is_done != COMP_COMPUTING) break;
 
+      if (error())
+	{
+	  gError << error_message();
+	  is_done = COMP_ERROR;
+	  break;
+	}
       s_pair *p = spairs->remove();
       if (p == NULL)
 	{
