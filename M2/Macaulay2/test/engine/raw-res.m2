@@ -23,7 +23,7 @@ assert(m1*m2 == 0)
 assert(m2*m3 == 0)
 assert(m3*m4 == 0)
 
-R = ZZ/101[a,b,c]
+R = ZZ/101[symbol a,symbol b, symbol c]
 m = matrix{{a^2,b^2,c^2*b-a^3}}
 M = coker m
 gbTrace = 3
@@ -161,52 +161,233 @@ F3 = rawSource m2
 F3b = rawTarget m3
 assert(F3 == F3b)
 ----------------------------------
+-- real projective plane        --
+-- Algorithm 0                  --
+----------------------------------
+-- WARNING: algorithm 0 requires a GB!!
 needs "raw-util.m2"
 R = QQ[symbol a .. symbol f]
 I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
 M = module I
-gbTrace = 3
-C = res M
-X = C.Resolution
-rawGBBetti(X.RawComputation, 0)
-
-m = raw syz gens I
 m = raw gens gb syz gens I
-rawTarget m
-rawSource m
-
-C = rawResolution(m,true,10,false,0,0,0) -- CORRECT
-C = rawResolution(m,true,10,false,0,1,0) -- CORRECT
-C = rawResolution(m,true,5,false,0,2,0) -- CORRECT
-C = rawResolution(m,true,5,false,0,3,0) -- CORRECT
-
+C = rawResolution(m,true,6,false,0,0,0)
 rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
 rawStartComputation C
-rawGBBetti(C,0)
+assert(rawbettimat(C,0) == matrix{{10,15,6}})
 m1 = rawResolutionGetMatrix(C,1)
 m2 = rawResolutionGetMatrix(C,2)
 m3 = rawResolutionGetMatrix(C,3)
-m4 = rawResolutionGetMatrix(C,4)
-
+assert(m1*m2 == 0)
+assert(m3 == 0)
 ----------------------------------
-
-
-
-
-
-
-
-
+-- real projective plane        --
+-- Algorithm 1                  --
+----------------------------------
+-- WARNING: algorithm 0 requires a GB!!
+needs "raw-util.m2"
+R = QQ[symbol a .. symbol f]
+I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
+M = module I
+m = raw gens gb syz gens I
+C = rawResolution(m,true,6,false,0,1,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawStartComputation C
+assert(rawbettimat(C,0) == matrix{{10,15,6}})
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+assert(m1*m2 == 0)
+assert(m3 == 0)
+----------------------------------
+-- real projective plane        --
+-- Algorithm 2                  --
+----------------------------------
+-- WARNING: algorithm 0 requires a GB!!
+needs "raw-util.m2"
+R = QQ[symbol a .. symbol f]
+I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
+M = module I
+m = raw gens gb syz gens I
+C = rawResolution(m,true,6,false,0,2,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawStartComputation C
+assert(rawbettimat(C,0) == matrix {{10, 15, 7}, {0, 1, 0}})
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+assert(m1*m2 == 0)
+assert(m3 == 0)
+----------------------------------
+-- real projective plane        --
+-- Algorithm 3                  --
+----------------------------------
+-- WARNING: algorithm 0 requires a GB!!
+needs "raw-util.m2"
+R = QQ[symbol a .. symbol f]
+I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
+M = module I
+m = raw gens gb syz gens I
+C = rawResolution(m,true,6,false,0,3,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawStartComputation C
+assert(rawbettimat(C,0) == matrix {{10, 15, 7}, {0, 1, 0}})
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+assert(m1*m2 == 0)
+assert(m3 == 0)
+----------------------------------
+-- 3 by 3 commuting matrices    --
+-- Algorithm 0                  --
+----------------------------------
+-- WARNING: algorithm 0 requires a GB!!
+needs "raw-util.m2"
+R = QQ[vars(0..17)]
+m1 = genericMatrix(R,a,3,3)
+m2 = genericMatrix(R,j,3,3)
+J = flatten(m1*m2-m2*m1)
+J = ideal J
+m = raw gens gb J
+time C = rawResolution(m,true,10,false,0,0,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+time rawStartComputation C
+bettimat = matrix {{1, 0, 0, 0, 0, 0, 0}, 
+        {0, 8, 2, 0, 0, 0, 0}, 
+	{0, 0, 31, 32, 3, 0, 0}, 
+	{0, 0, 0, 28, 58, 32, 4}, 
+	{0, 0, 0, 0, 0, 0, 1}}
+assert(bettimat == rawbettimat(C,0))
+   
+m1 = rawResolutionGetMatrix(C,1);
+m2 = rawResolutionGetMatrix(C,2);
+m3 = rawResolutionGetMatrix(C,3);
+m4 = rawResolutionGetMatrix(C,4);
+m5 = rawResolutionGetMatrix(C,5);
+m6 = rawResolutionGetMatrix(C,6);
+m7 = rawResolutionGetMatrix(C,7)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+assert(m4*m5 == 0)
+assert(m5*m6 == 0)
+assert(m7 == 0)
+----------------------------------
+-- 3 by 3 commuting matrices    --
+-- Algorithm 1                  --
+----------------------------------
+needs "raw-util.m2"
+R = ZZ/32003[vars(0..17)]
+m1 = genericMatrix(R,a,3,3)
+m2 = genericMatrix(R,j,3,3)
+J = flatten(m1*m2-m2*m1)
+J = ideal J
+m = raw gens J
+time C = rawResolution(m,true,10,false,0,1,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+time rawStartComputation C
+bettimat = matrix {{1, 0, 0, 0, 0, 0, 0}, 
+        {0, 8, 2, 0, 0, 0, 0}, 
+	{0, 0, 31, 32, 3, 0, 0}, 
+	{0, 0, 0, 28, 58, 32, 4}, 
+	{0, 0, 0, 0, 0, 0, 1}}
+assert(bettimat == rawbettimat(C,0))
+   
+m1 = rawResolutionGetMatrix(C,1);
+m2 = rawResolutionGetMatrix(C,2);
+m3 = rawResolutionGetMatrix(C,3);
+m4 = rawResolutionGetMatrix(C,4);
+m5 = rawResolutionGetMatrix(C,5);
+m6 = rawResolutionGetMatrix(C,6);
+m7 = rawResolutionGetMatrix(C,7)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+assert(m4*m5 == 0)
+assert(m5*m6 == 0)
+assert(m7 == 0)
+----------------------------------
+-- 3 by 3 commuting matrices    --
+-- Algorithm 2                  --
+----------------------------------
+needs "raw-util.m2"
+R = QQ[vars(0..17)]
+m1 = genericMatrix(R,a,3,3)
+m2 = genericMatrix(R,j,3,3)
+J = flatten(m1*m2-m2*m1)
+J = ideal J
+m = raw gens J
+time C = rawResolution(m,true,10,false,0,2,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+time rawStartComputation C
+bettimat = matrix {
+     {1, 0, 1, 0, 0, 0, 0}, 
+     {0, 9, 2, 0, 0, 0, 0}, 
+     {0, 0, 31, 32, 3, 0, 0}, 
+     {0, 0, 0, 28, 58, 32, 4}, 
+     {0, 0, 0, 0, 0, 0, 1}}
+assert(bettimat == rawbettimat(C,0))
+   
+m1 = rawResolutionGetMatrix(C,1);
+m2 = rawResolutionGetMatrix(C,2);
+m3 = rawResolutionGetMatrix(C,3);
+m4 = rawResolutionGetMatrix(C,4);
+m5 = rawResolutionGetMatrix(C,5);
+m6 = rawResolutionGetMatrix(C,6);
+m7 = rawResolutionGetMatrix(C,7)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+assert(m4*m5 == 0)
+assert(m5*m6 == 0)
+assert(m7 == 0)
+assert(m1 == m)
+----------------------------------
+-- 3 by 3 commuting matrices    --
+-- Algorithm 3                  --
+----------------------------------
+needs "raw-util.m2"
+R = ZZ/32003[vars(0..17)]
+m1 = genericMatrix(R,a,3,3)
+m2 = genericMatrix(R,j,3,3)
+J = flatten(m1*m2-m2*m1)
+J = ideal J
+m = raw gens J
+time C = rawResolution(m,true,10,false,0,3,0)
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+time rawStartComputation C
+bettimat = matrix {
+     {1, 0, 1, 0, 0, 0, 0}, 
+     {0, 9, 2, 0, 0, 0, 0}, 
+     {0, 0, 31, 32, 3, 0, 0}, 
+     {0, 0, 0, 28, 58, 32, 4}, 
+     {0, 0, 0, 0, 0, 0, 1}}
+assert(bettimat == rawbettimat(C,0))
+   
+m1 = rawResolutionGetMatrix(C,1);
+m2 = rawResolutionGetMatrix(C,2);
+m3 = rawResolutionGetMatrix(C,3);
+m4 = rawResolutionGetMatrix(C,4);
+m5 = rawResolutionGetMatrix(C,5);
+m6 = rawResolutionGetMatrix(C,6);
+m7 = rawResolutionGetMatrix(C,7)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+assert(m4*m5 == 0)
+assert(m5*m6 == 0)
+assert(m7 == 0)
+assert(m1 == m)
+----------------------------------
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}
 C = rawResolution(m,true,5,false,0,1,0)
 rawStartComputation C
-rawGBBetti(C,0)
+rawbettimat(C,0)
 m1 = rawResolutionGetMatrix(C,1)
 m2 = rawResolutionGetMatrix(C,2)
 m3 = rawResolutionGetMatrix(C,3)
-m4 = rawResolutionGetMatrix(C,4)
-m1*m2
+assert(m1*m2 == 0)
+assert(m3 == 0)
 
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^3-b*d^2}}
@@ -233,38 +414,4 @@ m4 = rawResolutionGetMatrix(C,4)
 m1*m2
 m2*m3
 assert(rawStatus1 C == 6)
-
-rawbetti = (C,typ) -> (
-     w := rawGBBetti(C,typ);
-     w1 := drop(w,3);
-     matrix pack(w1,w#2+1)
-     )
-
-needs "raw-util.m2"
-R = polyring(rawZZp 101, (vars 0 .. vars 17))
-m1 = mat{{a,b,c},{d,e,f},{g,h,i}}
-m2 = mat{{j,k,l},{m,n,o},{p,q,r}}
-m = rawReshape(m1*m2-m2*m1,R^1,R^{9:-2})
-rawIsHomogeneous m
-C = rawResolution(m,true,18,false,0,1,0)
-time rawStartComputation C
-rawGBBetti(C,0)
-rawbetti(C,0)
-rawbetti(C,1)
-rawbetti(C,2)
-rawbetti(C,3)
-
-m1 = rawResolutionGetMatrix(C,1);
-m2 = rawResolutionGetMatrix(C,2);
-m3 = rawResolutionGetMatrix(C,3);
-m4 = rawResolutionGetMatrix(C,4);
-m5 = rawResolutionGetMatrix(C,5);
-m6 = rawResolutionGetMatrix(C,6);
-m7 = rawResolutionGetMatrix(C,7);
-assert(m1*m2 == 0)
-assert(m2*m3 == 0)
-assert(m3*m4 == 0)
-assert(m4*m5 == 0)
-assert(m5*m6 == 0)
-assert(m7 == 0)
 

@@ -69,3 +69,9 @@ mat = (tab) -> (
      result := rawMatrix1(F,ncols,toSequence flatten tab,false,0);
      result
      )
+
+rawbettimat = (C,typ) -> (
+     w := rawGBBetti(C,typ);
+     w1 := drop(w,3);
+     matrix pack(w1,w#2+1)
+     )
