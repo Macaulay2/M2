@@ -5,14 +5,21 @@
 /* without -lcfmem (see Makefile.in) we use the native operator new/delete: 8.66, 8.67, 8.67 */
 /* with -lcfmem we use the "old" memory manager of singular -- it gets the lowest times */
 
+/* with -pg profiling option on and linking with -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg, the time jumps to 46 seconds */
+
+/*
+   21,886,823 calls to getBlock
+   21,886,743 calls to freeBlock
+*/
+
 /* for factor.cc */
 #define NEW_USES_GC 0		/* adds 3.77 sec : 8.87, 8.86, 8.85 (GC_MALLOC) ; 9.08, 9.06, 9.06 (GC_MALLOC_UNCOLLECTABLE) */
 #define NEW_TESTS_RETURN_VALUE_FROM_GC 0
 
 /* for factor-init.c */
 #define INTERIOR_POINTERS 0	/* */
-#define GMP_USES_GC 1		/* adds 0.05 : 7.12, 7.13, 7.14 */
-#define GMP_TESTS_RETURN_VALUE_FROM_GC 0
+#define GMP_USES_GC 1		/* adds 0.05 : 7.12, 7.13, 7.14, 7.12, 7.10, 7.10 */
+#define GMP_TESTS_RETURN_VALUE_FROM_GC 1 /* subtracts 0.05, so leave it in */
 #define FACTORY_USES_GC_DIRECTLY 0	/* adds 5.20 sec */
 #define FACTORY_TESTS_RETURN_VALUE_FROM_GC 0
 #define REPLACE_GETBLOCK 1	/* no change, our code is identical */
