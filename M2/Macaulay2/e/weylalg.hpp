@@ -100,7 +100,7 @@ public:
   ring_elem multinomial(const int *exptop, const int *exp) const;
   
 public:
-  virtual ring_elem imp_mult_by_term(const ring_elem f, 
+  virtual ring_elem mult_by_term(const ring_elem f, 
 				     const ring_elem c, const int *m) const;
 
   gbvector * gbvector_mult_by_term(gbvectorHeap &result,

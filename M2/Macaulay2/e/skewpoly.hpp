@@ -40,7 +40,7 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
 
 protected:
-  virtual ring_elem imp_mult_by_term(const ring_elem f, 
+  virtual ring_elem mult_by_term(const ring_elem f, 
 				     const ring_elem c, 
 				     const int *m) const;
 };

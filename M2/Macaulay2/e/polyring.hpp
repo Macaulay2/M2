@@ -17,35 +17,6 @@ class GBComputation;
 
 #include "poly.hpp"
 
-#if 0
-class QuotientInfo
-{
-public:
-  bool is_quotient() const;
-  vector<gbvector *,gc_alloc> elements;
-  const PolyRing *ambient_ring;
-#if 0
-  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
-  TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
-#endif
-};
-#endif
-
-#if 0
-// These were in PolynomialRing
-  static PolynomialRing *create_quotient_ring(const PolynomialRing *R, const array<ring_elem> &I);
-  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
-  const TermIdeal *get_quotient_monomials_ZZ() const { return _RidealZZ; }
-  const FreeModule *get_Rsyz() const;
-
-  Matrix     get_ideal() const;
-  ring_elem get_quotient_elem(int i) const { return _quotient_ideal[i]; }
-  int        get_quotient_elem_length() const { return _quotient_ideal.length(); }
-
-
-  void initialize_quotients(const array<ring_elem> &I);
-#endif
-
 class PolyRing : public PolynomialRing
 {
   friend class GBRingSkew;
@@ -89,19 +60,6 @@ protected:
   
   GBRing *_gb_ring;
 
-  // Quotient ring information
-  const PolyRing *_base_ring; // == NULL iff this is not a quotient ring
-  GBComputation *_quotient_gb;
-
-#if 0
-  QuotientInfo Quotient;
-
-  array<ring_elem> _quotient_ideal;
-  TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
-#endif
-  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
-
-
   bool _coefficients_are_ZZ;
 
   // Most skew-mult specific poly code is in skewpoly.{hpp,cpp}.  However, var, homogenize,
@@ -129,12 +87,7 @@ public:
   virtual const Monoid *getLogicalMonoid() const { return logicalM_; }
   // The logical monoid of this polynomial ring.
 
-
-
-
   static const PolyRing *get_trivial_poly_ring();
-
-  static PolyRing *create_quotient_ring(GBComputation *G);
 
   virtual const PolyRing * cast_to_PolyRing()  const { return this; }
   virtual       PolyRing * cast_to_PolyRing()        { return this; }
@@ -143,8 +96,8 @@ public:
   GBRing *get_gb_ring() const { return _gb_ring; }
 
   // Quotient ring information
-  bool        is_quotient_ring() const { return (_base_ring != NULL); }
-  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
+  bool        is_quotient_ring() const { return false; }
+  MonomialIdeal *  get_quotient_monomials() const { return 0; }
   
   // skew commutativity 
   bool is_skew_commutative() const { return _is_skew; }
@@ -159,7 +112,7 @@ public:
 				       || (_nvars == 0 && K_->has_gcd()); }
 
   virtual bool is_poly_ring() const { return true; }
-  virtual bool is_quotient_poly_ring() const { return _base_ring != NULL; }
+  virtual bool is_quotient_poly_ring() const { return false; }
 
   virtual CoefficientType coefficient_type() const 
   { return Ncoeffs()->coefficient_type(); }
@@ -241,15 +194,6 @@ public:
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 
-protected:
-  virtual ring_elem power2(const ring_elem f, mpz_t n) const;
-  virtual ring_elem power2(const ring_elem f, int n) const;
-
-  // Polynomial routines
-  void make_Rideal(const array<ring_elem> &polys);
-  void make_RidealZZ(const array<ring_elem> &polys);
-public:
-
   virtual ring_elem mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;
 
@@ -272,19 +216,11 @@ public:
   int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
 
   virtual ArrayPairOrNull list_form(const ring_elem f) const;
-#if 0
-  // do we need this here?
-  virtual void make_monic(ring_elem &f) const;
-  void auto_reduce_to(ring_elem &f, ring_elem g) const;
-  void subtract_multiple_to(ring_elem &f, 
-			    ring_elem a, const int *m, const ring_elem g) const;
-#endif
+
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
 
 
 protected:
-  //ring_elem coeff_of(const ring_elem f, const int *m) const;
-  
   ring_elem diff_term(const int *m, const int *n, 
 		      int *resultmon,
 		      int use_coeff) const;
@@ -324,55 +260,18 @@ protected:
 				      ring_elem &coeff, 
 				      int *monom) const;
 
-#if 0
-  // removed 3/18/04
-  void imp_cancel_lead_term(ring_elem &f, 
-			ring_elem g, 
-			ring_elem &coeff, 
-			int *monom) const;
-  void cancel_lead_term(ring_elem &f, 
-			ring_elem g, 
-			ring_elem &coeff, 
-			int *monom) const;
-#endif
-public:
-  void normal_form(Nterm *&f) const;
-  void apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_elem> &elems) const;
-  void normal_form_ZZ(Nterm *&f) const;
 protected:
   ring_elem imp_skew_mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;
-  virtual ring_elem imp_mult_by_term(const ring_elem f, 
-			      const ring_elem c, const int *m) const;
   void imp_subtract_multiple_to(ring_elem &f, 
 				ring_elem a, const int *m, const ring_elem g) const;
 public:
-  Nterm *resize(const PolyRing *R, Nterm *f) const;
   void sort(Nterm *&f) const;
 
   ///////////////////////////////////////////////////////
   // Used in gbvector <--> vector/ringelem translation //
   ///////////////////////////////////////////////////////
   // These are only meant to be called by Ring's.
-#if 0
-private:
-  int *trans_EXP1; // Used by translate_* routines.
-public:
-  int *trans_MONOM1; // A monomial of Nmonoms()
-
-  virtual ring_elem trans_to_ringelem(ring_elem coeff, 
-				      const int *exp) const;
-  virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
-					    ring_elem denom, 
-					    int *exp) const;
-  virtual void trans_from_ringelem(gbvectorHeap &H, 
-				   ring_elem coeff, 
-				   int comp, 
-				   int *exp,
-				   int firstvar) const;
-  
-  virtual trans_tag trans_type() const { return POLY; }
-#endif
 public:
   gbvector *translate_gbvector_from_ringelem(ring_elem coeff) const;
   

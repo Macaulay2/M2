@@ -405,7 +405,7 @@ Nterm * WeylAlgebra::weyl_diff(
   return head.next;
 }
 
-ring_elem WeylAlgebra::imp_mult_by_term(const ring_elem f, 
+ring_elem WeylAlgebra::mult_by_term(const ring_elem f, 
 			       const ring_elem c, const int *m) const
   // Computes c*m*f
 {
@@ -590,7 +590,7 @@ ring_elem WeylAlgebra::power(const ring_elem f, mpz_t n) const
 
 ring_elem WeylAlgebra::power(const ring_elem f, int n) const
 {
-  return PolyRing::power2(f,n);
+  return Ring::power(f,n);
 }
 
 // Local Variables:

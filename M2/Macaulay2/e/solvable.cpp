@@ -54,13 +54,13 @@ const SolvableAlgebra *SolvableAlgebra::createPolyRing(const Monoid *M) const
 		Q);
 }
 
-ring_elem SolvableAlgebra::imp_mult_by_term(const ring_elem f, 
+ring_elem SolvableAlgebra::mult_by_term(const ring_elem f, 
 					       const ring_elem c, 
 					       const int *m) const
   // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
 {
   // TODO
-#warning "implement SolvableAlgebra::imp_mult_by_term"
+#warning "implement SolvableAlgebra::mult_by_term"
   return ZERO_RINGELEM;
 }
 
@@ -78,7 +78,7 @@ ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
 
 ring_elem SolvableAlgebra::power(const ring_elem f, int n) const
 {
-  return PolyRing::power2(f,n);
+  return Ring::power(f,n);
 }
 
 

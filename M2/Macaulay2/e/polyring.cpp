@@ -86,14 +86,6 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
     sizeof(Nterm) + sizeof(int) * (M_->monomial_size() - 1);
 
   _gb_ring = 0;
-  _base_ring = 0;
-#if 0
-  // _quotient_ideal is initialized to 0 already
-  _Rideal = 0;
-  _RidealZZ = 0;
-#endif
-
-  _quotient_gb = 0;
 
   _coefficients_are_ZZ = (K_->is_ZZ());
   if (deg_ring->Nmonoms() == 0)
@@ -111,11 +103,6 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
   zeroV = from_int(0);
   oneV = from_int(1);
   minus_oneV = from_int(-1);
-
-#if 0
-  trans_MONOM1 = M->make_one(); // Used in gbvector <--> vec translation
-  trans_EXP1 = newarray(int,_nvars);
-#endif
 }
 
 void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
@@ -149,8 +136,8 @@ const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
 }
 
 const PolyRing *PolyRing::createPolyRing(const Monoid *M) const
-  // creates this[M], which is commutative in M variables, but skew commutative in
-  // (some of) the variables of this
+  // creates this[M], which is commutative in M variables, but possible skew or Weyl
+  // commutative in (some of) the variables of this
 {
   const Monoid *newM = Monoid::tensor_product(M, getMonoid());
   if (newM == 0) return 0;
@@ -161,344 +148,10 @@ const PolyRing *PolyRing::createPolyRing(const Monoid *M) const
 			  M);
 }
 
-
-#if 0
-//////////////////////////////////////////////////////
-// Helper routines for creation of polynomial rings //
-//////////////////////////////////////////////////////
-
-void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M)
-{
-}
-
-void PolyRing::set_skew_info(M2_arrayint skewvars)
-{
-}
-
-void PolyRing::set_weyl_info(M2_arrayint derivatives,
-				   M2_arrayint commutatives,
-				   int homog_var)
-{
-}
-
-void PolyRing::set_solvable_info()
-{
-}
-
-void PolyRing::set_quotient_info(vector<ring_elem, gc_alloc> &quotients)
-{
-  // Question: do we need to copy the quotient elements?
-  
-  // We need to call a virtual routine which sets up Rideal or RidealZZ
-  // We need a way to merge quotients (e.g. from a quotient of a quotient,
-  // or if the base ring has quotient elements too (same situation)).
-}
-
-const PolyRing *PolyRing::create1(const Ring *K, const Monoid *M)
-{
-  // The first thing to do is 
-
-  if (K == globalZZ) return new PolyZZ(M, K,M);
-  if (K->is_basic_ring()) return new PolyKK(K,M,  K,M);
-  if (K == globalQQ) return new PolyQQ(M,  K,M);
-  // Now, K is either a polynomial ring of some sort, or a fraction ring.
-  const PolyRing *K1 = K->get_numerator_ring();
-  const Ring *newK = K1->Ncoeffs();
-  const Monoid *newM = Monoid::tensor_product(M, K1->Nmonoms());
-  int nfrac = K1->get_n_fraction_vars();
-  if (nfrac == 0 && newK == globalZZ)
-    {
-      // NOT QUITE: this doesn't distinguish between ZZ and QQ!!
-      // Here if newK is a fraction field, nfrac is still 0.
-      // If nfrac=0, then it should be the case that newK is ZZ, and that the coeffs
-      // in the denominator are ZZ's too.
-      return new PolyQQ(newM,  K,M);
-    }
-  else
-    return new PolyFrac(newK, newM, nfrac, K,M);
-}
-
-PolyRing *PolyRing::clone() const
-{
-  // This should make a copy of the poly ring, with the intent that the multipliction
-  // will change.  The ring points to the old one.
-}
-
-void PolyRing::combine_quotients(vector<ring_elem, gc_alloc> &quotients)
-{
-}
-
-//////////////////////////////////////
-// Creation of new polynomial rings //
-//////////////////////////////////////
-
-  /**
-   *  @brief  The main routine for creating a polynomial ring
-   *  @param  K  The coefficient ring.  Can be a basic ring, fraction ring,
-   *             quotient ring, Weyl or skew-commutative algebra, etc.
-   *  @param  M  The monoid.
-   *  @return A new polynomial ring.  If there is an error, then NULL is returned
-   *             and an error is signalled.
-   *
-   * If one wants a Weyl algebra, quotient or skew-commutative ring, then after
-   * this ring has been created, call PolyRing::createWeylAlgebra(R,...)
-   * createSkew(R,...), or createQuotient(R,...), or for fractions, call
-   * createFractionRing(R,...).  
-  */
-const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
-{
-  const PolyRing *R = create1(K,M);
-  if (R == 0) return 0;
-
-  // Now we need to re-incorporate quotients in K, and/or funny multiplication in K.
-  
-  // First re-introduce multiplications
-  if (K->is_skew())
-    {
-      // Grab the list of skew comm vars (from K)
-      R = create_SkewPolyRing(R, newskewvars);
-    }
-  else if (K->is_weyl())
-    {
-      // Grab the Weyl lists from K, increment each number by M->n_vars().
-      R = create_WeylAlgebra(R, newcomm, newderiv, newhomogvar);
-    }
-
-  // Now re-introduce quotients, if any
-  if (K->is_quotient())
-    {
-      // Loop through each quotient element, and bump it up by M->n_vars() slots.
-      vector<ring_elem, gc_alloc> newquotients;
-      for (int i=0; i<K->quotients().size();i++)
-	{
-	  ring_elem f = R->from_coefficient(K->quotients()[i]);
-	  newquotients.push_back(f);
-	}
-      // Now create the new quotient.
-      R = create_Quotient(R, newquotients);
-    }
-
-  return R;
-}
-
-const PolyRing *
-PolyRing::create_SkewCommutative(M2_arrayint skewvars)
-{
-  if (!is_commutative_ring())
-    {
-      ERROR("cannot create a skew commutative polynomial ring over another non-commutative ring");
-      return 0;
-    }
-  PolyRing *S = clone();
-  S->set_skew_info(skewvars);
-  return S;
-}
-
-const PolyRing *
-PolyRing::create_WeylAlgebra(const PolyRing *R,
-				   M2_arrayint derivatives,
-				   M2_arrayint commutatives,
-				   int homog_var)
-{
-  if (!is_commutative_ring())
-    {
-      ERROR("cannot create a Weyl algebra over another non-commutative ring");
-      return 0;
-    }
-  PolyRing *S = R->clone();
-  S->set_weyl_info(derivatives, commutatives, homog_var);
-  return S;
-}
-
-const PolyRing *
-PolyRing::create_Quotient(const PolyRing *R,
-				vector<ring_elem> &quotients)
-{
-  PolyRing *S = R->clone();
-  S->set_quotient_info(quotients); 
-    // If R is already a quotient,
-    // this will combine the quotient elements into one GB
-  return S;
-}
-
-
-//////////////////////////////////////////////
-// End of polynomial ring creation routines //
-//////////////////////////////////////////////
-
-
-
-// Each poly ring class should have its own normal form routine(s).
-// Informational routines: ??
-
-#endif
-
-#if 0
-// 4-30-04
-const PolyRing *PolyRing::make_flattened_ring()
-{
-  // This is called only from PolyRing::create.  Thus, K[M]
-  // is not a quotient ring.
-  if (K_->is_basic_ring())
-    return this;
-  else {
-    // If K is not basic, then it can be one of:
-    //    QQ 
-    //    frac(R) (possibly has flattened ring)
-    //    poly ring (has flattened ring)
-    //    skew poly ring (has flattened ring)
-    //    Weyl algebra (has flattened ring)
-    //    quotient ring  (has flattened ring)
-    const Ring *Q = globalQQ;
-    if (K_ == Q) return PolyRing::create(globalZZ,Nmonoms());
-    
-    const PolyRing *R1;
-    const FractionField *F;
-    if ((F=K_->cast_to_FractionField()) != 0)
-      {
-	const PolynomialRing *R2 = F->get_ring()->cast_to_PolynomialRing();
-	if (R2 == 0) { ERROR("internal error: cannot create flattened ring"); exit(1);}
-	R1 = R2->cast_to_PolyRing();
-	if (R1 == 0) { ERROR("internal error: cannot create flattened ring"); exit(1);}
-      }
-    else
-      {
-	const PolynomialRing *R2 = K_->cast_to_PolynomialRing();
-	if (R2 == 0) { ERROR("internal error: cannot create flattened ring"); exit(1);}
-	R1 = R2->cast_to_PolyRing();
-	if (R1 == 0) { ERROR("internal error: cannot create flattened ring"); exit(1);}
-	R1 = R1->get_flattened_ring();
-	// Now we must make the poly ring R1[M], where M is the current monoid.
-	const Monoid *M1 = R1->Nmonoms();
-	const Monoid *newM = Monoid::tensor_product(Nmonoms(), M1);
-	if (newM == NULL) return NULL;
-	const PolyRing *P1 = PolyRing::create(R1->Ncoeffs(), newM);
-
-	// P1 is the result, unless R1 is not commutative, or this is non-commutative.
-#warning "make this ring non-commutative, if needed"
-	return P1;
-      }
-  }
-  return 0;
-}
-#endif
-
-PolyRing *PolyRing::create_quotient_ring(GBComputation *G)
-{
-#warning "write create_quotient_ring"
-#if 0
-  const PolynomialRing *R = G->get_ring();
-  PolyRing *result = new PolyRing;
-  *result = *R;
-  result->_quotient_gb = G;
-  result->_base_ring = R;
-  return result;
-#endif
-  return 0;
-}
-
-#if 0
-PolynomialRing *PolyRing::create_quotient_ring(
-    const PolynomialRing *R, const array<ring_elem> &I)
-{
-  PolynomialRing *obj = new PolynomialRing(R);
-  if (obj->coefficients_are_ZZ)
-    {
-      obj->_is_ZZ_quotient = false;
-      obj->_ZZ_quotient_value = (Nterm*)0;
-      for (int i=0; i<I.length(); i++)
-	{
-	  Nterm *f = I[i];
-	  if (f->next == 0 && R->M_->is_one(f->monom))
-	    {
-	      obj->_is_ZZ_quotient = true;
-	      obj->_ZZ_quotient_value = R->K_->copy(f->coeff);
-	      break;
-	    }
-	}
-      obj->make_RidealZZ(I);
-      obj->make_Rideal(I);
-    }
-  else
-    obj->make_Rideal(I);
-
-  obj->isgraded = obj->_base_ring->isgraded;
-  if (obj->isgraded)
-    for (int i=0; i<obj->_quotient_ideal.length(); i++)
-      if (!obj->_base_ring->is_homogeneous(obj->_quotient_ideal[i]))
-	{
-	  obj->isgraded = false;
-	  break;
-	}
-
-  obj->_gb_ring = GBRing::create_PolynomialRing(obj);
-  obj->_grtype = R->get_GRType();
-  return obj;
-}
-#endif
-
-#if 0
-const FreeModule *PolyRing::get_Rsyz() const 
-{
-#warning "implement PolyRing::get_Rsyz()"
-#if 0
-  // MES Aug 2002
-  if (_RidealZZ == NULL) return NULL;
-  return _RidealZZ->get_Rsyz();
-#endif
-  return 0;
-}
-
-Matrix PolyRing::get_ideal() const
-{
-  const PolynomialRing *R = this;
-  while (R->_base_ring != NULL) R = R->_base_ring;
-  Matrix result(R->make_FreeModule(1));
-  for (int i=0; i<_quotient_ideal.length(); i++)
-    result.append(result.rows()->raw_term(copy(_quotient_ideal[i]),0));
-  return result;
-}
-#endif
-
-#if 0
-bool PolyRing::equals(const object_element *o) const
-{
-  if (o->class_id() != class_id())
-    return false;
-
-  const PolynomialRing *R2 = (PolynomialRing *)o;
-  if (R2->K != K) return false;
-  if (R2->M != M) return false;
-  if (R2->_base_ring != _base_ring) return false;
-  if (R2->_quotient_ideal.length() != _quotient_ideal.length())
-    return false;
-  // MESXX: this is not necessarily correct!!  It assumes that
-  // the elements are in the same order...
-  for (int i=0; i<_quotient_ideal.length(); i++)
-    if (!is_equal(R2->_quotient_ideal[i], _quotient_ideal[i]))
-      return false;
-  return true;
-}
-#endif
-
 void PolyRing::text_out(buffer &o) const
 {
   K_->text_out(o);
   M_->text_out(o);
-  if (_base_ring != NULL)
-    {
-#warning "text_out doesn't handle quotient rings"
-#if 0
-      o << "/(";
-      int n = _quotient_ideal.length();
-      for (int i=0; i<n; i++)
-	{
-	  if (i != 0) o << ", ";
-	  _base_ring->elem_text_out(o, _quotient_ideal[i]);
-	}
-      o << ')';
-#endif
-    }
 }
 
 Nterm *PolyRing::new_term() const
@@ -523,68 +176,6 @@ Nterm *PolyRing::copy_term(const Nterm *t) const
   return result;
 }
 
-#if 0
-void PolyRing::make_RidealZZ(const array<ring_elem> &polys)
-{
-  // If coefficients_are_ZZ, then
-  // this routine sets the fields:
-  // _quotient_ideal, RidealZ.
-#if 0
-  const PolyRing *S = _base_ring;
-  while (S->_base_ring != NULL) S = S->_base_ring;
-
-  _RidealZZ = TermIdeal::make_ring_termideal(S,
-			   _base_ring->_quotient_ideal, 
-			   polys,
-			   _quotient_ideal);
-#endif
-}
-void PolyRing::make_Rideal(const array<ring_elem> &polys)
-{
-  int i, top;
-  queue<Bag *> elems;
-  intarray vp;
-
-  top = _base_ring->_quotient_ideal.length();
-  for (i=0; i<top; i++)
-    {
-      ring_elem q = copy(_base_ring->_quotient_ideal[i]);
-      if (is_zero(q)) continue;
-      M_->to_varpower(POLY(q)->monom, vp);
-      elems.insert(new Bag((void *)q, vp));
-      vp.shrink(0);
-    }
-
-  top = polys.length();
-  for (i=0; i<top; i++)
-    {
-      ring_elem q = copy(polys[i]);
-      if (is_zero(q)) continue;
-      M_->to_varpower(POLY(q)->monom, vp);
-      elems.insert(new Bag((void *)q, vp));
-      vp.shrink(0);
-    }
-
-  //  _Rideal = MonomialIdeal(this, elems);
-  _Rideal = new MonomialIdeal(_base_ring, elems);
-
-  for (Index<MonomialIdeal> j = _Rideal->first(); j.valid(); j++)
-    {
-#if 0
-      ring_elem f = (Nterm *) (*_Rideal)[j]->basis_ptr();
-
-      // The following line adds the element to f, it is not already there.
-      // Over ZZ, RidealZ has been set, and at the same time, _quotient_ideal
-      // was set too.
-
-      // MES Aug 2002
-      if (_RidealZZ == 0)
-	_quotient_ideal.append(f);
-#endif
-    }
-}
-#endif
-
 ring_elem PolyRing::from_int(int n) const
 {
   ring_elem a = K_->from_int(n);
@@ -595,7 +186,6 @@ ring_elem PolyRing::from_int(int n) const
   Nterm *result = new_term();
   result->coeff = a;
   M_->one(result->monom);
-  if (_base_ring != NULL) normal_form(result);
   return result;
 }
 ring_elem PolyRing::from_int(mpz_t n) const
@@ -608,7 +198,6 @@ ring_elem PolyRing::from_int(mpz_t n) const
   Nterm *result = new_term();
   result->coeff = a;
   M_->one(result->monom);
-  if (_base_ring != NULL) normal_form(result);
   return result;
 }
 ring_elem PolyRing::from_double(double n) const
@@ -621,7 +210,6 @@ ring_elem PolyRing::from_double(double n) const
   Nterm *result = new_term();
   result->coeff = a;
   M_->one(result->monom);
-  if (_base_ring != NULL) normal_form(result);
   return result;
 }
 
@@ -636,7 +224,6 @@ ring_elem PolyRing::var(int v, int n) const
   Nterm *result = new_term();
   result->coeff = K_->from_int(1);
   M_->from_expvector(_EXP1, result->monom);
-  if (_base_ring != NULL) normal_form(result);
   return result;
 }
 
@@ -682,14 +269,6 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
-  for (const PolyRing *base = _base_ring; base != NULL; base = base->_base_ring)
-    if (base == Rf)
-      {
-	Nterm *g = copy(f);
-	normal_form(g);
-	result = g;
-	return true;
-      }
   if (K_ == Rf)
     {
       int *m = M_->make_one();
@@ -726,12 +305,6 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
       result = K_->copy(g->coeff);
       return true;
     }
-  for (const PolyRing *base = _base_ring; base != NULL; base = base->_base_ring)
-    if (base == Rg)
-      {
-	result = copy(f);	// We are using the same representation
-	return true;
-      }
   return false;
 }
 
@@ -754,13 +327,6 @@ bool PolyRing::is_unit(const ring_elem ff) const
   if (f->next == NULL && M_->is_one(f->monom)
       && K_->is_unit(f->coeff))
     return true;
-
-  if (_base_ring == NULL)
-    return false;
-
-  if (is_field())
-    return true;
-
   return false;
 }
 
@@ -869,8 +435,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   // assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.
 
-  intarray expa;
-  int *exp = expa.alloc(_nvars);
+  int *exp = newarray(int, _nvars);
 
   Nterm head;
   Nterm *result = &head;
@@ -898,7 +463,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   result->next = NULL;
   sort(head.next);		// The monomial order, etc. might all have changed.
 				// Some terms might even drop out
-  if (_base_ring != NULL) normal_form(head.next);
+  deletearray(exp);
   return head.next;
 }
 
@@ -1041,8 +606,8 @@ ring_elem PolyRing::subtract(const ring_elem f, const ring_elem g) const
   return a;
 }
 
-ring_elem PolyRing::imp_mult_by_term(const ring_elem f, 
-			       const ring_elem c, const int *m) const
+ring_elem PolyRing::mult_by_term(const ring_elem f, 
+				 const ring_elem c, const int *m) const
    // return f*c*m
 {
   Nterm head;
@@ -1058,40 +623,6 @@ ring_elem PolyRing::imp_mult_by_term(const ring_elem f,
   return head.next;
 }
 
-#if 0
-void PolyRing::subtract_multiple_to(ring_elem &f, 
-				 ring_elem a, const int *m, const ring_elem g) const
-{
-  ring_elem b = K_->negate(a);
-  ring_elem h = mult_by_term(g, b, m);
-  add_to(f, h);
-}
-
-void PolyRing::auto_reduce_to(ring_elem &f, ring_elem g) const
-    // f -= c g, where c = coeff of in(g) in f
-{
-  Nterm *t = g;
-  ring_elem a = coeff_of(f, t->monom);
-  if (K_->is_zero(a)) return;
-
-  intarray ma;
-  int *m = ma.alloc(M_->monomial_size());
-  M_->one(m);
-  imp_subtract_multiple_to(f, a, m, g);
-}
-
-void PolyRing::make_monic(ring_elem &f) const
-{
-  Nterm *t = f;
-  if (t == NULL) return;
-  ring_elem a = K_->invert(t->coeff);
-  for ( ; t != NULL; t = t->next)
-    {
-      ring_elem tmp = t->coeff;
-      t->coeff = K_->mult(a, tmp);
-    }
-}
-#endif
 void PolyRing::mult_coeff_to(ring_elem a, ring_elem &f) const
 {
   Nterm *t = f;
@@ -1102,18 +633,6 @@ void PolyRing::mult_coeff_to(ring_elem a, ring_elem &f) const
       t->coeff = K_->mult(a, tmp);
     }
 }
-#if 0
-ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
-{
-  ring_elem result = NULL;
-  for (Nterm *a = f; a != NULL; a = a->next)
-    {
-      ring_elem h = mult_by_term(g, a->coeff, a->monom);
-      add_to(result, h);
-    }
-  return result;
-}
-#endif
 ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
 {
   polyheap H(this);
@@ -1123,63 +642,6 @@ ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
       H.add(h);
     }
   return H.value();
-}
-
-ring_elem PolyRing::power2(const ring_elem ff, mpz_t m) const
-{
-  // The exponent 'm' should be > 0 here.
-  mpz_t n;
-  mpz_init_set(n, m);
-  ring_elem prod = from_int(1);
-  ring_elem base = copy(ff);
-  ring_elem tmp;
-
-  for (;;)
-    {
-      if (ZZ::mod_ui(n,2) == 1)
-	{
-	  tmp = mult(prod, base);
-	  prod = tmp;
-	}
-      mpz_tdiv_q_2exp(n, n, 1);
-      if (mpz_sgn(n) == 0)
-	{
-	  mpz_clear(n);
-	  return prod;
-	}
-      else
-	{
-	  tmp = mult(base, base);
-	  base = tmp;
-	}
-    }
-}
-
-ring_elem PolyRing::power2(const ring_elem ff, int n) const
-{
-  // The exponent 'n' should be > 0 here.
-  ring_elem prod = from_int(1);
-  ring_elem base = copy(ff);
-  ring_elem tmp;
-
-  for (;;)
-    {
-      if ((n % 2) != 0)
-	{
-	  tmp = mult(prod, base);
-	  prod = tmp;
-	}
-      n >>= 1;
-      if (n == 0)
-	{
-	  return prod;
-	}
-      else
-	{
-	  tmp = mult(base, base);
-	  base = tmp;
-	}
-    }
 }
 
 ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
@@ -1200,31 +662,23 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
     }
 
   Nterm *f = ff;
-  if (_base_ring == NULL)
+
+  int n1;
+  // In this case, the computation may only be formed in two
+  // cases: (1) f is a constant, or (2) n is small enough
+  if (ZZ::get_si(n1,n))
     {
-      int n1;
-      // In this case, the computation may only be formed in two
-      // cases: (1) f is a constant, or (2) n is small enough
-      if (ZZ::get_si(n1,n))
-	{
-	  result = power(f,n1);
-	}
-      else if (is_unit(f))  // really want a routine 'is_scalar'...
-	{
-	  ring_elem a = K_->power(f->coeff, n);
-	  result = make_flat_term(a, f->monom);
-	}
-      else 
-	{
-	  ERROR("exponent too large");
-	  result = ZERO_RINGELEM;
-	}
+      result = power(f,n1);
     }
-  else
+  else if (is_unit(f))  // really want a routine 'is_scalar'...
     {
-      // At this point, we are in a quotient ring, so we will try
-      // to perform the exponentiation
-      result = power2(ff, n);
+      ring_elem a = K_->power(f->coeff, n);
+      result = make_flat_term(a, f->monom);
+    }
+  else 
+    {
+      ERROR("exponent too large");
+      result = ZERO_RINGELEM;
     }
 
   if (isinverted) mpz_neg(n,n);
@@ -1250,10 +704,6 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
 
   Nterm *lead = ff;
   if (lead == NULL) return ZERO_RINGELEM;
-  if (_base_ring != NULL)
-      return power2(ff,n);
-
-  intarray ma;
 
   rest = lead->next;
   g = from_int(1);
@@ -1267,8 +717,7 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
   result = t;
 
   if (POLY(rest) == 0) return result;
-  int *m = ma.alloc(M_->monomial_size());
-  M_->one(m);
+  int *m = M_->make_one();
 
   mpz_t bin_c;
 
@@ -1357,17 +806,8 @@ void PolyRing::imp_subtract_multiple_to(ring_elem &f,
 				 ring_elem a, const int *m, const ring_elem g) const
 {
   ring_elem b = K_->negate(a);
-  ring_elem h = imp_mult_by_term(g, b, m);
+  ring_elem h = mult_by_term(g, b, m);
   add_to(f, h);
-}
-
-ring_elem PolyRing::mult_by_term(const ring_elem f, 
-			       const ring_elem c, const int *m) const
-   // return f*c*m
-{
-  Nterm *result = imp_mult_by_term(f, c, m);
-  if (_base_ring != NULL) normal_form(result);
-  return result;
 }
 
 bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f, 
@@ -1399,57 +839,6 @@ bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
     }
   return result;
 }
-
-#if 0
-void PolyRing::imp_cancel_lead_term(ring_elem &f, 
-					  ring_elem g, 
-					  ring_elem &coeff, 
-					  int *monom) const
-{
-  Nterm *t = f;
-  Nterm *s = g;
-  if (t == NULL || s == NULL) return;
-  coeff = K_->divide(t->coeff, s->coeff); // exact division
-  if (_is_skew)
-    {
-      M_->to_expvector(t->monom, _EXP1);
-      M_->to_expvector(s->monom, _EXP2);
-      int sign = _skew.divide(_EXP1, _EXP2, _EXP3);
-      M_->from_expvector(_EXP3, monom);
-      if (sign < 0) K_->negate_to(coeff);
-      imp_subtract_multiple_to(f, coeff, monom, g);
-    }
-  else
-    {
-      M_->divide(t->monom, s->monom, monom);
-      imp_subtract_multiple_to(f, coeff, monom, g);
-    }
-}
-void PolyRing::cancel_lead_term(ring_elem &f, 
-				       ring_elem g, 
-				       ring_elem &coeff, 
-				       int *monom) const
-{
-  Nterm *t = f;
-  Nterm *s = g;
-  if (t == NULL || s == NULL) return;
-  coeff = K_->divide(t->coeff, s->coeff); // exact division in a field
-  if (_is_skew)
-    {
-	  M_->to_expvector(t->monom, _EXP1);
-	  M_->to_expvector(s->monom, _EXP2);
-	  int sign = _skew.divide(_EXP1, _EXP2, _EXP3);
-	  M_->from_expvector(_EXP3, monom);
-	  if (sign < 0) K_->negate_to(coeff);
-	  subtract_multiple_to(f, coeff, monom, g);
-    }
-  else
-    {
-      M_->divide(t->monom, s->monom, monom);
-      subtract_multiple_to(f, coeff, monom, g);
-    }
-}
-#endif
 
 ring_elem PolyRing::gcd(const ring_elem ff, const ring_elem gg) const
 {
@@ -1575,97 +964,12 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f, const ring_elem g,
 	  r = powerseries_division_algorithm(f1,g1,q);
 	  quot = q;
 	  return r;
-#if 0
-	  // First factor out powers of minimal monomial from f, g.
-	  ring_elem one_kk = K_->from_int(1);
-	  int *one = M_->make_one();
-	  int *mf1 = M_->make_one();
-	  int *mg1 = M_->make_one();
-	  int *mf = M_->make_one();
-	  int *mg = M_->make_one();
-	  PolyRing::minimal_monomial(f,mf);
-	  PolyRing::minimal_monomial(g,mg);
-#if 0
-	  buffer o;
-	  o << "Minimal monomial of ";
-	  elem_text_out(o,f);
-	  o << " is ";
-	  M_->elem_text_out(o,mf);
-	  o << newline;
-
-	  o << "Minimal monomial of ";
-	  elem_text_out(o,g);
-	  o << " is ";
-	  M_->elem_text_out(o,mg);
-	  o << newline;
-	  emit(o.str());
-#endif
-	  M_->divide(one,mf,mf1);
-	  M_->divide(one,mg,mg1);
-	  ring_elem f1 = mult_by_term(f,one_kk,mf1);
-	  ring_elem g1 = mult_by_term(g,one_kk,mg1);
-	  r = division_algorithm(f1,g1,q);
-	  M_->mult(mf,mg1,mg);
-	  rem = mult_by_term(r,one_kk,mf);
-	  quot = mult_by_term(q,one_kk,mg);
-	  return rem;
-#endif
 	}
-      else if (!is_quotient_poly_ring())
+      else 
 	{
 	  rem = division_algorithm(f,g,q);
 	  quot = q;
 	  return rem;
-	}
-      else if (false) //(n_vars() == 1 && K_->is_field())
-	{
-	  // Case 2: There is a quotient ideal, but we have one variable, over
-	  //         a field.  In this case, we can use gcd in k[x].
-	  //         The ring must be commutative here: skew in one variable isn't
-	  //         handled here.
-	}
-      else if (K_->is_field() || K_->is_ZZ())
-	{
-#if 0
-// MES Aug 2002: ifdef'ed this section because gb_comp is not back yet
-	  // Case 3: There is a quotient ideal.  Here we do a GB computation
-	  //         of the ideal (g), and reduce f wrt this ideal.
-
-	  // Create a GB of (g).
-	  intarray syzygy_stop_conditions;
-	  syzygy_stop_conditions.append(0); // ngb
-	  syzygy_stop_conditions.append(0); // nsyz
-	  syzygy_stop_conditions.append(0); // npairs
-	  syzygy_stop_conditions.append(0);
-	  syzygy_stop_conditions.append(0); 
-	  syzygy_stop_conditions.append(0); // subring limit
-	  syzygy_stop_conditions.append(0);
-	  
-	  const FreeModule *F = make_FreeModule(1);
-	  Matrix *m = new Matrix(F);
-	  m->append(F->raw_term(copy(g),0));
-	  gb_comp *g = gb_comp::make(m,false,-1,0);
-	  g->calc(0, syzygy_stop_conditions);
-
-	  // Reduce f wrt this GB.
-	  Vector *v = Vector::make_raw(F,F->raw_term(copy(f),0));
-	  Vector *lifted;
-	  Vector *red = g->reduce(v,lifted);
-	  // Now grab the two polynomials of interest:
-	  ring_elem result = F->get_coefficient(red->get_value(),0); // Rermainder
-	  quot = lifted->free_of()->get_coefficient(lifted->get_value(),0); // Quotient
-
-	  // Remove the GB.
-	  deleteitem(g);
-	  return result;
-#endif
-	}
-      else
-	{
-	  // Case 4: The coefficients are not ZZ, or a field.  Currently we say:
-	  //         not implemented.
-
-	  ERROR("remainder not defined and/or implemented for this ring");
 	}
     }
   quot = from_int(0);
@@ -1848,90 +1152,6 @@ ring_elem PolyRing::eval(const RingMap *map, const ring_elem f) const
 	}
       return result;
     }
-}
-
-
-#if 0
-void PolyRing::apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_elem> &elems) const
-{
-  // f in ring
-  // rsyz in Rsyz
-  // Modify f using the ring elements in rsyz.
-  ring_elem ff = f;
-  for (vec t = rsyz; t != NULL; t = t->next)
-    {
-      ring_elem r = elems[t->comp];
-      ring_elem f1 = imp_mult_by_term(r, t->coeff, t->monom);
-      add_to(ff, f1);
-    }
-  f = ff;
-}
-#endif
-
-void PolyRing::normal_form_ZZ(Nterm *&f) const
-{
-#if 0
-  const FreeModule *Rsyz = get_Rsyz();
-  Nterm head;
-  Nterm *result = &head;
-
-  while (f != NULL)
-    {
-      vec gsyz, rsyz;
-      int reduces = _RidealZZ->search(f->coeff, f->monom,
-				     gsyz, rsyz);
-      if (rsyz != NULL)	
-	{
-	  apply_ring_elements(f,rsyz,_quotient_ideal);
-	}
-      if (reduces != TI_TERM)
-	{
-	  result->next = f;
-	  f = f->next;
-	  result = result->next;
-	}
-    }
-  result->next = NULL;
-  f = head.next;
-#endif
-}
-void PolyRing::normal_form(Nterm *&f) const
-{
-#warning "normal_form is commented out for now: rewrite"
-#if 0
-  if (_coefficients_are_ZZ)
-    {
-      normal_form_ZZ(f);
-      return;
-    }
-  Nterm head;
-  Nterm *result = &head;
-  Nterm *t = f;
-  int *normal_m = M_->make_one();
-  int *normal_exp = newarray(int,_nvars);
-  while (t != NULL)
-    {
-      M_->to_expvector(t->monom, normal_exp);
-      int_bag *b;
-      if (_Rideal->search_expvector(normal_exp, b))
-	{
-	  Nterm *s = (Nterm *) (b->basis_ptr());
-	  ring_elem tf = t;
-	  ring_elem coeff;
-	  imp_cancel_lead_term(tf, s, coeff, normal_m);
-	  t = tf;
-	}
-      else
-	{
-	  result->next = t;
-	  t = t->next;
-	  result = result->next;
-	}
-    }
-  deletearray(normal_exp);
-  result->next = NULL;
-  f = head.next;
-#endif
 }
 
 /////////////////////////////////////////
@@ -2329,31 +1549,6 @@ ring_elem PolyRing::get_terms(const ring_elem f, int lo, int hi) const
   return head.next;
 }
 
-#if 0
-
-  Nterm *v = f;
-  Nterm head;
-  Nterm *result = &head;
-  int nmons = n_terms(f);
-  if (lo < 0) lo = nmons + lo;
-  if (hi < 0) hi = nmons + hi;
-  int n = 0;
-  while (v != NULL)
-    {
-      if (n > hi) break;
-      if (n >= lo)
-	{
-	  result->next = copy_term(v);
-	  result = result->next;
-	}
-      v = v->next;
-      n++;
-    }
-  result->next = NULL;
-  return head.next;
-}
-#endif
-
 int PolyRing::n_flat_terms(const ring_elem f) const
 {
   int result = 0;
@@ -2369,7 +1564,6 @@ ring_elem PolyRing::make_flat_term(const ring_elem a, const int *m) const
   t->coeff = K_->copy(a);
   M_->copy(m, t->monom);
   t->next = NULL;
-  if (_base_ring != NULL) normal_form(t);
   return t;
 }
 
@@ -2437,7 +1631,6 @@ ring_elem PolyRing::diff(ring_elem a, ring_elem b, int use_coeff) const
 ring_elem PolyRing::diff_term(const int *m, const int *n, 
 				    int *resultmon,
 				    int use_coeff) const
-  // GRABBED FROM FREEMODULE CODE
 {
   int sign = 0;
   if (!M_->divides(m, n)) return K_->from_int(0);
@@ -2471,28 +1664,6 @@ ring_elem PolyRing::diff_term(const int *m, const int *n,
 	}
     }
   return result;
-}
-
-Nterm *PolyRing::resize(const PolyRing *R, Nterm *f) const
-    // assumptions: (1) f is a polynomial in the ring R.
-    // (2) the current ring is the same as 'R', except for
-    // the size of monomials (i.e: same base ring, same 
-    // monomial order, same degree info)
-{
-  Nterm head;
-  Nterm *result = &head;
-  intarray expa;
-  int *exp = expa.alloc(_nvars);
-  for (Nterm *t = f; t != NULL; t = t->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->coeff = K_->copy(t->coeff);
-      R->M_->to_expvector(t->monom, exp);
-      M_->from_expvector(exp, result->monom);
-    }
-  result->next = NULL;
-  return head.next;
 }
 
 void PolyRing::sort(Nterm *&f) const
