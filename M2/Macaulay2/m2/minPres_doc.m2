@@ -1,6 +1,6 @@
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
-document{(minPres,ring),
+document{(minPres,Ring),
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => {
 	  TT "minPres R", "-- If ", TT "S", " is a polynomial ring 
@@ -30,13 +30,15 @@ document{(minPres,ring),
      }
 
 
-document{ minPres => VarName,
-     Headline=> "Rename the variables in the ring given so that the minimal 
-     presentation variables are named differently than those in the original 
-     ring."
-     }
+-- I commented this out because minPres doesn't actually accept this option (drg)
 
-document{(minPresIdeal,ideal),
+-- document{ minPres => VarName,
+--      Headline=> "Rename the variables in the ring given so that the minimal 
+--      presentation variables are named differently than those in the original 
+--      ring."
+--      }
+
+document{(minPresIdeal,Ideal),
      Headline => "compute a minimal presentation of an ideal",
      Usage => {
 	  TT "minPresIdeal I", "-- If ", TT "R", " is the ring of ", TT "I", 
@@ -67,8 +69,10 @@ document{(minPresIdeal,ideal),
 	  }
      }
 
-document{ minPresIdeal => VarName,
-     Headline=> "Rename the variables in the ring of the ideal given so 
-     that the variables for the minimal presentation are named differently 
-     than the variables in the original ring."
-     }
+-- I commented this out because minPres doesn't actually accept this option (drg)
+
+-- document{ minPresIdeal => VarName,
+--      Headline=> "Rename the variables in the ring of the ideal given so 
+--      that the variables for the minimal presentation are named differently 
+--      than the variables in the original ring."
+--      }

@@ -2,7 +2,7 @@
 
 -- this file should be mentioned *last* in dumpseq
 
-if phase > 1 then load "docloads.m2"
+if phase === 2 or phase === 4 then load "docloads.m2"
 
 setrecursionlimit 300
 
