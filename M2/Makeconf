@@ -71,6 +71,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# MEMDEBUG    := TRUE' >>$@
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
+	echo '# GCMALLOC    := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo '# NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
@@ -160,6 +161,12 @@ ifdef DEBUG
 DEBUGFLAGS += -g -DDEBUG
 else
 DEBUGFLAGS += -DNDEBUG
+endif
+
+ifdef GCMALLOC
+CFLAGS += -DGCMALLOC
+CXXFLAGS += -DGCMALLOC
+export CFLAGS
 endif
 
 ifdef PROFILE

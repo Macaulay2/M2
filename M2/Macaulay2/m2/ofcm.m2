@@ -119,7 +119,10 @@ document { quote GeneralOrderedMonoid,
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
 GeneralOrderedMonoid _ ZZ := (M,i) -> M.generators#i
-GeneralOrderedMonoid _ List := (M,v) -> product(M.generators,v,(x,i)->x^i)
+GeneralOrderedMonoid _ List := (M,v) -> (
+     if #v === 0 then 1_M
+     else product(take(M.generators,#v),v,(x,i)->x^i)
+     )
 numgens GeneralOrderedMonoid := M -> # M.generators
 degreeLength GeneralOrderedMonoid := M -> M.degreeLength
 

@@ -168,14 +168,14 @@ resolutionByHomogenization := (M,options) -> (
 
 resolutionBySyzygies := (M,options) -> (
      R := ring M;
+     maxlength := (
+	  if options.LengthLimit === infinity 
+	  then numgens R + 1
+	  else options.LengthLimit
+	  );
      if M.?resolution 
      then C := M.resolution
      else (
-	  maxlength := (
-	       if options.LengthLimit === infinity 
-	       then numgens R + 1
-	       else options.LengthLimit
-	       );
 	  C = new ChainComplex;
 	  C.ring = R;
 	  f := presentation M;

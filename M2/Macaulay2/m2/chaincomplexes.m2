@@ -269,11 +269,15 @@ RingElement + ChainComplexMap := {ChainComplexMap,
 	  if source f == target f and f.degree === 0 
 	  then r*id_(source f) + f
 	  else error "expected map to have same source and target and to have degree 0")}
-ChainComplexMap + RingElement := {ChainComplexMap,
-     (f,r) -> (
-	  if source f == target f and f.degree === 0 
-	  then r*id_(source f) + f
-	  else error "expected map to have same source and target and to have degree 0")}
+ChainComplexMap + RingElement := {ChainComplexMap, (f,r) -> r+f}
+
+ChainComplexMap + ZZ := (f,i) -> (
+     if i === 0 then f
+     else if source f != target f
+     then error "expected same source and target"
+     else f + i*id_(target f))
+ZZ + ChainComplexMap := (i,f) -> f+i
+
 RingElement - ChainComplexMap := (r,f) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) - f
@@ -282,6 +286,8 @@ ChainComplexMap - RingElement := (f,r) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) - f
      else error "expected map to have same source and target and to have degree 0")
+
+
 RingElement == ChainComplexMap := (r,f) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) == f
