@@ -1,4 +1,4 @@
-rall::
+all::
 
 ifndef MAKECONF
 
