@@ -163,8 +163,7 @@ BUTTON := (s,alt) -> (
 
 upAncestors := key -> reverse (
      n := 0;
-     while UP#?key and n < 20 list (n = n+1; key = UP#key)
-     )
+     prepend(key, while UP#?key and n < 20 list (n = n+1; key = UP#key)))
 
 fakeMenu := x -> (
      --   o  item 1
@@ -232,8 +231,10 @@ toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
 toDoc TreeNode := x -> SEQ { TOH x#0, toDoc x#1 }
 
 local visitCount
-local externalReferences
+local missingReferences
+showExternalReferences = () -> sort keys missingReferences
 local duplicateReferences
+local nodesToScope
 
 makeTree := x -> (
      visits := if visitCount#?x then visitCount#x else 0;
@@ -245,8 +246,8 @@ makeTree := x -> (
      	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree) }
 	  )
      else (
-	  if externalReferences#?x
-     	  then new TreeNode from { x | " -- external or missing reference", new ForestNode from { } }
+	  if missingReferences#?x
+     	  then new TreeNode from { x | " -- missing reference", new ForestNode from { } }
 	  else new TreeNode from { x | " -- internal error", new ForestNode from { } }
 	  )
      )
@@ -262,56 +263,6 @@ roots := () -> (
 getTrees := topNode -> (
      visitCount = new MutableHashTable;
      return makeForest roots())
-
---
-
-local follow
-scope := method()
-scope2 := method()
-scope1 := method()
-
---- all this will be changed -- we will use the Menu => options for descent, only
-
--- scanning at top level, not inside a CONTENTS or a NOCONTENTS
-scope (String, Thing      ) := (f,x) -> null
-scope (String, Sequence   ) :=
-scope (String, BasicList  ) := (f,x) -> scan(x,y -> scope(f,y))
--- scope (String, NOCONTENTS ) := (f,x) -> scan(x,y -> scope1(f,y))
--- scope (String, CONTENTS   ) := (f,x) -> scan(x,y -> scope2(f,y))
-scope (String, TO         ) :=
-scope (String, TOH        ) := (f,x) -> follow(x#0)
-
--- scanning inside a NOCONTENTS
-scope1 (String, Thing     ) := (f,x) -> null
-scope1 (String, Sequence  ) :=
-scope1 (String, BasicList ) := (f,x) -> scan(x,y -> scope1(f,y))
-scope1 (String, TO        ) :=
-scope1 (String, TOH       ) := (f,x) -> follow(x#0)
--- scope1 (String, CONTENTS  ) := (f,x) -> error ("CONTENTS tag encountered withing a NOCONTENTS tag: ", f)
-
--- scanning inside a CONTENTS not inside a NOCONTENTS
-scope2 (String, Thing     ) := scope
-scope2 (String, SEQ       ) := (f,x) -> scan(x,y -> scope2(f,y))
--- scope2 (String, NOCONTENTS) := (f,x) -> scan(x,y -> scope1(f,y))
-scope2 (String, TO        ) :=
-scope2 (String, TOH       ) := (f,x) -> (
-      key := normalizeDocumentTag x#0;
-      fkey := formatDocumentTag key;
-      linkTable#f = append(linkTable#f,fkey);		    -- linkTable is a graph, not a tree
-      follow(key))
-
-showExternalReferences = () -> sort keys externalReferences
-local nodesToScope
-follow = key -> (
-     key = normalizeDocumentTag key;
-     fkey := formatDocumentTag key;
-     if currentPackage#"documentation"#?fkey or fkey == topNodeName -- there are other ways to deduce a node belongs in our package...
-     then (
-     	  if not linkTable#?fkey then (
-	       nodesToScope#(fkey,key) = true;
-	       linkTable#fkey = {};
-	       ))
-     else externalReferences#fkey = true)
 
 -----------------------------------------------------------------------------
 
@@ -334,31 +285,19 @@ buildLinks ForestNode := x -> (
 
 assembleTree = method()
 assembleTree Package := pkg -> (
-     doExamples = false;				    -- wrong way, change format for doc key for optional arg so it doesn't look like one!
      oldpkg := currentPackage;
      currentPackage = pkg;
-     externalReferences = new MutableHashTable;
+     missingReferences = new MutableHashTable;
      duplicateReferences = new MutableHashTable;
      topNodeName = pkg#"top node name";
      key := normalizeDocumentTag topNodeName;
      fkey := formatDocumentTag key;			    -- same as topNodeName
      nodes := packageNodes(pkg,topNodeName);
-     linkTable = new MutableHashTable from { };
-     nodesToScope = new MutableHashTable from join(
-	  { (fkey,key) => true },
-	  apply(keys pkg#"documentation", fkey -> (fkey,fkey) => true)
-	  );
-     while #nodesToScope > 0 do (
-	  m := keys nodesToScope;
-	  scan(m, (fkey,key) -> (
-		    linkTable#fkey = {};
-		    -- stderr << "scanning documentation for  '" << fkey << "'" << endl;
-		    scope(fkey,documentation key)));
-	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
+     linkTable = new HashTable from apply(
+	  pairs pkg#"documentation", (fkey,doc) -> fkey => if doc.?Menu then doc.Menu else {}
 	  );
      CONT = getTrees();
      buildLinks CONT;
-     doExamples = true;					    -- wrong way
      )
 
 -----------------------------------------------------------------------------
