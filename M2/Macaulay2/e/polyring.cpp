@@ -83,7 +83,7 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
     //    Weyl algebra (has flattened ring)
     //    quotient ring  (has flattened ring)
     const Ring *Q = (const Ring *) globalQQ;
-    if (K_ == Q) return PolynomialRing::create(ZZ,Nmonoms());
+    if (K_ == Q) return PolynomialRing::create(globalZZ,Nmonoms());
     
     const PolynomialRing *R1;
     const FractionField *F;

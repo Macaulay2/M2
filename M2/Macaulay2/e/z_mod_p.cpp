@@ -8,7 +8,7 @@
 #include "random.hpp"
 #include "gbring.hpp"
 
-extern Z *ZZ;
+extern Z *globalZZ;
 
 bool Z_mod::initialize_Z_mod(int p, const Monoid *D)
 {
@@ -141,7 +141,7 @@ ring_elem Z_mod::var(int v, int) const
 bool Z_mod::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Rf = Z ---> Z/p
-  if (Rf == ZZ)
+  if (Rf == globalZZ)
     {
       result = from_int(MPZ_VAL(f));
       return true;
@@ -152,7 +152,7 @@ bool Z_mod::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 bool Z_mod::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
   // Rg = Z ---> Z/p
-  if (Rg == ZZ)
+  if (Rg == globalZZ)
     {
       result = Rg->from_int(coerce_to_int(f));
       return true;

@@ -80,7 +80,7 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
   gbvector *used_to_determine_size = 0;
   gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
 
-  if (K == ZZ)
+  if (K == globalZZ)
     _coeffs_ZZ = true;
 
   // How to get the degree vector?
@@ -200,7 +200,7 @@ GBRingWeylZZ::GBRingWeylZZ(const Ring *K0, const Monoid *M0, const WeylAlgebra *
 
 GBRing * GBRing::create_WeylAlgebra(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0)
 {
-  if (K0 == ZZ)
+  if (K0 == globalZZ)
     return new GBRingWeylZZ(K0,M0,R0);
   return new GBRingWeyl(K0,M0,R0); 
 }

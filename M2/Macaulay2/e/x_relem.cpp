@@ -40,7 +40,7 @@ M2_string IM2_Ring_to_string(const Ring *R)
 
 const Ring *IM2_Ring_ZZ(void)
 {
-  return ZZ;
+  return globalZZ;
 }
 
 const Ring *IM2_Ring_QQ(void)
@@ -135,7 +135,7 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
 
 const RingOrNull *IM2_Ring_frac(const Ring *R)
 {
-  if (R == ZZ) return globalQQ;
+  if (R == globalZZ) return globalQQ;
   return FractionField::create(R);
 }
 
@@ -181,7 +181,7 @@ void IM2_Ring_declare_field(const Ring *K)
   /* Declare that K is a field.  The ring K can then be used as the coefficient
      ring for computing Groebner bases,etc.  */
 {
-  ((Ring *)(K))->declare_field(); // Note: this modifies a const value...
+  const_cast<Ring *>(K)->declare_field(); // Note: this modifies a const value...
 }
 
 const RingElement * IM2_Ring_get_zero_divisor(const Ring *K)
@@ -246,7 +246,7 @@ const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
      Otherwise, NULL is returned, and an error is given */
 {
   const Ring *R = a->get_ring();
-  if (R == ZZ)
+  if (R == globalZZ)
     {
       ring_elem f = a->get_value();
       Nterm *t = f;
@@ -760,7 +760,7 @@ void cmd_Z()
 
 void cmd_RR()
 {
-  gStack.insert(RRR);
+  gStack.insert(globalRR);
 }
 
 void cmd_GF(object &oprim)

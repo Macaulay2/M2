@@ -87,12 +87,12 @@ void QQ::elem_text_out(buffer &o, const ring_elem ap) const
 
 ring_elem QQ::numerator(ring_elem q) const
 {
-  return ZZ->from_int(mpq_numref(MPQ_VAL(q)));
+  return globalZZ->from_int(mpq_numref(MPQ_VAL(q)));
 }
 
 ring_elem QQ::denominator(ring_elem q) const
 {
-  return ZZ->from_int(mpq_denref(MPQ_VAL(q)));
+  return globalZZ->from_int(mpq_denref(MPQ_VAL(q)));
 }
 
 ring_elem QQ::fraction(ring_elem top, ring_elem bottom) const
@@ -146,7 +146,7 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
       M2_Rational h = MPQ_VAL(f);
       if (mpq_cmp_si(h,1,1) == 0)
 	{
-	  result = ZZ->Z::from_int(mpq_numref(h));
+	  result = globalZZ->Z::from_int(mpq_numref(h));
 	  return true;
 	}
     }
@@ -376,9 +376,9 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
 {
   const Ring *S = map->get_ring();
   const M2_Rational f = MPQ_VAL(a);
-  ring_elem top = ZZ->eval(map, MPZ_RINGELEM(mpq_numref(f)));
+  ring_elem top = globalZZ->eval(map, MPZ_RINGELEM(mpq_numref(f)));
   if (S->is_zero(top)) return top;
-  ring_elem bottom = ZZ->eval(map, MPZ_RINGELEM(mpq_denref(f)));
+  ring_elem bottom = globalZZ->eval(map, MPZ_RINGELEM(mpq_denref(f)));
   if (S->is_zero(bottom))
     {
       ERROR("division by zero!");
@@ -397,7 +397,7 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
 ring_elem QQ::trans_to_ringelem(ring_elem coeff, 
 				const int *exp) const
 {
-  ring_elem a = ZZ->trans_to_ringelem(coeff,exp);
+  ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
   return this->fraction(a, trans_one);
 }
 
@@ -405,7 +405,7 @@ ring_elem QQ::trans_to_ringelem_denom(ring_elem coeff,
 				      ring_elem denom, 
 				      int *exp) const
 {
-  ring_elem a = ZZ->trans_to_ringelem(coeff,exp);
+  ring_elem a = globalZZ->trans_to_ringelem(coeff,exp);
   return this->fraction(a, denom);
 }
 
@@ -416,7 +416,7 @@ void QQ::trans_from_ringelem(gbvectorHeap &H,
 			     int firstvar) const
 {
   ring_elem a = this->numerator(coeff);
-  ZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
+  globalZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
 }
 
 // Local Variables:

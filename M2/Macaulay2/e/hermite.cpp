@@ -4,7 +4,7 @@
 #include "hermite.hpp"
 #include "text_io.hpp"
 #include "vector.hpp"
-extern Z *ZZ;
+extern Z *globalZZ;
 
 hm_elem *HermiteComputation::new_gen(int i)
 {
@@ -207,10 +207,10 @@ void HermiteComputation::reduce(hm_elem *&p, hm_elem *q)
   // set q <- lead(q)/gcd * p - lead(p)/gcd * q
   // DOn't forget to also reset the 'lead' fields!
   ring_elem u, v;
-  ring_elem g = ZZ->gcd_extended(p->f->coeff, q->f->coeff, u, v);
-  ring_elem a = ZZ->divide(q->f->coeff, g); // exact
-  ring_elem b = ZZ->divide(p->f->coeff, g); // exact
-  ZZ->negate_to(b);
+  ring_elem g = globalZZ->gcd_extended(p->f->coeff, q->f->coeff, u, v);
+  ring_elem a = globalZZ->divide(q->f->coeff, g); // exact
+  ring_elem b = globalZZ->divide(p->f->coeff, g); // exact
+  globalZZ->negate_to(b);
 
   vec p1 = gens->rows()->mult(u, p->f);
   vec p2 = gens->rows()->mult(v, q->f);
@@ -232,11 +232,11 @@ void HermiteComputation::reduce(hm_elem *&p, hm_elem *q)
   gens->rows()->remove(q->f);
   syz->rows()->remove(p->fsyz);
   syz->rows()->remove(q->fsyz);
-  ZZ->remove(a);
-  ZZ->remove(b);
-  ZZ->remove(g);
-  ZZ->remove(u);
-  ZZ->remove(v);
+  globalZZ->remove(a);
+  globalZZ->remove(b);
+  globalZZ->remove(g);
+  globalZZ->remove(u);
+  globalZZ->remove(v);
 
   // Now that the arithmetic has been done, put back into 'p', 'q':
   p->f = p1;
