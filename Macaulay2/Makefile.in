@@ -29,8 +29,6 @@ cache :; mkdir $@
 distclean clean ::; rm -rf cache
 install :: $(cachedir)
 $(cachedir):; $(INSTALL) -d "$@"
-install :: $(cachedir)/Macaulay2-doc
-$(cachedir)/Macaulay2-doc : cache/Macaulay2-doc; $(INSTALL_DATA) $^ "$(cachedir)"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
