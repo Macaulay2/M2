@@ -243,7 +243,7 @@ makeNode := x -> (
 leaves := () -> keys set flatten values linkTable
 roots := () -> sort keys ( set keys linkTable - set leaves() )
 makeTree := topNode -> (
-     error "debug this";
+     -- error "debug this";
      visitedNodes = new MutableHashTable;
      foundLoop = false;
      linkTable#ROOT = roots();
