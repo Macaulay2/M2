@@ -510,7 +510,7 @@ MatrixOrNull *Matrix::reshape(const FreeModule *F, const FreeModule *G) const
     }
 
   // EFFICIENCY: might be better to sort columns at end?
-  MatrixConstructor mat(F,G);
+  MatrixConstructor mat(F,G,0);
   for (int c=0; c<n_cols(); c++)
     for (vecterm *p = elem(c); p != NULL; p = p->next)
       {
@@ -535,7 +535,7 @@ MatrixOrNull *Matrix::flip(const FreeModule *F, const FreeModule *G)
   const FreeModule *H = F->tensor(G);
   const FreeModule *K = G->tensor(F);
 
-  MatrixConstructor mat(K,H);
+  MatrixConstructor mat(K,H,0);
   int next = 0;
   for (int f=0; f<F->rank(); f++)
     for (int g=0; g<G->rank(); g++)
@@ -594,7 +594,7 @@ Matrix *Matrix::concat(const Matrix &m) const
     }
 
   const FreeModule *G = cols()->direct_sum(m.cols());
-  MatrixConstructor mat(rows(), G);
+  MatrixConstructor mat(rows(), G, 0);
   int i;
   int nc = n_cols();
   for (i=0; i<nc; i++)
@@ -620,7 +620,7 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   const FreeModule *F = rows()->direct_sum(m->rows());
   const FreeModule *G = cols()->direct_sum(m->cols());
 
-  MatrixConstructor mat(F,G);
+  MatrixConstructor mat(F,G, 0);
 
   int i;
   int nr = n_rows();
@@ -671,7 +671,7 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   G->direct_sum_to(G1);
   deleteitem(G1);
 
-  MatrixConstructor mat(F,G);
+  MatrixConstructor mat(F,G, 0);
 
   int i, j, next=0;
 
@@ -708,7 +708,7 @@ Matrix *Matrix::random(const Ring *R,
 
   FreeModule *F = R->make_FreeModule(r);
   FreeModule *G = R->make_FreeModule(c);
-  MatrixConstructor mat(F,G);
+  MatrixConstructor mat(F,G, 0);
 
   // Loop through all selected elements, flip a 'fraction_non_zero' coin, and if non-zero
   // set that element.
@@ -1086,7 +1086,7 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
   const Ring *K = P->getLogicalCoefficients();
   const Monoid *M = P->getLogicalMonoid();
 
-  MatrixConstructor mat(F, c->cols());
+  MatrixConstructor mat(F, c->cols(), 0);
 
   int nvars = M->n_vars();
   int nrows = r->n_cols();
@@ -1130,7 +1130,7 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
   const FreeModule *G = Fp->tensor(Fq);
   const Ring *R = F->get_ring();
 
-  MatrixConstructor mat(Fn,G);
+  MatrixConstructor mat(Fn,G, 0);
 
   if (p < 0 || q < 0 || p+q >F->rank())
     return mat.to_matrix();

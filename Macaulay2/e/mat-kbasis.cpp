@@ -117,7 +117,7 @@ KBasis::KBasis(const Matrix *bottom,
 
   kb_mon = M->make_one();
 
-  mat = MatrixConstructor(bottom->rows(), 0, false);
+  mat = MatrixConstructor(bottom->rows(), 0);
 
   if (D->n_vars() > 1 && lo_degree)
     {

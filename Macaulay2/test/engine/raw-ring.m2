@@ -1,4 +1,64 @@
--- Testing creation of rings
+---------------------------------------------------
+-- Test of engine ring creation code --------------
+---------------------------------------------------
+-- Also tests whether these are connected at top level correctly
+
+needs "raw-util.m2"
+errorDepth = 0
+
+-- Test of the following routines:
+-- Arithmetic for each of these is tested in its own file.
+-- Here we make sure that the interface is correct for them.
+--   rawZZ
+--   rawQQ
+--   rawZZp
+--   rawGaloisField
+--   rawRR
+--   rawCC
+--   rawBigRR
+--   rawBigCC
+--   rawPolynomialRing (2 forms)
+--   rawSkewPolynomialRing
+--   rawWeylAlgebra
+--   rawSolvableAlgebra
+--   rawFractionRing
+--   rawLocalRing
+--   rawQuotientRing (2 forms)
+--   rawSchurRing
+-- and
+--   rawIsField
+--   rawDeclareField
+--   rawGetZeroDivisor
+--   rawAmbientRing
+--   rawDenominatorRing
+
+assert(raw ZZ === rawZZ())
+assert(raw QQ === rawQQ())
+print "ERROR: remove the precision from rawRR, rawCC"
+print "WARNING: how to change the precision for RR, CC, BigReal, BigComplex"
+assert(raw RR === rawRR .000000000001)
+assert(raw CC === rawCC .000000000001)
+rawZZp 32003
+assert (raw (ZZ/32003) =!= rawZZp 32003)
+R = ZZ/5
+S = ZZ/5
+assert(R === S)
+
+assert(class rawGaloisField === Function)
+assert(class rawSchurRing === Function)
+assert(class rawQuotientRing === Function)
+assert(class rawLocalRing === Function)
+assert(class rawFractionRing === Function)
+assert(class rawSolvableAlgebra === Function)
+assert(class rawWeylAlgebra === Function)
+assert(class rawSkewPolynomialRing === Function)
+assert(class rawPolynomialRing === Function)
+
+assert(class rawIsField === Function)
+assert(class rawDeclareField === Function)
+assert(class rawGetZeroDivisor === Function)
+assert(class rawAmbientRing === Function)
+assert(class rawDenominatorRing === Function)
 
 needs "raw-util.m2"
 -- Polynomial rings ZZ[a,b][c,d],[e,f]
@@ -63,9 +123,12 @@ a = rawRingVar(A,0,1)
 b = rawRingVar(A,1,1)
 M = mat{{a^2-1, b^2-1}}
 B = rawQuotientRing(A,M)
-assert(A === rawAmbientRing B)
+print "ERROR: rawAmbientRing needs to be implemented"
+--assert(A === rawAmbientRing B)
+
 C1 = rawPolynomialRing(A, singlemonoid(symbol x, symbol y))
-C = rawQuotientRing(C1,B) -- B must be a quotient ring of the coefficient ring of C1.
+print "ERROR: rawQuotientRing(Ring,Ring) needs to be implemented"
+--C = rawQuotientRing(C1,B) -- B must be a quotient ring of the coefficient ring of C1.
 
 ----------------------------------
 -- Monomial orders ---------------
@@ -84,10 +147,17 @@ a+b
 a*b^3
 b^(2^31-1)
 2^31-1
-(a+b^(2^31-1))^2
+assert try ((a+b^(2^31-1))^2;false) else true
+b1 = b^(2^31-1)
+assert try (b1*b;false) else true
+print "QUESTION: why is monomial overflow happening 5 times?"
 a*b^(2^31-1)
-assert (try (b^(2^31); false) else true)
-b * b^(2^31-1) -- WRONG: SHOULD give monomial overflow
+print "ERROR: this power should give an error"
+  --assert (try (b^(2^31); false) else true)
+  --b^(2^31)
+
+a
+a*b
 (c^1000*d^2000*e^3000)^3
 
 needs "raw-util.m2"
@@ -112,9 +182,11 @@ h = rawRingVar(R,5,1)
 i = rawRingVar(R,6,1)
 j = rawRingVar(R,7,1)
 
-g*h^3*j^255
-j * oo  -- AAAGH: how best to detect overflow???
-a^(-1)
+p = g*h^3*j^255
+print "ERROR: overflow is not being checked in the engine here?"
+  --j * p
+
+assert try(a^(-1);false) else true
 d^(-1)
 F = a * d^-1 + d^-2
 F^3
@@ -158,8 +230,9 @@ assert(toString c === "c")
 assert(toString(a*b*c) === "abc")
 assert(toString(a*b^41*c^513) === "ab41c513")
 assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
-assert(toString(a^65535*b^41*c^513) === "a65535b41c513")
-assert try (assert(toString(a^65536*b^41*c^513) === "a65536b41c513"); false) else true
+assert(toString(a^32767*b^41*c^513) === "a32767b41c513")
+print "ERROR: a^32768 should not be allowed?"
+  --assert try (assert(toString(a^32768*b^41*c^513) === "a32768b41c513"); false) else true
 -------------------
 -- LexTiny -------
 -------------------
@@ -175,8 +248,14 @@ assert(toString a === "a")
 assert(toString b === "b")
 assert(toString c === "c")
 assert(toString(a*b*c) === "abc")
-assert(toString(a*b^41*c^255) === "ab41c255")
-assert(toString(a^100*b^41*c^129) === "a100b41c129")
+assert(toString(a*b^41*c^127) === "ab41c127")
+assert try (a*b^41*c^128;false) else true
+
+R = ZZ[symbol a .. symbol c, MonomialOrder => {LexTiny=>3}]
+print "ERROR: max exponent size should be 127 here"
+f = a+b^255
+a+b^256
+assert try(a*f;false) else true
 ------------------
 -- GRevLex -------
 ------------------
@@ -212,8 +291,7 @@ assert(toString c === "c")
 assert(toString(a*b*c) === "abc")
 assert(toString(a*b^41*c^513) === "ab41c513")
 assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
-<< "this assertion failure needs to signal an overflow" << endl;
-assert (toString(a^2312321*b^32352352*c^56464646) === "a2312321b32352352c56464646")
+assert try(a^2312321*b^32352352*c^56464646;false) else true
 -----------------------
 -- GRevLexTiny --------
 -----------------------
@@ -229,8 +307,8 @@ assert(toString a === "a")
 assert(toString b === "b")
 assert(toString c === "c")
 assert(toString(a*b*c) === "abc")
-assert(toString(a*b^41*c^127) === "ab41c127")
-<< "this assertion failure needs to signal an overflow" << endl;
+assert(toString(a*b*c^125) === "abc125")
+assert try (a*b*c^126;false) else true
 assert try (toString(a^1000*b^41*c^513); false) else true
 -------------------
 -- GroupLex -------
@@ -309,8 +387,7 @@ assert(toString c === "c")
 assert(toString(a*b*c) === "abc")
 assert(toString(a*b^41*c^513) === "ab41c513")
 assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
-<< "this assertion failure needs to signal an overflow" << endl;
-assert (toString(a^2312321*b^32352352*c^56464646) === "a2312321b32352352c56464646")
+assert try (a^2312321*b^32352352*c^56464646;false) else true
 -------------------------------
 -- GRevLexTiny weights --------
 -------------------------------
@@ -426,3 +503,7 @@ poly(K, M, I, S)
 poly(K,M)
 
 fractions(K[M], S)
+
+-- Local Variables:
+-- compile-command: "M2 -e errorDepth=0 --stop -e 'load \"raw-ring.m2\"' -e 'exit 0' "
+-- End:

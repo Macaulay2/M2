@@ -1650,7 +1650,7 @@ const MatrixOrNull *gbA::get_gb()
 {
   minimalize_gb();
   const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
-  MatrixConstructor mat(_F,0,false/*not mutable*/);
+  MatrixConstructor mat(_F,0);
 #if 0
   int j=0;
 #endif
@@ -1677,7 +1677,7 @@ const MatrixOrNull *gbA::get_gb()
 
 const MatrixOrNull *gbA::get_mingens()
 {
-  MatrixConstructor mat(_F,0,false/*not mutable*/);
+  MatrixConstructor mat(_F,0);
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
@@ -1689,7 +1689,7 @@ const MatrixOrNull *gbA::get_change()
 {
   minimalize_gb();
   const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
-  MatrixConstructor mat(_Fsyz,0,false/*not mutable*/);
+  MatrixConstructor mat(_Fsyz,0);
   for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
     mat.append(originalR->translate_gbvector_to_vec(_Fsyz, (*i).fsyz));
   return mat.to_matrix();
@@ -1698,7 +1698,7 @@ const MatrixOrNull *gbA::get_change()
 const MatrixOrNull *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
-  MatrixConstructor mat(_Fsyz, 0, false /* not mutable */);
+  MatrixConstructor mat(_Fsyz, 0);
   for (vector<gbvector *,gc_alloc>::iterator i = _syz.begin(); i != _syz.end(); i++)
     mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
   return mat.to_matrix();
@@ -1708,7 +1708,7 @@ const MatrixOrNull *gbA::get_initial(int nparts)
 {
   minimalize_gb();
   const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
-  MatrixConstructor mat(_F,0,false/*not mutable*/);
+  MatrixConstructor mat(_F,0);
   for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
     {
       gbvector *f = R->gbvector_lead_term(nparts, _F, (*i).f);
@@ -1772,7 +1772,7 @@ void gbA::matrix_lift(const Matrix *m,
   }
 
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_quotient(_Fsyz, m->cols());
+  MatrixConstructor mat_quotient(_Fsyz, m->cols(), 0);
 
   const Ring *K = R->get_flattened_coefficients();
   for (int i=0; i<m->n_cols(); i++)

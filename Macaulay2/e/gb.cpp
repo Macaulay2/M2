@@ -1145,7 +1145,7 @@ const MatrixOrNull *GB_comp::get_gb()
 const MatrixOrNull *GB_comp::get_mingens()
 {
   start_computation();
-  MatrixConstructor mat(_F, 0, false);
+  MatrixConstructor mat(_F, 0);
   for (int i=0; i<_gb.length(); i++)
     if (_gb[i]->is_min)
       mat.append(originalR->translate_gbvector_to_vec(_F,_gb[i]->f));

@@ -28,7 +28,7 @@ lexgin = gin
 
 example = () -> "R = ZZ/101[a..e]
 I = ideal(a^2,b^2,c^2)
-M = rawMatrixRandom(raw R, 1,5,1.0,0,false,0)
+M = rawMatrixRandom(raw R, 1,5,1.0,0,0)
 M = random(R^1, R^5)
 "
 

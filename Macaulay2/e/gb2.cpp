@@ -291,7 +291,7 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
        return 0;
   }
   MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols());
+  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), 0);
 
   for (int i=0; i<m->n_cols(); i++)
     {

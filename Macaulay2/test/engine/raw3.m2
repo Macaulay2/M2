@@ -314,62 +314,6 @@ assert(x^4 == 0)
 assert(2*x^3 == 0)
 assert(312*x == 0)
 
---------------------------
--- free module routines --
---------------------------
--- rawRing, rawRank, rawMultiDegree
--- rawFreeModule(R,5), rawFreeModule(R,(0,1,2,3))
--- rawDirectSum, rawTensor
--- rawDual, rawSymmetricPower, rawExteriorPower, rawSubmodule
--- toString
--- TO BE TESTED: rawFreeModule mat, rawGetSchreyer
--- TO BE WRITTEN: hash 
-R = polyring(rawZZ(), (symbol a .. symbol f))
-F = rawFreeModule(R,5)
-assert(rawRank F === 5)
-assert(rawMultiDegree F === {0,0,0,0,0})
-assert(rawRing F === R)
-G = rawFreeModule(R, (1,2,3,4))
-assert(rawMultiDegree G === {1,2,3,4})
-H = rawFreeModule(R,0)
-assert(rawRank H === 0)
-assert(rawMultiDegree H === {})
-assert try (rawFreeModule(R,-1);false) else true
-rawRank H
-G = rawFreeModule(R,(0,0,1,1,-3))
-assert(toString G === "free(rank 5 degrees = {1, 1, t, t, t^(-3)})")
-
-F = rawFreeModule(R,(0,10,100,1000))
-G = rawFreeModule(R,(1,2,3))
-H = rawTensor(F,G)
-assert(F ** G === H)
-assert(rawRank H === rawRank F * rawRank G)
-assert(rawMultiDegree H === 
-     {1, 2, 3, 11, 12, 13, 101, 102, 103, 1001, 1002, 1003})
-assert(rawMultiDegree rawDual F === - rawMultiDegree F)
-assert(rawMultiDegree rawDual H === - rawMultiDegree H)
-assert(rawMultiDegree rawExteriorPower(3,F) === {110,1010,1100,1110})
-assert(rawSubmodule(F, (0,0,1,1,2,2)) === rawFreeModule(R,(0,0,10,10,100,100)))
-S2F = rawSymmetricPower(2,F)
-assert(rawRank S2F === 10)
-assert(toString S2F === 
-     "free(rank 10 degrees = {1, t10, t100, t1000, t20, t110, t1010, t200, t1100, t2000})")
-
-assert(rawMultiDegree rawExteriorPower(3,F) === {110,1010,1100,1110})
-assert(rawSubmodule(F, (0,0,1,1,2,2)) === rawFreeModule(R,(0,0,10,10,100,100)))
-assert(rawRank rawSubmodule(F, (0,1)) === 2)
-assert(rawRank rawSubmodule(F, ()) === 0)
-
-assert(rawRank rawSymmetricPower(-1,F) === 0)
-assert(rawSymmetricPower(0,F) === R^1)
-assert(rawSymmetricPower(1,F) === F)
-assert(rawRank rawExteriorPower(-1,F) == 0)
-assert(rawExteriorPower(0,F) == R^1)
-assert(rawExteriorPower(1,F) == F)
-
-assert(R^4 == rawFreeModule(R,4))
-assert(R^4 === rawFreeModule(R,4))
-R^{-1,-1,2} == rawFreeModule(R,(1,1,-2))
 
 ---------------------
 -- Matrix routines --
@@ -416,8 +360,8 @@ m = rawMatrix1(F,4,toSequence flatten elems,0)
 R = polyring(rawZZ(), (vars 0 .. vars 15))
 F = rawFreeModule(R,5)
 G = rawFreeModule(R,10)
-m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),false,0)
-m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true,0)
+m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
+m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
 assert(-(-m) == m)
 assert((m-m) == m + (-m)) -- CURRENTLY FAILS BECAUSE OF HASH CODES
 --<< "make sure mutable matrices and immutable matrices are not ==" << endl;
@@ -429,16 +373,16 @@ rawMultiDegree m === {0}
 assert rawIsZero(m - m)
 assert rawIsZero(m - m1)
 
-m = rawSparseMatrix2(F,G,{7},{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true,0)
+m = rawSparseMatrix2(F,G,{7},{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
 assert(rawMultiDegree m  === {7})
-m1 = rawMatrixRemake2(F,G,rawMultiDegree m, m, true, 0)
-m2 = rawMatrixRemake2(F,G,{13}, m, false, 0)
+m1 = rawMatrixRemake2(F,G,rawMultiDegree m, m, 0)
+m2 = rawMatrixRemake2(F,G,{13}, m, 0)
 assert(rawMultiDegree m2 === {13})
 
 elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))
 m = rawMatrix1(F,5,elems,0)
 p1 = rawMatrix1(F,5,toSequence flatten entries m,0)
-p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,false,0)
+p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,0)
 p1 == p2
 
 2*m
@@ -517,12 +461,12 @@ assert(mh == mat{{-e^4+a^2, -c^3-b*e^2+a*b, -d^100+a*b*c*e^96}})
 -- random matrices --
 ---------------------
 needs "raw-util.m2"
-mr = rawMatrixRandom(rawZZ(),2,3,.5,0,false,0)
-mr = rawMatrixRandom(rawZZ(),10,15,.5,0,false,0)
+mr = rawMatrixRandom(rawZZ(),2,3,.5,0,0)
+mr = rawMatrixRandom(rawZZ(),10,15,.5,0,0)
 R = polyring(rawZZp(32003), (symbol x, symbol y))
-mr = rawMatrixRandom(R,10,15,.5,0,false,0)
-mr = rawMatrixRandom(R,10,15,.5,1,false,0)
-mr = rawMatrixRandom(R,10,10,.5,1,false,0)
+mr = rawMatrixRandom(R,10,15,.5,0,0)
+mr = rawMatrixRandom(R,10,15,.5,1,0)
+mr = rawMatrixRandom(R,10,10,.5,1,0)
 
 -------------------------------
 -- row and column operations --
@@ -583,7 +527,7 @@ m
 rawMatrixRowScale(m,f,2,true) -- wrong error message
 rawMatrixColumnScale(m,f,2,true) -- wrong error message
 m
-m1 = rawMatrixRemake1(rawTarget m,m,false,0)
+m1 = rawMatrixRemake1(rawTarget m,m,0)
 m * m1
 assert try (rawMatrixEntry(m1,2,1,0_R); false) else true
 ------------------

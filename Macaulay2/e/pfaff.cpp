@@ -10,7 +10,7 @@ PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
     row_set(p0)
 {
   endI = comb::binom(M->n_rows(), p);
-  pfaffs = MatrixConstructor(R->make_FreeModule(1),0,false);
+  pfaffs = MatrixConstructor(R->make_FreeModule(1),0);
   if (p == 0)
     {
       pfaffs.append(R->make_vec(0,R->one()));

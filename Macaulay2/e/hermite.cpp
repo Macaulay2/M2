@@ -289,7 +289,7 @@ int HermiteComputation::calc(const int *, const intarray &/*stop*/)
 
 const MatrixOrNull *HermiteComputation::get_gb()
 {
-  MatrixConstructor mat(gens->rows(), 0, false);
+  MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
     mat.append(globalZZ->copy_vec(p->f));
   return mat.to_matrix();
@@ -303,7 +303,7 @@ const MatrixOrNull *HermiteComputation::get_mingens()
 
 const MatrixOrNull *HermiteComputation::get_change()
 {
-  MatrixConstructor mat(syz->rows(), 0, false);
+  MatrixConstructor mat(syz->rows(), 0);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
     mat.append(globalZZ->copy_vec(p->fsyz));
   return mat.to_matrix();
@@ -434,7 +434,7 @@ void HermiteComputation::matrix_lift(const Matrix *m,
 				     MatrixOrNull **result_quotient)
 {
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
-  MatrixConstructor mat_quotient(syz->rows(), m->cols());
+  MatrixConstructor mat_quotient(syz->rows(), m->cols(), 0);
   if (m->n_rows() != gens->rows()->rank()) {
        ERROR("expected matrices to have same number of rows");
        *result_remainder = 0;

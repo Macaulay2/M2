@@ -66,7 +66,7 @@ Matrix * FreeModule::get_induced_order() const
     if (S->compare_num(i) > maxtie)
       maxtie = S->compare_num(i);
   const FreeModule *F = R->make_FreeModule(maxtie+1);
-  MatrixConstructor mat(F,this,false);
+  MatrixConstructor mat(F,this,0);
   for (i=0; i<rank(); i++)
     {
       ring_elem f = P->make_flat_term(P->getCoefficients()->from_int(1), 

@@ -64,7 +64,7 @@ void GBinhom_comp::set_up(const Matrix *m,
 
   Fsyz = m->cols()->sub_space(n_comps_per_syz);  
   //  syz = new Matrix(Fsyz);
-  syz = MatrixConstructor(Fsyz, 0, false);
+  syz = MatrixConstructor(Fsyz, 0);
   n_syz = 0;
   add_gens(0, m->n_cols()-1, m);
 }
@@ -854,8 +854,8 @@ Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  MatrixConstructor mat_red(m->rows(), m->cols(), false);
-  MatrixConstructor mat_lift(Fsyz, 0, false);
+  MatrixConstructor mat_red(m->rows(), m->cols(), 0);
+  MatrixConstructor mat_lift(Fsyz, 0);
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -900,7 +900,7 @@ int GBinhom_comp::contains(const Matrix *m)
 //--- Obtaining matrices as output -------
 Matrix *GBinhom_comp::min_gens_matrix()
 {
-  MatrixConstructor mat(F, 0, false);
+  MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     if (q->is_min)
       mat.append(originalR->translate_gbvector_to_vec(F,q->f));
@@ -909,7 +909,7 @@ Matrix *GBinhom_comp::min_gens_matrix()
 
 Matrix *GBinhom_comp::initial_matrix(int n)
 {
-  MatrixConstructor mat(F, 0, false);
+  MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     {
       gbvector *f = GR->gbvector_lead_term(n, F, q->f);
@@ -920,7 +920,7 @@ Matrix *GBinhom_comp::initial_matrix(int n)
 
 Matrix *GBinhom_comp::gb_matrix()
 {
-  MatrixConstructor mat(F, 0, false);
+  MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     mat.append(originalR->translate_gbvector_to_vec(F,q->f));
   return mat.to_matrix();
@@ -928,7 +928,7 @@ Matrix *GBinhom_comp::gb_matrix()
 
 Matrix *GBinhom_comp::change_matrix()
 {
-  MatrixConstructor mat(Fsyz, 0, false);
+  MatrixConstructor mat(Fsyz, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     mat.append(originalR->translate_gbvector_to_vec(Fsyz,q->fsyz));
   return mat.to_matrix();

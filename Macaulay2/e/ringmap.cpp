@@ -218,7 +218,7 @@ RingElementOrNull *RingMap::eval(const RingElement *r) const
 
 MatrixOrNull *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
-  MatrixConstructor mat(F, 0, false);
+  MatrixConstructor mat(F, 0);
   for (int i=0; i<m->n_cols(); i++)
     mat.append(m->get_ring()->vec_eval(this, F, m->elem(i)));
   if (error()) return 0;
