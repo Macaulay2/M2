@@ -1,4 +1,4 @@
-newPackage("eliminate"
+newPackage("Eliminate"
      Version => "1.0", 
      Date => "January 5, 2005",
      Author => "Michael E. Stillman <mike@math.cornell.edu>",
