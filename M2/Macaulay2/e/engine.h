@@ -1673,7 +1673,7 @@ enum gbTraceValues
   /**** LLL bases ***********************************/
   /**************************************************/
   
-  M2_bool IM2_LLL(MutableMatrix *M, const RingElement *threshold); /* connected to rawLLL */
+  M2_bool IM2_LLL(MutableMatrix *M, const M2_Rational threshold); /* connected to rawLLL */
   /* Given a mutable matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
      modify M so that it forms a Lenstra-Lenstra-Lovasz
      basis of the image of (the original) M.  ASSUMPTION: the columns of M are already a a basis for the 

@@ -437,7 +437,7 @@ M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M)
   return FF_LUComputation::DO(M);
 }
 
-M2_bool IM2_LLL(MutableMatrix *M, const RingElement *threshold)
+M2_bool IM2_LLL(MutableMatrix *M, const M2_Rational threshold)
 {
   return LLLoperations::LLL(M,threshold);
 }

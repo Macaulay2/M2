@@ -26,6 +26,7 @@ private:
   const Matrix *gens;			// This is the input
 
   hm_elem *GB_list;
+  const FreeModule *Fsyz;
   Matrix * syz;
 
   int n_gb;
@@ -44,16 +45,17 @@ private:
 
   void gb_reduce(vec &f, vec & /*fsyz*/) const;
   
-  // performing the computation
-  int calc(const int *deg, const intarray &stop);  // 'deg' is ignored here
+protected:
+  virtual bool stop_conditions_ok() { return true; }
+
 public:
   // An honest GB computation
   HermiteComputation(const Matrix *m, int collect_syz, int n_syz);
   ~HermiteComputation();
 
-  virtual void start_computation() = 0;
+  virtual void start_computation();
 
-  virtual enum ComputationStatusCode gb_status(int *degree); 
+  virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
   ////////////////////////////////
