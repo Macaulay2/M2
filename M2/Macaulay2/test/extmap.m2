@@ -28,6 +28,6 @@ M = R^1/I
 N = R^1/J
 f = map(M,N)
 g = Ext^2(f,R)
-assert( presentation target g - matrix{{d^2,c^2,0,0},{0,0,b^2,a^2}} == 0 )
-assert( presentation source g - matrix {{d, c, 0, 0}, {0, 0, b, a}} == 0 )
-assert( matrix g - matrix {{c*d, 0}, {0, a*b}} == 0 )
+assert( presentation target g - matrix{{a^2,b^2,0,0},{0,0,c^2,d^2}} == 0 )
+assert( presentation source g - matrix {{a, b, 0, 0}, {0, 0, c, d}} == 0 )
+assert( matrix g - matrix {{a*b, 0}, {0, c*d}} == 0 )

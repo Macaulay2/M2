@@ -184,8 +184,10 @@ ifdef SHAREDLIBS
 LDLIBS += -lnsl -lnss_files -ldb -lnss_compat -lnss_db -lnss_dns -lnss_nis -lresolv
 endif
 ifndef NOSTATIC
+ifeq ($(OS),Linux)
 # so I tried it, but it doesn't work...
 ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
+endif
 endif
 
 
