@@ -339,7 +339,7 @@ installPackage = method(Options => {
 	  })
 
 installPackage String := opts -> pkg -> (
-     if class value pkg === Package then return installPackage(value pkg, opts);
+     if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return installPackage(value getGlobalSymbol pkg, opts);
      needsPackage pkg;
      if class value pkg === Package then return installPackage(value pkg, opts);
      error ("can't locate package '",pkg,"'");
@@ -387,7 +387,8 @@ installPackage Package := o -> pkg -> (
      pkg#"package prefix" = buildDirectory;
 
      -- check that we've read the raw documentation
-     if #pkg#"raw documentation" == 0 then (
+     if #pkg#"raw documentation" > 0 or pkg#?"raw documentation database" and isOpen pkg#"raw documentation database" then null
+     else (
 	  if pkg === Macaulay2 then (
      	       currentPackage = Macaulay2;
      	       stderr << "--loading Macaulay2-doc.m2" << endl;
@@ -465,7 +466,7 @@ installPackage Package := o -> pkg -> (
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- cache raw documentation in database
-     stderr << "--storing processed documentation" << endl;
+     stderr << "--storing raw documentation" << endl;
      docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
      makeDirectory docDir;
      rawtmpname := docDir | "rawdocumentation.db.tmp";
@@ -483,7 +484,7 @@ installPackage Package := o -> pkg -> (
      addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
 
      -- process documentation
-     stderr << "--processing documentation nodes" << endl;
+     stderr << "--processing documentation nodes..." << endl;
      scan(nodes, tag -> (
 	       -- stderr << "processing " << tag << endl;
 	       pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag;

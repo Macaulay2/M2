@@ -39,11 +39,6 @@ if firstTime then (
 	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
 	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
 	  );
-     examplePrompts = () -> (
-	  normalPrompts();
-	  ZZ.InputPrompt = lineno -> concatenate (newline, "\1i", toString lineno, " : ");
-	  symbol currentPrompts <- examplePrompts;
-	  );
      noPrompts = () -> (
 	  ZZ.InputPrompt = lineno -> "";
 	  ZZ.InputContinuationPrompt = lineno -> "";
@@ -223,7 +218,6 @@ usage := arg -> (
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
      << "    --dumpdata         read source code, dump data if so configured, exit (no init.m2)" << newline
-     << "    --example-prompts  examples prompt mode" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --int              accept interrupts" << newline -- handled by M2lib.c
@@ -286,7 +280,6 @@ action := hashTable {
      "--no-prompts" => arg -> if phase == 1 then noPrompts(),
      "--notify" => arg -> if phase == 1 then notify = true,
      "-x" => obsolete,
-     "--example-prompts" => arg -> if phase == 1 then examplePrompts(),
      "-s" => obsolete,
      "--fullbacktrace" => arg -> if phase == 1 then fullBacktrace = true,
      "--no-backtrace" => arg -> if phase == 1 then fullBacktrace = backtrace = false,

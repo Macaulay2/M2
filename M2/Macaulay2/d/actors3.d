@@ -86,22 +86,46 @@ equalmethod(x:Expr,y:Expr):Expr := (
      if method == nullE 
      then MissingMethodPair(EqualEqualS,x,y)
      else apply(method,x,y));
+EqualEqualfun(x:Expr,y:Expr):Expr := (
+     -- some cases, where the types are equal, call immediately for strict equality
+     -- some cases call for simple recursive routines
+     when x
+     is Integer do when y is Integer do equal(x,y) else equalmethod(x,y)
+     is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
+     is Rational do when y is Rational do equal(x,y) else equalmethod(x,y)
+     is Real do when y is Real do equal(x,y) else equalmethod(x,y)
+     is BigReal do when y is BigReal do equal(x,y) else equalmethod(x,y)
+     is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
+     is Net do when y is Net do equal(x,y) else equalmethod(x,y)
+     is string do when y is string do equal(x,y) else equalmethod(x,y)
+     is a:List do when y is b:List do (
+	  if a.class != b.class then return False;				    -- oops, what if the classes are immutable????
+     	  s := a.v;
+	  t := b.v;
+	  if length(s) != length(t) then return False;
+	  for i from 0 to length(s)-1 do (
+	       ret := EqualEqualfun(s.i,t.i);
+	       when ret is Error do return ret else nothing;
+	       if ret == False then return False;
+	       );
+	  True
+	  ) else equalmethod(x,y)
+     is s:Sequence do when y is t:Sequence do (
+	  if length(s) != length(t) then return False;
+	  for i from 0 to length(s)-1 do (
+	       ret := EqualEqualfun(s.i,t.i);
+	       when ret is Error do return ret else nothing;
+	       if ret == False then return False;
+	       );
+	  True
+	  ) else equalmethod(x,y)
+     else equalmethod(x,y));
 EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
      else (
      	  y := eval(rhs);
-     	  when y 
-	  is Error do y
-	  is Integer do when x is Integer do equal(x,y) else equalmethod(x,y)
-	  is SymbolClosure do when x is SymbolClosure do equal(x,y) else equalmethod(x,y)
-	  is Rational do when x is Rational do equal(x,y) else equalmethod(x,y)
-	  is Real do when x is Real do equal(x,y) else equalmethod(x,y)
-	  is BigReal do when x is BigReal do equal(x,y) else equalmethod(x,y)
-	  is Boolean do when x is Boolean do equal(x,y) else equalmethod(x,y)
-	  is Net do when x is Net do equal(x,y) else equalmethod(x,y)
-	  is string do when x is string do equal(x,y) else equalmethod(x,y)
-	  else equalmethod(x,y)));
+	  when y is Error do y else EqualEqualfun(x,y)));
 setup(EqualEqualS,EqualEqualfun);
 not(z:Expr):Expr := (
      when z is Error do z 
@@ -155,13 +179,13 @@ compare(left:Expr,right:Expr):Expr := (
 	  when right
 	  is y:SymbolClosure do (
 	       c := strcmp(x.symbol.word.name,y.symbol.word.name);
-	       if c == 1 then LessE
-	       else if c == -1 then GreaterE
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
 	       else (
-		    if x.symbol.hash < y.symbol.hash then GreaterE
-		    else if x.symbol.hash > y.symbol.hash then LessE
+		    if x.symbol.hash < y.symbol.hash then LessE
+		    else if x.symbol.hash > y.symbol.hash then GreaterE
 		    else (
-			 -- if we had a Sequence number stored in each fram
+			 -- if we had a Sequence number stored in each frame
 			 -- we could make the rest of the comparison well-defined
 			 EqualEqualE
 			 )
@@ -266,7 +290,7 @@ setup(QuestionS,compareop);
 
 whichway := GreaterE;
 sortlist := emptySequence;
-subsort(l:int,r:int):void := (
+subsort(l:int,r:int):Expr := (
      b := r+1-l;
      a := randomint() % b;
      if a < 0 then a = a+b;
@@ -280,8 +304,14 @@ subsort(l:int,r:int):void := (
 	  -- spots 1 .. i-1 contain elements less or equal to the pivot
 	  -- spots j+1 .. r contain elements greater or equal to the pivot
 	  -- when i > j we've partitioned all the elements into two parts
-	  if compare(sortlist.i,pivot) != whichway then i = i+1
-	  else if compare(pivot, sortlist.j) != whichway then j = j-1
+	  if (
+	       c := compare(sortlist.i,pivot);
+	       when c is Error do return c else nothing;
+	       c) != whichway then i = i+1
+	  else if (
+	       c := compare(pivot, sortlist.j);
+	       when c is Error do return c else nothing;
+	       c) != whichway then j = j-1
 	  else (
 	       tmp := sortlist.i;
 	       sortlist.i = sortlist.j;
@@ -292,24 +322,26 @@ subsort(l:int,r:int):void := (
      if j+1 < r then subsort(j+1,r);
      for k from l+1 to j do sortlist.(k-1) = sortlist.k;
      sortlist.j = pivot;
-     );
-basicsort(s:Sequence,ww:Expr):Sequence := (
-     if length(s) <= 1 then return s;
+     nullE);
+basicsort(s:Sequence,ww:Expr):Expr := (
+     if length(s) <= 1 then return Expr(s);
      savesortlist := sortlist;
      savewhichway := whichway;
      sortlist = s;
      whichway = ww;
-     subsort(0,length(s)-1);
-     s = sortlist;
+     ret := subsort(0,length(s)-1);
+     when ret is Error do nothing else ret = Expr(sortlist);
      whichway = savewhichway;
      sortlist = savesortlist;
-     s);
+     ret);
 basicsort2(e:Expr,ww:Expr):Expr := (
      when e is s:Sequence do (
-	  if length(s) <= 1 then e else Expr(basicsort(s,ww)))
+	  if length(s) <= 1 then e else basicsort(s,ww))
      is t:List do (
 	   if ancestor(t.class, listClass) then (
-		if length(t.v) <= 1 then e else list(basicsort(t.v,ww)))
+		if length(t.v) <= 1 then e else (
+		     r := basicsort(t.v,ww);
+		     when r is b:Sequence do list(b) else r))
       	   else WrongArg("a list or sequence"))
      else WrongArg("a list or sequence"));
 sortfun(e:Expr):Expr := basicsort2(e,GreaterE);

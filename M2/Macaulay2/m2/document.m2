@@ -10,6 +10,30 @@ local exampleBaseFilename
 local currentNodeName
 fixup := method(SingleArgumentDispatch => true)
 
+rawKey := "raw documentation"
+rawKeyDB := "raw documentation"
+fetchRawDocumentation := (pkg,fkey) -> (		    -- returns null if none
+     d := pkg#rawKey;
+     if d#?fkey then d#fkey
+     else (
+	  if pkg#?rawKeyDB then (
+	       d = pkg#rawKeyDB;
+	       if isOpen d and d#?fkey then value d#fkey)))
+fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary, 
+     pkg -> (
+	  r := fetchRawDocumentation(pkg,fkey);
+	  if r =!= null then break r))
+
+proKey := "processed documentation"
+proKeyDB := "processed documentation database"
+fetchProcessedDocumentation := (pkg,fkey) -> (		    -- returns null if none
+     d := pkg#proKey;
+     if d#?fkey then d#fkey
+     else (
+	  if pkg#?proKeyDB then (
+	       d = pkg#proKeyDB;
+	       if isOpen d and d#?fkey then value d#fkey)))
+
 -----------------------------------------------------------------------------
 -- sublists, might be worthy making public
 -----------------------------------------------------------------------------
@@ -79,11 +103,13 @@ isDocumentableThing     Thing := key -> (
 packageTag = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
 packageTag   Symbol := key -> package key
 packageTag   String := key -> (
-     r := scan(packages, pkg -> if pkg#"raw documentation"#?key then break pkg);
+     r := scan(packages, pkg -> if fetchRawDocumentation(pkg,key) =!= null then break pkg);
      if r === null then currentPackage else r)
 packageTag  Package := identity
 packageTag Sequence := key -> youngest \\ package \ key
 packageTag    Thing := key -> ( p := package key; if p === null then currentPackage else p)
+-- here is an alternative method -- it's fishy that we have both!
+getPackage := fkey -> scan(value \ values PackageDictionary, pkg -> if null =!= fetchRawDocumentation(pkg,fkey) then break pkg)
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -243,7 +269,8 @@ packageTag DocumentTag := DocumentTag.Package
 hasDocumentation := key -> isDocumentableThing key and (
      tag := makeDocumentTag key;
      pkg := DocumentTag.Package tag;
-     pkg =!= null and pkg#"raw documentation"#?(DocumentTag.FormattedKey tag))
+     fkey := DocumentTag.FormattedKey tag;
+     fetchRawDocumentation(pkg,fkey))
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
@@ -325,19 +352,12 @@ file := null
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
-
 extractBody := x -> if x.?Description then x.Description
-getRecord := (pkg,key) -> pkg#"raw documentation"#key	    -- for Databases, insert 'value' here
-getPackage := key -> scan(value \ values PackageDictionary, pkg -> if pkg#?"raw documentation" and pkg#"raw documentation"#?key then break pkg)
-getDoc := key -> (
-     fkey := formatDocumentTag key;
-     pkg := getPackage fkey;
-     if pkg =!= null then getRecord(pkg,fkey))
-if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
-getOption := (key,tag) -> (
+getDoc := key -> fetchAnyRawDocumentation formatDocumentTag key
+getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
      s := getDoc key;
      if s =!= null and s#?tag then s#tag)
-getBody := key -> getOption(key,Description)
+getBody := key -> getOption(key,Description)		    -- get rid of this
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
@@ -491,9 +511,9 @@ document Sequence := args -> (
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
-     if currentPackage#"raw documentation"#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
+     if currentPackage#rawKey#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
      opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val));
-     currentPackage#"raw documentation"#currentNodeName = opts;
+     currentPackage#rawKey#currentNodeName = opts;
      currentNodeName = null;
      )
 
@@ -501,7 +521,7 @@ document Sequence := args -> (
 -- getting help from the documentation
 -----------------------------------------------------------------------------
 
-topicList = () -> sort flatten apply(values PackageDictionary, p -> keys (value p)#"raw documentation")
+topicList = () -> sort flatten apply(values PackageDictionary, p -> keys (value p)#rawKey)
 
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
@@ -514,13 +534,15 @@ topics = Command (() -> pager columnate(if printWidth != 0 then printWidth else 
 apropos = (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
+headline Thing := key -> getOption(key,Headline)	    -- old method
 headline DocumentTag := tag -> (
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
-     if pkg =!= null and pkg#"raw documentation"#?fkey and pkg#"raw documentation"#fkey#?Headline then pkg#"raw documentation"#fkey#Headline
-     else headline DocumentTag.Key tag			    -- revert to old method
+     d := fetchRawDocumentation(pkg,fkey);
+     if d === null then return null;
+     if d#?Headline then d#Headline
+     else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
-headline Thing := key -> getOption(key,Headline)
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
@@ -573,7 +595,7 @@ makeDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
      if pkg =!= null then (
-	  rec := getRecord(pkg,fkey);
+	  rec := fetchRawDocumentation(pkg,fkey);
 	  docBody := extractBody rec;
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);
