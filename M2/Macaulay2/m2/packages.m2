@@ -99,6 +99,12 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
+     if newpkg#"package prefix" =!= null then (
+	  dbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "documentation.db";
+	  if fileExists dbname then (
+	       db := openDatabase dbname;
+	       newpkg#"processed documentation database" = db;
+	       addEndFunction(() -> if isOpen db then close db)));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
      if title =!= "Macaulay2" then (
 	  newpkg#"private dictionary" = new Dictionary; -- this is the local one
