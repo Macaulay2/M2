@@ -201,19 +201,6 @@ public:
 };
 
 
-class DenseMutableMatrixCC : public DenseMutableMatrix
-{
-  double *array_;  // stored as double to assure contiguous memory
-                   // array has length 2*nrows*ncols
-                   // columns stored one after another
-
-  void initialize(int nrows, int ncols, double *array);
-public:
-  static DenseMutableMatrixCC *zero_matrix(int nrows, int ncols);
-
-  virtual DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() { return this; }
-};
-
 #if 0
 
 class MutableMatrix : public Matrix

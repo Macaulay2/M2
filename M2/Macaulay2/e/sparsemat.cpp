@@ -216,14 +216,24 @@ bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
 
 bool SparseMutableMatrix::is_zero() const
 {
-#warning "to be written"
-  return 0;
+  for (int i=0; i<ncols; i++)
+    if (columns_[i] != 0) return false;
+  return true;
 }
 
 bool SparseMutableMatrix::is_equal(const MutableMatrix *B) const
 {
-#warning "to be written"
-  return 0;
+  if (R != B->get_ring()) return false;
+  if (nrows != B->n_rows() || ncols != B->n_cols()) return false;
+  const SparseMutableMatrix *B1 = B->cast_to_SparseMutableMatrix();
+  if (B1 != 0)
+    {
+      for (int i=0; i<ncols; i++)
+	if (!R->is_equal(columns_[i], B1->columns_[i])) return false;
+      return true;
+    }
+  // Otherwise B is dense. 
+#warning "implement isequal for dense == sparse"
 }
 
 bool SparseMutableMatrix::set_values(M2_arrayint rows,
@@ -239,7 +249,29 @@ MutableMatrixOrNull * SparseMutableMatrix::add(const MutableMatrix *B) const
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
-#warning "to be written"
+  if (R != B->get_ring())
+    {
+      ERROR("matrices have different base rings");
+      return 0;
+    }
+  if (nrows != B->n_rows() || ncols != B->n_cols())
+    {
+      ERROR("matrices have different shape");
+      return 0;
+    }
+  const SparseMutableMatrix *B1 = B->cast_to_SparseMutableMatrix();
+  SparseMutableMatrix *result = zero_matrix(R,nrows,ncols);
+  if (B1 != 0)
+    {  
+      for (int i=0; i<ncols; i++)
+	{
+	  vec v = R->copy_vec(columns_[i]);
+	  vec w = R->copy_vec(B1->columns_[i]);
+	  R->add_vec_to(v,w);
+	  result->columns_[i] = v;
+	}
+    }
+#warning "implement for dense + sparse"
   return 0;
 }
 
@@ -272,21 +304,49 @@ MutableMatrixOrNull * SparseMutableMatrix::mult(const RingElement *f,
 
 MutableMatrix * SparseMutableMatrix::negate() const
 {
-#warning "to be written"
-  return 0;
+  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(R,nrows,ncols);
+  for (int i=0; i<ncols; i++)
+    result->columns_[i] = R->negate_vec(columns_[i]);
+  return result;
 }
 
 MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint rows, 
-						  const M2_arrayint cols) const
+					       const M2_arrayint cols) const
 {
-#warning "to be written"
-  return 0;
+  int *trans = newarray(int,n_rows());
+
+  for (int i=0; i<nrows; i++)
+    trans[i] = -1;
+
+  for (unsigned j=0; j<rows->len; j++)
+    if (rows->array[j] >= 0 && rows->array[j] < nrows)
+      trans[rows->array[j]] = j;
+
+  SparseMutableMatrix *result = zero_matrix(R,rows->len,cols->len);
+
+  for (unsigned int i=0; i<cols->len; i++)
+    {
+      if (cols->array[i] < 0 || cols->array[i] >= ncols) continue;
+      vec v = columns_[cols->array[i]];
+      vec w = 0;
+      for ( ; v != NULL; v = v->next)
+	{
+	  if (trans[v->comp] != -1)
+	    R->set_entry(w, trans[v->comp], v->coeff);
+	}
+      result->columns_[i] = w;
+    }
+  deletearray(trans);
+  return result;
 }
 
 MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint cols) const
 {
-#warning "to be written"
-  return 0;
+  SparseMutableMatrix *result = zero_matrix(R,nrows,cols->len);
+  for (unsigned int i=0; i<cols->len; i++)
+    if (cols->array[i] >= 0 && cols->array[i] < ncols)
+      result->columns_[i] = R->copy_vec(columns_[cols->array[i]]);
+  return result;
 }
 
 
