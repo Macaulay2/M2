@@ -92,38 +92,30 @@ document {
      Key => List,
      Headline => "the class of all lists -- {...}",
      SeeAlso => "lists",
-     "Common operations on lists:",
-     UL {
+     Subnodes => {
+     	  "Common operations on lists:",
 	  TO "append",
 	  TO "join",
 	  TO "prepend",
-	  },
-     "Common ways to apply functions to elements of lists:",
-     UL {
+     	  "Common ways to apply functions to elements of lists:",
 	  TO (apply,BasicList,Function),
 	  TO (scan,BasicList,Function),
-	  },
-     "Common ways to test elements of lists:",
-     UL {
+     	  "Common ways to test elements of lists:",
 	  TO (all,BasicList,Function),
 	  TO (any,BasicList,Function),
-	  },
-     "Common ways to find things in lists:",
-     UL {
+     	  "Common ways to find things in lists:",
 	  TO (position,VisibleList,Function),
 	  TO (positions,VisibleList,Function),
 	  TO (select,BasicList,Function),
 	  TO (select,ZZ,BasicList,Function),
-	  },
-     "Common ways to extract elements from lists:",
-     UL {
+     	  "Common ways to extract elements from lists:",
 	  TO "drop",
 	  TO "take",
 	  TO (symbol #, List, ZZ),
 	  TO (symbol #?, List, ZZ),
 	  TO (symbol _, List, ZZ),
 	  TO (symbol _, VisibleList, List)
-	  },
+	  }
      }
 
 document {

@@ -24,7 +24,7 @@ document {						    -- rewrite this!
 	  TOH "Caveat",
 	  TOH "EXAMPLE",
 	  TOH "SeeAlso",
-	  TOH "Menu"
+	  TOH "Subnodes"
 	  },
      Inputs => {
 	  "opts" => List => "a list of options",
