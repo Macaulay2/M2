@@ -59,7 +59,7 @@ const SkewPolynomialRing *SkewPolynomialRing::createPolyRing(const Monoid *M) co
 }
 
 
-ring_elem SkewPolynomialRing::imp_mult_by_term(const ring_elem f, 
+ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f, 
 					       const ring_elem c, 
 					       const int *m) const
   // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
@@ -104,7 +104,7 @@ ring_elem SkewPolynomialRing::power(const ring_elem f, mpz_t n) const
 
 ring_elem SkewPolynomialRing::power(const ring_elem f, int n) const
 {
-  return PolyRing::power2(f,n);
+  return Ring::power(f,n);
 }
 
 

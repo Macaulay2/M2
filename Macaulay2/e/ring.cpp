@@ -66,6 +66,69 @@ ring_elem Ring::get_zero_divisor() const
   return copy(_zero_divisor); 
 }
 
+ring_elem Ring::power(const ring_elem ff, mpz_t m) const
+{
+  // The exponent 'm' should be > 0 here.
+#warning "error check: m >= 0"
+  mpz_t n;
+  mpz_init_set(n, m);
+  ring_elem prod = from_int(1);
+  ring_elem base = copy(ff);
+  ring_elem tmp;
+
+  for (;;)
+    {
+      if (ZZ::mod_ui(n,2) == 1)
+	{
+	  tmp = mult(prod, base);
+	  prod = tmp;
+	}
+      mpz_tdiv_q_2exp(n, n, 1);
+      if (mpz_sgn(n) == 0)
+	{
+	  mpz_clear(n);
+	  return prod;
+	}
+      else
+	{
+	  tmp = mult(base, base);
+	  base = tmp;
+	}
+    }
+}
+
+ring_elem Ring::power(const ring_elem ff, int n) const
+{
+#warning "error check: n >= 0"
+  // The exponent 'n' should be > 0 here.
+  ring_elem prod = from_int(1);
+  ring_elem base = copy(ff);
+  ring_elem tmp;
+
+  for (;;)
+    {
+      if ((n % 2) != 0)
+	{
+	  tmp = mult(prod, base);
+	  prod = tmp;
+	}
+      n >>= 1;
+      if (n == 0)
+	{
+	  return prod;
+	}
+      else
+	{
+	  tmp = mult(base, base);
+	  base = tmp;
+	}
+    }
+}
+
+
+
+
+
 void Ring::mult_to(ring_elem &f, const ring_elem g) const
 {
   f = mult(f,g);

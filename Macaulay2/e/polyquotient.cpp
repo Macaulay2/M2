@@ -86,6 +86,12 @@ void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quot
 	  // The element is part of a minimal GB
 	  ringtableZZ_->insert(MPZ_VAL(f->coeff), exp, 1, quotient_ideal_.size());
 	  quotient_ideal_.push_back(f);
+
+	  if (f->next == 0 && getMonoid()->is_one(f->monom))
+	    {
+	      is_ZZ_quotient_ = true;
+	      ZZ_quotient_value_ = f->coeff;
+	    }
 	}
     }
 
@@ -100,6 +106,24 @@ void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quot
     }
   deletearray(exp);
 }
+
+#if 0
+// This is old (pre-gg-removal) code, that we might want to ressurrect.
+void PolyRing::make_RidealZZ(const array<ring_elem> &polys)
+{
+  // If coefficients_are_ZZ, then
+  // this routine sets the fields:
+  // _quotient_ideal, RidealZ.
+
+  const PolyRing *S = _base_ring;
+  while (S->_base_ring != NULL) S = S->_base_ring;
+
+  _RidealZZ = TermIdeal::make_ring_termideal(S,
+			   _base_ring->_quotient_ideal, 
+			   polys,
+			   _quotient_ideal);
+}
+#endif
 
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
 					 const Matrix *M)
@@ -155,12 +179,19 @@ void PolyRingQuotient::text_out(buffer &o) const
 bool PolyRingQuotient::is_unit(ring_elem) const
 {
 #warning "todo: is_unit"
+  return is_field();
   return false;
 }
 
 MonomialIdeal *PolyRingQuotient::get_quotient_monomials() const
 {
   return Rideal_;
+}
+
+const MonomialTableZZ * PolyRingQuotient::get_quotient_MonomialTableZZ() const
+  // Each id is an index into quotient_ideal_
+{
+  return ringtableZZ_;
 }
 
 bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &result) const
@@ -369,6 +400,57 @@ ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f) const
 {
   return ZERO_RINGELEM;
 }
+
+
+#if 0
+// This is part of remainderAndQuotient, for quotient rings.
+
+      else if (false) //(n_vars() == 1 && K_->is_field())
+	{
+	  // Case 2: There is a quotient ideal, but we have one variable, over
+	  //         a field.  In this case, we can use gcd in k[x].
+	  //         The ring must be commutative here: skew in one variable isn't
+	  //         handled here.
+	}
+      else if (K_->is_field() || K_->is_ZZ())
+	{
+
+// MES Aug 2002: ifdef'ed this section because gb_comp is not back yet
+	  // Case 3: There is a quotient ideal.  Here we do a GB computation
+	  //         of the ideal (g), and reduce f wrt this ideal.
+
+	  // Create a GB of (g).
+	  intarray syzygy_stop_conditions;
+	  syzygy_stop_conditions.append(0); // ngb
+	  syzygy_stop_conditions.append(0); // nsyz
+	  syzygy_stop_conditions.append(0); // npairs
+	  syzygy_stop_conditions.append(0);
+	  syzygy_stop_conditions.append(0); 
+	  syzygy_stop_conditions.append(0); // subring limit
+	  syzygy_stop_conditions.append(0);
+	  
+	  const FreeModule *F = make_FreeModule(1);
+	  Matrix *m = new Matrix(F);
+	  m->append(F->raw_term(copy(g),0));
+	  gb_comp *g = gb_comp::make(m,false,-1,0);
+	  g->calc(0, syzygy_stop_conditions);
+
+	  // Reduce f wrt this GB.
+	  Vector *v = Vector::make_raw(F,F->raw_term(copy(f),0));
+	  Vector *lifted;
+	  Vector *red = g->reduce(v,lifted);
+	  // Now grab the two polynomials of interest:
+	  ring_elem result = F->get_coefficient(red->get_value(),0); // Rermainder
+	  quot = lifted->free_of()->get_coefficient(lifted->get_value(),0); // Quotient
+
+	  // Remove the GB.
+	  deleteitem(g);
+	  return result;
+#endif
+
+
+
+
 
 
 // Local Variables:

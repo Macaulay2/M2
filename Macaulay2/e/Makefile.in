@@ -131,9 +131,7 @@ COMMANDS_REDO = \
 	x_mat \
 	x_relem \
 	x_gb \
-	freemod2 \
 	x_borel \
-	gbnod
 
 NAMES_H = comp \
 	ringelem \
