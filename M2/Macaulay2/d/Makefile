@@ -286,7 +286,7 @@ endif
 ../bin/Macaulay2 : $(ALLOBJ) $(LIBRARIES)
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LDLIBS)'
-	@ time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 ifndef CYGWIN32
 	$(STRIPCMD) $@
 endif
@@ -319,4 +319,3 @@ clean :
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
 		core core.* compat.c compat.h c-files.tar tmp_init.c
-
