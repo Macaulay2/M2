@@ -83,11 +83,32 @@ M2_arrayint DMatLU<CoeffRing>::LU(DMat<CoeffRing> *A)
   int npivots = 0;
 
   for (int c=0; c<ncols; c++)
-    {
-      LU_step(A,perm,pivots,npivots,c); // modifies all arguments but 'c'
-    }
+    LU_step(A,perm,pivots,npivots,c); // modifies all arguments but 'c'
 
   return perm;
+}
+
+template <typename CoeffRing>
+bool DMatLU<CoeffRing>::solve(DMat<CoeffRing> *A, // in LU format
+			      M2_arrayint perm, // modified, should be of length >= A->n_rows()
+			      M2_arrayint pivotcols, // modified, of length >= A->n_rows()
+			      int &n_pivot_rows, // how many have already been set
+			      DMat<CoeffRing> *b) // replaces b with the solution
+  // returns true iff every column of b has a solution
+{
+#warning "write 'solve'"
+  return false;
+}
+
+template <typename CoeffRing>
+void DMatLU<CoeffRing>::kernel(DMat<CoeffRing> *A, // in LU format
+			       M2_arrayint perm, // modified, should be of length >= A->n_rows()
+			       M2_arrayint pivotcols, // modified, of length >= A->n_rows()
+			       int &n_pivot_rows, // how many have already been set
+			       DMat<CoeffRing> *result) // replaces this with a matrix whose
+                                          // columns form the kernel of the original A.
+{
+#warning "write 'kernel'"
 }
 
 #include "coeffrings.hpp"

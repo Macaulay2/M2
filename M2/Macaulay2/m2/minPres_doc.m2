@@ -39,7 +39,7 @@ document{(minPres, Ideal),
      Usage => {
 	  TT "J = minPres I", "-- If ", TT "R", " is the ring of ", TT "I", 
 	  " a minimal presentation of ", TT "R/I", " is computed and 
-	  and an ideal ", TT "J", " is returned such that ", TT "R/J", " is 
+	  and an ideal ", TT "J", " in a polynomial ring S is returned such that ", TT "S/J", " is 
 	  isomorphic to ", TT "R/I", "."
     	  },
      Inputs => {
@@ -59,7 +59,7 @@ document{(minPres, Ideal),
      EXAMPLE {
 	  "C = ZZ/101[x,y,z,u,w];",
 	  "I = ideal(x-x^2-y,z+x*y,w^2-u^2);",
-	  "minPres2 I",
+	  "minPres I",
 	  "I.cache.minPresMap",
 	  "I.cache.minPresMapInv",
 	  }

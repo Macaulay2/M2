@@ -296,17 +296,122 @@ void DMat<CoeffRing>::dot_product(int i, int j, elem &result) const
 }
 
 template<typename CoeffRing>
+void DMat<CoeffRing>::copy_elems(int n_to_copy, elem *target, int target_stride, elem *source, int stride)
+{
+  for (int i=0; i<n_to_copy; i++)
+    {
+      *target = *source;
+      target += target_stride;
+      source += stride;
+    }
+}
+
+template<typename CoeffRing>
 bool DMat<CoeffRing>::row_permute(int start_row, const M2_arrayint perm)
 {
-#warning "write DMat<CoeffRing>::row_permute"
-  return false;
+  // We copy one row to another location for each cycle in 'perm' of length > 1.
+  int nrows_to_permute = perm->len;
+  bool *done = newarray_atomic(bool,nrows_to_permute);
+  for (int i=0; i<nrows_to_permute; i++)
+    done[i] = true;
+  for (int i=0; i<nrows_to_permute; i++)
+    {
+      int j = perm->array[i];
+      if (!done[j])
+	{
+	  ERROR("expected permutation");
+	  deletearray(done);
+	  return false;
+	}
+      done[j] = false;
+    }
+  elem *tmp = newarray(elem,ncols_);
+  int next = 0;
+  elem *arr = array_ + start_row;
+
+  while (next < nrows_to_permute)
+    {
+      if (done[next] || perm->array[next] == next)
+	{
+	  next++;
+	}
+      else
+	{
+	  // store row 'next' into tmp
+	  copy_elems(ncols_,tmp,1,arr + next, nrows_);
+	  
+	  int r = next;
+	  for (;;)
+	    {
+	      // copy row perm[r] to row r
+	      copy_elems(ncols_, arr + r, nrows_, arr + perm->array[r], nrows_);
+	      done[r] = true;
+	      int next_r = perm->array[r];
+	      if (next_r == next) break; // and so r is the previous one
+	      r = perm->array[r];
+	    }
+	  // Now copy tmp back
+	  copy_elems(ncols_, arr + r, nrows_, tmp, 1);
+	  done[r] = true;
+	}
+    }
+  deletearray(tmp);
+  deletearray(done);
+  return true;
 }
 
 template<typename CoeffRing>
 bool DMat<CoeffRing>::column_permute(int start_col, const M2_arrayint perm)
 {
-#warning "write DMat<CoeffRing>::column_permute"
-  return false;
+  // We copy one column to another location for each cycle in 'perm' of length > 1.
+  int ncols_to_permute = perm->len;
+  bool *done = newarray_atomic(bool,ncols_to_permute);
+  for (int i=0; i<ncols_to_permute; i++)
+    done[i] = false;
+  for (int i=0; i<ncols_to_permute; i++)
+    {
+      int j = perm->array[i];
+      if (!done[j])
+	{
+	  ERROR("expected permutation");
+	  deletearray(done);
+	  return false;
+	}
+      done[j] = false;
+    }
+  elem *tmp = newarray(elem,nrows_);
+  int next = 0;
+  elem *arr = array_ + start_col * nrows_;
+
+  while (next < ncols_to_permute)
+    {
+      if (done[next] || perm->array[next] == next)
+	{
+	  next++;
+	}
+      else
+	{
+	  // store col 'next' into tmp
+	  copy_elems(nrows_,tmp,1,arr + next * nrows_, 1);
+	  
+	  int r = next;
+	  for (;;)
+	    {
+	      // copy col perm[r] to col r
+	      copy_elems(nrows_, arr + r * nrows_, 1, arr + perm->array[r] * nrows_, 1);
+	      done[r] = true;
+	      int next_r = perm->array[r];
+	      if (next_r == next) break; // and so r is the previous one
+	      r = perm->array[r];
+	    }
+	  // Now copy tmp back
+	  copy_elems(nrows_, arr + r * nrows_, 1, tmp, 1);
+	  done[r] = true;
+	}
+    }
+  deletearray(tmp);
+  deletearray(done);
+  return true;
 }
 
 

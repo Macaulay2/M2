@@ -71,6 +71,14 @@ columnSwap = method()
 columnSwap(RawMutableMatrix,ZZ,ZZ) := (m,i,j) -> rawMatrixColumnSwap(m,i,j)
 columnSwap(MutableMatrix,ZZ,ZZ) := (m,i,j) -> rawMatrixColumnSwap(raw m,i,j)
 
+rowPermute = method()
+rowPermute(RawMutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteRows(m,start,p)
+rowPermute(MutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteRows(raw m,start,p)
+
+columnPermute = method()
+columnPermute(RawMutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteColumns(m,start,p)
+columnPermute(MutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteColumns(raw m,start,p)
+
 LU = method()
 LU MutableMatrix := (A) -> (
      nrows := rawNumberOfRows raw A;
