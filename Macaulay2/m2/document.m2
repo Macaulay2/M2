@@ -308,9 +308,7 @@ processExample := x -> (
      exampleCounter = exampleCounter + 1;
      a)
 processExamplesLoop := s -> (
-     if class s === EXAMPLE then SEQ{
-	  ExampleTABLE apply(select(toList s, i -> i =!= null), processExample),
-	  }
+     if class s === EXAMPLE then ExampleTABLE apply(select(toList s, i -> i =!= null), processExample)
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
@@ -839,10 +837,12 @@ help List := v -> (
      printWidth = printWidth + 2;
      r)
 help Thing := s -> net (
+     if s === () then s = help;
      r := documentation s;
      if r === null
      then Hypertext { "No documentation found for '", formatDocumentTag s, "'"}
      else r)
+help = Command help
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
@@ -1166,7 +1166,12 @@ net HR := x -> "----------------------------------------------------------------
 
 net UL := 
 net OL := 
-net DL := x -> stack apply(toList x, i -> "  * " | wrap(printWidth - 10, net i))
+net DL := x -> (
+     s := "  * ";
+     printWidth = printWidth - #s;
+     r := stack apply(toList x, i -> s | net i);
+     printWidth = printWidth + #s;
+     r)
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 net NL := x -> stack apply(#x, i -> toString (i+1) | " : " | wrap(printWidth - 10, net x#i))
 

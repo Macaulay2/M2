@@ -138,33 +138,18 @@ document { documentation,
      EXAMPLE "documentation partitions"
      }
 document { help,
-     Headline => "get help",
-     -- no PARA in this documentation, so it all gets displayed.
-     TT "help X", " -- displays the online documentation for ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help \"Macaulay 2\"", " -- displays the base of the online documentation
-     tree.",
-     BR, NOINDENT,
-     TT "help methods X", " -- displays help messages about the methods usable
-     with things of type ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help methods res", " -- displays help messages about the methods 
-     usable with the function ", TT "res", ".",
-     BR, NOINDENT,
-     TT "help methods symbol **", " -- displays help messages about the methods 
-     usable with the operator ", TT "**", ".",
-     BR, NOINDENT,
-     TT "help methods (res, X)", " -- displays help messages about the 
-     methods usable with the function ", TT "res", " and a thing of
-     class ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help methods (symbol **, X)", " -- displays help messages about the 
-     methods usable with the operator ", TT "**", " and a thing of
-     class ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help methods (X, Y)", " -- displays help messages about the 
-     methods usable with a thing of class ", TT "X", " and a thing of class
-     ", TT "Y", "."
+     Headline => "help command",
+     "Various ways to get help:",
+     UL {
+     	  (TT "help \"Macaulay 2\"", " -- displays the base of the online documentation tree."),
+     	  (TT "help X", " -- displays the online documentation for ", TT "X"),
+	  (TT "help methods X", " -- displays help messages about the methods usable with things of type ", TT "X"),
+	  (TT "help methods res", " -- displays help messages about the methods usable with the function ", TT "res"),
+	  (TT "help methods symbol **", " -- displays help messages about the methods usable with the operator ", TT "**"),
+	  (TT "help methods (res, X)", " -- displays help messages about the methods usable with the function ", TT "res", " and a thing of class ", TT "X"),
+	  (TT "help methods (symbol **, X)", " -- displays help messages about the methods usable with the operator ", TT "**", " and a thing of class ", TT "X"),
+	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y")
+	  }
      }
 document { topicList,
      Headline => "list of help topics",
