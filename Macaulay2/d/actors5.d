@@ -1515,6 +1515,18 @@ storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,globalDict
 export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
 export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 
+-- getcwdfun(e:Expr):Expr := (
+--      when e
+--      is s:Sequence do
+--      if length(s) == 0
+--      then Expr(getcwd())
+--      else WrongNumArgs(0)
+--      else WrongNumArgs(0));
+-- setupfun("currentDirectory",getcwdfun);
+currentDirectory := setupconst("currentDirectory",Expr(getcwd()));
+resetCurrentDirectory():void := setGlobalVariable(currentDirectory,Expr(getcwd()));
+everytime(resetCurrentDirectory);
+
 export lineNumber := 0;
 export debuggerHook := nullE;
 

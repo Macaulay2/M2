@@ -1,6 +1,6 @@
+needsPackage "FirstPackage"
 newPackage "SecondPackage"
 export secondFunction
-needsPackage "FirstPackage"
 secondFunction = () -> apply(5, firstFunction)
 document {
      Key => SecondPackage,
