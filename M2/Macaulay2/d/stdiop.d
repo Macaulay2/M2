@@ -9,6 +9,7 @@
 -- Also, these are *text* files, so we translate all three flavors of line termination
 -- into a single \n.
 
+use C;
 use system;
 use strings;
 use stdio;
@@ -79,7 +80,9 @@ export relativizeFilename(filename:string):string := relativizeFilename(getcwd()
 export minimizeFilename(filename:string):string := (
      a := relativizeFilename(filename);
      b := absoluteFilename(filename);
-     if length(a) <= length(b) then a else b);
+     c := if length(a) <= length(b) then a else b;
+     if length(c) == 0 then c = "./";
+     c);
 
 export tostring(w:Position) : string := (
      if w == dummyPosition 
