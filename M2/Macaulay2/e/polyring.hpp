@@ -110,6 +110,11 @@ public:
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
 				  ring_elem &u, ring_elem &v) const;
 
+protected:
+  void minimal_monomial(ring_elem f, int *&monom) const;
+  Nterm *division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
+  Nterm *division_algorithm(Nterm *f, Nterm *g) const;
+public:
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
   virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
@@ -173,6 +178,10 @@ protected:
 			ring_elem g, 
 			ring_elem &coeff, 
 			int *monom) const;
+  bool imp_attempt_to_cancel_lead_term(ring_elem &f, 
+				      ring_elem g, 
+				      ring_elem &coeff, 
+				      int *monom) const;
   void cancel_lead_term(ring_elem &f, 
 			ring_elem g, 
 			ring_elem &coeff, 
@@ -195,7 +204,7 @@ public:
   Nterm *resize(const PolynomialRing *R, Nterm *f) const;
   void sort(Nterm *&f) const;
   void debug_out(const ring_elem f) const;
-  void debug_out(const Nterm *f) const;
+  void debug_outt(const Nterm *f) const;
 };
 
 #endif
