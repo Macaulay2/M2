@@ -153,11 +153,12 @@ To compile in another directory, for example, in a subdirectory:
 
 To make a distribution tarball suitable for use with epkg:
 
-	../configure --enable-encap --with-encapdir=/tmp
+	../configure --enable-encap
 	make
 	make check
-	make install
-	make distribution
+	make prefix=/tmp install
+
+You'll find the result in /tmp/Macaulay2-*/.
 
 (The effect of the option --enable-encap is to place a few extra files
 in the top level directory of the tree.  The epkg program reads those
