@@ -180,13 +180,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else notImplemented()
 	       )
 	  else (
-	       (basering,flatmonoid) := if isBasic R then (R,M) else (R#"base ring", M ** R#"flat monoid");
+	       (basering,flatmonoid) := if isBasic R then (R,M) else (R.basering, M ** R.flatmonoid);
 	       rawRM := rawPolynomialRing(raw basering, raw flatmonoid);
 	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
 	       new PolynomialRing from rawRM
 	       );
-	  RM#"base ring" = basering;
-	  RM#"flat monoid" = flatmonoid;
+	  RM.basering = basering;
+	  RM.flatmonoid = flatmonoid;
 	  RM.baseRings = append(R.baseRings,R);
 	  RM.monoid = M;
 	  RM.Adjust = (options M).Adjust;
