@@ -806,7 +806,15 @@ document { MonomialOrder,
 	  {TO "Eliminate", " -- elimination order"},
 	  {TO "ProductOrder", " -- product order"}
           },
-     "Eventually, more general monomial orders will be allowed." -- MES
+     "Eventually, more general monomial orders will be allowed.", -- MES
+     SEEALSO "Weights"
+     }
+
+document { Weights,
+     TT "Weights => {...}", " -- a keyword for an option used in specifying
+     monomial orderings.",
+     PARA,
+     "This feature is currently under development."
      }
 
 document { Variables,

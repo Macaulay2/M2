@@ -482,7 +482,7 @@ html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> {x, CODE
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
-net ExampleTABLE := x -> stack between("",apply(toList x#1, net))
+net ExampleTABLE := x -> stack between("",apply(x, y -> net y#1))
 
 net TABLE := x -> net MatrixExpression toList x
 tex TABLE := x -> concatenate applyTable(x,tex)

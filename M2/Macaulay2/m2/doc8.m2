@@ -485,6 +485,7 @@ document { gb => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
+	  TO "EGB",
 	  TO "LongPolynomial",
 	  TO "Sort"
 	  }
@@ -496,6 +497,12 @@ document { Sort,
      "Indicates that the Groebner basis should be sorted by lead term; usually
      this is a bad idea.  Normally the basis is sorted only by degree. The
      matrix of generators is affected, as is the running time."
+     }
+
+document { EGB,
+     TT "EGB", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA,
+     "This feature is currently under development."
      }
 
 document { LongPolynomial,

@@ -423,7 +423,7 @@ document = z -> (
      if class key === ZZ then error "oops";
      -- if documentableValue key then Symbols#(value key) = key;
      nodeName = formatDocumentTag key;
-     Documentation#key = nodeName;
+     -- Documentation#key = nodeName;
      if substring(nodeName,0,6) === "quote " then Documentation#(substring(nodeName,6)) = nodeName;
      nodeBaseFilename = makeBaseFilename();
      docBody := repl toList apply(1 .. #z - 1, i -> z#i); -- drop isn't defined yet
