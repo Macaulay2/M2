@@ -154,6 +154,17 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
   // TODO
   return R->create_quotient(I);
 #endif
+  ERROR("not implemented yet");
+  return 0;
+}
+
+const RingOrNull * IM2_Ring_quotient1(const Ring *R, 
+				      const Ring *B)
+/* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
+   then form the quotient ring B[x]/J. */
+{
+#warning "implement IM2_Ring_quotient1"
+  ERROR("not implemented yet");
   return 0;
 }
 
@@ -190,6 +201,25 @@ const RingElement * IM2_Ring_get_zero_divisor(const Ring *K)
   return RingElement::make_raw(K, K->get_zero_divisor());
 }
 
+const RingOrNull *rawAmbientRing(const Ring *R)
+/* If R is a quotient of a polynomial ring, or is a fraction ring, return the
+   polynomial ring over a basic ring of which this is a quotient (or fraction ring) of.
+   For example, if R = frac(ZZ[s,t]/(s^2-1))[x,y,z]/(s*x+t*y+z^2), then the returned
+   ring is ZZ[s,t][x,y,z]. This routine is provided only for debugging the engine. */
+{
+#warning implement rawAmbientRing
+  return R;
+}
+
+M2_bool rawDenominatorRing(const Ring *R, RingOrNull **resultRing)
+/* If elements of R may have denominators, then this routine returns true, and 
+   the ambient ring for denominators is placed into resultRing. Otherwise, false
+   is returned. This routine is provided only for debugging the engine. */
+{
+#warning implement rawDenominatorRing
+  *resultRing = 0;
+  return false;
+}
 /*********************************************************************/
 
 const Ring * IM2_RingElement_ring(const RingElement *a)

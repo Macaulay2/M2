@@ -345,6 +345,11 @@ extern "C" {
   const RingOrNull * IM2_Ring_quotient(const Ring *R, 
 				       const Matrix *I); /*drg: connected rawQuotientRing */
 
+  const RingOrNull * IM2_Ring_quotient1(const Ring *R, 
+					const Ring *B);
+  /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
+     then form the quotient ring B[x]/J. */
+
   const RingOrNull *IM2_Ring_schur(const Ring *R); /* drg: reconnected rawSchurRing */
 
   M2_bool IM2_Ring_is_field(const Ring *K); /* drg: connected rawIsField*/
@@ -363,7 +368,18 @@ extern "C" {
        element, if not. Perhaps we should name this 'get_non_unit'.  This
        function currently never seems to return a non-zero value, but I plan 
        on fixing that (MES, June 2002). */
-  
+
+  const RingOrNull *rawAmbientRing(const Ring *R);
+  /* If R is a quotient of a polynomial ring, or is a fraction ring, return the
+     polynomial ring over a basic ring of which this is a quotient (or fraction ring) of.
+     For example, if R = frac(ZZ[s,t]/(s^2-1))[x,y,z]/(s*x+t*y+z^2), then the returned
+     ring is ZZ[s,t][x,y,z]. This routine is provided only for debugging the engine. */
+
+  M2_bool rawDenominatorRing(const Ring *R, RingOrNull **resultRing);
+  /* If elements of R may have denominators, then this routine returns true, and 
+     the ambient ring for denominators is placed into resultRing. Otherwise, false
+     is returned. This routine is provided only for debugging the engine. */
+
   /**************************************************/
   /**** Ring element routines ***********************/
   /**************************************************/
