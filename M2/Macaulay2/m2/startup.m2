@@ -348,7 +348,7 @@ path = select(path, fileExists)
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
 processCommandLineOptions false
-if not debuggingMode then errorDepth = loadDepth = loadDepth + 1
+errorDepth = loadDepth = loadDepth + 1
 runStartFunctions()
 tryLoad := fn -> if fileExists fn then (load fn; true) else false
 noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
