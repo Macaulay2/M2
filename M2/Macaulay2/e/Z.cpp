@@ -192,7 +192,7 @@ bool Z::is_unit(const ring_elem f) const
 bool Z::is_zero(const ring_elem f) const
 {
   mpz_ptr a = MPZ_VAL(f);
-  return mpz_cmp_si(a, 0) == 0;
+  return mpz_sgn(a) == 0;
 }
 
 bool Z::is_equal(const ring_elem f, const ring_elem g) const
@@ -211,7 +211,7 @@ int Z::compare(const ring_elem f, const ring_elem g) const
 int Z::is_positive(const ring_elem f) const
 {
   mpz_ptr a = MPZ_VAL(f);
-  return mpz_cmp_si(a,0) > 0;
+  return mpz_sgn(a) > 0;
 }
 
 ring_elem Z::copy(const ring_elem f) const

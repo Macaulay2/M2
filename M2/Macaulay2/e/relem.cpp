@@ -365,3 +365,15 @@ RingElement RingElement::denominator() const
   RingElement g(K->Ring_of(), K->denominator(get_value()));
   return g;
 }
+
+RingElement RingElement::fraction(const Ring *R, const RingElement &bottom) const
+{
+  const FractionField *K = R->cast_to_FractionField();
+  if (K == NULL) 
+    {
+      gError << "fraction field required";
+      return *this;
+    }
+  RingElement result(K,K->fraction(this->get_value(), bottom.get_value()));
+  return result;
+}

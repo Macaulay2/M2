@@ -456,7 +456,7 @@ bool HermiteComputation::is_equal(const gb_comp *q1)
 {
   if (kind() != q1->kind()) return false;
   HermiteComputation *qq = (HermiteComputation *) q1;
-  if (gens.rows() != qq->gens.rows()) return false;
+  if (gens.rows()->rank() != qq->gens.rows()->rank()) return false;
 
   hm_elem *q = qq->GB_list;
   for (hm_elem *p = GB_list; p != NULL; p = p->next)

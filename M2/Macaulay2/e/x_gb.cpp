@@ -18,6 +18,9 @@
 #include "ringmap.hpp"
 #include "sagbi.hpp"
 
+#include "lattice.hpp"
+#include "LLL.hpp"
+
 extern int comp_printlevel;
 extern Z *ZZ;
 
@@ -477,6 +480,86 @@ void cmd_sagbi_subduction(object &om, object &oF, object &og)
   gStack.insert(result);
 }
 
+void cmd_smith_make(object &om, object &o1, object &o2)
+{
+  Matrix m = om->cast_to_Matrix();
+  bool do_rowchange = (o1->int_of() != 0);
+  bool do_colchange = (o2->int_of() != 0);
+  // Error check here: ring of 'm' must be a computatable PID
+  if (!m.Ring_of()->is_pid())
+    {
+      gError << "Smith normal form requires the base ring to be a computable P.I.D.";
+      return;
+    }
+  MatrixComputation *sm = new MatrixComputation(m,do_rowchange,do_colchange);
+  gStack.insert(sm);
+}
+
+void cmd_smith_calc(object &os, object &on)
+{
+  MatrixComputation *sm = os->cast_to_MatrixComputation();
+  int n = on->int_of();
+  int result = sm->calc(n);
+  gStack.insert(make_object_int(result));
+}
+
+void cmd_smith_rowchange(object &os)
+{
+  MatrixComputation *sm = os->cast_to_MatrixComputation();
+  gStack.insert(sm->getRowChangeOfBasisMatrix());
+}
+
+void cmd_smith_colchange(object &os)
+{
+  MatrixComputation *sm = os->cast_to_MatrixComputation();
+  gStack.insert(sm->getColumnChangeOfBasisMatrix());
+}
+
+void cmd_smith_matrix(object &os)
+{
+  MatrixComputation *sm = os->cast_to_MatrixComputation();
+  gStack.insert(sm->getResultMatrix());
+}
+
+void cmd_smith_status(object &os)
+{
+  MatrixComputation *sm = os->cast_to_MatrixComputation();
+  int result = sm->getStatus();
+  gStack.insert(make_object_int(result));
+}
+
+void cmd_LLL_init(object &o1, object &o2, object &o3)
+{
+  Matrix m = o1->cast_to_Matrix();
+  RingElement threshold = o2->cast_to_RingElement();
+  bool useChangeOfBasis = (o3->int_of() != 0);
+  SparseMutableMatrix *A;
+  SparseMutableMatrix *LLLstate;
+  if (LLLoperations::initializeLLL(m,threshold,useChangeOfBasis,A,LLLstate))
+    {
+      gStack.insert(A);
+      gStack.insert(LLLstate);
+    }
+}
+
+void cmd_LLL_init0(object &o1, object &o2)
+{
+  SparseMutableMatrix *A = o1->cast_to_SparseMutableMatrix();
+  RingElement threshold = o2->cast_to_RingElement();
+  SparseMutableMatrix *LLLstate;
+  if (LLLoperations::initializeLLL(A,threshold,LLLstate))
+    gStack.insert(LLLstate);
+}
+
+void cmd_LLL_calc(object &o1, object &o2, object &o3)
+{
+  SparseMutableMatrix *A = o1->cast_to_SparseMutableMatrix();
+  SparseMutableMatrix *LLLstate = o2->cast_to_SparseMutableMatrix();
+  int nsteps = o3->int_of();
+  int ret = LLLoperations::doLLL(A,LLLstate,nsteps);
+  gStack.insert(make_object_int(ret));
+}
+
 void i_NGB_cmds(void)
 {
   // New NGB commands
@@ -527,4 +610,17 @@ void i_NGB_cmds(void)
   // SAGBI basis routines
   install(ggsubduction, cmd_sagbi_subduction, TY_MATRIX, TY_RING_MAP, TY_GB_COMP);
   install(ggsagbi, cmd_sagbi_make, TY_MATRIX);
+
+  // Smith normal form
+  install(ggSmithNormalForm, cmd_smith_make, TY_MATRIX, TY_INT, TY_INT);
+  install(ggcalc, cmd_smith_calc, TY_MatrixComputation, TY_INT);
+  install(gggetRowChange, cmd_smith_rowchange, TY_MatrixComputation);
+  install(gggetColChange, cmd_smith_colchange, TY_MatrixComputation);
+  install(gggetgb, cmd_smith_matrix, TY_MatrixComputation);
+  install(ggstatus, cmd_smith_status, TY_MatrixComputation);
+
+  // LLL operations
+  install(ggLLLinit, cmd_LLL_init, TY_MATRIX, TY_RING_ELEM, TY_INT);
+  install(ggLLLinit, cmd_LLL_init0, TY_SparseMutableMatrix, TY_RING_ELEM);
+  install(ggLLLcalc, cmd_LLL_calc, TY_SparseMutableMatrix, TY_SparseMutableMatrix, TY_INT);
 }

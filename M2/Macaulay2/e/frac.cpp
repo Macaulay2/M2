@@ -77,6 +77,11 @@ frac_elem *FractionField::new_frac_elem() const
   return (frac_elem *) frac_stash->new_elem();
 }
 
+ring_elem FractionField::fraction(const ring_elem top, const ring_elem bottom) const
+{
+  return FRAC_RINGELEM(make_elem(R->copy(top), R->copy(bottom)));
+}
+
 void FractionField::simplify(frac_elem *f) const
 {
   if (R->is_zero(f->numer))

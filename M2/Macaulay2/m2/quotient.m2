@@ -8,7 +8,7 @@ gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      if a>b then (k :=m;m=n;n=k);
      while m#0 > 0 do (
 	  t := n#0 // m#0;
-	  n = n - apply(m,y -> t y);
+	  n = n - apply(m,y -> t * y);
 	  (k=m;m=n;n=k);
 	  );
      {n#1,n#2});

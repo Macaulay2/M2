@@ -8,7 +8,8 @@ In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
 have set up your emacs init file as described in 'running Macaulay 2 in emacs'
 when you visit a file whose name ends with '.m2' 
 you will see on the mode line the name 'Macaulay 2' in
-parentheses, indicating that the file is being edited in Macaulay 2 mode.
+parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
+sure that the file 'emacs/M2-mode.el' is on your 'load-path'.)
 
 To see how electric parentheses, electric semicolons, and indentation work,
 move to a blank line of this file and type the following text.

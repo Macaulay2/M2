@@ -1,3 +1,4 @@
+#ARING = true
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
@@ -20,6 +21,10 @@ WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
 WARNINGS = -Wall
 
 CPPFLAGS += -I$(INCDIR) -DNDEBUG
+
+ifdef ARING
+CPPFLAGS += -DARING
+endif
 
 # CXXFLAGS += -fhandle-exceptions
 
@@ -85,6 +90,8 @@ NAMES = \
 	freemod \
 	weylfree \
 	matrix \
+	sparsemat \
+	LLL \
 	relem \
 	ring \
 	vector \
@@ -132,6 +139,11 @@ NAMES_H = \
 
 C_FILES = mac2
 
+ifdef ARING
+#NAMES += ARING/polywrap
+NAMES += ARING/poly
+endif
+
 ##############################
 ## end of source code files ##
 ##############################
@@ -156,7 +168,7 @@ OTHERS := Makefile Makefile.secondary \
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
 
-all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
+all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES) # $(LIB)
 
 $(LIB): $(LIB)($(OFILES))
 	$(RANLIB) $(LIB) || true
@@ -168,7 +180,7 @@ $(LIB): $(LIB)($(OFILES))
 
 %.dd: %.cpp
 	@echo remaking $@
-	$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's/$*\.o/& $@/g' > tmp.dd
+	$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's|$*\.o|& $@|g' > tmp.dd
 	mv tmp.dd $@
 # this was:
 #	@$(SHELL) -ec '$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed '\''s/$*.o/& $@/g'\'' > $@'

@@ -239,6 +239,8 @@ else
 LIBMP =
 endif
 
+#../bin/Macaulay2 : $(ALLOBJ) ../e/libgb.a tmp_init.o \
+
 ../bin/Macaulay2 : $(ALLOBJ) ../e/*.o tmp_init.o \
 		../../lib/libgc.a \
 		../../lib/libgmp.a \
