@@ -53,7 +53,8 @@ oldendl := endl
 erase symbol endl
 endl = new Manipulator from oldendl
 
-stderr << "--loading setup.m2" << endl
+notify := false						    -- can change this for debugging
+if notify then stderr << "--loading setup.m2" << endl
 
 if class path =!= List then path = { "" }
 savepath := path
@@ -128,7 +129,6 @@ String | String := String => concatenate
 String | ZZ := String => (s,i) -> concatenate(s,string i)
 ZZ | String := String => (i,s) -> concatenate(string i,s)
 
-notify := false						    -- can change this for debugging
 loaded := new MutableHashTable
 
 canonicalFilename := f -> (

@@ -2,6 +2,7 @@
 justM2 default :: initialize phase1
 include ../../include/config.Makefile
 VPATH = @srcdir@
+srcdir = $(shell cd @srcdir@; pwd)
 all:: initialize
 emacs html: all; $(MAKE) -C ../$@
 
@@ -156,7 +157,7 @@ cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 # phase 3: perhaps running the example input files
-	$(MAKE) -C cache/doc -f ../../@srcdir@/Makefile.egs srcdir=../../@srcdir@
+	$(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
@@ -176,7 +177,7 @@ endif
 
 check:: test2
 test2: phase1 ../libexec/Macaulay2
-	$(MAKE) -k -C cache/tests -f ../../@srcdir@/Makefile.tests srcdir=../../@srcdir@
+	$(MAKE) -k -C cache/tests -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
@@ -189,7 +190,7 @@ clean::; rm -f test3
 ifeq ($(OS),Linux)
 check:: test4
 test4: ../util/screen
-	echo 2+3 | ../util/screen ../bin/M2
+	echo 2+3 | ../util/screen ../../bin/M2
 	touch $@
 clean::; rm -f test4
 endif
