@@ -74,27 +74,26 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(CC) -o $*.oo $(CPPFLAGS) $(CCFLAGS) -c $*.c
+	$(CC) -o $*.oo $(CPPFLAGS) $(CFLAGS) -c $*.c
 	rm $*.c
 %     : %.oo;	$(CC) -o $@ $< $(LDFLAGS) $(LDLIBS)
-%.o   : %.c;	$(CC) -o $@ $< -c $(CPPFLAGS) $(CFLAGS)
+%.o   : %.c;	$(CC) -o $@ $< -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS)
 ############################## flags
 
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1 $(DEBUGFLAGS)
+CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
 WARNINGS := -Wall -Wshadow -Wcast-qual
 
-CCFLAGS  := -O2 -g
+# we can't do this because our manufactured c files have lots of unused labels
+# CFLAGS  += -Wall -Wshadow -Wcast-qual
 
-CFLAGS   := $(CCFLAGS) $(WARNINGS)
-CXXFLAGS := $(CFLAGS)
-LDLIBS   := 
-LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
+CXXFLAGS += $(WARNINGS)
+LDFLAGS  += -L${LIBDIR} $(STRIPFLAG)
 
 ifeq ($(OS),Linux)
 ## - use this to get a memory map listing from the gnu linker

@@ -31,7 +31,6 @@ else
 endif
 GCFLAGS  := -g -O $(INCLUDES)
 CFLAGS   := $(GCFLAGS) $(WARNINGS)
-LDFLAGS  := $(DEBUGFLAGS)
 ############################## compiling
 scc1 : $(OFILES)
 $(OFILES) : $(HFILES)

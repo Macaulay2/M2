@@ -519,7 +519,7 @@ void elim_mon_order::decode(const int *m, int *exp) const
     exp[i] = (m[n-i] - m[n-i+1]) / d[i];
 
   if (nelim == 1) 
-    exp[0] = m[0];
+    exp[0] = m[0] / degs[0];
   else
     {
       exp[0] = m[n-1] / degs[0];

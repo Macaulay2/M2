@@ -1,5 +1,7 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
+LDFLAGS =
+CFLAGS =
 
 CPPFLAGS += -I../include
 EXES = echoout timestmp restart update

@@ -7,7 +7,7 @@ ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
-export VERSION	      := 0.8.43
+export VERSION	      := 0.8.44
 export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
@@ -170,7 +170,9 @@ export CFLAGS
 endif
 
 ifdef PROFILE
-DEBUGFLAGS += -pg
+export CFLAGS += -pg
+export CXXFLAGS += -pg
+export LDFLAGS += -pg
 NOSTRIP := TRUE
 endif
 
