@@ -106,7 +106,10 @@ extern char *libfac_version;
 #define O_BINARY 0		/* for non msdos systems */
 #endif
 
+#ifndef PAGESIZE
+extern int getpagesize();
 #define PAGESIZE getpagesize()
+#endif
 #define RUP(x) ((((x) + PAGESIZE - 1) / PAGESIZE) * PAGESIZE)
 
 void *sbrk();		/* not really ansi standard, sigh */

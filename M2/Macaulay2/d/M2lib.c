@@ -848,7 +848,7 @@ static int probe() {
 #endif
 
 #ifndef __linux__
-static int loaddata(const char *filename) {
+static int loaddata(char *filename) {
      char savetimestamp[60];
      struct stat statbuf;
      int filelen;
@@ -915,6 +915,7 @@ x)",
 	  putstderr("data file not created by this executable");
 	  _exit(1);
 	  }
+     return OKAY;
 }
 #endif
 
