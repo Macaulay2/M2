@@ -32,13 +32,8 @@ codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
 
 toString MonomialIdeal := m -> if m.?name then m.name else "monomialIdeal " | toString generators m
 
-UnaryMonomialIdealOperation := (operation) -> (m) -> (
-     sendgg (ggPush m, operation);
-     newMonomialIdeal ring m)
-
-BinaryMonomialIdealOperation := (operation) -> (m,n) -> (
-     sendgg (ggPush m, ggPush n, operation);
-     newMonomialIdeal ring m)
+UnaryMonomialIdealOperation  := (operation) -> (m) -> newMonomialIdeal(ring m, operation raw m)
+BinaryMonomialIdealOperation := (operation) -> (m,n) -> newMonomialIdeal(ring m, operation(raw m, raw n))
 
 -- net MonomialIdeal := I -> if I == 0 then "0" else "monomialIdeal " | net toSequence first entries gens I
 
@@ -72,13 +67,11 @@ MonomialIdeal * MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, raw I * raw J))
 
-radical MonomialIdeal := MonomialIdeal => options -> (I) -> (UnaryMonomialIdealOperation ggradical) I
+radical MonomialIdeal := MonomialIdeal => options -> (I) -> (UnaryMonomialIdealOperation rawRadical) I
 
-MonomialIdeal : MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation ggdiv
+MonomialIdeal : MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation rawColon
 
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> (
-     (BinaryMonomialIdealOperation ggsat) (I,J)
-     )
+saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> (BinaryMonomialIdealOperation rawSaturate) (I,J)
 
 int := (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
@@ -130,13 +123,9 @@ intersect(Sequence) := args -> (
     else error "expected modules, ideals, or monomial ideals"
     )
 
-borel MonomialIdeal := MonomialIdeal => UnaryMonomialIdealOperation ggborel
-isBorel MonomialIdeal := m -> (
-     sendgg(ggPush m, ggisborel);
-     eePopBool())
-
+borel MonomialIdeal := MonomialIdeal => UnaryMonomialIdealOperation rawStronglyStableClosure
+isBorel MonomialIdeal := m -> UnaryMonomialIdealOperation rawIsStronglyStable
 codim MonomialIdeal := m -> rawCodimension raw m
-
 poincare MonomialIdeal := M -> ( --poincare matrix m
      R := ring M;
      ZZn := degreesRing(R);

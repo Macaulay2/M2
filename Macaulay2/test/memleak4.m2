@@ -1,3 +1,6 @@
+-- we can no longer test for memory leaks, because  engineHeap()  and   engineMemory()  are gone, oh well
+end
+
 n = 100
 kk = ZZ/31
 R = kk[x]

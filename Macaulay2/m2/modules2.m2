@@ -58,10 +58,11 @@ Matrix ** Module := Matrix => (f,M) -> (
 	  )
      )
 Module ** Matrix := Matrix => (M,f) -> (
-     P := youngest(M,f);
-     key := (M,f,symbol **);
-     if P#?key then P#key
-     else M**f = (
+--      P := youngest(M,f);
+--      key := (M,f,symbol **);
+--      if P#?key then P#key
+--      else M**f = 
+     (
      	  id_M ** f
 	  )
      )
@@ -584,7 +585,7 @@ Module _ ZZ := Vector => (M,i) -> (
 Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
-     if not M.?class.components then error "expected a direct sum module";
+     if not M.?cache.components then error "expected a direct sum module";
      if M.cache.?indexComponents then (
 	  ic := M.cache.indexComponents;
 	  w = apply(w, i -> if ic#?i 
@@ -599,7 +600,7 @@ Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else
 Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else M#(symbol _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
-     if not M.?class.components then error "expected a direct sum module";
+     if not M.?cache.components then error "expected a direct sum module";
      if M.cache.?indexComponents then (
 	  ic := M.cache.indexComponents;
 	  w = apply(w, i -> if ic#?i 
@@ -689,7 +690,9 @@ truncate(List,Module) := Module => (deg,M) -> (
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
 truncate(ZZ,Ideal) := Ideal => (deg,M) -> truncate({deg},M)
 
-issub := (f,g) -> -1 === rawGBContains(raw f, raw gb g)
+issub := (f,g) -> -1 === (
+     error "rawGBContains doesn't work yet after re-implementation";
+     rawGBContains(raw gb g,raw f))
 
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!

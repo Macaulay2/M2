@@ -24,7 +24,7 @@ trim QuotientRing := options -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,options)))
-trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = (
+trim Module := Module => options -> (M) -> if M.cache.?trim then M.cache.trim else M.cache.trim = (
      if isFreeModule M -- or not isHomogeneous M
      then M
      else (
@@ -37,7 +37,7 @@ trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = 
 	       else if relns === null then ambient M
 	       else cokernel relns
 	       );
-	  N.trim = N;
+	  N.cache.trim = N;
 	  N)
      )
 

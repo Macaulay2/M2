@@ -253,6 +253,7 @@ denominator Divide := x -> x#1
 Power = new HeaderType of Expression
 Power.synonym = "power expression"
 Power#operator = "^"
+value ZZ := identity
 value Power := (x) -> (value x#0) ^ (value x#1)
 
 Subscript = new HeaderType of Expression
