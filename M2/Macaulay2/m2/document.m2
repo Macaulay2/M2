@@ -5,7 +5,10 @@
 -----------------------------------------------------------------------------
 maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
+
 documentationPath = {  }
+writableGlobals.documentationPath = true
+
 addStartFunction(
      () -> (
 	  home := getenv "M2HOME";
@@ -24,7 +27,10 @@ writing                   := () -> phase === 2 or phase === 4 or phase === 5
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------
+
 DocDatabase = null
+writableGlobals.DocDatabase = true
+
 local nodeBaseFilename
 local exampleOutputFilename				    -- nodeBaseFilename | ".out"
 local exampleCounter
@@ -51,7 +57,8 @@ addStartFunction(
 		    if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
 		    new HashTable)
 	       );
-	  documentationPath = append(documentationPath,DocDatabase);
+     	  -- temporarily don't use it...
+	  -- documentationPath = append(documentationPath,DocDatabase);
      	  )
      )
 
@@ -68,26 +75,30 @@ storeDoc := (nodeName,docBody) -> (
      )
 
 -----------------------------------------------------------------------------
--- some things can't be documented
+-- most things can't be documented; some can, because they always know what
+-- symbol they are associated with.  Hmm, this seems to be have two purposes,
+-- should fix.
 -----------------------------------------------------------------------------
 unDocumentable := method(SingleArgumentDispatch => true)
-unDocumentable Thing := x ->false
+unDocumentable Thing := x ->true
 unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
 unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
-unDocumentable List := x -> true
 -----------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
 unformatTag := new MutableHashTable
 record      := f -> x -> (val := f x; unformatTag#val = x; val)
-unformat    := s -> (
+unformat    = s -> (
      if isGlobalSymbol s 
-     and value getGlobalSymbol s =!= null	  -- keywords have null value
-     then (
-	  if unDocumentable value getGlobalSymbol s
-     	  then getGlobalSymbol s
-     	  else value getGlobalSymbol s
-	  )
+-- will this work?
+     then getGlobalSymbol s
+--      and value getGlobalSymbol s =!= null	  -- keywords have null value
+--      then (
+-- 	  if unDocumentable value getGlobalSymbol s
+--      	  then getGlobalSymbol s
+--      	  else value getGlobalSymbol s
+-- 	  )
+
      else (
 	  if unformatTag#?s 
 	  then unformatTag#s

@@ -2,7 +2,7 @@
 
 -- this file should be mentioned *last* in dumpseq
 
-if phase === 2 or phase === 4 or phase == 5 then load "docloads.m2"
+-- if phase === 2 or phase === 4 or phase == 5 then load "Macaulay2-doc.m2"
 
 setrecursionlimit 300
 
@@ -10,13 +10,13 @@ addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> (
 	  scan(openFiles(), f -> if isOutputFile f then flush f);
 	  path = {};
-     	  phase = 0;
+     	  -- phase = 0;
 	  )
      )
 
 path = {}
 
-
+writableGlobals.TeXmacsMode = true
 addStartFunction(
      () -> (
 	  TeXmacsMode = member("--texmacs",commandLine);
@@ -53,6 +53,7 @@ erase symbol outputSymbols
 erase symbol lastSystemSymbol
 
 -- make sure this is after all global symbols are defined or erased
+scan(( symbol oooo, symbol ooo, symbol oo, symbol path ), x -> writableGlobals#x = true)
 scanPairs(symbolTable(), (name,sym) -> if not writableGlobals#?sym then protect sym)
 end Macaulay2
 User = newPackage( "User", "0.0" )

@@ -19,7 +19,7 @@ LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
 DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq )) gbdoc.m2 gbfunctions.m2
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 layout.m2
+MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 Macaulay2-doc.m2 tutorials.m2 cmdnames.m2 layout.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -47,7 +47,7 @@ loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
 
-docloads.m2 : loads.awk docseq 
+Macaulay2-doc.m2 : loads.awk docseq 
 	@echo making $@
 	@awk -f $^ >$@
 
@@ -128,7 +128,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made
 	touch $@
 
 ../cache/Macaulay2-pre cache/doc/.made : \
-		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq docloads.m2
+		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq Macaulay2-doc.m2
 	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
@@ -137,7 +137,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made
 		'-e phase = 2' \
 		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
-		docloads.m2 '-eexit(0)'
+		Macaulay2-doc.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 	touch cache/doc/.made cache/tests/.made
 
@@ -187,7 +187,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 		'-e phase = 4' \
 		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
-		docloads.m2 '-eexit(0)'
+		Macaulay2-doc.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp $@
 	touch $@
 
@@ -257,7 +257,7 @@ clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
 		cache *.obj *.exe runexample \
 		temp.data distfiles \
-		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
+		gbdoc.m2 gbfunctions.m2 loads.m2 Macaulay2-doc.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
 distclean : clean
 	rm -f Makefile
