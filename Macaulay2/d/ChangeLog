@@ -1,3 +1,348 @@
+2004-08-06  author  <author@rhodium>
+
+	* engine.d, interface.d, util.d:
+	connect rawTopCoefficients, IM2_Matrix_compress, rawSchurDimension
+
+2004-07-15  author  <author@rhodium>
+
+	* interface.d: wedgeProduct and rawWedgeProduct
+
+2004-07-14  author  <author@rhodium>
+
+	* interface.d: connect rawGaloisField
+
+2004-06-23  author  <author@rhodium>
+
+	* interface.d: *** empty log message ***
+
+2004-06-19  author  <author@rhodium>
+
+	* interface.d:
+	made rawSyzygy return a sequence of two elements, rather than a list
+
+2004-05-21  author  <author@rhodium>
+
+	* interface.d: *** empty log message ***
+
+2004-05-20  author  <author@rhodium>
+
+	* interface.d: *** empty log message ***
+
+2004-04-28  author  <author@rhodium>
+
+	* gc_test.c: *** empty log message ***
+
+2004-04-14  author  <author@rhodium>
+
+	* interface.d: *** empty log message ***
+
+2004-04-06  author  <author@rhodium>
+
+	* actors.d, actors2.d, actors3.d, actors4.d, actors5.d, evaluate.d, interp.d, texmacs.d:
+	*** empty log message ***
+
+2004-04-03  author  <author@rhodium>
+
+	* evaluate.d, actors4.d, common.d, tokens.d: *** empty log message ***
+
+2004-04-02  author  <author@rhodium>
+
+	* actors3.d, actors4.d, binding.d, common.d, convertr.d, evaluate.d, lex.d, tokens.d, actors5.d, actors.d, actors2.d, interp.d, parser.d:
+	*** empty log message ***
+
+2004-04-01  author  <author@rhodium>
+
+	* actors4.d, interface.d: *** empty log message ***
+
+2004-03-31  author  <author@rhodium>
+
+	* interface.d, M2types.h, actors5.d, tokens.d, basic.d, common.d, evaluate.d, interp.d, objects.d, binding.d:
+	*** empty log message ***
+
+2004-03-30  author  <author@rhodium>
+
+	* interp.d, objects.d: *** empty log message ***
+
+2004-03-29  author  <author@rhodium>
+
+	* interface.d: *** empty log message ***
+
+2004-03-28  author  <author@rhodium>
+
+	* interface.d, actors5.d, evaluate.d, actors2.d, gmp.d:
+	*** empty log message ***
+
+2004-03-27  author  <author@rhodium>
+
+	* Makefile.in, nets.d, actors3.d, evaluate.d, actors2.d:
+	*** empty log message ***
+
+2004-03-26  author  <author@rhodium>
+
+	* actors5.d, actors3.d: *** empty log message ***
+
+2004-03-25  author  <author@rhodium>
+
+	* actors5.d, evaluate.d, interp.d: *** empty log message ***
+
+2004-03-24  author  <author@rhodium>
+
+	* actors3.d: *** empty log message ***
+
+2004-03-23  author  <author@rhodium>
+
+	* actors2.d, actors3.d: *** empty log message ***
+
+2004-03-22  author  <author@rhodium>
+
+	* actors2.d, parser.d, actors5.d, binding.d, interface.d, lex.d, objects.d, tokens.d, util.d, common.d, evaluate.d, actors.d:
+	*** empty log message ***
+
+2004-03-21  author  <author@rhodium>
+
+	* evaluate.d, nets.d, actors5.d, scclib.c, M2lib.c:
+	*** empty log message ***
+
+	* M2lib.c, actors3.d, actors5.d, evaluate.d, interp.d, scclib.c, stdio.d, system.d, tokens.d:
+	error checking for regexmatch
+
+2004-03-20  author  <author@rhodium>
+
+	* actors3.d: *** empty log message ***
+
+2004-03-19  author  <author@rhodium>
+
+	* stdio.d:
+	now stdio will check for interrupt flag before writing to file, return error if set
+
+	* actors.d, actors4.d, evaluate.d, actors5.d, binding.d:
+	*** empty log message ***
+
+	* actors.d, actors3.d, binding.d, common.d, interface.d, objects.d:
+	Installed a new way to do assignments when the left hand side involves an operator.
+	For example, for *, which is both binary and unary:
+
+	  x*y=z is looked up under ((symbol *,symbol =),class x,class y)
+
+	  *y=z is looked up under ((symbol *,symbol =),class y)
+
+2004-03-18  author  <author@rhodium>
+
+	* actors4.d: *** empty log message ***
+
+2004-03-17  author  <author@rhodium>
+
+	* actors4.d, binding.d: fixed a bug that allowed assignments like 4=4
+
+	* C.d, actors5.d, scclib.c, stdio.d, system.d:
+	*** empty log message ***
+
+2004-03-16  author  <author@rhodium>
+
+	* actors3.d: *** empty log message ***
+
+2004-03-14  author  <author@rhodium>
+
+	* actors3.d: *** empty log message ***
+
+	* actors3.d:
+	fix "override" so it distinguishes f((a,b),c=>5) from f(a,b,c=>5).
+	The former should be called with
+	      (f opts)( singleton (a,b) )
+	and the latter with
+	      (f opts)(a,b)
+
+	* M2lib.c, actors5.d, binding.d: *** empty log message ***
+
+2004-03-13  author  <author@rhodium>
+
+	* M2types.c: *** empty log message ***
+
+	* actors5.d:
+	fixed isDirectory so false is returned if the file doesn't exist
+
+	* actors5.d: *** empty log message ***
+
+2004-03-12  author  <author@rhodium>
+
+	* actors5.d: *** empty log message ***
+
+2004-03-11  author  <author@rhodium>
+
+	* actors4.d: *** empty log message ***
+
+2004-03-03  author  <author@rhodium>
+
+	* actors.d, actors2.d, actors3.d, actors4.d, actors5.d, common.d, convertr.d, evaluate.d, interp.d, tokens.d, binding.d:
+	*** empty log message ***
+
+2004-03-02  author  <author@rhodium>
+
+	* actors2.d, binding.d, ctype.d, evaluate.d, objects.d, tokens.d, interp.d, actors5.d:
+	*** empty log message ***
+
+2004-03-01  author  <author@rhodium>
+
+	* binding.d, common.d, convertr.d, evaluate.d, parser.d, tokens.d:
+	implemented "try ... then ... else ..."
+
+	* binding.d, evaluate.d: *** empty log message ***
+
+	* common.d:
+	fixed printErrorMessage(c:Code,message:string) so it would actually
+	print -- this is needed when there is an error like this that occurs
+	during the Print method.
+
+	    i17 : listLocalSymbols
+
+	    i18 : listLocalSymbols ()
+	    stdio:6:1: not in debugger (i.e., errorCode not set)
+
+	* interp.d:
+	fixed break, return, and continue so they would exit the debugger but not the program
+
+	* evaluate.d, interp.d, tokens.d:
+	break, return, and continue were causing the program to exit when undhandled
+
+	* actors3.d:
+	"apply" wasn't handling the "break" command when its argument(s) were sequences
+
+	* actors2.d: 'new MutableList' was returning an immutable list -- fixed
+
+2004-02-17  author  <author@rhodium>
+
+	* evaluate.d: give a better error message when a function is undefined
+
+2004-02-16  author  <author@rhodium>
+
+	* actors5.d, binding.d: *** empty log message ***
+
+	* actors3.d:
+	Changed the binary operator '!=' so binary methods can be installed
+	for it.  This operator is special in the same way '==' is: for certain
+	basic classes, the binary method is not consulted, and comparison is
+	performed internally.  Another wrinkle (now) is that if there is not
+	method for computing x != y, then the methods for (not (x == y)) are
+	used instead.
+
+2004-02-15  author  <author@rhodium>
+
+	* actors.d, actors5.d, objects.d:
+	modified method code so we can dispatch on types of 4 arguments
+
+	* Makefile.in, tokens_stub.c, actors.d, actors3.d, system.d:
+	*** empty log message ***
+
+	* stdiop.d: print the load depth in error messages, too.
+
+	* scclib.c: print the load depth, too, in error messages
+
+	* actors3.d:
+	Changed the '==' operator, for classes other than ZZ, Symbol, QQ, RR,
+	Boolean, Net, String, Function, to call the method for comparison,
+	even if the two arguments are identical pointers.  This way equations
+	such as x==x can be considered.
+
+2004-02-14  author  <author@rhodium>
+
+	* memdebug.h, M2inits.c, M2lib.c, M2types.h, Makefile.in, debug.c, debug.h, factory_allocator.c, gdbm_interface.c, gmp_init.cc, memdebug.c, t_main.c:
+	*** empty log message ***
+
+2004-02-12  author  <author@rhodium>
+
+	* actors5.d:
+	The function "remove" can now be used to remove an element from a list
+	or sequence, like this: remove({a,b,c},1).
+
+2004-02-10  author  <author@rhodium>
+
+	* actors5.d, binding.d: added new operator ===>
+
+	* actors.d, actors5.d, binding.d:
+	The operator ==> has been renamed to >>> so a new operator,
+	==>, with higher parsing precedence, can be introduced for use as
+	"implication" in logical expressions.  Other new operators introduced
+	are |- and <==> .
+
+2004-02-09  author  <author@rhodium>
+
+	* actors3.d, binding.d, common.d, convertr.d, evaluate.d, interp.d, lex.d:
+	4 symbols occurred twice in the main dictionary : fixed
+
+2004-02-05  author  <author@rhodium>
+
+	* basic.d: *** empty log message ***
+
+2004-02-04  author  <author@rhodium>
+
+	* interface.d: matrix maintenance
+
+2004-02-02  author  <author@rhodium>
+
+	* Makefile.in: *** empty log message ***
+
+2004-02-01  author  <author@rhodium>
+
+	* gc_test.c, M2inits.c, M2lib.c, Makefile.in, factory_allocator.c:
+	*** empty log message ***
+
+2004-01-31  author  <author@rhodium>
+
+	* M2_setup.c, M2inits.h, Makefile.in, factory_allocator.c, factory_setup.c, gmp_init.cc, M2inits.c, gmp_init.h, initgmp.cc:
+	*** empty log message ***
+
+	* M2inits.c, M2lib.c, Makefile.in, debug.c, version.cc:
+	new option --disable-factory, macro variable "FACTORY"
+
+2004-01-30  author  <author@rhodium>
+
+	* M2inits.c, Makefile.in: *** empty log message ***
+
+2004-01-27  author  <author@rhodium>
+
+	* M2lib.c, scclib.c, Makefile.in: *** empty log message ***
+
+2004-01-26  author  <author@rhodium>
+
+	* scclib.c: *** empty log message ***
+
+2004-01-25  author  <author@rhodium>
+
+	* actors5.d, evaluate.d, interface.d: *** empty log message ***
+
+2004-01-24  author  <author@rhodium>
+
+	* interface.d, Makefile.in: *** empty log message ***
+
+2004-01-23  author  <author@rhodium>
+
+	* nets.d: *** empty log message ***
+
+2004-01-22  author  <author@rhodium>
+
+	* actors5.d, nets.d: *** empty log message ***
+
+	* nets.d:
+	undo the last change -- we want to be able to convert back and forth
+	between strings and nets without losing information
+
+	* ChangeLog: *** empty log message ***
+
+	* nets.d:
+	Fixed the conversion from strings to nets so that a terminal newline
+	in the string doesn't result in an extra blank line in the list of
+	lines.
+
+	    i1 : peek net "\n\n"
+
+		 ++
+	    o1 = ||
+		 ||
+		 ++
+
+	* actors2.d, actors3.d, actors4.d, basic.d, evaluate.d, objects.d:
+	*** empty log message ***
+
 2004-01-22  Dan Grayson  <dan@math.uiuc.edu>
 
 	* nets.d:
