@@ -3,22 +3,14 @@
 
 include ../../../../include/config.Makefile
 
-TESTFILES := $(wildcard *.m2)
-TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
-
 .PHONY : all
 
-all:: $(TESTRESULTS)
-
-ifneq "$(DUMPDATA)" "no"
-$(TESTRESULTS) : ../../../$(DUMPDATAFILE)
-else
-$(TESTRESULTS) : ../../../cache/Macaulay2-doc
-endif
-
-ifneq "$(DUMPDATA)" "no"
+ifeq "$(DUMPDATA)" "yes"
 ARGS := -q '-eloaddata("../../../$(DUMPDATAFILE)")' -- \
 		'-epath=join(path,{"../../","$(srcdir)/"})' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+
+all :: $(DUMPDATAFILE)
+
 else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
@@ -26,8 +18,13 @@ ifeq "$(CC)" "cl"
 ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 \
 		'-epath=join(path,{\"../../\",\"$(srcdir)/\"})' '-erunStartFunctions()' '-eerrorDepth(0)'
 else
-ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 \
-		'-epath=join(path,{"../../","$(srcdir)/"})' '-erunStartFunctions()' '-eerrorDepth(0)'
+ARGS := -q -silent \
+		'-epath=join({"../../","$(srcdir)/"})' \
+		-ephase=1 $(srcdir)/setup.m2 -ephase=0 \
+		'-erunStartFunctions()' '-eerrorDepth(0)'
+
+all :: $(srcdir)/setup.m2
+
 endif
 endif
 
@@ -36,3 +33,14 @@ endif
 	@ echo testing $<
 	@ env M2HOME=../../.. ../../../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
+
+TESTFILES := $(wildcard *.m2)
+TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
+
+all:: $(TESTRESULTS)
+
+ifneq "$(DUMPDATA)" "no"
+$(TESTRESULTS) : ../../../$(DUMPDATAFILE)
+else
+$(TESTRESULTS) : ../../../cache/Macaulay2-doc
+endif
