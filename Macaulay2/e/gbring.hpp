@@ -77,6 +77,7 @@ protected:
 
   bool _is_skew;
   SkewMultiplication _skew;
+  int * const *_skew_monoms; // array 0.._skew.n_skew_vars()-1 of elements of monoid
 
   // Weyl algebra information
   // Private data goes into the subclass
@@ -179,8 +180,8 @@ public:
   bool is_skew_commutative() const { return _skew.n_skew_vars() > 0; }
   int n_skew_commutative_vars() const { return _skew.n_skew_vars(); }
   int skew_variable(int i) const { return _skew.skew_variable(i); }
-  gbvector * skew_poly(int i) const; // TODO
-
+  const int * skew_monomial_var(int i) const { return _skew_monoms[i]; }
+  
   // Weyl algebra
   bool is_weyl_algebra() const { return is_weyl; }
   // returns true if this is a Weyl algebra OR a homog Weyl algebra
