@@ -77,13 +77,13 @@ assert(m3*m4 == 0)
 F = rawSource m1
 F2 = rawTarget m2
 F3 = rawSource m2
+F4 = rawSource m3
 F3b = rawTarget m3
 assert(F3 == F3b)
 ----------------------------------
 -- Koszul complex on 3 elements --
 -- Algorithm 3                  --
 ----------------------------------
--- CURRENTLY FAILS
 needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
@@ -105,6 +105,34 @@ F = rawSource m1
 F2 = rawTarget m2
 F3 = rawSource m2
 F3b = rawTarget m3
+assert(F3 == F3b)
+----------------------------------
+-- Koszul complex on 4 elements --
+-- Algorithm 3                  --
+----------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
+m = mat{{a,b,c^2,d^2}}
+gbTrace=10
+C = rawResolution(m,true,5,false,0,3,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+F = rawSource m1
+F2 = rawTarget m2
+F3 = rawSource m2
+F3b = rawTarget m3
+F4 = rawSource m3
+F5 = rawSource m4
 assert(F3 == F3b)
 ----------------------------------
 -- Twisted cubic                --
@@ -133,6 +161,23 @@ F3 = rawSource m2
 F3b = rawTarget m3
 assert(F3 == F3b)
 ----------------------------------
+needs "raw-util.m2"
+R = QQ[symbol a .. symbol f]
+I = ideal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f, b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
+M = module I
+gbTrace = 3
+C = res M
+X = C.Resolution
+rawGBBetti(X.RawComputation, 0)
+
+----------------------------------
+
+
+
+
+
+
+
 
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}

@@ -1,5 +1,6 @@
 // Copyright 2004 Michael E. Stillman.
 
+#include "text_io.hpp"
 #include "comp_res.hpp"
 #include "res.hpp"
 #include "res2.hpp"
@@ -30,6 +31,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	ERROR("resolution algorithm 1 cannot resolve a cokernel with a given presentation: use algorithm 2 or 3 instead");
 	return 0;
       }
+    if (gbTrace > 0) emit_line("resolution algorithm 1");
     return new res_comp(m, max_level, strategy);
   case 0: 
     if (!resolve_cokernel)
@@ -37,12 +39,15 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
 	ERROR("resolution algorithm 0 cannot resolve a cokernel with a given presentation: use algorithm 2 or 3 instead");
 	return 0;
       }
+    if (gbTrace > 0) emit_line("resolution algorithm 0");
     return new res2_comp(m, max_level, use_max_slanted_degree, max_slanted_degree, strategy);
   case 2 : 
     origsyz = m->n_cols();
+    if (gbTrace > 0) emit_line("resolution algorithm 2");
     return new gbres_comp(m, max_level+1, origsyz, strategy);
   case 3: 
     origsyz = m->n_cols();
+    if (gbTrace > 0) emit_line("resolution algorithm 3");
     return new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
 
   }

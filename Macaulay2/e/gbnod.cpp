@@ -60,8 +60,10 @@ void gb2_comp::setup(FreeModule *FFsyz,
     }
 
   use_hilb = 0;
-  n_hf = -1;			// This will enable the initial computation of HF.
-				// If use_hilb is set.
+  hf_numgens_F = F->rank();
+  hf_numgens_gb = -1; // This will enable the initial computation of HF,
+                      // if use_hilb is set.
+  hf = hilb_comp::hilbertNumerator(F);
   n_gb_syz = -1;
 
   strategy_flags = strategy;
@@ -304,7 +306,8 @@ void gb2_comp::compute_s_pair(s_pair *p)
   if (p->f == NULL)
     {
       int *s = M->make_one();
-      M->divide(p->lcm, p->first->f->monom, s);
+      GR->gbvector_get_lead_monomial(F, p->first->f, s);
+      M->divide(p->lcm, s, s);
 
       GR->gbvector_mult_by_term(F,Fsyz,
 				GR->one(), s,
@@ -494,6 +497,14 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   else
     GR->gbvector_remove_content(p->f, p->fsyz);
 
+  if (gbTrace >= 10)
+    {
+      buffer o;
+      o << "inserting level " << level << " ";
+      GR->gbvector_text_out(o, F, p->f);
+      o << newline;
+      emit(o.str());
+    }
   if (ismin) n_mingens++;
   GR->gbvector_get_lead_monomial(F,p->f,f_m);
 
@@ -504,7 +515,6 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   M->to_varpower(f_m, vp);
   monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   gb.append(p);
-  M->remove(f_m);
 
   if (use_hilb)
     {
@@ -513,10 +523,12 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
 
       gbvector *new_f = p->f;
       ring_elem a = originalR->get_flattened_ring()->term(originalR->Ncoeffs()->one(), 
-							  new_f->monom);
+							  f_m);
       hf_matrix->append_column(0);
       hf_matrix->set_entry(new_f->comp-1,hf_matrix->n_cols()-1, a);
     }
+
+  M->remove(f_m);
 
   // Now do auto-reduction of previous elements using this one.
   // MES: possible fix: only do this if the current element is not minimal
@@ -568,8 +580,8 @@ bool gb2_comp::s_pair_step()
      // Otherwise, compute the current s-pair, reduce it, and
      // dispatch the result.  Return true.
 {
-  if (use_hilb && n_gb_syz == 0)
-    flush_pairs();
+  //  if (use_hilb && n_gb_syz == 0)
+  //    flush_pairs();
   if (these_pairs == NULL) return false; // Done
   s_pair *p = these_pairs;
   these_pairs = these_pairs->next;
@@ -725,11 +737,50 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
   // prematurely, our state will be one of STATE_NEW_DEGREE,
   // STATE_GB, STATE_GENS.
 
+  buffer o;
+
   int n1,n2;
   if (state == STATE_NEW_DEGREE)
     {
       if (use_hilb)
 	{
+	  RingElement *hsyz;
+	  const PolynomialRing *DR = R->get_degree_ring();
+	  RingElement *h = RingElement::make_raw(DR, DR->zero());
+	  if (syz != NULL)
+	    {
+	      hsyz = syz->hilbertNumerator();
+	      if (hsyz == 0) return COMP_INTERRUPTED;
+	      o << "hsyz = "; hsyz->text_out(o);
+	      h = (*h) + (*hsyz);
+	      o << "hsyz2= "; hsyz->text_out(o);
+	    }
+	  RingElement *hf1 = hilbertNumerator();
+	  if (hf == 0) return COMP_INTERRUPTED;
+	  h = (*h) + (*hf1);
+	  RingElement *hF = hilb_comp::hilbertNumerator(F);
+	  if (hF == 0) return COMP_INTERRUPTED;
+	  h = (*h) - (*hF);
+	  o << "\nhf   = "; hf1->text_out(o);
+	  o << "\nhF   = "; hF->text_out(o);
+	  o << "\nh    = "; h->text_out(o);
+	  o << "\n";
+	  emit(o.str());
+	  o.reset();
+
+	  if (gbTrace >= 1 && n_gb_syz != 0)
+	    {
+	      buffer o;
+	      o << "<WARNING: remaining nsyz+ngb = " << n_gb_syz << ">";
+	      emit(o.str());
+	    }
+
+	  n_gb_syz = hilb_comp::coeff_of(h, this_degree);
+	  if (error())
+	    return COMP_ERROR;
+
+#if 0
+
 	  if (syz != NULL)
 	    {
 	      ret = syz->hilbertNumeratorCoefficient(this_degree, n1);
@@ -745,7 +796,10 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	    {
 	      return ret;
 	    }
+#endif
+#if 0
 	  n_gb_syz = n1 + n2;
+#endif
 	}
 
       // Compute new s-pairs
@@ -761,7 +815,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	  // Should only display this if there are some pairs.
 	  o << '[' << level << ',' << npairs;
 	  if (use_hilb)
-	    o << ",e" << n_gb_syz << "," << n1 << "," << n2;
+	    o << ",e" << n_gb_syz; // << "," << n1 << "," << n2;
 	  o << ']';
 	  emit(o.str());
 	}
@@ -835,6 +889,7 @@ bool gb2_comp::is_done()
 // Hilbert function computing //
 ////////////////////////////////
 
+#if 0
 enum ComputationStatusCode gb2_comp::hilbertNumerator(RingElement *&result)
 {
   // It is possible that the computation was not completed before.
@@ -861,6 +916,36 @@ enum ComputationStatusCode gb2_comp::hilbertNumeratorCoefficient(int deg, int &r
   if (ret != COMP_DONE) return ret;
   result = hilb_comp::coeff_of(f, deg);
   return COMP_DONE;
+}
+#endif
+
+RingElementOrNull *gb2_comp::hilbertNumerator()
+{
+  // It is possible that the computation was not completed before.
+  if (hf_numgens_gb == n_gb && hf_numgens_F == F->rank())
+    {
+      // No more is needed to be computed
+      return hf;
+    }
+
+  
+  hf = hilb_comp::hilbertNumerator(hf_matrix);
+
+  // hf is NULL if the computation was interrupted
+  if (hf == 0) return 0;
+
+  hf_numgens_F = F->rank();
+  hf_numgens_gb = n_gb;
+  
+  emit("hilbert function of ");
+  dfree(hf_matrix->rows());
+  dmatrix(hf_matrix);
+  emit("\n  is ");
+  drelem(hf);
+  emit("\n");
+
+
+  return hf;
 }
 
 //--- Obtaining matrices as output -------
@@ -1001,6 +1086,7 @@ void gb2_comp::stats() const
 	emit(o.str());
       }
 
+  dfree(F);
 }
 
 

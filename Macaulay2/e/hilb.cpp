@@ -578,16 +578,18 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
   return result;
 }
 
-#if 0
-RingElement hilb_comp::hilbertSeries(const FreeModule *F)
+RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
 {
-  const Ring *P = F->get_ring()->get_degree_ring();
-  RingElement result(P);
+  const PolynomialRing *P = F->get_ring()->get_degree_ring();
+  ring_elem f = P->zero();
+  ring_elem one = P->Ncoeffs()->one();
   for (int i=0; i<F->rank(); i++)
-    result += RingElement(P,...);
-  return result;
+    {
+      ring_elem f1 = P->term(one, F->degree(i));
+      P->add_to(f, f1);
+    }
+  return RingElement::make_raw(P, f);
 }
-#endif
 
 int hilb_comp::coeff_of(const RingElement *h, int deg)
 {

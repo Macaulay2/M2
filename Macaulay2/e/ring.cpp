@@ -283,14 +283,6 @@ void Ring::trans_from_ringelem(gbvectorHeap &H,
 /////////////////////////////////////////////////////
 
 
-#include "text_io.hpp"
-extern "C" void prelem(const Ring *R, const ring_elem f)
-{
-  buffer o;
-  R->elem_text_out(o,f);
-  emit(o.str());
-}
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

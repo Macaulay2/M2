@@ -1387,13 +1387,6 @@ void GBRing::reduce_lead_term_heap(const FreeModule *F,
 
 
 
-extern "C" void dvec(const GBRing *R, gbvector *v)
-{
-  buffer o;
-  const FreeModule *F = 0;
-  R->gbvector_text_out(o, F, v);
-  emit(o.str());
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
