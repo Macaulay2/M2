@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "M2types.h"
+#include "M2inits.h"
 
 void M2initschk(void) __attribute__ ((constructor));
 void M2initschk(void) {
@@ -10,3 +11,9 @@ void M2initschk(void) {
      }
 
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ End:
+*/
