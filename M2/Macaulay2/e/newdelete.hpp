@@ -38,7 +38,7 @@ struct our_new_delete {
   inline void operator delete [] ( void* obj ) { if (obj != NULL) GC_FREE( obj ); }
 };
 
-#include <gc/new_gc_alloc.h>
+#include <gc/gc_allocator.h>
 
 // struct gc_malloc_alloc {
 //   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL) outofmem(); return p; }

@@ -528,7 +528,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
   const Monoid *MF = R->getMonoid();
   MonomialSet H;
 
-  std::vector<poly,gc_alloc> pols;
+  std::vector<poly, gc_allocator<poly> > pols;
 
   from_M2_matrix(M,&H,pols);
   H.dump();

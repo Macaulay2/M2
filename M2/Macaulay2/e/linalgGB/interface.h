@@ -29,12 +29,12 @@ vec to_M2_vec(poly &f,
 
 void from_M2_matrix(const Matrix *m, 
 		    MonomialSet *H,
-		    std::vector<poly,gc_alloc> &result_polys);
+		    std::vector<poly,gc_allocator<poly> > &result_polys);
 
-Matrix *to_M2_matrix(std::vector<poly,gc_alloc> &polys, const FreeModule *F);
+Matrix *to_M2_matrix(std::vector<poly,gc_allocator<poly> > &polys, const FreeModule *F);
 
 void spair_testing(MonomialSet *H,
-		   std::vector<poly,gc_alloc> &result_polys);
+		   std::vector<poly,gc_allocator<poly> > &result_polys);
 
 #endif
 

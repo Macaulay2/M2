@@ -103,7 +103,7 @@ void SPairSet::insert(SPairSet::spair *p)
   p->next = heap;
   heap = p;
 }
-int SPairSet::find_new_pairs(const std::vector<gb_elem, gc_alloc> &gb,
+int SPairSet::find_new_pairs(const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
 			     bool remove_disjoints)
   // returns the number of new pairs found
 {
@@ -171,7 +171,7 @@ SPairConstructor::pre_spair *SPairConstructor::create_pre_spair(int i)
 
 SPairConstructor::SPairConstructor(MonomialSet* H0,
 				   SPairSet *S0,
-				   const std::vector<gb_elem, gc_alloc> &gb0,
+				   const std::vector<gb_elem, gc_allocator<gb_elem> > &gb0,
 				   bool remove_disjoints0)
   : H(H0),
     S(S0),
@@ -228,7 +228,7 @@ void SPairConstructor::send_spair(pre_spair *p)
 
 int SPairConstructor::construct_pairs()
 {
-  typedef vector<pre_spair *,gc_alloc> spairs;
+  typedef vector<pre_spair *,gc_allocator<pre_spair*> > spairs;
   spairs new_set;
 
   // Loop through each element of gb, and create the pre_spair
@@ -296,7 +296,7 @@ int SPairConstructor::construct_pairs()
 
 int SPairConstructor::make(MonomialSet* H0,
 			   SPairSet *S0,
-			   const std::vector<gb_elem, gc_alloc> &gb0,
+			   const std::vector<gb_elem, gc_allocator<gb_elem> > &gb0,
 			   bool remove_disjoints0)
 {
   SPairConstructor C(H0,S0,gb0,remove_disjoints0);

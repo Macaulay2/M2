@@ -25,7 +25,7 @@ QRingInfo_field::~QRingInfo_field()
 }
 
 QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
-				 const vector<Nterm *, gc_alloc> &quotients)
+				 const vector<Nterm *, gc_allocator<Nterm *> > &quotients)
   : QRingInfo(ambientR)
 // This constructs the quotient ideal, and sets the MonomialIdeal.
 // A subset of 'quotients' must be a minimal GB, and any non-minimal elements
@@ -152,7 +152,7 @@ QRingInfo_ZZ::~QRingInfo_ZZ()
 }
 
 QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
-			   const vector<Nterm *, gc_alloc> &quotients)
+			   const vector<Nterm *, gc_allocator<Nterm *> > &quotients)
   : QRingInfo(ambientR)
 {
   ringtableZZ = MonomialTableZZ::make(R->n_vars());

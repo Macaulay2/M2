@@ -62,7 +62,7 @@ public:
   };
 
 private:
-  typedef vector<spair *,gc_alloc> spairs;
+  typedef vector<spair *, gc_allocator<spair *> > spairs;
 
 
   struct SPairSet {
@@ -90,10 +90,10 @@ private:
   Ring::CoefficientType _coeff_type;
   int _n_fraction_vars;
 
-  vector<gbelem *,gc_alloc> gb; // Contains any quotient ring elements
+  vector<gbelem *, gc_allocator<gbelem *> > gb; // Contains any quotient ring elements
 
   MinimalGB *minimal_gb;
-  //vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
+  //vector<POLY, gc_allocator<POLY> > minimal_gb; // Contains NO quotient ring elements
   bool minimal_gb_valid;
 
   const MonomialTable *ringtable;    // At most one of these two will be non-NULL.
@@ -105,7 +105,7 @@ private:
   exponents EXP_; // Used in 'remainder'
 
   SPairSet S;
-  vector <gbvector *,gc_alloc> _syz;
+  vector<gbvector *, gc_allocator<gbvector *> > _syz;
 
   int _strategy;
   int _this_degree;
@@ -224,13 +224,13 @@ private:
 
   /* Making the minimal GB */
 
-  void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
-  void poly_auto_reduce_ZZ(vector<POLY,gc_alloc> &mat);
+  void poly_auto_reduce(vector<POLY, gc_allocator<POLY> > &mat);
+  void poly_auto_reduce_ZZ(vector<POLY, gc_allocator<POLY> > &mat);
 
   void remainder_by_ZZ(const FreeModule *F,
 		       const FreeModule *Fsyz,
 		       POLY &f,
-		       const vector<POLY,gc_alloc> &polys,
+		       const vector<POLY, gc_allocator<POLY> > &polys,
 		       MonomialTableZZ *T);
 
   void minimalize_gb();

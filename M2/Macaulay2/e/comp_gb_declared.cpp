@@ -33,7 +33,7 @@ GBDeclared::GBDeclared(const Matrix *m0,
   }
 
   // Now add in the elements
-  std::vector<POLY, gc_alloc> elems;
+  std::vector<POLY, gc_allocator<POLY> > elems;
   for (int i=0; i<gb->n_cols(); i++)
     {
       POLY g;

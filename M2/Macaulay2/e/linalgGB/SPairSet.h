@@ -35,7 +35,7 @@ class SPairSet : public our_new_delete
 
   ~SPairSet();
 
-  int find_new_pairs(const std::vector<gb_elem, gc_alloc> &gb,
+  int find_new_pairs(const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
 		    bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
 
@@ -84,7 +84,7 @@ class SPairConstructor : public our_new_delete
 
   SPairConstructor(MonomialSet *H0,
 		   SPairSet *S0,
-		   const std::vector<gb_elem, gc_alloc> &gb,
+		   const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
 		   bool remove_disjoints);
 
   int construct_pairs();
@@ -94,13 +94,13 @@ class SPairConstructor : public our_new_delete
   MemoryBlock B;
   SPairSet *S;
 
-  const std::vector<gb_elem, gc_alloc> &gb;
+  const std::vector<gb_elem, gc_allocator<gb_elem> > &gb;
   bool remove_disjoints;
 
  public:
   static int make(MonomialSet *H0,
 		  SPairSet *S0,
-		  const std::vector<gb_elem, gc_alloc> &gb,
+		  const std::vector<gb_elem, gc_allocator<gb_elem> > &gb,
 		  bool remove_disjoints);
 };
 

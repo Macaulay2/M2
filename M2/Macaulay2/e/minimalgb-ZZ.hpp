@@ -23,9 +23,9 @@ public:
 
   virtual ~MinimalGB_ZZ();
 
-  virtual void set_gb(vector<POLY, gc_alloc> &polys0);
+  virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0);
 
-  virtual void minimalize(const vector<POLY, gc_alloc> &polys0);
+  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0);
   // I have to decide: does this ADD to the existing set?
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);

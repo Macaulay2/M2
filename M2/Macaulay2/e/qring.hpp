@@ -15,8 +15,8 @@ class gbvector;
 
 class QRingInfo : public our_new_delete
 {
-  std::vector<Nterm *, gc_alloc> quotient_ideal;
-  std::vector<gbvector *, gc_alloc> quotient_gbvectors;
+  std::vector<Nterm *, gc_allocator<Nterm *> > quotient_ideal;
+  std::vector<gbvector *, gc_allocator<gbvector *> > quotient_gbvectors;
 
 protected:
   const PolyRing *R;
@@ -58,7 +58,7 @@ class QRingInfo_field : public QRingInfo
   void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field(const PolyRing *ambientR,
-		  const std::vector<Nterm *, gc_alloc> &quotients);
+		  const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_field();
 
   void normal_form(ring_elem &f) const;
@@ -83,7 +83,7 @@ class QRingInfo_ZZ : public QRingInfo
   bool reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_ZZ(const PolyRing *ambientR,
-	       const std::vector<Nterm *, gc_alloc> &quotients);
+	       const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_ZZ();
 
   void normal_form(ring_elem &f) const;

@@ -24,7 +24,7 @@
 Matrix::Matrix(const FreeModule *rows0, 
 	       const FreeModule *cols0,
 	       const int *degree_shift0,
-	       vector<vec,gc_alloc> & entries0)
+	       vector<vec, gc_allocator<vec> > & entries0)
 {
   _rows = const_cast<FreeModule *>(rows0);
   _cols = const_cast<FreeModule *>(cols0);

@@ -39,7 +39,7 @@ public:
 private:
     string m_name;
     ostream* m_osptr;
-    vector<Test*,gc_alloc> m_tests;
+    vector<Test*, gc_allocator<Test*> > m_tests;
     void reset();
 
     // Disallowed ops:

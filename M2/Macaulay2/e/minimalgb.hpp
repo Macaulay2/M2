@@ -16,7 +16,7 @@ protected:
   const PolynomialRing *originalR;
   const FreeModule *F;
   const FreeModule *Fsyz;
-  vector<POLY, gc_alloc> polys;
+  vector<POLY, gc_allocator<POLY> > polys;
 
   virtual bool stop_conditions_ok() { return true; }
   // If the stop conditions in _Stop are inappropriate,
@@ -77,9 +77,9 @@ public:
   // to be provided by subclasses               //
   ////////////////////////////////////////////////
 
-  virtual void set_gb(vector<POLY, gc_alloc> &polys0) = 0;
+  virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0) = 0;
 
-  virtual void minimalize(const vector<POLY, gc_alloc> &polys0) = 0;
+  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0) = 0;
   // I have to decide: does this ADD to the existing set?
 
   // Choose a minimal set of generators of the lead terms.
@@ -92,7 +92,7 @@ public:
   //   base is a frac field, # frac vars is given.
   //   ring has a local term order: reduction can not be complete...
 
-  const vector<POLY, gc_alloc> &get() const { return polys; }
+  const vector<POLY, gc_allocator<POLY> > &get() const { return polys; }
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom) = 0;
   // WARNING: this should only be used with term orders!
