@@ -597,8 +597,8 @@ document { MonomialSize,
      PARA,
      "Used as an option to ", TO "monoid", ", or when a polynomial ring
      is created.  Setting 'MonomialSize=>n' specifies that monomial exponents 
-     may be as large as 2^n - 1.  The default value is 8, allowing for exponents 
-     up to 255.",
+     may be as large as 2^n - 1.  The default value is 16, allowing for exponents 
+     up to 65535.",
      PARA,
      "See ", TO "monoid", " for details."
      }

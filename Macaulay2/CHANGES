@@ -1,7 +1,23 @@
 Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
-New in 0.8.61:
+
+New in 0.9.0:
+
+LLL in package LLL.m2 now returns a matrix, rather than a "sparse matrix".
+
+The documentation in the file gbdoc.m2 was being omitted when assembling the
+documentation.  That's been fixed.
+
+Made MonomialSize=>16 the default.  Eventually this option will go away.
+
+Changed code for 'dim M' where M is a module so that the dimension of
+the zero module is -1 instead of -infinity : this might affect only the
+developers, as a new routine for 'codim M' was installed Oct 2, 2000.
+
+-----------------------------------------------------------------------------
+
+New in 0.8.99:
 
 'currentFile' changed to 'currentFileName'
 
