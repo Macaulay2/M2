@@ -1,7 +1,6 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
-     	symbol reduceHilbert,
         symbol packagePrefixPath,
 	symbol backtrace,
 	symbol backupFileRegexp,
@@ -38,6 +37,8 @@ exportMutable (
 	)
 
 export (
+        symbol symlink,
+     	symbol reduceHilbert,
 	symbol Date,
 	symbol HomePage,
 	symbol Author,
@@ -943,7 +944,6 @@ export (
 	symbol regularity,
 	symbol relations,
 	symbol relativizeFilename,
-	symbol relativizeFilename2,
 	symbol remainder',
 	symbol remainder,
 	symbol remove,
