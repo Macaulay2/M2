@@ -268,14 +268,31 @@ document { notImplemented,
 
 document { errorDepth,
      Headline => "set the error printing depth",
-     TT "errorDepth i", " -- sets the error depth to i, which should be
+     TT "errorDepth i", " -- sets the error depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
+     BR,
+     TT "errorDepth()", " -- returns the current error depth.",
      PARA,
      "During the backtrace after an error message, a position in interpreted
-     code is displayed only if the value of ", TO "reloaded", " was at least
-     as large as the error depth is now.  Typically, the error depth is set
-     to 1 so that messages from code pre-interpreted and reloaded with 
-     ", TO "loaddata", " will not appear in the backtrace."
+     code is displayed only if the load depth was at least as large at the
+     time the code was parsed as the error depth is now.  Typically, the
+     error depth is set so that messages from code pre-interpreted and
+     reloaded with ", TO "loaddata", " will not appear in the backtrace.",
+     SEEALSO { "loadDepth" }
+     }
+
+document { loadDepth,
+     Headline => "set the load depth",
+     TT "loadDepth i", " -- sets the load depth to ", TT "i", ", which should be
+     a small integer, returning the old value.",
+     BR,
+     TT "loadDepth()", " -- returns the current load depth.",
+     PARA,
+     "During the backtrace after an load message, a position in interpreted
+     code is displayed only if the load depth was at least as large at the
+     time the code was parsed as the error depth is now.  The load depth 
+     is incremented each time ", TO "loaddata", " is run.",
+     SEEALSO { "errorDepth" }
      }
 
 document { benchmark,

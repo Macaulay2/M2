@@ -260,3 +260,5 @@ addStartFunction(
 	       );
 	  )
      )
+
+addStartFunction( () -> ( loadDepth 1; errorDepth 1; ) )

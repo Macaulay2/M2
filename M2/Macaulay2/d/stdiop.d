@@ -14,8 +14,8 @@ use strings;
 use stdio;
 use ctype;
 
-export Position := {filename:string, line:ushort, column:ushort, reloaded:uchar};
-export dummyPosition := Position("--dummy file name--",ushort(0),ushort(0),uchar(reloaded));
+export Position := {filename:string, line:ushort, column:ushort, LoadDepth:uchar};
+export dummyPosition := Position("--dummy file name--",ushort(0),ushort(0),uchar(LoadDepth));
 shorten(s:string):string := (
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
      while true do (
@@ -100,10 +100,10 @@ export (o:file) << (p:(null or Position)):file := (
      when p is null do o is w:Position do o << w
      );
 export copy(p:Position):Position := Position(
-     p.filename, p.line, p.column, uchar(reloaded));
+     p.filename, p.line, p.column, uchar(LoadDepth));
 export PosFile := {file:file, lastchar:int, pos:Position};
 export makePosFile(o:file):PosFile := PosFile(o, 0,
-     Position(o.filename, ushort(1), ushort(0), uchar(reloaded)));
+     Position(o.filename, ushort(1), ushort(0), uchar(LoadDepth)));
 export peek(o:PosFile, offset:int):int := (
      i := 0;
      prevchar := o.lastchar;
@@ -131,7 +131,7 @@ export openPosIn(filename:string):(PosFile or errmsg) := (
 		    if isAbsolutePath(f.filename)
 		    then f.filename
 		    else getcwd() + f.filename,
-		    ushort(1),ushort(0),uchar(reloaded))))
+		    ushort(1),ushort(0),uchar(LoadDepth))))
      is s:errmsg do (PosFile or errmsg)(s)
      );
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
