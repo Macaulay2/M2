@@ -206,8 +206,11 @@ homogenize(Vector, RingElement) := Vector => (f,n) -> (
     homogenize(f,n,wts)
     )
 
+coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
+coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
+coefficients(Sequence, RingElement) := (v,m) -> coefficients(toList v,matrix{{m}})
 coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
-
+coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
 coefficients(List, Matrix) := (vrs,f) -> (
      m := raw f;
      vrs = splice vrs;
@@ -218,12 +221,21 @@ coefficients(List, Matrix) := (vrs,f) -> (
      if any(vrs,i -> i === null) then error "expected a list of variables";
      monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(vrs, m)));
      (monoms,map(source monoms,source f,rawCoefficients(vrs,raw monoms,m))))
-coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
 
-coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
-coefficients(Sequence, RingElement) := (v,m) -> coefficients(toList v,matrix{{m}})
-
-coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
+monomials(Matrix) := monomials(RingElement) := (m) -> monomials(toList (0 .. numgens ring m - 1), m)
+monomials(List, RingElement) := (v,m) -> monomials(v,matrix{{m}})
+monomials(Sequence, RingElement) := (v,m) -> monomials(toList v,matrix{{m}})
+monomials(ZZ, Matrix) := monomials(ZZ, RingElement) := (v,m) -> monomials({v},m)
+monomials(Sequence, Matrix) := (vrs,f) -> monomials(toList vrs,f)
+monomials(List, Matrix) := (vrs,f) -> (
+     m := raw f;
+     vrs = splice vrs;
+     types := unique apply(vrs,class);
+     if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
+     R := first types;
+     if R =!= ZZ then vrs = index \ vrs;
+     if any(vrs,i -> i === null) then error "expected a list of variables";
+     map(target f,,rawMonomials(vrs, m)))
 
 terms RingElement := f -> (
      (m,c) := flatten \ entries \ coefficients f;
