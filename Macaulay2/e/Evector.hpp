@@ -204,9 +204,9 @@ public:
   // I/O
   void bin_out(buffer &o) const;
   void text_out(buffer &o) const;
-  ostream &binary_out(ostream &o) const;
+  // ostream &binary_out(ostream &o) const;
 
-  static EVector elem_binary_in(istream &i);
+  // static EVector elem_binary_in(istream &i);
 
   /////////////////////////////////////////
   // Iterator over elements of a vector ///

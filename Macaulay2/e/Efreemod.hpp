@@ -37,7 +37,7 @@ public:
   
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
-  static EFreeModule *binary_in(istream &i);
+  // static EFreeModule *binary_in(istream &i);
 
   const ERing *getCoefficientRing() const
     { return R->getCoefficientRing(); }

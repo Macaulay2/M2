@@ -5,7 +5,7 @@
 // to keep the I/O stream use localized to one file, and to keep the
 // magic numbers used also restricted to one file.
 
-#include <iostream.h>
+//#include <iostream.h>
 #include "Eio.hpp"
 #include "EZZp.hpp"
 #include "Emonorder.hpp"
@@ -21,6 +21,7 @@ extern int p_one;
 extern int p_parens;
 extern int p_plus;
 
+#if 0
 static void bin_int_in(istream &i, int &a)
 {
   i >> a;
@@ -32,7 +33,7 @@ static bool get_magic_number(istream &i, int magic)
   bin_int_in(i,a);
   return a == magic;
 }
-
+#endif
 /////////////////////
 // EZZ //////////////
 /////////////////////
@@ -46,14 +47,14 @@ void EZZ::bin_out(buffer &o) const
 {
   bin_int_out(o, MAGIC_ZZ);
 }
-
+#if 0
 EZZ *EZZ::binary_in(istream &i)
 {
   if (!get_magic_number(i,MAGIC_ZZ))
     return 0;
   return new EZZ();
 }
-
+#endif
 /////////////////////
 // EZZ elements /////
 /////////////////////
@@ -90,13 +91,14 @@ void EZZ::elem_bin_out(buffer &o, ZZ a) const
   bin_int_out(o, a);  // CHANGE WHEN element can be infinite precision
 }
 
+#if 0
 ZZ EZZ::elem_binary_in(istream &i) const
 {
   int a;
   bin_int_in(i,a);
   return _from_int(a);
 }
-
+#endif
 /////////////////////
 // EZZp /////////////
 /////////////////////
@@ -111,7 +113,7 @@ void EZZp::bin_out(buffer &o) const
   bin_int_out(o, MAGIC_ZZP);
   bin_int_out(o, P);
 }
-
+#if 0
 EZZp *EZZp::binary_in(istream &i)
 {
   int p;
@@ -121,7 +123,7 @@ EZZp *EZZp::binary_in(istream &i)
   // CHECK: that p is a proper value (perhaps also check that it is prime?)
   return EZZp::make(p);
 }
-
+#endif
 /////////////////////
 // EZZp elements /////
 /////////////////////
@@ -148,18 +150,18 @@ void EZZp::elem_bin_out(buffer &o, int a) const
   if (a > P/2) a -= P;
   bin_int_out(o, a);
 }
-
+#if 0
 int EZZp::elem_binary_in(istream &i) const
 {
   int a;
   bin_int_in(i,a);
   return _from_int(a);
 }
-
+#endif
 /////////////////////
 // Monomial orders //
 /////////////////////
-
+#if 0
 static bool check_mon_order(const int *moncodes)
 {
   int j, m;
@@ -221,7 +223,7 @@ static bool check_mon_order(const int *moncodes)
   if (total_nvars != 0) return false;
   return true;
 }
-
+#endif
 EMonomialOrder *EMonomialOrder::get_binary(const int *moncodes)
 {
   int m,i,j;
@@ -350,7 +352,7 @@ void EMonomialOrder::bin_out(buffer &o) const
     bin_int_out(o, moncodes[i]);
   delete [] moncodes;
 }
-
+#if 0
 EMonomialOrder *EMonomialOrder::binary_in(istream &i)
 {
   int len;
@@ -371,7 +373,7 @@ EMonomialOrder *EMonomialOrder::binary_in(istream &i)
   delete [] moncodes;
   return result;
 }
-
+#endif
 ////////////////////////
 // Commutative monoid //
 ////////////////////////
@@ -391,7 +393,7 @@ void ECommMonoid::bin_out(buffer &) const
 {
   // MES: write
 }
-
+#if 0
 ECommMonoid *ECommMonoid::binary_in(istream &i)
 {
   // MES: write
@@ -399,7 +401,7 @@ ECommMonoid *ECommMonoid::binary_in(istream &i)
     return 0;
   return 0;
 }
-
+#endif
 ///////////////////////////
 // NonCommutative monoid //
 ///////////////////////////
@@ -461,7 +463,7 @@ void ECommMonoid::elem_bin_out(buffer &o, const monomial *a) const
   for (int i=0; i<vp.length(); i++)
     bin_int_out(o, vp[i]);
 }
-
+#if 0
 const monomial *ECommMonoid::elem_binary_in(istream &i) const
 {
   int j, len, v, e;
@@ -476,7 +478,7 @@ const monomial *ECommMonoid::elem_binary_in(istream &i) const
     }
   return monomial_from_variable_exponent_pairs(vp);
 }
-
+#endif
 /////////////////////////////////
 // (Non-Commutative) monomials //
 /////////////////////////////////
@@ -507,7 +509,7 @@ void ENCMonoid::elem_bin_out(buffer &o, const monomial *a) const
   for (int i=0; i<vp.length(); i++)
     bin_int_out(o, vp[i]);
 }
-
+#if 0
 const monomial *ENCMonoid::elem_binary_in(istream &i) const
 {
   int j, len, v, e;
@@ -522,7 +524,7 @@ const monomial *ENCMonoid::elem_binary_in(istream &i) const
     }
   return monomial_from_variable_exponent_pairs(vp);
 }
-
+#endif
 //////////////////////
 // Polynomial rings //
 //////////////////////
@@ -540,6 +542,7 @@ void ECommPolynomialRing::bin_out(buffer &o) const
   M->bin_out(o);
 }
 
+#if 0
 ECommPolynomialRing *ECommPolynomialRing::binary_in(istream &i)
 {
 #if 0
@@ -557,7 +560,7 @@ ECommPolynomialRing *ECommPolynomialRing::binary_in(istream &i)
 #endif
   return 0;
 }
-
+#endif
 //////////////////////
 // EWeylAlgebra ///////
 //////////////////////
@@ -583,6 +586,7 @@ void EWeylAlgebra::bin_out(buffer &o) const
   M->bin_out(o);
 }
 
+#if 0
 EWeylAlgebra *EWeylAlgebra::binary_in(istream &i)
 {
 #if 0
@@ -600,7 +604,7 @@ EWeylAlgebra *EWeylAlgebra::binary_in(istream &i)
 #endif
   return 0;
 }
-
+#endif
 ///////////////////////////////////
 // ESkewCommPolynomialRing //
 ///////////////////////////////////

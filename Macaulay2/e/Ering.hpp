@@ -184,7 +184,7 @@ public:
 
   void elem_text_out(buffer &o, const epoly *a) const;
   void elem_bin_out(buffer &o, const epoly *a) const;/*TODO*/
-  epoly *elem_binary_in(istream &i) const;
+  // epoly *elem_binary_in(istream &i) const;
     
   
 /////////////////////////////
@@ -360,7 +360,7 @@ public:
 
   static const ECommPolynomialRing *getTrivialRing();
                           
-  static ECommPolynomialRing *binary_in(istream &i);
+  // static ECommPolynomialRing *binary_in(istream &i);
 
   virtual const ECommPolynomialRing *toCommPolynomialRing() const { return this; }
   virtual const EWeylAlgebra *toEWeylAlgebra() const { return 0; }
@@ -459,7 +459,7 @@ public:
 
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
-  static EWeylAlgebra *binary_in(istream &i);
+  // static EWeylAlgebra *binary_in(istream &i);
 
   virtual const EWeylAlgebra *toEWeylAlgebra() const { return this; }
 

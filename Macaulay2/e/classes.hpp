@@ -85,6 +85,7 @@ enum class_identifier {
   CLASS_EVector,
   CLASS_EMatrix,
   CLASS_ERingMap,
+  CLASS_EGroebnerComputation,
 
 #if defined(ARING)
   CLASS_APolynomialRing,
@@ -134,6 +135,7 @@ enum type_identifier {
     TY_EFreeModule,
     TY_EMatrix,
     TY_ERingMap,
+    TY_EGroebnerComputation,
 
     TY_SparseMutableMatrix,
     TY_MatrixComputation,
@@ -256,6 +258,6 @@ class EFreeModule;
 class EVector;
 class ERingMap;
 class EMatrix;
-class EGB;
+class EGroebnerComputation;
 #endif
 

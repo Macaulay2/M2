@@ -36,7 +36,7 @@ public:
 
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
-  static EFreeModule *binary_in(istream &i);
+  // static EFreeModule *binary_in(istream &i);
 
   virtual ERingMap * cast_to_ERingMap() { return this; }
   virtual const ERingMap * cast_to_ERingmap() const { return this; }
