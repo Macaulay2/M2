@@ -168,7 +168,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       );
 	  if R.?Adjust then deg = R.Adjust deg;
 	  f := m.RawMatrix * n.RawMatrix;
-	  f = rawMatrix(rawTarget f, rawSource f, deg, f);
+	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, false);
 	  newMatrix(M,N,reduce(M,f))))
 
 Matrix ^ ZZ := Matrix => (f,n) -> (

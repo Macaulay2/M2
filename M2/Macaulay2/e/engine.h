@@ -1047,7 +1047,7 @@ extern "C" {
      of 'm' which have their lead term in row 'n'.  If 'n' is out of range,
      or the ring is not allowed, NULL is returned. */
 
-  const Matrix *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I); /* drg: connected rawMatrix*/
+  const Matrix *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I); /* drg: connected rawMonomialIdealToMatrix */
   /* Return a one row matrix over the base ring of I consisting
      of the monomials in I */
 
