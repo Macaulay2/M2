@@ -27,12 +27,15 @@ CFLAGS += -O3
 # CFLAGS += -fomit-frame-pointer
 CXXFLAGS := $(CFLAGS)
 LDFLAGS =  -g -L/capybara/lib
-benchmark : factor factor.poly
+LDFLAGS += -Wl,-Map,mapfile
+benchmark : factor factor.poly mapfile.demangled
 	time ./factor < @srcdir@/factor.poly | tee factor.out
 	fgrep -s '( (x^2-y*x-13*z^2*x+y^4+z^7+12)^3, (x+3*y-14)^15 )' factor.out >/dev/null
 factor.o factor-init.o : factor.h
-factor : factor.o factor-init.o factor-init1.o 
-	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf -lntl -lgmp -lgc -lm factor-init1.o -o "$@"
+mapfile factor : factor.o factor-init.o factor-init1.o 
+	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf -lcfmem -lntl -lgmp -lgc -lm factor-init1.o -o "$@"
+mapfile.demangled : mapfile
+	demangle <$< >$@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine"

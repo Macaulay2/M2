@@ -23,7 +23,7 @@ extern "C" void IM2_initialize()
   factory_setup();
 }
 
-#if NEWNEW
+#if NEW_USES_GC
 
 void* operator new( size_t size ) {
   void *p = GC_MALLOC( size );
