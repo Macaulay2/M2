@@ -139,18 +139,19 @@ makeit1 := (options) -> (
      M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
      internalDegrees := apply(externalDegrees,options.Adjust);
      order := transpose internalDegrees;
-     primaryDegrees := if #order === 0 then toList(n:1) else order#0;
-     if not all(primaryDegrees, d -> d>0) then (
-	  if all(primaryDegrees, d -> d<0) then (
-	       adjust := if options.Adjust === identity then minus else minus @@ options.Adjust;
-	       repair := if options.Repair === identity then minus else minus @@ options.Repair;
-	       options = new OptionTable from join ( pairs options, {Adjust => adjust, Repair => repair} );
-	       internalDegrees = apply(externalDegrees,options.Adjust);
-	       order = transpose internalDegrees;
-	       primaryDegrees = order#0;
-	       )
-	  else error "first component of each degree should be positive" -- this error message will go away
-	  );
+--     primaryDegrees := if #order === 0 then toList(n:1) else order#0;
+--     if not all(primaryDegrees, d -> d>0) then (
+--	  if all(primaryDegrees, d -> d<0) then (
+--	       -- I wonder whether this attempt at an easy adjustment was ever used
+--	       adjust := if options.Adjust === identity then minus else minus @@ options.Adjust;
+--	       repair := if options.Repair === identity then minus else minus @@ options.Repair;
+--	       options = new OptionTable from join ( pairs options, {Adjust => adjust, Repair => repair} );
+--	       internalDegrees = apply(externalDegrees,options.Adjust);
+--	       order = transpose internalDegrees;
+--	       primaryDegrees = order#0;
+--	       )
+--	  else error "first component of each degree should be positive" -- this error message will go away
+--	  );
      variableOrder := toList (0 .. n-1);
      wts := splice flatten options.Weights;
      if not all(wts,i -> class i === ZZ)

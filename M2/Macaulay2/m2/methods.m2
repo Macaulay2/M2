@@ -151,7 +151,7 @@ status = method (
 
 basis = method(
      Options => new OptionTable from {
-	  
+	  Heft => null,
      	  })
 
 mopts := Options => {
