@@ -209,8 +209,7 @@ document { "Reading the Documentation",
      matrices, then you might get there by clicking first on ", TO "Thing", ",
      then click on ", TO "Type", ", and then on ", TO "Matrix", ".  The user's
      guide is organized more according to mathematical topics that might occur to
-     an initial user, and might be a good place to look first, except that it's
-     not completely written yet.",
+     an initial user, and might be a good place to look first.",
      PARA,
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT "Macaulay2/html", " contains the documentation in html
@@ -517,12 +516,6 @@ document { "debugging",
 	  TO "buckets",
 	  TO "seeParsing"
 	  }
-     }
-
-document { "subclass",
-     "We say that a class X is a subclass of a class P if P is X, or
-     P is the ", TO "parent", " of X, or P is the parent of the parent
-     of X, and so on.  See also ", TO "classes and types", "."
      }
 
 document { "system",

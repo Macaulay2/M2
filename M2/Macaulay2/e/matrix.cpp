@@ -291,9 +291,9 @@ Matrix Matrix::flip(const FreeModule *F, const FreeModule *G)
   const FreeModule *K = G->tensor(F);
   Matrix result(K, H);
   int next = 0;
-  for (int g=0; g<G->rank(); g++)
-    for (int f=0; f<F->rank(); f++)
-      result[next++] = H->e_sub_i(f * G->rank() + g);
+  for (int f=0; f<F->rank(); f++)
+    for (int g=0; g<G->rank(); g++)
+      result[next++] = H->e_sub_i(f + g * F->rank());
   return result;
 }
 

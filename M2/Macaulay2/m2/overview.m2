@@ -11,6 +11,7 @@ document { "Mathematical Overview",
 	  TO "ideals and modules",
 	  TO "chain complexes",
 	  TO "varieties",
+	  TO "computations"
 	  }
      }
 
@@ -1022,7 +1023,7 @@ document { "manipulating matrices",
 
 document { "computations",
      Headline => "an overview",
-     "In this section we present an overview of major the computations.",
+     "In this section we present an overview of the major computations.",
      MENU {
 	  TO "Groebner bases",
 	  TO "computing Groebner bases",

@@ -298,8 +298,9 @@ Expression == Expression    := (x,y) -> new Equation from {x,y}
 Holder     == Holder        := (x,y) -> new Equation from {x#0,y#0}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
-ZeroExpression + Holder     :=
 ZeroExpression + Expression := (x,y) -> y
+Sum + ZeroExpression     :=
+Holder + ZeroExpression     :=
 Expression + ZeroExpression := (x,y) -> x
 Sum + Sum                   := join
 Sum + Expression            := append
@@ -317,11 +318,12 @@ Expression + Thing          := (x,y) -> x + expression y
 Expression - Expression     := (x,y) -> x + -y
 Expression - Thing          := (x,y) -> x - expression y
      Thing - Expression     := (x,y) -> expression x - y
+Product    * OneExpression  :=
 Expression * OneExpression  :=
 Holder     * OneExpression  := (x,y) -> x
-OneExpression * Expression  :=
-OneExpression * Holder      := (x,y) -> y
+OneExpression * Expression  := (x,y) -> y
 Holder     * ZeroExpression :=
+Product    * ZeroExpression :=
 Expression * ZeroExpression := (x,y) -> y
 ZeroExpression * Holder     :=
 ZeroExpression * Expression := (x,y) -> x

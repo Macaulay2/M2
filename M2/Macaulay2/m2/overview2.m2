@@ -559,11 +559,11 @@ document { "Language and Programming Overview",
 	  TO "functions",
      	  TO "basic types",
 	  TO "control structures",
-	  TO "input and output",
 	  TO "classes and types",
+	  TO "input and output",
+	  TO "combinatorial functions",
 	  TO "system",
 	  TO "debugging",
-	  TO "classes and types",
 	  TO "operators",
 	  TO "executing other programs",
 	  }
@@ -635,10 +635,10 @@ document { "classes and types",
      Headline => "an overview",
      MENU {
 	  TO "what a class is",
-	  TO "binary methods",
 	  TO "installing methods",
-	  TO "inheritance from parents",
+	  TO "binary methods",
 	  TO "making new classes",
+	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
 	  (
 	       "method functions",
@@ -1911,32 +1911,84 @@ document { "using sockets",
      }
 
 document { "making new classes",
-     "This node has not been written yet."
+     "All new classes are made with the operator ", TO "new", ".
+     You may choose to implement the instances of your new class
+     either as basic lists or as hash tables, or you may even
+     base it on a subclass of ", TO "BasicList", " or a subclass of 
+     ", TO "HashTable", ", if you find a class that has some
+     of the methods you need already implemented.",
+     PARA,
+     "As an example, we may wish to implement quaternions as lists
+     of four real numbers.  We know that lists already have a method
+     for addition which treats them as vectors, and we could use
+     the same code for addition of quaternions.",
+     EXAMPLE {
+	  "Qu = new Type of List",
+	  "w = new Qu from {1,2,3,4}",
+	  "w+w"
+	  },
+     "Now all we have to do is to install a method for multiplying
+     quaternions.",
+     EXAMPLE {
+	  "Qu * Qu := (x,y) -> new Qu from { 
+	  x#0*y#0 - x#1*y#1 - x#2*y#2 - x#3*y#3,
+	  x#0*y#1 + x#1*y#0 + x#2*y#3 - x#3*y#2,
+	  x#0*y#2 + x#2*y#0 + x#3*y#1 - x#1*y#3,
+	  x#0*y#3 + x#3*y#0 + x#1*y#2 - x#2*y#1
+	  };",
+     	  "w*w"
+	  }
      }
 
 document { "making a new method function",
-     "This node has not been written yet."
+     "The function ", TO "method", " can be used to make new functions
+     which execute different bits of code depending on the types
+     of the arguments presented.  Our system depends heavily on
+     such functions.",
+     EXAMPLE "f = method()",
+     "We can install a method to be used when ", TT "f", " is applied to a string
+     as follows.",
+     EXAMPLE {
+	  "f String := s -> s|s;",
+	  ///f ".abcd."///
+	  },
+     "We can check for the types of more than one argument, too.",
+     EXAMPLE {
+	  "f(ZZ,String) := (n,s) -> concatenate (n:s);",
+	  ///f(5,".abcd.")///,
+	  }
      }
 
 document { "what a class is",
      "In Macaulay 2 the behavior of a function depends heavily on the types
      of the arguments it's presented with.  For example, the expression ", TT "x+y", "
-     means addition if ", TT "x", " and ", TT "y", " are integers, but it
-     means union if ", TT "x", " and ", TT "y", " are sets.  To implement this
-     in a clean fashion, we decided to store the code for doing things to sets
-     in something called ", TO "Set", " and to store the code for doing things to integers
+     means the sum if ", TT "x", " and ", TT "y", " are integers, but it
+     means the union if ", TT "x", " and ", TT "y", " are sets.  To implement this
+     in a clean fashion, we store the code for doing things with sets
+     in something called ", TO "Set", " and store the code for doing things with integers
      in something called ", TO "ZZ", ".  We say that each integer is an ", TO "instance", "
-     of ", TO "ZZ", ", and ", TO "ZZ", " is the ", TO "class", " (or type) of each integer.",
+     of ", TO "ZZ", ", and ", TO "ZZ", " is the ", TO "class", " (or type) of each 
+     integer.  The function ", TO "class", " provides the class of an object, and
+     the function ", TO "instance", " tells whether an given object is an
+     instance of a given class, or a subclass of it, and so on.",
      PARA,
      EXAMPLE {
 	  "class 33",
-	  "instance(33,ZZ)"
+	  "instance(33,ZZ)",
+	  "instance(33,String)"
 	  },
      "The corresponding mathematical idea is that ", TT "ZZ", " is the set of
      all integers.",
      PARA,
      "The class of all classes or types is called ", TO "Type", ".",
-     EXAMPLE "instance(ZZ,Type)",
+     EXAMPLE {
+	  "instance(ZZ,Type)",
+	  "instance(33,Type)",
+	  },
+     "The class of all objects in the system is ", TO "Thing", ".",
+     EXAMPLE {
+	  "instance(33,Thing)",
+	  },
      "Everything has a class, and every class has a ", TO "parent", ".  The 
      parent class represents a broader class of objects, and is used to
      contain code that applies to the broader class.  For example, ", TO "ZZ", "
@@ -1989,7 +2041,7 @@ document { "binary methods",
      code for the operation at hand.",
      PARA,
      "The method installed by the code above is automatically inherited by 
-     ", TO "subclass", "es of ", TT "X", " and ", TT "Y", ".  Here is a brief
+     subclasses of ", TT "X", " and ", TT "Y", ".  Here is a brief
      description of the way this works.  Suppose ", TT "X", " is the 
      ", TO "parent", " of ", TT "P", " and ", TT "Y", " is the parent of X.  When 
      a sum ", TT "p+q", " is evaluated where the class of ", TT "p", " is 
@@ -2041,7 +2093,7 @@ document { "installing methods",
      suitable code for the operation at hand.",
      PARA,
      "The method installed by the code above is automatically inherited by
-     ", TO "subclass", "es of X.  Here is a brief description of the way 
+     subclasses of X.  Here is a brief description of the way 
      this works.  Suppose ", TT "X", " is the ", TO "parent", " of ", TT "P", ".  When an expression
      ", TT "-p", " is to be evaluated, where the class of ", TT "p", " is ", TT "P", ", then the method for
      ", TT "-P", " is applied, unless there isn't one, in which case the method for
@@ -2100,7 +2152,7 @@ document { "inheritance from parents",
      EXAMPLE "lookup(symbol -, X) === null",
      "We install and test a new method as described in ", TT "installing methods", ".",
      EXAMPLE {
-	  "- X := t -> apply(t,i -> -i)",
+	  "- X := t -> apply(t,i -> -i);",
 	  "- x"
 	  },
      "This method will apply automatically to subclasses of ", TT "X", ",
@@ -2121,8 +2173,8 @@ document { "inheritance from parents",
      be applied to evaluate the expression ", TT "y+z", ", and see
      what happens.",
      EXAMPLE {
-	  "Y + X := (a,b) -> XY",
-	  "X + Z := (a,b) -> ZX",
+	  "Y + X := (a,b) -> XY;",
+	  "X + Z := (a,b) -> ZX;",
 	  "y + z"
 	  },
      "The result is the symbol ", TT "XY", ".  The reason is that
@@ -2185,5 +2237,41 @@ document { "method functions with optional arguments",
      }
 
 document { "printing and formatting for new classes",
-     "This node has not been written yet."
+     "After making a new type, it's desirable to install methods
+     for displaying the instances of the new type in various formats.",
+     EXAMPLE {
+	  "Qu = new Type of List",
+	  "w = new Qu from {1,-2,0,4}",
+	  },
+     "For example, it's desirable to display the quaternion above
+     so it looks like a quaternion.  One way to achieve this is to install
+     first a method for creating an ", TO "Expression", " from a
+     quaternion, since there are methods already installed for converting
+     expressions to common forms of output, such as to nets, which are
+     used most commonly.",
+     EXAMPLE {
+	  ///expression Qu := z -> (
+	       expression z#0 +
+	       expression z#1 * expression "I" +
+	       expression z#2 * expression "J" +
+	       expression z#3 * expression "K");///,
+	  ///net Qu := z -> net expression z;///,
+	  ///toString Qu := z -> toString expression z;///,
+	  ///tex Qu := z -> tex expression z;///,
+	  ///html Qu := z -> html expression z;///,
+	  "w",
+	  "toString w",
+	  "tex w",
+	  "html w",
+     	  },
+     "Of course, now that we've decided that there should be certain
+     quaternions called ", TT "I", ", ", TT "J", ", and ", TT "K", ",
+     perhaps we should install them",
+     EXAMPLE {
+	  "I = new Qu from {0,1,0,0}",
+	  "J = new Qu from {0,0,1,0}",
+	  "K = new Qu from {0,0,0,1}",
+	  "2*I + 5*J",
+	  "peek oo"
+	  }
      }

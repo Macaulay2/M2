@@ -113,7 +113,7 @@ document { (diff,Matrix,Matrix),
 	  },
      "The most common usage is when ", TT "m", " has one column and ", TT "n", "
      has one row.  In this case the result ", TT "h", " is a matrix whose
-     (i,j)-th entry is the result of differentiating ", TT {"n", SUB "j"}, " by the
+     ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, " by the
      differential operator corresponding to ", TT {"m", SUB "i"}, ".",
      EXAMPLE {
 	  "m = matrix {{a,b,c,d}}",

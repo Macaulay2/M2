@@ -448,7 +448,7 @@ diff(Matrix)         := m -> diff(vars ring m, m)
 
 contract (Matrix, Matrix) := Matrix => (f,g) -> (BinaryMatrixOperation ggcontract)(f,g)
 contract(RingElement, RingElement) := RingElement => (f,g) -> (
-     (contract(matrix{{f}},matrix{{g}}))#(0,0)
+     (contract(matrix{{f}},matrix{{g}}))_(0,0)
      )
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
 contract(RingElement, Matrix) := (f,m) -> contract(matrix{{f}},m)
@@ -457,6 +457,10 @@ contract(RingElement, Vector) := (f,v) -> contract(matrix{{f}},transpose matrix{
 contract(Vector, Vector) := (v,w) -> contract(matrix{v}, transpose matrix{w})
 contract(Matrix, Vector) := (m,w) -> contract(m,transpose matrix {w})
 contract(Vector, Matrix) := (v,m) -> contract(matrix {v}, m)
+
+diff'(Matrix, Matrix) := Matrix => (m,n) -> (
+     flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n)
+     )
 
 contract'(Matrix, Matrix) := Matrix => (m,n) -> (
      flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n)
