@@ -547,6 +547,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
 		  precedence List := x -> 70
 		 precedence Array := x -> 70
 		precedence Symbol := x -> 70
+		   precedence Net := x -> 70
 		precedence String := x -> 70
 	    precedence Expression := x -> 70    -- the default
 		precedence Holder := x -> 70    -- used to be precedence x#0
@@ -697,7 +698,7 @@ net Minus := x -> (
      term := x#0;
      horizontalJoin if precedence term < precedence x 
      then ("-", "(", net term, ")")
-     else ("- ", net term))
+     else (if class term === Divide then "- " else "-", net term))
 
 dashes1 := n -> concatenate (n:"-")
 dashes2 := memoize dashes1

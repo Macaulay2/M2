@@ -119,7 +119,9 @@ monoidDefaults = if OLDENGINE then (
 	  MonomialSize => 8,
 	  SkewCommutative => false,
 	  VariableOrder => null,		  -- not implemented yet
-	  WeylAlgebra => {}
+	  WeylAlgebra => {},
+	  Adjust => identity,
+	  Repair => identity
 	  }
      ) else ( 
      new OptionTable from {
@@ -133,7 +135,9 @@ monoidDefaults = if OLDENGINE then (
 	  MonomialSize => 8,
 	  SkewCommutative => false,
 	  VariableOrder => null,		  -- not implemented yet
-	  WeylAlgebra => {}
+	  WeylAlgebra => {},
+	  Adjust => identity,
+	  Repair => identity
 	  }
      )
 

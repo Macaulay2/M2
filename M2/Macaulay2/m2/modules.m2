@@ -241,7 +241,10 @@ isHomogeneous Vector := x -> (
      eePopBool())
 degree Vector := x -> (
      sendgg(ggPush x, ggdegree);
-     eePopIntarray())
+     d := eePopIntarray();
+     R := ring x;
+     if R.?Repair then R.Repair d else d
+     )
 Vector == Vector := (x,y) -> (
      sendgg(ggPush x, ggPush y, ggisequal);
      eePopBool())
@@ -326,6 +329,7 @@ Ring ^ List := Module => (
 	  degs = - splice degs;
 	  if R.?Engine and R.Engine then (
 	       ndegs := degreeLength R;
+	       if R.?Adjust then degs = apply(degs,R.Adjust);
 	       fdegs := flatten degs;
 	       if #degs === 0 then ()
 	       else if all(degs,i -> class i === ZZ) then (
@@ -344,19 +348,12 @@ Ring ^ List := Module => (
 	       if # fdegs === 0 
 	       then (
 		    n := #degs;
-		    -- if R#?(symbol ^,n)
-		    -- then R#(symbol ^,n)
-		    -- else R#(symbol ^,n) = 
-		    (
-			 sendgg( ggPush R, ggPush n, ggfree);
-	       		 new Module from R))
+		    sendgg( ggPush R, ggPush n, ggfree);
+		    new Module from R)
 	       else (
-		    -- if R#?(symbol ^, fdegs)
-		    -- then R#(symbol ^, fdegs)
-		    -- else R#(symbol ^, fdegs) = 
-		    (
-			 sendgg(ggPush R, ggPush fdegs, ggfree);
-	       		 new Module from R)))
+		    sendgg(ggPush R, ggPush fdegs, ggfree);
+		    new Module from R)
+	       )
 	  else error "non-engine free modules with degrees not implemented yet"
 	  ))
 
@@ -369,12 +366,8 @@ Ring ^ ZZ := Module => (
      (R,n) -> (
 	  if R.?Engine and R.Engine
 	  then (
-	       -- if R#?(symbol ^,n) 
-	       -- then R#(symbol ^,n)
-	       -- else R#(symbol ^,n) = 
-	       (
-	       	    sendgg(ggPush R, ggPush n, ggfree);
-     	       	    new Module from R)
+	       sendgg(ggPush R, ggPush n, ggfree);
+	       new Module from R
 	       )
 	  else notImplemented()
 	  )
@@ -444,7 +437,7 @@ Module.AfterPrint = M -> (
      n := rank ambient M;
      << "o" << lineNumber() << " : "
      << ring M
-     << " - module";
+     << "-module";
      if M.?generators then
      if M.?relations then << ", subquotient of " << ambient M
      else << ", submodule of " << ambient M

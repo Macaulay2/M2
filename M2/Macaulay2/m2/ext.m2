@@ -88,6 +88,10 @@ Ext(Module,Module) := Module => (N,M) -> (
   then error "expected modules over the same ring";
   if not isCommutative R
   then error "'Ext' not implemented yet for noncommutative rings.";
+  if not isHomogeneous R
+  then error "'Ext' received modules over an inhomogeneous ring";
+  if not isHomogeneous M or not isHomogeneous N
+  then error "'Ext' received an inhomogeneous module";
   if M == 0 then R^0
   else if N == 0 then R^0
   else (
@@ -112,7 +116,7 @@ Ext(Module,Module) := Module => (N,M) -> (
     -- the first component of each degree is positive.
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
     adjust := v -> {- fudge * v#0 + v#1, - v#0};
-    abjust := w -> {- w#1, - fudge * w#1 + w#0};
+    repair := w -> {- w#1, - fudge * w#1 + w#0};
     degs := splice {
       apply(0 .. c-1,i -> adjust {-2, - first degree f_i}), 
       n : adjust {0,1}
@@ -138,7 +142,7 @@ Ext(Module,Module) := Module => (N,M) -> (
       else (
 	i := m#-1;
 	splice apply(factorizations drop(m,-1), 
-	  (n,o) -> apply (0 .. i, j -> (append(n,j), append(o,i-j))))));
+	  (n,o) -> apply (0..i, j -> (append(n,j), append(o,i-j))))));
     scan(4 .. length E + 1, 
       d -> if even d then (
 	scan( exponents \ leadMonomial \ first entries basis(d,S), 
@@ -162,10 +166,10 @@ Ext(Module,Module) := Module => (N,M) -> (
     D := DT ** toT M';
     -- now compute the total Ext as a single homology module
     ext := prune homology(D,D);
-    -- stash the 'adjust' function we used
-    ext.adjust = adjust;
-    ext.abjust = abjust;
+    -- store the 'adjust' and 'repair' functions for later use
+    ext.adjust = T.adjust = adjust;
+    ext.repair = T.repair = repair;
     ext))
 
 adjust					  -- just use it again
-abjust					  -- just use it again
+repair					  -- just use it again
