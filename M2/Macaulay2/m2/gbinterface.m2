@@ -45,9 +45,10 @@ document { quote look,
 	  }
      }
      
-engineStack = new Command from (() -> (<< sendgg ggstack;))
+engineStack = new Command from (() -> stack lines sendgg ggstack)
 document { quote engineStack,
-     TT "engineStack()", " -- display the contents of the engine's stack.",
+     TT "engineStack()", " -- returns a net containing a display of the contents
+     of the engine's stack.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
      as ", TT "engineStack", " if it's alone on the command line.",

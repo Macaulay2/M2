@@ -86,10 +86,11 @@ savedQuotients := new MutableHashTable
 savedEQuotients := new MutableHashTable
 
 ZZZquotient := (R,I) -> (
-     if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
+     if ring I.generators =!= ZZZ then error "expected an ideal of ZZZ";
      EgensI := I.generators;
-     EgensgbI := generators gb EgensI;
+     EgensgbI := if rank source EgensI === 1 then EgensI else generators gb EgensI;
      En := if EgensgbI == 0 then 0 else EgensgbI_(0,0);
+     En = lift(En,ZZ);
      if En < 0 then En = -En;
      if En === 0 then ZZ
      else if savedEQuotients#?En 
@@ -223,7 +224,9 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotie
 	  );
      S)
 
-Ring / ZZ := Ring / RingElement := Ring / List := Ring / Sequence := (R,f) -> R / ideal f
+Ring / ZZ := (R,f) -> R / ideal f_R
+
+Ring / RingElement := Ring / List := Ring / Sequence := (R,f) -> R / ideal f
 
 presentation QuotientRing := R -> (
      if R.?presentation then R.presentation else R.presentation = (

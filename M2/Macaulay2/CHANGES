@@ -1,5 +1,10 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.50:
+
+'engineStack' now returns a net which you can print, rather than printing it
+for you.
+
 New in 0.8.49:
 
 Fixed another bug in 'betti'.
