@@ -11,7 +11,7 @@ ifeq "$(OS)" "MS-DOS"
 	@ mv tmp.out $*.out
 else
 %.out : %.m2
-	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
+	@ - if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
 	 then touch $*.out ; \
 	 else echo "run example $* `head -1 $*.m2`"; \
 	   sed 1d <$*.m2 | \

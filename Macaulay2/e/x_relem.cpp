@@ -478,7 +478,7 @@ void i_ring_elem_cmds(void)
   install(ggishomogeneous, cmd_PolynomialRing_ishomogeneous, TY_RING_ELEM);
   install(ggdegree, cmd_PolynomialRing_degree, TY_RING_ELEM);
   install(gghomogenize, cmd_PolynomialRing_homogenize, TY_RING_ELEM, TY_INT, TY_INTARRAY);
-  install(gghomogenize, cmd_PolynomialRing_homogenize1, 
+  install(gghomogenize1, cmd_PolynomialRing_homogenize1, 
 	  TY_RING_ELEM, TY_INT, TY_INT, TY_INTARRAY);
 
   // schur ring functions
