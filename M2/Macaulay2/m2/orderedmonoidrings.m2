@@ -332,6 +332,9 @@ samering := (f,g) -> (
 Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
 PolynomialRing _ List := (R,v) -> product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
-dim PolynomialRing := R -> dim last R.baseRings + # generators R
+dim PolynomialRing := R -> (
+     if options.SkewCommutative then dim coefficientRing R
+     else dim coefficientRing R + # generators R
+     )
 char PolynomialRing := (R) -> char coefficientRing R
 numgens PolynomialRing := R -> numgens monoid R
