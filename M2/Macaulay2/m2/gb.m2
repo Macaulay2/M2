@@ -2,6 +2,7 @@
 
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
+raw GroebnerBasis := G -> G.RawComputation
 toString GroebnerBasis := g -> toString new FunctionApplication from { gb, g.matrix }
 net GroebnerBasis := g -> net gens g
 
@@ -98,7 +99,7 @@ gb Module := GroebnerBasis => options -> (M) -> (
      else gb(generators M, options))
 
 	  -- handle the Hilbert numerator later, which might be here:
-	  -- if not withSyz and f.?cache and f.cache.?cokernel and f.cache.cokernel.?poincare then ( ggPush f.cache.cokernel.poincare );
+	  -- 
 
 
 gb Matrix := GroebnerBasis => opts -> (f) -> (
@@ -119,14 +120,27 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
 	       type.Syzygies,
 	       toEngineNat type.SyzygyRows,
 	       opts.HardDegreeLimit =!= null,
-	       if opts.HardDegreeLimit =!= null then opts.HardDegreeLimit else 0,
+	       if opts.HardDegreeLimit =!= null then checkListOfIntegers opts.HardDegreeLimit else {},
 	       processAlgorithm opts.Algorithm,
 	       processStrategy opts.Strategy
 	       );
 	  f.cache#type = G;			  -- do this last, in case of an interrupt
 	  );
-     if not opts.StopBeforeComputation 
-     then runGB(G, (
+     if opts.Hilbert =!= null then rawGBSetHilbertFunction(G.RawComputation,raw opts.Hilbert)
+     else if f.cache.?cokernel and f.cache.cokernel.?poincare then rawGBSetHilbertFunction(G.RawComputation,f.cache.cokernel.poincare); 
+     rawGBSetStop(G.RawComputation,
+	  opts.StopBeforeComputation,
+	  opts.DegreeLimit =!= null,
+	  if opts.DegreeLimit =!= null then checkListOfIntegers opts.DegreeLimit else {},
+     	  toEngineNat opts.BasisElementLimit,
+     	  toEngineNat opts.SyzygyLimit,
+     	  toEngineNat opts.PairLimit,
+     	  toEngineNat opts.CodimensionLimit,
+     	  toEngineNat opts.SubringLimit,
+     	  toEngineNat opts.StopWithMinimalGenerators,
+	  {}						    -- not used, just for resolutions
+	  );
+     runGB(G, (
 	       ggPush checkListOfIntegers opts.DegreeLimit,
 	       ggPush {
 		    toEngineNat opts.BasisElementLimit,
