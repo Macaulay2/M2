@@ -152,7 +152,10 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
 
 ring_elem PolyRingQuotient::divide(const ring_elem f, const ring_elem g) const
 {
-  return ZERO_RINGELEM;
+#warning "division should mean what for quotient rings?"
+  ring_elem a = numerR_->divide(f,g);
+  normal_form(a);
+  return a;
 }
 
 ring_elem PolyRingQuotient::gcd(const ring_elem f, const ring_elem g) const

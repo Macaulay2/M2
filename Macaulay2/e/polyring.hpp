@@ -60,6 +60,8 @@ public:
   virtual ring_elem from_double(double n) const;
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_rational(mpq_ptr q) const;
+
   virtual ring_elem var(int v) const;
 
   virtual int index_of_var(const ring_elem a) const;

@@ -210,6 +210,12 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	P->mult_to(result,temp);
 	P->remove(temp);
       }
+    else
+      {
+	// result_monom has not been used
+	// and result, result_coeff are both in the ring K
+	result = K->mult(result, result_coeff);
+      }
   }
   return result;
 }

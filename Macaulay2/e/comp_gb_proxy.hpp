@@ -14,7 +14,9 @@ class GBProxy : public GBComputation
   GBComputation *G;
 protected:
 
-  virtual bool stop_conditions_ok() { return G->stop_conditions_ok(); }
+  virtual bool stop_conditions_ok() {
+    G->stop_ = stop_;
+    return G->stop_conditions_ok(); }
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
