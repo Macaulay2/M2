@@ -9,6 +9,7 @@ s = nullhomotopy (-f * id_C)
 V = s_0
 q = -f * id_C_0
 V = q // U
+    q % U
 U*V - q
 assert( U*V - q == 0 )
 
