@@ -29,7 +29,7 @@ char *gnu_get_libc_version();
 #if 0
 # ifdef __MWERKS__
 #  include "::dbm:dbm.h"
-# else
+# endif
 #endif
 
 #include <gdbm.h>
@@ -1049,12 +1049,7 @@ int system_dbmopen(M2_string filename, bool mutable) {
      int flags = mutable ? DBM_WRCREAT : DBM_RD;
      int mode = 0666;
      char *FileName = tocharstar(filename);
-#ifdef GDBM
      DBM_FILE f = dbm_open(FileName, 0, flags, mode, NULL);
-#endif
-#ifdef NDBM
-     DBM_FILE f = dbm_open(FileName, flags, mode);
-#endif
      GC_FREE(FileName);
      if (f == NULL) return ERROR;
      if (numfiles == 0) {
@@ -1129,9 +1124,7 @@ M2_string /* or NULL */ system_dbmfirst(int handle) {
 M2_string /* or NULL */ system_dbmnext(int handle) {
      if (hadlastkey) {
 	  lastkey = dbm_nextkey(dbm_files[handle]
-#ifdef GDBM
 	       ,lastkey
-#endif
 	       );
 	  hadlastkey = TRUE;
 	  return fromdatum(lastkey);
@@ -1142,19 +1135,11 @@ M2_string /* or NULL */ system_dbmnext(int handle) {
      }
 
 int system_dbmreorganize(int handle) {
-#ifdef GDBM
      return gdbm_reorganize(dbm_files[handle]);
-#else
-     return -1;
-#endif
      }
 
 M2_string system_dbmstrerror() {
-#ifdef GDBM
      return tostring(gdbm_strerror(gdbm_errno));
-#else
-     return tostring("database error");
-#endif
      }
 
 void C__prepare() {}

@@ -1,6 +1,7 @@
 ############################### targets to use
-all justM2 check doc clean distclean::
+.PHONY: check all clean config initialize doc html book distclean justM2
 ################################# prologue
+all ::
 justM2 all :: initialize config
 
 include ../config.Makefile
@@ -9,7 +10,6 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 
-.PHONY: default check all clean dirs misc config initialize doc html book exe zip
 ################################# bin
 libexec bin :; mkdir $@
 clean ::; rm -rf bin libexec

@@ -6,7 +6,6 @@ Macaulay2/basictests/Makefile
 Macaulay2/book/Makefile
 Macaulay2/c/Makefile
 Macaulay2/d/Makefile
-Macaulay2/dbm/Makefile
 Macaulay2/dumpdata/Makefile
 Macaulay2/e/Makefile
 Macaulay2/emacs/Makefile
