@@ -162,6 +162,14 @@ else
 ENCAP = false
 endif
 
+initialize :: statuscodes.m2
+statuscodes.m2 : ../e/statuscodes
+	( \
+		echo 'RawStatusCodes = new HashTable from drop({' ; \
+		sed 's/\(.*\):\(.*\):\(.*\)/  \1 => \3,/' ; \
+		echo '}, -1)' ; \
+	) <$< >$@
+
 install::install-main
 install-main: all
 	M2 -q --stop \
