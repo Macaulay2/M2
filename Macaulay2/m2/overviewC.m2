@@ -1156,7 +1156,7 @@ Plan for the next node:
 ///
 document { "fine control of a Groebner basis computation",
      "Sometimes a Groebner basis computation doesn't finish quickly enough.  If so
-     then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION."
+     then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION.",
      TOC {
 	  SECTION { "Partially computed Groebner bases",
 	       "Suppose that you have computed part of a Groebner basis.  For
@@ -1166,7 +1166,7 @@ document { "fine control of a Groebner basis computation",
 	       partial computation.",
      	       EXAMPLE "R = ZZ/32003[a..e];",
 	       EXAMPLE "I = ideal(random(3,R),random(3,R),random(3,R))",
-	       EXAMPLE "gens gb(I,PairLimit=>7);"
+	       EXAMPLE "gens gb(I,PairLimit=>7);",
 	       "Get the Groebner basis object:",
 	       EXAMPLE "g = gb(I,StopBeforeComputation => true);",
 	       EXAMPLE "leadTerm gens g",
