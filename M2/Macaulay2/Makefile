@@ -107,7 +107,7 @@ setup : setup.template ../Makeconf.lcl
 endif
 ################################# experiments
 clean ::; if [ -d experiments ]; then $(MAKE) -C experiments clean; fi
-all::; $(MAKE) -C experiments all
+all   ::; if [ -d experiments ]; then $(MAKE) -C experiments all; fi
 ################################# slides
 clean ::; if [ -d slides ]; then $(MAKE) -k -C slides clean; fi
 tests ::; if [ -d slides ]; then $(MAKE) -k -C slides; fi
