@@ -178,9 +178,8 @@ EXAMPLEOPTIONS += -e 'debugLevel = 1'
 EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
 EXAMPLEOPTIONS += -e 'exit 0 '
 
-tmp/.documentation-made : $(DOCSEQUENCE)
+tmp/.documentation-made : $(DOCSEQUENCE) always
 	@ echo making the Macaulay2 package, including the documentation
-	rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
 	@ cd tmp && \
 	        echo "make: Entering directory \`tmp'" >&2 \
 		&& \

@@ -38,6 +38,7 @@ handle;
 
 -- some symbols are mentioned in the documentation only:
 GLex
+Primary
 
 -- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2"

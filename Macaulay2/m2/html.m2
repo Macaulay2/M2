@@ -349,9 +349,10 @@ installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
      topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
+     rawDoc := pkg#"raw documentation";
 
      -- check that we've read the raw documentation
-     if #pkg#"raw documentation" > 0 or pkg#?"raw documentation database" and isOpen pkg#"raw documentation database" then null
+     if #rawDoc > 0 or pkg#?"raw documentation database" and isOpen pkg#"raw documentation database" then null
      else (
 	  if pkg === Macaulay2 then (
      	       currentPackage = Macaulay2;
@@ -461,20 +462,31 @@ installPackage Package := o -> pkg -> (
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
-     -- cache raw documentation in database
-     stderr << "--storing raw documentation" << endl;
+     -- cache raw documentation in database, and check for changes
+     rawDocUnchanged := new MutableHashTable;
      docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
-     makeDirectory docDir;
-     rawtmpname := docDir | "rawdocumentation.db.tmp";
      rawdbname := docDir | "rawdocumentation.db";
-     if fileExists rawtmpname then unlink rawtmpname;
-     rawdocDatabase := openDatabaseOut rawtmpname;
-     scan(pairs pkg#"raw documentation", (k,v) -> rawdocDatabase#k = toExternalString v);
+     stderr << "--storing raw documentation in " << rawdbname << endl;
+     makeDirectory docDir;
+     rawdocDatabase := openDatabaseOut rawdbname;
+     scan(nodes, tag -> (
+	       fkey := DocumentTag.FormattedKey tag;
+	       if rawDoc#?fkey then (
+	       	    v := toExternalString rawDoc#fkey;
+		    if rawdocDatabase#?fkey then (
+     	       	    	 if rawdocDatabase#fkey === v 
+			 then rawDocUnchanged#fkey = true
+			 else rawdocDatabase#fkey = v
+			 )
+		    else rawdocDatabase#fkey = v
+		    )
+	       else (
+		    if rawdocDatabase#?fkey then (
+			 stderr << "--warning: documentation for " << fkey << " is no longer present" << endl;
+			 )
+		    else rawDocUnchanged#fkey = true
+		    )));
      close rawdocDatabase;
-     if fileExists rawdbname then unlink rawdbname;
-     link(rawtmpname,rawdbname);
-     unlink rawtmpname;
-     stderr << "--stored raw documentation in " << rawdbname << endl;
      rawkey := "raw documentation database";
      pkg#rawkey = openDatabase rawdbname;
      addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
@@ -482,23 +494,24 @@ installPackage Package := o -> pkg -> (
      -- process documentation
      stderr << "--processing documentation nodes..." << endl;
      scan(nodes, tag -> (
-	       -- stderr << "--processing " << tag << endl;
-	       pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag;
+	       fkey := DocumentTag.FormattedKey tag;
+	       if rawDocUnchanged#?fkey then (
+	       	    -- stderr << "--skipping   " << tag << endl;
+		    )
+	       else (
+	       	    stderr << "--processing " << tag << endl;
+	       	    pkg#"processed documentation"#fkey = documentation tag;
+		    );
 	       ));
 
      -- cache processed documentation in database
-     stderr << "--storing processed documentation" << endl;
-     tmpname := docDir | "documentation.db.tmp";
      dbname := docDir | "documentation.db";
-     if fileExists tmpname then unlink tmpname;
-     docDatabase := openDatabaseOut tmpname;
+     stderr << "--storing processed documentation in " << dbname << endl;
+     prockey := "processed documentation database";
+     if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
+     docDatabase := openDatabaseOut dbname;
      scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
      close docDatabase;
-     if fileExists dbname then unlink dbname;
-     link(tmpname,dbname);
-     unlink tmpname;
-     stderr << "--stored processed documentation in " << dbname << endl;
-     prockey := "processed documentation database";
      pkg#prockey = openDatabase dbname;
      addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
@@ -531,19 +544,21 @@ installPackage Package := o -> pkg -> (
      topNodeName := DocumentTag.FormattedKey topDocumentTag;
      chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
      infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
+     getPDoc := fkey -> (
+	  if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
+	  if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
+	       stderr << "--warning: missing documentation node: " << fkey << endl;
+	       ));
      traverse(unbag pkg#"table of contents", tag -> (
 	       key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
-	       if not pkg#"processed documentation"#?fkey then (
-		    stderr << "--warning: skipping missing documentation node: " << fkey << endl;
-		    return);
 	       chk fkey;
 	       byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
 	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
 	       if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
 	       if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
 	       if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
-     	       infofile << endl << endl << info pkg#"processed documentation"#fkey << endl));
+     	       infofile << endl << endl << info getPDoc fkey << endl));
      infofile << "\037" << endl << "Tag Table:" << endl;
      scan(values byteOffsets, b -> infofile << b << endl);
      infofile << "\037" << endl << "End Tag Table" << endl;
@@ -605,7 +620,7 @@ installPackage Package := o -> pkg -> (
 		    buttonBar tag,
 		    if UP#?tag then SEQ between(" > ", apply(upAncestors tag, i -> TO i)),
 		    HR{}, 
-		    pkg#"processed documentation"#fkey,
+		    getPDoc fkey
 		    }
 	       }
 	  << endl << close));
