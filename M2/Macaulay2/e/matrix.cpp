@@ -366,16 +366,14 @@ Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
       ERROR("free modules have different base rings");
       return 0;
     }
-  MatrixConstructor mat(F,G->rank());
-  mat.set_column_degrees(G);
+  MatrixConstructor mat(F,G);
   return mat.to_matrix();
 }
 
 Matrix *Matrix::identity(const FreeModule *F)
 {
   const ring_elem one = F->get_ring()->one();
-  MatrixConstructor mat(F,F->rank());
-  mat.set_column_degrees(F);
+  MatrixConstructor mat(F,F,0);
   for (int i=0; i<F->rank(); i++)
     mat.set_entry(i,i,one);
   return mat.to_matrix();

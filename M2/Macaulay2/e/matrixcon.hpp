@@ -13,12 +13,14 @@ class MatrixConstructor
   const FreeModule *cols; // If cols is given at the beginning, this is used.
   // If this is immutable, no changes are allowed, other than to replace the entire thing.
 
-  bool cols_is_frozen; // Once this is set, no more modifications to the 'cols' 
-                       // are allowed.  In particular, if the 'source' is set at
-                       // the beginning via the constructor, and that free module is
-                       // immutable, then no more changes are allowed.
+  bool cols_frozen; // Once this is set, no more modifications to the 'cols' 
+                    // are allowed.  In particular, if the 'source' is set at
+                    // the beginning via the constructor, and that free module is
+                    // immutable, then no more changes are allowed.
 
   const int *deg;
+
+  void compute_column_degree(int i);
 public:
   MatrixConstructor();
   MatrixConstructor(const FreeModule *target, int ncols);
@@ -33,11 +35,9 @@ public:
   void set_entry(int r, int c, ring_elem a);
   void set_column(int c, vec v);
 
-  void compute_column_degree(int i);
   void compute_column_degrees(); /* Takes into acount the matrix degree */
 
   void set_column_degree(int i, const int *deg);
-  void set_column_degrees(const FreeModule *source);
 
   void set_matrix_degree(const int *deg);
 

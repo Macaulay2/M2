@@ -1,12 +1,11 @@
 #include "matrixcon.hpp"
 #include "matrix.hpp"
 
-#warning "logic for mutable/immutable is muddled"
-
 MatrixConstructor::MatrixConstructor()
   : R(0),
     rows(0),
     cols(0),
+    cols_frozen(false),
     deg(0)
 {
 }
@@ -15,9 +14,10 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols)
   : R(target->get_ring()),
     rows(target),
     cols(0),
+    cols_frozen(false),
     deg(0)
 {
-  cols = R->make_FreeModule(ncols); // MAKE THIS UNFROZEN...
+  cols = R->make_FreeModule(ncols);
 
   entries.reserve(ncols);
   for (int i=0; i<ncols; i++)
@@ -31,7 +31,8 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target,
 				     const int *deg0)
  : R(target->get_ring()),
    rows(target),
-   cols(source)
+   cols(source),
+   cols_frozen(true)
 {
   entries.reserve(source->rank());
   for (int i=0; i<source->rank(); i++)
@@ -42,7 +43,7 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target,
 
 void MatrixConstructor::append(vec v) 
 {
-  //  if (cols->is_immutable()) return; // HOW BEST TO HANDLE THIS??
+  assert(!cols_frozen);
   int *d = R->degree_monoid()->make_one();
   if (v != 0) R->vec_degree(rows,v, d);
   append(v,d);
@@ -51,7 +52,7 @@ void MatrixConstructor::append(vec v)
 }
 void MatrixConstructor::append(vec v, const int *deg0) 
 {
-  //  if (cols->is_immutable()) return; // HOW BEST TO HANDLE THIS??
+  assert(!cols_frozen);
   entries.push_back(v); 
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->append(deg0);
@@ -69,18 +70,14 @@ void MatrixConstructor::set_column(int c, vec v)
 void MatrixConstructor::compute_column_degrees()
  /* Takes into acount the matrix degree */
 {
-  // DON'T CHANGE IT IN THE IMMUTABLE SITUATION!!
+  assert(!cols_frozen);
   for (int i=0; i<cols->rank(); i++)
     compute_column_degree(i);
 }
 
-void MatrixConstructor::set_column_degrees(const FreeModule *source)
-{
-  cols = source;
-}
-
 void MatrixConstructor::set_column_degree(int i, const int *deg0)
 {
+  assert(!cols_frozen);
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->change_degree(i,deg0);
 }
@@ -88,6 +85,7 @@ void MatrixConstructor::set_column_degree(int i, const int *deg0)
 void MatrixConstructor::compute_column_degree(int i)
 {
 
+  assert(!cols_frozen);
   int *d = R->degree_monoid()->make_one();
   const vec v = entries[i];
   if (v != 0) R->vec_degree(rows, v, d);

@@ -109,7 +109,7 @@ GTZ1 Ideal := (I) -> (
      
 ///
 restart
-load "GTZ.m2"
+load "PrimaryDecomposition/GTZ.m2"
 
 kk = ZZ/32003
 R = kk[x,y,z,t,u,v]
@@ -216,6 +216,9 @@ I = ideal(
     u*y+v*x,
     u*z+w*x,
     v*z+w*y)
+independentSets I
+flatt(I,b*s*t)
+peek oo
 (J1, F1) = GTZ0 I
 (J2, F2) = GTZ0 F1
 (J3, F3) = GTZ0 F2
