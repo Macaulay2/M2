@@ -66,7 +66,7 @@ char errfmtnc[] = "%s:%d: %s\n";
 
 #define VA_START_HAS_TWO_ARGS
 
-#define ERRLIMIT 2000
+#define ERRLIMIT 64
 int errors = 0;
 
 volatile void fatal(char *s,...)
