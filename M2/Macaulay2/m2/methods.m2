@@ -5,22 +5,14 @@ noapp := (f,x) -> error(
      " to item of class ", toString class x
      )
 
------------------------------------------------------------------------------
+f := (i,arg) -> horizontalJoin("     argument ",i," :  ",silentRobustNetWithClass(60,5,3,arg));
+line0 := meth -> concatenate("no method found for applying ", silentRobustString(45,3,meth), " to:");
 
-protect Options
-
-t := c -> (
-     n := try toString c else "--unprintable--";
-     if #n > 200 then n = substring(n,0,200) | "...";
-     n)
-
-noMethod := (meth,args) -> (
-     if class args === Sequence 
-     then if 0 < #args and #args <= 3 
-     then error("no method found for applying ", t meth, " to ", t args, ", items of classes ",t apply(args, class))
-     else error("no method found for applying ", t meth, " to ", t args, ", item of class Sequence and length ",t(#args))
-     else error("no method found for applying ", t meth, " to ", t args, ", item of class ", t class args)
-     )
+noMethodSingle := (meth,args) -> error toString stack( line0 meth, f(" ",args))
+noMethod := (meth,args) -> error toString stack join( {line0 meth},
+     if class args === Sequence and 0 < #args and #args <= 4
+     then apply(#args, i -> f(toString (i+1),args#i))
+     else {f(" ",args)})
 
 methodDefaults := new OptionTable from {
      SingleArgumentDispatch => false,
@@ -65,7 +57,7 @@ SingleArgWithOptions := opts -> (
          arg -> (
 	  -- Common code for every method with options, single argument
 	  f := lookup(methodFunction, class arg);
-	  if f === null then noMethod(methodFunction,arg) else (f options) arg
+	  if f === null then noMethodSingle(methodFunction,arg) else (f options) arg
 	  );
      methodOptions#methodFunction = opts;
      methodFunction)
@@ -107,7 +99,7 @@ method = methodDefaults >>> options -> args -> (
      methodFunction := (
 	  if options.Options === null then (
        	       if options.Associative then AssociativeNoOptions()
-       	       else if options.SingleArgumentDispatch then newmethod1 (args -> noMethod(methodFunction,args))
+       	       else if options.SingleArgumentDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args))
        	       else MultipleArgsNoOptions())
 	  else (
        	       if options.Associative then AssociativeWithOptions options.Options
