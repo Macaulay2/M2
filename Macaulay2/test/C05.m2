@@ -16,6 +16,10 @@ assert( unique {3,4,4,5,5,3,3} === {3, 4, 5} )
 
 assert ( {} === select ( pairs tally keys MainDictionary , (s,n) -> n>1 ) )
 
+-- version and printing
+
+assert ( toString version =!= "version" )
+
 -- Local Variables:
 -- compile-command: "make C05.okay "
 -- End:
