@@ -28,7 +28,7 @@ CPPFLAGS += -I$(INCDIR) -DNDEBUG
 CXXFLAGS += $(DEBUGFLAGS)
 ######################
 
-CXXFLAGS += -g $(WARNINGS) -O3
+CXXFLAGS += -g $(WARNINGS) -O3 
 
 CFLAGS = $(CXXFLAGS)
 ARFLAGS  = r
@@ -80,7 +80,9 @@ NAMES = \
 	hilb \
 	frac \
 	polyring \
+	weylalg \
 	freemod \
+	weylfree \
 	matrix \
 	relem \
 	ring \

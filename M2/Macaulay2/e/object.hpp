@@ -8,12 +8,8 @@
 #include "intarray.hpp"
 #include "obj_ptr.hpp"
 
-extern int refcount_check;
-
 extern buffer gError;
 extern buffer gOutput;
-extern char *gInput;
-extern int gInputLen;
 
 class caster_oil
 {
@@ -23,50 +19,15 @@ public:
 };
 extern caster_oil caster;
 
-enum {
-  TY_IntegerArray,
-  TY_String,
-  TY_PrimitiveFunction,
-  TY_MonomialOrder,
-  TY_Monoid,
-  TY_MonomialIdeal,
-  TY_TermIdeal,
-  TY_Ring,
-  TY_RingElement,
-  TY_FreeModule,
-  TY_Matrix,
-  TY_RingMap,
-
-  TY_Vector,
-  TY_Monomial,
-
-  TY_Computation
-};
-
-//const object_types TY_Integer = TY_RingElement;
-
-enum object_types {
-    TY_NONE, TY_STRING, TY_INTARRAY, TY_INTARRAY2, TY_PRIMITIVE,
-    TY_RING, TY_FREEMODULE, TY_RING_ELEM, TY_VECTOR, TY_MATRIX,
-    TY_RING_MAP, TY_MONIDEAL, TY_TERMIDEAL,
-    TY_MON_ORDER, TY_NEW_MON_ORDER,
-    TY_MONOID, TY_MONOMIAL,
-    TY_COMP, 
-    TY_HILB_COMP,
-    TY_GB_COMP,
-    TY_RES_COMP, 
-    TY_RES2_COMP,
-    TY_GBRES_COMP
-};
-const object_types TY_INT = TY_RING_ELEM;
-
 class object_element
 {
-private:
   friend class object;
+  friend class handles;		// only needed to display the ref count
+  friend void bump_up(const object_element *p);
+  friend void bump_down(const object_element *p);
+protected:
+  int refcount;
 public:
-  int refcount;			// Does this really have to be public?
-
   object_element(int ref=1) : refcount(ref) {}
   // Types needing ref count set to 0 instead of 1:
   // object_{int,string,intarray,prim}, all types.
@@ -77,8 +38,9 @@ public:
   virtual ~object_element() {}
 
   // Type information
-  virtual object_types type_of() const = 0;
-  virtual const char *type_name() const = 0;
+  virtual class_identifier class_id() const = 0;
+  virtual type_identifier  type_id()  const = 0;
+  virtual const char *     type_name() const = 0;
 
   // Downcasting
   virtual object_int       * cast_to_int()       { return 0; }
@@ -121,12 +83,14 @@ public:
   virtual Monomial      cast_to_Monomial();
 
   // Equality checks, hash function
-  virtual bool is_equal(const object_element *o) const;
+  virtual bool equals(const object_element *o) const;
   virtual int hash() const { return 0; }
 
   // Display
+  virtual void binary_out(buffer &) const { } ;// This one contains enough information
+				              // to reconstruct the object.
   virtual void bin_out(buffer &) const { }
-  virtual void text_out(buffer &o) const { o << type_name(); }
+  virtual void text_out(buffer &o) const { o << "<" << type_name() << ">"; }
   virtual void debug_out(buffer &o) const;
 
   // Getting values.  Shorthands for casting and getting values.

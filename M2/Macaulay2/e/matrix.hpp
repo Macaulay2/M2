@@ -32,8 +32,10 @@ class Matrix_rec : public object_element
 	  entries.append(zero); }
   ~Matrix_rec();
 
-  object_types type_of         () const { return TY_MATRIX; }
-  const char * type_name       () const { return "Matrix"; }
+  class_identifier class_id() const { return CLASS_Matrix; }
+  type_identifier  type_id () const { return TY_MATRIX; }
+  const char * type_name   () const { return "Matrix"; }
+
   Matrix cast_to_Matrix();
   
   int length_of() const { return entries.length(); }

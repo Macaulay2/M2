@@ -104,8 +104,10 @@ public:
   int                 length_of()           const { return count; }
   TermIdeal *         cast_to_TermIdeal()         { return this; }
   const TermIdeal *   cast_to_TermIdeal()   const { return this; }
-  object_types        type_of()             const { return TY_TERMIDEAL; }
-  const char *        type_name()           const { return "TermIdeal"; }
+
+  class_identifier class_id() const { return CLASS_TermIdeal; }
+  type_identifier  type_id () const { return TY_TERMIDEAL; }
+  const char * type_name   () const { return "TermIdeal"; }
 
   friend void i_stashes();
   static stash *mystash;

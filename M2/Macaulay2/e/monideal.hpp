@@ -73,8 +73,10 @@ class MonomialIdeal_rec : public object_element
   ~MonomialIdeal_rec() { delete mi; bump_down(R); }
 
   // Infrastructure
-  object_types type_of           () const { return TY_MONIDEAL; }
-  const char * type_name         () const { return "Nmonomial ideal"; }
+  class_identifier class_id() const { return CLASS_MonomialIdeal; }
+  type_identifier  type_id () const { return TY_MONIDEAL; }
+  const char * type_name   () const { return "MonomialIdeal"; }
+
   MonomialIdeal     cast_to_MonomialIdeal  ();
 
   void bin_out(buffer &o) const;

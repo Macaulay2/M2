@@ -87,7 +87,7 @@ void gbres_comp::setup(const Matrix &m,
   const Ring *R = m.Ring_of()->cast_to_poly_ring();
   if (R == NULL) assert(0);
 
-  FreeModule *Fsyz = new FreeModule(R);
+  FreeModule *Fsyz = R->make_FreeModule();
   if (length <= 0)
     {
       gError << "resolution length must be at least 1";
@@ -131,11 +131,11 @@ void gbres_comp::setup(const Matrix &m,
       if (origsyz > 0) deg--;
       for (i=2; i<n_nodes-1; i++)
 	{
-	  FreeModule *F = new FreeModule(R);
+	  FreeModule *F = R->make_FreeModule();
 	  nodes[i] = new gb2_comp(F,nodes[i-1],deg++,-1,i,strategy);
 	  nodes[i-1]->set_output(nodes[i]);
 	}
-      FreeModule *F = new FreeModule(R);
+      FreeModule *F = R->make_FreeModule();
       nodes[n_nodes-1] = new gb2_comp(F,nodes[n_nodes-2],deg++,0,n_nodes-1,strategy);
       nodes[n_nodes-1]->set_output(NULL);      
     }
@@ -256,7 +256,7 @@ FreeModule *gbres_comp::free_module(int level)
 {
   if (level >= 0 && level <= n_nodes-1)
     return nodes[level]->output_free_module();
-  return new FreeModule(nodes[0]->output_free_module()->Ring_of());
+  return nodes[0]->output_free_module()->Ring_of()->make_FreeModule();
 
 }
 Matrix gbres_comp::min_gens_matrix(int level)

@@ -839,6 +839,11 @@ vector
 vecinfo f0:ringelem f2:ringelem ... f(r-1):ringelem >> vector
 Create the vector f0 <0> + f1 <1> + ... + f(r-1) <r-1> using 'vecinfo'.
 
+ggweylalgebra
+weylalgebra
+k:field M:monoid a:intarray >> ring
+Create the ring of differential operators (the Weyl algebra), whose underlying commutative polynomial ring is k[M], and where the differential operators are given by 'a'. (E.g. a = {0,2,1,3} associates variable 2 to be the differential operator corresponding to the variable 0, var 3 is the diff op corresponding to var 1, etc.  A negative value signifies that the corresponding diff op, or commutative variable, is not present.
+
 ggGF
 GF
 p:int n:int >> ring

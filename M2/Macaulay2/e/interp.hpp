@@ -11,6 +11,9 @@
 #include "object.hpp"
 #include "cmdnames.hpp"
 
+extern char *gInput;
+extern int gInputLen;
+
 extern stack<object> gStack;
 
 typedef void (*cmdfcn0)();

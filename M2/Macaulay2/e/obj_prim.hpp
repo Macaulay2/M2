@@ -37,7 +37,7 @@ public:
   int check_args() 
     { 
       return (gStack.in_bounds(0) &&
-	      gStack[0]->type_of() == arg1);
+	      gStack[0]->type_id() == arg1);
     }
 
   void execute() 
@@ -59,8 +59,8 @@ public:
   int check_args() 
     { 
       return (gStack.in_bounds(1) &&
-	      gStack[1]->type_of() == arg1 && 
-	      gStack[0]->type_of() == arg2);
+	      gStack[1]->type_id() == arg1 && 
+	      gStack[0]->type_id() == arg2);
     }
 
   void execute() 
@@ -84,9 +84,9 @@ public:
   int check_args() 
     {
       return (gStack.in_bounds(2) &&
-	      gStack[2]->type_of() == arg1 &&
-	      gStack[1]->type_of() == arg2 &&
-	      gStack[0]->type_of() == arg3);
+	      gStack[2]->type_id() == arg1 &&
+	      gStack[1]->type_id() == arg2 &&
+	      gStack[0]->type_id() == arg3);
     }
 
   void execute() 
@@ -112,10 +112,10 @@ public:
   int check_args() 
     {
       return (gStack.in_bounds(3) &&
-	      gStack[3]->type_of() == arg1 &&
-	      gStack[2]->type_of() == arg2 &&
-	      gStack[1]->type_of() == arg3 &&
-	      gStack[0]->type_of() == arg4);
+	      gStack[3]->type_id() == arg1 &&
+	      gStack[2]->type_id() == arg2 &&
+	      gStack[1]->type_id() == arg3 &&
+	      gStack[0]->type_id() == arg4);
     }
 
   void execute() 
@@ -144,11 +144,11 @@ public:
   int check_args() 
     {
       return (gStack.in_bounds(4) &&
-	      gStack[4]->type_of() == arg1 &&
-	      gStack[3]->type_of() == arg2 &&
-	      gStack[2]->type_of() == arg3 &&
-	      gStack[1]->type_of() == arg4 &&
-	      gStack[0]->type_of() == arg5);
+	      gStack[4]->type_id() == arg1 &&
+	      gStack[3]->type_id() == arg2 &&
+	      gStack[2]->type_id() == arg3 &&
+	      gStack[1]->type_id() == arg4 &&
+	      gStack[0]->type_id() == arg5);
     }
 
   void execute() 

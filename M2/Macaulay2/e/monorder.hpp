@@ -114,8 +114,10 @@ public:
 
   const mon_order * mon_order_of() const { return val; }
 
-  object_types type_of         () const { return TY_MON_ORDER; }
-  const char * type_name       () const { return "monorder"; }
+  class_identifier class_id() const { return CLASS_MonomialOrder; }
+  type_identifier  type_id () const { return TY_MON_ORDER; }
+  const char * type_name   () const { return "MonomialOrder"; }
+
   object_mon_order *       cast_to_mon_order()       { return this; }
   const object_mon_order * cast_to_mon_order() const { return this; }
   

@@ -25,6 +25,13 @@ public:
   FractionField(const Ring *R);
   ~FractionField();
 
+  class_identifier class_id() const { return CLASS_FractionField; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  void binary_out(buffer &o) const;
+
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }
 

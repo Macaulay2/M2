@@ -37,6 +37,8 @@ public:
   int length_of() const { return pfaffs.n_cols(); }
   object index_of(int) { return pfaffs; }
 
+  class_identifier class_id() const { return CLASS_PfaffianComputation; }
+
   const Ring * Ring_of () const { return R; }
 };
 

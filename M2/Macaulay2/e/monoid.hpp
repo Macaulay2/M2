@@ -142,8 +142,10 @@ public:
   int          length_of() const      { return n_vars(); }
   const Monoid * cast_to_Monoid() const { return this; }
   Monoid *       cast_to_Monoid()       { return this; }
-  object_types type_of()   const    { return TY_MONOID; }
-  const char * type_name() const    { return "Monoid"; }
+
+  class_identifier class_id() const { return CLASS_Monoid; }
+  type_identifier  type_id () const { return TY_MONOID; }
+  const char * type_name   () const { return "Monoid"; }
 };
 
 extern Monoid *trivial_monoid;		// set in x_monoid.cpp

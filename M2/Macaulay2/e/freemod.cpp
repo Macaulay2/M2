@@ -1285,6 +1285,57 @@ ring_elem FreeModule::diff_term(const int *m, const int *n,
   return result;
 }
 
+vec FreeModule::diff_by_term(const int *exp, vec v, bool use_coeff) const
+{
+  // The result terms will be in the same order as those of f.
+  // NOT valid for skew commutative rings, although currently
+  // this routine is only used by Weyl algebra stuff.
+  vecterm head;
+  vec result = &head;
+  int nvars = M->n_vars();
+  int *exp2 = new int[nvars];
+  for (vec t = v; t != NULL; t = t->next)
+    {
+      M->to_expvector(t->monom, exp2);
+      if (ntuple::divides(nvars,exp,exp2))
+	{
+	  // Now determine the coefficient.
+	  ring_elem c = K->copy(t->coeff);
+	  if (use_coeff)
+	    {
+	      if (ty == FREE_SCHREYER)
+		{
+		  emit("can't handle Schreyer order yet!!");
+		}
+	      for (int i=0; i<nvars; i++)
+		for (int j=exp[i]-1; j>=0; j--)
+		  {
+		    ring_elem g = K->from_int(exp2[i]-j);
+		    K->mult_to(c,g);
+		    K->remove(g);
+		    if (K->is_zero(c))
+		      {
+			K->remove(c);
+			c = g;
+			// break out of these two loops
+			j = -1;
+			i = nvars;
+		      }
+		  }
+	    }
+	  ntuple::divide(nvars,exp2,exp,exp2);
+	  result->next = new_term();
+	  result = result->next;
+	  result->coeff = c;
+	  result->comp = t->comp;
+	  M->from_expvector(exp2, result->monom);
+	}
+    }
+  delete [] exp2;
+  result->next = NULL;
+  return head.next;
+}
+
 vec FreeModule::diff(const FreeModule * F, vec v, 
 		       const FreeModule * G, vec w,
 		       int use_coeff) const

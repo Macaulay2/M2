@@ -76,7 +76,8 @@ public:
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 
-  const char * type_name         () const { return "Hermite computation"; }
+  class_identifier class_id() const { return CLASS_HermiteComputation; }
+
   void bin_out(buffer &) const {}
   void text_out(buffer &o) const { o << "Hermite computation"; }
 

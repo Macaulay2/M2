@@ -20,8 +20,11 @@ public:
   ~object_int() { mpz_clear(val); }
 
   int          int_of     () const { return mpz_get_si(val); }
-  object_types type_of    () const { return TY_INT; }
-  const char * type_name  () const { return "int"; }
+
+  class_identifier class_id() const { return CLASS_int; }
+  type_identifier  type_id () const { return TY_INT; }
+  const char * type_name   () const { return "Integer"; }
+
   object_int * cast_to_int()       { return this; }
   
   void bin_out(buffer &o) const { bin_mpz_out(o,((object_int *)this)->val); }

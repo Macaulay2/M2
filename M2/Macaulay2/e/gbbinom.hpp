@@ -321,8 +321,9 @@ public:
   const binomialGB_comp * cast_to_binomialGB_comp() const { return this; }
 
   void bin_out(buffer &) const {}
-  const char * type_name         () const { return "binomialGB_comp"; }
   void text_out(buffer &o) const { o << "binomialGB_comp"; }
+
+  class_identifier class_id() const { return CLASS_binomialGB_comp; }
 
   int length_of() const { return 0; }
   

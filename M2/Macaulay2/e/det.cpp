@@ -2,6 +2,7 @@
 
 #include "det.hpp"
 #include "text_io.hpp"
+#include "bin_io.hpp"
 
 extern int comp_printlevel;
 
@@ -30,7 +31,7 @@ DetComputation::DetComputation(const Matrix &M, int p,
     }
   else
     {
-      FreeModule *F = new FreeModule(R,1);
+      FreeModule *F = R->make_FreeModule(1);
       result = Matrix(F);
       // MES: do I need to bump down F??
     }
@@ -56,6 +57,39 @@ DetComputation::~DetComputation()
   bump_down((Ring *)R);
   delete [] row_set;
   delete [] col_set;
+}
+
+bool DetComputation::equals(const object_element *o) const
+{
+  if (o->class_id() != class_id())
+    return false;
+
+  const DetComputation *D = (DetComputation *)o;
+  if (p != D->p) return false;
+  if (do_exterior != D->do_exterior) return false;
+  if (!M->equals(*(D->M))) return false;
+  return true;
+}
+
+int DetComputation::hash() const 
+{ 
+  return 0;
+}
+
+void DetComputation::binary_out(buffer &o) const
+{
+  bin_int_out(o, class_id());
+  bin_int_out(o, p);
+  bin_int_out(o, do_exterior);	// Is this automatic conversion a BAD THING?
+  bin_int_out(o, done);
+  for (int i=0; i<p; i++)
+    bin_int_out(o, row_set[i]);
+  for (int i=0; i<p; i++)
+    bin_int_out(o, col_set[i]);
+  bin_int_out(o, this_row);
+  bin_int_out(o, this_col);
+  M->binary_out(o);
+  result->binary_out(o);
 }
 
 int DetComputation::step()

@@ -95,11 +95,13 @@ public:
   virtual bool is_equal(const gb_comp *q) = 0;
 
   // Infrastructure
-  object_types type_of        () const { return TY_GB_COMP; }
+  class_identifier class_id() const { return CLASS_gb_comp; }
+  type_identifier  type_id () const { return TY_GB_COMP; }
+  const char * type_name   () const { return "gb_comp"; }
+
   gb_comp * cast_to_gb_comp   () { return this; }
 
   // These can be overridden by the specific computation
-  const char * type_name      () const { return "GB computation"; }
   void text_out(buffer &o) const { o << "GB computation"; }
 
   virtual binomialGB_comp * cast_to_binomialGB_comp() { return 0; }

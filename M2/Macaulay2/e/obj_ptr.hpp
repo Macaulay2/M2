@@ -28,7 +28,9 @@ public:									   \
   int operator!() const { return obj != NULL; }				   \
   int is_null() const { return obj == NULL; }				   \
   T *operator->() { assert(obj != NULL); return obj; }			   \
-  const T *operator->() const { assert(obj != NULL); return obj; }
+  const T *operator->() const { assert(obj != NULL); return obj; }         \
+  const object_element *operator*() const { return obj; } 
+
 
 #define POINTER(TYPE,T)				\
   OBJECT(TYPE,T)				\

@@ -21,8 +21,10 @@ class monomial_rec : public object_element
   ~monomial_rec() {}
 
   // Infrastructure
-  object_types type_of    () const { return TY_MONOMIAL; }
-  const char * type_name  () const { return "monomial"; }
+  class_identifier class_id() const { return CLASS_monomial; }
+  type_identifier  type_id () const { return TY_MONOMIAL; }
+  const char * type_name   () const { return "monomial"; }
+
   Monomial cast_to_Monomial();
 
   intarray *intarray_of() { return &val; }

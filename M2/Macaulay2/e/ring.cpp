@@ -6,6 +6,8 @@
 #include "respoly.hpp"
 #include "polyring.hpp"
 
+#include "freemod.hpp"
+
 Ring::Ring(int P, 
 	     int n, 
 	     int totaln,
@@ -48,6 +50,16 @@ Ring::Ring(const Ring &R)
 Ring::~Ring()
 {
   if (K != NULL) bump_down((Ring *) K);
+}
+
+FreeModule *Ring::make_FreeModule() const
+{ 
+  return new FreeModule(this); 
+}
+
+FreeModule *Ring::make_FreeModule(int n) const
+{ 
+  return new FreeModule(this,n);
 }
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const

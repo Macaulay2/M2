@@ -26,6 +26,13 @@ public:
   GF(const RingElement prim);
   ~GF();
 
+  class_identifier class_id() const { return CLASS_GF; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  void binary_out(buffer &o) const;
+
   int to_int(int a) const;
 
   GF * cast_to_GF() { return this; }

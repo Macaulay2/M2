@@ -57,7 +57,7 @@ Matrix::Matrix(const FreeModule *r)
 
 Matrix::Matrix(const MonomialIdeal &mi) 
 { 
-  const FreeModule *r = new FreeModule(mi.Ring_of(), 1);
+  const FreeModule *r = mi.Ring_of()->make_FreeModule(1);
   int *one = r->Ring_of()->degree_monoid()->make_one();
   obj = new Matrix_rec(r,r->new_free(),one);
   r->Ring_of()->degree_monoid()->remove(one);
@@ -169,10 +169,10 @@ Matrix Matrix::operator+(const Matrix &m) const
       const FreeModule *G = cols();
 
       if (!rows()->is_equal(m.rows()))
-	F = new FreeModule(R, n_rows());
+	F = R->make_FreeModule(n_rows());
       
       if (!cols()->is_equal(m.cols()))
-	G = new FreeModule(R, n_cols());
+	G = R->make_FreeModule(n_cols());
 
       if (EQ == degree_monoid()->compare(degree_shift(), m.degree_shift()))
 	result = Matrix(F,G,degree_shift());
@@ -205,10 +205,10 @@ Matrix Matrix::operator-(const Matrix &m) const
       const FreeModule *G = cols();
 
       if (!rows()->is_equal(m.rows()))
-	F = new FreeModule(R, n_rows());
+	F = R->make_FreeModule(n_rows());
       
       if (!cols()->is_equal(m.cols()))
-	G = new FreeModule(R, n_cols());
+	G = R->make_FreeModule(n_cols());
 
       if (EQ == degree_monoid()->compare(degree_shift(), m.degree_shift()))
 	result = Matrix(F,G,degree_shift());
@@ -410,8 +410,8 @@ Matrix Matrix::module_tensor(const Matrix &m) const
 }
 Matrix Matrix::random(const Ring *R, int r, int c)
 {
-  FreeModule *F = new FreeModule(R,r);
-  FreeModule *G = new FreeModule(R,c);
+  FreeModule *F = R->make_FreeModule(r);
+  FreeModule *G = R->make_FreeModule(c);
   Matrix result = Matrix(F,G);
   for (int i=0; i<c; i++)
     result[i] = F->random();
@@ -523,7 +523,7 @@ Matrix Matrix::lead_term(int n) const
 Matrix Matrix::lead_var_coefficient(Matrix &monoms) const
 {
   Matrix result(rows());
-  monoms = Matrix(new FreeModule(Ring_of(), 1));
+  monoms = Matrix(Ring_of()->make_FreeModule(1));
   int var, exp;
   for (int i=0; i<n_cols(); i++)
     {
@@ -978,7 +978,7 @@ void Matrix::sort(int degorder, int monorder, intarray &result) const
 Matrix Matrix::coeffs(const int *vars, Matrix &result_monoms) const
 {
   Matrix result_coeffs(rows());
-  result_monoms = Matrix(new FreeModule(Ring_of(),1));	// One row matrix
+  result_monoms = Matrix(Ring_of()->make_FreeModule(1));	// One row matrix
   for (int j=0; j<n_cols(); j++)
     {
       vec f = rows()->copy(elem(j));
