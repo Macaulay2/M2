@@ -6,7 +6,9 @@ getIndex := (R,x) -> (
      x = try baseName x else error "expected a variable of the ring";
      M.index#x)
 
-genericMatrix = (R,first,nrows,ncols) -> (
+genericMatrix = method(TypicalValue => Matrix)
+genericMatrix(Ring,ZZ,ZZ) := (R,nrows,ncols) -> genericMatrix(R,R_0,nrows,ncols)
+genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
      first = getIndex(R,first);
      if not instance(nrows,ZZ) or not instance(ncols,ZZ) or nrows < 0 or ncols < 0
      then error "expected nonnegative integers";
@@ -14,7 +16,9 @@ genericMatrix = (R,first,nrows,ncols) -> (
      then error "not enough variables in this ring";
      matrix table(nrows, ncols, (i,j)->R_(first + i + nrows*j)))
 
-genericSkewMatrix = (R,first,n) -> (
+genericSkewMatrix = method(TypicalValue => Matrix)
+genericSkewMatrix(Ring,ZZ) := (R,n) -> genericSkewMatrix(R,R_0,n)
+genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
      first = getIndex(R,first);
      vars := new MutableHashTable;
      nextvar := first;
@@ -26,7 +30,9 @@ genericSkewMatrix = (R,first,n) -> (
 	  else if i<j then vars#(i,j)
 	  else 0_R))
 
-genericSymmetricMatrix = (R,first,n) -> (
+genericSymmetricMatrix = method(TypicalValue => Matrix)
+genericSymmetricMatrix(Ring,ZZ) := (R,n) -> genericSymmetricMatrix(R,R_0,n)
+genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
      first = getIndex(R,first);
      vars := new MutableHashTable;
      nextvar := first;
