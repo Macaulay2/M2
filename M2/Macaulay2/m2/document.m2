@@ -248,8 +248,8 @@ hasDocumentation := key -> isDocumentableThing key and (
 -- fixing up hypertext
 -----------------------------------------------------------------------------
 nonnull := x -> select(x, i -> i =!= null)
-trimline0 := x -> selectRegexp ( "^(.*[^ \t]|)[ \t]*$",1, x)
-trimline  := x -> selectRegexp ( "^[ \t]*(.*[^ \t]|)[ \t]*$",1, x)
+trimline0 := x -> selectRegexp ( "^((.*[^ \t])?)[ \t]*$",1, x)
+trimline  := x -> selectRegexp ( "^[ \t]*((.*[^ \t])?)[ \t]*$",1, x)
 trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
 addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
