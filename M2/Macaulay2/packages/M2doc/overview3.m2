@@ -304,7 +304,7 @@ document {
 
 document {
      Key => "Macaulay2",
-     PARA IMG (LAYOUT#"images" | "9planets.gif", "image of nine planets"),
+     PARA IMG (LAYOUT#"packagesrc" "Images" | "9planets.gif", "image of nine planets"),
      PARA {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2. "
 	  },
@@ -594,7 +594,7 @@ document {
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA,
-     IMG { "../images/Grayson2.jpg", "picture of Grayson" }
+     IMG { "../../Images/Grayson2.jpg", "picture of Grayson" }
      }
 
 document {

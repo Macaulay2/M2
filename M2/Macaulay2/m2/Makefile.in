@@ -52,8 +52,8 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: loadsequence Makefile.in $(NONDOCM2FILES) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
 		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 @srcdir@/../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
 		@srcdir@/README.DOC @srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
-		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes @srcdir@/doc.css @srcdir@/doc-no-buttons.css \
-		../basictests/Makefile.in ../emacs/Makefile.in ../images/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
+		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes \
+		../basictests/Makefile.in ../emacs/Makefile.in ../packages/Style/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
 	@echo making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
@@ -141,12 +141,6 @@ $(datam2dir) :
 install:: $(DUMPEDM2FILES) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
-
-STYLE := doc.css doc-no-buttons.css styleswitcher.js
-install:: $(styledir)
-$(styledir):; $(INSTALL) -d "$@"
-install:: $(STYLE)
-	$(INSTALL_DATA) $^ $(styledir)
 
 ifeq "$(ENCAP)" "yes"
 ENCAPVALUE = true
