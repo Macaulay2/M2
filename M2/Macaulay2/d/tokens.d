@@ -66,8 +66,8 @@ export Dictionary := {
 export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
      position:Position,		--   the location where it was encountered
-     dictionary:Dictionary,		--   the dictionary in which it was encountered
-     entry:Symbol,     	  	--   the symbol table entry
+     dictionary:Dictionary,	--   the dictionary active at the time it was encountered
+     entry:Symbol,     	  	--   the symbol table entry, found in the dictionary above, or one for wider lexical scope
      followsNewline:bool        --   whether it followed white space with a newline in it
      };
 
@@ -220,7 +220,7 @@ export notfoundE := Expr(Nothing());			    -- internal use only, not visible to 
 
 export exprCode := {v:Expr,position:Position};
 export variableCode := {v:Symbol,position:Position};
-export assignmentCode := {lhs:Symbol,rhs:Code,position:Position};
+export assignmentCode := {nestingDepth:int,lhs:Symbol,rhs:Code,position:Position};
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {lhs:SymbolSequence,rhs:Code,position:Position};

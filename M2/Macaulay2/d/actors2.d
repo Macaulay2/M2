@@ -447,12 +447,26 @@ assignment(t:Symbol,newvalue:Expr):Expr := (
      f.i = newvalue;
      newvalue);
 
+assignmentByDepth(t:Symbol,newvalue:Expr,nestingDepth:int):Expr := (
+     i := t.frameindex;
+     if t.frameID == 0 then (
+     	  f := globalFrame.values;
+	  r := globalAssignment(t,f.i,newvalue);
+	  when r is Error do return(r) else nothing;
+     	  f.i = newvalue;
+	  )
+     else (
+     	  f := frameAndVerify(t.frameID,nestingDepth).values;
+     	  f.i = newvalue;
+	  );
+     newvalue);
+
 assignmentFun(x:assignmentCode):Expr := (
      t := x.lhs;
      if t.protected then return(buildErrorPacket("assignment to protected variable"));
      newvalue := eval(x.rhs);
      when newvalue is Error do return(newvalue) else nothing;
-     assignment(t,newvalue));
+     assignmentByDepth(t,newvalue,x.nestingDepth));
 AssignmentFun = assignmentFun;
 
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (

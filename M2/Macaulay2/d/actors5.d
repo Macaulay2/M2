@@ -443,19 +443,15 @@ examine(e:Expr):Expr := (
 	  f := sc.frame;
 	  s := sc.symbol;
 	  stdout
+	  << "symbol : " << present(s.word.name) << endl
 	  << " position : " << s.position << endl
-	  << " word.name : " << present(s.word.name) << endl
 	  << " frameID : " << s.frameID << endl
 	  << " frameindex : " << s.frameindex << endl
 	  << " lookupCount : " << s.lookupCount << endl
 	  << " protected : " << s.protected << endl
-	  << " transient : " << s.transient << endl
-	  << " frames bound for dictionaries :";
-	  while f.frameID >= 0 do (
-	       stdout << " " << f.frameID;
-	       f = f.outerFrame;
-	       );
-	  stdout << endl;
+	  << " transient : " << s.transient << endl;
+     	  showFrames(f);
+          if s.frameID != f.frameID then stdout << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
      is fc:FunctionClosure do (
 	  f := fc.frame;
@@ -466,23 +462,21 @@ examine(e:Expr):Expr := (
 	  << " frameID : " << desc.frameID << endl
 	  << " framesize : " << desc.framesize << endl
 	  << " numparms : " << desc.numparms << endl
-	  << " hasClosure : " << desc.hasClosure << endl
-	  << " frames bound for dictionaries :";
-	  while f.frameID >= 0 do (
-	       stdout << " " << f.frameID;
-	       f = f.outerFrame;
-	       );
-	  stdout << endl; 
+	  << " hasClosure : " << desc.hasClosure << endl;
+     	  showFrames(f);
+	  nullE)
+     is fn:CompiledFunction do (
+	  stdout
+	  << " hash : " << fn.hash << endl;
+	  nullE)
+     is fnc:CompiledFunctionClosure do (
+	  stdout
+	  << " hash : " << fnc.hash << endl
+	  << " env : [" << length(fnc.env) << "]" << endl;
 	  nullE)
      is s:Sequence do (
 	  if length(s) == 0 then (
-	       f := localFrame;
-	       stdout << "frames currently bound for dictionaries :";
-	       while f.frameID >= 0 do (
-		    stdout << " " << f.frameID;
-		    f = f.outerFrame;
-		    );
-	       stdout << endl;
+     	       showFrames(localFrame);
 	       nullE)
 	  else WrongNumArgs(1))
      else WrongArg("(), a function, or a symbol"));

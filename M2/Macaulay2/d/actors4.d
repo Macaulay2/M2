@@ -25,7 +25,10 @@ use basic;
 use struct;
 use objects;
 
-internalName(s:string):string := "$" + s;
+internalName(s:string):string := (
+     -- "$" + s						    -- old way, but now we can see these symbols sometimes
+     s
+     );
 
 sleepfun(e:Expr):Expr := (
      when e

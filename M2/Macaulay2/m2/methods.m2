@@ -291,6 +291,7 @@ lines = x -> (
 between = method()
 between(Thing,VisibleList) := List => (m,v) -> mingle(v,#v-1:m)
 
+length Dictionary := s -> #s
 length String := s -> #s
 length VisibleList := s -> #s
 

@@ -1107,23 +1107,25 @@ mathML Thing := x -> mathML expression x
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
+o := () -> concatenate(interpreterDepth():"o")
+
 Thing.AfterPrint = x -> (
      << endl;				  -- double space
-     << "o" << lineNumber() << " : " << class x;
+     << o() << lineNumber() << " : " << class x;
      << endl;
      briefDocumentation x;
      )
 
 Expression.AfterPrint = x -> (
      << endl;				  -- double space
-     << "o" << lineNumber() << " : " << class x
+     << o() << lineNumber() << " : " << class x
      << endl;
      briefDocumentation x;
      )
 
 Holder.AfterPrint = x -> (
      << endl;				  -- double space
-     << "o" << lineNumber() << " : " << class x << " " << class x#0
+     << o() << lineNumber() << " : " << class x << " " << class x#0
      << endl;
      briefDocumentation x;
      )

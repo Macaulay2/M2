@@ -50,7 +50,7 @@ if firstTime then (
 
      normalPrompts = () -> (
 	  lastprompt := "";
-	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate("i", string lineno, " : "));
+	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth():"i", string lineno, " : "));
 	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
 	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
 	  );
@@ -126,7 +126,7 @@ preload := true
 noloaddata := false
 nobanner := false;
 nosetup := false
-interpreter := topLevel
+interpreter := commandInterpreter
 
 getRealPath := fn -> (
      s := realpath fn;

@@ -14,6 +14,7 @@ peek2(List,ZZ) := (s,depth) -> (
      if depth === 0 then net s
      else horizontalJoin(
 	  "{", horizontalJoin between (",", apply(s, value -> peek2(value,depth))), "}" ) )
+
 peek2(String, ZZ) := (s,depth) -> if depth === 0 then s else format s
 
 boxNet := x -> ( 
@@ -41,7 +42,6 @@ peek2(Sequence,ZZ) := (s,depth) -> (
 
 precOption := precedence ( 1 => 2 )
 
-peek2(Dictionary,ZZ) := 
 peek2(HashTable,ZZ) := (s,depth) -> (
      if depth === 0 
      then net s
@@ -53,6 +53,28 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 	  "{",
 	  stack sort apply(
 	       pairs s,
+	       (key,value) -> horizontalJoin splice (
+		    if precedence key < precOption
+		    then ("(",peek2(key,depth-1),")")
+		    else peek2(key,depth-1),
+		    " => ",
+		    if precedence value < precOption
+		    then ("(",peek2(value,depth-1),")")
+		    else peek2(value,depth-1))),
+	  "}"
+	  ))
+
+peek2(Dictionary,ZZ) := (s,depth) -> (
+     if depth === 0 
+     then net s
+     else horizontalJoin(
+	  net class s,
+	  if parent s =!= Nothing 
+	  then horizontalJoin(" of ", net parent s)
+	  else "",
+	  "{",
+	  stack sort apply(
+	       apply(values s, s -> (s,value s)),
 	       (key,value) -> horizontalJoin splice (
 		    if precedence key < precOption
 		    then ("(",peek2(key,depth-1),")")
