@@ -71,7 +71,7 @@ msyz = rawGBGetMatrix(Gcomp,2,false) -- gb
 mchange = rawGBGetChange(Gcomp,1)
 m
 assert(mgb == m * mchange)
-
+m * mchange
 -- Test 5. -- Semi-random cubics
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,false,0,0,0)

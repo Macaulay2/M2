@@ -130,7 +130,7 @@ const RingElement_array *make_ringelem_array(int len, ...)
   return result;
 }
 
-
+#if 0
 const Vector *make_vector(const FreeModule *F, ...)
 {
   va_list ap;
@@ -161,7 +161,7 @@ const Vector_array *make_vector_array(int len, ...)
   va_end(ap);
   return result;
 }
-
+#endif
 void display_monomial(const Monomial *m)
 {
   if (m == 0)
@@ -210,14 +210,6 @@ void display_freemodule(const FreeModule *F)
     printf("%s\n", tocharstar(IM2_FreeModule_to_string(F)));
 }
 
-void display_vector(const Vector *f)
-{
-  if (f == 0)
-    printf("%s\n", tocharstar(IM2_last_error_message()));
-  else
-    printf("%s\n", tocharstar(IM2_Vector_to_string(f)));
-}
-
 void display_matrix(const Matrix *f)
 {
   if (f == 0)
@@ -226,6 +218,7 @@ void display_matrix(const Matrix *f)
     printf("%s\n", tocharstar(IM2_Matrix_to_string(f)));
 }
 
+#if 0
 void display_sparsemat(const MutableMatrix *f)
 {
   if (f == 0)
@@ -233,6 +226,7 @@ void display_sparsemat(const MutableMatrix *f)
   else
     printf("%s\n", tocharstar(IM2_MutableMatrix_to_string(f)));
 }
+#endif
 
 int is_eq(M2_string elem, char *answer)
 {
