@@ -193,9 +193,11 @@ degree c
 -- Groebner bases
 f = matrix {{x,y^2,z^3}}
 I = image f
+G = gb I
+peek G
+g = gens G
 
-oops()
--- g = gens gb I
+end
 
 G = gb (I, DegreeLimit => 100)
 raw G
