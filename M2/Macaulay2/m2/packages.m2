@@ -105,6 +105,9 @@ newPackage(String) := opts -> (title) -> (
 	       db := openDatabase dbname;
 	       newpkg#"processed documentation database" = db;
 	       addEndFunction(() -> if isOpen db then close db)));
+     addStartFunction(() -> if not isOpen newpkg#"processed documentation database" and prefixDirectory  =!= null then (
+	       dbname := prefixDirectory | LAYOUT#"packagedoc" title | "documentation.db"; -- what if there is more than one prefix directory?
+	       if fileExists dbname then newpkg#"processed documentation database" = openDatabase dbname));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
      if title =!= "Macaulay2" then (
 	  newpkg#"private dictionary" = new Dictionary; -- this is the local one
@@ -267,7 +270,10 @@ needsPackage String := s -> (
      )
 
 beginDocumentation = () -> (
-     stderr << "beginDocumentation: currentFileDirectory = " << currentFileDirectory << endl;
+     if currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
+	  stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	  return end;
+	  );
      )
 
 -- Local Variables:
