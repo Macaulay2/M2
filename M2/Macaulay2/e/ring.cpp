@@ -32,7 +32,6 @@ void Ring::initialize_ring(int P0,
   else
     _HRing = 0;
 
-  _grtype = 0;
   _flattened_ring = this; // WARNING: this is the default.  Polynomial
                           // rings, fraction fields, QQ will change this.
   _zero_divisor = (Nterm*)0;
@@ -40,6 +39,7 @@ void Ring::initialize_ring(int P0,
   _isquotientring = false;
   _is_ZZ_quotient = false;
   _ZZ_quotient_value = (Nterm*)0;
+
 }
 
 Ring::~Ring()
@@ -220,6 +220,45 @@ int Ring::primary_degree(const ring_elem) const
 {
   return 0;
 }
+
+////////////////////////////////////////////
+// Translation gbvector <--> ringelem/vec //
+////////////////////////////////////////////
+// This version is valid ONLY for base rings (not QQ!)
+
+#include "gbring.hpp"
+Ring::trans_tag Ring::trans_type() const { return BASE; }
+
+ring_elem Ring::trans_to_ringelem(ring_elem coeff, 
+				  const int *exp) const
+{
+  return coeff;
+}
+
+ring_elem Ring::trans_to_ringelem_denom(ring_elem coeff, 
+					ring_elem denom, 
+					int *exp) const
+{
+  // To use this, the corresponding ring MUST have division defined
+  return this->divide(coeff, denom);
+}
+
+void Ring::trans_from_ringelem(gbvectorHeap &H, 
+				    ring_elem coeff, 
+				    int comp, 
+				    int *exp,
+				    int firstvar) const
+{
+  GBRing *GR = H.get_gb_ring();
+  const FreeModule *F = H.get_freemodule();
+  const Monoid *M = GR->get_flattened_monoid();
+  
+  gbvector *g = GR->gbvector_term(F, coeff, comp);
+  M->from_expvector(exp, g->monom);
+  H.add(g);
+}
+////////////////////////////////////////////
+/////////////////////////////////////////////////////
 
 
 #include "text_io.hpp"

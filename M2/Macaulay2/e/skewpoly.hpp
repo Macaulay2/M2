@@ -16,7 +16,7 @@ protected:
   virtual ~SkewPolynomialRing();
 
 public:
-  static SkewPolynomialRing *create(const Ring *R,
+  static SkewPolynomialRing *create(const PolynomialRing *R,
 				    M2_arrayint skewvars);
 
   virtual bool is_pid() const       { return false; }

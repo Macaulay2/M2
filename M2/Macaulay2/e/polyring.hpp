@@ -239,6 +239,41 @@ public:
   void sort(Nterm *&f) const;
   void debug_out(const ring_elem f) const;
   void debug_outt(const Nterm *f) const;
+
+  ///////////////////////////////////////////////////////
+  // Used in gbvector <--> vector/ringelem translation //
+  ///////////////////////////////////////////////////////
+  // These are only meant to be called by Ring's.
+private:
+  int *trans_EXP1; // Used by translate_* routines.
+public:
+  int *trans_MONOM1; // A monomial of Nmonoms()
+
+  virtual ring_elem trans_to_ringelem(ring_elem coeff, 
+				      const int *exp) const;
+  virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
+					    ring_elem denom, 
+					    int *exp) const;
+  virtual void trans_from_ringelem(gbvectorHeap &H, 
+				   ring_elem coeff, 
+				   int comp, 
+				   int *exp,
+				   int firstvar) const;
+  
+  virtual trans_tag trans_type() const { return POLY; }
+public:
+   gbvector * translate_gbvector_from_vec(const FreeModule *F, 
+ 			       const vec v, 
+ 			       ring_elem &result_denominator) const;
+ 
+   vec translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const;
+ 
+   vec translate_gbvector_to_vec_denom(const FreeModule *F, 
+ 			    const gbvector *v,
+ 			    const ring_elem denom) const;
+   // Translate v/denom to a vector in F.  denom does not need to be positive,
+   // although it had better be non-zero.
+
 };
 
 #endif

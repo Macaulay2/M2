@@ -63,6 +63,7 @@ public:
 
 class gb_emitter : public gb_node
 {
+  const PolynomialRing *originalR;
   GBRing *GR;
   const Matrix *gens;
   gb_node *g;
@@ -107,10 +108,11 @@ class gb2_comp : public gb_node
 {
 private:
   // Ring information
+  const PolynomialRing *originalR;
   GBRing *GR;
   const PolynomialRing *R;
-  const Monoid *M;
-  const Ring *K;
+  const Monoid *M; // flattened monomials
+  const Ring *K;  // flattened coefficients
 
   FreeModule *F;
   FreeModule *Fsyz;	// This is a Schreyer module
@@ -249,6 +251,7 @@ public:
 class gbres_comp : public mutable_object
 {
 private:
+  const PolynomialRing *originalR;
   GBRing *GR;
   int n_nodes;
   gb_node **nodes;

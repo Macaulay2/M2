@@ -35,7 +35,6 @@ bigRR *bigRR::create(const Monoid *D)
 {
   bigRR *result = new bigRR;
   result->initialize_bigRR(D);
-  result->_grtype = GRType::make_BASE(result);
   return result;
 }
 

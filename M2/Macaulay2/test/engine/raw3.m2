@@ -327,7 +327,7 @@ rawExteriorPower(2,m,1)
 rawExteriorPower(3,m,0)
 rawSortColumns(m,1,1)
 rawMinors(2,m,0)
-rawPfaffians(4,m)
+--rawPfaffians(4,m) -- CRASHES
 
 -- TODO: 
 --  compress

@@ -21,8 +21,8 @@ SolvableAlgebra *SolvableAlgebra::create(const Ring *R,
 
   result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
   if (!result->initialize_solvable(Q)) return 0;
-  result->_gb_ring = GBRing::create_SolvableAlgebra(result);
-  result->_grtype = GRType::make_POLY(result);
+  const Ring *flatR = result->_flattened_ring;
+  result->_gb_ring = GBRing::create_SolvableAlgebra(flatR->Ncoeffs(), flatR->Nmonoms(), result);
   return result;
 }
 

@@ -23,7 +23,8 @@ class SolvableAlgebra;
 class FreeModule;
 class RingMap;
 
-class GRType; // Used in GBRing, but each ring is tagged with a GBType
+class gbvectorHeap;
+class gbvector;
 
 class Ring : public mutable_object
 {
@@ -36,7 +37,6 @@ protected:
   const Monoid *D_;
   const PolynomialRing *_HRing;	// Hilbert function ring, if D has >= 1 variables.
 				// Otherwise, this will be NULL.
-  const GRType *_grtype;	// Used for translation of gbvectors to/from ringelems and vecs.
   const Ring *_flattened_ring;	// Either 'this', or a polynomial ring whose coeff ring is 
                                 // 'basic', eg ZZ, ZZ/p, RR, or some other 
                                 // non fraction, non poly ring.
@@ -52,6 +52,9 @@ protected:
 				// there is an integer in the factored ideal.
   ring_elem _ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
 
+
+
+  
   void initialize_ring(int charac, int nvars, int totalvars, const Ring *K, 
 	const Monoid *M, const Monoid *D);
   Ring() {}
@@ -67,7 +70,6 @@ public:
   const Monoid * Nmonoms()       const { return M_; }
   const Monoid * degree_monoid() const { return D_; }
   const PolynomialRing *HilbertRing() const { return _HRing; }
-  const GRType * get_GRType() const { return _grtype; }
   const Ring * get_flattened_ring() const {  return _flattened_ring; }
 
   virtual FreeModule *make_FreeModule() const;
@@ -222,6 +224,29 @@ public:
     // returns true iff f is homogeneous
   virtual int primary_degree(const ring_elem f) const;
   virtual void degree_weights(const ring_elem f, const M2_arrayint wts, int &lo, int &hi) const;
+
+  ///////////////////////////////////////////////////////
+  // Used in gbvector <--> vector/ringelem translation //
+  ///////////////////////////////////////////////////////
+  // Default values are provided for base rings (ZZ, ZZ/p, GF)
+  // All others should redefine these routines
+
+public:
+  typedef enum { BASE, FRAC_QQ, FRAC, POLY } trans_tag;
+  virtual ring_elem trans_to_ringelem(ring_elem coeff, 
+				      const int *exp) const;
+  virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
+					    ring_elem denom, 
+					    int *exp) const;
+  virtual void trans_from_ringelem(gbvectorHeap &H, 
+				   ring_elem coeff, 
+				   int comp, 
+				   int *exp,
+				   int firstvar) const;
+  
+  virtual trans_tag trans_type() const;
+
+  ////////////////////////////////////////////////////////  
 
 };
 

@@ -53,7 +53,7 @@ private:
   
 private:
   // Data
-  const PolynomialRing *_originalR;
+  const PolynomialRing *originalR;
   GBRing *R;
   // Ring information
 
@@ -168,7 +168,7 @@ public:
 
   virtual int kind() { return 231; } // FIX THIS!!
 
-  virtual const PolynomialRing *get_ring() { return _originalR; }
+  virtual const PolynomialRing *get_ring() { return originalR; }
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
 

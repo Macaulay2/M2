@@ -117,7 +117,6 @@ GF *GF::create(const RingElement *prim)
   GF *result = new GF;
   if (!result->initialize_GF(prim)) return 0;
 
-  result->_grtype = GRType::make_BASE(result);
   return result;
 }
 

@@ -39,7 +39,7 @@ void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz)
       // MES: throw an error here.
       assert(0);
     }
-  _originalR = R;
+  originalR = R;
   _GR = R->get_gb_ring();
   _M = _GR->get_flattened_monoid();
   _K = _GR->get_flattened_coefficients();
@@ -78,7 +78,7 @@ void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz)
   for (i=0; i<=_F->rank(); i++)
     {
       // The 0th one is not used.
-      monideal_pair *p = new monideal_pair(_GR->get_flattened_ring());
+      monideal_pair *p = new monideal_pair(originalR->get_flattened_ring());
       _monideals.append(p);
     }
 }
@@ -97,7 +97,7 @@ void GB_comp::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   for (i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
-      gbvector *f = _GR->gbvector_from_vec(_F,(*m)[i], denom);
+      gbvector *f = originalR->translate_gbvector_from_vec(_F,(*m)[i], denom);
       s_pair *p = new_gen(i, f, denom);
       if (p != NULL)
 	{
@@ -122,8 +122,8 @@ void GB_comp::initialize_forced(const Matrix *m,
     {
       if ((*gb)[i] == NULL) continue;
       ring_elem denom1, denom2, u, v;
-      gbvector *f = _GR->gbvector_from_vec(_F, (*gb)[i], denom1);
-      gbvector *fsyz = _GR->gbvector_from_vec(_Fsyz, (*mchange)[i], denom2);
+      gbvector *f = originalR->translate_gbvector_from_vec(_F, (*gb)[i], denom1);
+      gbvector *fsyz = originalR->translate_gbvector_from_vec(_Fsyz, (*mchange)[i], denom2);
       _K->syzygy(denom1,denom2,u,v);
       _GR->gbvector_mult_by_coeff_to(f,u);
       _K->negate_to(v);
@@ -323,7 +323,9 @@ void GB_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 
-  if (_GR->is_quotient_ring())
+#warning "put back quotient ring stuff here"
+#if 0
+  if (originalR->is_quotient_ring())
     {
       for (int i=0; i<_GR->n_quotients(); i++)
 	{
@@ -335,6 +337,7 @@ void GB_comp::find_pairs(gb_elem *p)
 	  elems.insert(new Bag(q, vplcm));
 	}
     }
+#endif
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = _monideals[p->f->comp]->mi;
   for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
@@ -357,7 +360,7 @@ void GB_comp::find_pairs(gb_elem *p)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal mi(_GR->get_flattened_ring(), elems, rejects);
+  MonomialIdeal mi(originalR->get_flattened_ring(), elems, rejects);
   while (rejects.remove(b))
     {
       s_pair *q = (s_pair *) b->basis_ptr();
@@ -444,7 +447,9 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, f, div_totalexp);
-      if (_GR->is_quotient_ring() 
+#warning "put back quotient ring stuff"
+#if 0
+      if (originalR->is_quotient_ring() 
 	  && _GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
 	  gbvector *g = (gbvector *) b->basis_ptr();
@@ -452,7 +457,9 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 	  count++;
 	  _n_reductions++;
 	}
-      else if (_monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
+      else 
+#endif
+	if (_monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  _GR->gbvector_reduce_lead_term(_F,_Fsyz,head.next,f,fsyz,q->f,q->fsyz);
@@ -510,7 +517,8 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, lead, div_totalexp);
-
+#warning "put back quotient ring stuff"
+#if 0
       if (_GR->is_quotient_ring() 
 	  && _GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
@@ -521,7 +529,9 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 				    g,0);
 	  count++;
 	}
-      else if (_monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
+      else 
+#endif
+	if (_monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  _GR->reduce_lead_term_heap(_F,_Fsyz,
@@ -1126,7 +1136,7 @@ const MatrixOrNull *GB_comp::get_matrix(int level, M2_bool minimize)
       calc();
       Matrix *result = new Matrix(_Fsyz);
       for (int i=0; i<_syz.length(); i++)
-	result->append(_GR->gbvector_to_vec(_Fsyz,_syz[i]));
+	result->append(originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
       return result;
     }
   else if (minimize)
@@ -1136,7 +1146,7 @@ const MatrixOrNull *GB_comp::get_matrix(int level, M2_bool minimize)
       Matrix *result = new Matrix(_F);
       for (int i=0; i<_gb.length(); i++)
 	if (_gb[i]->is_min)
-	  result->append(_GR->gbvector_to_vec(_F,_gb[i]->f));
+	  result->append(originalR->translate_gbvector_to_vec(_F,_gb[i]->f));
       return result;
     }
   else
@@ -1145,7 +1155,7 @@ const MatrixOrNull *GB_comp::get_matrix(int level, M2_bool minimize)
       Matrix *result = new Matrix(_F);
       for (int i=0; i<_gb.length(); i++)
 	{
-	  vec v = _GR->gbvector_to_vec(_F,_gb[i]->f);
+	  vec v = originalR->translate_gbvector_to_vec(_F,_gb[i]->f);
 	  result->append(v);
 	}
       return result;
@@ -1164,7 +1174,7 @@ const MatrixOrNull *GB_comp::get_change(int level)
   calc();
   Matrix *result = new Matrix(_Fsyz);
   for (int i=0; i<_gb.length(); i++)
-    result->append(_GR->gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
+    result->append(originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
   return result;
 }
 
@@ -1180,7 +1190,7 @@ const MatrixOrNull *GB_comp::get_leadterms(int nparts, int level)
   for (int i=0; i<_gb.length(); i++)
     {
       gbvector *f = _GR->gbvector_lead_term(nparts, _F, _gb[i]->f);
-      result->append(_GR->gbvector_to_vec(_F,f));
+      result->append(originalR->translate_gbvector_to_vec(_F,f));
     }
   // TODO: sort this list.  This sort order will affect:
   //  get_matrix, get_change, and of course this one.
@@ -1224,12 +1234,12 @@ const MatrixOrNull *GB_comp::matrix_remainder(int level,
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
-      gbvector * f = _GR->gbvector_from_vec(_F, (*m)[i], denom);
+      gbvector * f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
       gbvector * fsyz = _GR->gbvector_zero();
 
       gb_reduce(f, fsyz);
 
-      vec fv = _GR->gbvector_to_vec_denom(_F, f, denom);
+      vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
       (*red)[i] = fv;
     }
   return red;
@@ -1258,14 +1268,14 @@ void GB_comp::matrix_lift(int level,
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
-      gbvector * f = _GR->gbvector_from_vec(_F, (*m)[i], denom);
+      gbvector * f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
       gbvector * fsyz = _GR->gbvector_zero();
 
       gb_reduce(f, fsyz);
 
-      vec fv = _GR->gbvector_to_vec_denom(_F, f, denom);
+      vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
       _K->negate_to(denom);
-      vec fsyzv = _GR->gbvector_to_vec_denom(_Fsyz,fsyz, denom);
+      vec fsyzv = originalR->translate_gbvector_to_vec_denom(_Fsyz,fsyz, denom);
       (**result_remainder)[i] = fv;
       (**result_quotient)[i] = fsyzv;
     }
@@ -1287,7 +1297,7 @@ int GB_comp::contains(int level,
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
-      gbvector *f = _GR->gbvector_from_vec(_F,(*m)[i], denom);
+      gbvector *f = originalR->translate_gbvector_from_vec(_F,(*m)[i], denom);
       _K->remove(denom);
       gbvector *fsyz = NULL;
       gb_reduce(f, fsyz);

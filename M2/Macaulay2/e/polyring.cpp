@@ -52,15 +52,18 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   _EXP1 = new int[_nvars];
   _EXP2 = new int[_nvars];
   _EXP3 = new int[_nvars];
+
+  trans_MONOM1 = M->make_one(); // Used in gbvector <--> vec translation
+  trans_EXP1 = new int[_nvars];
 }
 
 PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 {
   PolynomialRing *result = new PolynomialRing;
   result->initialize_poly_ring(K,MF);
-  result->_grtype = GRType::make_POLY(result);
   result->_flattened_ring = result->make_flattened_ring();
-  result->_gb_ring = GBRing::create_PolynomialRing(result);
+  const PolynomialRing *flatR = result->_flattened_ring;
+  result->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), flatR->Nmonoms());
   return result;
 }
 
@@ -2127,6 +2130,100 @@ ring_elem PolynomialRing::divide_by_expvector(const int *exp, const ring_elem a)
   return result;
 }
 
+///////////////////////////////////
+// translation gbvector <--> vec //
+///////////////////////////////////
+#include "geovec.hpp"
+
+ring_elem PolynomialRing::trans_to_ringelem(ring_elem coeff, 
+					   const int *exp) const
+{
+  ring_elem a = Ncoeffs()->trans_to_ringelem(coeff, exp + n_vars());
+  Nmonoms()->from_expvector(exp, trans_MONOM1);
+  Nterm *t = term(a, trans_MONOM1);
+  return t;
+}
+
+ring_elem PolynomialRing::trans_to_ringelem_denom(ring_elem coeff, 
+						 ring_elem denom, 
+						 int *exp) const
+{
+  ring_elem a = Ncoeffs()->trans_to_ringelem_denom(coeff, denom, exp + n_vars());
+  Nmonoms()->from_expvector(exp, trans_MONOM1);
+  Nterm *t = term(a, trans_MONOM1);
+  return t;
+}
+
+void PolynomialRing::trans_from_ringelem(gbvectorHeap &H, 
+			     ring_elem coeff, 
+			     int comp, 
+			     int *exp,
+			     int firstvar) const
+{
+  const Monoid *M = Nmonoms();
+  Nterm *t = coeff;
+  for ( ; t != 0; t=t->next)
+    {
+      M->to_expvector(t->monom, exp + firstvar);
+      Ncoeffs()->trans_from_ringelem(H, t->coeff, comp, exp, firstvar + n_vars());
+    }
+}
+
+vec PolynomialRing::translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const
+{
+  vecHeap H(F);
+  const Monoid *M = Nmonoms();
+
+  for (const gbvector *t = v; t != 0; t=t->next)
+    {
+      M->to_expvector(t->monom, trans_EXP1);
+      ring_elem a = trans_to_ringelem(t->coeff, trans_EXP1);
+      vec w = F->raw_term(a, t->comp-1);
+      H.add(w);
+    }
+
+  return H.value();
+}
+
+vec PolynomialRing::translate_gbvector_to_vec_denom(const FreeModule *F, 
+					  const gbvector *v,
+					  const ring_elem denom) const
+{
+  vecHeap H(F);
+  const Monoid *M = Nmonoms();
+  
+  for (const gbvector *t = v; t != 0; t=t->next)
+    {
+      M->to_expvector(t->monom, trans_EXP1);
+      ring_elem a = trans_to_ringelem_denom(t->coeff, denom, trans_EXP1);
+      vec w = F->raw_term(a, t->comp-1);
+      H.add(w);
+    }
+
+  return H.value();
+}
+
+gbvector * PolynomialRing::translate_gbvector_from_vec(const FreeModule *F, 
+					     const vec v,
+					     ring_elem &result_denominator) const
+{
+  gbvectorHeap H(get_gb_ring(),F);
+  // TODO: remove common denominator!!
+  // result_denominator = _one;
+  // F->common_denominator(v, result_denominator);
+  // now mult through by this element...
+  // SERIOUS QUESTION: what ring is this element in????
+  for (vec w = v; w != 0; w=w->next)
+    {
+      trans_from_ringelem(H, w->coeff, w->comp+1, trans_EXP1, 0);
+    }
+
+  const Ring *K = _flattened_ring->Ncoeffs();
+  result_denominator = K->from_int(1);
+  return H.value();
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
 // End:
+

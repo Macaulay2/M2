@@ -24,7 +24,6 @@ QQ *QQ::create(const Monoid *D)
 {
   QQ *result = new QQ;
   result->initialize_QQ(D);
-  result->_grtype = GRType::make_QQ(result);
   return result;
 }
 
@@ -393,6 +392,35 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
   return result;
 }
 
+///////////////////////////////////
+// translation gbvector <--> vec //
+///////////////////////////////////
+ring_elem QQ::trans_to_ringelem(ring_elem coeff, 
+				const int *exp) const
+{
+  ring_elem a = ZZ->trans_to_ringelem(coeff,exp);
+  return this->fraction(a, trans_one);
+}
+
+ring_elem QQ::trans_to_ringelem_denom(ring_elem coeff, 
+				      ring_elem denom, 
+				      int *exp) const
+{
+  ring_elem a = ZZ->trans_to_ringelem(coeff,exp);
+  return this->fraction(a, denom);
+}
+
+void QQ::trans_from_ringelem(gbvectorHeap &H, 
+			     ring_elem coeff, 
+			     int comp, 
+			     int *exp,
+			     int firstvar) const
+{
+  ring_elem a = this->numerator(coeff);
+  ZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
 // End:
+

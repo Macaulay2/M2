@@ -29,7 +29,6 @@ Z *Z::create(const Monoid *D)
 {
   Z *result = new Z;
   result->initialize_ZZ(D);
-  result->_grtype = GRType::make_BASE(result);
   return result;
 }
 

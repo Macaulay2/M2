@@ -16,7 +16,7 @@ class GB_comp : public Computation
 {
 private:
   // Ring information
-  const PolynomialRing *_originalR;
+  const PolynomialRing *originalR;
   GBRing *_GR;
   const Monoid *_M;
   const Ring *_K;
@@ -126,7 +126,7 @@ public:
 
   virtual int kind() { return 1; }
 
-  virtual const PolynomialRing *get_ring() { return _originalR; }
+  virtual const PolynomialRing *get_ring() { return originalR; }
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
 
