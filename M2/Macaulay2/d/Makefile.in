@@ -11,11 +11,41 @@ all :: ../bin/M2$(EXE)
 # least dependent so that "make" can remake the *.dep makefiles
 ALLOBJ :=
 CFILES :=
+OPTCFILES := 
 EXTRACFILES :=
 MADECFILES :=
 SRCFILES := 
-DFILES := 
 
+## *.c files
+
+OPTCFILES += debug.c
+ifeq "$(DEBUG)" "yes"
+ALLOBJ += debug.o
+endif
+
+CFILES += M2inits.c M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
+SRCFILES += $(OPTCFILES) $(CFILES)
+ALLOBJ += $(CFILES:.c=.o)
+
+## *.c files, non source, made by us from other files
+
+MADECFILES := tmp_init.c startup.c
+ALLOBJ += $(MADECFILES:.c=.o)
+
+## *.cc files
+
+CCFILES := version.cc initgmp.cc
+ALLOBJ += $(CCFILES:.cc=.o)
+SRCFILES += $(CCFILES)
+
+## *.h files
+
+HFILES := M2types.h getpagesize.h memdebug.h types.h
+SRCFILES += $(HFILES)
+
+## *.d files
+
+DFILES := 
 DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface.d
@@ -47,20 +77,6 @@ actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
 ALLOBJ += $(DFILES:.d=.oo) 
 SRCFILES += $(DFILES)
 clean::; rm -f $(DFILES:.d=.c)
-
-CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c M2inits.c gdbm_interface.c
-SRCFILES += $(CFILES)
-ALLOBJ += $(CFILES:.c=.o)
-
-MADECFILES := tmp_init.c startup.c
-ALLOBJ += $(MADECFILES:.c=.o)
-
-CCFILES := version.cc initgmp.cc
-ALLOBJ += $(CCFILES:.cc=.o)
-SRCFILES += $(CCFILES)
-
-HFILES := M2types.h getpagesize.h memdebug.h types.h
-SRCFILES += $(HFILES)
 
 ############################## dependencies
 ifeq "$(DEPENDS)" "yes"
@@ -94,15 +110,9 @@ endif
 
 CPPFLAGS += -I../../include -I@srcdir@ -I. -I../util -I../e
 CFLAGS += $(DEBUGFLAGS)
-
-# we can't do this because our manufactured c files have lots of unused labels
-# CFLAGS  += -Wall -Wshadow -Wcast-qual
-
-ifeq "$(DEBUG)" "yes"
-CFLAGS += -DGC_DEBUG
-endif
-
+# CFLAGS += -Wall -Wshadow -Wcast-qual 
 CXXFLAGS += $(WARNINGS)
+CFLAGS += -Wno-unused-label
 
 ifeq (gcc,$(CC))
 ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))

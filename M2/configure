@@ -885,7 +885,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-libgmp=...       libgmp option (-lgmp)
   --with-lapacklibs=...   lapack libraries (-llapack -lcblas -lf77blas -lg2c)
-  --with-veclib...        replace lapack libraries by "-framework vecLib"
+  --with-veclib           replace lapack libraries by "-framework vecLib"
 
 Some influential environment variables:
   CFLAGS      C compiler flags, default: -g -O2

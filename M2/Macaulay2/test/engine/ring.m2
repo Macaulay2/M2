@@ -92,7 +92,7 @@ assert( pR(f*d,d) == 0 )
 f
 g
 rawFactor raw (f*g)
--- factor(f*g)
+factor(f*g)
 
 -- rawCharSeries raw vars R
 

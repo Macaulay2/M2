@@ -225,27 +225,60 @@ size_t doubling_stash::allocated_size(void *p)
 
 extern "C" void outofmem();
 
-// the new way:
+#ifndef DEBUG
 
-void* operator new( size_t size ) {
-  void *p = GC_MALLOC( size );
-  if (p == NULL) outofmem();
-  return p;
-}
+    void* operator new( size_t size ) {
+      void *p = GC_MALLOC( size );
+      if (p == NULL) outofmem();
+      return p;
+    }
 
-void operator delete( void* obj ) {
-  if (obj != NULL) GC_FREE( obj );
-}
+    void operator delete( void* obj ) {
+      if (obj != NULL) GC_FREE( obj );
+    }
 
-void* operator new []( size_t size ) {
-  void *p = GC_MALLOC( size );
-  if (p == NULL) outofmem();
-  return p;
-}
+    void* operator new []( size_t size ) {
+      void *p = GC_MALLOC( size );
+      if (p == NULL) outofmem();
+      return p;
+    }
 
-void operator delete []( void* obj ) {
-  if (obj != NULL) GC_FREE( obj );
-}
+    void operator delete []( void* obj ) {
+      if (obj != NULL) GC_FREE( obj );
+    }
+
+#else
+
+#include "../d/debug.h"
+
+    void* operator new( size_t size ) {
+      void *p = GC_MALLOC( size );
+      if (p == NULL) outofmem();
+      trapchk(p);
+      return p;
+    }
+
+    void operator delete( void* p ) {
+      trapchk(p);
+      if (p != NULL) GC_FREE(p);
+    }
+
+    void* operator new []( size_t n ) {
+      void *p = GC_MALLOC( n );
+      if (p == NULL) outofmem();
+      trapchk(p);
+      return p;
+    }
+
+    void operator delete []( void* p ) {
+      trapchk(p);
+      if (p != NULL) GC_FREE( p );
+    }
+
+    static void debug_warning() __attribute__ ((constructor));
+    static void debug_warning() { fprintf(stderr,"warning: debugging version of operators new/delete included\n"); }
+
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
