@@ -145,102 +145,93 @@ trimm := (f,n) -> (
      fm := ff#0;			  -- the monomials
      fc := ff#1;			  -- the coefficients
      p := positions(first entries fm, m -> max first exponents m < n);
-     (fm_p * transpose fc_p)_(0,0)
+     (fm_p * fc^p)_(0,0)
      )
 
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
 hilbertSeries Module := options -> (M) -> (
-     if M#?{hilbertSeries} and options.Order == infinity
-     then M#{hilbertSeries}
-     else 
-     if M#?{{hilbertSeries}} 
-     and options.Order =!= infinity
-     and M#{{hilbertSeries}}#1 >= options.Order
-     then (
-	  if M#{{hilbertSeries}}#1 === options.Order
-	  then M#{{hilbertSeries}}#0
-	  else trimm(M#{{hilbertSeries}}#0,options.Order)
+     ord := options.Order;
+     if ord === infinity then (
+	  if M.cache#?"exact hilbertSeries" then return M.cache#"exact hilbertSeries";
 	  )
-     else (
-	  A := ring M;
-	  num := poincare M;
-	  -- stderr << "num = " << num << endl;
-	  T := degreesRing A;
-	  denom := tally (degree \ generators A);
-	  -- stderr << "denom = " << denom << endl;
-	  if options.Order === infinity 
-	  then M#{hilbertSeries} = (
-	       y := flatten apply(pairs denom,
-		    (i,e) -> (
-			 f := 1 - T_i;			    -- f^e is a factor of the denominator
-			 while true do (
-     	       	    	      -- stderr << toExternalString num << " / " << toExternalString f << " = " << flush;
-			      -- q := num/f; -- might go into an infinite loop, sigh
-			      q := null;
-			      -- stderr << toExternalString q << endl;
-			      if false			    -- temporary bypass
-			      and denominator q == 1 then (
-				   num = numerator q;
-			      	   e = e-1;
-			      	   if e == 0 then break {};
-				   )
-			      else (
-				   if #i > 0 and same i and first i > 1 
-				   and false		    -- bypass
-				   then (
-					-- we factor f as f1 * f2
-					i0 := first i;
-					t := product generators T;
-					f1 := 1 - t;
-					e1 := e;
-					f2 := sum(i0,j->t^j);
-					e2 := e;
-					while true do (
-					     q = num/f1;
-					     if denominator q != 1 then break;
-					     num = numerator q;
-					     e1 = e1 - 1;
-					     if e1 == 0 then break);
-					while true do (
-					     q = num/f2;
-					     if denominator q != 1 then break;
-					     num = numerator q;
-					     e2 = e2 - 1;
-					     if e2 == 0 then break);
-					if e1 == e2 then break{Power{f,e}}
-					else (
-					     e = min(e1,e2);
-					     if e > 0
-					     then if e1 > e
-					     then break{Power{f,e},Power{f1,e1-e}}
-					     else break{Power{f,e},Power{f2,e2-e}}
-					     else if e1 > e
-					     then break{Power{f1,e1-e}}
-					     else break{Power{f2,e2-e}}
-					     )
-					)
-				   else break{Power{f,e}}))));
-	       Divide{num, Product sort y }
+     else if class ord === ZZ then (
+	  if M.cache#?"approximate hilbertSeries" then (
+	       (ord2,ser) := M.cache#"approximate hilbertSeries";
+	       if ord == ord2 then return ser;
+	       if ord < ord2 then return trimm(ser,ord);
 	       )
-	  else if class options.Order === ZZ 
-	  then first (
-	       M#{{hilbertSeries}} = {
-		    if num == 0
-		    then 0_T
-		    else (
-			 m := min min(listForm num / first);
-			 n := options.Order;
-			 N := n - m;
-			 f := num * product apply(
-			      pairs denom,
-			      (i,e) -> (geometricSeries(
-				   product(#i, j -> T_j ^ (i_j)),
-				   N)) ^ e
-			      );
-			 trimm(f,n)),
-	       options.Order})
-	  else error "expected an integer as value of Order option"
-	  ))
+	  )
+     else error "expected infinity or an integer as value of Order option";
+     A := ring M;
+     num := poincare M;
+     -- stderr << "num = " << num << endl;
+     T := degreesRing A;
+     denom := tally (degree \ generators A);
+     -- stderr << "denom = " << denom << endl;
+     if class ord === ZZ then (
+	  s := if num == 0 then 0_T else (
+	       m := min min(listForm num / first);
+	       n := ord;
+	       N := n - m;
+	       f := num * product apply(
+		    pairs denom,
+		    (i,e) -> (geometricSeries( product(#i, j -> T_j ^ (i_j)), N)) ^ e
+		    );
+	       trimm(f,n));
+	  M.cache#"approximate hilbertSeries" = (ord,s);
+	  return s;)
+     else if ord === infinity then (
+	  y := flatten apply(pairs denom,
+	       (i,e) -> (
+		    f := 1 - T_i;			    -- f^e is a factor of the denominator
+		    while true do (
+			 -- stderr << toExternalString num << " / " << toExternalString f << " = " << flush;
+			 -- q := num/f; -- might go into an infinite loop, sigh
+			 q := null;
+			 -- stderr << toExternalString q << endl;
+			 if false			    -- temporary bypass
+			 and denominator q == 1 then (
+			      num = numerator q;
+			      e = e-1;
+			      if e == 0 then break {};
+			      )
+			 else (
+			      if #i > 0 and same i and first i > 1 
+			      and false		    -- bypass
+			      then (
+				   -- we factor f as f1 * f2
+				   i0 := first i;
+				   t := product generators T;
+				   f1 := 1 - t;
+				   e1 := e;
+				   f2 := sum(i0,j->t^j);
+				   e2 := e;
+				   while true do (
+					q = num/f1;
+					if denominator q != 1 then break;
+					num = numerator q;
+					e1 = e1 - 1;
+					if e1 == 0 then break);
+				   while true do (
+					q = num/f2;
+					if denominator q != 1 then break;
+					num = numerator q;
+					e2 = e2 - 1;
+					if e2 == 0 then break);
+				   if e1 == e2 then break{Power{f,e}}
+				   else (
+					e = min(e1,e2);
+					if e > 0
+					then if e1 > e
+					then break{Power{f,e},Power{f1,e1-e}}
+					else break{Power{f,e},Power{f2,e2-e}}
+					else if e1 > e
+					then break{Power{f1,e1-e}}
+					else break{Power{f2,e2-e}}
+					)
+				   )
+			      else break{Power{f,e}}))));
+	  M.cache#"exact hilbertSeries" = Divide{num, Product sort y}))
 
 ProjectiveHilbertPolynomial = new Type of HashTable
 ProjectiveHilbertPolynomial.synonym = "projective Hilbert polynomial"

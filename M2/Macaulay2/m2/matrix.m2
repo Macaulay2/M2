@@ -325,8 +325,8 @@ ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
 Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 
 listZ := v -> ( if not all(v,i -> class i === ZZ) then error "expected list of integers"; v )
-Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)
-Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,)
+Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
+Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
 Matrix _ ZZ := Vector => (m,i) -> error "vectors not re-implemented yet"
 

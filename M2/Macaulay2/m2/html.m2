@@ -720,15 +720,11 @@ relativizeFilename2 = on relativizeFilename
 
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
-makePackageIndex String := packagePrefixPath -> (
+makePackageIndex List := packagePrefixPath -> (
      -- this code is still experimental
      htmlDirectory = LAYOUT#"docm2";
-     p := prefixDirectory | htmlDirectory;
-     setupButtons();
-     r := readDirectory p;
-     r = select(r, fn -> fn != "." and fn != "..");
-     r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
-     r = sort r;
+     -- p := prefixDirectory | htmlDirectory;
+     -- setupButtons();
      key := "package index";
      -- tag := makeDocumentTag key;
      -- p | "index.html"
@@ -738,12 +734,21 @@ makePackageIndex String := packagePrefixPath -> (
 	       links()
 	       },
 	  BODY { 
-	       -- buttonBar tag,
-	       HR{},
+	       -- buttonBar tag, HR{},
 	       PARA BOLD "Index of installed packages:",
-	       UL apply(r, pkg -> HREF { LAYOUT#"packagehtml" pkg | "index.html", pkg })
+	       UL apply(packagePrefixPath, prefixDirectory -> (
+			 p := prefixDirectory | htmlDirectory;
+			 r := readDirectory p;
+			 r = select(r, fn -> fn != "." and fn != "..");
+			 r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
+			 r = sort r;
+	       		 SEQ { HEADER3 prefixDirectory, UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) }
+			 )
+		    )
 	       }
-	  } << endl << close
+	  } << endl
+     -- << close
+     ;
      )
 
 -- Local Variables:
