@@ -38,7 +38,7 @@ ALLOBJ += $(MADECFILES:.c=.o)
 
 ## *.cc files
 
-CCFILES := version.cc initgmp.cc
+CCFILES := version.cc gmp_init.o
 ALLOBJ += $(CCFILES:.cc=.o)
 SRCFILES += $(CCFILES)
 
@@ -192,6 +192,10 @@ tmp_init.c : $(DFILES)
 
 ifeq "$(FACTORY)" "yes"
 
+LIBRARYDEPS    += M2_setup.o
+LIBRARYOPTIONS += M2_setup.o
+LIBRARYOPTIONS += factory_setup.o
+
 # singular libraries: factory, libfac, ntl
 
 ifeq "$(PROFILE)" "yes"
@@ -215,6 +219,10 @@ LIBRARYOPTIONS += -lcf
 endif
 
 LIBRARYOPTIONS += -lcfmem
+
+LIBRARYDEPS    += factory_setup.o
+LIBRARYOPTIONS += factory_setup.o
+LIBRARYOPTIONS += M2_setup.o
 
 ifeq "$(PROFILE)" "yes"
 ifeq "$(HAVE_LIBNTL_PG)" "yes"
