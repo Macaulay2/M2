@@ -103,9 +103,9 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 	       s := gettoken(file,true);  -- get the semicolon
 	       if !(s.word == semicolonW || s.word == newlineW)
 	       then (
-		    printErrorMessage(s.position,"syntax error");
+		    printErrorMessage(s,"syntax error");
 		    if AbortIfError 
-		    then return Expr(Error(s.position,"syntax error",emptySequence,nullE));
+		    then return Expr(Error(position(s),"syntax error",emptySequence,nullE));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up
