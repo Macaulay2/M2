@@ -18,21 +18,37 @@ makeRing = (mo) -> (
 mo1 = monomialOrder(RevLex=>6)
 mo2 = monomialOrder(Weights=>{1,1,1,0,0,0},RevLex=>6)
 mo3 = monomialOrder(RevLex=>2,RevLex=>4)
-mo4 = monomialOrder(Lex=>2,RevLexWeights=>{1,2,3,4})
-mo5 = monomialOrder(LexWeights=>{3,5},Weights=>{0,0,-1},RevLexWeights=>{1,2,3,4})
+mo4 = monomialOrder(Lex=>2,RevLex=>{1,2,3,4})
+mo5 = monomialOrder(Lex=>{3,5},Weights=>{0,0,-1},RevLex=>{1,2,3,4})
 
 -- Graded reverse lex order
 makeRing monomialOrder(RevLex=>6)  
 assert(leadTerm(a+b^100) == b^100)
 assert(leadTerm(a*c + b^2) == b^2)
 assert(leadTerm(a*b-1_R) == a*b)
-assert(leadTerm(a^3 - b^3) == a^3)  -- FAILS!!
+assert(leadTerm(a^3 - b^3) == a^3)
 assert(leadTerm(a^3 - b^4) == -b^4)
-
+assert(leadTerm(a+b+c+d+e+f) == a)
 
 -- Lex order (not graded)
 makeRing monomialOrder(Lex=>6)
-leadTerm(a+b^100) == a
-leadTerm(a*c + b^2) == a*c
-leadTerm(a*b-1_R) == a*b
+assert(leadTerm(a+b^100) == a)
+assert(leadTerm(a*c + b^2) == a*c)
+assert(leadTerm(a*b-1_R) == a*b)
+assert(leadTerm(a^3 - b^3) == a^3)
+assert(leadTerm(a+b+c+d+e+f) == a)
 
+-- Weighted reverse lex order
+assert(try (makeRing monomialOrder(RevLex=>{0,0,0,0,0,0})) else true)
+makeRing monomialOrder(RevLex=>{1,1,1,6,6,10})
+assert(leadTerm(a+b+c+d+e+f) == f)
+assert(leadTerm(a^5 + d) == d)
+assert(leadTerm(a^6 + d) == a^6)
+assert(leadTerm(c*d-b^2) == c*d)
+assert(leadTerm(a*c-b^2) == -b^2)
+
+-- Weight function
+makeRing monomialOrder(Weights=>{-1,-1,-1,-1,-1,-1},RevLex=>6)
+see R 
+c+a^2+b^2
+leadTerm(a^2+b^2+c) == c

@@ -125,7 +125,7 @@ monomialOrder = args -> (
          args = sequence args;
      scan(args, val -> (
 	 if class val === ZZ then (
-	      sendgg(ggPush mo, ggPush val, ggMOrevlex)
+	      sendgg(ggPush val, ggPush mo, ggMOrevlex)
 	      )
 	 else if val === Component then (
 	      if hasComponent then
@@ -136,33 +136,33 @@ monomialOrder = args -> (
 	 else if class val === Option then (
 	      if val#0 === Lex then (
 		   if class val#1 === ZZ then 
-		       sendgg(ggPush mo,ggPush val#1, ggMOlex)
+		       sendgg(ggPush val#1,ggPush mo, ggMOlex)
 		   else if class val#1 === List and all(val#1,i->class i === ZZ) then
-		       sendgg(ggPush mo,ggPush val#1,ggMOlex)
+		       sendgg(ggPush val#1,ggPush mo,ggMOlex)
 		   else
 		       error "Expected Lex argument to be an integer or list of integers")
 	      else if val#0 === GroupLex then (
 		   if class val#1 === ZZ then 
-		       sendgg(ggPush mo,ggPush val#1, ggPush 1, ggMOlex)
+		       sendgg(ggPush val#1, ggPush 1, ggPush mo,ggMOlex)
 		   else if class val#1 === List and all(val#1,i->class i === ZZ) then
-		       sendgg(ggPush mo,ggPush val#1, ggPush 1, ggMOlex)
+		       sendgg(ggPush val#1, ggPush 1, ggPush mo,ggMOlex)
 		   else
 		       error "Expected Lex argument to be an integer or list of integers")
 	      else if val#0 === RevLex then (
 		   if class val#1 === ZZ then 
-		       sendgg(ggPush mo,ggPush val#1, ggMOrevlex)
+		       sendgg(ggPush val#1, ggPush mo,ggMOrevlex)
 		   else if class val#1 === List and all(val#1,i->class i === ZZ) then
-		       sendgg(ggPush mo,ggPush val#1,ggMOrevlex)
+		       sendgg(ggPush val#1,ggPush mo,ggMOrevlex)
 		   else
 		       error "Expected RevLex argument to be an integer or list of integers")
 	      else if val#0 === NCLex then (
 		   if class val#1 === ZZ then 
-		       sendgg(ggPush mo,ggPush val#1, ggMONClex)
+		       sendgg(ggPush val#1, ggPush mo,ggMONClex)
 		   else
 		       error "Expected NCLex argument to be an integer")
 	      else if val#0 === Weights then (
 		   if class val#1 === List and all(val#1,i->class i === ZZ) then
-		       sendgg(ggPush mo,ggPush val#1,ggMOwtfcn)
+		       sendgg(ggPush val#1,ggPush mo,ggMOwtfcn)
 		   else
 		       error "Expected 'Weights' argument to be a list of integers"))));
     if not hasComponent then sendgg(ggPush mo, ggMOcomponent);

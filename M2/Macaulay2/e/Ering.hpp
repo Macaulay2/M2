@@ -121,6 +121,13 @@ protected:
   int add_to(poly *&f, poly *&g) const;
 
 public:
+#if 0
+  // Ring element operations: Some will be virtual, since they depend on multiplication.
+  int addTo(ETerm *&a, ETerm *&b) const;
+    // a := a+b, b := 0, and the number of terms of the sum is returned.
+
+#endif
+public:
   // Creation of ring elements
   ERingElement *fromInteger(int a) const;
   ERingElement *makeRingVariable(int v, int exponent) const;

@@ -187,7 +187,6 @@ static bool check_mon_order(const int *moncodes)
 	  moncodes += nvars;
 	  break;
 
-	case MO_WTLEX:
 	case MO_WTREVLEX:
 	  m = *moncodes++;
 	  total_nvars -= m;
@@ -256,15 +255,6 @@ EMonomialOrder *EMonomialOrder::get_binary(const int *moncodes)
 	    wts[j] = *moncodes++;
 	  result->revlexWeights(m,wts,isgroup);
 	  break;
-
-	case MO_WTLEX:
-	  m = *moncodes++;
-	  isgroup = (bool) *moncodes++;
-	  wts = new int[m];
-	  for (j=0; j<m; j++)
-	    wts[j] = *moncodes++;
-	  result->lexWeights(m,wts,isgroup);
-	  break;
 	}
     }
   return result;
@@ -274,12 +264,13 @@ void EMonomialOrder::text_out(buffer &o) const
 {
   int j;
   o << "EMonomialOrder[";
-  if (componentloc == nslots)
-    o << "c,";
 
-  for (int i=nblocks-1; i>=0; i--)
+  for (int i=0; i<nblocks; i++)
     {
       mon_order_node *b = order[i];
+      if (i >= 1) o << ",";
+      if (b->first_slot == componentloc)
+	o << "c,";
       switch (b->typ)
 	{
 	case MO_LEX:
@@ -322,24 +313,10 @@ void EMonomialOrder::text_out(buffer &o) const
 	    }
 	  o << ")";
 	  break;
-
-	case MO_WTLEX:
-	  if (b->isgroup)
-	    o << "groupwtlex(";
-	  else
-	    o << "wtlex(";
-	  for (j=0; j<b->nweights; j++)
-	    {
-	      if (j > 0) o << " ";
-	      o << b->weights[j];
-	    }
-	  o << ")";
-	  break;
 	}
-      if (b->first_slot == componentloc)
-	o << ",c";
-      if (i >= 1) o << ",";
     }
+  if (componentloc == nslots)
+    o << ",c";
   o << "]";
 }
 
@@ -737,6 +714,15 @@ void EVector::bin_out(buffer &o) const
 {
   const EMonoid *M = F->getRing()->getMonoid();
   const ECoefficientRing *K = F->getRing()->getCoefficientRing();
+
+  if (M->n_vars() == 0 && F->rank() == 1)
+    {
+      if (len == 0) 
+	K->elem_bin_out(o, K->zero());
+      else
+	K->elem_bin_out(o, elems->coeff);
+      return;
+    }
   bin_int_out(o,len);
 
   for (const poly *t=elems; t != 0; t = t->next)
