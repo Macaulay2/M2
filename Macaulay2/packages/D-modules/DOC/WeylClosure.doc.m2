@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol WeylClosure,
+document { WeylClosure,
      TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
      ideal I",
      BR, NOINDENT,

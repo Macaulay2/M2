@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol inw,
+document { inw,
      TT "inw (L, w)", " -- 
      computes the initial form of an element L
      with respect to a weight vector w.",
@@ -56,7 +56,7 @@ document { symbol inw,
 --     MENU{HREF{"/HOME/gbw.html","gbw"}}
      },
 
-document { symbol gbw,
+document { gbw,
      TT "gbw (I, w)", " -- 
      computes a Grobner basis of an ideal with respect
      to a weight vector w.",

@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol Drestriction,
+document { Drestriction,
      TT "Drestriction (M, w)", " -- 
      computes derived restriction modules of M with respect
      to the weight vector w",
@@ -119,7 +119,7 @@ document { symbol Drestriction,
 --	  HREF{"/HOME/Dintegration.html","Dintegration"}}
      }
 
-document { symbol Dintegration,
+document { Dintegration,
      TT "Dintegration (M, w)", " -- 
      computes derived integration modules of M with respect
      to the weight vector w",

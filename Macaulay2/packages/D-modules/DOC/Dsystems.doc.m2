@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol gkz,
+document { gkz,
      TT "gkz (A,b)", " -- 
      computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A and parameter b",
@@ -42,7 +42,7 @@ document { symbol gkz,
 --     MENU{HREF{"/HOME/AppellF1.html","AppellF1"}}
      },
 
-document { symbol AppellF1,
+document { AppellF1,
      TT "AppellF1 {a0,a1,a2,a3}", " -- 
      compute the Appell F1 system of PDE's associated to the
      parameters a0, a1, a2, and a3.",
@@ -70,7 +70,7 @@ document { symbol AppellF1,
 --     MENU{HREF{"/HOME/gkz.html","gkz"}}
      }
 
-document { symbol PolyAnn,
+document { PolyAnn,
      TT "PolyAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the polynomial f",
 
@@ -99,7 +99,7 @@ document { symbol PolyAnn,
 --     MENU{HREF{"/HOME/RatAnn.html","RatAnn"}}
      }
 
-document { symbol RatAnn,
+document { RatAnn,
      TT "RatAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the rational
      function 1/f",

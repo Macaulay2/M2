@@ -1,6 +1,6 @@
 needs "D-modules.m2"
 
-document { symbol DHom,
+document { DHom,
      TT "DHom (M, N)", " -- computes a basis of
      D-homomorphisms between holonomic D-modules M and N.",
      BR, NOINDENT,
@@ -54,7 +54,7 @@ document { symbol DHom,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      },
 
-document { symbol DExt,
+document { DExt,
      --BIG "Drestriction",
      TT "DExt (M, N)", " -- 
      computes the dimensions of the Ext groups between
@@ -110,7 +110,7 @@ document { symbol DExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      }
 
-document { symbol PolySols,
+document { PolySols,
      TT "PolySols I", " -- computes a basis of the polynomial solutions
      of a holonomic ideal I",
      BR, NOINDENT,
@@ -167,7 +167,7 @@ document { symbol PolySols,
 --	  HREF{"/HOME/DHom.html","DHom"}}     
      },
 
-document { symbol PolyExt,
+document { PolyExt,
      TT "PolyExt M", " -- 
      computes the dimensions of the Ext groups between
      holonomic M and the polynomial ring.",
@@ -218,7 +218,7 @@ document { symbol PolyExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}     
      }
 
-document { symbol RatSols,
+document { RatSols,
      TT "RatSols I", " -- computes a basis of the rational solutions
      of a holonomic ideal I",
      BR, NOINDENT,
@@ -264,7 +264,7 @@ document { symbol RatSols,
      SEEALSO {"PolySols", "RatExt", "DHom"} 
      },
 
-document { symbol RatExt,
+document { RatExt,
      --BIG "Drestriction",
      TT "RatExt M", "-- 
      computes the dimensions of the Ext groups between
