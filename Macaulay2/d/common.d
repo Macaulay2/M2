@@ -234,28 +234,28 @@ export dbmopenout(filename:string):Expr := (
      then buildErrorPacket(dbmstrerror() + " : " + filename)
      else Expr(Database(filename,nextHash(),handle,true,mutable)));
 export dbmclose(f:Database):Expr := (
-     if !f.isopen then return(buildErrorPacket("database already closed"));
+     if !f.isopen then return buildErrorPacket("database already closed");
      dbmclose(f.handle);
      f.isopen = false;
      Expr(toInteger(0)));
 export dbmstore(f:Database,key:string,content:string):Expr := (
-     if !f.isopen then return(buildErrorPacket("database closed"));
-     if !f.mutable then return(buildErrorPacket("database not mutable"));
+     if !f.isopen then return buildErrorPacket("database closed");
+     if !f.mutable then return buildErrorPacket("database not mutable");
      ret := dbmstore(f.handle,key,content);
      if 0 == ret then Expr(content)
      else dbmcheck(ret));
 export dbmquery(f:Database,key:string):Expr := (
-     if !f.isopen then return(buildErrorPacket("database closed"));
+     if !f.isopen then return buildErrorPacket("database closed");
      when dbmfetch(f.handle,key)
      is a:string do True
      else False);
 export dbmfirst(f:Database):Expr := (
-     if !f.isopen then return(buildErrorPacket("database closed"));
+     if !f.isopen then return buildErrorPacket("database closed");
      when dbmfirst(f.handle)
      is a:string do Expr(a)
      else nullE);
 export dbmreorganize(f:Database):Expr := (
-     if !f.isopen then return(buildErrorPacket("database closed"));
-     if !f.mutable then return(buildErrorPacket("database not mutable"));
+     if !f.isopen then return buildErrorPacket("database closed");
+     if !f.mutable then return buildErrorPacket("database not mutable");
      dbmcheck(dbmreorganize(f.handle)));
 

@@ -51,14 +51,14 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
 	       key := b.v.0;
 	       keyhash := hash(key);
 	       r := storeInHashTableMustClobber(z,key,keyhash,b.v.1);
-	       when r is Error do return(r) else nothing;
+	       when r is Error do return r else nothing;
 	       )
 	  is y:HashTable do (
 	       foreach bucket in y.table do (
 		    q := bucket;
 		    while q != bucketEnd do (
 			 r := storeInHashTableMustClobber(z,q.key,q.hash,q.value);
-			 when r is Error do return(r) else nothing;
+			 when r is Error do return r else nothing;
 			 q = q.next)))
 	  else nothing;					    -- shouldn't occur
 	  );
@@ -291,15 +291,15 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	       when x.i
 	       is xi:Sequence do 
 	       if length(xi) != 2
-	       then return(WrongArg(1,"a list of pairs"))
+	       then return WrongArg(1,"a list of pairs")
 	       else
 	       when y.j
 	       is yj:Sequence do
 	       if length(yj) != 2
-	       then return(WrongArg(2,"a list of pairs"))
+	       then return WrongArg(2,"a list of pairs")
 	       else (
 		    c := compare(xi.0,yj.0);
-		    when c is Error do return(c) else nothing;
+		    when c is Error do return c else nothing;
 		    if GreaterS.symbol === c then (
 			 z.n = yj;
 			 j = j+1;
@@ -316,8 +316,8 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 			 j = j+1;
 			 n = n+1;
 			 ))
-	       else return(WrongArg(2,"a list of pairs"))
-	       else return(WrongArg(1,"a list of pairs")));
+	       else return WrongArg(2,"a list of pairs")
+	       else return WrongArg(1,"a list of pairs"));
 	  if n < length(x)+length(y)
 	  then z = new Sequence len n do foreach a in z do provide a;
 	  Expr(sethash(List(commonAncestor(xl.class,yl.class), z,0,false),xl.mutable | yl.mutable)))
@@ -353,15 +353,15 @@ setupfun("mergePairs",mergepairsfun);
 --	       when x.i
 --	       is xi:Sequence do 
 --	       if length(xi) != 2
---	       then return(WrongArg(1,"a list of pairs"))
+--	       then return WrongArg(1,"a list of pairs")
 --	       else
 --	       when y.j
 --	       is yj:Sequence do
 --	       if length(yj) != 2
---	       then return(WrongArg(2,"a list of pairs"))
+--	       then return WrongArg(2,"a list of pairs")
 --	       else (
 --		    c := compare(xi.0,yj.0);
---		    when c is Error do return(c) else nothing;
+--		    when c is Error do return c else nothing;
 --		    if LessS.symbol === c then (
 --			 z.n = yj;
 --			 j = j+1;
@@ -378,8 +378,8 @@ setupfun("mergePairs",mergepairsfun);
 --			 j = j+1;
 --			 n = n+1;
 --			 ))
---	       else return(WrongArg(2,"a list of pairs"))
---	       else return(WrongArg(1,"a list of pairs")));
+--	       else return WrongArg(2,"a list of pairs")
+--	       else return WrongArg(1,"a list of pairs"));
 --	  if n < length(x)+length(y)
 --	  then z = new Sequence len n do foreach a in z do provide a;
 --	  Expr(sethash(List(commonAncestor(xl.class,yl.class), z,0,false),xl.mutable | yl.mutable)))
@@ -572,11 +572,11 @@ sqrt(a:Expr):Expr := (
 setupfun("sqrt",sqrt);
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
-     if newlen != length(a2) then return(WrongArg("lists of the same length"));
-     if newlen == 0 then return(emptySequenceE);
+     if newlen != length(a2) then return WrongArg("lists of the same length");
+     if newlen == 0 then return emptySequenceE;
      haderror := false;
      recursiondepth = recursiondepth + 1;
-     if recursiondepth > recursionlimit then return(RecursionLimit());
+     if recursiondepth > recursionlimit then return RecursionLimit();
      errret := nullE;
      when f is fc:FunctionClosure do (
 	  previousFrame := fc.frame;
@@ -677,10 +677,10 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      );
 map(a:Sequence,f:Expr):Expr := (
      newlen := length(a);
-     if newlen == 0 then return(emptySequenceE);
+     if newlen == 0 then return emptySequenceE;
      haderror := false;
      recursiondepth = recursiondepth + 1;
-     if recursiondepth > recursionlimit then return(RecursionLimit());
+     if recursiondepth > recursionlimit then return RecursionLimit();
      errret := nullE;
      when f is fc:FunctionClosure do (
 	  previousFrame := fc.frame;
@@ -884,7 +884,7 @@ map(a:Sequence,f:Expr):Expr := (
      else WrongArg(2,"a function")
      );
 map(n:int,f:Expr):Expr := (
-     if n <= 0 then return(emptyList);
+     if n <= 0 then return emptyList;
      haderror := false;
      errret := nullE;
      recursiondepth = recursiondepth + 1;
@@ -978,7 +978,7 @@ map(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do Expr(map(a,f))
 --     is obj:HashTable do (
---	  if obj.mutable then return(WrongArg("an immutable hash table"));
+--	  if obj.mutable then return WrongArg("an immutable hash table");
 --	  if ancestor(obj.class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
 	  c := map(b.v,f);
@@ -1036,7 +1036,7 @@ map(e:Expr):Expr := (
 setupfun("apply",map);
 
 scan(n:int,f:Expr):Expr := (
-     if n <= 0 then return(emptySequenceE);
+     if n <= 0 then return emptySequenceE;
      if recursiondepth > recursionlimit then (
      	  recursiondepth = recursiondepth - 1;
 	  backtr(RecursionLimit()))
@@ -1052,7 +1052,7 @@ scan(n:int,f:Expr):Expr := (
 	  framesize := desc.framesize;
 	  if numparms != 1 then (
      	       recursiondepth = recursiondepth - 1;
-	       return(backtr(WrongNumArgs(model.parms,numparms,1)));
+	       return backtr(WrongNumArgs(model.parms,numparms,1));
 	       );
 	  if framesize == 1 then (
 	       values := new Sequence len framesize do provide nullE;
@@ -1064,7 +1064,7 @@ scan(n:int,f:Expr):Expr := (
 			 if err.message != returnMessage then (
 			      recursiondepth = recursiondepth - 1;
 			      localFrame = saveLocalFrame;
-			      return(backtrLoop(tmp)); 
+			      return backtrLoop(tmp); 
 			      )
 			 )
 		    else nothing;
@@ -1086,7 +1086,7 @@ scan(n:int,f:Expr):Expr := (
 			 if err.message != returnMessage then (
 			      recursiondepth = recursiondepth - 1;
 			      localFrame = saveLocalFrame;
-			      return(backtrLoop(tmp)); 
+			      return backtrLoop(tmp); 
 			      )
 			 )
 		    else nothing;
@@ -1108,7 +1108,7 @@ scan(n:int,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return(backtr(tmp)); 
+		    return backtr(tmp); 
 		    )
 	       else nothing; 
 	       );
@@ -1125,7 +1125,7 @@ scan(n:int,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return(backtr(tmp)); 
+		    return backtr(tmp); 
 		    )
 	       else nothing; 
 	       );
@@ -1136,12 +1136,12 @@ scan(n:int,f:Expr):Expr := (
 
 scan(a:Sequence,f:Expr):Expr := (
      oldlen := length(a);
-     if oldlen == 0 then return(nullE);
+     if oldlen == 0 then return nullE;
      recursiondepth = recursiondepth + 1;
      saveLocalFrame := localFrame;
      if recursiondepth > recursionlimit then (
 	  recursiondepth = recursiondepth - 1;
-	  return(backtr(RecursionLimit()));
+	  return backtr(RecursionLimit());
 	  );
      when f is fc:FunctionClosure do (
 	  previousFrame := fc.frame;
@@ -1161,7 +1161,7 @@ scan(a:Sequence,f:Expr):Expr := (
 			 if err.message != returnMessage then (
 			      recursiondepth = recursiondepth - 1;
 			      localFrame = saveLocalFrame;
-			      return(backtrLoop(tmp));
+			      return backtrLoop(tmp);
 			      )
 			 )
 		    else nothing;
@@ -1192,7 +1192,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtrLoop(tmp));
+					return backtrLoop(tmp);
 					)
 				   )
 			      else nothing;
@@ -1218,7 +1218,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtrLoop(tmp));
+					return backtrLoop(tmp);
 					)
 				   )
 			      else nothing;
@@ -1244,14 +1244,14 @@ scan(a:Sequence,f:Expr):Expr := (
 			      else (
 				   recursiondepth = recursiondepth - 1;
 				   localFrame = saveLocalFrame;
-				   return(backtr(WrongNumArgs(model.parms,numparms,1)));
+				   return backtr(WrongNumArgs(model.parms,numparms,1));
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtrLoop(tmp));
+					return backtrLoop(tmp);
 					)
 				   )
 			      else nothing))
@@ -1272,14 +1272,14 @@ scan(a:Sequence,f:Expr):Expr := (
 			      else (
 				   recursiondepth = recursiondepth - 1;
 				   localFrame = saveLocalFrame;
-				   return(backtr(WrongNumArgs(model.parms,numparms,1)));
+				   return backtr(WrongNumArgs(model.parms,numparms,1));
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtrLoop(tmp));
+					return backtrLoop(tmp);
 					)
 				   )
 			      else nothing;
@@ -1296,7 +1296,7 @@ scan(a:Sequence,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return(backtr(tmp));
+		    return backtr(tmp);
 		    )
 	       else nothing; ))
      is cf:CompiledFunctionClosure do (	  -- compiled code
@@ -1307,13 +1307,13 @@ scan(a:Sequence,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return(backtr(tmp));
+		    return backtr(tmp);
 		    )
 	       else nothing; ))
      else (
 	  recursiondepth = recursiondepth - 1;
 	  localFrame = saveLocalFrame;
-	  return(backtr(WrongArg(2,"a function")));
+	  return backtr(WrongArg(2,"a function"));
 	  );
      localFrame = saveLocalFrame;
      recursiondepth = recursiondepth - 1;
@@ -1322,17 +1322,17 @@ scan(a:Sequence,f:Expr):Expr := (
 -- scan(a:Sequence,f:Expr):Expr := (
 --      foreach x in a do (
 -- 	  y := apply(f,x);
--- 	  when y is Error do return(y) else nothing;
+-- 	  when y is Error do return y else nothing;
 -- 	  );
 --      nullE);
 
 scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
-     if newlen != length(a2) then return(WrongArg("lists of the same length"));
-     if newlen == 0 then return(nullE);
+     if newlen != length(a2) then return WrongArg("lists of the same length");
+     if newlen == 0 then return nullE;
      haderror := false;
      recursiondepth = recursiondepth + 1;
-     if recursiondepth > recursionlimit then return(RecursionLimit());
+     if recursiondepth > recursionlimit then return RecursionLimit();
      when f is fc:FunctionClosure do (
 	  previousFrame := fc.frame;
 	  model := fc.model;
@@ -1353,7 +1353,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      -- stash
 			      localFrame = saveLocalFrame;
 			      recursiondepth = recursiondepth - 1;
-			      return(backtrLoop(tmp));
+			      return backtrLoop(tmp);
 			      )
 			 )
 		    else nothing;
@@ -1382,7 +1382,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   -- stash
 				   localFrame = saveLocalFrame;
 				   recursiondepth = recursiondepth - 1;
-				   return(backtrLoop(tmp));
+				   return backtrLoop(tmp);
 				   )
 			      )
 			 else nothing;
@@ -1404,7 +1404,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       tmp := fn(Expr(Sequence(a1.i,a2.i)));
 	       when tmp is Error do (
 	  	    recursiondepth = recursiondepth - 1;
-		    return(backtr(tmp));
+		    return backtr(tmp);
 		    )
 	       else nothing;
 	       );
@@ -1418,7 +1418,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       tmp := fn(Expr(Sequence(a1.i,a2.i)),env);
 	       when tmp is Error do (
 	  	    recursiondepth = recursiondepth - 1;
-		    return(backtr(tmp));
+		    return backtr(tmp);
 		    )
 	       else nothing;
 	       );
@@ -1525,7 +1525,7 @@ iteratedApply(lhs:Code,rhs:Code):Expr := (
 	  is args:Sequence do (
 	       foreach x in args do (
 		    f = apply(f,x);
-		    when f is Error do return(f) else nothing;
+		    when f is Error do return f else nothing;
 		    );
 	       f)
 	  else apply(f,arg)));

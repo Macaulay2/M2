@@ -25,7 +25,7 @@ export topLevelTexmacs():bool := (
 	       exit(1);
 	       )
 	  is item:string do (
-	       if stdin.eof then return(true);;
+	       if stdin.eof then return true;;
 	       method := lookup(stringClass,TeXmacsEvaluate);
 	       if method == nullE 
 	       then (

@@ -377,7 +377,7 @@ export dummyDictionary := (
 export getLocalDictionary(frameID:int):Dictionary := (
      p := allDictionaries;
      while (
-	  if p.dictionary.frameID == frameID then return(p.dictionary);
+	  if p.dictionary.frameID == frameID then return p.dictionary;
 	  p != p.next) do p = p.next;
      error("internal error: local dictionary with frameID " + tostring(frameID) + " not found");
      dummyDictionary);

@@ -23,7 +23,7 @@ shorten(s:string):string := (
 	  i := 0;
 	  j := 0;
 	  while (
-	       if i == length(s) then return(s);
+	       if i == length(s) then return s;
 	       if i+3 < length(s) && s.i == '/' && s.(i+1) == '.' && s.(i+2) == '.' && s.(i+3) == '/'
 	       then (
 		    s = substr(s,0,j) + substr(s,i+3);
@@ -143,7 +143,7 @@ tabwidth := 8;
 export getc(o:PosFile):int := (
      prevchar := o.lastchar;
      c := getc(o.file);
-     if c == ERROR || c == EOF then return(c);
+     if c == ERROR || c == EOF then return c;
      o.lastchar = c;
      if c == int('\r') then (
 	  o.pos.line = o.pos.line + 1;
@@ -153,7 +153,7 @@ export getc(o:PosFile):int := (
      else if c == int('\n') then (
 	  if prevchar == int('\r') then (
 	       -- swallow a \n that comes after a \r
-	       return(getc(o));
+	       return getc(o);
 	       )
 	  else (
 	       o.pos.line = o.pos.line + 1;

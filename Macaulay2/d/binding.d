@@ -60,7 +60,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	       -- shouldn't occur
 	       -- "dictionaries" in actors5.d and "protect" in actors2.d enforce this!
 	       error("internal error: global dictionaries all protected");
-	       return(dummySymbol);
+	       return dummySymbol;
 	       );
 	  dictionary = dictionary.outerDictionary;
 	  );
@@ -351,25 +351,25 @@ lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
 	  );
      while true do
      when entryList
-     is null do return(NULL)
+     is null do return NULL
      is entryListCell:SymbolListCell do (
 	  if entryListCell.entry.word == word 
 	  then (
 	       e := entryListCell.entry;
 	       e.lookupCount = e.lookupCount + lookupCountIncrement;
-	       return(e);
+	       return e;
 	       );
 	  entryList = entryListCell.next));
 
 export globalLookup(w:Word):(null or Symbol) := (
      d := globalDictionary;
      while (
-	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return(e);
+	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return e;
 	  d != d.outerDictionary ) do d = d.outerDictionary;
      NULL);
 export lookup(w:Word,d:Dictionary):(null or Symbol) := (
      while (
-	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return(e);
+	  when lookup(w,d.symboltable) is null do nothing is e:Symbol do return e;
 	  d != d.outerDictionary ) do d = d.outerDictionary;
      globalLookup(w));
 lookup(token:Token,forcedef:bool):void := (
@@ -457,16 +457,16 @@ export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS, orS, andS, notS,
      ExclamationS );
 
 opHasBinaryMethod(o:Symbol):bool := (
-     foreach s in opsWithBinaryMethod do if s.symbol == o then return(true);
-     return(false);
+     foreach s in opsWithBinaryMethod do if s.symbol == o then return true;
+     return false;
      );
 opHasUnaryMethod(o:Symbol):bool := (
-     foreach s in opsWithUnaryMethod do if s.symbol == o then return(true);
-     return(false);
+     foreach s in opsWithUnaryMethod do if s.symbol == o then return true;
+     return false;
      );
 opHasPostfixMethod(o:Symbol):bool := (
-     foreach s in opsWithPostfixMethod do if s.symbol == o then return(true);
-     return(false);
+     foreach s in opsWithPostfixMethod do if s.symbol == o then return true;
+     return false;
      );
 bindTokenLocally(token:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 0;

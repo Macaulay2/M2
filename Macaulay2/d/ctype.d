@@ -49,5 +49,5 @@ export isnewline  (c:int ):bool := (chartype(c) & NEWLINE  ) != 0;
 export isquote    (c:int ):bool := (chartype(c) & QUOTE    ) != 0;
 
 export isalnum  (s:string):bool := (
-     foreach c in s do if !isalnum(c) then return(false);
+     foreach c in s do if !isalnum(c) then return false;
      true);

@@ -57,12 +57,12 @@ CodeSequenceLength(e:ParseTree):int := (
      	  is b:Binary do (
 	       if b.operator.word == commaW
 	       then ( i = i + CodeSequenceLength(b.lhs); e = b.rhs )
-	       else return(i+1))
+	       else return i+1)
 	  is u:Unary do (
 	       if u.operator.word == commaW
 	       then ( i = i + 1; e = u.rhs )
-	       else return(i+1))
-	  else return(i+1)));
+	       else return i+1)
+	  else return i+1));
 fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
      -- starts filling v at position m, returns the next available position
      while true do (
@@ -70,23 +70,23 @@ fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
      	  is b:Binary do (
 	       if b.operator.word == commaW
 	       then ( m = fillCodeSequence(b.lhs,v,m); e = b.rhs )
-	       else ( v.m = convert(e); return(m+1)))
+	       else ( v.m = convert(e); return m+1))
 	  is u:Unary do (
 	       if u.operator.word == commaW
 	       then ( 
 		    v.m = Code(nullCode());
 		    m = m + 1; 
 		    e = u.rhs )
-	       else ( v.m = convert(e); return(m+1)))
+	       else ( v.m = convert(e); return m+1))
 	  is p:EmptyParentheses do (
-	       (v.m = convert(e); return(m+1)))
+	       (v.m = convert(e); return m+1))
 	  is dummy do (
 	       v.m = Code(nullCode());
-	       return(m+1);
+	       return m+1;
 	       )
 	  is p:Parentheses do (
-	       ( v.m = convert(e); return(m+1)))
-	  else ( v.m = convert(e); return(m+1))));
+	       ( v.m = convert(e); return m+1))
+	  else ( v.m = convert(e); return m+1)));
 makeCodeSequence(e:ParseTree):CodeSequence := (
      v := new CodeSequence len CodeSequenceLength(e) do provide dummyCode;
      fillCodeSequence(e,v,0);
@@ -102,7 +102,7 @@ SymbolSequenceLength(e:ParseTree):int := (
 	       )
 	  else (					    -- should be the first token
 	       i = i+1;
-	       return(i);
+	       return i;
 	       )
 	  )
      );
@@ -130,7 +130,7 @@ makeSymbolSequence(e:ParseTree):SymbolSequence := (	    -- but replace local sym
      v);
 
 nestingDepth(frameID:int,d:Dictionary):int := (
-     if frameID == 0 then return(-1);
+     if frameID == 0 then return -1;
      n := 0;
      while d.frameID != frameID do (
 	  if !d.transient || d.framesize != 0 then n = n+1; -- empty transient frames will not appear at runtime

@@ -536,7 +536,7 @@ BackslashBackslashFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BackslashB
 setup(BackslashBackslashS,BackslashBackslashFun);
 
 doublepower(x:double,n:int):double := (
-     if n == 0 then return(1.0);
+     if n == 0 then return 1.0;
      if n < 0 then (x = 1./x; n = -n;);
      y := x;
      z := 1.0;
@@ -556,17 +556,17 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE then (
-		    return(buildErrorPacket("missing unit element"))
+		    return buildErrorPacket("missing unit element")
 		    )
-	       else return(onex);
+	       else return onex;
 	       );
 	  if i < 0 then (
 	       i = -i;
 	       wasneg = true;
 	       inverse = lookup(Class(x),InverseS);
-	       if inverse == nullE then return(MissingMethod("^","InverseMethod"));
+	       if inverse == nullE then return MissingMethod("^","InverseMethod");
 	       );
-	  if !isInt(i) then return(buildErrorPacket("'^' expects a small integer exponent"));
+	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
 	  w := x;
 	  z := nullE;	  -- meaning 1
@@ -575,12 +575,12 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 		    if z == nullE then z=w
 		    else (
 			 z=z*w;
-			 when z is Error do return(z) else nothing;
+			 when z is Error do return z else nothing;
 			 ));
 	       n = n >> 1;
 	       if n == 0 then break;
 	       w = w*w;
-	       when w is Error do return(w) else nothing;
+	       when w is Error do return w else nothing;
 	       );
 	  if wasneg then apply(inverse,z) else z)
      else WrongArgInteger(2));
@@ -598,16 +598,16 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE
-	       then return(buildErrorPacket("missing unit element"))
-	       else return(onex);
+	       then return buildErrorPacket("missing unit element")
+	       else return onex;
 	       );
 	  if i <= 0 then (
 	       i = -i;
 	       wasneg = true;
 	       inverse = lookup(Class(x),InverseS);
-	       if inverse == nullE then return(MissingMethod("^","InverseMethod"));
+	       if inverse == nullE then return MissingMethod("^","InverseMethod");
 	       );
-	  if !isInt(i) then return(buildErrorPacket("'^' expects a small integer exponent"));
+	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
 	  z := x;
 	  while n>1 do (
@@ -745,11 +745,11 @@ factorial(rhs:Code):Expr := (
      when eval(rhs)
      is x:Error do Expr(x)
      is x:Integer do (
-	  if !isInt(x) then return(printErrorMessage(rhs,"argument too large"));
+	  if !isInt(x) then return printErrorMessage(rhs,"argument too large");
 	  n := toInt(x);
-	  if n==0 || n==1 then return(Expr(toInteger(1)));
-	  if n<0 then return( 
-	       printErrorMessage(rhs,"expected a positive number"));
+	  if n==0 || n==1 then return Expr(toInteger(1));
+	  if n<0 then return  
+	       printErrorMessage(rhs,"expected a positive number");
 	  y := x;
 	  while true do (
 	       n = n-1;
@@ -1013,15 +1013,15 @@ flatten(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying
      hadlist := false;
      newlen := length(a);
-     if newlen == 0 then return(a);
+     if newlen == 0 then return a;
      if newlen == 1 then (
 	  when a.0
 	  is x:List do (
 	       if ancestor(x.class,listClass) 
-	       then return(x.v)
-	       else return(a)
+	       then return x.v
+	       else return a
 	       )
-	  else return(a);
+	  else return a;
 	  );
      foreach i in a do (
      	  when i is ii:List do (

@@ -239,14 +239,14 @@ pow(x:Integer, y:Integer, n:int):void ::= Ccode( void,
      );
 
 export (x:Integer) ^ (n:int) : Integer := (
-     if n < 0 then return(toInteger(0));
+     if n < 0 then return toInteger(0);
      y := newInteger();
      pow(y,x,n);
      y);
 
 export (x:Integer) ^ (n:Integer) : Integer := (
      if isNegative(n) then fatal("negative exponent for integer power"); -- what else can we do???
-     if isZero(x) then return(x);
+     if isZero(x) then return x;
      if !isInt(n) then fatal("integer exponent too large");
      x^toInt(n));
 
@@ -273,7 +273,7 @@ export (x:Integer) // (y:Integer) : Integer := (
      z);
 
 divexact(x:Integer, y:Integer):Integer := (
-     if y === 1 then return(x);
+     if y === 1 then return x;
      z := Integer(0,0,null());
      init(z);
      Ccode( void,
@@ -674,7 +674,7 @@ export (x:int     ) / (y:Rational) : Rational := toRational(x) / y;
 export (x:Rational) ^ (nn:Integer) : Rational := (
      if !isInt(nn) then fatal("integer exponent too large");
      n := toInt(nn);
-     if n == 0 then return(toRational(1));
+     if n == 0 then return toRational(1);
      if n < 0 then (
 	  x = inv(x);
 	  n = -n);
@@ -928,7 +928,7 @@ pow(x:BigReal, y:BigReal, n:ulong):void ::= Ccode( void,
      );
 
 export (x:BigReal) ^ (n:int) : BigReal := (
-     if n == 0 then return(toBigReal(1));
+     if n == 0 then return toBigReal(1);
      if n < 0 then (
 	  x = toBigReal(1) / x;
 	  n = -n);

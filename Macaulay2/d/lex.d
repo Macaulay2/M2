@@ -30,7 +30,7 @@ export makeUniqueWord(s:string,p:parseinfo):Word := (
      is null do break
      is hashCell:WordListCell do (
      	  if hashCell.word.name === s
-	  then return(hashCell.word);
+	  then return hashCell.word;
 	  hashList = hashCell.next;
 	  );
      newWord := Word(s,TCid,h,p);
@@ -65,14 +65,14 @@ base := Node( char(0), NULL, NULL, NULL );
      o);
 export dumpNodes():void := stdout << "[" << base << "]" << endl;
 advance(node:Node,ch:int):(null or Node) := (
-     if ch == EOF || ch == ERROR then return(NULL);
+     if ch == EOF || ch == ERROR then return NULL;
      t := node.further;
      while true do (
 	  when t
-	  is null do return(t)
+	  is null do return t
 	  is node:Node do (
 	       if int(node.ch) == ch
-	       then return(t)
+	       then return t
 	       else t = node.next
 	       )
 	  )
@@ -126,7 +126,7 @@ getstringslashes(o:PosFile):(null or Word) := (
 	  then (
 	       empty(tokenbuf);
 	       printErrorMessage(pos,"EOF or ERROR in string or character constant beginning here");
-	       return(NULL);
+	       return NULL;
 	       );
 	  if (
 	       ch == int('/')
@@ -136,7 +136,7 @@ getstringslashes(o:PosFile):(null or Word) := (
 	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
 	  if isnewline(ch) && hadnewline && isatty(o) then (
-	       return(NULL);	  -- user gets out with an extra NEWLINE
+	       return NULL;	  -- user gets out with an extra NEWLINE
 	       );
 	  hadnewline = isnewline(ch)
 	  );
@@ -158,7 +158,7 @@ getstring(o:PosFile):(null or Word) := (
 	  then (
 	       empty(tokenbuf);
 	       printErrorMessage(pos,"EOF or ERROR in string or character constant beginning here");
-	       return(NULL);
+	       return NULL;
 	       );
      	  tokenbuf << char(ch);
 	  if escaped 
@@ -166,7 +166,7 @@ getstring(o:PosFile):(null or Word) := (
 	  else if ch == delimiter then break
 	  else if ch == int('\\') then escaped = true;
 	  if isnewline(ch) && hadnewline && isatty(o) then (
-	       return(NULL);	  -- user gets out with an extra NEWLINE
+	       return NULL;	  -- user gets out with an extra NEWLINE
 	       );
 	  hadnewline = isnewline(ch);
 	  );
@@ -202,17 +202,17 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  skipwhite(file);
 	  pos := copy(file.pos);
 	  ch := peek(file);
-     	  if iseof(ch) then return(Token(wordEOF,pos,globalDictionary,dummySymbol,sawNewline))
-     	  else if iserror(ch) then return(errorToken)
+     	  if iseof(ch) then return Token(wordEOF,pos,globalDictionary,dummySymbol,sawNewline)
+     	  else if iserror(ch) then return errorToken
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return(Token(newlineW,pos,globalDictionary,dummySymbol,sawNewline)))
+	       return Token(newlineW,pos,globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) && ch != int('\'') then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
-	       return(Token(
+	       return Token(
 			 makeUniqueWord(takestring(tokenbuf),parseWORD),
-			 pos,globalDictionary,dummySymbol,sawNewline)))
+			 pos,globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       while isdigit(peek(file)) do (
@@ -231,30 +231,30 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			 );
 		    );
 	       s := takestring(tokenbuf);
-	       return(Token(
+	       return Token(
 			 Word(s,typecode,0, parseWORD),
-			 pos,globalDictionary,dummySymbol,sawNewline))) 
+			 pos,globalDictionary,dummySymbol,sawNewline)) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
 	       when getstringslashes(file)
 	       is null do (
 		    empty(tokenbuf);
-		    return(errorToken)
+		    return errorToken
 		    )
-	       is word:Word do return(Token(word,pos,globalDictionary,dummySymbol,sawNewline)))
+	       is word:Word do return Token(word,pos,globalDictionary,dummySymbol,sawNewline))
 	  else if isquote(ch) then (
 	       when getstring(file)
 	       is null do (
 		    empty(tokenbuf);
-		    return(errorToken)
+		    return errorToken
 		    )
-	       is word:Word do return(Token(word,pos,globalDictionary,dummySymbol,sawNewline)))
+	       is word:Word do return Token(word,pos,globalDictionary,dummySymbol,sawNewline))
 	  else (
 	       when recognize(file)
 	       is null do (
 		    empty(tokenbuf);
-		    return(errorToken)
+		    return errorToken
 		    )
-	       is word:Word do return(Token(word,pos,globalDictionary,dummySymbol,sawNewline)))));
+	       is word:Word do return Token(word,pos,globalDictionary,dummySymbol,sawNewline))));
 export gettoken(file:PosFile,obeylines:bool):Token := (
      sawNewline := false;
      while true do (
@@ -262,10 +262,10 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
 	  if w.word == newlineW
 	  then (
 	       sawNewline = true;
-	       if obeylines then return(w);
+	       if obeylines then return w;
 	       if int(w.position.column) == 0
-	       && isatty(file) then return(errorToken);
+	       && isatty(file) then return errorToken;
 	       -- user gets out with an extra NEWLINE
 	       )
-	  else return(w);
+	  else return w;
 	  ));
