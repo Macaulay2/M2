@@ -63,14 +63,15 @@ tex MarkUpList := defop(concatenate,tex)
 texMath MarkUpList := defop(concatenate,texMath)
 mathML MarkUpList := defop(concatenate,mathML)
 
-net TITLE := net HEADER1 := net HEADER2 := x -> (
-     r := "" || horizontalJoin apply(x,net);
-     r || concatenate( width r : "-" )
-     )
-info TITLE := info HEADER1 := info HEADER2 := x -> (
-     r := "" || horizontalJoin apply(x,info);
-     r || concatenate( width r : "*" )
-     )
+info TITLE := net TITLE := x -> ""
+
+Hop := (op,filler) -> x -> ( r := horizontalJoin apply(x,op); r || concatenate( width r : filler ) )
+net  HEADER1 := Hop(net,"*")
+net  HEADER2 := Hop(net,"=")
+net  HEADER3 := Hop(net,"-")
+info HEADER1 := Hop(info,"*")
+info HEADER2 := Hop(info,"=")
+info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
 mathML String := x -> concatenate("<mtext>",htmlLiteral x,"</mtext>")
