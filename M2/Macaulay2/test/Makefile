@@ -18,7 +18,7 @@ dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ touch $@
 
 clean  :	
-	rm -f *.okay
+	rm -f *.okay allfiles
 
 allfiles : *.m2 Makefile COPYRIGHT dumpdata.1 dumpdata.2 dumpdata.3
 	echo $^ |tr ' ' \\012 >allfiles

@@ -195,8 +195,12 @@ tests: ../bin/Macaulay2-$(ARCH).data $(SCRIPTS)
 	- $(MAKE) -k -C Tests -f ../Makefile.tests
 
 clean:
-	rm -rf ../bin/Macaulay2-$(ARCH).data ../bin/Macaulay2.doc Examples Tests \
-		TAGS ../bin/M2 gbdoc.m2 gbfunctions.m2 runexample temp.data
+	rm -rf ../bin/Macaulay2-$(ARCH).data ../bin/Macaulay2.doc \
+		Examples Tests \
+		TAGS ../bin/M2 runexample \
+		temp.data allfiles distfiles \
+		gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 \
+		mpcodes.m2 tutorials.m2 version.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h \

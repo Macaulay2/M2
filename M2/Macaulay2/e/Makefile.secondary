@@ -184,7 +184,7 @@ TAGS: $(HFILES) $(CCFILES)
 	etags *.hpp *.cpp *.c
 
 clean:
-	rm -f *.o *.dd *.ii $(LIB)
+	rm -f *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
 	rm -f TAGS
 
 $(addsuffix .dd,$(FILES)) : cmdnames.hpp cmdinst.hpp

@@ -28,6 +28,7 @@ version.gen : ../Makeconf
 version.date : ../Makeconf
 	bin/echoout '>$@' '${VERSIONDATE}'
 misc :: version version.gen version.date
+clean :: ; rm version version.gen version.date
 ################################# bin
 bin :; mkdir $@
 clean ::; rm -rf bin
@@ -68,10 +69,12 @@ all ::; -$(MAKE) -C basictests -k
 clean ::; $(MAKE) -C basictests clean
 ################################# thread
 allfiles.dev ::; $(MAKE) NODEPENDS=1 -C thread allfiles
+clean ::; $(MAKE) -C thread clean
 ################################# tutorial
 #### keep this before 'm2' so the final/*.out files get made
 all::; $(MAKE) -C tutorial all
 allfiles ::; $(MAKE) -C tutorial allfiles
+clean::; $(MAKE) -C tutorial clean
 ################################# m2
 all ::; $(MAKE) -C m2 all
 install ::; $(MAKE) -C m2 install
@@ -84,6 +87,7 @@ wc ::;  $(MAKE) -C m2 wc
 tests ::; -$(MAKE) -C schubert tests
 ################################# slides
 allfiles ::; $(MAKE) NODEPENDS=1 -C slides allfiles
+clean ::; -$(MAKE) -k -C slides clean
 tests ::; -$(MAKE) -k -C slides
 ################################# test
 allfiles ::; $(MAKE) -C test allfiles
@@ -108,6 +112,7 @@ allfiles ::; $(MAKE) -C Vasconcelos-appendix allfiles
 tests ::; $(MAKE) -C Vasconcelos-appendix
 ################################# socket
 allfiles.dev ::; $(MAKE) -C socket allfiles
+clean ::; $(MAKE) -C socket clean
 ################################# Mathematica
 allfiles.dev ::; $(MAKE) -C Mathematica allfiles
 clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
