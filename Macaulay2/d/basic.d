@@ -54,10 +54,6 @@ export hash(e:Expr):int := (
 	  0
 	  -- int(Ccode(ulong, "IM2_FreeModule_hash((FreeModule*)",x,")" ))
 	  )
-     is x:RawVector do (
-	  0
-	  -- int(Ccode(ulong, "IM2_Vector_hash((Vector*)",x,")" ))
-	  )
      is x:RawRingMap do (
 	  0
 	  -- int(Ccode(ulong, "IM2_RingMap_hash((RingMap*)",x,")" ))
@@ -65,10 +61,6 @@ export hash(e:Expr):int := (
      is x:RawMatrix do (
 	  0
 	  -- int(Ccode(ulong, "IM2_Matrix_hash((Matrix*)",x,")" ))
-	  )
-     is x:RawMutableMatrix do (
-	  0
-	  -- int(Ccode(ulong, "IM2_MutableMatrix_hash((MutableMatrix*)",x,")" ))
 	  )
      is x:LMatrixRR do (
 	  0
