@@ -197,7 +197,7 @@ html TABLE := x -> concatenate(
      newline,
      "<P>",
      "<CENTER>",
-     "<TABLE cellspacing='5' cellpadding='9' border='1' bgcolor='#80ffff' width='100%'>",
+     "<TABLE cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
      apply(x, row -> ( 
 	       "<TR>", 
 	       apply(row, item -> ("<TD NOWRAP>", html item, "</TD>")),
@@ -251,7 +251,8 @@ TITLE      = newListHead "TITLE"
 HEAD       = newListHead "HEAD"
 BODY       = newListHead "BODY"
 html BODY := x -> concatenate(
-     "<BODY BACKGROUND='/Icons/Backgrounds/recbg.jpg'>",
+     "<BODY BACKGROUND='recbg.jpg'>",
+     -- "<BODY bgcolor='#e4e4ff'>",
      newline,
      toList x / html,
      newline,
@@ -306,10 +307,7 @@ BOLD       = newListHead "B"; BOLD.name = "BOLD"
 CODE       = newListHead "CODE"
 html CODE   := x -> concatenate( 
      "<CODE>", 
-     demark(
-	  ("<BR>",newline),
-	  apply(lines concatenate x, s -> htmlExtraLiteral concatenate("   ",s))
-	  ),
+     demark( ("<BR>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
      "</CODE>"
      )
 

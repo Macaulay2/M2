@@ -94,7 +94,7 @@ document { "polynomial rings",
      "A polynomial ring can be created with the usual mathematical notation.",
      EXAMPLE "ZZ[x,y,z]",
      "If you try to construct this ring again, you will get a different
-     answer.  We use the strict comparisoin operator ", TO "===", "to
+     answer.  We use the strict comparison operator ", TO "===", " to
      demonstrate this.",
      EXAMPLE "ZZ[x,y,z]===ZZ[x,y,z]",
      "Thus it is a good idea to assign a new ring to a variable for
