@@ -357,11 +357,9 @@ if firstTime and not nosetup then (
 processCommandLineOptions 2
 runStartFunctions()
 tryLoad := fn -> if fileExists fn then (load fn; true) else false
+errorDepth = loadDepth+1
 noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
-(
-     errorDepth = loadDepth+1;			    -- for debugging this can be overridden almost *immediately* with -e errorDepth=0
-     processCommandLineOptions 3;
-     )
+processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0

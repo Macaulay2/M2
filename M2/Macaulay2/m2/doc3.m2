@@ -567,6 +567,20 @@ document {
      class and parent are considered equal to each other and have hash code equal to 0."
      }
 
+document {
+     Key => "Optional inputs",
+     "Some functions accept optional inputs in addition to their required inputs.  In the documentation,
+     such an optional input is indicated by writing ", TT "NAME => ...", ", where ", TT "NAME", " is the
+     name of the optional input, and the dots indicate the place where the user will provide the
+     value of the optional input.  The optional input can provided between parentheses along with the
+     other inputs (arguments) of the function.  For example, if the function is normally used with two
+     required inputs, then instead of typing ", TT "f(x,y)", ", you may type like
+     ", TT "f(x,y,NAME=>t)", ", where ", TT "t", " is the value to be provided to ", TT "f", " as
+     the value of the optional input with name ", TT "NAME", ".  The optional inputs can be inserted
+     in any order, and may even occur before the required inputs.  If more than one optional input with the same
+     option name are given, then the value accompanying the right-most one is the value provided to the function."
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -77,13 +77,13 @@ makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 makeDocumentTag Thing := opts -> key -> (
-     key = normalizeDocumentKey key;
-     verifyKey key;
-     fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag key;
-     pkg := if opts#Package =!= null then opts#Package else packageTag key;
-     if pkg === null then error ("can't determine correct package for document tag '",key,"'");
+     nkey := normalizeDocumentKey key;
+     verifyKey nkey;
+     fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
+     pkg := if opts#Package =!= null then opts#Package else packageTag nkey;
+     if pkg === null then error ("can't determine correct package for document tag '",nkey,"'");
      title := if pkg === null then "" else pkg#"title";
-     new DocumentTag from {key,fkey,pkg,title})
+     new DocumentTag from {nkey,fkey,pkg,title})
 -- a bit of experimentation...
 DocumentTag.Key = method(SingleArgumentDispatch => true)
 DocumentTag.Key DocumentTag := x -> x#0
@@ -178,6 +178,7 @@ packageTag   String := key -> (
      r := scan(packages, pkg -> if fetchRawDocumentation(pkg,key) =!= null then break pkg);
      if r === null then currentPackage else r)
 packageTag  Package := identity
+packageTag    Array := key -> youngest \\ package \ toSequence key
 packageTag Sequence := key -> youngest \\ package \ key
 packageTag    Thing := key -> ( p := package key; if p === null then currentPackage else p)
 -- here is an alternative method -- it's fishy that we have both!
@@ -671,16 +672,6 @@ merget := (v,v') -> apply(v,v',(a,t) -> (
 	       else t => a)
 	  else a))
 
-optargs := method(SingleArgumentDispatch => true)
-optargs Thing := x -> null
-optargs Function := f -> (
-     o := options f;
-     if o =!= null then PARA { "Optional arguments [default] :", smenu apply(keys o, t -> f => t)})
-optargs Sequence := s -> (
-     o := options s;
-     if o =!= null then PARA { "Optional arguments [default] :", smenu apply(keys o, t -> s => t)}
-     else optargs s#0)
-
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(SingleArgumentDispatch => true)
 getOptionDefaultValues Symbol := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
@@ -713,23 +704,23 @@ briefSynopsis := key -> (
      res := if o.?Consequences then o.Consequences else {};
      usa := if o.?Usage then o.Usage;
      fun := if o#?Function then o#Function;
-     iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
+     iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);	-- oops
      ino := new HashTable from select(inp, x -> iso x);
      inp = select(inp, x -> not iso x);
      opt := getOptionDefaultValues key;
      ino = apply(sortByName unique join(keys opt,keys ino),
 	  optionName -> (
+	       fn := if class key === Sequence then key#0 else value key;
 	       fixup (
 		    if opt#?optionName
 	       	    then (
 			 defaultValue := opt#optionName;
-			 if ino#?optionName 
-			 then SEQ { TO optionName, " => ", alter1 ino#optionName, " [", toString defaultValue, "]" }
-			 else SEQ { TO optionName, " => [", toString defaultValue, "]" }
+			 -- ino#optionName used to give the name of the variable used as value
+			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") } }
 			 )
 	       	    else (
 			 stderr << "--warning: " << optionName << " not an option for documentation key " << key << endl;
-			 SEQ { TO optionName, " => ", alter1 ino#optionName }
+			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") } }
 			 ))));
      (inp',out') := types key;
      if out' === {Thing} then out' = {};		    -- not informative enough
@@ -750,7 +741,7 @@ briefSynopsis := key -> (
 	  );
      inp = alter \ inp;
      out = alter \ out;
-     if #inp > 0 or #ino > 0 or #out > 0 then (
+     if #inp > 0 or #out > 0 then (
 	  fixup SEQ {				  -- to be implemented
 	       UL {
      	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
@@ -763,7 +754,7 @@ briefSynopsis := key -> (
 		    if inp#?0 then PARA1 { "Inputs:", UL inp },
 		    if out#?0 then PARA1 { "Outputs:", UL out },
 		    if res#?0 then PARA1 { "Consequences:", UL res },
-		    if ino#?0 then PARA1 { "Optional inputs [default] :", UL ino }
+		    if ino#?0 then PARA1 { TO "Optional inputs", ":", UL ino }
 		    }
 	       }
 	  ))
@@ -916,23 +907,23 @@ documentation Symbol := S -> (
 
 documentation DocumentTag := tag -> documentation DocumentTag.Key tag
 
-documentation Sequence := key -> (
-     if key#?-1 and instance(key#-1,Symbol) then (		    -- optional argument
-	  fn := unSingleton drop(key,-1);
-	  opt := key#-1;
-	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
-	  default := (options fn)#opt;
-	  Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
-	       PARA BOLD "Further information", 
-	       fixup UL {
-		    SEQ{ "Default value: ", if hasDocumentation default then TOH {default} else TT toString default },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
-		    SEQ{ "Option name: ", TOH {opt} }
-		    },
-	       theExamples key, programmingHint key, caveat key, seealso key, theMenu key ))
-     else (						    -- method key
-	  if null === lookup key then error("expected ", toString key, " to be a method");
-	  Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, programmingHint key, caveat key, seealso key, theMenu key )))
+documentation Array := key -> (		    -- optional argument
+     fn := key#0;
+     opt := key#1;
+     if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
+     default := (options fn)#opt;
+     Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
+	  PARA BOLD "Further information", 
+	  fixup UL {
+	       SEQ{ "Default value: ", if hasDocumentation default then TOH {default} else TT toString default },
+	       SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
+	       SEQ{ "Option name: ", TOH {opt} }
+	       },
+	  theExamples key, programmingHint key, caveat key, seealso key, theMenu key ))
+
+documentation Sequence := key -> (						    -- method key
+     if null === lookup key then error("expected ", toString key, " to be a method");
+     Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, programmingHint key, caveat key, seealso key, theMenu key ))
 
 documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
 
