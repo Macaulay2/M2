@@ -1255,12 +1255,15 @@ isAbsolute := url -> (
      "mailto:" == substring(url,0,7)
      )
 
-htmlFilename := key -> first cacheFileName(documentationPath, key) | ".html"
+-- htmlFilename := key -> first cacheFileName(documentationPath, key) | ".html"
+htmlFilename = s -> currentHTMLDirectory | toFilename s | ".html"
+
+currentHTMLDirectory = "./"
 
 rel := url -> (
      if isAbsolute url 
      then url
-     else relativizeFilename(first documentationPath, url)
+     else relativizeFilename(currentHTMLDirectory, url)
      )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"

@@ -181,6 +181,7 @@ scan((
 	  symbol path,
 	  symbol phase,
 	  symbol currentDirectory,
+	  symbol currentHTMLDirectory,
 	  symbol documentationPath,
 	  symbol DocDatabase,
 	  symbol currentFileName,
