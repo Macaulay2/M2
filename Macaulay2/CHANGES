@@ -3,6 +3,11 @@ Changes made, most recent ones first:
 New in 0.8.40:
 -----------------------------------------------------------------------------
 
+Minimal, an option to gb for internal use only, has been changed to 
+StopWithMinimalGenerators.
+
+GeneratorLimit has been changed to BasisElementLimit
+
 Bug fixed in code for projective resolutions of inohomogeneous modules.  This
 includes modules over inhomgeneous rings.  Previous results may have been
 wrong, so should be rerun.

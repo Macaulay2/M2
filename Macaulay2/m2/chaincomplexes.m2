@@ -395,6 +395,15 @@ components ChainComplexMap := f -> if f.?components then f.components else {f}
 ChainComplexMap _ Array := (f,v) -> f * (source f)_v
 ChainComplexMap ^ Array := (f,v) -> (target f)^v * f
 
+RingMap ChainComplex := (f,C) -> (
+     D := new ChainComplex;
+     D.ring = target f;
+     complete C;
+     scan(spots C, i -> D#i = f C#i);
+     complete C.dd;
+     scan(spots C.dd, i -> D.dd#i = map(D_(i-1),D_i, f C.dd#i));
+     D)
+
 ChainComplexMap * ChainComplexMap := (g,f) -> (
      if target f != source g then error "expected composable maps of chain complexes";
      h := new ChainComplexMap;

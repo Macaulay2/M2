@@ -3102,7 +3102,8 @@ document { "numbers",
      "Some other quantities which are not quite numbers:",
      MENU {
 	  TO "infinity",
-	  TO "-infinity"
+	  TO "-infinity",
+	  TO "indeterminate"
 	  }
      }
 
@@ -3893,7 +3894,7 @@ document { quote saturate,
     "Allowable options include:",
     MENU {
         TO "DegreeLimit",
-	--TO "GeneratorLimit",
+	--TO "BasisElementLimit",
 	--TO "PairLimit",
 	TO "Strategy",
 	TO "MinimalGenerators"

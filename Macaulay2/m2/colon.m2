@@ -106,8 +106,8 @@ doQuotientOptions := (options) -> (
     options = new MutableHashTable from options;
     remove(options,Strategy);
     remove(options,MinimalGenerators);
-    --options.SyzygyLimit = options.GeneratorLimit;
-    --remove(options,GeneratorLimit);
+    --options.SyzygyLimit = options.BasisElementLimit;
+    --remove(options,BasisElementLimit);
     new OptionTable from options
     )
 
@@ -159,7 +159,7 @@ quotientAnn := (I,J,options) -> (
 quotient = method(
      Options => {
 	  --DegreeLimit => {},
-	  --GeneratorLimit => infinity,
+	  --BasisElementLimit => infinity,
 	  --PairLimit => infinity,
 	  MinimalGenerators => true,
 	  Strategy => null
@@ -217,7 +217,7 @@ document { quote quotient,
     "Allowable options include:",
     MENU {
         --TO "DegreeLimit",
-	--TO "GeneratorLimit",
+	--TO "BasisElementLimit",
 	--TO "PairLimit",
 	TO "Strategy",
 	TO "MinimalGenerators"
@@ -237,7 +237,7 @@ document { quote quotient,
 TEST "
   -- quotient(Ideal,Ideal)
   -- quotient(Ideal,RingElement)
-  -- options to test: DegreeLimit, GeneratorLimit, PairLimit, 
+  -- options to test: DegreeLimit, BasisElementLimit, PairLimit, 
   --    MinimalGenerators,
   --    Strategy=>Iterate, Strategy=>Linear
   R = ZZ/101[a..d]
@@ -278,7 +278,7 @@ TEST "
 TEST "
   -- quotient(Ideal,Ideal)
   -- quotient(Ideal,RingElement)
-  -- options to test: DegreeLimit, GeneratorLimit, PairLimit, 
+  -- options to test: DegreeLimit, BasisElementLimit, PairLimit, 
   --    MinimalGenerators,
   --    Strategy=>Iterate, Strategy=>Linear
   R = ZZ/101[vars(0..3)]/(a*d)
@@ -385,7 +385,7 @@ TEST "
 saturate = method(
      Options => {
 	  DegreeLimit => {},
-	  --GeneratorLimit => infinity,
+	  --BasisElementLimit => infinity,
 	  --PairLimit => infinity,
 	  MinimalGenerators => true,
 	  Strategy => null

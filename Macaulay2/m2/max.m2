@@ -15,9 +15,24 @@ document { quote infinity,
      SEEALSO ( "-infinity", "InfiniteNumber" )
      }
 
+IndeterminateNumber = new Type of HashTable
+indeterminate = new IndeterminateNumber from {quote name => quote indeterminate}
+
+InfiniteNumber + ZZ := (i,j) -> i
+ZZ + InfiniteNumber := (i,j) -> j
+InfiniteNumber - ZZ := (i,j) -> i
+ZZ - InfiniteNumber := (i,j) -> -j
+InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
+ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
+
 neginfinity := new InfiniteNumber from {
      quote name => "-infinity", 
      sign => -1
+     }
+
+document { quote indeterminate,
+     TT "indeterminate", " -- a representaiton of an indeterminat number, such as might
+     result from multiplying 0 by infinity."
      }
 
 document { "-infinity",

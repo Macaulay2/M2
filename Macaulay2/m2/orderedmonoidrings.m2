@@ -229,7 +229,6 @@ Ring OrderedMonoid := (			  -- no memoize
 			 if M.index#?x
 			 then M.index#x
 			 else error "expected a variable of the ring"));
-	       stderr << "diffs : " << diffs << endl;
 	       new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
 	       );
 	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;

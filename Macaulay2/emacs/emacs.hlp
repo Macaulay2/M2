@@ -30,22 +30,27 @@ code.
    (global-set-key "\^Cm" 'M2) (global-set-key [ f12 ] 'M2)
    (autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
    (setq load-path (cons "/usr/local/Macaulay2/emacs" load-path))
-   (setq transient-mark-mode t)
+   (make-variable-buffer-local 'transient-mark-mode)
+   (add-hook 'M2-mode-hook '(lambda () (setq transient-mark-mode t)))
+   (add-hook 'comint-M2-hook '(lambda () (setq transient-mark-mode t)))
 
-The first two lines cause emacs to enter a special mode for editing Macaulay
-2 code whenever a file whose name has the form *.m2 is encountered.  The next
+The first two lines cause emacs to enter a special mode for editing Macaulay 2
+code whenever a file whose name has the form *.m2 is encountered.  The next
 two lines provide a special mode for running Macaulay 2 in an emacs buffer.
 The fifth line tells emacs where to find the emacs-lisp files provided in the
 Macaulay 2 emacs directory - you must edit the string in that line to
-indicate the correct path on your system to the Macaulay 2 emacs director.
+indicate the correct path on your system to the Macaulay 2 emacs directory.
 The files needed from that directory are M2-mode.el, M2-symbols.el, and
-M2.el.  The sixth line sets up the mark so that it is only active
-occasionally, and then emacs functions which act on a region of text will
-refuse to proceed unless the mark is active.  The set-mark function or the
-exchange-point-and-mark function will activate the mark, and it will remain
-active until some change occurs to the buffer.  The only reason we recommend
-the use of this mode is so the same key can be used to evaluate a line or a
-region of code, depending on whether the region is active.
+M2.el.  The sixth line sets the variable transient-mark-mode so that it can
+have a different value in each buffer.  The seventh and eighth lines set
+hooks so that transient-mark-mode will be set to t in M2 buffers.  The effect
+of this is that the mark is only active occasionally, and then emacs
+functions which act on a region of text will refuse to proceed unless the
+mark is active.  The set-mark function or the exchange-point-and-mark
+function will activate the mark, and it will remain active until some change
+occurs to the buffer.  The only reason we recommend the use of this mode is
+so the same key can be used to evaluate a line or a region of code, depending
+on whether the region is active.
 
 Exit and restart emacs with your new .emacs initialization file.  Use the
 keystrokes C-x 2 to divide the buffer containing this file into two windows,

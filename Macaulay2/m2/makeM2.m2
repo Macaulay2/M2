@@ -31,7 +31,9 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 			   "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `.data" 
 			   )
 		      )
-		 << " -- $TTY "
+		 << " --"
+		 -- << " $TTY"
+		 << " "
 		 << format ( "-e path = append(path, "| format "$M2HOME/m2" | ")" )
 		 << " "
 		 << format "-e runStartFunctions()" 
@@ -40,7 +42,8 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 		 o -> o
 		 << "exec "
 		 << format "$M2HOME/bin/Macaulay2"
-		 << " $TTY -ephase=1"
+		 -- << " $TTY"
+		 << " -ephase=1"
 		 << " "
 		 << format "$M2HOME/m2/setup.m2"
 		 << " "
@@ -55,7 +58,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
        FILENAME
        << "#! /bin/sh" << endl
        << "M2HOME=" << M2HOME << endl
-       << "if [ \"$EMACS\" = t ]; then TTY=-tty; else TTY=; fi" << endl
+       -- << "if [ \"$EMACS\" = t ]; then TTY=-tty; else TTY=; fi" << endl
        << "if [ $# = 0 ]" << endl
        << "then " << args << endl
        << "else " << args << " " << format "$@" << endl

@@ -682,6 +682,15 @@ dual Module := { Module,
      TT "dual M", " -- the dual of a module."
      }
 -----------------------------------------------------------------------------
+Hom(Ideal, Ideal) := (I,J) -> Hom(module I, module J)
+Hom(Ideal, Module) := (I,M) -> Hom(module I, M)
+Hom(Module, Ideal) := (M,I) -> Hom(M, module I)
+
+Hom(Module, Ring) := (M,R) -> Hom(M, R^1)
+Hom(Ring, Module) := (R,M) -> Hom(R^1, M)
+Hom(Ideal, Ring) := (I,R) -> Hom(module I, R^1)
+Hom(Ring, Ideal) := (R,I) -> Hom(R^1, module I)
+
 Hom(Module, Module) := (M,N) -> (
      if isFreeModule M 
      then dual M ** N

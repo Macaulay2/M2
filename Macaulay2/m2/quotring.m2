@@ -125,6 +125,7 @@ Ring / Ideal := (R,I) -> if I == 0 then R else (
 	       S := new QuotientRing from newHandle();
 	       S.relations = gensI;
 	       S.ConvertToExpression = R.ConvertToExpression;
+	       S.isCommutative = R.isCommutative;
 	       S.presentation = gensgbI;
 	       S.char = n;
 	       if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
@@ -155,6 +156,7 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
      S := new QuotientRing from newHandle();
      S.relations = gensI;
      S.ConvertToExpression = R.ConvertToExpression;
+     S.isCommutative = R.isCommutative;
      S.baseRings = append(R.baseRings,R);
      if R.?syms then (
 	  S.syms = R.syms;
