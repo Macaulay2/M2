@@ -1,6 +1,6 @@
 -- startup.m2
 
--- this file gets incorporated into the executable file bin/Macaulay2 as the string 'startupString'
+-- this file gets incorporated into the executable file bin/Macaulay2 as the string 'startupString2'
 
 --		Copyright 1993-2003 by Daniel R. Grayson
 
@@ -213,16 +213,16 @@ usage := arg -> (
      << "    " << progname << " [option ...] [file ...]" << newline
      << "options:"  << newline
      << "    --help             print this brief help message and exit" << newline
+     << "    --no-backtrace     print no backtrace after error" << newline
      << "    --copyright        display full copyright messasge" << newline
-     << "    --debug            enter break loop upon error" << newline
+     << "    --no-debug         do not enter break loop upon error" << newline
      << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline
-     << "    --no-backtrace     print no backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
+     << "    --notify           notify when loading source files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
-     << "    --notify           notify when loading source files during initialization" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
@@ -268,7 +268,7 @@ action := hashTable {
      "-mpwprompt" => notyeterr,
      "-q" => arg -> noinitfile = true,
      "--silent" => arg -> nobanner = true,
-     "--debug" => arg -> debuggingMode = true,
+     "--no-debug" => arg -> debuggingMode = false,
      "--dumpdata" => arg -> (noinitfile = noloaddata = true; if not preload then dump()),
      "-silent" => obsolete,
      "-tty" => notyet,
