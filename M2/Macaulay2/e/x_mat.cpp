@@ -589,7 +589,7 @@ const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree
   return m->remove_monomial_factors(make_squarefree_only);
 }
 
-const Matrix * rawScalarMultiples(const Matrix *m)
+const Matrix * rawRemoveScalarMultiples(const Matrix *m)
 {
   return m->remove_scalar_multiples();
 }

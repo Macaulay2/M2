@@ -206,7 +206,7 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
           nsyz
 	  };
      g := new GroebnerBasis;
-     g.matrix = f;
+     g.matrix = Bag {f};
      g.ring = ring f;
      g.target = target f;
      g.returnCode = 0;
