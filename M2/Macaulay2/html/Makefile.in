@@ -1,9 +1,10 @@
 # @configure_input@
 include ../../config.Makefile
-all :: Macaulay2-button.scm \
+IMAGES = Macaulay2-button.scm \
 	up.gif next.gif previous.gif top.gif index.gif null.gif \
-	recbg.jpg 9planets.gif \
-	index.html
+	recbg.jpg 9planets.gif
+all :: $(IMAGES)
+all :: index.html
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
@@ -52,3 +53,7 @@ view:; netscape index.html &
 clean::; rm -f ./*.html
 clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
 distclean: clean; rm -f Makefile
+$(packagedir)/html:; $(INSTALL) -d "$@"
+install:: $(packagedir)/html
+	$(INSTALL_DATA) Makefile $(IMAGES) *.html @srcdir@/html.m2 $(packagedir)/html
+
