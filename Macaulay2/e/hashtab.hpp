@@ -1,109 +1,131 @@
 // (c) 1994  Michael E. Stillman
-#ifndef _hashtable_hh_
-#define _hashtable_hh_
 
 #include "style.hpp"
-
-#define HASHTABLE(T) hashtable<T>
-
-#undef index
+#define TRUE 1
+#define FALSE 0
+typedef unsigned long compint;
 
 template<class T> class hashtable;
 template<class T> class cursor_hashtable;
 
-typedef unsigned long int compint;
-
-const int hashbin_size = 4;
-
-template<class T>
-class hashentry
-{
-  friend hashbin<T>;
-  friend hashtable<T>;
-  friend cursor_hashtable<T>;
-  T         elem;
-  compint   index;
-};
-
-template<class T>
-class hashbin
-{
-  friend hashtable<T>;
-  friend cursor_hashtable<T>;
-  hashentry<T> entries[hashbin_size];  
-  unsigned int n_held;
-  unsigned int n_using;
-
-  hashbin() : n_held(0), n_using(0) {}
-  ~hashbin() {}
-
-  unsigned int search(compint index);
-  remove(compint index);
-};
-
 template<class T>
 class hashtable
 {
+  unsigned int used;
+  unsigned int maxused;
+  T trivial_elem;
+  struct ENTRY {
+       T elem;
+       compint key;
+       char occupied;
+       } *bin;
+  unsigned int size;		// always a power of 2
+  void enlarge() {
+       unsigned int newsize = 2 * size;
+       ENTRY *newbin = new ENTRY [newsize];
+       for (unsigned int i = 0; i<newsize; i++) newbin[i].occupied = FALSE;
+       for (unsigned int j=0; j<size; j++) {
+	    if (!bin[j].occupied) continue;
+	    compint key = bin[j].key;
+	    unsigned int i;
+	    for (i = key & (newsize - 1); newbin[i].occupied; i>0 ? i-- : i=newsize-1) ;
+	    newbin[i].elem = bin[j].elem;
+	    newbin[i].key = key;
+     	    newbin[i].occupied = TRUE;
+	    }
+       delete [] bin;
+       bin = newbin;
+       size = newsize;
+       }
   friend cursor_hashtable<T>;
-
-  int          log_n_hashbins;
-  int          n_held;
-  hashbin<T> **bin;
-
-  void redistribute(compint i);
 public:
-  hashtable();
-  ~hashtable();
-
-  insert(T &elem, compint index);
-  remove(compint index);
-  search(T &elem, compint index);
-  
-  void debug_display(ostream &o);
-};
+  int highwater() { return maxused; }
+  int current() { return used; }
+  hashtable(T trivial_elem0) {
+       trivial_elem = trivial_elem0;
+       maxused = used = 0;
+       size = 1;
+       bin = new ENTRY [size];
+       for (unsigned int i = 0; i<size; i++) bin[i].occupied = FALSE;
+       }
+  ~hashtable() { delete [] bin; }
+  void insert(T &elem, compint key) {
+       used ++;
+       if (used > maxused) maxused = used;
+       if (used * 5 > size * 4) enlarge();
+       unsigned int i;
+       for (i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
+	    if (bin[i].key == key) {
+		 cerr << "duplicate key encountered - internal error" << endl;
+		 exit(1);
+		 }
+	    }
+       bin[i].elem = elem;
+       bin[i].key = key;
+       bin[i].occupied = TRUE;
+       }
+  int search(T &elem, compint key) {
+       unsigned int i;
+       for (i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
+	    if (bin[i].key == key) {
+		 elem = bin[i].elem;
+		 return TRUE;
+		 }
+	    }
+       return FALSE;
+       }
+  void remove(T &elem, compint key) {
+       for (unsigned int i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
+	    if (bin[i].key == key) {
+		 used --;
+		 bin[i].occupied = FALSE;
+		 elem = bin[i].elem;
+		 bin[i].elem = trivial_elem;
+		 bin[i].key = 0;
+       		 for (unsigned int j = i > 0 ? i-1 : size-1; bin[j].occupied; j>0 ? j-- : j=size-1) {
+		      for (unsigned int k = bin[j].key & (size - 1); k!=j ; k>0 ? k-- : k=size-1) {
+			   if (!bin[k].occupied) {
+				bin[k] = bin[j];
+				bin[j].occupied = FALSE;
+				bin[j].elem = trivial_elem;
+				bin[j].key = 0;
+				}
+			   }
+		      }
+		 return;
+		 }
+	    }
+       cerr << "key not found in hash table -- internal error" << endl;
+       exit(1);
+       }
+  };
 
 template<class T>
 class cursor_hashtable
 {
-  compint hashtable_i;
-  compint hashbin_i;
-  int is_valid;
   hashtable<T> *h;
+  unsigned int i;
 public:
-  cursor_hashtable(hashtable<T> &a) 
-    : hashtable_i(0), hashbin_i(0), h(&a)
-      {
-	//is_valid = (h->bin[0]->n_held > 0);
-	// MES replaced by:
-	is_valid = (h->n_held > 0);
-	if (is_valid) {		// DRG's fix
-	     while (h->bin[hashtable_i]->n_held == 0) hashtable_i++;
-	}
-      }
-  cursor_hashtable(const cursor_hashtable &c);
+  int valid() { return i < h->size; }
+  cursor_hashtable(hashtable<T> &a) {
+       h = &a;
+       i = 0;
+       while (i < h->size && !h->bin[i].occupied) i++;
+       }
+  // cursor_hashtable(const cursor_hashtable &c) ;
   ~cursor_hashtable() {}
-
-  int valid() {return is_valid;}
-  cursor_hashtable &operator++() // Next non-zero (var,exponent) pair.
-    {
-      if (++hashbin_i >= h->bin[hashtable_i]->n_held)
-	{
-	  unsigned int limit = (1 << h->log_n_hashbins); // DRG
-	  hashbin_i = 0;
-	  hashtable_i += h->bin[hashtable_i]->n_using;	    
-	  while (		// DRG
-		 hashtable_i < limit &&
-		 h->bin[hashtable_i]->n_held == 0
-		 ) {
-	       hashtable_i++;
-	  }			// DRG
-	  is_valid = (hashtable_i < limit);
-	}
-    return *this;
-    }
-
-  compint  index() {return h->bin[hashtable_i]->entries[hashbin_i].index;}
-  T       &elem () {return h->bin[hashtable_i]->entries[hashbin_i].elem;}
-};
-
-#endif
+  cursor_hashtable &operator++() {
+       if (!valid()) {
+	    cerr << "invalid hashtable cursor used - internal error" << endl;
+	    }
+       i++;
+       while (i < h->size && !h->bin[i].occupied) i++;
+       return *this;
+       }
+  compint  key() {
+       return h->bin[i].key;
+       }
+  T &elem () {
+       return h->bin[i].elem;
+       }
+  };

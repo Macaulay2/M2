@@ -20,6 +20,20 @@ betti
 res_comp >> intarray
 Return an intarray in the same format as in 'ggpairs' describing the known minimal betti numbers of the resolution, as so far computed.  These numbers represent minimal bounds on the actual betti numbers.
 
+ggbinomialGB
+binomialGB
+R:ring >> binomialGB_comp
+Create a new GB computation for (possibly inhomogeneous) binomial ideals.  No syzygies are computed using this type of computation.  Add generators using ggbinomialGBaddgens, change the ring (enlarge it) using ggbinomialGBenlarge, perform computations using ggcalc, obtain results using gggetmingens, gggetgb, gggetsubring, gggetsubringGB.
+
+ggbinomialGBaddgens
+binomialGBaddgens
+g:binomialGB_comp m:matrix >> .
+If 'm' is a one row matrix having the same base ring as 'g', then add the entries of 'm' to the binomial ideal.  If 'm' is an n by m matrix of integers, where n is less than or equal to the number of variables of the base ring of 'g', then the columns are considered as binomials, and are added to the binomial ideal.  It is valid to add generators of lower degree than what has already been computed.
+
+ggbinomialGBenlarge
+g:binomialGB_comp R:ring >> .
+Enlarges the base ring of 'g' to be 'R'.  The ring, its homogenity, and its term order should be consistent with the old values: The Groebner basis of the binomial ideal should not change.
+
 ggborel
 borel
 mi:monideal >> monideal
@@ -253,6 +267,16 @@ gggetshift
 getshift
 matrix >> intarray
 Yields the (multi-)degree of the matrix.
+
+gggetsubring
+getsubring
+g:binomialGB_comp n:int >> m:matrix
+Yields a generating set for the subideal of the given binomial ideal whose first 'n' wieght vectors are zero.  This will often be a minimal generating set, if that is computed during the GB computation.
+
+gggetsubringGB
+getsubringGB
+g:binomialGB_comp n:int >> m:matrix
+Yields a one row matrix whose entries form the Groebner basis of the given binomial ideal, as so far computed.
 
 gggetsyz
 getsyz

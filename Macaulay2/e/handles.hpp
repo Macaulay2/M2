@@ -26,9 +26,11 @@ class handles
   hashtable<handle *> objs;
 
 public:
-  handles() : next_handle(0) {}
+  handles() : next_handle(0), objs(hashtable<handle *>((handle *)0)) {}
   ~handles() {}
   
+  int current() { return objs.current(); }
+  int highwater() { return objs.highwater(); }
   int is_valid_handle(int h);
 
   int deref(int h, object &result);
@@ -40,7 +42,11 @@ public:
       // If 'o' is not already in the hashtable, place it there (refount 1)
       // Otherwise increment the handles refcount.
 
-  void forget(int h);
+  void forget(int h) {
+       handle *elem; 
+       objs.remove(elem,h);
+       delete elem;
+       }
       // Find the handle in the hashtable with key 'h'.  Decrement its
       // refcount, possibly deleting it if refcount drops to zero.
 

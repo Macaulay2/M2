@@ -229,12 +229,13 @@ M2-send-to-prorgram can obtain lines from this buffer."
   (let* ((f (prog1
 	      (select-frame 
 	       (new-frame
-		'((height . 26) (width . 54)
+		'((height . 24) (width . 80)
 		  (visiblity . t)
 		  (minibuffer . t) (name . "DEMO"))))
 	      (toggle-scroll-bar 0)
-	      ; (set-default-font "12x24"))
-	      (set-default-font "-adobe-courier-bold-r-normal--34-240-100-100-m-200-iso8859-1"))
+	      (set-default-font "12x24")
+	      ; (set-default-font "-adobe-courier-bold-r-normal--34-240-100-100-m-200-iso8859-1")
+	      )
 	    )
 	 (width (frame-pixel-width))
 	 (height (frame-pixel-height))

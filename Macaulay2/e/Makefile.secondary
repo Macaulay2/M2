@@ -18,7 +18,7 @@ WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
 	   -Wreorder -Wtemplate-debugging
 WARNINGS = -Wall
 
-CPPFLAGS += -DNDEBUG -I$(INCDIR)
+CPPFLAGS += -I$(INCDIR) -DNDEBUG
 
 ifdef FACTOR
 CPPFLAGS += -DFACTOR
@@ -141,7 +141,8 @@ HHFILES := $(addsuffix .hpp, \
 
 OTHERS := Makefile Makefile.secondary \
 	res_aux.cpp res_aux2.cpp geoT.hpp \
-	tests misc keep
+	tests misc keep gbbinom.hpp gbbinom.cpp
+
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
 
