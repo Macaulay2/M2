@@ -219,30 +219,35 @@ packageNodes := (pkg,topNodeName) -> unique join(
 -----------------------------------------------------------------------------
 
 -- make this first:
-linkTable := new MutableHashTable			    -- keys are fkeys for a node, values are ordinary lists of descendants
+linkTable := new MutableHashTable			    -- keys are fkeys for a node, values are ordinary lists of descendents
+ROOT := "ROOT"
 
 -- assemble this next
-DescendentList = new Type of BasicList			    -- list of formatted keys for descendents
+ForestNode = new Type of BasicList			    -- list of formatted keys for descendents
 TreeNode = new Type of BasicList			    -- first entry is formatted key for this node, second entry is a descendent list
 
-net DescendentList := x -> stack apply(toList x,net)
+net ForestNode := x -> stack apply(toList x,net)
 net TreeNode := x -> net x#0 || (stack (#x#1 : " |  ")) | net x#1
 
 local visitedNodes
 local foundLoop
 
-makeNode = x -> (
+makeNode := x -> (
      visited := visitedNodes#?x;
      if visited then (
 	  if not foundLoop then stderr << "warning: loop found in documentation tree" << endl;
 	  foundLoop = true;
 	  );
-     new TreeNode from { x, new DescendentList from if visited then { "-- node visited already --" } else apply(linkTable#x,makeNode) })
+     new TreeNode from { x, new ForestNode from if visited then { "-- node visited already --" } else apply(linkTable#x,makeNode) })
 
-makeTree = topNode -> (
+leaves := () -> keys set flatten values linkTable
+roots := () -> sort keys ( set keys linkTable - set leaves() )
+makeTree := topNode -> (
+     error "debug this";
      visitedNodes = new MutableHashTable;
      foundLoop = false;
-     makeNode topNode)
+     linkTable#ROOT = roots();
+     makeNode ROOT)
 
 --
 
@@ -303,9 +308,11 @@ assembleTree Package := pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
      topNodeName = pkg#"title";
+     key := normalizeDocumentTag topNodeName;
+     fkey := formatDocumentTag key;			    -- same as topNodeName
      nodes := packageNodes(pkg,topNodeName);
-     linkTable = new MutableHashTable from { "--root--" => {} };
-     nodesToScope = new MutableHashTable from { ("--root--",topNodeName) => true };
+     linkTable = new MutableHashTable from { };
+     nodesToScope = new MutableHashTable from { (fkey,key) => true };
      UP = new MutableHashTable;
      NEXT = new MutableHashTable;
      PREV = new MutableHashTable;
@@ -318,7 +325,7 @@ assembleTree Package := pkg -> (
      	  -- error "debug this";
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
-     makeTree topNodeName)
+     makeTree())
 
 -----------------------------------------------------------------------------
 -- making the html pages
