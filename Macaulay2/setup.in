@@ -12,6 +12,9 @@ then echo =======================================================
 fi
 echo =======================================================
 echo Making bin/M2
+if [ ! -d bin ]
+then mkdir bin || exit 1
+fi
 if [ "$DUMPDATA" != no ]
 then ../libexec/Macaulay2 "-e loaddata \"../libexec/Macaulay2-`uname -m | sed s=/=-=g `-data\"" \
             -- -q '-e runStartFunctions()' makeM2.m2 '-e exit 0' || exit 1

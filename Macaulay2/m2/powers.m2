@@ -10,7 +10,8 @@ binomial(ZZ,ZZ) := ZZ => memoize (
 	  else if i === 0 then 1
      	  else if n > 0 then (
      	       if i > n then 0
-     	       else binomial(n-1,i) + binomial(n-1,i-1)
+     	       else n! // (i! * (n-i)!)
+		    -- binomial(n-1,i) + binomial(n-1,i-1)
 	       )
 	  else if n === 0 then 0
      	  else (-1)^i * binomial(-n+i-1,i)

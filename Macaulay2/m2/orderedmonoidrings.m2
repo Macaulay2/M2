@@ -122,7 +122,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if R.?newEngine != M.?newEngine
 	  then error "expected both ring and monoid to be handled by new engine routines";
 	  Weyl := M.Options.WeylAlgebra =!= {};
-	  Skew := M.Options.SkewCommutative =!= false;
+	  Skew := M.Options.SkewCommutative;
 	  degRing := (
 	       if M.?newEngine or R.?newEngine
 	       then if degreeLength M != 0 then newDegreesRing degreeLength M else ZZZ

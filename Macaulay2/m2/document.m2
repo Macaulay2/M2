@@ -312,7 +312,7 @@ DocumentableValueType := hashTable {
      Function => true, 
      BasicList => true, 
      Nothing => true,
-     File => true,
+     File => true
      }
 UndocumentableValue := hashTable { symbol environment => true, symbol commandLine => true }
 documentableValue := key -> (

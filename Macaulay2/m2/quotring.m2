@@ -136,19 +136,22 @@ ZZquotient := (R,I) -> (
 	  savedQuotients#n = S;
 	  S))
 
-Ring / Ideal := QuotientRing => (R,I) -> if I == 0 then R else (
-     if R === ZZZ then ZZZquotient(R,I)
-     else if R === ZZ then ZZquotient(R,I)
-     else (
-	  error "can't form quotient of this ring"
-	  )
+Ring / Ideal := QuotientRing => (R,I) -> (
+     if ring I =!= R then error "expected ideal of the same ring";
+     if I == 0 then return R;
+     if R === ZZZ then return ZZZquotient(R,I);
+     if R === ZZ then return ZZquotient(R,I);
+     error "can't form quotient of this ring";
      )
 
 predecessors := method()
 predecessors Ring := R -> {R}
 predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 
-EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotient(R,I) else (
+EngineRing / Ideal := (R,I) -> (
+     if ring I =!= R then error "expected ideal of the same ring";
+     if I == 0 then return R;
+     if R === ZZZ then return ZZZquotient(R,I);
      -- recall that ZZ is NOT an engine ring.
      A := R;
      while class A === QuotientRing do A = last A.baseRings;

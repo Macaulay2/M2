@@ -467,8 +467,7 @@ export convert(e:ParseTree):Code := (
      is u:Postfix do Code(
 	  unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
      is d:dummy do (
-     	  -- was: Code(exprCode(nullE,d.position))
-	  dummyCode
+     	  Code(exprCode(nullE,d.position))
 	  ));
 export codePosition(e:Code):Position := (
      when e

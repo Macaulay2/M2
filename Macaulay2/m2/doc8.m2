@@ -1156,34 +1156,66 @@ document { RingMap,
 	  },
      }
 
+document { (map,Ring,Ring,Matrix),
+     Headline => "make a ring map",
+     Synopsis => {
+	  "f = map(R,S,m)",
+	  "R" => "the target ring",
+	  "S" => "the source ring",
+	  "m" => {"a 1 by n matrix over ", TT "R", ", where n is the
+     	       number of variables in the polynomial ring ", TT "S", ",
+	       or a matrix over the common coefficient ring of the 
+	       two rings."
+	       },
+	  "f" => {
+	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which,
+	       in case m is a matrix over R, sends the i-th variable
+	       of ", TT "S", " to the i-th entry in ", TT "m", ",
+	       or, in case ", TT "m", " is a matrix over the common coefficient ring,
+	       is the linear change of coordinates corresponding to ", TT "m", "."
+	       }
+	  },
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "S = ZZ[a,b,c];",
+	  "f = map(R,S,matrix {{x^2,x*y,y^2}})",
+	  "f(a+b+c^2)",
+	  "g = map(R,S,matrix {{1,2,3},{4,5,6}})"
+	  "g(x+y)"
+	  },
+     "If the coefficient ring of ", TT "S", " is itself a polynomial ring, then
+     one may optionally include values to which its variables should be 
+     sent: they should appear first in the matrix ", TT "m", ".",
+     EXAMPLE {
+	  "S = ZZ[a][b,c];",
+	  "h = map(S,S,matrix {{b,c,a}})",
+	  "h(a^7 + b^3 + c)",
+	  "k = map(S,S,matrix {{c,b}})",
+	  "k(a^7 + b^3 + c)"
+	  }
+     }
+
 document { (map,Ring,Ring,List),
      Headline => "make a ring map",
-     TT "map(R,S,m)", " -- sets up a ring homomorphism from ", TT "S", "
-     to ", TT "R", " which sends the i-th variable of S to the i-th element
-     of the list ", TT "m", ".  Alternatively, ", TT "m", " may be
-     a 1 by n matrix over ", TT "R", ", where n is the
-     number of variables in the polynomial ring ", TT "S", "; or it may
-     be a square matrix over the common coefficient ring of the two rings,
-     in which case it is used as the matrix of a linear change of coordinates.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b];",
-      	  "m = symmetricPower(3, vars R)",
-      	  "rank source m",
-      	  "S = ZZ/101[s_1 .. s_oo]",
-      	  "f = map(R,S,m)",
-      	  "f s_2",
-      	  "f vars S",
-      	  "kernel f",
-      	  "generators oo",
-      	  "f oo",
-      	  "U = ZZ/101[t,u,v]",
-      	  "g = map(S,U,{s_1+s_2, s_2 + s_3, s_3+s_4})",
-      	  "f * g",
-      	  "kernel oo",
-      	  "f g generators oo",
+     Synopsis => {
+	  "f = map(R,S,m)",
+	  "R" => "the target ring",
+	  "S" => "the source ring",
+	  "m" => {"a list of n elements of ", TT "R", ", where n is the
+     	       number of variables in the polynomial ring ", TT "S", "."
+	       },
+	  "f" => {
+	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which sends the i-th variable
+	       of ", TT "S", " to the i-th entry in ", TT "m", "."
+	       }
 	  },
-     PARA,
-     "The class of all ring maps is ", TO "RingMap", "."
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "S = ZZ[a,b,c];",
+	  "f = map(R,S,{x^2,x*y,y^2})",
+	  "f(a+b+c^2)"
+	  },
+     SEEALSO {(map,Ring,Ring,Matrix)}
      }
 
 document { substitute,

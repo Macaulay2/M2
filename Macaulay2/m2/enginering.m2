@@ -268,6 +268,8 @@ baseName RingElement := x -> (
 	       )
      	  else baseName leadMonomial x
 	  )
+     else if size x === 1 and leadMonomial x == 1
+     then baseName leadCoefficient x
      else error "expected a generator"
      )
 
