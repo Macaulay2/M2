@@ -12,11 +12,6 @@ Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "--package--"
 packages = {}
 
-hide := pkg -> (
-     globalDictionaries = select(globalDictionaries, x -> x =!= pkg.Dictionary);
-     packages = select(packages, x -> x =!= pkg);
-     )
-
 toString Dictionary := d -> (
      if ReverseDictionary#?d then return toString ReverseDictionary#d;
      if PrintNames#?d then return PrintNames#d;
@@ -26,12 +21,13 @@ toString Dictionary := d -> (
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
-removePackage = method()
-removePackage Package := p -> (
-     hide p;
-     stderr << "--previous definitions removed for package " << p << endl;
+dismiss Package := pkg -> (
+     packages = delete(pkg,packages);
+     globalDictionaries = delete(pkg.Dictionary,globalDictionaries);
+     globalDictionaries = delete(pkg#"private dictionary",globalDictionaries);
+     -- stderr << "--previous definitions removed for package " << pkg << endl;
      )
-removePackage String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then removePackage value PackageDictionary#title
+dismiss String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then dismiss value PackageDictionary#title
 
 substituteOptions := new MutableHashTable
 loadPackage = method(
@@ -47,7 +43,6 @@ loadPackage String := opts -> filename -> (
 
 newPackage = method( 
      Options => { 
-	  Using => {}, 
 	  Version => "0.0", 
 	  DebuggingMode => false,
 	  InfoDirSection => "Math",
@@ -61,9 +56,8 @@ newPackage(String) := opts -> (title) -> (
      filename := baseFilename currentFileName;
      if substituteOptions#?filename and substituteOptions#filename#Title =!= null then title = substituteOptions#filename#Title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
-     if class opts.Using =!= List or not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
      stderr << "--package \"" << title << "\" loading" << endl;
-     removePackage title;
+     dismiss title;
      saveD := globalDictionaries;
      saveP := packages;
      local hook;
@@ -140,15 +134,14 @@ newPackage(String) := opts -> (title) -> (
      pkgsym <- newpkg;
      packages = join(
 	  if title === "Macaulay2" then {} else {newpkg},
-	  {Macaulay2},
-	  opts.Using
+	  {Macaulay2}
 	  );
      globalDictionaries = join(
 	  {newpkg#"private dictionary"},
-	  {Macaulay2.Dictionary, OutputDictionary, PackageDictionary},
-	  apply(opts.Using,pkg->pkg.Dictionary)
+	  {Macaulay2.Dictionary, OutputDictionary, PackageDictionary}
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
+     PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      debuggingMode = if substituteOptions#?filename and substituteOptions#filename#DebuggingMode =!= null then substituteOptions#filename#DebuggingMode else opts.DebuggingMode;
      newpkg)
 
@@ -215,10 +208,10 @@ checkShadow = () -> (
 	       w := findSynonyms sym;
 	       w = select(w, s -> s != nam);
 	       if #w > 0 then stderr << "--   synonym" << (if #w > 1 then "s") << " for " << nam << ": " << demark(", ",w) << endl
-	       else if member(UserDictionary,globalDictionaries) then for i from 0 do (
+	       else if member(User.Dictionary,globalDictionaries) then for i from 0 do (
 		    newsyn := nam | "$" | toString i;
 		    if not isGlobalSymbol newsyn then (
-			 UserDictionary#newsyn = sym;
+			 User.Dictionary#newsyn = sym;
 			 stderr << "--   new synonym provided for '" << nam << "': " << newsyn << endl;
 			 break)))))
 
@@ -235,18 +228,17 @@ closePackage String := title -> (
 	       and s =!= symbol oooo
 	       then stderr << "--warning: unused writable symbol '" << s << "'" << endl));
      ws := set pkg#"exported mutable symbols";
-     dict := pkg.Dictionary;
-     scan(sortByHash values dict, s -> if not ws#?s then (
+     exportDict := pkg.Dictionary;
+     scan(sortByHash values exportDict, s -> if not ws#?s then (
 	       protect s;
 	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s));
-     exportDict := pkg.Dictionary;
-     if pkg =!= Macaulay2 then (			    -- protect it later
-	  protect dict;					    -- maybe don't do this, as it will be private
+     if true or pkg =!= Macaulay2 then (			    -- protect it later
+	  protect pkg#"private dictionary";
 	  protect exportDict;
 	  );
      if pkg#"title" === "Macaulay2" then (
 	  packages = {pkg};
-	  globalDictionaries = {UserDictionary, Macaulay2.Dictionary, OutputDictionary, PackageDictionary};
+	  globalDictionaries = {Macaulay2.Dictionary, OutputDictionary, PackageDictionary};
 	  )
      else (
 	  packages = prepend(pkg,pkg#"previous packages");

@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+'delete' has been modified so it uses the strict equality operator
+'===' instead of '=='.
+
 'factor' -- for a polynomial, always returns the constant factor as
 the first factor, even if it's equal to 1.
 
@@ -225,7 +228,8 @@ the source code in Macaulay2/d/ to understand what it means.
 
 New system for 3rd party packages: see 'Package'.  Related items:
 'newPackage', 'closePackage', 'installPackage', 'check', 'LAYOUT',
-'loadPackage', 'removePackage', 'packages', 'needsPackage'.
+'loadPackage', 'use Package' 'dismiss Package', 'packages',
+'needsPackage'.
 
 The internal symbol tables of the interpreters are now available at
 top level as members of the new class 'Dictionary'.  Both local and

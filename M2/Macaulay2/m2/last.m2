@@ -29,6 +29,13 @@ String.Wrap = x -> wr("",x)
 closePackage "Macaulay2"
 currentPackage = null					    -- eliminate the phony package we used for collecting test inputs
 
+addStartFunction( 
+     () -> (
+     	  dismiss "User";
+	  newPackage "User";
+	  )
+     )
+
 if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw documentation database" then (
      currentPackage = Macaulay2;
      stderr << "--loading Macaulay2-doc.m2" << endl;
