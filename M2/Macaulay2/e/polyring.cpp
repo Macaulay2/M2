@@ -220,7 +220,11 @@ ring_elem PolyRing::var(int v, int n) const
 
   for (int i=0; i<_nvars; i++) _EXP1[i] = 0;
   if (v >= 0 && v < _nvars) _EXP1[v] = n;
-
+  else 
+    {
+      ERROR("variable index out of range");
+      return ZERO_RINGELEM;
+    }
   Nterm *result = new_term();
   result->coeff = K_->from_int(1);
   M_->from_expvector(_EXP1, result->monom);
