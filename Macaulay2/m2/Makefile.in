@@ -151,13 +151,15 @@ gdb: .gdbinit .gdb-files; env M2LIB=.. M2HOME=.. gdb ../libexec/Macaulay2
 clean::; rm -f .gdbinit
 .gdbinit.$(USER):; cp @srcdir@/.gdbinit.dan $@
 .gdb-files:
-	echo 'file ../libexec/Macaulay2' >$@
+	echo 'echo -- loading .gdb-files\n' >$@
+	echo 'file ../libexec/Macaulay2' >>$@
 	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@
 	echo 'set environment M2HOME ..' >>$@
 	echo 'set environment M2LIB ..' >>$@
 clean :: ; rm -f .gdb-files
 .gdb-run-it:
-	echo 'echo \n' >$@
+	echo 'echo -- loading .gdb-run-it\n' >$@
+	echo 'echo \n' >>$@
 	echo 'run @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" "-e runStartFunctions()"' >>$@
 clean :: ; rm -f .gdb-run-it
 ##
