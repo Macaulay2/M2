@@ -633,7 +633,7 @@ document {
      if we omit the second argument, it is understood to be the source of f.",
      EXAMPLE {
 	  "h1 = inducedMap(target f,K2,f)",
-	  "h2 = inducedMap(,K2,g)",
+	  "h2 = inducedMap(,K2,f)",
 	  "h1 == h2"
 	  },
      "In this example, we cannot omit the second argument, since in that case the resulting 
