@@ -103,8 +103,8 @@ degrees source w
 assert( degrees source w == {{1}, {2}, {3}} )
 
 -- eventually:
--- raw v * raw x
--- v*x
+raw v * raw x
+v*x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"

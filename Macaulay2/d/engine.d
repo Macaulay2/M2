@@ -84,51 +84,22 @@ export (x:RawRingElement) % (y:RawRingElement) : RawRingElementOrNull := (
      Ccode(RawRingElementOrNull, 
 	  "(engine_RawRingElementOrNull)IM2_RingElement_mod(",
 	  "(RingElement *)", x, ",(RingElement *)", y, ")" ) );
-export (x:RawRingElement) ^ (y:Integer) : RawRingElementOrNull := (
-     Ccode(RawRingElementOrNull, 
-	  "(engine_RawRingElementOrNull)IM2_RingElement_power(",
-	  "(RingElement *)", x, ",(M2_Integer)", y, ")" ) );
-export (x:RawMatrix) + (y:RawMatrix) : RawMatrixOrNull := (
-     Ccode(RawMatrixOrNull,
-	  "(engine_RawMatrixOrNull)IM2_Matrix_add(",
-	  "(Matrix *)", x, ",(Matrix *)", y, ")" ));
-
-export - (y:RawMatrix) : RawMatrix := (
-     Ccode(RawMatrix, 
-	  "(engine_RawMatrix)IM2_Matrix_negate(",
-	  "(Matrix *)", y, ")" ) );
+export (x:RawRingElement) ^ (y:Integer) : RawRingElementOrNull := ( 
+     Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_power(", "(RingElement *)", x, ",(M2_Integer)", y, ")" ) );
+export (x:RawMatrix) + (y:RawMatrix) : RawMatrixOrNull := ( Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_add(", "(Matrix *)", x, ",(Matrix *)", y, ")" ));
+export - (y:RawMatrix) : RawMatrix := ( Ccode(RawMatrix, "(engine_RawMatrix)IM2_Matrix_negate(", "(Matrix *)", y, ")" ) );
 export (x:RawMatrix) - (y:RawMatrix) : RawMatrixOrNull := (
-     Ccode(RawMatrixOrNull, 
-	  "(engine_RawMatrixOrNull)IM2_Matrix_subtract(",
-	  "(Matrix *)", x, ",(Matrix *)", y, ")" ) );
+     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_subtract(", "(Matrix *)", x, ",(Matrix *)", y, ")" ) );
 export (x:RawRingElement) * (y:RawMatrix) : RawMatrixOrNull := (
-     Ccode(RawMatrixOrNull,
-	  "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(",
-	  "(RingElement *)", x, ",(Matrix *)", y, ")" ));
+     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(", "(RingElement *)", x, ",(Matrix *)", y, ",", false, ")" ));
 export (x:RawMatrix) * (y:RawRingElement) : RawMatrixOrNull := RawMatrixOrNull(
-     null()
---      Ccode(RawMatrixOrNull,
--- 	  "(engine_RawMatrixOrNull)IM2_Matrix_scalar_right_mult(",
--- 	  "(Matrix *)", x, ",(RingElement *)", y, ")" )
-);
-
+     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(", "(RingElement *)", y, ",(Matrix *)", x, ",", true, ")" ) );
 export (x:RawMatrix) * (y:RawMatrix) : RawMatrixOrNull := (
-     Ccode(RawMatrixOrNull,
-	  "(engine_RawMatrixOrNull)IM2_Matrix_mult(",
-	  "(Matrix *)", x, ",(Matrix *)", y, ")" ));
-
+     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_mult(", "(Matrix *)", x, ",(Matrix *)", y, ",", false, ")" ));
 export (x:RawMonomialIdeal) + (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
-     Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)",
-	  "IM2_MonomialIdeal_add((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" 
-	  )
-     );
-
+     Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_add((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
 export (x:RawMonomialIdeal) * (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
-     Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)",
-	  "IM2_MonomialIdeal_product((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" 
-	  )
-     );
-
+     Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_product((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
 
 -- lapack code
 export (x:LMatrixRR) + (y:LMatrixRR) : LMatrixRROrNull := (

@@ -293,12 +293,12 @@ rawMatrixEntry(h,1,1,y^4)
 assert( y^4 == rawMatrixEntry(h,1,1) )
 assert( y^2 != y^4 )
 
-rawMatrixRowChange(h,0,x,1)
-rawMatrixRowChange(h,0,y,2)
+rawMatrixRowChange(h,0,x,1,false)
+rawMatrixRowChange(h,0,y,2,false)
 << "h = " << h << endl
 
-rawMatrixColumnChange(h,0,x,1)
-rawMatrixColumnChange(h,1,-y,0)
+rawMatrixColumnChange(h,0,x,1,false)
+rawMatrixColumnChange(h,1,-y,0,false)
 << "h = " << h << endl
 
 rawMatrixColumnSwap(h,0,1)
