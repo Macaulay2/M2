@@ -242,6 +242,8 @@ addStartFunction(
 	       tryload("init.m2",oldLoad)
 	       or
 	       getenv "HOME" =!= "" and tryload(concatenate(getenv "HOME", "/init.m2"),oldLoad)
+	       or
+	       getenv "HOME" =!= "" and tryload(concatenate(getenv "HOME", "/.init.m2"),oldLoad)
 	       )
 	  )
      )
