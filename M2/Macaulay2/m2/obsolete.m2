@@ -14,7 +14,6 @@ netRows = X -> error "netRows' has been replaced by unstack'"
 quote = X -> error "'quote' has been replaced by 'symbol'"
 Numeric = X -> error "'Numeric' has been replaced by 'numeric'"
 submodule = X -> error "'submodule' has been removed"
-stats = X -> error "'stats' has been replaced by 'summary'"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
 assign = X -> error "assign' has been replaced by <-'"
 
@@ -28,8 +27,6 @@ undocumented(Module,Matrix)
 map(Module,Matrix) := options -> (M,f) -> error "method for 'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead";
 undocumented(Module,ZZ)
 map(Module,ZZ) := map(Module,RingElement) := options -> (M,r) -> error "method for 'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead"
-
-summary GroebnerBasis := g -> error "the method for 'summary(GroebnerBasis)' is obsolete -- the information is displayed now whenever a Groebner basis is displayed"
 
 undocumented(diff,RingElement)
 undocumented(diff,Matrix)

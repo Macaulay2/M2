@@ -281,11 +281,6 @@ document {
      }
 
 document {
-     Key => (summary, GroebnerBasis),
-     Headline => "display some statistics about the computation"
-     }
-
-document {
      Key => (generators, GroebnerBasis),
      Headline => "the Groebner basis matrix",
      TT "generators g", " -- returns a matrix whose columns are the

@@ -278,6 +278,7 @@ new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(r
 RawComputation.name = "RawComputation"
 RawComputation.synonym = "raw computation"
 status RawComputation := opts -> c -> rawStatus1 c
+RawComputation_ZZ := (C,i) -> rawResolutionGetMatrix(C,i)
 
 -- Groebner bases
 
