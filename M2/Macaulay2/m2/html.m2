@@ -364,14 +364,38 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
-packageSuffix = ".Macaulay2/"
+runfun := o -> if class o === Function then o() else o
+
 installPackage = method(Options => { 
-	  Prefix => () -> getenv "HOME" | "/" | packageSuffix | "encap/",
+	  PackagePrefix => () -> getenv "HOME" | "/" | packageSuffix | "encap/",
+          InstallPrefix => () -> getenv "HOME" | "/" | packageSuffix | "local/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
 	  MakeInfo => true,
-	  AbsoluteLinks => false
+	  AbsoluteLinks => false,
+	  MakeLinks => true
 	  })
+
+uninstallPackage = method(Options => options installPackage)
+uninstallPackage String := opts -> pkg -> (
+     if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return uninstallPackage(value getGlobalSymbol pkg, opts);
+     needsPackage pkg;
+     if class value pkg === Package then return uninstallPackage(value pkg, opts);
+     error ("can't locate package '",pkg,"'");
+     )
+
+uninstallPackage Package := o -> pkg -> (
+     buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
+     buildPackage = minimizeFilename buildPackage;
+     buildDirectory = minimizeFilename(runfun o.PackagePrefix | "/");
+     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+     installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
+     stderr << "--uninstalling package " << pkg << " in " << buildDirectory << endl;
+     -- unmake symbolic links
+     if o.MakeLinks then (
+	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true, Undo => true);
+	  );
+     )
 
 installPackage String := opts -> pkg -> (
      if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return installPackage(value getGlobalSymbol pkg, opts);
@@ -404,11 +428,13 @@ installPackage Package := o -> pkg -> (
      nodes := packageTagList(pkg,topDocumentTag);
 
      buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
-     pref := o.Prefix;
-     if class pref === Function then pref = pref();
-     buildDirectory = minimizeFilename(pref | "/");
-     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
      buildPackage = minimizeFilename buildPackage;
+
+     buildDirectory = minimizeFilename(runfun o.PackagePrefix | "/");
+     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+
+     installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
+
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
 
      if pkg =!= Macaulay2 then (				    -- Macaulay2 sources are handled separately
@@ -700,6 +726,12 @@ installPackage Package := o -> pkg -> (
      -- make table of contents
      makeTableOfContents();
 
+     -- make symbolic links
+     if o.MakeLinks then (
+	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true)
+	  );
+
+     -- all done
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      )

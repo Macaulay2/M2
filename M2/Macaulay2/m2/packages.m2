@@ -3,8 +3,8 @@
 addStartFunction(
      () -> (
 	  path = prepend("./",path);
-	  if sourceHomeDirectory =!= null then path = prepend(sourceHomeDirectory|"packages/",path);
-	  if prefixDirectory =!= null then path = prepend(prefixDirectory|LAYOUT#"packages",path);
+	  if sourceHomeDirectory =!= null then path = append(path,sourceHomeDirectory|"packages/");
+	  if prefixDirectory =!= null then path = append(path,prefixDirectory|LAYOUT#"packages");
 	  ))
 
 Package = new Type of MutableHashTable
@@ -103,6 +103,7 @@ newPackage(String) := opts -> (title) -> (
 	       ),
 	  };
      if newpkg#"package prefix" =!= null then (
+	  -- these assignments might be premature, for any package which is loaded before dumpdata, as the "package prefix" might change:
 	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "rawdocumentation.db";
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
@@ -255,7 +256,7 @@ closePackage String := title -> (
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode";
      remove(pkg,"old debuggingMode");
-     stderr << "--package " << pkg << " installed" << endl;
+     stderr << "--package " << pkg << " loaded" << endl;
      pkg)
 
 package = method ()

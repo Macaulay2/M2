@@ -18,11 +18,11 @@ New in 0.9.5:
 
 Function 'getZeroDivisor' removed.
 
-New functions 'symlinkDirectory' and 'unSymlinkDirectory'.  The former
-works like copyDirectory, except it creates relative symbolic links
-instead of copying the individual files.  The latter undoes that
-action.  These routines will allow us to emulate what the program
-'epkg' does when installing packages.
+New function 'symlinkDirectory'.  It works like copyDirectory, except
+it creates relative symbolic links instead of copying the individual
+files.  This routine will allow us to emulate what the program 'epkg'
+does when installing packages.  It has an option for "undoing" what it
+did, which is relatively safe.
 
 New function: 'reduceHilbert' -- use it to remove common factors from
 numerator and denominator of the rational functions returned by

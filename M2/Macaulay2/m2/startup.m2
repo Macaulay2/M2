@@ -282,7 +282,7 @@ action := hashTable {
      "--int" => arg -> arg,
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
      "--no-prompts" => arg -> if phase == 1 then noPrompts(),
-     "--notify" => arg -> if phase == 1 then notify = true,
+     "--notify" => arg -> if phase <= 2 then notify = true,
      "-x" => obsolete,
      "-s" => obsolete,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
@@ -346,7 +346,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  )
      )
 
+packageSuffix = ".Macaulay2/"
+
 path = {}
+path = append(path, getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2")
 if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
 if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")
@@ -358,9 +361,16 @@ if firstTime and not nosetup then (
      )
 processCommandLineOptions 2
 runStartFunctions()
-tryLoad := fn -> if fileExists fn then (load fn; true) else false
+tryLoad := fn -> if fileExists fn then (
+     load fn; 
+     true) else false
 errorDepth = loadDepth+1
-noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
+noinitfile or
+  tryLoad "init.m2" or
+  tryLoad (getenv "HOME" | "/" | packageSuffix | "init.m2") or
+  tryLoad (getenv "HOME" | "/init.m2") or 
+  tryLoad (getenv "HOME" | "/.init.m2") or
+  (if notify then stderr << "--no file 'init.m2' found" << endl; false)
 processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
