@@ -53,8 +53,9 @@ CONTAINER = \
 
 
 INTERFACE = \
-montable \
 gbA \
+gbasis \
+montable \
 schorder \
 freemod2 \
 monorder \

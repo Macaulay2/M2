@@ -6,6 +6,8 @@
 #include "style.hpp"
 #include "engine.h"
 
+typedef int *exponents;
+
 class ntuple
 {
 public:

@@ -29,27 +29,6 @@ gbA * gbA::create(
 
 void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
 {
-  _strategy = strat;
-
-  initialize0(m, csyz, nsyz);
-
-  _Fsyz = m->cols()->sub_space(_n_rows_per_syz);  
-
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      gbvector *f = R->gbvector_from_vec(_F,(*m)[i], denom);
-      spair *p = new_gen(i, f, denom);
-      if (p != NULL)
-	{
-	  spair_set_insert(p);
-	  _n_gens_left++;
-	}
-    }
-}
-
-void gbA::initialize0(const Matrix *m, int csyz, int nsyz)
-{
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
   if (origR == NULL)
     {
@@ -60,23 +39,21 @@ void gbA::initialize0(const Matrix *m, int csyz, int nsyz)
   _originalR = origR;
   R = origR->get_gb_ring();
 
-  _first_gb_element = 0; // MES: correct??
   _nvars = R->get_flattened_monoid()->n_vars();
-  lookup = MonomialTable::make(_nvars);
-  ringtable = MonomialTable::make(_nvars); // MES: grab from R.
-  _minimal_gb_valid = true;
   
   if (nsyz < 0 || nsyz > m->n_cols())
     nsyz = m->n_cols();
   _n_rows_per_syz = nsyz;
 
   _F = m->rows();
+  _Fsyz = m->cols()->sub_space(_n_rows_per_syz);  
 
   _n_syz = 0;
   _n_pairs_computed = 0;
   _n_gens_left = 0;
   _n_subring = 0;
 
+  _strategy = strat;
   _collect_syz = csyz;
   _is_ideal = (_F->rank() == 1 && csyz == 0);
   if (R->is_weyl_algebra())
@@ -99,6 +76,19 @@ void gbA::initialize0(const Matrix *m, int csyz, int nsyz)
   _stats_ngb = 0;
   _stats_ngcd1 = 0;
 
+  G = new GBasis(_F,_Fsyz);
+
+  for (int i=0; i<m->n_cols(); i++)
+    {
+      ring_elem denom;
+      gbvector *f = R->gbvector_from_vec(_F,(*m)[i], denom);
+      spair *p = new_gen(i, f, denom);
+      if (p != NULL)
+	{
+	  spair_set_insert(p);
+	  _n_gens_left++;
+	}
+    }
 }
 
 gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
@@ -150,7 +140,7 @@ static void exponents_lcm(int nvars,
 {
   int i;
   int deg = dega;
-  for (i=-1; i<=nvars; i++)
+  for (i=0; i<nvars; i++)
     {
       int diff = b[i] - a[i];
       if (diff <= 0)
@@ -163,6 +153,7 @@ static void exponents_lcm(int nvars,
     }
   result_degree = deg;
 }
+
 
 static bool exponents_equal(int nvars, exponents a, exponents b)
 {
@@ -181,43 +172,9 @@ static bool exponents_greater(int nvars, exponents a, exponents b)
   return false;
 }
 
-exponents gbA::exponents_make()
-{
-  int *e = new int[_nvars+1]; // length is nvars+1, add 1 to result.
-  return e+1;
-}
-
-void gbA::exponents_delete(exponents e)
-{
-  e--;
-  delete [] e;
-}
-
-void gbA::lead_exponents(gbvector *f, exponents e)
-  // This is only defined for f in _F
-  // 
-{
-  R->gbvector_get_lead_exponents(_F, f, e);
-  e[-1] = f->comp;
-  // Now maybe set the sugar degree too?
-}
-
 /*************************
  * SPair handling ********
  *************************/
-
-gbA::gbelem *gbA::gbelem_make(POLY f, int minlevel, int deg, int me)
-{
-  gbelem *g = new gbelem;
-  g->g = f;
-  g->lead = exponents_make();
-  lead_exponents(f.f, g->lead);
-  g->deg = deg;
-  g->alpha = deg - R->exponents_weight(g->lead);
-  g->minlevel = minlevel;
-  g->me = me;
-  return g;
-}
 
 gbA::spair *gbA::spair_node()
 {
@@ -234,14 +191,14 @@ void gbA::spair_delete(spair *&p)
 
 gbA::spair *gbA::spair_make(int i, int j)
 {
-  gbelem *g1 = gb[i];
-  gbelem *g2 = gb[j];
+  GBasis::gbelem *g1 = G->gb[i];
+  GBasis::gbelem *g2 = G->gb[j];
   exponents exp1 = g1->lead;
   exponents exp2 = g2->lead;
   spair *result = spair_node();
   result->next = 0;
   result->type = SPAIR_SPAIR;
-  result->lcm = exponents_make();
+  result->lcm = R->exponents_make();
     exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, result->deg);
   result->x.pair.i = i;
   result->x.pair.j = j;
@@ -252,8 +209,8 @@ gbA::spair *gbA::spair_make(int i, int j)
 gbA::spair *gbA::spair_make_gen(POLY f)
 {
   assert(f.f != 0);
-  exponents exp1 = exponents_make();
-  lead_exponents(f.f, exp1);
+  exponents exp1 = R->exponents_make();
+  R->gbvector_get_lead_exponents(_F, f.f, exp1);
   int deg = R->gbvector_degree(_F, f.f);
   spair *result = spair_node();
   result->next = 0;
@@ -269,10 +226,9 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
 {
   spair *result;
   int j;
-  gbelem *g1 = gb[i];
+  GBasis::gbelem *g1 = G->gb[i];
   exponents exp1 = g1->lead;
-  exponents exp2 = exponents_make();
-  exp2[-1] = 0;
+  exponents exp2 = R->exponents_make();
   for (j=0; j<_nvars; j++)
     exp2[j] = 0;
   exp2[v] = 2;
@@ -291,7 +247,7 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
 
 gbA::spair *gbA::spair_make_ring(int i, int j)
 {
-  /* This requires that j indexes into the G array somewhere (negative is fine) */
+  /* This requires that j indexes into the gb array somewhere. */
   spair *result = spair_make(i,j);
   result->type = SPAIR_RING;
 
@@ -333,7 +289,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
  * S-pair heuristics *****
  *************************/
 
-bool gbA::pair_not_needed(spair *p, gbelem *m)
+bool gbA::pair_not_needed(spair *p, GBasis::gbelem *m)
 {
   /* Check the criterion: in(m) divides lcm(p).
    * If so: check if lcm(p1,m) == lcm(p)  (if so, return false)
@@ -352,8 +308,8 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
 
   first = p->x.pair.i;
   second = p->x.pair.j;
-  p1exp = gb[first]->lead;
-  p2exp = gb[second]->lead; /* If a ring or skew pair, this should index into GB array */
+  p1exp = G->gb[first]->lead;
+  p2exp = G->gb[second]->lead; /* If a ring pair, this should index into gb array */
 
   for (i=0; i<_nvars; i++)
     if (mexp[i] > lcm[i]) return false;
@@ -381,7 +337,7 @@ void gbA::remove_unneeded_pairs(int id)
   /* Removes all pairs from C->S that are not needed */
   spair head;
   spair *p = &head;
-  gbelem *m = gb[id];
+  GBasis::gbelem *m = G->gb[id];
 
   head.next = S.heap;
   while (p->next != 0)
@@ -412,8 +368,8 @@ bool gbA::is_gcd_one_pair(spair *p)
   if (p->type != SPAIR_SPAIR) return false;
   i = p->x.pair.i;
   j = p->x.pair.j;
-  e1 = gb[i] -> lead;
-  e2 = gb[j] -> lead;
+  e1 = G->gb[i] -> lead;
+  e2 = G->gb[j] -> lead;
   for (i=0; i<_nvars; i++)
     if (e1[i] > 0 && e2[i] > 0)
       return false;
@@ -503,7 +459,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 
 void gbA::update_pairs(int id)
 {
-  gbelem *r = gb[id];
+  GBasis::gbelem *r = G->gb[id];
   int x = gbelem_COMPONENT(r);
 
   /* Step 1.  Remove un-needed old pairs */
@@ -525,19 +481,14 @@ void gbA::update_pairs(int id)
   /* Step 2b: pairs from ring elements, or 'in stone' elements */
   for (int i=0; i<_first_gb_element; i++)
     {
-      gbelem *g = gb[i];
-      int gx = gbelem_COMPONENT(g);
-      if (gx == 0 || gx == x) // MES: this should just be gx == 0??
-	{
-	  spair *s = spair_make_ring(id,i);
-	  new_set.push_back(s);
-	}
+      spair *s = spair_make_ring(id,i);
+      new_set.push_back(s);
     }
   /* Step 2c. pairs from the vectors themselves */
   /* Loop through the minimal GB elements and form the s-pair */
   for (int i=_first_gb_element; i<id; i++)
     {
-      gbelem *g = gb[i];
+      GBasis::gbelem *g = G->gb[i];
       if (g->minlevel <= ELEM_MIN_GB && gbelem_COMPONENT(g) == x)
 	{
 	  spair *s = spair_make(id,i);
@@ -712,7 +663,7 @@ void gbA::compute_s_pair(spair *p)
       emit_line(o.str());
     }
   if (p->type > SPAIR_SKEW) return;
-  f = gb[p->x.pair.i]->g;
+  f = G->gb[p->x.pair.i]->g;
   if (p->type == SPAIR_SKEW)
     {
 #if 0
@@ -726,7 +677,7 @@ void gbA::compute_s_pair(spair *p)
     }
   else
     {
-      g = gb[p->x.pair.j]->g;
+      g = G->gb[p->x.pair.j]->g;
       R->gbvector_cancel_lead_terms(_F, _Fsyz, 
 				    f.f, f.fsyz,
 				    g.f,g.fsyz,
@@ -756,19 +707,22 @@ bool gbA::reduce(spair *p)
       R->gbvector_text_out(o, _F, p->f());
       emit_line(o.str());
     }
+  exponents _EXP = R->exponents_make();
   while (!R->gbvector_is_zero(p->f()))
     {
       int alpha;
-      POLY g;
-      int v = find_good_divisor(p->x.f,_this_degree, alpha,g); 
+      R->gbvector_get_lead_exponents(_F, p->f(), _EXP);
+      int x = p->f()->comp;
+      int w = G->find_good_divisor(_EXP,x,_this_degree, alpha); 
       // replaced alpha, g.
-      if (v == 0) break;
+      if (w < 0) break;
       count++;
       if (alpha > 0)
 	{
-	  // MES: this next line needs to be fixed: does it need to be copied?
-	  // YES YES!!
-	  insert(p->x.f,ELEM_NON_MIN_GB);
+	  POLY h;
+	  h.f = R->gbvector_copy(p->x.f.f);
+	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
+	  insert(h,ELEM_NON_MIN_GB);
 	  if ((comp_printlevel % PRINT_SPAIR_TRACKING) != 0)
 	    {
 	      buffer o;
@@ -777,6 +731,7 @@ bool gbA::reduce(spair *p)
 	      emit_line(o.str());
 	    }
 	}
+      POLY g = G->gb[w]->g;
       R->gbvector_reduce_lead_term(_F, _Fsyz,
 				   0,
 				   p->f(), p->fsyz(), /* modifies these */
@@ -803,6 +758,7 @@ bool gbA::reduce(spair *p)
 	      emit_line(o.str());
 	    }
 	  spair_set_insert(p);
+	  R->exponents_delete(_EXP);
 	  return false;
 	}
     }
@@ -812,107 +768,10 @@ bool gbA::reduce(spair *p)
       o << "." << count;
       emit(o.str());
     }
+  R->exponents_delete(_EXP);
   return true;
 }
 
-void gbA::remainder(POLY &f, int degf)
-{
-  gbvector head;
-  gbvector *frem = &head;
-  frem->next = 0;
-  int count = 0;
-  POLY h = f;
-  while (!R->gbvector_is_zero(h.f))
-    {
-      int alpha;
-      POLY g;
-      int v = find_good_divisor(h,degf,  alpha,g);
-        // replaced alpha, g.
-      if (v == 0 || alpha > 0)
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
-      else
-	{
-	  R->gbvector_reduce_lead_term(_F, _Fsyz,
-				       head.next,
-				       h.f, h.fsyz,
-				       g.f, g.fsyz);
-	  count++;
-	  _stats_ntail++;
-	  if (comp_printlevel == 10)
-	    {
-	      buffer o;
-	      o << "  tail reducing by ";
-	      R->gbvector_text_out(o,_F,g.f);
-	      o << "\n    giving ";
-	      R->gbvector_text_out(o,_F,h.f);
-	      emit_line(o.str());
-	    }
-	  
-	}
-    }
-  h.f = head.next;
-  R->gbvector_remove_content(h.f, h.fsyz);
-  f.f = h.f;
-  f.fsyz = h.fsyz;
-  if (comp_printlevel == 3)
-    {
-      buffer o;
-      o << "," << count;
-      emit(o.str());
-    }
-}
-
-bool gbA::find_good_divisor(POLY f, int degf, int &result_alpha, POLY &result_g)
-     /* Assumption: f.f is non-zero */
-{
-  int i, alpha, newalpha, ealpha;
-  int n = 0;
-
-  vector<MonomialTable::mon_term *> divisors;
-  exponents e = exponents_make();
-  lead_exponents(f.f, e);
-  ealpha = degf - R->exponents_weight(e);
-  int x = exponents_COMPONENT(e);
-
-  /* First search for ring divisors */
-  n += ringtable->find_divisors(-1, e, 1, &divisors);
-
-  /* Next search for GB divisors */
-  n += lookup->find_divisors(-1, e, x, &divisors);
-
-  /* Now find the minimal alpha value */
-  if (n == 0) 
-    {
-      exponents_delete(e);
-      return false;
-    }
-  MonomialTable::mon_term *t = divisors[0];
-  gbelem *tg = gb[t->_val];
-  alpha = tg->alpha - ealpha;
-  if (alpha <= 0) 
-    alpha = 0;
-  else
-    for (i=1; i<n; i++)
-      {
-	t = divisors[i];
-	tg = gb[t->_val];
-	newalpha = tg->alpha - ealpha;
-	if (newalpha <= 0) {
-	  alpha = 0;
-	  break;
-	} else if (newalpha < alpha) alpha = newalpha;
-      }
-  result_alpha = alpha;
-  result_g = gb[t->_val] -> g;
-
-  exponents_delete(e);
-  return true;
-}
 
 /********************
  ** State machine ***
@@ -921,10 +780,11 @@ bool gbA::find_good_divisor(POLY f, int degf, int &result_alpha, POLY &result_g)
 void gbA::auto_reduce_by(int id)
 {
   /* Loop backwards while degree doesn't change */
-  gbelem *me = gb[id];
-  for (int i=id-1; i>=0; i--)
+  /* Don't change quotient ring elements */
+  GBasis::gbelem *me = G->gb[id];
+  for (int i=id-1; i>=_first_gb_element; i--)
     {
-      gbelem *g = gb[i];
+      GBasis::gbelem *g = G->gb[i];
       if (g->deg < me->deg) return;
       R->gbvector_auto_reduce(_F, _Fsyz,
 			      g->g.f, g->g.fsyz, // these are modified
@@ -935,17 +795,11 @@ void gbA::auto_reduce_by(int id)
 void gbA::insert(POLY f, int minlevel)
 {
   /* Reduce this element as far as possible.  This removes content. */
-  remainder(f,_this_degree);
+  G->remainder(f,_this_degree);
 
   _stats_ngb++;
 
-  gbelem *g = gbelem_make(f, minlevel, _this_degree, gb.size());
-  _minimal_gb_valid = false;
-  gb.push_back(g);
-  
-  int me = g->me;
-  int x = exponents_COMPONENT(g->lead);
-  lookup->insert(g->lead, x, me);
+  int me = G->insert(f.f, f.fsyz, minlevel, _this_degree);
 
   if (comp_printlevel >= 5)
     {
@@ -953,6 +807,7 @@ void gbA::insert(POLY f, int minlevel)
       buffer o;
       sprintf(s, "inserting element %d (minimal %d): ",me,minlevel);
       o << s;
+      GBasis::gbelem *g = G->gb[me];
       R->gbvector_text_out(o,_F,g->g.f);
       o << "\n";
       R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
@@ -1010,7 +865,7 @@ bool gbA::s_pair_step()
 int gbA::computation_is_complete()
 {
   // This handles everything but _Stop.always, _Stop.degree_limit
-  if (_Stop.basis_element_limit > 0 && gb.size() > _Stop.basis_element_limit) 
+  if (_Stop.basis_element_limit > 0 && G->gb.size() > _Stop.basis_element_limit) 
     return COMP_DONE_GB_LIMIT;
   if (_Stop.syzygy_limit > 0 && _n_syz > _Stop.syzygy_limit)
     return COMP_DONE_SYZ_LIMIT;
@@ -1091,10 +946,10 @@ void gbA::poly_auto_reduce(vector<POLY> &mat)
 struct gbelem_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
-  const vector<gbA::gbelem *> &gb;
+  const vector<GBasis::gbelem *> &gb;
   gbelem_sorter(GBRing *R,
 		const FreeModule *F,
-		const vector<gbA::gbelem *> &gb)
+		const vector<GBasis::gbelem *> &gb)
     : R(R), F(F), gb(gb) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx]->g.f;
@@ -1103,111 +958,6 @@ struct gbelem_sorter : public binary_function<int,int,bool> {
   }
 };
 
-#if 0
-void gbA::make_ring_gb(vector<gbelem *> &ring_gb, MonomialTable *&ring_table)
-{
-  // Given that the current GB has rank _F == 1, fill ring_gb (with copied elements).
-  // This will be a minimal, reduced GB (in the non-local case), with each component 
-  // of each monomial zero, and the ring_table points into this array.
-
-  // We also assume, for the purpose of degree checking, that the gen of _F has degree 0.
-  if (_F->rank() != 1) 
-    {
-      ring_table = make(_nvars);
-      return;
-    }
-
-  // Now choose a minimal set of elements
-  // Copy these
-  // Auto-reduce these and sort them
-  // Recreate the ring_table.
-
-  // Place into _minimal_gb a sorted minimal GB
-  vector<exponents> exps;
-  vector<int> comps;
-  vector<int> positions;
-  exps.reserve(gb.size());
-  comps.reserve(gb.size());
-  positions.reserve(gb.size());
-
-  for (vector<gbelem *>::iterator i = gb.begin(); i != gb.end(); i++)
-    {
-      if ((*i)->minlevel <= ELEM_MIN_GB)
-	{
-	  exps.push_back((*i)->lead);
-	  comps.push_back(1);
-	}
-    }
-
-  MonomialTable::minimalize(_nvars,
-			    exps,
-			    comps, // not really needed here...
-			    false,
-			    positions);
-
-  // Now sort 'positions'.
-  sort(positions.begin(), positions.end(), gbelem_sorter(R,_F,gb));
-
-  for (vector<int>::iterator i = positions.begin(); i != positions.end(); i++)
-    {
-      // Make a new gbelem, with a copy of the GB element.
-      POLY f;
-      f.f = R->gbvector_copy(gb[*i]->g.f);
-      f.fsyz = 0;
-      int deg = XXX;
-      gbelem *g = gbelem_make(f,ELEM_IN_STONE,deg,0);
-      
-      ring_gb.push_back(g);
-    }
-
-  poly_auto_reduce(_ring_gb);
-}
-#endif
-
-void gbA::make_minimal_gb()
-{
-  if (_minimal_gb_valid) return;
-
-  // Place into _minimal_gb a sorted minimal GB
-  vector<exponents> exps;
-  vector<int> comps;
-  vector<int> positions;
-  exps.reserve(gb.size());
-  comps.reserve(gb.size());
-  positions.reserve(gb.size());
-
-  for (vector<gbelem *>::iterator i = gb.begin(); i != gb.end(); i++)
-    {
-      if ((*i)->minlevel <= ELEM_MIN_GB)
-	{
-	  exps.push_back((*i)->lead);
-	  comps.push_back(exponents_COMPONENT((*i)->lead));
-	}
-    }
-
-  // MES: if we modify _nvars below to only take those variables
-  // which are not field vars (via a fraction field), we can obtain
-  // a minimal GB in those cases.  Uniqueness is harder to compute though.
-
-  MonomialTable::minimalize(_nvars,
-			    exps,
-			    comps,
-			    false,
-			    positions);
-
-  // Now sort 'positions'.
-  sort(positions.begin(), positions.end(), gbelem_sorter(R,_F,gb));
-
-  for (vector<int>::iterator i = positions.begin(); i != positions.end(); i++)
-    {
-      // possibly first copy gb[*i]->g...
-      _minimal_gb.push_back(gb[*i]->g);
-    }
-
-  poly_auto_reduce(_minimal_gb);
-
-  _minimal_gb_valid = true;
-}
 
 /*************************
  ** Top level interface **
@@ -1254,21 +1004,13 @@ const MatrixOrNull *gbA::get_matrix(int level, M2_bool minimize)
     {
       // return the minimal generators (or as minimal as possible?)
       compute();
-      Matrix *result = new Matrix(_F);
-      for (vector<gbelem *>::iterator i = gb.begin(); i != gb.end(); i++)
-	if ((*i)->minlevel <= ELEM_TRIMMED)
-	  result->append(R->gbvector_to_vec(_F, (*i)->g.f));
-      return result;
+      return G->get_minimal_gens();
     }
   else
     {
       // The (minimal) Groebner basis itself
       compute();
-      make_minimal_gb();
-      Matrix *result = new Matrix(_F);
-      for (vector<POLY>::iterator i = _minimal_gb.begin(); i != _minimal_gb.end(); i++)
-	  result->append(R->gbvector_to_vec(_F, (*i).f));
-      return result;
+      return G->get_minimal_gb();
     }
   return 0;
 }
@@ -1281,11 +1023,7 @@ const MatrixOrNull *gbA::get_change(int level)
       return 0;
     }
   compute();
-  make_minimal_gb();
-  Matrix *result = new Matrix(_Fsyz);
-  for (vector<POLY>::iterator i = _minimal_gb.begin(); i != _minimal_gb.end(); i++)
-    result->append(R->gbvector_to_vec(_F, (*i).fsyz));
-  return result;
+  return G->get_change();
 }
 
 const MatrixOrNull *gbA::get_leadterms(int nparts, int level)
@@ -1296,14 +1034,7 @@ const MatrixOrNull *gbA::get_leadterms(int nparts, int level)
       return 0;
     }
   compute();
-  make_minimal_gb();
-  Matrix *result = new Matrix(_F);
-  for (vector<POLY>::iterator i = _minimal_gb.begin(); i != _minimal_gb.end(); i++)
-    {
-      gbvector *f = R->gbvector_lead_term(nparts, _F, (*i).f);
-      result->append(R->gbvector_to_vec(_F, f));
-    }
-  return result;
+  return G->get_leadterms(nparts);
 }
   
 const FreeModuleOrNull *gbA::get_free(int level, M2_bool minimal)
@@ -1315,12 +1046,7 @@ const FreeModuleOrNull *gbA::get_free(int level, M2_bool minimal)
       return 0;
     }
   compute();
-#if 0
-  if (minimal)
-    return XXX;
-  else
-    return YYY;
-#endif
+  return G->get_free(minimal);
 }
 
 const MatrixOrNull *gbA::matrix_remainder(int level,
@@ -1336,21 +1062,7 @@ const MatrixOrNull *gbA::matrix_remainder(int level,
        return 0;
   }
   compute();
-  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      POLY g;
-      g.f = R->gbvector_from_vec(_F, (*m)[i], denom);
-      g.fsyz = R->gbvector_zero();
-
-      remainder(g, 0); // MES: this degree.  What should it be?
-
-      vec fv = R->gbvector_to_vec_denom(_F, g.f, denom);
-      // MES: what about g.fsyz??
-      (*red)[i] = fv;
-    }
-  return red;
+  return G->matrix_remainder(m);
 }
 
 void gbA::matrix_lift(int level,
@@ -1371,24 +1083,7 @@ void gbA::matrix_lift(int level,
       *result_quotient = 0;
   }
   compute();
-  *result_remainder = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  *result_quotient = new Matrix(_Fsyz, m->cols());
-  const Ring *K = R->get_flattened_coefficients();
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      POLY g;
-      g.f = R->gbvector_from_vec(_F, (*m)[i], denom);
-      g.fsyz = R->gbvector_zero();
-
-      remainder(g, 0); // MES: this degree.  What should it be?
-
-      vec fv = R->gbvector_to_vec_denom(_F, g.f, denom);
-      K->negate_to(denom);
-      vec fsyzv = R->gbvector_to_vec_denom(_Fsyz,g.fsyz, denom);
-      (**result_remainder)[i] = fv;
-      (**result_quotient)[i] = fsyzv;
-    }
+  G->matrix_lift(m, result_remainder, result_quotient);
 }
 
 int gbA::contains(int level,
@@ -1404,21 +1099,7 @@ int gbA::contains(int level,
     }
   // Reduce each column of m one by one.
   compute();
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      ring_elem denom;
-      POLY g;
-      g.f = R->gbvector_from_vec(_F,(*m)[i], denom);
-      g.fsyz = NULL;
-      remainder(g,0);
-      R->gbvector_remove(g.fsyz);
-      if (g.f != NULL)
-	{
-	  R->gbvector_remove(g.f);
-	  return i;
-	}
-    }
-  return -1;
+  return G->contains(m);
 }
 
 int gbA::status(int * complete_up_through_this_degree,
@@ -1461,10 +1142,10 @@ void gbA::text_out(buffer &o)
 {
   o << "# pairs computed = " << _n_pairs_computed << newline;
   if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
-    for (int i=0; i<gb.size(); i++)
+    for (int i=0; i<G->gb.size(); i++)
       {
 	o << i << '\t';
-	R->gbvector_text_out(o, _F, gb[i]->g.f);
+	R->gbvector_text_out(o, _F, G->gb[i]->g.f);
 	o << newline;
       }
 }
