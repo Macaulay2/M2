@@ -111,6 +111,8 @@ else
 WARNINGS := -Wall -Wshadow -Wcast-qual
 endif
 
+CFLAGS += $(DEBUGFLAGS)
+
 # we can't do this because our manufactured c files have lots of unused labels
 # CFLAGS  += -Wall -Wshadow -Wcast-qual
 
