@@ -3,6 +3,7 @@
 #include "types.h"
 
 #include "../c/compat.c"
+#include <dirent.h>
 
 char newline[] = NEWLINE;
 
@@ -477,6 +478,32 @@ int system_directoryExists(M2_string name) {
   int r = stat(cname,&buf);
   GC_FREE(cname);
   return r != ERROR && S_ISDIR(buf.st_mode);
+}
+
+int always(const struct dirent *p) { return 1; }
+
+M2_stringarray system_readDirectory(M2_string name) {
+  int n=0, i=0;
+  M2_stringarray a;
+  char *cname = tocharstar(name);
+  struct dirent *entry;
+  DIR *dir = opendir(cname);
+  GC_FREE(cname);
+  if (dir == NULL) return NULL;
+  errno = 0;
+  for (n=0; readdir(dir) != NULL; n++) ;
+  if (errno != 0) {
+    closedir(dir);
+    return NULL;
+  }
+  rewinddir(dir);
+  a = (M2_stringarray) getmem (sizeofarray(a,n));
+  a->len = n;
+  for (i=0; i<n && (entry = readdir(dir)) != NULL; i++) a->array[i] = tostring(entry->d_name);
+  for (   ; i<n ; i++) a->array[i] = tostring("");
+  closedir(dir);
+  if (errno != 0) return NULL;
+  return a;
 }
 
 int system_fileLength(int fd) {

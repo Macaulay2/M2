@@ -331,23 +331,28 @@ makeHTML = (builddir,finaldir) -> (
      )     
 
 -----------------------------------------------------------------------------
--- making html for packages -- eventually to be merged with 
+-- assembling packages -- eventually to be merged with 
 -- the code above for making html for Macaulay 2 itself
 -----------------------------------------------------------------------------
 
-makeHTMLPages = method(Options => { 
+assemble = method(Options => { 
 	  TemporaryDirectory => "tmp/", 
 	  FinalDirectory => "tmp/"
 	  })
-makeHTMLPages Package := o -> pkg -> (
+assemble Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
      buildDirectory = minimizeFilename(o.TemporaryDirectory | "/");
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
      htmlDirectory = LAYOUT#"packagehtml" pkg.name;
+     makeDirectory (buildDirectory|htmlDirectory);
+     srcDirectory := LAYOUT#"packagesrc" pkg.name;
+     makeDirectory (buildDirectory|srcDirectory);
+     fn := pkg.name | ".m2";
+     if not fileExists fn then error("file ", fn, " not found");
+     buildDirectory | srcDirectory | fn << get fn << close;
      keys := unique join(pkg#"symbols",pkg#"docs");
      stderr << "making html pages in " << buildDirectory << htmlDirectory << endl;
-     makeDirectory (buildDirectory|htmlDirectory);
      ret := makeHtmlNode \ keys;
-     "pages " | stack keys | " in " | htmlDirectory
+     -- << "pages " | stack keys | " in " | htmlDirectory << endl;
      )
