@@ -355,12 +355,12 @@ makeMasterIndex := keylist -> (
 	  } << endl << close
      )
 
-assemble = method(Options => { 
+installPackage = method(Options => { 
 	  Prefix => "tmp/", 
 	  Encapsulate => true
 	  })
 
-assemble Package := o -> pkg -> (
+installPackage Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
      buildDirectory = o.Prefix | "/";

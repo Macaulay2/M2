@@ -67,10 +67,6 @@ toExpr(x:CodeClosureList):Expr := Expr(list(
 
 readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
      lastvalue := nullE;
-     if interpreterHook != nullE then (
-     	  r := apply(interpreterHook,emptySequence);
-     	  when r is Error do return r else nothing;
-	  );
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
 	  interrupted = false;
@@ -289,6 +285,10 @@ debugger(f:Frame,c:Code):Expr := (
        oldDebuggerCode := getGlobalVariable(errorCodeS);
        setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
 	 incrementInterpreterDepth();
+	   if debuggerHook != nullE then (
+		r := apply(debuggerHook,emptySequence);
+		when r is Error do return r else nothing;
+		);
 	   ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
