@@ -3,12 +3,13 @@
 #ifndef _gbA_h_
 #define _gbA_h_
 
+#include "comp_gb.hpp"
+
 #include "gbring.hpp"
 #include "montable.hpp"
-#include "gb_comp.hpp"
 #include "gbasis.hpp"
 
-class gbA : public Computation {
+class gbA : public GBComputation {
 private:
   /* Types of minimality */
   enum spair_type {
@@ -142,17 +143,17 @@ private:
   void insert(POLY f, int minlevel);
   bool s_pair_step();
   int computation_is_complete();
-  void compute();
 
   /* Making the minimal GB */
   void poly_auto_reduce(vector<POLY> &mat);
 
+  virtual bool stop_conditions_ok();
+
 public:
-
-
   //////////////////////////
   // Computation routines //
   //////////////////////////
+
   static gbA * create(const Matrix *m, 
 			  M2_bool collect_syz, 
 			  int n_rows_to_keep,
@@ -168,55 +169,37 @@ public:
 
   virtual int kind() { return 231; } // FIX THIS!!
 
+  void start_computation();
+
   virtual const PolynomialRing *get_ring() { return originalR; }
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
 
-  virtual const MatrixOrNull *get_matrix(int level, M2_bool minimize); 
+  virtual const MatrixOrNull *get_gb();
 
-  virtual const MatrixOrNull *get_change(int level);
+  virtual const MatrixOrNull *get_mingens();
 
-  virtual const MatrixOrNull *get_leadterms(int nparts, int level);
-  
-  virtual const FreeModuleOrNull *get_free(int level, M2_bool minimal); 
+  virtual const MatrixOrNull *get_change();
 
-  virtual const MatrixOrNull *matrix_remainder(int level,
-					       const Matrix *m);
+  virtual const MatrixOrNull *get_syzygies();
 
-  virtual void matrix_lift(int level,
-			   const Matrix *m,
+  virtual const MatrixOrNull *get_initial(int nparts);
+
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+
+  virtual void matrix_lift(const Matrix *m,
 			   MatrixOrNull **result_remainder,
 			   MatrixOrNull **result_quotient
 			   );
 
-  virtual int contains(int level,
-		       const Matrix *m);
+  virtual int contains(const Matrix *m);
 
-  virtual int status(int * complete_up_through_this_degree,
-		     int * complete_up_through_this_level);
-  /* -1: error condition, and the error message is set.
-     0: not made, and in fact it won't ever be done...
-     1: not started,
-     2: started, 
-     3: stopped because of a stopping condition
-     4: finished the computation completely
-  */
-
-  virtual int status_level(int level, 
-			   M2_bool minimize,
-			   int * complete_up_through_this_degree);
-  /* Same return values */
-
-  virtual const M2_arrayint betti(int type);
-  /* 0: minimal betti numbers,
-     1:
-     2:
-     3:
-  */
-  
   virtual void text_out(buffer &o); 
   /* This displays statistical information, and depends on the
      gbTrace value */
+
+  virtual enum ComputationStatusCode gb_status(int *degree); 
+  // The computation is complete up through this degree.
 
   /* Debug display routines */
   void debug_spair(spair *p);

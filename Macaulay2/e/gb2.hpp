@@ -156,7 +156,7 @@ private:
 				// < 0 means compute syz's on minimal gens.
 
   char is_ideal;
-  int strategy_flags;		// USE_GEOBUCKET, USE_SORT are the current flags used
+  int strategy_flags;		// STRATEGY_LONGPOLYNOMIALS, USE_SORT are the current flags used
 
   // Hilbert function information
   char use_hilb;

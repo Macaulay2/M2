@@ -387,7 +387,7 @@ void GBZZ_comp::compute_s_pair(vec gsyz,
 bool GBZZ_comp::gb_reduce(vec &f, vec &fsyz) const
 {
 #if 0
-  if (((strategy & USE_GEOBUCKET) != 0) && !M->is_skew())
+  if (((strategy & STRATEGY_LONGPOLYNOMIALS) != 0) && !M->is_skew())
     {
       // gb_geo_reduce(f,fsyz);
       return true;
@@ -1188,7 +1188,7 @@ void GBZZ_comp::remove_gen(gen_pair *& p)
 
 void GBZZ_comp::gb_reduce(vec &f, vec &fsyz)
 {
-  if (((strategy & USE_GEOBUCKET) != 0) && !M->is_skew())
+  if (((strategy & STRATEGY_LONGPOLYNOMIALS) != 0) && !M->is_skew())
     {
       gb_geo_reduce(f,fsyz);
       return;

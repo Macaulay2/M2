@@ -3,6 +3,9 @@
 #ifndef _sagbi_hh_
 #define _sagbi_hh_
 
+#warning "sagbi code commented out"
+#if 0
+
 #include "matrix.hpp"
 #include "comp.hpp"
 #include "gb_comp.hpp"
@@ -90,7 +93,7 @@ public:
   const sagbi_comp * cast_to_sagbi_comp() const { return this; }
 };
 #endif
-
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

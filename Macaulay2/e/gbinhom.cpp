@@ -111,14 +111,12 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
 }
 
 GBinhom_comp::GBinhom_comp(const Matrix *m, int csyz, int nsyz, int strat)
-  : gb_comp(COMP_GBINHOM)
 {
   set_up(m, csyz, nsyz, strat);
 }
 
 GBinhom_comp::GBinhom_comp(const Matrix *m, const Matrix *gb0, const Matrix *mchange, 
 		 const Matrix *syz0)
-  : gb_comp(COMP_GBINHOM)
 {
   force(m, gb0, mchange, syz0);
 }
@@ -455,7 +453,7 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
 
 int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 {
-  if ((strategy & USE_GEOBUCKET) != 0)
+  if ((strategy & STRATEGY_LONGPOLYNOMIALS) != 0)
     return gb_geo_reduce(f,fsyz);
   gbvector head;
   gbvector *result = &head;
@@ -888,11 +886,6 @@ int GBinhom_comp::contains(const Matrix *m)
 	}
     }
   return -1;
-}
-bool GBinhom_comp::is_equal(const gb_comp * /*q*/)
-{
-  ERROR("== not yet implemented for inhomogeneous GB's");
-  return false;
 }
 
 //--- Obtaining matrices as output -------

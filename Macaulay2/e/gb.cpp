@@ -424,7 +424,7 @@ void GB_comp::compute_s_pair(s_pair *p)
 
 void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 {
-  if ((_strategy & USE_GEOBUCKET) != 0)
+  if ((_strategy & STRATEGY_LONGPOLYNOMIALS) != 0)
     {
       gb_geo_reduce(f,fsyz);
       return;
@@ -1001,7 +1001,7 @@ int GB_comp::calc()
 	  if (!auto_reduce_step()) 
 	    {
 	      _state = GB_COMP_NEWPAIRS;
-	      if ((_strategy & USE_SORT) != 0)
+	      if ((_strategy & STRATEGY_SORT) != 0)
 		{
 		  gb_sort(_np_i, _n_gb-1); // This is the range of elements to sort.
 		}
@@ -1035,7 +1035,7 @@ int GB_comp::calc()
   return is_done;
 }
 
-void GB_comp::compute()
+void GB_comp::start_computation()
 {
   calc();
 }
@@ -1127,69 +1127,50 @@ ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
   return this;
 }
 
-const MatrixOrNull *GB_comp::get_matrix(int level, M2_bool minimize)
+const MatrixOrNull *GB_comp::get_gb()
 {
-  // TODO
-  if (level > 2 || (level == 2 && minimize))
+  start_computation();
+  Matrix *result = new Matrix(_F);
+  for (int i=0; i<_gb.length(); i++)
     {
-      ERROR("GB computation: matrix was not computed");
-      return 0;
+      vec v = originalR->translate_gbvector_to_vec(_F,_gb[i]->f);
+      result->append(v);
     }
-  if (level == 2)
-    {
-      calc();
-      Matrix *result = new Matrix(_Fsyz);
-      for (int i=0; i<_syz.length(); i++)
-	result->append(originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
-      return result;
-    }
-  else if (minimize)
-    {
-      // return the minimal generators (or as minimal as possible?)
-      calc();
-      Matrix *result = new Matrix(_F);
-      for (int i=0; i<_gb.length(); i++)
-	if (_gb[i]->is_min)
-	  result->append(originalR->translate_gbvector_to_vec(_F,_gb[i]->f));
-      return result;
-    }
-  else
-    {
-      calc();
-      Matrix *result = new Matrix(_F);
-      for (int i=0; i<_gb.length(); i++)
-	{
-	  vec v = originalR->translate_gbvector_to_vec(_F,_gb[i]->f);
-	  result->append(v);
-	}
-      return result;
-      // TODO NOW sort it, and auto-reduce it
-    }
-  return 0;
+  return result;
+  // TODO NOW sort it, and auto-reduce it
 }
 
-const MatrixOrNull *GB_comp::get_change(int level)
+const MatrixOrNull *GB_comp::get_mingens()
 {
-  if (level > 1)
-    {
-      ERROR("matrix not computed");
-      return 0;
-    }
-  calc();
+  start_computation();
+  Matrix *result = new Matrix(_F);
+  for (int i=0; i<_gb.length(); i++)
+    if (_gb[i]->is_min)
+      result->append(originalR->translate_gbvector_to_vec(_F,_gb[i]->f));
+  return result;
+}
+
+const MatrixOrNull *GB_comp::get_change()
+{
+  start_computation();
   Matrix *result = new Matrix(_Fsyz);
   for (int i=0; i<_gb.length(); i++)
     result->append(originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
   return result;
 }
 
-const MatrixOrNull *GB_comp::get_leadterms(int nparts, int level)
+const MatrixOrNull *GB_comp::get_syzygies()
 {
-  if (level > 1)
-    {
-      ERROR("matrix not computed");
-      return 0;
-    }
-  calc();
+  start_computation();
+  Matrix *result = new Matrix(_Fsyz);
+  for (int i=0; i<_syz.length(); i++)
+    result->append(originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
+  return result;
+ }
+
+const MatrixOrNull *GB_comp::get_initial(int nparts)
+{
+  start_computation();
   Matrix *result = new Matrix(_F);
   for (int i=0; i<_gb.length(); i++)
     {
@@ -1200,40 +1181,20 @@ const MatrixOrNull *GB_comp::get_leadterms(int nparts, int level)
   //  get_matrix, get_change, and of course this one.
   return result;
 }
-  
-const FreeModuleOrNull *GB_comp::get_free(int level, M2_bool minimal)
-{
-  if (level == 0) return _F;
-  if (level > 1 || level < 0) 
-    {
-      ERROR("free module at level %d not computed", level);
-      return 0;
-    }
-  calc();
-#if 0
-  if (minimal)
-    return XXX;
-  else
-    return YYY;
-#else
-#warning "unimplemented"
-  return NULL;
-#endif
-}
 
-const MatrixOrNull *GB_comp::matrix_remainder(int level,
-					       const Matrix *m)
+const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
 {
-  if (level > 1)
+  if (m->get_ring() != originalR)
     {
-      ERROR("that Groebner basis not computed");
+      ERROR("expected matrix over the same ring");
       return 0;
     }
+
   if (m->n_rows() != _F->rank()) {
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  calc();
+  start_computation();
   Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
   for (int i=0; i<m->n_cols(); i++)
     {
@@ -1249,15 +1210,14 @@ const MatrixOrNull *GB_comp::matrix_remainder(int level,
   return red;
 }
 
-void GB_comp::matrix_lift(int level,
-		 const Matrix *m,
+void GB_comp::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
 {
-  if (level > 1)
+  if (m->get_ring() != originalR)
     {
-      ERROR("that Groebner basis not computed");
+      ERROR("expected matrix over the same ring");
       *result_remainder = 0;
       *result_quotient = 0;
     }
@@ -1266,7 +1226,7 @@ void GB_comp::matrix_lift(int level,
       *result_remainder = 0;
       *result_quotient = 0;
   }
-  calc();
+  start_computation();
   *result_remainder = new Matrix(m->rows(), m->cols(), m->degree_shift());
   *result_quotient = new Matrix(_Fsyz, m->cols());
   for (int i=0; i<m->n_cols(); i++)
@@ -1285,19 +1245,18 @@ void GB_comp::matrix_lift(int level,
     }
 }
 
-int GB_comp::contains(int level,
-		       const Matrix *m)
+int GB_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
-  if (level > 1)
+  if (m->get_ring() != originalR)
     {
-      ERROR("that Groebner basis not computed");
+      ERROR("expected matrix over the same ring");
       return -2;
     }
   // Reduce each column of m one by one.
-  calc();
+  start_computation();
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1315,42 +1274,14 @@ int GB_comp::contains(int level,
   return -1;
 }
 
-int GB_comp::status(int * complete_up_through_this_degree,
-		     int * complete_up_through_this_level)
-  /* -1: error condition, and the error message is set.
-     0: not made, and in fact it won't ever be done...
-     1: not started,
-     2: started, 
-     3: stopped because of a stopping condition
-     4: finished the computation completely
-  */
+enum ComputationStatusCode GB_comp::gb_status(int *degree)
+  // The computation is complete up through this degree.
 {
-  // TODO: what is this really supposed to do
-  *complete_up_through_this_level = 1;
-  *complete_up_through_this_degree = _this_degree-1;
-  return -1; // TODO
+  *degree = _this_degree - 1;
+#warning "set *degree correctly"
+  return status();
 }
 
-int GB_comp::status_level(int level, 
-			   M2_bool minimize,
-			   int * complete_up_through_this_degree)
-  /* Same return values */
-{
-#warning "unimplemented"
-  return 0;
-}
-
-const M2_arrayint GB_comp::betti(int type)
-  /* 0: minimal betti numbers,
-     1:
-     2:
-     3:
-  */
-{
-#warning "unimplemented"
-  return NULL;
-}
-  
 void GB_comp::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */

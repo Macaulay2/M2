@@ -5,14 +5,23 @@
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
-#include "comp.hpp"
-#include "gb_comp.hpp"
+
+#include "comp_gb.hpp"
 
 #include "spair.hpp"
 
 class hilb_comp;
 
-class GB_comp : public Computation
+// These are the possible states of a GB computation
+const int GB_COMP_NEWDEGREE        = 1; 
+const int GB_COMP_NEED_RESIZE      = 2;
+const int GB_COMP_S_PAIRS          = 3;
+const int GB_COMP_GENS             = 4;
+const int GB_COMP_AUTO_REDUCE      = 5;
+const int GB_COMP_NEWPAIRS         = 6;
+const int GB_COMP_DONE             = 7;
+
+class GB_comp : public GBComputation
 {
 private:
   // Ring information
@@ -53,7 +62,7 @@ private:
   bool _collect_syz;
   int _n_rows_per_syz;
   bool _is_ideal;
-  int _strategy;			// USE_SORT, USE_GEOBUCKET, or both
+  int _strategy;			// USE_SORT, STRATEGY_LONGPOLYNOMIALS, or both
 
   // Hilbert function information
   bool _use_hilb;
@@ -108,6 +117,8 @@ private:
 
   void debug_out(s_pair *q) const;
 
+  virtual bool stop_conditions_ok();
+
 public:
 
   //////////////////////////
@@ -126,57 +137,38 @@ public:
 
   virtual int kind() { return 1; }
 
+
+  void start_computation();
+
   virtual const PolynomialRing *get_ring() { return originalR; }
 
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
 
-  virtual void compute();
+  virtual const MatrixOrNull *get_gb();
 
-  virtual const MatrixOrNull *get_matrix(int level, M2_bool minimize); 
+  virtual const MatrixOrNull *get_mingens();
 
-  virtual const MatrixOrNull *get_change(int level);
+  virtual const MatrixOrNull *get_change();
 
-  virtual const MatrixOrNull *get_leadterms(int nparts, int level);
-  
-  virtual const FreeModuleOrNull *get_free(int level, M2_bool minimal); 
+  virtual const MatrixOrNull *get_syzygies();
 
-  virtual const MatrixOrNull *matrix_remainder(int level,
-					       const Matrix *m);
+  virtual const MatrixOrNull *get_initial(int nparts);
 
-  virtual void matrix_lift(int level,
-			   const Matrix *m,
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+
+  virtual void matrix_lift(const Matrix *m,
 			   MatrixOrNull **result_remainder,
 			   MatrixOrNull **result_quotient
 			   );
 
-  virtual int contains(int level,
-		       const Matrix *m);
+  virtual int contains(const Matrix *m);
 
-  virtual int status(int * complete_up_through_this_degree,
-		     int * complete_up_through_this_level);
-  /* -1: error condition, and the error message is set.
-     0: not made, and in fact it won't ever be done...
-     1: not started,
-     2: started, 
-     3: stopped because of a stopping condition
-     4: finished the computation completely
-  */
-
-  virtual int status_level(int level, 
-			   M2_bool minimize,
-			   int * complete_up_through_this_degree);
-  /* Same return values */
-
-  virtual const M2_arrayint betti(int type);
-  /* 0: minimal betti numbers,
-     1:
-     2:
-     3:
-  */
-  
   virtual void text_out(buffer &o); 
   /* This displays statistical information, and depends on the
      gbTrace value */
+
+  virtual enum ComputationStatusCode gb_status(int *degree); 
+  // The computation is complete up through this degree.
 
 };  
 #endif

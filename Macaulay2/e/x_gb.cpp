@@ -2,7 +2,7 @@
 
 #include "engine.h"
 #include "hilb.hpp"
-#include "gb_comp.hpp"
+#include "comp_gb.hpp"
 
 const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
   /* This routine computes the numerator of the Hilbert series
@@ -23,15 +23,15 @@ ComputationOrNull *IM2_GB_make(const Matrix *m,
 			       int strategy) /* drg: connected rawGB */
 {
   // Choose the correct computation here.
-  return Computation::choose_gb(
-                    m,
-		    collect_syz,
-		    n_rows_to_keep,
-		    gb_degrees,
-		    use_max_degree,
-		    max_degree,
-		    algorithm,
-		    strategy);
+  return GBComputation::choose_gb(
+				  m,
+				  collect_syz,
+				  n_rows_to_keep,
+				  gb_degrees,
+				  use_max_degree,
+				  max_degree,
+				  algorithm,
+				  strategy);
 }
 
 ComputationOrNull *IM2_res_make(
@@ -45,6 +45,8 @@ ComputationOrNull *IM2_res_make(
 	   )
 {
   // Choose the correct computation here.
+#warning "implement choose_res"
+#if 0
   return Computation::choose_res(m,
 				 resolve_cokernel,
 				 max_level,
@@ -52,13 +54,18 @@ ComputationOrNull *IM2_res_make(
 				 max_slanted_degree,
 				 algorithm,
 				 strategy);
+#endif
 }
 
 ComputationOrNull *
-IM2_GB_set_hilbert_function(Computation *G,
+IM2_GB_set_hilbert_function(Computation *C,
 			    const RingElement *h)
 {
-  return G->set_hilbert_function(h);
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->set_hilbert_function(h);
+  ERROR("computation type unknown or not implemented");
+  return 0;
 }
 
 ComputationOrNull *
@@ -66,7 +73,7 @@ IM2_GB_force(const Matrix *m,
 	     const Matrix *gb,
 	     const Matrix *change)
 {
-  return Computation::force(m,gb,change);
+  return GBComputation::force(m,gb,change);
 }
 
 ComputationOrNull* 
@@ -96,12 +103,73 @@ IM2_Computation_set_stop(Computation *G,
 				 length_limit);
 }
 
-void rawStartComputation(Computation *G)
+void rawStartComputation(Computation *C)
   /* start or continue the computation */
 {
-  G->compute();
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    G->start_computation();
 }
 
+enum ComputationStatusCode rawStatus1(Computation *C)
+{
+}
+
+const MatrixOrNull *rawGBMatrix(Computation *C)
+  /* Get the minimal, auto-reduced GB of a GB computation.
+     Each call to this will produce a different raw matrix */
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->get_gb();
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
+const MatrixOrNull *rawGBMinimalGenerators(Computation *C)
+  /* Yields a matrix whose columns form a minimal generating set
+     for the ideal or submodule, as computed so far.  In the
+     inhomogeneous case, this yields a generating set which is
+     sometimes smaller than the entire Groebner basis. */
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->get_mingens();
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
+const MatrixOrNull *rawGBChangeOfBasis(Computation *C)
+  /* Yields the change of basis matrix from the Groebner basis to
+     the original generators, at least if n_rows_to_keep was set
+     when creating the GB computation.  This matrix, after the 
+     computation has run to completion, should satisfy:
+     (original matrix) = (GB matrix) * (change of basis matrix). */
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->get_change();
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
+const MatrixOrNull *rawGBSyzygies(Computation *C)
+  /* Yields a matrix containing the syzygies computed so far
+     via the GB computation C, assuming that 'collect_syz' was
+     set when the computation was created.  If 'n_rows_to_keep' was
+     set to a non-negative integer, then only that many rows of each
+     syzygy are kept. */
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->get_syzygies();
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
+
+
+#if 0
 const MatrixOrNull *
 IM2_GB_get_matrix(Computation *G, 
 		  int level, 
@@ -215,6 +283,7 @@ IM2_GB_betti(Computation *G,
 {
   return G->betti(type);
 }
+#endif
 
 const M2_string
 IM2_GB_to_string(Computation *G)

@@ -44,8 +44,7 @@ void HermiteComputation::insert(hm_elem *p)
 }
 
 HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
-  : gb_comp(COMP_HERMITE),
-  row(m->n_rows()-1),
+  : row(m->n_rows()-1),
   gens(m),
   GB_list(NULL),
   n_gb(0),
@@ -277,12 +276,41 @@ int HermiteComputation::calc(const int *, const intarray &/*stop*/)
   return COMP_DONE;
 }
 
-Matrix *HermiteComputation::min_gens_matrix()
+
+
+/*************************
+ ** Top level interface **
+ *************************/
+
+const MatrixOrNull *HermiteComputation::get_gb()
 {
-  return gb_matrix();
+  Matrix *result = new Matrix(gens->rows());
+  for (hm_elem *p = GB_list; p != NULL; p = p->next)
+    result->append(gens->rows()->copy(p->f));
+  return result;
 }
 
-Matrix *HermiteComputation::initial_matrix(int)
+const MatrixOrNull *HermiteComputation::get_mingens()
+{
+  // return the minimal generators (or as minimal as possible?)
+  return get_gb();
+}
+
+const MatrixOrNull *HermiteComputation::get_change()
+{
+  Matrix *result = new Matrix(syz->rows());
+  for (hm_elem *p = GB_list; p != NULL; p = p->next)
+    result->append(syz->rows()->copy(p->fsyz));
+  return result;
+}
+
+const MatrixOrNull *HermiteComputation::get_syzygies()
+{
+  // The (non-minimal) syzygy matrix
+  return syz;
+}
+
+const MatrixOrNull *HermiteComputation::get_initial(int nparts)
 {
 #warning "implement HermiteComputation::initial_matrix"
 #if 0
@@ -295,29 +323,17 @@ Matrix *HermiteComputation::initial_matrix(int)
   return 0;
 }
 
-Matrix *HermiteComputation::gb_matrix()
+enum ComputationStatusCode HermiteComputation::gb_status(int *degree)
+  // The computation is complete up through this degree.
 {
-  Matrix *result = new Matrix(gens->rows());
-  for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result->append(gens->rows()->copy(p->f));
-  return result;
+#warning "set *degree correctly"
+  return status();
 }
 
-Matrix *HermiteComputation::change_matrix()
+void HermiteComputation::text_out(buffer &o)
+  /* This displays statistical information, and depends on the
+     gbTrace value */
 {
-  Matrix *result = new Matrix(syz->rows());
-  for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result->append(syz->rows()->copy(p->fsyz));
-  return result;
-}
-
-Matrix *HermiteComputation::syz_matrix()
-{
-  return syz;
-}
-void HermiteComputation::stats() const
-{
-  buffer o;
   for (int i=0; i<gens->n_rows(); i++)
     if (initial[i] != NULL)
       {
@@ -337,6 +353,19 @@ void HermiteComputation::stats() const
   o << newline;
   emit(o.str());
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
 {
@@ -394,13 +423,17 @@ void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
   result->next = NULL;
   f = head.next;
 }
-Matrix *HermiteComputation::reduce(const Matrix *m, Matrix *&lift)
+
+void HermiteComputation::matrix_lift(const Matrix *m,
+				     MatrixOrNull **result_remainder,
+				     MatrixOrNull **result_quotient)
 {
-  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  lift = new Matrix(syz->rows(), m->cols());
+  *result_remainder = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  *result_quotient = new Matrix(syz->rows(), m->cols());
   if (m->n_rows() != gens->rows()->rank()) {
        ERROR("expected matrices to have same number of rows");
-       return 0;
+       *result_remainder = 0;
+       *result_quotient = 0;
   }
   for (int i=0; i<m->n_cols(); i++)
     {
@@ -409,10 +442,9 @@ Matrix *HermiteComputation::reduce(const Matrix *m, Matrix *&lift)
 
       gb_reduce(f, fsyz);
       syz->rows()->negate_to(fsyz);
-      (*red)[i] = f;
-      (*lift)[i] = fsyz;
+      (**result_remainder)[i] = f;
+      (**result_quotient)[i] = fsyz;
     }
-  return red;
 }
 
 int HermiteComputation::contains(const Matrix *m)
@@ -420,6 +452,7 @@ int HermiteComputation::contains(const Matrix *m)
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
+#warning "check for equality of rings"
   // Reduce each column of m one by one.
   for (int i=0; i<m->n_cols(); i++)
     {
@@ -434,23 +467,6 @@ int HermiteComputation::contains(const Matrix *m)
 	}
     }
   return -1;
-}
-bool HermiteComputation::is_equal(const gb_comp *q1)
-{
-  if (kind() != q1->kind()) return false;
-  const HermiteComputation *qq = (const HermiteComputation *) q1;
-  if (gens->rows()->rank() != qq->gens->rows()->rank()) return false;
-
-  hm_elem *q = qq->GB_list;
-  for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    {
-      if (q == NULL) return false;
-      if (!gens->rows()->is_equal(p->f, q->f))
-	return false;
-      q = q->next;
-    }
-  if (q != NULL) return false;
-  return true;
 }
 
 // Local Variables:
