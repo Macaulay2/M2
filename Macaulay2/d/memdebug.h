@@ -48,6 +48,4 @@ extern "C" {
 
 #endif
 #endif
-#else
-#warning : including memdebug.h a second time
 #endif
