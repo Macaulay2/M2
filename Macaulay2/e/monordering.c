@@ -56,7 +56,7 @@ M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo)
 {
   int i,j,sum,nextvar;
   int nvars = rawNumberOfVariables(mo);
-  int *gt = (int *) getmem_atomic(nvars);
+  int *gt = (int *) getmem_atomic(nvars * sizeof(int));
   for (i=0; i<nvars; i++)
     gt[i] = 0; // 0 means undecided, -1 means non term order, 1 means term order
   // Now we loop through the parts of the monomial order
