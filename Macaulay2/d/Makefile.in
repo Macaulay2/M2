@@ -73,7 +73,7 @@ DFILES += interp.d
 DFILES += texmacs.d
 DFILES += interface.d
 DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
-DFILES += evaluate.d
+DFILES += evaluate.d libfac.d
 DFILES += objects.d
 DFILES += struct.d
 DFILES += GC.d
@@ -317,7 +317,7 @@ clean::; rm -f TAGS @srcdir@/TAGS
 @srcdir@/TAGS: Makefile $(SRCFILES)
 	cd @srcdir@ && etags $(shell ../util/echoout -r $(SRCFILES))
 
-clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core gmon.out mapfile restart.tmp
+clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep *.dp core gmon.out mapfile restart.tmp
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 all :: .gdbinit
