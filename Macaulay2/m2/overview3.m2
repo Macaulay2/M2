@@ -123,6 +123,7 @@ document { "operators",
           (TO ";", " -- statement separator"),
           (TO "=", " -- assignment"),
           (TO "<-", " -- assignment with left hand side evaluated"),
+	  TO "->",
           (TO ":=", " -- assignment of method or new local variable"),
           (TO "==", " -- equal"),
           (TO "!=", " -- not equal"),
@@ -164,10 +165,10 @@ document { "operators",
           (TO "\\", " -- applying a function to elements of a list"),
           (TO "==>", " -- attaching options to a function"),
           (TO "@@", " -- composing functions"),
-          (TO "@", " -- "),
-          (TO "&&", " -- "),
-          (TO "^^", " -- "),
-          (TO "~", " -- ")
+          TO "@",
+          TO "&&",
+          TO "^^",
+          (TO "~", " -- making a coherent sheaf")
      	  }
      }
 
@@ -293,11 +294,15 @@ document { "Reference Manual",
 	  TO "ChainComplex",
 	  TO "Variety",
 	  },
-     "Some types of things of interest to the programmer and user.",
+     "Some types of things of interest to the programmer and user:",
      MENU {
 	  TO "Function",
 	  TO "VisibleList",
-	  TO "File",
+	  TO "File"
+	  },
+     "A list of the operators:",
+     MENU {
+	  TO "operators",
 	  },
      "We've mentioned that our software is organized according to the
      types of things there are.  The types form a hierarchy; for example,

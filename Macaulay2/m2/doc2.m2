@@ -480,7 +480,7 @@ document { ";",
      }
 
 document { symbol "<-",
-     Headline => "assignment",
+     Headline => "assignment with left side evaluated",
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
      "If the value of x is a symbol, then the value of y is assigned as the
@@ -516,7 +516,7 @@ document { "=",
 
 
 document { ":=",
-     Headline => "assignment to a new local variable",
+     Headline => "assignment of method or new local variable",
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
      TT "f X := (x) -> ( ... )", " -- install a method for the method function

@@ -449,7 +449,7 @@ document { deepSplice,
      }
 
 document { ",",
-     Headline => "separator",
+     Headline => "separator for elements of a visible list",
      TT "x,y,...,z", " -- the comma is used to separate elements of a list or
      sequence.",
      PARA,

@@ -153,7 +153,10 @@ assert ( 1 == numerator(b/b) )
 ///
 
 document { FractionField,
-     Headline => "the class of all fraction fields"
+     Headline => "the class of all fraction fields",
+     "Note: there is no way to reduce an element of an arbitrary
+     fraction field to a normal form.  In other words, fractions
+     may be equal without displaying the same numerator and denominator."
      }
 
 document { symbol frac,
