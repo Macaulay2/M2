@@ -252,10 +252,12 @@ lcmOfGens := (I) -> if I#?(local lcm) then I#(local lcm) else I#(local lcm) = (
      max \ transpose apply(first entries gens I, i -> first exponents i)
      )
 
-dual(MonomialIdeal, List) := (I,a) -> (
-     -- Alexander dual
-     -- We use E. Miller's definition for nonsquare 
-     -- free monomial -- ideals.
+
+
+ -- We use E. Miller's definition for nonsquare 
+ -- free monomial -- ideals.
+
+dual(MonomialIdeal, List) := (I,a) -> ( -- Alexander dual
      R := ring I;
      X := gens R;
      aI := lcmOfGens I;
@@ -273,8 +275,7 @@ dual(MonomialIdeal, List) := (I,a) -> (
      S := R/(I + monomialIdeal apply(#X, i -> X#i^(a#i+1)));
      monomialIdeal contract(
 	  lift(syz transpose vars S, R), 
-	  product(#X, i -> X#i^(a#i)))
-     )
+	  product(#X, i -> X#i^(a#i))))
 
 dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
 
