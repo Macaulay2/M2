@@ -17,5 +17,5 @@ assert( dx * x == x*dx + 1 )
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res5.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res5.out"
 -- End:

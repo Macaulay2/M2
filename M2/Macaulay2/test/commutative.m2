@@ -7,5 +7,5 @@ assert isCommutative (GF(4))
 assert not isCommutative (ZZ[x,SkewCommutative => true])
 assert not isCommutative (ZZ[x,y,WeylAlgebra => {x => y}])
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test commutative.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test commutative.out"
 -- End:

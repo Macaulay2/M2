@@ -7,5 +7,5 @@ assert( f-g == 0 )
 f==g
 assert( f == g )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test quotientring.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test quotientring.out"
 -- End:

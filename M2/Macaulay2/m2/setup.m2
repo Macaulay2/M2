@@ -201,12 +201,6 @@ Thing.NoPrint = x -> (
      applyMethod(AfterNoPrint,x);
      )
 
-markLoaded := (filename,origfilename,notify) -> ( 
-     filename = minimizeFilename filename;
-     filesLoaded#origfilename = filename; 
-     if notify then stderr << "--loaded " << filename << endl;
-     )
-
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 
 tryload := (filename,loadfun,notify) -> (
@@ -232,10 +226,7 @@ tryload := (filename,loadfun,notify) -> (
 			 break)));
 	  if loaded then ret else error("file not found on path: \"", filename, "\"")))
 
-simpleLoad := load
 load = (filename) -> tryload(filename,simpleLoad,notify)
-
-simpleInput := input
 input = (filename) -> tryload(filename,simpleInput,false)
 needs = s -> if not filesLoaded#?s then load s
 

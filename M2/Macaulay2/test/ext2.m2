@@ -17,5 +17,5 @@ E = cokernel f
 
 assert( HH_1 res E == 0 )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ext.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ext.out"
 -- End:

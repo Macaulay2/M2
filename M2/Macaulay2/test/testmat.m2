@@ -7,5 +7,5 @@ p12 = m1 + m1
 assert( source p12 == source m1 )
 q12 = m1 - m1
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testmat.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testmat.out"
 -- End:

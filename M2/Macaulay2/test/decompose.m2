@@ -84,5 +84,5 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
 decompose I
 assert ( 25 == # decompose I )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test decompose.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test decompose.out"
 -- End:

@@ -179,5 +179,5 @@ time minors(3,m);
 testsame1(3,m)
 testsame2(3,m)
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testdet.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test testdet.out"
 -- End:

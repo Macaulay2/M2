@@ -5,5 +5,5 @@ a' = a + 0_R
 leadMonomial a'
 baseName a'
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst4.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst4.out"
 -- End:

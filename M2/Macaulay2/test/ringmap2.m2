@@ -78,5 +78,5 @@ time assert(m == F7inv m7)
 		-- 11/14/97:   .75 seconds
 ------------------------------------------------------
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ringmap2.out"
 -- End:

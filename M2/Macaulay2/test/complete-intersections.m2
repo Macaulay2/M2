@@ -44,5 +44,5 @@ psi = map(K,B)
 rks2 = apply(m, i -> rank (psi ** Ext^i(M,coker vars B)))
 assert( rks1 == rks2 )
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test complete-intersections.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test complete-intersections.out"
 -- End:

@@ -23,5 +23,5 @@
 
 -- hmm, these use a LOT of memory and time, so I've commented them out
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res6.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test res6.out"
 -- End:

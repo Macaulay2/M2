@@ -198,7 +198,7 @@ load(e:Expr):Expr := (
      when e
      is s:string do load(s)
      else buildErrorPacket("expected string as file name"));
-setupfun("load",load).protected = false;
+setupfun("simpleLoad",load);
 
 input(e:Expr):Expr := (
      when e
@@ -208,7 +208,7 @@ input(e:Expr):Expr := (
 	  previousLineNumber = -1;
 	  ret)
      else buildErrorPacket("expected string as file name"));
-setupfun("input",input).protected = false;
+setupfun("simpleInput",input);
 
 stringTokenFile(name:string,contents:string):TokenFile := (
      TokenFile(

@@ -4,5 +4,5 @@ assert( try ( isWellDefined inducedMap(image matrix {{x}}, R^1); false ) else tr
 
 	  
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test welldef.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test welldef.out"
 -- End:

@@ -4,5 +4,5 @@ assert("x" === toString M_0)
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test names.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test names.out"
 -- End:

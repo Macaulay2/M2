@@ -28,5 +28,5 @@ assert( try (
 	  false ) else true )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test euclid.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test euclid.out"
 -- End:

@@ -62,5 +62,5 @@ o = "docStructure.out" << world << endl
 o << close
 << "Documentation structure written to file " << o << endl
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test docStructure.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test docStructure.out"
 -- End:

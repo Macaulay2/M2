@@ -14,5 +14,5 @@ E1 = Ext^(r-1)(N,wR)
 degrees E1
 min degrees E1
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test varieties.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test varieties.out"
 -- End:

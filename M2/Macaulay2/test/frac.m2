@@ -29,5 +29,5 @@ assert(numerator (f/g) == x)
 -- we should have canonical forms for fractions
 assert(numerator((-f)/(-g)) == numerator(f/g))
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test frac.out"
 -- End:

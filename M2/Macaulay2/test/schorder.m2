@@ -15,5 +15,5 @@ gens gb M2 -- is zero right now...
 leadTerm M
 M
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test schorder.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test schorder.out"
 -- End:

@@ -12,5 +12,5 @@ use A
 phi = map(A,S,{x,y,s,t})
 ker phi
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker2.out"
 -- End:

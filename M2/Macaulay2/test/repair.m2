@@ -46,5 +46,5 @@ poincare (S/a)
 poincare (S/b)
 poincare (S/(a^2))
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test repair.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test repair.out"
 -- End:

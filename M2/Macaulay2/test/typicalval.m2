@@ -6,5 +6,5 @@ if #a > 0 then (
      )
 
      -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test typicalval.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test typicalval.out"
 -- End:
