@@ -3,6 +3,11 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+f_d now gives the part of the polynomial f of total degree d.  And
+  f_{a,b,c} gives the part of multi-degree {a,b,c}.
+WARNING: f_1 no longer gives the constant term of a polynomial;
+  use f_0 instead.
+
 a bug with printing GF(9)[x] has been fixed.
 
 finite prime fields k now have their order stored in k.order as well as

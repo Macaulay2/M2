@@ -1,7 +1,9 @@
 # -*- Mode: Makefile -*-
 
-CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2-$(shell cat version)
-CONFIGURE_ENVIRON = CFLAGS="-O3 -fexpensive-optimizations"
+CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2-$(shell cat version) --cache-file=config.cache
+CONFIGURE_ENVIRON = \
+	CFLAGS="-O3 -fexpensive-optimizations" \
+	CXXFLAGS="-O3 -fexpensive-optimizations"
 
 # for CC=cl we want CXXFLAGS and CFLAGS = -O2 -Zi -nologo -G5 -W3 -GR -GX
 
@@ -28,6 +30,7 @@ export CONFIGURED_FILES := \
 	Macaulay2/m2/Makefile \
 	Macaulay2/ComputationsBook/Makefile \
 	Macaulay2/ComputationsBook/book/Makefile \
+	Macaulay2/ComputationsBook/chapters/Makefile \
 	Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile \
 	Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile \
 	Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile \
@@ -84,13 +87,19 @@ include/config.h.in : configure.in aclocal.m4
 	autoheader
 	touch $@
 
-stage2 : Makefile include/config.h
+stage2 : Makefile include/config.h gmp/Makefile factory/GNUmakefile libfac/Makefile
 config.status : configure Makefile-configure
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
 
 $(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status include/config.h.in
 	./config.status
 	touch include/config.h
+gmp/Makefile : gmp/Makefile.in gmp/config.status
+	cd gmp; ./config.status
+factory/GNUmakefile : factory/GNUmakefile.in factory/config.status
+	cd factory; ./config.status
+libfac/Makefile : libfac/Makefile.in libfac/config.status
+	cd libfac; ./config.status
 
 TARGETS = all install dist check clean distclean uninstall
 

@@ -139,10 +139,10 @@ endif
 
 include/gmp.h: gmp/gmp.h ; cp $< $@
 
-make-gmp : GMPconfigure
+make-gmp :: GMPconfigure
+make-gmp ::
 	@echo we wanted to use: CFLAGS="$(GMPFLAGS)"
 	$(MAKE) -C gmp
-#	$(MAKE) CFLAGS="$(GMPFLAGS)" -C gmp
 
 ifeq "$(CC)" "cl"
 GMPconfigure : gmp/Makefile
