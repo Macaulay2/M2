@@ -110,6 +110,55 @@ void VectorOperations::scaleRow(sparse_vector *&v, int r, const ring_elem a) con
       }
 }
 
+void VectorOperations::divide(sparse_vector *&v, const ring_elem a) const
+{
+  if (K->is_zero(a))
+    {
+      remove(v);
+      v = 0;
+    }
+  sparse_vector head;
+  head.next = v;
+  for (sparse_vector *p = &head; p->next != 0; p=p->next)
+    {
+      //old version: K->mult_to(p->next->coefficient, a);
+      ring_elem c = K->divide(p->next->coefficient,a);
+      K->remove(p->next->coefficient);
+      p->next->coefficient = c;
+      if (K->is_zero(p->next->coefficient))
+	{
+	  sparse_vector *tmp = p->next;
+	  p->next = tmp->next;
+	  K->remove(tmp->coefficient);
+	  remove_sparse_vector_node(tmp);
+	}
+    }
+  v = head.next;
+}
+
+void VectorOperations::divideRow(sparse_vector *&v, int r, const ring_elem a) const
+{
+  sparse_vector head;
+  head.next = v;
+  for (sparse_vector *p = &head; p->next != 0; p = p->next)
+    if (p->next->component < r) 
+      break;
+    else if (p->next->component == r)
+      {
+	ring_elem c = K->divide(p->next->coefficient, a);
+	K->remove(p->next->coefficient);
+	p->next->coefficient = c;
+	if (K->is_zero(p->next->coefficient))
+	  {
+	    sparse_vector *tmp = p->next;
+	    p->next = tmp->next;
+	    K->remove(tmp->coefficient);
+	    remove_sparse_vector_node(tmp);
+	  }
+	break;
+      }
+}
+
 void VectorOperations::interchangeRows(sparse_vector *&v, int r1, int r2) const
 {
   sparse_vector *p;
@@ -640,6 +689,25 @@ void SparseMutableMatrix::scaleColumn(int c, ring_elem a, bool doRecording)
 
   if (doRecording && colOps != 0)
     colOps->scaleColumn(c,a,false);
+}
+
+void SparseMutableMatrix::divideRow(int r, ring_elem a, bool doRecording)
+{
+  if (errorRowBound(r)) return;
+  for (int c=0; c<ncols; c++)
+    V->divideRow(matrix[c], r, a);
+
+  if (doRecording && rowOps != 0)
+    rowOps->divideColumn(r,a,false);
+}
+
+void SparseMutableMatrix::divideColumn(int c, ring_elem a, bool doRecording)
+{
+  if (errorColumnBound(c)) return;
+  V->divide(matrix[c], a);
+
+  if (doRecording && colOps != 0)
+    colOps->divideColumn(c,a,false);
 }
 
 void SparseMutableMatrix::addRowMultiple(int r1, ring_elem a, int r, bool doRecording)

@@ -292,7 +292,11 @@ void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
 ring_elem PolynomialRing::from_int(int n) const
 {
   ring_elem a = K->from_int(n);
-  if (K->is_zero(a)) return (Nterm *)NULL;
+  if (K->is_zero(a)) 
+    {
+      K->remove(a);
+      return (Nterm *)NULL;
+    }
   Nterm *result = new_term();
   result->coeff = a;
   M->one(result->monom);
@@ -302,6 +306,20 @@ ring_elem PolynomialRing::from_int(int n) const
 ring_elem PolynomialRing::from_int(mpz_t n) const
 {
   ring_elem a = K->from_int(n);
+  if (K->is_zero(a)) 
+    {
+      K->remove(a);
+      return (Nterm *)NULL;
+    }
+  Nterm *result = new_term();
+  result->coeff = a;
+  M->one(result->monom);
+  if (base_ring != NULL) normal_form(result);
+  return result;
+}
+ring_elem PolynomialRing::from_double(double n) const
+{
+  ring_elem a = K->from_double(n);
   if (K->is_zero(a)) 
     {
       K->remove(a);

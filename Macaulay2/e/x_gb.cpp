@@ -487,6 +487,14 @@ static void cmd_kerGB_getsyz(object &o1)
   gStack.insert(g->get_syzygies());
 }
 
+static void cmd_FFgausselim(object &o1)
+{
+  SparseMutableMatrix *A = o1->cast_to_SparseMutableMatrix();
+  object_intarray * result = new object_intarray;
+  FF_LUComputation::DO(A,*result->intarray_of());
+  gStack.insert(result);
+}
+
 void i_NGB_cmds(void)
 {
   // New NGB commands
@@ -555,4 +563,7 @@ void i_NGB_cmds(void)
   install(ggLLLinit, cmd_LLL_init, TY_MATRIX, TY_RING_ELEM, TY_INT);
   install(ggLLLinit, cmd_LLL_init0, TY_SparseMutableMatrix, TY_RING_ELEM);
   install(ggLLLcalc, cmd_LLL_calc, TY_SparseMutableMatrix, TY_SparseMutableMatrix, TY_INT);
+
+  // Fraction free Gaussian elimination
+  install(ggFFgausselim, cmd_FFgausselim, TY_SparseMutableMatrix);
 }

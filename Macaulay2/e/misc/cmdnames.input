@@ -218,6 +218,10 @@ exteriorproduct
 p:int q:int F:freemodule >> m:matrix
 Return the matrix which represents the multiplication wedge(p)(F) ** wedge(q)(F) --> wedge(p+q)(F).
 
+ggFFgausselim
+M:SparseMutableMatrix >> p:intarray
+Performs a fraction-free (Bareiss) Gaussian elimination on the columns of M (which is modified in place), the permutation integer array on the columns of M is returned.
+
 ggfactor
 factor
 ... >> ...
@@ -262,6 +266,11 @@ ggfree
 free
 V:vecinfo intarray >> freemodule;  OR  V:vecinfo n:int >> freemodule
 Create a free module over the base ring of V which has as its degrees the entries of the intarray (first case), or has rank 'n', all of whose degrees are zero (second case).
+
+ggfromdouble
+fromdouble
+R:Ring n:double >> RingElement
+Return the double precision integer n as an element of R.  If R is not a ring over the reals RR, then n is coerved to an integer first, and then put into the ring R.
 
 ggfromint
 fromint

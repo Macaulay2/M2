@@ -196,3 +196,132 @@ int MatrixComputation::getStatus() const
 {
   return 0;
 }
+
+////////////////////////////////////////
+// Fraction free gaussian elimination //
+////////////////////////////////////////
+
+FF_LUComputation::FF_LUComputation(SparseMutableMatrix *M)
+  : R(M->getRing()),
+    M(M),
+    col_perm(0),
+    need_div(0)
+{
+  int ncols = M->n_cols();
+  col_perm = new int[ncols];
+  need_div = new bool[ncols];
+  pivot_col = ncols;  // Will be decremented before use
+  for (int i=0; i<ncols; i++)
+    {
+      col_perm[i] = i;
+      need_div[i] = false;
+    }
+
+  pivot = R->from_int(1);
+  lastpivot = R->from_int(1);
+  bump_up(M);
+}
+
+FF_LUComputation::~FF_LUComputation()
+{
+  R->remove(pivot);
+  R->remove(lastpivot);
+  delete [] col_perm;
+  delete [] need_div;
+
+  bump_down(M);
+}
+
+bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)
+{
+  int r = -1; // If this remains -1, then no better column was found
+  int c = -1;
+  for (int i=lo; i<=hi; i++)
+    {
+      int r1 = M->leadRow(i);
+      if (r1 > r) 
+	{
+	  r = r1;
+	  c = i;
+	}
+    }
+  if (r == -1) return false;
+
+  result = c;
+  return true;
+}
+
+void FF_LUComputation::do_pivots(int lo, int hi, int pivot_col)
+{
+  // Here we clear out row r in columns lo..hi, using the pivot.
+  R->remove(lastpivot);
+  lastpivot = pivot;
+  pivot = M->leadCoefficient(pivot_col);
+  int pivot_row = M->leadRow(pivot_col);
+  
+  for (int i=lo; i<=hi; i++)
+    {
+      int r = M->leadRow(i);
+      if (r == pivot_row)
+	{
+	  // Need to modify column i:
+	  // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivot_col]
+	  ring_elem a = M->leadCoefficient(i);  // This does a copy.
+	  R->negate_to(a);
+	  M->scaleColumn(i,pivot);
+	  M->addColumnMultiple(pivot_col,a,i);
+	  R->remove(a);
+	}	  
+
+      if (need_div[i])
+	M->divideColumn(i,lastpivot);
+
+      need_div[i] = (r == pivot_row);
+    }
+}
+
+bool FF_LUComputation::calc()
+{
+  int c1;
+  while (choose_pivot_column(0,--pivot_col,c1))
+    {
+      if (system_interrupted)
+	return false;
+
+      if (pivot_col != c1)
+	{
+	  M->interchangeColumns(pivot_col,c1);
+	  
+	  // swap need_div[pivot_col], need_div[c1]
+	  bool tmp = need_div[pivot_col];
+	  need_div[pivot_col] = need_div[c1];
+	  need_div[c1] = tmp;
+	  
+	  // swap col_perm
+	  int ctmp = col_perm[pivot_col];
+	  col_perm[pivot_col] = col_perm[c1];
+	  col_perm[c1] = ctmp;
+	}
+
+      do_pivots(0,pivot_col-1,pivot_col);
+    }
+  return true;
+}
+
+void FF_LUComputation::get_column_permutation(intarray &result)
+{
+  result.shrink(0);
+  int ncols = M->n_cols();
+  for (int i=0; i<ncols; i++)
+    result.append(col_perm[i]);
+}
+
+bool FF_LUComputation::DO(SparseMutableMatrix *M, intarray &col_permutation)
+{
+  FF_LUComputation F(M);
+  if (!F.calc()) return false;
+  F.get_column_permutation(col_permutation);
+  return true;
+}
+
+
