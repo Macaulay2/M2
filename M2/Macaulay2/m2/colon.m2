@@ -629,7 +629,7 @@ S = ZZ/101[x,y,z]
 row2 = substitute(random(S^1, S^{-3,-3,-3,-3}), R)
 row1 = matrix{{a,b,c,d}}
 J = minors(2,row1 || row2)
-gbTrace 3
+-- gbTrace 3
   -- best time so far for the following: 30.41 seconds
   -- but this doesn't yet include finding a minimal set
   -- of generators for the image
@@ -655,7 +655,7 @@ S = ZZ/101[x,y,z]
 row2 = substitute(random(S^1, S^{-3,-3,-3,-3}), R)
 row1 = matrix{{a,b,c,d}}
 J = minors(2,row1 || row2)
-gbTrace 3
+-- gbTrace 3
 F = row2_(0,0)
   -- For this example, just saturate w.r.t. F.
   -- best time: 21.76 seconds

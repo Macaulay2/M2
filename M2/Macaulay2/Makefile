@@ -2,10 +2,8 @@
 # export SHELL
 ############################### targets to use
 all ::				# everything needed for the distribution
-                                # this includes on-line documentation
 tests ::
 doc : html book Vasconcelos-appendix
-dist ::				# binary distribution
 ################################# setup
 all :: initialize
 include ../Makeconf
@@ -23,10 +21,16 @@ clean :: ; rm version version.gen
 bin :; mkdir $@
 clean ::; rm -rf bin
 initialize :: bin
+################################# cache
+initialize :: cache
+cache :; mkdir $@
+clean ::; rm -rf cache
 ################################# tmp
 tmp :; mkdir $@
+tmp/Examples :; mkdir $@
+tmp/Tests :; mkdir $@
 clean ::; rm -rf tmp
-initialize :: tmp
+initialize :: tmp tmp/Tests tmp/Examples
 ################################# util
 initialize ::; $(MAKE) -C util all
 clean ::; $(MAKE) NODEPENDS=1 -C util clean

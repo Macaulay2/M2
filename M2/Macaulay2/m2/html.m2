@@ -258,6 +258,7 @@ html SEQ   := x -> concatenate(apply(x, html))
 
 TT         = newListHead "TT"
 tex TT := x -> concatenate(///{\tt{}///, ttLiteral x#0, "}")
+text TT := x -> concatenate("'", x#0, "'")
 
 EM         = newListHead "EM"
 CITE       = newListHead "CITE"

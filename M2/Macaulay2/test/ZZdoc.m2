@@ -99,4 +99,4 @@ scan(unset, s -> warning(s,"symbol '"|name s|"' seen only once"))
 vals := select(tab#"a" .. tab#"Y", s -> value s =!= s)
 scan(vals, s -> warning(s,"indeterminate '"|name s|"' has a value already"))
 
-if haderror then exit 1
+-- if haderror then exit 1

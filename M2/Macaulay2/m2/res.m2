@@ -16,29 +16,6 @@ document { quote Resolution,
 	 }
     }
 
-document { quote HardLengthLimit,
-     TT "HardLengthLimit", " -- a keyword for an optional argument used
-     with ", TO "resolution", " which indicates that those parts of the
-     computation in higher degree than this should be discarded (i.e.
-     an implied LengthLimit=>d will be appended to this resolution 
-     computation, when HardLengthLimit=>d is given to the resolution
-     routine.  This should only be used in extreme cases when
-     the skeleton of the resolution is very large in higher degrees,
-     and you do not need that part of the resolution in these higher
-     (slanted) degrees."
-     }
-
-document { quote LengthLimit,
-     TT "LengthLimit", " -- keyword for an optional argument used with
-     ", TO "resolution", " which indicates how long a resolution to make.",
-     PARA,
-     "In the current version, asking for a second and longer resolution of the
-     same module involves recomputing the resolution from scratch.  Eventually
-     the previous work will be used and the recomputation will go quicker.",
-     PARA,
-     "The resolution returned may actually be one step longer than requested.
-     The extra differential is not guaranteed to be minimal."
-     }
 resolution = method(
      Options => {
 	  Compute => true,
@@ -53,11 +30,12 @@ resolution = method(
 	  }
      )
 
-
 res = resolution
+
 document { quote res,
     "See ", TO "resolution", "."
     }
+
 document { quote resolution,
      TT "resolution M", " -- produces a projective resolution of the 
      module (or ideal) M.",
@@ -88,7 +66,31 @@ document { quote resolution,
      SEEALSO "ChainComplex"
      }
 
-document { quote Algorithm,
+-- documentOption { resolution, quote HardLengthLimit,
+--      TT "HardLengthLimit", " -- a keyword for an optional argument used
+--      with ", TO "resolution", " which indicates that those parts of the
+--      computation in higher degree than this should be discarded (i.e.
+--      an implied LengthLimit=>d will be appended to this resolution 
+--      computation, when HardLengthLimit=>d is given to the resolution
+--      routine.  This should only be used in extreme cases when
+--      the skeleton of the resolution is very large in higher degrees,
+--      and you do not need that part of the resolution in these higher
+--      (slanted) degrees."
+--      }
+
+documentOption { resolution, quote LengthLimit,
+     TT "LengthLimit", " -- keyword for an optional argument used with
+     ", TO "resolution", " which indicates how long a resolution to make.",
+     PARA,
+     "In the current version, asking for a second and longer resolution of the
+     same module involves recomputing the resolution from scratch.  Eventually
+     the previous work will be used and the recomputation will go quicker.",
+     PARA,
+     "The resolution returned may actually be one step longer than requested.
+     The extra differential is not guaranteed to be minimal."
+     }
+
+documentOption { resolution, quote Algorithm,
      TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",
@@ -108,7 +110,7 @@ document { quote Algorithm,
      enormous improvement to the efficiency of the algorithm."
      }
 
-document { quote SortStrategy,
+documentOption { resolution, quote SortStrategy,
      TT "SortStrategy => n", " -- an option for ", TO "resolution", " which specifies
      the strategy to be used for sorting S-pairs.",
      PARA,

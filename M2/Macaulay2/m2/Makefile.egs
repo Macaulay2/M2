@@ -6,7 +6,7 @@ ifeq "$(OS)" "MS-DOS"
 %.out : %.m2
 	@ echo run example $*.m2
 	@ sed 1d <$*.m2 >tmp.m2
-	@ ../../bin/Macaulay2 -silent '-eloaddata("../../bin/Macaulay2-$(ARCH).data")' -- -x -s ../eg.m2 -- -x -s ../eg.m2 <tmp.m2 >tmp.out
+	@ ../../bin/Macaulay2 -silent '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- -x -s ../eg.m2 -- -x -s ../eg.m2 <tmp.m2 >tmp.out
 	@ mv tmp.out $*.out
 else
 %.out : %.m2
@@ -15,7 +15,7 @@ else
 	 else echo "run example $* `head -1 $*.m2`"; \
 	   sed 1d <$*.m2 | \
 	   ../../bin/Macaulay2 -silent \
-		'-e loaddata "../../bin/Macaulay2-$(ARCH).data"' \
+		'-e loaddata "../../cache/Macaulay2-$(ARCH).data"' \
 		-- -x -s ../eg.m2 -- -x -s ../eg.m2 >tmp \
 		 2>&1 |sed "s/^stdin:/$*.m2:/" \
 		&& \

@@ -1,5 +1,5 @@
 #! /bin/sh
 cd m2
 ../bin/Macaulay2 '-e phase=1' setup.m2 dumpdata.m2 '-e exit 0'
-../bin/Macaulay2 "-e loaddata \"../bin/Macaulay2-`uname -m | sed s=/=-=g `.data\"" \
+../bin/Macaulay2 "-e loaddata \"../cache/Macaulay2-`uname -m | sed s=/=-=g `.data\"" \
 	-- '-e runStartFunctions()' makeM2.m2 '-e exit 0'
