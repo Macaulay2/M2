@@ -90,10 +90,8 @@ public:
   void spair_to(monomial a, monomial b, monomial c) const;
   // spair_to: a = a - b + c
 
-  bool gcd_is_one(monomial m, monomial n) const;
-  bool remove_content(monomial &m, monomial &n) const;
-
   int compare(monomial m, monomial n) const; // returns LT, EQ, or GT.
+  int graded_compare(monomial m, monomial n) const; // returns LT, EQ, or GT.
 
   void translate_monomial(const binomial_ring *old_ring, monomial &m) const;
   vec monomial_to_vector(monomial m) const;
@@ -102,7 +100,12 @@ public:
   void remove_binomial(binomial &f) const;
   binomial make_binomial() const; // allocates the monomials
 
+  const monomial lead_monomial(binomial f) const { return f.lead; }
   void translate_binomial(const binomial_ring *old_ring, binomial &f) const;
+
+  bool gcd_is_one(monomial m, monomial n) const;
+  bool gcd_is_one(binomial f) const;
+  bool remove_content(binomial &f) const;
 
   vec binomial_to_vector(binomial f) const;
   vec binomial_to_vector(binomial f, int n) const;
@@ -113,6 +116,9 @@ public:
 
   bool one_reduction_step(binomial &f, binomial g) const;
   bool calc_s_pair(binomial_s_pair &s, binomial &result) const;
+
+  void monomial_out(ostream &o, const monomial m) const;
+  void elem_text_out(ostream &o, const binomial &f) const;
 };
 
 class binomial_s_pair_set
@@ -145,6 +151,10 @@ class binomial_s_pair_set
   s_pair_degree_list *_pairs;
   int _n_elems;
   
+  // Stats for number of pairs:
+  int _max_degree;
+  intarray _npairs; // npairs[2*d] = total # of pairs.  npairs[2*d+1] = number left
+
   void remove_lcm_list(s_pair_lcm_list *p);
   void remove_pair_list(s_pair_degree_list *p);
   void insert_pair(s_pair_degree_list *q, binomial_s_pair &s);
@@ -164,6 +174,7 @@ public:
   int lowest_degree() const;
   int n_elems(int d) const;
   int n_elems() const;
+  void stats() const;
 };
 
 class binomialGB
@@ -172,6 +183,7 @@ class binomialGB
     gbmin_elem *next;
     binomial_gb_elem *elem;
     int mask;
+    gbmin_elem() {}  // For list header
     gbmin_elem(binomial_gb_elem *f, int mask) : elem(f), mask(mask) {}
   };
 
@@ -187,14 +199,17 @@ class binomialGB
   gbmin_elem *first;
   int _max_degree;  // The highest degree of a GB generator found so far.
 
+  bool use_bigcell;
+  bool is_homogeneous_prime;
 public:
-  binomialGB(const binomial_ring *R);
+  binomialGB(const binomial_ring *R, bool bigcell, bool homogprime);
   ~binomialGB();
   void enlarge(const binomial_ring *newR);
 
   void minimalize_and_insert(binomial_gb_elem *f);
   monomial_list *find_divisor(monomial_list *I, monomial m) const;
   monomial_list *ideal_quotient(monomial m) const;
+  void remove_monomial_list(monomial_list *mm) const;
   
   binomial_gb_elem *find_divisor(monomial m) const;
   void make_new_pairs(binomial_s_pair_set *Pairs, binomial_gb_elem *f) const;
@@ -216,7 +231,13 @@ public:
 
   iterator begin() const { return iterator(first); }
   iterator end() const { return iterator(NULL); }
+
+  void debug_display() const;
 };
+
+#define GB_FLAG_IS_HOMOGENEOUS 1
+#define GB_FLAG_IS_NONDEGENERATE 2
+#define GB_FLAG_BIGCELL 4
 
 class binomialGB_comp : public gb_comp
 {
@@ -231,16 +252,28 @@ class binomialGB_comp : public gb_comp
   ///////////////////////
 
   // flags used during the computation:
-  bool is_homogeneous;
-  bool is_homogeneous_prime;
-  bool flag_auto_reduce;
-  bool flag_divide_by_variables;
+  bool is_homogeneous;		// Generators will all be homogeneous,
+				// and elements of degree d will be added
+				// only BEFORE computing a GB in degree d+1.
+				// An error is given if a generator is added in
+				// after that point.
+  bool is_nondegenerate;	// Assumed: the ideal has no linear factors:
+				// thus, if x.f is found to be in the ideal,
+				// f must already be in the ideal.
+  bool use_bigcell;		// The generators given do not necessarily generate
+				// the entire ideal.  If an element of the form
+				// x.f (x a variable) is found, then we may add f
+				// to the ideal.
+  bool flag_auto_reduce;	// Form full auto-reduction of GB elements.  This is the
+				// default.
   bool flag_use_monideal;	// If true, divisibility is done using monomial ideals
 				// otherwise, divisibility is done using a linked list, and 
-				// monomial masks.
+				// monomial masks.  Currently, using monideals is not yet
+				// implemented, so this is 'false'.
 
-  array<binomial_gb_elem *> mingens;	// Only valid for homogeneous case.  These point to G elements
-				// so don't free them by accident!
+  array<binomial_gb_elem *> mingens;	
+           // Only valid for homogeneous case.  These point to GB elements
+           // so don't free them by accident!
 
   array<binomial_gb_elem *> mingens_subring;  // Same comment applies here!
 
@@ -248,7 +281,8 @@ class binomialGB_comp : public gb_comp
   int gb_done(const intarray &stop_condtions) const;
 public:
   // creation
-  binomialGB_comp(const Ring *R, int *wts, bool revlex);
+  binomialGB_comp(const Ring *R, int *wts, bool revlex, 
+		  unsigned int options);
   ~binomialGB_comp();
 
   void enlarge(const Ring *R, int *wts);

@@ -393,10 +393,15 @@ void cmd_res_calc(object &op, object &odeg, object &oargs)
   //args[1] = SyzygyLimit
   //args[2] = PairLimit
   //args[3..5] = SyzygyLimit(nSyz, Level, Degree)
-  gStack.insert(make_object_int(p->calc(d, (*args)[0], 
-					(*args)[1], (*args)[2],
-					(*args)[3], (*args)[4],
-					(*args)[5])));
+  int llimit = (*args)[0];
+  int syzlimit = (*args)[1];
+  int pairlimit = (*args)[2];
+  int nsyz = (*args)[3];
+  int nlevel = (*args)[4];
+  int ndeg = (*args)[5];
+  gStack.insert(make_object_int(p->calc(d, llimit, 
+  					syzlimit, pairlimit, nsyz,
+  					nlevel, ndeg)));
 }
 void cmd_res_stats(object &op)
 {

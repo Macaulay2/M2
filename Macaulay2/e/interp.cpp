@@ -5,10 +5,19 @@
 #include "handles.hpp"
 #include "error.hpp"
 
+#if 0
 extern "C" void *make_string(char *,int);
 extern "C" void GB_gbstart(void);
 extern "C" void *GBgbprocess(char *,int);
 extern "C" void GB_gbforget(int);
+#endif
+
+extern "C" {
+void *make_string(char *,int);
+void GB_gbstart(void);
+void *GBgbprocess(char *,int);
+void GB_gbforget(int);
+}
 
 extern void execute(int opcode); // In primitive.cc
 
