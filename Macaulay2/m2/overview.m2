@@ -510,8 +510,12 @@ document { "finite fields",
      convert it to ring which is known by the system to be a finite field.",
      EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
      "You may also provide your own choice of primitive element.  Internally,
-     elements of the finite field are stored as powers of the primitive element.",
-     EXAMPLE "k = GF (ZZ/2[T]/(T^9+T+1), PrimitiveElement => T^3+1)",
+     elements of the finite field are stored as powers of the primitive element.
+     First we assign our quotient ring to a global variable to ensure that
+     ", TT "T", " gets set to a value in the quotient ring, and then we
+     call ", TT "GF", ".",
+     EXAMPLE "A = ZZ/2[T]/(T^9+T+1)",
+     EXAMPLE "k = GF (A, PrimitiveElement => T^3+1)",
      "Notice that ", TT "T", " is still recorded as an element of its
      quotient ring, rather than this finite field.",
      EXAMPLE "T",

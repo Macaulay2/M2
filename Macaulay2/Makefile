@@ -58,7 +58,7 @@ wc ::;  $(MAKE) -C d NODEPENDS=1 wc
 all ::; $(MAKE) -C basictests -k
 clean ::; $(MAKE) -C basictests clean
 ################################# thread
-clean ::; $(MAKE) -C thread clean
+clean ::; [ -d thread ] && $(MAKE) -C thread clean
 ################################# tutorial
 #### keep this before 'm2' so the final/*.out files get made
 all::; $(MAKE) -C tutorial all
@@ -72,7 +72,7 @@ tests ::;  $(MAKE) -C m2 tests
 clean ::; $(MAKE) -C m2 clean
 wc ::;  $(MAKE) -C m2 wc
 ################################# schubert
-tests ::; $(MAKE) -C schubert tests
+tests ::; [ -d schubert ] && $(MAKE) -C schubert tests
 ################################# setup
 all :: setup
 ifdef DUMPDATA
@@ -83,8 +83,8 @@ setup : setup.nodumpdata ../Makeconf.lcl
 	cp $< $@
 endif
 ################################# slides
-clean ::; -$(MAKE) -k -C slides clean
-tests ::; $(MAKE) -k -C slides
+clean ::; -[ -d slides ] && $(MAKE) -k -C slides clean
+tests ::;  [ -d slides ] && $(MAKE) -k -C slides
 ################################# html
 html ::; $(MAKE) -C html all
 clean ::; $(MAKE) -C html clean
@@ -98,9 +98,9 @@ clean ::; $(MAKE) -C emacs clean
 Vasconcelos-appendix ::; $(MAKE) -C Vasconcelos-appendix all
 clean ::; $(MAKE) -C Vasconcelos-appendix clean
 ################################# socket
-clean ::; $(MAKE) -C socket clean
+clean ::; [ -d socket ] && $(MAKE) -C socket clean
 ################################# Mathematica
-clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
+clean ::; [ -d Mathematica ] && $(MAKE) -C Mathematica clean
 ################################# backup
 backup ::; $(MAKE) -C m2 backup
-backup ::; $(MAKE) -C docs backup
+backup ::; [ -d backup ] && $(MAKE) -C docs backup

@@ -30,9 +30,8 @@ protected:
   Ring(int charac, int nvars, int totalvars, const Ring *K, 
 	const Monoid *M, const Monoid *D);
   Ring(const Ring &R);
-private:
-  virtual ~Ring();
 public:
+  virtual ~Ring();
 
   int charac() const { return P; }
   int n_vars() const { return nvars; }

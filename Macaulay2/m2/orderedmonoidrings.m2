@@ -202,10 +202,11 @@ Ring OrderedMonoid := (			  -- no memoize
 	  then error "expected ordered monoid handled by the engine";
 	  if not (R.?Engine and R.Engine) 
 	  then error "expected coefficient ring handled by the engine";
-	  Weyl := M.Options.WeylAlgebra === {};
-	  RM := if Weyl then (
+	  Weyl := M.Options.WeylAlgebra =!= {};
+	  RM := if not Weyl then (
 	       new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
-	       ) else (
+	       )
+	  else (
 	       diffs := M.Options.WeylAlgebra;
 	       if class diffs === Option 
 	       then diffs = {diffs}
@@ -231,7 +232,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       stderr << "diffs : " << diffs << endl;
 	       new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
 	       );
-	  RM.isCommutative = not Weyl;
+	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
 	  RM.baseRings = append(R.baseRings,R);
      	  ONE := RM#1;
 	  if degreeLength M != 0 then (
