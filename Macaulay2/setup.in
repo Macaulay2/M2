@@ -25,17 +25,16 @@ hadone=0
 for i in `printenv PATH | sed -e 's/%/%-/g' -e 's/ /%=/g' -e 's/:/ /g'`
 do i=`echo $i | sed -e 's/%=/ /g' -e 's/%-/%/g'`
    if [ "$i" != . ]
-   then echo -n "    "
-	if [ -w "$i" ]
+   then if [ -w "$i" ]
 	then hadone=1
-	     echo -n "**"
-        else echo -n "  "
-        fi
-	echo -n " $i"
-	if [ -x "$i"/M2 ]
-	then echo -n "   (contains a copy of M2)"
+	     flag="**"
+	else flag="  "
 	fi
-	echo
+	if [ -x "$i"/M2 ]
+	then comment="   (contains a copy of M2)"
+	else comment=""
+	fi
+	echo "    $flag $i$comment"
    fi
 done
 if [ "$hadone" = 0 ]

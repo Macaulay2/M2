@@ -650,8 +650,40 @@ readfun(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 0
 	  then Expr(read(stdin))
+	  else if length(s) == 2
+	  then (
+	       when s.0
+	       is f:file do (
+		    if ! f.input
+		    then return(WrongArg(1,"expected an input file"));
+		    when s.1
+		    is n:Integer do (
+			 if isInt(n)
+			 then (
+			      nn := toInt(n);
+			      if nn < 0
+			      then return(WrongArg(2,"a positive integer"));
+			      if f.inindex < f.insize
+			      then (
+				   nn = min(nn,f.insize - f.inindex);
+				   o := f.inindex;
+				   f.inindex = f.inindex + nn;
+				   Expr(new string len nn do for i from 0 to nn-1 do provide f.inbuffer.(o+i))
+				   )
+			      else (
+				   buf := new string len nn do provide ' ';
+				   r := read(f.infd,buf,nn);
+				   Expr(new string len r do for i from 0 to r-1 do provide buf.i)
+				   )
+			      )
+			 else WrongArgSmallInteger(2)
+			 )
+		    else WrongArg(2,"an integer")
+		    )
+	       else WrongArg(1,"a file")
+	       )
 	  else WrongNumArgs(0,1))
-     else WrongArg(1,"a file"));
+     else WrongArg(1,"a file or a string"));
 setupfun("read",readfun);
 
 toExpr(v:array(string)):Expr := list(

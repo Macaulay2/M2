@@ -121,7 +121,7 @@ ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
-	rm -f ../libexec/Macaulay2-$(ARCH)-data
+	rm -f ../$(DUMPDATAFILE)
 	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2

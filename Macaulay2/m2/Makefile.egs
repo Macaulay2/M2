@@ -4,7 +4,7 @@ include $(TOPDIR)/config.Makefile
 
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \
-	'-e loaddata "$(M2HOME)/cache/Macaulay2-$(ARCH)-data"' \
+	'-e loaddata "$(M2HOME)/$(DUMPDATAFILE)"' \
 	-- -x -s $(M2HOME)/m2/eg.m2
 else
 ARGS := -q -silent -x -s -ephase=1 $(M2HOME)/m2/setup.m2 -ephase=0 $(M2HOME)/m2/eg.m2
