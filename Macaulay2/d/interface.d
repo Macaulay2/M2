@@ -1332,7 +1332,7 @@ export rawMatrix1(e:Expr):Expr := (
 	       toInt(preference),
 	       ")"))
      else WrongArgInteger(4)
-     else WrongArg(3,"a sequence of ring elements")
+     else WrongArg(3,"a sequence of raw ring elements")
      else WrongArgInteger(2)
      else WrongArg(1,"a raw free module")
      else WrongNumArgs(4));
@@ -1344,7 +1344,7 @@ export rawMatrix2(e:Expr):Expr := (
      when s.0 is target:RawFreeModule do 
      when s.1 is source:RawFreeModule do
      if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
-     if !isSequenceOfRingElements(s.3) then WrongArg(4,"a sequence of ring elements") else
+     if !isSequenceOfRingElements(s.3) then WrongArg(4,"a sequence of raw ring elements") else
      when s.4 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(5) else
      toExpr(Ccode(RawMatrixOrNull,
 	       "(engine_RawMatrixOrNull)IM2_Matrix_make2(",
@@ -1419,7 +1419,7 @@ export rawSparseMatrix1(e:Expr):Expr := (
 	       toInt(preference),
 	       ")"))
      else WrongArgInteger(6)
-     else WrongArg(5,"a sequence of ring elements")
+     else WrongArg(5,"a sequence of raw ring elements")
      else WrongArg(4,"a sequence of small integers")
      else WrongArg(3,"a sequence of small integers")
      else WrongArgInteger(2)
@@ -1474,7 +1474,7 @@ export rawSparseMatrix2(e:Expr):Expr := (
 	       toInt(preference),
 	       ")"))
      else WrongArgInteger(7)
-     else WrongArg(6,"a sequence of ring elements")
+     else WrongArg(6,"a sequence of raw ring elements")
      else WrongArg(5,"a sequence of small integers")
      else WrongArg(4,"a sequence of small integers")
      else WrongArg(3,"a sequence of small integers")
@@ -3089,7 +3089,7 @@ export rawSetMatrixValues(e:Expr):Expr := (
 -- 			"(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(l.v), ",",
 -- 			"(RingElement_array*)", getSequenceOfRingElements(s.2), ")"
 -- 			))
--- 		else WrongArg(3, "a sequence of ring elements")
+-- 		else WrongArg(3, "a sequence of raw ring elements")
 -- 	     )
      	is M:LMatrixRR do (
 		if isSequenceOfReals(s.2) then (
