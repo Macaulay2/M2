@@ -10,24 +10,53 @@ getNameFromNumber = new MutableHashTable
 otherNodes = new MutableHashTable
 getNumberFromName = new MutableHashTable
 sectionNumberTable = new MutableHashTable
-sectionNumber = {0}
-descend = () -> sectionNumber = append(sectionNumber,0)
-ascend = () -> (
+-----------------------------------------------------------------------------
+-- we have to keep track of the part and chapter numbers, and *not* reset the
+-- chapter number to zero when starting a new part, so:
+--     3,8        part 3 (next chapter is chapter 8)
+--     3,8,8      part 3, chapter 8
+--     3,8,8,5    part 3, chapter 8, section 5
+--     3,8,8,5,2  part 3, chapter 8, section 5, subsection 2
+
+sectionNumber = {0,0}
+descend := () -> sectionNumber = (
+     if #sectionNumber === 2
+     then ( sectionNumber#0, sectionNumber#1, sectionNumber#1 )
+     else append(sectionNumber,0)
+     )
+ascend := () -> (
      if # sectionNumber === 1 then error "oops: ascending too high, producing empty section number";
      if # sectionNumber === 0 then error "oops: empty section number";
      sectionNumber = drop(sectionNumber,-1)
      )
+next := sectionNumber -> (
+     if #sectionNumber === 0 then sectionNumber
+     else if #sectionNumber === 2 then ( sectionNumber#0 + 1, sectionNumber#1 )
+     else if #sectionNumber === 3 
+     then ( sectionNumber#0, sectionNumber#1 + 1, sectionNumber#2 + 1 )
+     else append( drop(sectionNumber, -1), sectionNumber#-1 + 1 )
+     )
+fmt := sectionNumber -> (
+     concatenate between(".",
+	  prepend(
+	       ROMAN sectionNumber#0,
+	       apply(drop(sectionNumber,2),toString)
+	       )
+	  )
+     )
+-----------------------------------------------------------------------------
 String + ZZ := (s,i) -> s
+
+needs "roman.m2"
+
 record = (
      counter := 0;
      node -> (
 	  counter = counter + 1;
 	  getNumberFromName#node = counter;
 	  getNameFromNumber#counter = node;
-	  if # sectionNumber =!= 0 then (
-	       sectionNumber = append( drop(sectionNumber, -1), sectionNumber#-1 + 1 );
-	       );
-	  n := sectionNumberTable#counter = concatenate between(".",apply(sectionNumber,toString));
+	  sectionNumber = next sectionNumber;
+	  n := sectionNumberTable#counter = fmt sectionNumber;
 	  stderr << "node : " << node << " [" << n << "]" << endl;
 	  )
      )
