@@ -423,19 +423,32 @@ document { Set,
      HEADLINE "the class of all sets"
      }
 
-document { (symbol #?, Set, Thing), HEADLINE "test set membership",
+document { (symbol #?, Set, Thing),
+     HEADLINE "test set membership",
      TT "x#?i", " -- tests whether ", TT "i", " is a member of the set ", TT "x", "."
      }
 
 document { (symbol -, Set, Set),
+     HEADLINE "set difference",
      TT "x - y", " -- the difference of two sets.",
      SEEALSO {"Set", "-"}
      }
 
 document { (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
-document { isSubset, HEADLINE "whether something is a subset of another" }
-document { (symbol ++, Set, Set), HEADLINE "disjoint union of sets", EXAMPLE "set {a,b,c} ++ set {b,c,d}" }
-document { (symbol *, Set, Set), HEADLINE "intersection of sets", EXAMPLE "set {1,2,3} * set {2,3,4}" }
+
+document { isSubset,
+     HEADLINE "whether something is a subset of another"
+     }
+
+document { (symbol ++, Set, Set),
+     HEADLINE "disjoint union of sets",
+     EXAMPLE "set {a,b,c} ++ set {b,c,d}"
+     }
+
+document { (symbol *, Set, Set),
+     HEADLINE "intersection of sets",
+     EXAMPLE "set {1,2,3} * set {2,3,4}"
+     }
 
 TEST "
 x = set {1,2,3}
@@ -468,7 +481,9 @@ document { Handle,
 	  TO "newHandle"
 	  }
      }
+
 document { newHandle,
+     HEADLINE "make a new handle",
      TT "newHandle x", " -- passes the commands ", TT "x", " to the engine 
      with ", TO "sendgg", ", pops an object off the engine's stack and 
      produces the handle.",
@@ -476,6 +491,7 @@ document { newHandle,
      }
 
 document { toHandle,
+     HEADLINE "convert to handle",
      TT "toHandle i", " -- convert the integer i to a ", TO "Handle", ".",
      PARA,
      "No checking is done to ensure that the integer i actually has
@@ -483,6 +499,7 @@ document { toHandle,
      }
 
 document { handle,
+     HEADLINE "get the handle of an object",
      TT "handle x", " -- produces the ", TO "Handle", " for the object x.",
      PARA,
      "The corresponding symbol is used as a key under which to store
@@ -490,6 +507,7 @@ document { handle,
      }
 
 document { look,
+     HEADLINE "look at the engine's stack",
      TT "look()", " -- display item on the top of the engine's stack.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
@@ -504,12 +522,14 @@ document { look,
      }
 
 document { callgg,
+     HEADLINE "call the engine",
      TT "callgg(f,x,y,...)", " -- calls the ", TO "engine", " with engine
      command string f, after pushing engine objects corresponding to
      x, y, ... onto the engine's stack."
      }
 
 document { engineStack,
+     HEADLINE "display the engine's stack",
      TT "engineStack()", " -- returns a net containing a display of the contents
      of the engine's stack.",
      PARA,
@@ -526,6 +546,7 @@ document { engineStack,
      }
 
 document { heap,
+     HEADLINE "display the engine's heap",
      TT "heap()", " -- display the contents of the engine's heap.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
@@ -540,6 +561,7 @@ document { heap,
      }
      
 document { engineMemory,
+     HEADLINE "display engine memory usage",
      TT "engineMemory()", " -- display the memory usage of the engine.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
@@ -553,6 +575,7 @@ document { engineMemory,
 	  }
      }
 document { see,
+     HEADLINE "display engine object",
      TT "see i", " -- return a string which displays the engine object whose handle 
      is the integer i.",
      BR,
@@ -569,6 +592,7 @@ document { see,
      }
 
 document { eePopInt,
+     HEADLINE "pop integer from engine stack",
      TT "eePopInt()", " -- pop the integer from the top of the engine's stack,
      returning its value.",
      PARA,
@@ -576,6 +600,7 @@ document { eePopInt,
      }
 
 document { eePopIntarray,
+     HEADLINE "pop array of integers from engine stack",
      TT "eePopIntarray()", " -- pop the array of integers from the top of the engine's 
      stack, returning its value as a list of integers.",
      PARA,
@@ -583,6 +608,7 @@ document { eePopIntarray,
      }
 
 document { eePopBool,
+     HEADLINE "pop Boolean value from engine stack",
      TT "eePopBool()", " -- pop a boolean value from the top of the engine's stack,
      returning true or false.",
      PARA,
@@ -590,6 +616,7 @@ document { eePopBool,
      }
 
 document { eePop,
+     HEADLINE "pop object from engine stack",
      TT "eePop f", " -- take an engine conversion format string and use it
      to convert an object popped from the top of the engine's stack.",
      PARA,
@@ -597,16 +624,22 @@ document { eePop,
      }
 
 document { eePromote,
+     HEADLINE "call engine to promote a ring element",
      TT "eePromote(f,R)", " -- promote a ring element ", TT "f", " to the
-     ring ", TT "R", "."
+     ring ", TT "R", ".",
+     PARA,
+     SEEALSO "high level gb engine commands"
      }
 
 document { eeLift,
+     HEADLINE "call engine to lift a ring element",
      TT "eeLift(f,R)", " -- lift a ring element ", TT "f", " to the
-     ring ", TT "R", "."
+     ring ", TT "R", ".",
+     PARA,
+     SEEALSO "high level gb engine commands"
      }
 
 document { symbol directSum,
-     HEADLINE "key for special methods for forming direct sums",
+     HEADLINE "speciy method for forming direct sums",
      SEEALSO "directSum"
      }

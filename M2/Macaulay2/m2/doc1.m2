@@ -892,6 +892,7 @@ document { (symbol <<, Nothing, Thing),
      }
 
 document { mathML,
+     HEADLINE "convert to MathML format",
      TT "mathML x", " -- converts ", TT "x", " to MathML form.",
      PARA,
      EXAMPLE {

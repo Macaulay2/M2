@@ -744,3 +744,7 @@ document { "computing syzygies",
 document { "computing resolutions",
      "This node has not been written yet."
      }
+
+document { "diff and contract",
+     "This node has not been written yet."
+     }

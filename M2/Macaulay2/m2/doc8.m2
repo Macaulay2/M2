@@ -235,7 +235,7 @@ document { GBtype,
      }
      
 document { gb,
-     HEADLINE "compute a Groebner basis of an ideal or submodule",
+     HEADLINE "compute a Groebner basis",
      TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " ", TT "f", ".",
      PARA,
      "If the computation is interrupted, then the partially completed
@@ -263,14 +263,13 @@ document { gb => StopBeforeComputation,
      }
 
 document { DegreeLimit,
-     HEADLINE "compute only up to this degree",
+     HEADLINE "compute up to a certain degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      various functions which specifies that the computation should halt after dealing 
      with degree n."
      }
 
 document { gb => DegreeLimit, 
-     HEADLINE "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should halt after 
      dealing S-polynomials up to degree ", TT "n", ".",
@@ -405,7 +404,7 @@ document { gb => StopWithMinimalGenerators,
      }
 
 document { Strategy,
-     HEADLINE "specify the strategy and/or algorithm to use",
+     HEADLINE "specify a computational strategy",
      TT "Strategy => v", " -- an optional argument used with various routines 
      to suggest a strategy for efficient computation."
      }
@@ -417,8 +416,9 @@ document { gb => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      SHIELD MENU {
-	  TO "EGB",
-	  TO "GBinhom",
+	  TO "Primary",
+     	  TO "Homogeneous",
+	  TO "Inhomogeneous",
 	  TO "LongPolynomial",
 	  TO "Sort"
 	  }
@@ -432,17 +432,23 @@ document { Sort,
      running time can change either for the good or bad."
      }
 
-document { EGB,
-     TT "EGB", " -- a strategy used with the keyword ", TO "Strategy", ".",
+document { Primary,
+     TT "Primary", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "This is a new Groebner basis algorithm, that works in the homogeneous and
      inhomogeneous cases, and is often faster than the default algorithms.  This 
      feature is currently under development."
      }
 
+document { Homogeneous,
+     TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA,
+     "This is an alternate Groebner basis algorithm which can be used if the submodule
+     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field."
+     }
 
-document { GBinhom,
-     TT "GBinhom", " -- a strategy used with the keyword ", TO "Strategy", ".",
+document { Inhomogeneous,
+     TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "This is the default Groebner basis algorithm used if the submodule is
      inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field."

@@ -14,7 +14,7 @@ resolution = method(
 	  HardDegreeLimit => {},          -- throw out information in degrees above this one
 	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
 	  SortStrategy => 0,		  -- strategy choice for sorting S-pairs
-          Algorithm => null		  -- algorithm to use, usually 1, but sometimes 2
+          Strategy => null		  -- algorithm to use, usually 1, but sometimes 2
 	  }
      )
 
@@ -95,7 +95,7 @@ resolutionInEngine := options -> (M) -> (
 	  if not isField coefficientRing R
 	  then error "expected coefficient ring to be a field";
 	  g := presentation M;
-	  if options.Algorithm === 0 then
+	  if options.Strategy === 0 then
 	      g = gens gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
@@ -108,7 +108,7 @@ resolutionInEngine := options -> (M) -> (
 	  W.length = maxlength;
 	  W.DegreeLimit = degreelimit;
 	  W.handle = newHandle(ggPush g, 
-	       ggPush options.Algorithm,
+	       ggPush options.Strategy,
 	       ggPush maxlength,
 	       ggPush harddegreelimit,
 	       ggPush options.SortStrategy,
@@ -145,9 +145,9 @@ resolutionInEngine := options -> (M) -> (
      C)
 
 default := (o,defaults) -> merge(o,defaults,(x,y) -> if x === null then y else x)
-Algorithm0 := new OptionTable from { Algorithm => 0 }
-Algorithm1 := new OptionTable from { Algorithm => 1 }
-Algorithm2 := new OptionTable from { Algorithm => 2 }
+Strategy0 := new OptionTable from { Strategy => 0 }
+Strategy1 := new OptionTable from { Strategy => 1 }
+Strategy2 := new OptionTable from { Strategy => 2 }
 
 resolution Module := ChainComplex => o -> (M) -> (
      R := ring M;
@@ -155,13 +155,13 @@ resolution Module := ChainComplex => o -> (M) -> (
      oR := options R;
      if oR.?SkewCommutative and oR.SkewCommutative then (
 	  if isHomogeneous M then (
-	       (resolutionInEngine default(o,Algorithm2))(M))
+	       (resolutionInEngine default(o,Strategy2))(M))
 	  else
 	       (resolutionBySyzygies o)(M))
      else if k === ZZ or not isCommutative R then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then (resolutionByHomogenization o)(M)
-     else if isQuotientRing R then (resolutionInEngine default(o,Algorithm2))(M)
-     else (resolutionInEngine default(o,Algorithm1))(M)
+     else if isQuotientRing R then (resolutionInEngine default(o,Strategy2))(M)
+     else (resolutionInEngine default(o,Strategy1))(M)
      )
 
 resolution Matrix := ChainComplexMap => options -> (f) -> extend(

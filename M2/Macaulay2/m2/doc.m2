@@ -630,7 +630,7 @@ document { (symbol " ", Function, Thing),
      }
 
 document { symbol "*",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for multiplication",
      TT "x * y", " -- usually yields the product of x and y.",
      PARA,
      SEEALSO{ "times", "product" }
@@ -655,7 +655,7 @@ document { symbol "^^",
      }
 
 document { symbol "+",
-     HEADLINE "a binary operator",
+     HEADLINE "a bina operator",
      TT "x + y", " -- a binary operator used for addition in many situations
      and union of sets.",
      PARA,
@@ -667,7 +667,7 @@ document { (symbol +, Set, Set),
      TT "s + t", " -- union of two sets" }
 
 document { symbol "-",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for subtraction",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
      BR,NOINDENT,
@@ -677,7 +677,7 @@ document { symbol "-",
      }
 
 document { symbol "/",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for division",
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
      PARA,
@@ -685,11 +685,11 @@ document { symbol "/",
      }
 
 document { symbol "%",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for remainder",
      TT "x % y", " -- a binary operator used for remainder and reduction." }
 
 document { symbol "//",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for quotient",
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
      PARA,
@@ -701,7 +701,7 @@ document { symbol "\\\\",
      }
 
 document { symbol "^",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for exponents",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
      "When computing powers, one of the following methods is used.",
@@ -993,7 +993,7 @@ document { symbol "!=",
      }
 
 document { symbol "**",
-     HEADLINE "a binary operator",
+     HEADLINE "a binary operator, usually used for tensor product",
      }
 
 document { (symbol **, Set, Set),

@@ -278,9 +278,26 @@ document { "Mathematical Vignettes",
 document { "Reference Manual",
      "This section is intended to offer detailed documentation on
      every aspect of the system of interest to users.",
+     PARA,
+     "Some types of things with mathematical interest.",
      MENU {
-	  TO "Thing",
-	  }
+	  TO "ChainComplex",
+	  TO "GroebnerBasis",
+	  TO "Ideal",
+	  TO "Matrix",
+	  TO "Module",
+	  TO "Ring",
+	  TO "RingMap",
+	  TO "Variety",
+	  },
+     "Some types of things of interest to the programmer and user.",
+     MENU {
+	  TO "File",
+	  TO "Function",
+	  TO "List",
+	  TO "Sequence",
+	  },
+     "Everything else is explained as a type of ", TO "Thing", "."
      }
 
 document {  "Developer's Corner",

@@ -175,7 +175,7 @@ document { basictype,
      }
 
 document { symbol "++",
-     HEADLINE "a binary operator"
+     HEADLINE "a binary operator, usually used for direct sum"
      }
 
 document { symbol "@@",

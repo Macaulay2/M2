@@ -15,10 +15,10 @@
 -- J=minors(3,N);
 -- Q=R/J;
 -- M=coker vars Q;
--- time betti res (M,Algorithm=>2,LengthLimit=>3)
--- time betti res (M,Algorithm=>2,LengthLimit=>4)
--- time betti res (M,Algorithm=>2,LengthLimit=>5)
--- time betti res (M,Algorithm=>2,LengthLimit=>6)
+-- time betti res (M,Strategy=>2,LengthLimit=>3)
+-- time betti res (M,Strategy=>2,LengthLimit=>4)
+-- time betti res (M,Strategy=>2,LengthLimit=>5)
+-- time betti res (M,Strategy=>2,LengthLimit=>6)
 -- 
 
 -- hmm, these use a LOT of memory and time, so I've commented them out
