@@ -72,7 +72,7 @@ select(a:Sequence,f:Expr):Expr := (
      found := 0;
      foreach x at i in a do (
 	  y := applyEE(f,x);
-	  when y is Error do return y else nothing;
+	  when y is err:Error do if err.message == breakMessage then return err.value else return y else nothing;
 	  if y == True then (
 	       b.i = true;
 	       found = found + 1;
@@ -89,7 +89,7 @@ select(e:Expr,f:Expr):Expr := (
 	       while p != p.next do (
 		    newvalue := applyEE(f,p.value);
 		    when newvalue 
-		    is Error do return newvalue
+		    is err:Error do if err.message == breakMessage then return err.value else return newvalue
 		    else if newvalue == True 
 		    then storeInHashTable(u,p.key,p.hash,p.value);
 		    p = p.next;
@@ -111,7 +111,7 @@ select(n:int,a:Sequence,f:Expr):Expr := (
      foreach x at i in a do (
 	  if found < n then (
 	       y := applyEE(f,x);
-	       when y is Error do return y else nothing;
+	       when y is err:Error do if err.message == breakMessage then return err.value else return y else nothing;
 	       if y == True then (
 		    b.i = true;
 		    found = found + 1;
@@ -133,7 +133,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	       while nval > 0 && p != p.next do (
 		    newvalue := applyEE(f,p.value);
 		    when newvalue 
-		    is Error do return newvalue
+		    is err:Error do if err.message == breakMessage then return err.value else return newvalue
 		    else if newvalue == True 
 		    then (
 			 storeInHashTable(u,p.key,p.hash,p.value);
@@ -170,7 +170,7 @@ any(f:Expr,obj:HashTable):Expr := (
 	  while true do (
 	       if p == p.next then break;
 	       v := applyEEE(f,p.key,p.value);
-	       when v is Error do return v else nothing;
+	       when v is err:Error do if err.message == breakMessage then return err.value else return v else nothing;
 	       if v == True then return True;
 	       p = p.next;
 	       ));
@@ -178,7 +178,7 @@ any(f:Expr,obj:HashTable):Expr := (
 any(f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
 	  y := applyEE(f,x);
-	  when y is Error do return y else nothing;
+	  when y is err:Error do if err.message == breakMessage then return err.value else return y else nothing;
 	  if y == True then return True);
      False);
 any(f:Expr,e:Expr):Expr := (
