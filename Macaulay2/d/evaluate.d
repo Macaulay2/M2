@@ -1077,8 +1077,10 @@ export steppingFlag := false;
 export determineExceptionFlag():void := (
      exceptionFlag = interruptedFlag || steppingFlag || alarmedFlag;
      );
-export clearAllFlags():void := (
+export clearAlarm():void := (
      alarm(0);
+     );
+export clearAllFlags():void := (
      exceptionFlag = false;
      interruptedFlag = false;
      steppingFlag = false;
@@ -1264,7 +1266,6 @@ export eval(c:Code):Expr := (
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
 	       ));
      when e is err:Error do (
-     	  clearAllFlags();
 	  if SuppressErrors then return e;
 	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage || err.message == throwMessage
 	  then (
@@ -1272,6 +1273,8 @@ export eval(c:Code):Expr := (
 	       return e;
 	       );
 	  p := codePosition(c);
+     	  clearAllFlags();
+     	  clearAlarm();
      	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.frame;
 	       err.frame = noRecycle(localFrame);
