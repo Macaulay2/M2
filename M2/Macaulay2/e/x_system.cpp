@@ -53,10 +53,11 @@ void cmdForget(object &r)
 void cmdDeref(object &r)
 {
   object s;
-  if (gHandles.deref(r->int_of(), s))
+  int h = r->int_of();
+  if (gHandles.deref(h, s))
     gStack.insert(s);
   else
-    gError << "bad handle: " << r->int_of();
+    gError << "bad handle: " << h;
 }
 //////// Input of objects  ///////////////////////////////////////////
 void cmdInt(void)

@@ -226,3 +226,29 @@ size_t doubling_stash::allocated_size(void *p)
   return double_size[q[-1]];
 }
 
+#include <gc.h>
+
+extern "C" void outofmem();
+
+// the new way:
+
+void* operator new( unsigned int size ) {
+  void *p = GC_MALLOC( size );
+  if (p == NULL) outofmem();
+  return p;
+}
+
+void operator delete( void* obj ) {
+  if (obj != NULL) GC_FREE( obj );
+}
+
+void* operator new []( unsigned int size ) {
+  void *p = GC_MALLOC( size );
+  if (p == NULL) outofmem();
+  return p;
+}
+
+void operator delete []( void* obj ) {
+  if (obj != NULL) GC_FREE( obj );
+}
+
