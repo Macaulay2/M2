@@ -727,6 +727,7 @@ makePackageIndex String := prefixDirectory -> (
      r := readDirectory p;
      r = select(r, fn -> fn != "." and fn != "..");
      r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
+     r = sort r;
      key := "package index";
      -- tag := makeDocumentTag key;
      p | "index.html"

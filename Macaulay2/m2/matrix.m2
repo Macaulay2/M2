@@ -23,11 +23,8 @@ reduce = (tar,f) -> (					    -- we erase this later
 Matrix * QQ := Matrix * ZZ := (m,i) -> i * m
 
 ZZ * Matrix :=
-QQ * Matrix := 
-RingElement * Matrix := (r,m) -> (
-     R := ring r;
-     -- if R =!= ring m then error "scalar not in ring of matrix";
-     map(target m, source m, reduce(target m, raw r * raw m)))
+QQ * Matrix          := (r,m) -> map(target m, source m, reduce(target m, raw r_(ring m) * raw m))
+RingElement * Matrix := (r,m) -> map(target m, source m, reduce(target m, raw r * raw m))
 
 Matrix * RingElement := (m,r) -> (
      R := ring r;
