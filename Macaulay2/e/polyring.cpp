@@ -1310,6 +1310,12 @@ ring_elem PolynomialRing::remainderAndQuotient(const ring_elem f, const ring_ele
     {
       if (M->is_group())
 	{
+	  Nterm *f1 = f;
+	  Nterm *g1 = g;
+	  r = powerseries_division_algorithm(f1,g1,q);
+	  quot = q;
+	  return r;
+#if 0
 	  // First factor out powers of minimal monomial from f, g.
 	  ring_elem one_kk = K->from_int(1);
 	  int *one = M->make_one();
@@ -1349,6 +1355,7 @@ ring_elem PolynomialRing::remainderAndQuotient(const ring_elem f, const ring_ele
 	  M->remove(one);
 	  K->remove(one_kk);
 	  return rem;
+#endif
 	}
       else if (!is_quotient_poly_ring())
 	{
@@ -1863,6 +1870,99 @@ Nterm * PolynomialRing::division_algorithm(Nterm *f, Nterm *g) const
 
   M->remove(m);
   remt->next = NULL;
+  return remhead.next;
+}
+
+Nterm * PolynomialRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const
+{
+  // This is intended for use when there is one variable, inverses are present,
+  // and the coefficient ring is a field, or is ZZ.
+  // The algorithm used is as follows.
+  // Given a non-zero polynomial f = f(t,t^-1), let v(f) = top - bottom
+  //   where top is the largest exponent in f, and bottom is the smallest.
+  //   So if f is a monomial, v(f) = 0.  Also, v(fg) = v(f)v(g) (at least if the
+  //   coefficient ring is a domain), and v(f) >= 0 always.
+  // The algorithm is as follows:
+  //   Reduce f = f0 by lt(g) to obtain f1, then again to obtain f2, etc.
+  //   So v(f1) >= v(f2) >= ... >= v(fi),
+  //   and either fi = 0, v(fi) < v(g), or v(f(i+1)) > v(fi).
+  //   In this case, the remainder returned is fi.
+  //   (Note: the last case won't happen if the coefficients are a field, or the
+  //   lead coefficient of g is a unit).
+
+
+  // This returns the remainder, and sets quot to be the quotient.
+
+  ring_elem a = copy(f);
+  Nterm *t = a;
+  Nterm *b = g;
+  Nterm divhead;
+  Nterm remhead;
+  Nterm *divt = &divhead;
+  Nterm *remt = &remhead;
+  Nterm *nextterm = new_term();
+  int gval, flast;
+
+  if (a != 0)
+    {
+      Nterm *z = a;
+      for ( ; z->next != 0; z = z->next);
+      flast = M->primary_degree(z->monom);
+    }
+
+  if (g != 0)
+    {
+      int gfirst, glast;
+      Nterm *z = b;
+      gfirst = M->primary_degree(z->monom);
+      for ( ; z->next != 0; z = z->next);
+      glast = M->primary_degree(z->monom);
+      gval = abs(gfirst-glast);
+    }
+
+  
+  //  buffer o;
+  while (t != NULL)
+    {
+      int ffirst = M->primary_degree(t->monom);
+      int fval = abs(ffirst-flast);
+      if (fval >= gval)
+	{
+	  //o << "t = "; elem_text_out(o,t); o << newline;
+	  a = t;
+	  bool cancelled = imp_attempt_to_cancel_lead_term(a, g, nextterm->coeff, nextterm->monom);
+	  t = a;
+	  //	o << "  new t = "; elem_text_out(o,t); o << newline;
+	  //      o << "  cancelled = " << (cancelled ? "true" : "false") << newline;
+	  //	o << "  coeff = "; K->elem_text_out(o,nextterm->coeff); o << newline;
+	  //	emit(o.str());
+	  if (!K->is_zero(nextterm->coeff))
+	    {
+	      divt->next = nextterm;
+	      divt = divt->next;
+	      nextterm = new_term();
+	    }
+	  if (!cancelled)
+	    {
+	      remt->next = t;
+	      remt = remt->next;
+	      t = t->next;
+	    }
+	}
+      else
+	{
+	  remt->next = t;
+	  remt = remt->next;
+	  t = t->next;
+	}
+    }
+
+  nextterm = NULL;
+  ring_elem nt = nextterm;
+  remove(nt);
+  remt->next = NULL;
+  divt->next = NULL;
+  quot = divhead.next;
   return remhead.next;
 }
 

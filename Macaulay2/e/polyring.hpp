@@ -110,6 +110,8 @@ protected:
   void minimal_monomial(ring_elem f, int *&monom) const;
   Nterm *division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
   Nterm *division_algorithm(Nterm *f, Nterm *g) const;
+  Nterm *powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
+
 public:
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
