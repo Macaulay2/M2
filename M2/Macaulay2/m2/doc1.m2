@@ -438,12 +438,12 @@ document { OptionTable,
      SEEALSO "==>" }
 
 document { (symbol "==>", List, Function),
-     Headline => "declare option names and default values",
+     Headline => "attaching options to a function",
      "See ", TO (symbol "==>", OptionTable, Function), " for details."
      }
 
 document { (symbol "==>", OptionTable, Function),
-     Headline => "declare option names and default values",
+     Headline => "attaching options to a function",
      Usage => { TT "defs ==> fun", " -- a new function made from the
 	  function ", TT "fun", " that processes optional arguments
 	  specified by ", TT "defs", "."},

@@ -290,8 +290,8 @@ document { benchmark,
 
 document { memoize,
      Headline => "record results of function evaluation for future use",
-     TT "memoize f", " -- produces, from a function f, a new function which
-     behaves the same as f, but remembers previous answers to be provided
+     TT "memoize f", " -- produces, from a function ", TT "f", ", a new function which
+     behaves the same as ", TT "f", ", but remembers previous answers to be provided
      the next time the same arguments are presented.",
      PARA,
      EXAMPLE {
@@ -310,7 +310,7 @@ document { memoize,
      each of the form ", TT "x => v", ", where ", TT "v", " is the value to
      be provided for the argument ", TT "x", ".",
      PARA,
-     "Warning: when the value returned by f is null, it will always be 
+     "Warning: when the value returned by ", TT "f", " is ", TT "null", ", it will always be 
      recomputed, even if the same arguments are presented.",
      PARA,
      "Warning: the new function created by ", TT "memoize", " will save
@@ -319,7 +319,7 @@ document { memoize,
      as soon as they might have been.  If the arguments are
      implemented as mutable hash tables (modules, matrices and rings are
      implemented this way) then a viable strategy is to stash computed
-     results in the arugments themselves!"
+     results in the arguments themselves.  See also ", TT "CacheTable", "."
      }
 
 TEST "
