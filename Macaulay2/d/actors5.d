@@ -1016,11 +1016,7 @@ readlinkfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("readlink",readlinkfun);
 
-realpathfun(e:Expr):Expr := (
-     when e is filename:string do (
-	  v := realpath(filename);
-	  if length(v) == 0 then nullE else Expr(v))
-     else WrongArgString());
+realpathfun(e:Expr):Expr := when e is filename:string do Expr(realpath(filename)) else WrongArgString();
 setupfun("realpath",realpathfun);
 
 setupconst("typicalValues", Expr(typicalValues));
