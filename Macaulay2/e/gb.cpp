@@ -19,6 +19,7 @@
 #include "hilb.hpp"
 #include "text_io.hpp"
 #include "vector.hpp"
+#include "matrixcon.hpp"
 
 int gbTrace = 0;
 
@@ -1130,56 +1131,56 @@ ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
 const MatrixOrNull *GB_comp::get_gb()
 {
   start_computation();
-  Matrix *result = new Matrix(_F);
+  MatrixConstructor mat(_F, _gb.length(), false);
   for (int i=0; i<_gb.length(); i++)
     {
       vec v = originalR->translate_gbvector_to_vec(_F,_gb[i]->f);
-      result->append(v);
+      mat.set_column(i,v);
     }
-  return result;
+  return mat.to_matrix();
   // TODO NOW sort it, and auto-reduce it
 }
 
 const MatrixOrNull *GB_comp::get_mingens()
 {
   start_computation();
-  Matrix *result = new Matrix(_F);
+  MatrixConstructor mat(_F, 0, false);
   for (int i=0; i<_gb.length(); i++)
     if (_gb[i]->is_min)
-      result->append(originalR->translate_gbvector_to_vec(_F,_gb[i]->f));
-  return result;
+      mat.append(originalR->translate_gbvector_to_vec(_F,_gb[i]->f));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *GB_comp::get_change()
 {
   start_computation();
-  Matrix *result = new Matrix(_Fsyz);
+  MatrixConstructor mat(_Fsyz, _gb.length(), false);
   for (int i=0; i<_gb.length(); i++)
-    result->append(originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
-  return result;
+    mat.set_column(i,originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *GB_comp::get_syzygies()
 {
   start_computation();
-  Matrix *result = new Matrix(_Fsyz);
+  MatrixConstructor mat(_Fsyz, _syz.length(), false);
   for (int i=0; i<_syz.length(); i++)
-    result->append(originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
-  return result;
+    mat.set_column(i,originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
+  return mat.to_matrix();
  }
 
 const MatrixOrNull *GB_comp::get_initial(int nparts)
 {
   start_computation();
-  Matrix *result = new Matrix(_F);
+  MatrixConstructor mat(_Fsyz, _gb.length(), false);
   for (int i=0; i<_gb.length(); i++)
     {
       gbvector *f = _GR->gbvector_lead_term(nparts, _F, _gb[i]->f);
-      result->append(originalR->translate_gbvector_to_vec(_F,f));
+      mat.set_column(i,originalR->translate_gbvector_to_vec(_F,f));
     }
   // TODO: sort this list.  This sort order will affect:
   //  get_matrix, get_change, and of course this one.
-  return result;
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
@@ -1195,7 +1196,7 @@ const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
        return 0;
   }
   start_computation();
-  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift(), false);
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1205,9 +1206,9 @@ const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
       gb_reduce(f, fsyz);
 
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
-      (*red)[i] = fv;
+      red.set_column(i,fv);
     }
-  return red;
+  return red.to_matrix();
 }
 
 void GB_comp::matrix_lift(const Matrix *m,
@@ -1227,8 +1228,8 @@ void GB_comp::matrix_lift(const Matrix *m,
       *result_quotient = 0;
   }
   start_computation();
-  *result_remainder = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  *result_quotient = new Matrix(_Fsyz, m->cols());
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift(), false);
+  MatrixConstructor mat_quotient(_Fsyz, 0, false);
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1240,9 +1241,11 @@ void GB_comp::matrix_lift(const Matrix *m,
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, f, denom);
       _K->negate_to(denom);
       vec fsyzv = originalR->translate_gbvector_to_vec_denom(_Fsyz,fsyz, denom);
-      (**result_remainder)[i] = fv;
-      (**result_quotient)[i] = fsyzv;
+      mat_remainder.set_column(i, fv);
+      mat_quotient.append(fsyzv);
     }
+  *result_remainder = mat_remainder.to_matrix();
+  *result_quotient = mat_quotient.to_matrix();
 }
 
 int GB_comp::contains(const Matrix *m)

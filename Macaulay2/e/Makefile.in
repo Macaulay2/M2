@@ -25,7 +25,6 @@ PRE.cc   = $(COMPILE.cc) -E
 
 INTERFACE = \
 	matrixcon \
-	symm \
 	computation \
 	comp_gb \
 	gbA \
@@ -97,6 +96,8 @@ STILLTOCOMPILE = \
 	gbbinom
 
 COMMANDS = \
+	mat-kbasis \
+	mat-symm \
 	ring-vecs \
         gbnod \
         freemod2 \

@@ -26,7 +26,7 @@ private:
   const Matrix *gens;			// This is the input
 
   hm_elem *GB_list;
-  Matrix *syz;
+  Matrix * syz;
 
   int n_gb;
   int collect_syz;	// 0 or 1

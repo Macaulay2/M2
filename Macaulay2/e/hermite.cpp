@@ -4,6 +4,8 @@
 #include "hermite.hpp"
 #include "text_io.hpp"
 #include "vector.hpp"
+#include "matrixcon.hpp"
+
 extern ZZ *globalZZ;
 
 hm_elem *HermiteComputation::new_gen(int i)
@@ -30,8 +32,11 @@ void HermiteComputation::insert(hm_elem *p)
 {
   if (p->f == NULL)
     {
+#if 0
+#warning "syz->append needs to be rewritten"
       if (p->fsyz != NULL && collect_syz)
 	syz->append(p->fsyz);
+#endif
       mpz_clear(p->lead);
       deleteitem(p);
     }
@@ -59,7 +64,8 @@ HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
     nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
   const FreeModule *F = m->cols()->sub_space(nsyz);  
-  syz = new Matrix(F);
+#pragma "this syz needs to be replaced, assuming we are keeping this code"
+  //  syz = new Matrix(F);
 
   for (i=0; i<m->n_cols(); i++)
     {
@@ -284,10 +290,10 @@ int HermiteComputation::calc(const int *, const intarray &/*stop*/)
 
 const MatrixOrNull *HermiteComputation::get_gb()
 {
-  Matrix *result = new Matrix(gens->rows());
+  MatrixConstructor mat(gens->rows(), 0, false);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result->append(gens->rows()->copy(p->f));
-  return result;
+    mat.append(gens->rows()->copy(p->f));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *HermiteComputation::get_mingens()
@@ -298,10 +304,10 @@ const MatrixOrNull *HermiteComputation::get_mingens()
 
 const MatrixOrNull *HermiteComputation::get_change()
 {
-  Matrix *result = new Matrix(syz->rows());
+  MatrixConstructor mat(syz->rows(), 0, false);
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result->append(syz->rows()->copy(p->fsyz));
-  return result;
+    mat.append(syz->rows()->copy(p->fsyz));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull *HermiteComputation::get_syzygies()
@@ -428,8 +434,8 @@ void HermiteComputation::matrix_lift(const Matrix *m,
 				     MatrixOrNull **result_remainder,
 				     MatrixOrNull **result_quotient)
 {
-  *result_remainder = new Matrix(m->rows(), m->cols(), m->degree_shift());
-  *result_quotient = new Matrix(syz->rows(), m->cols());
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift(), false);
+  MatrixConstructor mat_quotient(syz->rows(), m->cols(), m->degree_monoid()->make_one(), false);
   if (m->n_rows() != gens->rows()->rank()) {
        ERROR("expected matrices to have same number of rows");
        *result_remainder = 0;
@@ -442,9 +448,11 @@ void HermiteComputation::matrix_lift(const Matrix *m,
 
       gb_reduce(f, fsyz);
       syz->rows()->negate_to(fsyz);
-      (**result_remainder)[i] = f;
-      (**result_quotient)[i] = fsyz;
+      mat_remainder.set_column(i, f);
+      mat_quotient.set_column(i, fsyz);
     }
+  *result_remainder = mat_remainder.to_matrix();
+  *result_quotient = mat_quotient.to_matrix();
 }
 
 int HermiteComputation::contains(const Matrix *m)

@@ -96,11 +96,20 @@ public:
 
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() { return gens->rows(); }
-  virtual Matrix *min_gens_matrix() { return new Matrix(gens->rows()); }
   virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
+
+#if 0
+  // These are the ones from 2/9/04.  Can't we just return 0 for many of these?
+  virtual Matrix *min_gens_matrix() { return new Matrix(gens->rows()); }
   virtual Matrix *initial_matrix(int) { return new Matrix(gens->rows()); }
   virtual Matrix *gb_matrix() { return new Matrix(gens->rows()); }
   virtual Matrix *change_matrix() { return new Matrix(gens->rows()); }
+#endif
+
+  virtual Matrix *min_gens_matrix() { return 0; }
+  virtual Matrix *initial_matrix(int) { return 0; }
+  virtual Matrix *gb_matrix() { return 0; }
+  virtual Matrix *change_matrix() { return 0; }
   virtual void stats() const;
 };
 

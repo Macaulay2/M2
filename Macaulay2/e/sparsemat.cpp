@@ -1,6 +1,7 @@
 #include "sparsemat.hpp"
 #include "matrix.hpp"
 #include "text_io.hpp"
+#include "matrixcon.hpp"
 
 stash *VectorOperations::vecstash = 0;
 
@@ -504,7 +505,7 @@ SparseMutableMatrix::~SparseMutableMatrix()
 Matrix *SparseMutableMatrix::toMatrix() const
 {
   FreeModule *F = K->make_FreeModule(nrows);
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F,0,false);
   for (int c=0; c<ncols; c++)
     {
       // Create the vec v.
@@ -514,9 +515,9 @@ Matrix *SparseMutableMatrix::toMatrix() const
 	  vec tmp = F->raw_term(K->copy(w->coefficient), w->component);
 	  F->add_to(v,tmp);
 	}
-      result->append(v);
+      mat.append(v);
     }
-  return result;
+  return mat.to_matrix();
 }
 
 int SparseMutableMatrix::n_rows() const

@@ -30,7 +30,10 @@ private:
 	 vector<vec> & entries,
 	 bool is_mutable_flag);
 
-  void initialize(const FreeModule *r, const FreeModule *c, const int *deg);
+
+#if 0
+    void initialize(const FreeModule *r, const FreeModule *c, const int *deg);
+#endif
 
   static bool make_sparse_vecs(MatrixConstructor &mat,
 			       const FreeModule *target,
@@ -47,20 +50,20 @@ private:
 		       const FreeModule *F, vec &vmonom) const;
   int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
 
+#if 0  
   void k_basis0(int topvar) const;
   void k_basis1(int topvar) const;
   void k_basis_insert() const;
 
-#if 0  
+
   void symm1(Matrix * &result, 
 	     vec f,	       // product so far generated
 	     int lastn,        // can use lastn..n_cols()-1 in product
 	     int pow) const;   // remaining power to take
 #endif
 
+#if 0
   void freeze(bool is_mutable);
-public:
-  /* The following 4 routines will go away */
 
   Matrix(const FreeModule *r, 
 	 const FreeModule *c,
@@ -72,6 +75,10 @@ public:
   Matrix(const FreeModule *r);
 
   Matrix(const MonomialIdeal * mi);
+#endif
+public:
+  /* The following 4 routines will go away */
+
   /*****************************************/
 
   static const MatrixOrNull * make(const FreeModule *target,
@@ -135,9 +142,11 @@ public:
   // Operations permitted on matrices which are mutable or not decided.
 
   /* These 3 routines will go away (they will be in MatrixConstructor) */
+#if 0
   void append(vec v);
   void append(vec v, const int *d);
   void schreyer_append(vec v);
+#endif
   /*********************************************************************/
 
   bool error_column_bound(int c) const;
@@ -193,7 +202,6 @@ public:
   // to/from monideals
   MonomialIdeal * make_monideal(int n) const;
   MonomialIdeal * make_skew_monideal(int n) const;
-  void append_monideal(const MonomialIdeal *mi, int k);
 
   // Matrix operations
   MatrixOrNull *sub_matrix(const M2_arrayint r, const M2_arrayint c) const;
@@ -227,8 +235,8 @@ public:
 
   Matrix *lead_var_coefficient(Matrix * &monoms) const;
 
-  Matrix *k_basis(Matrix &bot, const int *d, int do_trunc) const;
-  Matrix *k_basis(Matrix &bot) const;
+  Matrix *k_basis(const Matrix *bot, const int *d, bool do_trunc) const;
+  Matrix *k_basis(const Matrix *bot) const;
 
   Matrix *exterior(int p,int strategy) const;
   Matrix *minors(int p,int strategy) const;
@@ -285,6 +293,7 @@ public:
   void text_out(buffer &o) const;
 };
 
+#if 0
 inline void Matrix::append(vec v, const int *d)
 {
   _cols->append(d);
@@ -298,7 +307,7 @@ inline void Matrix::append(vec v)
   append(v,d);
   degree_monoid()->remove(d);
 }
-
+#endif
 #endif
 
 // Local Variables:

@@ -3,6 +3,7 @@
 #include "relem.hpp"
 #include "vector.hpp"
 #include "matrix.hpp"
+#include "matrixcon.hpp"
 
 extern Matrix_int_pair global_Matrix_int_pair;
 
@@ -485,7 +486,8 @@ const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
       return 0;
     }
   const FreeModule *F = Ms->array[0]->rows();
-  Matrix *result = new Matrix(Ms->array[0]->rows());
+  MatrixConstructor mat(Ms->array[0]->rows(), 0, false);
+  int next=0;
   for (unsigned int i=0; i<n; i++)
     {
       const Matrix *M = Ms->array[i];
@@ -500,9 +502,13 @@ const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
 	  return 0;
 	}
       for (int j=0; j<M->n_cols(); j++)
-	result->append(F->translate(M->rows(), (*M)[j]), M->cols()->degree(j));
+	{
+	  mat.append(F->translate(M->rows(), (*M)[j]));
+	  mat.set_column_degree(next++, M->cols()->degree(j));
+	}
     }
-  return result;
+  mat.compute_column_degrees();
+  return mat.to_matrix();
 }
 
 const MatrixOrNull * IM2_Matrix_direct_sum(const Matrix_array *Ms)

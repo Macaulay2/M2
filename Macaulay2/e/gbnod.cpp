@@ -5,6 +5,7 @@
 #include "hilb.hpp"
 #include "text_io.hpp"
 #include "comp_gb.hpp"
+#include "matrixcon.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
 		     gb_node *ggens,
@@ -34,7 +35,9 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   spairs = new s_pair_heap(M);
 
+#if 0
   gbmatrix = new Matrix(F);
+#endif
 
   n_gb = n_mingens = n_subring = 0;
   n_gb_first = 0;
@@ -839,8 +842,11 @@ int gb2_comp::hilbertNumerator(RingElement *&result)
       return COMP_DONE;
     }
 
+#warning "do hilb comp elsewhere"
+#if 0
   if (hf_comp == NULL)
     hf_comp = new hilb_comp(R->HilbertRing(), gbmatrix);
+#endif
 
   int retval = hf_comp->calc(-1);
   if (retval != COMP_DONE) return retval;
@@ -864,12 +870,12 @@ int gb2_comp::hilbertNumeratorCoefficient(int deg, int &result)
 //--- Obtaining matrices as output -------
 Matrix *gb2_comp::min_gens_matrix()
 {
-  Matrix *result = new Matrix(F,Fsyz);
+  MatrixConstructor mat(F,Fsyz,F->degree_monoid()->make_one(), false);
   int j = 0;
   for (int i=0; i<gb.length(); i++)
     if (gb[i]->is_min)
-      (*result)[j++] = originalR->translate_gbvector_to_vec(F,gb[i]->f);
-  return result;
+      mat.set_column(j++, originalR->translate_gbvector_to_vec(F,gb[i]->f));
+  return mat.to_matrix();
 }
 Matrix *gb2_comp::get_matrix()
 {
@@ -881,30 +887,30 @@ Matrix *gb2_comp::get_matrix()
 
 Matrix *gb2_comp::initial_matrix(int n)
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F, 0, false);
   for (int i=0; i<gb.length(); i++)
     {
       gbvector *tmp = GR->gbvector_lead_term(n, F, gb[i]->f);
-      result->append(originalR->translate_gbvector_to_vec(F,tmp));
+      mat.append(originalR->translate_gbvector_to_vec(F,tmp));
       GR->gbvector_remove(tmp);
     }
-  return result;
+  return mat.to_matrix();
 }
 
 Matrix *gb2_comp::gb_matrix()
 {
-  Matrix *result = new Matrix(F);
+  MatrixConstructor mat(F, 0, false);
   for (int i=0; i<gb.length(); i++)
-    result->append(originalR->translate_gbvector_to_vec(F,gb[i]->f));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(F,gb[i]->f));
+  return mat.to_matrix();
 }
 
 Matrix *gb2_comp::change_matrix()
 {
-  Matrix *result = new Matrix(Fsyz);
+  MatrixConstructor mat(Fsyz, 0, false);
   for (int i=0; i<gb.length(); i++)
-    result->append(originalR->translate_gbvector_to_vec(Fsyz,gb[i]->fsyz));
-  return result;
+    mat.append(originalR->translate_gbvector_to_vec(Fsyz,gb[i]->fsyz));
+  return mat.to_matrix();
 }
 
 void gb2_comp::debug_out(s_pair *q) const
