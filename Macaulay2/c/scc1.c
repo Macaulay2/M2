@@ -19,6 +19,7 @@ bool debug = FALSE;
 static char Copyright[] = "Copyright 1993 by Daniel R. Grayson";
 static char Version[]   = "Safe C - version 0.1";
 
+
 char *getmem(unsigned n) {
      char *p = malloc(n);
      if (p == NULL) fatal("out of memory");

@@ -88,7 +88,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo 'export OLDENGINE := TRUE' >>$@
 	echo 'GCMALLOC    := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
-	echo '# NEWDUMPDATA  := TRUE' >>$@
+	echo 'NEWDUMPDATA  := TRUE' >>$@
 	echo 'NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@

@@ -35,8 +35,6 @@ endif
 clean ::; rm -rf lib
 ################################# tmp
 tmp :; mkdir $@
-tmp/Examples :; mkdir $@
-tmp/Tests :; mkdir $@
 clean ::; rm -rf tmp
 initialize :: tmp tmp/Tests tmp/Examples
 ################################# util
