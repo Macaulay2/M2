@@ -185,7 +185,7 @@ loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
 	  else (
 	       if t == ERROR
 	       then buildErrorPacket("error closing file") 
-	       else True)));
+	       else nullE)));
 load(s:string):Expr := (
      when openTokenFile(s)
      is e:errmsg do buildErrorPacket(e.message)
