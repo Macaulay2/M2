@@ -53,13 +53,13 @@ lookupi := x -> (
      if r === null then error "encountered null or missing value";
      r)
 
-name Expression := v -> (
+toString Expression := v -> (
      op := class v;
      p := precedence v;
      names := apply(v,term -> (
 	       if precedence term <= p
-	       then "(" | name term | ")"
-	       else name term
+	       then "(" | toString term | ")"
+	       else toString term
 	       )
 	  );
      if # v === 0 then op#EmptyName
@@ -72,7 +72,7 @@ texMath Holder := v -> "{" | texMath v#0 | "}"
 mathML Holder := v -> mathML v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
-name Holder := v -> name v#0
+toString Holder := v -> toString v#0
 
 remove(Sequence,expression)
 
@@ -80,11 +80,11 @@ Minus = new WrapperType of Expression		  -- unary minus
 
 Minus#operator = "-"
 value Minus := v -> minus apply(toSequence v,value)
-name Minus := v -> (
+toString Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
-     then "-(" | name term | ")"
-     else "-" | name term
+     then "-(" | toString term | ")"
+     else "-" | toString term
      )
 
 Equation = new HeaderType of AssociativeExpression
@@ -109,14 +109,14 @@ net Equation := v -> (
 	  p := precedence v;
 	  horizontalJoin toList between(" == ", 
 	       apply(v, e -> if precedence e <= p then "(" | net e | ")" else net e))))
-name Equation := v -> (
+toString Equation := v -> (
      n := # v;
      if n === 0 then "Equation{}"
-     else if n === 1 then "Equation{" | name v#0 | "}"
+     else if n === 1 then "Equation{" | toString v#0 | "}"
      else (
 	  p := precedence v;
 	  concatenate between(" == ", 
-	       apply(v, e -> if precedence e <= p then ("(", name e, ")") else name e))))
+	       apply(v, e -> if precedence e <= p then ("(", toString e, ")") else toString e))))
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.name = "ZeroExpression"
@@ -133,7 +133,7 @@ Sum#EmptyName = "0"
 Sum#operator = "+"
 value Sum := v -> plus apply(toSequence v,value)
 
-name Sum := v -> (
+toString Sum := v -> (
      n := # v;
      if n === 0 then "0"
      else (
@@ -146,8 +146,8 @@ name Sum := v -> (
 		    else v#i ));
 	  names := apply(n, i -> (
 		    if precedence v#i <= p 
-		    then "(" | name v#i | ")"
-		    else name v#i ));
+		    then "(" | toString v#i | ")"
+		    else toString v#i ));
 	  concatenate mingle ( seps, names )))
 
 DoubleArrow = new HeaderType of Expression
@@ -169,7 +169,7 @@ Product#EmptyName = "1"
 Product#operator = "*"
 value Product := v -> times apply(toSequence v,value)
 
-name Product := v -> (
+toString Product := v -> (
      n := # v;
      if n === 0 then "1"
      else (
@@ -181,9 +181,9 @@ name Product := v -> (
 		    term := v#i;
 	       	    if precedence term <= p then (
 --			 seps#i = seps#(i+1) = "";
-			 "(" | name term | ")"
+			 "(" | toString term | ")"
 			 )
-	       	    else name term
+	       	    else toString term
 	       	    )
 	       );
 --	  scan(# v - 1,
@@ -206,7 +206,7 @@ NonAssociativeProduct#EmptyName = "1"
 NonAssociativeProduct#operator = "**"
 value NonAssociativeProduct := v -> times apply(toSequence v,value)
 
-name NonAssociativeProduct := v -> (
+toString NonAssociativeProduct := v -> (
      n := # v;
      if n === 0 then "1"
      else (
@@ -216,8 +216,8 @@ name NonAssociativeProduct := v -> (
      	  names := apply(#v,
 	       i -> (
 		    term := v#i;
-	       	    if precedence term <= p then "(" | name term | ")"
-	       	    else name term
+	       	    if precedence term <= p then "(" | toString term | ")"
+	       	    else toString term
 	       	    )
 	       );
 	  scan(# v - 1,
@@ -251,12 +251,12 @@ Superscript = new HeaderType of Expression
 Superscript#operator = "^"
 value Superscript := (x) -> (value x#0)^(value x#1)
 
-name Power := name Subscript := name Superscript := v -> (
+toString Power := toString Subscript := toString Superscript := v -> (
      x := v#0;
      y := v#1;
-     if y === 1 then name x else (
-	  x = name x;
-	  y = name y;
+     if y === 1 then toString x else (
+	  x = toString x;
+	  y = toString y;
 	  if precedence v#0 <  PowerPrecedence then x = "(" | x | ")";
 	  if precedence v#1 <= PowerPrecedence then y = "(" | y | ")";
 	  concatenate(x,(class v)#operator,y)))
@@ -266,7 +266,7 @@ RowExpression = new HeaderType of Expression
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
 texMath RowExpression := w -> concatenate apply(w,texMath)
-name RowExpression := w -> concatenate apply(w,name)
+toString RowExpression := w -> concatenate apply(w,toString)
 -----------------------------------------------------------------------------
 Adjacent = new HeaderType of Expression
 value Adjacent := x -> (value x#0) (value x#1)
@@ -383,35 +383,35 @@ value Thing := identity
 -----------------------------------------------------------------------------
 SparseVectorExpression = new HeaderType of Expression
 value SparseVectorExpression := x -> notImplemented()
-name SparseVectorExpression := v -> (
+toString SparseVectorExpression := v -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
-     scan(v#1,(i,x)->w#i=name x);
+     scan(v#1,(i,x)->w#i=toString x);
      concatenate("{",between(",",w),"}")
      )
 -----------------------------------------------------------------------------
 SparseMonomialVectorExpression = new HeaderType of Expression
 -- in these, the basis vectors are treated as variables for printing purposes
 value SparseMonomialVectorExpression := x -> notImplemented()
-name SparseMonomialVectorExpression := v -> name (
+toString SparseMonomialVectorExpression := v -> toString (
      sum(v#1,(i,m,a) -> 
 	  expression a * 
 	  expression m * 
-	  hold concatenate("<",name i,">"))
+	  hold concatenate("<",toString i,">"))
      )
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 value MatrixExpression := x -> matrix applyTable(toList x,value)
-name MatrixExpression := m -> concatenate(
+toString MatrixExpression := m -> concatenate(
      "MatrixExpression {",		  -- ????
-     between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
+     between(",",apply(m,row->("{", between(",",apply(row,toString)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
 value Table := x -> applyTable(toList x,value)
-name Table := m -> concatenate(
+toString Table := m -> concatenate(
      "Table {",
-     between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
+     between(",",apply(m,row->("{", between(",",apply(row,toString)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 
@@ -449,29 +449,29 @@ value BinaryOperation := (m) -> (
      )
 net BinaryOperation := m -> (
      -- must put precedences here eventually
-     horizontalJoin( "(", net m#1, string m#0, net m#2, ")" )
+     horizontalJoin( "(", net m#1, toString m#0, net m#2, ")" )
      )
-name BinaryOperation := m -> (
-     horizontalJoin( "(", name m#1, string m#0, name m#2, ")" )
+toString BinaryOperation := m -> (
+     horizontalJoin( "(", toString m#1, toString m#0, toString m#2, ")" )
      )
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
 value FunctionApplication := (m) -> (value m#0) (value m#1)
-name Adjacent := name FunctionApplication := m -> (
+toString Adjacent := toString FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
      args := m#1;
      if class args === Sequence
      then if #args === 1
-     then concatenate(name fun, " ", name args)  -- f singleton x
-     else concatenate(name fun, name args)       -- f(x,y) or f(), ...
+     then concatenate(toString fun, " ", toString args)  -- f singleton x
+     else concatenate(toString fun, toString args)       -- f(x,y) or f(), ...
      else if precedence args >= p
      then if precedence fun > p
-     then concatenate(name fun, " ", name args)
-     else concatenate("(", name fun, ")", name args)
+     then concatenate(toString fun, " ", toString args)
+     else concatenate("(", toString fun, ")", toString args)
      else if precedence fun > p
-     then concatenate(name fun, "(", name args, ")")
-     else concatenate("(", name fun, ")(", name args, ")")
+     then concatenate(toString fun, "(", toString args, ")")
+     else concatenate("(", toString fun, ")(", toString args, ")")
      )
 net Adjacent := net FunctionApplication := m -> (
      p := precedence m;
@@ -687,7 +687,7 @@ net SparseVectorExpression := v -> (
      then "0"
      else net sum(v#1,(i,r) -> (
 	       expression r * 
-	       hold concatenate("<",name i,">")
+	       hold concatenate("<",toString i,">")
 	       )
 	  )
      )
@@ -698,7 +698,7 @@ net SparseMonomialVectorExpression := v -> (
 	  net sum(v#1,(i,m,a) -> 
 	       expression a * 
 	       expression m * 
-	       hold concatenate("<",name i,">"))
+	       hold concatenate("<",toString i,">"))
 	  )
      )
 
@@ -807,7 +807,7 @@ mathML OneExpression := x -> "<cn>1</cn>"
 mathML ZeroExpression := x -> "<cn>0</cn>"
 
 html OneExpression := html ZeroExpression :=
-texMath OneExpression := texMath ZeroExpression := name
+texMath OneExpression := texMath ZeroExpression := toString
 
 texMath Sum := v -> (
      n := # v;
@@ -956,7 +956,7 @@ texMath SparseMonomialVectorExpression := v -> (
      texMath sum(v#1,(i,m,a) -> 
 	  expression a * 
 	  expression m * 
-	  hold concatenate("<",name i,">"))
+	  hold concatenate("<",toString i,">"))
      )
 
 texMath MatrixExpression := m -> concatenate(
@@ -971,7 +971,7 @@ texMath MatrixExpression := m -> concatenate(
 ctr := 0
 TeX = x -> (
      ctr = ctr + 1;
-     f := tmpname "tx" | string ctr;
+     f := tmpname "tx" | toString ctr;
      f | ".tex" 
      << "\\magnification = \\magstep 0" << endl
      << tex x << endl
@@ -1009,24 +1009,24 @@ print = x -> (<< net x << endl; null)
 
 -----------------------------------------------------------------------------
 
-texMath RR := string
-texMath ZZ := string
+texMath RR := toString
+texMath ZZ := toString
 texMath Thing := x -> texMath expression x
-texMath Symbol := string
+texMath Symbol := toString
 texMath String := identity
 
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x
 
-html ZZ := html RR := string
+html ZZ := html RR := toString
 html Thing := x -> html expression x
 
 mathML Boolean := i -> if i then "<ci type='constant'>&true;</ci>" else "<ci type='constant'>&false;</ci>"
 
-mathML ZZ := i -> concatenate("<cn type='integer'>",string i, "</cn>")
-mathML RR := i -> concatenate("<cn>",string i, "</cn>")
+mathML ZZ := i -> concatenate("<cn type='integer'>",toString i, "</cn>")
+mathML RR := i -> concatenate("<cn>",toString i, "</cn>")
 mathML QQ := i -> concatenate(
-     "<cn type='rational'>",string numerator i, "<sep/>", string denominator i, "</cn>"
+     "<cn type='rational'>",toString numerator i, "<sep/>", toString denominator i, "</cn>"
      )
 mathML Thing := x -> mathML expression x
 
@@ -1090,27 +1090,15 @@ expression HashTable := x -> (
 	  apply(pairs x, (k,v) -> expression(k=>v)) 
 	  }
      )
-
 expression BasicList := x -> (
      new FunctionApplication from { 
 	  expression class x, 
 	  apply(toList x, expression) 
 	  }
      )
-
 expression RR := x -> (
      if x < 0 then -new Holder from {-x} else new Holder from {x}
      )
-
--- we've waffled on which is the best way to display strings
--- net String := format
-net String := identity
-
-net Function := name
-net Boolean := net File := net ZZ :=
-     net Handle := net Database := string
-
-net Nothing := null -> ""
 -----------------------------------------------------------------------------
 hold = x -> new Holder from {x}
 
@@ -1121,7 +1109,7 @@ expression Boolean := expression Symbol := expression File :=
 -----------------------------------
 
 Position = new Type of BasicList
-name Position := net Position := i -> concatenate(i#0,":",string i#1,":",string i#2)
+toString Position := net Position := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 backtrace = () -> apply(toList deepSplice report, 
      i -> (
@@ -1139,7 +1127,7 @@ Entity = new HeaderType of HashTable
 tex Entity := x -> if x.?tex then x.tex else "$" | texMath x | "$"
 texMath Entity := x -> if x.?texMath then x.texMath else x.name
 html Entity := x -> if x.?html then x.html else x.name
-name Entity := x -> x.name
+toString Entity := x -> x.name
 net Entity := x -> if x.?net then x.net else x.name
 value Entity := x -> if x.?value then x.value else x
 use Entity := x -> if x.?use then x.use x else x

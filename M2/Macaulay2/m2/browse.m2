@@ -13,10 +13,10 @@ METHODS.name = "METHODS"
 showit := (ITEMS,SAME,DEFAULT) -> (
      wid := if # ITEMS < 10 then 1 else if # ITEMS < 100 then 2 else 3;
      << columnate(
-	  apply(#ITEMS, i -> concatenate {pad(wid,name i), ":", ITEMS#i#0}),
+	  apply(#ITEMS, i -> concatenate {pad(wid,toString i), ":", ITEMS#i#0}),
 	  if width stdio != 0 then width stdio - 1 else 79) << endl;
      while (
-     	  i := value read concatenate("menu item [",string DEFAULT,"]: ");
+     	  i := value read concatenate("menu item [",toString DEFAULT,"]: ");
      	  if i === null then i = DEFAULT;
      	  not (class i === ZZ and i >= 0 and i < # ITEMS)
 	  ) do (
@@ -26,12 +26,12 @@ showit := (ITEMS,SAME,DEFAULT) -> (
      ITEMS#i#1)
 
 menu(Thing,Thing) := (x,back) -> (
-     << name x << endl;
+     << toString x << endl;
      showit(
 	  {
 	       ("BACK",back),
-	       ("class=>" | name class x,(class x,(x,back))),
-	       ("parent=>" | name parent x,(parent x,(x,back)))
+	       ("class=>" | toString class x,(class x,(x,back))),
+	       ("parent=>" | toString parent x,(parent x,(x,back)))
 	       },
 	  (x,back),
 	  0))
@@ -43,10 +43,10 @@ menu(METHODS,Thing) := (x,back) -> (
 	  join(
 	       {("BACK",back)},
 	       apply(methods x#0, meth -> (
-			 name meth,
+			 toString meth,
 			 (RUNME {
 				   () -> (
-					<< "code " << name meth << " :" << endl;
+					<< "code " << toString meth << " :" << endl;
 					code meth; 
 					read "press return: ";)},
 			      (x,back))
@@ -55,11 +55,11 @@ menu(METHODS,Thing) := (x,back) -> (
 	  0))
 
 menu(Function,Thing) := (x,back) -> (
-     << name x << endl;
+     << toString x << endl;
      items := {
 	  ("BACK",back),
-	  ("class=>" | name class x,(class x,(x,back))),
-	  ("parent=>" | name parent x,(parent x,(x,back))),
+	  ("class=>" | toString class x,(class x,(x,back))),
+	  ("parent=>" | toString parent x,(parent x,(x,back))),
 	  ("METHODS", (METHODS {x}, (x,back)))
 	  };
      try (
@@ -74,11 +74,11 @@ menu(Function,Thing) := (x,back) -> (
      showit(items, (x,back), 0))
 
 menu(Symbol,Thing) := (x,back) -> (
-     << name x << endl;
+     << toString x << endl;
      items := {
 	  ("BACK",back),
-	  ("class=>" | name class x,(class x,(x,back))),
-	  ("parent=>" | name parent x,(parent x,(x,back)))} ;
+	  ("class=>" | toString class x,(class x,(x,back))),
+	  ("parent=>" | toString parent x,(parent x,(x,back)))} ;
      try (
 	  if (locate x)#0 === "stdio" then error "";
 	  items = append(items,
@@ -89,37 +89,37 @@ menu(Symbol,Thing) := (x,back) -> (
      showit(items, (x,back), 0))
 
 menu(HashTable,Thing) := (x,back) -> (
-     << name x << endl;
-     KEYS := sort apply(keys x, k -> {name k,k});
+     << toString x << endl;
+     KEYS := sort apply(keys x, k -> {toString k,k});
      showit(
 	  join({
 		    ("BACK",back),
-		    ("class=>" | name class x,(class x,(x,back))),
-		    ("parent=>" | name parent x,(parent x,(x,back)))
+		    ("class=>" | toString class x,(class x,(x,back))),
+		    ("parent=>" | toString parent x,(parent x,(x,back)))
 		    },
 	       apply(KEYS,k -> (k#0,(x#(k#1),(x,back))))),
      	  (x,back),
 	  0))
 
 menu(BasicList,Thing) := (x,back) -> (
-     << name x << endl;
+     << toString x << endl;
      showit(
-	  join(apply(# x,k -> (name x#k,(x#k,(x,back)))),
+	  join(apply(# x,k -> (toString x#k,(x#k,(x,back)))),
 	       {
 		    ("BACK",back),
-		    ("class=>" | name class x,(class x,(x,back))),
-		    ("parent=>" | name parent x,(parent x,(x,back)))
+		    ("class=>" | toString class x,(class x,(x,back))),
+		    ("parent=>" | toString parent x,(parent x,(x,back)))
 		    }),
      	  (x,back),
 	  # x))
 
 menu(Sequence,Thing) := (x,back) -> (
-     << name x << endl;
+     << toString x << endl;
      showit(
-	  join(apply(# x,k -> (name x#k,(x#k,(x,back)))),
+	  join(apply(# x,k -> (toString x#k,(x#k,(x,back)))),
 	       {
 		    ("BACK",back),
-		    ("class=>" | name class x,(class x,(x,back)))
+		    ("class=>" | toString class x,(class x,(x,back)))
 		    }),
      	  (x,back),
 	  # x))

@@ -9,6 +9,11 @@ SelfInitializingType Thing := (T,z) -> new T from z
 
 Command = new SelfInitializingType of BasicList
 Command.name = "Command"
+GlobalAssignHook Command := (X,x) -> if not Symbols#?x then Symbols#x = X
+GlobalReleaseHook Command := (X,x) -> (
+     stderr << "warning: " << string X << " redefined" << endl;
+     remove(Symbols,x);
+     )
 new Command from Function := (command,f) -> command {f}
 new Command from String   := (command,cmdname) -> command {
      x -> (

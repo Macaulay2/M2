@@ -8,7 +8,7 @@ vars Symbol := a -> (
      if indices#?a 
      then indices#a
      else (
-	  s := string a;
+	  s := toString a;
 	  if #s === 1 and s =!= "'" then (
 	       i := first ascii s;
 	       if i < 97 then i - 65 + 26 else i - 97
@@ -23,8 +23,8 @@ vars ZZ := i -> (
 	       "global " |
 	       if 0 <= i and i < 26 then ascii(97 + i)
 	       else if 26 <= i and i < 52 then ascii(65 + i - 26)
-	       else if i < 0 then "X" | string(-i)
-	       else "x" | string(i-52)
+	       else if i < 0 then "X" | toString(-i)
+	       else "x" | toString(i-52)
 	       );
 	  indeterminates#i = x;
 	  indices#x = i;
@@ -35,9 +35,9 @@ vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
 Symbol .. Symbol := (a,z) -> vars( vars a .. vars z )
 
 nometh2 := (n,x,y) -> error (
-     "no method '", name n, "' found for ", name x,
-     " (of class ", name class x, ") and ", name y,
-     " (of class ", name class y, ")"
+     "no method '", toString n, "' found for ", toString x,
+     " (of class ", toString class x, ") and ", toString y,
+     " (of class ", toString class y, ")"
      )
 
 Thing .. Thing := (a,z) -> (
@@ -52,7 +52,7 @@ Thing .. Thing := (a,z) -> (
      toSequence apply(aa .. zz, value)
      )
 
-document { quote "..",
+document { "..",
      TT "m .. n", " -- produces a sequence of integers in the range from m to 
      n inclusive. If n is less than m then the result is an empty sequence.",
      PARA,

@@ -2,7 +2,7 @@
 
 << "--loading documentation files..." << endl
 
-document { quote length,
+document { length,
      TT "length C", " -- returns the length of a graded module or a chain
      complex.",
      PARA,
@@ -11,7 +11,7 @@ document { quote length,
 	  }
      }
 
-document { quote sendgg,
+document { sendgg,
      TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the  string ", TT "s", " 
      of data and commands to the engine.  The first byte of the result is examined 
      for an error indication, and then an error is raised or the remainder of the 
@@ -20,7 +20,7 @@ document { quote sendgg,
      SEEALSO "engine communication protocol"
      }
 
-document { quote parent,
+document { parent,
      TT "parent X", " -- yields the parent P of X.",
      PARA,
      "Methods for the ", TO {"instance", "s"}, " of X which are not found
@@ -37,7 +37,7 @@ document { quote parent,
      SEEALSO "classes"
      }
 
-document { quote Array,
+document { Array,
      TT "Array", " -- the class of all arrays.",
      PARA,
      "An array is like a list, except that brackets are used instead of
@@ -49,13 +49,13 @@ document { quote Array,
 	  }
      }
 
-document { quote Sequence,
+document { Sequence,
      TT "Sequence", " -- the class of all sequences.",
      PARA,
      SEEALSO "sequences"
      }
 
-document { quote singleton,
+document { singleton,
      TT "singleton x", " -- returns a sequence of length one whose single 
      element is ", TT "x", ".",
      PARA,
@@ -66,7 +66,7 @@ document { quote singleton,
      SEEALSO "Sequence"
      }
 
-document { quote List,
+document { List,
      TT "List", " -- the class of all lists.",
      PARA,
      "Creating new lists or sequences:",
@@ -140,7 +140,7 @@ document { quote List,
 	  }
      }
 
-document { quote Type,
+document { Type,
      TT "Type", " -- the class of all types.",
      PARA, 
      "A type is a hash table intended to contain methods for 
@@ -149,7 +149,7 @@ document { quote Type,
      SEEALSO {"parent",  "class", "using methods"}
      }
 
-document { quote Print,
+document { Print,
      TT "Print", " -- a method applied at top level to print the result, 
      ", TT "r", " of an evaluation.",
      PARA,
@@ -163,7 +163,7 @@ document { quote Print,
      SEEALSO "NoPrint"
      }
 
-document { quote NoPrint,
+document { NoPrint,
      TT "NoPrint", " -- a method applied at top level to a result suppression of
      whose printing has been indicated by a semicolon.",
      PARA,
@@ -175,78 +175,55 @@ document { quote NoPrint,
      SEEALSO "Print"
      }
 
-document { quote BeforePrint,
+document { BeforePrint,
      TT "BeforePrint", " -- a method applied at top level to the result of an evaluation,
      whose result supplants the original for printing.",
      SEEALSO "Print"
      }
 
-document { quote AfterEval,
+document { AfterEval,
      TT "AfterEval", " -- a method applied at top level to the result of an evaluatino,
      whose result replaces the original for storing in the output variable and for
      printing.",
      SEEALSO "Print"
      }
 
-document { quote AfterPrint,
+document { AfterPrint,
      TT "AfterPrint", " -- a method applied at top level to the result of an evalution
      after printing.",
      SEEALSO "Print"
      }
 
-document { quote AfterNoPrint,
+document { AfterNoPrint,
      TT "AfterNoPrint", " -- a method applied at top level to the result of an 
      evalution when printing of the result has been suppressed by a semicolon.",
      SEEALSO "Print"
      }
 
-document { quote name,
-     TT "name x", " -- convert x to a string",
-     PARA,
-     "It converts an expression x to a string which contains a visible
-     representation of x, unless x is already a string, in which case it
-     escapes the control characters within the string and encloses it in
-     quotation marks.  The value of ", TT "name x", " is used when printing
-     out ", TT "x", ".  If ", TT "x", " is an hash table and ", TT "x.name",
-     " has a value, this value is returned.  But if the value of ", TT
-     "x.name", " is a string or net, then it is returned.  If x.name has no
-     value and (class x)#name has a value, it is assumed to be a function and
-     is applied to x in order to produce the name. Otherwise, the name
-     provided is a suitable visible representation of the expression.",
-     PARA,
-     "If ", TT "x", " is a symbol, then the string \"quote x\" is returned
-     unless the value of ", TT "x", " is ", TT "x", " itself.",
-     PARA,
-     NOINDENT,
-     TT "x.name = \"x\"", " -- sets the name of ", TT "x", " to ", TT "\"x\"", ".",
-     PARA,
-     SEEALSO{ "describe"}
-     }
-
-document { quote setrecursionlimit,
+document { setrecursionlimit,
      TT "setrecursionlimit n", " -- sets the recursion limit to n.",
      PARA,
      " It returns the old value.  The recursion limit governs the nesting level
      permissible for calls to functions."
      }
 
-document { quote commandLine,
+document { "commandLine",
      TT "commandLine", " -- a constant whose value is the list of arguments 
      passed to the interpreter, including argument 0, the name of the program.",
      }
 
-document { quote environment,
+document { "environment",
      TT "environment", " -- a constant whose value is the list containing the
      environment strings for the process."
      }
 
-document { quote Function,
+document { Function,
      TT "Function", " -- the class of all functions.",
      PARA,
      SEEALSO "functions"
      }
 
-document { quote ->,
+document { "->",
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -279,12 +256,12 @@ document { quote ->,
      "The class of all functions is ", TO "Function", "."
      }
 
-document { quote path,
+document { "path",
      TT "path", " -- a list of strings containing names of directories in which\n", 
      TO "load", " and ", TO "input", " should seek files."
      }
 
-document { quote HashTable,
+document { HashTable,
      TT "HashTable", " -- the class of all hash tables.",
      PARA,
      "A hash table consists of: a class type, a parent type, and a
@@ -347,21 +324,21 @@ document { quote HashTable,
 	  }
      }
 
-document { quote maxPosition,
+document { maxPosition,
      TT "maxPosition x", " -- yields the position of the largest element in the list.",
      PARA,
      "If it occurs more than once, then the first occurrence
      is used.  If x has length zero an error results."
      }
 
-document { quote minPosition,
+document { minPosition,
      TT "minPosition x", " -- yields the position of the smallest element in the list.",
      PARA,
      "If it occurs more than once, then the first occurrence
      is used.  If x has length zero an error results."
      }
 
-document { quote keys,
+document { keys,
      TT "keys t", " -- yields a list of the keys occurring in the hash table t.",
      PARA,
      EXAMPLE {
@@ -370,7 +347,7 @@ document { quote keys,
 	  }
      }
 
-document { quote values,
+document { values,
      TT "values t", " -- yields a list of the values occurring in the hash table t.",
      PARA,
      EXAMPLE {
@@ -379,7 +356,7 @@ document { quote values,
 	  }
      }
 
-document { quote splice,
+document { splice,
      TT "splice v", " -- yields a new list v where any members of v which are sequences
      are replaced by their elements.",
      PARA,
@@ -394,7 +371,7 @@ document { quote splice,
      SEEALSO "deepSplice"
      }
 
-document { quote deepSplice,
+document { deepSplice,
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
      PARA,
@@ -404,7 +381,7 @@ document { quote deepSplice,
      SEEALSO "splice"
      }
 
-document { quote ",",
+document { ",",
      TT "x,y,...,z", " -- the comma is used to separate elements of a list or
      sequence.",
      PARA,
@@ -414,7 +391,7 @@ document { quote ",",
 	  }
      }
 
-document { quote apply,
+document { apply,
      TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ", returning the list of results. If ", TT "v", " is 
      a sequence, then a sequence is returned.",
@@ -451,7 +428,7 @@ document { quote apply,
      SEEALSO {(quote /,List, Function), (quote \, Function, List)}
      }
 
-document { quote scan,
+document { scan,
      TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ".  The function values are discarded.",
      PARA,
@@ -462,7 +439,7 @@ document { quote scan,
      SEEALSO { "select", "any", "all", "member"}
      }
 
-document { quote scanPairs,
+document { scanPairs,
      TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
      pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
      table ", TT "x", " and ", TT "v", " is the corresponding 
@@ -474,7 +451,7 @@ document { quote scanPairs,
      SEEALSO "scan"
      }
 
-document { quote select,
+document { select,
      TT "select(v,f)", " -- select elements of the list or hash table
      ", TT "v", " which yield ", TT "true", " when the function 
      ", TT "f", " is applied.",
@@ -505,7 +482,7 @@ document { quote select,
 --     If no result is non-null, then it returns null."
 --     }
 
-document { quote any,
+document { any,
      TT "any(v,f)", " -- yields the value true or false depending on 
      whether any element ", TT "v#i", " of ", TT "v", " yields the value true 
      when the predicate ", TT "f", " is applied.",
@@ -517,22 +494,26 @@ document { quote any,
      SEEALSO{ "scan", "apply", "select", "all", "member"}
      }
 
-document { quote describe,
+document { describe,
      TT "describe x", " -- returns a string containing the real
      name of ", TT "x", ", bypassing the feature which causes certian
      types of things to acquire the names of global variables to which
      they are assigned.",
      PARA,
      EXAMPLE {
-	  "R = ZZ/101[a,b,c,d];",
+	  "R = ZZ[a,b,c_1,c_2];",
       	  "R",
       	  "describe R",
 	  },
      PARA,
-     SEEALSO "name"
+     "Currently, this function works by temporarily removing the value
+     stored under ", TT "name", " from the hash table ", TT "x", ",
+     which therefore must be mutable.",
+     PARA,
+     SEEALSO "toString"
      }
 
-document { quote input,
+document { input,
      TT "input \"f\"", " -- reads and executes the commands found in the 
      file named f, echoing the input, printing the values, and incrementing
      the line number.",
@@ -543,7 +524,7 @@ document { quote input,
      SEEALSO{ "path", "needs", "load"}
      }
 
-document { quote load,
+document { load,
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
      PARA,
@@ -555,43 +536,43 @@ document { quote load,
      SEEALSO{ "path", "needs", "input"}
      }
 
-document { quote needs,
+document { needs,
      TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
      been loaded yet.",
      PARA,
      SEEALSO "load"
      }
 
-document { quote plus,
+document { plus,
      TT "plus(x,y,...)", " -- yields the sum of its arguments.",
      PARA,
      "If the arguments are strings, they are concatenated.  If there
      are no arguments, the answer is the integer 0."
      }
 
-document { quote times,
+document { times,
      TT "times(x,y,...)", " -- yields the product of its arguments.",
      PARA,
      "If there are no arguments, the value is the integer 1."
      }
 
-document { quote power,
+document { power,
      TT "power(x,n)", " -- yields the n-th power of ", TT "x", ".",
      PARA,
      SEEALSO "^"
      }
 
-document { quote difference, 
+document { difference, 
      TT "difference(x,y)", " -- returns ", TT "x-y", "." 
      }
 
-document { quote minus,
+document { minus,
      TT "minus(x)   ", " -- yields ", TT "-x", ".",
      PARA,
      "minus(x,y)  -- yields x-y, but see also ", TO "difference", "."
      }
 
-document { quote append,
+document { append,
      TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -600,7 +581,7 @@ document { quote append,
      SEEALSO{ "prepend", "join"}
      }
 
-document { quote prepend,
+document { prepend,
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -614,7 +595,7 @@ document { "--",
      the double hyphen to the end of the line."
      }
 
-document { quote ascii,
+document { ascii,
      TT "ascii s", " -- convert a string to a list of ascii codes.", BR,
      NOINDENT,
      TT "ascii v", " -- convert a list of ascii codes to a string.",
@@ -623,7 +604,7 @@ document { quote ascii,
      SEEALSO{ "String" }
      }
 
-document { quote transnet,
+document { transnet,
      TT "transnet v", " -- takes a list ", TT "v", " of integers, and assembles the bytes of the
      integers, four at a time, in network order (high order byte
      first), into a string.",
@@ -638,7 +619,7 @@ document { quote transnet,
      SEEALSO{ "String" }
      }
 
-document { quote " ",
+document { " ",
      TT "f x", " -- yields the result of applying the function f to x.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -648,7 +629,7 @@ document { quote " ",
      class of ", TT "y", "."
      }
 
-document { quote *,
+document { "*",
      TT "x * y", " -- yields the product of x and y.",
      BR,NOINDENT,
      TT "* x", " -- unary operator available to the user.",
@@ -668,7 +649,7 @@ document { quote *,
      SEEALSO{ "times", "product" }
      }
 
-document { quote &,
+document { "&",
      TT "x & y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -688,7 +669,7 @@ document { (quote &, ZZ, ZZ),
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
      }
 
-document { quote &&,
+document { "&&",
      TT "x && y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -708,7 +689,7 @@ document { quote &&,
 --      class of ", TT "y", "."
 --      }
 
-document { quote ^^,
+document { "^^",
      TT "x ^^ y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -718,7 +699,7 @@ document { quote ^^,
      class of ", TT "y", "."
      }
 
-document { quote +,
+document { "+",
      TT "x + y", " -- a binary operator used for addition in many situations
      and union of sets.",
      PARA,
@@ -740,7 +721,7 @@ document { (quote +, Set, Set),
      SEEALSO "+"
      }
 
-document { quote -,
+document { "-",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
      BR,NOINDENT,
@@ -759,7 +740,7 @@ document { quote -,
      SEEALSO{ "difference", "minus" }
      }
 
-document { quote /,
+document { "/",
      TT "x / y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -776,7 +757,7 @@ document { quote /,
 	  }
      }
 
-document { quote %,
+document { "%",
      TT "x % y", " -- a binary operator used for remainder and reduction.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -786,7 +767,7 @@ document { quote %,
      class of ", TT "y", "."
      }
 
-document { quote //,
+document { "//",
      TT "x // y", " -- a binary operator used for quotients (with a possible
      remainder).",
      PARA,
@@ -797,7 +778,7 @@ document { quote //,
      class of ", TT "y", "."
      }
 
-document { quote \\,
+document { "\\\\",
      TT "x \\ y", " -- a binary operator used for quotients (with a possible
      remainder).",
      PARA,
@@ -808,7 +789,7 @@ document { quote \\,
      class of ", TT "y", "."
      }
 
-document { quote ^,
+document { "^",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -828,7 +809,7 @@ document { quote ^,
      will be called."
      }
 
-document { quote /^,
+document { "/^",
      TT "x/^  y", " -- a binary operator, used for divided powers.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -852,7 +833,7 @@ document { (quote /^, Thing, ZZ),
 	  },
      }
 
-document { quote substring,
+document { substring,
      TT "substring(s,i,n)", " -- yields the substring of the string s starting at 
      position i with length n.",
      PARA,
@@ -867,28 +848,28 @@ document { quote substring,
      SEEALSO{ "String" }
      }
 
-document { quote reverse,
+document { reverse,
      TT "reverse v", " -- yields a list containing the elements of the 
      list ", TT "v", " in reverse order.",
      PARA,
      EXAMPLE "reverse {a,b,c,d}"
      }
 
-document { quote read,
+document { read,
      TT "read f", "  -- yields a string obtained by reading bytes from the input file
      ", TT "f", ".",BR,
      NOINDENT, 
-     TT "read ()", " -- reads from stdio, getting input from the user.",BR,
+     TT "read ()", " -- reads from ", TT "stdio", ", getting input from the user.",BR,
      NOINDENT, 
-     TT "read s", "  -- reads from stdio, getting input from the user, prompting
-     with the string s.",BR,
+     TT "read s", "  -- reads from ", TT "stdio", ", getting input from the user, prompting
+     with the string ", TT "s", ".",BR,
      PARA,
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
      SEEALSO {"get", "File"}
      }
 
-document { quote get,
+document { get,
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
      PARA,
@@ -919,7 +900,7 @@ document { quote get,
      SEEALSO{ "File", "String", "read" }
      }
 
-document { quote lines,
+document { lines,
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",
      BR,NOINDENT,
@@ -936,16 +917,16 @@ document { quote lines,
      SEEALSO "newline"
      }
 
-document { quote !,
+document { "!",
      "n ! -- computes n factorial, 1*2*3*...*n."
      }
 
-document { quote "not",
+document { "not",
      TT "not x", " -- yields the negation of x, which must be true or false.",
      SEEALSO{ "and", "or" }
      }
 
-document { quote |,
+document { "|",
      TT "x | y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -1006,7 +987,7 @@ document { (quote |, Matrix, Matrix),
      SEEALSO {"|", (quote ||, Matrix, Matrix)}
      }
 
-document { quote ||,
+document { "||",
      TT "x || y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -1051,7 +1032,7 @@ document { (quote ||, Matrix, Matrix),
      SEEALSO{"||", (quote ||, Matrix, Matrix)}
      }
 
-document { quote "===",
+document { "===",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
      PARA,
@@ -1077,14 +1058,14 @@ document { quote "===",
      SEEALSO{ "==",  "=!=" }
      }
 
-document { quote "=!=",
+document { "=!=",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
      PARA,
      "See ", TO "===", " for details."
      }
 
-document { quote ==,
+document { "==",
      TT "x == y", " -- a binary operator for testing mathematical equality.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -1111,13 +1092,13 @@ document { quote ==,
      SEEALSO{ "!=" }
      }
 
-document { quote !=,
+document { "!=",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
      SEEALSO{ "==" }
      }
 
-document { quote **, 
+document { "**", 
      TT "x ** y", " -- a binary operator used for tensor product and
      cartesian product.",
      PARA,
@@ -1139,13 +1120,13 @@ document { (quote **, Set, Set),
      SEEALSO { "**", "Set" }
      }
 
-document { quote set,
+document { set,
      TT "set v", " -- yields the set whose elements are the members of the list v.",
      PARA,
      SEEALSO { "Set" }
      }
 
-document { quote random,
+document { random,
      TT "random n", " -- for n an integer, yields a random integer in the range 0 .. n-1.",
      BR,
      NOINDENT, 
@@ -1177,13 +1158,13 @@ document { quote random,
 	  },
      }
 
-document { quote true,
+document { true,
      PARA,
      "true -- a value indicating truth.",
      SEEALSO{"false", "Boolean"}
      }
 
-document { quote false,
+document { false,
      PARA,
      "false -- a value indicating falsity.",
      SEEALSO{"true", "Boolean"}

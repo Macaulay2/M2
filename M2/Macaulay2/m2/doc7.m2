@@ -41,7 +41,7 @@ document { (quote ^,Matrix,List),
      }
 
      
-document { quote submatrix,
+document { submatrix,
      TT "submatrix(m, rows, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
      BR,NOINDENT,
      TT "submatrix(m, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
@@ -64,7 +64,7 @@ document { quote submatrix,
      of range."
      }
 
-document { quote diff,
+document { diff,
      TT "diff(m,n)", " -- differentiate the matrix n by the matrix m",
      BR,NOINDENT,
      TT "diff P", " -- compute the difference polynomial for a projective
@@ -117,7 +117,7 @@ document { quote diff,
      SEEALSO { "contract", "jacobian" }
      }
 
-document { quote contract,
+document { contract,
      TT "usage: contract(m, n)", " -- contract the matrix n by the matrix m",
      PARA,
      "This function is identical to ", TO "diff", ", except that contraction is
@@ -156,7 +156,7 @@ jacobian A
 singA = minors(codim ideal presentation A, jacobian A)
 generators gb singA
 "
-document { quote jacobian,
+document { jacobian,
      TT "jacobian R", " -- calculates the Jacobian matrix of the ring R",
      BR,NOINDENT,
      TT "jacobian f", " -- calculates the Jacobian matrix of the matrix f,
@@ -184,7 +184,7 @@ document { quote jacobian,
      }
 
 
-document { quote leadTerm,
+document { leadTerm,
      TT "leadTerm f", " -- return the leading term of the polynomial or 
      vector f.",
      BR, NOINDENT,
@@ -204,7 +204,7 @@ document { quote leadTerm,
      SEEALSO {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 
-document { quote borel,
+document { borel,
   TT "usage: borel m", " -- create a matrix of monomials",
   PARA,
   "Yields the matrix with the same target as the matrix ", TT "m", ", whose columns
@@ -219,7 +219,7 @@ document { quote borel,
   }
 
 
-document { quote inducedMap,
+document { inducedMap,
      TT "inducedMap(M,N,f)", " -- produce the map from ", TT "N", " to ", TT "M", " 
      induced by ", TT "f", ".",
      PARA,
@@ -239,7 +239,7 @@ document { (inducedMap => Degree),
      degree of the map produced."
      }
 
-document { quote Verify,
+document { Verify,
      TT "Verify", " -- an option that can be used to request verification
      that a map is well defined.",
      PARA,
@@ -254,7 +254,7 @@ document { (inducedMap => Verify),
      }
 
 
-document { quote inducesWellDefinedMap,
+document { inducesWellDefinedMap,
      TT "inducesWellDefinedMap(M,N,f)", " -- tells whether the matrix ", TT "f", " would
      induce a well defined map from ", TT "N", " to ", TT "M", ".",
      SEEALSO "inducedMap"
@@ -266,7 +266,7 @@ document { (map,Module,Module,Function),
      }
 
 
-document { quote matrix,
+document { matrix,
   TT "matrix(...)", " -- create a matrix.",
   PARA,
   "This function can be used to create a matrix or map (homomorphism) between
@@ -453,7 +453,7 @@ document { (map,Module,RingElement),
 	  },
      SEEALSO {"map", "matrix"}
      }
-document { quote Degree,
+document { Degree,
      TT "Degree => d", " -- an optional argument to ", TO "matrix", " that
      specifies that the degree of the map created should be ", TT "d", ".",
      PARA,
@@ -542,14 +542,14 @@ document { (matrix,List),
      SEEALSO {"map", "matrix"}
      }
 
-document { quote id,
+document { id,
      TT "id_M", " -- the identity homomorphism from M to M.",
      PARA,
      "M may be a ", TO "Module", " or a ", TO "ChainComplex", ".",
      PARA,
      SEEALSO{"Matrix", "ChainComplexMap", "ScriptedFunction"}
      }
-document { quote reshape,
+document { reshape,
      TT "reshape(F,G,m)", " -- reshapes the matrix m to give a map from G to F.",
      PARA,
      "It yields the matrix obtained from ", TT "m", " of shape F <--- G, by
@@ -568,25 +568,25 @@ g = reshape(R^1, R^{-1}, f)
 assert isHomogeneous g
 "
 
-document { quote adjoint1,
+document { adjoint1,
      TT "adjoint1 (f,G,H)", " -- if f is a homomorphism of free modules of the
      form F -> G ** H, then produce the adjoint homomorphism of the
      form F ** (dual G) -> H.",
      SEEALSO "adjoint"
      }
 
-document { quote adjoint,
+document { adjoint,
      TT "adjoint (f,F,G)", " -- if f is a homomorphism of free modules of the
      form F ** G -> H, then produce the adjoint homomorphism of the
      form F -> (dual G) ** H.",
      SEEALSO "adjoint1"
      }
 
-document { quote flip,
+document { flip,
      TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
      }
 
-document { quote subquotient,
+document { subquotient,
      TT "subquotient(f,g)", " -- given matrices f and g with the same target, 
      produces a new module representing the image of f in the cokernel
      of g.",
@@ -623,8 +623,8 @@ ZZ[t]
 assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
 "
 
-document { quote compactMatrixForm,
-     TT "compactMatrixFormat", " -- a global flag which specifies whether to display
+document { "compactMatrixForm",
+     TT "compactMatrixForm", " -- a global flag which specifies whether to display
      matrices in compact form.",
      PARA,
      "The default value is ", TT "true", ".  The compact form is the form used by
@@ -649,7 +649,7 @@ assert( 1 == dim I )
 assert( 2 == codim I )
 "
 
-document { quote Ideal,
+document { Ideal,
      TT "Ideal", " -- the class of all ideals.",
      PARA,
      "The justification for considering an ideal I as different from a
@@ -689,19 +689,19 @@ document { (quote ^,Ideal,ZZ),
      TT "I^n", " -- the n-th power of an ideal I."
      }
 
-document { quote module,
+document { module,
      TT "module I", " -- produce the submodule of R^1 corresponding to an
      ideal I."
      }
 
-document { quote submodule,
+document { submodule,
      TT "submodule (u,v,w)", " -- form the submodule generated by a sequence
      or list of elements of a module.",
      BR,NOINDENT,
      TT "submodule I", " -- form the submodule corresponding to an ideal."
      }
 
-document { quote ideal,
+document { ideal,
      "ideal v", " -- produces the ideal spanned by a list or sequence of ring
      elements.",
      PARA,
@@ -710,11 +710,11 @@ document { quote ideal,
       	  "ideal (c..h)"
 	  },
      }
-document { quote ker,
+document { "ker",
      "See ", TO "kernel", "."
      }
 
-document { quote kernel,
+document { kernel,
      TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",
      PARA,
      "If f is a ring element, it will be interpreted as a one by one
@@ -728,7 +728,7 @@ document { quote kernel,
      "For an abbreviation, use ", TO "ker", "."
      }
 
-document { quote SubringLimit,
+document { SubringLimit,
      TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
      causes the computation of the kernel of a ring map to stop after n
      elements have been discovered."
@@ -746,7 +746,7 @@ document { (dual, Matrix),
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 
-document { quote singularLocus,
+document { singularLocus,
      TT "singularLocus R", " -- produce the singular locus of a ring,
      which is assumed to be integral and defined by a homogeneous ideal.",
      PARA,
@@ -797,7 +797,7 @@ document { (quote _,Matrix,Array),
      SEEALSO {submatrix, (quote _,Module,Array), (quote ^,Matrix,Array)}
      }
 
-document { quote entries,
+document { entries,
      TT "entries f", " -- produces the matrix of the homomorphism f as a doubly
      nested list of ring elements.",
      PARA,
@@ -860,13 +860,13 @@ time D = resolution cokernel leadTerm generators G
 -- betti D
 "
 
-document { quote isInjective,
+document { isInjective,
      TT "isInjective f", " -- tells whether the ring map or module
      map f is injective.",
      SEEALSO "isSurjective"
      }
 
-document { quote isSurjective,
+document { isSurjective,
      TT "isSurjective f", " -- tells whether the map f of modules is
      surjective",
      SEEALSO "isInjective"
@@ -881,23 +881,23 @@ assert not isSurjective R^2_{1}
 "
 
 
-document { quote content,
+document { content,
      TT "content f", " -- returns the content of a matrix or polynomial.",
      PARA,
      "The content is the ideal of the base ring generated by the 
      coefficients."
      }
 
-document { quote QuotientRing,
+document { QuotientRing,
      TT "QuotientRing", " -- the class of all quotient rings.",
      PARA,
      SEEALSO {"/", Ring, Ideal}
      }
-document { quote isQuotientOf,
+document { isQuotientOf,
      TT "isQuotientOf(S,R)", " -- tells whether S is a quotient ring of R."
      }
 
-document { quote isQuotientRing,
+document { isQuotientRing,
      TT "isQuotientRing R", " -- tells whether R is provided as a quotient
      ring."
      }
@@ -932,30 +932,30 @@ document { (quote /, Ring, Ideal),
      SEEALSO {"QuotientRing", "use"}
      }
 
-document { quote koszul,
+document { koszul,
      TT "koszul(i,f)", " -- provides the i-th differential in the Koszul complex
      associated to f.",
      PARA,
      "Here f should be a 1 by n matrix."
      }
 
-document { quote symmetricPower,
+document { symmetricPower,
      TT "symmetricPower(i,f)", " -- provides the i-th symmetric power of the matrix f.",
      PARA,
      "Here f should be a 1 by n matrix."
      }
 
-document { quote MinorsComputation,
+document { MinorsComputation,
      TT "MinorsComputation", " -- a type of self initializing list used
      internally by ", TO "minors", "."
      }
 
-document { quote PfaffiansComputation,
+document { PfaffiansComputation,
      TT "PfaffiansComputation", " -- a type of self initializing list used
      internally by ", TO "pfaffians", "."
      }
 
-document { quote wedgeProduct,
+document { wedgeProduct,
      TT "wedgeProduct(p,q,M)", " -- returns the matrix which represents the
      multiplication map from ", TT "exteriorPower(p,M) ** exteriorPower(q,M)", "
      to ", TT "exteriorPower(p+q,M)", ".",
@@ -963,7 +963,7 @@ document { quote wedgeProduct,
      "Here ", TT "M", " is free module."
      }
 
-document { quote exteriorPower,
+document { exteriorPower,
      TT "exteriorPower(i,M)", " -- the i-th exterior power of a module ", TT "M", ".",
      BR,NOINDENT,
      TT "exteriorPower(i,f)", " -- the i-th exterior power of a matrix ", TT "f", ".",
@@ -993,7 +993,7 @@ TEST ///
 ///
 
 
-document { quote minors,
+document { minors,
      TT "minors(j,m)", " -- produces the ideal generated by
      the determinants of the j-by-j submatrices of the matrix m.",
      PARA,
@@ -1018,7 +1018,7 @@ assert( minors(1,h) == image matrix {{a,b,c,d}} )
 assert( minors(2,h) == image matrix {{a * d - b * c}} )
 "
 
-document { quote pfaffians,
+document { pfaffians,
      TT "pfaffians(n,f)", " -- given a skew symmetric matrix f, produce the 
      ideal generated by its n by n pfaffians.",
      PARA,
@@ -1047,7 +1047,7 @@ assert( pfaffians(3,m) == ideal(0_R) )
 assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
 ///
 
-document { quote trace,
+document { trace,
      TT "trace f", " -- returns the trace of the matrix f.",
      PARA,
      EXAMPLE {
@@ -1056,7 +1056,7 @@ document { quote trace,
       	  "trace p"
 	  },
      }
-document { quote det,
+document { det,
      TT "det f", " -- returns the determinant of the matrix or table f.",
      PARA,
      EXAMPLE {
@@ -1066,13 +1066,13 @@ document { quote det,
 	  },
      }
 
-document { quote Limit,
+document { Limit,
      TT "Limit => n", " -- an optional argument for ", TO "pfaffians", "
      of for ", TO "minors", " specifying that the computation should stop 
      after n more elements are computed."
      }
 
-document { quote fittingIdeal,
+document { fittingIdeal,
      TT "fittingIdeal(i,M)", " -- the i-th Fitting ideal of the module M",
      PARA,
      EXAMPLE {
@@ -1099,7 +1099,7 @@ assert( fittingIdeal(7,M) == ideal x )
 assert( fittingIdeal(8,M) == ideal 1_R )
 assert( fittingIdeal(9,M) == ideal 1_R )
 "
-document { quote genericMatrix,
+document { genericMatrix,
      TT "genericMatrix(R,x,m,n)", " -- produce an m by n matrix of variables drawn
      from the ring R, starting with variable x.",
      PARA,
@@ -1109,13 +1109,13 @@ document { quote genericMatrix,
 	  },
      }
 
-document { quote genericSkewMatrix,
+document { genericSkewMatrix,
      TT "genericSkewMatrix(R,x,n)", " -- make a skew symmetric n by n 
      matrix whose entries above the diagonal are the variables of R, starting 
      with the variable x."
      }
 
-document { quote genericSymmetricMatrix,
+document { genericSymmetricMatrix,
      TT "genericSymmetricMatrix(R,x,n)", " -- make a symmetric n by n matrix 
      whose entries on and above the diagonal are the variables of R, starting 
      with the variable x."
@@ -1192,14 +1192,14 @@ document { (quote **, Matrix, Ring),
      EXAMPLE "f ** R"
      }
 
-document { quote poincareComputation,
+document { poincareComputation,
      TT "poincareComputation", " -- a key used in a module or monomial
      ideal to store a computation of Poincare polynomial.",
      PARA,
      SEEALSO {"poincare"}
      }
 
-document { quote hilbertFunction,
+document { hilbertFunction,
      TT "hilbertFunction(d,M)", " -- compute the dimension of the degree d
      part of the module, ring, or ideal M",
      PARA,
@@ -1218,12 +1218,12 @@ assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
 assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
 ///
 
-document { quote Order,
+document { Order,
      TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "
      to specify the order of the series requested."
      }
 
-document { quote hilbertSeries,
+document { hilbertSeries,
      TT "hilbertSeries M", " -- compute the Hilbert series of the ring or
      module M.",
      PARA,
@@ -1248,7 +1248,7 @@ document { quote hilbertSeries,
 	  },
      SEEALSO {"degreesRing", "Order"}
      }
-document { quote ProjectiveHilbertPolynomial,
+document { ProjectiveHilbertPolynomial,
      TT "ProjectiveHilbertPolynomial", " -- the class of all Hilbert
      polynomials expressed in terms of the Hilbert polynomials of projective
      space.",
@@ -1284,7 +1284,7 @@ document { (quote " ", ProjectiveHilbertPolynomial, ZZ),
 	  },
      SEEALSO ProjectiveHilbertPolynomial
      }
-document { quote projectiveHilbertPolynomial,
+document { projectiveHilbertPolynomial,
      TT "projectiveHilbertPolynomial n", " -- produces the projective
      Hilbert polynomial corresponding to projective space of dimension n.",
      BR,NOINDENT,
@@ -1322,7 +1322,7 @@ scan(3, n -> (
 	       	    assert( r == s)))))))
 "
 
-document { quote Projective,
+document { Projective,
      TT "Projective => true", " -- an option to ", TO "hilbertPolynomial", " which
      specifies that the Hilbert polynomial produced should be expressed in terms
      of the Hilbert polynomials of projective spaces.  This is the default.",
@@ -1355,7 +1355,7 @@ document { quote Projective,
      SEEALSO "ProjectiveHilbertPolynomial"
      }
 
-document { quote hilbertPolynomial,
+document { hilbertPolynomial,
      TT "hilbertPolynomial M", " -- the Hilbert polynomial of the module M as
      a polynomial in T.",
      PARA,
@@ -1366,7 +1366,7 @@ document { quote hilbertPolynomial,
      PARA,
      }
 
-document { quote codim,
+document { codim,
      TT "codim M", " -- calculate the codimension of the support of a module ", TT "M", ".",
      BR,NOINDENT,
      TT "codim I", " -- calculate the codimension of the quotient ring ", TT "R/I", ".",
@@ -1380,7 +1380,7 @@ document { quote codim,
 	  },
      }
 
-document { quote dim,
+document { dim,
      TT "dim M", " -- calculate the dimension of the support of a module M.",
      BR,NOINDENT,
      TT "dim R", " -- calculate the dimension of a ring R.",
@@ -1392,7 +1392,7 @@ document { quote dim,
      PARA,
      SEEALSO {"Schur"}
      }
-document { quote presentation,
+document { presentation,
      TT "presentation M", " -- produce a presentation of the module M.",
      BR,NOINDENT,
      TT "presentation R", " -- produce a presentation of the quotient ring R.",
@@ -1425,7 +1425,7 @@ TEST ///
     scan(modules, M -> assert( cover M == target presentation M ) )
 ///
 
-document { quote prune,
+document { prune,
      TT "prune M", " -- replace M by an isomorphic module with a minimal number
      of generators and relations.",
      BR,NOINDENT,
@@ -1441,7 +1441,7 @@ document { quote prune,
      }
 
 
-document { quote pruningMap,
+document { pruningMap,
      TT "pruningMap", " -- the key under which is stored the isomorphism to
      a module ", TT "M", " from the module ", TT "prune M", ".",
      PARA,
@@ -1450,7 +1450,7 @@ document { quote pruningMap,
      SEEALSO "prune"
      }
 
-document { quote dual,
+document { dual,
      TT "dual M", " -- the dual.",
      PARA,
      "For details, see one of the following.",
@@ -1494,7 +1494,7 @@ document { (dual, Module),
      TT "dual M", " -- the dual of a module."
      }
 
-document { quote homomorphism,
+document { homomorphism,
      TT "homomorphism f", " -- finds the matrix M <-- N corresponding to the 
      element f.",
      PARA,

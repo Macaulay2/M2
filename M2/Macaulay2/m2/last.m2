@@ -3,7 +3,7 @@
 -- this file should be mentioned *last* in dumpseq
 
 -- leave this at the end, to get a complete list of options
-document { quote Options,
+document { Options,
      TT "Options", " -- an option used with ", TO "method", " to specify
      names of optional arguments and their default values.",
      PARA,

@@ -2,7 +2,7 @@
 
 ProductRing = new Type of Ring
 
-name ProductRing := (RS) -> name RS.baseRings#0 | " * " | name RS.baseRings#1
+toString ProductRing := RS -> if RS.?name then RS.name else toString RS.baseRings#0 | " * " | toString RS.baseRings#1
 net ProductRing := (RS) -> net RS.baseRings#0 | " * " | net RS.baseRings#1
 Ring * Ring := (R,S) -> (
      RS := new ProductRing of BasicList;
@@ -12,7 +12,7 @@ Ring * Ring := (R,S) -> (
      RS == RS := (x,y) -> x#0 == y#0 and x#1 == y#1;
      RS == ZZ := (x,i) -> x#0 == i and x#1 == i;
      ZZ == RS := (i,x) -> x#0 == i and x#1 == i;
-     name RS := x -> "(" | name x#0 | "," | name x#1 | ")";
+     toString RS := x -> "(" | toString x#0 | "," | toString x#1 | ")";
      - RS := x -> new RS from {-x#0,-x#1};
      RS + RS := (x,y) -> new RS from {x#0+y#0,x#1+y#1};
      RS - RS := (x,y) -> new RS from {x#0-y#0,x#1-y#1};

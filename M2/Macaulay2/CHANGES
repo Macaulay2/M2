@@ -1,5 +1,13 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.54:
+
+'string' and 'name' phased out in favor of 'toString' and 'toExternalString',
+both of which accomodate methods better.
+
+'getDocumentationTag' removed, replaced by 'toString'
+
+-----------------------------------------------------------------------------
 New in 0.8.53:
 
 Comparison of monomials using '>' in rings with nonstandard monomial orderings 

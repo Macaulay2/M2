@@ -2,7 +2,7 @@
 
 SchurRing = new Type of EngineRing
 
-name SchurRing := S -> "Schur(" | string (# (monoid S).generatorSymbols) | ")"
+toString SchurRing := S -> if S.?name then S.name else "Schur(" | toString (# (monoid S).generatorSymbols) | ")"
 
 newSchur := (R,M) -> (
      if not (M.?Engine and M.Engine) 
@@ -59,7 +59,7 @@ newSchur := (R,M) -> (
 	  SR.ConvertToExpression,
 	  sendgg(ggPush f, ggtonet)
 	  );
-     SR.generators = apply(M.generators, m -> SR#(name m) = SR#0 + m);
+     SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
      scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
      SR.use = x -> (
 	  M + M := (m,n) -> R#1 * m + R#1 * n;
@@ -104,9 +104,9 @@ Schur(ZZ) := options -> n -> (
      prune := v -> drop(v, - # select(v,i -> i === 0));
      M := monoid[x_1 .. x_n];
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
-     name M := net M := x -> first lines sendgg(ggPush x, ggsee, ggpop);
+     toString M := net M := x -> first lines sendgg(ggPush x, ggsee, ggpop);
      M.ConvertToExpression = ConvertApply(
-	  args -> new Holder from {name (
+	  args -> new Holder from {toString (
 	       if args === ()
 	       then {}
 	       else prune sum(args,(v,n) -> n * vec#v)

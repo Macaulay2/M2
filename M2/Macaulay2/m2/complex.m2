@@ -12,7 +12,7 @@ CC#1 = new CC from {1,0}
 CC.degreeLength = 0
 
 mathML CC := z -> concatenate(
-     "<cn type='complex'>",string realPart z, "<sep/>", string imaginaryPart z, "</cn>"
+     "<cn type='complex'>",toString realPart z, "<sep/>", toString imaginaryPart z, "</cn>"
      )     
 
 conjugate ZZ := identity
@@ -29,7 +29,7 @@ realPart CC := z -> z#0
 imaginaryPart CC := z -> z#1
 exprI := quote ii
 expression CC := z -> z#0 + z#1 * hold exprI
-name CC := z -> name expression z
+toString CC := z -> toString expression z
 net CC := z -> net expression z
 
 CC + CC := (x,y) -> new CC from {x#0+y#0,x#1+y#1}

@@ -1,8 +1,8 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 noapp := (f,x) -> error(
-     "no method for applying item of class ", name class f, 
-     " to item of class ", name class x
+     "no method for applying item of class ", toString class f, 
+     " to item of class ", toString class x
      )
 
 --Symbol Thing := (f,x) -> (
@@ -20,9 +20,9 @@ protect Options
 noMethod := args -> (
      if class args === Sequence 
      then if 0 < #args and #args <= 3 
-     then error("no method found for items of classes ",name apply(args, class))
-     else error("no method found for item of class Sequence and length ",string(#args))
-     else error("no method found for item of class ", name class args)
+     then error("no method found for items of classes ",toString apply(args, class))
+     else error("no method found for item of class Sequence and length ",toString(#args))
+     else error("no method found for item of class ", toString class args)
      )
 
 methodDefaults := new OptionTable from {
@@ -121,17 +121,15 @@ scan({
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,
-	  isIsomorphism, exponents, 
-	  height, depth, width, regularity, nullhomotopy,
-	  hilbertFunction, content, isUnit, monoid,
-	  isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
-	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator,
-	  chainComplex, assign, numgens,
+	  isIsomorphism, exponents, height, depth, width, regularity, nullhomotopy,
+	  hilbertFunction, content, isUnit, monoid, isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
+	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
 	  frac, betti, det, ring, presentation, quote use, degreesMonoid, newDegreesMonoid, submatrix,
 	  truncate, fraction
 	  },
      n -> (
+	  if Symbols#?n then error concatenate("function ",n," redefined");
 	  f := method();
 	  Symbols#f = n;
 	  n <- f;
@@ -152,6 +150,8 @@ radical = method( Options=>{
 
 sum = method()
 product = method()
+toString = method(SingleArgumentDispatch => true)
+toExternalString = method(SingleArgumentDispatch => true)
 max = method(SingleArgumentDispatch=>true)
 min = method(SingleArgumentDispatch=>true)
 ideal = method(SingleArgumentDispatch=>true)
@@ -195,12 +195,12 @@ coker = cokernel
 source = (h) -> (
      if h#?(quote source) then h.source
      else if (class h)#?(quote source) then (class h)#?(quote source)
-     else error ( name h, " of class ", name class h, " has no source" ))
+     else error ( toString h, " of class ", toString class h, " has no source" ))
 
 target = (h) -> (
      if h.?target then h.target
      else if (class h)#?(quote target) then (class h)#?(quote target)
-     else error (name h | " of class " | name class h | " has no target"))
+     else error (toString h | " of class " | toString class h | " has no target"))
 
 gens = generators
 
@@ -237,13 +237,13 @@ options Function := function -> (
      )
 options Symbol := s -> select(apply(pairs OptionsRegistry, (f,o) -> if o#?s then f), i -> i =!= null)
 
-computeAndCache := (M,options,name,goodEnough,computeIt) -> (
-     if not M#?name or not goodEnough(M#name#0,options) 
+computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
+     if not M#?Name or not goodEnough(M#Name#0,options) 
      then (
 	  ret := computeIt(M,options);
-	  M#name = {options,ret};
+	  M#Name = {options,ret};
 	  ret)
-     else M#name#1
+     else M#Name#1
      )
 -----------------------------------------------------------------------------
 
@@ -264,9 +264,9 @@ EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expec
      MarkUpType Thing := (h,y) -> new h from {y}
 EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
 
-htmlMarkUpType := name -> (
-     on := "<" | name | ">";
-     off := "</" | name | ">";
+htmlMarkUpType := s -> (
+     on := "<" | s | ">";
+     off := "</" | s | ">";
      t -> concatenate(on, apply(t,html), off))
 
 GlobalAssignHook MarkUpType := (X,x) -> (
@@ -414,13 +414,6 @@ tex Boolean := tex Symbol :=
 text Symbol := text Boolean := 
 html Symbol := html Boolean := string
 
-net Symbol := s -> (
-     if operators#?s then operators#s 
-     -- else if s =!= value s then concatenate("quote ", string s)
-     else string s
-     )
-File << Symbol := (o,s) -> o << net s	  -- replaces a method installed in setup.m2
-erase quote operators			  -- created in name.m2
 
 html MarkUpList := x -> concatenate apply(x,html)
 text MarkUpList := x -> concatenate apply(x,text)
@@ -753,10 +746,7 @@ text TO   := x -> concatenate (
      )
 
 html TO   := x -> concatenate (
-     "<A HREF=\"", 
-     -- linkFilename getDocumentationTag x#0,
-     "\">", html formatDocumentTag x#0, "</A>", 
-     drop(toList x,1)
+     "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1)
      )
 
 tex TO := x -> tex TT formatDocumentTag x#0
@@ -764,10 +754,9 @@ tex TO := x -> tex TT formatDocumentTag x#0
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
 
-oldexit := exit
+exitMethod := method(SingleArgumentDispatch => true)
+exitMethod ZZ := i -> exit i
+exitMethod Sequence := () -> exit 0
+quit = new Command from (() -> exit 0)
 erase quote exit
-exit = method(SingleArgumentDispatch => true)
-exit ZZ := i -> oldexit i
-exit Sequence := () -> oldexit 0
-exit = new Command from exit
-quit = new Command from (() -> oldexit 0)
+exit = new Command from exitMethod

@@ -10,7 +10,7 @@ TEST ///
      E = image D_[0]
      E = coimage D_[0]
 ///
-document { quote Resolution,
+document { Resolution,
     TT "Resolution", " -- the class of all resolution computations, as well
     as the key used in a ", TO "ChainComplex", " to store the resolution it
     comes from.",
@@ -24,11 +24,11 @@ document { quote Resolution,
 	 }
     }
 
-document { quote res,
+document { "res",
     "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
     }
 
-document { quote resolution,
+document { resolution,
      TT "resolution", " -- a command for producing resolutions.",
      PARA,
      "See one of the following entries.",
@@ -91,7 +91,7 @@ document { resolution => StopBeforeComputation,
      the partially computed resolution contained in an interrupted computation."
      }
 
-document { quote LengthLimit,
+document { LengthLimit,
      TT "LengthLimit", " -- a keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -100,7 +100,7 @@ document { quote LengthLimit,
 	  }
      }
 
-document { quote Algorithm,
+document { Algorithm,
      TT "Algorithm", " -- a keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -126,7 +126,7 @@ document { resolution => LengthLimit,
      The extra differential is not guaranteed to be minimal."
      }
 
-document { quote HardDegreeLimit,
+document { HardDegreeLimit,
      TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
      that information above a specified degree is to be discarded.",
      PARA,
@@ -165,7 +165,7 @@ document { resolution => Algorithm,
      this makes an enormous improvement to the efficiency of the algorithm."
      }
 
-document { quote SortStrategy,
+document { SortStrategy,
      TT "SortStrategy", " -- an keyword for an optional argument which 
      specifies the strategy to be used for sorting S-pairs.",
      PARA,
@@ -255,7 +255,7 @@ C = res(M, LengthLimit => 2, DegreeLimit => 4)
 --- assert( rank C_2 == 90 )
 "
 
-document { quote status,
+document { status,
      TT "status C", " -- displays the status of the computation of a
      chain complex C constructed by ", TO "resolution", ".  The display has
      the same shape as the display produced by ", TO "betti", ", but
@@ -271,20 +271,20 @@ document { quote status,
 	       (options status).Monomials}
 	  }
      }
-document { quote TotalPairs,
+document { TotalPairs,
      TT "TotalPairs", " -- an option for ", TO "status", " which specifies
      whether to display the total number of S-pairs."
      }
-document { quote PairsRemaining,
+document { PairsRemaining,
      TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
      whether to display number of S-pairs remaining."
      }
-document { quote Monomials,
+document { Monomials,
      TT "Monomials", " -- an option for ", TO "status", " which specifies
      whether to display the number of monomials."
      }
 
-document { quote radical, 
+document { radical, 
   TT "radical I", " -- the radical of the ideal I",
   BR,NOINDENT,
   TT "radical(I,options)", " -- some options are allowed as well",
@@ -315,7 +315,7 @@ document { quote radical,
   SEEALSO {"top", "removeLowestDimension", "saturate", "quotient"}
   }
 
-document { quote CompleteIntersection,
+document { CompleteIntersection,
      TT "CompleteIntersection => J", " -- an option to ", TO "radical", " 
      which indicates that the ideal I provided by the user is unmixed,
      and that J is an ideal in I which is a complete intersection of
@@ -329,7 +329,7 @@ document { quote CompleteIntersection,
      ", TO "Unmixed", " option."
      }
 
-document { quote Unmixed,
+document { Unmixed,
      TT "Unmixed => true", " -- an option to ", TO "radical", " which asserts
      that the ideal provided by the user is known to be unmixed.",
      PARA,
@@ -337,7 +337,7 @@ document { quote Unmixed,
      have the same dimension.  In this case the algorithm tends to be much faster."
      }
 
-document { quote top,
+document { top,
      TT "top I", " -- yields the intersection of top dimensional primary
      components of the module or ideal I.",
      PARA,
@@ -351,7 +351,7 @@ document { quote top,
      SEEALSO {"removeLowestDimension", "saturate", "quotient", "radical"}
      }
 
-document { quote removeLowestDimension,
+document { removeLowestDimension,
      TT "removeLowestDimension", " I -- I an ideal or submodule of a free module.
      Yields the intersection of the primary
      components of I, excepting those of lowest dimension (and thus returns the
@@ -468,7 +468,7 @@ radical(I, CompleteIntersection=>I1)
 -- I2 = removeLowestDimension I1
 "
 
-document { quote factor,
+document { factor,
      TT "factor x", " -- factors x.",
      PARA,
      "The result is a ", TO "Product", " each of whose factors is a 
@@ -502,21 +502,21 @@ document { quote factor,
      EXAMPLE "code(factor,F)"
      }
 
-document { quote pseudoRemainder,
+document { pseudoRemainder,
      TT "pseudoRemainder(f,g)", " -- computes the pseudo-remainder for
      f divided by g.",
      PARA,
      "This is an internal experimental routine."
      }
 
-document { quote irreducibleCharacteristicSeries,
+document { irreducibleCharacteristicSeries,
      TT "irreducibleCharacteristicSeries I", " -- computes the irreducible
      characteristic series of ideal I.",
      PARA,
      "This is an internal routine used by ", TO "decompose", "."
      }
 
-document { quote topCoefficients,
+document { topCoefficients,
      TT "topCoefficients m", " -- for a matrix m, for each column, returns
      the coefficients of the highest power of the variable with the lowest
      index.",
@@ -531,7 +531,7 @@ document { quote topCoefficients,
      x_i^n."
      }
 
-document { quote decompose,
+document { decompose,
      TT "decompose I", " -- compute the ideals of the irreducible
      components of the subvariety defined by the ideal I.",
      PARA,
@@ -657,13 +657,13 @@ assert( (x^2-10748*y*x+y^2)*(y^2+x^2)*(x^2+10748*y*x+y^2) == x^6 + y^6 )
 assert ( # factor (x^6 + y^6) == 4 )
 "
 
-document { quote integrate,
+document { integrate,
      TT "integrate(f,a,b)", " -- integrate f from a to b numerically, using
      Gaussian quadrature.",
      EXAMPLE "integrate(sin,0,pi)"
      }
 
-document { quote getWWW,
+document { getWWW,
      TT "getWWW URL", " -- obtain the contents of a URL from an http server.",
      BR,NOINDENT,
      TT "getWWW(URL,TEXT)", " -- obtain the contents of a URL from an 
@@ -673,7 +673,7 @@ document { quote getWWW,
      or name service to statically linked programs like this one."
      }
 
-document { quote browse,
+document { browse,
      TT "browse x", " -- provides an interactive mechanism which allows the user
      to explore the hash table or list ", TT "x", ".",
      PARA,

@@ -1,7 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 GroebnerBasis = new Type of MutableHashTable
-name GroebnerBasis := g -> name new FunctionApplication from { gb, g.matrix }
+toString GroebnerBasis := g -> toString new FunctionApplication from { gb, g.matrix }
 net GroebnerBasis := g -> net gens g
 
 stats GroebnerBasis := g -> sendgg(ggPush g, ggstats)
@@ -122,7 +122,7 @@ processStrategy := (v) -> (
      if class v =!= List then v = {v};
      sum(v,s->(
 	       if not strategyCodes#?s
-	       then error("unknown strategy ", name s, " encountered");
+	       then error("unknown strategy ", toString s, " encountered");
 	       strategyCodes#s)))     
 
 gb Ideal := options -> (I) -> gb ( module I, options )

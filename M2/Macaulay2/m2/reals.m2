@@ -5,7 +5,6 @@ RR#1 = 1.
 RR.char = 0
 RR.ConversionFormat = ConvertMissing
 InverseMethod RR := x -> 1/x
-net RR := string
 RR.degreeLength = 0
 
 RR == ZZ := (x,y) -> x === y+0.

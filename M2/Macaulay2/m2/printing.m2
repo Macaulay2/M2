@@ -25,7 +25,7 @@ columnate = (s,w) -> (
      horizontalJoin between(" ", apply(pack(s,nrows), col -> stack col)))
 
 net Time := v -> (
-     t := "-- " | string v#0 | " seconds";
+     t := "-- " | toString v#0 | " seconds";
      x := v#1;
      if x === null then t else net x || t
      )

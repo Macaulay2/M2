@@ -35,7 +35,7 @@ reach2 Sequence :=
 reach2 MarkUpList := x -> scan(x,reach2)
 reach2 SHIELD := x -> null
 reach2 TO := x -> (
-     s := getDocumentationTag x#0;
+     s := toString x#0;
      if not reachable#?s or not reachable#s then (
 	  reachable#s = true;
 	  currentDescent = enter(currentDescent, formatDocumentTag s);
@@ -43,7 +43,7 @@ reach2 TO := x -> (
 	  currentDescent = currentDescent.parent;
 	  ))
 
-DocumentationProvided = set apply(topicList(), getDocumentationTag)
+DocumentationProvided = set apply(topicList(), toString)
 scan(keys DocumentationProvided, s -> reachable#s = false)
 reach2 TO "Macaulay 2"
 

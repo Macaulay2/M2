@@ -1,17 +1,11 @@
 -- Copyright 1994 by Daniel R. Grayson
 
 Tally.name = "Tally"
-name Tally := x -> (
+toString Tally := x -> (
      "new Tally from {"
-     | demark(", ", apply(pairs x, (v,i) -> name v | " => " | string i))
+     | demark(", ", apply(pairs x, (v,i) -> toString v | " => " | toString i))
      | "}"
      )
-
---net Tally := x -> horizontalJoin flatten(
---     "tally splice {",
---     between(", ", apply(pairs x, (v,i) -> string i | " : " | net v)),
---     "}"
---     )
 
 net Tally := t -> peek t
 
@@ -41,11 +35,11 @@ new Set from List := (X,x) -> set x
 
 set Set := x -> x
 net Set := x -> net class x | " " | net keys x
-name Set := x -> (
+toString Set := x -> (
      -- unpleasant hack
      if class x === Set
-     then "set " | name keys x
-     else "new " | name class x | " from " | name keys x
+     then "set " | toString keys x
+     else "new " | toString class x | " from " | toString keys x
      )
 Set + Set := (x,y) -> merge(x,y,(i,j)->i)
 Set ++ Set := (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))

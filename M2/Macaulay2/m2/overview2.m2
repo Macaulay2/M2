@@ -1252,21 +1252,14 @@ document { "two dimensional formatting",
      dimesional formatting of output to an ascii terminal with limited
      graphical ability.  We present now a few more hints about putting
      this idea into practice.  Nets are used extensively in Macaulay 2
-     for formatting, for example, for formatting of polynomials.",
+     for formatting, for example, for formatting of polynomials and
+     matrices.",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
 	  "f = random(R^1,R^{5:-3})",
 	  },
      PARA,
-     "Normally matrices such as the one above are displayed in compact
-     notation that originated with Macaulay.  Setting the global flag
-     ", TO "compactMatrixForm", " to ", TO "false", " will modify that
-     behavior.",
-     EXAMPLE {
-	  "compactMatrixForm = false",
-	  "f",
-	  },
      "Output of routines such as ", TO "betti", " and ", TO "net", " that
      return nets can be easily incorporated into more complex displays 
      using standard operations on nets (see ", TO "Net", ").",
@@ -1323,14 +1316,14 @@ document { "two dimensional formatting",
 	  },
      }
 
-document { quote isReady,
+document { isReady,
      TT "isReady f", " -- tells whether an input file ", TT "f", " has data
      available for reading, or it's at the end.",
      PARA,
      SEEALSO {"File"}
      }
 
-document { quote atEndOfFile,
+document { atEndOfFile,
      TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
      PARA,
      SEEALSO {"File"}
@@ -1432,15 +1425,7 @@ document { "inheritance from parents",
      "This node has not been written yet."
      }
 
-document { (quote @, List, Function),
-     "This node has not been written yet."
-     }
-
 document { "method functions with optional arguments",
-     "This node has not been written yet."
-     }
-
-document { (quote @, OptionTable, Function),
      "This node has not been written yet."
      }
 

@@ -19,19 +19,19 @@ Ideal \ Ring := (I,A) -> substitute(I,A)
 
 -- Integral closure of a ring
 
-document { quote isNormal,
+document { isNormal,
      TT "isNormal", "(R:Ring) ==> Boolean -- is R normal, i.e. integrally closed?",
      PARA,
 "If R is an affine ring, determines whether R is integrally closed.
 The method used is ..."
 }
 
-document { quote normalization,
+document { normalization,
      TT "normalization", "(R:Ring) ==> Ring -- Yields the integral closure of the
 affine ring R"
 }
 
-document { quote idealizer,
+document { idealizer,
   TT "idealizer", "(J:Ideal)==>Ideal -- ring structure on Hom(J,J)",
   PARA,
   "Yields an ideal L in a ring S such that Hom(J,J) = S/L. If

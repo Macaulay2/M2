@@ -476,7 +476,7 @@ effective = (D) -> (
     LB := globalSections D;
     L := LB#0;  -- the matrix of numerators
     if numgens source L == 0 
-    then error(name D + " is not effective")
+    then error(toString D + " is not effective")
     else divisor sectionIdeal(L_(0,0), LB#1, D));
 
 --

@@ -5,7 +5,7 @@ Matrix % Ideal := (f,I) -> (
           f % g)
      else f % gb I)
 
-document { quote sagbi,
+document { sagbi,
      TT "sagbi(F:RingMap, nsteps:ZZ) --> RingMap",
      BR,NOINDENT,
      "  -- yields a ring map where the images of the variables forms

@@ -8,7 +8,7 @@ vv = apply(8,i->rank re_i)
 assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
 << "-- " << first lines get "!uname -a" << endl
-<< "-- " <<  string ti << " seconds"
+<< "-- " <<  toString ti << " seconds"
 << ", Macaulay2 " << version#"VERSION"
 << ", compiled with " << version#"compiler"
 << endl

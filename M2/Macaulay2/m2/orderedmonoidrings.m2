@@ -10,7 +10,7 @@ isPolynomialRing PolynomialRing := (R) -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
-name PolynomialRing := R -> name R.baseRings#-1 | name monoid R
+toString PolynomialRing := R -> if R.?name then R.name else toString R.baseRings#-1 | toString monoid R
 expression PolynomialRing := R -> (
      if R.?name then R.name
      else (expression R.baseRings#-1) (expression monoid R)
@@ -250,7 +250,7 @@ Ring OrderedMonoid := (			  -- no memoize
 			 ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
 	       );
 	  expression RM := f -> convert( RM.ConvertToExpression, sendgg(ggPush f, ggtonet) );
-	  name RM := x -> name expression x;
+	  toString RM := toExternalString RM := x -> toString expression x;
 	  net RM := x -> net expression x;
 	  fac := options -> f -> (
 	       sendgg(ggPush f, ggfactor);
@@ -271,7 +271,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;
-	  RM.generators = apply(# M.generators, i -> RM#(name M.generators#i) = RM_i);
+	  RM.generators = apply(# M.generators, i -> RM#(toString M.generators#i) = RM_i);
 	  scan(keys R, k -> if class k === String then RM#k = promote(R#k,RM));
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;

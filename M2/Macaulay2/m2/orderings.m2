@@ -3,7 +3,7 @@
 clone = method()
 
 MonomialOrdering = new Type of MutableHashTable
-net MonomialOrdering := name MonomialOrdering := see
+net MonomialOrdering := toString MonomialOrdering := see
 
 hasComponent := false					    -- not re-entrant
 mo := null						    -- not re-entrant
@@ -64,7 +64,7 @@ types := new HashTable from {
 	  val -> (
 	       key := val#0;
 	       if opts#?key then opts#key val#1
-	       else error ("unknown ordering keyword: ", name key);
+	       else error ("unknown ordering keyword: ", toString key);
 	       )
 	  ),
      Eliminate => (
@@ -80,7 +80,7 @@ monomialOrdering = args -> (
      scan(args, val -> (
 	       if tags#?val then tags#val()
 	       else if types#?(class val) then types#(class val) val
-	       else error ("unknown ordering option: ", name val)));
+	       else error ("unknown ordering option: ", toString val)));
      if not hasComponent then sendgg(ggPush mo, ggMOcomponent);
      m := mo;
      mo = null;

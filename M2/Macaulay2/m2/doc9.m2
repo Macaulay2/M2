@@ -1,7 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 
-document { quote pushForward,
+document { pushForward,
      TT "pushForward(f,M)", " -- yields an R-presentation of the S-module M, where
      f:R --> S is a ring map, and M is considered as an R-module via f.",
      PARA,
@@ -47,12 +47,12 @@ TEST "
     assert( R^{0,-1,-2} == pushForward(f,M) )
 "
 
-document { quote UseHilbertFunction,
+document { UseHilbertFunction,
      TT "UseHilbertFunction", " -- an option for ", TO "pushForward1", "."
      }
 
 
-document { quote Ext,
+document { Ext,
      TT "Ext^i(M,N)", " -- compute the Ext module of two modules M, N.",
      PARA,
      NOINDENT,
@@ -84,14 +84,14 @@ document { quote Ext,
      SEEALSO{"ScriptedFunctor", "adjust"}
      }
 
-document { quote adjust,
+document { adjust,
      TT "adjust", " -- a symbol used as a key under which to store a degree
      adjustment function used by ", TO "Ext", ".",
      PARA,
      "This use of this symbol will eventually not be needed."
      }
 
-document { quote dd,
+document { dd,
      TT "dd", " -- a symbol used as a key in a chain complex, under which
      are stored the differentials.",
      PARA,
@@ -109,14 +109,14 @@ document { quote dd,
      }
 
 TEST "
-assert( name Tor == \"Tor\" )
+assert( toString Tor == \"Tor\" )
 "
 
-document { quote Tor,
+document { Tor,
      TT "Tor_i(M,N)", " -- compute the Tor module of two modules M, N.",
      SEEALSO{"ScriptedFunctor"}
      }
-document { quote MonomialIdeal,
+document { MonomialIdeal,
      TT "MonomialIdeal", " -- the class of all monomial ideals handled by
      the ", TO "engine", ".",
      PARA,
@@ -172,7 +172,7 @@ document { quote MonomialIdeal,
 --     }
 
 
-document { quote monomialIdeal,
+document { monomialIdeal,
      TT "monomialIdeal f", " -- create a monomial ideal from a 1 by n matrix f.",
      BR,NOINDENT,
      TT "monomialIdeal I", " -- create a copy of a monomial ideal I.",
@@ -212,18 +212,18 @@ assert(
      )
 "
 
-document { quote intersect,
+document { intersect,
      TT "intersect(M,N,...)", " -- calculate the intersection of 
      submodules of the same free module, or of monomial ideals."
      }
 
-document { quote isBorel,
+document { isBorel,
      TT "isBorel I", " -- determine whether a ", TO "MonomialIdeal", " I
      is fixed by the action of the Borel subgroup of upper triangular
      matrices acting on the variables."
      }
 
-document { quote minprimes,
+document { minprimes,
      TT "minprimes I", " -- compute the minimal primes of a monomial ideal I.",
      PARA,
      "Not working yet."
@@ -236,7 +236,7 @@ TEST "
     assert(f - toDual(4, fdual) == 0)
 "
 
-document { quote fromDual,
+document { fromDual,
      TT "fromDual f", " -- given a 1 by n matrix ", TT "f", " over a polynomial
      ring R, computes g so that ", TT "Hom(R/image g, E)", " corresponds to
      f, where E is the injective envelope of the coefficient field of R.",
@@ -246,7 +246,7 @@ document { quote fromDual,
      SEEALSO "toDual"
      }
 
-document { quote toDual,
+document { toDual,
      TT "toDual(d,f)", " -- given a 1 by n matrix ", TT "f", " over a polynomial
      ring R and an integer d such that the d-th power of each variable is in
      the image of f, computes ", TT "Hom(R/image f, E)", ", where
@@ -257,7 +257,7 @@ document { quote toDual,
      SEEALSO "fromDual"
      }
 
-document { quote GradedModule,
+document { GradedModule,
      TT "GradedModule", " -- the class of all graded modules.",
      PARA,
      "A new graded module can be made with 'M = new GradedModule'.
@@ -278,7 +278,7 @@ document { quote GradedModule,
      SEEALSO "GradedModuleMap"
      }
 
-document { quote GradedModuleMap,
+document { GradedModuleMap,
      TT "GradedModuleMap", " -- the class of all maps between graded modules.",
      PARA,
      "Operations on graded module maps:",
@@ -292,15 +292,15 @@ document { quote GradedModuleMap,
      SEEALSO "GradedModule"
      }
 
-document { quote gradedModule,
+document { gradedModule,
      TT "gradedModule", " -- a method for creating graded modules."
      }
 
-document { quote gradedModuleMap,
+document { gradedModuleMap,
      TT "gradedModuleMap", " -- a method for creating maps of graded modules."
      }
 
-document { quote coimage,
+document { coimage,
      TT "coimage f", " -- coimage of a map of graded modules.",
      PARA,
      "The coimage of a map differs slightly from the image, in that the
@@ -309,7 +309,7 @@ document { quote coimage,
      SEEALSO "GradedModule"
      }
 
-document { quote ChainComplex,
+document { ChainComplex,
      TT "ChainComplex", " -- the class of all chain complexes.",
      PARA,
      "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
@@ -400,7 +400,7 @@ document { (length, ChainComplex),
      between the smallest and largest indices of spots occupied by
      modules, even if those modules happen to be zero."
      }
-document { quote ChainComplexMap,
+document { ChainComplexMap,
      TT "ChainComplexMap", " -- the class of all maps between chain complexes.",
      PARA,
      "The usual algebraic operations are available: addition, subtraction,
@@ -436,7 +436,7 @@ document { (quote _, ChainComplexMap, ZZ),
      }
 
 
-document { quote extend,
+document { extend,
      TT "extend(D,C,f0)", " -- produces a lifting of a map f0 : D_0 <--- C_0
      to a map f: D <--- C of chain complexes of degree 0."
      }
@@ -449,7 +449,7 @@ g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
 E = cone g
 "
 
-document { quote cone,
+document { cone,
      TT "cone f", " -- produce the mapping cone of a map f of chain complexes",
      PARA,
      EXAMPLE {
@@ -469,7 +469,7 @@ document { quote cone,
 	  }
      }
 
-document { quote nullhomotopy,
+document { nullhomotopy,
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",
      PARA, 
@@ -493,7 +493,7 @@ document { quote nullhomotopy,
 	  },
      }
 
-document { quote poincare,
+document { poincare,
      TT "poincare C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      BR,NOINDENT,
@@ -532,7 +532,7 @@ document { quote poincare,
 	  }
      }
 
-document { quote poincareN,
+document { poincareN,
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      PARA,
@@ -575,7 +575,7 @@ document { (quote :, Module, Module),
      See ", TO quotient, " for further details."
      }
 
-document { quote quotient,
+document { quotient,
      TT "quotient(I,J)", " -- computes the ideal or submodule quotient ", TT "(I:J)", ".", 
      PARA,
      "The arguments should be ideals in the same ring, or submodules of the same
@@ -764,8 +764,8 @@ TEST "
 
 TEST ///
 R=ZZ[a]
-assert( name a === "a" )
-assert( name a^2 === "a^2" )
+assert( toString a === "a" )
+assert( toString a^2 === "a^2" )
 ///
 
 TEST "
@@ -799,7 +799,7 @@ TEST ///
      assert( 1 + z == 3 - 3*ii )
      assert( 2*w == 8 + 10*ii )
      assert( z + w == 6 + 2*ii )
-     assert( name w == "4+5*ii" )
+     assert( toString w == "4+5*ii" )
      assert( conjugate z == 2 + 3*ii )
      assert( x == 2 )
      assert( x == 2. )
@@ -948,7 +948,7 @@ TEST "
 	assert( numgens source basis(3,M) == 16 )
 "
 
-document { quote MinimalGenerators,
+document { MinimalGenerators,
      TT "MinimalGenerators => true", " -- an option for certain functions
      which specifies whether to compute minimal generators for the result.",
      PARA,
@@ -974,13 +974,13 @@ document { saturate => MinimalGenerators,
      "The default value is ", TT "true", "."
      }
 
-document { quote Elimination,
+document { Elimination,
      TT "Strategy => Elimination", " -- an option value for ", TO "saturate", " 
      which indicates that the saturation of (I:f) should be computed by
      eliminating z from (I,f*z-1), where z is a new variable."
      }
 
-document { quote Bayer,
+document { Bayer,
      TT "Strategy => Bayer", " -- an option value for ", TO "saturate", " which
      indicates that the method of Bayer's thesis should be used.",
      PARA,
@@ -989,14 +989,14 @@ document { quote Bayer,
      divide by z, and finally replace z by f."
      }
 
-document { quote Iterate,
+document { Iterate,
      TT "Strategy => Iterate", " -- an option value for ", TO "saturate", " which
      indicates that successive ideal or module quotients should be used.",
      PARA,
      "This value is the default."
      }
 
-document { quote Linear,
+document { Linear,
      TT "Strategy => Linear", " -- an option value for ", TO "saturate", " which
      indicates that the reverse lex order should be used to compute the saturation.",
      PARA,
@@ -1362,7 +1362,7 @@ document { (homology,ChainComplex),
      SEEALSO {"GradedModule", "HH"}
      }
 
-document { quote chainComplex,
+document { chainComplex,
      TT "chainComplex", " -- a method for creating chain complexes.",
      PARA,
      "See:",
@@ -1417,7 +1417,7 @@ document { (dual, ChainComplex),
      TT "dual C", " -- the dual of a chain complex."
      }
 
-document { quote regularity,
+document { regularity,
      TT "regularity M", " -- computes the regularity of a module or chain complex C.",
      PARA,
      "For a free chain complex C, the regularity r is the smallest number so that 
@@ -1425,7 +1425,7 @@ document { quote regularity,
      regularity is the regularity of a free minimal resolution of M."
      }
 
-document { quote betti,
+document { betti,
      TT "betti C", " -- display the graded Betti numbers for a ", TO "ChainComplex", " C.",
      PARA,
      NOINDENT,
@@ -1478,7 +1478,7 @@ assert( P == poincare kernel f + poincare cokernel f )
 assert( P == poincare prune W )
 "
 
-document { quote syzygyScheme,
+document { syzygyScheme,
      TT "syzygyScheme(C,i,v)", " -- produce the syzygy scheme from a map
      v : R^j ---> C_i which selects some syzygies from a resolution C."
      }
@@ -1591,7 +1591,7 @@ TEST ///
 	  )
      ///
 
-document { quote tensorAssociativity,
+document { tensorAssociativity,
      TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
      A**(B**C) to (A**B)**C.",
      PARA,

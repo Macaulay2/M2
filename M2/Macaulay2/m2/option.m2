@@ -1,13 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 Option = new Type of BasicList
-html Option := x -> name x
-text Option := x -> name x
+html Option := x -> toString x
+text Option := x -> toString x
 
-name Option := z -> concatenate splice (
-     if precedence z > precedence z#0 then ("(",name z#0,")") else name z#0,
+toString Option := z -> concatenate splice (
+     if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
      " => ",
-     if precedence z > precedence z#1 then ("(",name z#1,")") else name z#1
+     if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
      )
 
 Thing => Thing := (x,y) -> new Option from {x,y}
@@ -25,7 +25,7 @@ processArgs = (args,defaults,function) -> (
      op := (nam,value) -> (
 	  if defaults#?nam 
 	  then defaults#nam = value
-	  else error("unrecognized option '", name nam, "'");
+	  else error("unrecognized option '", toString nam, "'");
 	  false);
      args = select(deepSplice sequence args,
 	  a -> (

@@ -3,12 +3,12 @@
 olderror := error
 erase quote error
 error = args -> olderror apply(
-     sequence args, x -> if class x === String then x else name x
+     sequence args, x -> if class x === String then x else toString x
      )
 protect quote error
 
 on = f -> (
-     n := name f;
+     n := toString f;
      depth := 0;
      totaltime := 0.;
      i := 0;

@@ -1,8 +1,8 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 RingMap = new Type of MutableHashTable
-name RingMap := f -> concatenate(
-     "map(", name target f, ",", name source f, ",", name first entries f.matrix, ")"
+toString RingMap := f -> concatenate(
+     "map(", toString target f, ",", toString source f, ",", toString first entries f.matrix, ")"
      )
 net RingMap := f -> horizontalJoin(
      "map(", net target f, ",", net source f, ",", net first entries f.matrix, ")"
@@ -22,12 +22,12 @@ map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
 		    if r === n 
 		    then m = vars A ** R | m
 		    else if r < n
-		    then error ("encountered values for ", string r, " variables");
+		    then error ("encountered values for ", toString r, " variables");
 		    n = n + numgens A;
 		    coefficientRing A),
 	       S);
 	  if n != numgens source m 
-	  then error ("encountered values for ", string numgens source m," variables");
+	  then error ("encountered values for ", toString numgens source m," variables");
 	  new RingMap from {
 	       quote source => S,
 	       quote target => R,
@@ -42,7 +42,7 @@ map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
      and numgens source m === numgens target m
      then map(R,S,vars R * (m ** R))
      else error (
-	  "expected a 1 by ", numgens S, " matrix over ", name R, 
+	  "expected a 1 by ", numgens S, " matrix over ", toString R, 
 	  " or a square matrix over the coefficient ring"
 	  ))
 
@@ -52,7 +52,7 @@ map(Ring,Ring) := options -> (S,R) -> (
      A := R; v := {}; while (
 	  if A.?generators then (
 	       v = join(apply(A.generators, x -> (
-			      x = name x;
+			      x = toString x;
 			      if S#?x then S#x else 0_S
 			      )), v));
 	  A.?ring) do A = A.ring;
@@ -228,7 +228,7 @@ sub2 := (R,v) -> (
 	       x := opt#0;
 	       y := opt#1;
 	       s := try baseName x else error(
-		    "expected ", name x, " to be a generator of ", name R
+		    "expected ", toString x, " to be a generator of ", toString R
 		    );
 	       m#((monoid R).index#s) = y));
      f := matrix{toList m};

@@ -1,5 +1,4 @@
 command.m2
-name.m2
 document.m2
 symbols.m2
 classes.m2
@@ -69,14 +68,12 @@ chaincomplexes.m2
 res.m2
 radical.m2
 factor.m2
-macaulay.m2
 integrate.m2
 http.m2
 browse.m2
 monomcurve.m2
 fano.m2
 code.m2
-obsolete.m2
 indeterminates.m2
 local.m2
 varieties.m2

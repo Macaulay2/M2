@@ -18,11 +18,11 @@ poincare Ring := R -> poincare R^1
 dim Ring := R -> (
      if R.?dim
      then R.dim
-     else error("dimension of ring ", name R, " unknown"))
+     else error("dimension of ring ", toString R, " unknown"))
 
 char Ring := R -> (
      if R.?char then R.char 
-     else error("characteristic of ", name R, " unknown"))
+     else error("characteristic of ", toString R, " unknown"))
 
 generators Ring := R -> {}
 

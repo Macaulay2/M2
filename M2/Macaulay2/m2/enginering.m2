@@ -17,9 +17,9 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
-name EngineRing := R -> sendgg(ggPush R, ggsee, ggpop)
+toString EngineRing := R -> if R.?name then R.name else sendgg(ggPush R, ggsee, ggpop)
 
-net EngineRing := name
+net EngineRing := toString
 
 new EngineRing from Handle := (EngineRing, h) -> new EngineRing from ggPush h
 
@@ -67,15 +67,15 @@ ZZZ.Engine = true
 ZZZ.baseRings = {ZZ}
 ZZZ.ConvertToExpression = ConvertInteger
 ZZZ.degreeLength = 0
-net ZZZ := name ZZZ := see
+net ZZZ := toString ZZZ := see
 expression ZZZ := n -> expression lift(n,ZZ)
 
 -----------------------------------------------------------------------------
                 FractionField = new Type of EngineRing
            frac FractionField := identity
 coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
-       degreeLength FractionField := F -> degreeLength F.baseRings#-1
-           name FractionField := F -> "frac(" | name F.baseRings#-1 | ")"
+   degreeLength FractionField := F -> degreeLength F.baseRings#-1
+       toString FractionField := F -> if F.?name then F.name else "frac(" | toString F.baseRings#-1 | ")"
 	isField FractionField := F -> true
             net FractionField := F -> (
 		 if F.?name then F.name
@@ -101,7 +101,7 @@ frac EngineRing := R -> (
 	       (x,y) -> x/y, R.ConvertToExpression, R.ConvertToExpression
 	       );
 	  factor F := options -> f -> factor numerator f / factor denominator f;
-	  name F := x -> name expression x;
+	  toString F := x -> toString expression x;
 	  net F := x -> net expression x;
 	  baseName F := (f) -> (
 	       if denominator f != 1 
@@ -166,7 +166,7 @@ RingElement _ RingElement := (f,m) -> (
      	  if size m === 1
      	  and leadCoefficient m == 1
      	  then f_(leadMonomial m)
-     	  else error("expected ", name m, " to be a monomial")
+     	  else error("expected ", toString m, " to be a monomial")
 	  );
      f _ m)
 
@@ -218,7 +218,7 @@ RingElement ^ ZZ := (x,i) -> (
 	  sendgg(ggPush x, ggPush i, ggpower);
 	  new R));
 
-name RingElement := x -> name expression x
+toString RingElement := x -> toString expression x
 
 net RingElement := x -> net expression x
 
@@ -283,7 +283,7 @@ expression RingElement := (r) -> (
 	  A := ultimate(ambient,R);
 	  expression R := lookup(expression,A);
 	  expression r)
-     else error ("no method found for element of ring ", name R)
+     else error ("no method found for element of ring ", toString R)
      )
 
 leadTermSetup := (R) -> (

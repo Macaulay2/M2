@@ -2,7 +2,7 @@
 
 autoload(Symbol,String) := (symbol,filename) -> (
      if value symbol =!= symbol 
-     then error ("symbol ", name symbol, " already has a value");
+     then error ("symbol ", toString symbol, " already has a value");
      symbol <- x -> (
 	  load filename; 
 	  (value symbol) x

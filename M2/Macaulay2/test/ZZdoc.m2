@@ -45,13 +45,13 @@ reach Sequence := reach MarkUpList := x -> scan(x,reach)
 DocumentationProvided := set topicList()
 
 verify TO := x -> (
-     s := toString x#0;
+     s := formatDocumentTag x#0;
      if not DocumentationProvided#?s and not DocumentationMissing#?s 
      then DocumentationMissing#s = currentPage;
      )
 
 reach TO := x -> (
-     s := toString x#0;
+     s := formatDocumentTag x#0;
      if not reachable#?s or not reachable#s
      then (
 	  reachable#s = true;
@@ -65,7 +65,7 @@ scan(keys DocumentationProvided,
 	  currentPage = s;
 	  verify d;
 	  ))
-reachable#(getDocumentationTag "Macaulay 2") = true
+reachable#"Macaulay 2" = true
 
 topName = "Macaulay 2"
 reach doc topName
@@ -92,7 +92,7 @@ DocumentationNotNeeded#(quote{) = true
 DocumentationNotNeeded#(quote() = true
 
 scan(sort pairs tab, (n,s) -> (
-     tag := string s;					    -- getDocumentationTag
+     tag := toString s;
      if not DocumentationProvided#?tag and not DocumentationNotNeeded#?tag
      then warning(s,"no documentation for symbol '"|n|"'")))
 
@@ -101,8 +101,8 @@ unset := sort select (values tab, s ->
      class s === Symbol
      and lookupCount s === 1
      and mutable s
-     and string s =!= "\n"
+     and toString s =!= "\n"
      )
-scan(unset, s -> warning(s,"symbol '"|name s|"' seen only once"))
+scan(unset, s -> warning(s,"symbol '"|toString s|"' seen only once"))
 
 if haderror then exit 1

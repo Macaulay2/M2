@@ -214,8 +214,8 @@ putAnnotationPacket(e:Expr):Expr := (
      else WrongArg(2,"an integer")
      else WrongArg(1,"a small integer")
      else WrongArg(1,"an integer")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     else WrongNumArgs(4)
+     else WrongNumArgs(4));
 setupfun("PutAnnotationPacket",putAnnotationPacket);
 
 putCommonMetaOperatorPacket(e:Expr):Expr := (

@@ -32,6 +32,7 @@ document { "mathematical overview",
 		    TO "making matrices",
 		    TO "making random matrices",
 		    TO "making generic matrices",
+		    TO "displaying matrices",
 		    TO "manipulating matrices",
 		    TO "Groebner bases"
 		    }
@@ -155,10 +156,10 @@ document { "polynomial rings",
      "We may construct polynomial rings over polynomial rings.",
      EXAMPLE "ZZ[a,b,c][d,e,f];",
      "When displaying an element of an iterated polynomial ring,
-     parentheses may be used to organize the coefficients, which
-     may themselves be polynomials (sums).",
+     parentheses are used to organize the coefficients recursively, which
+     may themselves be polynomials.",
      EXAMPLE "(a+d+1)^2",
-     "Variables names may be words.",
+     "Variable names may be words.",
      EXAMPLE {
 	  "QQ[rho,sigma,tau];",
       	  "(rho - sigma)^2",
@@ -187,8 +188,8 @@ document { "polynomial rings",
 	  "protect xx; protect yy; protect zz;",
       	  "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
 	  },
-     "A basis of the part of the ring of a given degree can be obtained in
-     matrix form with ", TO "basis", ".",
+     "A basis of the subspace of ring elements of a given degree can be obtained
+     in matrix form with ", TO "basis", ".",
      EXAMPLE "basis(2,R)",
      "The Hilbert series of a polynomial ring can be obtained.  Its power
      series expansion is the generating function for the dimensions of the
@@ -310,18 +311,19 @@ document { "manipulating polynomials",
      PARA,
      "The list of terms of a polynomial is obtained with ", TO "terms", ".",
      EXAMPLE "terms g",
-     "We may combine that with ", TO "select", " to select terms satisfying certain 
-     conditions.  Here we select the terms of degree 2, subsequently summing them,
-     keeping in mind that the degree is a list of integers.",
+     "We may combine that with ", TO "select", " to select terms satisfying 
+     certain conditions.  Here we select the terms of degree 2, subsequently 
+     summing them, keeping in mind that the degree of a polynomial is always a 
+     list of integers.",
      EXAMPLE {
 	  "select(terms g, i -> degree i == {2})",
       	  "sum oo",
 	  },
      "A string representing the polynomial, suitable for entry into other programs,
-     can be obtained with ", TO "name", ".",
+     can be obtained with ", TO "toString", ".",
      EXAMPLE {
-	  "name f",
-      	  "name g",
+	  "toString f",
+      	  "toString g",
 	  },
      PARA,
      "The usual algebraic operations on polynomials are available, but there
@@ -1036,9 +1038,32 @@ document { "making generic matrices",
 	  },
      }
 
+document { "displaying matrices",
+     "Normally matrices are displayed in compact notation that originated 
+     with Macaulay.",
+     EXAMPLE {
+	  "R = ZZ/101[x,y];",
+	  "f = random(R^1,R^{2:-2})",
+	  },
+     "Setting the global flag ", TO "compactMatrixForm", " to ", TO "false", "
+     will modify that behavior so that matrices are displayed more clearly
+     and less compactly.",
+     EXAMPLE {
+	  "compactMatrixForm = false",
+	  "f",
+	  },
+     "We may use ", TO "toString", " to produce a string, useful as input into
+     other programs.",
+     EXAMPLE "toString f",
+     "The function ", TO "toExternalString", " tries harder: it gives
+     complete information about the source, target, and degree of the map.",
+     EXAMPLE "toExternalString f"
+     }
+     
+
 document { "manipulating matrices",
      "In previous sections we have learned various ways to make matrices.  Now
-     we discuss methods for manipulating matrices."
+     we discuss methods for manipulating matrices.",
      }
 
 document { "Groebner bases",

@@ -13,7 +13,7 @@ userSymbols = type -> (
      apply(sort(apply(v, symb -> (hash symb, symb))), (h,s) -> s))
 
 listUserSymbols = new Command from (
-     type -> stack apply(userSymbols type, s ->  string s | ": " | name class value s)
+     type -> stack apply(userSymbols type, s ->  toString s | ": " | toString class value s)
      )
 
 clearedSymbol := "-- cleared symbol --"

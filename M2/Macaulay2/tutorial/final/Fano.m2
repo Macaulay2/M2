@@ -139,7 +139,7 @@ erase quote Grassmannian
 
 -- The documentation has the following form:
 --$
-document { quote Fano, 
+document { Fano, 
         TT "Fano(k,X,GR) or  Fano(k,X)", " -- computes 
         the ideal of a Fano scheme in the Grassmannian.",
         PARA,
