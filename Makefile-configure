@@ -1,13 +1,9 @@
 # -*- Mode: Makefile -*-
 
 CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2-$(shell cat version) --cache-file=config.cache
-CONFIGURE_ENVIRON = \
-	CFLAGS="-O3 -fexpensive-optimizations" \
-	CXXFLAGS="-O3 -fexpensive-optimizations"
+CONFIGURE_ENVIRON = CFLAGS="-O2" CXXFLAGS="-O2"
 
 -include Makefile-configure.overrides
-
-# for CC=cl we want CXXFLAGS and CFLAGS = -O2 -Zi -nologo -G5 -W3 -GR -GX
 
 ## to build:
 ##	edit the lines above
