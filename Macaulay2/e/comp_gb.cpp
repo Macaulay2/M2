@@ -30,6 +30,7 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
     {
       // Look for the correct computation type here.
 #warning "handle non polynomial rings"
+      ERROR("GB computation for non-polynomial rings not yet re-implemented");
       return 0;
     }
   const PolynomialRing *R = R2->get_flattened_ring();
@@ -41,14 +42,14 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
 #warning "unused variable commented out"
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
-  if (algorithm == 2)
+  //  if (algorithm == 2)
     return gbA::create(m, 
 		       collect_syz, 
 		       n_rows_to_keep,
 		       strategy,
 		       use_max_degree,
 		       max_degree);
-
+#if 0
   if (is_graded)
     return GB_comp::create(m, 
 			   collect_syz, 
@@ -58,6 +59,7 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
 			   max_degree);
   
   return 0;
+#endif
 #if 0
   if (base_is_ZZ)
     {
