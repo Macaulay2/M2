@@ -853,6 +853,13 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_flip(const FreeModule *F,
 				       const FreeModule *G); /* drg: connected rawFlip*/
 
+  const MatrixOrNull * rawWedgeProduct(int p,
+				       int q,
+				       const FreeModule *F); /* Dan: Please connect */
+  /* Constructs the map
+     exterior(p,F) ** exterior(q,F) --> exterior(p+q,F)
+  */
+
   const MatrixOrNull * IM2_Matrix_submatrix(const Matrix *M,
 					    const M2_arrayint rows,
 					    const M2_arrayint cols); /* drg: connected rawSubmatrix*/

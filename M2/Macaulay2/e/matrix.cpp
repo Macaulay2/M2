@@ -1092,7 +1092,8 @@ Matrix *Matrix::random(const Ring *R,
 
   // Loop through all selected elements, flip a 'fraction_non_zero' coin, and if non-zero
   // set that element.
-  
+
+#warning "fraction_non_zero not yet used"  
   mpz_t a;
   mpz_init(a);
 
