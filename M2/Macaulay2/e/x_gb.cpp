@@ -237,16 +237,13 @@ rawResolutionGetFree(Computation *C,
   return 0;
 }
 
-
-enum ComputationStatusCode rawStatus(Computation *C,
+enum ComputationStatusCode rawStatus2(Computation *C,
 		  int * complete_up_through_this_degree)
 {
-#warning write this routine
-#if 0
-  return G->status(complete_up_through_this_degree,
-		   stopping_reason);
-#endif
-  ERROR("resolutions need to be re-implemented");
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->gb_status(complete_up_through_this_degree);
+  ERROR("computation type unknown or not implemented");
   return COMP_ERROR;
 }
 

@@ -1,4 +1,4 @@
-gbTrace = 5
+-- gbTrace = 5
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
 cmp = method()
@@ -196,24 +196,19 @@ I = image f
 G = gb I
 peek G
 g = gens G
-
-end
-
-G = gb (I, DegreeLimit => 100)
 raw G
 g = gens G
 assert( f === g )
-
 G2 = gb vars R2
 
-chk()
--- assert try ( matrix {{x^2,y}} % G2; false ) else true
+assert try ( matrix {{x^2,y}} % G2; false ) else true
 
 matrix {{x^2,y}} % G
 syz f
 
-oops()
--- peek f.cache
+peek f.cache
+
+status G
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
