@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
+        symbol AbsoluteLinks,
 	symbol backtrace,
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,
