@@ -1,5 +1,5 @@
 
-endInput -- disable this test
+end -- disable this test
 
 docFile = openDatabase databaseFileName
 time scanKeys(docFile,

@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New system for 3rd party packages: see 'Package'.  Related items:
+'newPackage', closePackage', 'assemble', 'check', 'LAYOUT', 'layout'.
+
 The internal symbol tables of the interpreters are now available at
 top level as members of the new class 'Dictionary'.  Both local and
 global symbol tables are obtainable with the function
@@ -30,7 +33,11 @@ the new function 'commandInterpreter()'.  If you give it a local
 closure (such as a symbol or a function) the symbols in the lexical
 scope of the symbol or closure will be visible to the user.  One more
 "i" will be added to prompt each time the command interpreter is
-entered.  To leave it, type 'endInput' or the end of file character.
+entered.  To leave it, type 'end' or the end of file character.
+
+The symbol 'end' entered into the command interpreter, will end the
+current input stream or input file.  It can also be used to exit a
+break loop.
 
 There is a new hash table called 'globalAssignmentHooks' which is
 consulted just before an assignment to a global variable is about to
@@ -175,9 +182,6 @@ The code for 'sort' (quick sort) unfortunately was choosing the left most
 array element as the pivot, leading to deep recursion when the array is
 already sorted.  Fixed.
 
-New system for 3rd party packages: see 'Package'.  Related items:
-'newPackage', 'end', 'assemble', 'check', 'LAYOUT', 'layout'.
-
 New type of list: VerticalList - it prints out vertically.
 
 When dumpdata/loaddata is not in use, the formerly copious backtrace messages
@@ -186,9 +190,6 @@ in response to an error have now been trimmed down to 1 message.
 New routines: 'mkdir', 'makeDirectory', 'fileTime', 'loadDepth'.
 
 New: 'errorDepth()' will report the error depth without changing it.
-
-The symbol "end" which may be used to indicate the end of an input file, has
-been changed to "endInput".
 
 Man pages created for M2 and M2-help.
 

@@ -102,10 +102,7 @@ list2 := syms -> stack apply(syms, s ->  toString s | ": " | toString class valu
 
 listUserSymbols = Command ( type -> list2 userSymbols type )
 
-clearOutput = Command (() -> (
-     	  scan(keys Output.Dictionary, s -> (
-		    s <- s;
-	       	    erase s))))
+clearOutput = Command (() -> scan(keys Output.Dictionary, s -> ( s <- null; erase s )))
 
 clearAll = Command (() -> ( 
      	  unmarkAllLoadedFiles();
@@ -117,3 +114,28 @@ clearAll = Command (() -> (
 erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
 
 typicalValues#frame = MutableList
+
+pos := s -> (
+     t := locate s;
+     if t =!= null then t#0 | ":" | toString t#1)
+
+truncate := s -> (
+     if width s > 45
+     then (
+	  s = stack ( apply( unstack s, l -> substring(l,0,45)));
+	  s = s | stack ( height s + depth s : "$" );
+	  );
+     if height s + depth s  > 4 
+     then (
+	  s = stack take(unstack s,4);
+	  s = s || concatenate(width s : "$");
+	  );
+     s)
+
+sortByHash := v -> last \ sort (v / (i -> (hash i, i)))
+
+listLocalVariables = Command(
+     x -> (
+	  if breakLoopFrame === null then error "no break loop active";
+	  Table (apply ( flatten (sortByHash \ values \ localDictionaries breakLoopFrame) , s -> {s,":",net class value s, "=", truncate net value s, pos s}))))
+

@@ -631,7 +631,7 @@ document { input,
      loaded, if any, and then along the ", TO "path", ", unless the name of
      the file begins with a slash (/).",
      PARA,
-     "If one of the expressions in the file evaluates to the symbol ", TO "endInput", "
+     "If one of the expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
      PARA,
      "If an error occurs while evaluating the expressions in the file,
@@ -640,9 +640,9 @@ document { input,
      SEEALSO{ "path", "needs", "load"}
      }
 
-document { endInput,
+document { end,
      Headline => "stop loading a file",
-     TT "endInput", " -- a symbol which causes loading of a file to be stopped.",
+     TT "end", " -- a symbol which causes loading of a file to be stopped.",
      PARA,
      SEEALSO{ "needs", "load", "input" }
      }

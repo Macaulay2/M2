@@ -156,5 +156,5 @@ if false then assert false
 -- if true then i :=6 else i :=6
 -- assert(i === 5)
 
-endInput						    -- should end the input file
+end						    -- should end the input file
 assert false
