@@ -100,11 +100,17 @@ newPackage(String) := opts -> (title) -> (
 	       ),
 	  };
      if newpkg#"package prefix" =!= null then (
+	  rawdbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "rawdocumentation.db";
+	  if fileExists rawdbname then (
+	       rawdb := openDatabase rawdbname;
+	       newpkg#"raw documentation database" = rawdb;
+	       addEndFunction(() -> if isOpen rawdb then close rawdb));
 	  dbname := newpkg#"package prefix" | LAYOUT#"packagedoc" title | "documentation.db";
 	  if fileExists dbname then (
 	       db := openDatabase dbname;
 	       newpkg#"processed documentation database" = db;
-	       addEndFunction(() -> if isOpen db then close db)));
+	       addEndFunction(() -> if isOpen db then close db);
+	       ));
      addStartFunction(() -> if not isOpen newpkg#"processed documentation database" and prefixDirectory  =!= null then (
 	       dbname := prefixDirectory | LAYOUT#"packagedoc" title | "documentation.db"; -- what if there is more than one prefix directory?
 	       if fileExists dbname then newpkg#"processed documentation database" = openDatabase dbname));
