@@ -29,19 +29,21 @@ CXXFLAGS := $(CFLAGS)
 LDFLAGS =  -g -L/capybara/lib
 LDFLAGS += -Wl,-Map,mapfile
 
-CFLAGS += -pg
-CXXFLAGS += -pg
-LDFLAGS += -pg
+# CFLAGS += -pg
+# CXXFLAGS += -pg
+# LDFLAGS += -pg
+# LDLIBS := -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg -lm
+LDLIBS := -lcf -lcfmem -lntl -lgmp -lgc -lm
 
-benchmark : factor factor.poly mapfile.demangled
+benchmark gmon.out : factor factor.poly mapfile.demangled
 	time ./factor < @srcdir@/factor.poly >factor.out
 	cat factor.out
 	fgrep -s '( (x^2-y*x-13*z^2*x+y^4+z^7+12)^3, (x+3*y-14)^15 )' factor.out >/dev/null
-	time ./factor < @srcdir@/factor.poly
-	time ./factor < @srcdir@/factor.poly
+factor.gprof : gmon.out
+	gprof -b ./factor >$@
 factor.o factor-init.o : factor.h
 mapfile factor : factor.o factor-init.o factor-init1.o 
-	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg -lm factor-init1.o -o "$@"
+	$(CXX) $(LDFLAGS) factor.o factor-init.o $(LDLIBS) factor-init1.o -o "$@"
 mapfile.demangled : mapfile
 	demangle <$< >$@
 
