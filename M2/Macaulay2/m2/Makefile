@@ -138,7 +138,7 @@ $(SCRIPTS) : makeM2.m2 ../../Makeconf.h
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 endif
 
-cache/doc/Macaulay2-index-cache ../cache/Macaulay2-pre : $(DUMPEDGFILES) \
+../cache/Macaulay2-pre : $(DUMPEDGFILES) \
 		../bin/Macaulay2$(EXESUFFIX) \
 		 $(DOCSEQUENCE) $(TUTORIALS)
 	 # phase 2 makes the example and test files
@@ -172,7 +172,7 @@ cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
 all :: ../cache/Macaulay2-doc
-../cache/Macaulay2-doc : ../cache/Macaulay2-pre cache/doc/Macaulay2-index-cache \
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
 		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	$(MAKE) -k -C cache/doc -f ../../Makefile.egs
 	rm -f ../cache/Macaulay2-tmp
