@@ -108,7 +108,7 @@ extern char *libfac_version;
 
 #if !defined(__FreeBSD__)
 #ifndef PAGESIZE
-#if !defined(__linux__) && !defined(__osf__)
+#if !defined(__linux__) && !defined(__osf__) && !defined(__FreeBSD__)
 extern size_t getpagesize();
 #endif
 #define PAGESIZE getpagesize()
@@ -130,10 +130,8 @@ void *sbrk();		/* not really ansi standard, sigh */
 #if defined(__NeXT__)
  /* on the NeXT Step i386 machine, brk always returns -1, and doesn't work. */
 #   define brk(p) (int)sbrk(p-sbrk(0))
-#else
-#if !defined(__FreeBSD__)
+#elif !defined(__FreeBSD__)
 int brk();		/* not really ansi standard, sigh */
-#endif
 #endif
 
 #define STDIN 0
