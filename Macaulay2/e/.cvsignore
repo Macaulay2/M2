@@ -10,3 +10,4 @@ cmdnames.m2
 *.pdb
 Makefile-o.depends
 Makefile-lo.depends
+Makefile

@@ -19,10 +19,7 @@ CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2
 default : stage2
 
 stage1 : configure include/config.h.in
-aclocal.m4 : configure.in
-	aclocal
-#	touch $@
-configure : configure.in aclocal.m4
+configure : configure.in
 	autoconf
 include/config.h.in : configure.in
 	autoheader

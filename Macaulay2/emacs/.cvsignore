@@ -5,3 +5,4 @@ allfiles
 emacs-hlp.txt
 emacs.m2
 *.elc
+Makefile

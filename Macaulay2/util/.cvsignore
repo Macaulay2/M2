@@ -9,3 +9,4 @@ update
 *.pdb
 *.obj
 *.exe
+Makefile
