@@ -46,9 +46,37 @@ insert(entry:Symbol,table:SymbolHashTable):void := (
      h := entry.word.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(entry,table.buckets.h);
      );
+enlarge(f:Frame):int := (
+     n := f.valuesUsed;
+     f.valuesUsed = n + 1;
+     if f.valuesUsed > length(f.values) then (
+	  f.values = new Sequence len 2 * length(f.values) + 1 do (
+	       foreach value in f.values do provide value;
+	       while true do provide nullE));
+     n);
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     frameindex := dictionary.framesize;
-     dictionary.framesize = dictionary.framesize + 1;
+     frameindex := (
+	  if dictionary.transient then (
+	       -- this is a dynamic frame, not allocated yet
+	       dictionary.numsyms
+	       )
+	  else (
+	       if dictionary.frameID == 0 then (
+		    -- this allows the global frame to grow
+		    enlarge(globalFrame)
+		    )
+	       else if dictionary.frameID == localFrame.frameID then (
+		    -- this should take care of scopes which span a file,
+		    -- and have a single frame which ought to be allowed to grow
+		    enlarge(localFrame)
+		    )
+	       else (
+		    -- shouldn't occur
+	       	    dictionary.numsyms
+		    )
+	       )
+	  );
+     dictionary.numsyms = dictionary.numsyms + 1;
      entry := Symbol(
 	  word, 
 	  nextHash(), 
@@ -60,25 +88,6 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	  false,			  -- not protected
 	  dictionary.transient,
 	  false
-	  );
-     if dictionary == globalDictionary then (
-	  -- this allows the global frame to grow
-	  if globalDictionary.framesize > length(globalFrame.values) then (
-	       globalFrame.values = (
-		    new Sequence len 2 * globalDictionary.framesize + 1 do (
-			 foreach y in globalFrame.values do provide y;
-			 while true do provide nullE;
-			 ))))
-     else if dictionary.frameID == localFrame.frameID then (
-	  -- this should take care of scopes which span a file,
-	  -- and have a single frame which ought to be allowed to grow
-	  if dictionary.framesize > length(localFrame.values) then (
-	       localFrame.values = (
-		    new Sequence len 2 * dictionary.framesize + 1 do (
-			 foreach y in localFrame.values do provide y;
-			 while true do provide nullE;
-			 )));
-	  -- localFrame.values.frameindex = nullE;
 	  );
      insert(entry,dictionary.symboltable);
      entry);
@@ -672,11 +681,11 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  )
      is a:Arrow do (
 	  SawClosure = false;
-	  newscop := newLocalDictionary(dictionary);
-	  a.desc = functionDescription(newscop.frameID,0,0,false,false);
-	  bindParenParmList(a.lhs,newscop,a.desc);
-	  bind(a.rhs,newscop);
-	  a.desc.framesize = newscop.framesize;
+	  newdict := newLocalDictionary(dictionary);
+	  a.desc = functionDescription(newdict.frameID,0,0,false,false);
+	  bindParenParmList(a.lhs,newdict,a.desc);
+	  bind(a.rhs,newdict);
+	  a.desc.framesize = newdict.numsyms;
 	  a.desc.hasClosure = SawClosure;
 	  SawClosure = true; )
      is unary:Unary do (
@@ -694,14 +703,14 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(w.doClause,dictionary);
 	  )
      is w:For do (
-	  newscop := newLocalDictionary(dictionary);
-	  bindSingleParm(w.variable,newscop);
+	  newdict := newLocalDictionary(dictionary);
+	  bindSingleParm(w.variable,newdict);
 	  bind(w.fromClause,dictionary);
 	  bind(w.toClause,dictionary);
-	  bind(w.whenClause,newscop);
-	  bind(w.listClause,newscop);
-	  bind(w.doClause,newscop);
-	  w.dictionary = newscop;
+	  bind(w.whenClause,newdict);
+	  bind(w.listClause,newdict);
+	  bind(w.doClause,newdict);
+	  w.dictionary = newdict;
 	  )
      is w:WhileList do (
 	  bind(w.predicate,dictionary);

@@ -57,7 +57,7 @@ export Dictionary := {
      symboltable:SymbolHashTable,
      outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
      frameID:int,	        -- -1 for dummy, 0 for global, then 1,2,3,...
-     framesize:int,
+     numsyms:int,
      transient:bool	        -- whether there can be multiple frames
      	       	    	        -- for the global dictionary and file scopes : no
 				-- for function closures : yes
@@ -137,9 +137,10 @@ export Sequence := array(Expr);
 export Frame := {
      outerFrame:Frame, 
      frameID:int,			  -- seqno of corresponding dictionary
+     valuesUsed:int,
      values:Sequence
      };
-export dummyFrame := Frame(self,-1,Sequence());   -- self pointer depended on by structure.d:apply()
+export dummyFrame := Frame(self,-1,0,Sequence());   -- self pointer depended on by structure.d:apply()
 export FunctionClosure := { frame:Frame, model:functionCode };
 export SymbolClosure := {frame:Frame, symbol:Symbol};
 export List := {
@@ -253,12 +254,15 @@ export Code := (exprCode or variableCode
 -- scopes
 
 export newSymbolHashTable():SymbolHashTable := SymbolHashTable( new array(SymbolList) len 10 do provide NULL, 0);
-export ScopeList := null or ScopeListCell;
-export ScopeListCell := {dictionary:Dictionary, next:ScopeList};
+
+-- this will be needed later -- a list of dictionaries to search:
+export DictionaryList := null or DictionaryListCell;
+export DictionaryListCell := {dictionary:Dictionary, next:DictionaryList};
+--
 
 dummySymbolFrameIndex := 0;
 export globalDictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
-export globalFrame := Frame(dummyFrame,0,Sequence(
+export globalFrame := Frame(dummyFrame,0,1,Sequence(
 	  nullE						    -- value for dummySymbol, the first symbol
 	  ));
 export newGlobalDictionary(dictionary:Dictionary):Dictionary := Dictionary(nextHash(),newSymbolHashTable(),dictionary,0,0,false);
@@ -275,7 +279,7 @@ export newLocalDictionary():Dictionary := (
 	  )
      );
 
-export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, new Sequence len dictionary.framesize do provide nullE);
+export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, dictionary.numsyms, new Sequence len dictionary.numsyms do provide nullE);
 
 -- hash tables for exprs
 
