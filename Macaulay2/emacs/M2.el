@@ -226,7 +226,7 @@ can be executed with \\[M2-send-to-program]."
 			       (setq send-it nil)
 			       cmd)
 			   "")
-		       (if mark-active
+		       (if (and (boundp 'mark-active) mark-active)
 			   (buffer-substring (point) (mark))
 			 (buffer-substring
 			  (save-excursion (M2-to-end-of-prompt) (point))
@@ -241,7 +241,7 @@ can be executed with \\[M2-send-to-program]."
 	      ; (setq deactivate-mark t)
 	      ))))
      (setq deactivate-mark nil)
-     (if (and (not mark-active) 
+     (if (and (not (and (boundp 'mark-active) mark-active)) 
 	      (not (and
 		    (equal (point) (point-max))
 		    (equal (current-buffer) (save-excursion (set-buffer "*M2*")))
