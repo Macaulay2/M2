@@ -393,14 +393,30 @@ document { quote isWellDefined,
 
 ggConcatCols := (tar,src,mats) -> (
      sendgg(apply(mats,ggPush), ggPush (#mats), ggconcat);
-     newMatrix(tar,src))
+     f := newMatrix(tar,src);
+     if same(degree \ mats)
+     and degree f != degree mats#0
+     then (
+	  d := degree mats#0;
+	  R := ring f;
+	  f = map(target f, source f ** R^{d}, f, Degree => d);
+	  );
+     f)
 
 ggConcatRows := (tar,src,mats) -> (
      sendgg(
 	  apply(mats,m -> (ggPush m, ggtranspose)), 
 	  ggPush (# mats), ggconcat, ggtranspose
 	  );
-     newMatrix(tar,src))
+     f := newMatrix(tar,src);
+     if same(degree \ mats)
+     and degree f != degree mats#0
+     then (
+	  d := degree mats#0;
+	  R := ring f;
+	  f = map(target f, source f ** R^{d}, f, Degree => d);
+	  );
+     f )
 
 samering := mats -> (
      R := ring mats#0;
@@ -868,7 +884,9 @@ degreeCheck := (d,R) -> (
      )
 
 map(Module,Module,Matrix) := (M,N,f,options) -> (
-     if M === f.target and N === f.source then f
+     if M === f.target and N === f.source
+     and (options.Degree === null or options.Degree === degree f)
+     then f
      else (
 	  R := ring M;
 	  sendgg (ggPush cover M, ggPush cover N, ggPush f,

@@ -140,14 +140,18 @@ RingMap Matrix := (p,m) -> (
      S := target p;
      if R =!= ring m 
      then error "expected source of ring map to be the same as ring of matrix";
-     F := if degreeLength R == degreeLength S then 
-              S^(- degrees target m) 
-          else if class S =!= class R or S =!= R then 
-              S^(numgens target m) 
-          else 
-              target m;
+     F := if S === R then target m
+          else if degreeLength R == degreeLength S then S^(- degrees target m) 
+          else S^(numgens target m) ;
+     E := if S === R then source m
+          else if degreeLength R == degreeLength S then S^(- degrees source m) 
+          else S^(numgens source m) ;
      sendgg(ggPush p, ggPush F, ggPush m, ggev);
-     getMatrix S)
+     f := getMatrix S;
+     if R === S or degreeLength R == degreeLength S
+     then map(F,E,f, Degree => degree m)
+     else map(F,E,f)
+     )
 
 kernel RingMap := (f,options) -> if f.?kernel then f.kernel else f.kernel = (
      R := source f;

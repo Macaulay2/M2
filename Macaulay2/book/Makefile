@@ -15,3 +15,8 @@ M2hbook.dvi : M2hbook.tex
 clean :; rm -rf M2book.tex M2book.dvi M2book.log \
 		M2hbook.tex M2hbook.dvi M2hbook.log
 view : M2hbook.dvi; xhdvi -hl blue -bd red -cr orange M2hbook.dvi
+split :
+	dvips -p   1 -l 100 M2book -o M2book1.ps
+	dvips -p 101 -l 200 M2book -o M2book2.ps
+	dvips -p 201 -l 300 M2book -o M2book3.ps
+	dvips -p 301        M2book -o M2book4.ps

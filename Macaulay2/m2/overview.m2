@@ -764,11 +764,12 @@ document { "making matrices",
      EXAMPLE "g = matrix {{x,0,y*z},{y^2,x^2,0}}",
      EXAMPLE "isHomogeneous g",
      EXAMPLE "degrees source g",
-     "Suppose we multiply a homogeneous polynomial by a homogeneous matrix?
+     "Suppose we multiply a homogeneous polynomial by a homogeneous matrix.
      The result ought to be homogeneous, but how can we arrange that?  Scalar
      multiplication should not change the source or target of a map!  Instead,
-     introduce one more complication.  Each matrix records a degree of its own,
-     which is normally zero.",
+     we introduce one final complication: each matrix records a degree of its own,
+     which is normally zero, and is used when deciding whether the matrix is
+     homogeneous.",
      EXAMPLE "degree matrix {{x^10}}",
      EXAMPLE "degree f",
      "Multiplying a matrix by a homogeneous polynomial adds the degree of

@@ -674,7 +674,7 @@ document { quote dual,
      }
 
 dual Module := { Module,
-     F -> (
+     F -> if F.?dual then F.dual else F.dual = (
 	  if not isFreeModule F then kernel transpose presentation F
 	  else (
 	       sendgg (ggPush F, ggtranspose); 

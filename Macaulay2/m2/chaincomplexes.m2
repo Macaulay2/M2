@@ -132,6 +132,13 @@ length ChainComplex := { ChainComplex,
      modules, even if those modules happen to be zero."
      }
 
+ChainComplex == ChainComplex := (C,D) -> (
+     all(sort union(spots C, spots D), i -> C_i == D_i)
+     )     
+
+ChainComplex == ZZ := (C,i) -> all(spots C, i -> C_i == 0)
+ZZ == ChainComplex := (i,C) -> all(spots C, i -> C_i == 0)
+
 document { "C.dd_i",
      TT "C.dd_i", " -- yields the i-th differential from a chain complex C",
      PARA,
@@ -192,6 +199,26 @@ complete ChainComplexMap := f -> (
 
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
+sum ChainComplex := C -> directSum apply(sort spots C, i -> C_i)
+sum ChainComplexMap := f -> (
+     T := target f;
+     t := sort spots T;
+     S := source f;
+     s := sort spots S;
+     d := degree f;
+     u := spots f;
+     tar := directSum apply(t,i->T_i);
+     src := directSum apply(s,i->S_i);
+     if #u > 0 and same(apply(u, i -> degree f#i))
+     then (
+	  deg := degree f#(u#0);
+     	  map(tar, src, matrix table(t,s,(j,i) -> if j == i+d then f_i else map(T_j,S_i,0)), Degree=>deg)
+	  )
+     else map(tar, src, matrix table(t,s,(j,i) -> if j == i+d then f_i else map(T_j,S_i,0)))
+     )
+
+degree ChainComplexMap := f -> f.degree
+
 net ChainComplexMap := f -> (
      complete f;
      v := between("",
@@ -215,7 +242,11 @@ ChainComplexMap _ ZZ := (f,i) -> (
 	  p := getMatrix ring gr;
 	  if p != 0 then f#i = p;
 	  p)
-     else map((target f)_(i+f.degree),(source f)_i,0))
+     else (
+	  if f.?degree
+	  then map((target f)_(i+f.degree),(source f)_i,0,Degree=>f.degree)
+	  else map((target f)_(i+f.degree),(source f)_i,0)
+	  ))
 ChainComplex#id = (C) -> (
      complete C;
      f := new ChainComplexMap;
@@ -355,6 +386,8 @@ ChainComplexMap ++ ChainComplexMap := (f,g) -> (
      h.components = {f,g};
      h)
 
+isHomogeneous ChainComplexMap := f -> all(spots f, i -> isHomogeneous f_i)
+
 isDirectSum ChainComplex := (C) -> C.?components
 components ChainComplexMap := f -> if f.?components then f.components else {f}
 ChainComplexMap _ Array := (f,v) -> f * (source f)_v
@@ -442,9 +475,16 @@ nullhomotopy ChainComplexMap := f -> (
      b := D.dd;
      deg := s.degree = f.degree + 1;
      complete f;
-     scan(sort spots f, i -> (
-	       si := (f_i - s_(i-1) * c_i) // b_(i+deg);
-	       if si != 0 then s#i = si));
+     scan(sort spots f, i -> 
+	  (
+	       if s#?(i-1) and c#?i
+	       then if f#?i
+	       then s#i = (f_i - s_(i-1) * c_i) // b_(i+deg)
+	       else s#i = (    - s_(i-1) * c_i) // b_(i+deg)
+	       else if f#?i 
+	       then s#i = (f_i                ) // b_(i+deg)
+	       )
+	  );
      s)
 document { quote nullhomotopy,
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 

@@ -1,3 +1,5 @@
+all::
+
 ifndef MAKECONF
 export MAKECONF = TRUE
 

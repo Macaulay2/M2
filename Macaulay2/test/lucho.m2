@@ -1,19 +1,28 @@
-A = ZZ/101[x,y]
-f = random (A^3, A^{-2,-2})
-M = cokernel f
-m = x^3
-n = y^4
-R = cokernel matrix {{m, n}}
-N = prune (M**R)
-C = resolution N
-d = C.dd
-i = id_C
-s = nullhomotopy (m*i)
-t = nullhomotopy (n*i)
+Q = ZZ/101[a,b]
+h = random (Q^3, Q^{-2,-2})
+f1 = a^3
+f2 = b^4
+R = cokernel matrix {{f1, f2}}
+N = prune (cokernel h ** R)
+E = resolution N
+d = E.dd
+i = id_E
+s1 = nullhomotopy (f1*i)
+s2 = nullhomotopy (f2*i)
 
 assert( d^2 == 0 )
-assert( d*s + s*d == m )
-assert( d*t + t*d == n )
-assert( s^2 == 0 )
-assert( t^2 == 0 )
-assert( t*s + s*t == 0 )
+assert( d*s1 + s1*d == f1 )
+assert( d*s2 + s2*d == f2 )
+assert( s1^2 == 0 )
+assert( s2^2 == 0 )
+assert( s2*s1 + s1*s2 == 0 )
+
+S = ZZ/101[a,b,X1,X2]/(a^3,b^4)
+
+d = substitute(sum E.dd, S)
+S1 = substitute(sum s1, S)
+S2 = substitute(sum s2, S)
+
+D = d - X1 * S1 - X2 * S2
+
+-- res homology(D,D)
