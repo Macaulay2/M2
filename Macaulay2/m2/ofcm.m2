@@ -24,6 +24,7 @@ GeneralOrderedMonoid.synonym = "general ordered monoid"
 GeneralOrderedMonoid.Engine = true
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
+raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 parts := (M) -> (
      O := monoidDefaults;
