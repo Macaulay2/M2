@@ -197,7 +197,7 @@ Nterm *PolynomialRing::new_term() const
   // and it crashes there, because this assignment only sets the integer
   // part of the union, so on a machine with 4 byte ints and 8 byte pointers, the
   // pointer part is not NULL!
-  result->coeff.poly_val = NULL;
+  result->coeff.poly_val = NULL;  // so I added this line
   return result;
 }
 
