@@ -96,11 +96,13 @@ document {
 
 document {
      Key => (cacheFileName, String, String, String),
-     OldSynopsis => {
-	  ///fn = cacheFileName(prefix,key,base)///,
+     Usage => ///fn = cacheFileName(prefix,key,base)///,
+     Inputs => {
 	  "prefix" => "the prefix from which to construct the file name",
 	  "key" => "a key, which can be anything",
-	  "base" => "the base part of the file name",
+	  "base" => "the base part of the file name"
+	  },
+     Outputs => {
 	  "fn" => "a new file name"
 	  },
      "A file name ", TT "fn", " is constructed by concatenating ", TT "prefix", " and

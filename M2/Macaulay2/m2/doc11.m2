@@ -246,22 +246,6 @@ document {
      }
 
 document {
-     Key => XMP,
-     Headline => "HTML XMP item",
-     TT "XMP x", " -- encloses ", TT "x", " in a hypertext XMP item.",
-     PARA,
-     "The argument ", TT "x", " should be a string.",
-     PARA,
-     "Here is an example.",
-     XMP "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
-   1234   2345    4567    5678
-     34    345    3455       7
-",
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
      Key => BLOCKQUOTE,
      Headline => "HTML BLOCKQUOTE item",
      TT "BLOCKQUOTE x", " -- encloses ", TT "x", " in a hypertext BLOCKQUOTE item.",
@@ -302,27 +286,6 @@ document {
      Headline => "hypertext literal text",
      TT "LITERAL x", " -- produces a special hypertext item which contains
      HTML text that should be left unchanged by ", TO "html", "."
-     }
-
-document {
-     Key => ExampleTABLE,
-     Headline => "hypertext list of examples",
-     TT "ExampleTABLE x", " -- produces a hypertext display suitable for displaying
-     a list of examples."
-     }
-
-document {
-     Key => DFN,
-     Headline => "HTML DFN item",
-     TT "DFN x", " -- encloses ", TT "x", " in a hypertext DFN item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
-     "Here is an example.",
-     DFN "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
-     PARA,
-     SeeAlso => "hypertext"
      }
 
 document {
@@ -375,36 +338,6 @@ document {
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
-     Key => SAMP,
-     Headline => "HTML SAMP item",
-     TT "SAMP x", " -- encloses ", TT "x", " in a hypertext SAMP item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
-     "Here is an example.",
-     PARA,
-     SAMP "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
-     Key => KBD,
-     Headline => "HTML KBD item",
-     TT "KBD x", " -- encloses ", TT "x", " in a hypertext KBD item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
-     "Here is an example.",
-     PARA,
-     KBD "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
      SeeAlso => "hypertext"
      }
@@ -476,21 +409,6 @@ document {
      "Here is an example.",
      PARA,
      EM "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
-     Key => CITE,
-     Headline => "HTML CITE item",
-     TT "CITE x", " -- encloses ", TT "x", " in a hypertext CITE item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
-     "Here is an example.",
-     PARA,
-     CITE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
      SeeAlso => "hypertext"
      }

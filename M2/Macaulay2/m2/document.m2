@@ -1,7 +1,5 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
-debugDoc = () -> commandInterpreter local symbol
-
 maximumCodeWidth := 120
 
 -----------------------------------------------------------------------------
@@ -454,7 +452,6 @@ fixupTable := new HashTable from {
      Inputs => val -> fixupList val,
      Outputs => val -> fixupList val,
      Consequences => val -> fixupList val,
-     OldSynopsis => identity,				    -- old
      FileName => chkIsString FileName,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
@@ -478,7 +475,6 @@ documentOptions := new HashTable from {
      Inputs => true,
      Outputs => true,
      Consequences => true,
-     OldSynopsis => true,				    -- old
      FileName => true,
      Headline => true,
      SeeAlso => true,
@@ -655,7 +651,7 @@ merget := (v,v') -> apply(v,v',(a,t) -> (
 			 )
 		    else (
 			 if istype a#0 then (
-			      if a#0 =!= t then error("type mismatch: ", toString a#0, " =!= ", toString t)
+			      if a#0 =!= t then error("type mismatch: ", toString a#1#0, " =!= ", toString t)
 			      else a
 			      )
 			 else a#0 => t => a#1			      

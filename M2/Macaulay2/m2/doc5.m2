@@ -488,6 +488,71 @@ document {
 	  }
      }
 
+document {
+     Key => symbol globalDictionaries,
+     "The value of ", TO "globalDictionaries", " is the list of global dictionaries whose symbols are visible.",
+     EXAMPLE { "globalDictionaries" },
+     SeeAlso => { Dictionary }
+     }
+
+document {
+     Key => Dictionary,
+     Headline => "the class of all dictionaries",
+     "A dictionary is a special sort of hash table whose keys are the strings, and whose values are the
+     corresponding symbols.",
+     EXAMPLE {
+	  "Macaulay2.Dictionary # \"sin\"",
+	  "Macaulay2.Dictionary #? \"sin\""
+	  }
+     }
+
+document {
+     Key => dictionary,
+     Headline => "determine the dictionary to which a symbol belongs",
+     Usage => "dictionary x",
+     Inputs => {
+	  "x" => Thing => ""
+	  },
+     Outputs => {
+	  { "the dictionary to which the symbol ", TT "x", " belongs"}
+	  },
+     "If ", TT "x", " is the value of a symbol recorded in ", TO "ReverseDictionary", ", then that symbol is used."
+     }
+
+document {
+     Key => unlink,
+     Headline => "unlink a file",
+     Usage => "unlink f",
+     Inputs => { "f" => String => "" },
+     Consequences => {{ "the file reachable by the path f is unlinked from its directory" }}}
+
+document {
+     Key => wrap,
+     Usage => "wrap(wid,sep,s)",
+     Inputs => {
+	  "wid" => ZZ => "",
+	  "sep" => String => "",
+	  "s" => String => ""
+	  },
+     Outputs => {
+	  { "a string obtained by wrapping the string ", TT "s", ", in case it is wider than the number ", TT "wid", ", so that it occupies multiple lines,
+	       separated by lines filled with the single character in the string ", TT "sep", ", if provided"}
+	  },
+     "The inputs ", TT "wid", " and ", TT "sep", " are optional, and can be given in either order.  The default for ", TT "wid", " is ", TT "printWidth", ",
+     and the default for ", TT "sep", " is null.",
+     EXAMPLE {
+	  ///wrap(10,"abcdefghijklmnopqrstuvwxyz")///,
+	  ///wrap(10,"-","abcdefghijklmnopqrstuvwxyz")///
+	  }
+     }
+
+     
+	       
+	       
+     
+
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

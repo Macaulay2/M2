@@ -47,25 +47,6 @@ document {
      }
 
 document {
-     Key => BinaryPowerMethod,
-     Headline => "compute powers by squaring",
-     TT "BinaryPowerMethod(x,n)", " -- computes ", TT "x^n", " using successive squaring",
-     PARA,
-     "The technique depends in a standard way on the binary expansion of ", TT "n", ",
-     hence the name.",
-     PARA,
-     SeeAlso => "SimplePowerMethod"
-     }
-
-document {
-     Key => SimplePowerMethod,
-     Headline => "compute powers by multiplying",
-     TT "SimplePowerMethod(x,n)", " -- computes x^n using repeated multiplication",
-     PARA,
-     SeeAlso => "BinaryPowerMethod"
-     }
-
-document {
      Key => dumpdata,
      Headline => "dump state of the system to a file",
      TT "dumpdata s", " -- dump all data segments for the current process to 
@@ -781,20 +762,6 @@ document {
      the variable.",
      PARA,
      SeeAlso => "globalAssignFunction"
-     }
-
-document {
-     Key => Entity,
-     Headline => "the class of all entities",
-     "Entities are special typsettable objects which have different realizations
-     in various typesetting systems.",
-     PARA,
-     "An example of an entity is ", TO "DownArrow", ", a downward pointing arrow.",
-     EXAMPLE {
-	  "DownArrow",
-	  "peek'(2,DownArrow)",
-	  "html DownArrow",
-	  }
      }
 
 document {

@@ -164,18 +164,6 @@ toFilename String := s -> (
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
 
-ttr := new MutableHashTable from pairs tt / ((k,v) -> (v,k))
-fromFilename = method()
-fromFilename String := s -> concatenate (
-     s = substring(s,1);
-     g := 0;
-     for i from 0 to #s - 1 list (
-	  if g > 0 then (g = g-1;"")
-	  else (
-	       b := substring(s,i,3);
-	       if ttr#?b then (g = 2; ttr#b)
-	       else s#i)))
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

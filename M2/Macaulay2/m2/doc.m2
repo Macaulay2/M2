@@ -883,12 +883,6 @@ document {
      Key => symbol "^",
      Headline => "a binary operator, usually used for exponents",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
-     PARA,
-     "When computing powers, one of the following methods is used.",
-     UL {
-	  TO "SimplePowerMethod",
-	  TO "BinaryPowerMethod"
-	  },
      NOINDENT, "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method
      named ", TO "InverseMethod", " will be called."

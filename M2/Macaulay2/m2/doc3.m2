@@ -209,26 +209,6 @@ document {
      }
 
 document {
-     Key => unhex,
-     Headline => "translate a URL",
-     TT "unhex s", " -- translates a string provided as the trailing part
-     of a URL by a web browser.",
-     PARA,
-     "A web browser sometimes has to put special characters into a URL.  So
-     such characters do not interfere with other things, they are translated
-     into a special form.  For example, each space is replaced by ", TT "+", "
-     and various other characters (including ", TT "/", " and ", TT "%", ")
-     are replaced by ", TT "%", " followed by two hex digits giving the numerical
-     code of the character in hexadecimal notation.",
-     PARA,
-     "The purpose of ", TO "unhex", " is to undo such translations, providing
-     the original string.",
-     EXAMPLE {
-	  ///unhex "abcd+efgh%2B"///
-	  }
-     }
-
-document {
      Key => "///",					    -- ///
      Headline => "delineate a string",
      TT "/// a string ///", " -- a string.",

@@ -951,18 +951,6 @@ document {
      }
 
 document {
-     Key => RightArrow,
-     TT "RightArrow", " -- an entity used in hypertext to represent an
-     rightward pointing arrow."
-     }
-
-document {
-     Key => DownArrow,
-     TT "DownArrow", " -- an entity used in hypertext to represent an
-     downward pointing arrow."
-     }
-
-document {
      Key => peek,
      Headline => "examine contents of an object",
      TT "peek s", " -- displays contents of ", TT "s", " to depth 1, bypassing
