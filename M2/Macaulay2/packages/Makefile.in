@@ -3,7 +3,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 
 ## here is the list of those package files to install with Macaulay2
-PACKAGES = Macaulay2Doc
+PACKAGES = Macaulay2
 PACKAGES += Style
 PACKAGES += PrimaryDecomposition
 PACKAGES += CacheFileName
