@@ -156,22 +156,29 @@ all :: ../cache/Macaulay2-doc
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
-test : test.m2 phase1 $(SCRIPTS)
+tests:: test1
+test1 : test.m2 phase1 $(SCRIPTS)
 	M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
+	touch $@
 
-tests:: $(SCRIPTS)
+tests:: test2
+test2: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
+	touch $@
 
-tests::
+tests:: test3
+test3:
 	echo 2+3 | M2
 	touch $@
+
 ifeq ($(OS),Linux)
-tests:: ../util/screen
+tests:: test4
+test4: ../util/screen
 	echo 2+3 | ../util/screen M2
 	touch $@
 endif
 
-gdb : ; gdb ../bin/Macaulay2
+gdb :; gdb ../bin/Macaulay2
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
