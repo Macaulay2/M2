@@ -594,7 +594,7 @@ document {
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA,
-     IMG { "../html/Grayson2.jpg", "picture of Grayson" }
+     IMG { "../images/Grayson2.jpg", "picture of Grayson" }
      }
 
 document {
@@ -761,14 +761,21 @@ document {
 document {
      Key => "initialization file",
      "The file ", TT "init.m2", " is loaded automatically when the
-     program is started.",
+     program is started, if it exists.",
      PARA,
-     "The file is sought in each of the directories of the ", TO "path", ",
-     and also in the home directory of the user.  At most one file is loaded.",
+     "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
+     where ", TT "$HOME", " is replaced by the path to the user's home
+     directory.",
      PARA,
-     "As an added convenience, if the file is in the home directory, its name can
-     be ", TT ".init.m2", ".",
-     SeeAlso => "load"
+     "Under Mac OS X, the file is sought instead in the
+     directory ", TT "$HOME/Library/Application Support/Macaulay2/", ".",
+     PARA,
+     "If the user wants a file called, say, ", TT "start.m2", " in the current
+     directory to be loaded automatically when the program is started, then the
+     following line of code can be placed in the file ", TT "init.m2", ".",
+     PRE {
+	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
+	  }
      }
 
 document {

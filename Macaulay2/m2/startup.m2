@@ -393,8 +393,8 @@ processCommandLineOptions 2
 runStartFunctions()
 errorDepth = loadDepth+1
 if not noinitfile then (
+     -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", getenv "HOME" | "/" | packageSuffix | "init.m2");
-     tryLoad ("init.m2", "init.m2");
      );
 processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
