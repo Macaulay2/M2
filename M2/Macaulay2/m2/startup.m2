@@ -84,7 +84,6 @@ if firstTime then (
      << Thing := x -> stdio << x;
      String | String := String => concatenate;
      Function _ Thing := Function => (f,x) -> y -> f splice (x,y);
-     String | String := String => concatenate;
      String | ZZ := String => (s,i) -> concatenate(s,toString i);
      ZZ | String := String => (i,s) -> concatenate(toString i,s);
 
