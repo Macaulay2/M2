@@ -980,33 +980,56 @@ vec Ring::vec_homogenize(const FreeModule *F,
 //  Divisibility checks               ////////
 //                                    ////////
 //////////////////////////////////////////////
-#if 0
+
+bool static check_nterm_multiples(const PolyRing *R,
+				  ring_elem f1, // in R
+				  ring_elem g1, // in R
+				  ring_elem c, // in flat coeffs of R
+				  ring_elem d) // in flat coeffs of R
+{
+  Nterm *f;
+  Nterm *g;
+  const Monoid *M = R->getMonoid();
+  const Ring *K = R->getCoefficients();
+  for (f = f1, g = g1; f != 0 && g != 0; f=f->next,g=g->next)
+    {
+      if (M->compare(f->monom,g->monom) != 0)
+	return false;
+      ring_elem c1 = K->mult(c, g->coeff);
+      ring_elem d1 = K->mult(d, f->coeff);
+      int isequal = K->is_equal(c1, d1);
+      if (!isequal) return false;
+    }
+  if (f == NULL && g == NULL) return true;
+  return false;
+}
+				  
 bool Ring::vec_is_scalar_multiple(vec f, vec g) const
   // is df = cg, some scalars c,d?
+  // These scalars are over the very bottom base field/ZZ.
 {
   if (f == NULL) return true;
   if (g == NULL) return true;
-  ring_elem c = f->coeff;
-  ring_elem d = g->coeff;
+  const PolynomialRing *PR = cast_to_PolynomialRing();
+  if (PR == 0) return true;
+  const PolyRing *PR1 = PR->getAmbientRing();
+#warning "use numerator only"
+  if (f->comp != g->comp) return false;
+  Nterm *f1 = f->coeff;
+  Nterm *g1 = g->coeff;
+  ring_elem c = f1->coeff;
+  ring_elem d = g1->coeff;
   vec p,q;
   for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
     {
       if (p->comp != q->comp) return 0;
-      if (M->compare(p->monom, q->monom) != 0) return 0;
+      if (!check_nterm_multiples(PR1,p->coeff,g1->coeff,c,d))
+	return false;
     }
-  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
-    {
-      ring_elem c1 = K->mult(c, q->coeff);
-      ring_elem d1 = K->mult(d, p->coeff);
-      int isequal = K->is_equal(c1, d1);
-      K->remove(c1);
-      K->remove(d1);
-      if (!isequal) return 0;
-    }
-  if (q == NULL && p == NULL) return 1;
-  return 0;
+  if (q == NULL && p == NULL) return true;
+  return false;
 }
-#endif
+
 void Ring::vec_monomial_divisor(vec f, int *exp) const
 // It is expected that 'exp' is already an initialized exponent vector.
 {

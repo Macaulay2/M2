@@ -333,6 +333,35 @@ Matrix *Matrix::minors(int p,int strategy) const
   return result;
 }
 
+Matrix *Matrix::minors(int p,
+		       int strategy, 
+		       int n_to_compute, // -1 means all
+		       M2_arrayint_OrNull first_row, // possibly NULL
+		       M2_arrayint_OrNull first_col // possibly NULL
+		       ) const
+{
+  if (first_row != 0 || first_col != 0)
+    {
+      // Make sure these are the correct size, and both are given
+      if (first_row == 0 || first_row->len != p)
+	{
+	  ERROR("row index set inappropriate");
+	  return 0;
+	}
+      if (first_col == 0 || first_col->len != p)
+	{
+	  ERROR("column index set inappropriate");
+	  return 0;
+	}
+    }
+  DetComputation *d = new DetComputation(this,p,0,strategy);
+  if (first_row != 0 && first_col != 0)
+    d->set_next_minor(first_row->array, first_col->array);
+  d->calc(n_to_compute);
+  Matrix *result = d->determinants();
+  deleteitem(d);
+  return result;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
