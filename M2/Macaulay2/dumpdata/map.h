@@ -3,7 +3,7 @@ typedef char bool;
 typedef struct MAP {
   /* these fields filled in by machine dependent code */
   void *from, *to;
-  bool r, w;
+  bool r, w, x;
   /* extra fields ignored by machine dependent code, filled in later */
   unsigned int checksum;
 } *map;

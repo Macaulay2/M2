@@ -1,8 +1,9 @@
 # it's tricky to debug, because breakpoints change the checksum of the
 # memory map with the code in it!
 
-display/i $pc
+display/2i $pc
 b dumpdata.c:248
+b map-solaris.c:30
 # b main
 # b dumpdata
 b loaddata

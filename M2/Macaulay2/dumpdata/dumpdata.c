@@ -23,7 +23,7 @@
 #endif
 #endif
 
-static char mapfmt[] = "%p-%p %c%c %u\n";
+static char mapfmt[] = "%p-%p %c%c%c %u\n";
 
 static int isStack(map m) {
   void *p = &p;
@@ -56,7 +56,10 @@ static void checkmaps(int nmaps, struct MAP m[nmaps]) {
 }
 
 static void sprintmap(char *s, map m) {
-  sprintf(s,mapfmt, m->from, m->to, m->r ? 'r' : '-', m->w ? 'w' : '-', m->checksum);
+  sprintf(s,mapfmt, 
+	  m->from, m->to,
+	  m->r ? 'r' : '-', m->w ? 'w' : '-', m->x ? 'x' : '-',
+	  m->checksum);
 }
 
 static void fdprintmap(int fd, map m) {
@@ -84,7 +87,7 @@ static int install(int fd, map m, long *pos) {
   void *start = m->from, *finish = m->to;
   int len = finish - start;
   void *ret;
-  int prot = (m->r ? PROT_READ : 0) | (m->w ? PROT_WRITE : 0) ;
+  int prot = (m->r ? PROT_READ : 0) | (m->w ? PROT_WRITE : 0) | (m->x ? PROT_EXEC : 0) ;
   int offset = *pos;
   int flags = MAP_FIXED | MAP_PRIVATE;
   *pos += len;
@@ -158,7 +161,7 @@ int loaddata(char const *filename) {
   while (TRUE) {
     char fbuf[200];
     int n, f_end, ret;
-    char r, w;
+    char r, w, x;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
     if (!got_newbreak) {
@@ -172,14 +175,15 @@ int loaddata(char const *filename) {
     }
     if (f_end) break;
     trim(fbuf);
-    ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &dumpedmap.checksum);
-    if (5 != ret) {
+    ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum);
+    if (6 != ret) {
       warning("loaddata: in data file %s: invalid map: %s\n", filename, fbuf, n);
       fclose(f);
       return ERROR;
     }
     dumpedmap.r = r == 'r';
     dumpedmap.w = w == 'w';
+    dumpedmap.x = x == 'x';
     for (; j<nmaps; j++) {
       if ((uintP)dumpedmap.from <= (uintP)currmap[j].from) break;
       if (isCheckable(&currmap[j])) {
@@ -198,7 +202,7 @@ int loaddata(char const *filename) {
     }
 
     if (!f_end && dumpedmap.from == currmap[j].from) {
-      if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w) {
+      if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w || dumpedmap.x != currmap[j].x) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
@@ -221,10 +225,12 @@ int loaddata(char const *filename) {
       return ERROR;
     }
     else dumpmaps[ndumps++] = dumpedmap;
-#if 0
-    fprintmap(stdout,&dumpedmap);
-#endif
   }
+#if 0
+  for (i=0; i<ndumps; i++) {
+    fdprintmap(STDOUT,&dumpmaps[i]);
+  }
+#endif
   {
     long pos = ftell(f);
     /* now we must stop using static memory and the heap! */
