@@ -74,6 +74,8 @@ DUMPSEQUENCE = \
 	monideal.m2 \
 	duals.m2 \
 	res.m2 \
+	abstract.m2 \
+	gradedmodules.m2 \
 	chaincomplexes.m2 \
 	radical.m2 \
 	factor.m2 \

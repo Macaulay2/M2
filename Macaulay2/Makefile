@@ -151,6 +151,11 @@ floppy  : allfiles allfiles.dev
 	@tar -c -z -f /dev/floppy \
 		--label "Macaulay2 $(VERSION) sources backup by $(USER) on `hostname`, `date`" \
 		$(DEVDISTFILES)
+tape  : allfiles allfiles.dev
+	@echo making tape
+	@tar -c -z -f /dev/st0 \
+		--label "Macaulay2 $(VERSION) sources backup by $(USER) on `hostname`, `date`" \
+		$(DEVDISTFILES)
 ################################# binary distributions
 # we use .tar.gz as extension, because Netscape doesn't recognize .tgz
 

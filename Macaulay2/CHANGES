@@ -1,17 +1,21 @@
 Changes made, most recent ones first:
------------------------------------------------------------------------------
-New in 0.8.32:
 
 new type : AbstractSet
 
-new type : GradedModule, ++, **
+-----------------------------------------------------------------------------
+New in 0.8.32:
+
+bug fixed in 'select(ZZ,HashTable,Function)' - it didn't stop after the
+specified number of entries were selected
+
+new type : GradedModule, with ++, **, etc, for them
 
 new notation:
-+	f^{2,3,4} : rows 2,3,4 of a matrix f
-+	M^{2,3,4} : projection of a free module M onto free module
+	f^{2,3,4} : rows 2,3,4 of a matrix f
+	M^{2,3,4} : projection of a free module M onto free module
 		spanned by basis vectors 2,3,4
     direct sums:
-+	M=V++W : M.components saves the list of summands
+	M=V++W : M.components saves the list of summands
 	M_[0] : inclusion V --> M
 	M_[1] : inclusion W --> M
 	M^[0] : projection M --> V
@@ -20,7 +24,7 @@ new notation:
 	M_[0,2] :  inclusion V++X --> M
 	M^[0,2] : projection V++X --> M
     direct sums for homomorphisms and chain complexes, too:
-+	h = f ++ g : h.components gives the list of components
+	h = f ++ g : h.components gives the list of components
 	f_[0,2] : compose f:M->N with inclusion
 	g^[0,2] : compose g:L->M with projection
 
