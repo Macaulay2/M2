@@ -96,8 +96,9 @@ CXXFLAGS := $(CFLAGS)
 LDLIBS   := 
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
 
-## uncomment the next line to get a link map file
+ifeq ($(OS),Linux)
 ## LDFLAGS  += -Wl,-Map,mapfile
+endif
 
 #################################
 
