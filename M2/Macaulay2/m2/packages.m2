@@ -77,7 +77,6 @@ newPackage = method(
      Options => { 
 	  Using => {}, 
 	  Version => "0.0", 
-	  WritableSymbols => {}, 
 	  DebuggingMode => false
 	  }
      )
@@ -98,7 +97,6 @@ newPackage(String) := opts -> (title) -> (
 	       fileExitHooks = prepend(hook, fileExitHooks);
 	       globalDictionaries = join({d,Main.Dictionary,PackageDictionary},apply(opts.Using,pkg->pkg.Dictionary));
 	       d));
-     if class opts.WritableSymbols =!= List or not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
      p := currentPackageS <- new Package from {
           symbol name => title,
      	  "private dictionary" => newdict,			    -- how do I make a synonym in a *different* dictionary (make a synonym dictionary closure, with the same frame?)
@@ -107,6 +105,7 @@ newPackage(String) := opts -> (title) -> (
      	  "close hook" => hook,
 	  "previous package" => currentPackage,
 	  "previous dictionaries" => saveD,
+	  "mutable symbols" => {},
 	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
@@ -133,31 +132,37 @@ newPackage(String) := opts -> (title) -> (
      p)
 
 export = method(SingleArgumentDispatch => true)
-export Symbol := x -> singleton x
+export Symbol := x -> export singleton x
 export Sequence := v -> export toList v
 export List := v -> (
      if not all(v, x -> class x === Symbol) then error "expected a list of symbols";
      if currentPackage === null then error "no current package";
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
-     scan(v, s -> (
+     if currentPackage =!= Main then scan(v, s -> (
 	       currentPackage.Dictionary#(toString s) = s;
 	       currentPackage.Dictionary#(currentPackage.name | "$" | toString s) = s;
 	       ));
      v)
+exportMutable = method(SingleArgumentDispatch => true)
+exportMutable Symbol := x -> exportMutable singleton x
+exportMutable Sequence := v -> exportMutable toList v
+exportMutable List := v -> (
+     export v;
+     currentPackage#"mutable symbols" = join(currentPackage#"mutable symbols",v);
+     v)
 
 addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
 
-newPackage("Main",
-     DebuggingMode => debuggingMode,
-     Version => version#"VERSION",
-     WritableSymbols => {
+newPackage("Main", DebuggingMode => debuggingMode, Version => version#"VERSION" )
+
+exportMutable {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
-	  })
+	  }
 
 Command.GlobalAssignHook = 
 Function.GlobalAssignHook = 
@@ -175,8 +180,8 @@ closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage.name then error ("package not current: ",title);
      pkg := currentPackage;
-     scan(pkg.Options.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
-     ws := set pkg.Options.WritableSymbols;
+     scan(pkg#"mutable symbols", s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
+     ws := set pkg#"mutable symbols";
      dict := pkg.Dictionary;
      scan(values dict,
 	  s -> (
