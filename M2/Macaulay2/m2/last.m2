@@ -29,4 +29,4 @@ scan(pairs Macaulay2Dictionary, (name,sym) -> if not writableGlobals#?sym then p
 
 
 -- make sure this is after all global symbols are defined or erased
-end Macaulay2
+endPackage Macaulay2

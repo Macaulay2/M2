@@ -632,7 +632,7 @@ document { input,
      loaded, if any, and then along the ", TO "path", ", unless the name of
      the file begins with a slash (/).",
      PARA,
-     "If one of the expressions in the file evaluates to the symbol ", TO "end", "
+     "If one of the expressions in the file evaluates to the symbol ", TO "endInput", "
      the reading of the file is stopped at that point.",
      PARA,
      "If an error occurs while evaluating the expressions in the file,

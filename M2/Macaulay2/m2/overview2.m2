@@ -1817,12 +1817,9 @@ document { "communicating with programs",
      this example we open a connection to the unix utility ", TT "egrep", "
      and use it to locate the symbol names in Macaulay2 that begin with
      ", TT "in", ".",
-     if version#"operating system" === "Windows-95-98-NT"
-     then PRE "<< example doesn't work under Windows >>"
-     else
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,
-	  ///scan(keys globalDictionary(), key -> f << key << endl)///,
+	  ///scan(keys Macaulay2Dictionary, key -> f << key << endl)///,
 	  ///f << closeOut///,
 	  ///get f///
 	  },

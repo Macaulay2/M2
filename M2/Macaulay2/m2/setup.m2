@@ -2,7 +2,7 @@
 
 if class Manipulator =!= Symbol then ( 
      printString(stderr, "warning: skipping setup.m2, already loaded\n"); flush stderr; 
-     end )
+     endInput )
 
 if class Manipulator =!= Symbol then error "setup.m2 already loaded"
 
@@ -170,4 +170,4 @@ addStartFunction(
 		    or
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
 erase symbol simpleLoad
-newPackage "User"
+newPackage User

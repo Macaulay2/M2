@@ -539,7 +539,7 @@ donode C1
 peek C1
 
 ///
-end
+endInput
 flattener = profile("flattener",flattener)
 minSatPPD = profile("minSatPPD", minSatPPD)
 extract = profile("extract", extract)

@@ -225,19 +225,19 @@ verifyTag Option   := s -> (
 -----------------------------------------------------------------------------
 
 Nothing << Thing := (x,y) -> null			    -- turning off the output is easy to do
-DocumentableValueType := hashTable { 
-     Boolean => true, 
-     HashTable => true, 
-     Function => true, 
-     BasicList => true, 
-     Nothing => true,
-     File => true
+DocumentableValueType := set { 
+     Boolean, 
+     HashTable, 
+     Function, 
+     BasicList, 
+     Nothing,
+     File
      }
 UndocumentableValue := hashTable { symbol environment => true, symbol commandLine => true }
 documentableValue := key -> (
      class key === Symbol and value key =!= key
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
-scan(pairs first dictionaries(), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
+scan(flatten(pairs \ dictionaries()), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
 fixup := method(SingleArgumentDispatch => true)
 fixup Nothing    := z -> z				    -- null
@@ -386,7 +386,7 @@ topics = Command (
 	  )
      )
 
-apropos = (pattern) -> sort select( keys globalDictionary(), i -> match(toString pattern,i))
+apropos = (pattern) -> sort select( keys flatten(pairs \ dictionaries()), i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 -- more general methods
 -----------------------------------------------------------------------------
@@ -705,7 +705,7 @@ op := s -> if operatorSet#?s then (
 	  }
      )
 
-optionFor := s -> unique select( value \ values first dictionaries(), f -> class f === Function and (options f)#?s)
+optionFor := s -> unique select( value \ flatten(values \ dictionaries()), f -> class f === Function and (options f)#?s)
 
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
@@ -728,7 +728,7 @@ documentation Symbol := s -> (
      )
 
 documentation Type := X -> (
-     syms := values first dictionaries();
+     syms := flatten(values \ dictionaries());
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
@@ -1429,7 +1429,7 @@ undocErr := x -> (
      )
 
 undocumentedSymbols = () -> select(
-     values globalDictionary(), 
+     flatten(values \ dictionaries()), 
      x -> (
 	  if (
 	       -- x =!= value x and        -- ignore symbols with no value assigned
