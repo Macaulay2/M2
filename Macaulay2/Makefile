@@ -61,7 +61,7 @@ tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
-ifdef NODUMPDATA
+ifndef NODUMPDATA
 all ::; $(MAKE) -C dumpdata all
 tests ::; $(MAKE) -C dumpdata tests
 endif
