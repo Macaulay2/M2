@@ -23,12 +23,12 @@ endsWithIdentifier := s -> (
 HeaderType = new Type of Type
 HeaderType.synonym = "header type"
 HeaderType List := (T,z) -> new T from z
-HeaderType Sequence := (T,z) -> new T from toList z
+HeaderType Sequence := (T,z) -> new T from z
 
 WrapperType = new Type of Type
 WrapperType.synonym = "wrapper type"
 WrapperType List := (T,z) -> new T from z
-WrapperType Sequence := (T,z) -> new T from toList z
+WrapperType Sequence := (T,z) -> new T from z
 WrapperType Thing := (T,z) -> new T from {z}
 
 -----------------------------------------------------------------------------

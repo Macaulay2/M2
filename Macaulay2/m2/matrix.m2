@@ -299,7 +299,7 @@ Option.directSum = args -> (
 	  S := type.directSum modules;
 	  if y =!= null then y#key = S;
      	  keys := S.indices = toList args/first;
-     	  S.indexComponents = new HashTable from toList apply(#keys, i -> keys#i => i);
+     	  S.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
 	  S))
 Matrix ++ Matrix := Matrix => directSum
 Module ++ Module := Module => directSum

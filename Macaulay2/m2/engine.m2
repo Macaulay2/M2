@@ -20,8 +20,12 @@ expression RawMonomial := x -> (
      if #v === 0 then expression 1
      else new Product from apply(v, (i,e) -> new Power from {vars i, e})
      )
+exponents(ZZ,RawMonomial) := (nvars,x) -> (
+     z := new MutableList from (nvars : 0);
+     scan(rawMonomialSparseListForm x, (i,e) -> z#i = z#i + e);
+     toList z)
 net RawMonomial := x -> net expression x
-degree RawMonomial := x -> rawDegree x
+degree RawMonomial := x -> error "degree of raw monomial not defined (no monoid)"
 gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 
 

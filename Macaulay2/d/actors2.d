@@ -362,6 +362,7 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 		    then transform(apply(method,Expr(class),newInitExpr),class,true)
 		    else (
 			 when newInitExpr
+			 is s:Sequence do transform(newInitExpr,class,false)
 			 is p:List do (
 			      if p.class == class
 			      then Expr(if p.mutable then copy(p) else p)
@@ -400,6 +401,7 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 				   apply(method,Expr(class),Expr(parent),newInitExpr),
 				   class,parent,true)
 			      else (when newInitExpr
+				   is p:Sequence do transform(newInitExpr,class,parent,false)
 				   is p:List do (
 					if p.class == class && nothingClass == parent
 					then Expr(if p.mutable then copy(p) else p)
