@@ -12,8 +12,16 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #define TRUE 1
 #define FALSE 0
+#define ERROR (-1)
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
 
 static int argc, xargc;
 static char **argv, **xargv;
@@ -88,7 +96,49 @@ static void parse(char *args) {
     exit(1);
   }
 }  
+
+static void argcpy(char **dst,char **src) {
+  do *dst++ = *src; while (*src++);
+}
     
+static void redirect(){
+  char **av = xargv;
+  int inc=1, fd;
+  for (;*av;av+=inc,inc=1) {
+    char  *fn, *arg = *av;
+    switch (arg[0]) {
+    case '<':
+      fn = arg+1;
+      fd = open(fn,O_RDONLY);
+      if (fd == ERROR) {
+	fprintf(stderr,"%s: failed to open \"%s\" for reading\n",argv[0],fn);
+	exit(1);
+      }
+      if (fd != STDIN) {
+	dup2(fd,STDIN);
+	close(fd);
+      }
+      argcpy(av,av+1);
+      inc = 0;
+      break;
+    case '>':
+      fn = arg+1;
+      fd = open(fn,O_CREAT|O_WRONLY,0666);
+      if (fd == ERROR) {
+	fprintf(stderr,"%s: failed to open \"%s\" for writing\n",argv[0],fn);
+	exit(1);
+      }
+      if (fd != STDOUT) {
+	dup2(fd,STDOUT);
+	close(fd);
+      }
+      argcpy(av,av+1);
+      inc = 0;
+      break;
+    }
+  }
+}
+
 static void usage() {
   fprintf(stderr,"usage: %s -c \"exec command arg1 arg2 ...\"\n",argv[0]);
   exit(1);
@@ -99,6 +149,7 @@ int main (int _argc, char **_argv) {
   argv = _argv;
   if (argc != 3 || 0 != strcmp("-c",argv[1]) || 0 != strncmp("exec ",argv[2],5)) usage();
   parse(argv[2] + 5);
+  redirect();
   if (NULL != getenv("OLDSHELL")) {
     setenv("SHELL",getenv("OLDSHELL"),TRUE);
     unsetenv("OLDSHELL");
