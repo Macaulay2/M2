@@ -493,7 +493,10 @@ type := S -> (
      PARA { "The object ", TO S, " is ", justSynonym class s,
      	  if parent s =!= Nothing then (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
-	       SEQ splice {", with ancestor classes ", toSequence between( ", ", f / (T -> TO T) ) }
+	       SEQ splice {
+		    if #f>1 then ", with ancestor classes " else ", with ancestor class ", 
+		    toSequence mingle(f / (T -> TO T), splice { #f-2 : ", ", ", and " } ) 
+		    }
 	       ),
 	  "."
      	  }

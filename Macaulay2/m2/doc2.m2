@@ -1161,20 +1161,11 @@ document { use,
      SEEALSO "GlobalAssignHook"
      }
 
-document { setSpin,
-     Headline => "set interval for spinning the cursor",
-     TT "setSpin n", " -- sets the interval between calls to spin the cursor on
-     the Macintosh.",
-     PARA,
-     "The value returned is the previous interval."
-     }
-
 document { symbol "=>",
      Headline => "produce an Option",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
      }
-
 
 document { (symbol " ", RingElement, Array),
      Headline => "substitution of variables",

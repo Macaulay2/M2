@@ -29,7 +29,7 @@ document { "rings",
 document { "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
-     SHIELD MENU { 
+     UL { 
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR", 
