@@ -241,6 +241,7 @@ hasDocumentation := key -> isDocumentableThing key and (
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
+nonnull := x -> select(x, i -> i =!= null)
 trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
 trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
 trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
@@ -269,7 +270,7 @@ fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
 fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
-fixup UL         := z -> splice apply(z, i -> fixup if class i === TO then TOH {i#0} else i)
+fixup UL         := z -> splice apply(nonnull z, i -> PARA fixup if class i === TO then TOH {i#0} else i)
 fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
