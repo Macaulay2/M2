@@ -1,6 +1,7 @@
 #include "mutablemat.hpp"
 #include "sparsemat.hpp"
 #include "densematRR.hpp"
+#include "densematCC.hpp"
 #include "RR.hpp"
 #include "CC.hpp"
 #include "text_io.hpp"
@@ -122,17 +123,10 @@ void MutableMatrix::text_out(buffer &o) const
   deletearray(p);
 }
 
-
-
-
-
-
-
 DenseMutableMatrixCC *
 DenseMutableMatrixCC::zero_matrix(int nrows, 
 				  int ncols)
 {
-#warning "implement this one"
   return 0;
 }
 
