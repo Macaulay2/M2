@@ -24,3 +24,10 @@ int main(int argc, char **argv)
   suite_free(s);
   return (nf==0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// End:
+*/
+

@@ -12,3 +12,10 @@ int main()
   s.run();
   s.report();
 }
+
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// End:
+*/
+

@@ -1,46 +1,13 @@
 #include "util.h"
-
+#include "string.h"
 /*******************************************************************/
 /* Stuff needed from M2lib.c, scclib.c in order to link */
 int system_interrupted = 0;
-int system_spincursor = 0;
 
 void outofmem(void)
 {
   printf("Out of memory\n");
   exit(1);
-}
-
-
-void *GC_malloc1 (size_t size_in_bytes) {
-     void *p;
-     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
-     if (p == NULL) outofmem();
-     return p;
-     }
-
-void *GC_realloc3 (void *s, size_t old, size_t new) {
-     void *p = GC_REALLOC(s,new);
-     if (p == NULL) outofmem();
-     return p;
-     }
-
-void GC_free2 (void *s, size_t old) {
-     GC_FREE(s);
-     }
-
-/* these next three functions are simply aliases for libcf in case it was configured 
-   with --with-memman-old.  The three functions are declared in libcfmem.a, but we don't
-   want to use their memory manager.  We make our own call to mp_set_memory_functions() 
-   in any case, see M2lib.c.
-   As a side effect, linking with libcfmem.a will cause an error about a duplicate definition,
-   which is good, since we don't want to link with libcfmem.a. */
-void* getBlock ( size_t size ) {
-  return GC_malloc1(size); }
-void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) {
-  return GC_realloc3(block,oldsize,newsize); }
-void freeBlock ( void * block, size_t size ) {
-  return GC_free2(block, size);
 }
 /***********************************************************/
 
@@ -167,7 +134,7 @@ const Vector *make_vector(const FreeModule *F, ...)
 const Vector_array *make_vector_array(int len, ...)
 {
   va_list ap;
-  int i,n;
+  int i;
   Vector_array *result;
   va_start(ap, len);
   result = (Vector_array *) getmem (sizeofarray(result,len));
@@ -286,3 +253,10 @@ int arrayint_is_eq(M2_arrayint a, int len, ...)
   return 1;
 }
 #endif
+
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// End:
+*/
+

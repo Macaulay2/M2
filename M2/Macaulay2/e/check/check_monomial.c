@@ -55,3 +55,9 @@ Test * monomial_test(void)
   return result;
 }
 
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// End:
+*/
+
