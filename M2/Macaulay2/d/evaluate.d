@@ -961,7 +961,7 @@ export eval(c:Code):Expr := (
 		    when p is err:Error do (
 			 if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage then p
 			 else eval(c.elseClause))
-		    else p))
+		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
 	  is c:ifCode do (
 	       p := eval(c.predicate);
 	       when p is Error do p

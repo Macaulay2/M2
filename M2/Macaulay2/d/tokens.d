@@ -82,6 +82,7 @@ export WhileDo := { whileToken:Token, predicate:ParseTree, dotoken:Token, doClau
 export WhileList := { whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
 export WhileListDo := { whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
 export TryElse := { tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
+export TryThenElse := { tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
 export Try := { tryToken:Token, primary:ParseTree};
 export IfThen := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
 export IfThenElse := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
@@ -102,7 +103,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
      or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
      or Quote or GlobalQuote or LocalQuote
-     or TryElse or Try or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
+     or TryThenElse or TryElse or Try or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
 -- misc
 
@@ -153,7 +154,7 @@ export globalAssignmentCode := {
      position:Position
      };
 export ifCode := { predicate:Code, thenClause:Code, elseClause:Code, position:Position };
-export tryCode := { code:Code, elseClause:Code, position:Position };
+export tryCode := { code:Code, thenClause:Code, elseClause:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {

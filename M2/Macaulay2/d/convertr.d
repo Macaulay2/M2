@@ -408,8 +408,9 @@ export convert(e:ParseTree):Code := (
 	  pos := treePosition(e);
 	  nd := nestingDepth(sym.frameID,token.dictionary);
 	  Code(localSymbolClosureCode(nd,sym,pos)))
-     is i:TryElse do Code(tryCode(convert(i.primary),convert(i.alternate),treePosition(e)))
-     is i:Try do Code(tryCode(convert(i.primary),NullCode,treePosition(e)))
+     is i:TryThenElse do Code(tryCode(convert(i.primary),convert(i.sequel),convert(i.alternate),treePosition(e)))
+     is i:TryElse do Code(tryCode(convert(i.primary),NullCode,convert(i.alternate),treePosition(e)))
+     is i:Try do Code(tryCode(convert(i.primary),NullCode,NullCode,treePosition(e)))
      is u:Postfix do Code(unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
      is d:dummy do dummyCode
      );
