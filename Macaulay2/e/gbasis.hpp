@@ -57,7 +57,7 @@ public:
   int insert(gbvector *f, gbvector *fsyz, gbelem_type minlevel, int deg);
     // returns integer index of this inserted element
 
-  void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
+  void poly_auto_reduce(vector<POLY, gc_allocator<POLY> > &mat);
 
   void minimalize_gb();
 
@@ -126,11 +126,11 @@ private:
   const MonomialTable *ringtable; // Set from originalR.
   MonomialTable *lookup;
 public:
-  vector<gbelem *,gc_alloc> gb; // Contains any quotient ring elements
+  vector<gbelem *, gc_allocator<gbelem *> > gb; // Contains any quotient ring elements
 private:
   int first_gb_element; // indices 0..first_gb_element-1 in 'gb'
 			// refer to quotient ring elements
-  vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
+  vector<POLY, gc_allocator<POLY> > minimal_gb; // Contains NO quotient ring elements
   bool minimal_gb_valid;
 
   exponents _EXP; // Used in 'remainder'
@@ -141,12 +141,12 @@ class RingGBasis : public our_new_delete
   GBRing *R;
   FreeModule *R1; // Should be rank 1, degree 0 generator.
   MonomialTable *ringtable;
-  vector<GBasis::gbelem *,gc_alloc> gb;
+  vector<GBasis::gbelem *, gc_allocator<GBasis::gbelem *> > gb;
   RingGBasis() {}
 
   GBasis::gbelem *gbelem_make(gbvector *f);
 public:
-  static RingGBasis *make(GBRing *R, vector<gbvector *,gc_alloc> &elems);
+  static RingGBasis *make(GBRing *R, vector<gbvector *, gc_allocator<gbvector *> > &elems);
 
   static RingGBasis *make_RingGBasis(const GBasis *G);
   // G should be a GB with _F having rank 1.
@@ -159,7 +159,7 @@ public:
 
   vec normal_form(FreeModule *F, vec v);
 
-  void set_quotient(vector<GBasis::gbelem *,gc_alloc> &gb);
+  void set_quotient(vector<GBasis::gbelem *, gc_allocator<GBasis::gbelem *> > &gb);
 };
 #endif
 

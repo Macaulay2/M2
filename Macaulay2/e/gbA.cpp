@@ -581,18 +581,18 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
   // Prune down the set of spairs to a 'minimal' set.  For each one, we 
   // need to add in a "gcd" combination spair as well.
 
-  vector<mpz_ptr,gc_alloc> coeffs;
-  vector<mpz_ptr,gc_alloc> coeffs2;
-  vector<exponents,gc_alloc> exps;
-  vector<int,gc_alloc> comps;
-  vector<int,gc_alloc> positions;
+  vector<mpz_ptr, gc_allocator<mpz_ptr> > coeffs;
+  vector<mpz_ptr, gc_allocator<mpz_ptr> > coeffs2;
+  vector<exponents, gc_allocator<exponents> > exps;
+  vector<int, gc_allocator<int> > comps;
+  vector<int, gc_allocator<int> > positions;
   
   coeffs.reserve(gb.size());
   coeffs2.reserve(gb.size());
   exps.reserve(gb.size());
   comps.reserve(gb.size());
 
-  for (vector<spair *,gc_alloc>::iterator i = new_set.begin(); i != new_set.end(); i++)
+  for (vector<spair *, gc_allocator<spair *> >::iterator i = new_set.begin(); i != new_set.end(); i++)
     {
       spair *a = *i;
       exps.push_back(a->lcm);
@@ -616,7 +616,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 
   MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
 
-  for (vector<int,gc_alloc>::iterator i = positions.begin(); i != positions.end(); i++)
+  for (vector<int, gc_allocator<int> >::iterator i = positions.begin(); i != positions.end(); i++)
     {
       // Insert this spair, and also the corresponding gcd one.
       spair *p = new_set[*i];
@@ -1038,7 +1038,7 @@ int gbA::find_good_monomial_divisor_ZZ(
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTableZZ::mon_term *,gc_alloc> divisors;
+  vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
   ealpha = degf - weightInfo_->exponents_weight(e) - _F->primary_degree(x-1);
 
 
@@ -1084,7 +1084,7 @@ int gbA::find_good_term_divisor_ZZ(
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTableZZ::mon_term *,gc_alloc> divisors;
+  vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
   ealpha = degf - weightInfo_->exponents_weight(e) - _F->primary_degree(x-1);
 
   /* First search for ring divisors */
@@ -1128,7 +1128,7 @@ int gbA::find_good_divisor(exponents e,
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTable::mon_term *,gc_alloc> divisors;
+  vector<MonomialTable::mon_term *, gc_allocator<MonomialTable::mon_term *> > divisors;
   ealpha = degf - weightInfo_->exponents_weight(e)
              - _F->primary_degree(x-1);
 
@@ -1597,7 +1597,7 @@ void gbA::minimalize_gb()
 {
   if (minimal_gb_valid) return;
 
-  vector<POLY,gc_alloc> polys;
+  vector<POLY, gc_allocator<POLY> > polys;
   for (int i=_first_gb_element; i<gb.size(); i++)
     {
       if (gb[i]->minlevel != ELEM_NON_MIN_GB)
@@ -1650,7 +1650,7 @@ const MatrixOrNull *gbA::get_gb()
 const MatrixOrNull *gbA::get_mingens()
 {
   MatrixConstructor mat(_F,0);
-  for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
+  for (vector<gbelem *, gc_allocator<gbelem *> >::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
   return mat.to_matrix();
@@ -1667,7 +1667,7 @@ const MatrixOrNull *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
-  for (vector<gbvector *,gc_alloc>::iterator i = _syz.begin(); i != _syz.end(); i++)
+  for (vector<gbvector *, gc_allocator<gbvector *> >::iterator i = _syz.begin(); i != _syz.end(); i++)
     {
       mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
     }

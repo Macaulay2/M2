@@ -9,17 +9,17 @@ MinimalGB_Field::~MinimalGB_Field()
 {
 }
 
-void MinimalGB_Field::set_gb(vector<POLY, gc_alloc> &polys0)
+void MinimalGB_Field::set_gb(vector<POLY, gc_allocator<POLY> > &polys0)
 {
 }
 
 struct MinimalGB_Field_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
-  const vector<POLY,gc_alloc> &gb;
+  const vector<POLY, gc_allocator<POLY> > &gb;
   MinimalGB_Field_sorter(GBRing *R0,
 			 const FreeModule *F0,
-			 const vector<POLY,gc_alloc> &gb0)
+			 const vector<POLY, gc_allocator<POLY> > &gb0)
     : R(R0), F(F0), gb(gb0) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx].f;
@@ -39,13 +39,13 @@ MinimalGB_Field::MinimalGB_Field(GBRing *R0,
     Rideal = originalR->get_quotient_monomials();
 }
 
-void MinimalGB_Field::minimalize(const vector<POLY, gc_alloc> &polys0)
+void MinimalGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
 // I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
   // Next insert minimal elements into T, and polys
 
-  vector<int, gc_alloc> positions;
+  vector<int, gc_allocator<int> > positions;
   positions.reserve(polys0.size());
 
   for (int i=0; i<polys0.size(); i++)
@@ -56,7 +56,7 @@ void MinimalGB_Field::minimalize(const vector<POLY, gc_alloc> &polys0)
   // Now loop through each element, and see if the lead monomial is in T.
   // If not, add it in , and place element into 'polys'.
 
-  for (vector<int,gc_alloc>::iterator i = positions.begin(); i != positions.end(); i++)
+  for (vector<int, gc_allocator<int> >::iterator i = positions.begin(); i != positions.end(); i++)
     {
       Bag *not_used;
       gbvector *f = polys0[*i].f;

@@ -24,7 +24,7 @@ MinimalGB::~MinimalGB()
 const MatrixOrNull *MinimalGB::get_gb()
 {
   MatrixConstructor mat(F,0);
-  for (vector<POLY,gc_alloc>::const_iterator i = polys.begin(); i != polys.end(); i++)
+  for (vector<POLY, gc_allocator<POLY> >::const_iterator i = polys.begin(); i != polys.end(); i++)
     {
       vec v = originalR->translate_gbvector_to_vec(F, (*i).f);
       mat.append(v);
@@ -47,7 +47,7 @@ const MatrixOrNull *MinimalGB::get_syzygies()
 const MatrixOrNull *MinimalGB::get_change()
 {
   MatrixConstructor mat(Fsyz,0);
-  for (vector<POLY,gc_alloc>::const_iterator i = polys.begin(); i != polys.end(); i++)
+  for (vector<POLY, gc_allocator<POLY> >::const_iterator i = polys.begin(); i != polys.end(); i++)
     {
       vec v = originalR->translate_gbvector_to_vec(Fsyz, (*i).fsyz);
       mat.append(v);
@@ -58,7 +58,7 @@ const MatrixOrNull *MinimalGB::get_change()
 const MatrixOrNull *MinimalGB::get_initial(int nparts)
 {
   MatrixConstructor mat(F,0);
-  for (vector<POLY,gc_alloc>::const_iterator i = polys.begin(); i != polys.end(); i++)
+  for (vector<POLY, gc_allocator<POLY> >::const_iterator i = polys.begin(); i != polys.end(); i++)
     {
       gbvector *f = R->gbvector_lead_term(nparts, F, (*i).f);
       mat.append(originalR->translate_gbvector_to_vec(F, f));

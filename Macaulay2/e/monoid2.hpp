@@ -49,7 +49,7 @@ class Monoid : public mutable_object
   int n_after_component_;
   bool component_up_;
 
-  vector<int> nslots_;
+  vector<int, gc_allocator<int> > nslots_;
   
   
   void set_degrees();

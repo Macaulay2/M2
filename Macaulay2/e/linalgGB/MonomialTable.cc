@@ -23,7 +23,7 @@ MonomialTable::MonomialTable(queue<tagged_monomial *> &elems, queue<tagged_monom
 {
   size_of_exp = 10;
   exp0 = newarray(int,size_of_exp);
-  std::vector< queue<tagged_monomial *> *, gc_alloc> bins;
+  std::vector< queue<tagged_monomial *> *, gc_allocator<queue<tagged_monomial *> *> > bins;
   tagged_monomial *b, *b1;
   while (elems.remove(b)) 
     {
@@ -55,7 +55,7 @@ MonomialTable::MonomialTable(queue<tagged_monomial *> &elems)
 {
   size_of_exp = 10;
   exp0 = newarray(int,size_of_exp);
-  std::vector< queue<tagged_monomial *> *, gc_alloc> bins;
+  std::vector< queue<tagged_monomial *> *, gc_allocator<queue<tagged_monomial *> *> > bins;
   tagged_monomial *b;
   while (elems.remove(b)) 
     {
@@ -125,7 +125,7 @@ int MonomialTable::search_expvector(exponent_vector exp, tagged_monomial *&b) co
     }
 }
 
-void MonomialTable::find_all_divisors(exponent_vector exp, vector<tagged_monomial *,gc_alloc> &b) const
+void MonomialTable::find_all_divisors(exponent_vector exp, vector<tagged_monomial *,gc_allocator<tagged_monomial *> > &b) const
 {
   if (mi == NULL) return;
 

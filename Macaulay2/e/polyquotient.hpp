@@ -18,7 +18,7 @@ protected:
   PolyRingQuotient() {}
 
   static PolyRingQuotient *create(const PolyRing *R, 
-			   std::vector<Nterm *, gc_alloc> &elems);
+			   std::vector<Nterm *, gc_allocator<Nterm *> > &elems);
   // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
   // They should also form a GB.
 

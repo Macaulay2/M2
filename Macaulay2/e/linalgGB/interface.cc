@@ -47,7 +47,7 @@ void from_M2_vec(MonomialSet *H,
 
 void from_M2_matrix(const Matrix *m, 
 		    MonomialSet *H,
-		    std::vector<poly,gc_alloc> &result_polys)
+		    std::vector<poly,gc_allocator<poly> > &result_polys)
 {
   const FreeModule *F = m->rows();
   for (int i=0; i<m->n_cols(); i++)
@@ -88,7 +88,7 @@ vec to_M2_vec(poly &f,
   return R->make_vec(0, head.next);
 }
 
-Matrix *to_M2_matrix(std::vector<poly,gc_alloc> &polys, const FreeModule *F)
+Matrix *to_M2_matrix(std::vector<poly,gc_allocator<poly> > &polys, const FreeModule *F)
 {
   MatrixConstructor result(F,polys.size());
   for (int i=0; i<polys.size(); i++)
@@ -97,10 +97,10 @@ Matrix *to_M2_matrix(std::vector<poly,gc_alloc> &polys, const FreeModule *F)
 }
 
 void spair_testing(MonomialSet *H,
-		   std::vector<poly,gc_alloc> &polys)
+		   std::vector<poly,gc_allocator<poly> > &polys)
 {
   SPairSet *S = new SPairSet(H);
-  std::vector<gb_elem, gc_alloc> gb;
+  std::vector<gb_elem, gc_allocator<gb_elem> > gb;
   for (int i=0; i<polys.size(); i++)
     {
       // First make a gbelem, and insert it into gb

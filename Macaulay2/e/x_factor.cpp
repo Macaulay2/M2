@@ -8,6 +8,7 @@
 
 #ifdef FACTORY
 #define Matrix MaTrIx
+#define NOSTREAMIO
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
 //#include <templates/ftmpl_list.cc>

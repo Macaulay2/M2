@@ -1,6 +1,7 @@
 #include "config.h"
 
 #ifdef FACTORY
+#define NOSTREAMIO
 #include <factory.h>		// to get definition of factoryseed()
 #endif
 
@@ -18,6 +19,7 @@ void factory_setup() {
 
 #ifdef FACTORY
 #define Matrix MaTrIx
+#define NOSTREAMIO
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
 #include <templates/ftmpl_list.cc>

@@ -447,7 +447,7 @@ class PolyQuotient : public PPolynomialRing
   // This class handles quotients of poly rings, skew comm, and Weyl algebras
   // If there are fractions (even QQ), this is the wrong class to use?
 
-  std::vector<ring_elem,gc_alloc> quotients_;
+  std::vector<ring_elem, gc_allocator<ring_elem> > quotients_;
 
   MonomialIdeal *Rideal_; // contains the lead monomials (in flatMonoid)
   MonomialTable *quotient_table_;
@@ -455,7 +455,7 @@ class PolyQuotient : public PPolynomialRing
   bool is_ZZ_quotient_;
   ring_elem ZZ_quotient_value_;
 
-  void setQuotientInfo(std::vector<ring_elem,gc_alloc> &quotients);
+  void setQuotientInfo(std::vector<ring_elem, gc_allocator<ring_elem> > &quotients);
 
   // Passes off most routines to its ambient ring, which is a PolyRing.
   // exceptions: promote, (maybe lift), mult, term.  What else?
