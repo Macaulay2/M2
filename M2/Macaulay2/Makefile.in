@@ -71,7 +71,7 @@ distclean clean ::; $(MAKE) -C test $@
 ################################# packages
 # from now on, all packages will be separate entities
 # all install check ::; $(MAKE) -C packages $@
-clean distclean ::; $(MAKE) -C packages $@
+all install clean distclean ::; $(MAKE) -C packages $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
 ################################# images
@@ -108,5 +108,5 @@ justM2 all doc clean distclean::
 	@echo "-------- done making '$@' --------"
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2"
+# compile-command: "make -C $M2BUILDDIR/Macaulay2 "
 # End:
