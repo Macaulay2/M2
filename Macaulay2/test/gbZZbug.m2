@@ -94,5 +94,5 @@ h3 - first first entries (matrix{{f1^3,f2^3,f3^3}} * (h3 // G))
 getChangeMatrix G
 transpose gens G - transpose((gens I) * getChangeMatrix G )
 -- Local Variables:
--- compile-command: "make gbZZbug.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gbZZbug.okay "
 -- End:

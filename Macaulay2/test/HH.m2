@@ -13,5 +13,5 @@ assert(
      )
 
 -- Local Variables:
--- compile-command: "make HH.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test HH.okay "
 -- End:

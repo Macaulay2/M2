@@ -5,5 +5,5 @@ I = ideal f
 S = R/I
 gb f
 -- Local Variables:
--- compile-command: "make gb2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gb2.okay "
 -- End:

@@ -6,5 +6,5 @@ p = new ParagraphList from { long "abc", long "abcd", long "abcde" }
 assert ( width net p < printWidth )
 
 -- Local Variables:
--- compile-command: "make printing.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test printing.okay "
 -- End:

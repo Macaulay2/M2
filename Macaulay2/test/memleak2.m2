@@ -43,5 +43,5 @@ engineMemory
 assert ( K < k + n - 10 )
 assert ( K'< k'+ n - 10 )
 -- Local Variables:
--- compile-command: "make memleak2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test memleak2.okay "
 -- End:

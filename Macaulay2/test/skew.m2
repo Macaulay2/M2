@@ -3,5 +3,5 @@
 ZZ[x,y,SkewCommutative=>true]
 assert( substitute(x*y,matrix {{y,x}}) == y*x )
 -- Local Variables:
--- compile-command: "make skew.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test skew.okay "
 -- End:

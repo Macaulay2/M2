@@ -30,5 +30,5 @@ try2 = () -> (
 
 try2()
 -- Local Variables:
--- compile-command: "make eisenbud.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test eisenbud.okay "
 -- End:

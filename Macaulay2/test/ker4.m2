@@ -5,5 +5,5 @@ ker f
 assert( degrees source gens ker f == {{2}} )
 assert( degrees target gens ker f == {{0}} )
 -- Local Variables:
--- compile-command: "make ker4.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test ker4.okay "
 -- End:

@@ -4,5 +4,5 @@ f = matrix{{x}}
 assert( substitute(f,0) == 0 )
 
 -- Local Variables:
--- compile-command: "make subst2.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst2.okay "
 -- End:

@@ -13,5 +13,5 @@ assert( rank source basis( {-3,-4}, E) === rank source basis( {-4}, E3 ) )
 assert( rank source basis( {-3,-3}, E) === rank source basis( {-3}, E3 ) )
 assert( rank source basis( {-3,-2}, E) === rank source basis( {-2}, E3 ) )
 -- Local Variables:
--- compile-command: "make Ext.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test Ext.okay "
 -- End:

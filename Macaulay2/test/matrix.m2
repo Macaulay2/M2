@@ -297,5 +297,5 @@ randomMatrix2 = (F,G) -> (
 
 
 -- Local Variables:
--- compile-command: "make matrix.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test matrix.okay "
 -- End:

@@ -22,5 +22,5 @@ c2 = substitute(c, {x => 0_R})
 assert(c1 == c) -- this works
 assert(c2 == c) -- this works
 -- Local Variables:
--- compile-command: "make subst3.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test subst3.okay "
 -- End:

@@ -1,3 +1,3 @@
 -- Local Variables:
--- compile-command: "make fracinverses.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test fracinverses.okay "
 -- End:

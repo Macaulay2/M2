@@ -9,5 +9,5 @@ f = A_{1}
 assert( f*f == A_{2} + A_{1,1} )
 
 -- Local Variables:
--- compile-command: "make schur.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test schur.okay "
 -- End:
