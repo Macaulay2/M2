@@ -488,27 +488,6 @@ examine(e:Expr):Expr := (
      else WrongArg("(), a function, or a symbol"));
 setupfun("examine",examine);
 
-numFrames(f:Frame):int := (
-     n := 0;
-     while f.scopenum > 0 do (n = n+1; f = f.next);
-     n);
-
-listFrames(f:Frame):Expr := list(
-     new Sequence len numFrames(f) do (
-	  while f.scopenum > 0 do (provide listFrame(f.values); f = f.next);
-	  )
-     );     
-
-frames(e:Expr):Expr := (
-     when e
-     is sc:SymbolClosure do Expr(listFrames(sc.frame))
-     is fc:FunctionClosure do Expr(listFrames(fc.frame))
-     is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
-     is CompiledFunction do Expr(list(listFrame(emptySequence)))
-     else WrongArg("a function"));
-setupfun("frames", frames);
-
-
 netWidth(e:Expr):Expr := (
      when e
      is n:Net do Expr(toInteger(n.width))
@@ -1063,7 +1042,7 @@ setupconst("otherOperators",Expr(new array(Expr) len length(opsOther) do (
      foreach s in opsOther do provide Expr(s))));
 
 fileExists(e:Expr):Expr := (
-     when e is name:string do ToExpr(fileExists(name))
+     when e is name:string do toExpr(fileExists(name))
      else WrongArgString()
      );
 setupfun("fileExists",fileExists);
@@ -1244,17 +1223,24 @@ frame(e:Expr):Expr := (
      is CompiledFunction do Expr(listFrame(emptySequence))
      else WrongNumArgs(1,2));
 setupfun("frame", frame);
-numframes(f:Frame):int := (
+
+numFrames(f:Frame):int := (
      n := 0;
-     while f.next != f do n = n+1;
+     while f.next != f && f.scopenum > 0 do (n = n+1; f = f.next);
      n);
-frames(f:Frame):Expr := list (
-     new Sequence len numframes(localFrame) do ( provide listFrame(f); f = f.next; )
-     );
-frames():Expr := frames(localFrame);
+
+listFrames(f:Frame):Expr := list(
+     new Sequence len numFrames(f) do (
+	  while f.next != f && f.scopenum > 0 do (provide listFrame(f.values); f = f.next);
+	  )
+     );     
+
 frames(e:Expr):Expr := (
-     when e is a:Sequence do
-     if length(a) == 0 then frames()
-     else WrongNumArgs(0) 
-     else WrongNumArgs(0));
-setupfun("frames",frames);
+     when e
+     is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
+     is sc:SymbolClosure do Expr(listFrames(sc.frame))
+     is fc:FunctionClosure do Expr(listFrames(fc.frame))
+     is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
+     is CompiledFunction do Expr(list(listFrame(emptySequence)))
+     else WrongArg("a function, a symbol, or ()"));
+setupfun("frames", frames);
