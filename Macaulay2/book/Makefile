@@ -1,12 +1,14 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
+BOOKNAME = Macaulay2-$(VERSION)-book
+
 DVIPSFLAGS = -z
 TEX=latex
 
 %.bux : %.tex
 	$(TEX) $*
-	makeindex $*
+	makeindex $*.idx
 	mv $*.dvi $*-prelim.dvi
 	cp $*.aux $*.bux
 .PRECIOUS : %.bux
@@ -16,10 +18,10 @@ TEX=latex
 %.dvi : %.tex
 %.dvi : %.bbl
 	$(TEX) $*
-	makeindex $*
+	makeindex $*.idx
 	if grep -s "Rerun to get cross-references right." $*.log; \
 	then $(TEX) $*; \
-	     makeindex $* ; \
+	     makeindex $*.idx ; \
 	fi
 %.ps : %.dvi
 	dvips $(DVIPSFLAGS) $< $(OUTPUT_OPTION)
@@ -27,21 +29,21 @@ TEX=latex
 
 %.pdf : %.tex
 	pdf$(TEX) $*
-	makeindex $*
-#	pdf$(TEX) $*
+	makeindex $*.idx
+	pdf$(TEX) $*
 
-all:: M2book.tex
+all:: $(BOOKNAME).tex
 
-M2book.bbl : papers.bib
+$(BOOKNAME).bbl : papers.bib
 
 ifndef CYGWIN32
-all:: M2book.dvi M2book.ps M2book.pdf
+all:: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
 endif
 
-M2book.tex : ../cache/Macaulay2-doc book.m2 booktex.m2
+$(BOOKNAME).tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 	../bin/M2 -q book.m2 '-e exit 0'
-	mv M2book.tmp M2book.tex
+	mv M2book.tmp $(BOOKNAME).tex
 
-clean :; rm -rf M2book.tex *.dvi *.log *.aux *.out *.tmp *.pdf *.ps \
-	*.bbl *.blg M2book-prelim.dvi *.ilg *.ind *.toc *.idx *.bux
+clean :; rm -rf .tex *.dvi *.log *.aux *.out *.tmp *.pdf *.ps \
+	*.bbl *.blg *.ilg *.ind *.toc *.idx *.bux
 

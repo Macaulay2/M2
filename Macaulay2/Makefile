@@ -4,7 +4,7 @@
 all ::				# everything needed for the distribution
 tests ::
 doc:: html
-# doc:: book
+doc:: book
 # doc:: ComputationsBook
 ifndef CYGWIN32
 doc:: Vasconcelos-appendix
