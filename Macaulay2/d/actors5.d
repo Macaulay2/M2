@@ -1100,7 +1100,7 @@ setupfun("unlink",unlinkfun);
 fileTime(e:Expr):Expr := (
      when e is name:string do (
 	  r := fileTime(name);
-	  if r == 0 && errno != 0
+	  if r == -1
 	  then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
 	  else Expr(toInteger(r))
 	  )
