@@ -92,7 +92,7 @@ tryload := (filename,loadfun,notify) -> (
 	       ret = loadfun filename;
 	       markLoaded(filename,filename,notify);
 	       ret)
-	  else error("can't open file ", filename))
+	  else error("file doesn't exist: ", filename))
      else (
           if class path =!= List then error "expected 'path' to be a list (of strings)";
 	  loaded := false;
@@ -106,7 +106,7 @@ tryload := (filename,loadfun,notify) -> (
 		    	 markLoaded(fullfilename,filename,notify);
 			 loaded = true;
 			 break)));
-	  if loaded then ret else error("can't find file ", filename)))
+	  if loaded then ret else error("file doesn't exist: ", filename)))
 
 simpleLoad := load
 load = (filename) -> tryload(filename,simpleLoad,notify)
@@ -129,14 +129,14 @@ setnotify()
 addStartFunction(
      () -> (
 	  if not debuggingMode then errorDepth = loadDepth = loadDepth + 1;
-	  if not member("-q",commandLine)
-	  then (
-	       tryload("init.m2", simpleLoad)
-	       or
-	       getenv "HOME" =!= "" and (
-		    tryload(getenv "HOME" | "/init.m2", simpleLoad)
-		    or
-		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
+	  if not member("-q",commandLine) then (
+	       if fileExists "init.m2" then tryload("init.m2", simpleLoad, true)
+	       else if getenv "HOME" =!= "" then (
+		    fn := getenv "HOME" | "/init.m2";
+		    if fileExists fn then tryload(fn, simpleLoad, true)
+		    else (
+		    	 fn = getenv "HOME" | "/.init.m2";
+		    	 tryload(getenv "HOME" | "/.init.m2", simpleLoad, true))))))
 newPackage Output
 protect symbol Output
 newPackage User

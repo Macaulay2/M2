@@ -19,12 +19,8 @@ dummyMultaryFun(c:CodeSequence):Expr := (
      error("dummy multary function called");
      nullE);
 
-export AdjacentFun := dummyBinaryFun;	-- filled in later
 export AssignElemFun := dummyTernaryFun;	-- filled
 export AssignQuotedElemFun := dummyTernaryFun;	-- filled
-export WhileDoFun := dummyBinaryFun;      -- filled in later
-export WhileListFun := dummyBinaryFun;      -- filled in later
-export WhileListDoFun := dummyTernaryFun;      -- filled in later
 export NewFun := dummyUnaryFun;	  -- filled in later
 export NewFromFun := dummyBinaryFun;	  -- filled in later
 export NewOfFun := dummyBinaryFun;	  -- filled in later
@@ -170,28 +166,17 @@ export convert(e:ParseTree):Code := (
 	       w.dictionary.frameID,
 	       w.dictionary.framesize,
 	       treePosition(e)))
-     is w:WhileDo do Code(
-	  binaryCode(WhileDoFun,convert(w.predicate),convert(w.doClause),
-	       treePosition(e)))
-     is w:WhileList do Code(
-	  binaryCode(WhileListFun,convert(w.predicate),convert(w.listClause),
-	       treePosition(e)))
-     is w:WhileListDo do Code(
-	  ternaryCode(WhileListDoFun,convert(w.predicate),convert(w.listClause),convert(w.doClause),
-	       treePosition(e)))
+     is w:WhileDo do Code(whileDoCode(convert(w.predicate),convert(w.doClause),treePosition(e)))
+     is w:WhileList do Code(whileListCode(convert(w.predicate),convert(w.listClause),treePosition(e)))
+     is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),convert(w.listClause),convert(w.doClause),treePosition(e)))
      is n:New do (
 	  if n.newparent == dummyTree
 	  then if n.newinitializer == dummyTree
-	       then Code(unaryCode(NewFun,convert(n.newclass),
-		    treePosition(e)))
-	       else Code(binaryCode(NewFromFun,convert(n.newclass),convert(n.newinitializer),
-		    treePosition(e)))
+	       then Code(newCode(convert(n.newclass),treePosition(e)))
+	       else Code(newFromCode(convert(n.newclass),convert(n.newinitializer),treePosition(e)))
 	  else if n.newinitializer == dummyTree
-	       then Code(binaryCode(NewOfFun,convert(n.newclass),convert(n.newparent),
-		    treePosition(e)))
-	       else Code(ternaryCode(NewOfFromFun,
-		    convert(n.newclass),convert(n.newparent),convert(n.newinitializer),
-		    treePosition(e))))
+	       then Code(newOfCode(convert(n.newclass),convert(n.newparent),treePosition(e)))
+	       else Code(newOfFromCode(convert(n.newclass),convert(n.newparent),convert(n.newinitializer),treePosition(e))))
      is i:IfThen do Code(ifCode(convert(i.predicate),convert(i.thenclause),NullCode,treePosition(e)))
      is i:IfThenElse do Code(ifCode(convert(i.predicate),convert(i.thenclause),convert(i.elseClause),treePosition(e)))
      is token:Token do (
@@ -212,9 +197,7 @@ export convert(e:ParseTree):Code := (
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,position(token)))
 	       )
 	  )
-     is a:Adjacent do Code(
-	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
-	       treePosition(e)))
+     is a:Adjacent do Code(adjacentCode(convert(a.lhs),convert(a.rhs),treePosition(e)))
      is p:EmptyParentheses do (
 	  if p.left.word == leftparen then Code(sequenceCode(CodeSequence(),treePosition(e)))
 	  else if p.left.word == leftbrace then Code(listCode(CodeSequence(),treePosition(e)))

@@ -59,6 +59,9 @@ assert( not  false === true )
 
 -- test try
 assert( try error "" else true )
+assert( try true else false )
+assert( try true )
+assert( null === try error "" )
 --i = 5
 --try i := 6 else i :=7
 --assert(i === 5)
@@ -158,6 +161,12 @@ if false then assert false
 -- if false then i :=6 else i :=6
 -- if true then i :=6 else i :=6
 -- assert(i === 5)
+
+-- test while
+assert( {0,1,2,3,4} === ( i = 0 ; while i < 5 list i do i = i +1 ) )
+assert( {} === while false list i do null )
+assert( {} === while false list i )
+assert( i = true ; {0} === while i list 0 do i = false )
 
 end						    -- should end the input file
 assert false

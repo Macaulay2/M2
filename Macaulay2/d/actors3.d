@@ -1484,34 +1484,6 @@ sequencefun(e:Expr):Expr := (
      else Expr(Sequence(e)));
 setupfun("sequence",sequencefun);
 
-
-adjacentfun(lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
-     when left
-     is c:FunctionClosure do (
-	  when rhs
-	  is cs:sequenceCode do apply(c,cs.x)
-	  else (
-	       e := eval(rhs);
-	       when e is Error do e
-	       is v:Sequence do apply(c,v)
-	       else apply(c,e)))
-     is ff:CompiledFunction do (
-	  e := eval(rhs);
-	  when e is Error do e
-	  else (
-	       ret := ff.fn(e);
-	       when ret is Error do backtr(ret) else ret))
-     is ff:CompiledFunctionClosure do (
-	  e := eval(rhs);
-	  when e is Error do e
-	  else (
-	       ret := ff.fn(e,ff.env);
-	       when ret is Error do backtr(ret) else ret))
-     is Error do left
-     else binarymethod(left,rhs,AdjacentS));
-AdjacentFun = adjacentfun;
-
 iteratedApply(lhs:Code,rhs:Code):Expr := (
      -- f ## (x,y,z) becomes ((f x) y) z
      f := eval(lhs);
