@@ -872,7 +872,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 	  SUBSECTION "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
 	  if #e > 0 then (
 	       SUBSECTION "Exports",
-	       UL {
+	       fixup UL {
 		    if #b > 0 then PARA1 {"Types", smenu b},
 		    if #a > 0 then PARA1 {"Functions", smenu a},
 		    if #m > 0 then PARA1 {"Methods", smenu m},
