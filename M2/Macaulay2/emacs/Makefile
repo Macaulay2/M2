@@ -23,3 +23,4 @@ allfiles : Makefile;
 
 clean:
 	rm -f M2-symbols.el
+

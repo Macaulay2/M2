@@ -157,8 +157,8 @@ document { (quote -, Set, Set),
      }
 
 set Set := x -> x
-net Set := x -> "set " | name keys x
-name Set := x -> "set " | name keys x
+net Set := x -> net class x | " " | net keys x
+name Set := x -> name class x | " " | name keys x
 Set + Set := (x,y) -> merge(x,y,(i,j)->i)
 Set ++ Set := (x,y) -> apply(x,i->(0,i)) + apply(y,j->(1,j))
 Set ** Set := (x,y) -> combine(x,y,identity,(i,j)->i,)
