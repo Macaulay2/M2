@@ -1,7 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-allsymbols := values symbolTable()				    -- do this first
-
 htmlDefaults#"BODY" = "BACKGROUND='recbg.jpg'"
 
 setrecursionlimit 4000
@@ -141,31 +139,10 @@ buttonBar = (key) -> CENTER {
 	  
 haderror = false
 
-<< "pass 1, checking for undocumented global symbols" << endl
-time scan(allsymbols, x -> (
-	  if not DocDatabase#?(toExternalString toString x) 
-	  then (
-	       haderror = true;
-	       pos := locate x;
-	       if pos =!= null then pos = pos#0 | ":" | toString pos#1 | ": ";
-	       stderr << pos << "warning: no documentation for symbol " << x;
-	       if value x =!= x then stderr << " with value of class " << class value x;
-	       stderr << endl;
-	       document {
-		    if value x =!= x and (
-			 class value x === Function
-			 or class value x === ScriptedFunctor
-		    	 or instance(value x, Type)
-			 )
-		    then value x
-		    else x,
-		    Headline => "undocumented symbol", "No documentation provided yet."};
-	       )))
-
-<< "pass 2, descending through documentation tree" << endl
+<< "pass 1, descending through documentation tree" << endl
 time follow topNodeName
 
-<< "pass 3, checking for unreachable documentation nodes" << endl
+<< "pass 2, checking for unreachable documentation nodes" << endl
 time scanKeys(DocDatabase,
      key -> (
 	  if not match(DocDatabase#key,"goto *") then (
@@ -178,7 +155,7 @@ time scanKeys(DocDatabase,
 	  )
      )
 
-<< "pass 4, writing html files" << endl
+<< "pass 3, writing html files" << endl
 time scan(keys linkFollowedTable, fkey -> (
 	  linkFilename fkey
 	  << html HTML { 
