@@ -723,7 +723,7 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					 const Matrix *M,
 					 M2_bool is_mutable
-					 ); /* drg: connected rawMatrixRemake NOT YET */
+					 ); /* drg: connected rawMatrixRemake1  */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      and/or mutable-ness. The target free module must have the expected rank.
      The source free module is computed heuristically from the the target and the
@@ -735,7 +735,7 @@ extern "C" {
 					const M2_arrayint deg,
 					const Matrix *M,
 					M2_bool is_mutable
-					); /* drg: connected rawMatrixRemake */
+					); /* drg: connected rawMatrixRemake2 */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
