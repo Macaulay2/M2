@@ -342,6 +342,7 @@ ZZ % RingElement := RingElement % ZZ :=
      )
 
 RingElement // RingElement := RingElement => 
+RR // RingElement := RingElement // RR :=
 QQ // RingElement := RingElement // QQ :=
 ZZ // RingElement := RingElement // ZZ := 
 (f,g) -> (
@@ -379,8 +380,8 @@ RingElement - QQ := (f,g) -> (
      f - g)
 
 RingElement - RingElement := RingElement =>
-ZZ - RingElement := 
-RingElement - ZZ := 
+RR - RingElement := RingElement - RR := 
+ZZ - RingElement := RingElement - ZZ := 
 (f,g) -> (
      R := class f;
      S := class g;
@@ -416,6 +417,7 @@ RingElement * QQ := (f,g) -> (
      f * g)
 
 RingElement * RingElement := RingElement =>
+RR * RingElement := RingElement * RR :=
 ZZ * RingElement := RingElement * ZZ :=
 (f,g) -> (
      R := class f;
@@ -452,6 +454,7 @@ RingElement + QQ := (f,g) -> (
      f + g)
 
 RingElement + RingElement := RingElement =>
+RR + RingElement := RingElement + RR := 
 ZZ + RingElement := RingElement + ZZ := 
 (f,g) -> (
      R := class f;
@@ -541,6 +544,7 @@ fraction(RingElement,RingElement) := (r,s) -> (
      )
 
 RingElement / RingElement := RingElement =>
+RR / RingElement := RingElement / RR :=
 ZZ / RingElement := RingElement / ZZ :=
 (f,g) -> (
      R := class f;
