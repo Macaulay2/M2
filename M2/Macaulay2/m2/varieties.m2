@@ -244,6 +244,9 @@ cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
      then X#(cotangentSheaf,i) 
      else X#(cotangentSheaf,i) = prune exteriorPower(i,cotangentSheaf X))
 
+tangentSheaf = method()
+tangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> dual cotangentSheaf X
+
 TEST ///
      k = ZZ/101
      R = k[a,b,c,d]/(a^4+b^4+c^4+d^4)
