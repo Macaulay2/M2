@@ -1069,7 +1069,7 @@ showTex = x -> (
 -----------------------------------------------------------------------------
 showHtml = x -> (
      fn := temporaryFileName () | ".html";
-     fn << "<TITLE>Macaulay 2 Output</TITLE>" << endl << html x << endl << close;
+     fn << "<title>Macaulay 2 Output</title>" << endl << html x << endl << close;
      run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
      )
 
@@ -1190,14 +1190,14 @@ use Entity := x -> if x.?use then x.use x else x
 
 RightArrow = Entity {
      symbol texMath => ///\rightarrow{}///,
-     symbol html    => ///<IMG SRC="RightArrow.gif">///,
+     symbol html    => ///<img src="RightArrow.gif">///,
      symbol net     => "--->",
      symbol symbol  => symbol RightArrow
      }
 
 DownArrow = Entity {
      symbol texMath => ///\downarrow{}///,
-     symbol html    => ///<IMG SRC="DownArrow.gif">///,
+     symbol html    => ///<img src="DownArrow.gif">///,
      symbol net     => "|" || "|" || "V",
      symbol symbol  => symbol DownArrow
      }

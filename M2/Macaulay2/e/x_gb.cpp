@@ -297,7 +297,7 @@ IM2_GB_to_string(Computation *C)
 {
   buffer o;
   o << "-- a raw Groebner basis --";
-    // C->text_out(o);
+  C->text_out(o);
   return o.to_string();
 }
 

@@ -182,7 +182,7 @@ primaryDecomposition = method(
 	  PrintLevel => 0,
 	  Strategy => null})
 
-simpleToString := toString
+simpleToString = toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity

@@ -29,6 +29,8 @@ map(Module,Matrix) := options -> (M,f) -> error "method for 'map(Module,Matrix)'
 undocumented(Module,ZZ)
 map(Module,ZZ) := map(Module,RingElement) := options -> (M,r) -> error "method for 'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead"
 
+summary GroebnerBasis := g -> error "the method for 'summary(GroebnerBasis)' is obsolete -- the information is displayed now whenever a Groebner basis is displayed"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

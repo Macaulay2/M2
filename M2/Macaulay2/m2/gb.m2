@@ -13,8 +13,6 @@ status GroebnerBasis := opts -> G -> (
      )
 toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[" | status g | "]"
 
-summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
-
 checkListOfIntegers := method()
 checkListOfIntegers ZZ := t -> {t}
 checkListOfIntegers List := t -> (

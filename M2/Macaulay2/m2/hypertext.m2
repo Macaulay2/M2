@@ -135,7 +135,7 @@ net PARA1 := vert(net,identity)				    -- singlespacing
 info PARA1 := vert(info,identity)
 
 html BR := x -> ///
-<BR>
+<br>
 ///
 tex  BR := x -> ///
 \hfil\break
@@ -169,12 +169,12 @@ tex  HR := x -> ///
 \hbox to\hsize{\leaders\hrule\hfill}
 ///
 
-html Hypertext := x -> concatenate("<P>",apply(x,html))
+html Hypertext := x -> concatenate("<p>",apply(x,html))
 
 html PARA1 := x -> concatenate("\n", apply(x,html),"\n")
 html PARA := x -> (
-     if #x === 0 then "\n<P>\n"
-     else concatenate("\n<P>", apply(x,html),"<P>\n")
+     if #x === 0 then "\n<p>\n"
+     else concatenate("\n<p>", apply(x,html),"<p>\n")
      )
 
 tex PARA := x -> concatenate(///
@@ -184,12 +184,12 @@ tex PARA := x -> concatenate(///
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<p><table class=\"examples\" cellspacing='0' cellpadding='12' border='4'>",
+     "<p><table class=\"examples\">",
      newline,
      apply(x, 
 	  item -> (
 	       "  <tr>", newline,
-	       "    <td>", html item#1, "</td>", newline,
+	       "    <td class=\"examples\">", html item#1, "</td>", newline,
 	       "  </tr>", newline
 	       )
 	  ),
@@ -295,7 +295,7 @@ html LISTING := t -> "<listing>" | concatenate toSequence t | "</listing>";
 texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
 
 texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
-html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
+html ITALIC := x -> concatenate("<i>",apply(x,html),"</i>")
 
 texMath TEX := tex TEX := x -> concatenate toList x
 
@@ -320,9 +320,9 @@ html ANCHOR := x -> (
 info ANCHOR := net ANCHOR := x -> net last x
 tex ANCHOR := x -> (
      concatenate(
-	  ///\special{html:<A name="///, texLiteral x#0, ///">}///,
+	  ///\special{html:<a name="///, texLiteral x#0, ///">}///,
 	  tex x#-1,
-	  ///\special{html:</A>}///
+	  ///\special{html:</a>}///
 	  )
      )
 
@@ -436,9 +436,9 @@ scan( (net,html,tex), op -> op TOH := x -> op SEQ{ new TO from x, commentize hea
 
 tex LITERAL := html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
-html ITALIC := t -> concatenate("<I>", apply(t,html), "</I>")
-html UNDERLINE := t -> concatenate("<U>", apply(t,html), "</U>")
-html BOLD := t -> concatenate("<B>", apply(t,html), "</B>")
+html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
+html UNDERLINE := t -> concatenate("<u>", apply(t,html), "</u>")
+html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 html TEX := x -> x#0	    -- should do something else!
 
 html Option := x -> toString x
@@ -490,49 +490,49 @@ tex HEADER6 := x -> concatenate (
 
 html HEADER1 := x -> concatenate (
      ///
-<H1>///,
+<h1>///,
      apply(toList x, html),
-     ///</H1>
+     ///</h1>
 ///
      )
 
 html HEADER2 := x -> concatenate (
      ///
-<H2>///,
+<h2>///,
      apply(toList x, html),
-     ///</H2>
+     ///</h2>
 ///
      )
 
 html HEADER3 := x -> concatenate (
      ///
-<H3>///,
+<h3>///,
      apply(toList x, html),
-     ///</H3>
+     ///</h3>
 ///
      )
 
 html HEADER4 := x -> concatenate (
      ///
-<H4>///,
+<h4>///,
      apply(toList x, html),
-     ///</H4>
+     ///</h4>
 ///
      )
 
 html HEADER5 := x -> concatenate (
      ///
-<H5>///,
+<h5>///,
      apply(toList x, html),
-     ///</H5>
+     ///</h5>
 ///
      )
 
 html HEADER6 := x -> concatenate (
      ///
-<H6>///,
+<h6>///,
      apply(toList x, html),
-     ///</H6>
+     ///</h6>
 ///
      )
 
