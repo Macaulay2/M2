@@ -74,7 +74,7 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
 #warning "unused variable commented out"
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
-  if (algorithm == 1)
+  if (algorithm == 2)
     return gbA::create(m, 
 		       collect_syz, 
 		       n_rows_to_keep,

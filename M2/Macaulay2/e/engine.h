@@ -1154,10 +1154,36 @@ extern "C" {
   ComputationOrNull *IM2_GB_make(const Matrix *m,
 				 M2_bool collect_syz,
 				 int n_rows_to_keep,
+				 M2_arrayint gb_degrees,
 				 M2_bool use_max_degree,
 				 int max_degree,
 				 int algorithm,
 				 int strategy); /* drg: connected rawGB */
+
+  ComputationOrNull *IM2_GB_set_hilbert_function(Computation *G,
+						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
+
+
+
+  ComputationOrNull *IM2_GB_force(const Matrix *m,
+				  const Matrix *gb,
+				  const Matrix *change); /* drg: connected rawGBForce */
+  
+  ComputationOrNull* IM2_Computation_set_stop(Computation *G,          
+				     M2_bool always_stop,       /* 1 */
+				     M2_bool stop_after_degree, /* 2 */
+				     M2_arrayint degree_limit,
+				     int basis_element_limit,   /* 3 */
+				     int syzygy_limit,          /* 4 */
+				     int pair_limit,            /* 5 */
+				     int codim_limit,           /* 6 */
+				     int subring_limit,         /* 7 */
+				     M2_bool just_min_gens,     /* 8 */
+				     M2_arrayint length_limit   /* 9 */  /* not for GB */
+				     ); /* drg: connected rawGBSetStop */
+
+  /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
+  /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 
   ComputationOrNull *IM2_res_make(const Matrix *m,
 				  M2_bool resolve_cokernel,
@@ -1168,32 +1194,28 @@ extern "C" {
 				  int strategy /* drg: connected rawResolution */
 				  );
 
-  ComputationOrNull *IM2_GB_set_hilbert_function(Computation *G,
-						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
-
-  ComputationOrNull *IM2_GB_force(const Matrix *m,
-				  const Matrix *gb,
-				  const Matrix *change); /* drg: connected rawGBForce */
-  
-  ComputationOrNull* IM2_GB_set_stop(Computation *G,
-				     M2_bool always_stop,
-				     M2_bool stop_after_degree,
-				     M2_arrayint degree_limit,
-				     int basis_element_limit,
-				     int syzygy_limit,
-				     int pair_limit,
-				     int codim_limit,
-				     int subring_limit,
-				     M2_bool just_min_gens,
-				     M2_arrayint length_limit); /* drg: connected rawGBSetStop */
-
-  /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
-  /* Res: SortStrategy, 0, 1, 2, 3 ?? */
+  void IM2_Computation_start(Computation *G);
+  /* start or continue the computation */
 
   const MatrixOrNull *IM2_GB_get_matrix(Computation *G, int level, M2_bool minimize); 
   /* drg: connected rawGBGetMatrix */
 
   int IM2_GB_status(Computation *G,
+		    int * complete_up_through_this_degree,
+		    int * stopping_reason); /* number from IM2_Computation_set_stop,
+					       interrupted is -1. None is 0. */
+  /* connected rawGBStatus */
+  /* -1: error condition, and the error message is set.
+     1: not started,
+     2: started, but still running in another thread (not implemented yet)
+     3: stopped because of a stopping condition or an interrupt
+     4: finished the computation completely
+  */
+
+
+
+
+  int IM2_Resolution_status(Computation *G,
 		    int * complete_up_through_this_degree,
 		    int * complete_up_through_this_level); /* drg: connected rawGBStatus */
   /* -1: error condition, and the error message is set.
@@ -1204,7 +1226,7 @@ extern "C" {
      4: finished the computation completely
   */
 
-  int IM2_GB_status_level(Computation *G, 
+  int IM2_Resolution_status_level(Computation *G, 
 			  int level, 
 			  M2_bool minimize,
 			  int * complete_up_through_this_degree); /* drg: connected rawGBStatusLevel */
