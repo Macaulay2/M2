@@ -151,8 +151,9 @@ fakeMenu := x -> (
 pass4 := () -> (
      << "pass 4, writing html files" << endl;
      scan(keys linkFollowedTable, fkey -> if linkFollowedTable#fkey then (
-	       linkFilename fkey
-	       << html HTML { 
+	       fn := linkFilename fkey;
+	       -- stderr << "-- creating " << fn << " for key " << fkey << endl;
+	       fn << html HTML { 
 		    HEAD TITLE {fkey, headline fkey},
 		    BODY { 
 			 buttonBar fkey,
@@ -177,7 +178,7 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      )
 
 pass5 := () -> (
-     << "pass 5, creating the master index" << endl;
+     << "pass 5, creating the master index in " << masterFileName << endl;
      masterNodeName := topNodeName | " Index";
      masterFileName << html HTML {
 	  HEAD { TITLE masterNodeName },
@@ -213,7 +214,7 @@ cacheVars := varlist -> (
 
 makeHTML = (topnode,docdatabase0) -> (
      restore := cacheVars{symbol documentationPath};
-     gifpath := minimizeFilename( getenv "M2HOME" | "/html/" );
+     gifpath := "cache/images/";
      prefix = first documentationPath;
      docdatabase = docdatabase0;
      checkDirectory prefix;
