@@ -24,17 +24,27 @@ subsets List := x -> (
 	  s := subsets x;
 	  join(s,apply(s,y->append(y,a)))))
 
+Partition = new Type of List
 partitions(ZZ,ZZ) := memoize (
      (n,k) -> (
      	  if k > n then k=n;
-     	  if n <= 0 then {{}} 
+	  if n < 0 then {}
+	  else if n === 0 then {new Partition from {}} 
      	  else if k === 0 then {} 
-     	  else if k === 1 then {apply(n,i->1)} 
+     	  else if k === 1 then {new Partition from apply(n,i->1)} 
      	  else join( 
 	       apply(partitions(n-k,k),i -> prepend(k,i)), 
 	       partitions(n,k-1))))
-
 partitions ZZ := (n) -> partitions(n,n)
+
+conjugate Partition := (lambda) -> (
+     if #lambda === 0 then {} else (
+     	  slot := #lambda-1;
+     	  new Partition from
+	  for i from 1 to lambda#0 list (
+	       while lambda#slot < i do slot=slot-1;
+	       slot+1)
+     ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
