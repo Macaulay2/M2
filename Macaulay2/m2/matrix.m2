@@ -16,7 +16,7 @@ source Matrix := f -> f.source
 target Matrix := f -> f.target
 
 newMatrix = method(TypicalValue => Matrix)
-newMatrix(Module,Module,RawMatrix) := (tar,src,f) -> (     -- we erase this later
+newMatrix(Module,Module,RawMatrix) := (tar,src,f) -> (
      R := ring tar;
      new Matrix from {
 	  symbol ring => R,
@@ -64,19 +64,7 @@ sameRing := (m,n) -> (
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
      if # ind === 2
-     then (
-     	  R := ring m;
-	  rows := numgens target m;
-	  cols := numgens source m;
-	  i := ind#0;
-	  j := ind#1;
-	  if i < 0 or i >= rows then error (
-	       "encountered row index ", toString i,
-	       " out of range 0 .. ", toString (rows-1));
-	  if j < 0 or j >= cols then error (
-	       "encountered column index ", toString j,
-	       " out of range 0 .. ", toString (cols-1));
-	  new R from rawMatrixEntry(m.RawMatrix, ind#0, ind#1))
+     then new ring m from rawMatrixEntry(m.RawMatrix, ind#0, ind#1)
      else error "expected a sequence of length two"
      )
 
