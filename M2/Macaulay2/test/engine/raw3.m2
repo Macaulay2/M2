@@ -377,7 +377,39 @@ ch = mat{{-x^4-4*x^3*y-4*x^3*z-6*x^2*y^2-12*x^2*y*z-6*x^2*z^2
 	 {1_R2}}
 m * ch
 
+-------------------------------
+-- row and column operations --
+-------------------------------
+load "raw-util.m2"
+R = polyring(rawZZ(), (symbol a .. symbol f))
+m = rawMatrix1(R^3,3,(a,b,c,a^2,b^2,c^2,a*b-1,b*c-1,c*d-1),true)
+assert(a === rawMatrixEntry(m,0,0))
+rawMatrixEntry(m,1,2,c^3)
+assert(c^3 === rawMatrixEntry(m,1,2))
+m
+rawMatrixEntry(m,2,1,0_R)
+assert(rawMatrixEntry(m,2,1) == 0_R)
+m
+rawMatrixRowSwap(m,0,1)
+rawMatrixRowSwap(m,2,3) -- should give an error, but doesn't ERROR
+rawMatrixRowSwap(m,1,2)
+rawMatrixColumnSwap(m,1,2)
 
+m
+
+rawMatrixRowChange(m,1,a^5,0,true) -- row index out of range... ERROR
+rawMatrixRowChange(m,1,a^5,0,true) -- now it doesn't give an error message!!
+rawMatrixRowChange(m,1,a^5,0) -- error message is OK.
+
+  
+rawMatrixColumnChange(m,1,a^5,0,true) -- 
+m
+rawMatrixRowScale(m,f,2,true) -- wrong error message
+rawMatrixColumnScale(m,f,2,true) -- wrong error message
+
+------------------
+-- rawGCD --------
+------------------
 load "raw-util.m2"
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (7*x+2*y+3*z)^2*(13*x^2+y-5)
@@ -429,33 +461,50 @@ rawPseudoRemainder(f,g)
 ---------------
 -- rawFactor --
 ---------------
+testfactor = (f) -> (
+     -- test factorization for f
+     -- assert: first factor is in base ring/field, first exponent is 1
+     -- product is f
+     g := rawFactor f;
+     assert(g_1_0 === 1);
+     assert(#g_0 === #g_1);
+     assert(f === product apply(#g_0, i -> (g_0_i)^(g_1_i)))
+     )
+
 load "raw-util.m2"
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+y)*(x-y)
 rawFactor f
+testfactor f
 
 R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
 f = (x+y)*(x-y)
 rawFactor f
+testfactor f
 
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
 f = (x+y)*(x-y)
 rawFactor f
+testfactor f
 
 load "raw-util.m2"
 R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^3*(x^2+y^4+z^7-x*y-13*x*z^2+12)
 time rawFactor f
+testfactor f
 f = (x+3*y-14)^10*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
+testfactor f
 
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
-time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
+--time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
+--testfactor f
 
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f -- .13 sec 1 Gz G4 tibook 1/19/03
+testfactor f
 
 R = polyring(rawZZ(), singleton symbol x)
 f = x^20+13*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
@@ -463,10 +512,34 @@ g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 F = f*g*h
 time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
+testfactor F
+
 F = f^2*g^2*h^3;
 time rawFactor F -- 1.41 sec 1 Gz G4 tibook 1/19/03
+testfactor F
+
 F = f^2*g^2*h^2;
 time rawFactor F -- 4.25 sec 1 Gz G4 tibook 1/19/03
+testfactor F
+
+R = polyring(rawZZ(), (symbol x .. symbol z))
+f = 20_R
+assert(f1 = rawFactor f; #f1_0 === 1 and f1_1_0 === 1)
+assert(rawFactor (0_R) === (singleton (0_R), {1}))
+assert(rawFactor (4_R) === (singleton (4_R), {1}))
+assert(rawFactor (4*x^3) === ((4_R, x), {1,3}))
+
+-------------------
+-- rawCharSeries --
+-------------------
+R = polyring(rawZZ(), (symbol x .. symbol z))
+I = rawMatrix1(R^1, 2, (x*y^2+1, x*z+y+1), false)
+rawCharSeries(I)
+rawIdealReorder I
+
+I = rawMatrix1(R^1, 2, (x*y+x+1, y*z-x), false)
+rawCharSeries(I)
+rawIdealReorder I
 
 -- TODO: 
 --  compress
