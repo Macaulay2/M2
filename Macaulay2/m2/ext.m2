@@ -157,7 +157,7 @@ eg3 = () -> (
 
 -- total ext over complete intersections
 
-factorizations = (m) -> (
+factorizations := (m) -> (
      -- m is a list of exponents for a monomial
      -- return a list of pairs of lists showing the factorizations
      -- e.g., if m is {1,1} we return
@@ -173,56 +173,66 @@ makeAdjust := fudge -> v -> {- fudge * v#1 + v#0, - v#1}
 Ext(Module,Module) := (N,M) -> (
      R := ring N;
      if R =!= ring M then error "expected modules over the same ring";
-     p := R.relations;
-     Q := ring p;
-     I := ideal p;
-     n := numgens Q;
-     c := numgens I;
-     if c =!= codim R then error "total Ext is available only for complete intersections";
-     f := apply(c, i -> I_i);
-     adjust := makeAdjust ((1 + max(first \ degree \ f)) // 2);
-     toR := map(R,Q);
-     N' := pushForward( toR, N );
-     M' := pushForward( toR, M );
-     E := resolution N';
-     s := f / (g -> nullhomotopy (g*id_E));
-     X := local X;
-     T := k[X_0 .. X_(c-1), toSequence Q.syms, 
-	  Degrees => {
-	       apply(0 .. c-1,i -> adjust { - first degree f_i, -2}), 
-	       n : adjust {1,0}
-	       }];
-     toT := map(T,Q,apply(toList(c .. c+n-1), i -> T_i));
-     S := k[X_0 .. X_(c-1),Degrees=>{c:{2}}];    -- find another way to enumerate monomials
-     mS := monoid S;
-     use S;
-     spots := E -> sort select(keys E, i -> class i === ZZ);
-     DMT := T^(apply(spots E, i -> toSequence apply(degrees E_i, d -> adjust {first d,i})));
-     Delta := new MutableHashTable;
-     Delta#(exponents 1_mS) = -E.dd;
-     scan(c, i -> Delta#(exponents mS_i) = s_i);
-     scan(4 .. length E + 1, 
-	  d -> if even d then (
-	       scan( exponents \ leadMonomial \ first entries basis(d,S), 
-		    m -> (
-			 h := sum(factorizations m,
-			      (n,o) -> if Delta#?n and Delta#?o then Delta#n * Delta#o else 0);
-			 if h != 0 then (
-			      Delta#m = nullhomotopy h;
-			      )))));
-     DT := map(DMT, DMT, transpose sum ( keys Delta, m -> T_m * toT sum Delta#m ), Degree => adjust {0,-1});
-     D := DT ** toT M';
-     ext := prune homology(D,D);
-     ext#(global adjust) = adjust;
-     ext
-     )
+     if M == 0 then R^0
+     else if N == 0 then R^0
+     else (
+	  p := presentation R;
+	  p = matrix (reverse \ entries p);-- just to make it look prettier
+	  Q := ring p;
+	  I := ideal p;
+	  n := numgens Q;
+	  c := numgens I;
+	  if c =!= codim R then error "total Ext is available only for complete intersections";
+	  f := apply(c, i -> I_i);
+	  adjust := if #f > 0 then makeAdjust ((1 + max(first \ degree \ f)) // 2) else identity;
+	  toR := map(R,Q);
+	  pN := lift(presentation N,Q);
+	  pM := lift(presentation M,Q);
+	  N' := cokernel ( pN | p ** id_(target pN) );
+	  M' := cokernel ( pM | p ** id_(target pM) );
+	  -- pushForward doesn't work when the module is not homogeneous
+	  -- N' := pushForward( toR, N );
+	  -- M' := pushForward( toR, M );
+	  E := resolution N';
+	  s := f / (g -> nullhomotopy (g*id_E));
+	  X := local X;
+	  k := coefficientRing Q;
+	  T := k[X_0 .. X_(c-1), toSequence Q.syms, 
+	       Degrees => {
+		    apply(0 .. c-1,i -> adjust { - first degree f_i, -2}), 
+		    n : adjust {1,0}
+		    }];
+	  toT := map(T,Q,apply(toList(c .. c+n-1), i -> T_i));
+	  S := k[X_0 .. X_(c-1),Degrees=>{c:{2}}];    -- find another way to enumerate monomials
+	  mS := monoid S;
+	  use S;
+	  spots := E -> sort select(keys E, i -> class i === ZZ);
+	  DMT := T^(apply(spots E, i -> toSequence apply(degrees E_i, d -> adjust {first d,i})));
+	  Delta := new MutableHashTable;
+	  Delta#(exponents 1_mS) = -E.dd;
+	  scan(c, i -> Delta#(exponents mS_i) = s_i);
+	  scan(4 .. length E + 1, 
+	       d -> if even d then (
+		    scan( exponents \ leadMonomial \ first entries basis(d,S), 
+			 m -> (
+			      h := sum(factorizations m,
+				   (n,o) -> if Delta#?n and Delta#?o then Delta#n * Delta#o else 0);
+			      if h != 0 then (
+				   Delta#m = nullhomotopy h;
+				   )))));
+	  DT := map(DMT, DMT, 
+	       transpose sum ( keys Delta, m -> T_m * toT sum Delta#m),
+	       Degree => adjust {0,-1});
+	  D := DT ** toT M';
+	  ext := prune homology(D,D);
+	  ext#(global adjust) = adjust;
+	  ext))
 
 TEST ///
      k = ZZ/101
      Q = k[x,y]
      I = ideal(x^3,y^5)
      R = Q/I
-     k' = coker vars R
      N = cokernel random (R^3, R^{2:-2})
      M = cokernel random (R^3, R^{2:-2})
      E = Ext(N,M)

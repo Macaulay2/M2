@@ -265,9 +265,13 @@ M2-send-to-prorgram can obtain lines from this buffer."
     ))
 
 (global-set-key [ f11 ] 'M2-send-to-program)
+(global-set-key [ SunF36 ] 'M2-send-to-program)
 (global-set-key [ C-f11 ] 'M2-switch-to-demo-buffer)
+(global-set-key [ C-SunF36 ] 'M2-switch-to-demo-buffer)
 (global-set-key [ M-f11 ] 'M2-set-demo-buffer)
+(global-set-key [ M-SunF36 ] 'M2-set-demo-buffer)
 (global-set-key [ M-f12 ] 'M2-demo)
+(global-set-key [ M-SunF37 ] 'M2-demo)
 (global-set-key [ kp-enter ] 'M2-send-to-program)
 (global-set-key "\^Cs" 'M2-send-to-program)
 

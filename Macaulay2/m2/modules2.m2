@@ -512,6 +512,8 @@ Module == ZZ := (M,n) -> (
 
 
 dim Module := M -> (
+     if degreeLength ring M === 0 
+     then error "can't compute dimension over a ring with zero degree length";
      if not isHomogeneous M
      then M = cokernel leadTerm gens gb presentation M;
      if poincare M == 0

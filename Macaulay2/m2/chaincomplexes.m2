@@ -203,21 +203,26 @@ lineOnTop := (s) -> concatenate(width s : "-") || s
 
 sum ChainComplex := C -> directSum apply(sort spots C, i -> C_i)
 sum ChainComplexMap := f -> (
+     R := ring f;
      T := target f;
      t := sort spots T;
      S := source f;
      s := sort spots S;
      d := degree f;
      u := spots f;
-     tar := directSum apply(t,i->T_i);
-     src := directSum apply(s,i->S_i);
-     if #u > 0 and same(apply(u, i -> degree f#i))
-     then (
-	  deg := degree f#(u#0);
-     	  map(tar, src, matrix table(t,s,(j,i) -> if j == i+d then f_i else map(T_j,S_i,0)), Degree=>deg)
-	  )
-     else map(tar, src, matrix table(t,s,(j,i) -> if j == i+d then f_i else map(T_j,S_i,0)))
-     )
+     if #t === 0 and #s === 0 then map(R^0,0)
+     else (
+	  tar := if #t === 0 then R^0 else directSum apply(t,i->T_i);
+	  src := if #s === 0 then R^0 else directSum apply(s,i->S_i);
+	  if #u > 0 and same(apply(u, i -> degree f#i))
+	  then (
+	       deg := degree f#(u#0);
+	       map(tar, src, matrix table(t,s,
+			 (j,i) -> if j == i+d then f_i else map(T_j,S_i,0)), Degree=>deg)
+	       )
+	  else (
+	       map(tar, src, matrix table(t,s,
+		    	 (j,i) -> if j == i+d then f_i else map(T_j,S_i,0))))))
 
 degree ChainComplexMap := f -> f.degree
 
@@ -497,18 +502,29 @@ nullhomotopy ChainComplexMap := f -> (
 	  (
 	       if s#?(i-1) and c#?i
 	       then if f#?i
-	       then s#i = (f_i - s_(i-1) * c_i) // b_(i+deg)
-	       else s#i = (    - s_(i-1) * c_i) // b_(i+deg)
+	       then (
+		    -- if    (f_i - s_(i-1) * c_i) %  b_(i+deg) != 0
+		    -- then error "expected map to be null homotopic";
+		    s#i = (f_i - s_(i-1) * c_i) // b_(i+deg)
+		    )
+	       else (
+		    -- if    (    - s_(i-1) * c_i) %  b_(i+deg) != 0
+		    -- then error "expected map to be null homotopic";
+		    s#i = (    - s_(i-1) * c_i) // b_(i+deg)
+		    )
 	       else if f#?i 
-	       then s#i = (f_i                ) // b_(i+deg)
+	       then (
+		    -- if    (f_i                ) %  b_(i+deg) != 0
+		    -- then error "expected map to be null homotopic";
+		    s#i = (f_i                ) // b_(i+deg)
+		    )
 	       )
 	  );
      s)
 document { quote nullhomotopy,
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",
-     PARA,
-     "Whether f is null homotopic is not checked.",
+     PARA, "Whether f is null homotopic is not checked.",
      PARA,
      "Here is part of an example provided by Luchezar Avramov.  We
      construct a random module over a complete intersection, resolve 

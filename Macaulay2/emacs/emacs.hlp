@@ -28,6 +28,7 @@ code.
    (setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
    (autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)
    (global-set-key "\^Cm" 'M2) (global-set-key [ f12 ] 'M2)
+   (global-set-key "\^Cm" 'M2) (global-set-key [ SunF37 ] 'M2)
    (autoload 'M2 "M2.el" "Run Macaulay 2 in a buffer." t)
    (setq load-path (cons "/usr/local/Macaulay2/emacs" load-path))
    (make-variable-buffer-local 'transient-mark-mode)
