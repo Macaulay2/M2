@@ -21,7 +21,6 @@ DESC    = @VERSION@-@host_cpu@-@OS@-@REL@
 DUMPDATA = @DUMPDATA@
 SOCKS = @SOCKS@
 NODENAME = @NODENAME@
-SHARED = @SHARED@
 PROFILE = @PROFILE@
 STRIP = @STRIP@
 OPTIMIZE = @OPTIMIZE@
@@ -32,6 +31,7 @@ STATIC = @STATIC@
 GC_FOR_NEW = @GC_FOR_NEW@
 
 CC = @CC@
+GCC = @GCC@
 CXX = @CXX@
 YACC = @YACC@
 AWK = @AWK@
@@ -88,7 +88,7 @@ endif
 DEBUGFLAGS :=
 
 ifeq "$(DEBUG)" "yes"
-DEBUGFLAGS += -g -DDEBUG
+DEBUGFLAGS += -DDEBUG
 else
 DEBUGFLAGS += -DNDEBUG
 endif
@@ -100,10 +100,12 @@ LDFLAGS  += -pg
 STRIP := no
 endif
 
-ifeq "$(CC)" "gcc"
+ifeq "$(GCC)" "yes"
+CFLAGS   += -Wall -Wshadow -Wcast-qual
+CXXFLAGS += -Wall -Wshadow -Wcast-qual
 ifeq "$(OPTIMIZE)" "yes"
-CFLAGS   += -fexpensive-optimizations -O3
-CXXFLAGS += -fexpensive-optimizations -O3
+CFLAGS   += -O3 -fexpensive-optimizations
+CXXFLAGS += -O3 -fexpensive-optimizations
 else
 CFLAGS   += -O0
 CXXFLAGS += -O0

@@ -4,6 +4,14 @@
 
 AC_INIT(Macaulay2.LSM)
 
+echo "any environment variables set:"
+test "$CC"         && echo "   CC=$CC"
+test "$CFLAGS"     && echo "   CFLAGS=$CFLAGS"
+test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
+test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
+test "$CXX"        && echo "   CXX=$CXX"
+test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
+
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
 
@@ -46,6 +54,7 @@ AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
+AC_SUBST(GCC)
 AC_PROG_CXX()
 AC_PROG_YACC()
 
@@ -64,10 +73,10 @@ esac
 
 DUMPDATA=yes
 AC_SUBST(DUMPDATA)
-AC_ARG_ENABLE(dumpdata,[\
-  --disable-dumpdata      do not cache data with dumpdata
-  --enable-dumpdata=old   cache data with the old version of dumpdata\
-],DUMPDATA="$enableval")
+AC_ARG_ENABLE(dumpdata,
+[  --disable-dumpdata      do not cache data with dumpdata
+  --enable-dumpdata=old   cache data with the old version of dumpdata],
+DUMPDATA="$enableval")
 case "$DUMPDATA" in
    no) ;;
    old) ;;
@@ -76,15 +85,6 @@ case "$DUMPDATA" in
 esac
 case "$DUMPDATA" in
    yes|old) AC_DEFINE(DUMPDATA,,whether to use dumpdata) ;;
-esac
-
-SHARED=no
-AC_SUBST(SHARED)
-AC_ARG_ENABLE(shared,[  --enable-shared         create shared libraries],SHARED="$enableval")
-case "$SHARED" in
-   no) ;;
-   yes) AC_DEFINE(SHARED,,whether to use shared libraries) ;;
-   *) echo configure: error: unrecognized value --enable-shared="$enableval" >&2; exit 1 ;;
 esac
 
 PROFILE=no

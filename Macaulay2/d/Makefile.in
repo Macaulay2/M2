@@ -63,7 +63,7 @@ WC1FILES := $(SCRIPTS) $(SRCFILES) \
 ALLFILES := $(WC1FILES) $(PROJECT:.d=.dep) $(PROJECT:.d=.sig)
 ############################## rules
 SCC1 := ../c/scc1
-.SUFFIXES: .d .oo .sig .dep .res .test .m2
+.SUFFIXES: .d .sig .dep .res .test .m2
 .PHONY : clean all check
 
 SCCFLAGS =
@@ -74,7 +74,7 @@ endif
 
 # SCCFLAGS += -spincursor
 
-ifneq "$(CC)" "gcc"
+ifeq "$(GCC)" "no"
 SCCFLAGS += -nogcc
 endif
 
@@ -86,31 +86,14 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(COMPILE.c) $*.c $(OUTPUT_OPTION)
+	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
 	rm $*.c
-%.loo  : %.d
-	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(COMPILE.c) -fPIC $*.c $(OUTPUT_OPTION)
-	rm $*.c
-%     : %.oo;	$(LINK.o)                $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
-%.o   : %.c;	$(COMPILE.c) $(WARNINGS) $<                        $(OUTPUT_OPTION)
-%.lo  : %.c;    $(COMPILE.c)  -fPIC      $<                        $(OUTPUT_OPTION)
-%.lo  : %.cc;   $(COMPILE.cc) -fPIC      $<			   $(OUTPUT_OPTION)
 ############################## flags
 
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I../../include -I. -I$(prefix)/include -I@srcdir@
-# the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
-# from the gcc installation, as it often is
-
-ifeq "$(CC)" "cl"
-WARNINGS := -W3
-else
-WARNINGS := -Wall -Wshadow -Wcast-qual
-endif
-
+CPPFLAGS += -I../../include -I@srcdir@ -I. -I../c2
 CFLAGS += $(DEBUGFLAGS)
 
 # we can't do this because our manufactured c files have lots of unused labels
@@ -167,13 +150,11 @@ endif
 # __underflow
 # LDLIBS+= -lc
 
-ifeq "$(SHARED)" "no"
 ifeq "$(STATIC)" "yes"
 LDFLAGS += -static
 ifeq ($(OS),Linux)
 # this is for gc somehow, see the end of gc/config.h
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0
-endif
 endif
 endif
 
@@ -183,21 +164,12 @@ ifeq ($(OS),SunOS)
 LDLIBS += -lsocket -lnsl
 endif
 
-ifeq "$(SHARED)" "yes"
-# This next bit is really needed only for gnu libc6 (glibc-2.0.7)
-# Without it, it does dynamic linking at run time and breaks our dumpdata scheme
-# Don't link statically, so that these libraries actually get loaded at run time.
-# If we must link statically, we should find out how to link all members.
-# LDLIBS += -lnsl -lnss_files -ldb -lnss_compat -lnss_db -lnss_dns -lnss_nis -lresolv
-endif
-
 ifeq "$(STATIC)" "yes"
 ifeq ($(OS),Linux)
 # so I tried it, but it doesn't work...
 # ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
 endif
 endif
-
 
 #ifeq ($(OS),Linux)
 #LDLIBS += -lieee
@@ -237,15 +209,13 @@ compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 endif
 
-M2lib.o scclib.o M2lib.lo scclib.lo : compat.h
-M2lib.o scclib.o M2lib.lo scclib.lo : \
+M2lib.o scclib.o : compat.h
+M2lib.o scclib.o : \
 	../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
-memdebug.o scclib.o actors5.oo gc_cpp.o memdebug.lo scclib.lo actors5.loo gc_cpp.lo : memdebug.h
-gc_cpp.o gc_cpp.lo : ../../include/config.h
+memdebug.o scclib.o actors5.o gc_cpp.o  : memdebug.h
+gc_cpp.o : ../../include/config.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
-
-$(PROJECT:.d=.loo) $(PROJECT:.d=.lo) : compat.h
 
 MISCO := M2lib.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o
 
@@ -262,21 +232,9 @@ ifeq ($(OS),Linux)
 # LDFLAGS += -rdynamic
 endif
 
-ifeq "$(SHARED)" "yes"
-LOADLIBES += -L../lib
-LIBRARYFILES += ../lib/libengine1.so
-LIBRARYOPTIONS += -lengine1
-LIBRARYFILES += ../lib/libengine2.so
-LIBRARYOPTIONS += -lengine2
-LIBRARYFILES += ../lib/libinterpreter.so
-LIBRARYOPTIONS += -linterpreter
-../lib/libinterpreter.so : $(PROJECT:.d=.loo) $(MISCO:.o=.lo)
-	$(CC) -shared $^ $(OUTPUT_OPTION)
-else
 ALLOBJ += $(PROJECT:.d=.oo) 
 ALLOBJ += $(MISCO)
 ALLOBJ += ../e/libgb.a
-endif
 
 ifeq "$(DUMPDATA)" "yes"
 LOADLIBES += -L../dumpdata
@@ -416,7 +374,7 @@ endif
 	$(STRIPCMD) $@
 
 t_main.o : types.h
-t : t_main.o gmp.oo stdio.oo strings.oo system.oo varstrin.oo nets.oo scclib.o C.oo t.oo
+t : t_main.o gmp.o stdio.o strings.o system.o varstrin.o nets.o scclib.o C.o t.o
 	$(CC) $(LDFLAGS) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 all:: TAGS
@@ -439,7 +397,7 @@ CVS/Entries : $(ALLFILES)
 wc:
 	wc -l $(WC1FILES)
 clean ::
-	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep *.loo *.lo \
+	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep mapfile \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
 		core core.* compat.c compat.h c-files.tar tmp_init.c ../libexec/Macaulay2

@@ -55,11 +55,11 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- (250 MHz Macintosh Powerbook G3)
 -- 1.67 seconds, Macaulay 2 version 0.8.52
 
--- beginning computation Tue Aug  7 20:07:00 CDT 2001
+-- beginning computation Thu Aug  9 18:07:41 CDT 2001
 -- Linux rhenium 2.4.6 #61 Fri Jul 13 09:17:38 CDT 2001 i686 unknown
 -- Macaulay2 0.9, compiled with gcc 2.95
--- res39: 1.75 seconds
--- resG25: 25.3 seconds
+-- res39: 1.71 seconds
+-- resG25: 25. seconds
 
 -- Linux rhenium 2.4.4 #55 Tue Jun 26 13:44:25 CDT 2001 i686 unknown
 -- Macaulay2 0.9, compiled with gcc 3.0

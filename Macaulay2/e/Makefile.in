@@ -9,31 +9,16 @@ INSTALL_DATA = $(INSTALL)
 # CXXFLAGS = -DGCMALLOC -DDEBUG
 
 %.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< $(OUTPUT_OPTION)
-
-AWK      = awk
-
-ifndef CC
-CC       = gcc
-endif
-
-ifndef CXX
-CXX      = g++ 
-endif
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 
 ifeq "$(CC)" "cl"
 WARNINGS = -W3
 else
-WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
-	   -Wparentheses -Wreturn-type -Wswitch -Wtrigraphs -Wuninitialized \
-	   -Wreorder -Wtemplate-debugging
-WARNINGS = -Wall #-Wno-non-template-friend
+# WARNINGS += -Wno-non-template-friend
 endif
 
-CPPFLAGS += -I../../include #-DNDEBUG  #MES
-CPPFLAGS += -I$(prefix)/include
+CPPFLAGS += -I../../include
 CPPFLAGS += -I../c2
-CPPFLAGS += -I.
 
 ifdef ARING
 CPPFLAGS += -DARING
@@ -44,16 +29,6 @@ endif
 ######################
 CXXFLAGS += $(DEBUGFLAGS)
 ######################
-
-ifeq "$(CC)" "cl"
-# cl doesn't know about -O3
-ifndef NOOPTIM
-CXXFLAGS += -O2
-endif
-else
-#CXXFLAGS += -O3 #MES
-CXXFLAGS += $(WARNINGS)
-endif
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
