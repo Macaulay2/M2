@@ -26,7 +26,7 @@ AC_DEFUN(M2_SHOW_CONFDEFS,[
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-AC_DEFUN(M2_CONFIGURED_FILES,m4_patsubst(m4_include(config/files),[
+AC_DEFUN(M2_CONFIGURED_FILES,patsubst(m4_include(config/files),[
 ],[ ]))
 
 echo "any environment variables set:"
@@ -164,9 +164,10 @@ AC_ARG_ENABLE(gc_for_new,
     GC_FOR_NEW="$enableval",
     GC_FOR_NEW=no)
 
-AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
-AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))
-AC_CHECK_FUNC(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing))
+AC_CHECK_DECL(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing),[#include <math.h>])
+AC_CHECK_DECL(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing),[#include <math.h>])
+AC_CHECK_DECL(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing),[#include <math.h>])
+AC_CHECK_DECLS(sys_nerr)
 
 OLIBS="$LIBS"
 LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
