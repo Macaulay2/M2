@@ -59,7 +59,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  cd @srcdir@ && \
 	  for i in $(patsubst @srcdir@/%, %, $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
-@srcdir@/TAGS.doc: Makefile.in @srcdir@/../packages/Macaulay2Doc/*.m2
+@srcdir@/TAGS.doc: Makefile.in @srcdir@/../packages/Macaulay2/*.m2
 	@echo making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
@@ -166,7 +166,7 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2Core, Encapsulate => false, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false)'
+M2OPTIONS += -e 'installPackage(Macaulay2Core, Encapsulate => true, PackagePrefix => "$(prefix)/", MakeLinks => false, MakeDocumentation => false)'
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif
