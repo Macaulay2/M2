@@ -240,7 +240,7 @@ protected:
 public:
 
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
-  virtual bool in_subring(int n, const ring_elem a) const;
+  virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;

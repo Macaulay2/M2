@@ -1185,7 +1185,7 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
 #endif
 }
 
-Matrix *Matrix::lead_term(int n) const
+Matrix *Matrix::lead_term(int nparts) const
     // Select those monomials in each column
     // which are maximal in the order under
     // the first n parts of the monomial order.
@@ -1194,7 +1194,7 @@ Matrix *Matrix::lead_term(int n) const
   MatrixConstructor mat(rows(),cols(),is_mutable(),degree_shift());
 
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i, P->vec_lead_term(n, elem(i)));
+    mat.set_column(i, P->vec_lead_term(nparts, elem(i)));
   return mat.to_matrix();
 }
 
@@ -1326,11 +1326,18 @@ Matrix *Matrix::lead_var_coefficient(Matrix *&monoms) const
 }
 #endif
 
-M2_arrayint Matrix::elim_vars(int nparts) const
+M2_arrayint_OrNull Matrix::elim_vars(int nparts) const
 {
   intarray keep;
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  int nslots = P->getMonoid()->n_slots(nparts);
   for (int i=0; i<n_cols(); i++)
-    if (rows()->in_subring(nparts, elem(i)))
+    if (rows()->in_subring(nslots, elem(i)))
       keep.append(i);
   M2_arrayint result = makearrayint(keep.length());
   for (unsigned int i=0; i<result->len; i++)
@@ -1338,11 +1345,18 @@ M2_arrayint Matrix::elim_vars(int nparts) const
   return result;
 }
 
-M2_arrayint Matrix::elim_keep(int nparts) const
+M2_arrayint_OrNull Matrix::elim_keep(int nparts) const
 {
   intarray keep;
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  int nslots = P->getMonoid()->n_slots(nparts);
   for (int i=0; i<n_cols(); i++)
-    if (!rows()->in_subring(nparts, elem(i)))
+    if (!rows()->in_subring(nslots, elem(i)))
       keep.append(i);
   M2_arrayint result = makearrayint(keep.length());
   for (unsigned int i=0; i<result->len; i++)

@@ -454,7 +454,7 @@ int GBRing::gbvector_compare(const FreeModule *F,
   return cmp;
 }
 
-gbvector * GBRing::gbvector_lead_term(int n, 
+gbvector * GBRing::gbvector_lead_term(int nparts, 
 				      const FreeModule *F, 
 				      const gbvector *v)
   // What should we do with Schreyer orders?  This probably doesn't
@@ -462,11 +462,12 @@ gbvector * GBRing::gbvector_lead_term(int n,
 {
 #warning "Schreyer order question"
   if (v == NULL) return NULL;
+  int nslots = M->n_slots(nparts);
   gbvector head;
   gbvector *result = &head;
   for (const gbvector *t = v; t != NULL; t = t->next)
       {
-	if (M->compare(n, t->monom, v->monom) != 0) break;
+	if (M->compare(nslots, t->monom, v->monom) != 0) break;
 	result->next = gbvector_copy_term(t);
 	result = result->next;
       }

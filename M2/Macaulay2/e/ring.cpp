@@ -213,7 +213,7 @@ ring_elem Ring::diff(ring_elem a, ring_elem b, int use_coeff) const
   return mult(a,b);
 }
 
-bool Ring::in_subring(int n, const ring_elem a) const
+bool Ring::in_subring(int nslots, const ring_elem a) const
 {
   return true;
 }
