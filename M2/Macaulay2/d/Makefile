@@ -383,8 +383,8 @@ LIBRARYOPTIONS += ../../lib/libfac.a
 LIBRARYFILES += ../../lib/libcf.a
 LIBRARYOPTIONS += ../../lib/libcf.a
 endif
-LIBRARYFILES += ../../lib/libgmp.a
-LIBRARYOPTIONS += ../../lib/libgmp.a
+LIBRARYFILES += ../../gmp/.libs/libgmp.a
+LIBRARYOPTIONS += ../../gmp/.libs/libgmp.a
 LIBRARYFILES += ../../lib/libgc.a
 LIBRARYOPTIONS += ../../lib/libgc.a
 endif

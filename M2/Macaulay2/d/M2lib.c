@@ -1,10 +1,8 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+extern char *gmp_version;	/* removed the 'static' in gmp/version.c */
 #include "readline.h"
-
 #include "types.h"
-
-#include "../../gmp/version.c"
 
 #define GC_NO_VERSION_VAR
 #include "../../gc/version.h"
@@ -493,7 +491,7 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("--Copyright 1993-1999, all rights reserved, D. R. Grayson and M. E. Stillman");
+	       putstderr("--Copyright 1993-2000, all rights reserved, D. R. Grayson and M. E. Stillman");
 #     	       ifdef FACTORY
 	       putstderr("--Factory " 
 		    FACTORYVERSION
@@ -512,15 +510,15 @@ char **argv;
 #     	       endif
 	       sprintf(buf,
 #                      if GC_ALPHA_VERSION == GC_NOT_ALPHA
-		       "--GC %d.%d, copyright 1999, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
+		       "--GC %d.%d, copyright, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
 #                      else
-		       "--GC %d.%d alpha %d, copyright 1999, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
+		       "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
 #                      endif
 		       GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION
 		       );
 	       putstderr(buf);
-	       putstderr("--GNU libc and libg++, copyright 1996, Free Software Foundation");
-	       sprintf(buf,"--GNU MP %s, copyright 1996, Free Software Foundation",gmp_version);
+	       putstderr("--GNU libc and libg++, copyright, Free Software Foundation");
+	       sprintf(buf,"--GNU MP %s, copyright, Free Software Foundation",gmp_version);
 	       putstderr(buf);
 	       break;
        	       }

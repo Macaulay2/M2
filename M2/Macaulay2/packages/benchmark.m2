@@ -43,6 +43,11 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- res39: 1.29 seconds
 -- resG25: 19.97 seconds
 
+-- Linux rhenium 2.3.99-pre5 #5 Thu Apr 20 19:14:08 CDT 2000 i686 unknown
+-- Macaulay2 0.8.61, compiled with gcc 2.95
+-- res39: 1.28 seconds
+-- resG25: 20.51 seconds
+
 -- SunOS sg0.math.cornell.edu 5.7 Generic_106541-08 sun4u sparc SUNW,Ultra-Enterprise
 -- Macaulay2 0.8.60, compiled with gcc 2.95
 -- res39: 1.37 seconds

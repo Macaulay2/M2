@@ -4,6 +4,7 @@
 #	all:	make a binary distribution
 #	doc:	make the documentation
 #	port:   make a porting source distribution
+#	testport: test the porting source distribution in tmp/Macaulay2
 # The default is 'all' and 'doc'.
 
 # Warning: if you move the directory tree, then factory needs to be reconfigured
@@ -101,24 +102,23 @@ clean::; rm -f gc/base_lib
 all:: GMP
 
 ifeq "$(CC)" "cl"
-GMPlibs = lib/gmp.lib
-lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
-gmp/gmp.lib : make-gmp
+# lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
+gmp/.libs/gmp.lib : make-gmp
+GMPlibs = gmp/.libs/gmp.lib
 else
-GMPnames := gmp
 # GMPnames += mpn mpz mpq mpf 
 GMPFLAGS := -g -O2
-GMPlibs := $(foreach i, $(GMPnames), lib/lib$(i).a)
 # lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
 # lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
 # lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
 # lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
-lib/libgmp.a: gmp/libgmp.a     lib/.exists; cp $< $@; ranlib $@
+# lib/libgmp.a: gmp/libgmp.a     lib/.exists; cp $< $@; ranlib $@
 # gmp/mpn/libmpn.a : make-gmp
 # gmp/mpz/libmpz.a : make-gmp
 # gmp/mpq/libmpq.a : make-gmp
 # gmp/mpf/libmpf.a : make-gmp
-gmp/libgmp.a : make-gmp
+gmp/.libs/libgmp.a : make-gmp
+GMPlibs := gmp/.libs/libgmp.a
 endif
 
 GMP : 	gmp include/gmp.h $(GMPlibs)
@@ -134,7 +134,7 @@ gmp/Makefile: WindowsNT/gmp/Makefile
 	cp WindowsNT/$@ $@
 else
 GMPconfigure : gmp/config.status
-gmp/config.status: gmp/configure config/config.guess config/config.sub
+gmp/config.status: gmp/configure
 	cd gmp; \
 	rm -f config.status; \
 	./configure --silent --cache-file=../config.cache
@@ -394,10 +394,19 @@ PORTING := CVS \
 	Macaulay2/tutorial \
 	Macaulay2/util \
 	WindowsNT \
-	bin factory gc gcStatic gmp libfac
-port : rmcores Macaulay2-$(VERSION)-porting-src.tar.gz
-Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
+	bin factory gc gcStatic gmp libfac config
+port: Macaulay2-$(VERSION)-porting-src.tar.gz
+Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile rmcores
 	tar cf - `Export3 $(PORTING)` | gzip >$@
+testport: testport-clean testport-files testport-go testport-clean
+testport-clean:
+	rm -rf tmp/M2
+testport-files: Macaulay2-$(VERSION)-porting-src.tar.gz
+	mkdir -p tmp/M2
+	gunzip <$< |tar xf - -C tmp/M2
+testport-go:
+	@echo '## testing poritng source'
+	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
 ifdef CYGWIN32
