@@ -451,7 +451,7 @@ uninstallPackage Package := o -> pkg -> (
      installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
      stderr << "--uninstalling package " << pkg << " in " << buildDirectory << endl;
      -- unmake symbolic links
-     if o.MakeLinks then (
+     if o.Encapsulate and o.MakeLinks then (
 	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true, Undo => true);
 	  );
      )
@@ -805,7 +805,7 @@ installPackage Package := o -> pkg -> (
      makeTableOfContents();
 
      -- make symbolic links
-     if o.MakeLinks then (
+     if o.Encapsulate and o.MakeLinks then (
 	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true)
 	  );
 

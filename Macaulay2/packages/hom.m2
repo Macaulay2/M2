@@ -245,9 +245,11 @@ document {
 
 document {
      Key => (prePrune, Module),
-     OldSynopsis => {
-	  "N = prePrune M",
-	  "M" => null,
+     Usage => "N = prePrune M",
+     Inputs => {
+	  "M" => null
+	  },
+     Outputs => {
 	  "N" => {"a module isomorphic to ", TT "M", "
 	       which is represented as the cokernel of a matrix."}
 	  },
@@ -277,9 +279,11 @@ document {
 document {
      Key => homElement,
      Headline => "get the element of Hom from a homomorphism",
-     OldSynopsis => {
-          "h = homElement f",
-          "f" => TT "M --> N",
+     Usage => "h = homElement f",
+     Inputs => {
+          "f" => TT "M --> N"
+	  },
+     Outputs => {
           "h" => {"the corresponding map ", TT "R^1 --> Hom(M,N)", ", 
 	       where ", TT "R", " is the ring of ", TT "f", "."}
 	  },
@@ -296,31 +300,36 @@ document {
 document {
      Key => (tensorHomAdjoint, Matrix, Module, Module),
      Headline => "adjoint map, ** to Hom",
-     OldSynopsis => {
-          "g = tensorHomAdjoint(f,L,M)",
+     Usage => "g = tensorHomAdjoint(f,L,M)",
+     Inputs => {
           "f" => TT "L ** M --> N",
-          "L" => null, "M" => null,
+          "L" => null,
+	  "M" => null
+	  },
+     Outputs => {
           "g" => {"the adjoint ", TT "L --> Hom(M,N)",
 	       " of ", TT "f", ".", PARA,
 	       "In terms of 'elements': ",
 	       TT "g(l)(m) = f(l ** m)", "."}
           },
-     SeeAlso => (homTensorAdjoint,Matrix,Module,Module)
+     SeeAlso => {(homTensorAdjoint,Matrix,Module,Module)}
      }
 
 document {
      Key => (tensorHomAdjoint, Module, Module, Module),
      Headline => "** - Hom adjunction functor.",
-     OldSynopsis => {
-          "g = tensorHomAdjoint(L,M,N)",
+     Usage => "g = tensorHomAdjoint(L,M,N)",
+     Inputs => {
           "L" => null,
           "M" => null,
-          "N" => null,
+          "N" => null
+	  },
+     Outputs => {
           "g" => {TT "Hom(L ** M,N) --> Hom(L,Hom(M,N))",
 	       PARA, "In terms of 'elements': ",
 	       TT "g(f)(l)(m) = f(l ** m)", "."}
           },
-     SeeAlso => (homTensorAdjoint,Module,Module,Module)
+     SeeAlso => {(homTensorAdjoint,Module,Module,Module)}
      }
 
 document {
@@ -331,10 +340,12 @@ document {
 document {
      Key => (homTensorAdjoint, Matrix, Module, Module),
      Headline => "adjoint map, Hom to **",
-     OldSynopsis => {
-          "g = homTensorAdjoint(f,L,M)",
+     Usage => "g = homTensorAdjoint(f,L,M)",
+     Inputs => {
           "f" => TT "L --> Hom(M,N)",
-          "L" => null, "M" => null,
+          "L" => null, "M" => null
+	  },
+     Outputs => {
           "g" => {"the adjoint ", TT "L ** M --> N", " of ",
 	       TT "f", ".", PARA, "In terms of 'elements': ",
 	       TT "g(l ** m) = f(l)(m)", "."}
@@ -345,11 +356,13 @@ document {
 document {
      Key => (homTensorAdjoint, Module, Module, Module),
      Headline => "Hom - ** adjunction functor",
-     OldSynopsis => {
-          "g = homTensorAdjoint(L,M,N)",
+     Usage => "g = homTensorAdjoint(L,M,N)",
+     Inputs => {
           "L" => null,
           "M" => null,
-          "N" => null,
+          "N" => null
+	  },
+     Outputs => {
           "g" => {TT "Hom(L,Hom(M,N)) --> Hom(L ** M, N)", PARA,
 	       "In terms of 'elements': ",
 	       TT "g(f)(l ** m) = f(l)(m)", "."}
@@ -364,11 +377,13 @@ document {
 
 document {
      Key => (homEvaluation,Module,Module,Module),
-     OldSynopsis => {
-          "h = homEvaluation(L,M,N)",
+     Usage => "h = homEvaluation(L,M,N)",
+     Inputs => {
           "L" => null,
           "M" => null,
-          "N" => null,
+          "N" => null
+	  },
+     Outputs => {
           "h" => {TT "L ** Hom(M,N) --> Hom(Hom(L,M),N)", ".", PARA,
 	       "In terms of 'elements': ",
 	       TT "h(l ** g)(f) = f(g(l))", "."}
@@ -385,9 +400,11 @@ document {
 
 document {
      Key => (tensorEvaluation,Module,Module,Module),
-     OldSynopsis => {
-          "h = tensorEvaluation(L,M,N)",
-          "L" => null, "M" => null, "N" => null,
+     Usage => "h = tensorEvaluation(L,M,N)",
+     Inputs => {
+          "L" => null, "M" => null, "N" => null
+	  },
+     Outputs => {
           "h" => {TT "Hom(L,M) ** N --> Hom(L, M ** N)", ".", PARA,
 	       "In terms of 'elements': ",
 	       TT "h(f ** n)(l) = f(l) ** n", "."}
@@ -400,9 +417,11 @@ document {
 document {
      Key => bidualMap,
      Headline => "map from a module to its bi-dual",
-     OldSynopsis => {
-          "h = bidualMap M",
-          "M" => null,
+     Usage => "h = bidualMap M",
+     Inputs => {
+          "M" => null
+	  },
+     Outputs => {
           "h" => {TT "M --> Hom(Hom(M,R^1),R^1)", ", where ", TT "R",
 	       " is the ring of ", TT "M", ".", PARA, 
                "In terms of 'elements': ", 

@@ -494,7 +494,7 @@ document Sequence := args -> (
      opts := new MutableHashTable;
      scan(args, arg -> if class arg === Option then (
 	       key := arg#0;
-	       if not documentOptions#?key then error("--warning: ignoring unknown documentation option '", key, "'");
+	       if not documentOptions#?key then error("unknown documentation option '", key, "'");
 	       if opts#?key then error("option ",key," encountered twice");
 	       opts#key = arg#1));
      args = select(args, arg -> class arg =!= Option);

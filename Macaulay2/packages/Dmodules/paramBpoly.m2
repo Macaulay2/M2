@@ -940,7 +940,7 @@ myLCM := l -> (
 	  )
      );
 
-in := f -> if f!=0 then leadTerm f else 0_(ring f) 
+in2 := f -> if f!=0 then leadTerm f else 0_(ring f) 
 
 isdivisible := (f,g) -> (
      if (f==0) or (g==0) 
@@ -1031,7 +1031,7 @@ paramGB = I -> (
 	 );
     i = 0;
     while i < #g do (
-	 if any(drop(g, {i,i}), u->isdivisible(in g#i, in u)) 
+	 if any(drop(g, {i,i}), u->isdivisible(in2 g#i, in2 u)) 
 	 then g = drop(g, {i,i})
 	 else i = i + 1; 
 	 );

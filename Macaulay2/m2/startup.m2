@@ -240,7 +240,7 @@ usage := arg -> (
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
-     << "    -q                 don't load user's init.m2 file" << newline
+     << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
      << "    -x                 example prompts, don't use readline" << newline
@@ -360,10 +360,11 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 packageSuffix = ".Macaulay2/"
 
 path = {}
-
-path = append(path, getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2")
-packagePrefixPath = append(packagePrefixPath, getenv "HOME" | "/" | packageSuffix | "local/")
-
+scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
+if not noinitfile then (
+     path = append(path, getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2");
+     packagePrefixPath = append(packagePrefixPath, getenv "HOME" | "/" | packageSuffix | "local/");
+     )
 if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
 if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")

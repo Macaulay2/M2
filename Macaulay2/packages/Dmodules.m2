@@ -1,12 +1,12 @@
-newPackage( Dmodules, Version => "1.0")
+newPackage("Dmodules", Version => "1.0")
 export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunction,NonGeneric,TryGeneric,IntRing,
-        globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,
+        globalB,globalBFunction,ViaAnnFs,ReducedB,factorBFunction,getIntRoots,Boperator,Bpolynomial,globalBoperator,
 	AnnFs,AnnIFs,Dtrace,getDtrace,setHomSwitch,getHomSwitch,localCohom,Walther,OaTa,LocStrategy,
 	OaTaWa,pruneLocalCohom,paramBpoly,GroundField,makeCyclic,Generator,AnnG,isHolonomic,DHom,DExt,Special,
-	None,Output,Info,PolySols,Alg,GD,Duality,PolySols,PolyExt,RatSols,RatExt,createDpairs,dpairInds,
+	None,Output,Info,PolySols,Alg,GD,Duality,PolyExt,RatSols,RatExt,createDpairs,dpairInds,
 	dpairVars,Fourier,Dtransposition,singLocus,charIdeal,Drank,Ddim,makeWeylAlgebra,Ddual,Dlocalize,
 	Oaku,OTW,Dlocalization,DlocalizationAll,DlocalizeMap,LocModule,GeneratorPower,LocMap,annFS,
-	DlocalizeAll,IntegrateBfunction,Bfunction,DlocalizationMap,Dresolution,Schreyer,Vhomogenize,
+	DlocalizeAll,IntegrateBfunction,Bfunction,DlocalizationMap,Dresolution,Schreyer,Vhomogenize,Dres,
 	Drestriction,Drestrict,DrestrictionClasses,DrestrictClasses,DrestrictIdeal,DrestrictAll,
 	DrestrictionComplex,DrestrictionAll,DrestrictionIdeal,DrestrictComplex,HomologyModules,
 	GenCycles,Exponents,Cycles,Boundaries,VResolution,Explicit,IntegrateComplex,Dintegration,
@@ -17,19 +17,9 @@ export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	newSparseMatrix,reduceCompress,getEntry,iden,sparsemat,numcols,numrows,setEntry,reducePivots,
 	Dprune,Dprune2,optGB,FourierInverse)
 
-needs "Dmodules/Dloadfile.m2"
-needs "Dmodules/DMODdoc.m2"
+load "Dmodules/Dloadfile.m2"
+load "Dmodules/DMODdoc.m2"
 
--- erase the internal symbols
-scan({"createCommAlgebra", "CommAlgebra", "createAssCommRing", "ThetaRing",
-     "createThetaRing", "createIntRing", "createHomWeylAlgebra", "zeroize",
-     "DBIGPRIME", "computeLocalization", "invPermute", "gbW1",
-     "gbW2", "inW1", "inW2", "WAtoCR", "WAtoCA", "CAtoWA",
-     "AnnIFs2", "kerGB", "kerGBstatus", "ResToOrigRing", "CRtoWA",
-     "isGeneric", "IRtoR", "CommRing", "RtoIR", "WtoT", "HWAtoWA",
-     "WAtoHWA", "HomWeylAlgebra", "RestrictComplex", "BFunction",
-     "LocalizeMap", "diagonal", "computeRestriction", "TwistOperator",
-     "divideOutGCD"},
-  s -> (
-       if not Dmodules.Dictionary#?s then error("expected ",s," to be a symbol first defined by the Dmodules package");
-       erase Dmodules.Dictionary#s))
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+-- End:

@@ -1,4 +1,4 @@
-newPackage(CacheFileName, Version => "1.0")
+newPackage("CacheFileName", Version => "1.0")
 
 queryFun := symbol queryFun
 getFun := symbol getFun
@@ -78,6 +78,7 @@ document {
 document {
      Key => (cacheFileName, String, String),
      Usage => ///fn = cacheFileName(prefix,key)///,
+     Inputs => {
 	  "prefix" => "the prefix from which to construct the file name",
 	  "key" => "a key, which can be anything"
 	  },
@@ -121,11 +122,13 @@ document {
 
 document {
      Key => (cacheFileName, List, String),
-     OldSynopsis => {
-	  ///fn = cacheFileName(path,key)///,
+     Usage => ///fn = cacheFileName(path,key)///,
+     Inputs => {
 	  "path" => "a search path (list) of prefixes from which to construct the
 	        file name",
-	  "key" => "a key",
+	  "key" => "a key"
+	  },
+     Outputs => {
 	  "fn" => "a new file name"
 	  },
      "The path should be a list of prefixes which correspond to existing
