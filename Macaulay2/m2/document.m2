@@ -6,9 +6,6 @@ DocDatabase = null
 
 local exampleBaseFilename
 local exampleOutputFilename
-local exampleCounter
-local exampleResultsFound
-local exampleResults
 local currentNodeName
 
 docFilename := () -> (
@@ -166,17 +163,6 @@ formatDocumentTagTO Sequence := (
 						        else toString) s))
 
 -----------------------------------------------------------------------------
--- getting database records
------------------------------------------------------------------------------
-
-getDoc := key -> value getRecord formatDocumentTag key
--- getDoc = on (getDoc, Name => "getDoc")			    -- debugging
- 
-getDocBody := key -> (
-     a := getDoc key;
-     if a =!= null then select(a, s -> class s =!= Option))
-
------------------------------------------------------------------------------
 -- verifying the keys
 -----------------------------------------------------------------------------
 verifyTag := method(SingleArgumentDispatch => true)
@@ -228,6 +214,16 @@ file := null
 -- process examples
 -----------------------------------------------------------------------------
 
+extractExamplesLoop            := method(SingleArgumentDispatch => true)
+extractExamplesLoop Thing      := x -> {}
+extractExamplesLoop EXAMPLE    := toList
+extractExamplesLoop MarkUpList := x -> join apply(toSequence x, extractExamplesLoop)
+
+extractExamples := (docBody) -> (
+     examples := extractExamplesLoop docBody;
+     if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
+     docBody)
+
 separateRegexp = method()
 separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
 separateRegexp(String,ZZ,String) := (re,n,s) -> (
@@ -242,7 +238,12 @@ separateM2output String := r -> (
      while r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
+exampleResultsFound := false
+exampleResults := {}
+exampleCounter := 0
 checkForExampleOutputFile := () -> (
+     exampleCounter = 0;
+     exampleResults = {};
      exampleResultsFound = false;
      exampleOutputFilename = null;
      -- error "break";
@@ -251,17 +252,8 @@ checkForExampleOutputFile := () -> (
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example output
 	       exampleResults = currentPackage#"example outputs"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
-	       stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl;
-	       exampleResultsFound = true;
-	       );
-	  );
-     )
-
-extractExamples            := method(SingleArgumentDispatch => true)
-extractExamples Thing      := x -> {}
-extractExamples EXAMPLE    := toList
-extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
-
+	       stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl; -- debugging
+	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
      if exampleResultsFound and exampleResults#?exampleCounter
@@ -275,7 +267,6 @@ processExample := x -> (
 	  );
      exampleCounter = exampleCounter + 1;
      a)
-
 processExamplesLoop := s -> (
      if class s === EXAMPLE then {
 	  PARA{},
@@ -284,15 +275,9 @@ processExamplesLoop := s -> (
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
-
 processExamples := (docBody) -> (
-     exampleResults = {};
-     exampleCounter = 0;
-     examples := extractExamples docBody;
-     if #examples > 0 then currentPackage#"example inputs"#currentNodeName = examples;
      checkForExampleOutputFile();
-     docBody = apply(docBody,processExamplesLoop);
-     docBody)
+     processExamplesLoop docBody)
 
 -----------------------------------------------------------------------------
 -- 'document' function
@@ -319,7 +304,7 @@ document List := z -> (
      exampleBaseFilename = makeFileName(currentNodeName,getFileName body);
      d := currentPackage#"raw documentation";
      if d#?currentNodeName then duplicateDocWarning();
-     d#currentNodeName = toExternalString processExamples fixup body;
+     d#currentNodeName = toExternalString extractExamples fixup body;
      currentNodeName = null;
      )
 
@@ -393,12 +378,23 @@ nextMoreGeneral := s -> (
      else if class s === Option and #s === 2 then s#1
      )
 
+-----------------------------------------------------------------------------
+-- getting database records
+-----------------------------------------------------------------------------
+
 getOption := (s,tag) -> (
      if class s === SEQ then (
      	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
      	  if #x > 0 then x#0#1 else null)
      else null
      )
+
+getDoc := key -> value getRecord formatDocumentTag key
+-- getDoc = on (getDoc, Name => "getDoc")			    -- debugging
+ 
+getDocBody := key -> (
+     a := getDoc key;
+     if a =!= null then processExamples select(a, s -> class s =!= Option))
 
 getHeadline := key -> (
      d := getOption(getDoc key, Headline);
@@ -424,6 +420,7 @@ moreGeneral := s -> (
      n := nextMoreGeneral s;
      if n =!= null then SEQ { "Next more general method: ", TO n, headline n, PARA{} }
      )
+
 -----------------------------------------------------------------------------
 
 optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i

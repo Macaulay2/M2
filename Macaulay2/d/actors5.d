@@ -1354,7 +1354,6 @@ export setstopIfError(b:bool):void := (
      stopIfError = b;
      setGlobalVariable(stopIfErrorS,toExpr(b));
      );
-
 msg := "global assignment hook encountered unknown symbol/value combination";
 store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e

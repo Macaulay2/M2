@@ -280,6 +280,8 @@ setupfun("commandInterpreter",topLevel);
 
 errorCodeS := setupconst("errorCode",nullE);
 breakLoop(f:Frame,c:Code):Expr := (
+     oldrecursiondepth := recursiondepth;
+     recursiondepth = 0;
      setDebuggingMode(false);
        oldBreakLoopCode := getGlobalVariable(errorCodeS);
        setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
@@ -288,6 +290,7 @@ breakLoop(f:Frame,c:Code):Expr := (
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldBreakLoopCode);
      setDebuggingMode(true);
+     recursiondepth = oldrecursiondepth;
      ret);
 breakLoopFun = breakLoop;
 
