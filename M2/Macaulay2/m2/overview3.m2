@@ -499,32 +499,33 @@ document { "syntax",
      EXAMPLE "2+\n3+\n4",
      PARA,
      "Parsing is determined by a triple of numbers attached to each token.
-     The following table (produced by ", TO "seeParsing", "), displays each
-     of these numbers.",
+     The following table (produced by the command ", TO "seeParsing", "), 
+     displays each of these numbers.",
      EXAMPLE "seeParsing()",
      "Here is the way these numbers work.  The parser maintains a number
      which we will call the current parsing level, or simply, the level.
      The parser builds up an expression until it encounters an input token
-     whose precedence is less than or equal to the current level.  The
-     tokens preceding the offending token are bundled into an expression
+     whose parsing precedence is less than or equal to the current level.
+     The tokens preceding the offending token are bundled into an expression
      appropriately and incorporated into the containing expression.",
      PARA,
-     "When an operator or token is encountered, its scope serves as the
-     level for parsing the subsequent expression, unless the current level
+     "When an operator or token is encountered, its binding strength serves
+     as the level for parsing the subsequent expression, unless the current level
      is higher, in which case it is used.",
      PARA,
      "Consider a binary operator such as ", TT "*", ".  The relationship between
-     its scope and its precedence turns out to determine whether ", TT "a*b*c", "
-     is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".  When the parser encounters
-     the second ", TT "*", ", the current parsing level is equal to the scope of
-     the first ", TT "*", ".  If the scope is less than the precedence, then
-     the second ", TT "*", " becomes part of the right hand operand of the
-     first ", TT "*", ", and the expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the
-     expression is parsed as ", TT "(a*b)*c", ".",
+     its binary binding strength and its parsing precedence turns out to determine
+     whether ", TT "a*b*c", " is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".
+     When the parser encounters the second ", TT "*", ", the current parsing level 
+     is equal to the binding strength of the first ", TT "*", ".  If the binding 
+     strength is less than the precedence, then the second ", TT "*", " becomes
+     part of the right hand operand of the first ", TT "*", ", and the
+     expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the expression is
+     parsed as ", TT "(a*b)*c", ".",
      PARA,
-     "For unary operators, the strength is used instead of the scope to reset
-     the current level.  The reason for having both numbers is that some
-     operators can be either unary or binary, depending on the context.
+     "For unary operators, the unary binding strength is used instead of the binary
+     binding strength to reset the current level.  The reason for having both numbers 
+     is that some operators can be either unary or binary, depending on the context.
      A good example is ", TO "#", " which binds as tightly as ", TO ".", "
      when used as an infix operator, and binds as loosely as adjacency or
      function application when used as a prefix operator.",
@@ -534,12 +535,8 @@ document { "syntax",
      the level will be set to 1 less than the precedence of an identifier,
      so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
      PARA,
-     "The exclamation point is allowed as a unary operator either to the
-     right or to the left of its operand.  The other unary operators occur
-     to the left of their operands.",
-     PARA,
-     "Three operators are treated specially, in that the empty expression
-     is allowed to the right of them.  These are newline, comma, and semicolon."
+     "The comma and semicolon get special treatment; the empty expression can
+     occur to the right of the comma or semicolon or to the left of the comma."
      }
 
 document { "debugging",

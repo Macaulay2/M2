@@ -83,31 +83,7 @@ describe MutableHashTable := x -> (
 net Manipulator := toString
 net Thing := toString
 -----------------------------------------------------------------------------
-    operators := new MutableHashTable
-    alphabet := new MutableHashTable
-    scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", c -> alphabet#c = true)
-    scan( { symbol or, symbol do, symbol else, symbol then, symbol of, symbol shield,
-	      symbol from, symbol and, symbol not, symbol if, symbol try, 
-	      symbol new, symbol while, symbol symbol, symbol global, symbol local,
-	      symbol timing, symbol time
-	      },
-	 i -> operators#i = concatenate("symbol ", toString i))
-    scan(pairs symbolTable(), (n,s) -> (
-	      if not alphabet#?(n#0) then (
-		   operators#s = concatenate("symbol ",n);
-		   )
-	      )
-	 )
-    alphabet = null
-    operators#(symbol " ") = ///symbol " "///
-
--- toExternalString Symbol := s -> if operators#?s then operators#s else toString s
-
-toExternalString Symbol := s -> (			    -- experimental
-     if operators#?s then operators#s
-     else if value s =!= s then concatenate("symbol ",string s)
-     else string s
-     )
+toExternalString Symbol := s -> if value s =!= s then concatenate("symbol ",string s) else string s
 
 net Symbol := string
 File << Symbol := File => (o,s) -> o << string s		    -- provisional

@@ -240,11 +240,6 @@ char *funname;
      return 0;
      }
 
-void system_accountfor(n)
-int n;
-{
-     }
-
 int system_returncode;
 
 M2_string actors5_CCVERSION;

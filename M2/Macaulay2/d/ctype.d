@@ -45,3 +45,7 @@ export iswhite    (c:int ):bool := (chartype(c) & WHITE    ) != 0;
 export isspace    (c:int ):bool := (chartype(c) & SPACE    ) != 0;
 export isnewline  (c:int ):bool := (chartype(c) & NEWLINE  ) != 0;
 export isquote    (c:int ):bool := (chartype(c) & QUOTE    ) != 0;
+
+export isalpha  (s:string):bool := (
+     foreach c in s do if !isalpha(c) then return(false);
+     true);

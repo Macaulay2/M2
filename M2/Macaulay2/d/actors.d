@@ -468,7 +468,7 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 	       if isInt(x) && isInt(y) then (
 	  	    i := toInt(x);
 		    j := toInt(y);
-		    if i>j then ExprEmptySequence
+		    if i>j then emptySequenceE
 		    else if i==0 && j<length(smallintarrays0)
 		    then smallintarrays0.j
 		    else if i==1 && j<length(smallintarrays1)
@@ -476,7 +476,7 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 		    else Expr(new Sequence len j-i+1 at k do provide toInteger(i+k)))
 	       else (
 		    z := y-x;
-		    if z <= 0 then ExprEmptySequence
+		    if z <= 0 then emptySequenceE
 		    else if isInt(z) then (
 			 m := toInt(z);
 			 Expr(new Sequence len m+1 at k do provide x+k))

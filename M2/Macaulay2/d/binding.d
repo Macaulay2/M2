@@ -11,78 +11,8 @@ use ctype;
 use err;
 use stdiop;
 
-export defaultparsefuns := parsefuns(defaultunary, defaultbinary);
-foreach p in array(parseinfo)(
-     parseEOF, parseERRMSG, parseWORD
-     ) do p.funs = defaultparsefuns;
-prec := 0;
-step := 2;
-bump():void := prec = prec + step;
-bump(i:int):void := prec = prec + i*step;
-unary(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,defaultbinary))));
-unaryword(s:string)     :Word :=           unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,defaultbinary)));
-biunary(s:string)       :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,postfixop))));
-postfix(s:string)       :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,postfixop))));
-unaryleft(s:string)     :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,binaryop))));
-unaryright(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec-step,prec,parsefuns(unaryop   ,binaryop))));
-binaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,binaryop))));
-binaryleftword(s:string):Word :=           unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,binaryop)));
-nleft(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,nbinaryop))));
-nleftword(s:string)     :Word :=           unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,nbinaryop)));
-nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(nunaryop  ,nbinaryop))));
-binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree):Word := (
-                                 install(s,unique(s,parseinfo(prec,prec-step,prec,parsefuns(errorunary,binary)))));
-binaryright(s:string)   :Word := binaryright(s,binaryop);
-token(s:string)         :Word :=           unique(s,parseinfo(prec,prec,prec,parsefuns(errorunary,errorbinary)));
-
-export parens(binaryleft:string,binaryright:string,prec:int,binaryStrength:int,unaryStrength:int):Word := (
-     l := unique(binaryleft, parseinfo(prec,binaryStrength,unaryStrength,leftParenFuns));
-     binaryleft = l.name;
-     install(binaryleft,l);
-     r := unique(binaryright,parseinfo(binaryStrength,0,0,rightParenFuns));
-     binaryright = r.name;
-     install(binaryright,r);
-     addmatch(binaryleft,binaryright);
-     l
-     );
-
-HadError := false;
-unknown := Position("--unknown position--",ushort(0),ushort(0),uchar(reloaded));
-export treePosition(e:ParseTree):Position := (
-     while true do (
-	  when e
-	  is dummy do return(dummyPosition)
-	  is token:Token do return(token.position)
-	  is adjacent:Adjacent do e = adjacent.rhs
-	  is binary:Binary do return(binary.operator.position)
-	  is a:Arrow do return(a.operator.position)
-	  is unary:Unary do return(unary.operator.position)
-	  is postfix:Postfix do return(postfix.operator.position)
-	  is a:Quote do return(a.operator.position)
-	  is a:GlobalQuote do return(a.operator.position)
-	  is a:LocalQuote do return(a.operator.position)
-	  is ee:parenthesized do return(ee.left.position)
-	  is ee:parentheses do return(ee.left.position)
-     	  is i:IfThen do return(i.iftoken.position)
-	  is i:TryElse do return(i.trytoken.position)
-	  is i:Try do return(i.trytoken.position)
-     	  is i:IfThenElse do return(i.iftoken.position)
-     	  is w:For do return(w.fortoken.position)
-     	  is w:WhileDo do return(w.whiletoken.position)
-     	  is w:WhileList do return(w.whiletoken.position)
-     	  is w:WhileListDo do return(w.whiletoken.position)
-     	  is s:startScope do e = s.body
-	  is n:New do return(n.newtoken.position)
-	  )
-     );
-export makeErrorTree(e:ParseTree,message:string):void := (
-     HadError = true;
-     errorpos(treePosition(e),message);
-     );
-export makeErrorTree(e:Token,message:string):void := (
-     HadError = true;
-     errorpos(e.position,message);
-     );
+-----------------------------------------------------------------------------
+-- first, the global symbol dictionary and functions for making symbols
 append(hashTable:SymbolHashTable,entry:Symbol):void := (
      h := entry.word.hash & (length(hashTable)-1);
      when hashTable.h
@@ -115,183 +45,225 @@ insert(entry:Symbol,dictionary:Dictionary):void := (
      h := entry.word.hash & (length(dictionary.hashTable)-1);
      dictionary.hashTable.h = SymbolListCell(entry,dictionary.hashTable.h);
      );
-export makeSymbol(word:Word,position:Position,binaryStrength:Scope):Symbol := (
-     frameindex := binaryStrength.framesize;
-     binaryStrength.framesize = binaryStrength.framesize + 1;
+export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
+     frameindex := scope.framesize;
+     scope.framesize = scope.framesize + 1;
      entry := Symbol(
 	  word, 
 	  nextHash(), 
 	  position,
 	  dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-	  binaryStrength.seqno, 
+	  scope.seqno, 
 	  frameindex,
 	  1,				  -- first lookup is now
 	  false,			  -- not protected
-	  binaryStrength.transient,
+	  scope.transient,
 	  false
 	  );
-     if binaryStrength == globalScope then (
+     if scope == globalScope then (
 	  -- this allows the global frame to grow
 	  if globalScope.framesize > length(globalFrame.values) then (
 	       globalFrame.values = (
 		    new Sequence len 2 * globalScope.framesize + 1 do (
 			 foreach y in globalFrame.values do provide y;
 			 while true do provide nullE;
-			 )));
-	  globalFrame.values.frameindex = Expr(SymbolClosure(globalFrame,entry));
-	  )
-     else if binaryStrength.seqno == localFrame.scopenum then (
+			 ))))
+     else if scope.seqno == localFrame.scopenum then (
 	  -- this should take care of scopes which span a file,
 	  -- and have a single frame which ought to be allowed to grow
-	  if binaryStrength.framesize > length(localFrame.values) then (
+	  if scope.framesize > length(localFrame.values) then (
 	       localFrame.values = (
-		    new Sequence len 2 * binaryStrength.framesize + 1 do (
+		    new Sequence len 2 * scope.framesize + 1 do (
 			 foreach y in localFrame.values do provide y;
 			 while true do provide nullE;
 			 )));
-	  localFrame.values.frameindex = nullE;
+	  -- localFrame.values.frameindex = nullE;
 	  );
-     insert(entry,binaryStrength.dictionary);
-     entry
-     );
+     insert(entry,scope.dictionary);
+     entry);
+export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
+     s := makeEntry(word,position,scope);
+     if scope == globalScope && isalpha(word.name)
+     then globalFrame.values.(s.frameindex) = Expr(SymbolClosure(globalFrame,s));
+     s);
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
      entry := makeSymbol(w,dummyPosition,globalScope);
      entry.protected = true;
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
-export makeProtectedSymbolClosure(s:string):SymbolClosure := (
-     makeProtectedSymbolClosure(unique(s,parseWORD))
-     );
+makeKeyword(w:Word):SymbolClosure := (
+     -- keywords differ from symbols in that their initial value is null
+     entry := makeEntry(w,dummyPosition,globalScope);
+     entry.protected = true;
+     SymbolClosure(globalFrame,entry));
+export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(unique(s,parseWORD));
+makeKeyword(s:string):SymbolClosure := makeKeyword(unique(s,parseWORD));
+-----------------------------------------------------------------------------
+prec := 0;
+bump():void := prec = prec + 1;
 
-bump();
-     export pEOF := prec;
-     parseEOF.precedence = pEOF;
-     parseEOF.binaryStrength = pEOF;
-bump();
+-- helper functions for setting up words with various methods for parsing them
+foreach p in array(parseinfo)( parseEOF, parseWORD ) do p.funs = parsefuns(defaultunary, defaultbinary);
+unary(s:string)         :Word := install(s,unique(s,parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
+unaryword(s:string)     :Word :=           unique(s,parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
+biunary(s:string)       :Word := install(s,unique(s,parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
+postfix(s:string)       :Word := install(s,unique(s,parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
+unaryleft(s:string)     :Word := install(s,unique(s,parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
+unaryright(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
+binaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
+binaryleftword(s:string):Word :=           unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
+nleft(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
+nleftword(s:string)     :Word :=           unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
+nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,prec,parsefuns(nunaryop  ,nbinaryop))));
+token(s:string)         :Word :=           unique(s,parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
+binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree)
+                        :Word := install(s,unique(s,parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
+binaryright(s:string)   :Word := binaryright(s,binaryop);
+
+-- Now the symbols and operators:
+
+-- Keep in mind that a "Word" is determined by a string token, and has attributes 
+-- that determine how it is parsed, but a "Symbol" or "SymbolClosure" is a Word together
+-- with a binding done in a particular way depending on the current scope.  The symbols
+-- created below are all in the global scope.
+
+     parseEOF.precedence = prec;
+     parseEOF.binaryStrength = prec;
      precRightParen := prec;
-bump(2);
+bump();
      semicolonW = nleft(";");
-     export semicolonS := makeProtectedSymbolClosure(semicolonW);
-     newlineW = nleftword("--newline--");
-     export newlineS := makeProtectedSymbolClosure(newlineW);
+     export semicolonS := makeKeyword(semicolonW);
+     newlineW = nleftword("<NEWLINE>");			    -- no symbol for this one needed
 bump();
-     export commaW := nunaryleft(",");
-bump(2);
+     export commaW := nunaryleft(","); makeKeyword(commaW);
+bump();
      wide := prec;
-     elseW = token("else");
-     thenW = token("then");
-     doW = token("do");
-     listW = token("list");
+     elseW = token("else"); makeKeyword(elseW);
+     thenW = token("then"); makeKeyword(thenW);
+     doW = token("do"); makeKeyword(doW);
+     listW = token("list"); makeKeyword(listW);
 bump();
-     export ColonEqualW := binaryright(":=");
-     export EqualW := binaryright("=");
-     export LeftArrowW := binaryright("<-");
-     export RightArrowW := binaryright("->",arrowop);
-     makeProtectedSymbolClosure(RightArrowW);
-     export DoubleArrowS := makeProtectedSymbolClosure(binaryright("=>"));
-     export LongDoubleArrowS := makeProtectedSymbolClosure(binaryright("==>"));
+     export ColonEqualW := binaryright(":="); makeKeyword(ColonEqualW);
+     export EqualW := binaryright("="); makeKeyword(EqualW);
+     export LeftArrowW := binaryright("<-"); makeKeyword(LeftArrowW);
+     export RightArrowW := binaryright("->",arrowop); makeKeyword(RightArrowW);
+     export DoubleArrowS := makeKeyword(binaryright("=>"));
+     export LongDoubleArrowS := makeKeyword(binaryright("==>"));
 bump();
      narrow := prec;
-     whenW = token("when");
-     ofW = token("of");
-     fromW = token("from");
-     toW = token("to");
+     whenW = token("when"); makeKeyword(whenW);
+     ofW = token("of"); makeKeyword(ofW);
+     fromW = token("from"); makeKeyword(fromW);
+     toW = token("to"); makeKeyword(toW);
 bump();
-     export LessLessS := makeProtectedSymbolClosure(unaryleft("<<"));
+     export LessLessS := makeKeyword(unaryleft("<<"));
 bump();
-     export GreaterGreaterS := makeProtectedSymbolClosure(binaryright(">>"));
+     export GreaterGreaterS := makeKeyword(binaryright(">>"));
 bump();
-     export orS := makeProtectedSymbolClosure(binaryleftword("or"));
+     export orS := makeKeyword(binaryleftword("or"));
 bump();
-     export andS := makeProtectedSymbolClosure(binaryleftword("and"));
+     export andS := makeKeyword(binaryleftword("and"));
 bump();
-     export notS := makeProtectedSymbolClosure(unaryword("not"));
+     export notS := makeKeyword(unaryword("not"));
 bump();
-     export LessS := makeProtectedSymbolClosure(binaryleft("<"));
-     export GreaterS := makeProtectedSymbolClosure(binaryleft(">"));
-     export LessEqualS := makeProtectedSymbolClosure(binaryleft("<="));
-     export GreaterEqualS := makeProtectedSymbolClosure(binaryleft(">="));
-     export EqualEqualEqualS := makeProtectedSymbolClosure(binaryleft("==="));
-     export EqualEqualS := makeProtectedSymbolClosure(binaryleft("=="));
-     export QuestionS := makeProtectedSymbolClosure(binaryleft("?"));
-     export NotEqualEqualEqualS := makeProtectedSymbolClosure(binaryleft("=!="));
-     export NotEqualS := makeProtectedSymbolClosure(binaryleft("!="));
+     export LessS := makeKeyword(binaryleft("<"));
+     export GreaterS := makeKeyword(binaryleft(">"));
+     export LessEqualS := makeKeyword(binaryleft("<="));
+     export GreaterEqualS := makeKeyword(binaryleft(">="));
+     export EqualEqualEqualS := makeKeyword(binaryleft("==="));
+     export EqualEqualS := makeKeyword(binaryleft("=="));
+     export QuestionS := makeKeyword(binaryleft("?"));
+     export NotEqualEqualEqualS := makeKeyword(binaryleft("=!="));
+     export NotEqualS := makeKeyword(binaryleft("!="));
 bump();
-     export BarBarS := makeProtectedSymbolClosure(binaryleft("||"));
+     export BarBarS := makeKeyword(binaryleft("||"));
 bump();
-     export AmpersandAmpersandS := makeProtectedSymbolClosure(binaryleft("&&"));
+     export AmpersandAmpersandS := makeKeyword(binaryleft("&&"));
 bump();
-     export ColonS := makeProtectedSymbolClosure(binaryright(":"));
+     export ColonS := makeKeyword(binaryright(":"));
 bump();
-     -- export ColonColonS := makeProtectedSymbolClosure(binaryleft("::"));
+     -- export ColonColonS := makeKeyword(binaryleft("::"));
      export ColonColonS := ColonS;
 bump();
-     export BarS := makeProtectedSymbolClosure(binaryleft("|"));
+     export BarS := makeKeyword(binaryleft("|"));
 bump();
-     export HatHatS := makeProtectedSymbolClosure(binaryleft("^^"));
+     export HatHatS := makeKeyword(binaryleft("^^"));
 bump();
-     export AmpersandS := makeProtectedSymbolClosure(binaryleft("&"));
+     export AmpersandS := makeKeyword(binaryleft("&"));
 bump();
-     export TildeS := makeProtectedSymbolClosure(postfix("~"));
+     export TildeS := makeKeyword(postfix("~"));
 bump();
-     export DotDotS := makeProtectedSymbolClosure(binaryleft(".."));
+     export DotDotS := makeKeyword(binaryleft(".."));
 bump();
-     export MinusS := makeProtectedSymbolClosure(unaryleft("-"));
-     export PlusS := makeProtectedSymbolClosure(binaryleft("+"));
-     export PlusPlusS := makeProtectedSymbolClosure(binaryleft("++"));
-     export pPLUS := prec;
+     export MinusS := makeKeyword(unaryleft("-"));
+     export PlusS := makeKeyword(binaryleft("+"));
+     export PlusPlusS := makeKeyword(binaryleft("++"));
 bump();
-     export StarStarS := makeProtectedSymbolClosure(binaryleft("**"));
+     export StarStarS := makeKeyword(binaryleft("**"));
 bump();
      precBracket := prec;
 bump();
-     export BackslashBackslashS := makeProtectedSymbolClosure(binaryright("\\\\"));
+     export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
 bump();
-     export StarS := makeProtectedSymbolClosure(unaryleft("*"));
-     export DivideS := makeProtectedSymbolClosure(binaryleft("/"));
-     export LeftDivideS := makeProtectedSymbolClosure(binaryright("\\"));
-     export PercentS := makeProtectedSymbolClosure(binaryleft("%"));
-     export SlashSlashS := makeProtectedSymbolClosure(binaryleft("//"));
+     export StarS := makeKeyword(unaryleft("*"));
+     export DivideS := makeKeyword(binaryleft("/"));
+     export LeftDivideS := makeKeyword(binaryright("\\"));
+     export PercentS := makeKeyword(binaryleft("%"));
+     export SlashSlashS := makeKeyword(binaryleft("//"));
 bump();
-     export SharpSharpS := makeProtectedSymbolClosure(binaryright("##"));
-     export AtS := makeProtectedSymbolClosure(binaryright("@"));
+     export SharpSharpS := makeKeyword(binaryright("##"));
+     export AtS := makeKeyword(binaryright("@"));
 bump();
-     export AdjacentS:=makeProtectedSymbolClosure(binaryright(" ")); precSpace = prec;
+     export AdjacentS:=makeKeyword(binaryright(" "));
+     precSpace = prec;
      parseWORD.precedence = prec; parseWORD.binaryStrength = prec; parseWORD.unaryStrength = prec;
 bump();
-     export AtAtS := makeProtectedSymbolClosure(binaryleft("@@"));
+     export AtAtS := makeKeyword(binaryleft("@@"));
 bump();
-     export SlashHatS := makeProtectedSymbolClosure(binaryleft("/^"));
-     export PowerS := makeProtectedSymbolClosure(binaryleft("^"));
-     export UnderscoreS := makeProtectedSymbolClosure(binaryleft("_"));
-     export SharpS := makeProtectedSymbolClosure(unaryleft("#"));
+     export SlashHatS := makeKeyword(binaryleft("/^"));
+     export PowerS := makeKeyword(binaryleft("^"));
+     export UnderscoreS := makeKeyword(binaryleft("_"));
+     export SharpS := makeKeyword(unaryleft("#"));
      SharpS.symbol.word.parse.unaryStrength = precSpace-1;
-     export SharpQuestionS := makeProtectedSymbolClosure(binaryleft("#?"));
-     export DotS := makeProtectedSymbolClosure(binaryleft("."));
-     export DotQuestionS := makeProtectedSymbolClosure(binaryleft(".?"));
+     export SharpQuestionS := makeKeyword(binaryleft("#?"));
+     export DotS := makeKeyword(binaryleft("."));
+     export DotQuestionS := makeKeyword(binaryleft(".?"));
 bump();
-     export ExclamationS := makeProtectedSymbolClosure(postfix("!"));
-bump();
-     export leftparen   := parens("(",")",precSpace,  precRightParen,prec);
-     export leftbrace   := parens("{","}",precSpace,  precRightParen,prec);
-     export leftbracket := parens("[","]",precBracket,precRightParen,prec);
+     export ExclamationS := makeKeyword(postfix("!"));
 -----------------------------------------------------------------------------
-special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Word := (
-     unique(s, parseinfo(precSpace, prec, prec, parsefuns(f, defaultbinary))));
+parens(left:string,right:string,prec:int,binaryStrength:int,unaryStrength:int):Word := (
+     l := unique(left, parseinfo(prec          ,nopr,unaryStrength,parsefuns(unaryparen, defaultbinary)));
+     r := unique(right,parseinfo(precRightParen,nopr,nopr,         parsefuns(errorunary, errorbinary  )));
+     left = l.name;
+     right = r.name;
+     install(left,l);
+     install(right,r);
+     addmatch(left,right);
+     l);
+
+     export leftparen   := parens("(",")",precSpace,  precRightParen,precRightParen);
+     export leftbrace   := parens("{","}",precSpace,  precRightParen,precRightParen);
+     export leftbracket := parens("[","]",precBracket,precRightParen,precRightParen);
+-----------------------------------------------------------------------------
+bump();
+special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):SymbolClosure := (
+     makeKeyword(unique(s, parseinfo(precSpace, nopr, prec, parsefuns(f, defaultbinary)))));
 
      special("new",unarynew,narrow);
      special("for",unaryfor,narrow);
 
-     export timeW := special("time",unaryop,wide);
-     export timingW := special("timing",unaryop,wide);
-     export shieldW := special("shield",unaryop,wide);
+     export timeS := special("time",unaryop,wide);
+     export timingS := special("timing",unaryop,wide);
+     export shieldS := special("shield",unaryop,wide);
+
      special("while",unarywhile,wide);
      special("if",unaryif,wide);
      special("try",unarytry,wide);
-     special("symbol",unaryquote,wide);
-     special("global",unaryglobal,wide);
-     special("local",unarylocal,wide);
+
+     special("symbol",unaryquote,prec);
+     special("global",unaryglobal,prec);
+     special("local",unarylocal,prec);
 -----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
 export GlobalAssignE := Expr(GlobalAssignS);
@@ -317,11 +289,20 @@ export NewOfFromE := Expr(NewOfFromS);
 
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
-
+-----------------------------------------------------------------------------
 export makeSymbol(token:Token):Symbol := (
      e := makeSymbol(token.word,token.position,token.scope);
      token.entry = e;
      e);
+HadError := false;
+export makeErrorTree(e:ParseTree,message:string):void := (
+     HadError = true;
+     errorpos(treePosition(e),message);
+     );
+export makeErrorTree(e:Token,message:string):void := (
+     HadError = true;
+     errorpos(e.position,message);
+     );
 makeSymbol(e:ParseTree,scope:Scope):void := (
      when e
      is token:Token do (
@@ -368,26 +349,26 @@ lookup(
 	       return(e);
 	       );
 	  entryList = entryListCell.next));
-export lookup(word:Word,binaryStrength:Scope):(null or Symbol) := (
+export lookup(word:Word,scope:Scope):(null or Symbol) := (
      while true do (
-	  when lookup(word,binaryStrength.dictionary)
+	  when lookup(word,scope.dictionary)
 	  is null do (
-	       if binaryStrength.outerScope == binaryStrength 
+	       if scope.outerScope == scope 
 	       then return(NULL)
-	       else binaryStrength = binaryStrength.outerScope;
+	       else scope = scope.outerScope;
 	       )
 	  is e:Symbol do return(e)));
 lookup(
      word:Word,
      criterion:function(Symbol):bool,  	  -- used for overloading
-     binaryStrength:Scope
+     scope:Scope
      ):(null or Symbol) := (
      while true do (
-	  when lookup(word,criterion,binaryStrength.dictionary)
+	  when lookup(word,criterion,scope.dictionary)
 	  is null do (
-	       if binaryStrength.outerScope == binaryStrength
+	       if scope.outerScope == scope
 	       then return(NULL)
-	       else binaryStrength = binaryStrength.outerScope
+	       else scope = scope.outerScope
 	       )
 	  is e:Symbol do return(e)));
 lookup(token:Token,forcedef:bool):void := (
@@ -453,10 +434,10 @@ bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
 	  bindFormalParm(e,scope,desc);
 	  desc.restargs = true;
 	  )
-     is p:parenthesized do (
+     is p:Parentheses do (
 	  bindFormalParmList(p.contents,scope,desc)
 	  )
-     is p:parentheses do nothing
+     is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 export opsWithBinaryMethod := array(SymbolClosure)(
@@ -572,11 +553,11 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 bindnewscope(e:ParseTree,scope:Scope):ParseTree := (
      n := newScope(scope);
      bind(e,n);
-     ParseTree(startScope(n,e)));
+     ParseTree(StartScope(n,e)));
 SawClosure := false;
 export bind(e:ParseTree,scope:Scope):void := (
      when e
-     is s:startScope do bind(s.body,scope)
+     is s:StartScope do bind(s.body,scope)
      is i:IfThen do (
 	  bind(i.predicate,scope);
 	  -- i.thenclause = bindnewscope(i.thenclause,scope);
@@ -586,8 +567,8 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  bind(i.predicate,scope);
 	  -- i.thenclause = bindnewscope(i.thenclause,scope);
 	  bind(i.thenclause,scope);
-	  -- i.elseclause = bindnewscope(i.elseclause,scope);
-	  bind(i.elseclause,scope);
+	  -- i.elseClause = bindnewscope(i.elseClause,scope);
+	  bind(i.elseClause,scope);
 	  )
      is token:Token do (
 	  if token.word.typecode == TCid then bind(token,scope);
@@ -673,32 +654,32 @@ export bind(e:ParseTree,scope:Scope):void := (
      is postfix:Postfix do (
 	  bind(postfix.lhs,scope);
 	  bindop(postfix.operator,scope);)
-     is ee:parenthesized do bind(ee.contents,scope)
-     is parentheses do nothing
+     is ee:Parentheses do bind(ee.contents,scope)
+     is EmptyParentheses do nothing
      is dummy do nothing
      is w:WhileDo do (
 	  bind(w.predicate,scope);
 	  -- w.body = bindnewscope(w.body,scope);
-	  bind(w.doclause,scope);
+	  bind(w.doClause,scope);
 	  )
      is w:For do (
 	  newscop := newScope(scope);
 	  bindSingleParm(w.variable,newscop);
-	  bind(w.fromclause,scope);
-	  bind(w.toclause,scope);
-	  bind(w.whenclause,newscop);
-	  bind(w.listclause,newscop);
-	  bind(w.doclause,newscop);
+	  bind(w.fromClause,scope);
+	  bind(w.toClause,scope);
+	  bind(w.whenClause,newscop);
+	  bind(w.listClause,newscop);
+	  bind(w.doClause,newscop);
 	  w.scope = newscop;
 	  )
      is w:WhileList do (
 	  bind(w.predicate,scope);
-	  bind(w.listclause,scope);
+	  bind(w.listClause,scope);
 	  )
      is w:WhileListDo do (
 	  bind(w.predicate,scope);
-	  bind(w.listclause,scope);
-	  bind(w.doclause,scope);
+	  bind(w.listClause,scope);
+	  bind(w.doClause,scope);
 	  )
      is n:New do (
      	  bind(n.newclass,scope);

@@ -66,3 +66,18 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 peek = s -> peek2(s,1)
 typicalValues#peek = Net
 
+seeParsing = args -> (
+     x := new MutableHashTable;
+     t := (p,s) -> if x#?p then x#p = append(x#p,s) else x#p = {s};
+     q := getParsing symbol seeParsing;
+     scanValues(symbolTable(), s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
+     t(getParsing symbol s  , "<SYMBOLS>"  );
+     t(getParsing symbol " ", "<ADJACENCY>");
+     new Table from prepend(
+	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },
+ 	  sort pairs x / (
+	       (a,b) -> append(a/(i -> if i === -1 then "" else toString i),
+		    concatenate(
+			 between("  ",
+			      sort(b/toString)))))))
+seeParsing = new Command from seeParsing

@@ -114,7 +114,7 @@ export CXX
 CFLAGS = -g
 CXXFLAGS = -g
 ifndef NOOPTIM 
-CFLAGS += -O2
+CFLAGS += -O3 -fexpensive-optimizations
 # CXXFLAGS += -O2
 CXXFLAGS += -O3 -fexpensive-optimizations
 endif

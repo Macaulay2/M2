@@ -94,7 +94,7 @@ methods Type := F -> (
 	       if class meth === Function then (
 		    if class key === Sequence and member(F,key) then found#key = true
 	       	    else if class key === Function then found#(key,F) = true
-		    else if class key === Symbol and operator#?key then found#(key,F) = true
+		    else if class key === Symbol and operatorSet#?key then found#(key,F) = true
 		    )
 	       )
 	  );
@@ -109,8 +109,6 @@ methods Type := F -> (
 			      else if class key === Sequence and member(F,key)
 			      then found#key = true)))));
      sort keys found)
-
-erase symbol operator					    -- created in document.m2
 
 methods Sequence := F -> (
      seen := new MutableHashTable;

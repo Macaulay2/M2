@@ -234,24 +234,6 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return(errorToken)
 		    )
 	       is word:Word do return(Token(word,pos,globalScope,dummySymbol,sawNewline)))
---	  else if ch == 27 && peek(file,1) == int('$') && peek(file,2) == int('B') then (
---	       -- junet = iso-2022-7bit
---	       tokenbuf << char(getc(file));-- esc
---	       tokenbuf << char(getc(file));-- $
---	       tokenbuf << char(getc(file));-- B
---	       junetEnd := "\033(B";
---	       i := 0;
---	       hadnewline := false;
---	       c := 0;
---	       while i < 3 
---	       && (c = getc(file); c) != EOF
---	       && !(hadnewline && isnewline(c) && isatty(file)) do (
---		    if c == int(junetEnd.i) then i=i+1 else i=0;
---		    tokenbuf << char(c);
---		    );
---	       return(Token(
---			 unique(takestring(tokenbuf),parseWORD),
---			 pos,globalScope,dummySymbol,sawNewline)))
 	  else (
 	       when recognize(file)
 	       is null do (

@@ -34,7 +34,7 @@ numOptions(c:HashTable,w:Sequence):int := (
 override(h:HashTable,v:Sequence,numopts:int):Expr := (
      numargs := length(v) - numopts;
      newargs := nullE;
-     if numargs == 0 then (newargs = ExprEmptySequence;)
+     if numargs == 0 then (newargs = emptySequenceE;)
      else if numargs == 1 then foreach x in v do (if !isOption(h.class,x) then newargs = x)
      else (
 	  newargs = Expr(
@@ -361,9 +361,7 @@ semicolonfun(lhs:Code,rhs:Code):Expr := (
      when eval(lhs)
      is err:Error do Expr(err)
      else eval(rhs));
-Semicolonfun = semicolonfun;
 setup(semicolonS,semicolonfun);
-setup(newlineS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
 timesfun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
@@ -540,7 +538,7 @@ setupfun("sqrt",sqrt);
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
      if newlen != length(a2) then return(WrongArg("lists of the same length"));
-     if newlen == 0 then return(ExprEmptySequence);
+     if newlen == 0 then return(emptySequenceE);
      haderror := false;
      recursiondepth = recursiondepth + 1;
      if recursiondepth > recursionlimit then return(RecursionLimit());
@@ -672,7 +670,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      );
 map(a:Sequence,f:Expr):Expr := (
      newlen := length(a);
-     if newlen == 0 then return(ExprEmptySequence);
+     if newlen == 0 then return(emptySequenceE);
      haderror := false;
      recursiondepth = recursiondepth + 1;
      if recursiondepth > recursionlimit then return(RecursionLimit());
@@ -1076,7 +1074,7 @@ map(e:Expr):Expr := (
 setupfun("apply",map);
 
 scan(n:int,f:Expr):Expr := (
-     if n <= 0 then return(ExprEmptySequence);
+     if n <= 0 then return(emptySequenceE);
      recursiondepth = recursiondepth + 1;
      saveLocalFrame := localFrame;
      if recursiondepth > recursionlimit then (
