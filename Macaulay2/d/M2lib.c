@@ -1,7 +1,6 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
 #include <factoryconf.h>
-#include "cxx-wrappers.h" 
 #include <NTL/version.h>
 
 extern int haveDumpdata();	/* in dumpdata/map.o */
@@ -193,17 +192,6 @@ int system_randomint() {
 #else
      extern long random00();
      return random00();
-#endif
-     }
-
-void initrandom(){
-#if 0
-     extern char *initstate();
-#endif
-#if 0
-     static char state[32];
-     unsigned int seed = time(NULL);
-     initstate(seed,(void *)state,sizeof(state));
 #endif
      }
 
@@ -461,7 +449,6 @@ char **argv;
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      M2_init_gmp();
-     initrandom();
      system_newline = tostring(newline);
      actors5_CCVERSION = tostring(get_cc_version());
      actors5_VERSION = tostring(PACKAGE_VERSION);
@@ -505,7 +492,6 @@ char **argv;
      display = XOpenDisplay(NULL);
      font = XLoadFont(display,"6x13");
 #endif
-     factory_setup();
      init_readline_variables();
      main_inits();		/* run all the startup code in the *.d files, see tmp_init.c */
      actors4_setupargv();

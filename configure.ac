@@ -196,6 +196,13 @@ AC_ARG_ENABLE(gc_for_new,
     GC_FOR_NEW="$enableval",
     GC_FOR_NEW=no)
 
+AC_SUBST(ALTIVEC)
+AC_ARG_ENABLE(altivec,
+    AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option),
+    ALTIVEC="yes",
+    ALTIVEC="no"
+    )
+
 AC_CHECK_DECL(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing),[#include <math.h>])
 AC_CHECK_DECL(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing),[#include <math.h>])
 AC_CHECK_DECL(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing),[#include <math.h>])
