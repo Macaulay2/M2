@@ -50,6 +50,7 @@ expression QuotientRing := S -> (
 tex QuotientRing := S -> "$" | texMath S | "$"
 texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
 
+describe QuotientRing := R -> net expression R
 net QuotientRing := S -> if ReverseDictionary#?S then toString ReverseDictionary#S else net expression S
 
 ambient PolynomialRing := R -> R
