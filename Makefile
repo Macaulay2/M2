@@ -51,9 +51,9 @@ export CONFIGURED_FILES := $(shell cat config.files)
 	./config.status $@
 #############################################################################
 
-configure : configure.in aclocal.m4
+configure : configure.ac aclocal.m4
 	autoconf
-include/config.h.in : configure.in aclocal.m4
+include/config.h.in : configure.ac aclocal.m4
 	autoheader
 	touch $@
 

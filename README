@@ -50,7 +50,9 @@ you can compile and link Macaulay 2.  We always compile with gcc.
 		work, and add -Dconst= -Dinline= to DEFS.  This results in a stream of
 		error messages about duplicate declarations.
 	     Also, make sure you patch the source with the diffs in README.libfac-0.3.2,
-		or else it gets confused about the NOSTREAMIO option.
+		or else it gets confused about the NOSTREAMIO option.  Do it this way:
+			cd libfac
+			patch -p1 < ...../README.libfac-0.3.2
 	     Also, ignore the warning message about factory.h being missing, if you think you've put
 		it in $prefix/include.
 
@@ -182,3 +184,10 @@ and commented out the Makefile line
 	all:: GMP
 
 Dumpdata doesn't work, so configure with the option --disable-dumpdata.
+
+----------------------
+DEC Alpha notes
+----------------------
+
+Use gcc 3.0 for best results.  If the compiler crashes on one of the files in
+Macaulay2/e, compile that one file without --fexpensive-optimizations -O3 .
