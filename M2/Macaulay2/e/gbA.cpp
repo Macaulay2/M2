@@ -21,7 +21,6 @@ gbA * gbA::create(
 		  M2_bool use_max_degree_limit,
 		  int max_degree_limit)
 {
-  emit_line("Creating gbA");
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, strategy);
   return result;

@@ -26,7 +26,7 @@ computationOptionDefaults := new OptionTable from {
      Syzygies => false,				    -- collect_syz parameter
      HardDegreeLimit => null,			    -- use_max_degree and degree_limit
      ChangeMatrix => false,			    -- calculate change of basis matrix, too, for '//' operation
-     Algorithm => null,				    -- Homogeneous (1) or Inhomogeneous (2)
+     Algorithm => Inhomogeneous,		    -- Homogeneous (1) or Inhomogeneous (2)
      Strategy => {},				    -- strategy
      GBDegrees => null,				    -- positive integers
      Hilbert => null				    -- also obtainable from f.cache.cokernel.poincare
@@ -84,7 +84,6 @@ processStrategy := (v) -> (
 processAlgorithm := (a) -> (
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
-     else if a === null then 0
      else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
@@ -173,6 +172,7 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      setStopGB(G,opts);
      recordOptions(G,opts);
      rawStartComputation G.RawComputation;
+     f.cache.type = G;
      G)
 
 mingens GroebnerBasis := Matrix => options -> (g) -> (
@@ -186,7 +186,7 @@ syz GroebnerBasis := Matrix => options -> (g) -> (
      sendgg(ggPush g, gggetsyz);
      getMatrix ring g )
 
-generators GroebnerBasis := Matrix => (G) -> newMatrix(ring G, rawGBGetMatrix(G.RawComputation,1,false))
+generators GroebnerBasis := Matrix => (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,false))
 
 getChangeMatrix GroebnerBasis := Matrix => (g) -> (
      sendgg(ggPush g, gggetchange);
@@ -243,9 +243,7 @@ RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
 Matrix % GroebnerBasis := Matrix => (n,g) -> (
      R := ring n;
-     if R =!= ring g then error "expected matrix over the same ring";
-     sendgg(ggPush g, ggPush n, ggreduce, ggpop);
-     getMatrix R)
+     map(target n,, rawGBMatrixRemainder(raw g, 1, raw n)));
 
 RingElement % GroebnerBasis := RingElement =>
 ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)

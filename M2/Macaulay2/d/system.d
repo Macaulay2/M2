@@ -12,6 +12,7 @@ import write(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int, offset:int):int;
 import readline(buffer:string, buffersize:int, offset:int, prompt:string):int;
+import link(oldfilename:string,newfilename:string):int;
 import unlink(filename:string):int;
 import openin(filename:string):int;
 import openout(filename:string):int;

@@ -554,6 +554,15 @@ int system_unlink(M2_string name) {
   return r;
 }
 
+int system_link(M2_string oldfilename,M2_string newfilename) {
+  char *old = tocharstar(oldfilename);
+  char *new = tocharstar(newfilename);
+  int r = link(old,new);
+  GC_FREE(old);
+  GC_FREE(new);
+  return r;
+}
+
 M2_string system_readfile(fd)
 int fd;
 {

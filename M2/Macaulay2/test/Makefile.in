@@ -37,5 +37,5 @@ docStructure.out : docStructure.m2
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/test/Makefile
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/test"
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/test "
 # End:

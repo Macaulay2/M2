@@ -1200,11 +1200,11 @@ extern "C" {
   const MatrixOrNull *IM2_GB_get_matrix(Computation *G, int level, M2_bool minimize); 
   /* drg: connected rawGBGetMatrix */
 
-  int rawStatusComputation(Computation *G,
+  int rawStatus(Computation *G,
 		    int * complete_up_through_this_degree,
 		    int * stopping_reason); /* number from IM2_Computation_set_stop,
 					       interrupted is -1. None is 0. */
-  /* drg: connected rawStatusComputation */
+  /* drg: connected rawStatus */
   /* -1: error condition, and the error message is set. 
      1: not started,
      2: started, but still running in another thread (not implemented yet)
@@ -1236,7 +1236,7 @@ extern "C" {
     /*drg: connected rawGBGetFree*/
 
 
-  const MatrixOrNull *IM2_GB_matrix_remainder(Computation *G, 
+  const MatrixOrNull *rawGBMatrixRemainder(Computation *G, 
 						int level,
 						const Matrix *m); /* drg: connected rawGBMatrixRemainder */
 
