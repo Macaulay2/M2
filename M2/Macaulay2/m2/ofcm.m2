@@ -591,7 +591,12 @@ group Array := X -> monoid append(X,Inverses=>true)
 
 tensor = method( Options => options monoid )
 
-Monoid ** Monoid := (M,N) -> tensor(M,N)
+Monoid ** Monoid := { Monoid,
+     (M,N) -> tensor(M,N),
+     TT "M ** N", " -- tensor product of monoids.",
+     PARA,
+     "For complete documentation, see ", TO "tensor", "."
+     }
 
 tensor(Monoid, Monoid) := (M,N,options) -> (
      M = M.Options;

@@ -1,6 +1,11 @@
 ifndef MAKECONF
 MAKECONF = TRUE
 
+# export PROFILE     := TRUE
+
+export DEBUGFLAGS :=
+# export DEBUGFLAGS += -DMEM_DEBUG
+
 export VERSION	      := 0.8.35
 export FACTORYVERSION := 1.2c
 export ARCH           := $(shell uname -m | sed s=/=-=g )
@@ -21,6 +26,15 @@ export PATH           := ..\util;$(PATH)
 else
 PATHSEP := /
 export PATH           := ../util:$(PATH)
+endif
+
+ifdef PROFILE
+DEBUGFLAGS += -pg
+STRIPFLAG :=
+STRIPCMD := :
+else
+STRIPFLAG := -s
+STRIPCMD := strip
 endif
 
 endif

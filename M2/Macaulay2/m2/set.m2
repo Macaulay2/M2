@@ -29,8 +29,6 @@ document { quote Tally,
 	  (TO "tally", "               -- tally the elements of a list"),
 	  (TO "elements", "            -- a list of the elements"),
 	  (TO "apply(Tally,Function)", " -- apply a function to the elements."),
-	  (TO "Tally ** Tally", "      -- Cartesian product"),
-	  (TO "Tally + Tally", "       -- union"),
 	  (TO "sum(Tally)", "          -- add the elements"),
 	  (TO "product(Tally)", "      -- multiply the elements")
 	  }

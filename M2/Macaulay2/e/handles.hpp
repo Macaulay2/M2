@@ -29,6 +29,7 @@ public:
   handles() : next_handle(0), objs(hashtable<handle *>((handle *)0)) {}
   ~handles() {}
   
+  void showshape() { objs.showshape(); }
   int current() { return objs.current(); }
   int highwater() { return objs.highwater(); }
   int is_valid_handle(int h);

@@ -25,7 +25,6 @@ document { quote ZZ,
 	  TO "gcdCoefficients",
 	  TO "ZZ << ZZ",
 	  TO "ZZ >> ZZ",
-	  TO "ZZ & ZZ"
 	  }
      }
 

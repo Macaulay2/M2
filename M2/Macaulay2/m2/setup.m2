@@ -45,7 +45,6 @@ endl = new Manipulator from oldendl
 << Thing := x -> stdout << x
 File << Net := File << Symbol := File << String := printString
 File << Thing := (x,y) -> printString(x,string y) -- provisional
-Nothing << Thing := (x,y) -> null
 
 protect AfterEval
 protect AfterPrint
