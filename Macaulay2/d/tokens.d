@@ -262,11 +262,7 @@ export globalFrame := Frame(dummyFrame,0,1,Sequence(
 	  nullE						    -- value for dummySymbol, the first symbol
 	  ));
 export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false);
-export DictionaryList := {
-     dictionary:Dictionary, 
-     next:DictionaryList				    -- pointer to self ends the list
-     };
-export globalDictionaryList := DictionaryList(Macaulay2Dictionary,self);
+export globalDictionary := Macaulay2Dictionary;
 
 numLocalScopes := 0;
 export localFrame := globalFrame;
@@ -309,7 +305,6 @@ export dummySymbolHashTable := newSymbolHashTable();
 export dummyDictionary := (
      numLocalScopes = numLocalScopes + 1;
      Dictionary(nextHash(),dummySymbolHashTable,self,numLocalScopes,0,false));
-export dummyDictionaryList := DictionaryList(dummyDictionary,self);
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
