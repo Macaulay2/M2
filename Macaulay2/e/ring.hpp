@@ -243,7 +243,6 @@ public:
   // ignore the case when b=0... (Really?)
 
   virtual ring_elem random() const;
-  virtual ring_elem random(int homog, const int *deg) const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
 

@@ -32,7 +32,9 @@ Matrix::Matrix(const FreeModule *rows0,
   for (int i=0; i<cols0->rank(); i++)
     _entries.append(entries0[i]);
 
-  make_immutable(234123 + get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols()));
+  int z = 234123 + get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols());
+  if (z < 0) z = -z;
+  make_immutable(z);
 }
 
 

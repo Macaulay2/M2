@@ -46,7 +46,6 @@ public:
   RingElement *invert() const;
 
   static RingElement *random(const Ring *R);
-  static RingElement *random(const Ring *R, int homog, const intarray &deg);
 
   void text_out (buffer &o) const;
 

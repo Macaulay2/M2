@@ -326,7 +326,7 @@ h = rawHilbert m
 -- redo the computation, using this HF.
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
 rawGBSetHilbertFunction(Gcomp, h)
-rawStartComputation Gcomp
+rawStartComputation Gcomp -- CRASHES
 m1 = rawGBGetMatrix Gcomp;
 assert(m == m1)
 

@@ -204,13 +204,6 @@ RingElement *RingElement::random(const Ring *R)
   return new RingElement(R,R->random());
 }
 
-RingElement *RingElement::random(const Ring *R,
-				int homog,
-				const intarray &deg)
-{
-  return new RingElement(R,R->random(homog,deg.raw()));
-}
-
 void RingElement::text_out(buffer &o) const
 {
   R->elem_text_out(o, val);

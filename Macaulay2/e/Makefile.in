@@ -182,11 +182,17 @@ HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
 
 all tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c @srcdir@/check/*.c @srcdir@/check/*.cpp @srcdir@/check/*.h \
-		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp statuscodes
+		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp \
+		 @srcdir@/rings/*.hpp @srcdir@/rings/*.cpp \
+		 @srcdir@/linalgGB/*.h @srcdir@/linalgGB/*.c \
+		 statuscodes
 	cd @srcdir@ && etags $(patsubst @srcdir@/%, %, $^)
 
 # the target 'initialize' is used by the Makefile in the parent directory
 initialize all :: $(addsuffix .hpp, $(GENERATED_H))
+
+#all::; $(MAKE) -C rings
+all::; $(MAKE) -C linalgGB
 
 ifeq "$(SHARED)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so

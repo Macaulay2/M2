@@ -3,17 +3,27 @@
 ----------------
 -- quotients ---
 ----------------
+quotelem0 = (I,f) -> (
+     -- I is an ideal, f is an element
+     If := matrix{{f}} | (generators I);
+     g := syz gb(If,
+	  Strategy=>LongPolynomial,
+	  Syzygies=>true,
+	  SyzygyRows=>1);
+     g)
 
 quot0 := options -> (I,J) -> (
     -- this is the version when I, J are ideals,
     R := (ring I)/I;
     mR := transpose generators J ** R;
+    << "about to compute syzygies over quotient" << endl;
     g := syz gb(mR,
            options,
            Strategy=>LongPolynomial,
            Syzygies=>true,SyzygyRows=>1);
     -- The degrees of g are not correct, so we fix that here:
     -- g = map(R^1, null, g);
+    << "about to lift back to original ring" << endl;    
     lift(ideal g, ring I)
     )
 
@@ -118,12 +128,18 @@ quotientIdeal := options -> (I,J) -> (
      strat := options.Strategy;
      options = doQuotientOptions options;
      local IJ;
-     if strat === symbol Iterate then
-         IJ = (quot1 options)(I,J)
-     else if strat === symbol Linear then
-         IJ = (quot2 options)(I,J)
-     else 
+     if strat === symbol Iterate then (
+	 if gbTrace > 0 then << "colon ideal: using Strategy=>Iterate" << endl;	
+         IJ = (quot1 options)(I,J);
+	 )
+     else if strat === symbol Linear then (
+	 if gbTrace > 0 then << "colon ideal: using Strategy=>Linear" << endl;
+         IJ = (quot2 options)(I,J);
+	 )
+     else (
+	 if gbTrace > 0 then << "colon ideal: using Strategy=>Quotient" << endl;	 
      	 IJ = (quot0 options)(I,J);
+	 );
      if domins then trim IJ else IJ)
 
 quotientModule := options -> (I,J) -> (
@@ -295,6 +311,7 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
 	if not linearvar or not homog 
 	then error "'Linear' method requires saturation w.r.t. single linear element";
         f = satideal2;
+	if gbTrace > 0 then << "colon ideal: using Linear strategy" << endl;
       )
     else if strategy === Bayer then 
       (
@@ -303,17 +320,23 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
 	if n =!= 1
 	then error "Bayer method only saturates w.r.t. a single element";
         f = satideal3;
+	if gbTrace > 0 then << "colon ideal: using Bayer strategy" << endl;	
       )
     else if strategy === Elimination then
       (
 	if n =!= 1
 	then error "'Elimination' method requires a single element";
-        f = satideal4
-      )
-    else if strategy === Iterate then
-        f = satideal0
-    else
+        f = satideal4;
+	if gbTrace > 0 then << "colon ideal: using Elimination strategy" << endl;
+	)
+    else if strategy === Iterate then (
+	f = satideal0;
+	if gbTrace > 0 then << "colon ideal: using Iterate strategy" << endl;
+	)
+    else (
         f = satideal0;
+	if gbTrace > 0 then << "colon ideal: using Quotient Iteration strategy" << endl;
+	);
 
     g := (f options)(J,I);
     if domins then trim g else g

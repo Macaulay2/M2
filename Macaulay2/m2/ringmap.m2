@@ -181,7 +181,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
 	      hf = hf * product(numgens source JJ, i -> (
 			d := (degrees source JJ)#i#0; 
 			1 - T^d));
-	      (cokernel JJ).poincare = hf;
+	      (cokernel JJ).cache.poincare = hf;
 	      );
 	  mapback := map(R, ring JJ, map(R^1, R^n1, 0) | vars R);
 	  ideal mapback selectInSubring(1,generators gb(JJ,options))

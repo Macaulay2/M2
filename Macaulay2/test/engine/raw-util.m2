@@ -12,7 +12,7 @@ degmonoid = (n) -> (
      varnames := if n === 1 then {"t"} else
         toList apply(1..n, i -> toString(t_i));
      rawMonoid(mo, 
-	  varnames,
+	  toSequence varnames,
 	  trivring,
 	  {}))
 
@@ -26,7 +26,7 @@ degring = (n) -> (
 singlemonoid = vars -> (
      vars = toList vars;
      mo := rawMonomialOrdering { GRevLex => apply(#vars, i -> 1) };
-     varnames := apply(vars, toString);
+     varnames := toSequence apply(vars, toString);
      degs := apply(vars, i -> 1);
      rawMonoid(mo, varnames, degring 1, degs))
 

@@ -35,11 +35,9 @@ M = random(R^1, R^5)
 document {
      Key => (gin,Ideal),
      Headline => "the generic initial ideal",
-     OldSynopsis => {
-	  "J = gin I",
-	  "I" => {"an ", TO Ideal, " in a polynomial ring"},
-	  "J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}
-	  },
+     Usage => "J = gin I",
+     Inputs => {"I" => {"an ", TO Ideal, " in a polynomial ring"}},
+     Outputs => {"J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
      SeeAlso => "lexgin"
      }
 end

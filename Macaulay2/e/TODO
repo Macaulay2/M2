@@ -16,6 +16,8 @@ packages:
 	points
 	complexes
 	toric ideals
+	markov
+	borel -- generating sets of ideals
 	
 matrix2.m2 gg problems:
   divideByVariable DONE
