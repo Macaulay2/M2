@@ -238,11 +238,13 @@ bidualMap(Module) := Matrix => (M) -> (
      h := homEvaluation(M,R^1,R^1));
 ---
 
-document{ prePrune,
+document {
+     Key => prePrune,
      Headline => {"a simplified version of the ", TT "prune", " function."}
      }
 
-document{ (prePrune, Module),
+document {
+     Key => (prePrune, Module),
      OldSynopsis => {
 	  "N = prePrune M",
 	  "M" => null,
@@ -261,7 +263,8 @@ document{ (prePrune, Module),
 	  }	  
      }
 
-document { prePruningMap,
+document {
+     Key => prePruningMap,
      Headline => "store the isomorphism obtained by 'prePruning'",
      TT "prePruningMap", " -- the key under which is stored the isomorphism to
      a module ", TT "M", " from the module ", TT "prePrune M", ".",
@@ -271,7 +274,8 @@ document { prePruningMap,
      SEEALSO {(prePrune, Module), "pruningMap"}
      }
 
-document{ homElement,
+document {
+     Key => homElement,
      Headline => "get the element of Hom from a homomorphism",
      OldSynopsis => {
           "h = homElement f",
@@ -284,11 +288,13 @@ document{ homElement,
      SEEALSO "homomorphism"
      }
 
-document{ tensorHomAdjoint,
+document {
+     Key => tensorHomAdjoint,
      Headline => {"adjunction, ", TT "**", " to ", TT "Hom", "."}
      }
 
-document{ (tensorHomAdjoint, Matrix, Module, Module),
+document {
+     Key => (tensorHomAdjoint, Matrix, Module, Module),
      Headline => {"adjoint map, ", TT "**", " to ", TT "Hom", "."},
      OldSynopsis => {
           "g = tensorHomAdjoint(f,L,M)",
@@ -302,7 +308,8 @@ document{ (tensorHomAdjoint, Matrix, Module, Module),
      SEEALSO (homTensorAdjoint,Matrix,Module,Module)
      }
 
-document{ (tensorHomAdjoint, Module, Module, Module),
+document {
+     Key => (tensorHomAdjoint, Module, Module, Module),
      Headline => {TT "**", "-", TT "Hom", " adjunction functor."},
      OldSynopsis => {
           "g = tensorHomAdjoint(L,M,N)",
@@ -316,11 +323,13 @@ document{ (tensorHomAdjoint, Module, Module, Module),
      SEEALSO (homTensorAdjoint,Module,Module,Module)
      }
 
-document{ homTensorAdjoint,
+document {
+     Key => homTensorAdjoint,
      Headline => {"adjunction, ", TT "Hom", " to ", TT "**", "."}
      }
 
-document{ (homTensorAdjoint, Matrix, Module, Module),
+document {
+     Key => (homTensorAdjoint, Matrix, Module, Module),
      Headline => {"adjoint map, ", TT "Hom", " to ", TT "**"},
      OldSynopsis => {
           "g = homTensorAdjoint(f,L,M)",
@@ -333,7 +342,8 @@ document{ (homTensorAdjoint, Matrix, Module, Module),
      SEEALSO (tensorHomAdjoint,Matrix,Module,Module)
      }
 
-document{ (homTensorAdjoint, Module, Module, Module),
+document {
+     Key => (homTensorAdjoint, Module, Module, Module),
      Headline => {TT "Hom", "-", TT "**", " adjunction functor."},
      OldSynopsis => {
           "g = homTensorAdjoint(L,M,N)",
@@ -347,11 +357,13 @@ document{ (homTensorAdjoint, Module, Module, Module),
      SEEALSO (tensorHomAdjoint,Module,Module,Module)
      }
 
-document{ homEvaluation,
+document {
+     Key => homEvaluation,
      Headline => "Hom evaluation functor."
      }
 
-document{ (homEvaluation,Module,Module,Module),
+document {
+     Key => (homEvaluation,Module,Module,Module),
      OldSynopsis => {
           "h = homEvaluation(L,M,N)",
           "L" => null,
@@ -366,11 +378,13 @@ document{ (homEvaluation,Module,Module,Module),
                (tensorHomAdjoint,Module,Module,Module) }
      }
 
-document{ tensorEvaluation,
+document {
+     Key => tensorEvaluation,
      Headline => "tensor evaluation functor."
      }
 
-document{ (tensorEvaluation,Module,Module,Module),
+document {
+     Key => (tensorEvaluation,Module,Module,Module),
      OldSynopsis => {
           "h = tensorEvaluation(L,M,N)",
           "L" => null, "M" => null, "N" => null,
@@ -383,7 +397,8 @@ document{ (tensorEvaluation,Module,Module,Module),
                (tensorHomAdjoint,Module,Module,Module) }
      }
 
-document{ bidualMap,
+document {
+     Key => bidualMap,
      Headline => "map from a module to its bi-dual",
      OldSynopsis => {
           "h = bidualMap M",

@@ -1,19 +1,22 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { "shield",
+document {
+     Key => "shield",
      Headline => "shield evaluation from interrupts",
      TT "shield x", " -- executes the expression ", TT "x", ", temporarily
      ignoring interrupts."
      }
 
-document { symbol lineNumber,
+document {
+     Key => symbol lineNumber,
      Headline => "current line number",
      TT "lineNumber", " -- the current line number.",
      BR, NOINDENT,
      TT "lineNumber = n", " -- sets the line number to ", TT "n", ".",
      }
 
-document { FilePosition,
+document {
+     Key => FilePosition,
      Headline => "the class of all file positions",
      TT "FilePosition", " -- a type of list designed to represent a position
      in a file.",
@@ -22,19 +25,22 @@ document { FilePosition,
      the line number, and the column number."
      }
 
-document { symbol "currentFileName",
+document {
+     Key => symbol "currentFileName",
      Headline => "the current source file",
      TT "currentFileName", " -- a variable whose value is the name of the current
      source file."
      }
 
-document { flag,
+document {
+     Key => flag,
      Headline => "flag a symbol",
      TT "flag x", " -- arranges for each subsequent reference to a
      symbol x to be flagged with a warning message."
      }
 
-document { frame,
+document {
+     Key => frame,
      Headline => "the frame of a function",
      TT "frame f", " -- provides the frame of values for local variables
      bound up in a function closure.",
@@ -52,7 +58,8 @@ document { frame,
      "This function is provisional, and is to be used mainly for debugging."
      }
 
-document { examine,
+document {
+     Key => examine,
      Headline => "examine internal information about functions or symbols",
      TT "examine ()", " -- list the sequence numbers for the scopes corresponding
      to the frames currently in use.", BR,NOINDENT, 
@@ -64,13 +71,15 @@ document { examine,
      SEEALSO "debugging"
      }
 
-document { seeParsing,
+document {
+     Key => seeParsing,
      Headline => "print syntax table",
      TT "seeParsing()", " -- print the syntax table which governs parsing
      precedence."
      }
 
-document { instance,
+document {
+     Key => instance,
      Headline => "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
@@ -81,7 +90,8 @@ document { instance,
      SEEALSO { "classes and types", "class", "parent" }
      }
 
-document { alarm,
+document {
+     Key => alarm,
      Headline => "set an alarm",
      TT "alarm n", " -- arrange for an interrupt to occur in ", TT "n", "
      seconds, cancelling any previously set alarm.",
@@ -100,7 +110,8 @@ document { alarm,
      causing it to provide incorrect answers."
      }
 
-document { char,
+document {
+     Key => char,
      Headline => "the characteristic of a field or ring",
      TT "char F", " -- returns the characteristic of the ring ", TT "F", ".",
      PARA,
@@ -108,13 +119,12 @@ document { char,
      in F after it has been computed."
      }
 
-document { basictype,
+document {
+     Key => basictype,
      Headline => "the basic type of an object",
-     Synopsis => {
-	  Usage => "T = basictype x",
-	  Inputs => { "x" => "anything" },
-	  Outputs => { { "class representing the basic type of ", TT "x" } }
-	  },
+     Usage => "T = basictype x",
+     Inputs => { "x" => "anything" },
+     Outputs => { { "class representing the basic type of ", TT "x" } },
      "Every thing has basic type which tells what sort of thing it
      really is, internally.",
      PARA,
@@ -130,15 +140,18 @@ document { basictype,
      SEEALSO "basic types"
      }
 
-document { symbol "++",
+document {
+     Key => symbol "++",
      Headline => "a binary operator, usually used for direct sum"
      }
 
-document { symbol "@@",
+document {
+     Key => symbol "@@",
      Headline => "a binary operator"
      }
 
-document { symbol ">>>",
+document {
+     Key => symbol ">>>",
      Headline => "a binary operator",
      "This operator is right associative.",
      PARA,
@@ -146,16 +159,19 @@ document { symbol ">>>",
      parsing precedence is so low!  This will be fixed eventually."
      }
 
-document { symbol "@",
+document {
+     Key => symbol "@",
      Headline => "a binary operator",
      "This operator is right associative."
      }
 
-document { symbol "\\",
+document {
+     Key => symbol "\\",
      Headline => "a binary operator"
      }
 
-document { (symbol /, VisibleList, Function),
+document {
+     Key => (symbol /, VisibleList, Function),
      Headline => "apply a function to each member of a list",
      TT "w / f", " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
@@ -167,7 +183,8 @@ document { (symbol /, VisibleList, Function),
      SEEALSO {"apply", (symbol \,Function, VisibleList)}
      }
 
-document { (symbol \,Function, VisibleList),
+document {
+     Key => (symbol \,Function, VisibleList),
      Headline => "apply a function to each member of a list",
      TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
@@ -185,7 +202,8 @@ document { (symbol \,Function, VisibleList),
      SEEALSO {"apply", "@@", (symbol /,List, Function)}
      }
 
-document { String,
+document {
+     Key => String,
      Headline => "the class of all strings",
      "A string is thing which contains a sequence of characters (bytes).
      A string is normally entered as a sequence of characters surrounded 
@@ -200,7 +218,8 @@ document { String,
      as a type of net.  See ", TO "Net", ".",
      }
 
-document { unhex,
+document {
+     Key => unhex,
      Headline => "translate a URL",
      TT "unhex s", " -- translates a string provided as the trailing part
      of a URL by a web browser.",
@@ -219,7 +238,8 @@ document { unhex,
 	  }
      }
 
-document { "///",					    -- ///
+document {
+     Key => "///",					    -- ///
      Headline => "delineate a string",
      TT "/// a string ///", " -- a string.",
      PARA,
@@ -233,7 +253,8 @@ document { "///",					    -- ///
      SEEALSO "String"
      }
 
-document { Net,
+document {
+     Key => Net,
      Headline => "the class of all nets and strings",
      "A net is a generalization of a string which is designed to facilitate
      two-dimensional printing on ascii terminals.  It consists of a rectangular
@@ -252,7 +273,8 @@ document { Net,
      flushed, and writing a net subsequently will produce an unexpected result."
      }
 
-document { net, 
+document {
+     Key => net, 
      Headline => "convert to net",
      TT "net x", " -- format ", TT "x", " for printing.",
      PARA,
@@ -279,7 +301,8 @@ document { net,
 	  }
      }
 
-document { horizontalJoin,
+document {
+     Key => horizontalJoin,
      Headline => "join nets or strings horizontally",
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
@@ -294,7 +317,8 @@ document { horizontalJoin,
      SEEALSO {"Net", (symbol |, String, String)}
      }
 
-document { stack,
+document {
+     Key => stack,
      Headline => "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
@@ -312,7 +336,8 @@ document { stack,
      SEEALSO { (symbol ||, Net, Net)}
      }
 
-document { (symbol ^, Net, ZZ),
+document {
+     Key => (symbol ^, Net, ZZ),
      Headline => "raise a net",
      TT "n^i", " -- elevates a net or string ", TT "n", " by raising its
      characters by ", TT "i", " rows.",
@@ -324,7 +349,8 @@ document { (symbol ^, Net, ZZ),
      it to a net."
      }
 
-document { width,
+document {
+     Key => width,
      Headline => "width of a file or net",
      TT "width f", " -- determines the width of the terminal associated to an
      output file ", TT "f", ", if any.", BR,NOINDENT, 
@@ -332,7 +358,8 @@ document { width,
      SEEALSO {"Net", "File"}
      }
 
-document { height,
+document {
+     Key => height,
      Headline => "height of a net",
      TT "height n", " -- the height of a net ", TT "n", ".",
      PARA,
@@ -342,7 +369,8 @@ document { height,
      SEEALSO {"Net", "depth"}
      }
 
-document { depth,
+document {
+     Key => depth,
      Headline => "depth of a net",
      TT "depth n", " -- the depth of a net ", TT "n", ".",
      PARA,
@@ -352,14 +380,16 @@ document { depth,
      SEEALSO {"Net", "height"}
      }
 
-document { class,
+document {
+     Key => class,
      Headline => "class of an object",
      TT "class x", " -- yields the class of ", TT "x", ".",
      PARA,
      SEEALSO "classes and types"
      }
 
-document { hash,
+document {
+     Key => hash,
      Headline => "hash code of an object",
      TT "hash x", " -- returns the hash code of ", TT "x", ".",
      PARA,
@@ -369,7 +399,8 @@ document { hash,
      the hash codes used here are designed to satisfy."
      }
 
-document { remove,
+document {
+     Key => remove,
      Headline => "remove an entry from a hash table",
      TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
      under the key ", TT "k", ".",
@@ -381,7 +412,8 @@ document { remove,
 	  }
      }
 
-document { BasicList,
+document {
+     Key => BasicList,
      Headline => "the class of all basic lists",
      "A basic list is a sequence of expressions indexed by integers
      ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ", where ", TT "N", " is the length of the list.",
@@ -395,7 +427,8 @@ document { BasicList,
 	  }
      }
 
-document { toSequence,
+document {
+     Key => toSequence,
      Headline => "convert to sequence",
      TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
      PARA,
@@ -406,13 +439,14 @@ document { toSequence,
 	  },
      }
 
-document { Boolean,
+document {
+     Key => Boolean,
      Headline => "the class of Boolean values",
      "Predicate functions return these as values, and the logical connectives 
      expect to receive them as arguments.",
      PARA,
      "Special operators dealing with truth values.",
-     NOCONTENTS UL {
+     UL {
 	  TO "not",
 	  TO "and",
 	  TO "or",
@@ -420,7 +454,8 @@ document { Boolean,
 	  }
      }
 
-document { Symbol,
+document {
+     Key => Symbol,
      Headline => "the class of all symbols",
      "Symbols are entered as an alphabetic character followed by a
      sequence of alphanumeric characters; case is significant.
@@ -438,29 +473,34 @@ document { Symbol,
      SEEALSO {"local", "global", "symbol", ":="}
      }
 
-document { File,
+document {
+     Key => File,
      Headline => "the class of all files",
      "Files may be input files, output files, pipes, or sockets.
      A list of currently open files may be obtained with ", TO "openFiles", "."
      }
 
-document { connectionCount,
+document {
+     Key => connectionCount,
      Headline => "the number of connections",
      TT "connectionCount f", " -- returns the number of connections accepted by 
      the listener ", TT "f", " so far."
      }
 
-document { echoOn,
+document {
+     Key => echoOn,
      Headline => "turn on echoing",
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
      }
 
-document { echoOff,
+document {
+     Key => echoOff,
      Headline => "turn off echoing",
      TT "echoOff f", " -- turns off echoing for the file ", TT "f", "."
      }
 
-document { printString,
+document {
+     Key => printString,
      Headline => "lowlevel function to print a string",
      TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
      PARA,
@@ -475,7 +515,8 @@ document { printString,
      EXAMPLE ///printString(stdio, (a,10,"b",20,c))///
      }
 
-document { mutable,
+document {
+     Key => mutable,
      Headline => "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA,
@@ -492,19 +533,22 @@ document { mutable,
      SEEALSO {"MutableList", "MutableHashTable"}
      }
 
-document { setEcho,
+document {
+     Key => setEcho,
      Headline => "turn on echoing",
      TT "setEcho stdio", " -- turn on echoing of characters typed to the standard
      input."
      }
 
-document { clearEcho,
+document {
+     Key => clearEcho,
      Headline => "turn off echoing",
      TT "clearEcho stdio", " -- turn off echoing of characters typed to the standard
      input."
      }
 
-document { CacheTable,
+document {
+     Key => CacheTable,
      Headline => "hash tables for caching",
      "A type of mutable hash table designed for caching computed values that
      could always be recomputed.  Cache tables are designed so their contents

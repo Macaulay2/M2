@@ -58,7 +58,7 @@ chkopt  := o -> if not ( class o === Option and #o === 2 and class o#0 === Symbo
 chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if class x === List then scan(x,chkopt) else error "expected list of optional arguments"
 
 SingleArgWithOptions := opts -> (
-     chkopts opts;
+     -- chkopts opts;
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts >>> 
      options ->
@@ -71,12 +71,12 @@ SingleArgWithOptions := opts -> (
      methodFunction)
 
 AssociativeWithOptions := opts -> (
-     chkopts opts;
+     -- chkopts opts;
      error "associative methods with options not implemented yet"
      )
 
 MultipleArgsWithOptions := opts -> (
-     chkopts opts;
+     -- chkopts opts;
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts >>> 
      options ->

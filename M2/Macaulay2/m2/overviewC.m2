@@ -1,9 +1,10 @@
 ----------- File Mike is Working on! -------------------------
 
-document { "basic rings",
+document {
+     Key => "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
-     NOCONTENTS UL { 
+     UL { 
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR", 
@@ -34,7 +35,8 @@ document { "basic rings",
 	  },
      }
 
-document { "finite fields",
+document {
+     Key => "finite fields",
      -- Also include: getting the variable, its equation.
      -- Current restrictions on p, p^n.
      -- example should include: making these, simple arithmetic
@@ -133,7 +135,8 @@ document { "finite fields",
      }
 
 
-document { "polynomial rings",
+document {
+     Key => "polynomial rings",
      "Create a polynomial ring using the usual mathematical notation.",
      EXAMPLE {
 	  "R = QQ[x,y,z];",
@@ -250,7 +253,8 @@ document { "polynomial rings",
 	       }
      }
 
-document { "monomial orderings",
+document {
+     Key => "monomial orderings",
      -- Defining the orders
      -- MonomialOrder option.  Currently: Weights option.
      -- Philosophy: each ring comes equipped with a monomial order.
@@ -344,7 +348,8 @@ document { "monomial orderings",
      "See ", TO "MonomialOrder", " for further details."
      }
 
-document { "quasi- and multi-graded polynomial rings",
+document {
+     Key => "quasi- and multi-graded polynomial rings",
      "It is possible to set up a polynomial ring so that the degree of an
      element is a vector of integers.  For this, the option
      ", TO "Degrees", " is used, together with a list of degrees for the
@@ -377,7 +382,8 @@ document { "quasi- and multi-graded polynomial rings",
 	  },
      }
 
-document { "quotient rings",
+document {
+     Key => "quotient rings",
      -- R/I.  GB of I is needed for arithmetic.
      -- The variables get set?  Doing a quotient ring twice: ie. R/I, then R/I
      -- gives DIFFERENT rings.  Pointer to working with multiple rings.
@@ -452,7 +458,8 @@ document { "quotient rings",
      "For more information see ", TO "QuotientRing", "."
      }
 
-document { "manipulating polynomials",
+document {
+     Key => "manipulating polynomials",
      UL {
 	  TO "+",
 	  TO "-",
@@ -616,7 +623,8 @@ document { "manipulating polynomials",
      }
 
 
-document { "factoring polynomials",
+document {
+     Key => "factoring polynomials",
      "Polynomials can be factored with ", TO "factor", ".  Factorization
      works in polynomial rings over prime finite fields, ZZ, or QQ.",
      EXAMPLE {
@@ -640,11 +648,13 @@ document { "factoring polynomials",
 	  }
      }
 
-document { "finite fields, part II",
+document {
+     Key => "finite fields, part II",
      -- options to GF command.  Other forms of the GF command.
      }
 
-document { "fraction fields",
+document {
+     Key => "fraction fields",
      "The fraction field of a ring (which must be an integral domain) is obtained
      with the function ", TO "frac", ".",
      EXAMPLE {
@@ -687,7 +697,8 @@ document { "fraction fields",
      "Note that computations, such as Groebner bases, over fraction fields can be quite slow."
      }
 
-document { "finite field extensions",
+document {
+     Key => "finite field extensions",
      UL {
 	  TO "toField",
 	  -- writeup under "toField" is a good start,
@@ -695,7 +706,8 @@ document { "finite field extensions",
 	  }
      }
 
-document { "exterior algebras",
+document {
+     Key => "exterior algebras",
      -- making one, making quotients,
      -- using it.
      -- modules are right-modules, example of multiplication.
@@ -733,7 +745,8 @@ document { "exterior algebras",
      commutative rings."
      }
 
-document { "symmetric algebras",
+document {
+     Key => "symmetric algebras",
      "Polynomial rings are symmetric algebras with explicit generators, and we have
      already seen how to construct them.  But if you have a module, then its symmetric
      algebra can be constructed with ", TO "symmetricAlgebra", ".",
@@ -757,7 +770,8 @@ document { "symmetric algebras",
      EXAMPLE "symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})"
      }
 
-document { "tensor products of rings",
+document {
+     Key => "tensor products of rings",
      -- **, tensor.  Options for changing monomial orders.
      -- What is the default monomial order
      -- What if the names of the variables clash.
@@ -787,7 +801,8 @@ document { "tensor products of rings",
 	  }
      }
 
-document { "Weyl algebras",
+document {
+     Key => "Weyl algebras",
      "A Weyl algebra is the non-commutative algebra of algebraic differential 
      operators on a polynomial ring.  To each variable ", TT "x", " corresponds 
      the operator ", TT "dx", " that differentiates with respect to that 
@@ -814,7 +829,8 @@ document { "Weyl algebras",
      TO "D-modules", "."
      }
 
-document { "Schur rings",
+document {
+     Key => "Schur rings",
      "Given a positive integer ", TT "n", ", 
      we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
      monomials correspond to the irreducible representations of GL(n), and where 
@@ -842,7 +858,8 @@ document { "Schur rings",
      do not work, but I'm not sure what they would mean..."
      }
 
-document { "associative algebras",
+document {
+     Key => "associative algebras",
      "Eventually we will implement associative algebras, not necessarily
      commutative."
      }
@@ -882,7 +899,8 @@ document { "associative algebras",
 -- module nodes ---
 -------------------
 
-document { "construction of free modules",
+document {
+     Key => "construction of free modules",
      "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",
      PARA,
      EXAMPLE {
@@ -896,11 +914,13 @@ document { "construction of free modules",
      generators, see ", TO "graded modules", ".",
      }
 
-document { "graded modules",
+document {
+     Key => "graded modules",
      -- Mike must have wanted a node with this name...
      }
 
-document { "matrices to and from modules",
+document {
+     Key => "matrices to and from modules",
      TOC {
 	  SECTION { "matrices to modules (kernel, image, cokernel)",
      	       "Let's make a matrix.",
@@ -922,7 +942,8 @@ document { "matrices to and from modules",
      }
 }
 
-document { "Hilbert functions and free resolutions",
+document {
+     Key => "Hilbert functions and free resolutions",
      "In this section, we give examples of common operations
      involving modules.  Throughout this section, we suppose that the base
      ring ", TT "R", " is graded, with each variable having degree one, and that  ",
@@ -998,30 +1019,37 @@ document { "Hilbert functions and free resolutions",
 	  }
      }
 
-document { "operations on modules",
+document {
+     Key => "operations on modules",
      }
 
-document { "homomorphisms (maps) between modules",
+document {
+     Key => "homomorphisms (maps) between modules",
      }
 
-document { "subquotient modules",
+document {
+     Key => "subquotient modules",
      }
 
 
-document { "extracting elements",
+document {
+     Key => "extracting elements",
      "If M is an R-module, the best way to think of an element v of M
      in Macaulay 2 is as a map of the ring into M, mapping 1 to v."
      }
 
-document { "equality and containment of modules",
+document {
+     Key => "equality and containment of modules",
      "==, isSubset"
      }
 
-document { "minimal presentations and generators",
+document {
+     Key => "minimal presentations and generators",
      "prune, trim"
      }
 
-document { "annihilator of a module",
+document {
+     Key => "annihilator of a module",
      "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
      using the ", TO "annihilator", " function.",
      EXAMPLE {
@@ -1035,7 +1063,8 @@ document { "annihilator of a module",
 	  }
      }
 
-document { "constructing maps between modules",
+document {
+     Key => "constructing maps between modules",
      "The standard way to define a map from an R-module M to an 
      R-module N is to give a matrix whose columns are the image vectors
      of the generators of M.",
@@ -1046,29 +1075,36 @@ document { "constructing maps between modules",
 	  }
      }
 
-document { "information about a map of modules",
+document {
+     Key => "information about a map of modules",
      "usual information: source, target, ring.",
      TOC {
      	  }
      }
 
 
-document { "kernel, cokernel and image of a map of modules",
+document {
+     Key => "kernel, cokernel and image of a map of modules",
      }
 
-document { "degree and multiplicity of a module",
+document {
+     Key => "degree and multiplicity of a module",
      }
 
-document { "Hilbert functions and polynomials",
+document {
+     Key => "Hilbert functions and polynomials",
      }
 
-document { "homogenization",
+document {
+     Key => "homogenization",
      }
 
-document { "truncation and homogeneous components of a graded module",
+document {
+     Key => "truncation and homogeneous components of a graded module",
      }
 
-document { "what is a subquotient module?",
+document {
+     Key => "what is a subquotient module?",
      "There are two basic types of modules over a ring R: submodules of R^n
      and quotients of R^n.  Macaulay 2's notion of a module includes both
      of these.  Macaulay 2 represents every module as a quotient image(f)/image(g),
@@ -1083,35 +1119,45 @@ document { "what is a subquotient module?",
 
      }
 
-document { "extracting parts of a subquotient module",
+document {
+     Key => "extracting parts of a subquotient module",
      "Include: "
      }
 
-document { "quotients of modules",
+document {
+     Key => "quotients of modules",
      }
 
-document { "direct sums of modules",
+document {
+     Key => "direct sums of modules",
      }
 
-document { "exterior power of a module",
+document {
+     Key => "exterior power of a module",
      }
 
-document { "Fitting ideals",
+document {
+     Key => "Fitting ideals",
      }
 
-document { "adjoints of maps",
+document {
+     Key => "adjoints of maps",
      }
 
-document { "free resolutions",
+document {
+     Key => "free resolutions",
      }
 
-document { "Hom module",
+document {
+     Key => "Hom module",
      }
 
-document { "tensor products of modules",
+document {
+     Key => "tensor products of modules",
      }
 
-document { "Tor and Ext",
+document {
+     Key => "Tor and Ext",
      }
 
 -------------------
@@ -1119,7 +1165,8 @@ document { "Tor and Ext",
 -------------------
 
 
-document { "monomial orderings v1.0",
+document {
+     Key => "monomial orderings v1.0",
      "This section is only valid for Macaulay2, versions 1.0 and higher.",
      PARA,
      "Each ring in Macaulay2 comes equipped with an ordering on the
@@ -1133,7 +1180,8 @@ chosen monomial ordering.",
      }
 
 
-document { "what is a Groebner basis?",
+document {
+     Key => "what is a Groebner basis?",
      "A Groebner basis is a specific generating set
      of an ideal or submodule over a polynomial ring, not usually minimal, 
      which has extremely nice properties, from which 
@@ -1170,25 +1218,32 @@ document { "what is a Groebner basis?",
      EXAMPLE "leadTerm F"          
      }
 
-document { "finding a Groebner basis",
+document {
+     Key => "finding a Groebner basis",
      }
 
-document { "elimination of variables",
+document {
+     Key => "elimination of variables",
      }
 
-document { "Hilbert functions",
+document {
+     Key => "Hilbert functions",
      }
 
-document { "syzygies",
+document {
+     Key => "syzygies",
      }
 
-document { "saturation",
+document {
+     Key => "saturation",
      }
 
-document { "fibers of maps",
+document {
+     Key => "fibers of maps",
      }
 
-document { "solving systems of polynomial equations",
+document {
+     Key => "solving systems of polynomial equations",
      }
 
 /// 
@@ -1207,7 +1262,8 @@ Plan for the next node:
 --   remove linear equations, and the corresponding variable.
 --   computing up to a given degree
 ///
-document { "fine control of a Groebner basis computation",
+document {
+     Key => "fine control of a Groebner basis computation",
      "Sometimes a Groebner basis computation doesn't finish quickly enough.  If so
      then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION.",
      TOC {

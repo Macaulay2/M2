@@ -1,7 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 
-document { (symbol _, Matrix, List),
+document {
+     Key => (symbol _, Matrix, List),
      Headline => "get some columns from a matrix",
      TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      columns numbered i, j, k, ... .",
@@ -22,7 +23,8 @@ document { (symbol _, Matrix, List),
      SEEALSO "_"
      }
 
-document { (symbol ^,Matrix,List),
+document {
+     Key => (symbol ^,Matrix,List),
      Headline => "select some rows of a matrix",
      TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      rows numbered i, j, k, ... .",
@@ -43,7 +45,8 @@ document { (symbol ^,Matrix,List),
      }
 
      
-document { submatrix,
+document {
+     Key => submatrix,
      Headline => "select part of a matrix",
      TT "submatrix(m, rows, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
      BR,NOINDENT,
@@ -67,36 +70,38 @@ document { submatrix,
      of range."
      }
 
-document { (diff,Matrix),
+document {
+     Key => (diff,Matrix),
      Headline => "differentiate a matrix",
      TT "diff m", " -- differentiate the matrix ", TT "m", " with respect to the variables
      of its ring."
      }
 
-document { (diff,RingElement),
+document {
+     Key => (diff,RingElement),
      Headline => "differentiate a ring element",
      TT "diff f", " -- differentiate the ring element ", TT "f", " with respect to 
      the variables of its ring."
      }
 
-document { (diff,ProjectiveHilbertPolynomial,ZZ),
+document {
+     Key => (diff,ProjectiveHilbertPolynomial,ZZ),
      TT "diff(P,i)", " -- compute the i-th difference polynomial"
      }
 
-document { (diff,Matrix,Matrix),
+document {
+     Key => (diff,Matrix,Matrix),
      Headline => "differentiate a matrix by a matrix",
-     Synopsis => {
-	  Usage => "h = diff(m,n)",
-	  Inputs => {
-	       "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
-	       "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
-	       },
-	  Outputs => {
-	       "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
-		    whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
-		    is the result of differentiating ", TT { "n", SUB "j,l" }, "
-		    by the differential operator corresponding to ", TT {"m", SUB "i,k", "."}
-		    }
+     Usage => "h = diff(m,n)",
+     Inputs => {
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
+	  },
+     Outputs => {
+	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of differentiating ", TT { "n", SUB "j,l" }, "
+	       by the differential operator corresponding to ", TT {"m", SUB "i,k", "."}
 	       }
 	  },
      PARA {
@@ -115,31 +120,34 @@ document { (diff,Matrix,Matrix),
      SEEALSO "diff and contract"
      }
 
-document { (diff, ProjectiveHilbertPolynomial),
+document {
+     Key => (diff, ProjectiveHilbertPolynomial),
      TT "diff P", " -- compute the difference polynomial."
      }
 
-document { diff,
+document {
+     Key => diff,
      Headline => "differentiate"
      }
 
-document { contract,
+document {
+     Key => contract,
      Headline => "contract one matrix by another",
      }
 
-document { (contract,Matrix,Matrix),
+document {
+     Key => (contract,Matrix,Matrix),
      Headline => "contract a matrix by a matrix",
-     Synopsis => {
-	  Usage => "h = contract(m,n)",
-	  Inputs => {
-	       "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
-	       "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
-	       },
-	  Outputs => {
-	       "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
-		    whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
-		    is the result of contracting ", TT { "n", SUB "j,l" }, "
-		    by ", TT {"m", SUB "i,k", "."}}}},
+     Usage => "h = contract(m,n)",
+     Inputs => {
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
+	  },
+     Outputs => {
+	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of contracting ", TT { "n", SUB "j,l" }, ",
+		    by ", TT {"m", SUB "i,k", "."}}},
      PARA,
      "This function is identical to ", TO (diff,Matrix,Matrix), ", except that 
      the multiplication by integers that occurs during differentiation is
@@ -156,7 +164,8 @@ jacobian A
 singA = minors(codim ideal presentation A, jacobian A)
 generators gb singA
 "
-document { jacobian,
+document {
+     Key => jacobian,
      Headline => "the Jacobian matrix of partial derivatives",
      TT "jacobian R", " -- calculates the Jacobian matrix of the ring R",
      BR,NOINDENT,
@@ -187,7 +196,8 @@ document { jacobian,
      }
 
 
-document { leadTerm,
+document {
+     Key => leadTerm,
      Headline => "get the leading term",
      TT "leadTerm f", " -- return the leading term of the polynomial or 
      vector f.",
@@ -208,7 +218,8 @@ document { leadTerm,
      SEEALSO {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 
-document { borel,
+document {
+     Key => borel,
      Headline => "make a Borel fixed submodule",
      TT "borel m", " -- make a Borel fixed submodule",
      PARA,
@@ -223,7 +234,8 @@ document { borel,
 	  }
      }
 
-document { inducedMap,
+document {
+     Key => inducedMap,
      Headline => "compute an induced map",
      TT "inducedMap(M,N,f)", " -- produce the map from ", TT "N", " to ", TT "M", " 
      induced by ", TT "f", ".",
@@ -234,13 +246,15 @@ document { inducedMap,
      SEEALSO "inducesWellDefinedMap"
      }
 
-document { (inducedMap,Degree),
+document {
+     Key => (inducedMap,Degree),
      Headline => "specify the degree of a map",
      TT "Degree => n", " -- an option to ", TO "inducedMap", " that provides the
      degree of the map produced."
      }
 
-document { Verify,
+document {
+     Key => Verify,
      Headline => "verify that a map is well-defined",
      TT "Verify", " -- an option that can be used to request verification
      that a map is well defined.",
@@ -250,20 +264,23 @@ document { Verify,
 	  }
      }
 
-document { (inducedMap,Verify),
+document {
+     Key => (inducedMap,Verify),
      TT "Verify => true", " -- an option for ", TO "inducedMap", " which
      requests verification that the induced map produced is well defined."
      }
 
 
-document { inducesWellDefinedMap,
+document {
+     Key => inducesWellDefinedMap,
      Headline => "whether a map is well defined",
      TT "inducesWellDefinedMap(M,N,f)", " -- tells whether the matrix ", TT "f", " would
      induce a well defined map from ", TT "N", " to ", TT "M", ".",
      SEEALSO "inducedMap"
      }
 
-document { (map,Module,Module,Function),
+document {
+     Key => (map,Module,Module,Function),
      OldSynopsis => {
 	  "h = map(M,N,f)",
 	  "M" => {},
@@ -298,7 +315,8 @@ document { (map,Module,Module,Function),
 	  }
      }
 
-document { matrix,
+document {
+     Key => matrix,
      Headline => "make a matrix",
      "This function can be used to create a matrix or map (homomorphism) between
      modules, but it is complicated because there are many different ways it can
@@ -312,13 +330,15 @@ document { matrix,
 
 
 
-document { (map,Matrix),
+document {
+     Key => (map,Matrix),
      TT "map(f, Degree => d)", " -- make a map of degree d from a map f
      of modules by tensoring the source module with a free module of
      rank 1 and appropriate degree."
      }
 
-document { (matrix,Matrix),
+document {
+     Key => (matrix,Matrix),
      TT "matrix f", " -- produce the matrix of a map f.",
      PARA,
      "If the source and target of f are free, then the result is
@@ -328,7 +348,8 @@ document { (matrix,Matrix),
      SEEALSO {"map", "matrix"}
      }
 
-document { (matrix,Ring,List),
+document {
+     Key => (matrix,Ring,List),
      TT "matrix(R,v)", " -- create a matrix over R from a doubly-nested list of
      ring elements or matrices.",
      PARA,
@@ -342,7 +363,8 @@ document { (matrix,Ring,List),
      SEEALSO {"map", "matrix"}
      }
 
-document { (map,Module,Module),
+document {
+     Key => (map,Module,Module),
      TT "map(M,N)", " -- constructs the natural map from N to M.",
      PARA,
      "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
@@ -350,7 +372,8 @@ document { (map,Module,Module),
      SEEALSO {"map", "isWellDefined"}
      }
 
-document { (map,Module,Matrix),
+document {
+     Key => (map,Module,Matrix),
      TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
      tensoring p with a graded free module of rank 1.",
      PARA,
@@ -364,7 +387,8 @@ document { (map,Module,Matrix),
      SEEALSO {"map", "matrix"}
      }
 
-document { (map,Module,Module,List),
+document {
+     Key => (map,Module,Module,List),
      TT "map(M,N,v)", " -- produces a map (matrix) from the module N
      to the module M whose entries are obtained from the doubly-nested list
      v of ring elements.",
@@ -376,7 +400,8 @@ document { (map,Module,Module,List),
 	  },
      SEEALSO {"map", "matrix"}
      }
-document { (map,Module,Module,Matrix),
+document {
+     Key => (map,Module,Module,Matrix),
      TT "map(M,N,p)", " -- recasts the matrix p as a map (matrix) from
      the module N to the module M.",
      PARA,
@@ -389,7 +414,8 @@ document { (map,Module,Module,Matrix),
 	  },
      SEEALSO {"map", "matrix"}
      }
-document { (map,Module,Module,RingElement),
+document {
+     Key => (map,Module,Module,RingElement),
      TT "map(M,N,r)", " -- construct a map from a module ", TT "N", " to ", TT "M", " which is provided
      by the ring element ", TT "r", ".",
      PARA,
@@ -406,7 +432,8 @@ document { (map,Module,Module,RingElement),
      PARA,
      SEEALSO {(map,Module,Module,ZZ), "map", "matrix"}
      }
-document { (map,Module,Module,ZZ),
+document {
+     Key => (map,Module,Module,ZZ),
      TT "map(M,N,k)", " -- construct a map from a module ", TT "N", " to ", TT "M", " 
      which is provided by the integer ", TT "k", ".",
      PARA,
@@ -434,13 +461,15 @@ document { (map,Module,Module,ZZ),
      PARA,
      SEEALSO {(map,Module,Module,RingElement), "map", "matrix"}
      }
-document { (map,Module),
+document {
+     Key => (map,Module),
      TT "map M", " -- construct the identity map from M to itself.",
      PARA,
      "This can also be accomplished with ", TT "id_M", " or ", TT "map(M,1)", ".",
      SEEALSO {"map", "id"}
      }
-document { (map,Module,RingElement),
+document {
+     Key => (map,Module,RingElement),
      TT "map(M,r)", " -- construct the map from M to itself which is provided
      by scalar multiplication by the ring element r.",
      PARA,
@@ -450,7 +479,8 @@ document { (map,Module,RingElement),
 	  },
      SEEALSO {"map", "matrix"}
      }
-document { Degree,
+document {
+     Key => Degree,
      TT "Degree => d", " -- an optional argument to ", TO "matrix", " that
      specifies that the degree of the map created should be ", TT "d", ".",
      PARA,
@@ -468,7 +498,8 @@ document { Degree,
      SEEALSO {"map", "matrix", (inducedMap,Degree)}
      }
 
-document { (map,Module,ZZ,Function),
+document {
+     Key => (map,Module,ZZ,Function),
      TT "map(M,n,f)", " -- construct a map from a free graded module of
      rank n to M whose entries are obtained from the function f by 
      evaluating f(i,j).",
@@ -478,7 +509,8 @@ document { (map,Module,ZZ,Function),
      degree zero."
      }
 
-document { (map,Module,ZZ,List),
+document {
+     Key => (map,Module,ZZ,List),
      TT "map(M,n,v)", " -- construct a map from a free graded module of
      rank n to M whose entries are in the doubly nested list ", TT "v", ".",
      PARA,
@@ -487,7 +519,8 @@ document { (map,Module,ZZ,List),
      degree zero."
      }
 
-document { (map,Module,Nothing,List),
+document {
+     Key => (map,Module,Nothing,List),
      TT "map(M,,v)", " -- construct a map from a free graded module to M
      whose entries are obtained from the doubly-nested list v of
      ring elements.",
@@ -504,7 +537,8 @@ document { (map,Module,Nothing,List),
 	  },
      SEEALSO {"map", "matrix"}
      }
-document { (matrix,List),
+document {
+     Key => (matrix,List),
      TT "matrix v", " -- create a matrix from a doubly-nested list of
      ring elements or matrices, or from a list of (column) vectors.",
      PARA,
@@ -539,12 +573,14 @@ document { (matrix,List),
      SEEALSO {"map", "matrix"}
      }
 
-document { id,
+document {
+     Key => id,
      Headline => "identity map",
      TT "id_M", " -- the identity homomorphism from ", TT "M", " to ", TT "M", "."
      }
 
-document { reshape,
+document {
+     Key => reshape,
      Headline => "reshape a matrix",
      TT "reshape(F,G,m)", " -- reshapes the matrix ", TT "m", " to give
      a map from ", TT "G", " to ", TT "F", ".",
@@ -565,7 +601,8 @@ g = reshape(R^1, R^{-1}, f)
 assert isHomogeneous g
 "
 
-document { adjoint1,
+document {
+     Key => adjoint1,
      Headline => "the adjoint map",
      TT "adjoint1 (f,G,H)", " -- if f is a homomorphism of free modules of the
      form F -> G ** H, then produce the adjoint homomorphism of the
@@ -573,7 +610,8 @@ document { adjoint1,
      SEEALSO "adjoint"
      }
 
-document { adjoint,
+document {
+     Key => adjoint,
      Headline => "the adjoint map",
      TT "adjoint (f,F,G)", " -- if f is a homomorphism of free modules of the
      form F ** G -> H, then produce the adjoint homomorphism of the
@@ -581,22 +619,22 @@ document { adjoint,
      SEEALSO "adjoint1"
      }
 
-document { (flip,Module,Module),
+document {
+     Key => (flip,Module,Module),
      Headline => "matrix of commutativity of tensor product",
      TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
      }
 
-document { (subquotient,Matrix,Matrix),
+document {
+     Key => (subquotient,Matrix,Matrix),
      Headline => "make a subquotient module",
-     Synopsis => {
-	  Usage => "subquotient(g,r)",
-	  Inputs => {
-	       "g" => "the matrix of generators",
-	       "r" => {"the matrix of relations, with the same target as ", TT "g", ""}
-	       },
-	  Outputs => {
-	       {"the image of ", TT "g", " in the cokernel of ", TT "r"}
-	       }
+     Usage => "subquotient(g,r)",
+     Inputs => {
+	  "g" => "the matrix of generators",
+	  "r" => {"the matrix of relations, with the same target as ", TT "g", ""}
+	  },
+     Outputs => {
+	  {"the image of ", TT "g", " in the cokernel of ", TT "r"}
 	  },
      PARA {
      	  "The general form in which modules are represented in Macaulay 2 is as subquotients,
@@ -611,7 +649,8 @@ document { (subquotient,Matrix,Matrix),
      SEEALSO {"generators", "relations", "prune"}
      }
 
-document { (symbol **, Matrix, Matrix),
+document {
+     Key => (symbol **, Matrix, Matrix),
      Headline => "tensor product of matrices",
      TT "f ** g", " -- computes the tensor product of two matrices.",
      PARA,
@@ -623,7 +662,8 @@ ZZ[t]
 assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
 "
 
-document { symbol "compactMatrixForm",
+document {
+     Key => symbol "compactMatrixForm",
      Headline => "global flag for compact printing",
      TT "compactMatrixForm", " -- a global flag which specifies whether to display
      matrices in compact form.",
@@ -639,7 +679,8 @@ document { symbol "compactMatrixForm",
 	  }
      }
 
-document { (symbol +, Ideal, Ideal), 
+document {
+     Key => (symbol +, Ideal, Ideal), 
      Headline => "sum of ideals",
      TT "I + J", " -- the sum of two ideals."
      }
@@ -651,7 +692,8 @@ assert( 1 == dim I )
 assert( 2 == codim I )
 "
 
-document { Ideal,
+document {
+     Key => Ideal,
      Headline => "the class of all ideals",
      SEEALSO "ideals",
      "Common ways to make an ideal:",
@@ -660,7 +702,7 @@ document { Ideal,
 	  TO "annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
-	  NOCONTENTS TO (kernel, RingMap),
+	  TO (kernel, RingMap),
 	  },
      "Common ways to get information about an ideal:",
      UL {
@@ -686,7 +728,7 @@ document { Ideal,
 	  },
      "Common ways to use an ideal:",
      UL {
-	  NOCONTENTS TO (symbol /, Ring, Ideal),
+	  TO (symbol /, Ring, Ideal),
 	  },
      PARA,
      "An ideal ", TT "I", " is an immutable object, so if you want to 
@@ -694,28 +736,33 @@ document { Ideal,
      PARA
      }
 
-document { (symbol *,Ideal,Ideal),
+document {
+     Key => (symbol *,Ideal,Ideal),
      Headline => "product of ideals",
      TT "I * J", " -- the product of two ideals."
      }
 
-document { (symbol ^,Ideal,ZZ),
+document {
+     Key => (symbol ^,Ideal,ZZ),
      Headline => "power of an ideal",
      TT "I^n", " -- the n-th power of an ideal I."
      }
 
-document { (module, Ideal),
+document {
+     Key => (module, Ideal),
      Headline => "turn an ideal into a module",
      TT "module I", " -- produce the submodule of ", TT "R^1", " corresponding to an
      ideal ", TT "I", " in a ring ", TT "R", "."
      }
 
-document { (ideal, Ring),
+document {
+     Key => (ideal, Ring),
      Headline => "get the ideal used to form a quotient ring",
      TT "ideal R", " -- for a quotient ring R=A/I, returns I"
      }
 
-document { ideal,
+document {
+     Key => ideal,
      Headline => "make an ideal",
      "ideal v", " -- produces the ideal spanned by a list or sequence of ring
      elements.",
@@ -726,7 +773,8 @@ document { ideal,
 	  },
      }
 
-document { kernel,
+document {
+     Key => kernel,
      Headline => "kernel of a map",
      TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",
      PARA,
@@ -734,7 +782,8 @@ document { kernel,
      matrix."
      }
 
-document { SubringLimit,
+document {
+     Key => SubringLimit,
      Headline => "stop after finding enough elements of a subring",
      TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
      which can stop the computation after a certain number of basis elements in
@@ -743,13 +792,15 @@ document { SubringLimit,
      }
 
 
-document { (kernel,SubringLimit),
+document {
+     Key => (kernel,SubringLimit),
      TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
      causes the computation of the kernel of a ring map to stop after ", TT "n", "
      elements have been discovered."
      }
 
-document { (homology,Matrix,Matrix),
+document {
+     Key => (homology,Matrix,Matrix),
      Headline => "kernel modulo image",
      TT "homology(g,f)", " -- computes the homology module ", TT "ker g/im f", ".",
      PARA,
@@ -758,12 +809,14 @@ document { (homology,Matrix,Matrix),
      SEEALSO "homology"
      }
 
-document { (dual, Matrix),
+document {
+     Key => (dual, Matrix),
      Headline => "dual of a map",
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 
-document { singularLocus,
+document {
+     Key => singularLocus,
      Headline => "singular locus",
      TT "singularLocus R", " -- produce the singular locus of a ring,
      which is assumed to be integral and defined by a homogeneous ideal.",
@@ -783,7 +836,8 @@ TEST "
      assert( dim singularLocus ideal { a^2 + b^2 + c^2 + d^2, a^2 + 5*b^2 + 3*c^2 + 2*d^2 } === 0 )
      "
 
-document { (symbol ^,Matrix,Array),
+document {
+     Key => (symbol ^,Matrix,Array),
      Headline => "select some rows of blocks",
      TT "f^[i,j,k]", " -- extract some rows of blocks from a matrix ", TT "f", ".",
      PARA,
@@ -800,7 +854,8 @@ document { (symbol ^,Matrix,Array),
      SEEALSO {submatrix, (symbol ^,Module,Array), (symbol _,Matrix,Array)}
      }
 
-document { (symbol _, Matrix, Array),
+document {
+     Key => (symbol _, Matrix, Array),
      Headline => "select some columns of blocks",
      TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
      PARA,
@@ -817,7 +872,8 @@ document { (symbol _, Matrix, Array),
      SEEALSO {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
      }
 
-document { entries,
+document {
+     Key => entries,
      Headline => "list the entries of a matrix",
      TT "entries f", " -- produces the matrix of the homomorphism f as a doubly
      nested list of ring elements.",
@@ -881,12 +937,14 @@ time D = resolution cokernel leadTerm generators G
 -- betti D
 "
 
-document { isInjective,
+document {
+     Key => isInjective,
      Headline => "whether a map is injective",
      SEEALSO "isSurjective"
      }
 
-document { isSurjective,
+document {
+     Key => isSurjective,
      Headline => "whether a map is surjective",
      SEEALSO "isInjective"
      }
@@ -900,7 +958,8 @@ assert not isSurjective R^2_{1}
 "
 
 
-document { content,
+document {
+     Key => content,
      Headline => "the content of a polynomial",
      TT "content f", " -- returns the content of a matrix or polynomial.",
      PARA,
@@ -908,15 +967,18 @@ document { content,
      coefficients."
      }
 
-document { QuotientRing,
+document {
+     Key => QuotientRing,
      Headline => "the class of all quotient rings"
      }
 
-document { isQuotientOf,
+document {
+     Key => isQuotientOf,
      Headline => "whether one thing is a quotient of another"
      }
 
-document { isQuotientRing,
+document {
+     Key => isQuotientRing,
      Headline => "whether something is a quotient ring"
      }
 
@@ -925,7 +987,8 @@ assert( ZZ/2 === ZZ/(4,6) )
 R = ZZ/101[t]
 "
 
-document { (symbol /, Ring, RingElement),
+document {
+     Key => (symbol /, Ring, RingElement),
      Headline => "quotient ring",
      OldSynopsis => {
 	  "S = R/f",
@@ -935,7 +998,8 @@ document { (symbol /, Ring, RingElement),
 	  }
      }
 
-document { (symbol /, Ring, Sequence),
+document {
+     Key => (symbol /, Ring, Sequence),
      Headline => "quotient ring",
      OldSynopsis => {
 	  "S = R/(f,g,h,...)",
@@ -945,7 +1009,8 @@ document { (symbol /, Ring, Sequence),
 	  }
      }
 
-document { (symbol /, Ring, Ideal),
+document {
+     Key => (symbol /, Ring, Ideal),
      Headline => "quotient ring",
      OldSynopsis => {
 	  "S = R/I",
@@ -971,46 +1036,44 @@ document { (symbol /, Ring, Ideal),
 	  }
      }
 
-document { koszul, Headline => "a differential in a Koszul complex" }
-document { (koszul,ZZ,Matrix),
-     Synopsis => {
-	  Usage => "g = koszul(i,f)",
-	  Inputs => {
-	       "i" => "",
-	       "f" => {"a ", TT "1", " by ", TT "n", " matrix."},
-	       },
-	  Outputs => {
-	       "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
-	       }
-	  }
+document {
+     Key => koszul, Headline => "a differential in a Koszul complex" }
+document {
+     Key => (koszul,ZZ,Matrix),
+     Usage => "g = koszul(i,f)",
+     Inputs => {
+	  "i" => "",
+	  "f" => {"a ", TT "1", " by ", TT "n", " matrix."},
+	  },
+     Outputs => {
+	  "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
+	  },
      }
 
-document { symmetricPower, Headline => "symmetric power" }
-document { (symmetricPower,ZZ,Matrix),
-     Synopsis => {
-	  Usage => "symmetricPower(i,f)",
-	  Inputs => {
-	       "i" => "",
-	       "f" => "",
-	       },
-	  Outputs => {
-	       { "the ", TT "i", "-th symmetric power of ", TT "f"}
-	       }
+document {
+     Key => symmetricPower, Headline => "symmetric power" }
+document {
+     Key => (symmetricPower,ZZ,Matrix),
+     Usage => "symmetricPower(i,f)",
+     Inputs => {
+	  "i" => "",
+	  "f" => "",
+	  },
+     Outputs => {
+	  { "the ", TT "i", "-th symmetric power of ", TT "f"}
 	  },
      PARA { "Note: in the current implementation, ", TT "f", " should have just one row." }
      }
 
-document { (exteriorPower,ZZ,Matrix),
-     Synopsis => {
-	  Usage => {TT "exteriorPower(p,f)", " or ", TT "exteriorPower_p f"},
-	  Inputs => {
-	       "p" => null,
-	       "f" => null,
-	       },
-	  Outputs => {
-	       { "the ", TT "p", "-th exterior power of ", TT "f", "."}
-	       },
-	  ,
+document {
+     Key => (exteriorPower,ZZ,Matrix),
+     Usage => {TT "exteriorPower(p,f)", " or ", TT "exteriorPower_p f"},
+     Inputs => {
+	  "p" => null,
+	  "f" => null,
+	  },
+     Outputs => {
+	  { "the ", TT "p", "-th exterior power of ", TT "f", "."}
 	  },
      EXAMPLE {
 	  "R = ZZ/2[x,y];",
@@ -1025,21 +1088,20 @@ document { (exteriorPower,ZZ,Matrix),
 	  }
      }
 
-document { (symbol _,Function,Thing),
+document {
+     Key => (symbol _,Function,Thing),
      Headline => "attach the first argument to a function of two or more arguments",
-     Synopsis => {
-	  Usage => "g = f_x",
-	  Inputs => {
-	       "f" => Function => "a function of two or more arguments",
-	       "x" => Thing => ""
-	       },
-	  Outputs => {
-	       "g" => Function => {
-		    "a new function with the property that ", TT "g(y)", "
-		    returns the value of  ", TT "f(x,y)", ", that
-		    ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
-		    so on."
-		    }
+     Usage => "g = f_x",
+     Inputs => {
+	  "f" => Function => "a function of two or more arguments",
+	  "x" => Thing => ""
+	  },
+     Outputs => {
+	  "g" => Function => {
+	       "a new function with the property that ", TT "g(y)", "
+	       returns the value of  ", TT "f(x,y)", ", that
+	       ", TT "g(y,z)", " returns the value of ", TT "f(x,y,z)", ", and
+	       so on."
 	       }
 	  },
      PARA {
@@ -1055,19 +1117,22 @@ document { (symbol _,Function,Thing),
 	  }
      }
 
-document { MinorsComputation,
+document {
+     Key => MinorsComputation,
      Headline => "the class of all minors computations",
      TT "MinorsComputation", " -- a type of self initializing list used
      internally by ", TO "minors", "."
      }
 
-document { PfaffiansComputation,
+document {
+     Key => PfaffiansComputation,
      Headline => "the class of all Pfaffians computations",
      TT "PfaffiansComputation", " -- a type of self initializing list used
      internally by ", TO "pfaffians", "."
      }
 
-document { wedgeProduct,
+document {
+     Key => wedgeProduct,
      Headline => "the exterior multiplication map",
      TT "wedgeProduct(p,q,M)", " -- returns the matrix which represents the
      multiplication map from ", TT "exteriorPower(p,M) ** exteriorPower(q,M)", "
@@ -1076,7 +1141,8 @@ document { wedgeProduct,
      "Here ", TT "M", " is free module."
      }
 
-document { exteriorPower,
+document {
+     Key => exteriorPower,
      Headline => "exterior power",
      TT "exteriorPower(i,M)", " -- the i-th exterior power of a module ", TT "M", ".",
      BR,NOINDENT,
@@ -1107,7 +1173,8 @@ TEST ///
 ///
 
 
-document { minors,
+document {
+     Key => minors,
      Headline => "ideal generated by minors",
      TT "minors(p,m)", " -- produces the ideal generated by
      the determinants of the p-by-p submatrices of the matrix ", TT "m", ".",
@@ -1115,17 +1182,16 @@ document { minors,
      SEEALSO {"det", "exteriorPower"}
      }
 
-document { (minors,ZZ,Matrix),
+document {
+     Key => (minors,ZZ,Matrix),
      Headline => "ideal generated by minors",
-     Synopsis => {
-	  Usage => "minors(p,m)",
-	  Inputs => {
-	       "p" => "",
-	       "m" => {"a map between free modules"}
-	       },
-	  Outputs => {
-	       {"the ideal generated by the ", TT "p", " by ", TT "p", " minors of the matrix ", TT "m", "."}
-	       }
+     Usage => "minors(p,m)",
+     Inputs => {
+	  "p" => "",
+	  "m" => {"a map between free modules"}
+	  },
+     Outputs => {
+	  {"the ideal generated by the ", TT "p", " by ", TT "p", " minors of the matrix ", TT "m", "."}
 	  },
      PARA { "Minors are generated in the same order as that used by ", TO (subsets,ZZ,ZZ), "." },
      EXAMPLE {
@@ -1142,15 +1208,18 @@ document { (minors,ZZ,Matrix),
      }
 
 
-document { symbol Bareiss,
+document {
+     Key => symbol Bareiss,
      "A keyword used by ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "."
      }
-document { symbol Cofactor,
+document {
+     Key => symbol Cofactor,
      "A keyword used by ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "."
      }
 
-apply({ (minors, Strategy), (det,Strategy), (exteriorPower,Strategy) }, 
-     node -> document { node,
+apply({ (minors, Strategy), (det,Strategy), (exteriorPower,Strategy) },	-- let's do something different here
+     node -> document { 
+	  Key => node,
 	  Headline => "choose between Bareiss and Cofactor algorithms",
 	  TT "Strategy => Bareiss", " -- use Bareiss' fraction free determinant algorithm",
 	  BR,
@@ -1166,7 +1235,8 @@ apply({ (minors, Strategy), (det,Strategy), (exteriorPower,Strategy) },
 	  }
   )
 
-document { (minors,First),
+document {
+     Key => (minors,First),
      Headline => "set the first minor to compute",
      TT "First => {rows, columns}", " -- set the first minor to compute",
      PARA,
@@ -1181,7 +1251,8 @@ document { (minors,First),
      SEEALSO {minors, (minors,Limit)}
      }
 
-document { (minors,Limit),
+document {
+     Key => (minors,Limit),
      TT "Limit => n", " -- the number of minors to compute",
      SEEALSO (minors,First)
      }
@@ -1195,7 +1266,8 @@ assert( minors(1,h) == image matrix {{a,b,c,d}} )
 assert( minors(2,h) == image matrix {{a * d - b * c}} )
 "
 
-document { pfaffians,
+document {
+     Key => pfaffians,
      Headline => "ideal generated by Pfaffians",
      TT "pfaffians(n,f)", " -- given a skew symmetric matrix f, produce the 
      ideal generated by its ", TT "n", " by ", TT "n", " Pfaffians.",
@@ -1221,7 +1293,8 @@ assert( pfaffians(3,m) == ideal(0_R) )
 assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
 ///
 
-document { trace,
+document {
+     Key => trace,
      Headline => "trace of a matrix",
      TT "trace f", " -- returns the trace of the matrix f.",
      PARA,
@@ -1232,21 +1305,21 @@ document { trace,
 	  },
      }
 
-document { det,
+document {
+     Key => det,
      Headline => "determinant of a matrix",
      SEEALSO {"minors", "exteriorPower"}
      }
 
-document { (det,Matrix),
+document {
+     Key => (det,Matrix),
      Headline => "determinant of a matrix",
-     Synopsis => {
-	  Usage => "det f",
-	  Inputs => {
-	       "f" => { "a square matrix"}
-	       },
-	  Outputs => {
-	       { "the determinant of ", TT "f"}
-	       }
+     Usage => "det f",
+     Inputs => {
+	  "f" => { "a square matrix"}
+	  },
+     Outputs => {
+	  { "the determinant of ", TT "f"}
 	  },
      EXAMPLE {
 	  "R = QQ[a..d]",
@@ -1255,14 +1328,16 @@ document { (det,Matrix),
 	  }
      }
      
-document { Limit,
+document {
+     Key => Limit,
      Headline => "specify how many to compute",
      TT "Limit => n", " -- an optional argument for ", TO "pfaffians", "
      or for ", TO "minors", " specifying that the computation should stop 
      after ", TT "n", " more elements are computed."
      }
 
-document { fittingIdeal,
+document {
+     Key => fittingIdeal,
      Headline => "Fitting ideal of a module",
      TT "fittingIdeal(i,M)", " -- the i-th Fitting ideal of the module M",
      PARA,
@@ -1290,7 +1365,8 @@ assert( fittingIdeal(7,M) == ideal x )
 assert( fittingIdeal(8,M) == ideal 1_R )
 assert( fittingIdeal(9,M) == ideal 1_R )
 "
-document { genericMatrix,
+document {
+     Key => genericMatrix,
      Headline => "make a generic matrix of variables",
      TT "genericMatrix(R,x,m,n)", " -- produce an m by n matrix of variables drawn
      from the ring R, starting with variable x.",
@@ -1301,28 +1377,32 @@ document { genericMatrix,
 	  },
      }
 
-document { genericSkewMatrix,
+document {
+     Key => genericSkewMatrix,
      Headline => "make a generic skew symmetric matrix",
      TT "genericSkewMatrix(R,x,n)", " -- make a skew symmetric n by n 
      matrix whose entries above the diagonal are the variables of R, starting 
      with the variable x."
      }
 
-document { genericSymmetricMatrix,
+document {
+     Key => genericSymmetricMatrix,
      Headline => "make a generic symmetric matrix",
      TT "genericSymmetricMatrix(R,x,n)", " -- make a symmetric n by n matrix 
      whose entries on and above the diagonal are the variables of R, starting 
      with the variable x."
      }
 
-document { (symbol +, Module, Module),
+document {
+     Key => (symbol +, Module, Module),
      Headline => "sum of submodules",
      TT "M + N", " -- the sum of two submodules.",
      PARA,
      "The two modules should be submodules of the same module."
      }
 
-document { (symbol **, Module, Module),
+document {
+     Key => (symbol **, Module, Module),
      Headline => "tensor product of modules",
      TT "M ** N", " -- produce the tensor product of two modules.",
      PARA,
@@ -1346,7 +1426,8 @@ TEST ///
     table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
 ///
 
-document { (symbol **, Matrix, Module),
+document {
+     Key => (symbol **, Matrix, Module),
      Headline => "tensor product",
      TT "f ** N", " -- tensor product of a matrix ", TT "f", " and a module ", TT "N", ".",
      PARA,
@@ -1363,7 +1444,8 @@ document { (symbol **, Matrix, Module),
      SEEALSO {"Matrix", "Module"}
      }
 
-document { (symbol **, Module, Ring),
+document {
+     Key => (symbol **, Module, Ring),
      Headline => "tensor product",
      TT "M ** R", " -- form the tensor product of a module ", TT "M", " with a ring ", TT "R", ".",
      PARA,
@@ -1375,7 +1457,8 @@ document { (symbol **, Module, Ring),
 	  },
      }
 
-document { (symbol **, Matrix, Ring),
+document {
+     Key => (symbol **, Matrix, Ring),
      Headline => "tensor product",
      TT "f ** R", " -- form the tensor product of a module map ", TT "f", " with 
      a ring ", TT "R", ".",
@@ -1390,7 +1473,8 @@ document { (symbol **, Matrix, Ring),
 	  },
      }
 
-document { poincareComputation,
+document {
+     Key => poincareComputation,
      Headline => "store the Poincare polynomial computation",
      TT "poincareComputation", " -- a key used in a module or monomial
      ideal to store a computation of Poincare polynomial.",
@@ -1398,7 +1482,8 @@ document { poincareComputation,
      SEEALSO {"poincare"}
      }
 
-document { hilbertFunction,
+document {
+     Key => hilbertFunction,
      Headline => "Hilbert function of a module",
      TT "hilbertFunction(d,M)", " -- compute the dimension of the degree d
      part of the module, ring, or ideal M",
@@ -1418,13 +1503,15 @@ assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
 assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
 ///
 
-document { Order,
+document {
+     Key => Order,
      Headline => "specify the order of a Hilbert series required",
      TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "
      to specify the order of the series requested."
      }
 
-document { hilbertSeries,
+document {
+     Key => hilbertSeries,
      Headline => "compute Hilbert series",
      TT "hilbertSeries M", " -- compute the Hilbert series of the ring or
      module ", TT "M", ".",
@@ -1451,7 +1538,8 @@ document { hilbertSeries,
      SEEALSO {"degreesRing", "Order"}
      }
 
-document { ProjectiveHilbertPolynomial,
+document {
+     Key => ProjectiveHilbertPolynomial,
      Headline => "the class of all Hilbert polynomials",
      "For convenience, these polynomials are expressed in terms of the Hilbert 
      polynomials of projective space.",
@@ -1465,7 +1553,8 @@ document { ProjectiveHilbertPolynomial,
 	  }
      }
 
-document { (symbol " ", ProjectiveHilbertPolynomial, ZZ),
+document {
+     Key => (symbol " ", ProjectiveHilbertPolynomial, ZZ),
      Headline => "value of polynomial",
      TT "P i", " -- the value of a projective Hilbert polynomial ", TT "P", " at 
      an integer ", TT "i", ".",
@@ -1477,7 +1566,8 @@ document { (symbol " ", ProjectiveHilbertPolynomial, ZZ),
      SEEALSO ProjectiveHilbertPolynomial
      }
 
-document { projectiveHilbertPolynomial,
+document {
+     Key => projectiveHilbertPolynomial,
      Headline => "Hilbert polynomial of projective space",
      TT "projectiveHilbertPolynomial n", " -- produces the projective
      Hilbert polynomial corresponding to projective space of dimension n.",
@@ -1516,7 +1606,8 @@ scan(3, n -> (
 	       	    assert( r == s)))))))
 "
 
-document { Projective,
+document {
+     Key => Projective,
      Headline => "whether to produce a projective Hilbert polynomial",
      TT "Projective => true", " -- an option to ", TO "hilbertPolynomial", " which
      specifies that the Hilbert polynomial produced should be expressed in terms
@@ -1550,13 +1641,15 @@ document { Projective,
      SEEALSO "ProjectiveHilbertPolynomial"
      }
 
-document { hilbertPolynomial,
+document {
+     Key => hilbertPolynomial,
      Headline => "compute Hilbert polynomial",
      TT "hilbertPolynomial M", " -- the Hilbert polynomial of the module ", TT "M", " as
      a polynomial in ", TT "T", "."
      }
 
-document { codim,
+document {
+     Key => codim,
      Headline => "calculate the codimension",
      TT "codim M", " -- calculate the codimension of the support of a module ", TT "M", ".",
      BR,NOINDENT,
@@ -1577,7 +1670,8 @@ document { codim,
      different dimension!"
      }
 
-document { (codim, Module),
+document {
+     Key => (codim, Module),
      OldSynopsis => {
 	  "c = codim M",
 	  "M" => {"A module over a ring ", TT "R", "."},
@@ -1595,7 +1689,8 @@ document { (codim, Module),
 	  rational numbers, yielding the wrong answers in some cases.",
 	  "R must be a quotient of a commutative polynomial ring.")
      }
-document { dim,
+document {
+     Key => dim,
      Headline => "calculate the dimension",
      TT "dim M", " -- calculate the dimension of the support of a module M.",
      BR,NOINDENT,
@@ -1615,7 +1710,8 @@ document { dim,
      SEEALSO {"Schur"}
      }
 
-document { presentation,
+document {
+     Key => presentation,
      Headline => "presentation of a module or ring",
      TT "presentation M", " -- produce a presentation of the module ", TT "M", ".",
      BR,NOINDENT,
@@ -1651,11 +1747,13 @@ TEST ///
 ///
 
 
-document { prune,
+document {
+     Key => prune,
      Headline => "minimize generators and relations"
      }
 
-document { (prune, Matrix),
+document {
+     Key => (prune, Matrix),
      OldSynopsis => {
 	  "h = prune f",
 	  "f" => null,
@@ -1666,7 +1764,8 @@ document { (prune, Matrix),
      SEEALSO {"presentation", "trim"}
      }
 
-document { (prune, Module),
+document {
+     Key => (prune, Module),
      OldSynopsis => {
 	  "N = prune M",
 	  "M" => null,
@@ -1682,7 +1781,8 @@ document { (prune, Module),
      SEEALSO { "pruningMap" }
      }
 
-document { pruningMap,
+document {
+     Key => pruningMap,
      Headline => "store the isomorphism obtained by pruning",
      TT "pruningMap", " -- the key under which is stored the isomorphism to
      a module ", TT "M", " from the module ", TT "prune M", ".",
@@ -1692,7 +1792,8 @@ document { pruningMap,
      SEEALSO "prune"
      }
 
-document { dual,
+document {
+     Key => dual,
      Headline => "dual module or map",
      TT "dual M", " -- the dual.",
      PARA,
@@ -1733,12 +1834,14 @@ assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
 "
 
-document { (dual, Module),
+document {
+     Key => (dual, Module),
      Headline => "dual module",
      TT "dual M", " -- the dual of a module."
      }
 
-document { homomorphism,
+document {
+     Key => homomorphism,
      Headline => "get the homomorphism from element of Hom",
      TT "homomorphism f", " -- finds the matrix ", TT "M <-- N", " corresponding to the 
      element ", TT "f", ".",

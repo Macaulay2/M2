@@ -270,12 +270,14 @@ scope := method()
 scope2 := method()
 scope1 := method()
 
+--- all this will be changed -- we will use the Menu => options for descent, only
+
 -- scanning at top level, not inside a CONTENTS or a NOCONTENTS
 scope (String, Thing      ) := (f,x) -> null
 scope (String, Sequence   ) :=
 scope (String, BasicList  ) := (f,x) -> scan(x,y -> scope(f,y))
-scope (String, NOCONTENTS ) := (f,x) -> scan(x,y -> scope1(f,y))
-scope (String, CONTENTS   ) := (f,x) -> scan(x,y -> scope2(f,y))
+-- scope (String, NOCONTENTS ) := (f,x) -> scan(x,y -> scope1(f,y))
+-- scope (String, CONTENTS   ) := (f,x) -> scan(x,y -> scope2(f,y))
 scope (String, TO         ) :=
 scope (String, TOH        ) := (f,x) -> follow(x#0)
 
@@ -285,12 +287,12 @@ scope1 (String, Sequence  ) :=
 scope1 (String, BasicList ) := (f,x) -> scan(x,y -> scope1(f,y))
 scope1 (String, TO        ) :=
 scope1 (String, TOH       ) := (f,x) -> follow(x#0)
-scope1 (String, CONTENTS  ) := (f,x) -> error ("CONTENTS tag encountered withing a NOCONTENTS tag: ", f)
+-- scope1 (String, CONTENTS  ) := (f,x) -> error ("CONTENTS tag encountered withing a NOCONTENTS tag: ", f)
 
 -- scanning inside a CONTENTS not inside a NOCONTENTS
 scope2 (String, Thing     ) := scope
 scope2 (String, SEQ       ) := (f,x) -> scan(x,y -> scope2(f,y))
-scope2 (String, NOCONTENTS) := (f,x) -> scan(x,y -> scope1(f,y))
+-- scope2 (String, NOCONTENTS) := (f,x) -> scan(x,y -> scope1(f,y))
 scope2 (String, TO        ) :=
 scope2 (String, TOH       ) := (f,x) -> (
       key := normalizeDocumentTag x#0;

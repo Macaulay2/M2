@@ -11,7 +11,8 @@ TEST ///
      E = coimage D_[0]
 ///
 
-document { Resolution,
+document {
+     Key => Resolution,
      Headline => "the class of all resolution computations",
      PARA,
      "These resolutions are internal engine objects not meant to be examined
@@ -21,8 +22,10 @@ document { Resolution,
      store the resolution it comes from."
      }
 
-document { resolution, Headline => "make a projective resolution" }
-document { (resolution,DegreeLimit),
+document {
+     Key => resolution, Headline => "make a projective resolution" }
+document {
+     Key => (resolution,DegreeLimit),
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "resolution", " which specifies that the computation should halt
@@ -39,7 +42,8 @@ document { (resolution,DegreeLimit),
 	  },
      }
 
-document { (resolution,SyzygyLimit),
+document {
+     Key => (resolution,SyzygyLimit),
      Headline => "stop when this number of syzygies are obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
@@ -54,7 +58,8 @@ document { (resolution,SyzygyLimit),
 	  }
      }
 
-document { (resolution,PairLimit),
+document {
+     Key => (resolution,PairLimit),
      Headline => "stop when this number of pairs are handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
@@ -68,7 +73,8 @@ document { (resolution,PairLimit),
 	  }
      }
 
-document { (resolution,StopBeforeComputation),
+document {
+     Key => (resolution,StopBeforeComputation),
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
@@ -78,11 +84,13 @@ document { (resolution,StopBeforeComputation),
      the partially computed resolution contained in an interrupted computation."
      }
 
-document { LengthLimit,
+document {
+     Key => LengthLimit,
      Headline => "stop when the resolution reaches this length",
      }
 
-document { (resolution,LengthLimit),
+document {
+     Key => (resolution,LengthLimit),
      Headline => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
@@ -100,13 +108,15 @@ document { (resolution,LengthLimit),
      The extra differential is not guaranteed to be minimal."
      }
 
-document { HardDegreeLimit,
+document {
+     Key => HardDegreeLimit,
      Headline => "compute only up to this degree",
      TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
      that information above a specified degree is to be discarded."
      }
 
-document { (resolution,HardDegreeLimit),
+document {
+     Key => (resolution,HardDegreeLimit),
      TT "HardDegreeLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -115,7 +125,8 @@ document { (resolution,HardDegreeLimit),
      "Information above the specified degree is discarded."
      }
 
-document { (resolution,Strategy),
+document {
+     Key => (resolution,Strategy),
      TT "Strategy => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
@@ -135,13 +146,15 @@ document { (resolution,Strategy),
      this makes an enormous improvement to the efficiency of the algorithm."
      }
 
-document { SortStrategy,
+document {
+     Key => SortStrategy,
      Headline => "specify a strategy for sorting S-pairs",
      TT "SortStrategy", " -- a keyword for an optional argument which 
      specifies the strategy to be used for sorting S-pairs."
      }
 
-document { (resolution,SortStrategy),
+document {
+     Key => (resolution,SortStrategy),
      TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
      specifies the strategy to be used for sorting S-pairs.",
      PARA,
@@ -160,15 +173,14 @@ assert (HH_3 C == 0)
 assert (HH_4 C == 0)
 "
 
-document { (resolution,Module),
-     Synopsis => {
-	  Usage => {TT "resolution M", " or ", TT "res M"},
-	  Inputs => {
-	       "M" => "",
-	       },
-	  Outputs => {
-	       {"a free resolution of ", TT "M"}
-	       }
+document {
+     Key => (resolution,Module),
+     Usage => {TT "resolution M", " or ", TT "res M"},
+     Inputs => {
+	  "M" => "",
+	  },
+     Outputs => {
+	  {"a free resolution of ", TT "M"}
 	  },
      "Warning: the resolution can have free modules with unexpected ranks
      when the module ", TT "M", " is not homogeneous.  Here is an example
@@ -196,26 +208,28 @@ document { (resolution,Module),
 	  "C = resolution(M, LengthLimit=>6)"
 	  },
      "For an overview of resolutions, in order of increasing detail, see",
-     NOCONTENTS UL {
+     UL {
 	  SEQ (TO "Hilbert functions and free resolutions"),
 	  TO "free resolutions of modules",
 	  SEQ (TO "computing resolutions", " -- most detailed")
 	  },
      "Some useful related functions",
-     NOCONTENTS UL {
+     UL {
 	  TO (betti,ChainComplex),
 	  TO (status,Resolution),
 	  }
      }
 
-document { (resolution, Matrix),
+document {
+     Key => (resolution, Matrix),
      TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
      chain map from a resolution of the source of ", TT "f", " to a resolution of the
      target of ", TT "f", ".",
      SEEALSO "free resolutions of modules"
      }
 
-document { (resolution, Ideal),
+document {
+     Key => (resolution, Ideal),
      TT "resolution I", " -- produces a projective resolution of the 
      module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", "."
      }
@@ -236,7 +250,8 @@ C = res(M, LengthLimit => 2, DegreeLimit => 4)
 --- assert( rank C_2 == 90 )
 "
 
-document { status,
+document {
+     Key => status,
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex C constructed by ", TO "resolution", ".  The display has
@@ -254,25 +269,29 @@ document { status,
 	  }
      }
 
-document { TotalPairs,
+document {
+     Key => TotalPairs,
      Headline => "whether to display the total number of S-pairs",
      TT "TotalPairs", " -- an option for ", TO "status", " which specifies
      whether to display the total number of S-pairs."
      }
 
-document { PairsRemaining,
+document {
+     Key => PairsRemaining,
      Headline => "whether to display the number of S-pairs remaining",
      TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
      whether to display number of S-pairs remaining."
      }
 
-document { Monomials,
+document {
+     Key => Monomials,
      Headline => "whether to display the number of monomial",
      TT "Monomials", " -- an option for ", TO "status", " which specifies
      whether to display the number of monomials."
      }
 
-document { radical, 
+document {
+     Key => radical, 
      Headline => "compute the radical of an ideal",
      TT "radical I", " -- the radical of the ideal I",
      PARA,
@@ -296,7 +315,8 @@ document { radical,
      SEEALSO {"top", "removeLowestDimension", "saturate", "quotient"}
      }
 
-document { CompleteIntersection,
+document {
+     Key => CompleteIntersection,
      Headline => "provide a hint when computing a radical",
      TT "CompleteIntersection => J", " -- an option to ", TO "radical", " 
      which indicates that the ideal ", TT "I", " provided by the user is unmixed,
@@ -311,7 +331,8 @@ document { CompleteIntersection,
      ", TO "Unmixed", " option."
      }
 
-document { Unmixed,
+document {
+     Key => Unmixed,
      Headline => "provide a hint when computing a radical",
      TT "Unmixed => true", " -- an option to ", TO "radical", " which asserts
      that the ideal provided by the user is known to be unmixed.",
@@ -320,7 +341,8 @@ document { Unmixed,
      have the same dimension.  In this case the algorithm tends to be much faster."
      }
 
-document { top,
+document {
+     Key => top,
      Headline => "compute the top dimensional components",
      TT "top I", " -- yields the intersection of top dimensional primary
      components of the module or ideal ", TT "I", ".",
@@ -335,7 +357,8 @@ document { top,
      SEEALSO {"removeLowestDimension", "saturate", "quotient", "radical"}
      }
 
-document { removeLowestDimension,
+document {
+     Key => removeLowestDimension,
      Headline => "remove components of lower dimension",
      TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",
      PARA,
@@ -352,7 +375,8 @@ document { removeLowestDimension,
      SEEALSO {"top", "saturate", "quotient", "radical", "decompose"}
      }
 
-document { factor,
+document {
+     Key => factor,
      Headline => "factor a ring element",
      TT "factor x", " -- factors x.",
      PARA,
@@ -388,7 +412,8 @@ document { factor,
      EXAMPLE "code(factor,F)"
      }
 
-document { pseudoRemainder,
+document {
+     Key => pseudoRemainder,
      Headline => "compute the pseudo-remainder",
      TT "pseudoRemainder(f,g)", " -- computes the pseudo-remainder for
      f divided by g.",
@@ -396,7 +421,8 @@ document { pseudoRemainder,
      "This is an internal experimental routine."
      }
 
-document { irreducibleCharacteristicSeries,
+document {
+     Key => irreducibleCharacteristicSeries,
      Headline => "compute the irreducible characteristic series",
      TT "irreducibleCharacteristicSeries I", " -- computes the irreducible
      characteristic series of the ideal ", TT "I", ".",
@@ -404,7 +430,8 @@ document { irreducibleCharacteristicSeries,
      "This is an internal routine used by ", TO "decompose", "."
      }
 
-document { topCoefficients,
+document {
+     Key => topCoefficients,
      Headline => "list of top coefficients of a matrix",
      TT "topCoefficients m", " -- for a matrix ", TT "m", ", for each column, returns
      the coefficients of the highest power of the variable with the lowest
@@ -420,7 +447,8 @@ document { topCoefficients,
      x_i^n."
      }
 
-document { decompose,
+document {
+     Key => decompose,
      Headline => "irreducible components of an ideal",
      TT "decompose I", " -- compute the ideals of the irreducible
      components of the subvariety defined by the ideal ", TT "I", ".",
@@ -547,14 +575,16 @@ assert( (x^2-10748*y*x+y^2)*(y^2+x^2)*(x^2+10748*y*x+y^2) == x^6 + y^6 )
 assert ( # factor (x^6 + y^6) == 3 )
 "
 
-document { integrate,
+document {
+     Key => integrate,
      Headline => "numerical integration",
      TT "integrate(f,a,b)", " -- integrate f from a to b numerically, using
      Gaussian quadrature.",
      EXAMPLE "integrate(sin,0,pi)"
      }
 
-document { getWWW,
+document {
+     Key => getWWW,
      Headline => "get a web page",
      TT "getWWW URL", " -- obtain the contents of the web page addressed
      by ", TT "URL", " from an http server.",
@@ -570,7 +600,8 @@ document { getWWW,
      depends on your having installed ", TT "openssl", " on your system."
      }
 
-document { browse,
+document {
+     Key => browse,
      Headline => "browse the contents of an object",
      TT "browse x", " -- provides an interactive mechanism which allows the user
      to explore the hash table or list ", TT "x", ".",
@@ -583,7 +614,8 @@ document { browse,
      re-examine the previous item."
      }
 
-document { showUserStructure,
+document {
+     Key => showUserStructure,
      Headline => "show relationship between types defined by user",
      TT "showUserStructure", " -- a command which displays the structure of 
      types defined by the user and assigned to global variables.",
@@ -601,7 +633,8 @@ document { showUserStructure,
      }
 
 
-document { showStructure,
+document {
+     Key => showStructure,
      Headline => "show relationship between types",
      TT "showStructure", " -- a command which displays the structure of types
      assigned to global variables.",
@@ -618,7 +651,8 @@ document { showStructure,
      SEEALSO { "showUserStructure", "parent"}
      }
 
-document { symbol "..",
+document {
+     Key => symbol "..",
      Headline => "sequence of consecutive items",
      TT "m .. n", " -- produces a sequence of integers in the range from m to 
      n inclusive. If n is less than m then the result is an empty sequence.",
@@ -662,7 +696,8 @@ document { symbol "..",
 	  },
      }
 
-document { (cohomology, ZZ, Module),
+document {
+     Key => (cohomology, ZZ, Module),
      Headline => "local cohomology",
      TT "HH^i(M)", " -- computes the i-th local cohomology of ", TT "M", " with
      respect to the maximal ideal generated by the variables of the ring.",
@@ -674,44 +709,52 @@ document { (cohomology, ZZ, Module),
 	  }
      }
 
-document { Variety,
+document {
+     Key => Variety,
      Headline => "the class of all algebraic varieties", 
      SEEALSO "varieties"
      }
 
-document { AffineVariety,
+document {
+     Key => AffineVariety,
      Headline => "the class of all affine varieties",
      "To create an affine variety, use ", TO "Spec", ".",
      EXAMPLE { "Spec(QQ[x,y])" }
      }
 
-document { ProjectiveVariety,
+document {
+     Key => ProjectiveVariety,
      Headline => "the class of all projective varieties",
      "To create a projective variety, use ", TO "Proj", ".",
      EXAMPLE { "Proj(QQ[x,y])" }
      }
 
-document { Spec,
+document {
+     Key => Spec,
      Headline => "make an affine variety",
      TT "Spec R", " -- create an affine variety or scheme from the ring ", TT "R", ".",
      EXAMPLE { "R = QQ[x,y];", "Spec R" }
      }
 
-document { Proj,
+document {
+     Key => Proj,
      Headline => "make a projective variety",
      TT "Proj R", " -- create a projective variety or scheme from the graded ring ", TT "R", ".",
      EXAMPLE { "R = QQ[x,y];", "Proj R" }
      }
 
-document { CoherentSheaf,
+document {
+     Key => CoherentSheaf,
      Headline => "the class of all coherent sheaves"
      }
 
-document { sheaf,
+document {
+     Key => sheaf,
      Headline => "make a coherent sheaf"
      }
 
-document { (sheaf, Variety, Module),
+document {
+     Key => (sheaf, Variety, Module),
      Headline => "make a coherent sheaf",
      TT "sheaf(X,M)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
      to the module ", TT "M", ".",
@@ -720,13 +763,15 @@ document { (sheaf, Variety, Module),
      the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
      }
 
-document { (sheaf, Module),
+document {
+     Key => (sheaf, Module),
      Headline => "make a coherent sheaf",
      TT "sheaf M", " -- produce the coherent sheaf on a projective variety ", TT "X", "
      corresponding to a homegeneous module ", TT "M", "."
      }
 
-document { (symbol ~, Module),
+document {
+     Key => (symbol ~, Module),
      Headline => "make a coherent sheaf",
      TT "M~", " -- produce the coherent sheaf on a projective variety ", TT "X", "
      corresponding to a homegeneous module ", TT "M", ".",
@@ -734,18 +779,21 @@ document { (symbol ~, Module),
      SEEALSO "CoherentSheaf"
      }
 
-document { (sheaf, Ring), 
+document {
+     Key => (sheaf, Ring), 
      Headline => "make the structure sheaf",
      TT "sheaf R", " -- produce the structure sheaf on the projective variety ", TT "Proj R", "."
      }
 
-document { (symbol ~, Ring),
+document {
+     Key => (symbol ~, Ring),
      Headline => "make the structure sheaf",
      TT "R~", " -- produce the structure sheaf on the projective variety ", TT "Proj R", ".",
      EXAMPLE { "R = QQ[x,y,z];", "R~", "variety oo" }
      }
 
-document { (variety, CoherentSheaf),
+document {
+     Key => (variety, CoherentSheaf),
      Headline => "get the variety under a sheaf",
      TT "variety F", " -- produce the variety over which a coherent sheaf is defined.",
      PARA,
@@ -756,17 +804,20 @@ document { (variety, CoherentSheaf),
 	  }
      }
 
-document { variety,
+document {
+     Key => variety,
      Headline => "get the variety"
      }
 
-document { (ring, CoherentSheaf),
+document {
+     Key => (ring, CoherentSheaf),
      Headline => "get the coordinate ring under a sheaf",
      TT "ring F", " -- produce the coordinate ring of the variety on which a coherent sheaf
      ", TT "F", " is defined."
      }
 
-document { (module, CoherentSheaf),
+document {
+     Key => (module, CoherentSheaf),
      Headline => "get the module defining a coherent sheaf",
      TT "module F", " -- produce the module from which the coherent sheaf ", TT "F", " was defined.",
      PARA,
@@ -778,17 +829,20 @@ document { (module, CoherentSheaf),
 	  }
      }
 
-document { (symbol ++, CoherentSheaf, CoherentSheaf),
+document {
+     Key => (symbol ++, CoherentSheaf, CoherentSheaf),
      Headline => "direct sum of coherent sheaves",
      TT "F ++ G", " -- direct sum of coherent sheaves."
      }
 
-document { (symbol **, CoherentSheaf, CoherentSheaf),
+document {
+     Key => (symbol **, CoherentSheaf, CoherentSheaf),
      Headline => "tensor product of coherent sheaves",
      TT "F ** G", " -- tensor product of coherent sheaves."
      }
 
-document { (symbol " ", CoherentSheaf, ZZ),
+document {
+     Key => (symbol " ", CoherentSheaf, ZZ),
      Headline => "canonical twist of a coherent sheaf",
      TT "F(n)", " -- twist a coherent sheaf F on a projective variety by
      the n-th power of the hyperplane line bundle.",
@@ -802,7 +856,8 @@ document { (symbol " ", CoherentSheaf, ZZ),
 	  }
      }
 
-document { (symbol /, CoherentSheaf, CoherentSheaf),
+document {
+     Key => (symbol /, CoherentSheaf, CoherentSheaf),
      Headline => "quotient of coherent sheaves",
      TT "F / G", " -- quotient of coherent sheaves.",
      PARA,
@@ -810,25 +865,30 @@ document { (symbol /, CoherentSheaf, CoherentSheaf),
      }
 
 
-document { (codim, CoherentSheaf),
+document {
+     Key => (codim, CoherentSheaf),
      Headline => "codimension of support"
      }
 
-document { (rank, CoherentSheaf),
+document {
+     Key => (rank, CoherentSheaf),
      Headline => "the rank of a coherent sheaf",
      }
 
-document { (exteriorPower, ZZ, CoherentSheaf),
+document {
+     Key => (exteriorPower, ZZ, CoherentSheaf),
      TT "exteriorPower(i,F)", " -- calculate the ", TT "i", "-th exterior power of a coherent sheaf
      ", TT "F", ".",
      }
 
-document { (degrees, CoherentSheaf),
+document {
+     Key => (degrees, CoherentSheaf),
      TT "degrees F", " -- produce a list of the degrees of the generators of the module
      defining a coherent sheaf ", TT "F", "."
      }
 
-document { (symbol >=, ZZ),
+document {
+     Key => (symbol >=, ZZ),
      OldSynopsis => {
 	  "b = (>= d)",
 	  "d" => null,
@@ -839,7 +899,8 @@ document { (symbol >=, ZZ),
 	  }
      }
 
-document { (symbol >, ZZ),
+document {
+     Key => (symbol >, ZZ),
      OldSynopsis => {
 	  "b = (> d)",
 	  "d" => null,
@@ -850,7 +911,8 @@ document { (symbol >, ZZ),
 	  }
      }
 
-document { (cohomology, ZZ, SumOfTwists),
+document {
+     Key => (cohomology, ZZ, SumOfTwists),
      Headline => "coherent sheaf cohomology",
      OldSynopsis => {
 	  "M = HH^i(F(>=d))",
@@ -876,7 +938,8 @@ document { (cohomology, ZZ, SumOfTwists),
 	  }
      }
 
-document { (cohomology, ZZ, CoherentSheaf),
+document {
+     Key => (cohomology, ZZ, CoherentSheaf),
      Headline => "coherent sheaf cohomology",
      OldSynopsis => {
 	  "V = HH^i(F)",
@@ -894,7 +957,8 @@ document { (cohomology, ZZ, CoherentSheaf),
 	  }
      }
 
-document { OO,
+document {
+     Key => OO,
      Headline => "the structure sheaf",
      OldSynopsis => {
 	  "O = OO_X",
@@ -903,21 +967,25 @@ document { OO,
 	  }
      }
 
-document { (cotangentSheaf, ProjectiveVariety),
+document {
+     Key => (cotangentSheaf, ProjectiveVariety),
      TT "cotangentSheaf X", " -- calculate the cotangent sheaf of a variety ", TT "X", "."
      }
 
-document { cotangentSheaf,
+document {
+     Key => cotangentSheaf,
      Headline => "cotangent sheaf of a variety"
      }
 
-document { (cotangentSheaf, ZZ, ProjectiveVariety),
+document {
+     Key => (cotangentSheaf, ZZ, ProjectiveVariety),
      Headline => "make an exterior power of the cotangent sheaf",
      TT "cotangentSheaf(p,X)", " -- calculate the ", TT "p", "-th exterior power of
      the cotangent sheaf of a variety ", TT "X", "."
      }
 
-document { (symbol _, RingElement, ZZ),
+document {
+     Key => (symbol _, RingElement, ZZ),
      OldSynopsis => {
 	  "g = f_d",
 	  "f" => "a polynomial",
@@ -929,7 +997,8 @@ document { (symbol _, RingElement, ZZ),
      SEEALSO (symbol _, RingElement, List)
      }
 
-document { (symbol _, RingElement, List),
+document {
+     Key => (symbol _, RingElement, List),
      OldSynopsis => {
 	  "g = f_d",
 	  "f" => "a polynomial",

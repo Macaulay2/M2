@@ -1,5 +1,6 @@
 
-document { "replacements for commands and scripts from Macaulay",
+document {
+     Key => "replacements for commands and scripts from Macaulay",
      "Macaulay 2 aims to provide all of the functionality of Macaulay, but
      the names of the functions are not the same, and there are
      other differences.  One major difference is the introduction of the
@@ -11,7 +12,7 @@ document { "replacements for commands and scripts from Macaulay",
      PARA,
      UL {
 	  SEQ ("Macaulay commands:",
-	  NOCONTENTS UL {
+	  UL {
 	       SEQ ("ac -- such destructive changes are not allowed"),
 	       SEQ ("add -- ", TO "+"),
 	       SEQ ("ar -- ", TO "not documented yet"),
@@ -150,7 +151,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       SEQ ("wedge -- ", TO "minors", ",", TO "exteriorPower")
 	       }),
 	  SEQ ("Macaulay scripts from 'scriptsde':",
-	  NOCONTENTS UL {
+	  UL {
 	       SEQ ("<adj_of_cat -- ", TO "not documented yet"),
 	       SEQ ("<adjoin_fractions -- ", TO "not documented yet"),
 	       SEQ ("<adjoint -- ", TO "not documented yet"),
@@ -275,7 +276,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       SEQ ("<zeromat -- ", TO "not documented yet")
 	       }),
 	  SEQ ("Macaulay scripts from 'scriptsmj':",
-	  NOCONTENTS UL {
+	  UL {
 	       SEQ ("<2BYN -- ", TO "not documented yet"),
 	       SEQ ("<add_matrix_to_array -- ", TO "not documented yet"),
 	       SEQ ("<check_complex -- ", TO "not documented yet"),
@@ -295,7 +296,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       SEQ ("<splice_resns -- ", TO "not documented yet")
 	       }),
 	  SEQ ("Macaulay scripts from 'scriptsms':",
-	  NOCONTENTS UL {
+	  UL {
 	       SEQ ("<block_map -- ", TO "not documented yet"),
 	       SEQ ("<blowup -- ", TO "not documented yet"),
 	       SEQ ("<blowup0 -- ", TO "not documented yet"),
@@ -621,7 +622,8 @@ document { "replacements for commands and scripts from Macaulay",
      
      }
 
-document { "not documented yet", 
+document {
+     Key => "not documented yet", 
      "We haven't documented yet the way to replace this Macaulay function or
      script."
      }

@@ -2,7 +2,8 @@
 -- The granddaddy node -----
 ----------------------------
 
-document { "Mathematical Overview",
+document {
+     Key => "Mathematical Overview",
      "In this section we give a comprehensive overview of the main 
      mathematical types of Macaulay 2, their construction and most common
      operations. WARNING: this overview is currently under construction.",
@@ -34,7 +35,8 @@ document { "Mathematical Overview",
 -- Top level nodes ---------
 ----------------------------
 
-document { "rings",
+document {
+     Key => "rings",
      HEADER2 "An overview",
      "Macaulay 2 differs from computer algebra systems such as maple and
      mathematica, in that rings are first class objects.  This means that
@@ -79,7 +81,8 @@ document { "rings",
      in Macaulay 2 which return or use rings, see ", TO "Ring", "."
      }
 
-document { "ideals",
+document {
+     Key => "ideals",
      HEADER2 "An overview",     
      "In Macaulay 2, once a ring (see ",TO "rings", 
      ") is defined, ideals are constructed in the usual way
@@ -89,7 +92,7 @@ document { "ideals",
 	  SEQ ("conversions",
 	       UL {
 		    TO "ideals to and from matrices",
-		    NOCONTENTS TO "ideals to and from modules"
+		    TO "ideals to and from modules"
 		    }
 	       ),
 	  SEQ ("basic operations on ideals",
@@ -110,7 +113,7 @@ document { "ideals",
 		    TO "primary decomposition"
 		    }
 	       ),
-	  NOCONTENTS TO "Groebner bases and related computations",
+	  TO "Groebner bases and related computations",
           },
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",
@@ -124,7 +127,8 @@ document { "ideals",
 
 This node is old -- is there anything we want to save from it?
 
-document { "ideals",
+document {
+     Key => "ideals",
      "An ideal ", TT "I", " is represented by its generators,
      which are stored inside it in a one-rowed matrix.",
      PARA,
@@ -242,7 +246,8 @@ document { "ideals",
 ///
 
 
-document { "matrices",
+document {
+     Key => "matrices",
      HEADER2 "An overview",     
      "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay 2.",
@@ -283,7 +288,8 @@ document { "matrices",
      in Macaulay 2 which return or use matrices, see ", TO "Matrix", "."
      }
 
-document { "substitution and maps between rings",
+document {
+     Key => "substitution and maps between rings",
      HEADER2 "An overview",
      UL {
 	  TO "substitute values for variables",
@@ -300,7 +306,8 @@ document { "substitution and maps between rings",
      in Macaulay 2 which return or use ring maps, see ", TO "RingMap", "."
      }
      
-document { "modules: part I",
+document {
+     Key => "modules: part I",
      HEADER2 "Getting started",
      UL {
 	  SEQ ("construction of modules",
@@ -353,7 +360,8 @@ document { "modules: part I",
      "See ", TO "modules: part II", " for more operations on modules."
      }
 
-document { "modules: part II",
+document {
+     Key => "modules: part II",
      UL {
 	  SEQ ("multilinear algebra",
 	       UL {
@@ -373,7 +381,8 @@ document { "modules: part II",
      in Macaulay 2 which return or use modules, see ", TO "Module", "."
      }
 
-document { "Groebner bases and related computations",
+document {
+     Key => "Groebner bases and related computations",
      HEADER2 "An overview",
      UL {
 	  TO "what is a Groebner basis?",
@@ -393,7 +402,8 @@ document { "Groebner bases and related computations",
 	  }
      }
 
-document { "chain complexes",
+document {
+     Key => "chain complexes",
      HEADER2 "An overview",
      UL {
 	  TO "free resolutions of modules",
@@ -407,7 +417,8 @@ document { "chain complexes",
       TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
      }
 
-document { "varieties",
+document {
+     Key => "varieties",
      HEADER2 "An overview",
      UL {
 	  TO "algebraic varieties",
@@ -416,7 +427,8 @@ document { "varieties",
      "For details, see ", TO "Variety", ".",
      }
 
-document { "using external libraries",
+document {
+     Key => "using external libraries",
      UL {
      	  TO "loading a library",
      	  TO "how to get documentation on a library",
@@ -438,7 +450,8 @@ document { "using external libraries",
 -- Lead nodes --------------
 ----------------------------
 
-document { "rings that are available for Groebner basis computations",
+document {
+     Key => "rings that are available for Groebner basis computations",
      "In Macaulay 2, Groebner bases can be computed for ideals and submodules over many
      different rings.",
      UL {
@@ -483,41 +496,52 @@ document { "rings that are available for Groebner basis computations",
 -- library nodes --
 -------------------
 
-document { "loading a library",
+document {
+     Key => "loading a library",
      }
 
-document { "how to get documentation on a library",
+document {
+     Key => "how to get documentation on a library",
      }
 
-document { "blow ups",
+document {
+     Key => "blow ups",
      }
 
-document { "convex hulls and polar cones",
+document {
+     Key => "convex hulls and polar cones",
      }
 
-document { "D-modules",
+document {
+     Key => "D-modules",
      }
 
-document { "elimination theory",
+document {
+     Key => "elimination theory",
      }
 
-document { "graphing curves and surfaces via 'surf'",
+document {
+     Key => "graphing curves and surfaces via 'surf'",
      }
 
-document { "invariants of finite groups",
+document {
+     Key => "invariants of finite groups",
      }
 
-document { "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
+document {
+     Key => "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
      }
 
-document { "SAGBI bases",
+document {
+     Key => "SAGBI bases",
      }
 
 -------------------
 -- specialized   --
 -------------------
 
-document { "commutative algebra",
+document {
+     Key => "commutative algebra",
      TOC {
 	  SECTION { "integralClosure",
 	       },
@@ -528,7 +552,8 @@ document { "commutative algebra",
 	  }
      }
 
-document { "algebraic geometry",
+document {
+     Key => "algebraic geometry",
      TOC {
 	  SECTION { "cotangentSheaf",
 	       }

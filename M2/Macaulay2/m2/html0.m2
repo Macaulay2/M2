@@ -107,12 +107,7 @@ CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
 ANCHOR     = new MarkUpType of MarkUpList
 Hypertext  = new MarkUpType of MarkUpList		    -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
-
 UL         = new MarkUpType of MarkUpListParagraph
-
-CONTENTS   = new DistributedMarkUpType of MarkUpList
-NOCONTENTS = new DistributedMarkUpType of MarkUpList
-
 OL         = new MarkUpType of MarkUpListParagraph
 DIV        = new MarkUpType of MarkUpList
 NL         = new MarkUpType of MarkUpListParagraph

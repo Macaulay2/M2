@@ -345,21 +345,20 @@ polarCone(Matrix) := (Z) -> (
 ------------------------------------------------------------
 -- DOCUMENTATION
 ------------------------------------------------------------
-document { polarCone
+document {
+     Key => polarCone
      Headline => "find the polar dual of a rational convex polyhedral cone",
      Usage => {
 	  TT "polarCone(A, B)", " -- find the polar cone"
 	  },
-     Synopsis => {
-	  Usage => "(A', B') = polarCone(A, B)",
-	  Inputs => {
-	       "A" => {"a ", TT "d ", "by ", TT "n ", "matrix over ", TT "ZZ ", "or ", TT "QQ", "."},
-	       "B" => {"a ", TT "d ", "by ", TT "r ", "matrix over ", TT "ZZ ", "or ", TT "QQ", "."}
-	       },
-	  Outputs => {
-	       "A'" => { "a matrix having ", TT "d ", "rows" },
-	       "B'" => { "a matrix having ", TT "d ", "rows" }
-	       },
+     Usage => "(A', B') = polarCone(A, B)",
+     Inputs => {
+	  "A" => {"a ", TT "d ", "by ", TT "n ", "matrix over ", TT "ZZ ", "or ", TT "QQ", "."},
+	  "B" => {"a ", TT "d ", "by ", TT "r ", "matrix over ", TT "ZZ ", "or ", TT "QQ", "."}
+	  },
+     Outputs => {
+	  "A'" => { "a matrix having ", TT "d ", "rows" },
+	  "B'" => { "a matrix having ", TT "d ", "rows" }
 	  },
      PARA,
      "The input pair ", TT "(A,B)", "gives a cone", TT "C", 

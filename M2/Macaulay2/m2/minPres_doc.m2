@@ -1,15 +1,14 @@
 -- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
-document{(minPres,Ring),
+document {
+     Key => (minPres,Ring),
      Headline => "compute a minimal presentation of a quotient ring",
-     Synopsis => {
-	  Usage => "Q = minPres R",
-	  Inputs => {
-	       "R" => {"a quotient ring of the form ", TT "R = S/I"}
-	       },
-	  Outputs => {
-	       "Q" = {"an minimally presented isomorphic quotient ring ", TT "S'/J"}
-	       }
+     Usage => "Q = minPres R",
+     Inputs => {
+	  "R" => {"a quotient ring of the form ", TT "R = S/I"}
+	  },
+     Outputs => {
+	  "Q" = {"an minimally presented isomorphic quotient ring ", TT "S'/J"}
 	  },
      PARA "The function ", TT "minPres", " is written so that it stores 
      the map from ", TT "R", " to ", TT "Q", ".  The map is stored 
@@ -32,7 +31,8 @@ document{(minPres,Ring),
 --      ring."
 --      }
 
-document{(minPresIdeal,Ideal),
+document {
+     Key => (minPresIdeal,Ideal),
      Headline => "compute a minimal presentation of an ideal",
 --      Usage => {
 -- 	  TT "minPresIdeal I", "-- If ", TT "R", " is the ring of ", TT "I", 
@@ -40,16 +40,14 @@ document{(minPresIdeal,Ideal),
 -- 	  returns and ideal ", TT "J", " such that ", TT "R/J", " is 
 -- 	  isomorphic to ", TT "R/I", "."
 --     	  },
-     Synopsis => {
-	  Usage => "J = minPresIdeal I",
-	  Inputs => {
-	       "I" => {"Any ideal in a polynomial ring."}
-	       },
-	  Outputs => {
-	       "J" => {"An ideal such that ", TT "R/J", " is isomorphic 
-	       	    to ", TT "R/I", " and ", TT "J", " has fewer generators 
-	       	    than ", TT "I", "."}
-	       },
+     Usage => "J = minPresIdeal I",
+     Inputs => {
+	  "I" => {"Any ideal in a polynomial ring."}
+	  },
+     Outputs => {
+	  "J" => {"An ideal such that ", TT "R/J", " is isomorphic 
+	       to ", TT "R/I", " and ", TT "J", " has fewer generators 
+	       than ", TT "I", "."}
 	  },
      -- this documentation is wrong, because the ambient ring changes, too!
      PARA {

@@ -1,6 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-document { override,
+document {
+     Key => override,
      Headline => "override default values for optional arguments",
      TT "override(defaults,args)", " -- overrides default values for
      optional arguments present in the argument sequence ", TT "args", ".",
@@ -21,7 +22,8 @@ document { override,
 	  }
      }
 
-document { userSymbols,
+document {
+     Key => userSymbols,
      Headline => "a list of the user's symbols",
      TT "userSymbols ()", " -- provides a list of symbols defined by
      the user.",
@@ -34,7 +36,8 @@ document { userSymbols,
      }
 
 
-document { listUserSymbols,
+document {
+     Key => listUserSymbols,
      Headline => "display the user's symbols",
      TT "listUserSymbols", " -- a command which returns a display of the variables 
      defined by the user, along with their types.",
@@ -47,7 +50,8 @@ document { listUserSymbols,
      SEEALSO {"userSymbols"}
      }
 
-document { clearOutput,
+document {
+     Key => clearOutput,
      Headline => "forget output values",
      TT "clearOutput", " -- a command which attempts to release memory by 
      clearing the values retained by the output line symbols.",
@@ -55,7 +59,8 @@ document { clearOutput,
      SEEALSO { "clearAll" }
      }
 
-document { clearAll,
+document {
+     Key => clearAll,
      Headline => "forget everything",
      TT "clearAll", " -- a command which attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
@@ -63,7 +68,8 @@ document { clearAll,
      SEEALSO {"userSymbols", "clearOutput"}
      }
 
-document { exec,
+document {
+     Key => exec,
      Headline => "execute another program",
      TT "exec argv", " -- uses the 'exec' operating system call to
      start up another program, replacing the current Macaulay 2 process.
@@ -72,7 +78,8 @@ document { exec,
      is the name of the executable file."
      }
 
-document { restart,
+document {
+     Key => restart,
      Headline => "restart Macaulay 2",
      TT "restart", " -- restart Macaulay 2 from the beginning.",
      PARA,
@@ -80,7 +87,8 @@ document { restart,
      be called first."
      }
 
-document { on,
+document {
+     Key => on,
      Headline => "trace a function each time it's run",
      TT "f = on f", " -- replaces the function ", TT "f", " by a version which 
      will print out its arguments and return value each time it's called,
@@ -94,18 +102,21 @@ document { on,
      will know its name.  The name will appear in the display."
      }
 
-document { assert,
+document {
+     Key => assert,
      Headline => "assert something is true",
      TT "assert x", " -- prints an error message if x isn't true."
      }
 
-document { notImplemented,
+document {
+     Key => notImplemented,
      Headline => "print an 'not implemented' error message",
      TT "notImplemented()", " -- print an error message that 
      says \"not implemented yet\"."
      }
 
-document { "errorDepth",
+document {
+     Key => "errorDepth",
      Headline => "set the error printing depth",
      TT "errorDepth i", " -- sets the error depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
@@ -122,7 +133,8 @@ document { "errorDepth",
      SEEALSO { "loadDepth" }
      }
 
-document { "loadDepth",
+document {
+     Key => "loadDepth",
      Headline => "the load depth",
      TT "loadDepth = i", " -- sets the load depth to ", TT "i", ", which should be
      a small integer, returning the old value.",
@@ -139,7 +151,8 @@ document { "loadDepth",
      SEEALSO { "errorDepth" }
      }
 
-document { benchmark,
+document {
+     Key => benchmark,
      Headline => "accurate timing of execution",
      TT "benchmark s", " -- produce an accurate timing for the code contained
      in the string ", TT "s", ".  The value returned is the number of seconds.",
@@ -149,7 +162,8 @@ document { benchmark,
      beforehand."
      }
 
-document { memoize,
+document {
+     Key => memoize,
      Headline => "record results of function evaluation for future use",
      TT "memoize f", " -- produces, from a function ", TT "f", ", a new function which
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
@@ -203,19 +217,22 @@ f 3
 assert( a == 3 )
 "
 
-document { (symbol _, Tally, Thing),     
+document {
+     Key => (symbol _, Tally, Thing),     
      Headline => "get a count from a tally",
      TT "t_x", " -- returns the number of times ", TT "x", " is counted
      by ", TT "t", ".",
      SEEALSO "Tally"
      }
 
-document { Tally,
+document {
+     Key => Tally,
      Headline => "the class of all tally results",
      TT "Tally", " -- a class designed to hold tally results, i.e., multisets."
      }
 
-document { (symbol **, Tally, Tally),
+document {
+     Key => (symbol **, Tally, Tally),
      Headline => "Cartesian product of tallies",
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA,
@@ -229,14 +246,16 @@ document { (symbol **, Tally, Tally),
      SEEALSO {"Tally", "tally"}
      }
 
-document { (symbol ?, Tally, Tally),
+document {
+     Key => (symbol ?, Tally, Tally),
      Headline => "comparison of tallies",
      TT "x ? y", " -- compares two tallies, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      SEEALSO "Tally"
      }
 
-document { (symbol +, Tally, Tally),
+document {
+     Key => (symbol +, Tally, Tally),
      Headline => "union of tallies",
      TT "x + y", " -- produces the union of two tallies.",
      PARA,
@@ -250,7 +269,8 @@ document { (symbol +, Tally, Tally),
      SEEALSO {"Tally", "tally"}
      }
 
-document { (symbol -, Tally, Tally),
+document {
+     Key => (symbol -, Tally, Tally),
      Headline => "difference of tallies",
      TT "x - y", " -- produces the difference of two tallies.",
      PARA,
@@ -258,7 +278,8 @@ document { (symbol -, Tally, Tally),
      SEEALSO "Tally"
      }
 
-document { tally,
+document {
+     Key => tally,
      Headline => "tally the elements of a list",
      TT "tally x", " -- tallies the frequencies of items in a list x.",
      PARA,
@@ -280,33 +301,40 @@ assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 =>
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 ///
 
-document { Set, 
+document {
+     Key => Set, 
      Headline => "the class of all sets"
      }
 
-document { (symbol #?, Set, Thing),
+document {
+     Key => (symbol #?, Set, Thing),
      Headline => "test set membership",
      TT "x#?i", " -- tests whether ", TT "i", " is a member of the set ", TT "x", "."
      }
 
-document { (symbol -, Set, Set),
+document {
+     Key => (symbol -, Set, Set),
      Headline => "set difference",
      TT "x - y", " -- the difference of two sets.",
      SEEALSO {"Set", "-"}
      }
 
-document { (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
+document {
+     Key => (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
 
-document { isSubset,
+document {
+     Key => isSubset,
      Headline => "whether something is a subset of another"
      }
 
-document { (symbol ++, Set, Set),
+document {
+     Key => (symbol ++, Set, Set),
      Headline => "disjoint union of sets",
      EXAMPLE "set {a,b,c} ++ set {b,c,d}"
      }
 
-document { (symbol *, Set, Set),
+document {
+     Key => (symbol *, Set, Set),
      Headline => "intersection of sets",
      EXAMPLE "set {1,2,3} * set {2,3,4}"
      }
@@ -327,7 +355,8 @@ assert ( x + y === set {1, 2, 3, 4, 5} )
 assert ( toString x === \"set {1, 2, 3}\" )
 "
 
-document { (symbol ^**, Module, ZZ),
+document {
+     Key => (symbol ^**, Module, ZZ),
      Headline => "tensor power",
      OldSynopsis => {
 	  "N = M^**i",
@@ -337,7 +366,8 @@ document { (symbol ^**, Module, ZZ),
 	  }
      }
 
-document { (symbol ^**, CoherentSheaf, ZZ),
+document {
+     Key => (symbol ^**, CoherentSheaf, ZZ),
      Headline => "tensor power",
      OldSynopsis => {
 	  "N = M^**i",
@@ -347,11 +377,13 @@ document { (symbol ^**, CoherentSheaf, ZZ),
 	  }
      }    
 
-document { setRandomSeed,
+document {
+     Key => setRandomSeed,
      Headline => "set starting point for random number generator"
      }
 
-document { (setRandomSeed, ZZ),
+document {
+     Key => (setRandomSeed, ZZ),
      OldSynopsis => {
 	  "setRandomSeed i",
 	  "i" => null
@@ -366,7 +398,8 @@ document { (setRandomSeed, ZZ),
 	  }
      }
 
-document { (setRandomSeed, String),
+document {
+     Key => (setRandomSeed, String),
      OldSynopsis => {
 	  ///setRandomSeed s///,
 	  "s" => null
@@ -382,7 +415,8 @@ document { (setRandomSeed, String),
 	  }
      }
 
-document { truncateOutput,
+document {
+     Key => truncateOutput,
      OldSynopsis => {
 	  "truncateOutput w",
 	  "w" => "the maximum output line width to enforce"
@@ -393,7 +427,8 @@ document { truncateOutput,
      may conflict with other ", TO "BeforePrint", " methods installed by the user.",
      }
 
-document { Package,
+document {
+     Key => Package,
      PARA {
 	  "A package is a body of Macaulay2 source code devoted to a particular topic."
 	  },
@@ -402,16 +437,15 @@ document { Package,
 	  }
      }
 
-document { "printWidth",
-     Synopsis => {
-	  Usage => "printWidth = n",
-	  Inputs => {
-	       "n" => ZZ => "the width to use for wrapping printed output"
-	       },
-	  Results => {
-	       "The function ", TT "wrap", " will use ", TT "n", " as the window width when wrapping
-	       certain types of output."
-	       }
+document {
+     Key => "printWidth",
+     Usage => "printWidth = n",
+     Inputs => {
+	  "n" => ZZ => "the width to use for wrapping printed output"
+	  },
+     Results => {
+	  "The function ", TT "wrap", " will use ", TT "n", " as the window width when wrapping
+	  certain types of output."
 	  }
      }
 	  

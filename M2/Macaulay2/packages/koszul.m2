@@ -219,7 +219,8 @@ depth Module := (M) -> (
      depth(ideal gens R, M));
 ----
 
-document{ KK,
+document {
+     Key => KK,
      Headline => "scripted functor for the Koszul complex.",
      TT "KK x", " -- the Koszul complex of the matrix or ideal ", TT "x", ".",
      BR, NOINDENT,
@@ -247,11 +248,13 @@ document{ KK,
      SEEALSO {koszul, cokoszul, koszulComplex, cokoszulComplex, HK}
      }
 
-document{ koszul,
+document {
+     Key => koszul,
      Headline => "a differential in the Koszul complex"
      }
 
-document{ cokoszul,
+document {
+     Key => cokoszul,
      Headline => "a differential in the \"co-Koszul\" complex",
      TT "cokoszul(i,x)", " or ", TT "cokoszul(i,x,M)", ".",
      PARA, TT "cokoszul(i,x,M)", " is equal to ", 
@@ -259,7 +262,8 @@ document{ cokoszul,
      ", TT "cokoszul(i,x)", " is shorthand for ",
      TT "cokoszul(i,x,(ring x)^1)", "."}
 
-document{ koszulComplex,
+document {
+     Key => koszulComplex,
      -- this node has to be replace by three
      Headline => "the Koszul complex",
      -- Usage => {TT "koszulComplex x", " or ", TT "koszulComplex(x,M)"},
@@ -268,7 +272,8 @@ document{ koszulComplex,
      of ", TT "x", "."
      }
 
-document{ cokoszulComplex,
+document {
+     Key => cokoszulComplex,
      -- this node has to be replace by three
      Headline => "the \"co-Koszul\" complex",
      -- Usage => {TT "cokoszulComplex x", " or ", TT "cokoszulComplex(x,M)"},
@@ -277,7 +282,8 @@ document{ cokoszulComplex,
        ", TT "cokoszulComplex x", " is the same as ",
      TT "cokoszulComplex(x,(ring x)^1)", "."}
 
-document{ HK,
+document {
+     Key => HK,
      Headline => "scripted functor for Koszul (co)homology",
      TT "HK x", " -- the Koszul homology of the matrix or ideal ", TT "x", ".",
      BR, NOINDENT,
@@ -302,7 +308,8 @@ document{ HK,
      SEEALSO {koszulHomology, koszulCohomology, KK}
      }
 
-document{ (depth,Ideal,Module),
+document {
+     Key => (depth,Ideal,Module),
      Headline => {"the ", TT "I", "-depth of ", TT "M"},
      OldSynopsis => {
 	  "d = depth(I,M)",
@@ -312,7 +319,8 @@ document{ (depth,Ideal,Module),
 	  }
      }
 
-document{ (depth,Module),
+document {
+     Key => (depth,Module),
      Headline => "the depth of a module",
      PARA, "Over a ring whose coefficient ring is a field, find the 
      depth of the module with respect to the graded-maximal ideal."
