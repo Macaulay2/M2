@@ -24,25 +24,16 @@ net Sequence := x -> horizontalJoin deepSplice (
      else ("(", unlist between(",",apply(x,net)), ")"))
 net List := x -> horizontalJoin deepSplice (
      "{",
-     unlist between(",",apply(x,i -> (
-                    if class i === Sequence
-                    then ("(", net i, ")")
-                    else net i))),
+     unlist between(",",apply(x,net)),
      "}")
 net Array := x -> horizontalJoin deepSplice (
      "[",
-     unlist between(",",apply(x,i -> (
-		    if class i === Sequence
-		    then ("(", net i, ")")
-		    else net i))),
+     unlist between(",",apply(x,net)),
      "]")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
-      unlist between(",",apply(x,i -> (
-		     if class i === Sequence
-		     then ("(", net i, ")")
-		     else net i))),
+      unlist between(",",apply(x,net)),
       "}")
 net MutableList := x -> horizontalJoin ( net class x, "{...}" )
 net HashTable := x -> (
