@@ -34,9 +34,7 @@ newPackage("Markov",
 
 
 export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
-       removeRedundantStmts, markovRing, marginMap, markovMatrices,
-       markovIdeal, writeDotFile, descendents, nondescendents, parents, children,
-       equivStmts, removeRedundants, bayesBall, hideMap, prob)
+       markovRing, marginMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, bayesBall, prob)
 exportMutable(dotBinary,jpgViewer)
 
 
@@ -155,6 +153,7 @@ children(Graph,ZZ) := (G,v) -> G#v
 -- However, we have several very simple routines to remove
 -- the most obvious redundant elements
 -- If S and T represent exactly the same dependency, return true.
+
 equivStmts = (S,T) -> S#2 === T#2 and set{S#0,S#1} === set{T#0,T#1}
 
 removeRedundants = (Ds) -> (
@@ -393,6 +392,9 @@ markovIdeal = (R,Stmts) -> (
 
 beginDocumentation()
 
+document {
+     Key => "Markov"
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Markov.installed"
