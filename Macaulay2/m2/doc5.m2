@@ -474,7 +474,6 @@ document {
      Usage => "loadPackage FILENAME",
      Inputs => {
 	  "FILENAME" => String => "the name of the file containing the package",
-	  Title => String => "a substitute title for the package, in case you want to load two versions of the same package",
 	  DebuggingMode => Boolean => "the debugging mode to use during the loading of the package"
 	  },
      Consequences => {
