@@ -696,42 +696,72 @@ document {
      }
 document {
      Key => (map,Module,Module,List),
-     Headline => "create a matrix by giving a list of lists of ring elements",
+     Headline => "create a matrix by giving a sparse or dense list of entries",
      Usage => "map(M,N,v)",
      Inputs => {
 	  "M" => null,
 	  "N" => null,
-	  "v" => "a list of lists of ring elements"
+	  "v" => null
 	  },
      Outputs => {
-	  {"A matrix ", TT "M <-- N", " whose entries are obtained from the 
-	       doubly-nested list ", TT "v", " of ring elements"}
+	  {"A matrix ", TT "M <-- N", " whose entries are obtained from ", TT "v"}
 	  },
-     "The length of ", TT "v", " should be the number of generators of ", TT "M", 
+     "The list ", TT "v", " is either a doubly nested list of 
+     ring elements, or a list of elements ",
+     TT "(i,j) => f", ".  The first version provides all of the elements of the 
+     output matrix, row by row.  The second form provides only the 
+     non-zero elements of the 
+     output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
+     " in the list ", TT "v", ".",
+     PARA,
+     "In each case, the modules ", TT "M", " and ", TT "N", " should have the 
+     same base ring
+     ", TT "R", ", and the ring elements appearing in ", TT "v", " should be over ", 
+     TT "R", ", or over a base
+     ring of ", TT "R", ".",
+     PARA,
+     "In the first form, each list in v gives a row of the matrix. ",
+     "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
      ", and the length of each element of ", TT "v", " (which is itself a 
      list of ring elements) should be the
-     number of generators of the source module ", TT "N", ".  Each ring element should be in 
-     the common ring R of M and N, or should be in a base ring of R.",
+     number of generators of the source module ", TT "N", ".",
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "p = map(R^2,R^{-2,-2,0},{{x^2,0,3},{0,y^2,5}})",
       	  "isHomogeneous p",
 	  },
+     "In the second form, if an index (i,j) occurs more than once, 
+     only the last is taken.",
+     EXAMPLE {
+      	  "p = map(R^2,R^3,{(0,0) => x+y, (1,1) => x^2, (0,2) => x-1, (0,0) => x-y})"
+	  },
      SeeAlso => {matrix, (map,Module,Nothing,List), "input a matrix"}
      }
 document {
      Key => (map,Module,Module,Matrix),
-     TT "map(M,N,p)", " -- recasts the matrix p as a map (matrix) from
-     the module N to the module M.",
-     PARA,
+     Headline => "",
+     Usage => "map(M,N,p)",
+     Inputs => {
+	  "M" => null,
+	  "N" => null,
+	  "p" => null
+	  },
+     Outputs => {
+	  "A matrix with the same entries as ", TT "p", ", but whose target 
+	  is ", TT "M", " and source is ", TT "N", "."
+	  },
+     TT "M", " and ", TT "N", " should be modules over the same ring, and have the same 
+     number of generators as ", TT "target p", " and ", TT "source p", ", respectively.  
+     If ", TT "M", " or ", TT "N", " is not free,
+     then we verify that the the result is a well defined homomorphism.",
      EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
+	  "R = QQ[x,y,z]",
       	  "p = matrix {{x,y,z}}",
       	  "q = map(R^1,R^3,p)",
       	  "degrees source p",
       	  "degrees source q",
 	  },
-     SeeAlso => {"map", "matrix"}
+     SeeAlso => inducedMap
      }
 document {
      Key => (map,Module,Module,RingElement),
