@@ -718,7 +718,7 @@ document { quotient,
      result is the set of ring elements r such that rJ is contained in I.",
      EXAMPLE {
 	  "R = ZZ/32003[a..d];",
-      	  "J = monomialCurve(R,{1,4,7})",
+      	  "J = monomialCurveIdeal(R,{1,4,7})",
       	  "I = ideal(J_1-a^2*J_0,J_2-d*c*J_0)",
       	  "I : J",
 	  },
@@ -746,7 +746,7 @@ TEST "
   --    MinimalGenerators,
   --    Strategy=>Iterate, Strategy=>Linear
   R = ZZ/101[a..d]
-  I1 = monomialCurve(R, {1,3,7})
+  I1 = monomialCurveIdeal(R, {1,3,7})
   I2 = ideal((gens I1)_{0,1})
   I3 = quotient(I2,I1)
   I4 = quotient(I2,I3)
@@ -987,7 +987,7 @@ TEST "
 R = ZZ/101
 exteriorPower(3,R^5)
 R = ZZ/101[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 M = Ext^2(coker generators I, R)
 prune exteriorPower(3,M)
 exteriorPower(0,R^3)
@@ -1124,7 +1124,7 @@ document { Linear,
 TEST "
 -- The ideal case
 R = ZZ/101[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 F = I_0
 J = ideal(F*I_1, I_2, F^2*I_3)
 saturate(J,F)
@@ -1198,7 +1198,7 @@ time saturate(J, F, Strategy=>Elimination) -- 26.08
 
 TEST "
 R = ZZ/101[a..f]
-m = monomialCurve(R,{1,3,4})
+m = monomialCurveIdeal(R,{1,3,4})
 I = ideal(d-c) + m 
 saturate(I,a+b)
 I

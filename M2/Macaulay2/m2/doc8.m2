@@ -1394,7 +1394,7 @@ document { pushForward1,
      generalized module homomorphisms which map an R-module to an S-module.",
      PARA,
      "As an example, the following fragment computes the ideal of the
-     rational normal curve. This could also be done using ", TO "monomialCurve", ".",
+     rational normal curve. This could also be done using ", TO "monomialCurveIdeal", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
       	  "S = ZZ/101[s,t];",

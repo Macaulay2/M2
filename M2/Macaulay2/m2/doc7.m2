@@ -151,7 +151,7 @@ document { (contract,Matrix,Matrix),
 
 TEST "
 R = ZZ/101[a..d]
-I = monomialCurve(R,{1,3,4})
+I = monomialCurveIdeal(R,{1,3,4})
 A = R/I
 jacobian A
 singA = minors(codim ideal presentation A, jacobian A)
@@ -169,7 +169,7 @@ document { jacobian,
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
-      	  "I = monomialCurve(R,{1,3,4})",
+      	  "I = monomialCurveIdeal(R,{1,3,4})",
       	  "A = R/I",
       	  "jacobian A",
 	  },
@@ -1660,7 +1660,7 @@ document { homomorphism,
 
 TEST ///
 S = ZZ/101[a..d]
-I = monomialCurve(S, {1,3,4})
+I = monomialCurveIdeal(S, {1,3,4})
 R = S/I
 use R
 J = module ideal(a,d)

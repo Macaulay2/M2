@@ -1,7 +1,7 @@
 -- Copyright 1996 Michael E. Stillman
 -- Based on the Macaulay script written by David Eisenbud
 
-monomialCurve = (S, a) -> (
+monomialCurveIdeal = (S, a) -> (
     -- check that S is a polynomial ring over a field
     n := # a;
     topa := max a;

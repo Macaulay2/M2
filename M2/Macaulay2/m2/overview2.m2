@@ -40,8 +40,8 @@ document { "ideals",
      "An interesting class of ideals can be obtained as the defining ideals in 
      projective space of monomial curves.  The twisted cubic is the closure of the
      set of points ", TT "(1,t^1,t^2,t^3)", " in projective space.  We use a list of
-     the exponents and ", TO "monomialCurve", " to get the ideal.",
-     EXAMPLE "monomialCurve(R,{1,2,3})",
+     the exponents and ", TO "monomialCurveIdeal", " to get the ideal.",
+     EXAMPLE "monomialCurveIdeal(R,{1,2,3})",
      "The command ", TO "substitute", " can be used to transfer an ideal to another
      ring.  You may want to do this because another ring has a monomial ordering
      more suitable for the computations you are about to do, or it may have
