@@ -72,12 +72,14 @@ const RingOrNull *rawGaloisField(const RingElement *f)
 
 const RingOrNull *IM2_Ring_RR(double precision)
 {
-  return RR::create(precision);
+  return globalRR;
+  //  return RR::create(precision);
 }
 
 const RingOrNull *IM2_Ring_CC(double precision)
 {
-  return CC::create(precision);
+  return globalCC;
+  //  return CC::create(precision);
 }
 
 const RingOrNull *IM2_Ring_bigRR()

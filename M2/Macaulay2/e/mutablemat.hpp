@@ -71,8 +71,23 @@ public:
   virtual DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() { return 0; }
   virtual DenseMutableMatrixCC * cast_to_DenseMutableMatrixCC() { return 0; }
 
+  virtual bool is_dense() const = 0;
   virtual void text_out(buffer &o) const;
 public:
+#if 0
+gcdColumnReduce
+sortColumns
+normalizeColumn
+#endif
+  virtual int lead_row(int col) const = 0;
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     returns -1 if the column is 0 */
+
+  virtual int lead_row(int col, ring_elem &result) const = 0;
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     Also sets result to be the entry at this index.
+     returns -1 if the column is 0 */
+
   ///////////////////////////////
   // Row and column operations //
   ///////////////////////////////
@@ -80,7 +95,8 @@ public:
   // is out of range.
 
   virtual bool get_entry(int r, int c, ring_elem &result) const = 0;
-  // Returns false if (r,c) is out of range.
+  // Returns false if (r,c) is out of range or if result is 0.  No error
+  // is returned. result <-- this(r,c), and is set to zero if false is returned.
 
   virtual bool set_entry(int r, int c, const ring_elem a) = 0;
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
@@ -96,6 +112,12 @@ public:
 
   virtual bool scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording=true) = 0;
   /* column(i) <- r * column(i) */
+
+  virtual bool divide_row(int i, ring_elem r, bool do_recording=true) = 0;
+  /* row(i) <- row(i) / r */
+
+  virtual bool divide_column(int i, ring_elem r, bool do_recording=true) = 0;
+  /* column(i) <- column(i) / r */
 
   virtual bool row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true) = 0;
   /* row(i) <- row(i) + r * row(j) */
@@ -170,6 +192,8 @@ class SparseMutableMatrix : public MutableMatrix
 public:
   static SparseMutableMatrix *zero_matrix(const Ring *R, int nrows, int ncols);
 
+  virtual bool is_dense() const { return false; }
+
   virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return this; }
 };
 
@@ -180,20 +204,11 @@ protected:
   DenseMutableMatrix(const Ring *R0) : MutableMatrix(R0) {}
   virtual ~DenseMutableMatrix() {}
 public:
+  virtual bool is_dense() const { return true; }
+
   virtual DenseMutableMatrix * cast_to_DenseMutableMatrix() { return this; }
 };
 
-class DenseMutableMatrixRR : public DenseMutableMatrix
-{
-  double *array_; // array has length nrows*ncols
-                  // columns stored one after another
-
-  void initialize(int nrows, int ncols, double *array);
-public:
-  static DenseMutableMatrixRR *zero_matrix(int nrows, int ncols);
-
-  virtual DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() { return this; }
-};
 
 class DenseMutableMatrixCC : public DenseMutableMatrix
 {

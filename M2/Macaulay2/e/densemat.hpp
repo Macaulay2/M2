@@ -12,7 +12,7 @@ class DenseMutableMatrixRing : public DenseMutableMatrix
 
   void initialize(int nrows, int ncols, ring_elem *array);
 
-  DenseMutableMatrixRing(const Ring *R, int nrows, int ncols);
+  DenseMutableMatrixRing(const Ring *R);
 
   virtual ~DenseMutableMatrixRing() {}
 public:
@@ -26,14 +26,24 @@ public:
   virtual MutableMatrix *copy(bool prefer_dense) const;
 
 public:
+  virtual int lead_row(int col) const;
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     returns -1 if the column is 0 */
+
+  virtual int lead_row(int col, ring_elem &result) const;
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     Also sets result to be the entry at this index.
+     returns -1 if the column is 0 */
+
   ///////////////////////////////
   // Row and column operations //
   ///////////////////////////////
   // The following routines return false if one of the row or columns given
   // is out of range.
 
-  virtual bool get_entry(int r, int c, ring_elem &result) const; 
-  // Returns false if (r,c) is out of range.
+  virtual bool get_entry(int r, int c, ring_elem &result) const;
+  // Returns false if (r,c) is out of range or if result is 0.  No error
+  // is returned. result <-- this(r,c), and is set to zero if false is returned.
 
   virtual bool set_entry(int r, int c, const ring_elem a); // DONE
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
@@ -49,6 +59,12 @@ public:
 
   virtual bool scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording=true); // DONE
   /* column(i) <- r * column(i) */
+
+  virtual bool divide_row(int i, ring_elem r, bool do_recording=true);
+  /* row(i) <- row(i) / r */
+
+  virtual bool divide_column(int i, ring_elem r, bool do_recording=true);
+  /* column(i) <- column(i) / r */
 
   virtual bool row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true); // DONE
   /* row(i) <- row(i) + r * row(j) */
