@@ -6,16 +6,15 @@ f = a+b+c
 B = A[x,y]
 f = (a+b)*x + (2*a-3*c)*y^4
 
-listForm f -- fails
-size f -- fails
-leadMonomial f -- fails
-leadCoefficient f -- fails
-f_x -- fails
-someTerms(1,f,1,1) -- doesn't seem right
-a*x > b*x
-x ? y
+assert(listForm f === {({0,4},2*a-3*c), ({1,0},a+b)})
+assert(size f === 2)
+assert(leadMonomial f == leadMonomial (y^4))
+assert(leadCoefficient f == 2*a-3*c)
+f_x == a+b
+assert(someTerms(f,1,1) == (a+b)*x)
+assert(a*x > b*x)
+assert((x ? y) === symbol>)
 
--- many things not working here yet...
 
 needs "raw-util.m2"
 errorDepth = 0
