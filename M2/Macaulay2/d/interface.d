@@ -457,10 +457,10 @@ export rawCC(e:Expr):Expr := (
      else WrongArg("a real number"));
 setupfun("rawCC",rawCC);
 
-rawBigRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_bigRR()" )) else WrongNumArgs(0);
+rawBigRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR()" )) else WrongNumArgs(0);
 setupfun("rawBigRR",rawBigRR);
 
-rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_bigCC()" )) else WrongNumArgs(0);
+rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC()" )) else WrongNumArgs(0);
 setupfun("rawBigCC",rawBigCC);
 
 export rawIndexIfVariable(e:Expr):Expr := (

@@ -303,9 +303,9 @@ extern "C" {
 
   const RingOrNull *IM2_Ring_CC(double precision); /* drg: connected rawCC */
 
-  const RingOrNull *IM2_Ring_bigRR(void); /* drg: connected rawBigRR */
+  const RingOrNull *IM2_Ring_RRR(void); /* drg: connected rawBigRR */
 
-  const RingOrNull *IM2_Ring_bigCC(void); /* drg: connected rawBigCC */
+  const RingOrNull *IM2_Ring_CCC(void); /* drg: connected rawBigCC */
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
@@ -408,17 +408,19 @@ extern "C" {
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
 
-  const M2_Rational IM2_RingElement_to_rational(const RingElement *a); /* drg: connected rawToInteger*/
+  const M2_Rational IM2_RingElement_to_rational(const RingElement *a); /* connected: rawToRational */
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
        Otherwise, NULL is returned, and an error is given */
 
-  double IM2_RingElement_to_double(const RingElement *a); /* TODO */
+  double IM2_RingElement_to_double(const RingElement *a); /* rawToReal */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise 0.0 is returned. */
 
-  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* TODO */
+  M2_CC IM2_RingElement_to_complex(const RingElement *a); /* rawToComplex */
     /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise 0.0 is returned. */
+
+  const RingElement *rawRRRFromString(const M2_string *s);
 
   const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
 							const M2_BigReal d); /* drg: waiting, rawFromNumber*/
@@ -572,7 +574,8 @@ extern "C" {
 
   const RingElement *rawImaginaryPart(const RingElement *f);
 
-  
+  const RingElement *rawMakeComplex(const RingElement *re, const RingElement *im);
+
   /**************************************************/
   /**** FreeModule routines *************************/
   /**************************************************/

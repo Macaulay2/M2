@@ -1,6 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "bigCC.hpp"
+#include "CCC.hpp"
 #include "ZZ.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
@@ -10,9 +10,9 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
-mpf_ptr bigCC::_epsilon = NULL;
+mpf_ptr CCC::_epsilon = NULL;
 
-bool bigCC::initialize_bigCC() 
+bool CCC::initialize_CCC() 
 {
   initialize_ring(0,0,0);
   _elem_size = sizeof(M2_BigComplex_struct);
@@ -29,49 +29,49 @@ bool bigCC::initialize_bigCC()
   return true;
 }
 
-bigCC *bigCC::create()
+CCC *CCC::create()
 {
-  bigCC *result = new bigCC;
-  result->initialize_bigCC();
+  CCC *result = new CCC;
+  result->initialize_CCC();
   return result;
 }
 
-void bigCC::text_out(buffer &o) const
+void CCC::text_out(buffer &o) const
 {
-  o << "bigCC";
+  o << "CCC";
 }
 
-mpf_ptr bigCC::new_mpf() const
+mpf_ptr CCC::new_mpf() const
 {
   mpf_ptr result = reinterpret_cast<mpf_ptr>(getmem(_elem_size));
   mpf_init(result);
   return result;
 }
 
-M2_BigComplex bigCC::new_elem() const
+M2_BigComplex CCC::new_elem() const
 {
   M2_BigComplex result = reinterpret_cast<M2_BigComplex>(getmem(_elem_size));
   mpf_init(&result->re);
   mpf_init(&result->im);
   return result;
 }
-void bigCC::remove_elem(M2_BigComplex f) const
+void CCC::remove_elem(M2_BigComplex f) const
 {
   // mpf_clear(f);
 }
 
-ring_elem bigCC::random() const
+ring_elem CCC::random() const
 {
   return from_int(0);
 }
 
-void bigCC::elem_text_out(buffer &o, const ring_elem ap) const
+void CCC::elem_text_out(buffer &o, const ring_elem ap) const
 {
   mpf_ptr a = BIGCC_RE(ap);
   mpf_ptr b = BIGCC_IM(ap);
   mp_exp_t expptr;
 
-  // easier to call bigRR::elem_text_out here ???
+  // easier to call RRR::elem_text_out here ???
 
   // size_t size = 1000;
   char *s = newarray(char,1000);
@@ -105,7 +105,7 @@ void bigCC::elem_text_out(buffer &o, const ring_elem ap) const
   // if (size > 1000) deletearray(allocstr);
 }
 
-void bigCC::set_epsilon(mpf_ptr epsilon)
+void CCC::set_epsilon(mpf_ptr epsilon)
 {
   if (_epsilon == NULL) {
     _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
@@ -114,7 +114,7 @@ void bigCC::set_epsilon(mpf_ptr epsilon)
   mpf_set(_epsilon, epsilon);
 }
 
-mpf_ptr bigCC::get_epsilon()
+mpf_ptr CCC::get_epsilon()
 {
   mpf_ptr epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
   mpf_init(epsilon);
@@ -122,7 +122,7 @@ mpf_ptr bigCC::get_epsilon()
   return epsilon;
 }
 
-ring_elem bigCC::from_int(int n) const
+ring_elem CCC::from_int(int n) const
 {
   M2_BigComplex result = new_elem();
   mpf_set_si(&result->re, n);
@@ -130,7 +130,7 @@ ring_elem bigCC::from_int(int n) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_int(mpz_ptr n) const
+ring_elem CCC::from_int(mpz_ptr n) const
 {
   M2_BigComplex result = new_elem();
   mpf_set_z(&result->re, n);
@@ -138,7 +138,7 @@ ring_elem bigCC::from_int(mpz_ptr n) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_double(double r) const
+ring_elem CCC::from_double(double r) const
 {
   M2_BigComplex result = new_elem();
   mpf_set_d(&result->re, r);
@@ -146,7 +146,7 @@ ring_elem bigCC::from_double(double r) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_doubles(double r, double s) const
+ring_elem CCC::from_doubles(double r, double s) const
 {
   M2_BigComplex result = new_elem();
   mpf_set_d(&result->re, r);
@@ -155,7 +155,7 @@ ring_elem bigCC::from_doubles(double r, double s) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_rational(mpq_ptr r) const
+ring_elem CCC::from_rational(mpq_ptr r) const
 {
   M2_BigComplex result = new_elem();
   mpf_set_q(&result->re, r);
@@ -163,7 +163,7 @@ ring_elem bigCC::from_rational(mpq_ptr r) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_complex(M2_CC z) const
+ring_elem CCC::from_complex(M2_CC z) const
 {
   M2_BigComplex result = new_elem();
   mpf_set_d(&result->re, z->re);
@@ -172,7 +172,7 @@ ring_elem bigCC::from_complex(M2_CC z) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_BigReal(mpf_ptr r) const
+ring_elem CCC::from_BigReal(mpf_ptr r) const
 {
   M2_BigComplex result = new_elem();
   mpf_set(&result->re, r);
@@ -180,7 +180,7 @@ ring_elem bigCC::from_BigReal(mpf_ptr r) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_BigReals(mpf_ptr a, mpf_ptr b) const
+ring_elem CCC::from_BigReals(mpf_ptr a, mpf_ptr b) const
 {
   M2_BigComplex result = new_elem();
   mpf_set(&result->re, a);
@@ -189,7 +189,7 @@ ring_elem bigCC::from_BigReals(mpf_ptr a, mpf_ptr b) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::from_BigComplex(M2_BigComplex z) const
+ring_elem CCC::from_BigComplex(M2_BigComplex z) const
 {
   M2_BigComplex result = new_elem();
   mpf_set(&result->re, &z->re);
@@ -198,40 +198,40 @@ ring_elem bigCC::from_BigComplex(M2_BigComplex z) const
   return BIGCC_RINGELEM(result);
 }
 
-mpf_ptr bigCC::to_BigReal(ring_elem f) const
+mpf_ptr CCC::to_BigReal(ring_elem f) const
 {
   return BIGCC_RE(f);
 }
 
 
-ring_elem bigCC::var(int v, int n) const
+ring_elem CCC::var(int v, int n) const
 {
   if (v >= 0) return from_int(0);
   return from_int(1);
 }
-bool bigCC::promote(const Ring *, const ring_elem, ring_elem &) const
+bool CCC::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
 }
 
-bool bigCC::lift(const Ring *, const ring_elem, ring_elem &) const
+bool CCC::lift(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
 }
 
-bool bigCC::is_unit(const ring_elem f) const
+bool CCC::is_unit(const ring_elem f) const
 {
   return !is_zero(f);
 }
 
-bool bigCC::is_zero(const ring_elem f) const
+bool CCC::is_zero(const ring_elem f) const
 {
   mpf_ptr a = BIGCC_RE(f);
   mpf_ptr b = BIGCC_IM(f);
   return (mpf_sgn(a) == 0 && mpf_sgn(b) == 0);
 }
 
-bool bigCC::is_equal(const ring_elem f, const ring_elem g) const
+bool CCC::is_equal(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr ar = BIGCC_RE(f);
   mpf_ptr ai = BIGCC_IM(f);
@@ -256,7 +256,7 @@ bool bigCC::is_equal(const ring_elem f, const ring_elem g) const
 	      mpf_cmp(dr, _epsilon) < 0 && mpf_cmp(di, _epsilon) < 0);
     }
 }
-bool bigCC::is_greater(const ring_elem f, const ring_elem g) const
+bool CCC::is_greater(const ring_elem f, const ring_elem g) const
 {
   M2_BigComplex a = new_elem();
   M2_BigComplex b = new_elem();
@@ -270,13 +270,13 @@ bool bigCC::is_greater(const ring_elem f, const ring_elem g) const
   return mpf_cmp(&a->re,&b->re) > 0;
 }
 
-bool bigCC::is_real(const ring_elem f) const
+bool CCC::is_real(const ring_elem f) const
 {
   mpf_ptr im = BIGCC_IM(f);
   return mpf_sgn(im) == 0;
 }
 
-void bigCC::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
+void CCC::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
 {
   while (v != NULL) {
     mpf_ptr re = new_mpf();
@@ -289,7 +289,7 @@ void bigCC::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
   }
 }
 
-ring_elem bigCC::absolute(const ring_elem f) const
+ring_elem CCC::absolute(const ring_elem f) const
 {
   M2_BigComplex result = new_elem();
 
@@ -302,7 +302,7 @@ ring_elem bigCC::absolute(const ring_elem f) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::copy(const ring_elem f) const
+ring_elem CCC::copy(const ring_elem f) const
 {
   mpf_ptr a = BIGCC_RE(f);
   mpf_ptr b = BIGCC_IM(f);
@@ -313,7 +313,7 @@ ring_elem bigCC::copy(const ring_elem f) const
   return BIGCC_RINGELEM(result);
 }
 
-void bigCC::remove(ring_elem &f) const
+void CCC::remove(ring_elem &f) const
 {
 #if 0
   M2_BigComplex z = BIGCC_VAL(f);
@@ -323,32 +323,32 @@ void bigCC::remove(ring_elem &f) const
 }
 
 // TO DO: MAKE IT SAME AS CC
-ring_elem bigCC::preferred_associate(ring_elem f) const
+ring_elem CCC::preferred_associate(ring_elem f) const
 {
   return from_int(1);
 }
 
-void bigCC::internal_negate_to(ring_elem &f) const
+void CCC::internal_negate_to(ring_elem &f) const
 {
   mpf_neg(BIGCC_RE(f), BIGCC_RE(f));
   mpf_neg(BIGCC_IM(f), BIGCC_IM(f));
 }
 
-void bigCC::internal_add_to(ring_elem &f, ring_elem &g) const
+void CCC::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   mpf_add(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g));
   mpf_add(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g));
   // remove(g); should this be removed?
 }
 
-void bigCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
+void CCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   mpf_sub(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g));
   mpf_sub(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g));
   // remove(g); should g be removed?
 }
 
-ring_elem bigCC::negate(const ring_elem f) const
+ring_elem CCC::negate(const ring_elem f) const
 {
   M2_BigComplex result = new_elem();
   mpf_neg(&result->re, BIGCC_RE(f));
@@ -356,7 +356,7 @@ ring_elem bigCC::negate(const ring_elem f) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::add(const ring_elem f, const ring_elem g) const
+ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 {
   M2_BigComplex result = new_elem();
   mpf_add(&result->re, BIGCC_RE(f), BIGCC_RE(g));
@@ -364,7 +364,7 @@ ring_elem bigCC::add(const ring_elem f, const ring_elem g) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::subtract(const ring_elem f, const ring_elem g) const
+ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 {
   M2_BigComplex result = new_elem();
   mpf_sub(&result->re, BIGCC_RE(f), BIGCC_RE(g));
@@ -372,7 +372,7 @@ ring_elem bigCC::subtract(const ring_elem f, const ring_elem g) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::mult(const ring_elem f, const ring_elem g) const
+ring_elem CCC::mult(const ring_elem f, const ring_elem g) const
 {
   M2_BigComplex result = new_elem();
   M2_BigComplex tmp = new_elem();
@@ -385,7 +385,7 @@ ring_elem bigCC::mult(const ring_elem f, const ring_elem g) const
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem bigCC::power(const ring_elem f, int n) const
+ring_elem CCC::power(const ring_elem f, int n) const
 {
   ring_elem curr_pow;
   ring_elem result = from_int(1);
@@ -406,15 +406,15 @@ ring_elem bigCC::power(const ring_elem f, int n) const
   while (n > 0)
     {
       if (n%2) {
-	result = bigCC::mult(result, curr_pow);
+	result = CCC::mult(result, curr_pow);
       }
       n = n/2;
-      curr_pow = bigCC::mult(curr_pow, curr_pow);
+      curr_pow = CCC::mult(curr_pow, curr_pow);
     }
   return result;
 }
 
-ring_elem bigCC::power(const ring_elem f, mpz_t n) const
+ring_elem CCC::power(const ring_elem f, mpz_t n) const
 {
   int n1;
   if (!ZZ::get_si(n1, n)) 
@@ -425,7 +425,7 @@ ring_elem bigCC::power(const ring_elem f, mpz_t n) const
   return power(f, n1);
 }
 
-ring_elem bigCC::invert(const ring_elem f) const
+ring_elem CCC::invert(const ring_elem f) const
 {
   if (is_zero(f))
     return from_int(0);
@@ -442,26 +442,26 @@ ring_elem bigCC::invert(const ring_elem f) const
   }
 }
 
-ring_elem bigCC::divide(const ring_elem f, const ring_elem g) const
+ring_elem CCC::divide(const ring_elem f, const ring_elem g) const
 {
-  ring_elem h = bigCC::invert(g);
-  return bigCC::mult(f, h);
+  ring_elem h = CCC::invert(g);
+  return CCC::mult(f, h);
 }
 
-ring_elem bigCC::remainder(const ring_elem f, const ring_elem g) const
+ring_elem CCC::remainder(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
   return remainderAndQuotient(f,g,quot);
 }
 
-ring_elem bigCC::quotient(const ring_elem f, const ring_elem g) const
+ring_elem CCC::quotient(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
   remainderAndQuotient(f,g,quot);
   return quot;
 }
 
-ring_elem bigCC::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+ring_elem CCC::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				      ring_elem &quot) const
 {
   // If g == 0.0 then rem = f, quot 0.
@@ -479,7 +479,7 @@ ring_elem bigCC::remainderAndQuotient(const ring_elem f, const ring_elem g,
 }
 
 
-ring_elem bigCC::gcd(const ring_elem f, const ring_elem g) const
+ring_elem CCC::gcd(const ring_elem f, const ring_elem g) const
 {
   if (is_zero(g) && is_zero(f))
     return from_int(0);
@@ -488,10 +488,10 @@ ring_elem bigCC::gcd(const ring_elem f, const ring_elem g) const
 }
 
 /* TO DO */
-ring_elem bigCC::gcd_extended(const ring_elem f, const ring_elem g, 
+ring_elem CCC::gcd_extended(const ring_elem f, const ring_elem g, 
 			    ring_elem &u, ring_elem &v) const
 {
-  return bigCC::from_int(0);
+  return CCC::from_int(0);
   /*
   if (!is_zero(g))
     {
@@ -517,7 +517,7 @@ ring_elem bigCC::gcd_extended(const ring_elem f, const ring_elem g,
 }
 
 
-void bigCC::syzygy(const ring_elem a, const ring_elem b,
+void CCC::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {
   if (is_zero(b))
@@ -532,7 +532,7 @@ void bigCC::syzygy(const ring_elem a, const ring_elem b,
     }
 }
 
-ring_elem bigCC::eval(const RingMap *map, const ring_elem f) const
+ring_elem CCC::eval(const RingMap *map, const ring_elem f) const
 {
   return map->get_ring()->from_BigComplex(BIGCC_VAL(f));
 }

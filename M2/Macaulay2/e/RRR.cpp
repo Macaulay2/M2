@@ -1,6 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "bigRR.hpp"
+#include "RRR.hpp"
 #include "ZZ.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
@@ -16,9 +16,9 @@
 #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-mpf_ptr bigRR::_epsilon = NULL;
+mpf_ptr RRR::_epsilon = NULL;
 
-bool bigRR::initialize_bigRR() 
+bool RRR::initialize_RRR() 
 {
   initialize_ring(0,0,0);
   _elem_size = sizeof(mpf_t);
@@ -35,35 +35,35 @@ bool bigRR::initialize_bigRR()
   return true;
 }
 
-bigRR *bigRR::create()
+RRR *RRR::create()
 {
-  bigRR *result = new bigRR;
-  result->initialize_bigRR();
+  RRR *result = new RRR;
+  result->initialize_RRR();
   return result;
 }
 
-void bigRR::text_out(buffer &o) const
+void RRR::text_out(buffer &o) const
 {
-  o << "bigRR";
+  o << "RRR";
 }
 
-mpf_ptr bigRR::new_elem() const
+mpf_ptr RRR::new_elem() const
 {
   mpf_ptr result = reinterpret_cast<mpf_ptr>(getmem(_elem_size));
   mpf_init(result);
   return result;
 }
-void bigRR::remove_elem(mpf_ptr f) const
+void RRR::remove_elem(mpf_ptr f) const
 {
   // mpf_clear(f);
 }
 
-ring_elem bigRR::random() const
+ring_elem RRR::random() const
 {
   return from_int(0);
 }
 
-void bigRR::elem_text_out(buffer &o, const ring_elem ap) const
+void RRR::elem_text_out(buffer &o, const ring_elem ap) const
 {
   mpf_ptr a = MPF_VAL(ap);
   mp_exp_t expptr;
@@ -93,7 +93,7 @@ void bigRR::elem_text_out(buffer &o, const ring_elem ap) const
   // if (size > 1000) deletearray(allocstr);
 }
 
-void bigRR::set_epsilon(mpf_ptr epsilon)
+void RRR::set_epsilon(mpf_ptr epsilon)
 {
   if (_epsilon == NULL) {
     _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
@@ -102,7 +102,7 @@ void bigRR::set_epsilon(mpf_ptr epsilon)
   mpf_set(_epsilon, epsilon);
 }
 
-mpf_ptr bigRR::get_epsilon()
+mpf_ptr RRR::get_epsilon()
 {
   mpf_ptr epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
   mpf_init(epsilon);
@@ -110,12 +110,25 @@ mpf_ptr bigRR::get_epsilon()
   return epsilon;
 }
 
-mpf_ptr bigRR::to_BigReal(ring_elem f) const
+bool RRR::from_string(const M2_string s, ring_elem &f) const
+  // returns false if an error has occurred.  f is initialized and set with value
+  // only if true is returned.
+{
+  char *s1 = tocharstar(s);
+  mpf_ptr result = new_elem();
+  if (!mpf_set_str(result, s1, 10))
+    return false;
+
+  f = MPF_RINGELEM(result);
+  return true;
+}
+
+mpf_ptr RRR::to_BigReal(ring_elem f) const
 {
   return MPF_VAL(f);
 }
 
-ring_elem bigRR::from_int(int n) const
+ring_elem RRR::from_int(int n) const
 {
   mpf_ptr result = new_elem();
   mpf_set_si(result, n);
@@ -123,7 +136,7 @@ ring_elem bigRR::from_int(int n) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::from_int(mpz_ptr n) const
+ring_elem RRR::from_int(mpz_ptr n) const
 {
   mpf_ptr result = new_elem();
   mpf_set_z(result, n);
@@ -131,7 +144,7 @@ ring_elem bigRR::from_int(mpz_ptr n) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::from_double(double r) const
+ring_elem RRR::from_double(double r) const
 {
   mpf_ptr result = new_elem();
   mpf_set_d(result, r);
@@ -139,7 +152,7 @@ ring_elem bigRR::from_double(double r) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::from_rational(mpq_ptr r) const
+ring_elem RRR::from_rational(mpq_ptr r) const
 {
   mpf_ptr result = new_elem();
   mpf_set_q(result, r);
@@ -147,7 +160,7 @@ ring_elem bigRR::from_rational(mpq_ptr r) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::from_BigReal(mpf_ptr r) const
+ring_elem RRR::from_BigReal(mpf_ptr r) const
 {
   mpf_ptr result = new_elem();
   mpf_set(result, r);
@@ -155,33 +168,33 @@ ring_elem bigRR::from_BigReal(mpf_ptr r) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::var(int v, int) const
+ring_elem RRR::var(int v, int) const
 {
   if (v >= 0) return from_int(0);
   return from_int(1);
 }
-bool bigRR::promote(const Ring *, const ring_elem, ring_elem &) const
+bool RRR::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
 }
 
-bool bigRR::lift(const Ring *, const ring_elem, ring_elem &) const
+bool RRR::lift(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
 }
 
-bool bigRR::is_unit(const ring_elem f) const
+bool RRR::is_unit(const ring_elem f) const
 {
   return !is_zero(f);
 }
 
-bool bigRR::is_zero(const ring_elem f) const
+bool RRR::is_zero(const ring_elem f) const
 {
   mpf_ptr a = MPF_VAL(f);
   return mpf_sgn(a) == 0;
 }
 
-bool bigRR::is_equal(const ring_elem f, const ring_elem g) const
+bool RRR::is_equal(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr a = MPF_VAL(f);
   mpf_ptr b = MPF_VAL(g);
@@ -199,26 +212,26 @@ bool bigRR::is_equal(const ring_elem f, const ring_elem g) const
       return (mpf_cmp(c, _epsilon) < 0 && mpf_cmp(d, _epsilon) < 0);
     }
 }
-bool bigRR::is_greater(const ring_elem f, const ring_elem g) const
+bool RRR::is_greater(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr a = MPF_VAL(f);
   mpf_ptr b = MPF_VAL(g);
   return mpf_cmp(a,b) > 0;
 }
-bool bigRR::is_less(const ring_elem f, const ring_elem g) const
+bool RRR::is_less(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr a = MPF_VAL(f);
   mpf_ptr b = MPF_VAL(g);
   return mpf_cmp(a,b) < 0;
 }
-int bigRR::is_positive(const ring_elem f) const
+int RRR::is_positive(const ring_elem f) const
 {
   mpf_ptr a = MPF_VAL(f);
   return mpf_sgn(a) > 0;
 }
 
 
-void bigRR::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
+void RRR::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
 {
   while (v != NULL) {
     mpf_ptr r = new_elem();
@@ -229,7 +242,7 @@ void bigRR::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
   }
 }
 
-ring_elem bigRR::absolute(const ring_elem f) const
+ring_elem RRR::absolute(const ring_elem f) const
 {
   mpf_ptr result = new_elem();
   mpf_ptr a = MPF_VAL(f);
@@ -238,7 +251,7 @@ ring_elem bigRR::absolute(const ring_elem f) const
 }
 
 
-ring_elem bigRR::copy(const ring_elem f) const
+ring_elem RRR::copy(const ring_elem f) const
 {
   mpf_ptr a = MPF_VAL(f);
 
@@ -247,7 +260,7 @@ ring_elem bigRR::copy(const ring_elem f) const
   return MPF_RINGELEM(result);
 }
 
-void bigRR::remove(ring_elem &f) const
+void RRR::remove(ring_elem &f) const
 {
 #if 0
   mpf_ptr a = MPF_VAL(f);
@@ -256,7 +269,7 @@ void bigRR::remove(ring_elem &f) const
 #endif
 }
 
-ring_elem bigRR::preferred_associate(ring_elem f) const
+ring_elem RRR::preferred_associate(ring_elem f) const
 {
   mpf_ptr a = MPF_VAL(f);
   if (mpf_sgn(a) >= 0)
@@ -264,58 +277,58 @@ ring_elem bigRR::preferred_associate(ring_elem f) const
   return from_int(-1);
 }
 
-void bigRR::internal_negate_to(ring_elem &f) const
+void RRR::internal_negate_to(ring_elem &f) const
 {
   mpf_neg(MPF_VAL(f), MPF_VAL(f));
 }
 
-void bigRR::internal_add_to(ring_elem &f, ring_elem &g) const
+void RRR::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   mpf_add(MPF_VAL(f), MPF_VAL(f), MPF_VAL(g));
   // remove(g); should this be removed?
 }
 
-void bigRR::internal_subtract_to(ring_elem &f, ring_elem &g) const
+void RRR::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   mpf_sub(MPF_VAL(f), MPF_VAL(f), MPF_VAL(g));
   // remove(g); should g be removed?
 }
 
-ring_elem bigRR::negate(const ring_elem f) const
+ring_elem RRR::negate(const ring_elem f) const
 {
   mpf_ptr result = new_elem();
   mpf_neg(result, MPF_VAL(f));
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::add(const ring_elem f, const ring_elem g) const
+ring_elem RRR::add(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr result = new_elem();
   mpf_add(result, MPF_VAL(f), MPF_VAL(g));
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::subtract(const ring_elem f, const ring_elem g) const
+ring_elem RRR::subtract(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr result = new_elem();
   mpf_sub(result, MPF_VAL(f), MPF_VAL(g));
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::mult(const ring_elem f, const ring_elem g) const
+ring_elem RRR::mult(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr result = new_elem();
   mpf_mul(result, MPF_VAL(f), MPF_VAL(g));
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::power(const ring_elem f, int n) const
+ring_elem RRR::power(const ring_elem f, int n) const
 {
   mpf_ptr result = new_elem();
   mpf_pow_ui(result, MPF_VAL(f), n);
   return MPF_RINGELEM(result);
 }
-ring_elem bigRR::power(const ring_elem f, mpz_t n) const
+ring_elem RRR::power(const ring_elem f, mpz_t n) const
 {
   mpf_ptr result = new_elem();
   int n1;
@@ -326,14 +339,14 @@ ring_elem bigRR::power(const ring_elem f, mpz_t n) const
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::sqrt(const ring_elem f) const
+ring_elem RRR::sqrt(const ring_elem f) const
 {
   mpf_ptr result = new_elem();
   mpf_sqrt(result, MPF_VAL(f));
   return MPF_RINGELEM(result);
 }
 
-ring_elem bigRR::invert(const ring_elem f) const
+ring_elem RRR::invert(const ring_elem f) const
 {
   if (is_zero(f))
     return from_int(0);
@@ -347,13 +360,13 @@ ring_elem bigRR::invert(const ring_elem f) const
   }
 }
 
-ring_elem bigRR::divide(const ring_elem f, const ring_elem g) const
+ring_elem RRR::divide(const ring_elem f, const ring_elem g) const
 {
   mpf_ptr result = new_elem();
   mpf_div(result, MPF_VAL(f), MPF_VAL(g));
   return MPF_RINGELEM(result);
 }
-ring_elem bigRR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
+ring_elem RRR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
 {
   // If g == 0.0 then rem = f, return 0.
   // If g != 0.0 then rem = 0, return f/g
@@ -369,7 +382,7 @@ ring_elem bigRR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) co
     }
 }
 
-ring_elem bigRR::remainder(const ring_elem f, const ring_elem g) const
+ring_elem RRR::remainder(const ring_elem f, const ring_elem g) const
 {
   ring_elem rem;
   ring_elem quot = divide(f,g,rem);
@@ -377,24 +390,24 @@ ring_elem bigRR::remainder(const ring_elem f, const ring_elem g) const
   return rem;
 }
 
-ring_elem bigRR::quotient(const ring_elem f, const ring_elem g) const
+ring_elem RRR::quotient(const ring_elem f, const ring_elem g) const
 {
   ring_elem rem;
-  ring_elem quot = bigRR::divide(f,g,rem);
+  ring_elem quot = RRR::divide(f,g,rem);
   remove(rem);
   return quot;
 }
 
-ring_elem bigRR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+ring_elem RRR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				  ring_elem &quot) const
 {
   ring_elem result;
-  quot = bigRR::divide(f,g,result);
+  quot = RRR::divide(f,g,result);
   return result;
 }
 
 
-ring_elem bigRR::gcd(const ring_elem f, const ring_elem g) const
+ring_elem RRR::gcd(const ring_elem f, const ring_elem g) const
 {
   if (is_zero(g) && is_zero(f))
     return from_int(0);
@@ -402,7 +415,7 @@ ring_elem bigRR::gcd(const ring_elem f, const ring_elem g) const
     return from_int(1);
 }
 
-ring_elem bigRR::gcd_extended(const ring_elem f, const ring_elem g, 
+ring_elem RRR::gcd_extended(const ring_elem f, const ring_elem g, 
 			    ring_elem &u, ring_elem &v) const
 {
   if (!is_zero(g))
@@ -428,7 +441,7 @@ ring_elem bigRR::gcd_extended(const ring_elem f, const ring_elem g,
 }
 
 
-void bigRR::syzygy(const ring_elem a, const ring_elem b,
+void RRR::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {
   if (is_zero(b))
@@ -443,7 +456,7 @@ void bigRR::syzygy(const ring_elem a, const ring_elem b,
     }
 }
 
-ring_elem bigRR::eval(const RingMap *map, const ring_elem f) const
+ring_elem RRR::eval(const RingMap *map, const ring_elem f) const
 {
   return map->get_ring()->from_BigReal(MPF_VAL(f));
 }
