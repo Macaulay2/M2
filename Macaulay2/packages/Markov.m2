@@ -1,24 +1,80 @@
 newPackage("Markov",
      Author => "Luis Garcia and Mike Stillman",
-     DebuggingMode => true,
+     DebuggingMode => false,
      Headline => "Markov ideals, arising from Bayesian networks in statistics",
      Version => "1.0"
      )
 
+
+------------------------------------------
+-- markov ideals in Macaulay2
+-- Authors: Luis Garcia and Mike Stillman
+-- 
+-- Routines:
+--   makeGraph {{},{1},{1},{2,3},{2,4}}
+--   displayGraph(name,G)
+--
+--   localMarkovStmts G -- G is a directed graph
+--   globalMarkovStmts G
+--   pairMarkovStmts G
+--
+--   removeRedundantStmts S
+--  
+--   markovRing (2,2,3,3)
+--
+--   marginMap(R,i) : R --> R
+--   hiddenMap(R,i) : R --> S
+--
+--   markovMatrices S  -- S is a list of independence statements
+--   markovIdeal S
+--
+-- For examples of use, see the 
+------------------------------------------
+
+
+
+export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
+       removeRedundantStmts, markovRing, marginMap, markovMatrices,
+       markovIdeal, writeDotFile, descendents, nondescendents, parents, children,
+       equivStmts, removeRedundants, bayesBall, hideMap, prob)
+exportMutable(dotBinary,jpgViewer)
+
+
+
+-------------------------
+-- Graph visualization --
+-------------------------
+
+-- Give a graph as a hash table i => descendents
+-- Make a graph
+-- Input: a directed acyclic graph in the form of a 
+--        list of lists of children.
+--        the vertices must be named 1..n, some n.
+--        ASSUMPTION: we assume that the descendents of vertex
+--        i are all less than i.  This only represents DAGS.
+-- Output: A hashtable G with keys 1..n, and G#i is the
+--        the set of all children of the vertex i.
+-- This routine produces a useful version of a 'graph'
+-- which we use in routines throughout this package.
+
+Graph = new Type of HashTable
+     -- a directed graph is a hash table in the form:
+     -- { A => set {B,C,...}, ...}, where there are edges A->B, A->C, ...
+     -- and A,B,C are integers.  The nodes of the graph must be 1,2,...,N.
+
 makeGraph = (g) -> (
      h := new MutableHashTable;
      scan(#g, i -> h#(i+1) = set g#i);
-     new HashTable from h)
+     new Graph from h)
 
 -- dotBinary = "/sw/bin/dot"
 dotBinary = "dot"
 -- jpgViewer = "/usr/bin/open"
 jpgViewer = "open"
 
-writeDotFile = (filename,G) -> (
-     -- G should be a hash table in the form:
-     -- key => set of keys.
-     fil := openOut (filename | ".dot");
+writeDotFile = method()
+writeDotFile(String,Graph) := (filename,G) -> (
+     fil := openOut filename;
      fil << "digraph G {" << endl;
      p := pairs G;
      for i from 0 to #p-1 do (
@@ -37,22 +93,40 @@ writeDotFile = (filename,G) -> (
      fil << "}" << endl << close;
      )
 
-displayGraph = (filename,G) -> (
-     -- write dot file
-     writeDotFile(filename,G);
-     -- write jpg file
-     run (dotBinary | " -Tjpg " | filename | ".dot -o " | filename | ".jpg");
-     -- open jpg file
-     run(jpgViewer | " " | filename | ".jpg");
+runcmd := cmd -> (
+     stderr << "--running: " << cmd << endl;
+     r := run cmd;
+     if r != 0 then error("--command failed, error return code ",r);
+     )
+
+displayGraph = method()
+
+displayGraph(String,String,Graph) := (dotfilename,jpgfilename,G) -> (
+     writeDotFile(dotfilename,G);
+     runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
+     runcmd(jpgViewer | " " | jpgfilename);
+     )
+displayGraph(String,Graph) := (dotfilename,G) -> (
+     jpgfilename := temporaryFileName() | ".jpg";
+     displayGraph(dotfilename,jpgfilename,G);
+     removeFile jpgfilename;
+     )
+displayGraph Graph := (G) -> (
+     dotfilename := temporaryFileName() | ".dot";
+     displayGraph(dotfilename,G);
+     removeFile dotfilename;
      )
 
 -------------------------
 -- Statements -----------
 -------------------------
+
 ------------------
 -- Graph basics --
 ------------------
-descendents = (G,v) -> (
+
+descendents = method()
+descendents(Graph,ZZ) := (G,v) -> (
      -- returns a set of vertices
      result := G#v;
      scan(reverse(1..v-1), i -> (
@@ -60,11 +134,15 @@ descendents = (G,v) -> (
      ));
      result)
 
-nondescendents = (G,v) -> set(1..#G) - descendents(G,v) - set {v}
+nondescendents = method()
+nondescendents(Graph,ZZ) := (G,v) -> set(1..#G) - descendents(G,v) - set {v}
 
-parents = (G,v) -> set select(1..#G, i -> member(v, G#i))
+parents = method()
+parents(Graph,ZZ) := (G,v) -> set select(1..#G, i -> member(v, G#i))
 
-children = (G,v) -> G#v
+children = method()
+children(Graph,ZZ) := (G,v) -> G#v
+
 --------------------------
 -- Statement calculus ----
 --------------------------
@@ -315,43 +393,7 @@ markovIdeal = (R,Stmts) -> (
 
 beginDocumentation()
 
-------------------------------------------
--- markov ideals in Macaulay2
--- Authors: Luis Garcia and Mike Stillman
--- 
--- Routines:
---   makeGraph {{},{1},{1},{2,3},{2,4}}
---   displayGraph(name,G)
---
---   localMarkovStmts G -- G is a directed graph
---   globalMarkovStmts G
---   pairMarkovStmts G
---
---   removeRedundantStmts S
---  
---   markovRing (2,2,3,3)
---
---   marginMap(R,i) : R --> R
---   hiddenMap(R,i) : R --> S
---
---   markovMatrices S  -- S is a list of independence statements
---   markovIdeal S
---
--- For examples of use, see the 
-------------------------------------------
 
--------------------------
--- Graph visualization --
--------------------------
-
--- Give a graph as a hash table i => descendents
--- Make a graph
--- Input: a directed acyclic graph in the form of a 
---        list of lists of children.
---        the vertices must be named 1..n, some n.
---        ASSUMPTION: we assume that the descendents of vertex
---        i are all less than i.  This only represents DAGS.
--- Output: A hashtable G with keys 1..n, and G#i is the
---        the set of all children of the vertex i.
--- This routine produces a useful version of a 'graph'
--- which we use in routines throughout this package.
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Markov.installed"
+-- End:
