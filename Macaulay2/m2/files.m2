@@ -46,9 +46,20 @@ cacheFileName(String,Thing) := (prefix,key) -> (
      tb := indexTable prefix;
      prefix | if tb#?key then tb#key else (
 	  changed#tb = true;
-	  tb#key = fourDigits(#tb)
-	  )
-     )
+	  tb#key = fourDigits(#tb)))
+
+cacheFileName(List,Thing) := (path,key) -> (
+     for i from 0 when i < #path do (
+	  prefix := path#i;
+	  tb := indexTable prefix;
+	  if tb#?key then return prefix | tb#key;
+	  );
+     i := 0;
+     if not i < #path then error "encountered empty cache file path";
+     prefix := path#i;
+     tb := indexTable prefix;
+     changed#tb = true;
+     tb#key = fourDigits(#tb))     
 
 cacheFileName(String,Thing,String) := (prefix,key,suffix) -> (
      tb := indexTable prefix;

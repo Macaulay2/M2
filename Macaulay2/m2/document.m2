@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
 -- configuration
 -----------------------------------------------------------------------------
-maximumCodeWidth := 81
+maximumCodeWidth := 59
 CachePrefix          := "cache/"
 DocumentationPrefix  := CachePrefix | "doc/"
 TestsPrefix          := CachePrefix | "tests/"
@@ -1310,7 +1310,14 @@ html TO := x -> (
      	  drop(toList x,1) 
      	  )
      )
-tex  TO := x -> tex TT formatDocumentTag x#0
+tex  TO := x -> (
+     node := formatDocumentTag x#0;
+     tex SEQ {
+     	  TT formatDocumentTag x#0,
+     	  " [", LITERAL { ///\ref{///, cacheFileName(DocumentationPrefix, node), ///}/// },
+	  "]"
+	  }
+     )
 
              toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
             htoh := op -> x -> op SEQ{ new TO from x, headline x#0 }
@@ -1319,7 +1326,7 @@ text TOH := htoh text
 html TOH :=  toh html
 tex  TOH :=  toh tex
 
-html LITERAL := x -> x#0
+tex LITERAL := html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := htmlMarkUpType "I"
 html UNDERLINE := htmlMarkUpType "U"

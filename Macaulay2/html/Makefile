@@ -2,7 +2,7 @@ TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
 
-all :: up.gif next.gif previous.gif top.gif index.gif index.html
+all :: up.gif next.gif previous.gif top.gif index.gif null.gif index.html
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
