@@ -940,7 +940,7 @@ extern "C" {
      Warning: Over non-domains, this might not be the intended effect.
   */
 
-  const Matrix * rawRemoveScalarMultiples(const Matrix *m); /* DAN: please connect */
+  const Matrix * rawRemoveScalarMultiples(const Matrix *m); /* connected */
 
   const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only);
   /* connected to rawRemoveMonomialFactors */

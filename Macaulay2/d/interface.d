@@ -2209,6 +2209,12 @@ export rawRemoveMonomialFactors(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawRemoveMonomialFactors",rawRemoveMonomialFactors);
 
+export rawRemoveScalarMultiples(e:Expr):Expr := (
+     when e is m:RawMatrix 
+     do Expr(Ccode(RawMatrix, "(engine_RawMatrix)rawRemoveScalarMultiples(", "(Matrix *)", m, ")" ))
+     else WrongArg(0,"a raw matrix"));
+setupfun("rawRemoveScalarMultiples",rawRemoveScalarMultiples);
+
 -----------------------------------------------------------------------------
 -- monomial ideals
 
