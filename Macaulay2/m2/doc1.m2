@@ -1035,9 +1035,17 @@ document {
      SeeAlso => "take" }
 document {
      Key => (options, Function),
-     Headline => "get optional arguments and defaults",
-     TT "options f", " -- returns the table of option names and default values
-     provided for the function ", TT "f", "."
+     Headline => "get optional arguments and default values for a function which accepts them",
+     Usage => "options f",
+     Inputs => {
+	  "f" => ""
+	  },
+     Outputs => {
+	  { "a hash table whose keys are the names of the optional arguments accepted by the function ", TT "f", " and whose values are the corresponding default values" }
+	  },
+     EXAMPLE {
+	  "options res",
+	  }
      }
 document {
      Key => (options, Ring),
