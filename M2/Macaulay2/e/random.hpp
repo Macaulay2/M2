@@ -9,9 +9,10 @@
 
 class RingElement;
 
+extern int32 RandomSeed;
+
 class Random
 {
-  static int32 seed;
   static RingElement *maxint;
   static int32 maxint32;		// At the moment, this is the max bignum random
 				// number that can be generated...
@@ -33,7 +34,7 @@ public:
 
   static void random_integer(M2_Integer a); // a should be an mpz_t which has been initialized
 
-  static void set_seed(M2_Integer s);
+  static int32 set_seed(M2_Integer s); // returns previous seed value
   static void set_max_int(M2_Integer N); // values will be in the range 0..N-1
   static M2_Integer get_random_integer(M2_Integer maxN);
 };

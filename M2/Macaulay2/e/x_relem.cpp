@@ -26,9 +26,9 @@
 #include "random.hpp"
 
 
-void rawSetRandomSeed(M2_Integer seed)
+int32 rawSetRandomSeed(M2_Integer seed)
 {
-  Random::set_seed(seed);
+  return Random::set_seed(seed);
 }
 
 void rawSetRandomMax(M2_Integer maxN)

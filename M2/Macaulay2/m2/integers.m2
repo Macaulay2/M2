@@ -71,7 +71,7 @@ isPrime ZZ := Boolean => n -> (
 
 random ZZ := ZZ => x -> (
      if x <= 0 then error "expected a positive number";
-     randomint() % x)
+     rawRandomInteger x)
 
 d := 2^31 - 1.
 
@@ -79,7 +79,7 @@ random RR := RR => x -> (
      if x <= 0. then (
 	  error "expected a positive number"
 	  );
-     x * (randomint() / d))
+     x * (rawRandomInteger d / d))
 
 ceiling = x -> - floor(-x)
 

@@ -14,10 +14,7 @@ restart = Command (
      )
 
 setRandomSeed = method()
-setRandomSeed ZZ := seed -> (
-     error "random seed not re-implemented yet";
-     (callgg(ggrandomseed, seed);)
-     )
+setRandomSeed ZZ := seed -> rawSetRandomSeed seed
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
 
 -- Local Variables:

@@ -364,7 +364,7 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
-runFile := (inf,outf,tmpf,desc,pkg,announcechange) -> (
+runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
 	  stderr << "--leaving " << desc << " in file " << outf << endl;
@@ -380,7 +380,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange) -> (
 	  ulimit := "ulimit -t 20 -v 60000";
 	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
 	  cmdname := commandLine#0;
-	  cmd := ulimit | "; " | cmdname | " " | args | " <" | inf | " >" | tmpf | " 2>&1";
+	  cmd := ulimit | "; cd " | rundir | "; " | cmdname | " " | args | " <" | inf | " >" | tmpf | " 2>&1";
 	  stderr << cmd << endl;
 	  r := run cmd;
 	  if r == 0 then (
@@ -407,7 +407,7 @@ runString := (x,pkg) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     runFile(inf,outf,tmpf,"test results",pkg,t->t);
+     runFile(inf,outf,tmpf,"test results",pkg,t->t,".");
      result := if fileExists outf then get outf;
      if result =!= null then (
 	  stderr
@@ -620,7 +620,7 @@ installPackage Package := o -> pkg -> (
 	       tmpf := tmpfn fkey;
 	       desc := "example results for " | fkey;
 	       changefun := () -> remove(rawDocUnchanged,fkey);
-	       runFile(inf,outf,tmpf,desc,pkg,changefun);
+	       runFile(inf,outf,tmpf,desc,pkg,changefun,".");
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 	       else (
@@ -639,7 +639,7 @@ installPackage Package := o -> pkg -> (
 	       outf := outfn2 n;
 	       tmpf := tmpfn2 n;
 	       desc := "test results for " | toString key;
-	       runFile(inf,outf,tmpf,desc,pkg,identity);
+	       runFile(inf,outf,tmpf,desc,pkg,identity,".");
 	       ));
      if haderror then error "error(s) occurred running test files";
 
