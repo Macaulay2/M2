@@ -636,7 +636,7 @@ char **argv;
      sigsetjmp(abort_jump,TRUE);
      abort_jump_set = TRUE;
 
-     setup_readline();
+     /* setup_readline(); */
 
      if (sigsetjmp(out_of_memory_jump,TRUE)) {
 	  if (reserve != NULL) {
