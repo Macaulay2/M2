@@ -7,7 +7,7 @@ assert( null =!= documentation symbol sin)
 ///
 
 document { document,
-     HEADLINE => "install documentation",
+     Headline => "install documentation",
      TT "document {s, d}", " -- install documentation ", TT "d", " for 
      the topic ", TT "s", ".",
      PARA,
@@ -21,7 +21,7 @@ document { document,
      }
 
 document { TEST,
-     HEADLINE => "commands for testing later",
+     Headline => "commands for testing later",
      TT "TEST s", " -- writes the string ", TT "s", " to a new test file.  The
      commands in that file can be run later as a test.",
      PARA,
@@ -29,7 +29,7 @@ document { TEST,
      }
 
 document { between,
-     HEADLINE => "insert something between elements of a list",
+     Headline => "insert something between elements of a list",
      TT "between(m,v)", " -- inserts ", TT "m", " between each pair of elements 
      of the list or sequence ", TT "v", ", returning a list.",
      PARA,
@@ -39,7 +39,7 @@ document { between,
      }
 
 document { SEEALSO,
-     HEADLINE => "crossreferences in documentation",
+     Headline => "crossreferences in documentation",
      TT "SEEALSO {a, b, ...}", " -- inserts, into a documentation page, a sentence
      instructing the reader to see some other topics.",
      PARA,
@@ -48,7 +48,7 @@ document { SEEALSO,
      }
 
 document { briefDocumentation,
-     HEADLINE => "get brief documentation",
+     Headline => "get brief documentation",
      TT "briefDocumentation s", " -- provides the first paragraph of the online
      documentation for the topic ", TT "s", ", in internal ", TO "hypertext", "
      form, suitable for conversion to text with ", TO "text", " or to html 
@@ -57,7 +57,7 @@ document { briefDocumentation,
      }
 
 document { documentation,
-     HEADLINE => "get documentation, unformatted",
+     Headline => "get documentation, unformatted",
      TT "documentation s", " -- provides the online documention for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to
      text with ", TO "text", " or to html with ", TO "html", ".",
@@ -66,7 +66,7 @@ document { documentation,
      }
 
 document { help,
-     HEADLINE => "get help",
+     Headline => "get help",
      -- no PARA in this documentation, so it all gets displayed.
      TT "help X", " -- displays the online documentation for ", TT "X", ".",
      BR, NOINDENT,
@@ -96,7 +96,7 @@ document { help,
      }
 
 document { topicList,
-     HEADLINE => "list of help topics",
+     Headline => "list of help topics",
      TT "topicList()", " -- provides a complete list of topics on which help 
      is available.",
      PARA,
@@ -107,7 +107,7 @@ document { topicList,
      }
 
 document { topics,
-     HEADLINE => "display available help topics",
+     Headline => "display available help topics",
      TT "topics", " -- displays a list of topics on which help is available.",
      PARA,
      "topics() -- Does the same in a function or file.",
@@ -116,7 +116,7 @@ document { topics,
      }
 
 document { apropos,
-     HEADLINE => "symbols matching a pattern",
+     Headline => "symbols matching a pattern",
      TT "apropos s", " -- displays a list of global symbols which match
      the pattern specified by the string ", TT "s", ".",
      PARA,
@@ -125,7 +125,7 @@ document { apropos,
      }
 
 document { printExamples,
-     HEADLINE => "print examples of use from documentation",
+     Headline => "print examples of use from documentation",
      TT "printExamples f", " -- prints out the examples of code using
      the function ", TT "f", " provided in the documentation for
      ", TT "f", ".",
@@ -135,7 +135,7 @@ document { printExamples,
      }
 
 document { symbol "Symbols",
-     HEADLINE => "find the symbol with a given value",
+     Headline => "find the symbol with a given value",
      TT "Symbols", " -- a hash table which can be used to obtain the global
      symbol with a particular value.",
      PARA,
@@ -144,7 +144,7 @@ document { symbol "Symbols",
      }
 
 document { symbol "Documentation",
-     HEADLINE => "where the documentation is stored",
+     Headline => "where the documentation is stored",
      TT "Documentation", " -- a hash table which is used to store
      pointers to documentation of functions, symbols, and methods.",
      PARA,
@@ -157,7 +157,7 @@ document { symbol "Documentation",
      }
 
 document { formatDocumentTag,
-     HEADLINE => "format documentation tags",
+     Headline => "format documentation tags",
      TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
      display purposes in documents.",
      PARA,
@@ -165,12 +165,12 @@ document { formatDocumentTag,
      }
 
 document { uniform,
-     HEADLINE => "test whether elements of a list are of the same class",
+     Headline => "test whether elements of a list are of the same class",
      TT "uniform x", " -- whether all elements of the list x have the same class."
      }
 
 document { newClass,
-     HEADLINE => "copy an object, changing the class",
+     Headline => "copy an object, changing the class",
      TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR, NOINDENT,
      TT "newClass(N,M,m)", " -- makes a copy of m with N as class and M as parent",
      PARA,
@@ -184,7 +184,7 @@ document { newClass,
      }
 
 document { MutableList,
-     HEADLINE => "the class of all mutable lists",
+     Headline => "the class of all mutable lists",
      PARA,
      "Normally the entries in a mutable list are not printed, to prevent
      infinite loops in the printing routines.  To print them out, use 
@@ -200,7 +200,7 @@ document { MutableList,
      }
 
 document { lookup,
-     HEADLINE => "look up methods",
+     Headline => "look up methods",
      NOINDENT,
      TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
@@ -223,7 +223,7 @@ document { lookup,
      }
 
 document { installMethod,
-     HEADLINE => "install methods",
+     Headline => "install methods",
      PARA,
      "Most users will use a different way of installing methods.",
      PARA,
@@ -253,7 +253,7 @@ document { installMethod,
      }
 
 document { "new",
-     HEADLINE => "new objects of various types",
+     Headline => "new objects of various types",
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR,
      NOINDENT,
@@ -337,12 +337,12 @@ document { "new",
      }
 
 document { "of",
-     HEADLINE => "a keyword",
+     Headline => "a keyword",
      TT "of", " -- a keyword used with ", TO "new", "."
      }
 
 document { "from",
-     HEADLINE => "a keyword",
+     Headline => "a keyword",
      TT "from", " -- a keyword used with ", TO "new", "."
      }
 
@@ -375,7 +375,7 @@ document { NewOfFromMethod,
      }
 
 document { Thing,
-     HEADLINE => "the class of all things",
+     Headline => "the class of all things",
      "Everything in Macaulay 2 is a ", ITALIC "thing", ".  This 
      includes numbers, strings, and lists.  More complicated things such as 
      polynomials, groups, rings, and chain complexes are implemented
@@ -384,14 +384,14 @@ document { Thing,
      }
 
 document { Nothing,
-     HEADLINE => "the empty class",
+     Headline => "the empty class",
      "This class is useful for representing the class of an argument
      which is missing.  It is also used as the parent for those things which
      are not themselves types, i.e., which do not have instances." 
      }
 
 document { Option,
-     HEADLINE => "the class of all pairs x => y",
+     Headline => "the class of all pairs x => y",
      PARA,
      "Such pairs are used as optional arguments for functions.  There
      is also a way to make new hash tables with ", TO "new", " by
@@ -410,7 +410,7 @@ document { Option,
      }
 
 document { (NewFromMethod, HashTable, List),
-     HEADLINE => "make a hash table from a list",
+     Headline => "make a hash table from a list",
      TT "new HashTable from x", " -- produce a new hash table from a
      list ", TT "x", ".",
      PARA,
@@ -420,16 +420,16 @@ document { (NewFromMethod, HashTable, List),
      }
 
 document { OptionTable,
-     HEADLINE => "the class of hash tables for optional arguments",
+     Headline => "the class of hash tables for optional arguments",
      SEEALSO "==>" }
 
 document { (symbol "==>", List, Function),
-     HEADLINE => "declare option names and default values",
+     Headline => "declare option names and default values",
      "See ", TO (symbol "==>", OptionTable, Function), " for details."
      }
 
 document { (symbol "==>", OptionTable, Function),
-     HEADLINE => "declare option names and default values",
+     Headline => "declare option names and default values",
      TT "g = defs ==> fun", " -- produces a new function ", TT "g", " from 
      the function ", TT "fun", " that processes optional arguments.",
      PARA,
@@ -459,7 +459,7 @@ document { (symbol "==>", OptionTable, Function),
      }
 
 document { SingleArgumentDispatch,
-     HEADLINE => "make a method for handling sequences individually",
+     Headline => "make a method for handling sequences individually",
      TT "SingleArgumentDispatch=>true", " -- an option to ", TO "method", "
      which specifies whether the method function should treat several
      arguments as a single argument, i.e., as a sequence.",
@@ -474,7 +474,7 @@ document { SingleArgumentDispatch,
      }
 
 document { symbol "typicalValues",
-     HEADLINE => "types of values returned by functions",
+     Headline => "types of values returned by functions",
      "A hash table used to store information about the type of values
      typically returned by functions and methods.",
      PARA,
@@ -484,7 +484,7 @@ document { symbol "typicalValues",
      }
 
 document { (method => TypicalValue),
-     HEADLINE => "specify return value type",
+     Headline => "specify return value type",
      TT "TypicalValue => X", " -- an option to ", TO "method", "
      which specifies that values returned by the method function will
      typically be of type ", TT "X", ".",
@@ -495,7 +495,7 @@ document { (method => TypicalValue),
      }
 
 document { method,
-     HEADLINE => "make a new method function",
+     Headline => "make a new method function",
      TT "f = method()", " -- creates a method function",
      PARA,
      "The code above creates a method function which takes up to three 
@@ -514,7 +514,7 @@ document { method,
      }
 
 document { method => Associative,
-     HEADLINE => "allows associative methods to be created",
+     Headline => "allows associative methods to be created",
      NOINDENT,
      TT "f = method(Associative=>true)", " -- creates an associative
      method which will call upon the appropriate binary methods for its arguments 
@@ -530,7 +530,7 @@ document { method => Associative,
      }
 
 document { size,
-     HEADLINE => "the size of an object",
+     Headline => "the size of an object",
      TT "size x", " -- returns the size of ", TT "x", " which usually gives
      a rough indication of memory space required to store the object ", TT "x", ".",
      PARA,
@@ -540,13 +540,13 @@ document { size,
      }
 
 document { baseName,
-     HEADLINE => "the base name of a generator",
+     Headline => "the base name of a generator",
      TT "baseName x", " -- returns the variable or symbol upon which a generator of a
      monoid or polynomial ring is based."
      }
 
 document { degree,
-     HEADLINE => "the degree",
+     Headline => "the degree",
      TT "degree X", " -- returns the degree of a polynomial, vector, 
      matrix, monomial, or module.",
      PARA,
@@ -568,7 +568,7 @@ document { degree,
      }
 
 document { degreeLength,
-     HEADLINE => "the number of degrees",
+     Headline => "the number of degrees",
      TT "degreeLength x", " -- returns the number of degrees of x.",
      PARA,
      "Here x may be a ring, in which case it returns the number of degrees
@@ -577,7 +577,7 @@ document { degreeLength,
      }
 
 document { coefficients,
-     HEADLINE => "the coefficients",
+     Headline => "the coefficients",
      TT "coefficients({i,j,...},p)", " -- yields the coefficients and
      monomials of the polynomial or matrix p with respect to variables 
      numbered i, j, ... .  This has to
@@ -589,17 +589,17 @@ document { coefficients,
      }
 
 document { isIsomorphism,
-     HEADLINE => "whether a map is an isomorphism",
+     Headline => "whether a map is an isomorphism",
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 
 document { isHomogeneous,
-     HEADLINE => "test for homogeneity",
+     Headline => "test for homogeneity",
      TT "isHomogeneous x", " -- whether the polynomial or ideal x is homogeneous."
      }
 
 document { vars, 
-     HEADLINE => "the matrix of the variables",
+     Headline => "the matrix of the variables",
      TT "vars R", " -- provides a 1 by n matrix whose entries are the
      variables of the polynomial ring R.",
      BR,
@@ -617,7 +617,7 @@ document { vars,
      }
 
 document { leadCoefficient,
-     HEADLINE => "the leading coefficient",
+     Headline => "the leading coefficient",
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
      or vector f.",
      PARA,
@@ -625,7 +625,7 @@ document { leadCoefficient,
      }
 
 document { leadComponent,
-     HEADLINE => "the leading component of a vector",
+     Headline => "the leading component of a vector",
      TT "leadComponent f", " -- return the leading component of the vector f,
      i.e., the integer i so that f_i is the first nonzero component of f.",
      PARA,
@@ -633,7 +633,7 @@ document { leadComponent,
      }
 
 document { leadMonomial,
-     HEADLINE => "the leading monomial",
+     Headline => "the leading monomial",
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
      or vector f.",
      PARA,
@@ -641,7 +641,7 @@ document { leadMonomial,
      }
 
 document { flatten,
-     HEADLINE => "flatten a list by unnesting lists",
+     Headline => "flatten a list by unnesting lists",
      TT "flatten m", " -- produces a new list from ", TT "m", " by
      effectively removing the braces surrounding the elements
      of any elements of m which happen to be lists.  Also works
@@ -668,12 +668,12 @@ document docTemplate {
 ///
 	  
 document { symbol "coker",
-     HEADLINE => "cokernel of a map",
+     Headline => "cokernel of a map",
      "An abbreviation for ", TO "cokernel", "."
      }
 
 document { cokernel,
-     HEADLINE => "cokernel of a map",
+     Headline => "cokernel of a map",
      TT "cokernel f", " -- produces the cokernel of the module homomorphism f",
      PARA,
      "The result will be a quotient module of the target of f.  If f is
@@ -699,7 +699,7 @@ TEST ///
 
 
 document { image,
-     HEADLINE => "image of a map",
+     Headline => "image of a map",
      TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
      PARA,
      "The result will be a submodule of the target of h",
@@ -708,17 +708,17 @@ document { image,
      }
 
 document { source,
-     HEADLINE => "source of a map",
+     Headline => "source of a map",
      TT "source h", " -- the source of a morphism ", TT "h", ".",
      }
 
 document { target,
-     HEADLINE => "target of a map",
+     Headline => "target of a map",
      TT "target h", " -- the target of a morphism ", TT "h", " or Groebner basis.",
      }
 
 document { ambient,
-     HEADLINE => "ambient free module or ring",
+     Headline => "ambient free module or ring",
      TT "ambient M", " -- yields the ambient free module for the module ", TT "M", ".",
      BR,
      NOINDENT,
@@ -730,7 +730,7 @@ document { ambient,
      }
      
 document { Hom,
-     HEADLINE => "module of homomorphisms",
+     Headline => "module of homomorphisms",
      TT "Hom(M,N)", " -- constructs the module of homomorphisms from M to N.",
      PARA,
      "Implemented with a method of the same name.",
@@ -740,12 +740,12 @@ document { Hom,
      }
 
 document { "gens",
-     HEADLINE => "matrix of generators",
+     Headline => "matrix of generators",
      "See ", TO "generators", "."
      }
 
 document { generators,
-     HEADLINE => "matrix of generators",
+     Headline => "matrix of generators",
      TT "generators x", " -- produces the generators of x.",
      PARA,
      "For an abbreviation, use ", TO "gens", ".",
@@ -763,13 +763,13 @@ document { generators,
      }
 
 document { someTerms,
-     HEADLINE => "select some terms of a polynomial",
+     Headline => "select some terms of a polynomial",
      TT "someTerms(f,i,n)", " -- select ", TT "n", " terms from the polynomial 
      ", TT "f", ", starting with the i-th one, and return the resulting polynomial."
      }
 
 document { scanKeys,
-     HEADLINE => "apply a function to each key in a hash table or database",
+     Headline => "apply a function to each key in a hash table or database",
      TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the
      hash table or database ", TT "x", ".",
      PARA,
@@ -778,7 +778,7 @@ document { scanKeys,
      }
 
 document { scanValues,
-     HEADLINE => "apply a function to each value in a hash table",
+     Headline => "apply a function to each value in a hash table",
      TT "scanValues(x,f)", " -- apply the function ", TT "f", " to each value
      appearing in the hash table ", TT "x", ".",
      PARA,
@@ -787,7 +787,7 @@ document { scanValues,
      }
 
 document { GlobalAssignHook,
-     HEADLINE => "hook for assignment to global variables",
+     Headline => "hook for assignment to global variables",
      TT "GlobalAssignHook", " -- a method name which is consulted when an
      assignment to a global variable occurs.",
      PARA,
@@ -853,7 +853,7 @@ document { complete,
      }
 
 document { (drop, BasicList, List),
-     HEADLINE => "drop some elements",
+     Headline => "drop some elements",
      TT "drop(v,{m,n})", " -- yields the list obtained from the list 
      ", TT "v", " by dropping the elements at positions ", TT "m", " through ", TT "n", ".",
      EXAMPLE {
@@ -863,7 +863,7 @@ document { (drop, BasicList, List),
      }
 
 document { (drop, BasicList, ZZ),
-     HEADLINE => "drop some elements",
+     Headline => "drop some elements",
      TT "drop(v,n) ", " -- yields the list obtained from the list ", TT "v", " by
      dropping the first ", TT "n", " elements.",
      PARA,
@@ -877,30 +877,30 @@ document { (drop, BasicList, ZZ),
      }
 
 document { drop,
-     HEADLINE => "drop some elements",
+     Headline => "drop some elements",
      SEEALSO{ "take"}
      }
 
 document { (options, Function),
-     HEADLINE => "get optional arguments and defaults",
+     Headline => "get optional arguments and defaults",
      TT "options f", " -- returns the table of option names and default values
      provided for the function ", TT "f", "."
      }
 document { (options, Ring),
-     HEADLINE => "get values used for optional arguments",
+     Headline => "get values used for optional arguments",
      TT "options R", " -- returns the options used when the polynomial
      ring ", TT "R", " was created."
      }
 document { (options, Monoid),
-     HEADLINE => "get values used for optional arguments",
+     Headline => "get values used for optional arguments",
      TT "options M", " -- returns the options used when the monoid ", TT "M", " 
      was created."
      }
 document { options,
-     HEADLINE => "get options" }
+     Headline => "get options" }
 
 document { (symbol <<, Nothing, Thing),
-     HEADLINE => "dummy file output",
+     Headline => "dummy file output",
      "null << x", " -- does nothing and returns ", TT "null", ".",
      PARA,
      "The intention here is that you can use ", TT "null", " as a dummy
@@ -909,7 +909,7 @@ document { (symbol <<, Nothing, Thing),
      }
 
 document { mathML,
-     HEADLINE => "convert to MathML format",
+     Headline => "convert to MathML format",
      TT "mathML x", " -- converts ", TT "x", " to MathML form.",
      PARA,
      EXAMPLE {
@@ -921,39 +921,39 @@ document { mathML,
 
 
 document { symbol "#",
-     HEADLINE => "length, or access to elements",
+     Headline => "length, or access to elements",
      "The precedence of ", TT "#", " when used as a binary operator is high,
      as high as ", TT ".", ", but the precedence when used as a unary operator
      lower, as low as adjacency or function application.",
      SEEALSO{ "#?" }
      }
 document { (symbol #, BasicList),
-     HEADLINE => "length",
+     Headline => "length",
      TT "#x", " -- provides the length of a list.",
      }
 document { (symbol #, Sequence),
-     HEADLINE => "length",
+     Headline => "length",
      TT "#x", " -- provides the length of a sequence.",
      }
 document { (symbol #, HashTable),
-     HEADLINE => "length",
+     Headline => "length",
      TT "#x", " -- provides the number of key-value pairs recorded
      in a hash table.",
      }
 document { (symbol #, Set),
-     HEADLINE => "cardinality",
+     Headline => "cardinality",
      TT "#x", " -- provides the number of elements in the set ", TT "x", "."
      }
 document { (symbol #, String),
-     HEADLINE => "length",
+     Headline => "length",
      TT "#x", " -- provides the length of a string.",
      }
 document { (symbol #, File),
-     HEADLINE => "length",
+     Headline => "length",
      TT "#x", " -- provides the length of a file.",
      }
 document { (symbol #, HashTable, Thing),
-     HEADLINE => "get value from hash table",
+     Headline => "get value from hash table",
      TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
      ", TT "x", ".",
      PARA,
@@ -966,13 +966,13 @@ document { (symbol #, HashTable, Thing),
      SEEALSO {(symbol #?, HashTable, Thing), "hashing"}
      }
 document { (symbol #, Database, String),
-     HEADLINE => "get value from database",
+     Headline => "get value from database",
      TT "x#i", " -- provides the value associated to the key ", TT "i", " in the database
      ", TT "x", ".",
      SEEALSO {(symbol #?, Database, String)}
      }
 document { (symbol #, String, ZZ),
-     HEADLINE => "get character from string",
+     Headline => "get character from string",
      TT "x#i", " -- provides the ", TT "i", "-th character of the string ", TT "x", ",
      as a string of length 1, if there is one.",
      PARA,
@@ -982,7 +982,7 @@ document { (symbol #, String, ZZ),
      SEEALSO {(symbol #?, String, ZZ)}
      }
 document { (symbol #, BasicList, ZZ),
-     HEADLINE => "get element from list",
+     Headline => "get element from list",
      TT "x#i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
      PARA,
      "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
@@ -992,7 +992,7 @@ document { (symbol #, BasicList, ZZ),
      SEEALSO {(symbol #?, BasicList, ZZ)}
      }
 document { (symbol #, Sequence, ZZ),
-     HEADLINE => "get element from sequence",
+     Headline => "get element from sequence",
      TT "x#i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
      PARA,
      "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
@@ -1000,19 +1000,19 @@ document { (symbol #, Sequence, ZZ),
      SEEALSO {(symbol #, Sequence, ZZ)}
      }
 document { (symbol #?, HashTable, Thing),
-     HEADLINE => "check for value in hash table",
+     Headline => "check for value in hash table",
      TT "x#?i", " -- tells whether there is a value associated to the
      key ", TT "i", " stored in the hash table ", TT "x", ".",
      SEEALSO {(symbol #, HashTable, Thing), "hashing"}
      }
 document { (symbol #?, Database, String),
-     HEADLINE => "check for value in database",
+     Headline => "check for value in database",
      TT "x#?i", " -- tells whether there is a value associated to the string
      ", TT "i", " in the database ", TT "x", ".",
      SEEALSO {(symbol #, Database, String)}
      }
 document { (symbol #?, String, ZZ),
-     HEADLINE => "check for character in string",
+     Headline => "check for character in string",
      TT "x#?i", " -- tells whether there is an ", TT "i", "-th character in
      the string ", TT "x", ".",
      EXAMPLE {
@@ -1022,7 +1022,7 @@ document { (symbol #?, String, ZZ),
      SEEALSO {(symbol #, String, ZZ)}
      }
 document { (symbol #?, BasicList, ZZ),
-     HEADLINE => "check for element in list",
+     Headline => "check for element in list",
      TT "x#?i", " --  tells whether there is an ", TT "i", "-th element in
      the list ", TT "x", ".",
      EXAMPLE {
@@ -1032,14 +1032,14 @@ document { (symbol #?, BasicList, ZZ),
      SEEALSO {(symbol #, BasicList, ZZ)}
      }
 document { (symbol #?, Sequence, ZZ),
-     HEADLINE => "check for element in sequence",
+     Headline => "check for element in sequence",
      TT "x#?i", " --tells whether there is an ", TT "i", "-th element in
      the sequence ", TT "x", ".",
      SEEALSO {(symbol #, Sequence, ZZ)}
      }
 
 document { symbol "#?",
-     HEADLINE => "check for presence of elements",
+     Headline => "check for presence of elements",
      SEEALSO{ "#" }
      }
 
@@ -1049,7 +1049,7 @@ document { symbol "_",
      }
 
 document { (symbol _, List, ZZ),
-     HEADLINE => "get element from list",
+     Headline => "get element from list",
      TT "x_i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
      PARA,
      "This is merely a convenient synonym for ", TT "x#i", ".",
@@ -1058,7 +1058,7 @@ document { (symbol _, List, ZZ),
      }
 
 document { (symbol _, Sequence, ZZ),
-     HEADLINE => "get element from list",
+     Headline => "get element from list",
      TT "x_i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
      PARA,
      "This is merely a convenient synonym for ", TT "x#i", ".",
@@ -1066,7 +1066,7 @@ document { (symbol _, Sequence, ZZ),
      }
 
 document { ".",
-     HEADLINE => "access to elements whose key is a symbol",
+     Headline => "access to elements whose key is a symbol",
      TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
      a global symbol and provide the value stored in the hash table ", TT "x", " 
      under the key ", TT "k", ".",
@@ -1083,7 +1083,7 @@ document { ".",
      }
 
 document { ".?",
-     HEADLINE => "check for presence of elements whose key is a symbol",
+     Headline => "check for presence of elements whose key is a symbol",
      TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
      available with ", TT "x.k", ".",
      PARA,
@@ -1091,7 +1091,7 @@ document { ".?",
      }
 
 document { autoload,
-     HEADLINE => "arrange for a function to be loaded automatically",
+     Headline => "arrange for a function to be loaded automatically",
      TT "autoload(f,\"x\")", " -- arranges for a function ", TT "f", " to be 
      automatically loaded from the file named ", TT "x", " the first
      time it is used."
