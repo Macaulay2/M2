@@ -253,7 +253,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
 void hilb_comp::next_monideal()
 {
   reset();
-  MonomialIdeal *I = input_mat->make_skew_monideal(this_comp);
+  MonomialIdeal *I = input_mat->make_monideal(this_comp);
     // The above line adds the squares of the variables which are skew variables
     // into the monomial ideal.  This allows Hilbert functions of such rings
     // to be computed as usual.

@@ -232,6 +232,13 @@ public:
 
   void sort(Nterm *&f) const;
 
+  virtual const vecterm * vec_locate_lead_term(const FreeModule *F, vec v) const = 0;
+  // Returns a pointer to the vector term of v which contains the lead term (of the
+  // numerator). 
+  // If result = R->vec_locate_lead_term(F,v), (if v is non-zero)
+  // To get the lead coeff, use result->comp
+  // To get the lead flat monomial (of numerator), use R->lead_flat_monomial(result->coeff).
+
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const = 0;
 
   virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const = 0;

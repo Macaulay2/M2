@@ -472,20 +472,29 @@ gbvector * GBRing::gbvector_lead_term(int nparts,
 				      const gbvector *v)
   // What should we do with Schreyer orders?  This probably doesn't
   // make much sense, except to get lead monomials.
+  // If nparts < 0, only take the actual lead term (i.e. one monomial
+  // in one component only).
 {
 #warning "Schreyer order question"
   if (v == NULL) return NULL;
-  int nslots = M->n_slots(nparts);
-  gbvector head;
-  gbvector *result = &head;
-  for (const gbvector *t = v; t != NULL; t = t->next)
-      {
-	if (M->compare(nslots, t->monom, v->monom) != 0) break;
-	result->next = gbvector_copy_term(t);
-	result = result->next;
-      }
-  result->next = NULL;
-  return head.next;
+  if (nparts < 0)
+    {
+      return gbvector_copy_term(v);
+    }
+  else
+    {
+      int nslots = M->n_slots(nparts);
+      gbvector head;
+      gbvector *result = &head;
+      for (const gbvector *t = v; t != NULL; t = t->next)
+	{
+	  if (M->compare(nslots, t->monom, v->monom) != 0) break;
+	  result->next = gbvector_copy_term(t);
+	  result = result->next;
+	}
+      result->next = NULL;
+      return head.next;
+    }
 }
 
 void GBRing::gbvector_get_lead_monomial(const FreeModule *F,

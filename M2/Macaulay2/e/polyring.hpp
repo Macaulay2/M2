@@ -225,7 +225,7 @@ public:
 
   virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const;
 
-  const vecterm * vec_find_lead_term(const FreeModule *F, vec v) const;
+  const vecterm * vec_locate_lead_term(const FreeModule *F, vec v) const;
   // Returns a pointer to the lead vector of v.
   // This works if F has a Schreyer order, or an up/down order.
 

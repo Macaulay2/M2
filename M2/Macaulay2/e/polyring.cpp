@@ -1764,7 +1764,7 @@ ring_elem PolyRing::divide_by_expvector(const int *exp, const ring_elem a) const
       ntuple::quotient(n_vars(), exp0, exp, exp0);
       Nterm *u = new_term();
       u->coeff = t->coeff;
-      M_->from_expvector(exp0, t->monom);
+      M_->from_expvector(exp0, u->monom);
       u->next = result;
       result = u;
     }
@@ -1794,7 +1794,7 @@ ring_elem PolyRing::lead_term(int nparts, const ring_elem f) const
   return head.next;
 }
 
-const vecterm * PolyRing::vec_find_lead_term(const FreeModule *F, vec v) const
+const vecterm * PolyRing::vec_locate_lead_term(const FreeModule *F, vec v) const
 // Returns a pointer to the lead vector of v.
 // This works if F has a Schreyer order, or an up/down order.
 {
@@ -1834,7 +1834,7 @@ vec PolyRing::vec_lead_term(int nparts, const FreeModule *F, vec v) const
 {
   // The first step is to find the lead monomial.
 
-  const vecterm * lead = vec_find_lead_term(F,v);
+  const vecterm * lead = vec_locate_lead_term(F,v);
 
   // Now that we have the lead term, use the first n parts of the monomial
   // ordering

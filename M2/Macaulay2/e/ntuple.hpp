@@ -113,8 +113,8 @@ void ntuple::quotient(int nvars, const int *a, const int *b, int *result)
 	    {
 	      ERROR("monomial overflow");
 	    }
-	  *result++ = z;
 	}
+      *result++ = z;
     }
 }
 
