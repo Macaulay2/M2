@@ -77,25 +77,16 @@ html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 
 encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
 doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
+
 style := () -> LITERAL {///
 <style type="text/css">
-   body { color: black; background-image: url("/// | rel ( LAYOUT#"images" | "recbg.jpg" ) | ///"); margin : 1.5em; }
-   h1   { text-align: center; }
-   h2   { text-align: center; }
-   ul   { clear: both; } 
-   p#buttons { text-align: center; }
-   img#myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
-   a:link { background-color: transparent; color: #0000ee; }
-   a:visited { background-color: transparent; color: #52188b; }
-   a:hover { background-color: transparent; color: #009999; }
-   a:active { background-color: transparent; color: #ee0000; }
+   @import "/// | rel ( LAYOUT#"style" | "doc.css" ) | ///";
 </style>
 /// }
 
-validate := LITERAL ///
-<a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
-///
-
+-- validate := LITERAL ///
+-- <a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
+-- ///
 
 -- produce html form of documentation, for Macaulay 2 and for packages
 
@@ -105,7 +96,7 @@ BUTTON := (s,alt) -> (
      s = rel s;
      if alt === null
      then error "required attribute: ALT"
-     else LITERAL concatenate("<IMG src=\"",s,"\" alt=\"[", alt, "]\">\n")
+     else LITERAL concatenate("<IMG id=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
      )
 
 upAncestors := key -> reverse (
@@ -187,14 +178,14 @@ scope2 TO := scope2 TOH := x -> (
 
 buttonBar := (key) -> SEQ {
      SEQ { 
-	  LITERAL ///<p id="buttons">///,
+	  LITERAL ///<p id="buttonbar">///,
 	  next key, prev key, up key,
      	  if key =!= topNodeName then topNodeButton else nullButton,
      	  masterIndexButton,
      	  LITERAL ///<p>///
 	  },
      LITERAL concatenate (///
-     <form action="///,					    -- "
+     <form id="search" action="///,					    -- "
      if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
      ///">
         <p>
@@ -255,8 +246,7 @@ makeHtmlNode = key -> (
 		    },
 	       HR{}, 
 	       documentationMemo key,
-	       HR{},
-	       PARA {validate}
+	       -- HR{}, PARA {validate}
 	       }
 	  }
      << endl << close)
