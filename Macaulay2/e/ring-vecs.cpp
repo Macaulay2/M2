@@ -306,7 +306,7 @@ vec Ring::vec_eval(const RingMap *map,
   for (vec t = v; t != 0; t = t->next)
     {
       ring_elem a = eval(map, t->coeff); // a is now in the target ring
-      if (!is_zero(a))
+      if (!targetRing->is_zero(a))
 	{
 	  result->next = targetRing->make_vec(t->comp,a);
 	  result = result->next;

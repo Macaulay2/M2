@@ -40,8 +40,11 @@ combinePowers := x -> (
      new Product from apply(pairs sum apply(toList x, e -> new Tally from { e#0 => e#1 }), (f,i) -> Power{f,i})
      )
 
-easyFactor Product := x -> Product sort toList splice apply(apply(x, easyFactor), 
-     y -> if class y === Product then toSequence y else y)
+easyFactor Product := x -> Product (
+     -- sort
+     toList splice apply(apply(x, easyFactor), 
+     	  y -> if class y === Product then toSequence y else y)
+     )
 easyFactor Power := x -> apply(easyFactor x#0, fac -> Power{fac#0, fac#1 * x#1})
 easyFactor Divide := x -> Divide{easyFactor x#0, easyFactor x#1}
 
@@ -66,6 +69,8 @@ simplify Divide := x -> (
 	  );
      Divide{num,combinePowers den}
      )
+
+end
 
 TEST ///
 A = ZZ/103[x,y]

@@ -377,7 +377,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  announcechange();
 	  stderr << "--making " << desc << " in file " << outf << endl;
 	  ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
-	  ulimit := "ulimit -t 20 -v 60000";
+	  ulimit := "ulimit -t 20 -m 60000 -v 60000";
 	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
 	  cmdname := commandLine#0;
 	  cmd := ulimit | "; cd " | rundir | "; " | cmdname | " " | args | " <" | inf | " >" | tmpf | " 2>&1";

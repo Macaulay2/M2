@@ -776,7 +776,7 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
      map(
 	  F := (AB := A ** B) ** C,
 	  E :=  A ** (BC := B ** C),
-	  k -> concatBlocks(R, apply(F_k.cache.indices, (ab,c) -> (
+	  k -> concatBlocks(apply(F_k.cache.indices, (ab,c) -> (
 			 apply(E_k.cache.indices, (a,bc) -> (
 				   b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
 				   if A#?a and B#?b and C#?c

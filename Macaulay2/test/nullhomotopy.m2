@@ -14,5 +14,5 @@ U*V - q
 assert( U*V - q == 0 )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test nullhomotopy.okay "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test nullhomotopy.out "
 -- End:
