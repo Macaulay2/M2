@@ -1006,11 +1006,11 @@ extern "C" {
   /* column(i) <- column(i) + r * column(j), returns false if matrix is 
      immutable, or columns are out of bounds */
 
-  M2_bool IM2_MutableMatrix_row_scale(Matrix *M, int i, const RingElement *r); /* drg: connected rawMatrixRowScale*/
+  M2_bool IM2_MutableMatrix_row_scale(Matrix *M, const RingElement *r, int i); /* drg: connected rawMatrixRowScale*/
   /* row(i) <- r * row(i), returns false if matrix is immutable
      or row is out of bounds */
 
-  M2_bool IM2_MutableMatrix_column_scale(Matrix *M, int i, const RingElement *r); /* drg: connected rawMatrixColumnScale*/
+  M2_bool IM2_MutableMatrix_column_scale(Matrix *M, const RingElement *r, int i); /* drg: connected rawMatrixColumnScale*/
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 
