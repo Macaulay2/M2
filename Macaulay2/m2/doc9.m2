@@ -1300,7 +1300,7 @@ T = (degreesRing R)_0
 p = poincare E
 assert ( p == 3*T^(-3)-5*T^(-2)+1*T^(-1)+1 )
 assert( dim E === 2 )
-assert( dim Ext^1(M,R^1) === -infinity )
+assert( dim Ext^1(M,R^1) === -1 )
 -- assert ( poincare prune Ext^2(M,M) == (4T^-3 + 2T^-2 - 5T^-1 + 3) (1 - T)^2 )
 
 F = Ext^3(M, R^1)
@@ -1311,7 +1311,7 @@ assert( Ext^4(M,R^1) == 0 )
 
 k = cokernel vars R
 N = cokernel matrix {{1_R}}
-assert( dim Ext^2(N,k) === -infinity )
+assert( dim Ext^2(N,k) === -1 )
 
 g = vars R
 P = (image g) / (image matrix {{a^2, b^2, c^2, d^2}})

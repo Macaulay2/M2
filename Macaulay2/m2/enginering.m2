@@ -89,6 +89,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
         numgens FractionField := F -> numgens last F.baseRings
   allGenerators FractionField := F -> allGenerators last F.baseRings
 	isField FractionField := F -> true
+           char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
             net FractionField := F -> (
 		 if F.?name then F.name

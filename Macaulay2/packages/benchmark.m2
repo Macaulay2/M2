@@ -4,7 +4,7 @@
 << ", compiled with " << version#"compiler"
 << endl
 
-rr = ZZ/101[a..Z];
+rr = ZZ/101[a..Z, MonomialSize => 16];
 ti = first timing (re = res coker genericMatrix(rr,a,3,9))
 
 vv = apply(8,i->rank re_i)
@@ -12,7 +12,7 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
 << "-- res39: " <<  toString ti << " seconds" << endl
 
-SS = ZZ/101[a..t]
+SS = ZZ/101[a..t, MonomialSize => 16]
 MM = SS^1/Grassmannian(2,5,SS)
 ti = first timing (re = res MM)
 vv = apply(11,i->rank re_i)

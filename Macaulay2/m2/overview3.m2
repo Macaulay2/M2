@@ -69,7 +69,7 @@ document { "Copyright and license",
 
 document { "GC garbage collector",
      "Macaulay 2 uses the excellent garbage collector 'GC' written by Hans-J. Boehm
-     and Alan J. Demers and generously provided to the publinc.  The copyright is 
+     and Alan J. Demers and generously provided to the public.  The copyright is 
      contained in its README file which we provide in the 
      file ", TT "Macaulay2/licenses/gc.lic", ".",
      SEEALSO {"collectGarbage" 

@@ -57,8 +57,8 @@ newdecompose Ideal := (I) -> (
      else I.components = decompose ideal mingens I)
 ///
 newdecompose Ideal := (I) -> (
-     print "decomposing I";
-     c := time decompose I;
+     -- print "decomposing I";
+     c := decompose I;
      if c === {} then error "bad decompose";
      c)
 --newdecompose = timefun(newdecompose,"decompose")
@@ -94,15 +94,15 @@ flattener = (I, m) -> (
      RU := (coefficientRing R) monoid([vars2,vars1,MonomialOrder=>ProductOrder{n-d,d},MonomialSize=>16]);
      J = substitute(I,RU);
      -- Collect lead coefficients of GB
-     time leads = leadTerm(n-d,gens gb J);
+     leads = leadTerm(n-d,gens gb J);
      ret = coefficients(toList(0..n-d-1),transpose leads);
      coeffmat = ret#1;
      -- Intersect these ideals, taking first element found
      coeffmat = map(RU^(numgens source coeffmat),, transpose coeffmat);
      ones = map(RU^(numgens target coeffmat), 1, (i,j)->1);
-     time mm = ones | coeffmat;
-     time F = gens gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
-     time substitute(F_(0,0),R)
+     mm = ones | coeffmat;
+     F = gens gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
+     substitute(F_(0,0),R)
      )
 --flattener = timefun(flattener,"flattener")
      
@@ -345,7 +345,7 @@ PPDSpecialCharSets = (I, PP) -> (
      -- the correct dimension.
      -- Then call PPD with this list.
      R := ring I;
-     time PPP = apply(PP, P1 -> (
+     PPP = apply(PP, P1 -> (
 	       P := P1#0;
 	       II := apply(P1#1, f -> (
 			 I := P + ideal(f);
@@ -356,7 +356,7 @@ PPDSpecialCharSets = (I, PP) -> (
      PPP = flatten flatten PPP;
      -- The following removes redundant prime ideals from this list
      PPP = new MutableList from PPP;
-     time scan(0..#PPP-1, i -> (
+     scan(0..#PPP-1, i -> (
         if PPP#i =!= null then 
 	scan(i+1..#PPP-1, j -> (
 	    if PPP#i =!= null and PPP#j =!= null 
@@ -501,7 +501,7 @@ donode = (PDC) -> (
      )
 
 
-primaryDecomposition = (I) -> (
+primaryDecomposition Ideal := (I) -> (
      C := PD I;
      while #C.W > 0 do (
 	  next C;
