@@ -62,8 +62,8 @@ Drestriction(Ideal,List) := options -> (I,w) -> (
      Drestriction ((ring I)^1/I, w, options )     )
 
 Drestriction(Module, List) := options -> (M,w) -> (
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Drestriction currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Drestriction currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      outputRequest := {HomologyModules};
      outputTable := computeRestriction (M, w, -1, d+1, 
@@ -75,8 +75,8 @@ Drestriction(ZZ,Ideal,List) := options -> (k,I,w) -> (
      Drestriction (k, (ring I)^1/I, w, options)     )
 
 Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Drestriction currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Drestriction currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      if k > d then output := 0
      else (
@@ -107,8 +107,8 @@ DrestrictionClasses(Ideal,List) := options -> (I,w) -> (
      DrestrictionClasses ((ring I)^1/I, w, options)     )
 
 DrestrictionClasses(Module, List) := options -> (M,w) -> (
-     if zeroize gens M != map (ring M)^(numgens source gens M) 
-     then error "Drestriction currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Drestriction currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
      if n == 2*d then outputRequest := {GenCycles,
@@ -124,8 +124,8 @@ DrestrictionClasses(ZZ,Ideal,List) := options -> (k,I,w) -> (
      DrestrictionClasses (k, (ring I)^1/I, w, options)     )
 
 DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Drestriction currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Drestriction currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      W := ring M;
      n := numgens W;
@@ -170,8 +170,8 @@ DrestrictionComplex(Ideal,List) := options -> (I,w) -> (
      DrestrictionComplex ((ring I)^1/I, w, options)     )
 
 DrestrictionComplex(Module, List) := options -> (M,w) -> (
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Drestriction currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Drestriction currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      outputRequest := {RestrictComplex};
      outputTable := computeRestriction (M, w, -1, d+1, 
@@ -212,8 +212,8 @@ DrestrictionAll(Ideal,List) := options -> (I,w) -> (
      DrestrictionAll ((ring I)^1/I, w, options)     )
 
 DrestrictionAll(Module, List) := options -> (M,w) -> (
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Drestriction currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Drestriction currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
      if n == 2*d then outputRequest := {GenCycles, HomologyModules,
@@ -247,8 +247,9 @@ Dintegration(Ideal,List) := options -> (I,w) -> (
 
 Dintegration(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if zeroize gens M != map W^(numgens source gens M)
-     then error "Dintegration currently only handles quotient modules";
+     F := W^(numgens source gens M);
+     ensureQuotientModule(M, 
+	  "Dintegration currently only handles quotient modules");
 
      d := #positions(w, i -> (i>0));
      MF := cokernel Fourier relations M; 
@@ -270,8 +271,8 @@ Dintegration(ZZ, Ideal, List) := options -> (k,I,w)  -> (
 
 Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
      W := ring M;
-     if zeroize gens M != map W^(numgens source gens M)
-     then error "Dintegration currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Dintegration currently only handles quotient modules");
 
      d := #positions(w, i -> (i>0));
      MF := cokernel Fourier relations M; 
@@ -304,8 +305,8 @@ DintegrationClasses(Ideal,List) := options -> (I,w) -> (
 
 DintegrationClasses(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if zeroize gens M != map W^(numgens source gens M)
-     then error "Dintegration currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Dintegration currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      n := numgens W;
      if n == 2*d then outputRequest := {GenCycles,
@@ -337,8 +338,8 @@ DintegrationClasses(ZZ,Ideal,List) := options -> (k,I,w) -> (
 
 DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      W := ring M;
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Dintegration currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Dintegration currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
 
@@ -392,8 +393,8 @@ DintegrationComplex(Ideal, List) := options -> (I,w) -> (
 
 DintegrationComplex(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if zeroize gens M != map W^(numgens source gens M)
-     then error "Dintegration currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Dintegration currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      n := numgens W;
      MF := cokernel Fourier relations M; 
@@ -446,8 +447,8 @@ DintegrationAll(Ideal,List) := options -> (I,w) -> (
 
 DintegrationAll(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if zeroize gens M != map (ring M)^(numgens source gens M)
-     then error "Dintegration currently only handles quotient modules";
+     ensureQuotientModule(M, 
+	  "Dintegration currently only handles quotient modules");
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
      if n == 2*d then outputRequest := {GenCycles, HomologyModules,
@@ -645,12 +646,12 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  if member(RestrictComplex, output) then (
 	       restrictComplex#n0 = resW^0;
 	       restrictComplex#n1 = resW^0;
-	       restrictComplex.dd#n0 = map resW^0;
-	       restrictComplex.dd#n1 = map resW^0;
+	       restrictComplex.dd#n0 = map(resW^0,resW^0);
+	       restrictComplex.dd#n1 = map(resW^0,resW^0);
 	       i = n0+1;
 	       while i < n1 do (
 	       	    restrictComplex#i = resW^0;
-	       	    restrictComplex.dd#i = map resW^0;
+	       	    restrictComplex.dd#i = map(resW^0,resW^0);
 	       	    i = i+1;
 	       	    );
 	       );
@@ -749,7 +750,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  
 	  -- MAKE THE DIFFERENTIAL AS MATRIX OF D_m MODULES
      	  if sourceSize == 0 and targetSize == 0 then (
-	       oldDiff := map resW^0 )
+	       oldDiff := map(resW^0,resW^0) )
      	  else if sourceSize == 0 then ( oldDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
      	  else if targetSize == 0 then ( oldDiff =
@@ -807,7 +808,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  m = C.dd#currDeg;
 	  sourceDeg = degrees C#(currDeg);
 	  sourceGens = {};
-	  if explicitFlag then sourceMat = map W^0;
+	  if explicitFlag then sourceMat = map(W^0,W^0);
 	  i = 0;
 	  while i < r do (
 	       -- Find generators of the current source
@@ -830,7 +831,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  
 	  -- MAKE THE NEXT DIFFERENTIAL OF D_m MODULES	       
 	  if sourceSize == 0 and targetSize == 0 then (
-	       newDiff := map(resW^0) )
+	       newDiff := map(resW^0,resW^0) )
 	  else if sourceSize == 0 then ( newDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
 	  else if targetSize == 0 then ( newDiff =

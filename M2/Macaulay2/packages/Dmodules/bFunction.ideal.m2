@@ -215,7 +215,7 @@ factorBFunction(RingElement) := Product => f -> (
      -- sanity check
      if numgens R != 1 then
      error "polynomial ring of one variable expected";
-     if coefficientRing R != QQ then
+     if coefficientRing R =!= QQ then
      error "expected polynomial over QQ";
      
      pInfo(666, {"f =" , f});

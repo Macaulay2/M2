@@ -37,14 +37,14 @@ s8 = rawRemoveScalarMultiples s7;
 debug Macaulay2
 J = Grassmannian(2,5)
 R = ZZ/31991[vars(0..19)]
-ideal(p*r-o*s+m*t,j*r-i*s+g*t,p*q-n*s+l*t,o*q-n*r+k*t,m*q-l*r+k*s,j*q-h*s+f*t,i*q-h*
+J = ideal(p*r-o*s+m*t,j*r-i*s+g*t,p*q-n*s+l*t,o*q-n*r+k*t,m*q-l*r+k*s,j*q-h*s+f*t,i*q-h*
      r+e*t,g*q-f*r+e*s,d*q-c*r+b*s-a*t,j*o-i*p+d*t,m*n-l*o+k*p,j*n-h*p+c*t,i*n-h*o+b*t,g*
      n-f*o+e*p+a*t,d*n-c*o+b*p,j*m-g*p+d*s,i*m-g*o+d*r,h*m-f*o+e*p+c*r-b*s+a*t,j*l-f*p+c*
      s,i*l-f*o+c*r+a*t,h*l-f*n+c*q,g*l-f*m+a*s,d*l-c*m+a*p,j*k-e*p+b*s-a*t,i*k-e*o+b*r,h*
      k-e*n+b*q,g*k-e*m+a*r,f*k-e*l+a*q,d*k-b*m+a*o,c*k-b*l+a*n,g*h-f*i+e*j,d*h-c*i+b*j,d*
      f-c*g+a*j,d*e-b*g+a*i,c*e-b*f+a*h)
 s1 = raw gens gb J;
-gbTrace = 5
+gbTrace = 4
 s2 = rawRemoveScalarMultiples s1;
 time s3 = rawRemoveScalarMultiples s2;
 time s4 = rawRemoveScalarMultiples s3;

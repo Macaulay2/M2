@@ -223,6 +223,18 @@ zeroize Matrix := m -> (
      map(W^(numgens target m), W^(numgens source m), m)
      )
 
+-- MES added 1/30/05 temorpary fix
+-- check whether a module is a quotient of a free module.
+--   In the Dmodule code, it appears that this is checked in
+--   3 ways: using isQuotientModule, doing what is done here,
+--   and doing what is done here, without the zerioize.
+ensureQuotientModule = method()
+ensureQuotientModule(Module, String) := (M,errorString) -> (
+   F := (ring M)^(numgens source gens M);
+   if zeroize gens M != map(F,F,1) 
+   then error errorString;
+   )
+
 -- Auto-reduction
 -- autoReduce = method()
 autoReduce Matrix := m -> (
