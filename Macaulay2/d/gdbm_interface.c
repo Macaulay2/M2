@@ -14,7 +14,7 @@
 typedef char bool;
 static int numfiles = 0;
 static GDBM_FILE *gdbm_files = NULL;
-void close_all_dbms() {
+void close_all_dbms(void) {
      int i;
      for (i=0; i<numfiles; i++) {
 	  if (gdbm_files[i] != NULL) gdbm_close(gdbm_files[i]);
@@ -115,6 +115,6 @@ int system_dbmreorganize(int handle) {
      return gdbm_reorganize(gdbm_files[handle]);
      }
 
-M2_string system_dbmstrerror() {
+M2_string system_dbmstrerror(void) {
      return tostring(gdbm_strerror(gdbm_errno));
      }

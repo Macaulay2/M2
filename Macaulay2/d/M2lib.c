@@ -11,7 +11,7 @@ extern int haveDumpdata();	/* in dumpdata/map.o */
 #include <gdbm.h>
 
 const char *get_libfac_version();	/* in version.cc */
-static const char *get_cc_version() {
+static const char *get_cc_version(void) {
   static char buf[100] = "cc (unknown)";
 # ifdef __GNUC__
 #  ifdef __GNUC_PATCHLEVEL__
@@ -120,7 +120,7 @@ static void interrupt_handler(int sig)
      signal(SIGINT,interrupt_handler);
      }
 
-void outofmem(){
+void outofmem(void) {
      static int count = 0;
      if (!tokens_stopIfError && out_of_memory_jump_set && count++ < 5) {
      	  fprintf(stderr,"out of memory, returning to top level");
@@ -178,7 +178,7 @@ M2_stringarray system_argv;
 M2_stringarray system_args;
 int system_loadDepth;
 
-int system_randomint() {
+int system_randomint(void) {
 #if 0
      extern long random();
      return random();
@@ -189,23 +189,23 @@ int system_randomint() {
      }
 
 #ifdef __DJGPP__
-void system_stime(){
+void system_stime(void){
      extern double start_timer();
      start_timer();
      }
-double system_etime(){
+double system_etime(void){
      double return_elapsed_time(double);
      return return_elapsed_time(0.);
      }
 #elif !defined(CLOCKS_PER_SEC) || CLOCKS_PER_SEC > 10000
 static struct itimerval it;
 #define INITVAL 1000000		/* a million seconds is very long */
-void system_stime(){
+void system_stime(void) {
      it.it_value.tv_sec = INITVAL;
      it.it_value.tv_usec = 0;
      (void) setitimer(ITIMER_VIRTUAL,&it,(struct itimerval *)NULL);
      }
-double system_etime(){
+double system_etime(void) {
      long sec,usec;
      (void) getitimer(ITIMER_VIRTUAL,&it);
      sec = INITVAL - it.it_value.tv_sec;
@@ -216,10 +216,10 @@ double system_etime(){
 #else
 				/* ANSI C */
 static clock_t start_time;
-void system_stime(){
+void system_stime(void) {
      start_time = clock();
      }
-double system_etime(){
+double system_etime(void) {
      return (double)(clock()-start_time) / CLOCKS_PER_SEC;
      }
 #endif
@@ -457,7 +457,7 @@ char **argv;
      return returncode;
      }
 
-static void clean_up() {
+static void clean_up(void) {
      extern void close_all_dbms();
      close_all_dbms();
      while (pre_final_list != NULL) {
@@ -478,7 +478,7 @@ int x;
      exit(x);
      }
 
-void scclib__prepare(){}
+void scclib__prepare(void) {}
 
 extern int etext, end;
 
@@ -511,7 +511,7 @@ int system_loaddata(M2_string datafilename){
 #endif
      }
 
-void C__prepare() {}
+void C__prepare(void) {}
 
 int actors4_isReady(int fd) {
 #if defined(_WIN32)

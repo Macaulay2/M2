@@ -15,7 +15,7 @@ void arginits(int argc, char **argv) {
   progname = argv[0];
 }
 
-static void init_gc() {
+static void init_gc(void) {
 #ifdef MEM_DEBUG
      GC_all_interior_pointers = TRUE; /* set this before using gc routines!  (see gc.h) */
 #endif
@@ -59,7 +59,7 @@ static void uniq(void *p, ...) {
     exit(1);
   }
 }
-static void test_gc () {
+static void test_gc (void) {
   uniq(
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
        GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
@@ -86,7 +86,7 @@ static void GC_free2 (void *s, size_t old) {
      GC_FREE(s);
      }
 
-static void init_gmp() {
+static void init_gmp(void) {
      mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
      }
 
@@ -100,7 +100,7 @@ void*     getBlock ( size_t size                                  ) { return GC_
 void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_realloc3(block,oldsize,newsize); }
 void     freeBlock ( void * block, size_t size                    ) { return GC_free2(block, size);              }
 
-void M2inits() {
+void M2inits(void) {
   init_gc();
   test_gc();
   init_gmp();
