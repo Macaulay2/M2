@@ -186,7 +186,8 @@ DISTFILES := 	Macaulay2/README \
 		Macaulay2/cache/Macaulay2.doc \
 		Macaulay2/tutorial/final/*.out \
 		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs
-Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES); tar cfz $@ $(DISTFILES)
+Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
+	tar cf - $(DISTFILES) | gzip >$@
 
 all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
 
@@ -196,7 +197,8 @@ DOCFILES := 	Macaulay2/html \
 		Macaulay2/book/M2book.dvi \
 		Macaulay2/book/M2hbook.dvi \
 		Macaulay2/Vasconcelos-appendix/appendix.dvi
-Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES); tar cf $@ $(DOCFILES)
+Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES)
+	tar cf - $(DOCFILES) | gzip >$@
 
 MACAULAY2.doc: MACAULAY2
 	$(MAKE) -C Macaulay2 doc

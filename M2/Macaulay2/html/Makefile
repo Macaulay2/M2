@@ -1,7 +1,7 @@
 include ../../Makeconf
 
 all : index.html
-index.html : ../bin/Macaulay2-$(ARCH).data html.m2
+index.html : ../cache/Macaulay2-$(ARCH).data html.m2
 	rm -f ./*.html
 	../bin/M2 html.m2 '-eexit(0)'
 view :
