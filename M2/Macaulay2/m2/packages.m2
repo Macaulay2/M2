@@ -59,3 +59,15 @@ endPackage = p -> (
 	  );
      currentPackage = null;
      p)
+
+pushDictionary = () -> (
+     d := newDictionary();
+     dictionaries prepend(d,dictionaries());
+     d)
+
+popDictionary = d -> (
+     if d =!= first dictionaries() then error "expected argument to be current dictionary";
+     dictionaries drop(dictionaries(),1);
+     d)
+
+     
