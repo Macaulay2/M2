@@ -7,12 +7,14 @@
 /* Support routines */
 /********************/
 
+#if 0
 static bool exponents_equal(int nvars, exponents a, exponents b)
 {
   for (int i=0; i<nvars; i++)
     if (a[i] != b[i]) return false;
   return true;
 }
+#endif
 
 static bool exponents_greater(int nvars, exponents a, exponents b)
 {
@@ -104,7 +106,7 @@ int MonomialTableZZ::find_term_divisors(int max,
      return value: length of this array, i.e. the number of matches found */
 {
   assert(comp >= 1);
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -143,7 +145,7 @@ bool MonomialTableZZ::is_weak_member(mpz_ptr c, exponents exp, int comp) const
   // At the end, return false
 
   assert(comp >= 1);
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -188,7 +190,7 @@ int MonomialTableZZ::find_smallest_coeff_divisor(exponents exp,
 						 int comp) const
 {
   assert(comp >= 1);
-  if (comp >= (int)_head.size()) return -1;
+  if (comp >= static_cast<int>(_head.size())) return -1;
   mon_term *head = _head[comp];
   mon_term *t;
 
@@ -226,7 +228,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
 					  vector<mon_term *,gc_alloc> *result) const
 {
   assert(comp >= 1);
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
 
@@ -268,7 +270,7 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact(mpz_ptr coeff,
 						       exponents exp, 
 						       int comp) const
 {
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -295,7 +297,7 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp,
 								int comp,
 								int first_val) const
 {
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -331,7 +333,7 @@ void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
      in some order (lex order?).  No element is ever removed.
   */
 
-  if (comp >= (int)_head.size())
+  if (comp >= static_cast<int>(_head.size()))
     {
       for (int i=_head.size(); i <= comp; i++)
 	_head.push_back(make_list_head());
@@ -505,7 +507,7 @@ void MonomialTableZZ::show(FILE *fil) const
   mon_term *t,*head;
   /* Loop through each component, display monomials(val) 10 per line */
   fprintf(fil, "monomial table: %d vars, %d components, %d elements\n",
-	  this->_nvars, (int)_head.size(), this->_count);
+	  this->_nvars, static_cast<int>(_head.size()), this->_count);
   for (unsigned i=1; i<_head.size(); i++)
     {
       head = this->_head[i];

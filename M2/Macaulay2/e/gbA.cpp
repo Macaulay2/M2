@@ -1343,7 +1343,8 @@ void gbA::insert(POLY f, int minlevel)
 
   //  int me = G->insert(f.f, f.fsyz, (gbelem_type)minlevel, _this_degree);
 
-  gbelem *g = gbelem_make(f.f, f.fsyz, (gbelem_type)minlevel, _this_degree);
+#warning "this cast should not be needed"
+  gbelem *g = gbelem_make(f.f, f.fsyz, static_cast<gbelem_type>(minlevel), _this_degree);
   minimal_gb_valid = false;
   int me = gb.size();
   gb.push_back(g);
@@ -1733,7 +1734,7 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
   _use_hilb = true;
   _hilb_new_elems = true;
 
-  _hilb_matrix = Matrix::make(_F, 0, 0, true);
+  _hilb_matrix = const_cast<Matrix *>(Matrix::make(_F, 0, 0, true));
   return this;
 }
 

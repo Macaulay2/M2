@@ -8,7 +8,7 @@
 
 M2_CC LP_make_M2_Comp(double* w)
 {
-  M2_CC z = (M2_CC) getmem_atomic(sizeof(M2_CC_struct));
+  M2_CC z = newitem_atomic(M2_CC_struct);
   z->re = w[0];
   z->im = w[1];
   return z;
@@ -16,7 +16,7 @@ M2_CC LP_make_M2_Comp(double* w)
 
 M2_CC LP_make_M2_Complex(double re, double im)
 {
-  M2_CC z = (M2_CC) getmem_atomic(sizeof(M2_CC_struct));
+  M2_CC z = newitem_atomic(M2_CC_struct);
   z->re = re;
   z->im = im;
   return z;
@@ -318,13 +318,13 @@ LMatrixCCOrNull *LP_LMatrixCR_mult(LMatrixCC *M, LMatrixRR *N)
 
 double * LP_LMatrixRR_get_epsilon()
 {
-  double *result = (double *) getmem(sizeof(double));
+  double *result = newitem_atomic(double);
   *result = LMatrixRR::get_epsilon();
   return result;
 }
 double * LP_LMatrixCC_get_epsilon()
 {
-  double *result = (double *) getmem(sizeof(double));
+  double *result = newitem_atomic(double);
   *result = LMatrixCC::get_epsilon();
   return result;
 }

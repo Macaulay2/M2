@@ -4,7 +4,7 @@
 
 void intarray::expand(int newtop)
 {
-  int *tmp = (int *) doubles->new_elem(sizeof(int)*(newtop+1));
+  int *tmp = reinterpret_cast<int *>(doubles->new_elem(sizeof(int)*(newtop+1)));
   for (int j = 0; j<max; j++) tmp[j] = entries[j];
   doubles->delete_elem(entries);
   entries = tmp;

@@ -13,6 +13,15 @@ void outofmem(void)
 }
 #endif
 
+void WerrorS(char *m) {
+  fprintf(stderr, "%s", m);
+  exit(1);
+}
+
+void WarnS(char *m) {
+  fprintf(stderr, "%s", m);
+}
+
 /***********************************************************/
 
 

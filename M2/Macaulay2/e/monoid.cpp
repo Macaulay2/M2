@@ -48,7 +48,7 @@ void monoid_info::set_degrees()
 {
   if (degree_monoid == NULL)
     {
-      degree_of_var.append((int *)NULL);
+      degree_of_var.append(static_cast<int *>(NULL));
       return;
     }
 
@@ -103,7 +103,7 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
     }
 
   if (moninfo->degree_monoid == NULL)
-    moninfo->degree_monoid = (Monoid *) this;
+    moninfo->degree_monoid = const_cast<Monoid *>(this);
 
   EXP1 = newarray(int,nvars);
   EXP2 = newarray(int,nvars);
@@ -171,7 +171,7 @@ static mon_order *make_mon_order(MonomialOrdering *mo)
 	}
       else if (p->type == MO_WEIGHTS && i < nwt_blocks)
 	{
-	  for (int j=0; (unsigned)j<nvars; j++)
+	  for (int j=0; static_cast<unsigned>(j) < nvars; j++)
 	    {
 	      if (j < p->nvars)
 		wts->array[nextwt++] = p->wts[j];
@@ -279,7 +279,7 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
   int i,v;
   monoid_info *m1 = M1->moninfo;
   monoid_info *m2 = M2->moninfo;
-  MonomialOrdering_array M12 = (MonomialOrdering_array)getmem_atomic(sizeofarray(M12,2));
+  MonomialOrdering_array M12 = GETMEM(MonomialOrdering_array, sizeofarray(M12,2));
   M12->len = 2;
   M12->array[0] = m1->_mo;
   M12->array[1] = m2->_mo;
@@ -288,7 +288,7 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
   int n1 = M1->n_vars();
   int n2 = M2->n_vars();
   int n = n1+n2;
-  M2_stringarray names = (M2_stringarray)getmem(sizeofarray(names, n));
+  M2_stringarray names = GETMEM(M2_stringarray, sizeofarray(names, n));
   names->len = n;
   for (i=0; i<n1; i++)
     names->array[i] = m1->varnames->array[i];

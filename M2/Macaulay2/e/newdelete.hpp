@@ -13,8 +13,16 @@
 // this replaces all uses of the construction "delete x":
 #define deleteitem(x) GC_FREE(x)
 
+
+// this replaces all uses of the construction "new T[n]", with T containing NO pointers
+#define newarray_atomic(T,len) reinterpret_cast<T*>(getmem_atomic((len) * sizeof(T)))
+// this replaces all uses of the construction "new T":
+#define newitem_atomic(T) reinterpret_cast<T*>(getmem_atomic(sizeof(T)))
+
 // This is used instead of newitem(T) when the size is not known to the c++ compiler
+// Caution: this uses the pointer type, not the struct type.
 #define GETMEM(T,size) reinterpret_cast<T>(getmem(size))
+#define GETMEM_ATOMIC(T,size) reinterpret_cast<T>(getmem_atomic(size))
 
 #include <gc.h>
 #include "../d/memdebug.h"

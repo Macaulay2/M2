@@ -68,7 +68,7 @@ void *stash::new_elem()
     }
   assert(free_list != NULL);	// chop_slab should not let this happen.
   void *result = free_list;
-  free_list = *((void **) free_list);
+  free_list = *(reinterpret_cast<void **>(free_list));
   return result;
 }
 
@@ -78,7 +78,7 @@ void stash::delete_elem(void *p)
   if (p == NULL) return;
   if (trace_bad_deletes)
     {
-      for (void *q = free_list; q != NULL; q = *((void **) q))
+      for (void *q = free_list; q != NULL; q = *(reinterpret_cast<void **>(q)))
 	if (q == p)
 	  assert(0);
     }
@@ -88,11 +88,11 @@ void stash::delete_elem(void *p)
   if (n_per_slab == 0)
     {
       deleted_amount += element_size;
-      char *q = (char *)p;
+      char *q = reinterpret_cast<char *>(p);
       deletearray(q);
       return;
     }
-  *((void **) p) = free_list;
+  *(reinterpret_cast<void **>(p)) = free_list;
   free_list = p;
 }
 
@@ -110,7 +110,7 @@ void stash::chop_slab()
   char *current = slabs->s;
   for (int i=0; i<n_per_slab; i++)
     {
-      *((char **) current) = prev;
+      *(reinterpret_cast<char **>(current)) = prev;
       prev = current;
       current += element_size;
     }
@@ -123,9 +123,9 @@ void stash::text_out(buffer &o) const
   char s[200];
   sprintf(s, "%16s %9dk %9dk %10d %10d %10d %10d %10d%s",
 	  name, 
-	  (int)((element_size * highwater + 1023)/1024),
-	  (int)((element_size * n_inuse + 1023)/1024),
-	  (int)element_size,
+	  static_cast<int>((element_size * highwater + 1023)/1024),
+	  static_cast<int>((element_size * n_inuse + 1023)/1024),
+	  static_cast<int>(element_size),
 	  n_allocs,
 	  n_inuse,
 	  highwater,
@@ -195,10 +195,10 @@ void *doubling_stash::new_elem(size_t size)
   int st = 0;
   while (double_size[st] < size) st++;
 
-  int *result = (int *) doubles[st]->new_elem();
+  int *result = reinterpret_cast<int *>(doubles[st]->new_elem());
   result[0] = st;
   result++;
-  return (void *) result;
+  return reinterpret_cast<void *>(result);
 }
 
 void doubling_stash::delete_elem(void *p)
@@ -213,7 +213,7 @@ void doubling_stash::delete_elem(void *p)
 
 size_t doubling_stash::allocated_size(void *p)
 {
-  int *q = (int *) p;
+  int *q = reinterpret_cast<int *>(p);
   assert(q[-1] >= 0);
   assert(q[-1] <= NDOUBLES);
   return double_size[q[-1]];

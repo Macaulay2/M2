@@ -147,7 +147,7 @@ void LMatrixCC::initialize(int nrows0, int ncols0, double *array)
   _nrows = nrows0;
   _ncols = ncols0;
   int len = 2 * nrows0 * ncols0;
-  _array = (double *) getmem_atomic(sizeof(double) * len);
+  _array = newarray_atomic(double, len);
   if (array == 0)
     for (int i=0; i<len; i++) {
       _array[i] = 0;
@@ -177,7 +177,7 @@ LMatrixCC::LMatrixCC(LMatrixRR *N)
 void LMatrixCC::text_out(buffer &o) const
 {
   char s[1000], t[1000];
-  int *field_len = (int *) getmem_atomic(sizeof(int) * _ncols);
+  int *field_len = newarray_atomic(int, _ncols);
   int loc = 0;
 
   for (int j=0; j<_ncols; j++) {
@@ -461,8 +461,8 @@ LMatrixCCOrNull * LMatrixCC::operator*(const LMatrixCC *N) const
     return 0;
   }
 
-  double *alpha = (double *) getmem_atomic(sizeof(double)*2);
-  double *beta = (double *) getmem_atomic(sizeof(double)*2);
+  double *alpha = newarray_atomic(double,2);
+  double *beta = newarray_atomic(double,2);
   alpha[0] = 1; // real part
   alpha[1] = 0; // imag part
   beta[0] = 0;  // real part
@@ -564,8 +564,9 @@ LMatrixCCOrNull * LMatrixCC::eigenvalues(LMatrixCC *eigvals)
   int size = _nrows;
   int wsize = 4*size;
   int rsize = 2*size;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * rsize);
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, rsize);
+
   int info;
 
   eigvals->resize(size,1);
@@ -573,8 +574,8 @@ LMatrixCCOrNull * LMatrixCC::eigenvalues(LMatrixCC *eigvals)
   zgeev_(&dont, &dont, 
 	 &size, copythis->_array, 
 	 &size, eigvals->_array,
-	 (double *)0, &size,  /* left eigenvectors */
-	 (double *)0, &size,  /* right eigenvectors */
+	 static_cast<double *>(0), &size,  /* left eigenvectors */
+	 static_cast<double *>(0), &size,  /* right eigenvectors */
 	 workspace, &wsize, rwork,
 	 &info);
 
@@ -607,8 +608,8 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors(LMatrixCC *eigvals, LMatrixCC *eigvecs
   int size = _nrows;
   int wsize = 4*size;
   int rsize = 2*size;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * rsize);
+  double *workspace = newarray_atomic(double,wsize);
+  double *rwork = newarray_atomic(double,rsize);
   int info;
 
   eigvals->resize(size,1);
@@ -617,7 +618,7 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors(LMatrixCC *eigvals, LMatrixCC *eigvecs
   zgeev_(&dont, &doit, 
 	 &size, copythis->_array, 
 	 &size, eigvals->_array,
-	 (double *)0, &size,  /* left eigvecs */
+	 static_cast<double *>(0), &size,  /* left eigvecs */
 	 eigvecs->_array, &size,  /* right eigvecs */
 	 workspace, &wsize, rwork,
 	 &info);
@@ -642,7 +643,7 @@ LMatrixCCOrNull * LMatrixCC::solve(LMatrixCC *b, LMatrixCC *x)
 
   int size = _nrows;
   int bsize, info;
-  int *permutation = (int *) getmem_atomic(sizeof(int) * size);
+  int *permutation = newarray_atomic(int, size);
 
   /* make sure matrix is square */
   if (_nrows != _ncols)
@@ -687,7 +688,7 @@ LMatrixCCOrNull * LMatrixCC::LU(LMatrixCC *L, LMatrixCC *U, LMatrixRR *P)
   int cols = _ncols;
   int info;
   int min = (rows <= cols) ? rows : cols;
-  int *permutation = (int *) getmem_atomic(sizeof(int) * min);
+  int *permutation = newarray_atomic(int, min);
 
   LMatrixCC *copythis = copy();
 
@@ -771,8 +772,8 @@ LMatrixRROrNull * LMatrixCC::eigenvalues_hermitian(LMatrixRR *eigvals)
 
   int size = _nrows;
   int wsize = 4*size-2;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * (3*size-2));
+  double *workspace = newarray_atomic(double,wsize);
+  double *rwork = newarray_atomic(double,3*size-2);
   int info;
 
   eigvals->resize(size,1);
@@ -809,8 +810,8 @@ LMatrixCCOrNull * LMatrixCC::eigenvectors_hermitian(LMatrixRR *eigvals,
 
   int size = _nrows;
   int wsize = 4*size-2;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * (3*size-2));
+  double *workspace = newarray_atomic(double,wsize);
+  double *rwork = newarray_atomic(double,3*size-2);
   int info;
 
   eigvecs->set_matrix(this);
@@ -846,8 +847,8 @@ LMatrixRROrNull * LMatrixCC::SVD(LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = 4*min+2*max;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * 5 * min);
+  double *workspace = newarray_atomic(double,wsize);
+  double *rwork = newarray_atomic(double,5*min);
 
   U->resize(rows,rows);
   VT->resize(cols,cols);
@@ -886,9 +887,10 @@ LMatrixRROrNull * LMatrixCC::SVD_divide_conquer(LMatrixRR *Sigma,
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = 2*min*min + 4*min + 2*max;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  int *iworkspace = (int *) getmem_atomic(sizeof(int) * 8 * min);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * (5*min*min + 7*min));
+
+  double *workspace = newarray_atomic(double, wsize);
+  int *iworkspace = newarray_atomic(int,8*min);
+  double *rwork = newarray_atomic(double,5*min*min + 7*min);
 
   U->resize(rows,rows);
   VT->resize(cols,cols);
@@ -929,7 +931,7 @@ LMatrixCCOrNull * LMatrixCC::least_squares(LMatrixCC *b, LMatrixCC *x)
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = min + ((bcols >=  max) ? bcols : max);
-  double *workspace = (double *) getmem_atomic(sizeof(double) * 2 * wsize);
+  double *workspace = newarray_atomic(double, 2*wsize);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");
@@ -999,9 +1001,10 @@ LMatrixCCOrNull * LMatrixCC::least_squares_deficient(LMatrixCC *b, LMatrixCC *x)
   int min = (rows < cols) ? rows : cols;
   int max = (rows > cols) ? rows : cols;
   int wsize = 2*min + ((bcols >  max) ? bcols : max);
-  double *workspace = (double *) getmem_atomic(sizeof(double) * 2 * wsize);
-  double *sing = (double *) getmem_atomic(sizeof(double) * min);
-  double *rwork = (double *) getmem_atomic(sizeof(double) * 5 * min);
+
+  double *workspace = newarray_atomic(double, 2*wsize);
+  double *sing = newarray_atomic(double, min);
+  double *rwork = newarray_atomic(double, 5*min);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");
