@@ -614,9 +614,16 @@ fmeth := f -> (
 	  } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
-noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
-briefDocumentation = x -> (
-     if noBriefDocClasses#?(class x) or noBriefDocThings#?x or not isDocumentableThing x then return null;
+briefDocumentation = method(SingleArgumentDispatch => true)
+
+briefDocumentation Thing :=
+briefDocumentation VisibleList := x -> null
+
+briefDocumentation BasicList := 
+briefDocumentation Function := 
+briefDocumentation MutableHashTable := 
+briefDocumentation HashTable := x -> (
+     if noBriefDocThings#?x or not isDocumentableThing x then return null;
      r := getUsage x;
      if r =!= null then << endl << text r << endl
      else (
