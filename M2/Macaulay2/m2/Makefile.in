@@ -18,6 +18,7 @@ emacs html: all; $(MAKE) -C ../$@
 LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
 DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq )) gbdoc.m2 gbfunctions.m2
 
+# just the files not mentioned in LOADSEQUENCE above
 MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
 ifdef MP
@@ -74,6 +75,9 @@ TAGS.doc : docseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
 clean::; rm -f TAGS.doc
+
+layout.m2 : ../../include/config.Makefile
+	echo 'LAYOUT = new HashTable from $(LAYOUT)' >$@
 
 default:: TAGS
 clean::; rm -f TAGS
