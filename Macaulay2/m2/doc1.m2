@@ -35,8 +35,6 @@ document { document,
 	  SEQ { TT ///EXAMPLE { "...", "..." }///, " -- bits of example code to display"},
 	  SEQ { TT ///SEEALSO { "a", "b" }///, " -- a menu of related nodes to visit." },
 	  },
-     PARA,
-     SEEALSO {"help functions"}
      }
 
 document { TEST,

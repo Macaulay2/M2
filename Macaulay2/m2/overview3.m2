@@ -10,29 +10,15 @@ document { "Invoking the program",
      TT "M2 file1 file2 ... ", " -- starts the program, reading and 
      executing the specified files.",
      PARA,
-     "These are the options that can also be provided on the command
-     line.",
-     UL {
-	  {TT "--", "         -- ignore previous arguments after reloading data"},
-	  {TT "-e x", "       -- evaluates the expression x"},
-	  {TT "-h", "         -- displays the usage message"},
-	  {TT "-mpwprompt", " -- MPW-style imput prompts"},
-	  {TT "-n", "         -- print no input prompts"},
-	  {TT "-q", "         -- suppresses loading of init file 'init.m2'"},
-	  {TT "-s", "         -- stops execution if an error occurs"},
-	  {TT "-silent", "    -- don't print the startup banner"},
-	  {TT "-tty", "       -- assume stdin is a tty"},
-	  {TT "-x", "         -- special mode for running examples"},
-	  },
-     "The file ", TT "M2", " is actually a shell script which calls the executable file
-     with appropriate arguments for loading the Macaulay 2 code previously
-     compiled.",
+     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
+     EXAMPLE ///run "M2 --help";///,
      PARA,
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
      ", TO "end", ", or the end of file character."
      }
 
 document { "COPYING",
+     Headline => "the Macaulay 2 license agreement",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA,
      if sourceHomeDirectory =!= null then PRE separate("\f",get(sourceHomeDirectory | "COPYING"))
@@ -47,10 +33,11 @@ document { "Copyright and license",
      "Macaulay 2, its object code and source code, and its documentation,
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
      you to use it under the terms of the GNU General Public License, version
-     2, as published by the Free Software Foundation; see the file
-     ", TO "COPYING", ".",
-     PARA,
-     "Various free libraries have been compiled into Macaulay 2.",
+     2, as published by the Free Software Foundation, and as contained in the file ", TT "COPYING", " accompanying the program.",
+     UL {
+     	  TOH "COPYING"
+	  },
+     PARA "The following free libraries have been compiled into Macaulay 2.",
      UL {
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
@@ -64,9 +51,8 @@ document { "GC garbage collector",
      written by Hans-J. Boehm and Alan J. Demers and generously licensed
      to the public.  It is available at
      ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
-     SEEALSO {"collectGarbage" 
-	  -- , "gcDump"
-	  }
+     PARA,
+     SEEALSO {"collectGarbage" }
      }
 
 document { "Singular-Factory",
@@ -74,21 +60,39 @@ document { "Singular-Factory",
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
-     which provides for factorization of polynomials.  It is distributed under the
+     that provides for factorization of polynomials.  It is distributed under the
      terms of the GNU General Public License and is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory",".",
-     SEEALSO {"factor", "gcd"}
+     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
+     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
+     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
+     PARA,
+     "The following important routines call upon it:",
+     SHIELD UL {
+	  TOH "factor",
+	  TOH "gcd",
+	  TOH "decompose",
+	  TOH "irreducibleCharacteristicSeries"
+	  }
      }
 
 document { "Singular-Libfac",
      "With the kind permission of the author, Michael Messollen, Macaulay 2
      incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
-     a free library of routines which provides factorization of multivariate
-     polynomials over finite fields and computation of the minimal associated primes 
+     a free library of routines, depending on ", TO "Singular-Factory", ", that provides
+     factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
      of ideals via characteristic sets.  It is distributed under the terms of the
      GNU General Public License, and is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac",".",
-     SEEALSO {"factor", "gcd", "decompose", "irreducibleCharacteristicSeries"}
+     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
+     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
+     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
+     PARA,
+     "The following important routines call upon it:",
+     SHIELD UL {
+	  TOH "factor",
+	  TOH "gcd",
+	  TOH "decompose",
+	  TOH "irreducibleCharacteristicSeries"
+	  }
      }
 
 document { "GNU MP",
@@ -96,8 +100,7 @@ document { "GNU MP",
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License.
      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
-     ", HREF "http://www.swox.com/gmp/", ".",
-     SEEALSO "How to get this program"
+     ", HREF "http://www.swox.com/gmp/", "."
      }
 
 document { "operators",
@@ -173,15 +176,6 @@ document { "Acknowledgements",
      geometry and the predecessor of this program."
      }
 
-document { "Miscellaneous Topics",
-     "Some of these topics will have to be merged with sections above.",
-     UL {
-	  TO "help functions",
-	  TO "replacements for commands and scripts from Macaulay",
-	  TO "obsolete functions and symbols",
-     	  }
-     }
-
 document { "internals",
      "Here are some functions and classes that are intended for internal use 
      by the developers only.",
@@ -191,7 +185,7 @@ document { "internals",
 	  }
      }
 
-document { "Reading the Documentation",
+document { "Reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT (LAYOUT#"packagehtml" "Main"), " 
      contains the documentation in html form, suitable for viewing with a web 
@@ -200,11 +194,40 @@ document { "Reading the Documentation",
      pages there.  Each documentation page has a text box for entering a
      search string.  This works by viewing the documentation at our web site.",
      PARA,
-     "Finally, all the documentation can be viewed within the program in
-     text form using ", TO "help", "."
+     "All the documentation can also be viewed within the program in
+     text form using ", TO "help", ".",
+     PARA,
+     NOINDENT,
+     "Functions for accessing the documentation:",
+     UL {
+	  TOH "apropos",
+	  TOH "printExamples",
+	  TOH "help", 
+	  TOH "topics"
+	  },
+     SEEALSO "Writing documentation"
+     }
+
+document { "Writing documentation",
+     "How to write documentation yourself:",
+     UL {
+	  TOH "document",
+	  TOH "hypertext",
+	  },
+     "Output formatting routines:",
+     UL {
+	  TOH "html",
+	  TOH "mathML",
+	  TOH "tex",
+	  TOH "text",
+	  },
      }
 
 document { "Preface",
+     "Macaulay 2 is a software system devoted to supporting research in 
+     algebraic geometry and commutative algebra, developed with funding
+     from the National Science Foundation.  We are eager to help new users
+     get started with it.",
      UL {
 	  TO "How to get this program",
 	  TO "Resources required",
@@ -242,19 +265,8 @@ document { "How Macaulay 2 finds its files",
      stored in the hash table called ", TO "version", "."
      }
 
-document { "User's Guide",
-     "Here are the basic concepts needed to use Macaulay 2 effectively.",
-     UL {
-	  TO "Preface",
-	  TO "Getting started",
-	  TO "Reading the Documentation",
-	  TO "Mathematical Overview",
-	  TO "Language and Programming Overview",
-	  TO "Miscellaneous Topics",
-	  }
-     }
-
 document { "Mathematical Tutorials",
+     Headline => "several extended examples",
      "In this section we present some tutorials which aim to introduce
      the user to some mathematical ways of using Macaulay 2.  The tutorials
      are relatively independent of each other, and each one introduces the use
@@ -283,16 +295,19 @@ document {  "Developer's Corner",
 
 document { "Macaulay 2",
      FileName => "index",
-     IMG "../html/9planets.gif", PARA,		    -- see LAYOUT for final location
-     "Macaulay 2 is a software system devoted to supporting research in 
-     algebraic geometry and commutative algebra, developed with funding
-     from the National Science Foundation.  The current version is 
-     ", version#"VERSION", ".  The program is still under development, but
-     the main features are working.  We are eager to help new users
-     get started with it.",
+     IMG (LAYOUT#"images" | "9planets.gif"), PARA,		    -- see LAYOUT for final location
+     PARA {
+	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
+	  },
      UL {
-	  (TO "User's Guide", " -- This is the place to get started"),
- 	  (TO "Mathematical Tutorials", " -- Several extended examples"),
+	  TOH "Preface",
+	  TOH "Getting started",
+	  TOH "Reading the documentation",
+	  TOH "Mathematical Overview",
+ 	  TOH "Mathematical Tutorials",
+	  TOH "Language and Programming Overview",
+	  TOH "Writing documentation",
+	  TOH "replacements for commands and scripts from Macaulay",
 	  }
      }
 
@@ -381,8 +396,8 @@ document { "Michael E. Stillman",
      }
 
 document { "Resources required",
-     "You will need about 12 megabytes of disk space to install Macaulay 2, though
-     this may vary.  It will need about 12 megabytes of RAM to run modest size problems,
+     "You will need about 70 megabytes of disk space to install Macaulay 2, though
+     this may vary.  It will need about 50 megabytes of RAM to run modest size problems,
      and can benefit from any additional memory."
      }
 
@@ -576,36 +591,6 @@ document { "top level loop",
 	  TO "NoPrint",
 	  TO "Print",
 	  }
-     }
-
-document { "help functions",
-     "Online Macaulay 2 documentation is stored in ", TO "hypertext", "
-     form.",
-     PARA,
-     NOINDENT,
-     "Functions for accessing the documentation:",
-     UL {
-	  TO "apropos",
-	  TO "briefDocumentation",
-	  TO "documentation",
-	  TO "examples",
-	  TO "help", 
-	  TO "topicList", 
-	  TO "topics"
-	  },
-     "How to write documentation yourself:",
-     UL {
-	  TO "document",
-	  TO "hypertext",
-	  },
-     "Output formatting routines:",
-     UL {
-	  TO "html",
-	  TO "mathML",
-	  TO "tex",
-	  TO "text",
-	  },
-     SEEALSO "Reading the Documentation"
      }
 
 document { "Getting started",

@@ -79,7 +79,7 @@ html TO := x -> (
      	  )
      )
 
-text TO2 := x -> text x#2
+text TO2 := x -> text x#1
 
 html TO2 := x -> (
      key := normalizeDocumentTag x#0;
