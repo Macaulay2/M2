@@ -109,32 +109,18 @@ poincare Module := M -> (
      if n == 0 then error "expected nonzero degree length";
      M = cokernel presentation M;
      -- if not isHomogeneous relations M then error "expected a homogeneous module";
-     ZZn := degreesRing R;
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
-	if not M.?poincareComputation then (
-            g := generators gb presentation M;
-	    error "Poincare polynomial (Hilbert numerator): not re-implemented yet";
-	    sendgg(ggPush ZZn, ggPush g, gghilb);
-	    M.poincareComputation = newHandle());
-        sendgg(ggPush M.poincareComputation, ggPush (-1), ggcalc, ggpop);
-            -- the last ggpop is to remove the return code.  MES: we should
-            -- look at it first.
-	sendgg(ggPush M.poincareComputation, gggetvalue);
-	p := ZZn.pop();
-	if R.?Repair and R.Repair =!= identity then (
-	     repair := R.Repair;
-	     p = substitute(p,
-		  apply( toList ( 0 .. n-1 ), 
-		       i -> ZZn_i => ZZn_(
-			    repair apply( toList ( 0 .. n-1 ),  -- should just have the matrix of Repair available! 
-				 j -> if j === i then 1 else 0
-				 )
-			    )
-		       )
-		  );
-	     );
-        p)
-     )
+     	  ZZn := degreesRing R;
+	  g := generators gb presentation M;
+	  p := M.cache.poincareComputation = new ZZn from rawHilbert raw g;
+	  if R.?Repair and R.Repair =!= identity then (
+	       repair := R.Repair;
+	       p = substitute(p,
+		    toList apply( 0 .. n-1, 
+		       	 i -> ZZn_i => ZZn_(
+			      repair toList apply( 0 .. n-1,  -- should just have the matrix of Repair available! 
+				   j -> if j === i then 1 else 0 ) ) ) ) );
+          p))
 
 hilbertFunction(ZZ,Module) :=
 hilbertFunction(ZZ,Ring) :=
@@ -560,26 +546,8 @@ annihilator Ideal := Ideal => I -> annihilator module I
 annihilator RingElement := Ideal => f -> annihilator ideal f
 
 -----------------------------------------------------------------------------
-
-ZZ _ Module := Vector => (i,M) -> (
-     if i === 0 then M#0
-     else error "expected integer to be 0"
-     )
-
-Module _ ZZ := Vector => (M,i) -> (
-     if M.?generators then (
-	  if i < 0 or i >= rank source M.generators
-	  then error ("subscript '", toString i, "' out of range");
-	  sendgg (ggPush M.generators, ggPush i, ggelem);
-	  new M)
-     else (
-	  -- if i < 0 or i >= M.numgens 
-	  -- then error ("subscript '", toString i, "' out of range");
-	  stderr << "--warning: why don't we have M.generators set up?" << endl;
- 	  new M from M.RawFreeModule_i
-	  )
-     )
-
+ZZ _ Module := Vector => (i,M) -> new Vector from map(M,(ring M)^1,0)
+Module _ ZZ := Vector => (M,i) -> new Vector from M_{i}
 -----------------------------------------------------------------------------
 Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).

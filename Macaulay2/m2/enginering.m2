@@ -1,6 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 RingElement = new Type of HashTable
 RingElement.synonym = "ring element"
+value RingElement := identity
 raw RingElement := f -> f.RawRingElement
 RingElement == RawRingElement := (x,y) -> raw x === y
 RawRingElement == RingElement := (x,y) -> x === raw y

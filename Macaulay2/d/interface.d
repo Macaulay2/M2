@@ -1240,7 +1240,7 @@ export rawMatrix2(e:Expr):Expr := (
      if !isSequenceOfRingElements(s.3) then WrongArg(4,"a sequence of ring elements") else
      when s.4 is mutable:Boolean do
      when s.5 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(6) else
-     toExpr(Ccode(RawMatrixOrNull, 
+     toExpr(Ccode(RawMatrixOrNull,
 	       "(engine_RawMatrixOrNull)IM2_Matrix_make2(",
 	       "(FreeModule*)", target, ",",
 	       "(FreeModule*)", source, ",",
