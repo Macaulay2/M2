@@ -15,12 +15,6 @@ toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[" | status g 
 
 summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
 
-runGB := (G,ggcmds) -> (
-     sendgg(ggPush G, ggcmds);
-     sendgg ggcalc;
-     G.returnCode = eePopInt();
-     )
-
 checkListOfIntegers := method()
 checkListOfIntegers ZZ := t -> {t}
 checkListOfIntegers List := t -> (
