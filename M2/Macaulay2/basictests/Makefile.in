@@ -23,5 +23,8 @@ $(TESTRESULTS) : ../libexec/Macaulay2
 clean  :	
 	rm -f *.okay
 
+distclean : clean
+	rm -f Makefile
+
 allfiles : *.m2 Makefile
 	echoout $^ >allfiles
