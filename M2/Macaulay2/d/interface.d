@@ -63,7 +63,7 @@ rawMonomialSparseListForm(e:Expr):Expr := (
 	  y := Ccode(RawArrayInt, "(engine_RawArrayInt)IM2_Monomial_to_arrayint((Monomial*)",x,")" );
 	  n := length(y)/2;
 	  list(new Sequence len n do (
-		    for i from length(y)-2 to 0 by -2 do (
+		    for i from length(y)-2 to 0 by -2 do (  -- we reverse the engine order
 			 provide new Sequence len 2 do (
 			      provide Expr(toInteger(y.i));
 			      provide Expr(toInteger(y.(i+1))))))))
@@ -72,13 +72,14 @@ rawMonomialSparseListForm(e:Expr):Expr := (
 setupfun("rawMonomialSparseListForm",rawMonomialSparseListForm);
 
 rawMonomialMake(e:Expr):Expr := (
-     -- accepts a list of pairs : {(5,4),(3,7),(2,1)}
+     -- accepts a list of pairs : {(2, 1), (3, 7), (5, 4)}
+     -- we reverse the list before giving it to the engine
      when e
      is l:List do (
 	  when isSequenceOfPairsOfSmallIntegers(l.v) is s:string do return WrongArg(s) else nothing;
 	  when Ccode(RawMonomialOrNull, 
 	       "(engine_RawMonomialOrNull)IM2_Monomial_make(",
-	          "(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(l.v), 
+	          "(M2_arrayint)", getReverseSequenceOfPairsOfSmallIntegers(l.v), 
 	       ")" )
 	  is x:RawMonomial do Expr(x)
 	  is null do buildErrorPacket(EngineError("raw monomial overflow"))
