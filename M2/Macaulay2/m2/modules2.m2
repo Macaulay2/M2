@@ -252,9 +252,7 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
 i := symbol i
-
--- bypass temporarily
--- hilbertFunctionRing := QQ[i]
+hilbertFunctionRing := QQ[i]
 
 hilbertFunctionQ := method()
 hilbertFunctionQ(ZZ) := (n) -> (

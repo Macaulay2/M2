@@ -148,10 +148,7 @@ complement Matrix := Matrix => (m) -> (
 -- index number of a ring variable --
 -------------------------------------
 index = method()
-
-index RingElement := f -> (
-    v := try (baseName f) else error("expected a ring variable but received ",toString f);
-    (monoid ring f).index#v)
+index RingElement := f -> rawIndexIfVariable raw f
 
 --------------------
 -- homogenization --
@@ -213,7 +210,13 @@ coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficien
 
 coefficients(List, Matrix) := (vrs,f) -> (
      m := raw f;
-     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(splice vrs, m)));
+     vrs = splice vrs;
+     types := unique apply(vrs,class);
+     if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
+     R := first types;
+     if R =!= ZZ then vrs = index \ vrs;
+     if any(vrs,i -> i === null) then error "expected a list of variables";
+     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(vrs, m)));
      (monoms,map(source monoms,source f,rawCoefficients(vrs,raw monoms,m))))
 coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
 
