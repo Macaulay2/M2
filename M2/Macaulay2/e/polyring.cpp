@@ -81,7 +81,10 @@ PolynomialRing *PolynomialRing::create(
 {
   PolynomialRing *obj = new PolynomialRing(R,I);
   if (obj->coefficients_are_ZZ)
-    obj->make_RidealZ(I);
+    {
+      obj->make_RidealZ(I);
+      obj->make_Rideal(I);
+    }
   else
     obj->make_Rideal(I);
 

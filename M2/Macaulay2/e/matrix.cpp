@@ -23,6 +23,7 @@ To do here:
 #include "comb.hpp"
 #include "det.hpp"
 #include "termideal.hpp"
+#include "assprime.hpp"
 stash *Matrix_rec::mystash;
 
 Matrix_rec::~Matrix_rec()
@@ -1162,6 +1163,51 @@ void Matrix::append_monideal(const MonomialIdeal &mi, int k)
     {
       vec v = rows()->from_varpower(mi[i]->monom().raw(), k);
       append(v);
+    }
+}
+
+
+int Matrix::dimension() const
+{
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  const Ring *K = get_ring()->Ncoeffs();
+  bool is_ZZ = K->is_Z();
+  int base = (is_ZZ ? 1 : 0);
+  int result = -1;
+  if (P != 0)
+    {
+      int n = get_ring()->n_vars();
+      for (int i=0; i<n_rows(); i++)
+	{
+	  MonomialIdeal mi = make_skew_monideal(i);
+	  AssociatedPrimes ap(mi);
+	  int d = n - ap.codimension();
+	  if (d > result) result = d;
+	}
+      if (result != -1) result += base;
+      return result;
+    }
+  else
+    {
+      // This handles the case when the coefficients are a field, or ZZ
+      int i,j;
+      int *dims = new int[n_rows()];
+      for (i=0; i<n_rows(); i++)
+	dims[i] = base;
+      for (j=0; j<n_cols(); j++)
+	{
+	  vec f = elem(j);
+	  if (f == 0) continue;
+	  if (dims[f->comp] == -1) continue;
+	  if (K->is_unit(f->coeff))
+	    dims[f->comp] = -1;
+	  else
+	    dims[f->comp] = 0;
+	}
+      for (i=0; i<n_rows(); i++)
+	if (dims[i] > result) result = dims[i];
+      delete [] dims;
+      return result;
     }
 }
 
