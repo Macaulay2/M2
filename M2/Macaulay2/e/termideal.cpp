@@ -160,9 +160,11 @@ mon_term *TermIdeal::new_mon_term_head() const
 {
   mon_term *result = new mon_term;
   result->next = result->prev = result;
-  result->coeff_is_one = 0;
+  result->coeff_is_one = false;
   result->expmask = 0;
   result->degree = 0;
+  result->_lead_exp = NULL;
+  result->t = NULL;
 
   return result;
 }

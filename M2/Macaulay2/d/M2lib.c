@@ -1493,6 +1493,7 @@ short htons(short x) { return x; }
 int system(const char * s) { return ERROR; }
 char * getcwd(char * s, int n) { return ""; }
 int exec(const char *s,...) { return ERROR; }
+unsigned int sleep(unsigned int i) { return ERROR; }
 /* End of MPW missing stuff */
 #else
 char * getcwd(char * s, int n) { return ""; }
