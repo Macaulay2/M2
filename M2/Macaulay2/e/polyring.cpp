@@ -1844,7 +1844,7 @@ vec PolyRing::vec_lead_term(int nparts, const FreeModule *F, vec v) const
 vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
 // Find the coefficient of x^e in v.
 {
-  int *exp = newarray(int,n_vars());
+  int *exp = newarray_atomic(int,n_vars());
   vecterm vec_head;
   vecterm *vec_result = &vec_head;
   for (vecterm *t = v; t != NULL; t = t->next)
@@ -1865,6 +1865,7 @@ vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
       vec_result->next = make_vec(t->comp, head.next);
       vec_result = vec_result->next;
     }
+  deletearray(exp);
   vec_result->next = NULL;
   return vec_head.next;
 }
@@ -1900,6 +1901,7 @@ vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
       }
       
   // Now we have the variable, and its exponent.
+  deletearray(exp);
   if (x == n_vars()) return v;
   return vec_coefficient_of_var(v, x, e);
 }
