@@ -588,11 +588,12 @@ forceGB = method(
      )
 
 forceGB Matrix := (f,options) -> (
+     if not isFreeModule source f then error "expected a free module";
      minmat := if options.MinimalMatrix === null
                then f
                else options.MinimalMatrix;
      changemat := if options.ChangeMatrix === null
-               then map((ring f)^0, source f, 0)
+               then id_(source f)
                else options.ChangeMatrix;
      syzmat := if options.SyzygyMatrix === null
                then map(target changemat, 0)

@@ -1,5 +1,15 @@
 Changes made, most recent ones first:
 
+New in 0.8.45:
+
+the default changeMatrix for forceGB is now the identity.
+
+New in 0.8.44:
+
+Fixed a bug noticed by Irena Swanson: when a polynomial ring is created
+with ordering Elimination 1, and the first variable x has degree d larger
+than 1, then x^d appeared in place of x as the first generator of the ring.
+
 New in 0.8.43:
 
 'prune' now works for chain complexes
