@@ -36,7 +36,10 @@ extern int getmaps(int nmaps, struct MAP maps[nmaps]) {
   prmap_t buf[nmaps];
   int fd = openproc();
   if (fd == ERROR) return ERROR;
-  if (ERROR == ioctl(fd, PIOCMAP, buf)) return ERROR;
+  if (ERROR == ioctl(fd, PIOCMAP, buf)) {
+    close(fd);
+    return ERROR;
+  }
   for (i=0; i<nmaps; i++) {
     maps[i].from = buf[i].pr_vaddr;
     maps[i].to = buf[i].pr_vaddr + buf[i].pr_size;
