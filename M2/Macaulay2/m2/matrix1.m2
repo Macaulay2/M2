@@ -3,6 +3,7 @@
 module = method()
 
 matrix(Ring,List) := Matrix => options -> (R,m) -> (
+     m = apply(splice m,splice);
      if not isTable m then error "expected a table";
      map(R^#m,,m,options))
 
@@ -438,7 +439,7 @@ net Matrix := f -> (
 	       	    )
      	       else net expression f
 	       );
-	  if degreeLength ring f > 0 -- and isHomogeneous f
+	  if compactMatrixForm and  degreeLength ring f > 0 -- and isHomogeneous f
 	  then (
 	       d := degrees cover target f;
 	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
