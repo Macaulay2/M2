@@ -79,10 +79,10 @@ public:
   bool is_skew_commutative() const { return _is_skew; }
   bool is_skew_var(int v) const { return _skew.is_skew_var(v); }
 
-  virtual bool is_pid() const       { return (_nvars == 1 && _K->is_field())
-				       || (_nvars == 0 && _K->is_pid()); }
-  virtual bool has_gcd() const      { return (_nvars == 1 && _K->is_field())
-				       || (_nvars == 0 && _K->has_gcd()); }
+  virtual bool is_pid() const       { return (_nvars == 1 && K_->is_field())
+				       || (_nvars == 0 && K_->is_pid()); }
+  virtual bool has_gcd() const      { return (_nvars == 1 && K_->is_field())
+				       || (_nvars == 0 && K_->has_gcd()); }
   virtual bool is_graded() const    { return _isgraded; } // MES: change this
   virtual bool is_expensive() const { return 1; }
 

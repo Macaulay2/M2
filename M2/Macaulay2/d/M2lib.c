@@ -324,7 +324,7 @@ static void testgc () {
 
 extern void init_readline_variables();
 
-int main(argc,argv)
+int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
 {

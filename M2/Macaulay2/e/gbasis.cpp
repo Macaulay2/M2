@@ -37,7 +37,7 @@ GBasis::GBasis(const FreeModule *F, const FreeModule *Fsyz)
 GBasis::gbelem *GBasis::gbelem_make(const FreeModule *F,
 				    gbvector *f,  // grabs f
 				    gbvector *fsyz, // grabs fsyz
-				    int minlevel,
+				    gbelem_type minlevel,
 				    int deg)
 {
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
@@ -48,12 +48,12 @@ GBasis::gbelem *GBasis::gbelem_make(const FreeModule *F,
   g->lead = R->exponents_make();
   R->gbvector_get_lead_exponents(F, f, g->lead);
   g->deg = deg;
-  g->alpha = deg - R->exponents_weight(g->lead);
+  g->alpha = deg - R->gbvector_term_weight(F,f);
   g->minlevel = minlevel;
   return g;
 }
 
-int GBasis::insert(gbvector *f, gbvector *fsyz, int minlevel, int deg)
+int GBasis::insert(gbvector *f, gbvector *fsyz, gbelem_type minlevel, int deg)
 {
   gbelem *g = gbelem_make(F, f, fsyz, minlevel, deg);
   minimal_gb_valid = false;
@@ -196,7 +196,9 @@ void GBasis::remainder(POLY &f, int degf)
 	}
     }
   h.f = head.next;
-  R->gbvector_remove_content(h.f, h.fsyz);
+  const Ring *K = R->get_flattened_coefficients();
+  ring_elem denom = K->from_int(0);
+  R->gbvector_remove_content(h.f, h.fsyz,denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
   if (comp_printlevel == 3)
@@ -273,7 +275,7 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
 	}
     }
   h.f = head.next;
-  R->gbvector_remove_content(h.f, h.fsyz);
+  R->gbvector_remove_content(h.f, h.fsyz,denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
   if (comp_printlevel == 3)
@@ -479,29 +481,40 @@ int GBasis::contains(const Matrix *m)
   return -1;
 }
 
+GBasis::gbelem *RingGBasis::gbelem_make(gbvector *f)
+{
+  // Creates a gbelem *, and populates it with a copy of f,
+  // and also sets the components of the copy to 0.
+  
+  int lead, lo, hi;
+  GBasis::gbelem *g = new GBasis::gbelem;
+  g->g.f = R->gbvector_copy(f);
+  g->g.fsyz = 0;
+  R->gbvector_weight(R1,g->g.f, lead, lo, hi);
+  g->deg = hi;
+  g->alpha = hi-lead;
+  g->lead = R->exponents_make();
+  R->gbvector_get_lead_exponents(R1,g->g.f, g->lead);
+  g->minlevel = ELEM_IN_STONE;
+  return g;
+}
+
 RingGBasis *RingGBasis::make(GBRing *R, vector<gbvector *> &elems)
 {
-#if 0
   RingGBasis *result = new RingGBasis;
   result->R = R;
+#if 0
   result->_mem.set_size(xxx);
   R->set_mem(_mem);
+#endif
   result->ringtable = MonomialTable::make(R->n_vars());
   for (int i=0; i<elems.size(); i++)
     {
-      GBasis::gbelem *g = new GBasis::gbelem;
-      g->g.f = R->gbvector_copy(elems[i]);
-      g->g.fsyz = 0;
-      g->deg = R->gbvector_degree(F,g->g.f);
-      g->alpha = ???;
-      g->lead = R->exponents_make();
-      R->gbvector_get_lead_exponents(g->g.f, g->lead);
-      g->minlevel = ELEM_IN_STONE;
-      lookup->insert(g->lead, 0, i);
+      GBasis::gbelem *g = result->gbelem_make(elems[i]);
+      result->ringtable->insert(g->lead, 0, i);
       result->gb.push_back(g);
     }
   return result;
-#endif
 }
 
 void RingGBasis::normal_form(FreeModule *F, 

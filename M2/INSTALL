@@ -299,6 +299,14 @@ Here is the configure line I have used that works:
 
     LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ./configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --enable-lapack --enable-profile
 
+    LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ./configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --enable-lapack
+
+    # my current configure method
+    mkdir tmp
+    cd tmp
+    CPPFLAGS=-I/sw/include CFLAGS="-g -faltivec" LDFLAGS="-faltivec -framework VecLib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --enable-lapack
+
+
 Further notes:
 
   Dynamic linking:

@@ -452,6 +452,10 @@ endif
 
 m2.exe : # used on Wintel
 
+doxygen : 
+	rm -rf html latex
+	doxygen
+
 ########################
 ## Obsolete targets ####
 ########################

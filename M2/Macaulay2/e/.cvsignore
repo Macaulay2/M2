@@ -4,6 +4,7 @@ dups-okay
 *.lo
 *.obj
 *.dd
+*.dep
 allfiles
 cmdinst.hpp
 cmdnames.hpp

@@ -1,5 +1,6 @@
 #ifndef __gbring_hpp_
 #define __gbring_hpp_
+
 // Problems to solve:
 //  a. F,Fsyz
 //  b. hide Schreyer order completely
@@ -17,6 +18,7 @@
 //   KK or ZZ
 //   [polyring,skew,weyl,solvable]
 //   quotient ideal
+
 #include "ring.hpp"
 #include "skew.hpp"
 #include "ntuple.hpp"
@@ -34,23 +36,23 @@ typedef int * monomial;
 #define NSLAB 4092
 class MemoryAllocator
 {
-  int _size; // Size of an element, in bytes
-  char *_freelist;
+  int size; // Size of an element, in bytes
+  char *freelist;
   struct slab {
     slab *next;
     char a[NSLAB];
   };
-  slab *_top_slab;
+  slab *top_slab;
   void new_slab(); // Link in a new slab, break it up, and add elements to free list.
 public:
   MemoryAllocator(int size_in_bytes) 
-    : _size(size_in_bytes), _freelist(0), _top_slab(0) {}
+    : size(size_in_bytes), freelist(0), top_slab(0) {}
   ~MemoryAllocator() {}
   char *new_elem() { 
-    if (!_freelist) new_slab();
-    char *result = _freelist; _freelist = * ((char **)_freelist); return result;
+    if (!freelist) new_slab();
+    char *result = freelist; freelist = * ((char **)freelist); return result;
   }
-  void remove_elem(char *p) { *((char **)p) = _freelist; _freelist = p; }
+  void remove_elem(char *p) { *((char **)p) = freelist; freelist = p; }
 };
 
 class gbvectorHeap;
@@ -146,7 +148,8 @@ protected:
   void lower_content_ZZ(gbvector *f, M2_Integer content) const;
 
   void gbvector_remove_content_ZZ(gbvector *f, 
-				  gbvector *fsyz) const;
+				  gbvector *fsyz,
+				  mpz_t denom) const;
 
   const gbvector *find_coeff(const FreeModule *F,
 			     const gbvector *f, const gbvector *g) const;
@@ -171,6 +174,7 @@ public:
   //////////////////////
   // Ring information //
   //////////////////////
+
   // array of quotient elements (all component 0).
   bool is_quotient_ring() const { return _nquotients > 0; }
   MonomialIdeal * get_quotient_monomials() const { return _Rideal; }
@@ -216,8 +220,6 @@ public:
   // gbvector support //
   //////////////////////
 
-  int exponents_weight(const int *e) const;
-
   const ring_elem one() { return _one; }  // the element '1' in the base K.
 
   void gbvector_remove(gbvector *f);
@@ -235,11 +237,24 @@ public:
 
   int gbvector_n_terms(const gbvector *f) const;
 
-  int gbvector_degree(const FreeModule *F, const gbvector *f);
+  // Degrees, using the weight vector _degrees.
+  int exponents_weight(const int *e) const;
+
+  int gbvector_term_weight(const FreeModule *F, 
+			   const gbvector *f);
+
+  void gbvector_weight(const FreeModule *F, const gbvector *f,
+		       int &result_lead,
+		       int &result_lo,
+		       int &result_hi);
+
+  int gbvector_degree(const FreeModule *F, 
+		      const gbvector *f);
 
   int gbvector_compare(const FreeModule *F,
 		       const gbvector *f,
 		       const gbvector *g) const;
+
 
   gbvector * gbvector_lead_term(int n, 
 				const FreeModule *F, 
@@ -333,7 +348,12 @@ public:
 			     const gbvector *gsyz);
   
   void gbvector_remove_content(gbvector *f, 
-			       gbvector *fsyz);
+			       gbvector *fsyz,
+			       ring_elem &denom);
+  // if c = content(f,fsyz), then 
+  //  f = f//c
+  //  fsyz = fsyz//c
+  //  denom = denom*c
   
   void gbvector_auto_reduce(const FreeModule *F,
 			    const FreeModule *Fsyz,
@@ -473,8 +493,8 @@ public:
 class GRType {
 protected:
   typedef enum { BASE, FRAC_QQ, FRAC, POLY } tag;
-  const GRType *_next;
-  GRType(const GRType *next) : _next(next) {}
+  const GRType *next_;
+  GRType(const GRType *next) : next_(next) {}
 public:
   virtual ring_elem to_ringelem(ring_elem coeff, 
 				const int *exp) const = 0;
