@@ -195,9 +195,9 @@ all :: phase5
 target = .
 builddir = tmp/$(package)
 
-$(builddir)/$(htmldocdir) : ; install -d $@
+cache/html : ; install -d $@
 
-phase5 : $(builddir)/$(htmldocdir) $(builddir)/$(htmldocdir)/index.html
+phase5 : cache/html $(builddir)/$(htmldocdir)/index.html
 $(builddir)/$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
 	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
