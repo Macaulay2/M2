@@ -654,6 +654,10 @@ M2_string serv;
 
 extern int errno, sys_nerr;
 
+#ifdef __CYGWIN__
+#define NO_HERROR
+#endif
+
 #ifndef NO_HERROR
 extern int h_nerr;
 #ifndef H_ERRLIST_IS_DECLARED
@@ -679,7 +683,7 @@ char const *system_strerror() {
 #ifndef NO_HERROR
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
 #endif
-#ifndef __MWERKS__
+#if !defined(__MWERKS__) && !defined(__CYGWIN__)
      errno > 0 && errno < sys_nerr ? sys_errlist[errno] :
 #endif
      "no system error (scclib.c)";
