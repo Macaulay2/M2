@@ -23,6 +23,11 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 
 -- Results:
 
+-- FreeBSD euclid.math.purdue.edu 4.5-RELEASE FreeBSD i386
+-- Macaulay2 0.9.2, compiled with gcc 2.95
+-- res39: 0.523437 seconds
+-- resG25: 8.14062 seconds
+
 -- OSF1 cosimo.medicis.polytechnique.fr V4.0 1229 alpha
 -- 0.683216 seconds, Macaulay2 0.8.57, compiled with gcc 2.95
 
