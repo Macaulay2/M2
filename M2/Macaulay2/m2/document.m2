@@ -1,7 +1,6 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
-local foo
-debugDoc = () -> commandInterpreter symbol foo
+debugDoc = () -> commandInterpreter local symbol
 
 maximumCodeWidth := 120
 
@@ -51,14 +50,11 @@ needDoc := () -> (
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
-thePackage := null
 getRecord := key -> scan(packages,
      pkg -> (
      	  needDoc();
 	  d := pkg#"documentation";
-	  if d#?key then (
-	       thePackage = pkg;
-	       break d#key)))
+	  if d#?key then break d#key))
 -----------------------------------------------------------------------------
 -- normalizing document tags
 -----------------------------------------------------------------------------
@@ -92,8 +88,9 @@ isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
 isDocumentableTag    Thing := s -> false
 
 packageTag          = method(SingleArgumentDispatch => true)
-packageTag   Symbol := s -> package s
+packageTag   Symbol := s -> if class value s === Package then value s else package s
 packageTag   String := s -> currentPackage
+packageTag  Package := identity
 packageTag Sequence := s -> package youngest s
 packageTag   Option := s -> package youngest toSequence s
 packageTag    Thing := s -> error "can't provide package for documentation tag of unknown type"
@@ -320,10 +317,8 @@ processExamplesLoop := s -> (
      then apply(s,processExamplesLoop)
      else s)
 processExamples := (key,docBody) -> (
-     -- thePackage = packageTag key;
      currentNodeName = formatDocumentTag key;
-     if debugLevel > 0 then stderr << "thePackage = " << endl;
-     exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,thePackage);
+     exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,currentPackage);
      checkForExampleOutputFile();
      processExamplesLoop docBody)
 
@@ -335,6 +330,8 @@ document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
      key := normalizeDocumentTag z#0;
+     pkg := packageTag key;
+     if pkg =!= currentPackage then error("documentation for \"",key,"\" belongs in package ",pkg," but current package is ",currentPackage);
      verifyTag key;
      body := drop(z,1);
      if not isDocumentableTag key then error("undocumentable item encountered");
