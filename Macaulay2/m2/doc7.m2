@@ -115,6 +115,23 @@ document { diff,
       	  "Wf = minors(3,W)",
 	  },
      PARA,
+     "The free modules which are provided as the result of differentiation are 
+     chosen to preserve homogeneity.  Just as with ", TO "contract", ",  it
+     should come as no surprise that the source and target of
+     ", TT "diff(m,n)", " are the same as those we would get from
+     the tensor product ", TT "transpose m^-1 ** n", ", if only ", TT "m", "
+     were invertible.  We illustrate that now, by displaying the degrees of the
+     basis elements.",
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+	  "A = R^{0,-1}; B = R^{0,-2}; C = R^{0,-4}; D = R^{0,-8};",
+	  "m = random(A,B)"
+	  "n = random(C,D)"
+	  "diff(m,n)",
+	  "degrees target oo, degrees source oo",
+	  "degrees (dual A ** C), degrees (dual B ** D)",
+	  },
+     PARA,
      SEEALSO { "contract", "jacobian" }
      }
 
@@ -122,28 +139,45 @@ document { contract,
      TT "usage: contract(m, n)", " -- contract the matrix n by the matrix m",
      PARA,
      "This function is identical to ", TO "diff", ", except that contraction is
-     used instead of differentiation.  This means for example that x^3
-     contracted by x^2 is x, not 6 x.  For example, ",
+     used instead of differentiation.  This means for example that ", TT "x^3", "
+     contracted by ", TT "x^2", " is ", TT "x", ", not ", TT "6 x", ".  For example, ",
      EXAMPLE {
 	  "R = ZZ/101[a..c]",
-      	  "diff(transpose matrix {{a,b,c}}, matrix {{(a+b+c)^3, a^2 * b^3 * c^2}})",
+      	  "contract(transpose matrix {{a,b,c}}, matrix {{(a+b+c)^3, a^2 * b^3 * c^2}})",
 	  },
      PARA,
      "As another example, the Sylvester resultant between homogeneous polynomials
-     f(x,y) and g(x,y) can be found in the following way.",
+     ", TT "f(x,y)", " and ", TT "g(x,y)", " can be found in the following way.",
      EXAMPLE {
 	  "R = (ZZ/101[a,b])[x,y]",
       	  "f = a * x^3 + b * x^2 * y + y^3",
       	  "g = b * x^3 + a * x * y^2 + y^3",
 	  },
      "Multiply each of these by all quadrics, obtaining a set of elements in
-     degree 5:",
+     degree 5.",
      EXAMPLE "n = matrix {{f,g}} ** symmetricPower(2,vars R)",
      "Now create the matrix of coefficients by using contract against all
-     monomials of degree 5 in x and y.",
+     monomials of degree 5 in ", TT "x", " and ", TT "y", ".",
      EXAMPLE {
 	  "M = contract(transpose symmetricPower(5,vars R), n)",
       	  "Resfg = minors(6, M)",
+	  },
+     PARA,
+     "The free modules which are provided as the result of differention are carefully
+     chosen to preserve homogeneity.  Contraction is essentially a partially
+     defined division operation, so it should come as no surprise that
+     the source and target of ", TT "contract(m, n)", " are the same as those we
+     would get from the tensor product ", TT "transpose m^-1 ** n", ", if only ", TT "m", "
+     were invertible.  We illustrate that now, by displaying the degrees of the
+     basis elements.",
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+	  "A = R^{0,-1}; B = R^{0,-2}; C = R^{0,-4}; D = R^{0,-8};",
+	  "m = random(A,B)"
+	  "n = random(C,D)"
+	  "contract(m,n)",
+	  "degrees target oo, degrees source oo",
+	  "degrees (dual A ** C), degrees (dual B ** D)",
 	  },
      PARA,
      SEEALSO "diff"

@@ -629,10 +629,9 @@ documentation Option := v -> (
 	       usage v,
 	       "See also:",
 	       MENU {
-		    SEQ{ "Default value: ", toString (options fn)#opt},
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ",
-			 TO formatDocumentTag fn},
-		    SEQ{ "Option name: ", TO formatDocumentTag opt}
+		    SEQ{ "Default value: ", TOH toString (options fn)#opt },
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH formatDocumentTag fn },
+		    SEQ{ "Option name: ", TOH formatDocumentTag opt }
 		    }
 	       }
 	  )
@@ -691,16 +690,7 @@ TEST = (e) -> if phase === 2 then (
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then (
-	  PARA, 
-	  "See also ",
-	  if #v === 1 then TO v#0
-	  else if #v === 2 then {TO v#0, " and ", TO v#1}
-	  else mingle(
-	       apply(v, i -> TO {i}),
-	       append(#v-2 : ", ", ", and ")
-	       ),
-     	  "."))
+     if #v > 0 then SEQ { PARA{}, "See also:", MENU (TOH \ v) })
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1128,11 +1118,12 @@ net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop
 html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
 tex  TO := x -> tex TT formatDocumentTag x#0
 
-            toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
-net  TOH := toh net
-text TOH := toh text
-html TOH := toh html
-tex  TOH := toh tex
+             toh := op -> x -> op SEQ{          new TO from x, headline x#0 }
+            htoh := op -> x -> op SEQ{ "help ", new TO from x, headline x#0 }
+net  TOH :=  toh net
+text TOH := htoh text
+html TOH :=  toh html
+tex  TOH :=  toh tex
 
 html LITERAL := x -> x#0
 html EmptyMarkUpType := html MarkUpType := X -> html X{}

@@ -273,7 +273,8 @@ Matrix Matrix::reshape(const FreeModule *F, const FreeModule *G) const
 Matrix Matrix::flip(const FreeModule *F, const FreeModule *G)
 {
   const FreeModule *H = F->tensor(G);
-  Matrix result(H, H);
+  const FreeModule *K = G->tensor(F);
+  Matrix result(K, H);
   int next = 0;
   for (int g=0; g<G->rank(); g++)
     for (int f=0; f<F->rank(); f++)

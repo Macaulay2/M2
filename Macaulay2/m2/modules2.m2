@@ -584,7 +584,8 @@ basis Module := Matrix => M -> (
      --     
      R := ring M;
      A := ultimate(ambient,R);
-     if not isField coefficientRing A then error "expected an algebra over a field";
+     if not isField coefficientRing A then error "expected ring to be an algebra over a field";
+     if dim M != 0 then error "expected module to be a finite dimensional module";
      k := coefficientRing A;
      bottom := generators gb presentation M;
      top := id_(target bottom);

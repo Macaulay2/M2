@@ -24,7 +24,7 @@ Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
 
 singleton := tally {0}
 
-Tally - Tally := Tally => (x,y) -> select(merge(x,apply(y,minus),plus),i -> i =!= 0)
+Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i =!= 0)
      
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
