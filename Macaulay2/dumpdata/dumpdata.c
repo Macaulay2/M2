@@ -23,8 +23,8 @@ static int checksum(unsigned char *p, unsigned int len) {
 }
 
 static void printmap(FILE *f, map m) {
-  fprintf(f,"%08x-%08x %c%c%c%c %08x %02x:%02x %8d %10u %s\n",
-	 (int)m->from, (int)m->to,
+  fprintf(f,"%p-%p %c%c%c%c %08x %02x:%02x %8d %10u %s\n",
+	 m->from, m->to,
 	 m->r, m->w, m->x, m->p,
 	 m->offset,
 	 m->dev_major, m->dev_minor, m->inode,
@@ -40,6 +40,7 @@ static void dumpmap(int fd, map m) {
 void dumpdata(const char *dumpfilename) {
   struct MAP map;
   char fn[1000], buf[1000];
+  char *p;
   int fd = open(dumpfilename,O_WRONLY|O_CREAT|O_TRUNC,0666);
   FILE *f  = fdopen(fd,"w");
   static char *mapfilename = "/proc/self/maps";
@@ -49,10 +50,11 @@ void dumpdata(const char *dumpfilename) {
   while (TRUE) {
     if (NULL == fgets(buf,sizeof buf,maps)) break;
     fn[0] = 0;
-    if (0 == sscanf(buf,"%x-%x %c%c%c%c %x %x:%x %d %1000s",
-	   (int *)&map.from, (int *)&map.to, &map.r, &map.w, &map.x, &map.p,
+    if (0 == sscanf(buf,"%p-%p %c%c%c%c %x %x:%x %d %1000s",
+	   &map.from, &p, &map.r, &map.w, &map.x, &map.p,
 	   &map.offset, &map.dev_major, &map.dev_minor, &map.inode, 
 	   fn)) break;
+    map.to = p;			/* work around a gcc bug */
     map.filename = fn;
     if (isStack(&map)) continue;
     printmap(f,&map);
@@ -65,10 +67,11 @@ void dumpdata(const char *dumpfilename) {
   while (TRUE) {
     if (NULL == fgets(buf,sizeof buf,maps)) break;
     fn[0] = 0;
-    if (0 == sscanf(buf,"%x-%x %c%c%c%c %x %x:%x %d %1000s",
-	   (int *)&map.from, (int *)&map.to, &map.r, &map.w, &map.x, &map.p,
+    if (0 == sscanf(buf,"%p-%p %c%c%c%c %x %x:%x %d %1000s",
+	   &map.from, &p, &map.r, &map.w, &map.x, &map.p,
 	   &map.offset, &map.dev_major, &map.dev_minor, &map.inode, 
 	   fn)) break;
+    map.to = p;			/* work around a gcc bug */
     map.filename = fn;
     if (!isDumpable(&map)) continue;
     dumpmap(fd,&map);
