@@ -12,6 +12,17 @@ extern int haveDumpdata();	/* in dumpdata/map.o */
 #include <gdbm.h>
 
 const char *get_libfac_version();	/* in version.cc */
+static const char *get_cc_version() {
+  static char buf[100] = "cc (unknown)";
+# ifdef __GNUC__
+#  ifdef __GNUC_PATCHLEVEL__
+   sprintf(buf,"gcc %d.%d.%d",__GNUC__,__GNUC_MINOR__,__GNUC_PATCHLEVEL__);
+#  else
+   sprintf(buf,"gcc %d.%d",__GNUC__,__GNUC_MINOR__);
+#  endif
+# endif  
+  return buf;
+}
 
 static void putstderr(char *m) {
      write(STDERR,m,strlen(m));
@@ -449,7 +460,7 @@ char **argv;
      M2_init_gmp();
      initrandom();
      system_newline = tostring(newline);
-     actors5_CCVERSION = tostring(CCVERSION);
+     actors5_CCVERSION = tostring(get_cc_version());
      actors5_VERSION = tostring(PACKAGE_VERSION);
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
