@@ -329,10 +329,39 @@ document { inducesWellDefinedMap,
      }
 
 document { (map,Module,Module,Function),
-     TT "map(M,N,f)", " -- creates a map from the module N to the module M whose
-     matrix entries are obtained from the function f by evaluating f(i,j)"
+     Synopsis => {
+	  "h = map(M,N,f)",
+	  "M" => {},
+	  "N" => {},
+	  "f" => {},
+	  "h" => {"a map from the module ", TT "N", " to the module ", TT "M", " 
+	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
+	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
+	       }
+	  },
+     EXAMPLE {
+	  "R = ZZ[a..c];",
+	  "f = map(R^3,R^{0,-1,-2},(i,j) -> R_i^j)",
+	  },
+     "We specified the degrees of the source basis elements explicitly
+     to ensure the matrix would be homogeneous.",
+     EXAMPLE "isHomogeneous f",
+     "We could have let Macaulay2 take care of that for us, by replacing
+     the source module by its desired rank.",
+     EXAMPLE {
+	  "g = map(R^3,3,(i,j) -> R_i^j)",
+	  "degrees g",
+	  "isHomogeneous g"
+	  },
+     PARA,
+     "Another way would be to let ", TO "matrix", " take care of that for
+     us.",
+     EXAMPLE {
+	  "h = matrix table(3,3,(i,j) -> R_i^j)",
+	  "degrees h",
+	  "isHomogeneous h"
+	  }
      }
-
 
 document { matrix,
      Headline => "make a matrix",
@@ -381,7 +410,7 @@ document { (matrix,Ring,List),
 document { (map,Module,Module),
      TT "map(M,N)", " -- constructs the natural map from N to M.",
      PARA,
-     "The modules M and N should be subquotient modules of the same
+     "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
      free module",
      SEEALSO {"map", "isWellDefined"}
      }
@@ -624,12 +653,12 @@ document { (flip,Module,Module),
 
 document { subquotient,
      Headline => "make a subquotient module",
-     TT "subquotient(f,g)", " -- given matrices f and g with the same target, 
-     produces a new module representing the image of f in the cokernel
-     of g.",
+     TT "subquotient(f,g)", " -- given matrices ", TT "f", " and ", TT "g", " with the same target, 
+     produces a new module representing the image of ", TT "f", " in the cokernel
+     of ", TT "g", ".",
      PARA,
-     "The columns of f are called the generators, and the columns of
-     g are the relations.",
+     "The columns of ", TT "f", " are called the generators, and the columns of
+     ", TT "g", " are the relations.",
      PARA,
      "Functions:",
      MENU {

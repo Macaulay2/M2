@@ -137,21 +137,26 @@ int main(int argc, char **argv, char **envp){
      }
 #endif
      printf("%08x   argv\n",(int)argv);
-     for (i=0,pp=argv; *pp; i++,pp++) printf("%08x   argv[%d]\n",(int)*pp,i);
-     printf("%08x   argv tail\n",(int)pp);
+     for (i=0,pp=argv; *pp; i++,pp++) printf("%08x   argv[%d] : %s\n",(int)*pp,i,*pp);
+     printf("%08x   null pointer at end of argv\n",(int)pp);
 #if !defined(__MWERKS__)
      printf("%08x   envp\n",(int)envp);
      printf("%08x   environ\n",(int)environ);
 #if !defined(__CYGWIN__)
      printf("%08x   __environ\n",(int)__environ);
 #endif
-     for (i=0,pp=envp; *pp; i++,pp++) printf("%08x   envp[%d]\n",(int)*pp,i);
-     printf("%08x   envp tail\n",(int)pp);
+     for (i=0,pp=envp; *pp; i++,pp++) printf("%08x   envp[%d] : %s\n",(int)*pp,i,*pp);
+     printf("%08x   null pointer at end of envp\n",(int)pp);
      if (envp[0] != 0) {
 	  int last;
-     	  printf("%08x   envp[0]+strlen(envp[0]) + 1\n",(int)(envp[0]+strlen(envp[0]) + 1));
+	  char *x;
+	  int *y;
+     	  printf("%08x   envp[0]+strlen(envp[0])+1\n",(int)(envp[0]+strlen(envp[0]) + 1));
      	  last = strarrlen(envp)-1;
-     	  printf("%08x   envp[last]+strlen(envp[last]) + 1\n",(int)(envp[last]+strlen(envp[last]) + 1));
+	  x = envp[last]+strlen(envp[last]) + 1;
+     	  printf("%08x   envp[%d]+strlen(envp[%d])+1 : %s\n",(int)x,last,last,x);
+	  y = (int *)(x + strlen(x) + 1);
+     	  printf("%08x   %08x\n",(int)y,*y);
 	  }
 #endif
      fflush(stdout);

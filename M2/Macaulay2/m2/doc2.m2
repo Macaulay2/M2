@@ -238,7 +238,7 @@ document { openIn,
 
 document { openOut,
      Headline => "open an output file",
-     TT "openOut \"fff\"", "  -- opens an output file whose filename is fff.",
+     TT "openOut \"fff\"", "  -- opens an output file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", "."
      }
@@ -277,12 +277,14 @@ document { openInOut,
      network communications, or the static version doesn't provide network 
      name service for looking up hostnames.",
      PARA,
-     "The various forms listed above can be used also with ", TO "openIn", "
-     and ", TO "openOut", ", with data transfer possible only in the
-     direction specified.  The only subtlety is that with ", TT ///openIn "!foo"///, "
-     the standard input of the command ", TT "foo", " is closed, but with
-     ", TT ///openOut "!foo"///, " the standard output of the command ", TT "foo", "
-     is connected to the standard output of the parent Macaulay 2 process."
+     "The various forms listed above can be used also with all other input
+     output operations that open files, such as ", TO "openIn", ",
+     ", TO "openOut", ", ", TO "get", ", and ", TO "<<", ", with data transfer 
+     possible only in the direction specified.  The only subtlety is that 
+     with ", TT ///openIn "!foo"///, " the standard input of the command
+     ", TT "foo", " is closed, but with ", TT ///openOut "!foo"///, " the
+     standard output of the command ", TT "foo", " is connected to the
+     standard output of the parent Macaulay2 process."
      }
 
 document { protect,

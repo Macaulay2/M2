@@ -43,7 +43,7 @@ document { annihilator,
      "For an abbreviation, use ", TO "ann", "."
      }
 
-document { (symbol _, Module, ZZ),
+document { (symbol _,Module,ZZ),
      Headline => "get a generator",
      TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",
      PARA,
