@@ -348,13 +348,17 @@ fixupTable := new HashTable from {
      Results => fixupList,
      OldSynopsis => identity,				    -- old
      FileName => identity,
-     Headline => v -> if v =!= null then concatenate(" -- ",v),
+     Headline => identity,
      Description => extractExamples @@ hypertext,
      Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
-     Menu => fixup }
+     Menu => keys -> apply(keys,key -> formatDocumentTag normalizeDocumentTag key)
+     }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
+theMenu := key -> (
+     r := getOption(key,Menu);
+     if r =!= null then SEQ { PARA BOLD "Menu", UL (TO \ r)})
 documentOptions := new HashTable from {
      Key => true,
      FormattedKey => true,
@@ -480,7 +484,7 @@ headline = memoize (
 	       key =!= null
 	       )
 	  do null;
-	  d))
+	  if d =!= null then concatenate(" -- ",d)))
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
@@ -518,7 +522,6 @@ OFCLASS = X -> (
      )
 
 makeDocBody := method(SingleArgumentDispatch => true)
-doExamples = true					    -- sigh, another global variable???
 makeDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
@@ -526,7 +529,7 @@ makeDocBody Thing := key -> (
 	  rec := getRecord(pkg,fkey);
 	  docBody := extractBody rec;
 	  if docBody =!= null and #docBody > 0 then (
-	       if doExamples then docBody = processExamples(pkg, fkey, docBody);
+	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then PARA {docBody}
 	       else SEQ { PARA BOLD "Description", PARA {docBody} })))
@@ -731,7 +734,7 @@ documentation String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then null
-	  else Hypertext join({title key}, b, {caveat key, seealso key})))
+	  else Hypertext join({title key}, b, {caveat key, seealso key, theMenu key})))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -849,7 +852,8 @@ documentation Symbol := S -> (
      	  documentationValue(S,value S),
 	  type S,
 	  caveat S,
-	  seealso S
+	  seealso S,
+	  theMenu S
      	  }
      )
 
@@ -864,13 +868,13 @@ documentation Sequence := key -> (
 	       synopsis key,
 	       makeDocBody key,
 	       caveat key,
-	       seealso key,
-	       PARA BOLD "Further information",
-	       UL {
+	       PARA BOLD "Further information", UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
-		    }
+		    },
+	       seealso key,
+	       theMenu key
 	       }
 	  )
      else (						    -- method key
@@ -880,7 +884,8 @@ documentation Sequence := key -> (
 	       synopsis key,
 	       makeDocBody key,
 	       caveat key,
-	       seealso key
+	       seealso key,
+	       theMenu key
 	       }
 	  ))
 
