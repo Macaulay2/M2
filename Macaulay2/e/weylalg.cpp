@@ -397,6 +397,7 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 	  int comp, // adds this component to each component of g.
 	  const int *expf,  // The exponent vector of f
 	  const int *derivatives, 
+	  const FreeModule *F, // freemodule of g, only needed because of possible Schreyer order
 	  const gbvector *g) const  // An entire polynomial
 {
   // This isn't really differentiation, but it is close.
@@ -438,7 +439,7 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
     {
       // This first part checks whether the x-part of t->monom is divisible by
       // 'derivatives'.  If so, true is returned, and the resulting monomial is set.
-      M_->to_expvector(t->monom, result_exp);
+      GR->gbvector_get_lead_exponents(F, t, result_exp);
       extractCommutativePart(result_exp, exp);
       if (divides(derivatives,exp))
 	{
@@ -487,13 +488,14 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
   int *expf = newarray(int,_nvars);
 
   GBRing *GR = result.get_gb_ring();
+  const FreeModule *F = result.get_freemodule();
   M_->to_expvector(m, expf);
   extractDerivativePart(expf, top_derivative);
   for (int i=0; i<_nderivatives; i++) current_derivative[i] = 0;
   // Loop over each current_derivative <= top_derivative.
   do {
     ring_elem d = multinomial(c, top_derivative, current_derivative);// in K_
-    gbvector * h = gbvector_weyl_diff(GR,d,comp,expf,current_derivative,f);
+    gbvector * h = gbvector_weyl_diff(GR,d,comp,expf,current_derivative,F,f);
     K_->remove(d);
     result.add(h);
   } while (increment(current_derivative, top_derivative));

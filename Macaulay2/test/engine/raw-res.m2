@@ -47,10 +47,10 @@ assert(m3*m4 == 0)
 -- Koszul complex on 3 elements --
 -- Algorithm 2                  --
 ----------------------------------
--- NOT FUNCTIONAL YET
+needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
-gbTrace=3
+gbTrace=10
 C = rawResolution(m,true,5,false,0,2,0)
 
 rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
@@ -64,6 +64,12 @@ m4 = rawResolutionGetMatrix(C,4)
 assert(m1*m2 == 0)
 assert(m2*m3 == 0)
 assert(m3*m4 == 0)
+F = rawSource m1
+F2 = rawTarget m2
+F3 = rawSource m2
+F3b = rawTarget m3
+assert(F3 == F3b)
+
 ----------------------------------
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}

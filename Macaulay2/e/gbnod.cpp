@@ -22,6 +22,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
       ERROR("internal error - ring is not a polynomial ring");
       assert(0);
     }
+  R = originalR->get_flattened_ring();
   GR = originalR->get_gb_ring();
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
@@ -51,6 +52,9 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   this_degree = lodeg;
 
+  // We index into this using gbvector components (which are one greater than the
+  // FreeModule components
+  monideals.append(0);
   for (i=0; i<F->rank(); i++)
     {
       monideal_pair *p = new monideal_pair(originalR->get_flattened_ring());
@@ -106,7 +110,7 @@ s_pair *gb2_comp::new_ring_pair(gb_elem *p, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_RING;
-  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp);
+  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = NULL;
@@ -123,7 +127,7 @@ s_pair *gb2_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_PAIR;
-  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp);
+  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = q;
@@ -643,7 +647,7 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
   bool isgen = false;
   // It is our duty to free 'f'...
 
-  for (int i=monideals.length(); i<F->rank(); i++)
+  for (int i=monideals.length(); i<=F->rank(); i++)
     {
       monideal_pair *p = new monideal_pair(R);
       monideals.append(p);
@@ -653,7 +657,7 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
   if (orig_syz >= 0)
     {
       if (orig_syz > n)
-	fsyz = GR->gbvector_term(Fsyz,denom,n);
+	fsyz = GR->gbvector_term(Fsyz,denom,n+1); // Note the change in component number
       gb_reduce(f,fsyz);
       if (f == NULL)
 	{
@@ -699,7 +703,7 @@ void gb2_comp::end_degree()
 	if (gb[j]->is_min)
 	  {
 	    schreyer_append(gb[j]->f);
-	    gb[j]->fsyz = GR->gbvector_term(Fsyz,GR->one(),Fsyz->rank()-1);
+	    gb[j]->fsyz = GR->gbvector_term(Fsyz,GR->one(),Fsyz->rank());
 	  }
     }
 

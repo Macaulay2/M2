@@ -154,8 +154,6 @@ gbvector *GBRingSkew::mult_by_term(const FreeModule *F,
 				   int comp)
   // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
 {
-  // BUG BUG BUG BUG!!!! Doesn't handle encoded Schreyer orders....
-  // WE NEED TO FIX THIS.
   gbvector head;
   gbvector *inresult = &head;
 
@@ -163,7 +161,7 @@ gbvector *GBRingSkew::mult_by_term(const FreeModule *F,
 
   for (const gbvector *s = f; s != NULL; s = s->next)
     {
-      M->to_expvector(s->monom, _EXP2);
+      gbvector_get_lead_exponents(F, s, _EXP2);
       int sign = _skew.mult_sign(_EXP1, _EXP2);
       if (sign == 0) continue;
 
@@ -288,10 +286,12 @@ gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   v->coeff = coeff;
   v->comp = comp;
   v->next = 0;
-  if (_schreyer_encoded)
-    M->copy(F->get_schreyer_order()->base_monom(comp-1), v->monom);
-  else
-    M->one(v->monom);
+  M->one(v->monom);
+
+  const SchreyerOrder *S;
+  if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+    S->schreyer_up(v->monom, comp-1, v->monom);
+
   return v;
 }
 
@@ -386,16 +386,11 @@ int GBRing::gbvector_compare(const FreeModule *F,
 		     const gbvector *g) const
   // Return LT, EQ, GT depending on the monomial order of lead(f), lead(g) in F.
 {
-  if (!_schreyer_encoded && F->get_schreyer_order())
+  if (!_schreyer_encoded)
     {
-#if 0
-      return M->compare_schreyer(f->monom,
-				 F->get_schreyer_order()->base_monom(f->comp-1),
-				 F->get_schreyer_order()->compare_num(f->comp-1),
-				 g->monom,
-				 F->get_schreyer_order()->base_monom(g->comp-1),
-				 F->get_schreyer_order()->compare_num(g->comp-1))
-#endif
+      const SchreyerOrder *S = F->get_schreyer_order();
+      if (S != 0)
+	return S->schreyer_compare(f->monom, f->comp-1, g->monom, g->comp-1);
     }
 
   int cmp;
@@ -412,6 +407,7 @@ gbvector * GBRing::gbvector_lead_term(int n,
   // What should we do with Schreyer orders?  This probably doesn't
   // make much sense, except to get lead monomials.
 {
+#warning "Schreyer order question"
   if (v == NULL) return NULL;
   gbvector head;
   gbvector *result = &head;
@@ -431,9 +427,11 @@ void GBRing::gbvector_get_lead_monomial(const FreeModule *F,
   // This copies the monomial to result.  If a Schreyer order,
   // the result will NOT be the total monomial.
 {
-
-  if (_schreyer_encoded && F->get_schreyer_order() != 0)
-    M->divide(f->monom, F->get_schreyer_order()->base_monom(f->comp-1), result);
+  const SchreyerOrder *S;
+  if (_schreyer_encoded 
+      && (S=F->get_schreyer_order()) != 0
+      && f->comp > 0)
+    S->schreyer_down(f->monom, f->comp-1, result);
   else 
     M->copy(f->monom, result);
 }
@@ -442,10 +440,12 @@ void GBRing::gbvector_get_lead_exponents(const FreeModule *F,
 					 const gbvector *f, 
 					 int *result)
 {
-  // result[0]..result[nvars-1] is set
-  if (_schreyer_encoded && F->get_schreyer_order() != 0)
+  const SchreyerOrder *S;
+  if (_schreyer_encoded 
+      && (S=F->get_schreyer_order()) != 0
+      && f->comp > 0)
     {
-      M->divide(f->monom, F->get_schreyer_order()->base_monom(f->comp-1), _MONOM1);
+      S->schreyer_down(f->monom, f->comp-1, _MONOM1);
       M->to_expvector(_MONOM1, result);
     }
   else 
@@ -484,8 +484,6 @@ gbvector * GBRing::gbvector_copy(const gbvector *f)
 
 void GBRing::gbvector_add_to(const FreeModule *F,
 			     gbvector * &f, gbvector * &g)
-  // If F has an un-encoded Schreyer order, we should call
-  // another function here, with compare defined...
 {
   if (g == NULL) return;
   if (f == NULL) { f = g; g = NULL; return; }

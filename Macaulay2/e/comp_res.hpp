@@ -17,6 +17,7 @@ protected:
   // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
+  void betti_init(int lo, int hi, int len, int *&bettis) const;
   M2_arrayint betti_make(int lo, int hi, int len, int *bettis) const;
 
   void betti_display(buffer &o, const M2_arrayint a) const;

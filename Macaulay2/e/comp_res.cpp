@@ -51,6 +51,14 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
   return 0;
 }
 
+void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis) const
+{
+  int z = (hi-lo+1) * (len+1);
+  bettis = newarray(int,z);
+  for (int i=0; i<z; i++)
+    bettis[i] = 0;
+}
+
 M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bettis) const
 {
   int d, lev;

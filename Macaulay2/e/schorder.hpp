@@ -28,6 +28,7 @@ public:
   int compare_num(int i) const { return _order[i * _nslots]; }
   const int *base_monom(int i) const { return _order.raw() + i*_nslots + 1; }
 
+
   bool is_equal(const SchreyerOrder *G) const;
   SchreyerOrder *copy() const;
   SchreyerOrder *sub_space(int n) const;
@@ -42,12 +43,23 @@ public:
   void append(int compare_num, const int *base_monom);
   // Copies the monomial
 
-  void schreyer_up(int *m, int comp, int *result);// 'result' is allowed to be 'm'.
+  void schreyer_up(const int *m, int comp, int *result) const
+  // 'result' is allowed to be 'm'.
+  {
+    M->mult(m, base_monom(comp), result);
+  }
 
-  void schreyer_down(int *m, int comp, int *result); // 'result' is allowed to be 'm'.
+  void schreyer_down(const int *m, int comp, int *result) const
+  // 'result' is allowed to be 'm'.
+  {
+    M->divide(m, base_monom(comp), result);
+  }
 
-  int schreyer_compare(int *m1, int comp1, int *m2, int comp2);
-  // Assumes that m1, m2 are 'schreyer up'.
+  int schreyer_compare(const int *m,
+		       int m_comp,
+		       const int *n,
+		       int n_comp) const;
+
 
   void text_out(buffer &o) const;
 };
