@@ -50,6 +50,11 @@ bool Z_mod::initialize_Z_mod(int p)
   _log_table[0]    = _ZERO;
 
   _P1 = P-1;
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

@@ -52,6 +52,10 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   _EXP2 = newarray(int,_nvars);
   _EXP3 = newarray(int,_nvars);
 
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   trans_MONOM1 = M->make_one(); // Used in gbvector <--> vec translation
   trans_EXP1 = newarray(int,_nvars);
 
@@ -1433,16 +1437,14 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   // grab the answer from the syz matrix.
 
   // Special situations:
-  ring_elem one = from_int(1);
-  ring_elem minus_one = from_int(-1);
-  if (PolynomialRing::is_equal(b, one))
+  if (PolynomialRing::is_equal(b, one()))
     {
       x = PolynomialRing::copy(b);
       y = PolynomialRing::negate(a);
     }
-  else if (PolynomialRing::is_equal(b, minus_one))
+  else if (PolynomialRing::is_equal(b, minus_one()))
     {
-      x = PolynomialRing::from_int(1);
+      x = one();
       y = PolynomialRing::copy(a);
     }
   else

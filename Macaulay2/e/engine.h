@@ -690,7 +690,7 @@ extern "C" {
 
   const M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
 
-  unsigned long  IM2_Matrix_hash(const Matrix *M); /* TODO */ /* drg: waiting, returning 0 */
+  int IM2_Matrix_hash(const Matrix *M); /* drg: waiting, returning 0 */
 
   const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
 

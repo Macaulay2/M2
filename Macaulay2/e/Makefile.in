@@ -24,6 +24,8 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	matrixcon \
+	symm \
 	computation \
 	comp_gb \
 	gbA \

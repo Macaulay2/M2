@@ -28,7 +28,7 @@ vec Ring::make_vec(int r, ring_elem a) const
   return result;
 }
 
-vec Ring::copy(const vecterm * v) const
+vec Ring::copy_vec(const vecterm * v) const
 {
   vecterm head;
   vec result = &head;
@@ -44,7 +44,7 @@ vec Ring::copy(const vecterm * v) const
   return head.next;
 }
 
-void Ring::remove(vec v) const
+void Ring::remove_vec(vec v) const
 {
   while (v != 0)
     {
@@ -157,11 +157,11 @@ void Ring::elem_text_out(buffer &o, const vecterm * v) const
 // Routines which modify a vec ////////
 ///////////////////////////////////////
 
-void Ring::mult(vec &v, const ring_elem r, bool opposite_mult) const
+void Ring::mult_vec_to(vec &v, const ring_elem r, bool opposite_mult) const
 {
   if (this->is_zero(r))
     {
-      remove(v);
+      remove_vec(v);
       v = 0;
       return;
     }
@@ -225,18 +225,18 @@ vec Ring::mult_vec_matrix(const Matrix *m,
   vec result = NULL;
   for ( ; v != NULL; v = v->next)
     {
-      vec w = this->copy(m->elem(v->comp));
-      mult(w, v->coeff, !opposite_mult);
-      this->add(result, w);
+      vec w = this->copy_vec(m->elem(v->comp));
+      mult_vec_to(w, v->coeff, !opposite_mult);
+      this->add_vec_to(result, w);
     }
   return result;
 }
 
-void Ring::divide(vec &v, const ring_elem a) const
+void Ring::divide_vec_to(vec &v, const ring_elem a) const
 {
   if (this->is_zero(a))
     {
-      remove(v);
+      remove_vec(v);
       v = 0;
     }
   vecterm head;
@@ -332,7 +332,7 @@ void Ring::interchange_rows(vec &v, int i, int j) const
   v = head.next;
 }
 
-void Ring::add(vec &v, vec &w) const
+void Ring::add_vec_to(vec &v, vec &w) const
 {
   if (w == NULL) return;
   if (v == NULL) { v = w; w = NULL; return; }
@@ -565,7 +565,7 @@ void Ring::sort(vecterm *&f) const
   
   sort(f1);
   sort(f2);
-  add(f1, f2);
+  add_vec_to(f1, f2);
   f = f1;
 }
 

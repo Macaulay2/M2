@@ -23,6 +23,11 @@ bool ZZ::initialize_ZZ(const Monoid *D)
   _elem_size = sizeof(mpz_t);
   _zero_elem = new_elem();
   mpz_init_set_si(_zero_elem, 0);
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

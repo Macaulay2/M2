@@ -37,6 +37,9 @@ void Ring::initialize_ring(int P0,
   _is_ZZ_quotient = false;
   _ZZ_quotient_value = (Nterm*)0;
 
+  zeroV = (Nterm*)0;
+  oneV = (Nterm*)0;
+  minus_oneV = (Nterm*)0;
 }
 
 Ring::~Ring()

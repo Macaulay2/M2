@@ -18,6 +18,11 @@ bool QQ::initialize_QQ(const Monoid *D)
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
   trans_one = globalZZ->from_int(1);
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

@@ -1,20 +1,5 @@
-// Copyright 1995 Michael E. Stillman
+// Copyright 1995-2004 Michael E. Stillman
 
-#if 0
-To do here:
-  +k-basis routines
-  +monideal routines (done)
-  elem(r,c) makes new element, so be sure to remove it if needed
-
-  check error conditions
-  lead term routines are a bit messed up
-
-  new routines to add: 
-    exterior, symm (how best to do this?)
-    random_matrix
-    coeffs, 
-    inpart, stdpart, mininimalpart (but call them what?? )
-#endif
 
 #include "style.hpp"
 #include "text_io.hpp"
@@ -31,6 +16,11 @@ To do here:
 #include "vector.hpp"
 #include "exptable.h"
 
+#include <vector>
+
+#include "matrixcon.hpp"
+#include "random.hpp"
+
 void Matrix::initialize(const FreeModule *r, 
 		     const FreeModule *c,
 		     const int *deg)
@@ -42,6 +32,9 @@ void Matrix::initialize(const FreeModule *r,
   vec Zero = NULL;
   for (int i=0; i<c->rank(); i++) 
     _entries.append(Zero); 
+
+  rowOps = NULL;
+  colOps = NULL;
 }
 
 void Matrix::freeze(bool is_mutable_flag)
@@ -49,7 +42,7 @@ void Matrix::freeze(bool is_mutable_flag)
   if (is_mutable_flag)
     make_mutable();
   else 
-    make_immutable(get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols()));
+    make_immutable(234123 + get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols()));
 }
 
 Matrix::Matrix(const FreeModule *r, 
@@ -76,6 +69,19 @@ Matrix::Matrix(const FreeModule *r)
 	     r->get_ring()->degree_monoid()->make_one());
 }
 
+
+Matrix::Matrix(const FreeModule *rows0, 
+	       const FreeModule *cols0,
+	       const int *degree_shift0,
+	       vector<vec> & entries0,
+	       bool is_mutable_flag)
+{
+  initialize(rows0,cols0,degree_shift0);
+  for (int i=0; i<cols0->rank(); i++)
+    _entries[i] = entries0[i];
+  freeze(is_mutable_flag);
+}
+
 Matrix::Matrix(const MonomialIdeal *mi) 
 { 
   const FreeModule *r = mi->get_ring()->make_FreeModule(1);
@@ -84,6 +90,7 @@ Matrix::Matrix(const MonomialIdeal *mi)
   append_monideal(mi,0);
 }
 
+
 const MatrixOrNull * Matrix::make(const FreeModule *target,
 				   int ncols,
 				   const RingElement_array *M,
@@ -91,7 +98,7 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 {
   // Checks to make:
   // each vector in V is over same ring.
-  
+
   const Ring *R = target->get_ring();
   for (unsigned int i=0; i<M->len; i++)
     {
@@ -101,37 +108,24 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 	  return 0;
 	}
     }
+
+  MatrixConstructor mat(target, ncols, is_mutable_flag);
   unsigned int next = 0;
-
-  vec *newcols = newarray(vec,ncols);
-  for (int i=0; i<ncols; i++) newcols[i] = 0;
-
   for (int r=0; r <target->rank(); r++)
-    {
-      for (int c=0; c < ncols && next < M->len; c++)
-	{
-	  R->set_entry(newcols[c],r,M->array[next]->get_value());
-	  next++;
-	}
-    }
-
-  Matrix *result = new Matrix(target);
-  for (int i=0; i<ncols; i++)
-    result->append(newcols[i]);
-
-  result->freeze(is_mutable_flag);
-  return result;
+    for (int c=0; c < ncols && next < M->len; c++)
+      {
+	mat.set_entry(r,c,M->array[next]->get_value());
+	next++;
+      }
+  mat.compute_column_degrees();
+  return mat.to_matrix();
 }
-
 const MatrixOrNull * Matrix::make(const FreeModule *target,
 				   const FreeModule *source,
 				   const M2_arrayint deg,
 				   const RingElement_array *M,
 				   M2_bool is_mutable_flag)
 {
-  // Checks to make:
-  // each vector in V is over same ring.
-  
   const Ring *R = target->get_ring();
   if (source->get_ring() != R)
     {
@@ -153,30 +147,29 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 	}
     }
 
-  Matrix *result = new Matrix(target,source,deg->array);
+  MatrixConstructor mat(target, source, deg->array, is_mutable_flag);
+
   unsigned int next = 0;
   for (int r=0; r <target->rank(); r++)
     {
       for (int c=0; c < source->rank(); c++)
 	{
-	  result->set_entry(r,c,M->array[next]->get_value());
+	  mat.set_entry(r,c,M->array[next]->get_value());
 	  next++;
 	  if (next >= M->len) break;
 	}
     }
-
-  result->freeze(is_mutable_flag);
-  return result;
+  return mat.to_matrix();
 }
 
-vec * Matrix::make_sparse_vecs(const FreeModule *target,
-				      int ncols,
-				      const M2_arrayint rows,
-				      const M2_arrayint cols,
-				      const RingElement_array *entries)
-  // returns NULL of an error, otherwise returns
-  // an array of vec's of length ncols.
-  // caller now owns the resulting array
+bool Matrix::make_sparse_vecs(MatrixConstructor &mat,
+			       const FreeModule *target,
+			       int ncols,
+			       const M2_arrayint rows,
+			       const M2_arrayint cols,
+			       const RingElement_array *entries)
+  // returns false if an error, true otherwise.
+  // Places the elements into 'mat'.
 {
   const Ring *R = target->get_ring();
   for (unsigned int i=0; i<entries->len; i++)
@@ -184,13 +177,13 @@ vec * Matrix::make_sparse_vecs(const FreeModule *target,
       if (R != entries->array[i]->get_ring())
 	{
 	  ERROR("expected vectors in the same ring");
-	  return 0;
+	  return false;
 	}
     }
   if (rows->len != cols->len || rows->len != entries->len)
     {
       ERROR("sparse matrix creation: encountered different length arrays");
-      return 0;
+      return false;
     }
   for (int x=0; x < entries->len; x++)
     {
@@ -199,24 +192,22 @@ vec * Matrix::make_sparse_vecs(const FreeModule *target,
       if (r < 0 || r >= target->rank())
 	{
 	  ERROR("sparse matrix creation: row index out of range");
-	  return 0;
+	  return false;
 	}
       if (c < 0 || c >=ncols)
 	{
 	  ERROR("sparse matrix creation: column index out of range");
-	  return 0;
+	  return false;
 	}
     }
 
-  vec *newcols = newarray(vec,ncols);
-  for (int i=0; i<ncols; i++) newcols[i] = 0;
   for (int x=0; x<entries->len; x++)
     {
       int r = rows->array[x];
       int c = cols->array[x];
-      R->set_entry(newcols[c], r, entries->array[x]->get_value());
+      mat.set_entry(r,c, entries->array[x]->get_value());
     }
-  return newcols;
+  return true;
 }
 
 const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
@@ -226,17 +217,11 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 					  const RingElement_array *entries,
 					  M2_bool is_mutable_flag)
 {
-  vec * newcols = Matrix::make_sparse_vecs(target, ncols, rows, cols, entries);
-  if (newcols == 0) return 0;
-
-
-  Matrix *result = new Matrix(target);
-  for (int i=0; i<ncols; i++)
-    result->append(newcols[i]);
-  result->freeze(is_mutable_flag);
-
-  deletearray(newcols);
-  return result;
+  MatrixConstructor mat(target, ncols, is_mutable_flag);
+  if (!Matrix::make_sparse_vecs(mat, target, ncols, rows, cols, entries))
+    return 0; // error message has already been sent
+  mat.compute_column_degrees();
+  return mat.to_matrix();
 }
 
 const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
@@ -247,15 +232,10 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 					  const RingElement_array *entries,
 					  M2_bool is_mutable_flag)
 {
-  vec * newcols = make_sparse_vecs(target, source->rank(), rows, cols, entries);
-  if (newcols == 0) return 0;
-
-  Matrix *result = new Matrix(target,source,deg->array);
-  for (int i=0; i<source->rank(); i++)
-    (*result)[i] = newcols[i];
-
-  deletearray(newcols);
-  return result;
+  MatrixConstructor mat(target, source, deg->array, is_mutable_flag);
+  if (!Matrix::make_sparse_vecs(mat, target, source->rank(), rows, cols, entries))
+    return 0; // error message has already been sent
+  return mat.to_matrix();
 }
 
 const MatrixOrNull * Matrix::remake(const FreeModule *target,
@@ -282,12 +262,10 @@ const MatrixOrNull * Matrix::remake(const FreeModule *target,
       return 0;
     }
 
-  Matrix *result = new Matrix(target,source,deg->array);
+  MatrixConstructor mat(target, source, deg->array, is_mutable_flag);
   for (int i=0; i<source->rank(); i++)
-    (*result)[i] = R->copy(_entries[i]);
-
-  result->freeze(is_mutable_flag);
-  return result;
+    mat.set_column(i, R->copy_vec(_entries[i]));
+  return mat.to_matrix();
 }
 
 const MatrixOrNull * Matrix::remake(const FreeModule *target,
@@ -305,12 +283,11 @@ const MatrixOrNull * Matrix::remake(const FreeModule *target,
       return 0;
     }
 
-  Matrix *result = new Matrix(target);
+  MatrixConstructor mat(target, n_cols(), is_mutable_flag);
   for (int i=0; i<n_cols(); i++)
-    result->append(R->copy(_entries[i]));
-
-  result->freeze(is_mutable_flag);
-  return result;
+    mat.set_column(i, R->copy_vec(_entries[i]));
+  mat.compute_column_degrees();
+  return mat.to_matrix();
 }
 
 const Matrix * Matrix::make(const MonomialIdeal * mi)
@@ -338,15 +315,87 @@ bool Matrix::error_row_bound(int r) const
   return false;
 }
 
-bool Matrix::set_entry(int r, int c, const ring_elem a)
-  // Returns false if (r,c) is out of range, or the ring of a is wrong.
+bool Matrix::setRowChangeMatrix(Matrix *rops)
 {
-  // Check that r and c are in range. Returns false if a problem.
+  if (is_immutable())
+    {
+      ERROR("expected mutable matrix");
+      return false;
+    }
+  if (rops->get_ring() != get_ring())
+    {
+      ERROR("matrices over different rings");
+      return false;
+    }
+  if (rops->n_cols() != n_rows())
+    {
+      ERROR("row change matrix must have %d columns", n_rows());
+      return false;
+    }
+
+  rowOps = rops;
+  return true;
+}
+
+bool Matrix::setColumnChangeMatrix(Matrix *cops)
+{
+  if (is_immutable())
+    {
+      ERROR("expected mutable matrix");
+      return false;
+    }
+  if (cops->get_ring() != get_ring())
+    {
+      ERROR("matrices over different rings");
+      return false;
+    }
+  if (cops->n_cols() != n_cols())
+    {
+      ERROR("column change matrix must have %d columns", n_cols());
+      return false;
+    }
+
+  colOps = cops;
+  return true;
+}
+
+MatrixOrNull *Matrix::getRowChangeMatrix()
+{
+  return rowOps;
+}
+
+MatrixOrNull *Matrix::getColumnChangeMatrix()
+{
+  return colOps;
+}
+
+bool Matrix::get_entry(int r, int c, ring_elem &a) const
+  // This one returns false if (r,c) is out of range.
+{
+  if (error_row_bound(r)) return false;
+  if (error_column_bound(c)) return false;
+  if (!get_ring()->get_entry(_entries[c], r, a))
+    a = get_ring()->zero();
+  return true;
+}
+
+bool Matrix::get_nonzero_entry(int r, int c, ring_elem &result) const
+{
+  if (c < 0 || c >= n_cols()) return false;
+  return get_ring()->get_entry(_entries[c],r,result);
+}
+
+bool Matrix::set_entry(int r, int c, const ring_elem a)
+  // Returns false if (r,c) is out of range.  It is assumed that the ring of
+  // 'a' is the same as the ring of this.
+{
+  if (error_row_bound(r)) return false;
+  if (error_column_bound(c)) return false;
   _rows->get_ring()->set_entry(_entries[c], r, a);
   return true;
 }
 
-bool Matrix::interchange_rows(int i, int j)
+bool Matrix::interchange_rows(int i, int j, bool do_recording)
   /* swap rows: row(i) <--> row(j) */
 {
   if (is_immutable()) return false;
@@ -355,11 +404,13 @@ bool Matrix::interchange_rows(int i, int j)
   const Ring *R = get_ring();
   for (int c=0; c<n_cols(); c++)
     R->interchange_rows(_entries[c], i, j);
+  if (do_recording && rowOps != 0)
+    rowOps->interchange_columns(i,j,false);
   return true;
 }
 
 
-bool Matrix::interchange_columns(int i, int j)
+bool Matrix::interchange_columns(int i, int j, bool do_recording)
   /* swap columns: column(i) <--> column(j) */
 {
   if (is_immutable()) return false;
@@ -368,10 +419,12 @@ bool Matrix::interchange_columns(int i, int j)
   vec tmp = _entries[i];
   _entries[i] = _entries[j];
   _entries[j] = tmp;
+  if (do_recording && colOps != 0)
+    colOps->interchange_columns(i,j,false);
   return true;
 }
 
-bool Matrix::scale_row(ring_elem r, int i, bool opposite_mult)
+bool Matrix::scale_row(ring_elem r, int i, bool opposite_mult, bool do_recording)
   /* row(i) <- r * row(i) */
 {
   if (is_immutable()) return false;
@@ -379,20 +432,24 @@ bool Matrix::scale_row(ring_elem r, int i, bool opposite_mult)
   const Ring *R = get_ring();
   for (int c=0; c<n_cols(); c++)
     R->mult_row(_entries[c], r, i, opposite_mult);
+  if (do_recording && rowOps != 0)
+    rowOps->scale_column(r,i,opposite_mult,false);
   return true;
 }
 
-bool Matrix::scale_column(ring_elem r, int i, bool opposite_mult)
+bool Matrix::scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording)
   /* column(i) <- r * column(i) */
 {
   if (is_immutable()) return false;
   if (error_column_bound(i)) return false;
   const Ring *R = get_ring();
-  R->mult(_entries[i], r, opposite_mult);
+  R->mult_vec_to(_entries[i], r, opposite_mult);
+  if (do_recording && colOps != 0)
+    colOps->scale_column(r,i,opposite_mult,false);
   return true;
 }
 
-bool Matrix::row_op(int i, ring_elem r, int j, bool opposite_mult)
+bool Matrix::row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording)
   /* row(i) <- row(i) + r * row(j) */
 {
   if (is_immutable()) return false;
@@ -403,10 +460,13 @@ bool Matrix::row_op(int i, ring_elem r, int j, bool opposite_mult)
   for (int c=0; c<n_cols(); c++)
     R->vec_row_op(_entries[c], i, r, j, opposite_mult);
 
+  if (do_recording && rowOps != 0)
+    rowOps->column_op(i,r,j,opposite_mult,false);
+
   return true;
 }
 
-bool Matrix::column_op(int i, ring_elem r, int j, bool opposite_mult)
+bool Matrix::column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording)
   /* column(i) <- column(i) + r * column(j) */
 {
   if (is_immutable()) return false;
@@ -414,16 +474,102 @@ bool Matrix::column_op(int i, ring_elem r, int j, bool opposite_mult)
   if (error_column_bound(j)) return false;
   const Ring *R = get_ring();
 
-  vec tmp = R->copy(_entries[j]);
-  R->mult(tmp, r, opposite_mult); // replaces tmp by r*tmp or tmp*r
-  R->add(_entries[i], tmp);
+  vec tmp = R->copy_vec(_entries[j]);
+  R->mult_vec_to(tmp, r, opposite_mult); // replaces tmp by r*tmp or tmp*r
+  R->add_vec_to(_entries[i], tmp);
+
+  if (do_recording && colOps != 0)
+    colOps->column_op(i,r,j,opposite_mult,false);
 
   return true;
 }
 
+#if 0
+void Matrix::column_reduce(int c1, int c2, bool do_recording)
+{
+  if (is_immutable()) return false;
+  if (error_column_bound(c1)) return false;
+  if (error_column_bound(c2)) return false;
+  const Ring *R = get_ring();
+
+  ring_elem a1 = _entries[c1]->coeff; // Assumed to be non-zero...
+  ring_elem a2, b;
+  if (!get_entry(_entries[c1]->comp,c2,a2))
+    return;
+  if (!K->is_equal(a1,one))
+    {
+      ring_elem rem;
+      b = K->divide(a2,a1,rem); // division algorithm...
+      K->negate_to(b);
+    }
+  else
+    b = K->negate(a2);
+  column_op(c1,b,c2,do_recording);
+}
+void Matrix::row2by2(int r1, int r2, 
+		     ring_elem a1, ring_elem a2,
+		     ring_elem b1, ring_elem b2,
+		     bool do_recording)
+{
+  for (int i=0; i<n_cols(); i++)
+    row2by2(matrix[i],r1,r2,a1,a2,b1,b2);
+
+  if (doRecording && rowOps != 0)
+    rowOps->column2by2(r1,r2,a1,a2,b1,b2,false);
+}
+
+void Matrix::column2by2(int c1, int c2, 
+				     ring_elem a1, ring_elem a2,
+				     ring_elem b1, ring_elem b2,
+				     bool doRecording)
+{
+  // do the replacements:
+  // new column c1 = a1 * column[c1] + a2 * column[c2]
+  // new column c2 = b1 * column[c1] + b2 * column[c2]
+  // Make first column: v1 = a1*c1+a2*c2
+  sparse_vector *v1 = V->clone(matrix[c1]);
+  sparse_vector *v2 = V->clone(matrix[c2]);
+  V->scale(v1,a1);
+  V->scale(v2,a2);
+  V->add(v1,v2);
+  // Second column: w1 = b1*c1 + b2*c2
+  sparse_vector *w1 = V->clone(matrix[c1]);
+  sparse_vector *w2 = V->clone(matrix[c2]);
+  V->scale(w1,b1);
+  V->scale(w2,b2);
+  V->add(w1,w2);
+  // Set the matrices:
+  V->remove(matrix[c1]);
+  V->remove(matrix[c2]);
+  matrix[c1] = v1;
+  matrix[c2] = w1;
+  // Do the recording, if needed:
+  if (doRecording && colOps != 0)
+    colOps->column2by2(c1,c2,a1,a2,b1,b2,false);
+}
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool Matrix::is_equal(const Matrix &m) const
 {
   if (this == &m) return true;
+  if (get_hash_value() != m.get_hash_value())
+    return false; // Note that if one is immutable, 
+                  // and the other is mutable, false will be returned.
   if (get_ring() != m.get_ring())
     return false;
   if (n_rows() != m.n_rows())
@@ -431,7 +577,7 @@ bool Matrix::is_equal(const Matrix &m) const
   if (n_cols() != m.n_cols())
     return false;
   for (int i=0; i<n_cols(); i++)
-    if (! rows()->is_equal(elem(i), m.elem(i))) 
+    if (! get_ring()->is_equal(elem(i), m.elem(i))) 
       return false;
   return true;
 }
@@ -439,19 +585,9 @@ bool Matrix::is_equal(const Matrix &m) const
 bool Matrix::is_zero() const
 {
   for (int i=0; i<n_cols(); i++)
-    if (! rows()->is_zero(elem(i))) return false;
+    if (elem(i) != 0) return false;
   return true;
 }
-
-bool Matrix::get_entry(int r, int c, ring_elem &a) const
-{
-  // Check that r and c are in range. Returns false if a problem.
-  _rows->get_ring()->get_entry(_entries[c], r, a);
-  return true;
-}
-
-
-
 
 int Matrix::is_homogeneous() const
 {
@@ -480,47 +616,33 @@ int Matrix::is_homogeneous() const
 
 Matrix *Matrix::homogenize(int v, const M2_arrayint wts) const
 {
-  Matrix *result = new Matrix(rows());
+  MatrixConstructor mat(rows(), n_cols(), is_mutable());
   for (int i=0; i<n_cols(); i++)
-    result->append(rows()->homogenize(elem(i), v, wts));
-  return result;
+    mat.set_column(i, rows()->homogenize(elem(i), v, wts));
+  mat.compute_column_degrees();
+  return mat.to_matrix();
 }
 
-#if 0
-void Matrix::schreyer_append(vec v)
-{
-  if (! rows()->is_zero(v)) 
-    {
-      int *d = degree_monoid()->make_one();
-      rows()->degree(v, d);
-      cols()->append(d, v->monom, cols()->rank());
-      degree_monoid()->remove(d);
-      _entries.append(v);
-    }
-  else
-    append(v);
-}
-#endif
-
-Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
+Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G, bool is_mutable_flag)
 {
   if (F->get_ring() != G->get_ring())
     {
       ERROR("free modules have different base rings");
       return 0;
     }
-  Matrix *result = new Matrix(F,G);
-  for (int i=0; i<G->rank(); i++)
-    (*result)[i] = F->zero();
-  return result;
+  MatrixConstructor mat(F,G->rank(),is_mutable_flag);
+  mat.set_column_degrees(G);
+  return mat.to_matrix();
 }
 
-Matrix *Matrix::identity(const FreeModule *F)
+Matrix *Matrix::identity(const FreeModule *F, bool is_mutable_flag)
 {
-  Matrix *result = new Matrix(F,F);
+  const ring_elem one = F->get_ring()->one();
+  MatrixConstructor mat(F,F->rank(),is_mutable_flag);
+  mat.set_column_degrees(F);
   for (int i=0; i<F->rank(); i++)
-    (*result)[i] = F->e_sub_i(i);
-  return result;
+    mat.set_entry(i,i,one);
+  return mat.to_matrix();
 }
 
 Matrix *Matrix::operator+(const Matrix &m) const
@@ -537,11 +659,11 @@ Matrix *Matrix::operator+(const Matrix &m) const
       return 0;
     }
   
-  Matrix *result;
   const Ring *R = get_ring();
   const FreeModule *F = rows();
   const FreeModule *G = cols();
-  
+  const int *deg;
+
   if (!rows()->is_equal(m.rows()))
     F = R->make_FreeModule(n_rows());
   
@@ -549,13 +671,20 @@ Matrix *Matrix::operator+(const Matrix &m) const
     G = R->make_FreeModule(n_cols());
   
   if (EQ == degree_monoid()->compare(degree_shift(), m.degree_shift()))
-    result = new Matrix(F,G,degree_shift());
+    deg = degree_shift();
   else
-    result = new Matrix(F,G);
-  
+    deg = degree_monoid()->make_one();
+
+  bool is_mutable_flag = is_mutable() && m.is_mutable();
+  MatrixConstructor mat(F,G,deg,is_mutable_flag);
   for (int i=0; i<n_cols(); i++)
-    (*result)[i] = F->add(elem(i),m[i]);
-  return result;
+    {
+      vec v = R->copy_vec(elem(i));
+      vec w = R->copy_vec(m[i]);
+      R->add_vec_to(v,w);
+      mat.set_column(i, v);
+    }
+  return mat.to_matrix();
 }
 
 Matrix *Matrix::operator-(const Matrix &m) const
@@ -572,11 +701,11 @@ Matrix *Matrix::operator-(const Matrix &m) const
       return 0;
     }
 
-  Matrix *result;
   const Ring *R = get_ring();
   const FreeModule *F = rows();
   const FreeModule *G = cols();
-  
+  const int *deg;
+
   if (!rows()->is_equal(m.rows()))
     F = R->make_FreeModule(n_rows());
   
@@ -584,21 +713,23 @@ Matrix *Matrix::operator-(const Matrix &m) const
     G = R->make_FreeModule(n_cols());
   
   if (EQ == degree_monoid()->compare(degree_shift(), m.degree_shift()))
-    result = new Matrix(F,G,degree_shift());
+    deg = degree_shift();
   else
-    result = new Matrix(F,G);
-  
+    deg = degree_monoid()->make_one();
+
+  bool is_mutable_flag = is_mutable() && m.is_mutable();
+  MatrixConstructor mat(F,G,deg,is_mutable_flag);
   for (int i=0; i<n_cols(); i++)
-    (*result)[i] = F->subtract(elem(i),m[i]);
-  return result;
+    mat.set_column(i, F->subtract(elem(i),m[i]));
+  return mat.to_matrix();
 }
 
 Matrix *Matrix::operator-() const
 {
-  Matrix *result = new Matrix(rows(), cols(), degree_shift());
+  MatrixConstructor mat(rows(), cols(), degree_shift(), is_mutable());
   for (int i=0; i<n_cols(); i++)
-    (*result)[i] = rows()->negate(elem(i));
-  return result;
+    mat.set_column(i, rows()->negate(elem(i)));
+  return mat.to_matrix();
 }
 
 MatrixOrNull *Matrix::sub_matrix(const M2_arrayint r, const M2_arrayint c) const
@@ -608,10 +739,30 @@ MatrixOrNull *Matrix::sub_matrix(const M2_arrayint r, const M2_arrayint c) const
   if (F == NULL || G == NULL)
     return 0;
 
-  Matrix *result = new Matrix(F, G, degree_shift());
+  int *trans = newarray(int,n_rows());
+  for (int i=0; i<n_rows(); i++)
+    trans[i] = -1;
+
+  for (unsigned j=0; j<r->len; j++)
+    if (r->array[j] >= 0 && r->array[j] < n_rows())
+      trans[r->array[j]] = j;
+
+  MatrixConstructor mat(F,G,degree_shift(),is_mutable());
   for (unsigned int i=0; i<c->len; i++)
-    (*result)[i] = F->sub_vector(rows(), elem(c->array[i]), r);
-  return result;
+    {
+      vec v = elem(c->array[i]);
+      for ( ; v != NULL; v = v->next)
+	if (trans[v->comp] != -1)
+	  mat.set_entry(trans[v->comp], i, v->coeff);
+    }
+  deletearray(trans);
+  return mat.to_matrix();
+#if 0
+  MatrixConstructor mat(F,G,degree_shift(),is_mutable());
+  for (unsigned int i=0; i<c->len; i++)
+    mat.set_column(i, F->sub_vector(rows(), elem(c->array[i]), r));
+  return mat.to_matrix();
+#endif
 }
 
 MatrixOrNull *Matrix::sub_matrix(const M2_arrayint c) const
@@ -620,11 +771,10 @@ MatrixOrNull *Matrix::sub_matrix(const M2_arrayint c) const
   if (G == NULL)
     return 0;
 
-  Matrix *result = new Matrix(rows(), G, degree_shift());
+  MatrixConstructor mat(rows(),G,degree_shift(),is_mutable());
   for (unsigned int i=0; i<c->len; i++)
-    (*result)[i] = rows()->copy(elem(c->array[i]));
-  return result;
-
+    mat.set_column(i, get_ring()->copy_vec(elem(c->array[i])));
+  return mat.to_matrix();
 }
 
 MatrixOrNull *Matrix::reshape(const FreeModule *F, const FreeModule *G) const
@@ -656,12 +806,13 @@ MatrixOrNull *Matrix::flip(const FreeModule *F, const FreeModule *G)
     }
   const FreeModule *H = F->tensor(G);
   const FreeModule *K = G->tensor(F);
-  Matrix *result = new Matrix(K, H);
+
+  MatrixConstructor mat(K,H,F->get_ring()->degree_monoid()->make_one(),false);
   int next = 0;
   for (int f=0; f<F->rank(); f++)
     for (int g=0; g<G->rank(); g++)
-      (*result)[next++] = H->e_sub_i(f + g * F->rank());
-  return result;
+      mat.set_column(next++, H->e_sub_i(f + g * F->rank()));
+  return mat.to_matrix();
 }
 
 Matrix *Matrix::transpose() const
@@ -670,10 +821,24 @@ Matrix *Matrix::transpose() const
   const FreeModule *G = rows()->transpose();
   int *deg = degree_monoid()->make_one();
   degree_monoid()->divide(deg, degree_shift(), deg);
+
+  MatrixConstructor mat(F,G,deg,is_mutable());
+  degree_monoid()->remove(deg);
+
+  // The efficiency of this code relies on the way of ordering
+  // the sparse vectors (lead term has largest component)
+  for (int c=0; c<n_cols(); c++)
+    {
+      for (vec t = elem(c); t != 0; t=t->next)
+	mat.set_entry(c,t->comp,t->coeff);
+    }
+  return mat.to_matrix();
+#if 0
   Matrix *result = new Matrix(F, G, deg);
   degree_monoid()->remove(deg);
   F->transpose_matrix(*this, *result);
   return result;
+#endif
 }
 
 Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
@@ -683,26 +848,25 @@ Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
   if (!R->is_zero(r))
     R->degree(r, deg);
   degree_monoid()->mult(deg, degree_shift(), deg);
+  MatrixConstructor mat(rows(), cols(), deg, is_mutable());
+  for (int i=0; i<n_cols(); i++)
+    {
+      vec w = R->copy_vec(elem(i));
+      R->mult_vec_to(w,r,opposite_mult);
+      mat.set_column(i, w);
+    }
+  return mat.to_matrix();
+
+#if 0
   Matrix *result = new Matrix(rows(), cols(), deg);
   for (int i=0; i<n_cols(); i++)
     {
-      vec w = R->copy(elem(i));
-      R->mult(w,r,opposite_mult);
+      vec w = R->copy_vec(elem(i));
+      R->mult_vec_to(w,r,opposite_mult);
       (*result)[i] = w;
     }
   return result;
-}
-
-Matrix *Matrix::operator*(const ring_elem r) const
-{
-  int *deg = degree_monoid()->make_one();
-  if (!get_ring()->is_zero(r))
-    get_ring()->degree(r, deg);
-  degree_monoid()->mult(deg, degree_shift(), deg);
-  Matrix *result = new Matrix(rows(), cols(), deg);
-  for (int i=0; i<n_cols(); i++)
-    (*result)[i] = rows()->mult(r, elem(i));
-  return result;
+#endif
 }
 
 Matrix *Matrix::concat(const Matrix &m) const
@@ -719,6 +883,16 @@ Matrix *Matrix::concat(const Matrix &m) const
     }
 
   const FreeModule *G = cols()->direct_sum(m.cols());
+  MatrixConstructor mat(rows(), G, degree_monoid()->make_one(), is_mutable() && m.is_mutable());
+  int i;
+  int nc = n_cols();
+  for (i=0; i<nc; i++)
+    mat.set_column(i, get_ring()->copy_vec(elem(i)));
+  for (i=0; i<m.n_cols(); i++)
+    mat.set_column(nc+i, get_ring()->copy_vec(m.elem(i)));
+  return mat.to_matrix();
+
+#if 0
   Matrix *result = new Matrix(rows(), G);
   int i;
   int nc = n_cols();
@@ -728,6 +902,8 @@ Matrix *Matrix::concat(const Matrix &m) const
     (*result)[nc+i] = rows()->copy(m.elem(i));
 
   return result;
+#endif
+
 }
 
 Matrix *Matrix::direct_sum(const Matrix *m) const
@@ -745,6 +921,19 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
 
   const FreeModule *F = rows()->direct_sum(m->rows());
   const FreeModule *G = cols()->direct_sum(m->cols());
+
+  MatrixConstructor mat(F,G,deg,is_mutable() && m->is_mutable());
+  degree_monoid()->remove(deg);
+
+  int i;
+  int nr = n_rows();
+  int nc = n_cols();
+  for (i=0; i<nc; i++) 
+    mat.set_column(i, get_ring()->copy_vec(elem(i)));
+  for (i=0; i<m->n_cols(); i++)
+    mat.set_column(nc+i, F->component_shift(nr, m->rows(), (*m)[i]));
+  return mat.to_matrix();
+#if 0  
   Matrix *result = new Matrix(F, G, deg);
 
   degree_monoid()->remove(deg);
@@ -756,6 +945,7 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   for (i=0; i<m->n_cols(); i++)
     (*result)[nc+i] = F->component_shift(nr, m->rows(), (*m)[i]);
   return result;
+#endif
 }
 
 Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
@@ -775,36 +965,22 @@ Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
   int *deg = degree_monoid()->make_new(degree_shift());
   degree_monoid()->mult(deg, m->degree_shift(), deg);
 
+  MatrixConstructor mat(rows(), m->cols(), deg, is_mutable() && m->is_mutable());
+
+  degree_monoid()->remove(deg);
+
+  for (int i=0; i<m->n_cols(); i++)
+    mat.set_column(i, R->mult_vec_matrix(this, m->elem(i), opposite_mult));
+  return mat.to_matrix();
+
+#if 0
   Matrix *result = new Matrix(rows(), m->cols(), deg);
   degree_monoid()->remove(deg);
 
   for (int i=0; i<m->n_cols(); i++)
     (*result)[i] = R->mult_vec_matrix(this, m->elem(i), opposite_mult);
   return result;
-}
-
-Matrix *Matrix::operator*(const Matrix &m) const
-{
-  if (get_ring() != m.get_ring())
-    {
-      ERROR("matrix mult: different base rings");
-      return 0;
-    }
-  if (n_cols() != m.n_rows())
-    {
-      ERROR("matrix mult: matrix sizes don't match");
-      return 0;
-    }
-
-  int *deg = degree_monoid()->make_new(degree_shift());
-  degree_monoid()->mult(deg, m.degree_shift(), deg);
-
-  Matrix *result = new Matrix(rows(), m.cols(), deg);
-  degree_monoid()->remove(deg);
-
-  for (int i=0; i<m.n_cols(); i++)
-    (*result)[i] = rows()->mult_by_matrix(this, m.rows(), m[i]);
-  return result;
+#endif
 }
 
 Matrix *Matrix::module_tensor(const Matrix *m) const
@@ -819,6 +995,23 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   FreeModule *G1 = m->rows()->tensor(cols());
   G->direct_sum_to(G1);
   deleteitem(G1);
+
+  MatrixConstructor mat(F,G,
+			get_ring()->degree_monoid()->make_one(),
+			is_mutable() && m->is_mutable());
+
+  int i, j, next=0;
+
+  for (i=0; i<n_rows(); i++)
+    for (j=0; j<m->n_cols(); j++)
+      mat.set_column(next++, F->component_shift(i * m->n_rows(), m->rows(), (*m)[j]));
+
+  for (i=0; i<m->n_rows(); i++)
+    for (j=0; j<n_cols(); j++)
+      mat.set_column(next++, F->tensor_shift(m->n_rows(), i, rows(), elem(j)));
+  return mat.to_matrix();
+
+#if 0
   Matrix *result = new Matrix(F, G);
 
   int i, j, next=0;
@@ -832,6 +1025,7 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
       (*result)[next++] = F->tensor_shift(m->n_rows(), i, rows(), elem(j));
 
   return result;
+#endif
 }
 Matrix *Matrix::random(const Ring *R, int r, int c)
 {
@@ -842,43 +1036,50 @@ Matrix *Matrix::random(const Ring *R, int r, int c)
     (*result)[i] = F->random();
   return result;
 }
-#if 0
-Matrix Matrix::random(const FreeModule *F, const FreeModule *G, 
-		      int *mapdeg,	// Degree of the map, not the elements
-		      int ishomog)	// Whether the map is homog.  If not
-					// then degrees < given degree in any
-					// entry are allowed.
+
+Matrix *Matrix::random(const Ring *R, 
+		       int r, int c, 
+		       double fraction_non_zero, 
+		       int special_type, // 0: general, 1:upper triangular, others?
+		       M2_bool is_mutable_flag)
 {
-  // For each degree in the matrix, generate a basis in that degree, or in
-  // degrees <= that degree (if ishomog is false).  Don't duplicate these:
-  // It is probably sufficient to check linearly the ones that we have.
-  // In any case, for each column, place all of the terms on a list, and sort
-  // them afterwords.
-  Matrix result(F,G,mapdeg);
-  array<intarray> degs;
-  array<Matrix> bases;
-  for (i=0; i<G->rank(); i++)
+  FreeModule *F = R->make_FreeModule(r);
+  FreeModule *G = R->make_FreeModule(c);
+  MatrixConstructor mat(F,G,R->degree_monoid()->make_one(),is_mutable_flag);
+
+  // Loop through all selected elements, flip a 'fraction_non_zero' coin, and if non-zero
+  // set that element.
+  
+  mpz_t a;
+  mpz_init(a);
+
+  if (special_type == 0)
     {
-      vec f = NULL;
-      for (j=0; j<F->rank(); j++)
-	{
-	  // The degree we need:
-
-	  // Determine whether this basis exists
-
-	  // If not, create it, and insert into list.
-	  // If ishomog is false, then do that basis.
-
-	  // For each term in this matrix, call 'random' on
-	  // the coefficient ring, and add to the 'f' list this term.
-	  // Fon't forget to handle the case when F is Schreyer, or
-	  // R has no monoid.
-
-	  result[j] = F->sort(f);
-	}
+      for (int i=0; i<c; i++)
+	for (int j=0; j<r; j++)
+	  {
+	    Random::random_integer(a);
+	    mat.set_entry(j,i,R->from_int(a));
+	  }
     }
+  else if (special_type == 1)
+    {
+      for (int i=0; i<c; i++)
+	{
+	  int top = (i>=r ? r : i);
+	  for (int j=0; j<top; j++)
+	    {
+	      Random::random_integer(a);
+	      mat.set_entry(j,i,R->from_int(a));
+	    }
+	}
+
+    }
+  mpz_clear(a);
+  return mat.to_matrix();
 }
-#endif		      
+
+
 Matrix *Matrix::tensor(const Matrix *m) const
 {
   if (get_ring() != m->get_ring())
@@ -892,6 +1093,15 @@ Matrix *Matrix::tensor(const Matrix *m) const
   int *deg = degree_monoid()->make_new(degree_shift());
   degree_monoid()->mult(deg, m->degree_shift(), deg);
 
+  MatrixConstructor mat(F,G,deg,is_mutable() && m->is_mutable());
+  degree_monoid()->remove(deg);
+  int i, j, next = 0;
+  for (i=0; i<n_cols(); i++)
+    for (j=0; j<m->n_cols(); j++)
+      mat.set_column(next++, F->tensor(rows(), elem(i), 
+				       m->rows(), (*m)[j]));
+  return mat.to_matrix();
+#if 0
   Matrix *result = new Matrix(F, G, deg);
 
   degree_monoid()->remove(deg);
@@ -903,6 +1113,7 @@ Matrix *Matrix::tensor(const Matrix *m) const
 				 m->rows(), (*m)[j]);
 				 
   return result;
+#endif
 }
 
 Matrix *Matrix::diff(const Matrix *m, int use_coef) const
@@ -920,6 +1131,17 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   degree_monoid()->divide(m->degree_shift(), degree_shift(), deg);
   deleteitem(F1);
   deleteitem(G1);
+
+  MatrixConstructor mat(F,G,deg,is_mutable() && m->is_mutable());
+  degree_monoid()->remove(deg);
+  int i, j, next=0;
+  for (i=0; i<n_cols(); i++)
+    for (j=0; j<m->n_cols(); j++)
+      mat.set_column(next++, F->diff(rows(), elem(i), 
+				     m->rows(), (*m)[j],
+				     use_coef));
+  return mat.to_matrix();
+#if 0
   Matrix *result = new Matrix(F, G, deg);
   degree_monoid()->remove(deg);
   int i, j, next=0;
@@ -930,6 +1152,7 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
 				  use_coef);
 
   return result;
+#endif
 }
 
 Matrix *Matrix::lead_term(int n) const
@@ -1323,7 +1546,8 @@ void Matrix::text_out(buffer &o) const
 //  cols().text_out(o);
 //  o << endl;
 
-  buffer *p = new buffer[nrows];
+  buffer *p = newarray(buffer,nrows);
+  //  buffer *p = new buffer[nrows];
   int r;
   for (int c=0; c<ncols; c++)
     {
@@ -1838,52 +2062,6 @@ int Matrix::dimension() const
 }
 
 
-static int symm1_next = 0;
-
-void Matrix::symm1(Matrix * &result, 
-		   vec f,	     // product so far generated, consumed here
-		   int lastn,	     // can use lastn..n_cols()-1 in product
-		   int pow) const   // remaining power to take
-{
-  if (pow == 0)
-    (*result)[symm1_next++] = f;
-  else
-    {
-      for (int i=lastn; i<n_cols(); i++)
-	{
-	  ring_elem g = elem(0,i);
-	  vec h = result->rows()->mult(g, f);
-	  get_ring()->remove(g);
-	  symm1(result, h, i, pow-1);
-	}
-      result->rows()->remove(f);
-    }
-}
-
-MatrixOrNull *Matrix::symm(int n) const
-    // Assumption: 'this' has one row.
-    // Return the 'n'th power of the ideal
-{
-  if (this->n_rows() != 1)
-    {
-      ERROR("expected one row");
-      return 0;
-    }
-  const FreeModule *G = cols()->symm(n);
-  int *deg = degree_monoid()->make_new(degree_shift());
-  degree_monoid()->power(deg, n, deg);
-  Matrix *result = new Matrix(rows(), G, deg);
-  degree_monoid()->remove(deg);
-
-  if (n >= 0)
-    {
-      vec f = rows()->e_sub_i(0);
-      symm1_next = 0;
-      symm1(result, f, 0, n);	  // consumes f
-    }
-  return result;
-}
-
 static int            kb_do_trunc;
 static Matrix       * kb_result;
 static MonomialIdeal* kb_monideal;
@@ -2108,6 +2286,43 @@ Matrix *Matrix::k_basis(Matrix &bot) const
   kb_P = 0;
   return result;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#if 0
+#if 0
+To do here:
+  +k-basis routines
+  +monideal routines (done)
+  elem(r,c) makes new element, so be sure to remove it if needed
+
+  check error conditions
+  lead term routines are a bit messed up
+
+  new routines to add: 
+    exterior, symm (how best to do this?)
+    random_matrix
+    coeffs, 
+    inpart, stdpart, mininimalpart (but call them what?? )
+#endif
+
+#if 0
+void Matrix::schreyer_append(vec v)
+{
+  if (! rows()->is_zero(v)) 
+    {
+      int *d = degree_monoid()->make_one();
+      rows()->degree(v, d);
+      cols()->append(d, v->monom, cols()->rank());
+      degree_monoid()->remove(d);
+      _entries.append(v);
+    }
+  else
+    append(v);
+}
+#endif
+
+#endif
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -27,6 +27,11 @@ bool CC::initialize_CC(double epsilon)
 		  Monoid::get_trivial_monoid(),
 		  Monoid::get_trivial_monoid());
   _epsilon = epsilon;
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

@@ -46,6 +46,10 @@ protected:
 				// there is an integer in the factored ideal.
   ring_elem _ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
 
+  ring_elem zeroV;              // Three generally useful values in a ring.
+  ring_elem oneV;
+  ring_elem minus_oneV;
+
   void initialize_ring(int charac, int nvars, int totalvars, const Ring *K, 
 	const Monoid *M, const Monoid *D);
   Ring() {}
@@ -111,6 +115,10 @@ public:
   virtual void text_out(buffer &o) const = 0;
 
   virtual int coerce_to_int(ring_elem a) const;
+
+  ring_elem one() const { return oneV; }
+  ring_elem minus_one() const { return minus_oneV; }
+  ring_elem zero() const { return zeroV; }
 
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
@@ -260,8 +268,8 @@ protected:
   void sort(vecterm *&f) const;
 public:
   vec make_vec(int r, ring_elem a) const;
-  vec copy(const vecterm * v) const;
-  void remove(vec v) const;
+  vec copy_vec(const vecterm * v) const;
+  void remove_vec(vec v) const;
 
   bool is_equal(const vecterm * a, const vecterm * b) const;
   bool get_entry(const vecterm * v, int r, ring_elem &result) const;
@@ -270,9 +278,9 @@ public:
   void elem_text_out(buffer &o, const vecterm * v) const;
 
   void set_entry(vec &v, int i, ring_elem r) const;
-  void mult(vec &v, const ring_elem r, bool opposite_mult) const; // multiplies v <- r * v or v * r
+  void mult_vec_to(vec &v, const ring_elem r, bool opposite_mult) const; // multiplies v <- r * v or v * r
   void mult_row(vec &v, const ring_elem r, int i, bool opposite_mult) const;
-  void add(vec &v, vec &w) const; // v <- v+w, w is set to 0.
+  void add_vec_to(vec &v, vec &w) const; // v <- v+w, w is set to 0.
   void interchange_rows(vec &v, int i, int j) const;
   void vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const;
 
@@ -285,7 +293,7 @@ public:
 	       ring_elem a1, ring_elem a2,
 	       ring_elem b1, ring_elem b2) const;
 
-  void divide(vec &v, const ring_elem a) const;
+  void divide_vec_to(vec &v, const ring_elem a) const;
   void divide_row(vec &v, int r, const ring_elem a) const;
   ring_elem dot_product(const vecterm *v, const vecterm *w) const;
 
