@@ -86,8 +86,8 @@ bookFile << ///
 \font\headerFontSix=cmbx10
 
 \begin{document}
-        \title{Macaulay 2}
-        \thanks{Supported by the NSF}
+        \title{Macaulay 2 \\ A system for computations in \\ algebraic geometry and commutative algebra}
+        % \thanks{Supported by the NSF}
         \author[Grayson]{Daniel R. Grayson}
         \address{University of Illinois at Urbana-Champaign}
         \email{dan\char`\@math.uiuc.edu}
