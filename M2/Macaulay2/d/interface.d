@@ -307,11 +307,11 @@ rawMonomialOrdering(e:Expr):Expr := (
 			 )
 		    is g:fun4 do (
 			 if g == PositionFun then (
-			      if !(sp.v.1 == UpS && sp.v.1 == DownS)
+			      if !(sp.v.1 == UpS || sp.v.1 == DownS)
 			      then return buildErrorPacket("expected option value to be Up or Down");
 			      )
 			 else (
-			      if !(sp.v.1 == True && sp.v.1 == False)
+			      if !(sp.v.1 == True || sp.v.1 == False)
 			      then return buildErrorPacket("expected option value to be true or false");
 			      ))
 		    is null do return buildErrorPacket("expected option key to be a monomial ordering key")
@@ -499,13 +499,13 @@ setupfun("rawSkewPolynomialRing",rawSkewPolynomialRing);
 rawWeylAlgebra(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 4 then 
-     when a.0 is K:RawRing do 
+     when a.0 is R:RawRing do 
      if !isListOfSmallIntegers(a.1) then WrongArg(2,"a list of small integers") else
      if !isListOfSmallIntegers(a.2) then WrongArg(3,"a list of small integers") else
      if !isSmallInt(a.3) then WrongArgSmallInteger(4) else
      toExpr(Ccode(RawRingOrNull,
 	       "(engine_RawRingOrNull)IM2_Ring_weyl_algebra(",
-	       "(Ring *)", K, ",",
+	       "(Ring *)", R, ",",
 	       "(M2_arrayint)", getListOfSmallIntegers(a.1), ",",  -- commvars
 	       "(M2_arrayint)", getListOfSmallIntegers(a.2), ",", -- diff vars
 	       getSmallInt(a.3), -- homog var
@@ -574,12 +574,7 @@ rawFractionRing(e:Expr):Expr := (
 setupfun("rawFractionRing", rawFractionRing);
 
 rawSchurRing(e:Expr):Expr := (
-     when e is R:RawRing do toExpr(Ccode(RawRingOrNull,
-	       "(engine_RawRingOrNull)IM2_Ring_schur(",
-	       "(Ring *)", R,
-	       ")"
-	       )
-	  )
+     when e is R:RawRing do toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_schur(", "(Ring *)", R, ")" ) )
      else WrongArg("a raw ring"));
 setupfun("rawSchurRing",rawSchurRing);
 
