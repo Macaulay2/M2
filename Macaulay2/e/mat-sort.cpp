@@ -2,6 +2,7 @@
 
 class MatrixSorter
 {
+  const PolynomialRing *R;
   const Monoid *M;
   int deg_ascending;
   int monorder_ascending;
@@ -22,13 +23,17 @@ class MatrixSorter
       }
     vec v1 = sort_vecs[i];
     vec v2 = sort_vecs[j];
-    if (M != 0)
-      {
-#warning "fix matrix sort"
-      }
     if (v1 == NULL) return -monorder_ascending;
     if (v2 == NULL) return monorder_ascending;
-    int cmp = v1->comp - v2->comp;
+    int cmp;
+    if (M != 0)
+      {
+	const int *m1 = R->lead_flat_monomial(v1->coeff);
+	const int *m2 = R->lead_flat_monomial(v2->coeff);
+	cmp = M->compare(m1,v1->comp,m2,v2->comp);
+      }
+    else
+      cmp = v1->comp - v2->comp;
     if (cmp > 0) return -monorder_ascending;
     if (cmp < 0) return monorder_ascending;  
 #if 0
@@ -84,16 +89,22 @@ class MatrixSorter
   }
   
 public:
-  MatrixSorter(const Matrix *m, const Monoid *M0, int degorder, int monorder);
+  MatrixSorter(const Matrix *m, int degorder, int monorder);
 
   M2_arrayint_OrNull value();
 };
 
-MatrixSorter::MatrixSorter(const Matrix *m, const Monoid *M0, int degorder, int monorder)
-  : M(M0),
-    deg_ascending(degorder),
+MatrixSorter::MatrixSorter(const Matrix *m, int degorder, int monorder)
+  : deg_ascending(degorder),
     monorder_ascending(monorder)
 {
+  const Ring *R0 = m->get_ring();
+  R = R0->cast_to_PolynomialRing();
+  if (R == 0)
+    M = 0;
+  else
+    M = R->getMonoid();
+
   int nelems = m->n_cols();
   
   if (degorder != 0)
@@ -126,11 +137,7 @@ M2_arrayint Matrix::sort(int degorder, int monorder) const
   // If ==0, or in the event that two columns have the same (simple) degree,
   // use the monomial order: monorder > 0 means ascending, <0 means descending.
 {
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  const Monoid *M;
-  if (P == 0) M = 0;
-  else M = P->getMonoid();
-  MatrixSorter sorter(this, M, degorder, monorder);
+  MatrixSorter sorter(this, degorder, monorder);
   return sorter.value();
 }
 
