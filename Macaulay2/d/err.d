@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 use stdio;
+use C;
 use system;
 use strings;
 export usage(msg:string):void := ( 
@@ -21,6 +22,11 @@ export fatal(msg:string):void := (
      flush(stdout);
      stderr << argv.0 << ": fatal: " << msg << endl;
      exit(1);
+     );
+export abort(msg:string):void := (
+     flush(stdout);
+     stderr << argv.0 << ": fatal: " << msg << endl;
+     abort();
      );
 export syserr(msg:string):void := (
      flush(stdout);

@@ -34,7 +34,7 @@ struct res2_pair
 				// Before being computed, this is the 1 or 2 term syzygy
 				// saying what the syzygy is.
 
-  MonomialIdeal mi;
+  MonomialIdeal * mi;
 #if 0
   union {
     MonomialIdeal mi;		// Monomial ideal of total monomials
@@ -52,11 +52,6 @@ struct res2_pair
 				// term containing the constant.
 				// Is this always the last term??
 				// If so, we probably don't need this field...
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

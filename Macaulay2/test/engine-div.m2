@@ -1,18 +1,12 @@
 -- Test of division in various rings
 -- ggdiv, ggmod, ggdivmod.
 -- For the purposes of this test, we define:
-quot = (m,n) -> (
-     sendgg(ggPush m, ggPush n, ggdiv);
-     new ring m
-     )
-rem = (m,n) -> (
-     sendgg(ggPush m, ggPush n, ggmod);
-     new ring m
-     )
-
+quot = (m,n) -> new ring m from raw m // raw n
+rem = (m,n) -> new ring m from raw m % raw n
 remquot = (m,n) -> (
-     sendgg(ggPush m, ggPush n, ggdivmod);
-     {new ring m, new ring m})
+     R := ring m;
+     t := rawDivMod(raw m, raw n);
+     {new R from t#1, new R from t#0})
 
 checkremquot = (m,n) -> (
      q := quot(m,n);

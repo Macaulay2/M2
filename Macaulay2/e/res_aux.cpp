@@ -1,8 +1,6 @@
 // Copyright 1996 Michael E. Stillman
 // Included from 'res.cc'
 
-#include "interp.hpp"
-
 int res_comp::n_pairs(int lev, int d) const
 {
   res_degree *p = get_degree_set(lev, d);
@@ -184,7 +182,7 @@ void res_comp::text_out(buffer &o, const res_pair *p) const
 #if 0
   if (p->mi_exists)
 #endif
-    o << "[mi: " << p->mi.length() << "]";
+    o << "[mi: " << p->mi->length() << "]";
 #if 0
   else
     {
@@ -308,18 +306,18 @@ FreeModule *res_comp::minimal_free_of(int i) const
   return result;
 }
 
-Matrix res_comp::make(int level) const
+Matrix *res_comp::make(int level) const
 {
-  Matrix result(free_of(level-1), free_of(level));
+  Matrix *result = new Matrix(free_of(level-1), free_of(level));
 
   int n = 0;
-  if (result.n_cols() == 0) return result;
+  if (result->n_cols() == 0) return result;
   res_level *lev = resn[level];
   for (int j=0; j<lev->bin.length(); j++)
     {
       res_degree *pairs = lev->bin[j];
       for (res_pair *p = pairs->first; p != NULL; p = p->next)
-	result[n++] = R->to_vector(p->syz, result.rows());
+	(*result)[n++] = R->to_vector(p->syz, result->rows());
     }
   
   return result;
@@ -343,7 +341,7 @@ void res_comp::reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) cons
 	    // Subtract the proper multiple to f.  f = ... + c m e_y + ...
 	    // and                                 p = ... + d n e_y
 	    // where n|m.  So we want to compute f -= c/d m/n p.
-	    ring_elem c = K->divide(tm->coeff, p->pivot_term->coeff);
+	    ring_elem c = K->divide(tm->coeff, p->pivot_term->coeff); // exact division
 	    // MES: is the following line actually needed?
 	    M->divide(tm->monom, p->pivot_term->monom, MINIMAL_mon);
 	    if (p->stripped_syz == NULL)
@@ -353,9 +351,9 @@ void res_comp::reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) cons
     }
 }
 
-Matrix res_comp::make_minimal(int i) const
+Matrix *res_comp::make_minimal(int i) const
 {
-  Matrix m(minimal_free_of(i-1), minimal_free_of(i));
+  Matrix *m = new Matrix(minimal_free_of(i-1), minimal_free_of(i));
   if (i < 0 || i > length_limit) return m;
   array<res_pair *> elems;
 
@@ -375,13 +373,14 @@ Matrix res_comp::make_minimal(int i) const
 	      p->stripped_syz = R->strip(p->syz);
 	      reduce_minimal(x,p->stripped_syz, elems);
 	    }
-	  m[thisx++] = R->to_vector(p->stripped_syz, m.rows(), 1);
+	  (*m)[thisx++] = R->to_vector(p->stripped_syz, m->rows(), 1);
 	}
     }
   return m;
 }
 
 #if 0
+// This was commented out earlier than 2002
 void cmd_res1(object &om, object &olength, object &ostrategy)
 {
   Matrix m = om->cast_to_Matrix();
@@ -392,6 +391,7 @@ void cmd_res1(object &om, object &olength, object &ostrategy)
 }
 #endif
 
+#if 0
 void cmd_res_calc(object &op, object &odeg, object &oargs)
 {
   res_comp *p = op->cast_to_res_comp();
@@ -507,3 +507,4 @@ int i_res_cmds()
   install(ggskeleton, cmd_res_skeleton, TY_RES_COMP, TY_INT);
   return 1;
 }
+#endif

@@ -2,28 +2,35 @@
 
 #include "Z.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "random.hpp"
+#include "gbring.hpp"
+
 #if 0
 #include "gmp.h"
 #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
 #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-Z::Z(const Monoid *D) : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D)
+bool Z::initialize_ZZ(const Monoid *D) 
 {
-  mpz_stash = new stash("ZZ", sizeof(mpz_t));
-  zero_elem = new_elem();
-  mpz_init_set_si(zero_elem, 0);
+  initialize_ring(0,0,0,this,
+		  Monoid::get_trivial_monoid(),
+		  D);
+  _elem_size = sizeof(mpz_t);
+  _zero_elem = new_elem();
+  mpz_init_set_si(_zero_elem, 0);
+  return true;
 }
 
 Z *Z::create(const Monoid *D)
 {
-  Z *obj = new Z(D);
-  return (Z *) intern(obj);
+  Z *result = new Z;
+  result->initialize_ZZ(D);
+  result->_grtype = GRType::make_BASE(result);
+  return result;
 }
 
 void Z::text_out(buffer &o) const
@@ -33,15 +40,12 @@ void Z::text_out(buffer &o) const
 
 mpz_ptr Z::new_elem() const
 {
-  mpz_ptr result = (mpz_ptr) mpz_stash->new_elem();
+  mpz_ptr result = (mpz_ptr) getmem(_elem_size);
   mpz_init(result);
   return result;
 }
 void Z::remove_elem(mpz_ptr f) const
 {
-  if (f == NULL) return;
-  mpz_clear(f);
-  mpz_stash->delete_elem(f);
 }
 
 bool Z::get_ui(unsigned int &result, mpz_t n)
@@ -74,9 +78,9 @@ int Z::coerce_to_int(ring_elem a) const
 
 ring_elem Z::random() const
 {
-  // uugh.  This should not need to go through RingElement
-  RingElement f = Random::random();
-  return copy(f.get_value());
+  M2_Integer result = Z::new_elem();
+  Random::random_integer(result);
+  return MPZ_RINGELEM(result);
 }
 
 void Z::elem_text_out(buffer &o, const ring_elem ap) const
@@ -105,11 +109,6 @@ void Z::elem_text_out(buffer &o, const ring_elem ap) const
       o << str;
     }
   if (size > 1000) delete [] allocstr;
-}
-
-void Z::elem_bin_out(buffer &o, const ring_elem a) const
-{
-  bin_mpz_out(o, MPZ_VAL(a));
 }
 
 ring_elem Z::from_int(int n) const
@@ -201,7 +200,7 @@ ring_elem Z::preferred_associate(ring_elem f) const
 
 void Z::negate_to(ring_elem &f) const
 {
-  mpz_sub(MPZ_VAL(f), zero_elem, MPZ_VAL(f));
+  mpz_sub(MPZ_VAL(f), _zero_elem, MPZ_VAL(f));
 }
 
 void Z::add_to(ring_elem &f, ring_elem &g) const
@@ -219,7 +218,7 @@ void Z::subtract_to(ring_elem &f, ring_elem &g) const
 ring_elem Z::negate(const ring_elem f) const
 {
   mpz_ptr result = new_elem();
-  mpz_sub(result, zero_elem, MPZ_VAL(f));
+  mpz_sub(result, _zero_elem, MPZ_VAL(f));
   return MPZ_RINGELEM(result);
 }
 
@@ -255,7 +254,7 @@ ring_elem Z::power(const ring_elem f, mpz_t n) const
   mpz_ptr result = new_elem();
   int n1;
   if (!get_si(n1, n)) 
-    { gError << "exponent too large"; }
+    { ERROR("exponent too large"); }
   else
     mpz_pow_ui(result, MPZ_VAL(f), n1);
   return MPZ_RINGELEM(result);
@@ -422,53 +421,5 @@ ring_elem Z::eval(const RingMap *map, const ring_elem f) const
   return map->get_ring()->from_int(MPZ_VAL(f));
 }
 
-bool Z::is_homogeneous(const ring_elem) const
-{
-  return true;
-}
 
-void Z::degree(const ring_elem, int *d) const
-{
-  degree_monoid()->one(d);
-}
-void Z::degree_weights(const ring_elem, const int *, int &lo, int &hi) const
-{
-  lo = hi = 0;
-}
-int Z::primary_degree(const ring_elem) const
-{
-  return 0;
-}
 
-ring_elem Z::homogenize(const ring_elem f, int, int deg, const int *) const
-{
-  if (deg != 0) 
-    gError << "homogenize: no homogenization exists";
-  return f;
-}
-
-ring_elem Z::homogenize(const ring_elem f, int, const int *) const
-{
-  return f;
-}
-
-int Z::n_terms(const ring_elem) const
-{
-  return 1;
-}
-ring_elem Z::term(const ring_elem a, const int *) const
-{
-  return copy(a);
-}
-ring_elem Z::lead_coeff(const ring_elem f) const
-{
-  return f;
-}
-ring_elem Z::get_coeff(const ring_elem f, const int *) const
-{
-  return f;
-}
-ring_elem Z::get_terms(const ring_elem f, int, int) const
-{
-  return f;
-}

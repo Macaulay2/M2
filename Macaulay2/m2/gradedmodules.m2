@@ -1,4 +1,4 @@
---		Copyright 1997 by Daniel R. Grayson
+--		Copyright 1997-2002 by Daniel R. Grayson
 
 GradedModule = new Type of MutableHashTable
 GradedModule.synonym = "graded module"
@@ -24,6 +24,10 @@ length GradedModule := (M) -> (
      if #s === 0 then 0 else max s - min s)
 GradedModuleMap = new Type of MutableHashTable
 GradedModuleMap.synonym = "graded module map"
+
+source GradedModuleMap := f -> f.source
+target GradedModuleMap := f -> f.target
+
 net GradedModuleMap := f -> (
      d := f.degree;
      v := between("",

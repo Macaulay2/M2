@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 -- html.m2 documentation
 
@@ -895,6 +895,6 @@ document { Monoid,
 
 document { (symbol _, ZZ, Monoid),
      Headline => "get unit element",
-     TT "1_M", " -- provides the unit element of a group or monoid ", TT "M", "."
+     TT "1_M", " -- provides the unit element of a monoid ", TT "M", "."
      }
 

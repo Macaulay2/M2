@@ -10,6 +10,10 @@
 #include "matrix.hpp"
 #include "polyring.hpp"
 
+class RingElement;
+class Matrix;
+class MonomialIdeal;
+
 class partition_table
     // Partition a monomial ideal into several such that
     // the graph of variables occuring in each is connected.
@@ -31,7 +35,7 @@ public:
   ~partition_table() {}
 
   void reset(int nvars);
-  void partition(MonomialIdeal &I, array<MonomialIdeal> &result);	// Consumes I.
+  void partition(MonomialIdeal * &I, array<MonomialIdeal *> &result);	// Consumes I.
 };
 
 struct hilb_step
@@ -42,10 +46,10 @@ struct hilb_step
   ring_elem h0;			// Hilbert function so far computed 'to the left'
   ring_elem h1;
   int first_sum;		// First monomial ideal which corresponds to the 'sum' part
-  array<MonomialIdeal> monids;	// The (partitoned) array of monomial ideals 
+  array<MonomialIdeal *> monids;	// The (partitoned) array of monomial ideals 
 };
 
-class hilb_comp : public type
+class hilb_comp : public mutable_object
 {
   const PolynomialRing *S;		// This is the base ring of the monomial ideal
   const PolynomialRing *R;		// This is the output degree ring.
@@ -53,7 +57,7 @@ class hilb_comp : public type
   const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
 
   // Collected values from the matrix
-  Matrix input_mat;             // The input matrix
+  const Matrix *input_mat;             // The input matrix
   ring_elem result_poincare;	// The result poincare polynomial from components
 				// 0..this_comp-1
   int this_comp;
@@ -79,45 +83,35 @@ class hilb_comp : public type
   partition_table part_table;
 
   int step();			// Returns 0 when done
-  void recurse(MonomialIdeal &I, const int *pivot_vp);
-  void do_ideal(MonomialIdeal &I);
+  void recurse(MonomialIdeal * &I, const int *pivot_vp);
+  void do_ideal(MonomialIdeal * I);
   
 public:
-  //hilb_comp(const PolynomialRing *R, const MonomialIdeal &I);
-  hilb_comp(const PolynomialRing *R, const Matrix &M);
+  hilb_comp(const PolynomialRing *R, const Matrix * M);
   ~hilb_comp();
 
   void reset();
   void next_monideal();
   int calc(int nsteps);
   int is_done() const;
-  RingElement value();
+  RingElement *value();
   void stats() const;
 
   // static routines
-  static int coeff_of(const RingElement &h, int deg);
+  static int coeff_of(const RingElement *h, int deg);
 
-  static int hilbertSeries(const Matrix &M, RingElement &result);
+#if 0
+  static int hilbertSeries(const Matrix *M, RingElement * &result);
   // A return of 0 means that the result can be used.  A non-zero return
   // value means that the computation was interrupted, and so control should
   // return to the user.
+#endif
 
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  class_identifier class_id() const { return CLASS_hilb_comp; }
-  type_identifier  type_id () const { return TY_HILB_COMP; }
-  const char * type_name   () const { return "hilb_comp"; }
-
-  hilb_comp  * cast_to_hilb_comp ()       { return this; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "hilb comp"; }
-
-  int length_of() const { return nsteps; }
+  static RingElement *hilbertNumerator(const Matrix *M);
+  /* This routine computes the numerator of the Hilbert series
+     for coker leadterms(M), using the degrees of the rows of M. 
+     NULL is returned if the ring is not appropriate for
+     computing Hilbert series, or the computation was interrupted. */
 };
 
 #endif

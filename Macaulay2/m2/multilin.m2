@@ -1,10 +1,12 @@
---		Copyright 1995 by Daniel R. Grayson and Michael Stillman
+--		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
 koszul(ZZ, Matrix) := Matrix => (i,m) -> (
+     error "IM2_Matrix_koszul not implemented yet";
      sendgg(ggPush m, ggINT, gg i, ggkoszul);
      getMatrix ring m)
 
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> (
+     error "IM2_Matrix_symm not implemented yet";
      sendgg(ggPush m, ggINT, gg i, ggsymm);
      getMatrix ring m)
 
@@ -44,9 +46,7 @@ exteriorPower(ZZ,Module) := Module => options -> (p,M) -> (
      else if p === 0 then R^1
      else if p === 1 then M
      else (
-	  if isFreeModule M then (
-	       sendgg(ggPush M, ggPush p, ggexterior);
-	       new Module from R)
+	  if isFreeModule M then newModule(R, rawExteriorPower(p,M.RawFreeModule))
 	  else (
 	       m := presentation M;
 	       F := target m;
@@ -67,8 +67,9 @@ exteriorPower(ZZ, Matrix) := Matrix => options -> (p,m) -> (
 	  h := m;			  -- DRG: disabled 'prune' here.
 	  h1 := matrix h;
 	  strat := getMinorsStrategy(R,options);
+	  error "IM2_Matrix_exterior not implemented yet";
 	  sendgg(ggPush h1, ggPush p, ggPush strat, ggexterior);
-	  hp := getMatrix ring m;
+	  hp := getMatrix R;
 	  map(exteriorPower(p, target h, options),
 	      exteriorPower(p, source h, options),
 	      hp))
@@ -78,6 +79,7 @@ wedgeProduct = method()
 wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
      if isFreeModule M then (
 	  R := ring M;
+	  error "ggexteriorproduct not re-implemented yet";
 	  sendgg(ggPush p, ggPush q, ggPush M, ggexteriorproduct);
 	  getMatrix R)
      else map(exteriorPower(p+q,M),exteriorPower(p,M)**exteriorPower(q,M),wedgeProduct(p,q,cover M)))
@@ -86,6 +88,7 @@ wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
 someMinors := (j,m,options) -> (
      strat := getMinorsStrategy(ring m,options);
      -- setup computation in the engine
+     error "IM2_Matrix_minors not re-implemented yet";
      sendgg(
 	  ggPush m,			  -- m
 	  ggPush j,
@@ -122,6 +125,7 @@ someMinors := (j,m,options) -> (
      )
 
 minors(ZZ,Matrix) := Ideal => options -> (j,m) -> (
+     error "IM2_Matrix_minors not re-implemented yet";
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then trim ideal 0_(ring m)
      else (
@@ -156,6 +160,7 @@ minors(ZZ,Matrix) := Ideal => options -> (j,m) -> (
 
 pfaffians = method(Options => { Limit => infinity })
 pfaffians(ZZ,Matrix) := Ideal => options -> (j,m) -> (
+     error "IM2_Matrix_pfaffians not re-implemented yet";
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then ideal 0_(ring m)
      else (

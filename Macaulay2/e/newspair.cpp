@@ -3,19 +3,13 @@
 #include "newspair.hpp"
 #include "text_io.hpp"
 
-
-stash *S_pair::mystash;
-stash *gen_pair::mystash;
-stash *s_pair_bunch::mystash;
-stash *s_pair_set::mystash;
-
 extern int comp_printlevel;
 
 gen_pair::gen_pair()
 {
 }
 
-gen_pair::gen_pair(vec f, vec fsyz)
+gen_pair::gen_pair(gbvector *f, gbvector *fsyz)
   : next(NULL),
     f(f),
     fsyz(fsyz)
@@ -26,18 +20,19 @@ S_pair::S_pair()
 {
 }
 
-S_pair::S_pair(vec gsyz, vec rsyz)
+S_pair::S_pair(gbvector *gsyz)
 : next(NULL), 
-  gsyz(gsyz),
-  rsyz(rsyz)
+  gsyz(gsyz)
 {
 }
 
-s_pair_set::s_pair_set(const FreeModule *FF, 
-		       const FreeModule *FFsyz,
-		       const FreeModule *GGsyz,
-		       const FreeModule *RRsyz)
-: F(FF), Fsyz(FFsyz), Gsyz(GGsyz), Rsyz(RRsyz), heap(NULL), this_deg(NULL),
+// MES Aug 2002: rewrite...
+s_pair_set::s_pair_set(GBRing *GR,
+		       const FreeModule *FF, 
+		       const FreeModule *GGsyz)
+: GR(GR),
+  F(FF), Gsyz(GGsyz), 
+  heap(NULL), this_deg(NULL),
   nelems(0), ngens(0), ncomputed(0)
 {
 }
@@ -70,8 +65,7 @@ void s_pair_set::remove_pair_list(S_pair *&p)
 void s_pair_set::remove_pair(S_pair *&s)
 {
   s->next = NULL;
-  Gsyz->remove(s->gsyz);
-  if (s->rsyz != NULL) Rsyz->remove(s->rsyz);
+  GR->gbvector_remove(s->gsyz);
   delete s;
   s = NULL;
 }
@@ -89,8 +83,8 @@ void s_pair_set::remove_gen_list(gen_pair *&p)
 void s_pair_set::remove_gen(gen_pair *&s)
 {
   s->next = NULL;
-  F->remove(s->f);
-  Fsyz->remove(s->fsyz);
+  GR->gbvector_remove(s->f);
+  GR->gbvector_remove(s->fsyz);
   delete s;
   s = NULL;
 }
@@ -114,26 +108,13 @@ void s_pair_set::flush_degree(s_pair_bunch *&p)
 int s_pair_set::compare(S_pair *f, S_pair *g) const
 {
   // Note: we are only comparing elements of the same degree
-  if (f->rsyz == NULL)
-    {
-      if (g->rsyz == NULL)
-	return Gsyz->compare(f->gsyz, g->gsyz);
-      else 
-	return LT;
-    }
-  else
-    {
-      if (g->rsyz == NULL)
-	return GT;
-      else 
-	return Rsyz->compare(f->rsyz, g->rsyz);
-    }
+  return GR->gbvector_compare(Gsyz, f->gsyz, g->gsyz);
 }
 
 int s_pair_set::compare(gen_pair *f, gen_pair *g) const
 {
   // Note: we are only comparing elements of the same degree
-  return F->compare(f->f, g->f);
+  return GR->gbvector_compare(F,f->f, g->f);
 }
 
 S_pair *s_pair_set::merge(S_pair *f, S_pair *g) const
@@ -275,18 +256,16 @@ s_pair_bunch *s_pair_set::get_degree(int d)
   return q;
 }
 
-void s_pair_set::insert_s_pair(vec gsyz, vec rsyz)
+void s_pair_set::insert_s_pair(gbvector *gsyz)
 {
   int deg;
 
   if (gsyz != NULL)
-    deg = Gsyz->primary_degree(gsyz);
-  else if (rsyz != NULL)
-    deg = Rsyz->primary_degree(rsyz);
+    deg = GR->gbvector_degree(Gsyz,gsyz);
   else 
     return;
 
-  S_pair *p = new S_pair(gsyz,rsyz);
+  S_pair *p = new S_pair(gsyz);
   s_pair_bunch *q = get_degree(deg);
   p->next = q->unsorted_pairs;
   q->unsorted_pairs = p;
@@ -295,11 +274,11 @@ void s_pair_set::insert_s_pair(vec gsyz, vec rsyz)
   p = NULL;
 }
 
-void s_pair_set::insert_generator(vec f, vec fsyz)
+void s_pair_set::insert_generator(gbvector *f, gbvector *fsyz)
 {
   if (f == NULL) return;
   gen_pair *p = new gen_pair(f, fsyz);
-  int deg = F->primary_degree(p->f);
+  int deg = GR->gbvector_degree(F,p->f);
   s_pair_bunch *q = get_degree(deg);
   p->next = q->unsorted_gens;
   q->unsorted_gens = p;
@@ -356,7 +335,7 @@ int s_pair_set::next_degree(int &nextdeg)
   return this_deg->nelems + this_deg->ngens;
 }
 
-bool s_pair_set::next_generator(vec &f, vec &fsyz)
+bool s_pair_set::next_generator(gbvector *&f, gbvector *&fsyz)
 {
   if (this_deg != heap) return false;
 
@@ -376,7 +355,7 @@ bool s_pair_set::next_generator(vec &f, vec &fsyz)
   return true;
 }
 
-bool s_pair_set::next_s_pair(vec &gsyz, vec &rsyz)
+bool s_pair_set::next_s_pair(gbvector *&gsyz)
 {
   if (this_deg != heap) return false;
 
@@ -391,7 +370,6 @@ bool s_pair_set::next_s_pair(vec &gsyz, vec &rsyz)
   ncomputed++;
 
   gsyz = result->gsyz;
-  rsyz = result->rsyz;
   delete result;
   return true;
 }
@@ -400,7 +378,7 @@ void s_pair_set::flush_degree()
 {
   if (heap != this_deg)
     {
-      gError << "attempting to flush wrong pairs!";
+      ERROR("attempting to flush wrong pairs!");
       assert(0);
     }
   heap = heap->next;
@@ -426,12 +404,7 @@ void s_pair_set::debug_out(buffer &o, S_pair *q) const
   if (q->gsyz != NULL) 
     {
       o << "spair ";
-      Gsyz->elem_text_out(o, q->gsyz);
-    }
-  if (q->rsyz != NULL)
-    {
-      o << " rsyz ";
-      Rsyz->elem_text_out(o, q->rsyz);
+      GR->gbvector_text_out(o, Gsyz, q->gsyz);
     }
   o << newline;
 }
@@ -439,7 +412,7 @@ void s_pair_set::debug_out(buffer &o, S_pair *q) const
 void s_pair_set::debug_out(buffer &o, gen_pair *s) const
 {
   o<< "  gen  ";
-  F->elem_text_out(o, s->f);
+  GR->gbvector_text_out(o, F,s->f);
   o << newline;
 }
 

@@ -1,4 +1,4 @@
---		Copyright 1996 by Daniel R. Grayson and Michael E. Stillman
+--		Copyright 1996-2002 by Daniel R. Grayson and Michael E. Stillman
 
 
 QuotientRing = new Type of EngineRing
@@ -72,38 +72,6 @@ Ring / Module := QuotientRing => (R,I) -> (
 savedQuotients := new MutableHashTable
 savedEQuotients := new MutableHashTable
 
-ZZZquotient := (R,I) -> (
-     if ring I.generators =!= ZZZ then error "expected an ideal of ZZZ";
-     EgensI := I.generators;
-     EgensgbI := if rank source EgensI === 1 then EgensI else generators gb EgensI;
-     En := if EgensgbI == 0 then 0 else EgensgbI_(0,0);
-     En = lift(En,ZZ);
-     if En < 0 then En = -En;
-     if En === 0 then ZZ
-     else if savedEQuotients#?En 
-     then savedEQuotients#En
-     else (
-	  if En > 32767 then error "large characteristics not implemented yet";
-	  if En > 1 and not isPrime En
-	  then error "ZZZ/n not implemented yet for composite n";
-	  ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
-	  ES.ideal = I;
-	  ES.baseRings = append(R.baseRings,R);
-	  ES.newEngine = true;
-	  ES.relations = EgensI;
-	  ES.ConvertToExpression = R.ConvertToExpression;
-	  ES.isCommutative = R.isCommutative;
-	  ES.presentation = EgensgbI;
-	  ES.order = ES.char = En;
-	  if En === 1 then ES.dim = -1 else if En === 0 then ES.dim = 1 else ES.dim = 0;
-	  ES.ConvertToExpression = ConvertApply(expression, ConvertInteger);
-	  expression ES := x -> convert(
-	       ES.ConvertToExpression, sendgg(ggPush x, ggtonet)
-	       );
-	  ES.frac = ES;		  -- ZZ/n with n PRIME!
-	  savedEQuotients#En = ES;
-	  ES))
-
 ZZquotient := (R,I) -> (
      if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
      gensI := I.generators;
@@ -123,12 +91,10 @@ ZZquotient := (R,I) -> (
 	  S.ideal = I;
 	  S.baseRings = {R};
 	  S.relations = gensI;
-	  S.ConvertToExpression = R.ConvertToExpression;
 	  S.isCommutative = R.isCommutative;
 	  S.presentation = gensgbI;
 	  S.order = S.char = n;
 	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
-	  S.ConvertToExpression = ConvertApply(expression, ConvertInteger);
 	  expression S := x -> convert(
 	       S.ConvertToExpression, sendgg(ggPush x, ggtonet)
 	       );
@@ -139,7 +105,6 @@ ZZquotient := (R,I) -> (
 Ring / Ideal := QuotientRing => (R,I) -> (
      if ring I =!= R then error "expected ideal of the same ring";
      if I == 0 then return R;
-     if R === ZZZ then return ZZZquotient(R,I);
      if R === ZZ then return ZZquotient(R,I);
      error "can't form quotient of this ring";
      )
@@ -151,7 +116,6 @@ predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 EngineRing / Ideal := (R,I) -> (
      if ring I =!= R then error "expected ideal of the same ring";
      if I == 0 then return R;
-     if R === ZZZ then return ZZZquotient(R,I);
      -- recall that ZZ is NOT an engine ring.
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
@@ -159,13 +123,11 @@ EngineRing / Ideal := (R,I) -> (
      gensgbI := generators gb gensI;
      sendgg(ggPush gensgbI, ggqring);
      S := new QuotientRing from newHandle();
-     if R.?newEngine then S.newEngine = true;
      if R.?Adjust then S.Adjust = R.Adjust;
      if R.?Repair then S.Repair = R.Repair;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
      S.relations = gensI;
-     S.ConvertToExpression = R.ConvertToExpression;
      S.isCommutative = R.isCommutative;
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then (

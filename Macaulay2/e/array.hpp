@@ -30,7 +30,7 @@ public:
       engine_alloc(len * sizeof(T));
       for (int i=0; i<max; i++) entries[i] = a.entries[i];
     }
-  ~array() { engine_dealloc(len * sizeof(T)); delete [] entries; }
+  ~array() {/* engine_dealloc(len * sizeof(T)); delete [] entries;*/ }
 
   int  length() const { return max; }
 

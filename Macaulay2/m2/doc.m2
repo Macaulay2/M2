@@ -18,16 +18,6 @@ document { (length, GradedModule),
 	  }
      }
 
-document { sendgg,
-     Headline => "send commands to engine",
-     TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the string ", TT "s", " 
-     of data and commands to the engine.  The first byte of the result is examined 
-     for an error indication, and then an error is raised or the remainder of the 
-     string is returned.",
-     PARA,
-     SEEALSO "engine communication protocol"
-     }
-
 document { (parent,Thing),
      Headline => "parent type of an object",
      Synopsis => {
@@ -328,7 +318,7 @@ document { "path",
      PARA,
      EXAMPLE {
 	  "path",
-	  ///path = append(path, getenv "HOME" | pathSeparator | "resolutions" | pathSeparator)///
+	  ///path = append(path, getenv "HOME" | "/resolutions/")///
 	  }
      }
 
@@ -640,7 +630,7 @@ document { input,
      PARA,
      "The file is sought in the directory containing the file currently being
      loaded, if any, and then along the ", TO "path", ", unless the name of
-     the file begins with the character(s) in ", TO "pathSeparator", ".",
+     the file begins with a slash (/).",
      PARA,
      "If one of the expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
@@ -665,9 +655,8 @@ document { load,
      PARA,
      "The file is sought in the directory containing the file currently being
      loaded, if any, and then along the ", TO "path", ", unless the name of
-     the file begins with the character(s) in ", TO "pathSeparator", ".
-     The file is read without echoing the input, printing the values,
-     or incrementing the line number.",
+     the file begins with a slash (/). The file is read without echoing the
+     input, printing the values, or incrementing the line number.",
      PARA,
      SEEALSO{ "path", "needs", "input"}
      }
@@ -898,16 +887,20 @@ document { (symbol /^, Thing, ZZ),
 
 document { substring,
      Headline => "extract part of a string",
-     TT "substring(s,i,n)", " -- yields the substring of the string s starting at 
-     position i with length n.",
+     TT "substring(i,n,s)", " -- yields the substring of the string ", TT "s", " starting at 
+     position ", TT "i", " with length ", TT "n", ".",
      PARA,
-     "substring(s,i)   -- yields the substring of s starting at position i and
-     continuing to the end of s.",
+     "substring(i,s)   -- yields the substring of ", TT "s", " starting at position ", TT "i", " and
+     continuing to the end of ", TT "s", ".",
      PARA,
      "Positions are numbered starting at 0.",
      PARA,
-     "Requests for character positions out of bounds are 
-     silently ignored."
+     "If the starting position ", TT "i", " is negative, it means to start from the end of the string.",
+     PARA,
+     "Requests for character positions out of bounds are silently ignored.",
+     PARA,
+     "In an older version of the program the string argument was placed first;
+     the old way will still work."
      }
 
 document { reverse,

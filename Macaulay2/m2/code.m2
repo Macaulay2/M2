@@ -4,8 +4,15 @@ getSourceLines := method(SingleArgumentDispatch=>true)
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := (filename,start,stop) -> if filename =!= "stdio" then (
      wp := set characters " \t);";
-     if not fileExists filename then error ("couldn't find file ", filename);
-     file := lines get filename;
+     file := (
+	  if filename === "--startupString--/startup.m2"
+	  then startupString
+	  else (
+	       if not fileExists filename then error ("couldn't find file ", filename);
+	       get filename
+	       )
+	  );
+     file = lines file;
      while (
 	  file#?stop 
      	  and (				  -- can improve this
@@ -30,7 +37,6 @@ isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
 
 codeFunction := (f,depth) -> (
      if depth <= limit and locate f =!= null then stack(
-	  -- if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
 	  try getSourceLines locate f else "source code file not available",
 	  if isOptionedFunction f then (
 	       "-- original function f:", codeFunction(last frame f,depth+1)
@@ -69,7 +75,6 @@ EDIT Sequence := (filename,start,stop) -> (
 	  " +",toString start,
 	  " ",
 	  filename
-	  -- resolve filename -- the old way
 	  ))
 editMethod Function := args -> EDIT locate args
 editMethod Command := c -> editMethod c#0

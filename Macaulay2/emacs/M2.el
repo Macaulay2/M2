@@ -22,7 +22,10 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 (defun M2()
   "Run Macaulay 2 in a buffer."
   (interactive)
-  (M2-comint-run "M2" "-tty")
+  (M2-comint-run "M2" 
+		 ; "-tty"  ; This option is no longer needed.
+		           ; It tells M2 to regard stdin and stdout as tty's.
+		 )
   )
 
 (defvar M2-usual-jog 30 

@@ -1,4 +1,4 @@
-symbols := values symbolTable()
+symbols := values symbolTable();
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)
@@ -40,7 +40,6 @@ add( ",font-lock-constant-face", toString \ select(symbols, sym -> (
 	       not (is Function) sym
 	       and not (is Type) sym
 	       and (sym === symbol null or value sym =!= null)
-	       and not mutable sym
 	       and isAlpha sym)))
 
 f << "    (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl

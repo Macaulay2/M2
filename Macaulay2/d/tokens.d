@@ -1,13 +1,15 @@
 --		Copyright 1994 by Daniel R. Grayson
 --- here we define the recursive types involved in parsing
 
+use C;
 use system;
 use err;
 use stdio;
 use stdiop;
 use strings;
 use nets;
-use arith;
+use gmp;
+use engine;
 
 export parsefuns := {
      unary:function(Token,TokenFile,int,bool):ParseTree,
@@ -125,7 +127,6 @@ export fileErrorMessage(f:TokenFile):string := fileErrorMessage(f.posFile);
 export fileError(f:TokenFile):bool := fileError(f.posFile);
 export isatty(f:TokenFile):bool := isatty(f.posFile);
 
-export Real := {v:double};
 export CompiledFunction := {fn:fun,hash:int};
 export CompiledFunctionClosure := {
      fn:function(Expr,Sequence):Expr,
@@ -151,9 +152,6 @@ export List := {
      mutable:bool
      };
 export Error := {position:Position, message:string, report:Expr, value:Expr};
-export Handle := {
-     handle:int
-     };
 export Database := {
      filename:string,
      hash:int,
@@ -164,18 +162,50 @@ export Database := {
 
 export Boolean := {v:bool};
 export Nothing := {nothing:void};
+export Real := {v:double};
+export Complex := { re:double, im:double };
 
 export Expr := (
-     Real or Boolean or file or string or FunctionClosure or Error or Sequence
-     or CompiledFunction or CompiledFunctionClosure
-     or SymbolClosure or List or Rational or Integer 
-     or HashTable or Handle or Database or Nothing or Net
+     BigComplex or
+     BigReal or
+     Boolean or
+     CompiledFunction or
+     CompiledFunctionClosure or
+     Complex or
+     Database or
+     Error or
+     FunctionClosure or
+     HashTable or
+     Integer or
+     LMatrixRR or
+     LMatrixCC or     
+     List or
+     Net or
+     Nothing or
+     Rational or
+     RawComputation or
+     RawFreeModule or
+     RawMatrix or
+     RawMonoid or
+     RawMonomial or
+     RawMonomialIdeal or
+     RawMonomialOrdering or
+     RawMutableMatrix or
+     RawRing or
+     RawRingElement or
+     RawRingMap or
+     RawVector or
+     Real or
+     Sequence or
+     SymbolClosure or
+     file or
+     string
      );
 export fun := function(Expr):Expr;
 
 export True := Expr(Boolean(true));	  -- don't make new ones!
-export False := Expr(Boolean(false));	  -- use toBoolean instead
-export toBoolean(v:bool):Expr := if v then True else False;
+export False := Expr(Boolean(false));	  -- use toExpr instead
+export toExpr(v:bool):Expr := if v then True else False;
 
 export nullE := Expr(Nothing());
 export notfoundE := Expr(Nothing());			    -- internal use only, not visible to user
@@ -342,7 +372,6 @@ export fileClass := newbasictype();
 export functionClass := newbasictype();
 export symbolClass := newbasictype();
 export errorClass := newbasictype();
-export handleClass := newbasictype();
 export netClass := newbasictype();
 export stringClass := newtypeof(netClass);
 export booleanClass := newbasictype();
@@ -358,7 +387,25 @@ export ringClass := newtypeof(typeClass);
        newbasicringtype():HashTable := newHashTable(ringClass,thingClass);
 export integerClass := newbasicringtype();
 export rationalClass := newbasicringtype();
+export bigRealClass := newbasicringtype();
+export bigComplexClass := newbasicringtype();
 export doubleClass := newbasicringtype();
+export complexClass := newbasicringtype();
+export rawObjectClass := newbasictype();		    -- RawObject
+export rawMonomialClass := newtypeof(rawObjectClass);	    -- RawMonomial
+export rawMonomialOrderingClass := newtypeof(rawObjectClass); -- RawMonomialOrdering
+export rawMonoidClass := newtypeof(rawObjectClass);	    -- RawMonoid
+export rawMonomialIdealClass := newtypeof(rawObjectClass);  -- RawMonomialIdeal
+export rawRingClass := newtypeof(rawObjectClass);	    -- RawRing
+export rawRingElementClass := newtypeof(rawObjectClass);    -- RawRingElement
+export rawRingMapClass := newtypeof(rawObjectClass);	    -- RawRingMap
+export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
+export rawVectorClass := newtypeof(rawObjectClass);	    -- RawVector
+export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
+export rawMutableMatrixClass := newtypeof(rawObjectClass);  -- RawMutableMatrix
+export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
+export LMatrixRRClass := newtypeof(rawObjectClass);         -- LMatrixRRClass
+export LMatrixCCClass := newtypeof(rawObjectClass);         -- LMatrixCCClass
 export nothingClass := newbasictype();
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (

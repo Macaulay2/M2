@@ -5,17 +5,15 @@
 #include "text_io.hpp"
 #include "Z.hpp"
 
-tableau::tableau(int nvars)
-: dim(nvars), maxwt(SCHUR_MAX_WT), wt(0),
-  lambda(NULL), p(NULL),
-  xloc(new int[SCHUR_MAX_WT+1]), yloc(new int[SCHUR_MAX_WT+1])
+void tableau::initialize(int nvars)
 {
-}
-
-tableau::~tableau()
-{
-  delete [] xloc;
-  delete [] yloc;
+  dim = nvars;
+  maxwt = SCHUR_MAX_WT;
+  wt = 0;
+  lambda = 0;
+  p = 0;
+  xloc = new int[SCHUR_MAX_WT+1];
+  yloc = new int[SCHUR_MAX_WT+1];
 }
 
 void tableau::resize(int max_wt)
@@ -77,84 +75,89 @@ void tableau::display() const
     }
 }
 
-SchurRing::SchurRing(const Ring *KK, const Monoid *MMF)
-: PolynomialRing(KK, MMF), 
-  SMtab(MMF->n_vars()),
-  SMfilled(MMF->n_vars()),
-  SMcurrent(0),
-  SMfinalwt(0),
-  SMresult(NULL)
+bool SchurRing::initialize_schur()
 {
-  part_exp = part_exp_a.alloc(nvars);
-  SMtab.p = new int[nvars+1];
-  for (int i=0; i<nvars+1; i++) SMtab.p[i] = 0;
+  _SMtab.initialize(n_vars());
+  _SMfilled.initialize(n_vars());
+  _SMcurrent = 0;
+  _SMfinalwt = 0;
+  _SMresult = 0;
+  
+  _EXP1 = new int[_nvars];
+  _SMtab.p = new int[_nvars+1];
+  for (int i=0; i<_nvars+1; i++) _SMtab.p[i] = 0;
+  return true;
 }
 
-SchurRing::~SchurRing()
+SchurRing * SchurRing::create(const PolynomialRing *R)
 {
-  delete [] SMtab.p;
+  SchurRing *result = new SchurRing;
+  result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
+  if (!result->initialize_schur()) return 0;
+  // NO gbring, grtype...
+  return result;
 }
 
 void SchurRing::text_out(buffer &o) const
 {
   o << "Schur(";
-  K->text_out(o);
+  _K->text_out(o);
   o << ", ";
-  M->text_out(o);
+  _M->text_out(o);
   o << ")";
 }
 
 void SchurRing::to_partition(const int *m, int *exp) const
     // exp[1]..exp[nvars] are set
 {
-  M->to_expvector(m, ((SchurRing *) this)->part_exp);
-  exp[nvars] = part_exp[nvars-1];
-  for (int i=nvars-1; i>=1; i--)
-    exp[i] = exp[i+1] + part_exp[i-1];
+  _M->to_expvector(m, ((SchurRing *) this)->_EXP1);
+  exp[_nvars] = _EXP1[_nvars-1];
+  for (int i=_nvars-1; i>=1; i--)
+    exp[i] = exp[i+1] + _EXP1[i-1];
 }
 void SchurRing::from_partition(const int *exp, int *m) const
 {
-  part_exp[nvars-1] = exp[nvars];
-  for (int i=nvars-1; i>0; i--)
-    ((SchurRing *) this)->part_exp[i-1] = exp[i] - exp[i+1];
-  M->from_expvector(part_exp, m);
+  _EXP1[_nvars-1] = exp[_nvars];
+  for (int i=_nvars-1; i>0; i--)
+    ((SchurRing *) this)->_EXP1[i-1] = exp[i] - exp[i+1];
+  _M->from_expvector(_EXP1, m);
 }
 
 void SchurRing::bounds(int &lo, int &hi)
 {
   int i, k;
-  int x = SMfilled.xloc[SMcurrent];
-  int y = SMfilled.yloc[SMcurrent];
+  int x = _SMfilled.xloc[_SMcurrent];
+  int y = _SMfilled.yloc[_SMcurrent];
   
   // First set the high bound, using info from the "one to the right"
   // in the reverse lex filled skew tableau.
 
-  if (y == SMfilled.p[x])	// There is not one to the right
+  if (y == _SMfilled.p[x])	// There is not one to the right
     {
-      hi = nvars;
-      for (k=1; k<=nvars; k++)
-	if (SMtab.p[k] == 0)
+      hi = _nvars;
+      for (k=1; k<=_nvars; k++)
+	if (_SMtab.p[k] == 0)
 	  {
 	    hi = k;
 	    break;
 	  }
     }
-  else				// note that the case SMcurrent==1 will be handled
+  else				// note that the case _SMcurrent==1 will be handled
     {				// in the previous statement.
-      hi = SMtab.xloc[SMcurrent-1];
+      hi = _SMtab.xloc[_SMcurrent-1];
     }
 
   // Now we set the lo bound, using info from the "one above"
   
-  if (x == 1 || y <= SMfilled.lambda[x-1])
+  if (x == 1 || y <= _SMfilled.lambda[x-1])
     lo = 1;			// There is not one above
   else
     {
-      int above = SMcurrent - SMfilled.p[x] + SMfilled.lambda[x-1];
-      int xabove = SMtab.xloc[above];
-      int yabove = SMtab.yloc[above];
+      int above = _SMcurrent - _SMfilled.p[x] + _SMfilled.lambda[x-1];
+      int xabove = _SMtab.xloc[above];
+      int yabove = _SMtab.yloc[above];
       for (i=xabove+1; i<=hi; i++)
-	if (SMtab.p[i] < yabove) break;
+	if (_SMtab.p[i] < yabove) break;
       lo = i;
     }
     
@@ -164,53 +167,53 @@ void SchurRing::SM()
 {
   int lo, hi;
 
-  if (SMcurrent == SMfinalwt)
+  if (_SMcurrent == _SMfinalwt)
     {
       // partition is to be output
       Nterm *f = new_term();
-      f->coeff = K->from_int(1);
-      from_partition(SMtab.p, f->monom);
-      f->next = SMresult;
-      SMresult = f;
+      f->coeff = _K->from_int(1);
+      from_partition(_SMtab.p, f->monom);
+      f->next = _SMresult;
+      _SMresult = f;
       return;
     }
   
-  SMcurrent++;
+  _SMcurrent++;
   bounds(lo, hi);
-  int this_one = LARGE_NUMBER;	// larger than any entry of SMtab
+  int this_one = LARGE_NUMBER;	// larger than any entry of _SMtab
   int last_one;
   for (int i=lo; i<=hi; i++)
     {
       last_one = this_one;
-      this_one = SMtab.p[i];
+      this_one = _SMtab.p[i];
       if (last_one > this_one)
 	{
-	  SMtab.p[i]++;
-	  SMtab.xloc[SMcurrent] = i;
-	  SMtab.yloc[SMcurrent] = SMtab.p[i];
+	  _SMtab.p[i]++;
+	  _SMtab.xloc[_SMcurrent] = i;
+	  _SMtab.yloc[_SMcurrent] = _SMtab.p[i];
 	  SM();
-	  SMtab.p[i]--;
+	  _SMtab.p[i]--;
 	}
     }
-  SMcurrent--;
+  _SMcurrent--;
 }
 
 Nterm *SchurRing::skew_schur(int *lambda, int *p)
 {
-  SMcurrent = 0;
+  _SMcurrent = 0;
 
-  SMfinalwt = 0;
+  _SMfinalwt = 0;
   for (int i=1; p[i] != 0; i++)
-    SMfinalwt += (p[i] - lambda[i]);
+    _SMfinalwt += (p[i] - lambda[i]);
 
-  SMtab.wt = SMfinalwt;
-  SMtab.resize(SMfinalwt);
-  SMfilled.resize(SMfinalwt);
-  SMfilled.fill(lambda, p);
-  SMresult = NULL;
+  _SMtab.wt = _SMfinalwt;
+  _SMtab.resize(_SMfinalwt);
+  _SMfilled.resize(_SMfinalwt);
+  _SMfilled.fill(lambda, p);
+  _SMresult = NULL;
   SM();
-  ring_elem result = SMresult;
-  SMresult = NULL;
+  ring_elem result = _SMresult;
+  _SMresult = NULL;
   return result;
 }
 
@@ -218,10 +221,10 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
 {
   int i;
   intarray a_part_a, b_part_a, lambda_a, p_a;
-  int *a_part = a_part_a.alloc(nvars+1);
-  int *b_part = b_part_a.alloc(nvars+1);
-  int *lambda = lambda_a.alloc(2*nvars+2);
-  int *p      = p_a.alloc(2*nvars+2);
+  int *a_part = a_part_a.alloc(_nvars+1);
+  int *b_part = b_part_a.alloc(_nvars+1);
+  int *lambda = lambda_a.alloc(2*_nvars+2);
+  int *p      = p_a.alloc(2*_nvars+2);
 
   // First: obtain the partitions
   to_partition(m, a_part);
@@ -229,13 +232,13 @@ ring_elem SchurRing::mult_monomials(const int *m, const int *n)
   
   // Second: make the skew partition
   int a = b_part[1];
-  for (i=1; i <= nvars && a_part[i] != 0; i++)
+  for (i=1; i <= _nvars && a_part[i] != 0; i++)
     {
       p[i] = a + a_part[i];
       lambda[i] = a;
     }
   int top = i-1;
-  for (i=1; i <= nvars && b_part[i] != 0; i++)
+  for (i=1; i <= _nvars && b_part[i] != 0; i++)
     {
       p[top+i] = b_part[i];
       lambda[top+i] = 0;
@@ -255,12 +258,11 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
   ring_elem result = (Nterm *)NULL;
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem a = K->mult(c, t->coeff);
+      ring_elem a = _K->mult(c, t->coeff);
       ring_elem g = ((SchurRing *) this)->mult_monomials(t->monom, m);
       for (Nterm *s = g; s != NULL; s = s->next)
 	{
-	  ring_elem b = K->mult(a, s->coeff);
-	  K->remove(s->coeff);
+	  ring_elem b = _K->mult(a, s->coeff);
 	  s->coeff = b;
 	}
       Nterm *gt = g;
@@ -274,13 +276,13 @@ ring_elem SchurRing::power(const ring_elem f, mpz_t n) const
 {
   if (mpz_sgn(n) < 0)
     {
-      gError << "element not invertible";
+      ERROR("element not invertible");
       return from_int(1);
     }
   unsigned int n1;
   if (!Z::get_ui(n1, n))
     {
-      gError << "exponent too large";
+      ERROR("exponent too large");
       return from_int(1);
     }
   return power(f,n1);
@@ -291,7 +293,7 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
   ring_elem result = from_int(1);
   if (n < 0)
     {
-      gError << "element not invertible";
+      ERROR("element not invertible");
       return result;
     }
   for (int i=0; i<n; i++)
@@ -305,20 +307,20 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
 
 void SchurRing::dimension(const int *exp, mpz_t result) const
     // Return in 'result' the dimension of the irreducible
-    // GL(nvars) representation having highest weight
+    // GL(_nvars) representation having highest weight
     // 'exp'
 {
   // MES: this might not be efficient enough in practice?
   int i,j;
 
   mpz_set_ui(result, 1);
-  for (i=1; i<nvars; i++)
-    for (j=i+1; j<=nvars; j++)
+  for (i=1; i<_nvars; i++)
+    for (j=i+1; j<=_nvars; j++)
       if (exp[i] != exp[j])
 	mpz_mul_ui(result, result, exp[i] - exp[j] + j - i);
 
-  for (i=1; i<nvars; i++)
-    for (j=i+1; j<=nvars; j++)
+  for (i=1; i<_nvars; i++)
+    for (j=i+1; j<=_nvars; j++)
       if (exp[i] != exp[j])
 	mpz_div_ui(result, result, j - i);
 }
@@ -326,18 +328,18 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
 ring_elem SchurRing::dimension(const ring_elem f) const
 {
   intarray expa;
-  int *exp = expa.alloc(nvars+1);
-  ring_elem result = K->from_int(0);
+  int *exp = expa.alloc(_nvars+1);
+  ring_elem result = _K->from_int(0);
   mpz_t dim;
   mpz_init(dim);
   for (Nterm *t = f; t != NULL; t = t->next)
     {
       to_partition(t->monom, exp);
       dimension(exp, dim);
-      ring_elem h = K->from_int(dim);
-      ring_elem h2 = K->mult(t->coeff, h);
-      K->add_to(result, h2);
-      K->remove(h);
+      ring_elem h = _K->from_int(dim);
+      ring_elem h2 = _K->mult(t->coeff, h);
+      _K->add_to(result, h2);
+      _K->remove(h);
     }
   return result;
 }
@@ -345,7 +347,7 @@ ring_elem SchurRing::dimension(const ring_elem f) const
 void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
 {
   intarray exp_a;
-  int *exp = exp_a.alloc(nvars+1);
+  int *exp = exp_a.alloc(_nvars+1);
   int n = n_terms(f);
 
   int old_plus = p_plus;
@@ -361,15 +363,15 @@ void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
     {
       int old_one = p_one;
       int old_parens = p_parens;
-      int isone = M->is_one(t->monom);
+      int isone = _M->is_one(t->monom);
       p_parens = !isone;
       //p_one = old_one && isone;
       p_one = 0;
-      K->elem_text_out(o,t->coeff);
+      _K->elem_text_out(o,t->coeff);
       p_one = 0;
       to_partition(t->monom, exp);
       o << "{" << exp[1];
-      for (int i=2; i<=nvars && exp[i] != 0; i++)
+      for (int i=2; i<=_nvars && exp[i] != 0; i++)
 	o << "," << exp[i];
       o << "}";
       p_one = old_one;

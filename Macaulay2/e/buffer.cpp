@@ -13,6 +13,11 @@ void buffer::expand(int newcap)
   _buf = newbuf;
 }
 
+M2_string buffer::to_string()
+{
+  return tostringn(_buf, _size);
+}
+
 void buffer::put(char c)
 {
   if (_capacity <= _size+1) expand(1);
@@ -20,7 +25,7 @@ void buffer::put(char c)
 }
 
 void buffer::put(const char *s, int len)
-{
+ {
   if (_capacity <= _size + len + 1)
     expand(_size + len + 1);
   memcpy(_buf + _size, s, len);

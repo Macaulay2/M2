@@ -4,6 +4,7 @@
 #define _sparsemat_hpp_
 
 #include "ring.hpp"
+class Matrix;
 
 struct sparse_vector
 {
@@ -43,7 +44,7 @@ public:
   void setEntry(sparse_vector *&v, int r, ring_elem a) const;
 };
 
-class SparseMutableMatrix : public type
+class SparseMutableMatrix : public mutable_object
 {
   const Ring *K;
   VectorOperations *V;
@@ -68,10 +69,11 @@ class SparseMutableMatrix : public type
   bool errorColumnBound(int c) const;
   bool errorRowBound(int r) const;
 
-public:
-
-  SparseMutableMatrix(const Matrix &m);
+  SparseMutableMatrix(const Matrix *m);
   SparseMutableMatrix(const Ring *K, int nrows, int ncols);
+public:
+  static SparseMutableMatrix * make(const Ring *K, int nrows, int ncols);
+  static SparseMutableMatrix * make(const Matrix *m);
 
   ~SparseMutableMatrix();
   
@@ -85,7 +87,7 @@ public:
   SparseMutableMatrix *getColumnChangeMatrix();
 
   static SparseMutableMatrix *identity(const Ring *K, int n);
-  Matrix toMatrix() const;
+  Matrix *toMatrix() const;
 
   int numNonZeroRow(int r) const;
   int numNonZeroColumn(int c) const;
@@ -161,10 +163,5 @@ public:
   // Infrastructure
   void text_out(buffer &o) const;
   void display() const;
-
-  class_identifier class_id() const { return CLASS_SparseMutableMatrix; }
-  type_identifier  type_id () const { return TY_SparseMutableMatrix; }
-  const char * type_name   () const { return "SparseMutableMatrix"; }
-  SparseMutableMatrix *cast_to_SparseMutableMatrix() { return this; }
 };
 #endif

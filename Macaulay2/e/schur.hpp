@@ -22,8 +22,9 @@ class tableau
   int *yloc;			// array 1..|p|-|lambda| of the vertical location
 				// of this number in the skew table
 
-  tableau(int nvars);
-  ~tableau();
+  void initialize(int nvars);
+  tableau() {}
+  ~tableau() {}
   void resize(int max_wt);
 
   int elem(int x, int y) const;
@@ -36,13 +37,13 @@ class SchurRing : public PolynomialRing
 private:
   // These are variables that are used in the recursive routine 
   // SM(), which is called from skew_schur().
-  tableau SMtab;
-  tableau SMfilled;
-  int SMcurrent;
-  int SMfinalwt;
-  Nterm *SMresult;
-  intarray part_exp_a;		// Used in to_partition, from_partition
-  int *part_exp;		// Used in to_partition, from_partition
+  tableau _SMtab;
+  tableau _SMfilled;
+  int _SMcurrent;
+  int _SMfinalwt;
+  Nterm *_SMresult;
+  intarray _part_exp_a;		// Used in to_partition, from_partition
+  int *_EXP1;		// Used in to_partition, from_partition
 
   void to_partition(const int *m, int *exp) const;
     // exp[1]..exp[nvars] are set
@@ -52,11 +53,14 @@ private:
   void SM();
   Nterm *skew_schur(int *lambda, int *p);
   ring_elem mult_monomials(const int *m, const int *n);
-public:
-  SchurRing(const Ring *KK, const Monoid *MMF);
-  ~SchurRing();
 
-  class_identifier class_id() const { return CLASS_SchurRing; }
+protected:
+  bool initialize_schur();
+  SchurRing() {}
+  virtual ~SchurRing() {}
+
+public:
+  static SchurRing *create(const PolynomialRing *R);
 
   virtual const SchurRing * cast_to_SchurRing() const { return this; }
   virtual       SchurRing * cast_to_SchurRing()       { return this; }

@@ -1,4 +1,4 @@
---		Copyright 1996 by Daniel R. Grayson
+--		Copyright 1996-2002 by Daniel R. Grayson
 
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
@@ -94,7 +94,6 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      then (
      	  sendgg(ggPush S, ggGF);
      	  F := new GaloisField from newHandle();
-     	  F.ConvertToExpression = R.ConvertToExpression;
 	  )
      else (
 	  d := p^n-1;
@@ -104,18 +103,10 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  then error "expected ring element to be primitive";
      	  sendgg (ggPush g, ggGF);
      	  F = new GaloisField from newHandle();
-	  F.ConvertToExpression = ConvertApply(
-	       i -> (
-		    if i === 0 then expression 0 
-		    else if i === d then expression 1
-		    else (expression xx)^i
-		    ), 
-	       ConvertInteger);
 	  toString F := h -> toString expression h;
 	  net F := h -> net expression h;
 	  );
      F.baseRings = append(S.baseRings,S);
-     if S.?newEngine then F.newEngine = true;
      F.isCommutative = true;
      expression F := t -> convert(
 	  F.ConvertToExpression, sendgg(ggPush t, ggtonet)
@@ -150,8 +141,6 @@ isField QuotientRing := R -> (
      R.?isField and R.isField
      or
      ambient R === ZZ and isPrime char R
-     or
-     ambient R === ZZZ and isPrime char R
      )
 isField Ring := R -> (
      R.?isField and R.isField

@@ -1,9 +1,9 @@
 --		Copyright 1994 by Daniel R. Grayson
 -- dictionary entries
-use system;
 use C;
+use system;
 use ctype;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use strings;

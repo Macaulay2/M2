@@ -2,7 +2,7 @@
 EXE = ..\bin\Macaulay2.exe
 .m2.okay:
 	@echo testing $(EXE) on $*.m2
-	@$(EXE) -silent setpath ../m2/setup.m2 $*.m2 -eexit(0)
+	@$(EXE) --silent setpath ../m2/setup.m2 $*.m2 -eexit(0)
 	@echo okay > $@
 
 !ifdef HAVE_FILES

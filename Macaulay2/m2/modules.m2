@@ -1,4 +1,4 @@
- --		Copyright 1993-1999 by Daniel R. Grayson
+ --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
 vector = (v) -> (
@@ -23,6 +23,7 @@ vector = (v) -> (
 -- BasicModule = new Type of Type
 Module = new Type of Type
 Module.synonym = "module"
+raw Module := M -> M.RawFreeModule
 
 isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false
@@ -112,8 +113,6 @@ net Module := M -> (
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it
      ring M === ring N
-     -- and numgens ambient M === numgens ambient N 
-     -- and ( callgg(ggisequal,M,N); eePopBool())  -- just checks the free modules
      and degrees ambient M === degrees ambient N
      and (
 	  if M.?relations 
@@ -170,49 +169,39 @@ Module == Module := (M,N) -> (
 		    isSubset(ambient M, image g))
 	       else true)))
 
-Vector = new Type of MutableHashTable
+Vector = new Type of HashTable
 Vector.synonym = "vector"
 ring Vector := v -> ring class v
+raw Vector := v -> v.RawVector
+
+entries Vector := v -> (
+     R := ring v;
+     apply( entries v.RawVector, r -> new R from r )
+     )
 
 expression Vector := v -> (
      F := class v;
      R := ring v;
-     if class R === PolynomialRing or class R === QuotientRing then (
-	  M := monoid R;
-	  A := coefficientRing R;
-	  SparseMonomialVectorExpression { numgens ambient F, 
-	       convert(
-		    ConvertRepeat ConvertJoin(
-			 ConvertInteger,
-			 M.ConvertToExpression,
-			 A.ConvertToExpression),
-		    callgg(ggtonet, v))})
-     else (
-	  SparseVectorExpression { numgens ambient F, 
-	       convert(
-		    ConvertRepeat ConvertJoin(ConvertInteger,R.ConvertToExpression),
-		    callgg(ggtonet, v))}))
-toString Vector := x -> if (ring x).?newEngine then see x else toString expression x
-net Vector := x -> if (ring x).?newEngine then see x else net expression x
+     n := numgens ambient F;
+     SparseVectorExpression { n, apply(0 .. n-1, entries v, identity) })
+toString Vector := x -> toString expression x
+net Vector := x -> net expression x
 Vector + Vector := Vector => (x,y) -> (
      M := class x;
      if M != class y then error "no method for '+'";
-     sendgg(ggPush x, ggPush y, ggadd);
-     new M)
+     new M from x.RawVector + y.RawVector
+     )
 Vector - Vector := Vector => (x,y) -> (
      M := class x;
      if M != class y then error "no method for '-'";
-     sendgg(ggPush x, ggPush y, ggsubtract);
-     new M)
+     new M from x.RawVector - y.RawVector)
 - Vector := Vector => x -> (
-     sendgg(ggPush x, ggnegate);
-     new class x)
+     M := class x;
+     new M from - x.RawVector)
 
 ZZ * Vector := Vector => (r,x) -> (
-     R := ring x;
      F := class x;
-     sendgg(ggPush R, ggPush r, ggfromint, ggPush x, ggmult);
-     new F)
+     new F from r * x.RawVector)
 
 leadTerm Vector := RingElement => x -> (
      R := ring x;
@@ -236,101 +225,68 @@ leadMonomial Vector := MonoidElement => x -> (
      sendgg(ggPush x, ggleadmonom);
      M.pop())
 
-isHomogeneous Vector := x -> (
-     sendgg(ggPush x, ggishomogeneous);
-     eePopBool())
+isHomogeneous Vector := x -> rawIsHomogeneous x.RawVector;
 degree Vector := x -> (
-     sendgg(ggPush x, ggdegree);
-     d := eePopIntarray();
+     d := rawMultiDegree x.RawVector;
      R := ring x;
      if R.?Repair then R.Repair d else d
      )
-Vector == Vector := (x,y) -> (
-     sendgg(ggPush x, ggPush y, ggisequal);
-     eePopBool())
+Vector == Vector := (x,y) -> x.RawVector === y.RawVector;
 Vector == ZZ := (x,i) -> (
-     if i == 0 then (
-	  sendgg(ggPush x, ggiszero);
-	  eePopBool())
-     else (
-	  error "no method for '=='"
-	  ))
+     if i == 0 then rawIsZero x.RawVector
+     else error "comparison with nonzero integer"
+     )
 ZZ == Vector := (i,x) -> x == i
-Vector _ ZZ := (v,i) -> (
-     M := class v;
-     R := ring M;
-     n := numgens ambient M;
-     if i < 0 or i >= n then error "subscript out of range for vector";
-     sendgg( ggPush v, ggINT, gg i, ggelem);
-     new R)
-
-reduceit := M -> (
-     if M.?relations then (
-	  g := gb M;
-	  sendgg(
-	       ggPush g,
-	       ggINT, gg 1, ggpick,  -- swap
-	       ggreduce)))
+Vector _ ZZ := (v,i) -> new ring v from rawVectorEntry(v.RawVector,i)
 
 RingElement * Vector := Vector => (r,x) -> (
-     R := class r;
      M := class x;
-     if R =!= ring M then error "ring element and vector involve different rings";
-     sendgg(ggPush r, ggPush x, ggmult);
-     reduceit M;
-     new M)
-
-new Vector := M -> (
-     if not instance(M, Module) then error "expected a module";
-     x := new MutableHashTable;
-     x.handle = newHandle "";
-     x)
-
-new Vector from List := (M,w) -> (
-     if class M =!= Module then error "expected a module";
-     if # w != numgens M then error (
-	  "expected a list of length '", toString numgens M, "'");
-     R := ring M;
-     w = apply(w, r -> if class r != R then R#0 + r else r);
-     sendgg(
-	  apply(w, ggPush),
-	  ggPush M,
-	  ggvector	  -- the sparse version of this is ggsparsevector
+     y := r.RawRingElement * x.RawVector;
+     if M.?relations then (
+	  -- reduce y modulo a gb for the relations
+	  g := gb M;
+	  error "not re-implemented yet";
 	  );
-     reduceit M;
-     new M);
+     new M from y)
 
-new Module from Ring := (Module,R) -> (
+Vector * RingElement := Vector => (x,r) -> (
+     M := class x;
+     y := x.RawVector * r.RawRingElement;
+     if M.?relations then (
+	  -- reduce y modulo a gb for the relations
+	  g := gb M;
+	  error "not re-implemented yet";
+	  );
+     new M from y)
+
+new Vector from RawVector := (M,v) -> new M from { symbol RawVector => v }
+
+newModule = method(TypicalValue => Module)
+newModule(Ring,RawFreeModule) := (R,rM) -> (
      M := new Module of Vector;
-     M.handle = newHandle ggdup;
+     M.RawFreeModule = rM;
      M.ring = R;
-     if R.?newEngine then M.newEngine = true;
-     M.numgens = (sendgg if R.?newEngine then ggrank else gglength; eePopInt());
-     M#0 = (sendgg(ggPush M, ggzero); new M);
+     M.numgens = rawRank rM;
+     M#0 = new M from rawZero rM;
      M)
 
-degrees Module := M -> (
-     R := ring M;
+degrees Module := M -> if M.?degrees then M.degrees else M.degrees = (
      if not isFreeModule M then M = cover M;
-     if M.?degrees then M.degrees
+     rk := numgens M;
+     R := ring M;
+     nd := degreeLength R;
+     if nd == 0 then toList (rk : {})
      else (
-	  rk := numgens M;
-	  nd := degreeLength R;
-	  M.degrees = (
-	       if nd == 0 
-	       then toList (rk : {})
-	       else (
-	  	    sendgg ggPush M;
-		    d := pack(nd,eePopIntarray());
-		    if R.?Repair then d = apply(d,R.Repair);
-		    d))))
+	  d := pack(nd,rawMultiDegree M.RawFreeModule);
+	  if R.?Repair then d = apply(d,R.Repair);
+	  d))
 
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
 Ring ^ List := Module => (
      (R,degs) -> (
 	  degs = - splice degs;
-	  if R.?Engine and R.Engine then (
+	  if R.?RawRing then (
 	       ndegs := degreeLength R;
 	       if R.?Adjust then degs = apply(degs,R.Adjust);
 	       fdegs := flatten degs;
@@ -349,13 +305,8 @@ Ring ^ List := Module => (
 			      then error "expected each multidegree to be a list of integers")))
 	       else error "expected a list of integers or a list of lists of integers";
 	       if # fdegs === 0 
-	       then (
-		    n := #degs;
-		    sendgg( ggPush R, ggPush n, ggfree);
-		    new Module from R)
-	       else (
-		    sendgg(ggPush R, ggPush fdegs, ggfree);
-		    new Module from R)
+	       then newModule(R,rawFreeModule(R.RawRing,#degs))
+	       else newModule(R,rawFreeModule(R.RawRing,toSequence fdegs))
 	       )
 	  else error "non-engine free modules with degrees not implemented yet"
 	  ))
@@ -365,15 +316,10 @@ components(Vector) := (x) -> apply(numgens class x,i->x_i)
 
 SparseDisplayThreshhold := 15
 
-Ring ^ ZZ := Module => (
-     (R,n) -> (
-	  if R.?Engine and R.Engine
-	  then (
-	       sendgg(ggPush R, ggPush n, ggfree);
-	       new Module from R
-	       )
-	  else notImplemented()
-	  )
+Ring ^ ZZ := Module => (R,n) -> (
+     if R.?RawRing
+     then newModule (R, rawFreeModule(R.RawRing,n))
+     else notImplemented()
      )
 
 -- euler(Module) := (M) -> (

@@ -4,6 +4,7 @@
 
 #include "freemod.hpp"
 #include "polyring.hpp"
+#include "gbring.hpp"
 
 struct s_pair;
 
@@ -12,8 +13,8 @@ struct gb_elem
   gb_elem *next;
   gb_elem *next_min;
   s_pair *pair_list;		// List of pairs with this as 'first' element
-  vec f;
-  vec fsyz;
+  gbvector *f;
+  gbvector *fsyz;
   int *lead_exp;
   int is_min;
   int me;
@@ -21,15 +22,9 @@ struct gb_elem
   gb_elem()
     : next(NULL), next_min(NULL), pair_list(NULL),
       f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0), me(0) {}
-  gb_elem(vec f, vec fsyz, int is_min) 
+  gb_elem(gbvector *f, gbvector *fsyz, int is_min) 
     : next(NULL), next_min(NULL), pair_list(NULL),
       f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min), me(0) {}
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 struct s_pair
@@ -42,13 +37,8 @@ struct s_pair
   int *lcm;			// A packed monomial (should it be an expvector?)
   gb_elem *first;
   gb_elem *second;
-  vec f;			// A vector in NGB_comp::gens.rows()
-  vec fsyz;			// A vector in NGB_comp::syz.rows()
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
+  gbvector *f;			// A vector in NGB_comp::gens.rows()
+  gbvector *fsyz;		// A vector in NGB_comp::syz.rows()
 };
 
 const int NHEAP = 10;

@@ -1,3 +1,6 @@
+#ifndef MAP_H
+#define MAP_H
+
 typedef char bool;
 
 typedef struct MAP {
@@ -10,3 +13,5 @@ typedef struct MAP {
 
 extern int nummaps(), haveDumpdata();
 extern int getmaps(int nmaps, struct MAP[nmaps]);
+
+#endif

@@ -12,9 +12,9 @@ class AssociatedPrimes
   int min_codim;
   int nvars;
 
-  MonomialIdeal mi;			// A radical monomial ideal
+  MonomialIdeal * mi;			// A radical monomial ideal
 
-  MonomialIdeal ass_primes;		// Assoc. primes of minimal codim, stored
+  MonomialIdeal * ass_primes;		// Assoc. primes of minimal codim, stored
 				// in a monideal, where each monomial
 				// corresponds to a prime monomial ideal
 				// whose generators are the variables occuring
@@ -25,12 +25,12 @@ class AssociatedPrimes
   void ass_prime_generator(Nmi_node *p, int codim);
 
 public:
-  AssociatedPrimes(const MonomialIdeal &mi);
-  AssociatedPrimes(const MonomialIdeal &mi, int codim);
+  AssociatedPrimes(const MonomialIdeal * const &mi);
+  AssociatedPrimes(const MonomialIdeal * const &mi, int codim);
   ~AssociatedPrimes();
 
   int codimension();
-  MonomialIdeal associated_primes();
+  MonomialIdeal * associated_primes();
 };
 
 #endif

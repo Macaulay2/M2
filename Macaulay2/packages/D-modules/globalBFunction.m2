@@ -18,7 +18,6 @@ makeMonic := f -> ( if coefficientRing ring f === QQ
      else (1 // (leadCoefficient f)) * f
      );
 
-
 --------------------------------------------------------
 -- version that uses bFunction
 --------------------------------------------------------

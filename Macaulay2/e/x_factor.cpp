@@ -37,6 +37,16 @@ ostream &operator<<(ostream &o,const intarray &w) {
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
 
+#if 1
+// debugging display routines to be called from gdb
+void showvar(Variable &t) { cout << t << endl; }
+void showcf(CanonicalForm &t) { cout << t << endl; }
+void showcfl(CFList &t) { cout << t << endl; }
+#include <templates/ftmpl_list.cc>
+template class List<List<CanonicalForm> >;
+void showcffl(CFFList &t) { cout << t << endl; }
+#endif
+
 static RingElement convert(const Ring *R, CanonicalForm h) {
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {

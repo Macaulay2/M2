@@ -3,45 +3,12 @@
 #define _ringmap_hh_
 
 #include "ring.hpp"
-#if 0
-class RingMap : public type
-{
-  const Ring *R;		// This is the target ring.
-  array <ring_elem> map;
-public:
-  RingMap(const Matrix &m);
-  ~RingMap();
 
-  const Ring *get_ring() const { return R; }
-  const ring_elem elem(int i) const { return map[i]; }
+class RingElement;
+class Vector;
+class Matrix;
 
-  ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff, 
-		      const int *vp) const;
-
-  RingElement eval(const RingElement &r) const;
-  Vector eval(const FreeModule *resultfree, const Vector &v) const;
-  Matrix eval(const FreeModule *newrows, const Matrix &m) const;
-
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  class_identifier class_id() const { return CLASS_RingMap; }
-  type_identifier  type_id () const { return TY_RING_MAP; }
-  const char * type_name   () const { return "RingMap"; }
-
-  RingMap *cast_to_RingMap() { return this; }
-  const RingMap *cast_to_RingMap() const{ return this; }
-  
-  int length_of() const { return map.length(); }
-
-  void bin_out(buffer &o) const;
-  void text_out(buffer &o) const;
-};
-#endif
-class RingMap : public type
+class RingMap : public immutable_object
 {
   struct var {
     bool is_zero;		// Does this variable map to 0?
@@ -69,44 +36,28 @@ class RingMap : public type
   int nvars;			// Number of variables in the source ring.
   var *_elem;			// elem[i] is the structure representing the image of
 				// the i th variable.
+  RingMap(const Matrix *m);
 public:
-  RingMap(const Matrix &m);
   ~RingMap();
+
+  static const RingMap *make(const Matrix *m);
 
   const Ring *get_ring() const { return R; }
   const ring_elem elem(int i) const { 
     assert(i < nvars);
     return _elem[i].bigelem; 
   }
-  
+
+  bool is_equal(const RingMap *phi) const;
+
   ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff, 
 		      const int *vp) const;
 
-  RingElement eval(const RingElement &r) const;
-  Vector eval(const FreeModule *resultfree, const Vector &v) const;
-  Matrix eval(const FreeModule *newrows, const Matrix &m) const;
+  RingElementOrNull *eval(const RingElement *r) const;
+  VectorOrNull *eval(const FreeModule *resultfree, const Vector *v) const;
+  MatrixOrNull *eval(const FreeModule *newrows, const Matrix *m) const;
 
-  void bin_out(buffer &o) const;
   void text_out(buffer &o) const;
-
-  ////////////////////
-  // Infrastructure //
-  ////////////////////
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  class_identifier class_id() const { return CLASS_RingMap; }
-  type_identifier  type_id () const { return TY_RING_MAP; }
-  const char * type_name   () const { return "RingMap"; }
-
-  RingMap *cast_to_RingMap() { return this; }
-  const RingMap *cast_to_RingMap() const{ return this; }
-  
-  int length_of() const { return nvars; }
-
 };
 
 #endif

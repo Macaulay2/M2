@@ -5,20 +5,17 @@
 #include "comp.hpp"
 #include "text_io.hpp"
 
-GBKernelComputation::GBKernelComputation(const Matrix &m)
-  : R(m.get_ring()->cast_to_PolynomialRing()),
-    K(m.get_ring()->Ncoeffs()),
-    M(m.get_ring()->Nmonoms()),
-    F(m.rows()),
-    G(m.cols()),
+GBKernelComputation::GBKernelComputation(const Matrix *m)
+  : R(m->get_ring()->cast_to_PolynomialRing()),
+    K(m->get_ring()->Ncoeffs()),
+    M(m->get_ring()->Nmonoms()),
+    F(m->rows()),
+    G(m->cols()),
     n_ones(0),
     n_unique(0),
     n_others(0),
     total_reduce_count(0)
 {
-  bump_up(F);
-  bump_up(G);
-  bump_up(R);
   one = K->from_int(1);
   PAIRS_mon = M->make_one();
   REDUCE_mon = M->make_one();
@@ -34,9 +31,6 @@ GBKernelComputation::~GBKernelComputation()
   M->remove(REDUCE_mon);
   delete [] REDUCE_exp;
   K->remove(one);
-  bump_down(R);
-  bump_down(F);
-  bump_down(G);
   // Remove gb
   // Remove syzygies
   // Remove mi
@@ -47,9 +41,9 @@ int GBKernelComputation::calc()
   // First find the skeleton
   for (int i=0; i<gb.length(); i++) new_pairs(i);
 
-  Matrix mm(G);
+  Matrix *mm = new Matrix(G);
   for (int p=0; p<syzygies.length(); p++)
-    mm.append(G->copy(syzygies[p]));
+    mm->append(G->copy(syzygies[p]));
 
 #if 0
   buffer o;
@@ -68,13 +62,13 @@ int GBKernelComputation::calc()
   return COMP_DONE;
 }
 
-Matrix GBKernelComputation::get_syzygies()
+Matrix *GBKernelComputation::get_syzygies()
 {
   // Make the Schreyer free module H.
-  Matrix result(G);
+  Matrix *result = new Matrix(G);
   for (int i=0; i<syzygies.length(); i++)
     {
-      result.append(syzygies[i]);
+      result->append(syzygies[i]);
       syzygies[i] = 0;
     }
   return result;
@@ -87,20 +81,20 @@ vec GBKernelComputation::make_syz_term(ring_elem c, const int *m, int comp) cons
 {
   return G->new_term(comp, c, m);
 }
-void GBKernelComputation::strip_gb(const Matrix &m)
+void GBKernelComputation::strip_gb(const Matrix *m)
 {
   int i;
   int *components = new int[F->rank()];
-  for (i=0; i<m.n_rows(); i++)
+  for (i=0; i<m->n_rows(); i++)
     components[i] = 0;
-  for (i=0; i<m.n_cols(); i++)
-    if (m[i] != 0)
-      components[m[i]->comp]++;
-  for (i=0; i<m.n_cols(); i++)
+  for (i=0; i<m->n_cols(); i++)
+    if ((*m)[i] != 0)
+      components[(*m)[i]->comp]++;
+  for (i=0; i<m->n_cols(); i++)
     {
       vecterm head;
       vecterm *last = &head;
-      for (vec v = m[i]; v != 0; v = v->next)
+      for (vec v = (*m)[i]; v != 0; v = v->next)
 	if (components[v->comp] > 0)
 	  {
 	    vec t = F->copy_term(v);
@@ -118,7 +112,7 @@ void GBKernelComputation::strip_gb(const Matrix &m)
     mi[i] = 0;
 #endif
   for (i=0; i<F->rank(); i++)
-    mi[i] = MonomialIdeal(R);
+    mi[i] = new MonomialIdeal(R);
   delete [] components;
 }
 
@@ -164,15 +158,15 @@ void GBKernelComputation::new_pairs(int i)
   // The baggage of each of these is NULL
   if (R->is_quotient_ring())
     {
-      const MonomialIdeal &Rideal = R->get_quotient_monomials();
-      for (j = Rideal.first(); j.valid(); j++)
+      const MonomialIdeal * Rideal = R->get_quotient_monomials();
+      for (j = Rideal->first(); j.valid(); j++)
 	{
 	  // Compute (P->quotient_ideal->monom : p->monom)
 	  // and place this into a varpower and Bag, placing
 	  // that into 'elems'
 	  thisvp.shrink(0);
-	  varpower::divide(Rideal[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal(Rideal[j]->monom().raw(), thisvp.raw()))
+	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
 	    continue;
 	  Bag *b = new Bag((void *)0, thisvp);
 	  elems.insert(b);
@@ -182,11 +176,11 @@ void GBKernelComputation::new_pairs(int i)
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res2_pair
 
-  MonomialIdeal &mi_orig = mi[gb[i]->comp];
-  for (j = mi_orig.first(); j.valid(); j++)
+  MonomialIdeal *mi_orig = mi[gb[i]->comp];
+  for (j = mi_orig->first(); j.valid(); j++)
     {
       Bag *b = new Bag();
-      varpower::divide(mi_orig[j]->monom().raw(), vp.raw(), b->monom());
+      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
       elems.insert(b);
     }
 
@@ -194,18 +188,18 @@ void GBKernelComputation::new_pairs(int i)
   // and insert into the proper degree. (Notice that sorting does not
   // need to be done yet: only once that degree is about to begin.
 
-  mi_orig.insert_minimal(new Bag(i, vp));
+  mi_orig->insert_minimal(new Bag(i, vp));
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal mi(R, elems, rejects);
+  MonomialIdeal * mi = new MonomialIdeal(R, elems, rejects);
   while (rejects.remove(b))
     delete b;
 
   int *m = M->make_one();
-  for (j = mi.first(); j.valid(); j++)
+  for (j = mi->first(); j.valid(); j++)
     {
-      M->from_varpower(mi[j]->monom().raw(), m);
+      M->from_varpower((*mi)[j]->monom().raw(), m);
       M->mult(m, gb[i]->monom, m);
       
       vec q = make_syz_term(K->from_int(1),m,i);
@@ -224,33 +218,33 @@ bool GBKernelComputation::find_ring_divisor(const int *exp, ring_elem &result)
 {
   if (!R->is_quotient_ring()) return false;
   Bag *b;
-  if (!R->get_quotient_monomials().search_expvector(exp, b))
+  if (!R->get_quotient_monomials()->search_expvector(exp, b))
     return false;
   result = (Nterm *) b->basis_ptr();
   return true;
 }
 
-int GBKernelComputation::find_divisor(const MonomialIdeal &mi, 
+int GBKernelComputation::find_divisor(const MonomialIdeal *mi, 
 				   const int *exp,
 				   int &result)
 {
   // Find all the posible matches, use some criterion for finding the best...
   array<Bag *> bb;
-  mi.find_all_divisors(exp, bb);
+  mi->find_all_divisors(exp, bb);
   int ndivisors = bb.length();
   if (ndivisors == 0) return 0;
   result = bb[0]->basis_elem();
   // Now search through, and find the best one.  If only one, just return it.
   if (comp_printlevel >= 5)
-    if (mi.length() > 1)
+    if (mi->length() > 1)
       {
 	buffer o;
-	o << ":" << mi.length() << "." << ndivisors << ":";
+	o << ":" << mi->length() << "." << ndivisors << ":";
 	emit(o.str());
       }
   if (ndivisors == 1)
     {
-      if (mi.length() == 1)
+      if (mi->length() == 1)
 	n_ones++;
       else
 	n_unique++;

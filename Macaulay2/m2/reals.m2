@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 RR#0 = 0.
 RR#1 = 1.
@@ -12,15 +12,7 @@ RR.baseRings = {}
 RR.dim = 1
 RR.char = 0
 RR.Engine = true
-RR.pop = () -> eePop ConvertReal
-RR.ConversionFormat = ConvertReal
-RR.mathML = "<mi>&Ropf;</mi>"
-RR.handle = newHandle ggRR
-RR.ConvertToExpression = ConvertReal
 new RR := RR -> RR.pop()
-
-ggPush RR := r -> (ggDOUBLE, gg r)
-
 degree RR := i -> {}
 
 RR == ZZ := (x,y) -> x === y+0.

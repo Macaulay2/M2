@@ -3,7 +3,7 @@
 #define _newspair_hpp_
 
 #include "freemod.hpp"
-#include "polyring.hpp"
+#include "gbring.hpp"
 
 struct gen_pair;
 struct S_pair;
@@ -12,30 +12,19 @@ struct s_pair_bunch;
 struct gen_pair
 {
   gen_pair *next;
-  vec f;
-  vec fsyz;
+  gbvector *f;
+  gbvector *fsyz;
 
   gen_pair();
-  gen_pair(vec f, vec fsyz);
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
+  gen_pair(gbvector *f, gbvector *fsyz);
 };
 struct S_pair
 {
   S_pair *next;
-  vec gsyz;			// element of Gsyz
-  vec rsyz;			// element of Rsyz
+  gbvector *gsyz;			// element of Gsyz
 
   S_pair();
-  S_pair(vec gsyz, vec rsyz);
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
+  S_pair(gbvector *gsyz);
 };
 
 struct s_pair_bunch
@@ -55,16 +44,12 @@ struct s_pair_bunch
     pairs(NULL), gens(NULL),
     unsorted_pairs(NULL), unsorted_gens(NULL),
     nelems(0), ngens(0) {}
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 class s_pair_set
 {
-  const FreeModule *F, *Fsyz, *Gsyz, *Rsyz;
+  GBRing *GR;
+  const FreeModule *F, *Gsyz;
 
   s_pair_bunch *heap;		// Sorted by increasing degree
   s_pair_bunch *this_deg;	// Points to current degree (which should be the first)
@@ -97,14 +82,14 @@ class s_pair_set
   void remove_gen(gen_pair *&s);
   void remove_gen_list(gen_pair *&p);
 public:
-  s_pair_set(const FreeModule *F, const FreeModule *Fsyz, const FreeModule *Gsyz, const FreeModule *Rsyz);
+  s_pair_set(GBRing *GR, const FreeModule *F, const FreeModule *Gsyz);
   ~s_pair_set();
 
-  void insert_generator(vec f, vec fsyz);
-  bool next_generator(vec &f, vec &fsyz);
+  void insert_generator(gbvector *f, gbvector *fsyz);
+  bool next_generator(gbvector *&f, gbvector *&fsyz);
 
-  void insert_s_pair(vec gsyz, vec rsyz);
-  bool next_s_pair(vec &gsyz, vec &rsyz);
+  void insert_s_pair(gbvector *gsyz);
+  bool next_s_pair(gbvector *&gsyz);
 
   bool lowest_degree(int &lodeg) const;	// Sets 'lodeg' to lowest degree of a pair or gen,
 				        // Returns true if any pairs or gens left, else false.
@@ -116,11 +101,6 @@ public:
   int n_computed() const { return ncomputed; }
 
   void stats();			// Displays some statistics about this set.
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

@@ -1,8 +1,7 @@
 // Copyright 1997  Michael E. Stillman
 
 #include "sagbi.hpp"
-
-stash *sagbi_comp::mystash;
+#include "vector.hpp"
 
 vec sagbi::subduct(const FreeModule *F,
 		   vec f,
@@ -18,10 +17,10 @@ vec sagbi::subduct(const FreeModule *F,
       f = f->next;
       g->next = NULL;
 
-      Vector gv(F,F->copy(g));
-      Vector junk;
-      Vector g1v = J->reduce(gv, junk);
-      vec g1 = g1v.get_value();
+      Vector *gv = Vector::make_raw(F,F->copy(g));
+      Vector *junk;
+      Vector *g1v = J->reduce(gv, junk);
+      vec g1 = g1v->get_value();
       
       // Is g1 a monomial in the new variables?
       if (F->in_subring(1,g1))
@@ -42,14 +41,14 @@ vec sagbi::subduct(const FreeModule *F,
   return head.next;
 }
 
-Matrix sagbi::subduct(const Matrix &m, 
+Matrix *sagbi::subduct(const Matrix *m, 
 			const RingMap *phi,
 			gb_comp *J)
 {
-  Matrix result(m.rows(), m.cols());
+  Matrix *result = new Matrix(m->rows(), m->cols());
 
-  for (int i=0; i<m.n_cols(); i++)
-    result[i] = subduct(m.rows(), m.rows()->copy(m[i]), phi, J);
+  for (int i=0; i<m->n_cols(); i++)
+    (*result)[i] = subduct(m->rows(), m->rows()->copy((*m)[i]), phi, J);
   return result;
 }
 
@@ -103,7 +102,7 @@ Matrix pending_list::take_lowest_matrix()
 }
 #endif
 
-sagbi_comp::sagbi_comp(const Matrix &m) : gb_comp(COMP_SAGBI) 
+sagbi_comp::sagbi_comp(const Matrix *m) : gb_comp(COMP_SAGBI) 
 {
 }
 
@@ -115,7 +114,7 @@ void sagbi_comp::enlarge(const Ring *R, int *wts)
 {
 }
 
-void sagbi_comp::add_generators(const Matrix &m)
+void sagbi_comp::add_generators(const Matrix *m)
 {
 }
 
@@ -139,10 +138,10 @@ polynomial_ring *sagbi_comp::extend_ring(const polynomial_ring *R, intarray &deg
 #endif
 #if 0
 
-void sagbi_comp::append_to_basis(Matrix &m)
+void sagbi_comp::append_to_basis(Matrix *m)
 {
   // Each of the elements in 'm' are to be added in.
-  if (m.n_cols() == 0) return;
+  if (m->n_cols() == 0) return;
   
   // Append m to the basis so far.
 
@@ -231,17 +230,17 @@ int sagbi_comp::calc(const int *deg, const intarray &stop_conditions)
 #endif
 }
 
-Matrix sagbi_comp::reduce(const Matrix &m, Matrix &lift)
+Matrix *sagbi_comp::reduce(const Matrix *m, Matrix *&lift)
 {
 return 0;
 }
 
-Vector sagbi_comp::reduce(const Vector &v, Vector &lift)
+Vector *sagbi_comp::reduce(const Vector *v, Vector *&lift)
 {
 return 0;
 }
 
-int sagbi_comp::contains(const Matrix &m)
+int sagbi_comp::contains(const Matrix *m)
 {
 return 0;
 }
@@ -252,27 +251,27 @@ return 0;
 }
 
 // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-Matrix sagbi_comp::min_gens_matrix()
+Matrix *sagbi_comp::min_gens_matrix()
 {
 return 0;
 }
 
-Matrix sagbi_comp::initial_matrix(int n)
+Matrix *sagbi_comp::initial_matrix(int n)
 {
 return 0;
 }
 
-Matrix sagbi_comp::gb_matrix()
+Matrix *sagbi_comp::gb_matrix()
 {
 return 0;
 }
 
-Matrix sagbi_comp::change_matrix()
+Matrix *sagbi_comp::change_matrix()
 {
 return 0;
 }
 
-Matrix sagbi_comp::syz_matrix()
+Matrix *sagbi_comp::syz_matrix()
 {
 return 0;
 }

@@ -1,5 +1,6 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
 
+use C;
 use system;
 use stdio;
 use strings;

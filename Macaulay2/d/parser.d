@@ -1,4 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use err;
 use system;
 use strings;
@@ -6,7 +7,7 @@ use varstrin;
 use lex;
 use stdio;
 use stdiop;
-use arith;
+use gmp;
 use nets;
 use tokens;
 

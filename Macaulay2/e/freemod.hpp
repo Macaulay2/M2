@@ -4,56 +4,25 @@
 #define _FreeModule_hh_
 
 #include "ring.hpp"
-#include "monideal.hpp"
+#include "schorder.hpp"
 
-struct index_type
+class Matrix;
+
+class FreeModule : public immutable_object
 {
-  int       compare_num;
-  int *     base_monom;
-  int *     deg;
-
-  index_type(int i) : compare_num(i) {}
-};
-
-class EInterface;
-
-class FreeModule : public type
-{
-  friend class NGB_comp;
-  friend class GB_comp;
-  friend class GBZZ_comp;
-  friend class GBinhom_comp;
-  friend class gb2_comp;
-  friend class res_poly;
-  friend class res2_poly;
-  friend class TermIdeal;
-  friend class GBKernelComputation;  // only for 
-  friend class EInterface;
 protected:
 
   // free module part
-  array<index_type *> components;
+  array<int *> components; // Degrees of each component
+  SchreyerOrder *schreyer; // NULL, if not a Schreyer order...
+
+  const Ring *R;
 
   // stash used for vecterm's: R->vecstash
   
-  const Ring *K;		// If R is a poly ring, K is the coeff ring, otherwise
-  const Ring *R;		// K = R.
-  const Monoid *M;	// Resizing is possible.  This will 'change' R, M.
-  bool is_quotient_ring;		// MES: this needs to be set!
-  bool coefficients_are_ZZ;
-
-  enum {FREE, FREE_POLY, FREE_SCHREYER} ty;
-      // A free module will be of type FREE if the base ring is not a polynomial ring
-      // Otherwise, the free module starts off as a FREE_POLY, and is changed to a
-      // FREE_SCHREYER if a generator with base != one is appended.
-
-  intarray nf_exp_a;
-  int *nf_1, *nf_exp, *mon_1;
-  int *TO_EXP_monom;  // a monomial: only used in to_exponents, from_exponents.
 protected:
   // Do we need all these routines?
   vec new_term() const;
-  vec new_term(int e, ring_elem a, const int *m) const;
 
 //////////////////////////////////////////////
 //  Free module routines /////////////////////
@@ -66,23 +35,26 @@ public:
   FreeModule(const Ring *R);
   FreeModule(const Ring *R, int n);
   FreeModule(const Ring *RR, const FreeModule *F);
+
+  static FreeModule *make_schreyer(const Matrix *m);
+  Matrix * get_induced_order() const;
+
   virtual ~FreeModule();
 
   virtual FreeModule *new_free() const;
 
   void append(const int *d); // append a new row to a FREE or FREE_POLY
-  void append(const int *d, const int *basemonom); // append to a FREE_SCHREYER
-  void append(const int *d, const int *basemonom, int comparenum); // append to a FREE_SCHREYER
 
   const Ring *  get_ring()      const { return R; }
-  const Ring *  Ncoeffs()       const { return K; }
-  const Monoid * Nmonoms()       const { return M; }
   const Monoid * degree_monoid() const { return R->degree_monoid(); }
+  const SchreyerOrder * get_schreyer_order() const { return schreyer; }
 
-  const index_type  *  component(int i) const { return components[i]; }
-  const int *          degree(int i)    const { return components[i]->deg; }
-  const int *          base_monom(int i)const { return components[i]->base_monom; }
-        int            compare_num(int i)const { return components[i]->compare_num; }
+  const int *          degree(int i)    const { return components[i]; }
+#if 0
+  const int *          base_monom(int i)const { return schorder->base_monom(i); }
+        int            compare_num(int i)const { return schorder->compare_num(i); }
+#endif
+
   int                  rank()           const { return components.length(); }
 
   int                  primary_degree(int i) const;
@@ -95,18 +67,16 @@ public:
   bool is_zero() const;
 
   FreeModule * sub_space   (int n)                const;
-  FreeModule * sub_space   (const intarray &a)    const;
+  FreeModule * sub_space   (const M2_arrayint a)  const;
   FreeModule * transpose   ()                     const;
-  FreeModule * direct_sum  (const FreeModule *G) const;
+  FreeModule * direct_sum  (const FreeModule *G)  const;
   FreeModule * shift       (const int *d)         const;
-  FreeModule * tensor      (const FreeModule *G) const;
+  FreeModule * tensor      (const FreeModule *G)  const;
   FreeModule * schur       (const int *m)         const;
   FreeModule * exterior    (int p)                const;
   FreeModule * symm        (int p)                const;
 
   void direct_sum_to(const FreeModule *G);
-  void gcd(intarray &lo_deg) const;
-  void lcm(intarray &hi_deg) const;
   int lowest_primary_degree() const;
   int highest_primary_degree() const;
 
@@ -115,12 +85,14 @@ public:
 //////////////////////////////////////////////
 
 public:
+#if 0
   void to_exponents(const int *m, int component, int *result_exponents) const;
   void from_exponents(const int *exponents, int component, int *result_monomial) const;
+#endif
 
   vec zero() const { return NULL; }
   vec e_sub_i(int i) const;
-  vec term(int r, ring_elem a) const;
+  vec raw_term(ring_elem a, int r) const;
 
   bool is_equal(vec v, vec w) const;
   bool is_zero(vec v) const  { return v == NULL; }
@@ -138,24 +110,31 @@ public:
   vec add(vec v, vec w) const;
   vec subtract(vec v, vec w) const;
 
-
-  int n_terms(vec v) const;
+  int n_terms(vec v) const; // ??
   ring_elem get_coefficient(vec v, int r) const;
-  vec get_terms(vec v, int lo, int hi) const;
+  vec get_terms(vec v, int lo, int hi) const; // ??
 
+  // These four require some (small) computation
   int lead_component(vec v) const;
+#if 0
   vec lead_term(vec v) const;
   vec lead_term(int n, vec v) const;
+#endif
   ring_elem lead_coefficient(vec v) const;
 
+#if 0
   vec lead_var_coefficient(vec &v, int &var, int &exp) const;
   vec coefficient_of_var(vec v, int var, int exp) const;
+#endif
 
+#if 0
   // Polynomial routines
   vec from_varpower(const int *vp, int x) const;
   void lead_varpower(const vec v, intarray &vp) const;
   vec term(int r, ring_elem a, const int *m) const;
 
+
+#endif
   int compare(const vecterm *f, const vecterm *g) const;
 
   // Some divisibility routines
@@ -164,7 +143,7 @@ public:
 //////////////////////////////////////////////
 //  Groebner basis support routines //////////
 //////////////////////////////////////////////
-
+#if 0
   vec mult_by_monomial(const int *m, vec v) const;
 
   ring_elem coeff_of(const vec v, const int *m, int x) const;
@@ -181,12 +160,13 @@ public:
 
   vec strip(vec v) const;
   const vec component_occurs_in(int x, vec v) const;
-
+#endif
 //////////////////////////////////////////////
 //  Multiplication ///////////////////////////
 //////////////////////////////////////////////
 
 protected:
+#if 0
   // These routines do straight multiplication with no normal forms.
 
   vec imp_mult_by_coeff       (const ring_elem c, vec v) const;
@@ -212,24 +192,26 @@ protected:
 				 const int *m, 
 				 int x) const;   // return c*m*f*e_x
 
-
+#endif
 
 
 public:
           vec mult         (int n, vec v)        const;
   virtual vec mult         (const ring_elem f, const vec v) const;
   virtual vec rightmult    (const vec v, const ring_elem f) const;
+#if 0
   virtual vec mult_by_coeff(const ring_elem c, vec v) const;
   virtual vec mult_by_term (const ring_elem c, const int *m, const vec v) const;
   virtual vec right_mult_by_term (vec v, ring_elem c, const int *m) const;
 
   void subtract_multiple_to(vec &v, ring_elem c, 
 			    const int *m, const vec w) const;
-
+#endif
 //////////////////////////////////////////////
 //  Normal forms /////////////////////////////
 //////////////////////////////////////////////
 
+#if 0
 protected:
   vec imp_ring_mult_by_term(const ring_elem f, 
 				const ring_elem c, 
@@ -246,7 +228,7 @@ public:
   virtual void normal_form_ZZ(vec &v) const;
 
   void normal_form(vec &v, 
-		   const array<MonomialIdeal> &mis, 
+		   const array<MonomialIdeal *> &mis, 
 		   const array<vec> &vecs) const;
 
   void normal_form_ZZ(vec &f,
@@ -254,6 +236,7 @@ public:
 		      const FreeModule *Gsyz,
 		      const array<vec> &vecs) const;
 
+#endif
 //////////////////////////////////////////////
 //  Matrix routines //////////////////////////
 //////////////////////////////////////////////
@@ -262,7 +245,7 @@ public:
   void transpose_matrix (const Matrix &m, Matrix &result) const;
 
   vec sub_vector(const FreeModule *F, vec v, 
-		     const intarray &r) const;
+		     const M2_arrayint r) const;
 
   vec component_shift(int n, const FreeModule *F, 
 			  vec v) const;
@@ -271,7 +254,7 @@ public:
 		       const FreeModule *F,
 		       vec v) const;
 
-  vec mult_by_matrix(const Matrix &m,
+  vec mult_by_matrix(const Matrix *m,
 			 const FreeModule *F, 
 			 vec v) const;
 
@@ -285,9 +268,11 @@ public:
   vec tensor(const FreeModule *F, vec v, 
 		 const FreeModule *G, vec w) const;
 
+#if 0
   void auto_reduce(array<vec> &vecs) const;
 protected:
   void auto_reduce_ZZ(array<vec> &vecs) const;
+#endif
 public:
   vec random() const;  // Produces a random vector of coefficients (no monomials)
 protected:
@@ -296,29 +281,25 @@ protected:
   void sort_range(int lo, int hi) const;
 
 public:
-  void sort(const array<vec> &vecs, 
-	    const intarray &degrees, // only needed if degorder!=0
-	    int degorder, // -1=descending, 0=don't use, 1=ascending
-	    int monorder, // -1=descending, 1=ascending.
-	    intarray &result) const;
+  M2_arrayint sort(const array<vec> &vecs, 
+		   const M2_arrayint degrees, // only needed if degorder!=0
+		   int degorder, // -1=descending, 0=don't use, 1=ascending
+		   int monorder // -1=descending, 1=ascending.
+		   ) const;
 
-  void monomial_divisor(vec f, int *exp) const;
-  vec monomial_squarefree(vec f) const;
-  vec remove_monomial_divisors(vec f) const;
 
-protected:  // Used as local routine to 'diff'
-  ring_elem diff_term(const int *m, const int *n, 
-		       int *resultmon,
-		       int use_coeff) const;
-
-  vec diff_by_term(const int *exp, vec v, bool use_coeff) const;
 public:
   vec diff(const FreeModule *F, vec v, 
 	       const FreeModule *G, vec w,
 	       int use_coeff) const;
 
+
+  void monomial_divisor(vec f, int *exp) const;
+  vec monomial_squarefree(vec f) const;
+  vec remove_monomial_divisors(vec f) const;
+
   int in_subring(int n, const vec v) const;
-  int degree_of_var(int n, const vec v) const;
+  void degree_of_var(int n, const vec v, int &lo, int &hi) const;
   vec divide_by_var(int n, int d, const vec v) const;
   vec divide_by_expvector(const int *exp, const vec v) const;
   
@@ -326,15 +307,16 @@ public:
 //  Homogeniety and the grading //////////////
 //////////////////////////////////////////////
 
-protected:
-  void    term_degree    (const vecterm *t, int *degt)    const;
 public:
+  bool multi_degree(const vec f, int *degf) const;
+  // returns true iff f is homogeneous
+
   void    degree         (const vec f, int *d)         const;
-  void    degree_weights (const vec f, const int *wts, int &lo, int &hi) const;
+  void    degree_weights (const vec f, const M2_arrayint wts, int &lo, int &hi) const;
   int     primary_degree (const vec f)                 const;
   bool    is_homogeneous (const vec f)                 const;
-  vec homogenize     (const vec f, int v, int deg, const int *wts) const;
-  vec homogenize     (const vec f, int v, const int *wts)          const;
+  vec homogenize     (const vec f, int v, int deg, const M2_arrayint wts) const;
+  vec homogenize     (const vec f, int v, const M2_arrayint wts)          const;
 
 //////////////////////////////////////////////
 //  Translation and sorting routines /////////
@@ -343,30 +325,15 @@ public:
 public:
   vec resize    (const FreeModule *oldF, vec v) const;
   void    sort      (vecterm *&f)                       const;
-  vec translate (const FreeModule *F, vec v)    const;
+  vec translate (const FreeModule *F, vec v)    const;  // NOT NEEDED ANYMORE...
 
 //////////////////////////////////////////////
 //  Input, output, infrastructure ////////////
 //////////////////////////////////////////////
 
   void text_out(buffer &o) const;
-  void bin_out(buffer &o) const;
 
   void elem_text_out(buffer &o, const vec a) const;
-  void elem_bin_out(buffer &o, const vec a) const;
-
-  int                 length_of()           const { return rank(); }
-  FreeModule *       cast_to_FreeModule()       { return this; }
-  const FreeModule * cast_to_FreeModule() const { return this; }
-
-  class_identifier class_id() const { return CLASS_FreeModule; }
-  type_identifier  type_id () const { return TY_FREEMODULE; }
-  const char * type_name   () const { return "FreeModule"; }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

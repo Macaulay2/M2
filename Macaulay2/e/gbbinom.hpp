@@ -289,44 +289,30 @@ public:
   ~binomialGB_comp();
 
   void enlarge(const Ring *R, int *wts);
-  void add_generators(const Matrix &m);
+  void add_generators(const Matrix *m);
   int calc(const int *deg, const intarray &stop_conditions);
 
-  Matrix subring();
-  Matrix subringGB();
+  Matrix *subring();
+  Matrix *subringGB();
 
   // reduction: these elements do not need to be binomials?
-  Matrix reduce(const Matrix &m, Matrix &lift);
-  Vector reduce(const Vector &v, Vector &lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  Vector *reduce(const Vector *v, Vector *&lift);
 
-  virtual int contains(const Matrix &m);
+  virtual int contains(const Matrix *m);
   virtual bool is_equal(const gb_comp *q);
   
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix min_gens_matrix();
-  Matrix initial_matrix(int n);
-  Matrix gb_matrix();
-  Matrix change_matrix();
-  Matrix syz_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
+  Matrix *syz_matrix();
   void stats() const;
 
 public:
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
   binomialGB_comp * cast_to_binomialGB_comp() { return this; }
   const binomialGB_comp * cast_to_binomialGB_comp() const { return this; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "binomialGB_comp"; }
-
-  class_identifier class_id() const { return CLASS_binomialGB_comp; }
-
-  int length_of() const { return 0; }
-  
 };
 #endif
 

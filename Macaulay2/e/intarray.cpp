@@ -1,9 +1,6 @@
 // (c) 1995  Michael E. Stillman
 
 #include "intarray.hpp"
-#include "bin_io.hpp"
-
-stash *intarray::mystash;
 
 void intarray::expand(int newtop)
 {
@@ -14,12 +11,6 @@ void intarray::expand(int newtop)
   len = doubles->allocated_size(entries)/sizeof(int);
 }
 
-void intarray::bin_out(buffer &o) const
-{
-  bin_int_out(o, max);
-  for (int i=0; i<max; i++)
-    bin_int_out(o, entries[i]);
-}
 void intarray::text_out(buffer &o) const
 {
   o << '[';

@@ -1,11 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+use C;
 use system; 
 use convertr;
 use binding;
 use parser;
 use lex;
-use arith;
+use engine;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -30,6 +32,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x + y)
      	  is y:Rational do Expr(x + y)
+     	  is y:BigReal do Expr(toBigReal(x) + y)
      	  is y:Real do Expr(Real(x + y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -37,15 +40,89 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x + y)
      	  is y:Rational do Expr(x + y)
+     	  is y:BigReal do Expr(toBigReal(x) + y)
 	  is y:Real do Expr(Real(x + y.v))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:RawRingElement do (
+	  when rhs
+	  is y:RawRingElement do (
+	       when x+y
+	       is t:RawRingElement do Expr(t)
+	       is null do buildErrorPacket(EngineError("polynomial addition failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:BigReal do (
+	  when rhs
+	  is y:Integer do Expr(x + toBigReal(y))
+     	  is y:Rational do Expr(x + toBigReal(y))
+     	  is y:BigReal do Expr(x + y)
+	  is y:Real do Expr(x + toBigReal(y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is x:Real do (
 	  when rhs
      	  is y:Integer do Expr(Real(x.v+y))
      	  is y:Rational do Expr(Real(x.v+y))
+     	  is y:BigReal do Expr(toBigReal(x.v)+y)
 	  is y:Real do Expr(Real(x.v+y.v))
      	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:RawVector do (
+	  when rhs
+	  is y:RawVector do (
+	       when x+y
+	       is t:RawVector do Expr(t)
+	       is null do buildErrorPacket(EngineError("vector addition failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:RawMatrix do (
+	  when rhs
+	  is y:RawMatrix do (
+	       when x+y
+	       is t:RawMatrix do Expr(t)
+	       is null do buildErrorPacket(EngineError("polynomial addition failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:RawMonomialIdeal do (
+	  when rhs
+	  is y:RawMonomialIdeal do (
+	       when x+y
+	       is t:RawMonomialIdeal do Expr(t)
+	       is null do buildErrorPacket(EngineError("monomial ideal addition failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:LMatrixRR do (
+	  when rhs
+	  is y:LMatrixRR do (
+	       when x+y
+	       is t:LMatrixRR do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix addition failed"))
+	       )
+	  is y:LMatrixCC do (
+	       when x+y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix addition failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
+     is x:LMatrixCC do (
+	  when rhs
+	  is y:LMatrixRR do (
+	       when x+y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix addition failed"))
+	       )
+	  is y:LMatrixCC do (
+	       when x+y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix addition failed"))
+	       )
+	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
      is Error do lhs
      else binarymethod(lhs,rhs,PlusS));
@@ -64,7 +141,13 @@ export - (rhs:Expr) : Expr := (
      when rhs
      is x:Real do Expr(Real(-x.v))
      is x:Integer do Expr(-x)
+     is x:BigReal do Expr(-x)
      is x:Rational do Expr(-x)
+     is x:RawRingElement do Expr(-x)
+     is x:RawVector do Expr(-x)
+     is x:RawMatrix do Expr(-x)
+     is x:LMatrixRR do Expr(-x)
+     is x:LMatrixCC do Expr(-x)
      is Error do rhs
      else (
 	  method := lookup(Class(rhs),MinusS);
@@ -78,6 +161,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
      is x:Real do (
 	  when rhs
 	  is y:Real do Expr(Real(x.v-y.v))
+	  is y:BigReal do Expr(toBigReal(x.v) - y)
 	  is y:Integer do Expr(Real(x.v-y))
 	  is y:Rational do Expr(Real(x.v-y))
      	  is Error do rhs
@@ -87,6 +171,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x - y)
      	  is y:Rational do Expr(x - y)
 	  is y:Real do Expr(Real(x - y.v))
+	  is y:BigReal do Expr(toBigReal(x) - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:Rational do (
@@ -94,6 +179,70 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x - y)
      	  is y:Rational do Expr(x - y)
 	  is y:Real do Expr(Real(x - y.v))
+	  is y:BigReal do Expr(toBigReal(x) - y)
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,MinusS))
+     is x:RawRingElement do (
+	  when rhs
+	  is y:RawRingElement do (
+	       when x-y
+	       is t:RawRingElement do Expr(t)
+	       is null do buildErrorPacket(EngineError("polynomial subtraction failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,MinusS))
+     is x:BigReal do (
+	  when rhs
+	  is y:Integer do Expr(x - toBigReal(y))
+     	  is y:Rational do Expr(x - toBigReal(y))
+	  is y:Real do Expr(x - toBigReal(y.v))
+	  is y:BigReal do Expr(x - y)
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,MinusS))
+     is x:RawVector do (
+	  when rhs
+	  is y:RawVector do (
+	       when x-y
+	       is t:RawVector do Expr(t)
+	       is null do buildErrorPacket(EngineError("vector subtraction failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,MinusS))
+     is x:RawMatrix do (
+	  when rhs
+	  is y:RawMatrix do (
+	       when x-y
+	       is t:RawMatrix do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,MinusS))
+     is x:LMatrixRR do (
+	  when rhs
+	  is y:LMatrixRR do (
+	       when x-y
+	       is t:LMatrixRR do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
+	       )
+	  is y:LMatrixCC do (
+	       when x-y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,MinusS))
+     is x:LMatrixCC do (
+	  when rhs
+	  is y:LMatrixRR do (
+	       when x-y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
+	       )
+	  is y:LMatrixCC do (
+	       when x-y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
+	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is Error do lhs
@@ -130,12 +279,14 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:Real do Expr(Real(x.v*y.v))
 	  is y:Integer do Expr(Real(x.v*y))
 	  is y:Rational do Expr(Real(x.v*y))
+	  is y:BigReal do Expr(toBigReal(x.v)*y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:Integer do (
 	  when rhs
 	  is y:Integer do Expr(x * y)
      	  is y:Rational do Expr(x * y)
+     	  is y:BigReal do Expr(toBigReal(x) * y)
 	  is y:Real do Expr(Real(x * y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -143,7 +294,97 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x * y)
      	  is y:Rational do Expr(x * y)
+     	  is y:BigReal do Expr(toBigReal(x) * y)
 	  is y:Real do Expr(Real(x * y.v))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
+     is x:RawRingElement do (
+	  when rhs
+	  is y:RawRingElement do (
+	       when x*y
+	       is t:RawRingElement do Expr(t)
+	       is null do buildErrorPacket(EngineError("polynomial multiplication failed"))
+	       )
+	  is y:RawMatrix do (
+	       when x*y
+	       is t:RawMatrix do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
+     is x:BigReal do (
+	  when rhs
+	  is y:Integer do Expr(x * toBigReal(y))
+     	  is y:Rational do Expr(x * toBigReal(y))
+     	  is y:BigReal do Expr(x * y)
+	  is y:Real do Expr(x * toBigReal(y.v))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
+     is x:RawMonomial do (
+	  when rhs
+	  is y:RawMonomial do (
+	       when x*y
+	       is z:RawMonomial do Expr(z)
+	       is null do buildErrorPacket(EngineError("monomial multiplication overflow"))
+	       )
+	  else binarymethod(lhs,rhs,StarS))
+     is x:RawMonomialIdeal do (
+	  when rhs
+	  is y:RawMonomialIdeal do (
+	       when x*y
+	       is z:RawMonomialIdeal do Expr(z)
+	       is null do buildErrorPacket(EngineError("monomial ideal multiplication failed"))
+	       )
+	  else binarymethod(lhs,rhs,StarS))
+     is x:RawVector do (
+	  when rhs
+	  is y:RawRingElement do (
+	       when x*y
+	       is t:RawVector do Expr(t)
+	       is null do buildErrorPacket(EngineError("vector scalar multiplication failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
+     is x:RawMatrix do (
+	  when rhs
+	  is y:RawMatrix do (
+	       when x*y
+	       is t:RawMatrix do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
+	       )
+	  is y:RawVector do (
+	       when x*y
+	       is t:RawVector do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix vector multiplication failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
+     is x:LMatrixRR do (
+	  when rhs
+	  is y:LMatrixRR do (
+	       when x*y
+	       is t:LMatrixRR do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
+	       )
+	  is y:LMatrixCC do (
+	       when x*y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
+     is x:LMatrixCC do (
+	  when rhs
+	  is y:LMatrixRR do (
+	       when x*y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
+	       )
+	  is y:LMatrixCC do (
+	       when x*y
+	       is t:LMatrixCC do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
+	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is Error do lhs
@@ -165,6 +406,10 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
+     	  is y:BigReal do (
+	       if y === 0
+	       then buildErrorPacket("division by zero")
+	       else Expr(toBigReal(x) / y))
 	  is y:Real do (
 	       --if y.v == 0.
 	       --then buildErrorPacket("division by zero")
@@ -184,6 +429,10 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x.v/y)))
+     	  is y:BigReal do (
+	       if y === 0
+	       then buildErrorPacket("division by zero")
+	       else Expr(toBigReal(x.v) / y))
      	  is y:Rational do (
 	       --if y === 0
 	       --then buildErrorPacket("division by zero")
@@ -201,12 +450,44 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
+     	  is y:BigReal do (
+	       if y === 0
+	       then buildErrorPacket("division by zero")
+	       else Expr(toBigReal(x) / y))
 	  is y:Real do (
 	       --if y.v == 0.
 	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x / y.v)))
 	  is Error do rhs
+	  else binarymethod(lhs,rhs,DivideS))
+     is x:BigReal do (
+	  when rhs
+	  is y:Integer do (
+	       if y === 0
+	       then buildErrorPacket("division by zero")
+	       else Expr(x / toBigReal(y)))
+     	  is y:Rational do (
+	       if y === 0
+	       then buildErrorPacket("division by zero")
+	       else Expr(x / toBigReal(y)))
+     	  is y:BigReal do (
+	       if y === 0
+	       then buildErrorPacket("division by zero")
+	       else Expr(x / y))
+	  is y:Real do (
+	       if y.v == 0.
+	       then buildErrorPacket("division by zero")
+	       else Expr(x / toBigReal(y.v)))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,DivideS))
+     is x:RawMonomial do (
+	  when rhs
+	  is y:RawMonomial do (
+	       when x/y
+	       is z:RawMonomial do Expr(z)
+	       is null do buildErrorPacket(EngineError("monomial division overflow"))
+	       )
 	  else binarymethod(lhs,rhs,DivideS))
      is Error do lhs
      else binarymethod(lhs,rhs,DivideS));
@@ -228,6 +509,15 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	       else Expr(x//y)
 	       )
      	  is Error do rhs
+	  else binarymethod(lhs,rhs,SlashSlashS))
+     is x:RawRingElement do (
+	  when rhs
+	  is y:RawRingElement do (
+	       when x//y
+	       is t:RawRingElement do Expr(t)
+	       is null do buildErrorPacket(EngineError("polynomial division failed"))
+	       )
+	  is Error do rhs
 	  else binarymethod(lhs,rhs,SlashSlashS))
      is Error do lhs
      else binarymethod(lhs,rhs,SlashSlashS));
@@ -344,7 +634,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    if int(y%ushort(2)) == 0
 		    then Expr(toInteger(1))
 		    else Expr(toInteger(-1)))
-	       else Expr(Rational(toInteger(1),x^-y)))
+	       else Expr(newRationalCanonical(toInteger(1),x^-y)))
 	  is y:Real do Expr(Real(pow(double(toInt(x)),y.v)))
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
@@ -353,12 +643,41 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
+     is x:BigReal do (
+	  when rhs
+	  is y:Integer do (
+	       if isInt(y)
+	       then Expr(x^toInt(y))
+	       else WrongArgSmallInteger(2)
+	       )
+     	  is Error do rhs
+	  else binarymethod(lhs,rhs,PowerS))
+     is x:RawRingElement do (
+	  when rhs
+	  is y:Integer do (
+	       when x^y
+	       is t:RawRingElement do Expr(t)
+	       is null do buildErrorPacket(EngineError("polynomial power failed"))
+	       )
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,StarS))
      is x:Real do (
 	  when rhs
 	  is y:Real do Expr(Real(pow(x.v,y.v)))
 	  is y:Integer do Expr(Real(x.v ^ y))
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
+     is x:RawMonomial do (
+	  when rhs
+	  is y:Integer do
+	  if isInt(y)
+	  then (
+	       when x ^ toInt(y)
+	       is z:RawMonomial do Expr(z)
+	       is null do buildErrorPacket(EngineError("monomial power overflow"))
+	       )
+	  else WrongArgSmallInteger(2)
+	  else binarymethod(lhs,rhs,DivideS))
      else binarymethod(lhs,rhs,PowerS));
 powerC(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);

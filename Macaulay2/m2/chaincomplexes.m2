@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
@@ -26,6 +26,7 @@ ChainComplex _ ZZ := Module => (C,i) -> (
      then C#i
      else if C.?Resolution then (
 	  gr := C.Resolution;
+     	  error "ggresmodule not re-implemented yet";
 	  sendgg(ggPush gr, ggPush i, ggresmodule);
 	  F := new Module from ring C;
 	  if F != 0 then C#i = F;
@@ -83,6 +84,9 @@ complete ChainComplexMap := f -> (
      if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
      f)
 
+source ChainComplexMap := f -> f.source
+target ChainComplexMap := f -> f.target
+
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
 sum ChainComplex := Module => C -> directSum apply(sort spots C, i -> C_i)
@@ -130,6 +134,7 @@ ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
      ta := (target f)_(i+de);
      if f.?Resolution then (
 	  gr := f.Resolution;
+     	  error "ggresmap not re-implemented yet";
 	  sendgg(ggPush gr, ggPush i, ggresmap);
 	  p := getMatrix ring gr;
 	  if p != 0 then f#i = p;
@@ -393,7 +398,7 @@ poincare ChainComplex := C -> (
 poincareN ChainComplex := (C) -> (
      s := local S;
      t := local T;
-     G := group [s, t_0 .. t_(degreeLength ring C - 1)];
+     G := monoid [s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true];
      -- this stuff has to be redone as in Poincare itself, DRG
      R := ZZ G;
      use R;
@@ -602,6 +607,7 @@ rawbetti Resolution := X -> (
      -- returns a hash table with pairs of the form (d,i) => n
      -- where d is the multi-degree, i is the homological degree, and 
      -- n is the betti number.
+     error "ggbetti not re-implemented yet";
      sendgg(ggPush X, ggbetti);
      w := eePopIntarray();
      lo := w#0;
@@ -672,20 +678,14 @@ chainComplex GradedModule := ChainComplex => (M) -> (
      C)
 -----------------------------------------------------------------------------
 
-ggConcatCols := (R,mats) -> (
-     sendgg(apply(mats,ggPush), ggPush (#mats), ggconcat);
-     getMatrix R)
+ggConcatCols := (R,mats) -> newMatrix(R, rawDirectSum apply(toSequence mats, f -> f.RawMatrix))
 
 ggConcatBlocks := (R,mats) -> (
-     sendgg (
-	  apply(mats, row -> ( apply(row, m -> ggPush m), 
-		    ggPush(#row), ggconcat, ggtranspose )),
-	  ggPush(#mats), ggconcat, ggtranspose );
-     getMatrix R)
+     mats = applyTable(mats, f -> f.RawMatrix);
+     newMatrix(R, 
+	  rawDual rawDirectSum apply(toSequence mats, row -> rawDual rawDirectSum toSequence row)))
 
-tens := (R,f,g) -> (
-     sendgg (ggPush f, ggPush g, ggtensor);
-     getMatrix R)
+tens := (R,f,g) -> newMatrix(R, rawTensor( f.RawMatrix, g.RawMatrix ))
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      P := youngest(C,D);
@@ -780,7 +780,6 @@ newMatrix := (tar,src) -> (
 	  symbol ring => ring tar,
 	  symbol source => src,
 	  symbol target => tar,
-	  symbol handle => newHandle "",
 	  symbol cache => new CacheTable
 	  })
      

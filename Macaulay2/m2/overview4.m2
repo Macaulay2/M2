@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 
 document {
@@ -74,20 +74,21 @@ PARA,
 CODE ///(load "/usr/local/Macaulay2-0.9/lib/Macaulay2-0.9/emacs/M2-init.el")///,
 PARA,
 "Now edit that line and replace the path by the correct path to Macaulay2's
-files on your system.  To find out what that path is, run the following command",
-TT ///getenv "M2HOME"///, " in Macaulay 2.  Then append ", TT "/emacs/M2-init.el", "
-to the value returned and incorporate it into the ", TT "load", " command above.",
+files on your system.  To find out what that path is, evaluate the variable 
+", TT ///sourceHomeDirectory///, " in Macaulay 2.  Then append 
+", TT "/emacs/M2-init.el", " to the value returned and incorporate it into 
+the ", TT "load", " command above.",
 PARA,
 "Loading the file will cause emacs to enter a special mode for editing
 Macaulay 2 code whenever a file whose name has the form ", TT "*.m2", " is
 encountered.  It will also provide a special mode for running Macaulay 2 in
 an emacs buffer.  It sets the variable ", TT "transient-mark-mode", " to have
-a different value in each buffer, and sets hooks so that ", 
-TT "transient-mark-mode", " will be set to ", TT "t", " in M2 buffers.  The
+a different value in each buffer, and sets hooks so that 
+", TT "transient-mark-mode", " will be set to ", TT "t", " in M2 buffers.  The
 effect of this is that the mark is only active occasionally, and then emacs
 functions which act on a region of text will refuse to proceed unless the
-mark is active.  The ", TT "set-mark", " function or the ", 
-TT "exchange-point-and-mark", " function will activate the mark, and it will
+mark is active.  The ", TT "set-mark", " function or the 
+", TT "exchange-point-and-mark", " function will activate the mark, and it will
 remain active until some change occurs to the buffer.  The only reason we
 recommend the use of this mode is so the same key can be used to evaluate a
 line or a region of code, depending on whether the region is active.",
@@ -139,8 +140,8 @@ while the meta key was held down.)  Then position your cursor (and thus the
 emacs point) within the line containing ", TT "20!", ".  Now press ", TT "M-F12", "
 to open up a new frame called ", TT "DEMO", " for the ", TT "*M2*", " window with
 a large font suitable for use with a projector, and with your cursor in that
-frame, press ", TT "F11", " a few times to conduct the demo.  (If the font or frame is the
-wrong size, you may have to create a copy of the file ", TT "M2.el", "
+frame, press ", TT "F11", " a few times to conduct the demo.  (If the font or frame 
+is the wrong size, you may have to create a copy of the file ", TT "M2.el", "
 with a version of the function ", TT "M2-demo", " modified to fit your screen.)",
 PARA,
 "One press of ", TT "F11", " brings the next line of code forward into the
@@ -279,212 +280,15 @@ document { "w3",
      within emacs."
      }
 
-document { "engine communication protocol",
-     "Here is a description of the protocol for communication between the 
-     front end and the engine.  At the moment, this protocol is used only
-     for transmissions from the engine to the front end.",
-     PARA,
-     MENU {
-	  TO "transmitting a positive integer",
-	  TO "transmitting an integer",
-	  TO "transmitting an integer mod n",
-     	  TO "transmitting a sequence",
-	  TO "transmitting a monomial",
-	  TO "transmitting a polynomial",
-	  TO "transmitting a vector",
-	  TO "transmitting a matrix",
-	  TO "convert"
-	  }
-     }
-
-document { "transmitting a vector",
-     "The method for transmitting a vector depends on the ring involved.",
-     PARA,
-     "If the ring is a monoid ring (e.g., a polynomial ring), then
-     the vector is transmitted as a sequence of triples ", TT "(i,m,a)", ", 
-     where ", TT "i", " is the number of the row, ", TT "m", " is the monomial,
-     and ", TT "a", " is the coefficient.",
-     PARA,
-     "If the ring is not a monoid ring, then the vector is transmitted
-     as a sequences of pairs ", TT "(i,r)", " where ", TT "i", " is the 
-     number of the row, and ", TT "r", " is the entry.",
-     PARA,
-     "The columns of a matrix are transmitted as vectors.",
-     SEEALSO {"transmitting a monomial", "transmitting a matrix"}
-     }
-
-document { "transmitting a matrix",
-     "Most objects in the engine are stored as matrices.  Even single
-     polynomials are usually stored as 1 by 1 matrices.",
-     PARA,
-     "A matrix is transmitted by sending the columns as a sequence of
-     vectors.",
-     EXAMPLE "R = ZZ/101[x,y,z];",
-     EXAMPLE "f = matrix ( R, {{11,0,33},{0,22,34}} )",
-     EXAMPLE "ascii sendgg(ggPush f, ggtonet)",
-     SEEALSO "transmitting a vector"
-     }
-
-document { "transmitting an integer mod n",
-     "An integer mod n is sent as an integer.",
-     PARA,
-     EXAMPLE "ZZ/101[x];",
-     EXAMPLE "s = 44 + x - x",
-     EXAMPLE "ascii sendgg( ggPush s, ggleadcoeff, ggtonet)"
-     }
-
-document { "transmitting a polynomial",
-     "A polynomial is transmitted as a sequence of pairs (m,c), where
-     m is a monomial and c is a coefficient.",
-     PARA,
-     EXAMPLE "ZZ/101[x,y,z];",
-     EXAMPLE "ascii callgg(ggtonet, 22*x^66+11*y^77)"
-     }
-
-document { "transmitting a monomial",
-     "A monomial is transmitted as a sequence of pairs (i,e) of integers,
-     where i refers to the i-th variable in the ring, and e is the exponent.",
-     PARA,
-     EXAMPLE "ZZ/3[t,u,x,y,z];",
-     EXAMPLE "ascii sendgg(ggPush (t^22 * y^33 * z^55), ggleadmonom, ggtonet)"
-     }
-
-document { "transmitting a sequence",
-     "Several items of the same type are transmitted as follows.  The
-     number of items is transmitted first, as a positive integer of
-     28 bits or less.  See ", TO "transmitting a positive integer", ".
-     Then the items are transmitted.",
-     PARA,
-     EXAMPLE "ascii gg {33,44,55}"
-     }
-
-document { "transmitting a positive integer",
-     "The integer 0 is transmitted as a single zero byte.
-     A positive integer of 28 bits or less is sent 7 bits at a time, with
-     the high-order nonzero seven bits sent first.  The highest bit of
-     each byte except the last one is set to 1.",
-     PRE "
-     00000000    or
-     0xxxxxxx    or
-     1xxxxxxx 0xxxxxxx    or
-     1xxxxxxx 1xxxxxxx 0xxxxxxx    or
-     1xxxxxxx 1xxxxxxx 1xxxxxxx 0xxxxxxx",
-     PARA,
-     "A positive integer of more than 28 bits is sent as follows.  First
-     come four bytes, with seven bits of the number in each one, with 
-     the high bit of each byte set to 1.  Then comes the number of succeeding
-     bytes, transmitted as described above for a positive integer of 28
-     bits or less.  Finally come the succeeding bytes, each containing 8
-     bits of the intger.  Format:",
-     PRE "
-     1xxxxxxx 1xxxxxxx 1xxxxxxx 1xxxxxxx  (first 28 bits)
-     1xxxxxxx 0xxxxxxx                    (number of succeeding bytes)
-     xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx  (succeeding bytes)
-     xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx  (succeeding bytes)
-     ...
-     xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx  (succeeding bytes)
-     xxxxxxxx xxxxxxxx                    (succeeding bytes)",
-     "It may happen that the first byte in the sequence above has the
-     form 10000000."
-     }
-
-document { "transmitting an integer",
-     "The integer 0 is transmitted as a single zero byte.
-     Otherwise, the sign of the integer is put into bit 6 of the first byte,
-     and the bits of the absolute value of the integer are packed as follows:
-     6 bits into the first byte, 7 bits into 1, 2, or 3 more bytes, and 
-     8 bits into each of the succeeding bytes.  If 8 bit bytes are needed,
-     then the number of them is sent as a positive integer after the
-     first four bytes are sent.  See also ", 
-     TO "transmitting a positive integer", ".
-     In the following illustration, S denotes the sign bit, and x's denote
-     the bits of the integer.",
-     PRE "
-     00000000     or
-
-     0Sxxxxxx     or
-
-     1Sxxxxxx 0xxxxxxx	or
-
-     1Sxxxxxx 1xxxxxxx 0xxxxxxx	 or
-
-     1Sxxxxxx 1xxxxxxx 1xxxxxxx 0xxxxxxx   or
-
-     1Sxxxxxx 1xxxxxxx 1xxxxxxx 1xxxxxxx   (first 27 bits)
-     1xxxxxxx 0xxxxxxx    	      	   (number of succeeding bytes)
-     xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx   (succeeding bytes)
-     xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx   (succeeding bytes)
-     ...
-     xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx   (succeeding bytes)
-     xxxxxxxx xxxxxxxx	      	           (succeeding bytes)",
-     EXAMPLE "binary = s -> concatenate between (\" \",
-          apply(s,x -> apply(8, i-> toString ((x >> 7-i) % 2))));",
-     EXAMPLE "<< binary ascii gg 63 << endl;",
-     EXAMPLE "<< binary ascii gg 64 << endl;",
-     EXAMPLE "<< binary ascii gg 127 << endl;",
-     EXAMPLE "<< binary ascii gg 128 << endl;",
-     EXAMPLE "<< binary ascii gg 2^10 << endl;",
-     EXAMPLE "<< binary ascii gg 2^20 << endl;",
-     EXAMPLE "<< binary ascii gg (-2^20) << endl;",
-     EXAMPLE "<< binary ascii gg 2^30 << endl;",
-     EXAMPLE "<< binary ascii gg 2^40 << endl;",
-     EXAMPLE "<< binary ascii gg 2^50 << endl;"
-     }
-
 document { "engine", 
      "The engine is the part of the program that is dedicated to
      performing the computation of Groebner bases with Buchberger's
-     algorithm.  It is coded directly in C++ for speed, and it communicates
-     with the front-end interpreter through a bidirectional stream of bytes,
-     so that in future implementations the engine may reside in a separate
-     process on a distant machine.",
-     MENU {
-	  TO "engine communication protocol",
-     	  TO "low level gb engine commands",
-	  TO "high level gb engine commands"
-	  },
+     algorithm.  It is coded directly in C++ for speed.",
      PARA,
      "The Macaulay 2 engine provides fast polynomial and matrix operations,
      and Groebner bases, syzygies, Hilbert functions, resolutions and
      other operations that we feel need to be implemented directly for
      efficiency reasons.",
-     }
-
-document { "high level gb engine commands",
-     "Sending commands to the engine:",
-     MENU {
-	  TO "callgg",
-	  TO "gg",
-	  TO "ggPush",
-	  TO "handle",
-	  TO "sendToEngine",
-	  TO "sendgg"
-	  },
-     "This class provides an interface to rings implemented by the engine.",
-     SHIELD MENU {
-	  TO "EngineRing"
-	  },
-     "These routines take an element off the stack.",
-     MENU {
-	  TO "eePop",
-	  TO "eePopBool",
-	  TO "eePopInt",
-	  TO "eePopIntarray",
-	  TO "getMatrix"
-	  },
-     "These functions transfer ring elements to other rings.",
-     MENU {
-	  TO "eeLift",
-	  TO "eePromote"
-	  },
-     "These functions are used mainly for debugging the engine.",
-     MENU {
-	  TO "look",
-	  TO "engineMemory",
-	  TO "engineStack",
-	  TO "engineHeap",
-	  TO "see"
-	  }
      }
 
 document { "component example",

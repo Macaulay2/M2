@@ -4,6 +4,9 @@
 
 -- this file is for testing built-in functions
 
+printString(stdio, "testing A01.m2\n")
+simpleFlush stdio
+
 assert = x -> if not x then error "assertion failed "
 
 -- test {}

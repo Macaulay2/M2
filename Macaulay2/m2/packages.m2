@@ -23,10 +23,8 @@ addStartFunction(
 	       )))
 
 currentPackage = null
-writableGlobals.currentPackage = true
 
 packages = new VerticalList from {}
-writableGlobals.packages = true
 
 Dictionary = new Type of MutableHashTable		    -- temporary fiction
 
@@ -35,8 +33,6 @@ Package.synonym = "package"
 
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
-
-writableGlobals.currentDictionary = true
 
 net Package := p -> p#"package title" | " version " | p#"package version";
 

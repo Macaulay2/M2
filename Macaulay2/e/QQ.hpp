@@ -1,0 +1,99 @@
+// Copyright 1995 Michael E. Stillman.
+
+#ifndef _QQ_hh_
+#define _QQ_hh_
+
+#include "ring.hpp"
+#include <gmp.h>
+
+#define MPQ_VAL(f) (M2_Rational ((f).poly_val))
+#define MPQ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+
+class QQ : public Ring
+{
+  int _elem_size;
+  M2_Rational _zero_elem;
+
+  M2_Rational new_elem() const;
+  void remove_elem(M2_Rational f) const;
+
+protected:
+  QQ() {}
+  virtual ~QQ() {}
+  bool initialize_QQ(const Monoid *D);
+public:
+  static QQ * create(const Monoid *D);
+
+  QQ * cast_to_QQ() { return this; }
+  const QQ * cast_to_QQ() const { return this; }
+
+  virtual bool is_QQ() const         { return true; }
+  virtual bool is_basic_ring() const { return false; } 
+
+  virtual bool is_pid() const       { return 1; }
+  virtual bool has_gcd() const      { return 1; }
+  virtual bool is_graded() const    { return 1; }
+  virtual bool is_expensive() const { return 1; }
+
+  virtual void text_out(buffer &o) const;
+
+  virtual int coerce_to_int(ring_elem a) const;
+
+  ring_elem numerator(ring_elem q) const;
+  ring_elem denominator(ring_elem q) const;
+  ring_elem fraction(ring_elem top, ring_elem bottom) const;
+
+  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem var(int v, int n) const;
+  virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
+  virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
+
+  virtual ring_elem preferred_associate(ring_elem f) const;
+
+  int compare(const ring_elem a, const ring_elem b) const;
+  int is_positive(const ring_elem a) const;
+
+  virtual bool is_unit(const ring_elem f) const;
+  virtual bool is_zero(const ring_elem f) const;
+  virtual bool is_equal(const ring_elem f, const ring_elem g) const;
+
+  virtual ring_elem copy(const ring_elem f) const;
+  virtual void remove(ring_elem &f) const;
+
+  virtual void negate_to(ring_elem &f) const;
+  virtual void add_to(ring_elem &f, ring_elem &g) const;
+  virtual void subtract_to(ring_elem &f, ring_elem &g) const;
+  virtual ring_elem negate(const ring_elem f) const;
+  virtual ring_elem add(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, int n) const;
+
+  virtual ring_elem invert(const ring_elem f) const;
+
+  virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
+
+  virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g, 
+					 ring_elem &quot) const;
+
+  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
+				  ring_elem &u, ring_elem &v) const;
+
+  virtual void syzygy(const ring_elem a, const ring_elem b,
+		      ring_elem &x, ring_elem &y) const;
+
+  virtual ring_elem random() const;
+
+  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+
+  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
+
+};
+
+#endif

@@ -1,5 +1,6 @@
-R = QQ[x,y]
 load "D-modules.m2"
+-- Dtrace 666
+R = QQ[x,y]
 A = deRhamAll(x^2+y^3)
 assert A.?TransferCycles
 B = deRhamAll(x^2+y^2)

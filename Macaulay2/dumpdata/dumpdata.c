@@ -17,6 +17,7 @@
 #include "map.h"
 #include "warning.h"
 #include "std.h"
+#include "maputil.h"
 
 #define DRYRUN 0
 
@@ -27,58 +28,6 @@
 #define PAGESIZE 4096
 #endif
 #endif
-
-static char mapfmt[] = "%p-%p %c%c%c %u\n";
-
-static int isStack(map m) {
-  void *p = &p;
-  return p - m->from >= 0 && m->to - p > 0;
-}
-
-static int isStatic(map m) {
-  static char p0[] = "h";
-  static char q0[1];
-  void *p = (void *)(p0), *q = (void *)(q0);
-  return p - m->from >= 0 && m->to - p > 0 || q - m->from >= 0 && m->to - q > 0;
-}
-
-static int isDumpable(map m) {
-  return m->w && m->r && !isStack(m);
-}
-  
-static unsigned int checksum(unsigned char *p, unsigned int len) {
-  unsigned int c = 0;
-  while (0 < len--) c = 23 * c + *p++;
-  return c;
-}
-
-static int isCheckable(map m) {
-  return !m->w && m->r && !isStack(m);
-}
-
-static void checkmap(map m) {
-  m->checksum = isCheckable(m) ? checksum(m->from, m->to - m->from) : 0;
-}
-
-static void checkmaps(int nmaps, struct MAP m[nmaps]) {
-  int i;
-  for (i=0; i<nmaps; i++) {
-    checkmap(&m[i]);
-  }
-}
-
-static void sprintmap(char *s, map m) {
-  sprintf(s,mapfmt, 
-	  m->from, m->to,
-	  m->r ? 'r' : '-', m->w ? 'w' : '-', m->x ? 'x' : '-',
-	  m->checksum);
-}
-
-static void fdprintmap(int fd, map m) {
-  char buf[200];
-  sprintmap(buf,m);
-  write(fd,buf,strlen(buf));
-}
 
 static void trim(char *s) {
   if (s == NULL) return;
@@ -236,7 +185,8 @@ int loaddata(char const *filename) {
       if (dumpedmap.checksum != currmap[j].checksum) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
-	warning("loaddata: map checksum has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
+	warning("loaddata: checksum has changed from %u to %u for map %s\n",
+		dumpedmap.checksum, currmap[j].checksum, buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
 	  fclose(f);
 	  return ERROR;

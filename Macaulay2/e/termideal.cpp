@@ -5,34 +5,20 @@
 #include "matrix.hpp"
 #include "text_io.hpp"
 
-stash *TermIdeal::mystash;
-stash *mon_term::mystash;
-stash *tagged_term::mystash;
-
-TermIdeal::TermIdeal(const PolynomialRing *AA, const FreeModule *GGsyz)
+// MES Aug 2002: still to fix up
+TermIdeal::TermIdeal(GBRing *GR, const FreeModule *GGsyz)
 {
-  A = AA;
-  R = GGsyz->get_ring()->cast_to_PolynomialRing();
-  assert(R != NULL);
-  M = R->Nmonoms();
-  K = R->Ncoeffs();
+  M = GR->get_flattened_monoid();
+  K = GR->get_flattened_coefficients(); // Should be ZZ ?
   Gsyz = GGsyz;
-  nvars = R->n_vars();
+  nvars = M->n_vars();
   one = K->from_int(1);
-  bump_up(R);			// Don't bother bumping the others
-  bump_up(Gsyz);
 
   // MESXX: the following should all be taken from the ring R.
-  Rsyz = A->get_Rsyz();
-  if (Rsyz) bump_up(Rsyz);
-  if (A->is_quotient_ring())
-    ring_terms = A->get_quotient_monomials_ZZ()->ring_terms;
+  if (GR->is_quotient_ring())
+    ring_terms = GR->get_quotient_monomials_ZZ()->ring_terms;
   else
     ring_terms = NULL;
-
-  //  Rsyz = R->make_FreeModule();
-  //  bump_up(Rsyz);
-  //  ring_terms = NULL;
 
   terms = new_mon_term_head();
   count = 0;
@@ -40,18 +26,6 @@ TermIdeal::TermIdeal(const PolynomialRing *AA, const FreeModule *GGsyz)
 
 TermIdeal::~TermIdeal()
 {
-  while (terms->next != terms)
-    {
-      mon_term *t = terms->next;
-      unlink(t);
-      delete_mon_term(t);
-    }
-  delete_mon_term(terms);
-  ring_terms = NULL;
-  K->remove(one);
-  bump_down(Gsyz);
-  if (Rsyz) bump_down(Rsyz);
-  bump_down(R);
 }
 
 void TermIdeal::from_list(queue<tagged_term *> &elems)
@@ -120,7 +94,9 @@ void TermIdeal::from_list(queue<tagged_term *> &elems)
   delete [] exp;
 }
 
-void TermIdeal::select_non_divisors(tagged_term **a, int nelems, tagged_term *g,
+void TermIdeal::select_non_divisors(tagged_term **a, 
+				    int nelems, 
+				    tagged_term *g,
 				    array<tagged_term *> &result_divs) const
 {
   int i;
@@ -134,7 +110,7 @@ void TermIdeal::select_non_divisors(tagged_term **a, int nelems, tagged_term *g,
   for (i=0; i<nelems; i++)
     {
       ring_elem r;
-      ring_elem f = K->divide(a[i]->coeff(), g->coeff(), r);
+      ring_elem f = K->divide(a[i]->coeff(), g->coeff(), r); // MES MES
       if (!K->is_zero(r))
 	result_divs.append(a[i]);
       K->remove(f);
@@ -150,11 +126,6 @@ void TermIdeal::text_out(buffer &o) const
       M->elem_text_out(o, p->monom());
       o << " ";
     }
-}
-
-void TermIdeal::bin_out(buffer &/*o*/) const
-{
-  emit_line("bin_out not implemented for term ideals");
 }
 
 mon_term *TermIdeal::new_mon_term_head() const
@@ -174,8 +145,7 @@ void TermIdeal::delete_tagged_term(tagged_term *&t) const
   if (t == NULL) return;
   K->remove(t->_coeff);
   M->remove(t->_monom);
-  Gsyz->remove(t->_gsyz);
-  if (t->_rsyz != NULL) Rsyz->remove(t->_rsyz);
+  GR->remove(t->_gsyz);
   delete t;
   t = NULL;
 }
@@ -252,29 +222,34 @@ int TermIdeal::compare(mon_term *p, mon_term *q) const
 
 
 
-TermIdeal *TermIdeal::make_termideal(const Matrix &m, int n)
+TermIdeal *TermIdeal::make_termideal(const Matrix *m, int n)
 {
   int i;
-  const PolynomialRing *R = m.get_ring()->cast_to_PolynomialRing();
+
+  // MES Aug 2002: what should these lines be? 
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *A = R->get_base_poly_ring();
   while (A->is_quotient_ring())
     A = A->get_base_poly_ring();
-  const Ring *K = R->Ncoeffs();
-  const Monoid *M = R->Nmonoms();
-  const FreeModule *Gsyz = R->make_FreeModule(m.n_cols()); 
-  TermIdeal *result = new TermIdeal(A,Gsyz);
+
+  const FreeModule *Gsyz = R->make_FreeModule(m->n_cols()); 
+  GBRing *GR = R->get_gb_ring();
+  const Monoid *M = GR->get_flattened_monoid();
+  const Ring *K = GR->get_flattened_coefficients(); // Should be ZZ ?
+
+  TermIdeal *result = new TermIdeal(GR,Gsyz);
   queue <tagged_term *> new_elems;
-  for (i=0; i<m.n_cols(); i++)
+  for (i=0; i<m->n_cols(); i++)
     {
-      vec v = m[i];
-      if (m.rows()->is_zero(v)) continue;
-      if (m.rows()->lead_component(v) != n) continue;
-      vec vsyz = m.cols()->e_sub_i(i);
+      gbvector *v = GR->gbvector_from_vec(m->rows(), (*m)[i]);
+      if (GR->gbvector_is_zero(v)) continue;
+      if (GR->gbvector_lead_component(v) != n) continue;
+      gbvector *vsyz = GR->gbvector_e_sub_i(Gsyz,i);
       tagged_term *p = new tagged_term(
 			     K->copy(v->coeff),
 			     M->make_new(v->monom),
-			     vsyz,
-			     NULL);
+			     vsyz);
+
       new_elems.insert(p);
     }
 
@@ -282,15 +257,17 @@ TermIdeal *TermIdeal::make_termideal(const Matrix &m, int n)
   return result;
 }
 
-TermIdeal *TermIdeal::make_termideal(const PolynomialRing *A,
+TermIdeal *TermIdeal::make_termideal(GBRing *GR,
 				     const FreeModule *Gsyz, 
 				     queue<tagged_term *> &elems)
 {
-  TermIdeal *result = new TermIdeal(A,Gsyz);
+  TermIdeal *result = new TermIdeal(GR,Gsyz);
   result->from_list(elems);
   return result;
 }
 
+// MES Aug 2002: this needs to be done too
+#if 0
 TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
 					  const array<ring_elem> &elems1,
 					  const array<ring_elem> &elems2,
@@ -313,14 +290,13 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
       tagged_term *t = new 
 	tagged_term(R->Ncoeffs()->copy(f->coeff),
 		    R->Nmonoms()->make_new(f->monom),
-		    G->e_sub_i(i),
-		    NULL);
+		    G->e_sub_i(i));
       guys.insert(t);
     }
   TermIdeal *ti = make_termideal(R,G,guys);
 
-  // Now we loop through ti, adding to 'result', and resetting the 'gsyz', 'rsyz'
-  // fields of 'ti'.  We then place the entire list in 'ring_terms'.
+  // Now we loop through ti, adding to 'result', and resetting the 'gsyz'
+  // field of 'ti'.  We then place the entire list in 'ring_terms'.
   mon_term *p;
   for (p = ti->terms->next; p != ti->terms; p = p->next)
     {
@@ -331,7 +307,6 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
     }
   const FreeModule *RRsyz = R->make_FreeModule(result.length());
   ti->Rsyz = RRsyz;
-  bump_up(ti->Rsyz);
   i = 0;
   for (p = ti->terms->next; p != ti->terms; p = p->next)
     {
@@ -347,49 +322,56 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
   ti->count = 0;
   return ti;
 }
+#endif
 
-void TermIdeal::append_to_matrix(Matrix m, int i) const
+#if 0
+// MES Aug 2002: this needs to be done too
+void TermIdeal::append_to_matrix(Matrix *m, int i) const
 {
   // Should check: i is in range, m has same ring as this.
-  if (i < 0 || i >= m.n_rows())
+  if (i < 0 || i >= m->n_rows())
     {
-      gError << "index out of range";
+      ERROR("index out of range");
       return;
     }
-  if (m.get_ring() != R)
+  if (m->get_ring() != R)
     {
-      gError << "incorrect base ring";
+      ERROR("incorrect base ring");
       return;
     }
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
       ring_elem r = R->term(p->coeff(), p->monom());
-      vec v = m.rows()->term(i, r);
-      if (v != NULL) m.append(v);
+      vec v = m->rows()->raw_term(r,i);
+      if (v != NULL) m->append(v);
     }
 }
-Matrix TermIdeal::change_matrix() const
+#endif
+
+Matrix *TermIdeal::change_matrix() const
 {
-  Matrix result(Gsyz);
+  Matrix *result = new Matrix(Gsyz);
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
-      vec vsyz = Gsyz->copy(p->t->_gsyz);
-      result.append(vsyz);
+      vec vsyz = GR->gbvector_to_vec(Gsyz, p->t->_gsyz);
+      result->append(vsyz);
     }
   return result;
 }
 
-Matrix TermIdeal::ring_change_matrix() const
+#if 0
+// MES Aug 2002: this needs to be done too
+Matrix *TermIdeal::ring_change_matrix() const
 {
-  if (Rsyz == NULL) return Matrix();
-  Matrix result(Rsyz);
+  Matrix *result = new Matrix(Rsyz);
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
       vec vsyz = Rsyz->copy(p->t->_rsyz);
-      result.append(vsyz);
+      result->append(vsyz);
     }
   return result;
 }
+#endif
 
 tagged_term *TermIdeal::insert_minimal(tagged_term *tt)
 {
@@ -457,6 +439,7 @@ void TermIdeal::insert_w_deletions(tagged_term *t, queue<tagged_term *> &deletio
   delete [] exp;
 }
 
+// MES Aug 2002: this needs to be done too
 int TermIdeal::replace_minimal(const ring_elem new_coeff, const int *mon)
 {
   // First see if 'mon' occurs.  If not, return -1.  If it does appear,
@@ -469,7 +452,7 @@ int TermIdeal::replace_minimal(const ring_elem new_coeff, const int *mon)
       if (cmp == EQ)
 	{
 	  tagged_term *t = s->t;
-	  if (t->gsyz() == NULL || t->gsyz()->next != NULL || t->rsyz() != NULL)
+	  if (t->gsyz() == NULL || t->gsyz()->next != NULL)
 	    break;
 	  K->remove(t->_coeff);
 	  t->_coeff = K->copy(new_coeff);
@@ -577,6 +560,7 @@ bool TermIdeal::find_all_divisors(const int *exp, array<tagged_term *> &result) 
   return false; // A '1' lead coefficient was not found.
 }
 
+// MES Aug 2002: this needs to be done too
 tagged_term *TermIdeal::gcd(array<tagged_term *> &elems, const int *m) const
 {
   //sort_by_field(elems);		// Sorted in increasing abs value
@@ -589,10 +573,8 @@ tagged_term *TermIdeal::gcd(array<tagged_term *> &elems, const int *m) const
   int *factor = M->make_one();
   M->divide(m, elems[0]->monom(), factor);
 
-  vec rsyz = NULL;
-  vec gsyz = Gsyz->mult_by_monomial(factor, elems[0]->gsyz());
-  if (Rsyz != NULL) rsyz = Rsyz->mult_by_monomial(factor, elems[0]->rsyz());
-  vec tmp, tmp2;
+  gbvector *gsyz = GR->mult_by_monomial(Gsyz, factor, elems[0]->gsyz());
+  gbvector *tmp, *tmp2;
 
   for (int i=1; i<elems.length(); i++)
     {
@@ -604,47 +586,33 @@ tagged_term *TermIdeal::gcd(array<tagged_term *> &elems, const int *m) const
       ring_elem g = K->gcd_extended(c, elems[i]->coeff(), u, v);
       K->remove(c);
       c = g;
-      // Take combination of elems[i]->gsyz, gsyz.  Same for rsyz.
+      // Take combination of elems[i]->gsyz, gsyz.
       if (!K->is_zero(u))
-	tmp = Gsyz->mult_by_coeff(u, gsyz);
+	tmp = GR->mult_by_coeff(Gsyz, u, gsyz);
       else
 	tmp = NULL;
       if (!K->is_zero(v))
-	tmp2 = Gsyz->mult_by_term(v, factor, elems[i]->gsyz());
+	tmp2 = GR->mult_by_term(Gsyz, v, factor, elems[i]->gsyz());
       else
 	tmp2 = NULL;
-      Gsyz->add_to(tmp, tmp2);
-      Gsyz->remove(gsyz);
+      GR->add_to(Gsyz, tmp, tmp2);
+      GR->remove(gsyz);
       gsyz = tmp;
-
-      if (Rsyz != NULL)
-	{
-	  if (!K->is_zero(u))
-	    tmp = Rsyz->mult_by_coeff(u, rsyz);
-	  else
-	    tmp = NULL;
-	  if (!K->is_zero(v))
-	    tmp2 = Rsyz->mult_by_term(v, factor, elems[i]->rsyz());
-	  else
-	    tmp2 = NULL;
-	  Rsyz->add_to(tmp, tmp2);
-	  Rsyz->remove(rsyz);
-	  rsyz = tmp;
-	}
 
       K->remove(u);
       K->remove(v);
     }
   M->remove(factor);
-  return new tagged_term(c,M->make_new(m),gsyz,rsyz);
+  return new tagged_term(c,M->make_new(m),gsyz);
 }
 
-int TermIdeal::search(const int *m, ring_elem &result_gcd, vec &result_gsyz, vec &result_rsyz) const
+int TermIdeal::search(const int *m, ring_elem &result_gcd, 
+		      gbvector * &result_gsyz) const
   // Given a monomial 'm', find the gcd 'result_gcd' of all of the coefficients of
-  // the monomials in 'this' which divide 'm'.  result_gsyz, result_rsyz are used to 
+  // the monomials in 'this' which divide 'm'.  result_gsyz is used to 
   // generate this element, as usual.
   // The result integer: the number of divisors found.  If this is 0, then result_gcd is 
-  // undefined, and result_gsyz, result_rsyz are null pointers.  Caveat: there may be more divisors
+  // undefined, and result_gsyz is a null pointer.  Caveat: there may be more divisors
   // than the ones actually found, if the gcd becomes 1 earlier.
 {
   int *exp = new int[nvars];
@@ -654,110 +622,78 @@ int TermIdeal::search(const int *m, ring_elem &result_gcd, vec &result_gsyz, vec
   if (divs.length() == 0)
     {
       result_gsyz = NULL;
-      result_rsyz = NULL;
       return 0;
     }
   tagged_term *p = gcd(divs, m);
   result_gcd = p->_coeff;
   result_gsyz = p->_gsyz;
-  result_rsyz = p->_rsyz;
   p->_coeff = (Nterm*)0;
-  p->_rsyz = 0;
   p->_gsyz = 0;
   delete_tagged_term(p);
   return divs.length();
 }
 
 int TermIdeal::search(const ring_elem coeff, const int *m, 
-		      ring_elem &result_gcd, vec &result_gsyz, vec &result_rsyz) const
+		      ring_elem &result_gcd, gbvector * &result_gsyz) const
   // Returns one of TI_TERM, TI_MONOMIAL, TI_NONE.
   // Returns TI_TERM if coeff*m is in the term ideal.
   // Returns TI_MONOMIAL if m is in the ideal generated by the monomials
   // Returns TI_NONE if m is not in this monomial ideal.
-  // The result_gsyz, result_rsyz are the 'multipliers' that may be used to 
+  // The result_gsyz is the 'multiplier' that may be used to 
   // perform the reduction.  These have the effect of reducing the coefficient
   // mod the gcd of the elements in the termideal of monomial 'm'.
 {
-  vec gsyz, rsyz;
+  gbvector *gsyz;
   result_gsyz = 0;
-  result_rsyz = 0;
 
-  int nfound = search(m, result_gcd, gsyz, rsyz);
+  int nfound = search(m, result_gcd, gsyz);
   if (nfound == 0) return TI_NONE;
 
   ring_elem rem;
-  ring_elem d = K->divide(coeff, result_gcd, rem);
+  ring_elem d = K->divide(coeff, result_gcd, rem); // MES MES
   if (!K->is_zero(d))
     {
-      result_gsyz = Gsyz->mult_by_coeff(d,gsyz);
-      if (Rsyz == NULL)
-	result_rsyz = NULL;
-      else 
-	result_rsyz = Rsyz->mult_by_coeff(d,rsyz);
+      result_gsyz = GR->mult_by_coeff(Gsyz,d,gsyz);
     }
 
-  Gsyz->remove(gsyz);
-  if (Rsyz != NULL) Rsyz->remove(rsyz);
+  GR->remove(gsyz);
   bool iszero = K->is_zero(rem);
   K->remove(rem);
   if (iszero) return TI_TERM;
   return TI_MONOMIAL;
 }
 
-int TermIdeal::search(const ring_elem coeff, const int *m, vec &result_gsyz, vec &result_rsyz) const
+int TermIdeal::search(const ring_elem coeff, const int *m, 
+		      gbvector * &result_gsyz) const
   // Returns one of TI_TERM, TI_MONOMIAL, TI_NONE.
   // Returns TI_TERM if coeff*m is in the term ideal.
   // Returns TI_MONOMIAL if m is in the ideal generated by the monomials
   // Returns TI_NONE if m is not in this monomial ideal.
-  // The result_gsyz, result_rsyz are the 'multipliers' that may be used to 
+  // The result_gsyz is the 'multiplier' that may be used to 
   // perform the reduction.  These have the effect of reducing the coefficient
   // mod the gcd of the elements in the termideal of monomial 'm'.
 {
   ring_elem termgcd;
-  int result = search(coeff, m, termgcd, result_gsyz, result_rsyz);
+  int result = search(coeff, m, termgcd, result_gsyz);
   if (result != TI_NONE)
     K->remove(termgcd);
   return result;
 }
 
-Matrix TermIdeal::search(const Matrix &m) const
+// MES Aug 2002: what to do with this one?
+Matrix *TermIdeal::search(const Matrix *m) const
 {
-  Matrix result(Gsyz);
-  for (int i=0; i<m.n_cols(); i++)
+  Matrix *result = new Matrix(Gsyz);
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec v = m[i];
-      vec gsyz, rsyz;
+      gbvector *v = GR->gbvector_from_vec(m->rows(), (*m)[i]);
+      gbvector *gsyz;
       if (v != NULL)
-	search(v->coeff,v->monom,gsyz,rsyz);
+	search(v->coeff,v->monom,gsyz);
       else
 	gsyz = NULL;
-      result.append(gsyz);
+      vec vsyz = GR->gbvector_to_vec(m->rows(), gsyz);
+      result->append(vsyz);
     }
   return result;
 }
-#if 0
-      int any_is_one = 0;
-      for (i=0; i<divs.length(); i++)
-	if (divs[i]->coeff_is_one)
-	  {
-	    any_is_one = 1;
-	    break;
-	  }
-
-  // If the base ring is a quotient ring, include these lead monomials.
-  if (m.get_ring()->is_quotient_poly_ring())
-    {
-      i = 0;
-      MonomialIdeal Rideal = m.get_ring()->get_quotient_monomials();
-      for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++, i++)
-	{
-	  Nterm *f = (Nterm *) Rideal[j]->basis_ptr();
-	  tagged_term *m = new_tagged_term(f->coeff,
-					   f->monom,
-					   NULL, 
-					   result->Rsyz->e_sub_i(i));
-	  new_elems.insert(m);
-	}
-    }
-
-#endif

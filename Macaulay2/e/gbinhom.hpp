@@ -2,7 +2,6 @@
 #ifndef _gbinhom_hh_
 #define _gbinhom_hh_
 
-#include "object.hpp"
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
@@ -15,8 +14,10 @@ class GBinhom_comp : public gb_comp
 {
 private:
   // Ring information
+  GBRing *GR;
   const Monoid *M;
-  const PolynomialRing *R;
+  const Ring *K;
+
   const FreeModule *F;
   const FreeModule *Fsyz;
 
@@ -27,11 +28,11 @@ private:
 
   gb_elem *gbLarge;
 
-  array<MonomialIdeal> monideals; // baggage for each is 'gb_elem *'
+  array<MonomialIdeal *> monideals; // baggage for each is 'gb_elem *'
                               // This is the 'large' GB
 
   // Syzygies collected
-  Matrix syz;
+  Matrix *syz;
 
   // statistics information
   int n_gb;
@@ -50,16 +51,16 @@ private:
 
   int need_resize;
 private:
-  void set_up0(const Matrix &m, int csyz, int nsyz);
-  void set_up(const Matrix &m, int csyz, int nsyz, int strategy);
-  void force(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-	  const Matrix &syz);
+  void set_up0(const Matrix *m, int csyz, int nsyz);
+  void set_up(const Matrix *m, int csyz, int nsyz, int strategy);
+  void force(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+	  const Matrix *syz);
 
   // S-pair control
   s_pair *new_var_pair(gb_elem *p, const int *lcm);
   s_pair *new_ring_pair(gb_elem *p, const int *lcm);
   s_pair *new_s_pair(gb_elem *p, gb_elem *q, const int *lcm);
-  s_pair *new_gen(int i, const vec f);
+  s_pair *new_gen(int i, gbvector * f, ring_elem denom);
   void remove_pair(s_pair *& p);
   int mark_pair(gb_elem *p, gb_elem *q) const;
 
@@ -67,9 +68,9 @@ private:
   int compare(const gb_elem *p, const gb_elem *q) const;
   void find_pairs(gb_elem *p);
   void compute_s_pair(s_pair *p);
-  int gb_reduce(vec &f, vec &fsyz);
-  int gb_geo_reduce(vec &f, vec &fsyz);
-  void gb_insert(vec f, vec fsyz, int ismin);
+  int gb_reduce(gbvector * &f, gbvector * &fsyz);
+  int gb_geo_reduce(gbvector * &f, gbvector * &fsyz);
+  void gb_insert(gbvector *f, gbvector *fsyz, int ismin);
   void inter_reduce(gb_elem *&gens);
 
   int computation_complete(int stop_gb, int stop_syz, 
@@ -81,32 +82,32 @@ private:
 
 public:
   // Forcing a GB
-  GBinhom_comp(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-	  const Matrix &syz);
+  GBinhom_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+	  const Matrix *syz);
 
   // An honest GB computation
-  GBinhom_comp(const Matrix &m, int collect_syz, int n_syz, int strategy);
+  GBinhom_comp(const Matrix *m, int collect_syz, int n_syz, int strategy);
   ~GBinhom_comp();
 
   // Performing the computation
   int calc(const int *deg, const intarray &stop_conditions);
 
   // Adding generators
-  void add_gens(int lo, int hi, const Matrix &m);
+  void add_gens(int lo, int hi, const Matrix *m);
 
   // reduction
-  Matrix reduce(const Matrix &m, Matrix &lift);
-  Vector reduce(const Vector &v, Vector &lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  Vector *reduce(const Vector *v, Vector *&lift);
 
-  virtual int contains(const Matrix &m);
+  virtual int contains(const Matrix *m);
   virtual bool is_equal(const gb_comp *q);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix min_gens_matrix();
-  Matrix initial_matrix(int n);
-  Matrix gb_matrix();
-  Matrix change_matrix();
-  Matrix syz_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
+  Matrix *syz_matrix();
   void debug_out(s_pair *q) const;
   void debug_pairs_out(gb_elem *p) const;
   void debug_pairs() const;
@@ -115,18 +116,5 @@ public:
   void debug_pairs(buffer &o) const;
 
   void stats() const;
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "groebner computation"; }
-
-  class_identifier class_id() const { return CLASS_GBinhom_comp; }
-
-  int length_of() const { return n_gb; }
 };  
 #endif

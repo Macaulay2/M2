@@ -3,13 +3,21 @@
 #ifndef _gb_comp_hh_
 #define _gb_comp_hh_
 
-#include "object.hpp"
+#include "hash.hpp"
+#include "intarray.hpp"
 
 class binomialGB_comp;
 class sagbi_comp;
+class Matrix;
+class RingElement;
+class Vector;
+class PolynomialRing;
 
 extern "C" char system_interrupted;
 extern int comp_printlevel;
+
+// The printlevel flags
+const int PRINT_SPAIR_TRACKING=1024;
 
 // The various kinds of GB computations
 const int COMP_NGB = 10;
@@ -69,42 +77,170 @@ const int STOP_CODIM    = 4;
 const int STOP_MIN_GENS = 5;
 //--- above to be removed soon -----------------------------
 
-//class gb_comp : public mutable_object
-class gb_comp : public type
+struct StopConditions
+{
+  bool always_stop;
+  bool stop_after_degree;
+  M2_arrayint degree_limit; // Stop after completing this 'slanted' degree
+  int basis_element_limit; // Number of gb elements
+  int syzygy_limit;
+  int pair_limit;
+  bool use_codim_limit;
+  int codim_limit;
+  int subring_limit;
+  M2_bool just_min_gens;
+  M2_arrayint length_limit; // ignored for GB computations
+};
+
+class Computation : public mutable_object
+// This is the base type for all Groebner basis and syzygy computations
+{
+protected:
+  StopConditions _Stop;
+  Computation();
+  virtual ~Computation();
+public:
+  static ComputationOrNull *choose_gb(const Matrix *m,
+				 M2_bool collect_syz,
+				 int n_rows_to_keep,
+				 M2_bool use_max_degree,
+				 int max_degree,
+				 int algorithm,
+				 int strategy);
+
+  static ComputationOrNull *choose_res(const Matrix *m,
+				  M2_bool resolve_cokernel,
+				  int max_level,
+				  M2_bool use_max_slanted_degree,
+				  int max_slanted_degree,
+				  int algorithm,
+				  int strategy
+				  );
+
+  static ComputationOrNull * force(const Matrix *m,
+				   const Matrix *gb,
+				   const Matrix *change);
+
+  ComputationOrNull *
+  set_stop_conditions(M2_bool always_stop,
+		      M2_bool stop_after_degree,
+		      M2_arrayint degree_limit,
+		      int basis_element_limit,
+		      int syzygy_limit,
+		      int pair_limit,
+		      int codim_limit,
+		      int subring_limit,
+		      M2_bool just_min_gens,
+		      M2_arrayint length_limit);
+
+  virtual const PolynomialRing *get_ring() = 0;
+
+  virtual ComputationOrNull *set_hilbert_function(const RingElement *h) = 0;
+
+  virtual const MatrixOrNull *get_matrix(int level, M2_bool minimize) = 0;
+
+  virtual int kind() = 0;
+
+  virtual int status(int * complete_up_through_this_degree,
+		     int * complete_up_through_this_level) = 0;
+  /* -1: error condition, and the error message is set.
+     0: not made, and in fact it won't ever be done...
+     1: not started,
+     2: started, 
+     3: stopped because of a stopping condition
+     4: finished the computation completely
+  */
+
+  virtual int status_level(int level, 
+			   M2_bool minimize,
+			   int * complete_up_through_this_degree) = 0;
+  /* Same return values */
+
+  virtual const MatrixOrNull *get_change(int level) = 0;
+
+  virtual const MatrixOrNull *get_leadterms(int nparts, int level) = 0;
+  
+  virtual const FreeModuleOrNull *get_free(int level, M2_bool minimal) = 0; 
+
+  virtual const MatrixOrNull *matrix_remainder(int level,
+					       const Matrix *m) = 0;
+
+  virtual void matrix_lift(int level,
+			   const Matrix *m,
+			   MatrixOrNull **result_remainder,
+			   MatrixOrNull **result_quotient
+			   ) = 0;
+
+  virtual int contains(int level,
+		       const Matrix *m) = 0;
+
+  virtual const M2_arrayint betti(int type) = 0;
+  /* 0: minimal betti numbers,
+     1:
+     2:
+     3:
+  */
+  
+  virtual void text_out(buffer &o) = 0;
+  /* This displays statistical information, and depends on the
+     comp_printlevel value */
+};
+
+class GBComputation : public Computation
+{
+protected:
+  // Values maintained to determine status of computation
+  int _state;
+  int _this_degree;
+
+  // Values maintained to check stop conditions  
+  int _n_gb;
+  int _n_syz;
+  int _n_pairs_computed;
+  int _n_gens_left;
+  int _n_subring;
+
+protected:
+  int computation_is_complete() const;
+
+public:
+};
+
+
+class gb_comp : public mutable_object
 {
 protected:
   int _kind;  // GB_comp:1, GBinhom_comp:2, EGB1:13
+  StopConditions Stop;
 public:
   gb_comp(int kind) : _kind(kind) {}
   virtual ~gb_comp() {}
 
   int kind() const { return _kind; }
 
-  static gb_comp *make(Matrix &m, bool dosyz, int nsyz, int strategy);
-  static gb_comp *make(Matrix &m, bool dosyz, int nsyz, RingElement &hf, int strategy);
-  static gb_comp *force(Matrix &gens, Matrix &gb, Matrix &change, Matrix &syz);
+  static gb_comp *make(const Matrix *m, bool dosyz, int nsyz, int strategy);
+  static gb_comp *make(const Matrix *m, bool dosyz, int nsyz, const RingElement *hf, int strategy);
+  static gb_comp *force(const Matrix *gens, 
+			const Matrix *gb, 
+			const Matrix *change, 
+			const Matrix *syz);
 
-  virtual int calc(const int *deg, const intarray &stop_conditions) = 0;
+  void set_stop_conditions(StopConditions &S) { Stop = S; }
+
+  virtual int calc(const int *deg, const intarray &stop) = 0;
   
   virtual void stats() const = 0;
-  virtual Matrix min_gens_matrix() = 0;
-  virtual Matrix gb_matrix() = 0;
-  virtual Matrix syz_matrix() = 0;
-  virtual Matrix change_matrix() = 0;
-  virtual Matrix initial_matrix(int n=-1) = 0;
+  virtual Matrix *min_gens_matrix() = 0;
+  virtual Matrix *gb_matrix() = 0;
+  virtual Matrix *syz_matrix() = 0;
+  virtual Matrix *change_matrix() = 0;
+  virtual Matrix *initial_matrix(int n=-1) = 0;
 
-  virtual Matrix reduce(const Matrix &m, Matrix &result_lift) = 0;
-  virtual Vector reduce(const Vector &v, Vector &result_lift) = 0;
+  virtual Matrix *reduce(const Matrix *m, Matrix * &result_lift) = 0;
+  virtual Vector *reduce(const Vector *v, Vector * &result_lift) = 0;
 
-  virtual int contains(const Matrix &m) = 0;
+  virtual int contains(const Matrix *m) = 0;
   virtual bool is_equal(const gb_comp *q) = 0;
-
-  // Infrastructure
-  class_identifier class_id() const { return CLASS_gb_comp; }
-  type_identifier  type_id () const { return TY_GB_COMP; }
-  const char * type_name   () const { return "gb_comp"; }
-
-  gb_comp * cast_to_gb_comp   () { return this; }
 
   // These can be overridden by the specific computation
   void text_out(buffer &o) const { o << "GB computation"; }

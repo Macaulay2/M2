@@ -1,2 +1,11 @@
+directory /usr/share/capybara/packages/libfac/TMP/libfac/
+directory /usr/share/capybara/packages/libfac/TMP/libfac/factor/
+directory /usr/share/capybara/packages/factory/TMP/factory/
+directory /usr/share/capybara/packages/gmp/TMP/gmp-4.1/
+directory /usr/share/capybara/packages/gmp/TMP/gmp-4.1/mpn/
+directory /usr/share/capybara/packages/gmp/TMP/gmp-4.1/mpz/
+directory /usr/share/capybara/packages/gmp/TMP/gmp-4.1/mpq/
+directory /usr/share/capybara/packages/gmp/TMP/gmp-4.1/mpf/
+directory /usr/share/capybara/packages/gc/TMP/gc6.1/
 source .gdb-files
 source .gdb-run-it

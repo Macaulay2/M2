@@ -653,6 +653,7 @@ node chkfor(node e, env v) {
 	       	    list(2,goto_S,breaklabel)),v);
 	  }
      pushenv(&v);
+     v->loop = TRUE;
      v->break_loop_label = breaklabel;
      v->continue_loop_label = looplabel;
      chklistn(body,v);
@@ -2309,6 +2310,11 @@ node chksetd(node e, env v){
      return NULL;
      }
 
+node chkkindof(node e, env v) {
+  errorpos(e,"kindof: not implemented");
+  return bad_K;
+}
+
 node chkor(node e,env v){
      node types = chktypelist(cdr(e),v);
      node t;
@@ -2317,6 +2323,7 @@ node chkor(node e,env v){
 	  node utt = unpos(tt);
 	  if (utt == undefined_T) return bad_K;
 	  if (equal(tt,null_K)) continue;
+	  if (equal(tt,pointer_K)) continue;
 	  if (isobjecttypeexpr(tt)) continue;
 	  if (isarraytypeexpr(tt)) continue;
 	  if (tt->body.type.flags & deferred_F) continue;
@@ -2728,4 +2735,5 @@ void init_chk(){
      setchkfun(chked_K,chkchked);
      setchkfun(export_K,chkexport);
      setchkfun(import_K,chkimport);
+     setchkfun(kindof_K,chkkindof);
      }

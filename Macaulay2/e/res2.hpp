@@ -6,7 +6,6 @@
 #include "style.hpp"
 #include "array.hpp"
 #include "intarray.hpp"
-#include "object.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "polyring.hpp"
@@ -65,11 +64,6 @@ struct auto_reduce_node
   auto_reduce_node *next;
   res2term *pivot;
   res2_pair *p;
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 struct res2_level
@@ -90,14 +84,14 @@ struct res2_level
   res2_level() : pairs(NULL), npairs(0), nleft(0), nminimal(0) {}
 };
 
-class res2_comp : public type
+class res2_comp : public mutable_object
 {
   // Base ring and input
   const PolynomialRing *P;
   res2_poly *R;
   const Monoid *M;
   const Ring *K;
-  Matrix generator_matrix;	// Input matrix of generators, needs to be a GB.
+  const Matrix *generator_matrix;	// Input matrix of generators, needs to be a GB.
 
   array<res2_level *> resn;	// The resolution itself
 
@@ -158,7 +152,7 @@ class res2_comp : public type
   int *MINIMAL_mon;
 
   int find_ring_divisor(const int *exp, ring_elem &result) const;
-  int find_divisor(const MonomialIdeal &mi, const int *exp, res2_pair *& result) const;
+  int find_divisor(const MonomialIdeal *mi, const int *exp, res2_pair *& result) const;
   res2_pair *reduce(res2term *&f, res2term *&fsyz, res2term *&pivot, res2_pair *p);
   res2_pair *reduce2(res2term *&f, res2term *&fsyz, res2term *&pivot, res2_pair *p);
   res2_pair *reduce3(res2term *&f, res2term *&fsyz, res2term *&pivot, res2_pair *p);
@@ -195,14 +189,14 @@ private:
   void remove_res2_pair(res2_pair *p);
   void remove_res2_level(res2_level *lev);
 
-  void initialize(Matrix mat, 
+  void initialize(const Matrix *mat, 
 		  int LengthLimit,
 		  bool UseDegreeLimit,
 		  int SlantedDegreeLimit,
 		  int SortStrategy);
 
 public:
-  res2_comp(Matrix m, 
+  res2_comp(const Matrix *m, 
 	    int LengthLimit, 
 	    bool UseDegreeLimit,
 	    int SlantedDegreeLimit,
@@ -244,8 +238,8 @@ public:
 
   FreeModule *free_of(int i) const;
   FreeModule *minimal_free_of(int i) const;
-  Matrix make(int i) const;
-  Matrix make_minimal(int i) const;
+  Matrix *make(int i) const;
+  Matrix *make_minimal(int i) const;
 
 //////////////////////////////////////////////
 //  Betti routines and numbers associated ////
@@ -283,22 +277,7 @@ public:
 //////////////////////////////////////////////
 
 public:  
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  class_identifier class_id() const { return CLASS_res2_comp; }
-  type_identifier  type_id () const { return TY_RES2_COMP; }
-  const char * type_name   () const { return "ResolutionComputation2"; }
-
   res2_comp   * cast_to_res2_comp  ()       { return this; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "res2_computation"; }
-
-  int length_of() const { return nminimal; }
-  object index_of(int i) { return make_minimal(i); }
 
   const Ring   * get_ring() const { return P; }
   const Monoid  * Nmonoms() const { return M; }

@@ -2,6 +2,8 @@
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 
+#include "engine.h"
+
 const int BUFFER_INITIAL_CAPACITY = 100;
 
 class buffer
@@ -26,7 +28,8 @@ public:
     _buf[_size] = '\0';
     return _buf;
   }
-    
+
+  M2_string to_string(); // Copies the string, leaves buffer intact
 
   void put(const char *s);		// Place null-terminated string into buffer
   void put(const char *s, int len);	// Place a string possible containing null chars
@@ -51,6 +54,7 @@ public:
   // cerr << o.str();
 
   buffer &operator<<(const char *s) { put(s); return *this; }
+  buffer &operator<<(const M2_string s) { put(s->array, s->len); return *this; }
   buffer &operator<<(long n) { put(n); return *this; }
   buffer &operator<<(unsigned int n) { put(n); return *this; }
   buffer &operator<<(unsigned long n) { put(n); return *this; }

@@ -25,13 +25,7 @@ finalDirectory := "/usr/local/"
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory
 
-isAbsolute := url -> (				       -- drg: replace with regexp after merging the branch
-     "#" == substring(url,0,1) or
-     "http://" == substring(url,0,7) or
-     "ftp://" == substring(url,0,6) or
-     "mailto:" == substring(url,0,7)
-     )
-
+isAbsolute := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 rel := url -> (
      if isAbsolute url 

@@ -1,4 +1,4 @@
---		Copyright 1996 by Daniel R. Grayson
+--		Copyright 1996-2002 by Daniel R. Grayson
 
 SchurRing = new Type of EngineRing
 SchurRing.synonym = "Schur ring"
@@ -10,9 +10,8 @@ newSchur := (R,M) -> (
      then error "expected ordered monoid handled by the engine";
      if not (R.?Engine and R.Engine) 
      then error "expected coefficient ring handled by the engine";
-     SR := new SchurRing from (ggPush R, ggPush M, ggschur);
+     SR := new SchurRing from rawSchurRing(R.RawRing,M.RawMonoid);
      SR.baseRings = append(R.baseRings,R);
-     if R.?newEngine or M.?newEngine then SR.newEngine = true;
      ONE := SR#1;
      if degreeLength M != 0 then (
 	  -- there must be something smarter to do, but if we
@@ -31,12 +30,8 @@ newSchur := (R,M) -> (
 	  if f == g then symbol ==
 	  else leadMonomial f ? leadMonomial g
 	  );
-     R * M := (r,m) -> (
-	  sendgg(ggPush SR, ggPush r, ggPush m, ggterm);
-	  new SR);
-     M * R := (m,r) -> (
-	  sendgg(ggPush SR, ggPush r, ggPush m, ggterm);
-	  new SR);
+     R * M := (r,m) -> new SR from rawTerm(SR.RawRing,raw r,m.RawMonomial);
+     M * R := (m,r) -> new SR from rawTerm(SR.RawRing,raw r,m.RawMonomial);
      SR * M := (p,m) -> p * (R#1 * m);
      M * SR := (m,p) -> (R#1 * m) * p;
      R + M := (r,m) -> r * M#1 + R#1 * m;
@@ -47,19 +42,11 @@ newSchur := (R,M) -> (
      M - R := (m,r) -> R#1 * m - r * M#1;
      SR - M := (p,m) -> p - R#1 * m;
      M - SR := (m,p) -> R#1 * m - p;
-     SR.ConvertToExpression = ConvertApply(
-	  args -> (
-	       if # args === 1 
-	       then args#0
-	       else Sum toList args
-	       ),
-	  ConvertRepeat ConvertApply ( 
-	       (m,r) -> r * m,
-	       ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
-     expression SR := f -> convert(
-	  SR.ConvertToExpression,
-	  sendgg(ggPush f, ggtonet)
-	  );
+     expression SR := f -> (
+	  (coeffs,monoms) -> sum(
+	       coeffs,monoms,
+	       (a,m) -> expression (new R from a) * expression (new M from m))
+	  ) pairs f.RawRingElement;
      SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
      scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
      SR.use = x -> (
@@ -93,8 +80,7 @@ SchurRing _ List := (S,a) -> (
 		    ck if i+1 < # a 
 	       	    then a#i - a#(i+1)
 	       	    else a#i)));
-     sendgg(ggPush S, ggPush 1, ggPush m, ggterm);
-     new S)
+     new S from rawTerm(S.RawRing, rawFromNumber(rawZZ(),1), m.RawMonomial))
 
 Schur = method ( Options => { } )
 
@@ -104,21 +90,10 @@ Schur(ZZ) := SchurRing => options -> n -> (
      prune := v -> drop(v, - # select(v,i -> i === 0));
      M := monoid[x_1 .. x_n];
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
-     toString M := net M := x -> first lines sendgg(ggPush x, ggsee, ggpop);
-     M.ConvertToExpression = ConvertApply(
-	  args -> new Holder from {toString (
-	       if args === ()
-	       then {}
-	       else prune sum(args,(v,n) -> n * vec#v)
-	       )},
-	  ConvertRepeat ConvertJoin(
-	       ConvertInteger,	  -- index of variable
-	       ConvertInteger	  -- exponent on variable
-	       ));
+     -- toString M := net M := x -> first lines toString x;
      S := newSchur(R,M);
      dim S := s -> (
+	  error "ggdim for Schur rings not re-implemented yet";
 	  sendgg(ggPush s, ggdim);
 	  R.pop());
-     S
-     )
-
+     S)

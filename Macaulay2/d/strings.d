@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+use C;
 use system;
 
 import join(x:string,y:string):string;
@@ -58,7 +59,3 @@ export index(s:string,offset:int,c:char,d:char):int := (
      i := offset;
      while i+1 < length(s) do if c == s.i && d==s.(i+1) then return(i) else i=i+1;
      -1);     
-
--- C strings, use with care!
-
-export Cstring := null ;

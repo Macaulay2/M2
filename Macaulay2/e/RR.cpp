@@ -4,33 +4,37 @@
 #include <stdio.h>
 #include <math.h>
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "random.hpp"
+#include "gbring.hpp"
 
 #define RRELEM_VAL(f) (RRelem ((f).poly_val))
 #define RR_VAL(f) ((RRELEM_VAL(f))->val)
 #define RR_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 
-RR::RR(const Monoid *D,double epsilon) 
-  : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D),
-    epsilon(epsilon)
+RR::~RR()
 {
-  RR_stash = new stash("RR", sizeof(RRelem_rec));
+}
+
+bool RR::initialize_RR(const Monoid *D, double epsilon) 
+{
+  initialize_ring(0,0,0,this,
+		  Monoid::get_trivial_monoid(),
+		  D);
+  _epsilon = epsilon;
+  return true;
 }
 
 RR *RR::create(const Monoid *D, double epsilon)
 {
-  RR *obj = new RR(D,epsilon);
-  return (RR *) intern(obj);
+  RR *result = new RR;
+  result->initialize_RR(D, epsilon);
+  result->_grtype = GRType::make_BASE(result);
+  return result;
 }
 
-RR::~RR()
-{
-  delete RR_stash;
-}
 
 void RR::text_out(buffer &o) const
 {
@@ -39,13 +43,13 @@ void RR::text_out(buffer &o) const
 
 RR::RRelem RR::new_elem() const
 {
-  RRelem result = (RRelem) RR_stash->new_elem();
+  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
   result->val = 0.0;
   return result;
 }
 ring_elem RR::from_double(double a) const
 {
-  RRelem result = (RRelem) RR_stash->new_elem();
+  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
   result->val = a;
   return RR_RINGELEM(result);
 }
@@ -54,10 +58,21 @@ double RR::to_double(ring_elem a)
   return RR_VAL(a);
 }
 
+ring_elem RR::from_rational(mpq_ptr r) const
+{
+  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
+  result->val = mpq_get_d(r);
+  return RR_RINGELEM(result);
+}
+ring_elem RR::from_BigReal(mpf_ptr a) const
+{
+  RRelem result = (RRelem) getmem(sizeof(RRelem_rec));
+  result->val = mpf_get_d(a);
+  return RR_RINGELEM(result);
+}
+
 void RR::remove_elem(RRelem f) const
 {
-  if (f == NULL) return;
-  RR_stash->delete_elem(f);
 }
 
 ring_elem RR::random() const
@@ -68,12 +83,12 @@ ring_elem RR::random() const
   return RR::from_double(a);
 }
 
-int compare_RR(double a, double b, double epsilon)
+int RR::compare_RR(double a, double b) const
   // This is our notion of equality
 {
   double c = a-b;
-  if (c > epsilon) return GT;
-  if (c < -epsilon) return LT;
+  if (c > _epsilon) return GT;
+  if (c < -_epsilon) return LT;
   return EQ;
 }
 
@@ -83,9 +98,9 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
 
   char s[100];
 
-  bool is_neg = compare_RR(a,0.0,epsilon) == LT;
+  bool is_neg = compare_RR(a,0.0) == LT;
   a = fabs(a);
-  bool is_one = compare_RR(a,1.0,epsilon) == EQ;
+  bool is_one = compare_RR(a,1.0) == EQ;
 
   if (!is_neg && p_plus) o << '+';
   if (is_one) 
@@ -98,11 +113,6 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
       sprintf(s, "%f", a);
       o << s;
     }
-}
-
-void RR::elem_bin_out(buffer &o, const ring_elem a) const
-{
-  bin_double_out(o, RR_VAL(a));
 }
 
 ring_elem RR::from_int(int n) const
@@ -134,12 +144,12 @@ bool RR::lift(const Ring *, const ring_elem, ring_elem &) const
 
 bool RR::is_zero_RR(double a) const
 {
-  return compare_RR(a,0.0,epsilon) == EQ;
+  return compare_RR(a,0.0) == EQ;
 }
 
 bool RR::is_zero(const ring_elem f) const
 {
-  return compare_RR(RR_VAL(f),0.0,epsilon) == EQ;;
+  return compare_RR(RR_VAL(f),0.0) == EQ;;
 }
 
 bool RR::is_unit(const ring_elem f) const
@@ -149,15 +159,15 @@ bool RR::is_unit(const ring_elem f) const
 
 bool RR::is_equal(const ring_elem f, const ring_elem g) const
 {
-  return compare_RR(RR_VAL(f),RR_VAL(g),epsilon) == EQ;
+  return compare_RR(RR_VAL(f),RR_VAL(g)) == EQ;
 }
 int RR::compare(const ring_elem f, const ring_elem g) const
 {
-  return compare_RR(RR_VAL(f),RR_VAL(g),epsilon);
+  return compare_RR(RR_VAL(f),RR_VAL(g));
 }
 int RR::is_positive(const ring_elem f) const
 {
-  return compare_RR(RR_VAL(f),0.0,epsilon) == GT;
+  return compare_RR(RR_VAL(f),0.0) == GT;
 }
 
 ring_elem RR::copy(const ring_elem f) const
@@ -167,9 +177,6 @@ ring_elem RR::copy(const ring_elem f) const
 
 void RR::remove(ring_elem &f) const
 {
-  RRelem a = RRELEM_VAL(f);
-  remove_elem(a);
-  f = RR_RINGELEM(NULL);
 }
 
 ring_elem RR::preferred_associate(ring_elem f) const
@@ -230,7 +237,7 @@ ring_elem RR::power(const ring_elem f, mpz_t n) const
 {
   int n1;
   if (!Z::get_si(n1, n)) 
-    { gError << "exponent too large"; }
+    { ERROR("exponent too large"); }
   return RR::power(f,n1);
 }
 
@@ -360,7 +367,7 @@ void RR::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);
 }
-void RR::degree_weights(const ring_elem, const int *, int &lo, int &hi) const
+void RR::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
@@ -369,14 +376,14 @@ int RR::primary_degree(const ring_elem) const
   return 0;
 }
 
-ring_elem RR::homogenize(const ring_elem f, int, int deg, const int *) const
+ring_elem RR::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
 {
   if (deg != 0) 
-    gError << "homogenize: no homogenization exists";
+    ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem RR::homogenize(const ring_elem f, int, const int *) const
+ring_elem RR::homogenize(const ring_elem f, int, const M2_arrayint) const
 {
   return f;
 }

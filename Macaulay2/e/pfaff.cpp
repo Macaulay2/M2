@@ -2,23 +2,19 @@
 
 #include "pfaff.hpp"
 
-PfaffianComputation::PfaffianComputation(const Matrix &M, int p)
-  : R(M.get_ring()),
+PfaffianComputation::PfaffianComputation(const Matrix *M, int p)
+  : R(M->get_ring()),
     M(M),
-    pfaffs(R->make_FreeModule(1)),
+    pfaffs(new Matrix(R->make_FreeModule(1))),
     p(p),
     I(0),
     row_set(p)
 {
-  bump_up((Ring *)R);
-  bump_up((FreeModule *) pfaffs.rows());
-  endI = comb::binom(M.n_rows(), p);
+  endI = comb::binom(M->n_rows(), p);
 }
 
 PfaffianComputation::~PfaffianComputation()
 {
-  bump_down((Ring *)R);
-  bump_down((FreeModule *) pfaffs.rows());
 }
 
 int PfaffianComputation::step()
@@ -29,9 +25,9 @@ int PfaffianComputation::step()
   comb::decode(I++, row_set.raw(), p);
   ring_elem r = calc_pfaff(row_set.raw(), p);
   if (!R->is_zero(r))
-    pfaffs.append(pfaffs.rows()->term(0,r));
-
-  R->remove(r);
+    pfaffs->append(pfaffs->rows()->raw_term(r,0));
+  else
+    R->remove(r);
   return COMP_COMPUTING;
 }
 
@@ -60,7 +56,7 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p)
 //  const ring_elem &result = lookup(r,p,found);
 //  if (found) return result;
   int i;
-  if (p == 2) return M.elem(r[0],r[1]);
+  if (p == 2) return M->elem(r[0],r[1]);
   ring_elem result = R->from_int(0);
 
   int negate = 1;
@@ -74,7 +70,7 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p)
       swap(r[i],r[p-2]);
 #endif
       negate = !negate;
-      ring_elem g = M.elem(r[p-2],r[p-1]);
+      ring_elem g = M->elem(r[p-2],r[p-1]);
       if (R->is_zero(g)) 
 	{
 	  R->remove(g);

@@ -1,15 +1,15 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system;
 use stdio;
 use stdiop;
 use binding;
-use system;
 use strings;
 use nets;
 use tokens;
 use err;
 use stdio;
-use arith;
+use gmp;
 use basic;
 use convertr;
 
@@ -27,20 +27,6 @@ reverse(e:Expr):Expr := (
 setupfun("reverse",reverse);
 export seq(e:Expr):Expr := Expr(Sequence(e));
 -- setupfun("singleton",seq);
-pairs(e:Expr):Expr := (
-     when e
-     is o:HashTable do list(
-	  new Sequence len o.numEntries do
-	  foreach bucket in o.table do (
-	       p := bucket;
-	       while p != bucketEnd do (
-		    provide Expr(Sequence(p.key,p.value));
-		    p = p.next;
-		    )
-	       )
-	  )
-     else WrongArg("a hash table"));
-setupfun("pairs",pairs);
 export splice(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying
      hadseq := false;

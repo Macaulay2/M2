@@ -1,0 +1,38 @@
+# -*- Mode: Makefile -*-
+# @configure_input@
+
+# This makefile is run in ./cache/doc and in ../packages/cache/doc, so to reach ./ we have
+# to append something defined here:
+BACK = ../../../m2
+# If we ever change the depth of cache/doc, we can edit the line above.
+
+BINDIR = $(BACK)/../bin
+INCDIR = $(BACK)/../../include
+
+include $(INCDIR)/config.Makefile
+
+# Notice that 'srcdir' is set to an absolute path in ./Makefile
+# We can't use @srcdir@ here, because it might be a relative path, and we aren't
+# in the same directory any longer.  We can't use $(BACK)/@srcdir@ either, because
+# @srcdir@ might be an absolute path.
+ARGS := -q --silent $(srcdir)/eg.m2
+
+%.out : %.example
+	@if [ -f ./"$*.out" ] && cmp -s ./"$*.example" ./"$*.example.old" ; \
+	then touch ./"$*.out" ; \
+	else echo "making $@ from $^"; \
+	     if env M2HOME=$(srcdir)/.. $(BINDIR)/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
+	     then mv ./"$*.tmp" ./"$*.out" ; \
+		  cp ./"$*.example" ./"$*.example.old" ; \
+	     else echo "contents of $*.example:" ; \
+		  cat ./"$*.example" ; \
+		  exit 1; \
+	     fi ; \
+	fi
+
+INFILES  := $(wildcard *.example)
+OUTFILES := $(INFILES:.example=.out)
+
+.PHONY : all
+
+all:: $(OUTFILES)

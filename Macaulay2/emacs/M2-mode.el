@@ -1,8 +1,3 @@
-;;;; put these lines in your .emacs file
-;; (setq auto-mode-alist (append auto-mode-alist '(("\\.g$" . M2-mode))))
-;; (autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)
-;;;;
-
 (defvar M2-mode-hook nil
   "*Hook evaluated when first loading Macaulay 2 mode.")
 

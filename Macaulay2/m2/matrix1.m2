@@ -1,8 +1,6 @@
---		Copyright 1993-1998 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
-module = method(TypicalValue => Module)
-
-module Ring := R -> R^1
+module Ring := Module => R -> R^1
 
 matrix(Ring,List) := Matrix => options -> (R,m) -> (
      m = apply(splice m,splice);
@@ -22,50 +20,39 @@ map(Matrix) := Matrix => options -> (f) -> (
      	  map(target f, source f ** R^{d - degree f}, f, options)))
 
 map(Module,ZZ,Function) := Matrix => options -> (M,n,f) -> map(M,n,table(numgens M,n,f),options)
+
+makeRawTable := (R,p) -> (					    -- this is messy
+     if R === ZZ then applyTable(p,x -> rawFromNumber(rawZZ(), x))
+     else if R === QQ then (
+	  applyTable(p,x -> (
+		    if class x === ZZ then rawFromNumber(QQ.RawRing, x)
+		    else if class x === QQ then raw x
+		    else error "can't promote ring element to QQ"
+		    )
+	       )
+	  )
+     else applyTable(p,x -> (promote(x,R)).RawRingElement)
+     )
+
 map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      if options.Degree =!= null
      then error "Degree option given with indeterminate source module";
      R := ring M;
      p = apply(splice p,splice);
-     if #p != numgens M
-     or #p > 0 and ( not isTable p or # p#0 != rankN )
+     if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
-     p = applyTable(p,x -> promote(x,R));
-     coverM := cover M;
-     h := newHandle(
-	  apply(
-	       if # p === 0 then splice {rankN:{}}
-	       else transpose p, 
-	       col -> {apply(col, r -> ggPush r), ggPush coverM, ggvector}
-	       ),
-	  ggPush coverM,
-	  ggPush rankN,
-	  ggmatrix);
-     N := ( sendgg(ggPush h,gggetcols); new Module from R );
-     new Matrix from {
-     	  symbol handle => h,
-	  symbol source => N,
-	  symbol target => M,
-	  symbol ring => R,
-	  symbol cache => new CacheTable
-	  })
+     p = makeRawTable(R,p);
+     rawM := (cover M).RawFreeModule;
+     p = if # p === 0 then splice {rankN:{}} else transpose p;
+     h := rawMatrix(rawM, 
+	  apply(toSequence p, col -> rawVector(rawM, apply(toSequence col, r -> r.RawRingElement)))
+	  );
+     newMatrix(M,newModule(R,rawSource h),h))
 
-map(Module,Nothing,Matrix) := Matrix => options -> (M,nothing,p) -> (
-     R := ring M;
-     coverM := cover M;
-     n := numgens cover source p;
-     colvectors := apply(n, i -> p_i);
-     if options.Degree =!= null
-     then error "Degree option given with indeterminate source module";
-     h := newHandle( colvectors / ggPush, ggPush coverM, ggPush n, ggmatrix);
-     N := (sendgg(ggPush h,gggetcols); new Module from R);
-     new Matrix from {
-	  symbol target => M,
-	  symbol handle => h,
-	  symbol source => N,
-	  symbol ring => R,
-	  symbol cache => new CacheTable
-	  }
+map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
+     if o.Degree =!= null then error "Degree option given with indeterminate source module";
+     f := rawMatrix(raw target p, rawMatrixColumns raw p);
+     newMatrix(M, newModule(ring source p, rawSource f), f)
      )
 
 degreeCheck := (d,R) -> (
@@ -84,7 +71,7 @@ degreeCheck := (d,R) -> (
 	       toString degreeLength R
 	       )
 	  );
-     d)
+     toSequence d)
 
 map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      if M === f.target and N === f.source
@@ -93,14 +80,12 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      else (
 	  R := ring M;
 	  N' := cover N ** R;
-	  sendgg (ggPush cover M, ggPush N', ggPush f,
-	       ggPush (
-		    if options.Degree === null
-		    then toList (degreeLength R : 0)
-		    else degreeCheck(options.Degree, R)),
-	       ggmatrix);
-	  reduce M;
-	  newMatrix(M,N)))
+	  deg := (
+	       if options.Degree === null
+	       then (degreeLength R : 0)
+	       else degreeCheck(options.Degree, R)
+	       );
+	  newMatrix(M,N,reduce(M,rawMatrix(raw cover M, raw N', deg, raw f)))))
 
 map(Module,Nothing,List) := 
 map(Module,Module,List) := Matrix => 
@@ -122,45 +107,23 @@ options -> (M,N,p) -> (
      if #p != numgens M
      or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
-     p = applyTable(p,x -> promote(x,R));
-     coverM := cover M;
-     h := newHandle(
-	  apply(
-	       if # p === 0 then splice {rankN:{}}
-	       else transpose p, 
-	       col -> {apply(col, r -> ggPush r), ggPush coverM, ggvector}
-	       ),
-	  ggPush coverM,
-	  if N === null
-	  then (
-	       if options.Degree =!= null
-	       then error "Degree option given with indeterminate source module";
-	       ggPush rankN,
-	       if R.?newEngine then (
-		    ggPush 3,				    -- 1=left 2=right 3=both
-		    ggPush toList (degreeLength R:0)
-		    )
-	       )
-	  else (
-	       ggPush cover N,
-	       if R.?newEngine then (
-		    ggPush 3				    -- 1=left 2=right 3=both
-		    ),
-	       ggPush (
-		    if options.Degree === null
-		    then toList (degreeLength R:0)
-		    else degreeCheck(options.Degree,R)
-		    )
-	       ),
-	  ggmatrix);
-     N' := (
-	  if N === null then (sendgg(ggPush h,gggetcols); new Module from R)
-	  else N
+     if N === null and options.Degree =!= null
+     then error "Degree option given with indeterminate source module";
+     p = makeRawTable(R,p);
+     rawM := M.RawFreeModule;
+     p = if # p === 0 then rankN:() else toSequence transpose p;
+     p = apply(p, col -> rawVector(rawM,toSequence col));
+     h := (
+	  if N === null 
+	  then rawMatrix(rawM,p)
+	  else rawMatrix(rawM,N.RawFreeModule,
+	       if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),
+	       p)
 	  );
      new Matrix from {
 	  symbol target => M,
-	  symbol handle => h,
-	  symbol source => N',
+	  symbol RawMatrix => h,
+	  symbol source => if N === null then newModule(R, rawSource h) else N,
 	  symbol ring => R,
 	  symbol cache => new CacheTable
 	  })
@@ -305,8 +268,8 @@ matrix(List) := Matrix => options -> (m) -> (
 	       M := type;
 	       if M.?generators then error "not implemented yet";
 	       R := ring M;
-	       coverM := cover M;
-	       h := newHandle(ggPush\m, ggPush coverM, ggPush (#m), ggmatrix);
+	       rawM := cover M;
+	       h := newHandle(ggPush\m, ggPush rawM, ggPush (#m), ggmatrix);
      	       N := (sendgg(ggPush h,gggetcols); new Module from R);
 	       new Matrix from {
 		    symbol target => M,
@@ -362,10 +325,9 @@ align := f -> (
 
 subquotient = method(TypicalValue => Module)
 subquotient(Nothing,Matrix) := Module => (null,relns) -> (
-     M := new Module of Vector;
-     M.ring = ring relns;
+     R := ring relns;
      E := target relns;
-     M.handle = handle E;
+     M := newModule(R,E.RawFreeModule);
      relns = align matrix relns;
      if E.?generators then (
 	  M.generators = E.generators;
@@ -373,29 +335,21 @@ subquotient(Nothing,Matrix) := Module => (null,relns) -> (
 	  );
      if E.?relations then relns = relns | E.relations;
      if relns != 0 then M.relations = relns;
-     M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
-     M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
 subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
-     M := new Module of Vector;
+     R := ring subgens;
      E := target subgens;
+     M := newModule(R,E.RawFreeModule);
      subgens = align matrix subgens;
      if E.?generators then subgens = E.generators * subgens;
-     M.handle = E.handle;
      M.generators = subgens;
      if E.?relations then M.relations = E.relations;
-     M.ring = ring subgens;
-     M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
-     M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
 subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
+     R := ring relns;
      E := target subgens;
      if E != target relns then error "expected maps with the same target";
-     M := new Module of Vector;
-     M.ring = ring subgens;
-     M.handle = handle E;
-     M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
-     M#0 = ( sendgg(ggPush M, ggzero); new M);
+     M := newModule(R,E.RawFreeModule);
      if M == 0 then M
      else (
 	  relns = align matrix relns;
@@ -411,12 +365,12 @@ subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
 
 Matrix ** Matrix := Matrix => (f,g) -> (
      R := ring target f;
-     if ring target g =!= R 
-     or ring source g =!= ring source f
+     if ring target g =!= R or ring source g =!= ring source f
      then error "expected matrices over the same ring";
-     sendgg (ggPush f, ggPush g, ggtensor);
-     h := getMatrix R;
-     map(target f ** target g, source f ** source g, h, Degree => degree f + degree g))
+     map(target f ** target g, 
+	  source f ** source g, 
+	  newMatrix(R, f.RawMatrix ** g.RawMatrix),
+	  Degree => degree f + degree g))
 
 Matrix ** ZZ := 
 Matrix ** QQ := (f,r) -> r * f
@@ -444,7 +398,6 @@ Matrix.AfterNoPrint = f -> (
 precedence Matrix := x -> precedence symbol x
 
 compactMatrixForm = true
-writableGlobals.compactMatrixForm = true
 
 net Matrix := f -> (
      if f == 0 
@@ -452,7 +405,7 @@ net Matrix := f -> (
      else (
 	  m := (
 	       if compactMatrixForm then (
-	       	    stack toSequence apply(lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"))
+	       	    stack toSequence apply(lines toString f.RawMatrix, x -> concatenate("| ",x,"|"))
 	       	    )
      	       else net expression f
 	       );
@@ -659,23 +612,14 @@ Matrix.InverseMethod = m -> if m.cache#?-1 then m.cache#-1 else m.cache#-1 = (
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
 
-entries = method()
 entries Matrix := (m) -> (
-     M := target m;
-     R := ring M;
-     N := source m;
-     sendgg (ggPush m,
-      	  apply(numgens M, i -> apply(numgens N, j -> (
-		    	 ggdup, ggINT, gg i, ggINT, gg j, ggelem, ggINT, gg 1, ggpick
-		    	 ))));
-     RPop := R.pop;
-     sendgg ggpop;
-     r := reverse apply(numgens M, i -> reverse apply(numgens N, j -> RPop()));
-     r)
+     R := ring m;
+     m = m.RawMatrix;
+     applyTable ( entries m, r -> new R from r )
+     )
 
 getshift := (f) -> (
-     sendgg(ggPush f, gggetshift);
-     d := eePopIntarray();
+     d := rawMultiDegree f.RawMatrix;
      R := ring f;
      if R.?Repair then R.Repair d else d)
 
@@ -733,7 +677,6 @@ cover(Matrix) := Matrix => (f) -> matrix f
 rank Matrix := (f) -> rank image f
 
 erase symbol reduce
-erase symbol newMatrix
 erase symbol concatRows
 erase symbol concatCols
 erase symbol samering

@@ -218,6 +218,7 @@ factorBFunction(RingElement) := Product => f -> (
      if coefficientRing R != QQ then
      error "expected polynomial over QQ";
      
+     pInfo(666, {"f =" , f});
      l := listForm f;
      d := product(l, u -> denominator(u#1));
      l = l / (u -> (u#0, lift(u#1*d, ZZ)));

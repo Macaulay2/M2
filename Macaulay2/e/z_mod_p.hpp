@@ -7,23 +7,22 @@
 class Z_mod : public Ring
 {
   //int P; // this is defined in class Ring
-  int P1;	// = P-1
-  int ZERO;     // = p-1, log of zero...
+  int _P1;	// = P-1
+  int _ZERO;     // = p-1, log of zero...
 
-  int prim_root;
-  int minus_one;
-  int *exp_table;
-  int *log_table;
+  int _prim_root;
+  int _minus_one;
+  int *_exp_table;
+  int *_log_table;
 
   int int_to_exp(int a) const;
 
-  Z_mod(int p, const Monoid *D);
 protected:
-  virtual ~Z_mod() { delete [] exp_table; delete [] log_table; }
+  Z_mod() {}
+  virtual ~Z_mod() {}
+  bool initialize_Z_mod(int p, const Monoid *D);
 public:
   static Z_mod * create(int p, const Monoid *D);
-
-  class_identifier class_id() const { return CLASS_Z_mod; }
 
   Z_mod * cast_to_Z_mod() { return this; }
   const Z_mod * cast_to_Z_mod() const { return this; }
@@ -35,9 +34,6 @@ public:
 // The following are all the routines required by 'ring'
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
-  virtual bool is_Z() const         { return 0; }
-  virtual bool is_poly_ring() const { return 0; }
-  virtual bool is_quotient_poly_ring() const { return 0; }
   virtual bool is_graded() const    { return 1; }
   virtual bool is_expensive() const { return 0; }
 
@@ -53,12 +49,6 @@ public:
   virtual bool is_zero(const ring_elem f) const;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const;
 
-  virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, int *d) const;
-  virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -74,6 +64,7 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
+
   virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
   virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
@@ -90,9 +81,17 @@ public:
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
+
+  virtual bool is_homogeneous(const ring_elem f) const;
+  virtual void degree(const ring_elem f, int *d) const;
+  virtual int primary_degree(const ring_elem f) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
+			       const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual int n_terms(const ring_elem f) const;
   virtual ring_elem term(const ring_elem a, const int *m) const;

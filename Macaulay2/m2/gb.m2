@@ -1,4 +1,4 @@
---		Copyright 1995 by Daniel R. Grayson
+--		Copyright 1995-2002 by Daniel R. Grayson
 
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
@@ -9,8 +9,8 @@ summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
 
 gbTrace = (n) -> (
      if class n === ZZ then (
-	  sendgg(ggINT, gg n, ggtracing);
-	  eePopInt())
+	  stderr << "warning: engine tracing not re-implemented yet" << endl
+	  )
      else error "expected an integer" )
 
 bool := t -> if t then 1 else 0
@@ -50,6 +50,7 @@ makeGB := (f,type,strategy) -> (
 	  g.matrix = f;
 	  g.ring = ring f;
 	  g.target = target f;
+	  error "gb's not re-implemented yet";
 	  g.handle = newHandle (
 	       ggPush f,
 	       ggPush bool withSyz,

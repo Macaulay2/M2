@@ -50,11 +50,6 @@ public:
       if (val.length() > 0) o << val[val.length()-1];
       o << ']';
     }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

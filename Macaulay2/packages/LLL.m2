@@ -341,11 +341,11 @@ LLLKernelOptions := Options => {
 kernelLLL = method LLLKernelOptions
 
 kernelLLL Matrix := options -> (M) -> (
-     if not M.?kernelLLL then (
-	  M.kernelLLL = newLLLKernelComputation(M);
+     if not M.cache.?kernelLLL then (
+	  M.cache.kernelLLL = newLLLKernelComputation(M);
 	  );
-     doKernelLLL(M.kernelLLL, options.Steps);
-     C := M.kernelLLL;
+     doKernelLLL(M.cache.kernelLLL, options.Steps);
+     C := M.cache.kernelLLL;
      r := 1;
      n := numcols C.A;
      while r <= n and not C.F#r do r=r+1;
@@ -495,11 +495,11 @@ hermiteLLL = method HermiteLLLoptions
 hermiteLLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
-     if not M.?hermiteLLL then (
-	  M.hermiteLLL = newLLLHermiteComputation(M,options.Threshold, options.ChangeOfBasisMatrix);
+     if not M.cache.?hermiteLLL then (
+	  M.cache.hermiteLLL = newLLLHermiteComputation(M,options.Threshold, options.ChangeOfBasisMatrix);
 	  );
-     doHermiteLLL(M.hermiteLLL, options.Steps);
-     M.hermiteLLL.A
+     doHermiteLLL(M.cache.hermiteLLL, options.Steps);
+     M.cache.hermiteLLL.A
      )
 
 ------------

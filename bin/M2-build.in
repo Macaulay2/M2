@@ -30,4 +30,4 @@ else SETUP="$SRCHOME/m2/setup.m2"
      SEP=""
 fi 
 
-exec "$M2HOME/libexec/Macaulay2" "$INIPATH" "$SETUP" $SEP "$M2PATH" "$START" -- "$@"
+exec "$M2HOME/bin/Macaulay2" "$INIPATH" "$SETUP" $SEP "$M2PATH" "$START" "$@"

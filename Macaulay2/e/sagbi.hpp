@@ -15,9 +15,9 @@ public:
 		     const RingMap *phi,
 		     gb_comp *J);
 
-  static Matrix subduct(const Matrix &m, 
-			const RingMap *phi, 
-			gb_comp *J);
+  static Matrix *subduct(const Matrix *m, 
+			 const RingMap *phi, 
+			 gb_comp *J);
 };
 
 class pending_list
@@ -26,13 +26,13 @@ class pending_list
   int _n_held;
   int _base_degree;
   int _lo_degree;
-  array<Matrix> pending;
+  array<Matrix *> pending;
 public:
-  pending_list(Matrix &m);
+  pending_list(Matrix *m);
   ~pending_list();
 
-  void insert(Matrix &m);  // removes m?
-  Matrix take_lowest_matrix();
+  void insert(Matrix *m);  // removes m?
+  Matrix *take_lowest_matrix();
   int lo_degree() { return _lo_degree; }
   int n_left() { return _n_held; }
 };
@@ -65,42 +65,29 @@ class sagbi_comp : public gb_comp
 #endif
 public:
   // creation
-  sagbi_comp(const Matrix &m);
+  sagbi_comp(const Matrix *m);
   ~sagbi_comp();
 
   void enlarge(const Ring *R, int *wts);
-  void add_generators(const Matrix &m);
+  void add_generators(const Matrix *m);
   int calc(const int *deg, const intarray &stop_conditions);
 
-  Matrix reduce(const Matrix &m, Matrix &lift);
-  Vector reduce(const Vector &v, Vector &lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  Vector *reduce(const Vector *v, Vector *&lift);
 
-  virtual int contains(const Matrix &m);
+  virtual int contains(const Matrix *m);
   virtual bool is_equal(const gb_comp *q);
   
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix min_gens_matrix();
-  Matrix initial_matrix(int n);
-  Matrix gb_matrix();
-  Matrix change_matrix();
-  Matrix syz_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
+  Matrix *syz_matrix();
   void stats() const;
 
 public:
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
   sagbi_comp * cast_to_sagbi_comp() { return this; }
   const sagbi_comp * cast_to_sagbi_comp() const { return this; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "sagbi_comp"; }
-
-  class_identifier class_id() const { return CLASS_SagbiComputation; }
-
-  int length_of() const { return 0; }
 };
 #endif

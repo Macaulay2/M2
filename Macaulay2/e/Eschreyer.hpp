@@ -6,7 +6,7 @@
 #include "matrix.hpp"
 #include "geovec.hpp"
 
-class GBKernelComputation : public type
+class GBKernelComputation : public mutable_object
 {
   const PolynomialRing *R;
   const Ring *K;
@@ -15,7 +15,7 @@ class GBKernelComputation : public type
   const FreeModule *G;  // This is where the resulting syzygies live.
         // This MUST be a Schreyer free module compatible with the input!
 
-  array<MonomialIdeal> mi;  // Used in reduction.
+  array<MonomialIdeal *> mi;  // Used in reduction.
   array<vec> gb;            // This is the "stripped" GB.
   array<vec> syzygies;     // This is basically the result.
 
@@ -29,39 +29,29 @@ class GBKernelComputation : public type
   int total_reduce_count;
 
   void new_pairs(int i);
-  void strip_gb(const Matrix &m);  // Fills in 'gb' with stripped GB.
+  void strip_gb(const Matrix *m);  // Fills in 'gb' with stripped GB.
 
   vec make_syz_term(ring_elem c, const int *monom, int comp) const;
   // This routine grabs 'c', and 'monom' should be the total monomial.
 
   bool find_ring_divisor(const int *exponents, ring_elem &result);
-  int find_divisor(const MonomialIdeal &mi, const int *exponents, int &result);
+  int find_divisor(const MonomialIdeal * mi, const int *exponents, int &result);
   // Returns the index of the least element in the monomial order which divides.
 
   vec s_pair(vec syz) const;
   void reduce(vec &g, vec &gsyz);  // Reduces g to zero.  gsyz is real result.
 public:
-  GBKernelComputation(const Matrix &m);
+  GBKernelComputation(const Matrix *m);
 
   virtual ~GBKernelComputation();
 
   int calc();
 
-  Matrix get_syzygies();
+  Matrix *get_syzygies();
 
 public:
-  class_identifier class_id() const { return CLASS_GBKernelComputation; }
-  type_identifier  type_id () const { return TY_GBKernelComputation; }
-  const char * type_name   () const { return "GBKernelComputation"; }
-
   GBKernelComputation * cast_to_GBKernelComputation() { return this; }
   const GBKernelComputation * cast_to_GBKernelComputation() const { return this; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "gbKernelComputation"; }
-
-  int length_of() const { return syzygies.length(); }
-  object index_of(int /*i*/) { return get_syzygies(); }
 };
 
 

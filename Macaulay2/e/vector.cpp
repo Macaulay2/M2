@@ -2,119 +2,181 @@
 
 #include "vector.hpp"
 
-stash *Vector_rec::mystash;
-
-bool Vector_rec::equals(const object_element *o) const
+inline Vector::Vector(const FreeModule *F) : 
+  F(F), val(0)
 {
-  const Vector_rec *b = dynamic_cast<const Vector_rec *>(o);
-  if (F != b->F) return false;
-  return F->is_equal(val,b->val);
+}
+inline Vector::Vector(const FreeModule *F, const RingElement *r, int i) : 
+  F(F), val(F->raw_term(F->get_ring()->copy(r->get_value()),i))
+{
+}
+inline Vector::Vector(const FreeModule *F, const vec v) : 
+  F(F), val(v)
+{
 }
 
-void Vector_rec::text_out(buffer &o) const
+bool Vector::is_equal(const Vector *b) const
 {
-  F->elem_text_out(o, val);
+  if (this == b) return true;
+  if (free_of() != b->free_of()) return false;
+  return free_of()->is_equal(val, b->val);
 }
 
-void Vector_rec::bin_out(buffer &o) const
+Vector *Vector::make_raw(const FreeModule *F, vec v)
+  // This function GRABS the v, so be careful...
 {
-  F->elem_bin_out(o, val);
+  return new Vector(F,v);
+}
+
+Vector *Vector::zero(const FreeModule *F)
+{
+  return Vector::make_raw(F,0);
+}
+
+Vector *Vector::e_sub_i(const FreeModule *F, int i)
+{
+  if (i < 0 || i >= F->rank())
+    {
+      ERROR("index out of range");
+      return 0;
+    }
+  return Vector::make_raw(F,F->e_sub_i(i));
+}
+
+Vector *Vector::make(const FreeModule *F, const RingElement *r, int n)
+{
+  if (F->get_ring() != r->get_ring()) 
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+  if (n < 0 || n >= F->rank())
+    {
+      ERROR("index out of range");
+      return 0;
+    }
+  vec v = F->raw_term(F->get_ring()->copy(r->get_value()), n);
+  return Vector::make_raw(F,v);
+}
+
+Vector *Vector::make(const FreeModule *F, RingElement_array *fs)
+{
+  unsigned int n = F->rank();
+  if (n != fs->len)
+    {
+      ERROR("wrong length array for vector creation");
+      return 0;
+    }
+  const Ring *R = F->get_ring();
+  for (unsigned int i=0; i<n; i++)
+    {
+      if (R != fs->array[i]->get_ring())
+	{
+	  ERROR("expected same ring");
+	  return 0;
+	}
+    }
+  Vector *result = new Vector(F);
+  for (unsigned int i=0; i<n; i++)
+    result = (*result) + new Vector(F, fs->array[i], i);
+
+  return result;
+}
+
+RingElement_array * Vector::get_all_coeffs() const
+{
+  RingElement_array *result = (RingElement_array *) getmem(sizeofarray(result,F->rank()));
+  result->len = F->rank();
+
+  for (int i=0; i<F->rank(); i++)
+    result->array[i] = RingElement::make_raw(get_ring(), F->get_coefficient(val, i));
+
+  return result;
 }
 
 void Vector::text_out(buffer &o) const
 {
-  obj->text_out(o);
+  F->elem_text_out(o, val);
 }
 
-void Vector::bin_out(buffer &o) const
+Vector *Vector::get_terms(int lo, int hi) const
 {
-  obj->bin_out(o);
+  return new Vector(free_of(), free_of()->get_terms(val, lo, hi));
 }
 
-int Vector_rec::length_of() const
+Vector *Vector::operator-() const
 {
-  return F->n_terms(val);
+  return new Vector(free_of(), free_of()->negate(val));
 }
 
-Vector Vector::get_terms(int lo, int hi) const
+Vector *Vector::operator+(const Vector *b) const
 {
-  Vector result(free_of(), free_of()->get_terms(obj->val, lo, hi));
-  return result;
-}
-
-Vector Vector::operator-() const
-{
-  Vector result(free_of(), free_of()->negate(obj->val));
-  return result;
-}
-
-Vector Vector::operator+(const Vector &b) const
-{
-  Vector result(free_of());
-  if (free_of() != b.free_of())
-    gError << "vector addition requires both elements to have the same "
-      << "ambient module";
-  else 
+  if (F != b->free_of())
     {
-      vec f = obj->val;
-      vec g = b.obj->val;
-      result.obj->val = free_of()->add(f, g);
+      ERROR("vector addition requires both elements to have the same ambient module");
+      return 0;
     }
-  return result;
+
+  return new Vector(F, F->add(val, b->val));
 }
-Vector Vector::operator-(const Vector &b) const
+
+Vector *Vector::operator-(const Vector *b) const
 {
-  Vector result(free_of());
-  if (free_of() != b.free_of())
-    gError << "vector subtraction requires both elements to have the same "
-      << "ambient module";
-  else 
+  if (F != b->free_of())
     {
-      vec f = obj->val;
-      vec g = b.obj->val;
-      result.obj->val = free_of()->subtract(f, g);
+      ERROR("vector subtraction requires both elements to have the same ambient module");
+      return 0;
     }
-  return result;
+
+  return new Vector(F, F->subtract(val, b->val));
 }
 
-Vector Vector::operator*(const RingElement &b) const
+Vector *Vector::operator*(const RingElement *b) const
 {
-  Vector result(free_of());
-  if (get_ring() != b.get_ring())
-    gError << "scalar multiplication requires both elements to have the same "
-      << "base ring";
-  else 
-     result.obj->val = free_of()->rightmult(obj->val, b.get_value());
-  return result;
+  if (get_ring() != b->get_ring())
+    {
+      ERROR("scalar multiplication requires both elements to have the same base ring");
+      return 0;
+    }
+
+  return new Vector(F, F->rightmult(val, b->get_value()));
 }
 
-Vector Vector::operator*(int n) const
+Vector *Vector::operator*(int n) const
 {
-  Vector result(free_of(), free_of()->mult(n, obj->val));
-  return result;
+  return new Vector(F, F->mult(n, val));
 }
 
-RingElement Vector::get_coefficient(int i) const
+RingElement *Vector::get_coefficient(int i) const
 {
-  RingElement result(get_ring(), free_of()->get_coefficient(obj->val, i));
-  return result;
+  if (i < 0 || i >= F->rank())
+    {
+      ERROR("index out of range");
+      return 0;
+    }
+  return RingElement::make_raw(get_ring(), F->get_coefficient(val, i));
 }
 
 int Vector::lead_component() const
 {
-  return free_of()->lead_component(obj->val);
+  // returns -1 if applied to the zero vector
+  return free_of()->lead_component(val);
 }
 
-Vector Vector::lead_term() const
+Vector *Vector::lead_term() const
 {
-  Vector result(free_of(), free_of()->lead_term(obj->val));
-  return result;
+#warning "implement Vector::lead_term()"
+#if 0
+  // MES aug 2002
+  return new Vector(free_of(), free_of()->lead_term(val));
+#endif
+  return 0;
 }
 
-RingElement Vector::lead_coefficient() const
+RingElement *Vector::lead_coefficient() const
 {
-  RingElement result(get_ring()->Ncoeffs(), free_of()->lead_coefficient(obj->val));
-  return result;
+  if (val == 0) return 0;
+  return RingElement::make_raw(get_ring(), free_of()->lead_coefficient(val));
 }
 
 bool Vector::is_homogeneous() const
@@ -122,98 +184,75 @@ bool Vector::is_homogeneous() const
   return free_of()->is_homogeneous(get_value());
 }
 
-intarray Vector::degree() const
+M2_arrayint Vector::degree() const
 {
-  const Ring *R = get_ring();
-  const FreeModule *F = free_of();
-  intarray result;
-
-  int *mon = new int[R->degree_monoid()->monomial_size()];
-  int *d = result.alloc(R->degree_monoid()->n_vars());
-
   if (is_zero()) 
-    gError << "the zero element has no degree";
-  else
     {
-      F->degree(get_value(), mon);
-      R->degree_monoid()->to_expvector(mon, d);
+      ERROR("the zero element has no degree");
+      return 0;
     }
+
+  const FreeModule *F = free_of();
+  const Ring *R = get_ring();
+  const Monoid *D = R->degree_monoid();
+
+  M2_arrayint result = makearrayint(D->n_vars());
+
+  int *mon = new int[D->monomial_size()];
+
+  F->degree(get_value(), mon);
+  D->to_expvector(mon, result->array);
 
   delete [] mon;
   return result;
 }
 
-Vector Vector::homogenize(int v, const int *wts) const
+Vector *Vector::homogenize(int v, const M2_arrayint wts) const
 {
-  const FreeModule *F = free_of();
-  Vector result(F, F->homogenize(get_value(), v, wts));
-  return result;
+  if (v < 0 || v >= get_ring()->n_vars())
+    {
+      ERROR("homogenization: improper ring variable");
+      return 0;
+    }
+  if (wts == NULL || wts->len != (unsigned)(get_ring()->n_vars()))
+    {
+      ERROR("homogenization: improper weight function");
+      return 0;
+    }
+  if (wts->array[v] == 0)
+    {
+      ERROR("homogenization: variable weight is zero");
+      return 0;
+    }
+
+  return Vector::make_raw(F, F->homogenize(get_value(), v, wts));
 }
 
-Vector Vector::homogenize(int v, int deg, const int *wts) const
+Vector *Vector::homogenize(int v, int deg, const M2_arrayint wts) const
 {
-  const FreeModule *F = free_of();
-  Vector result(F, F->homogenize(get_value(), v, deg, wts));
-  return result;
+  if (v < 0 || v >= get_ring()->n_vars())
+    {
+      ERROR("homogenization: improper ring variable");
+      return 0;
+    }
+  if (wts == NULL || wts->len != (unsigned)(get_ring()->n_vars()))
+    {
+      ERROR("homogenization: improper weight function");
+      return 0;
+    }
+  if (wts->array[v] == 0)
+    {
+      ERROR("homogenization: variable weight is zero");
+      return 0;
+    }
+
+  return Vector::make_raw(F, F->homogenize(get_value(), v, deg, wts));
 }
 
-Vector Vector::sub_vector(const FreeModule * /*F*/, const intarray & /*r*/) const
+int Vector::n_terms() const
 {
-#if 0
-  Vector result(F);
-  if (!is_zero())
-    vinfo()->sub_vector(r, ints(), result.get_intarray());
-  return result;
-#endif
-  return Vector();
-}
-
-#if 0
-Vector Vector::mult_by_matrix(const matrix &M) const
-{
-  Vector result(free_of());
-  if (!is_zero())
-    vinfo()->mult_by_matrix(M, ints(), result.get_intarray());
+  int result = 0;
+  for (vec a = get_value(); a != NULL; a = a->next)
+    result++;
   return result;
 }
-
-Vector Vector::component_shift(int n) const
-    // Shift each component by n
-{
-  Vector result(free_of());
-  if (!is_zero())
-    vinfo()->component_shift(ints(), n, result.get_intarray());
-  return result;
-}
-
-Vector Vector::tensor_shift(int n, int m) const
-    // component i --> n*i+m
-{
-  Vector result(free_of());
-  if (!is_zero())
-    vinfo()->tensor_shift(ints(), n, m, result.get_intarray());
-  return result;
-}
-
-Vector Vector::tensor(const Vector &v, int m) const
-    // return the tensor product of 'this' and 'v', where 'm' is the
-    // rank of the ambient freemodule to 'v'.
-{
-  Vector result(free_of());
-  if (!is_zero() && !v.is_zero())
-    vinfo()->tensor(ints(), v.ints(), m, result.get_intarray());
-  return result;
-}
-
-Vector Vector::diff(const Vector &v, int m, int use_coef) const
-    // return the result (as a Vector of the same shape as for 'tensor'
-    // of differentiating v by 'this', where 'm' is the
-    // rank of the ambient freemodule to 'v'.  'use_coef' == 0 means
-    // use contraction, not differentiation.
-{
-  Vector result(free_of());
-  if (!is_zero() && !v.is_zero())
-    vinfo()->diff(ints(), v.ints(), m, use_coef, result.get_intarray());
-  return result;
-}
-#endif

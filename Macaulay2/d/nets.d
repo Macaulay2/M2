@@ -2,6 +2,7 @@
 
 -- nets are 2 dimensional strings of characters
 
+use C;
 use system;
 use strings;
 use varstrin;
@@ -162,3 +163,64 @@ export (s:Net) < (t:Net) : bool := (
 export (s:Net) >= (t:Net) : bool := !(s<t);
 export (s:Net) > (t:Net) : bool := t<s;
 export (s:Net) <= (t:Net) : bool := !(t<s);
+
+use vararray;
+
+blankcolumn(i:int, t:Net):bool := (
+     if i >= 0 then foreach s in t.body do if length(s) > i && s.i != ' ' then return(false);
+     true
+     );
+
+subnet(t:Net,startcol:int,wid:int):Net := (
+     if startcol < 0 then startcol = 0;			  -- shouldn't happen
+     if wid > t.width-startcol then wid = t.width-startcol;
+     if startcol == 0 && wid == t.width then return(t);
+     Net( t.height, 
+	  wid, 
+	  new array(string) len length(t.body) do foreach s in t.body do provide substr(s,startcol,wid)
+	  ));
+
+export wrap(wid:int, sep:char, t:Net):Net := (
+     if t.width <= wid then return(t);
+     if wid <= 0 then return(t);
+     breaks := newvararrayint(t.width/wid + 5);
+     minwid := wid/3;
+     if minwid == 0 then minwid = 1;
+     leftbkpt := 0;
+     nextleftbkpt := 0;
+     rightbkpt := 0;
+     while (
+	  while leftbkpt < t.width && blankcolumn(leftbkpt,t) do leftbkpt = leftbkpt+1;
+	  leftbkpt < t.width
+	  )
+     do (
+	  breaks << leftbkpt;
+	  n := leftbkpt + wid;
+	  nextleftbkpt = n;
+	  rightbkpt = n;
+	  if n >= t.width then (
+	       rightbkpt = t.width;
+	       nextleftbkpt = t.width;
+	       )
+	  else if blankcolumn(n,t)
+	  then (
+	       rightbkpt = n;
+	       nextleftbkpt = n;
+	       )
+	  else for i from n to leftbkpt + minwid by -1 do (
+	       if blankcolumn(i-1,t) then (
+		    nextleftbkpt = i;
+		    rightbkpt = i-1;
+		    break;
+		    ));
+	  while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,t) do rightbkpt = rightbkpt-1;
+	  breaks << rightbkpt;
+	  leftbkpt = nextleftbkpt;
+	  );
+     sepline := toNet(new string len wid do provide sep);
+     j := 0;
+     pieces := new array(Net) len breaks.size - 1 do (
+	  provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j); j = j+2;
+	  provide sepline;
+	  );
+     VerticalJoin(pieces));

@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 table = (rows,cols,f) -> apply(rows,i->apply(cols,j->f(i,j)))
 
@@ -17,5 +17,3 @@ transpose List := List => m -> (
      else if # m === 0
           then {}
 	  else error ("expected ", toString m, " to be a table"))
-
-

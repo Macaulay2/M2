@@ -10,8 +10,8 @@
 class PfaffianComputation : public computation
 {
   const Ring *R;
-  Matrix M;
-  Matrix pfaffs;			// One row matrix collecting non-zero 
+  const Matrix *M;
+  Matrix *pfaffs;			// One row matrix collecting non-zero 
 				// pfaffians.
   //hashtable<ring_elem> table;	// Only up through size p-1 by p-1.
   int p;
@@ -24,7 +24,7 @@ class PfaffianComputation : public computation
      // Compute the pfaffian of the minor with rows r[0]..r[p-1]
      // and columns c[0]..c[p-1].
 public:
-  PfaffianComputation(const Matrix &M, int p);
+  PfaffianComputation(const Matrix *M, int p);
   ~PfaffianComputation();
 
   int step();	
@@ -32,12 +32,7 @@ public:
 	// increments I and/or J and updates 'pfaffs', 'table'.
   int calc(int nsteps);
   
-  Matrix pfaffians() { return pfaffs; }
-
-  int length_of() const { return pfaffs.n_cols(); }
-  object index_of(int) { return pfaffs; }
-
-  class_identifier class_id() const { return CLASS_PfaffianComputation; }
+  Matrix *pfaffians() { return pfaffs; }
 
   const Ring * get_ring () const { return R; }
 };

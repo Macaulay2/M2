@@ -5,6 +5,7 @@ rep = x -> {x#0 - x#1,x#1}
 assert ( adj rep {1,0} === {1,0} )
 assert ( adj rep {0,1} === {0,1} )
 r = QQ[x,y,Degrees => {{2,1},{1,3}}, Repair => rep, Adjust => adj]
+   -- internal adjusted degrees for r : {{3, 1}, {4, 3}}
 R = QQ[X,Y,Degrees => {{2,1},{1,3}}]
 assert( degrees source vars R === degrees source vars r )
 assert( degrees R^{{2,3},{4,1},{1,0},{0,1}} === degrees r^{{2,3},{4,1},{1,0},{0,1}} )

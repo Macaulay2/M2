@@ -2,24 +2,24 @@
 
 #include "assprime.hpp"
 
-AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I)
+AssociatedPrimes::AssociatedPrimes(const MonomialIdeal * const &I)
   : state(do_codim),
-    min_codim(I.get_ring()->n_vars()+1),
-    nvars(I.get_ring()->n_vars()),
-    mi(I.radical()),
-    ass_primes(I.get_ring())
+    min_codim(I->get_ring()->n_vars()+1),
+    nvars(I->get_ring()->n_vars()),
+    mi(I->radical()),
+    ass_primes(new MonomialIdeal(I->get_ring()))
 {
   exps = new int *[nvars+2];
   for (int i=0; i<=nvars+1; i++)
     exps[i] = 0;
 }
 
-AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I, int cod)
+AssociatedPrimes::AssociatedPrimes(const MonomialIdeal * const &I, int cod)
   : state(do_primes),
     min_codim(cod),
-    nvars(I.get_ring()->n_vars()),
-    mi(I.radical()),
-    ass_primes(I.get_ring())
+    nvars(I->get_ring()->n_vars()),
+    mi(I->radical()),
+    ass_primes(new MonomialIdeal(I->get_ring()))
 {
   exps = new int *[nvars+2];
   for (int i=0; i<=nvars+1; i++)
@@ -36,12 +36,12 @@ int AssociatedPrimes::codimension()
 {
   exps[0] = new int[nvars];
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
-  ass_prime_generator(mi.first_node(), 0);
+  ass_prime_generator(mi->first_node(), 0);
   state = do_primes;
   return min_codim;
 }
 
-MonomialIdeal AssociatedPrimes::associated_primes()
+MonomialIdeal * AssociatedPrimes::associated_primes()
     // Place the associated primes of minimal codimension 
     // into a monomial ideal where each monomial corresponds to the prime
     // monomial ideal which is its support.
@@ -53,7 +53,7 @@ MonomialIdeal AssociatedPrimes::associated_primes()
     }
   if (exps[0] == 0) exps[0] = new int[nvars];
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
-  ass_prime_generator(mi.first_node(), 0);
+  ass_prime_generator(mi->first_node(), 0);
   return ass_primes;
 }
 
@@ -105,7 +105,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 	      to_prime_ideal(nvars, exp); 
 	      Bag *b = new Bag(0);
 	      varpower::from_ntuple(nvars, exp, b->monom());
-	      ass_primes.insert(b);
+	      ass_primes->insert(b);
 	    }
 	  return ;
 	}
@@ -113,7 +113,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
       switch (reduce_exp(m, exp)) 
 	{
 	case 0 : 
-	  p = mi.next(p);
+	  p = mi->next(p);
 	  break;
 	case -1:
 	  return ;
@@ -123,7 +123,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 	      if (exp[i.var()] == 0)
 		{
 		  exp[i.var()] = 1 ;
-		  ass_prime_generator(mi.next(p), codim+1) ;
+		  ass_prime_generator(mi->next(p), codim+1) ;
 		  exp[i.var()] = -1 ;
 		}
 	  return ;

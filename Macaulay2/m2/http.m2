@@ -50,11 +50,11 @@ getWWW (String,String) :=
 getWWW (String,Nothing) := (url,body) -> (
      ret := "";
      select(1,protocols,(prot,meth) -> (
-     	       if substring(url,0,#prot) == prot 
+     	       if substring(0,#prot,url) == prot 
 	       then (
-		    url = substring(url,#prot);
+		    url = substring(#prot,url);
 		    host := (separate("/",url))#0;
-		    url = substring(url,#host);
+		    url = substring(#host,url);
 		    if url == "" then url = "/";
 		    port := null;
 		    x := separate(":",host);

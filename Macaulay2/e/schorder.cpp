@@ -1,0 +1,226 @@
+#include "schorder.hpp"
+#include "matrix.hpp"
+#include "comb.hpp"
+#include "polyring.hpp"
+
+void SchreyerOrder::append(int compare_num, const int *base_monom)
+{
+  int *me = _order.alloc(_nslots);
+  *me++ = compare_num;
+  for (int i=1; i<_nslots; i++)
+    *me++ = *base_monom++;
+  _rank++;
+}
+
+SchreyerOrder *SchreyerOrder::create(const Matrix *m)
+{
+  int i;
+  const Ring *R = m->get_ring();
+  const SchreyerOrder *S = m->rows()->get_schreyer_order();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const Monoid *M = P->Nmonoms();
+  SchreyerOrder *result = new SchreyerOrder(M);
+  int rk = m->n_cols();
+  if (rk == 0) return result;
+  int *base = M->make_one();
+  int *tiebreaks = new int[rk];
+  int *ties = new int[rk];
+  for (i=0; i<rk; i++)
+    {
+      vec v = (*m)[i];
+      if (v == NULL || S == NULL)
+	tiebreaks[i] = i;
+      else
+	tiebreaks[i] = i + rk * S->compare_num(v->comp);
+    }
+  // Now sort tiebreaks in increasing order.
+  std::sort<int *>(tiebreaks, tiebreaks+rk);
+  for (i=0; i<rk; i++)
+    ties[tiebreaks[i] % rk] = i;
+  for (i=0; i<rk; i++)
+    {
+      vec v = (*m)[i];
+      if (v == NULL)
+	M->one(base);
+      else if (S == NULL)
+	M->copy(P->lead_monomial(v->coeff), base);
+      else
+	M->mult(P->lead_monomial(v->coeff), S->base_monom(i), base);
+
+      result->append(ties[i], base);
+    }
+
+  M->remove(base);
+  delete [] tiebreaks;
+  delete [] ties;
+  return result;
+}
+
+bool SchreyerOrder::is_equal(const SchreyerOrder *G) const
+{
+  for (int i=0; i<rank(); i++)
+    {
+      if (compare_num(i) != G->compare_num(i))
+	return false;
+      if (M->compare(base_monom(i), G->base_monom(i)) != 0)
+	return false;
+    }
+  return true;
+}
+
+SchreyerOrder *SchreyerOrder::copy() const
+{
+  SchreyerOrder *result = new SchreyerOrder(M);
+  for (int i=0; i<rank(); i++)
+    result->append(compare_num(i), base_monom(i));
+  return result;
+}
+
+SchreyerOrder *SchreyerOrder::sub_space(int n) const
+{
+  if (n < 0 || n > rank())
+    {
+      ERROR("sub schreyer order: index out of bounds");
+      return NULL;
+    }
+  SchreyerOrder *result = new SchreyerOrder(M);
+  for (int i=0; i<n; i++)
+    result->append(compare_num(i), base_monom(i));
+  return result;
+}
+
+SchreyerOrder *SchreyerOrder::sub_space(const M2_arrayint a) const
+{
+  // Since this is called only from FreeModule::sub_space,
+  // the elements of 'a' are all in bounds, and do not need to be checked...
+  // BUT, we check anyway...
+  SchreyerOrder *result = new SchreyerOrder(M);
+  for (unsigned int i=0; i<a->len; i++)
+    if (a->array[i] >= 0 && a->array[i] < rank())
+      result->append(compare_num(a->array[i]), base_monom(a->array[i]));
+    else
+      {
+	ERROR("schreyer order subspace: index out of bounds");
+	delete result;
+	return NULL;
+      }
+  return result;
+}
+
+void SchreyerOrder::append_order(const SchreyerOrder *G)
+{
+  for (int i=0; i<G->rank(); i++)
+    append(G->compare_num(i), G->base_monom(i));
+}
+
+SchreyerOrder *SchreyerOrder::direct_sum(const SchreyerOrder *G) const
+{
+  SchreyerOrder *result = new SchreyerOrder(M);
+  result->append_order(this);
+  result->append_order(G);
+  return result;
+}
+
+SchreyerOrder *SchreyerOrder::tensor(const SchreyerOrder *G) const
+     // tensor product
+{
+  // Since this is called only from FreeModule::tensor,
+  // we assume that 'this', 'G' have the same monoid 'M'.
+
+  SchreyerOrder *result = new SchreyerOrder(M);
+  int *base = M->make_one();
+
+  int next = 0;
+  for (int i=0; i<rank(); i++)
+    for (int j=0; j<G->rank(); j++)
+      {
+	M->mult(base_monom(i), G->base_monom(j), base);
+	result->append(next++, base);
+      }
+
+  M->remove(base);
+  return result;
+}
+
+
+SchreyerOrder *SchreyerOrder::exterior(int p) const
+     // p th exterior power
+{
+  // This routine is only called from FreeModule::exterior.
+  // Therefore: p is in the range 0 < p < rk.
+  SchreyerOrder *result = 0;
+
+  int rk = rank();
+
+  int *a = new int[p];
+  for (int i=0; i<p; i++) a[i] = i;
+
+  int *base = M->make_one();
+  int next = 0;
+  do
+    {
+      M->one(base);
+      for (int r=0; r<p; r++)
+	M->mult(base, base_monom(a[r]), base);
+
+      result->append(next++, base);
+    }
+  while (comb::increment(p, rk, a));
+
+  M->remove(base);
+  delete [] a;
+
+  return result;
+}
+
+static SchreyerOrder *symm1_result = NULL;
+static int *symm1_base = NULL;
+static int symm1_next = 0;
+
+void SchreyerOrder::symm1(int lastn,	     // can use lastn..rank()-1 in product
+			  int pow) const   // remaining power to take
+{
+  if (pow == 0)
+    symm1_result->append(symm1_next++, symm1_base);
+  else
+    {
+      for (int i=lastn; i<rank(); i++)
+	{
+	  // increase symm1_base with e_i
+	  M->mult(symm1_base, base_monom(i), symm1_base);
+
+	  symm1(i, pow-1);
+
+	  // decrease symm1_base back
+	  M->divide(symm1_base, base_monom(i), symm1_base);
+	}
+    }
+}
+
+SchreyerOrder *SchreyerOrder::symm(int n) const
+    // n th symmetric power
+{
+  symm1_result = new SchreyerOrder(M);
+  if (n >= 0)
+    {
+      symm1_base = M->make_one();
+      
+      symm1(0, n);
+      
+      M->remove(symm1_base);
+    }
+  SchreyerOrder *result = symm1_result;
+  symm1_result = NULL;
+  return result;
+}
+
+void SchreyerOrder::text_out(buffer &o) const
+{
+  for (int i=0; i<_rank; i++)
+    {
+      if (i != 0) o << ' ';
+      M->elem_text_out(o, base_monom(i));
+      o << '.';
+      o << compare_num(i);
+    }
+}

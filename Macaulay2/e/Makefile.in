@@ -1,5 +1,4 @@
 # @configure_input@
-#ARING = true
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
@@ -23,9 +22,6 @@ CPPFLAGS += -I../../include
 CPPFLAGS += -I../util
 CPPFLAGS += -I.
 
-ifdef ARING
-CPPFLAGS += -DARING
-endif
 
 # CXXFLAGS += -fhandle-exceptions
 
@@ -54,30 +50,171 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 CONTAINER = \
-	array \
-	hashtab \
-	queue \
-	stack 
+
 
 INTERFACE = \
+montable \
+gbA \
+schorder \
+freemod2 \
+monorder \
+GF \
+LLL \
+RR \
+Z \
+QQ \
+bigRR \
+bigCC \
+CC \
+assprime \
+buffer \
+comb \
+det \
+frac \
+freemod \
+gb \
+gb_comp \
+gbinhom \
+gbring \
+gb2 \
+gbnod \
+hermite \
+hilb \
+int_bag \
+intarray \
+lattice \
+matrix \
+mem \
+monideal \
+monoid \
+monomial \
+ntuple \
+polyring \
+pfaff \
+random \
+relem \
+ring \
+ringmap \
+sagbi \
+schur \
+skew \
+skewpoly \
+solvable \
+spair \
+sparsemat \
+text_io \
+varpower \
+vector \
+weylalg \
+z_mod_p
+
+ifeq "$(LAPACK)" "yes"
+INTERFACE += \
+matrixRR \
+matrixCC
+endif
+
+STILLTOCOMPILE = \
+newspair \
+weylfree \
+res \
+res2 \
+respoly \
+respoly2 \
+Eschreyer \
+gauss \
+termideal \
+gbZZ \
+gbbinom \
+
+
+COMMANDS = \
+	engine \
+	x_monom \
+	x_monoid \
+	x_relem \
+	x_free \
+	x_mat \
+	x_monideal \
+	x_gb \
+	x_ringmap \
+	x_sparsemat
+
+ifeq "$(LAPACK)" "yes"
+COMMANDS += \
+	x_lapack
+endif
+
+INTERFACE0 = \
 	buffer \
-	bin_io \
-	handles \
-	interp \
-	object \
-	obj_prim \
-	text_io
+	engine \
+	error \
+	intarray \
+	mem \
+	text_io \
+	ntuple \
+	varpower \
+	monomial \
+	x_monom \
+	monorder \
+	monoid \
+	monideal \
+	x_monideal \
+	ring \
+	relem \
+	vector \
+	freemod \
+	matrix \
+	Z \
+	z_mod_p \
+	GF \
+	RR \
+	frac \
+	polyring \
+	schur \
+	weylalg \
+	freemod2 \
+	random \
+	weylfree \
+	int_bag \
+	hilb \
+	comb \
+	sparsemat \
+	termideal \
+	det \
+	pfaff \
+	assprime \
+	gb_comp \
+	LLL \
+	hermite \
+	gauss \
+	sagbi \
+	gb \
+	gbinhom \
+	gbbinom \
+	gbZZ \
+	respoly \
+	respoly2 \
+	res \
+	res2 \
+	gbnod \
+	gb2 \
+	Eschreyer
 
-INTERFACE_H = obj_int obj_iarr obj_str obj_ptr
+#	x_relem \
 
-ESTUFF = \
+#	x_monoid \
+
+INTERFACE_OLD_H = obj_int obj_iarr obj_str obj_ptr
+
+REMOVEDESTUFF_OLD = \
 	Eschreyer \
 	Espairs \
 	EGB1 \
 	Elookup \
 	Einterface
 
-COMMANDS = \
+COMMANDS_REDO = \
 	x_monoid \
 	x_monom \
 	x_system \
@@ -87,9 +224,10 @@ COMMANDS = \
 	x_gb \
 	freemod2 \
 	x_factor \
+	x_borel \
 	gbnod
 
-NAMES = \
+NAMES_OLD = \
 	error \
 	ntuple \
 	res \
@@ -122,9 +260,7 @@ NAMES = \
 	lattice \
 	gauss \
 	comb \
-	mem \
 	int_bag \
-	intarray \
 	monorder \
 	monomial \
 	varpower \
@@ -139,7 +275,7 @@ NAMES = \
 	gb2 \
 	res2 \
 	respoly2 \
-	monoid \
+	monoid
 
 NOT_USED_YET = \
 	gbc \
@@ -158,7 +294,16 @@ NOT_USED_YET = \
 	montable \
 	monheap
 
-OLDESTUFF = \
+OLDSTUFF = \
+	bin_io \
+	handles \
+	interp \
+	object \
+	obj_prim \
+	hashtab \
+	stack 
+
+OLDESTUFF_OLD = \
 	EZZp \
 	Emonoid \
 	Epoly \
@@ -169,16 +314,16 @@ OLDESTUFF = \
 	Eringmap \
 	Eio \
 	EGB \
-	Ecommands \
+	Ecommands
 
-E_H = \
+E_H_OLD = \
 	Edefs.hpp \
 	Ehashtab.hpp \
 	Ematrix.hpp \
 	Eringmap.hpp \
 	Epolywrap.hpp
 
-NAMES_H = \
+NAMES_H_OLD = \
 	comp \
 	ringelem \
 	style \
@@ -186,23 +331,26 @@ NAMES_H = \
 	index \
 	respair2
 
-C_FILES = mac2
+NAMES_H = comp \
+	ringelem \
+	style \
+	hash \
+	index \
+	respair2
 
-ifdef ARING
-#NAMES += ARING/polywrap
-Names += ARING/poly
-endif
+C_FILES = error table exptable monordering # ../d/M2types # borel
 
 
 ##############################
 ## end of source code files ##
 ##############################
 
-GENERATED_H = cmdnames cmdinst geovec geores
+GENERATED_H = geovec geogbvec geores
 
-CC_FILES1 := $(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE)
-CC_FILES2 := $(COMMANDS)
-CC_FILES := $(CC_FILES1) $(CC_FILES2)
+#CC_FILES1 := $(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE)
+#CC_FILES2 := $(COMMANDS)
+#CC_FILES := $(CC_FILES1) $(CC_FILES2)
+CC_FILES := $(INTERFACE) $(COMMANDS)
 FILES := $(CC_FILES) $(C_FILES)
 LOFILES1 := $(addsuffix .lo,$(CC_FILES1))
 LOFILES2 := $(addsuffix .lo,$(CC_FILES2) $(C_FILES))
@@ -226,7 +374,7 @@ HHFILES := $(addsuffix .hpp, \
 ###################################################################
 ## Targets ##
 #############
-all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H))
+all:: $(addsuffix .hpp, $(GENERATED_H))
 
 ifeq "$(SHARED)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so
@@ -246,22 +394,14 @@ endif
 ../lib/libengine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
 ../lib/libengine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
 
-geovec.hpp: geoT.hpp
-	awk '{sub(/geobucket/, "vecHeap"); sub(/geobucket/, "vecHeap"); sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
-#	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
+VEC =   -e "s/geobucket/vecHeap/g"      -e "s/FREEMODULETYPE/const FreeModule/g" -e "s/VECTYPE/vecterm */g"
+GBVEC = -e "s/geobucket/gbvectorHeap/g" -e "s/FREEMODULETYPE/GBRing/g"     -e "s/VECTYPE/gbvector */g"
+RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g"  -e "s/VECTYPE/res2term */g"
 
-geores.hpp: geoT.hpp
-	awk '{sub(/geobucket/, "respolyHeap"); sub(/geobucket/, "respolyHeap"); sub(/FREEMODULETYPE/, "res2_poly"); sub(/VECTYPE/, "res2term *"); print }' geoT.hpp >$@
-
-#geopoly.hpp: geoT.hpp
-#	awk '{sub(/FREEMODULETYPE/, "Ring"); sub(/VECTYPE/, "Nterm *"); print }' geoT.hpp >$@
-
-cmdnames.m2 : misc/cmdg.awk misc/cmdnames.input
-	$(AWK) -f  $^ >cmdnames.m2
-cmdnames.hpp : misc/cmdh.awk misc/cmdnames.input
-	$(AWK) -f $^ >$@
-cmdinst.hpp : misc/cmdinst.awk misc/cmdnames.input
-	$(AWK) -f $^ >$@
+geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
+geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
+geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
+initialize :: $(addsuffix .hpp, $(GENERATED_H))
 
 tags:: TAGS
 
@@ -269,18 +409,20 @@ TAGS: $(HHFILES) $(CCFILES)
 	etags $^
 
 clean::
-	rm -f *.lo *.o *.dd *.ii $(LIB) cmdinst.hpp cmdnames.hpp cmdnames.m2
-	rm -f TAGS
+	rm -f *.lo *.o $(LIB) TAGS $(addsuffix .hpp, $(GENERATED_H))
+
+clean::
+	$(MAKE) -C tests $@
 
 Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/e/Makefile
 
-Makefile-o.depends: $(CFILES) $(CCFILES) cmdnames.hpp cmdinst.hpp
-	$(CC) -MM $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
-clean::; rm -f Makefile-o.depends
-
+# dependency files, made automatically
+%.dep: %.cpp; $(CXX) -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
+%.dep: %.c;   $(CC)  -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
+clean::; rm -f *.dep
 ifeq "$(DEPENDS)" "yes"
-include Makefile-o.depends
+include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
 endif
 
 # this requires gnu sort and gnu uniq commands
@@ -291,6 +433,7 @@ dups-okay: dups-tmp
 	 else touch $@; fi
 
 check::
+	$(MAKE) -C tests check
 
 ifeq ($(OS),Linux)
 # don't run it elsewhere because we may not have gnu sort and gnu uniq there
@@ -323,19 +466,6 @@ $(LIB): $(OFILES)
 	-$(RANLIB) $(LIB)
 
 endif
-
-%.dd: %.cpp
-	@echo remaking $@
-	g++ -I../../include -MM $(CPPFLAGS) $< | sed 's|$*\.o|& $@|g' > tmp.dd
-	mv tmp.dd $@
-# we say g++ above instead of $(CXX) because -MM is understood only by g++, or at
-# not by cl
-
-#$(addsuffix .dd,$(FILES)) : cmdnames.hpp cmdinst.hpp
-
-#ifeq "$(DEPENDS)" "yes"
-#include $(addsuffix .dd,$(FILES))
-#endif
 
 distclean : clean
 	rm -f Makefile
