@@ -1,0 +1,131 @@
+#! /bin/sh
+
+TMP=tmp$$.c
+
+cat <<EOF >compat.h
+/* this file produced automatically by configure, do not edit */
+#include <stdlib.h>
+#include <math.h>
+#include <gc.h>
+#include <string.h>
+EOF
+
+cat <<EOF >compat.c
+/* this file produced automatically by configure, do not edit */
+#include <stdlib.h>
+#include <errno.h>
+EOF
+
+cat <<'EOF' >$TMP
+#include <math.h>
+main(){
+	double x;
+	__finite(x);
+	}
+EOF
+gcc $TMP -lm >/dev/null 2>&1 || echo '#define __finite finite' >>compat.h
+
+
+cat <<'EOF' >$TMP
+#include <math.h>
+main(){
+	double x;
+	__isnan(x);
+	}
+EOF
+gcc $TMP -lm >/dev/null 2>&1 || echo '#define __isnan isnan' >>compat.h
+
+
+cat <<'EOF' >$TMP
+#include <math.h>
+main(){
+	double x;
+	__isinf(x);
+	}
+EOF
+gcc $TMP -lm >/dev/null 2>&1 || echo '#define __isinf isinf' >>compat.h
+
+
+cat <<'EOF' >$TMP
+main(){ socket(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || (
+	echo '#ifndef ENOSYS'
+	echo '#define ENOSYS 0'
+	echo '#endif'
+	echo 'int socket() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ gethostbyname(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 ||
+	echo 'void *gethostbyname() { errno = ENOSYS; return (void *)0; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+main(){ inet_addr(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || 
+	echo 'int inet_addr() { errno = ENOSYS; return -1; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+main(){ getservbyname(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || 
+	echo 'void *getservbyname() { errno = ENOSYS; return (void *)0; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+main(){ authdes_create(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || (
+	echo '#ifndef ENOSYS'
+	echo '#define ENOSYS 0'
+	echo '#endif'
+	echo 'void *authdes_create() { errno = ENOSYS; return (void *)0; }' 
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ xdrmem_create(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || 
+	echo 'void *xdrmem_create() { errno = ENOSYS; return (void *)0; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+main(){ connect(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || 
+	echo 'int connect() { errno = ENOSYS; return -1; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+main(){ setsockopt(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || 
+	echo 'int setsockopt() { errno = ENOSYS; return -1; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+#include <netinet/in.h>
+main(){ htons(0); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || 
+	echo 'short htons(short x) { return x; }' \
+	>>compat.c
+
+cat <<'EOF' >$TMP
+main(){
+	int i = 0;
+	if (i < sizeof(long)) i = sizeof(long);
+	if (i < sizeof(double)) i = sizeof(double);
+	if (i < sizeof(void *)) i = sizeof(void *);
+	printf("#define GRANULARITY %d\n",i);
+	}
+EOF
+gcc $TMP && a.out >>compat.c
+rm -f a.out
+
+rm $TMP

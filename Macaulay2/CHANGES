@@ -1,0 +1,699 @@
+Changes made, most recent ones first:
+-----------------------------------------------------------------------------
+New in 0.8.24:
+
+the use of 'promote(I,R)' has been replaced by 'I*R', when I is an ideal and
+R is a ring.
+
+'ClassArgument' option to 'method' removed
+
+New in 0.8.21:
+
+'basename' has been changed to 'baseName'
+
+'on' changed to accept a function instead of a symbol
+
+'content', a new routine for content of polynomials and matrices
+
+'size', a new routine for measuring the size of objects.  It replaces
+	the use of 'length' to get the number of terms in a polynomial.
+
+'leadTermMatrix' changed to 'leadTerm'
+
+'subset' changed to 'isSubset'
+
+Our emacs mode for Macaulay 2 has been improved.  There is a new demo mode
+which will start up Macaulay 2 in a new frame that has a larger font, and
+there are function keys that can be used to obtain and execute lines of demo
+code from buffers that are not
+
+-----------------------------------------------------------------------------
+New in 0.8.19:
+
+'m2.init' is no longer loaded automatically - the init file is init.m2
+'hilbertSeries' now pulls out factors of 1-$T from the numerator
+'pushforward' changed to 'pushForward'
+'pushforward1' changed to 'pushForward1'
+'listForm', a new function which converts a polynomial to a form in which
+     a polynomial is represented by lists of pairs (m,c), where m is
+     a list of exponents for the variables in the ring, and c is the
+     coefficient.
+'listForm' and 'standardForm' also apply now to monomials
+'exponents', a new function that tells what the exponents are in a monomial
+     or polynomial
+
+-----------------------------------------------------------------------------
+New in 0.8.14:
+
+A fix to 'decompose' provided by John Dalbec has been applied.  The problem
+first appear when I incorporated the reordering routine of Messollen's 
+incorrectly.
+
+fixed 'html' - the html pages had extra braces and parentheses floating about.
+-----------------------------------------------------------------------------
+New in 0.8.12:
+
+'decompose' has been sped up by incorporating a call to a new routine of
+Michael Messollen which picks a good ordering for the variables in the ideal.
+-----------------------------------------------------------------------------
+New in 0.8.11:
+
+'tex' works on the documentation now, and now the default for 
+'document' is to create and use the EXAMPLE files if they exist.
+
+'substitute' now works for ideals, and now
+		substitute(f, x=>y)
+	works (before a list of substitutions was required)
+
+'res I' works for I an ideal, converting it to a module first.
+
+'exponents' removed
+-----------------------------------------------------------------------------
+New in 0.8.10:
+
+'stringlen' removed
+
+'prune' now works for maps.
+
+'CurrentDirectory' changed to 'currentDirectory'
+
+a new function 'input' which loads a file, echoes the input, prints the
+values of expressions, and increments the line numbers.
+
+'lines' has been generalized slightly - its default action is to break the
+string apart at the correct sequence of bytes that terminates a newline
+in the current operating system, and its second argument which specifies
+the newline sequence can be up to two bytes long.
+
+a new variable, 'newline', has been introduced - its value is a string 
+containing the sequence of bytes that terminates a line in the current
+operating system.
+
+'find' has been removed, for its use of a selector function which returns
+'null'/'not-null' is confusing when compared with 'select'.
+
+'select' now takes an optional first argument 'n' which specifies that
+selection should stop after n elements of the list satisfy the criterion.
+
+A new operator \ has been introduced.  It replaces @ as the operator that
+applies a function to each element of a list.
+	f \ g \ x  has the same effect as  x / g / f,
+since \ is right-associative and / is left associative.
+-----------------------------------------------------------------------------
+New in 0.8.9:
+
+The character ' is regarded as alphabetic, so symbols such as x' may be used
+
+A alternate method for entering strings without attaching any special
+meaning to " or \ has been introduced.  The new string delimiter is ///.
+-----------------------------------------------------------------------------
+New in 0.8.6:
+
+'pruneAndMap' removed in favor of 'prune' and 'fromPrune'.
+
+'exteriorPower' now works for modules.
+-----------------------------------------------------------------------------
+New in 0.8.5:
+
+'exit' typed by itself on a command line will now exit the program, as it
+	was supposed to do.
+-----------------------------------------------------------------------------
+New in 0.8.3:
+
+R^1/I works now when I is an Ideal of the Ring R, to give the corresponding
+quotient module
+
+Tor^0 and Ext^0 fixed.  It gave 0 when the first module was free.
+
+the name of the personal initialization file has been changed from 'M2.init'
+to 'init.m2', in accordance with the documentation
+
+new function 'isQuotientOf' for telling whether one ring is a quotient of another
+
+length of a resolution works
+-----------------------------------------------------------------------------
+New in 0.8.1:
+
+Fixed a bug in 'coefficients' such that if a garbage collection occured at a
+certain time, a "bad handle" error message might appear.
+-----------------------------------------------------------------------------
+New in 0.8:
+
+'minors(0,f)' fixed 
+
+'singular' renamed to 'singularLocus', and changed so it takes a quotient
+ring and returns a quotient ring of that.
+
+'trim' will now take a quotient ring of a polynomial ring, and return one
+where the defining ideal has been replaced by one minimally generated.
+
+'map' now can take a integer second argument which provides the rank of the
+source module only, allowing the degrees to be filled in.  The third argument
+can be a doubly nested list of ring elements, or a function to provide them.
+
+'minors' and 'pfaffians' now return ideals.
+
+'symmetric' renamed to 'symmetricPower'
+'exterior' renamed to 'exteriorPower'
+
+function of 'partitions2' subsumed by 'partitions'
+
+'subsets' and 'member' apply to Sets now.
+
+'stack' renamed to 'engineStack'
+
+the name of the personal initialization file has been changed from 'M2.init'
+to 'init.m2'.
+
+a new documentation item called 'SHIELD' which can be wrapped around TO links
+	in menus to prevent the item referred to from being incorporated into
+	the book at that point.
+
+'increasing' and 'decreasing' removed
+
+'saturation' change to 'saturate'
+
+'division' changed to 'quotient'  (ideal-quotient)
+
+new functions: isIsomorphism, isInjective, isSurjective, isWellDefined
+
+'time' changed to 'timing'
+'showTime' changed to 'time'
+
+'IrreducibleCharacteristicSeries' changed to irreducibleCharacteristicSeries,
+and now it takes an ideal instead of a matrix.
+
+'decompose' now takes an Ideal and returns a list of Ideals.
+
+'hilbertFunction' added
+
+'im' changed to imaginaryPart
+'re' changed to realPart
+'conj' changed to conjugate
+
+The meaning of "matrix" for a map between subquotient modules has been
+changed in a fundamental way.  Now the matrix describes how to transform
+generators of the source into linear combinations of generators of the
+target.  Previously the matrix was given in terms of the ambient free
+module.
+
+'eliminate' renamed to 'selectInSubring'
+
+'cover M' new routine to give the free module of which M is a quotient
+
+'super M' new routine to give the module of which M is a sumodule
+'super f' composes f with the inclusion of target f into super target f
+
+'modtensor' removed
+
+'ambient f' -- routine for ambient matrix of a map, removed
+
+'hilbertPolynomial' now takes an option "Projective" which specifies whether to
+	write the answer in terms of binomial coefficient polynomials.
+
+'kernel' of a ring map now returns an ideal instead of a module
+
+'res' now works for modules over skew commutative rings
+
+'subst' changed to 'substitute'
+'symm' changed to 'symmetric'
+'elim' changed to 'eliminate'
+'ann' and 'annihilator' are synonyms
+'generateSymm' eliminated
+'generateSkew' eliminated
+'genericSymm' changed to 'genericSymmetricMatrix'
+'genericSkew' changed to 'genericSkewMatrix'
+Arguments of both changed so that a variable is taken, rather than its
+index in the list of variables.
+
+'presentation R' now gives a presentation matrix for a quotient ring of 
+a quotient ring over the original polynomial ring.
+
+'Ideal' type introduced, to distinguish ideals from modules.
+	I*J defined
+	I^n defined
+	dim I means dim R/I
+	codim I means codim R^1/I
+
+precedence of ^ and _ are now equal, and parsing is still left associative, so
+	now both x_3^4 and R^3_1 work.
+
+'homogenize' works for modules now.
+
+'trim M' -- a new function which replaces generators and relations of M by
+	minimal sets
+
+Module maps (matrices) can now have source and target modules over different
+rings, and 'basis' returns such maps.
+
+new operations:
+	Module ** Ring -- tensor product
+	Matrix ** Ring -- tensor product
+
+'H' renamed to 'HH' (think of blackboard boldface)
+'Q' renmaed to 'QQ'
+'d' renamed to 'dd' (as in C.d, differential of chain complex)
+'Z' renamed to 'ZZ'
+'Real' renamed to 'RR'
+'Complex' renamed to 'CC', 'use Complex' eliminated, 
+	'I' and 'ImaginaryI' renamed to 'ii'
+
+'resolution' and 'res' are now synonyms
+'gens' and 'generators' are now synonyms
+'ker' and 'kernel' are now synonyms
+'coker' and 'cokernel' are now synonyms
+
+'..' will now work with (0,0)..(1,3) to yield 
+	((0, 0), (0, 1), (0, 2), (0, 3), (1, 0), (1, 1), (1, 2), (1, 3))
+
+'same' now tests equality with === instead of ==
+
+'matrix' has been rearranged so that it mostly takes a doubly-nested list
+and produces a map between free modules.  Its functionality where source and
+target modules are explicitly provided is taken over by 'map'.
+
+'matrix' has 'Degree' as an optional argument now, to set the degree of the map.
+
+'ndegrees' changed to 'degreeLength'
+
+'clearAll' -- new function for clearing values of output line variables, o1, o2, ...
+
+'monideal' changed to 'monomialIdeal'
+
+'matrix m', where m is a MonomialIdeal, has been replaced by 'generators m'
+
+Matrices now have a degree associated with them, which can be obtained with
+'degree f'.  The function 'degrees' has been disabled for matrices.
+
+new function 'flagSymbol' -- can be used to flag each use of symbol by
+printing an error message.
+
+'coefficient' removed
+'Polynomial' removed
+'GBtrace' renamed 'gbTrace'
+
+install(f,X,Y,g) must be replaced by f(X,Y):=g now
+install(f,X,Y,Z,g) must be replaced by f(X,Y,Z):=g now
+
+'merge' will now merge only two hash tables.  And the type of the result
+will be the same as the arguments only if both arguments agree.
+
+'scan' now can take two lists and a function, and apply the function to
+the elements two at a time, as does 'map'
+
+careful: 'list x' now gives the contents of an hash table x, rather than {x},
+and if x is not a sequence, list, or hash table, then it gives an error
+message.
+
+Those instance of 'matrix' where the first two arguments are the target and
+source modules of the map can now also be done with 'map'.
+
+The sort sequence for strings and symbols has been changed to agree with
+tradition, so that "a" < "b" now.
+
+'list' removed.  For objects, use the new function 'pairs' to get a list
+	of key/value pairs.  For lists and sequences, use 'elements' to
+	get a list of type 'List'.
+'page' removed (see experiments/repeat.m2)
+'subring' and 'subring0' removed in favor of 'ker', which now works for ring maps
+'iterates' removed (see experiments/iterates.m2)
+'repeat' removed (see experiments/repeat.m2)
+'Euler' replaced by 'euler'
+'gbWithChange' removed, use 'gb' with 'ChangeMatrix=>true'
+'assignto' replaced by 'assign'
+'numvars' replaced by 'numgens'
+'numterms' changed to 'length'
+'padto' changed to 'pad'
+'outstring' changed to 'printString'
+'getlines' changed to 'getLines'
+'deepsplice' changed to 'deepSplice'
+'minposition' changed to 'minPosition'
+'maxposition' changed to 'maxPosition'
+'foldright' and 'foldleft' removed (but see experiments/fold2.m2)
+'mergepairs' changed to 'mergePairs'
+'rmergepairs' removed
+'combinepairs' removed
+'rcombinepairs' removed
+'maps' removed
+'CollectGarbage' changed to 'collectGarbage'
+'ringMap' replaced by 'map'
+'mappairstolist' removed.  Replace mappairstolist(x,f) by apply(list x,f).
+'map' replaced by 'apply'
+'mapPairs' replaced by 'applyPairs'
+'mapKeys' replaced by 'applyKeys'
+'maptable' replaced by 'applyTable'
+'Create' removed
+'subquot' changed to 'subquotient'
+'sat' changed to 'saturation'
+'makenew' removed
+'contents' replaced by 'list'
+'makeObject' replaced by 'hashTable'
+'Object' replaced by 'HashTable'
+'HashTable' and 'MutableObject replaced by 'MutableHashTable'
+'apply' removed
+'restart' changed to 'addStartFunction'
+'listvars' changed to 'listUserSymbols'
+'varlist' changed to 'userSymbols'
+'argv' changed to commandLine
+'args' eliminated
+'reset' changed to 'restart'
+'symboltable' changed to 'symbolTable'
+'openfiles' changed to 'openFiles'
+'isborel' changed to 'isBorel'
+'ishomogeneous' changed to 'isHomogeneous'
+'vec' changed to 'vector'
+'leadTerms' changed to 'leadTermMatrix'
+'kbasis' changed to 'basis'
+'errordepth' changed to 'errorDepth'
+
+new function 'trace', for matrices
+
+M2.el is a gnu emacs file which provides a comvenient way to run Macaulay 2
+in an emacs buffer.  One thing it provides is the ability to send lines or
+regions of text from another buffer at the press of a function key.
+
+a new function 'backtrace' which provides information about the steps in the
+computation that led to an error.
+
+'randomMatrix' is much faster (by a factor of 50), and has been replaced by 'random'
+
+the command 'ls' has been eliminated
+
+new function, 'wait', waits for a child process to finish
+
+'tolist' has been eliminated
+
+'.' is slightly different - now x.a is the same as x#(global a) instead,
+	whereas before it was the same as x_(global a).  This will make it
+	faster, because '_' can looks for methods installed by the user, but
+	'#' is the raw hash table access operation
+
+MAJOR CHANGE: '__' has been renamed to '#', '__?' has been renamed to '#?',
+	and '_?' has been eliminated
+
+'length' has been renamed to '#' so we can use use 'length' for mathematical
+	concepts
+
+'!' has been replaced by 'not' for logical negation.  '!' is retained as
+	postfix operator for factorial.
+
+Handling of interrupts and out of memory errors is better - it now returns
+	to top level instead of exiting the program.  Also, null pointers
+	are no longer allowed to be returned to the C++ code, so some
+	former crashes are now prevented.
+
+f/g now gives an element of the fraction field
+
+new function 'coefficientRing'.  Also 'ambient' now applies to rings to get
+the ring of which the ring presented is a quotient ring.
+
+'map' now can take two lists and function of two variables
+
+A new synonym for install(f,X,x->...) is provided:  f X := x -> ...
+This looks better than X_f := x -> ... .  Notice that Y X := (y,x) -> ... is
+distinguished from this by types: Y is an Object and f is a Function or
+a Symbol.
+
+new test functions: isModule, isIdeal, isSubmodule, isQuotientModule,
+	isPolynomialRing, isAffineRing, isField, isQuotientRing, isRing.
+
+new functions 'lift' and 'promote' for dealing with ring maps and base rings
+
+new function 'ultimate' which yields the ultimate value for iteration
+of a function
+
+'absorb' is gone.  Use x->null instead!
+
+Schur rings (representation rings of general linear groups) available -- 
+see 'SchurRing'
+
+OrderedMonoidRing has been renamed PolynomialRing
+
+new option ClassArgument to 'method' which interprets one of the arguments
+	to the method as a class itself.
+
+general monoid rings and group rings removed
+
+a new type of engine ring called 'FractionField', made with 'frac'.
+
+graphIdeal and tensor have a new option 'VariableBaseName' to be used when
+generating new variables
+
+'ideal': new function for making ideals from lists of ring elements
+
+'randomint' is gone, use 'random' instead
+
+'mapkeys' is now 'mapKeys', and 'mappairs' is now 'mapPairs'
+
+'scankeys' is now 'scanKeys', and 'scanpairs' is now 'scanPairs'
+
+'map' is now a method, so that 'mapset' is replaced by 'map', and 'map' applies
+to tallies.  Same for 'scan'.
+
+a 'Set' is now implemented as a hash table where the values are all 1, and
+a 'Set' is now a type of 'Tally', so that cartesian product and union are defined.
+
+'randomElement' has been replaced by 'random'
+
+'GlobalReleaseMethod' is 'GlobalReleaseHook'
+
+'GlobalAssignMethod' is 'GlobalAssignHook'
+
+'power' is gone
+
+'divide' is gone
+
+'tostring' is 'string'
+
+'erase' - a new function for removing global symbols from the symbol table
+
+'&&' and '||' have been replace by 'and' and 'or'.  Moreover the latter
+operators open a new scope for the right hand side.  The parsing precendence
+of '&&' and '||' is now higher than that of comparison operators like == .
+
+New function: 'alarm', which can be used to interrupt a computation after a
+certain time and try and and alternate approach.
+
+Two new syntactic keywords : 'global' and 'local', like 'quote', except
+'global' obtains a global symbol (old or new) and 'local' obtains a local
+symbol, local to the same enclosing function or file
+
+'ref' and 'val' are gone
+
+There is a new function, 'remove', for removing entries from hash tables.  The
+old way, ' x#a = null ', will now allow storing 'null' as a value in the hash table.
+
+'objtake' and 'objdrop' are gone.
+
+'seeScopes' is gone.
+
+The functions 'spaces' and 'dashes' are gone.
+
+Certain functions such as 'resolution' and 'mingens' now take only modules and not matrices
+as arguments.  This change is meant to avoid any confusion about whether a matrix
+is used as an abbreviation for its image or its cokernel!  So now you must write
+'resolution cokernel m' or 'resolution image m' to clarify your meaning.
+
+There is a new method called 'Print' which can be used to override the way
+the top level interpreter prints a result.  The other methods have been rearranged, and
+more of the top level interpreter is written in the interpreter itself.  Take a look
+at the first few lines of init.m2.
+
+'time' has been changed so that it returns a list of type 'Time' from which
+the elapsed time can be extracted by a program.  The old behavior is provided
+by a new function, 'showTime'.
+
+Two dimensional printing works well with '<<' now.
+
+The BeforePrint method is no longer used by the interpreter to print
+results.
+
+New commands 'quit', and now 'exit' without an argument will quit, too.
+
+Changed 'expr' to 'expression'.
+
+Two dimensional printing of polynomials has been sped up by about a factor of 5.
+
+'box, 'display, 'HBox', 'VBox', 'FractionBox', 'MatrixBox, 'PMatrixBox' 
+	have been eliminated in favor of 'net'
+
+'intersect' now may be given more than two arguments.  This is accomplished
+by defining it to be an associative method, which is done with:
+	method(quote intersect, Associative => true)
+
+'betweenNames' has been removed.  Use concat(between(s,name@v)) instead.
+
+f@v is an operator that maps the function f over the elements of the list v
+
+The functions 'demark' and 'betweenNames' have had the order of their
+arguments reversed.
+
+The function 'map' has been heavily optimized, especially for calling
+interpreted functions, speeding it up by a factor of 3 or so.
+
+The degrees of a module are now computed only when needed.  This means that
+you must use 'degrees M' instead of 'M.degrees'.
+
+Functions 'set', 'tally', and 'new Object from List' have been made very
+fast.  So has the replicator function, 5:x, and a named function 'replicate'
+ahs been provided that does the same thing.
+
+Concatenation of strings is now done with concat() or with the binary
+operator "|", rather than "+".  There is a new sort of 2-dimensional string
+called an net.  Nets and strings can be concatenated horizontally with "|", 
+vertically with "||", and raised with "^".
+
+The new function 'width', applied to stdout, can be used to determine the
+current width of the terminal window, i.e., the number of columns, as
+reported by the tty device driver.
+
+The variable 'gc' is gone.
+
+The symbols Less, Greater, and Equal have been replaced by quote "<", quote
+">", and quote "==".
+
+The symbol 'o' (which gives the value of the previous expression) has been
+replaced by 'oo'.
+
+The symbol 'null' has been changed into something of class 'Nothing'.
+
+The class 'Indeterminate' is gone, and all symbols now carry with them
+information about what frame their values are stored in.  This changes
+slightly the behavior of x.a when a is a local variable, for the key will be
+different with each invocation of the function containing a.
+
+We've put 'true' and 'false' into a new class called 'Boolean'.
+
+The operators _^ and _^? have been eliminated in favor of 'lookup'.
+
+Symbols like PlusMethod have been abandoned in favor of symbols like quote "+"
+for constructing keys under which to store methods.
+
+The functions of 'spy' have been merge into 'peek'.
+
+There is a new function called 'browse' which allows the user to browse large
+hash tables and lists.
+
+We now type x_0 .. x_10 instead of x_(0 .. 10); moreover, the subscript i
+in x_i can be any expression.
+-----------------------------------------------------------------------------
+New in 0.3.2:
+
+Polynomial rings over Z are available.
+There is a function 'isprime' which can be used to tell whether an
+	integer is a probable prime.
+A personal initialization file named M2.init is loaded when the program
+	starts.
+An ideal I in a ring R is a submodule of R^1.  The quotient ring R/I
+	is now available.  If I is generated by ring elements (f,g,h)
+	the notation R/(f,g,h) is also available.  If I is generated
+	by one element f then R/f will suffice.
+If M is a module and (m,n,p) are elements of M, then M/(m,n,p) provides
+	the quotient module.
+Substition for variable in a polynomial, which used to be writen as
+	f[v], is now implemented in terms of a new function 'subst'.
+	Now you write subst(f,v).  Type 'help subst' for details.
+Multiplication must now be indicated explicitly by * instead of implicitly
+	by adjacency, i.e., you must now type 2*x instead of 2x.
+The parsing precedence has been changed so that the operators * / % //
+	are of lower precedence than adjacency.  Thus
+	f x * g y will now parse as (f x)*(g y) instead of (f ((x*g) y)) and
+	f(x,y)/2 will now parse as (f (x,y))/2 instead of f ((x,y) / 2).
+The parsing precedence has been changed so that brackets [ ] have lower
+	parsing precedence than the operators * / % // .  Thus
+	Z/5[x,y,z] will parse as (Z/5)[x,y,z].  Notice that { } and ( )
+	have the same precedence as adjacency, which is higher than /, so that
+	Z/5(x,y,z) will parse as Z/(5[x,y,z]).
+-----------------------------------------------------------------------------
+New in 0.3.1:
+
+'identity M' has been replace by 'id_M', and 'id' has been replace by 'identity'
+All functions for creating methods have been redone and combined into a single
+	function called 'method'.
+New function 'code' for retrieving the source code from compiled functions.
+'degrees' now does something for modules - returns degrees of target and source
+	in a list.
+'generators' replaced by 'generators'
+RememberMethod replaced by MakeMethod.  It is now the responsibility of the
+	called method to cache previously computed values if it wants to.
+	The advantage of MakeMethod is that it stores the method under
+	a key other than the name of the method, which is then free to be
+	used for caching values.
+	To install a method, installMakeMethod is used.  Also:
+	makeVariables, makeNumvars, makeDim, makeCoker, makeImage, makeKernel,
+	makeGenerators, makeVars, makePrune have all been removed.
+ColumnDegrees and RowDegrees have been eliminated.  Use 'degrees source f'
+	and 'degrees target f' instead.  They weren't right anyway for 
+	multi-degrees!
+'errorDepth' introduced as a mechanism for suppressing error messages from
+	pre-interpreted code.
+'table' now yields the transpose of what it gave before, to agree with the
+	way 'matrix' works.
+unit element is now stored in R#1 instead of R.One; One is gone;
+	but remember that R_1 gives the second variable of R, so use
+	1_R to get the unit element
+zero element is now stored in R#0 instead of R.Zero; Zero is gone
+hashTable changed to HashTable
+mutableObject changed to MutableObject
+mutableList changed to MutableList
+'inverse x' removed in favor of x^-1
+_ @ . have been reorganized:
+	_^ and # handle the raw access of elements of lists, sequences,
+		databases, strings, and hash tables.  The only difference between
+		them is that for hash tables, _^ looks in the ancestors, too.
+	@? removed
+	@ now is just an operator with methods available for the user
+	_ is also just an operator with methods, but many meanings have been
+		installed:
+		    HashTable _ Thing := (X,s) -> X # s
+		    List _ Thing := (X,s) -> X # s
+		    String _ Z := (s,i) -> substr(s,i,1)
+		    Module _ Z := (M,i) -> ...
+	_? is also just an operator with methods, but many meanings have been
+		installed:
+		    HashTable _? Thing := (X,s) -> X #? s
+		    List _? Thing := (X,s) -> X #? s
+		    String _? Z := (s,i) -> s #? i
+		    Module _? Z := (M,i) -> ...
+	_* has been removed in favor of a new function, 'unlist'
+'iszero' removed in favor of i->i==0
+the notion of equality F==G now involves comparing the degrees of the generators
+writing to a closed file now gives an error message
+a warning is issued now when a local variable declaration shields another
+	with the same name
+'one R' and 'zero R' removed in favor of 0_R and 1_R.  3_R also works.
+added an option, Compute, to resolution and gb which specifies whether to compute
+	at all
+changed hashTable to HashTable
+new function 'ringMap' for making ring homomorphisms.  Taking the kernel
+	of one gives an ideal, and replaces 'subring'.
+new class EngineRing for general purpose interface to rings in the engine
+new 'reset' command to reset the system to its initial state
+:, %, and // works now for ring elements when appropriate
+new algorithms installed for gb and resolution which are very fast.
+new optional arguments for gb and resolution which control the depth of calculation.
+'new Object from {x=>a, y=>b}' is a concise way to make new hash tables with
+	specified contents.
+"deepsplice" : new function which splices deeply
+subgenerators renamed to generators
+f[x=>a, y=>b] can be used to substitute for variables in a Polynomial
+x.s now takes s to be a symbol in the local scope, if there is one
+x_a = null now removes the entry in the hash table x for the key a
+"shield" : a new function which shields code from interrupts
+newvars is gone: instead, just type x_(0..6), for example
+now x==y will fail if x and y are in differenct classes, and there
+	is no method installed for comparison
+resolutions are now MUCH faster
+new functions : subqring, calc
+new key in a Matrix : thisgb
+_ now has higher parsing precedence than ^
+resolution and gb have various options for halting the computation
+-----------------------------------------------------------------------------
+New in  0.2.2:
+
+'name' of a matrix now yields a string which yields the same matrix when
+	read back in.  'describe' will display that string without the
+	quotation marks.
+syntax for 'random' changed
+'BasicType' removed; now a basic type is simply one whose parent is Thing
+removed classes IntegerNumber, RealNumber, RationalNumber

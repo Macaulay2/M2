@@ -1,0 +1,831 @@
+ggnone
+
+ggadd
++
+f g >> f+g
+Add f and g. [type f, type g] = [vector,vector], [freemodule,freemodule], [matrix,matrix], [monideal,monideal], [ringelem,ringelem].  The sum of two free modules is their direct sum.
+
+ggaddress
+address
+object >> int
+Replace the object with an integer handle.  A reference count is increased, and so each such call must be matched with a call to ggforget.
+
+ggautoreduce
+autoreduce
+m:matrix >> matrix
+Given a matrix, whose lead terms are not divisible by one another, form the matrix whose i th column is the normal form of the i th column of m, w.r.t. the other columns of m.
+
+ggbetti
+betti
+res_comp >> intarray
+Return an intarray in the same format as in 'ggpairs' describing the known minimal betti numbers of the resolution, as so far computed.  These numbers represent minimal bounds on the actual betti numbers.
+
+ggborel
+borel
+mi:monideal >> monideal
+Yield the smallest borel fixed monomial ideal containing 'mi'.
+
+ggcalc
+calc
+computation >> int
+Continue the computation on the stack until it is done, or until an interrupt occurs.  A return value of 
+
+ggcharp
+charp
+int >> ring
+Create the prime field with the given characteristic.  Currently, characteristic zero means finite precision integer arithmetic.
+
+ggcodim
+codim
+monideal >> int
+Yields the codimension of the given monomial ideal.
+
+ggcoeffs
+coeffs
+m:matrix vars:intarray >> coeffs:matrix monoms:matrix OR m:matrix >> coeffs:matrix monoms:matrix
+Given an integer array 'vars' containing variable numbers from 0..numvars ring m-1, find the monomials in these variables, and their coefficients, placing these in the matrices 'coeffs' and 'monoms'.  For the second version: Let x_i be the smallest index variable that occurs in the 'j' th column of 'm'. Then the j th column of coeffs contains the (vector) coefficient of the highest power of this variable, and the j th element of monoms is x_i^n, if n is this highest power.
+
+ggcompare
+compare
+a:monomial b:monomial >> int
+Place -1,0,1, onto the stack, when a<b,a==b, and a>b, respectively.
+
+ggconcat
+concat
+matrix_1 .. matrix_n n:int >> matrix
+Concatenate the columns of all of these matrices together, forming a new matrix.  None of these matrices is itself modified (different behavior from Macaulay).  WARNING: the matrix is set to have the row degrees of the first matrix.  If any other matrix has more rows, there will be trouble.  Additionally, if the row degrees are not the same, then the column degrees will be screwed up as well.
+
+ggcopy
+copy
+elem >> elem
+Make a shiny new copy of the item on the top of the stack.
+
+ggcontract
+contract
+m:matrix n:matrix >> matrix
+Yields the matrix having the same shape as the tensor product, whose individual entries are the result of contracting (i.e. differentiate without using bringing down coefficients) entries of n by entries of m.
+
+ggdegree
+degree
+f:ringelem >> intarray;  OR  monomial >> int
+(First form) Place the (multi-)degree of the lead term of f onto the stack. (Second form) Yields the sum of the exponents of the given monomial.
+
+ggdenominator
+denominator
+f:ringelem >> g:ringelem
+If f = g/h is an element of a fraction field frac(R), return the denominator h in R.
+
+ggderef
+deref
+int >> object
+Replace the integer handle with its corresponding object.
+
+ggdets
+dets
+m:matrix p:int >> determinant computation
+Create a computation which will yield the p by p minors of the matrix m.
+
+ggdiff
+diff
+m:matrix n:matrix >> matrix
+Yields the matrix having the same shape as the tensor product, whose individual entries are the result of differentiating entries of n by entries of m.
+
+ggdim
+dim
+f:ring_elem >> ring_elem
+Given a ring element, f, in a schur ring, replace each monomial with the dimension of the irreducible GL(n) representation having that monomial as highest weight, and return the resulting sum. (f is not modified).
+
+ggdirectsum
+m:matrix n:matrix >> matrix
+Yields the direct sum (i.e. block sum) of the two matrices.
+
+ggdiv
+div
+a:ringelem b:ringelem >> ringelem
+Find a/b in the ring of a, b, if division is defined over this ring.
+
+ggdivides
+divides
+a:monomial b:monomial >> int
+Place 0, (or 1) onto the stack when a doesn't divide (does divide) b.
+
+ggdivmod
+divmod
+a:ringelem b:ringelem >> d:ringelem m:ringelem
+Find d = a/b and m = (a mod b) in the ring of a, b, if division is defined over this ring.
+
+ggdrop
+drop
+vn .. v0 (n:int) >> v(n-1) .. v0
+Remove the n th element from the stack.
+
+ggdup
+dup
+v0 >> v0 v0
+Push a copy of the top element on the stack.
+
+ggduplicate
+duplicate
+vn .. v0 (n:int) >> vn .. v0 vn
+Push a copy of the n th element on the stack.
+
+ggelem
+elem
+vector i >> ring_elem;  OR  matrix i >> vector;  OR  matrix i j >> ringelem
+Vector version: yields the i th coefficient of the vector.  Matrix versions: Place either the i th column of the matrix, or the (i,j) th entry of the matrix onto the stack.
+
+ggelim
+elim
+matrix n:int >> intarray
+Yields an integer array having the indices of those columns of the matrix whose initial term is zero on the first n weight vectors.
+
+ggev
+ev
+map:matrix source:matrix >> matrix
+Evaluate the source matrix under the map sending the i th variable to the i th entry of map, where both indices count starting at zero.
+
+ggexterior
+exterior
+F:freemodule d:int >> freemodule, OR m:matrix d:int >> matrix
+Return the d th exterior power of F or m.
+
+ggexteriorproduct
+exteriorproduct
+p:int q:int F:freemodule >> m:matrix
+Return the matrix which represents the multiplication wedge(p)(F) ** wedge(q)(F) --> wedge(p+q)(F).
+
+ggfactor
+factor
+... >> ...
+experimental
+
+ggfactor1
+factor
+... >> ...
+experimental
+
+ggfactor2
+factor
+... >> ...
+experimental
+
+ggflip
+flip
+F:freemodule G:freemodule >> matrix
+Yields the matrix representing the map F ** G --> G ** F.
+
+ggforget
+forget
+h:int >> .
+Remove a reference to the given integer handle.  This should match an original call to ggaddress.
+
+ggfractionfield
+fractionfield
+R:ring >> K:field
+Given a domain 'R', create its field of fractions, 'K'.
+
+ggfree
+free
+V:vecinfo intarray >> freemodule;  OR  V:vecinfo n:int >> freemodule
+Create a free module over the base ring of V which has as its degrees the entries of the intarray (first case), or has rank 'n', all of whose degrees are zero (second case).
+
+ggfromint
+fromint
+ring int >> ringelem
+Return an element of the given ring with the given integer value.
+
+gggb
+gb
+matrix >> gbasis; or matrix syztype:int n:int >> groebner_comp
+Create a Groebner basis computation.
+
+gggcd
+gcd
+a:ringelem b:ringelem >> g:ringelem; OR monomial monomial >> monomial;
+Place the gcd of the two elements onto the stack, if gcd's are defined.
+
+gggcdextended
+gcdextended
+a:ringelem b:ringelem >> g:ringelem x:ringelem y:ringelem
+Return the greatest common divisor, g, of a and b, if gcd's are defined over this ring.  The following is satisfied: ax+by = g.
+
+gggetchange
+change
+gbasis >> matrix
+Return the change of basis matrix from the Groebner basis to another generating set, usually a minimal, or original, generating set.
+
+gggetcoeff
+getcoeff
+f:ringelem m:monomial >> a:ringelem
+Yields the (possibly zero) coefficient of the monomial 'm' in the polynomial 'f'.
+
+gggetcols
+getcols
+matrix >> intarray
+Place the column degrees of the matrix onto the stack.
+
+gggetideal
+getideal
+R:ring >> I:matrix
+If R is a quotient ring S/I, of a polynomial ring S, then place onto the stack the one row matrix consisting of the generators of a minimal GB of I.
+
+gggetgb
+getgb
+gbasis >> matrix
+Place the Groebner basis (as far as it has been computed) onto the stack.
+
+gggetmingens
+getmingens
+gbasis >> matrix
+Place the matrix whose columns are minimal generators of the submodule with the given Groebner basis (at least as it has so far been computed).
+
+gggetring
+getring
+var >> ring
+Place the base ring of the given variable onto the stack.  If that variable does not have a base ring (e.g. an int), then put the current ring onto the stack.
+
+gggetrows
+getrows
+matrix >> intarray
+Place the row degrees of the given matrix onto the stack.
+
+gggetshift
+getshift
+matrix >> intarray
+Yields the (multi-)degree of the matrix.
+
+gggetsyz
+getsyz
+gbasis >> matrix
+Place the (non-minimal) syzygy matrix computed in gbasis onto the stack.
+
+gggetterms
+getterms
+ringelem lo:int hi:int >> ringelem;  OR  vector lo:int hi:int >> vector
+Yields the sum of all terms within the given indices (inclusive).  If either lo or hi is less than zero, then they refer to the last indices.  For example, if lo=-3, and hi=-1, then this chooses the last three monomials of a polynomial.
+
+gggetvalue
+getvalue
+h:hilb_comp >> ringelement
+Yields the so-called Poincare polynomial (the numerator of the Hilbert series) if the computation has been completed.  If the computation is not yet complete, an error is issued.
+
+ggrandom
+random
+F:freemodule G:freemodule n:int deg:intarray >> matrix  OR  R:ring >> ringelem
+Return a matrix of degree 'deg' between graded free modules F <-- G.  If 'n' is less than zero,
+then a homogeneous matrix is returned.  NEEDS WORK!!
+
+ggrandomint
+randomint
+n:int >> int
+Return a random integer in the range 0..n-1, where n is positive arbitrary precision integer.  The algorithm used is described briefly in the documentation for ggrandomseed.
+
+ggrandommax
+randommax
+n:int >> int
+Set the maximum integer value that ggrandom or ggrandomint will return.  Random rational numbers will have both numerator and denominator bounded by this value.  The returned value is the current bound.
+
+ggrandomseed
+randomseed
+n:int >> .
+Set the random number generator seed to the given number. The seed is initially set to zero.  The random generator currently used is the 'minimal' random generator of Park and Miller, described in the book 'Numerical recipes in C'.  Currently only the low 32 bits of 'n' are used for the seed.
+
+ggremote
+remote
+matrix mach:string user:string s:string cmd:string >> remote_gb_comp
+Create a remote Groebner basis computation.  In development.
+
+ggheap
+heap
+. >> string
+Push a string containing the types of the heap elements.
+
+gghermite
+hermite
+m:matrix collectsyz:int ncomps:int >> hermite_computation
+Create the computation of the Hermite normal form of the matrix 'm' over the integers.  This is essentially a Groebner basis for the submodule of Z^n generated by the columns of 'm'.  The elements 'collectsyz' and 'ncomps' have the same meaning that they have for Groebner basis computations.
+
+gghilb
+hilb
+R:ring matrix >> denom:ring_elem numer:ring_elem; OR  R:ring monideal >> ring_elem
+Compute the numerator of the Hilbert series (the Poincare polynomial) of the given monomial ideal, or of the monomial submodule generated by the initial terms of the given matrix. The result is a ring element in the ring R, involving the first 'd' variables in that ring, where 'd' is the size of the degree vector.  In the first form, because the degrees of the rows may be negative, the first result is a monomial for which numer/denom is the Poincare polynomial.
+
+gghomogenize
+homogenize
+m:matrix n:int >> matrix;  OR  m:matrix deg:intarray n:int >> matrix
+Homogenize the given matrix using the n th variable in the ring to homogenize.  An error is given if the resulting matrix cannot be made (multi-)homogeneous.
+
+ggiden
+iden
+F:freemodule >> matrix
+Place the identity matrix F --> F onto the stack.
+
+ggindex
+index
+array int >> var,  or  intarray int >> int
+Place the given element of the given array onto the stack.
+
+gginitial
+initial
+m:matrix w:int >> matrix;  OR  gbasis n:int >> monideal.
+Return the matrix of initial forms of m.  The initial term of a vector consists of those monomials which have the same value as the lead monomial on the first 'w' weight vectors.  w=-1 gives the usual lead term. The second form returns the monomial ideal of initial forms which occur in the n th row.
+
+ggINT
+int
+>> int
+Read an integer from the binary input stream.
+
+ggINTARRAY
+intarray
+>> intarray
+Read an integer array from the binary input stream.  The format is: the length, followed by each entry.  Each of these integers is also in the binary format.
+
+ggintersect
+intersect
+monideal monideal >> monideal
+Place the intersection of the two monomial ideals onto the stack.
+
+ggisborel
+isborel
+mi:monideal >> int
+Return whether 'mi' is a borel fixed monomial ideal.
+
+ggisequal
+isequal
+f g >> bool [type of f,g is ringelem, vector, freemodule, matrix, gbcomp, monideal, monomial, ring]
+Yields true(1) or false(0) depending on whether f and g are equal.
+
+ggishomogeneous
+ishomogeneous
+f >> bool  [f is a ringelem, vector, or matrix]
+Yields true(1) or false(0), depending on whether 'f'is (multi-)homogeneous.  If the base ring is not homogeneous, then this will always yield false.
+
+ggissubset
+subset
+m:matrix gb:gbcomp >> int
+If some column of the matrix 'm' does not reduce to zero w.r.t. gb, return the index of the first such column, otherwise return -1.
+
+ggiszero
+iszero
+a:ringelem >> int
+Place a 1 on the stack if a is zero, otherwise place a 0 on the stack.
+
+ggkbasis
+kbasis
+top:matrix bottom:matrix d:deg >> matrix
+Form a matrix whose columns form a k-basis of the module (image(top)/image(bottom)) in degree d.  It is assumed that the columns of 'top' and 'bottom' form Groebner bases, and that they have the same row space.  If d = {}, then a k-basis for the whole module is returned.
+
+ggkbasisIn
+kbasisIn
+m:matrix deg:intarray >> matrix
+Yields a matrix 'n' such that 'm n' is a matrix whose columns form a k-basis for the submodule image(m) in degree 'deg'.  If 'm' is not a Groebner basis, then this set generates image(m) in degree 'deg', but may not be independent.
+
+ggkbasisOut
+kbasisOut
+m:matrix deg:intarray >> matrix
+Yields a matrix consisting of monomials such that the columns consist of all monomials of degree 'deg' that are not in the monomial submodule of lead terms of the matrix 'm'.
+
+ggker
+ker
+matrix h:int >> gbasis
+Create a Groebner basis computation to compute the first h components of each syzygy of the given matrix.
+
+ggkoszul
+koszul
+M:matrix p:int >> matrix
+Place the p th koszul matrix of M onto the stack.  M should be a matrix with exactly one row.
+
+gglcm
+lcm
+monomial monomial >> monomial
+Place the l.c.m. othe the two monomials onto the stack.
+
+gglength
+length
+object >> int
+Yields the length of the given object.  The definition of length is type specific.  For example, for polynomials it is the number of non-zero monomials, for vectors it is the number of non-zero components, for freemodules it is the rank, and for matrices it is the number of columns.
+
+ggleadcoeff
+leadcoeff
+f:ringelem >> ringelem
+Place the coefficient of the lead term onto the stack.  Its base ring is the coefficient ring of the base ring of f, if f is a polynomial.
+
+ggleadcomp
+leadcomp
+f:vector >> int
+Returns the lead component of the non-zero vector f.
+
+ggleadmonom
+leadmonom
+ringelem >> ringelem
+Place the lead monomial (with coefficient 1) onto the stack.
+
+ggleadterm
+leadterm
+ringelem >> ringelem
+Place the lead term (coefficient plus monomial) onto the stack.
+
+gglift
+lift
+S:ring f:ringelem >> g:ringelem
+Lift f to an element g of S.  If R is the base ring of f, then S ---> R should be one of the following extensions: (1) R ---> R (in which case f is returned without change), (2) S ---> R=S/I, (in which case f can always be lifted: note that S itself may be a quotient base ring of R), (3) S ---> R=S[x1..xn], (an error is returned if f is not a scalar), (4) S ---> R=frac S, (an error is returned if f is not an element of S), (5) S=Z/p[x]/(F(x)) ---> GF(p,n).  An error indication is returned if the ring extension is not one of these, or in the situations indicated.
+
+ggmatrix
+matrix
+v0 v1 ... v(c-1) rows:freemodule cols:freemodule >> matrix;  OR  v0 v1 ... v(c-1) rows:freemodule c:int >> matrix;  OR  vecinfo monideal >> matrix
+In the first two forms, create a matrix having the given rows, and the columns of the matrix are v0, ..., v(c-1).  In the first form, the column free module is set to 'cols', while in the second form, the column degrees are computed.  The third form creates a one row matrix whose entries are the monomials in the given monomial ideal.
+
+ggmem
+mem
+. >> .
+Place some user readable memory usage information onto the output string.
+
+ggmod
+mod
+a:ringelem b:ringelem >> ringelem
+Compute the remainder of dividing a by b, if division is defined in the ring of a and b.
+
+ggmodtensor
+modtensor
+m:matrix n:matrix >> matrix
+Yields a matrix which presents coker(m) tensor coker(n).
+
+ggmonideal
+monideal
+M:matrix n:int >> monideal
+Return the monomial ideal of those columns of M whose lead terms are in row n.
+
+ggmonoid
+monoid
+n:int degrees:intarray weights:intarray
+Create a monoid having n variables, which has the gradings from 'degrees' and the ordering from 'weights'
+
+ggMOelim
+MOelim
+mo1:mon_order mo2:monorder >> monorder
+Form the product elimination order.
+
+ggMOgeneral
+MOgeneral
+d:intarray order:intarray invorder:intarray invdegs:intarray >> monorder
+Create an engine 'mon_order', where 'd' is a (totally positive) vector of length 'n' of degrees, 'order' is a flattened n by n matrix of integers giving the order (i.e. given two monomials having exponent vectors m1, m2, then m1 > m2 iff (order*m1) > (order*m2) in the lexicographic order.  'invorder' is a (flattened) integral matrix such that (order * invorder == diagonal matrix whose entries are 'invdegs'.
+
+ggMOglex
+MOglex
+d:intarray >> monorder
+Create an engine 'mon_order', which is graded lex order on a set of variables, where 'd' consists of the degrees of these variables.
+
+ggMOgproduct
+MOgproduct
+mo1:mon_order mo2:monorder >> monorder
+Form the graded product order.
+
+ggMOgrevlex
+MOgrevlex
+d:intarray >> monorder
+Create an engine 'mon_order', which is graded reverse lex order on a set of variables, where 'd' consists of the degrees of these variables.
+
+ggMOlex
+MOlex
+d:intarray >> monorder
+Create an engine 'mon_order', which is lex order on a set of variables, where 'd' consists of the degrees of these variables.
+
+ggMOproduct
+MOproduct
+mo1:mon_order mo2:monorder >> monorder
+Form the product order.
+
+ggMOrevlex
+MOrevlex
+d:intarray >> monorder
+Create an engine 'mon_order', which is (non-graded) reverse lex order on a set of variables, where 'd' consists of the degrees of these variables.
+
+ggMOwtfcn
+MOwtfcn
+degs:intarray wtfcn:intarray >> monorder
+Form the monomial order which is graded using 'degs'.  MES
+
+ggMONOMIAL
+monomial
+monoid >> monomial
+Read from the input stream a monomial which is in the binary format (i.e. the number of variable/exponent pairs, followed by the sequence of variables and exponents.  Each of these integers is also in the binary format.
+
+ggmonsyz
+monsyz
+matrix >> matrix;  a:monomial b:monomial >> c:monomial d:monomial
+In the first case, place the monomial syzygies on the lead terms of the given matrix onto the stack.  For monomials, place the monomials c, d onto the stack, where a c = b d = lcm(a,b).
+
+ggmult
+*
+f g >> f*g: 
+Multiply f and g.  If f and g are free modules, then the result is the tensor product. [type,f,type g] = [ringelem,vector], [vector,ringelem], [ringelem,matrix], [matrix,matrix], [matrix,vector], [monideal, monideal], [monomial,monomial], [ringelem, ringelem], [freemodule, freemodule].
+
+ggnegate
+negate
+matrix >> matrix
+Place the negation of the given matrix onto the stack.
+
+ggnmonoms
+nmonoms
+res_comp >> intarray
+Return an intarray in the same format as in 'ggpairs' describing the number of monomials present in each level/degree of the resolution.
+
+ggnumerator
+numerator
+f:ringelem >> g:ringelem
+If f = g/h is an element of a fraction field frac(R), return the numerator g in R.
+
+ggpairs
+pairs
+res_comp >> intarray
+Return an intarray describing upper bounds on the graded betti numbers.  Equivalently, these numbers represent the number of s-pair computations that have been/or will be computed.  The format for this array is: [low degree, high degree, max level, b0, b1, ...], where the betti numbers have been flattened by rows.  Thus, b_((i-lo)*len + lev) gives the number of elements at level 'lev' in slanted degree 'i', where lo, hi, len are the first three elements in the output intarray.
+
+ggpfaffs
+pfaffs
+m:matrix p:int >> pfaffian computation
+Create a computation which will yield the p by p pfaffians of the skew symmetric matrix m.
+
+ggpick
+pick
+vn v(n-1) ... v1 v0 (n:int) >> v(n-1) ... v1 v0 vn 
+Move the n th element to the top of the stack.
+
+ggpolyring
+polyring
+ring monoid >> ring
+Create the polynomial ring (i.e. monoid ring) wirh coefficients from the given ring, and monomials from the given monoid.
+
+ggpop
+pop
+v1 v0 >> v1
+Remove the top element from the stack.
+
+ggpoppem
+poppem
+v(n-1) ... v1 v0 n:int >> .
+Remove the top n elements from the stack.
+
+ggpower
+^
+f:ringelem n:int >> ringelem
+Place f^n onto the stack.  If f is a polynomial, the binomial method is used to compute the exponent.
+
+ggprimes
+primes
+monideal >> monideal
+Yields a monomial ideal whose monomials are in one to one correspondence with the associated primes of minimal codimension.  Each monomial corresponds to the prime monomial ideal generated by the variables its support.
+
+ggpromote
+promote
+R:ring f:ringelem >> g:ringelem
+Promote f to an element g of R.  If S is the base ring of f, then S ---> R should be one of the following extensions: (1) R ---> R (in which case f is returned without change), (2) S ---> R=S/I, (3) S ---> R=S[x1..xn], (4) S ---> R=frac S, (5) S=Z/p[x]/(F(x)) ---> GF(p,n).  An error indication is returned if the ring extension is not one of these.
+
+ggqring
+qring
+I:matrix >> R:ring;  OR f1 ... fn n A:ring >> R:ring
+Create the ring R = A/I, where A is the ring of I, and I is a 1 by r matrix with entries in the polynomial ring (or quotient of a polynomial ring) A.  In the second version I is the ideal generated by the f1, ..., fn, which should be elements of A.  Currently, in either case the generators should form a Groebner basis, whose lead terms are all monic.
+
+ggquit
+quit
+. >> .
+Quit the engine
+
+ggradical
+radical
+monideal >> monideal;  OR  monomial >> monomial.
+Yields the radical of the given monomial (ideal).
+
+ggreduce
+reduce
+gbasis matrix >> red:matrix lift:matrix
+Reduce the given matrix using the Groebner basis, obtaining the matrix red.  The matrix lift is the corresponding matrix.  MES ************* improve this.
+
+ggremaining
+remaining
+res_comp >> intarray
+Return an intarray describing the number of s-pair computations that remain to be computed.  The format for the array is that of 'ggpairs'.
+
+ggringmap
+ringmap
+m:matrix >> f:ringmap;  OR  I:ideal >> f:ringmap
+Create a ring map f : (any ring S) --> (ring m).  The i th variable of S is mapped to the i th element of (the first row of) m, or the i th element of I, using the engine command 'ggev'.
+
+ggreceive
+receive
+remote_gb_comp >> matrix
+Return the Groebner basis matrix so far computed with the remote GB routine.  In development.
+
+ggremove
+remove
+monideal >> int monomial
+Remove the lexicographically largest element from the monomial ideal.  Place its integer number and the actual monomial onto the stack.  If the monideal is empty, raise an error.
+
+ggres
+res
+m:matrix >> res_comp
+Create a computation to compute the free resolution of m.  The computation itself should be done using ggcalc or ggcalc1.
+
+ggreshape
+reshape
+m:matrix F:freemodule G:freemodule >> matrix
+Yields the matrix obtained from 'm' of shape F <--- G, by taking elements from the first row of 'm', then the second, and so on, filling them into the result row by row.  Currently, it is assumed that 'm' and the result both have the same number of entries.
+
+ggresmap
+resmap
+gr:res_comp i:int >> matrix
+Return the i th matrix of the (minimal) resolution 'gr'.
+
+ggresmodule
+resmodule
+gr:res_comp i:int >> freemodule
+Return the i th free module of the (minimal) resolution 'gr'.
+
+ggresNmap
+resNmap
+gr:res_comp i:int >> matrix
+Return the i th matrix of the (possibly non-minimal) resolution 'gr'.
+
+ggresNmodule
+resNmodule
+gr:res_comp i:int >> freemodule
+Return the i th free module of the (possibly non-minimal) resolution 'gr'.
+
+ggsat
+sat
+I:monideal m:monomial >> monideal;  OR  I:monideal J:monideal >> monideal;  OR m:monomial n:monomial >> monomial.
+Yields the saturation (I:m^*), or (I:J^*).
+
+ggschur
+schur
+K:ring M:monoid >> R:ring
+Create the ring R = K[M], where each monomial is thought of as representing an irreducible GL(n)-module, where n is the number of variables of the monoid M.  Multiplication is the multiplication of schur functors, and is implemented using a variant of the Littlewood-Richardson rule.
+
+ggsee
+see
+string >> .
+Place this string onto the output stream.
+
+ggselect
+select
+v:vector F:freemodule a:intarray >> vector
+Yields a vector w in F: w = v_(a_0) F_0 + ... v_(a_r-1) F_(r-1), where r is the length of 'a', which should be less than or equal to the rank of 'F'.
+
+ggsend
+send
+remote_gb_comp >> .
+Send the generators to the remote machine. In development.
+
+ggsetshift
+setshift
+m:matrix d:intarray >> .
+Set the degree of the map 'm' to be the degree 'd'.  The source and target free modules of the matrix are not changed (and so the result may no longer be graded).
+
+ggshift
+shift
+F:freemodule a:intarray >> freemodule
+Return the graded free module F(a), where the length of a should be the number of degree vectors in the base ring of F.
+
+ggsimplify
+simplify
+m:matrix n:int >> matrix
+Simplify the columns of the matrix 'm' in a way depending on the number 'n': if n=1, remove zero columns. if n=2, remove elements which are scalar multiples of others, and zeros, if n=3, remove columns which are divisible by other columns. Larger n will be possible as well: for example, one will be able to auto-reduce a set of columns, or remove monomial multiples, or replace with square-free elements.
+
+ggskeleton
+skeleton
+r:res_comp >> .
+Compute the skeleton of the resolution.  This is a debugging facility.  To see the number of pairs, use ggpairs after this, or grab the lead terms by using ggresNmap.
+
+ggsortcolumns
+sortcolumns
+m:matrix degorder:int monorder:int>> intarray
+Return an integer array giving the permutation of columns required to sort the columns of 'm'. The order used is determined from the signs of degorder, monorder: if degorder is positive (negative), then the columns are sorted into ascending (descending) degree order.  If degorder is 0, or for columns having the same degree, if monorder is positive (negative), then these columns are sorted in ascending (descending) monomial order.
+
+ggsparsevector
+sparsevector
+nothing yet
+nothing yet
+
+ggstack
+stack
+. >> string
+Push a string containing the types of the stack elements.
+
+ggstats
+stats
+gb_comp >> .;  OR res_comp >> .
+Return a string describing the state of the Groebner or resolution computation, and the number of s-pair and generator computations remaining in each degree.
+
+ggSTRING
+string
+(string from input) >> string
+Place a string on the stack.
+
+ggsubmatrix
+submatrix
+rows:intarray cols:intarray M:matrix >> matrix
+Return the matrix obtained from M by choosing the given rows and columns in the specified order.
+
+ggsubmodule
+submodule
+F:freemodule rows:intarray >> freemodule
+Return the freemodule obtained by taking the basis elements of F given by rows[0], rows[1], ... rows[length(rows)-1].
+
+ggsubtract
+-
+a:var b:var >> var
+Place a-b onto the stack.
+
+ggsymm
+symm
+F:freemodule d:int >> freemodule;  OR m:matrix d:int >> matrix
+Yields the d th symmetric power of the first argument.  Currently, the matrix argument must have only one row.
+
+ggtensor
+tensor
+matrix matrix >> matrix
+Return the tensor product ('outer' in Macaulay) of the two matrices.
+
+ggterm
+term
+polyring a:ringelem m:monomial >> ringelem;  OR freemodule a:ringelem i:int >> vector
+Create a polynomial from a coefficient and a monomial (first case), or create a vector from a ring element and an integer component (second case).
+
+ggtermideal
+termideal
+m:matrix n:int >> termideal
+Given a matrix defined over a ring R = Z[x1..xn]/I, create the termideal of lead terms which occur in the 'i'th row of this matrix.
+
+ggtest
+test
+. >> .
+Run some debugging code.  Internal use only.
+
+ggtonet
+tonet
+var >> string
+Place onto the stack a string representation of var suitable for dumping to a disk or network (using the command netsee).
+
+ggtostring
+tostring
+var >> string
+Place a reasonably readable string representation of the object onto the stack.
+
+ggtracing
+tracing
+int >> int
+Set the amount of tracing output done by GB routines (0 = none), and return on the stack the current tracing value.
+
+ggtranspose
+transpose
+matrix >> matrix
+Return the (graded) transpose of the given matrix.
+
+ggtruncate
+truncate
+to do
+to do
+
+ggisunit
+unit
+f:ringelem >> int
+If f is a unit, place 1 on the stack, else place a 0.
+
+ggvar
+var
+xring v:int e:int >> ringelem
+Place the monomial x^e onto the stack, where x is the v th variable in the given ring.
+
+ggvector
+vector
+vecinfo f0:ringelem f2:ringelem ... f(r-1):ringelem >> vector
+Create the vector f0 <0> + f1 <1> + ... + f(r-1) <r-1> using 'vecinfo'.
+
+ggGF
+GF
+p:int n:int >> ring
+Create the finite field having p^n elements, where p is a prime number.
+
+ggZ
+Z
+. >> ring
+Place the ring of integers onto the stack.
+
+ggZn
+Zn
+n:int >> monoid
+Yields the monoid Z^n, where each entry must fit into a machine integer.
+
+ggzero
+zero
+F:freemodule >> vector
+Yields the zero vector of F.
+
+ggzeromat
+zeromat
+rows:freemodule cols:freemodule >> matrix
+Place the zero matrix cols --> rows onto the stack.  
+
+ggzeromonoid
+zeromonoid
+. >> monoid
+Returns the trivial monoid with a single element.

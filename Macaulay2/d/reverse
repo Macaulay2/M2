@@ -1,0 +1,7 @@
+#! /bin/sh
+a=
+while [ $# != 0 ]
+do	a="$1 $a"
+	shift
+done
+echo $a

@@ -1,0 +1,8 @@
+arithmetic.oo : arithmetic.d
+arithmetic.oo arithmetic.sig : system.sig
+arithmetic.oo arithmetic.sig : strings.sig
+arithmetic.oo arithmetic.sig : C.sig
+arithmetic.oo arithmetic.sig : varstrings.sig
+arithmetic.oo arithmetic.sig : nets.sig
+arithmetic.oo arithmetic.sig : stdio.sig
+arithmetic.oo arithmetic.sig : err.sig

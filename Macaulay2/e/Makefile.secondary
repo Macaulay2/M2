@@ -1,0 +1,197 @@
+include ../Makefile.develop
+
+%.o : %.cpp
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+
+AWK      = awk
+
+ifndef CC
+CC       = gcc
+endif
+
+ifndef CXX
+CXX      = g++ 
+endif
+
+WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
+	   -Wparentheses -Wreturn-type -Wswitch -Wtrigraphs -Wuninitialized \
+	   -Wreorder -Wtemplate-debugging
+WARNINGS = -Wall
+
+CPPFLAGS += -DNDEBUG -I$(INCDIR)
+
+ifdef FACTOR
+CPPFLAGS += -DFACTOR
+endif
+
+# CXXFLAGS += -fhandle-exceptions
+# CXXFLAGS += -pg
+
+CXXFLAGS += -g $(WARNINGS) -O3
+
+CFLAGS = $(CXXFLAGS)
+ARFLAGS  = r
+LIBNAME  = gb
+LIB      = lib$(LIBNAME).a
+LIBSCC   = ../interpret.a
+RANLIB   = ranlib
+PRE.cc   = $(COMPILE.cc) -E 
+
+##################
+## Source code ###
+##################
+
+CONTAINER = \
+	array \
+	hashtab \
+	queue \
+	stack 
+
+INTERFACE = \
+	bin_io \
+	handles \
+	interp \
+	object \
+	obj_prim \
+	text_io
+
+INTERFACE_H = obj_int obj_iarr obj_str obj_ptr
+
+COMMANDS = \
+	x_monoid \
+	x_monom \
+	x_system \
+	x_free \
+	x_mat \
+	x_relem \
+	x_gb \
+	freemod2 \
+	x_factor \
+	gbnod
+
+NAMES = \
+	error \
+	ntuple \
+	res \
+	respoly \
+	hilb \
+	frac \
+	polyring \
+	freemod \
+	matrix \
+	relem \
+	ring \
+	vector \
+	z_mod_p \
+	Z \
+	GF \
+	schur \
+	monideal \
+	termideal \
+	newspair \
+	assprime \
+	det \
+	pfaff \
+	ringmap \
+	hermite \
+	gauss \
+	comb \
+	mem \
+	int_bag \
+	intarray \
+	monorder \
+	monomial \
+	varpower \
+	monoid \
+	gb \
+	spair \
+	gbinhom \
+	random \
+	gb2 \
+	res2 \
+	respoly2
+
+NAMES_H = \
+	comp \
+	ringelem \
+	style \
+	classes \
+	index \
+	gb_comp \
+	respair2
+
+C_FILES = mac2
+
+##############################
+## end of source code files ##
+##############################
+
+GENERATED_H = cmdnames cmdinst geovec geores
+
+FILES := $(CONTAINER) $(INTERFACE) $(COMMANDS) $(NAMES)
+OFILES := $(addsuffix .o,$(FILES)) $(addsuffix .o,$(C_FILES))
+
+CCFILES := $(addsuffix .cpp,$(FILES))
+
+CFILES := $(addsuffix .c,$(C_FILES))
+
+HHFILES := $(addsuffix .hpp, \
+		$(NAMES_H) $(NAMES) \
+		$(INTERFACE_H) $(INTERFACE) $(CONTAINER))
+
+OTHERS := Makefile Makefile.secondary \
+	res_aux.cpp res_aux2.cpp geoT.hpp \
+	tests misc keep
+
+ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
+
+all: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
+
+$(LIB): $(LIB)($(OFILES))
+	$(RANLIB) $(LIB) || true
+
+%.ii: %.cpp
+	$(PRE.cc) $< -o $@
+%.s: %.cpp
+	$(CXX) $(CXXFLAGS) -S $< -o $@
+
+%.dd: %.cpp
+	@echo remaking $@
+	$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's/$*\.o/& $@/g' > $@
+# this was:
+#	@$(SHELL) -ec '$(CXX) -I$(INCDIR) -MM $(CPPFLAGS) $< | sed '\''s/$*.o/& $@/g'\'' > $@'
+# but we can't use that under MSDOS, and besides, it looks weird
+
+geovec.hpp: geoT.hpp
+	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm"); print }' geoT.hpp >$@
+
+geores.hpp: geoT.hpp
+	awk '{sub(/FREEMODULETYPE/, "res2_poly"); sub(/VECTYPE/, "res2term"); print }' geoT.hpp >$@
+
+cmdnames.m2 : misc/cmdnames.input misc/cmdg.awk
+	$(AWK) -f misc/cmdg.awk misc/cmdnames.input >cmdnames.m2
+cmdnames.hpp : misc/cmdnames.input
+	$(AWK) -f misc/cmdh.awk $^ >$@
+cmdinst.hpp : misc/cmdnames.input
+	$(AWK) -f misc/cmdinst.awk $^ >$@
+
+tags: TAGS
+
+TAGS: $(HFILES) $(CCFILES)
+	etags *.hpp *.cpp *.c
+
+clean:
+	rm -f *.o *.dd *.ii $(LIB)
+	rm -f TAGS
+
+$(addsuffix .dd,$(FILES)) : cmdnames.hpp cmdinst.hpp
+
+ifndef NODEPENDS
+include $(addsuffix .dd,$(FILES))
+endif
+
+allfiles: Makefile.secondary
+	@echo making allfiles
+	@echoout '>allfiles' $(ALLFILES)
+
+install:

@@ -1,0 +1,14 @@
+binding.oo : binding.d
+binding.oo binding.sig : system.sig
+binding.oo binding.sig : strings.sig
+binding.oo binding.sig : C.sig
+binding.oo binding.sig : varstrings.sig
+binding.oo binding.sig : nets.sig
+binding.oo binding.sig : stdio.sig
+binding.oo binding.sig : err.sig
+binding.oo binding.sig : arithmetic.sig
+binding.oo binding.sig : ctype.sig
+binding.oo binding.sig : stdiop.sig
+binding.oo binding.sig : tokens.sig
+binding.oo binding.sig : lex.sig
+binding.oo binding.sig : parser.sig

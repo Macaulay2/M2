@@ -1,0 +1,8 @@
+stdiop.oo : stdiop.d
+stdiop.oo stdiop.sig : system.sig
+stdiop.oo stdiop.sig : strings.sig
+stdiop.oo stdiop.sig : C.sig
+stdiop.oo stdiop.sig : varstrings.sig
+stdiop.oo stdiop.sig : nets.sig
+stdiop.oo stdiop.sig : stdio.sig
+stdiop.oo stdiop.sig : ctype.sig

@@ -1,0 +1,3 @@
+varstrings.oo : varstrings.d
+varstrings.oo varstrings.sig : system.sig
+varstrings.oo varstrings.sig : strings.sig
