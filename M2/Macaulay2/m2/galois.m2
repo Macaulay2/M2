@@ -65,7 +65,7 @@ GF(ZZ,ZZ) := GaloisField => options -> (p,n) -> (
      if n <= 0 then error "expected positive exponent";
      if n === 1 then ZZ/p
      else (
-	  x := if options.Variable === null then local a else baseName options.Variable;
+	  x := if options.Variable === null then GF$a else baseName options.Variable;
 	  R := ZZ/p[x];
 	  t := R_0;
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
@@ -97,7 +97,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      else (
 	  if primitiveElement === S_0 
 	  then var = S.generatorSymbols#0
-	  else var = local a;
+	  else var = GF$a;
 	  );
      d := p^n-1;
      rF := rawGaloisField raw primitiveElement;
@@ -119,6 +119,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  );
      F.order = p^n;
      F / F := (x,y) -> x // y;
+     F.use = F -> var <- F_0;
      F))
 
 random GaloisField := F -> (
