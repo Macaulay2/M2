@@ -288,9 +288,6 @@ else
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
 endif
 
-# why do we need pthreads ??  (we seem to need it when linking statically)
-LIBRARYOPTIONS += -lpthreads
-
 ifeq "$(STATIC)" "yes"
 LIBRARYOPTIONS += -Wl,-Bdynamic
 endif
