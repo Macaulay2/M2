@@ -256,6 +256,25 @@ Ring ^ ZZ := Module => (R,n) -> (
      else notImplemented()
      )
 
+Ring ^ Matrix := Module => (R,m) -> (
+     if R.?RawRing
+     then (
+	  if ring m =!= R then error "expected matrix over same ring";
+	  newModule (R, rawFreeModule m.RawMatrix)
+	  )
+     else notImplemented()
+     )
+
+schreyerOrder = method()
+schreyerOrder(Module) := Matrix => (F) -> (
+     if not isFreeModule F then error "expected a free module";
+     m := rawGetSchreyer F.RawFreeModule;
+     src := newModule(ring F, rawSource m);
+     tar := newModule(ring F, rawTarget m);
+     map(tar,src,m))
+
+schreyerOrder Matrix := Module => (m) -> (ring m)^m
+
 -- euler(Module) := (M) -> (
 --      f := poincare M;
 --      R := ring M;

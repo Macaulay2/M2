@@ -244,6 +244,19 @@ for i from 0 to rawNumberOfRows m - 1 do
 ---------------------
 -- rawMatrixRandom --
 ---------------------
+needs "raw-util.m2"
+mr = rawMatrixRandom(rawZZ(),2,3,.5,0,false,0)
+mr = rawMatrixRandom(rawZZ(),20,30,.5,0,false,0)
+mr = rawMatrixRandom(rawZZ(),20,30,.98,0,false,0)
+mr = rawMatrixRandom(rawZZ(),30,30,.5,1,false,0)
+mr = rawMatrixRandom(rawZZ(),30,30,1.0,1,false,0)
+
+mr = rawMatrixRandom(rawZZ(),10,15,.5,0,false,0)
+R = polyring(rawZZp(32003), (symbol x, symbol y))
+mr = rawMatrixRandom(R,10,15,.5,0,false,0)
+mr = rawMatrixRandom(R,10,15,.5,1,false,0)
+mr = rawMatrixRandom(R,10,10,.5,1,false,0)
+
 
 -------------------
 -- rawReshape -----
@@ -375,7 +388,12 @@ assert(m3 * C == M)
 -------------------
 -- rawInitial -----
 -------------------
-
+-- test this for up and down orders, and also
+-- for Schryer orders
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol a .. symbol g))
+m = mat{{a^2-a^3*b*c, a^4*c*d+a^3*b+1, a*b*c*d}}
+rawInitial(1,m)
 ---------------------------
 -- rawEliminateVariables --
 ---------------------------
