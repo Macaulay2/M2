@@ -1232,7 +1232,7 @@ regexmatch(e:Expr):Expr := (
 setupfun("matches",regexmatch);
      
 listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
-listFrame(f:Frame):Expr := if f == globalFrame then listFrame(emptySequence) else listFrame(f.values);
+listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables
 frame(e:Expr):Expr := (
      when e
      is s:Sequence do 
@@ -1246,14 +1246,17 @@ setupfun("frame", frame);
 
 numFrames(f:Frame):int := (
      n := 0;
-     while f.outerFrame != f && f.frameID > 0 do (n = n+1; f = f.outerFrame);
+     while f.frameID > 0
+     && ( n = n+1; f != f.outerFrame )
+     do f = f.outerFrame;
      n);
 
-listFrames(f:Frame):Expr := list(
-     new Sequence len numFrames(f) do (
-	  while f.outerFrame != f && f.frameID > 0 do (provide listFrame(f.values); f = f.outerFrame);
-	  )
-     );     
+listFrames(f:Frame):Expr := Expr(
+     list(
+	  new Sequence len numFrames(f) do (
+	       while f.frameID > 0
+	       && (provide listFrame(f) ; f != f.outerFrame )
+	       do f = f.outerFrame)));     
 
 frames(e:Expr):Expr := (
      when e
@@ -1265,7 +1268,13 @@ frames(e:Expr):Expr := (
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
 
-dictionaries(e:Expr):Expr := (
+newDictionaryFun(e:Expr):Expr := (
+     when e is a:Sequence do if length(a) == 0 then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("newDictionary", newDictionaryFun);
+
+globalDictionaries(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 0 then (		    -- get the current globalDictionary list
@@ -1273,32 +1282,59 @@ dictionaries(e:Expr):Expr := (
 	       n := 0;
 	       while ( n = n+1; g != g.outerDictionary ) do g = g.outerDictionary;
 	       g = globalDictionary;
-	       Expr(list(new Sequence len n do while true do ( provide Expr(g); g = g.outerDictionary ))))
+	       Expr(list(new Sequence len n do while true do ( provide Expr(DictionaryClosure(globalFrame,g)); g = g.outerDictionary ))))
      	  else WrongNumArgs(0))
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return(WrongArg("expected a nonempty list of dictionaries"));
+	  if n == 0 then return(WrongArg("expected a nonempty list of globalDictionaries"));
           sawUnprotected := false;
 	  sawM2dict := false;
 	  foreach x in s do 
-	  when x is d:Dictionary do (
+	  when x is dc:DictionaryClosure do (
+	       d := dc.dictionary;
 	       if d == Macaulay2Dictionary then sawM2dict = true;
 	       if !d.protected then sawUnprotected = true;
+	       if d.frameID != 0 || d.transient then return(WrongArg("expected a list of global dictionaries"))
 	       )
 	  else return(WrongArg("expected a list of dictionaries"));
 	  if !sawM2dict then return(WrongArg("expected a list of dictionaries containing Macaulay2Dictionary"));
           if !sawUnprotected then return(WrongArg("expected a list of dictionaries, not all protected"));
-     	  a := new array(Dictionary) len n do foreach x in s do when x is d:Dictionary do provide d else nothing;
+     	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
      	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);
 	  globalDictionary = a.0;
 	  e)
      else WrongNumArgs(0));
-setupfun("dictionaries", dictionaries);
+setupfun("globalDictionaries", globalDictionaries);
 
-newDictionaryFun(e:Expr):Expr := (
-     when e is a:Sequence do if length(a) == 0 then Expr(newGlobalDictionary())
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("newDictionary", newDictionaryFun);
+localDictionary(f:Frame):DictionaryClosure := DictionaryClosure(f,getLocalDictionary(f.frameID));
+
+localDictionary(e:Expr):Expr := (
+     f := localFrame;
+     when e
+     is a:Sequence do if length(a) == 0 then f = localFrame else return(WrongNumArgs(0,1))
+     is sc:SymbolClosure do f = sc.frame
+     is fc:FunctionClosure do f = fc.frame
+     is cfc:CompiledFunctionClosure do f = dummyFrame	    -- some values are there, but no symbols
+     is CompiledFunction do f = dummyFrame		    -- no values or symbols are there
+     else return(WrongArg("a function, a symbol, or ()"));
+     Expr(localDictionary(f)));
+setupfun("localDictionary", localDictionary);
+
+localDictionaries(e:Expr):Expr := (
+     f := localFrame;
+     when e
+     is a:Sequence do if length(a) == 0 then f = localFrame else return(WrongNumArgs(0,1))
+     is sc:SymbolClosure do f = sc.frame
+     is fc:FunctionClosure do f = fc.frame
+     is cfc:CompiledFunctionClosure do f = dummyFrame	    -- some values are there, but no symbols
+     is CompiledFunction do f = dummyFrame		    -- no values or symbols are there
+     else return(WrongArg("a function, a symbol, or ()"));
+     Expr(
+	  list(
+	       new Sequence len numFrames(f) do (
+		    while f.frameID > 0
+		    && ( provide Expr(localDictionary(f)); f != f.outerFrame )
+		    do f = f.outerFrame))));
+setupfun("localDictionaries", localDictionaries);

@@ -195,7 +195,13 @@ loadprint(s:string,StopIfError:bool):Expr := (
      	  localFrame = newLocalFrame(d);
 	  r := readeval3(file,true,StopIfError,d);
      	  localFrame = saveLocalFrame;
-	  t := if !(s==="-") then close(file) else 0;
+	  t := (
+	       if s === "-"			 -- whether it's stdin
+	       then (
+		    file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
+		    0
+		    )
+	       else close(file));
 	  when r is Error do r 
 	  else (
 	       if t == ERROR
@@ -290,13 +296,24 @@ export process():void := (
      stdin.echo       = !(0 != isatty(0));
      stdout.outisatty =   0 != isatty(1) ;
      stderr.outisatty =   0 != isatty(2) ;
+     StopIfError = false;				    -- this is usually true after loaddata()
      ret := (
 	  when readeval(stringTokenFile("--startupString1--/layout.m2",startupString1))
-	  is Error do ( if StopIfError then 1 else ( topLevel(); 0) )
+	  is Error do (
+	       if StopIfError
+	       then 1					    -- probably can't happen, because layout.m2 doesn't set StopIfError
+	       else (
+		    if topLevel() 			    -- give a prompt for debugging
+		    then 0 else 1))
 	  else 
-	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2))
-	  is Error do ( if StopIfError then 1 else ( topLevel(); 0) )
+	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2)) -- startup.m2 calls topLevel and eventually returns
+	  is Error do (
+	       if StopIfError 
+	       then 1
+	       else (
+		    if topLevel() 			    -- give a prompt for debugging
+		    then 0 else 1))
 	  else 0);
      value(Expr("exit " + tostring(ret)));		    -- try to exit the user's way
-     exit(ret);
+     exit(if ret == 0 then 1 else ret);			    -- if that doesn't work, try harder and indicate an error
      );

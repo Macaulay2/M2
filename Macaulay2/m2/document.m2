@@ -237,7 +237,7 @@ UndocumentableValue := hashTable { symbol environment => true, symbol commandLin
 documentableValue := key -> (
      class key === Symbol and value key =!= key
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
-scan(flatten(pairs \ dictionaries()), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
+scan(flatten(pairs \ globalDictionaries()), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
 fixup := method(SingleArgumentDispatch => true)
 fixup Nothing    := z -> z				    -- null
@@ -386,7 +386,7 @@ topics = Command (
 	  )
      )
 
-apropos = (pattern) -> sort select( keys flatten(pairs \ dictionaries()), i -> match(toString pattern,i))
+apropos = (pattern) -> sort select( keys flatten(pairs \ globalDictionaries()), i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 -- more general methods
 -----------------------------------------------------------------------------
@@ -705,7 +705,7 @@ op := s -> if operatorSet#?s then (
 	  }
      )
 
-optionFor := s -> unique select( value \ flatten(values \ dictionaries()), f -> class f === Function and (options f)#?s)
+optionFor := s -> unique select( value \ flatten(values \ globalDictionaries()), f -> class f === Function and (options f)#?s)
 
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
@@ -728,7 +728,7 @@ documentation Symbol := s -> (
      )
 
 documentation Type := X -> (
-     syms := flatten(values \ dictionaries());
+     syms := flatten(values \ globalDictionaries());
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
@@ -1429,7 +1429,7 @@ undocErr := x -> (
      )
 
 undocumentedSymbols = () -> select(
-     flatten(values \ dictionaries()), 
+     flatten(values \ globalDictionaries()), 
      x -> (
 	  if (
 	       -- x =!= value x and        -- ignore symbols with no value assigned

@@ -149,7 +149,7 @@ keys(o:Dictionary):Expr := Expr(
 		    else break;))));
 keys(e:Expr):Expr := (
      when e
-     is o:Dictionary do keys(o)
+     is o:DictionaryClosure do keys(o.dictionary)
      is f:Database do keys(f)
      is o:HashTable do keys(o)
      else WrongArg("a hash table, database, or dictionary"));
@@ -157,7 +157,7 @@ setupfun("keys",keys);
 toList(e:Expr):Expr := (
      when e
      is o:HashTable do keys(o)
-     is o:Dictionary do keys(o)
+     is o:DictionaryClosure do keys(o.dictionary)
      is a:Sequence do list(a)
      is b:List do (
 	  if b.class == listClass then e
@@ -170,15 +170,18 @@ toList(e:Expr):Expr := (
 setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e
-     is o:Dictionary do list(
-	  new Sequence len o.symboltable.numEntries do
-	  foreach bucket in o.symboltable.buckets do (
-	       p := bucket;
-	       while true do (
-		    when p
-		    is q:SymbolListCell do (provide Expr(SymbolClosure(globalFrame,q.entry)); p=q.next;)
-		    else break;
-		    )))
+     is oc:DictionaryClosure do (
+	  o := oc.dictionary;
+	  f := oc.frame;
+	  Expr(list(
+		    new Sequence len o.symboltable.numEntries do
+		    foreach bucket in o.symboltable.buckets do (
+			 p := bucket;
+			 while true do (
+			      when p
+			      is q:SymbolListCell do (provide Expr(SymbolClosure(f,q.entry)); p=q.next;)
+			      else break;
+			      )))))
      is o:HashTable do list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
@@ -191,15 +194,18 @@ setupfun("values",values);
 
 pairs(e:Expr):Expr := (
      when e
-     is o:Dictionary do list(
-	  new Sequence len o.symboltable.numEntries do (
-	       foreach bucket in o.symboltable.buckets do (
-		    p := bucket;
-		    while true do (
-			 when p
-			 is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(globalFrame,q.entry)))); p=q.next;)
-			 else break; ));
-	       ))
+     is oc:DictionaryClosure do (
+	  o := oc.dictionary;
+	  f := oc.frame;
+	  Expr(list(
+		    new Sequence len o.symboltable.numEntries do (
+			 foreach bucket in o.symboltable.buckets do (
+			      p := bucket;
+			      while true do (
+				   when p
+				   is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(f,q.entry)))); p=q.next;)
+				   else break; ));
+			 ))))
      is o:HashTable do list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
@@ -279,10 +285,12 @@ subvalue(left:Expr,right:Expr):Expr := (
 		    + " out of bounds 0 .. "
 		    + tostring(length(x.v)-1)))
 	  else buildErrorPacket("array index not an integer"))
-     is d:Dictionary do (
+     is dc:DictionaryClosure do (
 	  when right is s:string do (
+	       d := dc.dictionary;
+	       f := dc.frame;
 	       when lookup(s,d.symboltable)
-	       is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+	       is x:Symbol do Expr(SymbolClosure(f,x))
 	       else nullE
 	       )
 	  else buildErrorPacket("expected subscript to be a string")
@@ -320,7 +328,8 @@ subvalueQ(left:Expr,right:Expr):Expr := (
 	       else False)
 	  else False)
      is x:HashTable do if lookup1Q(x,right) then True else False
-     is d:Dictionary do (
+     is dc:DictionaryClosure do (
+	  d := dc.dictionary;
 	  when right is s:string do when lookup(s,d.symboltable) is Symbol do True else False
 	  else buildErrorPacket("expected subscript to be a string")
 	  )
@@ -369,7 +378,7 @@ lengthFun(rhs:Code):Expr := (
      is Error do e
      is x:HashTable do Expr(toInteger(x.numEntries))
      is x:Sequence do Expr(toInteger(length(x)))
-     is x:Dictionary do Expr(toInteger(x.symboltable.numEntries))
+     is dc:DictionaryClosure do Expr(toInteger(dc.dictionary.symboltable.numEntries))
      is x:List do Expr(toInteger(length(x.v)))
      is f:file do (
 	  if f.input || f.output then (
@@ -1079,7 +1088,8 @@ flush(g:Expr):Expr := (
 setupfun("simpleFlush",flush);
 protect(e:Expr):Expr := (
      when e
-     is d:Dictionary do (
+     is dc:DictionaryClosure do (
+	  d := dc.dictionary;
 	  okay := false;
 	  t := globalDictionary;
 	  while (

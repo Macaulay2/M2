@@ -480,14 +480,6 @@ document { connectionCount,
      the listener ", TT "f", " so far."
      }
 
-ccc := echoOn
-erase symbol echoOn
-echoOn = Command ccc
-
-ccc = echoOff
-erase symbol echoOff
-echoOff = Command ccc
-
 document { echoOn,
      Headline => "turn on echoing",
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
