@@ -237,10 +237,15 @@ ascii(e:Expr):Expr := (
      then Expr((
 	  v := toIntArray(e);
 	  new string len length(v) do foreach i in v do provide char(i)))
-     else when e is s:string do list(
+     else 
+     when e is s:string do list(
 	  new Sequence len length(s) do (
 	       foreach c in s do provide toInteger(int(uchar(c)))))
-     else errorExpr("expects a string or an array of integers"));
+     is i:Integer do (
+	  if isInt(i)
+	  then Expr(new string len 1 do provide char(toInt(i)))
+	  else WrongArgSmallInteger(1))
+     else errorExpr("expects a string, a small integer, or an array of small integers"));
 setupfun("ascii",ascii);
 
 transnet(e:Expr):Expr := (

@@ -1,27 +1,35 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-indeterminates :=  {
-     quote a,quote b,quote c,quote d,quote e,quote f,quote g,quote h,
-     quote i,quote j,quote k,quote l,quote m,quote n,quote o,quote p,
-     quote q,quote r,quote s,quote t,quote u,quote v,quote w,quote x,
-     quote y,quote z,
-     quote A,quote B,quote C,quote D,quote E,quote F,quote G,quote H,
-     quote I,quote J,quote K,quote L,quote M,quote N,quote O,quote P,
-     quote Q,quote R,quote S,quote T,quote U,quote V,quote W,quote X,
-     quote Y,quote Z
-     }
+indeterminates :=  new MutableHashTable
 
-Index := new MutableHashTable
-scan(#indeterminates, i -> Index#(indeterminates#i) = i )
-vars ZZ := i -> indeterminates#i
-vars List := vars Sequence := args -> apply(flatten args,j->indeterminates#j)
-Symbol .. Symbol := (a,z) -> (
-     vars(
-	  (if Index#?a then Index#a else error("not an indeterminate: ", name a))
-	  .. 
-	  (if Index#?z then Index#z else error("not an indeterminate: ", name z))
+indices := new MutableHashTable
+
+vars Symbol := a -> (
+     if indices#?a 
+     then indices#a
+     else if # string a === 1 and a =!= ' then (
+	  i := first ascii string a;
+	  if i < 97 then i - 65 + 26 else i - 97
 	  )
+     else error(string a, " is not one of the symbols known to 'vars'")
      )
+
+vars ZZ := i -> (
+     if indeterminates#?i then indeterminates#i else (
+	  x := value (
+	       "global " |
+	       if 0 <= i and i < 26 then ascii(97 + i)
+	       else if 26 <= i and i < 52 then ascii(65 + i - 26)
+	       else if i < 0 then "X" | string(-i)
+	       else "x" | string(i-52)
+	       );
+	  indeterminates#i = x;
+	  indices#x = i;
+	  x))
+
+vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
+
+Symbol .. Symbol := (a,z) -> vars( vars a .. vars z )
 
 nometh2 := (n,x,y) -> error (
      "no method '", name n, "' found for ", name x,
@@ -60,7 +68,7 @@ document { quote "..",
 	  },
      PARA,
      NOINDENT,
-     TT "a .. i", " -- produces a sequence of ", TO "indeterminates", " for use as 
+     TT "a .. i", " -- produces a sequence of symbols for use as 
      variables in polynomial rings.",
      EXAMPLE "a .. i",
      PARA,
@@ -82,18 +90,3 @@ document { quote "..",
      SEEALSO{ "lists, arrays, and sequences"}
      }
 
-document { "indeterminates",
-     "Certain symbols are preferred for use as variables in polynomial rings.
-     These are the symbols whose name consists of a single letter that are not
-     used for some other purpose.  The single-letter symbols that have another
-     use are : ", 
-     concatenate 
-     ((s) -> mingle(s,append(#s-2 : ", ", ", and ")))
-     toList (
-	  set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	  - set apply(indeterminates, name)
-	  ),
-     ".",
-     PARA,
-     SEEALSO {"vars", ".."}     
-     }

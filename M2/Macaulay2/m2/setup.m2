@@ -73,9 +73,11 @@ outputSymbols := new MutableHashTable
 Print Thing := x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
-     s := value concatenate("quote ",o);
-     outputSymbols#s = true;
-     s <- x;
+     if x =!= null then (
+     	  s := value concatenate("quote ",o);
+     	  outputSymbols#s = true;
+     	  s <- x;
+	  );
      rot x;
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
@@ -163,12 +165,7 @@ userSymbols = type -> (			  -- last symbol introduced
 	       and instance(value symb,type)
 	       )
 	  );
-     w := select(tab#"a" .. tab#"Z", 
-	  symb -> (
-	       value symb =!= symb
-	       and instance(value symb,type)
-	       ));
-     apply(sort(apply(join(v,w), symb -> (hash symb, symb))), (h,s) -> s))
+     apply(sort(apply(v, symb -> (hash symb, symb))), (h,s) -> s))
 
 document { quote userSymbols,
      TT "userSymbols ()", " -- provides a list of variables defined by
@@ -197,19 +194,19 @@ document { quote listUserSymbols,
      SEEALSO {"userSymbols"}
      }
 
-clearAll = new Command from (() -> (
-     	  clearOutput();
-     	  scan(userSymbols(), i -> i <- i);
-     	  ))
+clearedSymbol := "-- cleared symbol --"
 
-clearOutput = new Command from (
-     () -> (
+clearOutput = new Command from (() -> (
      	  scan(keys outputSymbols, s -> (
 	       	    remove(outputSymbols,s);
-	       	    erase s;
-	       	    ));
-     	  )
-     )
+		    s <- clearedSymbol;
+	       	    erase s))))
+
+clearAll = new Command from (() -> (
+     	  clearOutput();
+     	  scan(userSymbols(), i -> (
+		    i <- clearedSymbol;
+		    erase i))))
 
 document { quote clearOutput,
      TT "clearOutput", " -- a command which attempts to release memory by 

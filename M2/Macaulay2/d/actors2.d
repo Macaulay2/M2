@@ -37,7 +37,7 @@ dbmopenout(filename:string):Expr := (
      then errorExpr(dbmstrerror() + " : " + filename)
      else Expr(Database(filename,nextHash(),handle,true,mutable)));
 dbmclose(f:Database):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
+     if !f.isopen then return(errorExpr("database already closed"));
      dbmclose(f.handle);
      f.isopen = false;
      Expr(toInteger(0)));

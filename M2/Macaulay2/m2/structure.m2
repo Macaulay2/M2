@@ -4,9 +4,11 @@ document { quote pack,
      TT "pack(v,n)", " -- packs the elements of the list or sequence
      ", TT "v", " into a table ", TT "n", " at a time.",
      PARA,
-     "It produces, from a list ", TT "v", ", a list of lists formed by packing the 
-     elements of ", TT "v", " into lists ", TT "n", " at a time.  The last of the lists
-     produced may have fewer than ", TT "n", " elements."
+     "It produces, from a list ", TT "v", ", a list of lists formed 
+     by packing the elements of ", TT "v", " into lists ", TT "n", " 
+     at a time.  The last of the lists produced may have fewer 
+     than ", TT "n", " elements.",
+     EXAMPLE "pack({a,b,c,d,e,f,g,h,i,j,k},3)",
      }
 
 document { quote join,
@@ -15,7 +17,7 @@ document { quote join,
      PARA,
      "The class of the result is the same as the class of the first argument.
      If there is just one argument, and it's mutable, a copy is returned.",
-     EXAMPLE "join({1,2,3},{7,8,9})",
+     EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
      PARA,
      "The operator ", TO (quote |, List, List), " can be used as a synonym."
      }
@@ -28,6 +30,11 @@ document { quote take,
      TT "take(v,{m,n})", " -- yields a list containing the elements of the list v 
      in positions m through n.",
      PARA,
+     EXAMPLE {
+	  "take({a,b,c,d,e,f},3)",
+	  "take({a,b,c,d,e,f},-3)",
+	  "take({a,b,c,d,e,f},{2,4})",
+	  },
      SEEALSO "drop"
      }
 
@@ -80,6 +87,11 @@ document { quote delete,
      TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
      from the list ", TT "v", ".",
      PARA,
+     "Equality is determined with ", TO "==", " which may do extensive
+     calculations in certain cases.",
+     EXAMPLE {
+	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
+	  },
      SEEALSO "member"
      }
 

@@ -1115,6 +1115,7 @@ document { "language and programming overview",
 		    TO "local variables in a file",
 		    TO "viewing the symbols defined so far",
 		    TO "subscripted variables",
+		    TO "numbered variables",
 		    }
 	       ),
 	  (
@@ -1259,7 +1260,7 @@ document { "viewing the symbols defined so far",
 	  "ff = 20:4; hh = true; kk",
 	  "listUserSymbols"
 	  },
-     "The symbols are listed in alphabetical order, and the type of value stored
+     "The symbols are listed in chronological order, and the type of value stored
      under it is displayed.",
      PARA,
      "We can clear the output symbols with ", TO "clearOutput", ".",
@@ -1336,19 +1337,21 @@ document { "using functions",
      }
 
 document { "making functions",
-     "The operator ", TO "->", " is used to make new functions.  To the left
-     we provide the names of the parameters to the function, and to the right we
-     provide an expression involving those parameters, whose value is to be
-     computed when the function is applied.  Let's make a function for squaring
-     numbers, and call it ", TO "sq", ".",
+     "The operator ", TO "->", " is used to make new functions.  On its left
+     we provide the names of the parameters to the function, and to the 
+     right we provide the body of the function, an expression involving
+     those parameters whose value is to be computed when the function 
+     is applied.  Let's illustrate this by makint a function for squaring 
+     numbers and calling it ", TT "sq", ".",
      EXAMPLE {
 	  "sq = i -> i^2",
 	  "sq 10",
 	  "sq(5+5)",
 	  },
-     "When the function is evaluated, the parameter ", TT "i", " is temporarily
-     assigned as its value the argument provided, which in this case is
-     ", TT "10", ", and the body of the function, namely ", TT "i^2", ", is evaluated.",
+     "When the function is evaluated, the argument is evaluated and assigned
+     temporarily as the value of the parameter ", TT "i", ".  In the example
+     above, ", TT "i", " was assigned the value ", TT "10", ", and then the 
+     body of the function was evaluated, yielding ", TT "100", ".",
      PARA,
      "Here is how we make a function with more than one argument.",
      EXAMPLE {
@@ -1481,15 +1484,294 @@ document { "replacements for commands and scripts from Macaulay",
      }
 
 document { "conditional execution",
-     "This node has not been written yet."
+     "The basic way to control the execution of code is with the ", TO "if", "
+     expression.  Such an expression typically has the form ", TT "if X then Y else Z", "
+     and is evaluated as follows.  First ", TT "X", " is evaluated.  If the result is ", TT "true", ",
+     then the value of ", TT "Y", " is provided, and if the result is ", TT "false", ", then the value of ", TT "Z", "
+     is provided.  An error is signalled if the value of ", TT "X", " is anything but ", TT "true", " or
+     ", TT "false", ".",
+     EXAMPLE {
+	  ///(-4 .. 4) / 
+     (i -> if i < 0 then "neg" 
+	  else if i == 0 then "zer" 
+	  else "pos")///
+	  },
+     "The else clause may be omitted from an ", TT "if", " expression.  In that case, 
+     if value of the predicate ", TT "X", " is false, then ", TT "null", " is provided 
+     as the value of the ", TT "if", " expression.",
+     EXAMPLE {
+	  ///(-4 .. 4) / 
+     (i -> if i < 0 then "neg" 
+	  else if i == 0 then "zer")///
+	  },
+     "There is a variety of predicate functions (such as ", TT "<", ") which yield
+     ", TT "true", " or ", TT "false", " and can be used as the predicate in 
+     an ", TT "if", " expression. Here is a partial list of such functions 
+     and operators: ",
+     TO "==", ", ",
+     TO "!=", ", ",
+     TO "===", ", ",
+     TO "=!=", ", ",
+     TO "<", ", ",
+     TO ">", ", ",
+     TO "<=", ", ",
+     TO ">=", ", ",
+     TO ".?", ", ",
+     TO "#?", ", ",
+     TO "member", ", ",
+     TO "isAffineRing", ", ",
+     TO "isBorel", ", ",
+     TO "isCommutative", ", ",
+     TO "isDirectSum", ", ",
+     TO "isField", ", ",
+     TO "isFreeModule", ", ",
+     TO "isHomogeneous", ", ",
+     TO "isIdeal", ", ",
+     TO "isInjective", ", ",
+     TO "isIsomorphism", ", ",
+     TO "isModule", ", ",
+     TO "isPolynomialRing", ", ",
+     TO "isPrime", ", ",
+     TO "isPrimitive", ", ",
+     TO "isQuotientModule", ", ",
+     TO "isQuotientOf", ", ",
+     TO "isQuotientRing", ", ",
+     TO "isRing", ", ",
+     TO "isSubmodule", ", ",
+     TO "isSubset", ", ",
+     TO "isSurjective", ", ",
+     TO "isTable", ", ",
+     TO "isUnit", ", ",
+     TO "isWellDefined", ".  Results of these tests may be combined with 
+     ", TT "not", ", ", TT "and", ", and ", TT "or", "."
      }
 
 document { "loops",
-     "This node has not been written yet."
+     "An expression of the form ", TT "while X do Y", " operates by evaluating
+     ", TT "X", " repeatedly.  Each time the value of ", TT "X", " is true, ", TT "Y", " is evaluated once.
+     When finally the value of ", TT "X", " is false then ", TT "null", " is returned as the value
+     of the ", TT "while", " expression.",
+     EXAMPLE {
+	  "i = 0;",
+	  ///while i < 20 do (<< " " << i; i = i + 1); << endl///
+	  },
+     "In the example above, ", TT "X", " is the predicate ", TT "i < 20", " and ", TT "Y", " is
+     the code ", TT ///(<< " " << i; i = i + 1)///, ".  Notice the use of the
+     semicolon within Y which separates two expression.",
+     PARA,
+     "The semicolon can also be used with the predicate ", TT "X", " to do other things
+     before the test is performed.  This works because the value of an expression
+     of the form ", TT "(A;B;C;D;E)", " is obtained by evaluating each of the
+     parts, and providing the value of the last part (in this case, ", TT "E", "),
+     as the value of the whole expression.  Thus, if the value of E is always
+     true or false, the expression ", TT "(A;B;C;D;E)", " can be used as
+     the predicate ", TT "X", ".  We illustrate this in the following example.",
+     EXAMPLE {
+	  "i = 0;",
+	  ///while (<< " " << i; i < 20) do i = i+1; << endl///
+	  },
+     "As a further indication of the power of this construction, consider
+     an expression of the following form.", 
+     PRE "     while (A; not B) and (C; not D) do (E; F)",
+     "It is the Macaulay 2 equivalent of C code that looks like this:",
+     PRE "     while (TRUE) { A; if (B) break; C; if (D) break; E; F; }",
      }
 
-document { "sq",
-     "This node has not been written yet."
+document { "numbered variables",
+     "One way to get many variables suitable for use as indeterminates in
+     a polynomial ring is with the function ", TO "vars", ".  It converts 
+     a list or sequence of integers into symbols.  It prefers to hand out
+     symbols whose name consists of a single letter, but there are only 52 
+     such symbols, so it also uses symbols such as ", TT "x55", " 
+     and ", TT "X44", ".",
+     EXAMPLE {
+	  "vars (0 .. 9,40,100,-100)"
+	  },
+     "These variables can be used to make polynomial rings.",
+     EXAMPLE {
+	  "ZZ[vars(0 .. 10)]"
+	  }
+     }
+
+document { "local variables in a function",
+     "A local variable in a function is one which is not visible to
+     code in other locations.  Correct use of local variables is
+     important, for data stored in global variables will stay around
+     forever, needlessly occupying valuable memory space.  For recursive
+     functions especially, it is important to use local variables so that
+     one invocation of the function doesn't interfere with another.",
+     PARA,
+     "The simplest way to create a local variable in a function is with
+     the assignment operator ", TO ":=", ".  The expression ", TT "X := Y", "
+     means that the value of ", TT "Y", " will be assigned to a newly created local
+     variable whose name is ", TT "X", ".  Once ", TT "X", " has been created, new values can
+     be assigned to it with expressions like ", TT "X = Z", ".",
+     EXAMPLE {
+	  "i = 22;",
+	  ///f = () -> (i := 0; while i<9 do (<< i << " "; i=i+1); <<endl;)///,
+	  "f()",
+	  "i"
+	  },
+     "In the example above, we see that the function ", TT "f", " does 
+     its work with a local variable ", TT "i", " which is unrelated to the global 
+     variable ", TT "i", " introduced on the first line.",
+     PARA,
+     "In the next example, we show that the local variables in two
+     invocations of a function don't interfere with each other.  We
+     write a function f which returns a newly created counting function.  
+     The counting function simply returns the number of times it has 
+     been called.",
+     EXAMPLE {
+	  "f = () -> (i := 0; () -> i = i+1)",
+	  },
+     "Let's use ", TT "f", " to create counting functions and show that they operate
+     independently.",
+     EXAMPLE {
+	  "p = f()",
+	  "q = f()",
+	  "p(),p(),p(),p(),q(),p(),p(),q(),p(),p()"
+	  }
+     }
+
+document { "strings",
+     "A string is a sequence of characters.  These strings can
+     be manipulated in various ways to produce printed output.
+     One enters a string by surrounding them with quotation marks.",
+     EXAMPLE {
+	  ///"abcdefghij"///,
+	  },
+     "Strings may contain newline characters.",
+     EXAMPLE ///"abcde
+fghij"///,
+     "Strings, like anything else, can be assigned to variables.",
+     EXAMPLE ///x = "abcdefghij"///,
+     "There are escape sequences which make it possible to
+     enter special characters:",  PRE 
+"      \\n             newline
+      \\f             form feed
+      \\r             return
+      \\\\             \\ 
+      \\\"             \"
+      \\t             tab
+      \\xxx           ascii character with octal value xxx",
+     EXAMPLE ///y = "abc\101\102\n\tstu"///,
+     "We can use ", TO "peek", " to see what characters are in the string.",
+     EXAMPLE "peek y",
+     "Another way to enter special characters into strings is to use ", TO "///", "
+     as the string delimiter.",
+     EXAMPLE ("///" | ///a \ n = "c"/// | "///"),
+     "The function ", TO "ascii", " converts strings to lists of
+     ascii character code, and back again.",
+     EXAMPLE {
+      	  "ascii y",
+      	  "ascii oo",
+	  },
+     "We may use the operator ", TO "|", " to concatenate strings.",
+     EXAMPLE "x|x|x",
+     "The operator ", TO "#", " computes the length of a string.",
+     EXAMPLE "#x",
+     "We may also use the operator ", TO "#", " to extract single characters from
+     a string.  Warning: we number the characters starting with 0.",
+     EXAMPLE "x#5",
+     "The function ", TO "substring", " will extract portions of a string
+     for us.",
+     EXAMPLE {
+	  "substring(x,5)",
+	  "substring(x,5,2)",
+	  },
+     }
+
+document { "nets",
+     "A net is a rectangular two-dimensional array of characters, together
+     with an imaginary horizontal baseline that allows nets to be assembled
+     easily into lines of text.  A string is regarded as a net with one row.",
+     PARA,
+     "Nets are used extensively for such things as formatting polynomials for
+     display on ascii terminals.  Use ", TO "net", " to obtain such nets directly.",
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "(x+y)^2",
+	  "n = net oo",
+	  },
+     "We may use ", TO "peek", " to clarify the extent of a net.",
+     EXAMPLE "peek n",
+     "One way to create nets directly is with the operator ", TT "||", ", 
+     which concatenates strings or nets vertically.",
+     EXAMPLE ///x = "a" || "bb" || "ccc"///,
+     "We may use the operator ", TO "^", " to raise or lower a net with 
+     respect to its baseline.",
+     EXAMPLE "x^2",
+     "Nets may appear in lists, and elsewhere.",
+     EXAMPLE {
+	  "{x,x^1,x^2}",
+	  },
+     "Nets and strings can be concatenated horizontally with the operator ", TO "|", ".",
+     EXAMPLE ///x^2 | "-------" | x///,
+     "Each net has a width, depth, and height.  The width is the number
+     of characters in each row.  The depth is the number of rows below
+     the baseline, and the height is the number of rows above the baseline.
+     The depth and the height can be negative.",
+     EXAMPLE "width x, height x, depth x",
+     "We may extract the rows of a net as strings with ", TO "netRows", ".",
+     EXAMPLE {
+	  "netRows x",
+	  "peek oo"
+	  }
+     }
+
+document { "lists",
+     "A list is a handy way to store a series of things.  We create one
+     by separating the elements of the series by commas and surrounding 
+     the series with braces.",
+     EXAMPLE "x = {a,b,c,d,e}",
+     "We retrieve the length of a list with the operator ", TO "#", ".",
+     EXAMPLE "#x",
+     "We use it also to obtain a particular element.  Warning: we number
+     the elements starting with 0.",
+     EXAMPLE "x#2",
+     "The functions ", TO "first", " and ", TO "last", " retrieve the
+     first and last elements of a list.",
+     EXAMPLE "first x, last x",
+     "Omitting an element of a list causes the symbol ", TO "null", " to 
+     be inserted in its place.",
+     EXAMPLE {
+	  "g = {3,4,,5}",
+	  "peek g",
+	  },
+     "Lists can be used as vectors, provided their elements are the sorts of
+     things that can be added and mutliplied.",
+     EXAMPLE "10000*{3,4,5} + {1,2,3}",     
+     "If the elements of a list are themselves lists, we say that we have
+     a nested list.",
+     EXAMPLE {
+	  "y = {{a,b,c},{d,{e,f}}}",
+	  "#y"
+	  },
+     "One level of nesting may be eliminated with ", TO "flatten", ".",
+     EXAMPLE "flatten y",
+     "A table is a list whose elements are lists all of the same length.  
+     The inner lists are regarded as rows when the table is displayed as a
+     two-dimensional array with ", TO "MatrixExpression", ".",
+     EXAMPLE {
+	  "z = {{a,1},{b,2},{c,3}}",
+	  "isTable z",
+      	  "MatrixExpression z",
+	  },
+     "Various other functions for manipulating lists include ",
+     TO (quote |, List, List),
+     TO "append", ", ",
+     TO "between", ", ",
+     TO "delete", ", ",
+     TO "drop", ", ",
+     TO "join", ", ",
+     TO "mingle", ", ",
+     TO "pack", ", ",
+     TO "prepend", ", ",
+     TO "reverse", ", ",
+     TO "rsort", ", ",
+     TO "sort", ", ",
+     TO "take", ", and ",
+     TO "unique", ".",
      }
 
 document { "making new types",
@@ -1498,6 +1780,7 @@ document { "making new types",
 
 document { "mapping over lists",
      "This node has not been written yet."
+     -- scan, apply, accumulate, any, all, fold, ...
      }
 
 document { "error handling",
@@ -1532,11 +1815,7 @@ document { "mapping over hash tables",
      "This node has not been written yet."
      }
 
-document { "hash tables,",
-     "This node has not been written yet."
-     }
-
-document { "local variables in a function",
+document { "hash tables",
      "This node has not been written yet."
      }
 
@@ -1548,23 +1827,11 @@ document { "inheritance from parents",
      "This node has not been written yet."
      }
 
-document { "nets",
-     "This node has not been written yet."
-     }
-
-document { "strings",
-     "This node has not been written yet."
-     }
-
 document { "printing to the screen",
      "This node has not been written yet."
      }
 
 document { "two dimensional formatting",
-     "This node has not been written yet."
-     }
-
-document { "lists",
      "This node has not been written yet."
      }
 
@@ -1580,7 +1847,7 @@ document { "reading files",
      "This node has not been written yet."
      }
 
-document { "(quote @, List, Function)",
+document { (quote @, List, Function),
      "This node has not been written yet."
      }
 
@@ -1592,6 +1859,6 @@ document { "method functions with optional arguments",
      "This node has not been written yet."
      }
 
-document { "(quote @, OptionTable, Function)",
+document { (quote @, OptionTable, Function),
      "This node has not been written yet."
      }

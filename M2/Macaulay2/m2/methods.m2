@@ -845,6 +845,10 @@ document { quote TEST,
 document { quote between,
      TT "between(m,v)", " -- inserts ", TT "m", " between each pair of elements 
      of the list or sequence ", TT "v", ", returning a list.",
+     PARA,
+     EXAMPLE {
+	  "between(55,{a,b,c,d})"
+	  }
      }
 
 document { quote SEEALSO,
@@ -1511,11 +1515,12 @@ document { quote vars,
      variables of the polynomial ring R.",
      BR,
      NOINDENT,
-     TT "vars(i .. j)", " -- provides a list of ", TO "indeterminates", ", the i-th
-     one through the j-th one.",
+     TT "vars(i .. j)", " -- provides a sequence of symbols which can be used
+     as indeterminates in a polynomial ring, the i-th one through the j-th one.
+     There is no limit on the size of the integers ", TT "i", " and ", TT "j", ".",
      PARA,
      EXAMPLE {
-	  "vars(3 .. 9)",
+	  "vars(3 .. 9,1000,-100)",
       	  "R = ZZ/101[vars(3 .. 5)]",
       	  "vars R",
       	  "symmetricPower(2,vars R)"
@@ -1715,15 +1720,20 @@ document { quote complete,
      }
 
 document { quote drop,
-     TT "drop(v,n)    ", " -- yields the list obtained from the list v by
+     TT "drop(v,n) ", " -- yields the list obtained from the list v by
      dropping the first n elements.  Also works for sequences.",
-     PARA,
-     "drop(v,-n)    -- yields the list obtained from the list v by dropping the 
+     BR, NOINDENT,
+     TT "drop(v,-n)", " -- yields the list obtained from the list v by dropping the 
      last n elements.",
-     PARA,
-     "drop(v,{m,n}) -- yields the list obtained from the list v by dropping the
+     BR, NOINDENT,
+     "drop(v,{m,n})", " -- yields the list obtained from the list v by dropping the
      elements at positions m through n.",
      PARA,
+     EXAMPLE {
+	  "drop({a,b,c,d,e},2)",
+	  "drop({a,b,c,d,e},-2)",
+	  "drop({a,b,c,d,e},{2,3})",
+	  },
      SEEALSO{ "take"}
      }
 
