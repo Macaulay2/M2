@@ -214,7 +214,7 @@ coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficien
 coefficients(List, Matrix) := (vrs,f) -> (
      m := raw f;
      monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(splice vrs, m)));
-     (monoms,map(source monoms,source f,rawCoefficients(vrs,monoms,m))))
+     (monoms,map(source monoms,source f,rawCoefficients(vrs,raw monoms,m))))
 coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
 
 coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
@@ -223,13 +223,8 @@ coefficients(Sequence, RingElement) := (v,m) -> coefficients(toList v,matrix{{m}
 coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
 
 terms RingElement := f -> (
-     R := ring f;
-     n := numgens R;
-     m := new RawMatrix from raw f;
-     monoms := rawMonomials(0 .. n-1, m);
-     error "'terms' not re-implemented yet";
-     -- now we will want to hand monoms to a new version of rawCoefficients
-     )
+     (m,c) := flatten \ entries \ coefficients f;
+     apply(m,c,times))
 
 sortColumns = method ( 
      Options => {
