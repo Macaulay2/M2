@@ -127,7 +127,9 @@ localSymbols Function := ls
 -- make this work eventually:
 -- localSymbols() := () -> if errorCode === null then ls() else ls errorCode
 -- meanwhile: (see also method123())
-nullaryMethods # (singleton localSymbols) = () -> if errorCode =!= null then ls errorCode else error "not in debugger (i.e., errorCode not set)"
+-- nullaryMethods # (singleton localSymbols) = () -> if errorCode =!= null then ls errorCode else error "not in debugger (i.e., errorCode not set)"
+-- also meanwhile:
+installMethod(localSymbols, () -> if errorCode =!= null then ls errorCode else error "not in debugger (i.e., errorCode not set)")
 
 localSymbols(Type,Symbol) :=
 localSymbols(Type,Dictionary) :=
