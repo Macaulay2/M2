@@ -1,6 +1,6 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-if Function.?GlobalAssignHook then error "setup.m2, already loaded"
+if Function.?GlobalAssignHook then error "setup.m2 already loaded"
 addStartFunction(
      () -> (
 	  Function.GlobalReleaseHook = (X,x) -> (

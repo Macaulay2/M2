@@ -64,25 +64,10 @@ scan( {
 -- unformatting document tags
 -----------------------------------------------------------------------------
 unformatTag := new MutableHashTable
-record      := f -> x -> (val := f x; unformatTag#val = x; val)
-unformat    = s -> (
-     if isGlobalSymbol s 
--- will this work?
-     then getGlobalSymbol s
---      and value getGlobalSymbol s =!= null	  -- keywords have null value
---      then (
--- 	  if unDocumentable value getGlobalSymbol s
---      	  then getGlobalSymbol s
---      	  else value getGlobalSymbol s
--- 	  )
-
-     else (
-	  if unformatTag#?s 
-	  then unformatTag#s
-     	  else s
-	  )
-     )
-
+record      := f -> x -> (
+     val := f x; 
+     if val =!= x then unformatTag#val = x; 
+     val)
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
@@ -487,7 +472,6 @@ justClass := X -> SEQ {"an instance of class ", TO X}
 
 usage := s -> (
      o := getDocBody s;
-     if o === null and class s === Symbol then o = getDoc toString s;
      if o =!= null then SEQ {o, PARA{}}
      )
 
@@ -657,8 +641,7 @@ briefDocumentation = x -> (
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
-     t := unformat s;
-     if t =!= s then documentation t
+     if unformatTag#?s then documentation unformatTag#s 
      else if isGlobalSymbol s then documentation getGlobalSymbol s
      else SEQ { title s, getDocBody s }
      )
