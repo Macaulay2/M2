@@ -223,7 +223,7 @@ document { Function,
      SEEALSO "functions"
      }
 
-document { symbol ->,
+document { "->",
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -476,7 +476,7 @@ document { select,
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
 
---document { symbol find,
+--document { find,
 --     TT "find(x,f)", " -- applies the function ", TT "f", " to each element
 --     of ", TT "x", ", returning the result not equal to ", TT "null", ".
 --     If no result is non-null, then it returns null."
@@ -620,49 +620,17 @@ document { transnet,
      SEEALSO{ "String" }
      }
 
-document { " ",
+document { symbol " ",
      TT "f x", " -- yields the result of applying the function f to x.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
      }
 
-document { "*",
-     TT "x * y", " -- yields the product of x and y.",
-     BR,NOINDENT,
-     TT "* x", " -- unary operator available to the user.",
+document { symbol "*",
+     TT "x * y", " -- usually yields the product of x and y.",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator with code
-     such as ",
-     PRE "         X * Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "A unary method for this operator may be installed with code such as ", 
-     PRE "          * X := x -> ... ",
-     "Here are some of the methods installed.",
-     MENU {
-	  TO (symbol *, Set, Set)
-	  },
      SEEALSO{ "times", "product" }
      }
 
-document { "&",
-     TT "x & y", " -- a binary operator.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X & Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "See also:",
-     MENU {
-	  TO (symbol &,ZZ,ZZ)
-	  }
+document { symbol "&",
      }
 
 document { (symbol &, ZZ, ZZ),
@@ -670,39 +638,16 @@ document { (symbol &, ZZ, ZZ),
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
      }
 
-document { "&&",
-     TT "x && y", " -- a binary operator.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X && Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "&&",
      }
 
-document { "^^",
-     TT "x ^^ y", " -- a binary operator.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X ^^ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "^^",
      }
 
-document { "+",
+document { symbol "+",
      TT "x + y", " -- a binary operator used for addition in many situations
      and union of sets.",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X + Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     MENU {
-	  TO (symbol +, Set, Set)
-	  },
      SEEALSO{ "plus", "sum" }
      }
 
@@ -712,105 +657,50 @@ document { (symbol +, Set, Set),
      SEEALSO "+"
      }
 
-document { "-",
+document { symbol "-",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
      BR,NOINDENT,
-     TT "- y", "   -- a unary operator used for negation.",
+     TT "- y", "   -- a unary operator usually used for negation.",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X - Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "The user may install a method for this unary operator with code
-     such as ",
-     PRE "          - Y := y -> ...",
-     "where ", TT "Y", " is the class of ", TT "y", ".",
      SEEALSO{ "difference", "minus" }
      }
 
-document { "/",
-     TT "x / y", " -- a binary operator.",
+document { symbol "/",
+     TT "x / y", " -- a binary operator usually used for division, yielding a
+     fraction, or for quotients (ring by ideal, etc.).",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X / Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     MENU {
-	  TO (symbol /, Ring, Ideal),
-	  TO (symbol /, Module, Module),
-	  TO (symbol /, Module, Ideal),
-	  TO (symbol /, Ideal, Ideal),
-	  TO (symbol /, List, Function)
-	  }
+     SEEALSO { "//" }
      }
 
-document { "%",
-     TT "x % y", " -- a binary operator used for remainder and reduction.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X % Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "%",
+     TT "x % y", " -- a binary operator used for remainder and reduction."
      }
 
-document { "//",
-     TT "x // y", " -- a binary operator used for quotients (with a possible
-     remainder).",
+document { symbol "//",
+     TT "x // y", " -- a binary operator used for quotients in the same
+     ring (with a possible remainder).",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X // Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+     SEEALSO { "/" }
      }
 
-document { "\\\\",
-     TT "x \\ y", " -- a binary operator used for quotients (with a possible
-     remainder).",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X \\ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "\\\\",
      }
 
-document { "^",
+document { symbol "^",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X ^ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Here are some methods for computing powers:",
+     "When computing powers, one of the following methods is used.",
      MENU {
 	  TO "SimplePowerMethod",
 	  TO "BinaryPowerMethod"
 	  },
-     PARA,
-     "If n is 0, then the unit element ", TT "(class x)#1", " is returned.
-     If n is negative, then the method named ", TO "InverseMethod", "
-     will be called."
+     NOINDENT, "In addition, if n is 0, then the unit element 
+     ", TT "(class x)#1", " is returned.  If n is negative, then the method
+     named ", TO "InverseMethod", " will be called."
      }
 
-document { "/^",
-     TT "x/^  y", " -- a binary operator, used for divided powers.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X /^ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     MENU {
-	  TO (symbol /^, Thing, ZZ)
-	  }
+document { symbol "/^",
      }
 
 document { (symbol /^, Thing, ZZ),
@@ -917,23 +807,8 @@ document { "not",
      SEEALSO{ "and", "or" }
      }
 
-document { "|",
-     TT "x | y", " -- a binary operator.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X | Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     MENU {
-	  TO {(symbol |, List, List), " -- join two lists"},
-	  TO {(symbol |, String, String), " -- concatenate two strings or nets horizontally"},
-	  TO {(symbol |, ZZ, ZZ), " -- logical OR of two integers"},
-	  TO {(symbol |, Matrix, Matrix), " -- join two matrices horizontally"}
-	  },
-     SEEALSO "||"
-     }
+document { symbol "|", SEEALSO "||" }
+
 document { (symbol |, List, List),
      TT "v|w", " -- join two lists.", 
      PARA,
@@ -978,19 +853,7 @@ document { (symbol |, Matrix, Matrix),
      SEEALSO {"|", (symbol ||, Matrix, Matrix)}
      }
 
-document { "||",
-     TT "x || y", " -- a binary operator.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X || Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     MENU {
-	  TO (symbol ||, Net, Net),
-	  TO (symbol ||, Matrix, Matrix)
-	  }
+document { symbol "||",
      }
 
 document { (symbol ||, Net, Net),
@@ -1056,15 +919,8 @@ document { "=!=",
      "See ", TO "===", " for details."
      }
 
-document { "==",
+document { symbol "==",
      TT "x == y", " -- a binary operator for testing mathematical equality.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X == Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".  This code will not be consulted if ", TT "x===y", "
-     is true.",
      PARA,
      "A test for mathematical equality will typically involve doing a computation
      to see whether two representations of the same mathematical object are being
@@ -1093,15 +949,9 @@ document { "!=",
      SEEALSO{ "==" }
      }
 
-document { symbol **, 
+document { symbol "**", 
      TT "x ** y", " -- a binary operator used for tensor product and
-     cartesian product.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X ** Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+     cartesian product."
      }
 
 document { (symbol **, Set, Set),

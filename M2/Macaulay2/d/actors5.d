@@ -1317,3 +1317,9 @@ kill(e:Expr):Expr := (
 setupfun("kill",kill);
 
 setupconst("typicalValues", Expr(typicalValues));
+setupconst("binaryOperators",Expr(new array(Expr) len length(opsWithBinaryMethod) do (
+     foreach s in opsWithBinaryMethod do provide Expr(s))));
+setupconst("prefixOperators",Expr(new array(Expr) len length(opsWithUnaryMethod) do (
+     foreach s in opsWithUnaryMethod do provide Expr(s))));
+setupconst("postfixOperators",Expr(new array(Expr) len length(opsWithPostfixMethod) do (
+     foreach s in opsWithUnaryMethod do provide Expr(s))));

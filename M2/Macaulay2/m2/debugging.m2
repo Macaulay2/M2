@@ -8,7 +8,7 @@ error = args -> olderror apply(
 protect symbol error
 
 on = f -> (
-     n := toString f;
+     n := try toString f else string f;
      depth := 0;
      totaltime := 0.;
      i := 0;
@@ -18,7 +18,7 @@ on = f -> (
 	  i = i+1;
      	  << n << " (" << j << ")";
 	  if depth > 0 then << " [" << depth << "]";
-	  << " called with args : " << x << endl;
+	  << "  called with " << class x << " : " << x << endl;
 	  depth = depth + 1;
      	  r := timing f x;
 	  timeused := r#0;
@@ -28,8 +28,8 @@ on = f -> (
      	  << n << " (" << j << ")";
 	  if depth > 0 then << " [" << depth << "]";
 	  << " " << timeused << " seconds";
-	  if depth === 0 then << ", total " << totaltime << " seconds";
-	  << endl << "  and returned value : " << value << endl;
+	  if depth === 0 then << ", used " << totaltime << " seconds";
+	  << "  returned " << class value << " : " << value << endl;
      	  value)
      )
 

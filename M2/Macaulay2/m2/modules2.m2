@@ -474,7 +474,7 @@ Module / Vector := Module => (M,v) -> (
 --     R := ring M;
 --     c := codim M; 
 --     annihilator prune Ext^c(M, R))
---document { symbol top,
+--document { top,
 --     TT "top M", " -- produce the annihilator of Ext^c(M, R), where c
 --     is the codimension of the support of the module M."
 --     }

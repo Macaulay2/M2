@@ -476,38 +476,24 @@ bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
      is p:parentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
-opsWithBinaryMethod := array(Symbol)(
-     -- DoubleArrowS.symbol,
-     LessLessS.symbol, GreaterGreaterS.symbol,
-     EqualEqualS.symbol, QuestionS.symbol, BarBarS.symbol,
-     AmpersandAmpersandS.symbol, ColonS.symbol, 
-     -- ColonColonS.symbol,
-     BarS.symbol, HatHatS.symbol, AmpersandS.symbol, TildeS.symbol,
-     DotDotS.symbol, MinusS.symbol, PlusS.symbol, PlusPlusS.symbol,
-     StarStarS.symbol, StarS.symbol, BackslashBackslashS.symbol,
-     DivideS.symbol, LeftDivideS.symbol, PercentS.symbol,
-     SlashSlashS.symbol, AtS.symbol, AdjacentS.symbol, AtAtS.symbol,
-     SlashHatS.symbol, PowerS.symbol, UnderscoreS.symbol
-     );
+export opsWithBinaryMethod := array(SymbolClosure)(
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS,
+     AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, TildeS, DotDotS, MinusS, PlusS, PlusPlusS,
+     StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
+     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS);
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, TildeS, LessLessS );
+export opsWithPostfixMethod := array(SymbolClosure)( TildeS );
+
 opHasBinaryMethod(o:Symbol):bool := (
-     foreach s in opsWithBinaryMethod do if s == o then return(true);
+     foreach s in opsWithBinaryMethod do if s.symbol == o then return(true);
      return(false);
      );
-opsWithUnaryMethod := array(Symbol)(
-     StarS.symbol,
-     MinusS.symbol,
-     TildeS.symbol,
-     LessLessS.symbol
-     );
-opsWithPostfixMethod := array(Symbol)(
-     TildeS.symbol
-     );
 opHasUnaryMethod(o:Symbol):bool := (
-     foreach s in opsWithUnaryMethod do if s == o then return(true);
+     foreach s in opsWithUnaryMethod do if s.symbol == o then return(true);
      return(false);
      );
 opHasPostfixMethod(o:Symbol):bool := (
-     foreach s in opsWithPostfixMethod do if s == o then return(true);
+     foreach s in opsWithPostfixMethod do if s.symbol == o then return(true);
      return(false);
      );
 bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
