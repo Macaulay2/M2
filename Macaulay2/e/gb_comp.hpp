@@ -69,7 +69,8 @@ const int STOP_CODIM    = 4;
 const int STOP_MIN_GENS = 5;
 //--- above to be removed soon -----------------------------
 
-class gb_comp : public mutable_object
+//class gb_comp : public mutable_object
+class gb_comp : public type
 {
 protected:
   int _kind;  // GB_comp:1, GBinhom_comp:2, EGB1:13
