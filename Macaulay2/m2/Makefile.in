@@ -202,7 +202,6 @@ $(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libe
 install ::
 	$(INSTALL_PROGRAM) -d "$(htmldocdir)"
 	cd $(TARGETDIR) && tar cf - *.html | tar xf - -C "$(htmldocdir)"
-	cd $(IMAGESDIR) && tar cf - *.gif *.jpg | tar xf - -C "$(imagesdir)"
 
 HOMEDIR := $(shell cd .. && pwd)
 check :: check-links

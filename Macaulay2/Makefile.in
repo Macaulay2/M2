@@ -1,6 +1,6 @@
 # @configure_input@
 ############################### targets to use
-.PHONY: check all clean config initialize doc html book distclean justM2
+.PHONY: check all clean config initialize doc book distclean justM2
 ################################# prologue
 all ::
 install ::
@@ -74,10 +74,9 @@ distclean ::; rm -f setup
 ################################# packages
 # from now on, all packages will be separate entities
 # all install check clean distclean ::; $(MAKE) -C packages $@
-################################# html
-doc :: html
-html ::; $(MAKE) -C html all
-install distclean clean ::; $(MAKE) -C html $@
+################################# images
+doc :: images
+install distclean clean ::; $(MAKE) -C images $@
 ################################# book
 # doc :: book
 book ::;  $(MAKE) -C book all

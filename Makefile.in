@@ -33,6 +33,7 @@ distribution :
 	tar cf - -C $(encapdir) $(package) | gzip > "Macaulay2-$(DESC).tar.gz"
 
 ################################# tar manufactured files
+# this probably isn't correct any longer:
 manufactured.tgz : Makefile
 	$(MAKE) -C Macaulay2/d all-c-files
 	$(MAKE) -C Macaulay2/tutorial
@@ -49,7 +50,6 @@ manufactured.tgz : Makefile
 		Macaulay2/m2/loads.m2 \
 		Macaulay2/d/*.c \
 		Macaulay2/m2/cache-tmp/Examples/*.m2 \
-		Macaulay2/m2/cache-tmp/Tests/*.m2 \
-		Macaulay2/html
+		Macaulay2/m2/cache-tmp/Tests/*.m2
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 install all clean distclean::; @echo "-------- done making '$@' --------"

@@ -1596,6 +1596,7 @@ new TO from List := (TO,x) -> (
      x)
 new IMG from List := (IMG,x) -> (
      url := first x;
-     if not isAbsolute url and not fileExists url
-     then error ("file ", url, " does not exist");
+     --   It's hard to know where the html file will go, and if the path to image is relative
+     --   then we can't check it.
+     -- if not isAbsolute url and not fileExists url then error ("file ", url, " does not exist");
      x)
