@@ -1,393 +1,656 @@
--- Fourier-Motzkin  elimination and related routines.
--- Greg Smith & Mike Stillman
--- last updated: 16 June 2000
---
--- routines in this file: primitive
---                        lcm
---                        toZZ
---                        isNotRedundant
---                        fourierMotzkin
---                        polarCone
---
 ------------------------------------------------------------
--- Routines for passing between ZZ and QQ.
+-- PURPOSE:    compute the polar dual of a rational convex 
+--             polyhedral cone using Fourier-Motzkin 
+--             elimination,
+--
+-- PROGRAMMER     : Greg Smith 
+-- UPDATE HISTORY : 2 July 2000
+-- GLOBAL METHODS : polarCone
+-- REFERENCE : G\"unter M. Zielger, Lectures on Polytopes,
+--             Graduate Texts in Mathematics 152, 
+--             Springer-Verlag, New York, 1995. 
 ------------------------------------------------------------
 
--- divides a list of integers by their gcd.
+
+
+--  rotateMatrix  ------------------------------------------
+-- PURPOSE  : transposition along the antidiagonal?
+-- RECEIVES : 'M' : a matrix. 
+-- RETURNS  : a matrix.
+-- COMMENT  : used to compute Gaussian elimination in the 
+--            in the form in which I think.  
+------------------------------------------------------------
+rotateMatrix := (M) -> (
+     numRow := rank source M;
+     numCol := rank target M;
+     
+     matrix table(numRow, numCol, (i,j) -> 
+	  M_(numCol - j - 1, numRow - i - 1))
+     );
+
+
+
+--  isRedundant  -------------------------------------------
+-- PURPOSE  : determine if an row vector/inequality is 
+--            redundant.
+-- RECEIVES : 'V' : a list of sets of integers.  Each entry 
+--                  contains indices of the original rays  
+--                  which do NOT vanish at the corresponding  
+--                  row vector.
+--     'vertices' : a set of integers; the original rays for
+--                  the row vector in question.
+-- RETURNS  : a boolean.
+-- COMMENT  : see Exercise 2.15 (i) in Ziegler.
+------------------------------------------------------------
+isRedundant := (V, vertices) -> (
+     -- the row vector is redundant iff 'vertices' contains
+     -- an entry in 'V'.
+     x := 0;
+     k := 0;
+     numRow := #V;  -- equals the number of inequalities
+     while ((x < 1) and (k < numRow)) do (
+	  if isSubset(V#k, vertices) then x = x + 1;
+	  k = k + 1;
+	  );
+     
+     x === 1
+     );
+
+     
+
+--  fourierMotzkin  ----------------------------------------
+-- PURPOSE  : Eliminates the first variable in the 
+--            inequalities 'A' using the double description 
+--            version of Fourier-Motzkin elimination.
+-- RECEIVES : 'A' : a list of lists of integers.  Each entry 
+--                  is a corresponds to a row vector in the  
+--                  system of inequalities.
+--            'V' : a list of sets of integers.  Each entry 
+--                  contains indices of the original rays  
+--                  which do NOT vanish at the corresponding 
+--                  row vector;  the complement of the 'V_i" 
+--                  appearing in Exercise 2.15 in Ziegler.
+--         'spot' : an integer.  The index of the variable 
+--                  being eliminated.
+-- RETURNS  :  a list {projA, projV} where
+--        'projA' : a list of lists of integers.  Each entry 
+--                  is a corresponds to a row vector in the 
+--                  projected system of inequalities.
+--        'projV' : a list of sets of integers.  Each entry 
+--                  contains indices of the original rays  
+--                  which do NOT vanish at the corresponding
+--                  row vector in 'projA'
+------------------------------------------------------------
+fourierMotzkin := (A, V, spot) -> (
+     -- initializing local variables
+     numCol := #(A#0);
+     numRow := #A;  -- equal to the length of V
+     pos := {};
+     neg := {};
+     projA := {};
+     projV := {};
+
+     -- divide the inequalities into three groups.
+     k := 0;
+     while (k < numRow) do (
+	  if (A#k#0 < 0) then neg = append(neg, k)
+	  else if (A#k#0 > 0) then pos = append(pos, k)
+	  else (
+	       projA = append(projA, A#k);
+	       projV = append(projV, V#k);
+	       );
+	  k = k+1;
+	  );	  
+       
+     -- generate new irredundant inequalities.
+     scan(pos, i -> 
+	  scan(neg, j -> (
+		    vertices := V#i + V#j;
+		    if not isRedundant(projV, vertices) 
+		    then (
+			 iRow := A#i;
+			 jRow := A#j;
+			 iCoeff := - jRow#0;
+			 jCoeff := iRow#0;
+			 a := iCoeff*iRow + jCoeff*jRow;
+			 projA = append(projA, a);
+			 projV = append(projV, vertices);
+			 );
+		    )));
+     -- don't forget the implicit inequalities '-t <= 0'.
+     scan(pos, i -> (
+	  vertices := V#i + set{spot};
+	  if not isRedundant(projV, vertices) 
+	  then (
+	       projA = append(projA, A#i);
+	       projV = append(projV, vertices);
+	       );
+	  ));
+
+     -- remove the first column 
+     projA = apply(projA, e -> e_{1..(numCol-1)});
+          
+     {projA, projV}
+     );   
+
+
+
+--  primitive  ---------------------------------------------
+-- PURPOSE  : divides a list of integers by their gcd.
+-- RECEIVES : 'L' : a non-empty list of integers. 
+-- RETURNS  : a list of integers.
+------------------------------------------------------------
 primitive := (L) -> (
-     -- L should be a list of integers.
-     if class L#0 =!= ZZ
-     then error "expected non-empty list of integers";
+     -- checking of input errors
+     if (class L#0 =!= ZZ) then 
+     error "primitive: expected non-empty list of integers";
+     
+     -- finding greatest common divisor
      n := #L-1;
      g := L#n;
-     while n > 0 do (
+     while (n > 0) do (
 	  n = n-1;
 	  g = gcd(g, L#n);
 	  if g === 1 then n = 0
 	  );
+     
      if g === 1 then L 
      else apply(L, i -> i // g)
      );
 
--- determines the least common multiple
-lcm2 := (a,b) -> (a*b) // (gcd(a,b));
+
+
+--  lcm  ---------------------------------------------------
+-- PURPOSE  : determines the least common multiple of a list
+--            of integers.
+-- RECEIVES : 'L' : a list of integers. 
+-- RETURNS  : an integers.
+------------------------------------------------------------
 lcm := (L) -> (
-     -- L should be a list of integers
      R := ring L#0;
      l := 1_R;
-     scan(L, i -> (l = lcm2(l, i)));
+     scan(L, i -> (l = ((l*i) // (gcd(l,i))) ));
+     
      l
      );
 
+
+
+--  toZZ  --------------------------------------------------
+-- PURPOSE  : converts a list of 'QQ' to 'ZZ' by multiplying
+--            by a common denominator.
+-- RECEIVES : 'L' : a list of 'QQ'. 
+-- RETURNS  : a list of integers.
+------------------------------------------------------------
 -- converts a list of QQ to ZZ by multiplying by a common 
 -- denominator.
 toZZ := (L) -> (
-     -- L should be a list of QQ elements
-     if class L#0 =!= QQ
-     then error "expected non-empty list of 'QQ'";
+     -- checking for input errors
+     if (class L#0 =!= QQ) then
+     error "toZZ: expected non-empty list of 'QQ'";
+     
+     -- finding common denominator
      d := apply(L, e -> denominator e);
      l := lcm d;
+     
      apply(L, e -> (numerator(l*e)))
      );
 
+
+--  polarCone  ---------------------------------------------
+-- PURPOSE : computes the polar cone
 ------------------------------------------------------------
--- Main functions
-------------------------------------------------------------
-
--- determines if an inequality (halfspace) is redundant. 
-isNotRedundant := (raySet, allRaySets, iter) -> (
-     -- raySet: a list of integers
-     -- allRaySets: a list of lists of integers
-     -- iter: number of iterations through Fourier-Motzkin.
-     x := 0;
-     -- if the number of elements in 'raySet' exceeds the 
-     -- number of 'iter+1', then the inequality is 
-     -- redundant; see Exercise 2.15 (iv) in Zeigler.
-     if (#raySet > iter+1) then x = 3;
-     -- if the set 'raySet' contains the set of any other
-     -- inequality in this iteration, then the new 
-     -- inequality is redundant; see Exercise 2.15 (i) in 
-     -- Zeigler.
-     k := 0;
-     m := #allRaySets;
-     while ((x < 3) and (k < m)) do (
-	  if isSubset(allRaySets#k, raySet) then x = x + 1;
-	  k = k + 1;
-	  );
-     x === 2
-     );
-
-
--- eliminates the last variable in 'halfspaces' using
--- the double description version of Fourier-Motzkin 
--- elimination.
-fourierMotzkin := (halfspaces, rays, spot, iter) -> (
-     -- halfspaces: list of lists of integers.  Each list defines 
-     --    one inequality.
-     -- rays: list of lists of integers.  Each list contains the
-     --    indices of the original rays that maximize the corresponding
-     --    inequality in 'halfspaces'.
-     -- spot: an integer, which is the variable being eliminated.
-     -- iter: the number of times through Fourier-Motzkin so far.
-     -- The returned value:
-     --    is a list of two items:
-     --    a) a list of lists of integers: the new inequalities.
-     --    b) a list of lists of integers: the new rays.
-     pos := {};
-     neg := {};
-     newPlanes := {};
-     newRays := {};
-     m := #halfspaces;  -- also #rays
-     n := #halfspaces#0;
-     -- divide the inequalities into three groups.
-     k := 0;
-     while k < m do (
-	  if halfspaces#k#spot < 0 then 
-	  neg = append(neg, k)
-	  else if halfspaces#k#spot > 0 then 
-	  pos = append(pos, k)
-	  else (
-	       newPlanes = append(newPlanes, halfspaces#k);
-	       newRays = append(newRays, rays#k);
-	       );
-	  k = k + 1;
-	  );	    
-     -- generate new irredundant inequalities.
-     --<< "    " << #pos * #neg << endl;
-     scan(pos, i -> 
-	  scan(neg, j -> (
-		    raySet := rays#i +  rays#j;
-		    if isNotRedundant(raySet, rays, iter) 
-		    then (
-			 hi := halfspaces#i;
-			 hj := halfspaces#j;
-			 ci := -hj#spot;
-			 cj := hi#spot;
-			 h := ci*hi + cj*hj;
-			 newPlanes = append(newPlanes, 
-			      primitive h);
-			 newRays = append(newRays, raySet);
-			 );
-		    )));
-     {newPlanes, newRays}
-     );
-
-
--- computes the polar cone.
 polarCone = method();
-polarCone(Matrix,Matrix) := (A,E) -> (
-     --A := L#0;
-     --E := L#1;
-     d := numgens target A;
-     n := numgens source A;
-     AT := transpose A;
-     -- if the cone is not full-dimensional, we restrict to
-     -- a subspace.
-     Q := null;
-     implicitEqs := syz AT;
-     if not (implicitEqs == 0) then (
-	  M := substitute(leadTerm implicitEqs, QQ);
-	  AT = compress transpose(substitute(A, QQ) % M);
-	  n = numgens target AT;
-	  Q = compress (id_(QQ^d) % M);
-	  rowsOfQ := entries Q;
-	  Q = matrix apply(rowsOfQ, toZZ);
-	  d = numgens source AT;
-	  );     
-     -- express the cone as an intersection of halfspaces
-     -- in more variables.
-     equalities := -id_(QQ^d) || substitute(AT, QQ);
-     inequalities := map(QQ^d, QQ^n, 0) || -id_(QQ^(n));
-     B := transpose(inequalities % equalities);
-     ineqs := entries B;
-     halfspaces := apply(ineqs, toZZ);
-     rays := apply(n, i -> set {i});
-     -- successive projections eliminate the extra 
-     -- variables.
-     doubleD := {halfspaces, rays};
-     scan(reverse toList(d..n+d-1), i -> (
-	       doubleD = fourierMotzkin(doubleD#0, 
-		    doubleD#1, i, n+d-i);
-	       --<< i << " " << #(doubleD#0) << " " << #((doubleD#0#0)) << endl;
-	       )
+
+
+
+--  polarCone(Matrix, Matrix)  -----------------------------
+-- RECEIVES : 'Z' : a matrix.  The columns are the rays 
+--                  generating the cone.
+--	      'H' : a matrix.  The columns are the rays 
+--                  generaing the linear space in the cone.  
+-- RETURNS  : a sequence (A,E)
+--            'A' : a matrix.  The columns are the rays
+--                  generating the polar cone.
+--            'E' : a matrix.  The columns are the rays
+--                  generating the linear space in the polar 
+--                  cone.
+-- COMMENT  :  
+--   'cone(Z) + affine(H) = {x : A^t * x <= 0, E^t * x = 0}'
+------------------------------------------------------------
+polarCone(Matrix, Matrix) := (Z, H) -> (
+     -- checking for input errors
+     R := ring source Z;
+     if (R =!= ring source H) then
+     error ("polarCone: " | 
+	  "expected matrices over the same ring");
+     if (rank target Z =!= rank target H) then
+     error ("polarCone: expected matrices to have the " |
+	  "same number of rows");
+     
+     -- making 'QQ' versions of the input
+     local Y;
+     local B;
+     outputZZ := false; 
+     if (R === ZZ) then (
+	  outputZZ = true;
+	  Y = substitute(Z, QQ);
+	  B = substitute(H, QQ);
+	  )
+     else if (R === QQ) then (
+	  Y = Z;
+	  B = H;
+	  )
+     else error ("polarCone: " | 
+	  "expected a matrix over 'ZZ' or 'QQ'");
+     
+     -- expressing 'cone(Y)+affine(B)' in the form 
+     -- {x : Ax <= 0}
+     d := rank target Y;
+     if (rank source B > 0) then Y = Y | B | -B;
+     n := rank source Y;
+     A := Y | -id_(QQ^d);
+     
+     -- computing the row echelon form of 'A'
+     A = gens gb rotateMatrix A;
+     L := rotateMatrix leadTerm A;
+     A = rotateMatrix A;
+     
+     -- find pivots
+     numRow = rank target A;     -- numRow <= d
+     i := 0;
+     pivotCol := {};
+     while (i < numRow) do (
+	  j := 0;
+	  while ((j < n+d) and (L_(i,j) =!= 1_QQ)) do (
+	       j = j+1;
+	       );
+	  pivotCol = append(pivotCol, j);
+	  i = i+1;
 	  );
-     -- output formating.
-     if (doubleD#0 =!= {}) then 
-       halfspaces = transpose ((matrix doubleD#0)_{0..d-1})
-     else  
-       halfspaces = map(ZZ^d, ZZ^n, 0);
-     --
-     if (Q =!= null) then (
-	  halfspaces = Q * halfspaces;
-	  E = compress(implicitEqs | E);
+     
+     -- computing the row-reduced echelon form of 'A'
+     A = ((submatrix(A, pivotCol))^(-1)) * A;
+     
+     -- converting 'A' into a list of integer row vectors 
+     A = entries A;
+     A = apply(A, e -> primitive toZZ e);
+
+     -- creating the vertex list 'V' for double description
+     -- and listing the variables 'T' which remain to be
+     --  eliminated
+     V := {};
+     T := toList(0..(n-1));
+     scan(pivotCol, e -> (
+	       if (e < n) then (
+	       	    T = delete(e, T);
+	       	    V = append(V, set{e});
+		    )));
+
+     -- separating inequalities 'A' and equalities 'E'
+     eqnRow := {};
+     ineqnRow := {};
+     scan(numRow, i -> (
+	       if (pivotCol#i >= n) then 
+	       eqnRow = append(eqnRow, i)
+	       else
+	       ineqnRow = append(ineqnRow, i);	    
+	       ));	  
+     E := apply(eqnRow, i -> A#i);
+     E = apply(E, e -> e_{n..(n+d-1)});
+     A = apply(ineqnRow, i -> A#i);
+     A = apply(A, e -> e_(T | toList(n..(n+d-1)))); 
+    
+     -- successive projections eliminate the remaining 
+     -- variables 'T'.
+     if (A =!= {}) then
+     scan(T, t -> (
+	       D := fourierMotzkin(A, V, t);
+	       A = D#0;
+	       V = D#1;
+	       ));
+     
+     -- output formating
+     A = apply(A, e -> primitive e);
+     if (A === {}) then A = map(ZZ^d, ZZ^0, 0)
+     else A = transpose matrix A;
+     if (E === {}) then E = map(ZZ^d, ZZ^0, 0)
+     else E = transpose matrix E;
+     if (outputZZ === false) then (
+	  A = substitute(A, QQ); 
+	  E = substitute(E, QQ);
 	  );
-     (halfspaces, E)
-     --  
-     --if (Q === 1) then {halfspaces, E}
-     --else {Q*(halfspaces), compress(implicitEqs | E)}
+     
+     (A, E)
+     ); 
+
+
+
+--  polarCone(Matrix)  -------------------------------------
+-- RECEIVES : 'Z' : a matrix.  The columns are the rays 
+--                  generating the cone.
+-- COMMENT  : calls polarCone(Matrix, Matrix)
+------------------------------------------------------------
+polarCone(Matrix) := (Z) -> (
+     -- creating zero equalities
+     R := ring target Z;
+     d := rank target Z;
+     H := map(R^d, R^0, 0);
+     
+     polarCone(Z,H)
      );
 
-polarCone(Matrix) := (A) -> polarCone(A,map(target A,ZZ^0,0));
-
-document { (polarCone, Matrix),
-     Synopsis => (),
-     }
 
 
-document { (polarCone, Matrix,Matrix),
-     Headline => "find the polar to a convex polyhedral cone",
-     Usage => {
-	  TT "polarCone(m,n)", " -- find the polar cone"
+/// -- DELETE THIS LINE
+------------------------------------------------------------
+-- DOCUMENTATION
+------------------------------------------------------------
+document { polarCone
+     HEADLINE => {"find the polar dual of a rational convex 
+	  polyhedral cone"},
+     USAGE => {
+	  TT "polarCone(A, B)", " -- find the polar cone"
 	  },
-     Synopsis => {
-	  "C = polarCone(D,E)",
-	  "D" => {"an r by c matrix over ZZ"},
-	  "E" => {"an r by d matrix over ZZ"},
-	  "C" => {"a sequence of two matrices ", TT "D', E'", "both having
-	       d rows."
-	       }
+     SYNOPSIS => {
+	  "C' = polarCone(A, B)",
+	  "A" => {"a ", TT "d ", "by ", TT "n ", "matrix 
+	       over ", TT "ZZ ", "or ", TT "QQ", "."},
+	  "B" => {"a ", TT "d ", "by ", TT "r ", "matrix 
+	       over ", TT "ZZ ", "or ", TT "QQ", "."},
+	  "C'" => {"a sequence of two matrices ", TT "(A', 
+	       B') ", "both having ", TT "d ", "rows."}
 	  },
      PARA,
-     "Given a cone in R^d, {x in R^d | there exists y in R^c, blah blah blah}",
+     "The input ", TT "(A, B) ", "gives a cone", TT "C ", 
+     "generated by the column vectors of ", TT "A ", "and 
+     containing the lineality space generated by the column 
+     vectors pf ", TT "B", ".  Dually, ", TT "C ", "the set 
+     of vectors ", TT "x ", "satisfying ", TT "(transpose A) 
+     * x <= 0 ", "and ", TT "(transpose B) * x == 0", ".",
+     PARA,
+     "The polar cone ", TT "C' ", "is, by definition, the 
+     set of vectors ", TT "z ", "satisfying " 
+     TT "(transpose z) * x <= 0 ", "for all ", TT "x ", 
+     "in ", TT "C", ".},
+     PARA,
+     "The output", TT "(A', B') ", "is valid input and hence 
+     describes the cone ", TT "C' ", "in same manner that ", 
+     TT "(A, B) ", "gives the cone ", TT "C", ".", 
+     PARA,
+     "Three sample calculations using", TT "polarCone", " are 
+     given below.",
+     PARA,
+     "1.  The cone over the cube is dual to the cone over the 
+     octahedron."
      EXAMPLE {
-	  "D = matrix{{}}",
-	  "E = ...",
-	  "C = polarCone(D,E)",
+	  "octahedron = transpose matrix{
+     	       { 1,  1,  1, -1},
+     	       {-1,  1,  1, -1},
+     	       { 1, -1,  1, -1},
+     	       { 1,  1, -1, -1},
+     	       {-1, -1,  1, -1},
+     	       {-1,  1, -1, -1},
+     	       { 1, -1, -1, -1},
+     	       {-1, -1, -1, -1}}",
+	  "cube = polarCone octahedron",
+	  "polarCone cube"
 	  },
-     "The polar cone of C is the original cone",
-     EXAMPLE "polarCone C",
-     "Also mention: where the algorithm is from.  Author.",
-     CAVEAT=>"D and E should be matrices over ZZ.  If they are matrices over QQ, then...",
-     "Also mention: how to get convex hull of a set of points...  IE have several examples."
+     PARA,
+     "2.  Finding minimal generators for a rational convex 
+     polyhedral cone.  Consider the cone generated by ", 
+     TT "rays", ".",  
+     EXAMPLE {
+	  "rays = transpose matrix(QQ, {
+     	  	    {-1,  2, 0},
+     		    { 0,  1, 3},
+     		    { 0, -1, 3},
+     		    { 1, -2, 3},
+     		    { 2, -4, 0}})",
+	  "polarCone polarCone rays"
+	  },
+     NOINDENT,
+     "Two applications of ", TT "polarCone ", "indicate that 
+     this cone is the sum of a pointed polyhedral cone 
+     generated by two rays and a 1-dimensional lineality 
+     space.",
+     PARA,
+     "3.  Finding the vertices of a cone presented as an 
+     intersection of halfspaces.  The 4-dimenional 
+     associahedron is the set of all vectors ", TT "x ", 
+     "satisfying ", TT "(transpose A) * x <= b ", "and ", 
+     TT "(transpose B) * x == c ", "where"
+     EXAMPLE {
+	  "A = matrix{
+     	       {-1,  0,  0, 0},
+     	       { 0, -1,  0, 0},
+     	       { 0,  0, -1, 0},
+     	       {-2, -2,  0, 0},
+     	       { 0, -2, -2, 0}}",
+	  "b = transpose matrix{{1, 1, 1, 10, 10}}",
+	  "B = matrix{
+     	       {1, 2, 3,  4},
+     	       {1, 4, 9, 16}}",
+	  "c = transpose matrix{{-60, -194}}",
+	  "P = polarCone(transpose(A | -b), 
+	       transpose(B | -c))",
+	  "vertices = submatrix(P#0, {0..3},)"
+	  },
+     NOINDENT,
+     "By homogenizing, computing the polar cone and 
+     dehomogenizing, we find the five vertices of this 
+     cone.",
+     PARA,
+     "The polar cone is computed using the Fourier-Motzkin 
+     elimination algorithm described in G.M. Ziegler, 
+     Lectures on Polytopes, Graduate Texts in Mathematics 
+     152, Springer-Verlag, 1995.",
+     PARA,
+     "Implemented by Greg Smith"
      }
+/// -- DELETE THIS LINE
+
 
 
 ------------------------------------------------------------
--- Examples
+-- BASIC TESTS
 ------------------------------------------------------------
-TEST ///
--- planar example: see section 1.2 in Ziegler.
-load "polarCone.m2"
-ineqs = {{-1,-4,9},
-     {-2,-1,4},
-     {1,-2,0},
-     {1,0,-4},
-     {2,1,-11},
-     {-2,6,-17},
-     {-6,-1,6}};
-points = {{1,6,2},
-     {1,2,1},
-     {7,8,2},
-     {4,3,1},
-     {4,2,1},
-     {6,3,2}};
-ineqsM = transpose matrix ineqs;
-dualIneqs = set entries transpose (polarCone ineqsM)#0;
-assert(isSubset(set points, dualIneqs) === true)
-assert(isSubset(dualIneqs, set points) === true)
-///
-
 
 TEST ///
--- cube is dual to the octahedron
 load "polarCone.m2"
-octa = {{1,1,1,1},
-     {-1,1,1,1},
-     {1,-1,1,1},
-     {1,1,-1,1},
-     {-1,-1,1,1},
-     {-1,1,-1,1},
-     {1,-1,-1,1},
-     {-1,-1,-1,1}};
-cube = {{0,0,-1,-1},
-     {0,-1,0,-1},
-     {-1,0,0,-1},
-     {0,0,1,-1},
-     {0,1,0,-1},
-     {1,0,0,-1}};
-octaM = transpose matrix octa;
-dualOcta = set entries transpose (polarCone octaM)#0;
-assert(isSubset(set cube, dualOcta) === true)
-assert(isSubset(dualOcta, set cube) === true)
-cubeM = transpose matrix cube;
-dualCube = set entries transpose (polarCone cubeM)#0;
-assert(isSubset(set octa, dualCube) === true)
-assert(isSubset(dualCube, set octa) === true)
-///
+C = transpose matrix{{1,1,1,1}};
+assert(C == (polarCone polarCone C)#0)
 
-///
--- not full-dimensional example: image of cyclic polytope.
-load "polarCone.m2"
-cyclicPolytope = (d,n) -> map(ZZ^(d+1), ZZ^n, (i,j) -> j^i);
-C = cyclicPolytope(4,8)
-P = polarCone C
-M = id_(ZZ^5) || random(ZZ^3, ZZ^5)
-P = polarCone (M*C)
+C = transpose matrix(QQ, {{0,0,1}, {1,0,1}, {0,1,1}});
+assert( (entries transpose C) == 
+     (entries transpose ((polarCone polarCone C)#0)) )
+
+C = map(ZZ^3,ZZ^0,0);
+H = transpose matrix{{1,0,-1},{0,1,-1}};
+P = polarCone (C,H);
+assert(P#0 == C)
+assert(P#1 == transpose matrix{{1,1,1}})
+
+C = transpose matrix{{1,1,0}, {0,1,1}};
+H = transpose matrix{{1,0,-1}};
+P = polarCone polarCone (C,H);
+assert(P#0 == transpose matrix{{0,1,1}})
+assert(P#1 == H)
 ///
 
 
-///
--- traveling salesman polytope:
-load "polarCone.m2"
+end
 
-STSP = (n) -> (
-     if (n === 3) then (
-	  {{1,2,3}}
-	  )
-     else (
-	  J := {};
-	  L := STSP(n-1);
-	  scan(L, i -> (
-		    scan(0..(n-2), k -> (
-		    	      v := {};
-		    	      scan(0..k, j -> (
-					v = append(v, i#j))
-				   );
-		    	      v = append(v,n);
-		    	      scan((k+1)..(n-2), j -> (
-					v = append(v, i#j))
-				   );
-			      J = append(J, v);	      
-			      )
-		    	 );
-	       	    )
-	       );
-	  J
-	  )
-     );
 
-charVector = (J) -> (
-     m := binomial(#J#0,2)+1;
-     points := map(QQ^m, QQ^1, 0);
-     E := id_(QQ^(m-1)) || map(QQ^1, QQ^(m-1), i -> 1);
-     scan(J, L -> (
-     	       vector := map(QQ^m, QQ^1, 0);
-     	       first := L#0;
-     	       place := 0;
-     	       local second;
-     	       scan(1..(#L-1), k -> (
-	       		 second = L#k;
-	       		 if (second > first) then (
-	       	    	      place = (first-1)*(#L)-
-			      binomial(first,2)+
-	       	    	      (second-first-1);
-	       	    	      )
-	       		 else (
-	       	    	      place = (second-1)*(#L)-
-			      binomial(second,2)+
-	       	    	      (first-second-1);
-	       	    	      );
-	       		 vector = vector + (id_(QQ^m))_{place};
-	       		 first = second;
-	       		 )
-     	  	    );
-     	       second = L#0;
-     	       place = (second-1)*(#L)-binomial(second,2)+
-	       (first-second-1);
-     	       vector = vector + (E)_{place};
-	       points = points | vector;
-     	       )
-	  );
-     compress points
-     );
-     
-P = charVector(STSP(5));
-transpose P
-benchmark "polarCone P"
-P = substitute(P,ZZ)
-time polarCone P
--- PORTA = ~0.34  M2 = 0.3875
-P = charVector(STSP(6));
-transpose P
-P = substitute(P,ZZ)
-benchmark "polarCone P"
-time polarCone P
--- PORTA = ~1.25  M2 = 169.89
-///
 
-///
--- Added by MES
-load "polarCone.m2"
+------------------------------------------------------------
+-- MORE BASIC EXAMPLES
+------------------------------------------------------------
+-- not clear how to make these into 'assert' statements
+
+-- returns minimal generators for the cone
 polarCone(transpose matrix{{1,1,0},{1,0,0},{0,1,1},{0,0,0}})
 polarCone oo
 
-polarCone(transpose matrix{{1,1,1,1}})
-polarCone oo -- BUG: need minimal generators for the kernel...
-polarCone oo -- same here.
-
-polarCone(transpose matrix(QQ,{{1,1,1,1}})) -- BUG: doesn't work yet.
-
-polarCone(transpose matrix{{0}}) -- BUG: array index out of bounds
-polarCone(transpose matrix{{0,0}}) -- same problem.
-
-polarCone(transpose matrix{{1,1}},transpose matrix{{1,0}}) -- is this correct?
+-- the rays are redundant
+polarCone(transpose matrix{{1,1,1},{-1,-1,-1}})
 polarCone oo
 
-polarCone(transpose matrix{{1,1,1}}, transpose matrix{{1,2,3,4}}) -- check for this right off?
-polarCone(transpose matrix(QQ,{{1,1,1}}), transpose matrix{{1,2,3,4}}) -- check for this right off?
+-- trivial input
+polarCone(transpose matrix{{0}}) 
+polarCone(transpose matrix{{0,0}}) 
 
-polarCone(transpose matrix{{1,1,1},{-1,-1,-1}})
-polarCone oo -- BUG: array index out of bounds
+-- the double dual is equal even though the set of rays 
+-- is different
+polarCone(transpose matrix{{1,1}},transpose matrix{{1,0}}) 
+polarCone oo
+
+-- error: different number of rows
+polarCone(transpose matrix{{1,1,1}}, 
+     transpose matrix{{1,2,3,4}}) 
+
+-- error: matrices over different rings
+polarCone(transpose matrix(QQ,{{1,1,1}}), 
+     transpose matrix{{1,2,3,4}}) 
+
+-- error: not over 'ZZ' or 'QQ'
+R = ZZ/101
+polarCone (transpose matrix{{1_R, 0, 0}})
 
 
-///
+
+------------------------------------------------------------
+-- DOCUMENTATION EXAMPLES
+------------------------------------------------------------
+restart
+path = append(path, getenv "HOME" | pathSeparator | "M2")
+load "polarCone.m2"
+
+-- the cube is dual to the octahedron
+octahedron = transpose matrix{
+     { 1,  1,  1, -1},
+     {-1,  1,  1, -1},
+     { 1, -1,  1, -1},
+     { 1,  1, -1, -1},
+     {-1, -1,  1, -1},
+     {-1,  1, -1, -1},
+     { 1, -1, -1, -1},
+     {-1, -1, -1, -1}}
+cube = polarCone octahedron
+polarCone cube
+
+
+
+-- finding minimal generators for a rational convex 
+-- polyhedral cone
+rays = transpose matrix(QQ, {
+     {-1,  2, 0},
+     { 0,  1, 3},
+     { 0, -1, 3},
+     { 1, -2, 3},
+     { 2, -4, 0}})
+polarCone polarCone rays
+
+
+
+-- finding the vertices of the 4-dimenional 
+-- associahedron
+A = matrix{
+     {-1,  0,  0, 0},
+     { 0, -1,  0, 0},
+     { 0,  0, -1, 0},
+     {-2, -2,  0, 0},
+     { 0, -2, -2, 0}}
+b = transpose matrix{{1, 1, 1, 10, 10}}
+B = matrix{
+     {1, 2, 3,  4},
+     {1, 4, 9, 16}}
+c = transpose matrix{{-60, -194}}
+P = polarCone(transpose(A | -b), transpose(B | -c))
+vertices = submatrix(P#0, {0..3},)
+-- see Example 9.11 in Ziegler
+
+
+
+
+------------------------------------------------------------
+-- BENCHMARK EXAMPLES
+------------------------------------------------------------
+
+-- symmetric traveling salesman polytope with n=5
+stsp5 = matrix{
+     {0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1}, 
+     {1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0}, 
+     {0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0}, 
+     {1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1}, 
+     {1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1}, 
+     {1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0}, 
+     {0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0}, 
+     {0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1}, 
+     {0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0}, 
+     {1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1}, 
+     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}}
+P = time polarCone stsp5
+P = time polarCone P
+C = entries transpose stsp5;
+scan(entries transpose P#0, e -> (C = delete(e, C)))
+
+
+
+-- symmetric traveling salesman polytope with n=6
+stsp6 = matrix{
+     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+	  1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,1,
+	  1,1,1,0,1,1,1,1},
+     {1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,1,1,
+	  1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	  0,0,0,0,0,0,0,0},
+     {0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,
+	  0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1,
+	  1,1,0,0,0,0,0,0},
+     {0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,
+	  0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,
+	  0,0,0,1,1,1,1,0},
+     {1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,
+	  0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,
+	  0,0,1,1,0,0,0,1},
+     {1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,
+	  0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,0,
+	  1,1,1,1,0,1,1,1},
+     {1,1,0,1,1,0,0,0,0,0,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,0,
+	  0,0,0,1,0,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+	  0,0,0,0,0,0,0,0},
+     {0,0,0,0,0,1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,0,1,1,1,1,0,
+	  1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,1,1,1,0,0,
+	  0,0,0,0,0,0,0,0},
+     {0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,
+	  0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,1,0,0,1,1,0,0,0,1,1,
+	  0,0,0,1,1,0,0,0},
+     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,
+	  1,0,1,0,0,0,0,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,0,
+	  0,0,0,1,1,0,1,1},
+     {0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,0,0,
+	  0,0,0,1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,1,1,0,1,1,1,1,
+	  0,1,1,0,0,0,0,0},
+     {0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,1,1,0,0,
+	  0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,
+	  1,0,0,0,1,1,0,0},
+     {1,0,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+	  0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,
+	  1,0,1,1,1,1,0,1},
+     {0,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,
+	  1,1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,
+	  0,1,1,0,0,1,1,0},
+     {1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0,0,0,0,1,
+	  1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0,0,0,0,1,1,0,0,0,0,
+	  1,1,0,0,0,0,1,1},
+     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	  1,1,1,1,1,1,1,1}}
+P = time polarCone stsp6
+P = time polarCone P
+C = entries transpose stsp6;
+scan(entries transpose P#0, e -> (C = delete(e, C)));
+C == {}
+
+------------------------------------------------------------
