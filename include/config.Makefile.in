@@ -52,7 +52,7 @@ LOADLIBES = @LOADLIBES@
 LDLIBS = @LDLIBS@
 LAPACK = @LAPACK@
 LAPACKLIBS = @LAPACKLIBS@
-encap = @encap@
+ENCAP = @ENCAP@
 LIBGMP = @LIBGMP@
 
 # See the autoconf documentation for a description of LIBS, which autoconf uses at configure time for checking for features
@@ -97,31 +97,38 @@ emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
 
 prefix = @prefix@
-bindir = $(prefix)/$(binRelDir)
-libdir = $(prefix)/$(libRelDir)
-datadir = $(prefix)/$(dataRelDir)
-mandir = $(prefix)/$(manRelDir)
-man1dir = $(prefix)/$(man1RelDir)
-man3dir = $(prefix)/$(man3RelDir)
-emacsdir = $(prefix)/$(emacsRelDir)
-docdir = $(prefix)/$(docRelDir)
-docm2dir = $(prefix)/$(docm2RelDir)
-packagesdir = $(prefix)/$(packagesRelDir)
-docpackagesdir = $(prefix)/$(docpackagesRelDir)
-libm2dir = $(prefix)/$(libm2RelDir)
-cachedir = $(prefix)/$(cacheRelDir)
-datam2dir = $(prefix)/$(datam2RelDir)
-sharedir = $(prefix)/$(shareRelDir)
-m2dir = $(prefix)/$(m2RelDir)
-docm2reldir = $(prefix)/$(docm2relRelDir)
-emacsdocdir = $(prefix)/$(emacsdocRelDir)
-imagesdir = $(prefix)/$(imagesRelDir)
-packagesrcdir = $(prefix)/$(packagesrcRelDir)
-packagedocdir = $(prefix)/$(packagedocRelDir)
-packageimagesdir = $(prefix)/$(packageimagesRelDir)
-packagetestsdir = $(prefix)/$(packagetestsRelDir)
-packagehtmldir = $(prefix)/$(packagehtmlRelDir)
-packageexamplesdir = $(prefix)/$(packageexamplesRelDir)
+
+ifeq "$(ENCAP)" "yes"
+encapdir = $(prefix)/$(package)
+else
+encapdir = $(prefix)/.
+endif
+
+bindir = $(encapdir)/$(binRelDir)
+libdir = $(encapdir)/$(libRelDir)
+datadir = $(encapdir)/$(dataRelDir)
+mandir = $(encapdir)/$(manRelDir)
+man1dir = $(encapdir)/$(man1RelDir)
+man3dir = $(encapdir)/$(man3RelDir)
+emacsdir = $(encapdir)/$(emacsRelDir)
+docdir = $(encapdir)/$(docRelDir)
+docm2dir = $(encapdir)/$(docm2RelDir)
+packagesdir = $(encapdir)/$(packagesRelDir)
+docpackagesdir = $(encapdir)/$(docpackagesRelDir)
+libm2dir = $(encapdir)/$(libm2RelDir)
+cachedir = $(encapdir)/$(cacheRelDir)
+datam2dir = $(encapdir)/$(datam2RelDir)
+sharedir = $(encapdir)/$(shareRelDir)
+m2dir = $(encapdir)/$(m2RelDir)
+docm2reldir = $(encapdir)/$(docm2relRelDir)
+emacsdocdir = $(encapdir)/$(emacsdocRelDir)
+imagesdir = $(encapdir)/$(imagesRelDir)
+packagesrcdir = $(encapdir)/$(packagesrcRelDir)
+packagedocdir = $(encapdir)/$(packagedocRelDir)
+packageimagesdir = $(encapdir)/$(packageimagesRelDir)
+packagetestsdir = $(encapdir)/$(packagetestsRelDir)
+packagehtmldir = $(encapdir)/$(packagehtmlRelDir)
+packageexamplesdir = $(encapdir)/$(packageexamplesRelDir)
 
 MAKEFUN = "$(1)" => $(M2PKGNAME) -> "$(subst $(M2PKGNAME),"|$(M2PKGNAME)|",$($(1)RelDir))/"
 

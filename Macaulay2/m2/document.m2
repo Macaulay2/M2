@@ -59,7 +59,7 @@ thePackage := null
 
 getRecord = key -> scan(packages, 			    -- later, we make this function local to this file
      pkg -> (
-	  d := pkg#"raw documentation";	-- later on, we will use the processed documentation
+	  d := pkg#"documentation";	-- later on, we will use the processed documentation
 	  if d#?key then (
 	       thePackage = pkg;
 	       break d#key;
@@ -334,7 +334,7 @@ document List := z -> (
      if unDocumentable key then error("undocumentable type of thing: '",class key,"'");
      currentNodeName = formatDocumentTag key;
      exampleBaseFilename = makeFileName(currentNodeName,getFileName body,currentPackage);
-     d := currentPackage#"raw documentation";
+     d := currentPackage#"documentation";
      if d#?currentNodeName then duplicateDocWarning();
      d#currentNodeName = toExternalString extractExamples fixup body;
      currentNodeName = null;
@@ -764,7 +764,7 @@ seecode := x -> (
 hasDocumentation = x -> (
      fkey := formatDocumentTag x;
      pkgs := select(packages, P -> P =!= User and P =!= Output); -- see also packages.m2
-     p := select(pkgs, P -> P#"raw documentation"#?fkey);
+     p := select(pkgs, P -> P#"documentation"#?fkey);
      0 < #p)
 
 documentation Function := f -> SEQ { 

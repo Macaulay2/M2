@@ -156,11 +156,11 @@ AC_ARG_ENABLE(optimize,
     OPTIMIZE="$enableval",
     OPTIMIZE=yes)
 
-AC_SUBST(encap)
+AC_SUBST(ENCAP)
 AC_ARG_ENABLE(encap,
     AC_HELP_STRING(--enable-encap,create an encap package),
-    encap="$enableval",
-    encap=no)
+    ENCAP="$enableval",
+    ENCAP=no)
 
 AC_SUBST(XCODE)
 AC_ARG_ENABLE(xcode,
