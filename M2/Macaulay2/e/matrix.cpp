@@ -1497,7 +1497,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 
   // Finally, we sort them
   Matrix *result = mat.to_matrix();
-  M2_arrayint perm = result->sort(1,-1);
+  M2_arrayint perm = result->sort(0,-1);
   return result->sub_matrix(perm);
 }
 
