@@ -15,7 +15,7 @@ raw RingMap := f -> f.RawRingMap
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}
 
-map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
+map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
      then error "expected a homomorphism between free modules";
      if ring m === (try coefficientRing R) and ring m === (try coefficientRing S)
@@ -29,12 +29,12 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
      if rank target m != 1
      then error "expected a matrix with 1 row";
      degmap := (
-	  if options.DegreeMap =!= null then (
-	       if degreeLength R =!= # (options.DegreeMap apply(degreeLength S, i -> 0))
+	  if opts.DegreeMap =!= null then (
+	       if degreeLength R =!= # (opts.DegreeMap apply(degreeLength S, i -> 0))
 	       then error ("expected DegreeMap function to transform a degree of length ", 
 		    toString degreeLength S,
 		    " into a degree of length ", toString degreeLength R);
-	       options.DegreeMap
+	       opts.DegreeMap
 	       )
 	  else if degreeLength R === degreeLength S then identity
 	  else (
