@@ -109,9 +109,8 @@ method = methodDefaults ==> options -> () -> (
 
 setup := (args, symbols) -> (
      scan(symbols, n -> (
-	  if Symbols#?n then error concatenate("function redefined");
+	  if value n =!= n then error concatenate("symbol ",toString n," redefined");
 	  f := method args;
-	  Symbols#f = n;
 	  n <- f;
 	  )))
 
@@ -127,7 +126,7 @@ setup((), {
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens,
 	  autoload, minprimes, relations, cone, random,
-	  det, presentation, symbol use, degreesMonoid, submatrix,
+	  det, presentation, use = symbol use, degreesMonoid, submatrix,
 	  truncate, fraction
 	  })
 

@@ -1,18 +1,11 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
 if Function.?GlobalAssignHook then error "setup.m2, already loaded"
-Function.GlobalAssignHook = (X,x) -> (
-     if not Symbols#?x then Symbols#x = X;
-     )
-Function.GlobalReleaseHook = (X,x) -> (
-     -- error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
-     if Symbols#?x and Symbols#x === X then remove(Symbols,x);
-     )
 addStartFunction(
      () -> (
 	  Function.GlobalReleaseHook = (X,x) -> (
-	       if not writableGlobals#?X then stderr << "warning: " << toString X << " redefined" << endl;
-	       if Symbols#x === X then remove(Symbols,x);
+	       stderr << "warning: " << toString X << " redefined" << endl;
+	       reverseDictionaryRemove(X,x);
 	       );
 	  )
      )

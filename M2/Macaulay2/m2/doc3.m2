@@ -23,7 +23,7 @@ document { symbol phase,
      that we are reading creating the html files."
      }
 
-document { lineNumber,
+document { symbol lineNumber,
      Headline => "current line number",
      TT "lineNumber", " -- the current line number.",
      BR, NOINDENT,
@@ -656,24 +656,6 @@ document { (cacheFileName, List, String),
      assigned (see ", TO (cacheFileName, String, String), ") in one of
      the directories on the path will be returned.  In case no previous assignments
      to this key have occurred yet, one will be made using the first element of the
-     search path.",
-     EXAMPLE {
-	  ///documentationPath///,
-	  ///cacheFileName ( documentationPath, "sin" )///,
-	  ///cacheFileName ( documentationPath, "xxxxx" )///
-	  },
-     SEEALSO { "documentationPath" }
-     }
-
-document { symbol documentationPath,
-     Headline => "search path for documentation",
-     Synopsis => {
-	  ///documentationPath = x///,
-	  "x" => "a list of paths to directories where documentation is stored"
-	  },
-     EXAMPLE {
-	  ///documentationPath = unique append (documentationPath, "tmp/cache/doc/")///
-	  },
-     SEEALSO {cacheFileName}
+     search path."
      }
 

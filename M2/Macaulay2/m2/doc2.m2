@@ -761,18 +761,19 @@ a+a"///,
      the value of the global variable ", TT "a", " is unaffected."
      }
 
-document { (value,Expression),
-     Headline => "evaluate an expression",
-     Synopsis => {
-	  "x = value s",
-	  "s" => null,
-	  "x" => {"the value of ", TT "s", ""}
-	  },
-     EXAMPLE {
-	  "p = (expression 2)^3 * (expression 3)^2",
-      	  "value p",
-	  }
-     }
+-- fix this:
+-- document { (value,Expression),
+--      Headline => "evaluate an expression",
+--      Synopsis => {
+-- 	  "x = value s",
+-- 	  "s" => null,
+-- 	  "x" => {"the value of ", TT "s", ""}
+-- 	  },
+--      EXAMPLE {
+-- 	  "p = (expression 2)^3 * (expression 3)^2",
+--       	  "value p",
+-- 	  }
+--      }
 
 document { "global",
      Headline => "get a global symbol", 

@@ -83,16 +83,11 @@ if firstTime then (
      String | ZZ := String => (s,i) -> concatenate(s,toString i);
      ZZ | String := String => (i,s) -> concatenate(toString i,s);
 
-     Symbols = new MutableHashTable;
-
      Manipulator = new Type of BasicList;
      Manipulator.synonym = "manipulator";
      new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f};
      Manipulator.name = "Manipulator";
      Manipulator Database := Manipulator File := (m,o) -> m#0 o;
-
-     Manipulator.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X;
-     Manipulator.GlobalReleaseHook = (X,x) -> if Symbols#x === X then remove(Symbols,x);
 
      Manipulator Nothing := (m,null) -> null;
      File << Manipulator := File => (o,m) -> m#0 o;
@@ -296,10 +291,6 @@ path = {}
 if sourceHomeDirectory  =!= null                then path = append(path, sourceHomeDirectory|"m2/");
 if buildHomeDirectory   =!= sourceHomeDirectory then path = append(path, buildHomeDirectory |"m2/");
 path = select(path, fileExists);
-
--- this might have to be fixed later to get the caches for the packages directory
-documentationPath = apply(path, d -> minimizeFilename(d|"/cache/doc/"))
-    documentationPath = select(documentationPath, fileExists)
 
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
