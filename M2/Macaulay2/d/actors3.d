@@ -609,7 +609,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 		    );
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
-	       if errret != nullE then backtr(errret) else Expr(ret)
+	       if errret != nullE then errret else Expr(ret)
 	       )
 	  else (				  -- (x,y) -> ...
 	       if numparms != 2 then WrongNumArgs(model.parms,numparms,2)
@@ -641,7 +641,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			 );
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
-		    if errret != nullE then backtr(errret) else Expr(ret)
+		    if errret != nullE then errret else Expr(ret)
 		    )
 	       )
 	  )
@@ -655,7 +655,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       else provide tmp;
 	       );
 	  recursiondepth = recursiondepth - 1;
-	  if errret != nullE then backtr(errret) else Expr(ret)
+	  if errret != nullE then errret else Expr(ret)
 	  )
      is cf:CompiledFunctionClosure do (	  -- compiled code closure
 	  fn := cf.fn;
@@ -668,7 +668,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       else provide tmp;
 	       );
 	  recursiondepth = recursiondepth - 1;
-	  if errret != nullE then backtr(errret) else Expr(ret)
+	  if errret != nullE then errret else Expr(ret)
 	  )
      else WrongArg(2,"a function")
      );
@@ -713,7 +713,7 @@ map(a:Sequence,f:Expr):Expr := (
 		    );
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
-	       if errret != nullE then backtr(errret) else Expr(ret)
+	       if errret != nullE then errret else Expr(ret)
 	       )
 	  else (				  -- (x,y) -> ...
 	       if numparms == 1 then (
@@ -777,7 +777,7 @@ map(a:Sequence,f:Expr):Expr := (
 			 );
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
-		    if errret != nullE then backtr(errret) else Expr(ret)
+		    if errret != nullE then errret else Expr(ret)
 		    )
 	       else (
 		    if framesize == 0 then (
@@ -809,7 +809,7 @@ map(a:Sequence,f:Expr):Expr := (
 			      );
 			 localFrame = saveLocalFrame;
 			 recursiondepth = recursiondepth - 1;
-			 if errret != nullE then backtr(errret) else Expr(ret)
+			 if errret != nullE then errret else Expr(ret)
 			 )
 		    else (	  -- framesize != 0
 			 saveLocalFrame := localFrame;
@@ -848,7 +848,7 @@ map(a:Sequence,f:Expr):Expr := (
 				   ));
 			 localFrame = saveLocalFrame;
 			 recursiondepth = recursiondepth - 1;
-			 if errret != nullE then backtr(errret) else Expr(ret)
+			 if errret != nullE then errret else Expr(ret)
 			 )
 		    )
 	       )
@@ -863,7 +863,7 @@ map(a:Sequence,f:Expr):Expr := (
 			 while true do provide nullE; )
 		    else provide tmp; ));
 	  recursiondepth = recursiondepth - 1;
-	  if errret != nullE then backtr(errret) else Expr(ret)
+	  if errret != nullE then errret else Expr(ret)
 	  )
      is cf:CompiledFunctionClosure do (	  -- compiled code closure
 	  fn := cf.fn;
@@ -876,7 +876,7 @@ map(a:Sequence,f:Expr):Expr := (
 			 while true do provide nullE; )
 		    else provide tmp; ));
 	  recursiondepth = recursiondepth - 1;
-	  if errret != nullE then backtr(errret) else Expr(ret)
+	  if errret != nullE then errret else Expr(ret)
 	  )
      else WrongArg(2,"a function")
      );
@@ -968,7 +968,7 @@ map(n:int,f:Expr):Expr := (
 	       while true do provide nullE; ));
      localFrame = saveLocalFrame;
      recursiondepth = recursiondepth - 1;
-     if errret != nullE then backtr(errret) 
+     if errret != nullE then errret 
      else list(b));
 
 map(e:Expr,f:Expr):Expr := (
@@ -1036,7 +1036,7 @@ scan(n:int,f:Expr):Expr := (
      if n <= 0 then return emptySequenceE;
      if recursiondepth > recursionlimit then (
      	  recursiondepth = recursiondepth - 1;
-	  backtr(RecursionLimit()))
+	  RecursionLimit())
      else when f is fc:FunctionClosure do (
      	  recursiondepth = recursiondepth + 1;
      	  saveLocalFrame := localFrame;
@@ -1049,7 +1049,7 @@ scan(n:int,f:Expr):Expr := (
 	  framesize := desc.framesize;
 	  if numparms != 1 then (
      	       recursiondepth = recursiondepth - 1;
-	       return backtr(WrongNumArgs(model.parms,numparms,1));
+	       return WrongNumArgs(model.parms,numparms,1);
 	       );
 	  if framesize == 1 then (
 	       values := new Sequence len framesize do provide nullE;
@@ -1105,7 +1105,7 @@ scan(n:int,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return backtr(tmp); 
+		    return tmp; 
 		    )
 	       else nothing; 
 	       );
@@ -1122,14 +1122,14 @@ scan(n:int,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return backtr(tmp); 
+		    return tmp; 
 		    )
 	       else nothing; 
 	       );
 	  localFrame = saveLocalFrame;
 	  recursiondepth = recursiondepth - 1;
 	  nullE)
-     else backtr(WrongArg(2,"a function")));
+     else WrongArg(2,"a function"));
 
 scan(a:Sequence,f:Expr):Expr := (
      oldlen := length(a);
@@ -1138,7 +1138,7 @@ scan(a:Sequence,f:Expr):Expr := (
      saveLocalFrame := localFrame;
      if recursiondepth > recursionlimit then (
 	  recursiondepth = recursiondepth - 1;
-	  return backtr(RecursionLimit());
+	  return RecursionLimit();
 	  );
      when f is fc:FunctionClosure do (
 	  previousFrame := fc.frame;
@@ -1180,7 +1180,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
+					return WrongNumArgs(model.parms,numparms,length(args));
 					)
 				   )
 			      else values.0 = arg;
@@ -1206,7 +1206,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
+					return WrongNumArgs(model.parms,numparms,length(args));
 					)
 				   )
 			      else values.0 = arg;
@@ -1235,13 +1235,13 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if 0 != length(args) then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtr(WrongNumArgs(model.parms,0,length(args))));
+					return WrongNumArgs(model.parms,0,length(args));
 					)
 				   )
 			      else (
 				   recursiondepth = recursiondepth - 1;
 				   localFrame = saveLocalFrame;
-				   return backtr(WrongNumArgs(model.parms,numparms,1));
+				   return WrongNumArgs(model.parms,numparms,1);
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
@@ -1263,13 +1263,13 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return(backtr(WrongNumArgs(model.parms,numparms,length(args))));
+					return WrongNumArgs(model.parms,numparms,length(args));
 					)
 				   )
 			      else (
 				   recursiondepth = recursiondepth - 1;
 				   localFrame = saveLocalFrame;
-				   return backtr(WrongNumArgs(model.parms,numparms,1));
+				   return WrongNumArgs(model.parms,numparms,1);
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
@@ -1293,7 +1293,7 @@ scan(a:Sequence,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return backtr(tmp);
+		    return tmp;
 		    )
 	       else nothing; ))
      is cf:CompiledFunctionClosure do (	  -- compiled code
@@ -1304,13 +1304,13 @@ scan(a:Sequence,f:Expr):Expr := (
 	       when tmp is Error do (
 		    recursiondepth = recursiondepth - 1;
 		    localFrame = saveLocalFrame;
-		    return backtr(tmp);
+		    return tmp;
 		    )
 	       else nothing; ))
      else (
 	  recursiondepth = recursiondepth - 1;
 	  localFrame = saveLocalFrame;
-	  return backtr(WrongArg(2,"a function"));
+	  return WrongArg(2,"a function");
 	  );
      localFrame = saveLocalFrame;
      recursiondepth = recursiondepth - 1;
@@ -1401,7 +1401,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       tmp := fn(Expr(Sequence(a1.i,a2.i)));
 	       when tmp is Error do (
 	  	    recursiondepth = recursiondepth - 1;
-		    return backtr(tmp);
+		    return tmp;
 		    )
 	       else nothing;
 	       );
@@ -1415,7 +1415,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       tmp := fn(Expr(Sequence(a1.i,a2.i)),env);
 	       when tmp is Error do (
 	  	    recursiondepth = recursiondepth - 1;
-		    return backtr(tmp);
+		    return tmp;
 		    )
 	       else nothing;
 	       );
