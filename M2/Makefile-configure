@@ -1,13 +1,14 @@
 # -*- Mode: Makefile -*-
 
-CONFIGURE_OPTIONS = --prefix=/usr/local
+CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2
 
 ## to build:
 ##	edit the CONFIGURE_OPTIONS line above
+##	make -f Makefile-configure
 ##	make
 ##      make install
 ## or
-##      ./configure
+##      ./configure --prefix=/usr/local ...
 ##      make 
 ##      make install
 
@@ -15,21 +16,28 @@ CONFIGURE_OPTIONS = --prefix=/usr/local
 ##	autoconf
 ##	autoheader
 
+default : stage2
+
+stage1 : configure include/config.h.in
+aclocal.m4 : configure.in
+	aclocal
+#	touch $@
+configure : configure.in aclocal.m4
+	autoconf
+include/config.h.in : configure.in
+	autoheader
+#	touch $@
+
+stage2 : Makefile config.h
+config.status : configure Makefile-configure
+	./configure $(CONFIGURE_OPTIONS) --no-create
+CONFIGURED_FILES := config.Makefile Makefile include/config.h
+$(CONFIGURED_FILES) : $(CONFIGURED_FILES:=.in) config.status
+	./config.status
+#	touch include/config.h
+
 TARGETS = all install dist check clean distclean uninstall
 
 $(TARGETS) :: Makefile config.h
 	make $@
 
-stage1 : configure config.h.in
-configure : configure.in
-	autoconf
-config.h.in : configure.in
-	autoheader
-	touch $@
-
-stage2 : Makefile config.h
-config.status : configure
-	./configure $(CONFIGURE_OPTIONS) --no-create
-Makefile config.h : config.status Makefile.in config.h.in
-	./config.status
-	touch config.h

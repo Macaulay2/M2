@@ -1,5 +1,3 @@
-# SHELL := bash
-# export SHELL
 ############################### targets to use
 all ::				# everything needed for the distribution
 tests ::
@@ -24,9 +22,9 @@ include $(TOPDIR)/Makeconf
 ROOT := $(shell basename `pwd`)
 clean::; rm -f core
 ################################# version
-version : ../Makeconf
+version : ../config.Makefile
 	bin/echoout '>$@' 'version ${VERSION} for ${SYSTEM}' 
-version.gen : ../Makeconf
+version.gen : ../config.Makefile
 	bin/echoout '>$@' 'version ${VERSION}'
 misc :: version version.gen
 clean :: ; rm -f version version.gen
@@ -141,3 +139,7 @@ clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
 backup ::; $(MAKE) -C m2 backup
 backup ::; if [ -d docs ]; then $(MAKE) -C docs backup; fi
 backup ::; if [ -d experiments ]; then $(MAKE) -C experiments backup; fi
+################################# install
+install ::
+	$(INSTALL_PROG) bin/Macaulay2 $(libexecdir)
+	$(INSTALL_PROG) bin/M2 $(bindir)

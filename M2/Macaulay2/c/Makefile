@@ -2,6 +2,7 @@
 ############################## main target
 all:: scc1
 TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 ############################################
 %.c        : %.y

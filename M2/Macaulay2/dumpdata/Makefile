@@ -1,5 +1,6 @@
 default: all2 tests2
 TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 CFLAGS := -Wall -g
 LDFLAGS := 
