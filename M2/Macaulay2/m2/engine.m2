@@ -303,20 +303,6 @@ RawRingMap.synonym = "raw ring map"
 RawRingMap == RawRingMap := (v,w) -> v === w
 net RawRingMap := o -> stack lines toString o
 
--- lapck mutable matrices
-
-RawMatrixRR.name = "RawMatrixRR"
-RawMatrixRR.synonym = "raw real lapack matrix"
-
-RawMatrixRR == RawMatrixRR := (v,w) -> v === w
-net RawMatrixRR := o -> stack lines toString o
-
-RawMatrixCC.name = "RawMatrixCC"
-RawMatrixCC.synonym = "raw complex lapack matrix"
-
-RawMatrixCC == RawMatrixCC := (v,w) -> v === w
-net RawMatrixCC := o -> stack lines toString o
-
 -- clean up
 
 

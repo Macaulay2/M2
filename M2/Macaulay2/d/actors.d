@@ -98,34 +98,6 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
-     is x:LMatrixRR do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       when x+y
-	       is t:LMatrixRR do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix addition failed"))
-	       )
-	  is y:LMatrixCC do (
-	       when x+y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix addition failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
-     is x:LMatrixCC do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       when x+y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix addition failed"))
-	       )
-	  is y:LMatrixCC do (
-	       when x+y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix addition failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,PlusS))
      is Error do lhs
      else binarymethod(lhs,rhs,PlusS));
 plus(e:Expr):Expr := accumulate(plus0,plus1,op+,e);
@@ -142,8 +114,6 @@ plusfun1(rhs:Code):Expr := (
      is RawRingElement do r
      is RawMatrix do r
      is RawMutableMatrix do r
-     is LMatrixRR do r
-     is LMatrixCC do r
      else unarymethod(rhs,PlusS));
 plusfun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
@@ -162,8 +132,6 @@ export - (rhs:Expr) : Expr := (
      is x:RawRingElement do Expr(-x)
      is x:RawMatrix do Expr(-x)
      is x:RawMutableMatrix do Expr(-x)
-     is x:LMatrixRR do Expr(-x)
-     is x:LMatrixCC do Expr(-x)
      is Error do rhs
      else (
 	  method := lookup(Class(rhs),MinusS);
@@ -229,34 +197,6 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:RawMutableMatrix do (
 	       when x-y
 	       is t:RawMutableMatrix do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
-     is x:LMatrixRR do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       when x-y
-	       is t:LMatrixRR do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
-	       )
-	  is y:LMatrixCC do (
-	       when x-y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,MinusS))
-     is x:LMatrixCC do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       when x-y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
-	       )
-	  is y:LMatrixCC do (
-	       when x-y
-	       is t:LMatrixCC do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix subtraction failed"))
 	       )
 	  is Error do rhs
@@ -381,34 +321,6 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:RawMutableMatrix do (
 	       when x*y
 	       is t:RawMutableMatrix do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
-     is x:LMatrixRR do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       when x*y
-	       is t:LMatrixRR do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
-	       )
-	  is y:LMatrixCC do (
-	       when x*y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
-	       )
-	  is Error do rhs
-	  else binarymethod(lhs,rhs,StarS))
-     is x:LMatrixCC do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       when x*y
-	       is t:LMatrixCC do Expr(t)
-	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
-	       )
-	  is y:LMatrixCC do (
-	       when x*y
-	       is t:LMatrixCC do Expr(t)
 	       is null do buildErrorPacket(EngineError("matrix multiplication failed"))
 	       )
 	  is Error do rhs

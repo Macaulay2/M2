@@ -595,6 +595,11 @@ const Matrix * rawRemoveScalarMultiples(const Matrix *m)
   return m->remove_scalar_multiples();
 }
 
+const MatrixOrNull *IM2_Matrix_remove_content(const Matrix *M) {
+#warning "const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
+     return NULL;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

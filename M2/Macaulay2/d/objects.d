@@ -289,22 +289,6 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is x:LMatrixRR do (
-	  when rhs
-	  is y:LMatrixRR do (
-	       if Ccode(bool, "LP_LMatrixRR_is_equal((LMatrixRR *)",x,",(LMatrixRR *)",y,")")
-	       then True else False
-	       )
-	  else False
-	  )
-     is x:LMatrixCC do (
-	  when rhs
-	  is y:LMatrixCC do (
-	       if Ccode(bool, "LP_LMatrixCC_is_equal((LMatrixCC *)",x,",(LMatrixCC *)",y,")")
-	       then True else False
-	       )
-	  else False
-	  )
      is x:RawMatrix do (
 	  when rhs
 	  is y:RawMatrix do toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
@@ -478,8 +462,6 @@ export Class(e:Expr):HashTable := (
      is RawFreeModule do rawFreeModuleClass
      is RawMatrix do rawMatrixClass
      is RawMutableMatrix do rawMutableMatrixClass
-     is LMatrixRR do LMatrixRRClass
-     is LMatrixCC do LMatrixCCClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);
@@ -541,8 +523,6 @@ setupconst("Error",Expr(errorMessageClass));
 setupconst("MissingMethod",Expr(missingMethodClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
-setupconst("RawMatrixRR",Expr(LMatrixRRClass));
-setupconst("RawMatrixCC",Expr(LMatrixCCClass));
 
 varstringarray := { a:array(string), n:int };
 newvarstringarray(m:int):varstringarray := varstringarray( new array(string) len m do provide "", 0 );

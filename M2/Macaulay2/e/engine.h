@@ -589,7 +589,7 @@ extern "C" {
 						    const RingElement *a,
 						    const RingElement *b); /* drg: connected rawFraction*/
 
-  const M2_IntegerOrNull rawSchurDimension(const RingElement *f); /* Dan: please connect */
+  const M2_IntegerOrNull rawSchurDimension(const RingElement *f); /* connected rawSchurDimension */
   /* f should be a polynomial whose base ring was created using rawSchurRing
      (otherwise NULL is returned).  If so, the dimension of the corresponding
      (virtual) GL(n) representation is returned. */
@@ -953,10 +953,7 @@ extern "C" {
   const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only);
   /* connected to rawRemoveMonomialFactors */
 
-  const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M); 
-      /* drg: tried to connect to rawRemoveContent*/
-      /* drg: but where is it??? */
-      /* drg: TODO, I guess */
+  const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M);      /* connected rawRemoveContent*/
 
   /* Routines for use when the base ring is a polynomial ring of some sort */
 
@@ -1040,7 +1037,7 @@ extern "C" {
 				M2_arrayint wt,
 				M2_arrayint vars,
 				M2_bool do_truncation,
-				int limit); /* connect to rawBasis */
+				int limit); /* connected to rawBasis */
   /* Yields a monomial basis of part of the graded R-module cokernel(M).
    * Returns a matrix of monomials which maps to the target of M, such that
    *  (i) The image spans the sum of M_i, for lo_degree <= i <= hi_degree 
@@ -1243,7 +1240,7 @@ extern "C" {
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
-  const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c2); /* connect to rawColumnDotProduct, OK */
+  const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c2); /* connected to rawColumnDotProduct */
   /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
      out of range, 0 is returned. */
 
@@ -1307,25 +1304,25 @@ extern "C" {
 
   M2_bool rawSolve(MutableMatrix *A,
 		   MutableMatrix *b,
-		   MutableMatrix *x); /* Dan: please connect */
+		   MutableMatrix *x); /* connected */
 
   M2_bool rawLU(MutableMatrix *A,
 		MutableMatrix *L,
 		MutableMatrix *U,
-		MutableMatrix *P); /* Dan: please connect */
+		MutableMatrix *P); /* connected */
   /*
    */
 
   M2_bool rawEigenvalues(MutableMatrix *A,
 			 MutableMatrix *eigenvalues,
-			 M2_bool is_symm_or_hermitian); /* Dan: please connect */
+			 M2_bool isHermitian); /* connected */
   /*
    */
 
   M2_bool rawEigenvectors(MutableMatrix *A,
 			  MutableMatrix *eigenvalues,
 			  MutableMatrix *eigenvectors,
-			  M2_bool is_symm_or_hermitian); /* Dan: please connect */
+			  M2_bool isHermitian); /* connected */
   /*
    */
 
@@ -1333,14 +1330,14 @@ extern "C" {
 		 MutableMatrix *Sigma,
 		 MutableMatrix *U,
 		 MutableMatrix *VT,
-		 M2_bool use_divide_and_conquer); /* Dan: please connect */
+		 M2_bool use_divide_and_conquer); /* connected */
   /* 
    */
 
   M2_bool rawLeastSquares(MutableMatrix *A, 
 			  MutableMatrix *b, 
 			  MutableMatrix *x, /* return value: argument modified */
-			  M2_bool assume_full_rank); /* Dan: please connect */
+			  M2_bool assume_full_rank); /* connected */
   /* Case 1: A is a dense matrix over RR.  Then so are b,x.
      Case 2: A is a dense matrix over CC.  Then so are b,x. */
 
@@ -1435,7 +1432,7 @@ extern "C" {
      is x1 ... xn /(x_i1 ... x_ir), i.e. the complement of the support of
      the monomial generates the monomial minimal prime. */
 
-  const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I); /* Dan: please connect */
+  const RingElementOrNull * IM2_MonomialIdeal_Hilbert(const MonomialIdeal *I); /* connected to rawHilbert */
   /* This routine computes the numerator of the Hilbert series
      for coker I.  NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */

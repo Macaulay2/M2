@@ -302,8 +302,6 @@ export Expr := (
      FunctionClosure or
      HashTable or
      Integer or
-     LMatrixRR or
-     LMatrixCC or     
      List or
      Net or
      Nothing or
@@ -575,8 +573,6 @@ export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
-export LMatrixRRClass := newtypeof(rawObjectClass);         -- LMatrixRRClass
-export LMatrixCCClass := newtypeof(rawObjectClass);         -- LMatrixCCClass
 export nothingClass := newbasictype();
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
