@@ -4,6 +4,7 @@ load "statuscodes.m2"
 
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
+target GroebnerBasis := g -> g.target
 raw GroebnerBasis := G -> G.RawComputation
 status GroebnerBasis := opts -> G -> (
      s := toString RawStatusCodes#(rawStatus1 raw G);

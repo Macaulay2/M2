@@ -271,6 +271,10 @@ RawComputation.name = "RawComputation"
 RawComputation.synonym = "raw computation"
 status RawComputation := opts -> c -> rawStatus1 c
 
+-- Groebner bases
+
+RawMatrix % RawComputation := (m,g) -> rawGBMatrixRemainder(g,m)
+
 -- ring maps
 
 RawRingMap.name = "RawRingMap"
