@@ -18,10 +18,10 @@ int main(int argc, char **argv) {
     exit(1);
   }
   else if (sizeof(uintP) > sizeof(void *)) {
-    fprintf(stderr,"warning: uintP bigger than void *, see std.h\n");
+    fprintf(stderr,"--warning: uintP bigger than void *, see std.h\n");
   }
   if ((uintP)(-1) < 0) {
-    fprintf(stderr,"error: uintP should be an unsigned integer type, see std.h\n");
+    fprintf(stderr,"--error: uintP should be an unsigned integer type, see std.h\n");
     exit(1);
   }
   if (!setjmp(j)) {
@@ -35,11 +35,11 @@ int main(int argc, char **argv) {
       p[2] = malloc(4);
       fprintf(stderr,"  p[] = {%p,%p,%p,%p,%p,%p}\n", p[0], p[1], p[2], p[3], p[4], p[5]);
       fprintf(stderr,"  x = %s\n", x);
-      if (ERROR == dumpdata(filename)) { fprintf(stderr, "failed to dump data to file %s\n", filename); return 1; }
+      if (ERROR == dumpdata(filename)) { fprintf(stderr, "--dumpdata: can not dump data to file %s\n", filename); return 1; }
       fprintf(stderr,"  data dumped\n");
     }
     else if (argc > 1 && 0 == strcmp(argv[1],"load")) {
-      if (ERROR == loaddata(filename)) { fprintf(stderr, "failed to load data from file %s\n", filename); return 1; }
+      if (ERROR == loaddata(filename)) { fprintf(stderr, "--loaddata: can not load data from file %s\n", filename); return 1; }
       fprintf(stderr,"  data loaded\n");
       longjmp(j,1);
     }

@@ -951,7 +951,7 @@ tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
 
-html BIG := x -> concatenate( "<B><FONT SIZE=4>", apply(x, html), "</FONT></B>" )
+html BIG := x -> concatenate( "<b><font size=4>", apply(x, html), "</font></b>" )
 
 html HEAD := html CENTER := 
 x -> concatenate(newline, 
@@ -966,7 +966,7 @@ x -> concatenate(newline,
      )
 
 html HR := x -> ///
-<HR>
+<hr>
 ///
 text HR := x -> ///
 -----------------------------------------------------------------------------
@@ -1025,34 +1025,34 @@ tex ExampleTABLE := x -> concatenate apply(x,y -> tex y#1)
 
 html TABLE := x -> concatenate(
      newline,
-     "<TABLE>",
+     "<table>",
      newline,
      apply(x, row -> ( 
-	       "  <TR>",
+	       "  <tr>",
 	       newline,
-	       apply(row, item -> ("    <TD ALIGN=CENTER>", html item, "</TD>",newline)),
-	       "  </TR>",
+	       apply(row, item -> ("    <td align=center>", html item, "</td>",newline)),
+	       "  </tr>",
 	       newline)),
-     "</TABLE>",
+     "</table>",
      newline
      )			 
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<P>",
-     "<CENTER>",
-     "<TABLE cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
+     "<p>",
+     "<center>",
+     "<table cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
      newline,
      apply(x, 
 	  item -> (
-	       "  <TR>", newline,
-	       "    <TD NOWRAP>", html item#1, "</TD>", newline,
-	       "  </TR>", newline
+	       "  <tr>", newline,
+	       "    <td nowrap>", html item#1, "</td>", newline,
+	       "  </tr>", newline
 	       )
 	  ),
-     "</TABLE>",
-     "</CENTER>",
-     "</P>"
+     "</table>",
+     "</center>",
+     "</p>"
      )			 
 
 net PRE := x -> net concatenate x
@@ -1063,10 +1063,10 @@ text PRE   := x -> concatenate(
      newline
      )
 html PRE   := x -> concatenate( 
-     "<PRE>", 
+     "<pre>", 
      html demark(newline,
 	  apply(lines concatenate x, s -> concatenate("     ",s))),
-     "</PRE>"
+     "</pre>"
      )
 
 shorten := s -> (
@@ -1104,12 +1104,12 @@ htmlDefaults = new MutableHashTable from {
      }
 
 html BODY := x -> concatenate(
-     "<BODY ", htmlDefaults#"BODY", ">", newline,
+     "<body ", htmlDefaults#"BODY", ">", newline,
      apply(x, html), newline,
-     "</BODY>", newline
+     "</body>", newline
      )
 
-html LISTING := t -> "<LISTING>" | concatenate toSequence t | "</LISTING>";
+html LISTING := t -> "<listing>" | concatenate toSequence t | "</listing>";
 
 texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
 
@@ -1140,14 +1140,14 @@ html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 net CODE := x -> stack lines concatenate x
 
 html CODE   := x -> concatenate( 
-     "<CODE>", 
-     demark( ("<BR>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
-     "</CODE>"
+     "<code>", 
+     demark( ("<br>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
+     "</code>"
      )
 
 
 html ANCHOR := x -> (
-     "<A name=\"" | x#0 | "\">" | html x#-1 | "</A>"
+     "<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
      )
 text ANCHOR := x -> "\"" | x#-1 | "\""
 tex ANCHOR := x -> (
@@ -1168,10 +1168,11 @@ addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 }
 
 html MENU := x -> concatenate (
      newline,
-     "<MENU>", newline,
-     apply(addHeadlines x, s -> if s =!= null then ("<LI>", html s, newline)),
-     "</MENU>", newline, 
-     "<P>", newline)
+     "<p>", newline,
+     "<menu>", newline,
+     apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
+     "</menu>", newline, 
+     "</p>", newline)
 
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
 
@@ -1188,47 +1189,49 @@ tex MENU := x -> concatenate(
      ///\end{itemize}///, newline)
 
 html UL   := x -> concatenate(
-     "<UL>", newline,
-     apply(x, s -> ("<LI>", html s, newline)),
-     "</UL>", newline, 
-     "<P>", newline)
+     "<p>", newline,
+     "<ul>", newline,
+     apply(x, s -> ("<li>", html s, "</li>", newline)),
+     "</ul>", newline, 
+     "</p>", newline)
 
 text UL   := x -> concatenate(
      newline,
      apply(x, s -> ("    ", text s, newline)))
 
 html OL   := x -> concatenate(
-     "<OL>", newline,
-     apply(x,s -> ("<LI>", html s, newline)),
-     "</OL>", newline, 
-     "<P>", newline
+     "<p>", newline,
+     "<ol>", newline,
+     apply(x,s -> ("<li>", html s, "</li>", newline)),
+     "</ol>", newline, 
+     "</p>", newline
      )
 text OL   := x -> concatenate(
      newline,
      apply(x,s -> ("    ", text s, newline)))
 
 html NL   := x -> concatenate(
-     "<NL>", newline,
-     apply(x, s -> ("<LI>", html s, newline)),
-     "</NL>", newline, 
-     "<P>", newline)
+     "<p>", newline,
+     "<nl>", newline,
+     apply(x, s -> ("<li>", html s, newline)),
+     "</nl>", newline, 
+     "</p>", newline)
 text NL   := x -> concatenate(
      newline,
      apply(x,s -> ("    ",text s, newline)))
 
 html DL   := x -> (
-     "<DL>" 
+     "<dl>" 
      | concatenate apply(x, p -> (
 	       if class p === List or class p === Sequence then (
-		    if # p === 2 then "<DT>" | html p#0 | "<DD>" | html p#1
-		    else if # p === 1 then "<DT>" | html p#0
+		    if # p === 2 then "<dt>" | html p#0 | "<dd>" | html p#1
+		    else if # p === 1 then "<dt>" | html p#0
 		    else error "expected a list of length 1 or 2"
 		    )
-	       else "<DT>" | html p
+	       else "<dt>" | html p
 	       ))
-     | "</DL>")	  
+     | "</dl>")	  
 text DL   := x -> concatenate(
-     newline, 
      newline,
      apply(x, p -> (
 	       if class p === List or class p === Sequence then (

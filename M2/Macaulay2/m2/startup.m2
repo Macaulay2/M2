@@ -288,7 +288,7 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 	  stderr << "--loading cached memory data from " << datafile << newline << flush;
 	  loaddata datafile
 	  ) else (
-	  stderr << "warning: failed to load data from " << datafile << newline << flush;
+	  stderr << "--warning: can not load data from " << datafile << newline << flush;
 	  )
      )
 

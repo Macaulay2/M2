@@ -102,7 +102,7 @@ int dumpdata(char const *dumpfilename) {
     }
     for (i=0; i<nmaps; i++) {
       if (isDumpable(&dumpmaps[i]) && ERROR == dumpmap(fd,&dumpmaps[i])) {
-	warning("warning: error occurred while dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
+	warning("--warning: error occurred while dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
 	close(fd);
 	return ERROR;
       }
@@ -191,8 +191,8 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	trim(buf);
-	warning("loaddata: checksum has changed from %u to %u for map %s\n",
-		dumpedmap.checksum, currmap[j].checksum, buf);
+	// warning("--loaddata: checksum has changed from %u to %u for map %s\n", dumpedmap.checksum, currmap[j].checksum, buf);
+	warning("--loaddata: checksum has changed for map %s\n", buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
 	  fclose(f);
 	  return ERROR;
@@ -222,12 +222,12 @@ int loaddata(char const *filename) {
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
         if (installed_one) {
-          char x[] = "loaddata: failed to map memory completely\n";
+          char x[] = "--loaddata: failed to map memory completely\n";
           write(STDERR,x,strlen(x));
           _exit(1);
         }
         else {
-          char x[] = "loaddata: failed to map any memory\n";
+          char x[] = "--loaddata: failed to map any memory\n";
           write(STDERR,x,strlen(x));
           return ERROR;
         }
