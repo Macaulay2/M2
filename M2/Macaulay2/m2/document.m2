@@ -1253,14 +1253,38 @@ html CODE   := x -> concatenate(
      "</CODE>"
      )
 
-html HREF := x -> (
-     "<A HREF=\"" | x#0 | "\">" | html x#-1 | "</A>"
+isAbsolute := url -> (
+     "#" != substring(url,0,1) and
+     "http://" != substring(url,0,7) and
+     "ftp://" != substring(url,0,6) and
+     "mailto:" != substring(url,0,7)
      )
-text HREF := x -> "\"" | x#-1 | "\""
+
+htmlFilename := key -> (
+     v := cacheFileName(documentationPath, key);
+     if v =!= {} then first v else cacheFileName(first documentationPath, key)
+     ) | ".html"
+
+rel := url -> (
+     if isAbsolute url 
+     then url
+     else relativizeFilename(first documentationPath, htmlFilename formattedKey)
+     )
+
+html HREF := x -> (
+     "<A HREF=\"" 					    -- "
+     | rel first x 
+     | "\">" 						    -- "
+     | html last x 
+     | "</A>"
+     )
+text HREF := x -> "\"" | last x | "\""
 tex HREF := x -> (
      concatenate(
-	  ///\special{html:<A href="///, texLiteral x#0, ///">}///,
-	  tex x#-1,
+	  ///\special{html:<A href="///, 		    -- "
+	       texLiteral rel first x,
+	       ///">}///,				    -- "
+	  tex last x,
 	  ///\special{html:</A>}///
 	  )
      )
@@ -1376,18 +1400,12 @@ text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 
-htmlFilename := key -> (
-     v := cacheFileName(documentationPath, key);
-     if v =!= {} then first v else cacheFileName(first documentationPath, key)
-     ) | ".html"
-
 html TO := x -> (
      key := x#0;
      formattedKey := formatDocumentTag key;
-     prefix := first documentationPath;
      concatenate ( 
      	  ///<A HREF="///,				    -- "
-	  relativizeFilename(prefix, htmlFilename formattedKey),
+	  rel htmlFilename formattedKey,
 	  ///">///, 					    -- "
      	  htmlExtraLiteral formattedKey,
      	  "</A>",
@@ -1421,7 +1439,7 @@ html UNDERLINE := htmlMarkUpType "U"
 html TEX := x -> x#0	    -- should do something else!
 html BOLD := htmlMarkUpType "B"
 
-html BASE := x -> concatenate("<BASE HREF=\"",x#0,"\">")
+html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 tex BASE := text BASE := net BASE := x -> ""
 
 html Option := x -> toString x

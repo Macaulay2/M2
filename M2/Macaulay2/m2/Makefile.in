@@ -183,14 +183,6 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	mv ../cache/Macaulay2-tmp $@
 	touch $@
 
-phase5 : phase4
-	 #------ phase 5: making cache/doc/*.html
-	../../bin/M2 -q -silent '-e phase = 5' \
-		'-e errorDepth 0' \
-		'-e DocDatabase = new MutableHashTable' docloads.m2 \
-		@srcdir@/docfinish.m2 '-eexit(0)'
-	touch $@
-
 ifdef NEWENGINE
 check:: test1
 test1 : test.m2 phase1

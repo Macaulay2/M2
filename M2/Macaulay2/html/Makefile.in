@@ -51,6 +51,10 @@ endif
 index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	rm -f ../m2/cache/doc/*.html
 	../../bin/M2 -q $< '-eexit(0)'
+	cd ../m2/cache/doc \
+		&& ../../../html-check-links/html-check-links *.html && ret=$? \
+		| head -200; \
+		exit $ret
 view:; netscape index.html &
 clean::; rm -f ./*.html
 clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct Macaulay2-index-cache

@@ -609,3 +609,33 @@ document { (cacheFileName, List, Thing),
 	  },
      SEEALSO { "documentationPath" }
      }
+
+document { symbol documentationPath,
+     Headline => "search path for documentation",
+     Synopsis => {
+	  ///documentationPath = x///,
+	  "x" => "a list of paths to directories where documentation is stored"
+	  },
+     EXAMPLE {
+	  ///documentationPath = unique append ( documentationPath,
+	       directoryPath { "tmp", "cache", "doc" } )///
+	  },
+     SEEALSO {cacheFileName, directoryPath}
+     }
+
+document { directoryPath,
+     Headline => "construct a directory name from its components",
+     Synopsis => {
+	  ///p = directoryPath x///,
+	  "x" => "a list of strings, each of which is one component of a
+	       directory path",
+	  "p" => "the resulting directory path as a string"
+	  },
+     "The separator used between the components of a directory path
+     depends on the operating system.  An extra one is put at the end
+     so the directory path can be simply appended to a filename.  The
+     path may be rearranged to produce one of minimal length.",
+     EXAMPLE {
+	  ///directoryPath { "aa", "bb", "..", "cc" }///
+	  }
+     }
