@@ -170,6 +170,7 @@ Module == Module := (M,N) -> (
 	       else true)))
 
 Vector = new Type of MutableHashTable			    -- do we keep this??
+Vector _ ZZ := (v,i) -> notImplemented()		    -- we have this just because there is a possible obsolete documentation about it
 
 newModule = method(TypicalValue => Module)
 newModule(Ring,RawFreeModule) := (R,rM) -> (

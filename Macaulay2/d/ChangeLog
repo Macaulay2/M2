@@ -1,5 +1,19 @@
 2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
 
+	* scclib.c:
+	changed "run" so that it returns the entire exit status, not just the
+	second 8 bits
+
+	* actors.d, actors4.d, basic.d, engine.d, interface.d, objects.d, tokens.d, util.d, ChangeLog, interp.d, actors5.d:
+	*** empty log message ***
+
+2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
+
+	* actors.d, actors4.d, basic.d, engine.d, interface.d, objects.d, tokens.d, util.d, ChangeLog, interp.d, actors5.d:
+	*** empty log message ***
+
+2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
+
 	* interface.d, interp.d, objects.d, tokens.d, util.d, actors5.d:
 	*** empty log message ***
 

@@ -156,11 +156,17 @@ install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
+ifeq "$(encap)" "yes"
+ENCAP = true
+else 
+ENCAP = false
+endif
+
 install::install-main
 install-main: all
 	M2 -q --stop \
 	   -e 'errorDepth = 0' \
-	   -e 'installPackage(Main, Prefix => "$(prefix)") ' \
+	   -e 'installPackage(Main, Encapsulate => $(ENCAP), Prefix => "$(prefix)") ' \
 	   -e 'exit 0 '
 
 clean::

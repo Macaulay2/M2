@@ -107,9 +107,10 @@ static void interrupt_handler(int sig)
      else {
 	  if (system_interruptShield) system_interruptPending = TRUE;
 	  else {
-	       if (!isatty(STDIN)) {
-		    fprintf(stderr,"interrupted%s",NEWLINE);
-		    exit(1);
+	       if (tokens_stopIfError || !isatty(STDIN)) {
+		    int interruptExit = 2;	/* see also interp.d */
+		    fprintf(stderr,"interrupted, stopping%s",NEWLINE);
+		    exit(interruptExit);
 	       }
 	       system_interrupted = TRUE;
 #     	       ifdef FACTORY
@@ -262,6 +263,11 @@ extern char *GC_stackbottom;
 extern void M2inits();
 extern void arginits(int, char **);
 
+static bool gotArg(char *arg, char **argv) {
+  for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
+  return FALSE;
+}
+
 int Macaulay2_main(argc,argv)
 int argc; 
 char **argv;
@@ -363,15 +369,18 @@ char **argv;
 	  }
 
      system_stime();
-     signal(SIGINT,interrupt_handler);
 
-#ifdef SIGALRM
-     signal(SIGALRM,alarm_handler);
-#endif
+     if (gotArg("--stop", saveargv)) tokens_stopIfError = TRUE;
 
-#ifdef SIGPIPE
-     signal(SIGPIPE, SIG_IGN);
-#endif
+     if (!gotArg("--int", saveargv)) {
+       signal(SIGINT,interrupt_handler);
+#      ifdef SIGALRM
+       signal(SIGALRM,alarm_handler);
+#      endif
+#      ifdef SIGPIPE
+       signal(SIGPIPE, SIG_IGN);
+#      endif
+     }
 
      trap();
      arginits(argc,saveargv);

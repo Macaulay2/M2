@@ -94,7 +94,6 @@ shareRelDir = $(datam2RelDir)/Main
 m2RelDir = $(shareRelDir)/m2
 docm2relRelDir = $(docm2RelDir)/Main
 emacsdocRelDir = $(docm2relRelDir)/emacs
-htmldocRelDir = $(docm2relRelDir)/html
 imagesRelDir = $(docm2relRelDir)/images
 
 prefix = @prefix@
@@ -116,7 +115,6 @@ sharedir = $(prefix)/$(shareRelDir)
 m2dir = $(prefix)/$(m2RelDir)
 docm2reldir = $(prefix)/$(docm2relRelDir)
 emacsdocdir = $(prefix)/$(emacsdocRelDir)
-htmldocdir = $(prefix)/$(htmldocRelDir)
 imagesdir = $(prefix)/$(imagesRelDir)
 packagesrcdir = $(prefix)/$(packagesrcRelDir)
 packagedocdir = $(prefix)/$(packagedocRelDir)
@@ -146,7 +144,6 @@ LAYOUT += "share"=>"$(shareRelDir)/",
 LAYOUT += "m2"=>"$(m2RelDir)/",
 LAYOUT += "docm2rel"=>"$(docm2relRelDir)/",
 LAYOUT += "emacsdoc"=>"$(emacsdocRelDir)/",
-LAYOUT += "htmldoc"=>"$(htmldocRelDir)/",
 LAYOUT += "images"=>"$(imagesRelDir)/",
 LAYOUT += $(call MAKEFUN,packagesrc),
 LAYOUT += $(call MAKEFUN,packagedoc),
