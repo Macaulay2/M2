@@ -5,7 +5,7 @@ debugDoc = () -> commandInterpreter local symbol
 maximumCodeWidth := 120
 
 -----------------------------------------------------------------------------
--- normalizing document tags
+-- normalizing document keys
 -----------------------------------------------------------------------------
    -- The normalized form for simple objects will be the symbol whose value is the object
    -- (We don't document objects that are not stored in global variables.)
@@ -16,12 +16,12 @@ maximumCodeWidth := 120
    -- or
    --	             TO symbol sin
    -- and have them all get recorded the same way
-normalizeDocumentTag := method(SingleArgumentDispatch => true)
-normalizeDocumentTag   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
-normalizeDocumentTag   Symbol := identity
-normalizeDocumentTag Sequence := identity
-normalizeDocumentTag  Nothing := key -> symbol null
-normalizeDocumentTag    Thing := key -> (
+normalizeDocumentKey := method(SingleArgumentDispatch => true)
+normalizeDocumentKey   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
+normalizeDocumentKey   Symbol := identity
+normalizeDocumentKey Sequence := identity
+normalizeDocumentKey  Nothing := key -> symbol null
+normalizeDocumentKey    Thing := key -> (
      if ReverseDictionary#?key then return ReverseDictionary#key;
      error("encountered unidentifiable document tag: ",key);
      )
@@ -33,7 +33,12 @@ isDocumentableThing  Sequence := key -> false 		    -- we're not looking for doc
 isDocumentableThing   Nothing := key -> true
 
 isDocumentableMethod := method(SingleArgumentDispatch => true)
-isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod)
+isDocumentableMethod Sequence := key -> (
+     fn := lookup key;
+     if fn === null then error "key doesn't appear to be a method";
+     if methodDispatchFunctions#?fn then return false;
+     all(key,isDocumentableMethod)
+     )
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
@@ -41,6 +46,11 @@ isDocumentableMethod Function :=
 isDocumentableThing     Thing := key -> (
      if ReverseDictionary#?key then return true;
      false)
+
+undocumented = key -> (
+     if currentPackage === null then error "no package open";
+     currentPackage#"undocumented keys"#(normalizeDocumentKey key) = true;
+     )
 
 -----------------------------------------------------------------------------
 -- verifying the tags
@@ -82,7 +92,7 @@ makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 makeDocumentTag Thing := opts -> key -> (
-     key = normalizeDocumentTag key;
+     key = normalizeDocumentKey key;
      verifyTag key;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag key;
      pkg := if opts#Package =!= null then opts#Package else packageTag key;
@@ -786,8 +796,6 @@ documentableMethods := s -> select(methods s,isDocumentableMethod)
 
 fmeth := f -> (
      b := documentableMethods f;
-     if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
-     then b = select(b, x -> x =!= (f,Sequence));
      if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, smenu b } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }

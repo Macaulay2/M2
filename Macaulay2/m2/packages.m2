@@ -92,6 +92,7 @@ newPackage(String) := opts -> (title) -> (
 	  "exported symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
+	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => if title === "Macaulay2" then prefixDirectory else (
 	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)

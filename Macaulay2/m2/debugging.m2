@@ -90,7 +90,8 @@ typicalValues#frame = MutableList
 
 pos := s -> (
      t := locate s;
-     if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4)
+     if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4
+     else "")
 
 sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
 
@@ -135,9 +136,10 @@ robust := y -> silentRobustNet(25,4,3,y)
 abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else robust x)
-listSymbols = x -> (
-     if #x == 0 then "--no local variables"
-     else netTable prepend(
+listSymbols = method()
+listSymbols Dictionary := d -> listSymbols values d
+listSymbols List := x -> (
+     netTable prepend(
 	  {"symbol"||"------","", "type"||"----","", "value"||"-----", "location"||"--------"},
 	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, pos s})))
 
@@ -181,7 +183,7 @@ clearOutput = Command (() -> (
 clearAll = Command (() -> ( 
      	  unmarkAllLoadedFiles();
 	  clearOutput(); 
-	  scan(userSymbols(), i -> i <- i);
+	  scan(values UserDictionary, i -> (i <- i; erase i));
 	  )
      )
 
