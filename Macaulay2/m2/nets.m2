@@ -5,7 +5,8 @@ Net.AfterPrint = identity
 toString String := identity
 toString Symbol := string
 toString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
-     toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...}"
+     toString class s, if parent s =!= Nothing then (" of ", toString parent s), 
+     "{...", toString(#s), "...}"
      )
 toString HashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
      "new ", toString class s,
@@ -15,7 +16,7 @@ toString HashTable := s -> if s.?name and class s.name === String then s.name el
      then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
      else "",
      "}")
-toString MutableList := s -> concatenate(toString class s,"{...}")
+toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 toString BasicList := s -> concatenate(
      if class s =!= List then toString class s,
      "{", between(", ",apply(toList s,toString)), "}"
@@ -47,7 +48,7 @@ toExternalString Net := x -> concatenate(format toString x, "^", toString(height
 toExternalString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
      toExternalString class s,
      if parent s =!= Nothing then (" of ", toExternalString parent s),
-     "{...}"
+     "{...", toString(#s), "...}"
      )
 toExternalString HashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
      "new ", toExternalString class s,
@@ -57,7 +58,8 @@ toExternalString HashTable := s -> if s.?name and class s.name === String then s
      then demark(", ", apply(pairs s, (k,v) -> toExternalString k | " => " | toExternalString v) )
      else "",
      "}")
-toExternalString MutableList := s -> concatenate("new ",toExternalString class s, " from {...}")
+toExternalString MutableList := s -> concatenate("new ",toExternalString class s, 
+     " from {...", toString(#s), "...}" )
 toExternalString BasicList := s -> concatenate(
      (if class s === List then "{" else ("new ", toExternalString class s," from {")),
      between(", ",apply(toList s,toExternalString)),
@@ -160,7 +162,7 @@ net BasicList := x -> horizontalJoin deepSplice (
       "{",
       toSequence between(comma,apply(toList x,net)),
       "}")
-net MutableList := x -> horizontalJoin ( net class x, "{...}" )
+net MutableList := x -> horizontalJoin ( net class x, "{...", toString(#s), "...}" )
 net HashTable := x -> (
      if x.?name then x.name
      else horizontalJoin flatten ( 
@@ -174,7 +176,7 @@ net HashTable := x -> (
      )
 net MutableHashTable := x -> (
      if x.?name then x.name 
-     else horizontalJoin ( net class x, if #x > 0 then "{...}" else "{}" )
+     else horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" )
      )
 
 texMath Net := n -> concatenate (
