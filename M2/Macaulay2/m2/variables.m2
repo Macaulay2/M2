@@ -84,7 +84,6 @@ IndexedVariable .. IndexedVariable := (v,w) -> (
      toSequence apply(v#1 .. w#1, s -> x_s))	  
 
 expression IndexedVariable := x -> new Subscript from { expression x#0, expression x#1 }
-expression IndexedVariableTable := x -> hold name x
 
 baseName IndexedVariable := identity
 
