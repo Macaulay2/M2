@@ -16,6 +16,11 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+User input is now obtained through the GNU readline routine, with
+history.  It's a versatile mechanism for editing the current input
+line and retrieving previous input lines using emacs-like
+control-character editing commands.
+
 At compile time, you may now set the environment variable LIBS to
 provide additional libraries to link against, and the makefiles will
 use it.

@@ -176,7 +176,7 @@ setupfun("stopIfError",stopIfError);
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
 
-prompt():string := (
+topLevelPrompt():string := (
      method := lookup(integerClass,if stmtno == laststmtno then InputContinuationPrompt else (laststmtno = stmtno; InputPrompt));
      if method == nullE then ""
      else when apply(method,toExpr(stmtno)) is s:string do s
@@ -189,7 +189,7 @@ loadprint(s:string,StopIfError:bool):Expr := (
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
-	  setprompt(file,prompt);
+	  setprompt(file,topLevelPrompt);
 	  r := readeval3(file,true,StopIfError,globalScope);
 	  t := if !(s==="-") then close(file) else 0;
 	  when r is Error do r 
@@ -244,6 +244,7 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       0,			  -- inindex
 	       length(contents),	  -- insize
 	       true,			  -- eof
+	       false,	  		  -- promptq
 	       noprompt,		  -- prompt
      	       true,	       	    	  -- bol
 	       false,			  -- echo

@@ -365,6 +365,7 @@ M2_string buffer;
 int len;
 {
      if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
+     if (len == 0) return 0;
      return read(fd,buffer->array,len);
      }
 
@@ -380,23 +381,19 @@ int offset;
      if ((int)buffer->len < len+offset) {
 	  fatalarrayindex(len+offset,buffer->len,__FILE__,__LINE__,-1);
 	  }
+     if (len == 0) return 0;
      return read(fd,buffer->array+offset,len);
      }
 
 #include <readline/readline.h>
 #include <readline/history.h>
 
-static int readPrompt(int fd,char *buf,int len,char *prompt) {
+static int read_via_readline(char *buf,int len,char *prompt) {
   static char *p;		/* buffer, NULL if newline has already been returned */
   static int plen;		/* number of chars in p */
   static int i;			/* number of chars in p already returned */
   int r;			/* number of chars to return this time */
-  if (fd != STDIN) {		/* readline() works only with stdin */
-    if (*prompt) {
-      write(STDOUT,prompt,strlen(prompt)); /* ignoring error return, sigh! */
-    }
-    return read(fd,buf,len);
-  }
+  if (len == 0) return 0;
   if (p == NULL) {
     p = readline(prompt);
     if (p == NULL) return 0;	/* EOF */
@@ -408,41 +405,20 @@ static int readPrompt(int fd,char *buf,int len,char *prompt) {
   if (r > len) r = len;
   memmove(buf,p+i,r), i+=r;
   if (i == plen && r < len) {
-    free(p);
-    p = NULL;
-    buf[r++] = '\n';
+    free(p), p = NULL;
+    buf[r++] = '\n';		/* readline() doesn't include the \n at the end */
   }
   return r;
 }
 
-int system_readPrompt(fd,buffer,len,prompt)
-int fd;
-M2_string buffer;
-int len;
-M2_string prompt;
-{
-  char *p = tocharstar(prompt);
-  int r;
-  if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
-  r = readPrompt(fd,buffer->array,len,p);
-  free(p);
-  return r;
-}
-
-int system_readPrompt_1(fd,buffer,len,offset,prompt)
-int fd;
-M2_string buffer;
-int len, offset;
-M2_string prompt;
-{
+int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   char *p = tocharstar(prompt);
   int r;
   if (offset < 0 || (int)buffer->len - offset < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
-  r = readPrompt(fd,buffer->array + offset,len,p);
+  r = read_via_readline(buffer->array + offset,len,p);
   free(p);
   return r;
 }
-
 
 /* stupid ANSI forces some systems to put underscores in front of useful identifiers */
 #if !defined(S_ISREG)
