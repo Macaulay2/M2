@@ -17,7 +17,7 @@ emacs html: all; $(MAKE) -C ../$@
 # LDFLAGS = -s
 # LOADLIBES =
 DUMPSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/dumpseq))
-DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
+DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq )) gbdoc.m2 gbfunctions.m2
 
 MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
