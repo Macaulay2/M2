@@ -313,7 +313,7 @@ const MatrixOrNull * Matrix::make(const MonomialIdeal * mi)
   const Monoid *M = P->Nmonoms();
   int *mon = M->make_one();
 
-  MatrixConstructor mat(P->make_FreeModule(1), 0, false);
+  MatrixConstructor mat(P->make_FreeModule(1), mi->length(), false);
   int next = 0;
   for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
     {
@@ -323,6 +323,7 @@ const MatrixOrNull * Matrix::make(const MonomialIdeal * mi)
     }
   M->remove(mon);
 
+  mat.compute_column_degrees();
   return mat.to_matrix();
 }
 
