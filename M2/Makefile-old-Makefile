@@ -16,9 +16,8 @@ announce ::
 	@echo 'making Macaulay 2 version $(VERSION) for $(SYSTEM)'
 	@echo "######################################################"
 ################################# all
-all:: GC GMP FACTORY LIBFAC MP MACAULAY2
+all:: GC GMP FACTORY LIBFAC MP Makeconf.h MACAULAY2
 ################################# Makeconf.h
-all:: Makeconf.h
 Makeconf.h : Makeconf envh.awk Makeconf.var
 	awk -f envh.awk <Makeconf.var >tmp.tmp
 	mv tmp.tmp $@

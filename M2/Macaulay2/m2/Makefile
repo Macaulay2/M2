@@ -20,7 +20,9 @@ endif
 
 cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
-DUMPEDGFILES = $(DUMPSEQUENCE) setup.m2 dumpdata.m2 $(MADEGFILES)
+TUTORIALS := $(wildcard ../tutorial/final/*.out)
+
+DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 dumpdata.m2 $(MADEGFILES) $(TUTORIALS)
 
 GFILES = $(DUMPSEQUENCE) setup.m2 dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
 
@@ -42,7 +44,6 @@ version.m2 : ../../Makeconf ../../Makeconf-m2
 	../../Makeconf-m2 >version.tmp
 	mv version.tmp $@
 
-TUTORIALS = $(wildcard ../tutorial/final/*.out)
 tutorials.m2 : Makefile
 	@ echo making tutorials.m2
 	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@

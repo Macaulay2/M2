@@ -131,7 +131,7 @@ bbar2 = syz b1
 -- We document our new routine
 horseshoe = method()
 --$
-document { horseshoe, 
+document { quote horseshoe, 
      TT "horseshoe", "(F,G) -- Compute the horseshoe resolution of target F == source G,
      given homomorphisms F,G of R-modules",
      PARA,
