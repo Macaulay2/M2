@@ -334,47 +334,83 @@ const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c
 
 const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M)
 {
-  
+  ERROR("not re-implemented yet");
   return false;
 }
 
 const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
-					 const MutableMatrix *N); /* drg: connected === and to rawIsEqual for use with == */
+					 const MutableMatrix *N)
 /* This checks that the entries of M,N are the same */
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
-MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M);
+MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
-MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected + */
+MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the addition is performed.  If the targets are not equal, the target 
    of the result is set to have each degree zero.  Similarly with the
    source, and also with the degree of the matrix. */
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
-MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected - */
+MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the addition is performed.  If the targets are not equal, the target 
    of the result is set to have each degree zero.  Similarly with the
    source, and also with the degree of the matrix. */
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
-MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M); /* drg: connected - */
+MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M)
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
 MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M, 
 					     const MutableMatrix *N, 
-					     M2_bool opposite_mult); /* drg: connected * */
+					     M2_bool opposite_mult)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the multiplication is performed, and the source and target are taken from N,M
    respectively.  The degree of the result is the sum of the two degrees */
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
 MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
 						    const MutableMatrix *M, 
-						    M2_bool opposite_mult); /* drg: connected * */
+						    M2_bool opposite_mult)
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
 MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
 						  const M2_arrayint rows,
-						  const M2_arrayint cols); /* drg: connected rawSubmatrix*/
+						  const M2_arrayint cols)
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
 MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
-						   const M2_arrayint cols); /* drg: connected rawSubmatrix*/
+						   const M2_arrayint cols)
+{
+  ERROR("not re-implemented yet");
+  return 0;
+}
 
 
   /***************************************************
@@ -387,42 +423,58 @@ MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
 
 M2_bool rawSolve(MutableMatrix *A,
 		 MutableMatrix *b,
-		 MutableMatrix *x);
+		 MutableMatrix *x)
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 M2_bool rawLU(MutableMatrix *A,
 	      MutableMatrix *L,
 	      MutableMatrix *U,
-	      MutableMatrix *P);
-/*
- */
+	      MutableMatrix *P)
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 M2_bool rawEigenvalues(MutableMatrix *A,
 		       MutableMatrix *eigenvalues,
-		       M2_bool is_symm_or_hermitian);
-/*
- */
+		       M2_bool is_symm_or_hermitian)
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 M2_bool rawEigenvectors(MutableMatrix *A,
 			MutableMatrix *eigenvalues,
 			MutableMatrix *eigenvectors,
-			M2_bool is_symm_or_hermitian);
-/*
- */
+			M2_bool is_symm_or_hermitian)
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 M2_bool rawSVD(MutableMatrix *A,
 	       MutableMatrix *Sigma,
 	       MutableMatrix *U,
 	       MutableMatrix *VT,
-	       M2_bool use_divide_and_conquer);
-/* 
- */
+	       M2_bool use_divide_and_conquer)
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 M2_bool rawLeastSquares(MutableMatrix *A, 
 			MutableMatrix *b, 
 			MutableMatrix *x, /* return value: argument modified */
-			M2_bool assume_full_rank);
+			M2_bool assume_full_rank)
 /* Case 1: A is a dense matrix over RR.  Then so are b,x.
    Case 2: A is a dense matrix over CC.  Then so are b,x. */
+{
+  ERROR("not re-implemented yet");
+  return false;
+}
 
 
 #if 0

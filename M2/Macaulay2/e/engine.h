@@ -1382,7 +1382,7 @@ DAN DAN DAN -- this is the end of the stuff to be removed
 					   const MutableMatrix *N); /* drg: connected === and to rawIsEqual for use with == */
   /* This checks that the entries of M,N are the same */
 
-  MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M);
+  MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense);
 
   MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected + */
     /* If the sizes do not match, then NULL is returned.  If they do match,
