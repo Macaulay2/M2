@@ -12,8 +12,6 @@ List == List := (x,y) -> (
 Sequence == Sequence := (x,y) -> (
      # x === # y
      and
-     class x === class y
-     and
      all( 0 .. # x - 1, i -> x#i == y#i ))
 
 Thing == Thing := Boolean => (x,y) -> x === y			    -- this is a bit experimental, installed 7/15/99

@@ -207,7 +207,7 @@ document { setrecursionlimit,
      permissible for calls to functions."
      }
 
-document { symbol commandLine,
+document { "commandLine",
      TT "commandLine", " -- a constant whose value is the list of arguments 
      passed to the interpreter, including argument 0, the name of the program.",
      }

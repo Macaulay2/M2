@@ -2,9 +2,12 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+'help' now returns the documentation as a Net instead of printing it out.
+
 'doc' changed to 'documentation'
 
-New function: 'briefDocumentation'.
+New function: 'briefDocumentation'.  This is the function that prints one line
+of documentation after something appears as output on the screen.
 
 'RETURNS' has been replaced as a method for documenting the type of thing
 returned by a function.  See 'typicalValues'.

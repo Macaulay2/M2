@@ -43,6 +43,29 @@ export hash(s:string):int := (
      h & 0x7fffffff
      );
 
+export index(s:string,offset:int):int := (
+     i := offset;
+     while i < length(s) do if '\n' == s.i || '\r' == s.i then return(i) else i=i+1;
+     -1);     
+export index(s:string,offset:int,c:char):int := (
+     i := offset;
+     while i < length(s) do if c == s.i then return(i) else i=i+1;
+     -1);     
+export match(s:string,i:int,t:string):bool := (
+     m := length(s);
+     n := length(t);
+     j := 0;
+     while i < m && j < n do if s.i != t.j then return(false) else (i=i+1; j=j+1);
+     true);
+export index(s:string,offset:int,sep:string):int := (
+     i := offset;
+     while i < length(s) do if match(s,i,sep) then return(i) else i=i+1;
+     -1);
+export index(s:string,offset:int,c:char,d:char):int := (
+     i := offset;
+     while i+1 < length(s) do if c == s.i && d==s.(i+1) then return(i) else i=i+1;
+     -1);     
+
 -- C strings, use with care!
 
 export Cstring := null ;

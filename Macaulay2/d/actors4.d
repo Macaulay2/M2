@@ -681,56 +681,9 @@ substrfun(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
      
-index(s:string,offset:int):int := (
-     i := offset;
-     while i < length(s) do if '\n' == s.i || '\r' == s.i then return(i) else i=i+1;
-     -1);     
-index(s:string,offset:int,c:char):int := (
-     i := offset;
-     while i < length(s) do if c == s.i then return(i) else i=i+1;
-     -1);     
-match(s:string,i:int,t:string):bool := (
-     m := length(s);
-     n := length(t);
-     j := 0;
-     while i < m && j < n do if s.i != t.j then return(false) else (i=i+1; j=j+1);
-     true);
-index(s:string,offset:int,sep:string):int := (
-     i := offset;
-     while i < length(s) do if match(s,i,sep) then return(i) else i=i+1;
-     -1);
-index(s:string,offset:int,c:char,d:char):int := (
-     i := offset;
-     while i+1 < length(s) do if c == s.i && d==s.(i+1) then return(i) else i=i+1;
-     -1);     
-lines(s:string):Expr := (
-     nlines := 0;
-     i := 0;
-     while true do (
-	  j := index(s,i);
-	  if j == -1 then (
-     	       if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
-	  then i = j+2
-	  else i = j+1;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i);
-		    if j == -1 then (
-			 if i != length(s) then provide Expr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide Expr(substr(s,i,j-i));
-			 if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
-			 then i = j+2
-			 else i = j+1;
-			 )))));
+linesE(s:string):Expr := (
+     v := lines(s);
+     list(new Sequence len length(v) do foreach t in v do provide Expr(t)));
 lines(s:string,c:char):Expr := (
      nlines := 0;
      i := 0;
@@ -796,7 +749,7 @@ linesfun(e:Expr):Expr := (
      else WrongArg(2,"a string")
      else WrongArg(1,"a string")
      else WrongNumArgs(2)
-     is s:string do Expr(lines(s))
+     is s:string do linesE(s)
      else WrongArgString());
 setupfun("lines",linesfun);
 

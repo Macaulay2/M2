@@ -35,10 +35,39 @@ untabify(s:string):string := (
 	       )
 	  )
      else s);
+export lines(s:string):array(string) := (
+     nlines := 0;
+     i := 0;
+     while true do (
+	  j := index(s,i);
+	  if j == -1 then (
+     	       if i != length(s) then nlines = nlines + 1;
+	       break;
+	       );
+	  if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
+	  then i = j+2
+	  else i = j+1;
+	  nlines = nlines + 1;
+	  );
+     i = 0;
+     new array(string) len nlines do (
+	  while true do (
+	       j := index(s,i);
+	       if j == -1 then (
+		    if i != length(s) then provide untabify(substr(s,i));
+		    break;
+		    )
+	       else (
+		    provide untabify(substr(s,i,j-i));
+		    if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
+		    then i = j+2
+		    else i = j+1;
+		    ))));
 export toNet(s:string):Net := (
-     s = untabify(s);
-     Net(1,length(s),array(string)(s))
-     );
+     v := lines(s);
+     wid := 0;
+     foreach s in v do if wid < length(s) then wid = length(s);
+     Net(1,wid,v));
 export toNet(c:char):Net := toNet(string(c));
 export RaiseNet(n:Net,i:int):Net := Net(n.height+i,n.width,n.body);
 export HorizontalJoin(v:array(Net)):Net := (

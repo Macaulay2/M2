@@ -133,6 +133,7 @@ document { RingElement,
 
 
 document { EngineRing,
+     HEADLINE "the class of engine rings (including polynomial rings)",
      TT "EngineRing", " -- denotes the class of all special-purpose engine
      rings, such as finite fields.",
      PARA,
@@ -1321,7 +1322,6 @@ document { Matrix,
      MENU {
 	  (TO "adjoint", "                -- matrix of adjointness"),
 	  (TO "adjoint1", "               -- another matrix of adjointness"),
-	  (TO "flip", "                   -- matrix of commutativity of tensor product"),
           (TO "genericMatrix", "          -- a generic matrix"),
           (TO "genericSkewMatrix", "      -- a generic skew-symmetric matrix"),
           (TO "genericSymmetricMatrix", " -- a generic symmetric matrix"),

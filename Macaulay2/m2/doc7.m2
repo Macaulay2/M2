@@ -581,7 +581,8 @@ document { adjoint,
      SEEALSO "adjoint1"
      }
 
-document { flip,
+document { (flip,Module,Module),
+     HEADLINE "matrix of commutativity of tensor product",
      TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
      }
 
