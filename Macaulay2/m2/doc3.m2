@@ -40,38 +40,6 @@ document {
      }
 
 document {
-     Key => frame,
-     Headline => "the frame of a function",
-     TT "frame f", " -- provides the frame of values for local variables
-     bound up in a function closure.",
-     PARA,
-     "It also works when ", TT "f", " is a symbol, and returns the frame for the
-     scope it was defined in, even if the function that created it has
-     returned.",
-     PARA,
-     "The return value is a mutable list, so it's possible to modify the values
-     of the local variables, but it's probably not a good idea.",
-     PARA,
-     "Exception: if the scope of ", TT "f", " is the global scope, then an
-     empty list is returned instead, since some of the global variables are protected.",
-     PARA,
-     "This function is provisional, and is to be used mainly for debugging."
-     }
-
-document {
-     Key => examine,
-     Headline => "examine internal information about functions or symbols",
-     TT "examine ()", " -- list the sequence numbers for the scopes corresponding
-     to the frames currently in use.", BR,NOINDENT, 
-     TT "examine f", " -- display internal information about an interpreted 
-     function ", TT "f", ".",BR,NOINDENT, 
-     TT "examine x", " -- display internal information about a symbol ", TT "x", ".",
-     PARA,
-     "This function is intended for debugging the interpreter itself.",
-     SeeAlso => "debugging"
-     }
-
-document {
      Key => seeParsing,
      Headline => "print syntax table",
      TT "seeParsing()", " -- print the syntax table which governs parsing
