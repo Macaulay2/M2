@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+'text' function removed -- not needed.  Its functinality will be
+replaced by 'net', which is often applied automatically.
+
 MENU html tag is obsolete -- replaced by UL
 
 The operator '==' used to return True when the two arguments are

@@ -755,12 +755,12 @@ briefDocumentation Thing :=
 x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
      r := synopsis x;
-     if r =!= null then << endl << text r << endl
+     if r =!= null then << endl << r << endl
      else (
 	  if headline x =!= null then << endl << headline x << endl;
 	  if class x === Function then (
 	       s := fmeth x;
-	       if s =!= null then << endl << text s << endl;)))
+	       if s =!= null then << endl << s << endl;)))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -820,7 +820,7 @@ seecode := x -> (
      n := code f;
      if n =!= null 
      and height n + depth n <= 10 and width n <= maximumCodeWidth
-     then PARA { BOLD "Code", PRE concatenate between(newline,unstack n) }
+     then PARA { BOLD "Code", PRE demark(newline,unstack n) }
      )
 
 documentationValue := method()
@@ -922,13 +922,12 @@ hasDocumentation = x -> (
 hr1 := newline | "-----------------------------------------------------------------------------" | newline
 hr := v -> concatenate mingle(#v + 1 : hr1 , v)
 
-trimwhole := x -> selectRegexp ( "^\n*(.*[^\n]|)\n*$",1, x)
+-- this was removing initial and terminal newlines
+-- trimwhole := x -> selectRegexp ( "^\n*(.*[^\n]|)\n*$",1, x)
 
 help = method(SingleArgumentDispatch => true)
 help List := v -> hr apply(v, help)
-help Thing := s -> (
-     "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| trimwhole text documentation s
-     )
+help Thing := s -> documentation s
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
@@ -987,7 +986,7 @@ ENDVERBATIM := ///\endgroup{}///
 
 texExtraLiteralTable := copy texLiteralTable
 texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> concatenate between(ENDLINE,
+texExtraLiteral := s -> demark(ENDLINE,
      apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c))
      )
 -----------------------------------------------------------------------------
@@ -999,9 +998,6 @@ texMath String := s -> (
      if #s === 1 then s
      else concatenate("\\text{", texLiteral s, "}")
      )
-text String := identity
-
-text Thing := toString
 
 texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
 texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
@@ -1016,7 +1012,7 @@ tex HashTable := x -> (
      else tex expression x
      )
 
-mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
+mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 
 specials := new HashTable from {
      symbol ii => "&ii;"
@@ -1027,28 +1023,18 @@ mathML Symbol := x -> concatenate("<mi>",if specials#?x then specials#x else toS
 tex Function := x -> "--Function--"
 
 tex Boolean := tex Symbol := 
-text Symbol := text Boolean := 
 html Symbol := html Boolean := toString
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
 html MarkUpList := x -> concatenate apply(x,html)
-text MarkUpList := x -> concatenate apply(x,text)
 tex MarkUpList := x -> concatenate apply(x,tex)
-net MarkUpList := x -> peek x
+net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
---html MarkUpType := H -> html H{}
---text MarkUpType := H -> text H{}
---tex MarkUpType := H -> tex H{}
---net MarkUpType := H -> net H{}
---texMath MarkUpType := H -> tex H{}
-
 html BR := x -> ///
 <BR>
-///
-text BR := x -> ///
 ///
 tex  BR := x -> ///
 \hfil\break
@@ -1056,7 +1042,6 @@ tex  BR := x -> ///
 
 html NOINDENT := x -> ""
 net NOINDENT := x -> ""
-text NOINDENT := x -> ""
 tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
@@ -1078,9 +1063,6 @@ x -> concatenate(newline,
 
 html HR := x -> ///
 <hr>
-///
-text HR := x -> ///
------------------------------------------------------------------------------
 ///
 tex  HR := x -> ///
 \hfill\break
@@ -1111,20 +1093,7 @@ tex PARA := x -> concatenate(///
 
 trimline := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
 
-text PARA := x -> toString (
-     x = toList x;
-     x = flatten apply(x, s -> if class s === String then trimline \ lines s else s);
-     x = prepend("    ",x);
-     x = net \ x;
-     x = select(x, n -> width n > 0);
-     x = horizontalJoin between(" ",x);
-     wrap("",x)) | newline
-
-text EXAMPLE := x -> concatenate apply(#x, i -> text PRE concatenate("i",toString (i+1)," : ",x#i))
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
-
-text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
-text ExampleTABLE := x -> "\n" | toString (boxNets apply(toList x, y -> text y#1)) | "\n\n"
 net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
 
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -1174,12 +1143,6 @@ html ExampleTABLE := x -> concatenate(
      )			 
 
 net PRE := x -> net concatenate x
-text PRE   := x -> concatenate(
-     newline,
-     demark(newline,
-	  apply(lines concatenate x, s -> concatenate("     ",s))),
-     newline
-     )
 html PRE   := x -> concatenate( 
      "<pre>", 
      html demark(newline,
@@ -1213,9 +1176,7 @@ tex PRE := x -> concatenate ( VERBATIM,
 ///
      )
 
-text TT    := x -> concatenate   ("'", text \ toList x, "'")
 net TT     := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
-
 
 htmlDefaults = new MutableHashTable from {
      -- "BODY" => "bgcolor='#e4e4ff'"
@@ -1238,36 +1199,21 @@ html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 texMath TEX := tex TEX := x -> concatenate toList x
 
 texMath SEQ := tex SEQ := x -> concatenate(apply(toList x, tex))
-text SEQ := x -> (
+
+net SEQ := x -> (					    -- this needs a lot of work
      x = toList x;
      P := PARA{};
      p := positions(x, i -> i === P);
      p = apply(prepend(-1,p),append(p,#x),identity);
      p = select(p, (i,j) -> i+1 < j);
-     x = apply(p, (i,j) -> text \ take(x, {i+1,j-1}));
+     x = apply(p, (i,j) -> net \ take(x, {i+1,j-1}));
      x = flatten between(P,x);
-     concatenate \\ text \ x
+     horizontalJoin \\ net \ x
      )
+
 html SEQ := x -> concatenate(apply(toList x, html))
 
--- net UL := x -> "    " | stack apply(toList addHeadlines x, net)
-net EXAMPLE := 
-net UL := 
-net PARA := 
-net SEQ := x -> toString class x | boxNets \\ net \ toList x
--- this is wrong:
---      x = toList x;
-----      x = deepSplice apply(x, y -> if class y === PARA then (PARA{}, toSequence y) else y);
---      p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
---      stack apply(#p - 1, 
--- 	  i -> horizontalJoin apply(take(x,{p#i+1, p#(i+1)-1}), net)
--- 	  )
-
 tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
-
-text Sequence := x -> concatenate("(", between(",", apply(x,text)), ")")
-text List := x -> concatenate("{", between(",", apply(x,text)), "}")
-
 html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
 html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 
@@ -1283,7 +1229,6 @@ html CODE   := x -> concatenate(
 html ANCHOR := x -> (
      "<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
      )
-text ANCHOR := x -> "\"" | x#-1 | "\""
 tex ANCHOR := x -> (
      concatenate(
 	  ///\special{html:<A name="///, texLiteral x#0, ///">}///,
@@ -1293,7 +1238,6 @@ tex ANCHOR := x -> (
      )
 
 html SHIELD := x -> concatenate apply(x,html)
-text SHIELD := x -> concatenate apply(x,text)
 net SHIELD := x -> horizontalJoin apply(x,net)
 
 html TEX := x -> x#0
@@ -1301,11 +1245,6 @@ html TEX := x -> x#0
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
-
-text UL := x -> concatenate(
-     newline,
-     apply(addHeadlines1 x, s -> if s =!= null then ("    ", text s, newline))
-     )
 
 tex UL := x -> concatenate(
      ///\begin{itemize}///, newline,
@@ -1318,26 +1257,14 @@ html UL := x -> concatenate (
      apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
      "</ul>", newline)
 
-text UL   := x -> concatenate(
-     newline,
-     apply(x, s -> ("    ", text s, newline)))
-
 html OL   := x -> concatenate(
      "<ol>", newline,
      apply(x,s -> ("<li>", html s, "</li>", newline)),
      "</ol>", newline )
-text OL   := x -> concatenate(
-     newline,
-     apply(x,s -> ("    ", text s, newline)))
-
 html NL   := x -> concatenate(
      "<nl>", newline,
      apply(x, s -> ("<li>", html s, newline)),
      "</nl>", newline)
-text NL   := x -> concatenate(
-     newline,
-     apply(x,s -> ("    ",text s, newline)))
-
 html DL   := x -> (
      "<dl>" 
      | concatenate apply(x, p -> (
@@ -1349,34 +1276,10 @@ html DL   := x -> (
 	       else "<dt>" | html p
 	       ))
      | "</dl>")	  
-text DL   := x -> concatenate(
-     newline,
-     apply(x, p -> (
-	       if class p === List or class p === Sequence then (
-		    if # p === 2 
-		    then (
-			 "    ", text p#0, newline,
-			 "    ", text p#1,
-			 newline,
-			 newline)
-		    else if # p === 1 
-		    then ("    ", 
-			 text p#0, 
-			 newline, 
-			 newline)
-		    else error "expected a list of length 1 or 2"
-		    )
-	       else ("    ", text p, newline)
-	       )),
-     newline)
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
 
-text SUP := x -> "^" | text x#0
-text SUB := x -> "_" | text x#0
-
-text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 tex  TO := x -> (
      key := x#0;
      node := formatDocumentTag key;
@@ -1390,10 +1293,11 @@ tex  TO := x -> (
 	  }
      )
 
+net TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
+
              toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
             htoh := op -> x -> op SEQ{ new TO from x, headline x#0 }
 net  TOH :=  toh net
-text TOH := htoh text
 html TOH :=  toh html
 tex  TOH :=  toh tex
 
@@ -1404,10 +1308,9 @@ html UNDERLINE := htmlMarkUpType "U"
 html TEX := x -> x#0	    -- should do something else!
 html BOLD := htmlMarkUpType "B"
 
-tex BASE := text BASE := net BASE := x -> ""
+tex BASE := net BASE := x -> ""
 
 html Option := x -> toString x
-text Option := x -> toString x
 
 net BIG := x -> net x#0
 

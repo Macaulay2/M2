@@ -995,7 +995,7 @@ document { separate,
      EXAMPLE {
 	  ///separate( ".", "a.b.c.d" )///,
 	  ///peek separate( ".", "a.b.c.d" )///,
-	  ///concatenate between("=",ooo)///
+	  ///demark("=",ooo)///
 	  }
      }
 

@@ -48,14 +48,6 @@ document { HR,
      TT "HR{}", " -- a ", TO "hypertext", " horiziontal rule."
      }
 
-document { text,
-     Headline => "convert hypertext to text",
-     TT "text x", " -- convert ", TO "hypertext", " to text format",
-     PARA,
-     "The return value is a string which is suitable display on an
-     ascii terminal."
-     }
-
 document { html,
      Headline => "convert hypertext to html format",
      TT "html x", " -- convert ", TO "hypertext", " to html format",

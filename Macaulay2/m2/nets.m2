@@ -59,7 +59,7 @@ toExternalString Manipulator := toString Manipulator := f -> (
 -----------------------------------------------------------------------------
 toExternalString String := format
 
-toString Net := x -> concatenate between("\n",unstack x)
+toString Net := x -> demark("\n",unstack x)
 toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> (

@@ -63,7 +63,7 @@ toString Expression := v -> (
 	       )
 	  );
      if # v === 0 then op#EmptyName
-     else concatenate between(op#operator,names)
+     else demark(op#operator,names)
      )
 
 Holder = new WrapperType of Expression
@@ -71,7 +71,6 @@ Holder.synonym = "holder"
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
 mathML Holder := v -> mathML v#0
-text Holder := v -> text v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 toString Holder := v -> toString v#0
@@ -119,7 +118,7 @@ toString Equation := v -> (
      else if n === 1 then "Equation{" | toString v#0 | "}"
      else (
 	  p := precedence v;
-	  concatenate between(" == ", 
+	  demark(" == ", 
 	       apply(toList v, e -> if precedence e <= p then ("(", toString e, ")") else toString e))))
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
@@ -794,7 +793,7 @@ texMath Expression := v -> (
 	  else error("no method for texMath ", op)
 	  )
      else (
-	  if op#?operator then concatenate between(op#operator,names)
+	  if op#?operator then demark(op#operator,names)
 	  else error("no method for texMath ", op)
 	  )
      )
@@ -812,7 +811,7 @@ html Expression := v -> (
 	  else error("no method for html ", op)
 	  )
      else (
-	  if op#?operator then concatenate between(op#operator,names)
+	  if op#?operator then demark(op#operator,names)
 	  else error("no method for html ", op)
 	  )
      )
@@ -951,7 +950,7 @@ texMath Product := v -> (
      if n === 0 then "1"
      else (
      	  p := precedence v;
-     	  concatenate between( " ",	  -- could also try \cdot in case there are integers together.
+     	  demark( " ",	  -- could also try \cdot in case there are integers together.
 	        apply(#v,
 		    i -> (
 			 term := v#i;

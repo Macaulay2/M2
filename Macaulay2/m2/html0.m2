@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------------
 
 html = method(SingleArgumentDispatch=>true, TypicalValue => String)
-text = method(SingleArgumentDispatch=>true, TypicalValue => String)
+-- text used to be one of the conversion functions, but now we just use "net"
 tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
 texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
 mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)

@@ -37,7 +37,7 @@ next := sectionNumber -> (
      else append( drop(sectionNumber, -1), sectionNumber#-1 + 1 )
      )
 fmt := sectionNumber -> (
-     concatenate between(".",
+     demark(".",
 	  prepend(
 	       ROMAN sectionNumber#0,
 	       apply(drop(sectionNumber,2),toString)

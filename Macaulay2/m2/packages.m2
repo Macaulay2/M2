@@ -141,7 +141,7 @@ checkShadow = () -> (
 	       sym := d#j#nam;
 	       w := findSynonyms sym;
 	       w = select(w, s -> s != nam);
-	       if #w > 0 then stderr << "--   synonym(s) for " << nam << ": " << concatenate between(", ",w) << endl
+	       if #w > 0 then stderr << "--   synonym(s) for " << nam << ": " << demark(", ",w) << endl
 	       else if member(UserDictionary,globalDictionaries) then for i from 0 do (
 		    newsyn := nam | "$" | toString i;
 		    if not isGlobalSymbol newsyn then (
@@ -216,7 +216,7 @@ package TO := x -> (
 	  else stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
 	  p)
      else if #p > 1 then (
-	  error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P#"title")));
+	  error("documentation for ",fkey," occurs in multiple packages: ", demark(", ",apply(p,P -> P#"title")));
 	  )
      else (
 	  if not warned#?key then 
