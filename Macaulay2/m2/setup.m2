@@ -179,20 +179,6 @@ input = (filename) -> (
 needs = s -> if not loaded#?s then load s
 
 writableGlobals = new MutableHashTable
-scan((
-	  symbol oooo,
-	  symbol ooo,
-	  symbol oo,
-	  symbol path,
-	  symbol phase,
-	  symbol documentationPath,
-	  symbol DocDatabase,
-	  symbol currentDictionary,
-	  symbol currentFileName,
-	  symbol compactMatrixForm,
-	  symbol TeXmacsMode
-	  ), x -> writableGlobals#x = true)
-
 startFunctions := {}
 
 addStartFunction = g -> (

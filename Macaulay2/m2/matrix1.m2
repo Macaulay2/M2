@@ -444,6 +444,7 @@ Matrix.AfterNoPrint = f -> (
 precedence Matrix := x -> precedence symbol x
 
 compactMatrixForm = true
+writableGlobals.compactMatrixForm = true
 
 net Matrix := f -> (
      if f == 0 

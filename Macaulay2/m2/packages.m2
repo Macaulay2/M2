@@ -22,8 +22,8 @@ addStartFunction(
 currentPackage = null
 writableGlobals.currentPackage = true
 
-packagesLoaded = {}
-writableGlobals.packagesLoaded = true
+packages = {}
+writableGlobals.packages = true
 
 Dictionary = new Type of MutableHashTable		    -- temporary fiction
 
@@ -32,6 +32,10 @@ Package.synonym = "package"
 
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
+
+writableGlobals.currentDictionary = true
+
+net Package := p -> p#"package title" | " version " | p#"package version";
 
 newPackage = method( Options => { Using => {} } )
 newPackage(String,String) := opts -> (title,vers) -> (
@@ -61,7 +65,7 @@ end Package := p -> (
 	  apply(keys (set values symbolTable() - set p#"initial global symbols"), 
 	       s -> toString s => s));
      remove(p,"initial global symbols");
-     packagesLoaded = append(packagesLoaded,p);
+     packages = append(packages,p);
      p#"restore"();
      remove(p,"restore");
      p )
