@@ -187,7 +187,7 @@ anchor := entry -> if al#?i and entry >= al#i then (
 masterFileName << html HTML {
      HEAD { TITLE masterNodeName },
      BODY {
-	  H2 masterNodeName, PARA,
+	  HEADER2 masterNodeName, PARA,
 	  CENTER topNodeButton, PARA,
 	  CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(al, c -> HREF {"#"|c, c})), PARA,
 	  MENU apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TO key }), PARA,

@@ -1,5 +1,15 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#include <factoryconf.h>
+
+const char *get_libfac_version();	/* in version.cc */
+
+unsigned GC_version;		/* in libgc.a */
+#define GC_NOT_ALPHA 0xff
+#define GC_VERSION_MAJOR ((GC_version >> 16) & 0xffff)
+#define GC_VERSION_MINOR ((GC_version >> 8) & 0xff)
+#define GC_ALPHA_VERSION (GC_version & 0xff)
+
 #ifndef NO_GNU_GET_LIBC_VERSION
 char *gnu_get_libc_version();
 #endif
@@ -7,19 +17,12 @@ char *gnu_get_libc_version();
 #include "readline.h"
 #include "types.h"
 
-#define GC_NO_VERSION_VAR
-#include "../../gc/version.h"
-
 #ifdef NEWDUMPDATA
 #include "../dumpdata/dumpdata.h"
 #endif
 
 #ifndef __GNUC__
 #define __attribute__(x)
-#endif
-
-#ifdef MP
-#include "mpversion.h"
 #endif
 
 #if !(defined(GDBM) || defined(NDBM))
@@ -492,31 +495,27 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("--Copyright 1993-2001, all rights reserved, D. R. Grayson and M. E. Stillman");
-#     	       ifdef FACTORY
-	       putstderr("--Factory " 
+	       putstderr("--Copyright 1993-2001, D. R. Grayson and M. E. Stillman");
+	       putstderr("--Singular-Factory " 
 		    FACTORYVERSION
-		    " from Singular, copyright 1993-1997, G.-M. Greuel, R. Stobbe");
-	       sprintf(buf,"--Factorization and characteristic sets %s, copyright 1996, M. Messollen",
-		    libfac_version);
+		    ", copyright 1993-2001, G.-M. Greuel, et al.");
+	       sprintf(buf,"--Singular-Libfac %s, copyright 1996-2001, M. Messollen",
+		    get_libfac_version());
 	       putstderr(buf);
-#     	       endif
 #              ifdef PORTA
 	       sprintf(buf,"--PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
 	       putstderr(buf);
 #              endif
-#     	       ifdef MP
-	       sprintf(buf,"--MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
-               putstderr(buf);
-#     	       endif
-	       sprintf(buf,
-#                      if GC_ALPHA_VERSION == GC_NOT_ALPHA
-		       "--GC %d.%d, copyright, H-J. Boehm, A. oDemers",
-#                      else
-		       "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. Demers",
-#                      endif
-		       GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION
-		       );
+	       if (GC_ALPHA_VERSION == GC_NOT_ALPHA) {
+		 sprintf(buf,
+			 "--GC %d.%d, copyright, H-J. Boehm, A. oDemers",
+			 GC_VERSION_MAJOR, GC_VERSION_MINOR);
+	       }
+	       else {
+		 sprintf(buf,
+			 "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. Demers",
+			 GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION);
+	       }
 	       putstderr(buf);
 #ifndef NO_GNU_GET_LIBC_VERSION
 	       sprintf(buf,"--GNU C Library (glibc-%s), copyright, Free Software Foundation", gnu_get_libc_version());
@@ -588,7 +587,7 @@ char **argv;
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
-     actors5_LIBFACVERSION = tostring(libfac_version);
+     actors5_LIBFACVERSION = tostring(get_libfac_version());
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      actors5_DATE = tostring(current_date);
      actors5_TIME = tostring(current_time);
@@ -597,19 +596,8 @@ char **argv;
 #else
      actors5_DUMPDATA = FALSE;
 #endif
-#ifdef MP
-     actors5_MP = TRUE;
-#else
-     actors5_MP = FALSE;
-#endif
-#ifdef FACTORY
-     actors5_FACTORY = TRUE;
-#else
-     actors5_FACTORY = FALSE;
-#endif
      {
 	  char buf[100];
-	  extern unsigned GC_version;
 	  unsigned major, minor, alpha;
 	  major = GC_version >> 16;
 	  minor = (GC_version >> 8) & 0xff;
@@ -674,11 +662,8 @@ char **argv;
 
 static void close_all_dbms();
 
-static void close_all_links();
-
 static void clean_up() {
      close_all_dbms();
-     close_all_links();
      while (pre_final_list != NULL) {
 	  pre_final_list->final();
 	  pre_final_list = pre_final_list->next;
@@ -1179,360 +1164,6 @@ M2_string system_dbmstrerror() {
      return tostring("database error");
 #endif
      }
-
-/**********************************************
- *                  MP stuff                  *
- **********************************************/
-
-#ifdef MP
-
-static int numlinks = 0;
-static MP_Link_pt *mp_links = NULL;
-
-static int okay(n)
-int n;
-{
-     return 0 <= n && n < numlinks && mp_links[n] != NULL;
-     }
-
-static void close_all_links() {
-     int i;
-     for (i=0; i<numlinks; i++) {
-	  if (mp_links[i] != NULL) MP_CloseLink(mp_links[i]);
-	  }
-     }
-
-static MP_Env_pt MP_env;
-
-int mp_OpenLink(args) 
-M2_stringarray args;
-{
-     int link_handle;
-     char **argv;
-     int argc, i;
-     MP_Link_pt f;
-     if (MP_env == NULL) {
-	  MP_env = MP_InitializeEnv(NULL);
-	  }
-     argv = tocharstarstar(args);
-     argc = args->len;
-     f = MP_OpenLink(MP_env,argc,argv);
-     for (i=0; i<argc; i++) {
-     	  GC_FREE(argv[i]);
-	  }
-     GC_FREE(argv);
-     MP_SetLinkOption(f,MP_LINK_LOG_MASK_OPT,MP_LOG_ALL_EVENTS);
-     if (f == NULL) return -1;
-     if (numlinks == 0) {
-	  numlinks = 10;
-	  mp_links = (MP_Link_pt *) getmem(numlinks * sizeof(DBM_FILE));
-	  for (i=0; i<numlinks; i++) mp_links[i] = NULL;
-	  link_handle = 0;
-	  }
-     else {
-	  for (link_handle=0; TRUE ; link_handle++) {
-	       if (link_handle==numlinks) {
-		    MP_Link_pt *p;
-		    int j;
-		    numlinks *= 2;
-		    p = (MP_Link_pt *) getmem(numlinks * sizeof(DBM_FILE));
-		    for (j=0; j<link_handle; j++) p[j] = mp_links[j];
-		    mp_links = p;
-	  	    for (j=link_handle; j<numlinks; j++) mp_links[j] = NULL;
-		    break;
-		    }
-	       else if (mp_links[link_handle] == NULL) break;
-	       }
-	  }
-     mp_links[link_handle] = f;
-     return link_handle;
-     }
-
-int mp_CloseLink(handle) 
-int handle;
-{
-     int r;
-     if (!okay(handle)) return ERROR;
-     r = MP_PutStringPacket(mp_links[handle],"MP:Quit",0);
-     MP_EndMsgReset(mp_links[handle]);
-     MP_CloseLink(mp_links[handle]);
-     mp_links[handle] = NULL;
-     return 0;
-     }
-
-int mp_EndMsgReset(handle)
-int handle;
-{
-     if (okay(handle)) {
-	  return MP_EndMsgReset(mp_links[handle]);
-	  }
-     else return ERROR;
-     }
-
-int mp_PutSint32(handle,n) 
-int handle;
-int n;
-{
-     if (okay(handle)) {
-	  return MP_PutSint32Packet(mp_links[handle],n,0);
-	  }
-     else return ERROR;
-     }
-
-int mp_PutString(handle,s)
-int handle;
-M2_string s;
-{
-     if (okay(handle)) {
-     	  char *t = tocharstar(s);
-	  int r = MP_PutStringPacket(mp_links[handle],t,0);
-	  GC_FREE(t);
-	  return r;
-	  }
-     else return ERROR;
-     }
-
-
-int mp_PutIdentifier(handle,s)
-int handle;
-M2_string s;
-{
-     if (okay(handle)) {
-     	  char *t = tocharstar(s);
-	  int r = MP_PutIdentifierPacket(mp_links[handle],MP_ReceiverDict,t,0);
-	  GC_FREE(t);
-	  return r;
-	  }
-     else return ERROR;
-     }
-
-int mp_RawPutSint32(handle,n) 
-int handle;
-int n;
-{
-     if (okay(handle)) {
-	  return IMP_PutSint32(mp_links[handle],n);
-	  }
-     else return ERROR;
-     }
-
-int mp_RawPutString(handle,s)
-int handle;
-M2_string s;
-{
-     if (okay(handle)) {
-     	  char *t = tocharstar(s);
-	  int r = IMP_PutString(mp_links[handle],t);
-	  GC_FREE(t);
-	  return r;
-	  }
-     else return ERROR;
-     }
-
-
-int mp_RawPutIdentifier(handle,s)
-int handle;
-M2_string s;
-{
-     if (okay(handle)) {
-     	  char *t = tocharstar(s);
-	  int r = IMP_PutIdentifier(mp_links[handle],t);
-	  GC_FREE(t);
-	  return r;
-	  }
-     else return ERROR;
-     }
-
-int mp_PutListOperator(handle,len)
-int handle, len;
-{
-     if (okay(handle)) {
-	  return MP_PutCommonOperatorPacket(mp_links[handle],
-	       MP_BasicDict,MP_CopBasicList,0,len);
-	  }
-     else return ERROR;
-     }
-
-int mp_PutCommonOperator(handle,dict,oper,numannot,len)
-int handle, dict, oper, numannot, len;
-{
-     if (okay(handle)) {
-	  return MP_PutCommonOperatorPacket(
-	       mp_links[handle],
-	       dict,
-	       oper,
-	       numannot,
-	       len);
-	  }
-     else return ERROR;
-     }
-
-int mp_PutAnnotationPacket(handle,dict,atype,aflags)
-int handle, dict, atype, aflags;
-{
-     if (okay(handle)) {
-	  return MP_PutAnnotationPacket(
-	       mp_links[handle],
-	       dict,
-	       atype,
-	       aflags);
-	  }
-     else return ERROR;
-     }
-
-int mp_PutCommonMetaOperatorPacket(handle,dict, oper,numannot,numchildren)
-int handle, dict, oper, numannot, numchildren;
-{
-     if (okay(handle)) {
-	  return MP_PutCommonMetaOperatorPacket(
-	       mp_links[handle],
-	       dict,
-	       oper,
-	       numannot,
-	       numchildren
-	       );
-	  }
-     else return ERROR;
-     }
-
-int mp_PutCommonMetaTypePacket(handle,dict, oper,numannot)
-int handle, dict, oper, numannot;
-{
-     if (okay(handle)) {
-	  return MP_PutCommonMetaTypePacket(
-	       mp_links[handle],
-	       dict,
-	       oper,
-	       numannot
-	       );
-	  }
-     else return ERROR;
-     }
-
-int mp_PutOperatorPacket(handle,dict,oper1,numannot,len)
-int handle, dict, numannot, len;
-M2_string oper1;
-{
-     int r;
-     char *oper = tocharstar(oper1);
-     if (okay(handle)) {
-	  r = MP_PutOperatorPacket(
-	       mp_links[handle],
-	       dict,
-	       oper,
-	       numannot,
-	       len);
-	  }
-     else r = ERROR;
-     GC_FREE(oper);
-     return r;
-     }
-
-#else
-
-static void close_all_links() {
-     }
-
-int mp_OpenLink(args) 
-M2_stringarray args;
-{
-     return ERROR;
-     }
-
-int mp_CloseLink(handle) 
-int handle;
-{
-     return ERROR;
-     }
-
-int mp_EndMsgReset(handle)
-int handle;
-{
-     return ERROR;
-     }
-
-int mp_PutSint32(handle,n) 
-int handle;
-int n;
-{
-     return ERROR;
-     }
-
-int mp_PutString(handle,s)
-int handle;
-M2_string s;
-{
-     return ERROR;
-     }
-
-
-int mp_PutIdentifier(handle,s)
-int handle;
-M2_string s;
-{
-     return ERROR;
-     }
-
-int mp_RawPutSint32(handle,n) 
-int handle;
-int n;
-{
-     return ERROR;
-     }
-
-int mp_RawPutString(handle,s)
-int handle;
-M2_string s;
-{
-     return ERROR;
-     }
-
-
-int mp_RawPutIdentifier(handle,s)
-int handle;
-M2_string s;
-{
-     return ERROR;
-     }
-
-int mp_PutListOperator(handle,len)
-int handle, len;
-{
-	return ERROR;
-     }
-
-int mp_PutCommonOperator(handle,dict,oper,numannot,len)
-int handle, dict, oper, numannot, len;
-{
-     return ERROR;
-     }
-
-int mp_PutAnnotationPacket(handle,dict,atype,aflags)
-int handle, dict, atype, aflags;
-{
-    return ERROR;
-     }
-
-int mp_PutCommonMetaOperatorPacket(handle,dict, oper,numannot,numchildren)
-int handle, dict, oper, numannot, numchildren;
-{
-     return ERROR;
-     }
-
-int mp_PutCommonMetaTypePacket(handle,dict, oper,numannot)
-int handle, dict, oper, numannot;
-{
-	return ERROR;
-     }
-
-int mp_PutOperatorPacket(handle,dict,oper1,numannot,len)
-int handle, dict, numannot, len;
-M2_string oper1;
-{
-     return ERROR;
-     }
-
-#endif
 
 void C__prepare() {}
 

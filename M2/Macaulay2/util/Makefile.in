@@ -32,3 +32,6 @@ all:: ../setup.exe
 endif
 
 wc:; wc -l *.c *.h
+
+distclean : clean
+	rm -f Makefile

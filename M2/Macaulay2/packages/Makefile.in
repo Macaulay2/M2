@@ -12,23 +12,31 @@ TEST=cache/tests
 
 all :: initialize
 
+Makefile : Makefile.in
+	cd $(TOPDIR); config.status Macaulay2/packages/Makefile
+
+#############################################################################
 all :: doc
 doc :
 	../bin/M2 -q '-e phase=2' StateTable.m2 '-e exit 0'
 	../bin/M2 -q '-e phase=2' eliminate.m2  '-e exit 0'
 	$(MAKE) -k -C $(DOC) -f ../../../m2/Makefile.egs
-
 tests :: doc
 	$(MAKE) -k -C $(TEST) -f ../../../m2/Makefile.tests
-
+#############################################################################
+Dtests = $(wildcard D-modules/TST/*.tst.m2)
+Dtestresults = $(Dtests:.m2=.okay)
 tests :: test-D-modules
-test-D-modules :
-	for i in D-modules/TST/*.tst.m2 ;\
-	do echo running test file $$i ;\
-	   ../bin/M2 -q '-e path = prepend( "D-modules/", path )' "-e input \"$$i\"" '-e exit 0' \
-	   || exit 1 ;\
-	done
-
+test-D-modules : $(Dtestresults)
+$(Dtestresults) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
+%.okay : %.m2
+	@ echo running test file $<
+	../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
+	touch $@
+#############################################################################
+tests ::
+	$(MAKE) -C ComputationsBook tests
+#############################################################################
 initialize :: cache $(DOC) $(TEST)
 clean :; rm -rf cache
 cache $(DOC) $(TEST) :; mkdir $@

@@ -1,16 +1,22 @@
-			Installation of Macaulay 2
+			   Macaulay 2
+	    by Daniel R. Grayson <dan@math.uiuc.edu>
+	 and Michael E. Stillman <mike@math.cornell.edu>
+
+	available from http://www.math.uiuc.edu/Macaulay2/
 
 ----------------------
 1. Introduction
 ----------------------
 
 Macaulay 2 is a software system for algebraic geometry research, written by
-Daniel R. Grayson and Michael E. Stillman with support of the National
-Science Foundation.
+Daniel R. Grayson and Michael E. Stillman with generous support of the
+National Science Foundation, for which we thank them.
 
 ----------------------
 2. Installation
 ----------------------
+
+We assume you are installing a binary distribution.
 
 If you are installing Macaulay 2 on a Windows machine, see the special
 instructions in a later section of this document.
@@ -141,8 +147,11 @@ version you used.
 5. Licenses and copyright
 -------------------------
 
-See the file licenses/README for information about copyright and licenses for
-the program, its code, and the libraries it uses.
+Macaulay 2 is copyright 1993-2001 by Daniel R. Grayson and Michael
+E. Stillman.  We permit you to use it under the terms of the GNU General
+Public License, version 2, as published by the Free Software Foundation; see
+the file COPYING.  This is free software.  There is no warranty; not even for
+merchantability or fitness for a particular purpose.
 
 ----------------------
 6. Distribution

@@ -104,7 +104,9 @@ int fflush(FILE *);/* needed  for sunos 4.1 */
 #if !defined(__alpha) && !defined(_WIN32)
 int _flsbuf(unsigned int, FILE *);/* needed  for sunos 4.1 */
 #endif
+#ifndef printf
 int printf(const char *,...);
+#endif
 #endif
 
 #if 0

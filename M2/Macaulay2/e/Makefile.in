@@ -52,7 +52,7 @@ CXXFLAGS += -O2
 endif
 else
 #CXXFLAGS += -O3 #MES
-CXXFLAGS += -g $(WARNINGS)
+CXXFLAGS += $(WARNINGS)
 endif
 
 ifeq "$(SHARED)" "yes"

@@ -786,7 +786,7 @@ lines(s:string,ch:string):Expr := (
      then Expr(lines(s,ch.0))
      else if length(ch) == 2
      then Expr(lines(s,ch.0,ch.1))
-     else WrongArg(2,"a string of length 1 or 2")
+     else WrongArg(1,"a string of length 1 or 2")
      );
 linesfun(e:Expr):Expr := (
      when e

@@ -85,10 +85,10 @@ node typeforward(node e){
      return e;
      }
 
-void forwardtype(node old,node new){
+void forwardtype(node old,node newn){
      assert(istype(old));
-     assert(istype(new));
-     old->body.type.forward = typeforward(new);
+     assert(istype(newn));
+     old->body.type.forward = typeforward(newn);
      }
 
 node typedefinition(node t){
@@ -314,7 +314,8 @@ static void mark(int i, int j){
      d->listp = NULL;
      d->distinguishable = TRUE;
      while (l != NULL) {
-	  struct PAIR p = *l;
+	  struct PAIR p;
+	  p = *l;
 	  mark(p.i,p.j);
 	  l = p.next;
 	  }
@@ -407,7 +408,7 @@ node ExpandType(node t, node *f) {
 		    /* we should also merge sub-or's in, and eliminate
 		       duplicates */
 		    /* we really only handle (or null (object)) now! */
-		    node new = NULL;
+		    node newN = NULL;
 		    node mems = NULL;
 		    while (t != NULL) {
 			 node u = ExpandType(CAR(t),f);
@@ -415,35 +416,35 @@ node ExpandType(node t, node *f) {
 			 t = CDR(t);
 			 }
 		    apply(reverse,mems);
-		    new = newtype(cons(fun,mems),NULL,FALSE);
-		    push(*f,new);
-		    return new;
+		    newN = newtype(cons(fun,mems),NULL,FALSE);
+		    push(*f,newN);
+		    return newN;
 		    }
 	       else if (fun == object_K) {
-		    node new = NULL;
+		    node newN = NULL;
 		    while (t != NULL) {
 			 node name = CAAR(t);
 			 node u = CADAR(t);
-			 push(new, list(2, unpos(name), ExpandType(u,f)));
+			 push(newN, list(2, unpos(name), ExpandType(u,f)));
 			 t = CDR(t);
 			 }
-		    apply(reverse,new);
-		    new = newtype(cons(fun,new),NULL,FALSE);
-		    push(*f,new);
-		    return new;
+		    apply(reverse,newN);
+		    newN = newtype(cons(fun,newN),NULL,FALSE);
+		    push(*f,newN);
+		    return newN;
 		    }
 	       else if (fun == array_K) {
-		    node new;
-		    new = cons(fun,cons(ExpandType(car(t),f),cdr(t)));
-		    new = newtype(new,NULL,FALSE);
-		    *f = cons(new,*f);
-		    return new;
+		    node newN;
+		    newN = cons(fun,cons(ExpandType(car(t),f),cdr(t)));
+		    newN = newtype(newN,NULL,FALSE);
+		    *f = cons(newN,*f);
+		    return newN;
 		    }
 	       else if (fun == function_S) {
 		    node argtypes = car(t);
 		    node rettype = cadr(t);
 		    node newargtypes = NULL;
-		    node new;
+		    node newN;
 		    while (argtypes != NULL) {
 			 newargtypes = cons( 
 			      ExpandType(car(argtypes),f), newargtypes);
@@ -451,10 +452,10 @@ node ExpandType(node t, node *f) {
 			 }
 		    newargtypes = reverse(newargtypes);
 		    rettype = ExpandType(rettype,f);
-		    new = list(3,fun,newargtypes,rettype);
-		    new = newtype(new,NULL,FALSE);
-		    *f = cons(new,*f);
-		    return new;
+		    newN = list(3,fun,newargtypes,rettype);
+		    newN = newtype(newN,NULL,FALSE);
+		    *f = cons(newN,*f);
+		    return newN;
 		    }
 	       else assert(FALSE); return NULL;
 	       }

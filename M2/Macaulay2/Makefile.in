@@ -56,89 +56,84 @@ distclean clean ::; rm -rf lib
 distclean clean ::; rm -rf tmp
 ################################# util
 initialize ::; $(MAKE) -C util all
-clean ::; $(MAKE) NODEPENDS=1 -C util clean
+distclean clean ::; $(MAKE) NODEPENDS=1 -C util $@
 wc ::; $(MAKE) NODEPENDS=1 -C util wc
 ################################# c
-justM2 all ::; $(MAKE) -C c all
-clean ::; $(MAKE) NODEPENDS=1 -C c clean
+distclean clean ::; $(MAKE) NODEPENDS=1 -C c $@
+all justM2 ::; $(MAKE) -C c all
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# c2
-justM2 all ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
-clean ::; $(MAKE) NODEPENDS=1 -C c2 clean
+all justM2 ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
+distclean clean ::; $(MAKE) NODEPENDS=1 -C c2 $@
 ################################# e
-justM2 all ::; $(MAKE) -C e all
-tests ::; $(MAKE) -C e tests
-clean ::; $(MAKE) NODEPENDS=1 -C e clean
-wc ::;  $(MAKE) -C e NODEPENDS=1 wc
+justM2 ::; $(MAKE) -C e all
+all tests ::; $(MAKE) -C e $@
+wc distclean clean ::; $(MAKE) NODEPENDS=1 -C e $@
 ################################# dbm
-justM2 all ::; $(MAKE) -C dbm all
-tests ::; $(MAKE) -C dbm tests
-clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
+justM2 ::; $(MAKE) -C dbm all
+all tests ::; $(MAKE) -C dbm $@
+distclean clean ::; $(MAKE) NODEPENDS=1 -C dbm $@
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
-justM2 all ::; $(MAKE) -C dumpdata all
-tests ::; $(MAKE) -C dumpdata tests
+justM2 ::; $(MAKE) -C dumpdata all
+all tests ::; $(MAKE) -C dumpdata $@
 endif
-clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
-wc ::;  $(MAKE) -C dumpdata NODEPENDS=1 wc
+wc distclean clean ::; $(MAKE) NODEPENDS=1 -C dumpdata $@
 ################################# d
 config ::; $(MAKE) NODEPENDS=1 -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
-clean ::; $(MAKE) NODEPENDS=1 -C d clean
-wc ::;  $(MAKE) -C d NODEPENDS=1 wc
+wc distclean clean ::; $(MAKE) NODEPENDS=1 -C d $@
 ################################# basictests
 all ::; $(MAKE) -C basictests -k
-clean ::; $(MAKE) -C basictests clean
+distclean clean ::; $(MAKE) -C basictests $@
 ################################# thread
-clean ::; if [ -d thread ]; then $(MAKE) -C thread clean; fi
+distclean clean ::; if [ -d thread ]; then $(MAKE) -C thread clean; fi
 ################################# tutorial
 #### keep this before 'm2' so the final/*.out files get made
-justM2 all::; $(MAKE) -C tutorial all
-clean::; $(MAKE) -C tutorial clean
+justM2::; $(MAKE) -C tutorial all
+all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2
-all ::; $(MAKE) -C m2 all
-justM2 ::; $(MAKE) -C m2 justM2
-tests ::;  $(MAKE) -C m2 tests
-clean ::; $(MAKE) -C m2 clean
-wc ::;  $(MAKE) -C m2 wc
+wc distclean clean tests justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
 tests ::; $(MAKE) -C test -k
-clean ::; $(MAKE) -C test clean
+distclean clean ::; $(MAKE) -C test $@
 ################################# schubert
-tests ::; if [ -d schubert ]; then $(MAKE) -C schubert tests; fi
+tests ::
+	if [ -d schubert ]; then $(MAKE) -C schubert tests; fi
 ################################# setup
 all :: setup
 	[ -x $< ] || chmod a+x $<
+################################# packages
+tests clean distclean ::; $(MAKE) -C packages $@
 ################################# experiments
-clean ::; if [ -d experiments ]; then $(MAKE) -C experiments clean; fi
-all   ::; if [ -d experiments ]; then $(MAKE) -C experiments all; fi
+all distclean clean ::; if [ -d experiments ]; then $(MAKE) -C experiments $@; fi
 ################################# slides
-clean ::; if [ -d slides ]; then $(MAKE) -k -C slides clean; fi
+distclean clean ::; if [ -d slides ]; then $(MAKE) -k -C slides $@; fi
 tests ::; if [ -d slides ]; then $(MAKE) -k -C slides; fi
 ################################# html
 doc :: html
 html ::; $(MAKE) -C html all
-clean ::; $(MAKE) -C html clean
+distclean clean ::; $(MAKE) -C html $@
 ################################# book
 # doc :: book
 book ::;  $(MAKE) -C book all
-clean ::; $(MAKE) -C book clean
+distclean clean ::; $(MAKE) -C book $@
 ################################# ComputationsBook
-doc :: ComputationsBook
-ComputationsBook ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook all; fi
-clean distclean  ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook $@; fi
+# doc :: ComputationsBook
+# ComputationsBook ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook all; fi
+# clean distclean  ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook $@; fi
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
-clean ::; $(MAKE) -C emacs clean
+distclean clean ::; $(MAKE) -C emacs $@
 ################################# appendix to Vasconcelos' book
 doc :: Vasconcelos-appendix
 Vasconcelos-appendix ::; $(MAKE) -C Vasconcelos-appendix all
-clean ::; $(MAKE) -C Vasconcelos-appendix clean
+distclean clean ::; $(MAKE) -C Vasconcelos-appendix clean
 ################################# socket
-clean ::; if [ -d socket ]; then $(MAKE) -C socket clean; fi
+distclean clean ::; if [ -d socket ]; then $(MAKE) -C socket clean; fi
 ################################# Mathematica
-clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
+distclean clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
 ################################# backup
 backup ::; $(MAKE) -C m2 backup
 backup ::; if [ -d docs ]; then $(MAKE) -C docs backup; fi

@@ -38,3 +38,5 @@ else
 all:: all2
 tests: tests2
 endif
+distclean : clean
+	rm -f Makefile

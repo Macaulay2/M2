@@ -46,3 +46,5 @@ wais-service:
 clean::
 	rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
 
+distclean : clean
+	rm -f Makefile
