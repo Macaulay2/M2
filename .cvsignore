@@ -5,3 +5,4 @@ TAGS
 Makefile
 config.Makefile
 config.status
+configure.scan
