@@ -199,7 +199,7 @@ AC_ARG_ENABLE(gc_for_new,
 AC_SUBST(ALTIVEC)
 AC_ARG_ENABLE(altivec,
     AC_HELP_STRING(--enable-altivec,compile with "-faltivec" option),
-    ALTIVEC="yes",
+    ALTIVEC="$enableval",
     ALTIVEC="no"
     )
 
