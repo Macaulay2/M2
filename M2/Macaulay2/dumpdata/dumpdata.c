@@ -82,7 +82,7 @@ static void trim(char *s) {
 
 static int extend_memory(void *newbreak) {
   if (ERROR == (int)brk(newbreak)) {
-    warning("loaddata: out of memory (extending break to %p)", newbreak);
+    warning("loaddata: out of memory (extending break to %p)\n", newbreak);
     return ERROR;
   }
   else return OKAY;
@@ -146,7 +146,7 @@ int dumpdata(char const *dumpfilename) {
     }
     for (i=0; i<nmaps; i++) {
       if (isDumpable(&dumpmaps[i]) && ERROR == dumpmap(fd,&dumpmaps[i])) {
-	warning("warning dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
+	warning("warning: error occurred while dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
 	close(fd);
 	return ERROR;
       }
@@ -219,9 +219,17 @@ int loaddata(char const *filename) {
 	fclose(f);
 	return ERROR;
       }
+      if (dumpedmap.to != currmap[j].to) {
+	char buf[100];
+	sprintmap(buf,&currmap[j]);
+	warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);
+	fclose(f);
+	return ERROR;
+      }
       if (dumpedmap.checksum != currmap[j].checksum) {
-	warning("loaddata: checksum for map has changed from %u to %u\n",
-		dumpedmap.checksum, currmap[j].checksum);
+	char buf[100];
+	sprintmap(buf,&currmap[j]);
+	warning("loaddata: map checksum has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
 	  fclose(f);
 	  return ERROR;
