@@ -181,7 +181,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 -- 		    	 ggskewpolyring
 -- 		    )
 	       )
-	  else new PolynomialRing from rawPolynomialRing(R.RawRing, M.RawMonoid);
+	  else (
+	       rawRM := rawPolynomialRing(raw R, raw M);
+	       if class R =!= PolynomialRing and R =!= ZZ and R =!= QQ then rawRM = rawQuotientRing(rawRM, raw R);
+	       new PolynomialRing from rawRM
+	       );
 	  RM.baseRings = append(R.baseRings,R);
 	  RM.monoid = M;
 	  RM.Adjust = (options M).Adjust;
@@ -259,9 +263,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    gt)
 	       else hashTable gt
 	       );
-	  scan(keys R, k -> (
-		    if class k === String 
-		    then RM#k = new RM from rawTerm(RM.RawRing, (R#k).RawRingElement, (1_M).RawMonomial)));
+	  scan(keys R, k -> if class k === String then RM#k = new RM from rawPromote(raw RM, raw R#k));
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;
 	       M - M := (m,n) -> R#1 * m - R#1 * n;
