@@ -253,8 +253,11 @@ export Code := (exprCode or variableCode
 
 -- scopes
 
-export newSymbolHashTable():SymbolHashTable := SymbolHashTable( new array(SymbolList) len 10 do provide NULL, 0);
-
+export newSymbolHashTable():SymbolHashTable := SymbolHashTable( 
+     new array(SymbolList) 
+     len 8						    -- must be a power of 2, for our hashing to work
+     do provide NULL,
+     0);
 
 dummySymbolFrameIndex := 0;
 export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);

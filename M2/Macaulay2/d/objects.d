@@ -558,6 +558,24 @@ setupfun("applyValues",mapvaluesfun);
 
 bucketsfun(e:Expr):Expr := (
      when e
+     is d:Dictionary do list(
+	  new Sequence len length(d.symboltable.buckets) do (
+	       foreach b in d.symboltable.buckets do (
+		    n := 0;
+		    c := b;
+		    while ( when c is null do false is cell:SymbolListCell do (c = cell.next; true) ) do n = n+1;
+		    c = b;
+		    provide list(
+			 new Sequence len n do
+			 while (
+			      when c
+			      is null do false
+			      is cell:SymbolListCell do (
+				   provide Expr(SymbolClosure(globalFrame,cell.entry));
+				   c = cell.next;
+				   true)
+			      )
+			 do nothing))))
      is h:HashTable do list(
 	  new Sequence len length(h.table) do (
 	       foreach pp in h.table do (
