@@ -1,4 +1,4 @@
--- Canonical Embeddings of Plane Curves and Gonality
+-- Tutorial: Canonical Embeddings of Plane Curves and Gonality
 --
 --------------------------
 -- MATHEMATICAL BACKGROUND

@@ -1,4 +1,4 @@
--- Elementary uses of Groebner bases
+-- Tutorial: Elementary uses of Groebner bases
 --
 -- \def\P{\bf P}
 -- 	In this tutorial we introduce a number
