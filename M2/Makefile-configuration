@@ -1,4 +1,4 @@
-default : configure include/config.h.in.stamp
+all: configure include/config.h.in.stamp
 configure : configure.ac aclocal.m4 config.files
 	autoconf
 # autoheader may also change include/config.h.in
