@@ -1,65 +1,80 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
--- document {
---      Key => (ambient,Module),
---      Headline => "",
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      -- description here, with examples
---      SeeAlso => {},
---      Caveat => {}
---      }
-
+document {
+     Key => (ambient,Matrix),
+     Headline => "WRITE THIS ROUTINE",
+     Usage => "ambient f",
+     Inputs => {
+	  "f" => null
+	  },
+     Outputs => {
+	  {"WRITE THIS"}
+	  },
+     -- description here, with examples
+     SeeAlso => {},
+     Caveat => {}
+     }
 document {
      Key => (symbol _, Matrix, List),
-     Headline => "get some columns from a matrix",
-     TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
-     columns numbered i, j, k, ... .",
-     PARA,
-     "Repetitions of the indices are allowed.",
-     PARA,
-     "If the list of column indices is a permutation of 0 .. n-1, where n is
-     the number of columns, then the result is the corresponding permutation
-     of the columns of f.",
-     PARA,
-     EXAMPLE "R = ZZ/101[a..f];",
+     Headline => "select some columns from a matrix",
+     Usage => "f_cols",
+     Inputs => {
+	  "f" => {"a matrix between free modules"},
+	  "cols" => "a list of integers denoting the choice of columns",
+	  },
+     Outputs => {
+	  {"the submatrix of ", TT "f", " corresponding to the columns ", TT "cols", "."}
+	  },
+     "This is the same as calling ", 
+     TO2 ((submatrix,Matrix,VisibleList), TT "submatrix(f,cols)"), ".",
      EXAMPLE {
+	  "R = QQ[a..f];",
 	  "p = matrix {{a,b,c},{d,e,f}}",
       	  "p_{1}",
-      	  "p_{1,1,2}",
-      	  "p_{2,1,0}",
+      	  "p_{1,2,0}"
 	  },
-     SeeAlso => "_"
+     SeeAlso => {submatrix, (symbol ^, Matrix, List)}
      }
 document {
-     Key => (symbol ^,Matrix,List),
-     Headline => "select some rows of a matrix",
-     TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
-     rows numbered i, j, k, ... .",
-     PARA,
-     "Repetitions of the indices are allowed.",
-     PARA,
-     "If the list of row indices is a permutation of 0 .. n-1, where n is
-     the number of rows, then the result is the corresponding permutation
-     of the rows of f.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "p = matrix {{a,b,c},{d,e,f}}",
-      	  "p^{1}",
-      	  "p^{1,0}",
+     Key => (symbol ^, Matrix, List),
+     Headline => "select some rows from a matrix",
+     Usage => "f_rows",
+     Inputs => {
+	  "f" => {"a matrix between free modules"},
+	  "rows" => "a list of integers denoting the choice of rows",
 	  },
-     SeeAlso => "^"
+     Outputs => {
+	  {"the submatrix of ", TT "f", " corresponding to the rows in the list ", TT "rows", "."}
+	  },
+     "This is the same as calling ", 
+     TO2 ((submatrix,Matrix,VisibleList,VisibleList), TT "submatrix(f,rows,)"), ".",
+     EXAMPLE {
+	  "R = QQ[a..f];",
+	  "p = matrix {{a,b,c},{d,e,f}}",
+      	  "p^{1}",
+      	  "p^{1,0}"
+	  },
+     SeeAlso => {submatrix, (symbol _, Matrix, List)}
      }
+TEST ///
+     R = ZZ[x_1..x_12,y]
+     f = genericMatrix(R,3,4)
+     assert(source (f_{1,2}) == R^{-1,-1})
+     assert(target (f_{1,2}) == target f)
+     M1 = (target f)/(y * target f)
+     M2 = (source f)/(y * source f)
+     g = map(target f,M2,f)
+     assert(try (g_{1,2}; false) else true)
+     submatrix(g, {1})
+///
 document {
      Key => (submatrix,Matrix,VisibleList,VisibleList),
      Headline => "select part of a matrix",
-     Usage => "submatrix(f, rows, cols)",
-     Inputs => { "f" => Matrix => null,
-	  "rows" => VisibleList => "a list of integers denoting the choice of rows",
-	  "cols" => VisibleList => "a list of integers denoting the choice of columns"},
+     Usage => "submatrix(f, rows, cols) or submatrix(f,,cols) or submatrix(f,rows,)",
+     Inputs => { "f" => "a map between free modules",
+	  "rows" => "a list of integers denoting the choice of rows.  
+	            If omitted, use all rows",
+	  "cols" => "a list of integers denoting the choice of columns.
+	            If omitted, use all columns"},
      Outputs => {Matrix => {"the submatrix of ", TT "f", " corresponding to the lists ", TT "rows", 
 	  " and ", TT "cols", ""}},
      "Yields an r by c matrix, where r is the length of the list of integers
@@ -74,28 +89,33 @@ document {
      "Both ", TT "rows", " and/or ", TT "cols", " may contain duplicate values, 
      in which case the result will contain
      duplicate rows and/or columns.",
-     PARA,
-     "Both the source and target of ", TT "f", " must be free modules.",
-     PARA,
      EXAMPLE {
 	  "R = ZZ/101[a .. o];",
       	  "f = genericMatrix(R, a, 3, 5)",
       	  "submatrix(f, {1,2,0}, {0..2, 4})",
 	  },
      PARA,
-     EXAMPLE {"submatrix(f, {1,2}, )",
-	  "submatrix(f,,{0,1})"},
+     EXAMPLE {"submatrix(f, {1,2}, )"},
+     TT "submatrix(f,,cols)", " can be written as ", TT "submatrix(f,cols)", ", or ",
+     TT "f_cols", ".",
+     EXAMPLE {
+	  "submatrix(f,,{0,1})",
+	  "f_{0,1}"
+	  },
      SeeAlso => {
-	  (symbol_,Matrix,VisibleList),
-	  (symbol^,Matrix,VisibleList)
+	  (symbol_,Matrix,List),
+	  (symbol^,Matrix,List),
+	  (submatrix,Matrix,VisibleList),
+	  (symbol_,Matrix,Array),
+	  (symbol^,Matrix,Array),
 	  },
      }
 document {
      Key => (submatrix,Matrix,VisibleList),
      Headline => "select certain columns of a matrix",
      Usage => "submatrix(f, cols)",
-     Inputs => { "f" => Matrix => null,
-	  "cols" => VisibleList => "a list of integers denoting the choice of columns"},
+     Inputs => { "f" => "a map between free modules",
+	  "cols" => "a list of integers denoting the choice of columns"},
      Outputs => {Matrix => {"the submatrix of ", TT "f", " corresponding to the columns ",
 	        TT "cols", ""}},
      "Yields an r by c matrix, where r is the number of rows of ", TT "f", ", and 
@@ -105,22 +125,104 @@ document {
      "The list ", TT "cols", " may contain ", TO "ranges and repetitions", ", as in ", 
      TT "{3, 5..7, 3:0}",
      PARA,
-     "The source of ", TT "f", " must be a free module.",
-     PARA,
+     "If the list of column indices is a permutation of 0 .. n-1, where n is
+     the number of columns, then the result is the corresponding permutation
+     of the columns of f.",
      EXAMPLE {
 	  "R = ZZ/101[a .. o];",
       	  "f = genericMatrix(R, a, 3, 5)",
-      	  "submatrix(f, {0..2})",
+      	  "submatrix(f, {1..3,0})",
 	  },
      SeeAlso => {
 	  (symbol_,Matrix,VisibleList),
-	  (symbol^,Matrix,VisibleList)
+	  (symbol^,Matrix,VisibleList),
+	  (symbol_,Matrix,Array),
+	  (symbol^,Matrix,Array)
 	  },
      }
 document {
      Key => submatrix,
      Headline => "select part of a matrix"
      }
+document {
+     Key => (diff,RingElement,RingElement),
+     Headline => "differentiation",
+     Usage => "diff(x,f)",
+     Inputs => {
+	  "x" => "a polynomial",
+	  "f" => {"a polynomial in the same ring as ", TT "x",}
+	  },
+     Outputs => {
+	  {"the result of differentiating ", TT "f", " by ", TT "x", "."}
+	  },
+     "If ", TT "x", " is a polynomial, not just an indeterminate, 
+     we apply the differential
+     operator corresponding to ", TT "x", " (i.e. replace each occurence
+	  of the indeterminate ", TT "y", " in ", TT "x", " with ", TT "d/dy", ").",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "diff(x,x^7 + 4*x^3*y - 3*y)",
+	  "diff(x^2*y,x^7 + 4*x^3*y - 3*y)",
+	  "diff(x^2*y+y,x^7 + 4*x^3*y - 3*y)",
+	  },
+     SeeAlso => {diff',contract,contract',jacobian},
+     }
+document {
+     Key => (diff,RingElement,Matrix),
+     Headline => "differentiate each entry of a matrix",
+     Usage => "diff(x,f)",
+     Inputs => {
+	  "x" => "a polynomial",
+	  "f" => {"a matrice between free modules over the same ring as ", TT "x",}
+	  },
+     Outputs => {
+	  Matrix => {"having the same shape as f, whose (i,j) entry is the 
+	       result of differentiating ", TT "f_(i,j)", " by ", TT "x", "."}
+	  },
+     "If ", TT "x", " is a polynomial, not just an indeterminate, 
+     we apply the differential
+     operator corresponding to ", TT "x", " (i.e. replace each occurence
+	  of the indeterminate ", TT "y", " in ", TT "x", " with ", TT "d/dy", ").",
+     PARA,
+     "The target of the result is the same as the target of f, but the source, although
+     it has the same rank as the source of f, has different degrees in an attempt to
+     ensure that the result is homogeneous.",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "f = matrix{{x^2-y*z, x*y*z + z^4}, {x-1, 2*y^2+z^2-1}}",
+	  "diff(x,f)",
+	  "diff(y*z,f)",
+	  "diff(x^2+y^2+z^2,f)"
+	  },
+     SeeAlso => {diff',contract,contract',jacobian},
+     }
+document {
+     Key => (diff,Matrix,RingElement),
+     Headline => "differentiation",
+     Usage => "diff(f,g)",
+     Inputs => {
+	  "f" => "a matrix",
+	  "g" => {"a polynomial with the same ring as ", TT "f",}
+	  },
+     Outputs => {
+	  {"the result of differentiating ", TT "g", " with each entry of ", TT "f", "."}
+	  },
+     "If an entry ", TT "x", " of ", TT "f", " is a polynomial, not just an indeterminate, 
+     we apply the differential
+     operator corresponding to ", TT "x", " (i.e. replace each occurence
+	  of the indeterminate ", TT "y", " in ", TT "x", " with ", TT "d/dy", ").",
+     PARA,
+     "The shape of the resulting matrix is the same as the shape of f.",
+     EXAMPLE {
+	  "R = QQ[x,y,z,q];",
+	  "f = vars R",
+	  "diff(f, (x+y-z)^2)",
+	  "f2 = genericMatrix(R,2,2)",
+	  "diff(f2, (x+y-z)^2)"
+	  },
+     SeeAlso => {diff',contract,contract',jacobian},
+     }
+
 document {
      Key => (diff,Matrix),
      Headline => "differentiate a matrix",
@@ -173,11 +275,14 @@ document {
      }
 document {
      Key => diff,
-     Headline => "differentiate"
+     Headline => "differentiate or take difference",
+     "The main use of diff is to differentiate polynomials by indeterminates.",
+     SeeAlso => "diff and contract"
      }
 document {
      Key => contract,
      Headline => "contract one matrix by another",
+     SeeAlso => "diff and contract"
      }
 document {
      Key => (contract,Matrix,Matrix),
@@ -953,7 +1058,7 @@ document {
 document {
      Key => (map,Module,Nothing,List),
      Headline => "create a matrix by giving a doubly nested list of ring elements",
-     Usage => "map(M,n,v)",
+     Usage => "map(M,v)",
      Inputs => {
 	  "M" => null,
 	  "v" => null

@@ -2186,7 +2186,7 @@ ring_elem PolynomialRing::diff(ring_elem a, ring_elem b, int use_coeff) const
       for (Nterm *t = b; t != 0; t = t->next)
 	{
 	  d->coeff = diff_term(s->monom, t->monom, d->monom, use_coeff);
-	  if (!is_zero(d->coeff))
+	  if (!K_->is_zero(d->coeff))
 	    {
 	      K_->mult_to(d->coeff, s->coeff);
 	      K_->mult_to(d->coeff, t->coeff);
