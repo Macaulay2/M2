@@ -90,7 +90,7 @@ checkNet := n -> if class n === Net or class n === String then n else error "did
 checkString := n -> if class n === String then n else error "didn't format correctly"
 silentRobustNet = (wid,ht,sec,y) -> (
      trunc(wid,ht,
-	  try timelimit (sec, () -> if y === null then "null" else checkNet net y)
+	  try timelimit (sec, () -> checkNet net y)
 	  else 
 	  try timelimit (sec, () -> checkString toString y)
 	  else
