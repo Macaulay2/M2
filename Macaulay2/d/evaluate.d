@@ -917,11 +917,11 @@ export eval(c:Code):Expr := (
 	       if alarmed then (
 		    interrupted = false;
 		    alarmed = false;
-		    printErrorMessage(c,"alarm occurred"))
+		    buildErrorPacket("alarm occurred"))
 	       else (
 		    interrupted = false;
 		    SuppressErrors = false;
-		    printErrorMessage(c,"interrupted")))
+		    buildErrorPacket("interrupted")))
 	  else when c
 	  is u:unaryCode do u.f(u.rhs)
 	  is b:binaryCode do b.f(b.lhs,b.rhs)
@@ -1015,8 +1015,7 @@ export eval(c:Code):Expr := (
 	  p := codePosition(c);
      	  if int(p.loadDepth) >= errorDepth then (
 	       if err.position == dummyPosition then (err.position = p; printErrorMessage(err); );
-	       -- if localFrame != err.report.code.frame then 
-	       (
+	       if localFrame != err.report.code.frame then (
 		    err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
 		    if debuggingMode && stdIO.inisatty && stdIO.outisatty then (
 			 printErrorMessage(p,"--break loop--");
