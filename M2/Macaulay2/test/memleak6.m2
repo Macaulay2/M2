@@ -52,17 +52,26 @@ example=Ap
 	collectGarbage()
 	k = # netRows engineHeap()
 	k'= # netRows engineMemory()
-        n = 10
+        n = 30
 
 
-f = i -> (
-	  Ap := random(S^1,S^{27:-1});			    -- 1 handle wasted here
-	  As := substitute(A,Ap);
- 	  if betti res coker As == expectedSyzygies 
-	  then (
-	       Cs := substitute(C,Ap)			    -- 1 handle wasted here
+f = i->(
+     if i%20==0 then collectGarbage();
+     Ap=random(S^1,S^{27:-1});
+     As=substitute(A,Ap);
+     if betti res coker As == expectedSyzygies
+     then (
+  	  Cs=substitute(C,Ap);
+	  bet=betti syz(Cs,DegreeLimit=>1);
+  	  if expectedSymmetricSections == bet 
+	  then ( "expected Sections" )
+	  else (
+	       example=example||Ap;
+	       (bet,i)
 	       )
 	  )
+     else "wrong syzygies"
+     )
 
 scan(n,f)
 
@@ -71,6 +80,8 @@ scan(n,f)
 	collectGarbage()
 	K = # netRows engineHeap()
 	K'= # netRows engineMemory()
+	stderr << "total number of handles wasted per iteration : " << K-k << endl
+	stderr << "total number of memory types wasted per iteration : " << K'-k' << endl
 	w = floor( 1/2 + (K-k)/n )
 	w' = floor( 1/2 + (K'-k')/n )
 	stderr << "average number of handles wasted per iteration : " << w << endl
