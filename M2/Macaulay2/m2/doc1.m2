@@ -797,7 +797,7 @@ document { ambient,
      TT "ambient R", " -- yields the ambient ring of the quotient ring ", TT "R", ".
      For a Galois field it yields the ring it was constructed from.",
      PARA,
-     EXAMPLE "ambient(ZZ/101[a,b]/b^3/a^3)",
+     EXAMPLE "ambient(ZZ/101[a,b]/(a^3+b^3))",
      SEEALSO {"cover", "super"}
      }
 

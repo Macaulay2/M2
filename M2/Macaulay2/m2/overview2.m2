@@ -59,6 +59,7 @@ document { "ideals",
      all the variables.",
      EXAMPLE {
 	  "T = ZZ/101[x,y,z,t];",
+	  "use ring I",
       	  "substitute(I,{a=>x^10,b=>y^10,c=>z^10,d=>t^10})",
 	  },
      "Now notice that the variable ", TT "a", " appears to be an element of ", TT "S", ".

@@ -786,15 +786,14 @@ examine(e:Expr):Expr := (
 	  f := sc.frame;
 	  s := sc.symbol;
 	  stdout
-	  << s.position
-	  << " word.name:" << present(s.word.name)
-	  << " scopenum:" << s.scopenum
-	  << " frameindex:" << s.frameindex
-	  << " lookupCount:" << s.lookupCount
-	  << " protected:" << s.protected 
-	  << " transientScope:" << s.transientScope
-	  << endl
-	  << "frames bound for scopes:";
+	  << s.position << endl
+	  << " word.name:" << present(s.word.name) << endl
+	  << " scopenum:" << s.scopenum << endl
+	  << " frameindex:" << s.frameindex << endl
+	  << " lookupCount:" << s.lookupCount << endl
+	  << " protected:" << s.protected << endl
+	  << " transientScope:" << s.transientScope << endl
+	  << " frames bound for scopes:";
 	  while f.scopenum >= 0 do (
 	       stdout << " " << f.scopenum;
 	       f = f.next;
@@ -806,12 +805,12 @@ examine(e:Expr):Expr := (
 	  model := fc.model;
 	  desc := model.desc;
 	  stdout
-	  << "restargs:" << desc.restargs << ", "
-	  << "scopenum:" << desc.scopenum << ", "
-	  << "framesize:" << desc.framesize << ", "
-	  << "numparms:" << desc.numparms << ", "
-	  << "hasClosure:" << desc.hasClosure << endl
-	  << "frames bound for scopes:";
+	  << " restargs:" << desc.restargs << endl
+	  << " scopenum:" << desc.scopenum << endl
+	  << " framesize:" << desc.framesize << endl
+	  << " numparms:" << desc.numparms << endl
+	  << " hasClosure:" << desc.hasClosure << endl
+	  << " frames bound for scopes:";
 	  while f.scopenum >= 0 do (
 	       stdout << " " << f.scopenum;
 	       f = f.next;
@@ -870,7 +869,7 @@ setupfun("netDepth",netDepth);
 netRows(e:Expr):Expr := (
      when e
      is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide Expr(s))
-     is s:string do seq(e)
+     is s:string do list(e)
      else WrongArg("a net"));
 setupfun("netRows",netRows);
 
@@ -1396,3 +1395,9 @@ setupconst("postfixOperators",Expr(new array(Expr) len length(opsWithPostfixMeth
      foreach s in opsWithPostfixMethod do provide Expr(s))));
 setupconst("otherOperators",Expr(new array(Expr) len length(opsOther) do (
      foreach s in opsOther do provide Expr(s))));
+
+fileExists(e:Expr):Expr := (
+     when e is name:string do toBoolean(fileExists(name))
+     else buildErrorPacket("expected a string as file name")
+     );
+setupfun("fileExists",fileExists);

@@ -85,10 +85,13 @@ tt#";" = "%sc"
 tt#"\\" = "%bs"
 tt#" " = "%_"
 tt#"%" = "%%"
+tt#"$" = "%do"
+tt#"<" = "%lt"
+tt#">" = "%gt"
 
 uu := new HashTable from {
-     "." => "%d",
-     ".." => "%d%d"
+     "." => "%pe",
+     ".." => "%pe%pe"
      }
 
 toFilename = method()
