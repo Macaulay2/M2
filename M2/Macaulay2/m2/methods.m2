@@ -137,6 +137,15 @@ status = method (Options => new OptionTable from {
      	  Monomials => false
      	  })
 
+
+mopts := Options => {
+     Degree => null,					    -- for use with matrices
+     DegreeMap => null					    -- for use in ring maps
+     }
+
+matrix = method mopts
+map = method mopts
+
 setup(SingleArgumentDispatch => true, {transpose} )
 setup(TypicalValue => RR, {realPart, imaginaryPart})
 setup(TypicalValue => Boolean,

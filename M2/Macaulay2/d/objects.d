@@ -124,8 +124,7 @@ equal(x:HashTable,y:HashTable):Expr := (
      if x == y then return True;
      if x.hash != y.hash then return False;
      if x.class != y.class || x.parent != y.parent then return False;
-     if x.hash == 0					    -- cache tables have hash code 0
-     && ancestor(x.class,cacheTableClass) then return True;
+     if x.hash == 0 && x.class == cacheTableClass then return True; -- cache tables have hash code 0
      if x.mutable || y.mutable then return False;
      if x.numEntries != y.numEntries || length(x.table) != length(y.table) then return False;
      foreach a at i in x.table do (

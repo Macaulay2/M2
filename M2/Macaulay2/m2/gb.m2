@@ -4,7 +4,7 @@ GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
 raw GroebnerBasis := G -> G.RawComputation
 status GroebnerBasis := opts -> G -> status raw G
-toString GroebnerBasis := g -> toString new FunctionApplication from { gb, g.matrix }
+toString GroebnerBasis := g -> toString new FunctionApplication from { gb, unbag g.matrix }
 net GroebnerBasis := g -> net gens g
 
 summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)

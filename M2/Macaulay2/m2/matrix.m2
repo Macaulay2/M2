@@ -15,8 +15,8 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-newMatrix = method(TypicalValue => Matrix)
-newMatrix(Module,Module,RawMatrix) := (tar,src,f) -> (
+-- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
+map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      R := ring tar;
      new Matrix from {
 	  symbol ring => R,
@@ -25,9 +25,8 @@ newMatrix(Module,Module,RawMatrix) := (tar,src,f) -> (
 	  symbol RawMatrix => f,
 	  symbol cache => new CacheTable
 	  })
-newMatrix(Ring,RawMatrix) := (R,f) -> (			    -- replaces getMatrix =
-     newMatrix(newModule(R,rawTarget f),newModule(R,rawSource f),f)
-     )
+map(Module,Nothing,RawMatrix) := opts -> (tar,nullsrc,f) -> map(tar,newModule(ring tar,rawSource f),f,opts)
+map(Ring,RawMatrix) := opts -> (R,f) -> map(newModule(R,rawTarget f),newModule(R,rawSource f),f,opts)
 
 reduce = (tar,f) -> (					    -- we erase this later
      if not isFreeModule tar then (
@@ -40,19 +39,19 @@ reduce = (tar,f) -> (					    -- we erase this later
 QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m
 Matrix * QQ := (m,r) -> (r * 1_(ring m)) * m
 
-ZZ * Matrix := (i,m) -> newMatrix(target m, source m, reduce(target m, i * m.RawMatrix))
+ZZ * Matrix := (i,m) -> map(target m, source m, reduce(target m, i * m.RawMatrix))
 
 Matrix * ZZ := (m,i) -> i * m
 
 RingElement * Matrix := (r,m) -> (
      R := ring r;
      if R =!= ring m then error "scalar not in ring of matrix";
-     newMatrix(target m, source m, reduce(target m, r.RawRingElement * m.RawMatrix)))
+     map(target m, source m, reduce(target m, r.RawRingElement * m.RawMatrix)))
 
 Matrix * RingElement := (m,r) -> (
      R := ring r;
      if R =!= ring m then error "scalar not in ring of matrix";
-     newMatrix(target m, source m, reduce(target m, m.RawMatrix * r.RawRingElement)))
+     map(target m, source m, reduce(target m, m.RawMatrix * r.RawRingElement)))
 
 sameRing := (m,n) -> (
      if ring m =!= ring n then (
@@ -82,7 +81,7 @@ Matrix == ZZ := (m,i) -> (
 ZZ == Matrix := (i,m) -> m == i
 
 Matrix + Matrix := Matrix => (
-     (f,g) -> newMatrix(target f, source f, f.RawMatrix + g.RawMatrix)
+     (f,g) -> map(target f, source f, f.RawMatrix + g.RawMatrix)
      ) @@ sameRing
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
@@ -90,7 +89,7 @@ ZZ + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
 Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
 Matrix - Matrix := Matrix => (
-     (f,g) -> newMatrix(target f, source f, f.RawMatrix - g.RawMatrix)
+     (f,g) -> map(target f, source f, f.RawMatrix - g.RawMatrix)
      ) @@ sameRing
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
@@ -117,7 +116,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       );
 	  M := target m;
 	  N := source n;
-	  newMatrix(M,N,reduce(M,m.RawMatrix * n.RawMatrix)))
+	  map(M,N,reduce(M,m.RawMatrix * n.RawMatrix)))
      else (
      	  R := ring m;
 	  S := ring n;
@@ -141,7 +140,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  if R.?Adjust then deg = R.Adjust deg;
 	  f := m.RawMatrix * n.RawMatrix;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, false);
-	  newMatrix(M,N,reduce(M,f))))
+	  map(M,N,reduce(M,f))))
 
 Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
@@ -150,7 +149,7 @@ Matrix ^ ZZ := Matrix => (f,n) -> (
 transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpose else m.cache.transpose = (
      if not (isFreeModule source m and isFreeModule target m) 
      then error "expected a map between free modules";
-     newMatrix(ring m, rawDual m.RawMatrix))
+     map(ring m, rawDual m.RawMatrix))
 
 ring(Matrix) := m -> m.target.ring
 
@@ -190,21 +189,21 @@ isHomogeneous Matrix := m -> (
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
 ggConcatCols := (tar,src,mats) -> (
-     f := newMatrix(tar,src,rawConcatColumns (raw\mats));
+     f := map(tar,src,rawConcatColumns (raw\mats));
      if same(degree \ mats) and degree f != degree mats#0
      then f = map(target f, source f, f, Degree => degree mats#0);
      f)
 
 ggConcatRows := (tar,src,mats) -> (
      rawmats := raw \ mats;
-     f := newMatrix(tar,src,rawConcatRows (raw\mats));
+     f := map(tar,src,rawConcatRows (raw\mats));
      if same(degree \ mats)
      and degree f != degree mats#0
      then f = map(target f, source f, f, Degree => degree mats#0);
      f)
 
 ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
-     f := newMatrix(tar,src,rawConcatBlocks mats);
+     f := map(tar,src,rawConcatBlocks mats);
      if same(degree \ flatten mats)
      and degree f != degree mats#0#0
      then f = map(target f, source f, f, Degree => degree mats#0#0);
@@ -355,15 +354,15 @@ submatrix(Matrix,Sequence,List) :=
 submatrix(Matrix,List,Sequence) := 
 submatrix(Matrix,List,List) := Matrix => (m,rows,cols) -> (
      if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
-     newMatrix(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols)))
+     map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols)))
 submatrix(Matrix,List) := Matrix => (m,cols) -> (
      if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
-     newMatrix(ring m,rawSubmatrix(raw m, listZ toList splice cols)))
+     map(ring m,rawSubmatrix(raw m, listZ toList splice cols)))
 submatrix(Matrix,Nothing,List) := (m,rows,cols) -> submatrix(m,cols)
 submatrix(Matrix,List,Nothing) := (m,rows,cols) -> submatrix(m, rows, 0 .. numgens source m - 1)
 
 diff(Matrix, Matrix) := Matrix => (
-     (f,g) -> newMatrix(target f, source f, rawMatrixDiff(f.RawMatrix, g.RawMatrix))
+     (f,g) -> map(target f, source f, rawMatrixDiff(f.RawMatrix, g.RawMatrix))
      ) @@ sameRing
 diff(RingElement, RingElement) := RingElement => (f,g) -> (
      (diff(matrix{{f}},matrix{{g}}))_(0,0)
@@ -379,7 +378,7 @@ diff(RingElement)    := f -> diff(vars ring f, f)
 diff(Matrix)         := m -> diff(vars ring m, m)
 
 contract (Matrix, Matrix) := Matrix => diff(Matrix, Matrix) := Matrix => (
-     (f,g) -> newMatrix(target f, source f, rawMatrixContract(f.RawMatrix, g.RawMatrix))
+     (f,g) -> map(target f, source f, rawMatrixContract(f.RawMatrix, g.RawMatrix))
      ) @@ sameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (
      (contract(matrix{{f}},matrix{{g}}))_(0,0)
@@ -422,14 +421,6 @@ borel Matrix := Matrix => m -> (
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------
-
-mopts := Options => {
-     Degree => null,					    -- for use with matrices
-     DegreeMap => null					    -- for use in ring maps
-     }
-
-matrix = method mopts
-map = method mopts
 
 map(Module,Module) := Matrix => options -> (M,N) -> (
      F := ambient N;
@@ -477,7 +468,7 @@ map(Module,RingElement) := Matrix => options -> (M,r) -> (
 map(Module) := Matrix => options -> (M) -> (
      R := ring M;
      if options.Degree =!= null then error "Degree option encountered with identity matrix";
-     newMatrix(M, M, reduce(M, rawIdentity(M.RawFreeModule))))
+     map(M, M, reduce(M, rawIdentity(M.RawFreeModule))))
 
 map(Module,ZZ) := Matrix => options -> (M,i) -> (
      if i === 0 then map(M,M,0)

@@ -113,7 +113,7 @@ RingMap Matrix := Matrix => (p,m) -> (
      then error "expected source of ring map to be the same as ring of matrix";
      F := p target m;
      E := p source m;
-     map(F,E,newMatrix(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.DegreeMap degree m))
+     map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.DegreeMap degree m))
 
 kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.kernel else f.cache.kernel = (
      R := source f;

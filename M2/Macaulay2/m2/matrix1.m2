@@ -43,12 +43,12 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = makeRawTable(R,p);
      h := rawMatrix1(raw cover M, rankN, apply(toSequence flatten p, r -> r.RawRingElement), false);
-     newMatrix(M,newModule(R,rawSource h),h))
+     map(M,newModule(R,rawSource h),h))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
      f := rawMatrixRemake1(raw target p, raw p,false);
-     newMatrix(M, newModule(ring source p, rawSource f), f)
+     map(M, newModule(ring source p, rawSource f), f)
      )
 
 degreeCheck := (d,R) -> (
@@ -81,7 +81,7 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	       then (degreeLength R : 0)
 	       else degreeCheck(options.Degree, R)
 	       );
-	  newMatrix(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false)))))
 
 map(Module,Nothing,List) := 
 map(Module,Module,List) := Matrix => 
@@ -130,7 +130,7 @@ fixDegree := (m,d) -> (
 	  ggPush m, 
 	  ggPush degreeCheck(d,R),
 	  ggmatrix);
-     newMatrix(M,N)
+     map(M,N)
      )
 
 concatBlocks := mats -> (
@@ -362,7 +362,7 @@ Matrix ** Matrix := Matrix => (f,g) -> (
      then error "expected matrices over the same ring";
      map(target f ** target g, 
 	  source f ** source g, 
-	  newMatrix(R, f.RawMatrix ** g.RawMatrix),
+	  map(R, f.RawMatrix ** g.RawMatrix),
 	  Degree => degree f + degree g))
 
 Matrix ** ZZ := 

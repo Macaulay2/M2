@@ -169,7 +169,7 @@ Module == Module := (M,N) -> (
 		    isSubset(ambient M, image g))
 	       else true)))
 
-Vector = new Type of MutableHashTable			    -- do we keep this??
+Vector = new Type of HashTable				    -- used to be MutableHashTable!
 Vector _ ZZ := (v,i) -> notImplemented()		    -- we have this just because there is a possible obsolete documentation about it
 
 newModule = method(TypicalValue => Module)

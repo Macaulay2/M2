@@ -140,7 +140,7 @@ expected(type:string,returned:bool):Expr := buildErrorPacket(
 wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash table");
 
 transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
-     -- same as above, but parent specified
+     -- same as below, but parent specified
      basicType := basictype(class);
      when e
      is Error do e
@@ -154,8 +154,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 			 if mutable || o.mutable then copy(o.table) else o.table,
 			 class, parent, o.numEntries, 0, mutable);
 		    if mutable then (
-			 -- cache tables has hash code 0
-			 if !ancestor(class,cacheTableClass) then x.hash = nextHash();
+			 if class != cacheTableClass then x.hash = nextHash(); -- cache tables are mutable and have hash code 0
 			 )
 		    else x.hash = hash(x);
 		    Expr(x)))
@@ -215,7 +214,7 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 			 if mutable || o.mutable then copy(o.table) else o.table,
 			 class, o.parent, o.numEntries, 0, mutable);
 		    if mutable then (
-			 if !ancestor(class,cacheTableClass) then x.hash = nextHash();
+			 if class != cacheTableClass then x.hash = nextHash();
 			 )
 		    else x.hash = hash(x);
 		    Expr(x))
