@@ -1,7 +1,8 @@
 // Copyright 1997 by Michael Stillman
 
-#include "gmp.h"
-#include "relem.hpp"
+#define Random RandomFoo
+
+class RingElement;
 
 class Random
 {

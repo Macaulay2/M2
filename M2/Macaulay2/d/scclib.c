@@ -574,12 +574,12 @@ M2_string system_syserrmsg()
 {
      extern int errno, sys_nerr;
      extern int h_nerr;
-#if 1				/* figure out the criterion */
+#if 0				/* figure out the criterion */
      extern char * sys_errlist[];
      extern char * h_errlist[];
 #else
-     extern const char * sys_errlist[];
-     extern const char * h_errlist[];
+     extern const char * const sys_errlist[];
+     extern const char * const h_errlist[];
 #endif
 #if defined(__MWERKS__)
      return tostring("");

@@ -51,7 +51,7 @@ RingElement object_element::cast_to_RingElement() { return RingElement(0,caster)
 Vector     object_element::cast_to_Vector()     { return Vector(0,caster); }
 Matrix     object_element::cast_to_Matrix()     { return Matrix(0,caster); }
 
-object      object_element::index_of(int) { return 0; }
+object      object_element::index_of(int) { return (object_element *)0; }
 
 #include "obj_int.hpp"
 #include "obj_iarr.hpp"

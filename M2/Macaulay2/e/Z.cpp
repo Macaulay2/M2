@@ -4,6 +4,7 @@
 #include "text_io.hpp"
 #include "bin_io.hpp"
 #include "monoid.hpp"
+#include "relem.hpp"
 #include "ringmap.hpp"
 #include "random.hpp"
 #include "serial.hpp"

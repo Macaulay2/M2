@@ -83,7 +83,25 @@ public:
   virtual const res2_comp   * cast_to_res2_comp()   const { return 0; }
   virtual const gbres_comp  * cast_to_gbres_comp()   const { return 0; }
 
-
+  virtual ECoefficientRing * cast_to_ECoefficientRing() { return 0; }
+  virtual EZZp * cast_to_EZZp() { return 0; }
+  virtual EMonomialOrder * cast_to_EMonomialOrder() { return 0; }
+  virtual EMonoid * cast_to_EMonoid() { return 0; }
+  virtual EPolynomialRing * cast_to_EPolynomialRing() { return 0; }
+  virtual EFreeModule * cast_to_EFreeModule() { return 0; }
+  virtual EVector * cast_to_EVector() { return 0; }
+  virtual EMatrix * cast_to_EMatrix() { return 0; }
+  virtual ERingMap * cast_to_ERingMap() { return 0; }
+ 
+  virtual const ECoefficientRing * cast_to_ECoefficientRing() const { return 0; }
+  virtual const EZZp * cast_to_EZZp() const { return 0; }
+  virtual const EMonomialOrder * cast_to_EMonomialOrder() const { return 0; }
+  virtual const EMonoid * cast_to_EMonoid() const { return 0; }
+  virtual const EPolynomialRing * cast_to_EPolynomialRing() const { return 0; }
+  virtual const EFreeModule * cast_to_EFreeModule() const { return 0; }
+  virtual const EVector * cast_to_EVector() const { return 0; }
+  virtual const EMatrix * cast_to_EMatrix() const { return 0; }
+  virtual const ERingMap * cast_to_ERingMap() const { return 0; }
 #if defined(ARING)
   virtual const PolynomialRing * cast_to_PolynomialRing() const { return 0; }
   virtual const Polynomial * cast_to_Polynomial() const { return 0; }
@@ -132,6 +150,12 @@ public:
     }
 
   object(object_element *v) : obj(v) 
+    { 
+      if (obj != NULL) 
+	obj->refcount++; 
+    }
+
+  object(const object_element *v) : obj((object_element *)v) 
     { 
       if (obj != NULL) 
 	obj->refcount++; 

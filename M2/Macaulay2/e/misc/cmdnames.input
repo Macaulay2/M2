@@ -15,6 +15,11 @@ autoreduce
 m:matrix >> matrix
 Given a matrix, whose lead terms are not divisible by one another, form the matrix whose i th column is the normal form of the i th column of m, w.r.t. the other columns of m.
 
+ggbasisElement
+basisElement
+F:EFreeModule x:int >> EVector
+Create the vector F_x, if x is in the range 0 <= x < rank(F), and return zero otherwise.
+
 ggbetti
 betti
 res_comp >> intarray
@@ -44,10 +49,15 @@ calc
 computation >> int
 Continue the computation on the stack until it is done, or until an interrupt occurs.  A return value of 
 
+ggcharacteristic
+characteristic
+K:ECoefficientRing >> int
+Returns the characteristic of the ring K.
+
 ggcharp
 charp
 int >> ring
-Create the prime field with the given characteristic.  Currently, characteristic zero means finite precision integer arithmetic.
+Create the prime field with the given characteristic.
 
 ggcodim
 codim
@@ -263,6 +273,10 @@ getcoeff
 f:ringelem m:monomial >> a:ringelem
 Yields the (possibly zero) coefficient of the monomial 'm' in the polynomial 'f'.
 
+gggetCoefficientRing
+R:ERing >> ECoefficientRing
+Returns the coefficient ring of R.
+
 gggetColChange
 getColChange
 m:SparseMutableMatrix >> n:SparseMutableMatrix
@@ -278,10 +292,25 @@ getideal
 R:ring >> I:matrix
 If R is a quotient ring S/I, of a polynomial ring S, then place onto the stack the one row matrix consisting of the generators of a minimal GB of I.
 
+gggetFreeModule
+getFreeModule
+v:EVector >> EFreeModule
+Returns the free module which contains the vector v.
+
 gggetgb
 getgb
 gbasis >> matrix
 Place the Groebner basis (as far as it has been computed) onto the stack.
+
+gggetMO
+getMO
+M:EMonoid >> EMonomialOrder
+Returns (a copy of) the monomial order in M.
+
+gggetMonoid
+getMonoid
+R:ERing >> EMonoid
+Returns the monoid used to construct the (polynomial) ring R.
 
 gggetmingens
 getmingens
@@ -292,6 +321,11 @@ gggetring
 getring
 var >> ring
 Place the base ring of the given variable onto the stack.  If that variable does not have a base ring (e.g. an int), then put the current ring onto the stack.
+
+gggetRingFreeModule
+getRingFreeModule
+R:ERing >> EFreeModule
+Returns the free module R^1.
 
 gggetRowChange
 getRowChange
@@ -358,6 +392,10 @@ ggrandomseed
 randomseed
 n:int >> .
 Set the random number generator seed to the given number. The seed is initially set to zero.  The random generator currently used is the 'minimal' random generator of Park and Miller, described in the book 'Numerical recipes in C'.  Currently only the low 32 bits of 'n' are used for the seed.
+
+ggrank
+F:EFreeModule >> int
+Returns the rank of the free module F.
 
 ggremote
 remote
@@ -549,10 +587,25 @@ monoid
 n:int degrees:intarray weights:intarray
 Create a monoid having n variables, which has the gradings from 'degrees' and the ordering from 'weights'
 
+ggMOclone
+MOclone
+mo:MonomialOrder >> mo':MonomialOrder
+Create a new copy of 'mo'.
+
+ggMOcomponent
+MOcomponent
+mo:MonomialOrder >> .
+While creating a monomial order, place the component as the next slot.
+
 ggMOelim
 MOelim
 mo1:mon_order mo2:monorder >> monorder
 Form the product elimination order.
+
+ggMOinit
+MOinit
+. >> MonomialOrder
+Start the creation of a MonomialOrder.  One must then call a sequence of the routines: ggMOclone, ggMOrevlex, ggMOlex, ggMOcomponent, ggMOwtfcn, ggMOproduct, ggMONClex.
 
 ggMOgeneral
 MOgeneral
@@ -578,6 +631,11 @@ ggMOlex
 MOlex
 d:intarray >> monorder
 Create an engine 'mon_order', which is lex order on a set of variables, where 'd' consists of the degrees of these variables.
+
+ggMONClex
+MONClex
+mo:MonomialOrder nvars:int >> .
+Append a block of non-commuting 'nvars' variables as the next part of the monomial order.  The order in this block is the lexicographic order.
 
 ggMOproduct
 MOproduct
@@ -633,6 +691,11 @@ ggnumrows
 numrows
 m:SparseMutableMatrix >> int
 Yields the number of rows of 'm'.
+
+ggnvars
+nvars
+M:EMonoid >> int
+Returns the number of variables in M.
 
 ggpairs
 pairs
@@ -754,6 +817,11 @@ resNmodule
 gr:res_comp i:int >> freemodule
 Return the i th free module of the (possibly non-minimal) resolution 'gr'.
 
+ggrightmult
+rightmult
+v:EVector w:EVector >> EVector
+Return v*w, where the component is taken from v.
+
 ggRow2by2
 row2by2
 a1:RingElement a2:RingElement b1:RingElement b2:RingElement m:SparseMutableMatrix r1:int r2:int >> .
@@ -843,6 +911,11 @@ ggskeleton
 skeleton
 r:res_comp >> .
 Compute the skeleton of the resolution.  This is a debugging facility.  To see the number of pairs, use ggpairs after this, or grab the lead terms by using ggresNmap.
+
+ggskewpolyring
+skewpolyring
+K:ECoefficientRing M:EMonoid skews:intarray >> ESkewPolynomialRing
+Create the ring K[M], where multiplication is skew commutative for the variables in the 'skews' array.  All variables not in this list commute with all variables, whereas for variables x,y, in the list 'skews', x^2 = 0 and x*y = -y*x.
 
 ggSmithNormalForm
 SmithNormalForm
