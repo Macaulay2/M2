@@ -1,5 +1,5 @@
 .SUFFIXES : .m2 .okay
-EXE = ..\d\Release\Macaulay2.exe
+EXE = ..\bin\Macaulay2.exe
 .m2.okay:
 	@echo testing $(EXE) on $*.m2
 	@$(EXE) -silent setpath ../m2/setup.m2 $*.m2 -eexit(0)
@@ -8,7 +8,7 @@ EXE = ..\d\Release\Macaulay2.exe
 !ifdef HAVE_FILES
 !include files.tmp
 tests: $(FILES:.m2=.okay)
-$(FILES:.m2=.okay) : ..\d\Release\Macaulay2.exe
+$(FILES:.m2=.okay) : $(EXE)
 !endif
 
 

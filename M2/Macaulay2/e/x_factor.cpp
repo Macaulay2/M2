@@ -305,4 +305,3 @@ void i_factor_cmds() {
 //template int tmin(int const &, int const &);
 //template CanonicalForm tmax(CanonicalForm const &, CanonicalForm const &);
 //template CanonicalForm tmin(CanonicalForm const &, CanonicalForm const &);
-

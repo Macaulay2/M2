@@ -225,6 +225,8 @@ int sagbi_comp::calc(const int *deg, const intarray &stop_conditions)
 
       _current_degree++;
     }
+#else
+     return 0;
 #endif
 }
 

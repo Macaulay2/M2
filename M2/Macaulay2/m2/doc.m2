@@ -444,7 +444,7 @@ document { quote load,
      TT "load \"f\"", " -- reads and executes the commands found in the file named f.",
      PARA,
      "The file is sought along the ", TO "path", ", unless the name of the
-     file begins with '/' or './' or '../' .",
+     file begins with the character(s) in ", TO "pathSeparator", ".",
      PARA,
      SEEALSO( "path", "needs", "input")
      }

@@ -7,8 +7,8 @@ errorDepth 0
 conceptTable = new MutableHashTable
 
 scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
-scandb(openDatabase "../cache/Macaulay2.doc",
-     (key,doc) -> (
+
+process := (key,doc) -> (
 	  filename := linkFilename key;
 	  conceptTable#key = filename;
 	  openOut filename << html SEQ { 
@@ -20,7 +20,12 @@ scandb(openDatabase "../cache/Macaulay2.doc",
 		    },
 	       PARA,
 	       "Go to ", HREF {"concepts.html", "concepts index"}, "."
-	       } << endl << close))
+	       } << endl << close)
+try scandb(openDatabase "../cache/Macaulay2.doc", process) else
+    scan(keys Documentation, k -> (
+		v := Documentation#k;
+		if class v === SEQ then process (k,name v)
+		))
 
 concepts = openOut "concepts.html";
 concepts << html SEQ { TITLE "Concepts Index", H1 "Concepts Index" }
@@ -40,7 +45,9 @@ concepts << html {
      } << endl << close
 
 run concatenate ( 
-     if version#"OS" === "MS-DOS" then "copy" else "ln -s",
+     if version#"OS" === "MS-DOS" then "copy" else 
+     if version#"OS" === "Windows NT" then "copy" else 
+	 "ln -s",
      " ",
      conceptTable#"Macaulay 2", 
      " index.html")

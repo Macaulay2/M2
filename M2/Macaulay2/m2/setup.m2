@@ -1,25 +1,20 @@
 -- 	Copyright 1994 by Daniel R. Grayson
 
-if not load "version.m2" then error "couldn't find file 'version.m2'"
-
-pathSeparator = if version#"OS" === "MACOS" then ":" else "/"
-
-newline = if version#"OS" === "MACOS" then "\r"   else
-          if version#"OS" === "MS-DOS" then "\r\n" else
-          "\n"				  -- UNIX
-
-isAbsolutePath := (
-     if version#"OS" === "MACOS" then (
-	  filename -> false		  -- ???
-	  )
-     else (
-	  filename -> (
-	       substring(filename,0,1) === "/" or
-	       substring(filename,0,2) === "./" or
-	       substring(filename,0,3) === "../")))
-
 
 if class path =!= List then path = { "." }
+
+pathSeparator = (
+	if version#"OS" === "MACOS"	then ":" 
+	else if version#"OS" === "Windows NT" then "\\"
+	else "/"
+	)
+
+--newline = if version#"OS" === "MACOS" then "\r"   else
+--          if version#"OS" === "MS-DOS"
+--          or version#"OS" === "Windows NT" then "\r\n" else
+--          "\n"
+
+isAbsolutePath := filename -> pathSeparator === substring(filename,0,#pathSeparator)
 
 if class phase === Symbol then phase = 0
 

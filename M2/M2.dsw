@@ -12,16 +12,52 @@ Package=<5>
 Package=<4>
 {{{
     Begin Project Dependency
+    Project_Dep_Name WindowsDistribution
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "WindowsDistribution"=.\WindowsDistribution.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name basictests
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name d
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name m2
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name basictests
+    Project_Dep_Name test
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name test
+    Project_Dep_Name WindowsFixUps
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name setup
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "WindowsFixUps"=.\Macaulay2\WindowsFixUps.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name setup
     End Project Dependency
 }}}
 
@@ -276,7 +312,31 @@ Package=<4>
 
 ###############################################################################
 
+Project: "phases"=.\Macaulay2\m2\phases.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "root"=.\root.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "setup"=.\Macaulay2\util\setup.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

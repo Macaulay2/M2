@@ -952,15 +952,15 @@ bool binomialGB::reduce(binomial &f) const
 #endif
 int binomialGB::n_masks() const
 {
-  unsigned int masks[100000];
+  int masks[100000];
   buffer o;
-  int nmasks = 1;
+  unsigned int nmasks = 1;
   masks[0] = first->mask;
   for (gbmin_elem *p = first; p != NULL; p = p->next)
     {
       o << " " << p->mask;
       bool found = false;
-      for (int i=0; i<nmasks && !found; i++)
+      for (unsigned int i=0; i<nmasks && !found; i++)
 	if (masks[i] == p->mask)
 	  {
 	    found = true;
@@ -995,9 +995,9 @@ binomialGB_comp::binomialGB_comp(const Ring *RR, int *wts, bool revlex,
   : gb_comp(2)
 {
   // set the flags and options
-  is_homogeneous = (options & GB_FLAG_IS_HOMOGENEOUS);
-  is_nondegenerate = (options & GB_FLAG_IS_NONDEGENERATE);
-  use_bigcell = (options & GB_FLAG_BIGCELL);
+  is_homogeneous = (options & GB_FLAG_IS_HOMOGENEOUS) != 0;
+  is_nondegenerate = (options & GB_FLAG_IS_NONDEGENERATE) != 0;
+  use_bigcell = (options & GB_FLAG_BIGCELL) != 0;
   flag_auto_reduce = true;
   flag_use_monideal = false;
 
