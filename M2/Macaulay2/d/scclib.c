@@ -120,6 +120,10 @@ typedef DBM *DBM_FILE;
 
 void *sbrk();		/* not really ansi standard, sigh */
 
+#define link _link
+#include <MP.h>
+#undef link
+
 #if defined(__NeXT__)
  /* on the NeXT Step i386 machine, brk always returns -1, and doesn't work. */
 #   define brk(p) (int)sbrk(p-sbrk(0))
@@ -605,9 +609,10 @@ char **argv;
 	       sprintf(buf,"  Factorization and characteristic sets %s, copyright 1996, M. Messollen",
 		    libfac_version);
 	       putstderr(buf);
+	       sprintf(buf,"  MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
 	       putstderr("  GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
 	       putstderr("  GNU libc and libg++, copyright 1996, Free Software Foundation");
-	       putstderr("  GNU MP, copyright 1996, Free Software Foundation");
+	       putstderr("  GNU MP %s, copyright 1996, Free Software Foundation");
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;
@@ -1473,10 +1478,6 @@ M2_string system_dbmstrerror() {
 /**********************************************
  *                  MP stuff                  *
  **********************************************/
-
-#define link _link
-#include <MP.h>
-#undef link
 
 static int numlinks = 0;
 static MP_Link_pt *mp_links = NULL;

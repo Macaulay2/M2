@@ -175,7 +175,7 @@ include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
 
-DISTFILES := 	Macaulay2/README \
+DISTFILES = 	Macaulay2/README \
 		Macaulay2/CHANGES \
 		Macaulay2/licenses \
 		Macaulay2/setup \
@@ -189,7 +189,7 @@ all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
 
 ###################### Macaulay 2 documentation
 
-DOCFILES := 	Macaulay2/html \
+DOCFILES = 	Macaulay2/html \
 		Macaulay2/book/M2book.dvi \
 		Macaulay2/book/M2hbook.dvi \
 		Macaulay2/Vasconcelos-appendix/appendix.dvi
