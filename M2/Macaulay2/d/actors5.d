@@ -313,8 +313,11 @@ setupfun("gg",formatfun);
 seeParsing(o:file):void := (
      o
      << endl << endl
-     << "word      precedence scope strength" << endl << endl
-     << ("<WORDS>",12) << (parseWORD.precedence,-7) << (parseWORD.scope,-7) << (parseWORD.strength,-7) << endl;
+     << "word      precedence scope unaryStrength" << endl << endl
+     << ("<WORDS>",12)
+     << (parseWORD.precedence,-7)
+     << (parseWORD.binaryStrength,-7)
+     << (parseWORD.unaryStrength,-7) << endl;
      foreach hashListX in hashTable do (
 	  hashList := hashListX;
 	  while true do
@@ -325,8 +328,8 @@ seeParsing(o:file):void := (
 	       then (
 		    o << (hashCell.word.name,12)
 		    << (hashCell.word.parse.precedence,-7) 
-		    << (hashCell.word.parse.scope,-7) 
-		    << (hashCell.word.parse.strength,-7) 
+		    << (hashCell.word.parse.binaryStrength,-7) 
+		    << (hashCell.word.parse.unaryStrength,-7) 
 		    << endl;
 		    );
 	       hashList = hashCell.next;

@@ -35,11 +35,11 @@ binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTr
 binaryright(s:string)   :Word := binaryright(s,binaryop);
 token(s:string)         :Word :=           unique(s,parseinfo(prec,prec,prec,parsefuns(errorunary,errorbinary)));
 
-export parens(binaryleft:string,binaryright:string,prec:int,scope:int,strength:int):Word := (
-     l := unique(binaryleft, parseinfo(prec,scope,strength,leftParenFuns));
+export parens(binaryleft:string,binaryright:string,prec:int,binaryStrength:int,unaryStrength:int):Word := (
+     l := unique(binaryleft, parseinfo(prec,binaryStrength,unaryStrength,leftParenFuns));
      binaryleft = l.name;
      install(binaryleft,l);
-     r := unique(binaryright,parseinfo(scope,0,0,rightParenFuns));
+     r := unique(binaryright,parseinfo(binaryStrength,0,0,rightParenFuns));
      binaryright = r.name;
      install(binaryright,r);
      addmatch(binaryleft,binaryright);
@@ -115,22 +115,22 @@ insert(entry:Symbol,dictionary:Dictionary):void := (
      h := entry.word.hash & (length(dictionary.hashTable)-1);
      dictionary.hashTable.h = SymbolListCell(entry,dictionary.hashTable.h);
      );
-export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
-     frameindex := scope.framesize;
-     scope.framesize = scope.framesize + 1;
+export makeSymbol(word:Word,position:Position,binaryStrength:Scope):Symbol := (
+     frameindex := binaryStrength.framesize;
+     binaryStrength.framesize = binaryStrength.framesize + 1;
      entry := Symbol(
 	  word, 
 	  nextHash(), 
 	  position,
 	  dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-	  scope.seqno, 
+	  binaryStrength.seqno, 
 	  frameindex,
 	  1,				  -- first lookup is now
 	  false,			  -- not protected
-	  scope.transient,
+	  binaryStrength.transient,
 	  false
 	  );
-     if scope == globalScope then (
+     if binaryStrength == globalScope then (
 	  -- this allows the global frame to grow
 	  if globalScope.framesize > length(globalFrame.values) then (
 	       globalFrame.values = (
@@ -140,18 +140,18 @@ export makeSymbol(word:Word,position:Position,scope:Scope):Symbol := (
 			 )));
 	  globalFrame.values.frameindex = Expr(SymbolClosure(globalFrame,entry));
 	  )
-     else if scope.seqno == localFrame.scopenum then (
+     else if binaryStrength.seqno == localFrame.scopenum then (
 	  -- this should take care of scopes which span a file,
 	  -- and have a single frame which ought to be allowed to grow
-	  if scope.framesize > length(localFrame.values) then (
+	  if binaryStrength.framesize > length(localFrame.values) then (
 	       localFrame.values = (
-		    new Sequence len 2 * scope.framesize + 1 do (
+		    new Sequence len 2 * binaryStrength.framesize + 1 do (
 			 foreach y in localFrame.values do provide y;
 			 while true do provide nullE;
 			 )));
 	  localFrame.values.frameindex = nullE;
 	  );
-     insert(entry,scope.dictionary);
+     insert(entry,binaryStrength.dictionary);
      entry
      );
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
@@ -167,7 +167,7 @@ export makeProtectedSymbolClosure(s:string):SymbolClosure := (
 bump();
      export pEOF := prec;
      parseEOF.precedence = pEOF;
-     parseEOF.scope = pEOF;
+     parseEOF.binaryStrength = pEOF;
 bump();
      precRightParen := prec;
 bump(2);
@@ -258,7 +258,7 @@ bump();
      export AtS := makeProtectedSymbolClosure(binaryright("@"));
 bump();
      export AdjacentS:=makeProtectedSymbolClosure(binaryright(" ")); precSpace = prec;
-     parseWORD.precedence = prec; parseWORD.scope = prec; parseWORD.strength = prec;
+     parseWORD.precedence = prec; parseWORD.binaryStrength = prec; parseWORD.unaryStrength = prec;
 bump();
      export AtAtS := makeProtectedSymbolClosure(binaryleft("@@"));
 bump();
@@ -266,7 +266,7 @@ bump();
      export PowerS := makeProtectedSymbolClosure(binaryleft("^"));
      export UnderscoreS := makeProtectedSymbolClosure(binaryleft("_"));
      export SharpS := makeProtectedSymbolClosure(unaryleft("#"));
-     SharpS.symbol.word.parse.strength = precSpace-1;
+     SharpS.symbol.word.parse.unaryStrength = precSpace-1;
      export SharpQuestionS := makeProtectedSymbolClosure(binaryleft("#?"));
      export DotS := makeProtectedSymbolClosure(binaryleft("."));
      export DotQuestionS := makeProtectedSymbolClosure(binaryleft(".?"));
@@ -368,26 +368,26 @@ lookup(
 	       return(e);
 	       );
 	  entryList = entryListCell.next));
-export lookup(word:Word,scope:Scope):(null or Symbol) := (
+export lookup(word:Word,binaryStrength:Scope):(null or Symbol) := (
      while true do (
-	  when lookup(word,scope.dictionary)
+	  when lookup(word,binaryStrength.dictionary)
 	  is null do (
-	       if scope.outerScope == scope 
+	       if binaryStrength.outerScope == binaryStrength 
 	       then return(NULL)
-	       else scope = scope.outerScope;
+	       else binaryStrength = binaryStrength.outerScope;
 	       )
 	  is e:Symbol do return(e)));
 lookup(
      word:Word,
      criterion:function(Symbol):bool,  	  -- used for overloading
-     scope:Scope
+     binaryStrength:Scope
      ):(null or Symbol) := (
      while true do (
-	  when lookup(word,criterion,scope.dictionary)
+	  when lookup(word,criterion,binaryStrength.dictionary)
 	  is null do (
-	       if scope.outerScope == scope
+	       if binaryStrength.outerScope == binaryStrength
 	       then return(NULL)
-	       else scope = scope.outerScope
+	       else binaryStrength = binaryStrength.outerScope
 	       )
 	  is e:Symbol do return(e)));
 lookup(token:Token,forcedef:bool):void := (
