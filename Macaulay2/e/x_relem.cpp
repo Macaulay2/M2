@@ -10,8 +10,8 @@
 #include "QQ.hpp"
 #include "RR.hpp"
 #include "CC.hpp"
-#include "bigRR.hpp"
-#include "bigCC.hpp"
+#include "RRR.hpp"
+#include "CCC.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "schur.hpp"
@@ -82,14 +82,14 @@ const RingOrNull *IM2_Ring_CC(double precision)
   //  return CC::create(precision);
 }
 
-const RingOrNull *IM2_Ring_bigRR()
+const RingOrNull *IM2_Ring_RRR()
 {
-  return bigRR::create();
+  return RRR::create();
 }
 
-const RingOrNull *IM2_Ring_bigCC()
+const RingOrNull *IM2_Ring_CCC()
 {
-  return bigCC::create();
+  return CCC::create();
 }
 
 const Ring *IM2_Ring_trivial_polyring()
@@ -378,6 +378,15 @@ M2_CCOrNull IM2_RingElement_to_complex(const RingElement *a)
   void *f = a->get_value().poly_val;
   return static_cast<M2_CC>(f);
 }
+
+const RingElementOrNull *rawRRRFromString(const M2_string s)
+{
+  ring_elem f;
+  if (globalRRR->from_string(s,f))
+    return RingElement::make_raw(globalRRR, f);
+  return 0;
+}
+
 
 const RingElementOrNull *IM2_RingElement_make_var(const Ring *R, int v, int e)
 {

@@ -2,64 +2,59 @@
 
 // need to be careful that exponent does not overflow, according to GMP
 
-#ifndef _bigCC_hh_
-#define _bigCC_hh_
+#ifndef _RRR_hh_
+#define _RRR_hh_
 
 #include "ring.hpp"
 #include <gmp.h>
 
+#define MPF_VAL(f) (reinterpret_cast<mpf_ptr>((f).poly_val))
+#define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
 #if 0
-#define BIGCC_VAL(f) (M2_BigComplex ((f).poly_val))
-#define BIGCC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#define MPF_VAL(f) (mpf_ptr ((f).poly_val))
+#define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-#define BIGCC_VAL(f) (reinterpret_cast<M2_BigComplex>((f).poly_val))
-#define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-
-#define BIGCC_RE(f) (&BIGCC_VAL(f)->re)  // returns actual value, not copy
-#define BIGCC_IM(f) (&BIGCC_VAL(f)->im)
-
-class bigCC : public Ring
+class RRR : public Ring
 {
   int _elem_size;
+  mpf_ptr _zero_elem;
 
-  M2_BigComplex _zero_elem;
+  mpf_ptr new_elem() const;
+  void remove_elem(mpf_ptr f) const;
 
-  mpf_ptr new_mpf() const;
-  M2_BigComplex new_elem() const;
-  void remove_elem(M2_BigComplex f) const;
-
-  static mpf_ptr _epsilon;  // Components (real or imag) less than this are considered zero.
+  static mpf_ptr _epsilon;  // Elements less than this are considered zero.
 
 protected:
-  bigCC() {}
-  virtual ~bigCC() {}
-  bool initialize_bigCC();
+  RRR() {}
+  virtual ~RRR() {}
+  bool initialize_RRR();
 public:
-  static bigCC * create();
+  static RRR * create();
 
-  bigCC * cast_to_bigCC() { return this; }
-  const bigCC * cast_to_bigCC() const { return this; }
+  RRR * cast_to_RRR() { return this; }
+  const RRR * cast_to_RRR() const { return this; }
 
   static void set_epsilon(mpf_ptr epsilon);
   static mpf_ptr get_epsilon();
 
-  // should there be a complex conjugation function?
+  void zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const; 
+  // zeroizes coeffs until lead coeff no longer less than epsilon in abs value
 
-  ring_elem from_doubles(double r, double s) const;
-  ring_elem from_BigReals(mpf_ptr a, mpf_ptr b) const;
+  bool is_greater(const ring_elem a, const ring_elem b) const;
+  bool is_less(const ring_elem a, const ring_elem b) const;
+  ring_elem absolute(const ring_elem f) const;
+  ring_elem sqrt(const ring_elem f) const;
+
+  bool from_string(const M2_string s, ring_elem &f) const;
+  // returns false if an error has occurred.  f is initialized and set with value
+  // only if true is returned.
 
   virtual mpf_ptr to_BigReal(ring_elem f) const;
 
-  bool is_real(const ring_elem f) const;  // see if |f| is purely real
-  bool is_greater(const ring_elem f, const ring_elem g) const;  // compares |f| and |g|
-  ring_elem absolute(const ring_elem f) const;  // norm |f| of f
-
-  void zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const; 
-  // zeroizes coeffs until imag or real part of lead coeff greater than epsilon in abs value
-
-  // The following are all the routines required by 'ring'
-  virtual bool is_bigCC() const         { return true; }
+// The following are all the routines required by 'ring'
+  virtual bool is_RRR() const         { return true; }
 
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
@@ -70,15 +65,14 @@ public:
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
-  virtual ring_elem from_complex(M2_CC z) const;
   virtual ring_elem from_BigReal(mpf_ptr r) const;
-  virtual ring_elem from_BigComplex(M2_BigComplex z) const;
   virtual ring_elem var(int v, int n) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
-  // TO DO: MAKE IT SAME AS CC
   virtual ring_elem preferred_associate(ring_elem f) const;
+
+  int is_positive(const ring_elem a) const;
 
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
@@ -101,6 +95,7 @@ public:
   virtual ring_elem invert(const ring_elem f) const;
 
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;

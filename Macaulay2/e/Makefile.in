@@ -47,8 +47,8 @@ INTERFACE = \
 	RR \
 	ZZ \
 	QQ \
-	bigRR \
-	bigCC \
+	RRR \
+	CCC \
 	CC \
 	assprime \
 	buffer \
