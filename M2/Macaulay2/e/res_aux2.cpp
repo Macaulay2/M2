@@ -1,8 +1,6 @@
 // Copyright 1996 Michael E. Stillman
 // Included from 'res2.cc'
 
-#include "interp.hpp"
-
 void res2_comp::betti_init(int lo, int hi, int len, int *&bettis) const
 {
   int z = (hi-lo+1) * (len+1);
@@ -211,7 +209,7 @@ void res2_comp::text_out(buffer &o, const res2_pair *p) const
 #if 0
   if (p->mi_exists)
 #endif
-    o << "[mi: " << p->mi.length() << "]";
+    o << "[mi: " << p->mi->length() << "]";
 #if 0
   else
     {
@@ -309,14 +307,14 @@ FreeModule *res2_comp::minimal_free_of(int i) const
   return result;
 }
 
-Matrix res2_comp::make(int level) const
+Matrix *res2_comp::make(int level) const
 {
-  Matrix result(free_of(level-1), free_of(level));
+  Matrix *result = new Matrix(free_of(level-1), free_of(level));
 
   int n = 0;
-  if (result.n_cols() == 0) return result;
+  if (result->n_cols() == 0) return result;
   for (res2_pair *p = resn[level]->pairs; p != NULL; p = p->next)
-    result[n++] = R->to_vector(p->syz, result.rows());
+    (*result)[n++] = R->to_vector(p->syz, result->rows());
   return result;
 }
 
@@ -340,7 +338,7 @@ void res2_comp::reduce_minimal(int x, res2term *&f,
 	    // Subtract the proper multiple to f.  f = ... + c m e_y + ...
 	    // and                                 p = ... + d n e_y
 	    // where n|m.  So we want to compute f -= c/d m/n p.
-	    ring_elem c = K->divide(tm->coeff, p->pivot_term->coeff);
+	    ring_elem c = K->divide(tm->coeff, p->pivot_term->coeff); // exact division
 	    // MES: is the following line actually needed?
 	    M->divide(tm->monom, p->pivot_term->monom, MINIMAL_mon);
 	    if (stripped[p->me] == NULL)
@@ -350,9 +348,9 @@ void res2_comp::reduce_minimal(int x, res2term *&f,
     }
 }
 
-Matrix res2_comp::make_minimal(int i) const
+Matrix *res2_comp::make_minimal(int i) const
 {
-  Matrix m(minimal_free_of(i-1), minimal_free_of(i));
+  Matrix *m = new Matrix(minimal_free_of(i-1), minimal_free_of(i));
   if (i <= 0 || i >= resn.length()-1) return m;
 
   array<res2_pair *> elems;
@@ -377,7 +375,7 @@ Matrix res2_comp::make_minimal(int i) const
 	      stripped[p->me] = R->strip(p->syz);
 	      reduce_minimal(x,stripped[p->me], elems, stripped);
 	    }
-	  m[thisx++] = R->to_vector(stripped[p->me], m.rows(), 1);
+	  (*m)[thisx++] = R->to_vector(stripped[p->me], m->rows(), 1);
 	}
     }
 
@@ -499,6 +497,7 @@ void res2_comp::strip_matrix(int level)
 }
 #endif
 
+#if 0
 void cmd_res2_calc(object &op, object &odeg, object &oargs)
 {
   res2_comp *p = op->cast_to_res2_comp();
@@ -609,3 +608,4 @@ int i_res2_cmds()
   install(ggskeleton, cmd_res2_skeleton, TY_RES2_COMP, TY_INT);
   return 1;
 }
+#endif

@@ -4,6 +4,7 @@ VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)
 DOC=cache/doc
 TEST=cache/tests
+ENV = env M2HOME=@srcdir@/..
 
 .PHONY : all test-D-modules doc check initialize clean distclean install
 
@@ -15,26 +16,30 @@ Makefile : Makefile.in
 #############################################################################
 all :: doc
 distclean :: clean
-DOCFILES := eliminate.m2 D-modules/DMODdoc.m2
-## DOCFILES += $(wildcard @srcdir@/D-modules/DOC/*.m2)
+DOCFILES := StateTable.m2 eliminate.m2 D-modules/DMODdoc.m2
 
 phase2: $(DOCFILES)
-	@ set -x; for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0' || exit 1; done
+	@ set -x; for i in $^ ; do $(ENV) ../../bin/M2 -q '-e phase=2' $$i '-e exit 0' || exit 1; done
 	touch "$@"
 
+
+ifeq "$(DEBUG)" "yes"
+EGFLAGS = -k
+EGMORE = || true
+endif
+
 phase3: $(DOC) $(TEST)
-	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
+	$(MAKE) $(EGFLAGS) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir) $(EGMORE)
 	touch "$@"
 
 phase4: $(DOCFILES)
-	@ set -x; for i in $^ ; do ../../bin/M2 -q '-e phase=4; errorDepth 0' $$i '-e exit 0' || exit 1; done
+	@ set -x; for i in $^ ; do $(ENV) ../../bin/M2 -q '-e phase=4; errorDepth 0' $$i '-e exit 0' || exit 1; done
 	touch "$@"
-
 TARGETDIR = cache/doc
 phase5 : $(TARGETDIR)/index.html
-$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
+$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/Macaulay2
 	 #------ phase 5: making html documentation
-	../../bin/M2 -q -silent \
+	$(ENV) ../../bin/M2 -q --silent \
 		'-e phase = 5' \
 		'-e load "D-modules.m2"' \
 		'-e makeHTML("D-modules Package", Documentation)' '-e exit 0'
@@ -47,8 +52,7 @@ phase6 :
 	@ echo "make: Leaving directory \`$(shell cd $(TARGETDIR) && pwd)'"
 
 doc : phase2 phase3 phase4 phase5 phase6
-
-clean::; rm -f phase2
+clean::; rm -f phase2 phase3 phase4 phase5 phase6
 check:: doc
 	$(MAKE) -C $(TEST) -f $(srcdir)/../m2/Makefile.tests srcdir=$(srcdir)
 #############################################################################
@@ -56,10 +60,10 @@ Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)
 check:: test-D-modules
 test-D-modules : $(Dtestresults)
-$(Dtestresults) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
+$(Dtestresults) : ../bin/Macaulay2$(EXE) ../cache/Macaulay2-doc ../cache/Macaulay2-made
 %.okay : %.m2
 	@ echo running test file $<
-	../../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
+	$(ENV) ../../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
 	touch $@
 #############################################################################
 clean check distclean ::

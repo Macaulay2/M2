@@ -1,7 +1,8 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system;
 use stdio;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use strings;

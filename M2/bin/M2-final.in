@@ -3,7 +3,7 @@ M2PREFIX=@prefix@
 M2HOME="$M2PREFIX/share/Macaulay2/@PACKAGE_VERSION@"
 M2LIB="$M2PREFIX/lib/Macaulay2/@PACKAGE_VERSION@"
 export M2PREFIX M2HOME M2LIB
-EXE="$M2LIB/libexec/Macaulay2"
+EXE="$M2LIB/bin/Macaulay2"
 DATA="$M2LIB/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 SETUP="$M2HOME/m2/setup.m2"
 if [ -f "$DATA" ]

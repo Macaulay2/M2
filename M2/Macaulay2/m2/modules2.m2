@@ -1,4 +1,4 @@
---		Copyright 1995 by Daniel R. Grayson and Michael Stillman
+--		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
 Module + Module := Module => (M,N) -> (
      if ring M =!= ring N
@@ -32,10 +32,7 @@ Module ** Module := Module => (M,N) -> (
 	       if M == R^1 then N
 	       else if isFreeModule N then (
 		    if N == R^1 then M
-		    else (
-			 sendgg(ggPush M, ggPush N, ggmult);
-			 new Module from R
-			 )
+		    else newModule(R, raw M ** raw N)
 		    )
 	       else subquotient(
 		    if N.?generators then M ** N.generators,
@@ -314,7 +311,9 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
 i := symbol i
-hilbertFunctionRing := QQ[i]
+
+-- bypass temporarily
+-- hilbertFunctionRing := QQ[i]
 
 hilbertFunctionQ := method()
 hilbertFunctionQ(ZZ) := (n) -> (
@@ -561,7 +560,7 @@ annihilator RingElement := Ideal => f -> annihilator ideal f
 
 ZZ _ Module := Vector => (i,M) -> (
      if i === 0 then M#0
-     else error "expected integer to be zero"
+     else error "expected integer to be 0"
      )
 
 Module _ ZZ := Vector => (M,i) -> (
@@ -571,10 +570,11 @@ Module _ ZZ := Vector => (M,i) -> (
 	  sendgg (ggPush M.generators, ggPush i, ggelem);
 	  new M)
      else (
-	  if i < 0 or i >= M.numgens 
-	  then error ("subscript '", toString i, "' out of range");
-     	  sendgg(ggPush M, ggPush i, if M.?newEngine then ggbasisElement else ggfromint);
-     	  new M)
+	  -- if i < 0 or i >= M.numgens 
+	  -- then error ("subscript '", toString i, "' out of range");
+	  stderr << "warning: why don't we have M.generators set up?" << endl;
+ 	  new M from M.RawFreeModule_i
+	  )
      )
 
 -----------------------------------------------------------------------------

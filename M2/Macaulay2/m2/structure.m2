@@ -1,9 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-first = x -> x#0
-
-last = x -> x#-1
-
 positions = method()
 positions(VisibleList,Function) := (v,f) -> (
      apply(select(pack(2, mingle{v,0 .. #v-1}), p -> f p#0), p -> p#1)

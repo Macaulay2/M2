@@ -7,11 +7,9 @@ maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
 
 documentationPath = {  }
-writableGlobals.documentationPath = true
 
 addStartFunction(
      () -> (
-     	  originalPath = path;
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
@@ -21,7 +19,6 @@ addStartFunction(
 -----------------------------------------------------------------------------
 -- the phase encoding, obsolete
 -----------------------------------------------------------------------------
-writableGlobals.phase = true
 writingInputFiles         := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
 writingFinalDocDatabase   := () -> phase === 4
@@ -31,7 +28,6 @@ writing                   := () -> phase === 2 or phase === 4 or phase === 5
 -----------------------------------------------------------------------------
 
 DocDatabase = null
-writableGlobals.DocDatabase = true
 
 local nodeBaseFilename
 local exampleOutputFilename				    -- nodeBaseFilename | ".out"

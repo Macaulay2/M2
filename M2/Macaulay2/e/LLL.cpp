@@ -24,12 +24,12 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
   return true;
 }
 
-bool LLLoperations::setThreshold(const RingElement threshold, ring_elem& num, ring_elem &den)
+bool LLLoperations::setThreshold(const RingElement *threshold, ring_elem& num, ring_elem &den)
 {
-  const Ring *R = threshold.get_ring();
+  const Ring *R = threshold->get_ring();
   if (R == ZZ)
     {
-      num = ZZ->copy(threshold.get_value());
+      num = ZZ->copy(threshold->get_value());
       den = ZZ->from_int(1);
       return true;
     }
@@ -39,8 +39,8 @@ bool LLLoperations::setThreshold(const RingElement threshold, ring_elem& num, ri
       const Ring *K = KK->get_ring();
       if (K == ZZ)
 	{
-	  num = ZZ->copy(KK->numerator(threshold.get_value()));
-	  den = ZZ->copy(KK->denominator(threshold.get_value()));
+	  num = ZZ->copy(KK->numerator(threshold->get_value()));
+	  den = ZZ->copy(KK->denominator(threshold->get_value()));
 	  return true;
 	}
     }
@@ -48,13 +48,13 @@ bool LLLoperations::setThreshold(const RingElement threshold, ring_elem& num, ri
 }
 
 bool LLLoperations::initializeLLL(const SparseMutableMatrix *A,
-			    RingElement threshold,
+			    const RingElement *threshold,
 			    SparseMutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over ZZ.
   if (A == 0 || A->getRing() != ZZ)
     {
-      gError << "LLL only defined for matrices over ZZ";
+      ERROR("LLL only defined for matrices over ZZ");
       return false;
     }
 
@@ -77,7 +77,7 @@ bool LLLoperations::initializeLLL(const SparseMutableMatrix *A,
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
   int n = A->n_cols();
-  LLLstate = new SparseMutableMatrix(ZZ,n,n+4);
+  LLLstate = SparseMutableMatrix::make(ZZ,n,n+4);
   if (n > 0)
     {
       LLLstate->setEntry(0,n,ZZ->from_int(1));  // k := 2
@@ -89,22 +89,22 @@ bool LLLoperations::initializeLLL(const SparseMutableMatrix *A,
   return true;
 }
 
-bool LLLoperations::initializeLLL(const Matrix &m,
-				  RingElement threshold,
+bool LLLoperations::initializeLLL(const Matrix *m,
+				  const RingElement *threshold,
 				  bool useChangeOfBasisMatrix,
 				  SparseMutableMatrix *& A,
 				  SparseMutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over ZZ.
-  if (m.get_ring() != ZZ)
+  if (m->get_ring() != ZZ)
     {
-      gError << "LLL only defined for matrices over ZZ";
+      ERROR("LLL only defined for matrices over ZZ");
       return false;
     }
 
   // Set A and A's change of basis, if useChangeOfBasisMatrix is set.
-  A = new SparseMutableMatrix(m);
-  int n = m.n_cols();
+  A = SparseMutableMatrix::make(m);
+  int n = m->n_cols();
   if (useChangeOfBasisMatrix)
     {
       SparseMutableMatrix *B = SparseMutableMatrix::identity(ZZ,n);
@@ -357,7 +357,7 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
 	      LLLstate->setEntry(j,k,u);
 	      if (j == k && ZZ->is_zero(u))
 		{
-		  gError << "LLL vectors not independent";
+		  ERROR("LLL vectors not independent");
 		  return COMP_ERROR;
 		}
 	    }
@@ -386,7 +386,7 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
   return COMP_INTERRUPTED;
 }
 
-bool LLLoperations::LLL(const Matrix &m, const RingElement &threshold, Matrix &LLLbasis)
+bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis)
 {
   SparseMutableMatrix *A;
   SparseMutableMatrix *LLLstate;
@@ -403,7 +403,7 @@ bool LLLoperations::LLL(const Matrix &m, const RingElement &threshold, Matrix &L
   return true;
 }
 
-bool LLLoperations::LLL(const Matrix &m, const RingElement &threshold, Matrix &LLLbasis, Matrix &ChangeOfBasis)
+bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis, Matrix *&ChangeOfBasis)
 {
   SparseMutableMatrix *A;
   SparseMutableMatrix *LLLstate;

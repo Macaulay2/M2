@@ -6,7 +6,6 @@
 #include "style.hpp"
 #include "array.hpp"
 #include "intarray.hpp"
-#include "object.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "polyring.hpp"
@@ -41,11 +40,6 @@ public:
       is_sorted(0), npairs(0), nleft(0), nminimal(0)
 	{}
   ~res_degree() {}
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 class res_level
@@ -64,21 +58,16 @@ friend class res_comp;
   int           nminimal;
 public:
   res_level() : compare_num_list(NULL), npairs(0), nleft(0), nminimal(0) {}
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
-class res_comp : public type
+class res_comp : public mutable_object
 {
   // Base ring and input
   const PolynomialRing *P;
   res_poly *R;
   const Monoid *M;
   const Ring *K;
-  Matrix generator_matrix;	// Input matrix of generators, possibly a GB, possibly not
+  const Matrix *generator_matrix;	// Input matrix of generators, possibly a GB, possibly not
 
   // The current state of the computation
   int n_level;			// Current level
@@ -88,7 +77,7 @@ class res_comp : public type
 
   // Degree and length limits, monomial size limit
   array<res_pair *> base_components;
-  array<MonomialIdeal>  search_mi;	// Used for new generators only...
+  array<MonomialIdeal *>  search_mi;	// Used for new generators only...
 
   int lodegree;			// Base degree
   int hidegree;			// Highest (slanted) degree appearing
@@ -159,12 +148,12 @@ private:
   void remove_res_degree(res_degree *p);
   void remove_res_level(res_level *lev);
 
-  void initialize(Matrix mat, 
+  void initialize(const Matrix *mat, 
 		  int LengthLimit,
 		  int strategy);
 
 public:
-  res_comp(Matrix m, 
+  res_comp(const Matrix *m, 
 	   int LengthLimit, 
 	   int strategy);
 
@@ -202,8 +191,8 @@ public:
 
   FreeModule *free_of(int i) const;
   FreeModule *minimal_free_of(int i) const;
-  Matrix make(int i) const;
-  Matrix make_minimal(int i) const;
+  Matrix *make(int i) const;
+  Matrix *make_minimal(int i) const;
 
 //////////////////////////////////////////////
 //  Betti routines and numbers associated ////
@@ -247,23 +236,6 @@ public:
 //////////////////////////////////////////////
 
 public:  
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  class_identifier class_id() const { return CLASS_res_comp; }
-  type_identifier  type_id () const { return TY_RES_COMP; }
-  const char * type_name   () const { return "ResolutionComputation"; }
-
-  res_comp   * cast_to_res_comp  ()       { return this; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "res_computation"; }
-
-  int length_of() const { return nminimal; }
-  object index_of(int i) { return make_minimal(i); }
-
   const Ring   * get_ring() const { return P; }
   const Monoid  * Nmonoms() const { return M; }
   const Ring   * Ncoeffs() const { return K; }

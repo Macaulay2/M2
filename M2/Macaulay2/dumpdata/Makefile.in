@@ -9,7 +9,8 @@ check::
 checkit: checkit.o libdump.a
 map.o: map.h file.h std.h warning.h
 map.o: map-solaris.c map-linux.c map-macosx.c
-dumpdata.o: dumpdata.h map.h warning.h std.h
+dumpdata.o: dumpdata.h map.h warning.h std.h maputil.h
+maputil.o: maputil.h map.h
 checkit.o: dumpdata.h std.h
 file.o: std.h
 warning.o: warning.h std.h
@@ -20,7 +21,7 @@ LIBS :=
 # LIBS += mmap.o
 # LIBS += write.o
 $(LIBS): /usr/lib/libc.a; $(AR) x $< $@	
-libdump.a: libdump.a(file.o warning.o map.o dumpdata.o $(LIBS))
+libdump.a: libdump.a(file.o warning.o map.o dumpdata.o maputil.o printmaps.o $(LIBS))
 	ranlib libdump.a
 
 ifneq "$(DUMPDATA)" "no"
@@ -40,3 +41,6 @@ distclean : clean
 	rm -f Makefile
 Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/dumpdata/Makefile
+all::testprintmaps
+	./$<
+testprintmaps:libdump.a

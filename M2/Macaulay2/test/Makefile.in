@@ -6,43 +6,18 @@ ifneq "$(DUMPDATA)" "no"
 RESULTS := $(RESULTS) dumpdata.okay
 endif
 
+LATERESULTS := missingDoc.okay
+
 all :: $(RESULTS)
 
-$(RESULTS) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
+$(RESULTS) : ../bin/Macaulay2
+$(LATERESULTS) : ../bin/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
-ifneq "$(DUMPDATA)" "no"
-dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
-	@ echo testing dumpdata
-	@ env M2HOME=.. ../libexec/Macaulay2 -q \
-		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
-		-- '-epath=append(path,"@srcdir@/../packages/")' '-erunStartFunctions()' \
-		   '-eerrorDepth(0)' \
-		   -silent @srcdir@/dumpdata.1 \
-		   '-eexit(0)'
-	@ echo exit 0 \
-	  | env M2HOME=.. ../libexec/Macaulay2 -q \
-		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
-		-- '-epath=append(path,"@srcdir@/../packages/")' \
-		   '-erunStartFunctions()' '-eerrorDepth(0)' \
-		   -silent @srcdir@/dumpdata.2 \
-		-- @srcdir@/dumpdata.3
-	@ touch dumpdata.okay
-endif
-
-ifeq "$(DUMPDATA)" "yes"
-ARGS := -q '-eloaddata("../$(DUMPDATAFILE)")' -- \
-	'-epath=append(path,"@srcdir@/../packages/")' \
-	'-erunStartFunctions()' '-eerrorDepth(0)' -silent
-else
-ARGS := -q \
-	'-epath={"@srcdir@/../m2/","../m2/","@srcdir@/../packages/"}' \
-	-ephase=1 @srcdir@/../m2/setup.m2 -ephase=0 \
-	'-erunStartFunctions()' '-eerrorDepth(0)' -silent
-endif
+ARGS := -q '-epath=append(path,"@srcdir@/../packages/")' '-eerrorDepth(0)' --silent
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 600; time env M2HOME=.. ../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ ulimit -t 600; time env M2HOME=@srcdir@/.. ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
 
 clean  :	

@@ -2,19 +2,16 @@
 
 #include "ringmap.hpp"
 #include "matrix.hpp"
-#include "bin_io.hpp"
+#include "vector.hpp"
 
-stash *RingMap::mystash;
-
-
-RingMap::RingMap(const Matrix &m)
-: R(m.get_ring())
+RingMap::RingMap(const Matrix *m)
+: immutable_object(0), R(m->get_ring())
 {
-  bump_up(R);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
   M = R->Nmonoms();
   K = R->Ncoeffs();
 
-  nvars = m.n_cols();
+  nvars = m->n_cols();
   is_monomial = true;
 
   ring_elem one = K->from_int(1);
@@ -32,36 +29,47 @@ RingMap::RingMap(const Matrix &m)
       _elem[i].coeff = (Nterm *) NULL;
       _elem[i].monom = NULL;
 
-      vec v = m[i];
-      _elem[i].bigelem = m.elem(0,i);  // This does a copy.
+      ring_elem f = m->elem(0,i);  // This does a copy.
+      _elem[i].bigelem = f;
 
-      // We determine the parts of elem[i] using v.
-
-      if (v == NULL) 
+      if (R->is_zero(f))
 	_elem[i].is_zero = true;
-      else if (v->next == NULL)
+      else if (P == 0)
 	{
-	  // This is a single term
-	  if (!K->is_equal(v->coeff, one))
+	  // Not a polynomial ring, so put everything into coeff
+	  if (!K->is_equal(f, one))
 	    {
 	      _elem[i].coeff_is_one = false;
-	      _elem[i].coeff = K->copy(v->coeff);
-	    }
-
-	  if (!M->is_one(v->monom))  // should handle M->n_vars() == 0 case correctly.
-	    {
-	      _elem[i].monom_is_one = false;
-	      _elem[i].monom = M->make_new(v->monom);
+	      _elem[i].coeff = K->copy(f);
 	    }
 	}
-      else
-	{
-	  // This is a bigterm
-	  is_monomial = false;
-	  _elem[i].bigelem_is_one = false;
-	}
+      else {
+	// A polynomial ring.
+	Nterm *t = f;
+	if (t->next == NULL)
+	  {
+	    // This is a single term
+	    if (!K->is_equal(t->coeff, one))
+	      {
+		_elem[i].coeff_is_one = false;
+		_elem[i].coeff = K->copy(t->coeff);
+	      }
+	    
+	    if (!M->is_one(t->monom))  // should handle M->n_vars() == 0 case correctly.
+	      {
+		_elem[i].monom_is_one = false;
+		_elem[i].monom = M->make_new(t->monom);
+	      }
+	  }
+	else
+	  {
+	    // This is a bigterm
+	    is_monomial = false;
+	    _elem[i].bigelem_is_one = false;
+	  }
+      }
+      K->remove(one);
     }
-  K->remove(one);
 }
 
 RingMap::~RingMap()
@@ -75,14 +83,26 @@ RingMap::~RingMap()
   delete [] _elem;
   K = NULL;
   M = NULL;
-  bump_down(R);
 }
 
-void RingMap::bin_out(buffer &o) const
+bool RingMap::is_equal(const RingMap *phi) const
 {
-  bin_int_out(o, nvars);
+  // Two ringmap's are identical if their 'bigelem's are the same
+  if (R != phi->get_ring()) return false;
+  if (nvars != phi->nvars) return false;
+
   for (int i=0; i<nvars; i++)
-    R->elem_text_out(o, _elem[i].bigelem);
+    if (!R->is_equal(elem(i), phi->elem(i)))
+      return false;
+
+  return true;
+}
+
+const RingMap *RingMap::make(const Matrix *m)
+{
+  RingMap *result = new RingMap(m);
+  // MES: set hash value
+  return result;
 }
 
 void RingMap::text_out(buffer &o) const
@@ -174,23 +194,26 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   return result;
 }
 
-RingElement RingMap::eval(const RingElement &r) const
+RingElementOrNull *RingMap::eval(const RingElement *r) const
 {
-  RingElement result(get_ring(), r.get_ring()->eval(this, r.get_value()));
+  RingElement *result = RingElement::make_raw(get_ring(), r->get_ring()->eval(this, r->get_value()));
+  if (error()) return 0;
   return result;
 }
 
-Vector RingMap::eval(const FreeModule *F, const Vector &v) const
+VectorOrNull *RingMap::eval(const FreeModule *F, const Vector *v) const
 {
-  Vector result(F, v.free_of()->eval(this, F, v.get_value()));
+  Vector *result = Vector::make_raw(F, v->free_of()->eval(this, F, v->get_value()));
+  if (error()) return 0;
   return result;
 }
 
-Matrix RingMap::eval(const FreeModule *F, const Matrix &m) const
+MatrixOrNull *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
-  Matrix result(F);
-  for (int i=0; i<m.n_cols(); i++)
-    result.append(m.rows()->eval(this, F, m[i]));
+  Matrix *result = new Matrix(F);
+  for (int i=0; i<m->n_cols(); i++)
+    result->append(m->rows()->eval(this, F, (*m)[i]));
+  if (error()) return 0;
   return result;
 }
 

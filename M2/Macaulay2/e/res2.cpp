@@ -3,10 +3,8 @@
 #include "respoly2.hpp"
 #include "res2.hpp"
 #include "geores.hpp"
-
-stash *res2_pair::mystash;
-stash *res2_comp::mystash;
-stash *auto_reduce_node::mystash;
+#include "buffer.hpp"
+#include "text_io.hpp"
 
 extern char system_interrupted;
 extern int comp_printlevel;
@@ -175,7 +173,7 @@ int res2_comp::do_pairs_by_level(int level)
 	  res2term *g = &head;
 	  for (f = p->syz; f != NULL; f = f->next)
 	    {
-	      if (f->comp->mi.length() > 0)
+	      if (f->comp->mi->length() > 0)
 		{
 		  g->next = R->new_term(K->copy(f->coeff),
 					f->monom,
@@ -261,7 +259,7 @@ int res2_comp::calc(const int *DegreeLimit,
 
   if (LengthLimit <= 0)
     {
-      gError << "length limit out of range";
+      ERROR("length limit out of range");
       return COMP_ERROR;
     }
   if (LengthLimit > length_limit)
@@ -398,7 +396,7 @@ int res2_comp::calc(const int *DegreeLimit,
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
 
-void res2_comp::initialize(Matrix mat, 
+void res2_comp::initialize(const Matrix *mat, 
 			   int LengthLimit,
 			   bool UseDegreeLimit,
 			   int SlantedDegreeLimit,
@@ -406,13 +404,11 @@ void res2_comp::initialize(Matrix mat,
 {
   int i;
 
-  P = mat.get_ring()->cast_to_PolynomialRing();
+  P = mat->get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res2_poly((PolynomialRing *)P);
   M = P->Nmonoms();
   K = P->Ncoeffs();
-  bump_up(P);
-  bump_up(K);
   generator_matrix = mat;
 
   length_limit = -3;  // The resolution is always kept at least in range
@@ -422,20 +418,20 @@ void res2_comp::initialize(Matrix mat,
   projdim = 0;
   max_mon_degree = M->max_degree();
 
-  if (mat.n_rows() > 0)
+  if (mat->n_rows() > 0)
     {
-      lodegree = mat.rows()->primary_degree(0);
-      for (i=1; i<mat.n_rows(); i++)
-	if (lodegree > mat.rows()->primary_degree(i))
-	  lodegree = mat.rows()->primary_degree(i);
+      lodegree = mat->rows()->primary_degree(0);
+      for (i=1; i<mat->n_rows(); i++)
+	if (lodegree > mat->rows()->primary_degree(i))
+	  lodegree = mat->rows()->primary_degree(i);
     }
   else
     lodegree = 0;
 
   // This can't actually set lodegree, can it?
-  for (i=0; i<mat.n_cols(); i++)
-    if (lodegree > mat.cols()->primary_degree(i) - 1)
-      lodegree = mat.cols()->primary_degree(i) - 1;
+  for (i=0; i<mat->n_cols(); i++)
+    if (lodegree > mat->cols()->primary_degree(i) - 1)
+      lodegree = mat->cols()->primary_degree(i) - 1;
 
   hidegree = 0;  // hidegree is an offset from 'lodegree'.
 
@@ -453,7 +449,7 @@ void res2_comp::initialize(Matrix mat,
 
   // Do level 0
   next_component = 0;
-  for (i=0; i<mat.n_rows(); i++)
+  for (i=0; i<mat->n_rows(); i++)
     {
       res2_pair *p = new_base_res2_pair(i);
       base_components.append(p);
@@ -465,8 +461,8 @@ void res2_comp::initialize(Matrix mat,
     }
 
   // Do level 1
-  for (i=0; i<generator_matrix.n_cols(); i++)
-    if (generator_matrix[i] != NULL)
+  for (i=0; i<generator_matrix->n_cols(); i++)
+    if ((*generator_matrix)[i] != NULL)
       {
 	res2_pair *p = new_res2_pair(i); // Makes a generator 'pair'
 	insert_pair(p);
@@ -540,7 +536,7 @@ void res2_comp::display_order(buffer &o, int sortval) const
   o << "]" << newline;
 }
 
-res2_comp::res2_comp(Matrix m, 
+res2_comp::res2_comp(const Matrix *m, 
 		     int LengthLimit, 
 		     bool UseDegreeLimit,
 		     int SlantedDegreeLimit,
@@ -582,9 +578,6 @@ res2_comp::~res2_comp()
   M->remove(REDUCE_mon);
   M->remove(PAIRS_mon);
   M->remove(MINIMAL_mon);
-
-  bump_down(P);
-  bump_down(K);
   delete R;
 }
 //////////////////////////////////////////////
@@ -609,7 +602,7 @@ res2_pair *res2_comp::new_res2_pair(res2_pair *first,
   if (second != NULL)
     p->syz->next = R->new_term(K->from_int(-1), basemon, second);
 #endif
-  p->mi = MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P);
   p->pivot_term = NULL;
 
   return p;
@@ -623,12 +616,12 @@ res2_pair *res2_comp::new_base_res2_pair(int i)
   p->pair_num = p->me;
   p->syz_type = SYZ2_MINIMAL;
   p->level = 0;
-  p->degree = generator_matrix.rows()->primary_degree(i) - lodegree;
+  p->degree = generator_matrix->rows()->primary_degree(i) - lodegree;
   p->compare_num = i;
   int *m = M->make_one();
   p->syz = R->new_term(K->from_int(1), m, p); // circular link...
   M->remove(m);
-  p->mi = MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P);
   p->pivot_term = NULL;
   return p;
 }
@@ -641,10 +634,10 @@ res2_pair *res2_comp::new_res2_pair(int i)
   p->pair_num = p->me;
   p->syz_type = SYZ2_S_PAIR;
   p->level = 1;
-  p->degree = generator_matrix.cols()->primary_degree(i) - 1 - lodegree;
+  p->degree = generator_matrix->cols()->primary_degree(i) - 1 - lodegree;
   p->compare_num = 0;
-  p->syz = R->from_vector(base_components, generator_matrix[i]);
-  p->mi = MonomialIdeal(P);
+  p->syz = R->from_vector(base_components, (*generator_matrix)[i]);
+  p->mi = new MonomialIdeal(P);
   p->pivot_term = NULL;
   return p;
 }
@@ -692,7 +685,7 @@ void res2_comp::multi_degree(const res2_pair *p, int *deg) const
   const res2_pair *q;
   M->multi_degree(p->syz->monom, deg);
   for (q = p; q->level != 0; q = q->syz->comp);
-  degree_monoid()->mult(deg, generator_matrix.rows()->degree(q->me), deg);
+  degree_monoid()->mult(deg, generator_matrix->rows()->degree(q->me), deg);
 }
 
 //////////////////////////////////////////////
@@ -979,15 +972,15 @@ void res2_comp::new_pairs(res2_pair *p)
   // The baggage of each of these is NULL
   if (P->is_quotient_ring())
     {
-      const MonomialIdeal &Rideal = P->get_quotient_monomials();
-      for (j = Rideal.first(); j.valid(); j++)
+      const MonomialIdeal *Rideal = P->get_quotient_monomials();
+      for (j = Rideal->first(); j.valid(); j++)
 	{
 	  // Compute (P->quotient_ideal->monom : p->monom)
 	  // and place this into a varpower and Bag, placing
 	  // that into 'elems'
 	  thisvp.shrink(0);
-	  varpower::divide(Rideal[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal(Rideal[j]->monom().raw(), thisvp.raw()))
+	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
 	    continue;
 	  Bag *b = new Bag((void *)0, thisvp);
 	  elems.insert(b);
@@ -997,11 +990,11 @@ void res2_comp::new_pairs(res2_pair *p)
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res2_pair
 
-  MonomialIdeal &mi_orig = p->syz->comp->mi;
-  for (j = mi_orig.first(); j.valid(); j++)
+  MonomialIdeal *mi_orig = p->syz->comp->mi;
+  for (j = mi_orig->first(); j.valid(); j++)
     {
-      Bag *b = new Bag(mi_orig[j]->basis_ptr());
-      varpower::divide(mi_orig[j]->monom().raw(), vp.raw(), b->monom());
+      Bag *b = new Bag((*mi_orig)[j]->basis_ptr());
+      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
       elems.insert(b);
     }
 
@@ -1009,7 +1002,7 @@ void res2_comp::new_pairs(res2_pair *p)
   // and insert into the proper degree. (Notice that sorting does not
   // need to be done yet: only once that degree is about to begin.
 
-  mi_orig.insert_minimal(new Bag(p, vp));
+  mi_orig->insert_minimal(new Bag(p, vp));
 
   queue<Bag *> rejects;
   Bag *b;
@@ -1041,33 +1034,33 @@ int res2_comp::find_ring_divisor(const int *exp, ring_elem &result) const
 {
   if (!P->is_quotient_ring()) return 0;
   Bag *b;
-  if (!P->get_quotient_monomials().search_expvector(exp, b))
+  if (!P->get_quotient_monomials()->search_expvector(exp, b))
     return 0;
   result = (Nterm *) b->basis_ptr();
   return 1;
 }
 
-int res2_comp::find_divisor(const MonomialIdeal &mi, 
+int res2_comp::find_divisor(const MonomialIdeal *mi, 
 				   const int *exp,
 				   res2_pair *&result) const
 {
   // Find all the posible matches, use some criterion for finding the best...
   res2_pair *p;
   array<Bag *> bb;
-  mi.find_all_divisors(exp, bb);
+  mi->find_all_divisors(exp, bb);
   if (bb.length() == 0) return 0;
   result = (res2_pair *) (bb[0]->basis_ptr());
   // Now search through, and find the best one.  If only one, just return it.
   if (comp_printlevel >= 5)
-    if (mi.length() > 1)
+    if (mi->length() > 1)
       {
 	buffer o;
-	o << ":" << mi.length() << "." << bb.length() << ":";
+	o << ":" << mi->length() << "." << bb.length() << ":";
 	emit(o.str());
       }
   if (bb.length() == 1)
     {
-      if (mi.length() == 1)
+      if (mi->length() == 1)
 	n_ones++;
       else
 	n_unique++;

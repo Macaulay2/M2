@@ -1,59 +1,61 @@
---		Copyright 1995 by Daniel R. Grayson and Michael Stillman
+--		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
 ModuleMap = new Type of HashTable
 ModuleMap.synonym = "module map"
 
 Matrix = new Type of ModuleMap
 Matrix.synonym = "matrix"
+raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (
      S := ring target f;
      R := ring source f;
      if R === S then R
      else error "expected module map with source and target over the same ring"
      )
+source Matrix := f -> f.source
+target Matrix := f -> f.target
 
-reduce = (tar) -> (					    -- we erase this later
-     if not isFreeModule tar and not ring tar === ZZ then (
+newMatrix = method(TypicalValue => Matrix)
+newMatrix(Module,Module,RawMatrix) := (tar,src,f) -> (     -- we erase this later
+     R := ring tar;
+     new Matrix from {
+	  symbol ring => R,
+	  symbol source => src,
+	  symbol target => tar,
+	  symbol RawMatrix => f,
+	  symbol cache => new CacheTable
+	  })
+newMatrix(Ring,RawMatrix) := (R,f) -> (			    -- replaces getMatrix
+     newMatrix(newModule(R,rawTarget f),newModule(R,rawSource f),f)
+     )
+
+reduce = (tar,f) -> (					    -- we erase this later
+     if not isFreeModule tar then (
 	  g := gb presentation tar;
+     	  error "gb reduction not re-implemented yet";
 	  sendgg(ggPush g, ggPush 1, ggpick, ggreduce, ggpop);
-	  ))
+	  )
+     else f)
 
 QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m
 Matrix * QQ := (m,r) -> (r * 1_(ring m)) * m
 
-ZZ * Matrix := (i,m) -> (
-     sendgg(ggPush ring m, ggPush i, ggfromint, ggPush m, ggmult);
-     T := target m;
-     reduce T;
-     newMatrix(T, source m))
+ZZ * Matrix := (i,m) -> newMatrix(target m, source m, reduce(target m, i * m.RawMatrix))
 
-Matrix * ZZ := (m,i) -> (
-     sendgg(ggPush ring m, ggPush i, ggfromint, ggPush m, ggmult);
-     T := target m;
-     reduce T;
-     newMatrix(T, source m))
+Matrix * ZZ := (m,i) -> i * m
 
 RingElement * Matrix := (r,m) -> (
      R := ring r;
      if R =!= ring m then error "scalar not in ring of matrix";
-     sendgg (ggPush r, ggPush m, ggmult);
-     T := target m;
-     reduce T;
-     newMatrix(T, source m))
+     newMatrix(target m, source m, reduce(target m, r.RawRingElement * m.RawMatrix)))
 
-newMatrix = (tar,src) -> (				    -- we erase this later
-     new Matrix from {
-	  symbol ring => ring tar,
-	  symbol source => src,
-	  symbol target => tar,
-	  symbol handle => newHandle "",
-	  symbol cache => new CacheTable
-	  })
-
-getMatrix = (R) -> newMatrix(
-     (sendgg(ggdup,gggetrows); new Module from R),
-     (sendgg(ggdup,gggetcols); new Module from R)
-     )
+sameRing := (m,n) -> (
+     if ring m =!= ring n then (
+	  try (promote(m,ring n) , n) else
+	  try (m , promote(n,ring m))
+	  else error "expected matrices over compatible rings"
+	  )
+     else (m,n))
 
 BinaryMatrixOperation := (operation) -> (m,n) -> (
      if ring m =!= ring n then (
@@ -88,31 +90,18 @@ Matrix _ Sequence := RingElement => (m,ind) -> (
 	  if j < 0 or j >= cols then error (
 	       "encountered column index ", toString j,
 	       " out of range 0 .. ", toString (cols-1));
-     	  sendgg (ggPush m, ggINT, gg ind#0, ggINT, gg ind#1, ggelem);
-     	  R.pop())
+	  new R from rawMatrixEntry(m.RawMatrix, ind#0, ind#1))
      else error "expected a sequence of length two"
      )
 
-Matrix _ ZZ := Vector => (m,i) -> (
-     if 0 <= i and i < numgens source m then (
-     	  sendgg (ggPush m, ggPush i, ggelem);
-     	  new m.target)
-     else error ("subscript '", toString i, "' out of range"))
+Matrix _ ZZ := Vector => (m,i) -> new m.target from rawMatrixColumn(raw m, i)
 
-Matrix == Matrix := (m,n) -> (
-     target m == target n
-     and source m == source n
-     and (
-     	  sendgg (ggPush m, ggPush n, ggisequal); 
-     	  eePopBool()))
+Matrix == Matrix := (m,n) -> target m == target n and source m == source n and raw m === raw n
 Matrix == RingElement := (m,f) -> m - f == 0
 RingElement == Matrix := (f,m) -> m - f == 0
 Matrix == ZZ := (m,i) -> (
      if i === 0
-     then (
-	  sendgg(ggPush m, ggiszero); 
-	  eePopBool()
-	  )
+     then rawIsZero m.RawMatrix
      else (
 	  R := ring m;
 	  m == i_R
@@ -120,13 +109,17 @@ Matrix == ZZ := (m,i) -> (
      )
 ZZ == Matrix := (i,m) -> m == i
 
-Matrix + Matrix := Matrix => (f,g) -> (BinaryMatrixOperationSame ggadd)(f,g)
+Matrix + Matrix := Matrix => (
+     (f,g) -> newMatrix(target f, source f, f.RawMatrix + g.RawMatrix)
+     ) @@ sameRing
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
 ZZ + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
 Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
-Matrix - Matrix := Matrix => (f,g) -> (BinaryMatrixOperationSame ggsubtract)(f,g)
+Matrix - Matrix := Matrix => (
+     (f,g) -> newMatrix(target f, source f, f.RawMatrix - g.RawMatrix)
+     ) @@ sameRing
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
 ZZ - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
@@ -140,14 +133,9 @@ Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
      symbol cache => new CacheTable
      }
 
-setdegree := (M,N,type,degree) -> (
-     R := ring M;
-     if R.?Adjust then degree = R.Adjust degree;
-     sendgg (
-     	  if R.?newEngine 
-     	  then (ggPush M, ggPush N, ggPush type, ggPush degree)
-     	  else (ggdup, ggPush degree, ggsetshift)
-     	  )
+setdegree := (R,deg,f) -> (
+     
+     
      )
 
 Matrix * Matrix := Matrix => (m,n) -> (
@@ -155,11 +143,9 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  if ring target m =!= ring target n then (
 	       n = matrix n ** ring target m;
 	       );
-     	  sendgg (ggPush m, ggPush n, ggmult);
 	  M := target m;
 	  N := source n;
-	  reduce M;
-	  newMatrix(M,N))
+	  newMatrix(M,N,reduce(M,m.RawMatrix * n.RawMatrix)))
      else (
      	  R := ring m;
 	  S := ring n;
@@ -175,14 +161,15 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  if not isFreeModule P or not isFreeModule Q or rank P =!= rank Q
 	  then error "maps not composable";
 	  dif := degrees P - degrees Q;
-	  sendgg (ggPush m, ggPush n, ggmult);
-	  setdegree (M,N,
-	       3,				    -- 1=left 2=right 3=both
+	  deg := (
 	       if same dif
 	       then (degree m + degree n + dif#0)
- 	       else toList (degreeLength R:0));
-	  reduce M;
-	  newMatrix(M,N)))
+ 	       else toList (degreeLength R:0)
+	       );
+	  if R.?Adjust then deg = R.Adjust deg;
+	  f := m.RawMatrix * n.RawMatrix;
+	  f = rawMatrix(rawTarget f, rawSource f, deg, f);
+	  newMatrix(M,N,reduce(M,f))))
 
 Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
@@ -191,8 +178,7 @@ Matrix ^ ZZ := Matrix => (f,n) -> (
 transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpose else m.cache.transpose = (
      if not (isFreeModule source m and isFreeModule target m) 
      then error "expected a map between free modules";
-     sendgg (ggPush m, ggtranspose);
-     getMatrix ring m)
+     newMatrix(ring m, rawDual m.RawMatrix))
 
 ring(Matrix) := m -> m.target.ring
 
@@ -222,7 +208,7 @@ isHomogeneous Matrix := m -> (
 	  and (
 	       M := source m;
 	       N := target m;
-	       (sendgg(ggPush m, ggishomogeneous); eePopBool())
+	       rawIsHomogeneous m.RawMatrix
 	       and
 	       ( not M.?generators or isHomogeneous M.generators )
 	       and
@@ -431,6 +417,7 @@ submatrix(Matrix,List,List) := Matrix => (m,rows,cols) -> (
      listZ rows;
      cols = toList splice cols;
      listZ cols;
+     error "IM2_Matrix_submatrix not re-implemented yet";
      sendgg(ggPush m, 
 	  ggINTARRAY, gg rows, ggINTARRAY, gg cols, ggsubmatrix);
      getMatrix ring m)
@@ -438,12 +425,15 @@ submatrix(Matrix,List,List) := Matrix => (m,rows,cols) -> (
 submatrix(Matrix,List) := Matrix => (m,cols) -> (
      cols = toList splice cols;
      listZ cols;
+     error "IM2_Matrix_submatrix not re-implemented yet";
      sendgg(ggPush m, 
 	  ggINTARRAY, gg cols, 
 	  ggsubmatrix);
      getMatrix ring m)
 
-diff(Matrix, Matrix) := Matrix => (m,n) -> (BinaryMatrixOperation ggdiff)(m,n)
+diff(Matrix, Matrix) := Matrix => (
+     (f,g) -> newMatrix(target f, source f, rawMatrixDiff(f.RawMatrix, g.RawMatrix))
+     ) @@ sameRing
 diff(RingElement, RingElement) := RingElement => (f,g) -> (
      (diff(matrix{{f}},matrix{{g}}))_(0,0)
      )
@@ -457,7 +447,9 @@ diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 diff(RingElement)    := f -> diff(vars ring f, f)
 diff(Matrix)         := m -> diff(vars ring m, m)
 
-contract (Matrix, Matrix) := Matrix => (f,g) -> (BinaryMatrixOperation ggcontract)(f,g)
+contract (Matrix, Matrix) := Matrix => diff(Matrix, Matrix) := Matrix => (
+     (f,g) -> newMatrix(target f, source f, rawMatrixContract(f.RawMatrix, g.RawMatrix))
+     ) @@ sameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (
      (contract(matrix{{f}},matrix{{g}}))_(0,0)
      )
@@ -520,6 +512,7 @@ map(Module,Module) := Matrix => options -> (M,N) -> (
      )
 
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
+     error "IM2_Matrix_zero not re-implemented yet";
      R := ring M;
      if r == 0 then new Matrix from {
 	  symbol handle => newHandle(ggPush cover M, ggPush cover N, ggzeromat),
@@ -532,6 +525,7 @@ map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      else error "expected 0, or source and target with same number of generators")
 
 map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
+     error "IM2_Matrix_zero not re-implemented yet";
      if i === 0 then new Matrix from {
 	  symbol handle => newHandle(ggPush cover M, ggPush cover N, ggzeromat),
 	  symbol source => N,
@@ -553,16 +547,8 @@ map(Module,RingElement) := Matrix => options -> (M,r) -> (
 
 map(Module) := Matrix => options -> (M) -> (
      R := ring M;
-     sendgg(ggPush cover M, ggiden);
      if options.Degree =!= null then error "Degree option encountered with identity matrix";
-     reduce M;
-     new Matrix from {
-     	  symbol handle => newHandle "",
-	  symbol source => M,
-	  symbol target => M,
-	  symbol ring => R,
-	  symbol cache => new CacheTable
-	  })
+     newMatrix(M, M, reduce(M, rawIdentity(M.RawFreeModule))))
 
 map(Module,ZZ) := Matrix => options -> (M,i) -> (
      if i === 0 then map(M,M,0)

@@ -15,3 +15,7 @@ assert( r == 0 )
 R = QQ[x,y,z]
 M = coker matrix {{x^3,y^3,z^3}}
 assert( degree M == 27 )
+
+R = ZZ[x]
+M = subquotient( matrix {{x^3}}, matrix {{x^7}} )
+assert ( degrees M == {{3}} )

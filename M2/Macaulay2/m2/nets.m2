@@ -2,8 +2,6 @@
 
 Net.AfterPrint = identity
 
-toString String := identity
-toString Symbol := string
 toString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
      toString class s, if parent s =!= Nothing then (" of ", toString parent s), 
      "{...", toString(#s), "...}"
@@ -108,7 +106,7 @@ Net == String := (n,s) -> (
 String == Net := (s,n) -> n == s
 
 net String := horizontalJoin
-net RR := net Boolean := net File := net ZZ := net Handle := net Database := string
+net RR := net Boolean := net File := net ZZ := net Database := string
 net000 := horizontalJoin ()
 net Nothing := null -> net000
 

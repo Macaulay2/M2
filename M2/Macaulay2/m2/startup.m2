@@ -1,8 +1,9 @@
 -- startup.m2
 -- this file gets incorporated into the executable file bin/Macaulay2 as the string 'startupString'
 
-if reloaded == 0 then (
+firstTime := not Array.?name
 
+if firstTime then (
      Array.name = "Array";
      BasicList.name = "BasicList";
      BigReal.name = "BigReal";
@@ -79,15 +80,9 @@ if reloaded == 0 then (
 
      first = x -> x#0;
      last = x -> x#-1;
-     
      )
 
-loadFile := (
-     if reloaded == 0
-     then (s -> simpleLoad s or error("unable to load file ", s))
-     else load
-     )
-
+loadFile := if class load === Function then load else simpleLoad
 match := X -> 0 < #(matches X);
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
@@ -189,19 +184,20 @@ processOptions := () -> (			    -- two passes
 
 ---------------------------------
 
-if reloaded === 0 then processOptions()
+if firstTime then processOptions()
 preload = false
 
-if reloaded === 0 and not nobanner then (
+if firstTime and not nobanner then (
      stderr
      << "Macaulay 2, version " << version#"VERSION" << newline
      << "--Copyright 1993-2002, D. R. Grayson and M. E. Stillman" << newline
      << "--Singular-Factory " << version#"factory version" << ", copyright 1993-2001, G.-M. Greuel, et al." << newline
-     << "--Singular-Libfac " << version#"libfac version" << ", copyright 1996-2001, M. Messollen" << newline;
+     << "--Singular-Libfac " << version#"libfac version" << ", copyright 1996-2001, M. Messollen" << newline
+     << "--NTL Library " << version#"ntl version" << ", copyright, Victor Shoup" << newline;
      simpleFlush stderr
      )
 
-if reloaded === 0 and not noloaddata and version#"dumpdata" then (
+if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      datafile := minimizeFilename concatenate(buildHomeDirectory, "/libexec/Macaulay2-",arch, "-data");
@@ -220,7 +216,7 @@ path = {}
 documentationPath = apply(path, d -> minimizeFilename(d|"/cache/doc/"))
     documentationPath = select(documentationPath, fileExists)
 
-if reloaded == 0 and not nosetup then (
+if firstTime and not nosetup then (
      -- try to load setup.m2
      if sourceHomeDirectory === null then (
 	  if getenv "M2HOME" === "" 

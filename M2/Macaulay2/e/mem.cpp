@@ -1,7 +1,7 @@
 // (c) 1995  Michael E. Stillman
 
 #include "style.hpp"
-#include "handles.hpp"
+#include "mem.hpp"
 #include "text_io.hpp"
 
 static int allocated_amount = 0;
@@ -170,8 +170,6 @@ void stash::stats(buffer &o)
     //    if (p->n_allocs > 0)
       p->text_out(o);
 
-  o << "handles: highwater = " << gHandles.highwater() << ", current = " 
-    << gHandles.current() << newline;
 }
 
 //--------- Doubling Stashes -----------------------------------------
@@ -212,10 +210,12 @@ void *doubling_stash::new_elem(size_t size)
 
 void doubling_stash::delete_elem(void *p)
 {
+  /*
   if (p == NULL) return;
   int *q = (int *) p;
   q--;
   doubles[*q]->delete_elem(q);
+  */
 }
 
 size_t doubling_stash::allocated_size(void *p)
@@ -226,11 +226,11 @@ size_t doubling_stash::allocated_size(void *p)
   return double_size[q[-1]];
 }
 
+//--------- Use GC routines ----------------------------
+
 #include <gc.h>
 
 extern "C" void outofmem();
-
-#if 0
 
 // the new way:
 
@@ -254,4 +254,25 @@ void operator delete []( void* obj ) {
   if (obj != NULL) GC_FREE( obj );
 }
 
-#endif
+
+// the old way:
+
+void* __builtin_new( unsigned int size ) {
+  void *p = GC_MALLOC( size );
+  if (p == NULL) outofmem();
+  return p;
+}
+
+void __builtin_delete( void* obj ) {
+  if (obj != NULL) GC_FREE( obj );
+}
+
+void* __builtin_vec_new( unsigned int size ) {
+  void *p = GC_MALLOC( size );
+  if (p == NULL) outofmem();
+  return p;
+}
+
+void __builtin_vec_delete( void* obj ) {
+  if (obj != NULL) GC_FREE( obj );
+}

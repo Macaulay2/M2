@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
 
@@ -55,15 +55,6 @@ degreesRing ZZ := PolynomialRing => memoize(
      	  use ZZn
 	  ))
 
-newDegreesRing ZZ := memoize(
-     (n) -> (
-	  Zn := newDegreesMonoid n;
-	  ZZn := ZZZ Zn;
-	  ZZn.name = "ZZ[" | Zn.name | "]";
-	  use ZZn
-	  )
-     )
-
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else degreesRing degreeLength R)
@@ -116,19 +107,11 @@ indices := (M,vars) -> apply(vars, x -> (
 
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
-	  if not (M.?Engine and M.Engine) 
-	  then error "expected ordered monoid handled by the engine";
-	  if not (R.?Engine and R.Engine) 
-	  then error "expected coefficient ring handled by the engine";
-	  if R.?newEngine != M.?newEngine
-	  then error "expected both ring and monoid to be handled by new engine routines";
+	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
+	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  Skew := M.Options.SkewCommutative;
-	  degRing := (
-	       if M.?newEngine or R.?newEngine
-	       then if degreeLength M != 0 then newDegreesRing degreeLength M else ZZZ
-	       else if degreeLength M != 0 then degreesRing degreeLength M else ZZ
-	       );
+	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
 	  RM := if Weyl then (
 	       diffs := M.Options.WeylAlgebra;
 	       if class diffs === Option 
@@ -153,74 +136,21 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       diffs = flatten diffs;
 	       local diffs0;
 	       local diffs1;
-	       if R.?newEngine then (
-		    diffs = pack(2,diffs);
-		    diffs0 = indices(M,first\diffs);
-		    diffs1 = indices(M,last\diffs);
-		    scan(diffs0,diffs1,(x,dx) -> 
-			 if not x<dx
-			 then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
-			 );
-	       	    new PolynomialRing from (
-		    	 ggPush degRing, 
-		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust), 
-			 ggPush R, ggPush M, 
-			 ggPush diffs0,
-			 ggPush diffs1,
-			 ggPush h,
-			 ggweylalgebra)
-		    )
-	       else (
-		    diffs = pack(2,diffs);
-		    diffs0 = indices(M,first\diffs);
-		    diffs1 = indices(M,last\diffs);
-		    scan(diffs0,diffs1,(x,dx) -> 
-			 if not x<dx
-			 then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
-			 );
-	       	    new PolynomialRing from (
-			 ggPush R, ggPush M, 
-			 ggPush diffs0,
-			 ggPush diffs1,
-			 ggPush h,
-			 ggweylalgebra)
---	       	    diffs = indices(M,diffs);
---	       	    new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
-		    )
+	       diffs = pack(2,diffs);
+	       diffs0 = indices(M,first\diffs);
+	       diffs1 = indices(M,last\diffs);
+	       scan(diffs0,diffs1,(x,dx) -> 
+		    if not x<dx
+		    then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
+		    );
+	       new PolynomialRing from rawWeylAlgebra(R.RawRing,M.RawMonoid,diffs0,diffs1,h)
 	       )
 	  else if Skew then (
-	       if M.?newEngine
-	       then (
-		    skews := (
-		    	 if M.Options.SkewCommutative === true
-			 then toList (0 .. numgens M - 1)
-			 else if class M.Options.SkewCommutative === List
-			 then indices(M,M.Options.SkewCommutative)
-			 else error "expected SkewCommutative option to be 'true' or a list of variables"
-			 );
-		    new PolynomialRing from (
-		    	 ggPush degRing, 
-		    	 ggPush flatten apply((options M).Degrees, (options M).Adjust),
-		    	 ggPush R, 
-		    	 ggPush M,
-		    	 ggPush skews,
-		    	 ggskewpolyring
-		    ))
-	       else new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
+	       error "IM2_Ring_skew_polyring not implemented yet"
+	       -- new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
 	       )
-	  else (
-	       if M.?newEngine
-	       then new PolynomialRing from (
-		    ggPush degRing, 
-      	 	    ggPush flatten apply((options M).Degrees, (options M).Adjust), 
-		    ggPush R, 
-		    ggPush M, 
-		    ggpolyring
-		    )
-	       else new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
-	       );
+	  else new PolynomialRing from rawPolynomialRing(R.RawRing, M.RawMonoid);
 	  RM.baseRings = append(R.baseRings,R);
-	  if M.?newEngine then RM.newEngine = true;
 	  RM.monoid = M;
 	  RM.Adjust = (options M).Adjust;
 	  RM.Repair = (options M).Repair;
@@ -235,12 +165,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else if ret === 0 then symbol ==
 	       else symbol <
 	       );
-	  R * M := (r,m) -> (
-	       sendgg(ggPush RM, ggPush r, ggPush m, ggterm);
-	       new RM);
-	  M * R := (m,r) -> (
-	       sendgg(ggPush RM, ggPush r, ggPush m, ggterm);
-	       new RM);
+	  R * M := (r,m) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
+	  M * R := (m,r) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
 	  RM * M := (p,m) -> p * (R#1 * m);
 	  M * RM := (m,p) -> (R#1 * m) * p;
 	  M / RM := (m,f) -> (m * ONE) / f;
@@ -259,27 +185,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  M - R := (m,r) -> R#1 * m - r * M#1;
 	  RM - M := (p,m) -> p - R#1 * m;
 	  M - RM := (m,p) -> R#1 * m - p;
-	  RM _ M := (f,m) -> (
-	       sendgg(ggPush f, ggPush m, gggetcoeff);
-	       R.pop()
-	       );
-	  if RM.?newEngine then (
-	       RM.ConvertToExpression = ConvertApply(
-		    args -> if #args === 1 then args#0 else new Sum from toList args,
-		    ConvertRepeat ConvertApply ( 
-			 (m,r) -> r * m,
-			 ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
-	       )
-	  else (
-	       RM.ConvertToExpression = ConvertApply(
-		    args -> if #args === 1 then args#0 else new Sum from toList args,
-		    ConvertRepeat ConvertApply ( 
-			 (m,r) -> r * m,
-			 ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
-	       );
-	  expression RM := f -> convert( RM.ConvertToExpression, sendgg(ggPush f, ggtonet) );
+	  RM _ M := (f,m) -> new R from rawCoefficient(f.RawRingElement, m.RawMonomial);
+	  expression RM := f -> (
+	       (coeffs,monoms) -> sum(
+		    coeffs,monoms,
+		    (a,m) -> expression (new R from a) * expression (new M from m))
+	       ) rawPairs f.RawRingElement;
 	  toString RM := toExternalString RM := x -> toString expression x;
-	  net RM := x -> net expression x;
 	  fac := options -> f -> (
 	       sendgg(ggPush f, ggfactor);
 	       v := apply(eePopInt(), i -> ( exp := eePopInt(); new Power from {RM.pop(),exp}));
@@ -312,10 +224,15 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  gt := apply(RM.generatorSymbols, RM.generators, (v,x) -> v => x);
 	  RM.generatorsTable = (
 	       if R.?generatorsTable 
-	       then hashTable join(apply(pairs R.generatorsTable,(v,x) -> v => x + 0_RM), gt)
+	       then hashTable join(
+		    apply(pairs M.generatorsTable,
+			 (v,x) -> v => new RM from rawTerm(RM.RawRing, (0_R).RawRingElement, x.RawMonomial)),
+		    gt)
 	       else hashTable gt
 	       );
-	  scan(keys R, k -> if class k === String then RM#k = promote(R#k,RM));
+	  scan(keys R, k -> (
+		    if class k === String 
+		    then RM#k = new RM from rawTerm(RM.RawRing, (R#k).RawRingElement, (1_M).RawMonomial)));
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;
 	       M - M := (m,n) -> R#1 * m - R#1 * n;

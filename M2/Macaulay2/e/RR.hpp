@@ -13,21 +13,20 @@ class RR : public Ring
   };
   typedef RRelem_rec *RRelem;
 
-  stash *RR_stash;
-  double epsilon;  // Elements closer than this are considered identical.
+  double _epsilon;  // Elements closer than this are considered identical.
 
   RRelem new_elem() const;
   void remove_elem(RRelem f) const;
 
   bool is_zero_RR(double a) const;
+  int compare_RR(double a, double b) const;
 
-  RR(const Monoid *D, double epsilon);
 protected:
+  RR() {}
   virtual ~RR();
+  bool initialize_RR(const Monoid *D, double epsilon);
 public:
   static RR * create(const Monoid *D, double epsilon);
-
-  class_identifier class_id() const { return CLASS_RR; }
 
   RR * cast_to_RR() { return this; }
   const RR * cast_to_RR() const { return this; }
@@ -35,11 +34,10 @@ public:
   double to_double(ring_elem a);
 
 // The following are all the routines required by 'ring'
+  virtual bool is_RR() const { return true; }
+
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
-  virtual bool is_Z() const         { return 0; }
-  virtual bool is_poly_ring() const { return 0; }
-  virtual bool is_quotient_poly_ring() const { return 0; }
   virtual bool is_graded() const    { return 1; }
   virtual bool is_expensive() const { return 0; }
 
@@ -48,6 +46,8 @@ public:
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_double(double r) const;
+  virtual ring_elem from_rational(mpq_ptr r) const;
+  virtual ring_elem from_BigReal(mpf_ptr a) const;
   virtual ring_elem var(int v, int n) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
@@ -91,7 +91,6 @@ public:
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 
@@ -99,9 +98,10 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual int n_terms(const ring_elem f) const;
   virtual ring_elem term(const ring_elem a, const int *m) const;

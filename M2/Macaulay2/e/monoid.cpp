@@ -4,143 +4,43 @@
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "varpower.hpp"
-#include "error.hpp"
 #include "ntuple.hpp"
 
-Monoid *trivial_monoid;		// set in x_monoid.cc
+Monoid *Monoid::trivial_monoid = 0;
 
 monoid_info::monoid_info()
 : nvars(0),
   degree_monoid(NULL),
+  _mo(0),
   mo(mon_order::trivial()),		// the trivial monomial order
-  isgroup(1)
+  isgroup(1),
+  use_packing(0)
 {
   // varnames doesn't need to be set
   set_degrees();
 }
-  
-monoid_info::monoid_info(const mon_order *mmo, 
-			 const char *s, 
-			 int len, 
-			 Monoid *deg_monoid,
-			 const intarray &degs,
-			 bool isgrp,
-			 bool isskew)
-: nvars(mmo->n_vars()), degvals(degs),
-  degree_monoid(deg_monoid), mo(mmo), isgroup(isgrp)
+
+
+monoid_info::monoid_info(MonomialOrdering *mo, 
+			 mon_order *mmo,
+			 M2_stringarray s,
+			 const Monoid *deg_monoid,
+			 M2_arrayint degs)
+  : nvars(IM2_MonomialOrdering_nvars(mo)),
+  varnames(s),
+  degvals(degs),
+  degree_monoid(deg_monoid), _mo(mo), mo(mmo)
 { 
-  set_names(nvars, s, len, varnames); 
+  int ngroup = IM2_MonomialOrdering_n_invertible_vars(mo);
+    
+  use_packing = (ngroup == 0);
+  isgroup = (ngroup == nvars);
+    
   set_degrees();
-  if (!isskew)
-    {
-      n_skew = 0;
-      skew_vars = NULL;
-      skew_list = NULL;
-    }
-  else
-    {
-      n_skew = 0;
-      skew_vars = new int[nvars];
-      skew_list = new int[nvars];
-      for (int i=0; i<nvars; i++)
-	if (primary_degree_of_var[i] % 2 == 0)
-	  skew_vars[i] = 0;
-	else
-	  {
-	    skew_vars[i] = 1;
-	    skew_list[n_skew++] = i;
-	  }
-    }
-}
-monoid_info::monoid_info(const mon_order *mmo, 
-			 const char *s, 
-			 int len, 
-			 Monoid *deg_monoid,
-			 const intarray &degs,
-			 bool isgrp,
-			 const intarray &skewvariables)
-: nvars(mmo->n_vars()), degvals(degs),
-  degree_monoid(deg_monoid), mo(mmo), isgroup(isgrp)
-{ 
-  bump_up(degree_monoid);
-  set_names(nvars, s, len, varnames); 
-  set_degrees();
-  if (skewvariables.length() == 0)
-    {
-      n_skew = 0;
-      skew_vars = NULL;
-      skew_list = NULL;
-    }
-  else
-    {
-      skew_vars = new int[nvars];
-      skew_list = new int[nvars];
-      n_skew = skewvariables.length();
-      for (int j=0; j<nvars; j++)
-	{
-	  skew_vars[j] = skew_list[j] = 0;
-	}
-      for (int i=0; i<n_skew; i++)
-	{
-	  if (skewvariables[i] >= 0 && skewvariables[i] < nvars)
-	    {
-	      if (skew_vars[skewvariables[i]] != 0)
-		n_skew--;
-	      else
-		{
-		  skew_list[i] = skewvariables[i];
-		  skew_vars[skew_list[i]] = 1;
-		}
-	    }
-	  else
-	    n_skew--;
-	}
-    }
 }
 
 monoid_info::~monoid_info()
 {
-  int i;
-  for (i=0; i<varnames.length(); i++)
-    delete [] varnames[i];
-
-  for (i=0; i<degree_of_var.length(); i++)
-    degree_monoid->remove(degree_of_var[i]);
-  delete [] primary_degree_of_var;
-
-  bump_down(degree_monoid);
-  delete mo;
-
-  delete [] skew_vars;
-  delete [] skew_list;
-}
-
-void monoid_info::set_names(int nvars, const char *s, int slength, array<char *> &varnames)
-{
-  char thisstr[100];
-  char *current;
-  current = thisstr;
-  for (int i=0; i<=slength; i++) 
-    {
-      if (varnames.length() >= nvars) break;
-      if (!isspace(s[i]) && i<slength) 
-	*current++ = s[i];
-      else 
-	{
-	  if (current == thisstr) continue;
-	  *current++ = '\0';
-	  char *varname = new char[current - thisstr];
-	  strcpy(varname, thisstr);
-	  varnames.append(varname);
-	  current = thisstr;
-	}
-    }
-    for (int j=varnames.length()+1; j<=nvars; j++)
-      {
-	char *v = new char[1];
-	*v = '\0';
-	varnames.append(v);
-      }
 }
 
 void monoid_info::set_degrees()
@@ -153,16 +53,16 @@ void monoid_info::set_degrees()
 
   // Set 'degree_of_var
   int degvars = degree_monoid->n_vars();
-  int *t = degvals.raw();
+  int *t = degvals->array;
 
-  primary_degree_of_var = new int[nvars];
+  primary_degree_of_var = makearrayint(nvars);
 
   for (int i=0; i<nvars; i++)
     {
       int *m = degree_monoid->make_one();
       degree_monoid->from_expvector(t, m);
       degree_of_var.append(m);
-      primary_degree_of_var[i] = t[0];
+      primary_degree_of_var->array[i] = t[0];
       t += degvars;
     }
   degree_of_var.append(degree_monoid->make_one());
@@ -172,7 +72,7 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
 {
   moninfo = moninf;
   nvars = moninfo->nvars;
-  if (moninfo->isgroup)
+  if (!moninfo->use_packing)
     {
       nbits = sizeof(int)*8;
       bit_mask = -1;
@@ -193,7 +93,7 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   // MES: will the next line work correctly if nwords == 0?
   monom_stash = new stash("packed monoms", nwords*sizeof(int));
 
-  if (nvars != 0 && !moninfo->isgroup)
+  if (nvars != 0 && moninfo->use_packing)
     {
       top_bits = 0;
       for (int j=0; j<n_per_word; j++)
@@ -203,13 +103,10 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   if (moninfo->degree_monoid == NULL)
     moninfo->degree_monoid = (Monoid *) this;
 
-  skew_mvars = new int[nvars];
-  skew_nvars = new int[nvars];
   EXP1 = new int[nvars];
   EXP2 = new int[nvars];
   EXP3 = new int[nvars];
   MONlocal = new int[nvars + nwords]; // MES: should be total number of words of result...
-
 }
 
 Monoid::~Monoid()
@@ -218,24 +115,212 @@ Monoid::~Monoid()
   delete [] EXP2;
   delete [] EXP3;
   delete [] MONlocal;
-  delete [] skew_mvars;
-  delete [] skew_nvars;
   delete monom_stash;
   delete moninfo;  // This takes care of bump_down of degree monoid.
+}
+
+Monoid *Monoid::get_trivial_monoid()
+{
+  if (trivial_monoid == 0)
+    trivial_monoid = new Monoid(new monoid_info, sizeof(int)*8);
+
+  return trivial_monoid;
+}
+
+static mon_order *make_mon_order(MonomialOrdering *mo)
+{
+  unsigned int nvars = IM2_MonomialOrdering_nvars(mo);
+  unsigned int nwt_blocks = 0;
+  unsigned int first_non_weight = 0;
+  unsigned int last_non_component = 0;
+
+  bool prev_is_wt = true;
+  for (unsigned int i=0; i<mo->len; i++)
+    {
+      mon_part p = mo->array[i];
+      if (prev_is_wt)
+	{
+	  if (p->type == MO_WEIGHTS)
+	    nwt_blocks++;
+	  else
+	    {
+	      first_non_weight = i;
+	      prev_is_wt = false;
+	    }
+	}
+      if (p->type != MO_COMPONENT)
+	last_non_component = i;
+    }
+
+  // Now make the weight vector values, and grab the degrees
+  unsigned int nweights = nvars * nwt_blocks;
+  M2_arrayint wts = makearrayint(nweights);
+  M2_arrayint degs = makearrayint(nvars);
+
+  unsigned int nextwt = 0;
+  unsigned next = 0;
+  for (unsigned int i=0; i<mo->len; i++)
+    {
+      mon_part p = mo->array[i];
+      if (p->wts == 0)
+	{
+	  for (int j=0; j<p->nvars; j++)
+	    degs->array[next++] = 1;
+	}
+      else if (p->type == MO_WEIGHTS && i < nwt_blocks)
+	{
+	  for (int j=0; (unsigned)j<nvars; j++)
+	    {
+	      if (j < p->nvars)
+		wts->array[nextwt++] = p->wts[j];
+	      else
+		wts->array[nextwt++] = 0;
+	    }
+	}
+      else
+	// Should only be one of the grevlex weights blocks
+	{
+	  for (int j=0; j<p->nvars; j++)
+	    degs->array[next++] = p->wts[j];;
+	}
+    }
+
+  // Check: either there is only one here, or there are several grevlex...
+  if (first_non_weight == last_non_component)
+    {
+      // Only one block, not a product order
+      switch (mo->array[first_non_weight]->type) {
+      case MO_LEX:
+      case MO_LEX2:
+      case MO_LEX4:
+      case MO_LAURENT:
+	return mon_order::lex(degs,wts);
+      case MO_GREVLEX:
+      case MO_GREVLEX2:
+      case MO_GREVLEX4:
+      case MO_GREVLEX_WTS:
+      case MO_GREVLEX2_WTS:
+      case MO_GREVLEX4_WTS:
+	return mon_order::grlex(degs,wts);
+      case MO_REVLEX:
+	return mon_order::rlex(degs,wts);
+      case MO_NC_LEX:
+	ERROR("noncommutative monomials are not yet implemented");
+	return 0;
+      default:
+	ERROR("internal error in monorder construction");
+	return 0;
+      }
+    }
+
+  // Check that every part is a grevlex type
+  M2_arrayint blocks = makearrayint(last_non_component - first_non_weight + 1);
+  next = 0;
+  for (unsigned int i=first_non_weight; i<=last_non_component; i++)
+    {
+      mon_part p = mo->array[i];
+      if (p->type == MO_GREVLEX ||
+	  p->type == MO_GREVLEX2 ||
+	  p->type == MO_GREVLEX4 ||
+	  p->type == MO_GREVLEX_WTS ||
+	  p->type == MO_GREVLEX2_WTS ||
+	  p->type == MO_GREVLEX4_WTS)
+	{
+	  blocks->array[next++] = p->nvars;
+	}
+      else
+	{
+	  ERROR("cannot currently handle products of non GRevLex orders");
+	  return 0;
+	}
+    }
+  return mon_order::product(degs,blocks,wts);
+}
+
+Monoid *Monoid::create(MonomialOrdering *mo,
+		       M2_stringarray names,
+		       const Monoid *deg_monoid,
+		       M2_arrayint degs)
+{
+  unsigned int nvars = IM2_MonomialOrdering_nvars(mo);;
+  unsigned int eachdeg = deg_monoid->n_vars();
+  if (degs->len != nvars * eachdeg)
+    {
+      ERROR("degree list should be of length %d", nvars * eachdeg);
+      return 0;
+    }
+  if (nvars != names->len)
+    {
+      ERROR("expected %d variable names", nvars);
+      return 0;
+    }
+
+  // Check that the first degree for each variable is positive
+  if (eachdeg > 0)
+    for (unsigned int i=0; i<nvars; i++)
+      if (degs->array[i * eachdeg] <= 0)
+	{
+	  ERROR("All primary (first) degrees should be positive");
+	  return 0;
+	}
+
+  // create internal monomial order
+  mon_order *mmo = make_mon_order(mo);
+  if (mmo == 0) return 0;
+  monoid_info *moninf = new monoid_info(mo, mmo, names, deg_monoid, degs);
+  
+  return new Monoid(moninf, 16);
+}
+
+Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
+{
+  int i,v;
+  monoid_info *m1 = M1->moninfo;
+  monoid_info *m2 = M2->moninfo;
+  MonomialOrdering_array M12 = (MonomialOrdering_array)getmem_atomic(sizeofarray(M12,2));
+  M12->len = 2;
+  M12->array[0] = m1->_mo;
+  M12->array[1] = m2->_mo;
+  MonomialOrdering *M = IM2_MonomialOrdering_product(M12);
+
+  int n1 = M1->n_vars();
+  int n2 = M2->n_vars();
+  int n = n1+n2;
+  M2_stringarray names = (M2_stringarray)getmem(sizeofarray(names, n));
+  names->len = n;
+  for (i=0; i<n1; i++)
+    names->array[i] = m1->varnames->array[i];
+
+  for (i=0; i<n2; i++)
+    names->array[n1+i] = m2->varnames->array[i];
+
+  const Monoid *D = M1->degree_monoid();
+  int ndegs = D->n_vars();
+
+  M2_arrayint degs = makearrayint(ndegs*n);
+
+  int next = 0;
+  for (v=0; v<n1; v++)
+    for (i=0; i<ndegs; i++)
+      degs->array[next++] = m1->degvals->array[next++];
+
+  for (v=0; v<n2; v++)
+    for (i=0; i<ndegs; i++)
+      degs->array[next++] = 1;
+
+  return Monoid::create(M,names,D,degs);
 }
 
 void Monoid::text_out(buffer &o) const
 {
   int i;
-  if (moninfo->isgroup)
-    o << "group ";
   o << "[";
   for (i=0; i<nvars-1; i++)
-    o << moninfo->varnames[i] << ",";
+    o << moninfo->varnames->array[i] << ",";
   if (nvars > 0)
-    o << moninfo->varnames[nvars-1];
+    o << moninfo->varnames->array[nvars-1];
 
-  o << "; Degrees => {";
+  o << "," << newline << "  Degrees => {";
   int ndegrees = degree_monoid()->monomial_size();
   if (ndegrees == 0)
       o << "}";
@@ -248,17 +333,20 @@ void Monoid::text_out(buffer &o) const
 	  for (int j=0; j<ndegrees; j++)
 	    {
 	      if (j != 0) o << ", ";
-	      o << moninfo->degvals[i*ndegrees+j];
+	      o << moninfo->degvals->array[i*ndegrees+j];
 	    }
 	  if (ndegrees > 1) o << '}';	  
 	}
       o << "}";
     }
 
-  o << "; MonomialOrder => ";
-  moninfo->mo->text_out(o);
+  if (moninfo->_mo != 0)
+    {
+      o << "," << newline << "  ";
+      o << IM2_MonomialOrdering_to_string(moninfo->_mo);
+    }
 
-  o << "]";
+  o << newline << "  ]";
 }
 
 void Monoid::pack(const int *exp, int *result) const
@@ -314,7 +402,7 @@ void Monoid::unpack(const int *m, int *result) const
 void Monoid::from_expvector(const int *exp, int *result) const
 {
   if (nvars == 0) return;
-  if (moninfo->isgroup)
+  if (!moninfo->use_packing)
     {
       moninfo->mo->encode(exp, result);
     }
@@ -325,10 +413,17 @@ void Monoid::from_expvector(const int *exp, int *result) const
     }
 }
 
+M2_arrayint Monoid::to_arrayint(const int *monom) const
+{
+  M2_arrayint result = makearrayint(n_vars());
+  to_expvector(monom, result->array);
+  return result;
+}
+
 void Monoid::to_expvector(const int *m, int *result_exp) const
 {
   if (nvars == 0) return;
-  if (moninfo->isgroup)
+  if (!moninfo->use_packing)
     {
       moninfo->mo->decode(m, result_exp);
     }
@@ -523,23 +618,7 @@ void Monoid::lcm(const int *m, const int *n, int *p) const
 void Monoid::elem_text_out(buffer &o, const int *m) const
 {
   to_expvector(m, EXP1);
-  if (moninfo->isgroup)
-    {
-      o << '{';
-      for (int i=0; i<nvars; i++)
-	{
-	  if (i > 0) o << ' ';
-	  o << EXP1[i];
-	}
-      o << '}';
-    }
-  else
-    ntuple::elem_text_out(o, nvars, EXP1, moninfo->varnames);
-}
-void Monoid::elem_bin_out(buffer &o, const int *m) const
-{
-  to_expvector(m, EXP1);
-  ntuple::elem_bin_out(o, nvars, EXP1);
+  ntuple::elem_text_out(o, nvars, EXP1, moninfo->varnames);
 }
 
 void Monoid::multi_degree(const int *m, int *result) const
@@ -592,7 +671,7 @@ int Monoid::primary_degree(const int *m) const
   return degree_weights(m, moninfo->primary_degree_of_var);
 }
 
-int Monoid::degree_weights(const int *m, const int *wts) const
+int Monoid::degree_weights(const int *m, const M2_arrayint wts) const
 {
   if (nvars == 0) return 0;
   to_expvector(m, EXP1);
@@ -619,118 +698,3 @@ void Monoid::to_varpower(const int *m, intarray &result_vp) const
   varpower::from_ntuple(nvars, EXP1, result_vp);
 }
 
-bool Monoid::is_skew() const
-{
-  return (moninfo->n_skew > 0);
-}
-
-int Monoid::is_skew_var(int v) const
-{
-  return (moninfo->skew_vars[v]);
-}
-
-static int sort_sign(int a, int *v1, int b, int *v2)
-{
-  if (a == 0 || b == 0) return 1;
-  int result = 0; // number of sign switches
-  a--;
-  b--;
-  for (;;)
-    {
-      if (v1[a] < v2[b])
-	{
-	  b--;
-	  if (b < 0)
-	    {
-	      return (result % 2 == 0 ? 1 : -1);
-	    }
-	}
-      else if (v1[a] > v2[b])
-	{
-	  result += b+1;
-	  a--;
-	  if (a < 0)
-	    {
-	      return (result % 2 == 0 ? 1 : -1);
-	    }
-	}
-      else 
-	return 0;
-    }
-}
-
-int Monoid::exp_skew_mult_sign(const int *exp1, const int *exp2) const
-{
-  int a = exp_skew_vars(exp1, skew_mvars);
-  int b = exp_skew_vars(exp2, skew_nvars);
-  return sort_sign(a,skew_mvars, b, skew_nvars);
-}
-
-int Monoid::skew_mult_sign(const int *m, const int *n) const
-{
-  int a = skew_vars(m, skew_mvars);
-  int b = skew_vars(n, skew_nvars);
-  return sort_sign(a,skew_mvars, b, skew_nvars);
-}
-
-int Monoid::skew_mult(const int *m, const int *n, int *result) const
-{
-  int sign = skew_mult_sign(m,n);
-  mult(m,n,result);
-  return sign;
-}
-
-int Monoid::skew_divide(const int *m, const int *n, int *result) const
-    // If the result is s (1,or -1), then m = s * result * n
-{
-  divide(m,n,result);
-  int sign = skew_mult_sign(result,n);
-  return sign;
-}
-
-int Monoid::skew_diff(const int *m, const int *n, int *result) const
-      // m acting as a differential operator on n is s * result, s = 0, 1, or -1.
-{
-  divide(n,m,result);
-  int a = skew_vars(result, skew_mvars);
-  int b = skew_vars(m, skew_nvars);
-  int sign = sort_sign(a,skew_mvars, b, skew_nvars);
-  int c = b % 4;
-  if (c == 2 || c == 3) sign = -sign;
-  return sign;
-}
-
-int Monoid::exp_skew_vars(const int *exp, int *result) const
-    // The number s of skew variables in 'm' is returned, and their
-    // indices are placed in result[0], ..., result[s-1].
-    // The space that 'result' points to MUST hold at least 'nvars' ints.
-{
-  int i;
-  int next = 0;
-  for (i=0; i<moninfo->n_skew; i++)
-    {
-      int v = moninfo->skew_list[i];
-      if (exp[v] > 0)
-	result[next++] = v;
-    }
-  return next;
-}
-int Monoid::skew_vars(const int *m, int *result) const
-    // The number s of skew variables in 'm' is returned, and their
-    // indices are placed in result[0], ..., result[s-1].
-    // The space that 'result' points to MUST hold at least 'nvars' ints.
-{
-  to_expvector(m, result);
-  return exp_skew_vars(result,result); // This aliasing is ok...
-}
-
-bool Monoid::skew_is_zero(const int *exp) const
-    // Return whether any skew variable in the exponent vector has exponent >= 2
-{
-  for (int i=0; i<moninfo->n_skew; i++)
-    {
-      int v = moninfo->skew_list[i];
-      if (exp[v] >= 2) return true;
-    }
-  return false;
-}

@@ -18,7 +18,7 @@
 
 class geobucket
 {
-  const FREEMODULETYPE *F;		// Our elements will be vectors in here
+  FREEMODULETYPE *F;		// Our elements will be vectors in here
   const Ring *K;		// The coefficient ring
   VECTYPE heap[GEOHEAP_SIZE];
   int top_of_heap;
@@ -26,14 +26,14 @@ class geobucket
 				// set negative after each call to add, 
 				// or remove_lead_term
 public:
-  geobucket(const FREEMODULETYPE *F);
+  geobucket(FREEMODULETYPE *F);
   ~geobucket();
 
   void add(VECTYPE p);
   const VECTYPE get_lead_term(); // Returns NULL if none.
   VECTYPE remove_lead_term();	// Returns NULL if none.
 
-  const FREEMODULETYPE *get_target() const { return F; }
+  FREEMODULETYPE *get_target() const { return F; }
   VECTYPE value();		// Returns the linearized value, and resets the geobucket.
 
   VECTYPE debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
@@ -41,7 +41,7 @@ public:
 				 // Mainly used for debugging.
 };
 
-inline geobucket::geobucket(const FREEMODULETYPE *FF)
+inline geobucket::geobucket(FREEMODULETYPE *FF)
 : F(FF),
   K(FF->get_ring()->Ncoeffs()),
   top_of_heap(-1),

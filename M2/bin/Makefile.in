@@ -2,17 +2,20 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
 all:: M2
-M2 : M2-build.in
-	cd ..   ; \
-	        case "$<" in /*) PREFIX= ;; *) PREFIX=bin/ ;; esac   ; \
-		./config.status --file=bin/$@:$$PREFIX/$<
-	rm -f config.log
-	chmod 0755 $@
+
+# M2 used to be a shell script, and now it's just a link to the executable
+M2 :; ln -sf ../Macaulay2/bin/Macaulay2 M2
+checkM2: M2; [ -h M2 ] || rm -f M2
+all initialize :: checkM2
+
+##  M2 : M2-build.in
+##  	cd ..   ; \
+##  	        case "$<" in /*) PREFIX= ;; *) PREFIX=bin/ ;; esac   ; \
+##  		./config.status --file=bin/$@:"$$PREFIX"$<
+##  	rm -f config.log
+##  	chmod 0755 $@
 
 install :: $(bindir)/M2 $(bindir)/M2.bat
-
-SEDFLAGS = -e 's,@prefix\@,$(prefix),' -e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),'
-
 $(bindir)/M2 : M2-final.in
 	$(INSTALL) -d $(bindir)
 	sed $(SEDFLAGS) $< >"$@".tmp

@@ -1,17 +1,8 @@
 #! /bin/sh
-PREFIX=@prefix@
-M2DIR="$PREFIX/share/doc/Macaulay2"
-M2DOC="$M2DIR/index.html"
-if [ ! -f "$M2DOC" ]
-then M2DOC="$M2DIR/@PACKAGE_VERSION@/html/index.html"
-fi
-if [ ! -f "$M2DOC" ]
-then echo "Macaulay 2 documentation not found." >&2
-     exit 1
-fi
+M2HOME="`dirname $0`/../Macaulay2"
 if   [ "$WWWBROWSER" ]
-then "$WWWBROWSER" "$M2DOC"
+then "$WWWBROWSER" "$M2HOME/html/index.html"
 elif [ `uname -s` = Darwin ]
-then open "$M2DOC"
-else netscape "$M2DOC"
+then open "$M2HOME/html/index.html"
+else netscape "$M2HOME/html/index.html"
 fi

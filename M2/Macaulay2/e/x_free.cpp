@@ -1,11 +1,277 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "interp.hpp"
+#include "engine.h"
 
 #include "freemod.hpp"
 #include "vector.hpp"
 #include "matrix.hpp"
 
+const Ring *IM2_FreeModule_ring(const FreeModule *F)
+{
+  return F->get_ring();
+}
+
+int IM2_FreeModule_rank(const FreeModule *F)
+{
+  return F->rank();
+}
+
+const M2_string IM2_FreeModule_to_string(const FreeModule *F)
+{
+  buffer o;
+  F->text_out(o);
+  return o.to_string();
+}
+
+const unsigned long int IM2_FreeModule_hash(const FreeModule *F); /* TODO */
+
+const FreeModule *IM2_FreeModule_make(const Ring *R, int rank)
+{
+  if (rank < 0) rank = 0;
+  return R->make_FreeModule(rank);
+}
+
+const FreeModuleOrNull *IM2_FreeModule_make_degs(const Ring *R, 
+						 M2_arrayint degs)
+{
+  const Monoid *D = R->degree_monoid();
+  unsigned int eachdeg = D->n_vars();
+  unsigned int rank = degs->len / eachdeg;
+  if (rank * eachdeg != degs->len)
+    {
+      ERROR("inappropriate number of degrees");
+      return 0;
+    }
+  int *deg = D->make_one();
+  FreeModule *F = R->make_FreeModule();
+  for (unsigned int i=0; i<rank; i++)
+    {
+      D->from_expvector(degs->array + i*eachdeg, deg);
+      F->append(deg);
+    }
+  return F;
+}
+
+const FreeModuleOrNull *IM2_FreeModule_make_schreyer(const Matrix *m)
+{
+  return FreeModule::make_schreyer(m);
+}
+
+const M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
+{
+  const Ring *R = F->get_ring();
+  const Monoid *D = R->degree_monoid();
+  M2_arrayint result = makearrayint(F->rank() * D->n_vars());
+  int next = 0;
+  int *exp = new int[D->n_vars()];
+  for (int i=0; i<F->rank(); i++)
+    {
+      D->to_expvector(F->degree(i), exp);
+      for (int j=0; j<D->n_vars(); j++)
+	result->array[next++] = exp[j];
+    }
+  delete [] exp;
+  return result;
+}
+
+const Matrix * IM2_FreeModule_get_schreyer(const FreeModule *F)
+{
+  return F->get_induced_order();
+}
+
+const M2_bool IM2_FreeModule_is_equal(const FreeModule *F, 
+				      const FreeModule *G)
+/* Determines if F and G are the same graded module.  If one has a
+   Schreyer order and one does not, but their ranks and degrees are the
+   same, then they are considered equal by this routine. */
+{
+  return F->is_equal(G);
+}
+
+
+const FreeModuleOrNull * IM2_FreeModule_sum(const FreeModule *F,
+					    const FreeModule *G)
+{
+  return F->direct_sum(G);
+}
+
+const FreeModuleOrNull * IM2_FreeModule_tensor(const FreeModule *F,
+					       const FreeModule *G)
+{
+  return F->tensor(G);
+}
+
+const FreeModule * IM2_FreeModule_dual(const FreeModule *F)
+{
+  return F->transpose();
+}
+
+const FreeModule * IM2_FreeModule_symm(int n, const FreeModule *F)
+{
+  return F->symm(n);
+}
+
+const FreeModule * IM2_FreeModule_exterior(int n, const FreeModule *F)
+{
+  return F->exterior(n);
+}
+
+const FreeModule * IM2_FreeModule_submodule(const FreeModule *F, 
+					    M2_arrayint selection)
+{
+  return F->sub_space(selection);
+}
+
+
+/******************************************************
+ ** Vector routines ***********************************
+ ******************************************************/
+
+const FreeModule * IM2_Vector_freemodule(const Vector *v)
+{
+  return v->free_of();
+}
+
+const RingElement_array * IM2_Vector_to_ringelements(const Vector *v)
+{
+  return v->get_all_coeffs();
+} /* TODO */
+
+const RingElement * IM2_Vector_component(const Vector *v, int i)
+{
+  return v->get_coefficient(i);
+}
+
+const M2_string IM2_Vector_to_string(const Vector *v)
+{
+  buffer o;
+  v->text_out(o);
+  return o.to_string();
+}
+
+unsigned long IM2_Vector_hash(const Vector *v); /* TODO */
+
+const Vector * IM2_Vector_make(const FreeModule *F, RingElement_array *v)
+ /* TODO */
+{
+  return Vector::make(F,v);
+}
+
+const VectorOrNull * IM2_Vector_e_sub(const FreeModule *F, int i)
+{
+  return Vector::e_sub_i(F,i);
+}
+
+const Vector * IM2_Vector_zero(const FreeModule *F)
+{
+  return Vector::zero(F);
+}
+
+M2_bool IM2_Vector_is_zero(const Vector *a)
+{
+  return a->is_zero();
+}
+
+M2_bool IM2_Vector_is_equal(const Vector *a,
+				 const Vector *b)
+{
+  return a->is_equal(b);
+}
+
+const Vector * IM2_Vector_negate(const Vector *v)
+{
+  return -(*v);
+}
+
+const VectorOrNull * IM2_Vector_add(const Vector *v, 
+				    const Vector *w)
+{
+  return (*v) + (w);
+}
+
+const VectorOrNull * IM2_Vector_subtract(const Vector *v, 
+					 const Vector *w)
+{
+  return (*v) - (w);
+}
+
+const VectorOrNull * IM2_Vector_scalar_mult(const RingElement *r,
+					    const Vector *v); /* TODO */
+
+const VectorOrNull * IM2_Vector_scalar_right_mult(const Vector *v,
+						  const RingElement *r)
+{
+  return (*v) * (r);
+}
+
+const VectorOrNull *IM2_Vector_term(const FreeModule *F,
+				    const RingElement *a,
+				    int component)
+{
+  return Vector::make(F,a,component);
+}
+
+M2_bool IM2_Vector_is_graded(const Vector *a)
+{
+  return a->is_homogeneous();
+}
+
+M2_arrayint_OrNull IM2_Vector_multidegree(const Vector *a)
+{
+  return a->degree();
+}
+
+/**************************************************/
+/**** polynomial vector routines ******************/
+/**************************************************/
+
+M2_Integer_pair_OrNull *IM2_Vector_degree(const Vector *a, 
+					  const M2_arrayint wts); /* TODO */
+/* The first component of the degree is used, unless the degree monoid is trivial,
+   in which case the degree of each variable is taken to be 1. 
+   Returns lo,hi degree.  If the ring is not a graded ring or a polynomial ring
+   then (0,0) is returned.
+*/
+
+const VectorOrNull *IM2_Vector_homogenize_to_degree(const Vector *a,
+						    int v,
+						    int deg,
+						    const M2_arrayint wts)
+{
+  return a->homogenize(v,deg,wts);
+}
+
+const VectorOrNull *IM2_Vector_homogenize(const Vector *a,
+					  int v,
+					  const M2_arrayint wts)
+{
+  return a->homogenize(v,wts);
+}
+
+const Vector *IM2_Vector_get_terms(const Vector *a,
+				   int lo, int hi)
+{
+  return a->get_terms(lo,hi);
+}
+
+const RingElement *IM2_Vector_lead_coeff(const Vector *a)
+{
+  return a->lead_coefficient();
+}
+
+const MonomialOrNull *IM2_Vector_lead_monomial(const Vector *a); /* TODO */
+
+int IM2_Vector_lead_component(const Vector *a)
+{
+  return a->lead_component();
+}
+
+int IM2_Vector_n_terms(const Vector *a)
+{
+  return a->n_terms();
+}
+
+#if 0
 void cmd_FreeModule(object &oR, object &oa)
 {
   const Ring *R = oR->cast_to_Ring();
@@ -50,8 +316,7 @@ FreeModule *makeSchreyerFreeModule(Ring *R, int rank,
     F->append(degrees[i],ordering[i],tiebreaks[i]);
   return F;
 }
-#include <algorithm>
-using namespace std;
+
 FreeModule *makeSchreyerFreeModule(const Matrix &m)
 {
   int i;
@@ -495,3 +760,4 @@ void i_Vector_cmds(void)
   install(gglcm, cmd_Nfree_lcm, TY_FREEMODULE);
   install(gggcd, cmd_Nfree_gcd, TY_FREEMODULE);
 }
+#endif

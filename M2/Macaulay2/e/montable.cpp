@@ -1,183 +1,348 @@
-// Copyright 1999 by Michael E. Stillman
-
 #include "montable.hpp"
-#include "text_io.hpp"
+#include <functional>
+#include <algorithm>
 
-stash *tagged_monomial<int>::mystash;
+/********************/
+/* Support routines */
+/********************/
 
-template <class Tag>
-void display(MonomialTable<Tag> &mi)
+static bool exponents_equal(int nvars, exponents a, exponents b)
 {
-  buffer o;
-  for (MonomialTable<Tag>::iterator p = mi.first(); p.valid(); ++p)
-    {
-      const tagged_monomial<Tag> *t = *p;
-      varpower::elem_text_out(o, p.get_monomial().raw());
-      o << "(";
-      o << p.get_tag();
-      o << ") ";
-    }
-  o << newline;
-  emit(o.str());
+  for (int i=0; i<nvars; i++)
+    if (a[i] != b[i]) return false;
+  return true;
 }
-#if 0
-void test_monideal2()
+
+static bool exponents_greater(int nvars, exponents a, exponents b)
 {
-  // Here is a handful of monomials
-  int nmonomials;
-  intarray *mon;
-
-  mon = new intarray[10];
-  nmonomials = 1;
-
-  // First test: insert a handful of monomials
-  MonomialTable<int> mi;
-  typedef MonomialTable<int>::tagged_monomial tagged_monomial;
-
-  for (int i=0; i<nmonomials; i++)
+  for (int i=0; i<nvars; i++)
     {
-      tagged_monomial *b = new tagged_monomial(mon[i], i);
-      mi.insert_minimal(b);
+      if (a[i] < b[i]) return false;
+      if (a[i] > b[i]) return true;
     }
-
-  display<int>(mi);
-
-  // Creation.
-
-  // Find
-
-  // Insertion
-
-  // Removal
-
-  // Display
+  return false;
 }
-#endif
-#if 0
-extern int comp_printlevel;
 
-stash *MonomialIdeal_rec::mystash;
-stash *Nmi_node::mystash;
-stash *monideal_pair::mystash;
-
-static int nlists = 0;
-static int nleaves = 0;
-static int nnodes = 0;
-static int ndepth = 0;
-
-void MonomialIdeal::do_node(Nmi_node *p, int indent, int disp) const
+static void exponents_show(FILE *fil, exponents exp, int nvars)
+  /* This is only for debugging */
 {
-  buffer o;
+  fprintf(fil, "[");
+  for (int i=0; i<nvars; i++)
+    fprintf(fil, "%d ", exp[i]);
+  fprintf(fil, "]");
+}
+
+static unsigned long monomial_mask(int nvars, exponents exp)
+{
+  unsigned long result = 0;
+  int i,j;
+  for (i=0, j=0; i<nvars; i++, j++)
+    {
+      if (j == 8*sizeof(long)) j=0;
+      if (exp[i] > 0)
+	result |= (1 << j);
+    }
+  return result;
+}
+
+/********************/
+/* MonomialTable ****/
+/********************/
+
+MonomialTable::mon_term *MonomialTable::make_list_head()
+{
+  mon_term *t = new mon_term;
+  t->_next = t->_prev = t;
+  t->_val = -1;
+  t->_lead = 0;
+  return t;
+}
+
+MonomialTable *MonomialTable::make(int nvars)
+{
+  MonomialTable *result;
+  result = new MonomialTable;
+  result->_nvars = nvars;
+  result->_count = 0;
+
+  /* The first entry is a dummy entry.  Components 
+     will always start at 1. */
+  result->_head.push_back(0);
+
+  return result;
+}
+
+MonomialTable::~MonomialTable()
+{
+  /* Loop through each component, and remove all mon_terms */
+  for (unsigned int i=1; i<_head.size(); i++)
+    {
+      mon_term *t = _head[i];
+      while (t->_next != t)
+	{
+	  mon_term *tmp = t->_next;
+	  tmp->_prev->_next = tmp->_next;
+	  tmp->_next->_prev = t;
+	  delete tmp;
+	}
+      _head[i] = 0;
+    }
+  _count = 0;
+}
+
+int MonomialTable::find_divisors(int max,
+				 exponents exp,
+				 int comp,
+				 vector< mon_term * > *result)
+{
+  assert(comp >= 1);
+  if (comp >= (int)_head.size()) return 0;
+  mon_term *head = _head[comp];
+  mon_term *t;
   int i;
-  assert(p->left != NULL);
-  assert(p->right != NULL);
-  assert(p->left->right == p);
-  assert(p->right->left == p);
-  if (disp)
-    {
-      for (i=1; i<=indent; i++) o << ' ';
-      o << p->var << ' ' <<  p->exp;
-    }
-  if (p->tag == Nmi_node::leaf)
-    {
-      nleaves++;
-      if (disp) o << ' ';
-      varpower::elem_text_out(o, p->baggage()->monom().raw());
-      o << '(';
-      o << p->baggage()->basis_elem();
-      o << ')';
-    }
-  else if (p == p->header)
-    nlists++;
-  else
-    nnodes++;
-  emit_line(o.str());
+
+  int nmatches = 0;
+  unsigned long expmask = ~(monomial_mask(_nvars, exp));
+
+  for (t = head->_next; t != head; t = t->_next)
+    if ((expmask & t->_mask) == 0)
+      {
+	bool is_div = 1;
+	for (i=0; i<_nvars; i++)
+	  if (exp[i] < t->_lead[i])
+	    {
+	      is_div = 0;
+	      break;
+	    }
+	if (is_div)
+	  {
+	    nmatches++;
+	    if (result != 0) result->push_back(t);
+	    if (max >= 0 && nmatches >= max) break;
+	  }
+      }
+  return nmatches;
 }
 
-void MonomialIdeal::do_tree(Nmi_node *p, int depth, int indent, int disp) const
+MonomialTable::mon_term *MonomialTable::find_exact(exponents exp, int comp)
 {
-  if (depth > ndepth) ndepth = depth;
-  do_node(p, indent, disp);
-  Nmi_node *q = p->right;
-  while (q != p) {
-    do_node(q, indent, disp);
-    if (q->tag != Nmi_node::leaf)
-      do_tree(q->down(), depth+1, indent+2, disp);
-    q = q->right;
+  if (comp >= (int)_head.size()) return 0;
+  mon_term *head = _head[comp];
+  mon_term *t;
+  int i;
+
+  unsigned long expmask = monomial_mask(_nvars, exp);
+
+  for (t = head->_next; t != head; t = t->_next)
+    if (expmask == t->_mask)
+      {
+	bool is_eq = 1;
+	for (i=0; i<_nvars; i++)
+	  if (exp[i] != t->_lead[i])
+	    {
+	      is_eq = 0;
+	      break;
+	    }
+	if (is_eq)
+	  return t;
+      }
+  return 0;
+}
+
+void MonomialTable::insert(exponents exp, int comp, int id)
+{
+  /* Insert 'exp' into the monomial table.  These are kept sorted in ascending order
+     in some order (lex order?).  No element is ever removed.
+  */
+
+  if (comp >= (int)_head.size())
+    {
+      for (int i=_head.size(); i <= comp; i++)
+	_head.push_back(make_list_head());
+    }
+
+  mon_term *head = _head[comp];
+  mon_term *t;
+
+  /* Make a new mon_term including exp */
+  mon_term *newterm = new mon_term;
+  newterm->_lead = exp;
+  newterm->_mask = monomial_mask(_nvars,exp);
+  newterm->_val = id;
+
+  _count++;
+
+  /* Find where to put it */
+  for (t=head; t->_next != head; t = t->_next)
+    {
+      if (exponents_greater(_nvars, newterm->_lead, t->_next->_lead))
+	{
+	  /* Time to insert newterm, right between t, t->next */
+	  break;
+	}
+    }	  
+
+  /* The actual insertion */
+  newterm->_next = t->_next;
+  newterm->_prev = t;
+  t->_next->_prev = newterm;
+  t->_next = newterm;
+}
+
+/****************************
+ * Minimalization ***********
+ ****************************/
+
+struct sorter : public binary_function<exponents,exponents,bool> {
+  int nvars;
+  const vector<exponents> &exps;
+  const vector<int> &comps;
+  sorter(int nvars, 
+	 const vector<exponents> &exps,
+	 const vector<int> &comps) 
+    : nvars(nvars), exps(exps), comps(comps) {}
+  bool operator()(int x, int y) {
+    exponents xx = exps[x];
+    exponents yy = exps[y];
+    for (int i=0; i<nvars; i++)
+      if (xx[i] < yy[i]) return true;
+    if (comps[x] < comps[y]) return true;
+    return false;
   }
-}
+};
 
-void MonomialIdeal::debug_out(int disp) const
-     // Display MonomialIdeal in tree-like form, collect statistics
+void MonomialTable::minimalize(int nvars, 
+			       const vector<exponents> &exps,
+			       const vector<int> &comps,
+			       bool keep_duplicates, 
+			       vector<int> &result_positions)
 {
-  nlists = 0;
-  nnodes = 0;
-  nleaves = 0;
-  ndepth = 0;
-  if (obj->mi != NULL) do_tree(obj->mi, 0, 0, disp);
-  buffer o;
-  o << "list nodes     = " << nlists << newline;
-  o << "internal nodes = " << nnodes << newline;
-  o << "monomials      = " << nleaves << newline;
-  o << "max depth      = " << ndepth << newline;
-  emit(o.str());
-}
+  /* Step 1: Sort an intarray into ascending order.  In this order, if e divides f, then e should appear
+     before f. Don't actually change 'exp'.  Need a special compare routine.  */
 
-int MonomialIdeal::debug_check(Nmi_node *p, Nmi_node *up) const
-     // Returns the number of leaves at tree with root p.
-     // Make sure that the list header is constructed ok, that the 
-     // left/right pointers are ok on this level, that the
-     // var, exp, values in this train are correct. 
-     // Then loop through, checking each node (recursively) and each leaf
-{
-  Nmi_node *q;
-  // First check the node 'p' itself
-  assert(p != NULL);
-#ifndef NDEBUG
-  int v = p->var;
-#endif
-  assert(v >= 0);
-  if (up != NULL) 
-    assert(v < up->var);
-  assert(p->header == p);
-  assert(p->tag == Nmi_node::node);
-  assert(p->down() == up);
-  assert(p->left != NULL);
-  assert(p->right != NULL);
+  /* Step 2: Make a monomial table. */
 
-  // Now loop through each element in left/right chain, checking that
-  // v, e, left, right values are consistent.
-  for (q = p->left; q != p; q = q->left)
+  /* Step 3: Loop through each element in the intarray.  If the exponent is not in the
+     monomial ideal, put that index into the result, and insert into the monomial ideal.
+     If it is in the monomial ideal, go on. */
+
+  /* Step alternate3: If ALL minimal elements are to be taken. (e.g. if [1,1,0] is
+     minimal, but occurs more than once, then keep all occurrences of [1,1,0]. */
+
+  /* Step 4: Remove the monomial table.  Note that the exp vectors should not 
+     be recreated. */
+
+  MonomialTable *T;
+
+  vector<int> positions;
+  positions.reserve(exps.size());
+  for (unsigned int i=0; i<exps.size(); i++)
+    positions.push_back(i);
+
+  /* The following sorts in ascending lex order, considering the component and the
+     inhomogeneous part of the exponent vector */
+  sort(positions.begin(), positions.end(), sorter(nvars,exps,comps));
+
+  T = MonomialTable::make(nvars);
+
+  vector<int>::iterator first, end;
+  first = positions.begin();
+  end = positions.end();
+  while (first != end)
     {
-      assert(q->left != NULL);
-      assert(q->right != NULL);
-      assert(q->header == p);
-      assert(q->right->left == q);
-      assert(q->left->right == q);
-      assert(q->var == v);
-      assert((q->right == p) || (q->exp < q->right->exp));
-      assert(q->exp >= 0);
-    }
+      vector<int>::iterator next = first+1;
+      exponents this_exp = exps[*first];
+      int comp = comps[*first];
+      while (next != end)
+	{
+	  if (!exponents_equal(nvars, this_exp, exps[*next])) break;
+	  if (comp != comps[*next]) break;
+	  next++;
+	}
+      if (T->find_divisors(1, this_exp, comp) == 0)
+	{
+	  /* We have a minimal element */
 
-  // Now loop through again, this time descending into nodes
-  int c = 0;
-  for (q = p->right; q != p; q = q->right)
-    if (q->tag == Nmi_node::node) 
-      c += debug_check(q->down(), q);
-    else
-      c++;
-  return c;
+	  T->insert(this_exp, comp, *first);
+	  result_positions.push_back(*first);
+	  if (keep_duplicates)
+	    while (++first != next)
+	      result_positions.push_back(*first);
+	}
+      
+      first = next;
+      /* At this point: [first,next) is the range of equal monomials */
+    }
+  delete T;
 }
 
-void MonomialIdeal::debug_check() const
+MonomialTable *MonomialTable::make_minimal(int nvars, 
+					   const vector<exponents> &exps,
+					   const vector<int> &comps,
+					   const vector<int> &vals,
+					   vector<int> &rejects)
 {
-  if (obj->count == 0) 
+  MonomialTable *T;
+
+  vector<int> positions;
+  positions.reserve(exps.size());
+  for (unsigned int i=0; i<exps.size(); i++)
+    positions.push_back(i);
+
+  /* The following sorts in ascending lex order, considering the component and the
+     inhomogeneous part of the exponent vector */
+  sort(positions.begin(), positions.end(), sorter(nvars,exps,comps));
+
+  T = MonomialTable::make(nvars);
+
+  vector<int>::iterator first, end, last_minimal;
+  first = positions.begin();
+  end = positions.end();
+  last_minimal = first;
+  while (first != end)
     {
-      assert(obj->mi == NULL);
-      return;
+      vector<int>::iterator next = first+1;
+      exponents this_exp = exps[*first];
+      int comp = comps[*first];
+      while (next != end)
+	{
+	  if (!exponents_equal(nvars, this_exp, exps[*next])) break;
+	  if (comp != comps[*next]) break;
+	  rejects.push_back(*next);
+	  next++;
+	}
+      if (T->find_divisors(1, this_exp, comp) == 0)
+	{
+	  /* We have a minimal element */
+
+	  T->insert(this_exp, comp, vals[*first]);
+	  *last_minimal++ = *first;
+	}
+      else
+	rejects.push_back(*first);
+      
+      first = next;
+      /* At this point: [first,next) is the range of equal monomials */
     }
-  assert(obj->mi != NULL);
-  assert(debug_check(obj->mi, NULL) == obj->count);
+  return T;
 }
 
-#endif
+void MonomialTable::show(FILE *fil)
+{
+  mon_term *t,*head;
+  /* Loop through each component, display monomials(val) 10 per line */
+  fprintf(fil, "monomial table: %d vars, %d components, %d elements\n",
+	  this->_nvars, (int)_head.size(), this->_count);
+  for (unsigned i=1; i<_head.size(); i++)
+    {
+      head = this->_head[i];
+      if (head->_next == head) continue;
+      fprintf(fil,"  -- component %d --\n",i);
+      for (t = head->_next; t != head; t = t->_next)
+	{
+	  exponents_show(fil,t->_lead,_nvars);
+	  fprintf(fil," (%d)\n",t->_val);
+	}
+    }
+  fprintf(fil,"\n");
+}

@@ -457,14 +457,11 @@ document { symbol "?",
 	  "3 ? 4",
       	  "\"book\" ? \"boolean\"",
       	  "3 ? 3.",
-      	  "3 ? \"a\"",
 	  },
      "It would be nice to implement an operator like this one for everything
      in such a way that the set of all things in the language would be
      totally ordered, so that it could be used in the implementation of
-     efficient hash tables, but we haven't done this.  The methods which have
-     been installed for this operator are fairly primitive, and in the end
-     often amount to simply comparing hash codes."  
+     efficient hash tables, but we haven't done this."  
      }
 
 document { ";",
@@ -708,8 +705,9 @@ document { run,
 	  "s" => {"a command string ", TT "s", " understandable by your operating system"},
 	  "r" => "the exit status of the command (a small integer which is normally zero)"
 	  },
-     "The command is run by passing it to the operating system.  While it's
-     running, Macaulay 2 simply waits.",
+     "The command is run expanding it into words with ", TO "expandWord", ", forking, and
+     running the command.  While it's running, Macaulay 2 simply waits.  Commands indicating
+     pipes or redirection of input/output are not run."
      }
 
 document { wait,

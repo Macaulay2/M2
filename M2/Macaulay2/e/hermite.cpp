@@ -3,26 +3,24 @@
 #include "style.hpp"
 #include "hermite.hpp"
 #include "text_io.hpp"
-
-stash *HermiteComputation::mystash;
-stash *hm_elem::mystash;
+#include "vector.hpp"
 extern Z *ZZ;
 
 hm_elem *HermiteComputation::new_gen(int i)
 {
   hm_elem *result = new hm_elem;
   mpz_init(result->lead);
-  if (gens[i] == NULL)
+  if ((*gens)[i] == NULL)
     {
       result->f = NULL;
     }
   else
     {
-      mpz_abs(result->lead, MPZ_VAL(gens[i]->coeff));
-      result->f = gens.rows()->copy(gens[i]);
+      mpz_abs(result->lead, MPZ_VAL((*gens)[i]->coeff));
+      result->f = gens->rows()->copy((*gens)[i]);
     }
   if (i < n_comps_per_syz)
-    result->fsyz = syz.rows()->e_sub_i(i);
+    result->fsyz = syz->rows()->e_sub_i(i);
   else
     result->fsyz = NULL;
   result->next = NULL;
@@ -33,7 +31,7 @@ void HermiteComputation::insert(hm_elem *p)
   if (p->f == NULL)
     {
       if (p->fsyz != NULL && collect_syz)
-	syz.append(p->fsyz);
+	syz->append(p->fsyz);
       mpz_clear(p->lead);
       delete p;
     }
@@ -45,9 +43,9 @@ void HermiteComputation::insert(hm_elem *p)
     }
 }
 
-HermiteComputation::HermiteComputation(const Matrix &m, int collsyz, int nsyz)
+HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
   : gb_comp(COMP_HERMITE),
-  row(m.n_rows()-1),
+  row(m->n_rows()-1),
   gens(m),
   GB_list(NULL),
   n_gb(0),
@@ -55,16 +53,16 @@ HermiteComputation::HermiteComputation(const Matrix &m, int collsyz, int nsyz)
 {
   int i;
 
-  for (i=0; i<m.n_rows(); i++)
+  for (i=0; i<m->n_rows(); i++)
     initial.append((hm_elem *)NULL);
 
-  if (nsyz < 0 || nsyz > m.n_cols())
-    nsyz = m.n_cols();
+  if (nsyz < 0 || nsyz > m->n_cols())
+    nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
-  const FreeModule *F = m.cols()->sub_space(nsyz);  
-  syz = Matrix(F);
+  const FreeModule *F = m->cols()->sub_space(nsyz);  
+  syz = new Matrix(F);
 
-  for (i=0; i<m.n_cols(); i++)
+  for (i=0; i<m->n_cols(); i++)
     {
       hm_elem *p = new_gen(i);
       insert(p);
@@ -74,8 +72,8 @@ HermiteComputation::HermiteComputation(const Matrix &m, int collsyz, int nsyz)
 void HermiteComputation::remove_hm_elem(hm_elem *&p)
 {
   mpz_clear(p->lead);
-  gens.rows()->remove(p->f);
-  syz.rows()->remove(p->fsyz);
+  gens->rows()->remove(p->f);
+  syz->rows()->remove(p->fsyz);
   delete p;
   p = NULL;
 }
@@ -138,17 +136,17 @@ hm_elem *HermiteComputation::merge(hm_elem *f, hm_elem *g)
 	// In this case, we remove one, and re-insert:
 	if (mpz_cmp(MPZ_VAL(f->f->coeff), MPZ_VAL(g->f->coeff)) == 0)
 	  {
-	    vec f1 = gens.rows()->copy(f->f);
-	    vec f2 = syz.rows()->copy(f->fsyz);
-	    gens.rows()->subtract_to(g->f, f1);
-	    syz.rows()->subtract_to(g->fsyz, f2);
+	    vec f1 = gens->rows()->copy(f->f);
+	    vec f2 = syz->rows()->copy(f->fsyz);
+	    gens->rows()->subtract_to(g->f, f1);
+	    syz->rows()->subtract_to(g->fsyz, f2);
 	  }
 	else
 	  {
-	    vec f1 = gens.rows()->copy(f->f);
-	    vec f2 = syz.rows()->copy(f->fsyz);
-	    gens.rows()->add_to(g->f, f1);
-	    syz.rows()->add_to(g->fsyz, f2);
+	    vec f1 = gens->rows()->copy(f->f);
+	    vec f2 = syz->rows()->copy(f->fsyz);
+	    gens->rows()->add_to(g->f, f1);
+	    syz->rows()->add_to(g->fsyz, f2);
 	  }
 
 	h = g;
@@ -210,30 +208,30 @@ void HermiteComputation::reduce(hm_elem *&p, hm_elem *q)
   // DOn't forget to also reset the 'lead' fields!
   ring_elem u, v;
   ring_elem g = ZZ->gcd_extended(p->f->coeff, q->f->coeff, u, v);
-  ring_elem a = ZZ->divide(q->f->coeff, g);
-  ring_elem b = ZZ->divide(p->f->coeff, g);
+  ring_elem a = ZZ->divide(q->f->coeff, g); // exact
+  ring_elem b = ZZ->divide(p->f->coeff, g); // exact
   ZZ->negate_to(b);
 
-  vec p1 = gens.rows()->mult(u, p->f);
-  vec p2 = gens.rows()->mult(v, q->f);
-  gens.rows()->add_to(p1, p2);
+  vec p1 = gens->rows()->mult(u, p->f);
+  vec p2 = gens->rows()->mult(v, q->f);
+  gens->rows()->add_to(p1, p2);
 
-  vec syz1 = syz.rows()->mult(u, p->fsyz);
-  vec syz2 = syz.rows()->mult(v, q->fsyz);
-  syz.rows()->add_to(syz1, syz2);
+  vec syz1 = syz->rows()->mult(u, p->fsyz);
+  vec syz2 = syz->rows()->mult(v, q->fsyz);
+  syz->rows()->add_to(syz1, syz2);
 
-  vec q1 = gens.rows()->mult(a, p->f);
-  vec q2 = gens.rows()->mult(b, q->f);
-  gens.rows()->add_to(q1, q2);
+  vec q1 = gens->rows()->mult(a, p->f);
+  vec q2 = gens->rows()->mult(b, q->f);
+  gens->rows()->add_to(q1, q2);
 
-  vec qsyz1 = syz.rows()->mult(a, p->fsyz);
-  vec qsyz2 = syz.rows()->mult(b, q->fsyz);
-  syz.rows()->add_to(qsyz1, qsyz2);
+  vec qsyz1 = syz->rows()->mult(a, p->fsyz);
+  vec qsyz2 = syz->rows()->mult(b, q->fsyz);
+  syz->rows()->add_to(qsyz1, qsyz2);
   
-  gens.rows()->remove(p->f);
-  gens.rows()->remove(q->f);
-  syz.rows()->remove(p->fsyz);
-  syz.rows()->remove(q->fsyz);
+  gens->rows()->remove(p->f);
+  gens->rows()->remove(q->f);
+  syz->rows()->remove(p->fsyz);
+  syz->rows()->remove(q->fsyz);
   ZZ->remove(a);
   ZZ->remove(b);
   ZZ->remove(g);
@@ -279,43 +277,48 @@ int HermiteComputation::calc(const int *, const intarray &/*stop*/)
   return COMP_DONE;
 }
 
-Matrix HermiteComputation::min_gens_matrix()
+Matrix *HermiteComputation::min_gens_matrix()
 {
   return gb_matrix();
 }
 
-Matrix HermiteComputation::initial_matrix(int)
+Matrix *HermiteComputation::initial_matrix(int)
 {
-  Matrix result(gens.rows());
+#warning "implement HermiteComputation::initial_matrix"
+#if 0
+  // MES aug 2002
+  Matrix *result = new Matrix(gens->rows());
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result.append(gens.rows()->lead_term(p->f));
+    result->append(gens->rows()->lead_term(p->f));
+  return result;
+#endif
+  return 0;
+}
+
+Matrix *HermiteComputation::gb_matrix()
+{
+  Matrix *result = new Matrix(gens->rows());
+  for (hm_elem *p = GB_list; p != NULL; p = p->next)
+    result->append(gens->rows()->copy(p->f));
   return result;
 }
 
-Matrix HermiteComputation::gb_matrix()
+Matrix *HermiteComputation::change_matrix()
 {
-  Matrix result(gens.rows());
+  Matrix *result = new Matrix(syz->rows());
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result.append(gens.rows()->copy(p->f));
+    result->append(syz->rows()->copy(p->fsyz));
   return result;
 }
 
-Matrix HermiteComputation::change_matrix()
-{
-  Matrix result(syz.rows());
-  for (hm_elem *p = GB_list; p != NULL; p = p->next)
-    result.append(syz.rows()->copy(p->fsyz));
-  return result;
-}
-
-Matrix HermiteComputation::syz_matrix()
+Matrix *HermiteComputation::syz_matrix()
 {
   return syz;
 }
 void HermiteComputation::stats() const
 {
   buffer o;
-  for (int i=0; i<gens.n_rows(); i++)
+  for (int i=0; i<gens->n_rows(); i++)
     if (initial[i] != NULL)
       {
 	o << "--- component " << i << " -----" << newline;
@@ -323,20 +326,16 @@ void HermiteComputation::stats() const
 	  {
 	    bignum_text_out(o, p->lead);
 	    o << " ## ";
-	    gens.rows()->elem_text_out(o, p->f);
+	    gens->rows()->elem_text_out(o, p->f);
 	    o << " ## ";
-	    syz.rows()->elem_text_out(o, p->fsyz);
+	    syz->rows()->elem_text_out(o, p->fsyz);
 	    o << newline;
 	  }
       }
   o << newline;
-  syz.text_out(o);
+  syz->text_out(o);
   o << newline;
   emit(o.str());
-}
-int HermiteComputation::length_of() const
-{
-  return n_gb;
 }
 
 void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
@@ -345,7 +344,7 @@ void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
   // (in absolute value).
   vecterm head;
   vecterm *result = &head;
-  gError << "reduction over ZZ not implemented yet";
+  ERROR("reduction over ZZ not implemented yet");
 #if 0
   ring_elem coeff;
   while (f != NULL)
@@ -377,10 +376,10 @@ void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
 
 	      // Perform the division:
 	      mpz_...(a, f->coeff, p->f->coeff);
-	      vec f1 = gens.rows()->mult(a, p->f);
-	      vec fsyz1 = syz.rows()->mult(a,p->fsyz);
+	      vec f1 = gens->rows()->mult(a, p->f);
+	      vec fsyz1 = syz->rows()->mult(a,p->fsyz);
 	      ges.rows()->subtract_to(f, f1);
-	      syz.rows()->subtract_to(fsyz, fsyz1);
+	      syz->rows()->subtract_to(fsyz, fsyz1);
 	    }
 	}
       // If no divisors, or the divisor is larger than lead coeff of f:
@@ -395,58 +394,59 @@ void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
   result->next = NULL;
   f = head.next;
 }
-Matrix HermiteComputation::reduce(const Matrix &m, Matrix &lift)
+Matrix *HermiteComputation::reduce(const Matrix *m, Matrix *&lift)
 {
-  Matrix red(m.rows(), m.cols(), m.degree_shift());
-  lift = Matrix(syz.rows(), m.cols());
-  if (m.n_rows() != gens.rows()->rank()) {
-       gError << "expected matrices to have same number of rows";
-       return red;
+  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  lift = new Matrix(syz->rows(), m->cols());
+  if (m->n_rows() != gens->rows()->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       return 0;
   }
-  for (int i=0; i<m.n_cols(); i++)
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = gens.rows()->copy(m[i]);
+      vec f = gens->rows()->copy((*m)[i]);
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
-      syz.rows()->negate_to(fsyz);
-      red[i] = f;
-      lift[i] = fsyz;
+      syz->rows()->negate_to(fsyz);
+      (*red)[i] = f;
+      (*lift)[i] = fsyz;
     }
   return red;
 }
 
-Vector HermiteComputation::reduce(const Vector &v, Vector &lift)
+Vector *HermiteComputation::reduce(const Vector *v, Vector *&lift)
 {
-  if (!v.free_of()->is_equal(gens.rows()))
+  if (!v->free_of()->is_equal(gens->rows()))
     {
-      gError << "reduce: vector is in incorrect free module";
-      return Vector(gens.rows(), NULL);
+      ERROR("reduce: vector is in incorrect free module");
+      return 0;
     }
-  vec f = gens.rows()->copy(v.get_value());
+  vec f = gens->rows()->copy(v->get_value());
   vec fsyz = NULL;
 
   gb_reduce(f, fsyz);
-  syz.rows()->negate_to(fsyz);
+  syz->rows()->negate_to(fsyz);
 
-  lift = Vector(syz.rows(), fsyz);
-  return Vector(gens.rows(), f);
+  lift = Vector::make_raw(syz->rows(), fsyz);
+  return Vector::make_raw(gens->rows(), f);
+
 }
-int HermiteComputation::contains(const Matrix &m)
+int HermiteComputation::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
   // Reduce each column of m one by one.
-  for (int i=0; i<m.n_cols(); i++)
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = gens.rows()->translate(m.rows(),m[i]);
+      vec f = gens->rows()->translate(m->rows(),(*m)[i]);
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
-      syz.rows()->remove(fsyz);
+      syz->rows()->remove(fsyz);
       if (f != NULL)
 	{
-	  gens.rows()->remove(f);
+	  gens->rows()->remove(f);
 	  return i;
 	}
     }
@@ -456,13 +456,13 @@ bool HermiteComputation::is_equal(const gb_comp *q1)
 {
   if (kind() != q1->kind()) return false;
   HermiteComputation *qq = (HermiteComputation *) q1;
-  if (gens.rows()->rank() != qq->gens.rows()->rank()) return false;
+  if (gens->rows()->rank() != qq->gens->rows()->rank()) return false;
 
   hm_elem *q = qq->GB_list;
   for (hm_elem *p = GB_list; p != NULL; p = p->next)
     {
       if (q == NULL) return false;
-      if (!gens.rows()->is_equal(p->f, q->f))
+      if (!gens->rows()->is_equal(p->f, q->f))
 	return false;
       q = q->next;
     }

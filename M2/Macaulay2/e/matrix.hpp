@@ -5,52 +5,21 @@
 
 #include "monoid.hpp"
 #include "freemod.hpp"
-#include "vector.hpp"
 #include "monideal.hpp"
 
-class Matrix_rec : public mutable_object
+class Matrix : public mutable_object
 {
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
+  FreeModule *_rows;
+  FreeModule *_cols;
+  int *_degree_shift;		// An element of the degree monoid
+  array<vec> _entries;
 
-  friend class Matrix;
-  FreeModule *rows;
-  FreeModule *cols;
-  int *degree_shift;		// An element of the degree monoid
-  array<vec> entries;
-  
-  Matrix_rec(const FreeModule *r, const FreeModule *c, const int *deg) 
-    : mutable_object(), 
-      rows((FreeModule *)r), 
-      cols((FreeModule *)c),
-      degree_shift(r->get_ring()->degree_monoid()->make_new(deg))
-      { bump_up(rows); bump_up(cols); 
-	vec zero = NULL;
-        for (int i=0; i<c->rank(); i++) 
-	  entries.append(zero); }
-  virtual ~Matrix_rec();
-
-  class_identifier class_id() const { return CLASS_Matrix; }
-  type_identifier  type_id () const { return TY_MATRIX; }
-  const char * type_name   () const { return "Matrix"; }
-
-  Matrix cast_to_Matrix();
-  
-  int length_of() const { return entries.length(); }
-
-  void bin_out(buffer &o) const;
-  void text_out(buffer &o) const;
-};
-
-class Matrix
-{
   friend class FreeModule;
-  POINTER(Matrix, Matrix_rec)
 private:
-  vec &elem(int i) { return obj->entries[i]; }
-  const vec &elem(int i) const { return obj->entries[i]; }
+  void initialize(const FreeModule *r, const FreeModule *c, const int *deg);
+
+  vec &elem(int i) { return _entries[i]; }
+  const vec &elem(int i) const { return _entries[i]; }
 
   // These two routines are private to 'coeffs'
   vec strip_vector(vec &f, const int *vars, 
@@ -61,7 +30,7 @@ private:
   void k_basis1(int topvar) const;
   void k_basis_insert() const;
   
-  void symm1(Matrix &result, 
+  void symm1(Matrix * &result, 
 	     vec f,	       // product so far generated
 	     int lastn,        // can use lastn..n_cols()-1 in product
 	     int pow) const;   // remaining power to take
@@ -76,20 +45,35 @@ public:
 
   Matrix(const FreeModule *r);
 
-  Matrix(const MonomialIdeal &mi);
+  Matrix(const MonomialIdeal * mi);
+
+  static const MatrixOrNull * make(const FreeModule *target,
+				   const Vector_array *V);
+
+  static const MatrixOrNull * make(const FreeModule *target,
+				   const FreeModule *source,
+				   const M2_arrayint deg,
+				   const Vector_array *V);
+
+  static const MatrixOrNull * make(const FreeModule *target,
+				   const FreeModule *source,
+				   const M2_arrayint deg,
+				   const Matrix *M);
+
+  static const Matrix * make(const MonomialIdeal * mi);
 
   const Ring *get_ring() const { return rows()->get_ring(); }
   const Monoid *degree_monoid() const { return get_ring()->degree_monoid(); }
 
-  vec &operator[](int i) { return obj->entries[i]; }
-  const vec &operator[](int i) const { return obj->entries[i]; }
+  vec &operator[](int i) { return _entries[i]; }
+  const vec &operator[](int i) const { return _entries[i]; }
   ring_elem elem(int i, int j) const 
     { return rows()->get_coefficient(elem(j), i); }
 
-  FreeModule *rows() { return obj->rows; }
-  FreeModule *cols() { return obj->cols; }
-  const FreeModule *rows() const { return obj->rows; }
-  const FreeModule *cols() const { return obj->cols; }
+  FreeModule *rows() { return _rows; }
+  FreeModule *cols() { return _cols; }
+  const FreeModule *rows() const { return _rows; }
+  const FreeModule *cols() const { return _cols; }
 
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
@@ -99,51 +83,53 @@ public:
   void schreyer_append(vec v);
 
   // The degree shift
-  const int *degree_shift() const { return obj->degree_shift; }
-  int *degree_shift() { return obj->degree_shift; }
-
-  intarray get_degree_shift() const;
-  void set_degree_shift(const intarray &deg);
+  const int *degree_shift() const { return _degree_shift; }
+  //  int *degree_shift() { return _degree_shift; }
 
   // to/from monideals
-  MonomialIdeal make_monideal(int n) const;
-  MonomialIdeal make_skew_monideal(int n) const;
-  void append_monideal(const MonomialIdeal &mi, int k);
+  MonomialIdeal * make_monideal(int n) const;
+  MonomialIdeal * make_skew_monideal(int n) const;
+  void append_monideal(const MonomialIdeal *mi, int k);
 
   // Matrix operations
-  Matrix sub_matrix(const intarray &r, const intarray &c) const;
-  Matrix sub_matrix(const intarray &c) const;
-  Matrix transpose() const;
-  Matrix operator+(const Matrix &m) const;
-  Matrix operator-() const;
-  Matrix operator-(const Matrix &m) const;
-  Matrix operator*(const ring_elem r) const;
-  Matrix operator*(const Matrix &r) const;
-  Matrix concat(const Matrix &m) const;
+  MatrixOrNull *sub_matrix(const M2_arrayint r, const M2_arrayint c) const;
+  MatrixOrNull *sub_matrix(const M2_arrayint c) const;
+  Matrix *transpose() const;
+  Matrix *operator+(const Matrix &m) const;
+  Matrix *operator-() const;
+  Matrix *operator-(const Matrix &m) const;
+  Matrix *operator*(const ring_elem r) const;
+  Matrix *operator*(const Matrix &r) const;
+  Matrix *concat(const Matrix &m) const;
 
-  static Matrix identity(const FreeModule *F);
-  static Matrix zero(const FreeModule *F, const FreeModule *G);
+  static Matrix *identity(const FreeModule *F);
+  static MatrixOrNull *zero(const FreeModule *F, const FreeModule *G);
 
-  Matrix koszul(int p) const;
-  static Matrix koszul(const Matrix &rows, const Matrix &cols);
+  MatrixOrNull *koszul(int p) const;
+  static MatrixOrNull *koszul(const Matrix *rows, const Matrix *cols);
 
-  Matrix reshape(const FreeModule *G, const FreeModule *H) const;
-  static Matrix flip(const FreeModule *G, const FreeModule *H);
+  MatrixOrNull *reshape(const FreeModule *G, const FreeModule *H) const;
+  static MatrixOrNull *flip(const FreeModule *G, const FreeModule *H);
 
-  Matrix direct_sum(const Matrix &m) const;
-  Matrix module_tensor(const Matrix &m) const;
-  Matrix tensor(const Matrix &m) const;
-  Matrix diff(const Matrix &m, int use_coef) const;
-  Matrix symm(int n) const;
+  MatrixOrNull *direct_sum(const Matrix *m) const;
+  MatrixOrNull *module_tensor(const Matrix *m) const;
+  MatrixOrNull *tensor(const Matrix *m) const;
+  MatrixOrNull *diff(const Matrix *m, int use_coef) const;
+  MatrixOrNull *symm(int n) const;
 
-  Matrix coeffs(const int *vars, Matrix &result_monoms) const;
-  Matrix lead_var_coefficient(Matrix &monoms) const;
+  MatrixOrNull *coeffs(const int *vars, Matrix * &result_monoms) const;
+  MatrixOrNull *coeffs(M2_arrayint vars, const M2_arrayint monoms) const;
+  MatrixOrNull *monomials(M2_arrayint vars) const;
 
-  Matrix k_basis(Matrix bot, const int *d, int do_trunc) const;
-  Matrix k_basis(Matrix bot) const;
+  Matrix *lead_var_coefficient(Matrix * &monoms) const;
 
-  Matrix exterior(int p,int strategy) const;
-  static Matrix wedge_product(int p, int q, const FreeModule *F);
+  Matrix *k_basis(Matrix &bot, const int *d, int do_trunc) const;
+  Matrix *k_basis(Matrix &bot) const;
+
+  Matrix *exterior(int p,int strategy) const;
+  Matrix *minors(int p,int strategy) const;
+  Matrix *pfaffians(int p) const;
+  static Matrix *wedge_product(int p, int q, const FreeModule *F);
 //  static Matrix wedge_dual(int p, const FreeModule *F);
 
   // equality, zero
@@ -152,18 +138,19 @@ public:
 
   // degrees
   int is_homogeneous() const;
-  Matrix homogenize(int v, const int *wts) const;
+  Matrix *homogenize(int v, const M2_arrayint wts) const;
 
   // Simplification of column set
-  Matrix simplify(int n) const;
-  Matrix auto_reduce() const;	// An error is given, if their are two lead terms
+  Matrix *simplify(int n) const;
+  Matrix *auto_reduce() const;	// An error is given, if their are two lead terms
 				// one which divides another.
 
   // Sorting the columns of the matrix (new positions into 'result')
-  void sort(int degorder, int monorder, intarray &result) const;
+  //  void sort(int degorder, int monorder, intarray &result) const;
+  M2_arrayint sort(int degorder, int monorder) const;
 
   // Matrix selection
-  Matrix lead_term(int n=-1) const; // Select those monomials in each column
+  Matrix *lead_term(int n=-1) const; // Select those monomials in each column
 				  // which are maximal in the order under
 				  // the first n weight vectors
 
@@ -179,20 +166,18 @@ private:
 public:
   void minimal_lead_terms(intarray &result) const;
 
-  void elim(int n, intarray &result) const;
-  Matrix sat(int n, int maxd) const; // maxd<0 means divide by as much as possible
+  M2_arrayint elim_vars(int nparts) const;
+  M2_arrayint elim_keep(int nparts) const;
+  Matrix *divide_by_var(int n, int maxd, int &maxdivided) const; // maxd<0 means divide by as much as possible
 
-  static Matrix random(const Ring *R, int r, int c);
+  static Matrix *random(const Ring *R, int r, int c);
   void text_out(buffer &o) const;
 };
 
-inline Matrix Matrix_rec::cast_to_Matrix() 
-{ return Matrix(this,caster); }
-
 inline void Matrix::append(vec v, const int *d)
 {
-  cols()->append(d);
-  obj->entries.append(v);
+  _cols->append(d);
+  _entries.append(v);
 }
 
 inline void Matrix::append(vec v)

@@ -51,7 +51,7 @@ FFLAGS = @FFLAGS@
 DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-
+LAPACK = @LAPACK@
 encap = @encap@
 encapdir = @encapdir@
 

@@ -8,26 +8,23 @@
 extern "C" char system_interrupted;
 extern int comp_printlevel;
 
-MatrixComputation::MatrixComputation(const Matrix &m, bool do_rowchange, bool do_colchange)
-  : R(m.get_ring())
+MatrixComputation::MatrixComputation(const Matrix *m, bool do_rowchange, bool do_colchange)
+  : R(m->get_ring())
 {
-  gens = new SparseMutableMatrix(m);
-  bump_up(gens);
+  gens = SparseMutableMatrix::make(m);
   if (do_rowchange)
     {
-      SparseMutableMatrix *rowchange = SparseMutableMatrix::identity(R,m.n_rows());
+      SparseMutableMatrix *rowchange = SparseMutableMatrix::identity(R,m->n_rows());
       gens->setRowChangeMatrix(rowchange);
-      bump_up(rowchange);
     }
   if (do_colchange)
     {
-      SparseMutableMatrix *colchange = SparseMutableMatrix::identity(R,m.n_cols());
+      SparseMutableMatrix *colchange = SparseMutableMatrix::identity(R,m->n_cols());
       gens->setColumnChangeMatrix(colchange);
-      bump_up(colchange);
     }
 
-  last_col = m.n_cols() - 1;
-  last_row = m.n_rows() - 1;
+  last_col = m->n_cols() - 1;
+  last_row = m->n_rows() - 1;
 }
 
 MatrixComputation::~MatrixComputation()
@@ -169,25 +166,25 @@ int MatrixComputation::calc(int nsteps)
   return 0;
 }
 
-Matrix MatrixComputation::getResultMatrix() const
+Matrix *MatrixComputation::getResultMatrix() const
 {
   return gens->toMatrix();
 }
 
-Matrix MatrixComputation::getRowChangeOfBasisMatrix() const
+Matrix *MatrixComputation::getRowChangeOfBasisMatrix() const
 {
   SparseMutableMatrix *rowchange = gens->getRowChangeMatrix();
   if (rowchange == 0)
-    return Matrix(R);
+    return 0;
   else
     return rowchange->toMatrix();
 }
 
-Matrix MatrixComputation::getColumnChangeOfBasisMatrix() const
+Matrix *MatrixComputation::getColumnChangeOfBasisMatrix() const
 {
   SparseMutableMatrix *colchange = gens->getColumnChangeMatrix();
   if (colchange == 0)
-    return Matrix(R);
+    return 0;
   else
     return colchange->toMatrix();
 }
@@ -219,7 +216,6 @@ FF_LUComputation::FF_LUComputation(SparseMutableMatrix *M)
 
   pivot = R->from_int(1);
   lastpivot = R->from_int(1);
-  bump_up(M);
 }
 
 FF_LUComputation::~FF_LUComputation()
@@ -228,8 +224,6 @@ FF_LUComputation::~FF_LUComputation()
   R->remove(lastpivot);
   delete [] col_perm;
   delete [] need_div;
-
-  bump_down(M);
 }
 
 bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)
@@ -308,20 +302,21 @@ bool FF_LUComputation::calc()
   return true;
 }
 
-void FF_LUComputation::get_column_permutation(intarray &result)
+M2_arrayint FF_LUComputation::get_column_permutation()
 {
-  result.shrink(0);
   int ncols = M->n_cols();
+  M2_arrayint result = makearrayint(ncols);
   for (int i=0; i<ncols; i++)
-    result.append(col_perm[i]);
+    result->array[i] = col_perm[i];
+  return result;
 }
 
-bool FF_LUComputation::DO(SparseMutableMatrix *M, intarray &col_permutation)
+M2_arrayint_OrNull FF_LUComputation::DO(SparseMutableMatrix *M)
 {
   FF_LUComputation F(M);
-  if (!F.calc()) return false;
-  F.get_column_permutation(col_permutation);
-  return true;
+  if (!F.calc()) return NULL;
+  M2_arrayint col_permutation = F.get_column_permutation();
+  return col_permutation;
 }
 
 

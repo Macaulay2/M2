@@ -3,20 +3,20 @@
 #ifndef _mon_order_hh_
 #define _mon_order_hh_
 
-#include "object.hpp"
+#include "hash.hpp"
 #include "intarray.hpp"
 
 enum mon_order_types
 {
-  MO_GRLEX = 0,
-  MO_RLEX = 1,			// not usable with monoid
-  MO_GLEX = 2,
-  MO_LEX = 3,
-  MO_ELIM = 4,
-  MO_WTFCN = 5,
-  MO_PRODUCT = 6,
-  MO_GENERAL = 7,
-  MO_TRIVIAL = 8
+  MO1_GRLEX = 0,
+  MO1_RLEX = 1,			// not usable with monoid
+  MO1_GLEX = 2,
+  MO1_LEX = 3,
+  MO1_ELIM = 4,
+  MO1_WTFCN = 5,
+  MO1_PRODUCT = 6,
+  MO1_GENERAL = 7,
+  MO1_TRIVIAL = 8
 };
 
 class mon_order
@@ -33,27 +33,27 @@ protected:
   int **inv_order;
   int *inv_degs;
 
-  mon_order(mon_order_types ty, const intarray &degs, const intarray &wts);
+  mon_order(mon_order_types ty, const M2_arrayint degs, const M2_arrayint wts);
   void set_weights(const int *exp, int *m) const;
 public:
   virtual ~mon_order();
 
   static mon_order *trivial();
-  static mon_order *grlex(const intarray &degs,const intarray &wts);
-  static mon_order *rlex(const intarray &degs,const intarray &wts);
-  static mon_order *glex(const intarray &degs,const intarray &wts);
-  static mon_order *lex(const intarray &degs,const intarray &wts);
-  static mon_order *elim(const intarray &degs, int i,const intarray &wts);
-  static mon_order *product(const intarray &degs, const intarray &blocks,
-			    const intarray &wts);
+  static mon_order *grlex(const M2_arrayint degs,const M2_arrayint wts);
+  static mon_order *rlex(const M2_arrayint degs,const M2_arrayint wts);
+  static mon_order *glex(const M2_arrayint degs,const M2_arrayint wts);
+  static mon_order *lex(const M2_arrayint degs,const M2_arrayint wts);
+  static mon_order *elim(const M2_arrayint degs, unsigned int i,const M2_arrayint wts);
+  static mon_order *product(const M2_arrayint degs, const M2_arrayint blocks,
+			    const M2_arrayint wts);
 
   static mon_order *product(const mon_order *m1, const mon_order *m2);
   static mon_order *elim_product(const mon_order *m1, const mon_order *m2);
   static mon_order *graded_product(const mon_order *m1, const mon_order *m2);
-  static mon_order *general_order(const intarray &degs, 
-				  const intarray &order, 
-				  const intarray &invorder,
-				  const intarray &invdegs);
+  static mon_order *general_order(const M2_arrayint degs, 
+				  const M2_arrayint order, 
+				  const M2_arrayint invorder,
+				  const M2_arrayint invdegs);
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
@@ -69,7 +69,7 @@ public:
 class grlex_mon_order : public mon_order
 {
 public:
-  grlex_mon_order(const intarray &degs, const intarray &weights);
+  grlex_mon_order(const M2_arrayint degs, const M2_arrayint weights);
   ~grlex_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -80,7 +80,7 @@ public:
 class grlex1_mon_order : public mon_order
 {
 public:
-  grlex1_mon_order(const intarray &degs, const intarray &weights);
+  grlex1_mon_order(const M2_arrayint degs, const M2_arrayint weights);
   ~grlex1_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -92,8 +92,8 @@ class product_mon_order : public mon_order
   int nblocks;
   int *blocks;
 public:
-  product_mon_order(const intarray &degs, const intarray &blocks,
-		    const intarray &weights);
+  product_mon_order(const M2_arrayint degs, const M2_arrayint blocks,
+		    const M2_arrayint weights);
   ~product_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -104,7 +104,7 @@ class elim_mon_order : public mon_order
 {
   int nelim;			// Number of variables to eliminate
 public:
-  elim_mon_order(const intarray &degs, int n, const intarray &weights);
+  elim_mon_order(const M2_arrayint degs, unsigned int n, const M2_arrayint weights);
   ~elim_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -112,24 +112,17 @@ public:
   virtual void text_out(buffer &o) const;
 };
 
-class object_mon_order : public type
+class IM2_mon_order : public mutable_object
 {
 public:
   mon_order *val;
 
-  object_mon_order() {}
-  object_mon_order(mon_order *mo) : val(mo) {}
-  ~object_mon_order() {}
+  IM2_mon_order() {}
+  IM2_mon_order(mon_order *mo) : val(mo) {}
+  ~IM2_mon_order() {}
 
   mon_order * grab_mon_order(); // Note: can only use monomial order once!
 
-  class_identifier class_id() const { return CLASS_MonomialOrder; }
-  type_identifier  type_id () const { return TY_MON_ORDER; }
-  const char * type_name   () const { return "MonomialOrder"; }
-
-  object_mon_order *       cast_to_mon_order()       { return this; }
-  const object_mon_order * cast_to_mon_order() const { return this; }
-  
   int length_of() const { return val->n_vars(); }
 
   void text_out(buffer &o) const 

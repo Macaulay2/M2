@@ -1,11 +1,11 @@
---		Copyright 1995 by Daniel R. Grayson
-lift = method()
-liftable = method()
-promote = method()
+--		Copyright 1995-2002 by Daniel R. Grayson
 RingElement = new Type of HashTable
 RingElement.synonym = "ring element"
+raw RingElement := f -> f.RawRingElement
+
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
+raw EngineRing := R -> R.RawRing
 -----------------------------------------------------------------------------
 
 reduce := (r,s) -> (
@@ -19,66 +19,22 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
-toString EngineRing := R -> if R.?name then R.name else sendgg(ggPush R, ggsee, ggpop)
-
-net EngineRing := toString
-
-new EngineRing from Handle := (EngineRing, h) -> new EngineRing from ggPush h
-
-new EngineRing from Ring := (EngineRing, R) -> new EngineRing from handle R
-
-new EngineRing from List :=
-new EngineRing from Sequence :=
-new EngineRing from String := (EngineRing, ggcmds) -> (
-     R := new EngineRing of RingElement;
-     R.Engine = true;
-     R.handle = newHandle ggcmds;
-     new R from Handle := (R,h) -> new R from { (symbol handle, h) };
-     new R := R -> newClass( R, hashTable { (
-		    symbol handle, 
-		    toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
-		    ) } );
-     R#1 = 1_R;
-     R#0 = 0_R;
-     R.pop = () -> new R;
-     R)
+toString EngineRing := R -> if R.?name then R.name else toString R.RawRing
 
 ZZ _ EngineRing := 
-promote(ZZ,EngineRing) := RingElement => (i,R) -> (
-     new R from {( symbol handle, newHandle (ggPush R, ggINT, gg i, ggfromint) )}
-     )
+promote(ZZ,EngineRing) := RingElement => (i,R) -> new R from i_(R.RawRing)
 
--- MES: added 5/11/2001.  Should we allow silent rounding to occur when
--- promoting to a ring which is not based on RR?  For example, what if the
--- base is a field of characteristic p > 0?
+new RingElement from RawRingElement := (R, f) -> new R from { symbol RawRingElement => f };
+
+new EngineRing from RawRing := (EngineRing,R) -> (
+     S := new EngineRing of RingElement;
+     S.RawRing = R;
+     S#1 = 1_S;
+     S#0 = 0_S;
+     S)
+
 RR _ EngineRing := 
-promote(RR,EngineRing) := RingElement => (i,R) -> (
-     new R from {( symbol handle, newHandle (ggPush R, ggDOUBLE, gg i, ggfromdouble) )}
-     )
-
------------------------------------------------------------------------------
-
-ZZZ = new EngineRing of RingElement
-ZZZ.generators = {}
-ZZZ.pop = () -> new ZZZ
-ZZZ.handle = newHandle ggEZZ
-new ZZZ from Handle := (ZZZ,h) -> new ZZZ from { (symbol handle, h) };
-new ZZZ := ZZZ -> newClass( ZZZ, hashTable { (
-	       symbol handle, 
-	       toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
-	       ) } );
-ZZZ.newEngine = true
-ZZZ#1 = 1_ZZZ
-ZZZ#0 = 0_ZZZ
-ZZZ.isCommutative = true
-ZZZ.char = 0
-ZZZ.ConversionFormat = ConvertInteger
-ZZZ.Engine = true
-ZZZ.baseRings = {ZZ}
-ZZZ.ConvertToExpression = ConvertInteger
-ZZZ.degreeLength = 0
-net ZZZ := toString ZZZ := see
-expression ZZZ := n -> expression lift(n,ZZ)
+promote(RR,EngineRing) := RingElement => (i,R) -> i_R
 
 -----------------------------------------------------------------------------
                 FractionField = new Type of EngineRing
@@ -119,12 +75,8 @@ frac EngineRing := R -> (
 	  if o.Inverses then error "not implemented : fraction fields of rings with inverses";
 	  if o.WeylAlgebra =!= {} or o.SkewCommutative
 	  then error "fraction field of non-commutative ring requested";
-	  R.frac = F := new FractionField from (ggPush R, ggfractionfield);
+	  R.frac = F := new FractionField from rawFractionRing R.RawRing;
 	  F.baseRings = append(R.baseRings,R);
-     	  if R.?newEngine then F.newEngine = true;
-	  F.ConvertToExpression = ConvertApply(
-	       (x,y) -> x/y, R.ConvertToExpression, R.ConvertToExpression
-	       );
 	  factor F := options -> f -> factor numerator f / factor denominator f;
 	  toString F := x -> toString expression x;
 	  net F := x -> net expression x;
@@ -132,38 +84,12 @@ frac EngineRing := R -> (
 	       if denominator f != 1 
 	       then error "expected a generator"
 	       else baseName numerator f);
-	  expression F := (f) -> convert(
-	       F.ConvertToExpression,
-	       sendgg(ggPush f, ggtonet)
-	       );
-	  numerator F := (f) -> (
-	       sendgg( ggPush f, ggnumerator );
-	       R.pop());
-	  denominator F := (f) -> (
-	       sendgg( ggPush f, ggdenominator );
-	       R.pop());
-	  isHomogeneous F := (f) -> (
-	       isHomogeneous numerator f and isHomogeneous denominator f);
-	  degree F := (f) -> degree numerator f - degree denominator f;
+	  expression F := (f) -> expression numerator f / expression denominator f;
+	  numerator F := (f) -> new R from rawNumerator f.RawRingElement;
+	  denominator F := (f) -> new R from rawDenominator f.RawRingElement;
 	  F.generators = apply(generators R, m -> promote(m,F));
-	  F + F := (x,y) -> (
-	       sendgg(ggPush x, ggPush y, ggadd);
-	       new F);
-	  F - F := (x,y) -> (
-	       sendgg ( ggPush x, ggPush y, ggsubtract );
-	       new F);
-	  F * F := (x,y) -> (
-	       sendgg ( ggPush x, ggPush y, ggmult);
-	       new F);
-	  fraction(F,F) := F / F := (x,y) -> (
-	       sendgg ( ggPush x, ggPush y, ggdiv);
-	       new F);
-	  fraction(R,R) := (r,s) -> (
-	       -- need a better method
-	       r = promote(r,F);
-	       s = promote(s,F);
-	       sendgg ( ggPush r, ggPush s, ggdiv);
-	       new F);
+	  fraction(F,F) := F / F := (x,y) -> x//y;
+	  fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,r.RawRingElement,s.RawRingElement);
 	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
 	  if R.?generatorExpressions then F.generatorExpressions = R.generatorExpressions;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
@@ -221,63 +147,34 @@ RingElement _ List := RingElement => (f,d) -> (
 
 Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
-EngineRing _ ZZ := (R,i) -> (
-     if R.?generators 
-     then R.generators#i
-     else (
-     	  sendgg(ggPush i, ggPush 1, ggPush R, ggvar);
-     	  new R)
-     )
+EngineRing _ ZZ := (R,i) -> new R from R.RawRing_i
 
-size RingElement := f -> (
-     sendgg(ggPush f, gglength); 
-     eePopInt())
+size RingElement := f -> rawTermCount f.RawRingElement
 
-isHomogeneous RingElement := f -> (
-     sendgg(ggPush f, ggishomogeneous);
-     eePopBool())
+isHomogeneous RingElement := f -> rawIsHomogeneous f.RawRingElement
 
-- RingElement := RingElement => x -> (
-     sendgg(ggPush x, ggnegate); 
-     new ring x)
+- RingElement := RingElement => x -> new ring x from -x.RawRingElement
 
 RingElement ? RingElement := (x,y) -> (
      if ring x === ring y and x == y then symbol == else handle x ? handle y
      );
 
-net RingElement := x -> stack lines sendgg(ggPush x, ggsee, ggpop);
 
-RingElement ^ ZZ := RingElement => (x,i) -> (
-     R := ring x;
-     if i === 0
-     then R#1
-     else (
-	  sendgg(ggPush x, ggPush i, ggpower);
-	  new R));
+RingElement ^ ZZ := RingElement => (x,i) -> new ring x from x.RawRingElement^i
 
 toString RingElement := x -> toString expression x
 
 net RingElement := x -> net expression x
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> (
-     S := ring f;
-     if n <= 0
-     then 0_S
-     else (
-	  sendgg(ggPush f, ggPush i, ggPush (i + n - 1), gggetterms);
-	  new S))
+     new ring f from rawGetTerms(f.RawRingElement,i,i + n - 1)
+     )
 
 baseName RingElement := x -> (
      if size x === 1 and leadCoefficient x == 1
      then (
      	  R := ring x;
-     	  if R.?newEngine then (
-	       sendgg(ggPush x, ggleadmonom);
-	       v := eePopIntarray();
-	       if #v === 2 and v#1 === 1 then R.generatorSymbols#(v#0)
-	       else error "expected a generator"
-	       )
-     	  else baseName leadMonomial x
+ 	  baseName leadMonomial x
 	  )
      else if size x === 1 and leadMonomial x == 1
      then baseName leadCoefficient x
@@ -285,22 +182,23 @@ baseName RingElement := x -> (
      )
 
 leadCoefficient RingElement := RingElement => (f) -> (
-     if f == 0 then error "lead coefficient of 0 requested";
      R := ring f;
      k := coefficientRing R;
-     leadCoefficient R := (f) -> (
-     	  sendgg(ggPush f, ggleadcoeff);
-     	  k.pop());
+     leadCoefficient R := (
+	  -- if      k === ZZ then  (f) -> rawToInteger rawLeadCoefficient f.RawRingElement
+	  -- else if k === QQ then  (f) -> rawToRational rawLeadCoefficient f.RawRingElement
+	  -- else                   
+				 (f) -> new k from rawLeadCoefficient f.RawRingElement
+	  );
      leadCoefficient f)
 
 degree RingElement := f -> if f == 0 then -infinity else (
-     sendgg(ggPush f, ggdegree);
-     d := eePopIntarray();
+     d := rawMultiDegree f.RawRingElement;
      R := ring f;
      if R.?Repair then R.Repair d else d
      )
 
--- delayed installation of methods
+-- delayed installation of certain methods
 
 expression RingElement := (r) -> (
      R := class r;
@@ -311,16 +209,7 @@ expression RingElement := (r) -> (
      else error ("no method found for element of ring ", toString R)
      )
 
-leadTermSetup := (R) -> (
-     leadTerm R := (f) -> (
-     	  if f == 0 then error "encountered a zero polynomial";
-     	  sendgg(ggPush f, ggPush 0, ggPush 0, gggetterms);
-     	  new R);
-     )
-
-leadTerm RingElement := RingElement => (f) -> (
-     leadTermSetup ring f;
-     leadTerm f)
+leadTerm RingElement := RingElement => (f) -> someTerms(f,0,1)
 
 RingElement % RingElement := RingElement => 
 QQ % RingElement := RingElement % QQ :=
@@ -330,9 +219,7 @@ ZZ % RingElement := RingElement % ZZ :=
      S := class g;
      R % S := (
 	  if R === S then (
-	       (x,y) -> (
-	       	    sendgg ( ggPush x, ggPush y, ggmod);
-	       	    new R)
+	       (x,y) -> new R from x.RawRingElement % y.RawRingElement
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) % y
@@ -354,9 +241,7 @@ ZZ // RingElement := RingElement // ZZ :=
      S := class g;
      R // S := (
 	  if R === S then (x,y) -> (
-	       try (
-	       	    sendgg ( ggPush x, ggPush y, ggdiv);
-	       	    new R)
+	       try new R from x.RawRingElement // y.RawRingElement
 	       else first first entries (matrix {{x}} // y))
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
@@ -391,9 +276,7 @@ ZZ - RingElement := RingElement - ZZ :=
      S := class g;
      R - S := (
 	  if R === S then (
-	       (x,y) -> (
-	       	    sendgg ( ggPush x, ggPush y, ggsubtract);
-	       	    new R)
+	       (x,y) -> new R from x.RawRingElement - y.RawRingElement
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) - y
@@ -428,9 +311,7 @@ ZZ * RingElement := RingElement * ZZ :=
      S := class g;
      R * S := (
 	  if R === S then (
-	       (x,y) -> (
-	       	    sendgg ( ggPush x, ggPush y, ggmult);
-	       	    new R)
+	       (x,y) -> new R from x.RawRingElement * y.RawRingElement
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) * y
@@ -465,9 +346,7 @@ ZZ + RingElement := RingElement + ZZ :=
      S := class g;
      R + S := (
 	  if R === S then (
-	       (x,y) -> (
-		    sendgg ( ggPush x, ggPush y, ggadd);
-		    new R)
+	       (x,y) -> new R from x.RawRingElement + y.RawRingElement
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) + y
@@ -480,38 +359,14 @@ ZZ + RingElement := RingElement + ZZ :=
      f + g
      )
 
-ZZ == RingElement := (i,x) -> (
-     R := class x;
-     ZZ == R := (i,x) -> (
-	  if i === 0
-	  then (
-	       sendgg(ggPush x, ggiszero);
-	       eePopBool())
-	  else (
-	       sendgg(ggPush x, ggPush i, ggisequal);
-	       eePopBool()));
-     i == x)
-
-RingElement == ZZ := (x,i) -> (
-     R := ring x;
-     R == ZZ := (x,i) -> (
-	  if i === 0
-	  then (
-	       sendgg(ggPush x, ggiszero);
-	       eePopBool())
-	  else (
-	       sendgg(ggPush x, ggPush i, ggisequal);
-	       eePopBool()));
-     x == i)
-
+ZZ == RingElement := (i,x) -> i == x.RawRingElement
+RingElement == ZZ := (x,i) -> x.RawRingElement == i
 RingElement == RingElement := (f,g) -> (
      R := class f;
      S := class g;
      R == S := (
 	  if R === S then (
-	       (x,y) -> (
-	       	    sendgg ( ggPush x, ggPush y, ggisequal);
-	       	    eePopBool())
+	       (x,y) -> x.RawRingElement === y.RawRingElement
 	       )
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) == y
@@ -622,8 +477,6 @@ lift(RingElement, QQ) := (r,o) -> (
 	  );
      lift(r,o))
 
-lift(ZZZ,ZZ) := (r,o) -> convert(ConvertInteger, callgg(ggtonet, r))
-
 lift(RingElement,Ring) := RingElement => 
 lift(ZZ,Ring) :=
 lift(QQ,Ring) := (r,A) -> lift(r,A#0)
@@ -633,8 +486,9 @@ promote(QQ, RingElement) := RingElement => (r,o) -> (
      if member(QQ,S.baseRings) then (
 	  c := promoteChain(QQ,S);
 	  promote(QQ,S) := (f,o) -> (
-	       scan(c, S -> f = eePromote(f,S));
-	       f)
+	       f = raw f;
+	       scan(c, S -> f = rawPromote(S.RawRing,f));
+	       new S from f)
 	  )
      else (
 	  promote(QQ,S) := (r,S) -> (
@@ -655,19 +509,11 @@ promote(RingElement, RingElement) := RingElement => (r,o) -> (
      else (
 	  c := promoteChain(R,S);
 	  promote(R,S) := (f,o) -> (
-	       scan(c, S -> f = eePromote(f,S));
-	       f)
+	       f = raw f;
+	       scan(c, S -> f = rawPromote(S.RawRing,f));
+	       new S from f)
 	  );
      promote(r,S))
-
---     ggPushS := concatenate ggPush S;
---     ggpromotenewh := concatenate (ggpromote,ggaddress,ggtonet);
---     ggpush := lookup(ggPush,R);
---     promote(R,S) := (f,S) -> newClass( S, hashTable { (
---		    symbol handle, 
---		    toHandle convert(ConvertInteger,
---			 sendgg (ggPushS, ggpush f, ggpromotenewh)))});
-
 
 promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)
 

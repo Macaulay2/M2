@@ -1080,8 +1080,8 @@ fghij"///,
      "The function ", TO "substring", " will extract portions of a string
      for us.",
      EXAMPLE {
-	  "substring(x,5)",
-	  "substring(x,5,2)",
+	  "substring(5,x)",
+	  "substring(5,2,x)",
 	  },
      "The class of all strings is ", TO "String", "."
      }

@@ -37,5 +37,5 @@ truncateOutput ZZ := maxwidth -> (
 	  if width x <= maxwidth then return x;
 	  stack apply( netRows x, row -> (
 		    if #row <= maxwidth then return row;
-		    concatenate(substring(row,0,maxwidth - 4), " ...")))))
+		    concatenate(substring(0,maxwidth - 4,row), " ...")))))
 truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)

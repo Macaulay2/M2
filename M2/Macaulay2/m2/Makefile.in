@@ -3,24 +3,23 @@ justM2 default :: initialize phase1
 quick-install : justM2 install
 include ../../include/config.Makefile
 VPATH = @srcdir@
-srcdir = $(shell cd @srcdir@; pwd)
+srcdir = $(shell cd @srcdir@; /bin/pwd)
 all:: initialize
 Makefile : Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 emacs html: all; $(MAKE) -C ../$@
+
+ENV = env M2HOME=@srcdir@/.. 
 
 ##############################
 .SUFFIXES: .m2
 .PHONY: clean all install check html clean distclean check default initialize phase1 \
 	phase2 phase3 phase4 phase5 prep
 
-# CFLAGS =
-# LDFLAGS = -s
-# LOADLIBES =
 LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
-DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq )) gbdoc.m2 gbfunctions.m2
+DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 Macaulay2-doc.m2 tutorials.m2 cmdnames.m2 layout.m2
+MADEM2FILES := loads.m2 tutorials.m2 layout.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -28,8 +27,6 @@ mpcodes.m2: ../../include/MP.h mpcodes.sed
 all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
-
-cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
@@ -40,7 +37,7 @@ DUMPEDM2FILES := $(DUMPEDM2FILES) @srcdir@/dumpdata.m2
 endif
 
 NONDOCM2FILES = @srcdir@/setup.m2 $(LOADSEQUENCE) \
-	$(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2)
+	$(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2)
 
 M2FILES = $(NONDOCM2FILES) $(DOCSEQUENCE)
 
@@ -65,12 +62,6 @@ initialize :: cache/doc/cache/doc cache/doc/tmp
 cache/doc/cache/doc cache/doc/tmp :; mkdir -p $@
 #################################
 
-gbdoc.m2 : gbdoc.awk ../e/misc/cmdnames.input
-	awk -f $^ >tmp
-	mv tmp $@
-gbfunctions.m2 : gbfuns.awk ../e/misc/cmdnames.input 
-	awk -f $^ >tmp
-	mv tmp $@
 default:: TAGS.doc
 TAGS.doc : docseq
 	@echo making $@
@@ -109,20 +100,15 @@ prep :: $(DUMPEDM2FILES)
 phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
-ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	cd ../libexec && time env M2LIB=.. M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
-		'-e path = {"../m2/"}' \
-		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
-else
-ARGS := -silent setup.m2
+	time $(ENV) ../bin/Macaulay2 -q --silent --stop @srcdir@/dumpdata.m2 '-edump()'
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDM2FILES) ../libexec/Macaulay2
+../cache/Macaulay2-made : $(DUMPEDM2FILES) ../bin/Macaulay2$(EXE)
 	touch $@
 
 phase2 :: initialize
@@ -136,7 +122,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	M2LIB=.. M2HOME=.. ../../bin/M2 -q -silent \
+	$(ENV) ../../bin/M2 -q --silent --stop \
 		'-e phase = 2' \
 		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
@@ -146,21 +132,20 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made
 
 ## .gdbinit
 justM2 all:: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files; env M2LIB=.. M2HOME=.. gdb ../libexec/Macaulay2
+gdb: .gdbinit .gdb-files; $(ENV) gdb ../bin/Macaulay2$(EXE)
 .gdbinit: .gdbinit.$(USER); cp $< $@
 clean::; rm -f .gdbinit
 .gdbinit.$(USER):; cp @srcdir@/.gdbinit.dan $@
 .gdb-files:
 	echo 'echo -- loading .gdb-files\n' >$@
-	echo 'file ../libexec/Macaulay2' >>$@
+	echo 'file ../bin/Macaulay2' >$@
 	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@
-	echo 'set environment M2HOME ..' >>$@
-	echo 'set environment M2LIB ..' >>$@
+	echo 'set environment M2HOME @srcdir@/..' >>$@
 clean :: ; rm -f .gdb-files
 .gdb-run-it:
 	echo 'echo -- loading .gdb-run-it\n' >$@
 	echo 'echo \n' >>$@
-	echo 'run @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" "-e runStartFunctions()"' >>$@
+	echo 'run -q' >>$@
 clean :: ; rm -f .gdb-run-it
 ##
 backup : CVS/Entries
@@ -170,16 +155,21 @@ CVS/Entries : $(M2FILES)
 	umount /a.ext2
 
 profile : gmon.out
-	env M2LIB=.. M2HOME=.. gprof ../libexec/Macaulay2 >profile
+	$(ENV) gprof ../bin/Macaulay2 >profile
 clean ::; rm -f profile
 
 INPUTS := cache/doc/sample cache/doc/expression
 cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
+ifeq "$(DEBUG)" "yes"
+EGFLAGS = -k
+EGMORE = || true
+endif
+
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 #------ phase 3: running new example input files: cache/doc/*.example
-	M2HOME=.. M2LIB=.. $(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
+	$(ENV) $(MAKE) -C cache/doc -f ../../Makefile.egs srcdir=$(srcdir)
 	touch $@
 
 all :: phase4
@@ -188,7 +178,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	 #------ phase 4: making $@
 	rm -f ../cache/Macaulay2-tmp
-	M2LIB=.. M2HOME=.. ../../bin/M2 -q -silent \
+	$(ENV) ../../bin/M2 -q --silent --stop \
 		'-e phase = 4' \
 		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
@@ -203,7 +193,7 @@ $(htmldocdir) : ; install -d $@
 phase5 : phase4 $(htmldocdir) $(htmldocdir)/index.html always
 $(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
-	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
+	$(ENV) ../../bin/M2 -q --silent --stop \
 		'-e phase = 5; errorDepth 0' \
 		'-e makeHTML("$(prefix)/","@prefix@")' \
 		'-e exit 0'
@@ -226,26 +216,26 @@ check-links :
 ifdef NEWENGINE
 check:: test1
 test1 : test.m2 phase1
-	../../bin/M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
+	$(ENV) ../../bin/M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
 	touch $@
 endif
 
 check:: test2
-test2: phase1 ../libexec/Macaulay2
+test2: phase1 ../bin/Macaulay2$(EXE)
 	$(MAKE) -k -C cache/tests -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
 check:: test3
 test3:
-	echo 2+3 | ../../bin/M2
+	echo 2+3 | $(ENV) ../../bin/M2
 	touch $@
 clean::; rm -f test3
 
 ifeq ($(OS),Linux)
 check:: test4
 test4: ../util/screen
-	echo 2+3 | ../util/screen ../../bin/M2
+	echo 2+3 | ../util/screen $(ENV) ../../bin/M2
 	touch $@
 clean::; rm -f test4
 endif
@@ -262,7 +252,7 @@ clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
 		cache *.obj *.exe runexample \
 		temp.data distfiles \
-		gbdoc.m2 gbfunctions.m2 loads.m2 Macaulay2-doc.m2 tutorials.m2 cmdnames.m2 \
+		loads.m2 docloads.m2 tutorials.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
 distclean : clean
 	rm -f Makefile

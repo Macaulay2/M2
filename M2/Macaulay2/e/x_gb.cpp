@@ -1,7 +1,217 @@
-// Copyright 1996 Michael E. Stillman
+// Copyright 2002 Michael E. Stillman
 
-#include "interp.hpp"
+#include "engine.h"
+#include "hilb.hpp"
+#include "gb_comp.hpp"
 
+const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
+  /* This routine computes the numerator of the Hilbert series
+     for coker leadterms(M), using the degrees of the rows of M. 
+     NULL is returned if the ring is not appropriate for
+     computing Hilbert series, or the computation was interrupted. */
+{
+  return hilb_comp::hilbertNumerator(M);
+}
+
+ComputationOrNull *IM2_GB_make(const Matrix *m,
+			       M2_bool collect_syz,
+			       int n_rows_to_keep,
+			       M2_bool use_max_degree,
+			       int max_degree,
+			       int algorithm,
+			       int strategy)
+{
+  // Choose the correct computation here.
+  return Computation::choose_gb(
+                    m,
+		    collect_syz,
+		    n_rows_to_keep,
+		    use_max_degree,
+		    max_degree,
+		    algorithm,
+		    strategy);
+}
+
+ComputationOrNull *IM2_res_make(
+           const Matrix *m,
+	   M2_bool resolve_cokernel,
+	   int max_level,
+	   M2_bool use_max_slanted_degree,
+	   int max_slanted_degree,
+	   int algorithm,
+	   int strategy
+	   )
+{
+  // Choose the correct computation here.
+  return Computation::choose_res(m,
+				 resolve_cokernel,
+				 max_level,
+				 use_max_slanted_degree,
+				 max_slanted_degree,
+				 algorithm,
+				 strategy);
+}
+
+ComputationOrNull *
+IM2_GB_set_hilbert_function(Computation *G,
+			    const RingElement *h)
+{
+  return G->set_hilbert_function(h);
+}
+
+ComputationOrNull *
+IM2_GB_force(const Matrix *m,
+	     const Matrix *gb,
+	     const Matrix *change)
+{
+  return Computation::force(m,gb,change);
+}
+
+ComputationOrNull* 
+IM2_GB_set_stop(Computation *G,
+		M2_bool always_stop,
+		M2_bool stop_after_degree,
+		M2_arrayint degree_limit,
+		int basis_element_limit,
+		int syzygy_limit,
+		int pair_limit,
+		int codim_limit,
+		int subring_limit,
+		M2_bool just_min_gens,
+		M2_arrayint length_limit) /* TODO */
+  /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
+  /* Res: SortStrategy, 0, 1, 2, 3 ?? */
+{
+  return  G->set_stop_conditions(always_stop,
+				 stop_after_degree,
+				 degree_limit,
+				 basis_element_limit,
+				 syzygy_limit,
+				 pair_limit,
+				 codim_limit,
+				 subring_limit,
+				 just_min_gens,
+				 length_limit);
+}
+
+const MatrixOrNull *
+IM2_GB_get_matrix(Computation *G, 
+		  int level, 
+		  M2_bool minimize)
+{
+  return G->get_matrix(level, minimize);
+}
+
+int IM2_GB_status(Computation *G,
+		  int * complete_up_through_this_degree,
+		  int * complete_up_through_this_level)
+  /* -1: error condition, and the error message is set.
+     0: not made, and in fact it won't ever be done...
+     1: not started,
+     2: started, 
+     3: stopped because of a stopping condition
+     4: finished the computation completely
+  */
+{
+  return G->status(complete_up_through_this_degree,
+		   complete_up_through_this_level);
+}
+
+int 
+IM2_GB_status_level(Computation *G, 
+		    int level, 
+		    M2_bool minimize,
+		    int * complete_up_through_this_degree)
+  /* Same return values */
+{
+  return G->status_level(level, 
+			 minimize,
+			 complete_up_through_this_degree);
+}
+
+const MatrixOrNull *
+IM2_GB_get_change(Computation *G, 
+		  int level)
+{
+  return G->get_change(level);
+}
+
+const MatrixOrNull *
+IM2_GB_get_leadterms(Computation *G, 
+		     int nparts, 
+		     int level)
+{
+  return G->get_leadterms(nparts, level);
+}
+
+const FreeModuleOrNull *
+IM2_GB_get_free(Computation *G, 
+		int level, 
+		M2_bool minimal)
+{
+  return G->get_free(level, minimal);
+}
+
+const MatrixOrNull *
+IM2_GB_matrix_remainder(Computation *G, 
+			int level,
+			const Matrix *m)
+{
+  return G->matrix_remainder(level, m);
+}
+
+void IM2_GB_matrix_lift(Computation *G,
+			int level,
+			const Matrix *m,
+			MatrixOrNull **result_remainder,
+			MatrixOrNull **result_quotient
+			)
+{
+  G->matrix_lift(level, m, result_remainder, result_quotient);
+}
+
+int 
+IM2_GB_contains(Computation *G, 
+		int level,
+		const Matrix *m)
+{
+  return G->contains(level, m);
+}
+
+const M2_arrayint_OrNull
+IM2_GB_betti(Computation *G,
+	     int type)
+  /* 0: minimal betti numbers,
+     1:
+     2:
+     3:
+  */
+{
+  return G->betti(type);
+}
+
+const M2_string
+IM2_GB_to_string(Computation *G)
+  /* TODO */
+{
+  buffer o;
+  G->text_out(o);
+  return o.to_string();
+}
+
+int IM2_GB_hash(const Computation *G)
+{
+  return G->get_hash_value();
+}
+
+int IM2_GB_verbose(int level)
+{
+  int result = comp_printlevel;
+  comp_printlevel = level;
+  return result;
+}
+
+#if 0
 #include "gb_comp.hpp"
 
 #include "gbbinom.hpp"
@@ -24,6 +234,8 @@ extern int comp_printlevel;
 extern Z *ZZ;
 
 #if 0
+
+
 void i_EGB()
 {
 }
@@ -567,3 +779,4 @@ void i_NGB_cmds(void)
   // Fraction free Gaussian elimination
   install(ggFFgausselim, cmd_FFgausselim, TY_SparseMutableMatrix);
 }
+#endif

@@ -1,10 +1,9 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 -- singleton = x -> toSequence {x}
 typicalValues#singleton = Sequence
 
 List _ ZZ    := (x,i) -> x#i
-ggPush Sequence := ggPush List := v -> (ggINTARRAY, gg v)
 List | List  := List => join
 
 List + List  := List => (v,w) -> apply(v,w,plus)

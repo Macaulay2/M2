@@ -111,19 +111,18 @@ tt := new MutableHashTable from toList apply(0 .. 255, i -> (
 	  c => c
 	  ));
 
-tt#"/" = "_sl_"				  -- can't occur in a file name: unix
-tt#"%" = "_pc_"					     -- has a meaning in URLs
-tt#"?" = "_qu_"					     -- has a meaning in URLs
-tt#"#" = "_sh_"					     -- has a meaning in URLs
-tt#"\\"= "_bs_"				 -- can't occur in a file name: MSDOS
 tt#" " = "_sp_"           -- can't occur in a URL and has a meaning for xargs
-tt#"_" = "_us_"					      -- our escape character
-tt#":" = "_co_"					-- has a meaning for gnu make
+tt#"#" = "_sh_"					     -- has a meaning in URLs
 tt#"$" = "_do_"					-- has a meaning for gnu make
-tt#";" = "_se_"					-- has a meaning for gnu make
+tt#"%" = "_pc_"					     -- has a meaning in URLs
 tt#"'" = "_sq_"					   -- has a meaning for xargs
+tt#"/" = "_sl_"				  -- can't occur in a file name: unix
+tt#":" = "_co_"					-- has a meaning for gnu make
+tt#";" = "_se_"					-- has a meaning for gnu make
+tt#"?" = "_qu_"					     -- has a meaning in URLs
 tt#"\""= "_dq_"					 -- " has a meaning for xargs
-
+tt#"\\"= "_bs_"				 -- can't occur in a file name: MSDOS
+tt#"_" = "_us_"					      -- our escape character
 for i from 1 to 26 do (			    -- some OSes are case insensitive
      cap := ascii (64 + i);
      low := ascii (96 + i);

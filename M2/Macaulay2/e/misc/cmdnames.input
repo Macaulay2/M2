@@ -600,6 +600,11 @@ LLLcalc
 A:SparseMutableMatrix LLLstate:SparseMutableMatrix nsteps:int >> int
 Compute the LLL reduction of the matrix A, using the state setup originally by ggLLLinit.  Compute 'nsteps' amount.  If this is -1, compute until done, or interrupted.  See the documentation for ggLLLinit for more information.  Return values: if an error: -2 (e.g. the columns of 'A' are not independent), if completely done: 0, if interrupted: -1, if done with the given number of steps, but not completely done: 9.
 
+ggmacaulaySequence
+macaulaySequence
+H:intarray projdim:int >> intarray
+This is currently experimental.
+
 ggmatrix
 matrix
 v0 v1 ... v(c-1) rows:freemodule cols:freemodule >> matrix;  OR  v0 v1 ... v(c-1) rows:freemodule c:int >> matrix;  OR  vecinfo monideal >> matrix

@@ -12,39 +12,36 @@ struct frac_elem
 
 class FractionField : public Ring
 {
-  const Ring *R;		// Base ring.  Assumed to be a domain.
-  stash *frac_stash;
-
-  ring_elem MINUS_ONE;		// this is -1 in the ring R.
+  const Ring *_R;		// Base ring.  Assumed to be a domain.
+  int _elem_size;
+  ring_elem _MINUS_ONE;		// this is -1 in the ring R.
 
   frac_elem *new_frac_elem() const;
   void simplify(frac_elem *f) const;
   frac_elem *make_elem(ring_elem a, ring_elem b) const;
-  
-  FractionField(const Ring *R);
-protected:
-  virtual ~FractionField();
-public:
-  static FractionField *create(const Ring *R);
 
-  class_identifier class_id() const { return CLASS_FractionField; }
+protected:
+  FractionField() {}
+  virtual ~FractionField() {}
+  bool initialize_frac(const Ring *R);
+public:
+  static FractionField * create(const Ring *R);
 
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }
 
-  const Ring *get_ring() const { return R; }
+  const Ring *get_ring() const { return _R; }
 
   ring_elem numerator(ring_elem f) const;
   ring_elem denominator(ring_elem f) const;
   ring_elem fraction(const ring_elem top, const ring_elem bottom) const;
 
 // The following are all the routines required by 'ring'
+  virtual bool is_fraction_field() const { return true; }
+
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
-  virtual bool is_Z() const         { return 0; }
-  virtual bool is_poly_ring() const { return 0; }
-  virtual bool is_quotient_poly_ring() const { return 0; }
-  virtual bool is_graded() const    { return R->is_graded(); }
+  virtual bool is_graded() const    { return _R->is_graded(); }
   virtual bool is_expensive() const { return 1; }
 
   virtual void text_out(buffer &o) const;
@@ -61,10 +58,13 @@ public:
 
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
+  virtual bool multi_degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
+			       const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -97,7 +97,6 @@ public:
   virtual ring_elem random(int homog, const int *deg) const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 

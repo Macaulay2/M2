@@ -13,8 +13,6 @@ debugging.m2
 remember.m2
 set.m2
 files.m2
-handles.m2
-gbinterface.m2
 fold.m2
 max.m2
 sort.m2
@@ -28,8 +26,9 @@ printing.m2
 gateway.m2
 numbers.m2
 rings.m2
-enginering.m2
 integers.m2
+engine.m2
+enginering.m2
 rationals.m2
 reals.m2
 complex.m2
@@ -40,7 +39,6 @@ orderedmonoidrings.m2
 schur.m2
 variables.m2
 ofcm.m2
-orderings.m2
 tables.m2
 modules.m2
 matrix.m2

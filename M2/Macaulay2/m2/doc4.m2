@@ -79,26 +79,17 @@ document { loaddata,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
      SHIELD MENU {
-	  TO "reloaded",
 	  TO "environment",
 	  TO "commandLine",
 	  "whether the standard input is echoed and prompts to the 
 	  standard output are properly flushed, which depends on whether 
 	  the standard input is a terminal."
 	  },
-     "After the data segments have been reloaded, the command line arguments
+     "THIS IS NO LONGER CORRECT: After the data segments have been reloaded, the command line arguments
      will be dealt with in the usual way, except that only the arguments
      after the i-th '--' and before the i+1-st '--' (if any) will be considered,
      where ", TT "i", " is the current value of ", TO "reloaded", ".",
      SEEALSO {"listUserSymbols"}
-     }
-
-document { symbol "reloaded",
-     Headline => "count of how many times data has been dumped and restored",
-     TT "reloaded", " -- a constant whose value is the number of 
-     times ", TO "loaddata", " has been executed by the current process.  Since
-     loaddata completely resets the state of the system, something like this
-     is needed."
      }
 
 document { buckets,
@@ -177,12 +168,35 @@ document { generatorExpressions,
      }
 
 document { match, 
-     Headline => "whether a string matches a pattern",
-     TT "match(s,p)", " -- whether the string s matches the pattern ", TT "p", ".",
+     Headline => "regular expression matching",
+     TT "match(p,s)", " -- matches the string ", TT "s", " against the 
+     GNU regular expression ", TT "p", ".",
      PARA,
-     "The pattern p may contain '*'s, which serve as wild card characters.
-     This is provisional - eventually it will provide regular expression
-     matching."
+     "The value returned is true or false, depending on whether a the regular
+     expression ", TT "s", " matches a substring of ", TT "p", ".",
+     EXAMPLE {
+	  ///match ("asdf*", "--asdffff--")///,
+	  ///match ("asdf*", "--asffff--")///
+	  },
+     SEEALSO "matches"
+     }
+
+document { matches, 
+     Headline => "regular expression matching",
+     TT "matches(p,s)", " -- matches the string ", TT "s", " against the 
+     GNU regular expression ", TT "p", ".",
+     PARA,
+     "The value returned is a list of pairs of integers corresponding to the
+     subexpressions successfully matched.  The list has length 0 if no match
+     was successful.  The first member of each pair is the offset within
+     ", TT "s", " of the substring matched, and the second is the length.",
+     EXAMPLE {
+	  ///matches ("asdf*", "--asdffff--")///,
+	  ///matches ("asd(f*)", "--asdffff--")///,
+	  ///matches ("asd((f)*)", "--asdffff--")///,
+	  ///matches ("asd((f)*)", "--asffff--")///
+	  },
+     SEEALSO "match"
      }
 
 document { gg,
@@ -802,8 +816,3 @@ document { symbol ##,
 	  "f ## (1,2,3)"
 	  }
      }
-
--- these files are made at compile time
-load "gbdoc.m2"
-load "gbfunctions.m2"
-

@@ -66,7 +66,7 @@ isOutputFile(File) := Boolean => isOutputFile
 isReady(File) := Boolean => isReady
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
-match(String,String) := Boolean => match
+matches(String,String) := List => match
 basictype Thing := Type => basictype
 class Thing := Type => class
 parent Thing := Type => parent
@@ -112,7 +112,8 @@ typicalValues#stack = Net
 stack BasicList := Net => stack
 substring(String,ZZ) := String => substring
 substring(String,ZZ,ZZ) := String => substring
-toHandle ZZ := Handle => toHandle
+substring(ZZ,String) := String => substring
+substring(ZZ,ZZ,String) := String => substring
 toList HashTable := toList Set := toList BasicList := List => toList
 toSequence BasicList := toList List := Sequence => toSequence
 xor(ZZ,ZZ) := ZZ => xor
@@ -135,9 +136,6 @@ read File := String => read
 read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
-newHandle Thing := Handle => newHandle
-toHandle ZZ := Handle => newHandle
-handle HashTable := Handle => handle
 Function Thing := Thing => dummy
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan

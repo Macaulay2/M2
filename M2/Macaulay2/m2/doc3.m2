@@ -114,15 +114,6 @@ document { instance,
      SEEALSO { "classes and types", "class", "parent" }
      }
 
-document { symbol "pathSeparator",
-     Headline => "path separator for filenames",
-     TT "pathSeparator", " -- the character used under the current operating
-     system to separate the component directory names in a file path.",
-     PARA,
-     "Under unix it is ", TT ///"/"///, ", and on a Macintosh it is
-     ", TT ///":"///, "."
-     }
-
 document { alarm,
      Headline => "set an alarm",
      TT "alarm n", " -- arrange for an interrupt to occur in ", TT "n", "
@@ -560,7 +551,6 @@ document { CacheTable,
      class and parent are considered equal to each other and have hash code equal to 0."
      }
 
-
 document { cacheFileName,
      Headline => "produce the name of a cache file",
      "Macaulay 2 needs to remember some bits of data from one invocation to the next,
@@ -625,5 +615,89 @@ document { (cacheFileName, List, String),
      the directories on the path will be returned.  In case no previous assignments
      to this key have occurred yet, one will be made using the first element of the
      search path."
+     }
+
+document { cacheFileName,
+     Headline => "produce the name of a cache file",
+     "Macaulay 2 needs to remember some bits of data from one invocation to the next,
+     so it stores this data in cache files.  The name and directory of the cache file
+     depend on the data being stored.  For example, the input code for examples associated
+     with one of the documentation node will be stored in a file whose name depends on
+     the name of the node."
+     }
+
+document { (cacheFileName, String, String),
+     Synopsis => {
+	  ///fn = cacheFileName(prefix,key)///,
+	  "prefix" => "the prefix from which to construct the file name",
+	  "key" => "a key, which can be anything"
+	  },
+     "A file name is returned that depends only on the prefix and the key.  The
+     prefix should be the path to a directory, together with a terminating path component
+     separator.  When the program terminates, a file called
+     ", TT "Macaulay2-index-cache", " will be created or updated, if
+     necessary, in which to store the table of correspondences between keys
+     and filenames.",
+     EXAMPLE {
+	  ///cacheFileName("./tmp/","algebra")///,
+	  ///cacheFileName("./tmp/","14")///,
+	  ///cacheFileName("./tmp/","14")///
+	  }
+     }
+
+document { (cacheFileName, String, String, String),
+     Synopsis => {
+	  ///fn = cacheFileName(prefix,key,base)///,
+	  "prefix" => "the prefix from which to construct the file name",
+	  "key" => "a key, which can be anything",
+	  "base" => "the base part of the file name",
+	  "fn" => "a new file name"
+	  },
+     "A file name ", TT "fn", " is constructed by concatenating ", TT "prefix", " and
+     ", TT "base", " and associate with the key for future retrieval with
+     ", TT "cacheFileName", ".  The prefix should be the path to a directory,
+     together with a terminating path component
+     separator.  When the program terminates, a file called
+     ", TT "Macaulay2-index-cache", " will be created or updated, if
+     necessary, in which to store the table of correspondences between keys
+     and filenames.",
+     EXAMPLE {
+	  ///cacheFileName("./tmp/","K-theory","motives")///,
+	  ///cacheFileName("./tmp/","K-theory")///,
+	  }
+     }
+
+document { (cacheFileName, List, String),
+     Synopsis => {
+	  ///fn = cacheFileName(path,key)///,
+	  "path" => "a search path (list) of prefixes from which to construct the
+	        file name",
+	  "key" => "a key",
+	  "fn" => "a new file name"
+	  },
+     "The path should be a list of prefixes which correspond to existing
+     directories.  A list of those file names for the given key that have already been
+     assigned (see ", TO (cacheFileName, String, String), ") in one of
+     the directories on the path will be returned.  In case no previous assignments
+     to this key have occurred yet, one will be made using the first element of the
+     search path.",
+     EXAMPLE {
+	  ///documentationPath///,
+	  ///cacheFileName ( documentationPath, "sin" )///,
+	  ///cacheFileName ( documentationPath, "xxxxx" )///
+	  },
+     SEEALSO { "documentationPath" }
+     }
+
+document { symbol documentationPath,
+     Headline => "search path for documentation",
+     Synopsis => {
+	  ///documentationPath = x///,
+	  "x" => "a list of paths to directories where documentation is stored"
+	  },
+     EXAMPLE {
+	  ///documentationPath = unique append (documentationPath, "tmp/cache/doc/")///
+	  },
+     SEEALSO {cacheFileName}
      }
 

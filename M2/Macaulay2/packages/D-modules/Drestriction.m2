@@ -533,6 +533,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 -- PREPROCESSING
      local tInfo;
      local tempvar;
+     tempvar = symbol tempvar;
+     tInfo = "";
      nW := numgens W;
      -- make the (-w,w) weight vector
      w := new MutableList from join(W.dpairInds#0,W.dpairInds#1);

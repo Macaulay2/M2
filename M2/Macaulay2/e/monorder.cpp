@@ -14,14 +14,21 @@ void mon_order::set_weights(const int *exp, int *m) const
       *m++ = val;
     }
 }
-mon_order::mon_order(mon_order_types t, const intarray &d,const intarray &wts)
-: ty(t), n(d.length())
+mon_order::mon_order(mon_order_types t, const M2_arrayint d,const M2_arrayint wts)
 {
-  if (ty == MO_TRIVIAL ||
+  ty = t;
+
+  if (d == 0) 
+    n = 0;
+  else
+    n = d->len;
+
+  if (ty == MO1_TRIVIAL ||
       n == 0 ||
-      (wts.length() / n) * n != wts.length())
+      (wts->len / n) * n != wts->len)
     {
-      ty = MO_TRIVIAL;
+      n = 0;
+      ty = MO1_TRIVIAL;
       degs = NULL;
       order = NULL;
       inv_order = NULL;
@@ -31,10 +38,13 @@ mon_order::mon_order(mon_order_types t, const intarray &d,const intarray &wts)
       return;
     }
 
-  nweights = wts.length() / n;
-  weights = new int[wts.length()];
-  for (int i=0; i<wts.length(); i++)
-    weights[i] = wts[i];
+  if (wts == 0)
+    INTERNAL_ERROR("mon_order received null pointer");
+
+  nweights = wts->len / n;
+  weights = new int[wts->len];
+  for (unsigned int i=0; i<wts->len; i++)
+    weights[i] = wts->array[i];
 
   degs = new int[n];
   order = new ptr_to_int[n];
@@ -42,9 +52,9 @@ mon_order::mon_order(mon_order_types t, const intarray &d,const intarray &wts)
   inv_degs = new int[n];
   for (int r=0; r<n; r++)
     {
-      degs[r] = d[r];
-      inv_degs[r] = d[r];
-      assert(d[r] > 0); // MES: this should be checked higher up?
+      degs[r] = d->array[r];
+      inv_degs[r] = d->array[r];
+      assert(d->array[r] > 0); // MES: this should be checked higher up?
 
       order[r] = new int[n];
       inv_order[r] = new int[n];
@@ -75,31 +85,31 @@ void mon_order::text_out(buffer &o) const
   int i;
 
   switch (ty) {
-  case MO_GRLEX:
+  case MO1_GRLEX:
     o << "grlex";
     break;
-  case MO_RLEX:
+  case MO1_RLEX:
     o << "rlex";
     break;
-  case MO_GLEX:
+  case MO1_GLEX:
     o << "glex";
     break;
-  case MO_LEX:
+  case MO1_LEX:
     o << "lex";
     break;
-  case MO_ELIM:
+  case MO1_ELIM:
     o << "elim";
     break;
-  case MO_WTFCN:
+  case MO1_WTFCN:
     o << "wts";
     break;
-  case MO_PRODUCT:
+  case MO1_PRODUCT:
     o << "product";
     break;
-  case MO_GENERAL:
+  case MO1_GENERAL:
     o << "general";
     break;
-  case MO_TRIVIAL:
+  case MO1_TRIVIAL:
     o << "trivial";
   }
   o << "[";
@@ -137,19 +147,19 @@ void mon_order::text_out(buffer &o) const
 
 mon_order *mon_order::trivial()
 {
-  intarray junk, wts;
-  mon_order *result = new mon_order(MO_TRIVIAL, junk, wts);
+  M2_arrayint junk = 0, wts = 0;
+  mon_order *result = new mon_order(MO1_TRIVIAL, junk, wts);
   return result;
 }
 
-mon_order *mon_order::grlex(const intarray &degs, const intarray &weights)
+mon_order *mon_order::grlex(const M2_arrayint degs, const M2_arrayint weights)
 {
-  int n = degs.length();
+  int n = degs->len;
   if (n == 0) return trivial();
 
   int allones = 1;
   for (int i=0; i<n; i++)
-    if (degs[i] != 1) allones = 0;
+    if (degs->array[i] != 1) allones = 0;
 
   mon_order *result;
   if (allones)
@@ -159,20 +169,20 @@ mon_order *mon_order::grlex(const intarray &degs, const intarray &weights)
 
   for (int r=0; r<n; r++)
     {
-      for (int c=0; c<n-r; c++) result->order[r][c] = degs[c];
+      for (int c=0; c<n-r; c++) result->order[r][c] = degs->array[c];
       
       result->inv_order[r][n-r-1] = 1;
       if (r != 0) result->inv_order[r][n-r] = -1;
     }
   return result;
 }
-mon_order *mon_order::rlex(const intarray &degs, const intarray &weights)
+mon_order *mon_order::rlex(const M2_arrayint degs, const M2_arrayint weights)
 {
   // WARNING: this order cannot be used with monoid's
-  int n = degs.length();
+  int n = degs->len;
   if (n == 0) return trivial();
 
-  mon_order *result = new mon_order(MO_RLEX, degs, weights);
+  mon_order *result = new mon_order(MO1_RLEX, degs, weights);
   for (int r=0; r<n; r++)
     {
       result->order[r][r] = -1;
@@ -182,16 +192,16 @@ mon_order *mon_order::rlex(const intarray &degs, const intarray &weights)
   return result;
 }
 
-mon_order *mon_order::glex(const intarray &degs, const intarray &weights)
+mon_order *mon_order::glex(const M2_arrayint degs, const M2_arrayint weights)
 {
-  int n = degs.length();
+  int n = degs->len;
   if (n == 0) return trivial();
 
-  mon_order *result = new mon_order(MO_GLEX, degs, weights);
+  mon_order *result = new mon_order(MO1_GLEX, degs, weights);
 
   int r, c;
-  for (c=0; c<n; c++) result->order[0][c] = degs[c];
-  for (r=1; r<n; r++) result->order[r][r-1] = degs[r-1];
+  for (c=0; c<n; c++) result->order[0][c] = degs->array[c];
+  for (r=1; r<n; r++) result->order[r][r-1] = degs->array[r-1];
   
   result->inv_order[n-1][0] = 1;
   for (c=1; c<n; c++) result->inv_order[n-1][c] = -1;
@@ -199,13 +209,13 @@ mon_order *mon_order::glex(const intarray &degs, const intarray &weights)
 
   return result;
 }
-mon_order *mon_order::lex(const intarray &degs, const intarray &weights)
+mon_order *mon_order::lex(const M2_arrayint degs, const M2_arrayint weights)
 {
   // WARNING: this order cannot be used with monoid's
-  int n = degs.length();
+  int n = degs->len;
   if (n == 0) return trivial();
 
-  mon_order *result = new mon_order(MO_LEX, degs, weights);
+  mon_order *result = new mon_order(MO1_LEX, degs, weights);
 
   for (int r=0; r<n; r++)
     {
@@ -215,24 +225,26 @@ mon_order *mon_order::lex(const intarray &degs, const intarray &weights)
     }
   return result;
 }
-mon_order *mon_order::elim(const intarray &degs, int i, const intarray &weights)
+mon_order *mon_order::elim(const M2_arrayint degs, 
+			   unsigned int i, 
+			   const M2_arrayint weights)
 {
-  if ((i <= 0) || i >= degs.length()) return grlex(degs,weights);
+  if ((i <= 0) || i >= degs->len) return grlex(degs,weights);
 
   mon_order *result = new elim_mon_order(degs,i,weights);
-  int n = degs.length();
+  unsigned int n = degs->len;
 
-  int r, c;
+  unsigned int r, c;
   for (r=0; r<i; r++)
-    result->order[0][r] = degs[r];
+    result->order[0][r] = degs->array[r];
 
   for (r=1; r<=n-i; r++)
     for (c=0; c<n-i-r+1; c++)
-      result->order[r][i+c] = degs[i+c];
+      result->order[r][i+c] = degs->array[i+c];
 
   for (r=n-i+1; r<n; r++)
     for (c=0; c<n-r; c++)
-      result->order[r][c] = degs[c];
+      result->order[r][c] = degs->array[c];
 
   // Now set the inverse
   for (r=0; r<i-1; r++) result->inv_order[r][n-1-r] = 1;
@@ -244,32 +256,38 @@ mon_order *mon_order::elim(const intarray &degs, int i, const intarray &weights)
   return result;
 }
 
-mon_order *mon_order::product(const intarray &degs, const intarray &blocks,
-			      const intarray &weights)
+mon_order *mon_order::product(const M2_arrayint degs, const M2_arrayint blocks,
+			      const M2_arrayint weights)
 {
-  int r, c, b;
+  int r, c;
+  unsigned int b;
 
-  int n = degs.length();
+  int n = degs->len;
   if (n == 0) return trivial();
 
   int sum = 0;
 
-  for (b=0; b<blocks.length(); b++)
+  for (b=0; b<blocks->len; b++)
     {
-      if (blocks[b] < 0) return NULL;
-      sum += blocks[b];
+      if (blocks->array[b] < 0)
+	INTERNAL_ERROR("product order: a block has negative number of variables!");
+      sum += blocks->array[b];
     }
-  if (sum != n) return NULL;
+  if (sum != n) 
+    {
+      ERROR("product order: expected same number of variables as degree vectors");
+      return NULL;
+    }
 
   mon_order *result = new product_mon_order(degs, blocks, weights);
 
   int start = 0;
-  for (b=0; b<blocks.length(); b++)
+  for (b=0; b<blocks->len; b++)
     {
-      int nv = blocks[b];
+      int nv = blocks->array[b];
       for (r=0; r<nv; r++)
 	for (c=0; c<nv-r; c++)
-	  result->order[start+r][start+c] = degs[start+c];
+	  result->order[start+r][start+c] = degs->array[start+c];
 
       for (r=0; r<nv; r++) result->inv_order[start+r][start+nv-r-1] = 1;
       for (r=1; r<nv; r++) result->inv_order[start+r][start+nv-r] = -1;
@@ -282,12 +300,13 @@ mon_order *mon_order::product(const intarray &degs, const intarray &blocks,
 mon_order *mon_order::product(const mon_order *m1, const mon_order *m2)
 {
   emit_line("mon_order::product called");
+#if 0
   intarray degs;
   degs.copy(m1->n_vars(), m1->inv_degs);
   degs.copy(m2->n_vars(), m2->inv_degs);
   intarray weights;
-  mon_order *result = new mon_order(MO_PRODUCT, degs, weights);
-  int n = degs.length();
+  mon_order *result = new mon_order(MO1_PRODUCT, degs, weights);
+  int n = degs->len;
   int n1 = m1->n_vars();
 
   int r, c;
@@ -306,43 +325,50 @@ mon_order *mon_order::product(const mon_order *m1, const mon_order *m2)
       }
 
   return result;
+#endif
+  INTERNAL_ERROR("mon_order::product called");
+  return NULL;
 }
 
 mon_order *mon_order::elim_product(const mon_order * /*m1*/, const mon_order * /*m2*/)
 {
-  // MES
+  INTERNAL_ERROR("mon_order::elim_product called");
   return NULL;
 }
 
 mon_order *mon_order::graded_product(const mon_order * /*m1*/, const mon_order * /*m2*/)
 {
-  // MES
+  INTERNAL_ERROR("mon_order::graded_product called");
   return NULL;
 }
 
-mon_order *mon_order::general_order(const intarray &degs,
-				    const intarray &order, 
-				    const intarray &invorder,
-				    const intarray &invdegs)
+mon_order *mon_order::general_order(const M2_arrayint degs,
+				    const M2_arrayint order, 
+				    const M2_arrayint invorder,
+				    const M2_arrayint invdegs)
 {
   emit_line("general_order called");
-  if (degs.length() == 0) return trivial();
-  int n = invdegs.length();
-  if (order.length() != n*n || invorder.length() != n*n || n <= 0)
+#if 0
+  if (degs->len == 0) return trivial();
+  int n = invdegs->len;
+  if (order->len != n*n || invorder->len != n*n || n <= 0)
     return NULL;
 
   intarray weights;
-  mon_order *result = new mon_order(MO_GENERAL, degs, weights);
+  mon_order *result = new mon_order(MO1_GENERAL, degs, weights);
   
   int r,c;
-  for (r=0; r<n; r++) result->inv_degs[r] = invdegs[r];
+  for (r=0; r<n; r++) result->inv_degs[r] = invdegs->array[r];
   for (r=0; r<n; r++)
     for (c=0; c<n; c++)
       {
-	result->order[r][c] = order[n*c+r];
-	result->inv_order[r][c] = invorder[n*c+r];
+	result->order[r][c] = order->array[n*c+r];
+	result->inv_order[r][c] = invorder->array[n*c+r];
       }
   return result;
+#endif
+  INTERNAL_ERROR("mon_order::general_order called");
+  return NULL;
 }
 
 void mon_order::encode(const int *exp, int *m) const
@@ -371,8 +397,8 @@ void mon_order::decode(const int *m, int *exp) const
     }
 }
 
-grlex_mon_order::grlex_mon_order(const intarray &degs, const intarray &weights)
-: mon_order(MO_GRLEX, degs, weights)
+grlex_mon_order::grlex_mon_order(const M2_arrayint degs, const M2_arrayint weights)
+: mon_order(MO1_GRLEX, degs, weights)
 {
 }
 grlex_mon_order::~grlex_mon_order()
@@ -407,8 +433,8 @@ void grlex_mon_order::decode(const int *m, int *exp) const
     exp[i] = (m[n-i-1] - m[n-i]) / degs[i];
 }
 
-grlex1_mon_order::grlex1_mon_order(const intarray &degs, const intarray &weights)
-: mon_order(MO_GRLEX, degs, weights)
+grlex1_mon_order::grlex1_mon_order(const M2_arrayint degs, const M2_arrayint weights)
+: mon_order(MO1_GRLEX, degs, weights)
 {
 }
 grlex1_mon_order::~grlex1_mon_order()
@@ -444,14 +470,14 @@ void grlex1_mon_order::decode(const int *m, int *exp) const
 
 //---- Product order of several rev lex blocks ---//
 
-product_mon_order::product_mon_order(const intarray &degs, const intarray &blk,
-				     const intarray &weights)
-: mon_order(MO_PRODUCT, degs, weights),
-  nblocks(blk.length()),
-  blocks(new int[blk.length()])
+product_mon_order::product_mon_order(const M2_arrayint degs, const M2_arrayint blk,
+				     const M2_arrayint weights)
+: mon_order(MO1_PRODUCT, degs, weights),
+  nblocks(blk->len),
+  blocks(new int[blk->len])
 {
   for (int i=0; i<nblocks; i++)
-    blocks[i] = blk[i];
+    blocks[i] = blk->array[i];
 }
 product_mon_order::~product_mon_order()
 {
@@ -510,8 +536,10 @@ void product_mon_order::decode(const int *m, int *exp) const
 
 //---- Elimination order refined by graded rev lex ---//
 
-elim_mon_order::elim_mon_order(const intarray &degs, int n, const intarray &weights)
-: mon_order(MO_ELIM, degs, weights),
+elim_mon_order::elim_mon_order(const M2_arrayint degs, 
+			       unsigned int n, 
+			       const M2_arrayint weights)
+: mon_order(MO1_ELIM, degs, weights),
   nelim(n)
 {
 }
@@ -570,11 +598,11 @@ void elim_mon_order::decode(const int *m, int *exp) const
     }
 }
 
-mon_order * object_mon_order::grab_mon_order()
+mon_order * IM2_mon_order::grab_mon_order()
 { 
   mon_order *result = val;
   val = 0;
   if (result == 0)
-    gError << "cannot reuse engine monomial order";
+    ERROR("cannot reuse engine monomial order");
   return result;
 }

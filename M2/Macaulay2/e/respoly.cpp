@@ -8,16 +8,11 @@
 res_poly::res_poly(PolynomialRing *RR)
 : R(RR), M(R->Nmonoms()), K(R->Ncoeffs())
 {
-  bump_up(K);
-  bump_up(R);
-
   pstash = R->resstash;
 }
 
 res_poly::~res_poly()
 {
-  bump_down(R);
-  bump_down(K);
 }
 
 inline int res_poly::compare(const resterm *a, const resterm *b) const

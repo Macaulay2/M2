@@ -1,4 +1,15 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
+
+
+QQ.RawRing = rawQQ()
+-- from raw QQ to toplevel QQ
+new QQ from RawRingElement := (QQ,x) -> rawToInteger rawNumerator x / rawToInteger rawDenominator x
+-- from toplevel QQ to raw QQ
+raw QQ := x -> rawFraction(
+     QQ.RawRing,
+     rawFromNumber(rawZZ(), numerator x),
+     rawFromNumber(rawZZ(), denominator x))
+
 
 ZZ.frac = QQ
 QQ#1 = 1/1
@@ -6,18 +17,12 @@ QQ#0 = 0/1
 QQ.char = 0
 QQ.isField = true
 toString QQ := x -> toString numerator x | "/" | toString denominator x
-QQ.ConversionFormat = ConvertApply((x,y) -> x/y, ConvertInteger, ConvertInteger)
-QQ.ConvertToExpression = ConvertApply((x,y)->expression(x/y),ConvertInteger,ConvertInteger)
-QQ.pop = () -> eePop QQ.ConversionFormat
 QQ.baseRings = {ZZ}
 QQ.mathML = "<mi>&Qopf;</mi>"
 QQ.frac = QQ
+
 QQ.random = () -> (random 21 - 10) / (random 9 + 1)
 degree QQ := i -> {}
-ggPush QQ := i -> (
-     ggPush QQ, ggINT, gg numerator i, ggfromint, 
-     ggPush QQ, ggINT, gg denominator i, ggfromint, 
-     ggdiv)
 expression QQ := r -> (
      n := numerator r;
      d := denominator r;
@@ -32,7 +37,6 @@ QQ == ZZ := (r,i) -> r == i/1
 ZZ == QQ := (i,r) -> r == i/1
 
 QQ.Engine = true
-QQ.handle = newHandle (ggZ, ggfractionfield)
 assert (hash ZZ < hash QQ)
 promote(ZZ,QQ) := (n,QQ) -> n/1
 lift(QQ,ZZ) := (r,o) -> (

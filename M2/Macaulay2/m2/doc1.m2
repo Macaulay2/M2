@@ -137,9 +137,7 @@ document { topics,
 document { apropos,
      Headline => "symbols matching a pattern",
      TT "apropos s", " -- displays a list of global symbols which match
-     the pattern specified by the string ", TT "s", ".",
-     PARA,
-     "The pattern may contain '*'s as wild card characters.",
+     the regular expression specified by the string ", TT "s", ".",
      EXAMPLE "apropos \"scan\""
      }
 

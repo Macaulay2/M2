@@ -4,8 +4,9 @@
 #define _lattice_hpp_
 
 #include "matrix.hpp"
+#include "sparsemat.hpp"
 
-class MatrixComputation : public type
+class MatrixComputation : public mutable_object
 {
   SparseMutableMatrix *gens;
 
@@ -24,25 +25,18 @@ public:
 #define Algorithm_Gauss 3
 #define Algorithm_LLL 4
 public:
-  MatrixComputation(const Matrix &m, bool do_rowchange, bool do_colchange);
+  MatrixComputation(const Matrix *m, bool do_rowchange, bool do_colchange);
   virtual ~MatrixComputation();
 
   const Ring *getRing() const {return R;}
   int calc(int nsteps);
 
-  Matrix getResultMatrix() const;
-  Matrix getRowChangeOfBasisMatrix() const;
-  Matrix getColumnChangeOfBasisMatrix() const;
+  Matrix *getResultMatrix() const;
+  Matrix *getRowChangeOfBasisMatrix() const;
+  Matrix *getColumnChangeOfBasisMatrix() const;
   int getStatus() const;
 
-  // Infrastructure
-  class_identifier class_id() const { return CLASS_MatrixComputation; }
-  type_identifier  type_id () const { return TY_MatrixComputation; }
-  const char * type_name   () const { return "MatrixComputation"; }
-
   MatrixComputation * cast_to_MatrixComputation() { return this; }
-
-  void text_out(buffer &o) const { o << "MatrixComputation"; }
 };
 
 class FF_LUComputation
@@ -79,11 +73,16 @@ private:
   // Returns true if the computation completed.  False if it was
   // user interrupted.
 
-  void get_column_permutation(intarray &result);
+  M2_arrayint get_column_permutation();
 public:
-  static bool DO(SparseMutableMatrix *M, intarray &col_permutation);
-  // returns true if the computation was not user interrupted.  If it was,
-  // false is returned, and M is in an intermediate state.
-
+  static M2_arrayint_OrNull DO(SparseMutableMatrix *M);
+  // Replace M with its column echelon form.  If M has
+  // column recording going on, then one obtains the whole
+  // LU decomposition.
+  // If the computation was interrupted, or M is in a ring which is found to not
+  // be a domain (e.g. a non-commutative ring), then NULL is returned, and M is
+  // left in an intermediate state.
+  // Otherwise, M is modified, and the column permutation needed
+  // to obtain the resulting M is returned.
 };
 #endif

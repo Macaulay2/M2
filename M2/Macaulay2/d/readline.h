@@ -1,1 +1,0 @@
-void setup_readline();

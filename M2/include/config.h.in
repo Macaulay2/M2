@@ -49,8 +49,17 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the `wordexp' function. */
+#undef HAVE_WORDEXP
+
+/* Define to 1 if you have the <wordexp.h> header file. */
+#undef HAVE_WORDEXP_H
+
 /* whether h_errlist is declared in errno.h or stdio.h */
 #undef H_ERRLIST_IS_DECLARED
+
+/* whether to use LAPACK */
+#undef LAPACK
 
 /* whether to use the new version of dumpdata */
 #undef NEWDUMPDATA

@@ -41,7 +41,7 @@ public:
   res_pair *base_comp;
   int syz_type;
 
-  MonomialIdeal mi;			// Monomial ideal of total monomials
+  MonomialIdeal * mi;			// Monomial ideal of total monomials
   res_pair *mi2;		// List of res_pairs having this as lead term
   res_pair *next_mi;		// If this is part of a list of mi2, this is the
 				// next-link.
@@ -63,11 +63,6 @@ public:
                pivot_term(NULL),
                stripped_syz(NULL)
      {}
-  
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 struct resterm

@@ -22,8 +22,7 @@ extern "C" char newline[];
 #define Random RandomFoo
 #endif
 
-#include "classes.hpp"
-#include "error.hpp"
+#include "error.h"
 #include "buffer.hpp"
 #include "mem.hpp"
 

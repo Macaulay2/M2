@@ -2,14 +2,13 @@
 
 #include "det.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 
 extern int comp_printlevel;
 
-DetComputation::DetComputation(const Matrix &M, int p,
+DetComputation::DetComputation(const Matrix *M, int p,
 			       bool do_exterior,
 			       int strategy)
-  : R(M.get_ring()),
+  : R(M->get_ring()),
     M(M),
     done(false),
     p(p),
@@ -21,22 +20,19 @@ DetComputation::DetComputation(const Matrix &M, int p,
     this_col(0),
     D(0)
 {
-  bump_up(R);
-
   if (do_exterior)
     {
-      FreeModule *F = M.rows()->exterior(p);
-      FreeModule *G = M.cols()->exterior(p);
-      int *deg = R->degree_monoid()->make_new(M.degree_shift());
+      FreeModule *F = M->rows()->exterior(p);
+      FreeModule *G = M->cols()->exterior(p);
+      int *deg = R->degree_monoid()->make_new(M->degree_shift());
       R->degree_monoid()->power(deg, p, deg);
-      result = Matrix(F,G,deg);
+      result = new Matrix(F,G,deg);
       R->degree_monoid()->remove(deg);
     }
   else
     {
       FreeModule *F = R->make_FreeModule(1);
-      result = Matrix(F);
-      // MES: do I need to bump down F??
+      result = new Matrix(F);
     }
 
   if (do_trivial_case())
@@ -64,7 +60,6 @@ DetComputation::DetComputation(const Matrix &M, int p,
 
 DetComputation::~DetComputation()
 {
-  bump_down((Ring *)R);
   delete [] row_set;
   delete [] col_set;
 
@@ -96,19 +91,20 @@ int DetComputation::step()
     {
       if (do_exterior)
 	{
-	  vec v = result.rows()->term(this_row,r);
-	  result.rows()->add_to(result[this_col], v);
+	  vec v = result->rows()->raw_term(r,this_row);
+	  result->rows()->add_to((*result)[this_col], v);
 	}
       else
-	result.append(result.rows()->term(0,r));
+	result->append(result->rows()->raw_term(r,0));
     }
-  R->remove(r);
+  else
+    R->remove(r);
 
   this_row++;
-  if (!comb::increment(p, M.n_rows(), row_set))
+  if (!comb::increment(p, M->n_rows(), row_set))
     {
       // Now we increment column
-      if (!comb::increment(p, M.n_cols(), col_set))
+      if (!comb::increment(p, M->n_cols(), col_set))
 	{
 	  done = true;
 	  return COMP_DONE;
@@ -133,7 +129,7 @@ bool DetComputation::do_trivial_case()
       // I suppose we want a single element which is '1'?
       return true;
     }
-  else if (p > M.n_rows() || p > M.n_cols())
+  else if (p > M->n_rows() || p > M->n_cols())
     {
       // Zero matrix in either case
       return true;
@@ -144,19 +140,19 @@ bool DetComputation::do_trivial_case()
 void DetComputation::clear()
 {
   if (do_exterior) return;
-  result = Matrix(result.rows());
+  result = new Matrix(result->rows());
 }
 
 void DetComputation::set_next_minor(const int *rows, const int *cols)
 {
   if (do_exterior) return;
   int i;
-  if (rows != NULL && comb::valid_subset(p, M.n_rows(), rows))
+  if (rows != NULL && comb::valid_subset(p, M->n_rows(), rows))
     for (i=0; i<p; i++) row_set[i] = rows[i];
   else
     for (i=0; i<p; i++)	row_set[i] = i;
 
-  if (cols != NULL && comb::valid_subset(p, M.n_cols(), cols))
+  if (cols != NULL && comb::valid_subset(p, M->n_cols(), cols))
     for (i=0; i<p; i++) col_set[i] = cols[i];
   else
     for (i=0; i<p; i++)	col_set[i] = i;
@@ -183,7 +179,7 @@ void DetComputation::get_minor(int *r, int *c, int p, ring_elem **D)
 {
   for (int i=0; i<p; i++)
     for (int j=0; j<p; j++)
-      D[i][j] = M.elem(r[i],c[j]);
+      D[i][j] = M->elem(r[i],c[j]);
 }
 
 bool DetComputation::get_pivot(ring_elem **D, int r, ring_elem &pivot, int &pivot_col)
@@ -209,7 +205,7 @@ ring_elem DetComputation::detmult(ring_elem f1, ring_elem g1,
   R->subtract_to(a,b);
   if (!R->is_zero(d))
     {
-      ring_elem tmp = R->divide(a,d);
+      ring_elem tmp = R->divide(a,d); // exact division
       R->remove(a);
       a = tmp;
     }
@@ -283,7 +279,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p)
 //  const ring_elem &result = lookup(r,c,p,found);
 //  if (found) return result;
   int i;
-  if (p == 1) return M.elem(r[0],c[0]);
+  if (p == 1) return M->elem(r[0],c[0]);
   ring_elem result = R->from_int(0);
 
   int negate = 1;
@@ -297,7 +293,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p)
       c[p-1] = tmp;
 #endif
       negate = !negate;
-      ring_elem g = M.elem(r[p-1],c[p-1]);
+      ring_elem g = M->elem(r[p-1],c[p-1]);
       if (R->is_zero(g)) 
 	{
 	  R->remove(g);

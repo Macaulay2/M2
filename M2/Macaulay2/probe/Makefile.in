@@ -1,0 +1,39 @@
+# @configure_input@
+include ../../include/config.Makefile
+VPATH = @srcdir@
+
+all:: probe.out test-probe
+extra:: probe-gdb.out probe-compare
+ARGS = abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d
+
+
+diffs : probe.out probe-nash-gdb.out
+	diff -u $^
+probe.out : probe
+	./probe $(ARGS) >$@
+probe-gdb.out : probe probe.gdb
+	gdb -batch -nx -x @srcdir@/probe.gdb --args ./probe $(ARGS) >$@
+probe-gdb : probe probe.gdb
+	gdb -batch -nx -x @srcdir@/probe.gdb --args ./probe $(ARGS)
+probe-compare : probe.out probe-gdb.out
+	diff -u $^ || true
+
+TGDB = env OLDSHELL=$(SHELL) SHELL=nash gdb
+probe-nash-gdb.out : probe probe.gdb
+	$(TGDB) -nx -x ../../../Macaulay2/probe/probe.gdb --args ./probe $(ARGS) >$@
+
+############################## probe memory for dumpdata experiments
+probe : probe.c probe.h
+	$(CC) -g -I../../include -L../dumpdata $< -ldump $(OUTPUT_OPTION)
+probe.h :
+	echo "/* insert temporary fixes here */" >$@
+test-probe : addresses
+addresses : probe.out
+	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
+	<probe.out sed -e 's/0x//g' -e 's/^ *(nil)/00000000/g' -e 's/(nil)/00000000/g' \
+		>> syms
+	sort syms > addresses
+	rm syms
+clean ::; rm -f addresses probe
+Makefile : Makefile.in
+	cd ../..; ./config.status Macaulay2/probe/Makefile

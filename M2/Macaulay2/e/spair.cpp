@@ -2,9 +2,6 @@
 
 #include "spair.hpp"
 
-stash *gb_elem::mystash;
-stash *s_pair::mystash;
-
 int compare_type = 0;  // gb2.cpp: changes this value sometimes, usually to 0.
 static int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
    65536, 262144, 1677721};

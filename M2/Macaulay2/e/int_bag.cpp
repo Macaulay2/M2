@@ -2,4 +2,4 @@
 
 #include "int_bag.hpp"
 
-stash *int_bag::mystash;
+

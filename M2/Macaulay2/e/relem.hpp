@@ -3,110 +3,50 @@
 #ifndef _ring_elem_hh_
 #define _ring_elem_hh_
 
+#include "engine.h"
 #include "ring.hpp"
+class Monomial;
 
-// Using arbitrary precision integers in the engine.
-//
-// A RingElement, whose ring is ZZ (the only object ot type Z),
-// is a reference counted bignum.
-// 
-// Usual operations, such as +, -, *, / are defined automatically.
-//
-// To check that the ring of f is Z: 
-//    f.get_ring()->is_Z()
-//
-// To extract the various limbs of f: (NOT FUNCTIONAL YET)
-//    
-//    f.extract_limb(0)    gets the lowest part, usually 32 or 64 bits.
-//    f.extract_limb(1)    next higher part
-//    f.n_limbs()
-//
-// To create a bignum from a set of 16 bit integers: (NOT FUNCTIONAL YET)
-//    (low order parts first).
-//
-//    Z::make_int(int nparts, int parts[])
-// To check the sign of a number, or whether it is zero:
-//
-//    f.is_zero()
-//    f.sign()         returns -1,0,or 1 (NOT FUNCTIONAL YET)
-class RingElement_rec : public immutable_object
+class RingElement : public immutable_object
 {
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { 
-       return mystash->new_elem(); 
-  }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-  friend class RingElement;
-
   const Ring *R;
   ring_elem val;
 
-  RingElement_rec  (const Ring *RR)
-    : R(RR), val(R->from_int(0)) { bump_up((Ring *)R); }
-
-  RingElement_rec  (const Ring *RR, ring_elem f) 
-    : R(RR), val(f) { bump_up((Ring *)R); }
-
-  virtual ~RingElement_rec () { R->remove(val); bump_down((Ring *)R); }
-
-
-  // Infrastructure
-  class_identifier class_id() const { return CLASS_RingElement; }
-  type_identifier  type_id () const { return TY_RING_ELEM; }
-  const char * type_name   () const { return "RingElement"; }
-  virtual bool equals(const object_element *o) const;
-
-  RingElement    cast_to_RingElement();
-
-  int          int_of() const { return R->coerce_to_int(val); }
-  int          length_of() const;
-
-  void         text_out (buffer &o) const;
-  void         bin_out  (buffer &o) const;
-};
-
-class RingElement
-{
-  POINTER(RingElement, RingElement_rec)
-public:
-  RingElement(const Ring *R);
-  RingElement(const Ring *R, int n);
-  RingElement(const Ring *R, mpz_t n);
-  RingElement(const Ring *R, int v, int e);
   RingElement(const Ring *R, ring_elem f);
-  RingElement(const Ring *R, RingElement a, Monomial m);
 
-  ring_elem    get_value ()             const { return obj->val; }
-  void         set_value (ring_elem f)       { obj->R->remove(obj->val);
-                                               obj->val = f; }
-  const Ring * get_ring  ()             const { return obj->R; }
+public:
+  static RingElement * make_raw(const Ring *R, ring_elem f);
+
+  ring_elem    get_value ()             const { return val; }
+  void         set_value (ring_elem f)  { R->remove(val); val = f; }
+  const Ring * get_ring  ()             const { return R; }
 
   // ring arithmetic
+  int          int_of() const { return R->coerce_to_int(val); }
 
   bool is_zero() const;
   bool is_equal(const RingElement &b) const;
   bool is_unit() const;
 
-  RingElement operator-() const;
-  RingElement operator+(const RingElement &b) const;
-  RingElement operator-(const RingElement &b) const;
-  RingElement operator*(const RingElement &b) const;
-  RingElement operator*(int n) const;
-  RingElement power(mpz_t n) const;
-  RingElement power(int n) const;
+  RingElement *operator-() const;
+  RingElement *operator+(const RingElement &b) const;
+  RingElement *operator-(const RingElement &b) const;
+  RingElement *operator*(const RingElement &b) const;
+  RingElement *operator*(int n) const;
+  RingElement *power(mpz_t n) const;
+  RingElement *power(int n) const;
 
-  RingElement operator/(const RingElement &b) const;
-  RingElement operator%(const RingElement &b) const;
-  RingElement divide(const RingElement &b, 
-		      RingElement &rem) const;
-  RingElement gcd(const RingElement &b) const;
-  RingElement gcd_extended(const RingElement &b, 
-			    RingElement &u, RingElement &v) const;
-  RingElement invert() const;
+  RingElement *operator/(const RingElement &b) const;
+  RingElement *operator%(const RingElement &b) const;
+  RingElement *divide(const RingElement &b, 
+		      RingElement * &rem) const;
+  RingElement *gcd(const RingElement &b) const;
+  RingElement *gcd_extended(const RingElement &b, 
+			    RingElement * &u, RingElement * &v) const;
+  RingElement *invert() const;
 
-  static RingElement random(const Ring *R);
-  static RingElement random(const Ring *R, int homog, const intarray &deg);
+  static RingElement *random(const Ring *R);
+  static RingElement *random(const Ring *R, int homog, const intarray &deg);
 
   void text_out (buffer &o) const;
 
@@ -121,67 +61,45 @@ public:
   // is one of these construction steps.  Promote takes an element of
   // S, and maps it into 'this', while lift goes the other way.
 
-  int promote(const Ring *S, RingElement &result) const;
-  int lift(const Ring *S, RingElement &result) const;
+  bool promote(const Ring *S, const RingElement *& result) const;
+  bool lift(const Ring *S, const RingElement *& result) const;
 
   // functions primarily for polynomial ring elements
 
-  RingElement lead_term(int n=-1) const;
-  RingElement rest() const;
-  RingElement get_terms(int lo, int hi) const;
-  RingElement get_coeff(const Monomial &m) const;
-  RingElement lead_coeff() const;
-  Monomial  lead_monom() const;
+  RingElement *lead_term(int n=-1) const;
+  RingElement *rest() const;
+  int n_terms() const;
+  RingElement *get_terms(int lo, int hi) const;
+  RingElement *get_coeff(const Monomial *m) const;
+  RingElement *lead_coeff() const;
+  Monomial  *lead_monom() const;
   int       is_homogeneous() const;
-  RingElement homogenize(int v, const int *wts) const;
-  RingElement homogenize(int v, int deg, const int *wts) const;
-  intarray  degree() const;
+  RingElement *homogenize(int v, M2_arrayint wts) const;
+  RingElement *homogenize(int v, int deg, M2_arrayint wts) const;
+  void degree_weights(M2_arrayint wts, int &lo, int &hi) const;
+  M2_arrayint multi_degree() const;
+  //  intarray  degree() const;
 
   // functions for fraction fields
 
-  RingElement numerator() const;
-  RingElement denominator() const;
-  RingElement fraction(const Ring *R, const RingElement &bottom) const;
+  RingElement *numerator() const;
+  RingElement *denominator() const;
+  RingElement *fraction(const Ring *R, const RingElement *bottom) const;
 };
 
-//-----------------------------------------------------------------
-inline RingElement RingElement_rec :: cast_to_RingElement() 
-{ return RingElement(this,caster); }
-//-----------------------------------------------------------------
-
-inline RingElement::RingElement(const Ring *R) : 
-  obj(new RingElement_rec(R))
-{  
-}
-
-inline RingElement::RingElement(const Ring *R, int n) : 
-  obj(new RingElement_rec(R, R->from_int(n)))
-{
-}
-
-inline RingElement::RingElement(const Ring *R, mpz_t n) : 
-  obj(new RingElement_rec(R, R->from_int(n)))
-{
-}
-
-inline RingElement::RingElement(const Ring *R, int v, int e) : 
-  obj(new RingElement_rec(R, R->var(v,e)))
-{
-}
-
 inline RingElement::RingElement(const Ring *R, ring_elem f) : 
-  obj(new RingElement_rec(R, f))
+  immutable_object(0), R(R), val(f)
 {
 }
 
 inline bool RingElement::is_zero() const
 {
-  return get_ring()->is_zero(obj->val);
+  return get_ring()->is_zero(val);
 }
 
 inline bool RingElement::is_unit() const
 {
-  return get_ring()->is_unit(obj->val);
+  return get_ring()->is_unit(val);
 }
 
 inline bool RingElement::is_equal(const RingElement &b) const
@@ -189,10 +107,10 @@ inline bool RingElement::is_equal(const RingElement &b) const
   if (this == &b) return true;
   if (get_ring() != b.get_ring())
     {
-      gError << "cannot compare ring elements from different rings";
+      ERROR("cannot compare ring elements from different rings");
       return false;
     }
-  return get_ring()->is_equal(obj->val, b.obj->val);
+  return get_ring()->is_equal(val, b.val);
 }
 
 #endif

@@ -1,30 +1,21 @@
--- Copyright 1995 by Michael Stillman
+-- Copyright 1995-2002 by Michael Stillman
 
 MonomialIdeal = new Type of MutableHashTable
 MonomialIdeal.synonym = "monomial ideal"
 monomialIdeal = method(TypicalValue => MonomialIdeal,SingleArgumentDispatch=>true)
 numgens MonomialIdeal := I -> I.numgens
-
-generators MonomialIdeal := (I) -> (
-     R := ring I;
-     sendgg(ggPush I, ggmatrix);
-     f := getMatrix R;
-     -- f.cache#{false,0} = forceGB(f,MinimalMatrix=>f,ChangeMatrix=>id_(source f));
-     f)
+raw MonomialIdeal := I -> I.RawMonomialIdeal
+generators MonomialIdeal := (I) -> newMatrix(ring I, rawMatrix raw I)
 
 ideal MonomialIdeal := (I) -> ideal generators I
 
-newMonomialIdeal := R -> (
-     mi := new MonomialIdeal;
-     sendgg(ggdup, gglength);
-     mi.numgens = eePopInt();
-     mi.handle = newHandle();
-     mi.ring = R;
-     mi)
+newMonomialIdeal := (R,rawI) -> new MonomialIdeal from {
+     symbol numgens => rawNumgens rawI,
+     symbol RawMonomialIdeal => rawI,
+     symbol ring => R
+     }
 
-monomialIdealOfRow := (i,m) -> (
-     sendgg(ggPush m, ggPush i, ggmonideal);
-     newMonomialIdeal ring m)
+monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
 codim Module := M -> if M.?codim then M.codim else M.codim = (
      R := ring M;
@@ -62,24 +53,24 @@ monomialIdeal MonomialIdeal := I -> (
 
 monomialIdeal Matrix := MonomialIdeal => f -> (
      if numgens target f =!= 1 then error "expected a matrix with 1 row";
-     sendgg(ggPush f, ggPush 0, ggmonideal);
-     newMonomialIdeal ring f)
+     monomialIdealOfRow(0,f))
 
 monomialIdeal List := MonomialIdeal => v -> monomialIdeal matrix {splice v}
 monomialIdeal Sequence := v -> monomialIdeal toList v
 
-MonomialIdeal == MonomialIdeal := (m,n) -> (
-     sendgg (ggPush m, ggPush n, ggisequal); 
-     eePopBool())
+MonomialIdeal == MonomialIdeal := (m,n) -> m === n
 
 MonomialIdeal == ZZ := (m,i) -> (
      if i === 0 then numgens m == 0
      else error "asked to compare monomial ideal to nonzero integer")
 ZZ == MonomialIdeal := (i,m) -> m == i
 
-MonomialIdeal + MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation ggadd
-MonomialIdeal * MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation ggmult
-
+MonomialIdeal + MonomialIdeal := MonomialIdeal => (I,J) -> (
+     if ring I =!= ring J then error "expected monomial ideals in the same ring";
+     newMonomialIdeal(ring I, raw I + raw J))
+MonomialIdeal * MonomialIdeal := MonomialIdeal => (I,J) -> (
+     if ring I =!= ring J then error "expected monomial ideals in the same ring";
+     newMonomialIdeal(ring I, raw I * raw J))
 
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> (UnaryMonomialIdealOperation ggradical) I
 
@@ -89,7 +80,9 @@ saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> (
      (BinaryMonomialIdealOperation ggsat) (I,J)
      )
 
-int := BinaryMonomialIdealOperation ggintersect
+int := (I,J) -> (
+     if ring I =!= ring J then error "expected monomial ideals in the same ring";
+     newMonomialIdeal(ring I, rawIntersect(raw I, raw J)))
 
 intersect(List) := x -> intersect toSequence x
 
@@ -201,7 +194,7 @@ monomialIdeal Ring := MonomialIdeal => R -> monomialIdeal {0_R}
 ring MonomialIdeal := I -> I.ring
 numgens MonomialIdeal := I -> I.numgens
 MonomialIdeal _ ZZ := (I,n) -> (generators I)_(0,n)
-module MonomialIdeal := (I) -> image gens I
+module MonomialIdeal := Module => (I) -> image gens I
 
 isMonomialIdeal = method(TypicalValue => Boolean)
 isMonomialIdeal Thing := x -> false

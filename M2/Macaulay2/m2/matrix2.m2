@@ -1,4 +1,4 @@
---		Copyright 1995 by Daniel R. Grayson and Michael Stillman
+--		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
 complement = method()
 
@@ -137,27 +137,28 @@ homogCheck := (f, v, wts) -> (
        then error "homogenization weight vector has incorrect length";)
 
 homogenize(RingElement, RingElement, List) := RingElement => (f,v,wts) -> (
-    wts = flatten wts;
-    homogCheck(f,v,wts);
-    sendgg(ggPush f, ggPush index v, ggPush wts, gghomogenize);
-    new ring f)
+     R := ring f;
+     wts = flatten wts;
+     homogCheck(f,v,wts);
+     new R from rawHomogenize(f.RawRingElement, index v, wts))
 
 homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
-    wts = flatten wts;
-    homogCheck(f,v,wts);
-    sendgg(ggPush f, ggPush index v, ggPush wts, gghomogenize);
-    new class f)
+     M := class f;
+     wts = flatten wts;
+     homogCheck(f,v,wts);
+     new M from rawHomogenize(f.RawVector, index v, wts))
 
 homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
-    wts = flatten wts;
-    homogCheck(f,v,wts);
-    sendgg(ggPush f, ggPush index v, ggPush wts, gghomogenize);
-    getMatrix ring f)
+     R := ring f;
+     wts = flatten wts;
+     homogCheck(f,v,wts);
+     error "IM2_Matrix_homogenize not re-implemented yet";
+     newMatrix(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
 
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
-    wts := (transpose (monoid ring f).Options.Degrees)#0;
-    homogenize(f,n,wts)
-    )
+     wts := (transpose (monoid ring f).Options.Degrees)#0;
+     homogenize(f,n,wts)
+     )
 
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M
@@ -205,6 +206,7 @@ coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficien
 coefficients(List, Matrix) := (v,m) -> (
      R := ring m;
      v = splice v;
+     error "IM2_Matrix_coeffs not implemented yet";
      sendgg(ggPush m, ggPush v, ggcoeffs); 
      {getMatrix R, getMatrix R})
 

@@ -4,6 +4,7 @@
 #define _ntuple_hpp_
 
 #include "style.hpp"
+#include "engine.h"
 
 class ntuple
 {
@@ -24,13 +25,12 @@ public:
 
   static int lex_compare(int nvars, const int *a, const int *b);
   static void copy(int nvars, const int *a, int *result);
-  static int weight(int nvars, const int *a, const int *wt);
+  static int weight(int nvars, const int *a, const M2_arrayint wt);
   static int degree(int nvars, const int *a);
   static void elem_text_out(buffer &o, 
-			    int nvars,
+			    unsigned int nvars,
 			    const int *a, 
-			    const array<char *> &varnames);
-  static void elem_bin_out(buffer &o, int nvars, const int *a);
+			    const M2_stringarray varnames);
 };
 
 inline 
@@ -134,11 +134,11 @@ void ntuple::copy(int nvars, const int *a, int *result)
 
 
 inline
-int ntuple::weight(int nvars, const int *a, const int *wt)
+int ntuple::weight(int nvars, const int *a, const M2_arrayint wt)
 {
   int sum = 0;
   for (int i=0; i<nvars; i++)
-    sum += a[i] * wt[i];
+    sum += a[i] * wt->array[i];
   return sum;
 }
 

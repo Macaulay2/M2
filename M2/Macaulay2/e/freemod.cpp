@@ -6,7 +6,6 @@
 #include "freemod.hpp"
 #include "comb.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
 #include "ringmap.hpp"
@@ -15,9 +14,7 @@
 
 #include "geovec.hpp"
 
-stash *FreeModule::mystash;
-
-void debugout(const FreeModule *F, const vec v)
+extern "C" void debugout(const FreeModule *F, const vec v)
 {
   buffer o;
   F->elem_text_out(o,v);
@@ -25,7 +22,7 @@ void debugout(const FreeModule *F, const vec v)
 }
 vec FreeModule::new_term() const
 {
-  vec result = (vec) R->vecstash->new_elem();
+  vec result = new vecterm;
   result->next = NULL;
   result->coeff = (Nterm*)0;
   return result;
@@ -34,145 +31,26 @@ vec FreeModule::copy_term(vec v) const
 {
   vec result = new_term();
   result->comp = v->comp;
-  result->coeff = K->copy(v->coeff);
+  result->coeff = R->copy(v->coeff);
   result->next = NULL;
-  if (M != NULL)
-    M->copy(v->monom, result->monom);
-  return result;
-}
-vec FreeModule::new_term(int e, ring_elem a, const int *m) const
-{
-  // This is a low-level routine.  Assumptions:
-  // a is not to be copied, and is not 0.
-  // the result is not reduced, i.e. it is a single term.
-
-  vec result = new_term();
-  result->next = NULL;
-  result->comp = e;
-  result->coeff = a;
-  if (M != NULL)
-    M->copy(m, result->monom);
-  return result;
-}
-
-void FreeModule::to_exponents(const int *m, 
-			      int component, 
-			      int *result_exponents) const
-{
-  if (ty == FREE_SCHREYER)
-    {
-      M->divide(m,base_monom(component),TO_EXP_monom);
-      M->to_expvector(TO_EXP_monom,result_exponents);
-    }
-  else
-      M->to_expvector(m,result_exponents);
-}
-
-void FreeModule::from_exponents(const int *exponents, 
-				int component, 
-				int *result_monomial) const
-{
-  if (ty == FREE_SCHREYER)
-    {
-      M->from_expvector(exponents, TO_EXP_monom);
-      M->mult(TO_EXP_monom,base_monom(component),result_monomial);
-    }
-  else
-    M->from_expvector(exponents, result_monomial);
-}
-
-vec FreeModule::from_varpower(const int *vp, int x) const
-{
-  if (M == NULL) return NULL;
-  ring_elem a = K->from_int(1);
-  int *m = M->make_one();
-  M->from_varpower(vp, m);
-  if (M->is_skew() && M->skew_is_zero(m))
-    {
-      M->remove(m);
-      K->remove(a);
-      return NULL;
-    }
-  vec result = term(x,a,m);
-  K->remove(a);
-  M->remove(m);
-  return result;
-}
-
-void FreeModule::lead_varpower(const vec v, intarray &vp) const
-{
-  assert(v != NULL);
-  if (M == NULL)
-    varpower::one(vp);
-  else
-    {
-      int *m = M->make_one();
-      M->divide(v->monom, base_monom(v->comp), m);
-      M->to_varpower(m, vp);
-      M->remove(m);
-    }
-}
-
-vec FreeModule::term(int e, ring_elem a, const int *m) const
-{
-  // Higher level term construction
-  // MES: should this routine: (1) copy a, (2) reduce the result?, 
-  // (3) check whether a is NULL.  IE how low level should this be?
-  // (4) add base_monom to m, in case of FREE_SCHREYER.
-
-  if (K->is_zero(a)) return NULL;
-  vec result = new_term();
-  result->next = NULL;
-  result->comp = e;
-  result->coeff = K->copy(a);
-  switch (ty)
-    {
-    case FREE:
-      break;
-    case FREE_POLY:
-      M->copy(m, result->monom);
-      if (is_quotient_ring) normal_form(result);
-      break;
-    case FREE_SCHREYER:
-      M->mult(base_monom(e), m, result->monom);
-      if (is_quotient_ring) normal_form(result);
-      break;
-    }
   return result;
 }
 
 vec FreeModule::e_sub_i(int i) const
 {
-  // MES: if (R->is_zero_ring()) return NULL;
-  vec result = new_term();
-  result->next = NULL;
-  result->comp = i;
-  result->coeff = K->from_int(1);
-  switch (ty)
-    {
-    case FREE:
-      break;
-    case FREE_POLY:
-      M->one(result->monom);
-      if (is_quotient_ring) normal_form(result);
-      break;
-    case FREE_SCHREYER:
-      M->copy(base_monom(i), result->monom);
-      if (is_quotient_ring) normal_form(result);
-      break;
-    }
-
-  return result;
+  ring_elem a = R->from_int(1);
+  return raw_term(a,i);
 }
 
-vec FreeModule::term(int e, ring_elem a) const
-    // MES: handle this by "mult(a, e_sub_i(e))" ??  Sounds good.  This is not 
-    // time critical.
+vec FreeModule::raw_term(ring_elem a, int e) const
+  // This DOES NOT COPY a.
 {
-  if (R->is_zero(a)) return NULL;
-  vec v = e_sub_i(e);
-  vec result = mult(a, v);
-  remove(v);
+  if (R->is_zero(a))
+    return NULL;
+  vec result = new_term();
+  result->next = NULL;
+  result->comp = e;
+  result->coeff = a;
   return result;
 }
 
@@ -187,14 +65,38 @@ bool FreeModule::is_equal(vec a, vec b) const
 	}
       if (b == NULL) return false;
       if (a->comp != b->comp) return false;
-      if (!K->is_equal(a->coeff, b->coeff)) return false;
-      if (M != NULL && M->compare(a->monom, b->monom) != 0)
-	return false;
+      if (!R->is_equal(a->coeff, b->coeff)) return false;
     }
 }
 
 
+vec FreeModule::copy(vec v) const
+{
+  vecterm result;
+  vecterm *b = &result;
+  for ( ; v != NULL; v = v->next, b = b->next)
+      b->next = copy_term(v);
+  b->next = NULL;
+  return result.next;
+}
 
+void FreeModule::remove(vec &v) const
+{
+  R->remove_vector(v);
+}
+
+ring_elem FreeModule::get_coefficient(vec v, int e) const
+{
+  while (v != NULL)
+    {
+      if (v->comp == e) return R->copy(v->coeff);
+      if (v->comp < e) return R->from_int(0);
+      v = v->next;
+    }
+  return R->from_int(0);
+}
+
+#if 0
 vec FreeModule::lead_term(int n, vec v) const
 {
   if (v == NULL) return NULL;
@@ -220,53 +122,41 @@ vec FreeModule::lead_term(vec v) const
 {
   return lead_term(1 + R->n_vars(), v);
 }
+#endif
 
-vec FreeModule::copy(vec v) const
+#if 0
+// MES Aug 2002
+vec FreeModule::lead_term(vec v) const
 {
-  vecterm result;
-  vecterm *b = &result;
-  for ( ; v != NULL; v = v->next, b = b->next)
-      b->next = copy_term(v);
-  b->next = NULL;
-  return result.next;
+  // MES: THIS DEPENDS ON THE ORDER IN THE FREEMODULE!!
+  // This one is written so that the order is mi ei > mj ej
+  // iff mi > mj, or = and i > j.
+  //  if (schreyer) return schreyer_lead_term(v,a,comp);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) return copy_term(v);
+  // First find the component with the largest monomial
+  if (v == 0) return NULL;
+  vec largest = v;
+  for (vec w = v->next; w != 0; w = w->next)
+    if (P->compare(w->coeff, largest->coeff) == GT)
+      largest = w;
+
+  ring_elem lt = P->lead_term(largest->coeff);
+  return raw_term(lt, largest->comp);
 }
 
-void FreeModule::remove(vec &v) const
+const int * FreeModule::schreyer_lead_term(vec v, ring_elem &a, int &comp) const
 {
-  R->remove_vector(v);
+  
 }
+#endif
 
-ring_elem FreeModule::get_coefficient(vec v, int e) const
+int FreeModule::n_terms(vec v) const
 {
-  switch (ty)
-    {
-    case FREE:
-      while (v != NULL)
-	{
-	  if (v->comp == e) return K->copy(v->coeff);
-	  if (v->comp < e) return K->from_int(0);
-	  v = v->next;
-	}
-      return K->from_int(0);
-    case FREE_POLY:
-    case FREE_SCHREYER:
-      const PolynomialRing *P = R->cast_to_PolynomialRing();
-      assert(P != NULL);
-      Nterm head;
-      Nterm *result = &head;
-      const index_type *x = component(e);
-      for ( ; v != NULL; v = v->next)
-	{
-	  if (v->comp != e) continue;
-	  result->next = P->new_term();
-	  result = result->next;
-	  result->coeff = K->copy(v->coeff);
-	  M->divide(v->monom, x->base_monom, result->monom);
-	}
-      result->next = NULL;
-      return head.next;
-    }
-  return 0;
+  int result = 0;
+  for ( ; v != NULL; v = v->next)
+    result++;
+  return result;
 }
 
 vec FreeModule::get_terms(vec v, int lo, int hi) const
@@ -294,32 +184,15 @@ vec FreeModule::get_terms(vec v, int lo, int hi) const
 
 int FreeModule::lead_component(vec v) const
 {
-  if (v == NULL) 
-    {
-      //throw Exception("lead_component: vector is zero");
-      assert(0);
-      return 0;
-    }
+  if (v == NULL) return -1;
   return v->comp;
 }
 
 ring_elem FreeModule::lead_coefficient(vec v) const
 {
   if (v == NULL) 
-    {
-      //throw Exception("lead_coefficient: vector is zero");
-      assert(0);
-      return K->from_int(0);
-    }
-  return K->copy(v->coeff);
-}
-
-int FreeModule::n_terms(vec v) const
-{
-  int result = 0;
-  for ( ; v != NULL; v = v->next)
-    result++;
-  return result;
+    return R->from_int(0);
+  return v->coeff;
 }
 
 //////////////////////////////////////////////
@@ -328,38 +201,12 @@ int FreeModule::n_terms(vec v) const
 
 int FreeModule::compare(const vecterm *t, const vecterm *s) const
 {
-  int cmp;
-  switch (ty) {
-  case FREE:
-    cmp = t->comp - s->comp;
-    if (cmp < 0) return LT;
-    if (cmp > 0) return GT;
-    return EQ;
-  case FREE_POLY:
-    return M->compare(t->monom,t->comp, s->monom,s->comp);
-  case FREE_SCHREYER:
-    return M->compare(t->monom,component(t->comp)->compare_num, 
-		      s->monom,component(s->comp)->compare_num);
-  }
+  int cmp = t->comp - s->comp;
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
   return EQ;
 }
-#if 0
-// Guts of 'compare' above used to be this:
-  // MES: this should use compare_num's.
-  int cmp;
-  if (M != NULL)
-    {
-      cmp = M->compare(t->monom, s->monom);
-      if (cmp != 0) return cmp;
-    }
-  cmp = component(t->comp)->compare_num - component(s->comp)->compare_num;
-  // The following replaced.  We will see how much this breaks things...!
-  //cmp = t->comp - s->comp;
-  if (cmp < 0) return -1;
-  if (cmp > 0) return 1;
-  return 0;
-}
-#endif
+
 void FreeModule::add_to(vec &f, vec &g) const
 {
   if (g == NULL) return;
@@ -369,7 +216,7 @@ void FreeModule::add_to(vec &f, vec &g) const
   while (1)
     switch (compare(f, g))
       {
-      case -1:
+      case LT:
 	result->next = g;
 	result = result->next;
 	g = g->next;
@@ -380,7 +227,7 @@ void FreeModule::add_to(vec &f, vec &g) const
 	    return;
 	  }
 	break;
-      case 1:
+      case GT:
 	result->next = f;
 	result = result->next;
 	f = f->next;
@@ -392,30 +239,17 @@ void FreeModule::add_to(vec &f, vec &g) const
 	    return;
 	  }
 	break;
-      case 0:
+      case EQ:
 	vecterm *tmf = f;
 	vecterm *tmg = g;
 	f = f->next;
 	g = g->next;
-	K->add_to(tmf->coeff, tmg->coeff);
-	if (R->is_ZZ_quotient)
-	  {
-	    ring_elem t = K->remainder(tmf->coeff, R->ZZ_quotient_value);
-	    K->remove(tmf->coeff);
-	    tmf->coeff = t;
-	  }
-	if (K->is_zero(tmf->coeff))
-	  {
-	    K->remove(tmf->coeff);
-	    R->vecstash->delete_elem(tmf);
-	  }
-	else
+	R->add_to(tmf->coeff, tmg->coeff);
+	if (!R->is_zero(tmf->coeff))
 	  {
 	    result->next = tmf;
 	    result = result->next;
 	  }
-	K->remove(tmg->coeff);
-	R->vecstash->delete_elem(tmg);
 	if (g == NULL) 
 	  {
 	    result->next = f; 
@@ -438,7 +272,7 @@ void FreeModule::negate_to(vec &v) const
   vec w = v;
   while (w != NULL)
     {
-      K->negate_to(w->coeff);
+      R->negate_to(w->coeff);
       w = w->next;
     }
 }
@@ -455,7 +289,7 @@ vec FreeModule::negate(vec v) const
   vecterm *b = &result;
   for (vecterm *a = v; a != NULL; a = a->next)
     {
-      b->next = new_term(a->comp, K->negate(a->coeff), a->monom);
+      b->next = raw_term(R->negate(a->coeff), a->comp);
       b = b->next;
     }
   b->next = NULL;
@@ -478,155 +312,6 @@ vec FreeModule::subtract(vec v, vec w) const
   return f;
 }
 
-//////////////////////////////////////////////
-//  Divisibility checks               ////////
-//                                    ////////
-//////////////////////////////////////////////
-
-int FreeModule::is_scalar_multiple(vec f, vec g) const
-  // is df = cg, some scalars c,d?
-{
-  if (f == NULL) return 1;
-  if (g == NULL) return 1;
-  ring_elem c = f->coeff;
-  ring_elem d = g->coeff;
-  vec p,q;
-  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
-    {
-      if (p->comp != q->comp) return 0;
-      if (M->compare(p->monom, q->monom) != 0) return 0;
-    }
-  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
-    {
-      ring_elem c1 = K->mult(c, q->coeff);
-      ring_elem d1 = K->mult(d, p->coeff);
-      int isequal = K->is_equal(c1, d1);
-      K->remove(c1);
-      K->remove(d1);
-      if (!isequal) return 0;
-    }
-  if (q == NULL && p == NULL) return 1;
-  return 0;
-}
-
-//////////////////////////////////////////////
-//  Multiplication: may be overridden ////////
-//  by inheritance                    ////////
-//////////////////////////////////////////////
-
-vec FreeModule::imp_mult_by_coeff(const ring_elem c, vec v) const
-   // return c*v
-{
-  if (K->is_zero(c)) return 0;
-  vecterm head;
-  vecterm *result = &head;
-  for (vecterm *a = v; a != NULL; a = a->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->comp = a->comp;
-      result->coeff = K->mult(a->coeff, c);
-      if (M != NULL)
-	M->copy(a->monom, result->monom);
-    }
-  result->next = NULL;
-  return head.next;
-}
-
-vec FreeModule::imp_skew_mult_by_term(const ring_elem c,
-			       const int *m, vec v) const
-   // return c*m*v
-{
-  vecterm head;
-  vecterm *result = &head;
-  ring_elem minus_c = K->negate(c);
-  vecterm *nextterm = new_term();
-  for (vecterm *a = v; a != NULL; a = a->next)
-    {
-      M->divide(a->monom, base_monom(a->comp), nextterm->monom);
-      int sign = M->skew_mult(m, nextterm->monom, nextterm->monom);
-      M->mult(nextterm->monom, base_monom(a->comp), nextterm->monom);
-      if (sign == 0) 
-	continue;
-      else if (sign > 0)
-	nextterm->coeff = K->mult(a->coeff, c);
-      else
-	nextterm->coeff = K->mult(a->coeff, minus_c);
-
-      nextterm->comp = a->comp;
-      result->next = nextterm;
-      result = result->next;
-      nextterm = new_term();
-    }
-  nextterm->next = NULL;
-  remove(nextterm);
-  result->next = NULL;
-  return head.next;
-}
-
-vec FreeModule::imp_mult_by_term(const ring_elem c, const int *m, const vec v) const
-   // return c*m*v
-{
-  if (M != NULL && M->is_skew())
-    {
-      return imp_skew_mult_by_term(c,m,v);
-    }
-  vecterm head;
-  vecterm *result = &head;
-  for (vecterm *a = v; a != NULL; a = a->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->comp = a->comp;
-      result->coeff = K->mult(a->coeff, c);
-      if (M != NULL)
-	M->mult(m, a->monom, result->monom);
-    }
-  result->next = NULL;
-  return head.next;
-}
-
-void FreeModule::imp_subtract_multiple_to(vec &v, 
-				 ring_elem c, const int *m, const vec w) const
-{
-  ring_elem b = K->negate(c);
-  vec h = imp_mult_by_term(b, m, w);
-  add_to(v, h);
-  K->remove(b);
-}
-
-vec FreeModule::mult_by_coeff(const ring_elem c, vec v) const
-   // return c*v
-{
-  vec result = imp_mult_by_coeff(c,v);
-  if (is_quotient_ring) normal_form(result);
-  return result;
-}
-
-vec FreeModule::mult_by_term(const ring_elem c, const int *m, const vec v) const
-   // return c*m*v
-{
-  vecterm *result = imp_mult_by_term(c, m, v);
-  if (is_quotient_ring) normal_form(result);
-  return result;
-}
-
-vec FreeModule::right_mult_by_term(vec v, ring_elem c, const int *m) const
-   // return v*c*m
-{
-  return mult_by_term(c, m, v);
-}
-
-void FreeModule::subtract_multiple_to(vec &v, ring_elem c, 
-				    const int *m, const vec w) const
-    // v := v - c * m * w
-{
-  ring_elem minus_c = K->negate(c);
-  vec u = mult_by_term(minus_c, m, w);
-  add_to(v, u);
-  K->remove(minus_c);
-}
-
 
 vec FreeModule::mult(int n, vec v) const
 {
@@ -636,422 +321,44 @@ vec FreeModule::mult(int n, vec v) const
   return result;
 }
 
-vec FreeModule::mult(const ring_elem f, const vec v) const
+vec FreeModule::mult(const ring_elem f, const vec w) const
 {
   if (R->is_zero(f)) return NULL;
-  vec result = NULL;
-  if (M == NULL)
-    result = mult_by_coeff(f, v);
-  else
-    for (Nterm *a = f; a != NULL; a = a->next)
-      {
-	vec h = mult_by_term(a->coeff, a->monom, v);
-	add_to(result, h);
-      }
-  return result;
-}
-
-vec FreeModule::rightmult(const vec v, const ring_elem f) const
-{
-  return mult(f,v);
-}
-
-//////////////////////////////////////////////
-//  Normal forms /////////////////////////////
-//////////////////////////////////////////////
-void FreeModule::imp_cancel_lead_term(vec &f, 
-				      vec g, 
-				      ring_elem &coeff, 
-				      int *monom) const
-{
-  if (f == NULL || g == NULL) return;
-  coeff = K->divide(f->coeff, g->coeff);
-  if (M->is_skew())
-    {
-      M->divide(f->monom, base_monom(f->comp), f->monom);
-      M->divide(g->monom, base_monom(g->comp), g->monom);
-      int sign = M->skew_divide(f->monom, g->monom, monom);
-      M->mult(f->monom, base_monom(f->comp), f->monom);
-      M->mult(g->monom, base_monom(g->comp), g->monom);
-      if (sign < 0) K->negate_to(coeff);
-      imp_subtract_multiple_to(f, coeff, monom, g);
-    }
-  else
-    {
-      M->divide(f->monom, g->monom, monom);
-      imp_subtract_multiple_to(f, coeff, monom, g);
-    }
-}
-void FreeModule::imp_ring_cancel_lead_term(vec &f, 
-					   ring_elem gg, 
-					   ring_elem &coeff, 
-					   int *monom) const
-{
-  Nterm *g = gg;
-  if (f == NULL || g == NULL) return;
-  coeff = K->divide(f->coeff, g->coeff);
-  if (M->is_skew())
-    {
-      M->divide(f->monom, base_monom(f->comp), f->monom);
-      int sign = M->skew_divide(f->monom, g->monom, monom);
-      M->mult(f->monom, base_monom(f->comp), f->monom);
-      M->mult(monom, base_monom(f->comp), monom);
-      if (sign < 0) K->negate_to(coeff);
-      imp_subtract_ring_multiple_to(f, coeff, monom, g);
-    }
-  else
-    {
-      M->divide(f->monom, g->monom, monom);
-      imp_subtract_ring_multiple_to(f, coeff, monom, g);
-    }
-}
-
-
-
-
-vec FreeModule::imp_skew_ring_mult_by_term(
-		    const ring_elem f,
-		    const ring_elem c,
-		    const int *m, 
-                    int x) const
-   // return c*m*f*e_x
-{
   vecterm head;
-  vecterm *result = &head;
-  ring_elem minus_c = K->negate(c);
-  vecterm *nextterm = new_term();
-  M->divide(m, base_monom(x), (int *) m);
-  for (Nterm *a = f; a != NULL; a = a->next)
+  vec result = &head;
+  for (vec v = w ; v != 0; v = v->next)
     {
-      int sign = M->skew_mult(m, a->monom, nextterm->monom);
-      M->mult(nextterm->monom, base_monom(x), nextterm->monom);
-      if (sign == 0) 
-	continue;
-      else if (sign > 0)
-	nextterm->coeff = K->mult(a->coeff, c);
-      else
-	nextterm->coeff = K->mult(a->coeff, minus_c);
-
-      nextterm->comp = x;
-      result->next = nextterm;
-      result = result->next;
-      nextterm = new_term();
-    }
-  M->mult(m, base_monom(x), (int *) m);
-  nextterm->next = NULL;
-  remove(nextterm);
-  result->next = NULL;
-  return head.next;
-}
-vec FreeModule::imp_ring_mult_by_term(const ring_elem f, 
-			       const ring_elem c, const int *m, int x) const
-   // return c*m*f*e_x
-   // This is an internal routine: 'm' should be the total monomial to multiply
-{
-  assert(M != NULL);		// This should only be called by normal_form,
-				// which will check this first.
-  if (M != NULL && M->is_skew())
-    {
-      return imp_skew_ring_mult_by_term(f,c,m,x);
-    }
-  vecterm head;
-  vecterm *result = &head;
-  for (Nterm *a = f; a != NULL; a = a->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->coeff = K->mult(a->coeff, c);
-      result->comp = x;
-      M->mult(m, a->monom, result->monom);
-    }
-  result->next = NULL;
-  return head.next;
-}
-void FreeModule::imp_subtract_ring_multiple_to
-  (vec &f, ring_elem a, const int *m, const Nterm *g) const
-    // f := f - a * m * g
-{
-  // Caution: this returns an element which is not in normal form.
-  ring_elem minus_a = K->negate(a);
-  Nterm *g1 = (Nterm *) g;
-  vec result = imp_ring_mult_by_term(g1, minus_a, m, f->comp);
-  add_to(f, result);
-  K->remove(minus_a);
-}
-void FreeModule::apply_quotient_ring_elements(vec &f, int x, vec rsyz) const
-{
-  // f in F
-  // rsyz in Rsyz
-  // Modify f using the ring elements in rsyz, applied to component 'x'.
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  assert(P != NULL);
-  for (vec t = rsyz; t != NULL; t = t->next)
-    {
-      ring_elem r = P->get_quotient_elem(t->comp);
-      vec f1 = imp_ring_mult_by_term(r, t->coeff, t->monom, x);
-      add_to(f, f1);
-    }
-}
-void FreeModule::normal_form_ZZ(vec &f) const
-{
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const FreeModule *Rsyz = P->get_Rsyz(); // Possibly NULL.
-  vecterm head;
-  vecterm *result = &head;
-
-  while (f != NULL)
-    {
-      vec gsyz, rsyz;
-      int reduces = P->RidealZ->search(f->coeff, f->monom,
-					gsyz, rsyz);
-      if (rsyz != NULL)	
+      ring_elem a = R->mult(f,v->coeff);
+      if (!R->is_zero(a))
 	{
-	  apply_quotient_ring_elements(f, f->comp, rsyz);
-	  Rsyz->remove(rsyz);
-	}
-      if (reduces != TI_TERM)
-	{
-	  result->next = f;
-	  f = f->next;
-	  result = result->next;
-	}
-    }
-  result->next = NULL;
-  f = head.next;
-}
-
-void FreeModule::normal_form(vec &v) const
-{
-  assert(M != NULL);		// This routine should only be called
-				// if is_quotient_ring is set, which should
-				// only be set if M != NULL.
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (coefficients_are_ZZ)
-    {
-      normal_form_ZZ(v);
-      return;
-    }
-  vecterm head;
-  vecterm *result = &head;
-
-  vecterm *t = v;
-
-  while (t != NULL)
-    {
-      to_exponents(t->monom, t->comp, nf_exp);
-
-      int_bag *b;
-      if (P->Rideal.search_expvector(nf_exp, b))
-	{
-	  Nterm *s = (Nterm *) (b->basis_ptr());
-	  ring_elem coeff;
-	  imp_ring_cancel_lead_term(t, s, coeff, nf_1);
-	  K->remove(coeff);
-	}
-      else
-	{
+	  vec t = raw_term(a, v->comp);
 	  result->next = t;
-	  t = t->next;
-	  result = result->next;
+	  result = t;
 	}
-    }
-  result->next = NULL;
-  v = head.next;
-}
-
-void FreeModule::apply_map(vec &f, vec gsyz, const array<vec> &vecs) const
-{
-  // f in F
-  // gsyz in Gsyz
-  // Modify f using the GB elements in gsyz.
-  for (vec t = gsyz; t != NULL; t = t->next)
-    {
-      vec g = vecs[t->comp];
-      int *s = t->monom;
-      ring_elem c = K->negate(t->coeff);
-      vec f1 = imp_mult_by_term(c, s, g);
-      add_to(f, f1);
-      K->remove(c);
-    }
-}
-
-void FreeModule::normal_form_ZZ(vec &f,
-			     const array<TermIdeal *> &termideals,
-			     const FreeModule *Gsyz,
-			     const array<vec> &vecs) const
-{
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const FreeModule *Rsyz = P->get_Rsyz();
-  vecterm head;
-  vecterm *result = &head;
-
-  while (f != NULL)
-    {
-      vec gsyz, rsyz;
-      int reduces = termideals[f->comp]->search(f->coeff, f->monom,
-						 gsyz, rsyz);
-      if (rsyz != NULL)	
-	{
-	  apply_quotient_ring_elements(f, f->comp, rsyz);
-	  Rsyz->remove(rsyz);
-	}
-      if (gsyz != NULL) 
-	{
-	  apply_map(f,gsyz,vecs);
-	  Gsyz->remove(gsyz);
-	}
-      if (reduces != TI_TERM)
-	{
-	  result->next = f;
-	  f = f->next;
-	  result = result->next;
-	}
-    }
-  result->next = NULL;
-  f = head.next;
-}
-
-void FreeModule::normal_form(vec &v, 
-			     const array<MonomialIdeal> &mis, 
-			     const array<vec> &vecs) const
-{
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  vecterm head;
-  vecterm *result = &head;
-  int_bag *b;
-  int *m = M->make_one();
-  vecterm *t = v;
-  while (t != NULL)
-    {
-      to_exponents(t->monom, t->comp, nf_exp);
-      if (is_quotient_ring && P->Rideal.search_expvector(nf_exp, b))
-	{
-	  Nterm *s = (Nterm *) (b->basis_ptr());
-	  ring_elem coeff;
-	  imp_ring_cancel_lead_term(t, s, coeff, nf_1);
-	  K->remove(coeff);
-	}
-      else if (mis[t->comp].search_expvector(nf_exp, b))
-	{
-	  // Possibly be more careful in the choice of element...
-	  int x = b->basis_elem();
-	  // MES: reduce by w=vecs[x]: t -= (coeff)*m*w
-	  ring_elem c;
-	  imp_cancel_lead_term(t, vecs[x], c, m);
-	  K->remove(c);
-	}
-      else
-	{
-	  result->next = t;
-	  t = t->next;
-	  result = result->next;
-	}
-    }
-  result->next = NULL;
-  v = head.next;
-  M->remove(m);
-}
-
-//////////////////////////////////////////////
-//  Groebner basis support routines //////////
-//////////////////////////////////////////////
-
-vec FreeModule::mult_by_monomial(const int *m, vec v) const
-   // return m*v.  The result is not nec in normal form.
-{
-  if (M == NULL) return copy(v);
-  if (M->is_skew())
-    {
-      ring_elem one = K->from_int(1);
-      vec f = mult_by_term(one,m,v);
-      K->remove(one);
-      return f;
-    }
-  vecterm head;
-  vecterm *result = &head;
-  for (vecterm *a = v; a != NULL; a = a->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->comp = a->comp;
-      result->coeff = K->copy(a->coeff);
-      M->mult(m, a->monom, result->monom);
     }
   result->next = NULL;
   return head.next;
 }
 
-ring_elem FreeModule::coeff_of(const vec v, const int *m, int x) const
+vec FreeModule::rightmult(const vec w, const ring_elem f) const
 {
-  if (M == NULL)
+  if (R->is_zero(f)) return NULL;
+  vecterm head;
+  vec result = &head;
+  for (vec v = w ; v != 0; v = v->next)
     {
-      for (vecterm *t = v; t != NULL; t = t->next)
-	if (x == t->comp)
-	  return K->copy(t->coeff);
+      ring_elem a = R->mult(v->coeff,f);
+      if (!R->is_zero(a))
+	{
+	  vec t = raw_term(a, v->comp);
+	  result->next = t;
+	  result = t;
+	}
     }
-  else
-    {
-      for (vecterm *t = v; t != NULL; t = t->next)
-	if (x == t->comp && M->compare(m, t->monom) == 0)
-	  return K->copy(t->coeff);
-    }
-  return K->from_int(0);
+  result->next = NULL;
+  return head.next;
 }
 
-void FreeModule::auto_reduce(const FreeModule *Fsyz, vec &f, vec &fsyz, 
-		 vec g, vec gsyz) const
-    // f -= c g, fsyz -= c gsyz, where c = coeff of in(g) in f.
-{
-  // MES: this doesn't yet work for M == NULL.
-  ring_elem c = coeff_of(f, g->monom, g->comp);
-  if (!K->is_zero(c))
-    {
-      if (M != NULL) M->one(nf_1);
-      imp_subtract_multiple_to(f, c, nf_1, g);
-      Fsyz->imp_subtract_multiple_to(fsyz, c, nf_1, gsyz);
-    }
-  K->remove(c);
-}
-
-void FreeModule::auto_reduce_coeffs(const FreeModule *Fsyz, vec &f, vec &fsyz, 
-		 vec g, vec gsyz) const
-  // If f = ... + c m + ...
-  // and g = d m + ...
-  // and r = floor(c/d), then f -= r*f, fsyz -= r*fsyz.
-{
-  // Valid only for coefficients = ZZ.
-  ring_elem rem;
-  ring_elem c1 = coeff_of(f, g->monom, g->comp);
-  ring_elem c = K->divide(c1, g->coeff, rem);
-  if (!K->is_zero(c))
-    {
-      if (M != NULL) M->one(nf_1);
-      imp_subtract_multiple_to(f, c, nf_1, g);
-      Fsyz->imp_subtract_multiple_to(fsyz, c, nf_1, gsyz);
-    }
-  K->remove(c);
-  K->remove(c1);
-}
-
-void FreeModule::make_monic(vec &v, vec &vsyz) const
-{
-  vecterm *t;
-  if (v == NULL) return;
-  ring_elem a = K->invert(v->coeff);
-  for (t = v ; t != NULL; t = t->next)
-    {
-      ring_elem tmp = t->coeff;
-      t->coeff = K->mult(a, tmp);
-      K->remove(tmp);
-    }
-  for (t = vsyz ; t != NULL; t = t->next)
-    {
-      ring_elem tmp = t->coeff;
-      t->coeff = K->mult(a, tmp);
-      K->remove(tmp);
-    }
-  K->remove(a);
-}
 
 //////////////////////////////////////////////
 //  Matrix routines //////////////////////////
@@ -1068,15 +375,9 @@ vec FreeModule::component_shift(int n, const FreeModule *F,
       result->next = copy_term(v);
       result = result->next;
       result->comp += n;
-      if (M != NULL)
-	{
-	  M->divide(result->monom, F->base_monom(v->comp), result->monom);
-	  M->mult(result->monom, base_monom(result->comp), result->monom);
-	}
     }
   result->next = NULL;
   return head.next;
-  // MES: is sorting needed here sometimes?
 }
 
 vec FreeModule::tensor_shift(int n, int m, 
@@ -1091,28 +392,22 @@ vec FreeModule::tensor_shift(int n, int m,
       result->next = copy_term(v);
       result = result->next;
       result->comp = n * result->comp + m;
-      if (M != NULL)
-	{
-	  M->divide(result->monom, F->base_monom(v->comp), result->monom);
-	  M->mult(result->monom, base_monom(result->comp), result->monom);
-	}
     }
   result->next = NULL;
   return head.next;
-  // MES: is sorting needed here sometimes?
 }
 
 vec FreeModule::sub_vector(const FreeModule *F, vec v, 
-				const intarray &r) const
+				const M2_arrayint r) const
 {
   intarray trans(F->rank());
   int i;
   for (i=0; i<F->rank(); i++)
     trans.append(-1);
 
-  for (i=0; i<r.length(); i++)
-    if (r[i] >= 0 && r[i] < F->rank())
-      trans[r[i]] = i;
+  for (unsigned i=0; i<r->len; i++)
+    if (r->array[i] >= 0 && r->array[i] < F->rank())
+      trans[r->array[i]] = i;
 
   vecterm head;
   vecterm *result = &head;
@@ -1122,11 +417,6 @@ vec FreeModule::sub_vector(const FreeModule *F, vec v,
 	result->next = copy_term(v);
 	result = result->next;
 	result->comp = trans[v->comp];
-	if (M != NULL)
-	  {
-	    M->divide(result->monom, F->base_monom(v->comp), result->monom);
-	    M->mult(result->monom, base_monom(result->comp), result->monom);
-	  }
       }
   result->next = NULL;
   result = head.next;
@@ -1152,11 +442,6 @@ void FreeModule::reshape(const Matrix &m, Matrix &result) const
 	
 	q->comp = result_row;
 	q->next = result.elem(result_col);
-	if (M != NULL)
-	  {
-	    M->divide(q->monom, m.rows()->base_monom(p->comp), q->monom);
-	    M->mult(q->monom, base_monom(q->comp), q->monom);
-	  }
 	result.elem(result_col) = q;
       }
   for (c=0; c<result.n_cols(); c++)
@@ -1174,18 +459,13 @@ void FreeModule::transpose_matrix(const Matrix &m, Matrix &result) const
 	r = q->comp;
 	q->comp = c;
 	q->next = result.elem(r);
-	if (M != NULL)
-	  {
-	    M->divide(q->monom, m.rows()->base_monom(p->comp), q->monom);
-	    M->mult(q->monom, base_monom(q->comp), q->monom);
-	  }
 	result.elem(r) = q;
       }
   for (c=0; c<result.n_cols(); c++)
     sort(result.elem(c));
 }
 
-vec FreeModule::mult_by_matrix(const Matrix &m,
+vec FreeModule::mult_by_matrix(const Matrix *m,
 				 const FreeModule *F, 
 				 vec v) const
 {
@@ -1194,152 +474,29 @@ vec FreeModule::mult_by_matrix(const Matrix &m,
   // for each non-zero term f e[component] of the vector v
   //    result += f M[v]
   vec result = NULL, f;
-  switch (F->ty)
+  for ( ; v != NULL; v = v->next)
     {
-    case FREE:
-      for ( ; v != NULL; v = v->next)
-	{
-	  f = mult(v->coeff, m.elem(v->comp));
-	  add_to(result, f);
-	}
-      break;
-
-    case FREE_POLY:
-      for ( ; v != NULL; v = v->next)
-	{
-	  f = mult_by_term(v->coeff, v->monom, m.elem(v->comp));
-	  add_to(result, f);
-	}
-      break;
-
-    case FREE_SCHREYER:
-      for ( ; v != NULL; v = v->next)
-	{
-	  F->M->divide(v->monom, F->base_monom(v->comp), mon_1);
-	  f = mult_by_term(v->coeff, mon_1, m.elem(v->comp));
-	  add_to(result, f);
-	}
+      f = mult(v->coeff, m->elem(v->comp));
+      add_to(result, f);
     }
   return result;
 }
-#if 0
-vec FreeModule::tensor(const FreeModule *F, vec v, 
-			 const FreeModule *G, vec w) const
-{
-  vec result = NULL;
-  for ( ; v != NULL; v = v->next)
-    for (vecterm *p = w; p != NULL; p = p->next)
-      {
-	ring_elem a = K->mult(v->coeff, p->coeff);
-	if (K->is_zero(a)) 
-	  {
-	    K->remove(a);
-	    continue;
-	  }
 
-	vecterm *t = new_term();
-	t->comp = G->rank() * v->comp + p->comp; // MES: is this right??!
-	t->coeff = a;
-	if (M != NULL)
-	  {
-	    // MES: this might overflow allowable degrees!!
-	    M->divide(v->monom, F->base_monom(v->comp), t->monom);
-	    M->mult(t->monom, p->monom, t->monom);
-	    M->divide(t->monom, G->base_monom(p->comp), t->monom);
-	    M->mult(t->monom, base_monom(t->comp), t->monom);
-	  }
-	t->next = result;
-	result = t;
-      }
-  sort(result);
-  return result;
-}
-#endif
 vec FreeModule::tensor(const FreeModule *F, vec v, 
 			 const FreeModule *G, vec w) const
 {
   vecHeap H(this);
-  int *m = NULL;
-  if (M != NULL)
-    m = M->make_one();
   for ( ; v != NULL; v = v->next)
     {
       vec w1 = component_shift(v->comp * G->rank(),
 			       G,w);
-      if (M != NULL)
-	M->divide(v->monom, F->base_monom(v->comp), m);
-      vec w2 = mult_by_term(v->coeff, m, w1);
+      vec w2 = mult(v->coeff, w1);
       remove(w1);
       H.add(w2);
     }
-  if (M != NULL)
-    M->remove(m);
   return H.value();
 }
 
-void FreeModule::auto_reduce_ZZ(array<vec> & vecs) const
-{
-  // (a) Sort into increasing monomial order
-  // (b) For each element: reduce w.r.t. the previous elements
-  //     and then insert into the appropriate monomial ideal.
-  int x;
-  intarray indices;
-  intarray degs; // Not used.
-  array<TermIdeal *> mis;
-  sort(vecs, degs, 0, 1, indices);
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  FreeModule *Gsyz = R->make_FreeModule(vecs.length());
-  bump_up(Gsyz);
-  for (x=0; x<rank(); x++)
-    mis.append(new TermIdeal(P,Gsyz));
-  for (int i=0; i<vecs.length(); i++)
-    {
-      // Reduce each one in turn, and replace.
-      vec v = vecs[indices[i]];
-      normal_form_ZZ(v, mis, Gsyz, vecs);
-      if (v != NULL)
-	mis[v->comp]->insert_minimal(
-			  new tagged_term(K->copy(v->coeff),
-			  M->make_new(v->monom),
-			  Gsyz->e_sub_i(indices[i]),
-			  NULL));
-      vecs[indices[i]] = v;
-    }
-  for (x=0; x<rank(); x++)
-    delete mis[x];
-  bump_down(Gsyz);
-}
-
-void FreeModule::auto_reduce(array<vec> & vecs) const
-{
-  // (a) Sort into increasing monomial order
-  // (b) For each element: reduce w.r.t. the previous elements
-  //     and then insert into the appropriate monomial ideal.
-  if (Ncoeffs()->is_Z())
-    {
-      auto_reduce_ZZ(vecs);
-      return;
-    }
-  intarray indices, vp;
-  intarray degs; // Not used.
-  array<MonomialIdeal> mis;
-  sort(vecs, degs, 0, 1, indices);
-  for (int x=0; x<rank(); x++)
-    mis.append(MonomialIdeal(get_ring()));
-  for (int i=0; i<vecs.length(); i++)
-    {
-      // Reduce each one in turn, and replace.
-      vec v = vecs[indices[i]];
-      normal_form(v, mis, vecs);
-      vp.shrink(0);
-      lead_varpower(v, vp);
-      Bag *b = new Bag(indices[i], vp);
-      int isnew = mis[v->comp].insert(b);
-      vecs[indices[i]] = v;
-      if (!isnew)
-	gError << "bad boy!";
-    }
-}
 
 ///////////////////////////////////////////////////
 // Sorting a list of vectors (and maybe degrees) //
@@ -1368,7 +525,8 @@ int FreeModule::sort_compare(int i, int j) const
   int cmp = compare(v1, v2);
   if (cmp > 0) return -monorder_ascending;
   if (cmp < 0) return monorder_ascending;  
-  if (K->is_Z())
+#if 0
+  if (K->is_ZZ())
     {
       // Compare coeficients as well.
       cmp = K->cast_to_Z()->compare(v1->coeff, v2->coeff);
@@ -1382,6 +540,7 @@ int FreeModule::sort_compare(int i, int j) const
       if (cmp < 0) return 1;
       if (cmp > 0) return -1;
     }
+#endif
   return 0;
 }
 
@@ -1418,35 +577,68 @@ void FreeModule::sort_range(int lo, int hi) const
     }
 }
 
-void FreeModule::sort(const array<vec> &vecs, 
-		      const intarray &degrees, 
-		      int degorder, // -1=descending, 0=don't use, 1=ascending
-		      int monorder, // -1=descending, 1=ascending.
-		      intarray &result) const
+M2_arrayint_OrNull 
+FreeModule::sort(const array<vec> &vecs, 
+		 const M2_arrayint degrees, 
+		 int degorder, // -1=descending, 0=don't use, 1=ascending
+		 int monorder // -1=descending, 1=ascending.
+		 ) const
 {
-  result.shrink(0);
-  if (vecs.length() == 0) return;
+  M2_arrayint result = makearrayint(vecs.length());
+  if (vecs.length() == 0) return result;
 
   monorder_ascending = monorder;
   deg_ascending = degorder;
 
-  sort_vals = result.alloc(vecs.length());
+  sort_vals = result->array;
   for (int i=0; i<vecs.length(); i++)
     sort_vals[i] = i;
 
   sort_vecs = &vecs;
   sort_degs = NULL;
   if (deg_ascending) {
-    if (degrees.length() != vecs.length()) {
-	gError << "sort: specified degree order, without giving degrees";
-	return;
+    if (degrees->len != (unsigned int)(vecs.length())) {
+	ERROR("sort: specified degree order, without giving degrees");
+	return 0;
       }
-    sort_degs = degrees.raw();
+    sort_degs = degrees->array;
   }
 
   sort_range(0,vecs.length()-1);
   sort_vals = NULL;
   sort_degs = NULL;
+  return result;
+}
+
+//////////////////////////////////////////////
+//  Divisibility checks               ////////
+//                                    ////////
+//////////////////////////////////////////////
+#if 0
+int FreeModule::is_scalar_multiple(vec f, vec g) const
+  // is df = cg, some scalars c,d?
+{
+  if (f == NULL) return 1;
+  if (g == NULL) return 1;
+  ring_elem c = f->coeff;
+  ring_elem d = g->coeff;
+  vec p,q;
+  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
+    {
+      if (p->comp != q->comp) return 0;
+      if (M->compare(p->monom, q->monom) != 0) return 0;
+    }
+  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
+    {
+      ring_elem c1 = K->mult(c, q->coeff);
+      ring_elem d1 = K->mult(d, p->coeff);
+      int isequal = K->is_equal(c1, d1);
+      K->remove(c1);
+      K->remove(d1);
+      if (!isequal) return 0;
+    }
+  if (q == NULL && p == NULL) return 1;
+  return 0;
 }
 
 void FreeModule::monomial_divisor(vec f, int *exp) const
@@ -1496,157 +688,45 @@ vec FreeModule::remove_monomial_divisors(vec f) const
   delete [] exp;
   return result;
 }
-
-ring_elem FreeModule::diff_term(const int *m, const int *n, 
-				  int *resultmon,
-				  int use_coeff) const
-{
-  int sign = 0;
-  if (!M->divides(m, n)) return K->from_int(0);
-  if (M->is_skew() && use_coeff)
-    sign = M->skew_diff(m,n, resultmon);
-  else
-    M->divide(n, m, resultmon);
-  ring_elem result = K->from_int(1);
-  if (!use_coeff) return result;
-  intarray e1, e2;
-  int *exp1 = e1.alloc(R->n_vars());
-  int *exp2 = e2.alloc(R->n_vars());
-  M->to_expvector(m, exp1);
-  M->to_expvector(n, exp2);
-
-  if (M->is_skew() && sign < 0)
-    K->negate_to(result);
-
-  for (int i=0; i<R->n_vars(); i++)
-    {
-      for (int j=exp1[i]-1; j>=0; j--)
-	{
-	  ring_elem g = K->from_int(exp2[i]-j);
-	  K->mult_to(result, g);
-	  K->remove(g);
-	  if (K->is_zero(result)) return result;
-	}
-    }
-  return result;
-}
-
-vec FreeModule::diff_by_term(const int *exp, vec v, bool use_coeff) const
-{
-  // The result terms will be in the same order as those of f.
-  // NOT valid for skew commutative rings, although currently
-  // this routine is only used by Weyl algebra stuff.
-  vecterm head;
-  vec result = &head;
-  int nvars = M->n_vars();
-  int *exp2 = new int[nvars];
-  for (vec t = v; t != NULL; t = t->next)
-    {
-      M->to_expvector(t->monom, exp2);
-      if (ntuple::divides(nvars,exp,exp2))
-	{
-	  // Now determine the coefficient.
-	  ring_elem c = K->copy(t->coeff);
-	  if (use_coeff)
-	    {
-	      if (ty == FREE_SCHREYER)
-		{
-		  emit("can't handle Schreyer order yet!!");
-		}
-	      for (int i=0; i<nvars; i++)
-		for (int j=exp[i]-1; j>=0; j--)
-		  {
-		    ring_elem g = K->from_int(exp2[i]-j);
-		    K->mult_to(c,g);
-		    K->remove(g);
-		    if (K->is_zero(c))
-		      {
-			K->remove(c);
-			c = g;
-			// break out of these two loops
-			j = -1;
-			i = nvars;
-		      }
-		  }
-	    }
-	  ntuple::divide(nvars,exp2,exp,exp2);
-	  result->next = new_term();
-	  result = result->next;
-	  result->coeff = c;
-	  result->comp = t->comp;
-	  M->from_expvector(exp2, result->monom);
-	}
-    }
-  delete [] exp2;
-  result->next = NULL;
-  return head.next;
-}
+#endif
 
 vec FreeModule::diff(const FreeModule * F, vec v, 
 		       const FreeModule * G, vec w,
 		       int use_coeff) const
 {
-  int *mon1 = NULL, *mon2 = NULL;
-  if (M != NULL)
-    {
-      mon1 = M->make_one();
-      mon2 = M->make_one();
-    }
   vec result = NULL;
   for ( ; v != NULL; v = v->next)
     for (vecterm *p = w; p != NULL; p = p->next)
       {
-	ring_elem a = K->mult(v->coeff, p->coeff);
-	if (K->is_zero(a)) 
+	ring_elem a = R->diff(v->coeff, p->coeff, use_coeff);
+	if (R->is_zero(a)) 
 	  {
-	    K->remove(a);
+	    R->remove(a);
 	    continue;
 	  }
-
 	vecterm *t = new_term();
 	t->comp = G->rank() * v->comp + p->comp; // MES: is this right??!
 	t->coeff = a;
-	if (M != NULL)
-	  {
-	    M->divide(v->monom, F->base_monom(v->comp), mon1);
-	    M->divide(p->monom, G->base_monom(p->comp), mon2);
-	    ring_elem g = diff_term(mon1, mon2, t->monom, use_coeff);
-	    if (K->is_zero(g))
-	      {
-		t->next = NULL;
-		t->coeff = g;	// just to get rid of it!
-		remove(t);
-		continue;
-	      }
-	    M->mult(t->monom, base_monom(t->comp), t->monom);
-	    K->mult_to(t->coeff, g);
-	    K->remove(g);
-	    if (K->is_zero(t->coeff))
-	      {
-		t->next = NULL;
-		remove(t);
-		continue;
-	      }
-	  }
 	t->next = result;
 	result = t;
       }
-  if (M != NULL)
-    {
-      M->remove(mon1);
-      M->remove(mon2);
-    }
   sort(result);
   return result;
 }
 
+
 int FreeModule::in_subring(int n, const vec v) const
 {
-  if (v == NULL) return 1;
-  // MES BUG!!
-  return M->in_subring(n, v->monom);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0 || v == NULL) return true;
+  const Monoid *M = P->Nmonoms();
+  for (vec w = v ; w != NULL; w = w->next)
+    if (!M->in_subring(n, P->lead_monomial(w->coeff)))
+      return false;
+  return true;
 }
 
+#if 0
 vec FreeModule::coefficient_of_var(vec v, int var, int exp) const
 {
   if (M == NULL) return copy(v);
@@ -1708,65 +788,58 @@ vec FreeModule::lead_var_coefficient(vec &v, int &var, int &exp) const
   
   return coefficient_of_var(v, var, exp);
 }
+#endif
 
-int FreeModule::degree_of_var(int n, const vec v) const
+void FreeModule::degree_of_var(int n, const vec v, int &lo, int &hi) const
 {
-  if (M == NULL) return 0;
   if (v == NULL)
     {
-      gError << "attempting to find degree of zero vector";
-      return 0;
+      ERROR("attempting to find degree of zero vector");
+      return;
     }
-  M->divide(v->monom, base_monom(v->comp), nf_1);
-  M->to_expvector(nf_1, nf_exp);
-  int mindegree = nf_exp[n];
-  for (vecterm *t = v->next; t != NULL; t = t->next)
+  R->degree_of_var(n, v->coeff, lo, hi);
+  for (vec w = v->next; w != 0; w = w->next)
     {
-      M->divide(t->monom, base_monom(t->comp), nf_1);
-      M->to_expvector(nf_1, nf_exp);
-      if (nf_exp[n] < mindegree)
-	mindegree = nf_exp[n];
+      int lo1,hi1;
+      R->degree_of_var(n, w->coeff, lo1, hi1);
+      if (lo1 < lo) lo = lo1;
+      if (hi1 > hi) hi = hi1;
     }
-  return mindegree;
 }
+
 vec FreeModule::divide_by_var(int n, int d, const vec v) const
 {
-  if (M == NULL) return copy(v);
   vecterm head;
   vecterm *result = &head;
-  for (vecterm *t = v; t != NULL; t = t->next)
+  for (vec w = v; w != 0; w = w->next)
     {
-      result->next = new_term();
-      result = result->next;
-      M->to_expvector(t->monom, nf_exp);
-      if (nf_exp[n] >= d)
-	nf_exp[n] -= d;
-      else 
-	nf_exp[n] = 0;
-      result->comp = t->comp;
-      result->coeff = K->copy(t->coeff);
-      M->from_expvector(nf_exp, result->monom);
+      ring_elem a = R->divide_by_var(n, d, w->coeff);
+      if (!R->is_zero(a))
+	{
+	  vec t = raw_term(a, w->comp);
+	  result->next = t;
+	  result = t;
+	}
     }
-  result->next = NULL;
+  result->next = 0;
   return head.next;
 }
 
 vec FreeModule::divide_by_expvector(const int *exp, const vec v) const
 {
-  if (M == NULL) return copy(v);
   vecterm head;
   vecterm *result = &head;
-  for (vecterm *t = v; t != NULL; t = t->next)
+  for (vec w = v; w != 0; w = w->next)
     {
-      result->next = new_term();
-      result = result->next;
-      M->to_expvector(t->monom, nf_exp);
-      ntuple::quotient(R->n_vars(), nf_exp, exp, nf_exp);
-      result->comp = t->comp;
-      result->coeff = K->copy(t->coeff);
-      M->from_expvector(nf_exp, result->monom);
+      ring_elem a = R->divide_by_expvector(exp, w->coeff);
+      if (!R->is_zero(a))
+	{
+	  vec t = raw_term(a, w->comp);
+	  result->next = t;
+	  result = t;
+	}
     }
-  result->next = NULL;
+  result->next = 0;
   return head.next;
 }
 
@@ -1774,57 +847,83 @@ vec FreeModule::divide_by_expvector(const int *exp, const vec v) const
 //  Homogeniety and the grading //////////////
 //////////////////////////////////////////////
 
-void FreeModule::term_degree(const vecterm *t, int *degt) const
+bool FreeModule::multi_degree(const vec f, int *degf) const
+  // Returns true if the element is homogeneous
+  // Sets degf to be the highest degree found (actually, the join of the 
+  //   degree vectors occuring).
 {
-  assert(t != NULL);
+  int *degv;
+  degree_monoid()->one(degf);
+  if (f == NULL) return true;
+  bool result = R->multi_degree(f->coeff, degf);
+  degree_monoid()->mult(degf, degree(f->comp), degf);
+  degv = degree_monoid()->make_one();
 
-  switch (ty) {
-  case FREE:
-    degree_monoid()->one(degt);
-    break;
+  for (vec v = f->next; v != 0; v = v->next)
+    {
+      bool ishom = R->multi_degree(v->coeff, degv);
+      result = result && ishom;
+      degree_monoid()->mult(degv, degree(v->comp), degv);
 
-  case FREE_POLY:
-    M->multi_degree(t->monom, degt);
-    break;
-
-  case FREE_SCHREYER:
-    int *m = M->make_new(t->monom);
-    M->divide(t->monom, base_monom(t->comp), m);
-    M->multi_degree(m, degt);
-    M->remove(m);
-    break;
-  }
-
-  degree_monoid()->mult(degt, degree(t->comp), degt);
+      if (0 != degree_monoid()->compare(degf, degv))
+	{
+	  result = false;
+	  degree_monoid()->lcm(degf, degv, degf);
+	}
+    }
+  degree_monoid()->remove(degv);
+  return result;
 }
 
 void FreeModule::degree(const vec f, int *degf) const
 {
-  vecterm *t = f;
-  assert(t != NULL);
-  // MES: throw an error if t==NULL
-  int *e = degree_monoid()->make_one();
-  term_degree(t, degf);
-  for (t = t->next ; t != NULL; t = t->next)
-    {
-      term_degree(t, e);
-      degree_monoid()->lcm(degf, e, degf);
-    }
-  degree_monoid()->remove(e);
+  multi_degree(f, degf);
 }
+
+#if 0
+bool FreeModule::is_homogeneous(const vec f) const
+{
+  if (f == NULL) return true;
+  int *d = degree_monoid()->make_one();
+  int *e = degree_monoid()->make_one();
+  bool result = R->multi_degree(f->coeff, d);
+  if (!result) return false;
+  degree_monoid()->mult(d, degree(f->comp), d);
+  for (vecterm *t = f->next; (t != NULL) && result; t = t->next)
+    {
+      bool ishom = R->multi_degree(t->coeff, e);
+      if (!ishom) return false;
+      degree_monoid()->mult(e, degree(t->comp), e);
+
+      if (0 != degree_monoid()->compare(d,e))
+	result = false;
+    }
+  degree_monoid()->remove(d);
+  degree_monoid()->remove(e);
+  return result;
+}
+#endif
 
 bool FreeModule::is_homogeneous(const vec f) const
 {
-  if (f == NULL) return 1;
-  bool result = 1;
+  if (f == NULL) return true;
   int *d = degree_monoid()->make_one();
   int *e = degree_monoid()->make_one();
-  degree(f, d);
-  for (vecterm *t = f->next; t != NULL; t = t->next)
+  bool result = R->multi_degree(f->coeff, d);
+  if (result) 
     {
-      term_degree(t, e);
-      if (0 != degree_monoid()->compare(d, e))
-	{ result = 0; break; }
+      degree_monoid()->mult(d, degree(f->comp), d);
+      for (vecterm *t = f->next; (t != NULL) && result; t = t->next)
+	{
+	  bool ishom = R->multi_degree(t->coeff, e);
+	  result = result && ishom;
+	  if (result)
+	    {
+	      degree_monoid()->mult(e, degree(t->comp), e);
+	      if (0 != degree_monoid()->compare(d,e))
+		result = false;
+	    }
+	}
     }
   degree_monoid()->remove(d);
   degree_monoid()->remove(e);
@@ -1837,109 +936,92 @@ void FreeModule::change_degree(int i, const int *deg)
   // the construction of a free module (or matrix).
   assert(i >= 0);
   assert(i < rank());
-  degree_monoid()->copy(deg, components[i]->deg);
+  degree_monoid()->copy(deg, components[i]);
 }
 
 int FreeModule::primary_degree(const vec f) const
 {
   if (f == NULL) return 0;
-  if (M == NULL) return 0;
-  M->divide(f->monom, base_monom(f->comp), f->monom);
-  int deg = M->primary_degree(f->monom);
-  M->mult(f->monom, base_monom(f->comp), f->monom);
+  int deg = R->primary_degree(f->coeff);
 
   return primary_degree(f->comp) + deg;
 }
 
-void FreeModule::degree_weights(const vec f, const int *wts, int &lo, int &hi) const
+void FreeModule::degree_weights(const vec f, const M2_arrayint wts, int &lo, int &hi) const
 {
   vecterm *t = f;
-  assert(t != NULL);
-  int e = M->degree_weights(t->monom, wts) + primary_degree(t->comp);
-  lo = hi = e;
+  if (t == NULL)
+    {
+      lo = hi = 0;
+      return;
+    }
+  R->degree_weights(t->coeff, wts, lo, hi);
+  lo += primary_degree(t->comp);
+  hi += primary_degree(t->comp);
   for (t = t->next; t != NULL; t = t->next)
     {
-      e = M->degree_weights(t->monom, wts) + primary_degree(t->comp);
-      if (e > hi) hi = e;
-      else if (e < lo) lo = e;
+      int lo1, hi1;
+      R->degree_weights(t->coeff, wts, lo1, hi1);
+      lo1 += primary_degree(t->comp);
+      hi1 += primary_degree(t->comp);
+      if (hi1 > hi) hi = hi1;
+      if (lo1 < lo) lo = lo1;
     }
 }
 
 vec FreeModule::homogenize(const vec f, 
-				int v, int d, const int *wts) const
+			   int v, int d, const M2_arrayint wts) const
+  // Any terms which can't be homogenized are silently set to 0
 {
   vecterm head;
   vecterm *result = &head;
-  assert(wts[v] != 0);
-  // If an error occurs, then return 0, and set gError.
+  assert(wts->array[v] != 0);
+  // If an error occurs, then return 0, and set ERROR
 
-  intarray expa;
-  int *exp = expa.alloc(R->n_vars());
-
-  for (vecterm *a = f ; a != NULL; a = a->next)
+  for (vec w = f; w != 0; w = w->next)
     {
-      M->to_expvector(a->monom, exp);
-      int e = 0;
-      for (int i=0; i<R->n_vars(); i++) e += wts[i] * exp[i];
-      e += primary_degree(a->comp);
-      if (((d-e) % wts[v]) != 0)
+      int e = primary_degree(w->comp);
+      ring_elem a = R->homogenize(w->coeff, v, d-e, wts);
+      if (!R->is_zero(a))
 	{
-	  // We cannot homogenize, so clean up and exit.
-	  result->next = NULL;
-	  remove(head.next);
-	  gError << "homogenization impossible";
-	  result = NULL;
-	  return result;
+	  result->next = raw_term(a, w->comp);
+	  result = result->next;
 	}
-      exp[v] += (d - e) / wts[v];
-
-      result->next = new_term();
-      result = result->next;
-      result->coeff = K->copy(a->coeff);
-      result->comp = a->comp;
-      M->from_expvector(exp, result->monom);
     }
-  result->next = NULL;
-  sort(head.next);			// The monomial order, etc. might all have changed.
-				// Some terms might even drop out
-  if (is_quotient_ring) normal_form(head.next);
+  result->next = 0;
   return head.next;
 }
 
-vec FreeModule::homogenize(const vec f, int v, const int *wts) const
+vec FreeModule::homogenize(const vec f, int v, const M2_arrayint wts) const
 {
   vecterm *result = NULL;
   if (f == NULL) return result;
   int lo, hi;
   degree_weights(f, wts, lo, hi);
-  assert(wts[v] != 0);
-  int d = (wts[v] > 0 ? hi : lo);
+  assert(wts->array[v] != 0);
+  int d = (wts->array[v] > 0 ? hi : lo);
   return homogenize(f, v, d, wts);
 }
 
 vec FreeModule::random() const
 {
   vec result = NULL;
-  int *m = NULL;
-  if (M != NULL)
-    m = M->make_one();
   for (int i=0; i<rank(); i++)
     {
-      vec v = term(i,K->random(),m);
+      vec v = raw_term(R->random(),i);
       if (v != NULL)
 	{
 	  v->next = result;
 	  result = v;
 	}
     }
-  if (M != NULL)
-    M->remove(m);
   return result;
 }
 //////////////////////////////////////////////
 //  Translation and sorting routines /////////
 //////////////////////////////////////////////
 
+#if 0
 vec FreeModule::resize(const FreeModule *oldF, vec f) const
     // assumptions: (1) f is a polynomial in the ring R.
     // (2) the current ring is the same as 'R', except for
@@ -1962,6 +1044,7 @@ vec FreeModule::resize(const FreeModule *oldF, vec f) const
   result->next = NULL;
   return head.next;
 }
+#endif
 
 void FreeModule::sort(vecterm *&f) const
 {
@@ -2000,6 +1083,8 @@ vec FreeModule::translate(const FreeModule *oldF, vec v) const
   // The number of variables for R, F->R are the same.
   // Determine if sorting is needed.
 
+  return copy(v);
+#if 0  
   if (M == NULL || this == oldF) return copy(v);
 //  if (rank() != oldF->rank()) {
 //       gError << "expected free modules of the same rank";
@@ -2027,7 +1112,9 @@ vec FreeModule::translate(const FreeModule *oldF, vec v) const
   result->next = NULL;
   if (needs_sorting) sort(head.next);
   return head.next;
+#endif
 }
+
 
 //////////////////////////////////////////////
 //  Input, output ////////////////////////////
@@ -2048,11 +1135,7 @@ void FreeModule::elem_text_out(buffer &o, const vec v) const
   p_one = 0;
   for (vecterm *t = v; t != NULL; t = t->next)
     {
-      int isone = (M == NULL || M->is_one(t->monom));
-      //int isone = M->is_one(t->monom);
-      K->elem_text_out(o,t->coeff);
-      if (!isone)
-	M->elem_text_out(o, t->monom);
+      R->elem_text_out(o,t->coeff);
       o << "<" << t->comp << ">";
       p_plus = 1;
     }
@@ -2062,99 +1145,21 @@ void FreeModule::elem_text_out(buffer &o, const vec v) const
   p_plus = old_plus;
 }
 
-void FreeModule::elem_bin_out(buffer &o, const vec v) const
-{
-  const vecterm *t;
-
-  int n = n_terms(v);
-  bin_int_out(o,n);
-
-  switch (ty) {
-  case FREE:
-    for (t=v; t != NULL; t = t->next)
-      {
-	bin_int_out(o, t->comp);
-	K->elem_bin_out(o, t->coeff);
-      }
-    break;
-  case FREE_POLY:
-    for (t=v; t != NULL; t = t->next)
-      {
-	bin_int_out(o, t->comp);
-	M->elem_bin_out(o, t->monom);
-	K->elem_bin_out(o, t->coeff);
-      }
-    break;
-  case FREE_SCHREYER:
-    int *m = M->make_one();
-    for (t=v; t != NULL; t = t->next)
-      {
-	bin_int_out(o, t->comp);
-	M->divide(t->monom, base_monom(t->comp), m);
-	M->elem_bin_out(o, m);
-	K->elem_bin_out(o, t->coeff);
-      }
-    M->remove(m);
-    break;
-  }
-}
-
 vec FreeModule::eval(const RingMap *map, const FreeModule *F,
 			  const vec v) const
 {
-  ring_elem r;
-  vec g;
-  intarray vp;
-  vecHeap H(F);
+  vecterm head;
+  vec result = &head;
 
-  for (vecterm *t = v; t != NULL; t = t->next)
+  for (vec t = v; t != 0; t = t->next)
     {
-      if (M != NULL)
+      ring_elem a = R->eval(map, t->coeff);
+      if (!R->is_zero(a))
 	{
-	  vp.shrink(0);
-	  M->divide(t->monom, base_monom(t->comp), t->monom);
-	  M->to_varpower(t->monom, vp);
-	  M->mult(t->monom, base_monom(t->comp), t->monom);
-	  r = map->eval_term(K, t->coeff, vp.raw());
+	  result->next = raw_term(a,t->comp);
+	  result = result->next;
 	}
-      else
-	{
-	  r = K->eval(map, t->coeff);
-	}
-      g = F->term(t->comp, r);
-      F->get_ring()->remove(r);
-      H.add(g);
     }
-  return H.value();
+  result->next = 0;
+  return head.next;
 }
-#if 0
-vec FreeModule::eval(const RingMap *map, const FreeModule *F,
-			  const vec v) const
-{
-  ring_elem r;
-  vec g;
-  vec result = NULL;
-  intarray vp;
-
-  for (vecterm *t = v; t != NULL; t = t->next)
-    {
-      if (M != NULL)
-	{
-	  vp.shrink(0);
-	  M->divide(t->monom, base_monom(t->comp), t->monom);
-	  M->to_varpower(t->monom, vp);
-	  M->mult(t->monom, base_monom(t->comp), t->monom);
-	  r = map->eval_term(K, t->coeff, vp.raw());
-	}
-      else
-	{
-	  r = K->eval(map, t->coeff);
-	}
-      g = F->term(t->comp, r);
-      F->get_ring()->remove(r);
-      F->add_to(result, g);
-    }
-  return result;
-}
-
-#endif

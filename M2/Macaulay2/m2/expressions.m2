@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 precedence = method(SingleArgumentDispatch=>true, TypicalValue=>ZZ)
 
@@ -1162,7 +1162,7 @@ hold = x -> new Holder from {x}
 typicalValues#hold = Holder
 
 expression Boolean := expression Symbol := expression File := expression String := expression Net := 
-     expression Handle := expression Nothing := expression Database := 
+     expression Nothing := expression Database := 
      expression Function := x -> new Holder from {x}
 
 -----------------------------------

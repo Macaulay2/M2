@@ -1,4 +1,10 @@
---		Copyright 1997 by Daniel R. Grayson
+--		Copyright 1997-2002 by Daniel R. Grayson
+
+sendgg = X -> error "'sendgg' has been removed"
+ggPush = X -> error "'ggPush' has been removed"
+ConvertJoin = X -> error "'ConvertJoin' has been removed"
+ConvertRepeat = X -> error "'ConvertRepeat' has been removed"
+ConvertApply = X -> error "'ConvertApply' has been removed"
 
 unlist = X -> error "'unlist' has been replaced by toSequence"
 elements = X -> error "'elements' has been replace by toList"

@@ -24,14 +24,8 @@ protected:
 public:
   virtual ~WeylFreeModule();
 
-  class_identifier class_id() const { return CLASS_WeylFreeModule; }
-
   virtual vec imp_mult_by_term(const ring_elem c, const int *m, const vec v) const;
 
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

@@ -5,9 +5,7 @@ include ../../../../include/config.Makefile
 
 .PHONY : all
 
-ifeq "$(DUMPDATA)" "yes"
-ARGS := -q '-eloaddata("../../../$(DUMPDATAFILE)")' -- \
-		'-epath=join(path,{"../../","$(srcdir)/"})' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+ARGS := -q '-epath=join(path,{"../../","$(srcdir)/"})' '-eerrorDepth(0)' --silent
 
 all :: ../../../$(DUMPDATAFILE)
 
@@ -15,23 +13,18 @@ else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
-ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 \
-		'-epath=join(path,{\"../../\",\"$(srcdir)/\"})' '-erunStartFunctions()' '-eerrorDepth(0)'
+ARGS := -q --silent '-epath=join(path,{\"../../\",\"$(srcdir)/\"})' '-eerrorDepth(0)'
 else
-ARGS := -q -silent \
+ARGS := -q --silent \
 		'-e path=join({"../../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
-		-ephase=1 $(srcdir)/../m2/setup.m2 -ephase=0 \
-		'-e runStartFunctions()' '-e errorDepth(0)'
-
-all :: $(srcdir)/../m2/setup.m2
-
+		'-e errorDepth(0)'
 endif
 endif
 
 
 %.okay : %.m2
 	@ echo testing $<
-	@ env M2HOME=../../.. ../../../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ env M2HOME=@srcdir@/.. ../../../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
 
 TESTFILES := $(wildcard *.m2)

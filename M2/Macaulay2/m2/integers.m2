@@ -1,22 +1,27 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
+
+ZZ.RawRing = rawZZ()
+new ZZ from RawRingElement := (ZZ,n) -> rawToInteger n
+raw ZZ := x -> rawFromNumber(rawZZ(), x)
 
 ZZ#1 = 1
 ZZ#0 = 0
 ZZ.char = 0
-ZZ.ConversionFormat = ConvertInteger
 ZZ.InverseMethod = x -> 1/x
 ZZ.dim = 1
 ZZ.Engine = true
 ZZ.baseRings = {}
-ZZ.ConvertToExpression = ConvertInteger
 ZZ.degreeLength = 0
 ZZ.mathML = "<mi>&Zopf;</mi>"
 ZZ.frac = QQ
+
 degree ZZ := i -> {}
+lift = method()
+liftable = method()
+promote = method()
 promote(ZZ,ZZ) := (i,ZZ) -> i
 lift(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = () -> random 21 - 10
-new ZZ := ZZ -> ZZ.pop()		  -- new integers all come from the engine stack
 
 ZZ >> ZZ := ZZ => (i,j) -> i << -j
 

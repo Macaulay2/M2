@@ -29,10 +29,7 @@ public:
 
   int basis_elem() const { return val.b_elem; }
   void *basis_ptr() const { return val.b_ptr; }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
+
+typedef int_bag Bag;
 #endif

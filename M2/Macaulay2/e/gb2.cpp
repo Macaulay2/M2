@@ -3,19 +3,20 @@
 #include "gb2.hpp"
 #include "hilb.hpp"
 #include "text_io.hpp"
+#include "vector.hpp"
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 extern int compare_type;
 
-stash *gbres_comp::mystash;
-
-
-gb_emitter::gb_emitter(const Matrix &m)
-  : gens(m), g(NULL), n_left(m.n_cols()), n_i(0), n_in_degree(-1)
+gb_emitter::gb_emitter(const Matrix *m)
+  : gens(m), g(NULL), n_left(m->n_cols()), n_i(0), n_in_degree(-1)
 {
-  this_degree = m.cols()->lowest_primary_degree() - 1;
+  const PolynomialRing *P = m->get_ring()->cast_to_PolynomialRing();
+  assert(P != 0);
+  GR = P->get_gb_ring();
+  this_degree = m->cols()->lowest_primary_degree() - 1;
   n_gens = 0;			// Also needs to be set at that time.
-  these = new int[m.n_cols()];
+  these = new int[m->n_cols()];
 }
 
 gb_emitter::~gb_emitter()
@@ -38,8 +39,13 @@ int gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
 	return COMP_INTERRUPTED;
       if (n_i >= n_gens) return COMP_DONE;
       if (g != NULL)
-	g->receive_generator(gens.rows()->copy(gens[these[n_i]]), 
-			     these[n_i]);
+	{
+	  ring_elem denom;
+	  gbvector *v = GR->gbvector_from_vec(gens->rows(),
+					      (*gens)[these[n_i]],
+					      denom);
+	  g->receive_generator(v, these[n_i], denom);
+	}
       n_i++;
       n_left--;
     }
@@ -54,9 +60,9 @@ int gb_emitter::start_degree(int deg)
   this_degree = deg;
   n_gens = 0;
   n_i = 0;
-  for (int i=0; i<gens.n_cols(); i++)
+  for (int i=0; i<gens->n_cols(); i++)
     {
-      if (gens.cols()->primary_degree(i) == this_degree)
+      if (gens->cols()->primary_degree(i) == this_degree)
 	these[n_gens++] = i;
     }
   return n_gens;
@@ -79,39 +85,47 @@ void gb_emitter::stats() const
 
 typedef gb_node *gb_node_ptr;
 
-void gbres_comp::setup(const Matrix &m, 
+void gbres_comp::setup(const Matrix *m, 
 		     int length,
 		     int origsyz,
 		     int strategy)
 {
   int i;
-  const Ring *R = m.get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   if (R == NULL) assert(0);
+  GR = R->get_gb_ring();
 
   FreeModule *Fsyz = R->make_FreeModule();
   if (length <= 0)
     {
-      gError << "resolution length must be at least 1";
+      ERROR("resolution length must be at least 1");
       length = 1;
     }
+
+  // If origsyz, and length>1, create Fsyz as a Schreyer free
+  // if origsyz is smaller, truncate this module...
+#if 0
+  // MES: Aug 2002
   if (length > 1 && origsyz > 0)
     {
-      if (origsyz > m.n_cols())
-	origsyz = m.n_cols();
+      if (origsyz > m->n_cols())
+	origsyz = m->n_cols();
       int *one = R->Nmonoms()->make_one();
       const int *mon;
       for (i=0; i<origsyz; i++)
 	{
-	  if (m[i] == NULL)
+	  if ((*m)[i] == NULL)
 	    mon = one;
 	  else
-	    mon = m[i]->monom;
-	  Fsyz->append(m.cols()->degree(i), mon, i);
+	    mon = (*m)[i]->monom;
+	  // MES Aug 2002: is Fsyz a Schreyer order always?
+	  Fsyz->append(m->cols()->degree(i));
+	  Fsyz->get_schreyer_order()->append(i, mon);
 	}
       R->Nmonoms()->remove(one);
     }
-
-  lo_degree = m.cols()->lowest_primary_degree();
+#endif
+  lo_degree = m->cols()->lowest_primary_degree();
 
   n_nodes = length + 1;
   nodes = new gb_node_ptr[n_nodes];
@@ -143,13 +157,13 @@ void gbres_comp::setup(const Matrix &m,
   strategy_flags = strategy;
 }
 
-gbres_comp::gbres_comp(const Matrix &m, int length, int origsyz, int strategy)
+gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz, int strategy)
 {
   setup(m,length,origsyz,strategy);
 }
 
-gbres_comp::gbres_comp(const Matrix &m, int length, int origsyz,
-		 RingElement /*hf*/, int strategy)
+gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz,
+		 const RingElement */*hf*/, int strategy)
 {
   // MES: check homogeniety
   setup(m, length, origsyz, strategy);
@@ -209,44 +223,56 @@ bool gbres_comp::is_done()
 //--- Reduction --------------------------
 
 
-Matrix gbres_comp::reduce(const Matrix &m, Matrix &lift)
+Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
 {
   const FreeModule *F = nodes[0]->output_free_module();
-  Matrix red(m.rows(), m.cols(), m.degree_shift());
-  lift = Matrix(nodes[1]->output_free_module(), m.cols());
-  if (m.n_rows() != F->rank()) {
-       gError << "expected matrices to have same number of rows";
-       return red;
+  if (m->n_rows() != F->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       return 0;
   }
-  for (int i=0; i<m.n_cols(); i++)
+  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  lift = new Matrix(nodes[1]->output_free_module(), m->cols());
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->translate(m.rows(),m[i]);
-      vec fsyz = NULL;
+      const FreeModule *Fsyz = nodes[1]->output_free_module();
+
+      ring_elem denom;
+      gbvector * f = GR->gbvector_from_vec(F, (*m)[i], denom);
+      gbvector * fsyz = GR->gbvector_zero();
 
       nodes[1]->reduce(f, fsyz);
-      nodes[1]->output_free_module()->negate_to(fsyz);
-      red[i] = f;
-      lift[i] = fsyz;
+
+      vec fv = GR->gbvector_to_vec_denom(F, f, denom);
+      GR->get_flattened_coefficients()->negate_to(denom);
+      vec fsyzv = GR->gbvector_to_vec_denom(Fsyz,fsyz, denom);
+      (*red)[i] = fv;
+      (*lift)[i] = fsyzv;
     }
   return red;
 }
 
-Vector gbres_comp::reduce(const Vector &v, Vector &lift)
+Vector *gbres_comp::reduce(const Vector *v, Vector *&lift)
 {
   const FreeModule *F = nodes[0]->output_free_module();
-  if (!v.free_of()->is_equal(F))
+  if (!v->free_of()->is_equal(F))
     {
-      gError << "reduce: vector is in incorrect free module";
-      return Vector(F, NULL);
+      ERROR("reduce: vector is in incorrect free module");
+      return 0;
     }
-  vec f = F->copy(v.get_value());
-  vec fsyz = NULL;
+  const FreeModule *Fsyz = nodes[1]->output_free_module();
+
+  ring_elem denom;
+  gbvector *f = GR->gbvector_from_vec(F, v->get_value(), denom);
+  gbvector *fsyz = NULL;
 
   nodes[1]->reduce(f, fsyz);
-  nodes[1]->output_free_module()->negate_to(fsyz);
 
-  lift = Vector(nodes[1]->output_free_module(), fsyz);
-  return Vector(F, f);
+  vec fv = GR->gbvector_to_vec_denom(F, f, denom);
+  GR->get_flattened_coefficients()->negate_to(denom);
+  vec fsyzv = GR->gbvector_to_vec_denom(Fsyz,fsyz, denom);
+
+  lift = Vector::make_raw(Fsyz, fsyzv);
+  return Vector::make_raw(F, fv);
 }
 
 //////////////////////////////////
@@ -256,41 +282,41 @@ Vector gbres_comp::reduce(const Vector &v, Vector &lift)
 FreeModule *gbres_comp::free_module(int level)
 {
   if (level >= 0 && level <= n_nodes-1)
-    return nodes[level]->output_free_module();
+    return (FreeModule *) nodes[level]->output_free_module();
   return nodes[0]->output_free_module()->get_ring()->make_FreeModule();
 
 }
-Matrix gbres_comp::min_gens_matrix(int level)
+Matrix *gbres_comp::min_gens_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix(free_module(level-1), free_module(level));
+    return new Matrix(free_module(level-1), free_module(level));
   return nodes[level]->min_gens_matrix();
 }
-Matrix gbres_comp::get_matrix(int level)
+Matrix *gbres_comp::get_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix(free_module(level-1), free_module(level));
+    return new Matrix(free_module(level-1), free_module(level));
   return nodes[level]->get_matrix();
 }
 
-Matrix gbres_comp::initial_matrix(int n, int level)
+Matrix *gbres_comp::initial_matrix(int n, int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix(free_module(level-1), free_module(level));
+    return new Matrix(free_module(level-1), free_module(level));
   return nodes[level]->initial_matrix(n);
 }
 
-Matrix gbres_comp::gb_matrix(int level)
+Matrix *gbres_comp::gb_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix(free_module(level-1), free_module(level));
+    return new Matrix(free_module(level-1), free_module(level));
   return nodes[level]->gb_matrix();
 }
 
-Matrix gbres_comp::change_matrix(int level)
+Matrix *gbres_comp::change_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix(free_module(level-1), free_module(level));
+    return new Matrix(free_module(level-1), free_module(level));
   return nodes[level]->change_matrix();
 }
 
@@ -358,8 +384,7 @@ void gbres_comp::betti_minimal(intarray &result)
 // Commands for using this computation //
 /////////////////////////////////////////
 
-#include "interp.hpp"
-
+#if 0
 void cmd_gbres_calc(object &op, object &odeg, object &oargs)
 {
   gbres_comp *p = op->cast_to_gbres_comp();
@@ -498,3 +523,4 @@ int i_gbres_cmds()
   install(gginitial, cmd_gbres_initial, TY_GBRES_COMP, TY_INT, TY_INT);
   return 1;
 }
+#endif

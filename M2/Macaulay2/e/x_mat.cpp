@@ -1,8 +1,369 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "interp.hpp"
-
+#include "relem.hpp"
+#include "vector.hpp"
 #include "matrix.hpp"
+
+extern Matrix_int_pair global_Matrix_int_pair;
+
+const FreeModule * IM2_Matrix_get_target(const Matrix *M)
+{
+  return M->rows();
+}
+
+const FreeModule * IM2_Matrix_get_source(const Matrix *M)
+{
+  return M->cols();
+}
+
+const M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
+{
+  return M->degree_monoid()->to_arrayint(M->degree_shift());
+}
+
+const M2_string IM2_Matrix_to_string(const Matrix *M)
+{
+  buffer o;
+  M->text_out(o);
+  return o.to_string();
+}
+
+unsigned long  IM2_Matrix_hash(const Matrix *M); /* TODO */
+
+const RingElementOrNull * IM2_Matrix_get_element(const Matrix *M, int r, int c)
+{
+  if (r < 0 || r >= M->n_rows())
+    {
+      ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows()-1);
+      return 0;
+    }
+  if (c < 0 || c >= M->n_cols())
+    {
+      ERROR("matrix column index %d out of range 0 .. %d", c, M->n_cols()-1);
+      return 0;
+    }
+  return RingElement::make_raw(M->get_ring(), M->elem(r,c));
+}
+
+const Vector * IM2_Matrix_get_column(const Matrix *M, int c)
+{
+  if (c < 0 || c >= M->n_cols())
+    {
+      ERROR("matrix index %d out of range 0 .. %d", c, M->n_cols()-1);
+      return 0;
+    }
+  /* SHOULD WE COPY M->elem(c) ?? */
+  return Vector::make_raw(M->rows(), (*M)[c]);
+}
+
+
+const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
+				      const Vector_array *V)
+{
+  return Matrix::make(target,V);
+}
+
+const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
+				      const FreeModule *source,
+				      const M2_arrayint deg,
+				      const Vector_array *V)
+{
+  return Matrix::make(target,source,deg,V);
+}
+
+const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
+				      const FreeModule *source,
+				      const M2_arrayint deg,
+				      const Matrix *M)
+{
+  return Matrix::make(target, source, deg, M);
+}
+
+const M2_bool IM2_Matrix_is_zero(const Matrix *M)
+{
+  return M->is_zero();
+}
+
+const M2_bool IM2_Matrix_is_equal(const Matrix *M, 
+				  const Matrix *N)
+{
+  /* This checks that the entries of M,N are the same, as well as
+     that the source and target are the same (as graded free modules).
+     Therefore, it can happen that M-N == 0, but M != N.
+  */
+  return M->is_equal(*N);
+}
+
+const M2_bool IM2_Matrix_is_graded(const Matrix *M)
+{
+  return M->is_homogeneous();
+}
+
+const MatrixOrNull * IM2_Matrix_add(const Matrix *M, const Matrix *N)
+  /* If the sizes do not match, then NULL is returned.  If they do match,
+     the addition is performed, and the source,target,degree are taken from the
+     first matrix. */
+{
+  return (*M) + (*N);
+}
+
+const MatrixOrNull * IM2_Matrix_subtract(const Matrix *M, const Matrix *N)
+{
+  return (*M) - (*N);
+}
+
+const Matrix * IM2_Matrix_negate(const Matrix *M)
+{
+  return - (*M);
+}
+
+const MatrixOrNull * IM2_Matrix_mult(const Matrix *M, const Matrix *N)
+{
+  return (*M) * (*N);
+}
+
+const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
+					    const Matrix *M)
+{
+  return (*M) * (f->get_value());
+}
+
+const MatrixOrNull * IM2_Matrix_scalar_right_mult(const Matrix *M, 
+						  const RingElement *f); /* TODO */
+
+const VectorOrNull * IM2_Matrix_scalar_mult_vec(const Matrix *M, 
+						const Vector *v)
+{
+  // Check that M,v have the same ring
+  // Check that #cols(M) = #rows(v)
+
+  if (M->get_ring() != v->get_ring())
+    {
+      ERROR("expected the same ring");
+      return 0;
+    }
+  if (M->n_cols() != v->free_of()->rank())
+    {
+      ERROR("wrong sizes for matrix.vector multiplication");
+      return 0;
+    }
+  vec w = M->rows()->mult_by_matrix(M, v->free_of(), v->get_value());
+  return Vector::make_raw(M->rows(), w);
+}
+
+const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
+{
+  unsigned int n = Ms->len;
+  if (n == 0)
+    {
+      ERROR("matrix concat: expects at least one matrix");
+      return 0;
+    }
+  const FreeModule *F = Ms->array[0]->rows();
+  Matrix *result = new Matrix(Ms->array[0]->rows());
+  for (unsigned int i=0; i<n; i++)
+    {
+      const Matrix *M = Ms->array[i];
+      if (F->get_ring() != M->get_ring())
+	{
+	  ERROR("matrix concat: different base rings");
+	  return 0;
+	}
+      if (F->rank() != M->n_rows())
+	{
+	  ERROR("matrix concat: row sizes are not equal");
+	  return 0;
+	}
+      for (int j=0; j<M->n_cols(); j++)
+	result->append(F->translate(M->rows(), (*M)[j]), M->cols()->degree(j));
+    }
+  return result;
+}
+
+const MatrixOrNull * IM2_Matrix_direct_sum(const Matrix_array *Ms)
+{
+  // Check that the matrices all have the same ring, and that there is
+  // at least one matrix.
+  unsigned int n = Ms->len;
+  if (n == 0)
+    {
+      ERROR("matrix direct sum: expects at least one matrix");
+      return 0;
+    }
+  const Matrix *result = Ms->array[0];
+  const Ring *R = result->get_ring();
+  for (unsigned int i=1; i<n; i++)
+    if (R != Ms->array[i]->get_ring())
+      {
+	ERROR("matrix direct sum: different base rings");
+	return 0;
+      }
+  for (unsigned int i=1; i<n; i++)
+    result = result->direct_sum(Ms->array[i]);
+
+  return result;
+}
+
+const MatrixOrNull * IM2_Matrix_tensor(const Matrix *M,
+				       const Matrix *N)
+{
+  return M->tensor(N);
+}
+
+const Matrix * IM2_Matrix_transpose(const Matrix *M)
+{
+  return M->transpose();
+}
+
+const MatrixOrNull * IM2_Matrix_reshape(const Matrix *M,
+					const FreeModule *F,
+					const FreeModule *G)
+{
+  return M->reshape(F,G);
+}
+
+const MatrixOrNull * IM2_Matrix_flip(const FreeModule *F,
+				     const FreeModule *G)
+{
+  return Matrix::flip(F,G);
+}
+
+const MatrixOrNull * IM2_Matrix_submatrix(const Matrix *M,
+					  const M2_arrayint rows,
+					  const M2_arrayint cols)
+{
+  return M->sub_matrix(rows,cols);
+}
+
+const MatrixOrNull * IM2_Matrix_submatrix1(const Matrix *M,
+					   const M2_arrayint cols)
+{
+  return M->sub_matrix(cols);
+}
+
+const Matrix * IM2_Matrix_identity(const FreeModule *F)
+{
+  return Matrix::identity(F);
+}
+
+const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
+				     const FreeModule *G)
+{
+  return Matrix::zero(F,G);
+}
+
+const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
+{
+  return M->koszul(p);
+}
+
+const MatrixOrNull * IM2_Matrix_koszul_monoms(const Matrix *M,
+					      const Matrix *N)
+{
+  return Matrix::koszul(M,N);
+}
+
+const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)
+{
+  return M->symm(p);
+}
+
+const Matrix * IM2_Matrix_exterior(int p, const Matrix *M, int strategy)
+{
+  return M->exterior(p,strategy); 
+}
+
+const M2_arrayint_OrNull IM2_Matrix_sort_columns(const Matrix *M, 
+						 int deg_order, 
+						 int mon_order)
+{
+  return M->sort(deg_order, mon_order);
+}
+
+
+const Matrix * IM2_Matrix_minors(int p, const Matrix *M, int strategy)
+{
+  return M->minors(p,strategy);
+}
+
+const MatrixOrNull * IM2_Matrix_pfaffians(int p, const Matrix *M)
+{
+  return M->pfaffians(p);
+}
+
+const MatrixOrNull * IM2_Matrix_diff(const Matrix *M,
+				     const Matrix *N)
+{
+  return M->diff(N,1);
+}
+
+const MatrixOrNull * IM2_Matrix_contract(const Matrix *M,
+					 const Matrix *N)
+{
+  return M->diff(N,0);
+}
+
+const MatrixOrNull * IM2_Matrix_homogenize(const Matrix *M,
+					   int var,
+					   M2_arrayint wts)
+{
+  return M->homogenize(var, wts);
+}
+
+const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
+{
+#warning "implement IM2_Matrix_coeffs"
+  return 0;
+}
+
+const MatrixOrNull * IM2_Matrix_get_coeffs(const M2_arrayint vars,
+					   const M2_arrayint monoms,
+					   const Matrix *M)
+{
+  return M->coeffs(vars,monoms);
+}
+
+const MatrixOrNull * IM2_Matrix_monomials(const M2_arrayint vars, 
+					  const Matrix *M)
+{
+  return M->monomials(vars);
+}
+
+const Matrix * IM2_Matrix_initial(int nparts, const Matrix *M)
+{
+  return M->lead_term(nparts);
+}
+
+const M2_arrayint IM2_Matrix_elim_vars(int nparts, const Matrix *M)
+{
+  return M->elim_vars(nparts);
+}
+
+const M2_arrayint IM2_Matrix_keep_vars(int nparts, const Matrix *M)
+{
+  return M->elim_keep(nparts);
+}
+
+Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegree)
+  /* If M = [v1, ..., vn], and x = 'var'th variable in the ring, 
+     return the matrix [w1,...,wn], where wi * x^(ai) = vi,
+     and wi is not divisible by x, or ai = maxdegree, 
+     and the integer which is the maximum of the ai's.
+     QUESTION: what rings should this work over?
+  */
+{
+  int actualdegree;
+  Matrix *N = M->divide_by_var(var, maxdegree, actualdegree);
+  Matrix_int_pair *result = &global_Matrix_int_pair;
+  result->a = N;
+  result->b = actualdegree;
+  return result;
+}
+
+  /* MES: there are more matrix routines after this... */
+
+
+#if 0
 #include "monoid.hpp"
 
 #include "det.hpp"
@@ -162,16 +523,6 @@ void cmd_Matrix3(object &oa)
   gStack.insert(Matrix(mi));
 }
 
-void cmd_Matrix_rows(object &oM)
-{
-  Matrix M = oM->cast_to_Matrix();
-  gStack.insert(M.rows());
-}
-void cmd_Matrix_cols(object &oM)
-{
-  Matrix M = oM->cast_to_Matrix();
-  gStack.insert(M.cols());
-}
 
 void cmd_Matrix_getshift(object &oM)
 {
@@ -184,64 +535,6 @@ void cmd_Matrix_setshift(object &oM, object &odeg)
   intarray *deg = odeg->intarray_of();
   M.set_degree_shift(*deg);
 }
-void cmd_Matrix_elem(object &oM, object &on)
-{
-  Matrix M = oM->cast_to_Matrix();
-  int n = on->int_of();
-  if ((n < 0) || (n >= M.n_cols()))
-    gError << "matrix index " << n << " out of range 0 .. " << M.n_cols()-1;
-  else
-    {
-      Vector result(M.rows(), M.rows()->copy(M[n]));
-      gStack.insert(result);
-    }
-}
-void cmd_Matrix_elem2(object &oM, object &on, object &om)
-{
-  Matrix M = oM->cast_to_Matrix();
-  int n = on->int_of();
-  int m = om->int_of();
-  if ((n < 0) || (n >= M.n_rows()))
-    gError << "matrix row index " << n << " out of range 0 .. " << M.n_rows()-1;
-  else if ((m < 0) || (m >= M.n_cols()))
-    gError << "matrix column index " << m << " out of range 0 .. " 
-      << M.n_cols()-1;
-  else
-    {
-      RingElement result(M.get_ring(), M.elem(n,m));
-      gStack.insert(result);
-    }
-}
-
-void cmd_Matrix_isequal(object &oa, object &ob)
-{
-  Matrix a = oa->cast_to_Matrix();
-  Matrix b = ob->cast_to_Matrix();
-  gStack.insert(make_object_int(a.is_equal(b)));
-}
-
-void cmd_Matrix_iszero(object &oa)
-{
-  Matrix a = oa->cast_to_Matrix();
-  gStack.insert(make_object_int(a.is_zero()));
-}
-
-void cmd_Matrix_ishomog(object &oa)
-{
-  Matrix a = oa->cast_to_Matrix();
-  gStack.insert(make_object_int(a.is_homogeneous()));
-}
-
-void cmd_Matrix_add(object &oa, object &ob)
-{
-  Matrix a = oa->cast_to_Matrix();
-  Matrix b = ob->cast_to_Matrix();
-  gStack.insert(a+b);
-}
-
-#if defined(MIKE_NEWENGINE)
-extern void cmd_EMatrix_concatenate(object &o1);
-#endif
 
 void cmd_Matrix_concat(object &on)
 {
@@ -284,25 +577,6 @@ void cmd_Matrix_concat(object &on)
   gStack.insert(result);
 }
 
-void cmd_Matrix_negate(object &oa)
-{
-  Matrix a = oa->cast_to_Matrix();
-  gStack.insert(-a);
-}
-
-void cmd_Matrix_subtract(object &oa, object &ob)
-{
-  Matrix a = oa->cast_to_Matrix();
-  Matrix b = ob->cast_to_Matrix();
-  gStack.insert(a-b);
-}
-
-void cmd_Matrix_mult(object &oa, object &ob)
-{
-  Matrix a = oa->cast_to_Matrix();
-  Matrix b = ob->cast_to_Matrix();
-  gStack.insert(a*b);
-}
 void cmd_Matrix_multvec(object &oa, object &ov)
 {
   Matrix a = oa->cast_to_Matrix();
@@ -453,13 +727,6 @@ void cmd_Matrix_dsum_several(object &on)
 
   gStack.poppem(n);
   gStack.insert(result);
-}
-
-void cmd_Matrix_tensor(object &oa, object &ob)
-{
-  Matrix a = oa->cast_to_Matrix();
-  Matrix b = ob->cast_to_Matrix();
-  gStack.insert(a.tensor(b));
 }
 
 void cmd_Nmodule_tensor(object &oa, object &ob)
@@ -1677,3 +1944,4 @@ void i_Matrix_cmds(void)
   // Links to ALP (experimental)
   //  install(ggtest, cmd_ALP_eigenvals, TY_MATRIX);
 }
+#endif

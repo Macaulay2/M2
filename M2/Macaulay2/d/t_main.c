@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <gc.h>
+#include <gmp.h>
 #include "types.h"
-
 
 void outofmem(){
   fprintf(stderr,"out of memory, exiting\n");

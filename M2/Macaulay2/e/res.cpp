@@ -4,11 +4,6 @@
 #include "res.hpp"
 #include "text_io.hpp"
 
-stash *res_pair::mystash;
-stash *res_degree::mystash;
-stash *res_level::mystash;
-stash *res_comp::mystash;
-
 extern char system_interrupted;
 extern int comp_printlevel;
 
@@ -16,19 +11,17 @@ extern int comp_printlevel;
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
 
-void res_comp::initialize(Matrix mat, 
+void res_comp::initialize(const Matrix *mat, 
 			  int LengthLimit,
 			  int /*strategy*/)
 {
   int i;
 
-  P = mat.get_ring()->cast_to_PolynomialRing();
+  P = mat->get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res_poly((PolynomialRing *)P);
   M = P->Nmonoms();
   K = P->Ncoeffs();
-  bump_up(P);
-  bump_up(K);
   generator_matrix = mat;
 
   for (i=0; i<=LengthLimit; i++)
@@ -36,19 +29,19 @@ void res_comp::initialize(Matrix mat,
 
   max_degree = M->max_degree();
   length_limit = LengthLimit;
-  if (mat.n_rows() > 0)
+  if (mat->n_rows() > 0)
     {
-      lodegree = mat.rows()->primary_degree(0);
-      for (i=1; i<mat.n_rows(); i++)
-	if (lodegree > mat.rows()->primary_degree(i))
-	  lodegree = mat.rows()->primary_degree(i);
+      lodegree = mat->rows()->primary_degree(0);
+      for (i=1; i<mat->n_rows(); i++)
+	if (lodegree > mat->rows()->primary_degree(i))
+	  lodegree = mat->rows()->primary_degree(i);
     }
   else
     lodegree = 0;
 
-  for (i=0; i<mat.n_cols(); i++)
-    if (lodegree > mat.cols()->primary_degree(i) - 1)
-      lodegree = mat.cols()->primary_degree(i) - 1;
+  for (i=0; i<mat->n_cols(); i++)
+    if (lodegree > mat->cols()->primary_degree(i) - 1)
+      lodegree = mat->cols()->primary_degree(i) - 1;
 
   hidegree = lodegree;
   n_level = 2;
@@ -56,7 +49,7 @@ void res_comp::initialize(Matrix mat,
 
   component_number = 0;
   next_me_number = 0;
-  for (i=0; i<mat.n_rows(); i++)
+  for (i=0; i<mat->n_rows(); i++)
     {
       res_pair *p = new res_pair;
 
@@ -64,14 +57,14 @@ void res_comp::initialize(Matrix mat,
       next_me_number++;	// this and 'component_number' should still be equal here.
       p->compare_num = i;
 
-      p->base_monom = M->make_new(mat.rows()->base_monom(i));
-      p->mi = MonomialIdeal(P);
+      p->base_monom = M->make_new(mat->rows()->base_monom(i));
+      p->mi = new MonomialIdeal(P);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
       base_components.append(p);
-      search_mi.append(MonomialIdeal(P));
+      search_mi.append(new MonomialIdeal(P));
 
-      int d = mat.rows()->primary_degree(i);
+      int d = mat->rows()->primary_degree(i);
       res_degree *pairs = make_degree_set(0, d);
       p->next = pairs->first;
       pairs->first = p;
@@ -84,11 +77,11 @@ void res_comp::initialize(Matrix mat,
   npairs = 0;
   nminimal = 0;
 
-  for (i=0; i<mat.n_cols(); i++)
-    if (mat[i] != NULL)
+  for (i=0; i<mat->n_cols(); i++)
+    if ((*mat)[i] != NULL)
       {
 	res_pair *p = new_res_pair(i); // Makes a generator 'pair'
-	int d = mat.cols()->primary_degree(i);
+	int d = mat->cols()->primary_degree(i);
 	res_degree *pairs = make_degree_set(1, d-1);
 	p->next = pairs->next_gen;
 	pairs->next_gen = p;
@@ -112,7 +105,7 @@ void res_comp::initialize(Matrix mat,
   MINIMAL_mon = M->make_one();
 }
 
-res_comp::res_comp(Matrix m, 
+res_comp::res_comp(const Matrix *m, 
 		   int LengthLimit, 
 		   int strategy)
 {
@@ -166,8 +159,6 @@ res_comp::~res_comp()
   // base_components have all been removed by this point
   // Since they appear in resn[0].
 
-  bump_down(P);
-  bump_down(K);
   delete R;
 }
 //////////////////////////////////////////////
@@ -221,7 +212,7 @@ res_pair *res_comp::new_res_pair(int syztype, res_pair *first, res_pair *second)
   result->second = second;
   result->base_comp = first->base_comp;
   result->syz_type = syztype;
-  result->mi = MonomialIdeal(P);
+  result->mi = new MonomialIdeal(P);
   return result;
 }
 
@@ -231,11 +222,11 @@ res_pair *res_comp::new_res_pair(int i)
   p->syz_type = SYZ_GEN;
   p->me = component_number++;
   p->compare_num = i;
-  p->syz = R->from_vector(base_components, generator_matrix[i]);
+  p->syz = R->from_vector(base_components, (*generator_matrix)[i]);
   p->base_monom = M->make_new(p->syz->monom);
   p->base_comp = p->syz->comp;
   p->first = p->base_comp;
-  p->mi = MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P);
 
   return p;
 }
@@ -250,7 +241,7 @@ res_pair *res_comp::new_res_pair(int syztype, resterm *f)
   p->base_monom = M->make_new(f->monom);
   p->base_comp = f->comp->base_comp;
   p->first = f->comp;
-  p->mi = MonomialIdeal(P);
+  p->mi = new MonomialIdeal(P);
 
   return p;
 }
@@ -258,7 +249,7 @@ res_pair *res_comp::new_res_pair(int syztype, resterm *f)
 int res_comp::degree(const res_pair *p) const
 {
   int result = M->primary_degree(p->base_monom);
-  result += generator_matrix.rows()->primary_degree(p->base_comp->me);
+  result += generator_matrix->rows()->primary_degree(p->base_comp->me);
   return result;
 }
 
@@ -266,7 +257,7 @@ void res_comp::multi_degree(const res_pair *p, int *deg) const
 {
   // MES: Is this correct?
   M->multi_degree(p->base_monom, deg);
-  degree_monoid()->mult(deg, generator_matrix.rows()->degree(p->base_comp->me), deg);
+  degree_monoid()->mult(deg, generator_matrix->rows()->degree(p->base_comp->me), deg);
 }
 
 void res_comp::insert_res_pair(int level, res_pair *p)
@@ -291,7 +282,7 @@ void res_comp::insert_res_pair(int level, res_pair *p)
     {
       intarray vp;
       M->to_varpower(p->syz->monom, vp);
-      search_mi[p->syz->comp->me].insert_minimal(new Bag(p, vp));
+      search_mi[p->syz->comp->me]->insert_minimal(new Bag(p, vp));
     }
 }
 
@@ -637,15 +628,15 @@ void res_comp::new_pairs(res_pair *p)
   // The baggage of each of these is NULL
   if (P->is_quotient_ring())
     {
-      const MonomialIdeal &Rideal = P->get_quotient_monomials();
-      for (j = Rideal.first(); j.valid(); j++)
+      const MonomialIdeal *Rideal = P->get_quotient_monomials();
+      for (j = Rideal->first(); j.valid(); j++)
 	{
 	  // Compute (P->quotient_ideal->monom : p->monom)
 	  // and place this into a varpower and Bag, placing
 	  // that into 'elems'
 	  thisvp.shrink(0);
-	  varpower::divide(Rideal[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal(Rideal[j]->monom().raw(), thisvp.raw()))
+	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
 	    continue;
 	  Bag *b = new Bag((void *)0, thisvp);
 	  elems.insert(b);
@@ -654,11 +645,11 @@ void res_comp::new_pairs(res_pair *p)
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res_pair
 
-  MonomialIdeal &mi_orig = p->first->mi;
-  for (j = mi_orig.first(); j.valid(); j++)
+  MonomialIdeal *mi_orig = p->first->mi;
+  for (j = mi_orig->first(); j.valid(); j++)
     {
-      Bag *b = new Bag(mi_orig[j]->basis_ptr());
-      varpower::divide(mi_orig[j]->monom().raw(), vp.raw(), b->monom());
+      Bag *b = new Bag((*mi_orig)[j]->basis_ptr());
+      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
       elems.insert(b);
     }
 
@@ -666,22 +657,22 @@ void res_comp::new_pairs(res_pair *p)
   // and insert into the proper degree. (Notice that sorting does not
   // need to be done yet: only once that degree is about to begin.
 
-  mi_orig.insert_minimal(new Bag(p, vp));
+  mi_orig->insert_minimal(new Bag(p, vp));
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal mi(P, elems, rejects);
+  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
   while (rejects.remove(b))
     delete b;
 
-  if (comp_printlevel>= 11) mi.debug_out(1);
+  if (comp_printlevel>= 11) mi->debug_out(1);
 
-  for (j = mi.first(); j.valid(); j++)
+  for (j = mi->first(); j.valid(); j++)
     {
-      res_pair *second = (res_pair *) mi[j]->basis_ptr();
+      res_pair *second = (res_pair *) (*mi)[j]->basis_ptr();
       res_pair *q = new_res_pair(SYZ_S_PAIR, p, second);
       // That set most fields except base_monom:
-      M->from_varpower(mi[j]->monom().raw(), q->base_monom);
+      M->from_varpower((*mi)[j]->monom().raw(), q->base_monom);
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       insert_res_pair(n_level, q);
     }
@@ -698,7 +689,7 @@ int res_comp::find_ring_divisor(const int *exp, ring_elem &result) const
 {
   if (!P->is_quotient_ring()) return 0;
   Bag *b;
-  if (!P->get_quotient_monomials().search_expvector(exp, b))
+  if (!P->get_quotient_monomials()->search_expvector(exp, b))
     return 0;
   result = (Nterm *) b->basis_ptr();
   return 1;
@@ -749,7 +740,7 @@ res_pair *res_comp::reduce(resterm * &f, resterm * &fsyz, resterm * &pivot)
 	  M->divide(f->monom, r->monom, REDUCE_mon);
 	  R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
 	}
-      else if (f->comp->mi.search_expvector(REDUCE_exp, b))
+      else if (f->comp->mi->search_expvector(REDUCE_exp, b))
 	{
 	  q = (res_pair *) (b->basis_ptr());
 	  lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
@@ -794,7 +785,7 @@ res_pair *res_comp::reduce_level_one(resterm * &f, resterm * &fsyz, resterm * &p
 	  M->divide(f->monom, r->monom, REDUCE_mon);
 	  R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
 	}
-      else if (search_mi[f->comp->me].search_expvector(REDUCE_exp, b))
+      else if (search_mi[f->comp->me]->search_expvector(REDUCE_exp, b))
 	{
 	  q = (res_pair *) (b->basis_ptr());
 	  lastterm->next = R->new_term(K->negate(f->coeff), f->monom, q);
@@ -835,7 +826,7 @@ void res_comp::reduce_gen(resterm * &f) const
 	  M->divide(f->monom, r->monom, REDUCE_mon);
 	  R->ring_subtract_multiple_to(f, f->coeff, REDUCE_mon, f->comp, rg);
 	}
-      else if (search_mi[f->comp->me].search_expvector(REDUCE_exp, b))
+      else if (search_mi[f->comp->me]->search_expvector(REDUCE_exp, b))
 	{
 	  q = (res_pair *) (b->basis_ptr());
 	  M->divide(f->monom, q->syz->monom, REDUCE_mon);
@@ -870,7 +861,7 @@ int res_comp::calc(const int *DegreeLimit,
     {
       if (length_limit < LengthLimit)
 	{
-	  gError << "resolution: cannot increase maximum level";
+	  ERROR("resolution: cannot increase maximum level");
 	  return COMP_ERROR;
 	}
       else
@@ -1105,8 +1096,8 @@ void res_comp::skeleton_init(array<res_pair *> &reslevel)
 
   // Do level 1
   pp = NULL;
-  for (i=0; i<generator_matrix.n_cols(); i++)
-    if (generator_matrix[i] != NULL)
+  for (i=0; i<generator_matrix->n_cols(); i++)
+    if ((*generator_matrix)[i] != NULL)
       {
 	res_pair *p = new_res_pair(i); // Makes a generator 'pair'
 	p->next = pp;
@@ -1163,15 +1154,15 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   // The baggage of each of these is NULL
   if (P->is_quotient_ring())
     {
-      const MonomialIdeal &Rideal = P->get_quotient_monomials();
-      for (j = Rideal.first(); j.valid(); j++)
+      const MonomialIdeal *Rideal = P->get_quotient_monomials();
+      for (j = Rideal->first(); j.valid(); j++)
 	{
 	  // Compute (P->quotient_ideal->monom : p->monom)
 	  // and place this into a varpower and Bag, placing
 	  // that into 'elems'
 	  thisvp.shrink(0);
-	  varpower::divide(Rideal[j]->monom().raw(), vp.raw(), thisvp);
-	  if (varpower::is_equal(Rideal[j]->monom().raw(), thisvp.raw()))
+	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
+	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
 	    continue;
 	  Bag *b = new Bag((void *)0, thisvp);
 	  elems.insert(b);
@@ -1181,11 +1172,11 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res_pair
 
-  MonomialIdeal &mi_orig = p->first->mi;
-  for (j = mi_orig.first(); j.valid(); j++)
+  MonomialIdeal *mi_orig = p->first->mi;
+  for (j = mi_orig->first(); j.valid(); j++)
     {
-      Bag *b = new Bag(mi_orig[j]->basis_ptr());
-      varpower::divide(mi_orig[j]->monom().raw(), vp.raw(), b->monom());
+      Bag *b = new Bag((*mi_orig)[j]->basis_ptr());
+      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
       elems.insert(b);
     }
 
@@ -1193,22 +1184,22 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   // and insert into the proper degree. (Notice that sorting does not
   // need to be done yet: only once that degree is about to begin.
 
-  mi_orig.insert_minimal(new Bag(p, vp));
+  mi_orig->insert_minimal(new Bag(p, vp));
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal mi(P, elems, rejects);
+  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
   while (rejects.remove(b))
     delete b;
 
-  if (comp_printlevel>= 11) mi.debug_out(1);
+  if (comp_printlevel>= 11) mi->debug_out(1);
 
-  for (j = mi.first(); j.valid(); j++)
+  for (j = mi->first(); j.valid(); j++)
     {
-      res_pair *second = (res_pair *) mi[j]->basis_ptr();
+      res_pair *second = (res_pair *) (*mi)[j]->basis_ptr();
       res_pair *q = new_res_pair(SYZ_S_PAIR, p, second);
       // That set most fields except base_monom:
-      M->from_varpower(mi[j]->monom().raw(), q->base_monom);
+      M->from_varpower((*mi)[j]->monom().raw(), q->base_monom);
       M->mult(q->base_monom, p->base_monom, q->base_monom);
       result->next = q;
       result = q;

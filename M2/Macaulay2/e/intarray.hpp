@@ -2,9 +2,7 @@
 #ifndef _intarray_hh_
 #define _intarray_hh_
 
-#include <assert.h>
 #include "style.hpp"
-
 
 const int init_intarray_size = 16;
 
@@ -124,15 +122,7 @@ public:
 
   int operator!=(const intarray &a) const { return !(operator==(a)); }
 
-  void bin_out(buffer &o) const;
   void text_out(buffer &o) const;
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { 
-       return mystash->new_elem(); 
-  }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

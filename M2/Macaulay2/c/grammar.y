@@ -24,6 +24,7 @@ static int yylex(void);
 %left OROR
 %left ANDAND
 %left OR
+%left KINDOF
 %left infix4 prefix4
 %left infix5 prefix5
 %left infix6 prefix6 '-'
@@ -96,6 +97,7 @@ expr : typecasen	      	   %prec whiledo { $$ = reverse($1); }
      | IF expr THEN expr ELSE expr %prec ifte  { $$ = list(4,$1,$2,$4,$6); }
      | IF expr THEN expr           %prec ifte  { $$ = list(3,$1,$2,$4); }
      | PROVIDE expr	     	       	       { $$ = list(2,$1,$2); }
+     | KINDOF expr	     	       	       { $$ = list(2,$1,$2); }
      | expr OR expr	     	       	       {
 	  if (iscons($1) && equal(CAR($1),or_S)) {
 	       $$ = join($1,list(1,$3));
@@ -270,6 +272,7 @@ void yyinit() {
      registerkeyword("while",WHILE);
      registerkeyword("is",IS);
      registerkeyword("or",OR);
+     registerkeyword("kindof",KINDOF);
      registerkeyword("when",WHEN);
      registerkeyword("foreach",FOREACH);
      registerkeyword("function",FUNCTION);

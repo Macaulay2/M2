@@ -1,0 +1,40 @@
+# @configure_input@
+include ../../../include/config.Makefile
+VPATH = @srcdir@
+
+TESTS := test_monomial test_monordering test_monoid test_ring test_freemodule test_vector \
+	test_matrix test_sparsemat test_lapack
+
+CPPFLAGS += -I@srcdir@/..
+LIBRARYFILES += ../libgb.a
+LDFLAGS += -multiply_defined suppress
+LDLIBS += $(LIBRARYFILES) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++ \
+                   -llapack -lcblas -lf77blas -latlas -lg2c
+
+CFLAGS += -g -ansi
+
+all :: $(TESTS)
+
+test_monomial : test_monomial.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_monordering : test_monordering.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_monoid : test_monoid.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_ring : test_ring.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_freemodule : test_freemodule.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_vector : test_vector.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_matrix : test_matrix.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_sparsemat : test_sparsemat.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+test_lapack : test_lapack.o util.o ../../d/M2types.o $(LIBRARYFILES)
+
+check: $(TESTS)
+	for i in $(TESTS); do echo running $$i; ./$$i || exit 1; done
+
+clean :
+	rm -f *.o $(TESTS)

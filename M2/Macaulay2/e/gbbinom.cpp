@@ -23,9 +23,6 @@ binomial_ring::binomial_ring(const Ring *RR,
 {
   int i;
 
-  bump_up(R);
-  bump_up(F);
-
   nslots = nvars + 1;
   degrees = new int[nvars];
   for (i=0; i<nvars; i++) 
@@ -43,13 +40,11 @@ binomial_ring::binomial_ring(const Ring *RR,
 
 binomial_ring::binomial_ring(const Ring * /* RR */)
 {
-  gError << "MES: not implemented yet";
+  ERROR("MES: not implemented yet");
 }
 
 binomial_ring::~binomial_ring()
 {
-  bump_down(F);
-  bump_down(R);
   delete [] degrees;
   delete [] weights;
   delete monstash;
@@ -990,8 +985,6 @@ void binomialGB::debug_display() const
 // Binomial GB computation //
 /////////////////////////////
 
-stash *binomialGB_comp::mystash;
-
 binomialGB_comp::binomialGB_comp(const Ring *RR, int *wts, bool revlex,
 				 unsigned int options)
   : gb_comp(2)
@@ -1048,17 +1041,17 @@ void binomialGB_comp::enlarge(const Ring *newR, int *wts)
   delete old_ring;
 }
 
-void binomialGB_comp::add_generators(const Matrix &m)
+void binomialGB_comp::add_generators(const Matrix *m)
 {
   int i;
   binomial f;
   binomial_gb_elem *p;
-  if (m.get_ring()->is_Z())
+  if (m->get_ring()->is_ZZ())
     {
-      for (i=0; i<m.n_cols(); i++)
+      for (i=0; i<m->n_cols(); i++)
 	{
 	  f = R->make_binomial();
-	  R->intvector_to_binomial(m[i],f);
+	  R->intvector_to_binomial((*m)[i],f);
 	  p = new binomial_gb_elem(f);
 	  Gens.append(p);
 	  Pairs->insert(p);
@@ -1066,10 +1059,10 @@ void binomialGB_comp::add_generators(const Matrix &m)
     }
   else
     {
-      for (i=0; i<m.n_cols(); i++)
+      for (i=0; i<m->n_cols(); i++)
 	{
 	  f = R->make_binomial();
-	  if (R->vector_to_binomial(m[i], f))
+	  if (R->vector_to_binomial((*m)[i], f))
 	    {
 	      p = new binomial_gb_elem(f);
 	      Gens.append(p);
@@ -1077,7 +1070,7 @@ void binomialGB_comp::add_generators(const Matrix &m)
 	    }
 	  else
 	    {
-	      gError << "expected binomials";
+	      ERROR("expected binomials");
 	      return;
 	    }
 	}
@@ -1175,84 +1168,84 @@ int binomialGB_comp::calc(const int *deg, const intarray &stop_conditions)
 // Obtaining results //
 ///////////////////////
 
-Matrix binomialGB_comp::subring()
+Matrix *binomialGB_comp::subring()
 {
   // Subsequent calls will not receive duplicate elements
-  Matrix result = Matrix(R->F);
+  Matrix *result = new Matrix(R->F);
   for (int i=0; i<mingens_subring.length(); i++)
     {
-      result.append(R->binomial_to_vector(mingens_subring[i]->f));
+      result->append(R->binomial_to_vector(mingens_subring[i]->f));
       mingens_subring[i] = NULL;
     }
   mingens_subring.shrink(0);
   return result;
 }
 
-Matrix binomialGB_comp::subringGB()
+Matrix *binomialGB_comp::subringGB()
 {
-  Matrix result = Matrix(R->F);
+  Matrix *result = new Matrix(R->F);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
     if (R->weight((*p)->f.lead) == 0)
-      result.append(R->binomial_to_vector((*p)->f));
+      result->append(R->binomial_to_vector((*p)->f));
   return result;
 }
 
-Matrix binomialGB_comp::reduce(const Matrix &m, Matrix &/*lift*/)
+Matrix *binomialGB_comp::reduce(const Matrix *m, Matrix *&/*lift*/)
 {
-  gError << "MES: not implemented yet";
-  return m;
+  ERROR("MES: not implemented yet");
+  return 0;
 }
 
-Vector binomialGB_comp::reduce(const Vector &v, Vector &/*lift*/)
+Vector *binomialGB_comp::reduce(const Vector *v, Vector *&/*lift*/)
 {
-  gError << "MES: not implemented yet";
-  return v;
+  ERROR("MES: not implemented yet");
+  return 0;
 }
 
-int binomialGB_comp::contains(const Matrix &/*m*/)
+int binomialGB_comp::contains(const Matrix */*m*/)
 {
-  gError << "MES: not implemented yet";
+  ERROR("MES: not implemented yet");
   return 0;
 }
 
 bool binomialGB_comp::is_equal(const gb_comp * /*q*/)
 {
-  gError << "MES: not implemented yet";
+  ERROR("MES: not implemented yet");
   return false;
 }
   
-Matrix binomialGB_comp::min_gens_matrix()
+Matrix *binomialGB_comp::min_gens_matrix()
 {
-  Matrix result = Matrix(R->F);
+  Matrix *result = new Matrix(R->F);
   for (int i=0; i<mingens.length(); i++)
-    result.append(R->binomial_to_vector(mingens[i]->f));
+    result->append(R->binomial_to_vector(mingens[i]->f));
   return result;
 }
 
-Matrix binomialGB_comp::initial_matrix(int n)
+Matrix *binomialGB_comp::initial_matrix(int n)
 {
-  Matrix result = Matrix(R->F);
+  Matrix *result = new Matrix(R->F);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
-      result.append(R->binomial_to_vector((*p)->f, n));
+      result->append(R->binomial_to_vector((*p)->f, n));
   return result;
 }
 
-Matrix binomialGB_comp::gb_matrix()
+Matrix *binomialGB_comp::gb_matrix()
 {
-  Matrix result = Matrix(R->F);
+  Matrix *result = new Matrix(R->F);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
-      result.append(R->binomial_to_vector((*p)->f));
+      result->append(R->binomial_to_vector((*p)->f));
   return result;
 }
 
-Matrix binomialGB_comp::change_matrix()
+Matrix *binomialGB_comp::change_matrix()
 {
-  return Matrix(R->R);
+  return 0;
 }
 
-Matrix binomialGB_comp::syz_matrix()
+Matrix *binomialGB_comp::syz_matrix()
 {
-  return Matrix(R->R);
+  return 0;
 }
 
 void binomialGB_comp::stats() const

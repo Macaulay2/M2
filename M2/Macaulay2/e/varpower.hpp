@@ -4,7 +4,7 @@
 #define _varpower_hh_
 
 #include "intarray.hpp"
-#include "array.hpp"
+#include "engine.h"
 
 class varpower
 {
@@ -20,7 +20,7 @@ public:
 
   static void elem_text_out(buffer &o, const int *a);
   static void elem_text_out(buffer &o, const int *a, 
-			    const array<char *> &varnames);
+			    const M2_stringarray varnames);
 
   static bool is_one(const int *a);
   static bool is_equal(const int *a, const int *b);
@@ -35,8 +35,9 @@ public:
   static void from_varpower(const int *a, intarray &result);
   static void to_ntuple(int n, const int *a, intarray &result);
   static void from_ntuple(int n, const int *a, intarray &result);
+  static void from_arrayint(M2_arrayint m, intarray &result);
+  static M2_arrayint to_arrayint(const int *vp);
 
-  static void from_binary(char *&s, int &len, intarray &result);
 
   static int degree_of(int n, const int *a);
   static int simple_degree(const int *a);
@@ -44,10 +45,10 @@ public:
   static int compare(const int *a, const int *b);
     // return EQ, LT, or GT for a == b, a < b, or a > b.
   static void mult(const int *a, const int *b, intarray &result);
-  static void divide(const int *a, const int *b, intarray &result);
-    // divide a by b.
+  static void quotient(const int *a, const int *b, intarray &result);
+    // compute the quotient a:b
   static void power(const int *a, int n, intarray &result);
-  static int divides(const int *a, const int *b);
+  static bool divides(const int *a, const int *b);
     // Is a divisible by b?
   static void monsyz(const int *a, const int *b, 
 		     intarray &sa, intarray &sb);
@@ -56,7 +57,6 @@ public:
   static void erase(const int *a, const int *b, intarray &result);
     // divide a by b^infinity
   static void radical(const int *a, intarray &result);
-  static void elem_bin_out(buffer &o, const int *a);
 };
 
 class index_varpower

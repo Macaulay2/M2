@@ -6,7 +6,7 @@ static node hash_buckets[7313];
 node complete_symbol_list;
 node type_T, keyword_T, int_T, double_T, long_T, short_T, bool_T, char_T;
 node float_T, uint_T, ulong_T, ushort_T, uchar_T, package_T, pointer_T;
-node void_T, undefined_T, null_T, polymorphic_T, symbol_T, deferred_T;
+node void_T, undefined_T, null_T, symbol_T, deferred_T;
 node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    spincount_S, spincursor_S, chked_K, blank_S, function_S, package_K,
    use_K, export_K, import_K, export_S, import_S, package_S, use_S,
@@ -15,7 +15,7 @@ node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    refs__S, len__S, define_destroy_S, take_S, array_check_S, lt_S, gt_S,
    part_S, object_type_S, nothing_K, new_K, provide_K, plus_S, break_K,
    array_take_S, length_K, funcall_S, infix_S, prefix_S, type__S, array__S,
-   len__S, setd_K, if_K, foreach_K, le_S, plusplus_S, clean_S, 
+   len__S, setd_K, if_K, foreach_K, le_S, plusplus_S, clean_S, kindof_K, 
    foreach_reverse_K, minusminus_S, postfix_S, minus_S, for_K, ge_S,
    not_S, isnull_S, equal_S, when_K, until_K, while_K, object_S, andand_K, oror_K,
    label_S, keyword_K, release_S, releasec_S, reservec_S, reservenc_S,
@@ -23,7 +23,7 @@ node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    true_K, false_K, self_K, sizeof_K, comma_S, colon_S, space_S, deferred_K,
    declare_K, undefined_K, bad_K, void_K, type_K, null_K, blockn_K, assign_S,
    cast_S, block1_K, or_K, object_K, array_K, block_K, float_K, symbol_K, open_fd_K,
-   ushort_K, uint_K, ulong_K, uchar_K, polymorphic_K, andand_S, oror_S, or_S,
+   ushort_K, uint_K, ulong_K, uchar_K, andand_S, oror_S, or_S,
    Ccode_K, Ccode_S, dot_K, colon_K, colonequal_K, coloncolonequal_K, str_S,
    colonequal_S, pointer_K,
    double_K, int_K, goto_S, long_K, short_K, char_K, bool_K, tmp_S, zero, one;
@@ -33,7 +33,7 @@ struct {
      node *var;
      } keywords[] = {
      {"return", &return_K}, {"bool",&bool_K},
-     {"=", &setd_K}, {"if", &if_K},
+     {"=", &setd_K}, {"if", &if_K}, {"kindof", &kindof_K},
      {"new", &new_K}, {"provide", &provide_K}, {"break", &break_K},
      {"when", &when_K}, {"nothing", &nothing_K},
      {"until", &until_K}, {"while", &while_K}, {"self", &self_K},
@@ -50,7 +50,7 @@ struct {
      {"function",&function_K}, {"void",&void_K}, {"float",&float_K},
      {"File",&open_fd_K},
      {"double",&double_K}, {"null",&null_K}, {"symbol", &symbol_K},
-     {"?", &polymorphic_K}, {"uchar", &uchar_K},
+     {"uchar", &uchar_K},
      {"pointer", &pointer_K},
      {"ushort", &ushort_K}, {"uint", &uint_K}, {"ulong", &ulong_K},
      {"==",&equal_K}, {".",&dot_K}, {":",&colon_K}, {":=",&colonequal_K},
@@ -169,7 +169,6 @@ void init_dictionary(env v){
      deferred_T = basictype(deferred_K);
      undefine(deferred_K);
      symbol_T = basictype(symbol_K);
-     polymorphic_T = basictype(polymorphic_K);
      null_T = basictype(null_K);
      null_T->body.type.Cname = "void *";
      bad_K->body.symbol.type = undefined_T;

@@ -13,8 +13,8 @@ const int DET_COFACTOR = 1;
 class DetComputation : public computation
 {
   const Ring *R;
-  Matrix M;
-  Matrix result;  // Either:One row matrix collecting non-zero 
+  const Matrix *M;
+  Matrix *result;  // Either:One row matrix collecting non-zero 
 		  // determinants, or the resulting
 		  // exterior power; depending on 'do_exterior'
 
@@ -58,10 +58,8 @@ class DetComputation : public computation
   // Subroutines for use in Bareiss algorithm:
 
 public:
-  DetComputation(const Matrix &M, int p, bool do_exterior, int strategy);
+  DetComputation(const Matrix *M, int p, bool do_exterior, int strategy);
   ~DetComputation();
-
-  class_identifier class_id() const { return CLASS_DetComputation; }
 
   int step();
   int calc(int nsteps);
@@ -71,10 +69,7 @@ public:
   void discard() { clear(); }
   void set_next_minor(const int* rows, const int* cols);
   
-  Matrix determinants() { return result; }
-
-  int length_of() const { return result.n_cols(); }
-  object index_of(int) { return result; }
+  Matrix *determinants() { return result; }
 };
 
 #endif

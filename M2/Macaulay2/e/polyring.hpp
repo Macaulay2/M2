@@ -6,59 +6,88 @@
 #include "ring.hpp"
 #include "ringelem.hpp"
 #include "monideal.hpp"
+#include "skew.hpp"
 
 ///// Ring Hierarchy ///////////////////////////////////
 
+class TermIdeal;
+class Matrix;
+class GBRing;
+class GBRingSkew;
+
 class PolynomialRing : public Ring
 {
+  friend class GBRingSkew;
   friend class FreeModule;
 protected:
-  PolynomialRing(const Ring *K, const Monoid *MF);
-  PolynomialRing(const PolynomialRing *R, const array<ring_elem> &I);
+  const PolynomialRing * make_flattened_ring();
+  void initialize_poly_ring(const Ring *K, const Monoid *M);
+  void initialize_quotients(const array<ring_elem> &I);
   virtual ~PolynomialRing();
-protected:
-  stash *pstash;
-
-  // Quotient ring information
-  const PolynomialRing *base_ring; // == NULL iff this is not a quotient ring
-  array<ring_elem> quotient_ideal;
-  MonomialIdeal Rideal;		// This is used if the coeff ring is not ZZ.
-  TermIdeal *RidealZ;		// This is used if the coeff ring is ZZ.
-
-  bool coefficients_are_ZZ;
-  bool isgraded;
-
+  PolynomialRing() {}
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
-  static PolynomialRing *create(const PolynomialRing *R, const array<ring_elem> &I);
-  
-  class_identifier class_id() const { return CLASS_PolynomialRing; }
+
+protected:
+  int _poly_size;
+
+  GBRing *_gb_ring;
+
+  // Quotient ring information
+  const PolynomialRing *_base_ring; // == NULL iff this is not a quotient ring
+  Computation *_quotient_gb;
+
+#if 0
+  array<ring_elem> _quotient_ideal;
+  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
+  TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
+#endif
+
+  bool _coefficients_are_ZZ;
+  bool _isgraded;
+
+  // Most skew-mult specific poly code is in skewpoly.{hpp,cpp}.  However, var, homogenize,
+  //   and diff_term all have a small amount of skew commutative specific code.
+  bool _is_skew;
+  SkewMultiplication _skew; // Completely ignored if _is_skew is false.
+
+  int *_EXP1, *_EXP2, *_EXP3;
+public:
+  static PolynomialRing *create_quotient_ring(Computation *G);
 
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
   virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
 
+  virtual bool is_basic_ring() const { return false; }
+  GBRing *get_gb_ring() const { return _gb_ring; }
+
   // Queries for quotient ring
-  bool        is_quotient_ring() const { return (base_ring != NULL); }
-  const PolynomialRing * get_base_poly_ring() const { return base_ring; }
-  MonomialIdeal  get_quotient_monomials() const { return Rideal; }
-  const TermIdeal *get_quotient_monomials_ZZ() const { return RidealZ; }
+  bool        is_quotient_ring() const { return (_base_ring != NULL); }
+  const PolynomialRing * get_base_poly_ring() const { return _base_ring; }
+  
+#if 0
+  static PolynomialRing *create_quotient_ring(const PolynomialRing *R, const array<ring_elem> &I);
+  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
+  const TermIdeal *get_quotient_monomials_ZZ() const { return _RidealZZ; }
   const FreeModule *get_Rsyz() const;
 
   Matrix     get_ideal() const;
-  ring_elem get_quotient_elem(int i) const { return quotient_ideal[i]; }
-  int        get_quotient_elem_length() const { return quotient_ideal.length(); }
+  ring_elem get_quotient_elem(int i) const { return _quotient_ideal[i]; }
+  int        get_quotient_elem_length() const { return _quotient_ideal.length(); }
+#endif
 
+  bool is_skew_commutative() const { return _is_skew; }
+  bool is_skew_var(int v) const { return _skew.is_skew_var(v); }
 
-  virtual bool is_pid() const       { return (nvars == 1 && K->is_field())
-				       || (nvars == 0 && K->is_pid()); }
-  virtual bool has_gcd() const      { return (nvars == 1 && K->is_field())
-				       || (nvars == 0 && K->has_gcd()); }
-  virtual bool is_Z() const         { return 0; }
-  virtual bool is_poly_ring() const { return 1; }
-  virtual bool is_quotient_poly_ring() const { return base_ring != NULL; }
-  virtual bool is_graded() const    { return isgraded; } // MES: change this
+  virtual bool is_pid() const       { return (_nvars == 1 && _K->is_field())
+				       || (_nvars == 0 && _K->is_pid()); }
+  virtual bool has_gcd() const      { return (_nvars == 1 && _K->is_field())
+				       || (_nvars == 0 && _K->has_gcd()); }
+  virtual bool is_graded() const    { return _isgraded; } // MES: change this
   virtual bool is_expensive() const { return 1; }
-  virtual bool is_commutative_ring() const { return !M->is_skew(); }
+
+  virtual bool is_poly_ring() const { return true; }
+  virtual bool is_quotient_poly_ring() const { return _base_ring != NULL; }
 
   virtual void text_out(buffer &o) const;
 
@@ -77,10 +106,13 @@ public:
 
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
+  virtual bool multi_degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
+			       const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -120,7 +152,6 @@ public:
   virtual ring_elem random(int homog, const int *deg) const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 
@@ -130,7 +161,7 @@ protected:
 
   // Polynomial routines
   void make_Rideal(const array<ring_elem> &polys);
-  void make_RidealZ(const array<ring_elem> &polys);
+  void make_RidealZZ(const array<ring_elem> &polys);
 public:
 
   virtual ring_elem mult_by_term(const ring_elem f, 
@@ -142,6 +173,10 @@ public:
   virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
 
+  const int * lead_monomial(const ring_elem f) const;
+  ring_elem lead_term(const ring_elem f) const; // copies the lead term
+  int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
+
   virtual void make_monic(ring_elem &f) const;
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
 
@@ -150,11 +185,18 @@ public:
 			    ring_elem a, const int *m, const ring_elem g) const;
   ring_elem coeff_of(const ring_elem f, const int *m) const;
 
-  ring_elem diff_by_term(const int *exp, const ring_elem f,
-			 int use_coeff) const;
+protected:
+  ring_elem diff_term(const int *m, const int *n, 
+		      int *resultmon,
+		      int use_coeff) const;
+public:
+  virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
+  virtual bool in_subring(int n, const ring_elem a) const;
+  virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
+  virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
+  virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
 
   // Routines special to polynomial rings
-  // in_subring, div_degree, divide_by_var
   // possibly others?
   // Rideal, exterior_vars.
   // nbits
@@ -185,7 +227,6 @@ public:
   void apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_elem> &elems) const;
   void normal_form_ZZ(Nterm *&f) const;
 protected:
-  void term_degree(const Nterm *t, int *degt) const;
   ring_elem imp_skew_mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;
   virtual ring_elem imp_mult_by_term(const ring_elem f, 

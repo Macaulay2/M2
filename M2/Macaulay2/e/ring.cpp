@@ -8,77 +8,42 @@
 
 #include "freemod.hpp"
 
-Ring::Ring(int P, 
-	     int n, 
-	     int totaln,
-	     const Ring *KK,
-	     const Monoid *MM,
-	     const Monoid *DD)
-: type(), P(P), nvars(n), totalvars(totaln), K(KK), M(MM), D(DD),
-HRing(NULL)
+void Ring::initialize_ring(int P,
+			   int nvars,
+			   int totalvars,
+			   const Ring *K,
+			   const Monoid *M,
+			   const Monoid *D)
 {
-  if (K != NULL) bump_up((Ring *) K);
-  bump_up(M);
-  bump_up(D);
+  // Remember: if this is a poly ring, the ring is K[M].
+  // If this is a basic routine, K = this, M = trivial monoid.
+  // If this is a frac field, K = R, M = trivial monoid.
+  _P = P;
+  _nvars = nvars;
+  _totalvars = totalvars;
+  _K = K;
+  _M = M;
+  _D = D;
 
-  if (D->n_vars() > 0)
+  if (_D->n_vars() > 0)
     {
-      HRing = PolynomialRing::create(ZZ, D);
-      bump_up(HRing);
+      _HRing = PolynomialRing::create(ZZ, _D);
     }
   else
-    HRing = NULL;
+    _HRing = 0;
 
-  int msize = M->monomial_size();
-  vecstash = new stash("vectors",
-		       sizeof(vecterm) +
-		       (msize-1) * sizeof(int));
-  // Set up the resterm stash
-  resstash = new stash("respoly", sizeof(resterm *) + sizeof(res_pair *)
-		     + sizeof(ring_elem)
-		     + sizeof(int) * M->monomial_size());
-
-  isfield = false;
-  isquotientring = false;
-  zero_divisor = (Nterm *)0;
-
-  is_ZZ_quotient = false;
-  ZZ_quotient_value = (Nterm *)0;
-}
-
-Ring::Ring(const Ring &R)
-: type(),
-  P(R.P),
-  nvars(R.nvars),
-  totalvars(R.totalvars),
-  K(R.K),
-  M(R.M),
-  D(R.D),
-  HRing(R.HRing),
-  zero_divisor((Nterm *)0),
-  isfield(false),
-  isquotientring(true),
-  is_ZZ_quotient(false), // Needs to be set in polynomial ring creation
-  ZZ_quotient_value((Nterm *)0), // Ditto.
-  vecstash(R.vecstash),
-  resstash(R.resstash)
-{
-  if (K != NULL) bump_up((Ring *) K);
+  _grtype = 0;
+  _flattened_ring = this; // WARNING: this is the default.  Polynomial
+                          // rings, fraction fields, QQ will change this.
+  _zero_divisor = (Nterm*)0;
+  _isfield = false;
+  _isquotientring = false;
+  _is_ZZ_quotient = false;
+  _ZZ_quotient_value = (Nterm*)0;
 }
 
 Ring::~Ring()
 {
-  // PROBLEM: zero_divisor needs to be freed: this MUST be done by the specific ring.
-  // PROBLEM: resstash, vecstash need to be freed, if this is not a quotient.
-  if (!isquotientring)
-    {
-      delete vecstash;
-      delete resstash;
-      bump_down(M);
-      bump_down(D);
-      if (HRing != NULL) bump_down(HRing);
-    }
-  if (K != NULL) bump_down((Ring *) K);
 }
 
 FreeModule *Ring::make_FreeModule() const
@@ -93,27 +58,20 @@ FreeModule *Ring::make_FreeModule(int n) const
 
 bool Ring::is_field() const 
 { 
-  return isfield; 
+  return _isfield; 
 }
 void Ring::declare_field() 
 { 
-  isfield = true; 
+  _isfield = true; 
 }
 ring_elem Ring::get_zero_divisor() const 
 { 
-  return copy(zero_divisor); 
+  return copy(_zero_divisor); 
 }
 
 
 void Ring::remove_vector(vec &v) const
 {
-  while (v != NULL)
-    {
-      vecterm *tmp = v;
-      v = v->next;
-      K->remove(tmp->coeff);
-      vecstash->delete_elem(tmp);
-    }
 }
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const
@@ -125,7 +83,7 @@ void Ring::mult_to(ring_elem &f, const ring_elem g) const
 
 int Ring::coerce_to_int(ring_elem) const
 {
-  gError << "cannot coerce given ring element to an integer";
+  ERROR("cannot coerce given ring element to an integer");
   return 0;
 }
 
@@ -139,14 +97,34 @@ ring_elem Ring::from_double(double a) const
   return result;
 }
 
+ring_elem Ring::from_rational(mpq_ptr q) const
+{
+  return from_int(0);
+}
+
+ring_elem Ring::from_BigReal(mpf_ptr a) const
+{
+  return from_int(0);
+}
+
+ring_elem Ring::from_BigComplex(M2_BigComplex z) const
+{
+  return from_int(0);
+}
+
+ring_elem Ring::from_complex(M2_CC z) const
+{
+  return from_int(0);
+}
+
 ring_elem Ring::random() const
 {
-  gError << "random scalar elements for this ring are not implemented";
+  ERROR("random scalar elements for this ring are not implemented");
   return 0;
 }
 ring_elem Ring::random(int /*homog*/, const int * /*deg*/) const
 {
-  gError << "random non-scalar elements for this ring are not implemented";
+  ERROR("random non-scalar elements for this ring are not implemented");
   return 0;
 }
 
@@ -155,4 +133,99 @@ ring_elem Ring::preferred_associate(ring_elem f) const
   // Here we assume that 'this' is a field:
   if (is_zero(f)) return from_int(1);
   return invert(f);
+}
+
+int Ring::n_terms(const ring_elem) const
+{
+  return 1;
+}
+ring_elem Ring::term(const ring_elem a, const int *) const
+{
+  return copy(a);
+}
+ring_elem Ring::lead_coeff(const ring_elem f) const
+{
+  return f;
+}
+ring_elem Ring::get_coeff(const ring_elem f, const int *) const
+{
+  return f;
+}
+ring_elem Ring::get_terms(const ring_elem f, int, int) const
+{
+  return f;
+}
+
+ring_elem Ring::diff(ring_elem a, ring_elem b, int use_coeff) const
+{
+  return mult(a,b);
+}
+
+bool Ring::in_subring(int n, const ring_elem a) const
+{
+  return true;
+}
+
+void Ring::degree_of_var(int n, const ring_elem a, int &lo, int &hi) const
+{
+  lo = 0;
+  hi = 0;
+}
+
+ring_elem Ring::divide_by_var(int n, int d, const ring_elem a) const
+{
+  if (d == 0) return a;
+  return from_int(0);
+}
+
+ring_elem Ring::divide_by_expvector(const int *exp, const ring_elem a) const
+{
+  return a;
+}
+
+ring_elem Ring::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
+{
+  if (deg != 0) 
+    ERROR("homogenize: no homogenization exists");
+  return f;
+}
+
+ring_elem Ring::homogenize(const ring_elem f, int, const M2_arrayint) const
+{
+  return f;
+}
+
+bool Ring::is_homogeneous(const ring_elem) const
+{
+  return true;
+}
+
+void Ring::degree(const ring_elem, int *d) const
+{
+  degree_monoid()->one(d);
+}
+
+bool Ring::multi_degree(const ring_elem f, int *d) const
+  // returns true iff f is homogeneous
+{
+  degree_monoid()->one(d);
+  return true;
+}
+
+void Ring::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
+{
+  lo = hi = 0;
+}
+int Ring::primary_degree(const ring_elem) const
+{
+  return 0;
+}
+
+
+#include "text_io.hpp"
+extern "C" void prelem(const Ring *R, const ring_elem f)
+{
+  buffer o;
+  R->elem_text_out(o,f);
+  emit(o.str());
 }

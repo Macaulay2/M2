@@ -3,7 +3,7 @@
 #ifndef _comp_hh_
 #define _comp_hh_
 
-#include "object.hpp"
+#include "hash.hpp"
 
 extern "C" char system_interrupted;
 extern int comp_printlevel;
@@ -73,10 +73,10 @@ const int skel        = 2;
 const int pairs       = 3;
 #endif
 
-class computation : public type
+class computation : public mutable_object
 {
 public:
-  computation() {}
+  computation() : mutable_object() {}
   virtual ~computation() {}
   virtual int calc(int nsteps) = 0;
 
@@ -84,15 +84,6 @@ public:
   // at the moment.
   virtual void discard() {}
   virtual void set_next_minor(const int * /*rows*/, const int * /*cols*/) {}
-
-  // Infrastructure
-  class_identifier class_id() const { return CLASS_computation; }
-  type_identifier  type_id () const { return TY_COMP; }
-  const char * type_name   () const { return "computation"; }
-
-  computation *       cast_to_computation   () { return this; }
-
-  void text_out(buffer &o) const { o << "computation"; }
 };
 
 #endif

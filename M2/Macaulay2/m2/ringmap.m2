@@ -1,4 +1,4 @@
---		Copyright 1995-2000 by Daniel R. Grayson
+--		Copyright 1995-2002 by Daniel R. Grayson
 
 RingMap = new Type of HashTable
 RingMap.synonym = "ring map"
@@ -8,6 +8,10 @@ toString RingMap := f -> concatenate(
 net RingMap := f -> horizontalJoin(
      "map(", net target f, ",", net source f, ",", net first entries f.matrix, ")"
      )
+source RingMap := f -> f.source
+target RingMap := f -> f.target
+raw RingMap := f -> f.RawRingMap
+
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}
 
@@ -58,7 +62,7 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	  symbol source => S,
 	  symbol target => R,
 	  symbol matrix => m,
-	  symbol handle => newHandle(ggPush m, ggringmap),
+	  symbol RawRingMap => rawRingMap m.RawMatrix,
 	  symbol DegreeMap => degmap,
 	  symbol cache => new CacheTable
 	  }
@@ -89,8 +93,7 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
      if R =!= ring m then (
 	  m = promote(m,R);
 	  );
-     sendgg(ggPush p, ggPush m, ggev);
-     S.pop())
+     new S from rawRingMapEval(raw p, raw m))
 
 RingMap QQ := RingMap ZZ := (p,m) -> fff(p, promote(m,source p))
 
@@ -101,8 +104,7 @@ RingMap Vector := Vector => (p,m) -> (
      if R =!= ring m 
      then error "expected source of ring map to be the same as ring of matrix";
      F := p M;
-     sendgg(ggPush p, ggPush F, ggPush m, ggev);
-     new F)
+     new F from rawRingMapEval(raw p, raw F, raw m))
 
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
@@ -111,9 +113,7 @@ RingMap Matrix := Matrix => (p,m) -> (
      then error "expected source of ring map to be the same as ring of matrix";
      F := p target m;
      E := p source m;
-     sendgg(ggPush p, ggPush F, ggPush m, ggev);
-     f := getMatrix S;
-     map(F,E,f, Degree => p.DegreeMap degree m))
+     map(F,E,newMatrix(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.DegreeMap degree m))
 
 kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.kernel else f.cache.kernel = (
      R := source f;

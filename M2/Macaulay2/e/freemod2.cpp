@@ -2,8 +2,8 @@
 
 #include "freemod.hpp"
 #include "comb.hpp"
-#include "bin_io.hpp"
 #include "polyring.hpp"
+#include "matrix.hpp"
 
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
@@ -11,44 +11,18 @@
 
 void FreeModule::initialize(const Ring *RR)
 {
-  // type() should already be set.
   R = RR;
-
-  const PolynomialRing *P = RR->cast_to_PolynomialRing();
-  if (P == NULL)
-    {
-      ty = FREE;
-      K = RR;
-      M = NULL;
-      is_quotient_ring = 0;
-    }
-  else
-    {
-      ty = FREE_POLY;
-      K = R->Ncoeffs();
-      M = R->Nmonoms();
-
-      nf_1 = M->make_one();
-      mon_1 = M->make_one();
-
-      nf_exp = nf_exp_a.alloc(M->n_vars());
-      is_quotient_ring = (P->base_ring != NULL);
-      coefficients_are_ZZ = P->coefficients_are_ZZ;
-
-      TO_EXP_monom = M->make_one();
-    }
-
-  bump_up((Ring *) R);
+  schreyer = 0;
 }
 
 FreeModule::FreeModule(const Ring *RR)
-: type()
+: immutable_object(0)
 {
   initialize(RR);
 }
 
 FreeModule::FreeModule(const Ring *RR, int n)
-: type()
+: immutable_object(0)
      // Create R^n, with all gradings zero.
 {
   initialize(RR);
@@ -59,8 +33,9 @@ FreeModule::FreeModule(const Ring *RR, int n)
   degree_monoid()->remove(deg);
 }
 
+#if 0
 FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
-: type()
+: immutable_object(0)
     // Take the degrees and monomials from F, but take the 
     // new ring/monomial information using R.
 {
@@ -69,39 +44,55 @@ FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
 
   int rk = F->rank();
 
-  intarray expa;
-  int *exp = expa.alloc(R->n_vars());
-  int *base = NULL;
-  if (F->M != NULL) base = F->M->make_one();
-  for (int i=0; i<rk; i++)
+  int *exp = new int[R->n_vars()];
+  for (int i=0; i<rk; i++) append(F->degree(i));
+  if (F->schreyer) 
+    schreyer = F->schreyer->copy();
+}
+#endif
+
+FreeModule *FreeModule::make_schreyer(const Matrix *m)
+{
+  int i;
+  const Ring *R = m->get_ring();
+  FreeModule *F = R->make_FreeModule();
+  int rk = m->n_cols();
+  if (rk == 0) return F;
+
+  for (i=0; i<rk; i++)
+    F->append(m->cols()->degree(i));
+
+  F->schreyer = SchreyerOrder::create(m);
+
+  return F;
+}
+
+Matrix * FreeModule::get_induced_order() const
+{
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (!schreyer || P == 0)
+    return Matrix::zero(R->make_FreeModule(0),this);
+  const SchreyerOrder *S = schreyer;
+  int i;
+  int maxtie = 0;
+  for (i=0; i<rank(); i++)
+    if (S->compare_num(i) > maxtie)
+      maxtie = S->compare_num(i);
+  const FreeModule *F = R->make_FreeModule(maxtie+1);
+  Matrix *result = new Matrix(F,this);
+  for (i=0; i<rank(); i++)
     {
-      if (M != NULL)
-	{
-	  F->M->to_expvector(F->base_monom(i), exp);
-	  M->from_expvector(exp, base);
-	}
-      append(F->degree(i), base);
+      ring_elem f = P->term(P->Ncoeffs()->from_int(1), 
+			    S->base_monom(i));
+      (*result)[i] = F->raw_term(f,S->compare_num(i));
     }
-  if (F->M != NULL) F->M->remove(base);
-  ty = F->ty;
+  return result;
 }
 
 FreeModule::~FreeModule()
 {
-  int rk = rank();
-  for (int i=0; i<rk; i++)
-    {
-      if (M != NULL) M->remove(components[i]->base_monom);
-      degree_monoid()->remove(components[i]->deg);
-      delete components[i];
-    }
-  if (M != NULL)
-    {
-      M->remove(nf_1);
-      M->remove(mon_1);
-      M->remove(TO_EXP_monom);
-    }
-  bump_down((Ring *) R);
+  if (schreyer)
+    delete schreyer;
 }
 
 FreeModule *FreeModule::new_free() const
@@ -109,76 +100,33 @@ FreeModule *FreeModule::new_free() const
   return R->make_FreeModule();
 }
 
-#if 0
-bool FreeModule::equals(const object_element *o) const
-{
-  if (o->class_id() != class_id())
-    return false;
-
-  const FreeModule *FF = (FreeModule *)o;
-  if (ty != FF->ty) return false;
-  if (!R->equals(FF->R)) return false;
-  // MESXX: test rank, then for each element, test degree, base, compare_num.
-  return true;
-}
-#endif
-
 //////////////////////////////////////////////
 //  Manipulations involving components ///////
 //////////////////////////////////////////////
 
-void FreeModule::append(const int *d, const int *base, int compare_num)
-{
-  index_type *p = new index_type(compare_num);
-  p->deg = degree_monoid()->make_new(d);
-
-  if (M == NULL)
-    p->base_monom = NULL;
-  else
-    p->base_monom = M->make_new(base);
-
-  components.append(p);
-
-  if (ty == FREE_POLY && !M->is_one(p->base_monom))
-    ty = FREE_SCHREYER;
-}
-
-void FreeModule::append(const int *d, const int *base)
-{
-  append(d, base, rank());
-}
-
 void FreeModule::append(const int *d)
 {
-  index_type *p = new index_type(rank());
-
-  p->deg = degree_monoid()->make_new(d);
-
-  if (M == NULL)
-    p->base_monom = NULL;
-  else
-    p->base_monom = M->make_one();
-
+  int *p = degree_monoid()->make_new(d);
   components.append(p);
 }
 
 bool FreeModule::is_equal(const FreeModule *F) const
 {
   int i;
-  if (this == F) return 1;
-  if (rank() != F->rank()) return 0;
+  if (this == F) return true;
+  if (this->get_ring() != F->get_ring()) return false;
+  if (rank() != F->rank()) return false;
 
-  if (degree_monoid()->n_vars() > 0)
+  const Monoid *D = degree_monoid();
+  if (D->n_vars() > 0)
     for (i=0; i<rank(); i++)
-      if (0 != degree_monoid()->compare(degree(i), F->degree(i)))
-	return 0;
+      if (0 != D->compare(degree(i), F->degree(i)))
+	return false;
 
-  if (M != NULL)
-    for (i=0; i<rank(); i++)
-      if (M->compare(base_monom(i), F->base_monom(i)) != 0)
-	return 0;
+  if (schreyer != NULL)
+    return schreyer->is_equal(F->schreyer);
 
-  return 1;
+  return true;
 }
 
 //////////////////////////////////////////////
@@ -194,8 +142,11 @@ FreeModule *FreeModule::shift(const int *d) const
   for (int i=0; i<rank(); i++)
     {
       degree_monoid()->mult(degree(i), d, deg);
-      result->append(deg, base_monom(i));
+      result->append(deg);
     }
+
+  if (schreyer != NULL)
+    result->schreyer = schreyer->copy();
 
   degree_monoid()->remove(deg);
   return result;
@@ -206,27 +157,32 @@ FreeModule *FreeModule::sub_space(int n) const
 {
   if (n < 0 || n > rank())
     {
-      gError << "subfreemodule: index out of bounds";
+      ERROR("subfreemodule: index out of bounds");
       return NULL;
     }
   FreeModule *result = new_free();
   for (int i=0; i<n; i++)
-    result->append(degree(i), base_monom(i));
+    result->append(degree(i));
+
+  if (schreyer != NULL)
+    result->schreyer = schreyer->sub_space(n);
   return result;
 }
 
-FreeModule *FreeModule::sub_space(const intarray &a) const
+FreeModule *FreeModule::sub_space(const M2_arrayint a) const
 {
   FreeModule *result = new_free();
-  for (int i=0; i<a.length(); i++)
-    if (a[i] >= 0 && a[i] < rank())
-      result->append(degree(a[i]), base_monom(a[i]));
+  for (unsigned int i=0; i<a->len; i++)
+    if (a->array[i] >= 0 && a->array[i] < rank())
+      result->append(degree(a->array[i]));
     else
       {
-	gError << "subfreemodule: index out of bounds";
+	ERROR("subfreemodule: index out of bounds");
 	delete result;
 	return NULL;
       }
+  if (schreyer != NULL)
+    result->schreyer = schreyer->sub_space(a);
   return result;
 }
 
@@ -241,6 +197,7 @@ FreeModule *FreeModule::transpose() const
       result->append(deg);
     }
 
+  // result has no schreyer order
   degree_monoid()->remove(deg);
   return result;
 }
@@ -249,92 +206,55 @@ FreeModule *FreeModule::direct_sum(const FreeModule *G) const
      // direct sum 
 {
   int i;
+  if (get_ring() != G->get_ring())
+    {
+      ERROR("expected free modules over the same ring");
+      return 0;
+    }
   FreeModule *result = new_free();
   for (i=0; i<rank(); i++)
-    result->append(degree(i), base_monom(i));
+    result->append(degree(i));
   for (i=0; i<G->rank(); i++)
-    result->append(G->degree(i), G->base_monom(i));
+    result->append(G->degree(i));
+
+  if (schreyer != NULL && G->schreyer != NULL)
+    result->schreyer = schreyer->direct_sum(G->schreyer);
+
   return result;
 }
 
 void FreeModule::direct_sum_to(const FreeModule *G)
 {
   for (int i=0; i<G->rank(); i++)
-    append(G->degree(i), G->base_monom(i));
+    append(G->degree(i));
+
+  if (schreyer != NULL && G->schreyer != NULL)
+    schreyer->append_order(G->schreyer);
 }
 
 FreeModule *FreeModule::tensor(const FreeModule *G) const
      // tensor product
 {
-//  if (R != G->R) 
-//    THROW("free module tensor product: arguments must have same base ring");
-
+  if (get_ring() != G->get_ring())
+    {
+      ERROR("expected free modules over the same ring");
+      return 0;
+    }
   FreeModule *result = new_free();
   int *deg = degree_monoid()->make_one();
-  int *base = NULL;
-  if (M != NULL) base = M->make_one();
 
   for (int i=0; i<rank(); i++)
     for (int j=0; j<G->rank(); j++)
       {
 	degree_monoid()->mult(degree(i), G->degree(j), deg);
-	if (M != NULL)
-	  M->mult(base_monom(i), G->base_monom(j), base);
-	result->append(deg, base);
+	result->append(deg);
       }
-  degree_monoid()->remove(deg);
-  if (M != NULL) M->remove(base);
-  return result;
-}
-
-#if 0
-// OLD (4/26/2001) version.  Buggy: comb::binom exits M2
-// if p >= 35. (or n is).
-FreeModule *FreeModule::exterior(int p) const
-     // p th exterior power
-{
-  int r, c;
-
-  FreeModule *result;
-
-  if (p == 0) 
-    result = get_ring()->make_FreeModule(1);
-  result = new_free();
-  if (p > rank() || p < 0) return result;
-
-  int n = comb::binom(rank(), p);
-  intarray carray(p);
-  int *a = carray.raw();
-
-  int *deg = degree_monoid()->make_one();
-  int *base = NULL;
-  if (M != NULL) base = M->make_one();
-
-  for (c=0; c<n; c++)
-    {
-      comb::decode(c,a,p);
-
-      degree_monoid()->one(deg);
-
-      for (r=0; r<p; r++)
-	degree_monoid()->mult(deg, degree(a[r]), deg);
-
-      if (M != NULL)
-	{
-	  M->one(base);
-	  for (r=0; r<p; r++)
-	    M->mult(base, base_monom(a[r]), base);
-	}
-
-      result->append(deg, base);
-    }
 
   degree_monoid()->remove(deg);
-  if (M != NULL) M->remove(base);
-
+  if (schreyer != NULL && G->schreyer != NULL)
+    result->schreyer = schreyer->tensor(G->schreyer);
   return result;
 }
-#endif
 
 FreeModule *FreeModule::exterior(int p) const
      // p th exterior power
@@ -354,9 +274,6 @@ FreeModule *FreeModule::exterior(int p) const
     a[i] = i;
 
   int *deg = degree_monoid()->make_one();
-  int *base = NULL;
-  if (M != NULL) base = M->make_one();
-
   do
     {
       degree_monoid()->one(deg);
@@ -364,49 +281,37 @@ FreeModule *FreeModule::exterior(int p) const
       for (int r=0; r<p; r++)
 	degree_monoid()->mult(deg, degree(a[r]), deg);
 
-      // This part is only for Schreyer orders
-      if (M != NULL)
-	{
-	  M->one(base);
-	  for (int r=0; r<p; r++)
-	    M->mult(base, base_monom(a[r]), base);
-	}
-
-      result->append(deg, base);
+      result->append(deg);
     }
   while (comb::increment(p, rk, a));
 
   degree_monoid()->remove(deg);
-  if (M != NULL) M->remove(base);
   delete [] a;
 
+  if (schreyer != NULL)
+    result->schreyer = schreyer->exterior(p);
   return result;
 }
 
 static FreeModule *symm1_result = NULL;
 static int *symm1_deg = NULL;
-static int *symm1_base = NULL;
 
 void FreeModule::symm1(int lastn,	     // can use lastn..rank()-1 in product
 			int pow) const   // remaining power to take
 {
   if (pow == 0)
-    symm1_result->append(symm1_deg, symm1_base);
+    symm1_result->append(symm1_deg);
   else
     {
       for (int i=lastn; i<rank(); i++)
 	{
-	  // increase symm1_deg, symm1_base with e_i
+	  // increase symm1_deg, with e_i
 	  degree_monoid()->mult(symm1_deg, degree(i), symm1_deg);
-	  if (ty == FREE_SCHREYER)
-	    M->mult(symm1_base, base_monom(i), symm1_base);
 
 	  symm1(i, pow-1);
 
-	  // decrease symm1_deg, symm1_base back
+	  // decrease symm1_deg back
 	  degree_monoid()->divide(symm1_deg, degree(i), symm1_deg);
-	  if (ty == FREE_SCHREYER)
-	    M->divide(symm1_base, base_monom(i), symm1_base);
 	}
     }
 }
@@ -418,53 +323,16 @@ FreeModule *FreeModule::symm(int n) const
   if (n >= 0)
     {
       symm1_deg = degree_monoid()->make_one();
-      if (M != NULL)
-	symm1_base = M->make_one();
       
       symm1(0, n);
       
       degree_monoid()->remove(symm1_deg);
-      if (M != NULL) M->remove(symm1_base);
     }
   FreeModule *result = symm1_result;
   symm1_result = NULL;
+  if (schreyer != NULL)
+    result->schreyer = schreyer->symm(n);
   return result;
-}
-
-void FreeModule::gcd(intarray &lo_deg) const
-{
-  int *lodeg;
-  int *finaldeg = lo_deg.alloc(degree_monoid()->n_vars());
-  if (rank() == 0) 
-    {
-      lodeg = degree_monoid()->make_one();
-    }
-  else 
-    {
-      lodeg = degree_monoid()->make_new(degree(0));
-      for (int i=1; i<rank(); i++)
-	degree_monoid()->gcd(lodeg, degree(i), lodeg);
-    }
-  degree_monoid()->to_expvector(lodeg, finaldeg);
-  degree_monoid()->remove(lodeg);
-}
-
-void FreeModule::lcm(intarray &hi_deg) const
-{
-  int *hideg;
-  int *finaldeg = hi_deg.alloc(degree_monoid()->n_vars());
-  if (rank() == 0) 
-    {
-      hideg = degree_monoid()->make_one();
-    }
-  else 
-    {
-      hideg = degree_monoid()->make_new(degree(0));
-      for (int i=1; i<rank(); i++)
-	degree_monoid()->lcm(hideg, degree(i), hideg);
-    }
-  degree_monoid()->to_expvector(hideg, finaldeg);
-  degree_monoid()->remove(hideg);
 }
 
 int FreeModule::primary_degree(int i) const
@@ -508,34 +376,8 @@ void FreeModule::text_out(buffer &o) const
       degree_monoid()->elem_text_out(o, degree(i));
     }
   o << "}";
-  if (ty == FREE_SCHREYER)
-    for (i=0; i<rk; i++)
-      {
-	if (i != 0) o << ' ';
-	M->elem_text_out(o, base_monom(i));
-	o << '.';
-	o << compare_num(i);
-      }
+  if (schreyer != NULL) schreyer->text_out(o);
   o << ')';
 }
 
-void FreeModule::bin_out(buffer &o) const
-{
-  int rk = rank();
-  int n;
-  if (degree_monoid() != NULL)
-    n = degree_monoid()->n_vars();
-  else 
-    n = 0;
-  //bin_int_out(o, rk);
-  int *exp = new int[n+1];  // only use 0..n-1
-  bin_int_out(o, rk * n);
-  for (int i=0; i<rk; i++)
-    {
-      degree_monoid()->to_expvector(degree(i), exp);
-      for (int j=0; j<n; j++)
-	bin_int_out(o, exp[j]);
-    }
-  delete [] exp;
-}
 

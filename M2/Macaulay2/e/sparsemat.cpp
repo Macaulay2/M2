@@ -7,14 +7,12 @@ stash *VectorOperations::vecstash = 0;
 VectorOperations::VectorOperations(const Ring *K)
 : K(K)
 {
-  bump_up((Ring *)K);
   if (vecstash == 0)
     vecstash = new stash("sparse_vectors", sizeof(sparse_vector));
 }
 
 VectorOperations::~VectorOperations()
 {
-  bump_down((Ring *)K);
 }
 
 sparse_vector *VectorOperations::new_sparse_vector() const
@@ -122,7 +120,7 @@ void VectorOperations::divide(sparse_vector *&v, const ring_elem a) const
   for (sparse_vector *p = &head; p->next != 0; p=p->next)
     {
       //old version: K->mult_to(p->next->coefficient, a);
-      ring_elem c = K->divide(p->next->coefficient,a);
+      ring_elem c = K->divide(p->next->coefficient,a); // exact or quotient?? MES MES
       K->remove(p->next->coefficient);
       p->next->coefficient = c;
       if (K->is_zero(p->next->coefficient))
@@ -145,7 +143,7 @@ void VectorOperations::divideRow(sparse_vector *&v, int r, const ring_elem a) co
       break;
     else if (p->next->component == r)
       {
-	ring_elem c = K->divide(p->next->coefficient, a);
+	ring_elem c = K->divide(p->next->coefficient, a); // exact or quotient?? MES MES
 	K->remove(p->next->coefficient);
 	p->next->coefficient = c;
 	if (K->is_zero(p->next->coefficient))
@@ -456,18 +454,18 @@ void SparseMutableMatrix::initialize(const Ring *KK, int nr, int nc)
 
 // Harry: tried to change following to update colSize and rowSize.
 
-SparseMutableMatrix::SparseMutableMatrix(const Matrix &m)
+SparseMutableMatrix::SparseMutableMatrix(const Matrix *m)
 {
-  initialize(m.get_ring(), m.n_rows(), m.n_cols());
+  initialize(m->get_ring(), m->n_rows(), m->n_cols());
   // Now loop through and get all (non-zero) entries.
-  for (int c=0; c<m.n_cols(); c++)
+  for (int c=0; c<m->n_cols(); c++)
     {
       int last_row = -1;
-      for (vec v = m[c]; v!=0; v=v->next)
+      for (vec v = (*m)[c]; v!=0; v=v->next)
 	if (v->comp != last_row)
 	  {
 	    last_row = v->comp;
-	    ring_elem a = m.elem(last_row,c);
+	    ring_elem a = m->elem(last_row,c);
 	    if (K->is_zero(a) == false)
 	      {
 		colSize[c]++;
@@ -483,6 +481,16 @@ SparseMutableMatrix::SparseMutableMatrix(const Ring *K, int nrows, int ncols)
   initialize(K,nrows,ncols);
 }
 
+SparseMutableMatrix * SparseMutableMatrix::make(const Ring *K, int nrows, int ncols)
+{
+  return new SparseMutableMatrix(K,nrows,ncols);
+}
+
+SparseMutableMatrix * SparseMutableMatrix::make(const Matrix *m)
+{
+  return new SparseMutableMatrix(m);
+}
+
 SparseMutableMatrix::~SparseMutableMatrix()
 {
   for (int c=0; c<ncols; c++)
@@ -493,20 +501,20 @@ SparseMutableMatrix::~SparseMutableMatrix()
   delete V;
 }
 
-Matrix SparseMutableMatrix::toMatrix() const
+Matrix *SparseMutableMatrix::toMatrix() const
 {
   FreeModule *F = K->make_FreeModule(nrows);
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (int c=0; c<ncols; c++)
     {
       // Create the vec v.
       vec v = 0;
       for (sparse_vector *w = matrix[c]; w!=0; w=w->next)
 	{
-	  vec tmp = F->term(w->component, K->copy(w->coefficient));
+	  vec tmp = F->raw_term(K->copy(w->coefficient), w->component);
 	  F->add_to(v,tmp);
 	}
-      result.append(v);
+      result->append(v);
     }
   return result;
 }
@@ -548,7 +556,7 @@ bool SparseMutableMatrix::errorColumnBound(int c) const
 {
   if (c < 0 || c >= ncols)
     {
-      gError << "column out of range";
+      ERROR("column out of range");
       return true;
     }
   return false;
@@ -558,7 +566,7 @@ bool SparseMutableMatrix::errorRowBound(int r) const
 {
   if (r < 0 || r >= nrows)
     {
-      gError << "row out of range";
+      ERROR("row out of range");
       return true;
     }
   return false;
@@ -749,7 +757,7 @@ void SparseMutableMatrix::normalizeColumn(int c, bool doRecording)
 {
   if (errorColumnBound(c)) return;
   if (matrix[c] == 0) return;
-  if (K->is_Z())
+  if (K->is_ZZ())
     {
       ring_elem a = matrix[c]->coefficient;
       mpz_ptr b = (mpz_ptr)a.poly_val;
@@ -770,7 +778,7 @@ void SparseMutableMatrix::columnReduce(int c1, int c2, bool doRecording)
   if (!K->is_equal(a1,one))
     {
       ring_elem rem;
-      b = K->divide(a2,a1,rem);
+      b = K->divide(a2,a1,rem); // division algorithm...
       K->negate_to(b);
       K->remove(rem);
     }
@@ -855,8 +863,8 @@ void SparseMutableMatrix::gcdColumnReduce(int c1, int c2, bool doRecording)
   // Second column: matrix[column c2] = w1 = (a1/d) c2 - (a2/d) c1
   sparse_vector *w1 = V->clone(matrix[c2]);
   sparse_vector *w2 = V->clone(matrix[c1]);
-  ring_elem b1 = K->divide(a1,d);
-  ring_elem b2 = K->divide(b,d);
+  ring_elem b1 = K->divide(a1,d); // exact division
+  ring_elem b2 = K->divide(b,d); // exact division
   V->scale(w1,b1);
   V->scale(w2,b2);
   V->add(w1,w2);
@@ -909,8 +917,8 @@ void SparseMutableMatrix::gcdRowReduce(int c, int r1, int r2, bool doRecording)
     {
       b = K->negate(a2);
       d = K->gcd_extended(a1,a2,x,y);
-      b1 = K->divide(a1,d);
-      b2 = K->divide(b,d);
+      b1 = K->divide(a1,d); // exact
+      b2 = K->divide(b,d); // exact
       row2by2(r1,r2,x,y,b1,b2,doRecording);
       K->remove(b);
       K->remove(d);
@@ -936,8 +944,8 @@ void SparseMutableMatrix::gcdColumnReduce(int r, int c1, int c2, bool doRecordin
     {
       b = K->negate(a2);
       d = K->gcd_extended(a1,a2,x,y);
-      b1 = K->divide(a1,d);
-      b2 = K->divide(b,d);
+      b1 = K->divide(a1,d); //exact
+      b2 = K->divide(b,d); // exact
       // Make first column: matrix[column c1] = v1 = x*c1+y*c2
       // Second column: matrix[column c2] = w1 = (a1/d) c2 - (a2/d) c1
       column2by2(c1,c2,x,y,b1,b2,doRecording);
@@ -1188,7 +1196,7 @@ int SparseMutableMatrix::compare_sparse_vectors(sparse_vector *v, sparse_vector 
   int cmp = v->component - w->component;
   if (cmp > 0) return GT;
   if (cmp < 0) return LT;
-  if (K->is_Z())
+  if (K->is_ZZ())
     {
       bool negate_a = false;
       bool negate_b = false;

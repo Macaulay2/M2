@@ -1,7 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-new HashTable from List := HashTable => (O,v) -> hashTable v
-
 OptionTable = new Type of HashTable
 OptionTable.synonym = "option table"
 
