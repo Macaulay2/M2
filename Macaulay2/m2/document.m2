@@ -35,8 +35,8 @@ addStartFunction(
 -----------------------------------------------------------------------------
 writingInputFiles         := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
-writingHtmlFiles          := () -> phase === 5
-writing                   := () -> phase === 2 or phase === 4 or phase == 5
+writingFinalDocDatabase   := () -> phase === 4
+writing                   := () -> phase === 2 or phase === 4
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------
@@ -386,7 +386,7 @@ checkForNodeBaseFilename := key -> (
 	  );
      nodeBaseFilename = (
 	  if #t > 0 then first t
-	  else if writingInputFiles() or writingHtmlFiles()
+	  else if writingInputFiles()
 	  then cacheFileName(first documentationPath, key)
 	  else null
      	  );
@@ -1543,3 +1543,22 @@ html TOC := x -> (
 	  }
      )
 
+addEndFunction( () -> if writingFinalDocDatabase() then (
+	  scan(values symbolTable(), x -> (
+		    if not DocDatabase#?(toExternalString toString x) 
+		    then (
+			 pos := locate x;
+			 if pos =!= null then pos = pos#0 | ":" | toString pos#1 | ": ";
+			 stderr << pos << "warning: no documentation for symbol " << x;
+			 if value x =!= x then stderr << " with value of class " << class value x;
+			 stderr << endl;
+			 document {
+			      if value x =!= x and (
+				   class value x === Function
+				   or class value x === ScriptedFunctor
+				   or instance(value x, Type)
+				   )
+			      then value x
+			      else x,
+			      Headline => "undocumented symbol", "No documentation provided yet."};
+			 )))))
