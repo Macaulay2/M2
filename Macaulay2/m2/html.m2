@@ -174,6 +174,8 @@ fakeMenu := x -> (
 	  }
      )
 
+commentize := s -> if s =!= null then concatenate(" -- ",s)
+
 makeHtmlNode = key -> (
      fn := buildDirectory | htmlFilename key;
      if debugLevel > 1 then stderr << "--making html page for " << key << endl;
@@ -182,7 +184,7 @@ makeHtmlNode = key -> (
      << doctype << endl
      << html HTML { 
 	  HEAD {
-	       TITLE {key, headline key},
+	       TITLE {key, commentize headline key},
 	       style(), links()
 	       },
 	  BODY { 
@@ -546,7 +548,7 @@ makePackageIndex String := prefixDirectory -> (
      << doctype << endl
      << html HTML { 
 	  HEAD {
-	       TITLE {key, headline key},
+	       TITLE {key, commentize headline key},
 	       style(), links()
 	       },
 	  BODY { 

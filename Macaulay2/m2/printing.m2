@@ -45,10 +45,7 @@ net ParagraphList := x -> (
      x = toList x;
      x = net \ x;					    -- convert each to net
      x = select(x, p -> width p > 0);			    -- omit null strings
-     x = apply(x,p -> wrap(
-	       printWidth - promptWidth(),		    -- we don't really know!
-	       printWidth,				    -- we don't really know!
-	       net p));	-- wrap each one
+     x = apply(x,p -> wrap net p);
      x = between("",x);					    -- double space
      stack x)
 

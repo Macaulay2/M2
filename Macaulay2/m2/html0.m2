@@ -109,6 +109,7 @@ DL 	   = new MarkUpType of MarkUpListParagraph
 TO         = new MarkUpType of MarkUpList
 TO2        = new MarkUpType of MarkUpList
 TOH        = new MarkUpType of MarkUpList
+MENU       = new MarkUpType of MarkUpListParagraph	    -- like "* Menu:" of "info"
 SECTION    = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 TOC	   = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 
