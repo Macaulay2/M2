@@ -4,7 +4,7 @@
 #include "hermite.hpp"
 #include "text_io.hpp"
 #include "vector.hpp"
-extern Z *globalZZ;
+extern ZZ *globalZZ;
 
 hm_elem *HermiteComputation::new_gen(int i)
 {

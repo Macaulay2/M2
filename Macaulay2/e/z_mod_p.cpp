@@ -4,11 +4,11 @@
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "random.hpp"
 #include "gbring.hpp"
 
-extern Z *globalZZ;
+extern ZZ *globalZZ;
 
 bool Z_mod::initialize_Z_mod(int p, const Monoid *D)
 {
@@ -256,7 +256,7 @@ ring_elem Z_mod::power(const ring_elem f, int n) const
 ring_elem Z_mod::power(const ring_elem f, mpz_t n) const
 {
   if (f == _ZERO) return _ZERO;
-  int n1 = Z::mod_ui(n, _P1);
+  int n1 = ZZ::mod_ui(n, _P1);
   int m = (f * n1) % _P1;
   if (m < 0) m += _P1;
   return m;

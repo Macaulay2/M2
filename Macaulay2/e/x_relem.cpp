@@ -6,7 +6,7 @@
 #include "monomial.hpp"
 #include "relem.hpp"
 #include "z_mod_p.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "QQ.hpp"
 #include "RR.hpp"
 #include "CC.hpp"
@@ -748,7 +748,7 @@ void cmd_Z_mod(object &r, object &oM)
   if (p > 0)
     gStack.insert(Z_mod::create(p,M));
   else if (p == 0)
-    gStack.insert(Z::create(M));
+    gStack.insert(ZZ::create(M));
   else
     gError << "Z/pZ: p must be non-negative";
 }
@@ -921,7 +921,7 @@ void cmd_get_zero_divisor(object &oR)
 void i_ring_elem_cmds(void)
 {
   assert(trivial_monoid != NULL);
-  ZZ = Z::create(Monoid::get_trivial_monoid());
+  ZZ = ZZ::create(Monoid::get_trivial_monoid());
   double default_epsilon = .000000000001;
   RRR = RR::create(Monoid::get_trivial_monoid(),default_epsilon);
 

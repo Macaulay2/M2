@@ -231,7 +231,7 @@ int IM2_GB_verbose(int level)
 #include "Eschreyer.hpp"
 
 extern int gbTrace;
-extern Z *globalZZ;
+extern ZZ *globalZZ;
 
 #if 0
 

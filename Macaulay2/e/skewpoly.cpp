@@ -62,7 +62,7 @@ ring_elem SkewPolynomialRing::imp_mult_by_term(const ring_elem f,
 ring_elem SkewPolynomialRing::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (Z::get_si(n1,n))
+  if (ZZ::get_si(n1,n))
     return power(f,n1);
   else 
     {

@@ -32,7 +32,7 @@ INTERFACE = \
 	GF \
 	LLL \
 	RR \
-	Z \
+	ZZ \
 	QQ \
 	bigRR \
 	bigCC \

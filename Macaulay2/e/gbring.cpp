@@ -1,6 +1,6 @@
 #include "gbring.hpp"
 #include "text_io.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "QQ.hpp"
 #include "freemod.hpp"
 #include "geovec.hpp"

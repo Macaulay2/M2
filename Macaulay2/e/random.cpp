@@ -7,11 +7,11 @@
 #define MASK 123459876
 
 #include "random.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "relem.hpp"
 #include "gmp.h"
 
-extern Z *globalZZ;
+extern ZZ *globalZZ;
 int32 Random::seed;
 int32 Random::maxint32;
 RingElement *Random::maxint;

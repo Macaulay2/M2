@@ -10,7 +10,7 @@
 
 #include "array.hpp"
 #include "queue.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "QQ.hpp"
 
 extern void factory_setup(); // M2-factory.cpp
@@ -40,7 +40,7 @@ void IM2_initialize()
   initialized = true;
   doubles                  = new doubling_stash;
 
-  globalZZ = Z::create(Monoid::get_trivial_monoid());
+  globalZZ = ZZ::create(Monoid::get_trivial_monoid());
   globalQQ = QQ::create(Monoid::get_trivial_monoid());
   Random::i_random();
   factory_setup();
