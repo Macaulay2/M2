@@ -853,11 +853,11 @@ document { "using functions with optional arguments",
 document { "making new functions with optional arguments",
      "Let's consider an example where we wish to construct a linear function of ", TT "x", " 
      called ", TT "f", ", with the slope and y-intercept of the graph being optional
-     arguments of ", TT "f", ".  We use the ", TO "==>", " operator to attach the default
+     arguments of ", TT "f", ".  We use the ", TO ">>>", " operator to attach the default
      values to our function, coded in a special way.",
      EXAMPLE {
 	  "opts = {Slope => 1, Intercept => 1}",
-	  "f = opts ==> o -> x -> x * o.Slope + o.Intercept",
+	  "f = opts >>> o -> x -> x * o.Slope + o.Intercept",
 	  "f 5",
 	  "f(5, Slope => 100)",
 	  "f(5, Slope => 100, Intercept => 1000)",
@@ -873,7 +873,7 @@ document { "making new functions with optional arguments",
      but handling multiple arguments is just as easy.  Here is an example with two
      arguments.",
      EXAMPLE {
-	  "f = {a => 1000} ==> o -> (x,y) -> x * o.a + y;",
+	  "f = {a => 1000} >>> o -> (x,y) -> x * o.a + y;",
 	  "f(3,7)",
 	  "f(5,11,a=>10^20)",
 	  },

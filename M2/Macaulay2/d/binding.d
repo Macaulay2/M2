@@ -142,6 +142,7 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
      parseEOF.precedence = prec;
      parseEOF.binaryStrength = prec;
      precRightParen := prec;
+-- programming:
 bump();
      SemicolonW = nright(";");
      export semicolonS := makeKeyword(SemicolonW);
@@ -160,23 +161,32 @@ bump();
      export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(LeftArrowW);
      export RightArrowW := binaryright("->",arrowop); makeKeyword(RightArrowW);
      export DoubleArrowS := makeKeyword(binaryright("=>"));
-     export LongDoubleArrowS := makeKeyword(binaryright("==>"));
+     export GreaterGreaterGreaterS := makeKeyword(binaryright(">>>"));
 bump();
      narrow := prec;
      whenW = token("when"); makeKeyword(whenW);
      ofW = token("of"); makeKeyword(ofW);
      fromW = token("from"); makeKeyword(fromW);
      toW = token("to"); makeKeyword(toW);
+-- input/output:
 bump();
-     export LessLessS := makeKeyword(unaryleft("<<"));
+     export LessLessS := makeKeyword(unaryleft("<<"));	    -- also binary
 bump();
      export GreaterGreaterS := makeKeyword(binaryright(">>"));
+-- logic:
+bump();
+     export DeductionS := makeKeyword(unaryleft("|-"));	    -- also binary
+bump();
+     export LongBiDoubleArrowS := makeKeyword(binaryright("<==>"));
+bump();
+     export LongDoubleArrowS := makeKeyword(binaryright("==>"));
 bump();
      export orS := makeKeyword(binaryleftword("or"));
 bump();
      export andS := makeKeyword(binaryleftword("and"));
 bump();
      export notS := makeKeyword(unaryword("not"));
+-- binary predicates on terms:
 bump();
      export LessS := makeKeyword(unaryleft("<"));
      export GreaterS := makeKeyword(unaryleft(">"));
@@ -187,6 +197,7 @@ bump();
      export QuestionS := makeKeyword(binaryleft("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryleft("=!="));
      export NotEqualS := makeKeyword(binaryleft("!="));
+-- operations on terms that yield terms:
 bump();
      export BarBarS := makeKeyword(binaryleft("||"));
 bump();
@@ -202,7 +213,7 @@ bump();
 bump();
      export DotDotS := makeKeyword(binaryleft(".."));
 bump();
-     export MinusS := makeKeyword(unaryleft("-"));
+     export MinusS := makeKeyword(unaryleft("-"));	    -- also binary
      export PlusS := makeKeyword(binaryleft("+"));
      export PlusPlusS := makeKeyword(binaryleft("++"));
 bump();
@@ -212,7 +223,7 @@ bump();
 bump();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
      -- bump(); -- removed so we can intermingle \\ with \ in expressions : see method for 'Function \\ VisibleList'
-     export StarS := makeKeyword(unaryleft("*"));
+     export StarS := makeKeyword(unaryleft("*"));	    -- also binary
      export DivideS := makeKeyword(binaryleft("/"));
      export LeftDivideS := makeKeyword(binaryright("\\"));
      export PercentS := makeKeyword(binaryleft("%"));
@@ -432,15 +443,15 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
 export opsWithBinaryMethod := array(SymbolClosure)(
-     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
+     LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, GreaterGreaterGreaterS, LongBiDoubleArrowS, DeductionS,
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS,
-     LessS, GreaterS, LessEqualS, GreaterEqualS);
+     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS, notS, DeductionS,
+     LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
+     );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );
-export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS, orS, andS, notS, 
-     -- LessS, GreaterS, LessEqualS, GreaterEqualS,
+export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS,
      EqualEqualEqualS, EqualEqualS,
      QuestionS, NotEqualEqualEqualS, NotEqualS, SharpSharpS, SharpQuestionS, DotS, DotQuestionS,
      ExclamationS );
@@ -603,14 +614,6 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  then bindassignment(binary,dictionary,false)
 	  else if binary.operator.word == ColonEqualW
 	  then bindassignment(binary,dictionary,true)
-	  else if binary.operator.word == orS.symbol.word
-	       || binary.operator.word == andS.symbol.word
-	  then (
-	       bind(binary.lhs,dictionary);
-	       bindop(binary.operator,dictionary);
-	       -- binary.rhs = bindnewdictionary(binary.rhs,dictionary);
-	       bind(binary.rhs,dictionary);
-	       )
 	  else if binary.operator.word == DotS.symbol.word
 	  then (
 	       bind(binary.lhs,dictionary);

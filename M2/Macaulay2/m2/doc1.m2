@@ -424,20 +424,20 @@ document { (NewFromMethod, HashTable, List),
 
 document { OptionTable,
      Headline => "the class of hash tables for optional arguments",
-     SEEALSO "==>" }
+     SEEALSO ">>>" }
 
-document { (symbol "==>", List, Function),
+document { (symbol ">>>", List, Function),
      Headline => "attaching options to a function",
-     "See ", TO (symbol "==>", OptionTable, Function), " for details."
+     "See ", TO (symbol ">>>", OptionTable, Function), " for details."
      }
 
-document { (symbol "==>", OptionTable, Function),
+document { (symbol ">>>", OptionTable, Function),
      Headline => "attaching options to a function",
-     Usage => { TT "defs ==> fun", " -- a new function made from the
+     Usage => { TT "defs >>> fun", " -- a new function made from the
 	  function ", TT "fun", " that processes optional arguments
 	  specified by ", TT "defs", "."},
      Synopsis => {
-	  "g = defs ==> fun",
+	  "g = defs >>> fun",
 	  "defs" => { "a hash table whose keys are the names
      of the optional arguments, and whose values are the
      corresponding default values." },
@@ -461,7 +461,7 @@ document { (symbol "==>", OptionTable, Function),
      "In the following example we use a simple definition for ", TT "fun", "
      so we can see everything that ", TT "fun", " receives.",
      EXAMPLE {
-	  "g = {a=>1, b=>2} ==> opts -> args -> {args, opts}",
+	  "g = {a=>1, b=>2} >>> opts -> args -> {args, opts}",
 	  "g x",
 	  "g(x,y,b=>66)",
 	  "g(t,u,a=>44,b=>77)",
