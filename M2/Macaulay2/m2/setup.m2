@@ -51,6 +51,7 @@ applyMethod := (m,x) -> if x === null then x else (
      )
 
 commonProcessing := x -> (
+     err := rawGetErrorMessage(); if err =!= null then stderr << endl << " -- internal error : engine error message ignored : " << err << endl << endl;	-- just temporary
      x = applyMethod(AfterEval,x);
      if x =!= null then (
      	  s := getGlobalSymbol(OutputDictionary,concatenate(interpreterDepth:"o",toString lineNumber));
