@@ -382,7 +382,7 @@ int hilb_comp::step()
       if (current->up == NULL) 
 	{
 
-	  ring_elem tmp = R->term(one, input_mat->rows()->degree(this_comp));
+	  ring_elem tmp = R->make_flat_term(one, input_mat->rows()->degree(this_comp));
 	  R->mult_to(f, tmp);
 	  R->add_to(result_poincare, f);
 	  R->remove(tmp);
@@ -418,7 +418,7 @@ void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
   current = current->down;
   current->h0 = R->from_int(0);
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
-  current->h1 = R->term(one, LOCAL_deg1); // t^(deg vp)
+  current->h1 = R->make_flat_term(one, LOCAL_deg1); // t^(deg vp)
   MonomialIdeal *quot = new MonomialIdeal(S);
   MonomialIdeal *sum = new MonomialIdeal(S);
   iquotient_and_sum(*I, pivot_vp, quot, sum);
@@ -442,18 +442,18 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
       // len==1: set F to be 1 - t^(deg m), where m = this one element
       // len==2: set F to be 1 - t^(deg m1) - t^(deg m2) + t^(deg lcm(m1,m2))
       M->degree_of_varpower(I->first_elem(), LOCAL_deg1);
-      G = R->term(minus_one, LOCAL_deg1);
+      G = R->make_flat_term(minus_one, LOCAL_deg1);
       R->add_to(F, G);
 
       if (len == 2)
 	{
 	  M->degree_of_varpower(I->second_elem(), LOCAL_deg1);
-	  G = R->term(minus_one, LOCAL_deg1);
+	  G = R->make_flat_term(minus_one, LOCAL_deg1);
 	  R->add_to(F, G);
 	  LOCAL_vp.shrink(0);
 	  varpower::lcm(I->first_elem(), I->second_elem(), LOCAL_vp);
 	  M->degree_of_varpower(LOCAL_vp.raw(), LOCAL_deg1);
-	  G = R->term(one, LOCAL_deg1);
+	  G = R->make_flat_term(one, LOCAL_deg1);
 	  R->add_to(F,G);
 	}
     }
@@ -470,20 +470,20 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
 	  // where e_i >= 1 is the smallest number s.t. x_i^(e_i) is in I,
 	  // and m_i = exponent of x_i in pivot element (always < e_i).
 	  M->degree_of_varpower(pivot.raw(), LOCAL_deg1);
-	  G = R->term(one, LOCAL_deg1);
+	  G = R->make_flat_term(one, LOCAL_deg1);
 	  for (index_varpower i = pivot.raw(); i.valid(); ++i)
 	    if (pure[i.var()] != -1)
 	      {
 		ring_elem H = R->from_int(1);
 		D->power(M->degree_of_var(i.var()), pure[i.var()], LOCAL_deg1);
-		ring_elem tmp = R->term(minus_one, LOCAL_deg1);
+		ring_elem tmp = R->make_flat_term(minus_one, LOCAL_deg1);
 		R->add_to(H, tmp);
 		R->mult_to(F, H);
 		R->remove(H);
 		
 		H = R->from_int(1);
 		D->power(M->degree_of_var(i.var()), pure[i.var()] - i.exponent(), LOCAL_deg1);
-		tmp = R->term(minus_one, LOCAL_deg1);
+		tmp = R->make_flat_term(minus_one, LOCAL_deg1);
 		R->add_to(H, tmp);
 		R->mult_to(G, H);
 		R->remove(H);
@@ -585,7 +585,7 @@ RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
   ring_elem one = P->Ncoeffs()->one();
   for (int i=0; i<F->rank(); i++)
     {
-      ring_elem f1 = P->term(one, F->degree(i));
+      ring_elem f1 = P->make_flat_term(one, F->degree(i));
       P->add_to(f, f1);
     }
   return RingElement::make_raw(P, f);

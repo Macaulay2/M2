@@ -115,6 +115,7 @@ public:
   ///////////////////////////////////////////////////////
   // Used in gbvector <--> vector/ringelem translation //
   ///////////////////////////////////////////////////////
+#if 0
 protected:
   ring_elem trans_one; // 1 as an element of globalZZ.
 
@@ -130,6 +131,7 @@ protected:
 				   int firstvar) const;
   
   virtual trans_tag trans_type() const { return FRAC; }
+#endif
 };
 
 #endif

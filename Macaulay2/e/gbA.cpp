@@ -1379,7 +1379,7 @@ void gbA::insert(POLY f, int minlevel)
       // Make the element 1 * m * comp, as an element of _hilb_matrix->get_ring().
       // and append it as the last column of _hilb_matrix.
 
-      ring_elem a = originalR->get_flattened_ring()->term(originalR->Ncoeffs()->one(), g->g.f->monom);
+      ring_elem a = originalR->make_flat_term(originalR->Ncoeffs()->one(), g->g.f->monom);
       _hilb_matrix->append_column(0);
       _hilb_matrix->set_entry(g->g.f->comp-1,_hilb_matrix->n_cols()-1, a);
       

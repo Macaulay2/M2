@@ -289,7 +289,27 @@ gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   M->one(v->monom);
 
   const SchreyerOrder *S;
-  if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+    S->schreyer_up(v->monom, comp-1, v->monom);
+
+  return v;
+}
+
+gbvector * GBRing::gbvector_term(const FreeModule *F, 
+				 ring_elem coeff, 
+				 const int *monom, 
+				 int comp)
+  // Returns coeff*monom*e_sub_i in F.  If comp is 0, then F is never 
+  // considered.
+{
+  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  v->coeff = coeff;
+  v->comp = comp;
+  v->next = 0;
+  M->copy(monom,v->monom);
+
+  const SchreyerOrder *S;
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
     S->schreyer_up(v->monom, comp-1, v->monom);
 
   return v;
@@ -299,7 +319,9 @@ gbvector * GBRing::gbvector_term_exponents(const FreeModule *F,
 					   ring_elem coeff, 
 					   const int *exp, 
 					   int comp)
-  // Returns coeff*exp*e_sub_i in F, where exp is an exponent vector.
+  // Returns coeff*exp*e_sub_i in F.  If comp is 0, then F is never 
+  // considered.
+  // exp should be an exponent vector of length == n_vars()
 {
   gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
   v->coeff = coeff;
@@ -308,7 +330,7 @@ gbvector * GBRing::gbvector_term_exponents(const FreeModule *F,
   M->from_expvector(exp,v->monom);
 
   const SchreyerOrder *S;
-  if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
     S->schreyer_up(v->monom, comp-1, v->monom);
 
   return v;

@@ -101,7 +101,7 @@ void KBasis::insert()
 {
   M->from_expvector(kb_exp, kb_mon);
   M->divide(kb_mon, kb_vec_monom, kb_mon);
-  ring_elem tmp = P->term(K->from_int(1), kb_mon);
+  ring_elem tmp = P->make_logical_term(K->from_int(1), kb_mon);
   mat.append(top_matrix->rows()->mult(tmp, kb_vec));
   P->remove(tmp);
 }
@@ -257,7 +257,8 @@ void KBasis::k_basis1(int firstvar)
 {
   M->from_expvector(kb_exp, kb_mon);
   M->divide(kb_mon, kb_vec_monom, kb_mon);
-  ring_elem tmp = P->term(K->from_int(1), kb_mon);
+#warning "kbasis: handle as flat monoid, coefficients, but put in var list"
+  ring_elem tmp = P->make_flat_term(K->from_int(1), kb_mon);
   mat.append(top_matrix->rows()->mult(tmp, kb_vec));
   P->remove(tmp);
 
@@ -327,3 +328,7 @@ Matrix *Matrix::k_basis(const Matrix *bot) const
 {
   return KBasis::k_basis(this, bot, 0);
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// End:

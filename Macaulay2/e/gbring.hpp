@@ -201,9 +201,14 @@ public:
 
   gbvector * gbvector_term(const FreeModule *F, ring_elem coeff, int comp);
   // Returns coeff*e_sub_i in F, the monomial is set to 1.
+  // If comp==0, F is never considered (so it can be NULL)
+
+  gbvector * gbvector_term(const FreeModule *F, ring_elem coeff, const int *monom, int comp);
+  // Returns coeff*mon*e_comp in F.  If comp==0, F is never considered (so it can be NULL)
 
   gbvector * gbvector_term_exponents(const FreeModule *F, ring_elem coeff, const int *exp, int comp);
   // Returns coeff*exp*e_sub_i in F, where exp is an exponent vector.
+  // If comp==0, F is never considered (so it can be NULL)
 
   gbvector * gbvector_zero() const { return 0; }
 

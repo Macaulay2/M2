@@ -466,7 +466,7 @@ void GBasis::matrix_lift(const Matrix *m,
   MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
   MatrixConstructor mat_quotient(Fsyz, m->cols(), false);
 
-  const Ring *K = R->get_flattened_coefficients();
+  const Ring *K = R->get_flattened_oefficients();
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;

@@ -331,7 +331,7 @@ const MatrixOrNull * Matrix::make(const MonomialIdeal * mi)
   for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
     {
       M->from_varpower((*mi)[i]->monom().raw(), mon);
-      ring_elem f = P->term(P->Ncoeffs()->from_int(1), mon);
+      ring_elem f = P->make_flat_term(P->Ncoeffs()->from_int(1), mon);
       mat.set_entry(0,next++,f);
     }
   M->remove(mon);
@@ -1434,11 +1434,12 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   if (P == NULL) return 0;
-  const Monoid *M = P->Nmonoms();
+  const Ring *K = P->getLogicalCoefficients();
+  const Monoid *M = P->getLogicalMonoid();
 
   MatrixConstructor mat(F, c->cols(), false);
 
-  int nvars = P->n_vars();
+  int nvars = M->n_vars();
   int nrows = r->n_cols();
   int ncols = c->n_cols();
   int *aexp = newarray(int,nvars);
@@ -1447,12 +1448,12 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
   for (int i=0; i<ncols; i++)
     {
       if (c->elem(i) == 0) continue;
-      const int *a = P->lead_monomial(c->elem(i)->coeff);
+      const int *a = P->lead_logical_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
       for (int j=0; j<nrows; j++)
 	{
 	  if (r->elem(j) == 0) continue;
-	  const int *b = P->lead_monomial(r->elem(j)->coeff);
+	  const int *b = P->lead_logical_monomial(r->elem(j)->coeff);
 	  M->to_expvector(b, bexp);
 	  int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
@@ -1460,8 +1461,8 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 	      const int *m;
 #warning "does m need to be initialized?"
 	      M->from_expvector(m, result_exp);
-	      ring_elem s = (sign > 0 ? P->Ncoeffs()->one() : P->Ncoeffs()->minus_one());
-	      ring_elem f = P->term(s,m);
+	      ring_elem s = (sign > 0 ? K->one() : K->minus_one());
+	      ring_elem f = P->make_logical_term(s,m);
 	      mat.set_entry(j,i,f);
 	    }
 	}
@@ -1789,7 +1790,8 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
       ERROR("expected a matrix over a polynomial ring");
       return 0;
     }
-  const Monoid *M = P->Nmonoms();
+  const Monoid *M = P->getMonoid();
+  const Ring *K = P->getCoefficients();
   int nvars = M->n_vars();
   // Check that 'vars' is valid
   for (unsigned int i=0; i<vars->len; i++)
@@ -1802,7 +1804,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
   // Now collect all of the monomials
   int *mon = M->make_one();
   int *exp = newarray(int,M->n_vars());
-  ring_elem one = P->Ncoeffs()->from_int(1);
+  ring_elem one = K->from_int(1);
   exponent_table *E = exponent_table_new(50000, vars->len);
 
   for (int c=0; c<n_cols(); c++)
@@ -1831,7 +1833,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
       for (unsigned int j=0; j<vars->len; j++)
 	exp[vars->array[j]] = exp1[j];
       M->from_expvector(exp, mon);
-      ring_elem a = P->term(one, mon);
+      ring_elem a = P->make_flat_term(one, mon);
       mat.append(rows()->raw_term(a,0));
     }
   
@@ -1854,7 +1856,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
     return 0;
-  const Monoid *M = P->Nmonoms();
+  const Monoid *M = P->getMonoid();
   int *mon = M->make_one();
 
   // At this point, we know that we have a polynomial ring
@@ -1878,8 +1880,8 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 	  if (val > 0)
 	    {
 	      M->from_expvector(exp, mon);
-	      ring_elem t = P->term(h->coeff, mon);
-	      vec v = F->raw_term(t,val-1);
+	      ring_elem t = P->make_flat_term(h->coeff, mon);
+	      vec v = P->make_vec(val-1, t);
 	      v->next = result;
 	      result = v;
 	    }
@@ -1936,9 +1938,9 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 	  ERROR("expected non-zero polynomials");
 	  return 0;
 	}
-      const int *m = P->lead_monomial(f);
+      const int *m = P->lead_flat_monomial(f);
       exponent e = newarray(int, nvars);
-      P->Nmonoms()->to_expvector(m, e);
+      P->getMonoid()->to_expvector(m, e);
       exponent_table_put(E, e, i+1);
     }
 
@@ -2009,7 +2011,7 @@ MonomialIdeal *Matrix::make_monideal(int n) const
       ERROR("expected polynomial ring");
       return 0;
     }
-  const Monoid *M = P->Nmonoms();
+  const Monoid *M = P->getMonoid();
   queue <Bag *> new_elems;
   for (int i=0; i<n_cols(); i++)
     {
@@ -2017,7 +2019,7 @@ MonomialIdeal *Matrix::make_monideal(int n) const
       if (v == 0) continue;
       if (v->comp != n) continue;
       Bag *b = new Bag(i);
-      M->to_varpower(P->lead_monomial(v->coeff), b->monom());
+      M->to_varpower(P->lead_flat_monomial(v->coeff), b->monom());
       new_elems.insert(b);      
     }
 

@@ -22,7 +22,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
       ERROR("internal error - ring is not a polynomial ring");
       assert(0);
     }
-  R = originalR->get_flattened_ring();
+  R = originalR;
   GR = originalR->get_gb_ring();
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
@@ -55,7 +55,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
   monideals.append(0);
   for (i=0; i<F->rank(); i++)
     {
-      monideal_pair *p = new monideal_pair(originalR->get_flattened_ring());
+      monideal_pair *p = new monideal_pair(originalR);
       monideals.append(p);
     }
 
@@ -522,8 +522,8 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
       // and append it as the last column of _hilb_matrix.
 
       gbvector *new_f = p->f;
-      ring_elem a = originalR->term(originalR->Ncoeffs()->one(), 
-							  f_m);
+      ring_elem a = originalR->make_flat_term(originalR->getCoefficients()->one(), 
+					      f_m);
       hf_matrix->append_column(0);
       hf_matrix->set_entry(new_f->comp-1,hf_matrix->n_cols()-1, a);
     }

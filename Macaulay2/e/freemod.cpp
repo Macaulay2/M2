@@ -695,9 +695,9 @@ int FreeModule::in_subring(int n, const vec v) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0 || v == NULL) return true;
-  const Monoid *M = P->Nmonoms();
+  const Monoid *M = P->getMonoid();
   for (vec w = v ; w != NULL; w = w->next)
-    if (!M->in_subring(n, P->lead_monomial(w->coeff)))
+    if (!M->in_subring(n, P->lead_flat_monomial(w->coeff)))
       return false;
   return true;
 }

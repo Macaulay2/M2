@@ -69,7 +69,7 @@ public:
   void remainder(POLY &f, int degf);
 
   void remainder(POLY &f, int degf, ring_elem &denom);
-  // denom must start out as an element of the base R->get_flattened_coefficients().
+  // denom must start out as an element of the base R->getCoefficients().
   // denom is multiplied by the coefficient which is multiplied to f in order to
   // reduce f.
   // i.e. the result g satisfies: g = c*f mod GB, where new(denom) = c * old(denom).

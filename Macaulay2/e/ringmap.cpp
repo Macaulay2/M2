@@ -200,7 +200,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
       }
     if (P != 0)
       {
-	ring_elem temp = P->term(result_coeff, result_monom);
+	ring_elem temp = P->make_flat_term(result_coeff, result_monom);
 	K->remove(result_coeff);
 	M->remove(result_monom);
 	M->remove(temp_monom);

@@ -78,7 +78,7 @@ void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz)
   for (i=0; i<=_F->rank(); i++)
     {
       // The 0th one is not used.
-      monideal_pair *p = new monideal_pair(originalR->get_flattened_ring());
+      monideal_pair *p = new monideal_pair(originalR);
       _monideals.append(p);
     }
 }
@@ -362,7 +362,7 @@ void GB_comp::find_pairs(gb_elem *p)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal mi(originalR->get_flattened_ring(), elems, rejects);
+  MonomialIdeal mi(originalR, elems, rejects);
   while (rejects.remove(b))
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());

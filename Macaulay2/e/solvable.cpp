@@ -9,23 +9,49 @@ SolvableAlgebra::~SolvableAlgebra()
 }
 bool SolvableAlgebra::initialize_solvable(const Matrix *Q)
 {
-  // TODO
+  Q_ = Q;
   return true;
+}
+
+SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
+					 const Monoid *M,
+					 const Ring *originalK,
+					 const Monoid *originalM,
+					 const Matrix *Q)
+{
+  SolvableAlgebra *result = new SolvableAlgebra;
+
+  result->initialize_poly_ring(K,M,originalK,originalM);
+  if (!result->initialize_solvable(Q)) return 0;
+  result->_gb_ring = GBRing::create_SolvableAlgebra(K,M,result);
+  return result;
 }
 
 SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
 					 const Matrix *Q)
 {
-  // CHECK: R is a polynomial ring, and is commutative.
-  SolvableAlgebra *result = new SolvableAlgebra;
+  return create(R->getCoefficients(),
+		R->getMonoid(),
+		R->getLogicalCoefficients(),
+		R->getLogicalMonoid(),
+		Q);
+}
 
-  result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
-  if (!result->initialize_solvable(Q)) return 0;
-  const PolynomialRing *flatR = result->get_flattened_ring();
-  result->_gb_ring = GBRing::create_SolvableAlgebra(flatR->Ncoeffs(), 
-						    flatR->Nmonoms(), 
-						    result);
-  return result;
+const SolvableAlgebra *SolvableAlgebra::createPolyRing(const Monoid *M) const
+  // creates this[M], which is commutative in M variables, but skew commutative in
+  // (some of) the variables of this
+{
+  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+  if (newM == 0) return 0;
+
+  // Somehow generate a new matrix Q?
+  const Matrix *Q = Q_;
+
+  return create(getCoefficients(),
+		newM,
+		this,
+		M,
+		Q);
 }
 
 ring_elem SolvableAlgebra::imp_mult_by_term(const ring_elem f, 

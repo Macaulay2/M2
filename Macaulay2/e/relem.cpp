@@ -18,7 +18,13 @@ RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 
 int RingElement::n_terms() const
 {
-  return R->n_terms(val);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  return P->n_logical_terms(val);
 }
 
 RingElement *RingElement::operator-() const
@@ -197,14 +203,13 @@ RingElement *RingElement::lead_coeff() const
       ERROR("expected polynomial ring");
       return 0;
     }
-  const Ring *K = P->Ncoeffs();
   if (is_zero())
     {
       ERROR("zero polynomial has no lead coefficient");
       return 0;
     }
-  else
-    return new RingElement(K, P->lead_coeff(val));
+  const Ring *K = P->getLogicalCoefficients();
+  return new RingElement(K, P->lead_logical_coeff(val));
 }
 
 RingElement *RingElement::get_coeff(const Monomial *m) const
@@ -215,27 +220,29 @@ RingElement *RingElement::get_coeff(const Monomial *m) const
       ERROR("expected polynomial ring");
       return 0;
     }
-  const Ring *K = P->Ncoeffs();
+  const Ring *K = P->getLogicalCoefficients();
   return new RingElement(K, P->get_coeff(get_value(), m->ints()));
 }
 
 Monomial *RingElement::lead_monom() const
 {
-  if (is_zero()) 
-    {
-      ERROR("zero polynomial has no lead monomial");
-      return 0;
-    }
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
     {
       ERROR("expected polynomial ring");
       return 0;
     }
+  if (is_zero()) 
+    {
+      ERROR("zero polynomial has no lead monomial");
+      return 0;
+    }
+
   intarray resultvp;
 
   Nterm *t = get_value();
-  P->Nmonoms()->to_varpower(t->monom, resultvp);
+  const int *lead = P->lead_logical_monomial(t);
+  P->getLogicalMonoid()->to_varpower(lead, resultvp);
   return Monomial::make(resultvp.raw());
 }
 

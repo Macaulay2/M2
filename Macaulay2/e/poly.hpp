@@ -45,17 +45,18 @@ public:
                                               // logical coeffs
   virtual const Monoid * Nmonoms() const = 0;
 
-  virtual const Ring *getCoefficients() const = 0;
-  // The coefficient ring of 'this'.  This is either a non polynomial ring, or it is a PolyRing.
+  virtual const Ring *getLogicalCoefficients() const = 0;
+  // The logical coefficient ring of 'this'.  
+  // This is either a non polynomial ring, or it is a PolyRing.
 
-  virtual const Ring *getFlatCoefficients() const = 0;
+  virtual const Ring *getCoefficients() const = 0;
   // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
   // is another PolyRing.
 
-  virtual const Monoid *getMonoid() const = 0;
-  // The monoid of this polynomial ring.
+  virtual const Monoid *getLogicalMonoid() const = 0;
+  // The logical monoid of this polynomial ring.
 
-  virtual const Monoid *getFlatMonoid() const = 0;
+  virtual const Monoid *getMonoid() const = 0;
   // The implementation monoid of this ring.
 
   virtual const PolyRing * getAmbientRing() const = 0;
@@ -77,7 +78,6 @@ public:
   virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
 
   virtual bool is_basic_ring() const { return false; }
-  virtual const PolynomialRing * get_flattened_ring() const = 0;
 
   // Quotient ring information
   virtual bool        is_quotient_ring() const { return false; }
@@ -174,13 +174,26 @@ public:
   virtual ring_elem mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const = 0;
 
-  virtual int n_terms(const ring_elem f) const = 0;
-  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
-  virtual ring_elem lead_coeff(const ring_elem f) const = 0;
+  virtual int n_flat_terms(const ring_elem f) const = 0;
+  virtual int n_logical_terms(const ring_elem f) const = 0;
+
+  virtual ArrayPairOrNull list_form(const ring_elem f) const = 0;
+
+  int n_terms(const ring_elem f) const { return n_flat_terms(f); }
+  // This is here mainly because geopoly requires n_terms.
+
+  virtual ring_elem make_flat_term(const ring_elem a, const int *m) const = 0;
+  virtual ring_elem make_logical_term(const ring_elem a, const int *m) const = 0;
+  //  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
+
+  virtual ring_elem lead_flat_coeff(const ring_elem f) const = 0;
+  virtual ring_elem lead_logical_coeff(const ring_elem f) const = 0;
+
   virtual ring_elem get_coeff(const ring_elem f, const int *m) const = 0;
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const = 0;
 
-  virtual const int * lead_monomial(const ring_elem f) const = 0;
+  virtual const int * lead_flat_monomial(const ring_elem f) const = 0;
+  virtual const int * lead_logical_monomial(const ring_elem f) const = 0;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const = 0;
 
@@ -192,9 +205,13 @@ public:
 
   void sort(Nterm *&f) const;
 
+  virtual gbvector * translate_gbvector_from_ringelem(ring_elem coeff) const = 0;
+
   virtual gbvector * translate_gbvector_from_vec(const FreeModule *F, 
 						 const vec v, 
 						 ring_elem &result_denominator) const = 0;
+  // result/denom == v.
+  // result_denom will be an element in getDenominatorRing() (if non-NULL).
   
   virtual vec translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const = 0;
   
@@ -203,7 +220,8 @@ public:
 					      const ring_elem denom) const = 0;
   // Translate v/denom to a vector in F.  denom does not need to be positive,
   // although it had better be non-zero.
-  
+  // denom should be an element of getDenominatorRing() (if non-NULL, otherwise 'denom'
+  // is ignored).
 };
 
 

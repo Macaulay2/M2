@@ -29,7 +29,7 @@ public:
     const Ring *A = make_poly_ring(0,4);
     const Ring *B = IM2_Ring_polyring(A, makemonoid());
     printf("%s\n", tocharstar(IM2_Ring_to_string(B)));
-    const PolynomialRing *C = B->cast_to_PolynomialRing()->get_flattened_ring();
+    const PolynomialRing *C = B->cast_to_PolynomialRing();
     printf("%s\n", tocharstar(IM2_Ring_to_string(C)));
     _test(B != 0);
   }

@@ -95,7 +95,7 @@ Matrix * FreeModule::get_induced_order() const
   MatrixConstructor mat(F,this,false);
   for (i=0; i<rank(); i++)
     {
-      ring_elem f = P->term(P->Ncoeffs()->from_int(1), 
+      ring_elem f = P->make_flat_term(P->getCoefficients()->from_int(1), 
 			    S->base_monom(i));
       mat.set_entry(S->compare_num(i), i, f);
     }

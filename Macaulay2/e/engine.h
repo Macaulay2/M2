@@ -968,9 +968,6 @@ extern "C" {
      for coker leadterms(M), using the degrees of the rows of M. 
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
-  /* BUG: currently (7/18/2002), the result will be put into a ring ZZ[D],
-     which is set for each ring by the engine.  This needs to change...! */
-
 
   /**************************************************/
   /**** Matrix routines which modify a Matrix *******/
