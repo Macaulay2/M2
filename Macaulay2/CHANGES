@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New function "fileLength", takes an open file, or a string containing
+the name of a file.
+
 All the routines connected with primary decomposition of ideals are
 now in a package called "PrimaryDecomposition".  Load the package if
 you wish to use those routines.

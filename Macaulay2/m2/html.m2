@@ -832,6 +832,9 @@ installPackage Package := opts -> pkg -> (
 	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true)
 	  );
 
+     -- make new package index
+     makePackageIndex();
+
      -- all done
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;

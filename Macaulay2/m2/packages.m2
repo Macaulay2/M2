@@ -115,7 +115,7 @@ newPackage(String) := opts -> (title) -> (
 	       newpkg#"processed documentation database" = db;
 	       addEndFunction(() -> if isOpen db then close db);
 	       );
-	  newpkg#"index.html" = newpkg#"package prefix" | LAYOUT#"packagehtml" "GenericInitialIdeal" | "index.html";
+	  newpkg#"index.html" = newpkg#"package prefix" | LAYOUT#"packagehtml" newpkg#"title" | "index.html";
 	  );
      addStartFunction(() -> 
 	  if not ( newpkg#?"processed documentation database" and isOpen newpkg#"processed documentation database" ) and prefixDirectory =!= null 

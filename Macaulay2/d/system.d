@@ -59,6 +59,7 @@ import dbmreorganize(handle:int):int;
 import dbmstrerror():string;
 import readfile(fd:int):(null or string);
 import fileLength(fd:int):int;
+import fileLength(filename:string):int;
 import fileExists(name:string):bool;
 import fileTime(name:string):int;
 import fileMode(name:string):int;

@@ -1,4 +1,3 @@
-restart
 load "PrimaryDecomposition/GTZ.m2"
 R = ZZ/3[x,y,u,s,t]
 I = ideal(
@@ -10,4 +9,3 @@ C = flatt(I,s*t)
 keys C
 (values C)/print
 peek C
-

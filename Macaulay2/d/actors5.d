@@ -1679,6 +1679,13 @@ recursionDepthFun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("recursionDepth",recursionDepthFun);
 
+fileLength(e:Expr):Expr := (
+     when e
+     is f:file do Expr(toInteger(fileLength(f)))
+     is filename:string do Expr(toInteger(fileLength(filename)))
+     else WrongArg("a string or a file"));     
+setupfun("fileLength",fileLength);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

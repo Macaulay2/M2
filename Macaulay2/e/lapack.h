@@ -1,11 +1,16 @@
 #ifndef __lapack_h_
 #define __lapack_h_
 
+#if defined(__cplusplus)
 #include "dmat.hpp"
+#endif
 
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */
-extern "C" void dgesv_(int *n,    // number of rows in A
+#if defined(__cplusplus)
+extern "C" {
+#endif
+ void dgesv_(int *n,    // number of rows in A
 		       int *nrhs, // number of right hand sides
 		       double *a, // n by n matrix A, on exit L&U from A=PLU
 		       int *lda,  // n
@@ -14,7 +19,7 @@ extern "C" void dgesv_(int *n,    // number of rows in A
 		       int *ldb,  // n
 		       int *info);// error info
 
-extern "C" void dgeev_(char *n,    // whether to compute left eigenvectors
+void dgeev_(char *n,    // whether to compute left eigenvectors
 		       char *n2,   // whether to compute right eigenvectors
 		       int *size,  // rows
 		       double *M,  // input matrix A
@@ -29,8 +34,7 @@ extern "C" void dgeev_(char *n,    // whether to compute left eigenvectors
 		       int *,      // size of workspace
 		       int *);     // error info
 
-
-extern "C" void dsyev_(char *n,      // whether to compute eigenvectors
+void dsyev_(char *n,      // whether to compute eigenvectors
 		       char *n2,     // how to store A (upper or lower)
 		       int *size,    // rows
 		       double *M,    // symmetric matrix A
@@ -40,16 +44,14 @@ extern "C" void dsyev_(char *n,      // whether to compute eigenvectors
 		       int *wsize,   // size of workspace
 		       int *info);   // error info
 		       
-
-extern "C" void dgetrf_(int *rows, // rows 
+void dgetrf_(int *rows, // rows 
 			int *cols, // columns
 			double *A, // input matrix, on exit L & U from A=PLU.
 			int *ld,   // rows
 			int *ipiv, // becomes permutation indices of P
 			int *info);// error info
 
-
-extern "C" void dgesvd_(char* jobU,    // amount of U to return
+void dgesvd_(char* jobU,    // amount of U to return
 			char* jobV,    // amount of V to return
 			int* rows,     // rows
 			int* cols,     // columns
@@ -64,7 +66,7 @@ extern "C" void dgesvd_(char* jobU,    // amount of U to return
 			int *lwork,    // size of workspace
 			int *info);    // error info
 
-extern "C" void dgesdd_(char* jobU,    // amount of U to return
+void dgesdd_(char* jobU,    // amount of U to return
 			int* rows,     // rows
 			int* cols,     // columns
 			double *A,     // input matrix for SVD
@@ -79,7 +81,7 @@ extern "C" void dgesdd_(char* jobU,    // amount of U to return
 			int *iwork,    // integer workspace
 			int *info);    // error info
 
-extern "C" void dgels_(char* job,     // type of least squares problem
+void dgels_(char* job,     // type of least squares problem
 		       int* rows,     // rows
 		       int* cols,     // columns
 		       int* nhrs,     // number right hand sides
@@ -91,7 +93,7 @@ extern "C" void dgels_(char* job,     // type of least squares problem
 		       int *lwork,    // size of workspace
 		       int *info);    // error info
 
-extern "C" void dgelss_(int* rows,     // rows
+void dgelss_(int* rows,     // rows
 			int* cols,     // columns
 			int* nhrs,     // number right hand sides
 			double *A,     // input matrix for least squares
@@ -107,7 +109,7 @@ extern "C" void dgelss_(int* rows,     // rows
 
 /* cblas routines */
 // computes "ax + y"
-extern "C" void cblas_daxpy(const int n,     // length of vectors
+void cblas_daxpy(const int n,     // length of vectors
 			    const double a,  // scalar alpha
 			    const double* x, // vector x
 			    const int incx,  // increment of x
@@ -115,7 +117,7 @@ extern "C" void cblas_daxpy(const int n,     // length of vectors
 			    const int incy); // increment of y
 
 // computes ax
-extern "C" void cblas_dscal(const int n,     // length of vectors
+void cblas_dscal(const int n,     // length of vectors
 			    const double a,  // scalar alpha
 			    const double* x, // vector x
 			    const int incx); // increment of x
@@ -123,7 +125,7 @@ extern "C" void cblas_dscal(const int n,     // length of vectors
 // computes "alpha AB + beta C"
 // NOTE: first 3 args should formally be ENUMS, not ints.
 //       Problem? e.g., what if enums change?
-extern "C" void cblas_dgemm(const int Order,     // how matrices are stored, by column or row.
+void cblas_dgemm(const int Order,     // how matrices are stored, by column or row.
 			    const int TransA,    // whether to transform A, e.g. take transpose
 			    const int TransB,    // whether to transform B
 			    const int M,         // rows of A
@@ -138,7 +140,7 @@ extern "C" void cblas_dgemm(const int Order,     // how matrices are stored, by 
 			    double *C,           // matrix C; on output, alphaAB+betaC
 			    const int ldc);      // rows of C
 
-extern "C" void zgesv_(int *n,    // number of rows in A
+void zgesv_(int *n,    // number of rows in A
 		       int *nrhs, // number of right hand sides
 		       double *a, // n by n matrix A, on exit L&U from A=PLU
 		       int *lda,  // n
@@ -147,7 +149,7 @@ extern "C" void zgesv_(int *n,    // number of rows in A
 		       int *ldb,  // n
 		       int *info);// error info
 
-extern "C" void zgeev_(char *n,        // whether to compute left eigenvectors
+void zgeev_(char *n,        // whether to compute left eigenvectors
 		       char *n2,       // whether to compute right eigenvectors
 		       int *size,      // rows
 		       double *M,  // n by n input matrix
@@ -162,7 +164,7 @@ extern "C" void zgeev_(char *n,        // whether to compute left eigenvectors
 		       double *rwork,  // another workspace
 		       int *info);     // error info
 
-extern "C" void zheev_(char *n,       // whether to compute eigenvectors
+void zheev_(char *n,       // whether to compute eigenvectors
 		       char *n2,      // how to store A (upper or lower)
 		       int *size,     // rows
 		       double *M, // hermitian matrix A
@@ -173,14 +175,14 @@ extern "C" void zheev_(char *n,       // whether to compute eigenvectors
 		       double *rwork, // another workspace
 		       int *info);    // error info
 
-extern "C" void zgetrf_(int *rows, // rows 
+void zgetrf_(int *rows, // rows 
 			int *cols, // columns
 			double *M, // input matrix, on exit L & U from A=PLU.
 			int *ld,   // rows
 			int *ipiv, // becomes permutation indices of P
 			int *info);// error info
 
-extern "C" void zgesvd_(char* jobU,     // amount of U to return
+void zgesvd_(char* jobU,     // amount of U to return
 			char* jobV,     // amount of V to return
 			int* rows,      // rows
 			int* cols,      // columns
@@ -196,7 +198,7 @@ extern "C" void zgesvd_(char* jobU,     // amount of U to return
 			double *rwork,  // another workspace
 			int *info);     // error info
 
-extern "C" void zgesdd_(char* jobU,     // amount of U to return
+void zgesdd_(char* jobU,     // amount of U to return
 			int* rows,      // rows
 			int* cols,      // columns
 			double *A,  // input matrix for SVD
@@ -212,7 +214,7 @@ extern "C" void zgesdd_(char* jobU,     // amount of U to return
 			int *iwork,     // integer workspace
 			int *info);     // error info
 
-extern "C" void zgels_(char* job,     // type of least squares problem
+void zgels_(char* job,     // type of least squares problem
 		       int* rows,     // rows
 		       int* cols,     // columns
 		       int* nhrs,     // number right hand sides
@@ -224,7 +226,7 @@ extern "C" void zgels_(char* job,     // type of least squares problem
 		       int *lwork,    // size of workspace
 		       int *info);    // error info
 
-extern "C" void zgelss_(int* rows,     // rows
+void zgelss_(int* rows,     // rows
 			int* cols,     // columns
 			int* nhrs,     // number right hand sides
 			double *A,     // input matrix for least squares
@@ -241,7 +243,7 @@ extern "C" void zgelss_(int* rows,     // rows
 
 /* cblas routines */
 // computes "ax + y"
-extern "C" void cblas_daxpy(const int n,     // length of vectors
+void cblas_daxpy(const int n,     // length of vectors
 			    const double a,  // scalar alpha
 			    const double* x, // vector x
 			    const int incx,  // increment of x
@@ -249,7 +251,7 @@ extern "C" void cblas_daxpy(const int n,     // length of vectors
 			    const int incy); // increment of y
 
 // computes ax
-extern "C" void cblas_dscal(const int n,     // length of vectors
+void cblas_dscal(const int n,     // length of vectors
 			    const double a,  // scalar alpha
 			    const double* x, // vector x
 			    const int incx); // increment of x
@@ -257,7 +259,7 @@ extern "C" void cblas_dscal(const int n,     // length of vectors
 // computes "alpha AB + beta C"
 // NOTE: first 3 args should formally be ENUMS, not ints.
 //       Problem? e.g., what if enums change?
-extern "C" void cblas_zgemm(const int Order,   // how matrices are stored, by column or row.
+void cblas_zgemm(const int Order,   // how matrices are stored, by column or row.
 			    const int TransA,  // whether to transform A, e.g. take transpose
 			    const int TransB,  // whether to transform B
 			    const int M,       // rows of A
@@ -271,7 +273,11 @@ extern "C" void cblas_zgemm(const int Order,   // how matrices are stored, by co
 			    const void *beta,  // scalar bet
 			    void *C,           // matrix C; on output, alphaAB+betaC
 			    const int ldc);    // rows of C
+#if defined(__cplusplus)
+};
+#endif
 
+#if defined(__cplusplus)
 class Lapack {
  public:
   typedef DMat<CoefficientRingRR> LMatrixRR;
@@ -329,8 +335,7 @@ class Lapack {
 
   static bool least_squares_deficient(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x);
 };
-
-
+#endif
 
 #if 0
 #if defined(__cplusplus)

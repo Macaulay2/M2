@@ -591,6 +591,15 @@ int system_fileLength(int fd) {
   return statbuf.st_size;
 }
 
+int system_fileLength_1(M2_string filename) {
+  char *cname = tocharstar(filename);
+  struct stat statbuf;
+  int ret = stat(cname,&statbuf);
+  GC_FREE(cname);
+  if (ERROR == ret) return ERROR;
+  return statbuf.st_size;
+}
+
 int system_fileTime(M2_string name) {
   char *cname = tocharstar(name);
   struct stat buf;
