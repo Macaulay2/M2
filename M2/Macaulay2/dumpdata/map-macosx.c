@@ -1,7 +1,11 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h> 
 #include <mach/mach.h>
 #include <mach/mach_error.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "warning.h"
 #include "map.h"
 #include "file.h"
@@ -13,7 +17,7 @@ int haveDumpdata() {
 
 #define count(x) (sizeof(x)/sizeof(int))
 
-int nummaps () {
+int printmaps() {
   int i=0, nesting_depth=0;
   vm_address_t address = 0;
   struct vm_region_submap_info_64 info;
@@ -26,7 +30,43 @@ int nummaps () {
       nesting_depth++;
     }
     else {
+      printf("%d: %08x-%08x [%dK] %c%c%c/%c%c%c nesting_depth=%d share_mode=%d\n",i,address,address+size,size/1024,
+	     (info.protection & VM_PROT_READ) ? 'r' : '-',
+	     (info.protection & VM_PROT_WRITE) ? 'w' : '-',
+	     (info.protection & VM_PROT_EXECUTE) ? 'x' : '-',
+	     (info.max_protection & VM_PROT_READ) ? 'r' : '-',
+	     (info.max_protection & VM_PROT_WRITE) ? 'w' : '-',
+	     (info.max_protection & VM_PROT_EXECUTE) ? 'x' : '-',
+	     nesting_depth,
+	     info.share_mode
+	     );
       i++;
+      address += size;
+    }
+  }
+  {
+    char buf[100];
+    sprintf(buf,"vmmap %d",getpid());
+    system(buf);
+  }
+  return OKAY;
+}
+
+int nummaps () {
+  int i=0, nesting_depth=0;
+  vm_address_t address = 0;
+  struct vm_region_submap_info_64 info;
+  vm_size_t size;
+  printmaps();
+  while (address < 0xc0000000) {
+    int infoCnt = count(info);
+    if (vm_region_recurse_64(mach_task_self(),&address,&size,&nesting_depth,(int *)&info,&infoCnt) != 0) 
+      return ERROR;
+    if (info.is_submap) {
+      nesting_depth++;
+    }
+    else {
+      if (!(info.share_mode == SM_COW || info.share_mode == SM_PRIVATE_ALIASED || info.share_mode == SM_EMPTY)) i++;
       address += size;
     }
   }
@@ -46,43 +86,16 @@ int getmaps(int nmaps, struct MAP maps[nmaps]) {
       nesting_depth++;
     }
     else {
-      assert(i < nmaps);
-      maps[i].from = (void *)address;
-      maps[i].to = (void *)(address + size);
-      maps[i].r = (info.protection & VM_PROT_READ) != 0;
-      maps[i].w = (info.protection & VM_PROT_WRITE) != 0;
-      maps[i].x = (info.protection & VM_PROT_EXECUTE) != 0;
-      maps[i].checksum = 0;
-      i++;
-      address += size;
-    }
-  }
-  return OKAY;
-}
-
-int printmaps() {
-  int i=0, nesting_depth=0;
-  vm_address_t address = 0;
-  struct vm_region_submap_info_64 info;
-  vm_size_t size;
-  while (address < 0xc0000000) {
-    int infoCnt = count(info);
-    if (vm_region_recurse_64(mach_task_self(),&address,&size,&nesting_depth,(int *)&info,&infoCnt) != 0) 
-      return ERROR;
-    if (info.is_submap) {
-      nesting_depth++;
-    }
-    else {
-      printf("%d: %08x-%08x %c%c%c/%c%c%c nesting_depth=%d\n",i,address,address+size,
-	     (info.protection & VM_PROT_READ) ? 'r' : '-',
-	     (info.protection & VM_PROT_WRITE) ? 'w' : '-',
-	     (info.protection & VM_PROT_EXECUTE) ? 'x' : '-',
-	     (info.max_protection & VM_PROT_READ) ? 'r' : '-',
-	     (info.max_protection & VM_PROT_WRITE) ? 'w' : '-',
-	     (info.max_protection & VM_PROT_EXECUTE) ? 'x' : '-',
-	     nesting_depth
-	     );
-      i++;
+      if (!(info.share_mode == SM_COW || info.share_mode == SM_PRIVATE_ALIASED || info.share_mode == SM_EMPTY)) {
+	assert(i < nmaps);
+	maps[i].from = (void *)address;
+	maps[i].to = (void *)(address + size);
+	maps[i].r = (info.protection & VM_PROT_READ) != 0;
+	maps[i].w = (info.protection & VM_PROT_WRITE) != 0;
+	maps[i].x = (info.protection & VM_PROT_EXECUTE) != 0;
+	maps[i].checksum = 0;
+	i++;
+      }
       address += size;
     }
   }

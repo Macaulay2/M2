@@ -82,7 +82,7 @@ static void trim(char *s) {
 
 static int extend_memory(void *newbreak) {
   if (ERROR == (int)brk(newbreak)) {
-    warning("loaddata: out of memory (extending break to 0x%p)", newbreak);
+    warning("loaddata: out of memory (extending break to %p)", newbreak);
     return ERROR;
   }
   else return OKAY;
