@@ -62,3 +62,13 @@ p = rawMutableMatrix(raw RR, 10, 20, true); net p
 scan(50, i -> (rawMatrixEntry(p,random 10, random 20, rawFromNumber(raw RR, random 1.0))))
 net p
 map(RR,rawMatrix p)
+
+--------------------------------------------
+-- Test of mutable sparse matrices ---------
+--------------------------------------------
+needs "raw-util.m2"
+R = ZZ[a..d]
+p = rawMutableIdentity(raw R, 10, false)
+net p
+rawMatrixEntry(p,1,3,raw(a+b))
+net p

@@ -187,15 +187,6 @@ inline bool MutableMatrix::error_row_bound(int r) const
   return false;
 }
 
-class SparseMutableMatrix : public MutableMatrix
-{
-public:
-  static SparseMutableMatrix *zero_matrix(const Ring *R, int nrows, int ncols);
-
-  virtual bool is_dense() const { return false; }
-
-  virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return this; }
-};
 
 class DenseMutableMatrix : public MutableMatrix
 {
