@@ -120,8 +120,6 @@ static int fdprintbrk(int fd) {
 
 int dumpdata(char const *dumpfilename) {
   long pos, n;
-  int nmaps = nummaps();
-  struct MAP dumpmaps[nmaps];
   int i;
   int fd;
   if (!haveDumpdata()) return ERROR;
@@ -131,26 +129,30 @@ int dumpdata(char const *dumpfilename) {
     return ERROR;
   }
   if (ERROR == fdprintbrk(fd)) return ERROR;
-  if (ERROR == getmaps(nmaps,dumpmaps)) return ERROR;
-  checkmaps(nmaps,dumpmaps);
-  for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
-  write(fd,"\n",1);
-  pos = lseek(fd,0,SEEK_END);
-  n = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE - pos;
   {
-    char buf[n];
-    int k;
-    for (k=0; k<n; k++) buf[k] = '\n';
-    write(fd,buf,n);
-  }
-  for (i=0; i<nmaps; i++) {
-    if (isDumpable(&dumpmaps[i]) && ERROR == dumpmap(fd,&dumpmaps[i])) {
-      warning("warning dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
-      close(fd);
-      return ERROR;
+    int nmaps = nummaps();
+    struct MAP dumpmaps[nmaps];
+    if (ERROR == getmaps(nmaps,dumpmaps)) return ERROR;
+    checkmaps(nmaps,dumpmaps);
+    for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
+    write(fd,"\n",1);
+    pos = lseek(fd,0,SEEK_END);
+    n = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE - pos;
+    {
+      char buf[n];
+      int k;
+      for (k=0; k<n; k++) buf[k] = '\n';
+      write(fd,buf,n);
     }
+    for (i=0; i<nmaps; i++) {
+      if (isDumpable(&dumpmaps[i]) && ERROR == dumpmap(fd,&dumpmaps[i])) {
+	warning("warning dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
+	close(fd);
+	return ERROR;
+      }
+    }
+    return close(fd);
   }
-  return close(fd);
 }
 
 int loaddata(char const *filename) {
