@@ -16,14 +16,9 @@ document {
 
 document {
      Key => "emacs",
-     Headline => "invoking Macaulay 2 with emacs",
-     "The best way to edit Macaulay 2 code or to run Macaulay 2 is with GNU 
-     emacs, a versatile text editor written by Richard Stallman which
-     runs well under most UNIX systems.  Its
-     web page is ", HREF "http://www.gnu.org/software/emacs/emacs.html", "
-     and the software can be obtained from one of the ftp sites listed
-     at ", HREF "http://www.gnu.org/order/ftp.html", "; the primary ftp
-     site is ", HREF "ftp://ftp.gnu.org/pub/gnu/", ".",
+     "The best way to edit Macaulay 2 code or to run Macaulay 2 is
+     with ", TO2{ "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
+     editor written by Richard Stallman.",
      PARA,
      "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
      See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
@@ -142,7 +137,7 @@ submitted is not visible on the screen.  Paste the following text into
 an emacs buffer.",
 PARA,
 CODE ///20!
-4 + 5 2^20
+4 + 5 * 2^20
 -- that's all folks!///,
 PARA,
 "Press ", TT "M-f11", " with your cursor in this buffer to designate it as

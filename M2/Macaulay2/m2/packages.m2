@@ -41,7 +41,7 @@ loadPackage = method(
 	  Title => null, 
 	  DebuggingMode => null } )
 loadPackage String := opts -> filename -> (
-     filename = baseFilename filename;
+     filename = filename | ".m2";
      substituteOptions#filename = opts;
      load filename;
      remove(substituteOptions,filename);

@@ -147,7 +147,6 @@ document {
      }
 document {
      Key => "initial help",				    -- display by the help command by default
-     Headline => "initial help screen",
      "Welcome to Macaulay 2",
      PARA,
      "Try entering '2+2' at your next input prompt, which begins with ", TT "i", ".
@@ -163,6 +162,7 @@ document {
      	  ("help \"Getting started\"", "           -- "),
      	  ("help \"Your first input prompt\"", "   -- "),
      	  ("help x", "                           -- display the documentation for ", TT "x"),
+	  ("printWidth = 80", "                  -- set the print width to 80 characters"),
 	  },
      "To read the documentation in info form, in case you happen to be running Macaulay 2 in a 
      terminal window, replace ", TO "help", " by ", TO "infoHelp", " in any of the commands 
@@ -217,7 +217,7 @@ document {
      the function ", TT "f", " provided in the documentation for
      ", TT "f", ".",
      PARA,
-     EXAMPLE "printExamples partition",
+     EXAMPLE "printExamples partitions",
      SeeAlso => {"examples", "document"}
      }
 document {
@@ -735,13 +735,15 @@ document {
      Outputs => {
 	  { "the ", TT "1", " by ", TT "n", " matrix whose entries are the variables of the polynomial ring ", TT "R"}
 	  },
-     EXAMPLE {
-      	  "R = QQ[a..e]",
-      	  "vars R",
-	  "ideal vars R",
-	  "coker vars R",
-	  "res coker vars R",
-	  }
+     Examples => {
+	  EXAMPLE {
+      	       "R = QQ[a..e]",
+      	       "vars R",
+	       "ideal vars R",
+	       "coker vars R",
+	       "res coker vars R",
+	       }
+     	  }
      }
 document {
      Key => (vars,Sequence),

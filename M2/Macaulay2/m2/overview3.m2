@@ -219,8 +219,7 @@ document {
 	  TOH "printExamples",
 	  TOH "help", 
 	  TOH "topics"
-	  },
-     SeeAlso => "Writing documentation"
+	  }
      }
 
 document {
