@@ -2,6 +2,9 @@
 
 #ifndef _monoid_hh_
 #define _monoid_hh_
+#if 0
+#include "Emonoid.hpp"
+#else
 
 #include "monorder.hpp"
 #include "object.hpp"
@@ -45,6 +48,13 @@ public:
 	      const intarray &degs,
 	      bool isgrp,
 	      bool isskew);
+  monoid_info(const mon_order *mmo, 
+	      const char *s, 
+	      int len, 
+	      Monoid *deg_monoid,
+	      const intarray &degs,
+	      bool isgrp,
+	      const intarray &skewvars);
 };
 
 class Monoid : public type
@@ -103,6 +113,7 @@ public:
   void mult(const int *m, const int *n, int *result) const;
   void power(const int *m, int n, int *result) const;
   int compare(const int *m, const int *n) const;
+  int compare(const int *m, int mcomp, const int *n, int ncomp) const;
   bool divides(const int *m, const int *n) const;
   void divide(const int *m, const int *n, int *result) const;
   void lcm(const int *m, const int *n, int *result) const;
@@ -184,5 +195,14 @@ inline int Monoid::compare(const int *m, const int *n) const
     }
   return 0;
 }
-
+inline int Monoid::compare(const int *m, int mcomp, const int *n, int ncomp) const
+{
+  int cmp = compare(m,n);
+  if (cmp != EQ) return cmp;
+  cmp = mcomp - ncomp;
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
+  return EQ;
+}
+#endif
 #endif

@@ -14,9 +14,11 @@ private:
   static Monoid *_trivial_monoid;
   int _nvars;
   int _nwords;			// The number of ints in an (encoded) monomial
-  array<char *> _varnames;
+  int _component_loc;
+  array<char *> _var_names;
+  int *_print_order;		// Array 0.._nvars-1: a permutation of 0.._nvars-1.
 
-  bool isgroup;			// If so, then nwords == nvars, no packing is done
+  bool _is_group;		// If so, then nwords == nvars, no packing is done
 				// and display is altered as well.
 
   stash *_monom_stash;
@@ -65,30 +67,31 @@ private:
   Monoid(EMonomialOrder *mo,
 	 const int *print, 
 	 const char **names,
-	 Monoid *deg_monoid,
+	 const Monoid *deg_monoid,
 	 const intarray &degs,
-	 bool isgrp,
-	 bool isskew);
+	 const intarray &skewvars,
+	 bool is_group);
 
-  void set_skew_info(bool isskew);
-  void set_degrees(intarray &degvals);
+  void set_skew_info(const intarray &skewvariables);
+  void set_degrees(const intarray &degvals);
 	 
 public:
   static const Monoid *trivial_monoid();
-  static const Monoid *create(EMonomialOrder *mo,
-			      const int *print, 
-			      const char **names,
-			      Monoid *deg_monoid,
-			      const intarray &degs,
-			      bool isgrp,
-			      bool isskew);
+  static Monoid *create(EMonomialOrder *mo,
+			const int *print, 
+			const char **names,
+			const Monoid *D,
+			const intarray &degs,
+			const intarray &skewvars,   // This should really go with the ring.
+			bool is_group); // Possibly ignored?
   ~Monoid();
 
   static char **make_name_array(int nvars, const char *s, int slength);
 
-  bool is_group() const { return moninfo->isgroup; } // ??
+  bool is_group() const { return false; } // FIX: MES
   int n_vars()        const { return _nvars; }
-  int monomial_size() const { return nwords; }
+  int monomial_size() const { return _nwords; }
+  int max_degree()    const { return 1 << (8*sizeof(long)-1); }
 
   void from_varpower(const int *vp, int *result) const;
   void to_varpower(const int *m, intarray &result_vp) const;
@@ -96,20 +99,21 @@ public:
   void from_expvector(const int *exp, int *result) const;
   void to_expvector(const int *m, int *result_exp) const;
 
-  int in_subring(int n, const int *m) const;
+  bool in_subring(int n, const int *m) const;
   int compare(int nslots, const int *m, const int *n) const;
 
   int *make_new(const int *d) const;
   int *make_one() const;
   void remove(int *d) const;
 
-  int is_one(const int *m) const;
+  bool is_one(const int *m) const;
   void one(int *result) const;
   void copy(const int *m, int *result) const;
 
   void mult(const int *m, const int *n, int *result) const;
   void power(const int *m, int n, int *result) const;
   int compare(const int *m, const int *n) const;
+  int compare(const int *m, int mcomp, const int *n, int ncomp) const;
   bool divides(const int *m, const int *n) const;
   void divide(const int *m, const int *n, int *result) const;
   void lcm(const int *m, const int *n, int *result) const;
@@ -126,6 +130,8 @@ public:
   int skew_mult(const int *m, const int *n, int *result) const;
   int skew_divide(const int *m, const int *n, int *result) const;
       // If the result is s (1,or -1), then m = s * n * result
+  int skew_diff(const int *m, const int *n, int *result) const;
+      // m acting as a differential operator on n is s * result, s = 0, 1, or -1.
   int exp_skew_vars(const int *exp, int *result) const;
       // The number s of skew variables in 'exp' is returned, and their
       // indices are placed in result[0], ..., result[s-1].
@@ -166,16 +172,35 @@ public:
   void read_element(object_reader &i, int * &result) const;
 };
 
-extern Monoid *trivial_monoid;
+extern const Monoid *trivial_monoid; // Set in x_monoid.cpp
 
 inline int Monoid::compare(const int *m, const int *n) const
 {
   for (int i=0; i<_nwords; i++, m++, n++)
     {
-      if (*m > *n) return 1;
-      if (*m < *n) return -1;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
     }
-  return 0;
+  return EQ;
+}
+inline int Monoid::compare(const int *m, int mcomp, const int *n, int ncomp) const
+{
+  const int *mend = m + _component_loc;
+  const int *mend2 = m + _nwords;
+  for ( ; m != mend; m++, n++)
+    {
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+    }
+  int cmp = mcomp - ncomp;
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
+  for ( ; m != mend2; m++, n++)
+    {
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+    }
+  return EQ;
 }
 
 #endif

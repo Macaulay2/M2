@@ -328,6 +328,23 @@ int FreeModule::n_terms(vec v) const
 
 int FreeModule::compare(const vecterm *t, const vecterm *s) const
 {
+  int cmp;
+  switch (ty) {
+  case FREE:
+    cmp = t->comp - s->comp;
+    if (cmp < 0) return LT;
+    if (cmp > 0) return GT;
+    return EQ;
+  case FREE_POLY:
+    return M->compare(t->monom,t->comp, s->monom,s->comp);
+  case FREE_SCHREYER:
+    return M->compare(t->monom,component(t->comp)->compare_num, 
+		      s->monom,component(s->comp)->compare_num);
+  }
+  return EQ;
+}
+#if 0
+// Guts of 'compare' above used to be this:
   // MES: this should use compare_num's.
   int cmp;
   if (M != NULL)
@@ -342,6 +359,7 @@ int FreeModule::compare(const vecterm *t, const vecterm *s) const
   if (cmp > 0) return 1;
   return 0;
 }
+#endif
 void FreeModule::add_to(vec &f, vec &g) const
 {
   if (g == NULL) return;

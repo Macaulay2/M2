@@ -331,6 +331,37 @@ ring_elem Z_mod::gcd_extended(const ring_elem f, const ring_elem,
   return from_int(1);
 }
 
+
+ring_elem Z_mod::remainder(const ring_elem f, const ring_elem g) const
+{
+  if (g == ZERO) return f;
+  return ZERO;
+}
+
+ring_elem Z_mod::quotient(const ring_elem f, const ring_elem g) const
+{
+  if (g == ZERO) return ZERO;
+  if (f == ZERO) return ZERO;
+  int h = modulus_sub(f, g, P1);
+  return h;
+}
+
+ring_elem Z_mod::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+				      ring_elem &quot) const
+{
+  if (g == ZERO)
+    {
+      quot = ZERO;
+      return f;
+    }
+  else
+    {
+      if (f == ZERO) quot = ZERO;
+      quot = modulus_sub(f, g, P1);
+      return ZERO;
+    }
+}
+
 void Z_mod::syzygy(const ring_elem a, const ring_elem b,
 		   ring_elem &x, ring_elem &y) const
 {

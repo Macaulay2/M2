@@ -52,6 +52,50 @@ monoid_info::monoid_info(const mon_order *mmo,
 	  }
     }
 }
+monoid_info::monoid_info(const mon_order *mmo, 
+			 const char *s, 
+			 int len, 
+			 Monoid *deg_monoid,
+			 const intarray &degs,
+			 bool isgrp,
+			 const intarray &skewvariables)
+: nvars(mmo->n_vars()), degvals(degs),
+  degree_monoid(deg_monoid), mo(mmo), isgroup(isgrp)
+{ 
+  set_names(nvars, s, len, varnames); 
+  set_degrees();
+  if (skewvariables.length() == 0)
+    {
+      n_skew = 0;
+      skew_vars = NULL;
+      skew_list = NULL;
+    }
+  else
+    {
+      skew_vars = new int[nvars];
+      skew_list = new int[nvars];
+      n_skew = skewvariables.length();
+      for (int j=0; j<nvars; j++)
+	{
+	  skew_vars[j] = skew_list[j] = 0;
+	}
+      for (int i=0; i<n_skew; i++)
+	{
+	  if (skewvariables[i] >= 0 && skewvariables[i] < nvars)
+	    {
+	      if (skew_vars[skewvariables[i]] != 0)
+		n_skew--;
+	      else
+		{
+		  skew_list[i] = skewvariables[i];
+		  skew_vars[skew_list[i]] = 1;
+		}
+	    }
+	  else
+	    n_skew--;
+	}
+    }
+}
 
 void monoid_info::set_names(int nvars, const char *s, int slength, array<char *> &varnames)
 {
@@ -387,7 +431,8 @@ void Monoid::copy(const int *m, int *result) const
 bool Monoid::divides(const int *m, const int *n) const
 // Does m divide n?
 {
-  if (!moninfo->isgroup)
+  //if (!moninfo->isgroup)
+  if (true)
     {
       if (nvars == 0) return true;
       to_expvector(m, EXP1);

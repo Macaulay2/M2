@@ -408,6 +408,37 @@ ring_elem GF::gcd_extended(const ring_elem f, const ring_elem,
   return ONE;
 }
 
+ring_elem GF::remainder(const ring_elem f, const ring_elem g) const
+{
+  if (g == ZERO) return f;
+  return ZERO;
+}
+
+ring_elem GF::quotient(const ring_elem f, const ring_elem g) const
+{
+  if (g == ZERO) return ZERO;
+  if (f == ZERO) return ZERO;
+  return modulus_sub(f, g, Q1);
+}
+
+ring_elem GF::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+				   ring_elem &quot) const
+{
+  if (g == ZERO)
+    {
+      quot = ZERO;
+      return f;
+    }
+  else
+    {
+      if (f == ZERO) quot = ZERO;
+      quot = modulus_sub(f, g, Q1);
+      return ZERO;
+    }
+}
+
+
+
 void GF::syzygy(const ring_elem a, const ring_elem b,
 		ring_elem &x, ring_elem &y) const
 {

@@ -4,6 +4,7 @@
 #include "ntuple.hpp"
 #include "text_io.hpp"
 
+#define monomial monomial0
 extern int comp_printlevel;
 
 /////////////////////////////
