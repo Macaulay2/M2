@@ -402,18 +402,13 @@ coeffs = rawCoefficients(1:0, mons, m)
 mons * coeffs
 print "WARNING: in rawMonomials, monomials should be sorted"
 
+------------------
+load "raw-util.m2"
 R = ZZ/101[symbol a .. symbol d]
 f = (a+b)^4*(c+d)^2
-load "raw-util.m2"
 m = rawMonomials((0,1),mat{{raw f}})
-rawSortColumns(m,1,1)
-rawSubmatrix(m,oo)
-rawSortColumns(m,-1,1)
-rawSubmatrix(m,oo)
-rawSortColumns(m,1,-1)
-rawSubmatrix(m,oo)
-rawSortColumns(m,-1,-1)
-rawSubmatrix(m,oo)
+m = matrix{{f}}
+coefficients((0,1),m)
 
 -------------------
 -- rawInitial -----
