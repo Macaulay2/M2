@@ -113,7 +113,7 @@ assert( x#"asdf" === 2 )
 -- test method installation and lookup
 String | String := concatenate
 assert( lookup(symbol |, String, String ) =!= null )
-assert( class lookup(symbol <<, String, String ) === Function )
+assert( class lookup(symbol |, String, String ) === Function )
 assert( lookup(symbol |, String, String ) === concatenate )
 assert( "asdf" | "adsf" === "asdfadsf" )
 
