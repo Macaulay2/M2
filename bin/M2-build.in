@@ -20,9 +20,15 @@ export M2HOME
 SETUP="$SRCHOME/m2/setup.m2"
 EXE="$M2HOME/libexec/Macaulay2"
 DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
-M2PATH="-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }"
+M2PATH=
 
 if [ -f "$DATA" ]
-then exec "$EXE" "-e loaddata \"$DATA\"" -- "-e runStartFunctions()" "$@"
-else exec "$EXE" "$M2PATH" -ephase=1 "$SETUP" -ephase=0 "-e runStartFunctions()" "$@"
+then exec "$EXE" "-e loaddata \"$DATA\"" -- \
+	 "-e runStartFunctions()" \
+	 "-e path = join(path,{ \"$SRCHOME/m2/\", \"$SRCHOME/packages/\", \"$SRCHOME/experiments/\" })" \
+	 "$@"
+else exec "$EXE" "-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
+         "-e phase=1" "$SETUP" "-e phase=0" \
+	 "-e runStartFunctions()" \
+	 "$@"
 fi
