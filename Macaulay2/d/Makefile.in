@@ -209,12 +209,11 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 # maybe every system now has all the unix routines we use:
 # LDLIBS += -lc ../compat/compat.a
 
-clean::; rm -f ../bin/M2.tmp
-../bin/M2$(EXE) : ../bin/M2.tmp
-	mv "$<" "$@"
-../bin/M2.tmp : $(ALLOBJ) main.o $(LIBRARYFILES) ../e/libgb.a
-	time $(CC) $(LDFLAGS) $(ALLOBJ) main.o ../e/libgb.a $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
-	$(STRIPCMD) $@
+clean::; rm -f ../bin/M2$(EXE)
+../bin/M2$(EXE) : $(ALLOBJ) main.o $(LIBRARYFILES) ../e/libgb.a
+	time $(CC) $(LDFLAGS) $(ALLOBJ) main.o ../e/libgb.a $(LOADLIBES) $(LDLIBS) -o "$@".tmp
+	$(STRIPCMD) "$@".tmp
+	mv "$@".tmp "$@"
 
 interpret.a : $(ALLOBJ); $(AR) rcs $@ $^
 ifeq "$(XCODE)" "yes"
