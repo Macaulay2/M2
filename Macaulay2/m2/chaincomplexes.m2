@@ -3,7 +3,7 @@
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
 toString Resolution := g -> "<<resolution " | toString g.handle | ">>"
-
+raw Resolution := X -> X.RawComputation
 
 ChainComplex = new Type of GradedModule
 ChainComplex.synonym = "chain complex"
@@ -13,6 +13,8 @@ new ChainComplex := ChainComplex => (cl) -> (
      b.degree = -1;
      b.source = b.target = C;
      C)
+
+raw ChainComplex := C -> raw C.Resolution
 
 complete ChainComplex := ChainComplex => C -> (
      if C.?Resolution and not C.?complete then (

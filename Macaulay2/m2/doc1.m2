@@ -974,17 +974,6 @@ document {
      SeeAlso => "GlobalAssignHook"
      }
 document {
-     Key => summary,
-     TT "summary g", " -- describe the status of a Groebner basis computation
-     or of a resolution computation.",
-     PARA,
-     EXAMPLE {
-	  "ZZ/101[a..f]",
-      	  "summary gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
-	  },
-     SeeAlso => { "GroebnerBasis", "Resolution" }
-     }
-document {
      Key => complete,
      TT "complete C", " -- completely fills out the chain complex C by
      calling upon the engine to provide the maps and modules computed
