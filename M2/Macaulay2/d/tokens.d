@@ -173,6 +173,7 @@ export False := Expr(Boolean(false));	  -- use toBoolean instead
 export toBoolean(v:bool):Expr := if v then True else False;
 
 export nullE := Expr(Nothing());
+export notfoundE := Expr(Nothing());			    -- internal use only, not visible to user
 
 -- Code
 

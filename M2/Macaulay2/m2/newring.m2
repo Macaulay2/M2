@@ -4,12 +4,12 @@
 -- new polynomial ring from old --
 ----------------------------------
 
-local nothing
+nothing := quote nothing
 
-mergeOptions := args -> merge append(args, (a,b)-> if b === nothing then a else b)
+mergeOptions := (x,y) -> merge(x, y, (a,b) -> if b === nothing then a else b)
 
 modifyRing = method(
-     Options => apply(options monoid, x -> nothing)
+     Options => applyValues(options monoid, x -> nothing)
      )
 
 modifyRing Ring := options -> (R) -> (

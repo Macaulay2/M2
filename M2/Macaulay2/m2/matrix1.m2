@@ -66,6 +66,38 @@ map(Module,Nothing,Matrix) := options -> (M,nothing,p) -> (
      m
      )
 
+degreeCheck := (d,R) -> (
+     if class d === ZZ then d = {d};
+     if class d === List
+     and all(d,i -> class i === ZZ) 
+     and #d === degreeLength R
+     then d
+     else (
+	  if degreeLength R === 1
+	  then error "expected degree to be an integer or list of integers of length 1"
+	  else error (
+	       "expected degree to be a list of integers of length ",
+	       string degreeLength R
+	       )
+	  )
+     )
+
+map(Module,Module,Matrix) := options -> (M,N,f) -> (
+     if M === f.target and N === f.source
+     and (options.Degree === null or options.Degree === degree f)
+     then f
+     else (
+	  R := ring M;
+	  N' := cover N ** R;
+	  sendgg (ggPush cover M, ggPush N', ggPush f,
+	       ggPush (
+		    if options.Degree === null
+		    then toList (degreeLength R : 0)
+		    else degreeCheck(options.Degree, R)),
+	       ggmatrix);
+	  reduce M;
+	  newMatrix(M,N)))
+
 map(Module,Nothing,List) := map(Module,Module,List) := options -> (M,N,p) -> (
      R := ring M;
      if N === null
@@ -128,6 +160,27 @@ fixDegree := (m,d) -> (
 	  ggmatrix);
      newMatrix(M,N)
      )
+
+concatBlocks := mats -> (
+     if not isTable mats then error "expected a table of matrices";
+     if #mats === 1
+     then concatCols mats#0
+     else if #(mats#0) === 1
+     then concatRows (mats/first)
+     else (
+     	  samering flatten mats;
+	  sources := unique applyTable(mats,source);
+	  N := sources#0;
+	  if not all(sources, F -> F == N) and not all(sources, F -> all(F,isFreeModule))
+	  then error "unequal sources";
+	  targets := unique transpose applyTable(mats,target);
+	  M := targets#0;
+	  if not all(targets, F -> F == M) and not all(targets, F -> all(F,isFreeModule))
+	  then error "unequal targets";
+     	  ggConcatBlocks(
+	       Module.directSum (mats/first/target),
+	       Module.directSum (mats#0/source),
+	       mats)))
 
 Matrix.matrix = options -> (f) -> concatBlocks f
 
@@ -1063,56 +1116,6 @@ document { (quote _,Matrix,Array),
      SEEALSO {submatrix, (quote _,Module,Array), (quote ^,Matrix,Array)}
      }
 
-Matrix _ List := (f,v) -> (
-     v = splice v;
-     listZ v;
-     submatrix(f,v)
-     )
-
-document { (quote _, Matrix, List),
-     TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
-     columns numbered i, j, k, ... .",
-     PARA,
-     "Repetitions of the indices are allowed.",
-     PARA,
-     "If the list of column indices is a permutation of 0 .. n-1, where n is
-     the number of columns, then the result is the corresponding permutation
-     of the columns of f.",
-     PARA,
-     EXAMPLE "R = ZZ/101[a..f];",
-     EXAMPLE {
-	  "p = matrix {{a,b,c},{d,e,f}}",
-      	  "p_{1}",
-      	  "p_{1,1,2}",
-      	  "p_{2,1,0}",
-	  },
-     SEEALSO "_"
-     }
-
-Matrix ^ List := (f,v) -> (
-     v = splice v;
-     listZ v;
-     submatrix(f,v,)
-     )
-document { (quote ^,Matrix,List),
-     TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
-     rows numbered i, j, k, ... .",
-     PARA,
-     "Repetitions of the indices are allowed.",
-     PARA,
-     "If the list of row indices is a permutation of 0 .. n-1, where n is
-     the number of rows, then the result is the corresponding permutation
-     of the rows of f.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "p = matrix {{a,b,c},{d,e,f}}",
-      	  "p^{1}",
-      	  "p^{1,0}",
-	  },
-     SEEALSO "^"
-     }
-
 entries = method()
 entries Matrix := (m) -> (
      M := target m;
@@ -1273,3 +1276,10 @@ document { quote content,
 cover(Matrix) := (f) -> matrix f
 
 rank Matrix := (f) -> rank image f
+
+erase quote reduce
+erase quote newMatrix
+erase quote concatRows
+erase quote concatCols
+erase quote samering
+erase quote ggConcatBlocks

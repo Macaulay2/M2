@@ -50,6 +50,7 @@ mutablefun(e:Expr):Expr := Expr(toBoolean(
 setupfun("mutable",mutablefun);
 export equal(lhs:Expr,rhs:Expr):Expr;
 export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
+     -- warning: can return notfoundE, which should not be given to the user
      keymod := int(keyhash & (length(object.table)-1));
      bucket := object.table.keymod;
      if bucket.key == key then return(bucket.value);
@@ -60,7 +61,7 @@ export lookup1(object:HashTable,key:Expr,keyhash:int):Expr := (
 	  then return(bucket.value);
 	  bucket = bucket.next;
 	  );
-     nullE);
+     notfoundE);
 export lookup1(object:HashTable,key:Expr):Expr := lookup1(object,key,hash(key));
 export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
      keymod := int(keyhash & (length(object.table)-1));
@@ -378,17 +379,16 @@ mappairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
-mapkeys(f:Expr,obj:HashTable):Expr := (
+export mapkeys(f:Expr,obj:HashTable):Expr := (
      newobj := newHashTable(obj.class,obj.parent);
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
 	       if p == bucketEnd then break;
 	       newkey := apply(f,p.key);
-	       if newkey != nullE
-	       then when newkey 
-	       is Error do return(newkey) 
-	       else (storeInHashTable(newobj,newkey,p.value););
+	       if newkey == nullE then return(errorExpr("null key encountered")); -- remove soon!!!
+	       when newkey is Error do return(newkey) else nothing;
+	       storeInHashTable(newobj,newkey,p.value);
 	       p = p.next;
 	       ));
      sethash(newobj,obj.mutable);
@@ -405,6 +405,45 @@ mapkeysfun(e:Expr):Expr := (
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
 setupfun("applyKeys",mapkeysfun);
+
+export mapvalues(f:Expr,obj:HashTable):Expr := (
+     u := newHashTable(obj.class,obj.parent);
+     hadError := false;
+     errm := nullE;
+     u.numEntries = obj.numEntries;
+     u.table = new array(KeyValuePair) len length(obj.table) do (
+	  foreach bucket in obj.table do (
+	       p := bucket;
+	       q := bucketEnd;
+	       while p != bucketEnd do (
+		    newvalue := apply(f,p.value);
+		    when newvalue is Error do (
+			 errm = newvalue;
+			 hadError = true;
+			 while true do provide bucketEnd;
+			 )
+		    else nothing;
+		    q = KeyValuePair(p.key,p.hash,newvalue,q);
+		    p = p.next;
+		    );
+	       provide q;
+	       );
+	  );
+     if hadError then return(errm);
+     sethash(u,obj.mutable);
+     Expr(u));
+mapvaluesfun(e:Expr):Expr := (
+     when      e is a:Sequence do
+     if        length(a) == 2
+     then when a.0 is o:HashTable 
+     do        
+     if        o.mutable
+     then      WrongArg("an immutable hash table")
+     else      mapvalues(a.1,o)
+     else      WrongArg(1,"a hash table")
+     else      WrongNumArgs(2)
+     else      WrongNumArgs(2));
+setupfun("applyValues",mapvaluesfun);
 
 bucketsfun(e:Expr):Expr := (
      when e
@@ -439,7 +478,7 @@ merge(e:Expr):Expr := (
 		    q := bucket;
 		    while q != bucketEnd do (
 			 val := lookup1(z,q.key,q.hash);
-			 if val != nullE then (
+			 if val != notfoundE then (
 			      t := apply(g,val,q.value);
 			      when t is Error do return(t) else nothing;
 			      storeInHashTable(z,q.key,q.hash,t);
@@ -466,7 +505,7 @@ merge(e:Expr):Expr := (
 		    q := bucket;
 		    while q != bucketEnd do (
 			 val := lookup1(z,q.key,q.hash);
-			 if val != nullE then (
+			 if val != notfoundE then (
 			      t := apply(g,q.value,val);
 			      when t is Error do return(t) else nothing;
 			      storeInHashTable(z,q.key,q.hash,t);
@@ -505,11 +544,11 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 			 when pqvalue is Error do return(pqvalue) else nothing;
 			 pqhash := hash(pqkey);
 			 previous := lookup1(z,pqkey,pqhash);
-			 r:=storeInHashTable(z,pqkey,pqhash,
-			      if previous == nullE
+			 r := storeInHashTable(z,pqkey,pqhash,
+			      if previous == notfoundE
 			      then pqvalue
 			      else (
-				   t:=apply(h,previous,pqvalue);
+				   t := apply(h,previous,pqvalue);
 				   when t is Error do return(t) else nothing;
 				   t));
 			 when r is Error do return(r) else nothing;
@@ -696,9 +735,10 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
 key1 := Sequence(nullE,nullE);
 key1E := Expr(key1);
 export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
-     -- the big numbers here are the same as in hash() for sequences in structure.d
+     -- warning: can return notfoundE, which should not be given to the user
      key1.0 = Expr(s);
      key1.1 = meth;
+     -- the big numbers here are the same as in hash() for sequences in structure.d
      lookup1(s, key1E, (27449 * 27457 + s.hash) * 27457 + methhash));
 -----------------------------------------------------------------------------
 -- binary methods
@@ -730,7 +770,7 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	       s := lookup1(
 		    if lefthash > righthash then lhs else rhsptr,
 		    key2E, keyhash);
-	       if s != nullE then return(s);
+	       if s != notfoundE then return(s);
 	       if rhsptr == thingClass then break;
 	       rhsptr = rhsptr.parent;
 	       );
@@ -739,6 +779,7 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	  );
      nullE);
 export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
+     -- warning: can return notfoundE, which should not be given to the user
      key2.0 = Expr(lhs);
      key2.1 = Expr(rhs);
      key2.2 = meth;
@@ -793,7 +834,7 @@ export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,meth
 			      if s2hash > s3hash then s2ptr else s3ptr
 			      ),
 		    	 key3E, keyhash3);
-	       	    if s != nullE then (
+	       	    if s != notfoundE then (
 			 key3.0 = nullE;
 			 key3.1 = nullE;
 			 key3.2 = nullE;

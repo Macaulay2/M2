@@ -250,12 +250,14 @@ document {
 	  TO "ITALIC",
 	  TO "KBD",
 	  TO "LISTING",
+	  TO "LITERAL",
 	  TO "MENU",
 	  TO "NL",
 	  TO "NOINDENT",
 	  TO "OL",
 	  TO "PARA",
 	  TO "PRE",
+	  TO "RETURNS",
 	  TO "SAMP",
 	  TO "SEEALSO",
 	  TO "SEQ",
@@ -541,6 +543,11 @@ document { quote EXAMPLE,
 
 document { quote TABLE,
      TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
+     }
+
+document { quote LITERAL,
+     TT "LITERAL x", " -- produces a special hypertext item which contains
+     HTML text that should be left unchanged by ", TO "html", "."
      }
 
 document { quote ExampleTABLE,

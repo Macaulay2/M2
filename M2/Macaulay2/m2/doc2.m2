@@ -747,12 +747,13 @@ document { quote applyPairs,
      TT "applyPairs(x,f)", " -- applies f to each pair (k,v) in the 
      hash table x to produce a new hash table.",
      PARA,
-     "It produces a new hash table y from a hash table x by applying
-     the function f to the pair (k,v) for each key k, where v is the value
-     stored in x as x#k.  Thus f should be a function of two variables
-     which returns either a pair (kk,vv) which is placed into y, or
-     it returns ", TT "null", ", which signifies that no action
-     be performed.",
+     "It produces a new hash table ", TT "y", " from a hash table ", TT "x", " 
+     by applying the function ", TT "f", " to the pair ", TT "(k,v)", " for 
+     each key ", TT "k", ", where ", TT "v", " is the value stored in
+     ", TT "x", " as ", TT "x#k", ".  Thus ", TT "f", " should be a function of 
+     two variables which returns either a pair ", TT "(kk,vv)", " which is 
+     placed into ", TT "y", ", or it returns ", TT "null", ", which 
+     signifies that no action be performed.",
      PARA,
      "In this example, we show how to produce the hash table corresponding
      to the inverse of a function.",
@@ -762,22 +763,36 @@ document { quote applyPairs,
 	  "x#2",
 	  "y#b",
 	  },
-     SEEALSO { "apply", "applyKeys", "scanPairs"}
+     SEEALSO { "applyValues", "applyKeys", "scanPairs"}
      }
 
 document { quote applyKeys,
      TT "applyKeys(x,f)", " -- applies ", TT "f", " to each key ", TT "k", " in the 
      hash table ", TT "x", " to produce a new hash table.",
      PARA,
-     "Thus ", TT "f", " should be a function of one variables ", TT "k", " which 
-     returns a new key ", TT "kk", " for the value ", TT "v", " in ", TT "y", ".  
-     If ", TT "kk", " is null, the result is not stored in ", TT "y", ".",
+     "Thus ", TT "f", " should be a function of one variable ", TT "k", " which 
+     returns a new key ", TT "k'", " for the value ", TT "v", " in ", TT "y", ".",
      EXAMPLE {
 	  "x = new HashTable from {1 => a, 2 => b, 3 => c}",
 	  "applyKeys(x, k -> k + 100)",
 	  },
      PARA,
-     SEEALSO "apply"
+     SEEALSO {"applyValues","applyPairs"}
+     }
+
+document { quote applyValues,
+     TT "applyValues(x,f)", " -- applies ", TT "f", " to each value ", TT "v", " 
+     in the hash table ", TT "x", " to produce a new hash table.",
+     PARA,
+     "Thus ", TT "f", " should be a function of one variable ", TT "v", " which 
+     returns a new value ", TT "v'", " for the key ", TT "k", " in the resulting hash
+     table.",
+     EXAMPLE {
+	  "x = new HashTable from {a => 1, b => 2, c => 3}",
+	  "applyValues(x, v -> v + 100)",
+	  },
+     PARA,
+     SEEALSO {"applyPairs","applyKeys"}
      }
 
 document { quote use,

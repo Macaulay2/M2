@@ -969,36 +969,9 @@ map(n:int,f:Expr):Expr := (
 map(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do Expr(map(a,f))
-     is obj:HashTable do (
-	  if obj.mutable then return(WrongArg("an immutable hash table"));
-	  u := newHashTable(obj.class,obj.parent);
-	  if ancestor(obj.class,Tally) then (
-	       foreach bucket in obj.table do (
-		    p := bucket;
-		    while p != bucketEnd do (
-			 newkey := apply(f,p.key);
-			 when newkey is Error do return(newkey)
-			 else (
-			      newhash := hash(newkey);
-			      v := lookup1(u, newkey, newhash);
-			      storeInHashTable(u, newkey, newhash,
-			      	   if v == nullE then p.value else v + p.value
-				   );
-			      );
-			 p = p.next));
-	       sethash(u,obj.mutable);
-	       Expr(u))
-	  else (
-	       foreach bucket in obj.table do (
-		    p := bucket;
-		    while p != bucketEnd do (
-			 newvalue := apply(f,p.value);
-			 when newvalue is Error do return(newvalue)
-			 else (storeInHashTable(u,p.key,p.hash,newvalue););
-			 p = p.next;
-			 ));
-	       sethash(u,obj.mutable);
-	       Expr(u)))
+--     is obj:HashTable do (
+--	  if obj.mutable then return(WrongArg("an immutable hash table"));
+--	  if ancestor(obj.class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
 	  c := map(b.v,f);
 	  when c

@@ -354,16 +354,6 @@ document { quote gcDump,
      SEEALSO "GC garbage collector"
      }
 
-document { "apply(Set,Function)",
-     TT "apply(x,f)", " -- apply a function ", TT "f", " to each element of a
-     ", TO "Set", " ", TT "x", ", producing a new set.",
-     PARA,
-     EXAMPLE {
-	  "x = set {1,2,3}",
-      	  "apply(x,x -> x^2)"
-	  }
-     }
-
 document { quote lookupCount,
      TT "lookupCount s", " -- the number of times the symbol ", TT "s", " has been
      encountered in source code presented to the interpreter."

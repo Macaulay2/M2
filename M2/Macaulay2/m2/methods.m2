@@ -859,6 +859,12 @@ document { quote SEEALSO,
      SEEALSO "document"
      }
 
+document { quote RETURNS,
+     TT "RETURNS X", " -- inserts, into a documentation page, a sentence
+     explaining that the return type is ", TT "X", ", and referring the user to
+     the page for ", TT "X", "."
+     }
+
 document { quote doc,
      TT "doc s", " -- provides the online documention for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to

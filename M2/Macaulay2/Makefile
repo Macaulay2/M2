@@ -63,14 +63,14 @@ clean ::; if [ -d thread ]; then $(MAKE) -C thread clean; fi
 #### keep this before 'm2' so the final/*.out files get made
 all::; $(MAKE) -C tutorial all
 clean::; $(MAKE) -C tutorial clean
-################################# test
-tests ::; $(MAKE) -C test -k
-clean ::; $(MAKE) -C test clean
 ################################# m2
 all ::; $(MAKE) -C m2 all
 tests ::;  $(MAKE) -C m2 tests
 clean ::; $(MAKE) -C m2 clean
 wc ::;  $(MAKE) -C m2 wc
+################################# test
+tests ::; $(MAKE) -C test -k
+clean ::; $(MAKE) -C test clean
 ################################# schubert
 tests ::; if [ -d schubert ]; then $(MAKE) -C schubert tests; fi
 ################################# setup
