@@ -353,8 +353,8 @@ document {
 	  },
      Usage => "(A', B') = polarCone(A, B)",
      Inputs => {
-	  "A" => {"a ", TT "d ", "by ", TT "n ", "matrix over ", TT "ZZ ", "or ", TT "QQ", "."},
-	  "B" => {"a ", TT "d ", "by ", TT "r ", "matrix over ", TT "ZZ ", "or ", TT "QQ", "."}
+	  "A" => {"a ", TT "d ", "by ", TT "n ", "matrix over ", TO "ZZ ", "or ", TO "QQ", "."},
+	  "B" => {"a ", TT "d ", "by ", TT "r ", "matrix over ", TO "ZZ ", "or ", TO "QQ", "."}
 	  },
      Outputs => {
 	  "A'" => { "a matrix having ", TT "d ", "rows" },

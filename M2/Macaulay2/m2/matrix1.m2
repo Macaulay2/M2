@@ -34,17 +34,6 @@ makeRawTable := (R,p) -> (					    -- this is messy
      else applyTable(p,x -> (promote(x,R)).RawRingElement)
      )
 
-map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
-     if options.Degree =!= null
-     then error "Degree option given with indeterminate source module";
-     R := ring M;
-     p = apply(splice p,splice);
-     if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
-     then error( "expected ", toString numgens M, " by ", toString rankN, " table");
-     p = makeRawTable(R,p);
-     h := rawMatrix1(raw cover M, rankN, toSequence flatten p, false, 0);
-     map(M,newModule(R,rawSource h),h))
-
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
      f := rawMatrixRemake1(raw target p, raw p,false,0);
@@ -83,15 +72,21 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	       );
 	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false,0)))))
 
+-- combine the one above with the one below
+map(Module,ZZ,List) := 
 map(Module,Nothing,List) := 
-map(Module,Module,List) := Matrix => 
-options -> (M,N,p) -> (
+map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      R := ring M;
-     if N === null
-     then (
-	  k := R;
+     local rankN;
+     local k;
+     if N === null then (
+	  k = R;
 	  if #p === 0 then error "expected non-empty list of entries for matrix";
-	  rankN := #p#0;
+	  rankN = #p#0;
+	  )
+     else if class N === ZZ then (
+	  k = R;
+	  rankN = N;
 	  )
      else (
      	  k = ring N;
@@ -99,26 +94,29 @@ options -> (M,N,p) -> (
 	  -- later, allow a ring homomorphism
 	  rankN = numgens N;
 	  );
-     p = apply(splice p,splice);
-     if #p != numgens M
-     or #p > 0 and ( not isTable p or # p#0 != rankN )
-     then error( "expected ", toString numgens M, " by ", toString rankN, " table");
-     if N === null and options.Degree =!= null
-     then error "Degree option given with indeterminate source module";
-     p = toSequence makeRawTable(R,p);
-     rawM := M.RawFreeModule;
-     h := (
-	  if N === null 
-	  then rawMatrix1(rawM, rankN, flatten p, false, 0)
-	  else rawMatrix2(rawM, N.RawFreeModule, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false,0)
-	  );
-     new Matrix from {
-	  symbol target => M,
-	  symbol RawMatrix => h,
-	  symbol source => if N === null then newModule(R, rawSource h) else N,
-	  symbol ring => R,
-	  symbol cache => new CacheTable
-	  })
+     if not instance(N,Module) and options.Degree =!= null then error "Degree option given with indeterminate source module";
+     p = splice p;
+     if all(p, o -> instance(o,Option)) then (		    -- sparse list of entries
+	  notImplemented();
+	  )
+     else if all(p, o -> instance(o,List)) then (		    -- dense list of entries or blocks
+	  p = apply(splice p,splice);
+	  if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
+	  then error( "expected ", toString numgens M, " by ", toString rankN, " table");
+	  p = toSequence makeRawTable(R,p);
+	  h := (
+	       if N === null 
+	       then rawMatrix1(raw cover M, rankN, flatten p, false, 0)
+	       else rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false,0)
+	       );
+	  new Matrix from {
+	       symbol target => M,
+	       symbol RawMatrix => h,
+	       symbol source => if N === null then newModule(R, rawSource h) else N,
+	       symbol ring => R,
+	       symbol cache => new CacheTable
+	       })
+     else error "expected a list of lists or a list of options")
 
 fixDegree := (m,d) -> (
      M := target m;
@@ -281,7 +279,7 @@ matrix(List) := Matrix => options -> (m) -> (
 
 --------------------------------------------------------------------------
 
-Module#id = (M) -> map(M,1)
+Module#id = (M) -> map(M,M,1)
 
 reshape = method()
 reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> (

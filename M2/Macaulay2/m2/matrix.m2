@@ -423,7 +423,7 @@ map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
 	  symbol ring => ring M,
 	  symbol cache => new CacheTable
 	  }
-     else if M == N then map(M,i)
+     else if M === N then map(M, M, reduce(M, rawIdentity(raw cover M,false,0)))
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
