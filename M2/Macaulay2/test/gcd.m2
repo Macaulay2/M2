@@ -4,7 +4,7 @@ f = (3*x^3-x*y+y^2) * d
 g = (3*x^3+x*y+y^2) * d
 assert( degree ( gcd(f,g) // d ) == {0} )
 
-debugPackage Macaulay2
+debug Macaulay2
 R = QQ[x,y]
 f = 1+x^2
 g = 1+x^3

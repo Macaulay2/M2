@@ -411,14 +411,9 @@ separateM2output String := r -> (
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
-getFileName := body -> (
-     x := select(1, body, i -> class i === Option and #i === 2 and first i === FileName);
-     if #x > 0 then x#0#1 else null
-     )
-
-makeFileName := (fkey,filename,pkg) -> (			 -- may return 'null'
+makeFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | LAYOUT#"packageexamples" pkg#"title" | if filename =!= null then filename else toFilename fkey
+     then pkg#"package prefix" | LAYOUT#"packageexamples" pkg#"title" | toFilename fkey
      )
 
 exampleResultsFound := false
@@ -455,7 +450,7 @@ processExamplesLoop := s -> (
      then apply(s,processExamplesLoop)
      else s)
 processExamples := (pkg,fkey,docBody) -> (
-     exampleBaseFilename = makeFileName(fkey,getFileName docBody,pkg);
+     exampleBaseFilename = makeFileName(fkey,pkg);
      checkForExampleOutputFile(fkey,pkg);
      currentExampleKey = fkey;
      r := processExamplesLoop docBody;
@@ -482,7 +477,6 @@ fixupTable := new HashTable from {
      Inputs => val -> fixupList val,
      Outputs => val -> fixupList val,
      Consequences => val -> fixupList val,
-     FileName => chkIsString FileName,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
      Caveat => v -> if v =!= null then fixup DIV { SUBSECTION "Caveat", SEQ v },
@@ -505,7 +499,6 @@ documentOptions := new HashTable from {
      Inputs => true,
      Outputs => true,
      Consequences => true,
-     FileName => true,
      Headline => true,
      SeeAlso => true,
      Caveat => true,
@@ -534,7 +527,7 @@ document Sequence := args -> (
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
-     exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
+     exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
      if currentPackage#rawKey#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
      opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val));
      currentPackage#rawKey#currentNodeName = opts;

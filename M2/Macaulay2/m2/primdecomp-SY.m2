@@ -48,7 +48,7 @@ minSatPPD = (I, facs) -> (
      )
 
 TEST ///
-debugPackage Macaulay2
+debug Macaulay2
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
 I = ideal(
     b*v+s*u,

@@ -12,7 +12,6 @@ document {
 	  TT ///needsPackage "Dmodules"///, 
 	  "."
 	  },
-     FileName => "index",
      PARA,
      HEADER3 "How to make Weyl algebras:",
      UL{TO {"WeylAlgebra", " -- 
