@@ -8,7 +8,7 @@ applyMethod := (m,x) -> if x === null then x else (
 Print Thing := x -> (
      x = applyMethod(AfterEval,x);
      y := applyMethod(BeforePrint,x);
-     << y << flush;
+     << toExternalString y << flush;
      )
 
 BeforePrint Net := BeforePrint String := identity
