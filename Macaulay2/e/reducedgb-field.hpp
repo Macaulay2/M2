@@ -7,6 +7,9 @@
 
 class ReducedGB_Field : public ReducedGB
 {
+  friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
+				      const FreeModule *F0,
+				      const FreeModule *Fsyz0);
 protected:
   MonomialTable *T;
   const MonomialIdeal *Rideal;

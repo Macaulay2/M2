@@ -7,6 +7,9 @@
 
 class ReducedGB_Field_Local : public ReducedGB_Field
 {
+  friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
+				      const FreeModule *F0,
+				      const FreeModule *Fsyz0);
   // The polynomials themselves are in MinimalGB
   // The monomial ideals are in MinimalGB_Field
 protected:
