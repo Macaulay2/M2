@@ -207,7 +207,6 @@ export frameByNestingDepth(nestingDepth:int):Frame := (	    -- new version
 	  );
      f);
 
-export makeSymbolClosure(s:Symbol):SymbolClosure := SymbolClosure(frame(s.frameID),s);
 allExprCodes(cs:CodeSequence):bool := (
      foreach c in cs do when c is exprCode do nothing else return(false);
      return(true);
@@ -247,6 +246,8 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 	       treePosition(e)
 	       ))
      );
+
+export makeSymbolClosure(s:Symbol):SymbolClosure := SymbolClosure(frame(s.frameID),s);
 
 export convert(e:ParseTree):Code := (
      when e
@@ -303,8 +304,6 @@ export convert(e:ParseTree):Code := (
 	  then Code(exprCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
 	  then Code(exprCode(parseString(wrd.name), pos))
-	  else if var.protected && !var.transient
-	  then Code(exprCode(frame(var.frameID).values.(var.frameindex), pos))
 	  else Code(variableCode(var,pos)))
      is a:Adjacent do Code(
 	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
@@ -525,11 +524,7 @@ export convert(e:ParseTree):Code := (
 	       )
 	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (
-	  if q.rhs.entry.frameID == globalFrame.frameID
-	  then Code(exprCode(
-		    Expr(SymbolClosure(globalFrame,q.rhs.entry)),
-		    treePosition(e)))
-	  else Code(unaryCode(
+	  Code(unaryCode(
 		    QuoteFun,
 		    Code(variableCode(q.rhs.entry,q.rhs.position)),
 		    treePosition(e)
@@ -537,14 +532,10 @@ export convert(e:ParseTree):Code := (
 	       )
 	  )
      is q:GlobalQuote do (
-	  Code(
-	       exprCode(
-		    Expr(SymbolClosure(globalFrame,q.rhs.entry)),
-		    treePosition(e))
-	       --unaryCode(
-	       --	    QuoteFun,
-	       --	    Code(variableCode(q.rhs.entry,q.rhs.position)),
-	       --    treePosition(e))
+	  Code(unaryCode(
+	       	    QuoteFun,
+	       	    Code(variableCode(q.rhs.entry,q.rhs.position)),
+	            treePosition(e))
 	       )
 	  )
      is q:LocalQuote do (
@@ -569,6 +560,8 @@ export convert(e:ParseTree):Code := (
 export codePosition(e:Code):Position := (
      when e
      is f:assignmentCode do f.position
+     is f:localMemoryReferenceCode do f.position
+     is f:staticMemoryReferenceCode do f.position
      is f:parallelAssignmentCode do f.position
      is f:exprCode do f.position
      is f:variableCode do f.position
@@ -721,6 +714,8 @@ export eval(c:Code):Expr := (
 	  --couldtrace=false; 
 	  n.v)
      is var:variableCode do frame(var.v.frameID).values.(var.v.frameindex)
+     is r:localMemoryReferenceCode do frameWithNestingDepth(r.frameID,r.nestingDepth).values.(r.frameindex)
+     is r:staticMemoryReferenceCode do globalFrame.values.(r.frameindex)
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)
      is m:functionCode do Expr(FunctionClosure(localFrame, m))
