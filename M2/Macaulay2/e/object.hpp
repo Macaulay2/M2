@@ -93,7 +93,8 @@ public:
   virtual EVector * cast_to_EVector() { return 0; }
   virtual EMatrix * cast_to_EMatrix() { return 0; }
   virtual ERingMap * cast_to_ERingMap() { return 0; }
- 
+  virtual EGroebnerComputation *cast_to_EGroebnerComputation() { return 0; }
+
   virtual const ERing * cast_to_ERing() const { return 0; }
   virtual const EZZp * cast_to_EZZp() const { return 0; }
   virtual const EMonomialOrder * cast_to_EMonomialOrder() const { return 0; }
@@ -104,6 +105,7 @@ public:
   virtual const EVector * cast_to_EVector() const { return 0; }
   virtual const EMatrix * cast_to_EMatrix() const { return 0; }
   virtual const ERingMap * cast_to_ERingMap() const { return 0; }
+  virtual const EGroebnerComputation *cast_to_EGroebnerComputation() const { return 0; }
 #if defined(ARING)
   virtual const PolynomialRing * cast_to_PolynomialRing() const { return 0; }
   virtual const Polynomial * cast_to_Polynomial() const { return 0; }

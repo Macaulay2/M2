@@ -331,7 +331,7 @@ public:
   
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
-  static EZZ *binary_in(istream &i);
+  // static EZZ *binary_in(istream &i);
 
   virtual int characteristic() const
     { return 0; }
@@ -388,7 +388,7 @@ public:
 
   void elem_text_out(buffer &o, ZZ a) const;
   void elem_bin_out(buffer &o, ZZ a) const;
-  ZZ elem_binary_in(istream &i) const;
+  // ZZ elem_binary_in(istream &i) const;
 
   int compare(ZZ a, ZZ b) const
     { if (a>b) return GT; if (a<b) return LT; return EQ; }
@@ -476,7 +476,7 @@ public:
 
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
-  static EZZp *binary_in(istream &i);
+  // static EZZp *binary_in(istream &i);
 
   virtual int characteristic() const { return P; }
   virtual class_identifier class_id() const { return CLASS_EZZp; }
@@ -541,7 +541,7 @@ public:
 
   void elem_text_out(buffer &o, int a) const;
   void elem_bin_out(buffer &o, int a) const;
-  int elem_binary_in(istream &i) const;
+  // int elem_binary_in(istream &i) const;
 
 /////////////////////////////
 // Virtual Ring Operations //

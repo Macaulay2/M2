@@ -3,6 +3,7 @@
 #include "Ematrix.hpp"
 #include "Evector.hpp"
 #include "Eringmap.hpp"
+#include "EGB.hpp"
 
 #include "text_io.hpp"
 #include "comb.hpp"
@@ -420,6 +421,38 @@ EMatrix *EMatrix::multiply(const EMatrix * m) const
   for (int i=0; i<m->n_cols(); i++)
     newcols[i] = vectorImage(m->column(i));
   return make(getTarget(), m->getSource(), newcols, newtype, newdeg);
+}
+
+EMatrix *EMatrix::reduceByGB(const EGroebnerComputation *gb) const
+{
+  if (gb->getTarget()->rank() != getTarget()->rank())
+    {
+      gError << "incorrect number of rows";
+      return 0;
+    }
+  EVector *newcols = allocate_columns(n_cols());
+  for (int i=0; i<n_cols(); i++)
+    newcols[i] = gb->reduceVector(column(i), getMatrixType());
+  return make(getTarget(), getSource(), newcols, getMatrixType(), getMapDegree());
+}
+
+EMatrix *EMatrix::reduceByGB(const EGroebnerComputation *gb, EMatrix * &result_lift) const
+{
+  if (gb->getTarget()->rank() != getTarget()->rank())
+    {
+      gError << "incorrect number of rows";
+      return 0;
+    }
+  EVector *newcols = allocate_columns(n_cols());
+  EVector *liftcols = allocate_columns(n_cols());
+  const EFreeModule *Fsyz = gb->getSource();
+  for (int i=0; i<n_cols(); i++)
+    {
+      newcols[i] = gb->reduceVector(column(i), getMatrixType(), liftcols[i]);
+      liftcols[i].negateTo();
+    }
+  result_lift = make(Fsyz, getSource(), liftcols, getMatrixType(), getMapDegree());
+  return make(getTarget(), getSource(), newcols, getMatrixType(), getMapDegree());
 }
 
 EMatrix *EMatrix::flip(const EFreeModule *F, const EFreeModule *G)

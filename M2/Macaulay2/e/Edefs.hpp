@@ -2,7 +2,7 @@
 #ifndef __defs_hpp_
 #define __defs_hpp_
 
-#include <iostream.h>
+//#include <iostream.h>
 #include "object.hpp"
 //class ostream;
 //class istream;

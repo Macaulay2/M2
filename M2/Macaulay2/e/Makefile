@@ -97,6 +97,7 @@ ESTUFF = \
 	Ematrix \
 	Eringmap \
 	Eio \
+	EGB \
 	Ecommands
 
 E_H = \

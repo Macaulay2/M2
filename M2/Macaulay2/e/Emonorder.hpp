@@ -126,7 +126,7 @@ public:
   int * put_binary() const;  // NOT DONE
 
   static EMonomialOrder *get_binary(const int *monorder);
-  static EMonomialOrder *binary_in(istream &i);
+  //  static EMonomialOrder *binary_in(istream &i);
 
   EMonomialOrder * cast_to_EMonomialOrder() { return this; }
   const EMonomialOrder * cast_to_EMonomialOrder() const { return this; }

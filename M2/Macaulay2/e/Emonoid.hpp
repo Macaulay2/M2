@@ -127,7 +127,7 @@ public:
   virtual void bin_out(buffer &o) const = 0;
   virtual void elem_text_out(buffer &o, const monomial *a) const = 0;
   virtual void elem_bin_out(buffer &o, const monomial *a) const = 0;
-  virtual const monomial *elem_binary_in(istream &i) const = 0;
+  // virtual const monomial *elem_binary_in(istream &i) const = 0;
 
   virtual const ENCMonoid *toNCMonoid() const { return 0; }
   virtual const ECommMonoid *toCommMonoid() const { return 0; }
@@ -199,7 +199,7 @@ public:
 
   virtual void elem_text_out(buffer &o, const monomial *a) const;
   virtual void elem_bin_out(buffer &o, const monomial *a) const;
-  virtual const monomial *elem_binary_in(istream &i) const;
+  // virtual const monomial *elem_binary_in(istream &i) const;
 
   virtual const ENCMonoid *toNCMonoid() const { return this; }
 
@@ -225,7 +225,7 @@ public:
 
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
-  static ECommMonoid *binary_in(istream &i);
+  // static ECommMonoid *binary_in(istream &i);
   
   void copy_exponents(const monomial *m, int *&result) const;  
   const int * to_exponents(const monomial *m) const;
@@ -264,7 +264,7 @@ public:
   // I/O
   virtual void elem_text_out(buffer &o, const monomial *a) const;
   virtual void elem_bin_out(buffer &o, const monomial *a) const;
-  virtual const monomial *elem_binary_in(istream &i) const;
+  // virtual const monomial *elem_binary_in(istream &i) const;
 
   virtual const ECommMonoid *toCommMonoid() const { return this; }
 

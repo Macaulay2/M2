@@ -9,6 +9,7 @@
 #include "Evector.hpp"
 #include "Ematrix.hpp"
 #include "Eringmap.hpp"
+#include "EGB.hpp"
 
 #include "interp.hpp"
 #include "Ehashtab.hpp"
@@ -1679,6 +1680,79 @@ static void cmd_EMatrix_divideByVariables(object &oM, object &on, object &omax)
 #endif
 }
 
+static void cmd_EGB_declareGB(object &ogens, object &ogb, object &ochange)
+{
+  EMatrix *gens = ogens->cast_to_EMatrix();
+  EMatrix *m    = ogb->cast_to_EMatrix();
+  EMatrix *change = ochange->cast_to_EMatrix();
+  EMatrix *syz = EMatrix::zero(change->getTarget(), change->getRing()->makeFreeModule(0));
+  EGroebnerComputation *p = EDeclaredGB::make(gens,m,change,syz);
+  gStack.insert(p);
+}
+
+static void cmd_EGB_declareGB1(object &ogens, object &ogb, object &ochange, object &osyz)
+{
+  EMatrix *gens = ogens->cast_to_EMatrix();
+  EMatrix *m    = ogb->cast_to_EMatrix();
+  EMatrix *change = ochange->cast_to_EMatrix();
+  EMatrix *syz = osyz->cast_to_EMatrix();
+  EGroebnerComputation *p = EDeclaredGB::make(gens,m,change,syz);
+  gStack.insert(p);
+}
+static void cmd_EGB_stats(object &op)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  p->stats();
+}
+static void cmd_EGB_getgb(object &op)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  gStack.insert(p->getGB());
+}
+static void cmd_EGB_getchange(object &op)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  gStack.insert(p->getChangeOfBasis());
+}
+static void cmd_EGB_getsyz(object &op)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  gStack.insert(p->getSyzygies());
+}
+static void cmd_EGB_getmingens(object &op)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  gStack.insert(p->getMinimalGenerators());
+}
+static void cmd_EGB_in(object &op, object &on)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  gStack.insert(p->getLeadTerms(on->int_of()));
+}
+static void cmd_EGB_reduceVector(object &op, object &ov, object &om)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  EVector *v = ov->cast_to_EVector();
+  int m = om->int_of();
+  if (m <= 0 || m >= 4)
+    {
+      gError << "expected left/right/2sided";
+      return;
+    }
+  EVector lifted;
+  EVector result = p->reduceVector(*v,m,lifted);
+  gStack.insert(make_object_EVector(result));
+  gStack.insert(make_object_EVector(lifted));
+}
+static void cmd_EGB_reduceMatrix(object &op, object &ov)
+{
+  EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
+  EMatrix *v = ov->cast_to_EMatrix();
+  EMatrix *lifted;
+  EMatrix *result = p->reduceMatrix(v,lifted);
+  gStack.insert(result);
+  gStack.insert(lifted);
+}
 void i_Ecommands(void)
 {
   EUniqueObjects = new EHashTable;
@@ -1922,4 +1996,23 @@ void i_Ecommands(void)
   install(gglift, cmd_ERingElement_lift, TY_ERing, TY_ERingElement);
   install(gglift, cmd_EMatrix_lift, TY_EFreeModule, TY_EMatrix);
   install(gglift, cmd_EVector_lift, TY_EFreeModule, TY_EVector);
+
+  //////////////////////
+  // Groebner bases ////
+  //////////////////////
+  install(gggb, cmd_EGB_declareGB, TY_EMatrix, TY_EMatrix, TY_EMatrix);
+  install(gggb, cmd_EGB_declareGB1, TY_EMatrix, TY_EMatrix, TY_EMatrix, TY_EMatrix);
+
+  install(gggetmingens, cmd_EGB_getmingens, TY_EGroebnerComputation);  
+  install(gggetgb, cmd_EGB_getgb, TY_EGroebnerComputation);  
+  install(gggetchange, cmd_EGB_getchange, TY_EGroebnerComputation);  
+  install(gggetsyz, cmd_EGB_getsyz, TY_EGroebnerComputation);  
+  install(gginitial, cmd_EGB_in, TY_EGroebnerComputation, TY_INT);  
+
+  install(ggstats, cmd_EGB_stats, TY_EGroebnerComputation);
+  install(ggreduce, cmd_EGB_reduceVector, TY_EGroebnerComputation, TY_EVector, TY_INT);
+  install(ggreduce, cmd_EGB_reduceMatrix, TY_EGroebnerComputation, TY_EMatrix);
+#if 0
+  install(ggcalc, cmd_EGB_calc, TY_EGroebnerComputation, TY_INTARRAY, TY_INTARRAY);
+#endif
 }

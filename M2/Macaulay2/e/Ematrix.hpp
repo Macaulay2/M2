@@ -25,12 +25,11 @@ class EMatrix : public type
 				// and the coefficients are commutative.
 				// The columns are always the image vectors, but multiplication
 				// is affected by this setting.
-  EGB *gb;			// A GB computation for the columns, if not NULL.
+  EGroebnerComputation *gb;	// A GB computation for the columns, if not NULL.
 private:
   static EVector *allocate_columns(int c);
   static EVector *initialize_columns(const EFreeModule *F, int c);
 
-  const ERing *getRing() const { return target->getRing(); }
   const EMonoid *getDegreeMonoid() const { return target->getDegreeMonoid(); }
 public:
   EMatrix(const EFreeModule *F,
@@ -53,10 +52,10 @@ public:
 	  int type = EMatrix_both,
 	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
 
-  void text_out(ostream &o) const;
+  // void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  void binary_out(ostream &o) const;
-  static EFreeModule *binary_in(istream &i);
+  // void binary_out(ostream &o) const;
+  // static EFreeModule *binary_in(istream &i);
 
   virtual EMatrix * cast_to_EMatrix() { return this; }
   virtual const EMatrix * cast_to_EMatrix() const { return this; }
@@ -66,12 +65,13 @@ public:
   const char * type_name   () const { return "EMatrix"; }
 public:
   // Parts of the matrix
+  const ERing *getRing() const { return target->getRing(); }
   const EFreeModule *getTarget() const { return target; }
   const EFreeModule *getSource() const { return source; }
   const monomial *getMapDegree() const { return mapdegree; }
   const int getMatrixType() const { return theType; }
 
-  EGB *getGB() const { return gb; }
+  EGroebnerComputation *getGB() const { return gb; }
 
   int n_rows() const { return target->rank(); }
   int n_cols() const { return source->rank(); }
@@ -91,6 +91,9 @@ public:
   EMatrix *submatrix(const intarray &rows, const intarray &cols) const;
   EMatrix *submatrix(const intarray &cols) const;
   EMatrix *homogenize(int v, int nwts, const int *wts) const;
+
+  EMatrix *reduceByGB(const EGroebnerComputation *gb) const;
+  EMatrix *reduceByGB(const EGroebnerComputation *gb, EMatrix * &result_lift) const;
 
   EMatrix *tensor(const EMatrix *m) const;       // Return this ** m
   EMatrix *moduleTensor(const EMatrix *m) const; // Return the presentation matrix of 
