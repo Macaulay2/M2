@@ -1204,6 +1204,10 @@ document { symbol "**",
      Headline => "a binary operator, usually used for tensor product",
      }
 
+document { symbol "^**",
+     Headline => "a binary operator, usually used for tensor power",
+     }
+
 document { (symbol **, Set, Set),
      Headline => "Cartesian product",
      TT "X ** Y", " -- form the Cartesian product of two sets.",
