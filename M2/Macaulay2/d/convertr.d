@@ -37,8 +37,11 @@ export AssignNewOfFun := dummyTernaryFun;
 export AssignNewFromFun := dummyTernaryFun;
 export AssignNewOfFromFun := dummyMultaryFun;
 
-export InstallFun := dummyMultaryFun;
-export UnaryInstallFun := dummyTernaryFun;
+export InstallMethodFun := dummyMultaryFun;
+export UnaryInstallMethodFun := dummyTernaryFun;
+
+export InstallValueFun := dummyMultaryFun;
+export UnaryInstallValueFun := dummyTernaryFun;
 
 export braceFun := dummyMultaryFun;     -- filled in later in actors.d
 export bracketFun := dummyMultaryFun;   -- filled in later in actors.d
@@ -128,6 +131,21 @@ combine(cs:CodeSequence):Sequence := (
 	  when c is z:exprCode do provide z.v
 	  else provide nullE		  -- will not happen
 	  ));
+
+tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
+     -- we know it is a token, but we forget that now, sigh
+     Code(binaryCode(
+	       if t.entry.scopenum == globalScope.seqno
+	       then GlobalAssignFun else AssignFun,
+	       if t.word.typecode == TCid
+	       then Code(variableCode(t.entry,t.position))
+	       else (
+		    -- would have liked to give an error instead
+		    convert(b.lhs)
+		    ),
+	       convert(b.rhs),treePosition(e)))
+     );
+
 export convert(e:ParseTree):Code := (
      when e
      is s:startScope do (
@@ -239,7 +257,56 @@ export convert(e:ParseTree):Code := (
 	       then Code(exprCode(Expr(combine(cs)),treePosition(e)))
 	       else Code(cs)
 	       )
-	  else if b.operator.word == EqualW || b.operator.word == ColonEqualW
+	  else if b.operator.word == EqualW
+	  then (
+	       when b.lhs
+	       is a:Adjacent do (
+		    Code(multaryCode(
+			      InstallValueFun,
+			      CodeSequence(
+			      	   Code(exprCode(AdjacentS,dummyPosition)),
+			      	   convert(a.lhs),
+			      	   convert(a.rhs),
+			      	   convert(b.rhs)),
+			      treePosition(e))))
+	       is u:Unary do Code(ternaryCode(
+			 UnaryInstallValueFun,
+			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
+			 convert(u.rhs), convert(b.rhs), treePosition(e)))
+	       is u:Postfix do Code(ternaryCode(
+			 UnaryInstallValueFun,
+			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
+			 convert(u.lhs), convert(b.rhs), treePosition(e)))
+	       is c:Binary do (
+		    if c.operator.entry == SharpS.symbol
+		    then Code(ternaryCode( AssignElemFun, convert(c.lhs),
+			      convert(c.rhs), convert(b.rhs), treePosition(e)))
+		    else if c.operator.entry == DotS.symbol
+		    then (
+			 when c.rhs
+			 is crhs:Token do
+			 Code(ternaryCode(
+				   AssignElemFun,
+				   convert(c.lhs),
+				   Code(exprCode(Expr(SymbolClosure( globalFrame, crhs.entry)), 
+					     treePosition(c.rhs))),
+				   convert(b.rhs),
+				   treePosition(e)))
+			 else dummyCode --should not happen
+			 )
+		    else Code(multaryCode(
+			      InstallValueFun,
+			      CodeSequence(
+				   Code(exprCode( Expr(makeSymbolClosure(c.operator.entry)), 
+					     dummyPosition)),
+				   convert(c.lhs),
+				   convert(c.rhs),
+				   convert(b.rhs)),
+			      treePosition(e))))
+	       is t:Token do tokenAssignment(e,b,t)
+	       else dummyCode		  -- should not happen
+	       )
+	  else if b.operator.word == ColonEqualW
 	  then (
 	       when b.lhs
 	       is n:New do (
@@ -273,7 +340,7 @@ export convert(e:ParseTree):Code := (
 			      treePosition(e))))
 	       is a:Adjacent do (
 		    Code(multaryCode(
-			      InstallFun,
+			      InstallMethodFun,
 			      CodeSequence(
 			      	   Code(exprCode(AdjacentS,dummyPosition)),
 			      	   convert(a.lhs),
@@ -281,11 +348,11 @@ export convert(e:ParseTree):Code := (
 			      	   convert(b.rhs)),
 			      treePosition(e))))
 	       is u:Unary do Code(ternaryCode(
-			 UnaryInstallFun,
+			 UnaryInstallMethodFun,
 			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
 			 convert(u.rhs), convert(b.rhs), treePosition(e)))
 	       is u:Postfix do Code(ternaryCode(
-			 UnaryInstallFun,
+			 UnaryInstallMethodFun,
 			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
 			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
@@ -294,7 +361,7 @@ export convert(e:ParseTree):Code := (
 			      convert(c.rhs), convert(b.rhs), treePosition(e)))
 		    else if c.operator.entry == UnderscoreS.symbol
 		    then Code(multaryCode(
-			      InstallFun,
+			      InstallMethodFun,
 			      CodeSequence( 
 			      	   Code(exprCode(UnderscoreS,dummyPosition)),
 				   convert(c.lhs),
@@ -317,7 +384,7 @@ export convert(e:ParseTree):Code := (
 			 else dummyCode --should not happen
 			 )
 		    else Code(multaryCode(
-			      InstallFun,
+			      InstallMethodFun,
 			      CodeSequence(
 				   Code(
 					exprCode(
@@ -327,21 +394,8 @@ export convert(e:ParseTree):Code := (
 				   convert(c.rhs),
 				   convert(b.rhs)),
 			      treePosition(e))))
-	       is t:Token do (
-		    -- we know it is a token, but we forget that now, sigh
-		    Code(binaryCode(
-			      if t.entry.scopenum == globalScope.seqno
-			      then GlobalAssignFun else AssignFun,
-			      if t.word.typecode == TCid
-			      then Code(variableCode(t.entry,t.position))
-			      else (
-				   -- would have liked to give an error instead
-				   convert(b.lhs)
-				   ),
-			      convert(b.rhs),treePosition(e)))
-		    )
-	       else 
-	       dummyCode		  -- should not happen
+	       is t:Token do tokenAssignment(e,b,t)
+	       else dummyCode		  -- should not happen
 	       )
 	  else Code(binaryCode(b.operator.entry.binary,convert(b.lhs),
 	       	    convert(b.rhs),treePosition(e)))
