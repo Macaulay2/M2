@@ -12,7 +12,7 @@ INSTALL_DATA = $(INSTALL)
 	$(COMPILE.cc) $(OUTPUT_OPTION) $<
 
 ifeq "$(GCC)" "yes"
-CXXFLAGS += -Wno-shadow
+CXXFLAGS += -Wno-shadow -Wno-cast-qual
 endif
 
 ifeq "$(CC)" "cl"
