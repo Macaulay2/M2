@@ -395,7 +395,7 @@ tex LITERAL := html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := t -> concatenate("<I>", apply(t,html), "</I>")
 html UNDERLINE := t -> concatenate("<U>", apply(t,html), "</U>")
-html BODY := t -> concatenate("<B>", apply(t,html), "</B>")
+html BOLD := t -> concatenate("<B>", apply(t,html), "</B>")
 html TEX := x -> x#0	    -- should do something else!
 
 tex BASE := net BASE := x -> ""

@@ -47,26 +47,28 @@ record      := f -> x -> (
    --	             TO symbol sin
    -- and have them all get recorded the same way
 normalizeDocumentTag := method(SingleArgumentDispatch => true)
-isDocumentableThing  := method(SingleArgumentDispatch => true)
-isDocumentableMethod := method(SingleArgumentDispatch => true)
 normalizeDocumentTag   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
-isDocumentableThing    String := key -> true
 normalizeDocumentTag   Symbol := identity
-isDocumentableThing    Symbol := key -> true
 normalizeDocumentTag Sequence := identity
-isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
-isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod)
 normalizeDocumentTag  Nothing := key -> symbol null
-isDocumentableThing   Nothing := key -> true
 normalizeDocumentTag    Thing := key -> (
-     if key.?Symbol and value key.Symbol === key then return key.Symbol;
      if ReverseDictionary#?key then return ReverseDictionary#key;
      error("encountered unidentifiable document tag: ",key);
      )
+
+isDocumentableThing  := method(SingleArgumentDispatch => true)
+isDocumentableThing    String := key -> true
+isDocumentableThing    Symbol := key -> true
+isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
+isDocumentableThing   Nothing := key -> true
+
+isDocumentableMethod := method(SingleArgumentDispatch => true)
+isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod)
 isDocumentableMethod    Thing := key -> false
+isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
+isDocumentableMethod     Type := 
 isDocumentableMethod Function := 
 isDocumentableThing     Thing := key -> (
-     if key.?Symbol and value key.Symbol === key then return true;
      if ReverseDictionary#?key then return true;
      false)
 -----------------------------------------------------------------------------
@@ -196,6 +198,7 @@ verifyTag Option   := s -> error "old style option documentation tag"
 --     the package title            e.g., "Main", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
+DocumentTag.synonym = "document tag"
 makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  FormattedKey => null,
 	  Package => null
@@ -208,13 +211,23 @@ makeDocumentTag Thing := opts -> key -> (
      pkg := if opts#Package =!= null then opts#Package else packageTag key;
      title := if pkg === null then "" else pkg#"title";
      new DocumentTag from {key,fkey,pkg,title})
-DocumentTag.Key = x -> x#0				    -- just a bit of experimentation...
-DocumentTag.FormattedKey = x -> x#1
+-- a bit of experimentation...
+err := x -> error "expected a document tag, perhaps the function 'hypertext' has not yet run on hypertext"
+DocumentTag.Key = method(SingleArgumentDispatch => true)
+DocumentTag.Key DocumentTag := x -> x#0
+DocumentTag.Key Thing := err
+DocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
+DocumentTag.FormattedKey DocumentTag := x -> x#1
+DocumentTag.FormattedKey Thing := err
+DocumentTag.Package = method(SingleArgumentDispatch => true)
+DocumentTag.Package DocumentTag := x -> x#2
+DocumentTag.Package Thing := err
+DocumentTag.Title = method(SingleArgumentDispatch => true)
+DocumentTag.Title DocumentTag := x -> x#3
+DocumentTag.Title Thing := err
 DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
 DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
-DocumentTag.Package = x -> x#2
-DocumentTag.Title = x -> x#3
 net DocumentTag := x -> concatenate ( DocumentTag.FormattedKey x, " [", DocumentTag.Title x, "]" )
 toString DocumentTag := x -> error "who wants a string?"
 package DocumentTag := DocumentTag.Package
@@ -843,9 +856,7 @@ documentationValue(Symbol,Type) := (s,X) -> (
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
-	  if #b > 0 then SEQ { 
-	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
-	       smenu b},
+	  if #b > 0 then SEQ { PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b},
 	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", smenu a },
 	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", smenu c},
 	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", smenu e},

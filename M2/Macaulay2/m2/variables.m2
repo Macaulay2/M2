@@ -14,7 +14,6 @@ IndexedVariable.synonym = "indexed variable"
 toString IndexedVariable := v -> (
      x := v#0;
      i := v#1;
-     -- if x#?i then concatenate(toString x.Symbol,"_",toString i) else 
      concatenate(toString x.Symbol,"_",toString i)
      )
 net IndexedVariable := v -> (
@@ -42,6 +41,7 @@ Symbol _ Thing := IndexedVariable => (v,i) -> (
 	       symbol name => toString v,
 	       symbol Symbol => v
 	       };
+	  if not ReverseDictionary#?x then ReverseDictionary#x = v;
      	  new IndexedVariable from {x,i}))
 
 Sequence .. Sequence := Sequence => (v,w) -> (
