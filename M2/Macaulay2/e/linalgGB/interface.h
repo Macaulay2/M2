@@ -1,7 +1,7 @@
 #ifndef __interface_h_
 #define __interface_h_
 
-#include "monomials.h"
+#include "Monomials.h"
 #include "MonomialSet.h"
 #include "../freemod.hpp"
 #include <vector>

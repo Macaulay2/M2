@@ -527,7 +527,7 @@ document {
      "If the Poincare polynomial (or Hilbert function) for a homogeneous
      submodule ", TT "M", " is known, you can speed up the computation of a
      Groebner basis by informing the system.  This is done by storing
-     the Poincare polynomial in ", TT "M.poincare", ".",
+     the Poincare polynomial in ", TT "M.cache.poincare", ".",
      PARA,
      "As an example, we compute the Groebner basis of a random ideal,
      which is almost certainly a complete intersection, in which
@@ -546,7 +546,7 @@ document {
 	  },
      "Now we provide the hint and compute the Groebner basis anew.",
      EXAMPLE {
-      	  "(cokernel f).poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)",
+      	  "(cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)",
       	  "time betti gb f"
 	  },
      "The computation turns out to be substantially faster."

@@ -39,7 +39,7 @@ eliminate (Ideal, List) := (I,v) -> (
      toR := map(R,R1,apply(perm,i->R_i));
      J := toR1 I;
      if isHomogeneous I then
-         (cokernel generators J).poincare = poincare cokernel generators I;
+         (cokernel generators J).cache.poincare = poincare cokernel generators I;
      ideal mingens ideal toR selectInSubring(1,generators gb J)
      )
 

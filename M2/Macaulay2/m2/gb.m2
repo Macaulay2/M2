@@ -106,7 +106,7 @@ gb Module := GroebnerBasis => options -> (M) -> (
 
 gbGetHilbertHint := (f,opts) -> (
      if opts.Hilbert =!= null then opts.Hilbert
-     else if f.cache.?cokernel and f.cache.cokernel.?poincare then f.cache.cokernel.poincare
+     else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare then f.cache.cokernel.cache.poincare
      )
 
 ifSomething := method()

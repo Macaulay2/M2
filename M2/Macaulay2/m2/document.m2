@@ -756,7 +756,7 @@ briefSynopsis := key -> (
 
 synopsis := key -> (
      s := briefSynopsis key;
-     if s =!= null then DIV { SUBSECTION "Synopsis", s })
+     if s =!= null then SEQ { SUBSECTION "Synopsis", s })
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 

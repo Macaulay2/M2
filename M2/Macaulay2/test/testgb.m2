@@ -79,7 +79,7 @@ sortcols = (m) -> m_(sortColumns m)
     I = flatten(m1*m2-m2*m1);
     J = flatten(m1*m2-m2*m1);
     h1 = poincare cokernel I;
-    (cokernel J).poincare = h1;
+    (cokernel J).cache.poincare = h1;
     g = generators gb(J, Strategy=>strat);
     assert(image g == image generators gb I)
   
@@ -90,7 +90,7 @@ sortcols = (m) -> m_(sortColumns m)
     I = random(R^1, R^{-2,-2,-2,-2,-2});
     g = generators gb I;
     J = matrix entries I;
-    (cokernel J).poincare = h;
+    (cokernel J).cache.poincare = h;
     assert(image g == image generators gb(J,Strategy=>strat))
 
 
