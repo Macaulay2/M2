@@ -49,6 +49,10 @@ minSatPPD = (I, facs) -> (
      {ret#0, F0, F, facs0}
      )
 
+minSatPPD2 = (I, facs) -> (
+     (satI, G) := greedySat(I, product facs);
+     {satI, product facs, G, factors G})
+
 TEST ///
 debug Macaulay2Core
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
@@ -75,9 +79,9 @@ time minSatPPD(I1,{b,t})
 
 ///
 
-removeScalarMultipleColumns := m -> map(target m,,rawRemoveScalarMultiples raw m)
+removeScalarMultipleColumns = m -> map(target m,,rawRemoveScalarMultiples raw m)
 
-newdecompose := method()
+newdecompose = method()
 newdecompose(Ideal) := List => (I) -> (
      squarefree := (f) -> (
      	  g := factor f;
@@ -122,8 +126,8 @@ flattener = (I, m) -> (
 	  MonomialSize=>16]);
      J := substitute(I,RU);
      -- Collect lead coefficients of GB
-     leads := leadTerm(n-d,generators gb J);
-     ret := coefficients(0..n-d-1,transpose leads);
+     leads := leadTerm(1,generators gb J);
+     ret := coefficients(0..n-d-1,leads);
      -- coefficients returns two things.  The first is the
      -- list of coefficients.  The second is the 
      -- corresponding list of monomials.
@@ -132,13 +136,20 @@ flattener = (I, m) -> (
      -- of ret#0 next, the sets are again switched.
      coeffmat := ret#1;
      -- Intersect these ideals, taking first element found
-     coeffmat = map(RU^(numgens source coeffmat),, 
-	  transpose coeffmat);
-     ones = map(RU^(numgens target coeffmat), 1, (i,j)->1);
+     coeffmat = map(RU^(numgens target coeffmat),, coeffmat);
+     ones = map(target coeffmat, 1, (i,j)->1);
      mm = ones | coeffmat;
      F = generators gb syz(mm, SyzygyLimit=>1, SyzygyRows=>1);
-     substitute(F_(0,0),R)
+     result := substitute(F_(0,0),R);
+     print factors result;
+     result
      )
+
+flattener2 = (I,m) -> (
+     C := flatt(I,m);
+     F := (intersect values C)_0;
+     print factors F;
+     F)
      
 TEST ///
 debug Macaulay2Core
@@ -151,7 +162,7 @@ flattener(I,F1)
 ///
 
 -- Return a list of the prime factors of F
-factors := (F) -> (
+factors = (F) -> (
      facs := factor F;
      facs = apply(#facs, i -> facs#i#0);
      select(facs, f -> degree f =!= {0}))
@@ -268,7 +279,7 @@ extract = (I,P) -> (
      -- (a la minSat)
      --
      R := ring I;
-     UU := independentSets(P);  -- list of sets of variables
+     UU := independentSets(P, Limit=>1);  -- list of sets of variables
      local f;
      if #UU == 0 then
 	  f = 1_R
@@ -332,7 +343,7 @@ L = intersect(I^2, J)
 PPD(L,{I,J})
 ///
 
-PPDcharSets := (I) -> PPD(I, newdecompose I)
+PPDcharSets = (I) -> PPD(I, newdecompose I)
 
 PPDSpecialCharSets = (I, PP) -> (
      -- PP is a list of pairs (prime ideal P_i, a list of factors of a polynomial f_i).
@@ -391,7 +402,7 @@ REMAIN := symbol REMAIN
 if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
-PDinitialize := (I,printlevel) -> (
+PDinitialize = (I,printlevel) -> (
      if I.cache#?"PDC" then (
 	  I.cache#"PDC".PrintLevel = printlevel;
           I.cache#"PDC"
@@ -410,7 +421,7 @@ PDinitialize := (I,printlevel) -> (
      	  PDC
      ))
 
-PDnext := (PDC) -> (
+PDnext = (PDC) -> (
      if PDC.thisNode =!= null then PDC.thisNode else (
      -- returns the next node, and removes it from the list
      if #PDC.W === 0 then 
@@ -431,7 +442,7 @@ PDnext := (PDC) -> (
 	  PDnext PDC)
      ))
 
-PDdonode := (PDC) -> (
+PDdonode = (PDC) -> (
      local ret;
      node := PDC.thisNode;
      done := false;
@@ -508,6 +519,7 @@ SYprimaryDecomposition = (I,printlevel) -> (		    -- called by a later file
 	  PDdonode C
 	  );
      if C.H != I then error "algorithm missed components!";
+     I.cache.Assassinator =  apply(C.U, i -> trim(i#1));
      apply(C.U, i -> trim(i#0)))
 
 TEST ///
