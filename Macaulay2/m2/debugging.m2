@@ -99,14 +99,12 @@ listUserSymbols = Command (
      type -> stack apply(userSymbols type, s ->  toString s | ": " | toString class value s)
      )
 
-clearedSymbol := "-- cleared symbol --"
-
 clearOutput = Command (() -> (
      	  scan(keys outputSymbols, s -> (
 	       	    remove(outputSymbols,s);
-		    s <- clearedSymbol;
+		    s <- s;
 	       	    erase s))))
 
-clearAll = Command (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
+clearAll = Command (() -> ( clearOutput(); scan(userSymbols(), i -> erase(i <- i))))
 
 typicalValues#frame = MutableList

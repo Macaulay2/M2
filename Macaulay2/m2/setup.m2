@@ -107,29 +107,32 @@ applyMethod := (m,x) -> if x === null then x else (
 
 outputSymbols = new MutableHashTable
 
-Thing.Print = x -> (
-     o := concatenate("o",string lineNumber());
+outputLabel := ""
+
+commonProcessing := x -> (
+     outputLabel = concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
-     	  s := value concatenate("symbol ",o);
+     	  s := value concatenate("symbol ",outputLabel);
      	  outputSymbols#s = true;
      	  s <- x;
 	  );
      rot x;
+     x
+     )
+
+Thing.Print = x -> (
+     x = commonProcessing x;
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
 	  << endl;			  -- double space
-	  << o << " = " << net y << endl;
+	  << outputLabel << " = " << net y << endl;
 	  );
      applyMethod(AfterPrint,x);
      )
 
 Thing.NoPrint = x -> (
-     o := concatenate("o",string lineNumber());
-     x = applyMethod(AfterEval,x);
-     s := value concatenate("symbol ",o);
-     s <- x;
-     rot x;
+     x = commonProcessing x;
      applyMethod(AfterNoPrint,x);
      )
 
