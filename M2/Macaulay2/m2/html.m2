@@ -190,8 +190,12 @@ packageNodes := (pkg,topDocumentTag) -> checkIsTag \ unique join(
 linkTable := new MutableHashTable			    -- keys are DocumentTags for a node, values are lists of DocumentTags of descendents
 
 -- assemble this next
-ForestNode = new Type of BasicList			    -- list of DocumentTags for descendents
-TreeNode = new Type of BasicList			    -- first entry is DocumentTag for this node, second entry is a descendent list
+ForestNode = new Type of BasicList			    -- list of tree nodes, the descendent list
+TreeNode = new Type of BasicList			    -- first entry is DocumentTag for this node, second entry is a forest node
+
+traverse := method()
+traverse(ForestNode,Function) := (n,f) -> scan(n,t -> traverse(t,f))
+traverse(TreeNode,Function) := (t,f) -> (f t#0, traverse(t#1,f))
 
 net ForestNode := x -> stack apply(toList x,net)
 net TreeNode := x -> (
@@ -492,8 +496,30 @@ installPackage Package := o -> pkg -> (
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ nodes;
 
+     -- make info file
+     savePW := printWidth;
+     printWidth = 79;
+     infodir := buildDirectory|LAYOUT#"info";
+     makeDirectory infodir;
+     infofile := openOut (infodir|pkg#"title"|".info");
+     stderr << "--making info file in " << infofile << endl;
+     infofile << "This is " << infofile << " produced by Macaulay 2, version " << version#"VERSION" << endl;
+     traverse(unbag pkg#"table of contents", tag -> (
+	       checkIsTag tag;
+	       key := DocumentTag.Key tag;
+	       fkey := DocumentTag.FormattedKey tag;
+	       if tag === topDocumentTag then fkey = "Top";
+	       infofile << "\037" << endl << "File: " << infofile << ", Node: " << fkey;
+	       if NEXT#?tag then infofile << ", Next: " << DocumentTag.FormattedKey NEXT#tag;
+	       if PREV#?tag then infofile << ", Prev: " << DocumentTag.FormattedKey PREV#tag;
+	       if UP#?tag   then infofile << ", Up: " << DocumentTag.FormattedKey UP#tag;
+     	       infofile << endl << info documentation key << endl));
+     infofile << close;
+     printWidth = savePW;
+
      -- make master.html with master index of all the html files
      makeMasterIndex nodes;
+
 
      -- make table of contents
      makeTableOfContents();
