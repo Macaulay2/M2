@@ -1,13 +1,5 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-oldexit := exit
-erase quote exit
-exit = method(SingleArgumentDispatch => true)
-exit ZZ := i -> oldexit i
-exit Sequence := () -> oldexit 0
-exit = new Command from exit
-quit = new Command from (() -> oldexit 0)
-
 document { quote exit,
      TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
      BR,
@@ -562,8 +554,11 @@ PARA,
 "If this doesn't start up Macaulay 2, one reason may be that your function
 keys are not operable.  In that case press ", TT "C-C m", " instead.  (The 
 notation ", TT "C-C", " is standard emacs notation for Control-C.)  Another
-reason may be that you have not installed Macaulay 2 properly - the executables
-should be on your path.",
+reason may be that you have not installed Macaulay 2 properly - the startup
+script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
+A third reason may be that you are in Windows-98 and are using anti-virus 
+software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
+when it tries to run a subprocess.",
 PARA,
 "You may use ", TT "C-x o", " freely to switch from one window to the other.
 Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  

@@ -7,9 +7,9 @@ handle SIGSEGV nostop pass noprint
 # this breakpoint is where smashed objects are detected
 # b dbg_mlc.c:530
 
-b GB_gbprocess
-ignore 1 0d1523
-run setup.m2 bug-tony.m2
+# b GB_gbprocess
+# ignore 1 0d1523
+# run setup.m2 bug-tony.m2
 
 # this breakpoint is where bad handles are detected
 # b x_system.cpp:59

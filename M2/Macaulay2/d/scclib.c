@@ -610,26 +610,30 @@ extern char * sys_errlist[];
 extern const char * const sys_errlist[];
 #endif
 
+int system_errno() {
+  return h_errno > 0 ? h_errno : errno;
+}
+
+char *system_strerror() {
+     char *msg =
+#ifndef NO_HERROR
+     h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
+#endif
+     errno > 0 && errno < sys_nerr ? sys_errlist[errno] :
+     "no system error (scclib.c)";
+#ifndef NO_HERROR
+     h_errno = 0;
+#endif
+     errno = 0;
+     return msg;
+}
+
 M2_string system_syserrmsg()
 {
 #if defined(__MWERKS__)
      return tostring("");
 #else
-     M2_string s = (
-#ifndef NO_HERROR
-	  h_errno > 0 && h_errno < h_nerr
-	  ? tostring(h_errlist[h_errno])
-	  : 
-#endif
-	    errno > 0 && errno < sys_nerr 
-	  ? tostring(sys_errlist[errno])
-	  : tostring("") 
-	  );
-#ifndef NO_HERROR
-     h_errno = 0;
-#endif
-     errno = 0;
-     return s;
+     return tostring(system_strerror());
 #endif
 }
 
