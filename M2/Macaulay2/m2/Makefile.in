@@ -113,8 +113,6 @@ TAGS: Makefile dumpseq
 				../CHANGES), \
 			       $(i),0)
 
-all :: phase1
-
 phase1 :: $(DUMPEDGFILES)
 
 ifneq "$(DUMPDATA)" "no"
@@ -178,15 +176,14 @@ INPUTS := cache/doc/sample cache/doc/expression
 cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
-all :: ../cache/Macaulay2-doc
-
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	$(MAKE) -k -C ../m2/cache/doc       -f ../../../m2/Makefile.egs
 	$(MAKE) TOPDIR=../../../../.. -k -C ../tutorial/final/cache/doc -f ../../../../m2/Makefile.egs
 
-phase4 : ../cache/Macaulay2-doc
+all :: phase4
+phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
-		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS) phase3
+		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
