@@ -12,8 +12,11 @@ $(FILES:.m2=.okay) : ..\d\Release\Macaulay2.exe
 !endif
 
 
-all: files.tmp
+all: version.m2 files.tmp
 	@$(MAKE) -k -f Makefile.NT HAVE_FILES=1 -nologo tests
+
+version.m2 : ..\m2\version.m2
+	copy ..\m2\version.m2 version.m2
 
 files.tmp : *.m2
 	echo FILES = $** > files.tmp

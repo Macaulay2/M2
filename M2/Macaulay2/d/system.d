@@ -35,6 +35,7 @@ import hash(x:double):int;
 import getcwd():string;
 import dumpdata(filename:string):int;
 import loaddata(filename:string):int;
+import errfmt(filename:string,lineno:int,colno:int):string;
 import reloaded:int;
 import dbmopen(filename:string,write:bool):int;
 import dbmerror():string;

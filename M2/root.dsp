@@ -89,10 +89,39 @@ SOURCE=.\Makeconf
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowsNT\Makeconf.lcl
+USERDEP__MAKEC="WindowsNT/Makeconf.lcl"	
+
+!IF  "$(CFG)" == "root - Win32 Release"
+
+# Begin Custom Build - copying Makeconf.lcl
+InputPath=.\WindowsNT\Makeconf.lcl
+
+"Makeconf.lcl" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy $(InputPath) Makeconf.lcl
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "root - Win32 Debug"
+
+# Begin Custom Build - copying Makeconf.lcl
+InputPath=.\WindowsNT\Makeconf.lcl
+
+"Makeconf.lcl" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy $(InputPath) Makeconf.lcl
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\Makeconf.var
 
 !IF  "$(CFG)" == "root - Win32 Release"
 
+USERDEP__MAKECO="Makeconf.lcl"	
 # Begin Custom Build - Making Makeconf.h
 InputPath=.\Makeconf.var
 
@@ -103,7 +132,7 @@ InputPath=.\Makeconf.var
 
 !ELSEIF  "$(CFG)" == "root - Win32 Debug"
 
-USERDEP__MAKEC="envh.awk"	"Makeconf.var"	"Makeconf"	
+USERDEP__MAKECO="envh.awk"	"Makeconf.var"	"Makeconf"	"Makeconf.lcl"	
 # Begin Custom Build - Making Makeconf.h
 InputPath=.\Makeconf.var
 

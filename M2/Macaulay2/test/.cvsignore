@@ -1,2 +1,4 @@
 *.okay
 allfiles
+dumpdata.tmp
+gmon.out

@@ -100,6 +100,14 @@ SOURCE=.\bin_io.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\buffer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\buffer.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\classes.hpp
 # End Source File
 # Begin Source File

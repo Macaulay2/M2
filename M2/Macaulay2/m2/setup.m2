@@ -18,7 +18,8 @@ isAbsolutePath := (
 	       substring(filename,0,2) === "./" or
 	       substring(filename,0,3) === "../")))
 
-path = { "." }
+
+if class path =!= List then path = { "." }
 
 if class phase === Symbol then phase = 0
 

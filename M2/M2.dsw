@@ -119,6 +119,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name update
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name root
+    End Project Dependency
 }}}
 
 ###############################################################################

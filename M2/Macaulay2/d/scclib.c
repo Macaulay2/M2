@@ -803,6 +803,17 @@ stringarray p;
      return s;
      }
 
+M2_string system_errfmt(M2_string filename, int lineno, int colno) {
+	char *s = getmem(filename->len+strlen(posfmt)+10);
+	char *fn = tocharstar(filename);
+	M2_string ret;
+	sprintf(s,posfmt,fn,lineno,colno);
+	ret = tostring(s);
+	GC_FREE(s);
+	GC_FREE(fn);
+	return ret;
+}
+
 M2_string stdio_readfile(fd)
 int fd;
 {
