@@ -68,10 +68,6 @@ factor.m2
 integrate.m2
 http.m2
 browse.m2
-primdecomp-fastgb.m2
-primdecomp-SY.m2
-primdecomp-EHV.m2
-primdecomp.m2
 minPres.m2
 normal.m2
 monomcurve.m2
@@ -79,10 +75,14 @@ fano.m2
 code.m2
 indeterminates.m2
 local.m2
-varieties.m2
 typicalvalues.m2
 texmacs.m2
 packages.m2
 html.m2
+varieties.m2
+primdecomp-fastgb.m2
+primdecomp-SY.m2
+primdecomp-EHV.m2
+primdecomp.m2
 obsolete.m2
 last.m2

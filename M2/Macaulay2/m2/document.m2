@@ -283,8 +283,6 @@ NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
 PARA       = new MarkUpType
 EXAMPLE    = new MarkUpType
--- new EXAMPLE from List := (EXAMPLE,x) -> (
---      x)
 TABLE      = new MarkUpType
 ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
@@ -945,11 +943,12 @@ help Thing := s -> (
 
 numtests := 0
 
-TEST = (e) -> if writingInputFiles() then (
-     TestsPrefix | toString numtests | ".m2" << e << endl << close;
-     numtests = numtests + 1;
-     null
+TEST = method()
+TEST String := s -> (
+     x := currentPackage#"test inputs";
+     x# #x = s;
      )
+TEST List := y -> TEST \ y
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};

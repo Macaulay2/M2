@@ -1,6 +1,8 @@
 -- -*- fill-column: 107 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+-- maybe we should rename this file to "packages2.m2" after the merge.
+
 -- we've turned off checking for existence of files...
 
 local prefix, local topNodeButton

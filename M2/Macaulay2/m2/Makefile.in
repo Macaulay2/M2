@@ -10,7 +10,8 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install check html clean distclean check default initialize
+.PHONY: clean all install check html clean distclean check default initialize phase1 \
+	phase2 phase3 phase4 phase5 prep
 
 # CFLAGS =
 # LDFLAGS = -s
@@ -103,7 +104,9 @@ TAGS: loadsequence
 				@srcdir@/../CHANGES), \
 			       $(i),0)
 
-phase1 :: $(DUMPEDM2FILES)
+prep :: $(DUMPEDM2FILES)
+
+phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
