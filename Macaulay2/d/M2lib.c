@@ -120,6 +120,7 @@ static void interrupt_handler(int sig)
      else {
 	  if (system_interruptShield) system_interruptPending = TRUE;
 	  else {
+	       extern void evaluate_setInterruptFlag();
 	       if (tokens_stopIfError || !isatty(STDIN)) {
 		    int interruptExit = 2;	/* see also interp.d */
 		    fprintf(stderr,"interrupted, stopping%s",NEWLINE);
