@@ -646,6 +646,18 @@ export bind(e:ParseTree,scope:Scope):void := (
 		    )
 	       else makeErrorTree(binary.operator, "expected a symbol to right of '.'" );
 	       )
+	  else if binary.operator.word == DotQuestionS.symbol.word
+	  then (
+	       bind(binary.lhs,scope);
+	       bindop(binary.operator,scope);
+	       bind(binary.rhs,globalScope);
+	       when binary.rhs
+	       is token:Token do (
+		    if token.word.typecode != TCid
+		    then makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
+		    )
+	       else makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
+	       )
 	  else (
 	       bind(binary.lhs,scope);
 	       bindop(binary.operator,scope);

@@ -71,7 +71,7 @@ gbfunctions.m2 :  ../e/misc/cmdnames.input gbfuns.awk
 	awk -f gbfuns.awk ../e/misc/cmdnames.input >tmp
 	mv tmp $@
 all:: TAGS
-TAGS: Makefile
+TAGS: Makefile dumpseq
 	@echo making TAGS
 	@../util/echoout '>TAGS' $(foreach i, \
 			      $(GFILES) $(MADEGFILES) ../CHANGES \

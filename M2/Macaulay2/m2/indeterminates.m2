@@ -86,7 +86,5 @@ document { quote "..",
 	  "(0,0)..(1,3)",
       	  "p_(0,a) .. p_(1,c)",
 	  },
-     PARA,
-     SEEALSO{ "lists, arrays, and sequences"}
      }
 
