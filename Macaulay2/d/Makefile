@@ -13,12 +13,8 @@ remove-c-files ::
 
 PROJECT := 
 PROJECT += interpret.d
-ifdef MP
 PROJECT += mp.d
-endif
-ifdef includeX11
-PROJECT += actorsX.d
-endif
+# PROJECT += actorsX.d
 PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
 PROJECT += objects.d
 PROJECT += structure.d
@@ -110,10 +106,6 @@ CPPFLAGS += -DincludeX11
 LOADLIBES += -lX11
 endif
 
-ifdef MP
-CPPFLAGS += -DMP
-endif
-
 ## we use one of these in scclib.c
 # libdbm2.a is our own database manager
 # libgdbm.a is the gnu database manager
@@ -131,11 +123,6 @@ LDFLAGS += -static
 #ifeq ($(OS),Linux)
 #LOADLIBES += -lieee
 #endif
-
-# Messollen's multivariate factoring stuff
-ifdef FACTOR
-CPPFLAGS += -DFACTOR
-endif
 
 # -lsunmath makes suns obey ieee for floating point operations, at
 # -liberty is /usr/local/lib/libiberty.a, and it has random() in it
@@ -204,14 +191,10 @@ test-probe : probe
 	rm syms
 ############################## miscellaneous
 
-ifdef MP
-LIBMP :=	../../lib/libMP.a
-endif
-
 ../bin/Macaulay2 : $(ALLOBJ) ../e/*.o tmp_init.o \
 		../../lib/libgc.a \
 		../../lib/libgmp.a \
-		$(LIBMP) \
+		../../lib/libMP.a \
 		../../lib/libfac.a \
 		../../lib/libcf.a ../../lib/libcfmem.a \
 		../../lib/libmpf.a \

@@ -25,11 +25,7 @@ all:: Makeconf.h
 Makeconf.h : Makeconf Makeconf-h
 	Makeconf-h > $@
 
-all:: GC GMP FACTORY LIBFAC
-ifdef MP
-all:: MP
-endif
-all:: MACAULAY2
+all:: GC GMP FACTORY LIBFAC MP MACAULAY2
 
 lib/.exists:; mkdir -p lib; touch $@
 include/.exists:
