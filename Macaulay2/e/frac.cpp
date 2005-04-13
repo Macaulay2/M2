@@ -9,11 +9,6 @@
 #include "relem.hpp"
 #include "polyring.hpp"
 
-#if 0
-#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
-#define FRAC_RINGELEM(a) ((ring_elem) (Nterm *) (a))
-#endif
-
 #define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
 #define FRAC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
@@ -43,6 +38,12 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
   zeroV = from_int(0);
   oneV = from_int(1);
   minus_oneV = from_int(-1);
+
+  if (R->n_quotients() > 0)
+    use_gcd_simplify = false;
+  else
+    use_gcd_simplify = true;
+#warning "frac simplify: doesn't handle towers of fracs"
 
   declare_field();
   return true;
@@ -87,7 +88,7 @@ ring_elem FractionField::fraction(const ring_elem top, const ring_elem bottom) c
 void FractionField::simplify(frac_elem *f) const
 {
   ring_elem x, y;
-  if (true)
+  if (use_gcd_simplify)
     {
       y = f->denom;
       if (R_->is_equal(y, R_->one())) return;
@@ -654,36 +655,6 @@ ring_elem FractionField::get_terms(int nvars0, const ring_elem f, int, int) cons
 {
   return f;
 }
-
-#if 0
-///////////////////////////////////
-// translation gbvector <--> vec //
-///////////////////////////////////
-ring_elem FractionField::trans_to_ringelem(ring_elem coeff, 
-					   const int *exp) const
-{
-  ring_elem a = get_ring()->trans_to_ringelem(coeff,exp);
-  return this->fraction(a, trans_one);
-}
-
-ring_elem FractionField::trans_to_ringelem_denom(ring_elem coeff, 
-						 ring_elem denom, 
-						 int *exp) const
-{
-  ring_elem a = get_ring()->trans_to_ringelem(coeff,exp);
-  return this->fraction(a, denom);
-}
-
-void FractionField::trans_from_ringelem(gbvectorHeap &H, 
-			     ring_elem coeff, 
-			     int comp, 
-			     int *exp,
-			     int firstvar) const
-{
-  ring_elem a = this->numerator(coeff);
-  get_ring()->trans_from_ringelem(H, a, comp, exp, firstvar);
-}
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

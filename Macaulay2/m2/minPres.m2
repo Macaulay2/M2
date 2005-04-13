@@ -165,7 +165,7 @@ minPres Ring := o -> (R) -> (
      S := coreProgram(ideal M, o.Variable);
      R.minPresMap = map(S_2,R,S_4); 
      R.minPresMapInv = map(R,S_2,S_5);
-     S_1)
+     S_2)
     
 ---------------------------
 minPresMap = method()
