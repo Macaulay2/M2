@@ -23,7 +23,6 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     {
       if (dense)
 	{
-	  fprintf(stderr, "doing DMatrix zero matrix\n");
 	  return DMatrix<CoefficientRingZZp>::zero_matrix(KZZp, nrows, ncols);
 	}
       //      return SMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
@@ -32,7 +31,6 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     {
       if (dense)
 	{
-	  fprintf(stderr, "doing DMatrix<RR> zero matrix\n");
 	  return DMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
 	}
       //      return SMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);
@@ -41,7 +39,6 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     {
       if (dense)
 	{
-	  fprintf(stderr, "doing DMatrix<CC> zero matrix\n");
 	  return DMatrix<CoefficientRingCC>::zero_matrix(globalCC, nrows, ncols);
 	}
       //      return SMatrix<CoefficientRingRR>::zero_matrix(globalRR, nrows, ncols);

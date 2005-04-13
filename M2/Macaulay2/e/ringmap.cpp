@@ -126,14 +126,16 @@ void RingMap::text_out(buffer &o) const
 }
 
 ring_elem RingMap::eval_term(const Ring *sourceK,
-			      const ring_elem a, const int *vp) const
+			     const ring_elem a, 
+			     const int *vp, 
+			     int first_var,
+			     int nvars_in_source) const
 {
 #if 0
   // I think that this is removable MES 1/5/04
   assert(sourceK->total_n_vars() <= nvars);
   int first_var = sourceK->total_n_vars();
 #endif
-  int first_var = 0;
   for (index_varpower i = vp; i.valid(); ++i)
     {
       int v = first_var + i.var();
@@ -144,7 +146,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   // If K is a coeff ring of R, AND map is an identity on K,
   // then don't recurse: use this value directly.
   // Otherwise, we must recurse, I guess.
-  ring_elem result = sourceK->eval(this, a);
+  ring_elem result = sourceK->eval(this, a, first_var+nvars_in_source);
   if (R->is_zero(result)) return result;
 
   int *result_monom;
@@ -222,7 +224,8 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 
 RingElementOrNull *RingMap::eval(const RingElement *r) const
 {
-  RingElement *result = RingElement::make_raw(get_ring(), r->get_ring()->eval(this, r->get_value()));
+  RingElement *result = RingElement::make_raw(get_ring(), 
+					      r->get_ring()->eval(this, r->get_value(),0) );
   if (error()) return 0;
   return result;
 }

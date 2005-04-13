@@ -47,6 +47,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	points \
 	dmat-LU \
 	lapack \
 	dmat \

@@ -95,7 +95,7 @@ public:
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
   // The following are all basically dummy routines, and should be in ring.hpp
   virtual void degree(const ring_elem f, int *d) const;

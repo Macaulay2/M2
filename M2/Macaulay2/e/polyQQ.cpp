@@ -337,7 +337,7 @@ void PolyQQ::elem_text_out(buffer &o, const ring_elem f) const
   globalZZ->elem_text_out(o,MPZ_RINGELEM(denom(f)));
 }
 
-ring_elem PolyQQ::eval(const RingMap *map, const ring_elem f) const 
+ring_elem PolyQQ::eval(const RingMap *map, const ring_elem f,int first_var) const 
 {
 #warning "write this"
   return ZERO_RINGELEM;

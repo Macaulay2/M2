@@ -236,7 +236,7 @@ ring_elem PolyRing::var(int v) const
 int PolyRing::index_of_var(const ring_elem a) const
 {
   Nterm *f = a;
-  if (f->next != 0) return -1;
+  if (f == 0 || f->next != 0) return -1;
   if (!K_->is_equal(f->coeff, K_->from_int(1))) return -1;
   M_->to_expvector(f->monom, _EXP1);
   int result = -1;
@@ -1111,7 +1111,7 @@ void PolyRing::elem_text_out(buffer &o, const ring_elem f) const
 
 }
 
-ring_elem PolyRing::eval(const RingMap *map, const ring_elem f) const
+ring_elem PolyRing::eval(const RingMap *map, const ring_elem f, int first_var) const
 {
   // The way we collect the result depends on whether the target ring
   // is a polynomial ring: if so, use a heap structure.  If not, just add to the result.
@@ -1127,7 +1127,7 @@ ring_elem PolyRing::eval(const RingMap *map, const ring_elem f) const
 	{
 	  vp.shrink(0);
 	  M_->to_varpower(t->monom, vp);
-	  ring_elem g = map->eval_term(K_, t->coeff, vp.raw());
+	  ring_elem g = map->eval_term(K_, t->coeff, vp.raw(), first_var, n_vars());
 	  H.add(g);
 	}
       return H.value();
@@ -1141,7 +1141,7 @@ ring_elem PolyRing::eval(const RingMap *map, const ring_elem f) const
 	{
 	  vp.shrink(0);
 	  M_->to_varpower(t->monom, vp);
-	  ring_elem g = map->eval_term(K_, t->coeff, vp.raw());
+	  ring_elem g = map->eval_term(K_, t->coeff, vp.raw(), first_var, n_vars());
 	  target->add_to(result, g);
 	}
       return result;

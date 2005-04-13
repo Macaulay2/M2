@@ -1666,6 +1666,24 @@ enum gbTraceValues
   */
 
   /**************************************************/
+  /**** Specialized operations **********************/
+  /**************************************************/
+  
+  M2_bool rawIdealOfPoints(const Ring *R,
+		      const MutableMatrix *Pts,
+		      MatrixOrNull ** result_GB,
+		      MatrixOrNull ** result_std_monoms);
+  /* Returns false if an error occured.
+     Input: R: a polynomial ring of the form K[x1,...,xn]
+            Pts: an n by d matrix over K.
+     Action: Compute the ideal of the points in n-space
+             given by the columns of 'Pts'
+     Output: result_GB: the GB of this ideal
+             result_std_monoms: the standard monomials (1 by d matrix)
+     Question: should this return the separators as well?
+  */
+
+  /**************************************************/
   /**** Factory and libfac routines *****************/
   /**************************************************/
 

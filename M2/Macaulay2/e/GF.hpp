@@ -91,7 +91,7 @@ public:
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 };
 
 #endif

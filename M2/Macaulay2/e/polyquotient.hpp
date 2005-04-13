@@ -162,7 +162,7 @@ public:
     numerR_->PolyRing::elem_text_out(o,f);
   }
   
-  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
   /////////////////////////
   // Polynomial routines //

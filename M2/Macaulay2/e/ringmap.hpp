@@ -52,7 +52,9 @@ public:
   bool is_equal(const RingMap *phi) const;
 
   ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff, 
-		      const int *vp) const;
+		      const int *vp,
+		      int first_var,
+		      int nvars_in_source) const;
 
   RingElementOrNull *eval(const RingElement *r) const;
   MatrixOrNull *eval(const FreeModule *newrows, const Matrix *m) const;

@@ -330,7 +330,7 @@ void Z_mod::syzygy(const ring_elem a, const ring_elem b,
 }
 
 
-ring_elem Z_mod::eval(const RingMap *map, const ring_elem f) const
+ring_elem Z_mod::eval(const RingMap *map, const ring_elem f, int) const
 {
   int a = to_int(f);
   return map->get_ring()->from_int(a);

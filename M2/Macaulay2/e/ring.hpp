@@ -245,7 +245,7 @@ public:
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f) const = 0;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const = 0;
 
   // Polynomial routines
   // The default implementation is for non-polynomial rings

@@ -160,7 +160,7 @@ isHomogeneous RingElement := f -> rawIsHomogeneous f.RawRingElement
 - RingElement := RingElement => x -> new ring x from -x.RawRingElement
 
 RingElement ? RingElement := (x,y) -> (
-     if ring x === ring y and x == y then symbol == else handle x ? handle y
+     if ring x === ring y and x == y then symbol == else x.RawRingElement ? y.RawRingElement
      );
 
 

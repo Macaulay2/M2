@@ -124,7 +124,7 @@ public:
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
 
   virtual ring_elem mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;

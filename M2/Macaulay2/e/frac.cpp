@@ -539,13 +539,13 @@ void FractionField::syzygy(const ring_elem a, const ring_elem b,
   y = FractionField::negate(y);
 }
 
-ring_elem FractionField::eval(const RingMap *map, const ring_elem a) const
+ring_elem FractionField::eval(const RingMap *map, const ring_elem a, int first_var) const
 {
   const Ring *S = map->get_ring();
   const frac_elem *f = FRAC_VAL(a);
-  ring_elem top = R_->eval(map, f->numer);
+  ring_elem top = R_->eval(map, f->numer,first_var);
   if (S->is_zero(top)) return top;
-  ring_elem bottom = R_->eval(map, f->denom);
+  ring_elem bottom = R_->eval(map, f->denom,first_var);
   if (S->is_zero(bottom))
     {
       ERROR("division by zero!");

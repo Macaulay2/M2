@@ -305,7 +305,7 @@ vec Ring::vec_eval(const RingMap *map,
 
   for (vec t = v; t != 0; t = t->next)
     {
-      ring_elem a = eval(map, t->coeff); // a is now in the target ring
+      ring_elem a = eval(map, t->coeff, 0); // a is now in the target ring
       if (!targetRing->is_zero(a))
 	{
 	  result->next = targetRing->make_vec(t->comp,a);
@@ -578,6 +578,7 @@ void Ring::add_vec_to(vec &v, vec &w) const
 }
 
 void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const
+  // replace v_i = v_i + r * v_j, or v_i = v_i + v_j * r, depending on opposite_mult
 {
   vec p;
   vec vec2 = 0;
@@ -593,8 +594,8 @@ void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) con
     r1 = this->mult(vec2->coeff, r);
   else 
     r1 = this->mult(r, vec2->coeff);
+  if (this->is_zero(r1)) return; // nothing to change
   vecterm head;
-#warning "BUG??? check that r1 is zero!!"
   head.next = v;
   for (p = &head; p->next != 0; p=p->next)
     if (p->next->comp <= i)
