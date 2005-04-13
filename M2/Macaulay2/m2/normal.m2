@@ -108,7 +108,7 @@ newICnode = (R) -> (
      C#"fraclong" = {};
      C#"map" = null;
      C#"rings" = R;
-     R#"IC" = C;
+     R#IIICCC = C;
      C)
 
 -- Tells us when to stop the algorithm.  Moves ideals from C#"todo" to C#"pending".
@@ -265,8 +265,8 @@ normal0 = (C) -> (
 w := local w
 integralClosure = method(Options=>{Variable => null})	    -- changed to local variable, and hid it from the documentation -- drg
 integralClosure Ring := Ring => o -> (R) -> (
-     if not R#?"IC" then newICnode R;
-     C := R#"IC";
+     if not R#?IIICCC then newICnode R;
+     C := R#IIICCC;
      while next C do (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
@@ -279,19 +279,19 @@ integralClosure Ring := Ring => o -> (R) -> (
 
 --------------------------------------------------------------------
 
--- R#"IC"#"map" is needed to find the conductor
+-- R#IIICCC#"map" is needed to find the conductor
 ICmap = method()
 ICmap(Ring) := RingMap => (R) -> (
      -- Input:  a quotient ring.
      -- Output:  The natural map from R to its integral closure S.
      -- Note:  This is needed to compute the conductor of R into S.
-     if R#?"IC" or not isNormal R then (
-	  if not R#?"IC" then integralClosure(R);
-	  S := (R#"IC"#"answer"#0)#0/(R#"IC"#"answer"#0)#1;
-	  U := R#"IC"#"map";
-     	  if U === null then R#"IC"#"map" = map(S,S)
-     	  else R#"IC"#"map" = map(S,R,substitute((U).matrix,S));
-	       R#"IC"#"map"
+     if R#?IIICCC or not isNormal R then (
+	  if not R#?IIICCC then integralClosure(R);
+	  S := (R#IIICCC#"answer"#0)#0/(R#IIICCC#"answer"#0)#1;
+	  U := R#IIICCC#"map";
+     	  if U === null then R#IIICCC#"map" = map(S,S)
+     	  else R#IIICCC#"map" = map(S,R,substitute((U).matrix,S));
+	       R#IIICCC#"map"
 	       )
      else (map(R,R))
      )
@@ -307,18 +307,18 @@ ICfractions(Ring) := RingMap => (R) -> (
      -- I haven't figured out how to do the fractions and the maps
      -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
-     if R#?"IC" or not isNormal R then (
+     if R#?IIICCC or not isNormal R then (
 	  integralClosure R;
-	  K := (R#"IC"#"basefield")[join(flatten R#"IC"#"newvars",R.generatorSymbols)];
-	  K2 := (R#"IC"#"basefield")[toList R#"IC"#"vars"];
+	  K := (R#IIICCC#"basefield")[join(flatten R#IIICCC#"newvars",R.generatorSymbols)];
+	  K2 := (R#IIICCC#"basefield")[toList R#IIICCC#"vars"];
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
 	  KF2 := frac K2;  
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
-	  M2 := apply(R#"IC"#"fraclong", i->matrix{{i}});
+	  M2 := apply(R#IIICCC#"fraclong", i->matrix{{i}});
 	  M2' := apply(M2, i->substitute(i,KF));
 	  M3 := flatten apply(M2', j-> first entries j);
-	  L1 := apply(R#"IC"#"fractions", i->matrix{{i}});
+	  L1 := apply(R#IIICCC#"fractions", i->matrix{{i}});
 	  L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
 	  G := map(KF,KF,matrix{join(M3,M1)});
 	  done := false;
@@ -345,13 +345,13 @@ ICfractionsLong(Ring) := RingMap => (R) -> (
      -- I haven't figured out how to do the fractions and the maps
      -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
-     if R#?"IC" or not isNormal R then (
+     if R#?IIICCC or not isNormal R then (
 	  integralClosure(R);
-	  K := (R#"IC"#"basefield")[join(flatten R#"IC"#"newvars",R.generatorSymbols)];
+	  K := (R#IIICCC#"basefield")[join(flatten R#IIICCC#"newvars",R.generatorSymbols)];
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);  
      	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
-	  M2 := apply(R#"IC"#"fraclong", i->matrix{{i}});
+	  M2 := apply(R#IIICCC#"fraclong", i->matrix{{i}});
      	  M2' := apply(M2, i->substitute(i,KF));
      	  M3 := flatten apply(M2', j-> first entries j);
 	  G2 := matrix{join(M3,M1)};
@@ -366,9 +366,9 @@ ICfractionsLong(Ring) := RingMap => (R) -> (
      else (
 	  I := ideal(R);
 	  map(frac(ring I),frac(ring I)))
-     --if M3 === {} then R#"IC"#"fractions" = {G,G.matrix}
-     --else R#"IC"#"fractions" = {G,transpose G (matrix{M3})};
-     --R#"IC"#"fractions"
+     --if M3 === {} then R#IIICCC#"fractions" = {G,G.matrix}
+     --else R#IIICCC#"fractions" = {G,transpose G (matrix{M3})};
+     --R#IIICCC#"fractions"
      )
 
 --------------------------------------------------------------------
@@ -378,7 +378,7 @@ conductor(RingMap) := Ideal => (F) -> (
      --module over the source.
      --Output: The conductor of the target into the source.
      --NOTE:  If using this in conjunction with the command normalization,
-     --then the input is R#"IC"#"map" where R is the name of the ring used as 
+     --then the input is R#IIICCC#"map" where R is the name of the ring used as 
      --input into normalization.  
      if isSinglyGraded (source F) and isHomogeneous (source F)
      	  then(M := presentation pushForward(F, (target F)^1);
