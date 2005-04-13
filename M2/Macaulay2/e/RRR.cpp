@@ -21,6 +21,7 @@ mpf_ptr RRR::_epsilon = NULL;
 bool RRR::initialize_RRR() 
 {
   initialize_ring(0);
+  declare_field();
   _elem_size = sizeof(mpf_t);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {

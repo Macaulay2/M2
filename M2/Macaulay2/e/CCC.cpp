@@ -15,6 +15,7 @@ mpf_ptr CCC::_epsilon = NULL;
 bool CCC::initialize_CCC() 
 {
   initialize_ring(0);
+  declare_field();
   _elem_size = sizeof(M2_CCC_struct);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {

@@ -15,6 +15,9 @@ class FractionField : public Ring
 {
   const PolyRingFlat *R_;		// Base ring.  Assumed to be a domain.
   ring_elem _MINUS_ONE;		// this is -1 in the ring R.
+  bool use_gcd_simplify;     // Use built in gcd only if this is frac(ZZ[xs]) or frac(ZZ/p[xs])
+                             // When we (if we) change fractions to be flat, then this
+                             // restriction should go away.
 
   frac_elem *new_frac_elem() const;
   void simplify(frac_elem *f) const;
@@ -110,27 +113,6 @@ public:
   virtual ring_elem lead_coeff(const ring_elem f) const;
   virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
   virtual ring_elem get_terms(int nvars0, const ring_elem f, int lo, int hi) const;
-
-  ///////////////////////////////////////////////////////
-  // Used in gbvector <--> vector/ringelem translation //
-  ///////////////////////////////////////////////////////
-#if 0
-protected:
-  ring_elem trans_one; // 1 as an element of globalZZ.
-
-  virtual ring_elem trans_to_ringelem(ring_elem coeff, 
-				      const int *exp) const;
-  virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
-					    ring_elem denom, 
-					    int *exp) const;
-  virtual void trans_from_ringelem(gbvectorHeap &H, 
-				   ring_elem coeff, 
-				   int comp, 
-				   int *exp,
-				   int firstvar) const;
-  
-  virtual trans_tag trans_type() const { return FRAC; }
-#endif
 };
 
 #endif

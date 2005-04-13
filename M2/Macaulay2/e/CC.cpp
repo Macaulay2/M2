@@ -31,6 +31,7 @@ CC::~CC()
 bool CC::initialize_CC(double epsilon) 
 {
   initialize_ring(0);
+  declare_field();
   _epsilon = epsilon;
 
   zeroV = from_int(0);
