@@ -435,7 +435,7 @@ void CC::syzygy(const ring_elem a, const ring_elem b,
     }
 }
 
-ring_elem CC::eval(const RingMap *map, const ring_elem f) const
+ring_elem CC::eval(const RingMap *map, const ring_elem f, int) const
 {
   return map->get_ring()->from_complex(CCELEM_VAL(f));
 }

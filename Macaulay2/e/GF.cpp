@@ -164,9 +164,9 @@ void GF::elem_text_out(buffer &o, const ring_elem a) const
   _originalR->remove(h);
 }
 
-ring_elem GF::eval(const RingMap *map, const ring_elem f) const
+ring_elem GF::eval(const RingMap *map, const ring_elem f, int first_var) const
 {
-  return map->get_ring()->power(map->elem(0), f.int_val);
+  return map->get_ring()->power(map->elem(first_var), f.int_val);
 }
 
 ring_elem GF::from_int(int n) const

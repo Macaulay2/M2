@@ -354,7 +354,7 @@ void RR::syzygy(const ring_elem a, const ring_elem b,
     }
 }
 
-ring_elem RR::eval(const RingMap *map, const ring_elem f) const
+ring_elem RR::eval(const RingMap *map, const ring_elem f, int) const
 {
   return map->get_ring()->from_double(RR_VAL(f));
 }

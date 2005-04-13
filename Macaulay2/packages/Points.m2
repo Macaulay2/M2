@@ -9,6 +9,7 @@ newPackage(
     	)
 
 export (
+     pointsMat,
      points,
      pointsByIntersection,
      reduceColumn,
@@ -20,6 +21,8 @@ export (
 debug Macaulay2Core
 points = method()
 pointsByIntersection = method()
+pointsMat = method()
+pointsMatOrig = method()
 
 makeRingMaps = (M,R) -> (
      K := coefficientRing R;
@@ -41,7 +44,7 @@ pointsByIntersection(Matrix,Ring) := (M,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M, p -> ideal apply(#p, i -> R_i - p#i)))
      
-points(Matrix,Ring) := (M,R) -> (
+pointsMatOrig(Matrix,Ring) := (M,R) -> (
      -- The columns of M form the points.  M should be a matrix of size
      -- n by s, where n is the number of variables of R
      --
@@ -99,6 +102,132 @@ points(Matrix,Ring) := (M,R) -> (
 	       thiscol = thiscol + 1;
 	       )
 	  );
+     stds := transpose matrix{Q};
+     A := transpose matrix{apply(Fs, f -> f stds)};
+     (A, stds)
+     )
+
+pointsMat(Matrix,Ring) := (M,R) -> (
+     -- The columns of M form the points.  M should be a matrix of size
+     -- n by s, where n is the number of variables of R
+     --
+     K := coefficientRing R;
+     s := numgens source M;
+     -- The local data structures:
+     -- (P,PC) is the matrix which contains the elements to be reduced
+     -- Fs is used to evaluate monomials at the points
+     -- H is a hash table used in Gaussian elimination: it contains the
+     --    pivot columns for each row
+     -- L is the sum of monomials which is still to be done
+     -- Lhash is a hashtable: Lhash#monom = i means that only 
+     --    R_i*monom, ..., R_n*monom should be considered
+     -- G is a list of GB elements
+     -- inG is the ideal of initial monomials for the GB
+     Fs := makeRingMaps(M,R);
+     P := mutableMatrix map(K^s, K^(s+1), 0);
+     H := new MutableHashTable; -- used in the column reduction step
+     Lhash := new MutableHashTable; -- used to determine which monomials come next
+     L := 1_R;
+     Lhash#L = 0; -- start with multiplication by R_0
+     thiscol := 0;
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     Q := {}; -- the list of standard monomials
+     --ntimes := 0;
+     while L != 0 do (
+	  --ntimes = ntimes + 1;
+	  --if #Q === s then print "got a basis";
+	  --print("size of L = "| size(L));
+	  -- First step: get the monomial to consider
+	  L = L % inGB;
+	  monom = someTerms(L,-1,1);
+	  L = L - monom;
+	  -- Now fix up the matrix P
+          addNewMonomial(P,thiscol,monom,Fs);
+          isLT := reduceColumn(P,H,thiscol);
+	  if isLT then (
+	       -- we add to G, inG
+	       inG = inG + ideal(monom);
+	       inGB = forceGB gens inG;
+	       )
+	  else (
+	       -- we modify L, Lhash, thiscol, and also PC
+	       Q = append(Q, monom);
+	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+			 newmon := monom * R_i;
+			 Lhash#newmon = i;
+			 newmon));
+	       L = L + f;
+	       thiscol = thiscol + 1;
+	       )
+	  );
+     --print("ntimes "|ntimes|" std+inG "|#Q + numgens inG);
+     stds := transpose matrix{Q};
+     A := transpose matrix{apply(Fs, f -> f stds)};
+     (A, stds)
+     )
+
+points(Matrix,Ring) := (M,R) -> (
+     -- The columns of M form the points.  M should be a matrix of size
+     -- n by s, where n is the number of variables of R
+     --
+     K := coefficientRing R;
+     s := numgens source M;
+     -- The local data structures:
+     -- (P,PC) is the matrix which contains the elements to be reduced
+     -- Fs is used to evaluate monomials at the points
+     -- H is a hash table used in Gaussian elimination: it contains the
+     --    pivot columns for each row
+     -- L is the sum of monomials which is still to be done
+     -- Lhash is a hashtable: Lhash#monom = i means that only 
+     --    R_i*monom, ..., R_n*monom should be considered
+     -- G is a list of GB elements
+     -- inG is the ideal of initial monomials for the GB
+     Fs := makeRingMaps(M,R);
+     P := mutableMatrix map(K^s, K^(s+1), 0);
+     PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+     for i from 0 to s-1 do PC_(i,i) = 1_K;
+     setColumnChange(P, PC);
+     H := new MutableHashTable; -- used in the column reduction step
+     Lhash := new MutableHashTable; -- used to determine which monomials come next
+     L := 1_R;
+     Lhash#L = 0; -- start with multiplication by R_0
+     thiscol := 0;
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     Q := {}; -- the list of standard monomials
+     nL := 1;
+     while L != 0 do (
+	  -- First step: get the monomial to consider
+	  L = L % inGB;
+	  monom = someTerms(L,-1,1);
+	  L = L - monom;
+	  -- Now fix up the matrices P, PC
+          addNewMonomial(P,thiscol,monom,Fs);
+	  rawMatrixColumnScale(raw PC, raw(0_K), thiscol, false);
+	  PC_(thiscol,thiscol) = 1_K;
+          isLT := reduceColumn(P,H,thiscol);
+	  if isLT then (
+	       -- we add to G, inG
+	       inG = inG + ideal(monom);
+	       inGB = forceGB gens inG;
+	       g = sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+	       G = append(G, PC_(thiscol,thiscol) * monom + g);
+	       )
+	  else (
+	       -- we modify L, Lhash, thiscol, and also PC
+	       Q = append(Q, monom);
+	       f = sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+			 newmon := monom * R_i;
+			 Lhash#newmon = i;
+			 newmon));
+	       nL = nL + size(f);
+	       L = L + f;
+	       thiscol = thiscol + 1;
+	       )
+	  );
+     print("number of monomials considered = "|nL);
      (Q,inG,G)
      )
 

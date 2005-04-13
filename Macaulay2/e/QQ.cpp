@@ -372,7 +372,7 @@ void QQ::syzygy(const ring_elem a, const ring_elem b,
   QQ::internal_negate_to(y);
 }
 
-ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
+ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
 {
   const Ring *S = map->get_ring();
   return S->from_rational(MPQ_VAL(a));

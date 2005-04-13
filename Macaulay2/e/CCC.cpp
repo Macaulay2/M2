@@ -526,7 +526,7 @@ void CCC::syzygy(const ring_elem a, const ring_elem b,
     }
 }
 
-ring_elem CCC::eval(const RingMap *map, const ring_elem f) const
+ring_elem CCC::eval(const RingMap *map, const ring_elem f, int) const
 {
   return map->get_ring()->from_BigComplex(BIGCC_VAL(f));
 }

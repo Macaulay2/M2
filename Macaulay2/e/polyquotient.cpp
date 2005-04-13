@@ -230,9 +230,9 @@ ring_elem PolyRingQuotient::random() const
   return ZERO_RINGELEM;
 }
 
-ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f) const
+ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f,int first_var) const
 {
-  return numerR_->PolyRing::eval(map, f);
+  return numerR_->PolyRing::eval(map, f, first_var);
 }
 
 
