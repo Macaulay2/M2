@@ -541,6 +541,14 @@ installPackage Package := opts -> pkg -> (
 	       );
      	  );
 
+     -- copy package source subdirectory examples
+     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
+     en := realpath(currentSourceDir|buildPackage|"/examples/");
+     if fileExists en then (
+	  stderr << "--copying example files from " << en << endl;
+	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, Exclude => {"CVS"});
+	  );
+
      if opts.MakeDocumentation then (
 	  -- This is a bit of a fiction: we've copied the files for our package into the build directory,
 	  -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"
@@ -553,7 +561,6 @@ installPackage Package := opts -> pkg -> (
      	  -- ... to be implemented, but we seem to be copying the examples already, but only partially
 
 	  -- make example input files
-	  exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
 	  infn := fkey -> exampleDir|toFilename fkey|".m2";
 	  outfn := fkey -> exampleDir|toFilename fkey|".out";
 	  tmpfn := fkey -> exampleDir|toFilename fkey|".errors";
