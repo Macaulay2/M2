@@ -610,6 +610,20 @@ int system_fileTime(M2_string name) {
   return buf.st_mtime;
 }
 
+int system_setFileTime(M2_string name, int modtime) {
+  char *cname = tocharstar(name);
+  struct utimbuf buf = { time(NULL), modtime };
+  int r;
+  r = utime(cname,&buf);
+  GC_FREE(cname);
+  if (r == ERROR) return -1;
+  return 0;
+}
+
+int system_currentTime() {
+  return time(NULL);
+}
+
 int system_mkdir(M2_string name) {
   char *cname = tocharstar(name);
   int r = mkdir(cname,0777);

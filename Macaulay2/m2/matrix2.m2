@@ -25,7 +25,7 @@ trim QuotientRing := options -> (R) -> (
      A := ring f;
      A/(trim(ideal f,options)))
 trim Module := Module => options -> (M) -> if M.cache.?trim then M.cache.trim else M.cache.trim = (
-     if isFreeModule M -- or not isHomogeneous M
+     if isFreeModule M or not isHomogeneous M
      then M
      else (
           -- this helps sometimes, even if M is *not* homogeneous : see test/trim.m2 and figure it out

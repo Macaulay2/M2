@@ -62,6 +62,8 @@ import fileLength(fd:int):int;
 import fileLength(filename:string):int;
 import fileExists(name:string):bool;
 import fileTime(name:string):int;
+import setFileTime(name:string,modtime:int):int;
+import currentTime():int;
 import fileMode(name:string):int;
 import mkdir(name:string):int;
 import rmdir(name:string):int;

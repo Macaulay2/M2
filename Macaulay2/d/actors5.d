@@ -1215,8 +1215,26 @@ fileTime(e:Expr):Expr := (
 	  then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
 	  else Expr(toInteger(r))
 	  )
-     else WrongArgString());
+     is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
+	  when args.0 is name:string do (
+	       when args.1 is modtime:Integer do if !isInt(modtime) then WrongArgSmallInteger(2) else (
+		    r := setFileTime(name,toInt(modtime));
+		    if r == -1 then buildErrorPacket("can't set modification time of file '" + name + "' : " + syserrmsg())
+	  	    else nullE
+		    )
+	       else WrongArgInteger(2)
+	       )
+	  else WrongArgString(1)
+	  )
+     else WrongArg("string, or string and integer"));
 setupfun("fileTime",fileTime);
+
+currentTime(e:Expr):Expr := (
+     when e is a:Sequence do
+     if length(a) == 0 then Expr(toInteger(currentTime()))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("currentTime",currentTime);
 
 mkdir(e:Expr):Expr := (
      when e is name:string do (
@@ -1633,7 +1651,7 @@ export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      storeInHashTable(fileDictionaries,Expr(filename),Expr(d));
      d);
 
-fchmod(e:Expr):Expr := (
+fileMode(e:Expr):Expr := (
      when e is s:Sequence do (
 	  if length(s) != 2 
 	  then WrongNumArgs(2) 
@@ -1662,15 +1680,11 @@ fchmod(e:Expr):Expr := (
 			      else nullE))
 		    else WrongArgInteger(2))
 	       else WrongArg(1,"a file")))
-     else WrongNumArgs(2));
-setupfun("fileChangeMode",fchmod);
-
-fileMode(e:Expr):Expr := (
-     when e is fn:string do (
+     is fn:string do (
 	  r := fileMode(fn);
 	  if r == -1 then buildErrorPacket(syscallErrorMessage("stat"))
 	  else Expr(toInteger(r)))
-     else WrongArgString());
+     else WrongArg("string, file and integer, or string and integer"));
 setupfun("fileMode",fileMode);
 
 recursionDepthFun(e:Expr):Expr := (

@@ -23,7 +23,9 @@ copyFile = method(Options => fileOptions)
 copyFile(String,String) := opts -> (src,tar) -> (
      if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
      tar << get src << close;
-     fileChangeMode(tar,fileMode src))
+     fileTime(tar, fileTime src);
+     fileMode(tar,fileMode src);
+     )
 
 moveFile = method(Options => fileOptions)
 moveFile(String,String) := opts -> (src,tar) -> (

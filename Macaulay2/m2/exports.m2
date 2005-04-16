@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+        symbol currentTime,
      	symbol independentSets,
         symbol MakeDocumentation,
 	symbol rowPermute,
@@ -621,7 +622,6 @@ export (
 	symbol exteriorPower,
 	symbol factor,
 	symbol false,
-	symbol fileChangeMode,
 	symbol fileDictionaries,
 	symbol fileExists,
 	symbol fileMode,
