@@ -537,7 +537,7 @@ installPackage Package := opts -> pkg -> (
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
 	       buildDirectory|srcDirectory|".linkdir" << close;
-	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose => debugLevel > 0, Exclude => {"CVS"});
+	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose => debugLevel > 0, Exclude => {"^CVS$"});
 	       );
      	  );
 
@@ -546,7 +546,7 @@ installPackage Package := opts -> pkg -> (
      en := realpath(currentSourceDir|buildPackage|"/examples/");
      if fileExists en then (
 	  stderr << "--copying example files from " << en << endl;
-	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, Exclude => {"CVS"}, UpdateOnly => true);
+	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, Exclude => {"^CVS$"}, UpdateOnly => true);
 	  );
 
      if opts.MakeDocumentation then (
