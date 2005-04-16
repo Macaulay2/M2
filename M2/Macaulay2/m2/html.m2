@@ -855,7 +855,7 @@ installPackage Package := opts -> pkg -> (
 	  if version#"dumpdata" and pkg#"title" == "Macaulay2Core" then (
 	       f << endl << ///(set -x ; "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin/M2 -q --stop --dumpdata)/// << endl;
 	       );
-	  fileChangeMode(f,octal "755");
+	  fileMode(f,octal "755");
 	  f << close;
      	  f = buildDirectory | "preremove"
 	  << ///#! /bin/sh -x/// << endl
@@ -863,7 +863,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
 	  << ///done/// << endl;
-	  fileChangeMode(f,octal "755");
+	  fileMode(f,octal "755");
  	  f << close;
 	  f = buildDirectory | "encapinfo"
 	  << ///encap 2.0/// << endl

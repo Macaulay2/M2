@@ -46,6 +46,7 @@ extern char *libfac_version;
 #include <stddef.h>
 #include <signal.h>
 #include <time.h>
+#include <utime.h>
 #include <errno.h>
 #include <string.h>
 #include <math.h>
