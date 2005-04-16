@@ -1,0 +1,34 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : documentation partitions
+
+o1 = partitions -- list the partitions of an integer
+     ***********************************************
+
+     Description
+     ===========
+
+     partitions n returns a list of the partitions of the integer n.
+
+     partitions(n,k) returns a list of the partitions of the integer n into terms
+     each of which does not exceed k.
+
+         +--------------------+
+         |i1 : partitions 4   |
+         +--------------------+
+         |i2 : partitions(4,2)|
+         +--------------------+
+
+     Ways to use partitions
+     ======================
+
+       * "partitions ZZ" -- missing documentation
+       * "partitions(ZZ,ZZ)" -- missing documentation
+
+o1 : Hypertext
+
+i2 : 

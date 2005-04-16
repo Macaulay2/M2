@@ -1,0 +1,13 @@
+loaddata: map has appeared or changed its location: 0x0016b000-0x00189000 r-x 4062413709
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : apply(10, i -> i^2)
+
+o1 = {0, 1, 4, 9, 16, 25, 36, 49, 64, 81}
+
+o1 : List
+
+i2 : 

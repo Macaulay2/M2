@@ -1,0 +1,34 @@
+loaddata: map has appeared or changed its location: 0x00179000-0x00197000 r-x 4062413709
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : X = Proj(QQ[x,y,z])
+
+o1 = Proj(QQ [x, y, z])
+
+o1 : ProjectiveVariety
+
+i2 : F = OO_X(3)
+
+                           1
+o2 = (OO)                   (3)
+         Proj(QQ [x, y, z])
+
+o2 : coherent sheaf on Proj(QQ [x, y, z]), free
+
+i3 : module F
+
+                 1
+o3 = QQ [x, y, z]
+
+o3 : QQ [x, y, z]-module, free, degrees {-3}
+
+i4 : degrees oo
+
+o4 = {{-3}}
+
+o4 : List
+
+i5 : 

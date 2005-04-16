@@ -1,0 +1,44 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/2[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : exteriorPower(3,R^6)
+
+      20
+o2 = R
+
+o2 : R-module, free
+
+i3 : binomial(6,3)
+
+o3 = 20
+
+i4 : exteriorPower(2,R^1)
+
+o4 = 0
+
+o4 : R-module
+
+i5 : I = module ideal (x,y)
+
+o5 = image | x y |
+
+                             1
+o5 : R-module, submodule of R
+
+i6 : exteriorPower(2,I)
+
+o6 = cokernel {2} | x y |
+
+                            1
+o6 : R-module, quotient of R
+
+i7 : 

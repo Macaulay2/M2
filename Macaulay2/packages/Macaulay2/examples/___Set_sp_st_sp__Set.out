@@ -1,0 +1,13 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : set {1,2,3} * set {2,3,4}
+
+o1 = Set {2, 3}
+
+o1 : Set
+
+i2 : 

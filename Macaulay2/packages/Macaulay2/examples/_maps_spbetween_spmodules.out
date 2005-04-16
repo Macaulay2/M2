@@ -1,0 +1,55 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z];
+
+i2 : f = vars R
+
+o2 = | x y z |
+
+             1       3
+o2 : Matrix R  <--- R
+
+i3 : M = R^4
+
+      4
+o3 = R
+
+o3 : R-module, free
+
+i4 : M^{0,1}
+
+o4 = | 1 0 0 0 |
+     | 0 1 0 0 |
+
+             2       4
+o4 : Matrix R  <--- R
+
+i5 : M_{2,3}
+
+o5 = | 0 0 |
+     | 0 0 |
+     | 1 0 |
+     | 0 1 |
+
+             4       2
+o5 : Matrix R  <--- R
+
+i6 : map(source f, ker f)
+
+o6 = {1} | 0  -z -y |
+     {1} | -z 0  x  |
+     {1} | y  x  0  |
+
+o6 : Matrix
+
+i7 : map(coker f, target f)
+
+o7 = | 1 |
+
+o7 : Matrix
+
+i8 : 

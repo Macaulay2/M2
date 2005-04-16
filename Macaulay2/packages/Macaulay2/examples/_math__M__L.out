@@ -1,0 +1,24 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[x,y];
+
+i2 : mathML matrix {{x,y},{x^2+2,0}}
+
+o2 = <mrow><mo>(</mo><mtable>
+     <mtr><mtd><mrow><mi>x</mi></mrow></mtd>
+     <mtd><mrow><mi>y</mi></mrow></mtd>
+     </mtr>
+     <mtr><mtd><mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>&InvisibleTimes;
+     <mo>+</mo><mn>2</mn>
+     </mrow>
+     </mtd>
+     <mtd><mn>0</mn></mtd>
+     </mtr>
+     </mtable><mo>)</mo></mrow>
+     </mo></mrow>
+
+i3 : 

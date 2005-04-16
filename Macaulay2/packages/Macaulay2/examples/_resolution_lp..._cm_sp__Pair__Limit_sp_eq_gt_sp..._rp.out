@@ -1,0 +1,47 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z,w]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : M = cokernel matrix {{x*y-z,y^2-w-1,w^4-3}}
+
+o2 = cokernel | xy-z y2-w-1 w4-3 |
+
+                            1
+o2 : R-module, quotient of R
+
+i3 : res(M, PairLimit => 1)
+
+      1      8      17      14      4
+o3 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
+                                           
+     0      1      2       3       4      5
+
+o3 : ChainComplex
+
+i4 : res(M, PairLimit => 10)
+
+      1      8      17      14      4
+o4 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
+                                           
+     0      1      2       3       4      5
+
+o4 : ChainComplex
+
+i5 : res(M, PairLimit => 20)
+
+      1      8      17      14      4
+o5 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
+                                           
+     0      1      2       3       4      5
+
+o5 : ChainComplex
+
+i6 : 

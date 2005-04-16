@@ -1,0 +1,27 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : X = Proj(QQ[x,y,z])
+
+o1 = Proj(QQ [x, y, z])
+
+o1 : ProjectiveVariety
+
+i2 : OO_X(3)
+
+                           1
+o2 = (OO)                   (3)
+         Proj(QQ [x, y, z])
+
+o2 : coherent sheaf on Proj(QQ [x, y, z]), free
+
+i3 : variety oo
+
+o3 = Proj(QQ [x, y, z])
+
+o3 : ProjectiveVariety
+
+i4 : 

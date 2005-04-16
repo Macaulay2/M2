@@ -1,0 +1,22 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : f = x -> (
+          if x == 3 then return;
+          if x > 3 then return x^2;
+          5);
+
+i2 : f 2
+
+o2 = 5
+
+i3 : f 3
+
+i4 : f 4
+
+o4 = 16
+
+i5 : 

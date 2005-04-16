@@ -1,0 +1,35 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z]/(y^2-x^3-x^7);
+
+i2 : jacobian R
+
+o2 = {1} | -7x6-3x2 |
+     {1} | 2y       |
+     {1} | 0        |
+
+             3       1
+o2 : Matrix R  <--- R
+
+i3 : A = ZZ[a,b,c]/(a^2+b^2+c^2);
+
+i4 : R = A[x,y,z]/(a*x+b*y+c*z-1)
+
+o4 = R
+
+o4 : QuotientRing
+
+i5 : jacobian R
+
+o5 = {1} | a |
+     {1} | b |
+     {1} | c |
+
+             3       1
+o5 : Matrix R  <--- R
+
+i6 : 

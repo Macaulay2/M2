@@ -1,0 +1,181 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z,w];
+
+i2 : I = ideal(x*y-z^2,y^2-w^2)
+
+                   2   2    2
+o2 = ideal (x*y - z , y  - w )
+
+o2 : Ideal of R
+
+i3 : g2 = gb(I,DegreeLimit => 2)
+
+o3 = GroebnerBasis[status: DegreeLimit; all S-pairs handled up to degree 2]
+
+o3 : GroebnerBasis
+
+i4 : g3 = gb(I,DegreeLimit => 3)
+
+o4 = GroebnerBasis[status: DegreeLimit; all S-pairs handled up to degree 3]
+
+o4 : GroebnerBasis
+
+i5 : g2
+
+o5 = GroebnerBasis[status: DegreeLimit; all S-pairs handled up to degree 3]
+
+o5 : GroebnerBasis
+
+i6 : g2 === g3
+
+o6 = true
+
+o6 : Boolean
+
+i7 : I = ideal(x*y-z^2,y^2-w^2)
+
+                   2   2    2
+o7 = ideal (x*y - z , y  - w )
+
+o7 : Ideal of R
+
+i8 : gb(I,PairLimit => 2)
+
+o8 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
+
+o8 : GroebnerBasis
+
+i9 : gb(I,PairLimit => 3)
+
+o9 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
+
+o9 : GroebnerBasis
+
+i10 : I = ideal(x*y-z^2,y^2-w^2)
+
+                    2   2    2
+o10 = ideal (x*y - z , y  - w )
+
+o10 : Ideal of R
+
+i11 : gb(I,BasisElementLimit => 2)
+
+o11 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 2]
+
+o11 : GroebnerBasis
+
+i12 : gb(I,BasisElementLimit => 3)
+
+o12 = GroebnerBasis[status: BasisElementLimit; all S-pairs handled up to degree 3]
+
+o12 : GroebnerBasis
+
+i13 : R = ZZ/101[t,F,G,MonomialOrder => Eliminate 1];
+
+i14 : I = ideal(F - (t^3 + t^2 + 1), G - (t^4 - t))
+
+                3    2             4
+o14 = ideal (- t  - t  + F - 1, - t  + t + G)
+
+o14 : Ideal of R
+
+i15 : transpose gens gb (I, SubringLimit => 1)
+
+o15 = {-4} | F4-7F3-2F2G-4FG2-G3+18F2+3FG+6G2-21F-G+9 |
+      {-3} | tG2-tF+6tG+5t-F3+3F2+3FG+3G2+G-2         |
+      {-3} | tFG+tF-4tG-3t+F2-FG-G2-4F-G+3            |
+      {-3} | tF2-4tF+tG+5t-F2-FG+3F+3G-2              |
+      {-2} | t2+tF-2t-F-G+1                           |
+
+              5       1
+o15 : Matrix R  <--- R
+
+i16 : gbTrace = 3
+
+o16 = 3
+
+i17 : I = ideal(x*y-z^2,y^2-w^2)
+
+                    2   2    2
+o17 = ideal (x*y - z , y  - w )
+
+                ZZ
+o17 : Ideal of --- [x, y, z, w]
+               101
+
+i18 : gb I
+{2}(2)mm{3}(1)m{4}(2)om{5}(1)o
+o18 = GroebnerBasis[status: done; S-pairs encountered up to degree 4]
+
+o18 : GroebnerBasis
+
+i19 : gbTrace = 0
+
+o19 = 0
+
+i20 : R = ZZ/101[a..e];
+
+i21 : T = (degreesRing R)_0
+
+o21 = T
+
+o21 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i22 : f = random(R^1,R^{-3,-3,-5,-6});
+              1       4
+o22 : Matrix R  <--- R
+
+
+i23 : time betti gb f
+     -- used 1.55 seconds
+
+o23 = total: 1 53
+          0: 1  .
+          1: .  .
+          2: .  2
+          3: .  1
+          4: .  2
+          5: .  3
+          6: .  5
+          7: .  5
+          8: .  8
+          9: .  9
+         10: .  8
+         11: .  6
+         12: .  3
+         13: .  1
+
+i24 : remove(f.cache,{false,0})
+
+i25 : (cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)
+
+            3    5     8     9    12     14    17
+o25 = 1 - 2T  - T  + 2T  + 2T  - T   - 2T   + T
+
+o25 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i26 : time betti gb f
+     -- used 0.24 seconds
+
+o26 = total: 1 53
+          0: 1  .
+          1: .  .
+          2: .  2
+          3: .  1
+          4: .  2
+          5: .  3
+          6: .  5
+          7: .  5
+          8: .  8
+          9: .  9
+         10: .  8
+         11: .  6
+         12: .  3
+         13: .  1
+
+i27 : 

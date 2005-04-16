@@ -1,0 +1,26 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[x,y];
+
+i2 : f = random(R^{2},R^2)
+
+o2 = {-2} | xy+5y2 2x2-9xy-9y2 |
+
+             1       2
+o2 : Matrix R  <--- R
+
+i3 : compactMatrixForm = false;
+
+i4 : f
+
+     |         2    2            2 |
+o4 = | x*y + 5y   2x  - 9x*y - 9y  |
+
+             1       2
+o4 : Matrix R  <--- R
+
+i5 : 

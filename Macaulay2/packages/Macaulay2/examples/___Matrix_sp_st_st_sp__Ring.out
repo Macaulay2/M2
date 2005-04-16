@@ -1,0 +1,25 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[a..c];
+
+i2 : S = R/(a+b+c);
+
+i3 : f = vars R
+
+o3 = | a b c |
+
+             1       3
+o3 : Matrix R  <--- R
+
+i4 : f ** S
+
+o4 = | -b-c b c |
+
+             1       3
+o4 : Matrix S  <--- S
+
+i5 : 

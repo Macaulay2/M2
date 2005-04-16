@@ -1,0 +1,147 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z];
+
+i2 : f = random(R^1,R^{5:-3})
+
+o2 = | 42x3-50x2y+9xy2+50y3+39x2z-15xyz+45y2z-22xz2-29yz2-39z3
+     ---------------------------------------------------------------------------
+     30x3+19x2y+2xy2-16y3-38x2z-4xyz-6y2z-36xz2-32yz2+31z3
+     ---------------------------------------------------------------------------
+     -32x3-38x2y+24xy2-41y3+31x2z-42xyz+15y2z-50xz2+17yz2-28z3
+     ---------------------------------------------------------------------------
+     37x3-22x2y+45xy2-9y3-19x2z-8xyz+32y2z-31xz2-4yz2+4z3
+     ---------------------------------------------------------------------------
+     -2x3+24x2y-45xy2-10y3+x2z+15xyz-2y2z-15xz2+21z3 |
+
+             1       5
+o2 : Matrix R  <--- R
+
+i3 : C = resolution cokernel f
+
+      1      5      9      5
+o3 = R  <-- R  <-- R  <-- R  <-- 0
+                                  
+     0      1      2      3      4
+
+o3 : ChainComplex
+
+i4 : be = betti C
+
+o4 = total: 1 5 9 5
+         0: 1 . . .
+         1: . . . .
+         2: . 5 . .
+         3: . . 9 5
+
+i5 : "Betti numbers of " | net C | " are " | be^2
+
+                                                        total: 1 5 9 5
+                       1      5      9      5               0: 1 . . .
+o5 = Betti numbers of R  <-- R  <-- R  <-- R  <-- 0 are     1: . . . .
+                                                            2: . 5 . .
+                      0      1      2      3      4         3: . . 9 5
+
+i6 : "x" | "2"^1
+
+      2
+o6 = x
+
+i7 : Divide(Minus a,b)
+
+     -a
+o7 = --
+      b
+
+o7 : Divide
+
+i8 : Power(Sum(3,4,5),7)
+
+                7
+o8 = (3 + 4 + 5)
+
+o8 : Power
+
+i9 : Sum(1,2, Minus 3, 4,5)
+
+o9 = 1 + 2 - 3 + 4 + 5
+
+o9 : Sum
+
+i10 : Minus a / b
+
+      -a
+o10 = --
+       b
+
+o10 : Divide
+
+i11 : (Sum(3,4,5))^7
+
+                 7
+o11 = (3 + 4 + 5)
+
+o11 : Power
+
+i12 : 1 + 2 + Minus 3 + 4 + 5
+
+o12 = 3 - 3 + 4 + 5
+
+o12 : Sum
+
+i13 : g = (x+y)^2
+
+       2           2
+o13 = x  + 2x*y + y
+
+o13 : R
+
+i14 : e = expression g
+
+       2           2
+o14 = x  + 2x*y + y
+
+o14 : Sum
+
+i15 : peek e
+
+           2       2
+o15 = Sum{x ,2x*y,y }
+
+i16 : peek'(2,e)
+
+                   2                          2
+o16 = Sum{Product{x },Product{2,x,y},Product{y }}
+
+i17 : Table{{1,2,3},{a,bb,ccc}}
+
+o17 =  1   2   3  
+
+       a  bb  ccc 
+
+o17 : Table
+
+i18 : MatrixExpression{{1,2,3},{a,bb,ccc}}
+
+o18 = | 1   2   3  |
+      |            |
+      | a  bb  ccc |
+
+o18 : MatrixExpression
+
+i19 : Table{{"Example 1","Example 2"},
+            {Table{{1,2},{3,4}},Table{{11,22},{3,444}}}}
+
+o19 =  Example 1  Example 2 
+
+          1  2     11   22  
+
+          3  4      3  444 
+
+o19 : Table
+
+i20 : 

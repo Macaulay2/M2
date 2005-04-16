@@ -1,0 +1,20 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : code Thing.Print
+
+o1 = -- ../../../Macaulay2/m2/setup.m2:75-83
+     Thing.Print = x -> (
+          z := robustNet x;
+          wrapper := lookup(symbol Wrap,class x);
+          if wrapper =!= null then (
+               fun := () -> z = wrapper z;
+               try timelimit(printingTimeLimit, fun) else (
+                    global debugError <- fun;
+                    stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
+          << endl << concatenate(interpreterDepth:"o") << lineNumber << " = " << z << endl)
+
+i2 : 

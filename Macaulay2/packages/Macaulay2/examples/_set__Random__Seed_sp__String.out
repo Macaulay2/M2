@@ -1,0 +1,27 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x00125000 r-x 1382359422
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : setRandomSeed "thrkwjsxz"
+
+o1 = 123459876
+
+i2 : for i to 10 list random 100
+
+o2 = {87, 25, 83, 77, 25, 48, 96, 91, 16, 26, 82}
+
+o2 : List
+
+i3 : setRandomSeed "thrkwjsxz"
+
+o3 = 576824482
+
+i4 : for i to 10 list random 100
+
+o4 = {87, 25, 83, 77, 25, 48, 96, 91, 16, 26, 82}
+
+o4 : List
+
+i5 : 

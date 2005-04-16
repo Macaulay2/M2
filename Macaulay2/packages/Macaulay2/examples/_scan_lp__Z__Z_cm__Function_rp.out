@@ -1,0 +1,23 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : scan(3,print)
+0
+1
+2
+
+i2 : v = {a,b,c}
+
+o2 = {a, b, c}
+
+o2 : List
+
+i3 : scan(#v, i -> print(i,v#i))
+(0, a)
+(1, b)
+(2, c)
+
+i4 : 

@@ -1,0 +1,28 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : p = matrix {{x^2,y^2},{x*y*z, x^3-y^3}}
+
+o2 = | x2  y2    |
+     | xyz x3-y3 |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : entries p
+
+        2   2            3    3
+o3 = {{x , y }, {x*y*z, x  - y }}
+
+o3 : List
+
+i4 : 

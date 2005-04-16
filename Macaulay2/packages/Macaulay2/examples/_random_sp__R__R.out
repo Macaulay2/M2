@@ -1,0 +1,13 @@
+loaddata: map has appeared or changed its location: 0x00174000-0x00192000 r-x 4062413709
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : random pi
+
+o1 = 0.762082
+
+o1 : RR
+
+i2 : 

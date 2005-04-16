@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : {5:a,10:b}
+
+o1 = {(a, a, a, a, a), (b, b, b, b, b, b, b, b, b, b)}
+
+o1 : List
+
+i2 : splice {5:a,10:b}
+
+o2 = {a, a, a, a, a, b, b, b, b, b, b, b, b, b, b}
+
+o2 : List
+
+i3 : 

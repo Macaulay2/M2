@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : sequence 4
+
+o1 = 1 : (4)
+
+o1 : Sequence
+
+i2 : sequence {4,5}
+
+o2 = 1 : ({4, 5})
+
+o2 : Sequence
+
+i3 : sequence (4,5)
+
+o3 = (4, 5)
+
+o3 : Sequence
+
+i4 : 

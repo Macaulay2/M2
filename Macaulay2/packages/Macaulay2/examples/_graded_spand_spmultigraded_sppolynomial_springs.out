@@ -1,0 +1,64 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a,b,c,Degrees=>{{1,2},{2,1},{1,0}}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : describe R
+
+      ZZ
+o2 = --- [a, b, c, Degrees => {{1, 2}, {2, 1}, {1, 0}}]
+     101
+
+i3 : degree a
+
+o3 = {1, 2}
+
+o3 : List
+
+i4 : degree b^2
+
+o4 = {4, 2}
+
+o4 : List
+
+i5 : degree 0_R
+
+o5 = -infinity
+
+o5 : InfiniteNumber
+
+i6 : degree 1_R
+
+o6 = {0, 0}
+
+o6 : List
+
+i7 : random({15,15},R)
+
+        5 5      6 3 3      7   6
+o7 = 39a b  - 50a b c  + 42a b*c
+
+o7 : R
+
+i8 : degree (a+b)
+
+o8 = {2, 2}
+
+o8 : List
+
+i9 : degreeLength R
+
+o9 = 2
+
+i10 : degreeLength ZZ
+
+o10 = 0
+
+i11 : 

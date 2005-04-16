@@ -1,0 +1,34 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : g = {a=>1, b=>2} >> opts -> args -> {args, opts}
+
+o1 = g
+
+o1 : Function
+
+i2 : g x
+
+o2 = {x, OptionTable{a => 1}}
+                     b => 2
+
+o2 : List
+
+i3 : g(x,y,b=>66)
+
+o3 = {(x, y), OptionTable{a => 1 }}
+                          b => 66
+
+o3 : List
+
+i4 : g(t,u,a=>44,b=>77)
+
+o4 = {(t, u), OptionTable{a => 44}}
+                          b => 77
+
+o4 : List
+
+i5 : 

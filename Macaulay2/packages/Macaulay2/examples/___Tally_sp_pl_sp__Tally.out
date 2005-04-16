@@ -1,0 +1,32 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = tally {a,a,a,b,b,c}
+
+o1 = Tally{a => 3}
+           b => 2
+           c => 1
+
+o1 : Tally
+
+i2 : y = tally {b,c,c,d,d,d}
+
+o2 = Tally{b => 1}
+           c => 2
+           d => 3
+
+o2 : Tally
+
+i3 : x + y
+
+o3 = Tally{a => 3}
+           b => 3
+           c => 3
+           d => 3
+
+o3 : Tally
+
+i4 : 

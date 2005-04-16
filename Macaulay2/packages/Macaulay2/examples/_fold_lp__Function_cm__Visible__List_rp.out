@@ -1,0 +1,17 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x00166000 r-x 704318670
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : fold(identity, {a,b,c,d,e})
+
+o1 = ((((a, b), c), d), e)
+
+o1 : Sequence
+
+i2 : fold(plus, {1,2,3,4,5})
+
+o2 = 15
+
+i3 : 

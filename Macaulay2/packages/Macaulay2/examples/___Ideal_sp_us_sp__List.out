@@ -1,0 +1,34 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = ideal vars R
+
+o2 = ideal (x, y, z)
+
+o2 : Ideal of R
+
+i3 : f = I_{0,2}
+
+o3 = {1} | 1 0 |
+     {1} | 0 0 |
+     {1} | 0 1 |
+
+o3 : Matrix
+
+i4 : image f
+
+o4 = image | x z |
+
+                             1
+o4 : R-module, submodule of R
+
+i5 : 

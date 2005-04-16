@@ -1,0 +1,13 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : append( {a,b,c}, x )
+
+o1 = {a, b, c, x}
+
+o1 : List
+
+i2 : 

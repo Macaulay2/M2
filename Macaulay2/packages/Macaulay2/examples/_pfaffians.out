@@ -1,0 +1,31 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[u..z];
+
+i2 : f = genericSkewMatrix(R,u,4)
+
+o2 = | 0  u  v  w |
+     | -u 0  x  y |
+     | -v -x 0  z |
+     | -w -y -z 0 |
+
+             4       4
+o2 : Matrix R  <--- R
+
+i3 : pfaffians(2,f)
+
+o3 = ideal (u, v, x, w, y, z)
+
+o3 : Ideal of R
+
+i4 : pfaffians(4,f)
+
+o4 = ideal(w*x - v*y + u*z)
+
+o4 : Ideal of R
+
+i5 : 

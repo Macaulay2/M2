@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : drop({a,b,c,d,e},2)
+
+o1 = {c, d, e}
+
+o1 : List
+
+i2 : drop({a,b,c,d,e},-2)
+
+o2 = {a, b, c}
+
+o2 : List
+
+i3 : 

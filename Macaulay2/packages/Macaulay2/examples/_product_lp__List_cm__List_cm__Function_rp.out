@@ -1,0 +1,16 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : M = monoid [x,y,z];
+
+i2 : product({2,3,4},{x,y,z},(i,j)->j^i)
+
+      2 3 4
+o2 = x y z
+
+o2 : M
+
+i3 : 

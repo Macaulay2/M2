@@ -1,0 +1,30 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : t = set {1,2,3}
+
+o1 = Set {1, 2, 3}
+
+o1 : Set
+
+i2 : peek t
+
+o2 = Set{1 => 1}
+         2 => 1
+         3 => 1
+
+i3 : new MutableHashTable from {a=>3, b=>44}
+
+o3 = MutableHashTable{...2...}
+
+o3 : MutableHashTable
+
+i4 : peek oo
+
+o4 = MutableHashTable{a => 3 }
+                      b => 44
+
+i5 : 

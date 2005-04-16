@@ -1,0 +1,21 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : separate( ".", "a.b.c.d" )
+
+o1 = {a, b, c, d}
+
+o1 : List
+
+i2 : peek separate( ".", "a.b.c.d" )
+
+o2 = {"a","b","c","d"}
+
+i3 : demark("=",ooo)
+
+o3 = a=b=c=d
+
+i4 : 

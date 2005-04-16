@@ -1,0 +1,40 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[a..f];
+
+i2 : g = matrix{{a,b},{c,d},{e,f}}
+
+o2 = | a b |
+     | c d |
+     | e f |
+
+             3       2
+o2 : Matrix R  <--- R
+
+i3 : M = subquotient(g,matrix{{b},{c},{d}})
+
+o3 = subquotient (| a b |, | b |)
+                  | c d |  | c |
+                  | e f |  | d |
+
+                               3
+o3 : R-module, subquotient of R
+
+i4 : cover M
+
+      2
+o4 = R
+
+o4 : R-module, free, degrees {1, 1}
+
+i5 : cover M == source generators M
+
+o5 = true
+
+o5 : Boolean
+
+i6 : 

@@ -1,0 +1,83 @@
+loaddata: map has appeared or changed its location: 0x00140000-0x00146000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = {a,b,c,d,e}
+
+o1 = {a, b, c, d, e}
+
+o1 : List
+
+i2 : #x
+
+o2 = 5
+
+i3 : x#2
+
+o3 = c
+
+o3 : Symbol
+
+i4 : first x, last x
+
+o4 = (a, e)
+
+o4 : Sequence
+
+i5 : g = {3,4,,5}
+
+o5 = {3, 4, , 5}
+
+o5 : List
+
+i6 : peek g
+
+o6 = {3,4,null,5}
+
+i7 : 10000*{3,4,5} + {1,2,3}
+
+o7 = {30001, 40002, 50003}
+
+o7 : List
+
+i8 : y = {{a,b,c},{d,{e,f}}}
+
+o8 = {{a, b, c}, {d, {e, f}}}
+
+o8 : List
+
+i9 : #y
+
+o9 = 2
+
+i10 : flatten y
+
+o10 = {a, b, c, d, {e, f}}
+
+o10 : List
+
+i11 : z = {{a,1},{b,2},{c,3}}
+
+o11 = {{a, 1}, {b, 2}, {c, 3}}
+
+o11 : List
+
+i12 : isTable z
+
+o12 = true
+
+o12 : Boolean
+
+i13 : MatrixExpression z
+
+o13 = | a  1 |
+      |      |
+      | b  2 |
+      |      |
+      | c  3 |
+
+o13 : MatrixExpression
+
+i14 : 

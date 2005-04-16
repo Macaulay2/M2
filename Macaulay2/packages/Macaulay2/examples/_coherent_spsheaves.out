@@ -1,0 +1,53 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);
+
+i2 : X = Proj R
+
+                    4    4    4    4
+o2 = variety(ideal(a  + b  + c  + d ))
+
+o2 : ProjectiveVariety
+
+i3 : Omega = cotangentSheaf X
+
+o3 = cokernel {2} | b  a  0  0  0  c3 -d3 0   |
+              {2} | -c 0  a  0  0  b3 0   -d3 |
+              {2} | d  0  0  a  0  0  b3  -c3 |
+              {2} | 0  -c -b 0  d3 a3 0   0   |
+              {2} | 0  d  0  -b c3 0  a3  0   |
+              {2} | 0  0  d  c  b3 0  0   a3  |
+
+                                      4    4    4    4                                                     6
+o3 : coherent sheaf on variety(ideal(a  + b  + c  + d )), quotient of (OO)                                  (-2)
+                                                                                         4    4    4    4
+                                                                          variety(ideal(a  + b  + c  + d ))
+
+i4 : HH^1(Omega)
+
+       20
+o4 = QQ
+
+o4 : QQ-module, free
+
+i5 : F = sheaf coker matrix {{a,b}}
+
+o5 = cokernel | a b |
+
+                                      4    4    4    4                                                     1
+o5 : coherent sheaf on variety(ideal(a  + b  + c  + d )), quotient of (OO)
+                                                                                         4    4    4    4
+                                                                          variety(ideal(a  + b  + c  + d ))
+
+i6 : module F
+
+o6 = cokernel | a b |
+
+                            1
+o6 : R-module, quotient of R
+
+i7 : 

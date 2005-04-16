@@ -1,0 +1,87 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[a..d];
+
+i2 : I = ideal (a^2*b-c^2, a*b^2-d^3, c^5-d);
+o2 : Ideal of R
+
+
+i3 : J = ideal (a^2,b^2,c^2,d^2);
+o3 : Ideal of R
+
+
+i4 : I == J
+
+o4 = false
+
+o4 : Boolean
+
+i5 : I != J
+
+o5 = true
+
+o5 : Boolean
+
+i6 : (1+a+a^3+a^4) % J
+
+o6 = a + 1
+
+o6 : R
+
+i7 : (1+a+a^3+a^4) % J == 0
+
+o7 = false
+
+o7 : Boolean
+
+i8 : a^4 % J == 0
+
+o8 = true
+
+o8 : Boolean
+
+i9 : isSubset(I,J)
+
+o9 = false
+
+o9 : Boolean
+
+i10 : isSubset(I,I+J)
+
+o10 = true
+
+o10 : Boolean
+
+i11 : isSubset(I+J,I)
+
+o11 = false
+
+o11 : Boolean
+
+i12 : I = ideal (a^2-1,a^3+2);
+o12 : Ideal of R
+
+
+i13 : I == 1
+
+o13 = true
+
+o13 : Boolean
+
+i14 : S = R/I
+
+o14 = S
+
+o14 : QuotientRing
+
+i15 : S == 0
+
+o15 = false
+
+o15 : Boolean
+
+i16 : 

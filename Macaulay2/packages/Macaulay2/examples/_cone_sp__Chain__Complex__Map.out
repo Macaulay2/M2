@@ -1,0 +1,74 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : m = image vars R
+
+o2 = image | x y z |
+
+                             1
+o2 : R-module, submodule of R
+
+i3 : m2 = image symmetricPower(2,vars R)
+
+o3 = image | x2 xy xz y2 yz z2 |
+
+                             1
+o3 : R-module, submodule of R
+
+i4 : M = R^1/m2
+
+o4 = cokernel | x2 xy xz y2 yz z2 |
+
+                            1
+o4 : R-module, quotient of R
+
+i5 : N = R^1/m
+
+o5 = cokernel | x y z |
+
+                            1
+o5 : R-module, quotient of R
+
+i6 : C = cone extend(resolution N,resolution M,id_(R^1))
+
+      1      4      9      9      3
+o6 = R  <-- R  <-- R  <-- R  <-- R  <-- 0
+                                         
+     0      1      2      3      4      5
+
+o6 : ChainComplex
+
+i7 : prune HH_0 C
+
+o7 = 0
+
+o7 : R-module
+
+i8 : prune HH_1 C
+
+o8 = cokernel {1} | z 0 0 y 0 0 0 x 0 |
+              {1} | 0 z 0 0 y 0 x 0 0 |
+              {1} | 0 0 z 0 0 y 0 0 x |
+
+                            3
+o8 : R-module, quotient of R
+
+i9 : prune (m/m2)
+
+o9 = cokernel {1} | 0 0 z 0 0 y 0 0 x |
+              {1} | 0 z 0 0 y 0 0 x 0 |
+              {1} | z 0 0 y 0 0 x 0 0 |
+
+                            3
+o9 : R-module, quotient of R
+
+i10 : 

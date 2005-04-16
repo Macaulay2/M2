@@ -1,0 +1,23 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = new HashTable from {1 => a, 2 => b, 3 => c}
+
+o1 = HashTable{1 => a}
+               2 => b
+               3 => c
+
+o1 : HashTable
+
+i2 : applyKeys(x, k -> k + 100)
+
+o2 = HashTable{101 => a}
+               102 => b
+               103 => c
+
+o2 : HashTable
+
+i3 : 

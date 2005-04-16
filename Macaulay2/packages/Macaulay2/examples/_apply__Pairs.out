@@ -1,0 +1,33 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = new HashTable from {1 => a, 2 => b, 3 => c}
+
+o1 = HashTable{1 => a}
+               2 => b
+               3 => c
+
+o1 : HashTable
+
+i2 : y = applyPairs(x, (k,v) -> (v,k))
+
+o2 = HashTable{a => 1}
+               b => 2
+               c => 3
+
+o2 : HashTable
+
+i3 : x#2
+
+o3 = b
+
+o3 : Symbol
+
+i4 : y#b
+
+o4 = 2
+
+i5 : 

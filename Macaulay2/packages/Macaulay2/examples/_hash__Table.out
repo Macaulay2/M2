@@ -1,0 +1,20 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = hashTable {a=>b, c=>d, }
+
+o1 = HashTable{a => b}
+               c => d
+
+o1 : HashTable
+
+i2 : x#a
+
+o2 = b
+
+o2 : Symbol
+
+i3 : 

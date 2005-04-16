@@ -1,0 +1,49 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : "testfile" << 2^100 << endl << close
+
+o1 = testfile
+
+o1 : File
+
+i2 : value get "testfile"
+
+o2 = 1267650600228229401496703205376
+
+i3 : f = "testfile" << ""
+
+o3 = testfile
+
+o3 : File
+
+i4 : f << "hi" << endl
+
+o4 = testfile
+
+o4 : File
+
+i5 : f << "ho" << endl
+
+o5 = testfile
+
+o5 : File
+
+i6 : f << close
+
+o6 = testfile
+
+o6 : File
+
+i7 : get "testfile"
+
+o7 = hi
+     ho
+
+
+i8 : unlink "testfile"
+
+i9 : 

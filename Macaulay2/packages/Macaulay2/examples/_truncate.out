@@ -1,0 +1,33 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..c];
+
+i2 : truncate(2,R^1)
+
+o2 = image | a2 ab ac b2 bc c2 |
+
+                             1
+o2 : R-module, submodule of R
+
+i3 : truncate(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))
+
+o3 = subquotient (| ab ac bc c3 |, | a2 b2 c4 |)
+
+                               1
+o3 : R-module, subquotient of R
+
+i4 : S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
+
+i5 : truncate({7,24}, S^1 ++ S^{{-8,-20}})
+
+o5 = image {0, 0}  | x4y3 |
+           {8, 20} | 0    |
+
+                             2
+o5 : S-module, submodule of S
+
+i6 : 

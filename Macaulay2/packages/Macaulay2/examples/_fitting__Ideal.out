@@ -1,0 +1,31 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x];
+
+i2 : k = coker vars R
+
+o2 = cokernel | x |
+
+                            1
+o2 : R-module, quotient of R
+
+i3 : M = R^3 ++ k^5;
+
+i4 : fittingIdeal(3,M)
+
+            5
+o4 = ideal(x )
+
+o4 : Ideal of R
+
+i5 : fittingIdeal(8,M)
+
+o5 = ideal 1
+
+o5 : Ideal of R
+
+i6 : 

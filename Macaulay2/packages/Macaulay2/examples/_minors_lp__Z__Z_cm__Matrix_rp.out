@@ -1,0 +1,49 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[vars(0..11)];
+
+i2 : M = genericMatrix(R,a,4,3)
+
+o2 = | a e i |
+     | b f j |
+     | c g k |
+     | d h l |
+
+             4       3
+o2 : Matrix R  <--- R
+
+i3 : transpose generators minors(2,M)
+
+o3 = {-2} | -be+af |
+     {-2} | -ce+ag |
+     {-2} | -cf+bg |
+     {-2} | -de+ah |
+     {-2} | -df+bh |
+     {-2} | -dg+ch |
+     {-2} | -bi+aj |
+     {-2} | -ci+ak |
+     {-2} | -cj+bk |
+     {-2} | -di+al |
+     {-2} | -dj+bl |
+     {-2} | -dk+cl |
+     {-2} | -fi+ej |
+     {-2} | -gi+ek |
+     {-2} | -gj+fk |
+     {-2} | -hi+el |
+     {-2} | -hj+fl |
+     {-2} | -hk+gl |
+
+             18       1
+o3 : Matrix R   <--- R
+
+i4 : subsets(4,2)
+
+o4 = {{0, 1}, {0, 2}, {1, 2}, {0, 3}, {1, 3}, {2, 3}}
+
+o4 : List
+
+i5 : 

@@ -1,0 +1,30 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : filename = read "file name : "
+file name : sample
+
+o1 = sample
+
+i2 : peek filename
+
+o2 = "sample"
+
+i3 : R = ZZ[x,y];
+
+i4 : s = read "polynomial : "
+polynomial : (x+y)^2
+
+o4 = (x+y)^2
+
+i5 : value s
+
+      2           2
+o5 = x  + 2x*y + y
+
+o5 : R
+
+i6 : 

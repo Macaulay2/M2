@@ -1,0 +1,48 @@
+loaddata: map has appeared or changed its location: 0x00120000-0x00126000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : QQ[x];
+
+i2 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
+
+o2 = | x2+3  x4+1 |
+     | x13-5 x7-1 |
+
+                  2            2
+o2 : Matrix QQ [x]  <--- QQ [x]
+
+i3 : compactMatrixForm = false
+
+o3 = false
+
+o3 : Boolean
+
+i4 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
+
+     |   2       4     |
+o4 = |  x  + 3  x  + 1 |
+     |                 |
+     |  13       7     |
+     | x   - 5  x  - 1 |
+
+                  2            2
+o4 : Matrix QQ [x]  <--- QQ [x]
+
+i5 : compactMatrixForm = true
+
+o5 = true
+
+o5 : Boolean
+
+i6 : matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}
+
+o6 = | x2+3  x4+1 |
+     | x13-5 x7-1 |
+
+                  2            2
+o6 : Matrix QQ [x]  <--- QQ [x]
+
+i7 : 

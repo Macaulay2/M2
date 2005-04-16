@@ -1,0 +1,81 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : sin
+
+o1 = sin
+
+o1 : Function
+
+  * Usage: sin x
+  * Inputs:
+      * x, a real number, 
+  * Outputs:
+      * the sine of x
+
+i2 : sin 1.2
+
+o2 = 0.932039
+
+o2 : RR
+
+i3 : sin(1.2)
+
+o3 = 0.932039
+
+o3 : RR
+
+i4 : sin(1.0+0.2)
+
+o4 = 0.932039
+
+o4 : RR
+
+i5 : print(10 + 1)^2
+121
+
+i6 : append
+
+o6 = append
+
+o6 : Function
+
+  * Usage: append(v,x)
+
+i7 : append({a,b,c},d)
+
+o7 = {a, b, c, d}
+
+o7 : List
+
+i8 : join
+
+o8 = join
+
+o8 : Function
+
+ -- join lists
+
+Ways to use join
+================
+
+  * "join(BasicList,BasicList)" -- missing documentation
+
+i9 : join({a,b},{c,d},{e,f},{g,h,i})
+
+o9 = {a, b, c, d, e, f, g, h, i}
+
+o9 : List
+
+i10 : ap = append;
+
+i11 : ap({a,b,c},d)
+
+o11 = {a, b, c, d}
+
+o11 : List
+
+i12 : 

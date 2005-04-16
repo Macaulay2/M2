@@ -1,0 +1,37 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : f = openInOut "!cat"
+
+o1 = !cat
+
+o1 : File
+
+i2 : isReady f
+
+o2 = false
+
+o2 : Boolean
+
+i3 : f << "hi there" << flush;
+
+i4 : isReady f
+
+o4 = false
+
+o4 : Boolean
+
+i5 : read f
+
+o5 = hi there
+
+i6 : isReady f
+
+o6 = false
+
+o6 : Boolean
+
+i7 : 

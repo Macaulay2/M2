@@ -1,0 +1,27 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x_1 .. x_10, MonomialOrder=>{4,6}];
+
+i2 : (monoid R).Options.MonomialOrder
+
+o2 = {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1, 1, 1, 1, 1}}
+
+o2 : List
+
+i3 : S = QQ[a..d]
+
+o3 = S
+
+o3 : PolynomialRing
+
+i4 : (monoid R).Options.MonomialOrder
+
+o4 = {GRevLex => {1, 1, 1, 1}, GRevLex => {1, 1, 1, 1, 1, 1}}
+
+o4 : List
+
+i5 : 

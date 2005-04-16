@@ -1,0 +1,61 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : class 33
+
+o1 = ZZ
+
+o1 : Ring
+
+ -- the class of all integers
+
+i2 : instance(33,ZZ)
+
+o2 = true
+
+o2 : Boolean
+
+i3 : instance(33,String)
+
+o3 = false
+
+o3 : Boolean
+
+i4 : instance(ZZ,Type)
+
+o4 = true
+
+o4 : Boolean
+
+i5 : instance(33,Type)
+
+o5 = false
+
+o5 : Boolean
+
+i6 : instance(33,Thing)
+
+o6 = true
+
+o6 : Boolean
+
+i7 : class ZZ
+
+o7 = Ring
+
+o7 : Type
+
+ -- the class of all rings
+
+i8 : parent class ZZ
+
+o8 = Type
+
+o8 : Type
+
+ -- the class of all types
+
+i9 : 

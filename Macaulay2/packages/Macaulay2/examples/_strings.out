@@ -1,0 +1,65 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : "abcdefghij"
+
+o1 = abcdefghij
+
+i2 : "abcde
+     fghij"
+
+o2 = abcde
+     fghij
+
+i3 : x = "abcdefghij"
+
+o3 = abcdefghij
+
+i4 : y = "abc\101\102\n\tstu"
+
+o4 = abcAB
+             stu
+
+i5 : peek y
+
+o5 = "abcAB\n\tstu"
+
+i6 : ///a \ n = "c"///
+
+o6 = a \ n = "c"
+
+i7 : ascii y
+
+o7 = {97, 98, 99, 65, 66, 10, 9, 115, 116, 117}
+
+o7 : List
+
+i8 : ascii oo
+
+o8 = abcAB
+             stu
+
+i9 : x|x|x
+
+o9 = abcdefghijabcdefghijabcdefghij
+
+i10 : #x
+
+o10 = 10
+
+i11 : x#5
+
+o11 = f
+
+i12 : substring(5,x)
+
+o12 = fghij
+
+i13 : substring(5,2,x)
+
+o13 = fg
+
+i14 : 

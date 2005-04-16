@@ -1,0 +1,37 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[a..d];
+
+i2 : a*d + b*c
+
+o2 = b*c + a*d
+
+o2 : R
+
+i3 : R = ZZ[a..d, MonomialOrder => {Lex => 4}];
+
+i4 : 1+a+b+c+d+a*d+b*c
+
+o4 = a*d + a + b*c + b + c + d + 1
+
+o4 : R
+
+i5 : R = ZZ[a..d,MonomialOrder => {Weights => {1,0,0,1}}];
+
+i6 : 1+a+b+c+d+a*d+b*c
+
+o6 = a*d + a + d + b*c + b + c + 1
+
+o6 : R
+
+i7 : R = ZZ[a..d,MonomialOrder=>GRevLex]
+
+o7 = R
+
+o7 : PolynomialRing
+
+i8 : 

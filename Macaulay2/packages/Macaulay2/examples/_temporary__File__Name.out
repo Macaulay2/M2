@@ -1,0 +1,15 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : temporaryFileName () | ".tex"
+
+o1 = /tmp/M2-1244-1.tex
+
+i2 : temporaryFileName () | ".html"
+
+o2 = /tmp/M2-1244-2.html
+
+i3 : 

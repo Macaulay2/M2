@@ -1,0 +1,20 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : A = QQ[a..d,MonomialOrder=>Lex];
+
+i2 : a^1000000000
+
+      1000000000
+o2 = a
+
+o2 : A
+
+i3 : B = QQ[a..d,MonomialOrder=>LexSmall];
+
+i4 : C = QQ[a..d,MonomialOrder=>LexTiny];
+
+i5 : 

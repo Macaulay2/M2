@@ -1,0 +1,15 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : apply(-3..3,i->try 1/i else infinity)
+
+        1    1                   1  1
+o1 = (- -, - -, -1, infinity, 1, -, -)
+        3    2                   2  3
+
+o1 : Sequence
+
+i2 : 

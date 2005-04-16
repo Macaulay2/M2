@@ -1,0 +1,54 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/32003[x,y,z];
+
+i2 : P = R^3;
+
+i3 : M = image(x*P_{1}+y*P_{2} | z*P_{0})
+
+o3 = image | 0 z |
+           | x 0 |
+           | y 0 |
+
+                             3
+o3 : R-module, submodule of R
+
+i4 : N = image(x^4*P_{1} + x^3*y*P_{2} + x*y*z*P_{0})
+
+o4 = image | xyz |
+           | x4  |
+           | x3y |
+
+                             3
+o4 : R-module, submodule of R
+
+i5 : h = inducedMap(M,N)
+
+o5 = {1} | x3 |
+     {1} | xy |
+
+o5 : Matrix
+
+i6 : source h == N
+
+o6 = true
+
+o6 : Boolean
+
+i7 : target h == M
+
+o7 = true
+
+o7 : Boolean
+
+i8 : ambient M == ambient N
+
+o8 = true
+
+o8 : Boolean
+
+i9 : 

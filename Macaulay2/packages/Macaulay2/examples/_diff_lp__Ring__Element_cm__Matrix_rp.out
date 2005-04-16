@@ -1,0 +1,33 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z];
+
+i2 : f = matrix{{x^2-y*z, x*y*z + z^4}, {x-1, 2*y^2+z^2-1}}
+
+o2 = | x2-yz z4+xyz   |
+     | x-1   2y2+z2-1 |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : diff(x,f)
+
+o3 = | 2x yz |
+     | 1  0  |
+
+             2       2
+o3 : Matrix R  <--- R
+
+i4 : diff(x^2-y*z,f)
+
+o4 = | 3 -x |
+     | 0 0  |
+
+             2       2
+o4 : Matrix R  <--- R
+
+i5 : 

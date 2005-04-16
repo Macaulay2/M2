@@ -1,0 +1,60 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x..z];
+
+i2 : f = vars R
+
+o2 = | x y z |
+
+             1       3
+o2 : Matrix R  <--- R
+
+i3 : K = kernel f
+
+o3 = image {1} | 0  -z -y |
+           {1} | -z 0  x  |
+           {1} | y  x  0  |
+
+                             3
+o3 : R-module, submodule of R
+
+i4 : L = super K
+
+      3
+o4 = R
+
+o4 : R-module, free, degrees {1, 1, 1}
+
+i5 : L == source f
+
+o5 = true
+
+o5 : Boolean
+
+i6 : g = generators K
+
+o6 = {1} | 0  -z -y |
+     {1} | -z 0  x  |
+     {1} | y  x  0  |
+
+             3       3
+o6 : Matrix R  <--- R
+
+i7 : f*g
+
+o7 = 0
+
+             1       3
+o7 : Matrix R  <--- R
+
+i8 : f*g == 0
+
+o8 = true
+
+o8 : Boolean
+
+i9 : 

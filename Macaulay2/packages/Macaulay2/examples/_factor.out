@@ -1,0 +1,72 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : y = (2^15-4)/(2^15-5)
+
+     32764
+o1 = -----
+     32763
+
+o1 : QQ
+
+i2 : x = factor y
+
+       2
+      2 8191
+o2 = --------
+     3*67*163
+
+o2 : Divide
+
+i3 : value x
+
+     32764
+o3 = -----
+     32763
+
+o3 : QQ
+
+i4 : peek'(100,x)
+
+o4 = Divide{Product{Power{2,2},Power{8191,1}},Product{Power{3,1},Power{67,1},Power{163,1}}}
+
+i5 : R = ZZ/101[u]
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : factor (u^3-1)
+
+                 2
+o6 = (1)(u - 1)(u  + u + 1)
+
+o6 : Product
+
+i7 : F = frac(ZZ/101[t])
+
+           ZZ
+o7 = frac(--- [t])
+          101
+
+o7 : FractionField
+
+i8 : factor ((t^3-1)/(t^3+1))
+
+                 2
+     (1)(t - 1)(t  + t + 1)
+o8 = ----------------------
+                 2
+     (1)(t + 1)(t  - t + 1)
+
+o8 : Divide
+
+i9 : code(factor,F)
+
+o9 = -- ../../../Macaulay2/m2/enginering.m2:84
+               factor F := options -> f -> factor numerator f / factor denominator f;
+
+i10 : 

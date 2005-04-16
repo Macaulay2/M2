@@ -1,0 +1,16 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+
+i2 : conductor(ICmap R)
+
+             3     2   3    4
+o2 = ideal (z , x*z , x z, x )
+
+o2 : Ideal of R
+
+i3 : 

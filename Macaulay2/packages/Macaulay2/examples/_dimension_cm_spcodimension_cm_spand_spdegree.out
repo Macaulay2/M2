@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z];
+
+i2 : I = ideal(x^3-y*z^2,x*y-z^2,x*z);
+o2 : Ideal of R
+
+
+i3 : dim I
+
+o3 = 1
+
+i4 : codim I
+
+o4 = 2
+
+i5 : degree I
+
+o5 = 2
+
+i6 : 

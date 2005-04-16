@@ -1,0 +1,30 @@
+loaddata: map has appeared or changed its location: 0x00185000-0x0018b000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,w]; U = QQ[s,t,u]/ideal(s^2);
+
+i3 : H = map(U,R,matrix{{s^2,t^3,u^4}})
+
+                  3   4
+o3 = map(U,R,{0, t , u })
+
+o3 : RingMap U <--- R
+
+i4 : ker H
+
+o4 = ideal(x)
+
+o4 : Ideal of R
+
+i5 : image H
+
+     QQ [x, y, w]
+o5 = ------------
+           x
+
+o5 : QuotientRing
+
+i6 : 

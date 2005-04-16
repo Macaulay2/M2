@@ -1,0 +1,39 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : filename = temporaryFileName () | ".dbm"
+
+o1 = /tmp/M2-552-1.dbm
+
+i2 : x = openDatabaseOut filename
+
+o2 = /tmp/M2-552-1.dbm
+
+o2 : Database
+
+i3 : x#"first" = "hi there"
+
+o3 = hi there
+
+i4 : x#"first"
+
+o4 = hi there
+
+i5 : x#"second" = "ho there"
+
+o5 = ho there
+
+i6 : scanKeys(x,print)
+second
+first
+
+i7 : close x
+
+o7 = 0
+
+i8 : unlink filename
+
+i9 : 

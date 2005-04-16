@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = {2,3,,4}
+
+o1 = {2, 3, , 4}
+
+o1 : List
+
+i2 : net x
+
+o2 = {2, 3, , 4}
+
+i3 : toString x#2
+
+o3 = null
+
+i4 : peek x
+
+o4 = {2,3,null,4}
+
+i5 : 

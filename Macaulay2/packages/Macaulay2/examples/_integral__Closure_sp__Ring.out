@@ -1,0 +1,15 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+
+i2 : S = integralClosure (R)
+
+o2 = S
+
+o2 : QuotientRing
+
+i3 : 

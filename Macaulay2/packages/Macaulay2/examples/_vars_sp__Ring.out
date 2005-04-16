@@ -1,0 +1,42 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[a..e]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : vars R
+
+o2 = | a b c d e |
+
+             1       5
+o2 : Matrix R  <--- R
+
+i3 : ideal vars R
+
+o3 = ideal (a, b, c, d, e)
+
+o3 : Ideal of R
+
+i4 : coker vars R
+
+o4 = cokernel | a b c d e |
+
+                            1
+o4 : R-module, quotient of R
+
+i5 : res coker vars R
+
+      1      5      10      10      5      1
+o5 = R  <-- R  <-- R   <-- R   <-- R  <-- R  <-- 0
+                                                  
+     0      1      2       3       4      5      6
+
+o5 : ChainComplex
+
+i6 : 

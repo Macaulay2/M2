@@ -1,0 +1,21 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : s = new MutableList from {a,b,c};
+
+i2 : s#2 = 1234;
+
+i3 : s
+
+o3 = MutableList{...3...}
+
+o3 : MutableList
+
+i4 : peek s
+
+o4 = MutableList{a,b,1234}
+
+i5 : 

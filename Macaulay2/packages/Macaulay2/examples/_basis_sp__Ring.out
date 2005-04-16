@@ -1,0 +1,16 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y]/(x^3,y^2);
+
+i2 : basis R
+
+o2 = | 1 x x2 x2y xy y |
+
+             1       6
+o2 : Matrix R  <--- R
+
+i3 : 

@@ -1,0 +1,27 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+
+i2 : S = ICfractions R
+
+o2 = 0
+
+                   1             5
+o2 : Matrix frac(R)  <--- frac(R)
+
+i3 : integralClosure(R,Variable => a)
+
+     QQ [w , w , x, y, z, MonomialOrder => GRevLex => 5]
+          7   6
+o3 = ---------------------------------------------------
+        2                       2          2    2    2
+      (x  - w *z, w *x - w *z, w  - w *x, w  - y  - z )
+             6     6      7     6    7     7
+
+o3 : QuotientRing
+
+i4 : 

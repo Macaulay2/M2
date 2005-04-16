@@ -1,0 +1,39 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,dx,dy,t,WeylAlgebra => {x=>dx, y=>dy}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : dx*dy*x*y
+
+o2 = x*y*dx*dy + x*dx + y*dy + 1
+
+o2 : R
+
+i3 : dx*x^5
+
+      5       4
+o3 = x dx + 5x
+
+o3 : R
+
+i4 : dx*x
+
+o4 = x*dx + 1
+
+o4 : R
+
+i5 : matrix{{dx}} * matrix{{x}}
+
+o5 = | xdx |
+
+             1       1
+o5 : Matrix R  <--- R
+
+i6 : 

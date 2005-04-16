@@ -1,0 +1,30 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z];
+
+i2 : diff(x,x^7 + 4*x^3*y - 3*y)
+
+       6      2
+o2 = 7x  + 12x y
+
+o2 : R
+
+i3 : diff(x^2+y^2+z^2, y^2*z^2 - x^3 - 1)
+
+       2     2
+o3 = 2y  + 2z  - 6x
+
+o3 : R
+
+i4 : diff_x x^6
+
+       5
+o4 = 6x
+
+o4 : R
+
+i5 : 

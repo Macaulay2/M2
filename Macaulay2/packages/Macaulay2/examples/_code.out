@@ -1,0 +1,26 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : code methods use
+
+o1 = -- ../../../Macaulay2/m2/enginering.m2:108-113
+     use Ring := R -> (
+          if R.?ring then use R.ring;
+          generators R;
+          if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- val);
+          if R.?use then R.use R;
+          R)
+     -- ../../../Macaulay2/m2/packages.m2:278-281
+     use Package := pkg -> if not member(pkg,packages) then (
+          packages = prepend(pkg,packages);
+          globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
+          )
+     -- ../../../Macaulay2/m2/methods.m2:187-189
+     use HashTable := x -> (
+          if x.?use then x.use x; 
+          x)
+
+i2 : 

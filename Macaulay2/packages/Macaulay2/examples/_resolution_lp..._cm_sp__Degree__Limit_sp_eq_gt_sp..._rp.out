@@ -1,0 +1,31 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z,w];
+
+i2 : M = cokernel matrix {{x*y-z^2,y^2-w^2}}
+
+o2 = cokernel | xy-z2 y2-w2 |
+
+                            1
+o2 : R-module, quotient of R
+
+i3 : res(M,DegreeLimit => 1)
+
+      1      2      1
+o3 = R  <-- R  <-- R  <-- 0
+                           
+     0      1      2      3
+
+o3 : ChainComplex
+
+i4 : res(M,DegreeLimit => 2)
+
+o4 = 0
+
+o4 : ChainComplex
+
+i5 : 

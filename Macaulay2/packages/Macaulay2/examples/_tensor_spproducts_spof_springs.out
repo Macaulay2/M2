@@ -1,0 +1,74 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : ZZ/101[x,y]/(x^2-y^2) ** ZZ/101[a,b]/(a^3+b^3)
+
+      ZZ
+     --- [x, y, a, b, Degrees => {{1}, {1}, {0}, {0}}, MonomialOrder => {GRevLex => {1, 1}, GRevLex => {1, 1}}, SkewCommutative => {}]
+     101
+o1 = ---------------------------------------------------------------------------------------------------------------------------------
+                                                               2    2   3    3
+                                                             (x  - y , a  + b )
+
+o1 : QuotientRing
+
+i2 : T = tensor(ZZ/101[x,y], ZZ/101[a,b], MonomialOrder => Eliminate 2)
+
+o2 = T
+
+o2 : PolynomialRing
+
+i3 : options tensor
+
+o3 = OptionTable{Adjust => identity      }
+                 DegreeRank => 
+                 Degrees => 
+                 Inverses => false
+                 MonomialOrder => 
+                 MonomialSize => 32
+                 Repair => identity
+                 SkewCommutative => false
+                 VariableBaseName => 
+                 VariableOrder => 
+                 Variables => 
+                 Weights => {}
+                 WeylAlgebra => {}
+
+o3 : OptionTable
+
+i4 : R = QQ[x,y]/(x^3-y^2);
+
+i5 : T = R ** R
+
+o5 = T
+
+o5 : QuotientRing
+
+i6 : generators T
+
+o6 = {x, y, x, y}
+
+o6 : List
+
+i7 : {T_0 + T_1, T_0 + T_2}
+
+o7 = {x + y, x + x}
+
+o7 : List
+
+i8 : U = tensor(R,R,Variables => {x,y,x',y'})
+
+o8 = U
+
+o8 : QuotientRing
+
+i9 : x + y + x' + y'
+
+o9 = x + y + x' + y'
+
+o9 : U
+
+i10 : 

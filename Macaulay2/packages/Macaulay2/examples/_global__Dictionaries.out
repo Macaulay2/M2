@@ -1,0 +1,15 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : globalDictionaries
+
+o1 = {Macaulay2.Dictionary, PrimaryDecomposition.Dictionary, User#"private
+     ---------------------------------------------------------------------------
+     dictionary", Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
+
+o1 : List
+
+i2 : 
