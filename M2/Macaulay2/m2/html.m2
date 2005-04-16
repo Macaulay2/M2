@@ -444,8 +444,8 @@ setupNames := (opts,pkg) -> (
      )
 
 installPackage = method(Options => { 
-	  PackagePrefix => () -> homeDirectory | packageSuffix | "encap/",
-          InstallPrefix => () -> homeDirectory | packageSuffix | "local/",
+	  PackagePrefix => () -> applicationDirectory() | "encap/",
+          InstallPrefix => () -> applicationDirectory() | "local/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
 	  MakeDocumentation => true,
@@ -892,7 +892,7 @@ installPackage Package := opts -> pkg -> (
      )
 
 userMacaulay2Directory := () -> (
-     dir := homeDirectory | packageSuffix;
+     dir := applicationDirectory();
      if not isDirectory dir then (
 	  stderr << "--initializing user Macaulay 2 directory \"" << dir << "\"" << endl;
 	  makeDirectory(dir);
@@ -1066,7 +1066,7 @@ viewHTML = url -> (
      error "can't find firefox, open, or netscape"
      )
 
-viewHelp = key -> viewHTML if key === () then homeDirectory | packageSuffix | "index.html" else prefixDirectory | htmlFilename key
+viewHelp = key -> viewHTML if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (
