@@ -1,0 +1,35 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x_1 .. x_12];
+
+i2 : f = genericMatrix(R,2,6)
+
+o2 = | x_1 x_3 x_5 x_7 x_9  x_11 |
+     | x_2 x_4 x_6 x_8 x_10 x_12 |
+
+             2       6
+o2 : Matrix R  <--- R
+
+i3 : g = adjoint(f,R^2,R^{-1,-1,-1})
+
+o3 = {-1} | x_1 x_7  |
+     {-1} | x_2 x_8  |
+     {-1} | x_3 x_9  |
+     {-1} | x_4 x_10 |
+     {-1} | x_5 x_11 |
+     {-1} | x_6 x_12 |
+
+             6       2
+o3 : Matrix R  <--- R
+
+i4 : isHomogeneous g
+
+o4 = true
+
+o4 : Boolean
+
+i5 : 

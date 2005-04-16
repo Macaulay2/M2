@@ -1,0 +1,39 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/32003[a..e];
+
+i2 : I = ideal(random(3,R),random(3,R),random(3,R))
+
+                   3        2            2        3        2                      2           2           2         3        2                    2                                    2           2           2          2        3        2                     2                                   2                                               2          2          2           2          2        3         3         2           2        3         2                      2           2           2        3        2                       2                                  2           2           2          2         3       2                    2                                 2                                             2           2          2          2          2         3       3        2           2         3        2                     2           2           2         3         2                      2                                    2           2           2           2         3        2                     2                                    2                                              2            2          2           2          2        3
+o2 = ideal (- 2136a  + 9349a b + 13529a*b  + 1414b  + 8735a c - 15802a*b*c - 3327b c - 2519a*c  - 13874b*c  + 12981c  - 5609a d - 371a*b*d - 4035b d - 11250a*c*d + 13163b*c*d + 11236c d - 1270a*d  - 10830b*d  + 3209c*d  + 8860d  - 9489a e - 545a*b*e + 11874b e - 14212a*c*e + 15956b*c*e + 9276c e - 1415a*d*e - 12600b*d*e + 2110c*d*e - 14107d e + 626a*e  + 2547b*e  + 12268c*e  - 4550d*e  - 6827e , - 9750a  - 12767a b + 1573a*b  - 5914b  - 13006a c + 12829a*b*c - 9500b c + 8468a*c  + 11558b*c  + 2471c  - 6717a d + 12697a*b*d + 14443b d + 13129a*c*d - 6490b*c*d + 7483c d + 8794a*d  - 15112b*d  - 2398c*d  + 12669d  - 653a e + 200a*b*e - 7217b e + 9526a*c*e + 2960b*c*e + 9234c e + 6286a*d*e - 916b*d*e - 10690c*d*e - 9205d e + 9265a*e  + 3008b*e  + 2756c*e  + 6807d*e  - 14934e , 7488a  + 9794a b + 5799a*b  - 11359b  - 9923a c - 7000a*b*c + 4215b c - 5595a*c  - 14115b*c  - 11834c  + 10399a d + 12240a*b*d - 1674b d + 13885a*c*d - 15547b*c*d - 15948c d - 3320a*d  + 14672b*d  + 13700c*d  - 13156d  + 5338a e + 1137a*b*e - 2904b e + 13485a*c*e - 15389b*c*e + 12237c e - 8638a*d*e - 15456b*d*e + 9304c*d*e + 1001d e + 10525a*e  - 4436b*e  + 11510c*e  - 5320d*e  + 2682e )
+
+o2 : Ideal of R
+
+i3 : gens gb(I,PairLimit=>7);
+             1       11
+o3 : Matrix R  <--- R
+
+
+i4 : g = gb(I,StopBeforeComputation => true);
+
+i5 : leadTerm gens g
+
+o5 = | ab2 a2b a3 b3c b4 b2c3 abc3 a2c3 bc5 ac5 c7 |
+
+             1       11
+o5 : Matrix R  <--- R
+
+i6 : gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);
+
+i7 : leadTerm gbSnapshot(I)
+
+o7 = | ab2 a2b a3 b3c b4 b2c3 abc3 a2c3 bc5 ac5 c7 |
+
+             1       11
+o7 : Matrix R  <--- R
+
+i8 : 

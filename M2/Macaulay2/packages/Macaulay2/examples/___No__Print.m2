@@ -1,0 +1,1 @@
+code Thing.NoPrint

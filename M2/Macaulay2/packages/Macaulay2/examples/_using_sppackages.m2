@@ -1,0 +1,2 @@
+loadPackage "FirstPackage"
+installPackage FirstPackage

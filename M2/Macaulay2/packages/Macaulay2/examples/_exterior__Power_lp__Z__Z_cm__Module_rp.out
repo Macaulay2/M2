@@ -1,0 +1,21 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : M = ZZ^5
+
+       5
+o1 = ZZ
+
+o1 : ZZ-module, free
+
+i2 : exteriorPower(3,M)
+
+       10
+o2 = ZZ
+
+o2 : ZZ-module, free
+
+i3 : 

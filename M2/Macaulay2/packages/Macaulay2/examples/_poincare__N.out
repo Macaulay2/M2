@@ -1,0 +1,22 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..d]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : poincareN resolution cokernel vars R
+
+      4 4     3 3     2 2
+o2 = S T  + 4S T  + 6S T  + 4S*T  + 1
+        0       0       0       0
+
+o2 : ZZ [S, T , Inverses => true]
+             0
+
+i3 : 

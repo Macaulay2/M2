@@ -1,0 +1,70 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : << 2^100
+1267650600228229401496703205376
+o1 = stdio
+
+o1 : File
+
+ -- the standard input output file
+
+i2 : stdio << 2^100
+1267650600228229401496703205376
+o2 = stdio
+
+o2 : File
+
+ -- the standard input output file
+
+i3 : << "The answer is " << 2^100 << ".";The answer is 1267650600228229401496703205376.
+                                                                  aaa.
+i4 : << "The answer is " << "aaa"||"bb"||"c" << ".";The answer is bb
+                                                                  c
+i5 : R = ZZ[x,y];
+
+i6 : f = (x+y+1)^2; g = (x-y+1)^2
+
+      2           2
+o7 = x  - 2x*y + y  + 2x - 2y + 1
+
+o7 : R
+                                                        2           2
+                                                       x  + 2x*y + y  + 2x + 2y + 1
+i8 : << "f = " << f << endl << "g = " << g << endl;f = 
+     2           2
+g = x  - 2x*y + y  + 2x - 2y + 1
+
+
+i9 : scan(0 .. 20, i -> << "." << flush)
+.....................
+i10 : truncateOutput 50
+
+i11 : 41!
+
+o11 = 33452526613163807108170062053440751665152000000000
+
+i12 : 42!
+
+o12 = 1405006117752879898543142606244511569936384000 ...
+
+i13 : 43!
+
+o13 = 6041526306337383563735513206851399750726451200 ...
+
+i14 : truncateOutput infinity
+
+o14 = identity
+
+o14 : Function
+
+ -- the identity function
+
+i15 : 43!
+
+o15 = 60415263063373835637355132068513997507264512000000000
+
+i16 : 

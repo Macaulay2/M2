@@ -1,0 +1,80 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[x,y];
+
+i2 : (x+y)^2
+
+      2           2
+o2 = x  + 2x*y + y
+
+o2 : R
+
+i3 : n = net oo
+
+      2           2
+o3 = x  + 2x*y + y
+
+i4 : peek n
+
+     +--------------+
+     | 2           2|
+o4 = |x  + 2x*y + y |
+     +--------------+
+
+i5 : x = "a" || "bb" || "ccc"
+
+o5 = a
+     bb
+     ccc
+
+i6 : x^2
+
+     a
+     bb
+o6 = ccc
+
+i7 : {x,x^1,x^2}
+
+                a
+           a    bb
+o7 = {a  , bb , ccc}
+      bb   ccc
+      ccc
+
+o7 : List
+
+i8 : x^2 | "-------" | x
+
+     a
+     bb
+o8 = ccc-------a
+               bb
+               ccc
+
+i9 : width x, height x, depth x
+
+o9 = (3, 1, 2)
+
+o9 : Sequence
+
+i10 : v = unstack x
+
+o10 = {a, bb, ccc}
+
+o10 : List
+
+i11 : peek oo
+
+o11 = {"a","bb","ccc"}
+
+i12 : stack v
+
+o12 = a
+      bb
+      ccc
+
+i13 : 

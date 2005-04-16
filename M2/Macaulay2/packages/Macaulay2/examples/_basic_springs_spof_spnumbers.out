@@ -1,0 +1,67 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : 1234
+
+o1 = 1234
+
+i2 : 123/4
+
+     123
+o2 = ---
+      4
+
+o2 : QQ
+
+i3 : 123.4
+
+o3 = 123.4
+
+o3 : RR
+
+i4 : 123+4*ii
+
+o4 = 123. + 4.ii
+
+o4 : CC
+
+i5 : 4/5 + 2/3
+
+     22
+o5 = --
+     15
+
+o5 : QQ
+
+i6 : 10^20
+
+o6 = 100000000000000000000
+
+i7 : 3*5*7
+
+o7 = 105
+
+i8 : 3.1^2.1
+
+o8 = 10.7612
+
+o8 : RR
+
+i9 : sqrt 3.
+
+o9 = 1.73205
+
+o9 : RR
+
+i10 : 1234//100
+
+o10 = 12
+
+i11 : 1234%100
+
+o11 = 34
+
+i12 : 

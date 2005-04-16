@@ -1,0 +1,17 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : a = set select(1..50, isPrime)
+
+o1 = Set {41, 13, 31, 17, 3, 7, 2, 43, 11, 29, 47, 19, 5, 37, 23}
+
+o1 : Set
+
+i2 : product a
+
+o2 = 614889782588491410
+
+i3 : 

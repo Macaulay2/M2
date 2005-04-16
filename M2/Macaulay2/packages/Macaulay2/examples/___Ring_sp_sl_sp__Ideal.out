@@ -1,0 +1,25 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : ZZ/2 === ZZ/(4,6)
+
+o1 = true
+
+o1 : Boolean
+
+i2 : R = ZZ/101[t]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : R/t === R/t
+
+o3 = false
+
+o3 : Boolean
+
+i4 : 

@@ -1,0 +1,15 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : columnate(12, characters ascii (65 .. 90))
+
+o1 = A F K P U Z
+     B G L Q V
+     C H M R W
+     D I N S X
+     E J O T Y
+
+i2 : 

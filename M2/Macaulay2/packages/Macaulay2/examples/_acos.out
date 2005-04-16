@@ -1,0 +1,13 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : acos .5
+
+o1 = 1.0472
+
+o1 : RR
+
+i2 : 

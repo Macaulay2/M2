@@ -1,0 +1,24 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y];
+
+i2 : M = coker vars R
+
+o2 = cokernel | x y |
+
+                            1
+o2 : R-module, quotient of R
+
+i3 : M ** R[t]
+
+o3 = cokernel | x y |
+
+       ZZ                                  ZZ           1
+o3 : (--- [x, y])[t]-module, quotient of (--- [x, y])[t]
+      101                                 101
+
+i4 : 

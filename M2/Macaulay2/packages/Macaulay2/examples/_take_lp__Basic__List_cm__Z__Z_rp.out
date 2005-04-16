@@ -1,0 +1,19 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : take({a,b,c,d,e,f},3)
+
+o1 = {a, b, c}
+
+o1 : List
+
+i2 : take({a,b,c,d,e,f},-2)
+
+o2 = {e, f}
+
+o2 : List
+
+i3 : 

@@ -1,0 +1,18 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : p = (expression 2)^3 * (expression 3)^2
+
+      3 2
+o1 = 2 3
+
+o1 : Product
+
+i2 : value p
+
+o2 = 72
+
+i3 : 

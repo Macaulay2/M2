@@ -1,0 +1,17 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : /// \ " ///
+
+o1 =  \ " 
+
+i2 : ascii oo
+
+o2 = {32, 92, 32, 34, 32}
+
+o2 : List
+
+i3 : 

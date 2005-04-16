@@ -1,0 +1,18 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : timing 3^30
+
+o1 = 205891132094649
+     -- -8.89046e-18 seconds
+
+o1 : Time
+
+i2 : peek oo
+
+o2 = Time{-8.89046e-18,205891132094649}
+
+i3 : 

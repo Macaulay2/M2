@@ -1,0 +1,30 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : X = new Type of List
+
+o1 = X
+
+o1 : Type
+
+i2 : Y = new Type of X
+
+o2 = Y
+
+o2 : Type
+
+i3 : Z = new Type of X
+
+o3 = Z
+
+o3 : Type
+
+i4 : showUserStructure
+
+o4 = Thing : BasicList : VisibleList : List : X : Y
+                                                  Z
+
+i5 : 

@@ -1,0 +1,16 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[t][a..d];
+
+i2 : ideal(a,t*c) * ideal(a^2,b^2)
+
+             3     2     2      2
+o2 = ideal (a , a*b , t*a c, t*b c)
+
+o2 : Ideal of R
+
+i3 : 

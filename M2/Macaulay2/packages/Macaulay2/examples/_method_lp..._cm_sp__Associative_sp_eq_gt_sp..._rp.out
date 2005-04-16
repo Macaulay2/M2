@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : f = method(Associative => true)
+
+o1 = f
+
+o1 : Function
+
+i2 : f(String,String) := (i,j) -> "(" | i | ")," | j;
+
+i3 : f("a","b","c","d")
+
+o3 = (((a),b),c),d
+
+i4 : 

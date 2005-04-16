@@ -1,0 +1,25 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y,z,a..d,MonomialOrder=>ProductOrder{3,4}];
+
+i2 : f = matrix{{0,x^2*(a+b)}, {a*x+2*b*y, y^2*(c+d)}}
+
+o2 = | 0      x2a+x2b |
+     | xa+2yb y2c+y2d |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : leadTerm(1,f)
+
+o3 = | 0  x2a+x2b |
+     | xa 0       |
+
+             2       2
+o3 : Matrix R  <--- R
+
+i4 : 

@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : random ZZ
+
+o1 = -10
+
+i2 : random QQ
+
+     4
+o2 = -
+     3
+
+o2 : QQ
+
+i3 : 

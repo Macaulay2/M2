@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : rsort {g,d,w,s,c,a,r}
+
+o1 = {w, s, r, g, d, c, a}
+
+o1 : List
+
+i2 : rsort {4,2,3,1}
+
+o2 = {4, 3, 2, 1}
+
+o2 : List
+
+i3 : 

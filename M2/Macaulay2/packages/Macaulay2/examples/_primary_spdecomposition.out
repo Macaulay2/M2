@@ -1,0 +1,46 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..d];
+
+i2 : I = ideal(a*b-c*d, (a*c-b*d)^2);
+o2 : Ideal of R
+
+
+i3 : primaryDecomposition I
+{b}
+     -- used 0. seconds
+{c}
+     -- used 0. seconds
+{a}
+     -- used 0. seconds
+{c}
+
+              2                   2           2           2                   
+o3 = {ideal (d , a*d, a*b - c*d, a ), ideal (b  + 2b*c + c , a*c + b*d + 2c*d,
+     ---------------------------------------------------------------------------
+                 2           2           2        2                      2  
+     a*b - c*d, a  + 2a*d + d ), ideal (c , b*c, b , a*b - c*d), ideal (b  -
+     ---------------------------------------------------------------------------
+             2                                2           2
+     2b*c + c , a*c + b*d - 2c*d, a*b - c*d, a  - 2a*d + d )}
+
+o3 : List
+
+i4 : primaryDecomposition(I, Strategy => EHV)
+
+              2                   2           2           2                   
+o4 = {ideal (d , a*d, a*b - c*d, a ), ideal (b  + 2b*c + c , a*c + b*d + 2c*d,
+     ---------------------------------------------------------------------------
+                 2           2           2        2                      2  
+     a*b - c*d, a  + 2a*d + d ), ideal (c , b*c, b , a*b - c*d), ideal (b  -
+     ---------------------------------------------------------------------------
+             2                                2           2
+     2b*c + c , a*c + b*d - 2c*d, a*b - c*d, a  - 2a*d + d )}
+
+o4 : List
+
+i5 : 

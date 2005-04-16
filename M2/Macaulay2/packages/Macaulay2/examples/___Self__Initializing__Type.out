@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : X = new SelfInitializingType of BasicList
+
+o1 = X
+
+o1 : SelfInitializingType
+
+i2 : x = X {1,2,3}
+
+o2 = X{1, 2, 3}
+
+o2 : X
+
+i3 : class x
+
+o3 = X
+
+o3 : SelfInitializingType
+
+i4 : 

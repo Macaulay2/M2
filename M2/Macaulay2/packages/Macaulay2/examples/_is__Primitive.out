@@ -1,0 +1,21 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/5[t]/(t^2+t+1);
+
+i2 : isPrimitive t
+
+o2 = false
+
+o2 : Boolean
+
+i3 : isPrimitive (t-1)
+
+o3 = true
+
+o3 : Boolean
+
+i4 : 

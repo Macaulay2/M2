@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : accumulate(identity, {a,b,c,d,e})
+
+o1 = {(a, b), ((a, b), c), (((a, b), c), d), ((((a, b), c), d), e)}
+
+o1 : List
+
+i2 : accumulate(plus, 0 .. 10)
+
+o2 = (1, 3, 6, 10, 15, 21, 28, 36, 45, 55)
+
+o2 : Sequence
+
+i3 : 

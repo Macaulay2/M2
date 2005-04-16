@@ -1,0 +1,13 @@
+loaddata: map has appeared or changed its location: 0x00131000-0x0014f000 r-x 4062413709
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : apply([1,3,5,7], i->i^2)
+
+o1 = [1, 9, 25, 49]
+
+o1 : Array
+
+i2 : 

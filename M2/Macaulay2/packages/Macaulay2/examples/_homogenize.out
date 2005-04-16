@@ -1,0 +1,34 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z,Degrees => {1,2,3}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : f = 1 + y + z^2
+
+      2
+o2 = z  + y + 1
+
+o2 : R
+
+i3 : homogenize(f,x)
+
+      6    4     2
+o3 = x  + x y + z
+
+o3 : R
+
+i4 : homogenize(f,x,{1,0,-1})
+
+      2 2
+o4 = x z  + y + 1
+
+o4 : R
+
+i5 : 

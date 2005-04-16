@@ -1,0 +1,95 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : run "uname -a"
+Linux u123.math.uiuc.edu 2.4.22-1.2199.nptl #1 Wed Aug 4 12:21:48 EDT 2004 i686 i686 i386 GNU/Linux
+
+o1 = 0
+
+i2 : peek get "!uname -a"
+
+o2 = "Linux u123.math.uiuc.edu 2.4.22-1.2199.nptl #1 Wed Aug 4 12:21:48 EDT 2004
+     i686 i686 i386 GNU/Linux\n"
+
+i3 : f = openInOut "!egrep '^in'"
+
+o3 = !egrep '^in'
+
+o3 : File
+
+i4 : scan(keys Macaulay2Core.Dictionary, key -> f << key << endl)
+
+i5 : f << closeOut
+
+o5 = !egrep '^in'
+
+o5 : File
+
+i6 : get f
+
+o6 = interpreterDepth
+     infoHelp
+     integrate
+     inducedMap
+     installPackage
+     installMethod
+     integralClosure
+     infoTagConvert
+     instance
+     info
+     intersect
+     input
+     index
+     indexComponents
+     installAssignmentMethod
+     infinity
+     inducesWellDefinedMap
+     inverse
+     indexHtml
+     indices
+     incomparable
+     indeterminate
+     in
+     independentSets
+
+
+i7 : f = openIn "!sleep 5; echo -n the answer is 4"
+
+o7 = !sleep 5; echo -n the answer is 4
+
+o7 : File
+
+i8 : isReady f
+
+o8 = false
+
+o8 : Boolean
+
+i9 : while not isReady f do (sleep 1; << "." << flush)
+.....
+i10 : read f
+
+o10 = the answer is 4
+
+i11 : isReady f
+
+o11 = true
+
+o11 : Boolean
+
+i12 : atEndOfFile f
+
+o12 = true
+
+o12 : Boolean
+
+i13 : close f
+
+o13 = !sleep 5; echo -n the answer is 4
+
+o13 : File
+
+i14 : 

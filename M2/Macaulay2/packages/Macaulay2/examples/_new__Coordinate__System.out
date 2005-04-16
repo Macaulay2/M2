@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..d]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : S = ZZ/101[p..s]
+
+o2 = S
+
+o2 : PolynomialRing
+
+i3 : newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})
+
+o3 = {map(S,R,{p, r, p + 2q, 3r - s}), map(R,S,{a, 50a - 50c, b, 3b - d})}
+
+o3 : List
+
+i4 : 

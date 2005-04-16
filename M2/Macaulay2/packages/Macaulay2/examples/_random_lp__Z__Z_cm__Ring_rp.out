@@ -1,0 +1,16 @@
+loaddata: map has appeared or changed its location: 0x00136000-0x00160000 r-x 967609826
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = GF(9,Variable=>a)[x,y];
+
+i2 : random(3,R)
+
+             3           2         2      3
+o2 = (a + 1)x  + (a - 1)x y + a*x*y  + a*y
+
+o2 : R
+
+i3 : 

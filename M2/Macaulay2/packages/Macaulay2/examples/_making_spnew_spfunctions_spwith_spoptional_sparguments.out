@@ -1,0 +1,42 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : opts = {Slope => 1, Intercept => 1}
+
+o1 = {Slope => 1, Intercept => 1}
+
+o1 : List
+
+i2 : f = opts >> o -> x -> x * o.Slope + o.Intercept
+
+o2 = f
+
+o2 : Function
+
+i3 : f 5
+
+o3 = 6
+
+i4 : f(5, Slope => 100)
+
+o4 = 501
+
+i5 : f(5, Slope => 100, Intercept => 1000)
+--warning: f redefined
+
+o5 = 1500
+
+i6 : f = {a => 1000} >> o -> (x,y) -> x * o.a + y;
+
+i7 : f(3,7)
+
+o7 = 3007
+
+i8 : f(5,11,a=>10^20)
+
+o8 = 500000000000000000011
+
+i9 : 

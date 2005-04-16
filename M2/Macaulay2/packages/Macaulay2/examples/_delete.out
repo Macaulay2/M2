@@ -1,0 +1,13 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : delete(c,{a,b,c,d,e,a,b,c,d,e})
+
+o1 = {a, b, d, e, a, b, d, e}
+
+o1 : List
+
+i2 : 

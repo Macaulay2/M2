@@ -1,0 +1,25 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[x,y];
+
+i2 : S = ZZ[a,b,c];
+
+i3 : f = map(R,S,{x^2,x*y,y^2})
+
+               2        2
+o3 = map(R,S,{x , x*y, y })
+
+o3 : RingMap R <--- S
+
+i4 : f(a+b+c^2)
+
+      4    2
+o4 = y  + x  + x*y
+
+o4 : R
+
+i5 : 

@@ -1,0 +1,12 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : time 3^30
+     -- used 0. seconds
+
+o1 = 205891132094649
+
+i2 : 

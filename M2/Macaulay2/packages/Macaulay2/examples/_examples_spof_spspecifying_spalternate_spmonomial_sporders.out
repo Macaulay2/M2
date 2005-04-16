@@ -1,0 +1,52 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[a..d, MonomialOrder=>Lex];
+
+i2 : a+b^100+c*d
+
+          100
+o2 = a + b    + c*d
+
+o2 : R
+
+i3 : R = ZZ[a..d, MonomialOrder=>{Weights=>4:1,Lex}];
+
+i4 : a+b^100+c*d
+
+      100
+o4 = b    + c*d + a
+
+o4 : R
+
+i5 : R = ZZ[a..f, MonomialOrder=>Eliminate 2];
+
+i6 : a+b^100+c*d
+
+      100
+o6 = b    + a + c*d
+
+o6 : R
+
+i7 : R = ZZ[a..f, MonomialOrder=>Weights=>2:1];
+
+i8 : a+b^100+c*d
+
+      100
+o8 = b    + a + c*d
+
+o8 : R
+
+i9 : R = ZZ[a..f, MonomialOrder=>{2,4}];
+
+i10 : a^2*(c+d) + b*(c^100+d^100)
+
+       2     2       100      100
+o10 = a c + a d + b*c    + b*d
+
+o10 : R
+
+i11 : 

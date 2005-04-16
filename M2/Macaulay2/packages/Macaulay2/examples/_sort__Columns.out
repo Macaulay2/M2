@@ -1,0 +1,42 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..c];
+
+i2 : f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}
+
+o2 = | 1 a a2 b2 b c c2 ab bc ac |
+
+             1       10
+o2 : Matrix R  <--- R
+
+i3 : s = sortColumns f
+
+o3 = {0, 5, 4, 1, 6, 8, 9, 3, 7, 2}
+
+o3 : List
+
+i4 : f_s
+
+o4 = | 1 c b a c2 bc ac b2 ab a2 |
+
+             1       10
+o4 : Matrix R  <--- R
+
+i5 : s = sortColumns(f,DegreeOrder => Descending)
+
+o5 = {6, 8, 9, 3, 7, 2, 5, 4, 1, 0}
+
+o5 : List
+
+i6 : f_s
+
+o6 = | c2 bc ac b2 ab a2 c b a 1 |
+
+             1       10
+o6 : Matrix R  <--- R
+
+i7 : 

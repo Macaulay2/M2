@@ -1,0 +1,23 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ[a..f]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : tex matrix {{a^2+2,b,c},{d,e,f^3-a}}
+
+o2 = $\begin{pmatrix}a^{2}+{2}&
+     b&
+     c\\
+     d&
+     e&
+     f^{3}-a\\
+     \end{pmatrix}$
+
+i3 : 

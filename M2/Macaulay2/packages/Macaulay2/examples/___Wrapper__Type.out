@@ -1,0 +1,25 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : X = new WrapperType of BasicList
+
+o1 = X
+
+o1 : WrapperType
+
+i2 : X {a,b,c}
+
+o2 = X{a, b, c}
+
+o2 : X
+
+i3 : X a
+
+o3 = X{a}
+
+o3 : X
+
+i4 : 

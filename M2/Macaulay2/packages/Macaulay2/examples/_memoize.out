@@ -1,0 +1,35 @@
+loaddata: map has appeared or changed its location: 0x0012d000-0x0014b000 r-x 4062413709
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)
+
+o1 = fib
+
+o1 : Function
+
+i2 : time fib 16
+     -- used 0. seconds
+
+o2 = 1597
+
+i3 : fib = memoize fib
+--warning: fib redefined
+
+o3 = fib
+
+o3 : Function
+
+i4 : time fib 16
+     -- used 0. seconds
+
+o4 = 1597
+
+i5 : time fib 16
+     -- used 0. seconds
+
+o5 = 1597
+
+i6 : 

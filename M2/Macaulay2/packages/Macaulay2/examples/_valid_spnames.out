@@ -1,0 +1,31 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x
+
+o1 = x
+
+o1 : Symbol
+
+i2 : q0r55
+
+o2 = q0r55
+
+o2 : Symbol
+
+i3 : f'
+
+o3 = f'
+
+o3 : Symbol
+
+i4 : o2
+
+o4 = q0r55
+
+o4 : Symbol
+
+i5 : 

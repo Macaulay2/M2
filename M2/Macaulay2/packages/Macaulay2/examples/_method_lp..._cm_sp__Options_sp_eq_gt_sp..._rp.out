@@ -1,0 +1,40 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : protect Slope; protect Intercept;
+
+i3 : f = method(Options => {Slope => 1, Intercept => 1})
+
+o3 = f
+
+o3 : Function
+
+i4 : f RR := o -> x -> o.Slope * x + o.Intercept
+
+o4 = --Function[stdio:3:10-3:34]--
+
+o4 : Function
+
+i5 : f(5.)
+
+o5 = 6.
+
+o5 : RR
+
+i6 : f(5.,Slope=>100)
+
+o6 = 501.
+
+o6 : RR
+
+i7 : options f
+
+o7 = OptionTable{Intercept => 1}
+                 Slope => 1
+
+o7 : OptionTable
+
+i8 : 

@@ -1,0 +1,35 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..d]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : m = matrix{{a*b, a^2*c}, {a*b^2, a^4*d}}
+
+o2 = | ab  a2c |
+     | ab2 a4d |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : divideByVariable(m,a)
+
+o3 = (| b  c   |, 2)
+      | b2 a2d |
+
+o3 : Sequence
+
+i4 : divideByVariable(m,a,1)
+
+o4 = (| b  ac  |, 1)
+      | b2 a3d |
+
+o4 : Sequence
+
+i5 : 

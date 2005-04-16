@@ -1,0 +1,38 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : Qu = new Type of List
+
+o1 = Qu
+
+o1 : Type
+
+i2 : w = new Qu from {1,2,3,4}
+
+o2 = {1, 2, 3, 4}
+
+o2 : Qu
+
+i3 : w+w
+
+o3 = {2, 4, 6, 8}
+
+o3 : Qu
+
+i4 : Qu * Qu := (x,y) -> new Qu from { 
+     	  x#0*y#0 - x#1*y#1 - x#2*y#2 - x#3*y#3,
+     	  x#0*y#1 + x#1*y#0 + x#2*y#3 - x#3*y#2,
+     	  x#0*y#2 + x#2*y#0 + x#3*y#1 - x#1*y#3,
+     	  x#0*y#3 + x#3*y#0 + x#1*y#2 - x#2*y#1
+     	  };
+
+i5 : w*w
+
+o5 = {-28, 4, 6, 8}
+
+o5 : Qu
+
+i6 : 

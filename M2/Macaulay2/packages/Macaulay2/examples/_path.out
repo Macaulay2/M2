@@ -1,0 +1,27 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : path
+
+o1 = {./, ../../../Macaulay2/m2/, ../../../Macaulay2/packages/, ../m2/,
+     ---------------------------------------------------------------------------
+     ../tutorial/final/, ../../../Macaulay2/test/,
+     ---------------------------------------------------------------------------
+     ../../../Macaulay2/test/engine/}
+
+o1 : List
+
+i2 : path = append(path, homeDirectory | "resolutions/")
+
+o2 = {./, ../../../Macaulay2/m2/, ../../../Macaulay2/packages/, ../m2/,
+     ---------------------------------------------------------------------------
+     ../tutorial/final/, ../../../Macaulay2/test/,
+     ---------------------------------------------------------------------------
+     ../../../Macaulay2/test/engine/, /home/25/dan/resolutions/}
+
+o2 : List
+
+i3 : 

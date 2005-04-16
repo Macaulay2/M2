@@ -1,0 +1,27 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[a..d];
+
+i2 : f = matrix{{a,b},{c,0}}
+
+o2 = | a b |
+     | c 0 |
+
+             2       2
+o2 : Matrix R  <--- R
+
+i3 : h = matrix{{f,f},{f,0}}
+
+o3 = | a b a b |
+     | c 0 c 0 |
+     | a b 0 0 |
+     | c 0 0 0 |
+
+             4       4
+o3 : Matrix R  <--- R
+
+i4 : 

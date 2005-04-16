@@ -1,0 +1,19 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : a = tally{2,2,2,2,2,3,3,3,5,5}
+
+o1 = Tally{2 => 5}
+           3 => 3
+           5 => 2
+
+o1 : Tally
+
+i2 : product a
+
+o2 = 21600
+
+i3 : 

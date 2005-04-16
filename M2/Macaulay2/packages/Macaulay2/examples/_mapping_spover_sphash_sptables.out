@@ -1,0 +1,78 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = new HashTable from {a=>1, b=>2}
+
+o1 = HashTable{a => 1}
+               b => 2
+
+o1 : HashTable
+
+i2 : applyValues(x, value -> 1000*value)
+
+o2 = HashTable{a => 1000}
+               b => 2000
+
+o2 : HashTable
+
+i3 : applyKeys(x, key -> {key})
+
+o3 = HashTable{{a} => 1}
+               {b} => 2
+
+o3 : HashTable
+
+i4 : applyPairs(x, (key,value) -> (value,key))
+
+o4 = HashTable{1 => a}
+               2 => b
+
+o4 : HashTable
+
+i5 : x = new HashTable from {a=>1, b=>2}
+
+o5 = HashTable{a => 1}
+               b => 2
+
+o5 : HashTable
+
+i6 : scanValues(x, print)
+1
+2
+
+i7 : scanKeys(x, print)
+a
+b
+
+i8 : scanPairs(x, print)
+(a, 1)
+(b, 2)
+
+i9 : y = new HashTable from {b=>200, c=>300}
+
+o9 = HashTable{b => 200}
+               c => 300
+
+o9 : HashTable
+
+i10 : merge(x, y, plus)
+
+o10 = HashTable{a => 1  }
+                b => 202
+                c => 300
+
+o10 : HashTable
+
+i11 : combine(x,y,identity,times,plus)
+
+o11 = HashTable{(a, b) => 200}
+                (a, c) => 300
+                (b, b) => 400
+                (b, c) => 600
+
+o11 : HashTable
+
+i12 : 

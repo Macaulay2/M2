@@ -1,0 +1,76 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : f = x -> {class x, if class x === Sequence then #x};
+
+i2 : f()
+
+o2 = {Sequence, 0}
+
+o2 : List
+
+i3 : f(3)
+
+o3 = {ZZ, }
+
+o3 : List
+
+i4 : f(3,4)
+
+o4 = {Sequence, 2}
+
+o4 : List
+
+i5 : f(3,4,5)
+
+o5 = {Sequence, 3}
+
+o5 : List
+
+i6 : f = x -> (
+          x = sequence x;
+--warning: f redefined
+          {class x, #x});
+
+i7 : f()
+
+o7 = {Sequence, 0}
+
+o7 : List
+
+i8 : f(3)
+
+o8 = {Sequence, 1}
+
+o8 : List
+
+i9 : f(3,4)
+
+o9 = {Sequence, 2}
+
+o9 : List
+
+i10 : f(3,4,5)
+
+o10 = {Sequence, 3}
+
+o10 : List
+
+i11 : ((x) -> x) 3
+
+o11 = 3
+
+i12 : 1 : 3
+
+o12 = 1 : (3)
+
+o12 : Sequence
+
+i13 : ((x) -> x) oo
+
+o13 = 3
+
+i14 : 

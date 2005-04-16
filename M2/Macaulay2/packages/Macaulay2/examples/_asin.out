@@ -1,0 +1,13 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : asin 1
+
+o1 = 1.5708
+
+o1 : RR
+
+i2 : 

@@ -1,0 +1,65 @@
+loaddata: map has appeared or changed its location: 0x001b7000-0x001d5000 r-x 4062413709
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : X = new Type of MutableHashTable
+
+o1 = X
+
+o1 : Type
+
+i2 : x = new X
+
+o2 = X{}
+
+o2 : X
+
+i3 : X.GlobalAssignHook = globalAssignFunction
+
+o3 = globalAssignFunction
+
+o3 : Function
+
+ -- the standard method for the global assignment hook
+
+i4 : X.GlobalReleaseHook = globalReleaseFunction
+
+o4 = globalReleaseFunction
+
+o4 : Function
+
+ -- the standard method for the global variable release hook
+
+i5 : x' = new X
+
+o5 = X{}
+
+o5 : X
+
+i6 : t = {x,x'}
+
+o6 = {X{}, X{}}
+
+o6 : List
+
+i7 : x = x' = 44
+
+o7 = 44
+
+i8 : t
+
+o8 = {X{}, X{}}
+
+o8 : List
+
+i9 : code globalAssignFunction
+
+o9 = -- startup.m2:143-146
+          globalAssignFunction = (X,x) -> (
+               if not ReverseDictionary#?x then ReverseDictionary#x = X;
+               use x;
+               );
+
+i10 : 

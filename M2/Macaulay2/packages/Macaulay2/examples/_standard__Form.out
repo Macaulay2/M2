@@ -1,0 +1,20 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z];
+
+i2 : standardForm (x^2 - 7 + x*y*z^11 + y)
+
+o2 = HashTable{HashTable{0 => 1 } => 1}
+                         1 => 1
+                         2 => 11
+               HashTable{0 => 2} => 1
+               HashTable{1 => 1} => 1
+               HashTable{} => -7
+
+o2 : HashTable
+
+i3 : 

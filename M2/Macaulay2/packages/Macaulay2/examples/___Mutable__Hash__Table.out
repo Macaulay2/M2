@@ -1,0 +1,25 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = new MutableHashTable
+
+o1 = MutableHashTable{}
+
+o1 : MutableHashTable
+
+i2 : scan(0 .. 30, i -> x#i = i^2)
+
+i3 : x # 20
+
+o3 = 400
+
+i4 : x #? 40
+
+o4 = false
+
+o4 : Boolean
+
+i5 : 

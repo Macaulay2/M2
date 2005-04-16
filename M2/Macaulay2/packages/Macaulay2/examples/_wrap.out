@@ -1,0 +1,21 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : wrap(10,"abcdefghijklmnopqrstuvwxyz")
+
+o1 = abcdefghij
+     klmnopqrst
+     uvwxyz
+
+i2 : wrap(10,"-","abcdefghijklmnopqrstuvwxyz")
+
+o2 = abcdefghij
+     ----------
+     klmnopqrst
+     ----------
+     uvwxyz
+
+i3 : 

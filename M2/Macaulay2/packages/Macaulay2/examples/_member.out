@@ -1,0 +1,21 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : x = {a,b,c,d,e};
+
+i2 : member(c,x)
+
+o2 = true
+
+o2 : Boolean
+
+i3 : member(f,x)
+
+o3 = false
+
+o3 : Boolean
+
+i4 : 

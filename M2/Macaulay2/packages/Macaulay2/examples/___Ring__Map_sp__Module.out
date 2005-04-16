@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y];
+
+i2 : S = QQ[t];
+
+i3 : f = map(S,R,{t^2,t^3})
+
+               2   3
+o3 = map(S,R,{t , t })
+
+o3 : RingMap S <--- R
+
+i4 : f image vars R
+
+o4 = image | t2 t3 |
+
+                             1
+o4 : S-module, submodule of S
+
+i5 : 

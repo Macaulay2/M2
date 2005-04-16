@@ -1,0 +1,31 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : degrees R
+
+o2 = {{1}, {1}, {1}}
+
+o2 : List
+
+i3 : S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}]
+
+o3 = S
+
+o3 : PolynomialRing
+
+i4 : degrees S
+
+o4 = {{2, 3}, {1, 2}, {2, 0}}
+
+o4 : List
+
+i5 : 

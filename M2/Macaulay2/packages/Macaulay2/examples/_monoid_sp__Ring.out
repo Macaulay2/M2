@@ -1,0 +1,19 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : monoid R
+
+o2 = [x, y]
+
+o2 : GeneralOrderedMonoid
+
+i3 : 

@@ -1,0 +1,25 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : f = () -> ZZ[local t]
+
+o1 = f
+
+o1 : Function
+
+i2 : f()
+
+o2 = ZZ [t]
+
+o2 : PolynomialRing
+
+i3 : t
+
+o3 = t
+
+o3 : Symbol
+
+i4 : 

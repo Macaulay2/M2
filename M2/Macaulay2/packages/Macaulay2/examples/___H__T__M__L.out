@@ -1,0 +1,14 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : html HTML x
+
+o1 = <?xml version="1.0" encoding="us-ascii"?>
+     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
+     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">x</html>
+     "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" >
+
+i2 : 

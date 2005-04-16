@@ -1,0 +1,47 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : M = ZZ^2 ++ ZZ^3
+
+       5
+o1 = ZZ
+
+o1 : ZZ-module, free
+
+i2 : M_[0]
+
+o2 = | 1 0 |
+     | 0 1 |
+     | 0 0 |
+     | 0 0 |
+     | 0 0 |
+
+              5        2
+o2 : Matrix ZZ  <--- ZZ
+
+i3 : M_[1]
+
+o3 = | 0 0 0 |
+     | 0 0 0 |
+     | 1 0 0 |
+     | 0 1 0 |
+     | 0 0 1 |
+
+              5        3
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : M_[1,0]
+
+o4 = | 0 0 0 1 0 |
+     | 0 0 0 0 1 |
+     | 1 0 0 0 0 |
+     | 0 1 0 0 0 |
+     | 0 0 1 0 0 |
+
+              5        5
+o4 : Matrix ZZ  <--- ZZ
+
+i5 : 

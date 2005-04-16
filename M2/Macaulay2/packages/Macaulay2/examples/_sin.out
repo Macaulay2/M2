@@ -1,0 +1,13 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011d000 r-x 2949285446
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : sin 0.5
+
+o1 = 0.479426
+
+o1 : RR
+
+i2 : 

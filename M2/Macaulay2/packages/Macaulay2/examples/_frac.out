@@ -1,0 +1,39 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : F = frac (ZZ/101[x,y])
+
+           ZZ
+o1 = frac(--- [x, y])
+          101
+
+o1 : FractionField
+
+i2 : 1/x + 1/y + 1/2
+
+     x*y + 2x + 2y
+o2 = -------------
+          2x*y
+
+           ZZ
+o2 : frac(--- [x, y])
+          101
+
+i3 : R = ZZ[x,y]
+
+o3 = R
+
+o3 : PolynomialRing
+
+i4 : x/y
+
+     x
+o4 = -
+     y
+
+o4 : frac(R)
+
+i5 : 

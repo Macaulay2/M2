@@ -1,0 +1,38 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x00125000 r-x 1382359422
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : f = x+2*y+3*z
+
+o2 = x + 2y + 3z
+
+o2 : R
+
+i3 : substitute(f,{x=>x^3, y=>y^3})
+
+      3     3
+o3 = x  + 2y  + 3z
+
+o3 : R
+
+i4 : S = ZZ/101[z,y,x]
+
+o4 = S
+
+o4 : PolynomialRing
+
+i5 : substitute(f,S)
+
+o5 = 3z + 2y + x
+
+o5 : S
+
+i6 : 

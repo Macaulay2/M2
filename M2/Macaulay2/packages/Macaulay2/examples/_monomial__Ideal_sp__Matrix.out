@@ -1,0 +1,33 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x001c8000 r-x 4013405781
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R=ZZ/101[a,b,c]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : m = monomialIdeal vars R
+
+o2 = monomialIdeal (a, b, c)
+
+o2 : MonomialIdeal of R
+
+i3 : m^2
+
+                     2        2             2
+o3 = monomialIdeal (a , a*b, b , a*c, b*c, c )
+
+o3 : MonomialIdeal of R
+
+i4 : m^3
+
+                     3   2      2   3   2           2      2     2   3
+o4 = monomialIdeal (a , a b, a*b , b , a c, a*b*c, b c, a*c , b*c , c )
+
+o4 : MonomialIdeal of R
+
+i5 : 

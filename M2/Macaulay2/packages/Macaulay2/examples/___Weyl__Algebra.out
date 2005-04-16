@@ -1,0 +1,29 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];
+
+i2 : dx*x
+
+o2 = x*dx + 1
+
+o2 : R
+
+i3 : dx*x^10
+
+      10        9
+o3 = x  dx + 10x
+
+o3 : R
+
+i4 : dx*y^10
+
+         10
+o4 = dx*y
+
+o4 : R
+
+i5 : 

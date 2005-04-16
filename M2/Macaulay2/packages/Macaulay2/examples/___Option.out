@@ -1,0 +1,24 @@
+loaddata: map has appeared or changed its location: 0x00118000-0x0011e000 r-x 908788983
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : a => 5
+
+o1 = a => 5
+
+o1 : Option
+
+i2 : peek (a => 5)
+
+o2 = Option{a,5}
+
+i3 : new HashTable from {a => 5, b => 7}
+
+o3 = HashTable{a => 5}
+               b => 7
+
+o3 : HashTable
+
+i4 : 

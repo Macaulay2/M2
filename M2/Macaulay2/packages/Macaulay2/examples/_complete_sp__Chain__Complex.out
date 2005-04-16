@@ -1,0 +1,26 @@
+loaddata: map has disappeared or changed its location:
+  0x00111000-0x00117000 r-x 632362725
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : R = ZZ/101[a..d];
+
+i2 : C = resolution cokernel vars R;
+
+i3 : keys C
+
+o3 = {Resolution, dd, cache, ring}
+
+o3 : List
+
+i4 : complete C;
+
+i5 : keys C
+
+o5 = {0, 2, complete, 4, dd, ring, 1, Resolution, 3, 5, cache}
+
+o5 : List
+
+i6 : 

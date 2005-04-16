@@ -1,0 +1,99 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : 2+
+     3+
+     4
+
+o1 = 9
+
+i2 : seeParsing()
+
+o2 =  parsing     binary    unary                                                 
+      precedence  binding   binding                    operators
+                  strength  strength
+
+           1          0                                    ;                      
+
+           2          2         2                          ,                      
+
+           3                    3                 do  else  list  then            
+
+           4          3                          ->  :=  <-  =  =>  >>            
+
+           5                    5                  from  of  to  when             
+
+           6          6         6                          <<                     
+
+           7          6                                   ===>                    
+
+           8          7         8                          |-                     
+
+           9          8                                   <==>                    
+
+          10          9                                   ==>                     
+
+          11         10                                    or                     
+
+          12         11                                   and                     
+
+          13                   13                         not                     
+
+          14         13                         !=  =!=  ==  ===  ?  in           
+
+          14         13        14                     <  <=  >  >=                
+
+          15         15                                    ||                     
+
+          16         15                                    :                      
+
+          17         17                                    |                      
+
+          18         18                                    ^^                     
+
+          19         19                                    &                      
+
+          20         20                                    ..                     
+
+          21         21                                    ++                     
+
+          21         21        21                         +  -                    
+
+          22         22                                    **                     
+
+          24         23                                  \  \\                    
+
+          24         24                                 %  /  //                  
+
+          24         24        24                          *                      
+
+          25         24                                    @                      
+
+          26                                              (*)                     
+
+          26                    3     catch  if  shield  time  timing  try  while 
+
+          26                    5       break  continue  for  new  return  throw  
+
+          26                   31                global  local  symbol            
+
+          26         25                               <ADJACENCY>                 
+
+          26         26        26                      <SYMBOLS>                  
+
+          27         27                                    @@                     
+
+          28                                               ~                      
+
+          29         29                           #?  .  .?  ^  ^**  _            
+
+          29         29        25                          #                      
+
+          30                                               !                      
+
+o2 : Table
+
+i3 : 

@@ -1,0 +1,148 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : showStructure
+
+o1 = Thing : BasicList : Command
+                         DocumentTag
+                         Eliminate
+                         Error : MissingMethod
+                         Expression : Adjacent
+                                      AssociativeExpression : Equation
+                                                              Product
+                                                              Sum
+                                      BinaryOperation
+                                      Divide
+                                      FunctionApplication
+                                      Holder : OneExpression
+                                               ZeroExpression
+                                      MatrixExpression
+                                      Minus
+                                      NonAssociativeProduct
+                                      Power
+                                      RowExpression
+                                      SparseMonomialVectorExpression
+                                      SparseVectorExpression
+                                      Subscript
+                                      Superscript
+                                      Table
+                         FilePosition
+                         ForestNode
+                         IndeterminateNumber
+                         IndexedVariable
+                         InfiniteNumber
+                         LowerBound
+                         Manipulator
+                         MarkUpList : ANCHOR
+                                      BLOCKQUOTE
+                                      BOLD
+                                      CODE
+                                      EM
+                                      HREF
+                                      HTML
+                                      Hypertext
+                                      IMG
+                                      ITALIC
+                                      LABEL
+                                      LITERAL
+                                      MarkUpListParagraph : BODY
+                                                            BR
+                                                            DIV
+                                                            EXAMPLE
+                                                            ExampleTABLE
+                                                            HEAD
+                                                            HEADER1
+                                                            HEADER2
+                                                            HEADER3
+                                                            HEADER4
+                                                            HEADER5
+                                                            HEADER6
+                                                            HR
+                                                            LISTING
+                                                            MENU
+                                                            NL
+                                                            PARA
+                                                            PARA1
+                                                            PRE
+                                                            TABLE
+                                                            TITLE
+                                                            UL
+                                      NOINDENT
+                                      SEQ
+                                      SMALL
+                                      STRONG
+                                      SUB
+                                      SUP
+                                      TEX
+                                      TO
+                                      TO2
+                                      TOH
+                                      TT
+                                      UNDERLINE
+                         MinorsComputation
+                         MutableList : Bag
+                         Option
+                         ParagraphList
+                         ProductOrder
+                         PushforwardComputation
+                         Time
+                         TreeNode
+                         VisibleList : Array
+                                       List : Partition
+                                              Vector
+                                              VerticalList
+                                       Sequence
+             Boolean
+             CC
+             CCC
+             Database
+             Dictionary
+             File
+             Function
+             HashTable : CoherentSheaf
+                         Ideal : MonomialIdeal
+                         ImmutableType : Module
+                         ModuleMap : Matrix
+                         MonoidElement
+                         MutableHashTable : CacheTable
+                                            ChainComplexMap
+                                            GradedModule : ChainComplex
+                                            GradedModuleMap
+                                            GroebnerBasis
+                                            ICnode
+                                            Package
+                                            Resolution
+                                            ScriptedFunctor
+                                            Type : HeaderType
+                                                   MarkUpType : DistributedMarkUpType
+                                                                EmptyMarkUpType
+                                                   Monoid : OrderedMonoid : GeneralOrderedMonoid
+                                                   Ring : EngineRing : FractionField
+                                                                       GaloisField
+                                                                       PolynomialRing
+                                                                       QuotientRing
+                                                   SelfInitializingType
+                                                   WrapperType
+                                            Variety : AffineVariety
+                                                      ProjectiveVariety
+                         MutableMatrix
+                         OptionTable
+                         ProjectiveHilbertPolynomial
+                         RingElement
+                         RingMap
+                         SheafOfRings
+                         SumOfTwists
+                         Tally : Set
+             Net : String
+             Nothing
+             Pseudocode
+             QQ
+             RR
+             RRR
+             Symbol : Keyword
+             ZZ
+
+i2 : 

@@ -1,0 +1,23 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : QQ[a,b,c,d];
+
+i2 : I = ideal(b*c, c^2 - b*d, -a*c+b^2)
+
+                  2         2
+o2 = ideal (b*c, c  - b*d, b  - a*c)
+
+o2 : Ideal of QQ [a, b, c, d]
+
+i3 : monomialSubideal I
+
+                     3          2   3          2
+o3 = monomialIdeal (b , b*c, a*c , c , a*b*d, b d, a*c*d)
+
+o3 : MonomialIdeal of QQ [a, b, c, d]
+
+i4 : 

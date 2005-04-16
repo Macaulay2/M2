@@ -1,0 +1,47 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : ff := 5
+
+o1 = 5
+
+i2 : ff
+
+o2 = 5
+
+i3 : hh = () -> jj
+
+o3 = hh
+
+o3 : Function
+
+i4 : hh()
+
+o4 = jj
+
+o4 : Symbol
+
+i5 : jj = 444
+
+o5 = 444
+
+i6 : hh()
+
+o6 = 444
+
+i7 : jj := 555
+
+o7 = 555
+
+i8 : hh()
+
+o8 = 444
+
+i9 : jj
+
+o9 = 555
+
+i10 : 

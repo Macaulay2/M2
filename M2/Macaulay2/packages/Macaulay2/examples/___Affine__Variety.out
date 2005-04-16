@@ -1,0 +1,13 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : Spec(QQ[x,y])
+
+o1 = Spec(QQ [x, y])
+
+o1 : AffineVariety
+
+i2 : 

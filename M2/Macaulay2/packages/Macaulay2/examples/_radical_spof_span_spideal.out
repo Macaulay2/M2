@@ -1,0 +1,34 @@
+--warning: checksum has changed for a map
+--package "Macaulay2Core" loaded
+--package "PrimaryDecomposition" loaded
+--loading the Macaulay2 documentation
+--package "Macaulay2" loaded
+
+i1 : S = ZZ/101[x,y,z]
+
+o1 = S
+
+o1 : PolynomialRing
+
+i2 : I = ideal(x^3-y^2,y^2*z^2)
+
+             3    2   2 2
+o2 = ideal (x  - y , y z )
+
+o2 : Ideal of S
+
+i3 : radical I
+
+                       3    2
+o3 = ideal (y*z, x*z, x  - y )
+
+o3 : Ideal of S
+
+i4 : intersect decompose I
+
+                           3    2
+o4 = ideal (-y*z, -x*z, - x  + y )
+
+o4 : Ideal of S
+
+i5 : 
