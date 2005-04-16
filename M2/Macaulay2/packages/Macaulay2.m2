@@ -30,6 +30,8 @@ load "Macaulay2/overview2.m2"
 load "Macaulay2/overview3.m2"
 load "Macaulay2/overview4.m2"
 load "Macaulay2/macaulay.m2"
+load "Macaulay2/doc_packages.m2"
+load "Macaulay2/overview_packages.m2"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Macaulay2.installed"

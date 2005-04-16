@@ -129,6 +129,13 @@ ring_elem PolyQQ::from_int(mpz_ptr n) const
   return FRAC_RINGELEM(result);  
 }
 
+ring_elem PolyQQ::from_rational(mpq_ptr n) const
+{
+  elem *result = make_fraction(numerR_->from_int(mpq_numref(n)),
+			       mpq_denref(n));
+  return FRAC_RINGELEM(result);
+}
+
 ring_elem PolyQQ::var(int v) const 
 {
   elem *result = make_fraction(numerR_->var(v));

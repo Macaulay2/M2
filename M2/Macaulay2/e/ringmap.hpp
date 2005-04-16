@@ -38,16 +38,18 @@ class RingMap : public immutable_object
   var *_elem;			// elem[i] is the structure representing the image of
 				// the i th variable.
   RingMap(const Matrix *m);
+
+  friend class GF; // To obtain the value of this element
+  const ring_elem elem(int i) const { 
+    assert(i < nvars);
+    return _elem[i].bigelem; 
+  }
 public:
   ~RingMap();
 
   static const RingMap *make(const Matrix *m);
 
   const Ring *get_ring() const { return R; }
-  const ring_elem elem(int i) const { 
-    assert(i < nvars);
-    return _elem[i].bigelem; 
-  }
 
   bool is_equal(const RingMap *phi) const;
 
