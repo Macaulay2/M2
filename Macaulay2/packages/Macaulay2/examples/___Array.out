@@ -1,0 +1,20 @@
+
+i1 : v = [a,b,c]
+
+o1 = [a, b, c]
+
+o1 : Array
+
+i2 : v#2
+
+o2 = c
+
+o2 : Symbol
+
+i3 : ZZ[a,b,c]
+
+o3 = ZZ [a, b, c]
+
+o3 : PolynomialRing
+
+i4 : 

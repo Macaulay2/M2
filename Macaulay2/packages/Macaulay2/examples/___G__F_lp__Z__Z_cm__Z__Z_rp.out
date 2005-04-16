@@ -1,0 +1,15 @@
+
+i1 : k = GF(2,3,Variable=>x)
+
+o1 = k
+
+o1 : GaloisField
+
+i2 : x+x^2
+
+      2
+o2 = x  + x
+
+o2 : k
+
+i3 : 

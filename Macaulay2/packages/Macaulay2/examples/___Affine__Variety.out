@@ -1,0 +1,8 @@
+
+i1 : Spec(QQ[x,y])
+
+o1 = Spec(QQ [x, y])
+
+o1 : AffineVariety
+
+i2 : 

@@ -1,0 +1,11 @@
+
+i1 : RR.GlobalAssignHook = (sym,val) -> << "--about to assign " << val << " to " << sym << endl;
+
+i2 : a = 4.5
+--about to assign 4.5 to a
+
+o2 = 4.5
+
+o2 : RR
+
+i3 : 

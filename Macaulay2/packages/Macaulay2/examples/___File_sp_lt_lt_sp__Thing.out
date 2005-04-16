@@ -1,0 +1,15 @@
+
+i1 : x = 5
+
+o1 = 5
+
+i2 : << "the value of x is " << x << endl
+the value of x is 5
+
+o2 = stdio
+
+o2 : File
+
+ -- the standard input output file
+
+i3 : 

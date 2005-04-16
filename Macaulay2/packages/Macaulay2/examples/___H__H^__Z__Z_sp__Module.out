@@ -1,0 +1,21 @@
+
+i1 : R = QQ[x,y];
+
+i2 : HH^2 (R^{-3})
+
+o2 = cokernel | y x  0 |
+              | 0 -y x |
+
+                            2
+o2 : R-module, quotient of R
+
+i3 : HH^2 (R^{-4})
+
+o3 = cokernel | y x  0  0 |
+              | 0 -y x  0 |
+              | 0 0  -y x |
+
+                            3
+o3 : R-module, quotient of R
+
+i4 : 

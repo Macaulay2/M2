@@ -1,0 +1,20 @@
+
+i1 : x = new MutableHashTable
+
+o1 = MutableHashTable{}
+
+o1 : MutableHashTable
+
+i2 : x#i = p
+
+o2 = p
+
+o2 : Symbol
+
+i3 : x#i
+
+o3 = p
+
+o3 : Symbol
+
+i4 : 

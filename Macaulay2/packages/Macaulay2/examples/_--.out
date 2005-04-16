@@ -1,0 +1,6 @@
+
+i1 : x = 1 -- this is a comment
+
+o1 = 1
+
+i2 : 
