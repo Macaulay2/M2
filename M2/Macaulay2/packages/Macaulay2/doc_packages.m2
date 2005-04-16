@@ -70,21 +70,21 @@ document {
      Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
      containing links to the documentation for Macaulay2 and
      all installed packages."},
-     "This command should be run after installing a package via ",
+     "This command needs to be run after installing a package via ",
      TO (installPackage,String), ".",
      PARA,
      "This command is run each time the program is started, therefore 
      overwriting this file.  Thus, one can simply restart Macaulay2 to
-     obtain the new ",
+     obtain the same consequence",
      EXAMPLE {
 	  "makePackageIndex()"
 	  },
-     SeeAlso => {}
+     SeeAlso => {"packages"}
      }
 
 document {
      Key => (newPackage,String),
-     Headline => "",
+     Headline => "package item: preamble",
      Usage => "",
      Inputs => {
 	  },
@@ -100,41 +100,43 @@ document {
 
 document {
      Key => export,
-     Headline => "",
-     Usage => "",
+     Headline => "package item: export functions",
+     Usage => "export(symbol1,...,symbolN)",
      Inputs => {
+	  "(symbol1,...,symbolN)" => Sequence => " of symbols to be made 
+	  available to those using this package."
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => "",
-     SeeAlso => {}
+     Consequences => {"the functions in the sequence are made available 
+	  to the user of the package"},
+     "Blah xxx A package can contain the code for many functions, only some 
+     of which should be made visible to the user. ", TT "export",
+     " allows one to decided which variables are global variables. 
+     For an example see ", TO "an example of a package", ".",
+     PARA,
+     "TO export variables which the user can modify, see ", 
+     TO exportMutable, ".",
+     SeeAlso => {"packages", "creating packages", (debug,Package)}
      }
 
 document {
      Key => exportMutable,
-     Headline => "",
-     Usage => "",
+     Headline => "package item: export writable variables",
+     Usage => "exportMutable(symbol1,...,symbolN)",
      Inputs => {
+	  "(symbol1,...,symbolN)" => Sequence => " of mutable
+	  symbols to be made 
+	  available to those using this package."
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => "",
-     SeeAlso => {}
+     Consequences => {"the functions in the sequence are made available 
+	  to the user of the package"},
+     "This package item is needed much less frequently that ", TO export, 
+     ".  For an example, see ", TO "an example of a package",
+     SeeAlso => {"packages", "creating packages", (debug,Package)}
      }
 
 document {
      Key => beginDocumentation,
-     Headline => "start the documentation section of a package",
+     Headline => "package item: start documentation section",
      Usage => "",
      Inputs => {
 	  },
@@ -151,7 +153,7 @@ document {
 
 document {
      Key => (TEST,String),
-     Headline => "",
+     Headline => "package item: register a test of the package",
      Usage => "TEST s",
      Inputs => {
 	  "s" => String => ", containing Macaulay2 code"
@@ -171,7 +173,7 @@ document {
 
 document {
      Key => (installPackage,String),
-     Headline => "",
+     Headline => "load and install a package and its documentation",
      Usage => "",
      Inputs => {
 	  },
@@ -207,17 +209,6 @@ document {
 	///,
 	SeeAlso => {"writing packages"}
   }
-
-document { 
-	Key => export,
-	Headline => "make global variables visible to the user",
-	Usage => "export(function1, function2, ... )",
-	Inputs => { Sequence => {} },
-	Consequences => {"the functions in the sequence are made available to the user"},
-	"A package can contain the code for many functions, only some of which should be made visible to the user. ", TT "export",
-	" allows one to decided which variables are global variables. For an example see ", TO "an example of a package", "."
-	}
-document { Key => exportMutable }
 
 end
 ---------------------------------
