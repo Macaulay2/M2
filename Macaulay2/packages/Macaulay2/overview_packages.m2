@@ -6,9 +6,9 @@ document { Key => "packages",
      TO Package, ".",
      Subnodes => {
      "Using and loading packages",
-	  TO needsPackage,
-	  TO loadPackage,
-	  TO installPackage,
+	  TO (needsPackage,String),
+	  TO (loadPackage,String),
+	  TO (installPackage,String),
      "Available packages",
 	  TO "convex hulls and polar cones",
           TO "Dmodules",
@@ -130,7 +130,7 @@ document {
 		"firstFunction 0"
 		}
 	}
-TEST "firstFunction 1"
+TEST "firstFunction 2"
 ///,
 	SeeAlso => {newPackage,
 	     export,
