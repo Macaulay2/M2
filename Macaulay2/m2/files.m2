@@ -14,7 +14,7 @@ makeDirectory String := name -> (			    -- make the whole path, too
      makeDir fold((a,b) -> ( makeDir a; a|"/"|b ), parts))
 
 fileOptions := new OptionTable from { 
-     Exclude => set {},	-- eventually we change from a set to a regular expression or a list of them
+     Exclude => {},
      Verbose => false,
      Undo => false,
      UpdateOnly => false
