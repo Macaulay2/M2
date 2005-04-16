@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+     	symbol UpdateOnly,
         symbol currentTime,
      	symbol independentSets,
         symbol MakeDocumentation,

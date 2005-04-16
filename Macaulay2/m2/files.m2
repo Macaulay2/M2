@@ -16,15 +16,21 @@ makeDirectory String := name -> (			    -- make the whole path, too
 fileOptions := new OptionTable from { 
      Exclude => set {},	-- eventually we change from a set to a regular expression or a list of them
      Verbose => false,
-     Undo => false
+     Undo => false,
+     UpdateOnly => false
      }
 
 copyFile = method(Options => fileOptions)
 copyFile(String,String) := opts -> (src,tar) -> (
-     if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
-     tar << get src << close;
-     fileTime(tar, fileTime src);
-     fileMode(tar,fileMode src);
+     if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
+     	  if opts.Verbose then stderr << "--skipping: " << src << " not newer than " << tar << endl;
+	  )
+     else (
+     	  if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
+     	  tar << get src << close;
+     	  fileTime(tar,fileTime src);
+     	  fileMode(tar,fileMode src);
+	  )
      )
 
 moveFile = method(Options => fileOptions)

@@ -217,7 +217,7 @@ packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key 
 packageKey   String := fkey -> (
      r := scan(packages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
      if r === null then (
-	  if debugLevel > 0 then error "debug me";
+	  -- if debugLevel > 0 then error "debug me";
 	  -- value PackageDictionary#"Missing"
 	  currentPackage
 	  )
@@ -575,7 +575,7 @@ headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchRawDocumentation tag;
      if d === null then (
-	  if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
+	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then return "missing documentation";
 	  );
