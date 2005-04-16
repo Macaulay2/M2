@@ -1031,7 +1031,9 @@ makePackageIndex List := packagePath -> (
 			      p := prefixDirectory | LAYOUT#"docm2";
 			      if isDirectory p then (
 				   r := readDirectory p;
-				   r = select(r, fn -> fn != "." and fn != ".." and fn != "Macaulay2");
+				   r = select(r, fn -> fn != "." and fn != ".."
+					-- and fn != "Macaulay2"
+					);
 				   r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
 				   r = sort r;
 				   SEQ {
