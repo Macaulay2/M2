@@ -1,0 +1,104 @@
+
+i1 : R = ZZ/32003[vars(0..17)];
+
+i2 : M = coker genericMatrix(R,a,3,6)
+
+o2 = cokernel | a d g j m p |
+              | b e h k n q |
+              | c f i l o r |
+
+                            3
+o2 : R-module, quotient of R
+
+i3 : isHomogeneous M
+
+o3 = true
+
+o3 : Boolean
+
+i4 : codim M
+
+o4 = 4
+
+i5 : degree M
+
+o5 = 15
+
+i6 : genera M
+
+o6 = {-2, 2, -2, 2, -2, 2, -2, 2, -2, 2, -2, 2, 4, 14}
+
+o6 : List
+
+i7 : poincare M
+
+                 4      5     6
+o7 = 3 - 6T + 15T  - 18T  + 6T
+
+o7 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i8 : hilbertSeries M
+
+                 4      5     6
+     3 - 6T + 15T  - 18T  + 6T
+o8 = --------------------------
+                     18
+              (1 - T)
+
+o8 : Divide
+
+i9 : poincare' = (M) -> (
+     	H := poincare M;
+     	t := (ring H)_0;  -- The variable t above
+     	while H % (1-t) == 0 do H = H // (1-t);
+     	H)
+
+o9 = poincare'
+
+o9 : Function
+
+i10 : poincare' M
+
+                 2
+o10 = 3 + 6T + 6T
+
+o10 : ZZ [T, MonomialOrder => RevLex, Inverses => true]
+
+i11 : C = resolution M
+
+       3      6      15      18      6
+o11 = R  <-- R  <-- R   <-- R   <-- R  <-- 0
+                                            
+      0      1      2       3       4      5
+
+o11 : ChainComplex
+
+i12 : C.dd_3
+
+o12 = {4} | m  -n o  p  -q r  0  0  0  0  0  0  0  0  0  0  0  0  |
+      {4} | -j k  -l 0  0  0  p  0  0  0  -q r  0  0  0  0  0  0  |
+      {4} | g  -h i  0  0  0  0  p  0  0  0  0  -q 0  0  r  0  0  |
+      {4} | -d e  -f 0  0  0  0  0  p  0  0  0  0  -q 0  0  r  0  |
+      {4} | a  -b c  0  0  0  0  0  0  p  0  0  0  0  -q 0  0  r  |
+      {4} | 0  0  0  -j k  -l -m 0  0  0  n  -o 0  0  0  0  0  0  |
+      {4} | 0  0  0  g  -h i  0  -m 0  0  0  0  n  0  0  -o 0  0  |
+      {4} | 0  0  0  -d e  -f 0  0  -m 0  0  0  0  n  0  0  -o 0  |
+      {4} | 0  0  0  a  -b c  0  0  0  -m 0  0  0  0  n  0  0  -o |
+      {4} | 0  0  0  0  0  0  g  j  0  0  -h i  -k 0  0  l  0  0  |
+      {4} | 0  0  0  0  0  0  -d 0  j  0  e  -f 0  -k 0  0  l  0  |
+      {4} | 0  0  0  0  0  0  a  0  0  j  -b c  0  0  -k 0  0  l  |
+      {4} | 0  0  0  0  0  0  0  -d -g 0  0  0  e  h  0  -f -i 0  |
+      {4} | 0  0  0  0  0  0  0  a  0  -g 0  0  -b 0  h  c  0  -i |
+      {4} | 0  0  0  0  0  0  0  0  a  d  0  0  0  -b -e 0  c  f  |
+
+              15       18
+o12 : Matrix R   <--- R
+
+i13 : betti C
+
+o13 = total: 3 6 15 18 6
+          0: 3 6  .  . .
+          1: . .  .  . .
+          2: . . 15 18 6
+
+i14 : 

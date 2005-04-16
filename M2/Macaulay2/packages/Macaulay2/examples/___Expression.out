@@ -1,0 +1,12 @@
+
+i1 : (expression 2)^5 * (expression 3)^3 / ((expression 5) * (expression 11)^2)^6
+
+        5 3
+       2 3
+o1 = --------
+          2 6
+     (5*11 )
+
+o1 : Divide
+
+i2 : 

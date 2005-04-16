@@ -1,0 +1,14 @@
+
+i1 : X = new HeaderType of BasicList
+
+o1 = X
+
+o1 : HeaderType
+
+i2 : X {a,b,c}
+
+o2 = X{a, b, c}
+
+o2 : X
+
+i3 : 

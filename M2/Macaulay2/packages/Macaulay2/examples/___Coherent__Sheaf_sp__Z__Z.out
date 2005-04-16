@@ -1,0 +1,36 @@
+
+i1 : X = Proj(QQ[x,y,z])
+
+o1 = Proj(QQ [x, y, z])
+
+o1 : ProjectiveVariety
+
+i2 : F = OO_X
+
+o2 = (OO)
+         Proj(QQ [x, y, z])
+
+o2 : SheafOfRings
+
+i3 : G = F(3)
+
+                           1
+o3 = (OO)                   (3)
+         Proj(QQ [x, y, z])
+
+o3 : coherent sheaf on Proj(QQ [x, y, z]), free
+
+i4 : module G
+
+                 1
+o4 = QQ [x, y, z]
+
+o4 : QQ [x, y, z]-module, free, degrees {-3}
+
+i5 : degrees oo
+
+o5 = {{-3}}
+
+o5 : List
+
+i6 : 
