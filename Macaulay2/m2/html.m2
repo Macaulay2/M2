@@ -1052,7 +1052,7 @@ check := ret -> if ret != 0 then error "--error: external command failed"
 
 viewHTML = url -> (
      if runnable "firefox" then check run("firefox "|url|"&") else
-     if runnable "open" then check run("open "|url) else
+     if runnable "open" then check run("open \""|url|"\"") else
      if runnable "netscape" then check run("netscape -remote \"openURL("|url|")") else
      error "can't find firefox, open, or netscape"
      )
