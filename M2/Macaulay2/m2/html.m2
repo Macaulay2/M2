@@ -381,10 +381,10 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      then (
 	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
 	  )
-     else if fileExists tmpf and fileTime tmpf >= fileTime inf
-     then (
-	  stderr << "--skipping " << desc << " in file " << outf << " due to errors last time" << endl;
-	  )
+--     else if fileExists tmpf and fileTime tmpf >= fileTime inf
+--     then (
+--	  stderr << "--skipping " << desc << " in file " << outf << " due to errors last time" << endl;
+--	  )
      else (
 	  announcechange();
 	  stderr << "--making " << desc << " in file " << outf << endl;
@@ -546,7 +546,7 @@ installPackage Package := opts -> pkg -> (
      en := realpath(currentSourceDir|buildPackage|"/examples/");
      if fileExists en then (
 	  stderr << "--copying example files from " << en << endl;
-	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, Exclude => {"CVS"});
+	  copyDirectory(en, exampleDir, Verbose => debugLevel > 0, Exclude => {"CVS"}, UpdateOnly => true);
 	  );
 
      if opts.MakeDocumentation then (
