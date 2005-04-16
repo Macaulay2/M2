@@ -210,6 +210,14 @@ ring_elem FractionField::from_int(mpz_ptr n) const
   return FRAC_RINGELEM(f);
 }
 
+ring_elem FractionField::from_rational(mpq_ptr n) const
+{
+  frac_elem *f = new_frac_elem();
+  f->numer = R_->from_int(mpq_numref(n));
+  f->denom = R_->from_int(mpq_denref(n));
+  return FRAC_RINGELEM(f);
+}
+
 ring_elem FractionField::var(int v) const
 {
   frac_elem *f = new_frac_elem();
@@ -264,7 +272,7 @@ bool FractionField::lift(const Ring *Rg, const ring_elem f, ring_elem &result) c
   if (Rg == R_)
     {
       frac_elem *h = FRAC_VAL(f);
-      if (R_->is_unit(h->denom)) // In this case, by 'simplify', f->denom == 1.
+      if (R_->is_equal(h->denom, R_->one()))
 	{
 	  result = R_->copy(h->numer);
 	  return true;

@@ -167,11 +167,12 @@ ring_elem Ring::from_double(double a) const
   return result;
 }
 
-ring_elem Ring::from_rational(mpq_ptr q) const
-{
-#warning "not implemented yet"
-  return from_int(0);
-}
+
+//ring_elem Ring::from_rational(mpq_ptr q) const
+//{
+//#warning "not implemented yet"
+//  return from_int(0);
+//}
 
 ring_elem Ring::from_BigReal(mpf_ptr a) const
 {

@@ -366,24 +366,6 @@ document { Key => "frequently encountered problems",
      }
 
 
-document { Key => "packages",
-     Subnodes => {
-	  TO "using packages",				    -- ?
-	  TO "writing packages",			    -- ?
-     	  -- these next ones might not be needed:
-     	  TO "loading a library",
-     	  TO "how to get documentation on a library",
-     	  "available libraries",
-	  TO "blow ups",
-	  TO "convex hulls and polar cones",
-	  TO "Dmodules",
-	  TO "elimination theory",
-	  TO "graphing curves and surfaces via 'surf'",
-	  TO "invariants of finite groups",
-	  TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
-	  TO "SAGBI bases",
-	  }
-     }
 
 document { Key => "using packages",
 	"To use a package one must load it.",
@@ -397,77 +379,6 @@ document { Key => "using packages",
 	"Installing the package creates the online documentation for the package and evaluates Macaulay 2 code in the documentation of the package."
 	 }
 
-document { Key => "writing packages",
-	"There are essentially four pieces to a Macaulay 2 package: a preamble which is initiated by the ", TO "newPackage",
-	" function, a section where one defines which variables will be exported to global variables, a section containing 
-	the actual coding that constitutes the package, and a section containing documentation for the new package. Here is
-	a basic template for new packages:",
-	PRE///
-	newPackage( ... )
-	
-	export( ... )
-	
-	-- Macaulay 2 code goes here
-	
-	beginDocumentation()
-	document { ... } 
-	///,
-     Subnodes => {
-	  TO "an example of a package",
-	  TO "newPackage",
-	  TO "export",
-	  TO "exportMutable",
-	  TO "writing documentation"
-	  }
-     }
-
-document {
-     Key => "an example of a package",
-     "Here is a basic example of a complete package:",
-	PRE///
-newPackage(
-	"FirstPackage",
-    	Version => "1.0", 
-    	Date => "February 11, 2004",
-    	Author => "Jane Doe <doe@math.uiuc.edu>",
-    	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "an example Macaulay 2 package",
-    	DebuggingMode => true
-    	)
-
-export(firstFunction)
-
-firstFunction = method(TypicalValue => String)
-firstFunction ZZ := String => n -> (
-	if n == 1
-	then print "Hello World!"
-	else print "D'oh!"	
-	);
-
-beginDocumentation()
-document { 
-	Key => FirstPackage,
-	Headline => "an example Macaulay 2 package",
-	EM "FirstPackage", " is a basic package to be used as an example."
-	}
-document {
-	Key => firstFunction,
-	Headline => "a silly first function",
-	Usage => "firstFunction n",
-	Inputs => {
-		"n" => ZZ => {}
-		},
-	Outputs => {
-		String => {}
-		},
-	EXAMPLE {
-		"firstFunction 1",
-		"firstFunction 0"
-		}
-	}
-	///,
-	SeeAlso => {newPackage,export,exportMutable,"writing documentation"}
-	}
 
 
 document {
@@ -492,38 +403,6 @@ document {
   SeeAlso => document
      }
 
-document {
-	Key => newPackage, 
-     Headline => "starts the definition of a package",
-	Usage => "newPackage ( \"package name\", ... )",
- 	Inputs => {},
-	Consequences => {"a package is created"},
-	"Here is a template for a typical ", TT "newPackage", " entry in a package.",
- 	PRE ///
-	newPackage(
-		"package name",
-		Headline => "one line description",
-		Version => 1.0,
-		Date => "month  XX, 20XX",
-		Author => "author <email>",
-		HomePage => "url",
-		DebuggingMode => true,
-		InfoDirSection => ...  -- this option is not normally used
-		)
-	///,
-	SeeAlso => {"writing packages"}
-  }
-
-document { 
-	Key => export,
-	Headline => "make global variables visible to the user",
-	Usage => "export(function1, function2, ... )",
-	Inputs => { Sequence => {} },
-	Consequences => {"the functions in the sequence are made available to the user"},
-	"A package can contain the code for many functions, only some of which should be made visible to the user. ", TT "export",
-	" allows one to decided which variables are global variables. For an example see ", TO "an example of a package", "."
-	}
-document { Key => exportMutable }
 
 document {
      Key => "specifying typical values",

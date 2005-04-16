@@ -188,6 +188,14 @@ ring_elem GF::from_int(mpz_ptr n) const
   return ring_elem(m);
 }
 
+ring_elem GF::from_rational(mpq_ptr q) const
+{
+  // a should be an element of ZZ/p
+  ring_elem a = _originalR->getCoefficients()->from_rational(q);
+  int b = _originalR->getCoefficients()->coerce_to_int(a);
+  return GF::from_int(b);
+}
+
 ring_elem GF::var(int v) const
 {
   if (v == 0)

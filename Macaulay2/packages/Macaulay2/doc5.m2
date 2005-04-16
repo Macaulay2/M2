@@ -447,15 +447,6 @@ document {
 	  }
      }
 
-document {
-     Key => Package,
-     PARA {
-	  "A package is a body of Macaulay2 source code devoted to a particular topic."
-	  },
-     PARA {
-     	  "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "."
-	  }
-     }
 
 document {
      Key => "printWidth",
@@ -469,19 +460,6 @@ document {
 	  }
      }
 	  
-document {
-     Key => loadPackage,
-     Usage => "loadPackage FILENAME",
-     Inputs => {
-	  "FILENAME" => String => "the name of the file containing the package",
-	  DebuggingMode => Boolean => "the debugging mode to use during the loading of the package"
-	  },
-     Consequences => {
-	  "The file, which will typically start with a 'newPackage' command, is loaded."
-	  },
-     SeeAlso => { "newPackage", "Package", "load" }
-     }
-
 document {
      Headline => "make a new link to a file",
      Key => link,

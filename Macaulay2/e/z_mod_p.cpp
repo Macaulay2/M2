@@ -136,6 +136,15 @@ ring_elem Z_mod::from_int(mpz_ptr n) const
   return ring_elem(m);
 }
 
+ring_elem Z_mod::from_rational(mpq_ptr q) const
+{
+  ring_elem a = Z_mod::from_int(mpq_numref(q));
+  ring_elem b = Z_mod::from_int(mpq_denref(q));
+  if (b == _ZERO)
+    return _ZERO;
+  return Z_mod::divide(a,b);
+}
+
 bool Z_mod::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Rf = Z ---> Z/p
