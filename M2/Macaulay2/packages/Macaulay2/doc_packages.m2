@@ -1,28 +1,8 @@
 document {
      Key => Package,
      Headline => "the class of all packages",
-     "A package is a body of Macaulay2 source code devoted to a 
-     particular topic.  Many packages are distributed with Macaulay 2,
-     and others are available from various users on the internet.",
-     SeeAlso => "writing documentation",
-     Subnodes => {
-     "Using and loading packages",
-	  TO needsPackage,
-	  TO loadPackage,
-	  TO installPackage,
-     "Creating new packages",
-     	  TO "package format",
-	  TO newPackage,
-	  TO export,
-	  TO beginDocumentation,
-	  TO (TEST,String),
-     "Writing documentation for packages",
-	  TO document,
-     "Debugging your package",
-	  TO "using the debugger",
-	  TO (debug,Package),
-	  TO (check,Package)
-	  },
+     "See ", TO "packages", " for an overview about using and writing
+     packages.",
      PARA {
      	  "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "."
 	  }
@@ -30,36 +10,53 @@ document {
 
 document {
      Key => (loadPackage,String),
-     Headline => "",     
-     Usage => "loadPackage FILENAME",
+     Headline => "load a package",     
+     Usage => "loadPackage PACKAGENAME",
      Inputs => {
-	  "FILENAME" => String => "the name of the file containing the package",
+	  "PACKAGENAME" => String => "the name of the package",
 	  DebuggingMode => Boolean => "the debugging mode to use during the loading of the package"
 	  },
+     Outputs => {
+	  Package => "the package just loaded.  Typically not used."
+	  },
      Consequences => {
-	  "The file, which will typically start with a 'newPackage' command, is loaded."
+	  {"Loads the package 'PACKAGENAME' which is in the file 'PACKAGENAME.m2'"}
 	  },
+    "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", 
+    " and should contain a package named ", TT "PACKAGENAME", ".",
+    PARA,
+    "For example, to load the sample package ", TT "FirstPackage", ",",
      EXAMPLE {
-	  ///loadPackage "First"///
+	  ///loadPackage "FirstPackage"///
 	  },
-     SeeAlso => { "newPackage", "Package", "load" }
+     SeeAlso => {"packages", "an example of a package", (needsPackage,String),
+	  load}
      }
 
 document {
      Key => (needsPackage,String),
      Headline => "load a package if not already loaded",
-     Usage => "needsPackage packagename",
+     Usage => "needsPackage PACKAGENAME",
      Inputs => {
-	  "packagename" => "package name"
+	  "PACKAGENAME" => "the name of the package"
 	  },
-     Consequences => {"Loads the file 'packagename.m2' which should be on the
-     load path ", TO "path", ", and should also contain a package named
-     'packagename'"},
+     Outputs => {
+	  {
+	  "either the package just loaded, or ", TO null, " if the package 
+	  did not need to be loaded."}
+	  },
+     Consequences => {
+	  {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"}
+         },
+    "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", 
+    " and should contain a package named ", TT "PACKAGENAME", ".",
+    PARA,
+    "For example, to load the sample package ", TT "FirstPackage", ",",
      EXAMPLE {
-	  ///needsPackage "FirstPackage"///
+	  ///needsPackage "FirstPackage"///,
+	  ///needsPackage "FirstPackage"///	  
 	  },
-     Caveat => "",
-     SeeAlso => {(installPackage,String)}
+     SeeAlso => {"packages", "an example of a package", (loadPackage,String)}
      }
 
 document {
@@ -232,7 +229,8 @@ document {
 	  },
      Outputs => {
 	  },
-     Consequences => "",
+     Consequences => {
+	  },
      "description",
      EXAMPLE {
 	  },
