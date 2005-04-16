@@ -154,7 +154,7 @@ if firstTime then (
 	  else error "expected a type";
 	  );
      globalAssignment {Type,Function};
-
+     applicationDirectory = () -> homeDirectory | packageSuffix;
      )
 
 sourceHomeDirectory = null				    -- home directory of Macaulay 2
@@ -391,13 +391,13 @@ homeDirectory = getenv "HOME" | "/"
 
 if not noinitfile then (
      path = join(
-	  {homeDirectory | packageSuffix | "local/" | LAYOUT#"datam2", homeDirectory | packageSuffix | "code/"},
+	  {applicationDirectory() | "local/" | LAYOUT#"datam2", applicationDirectory() | "code/"},
 	  path);
      )
 
 if packagePath === null then if prefixDirectory =!= null then packagePath = { prefixDirectory } else packagePath = { }
 if not noinitfile then (
-     packagePath = prepend(homeDirectory | packageSuffix | "local/", packagePath);
+     packagePath = prepend(applicationDirectory() | "local/", packagePath);
      )
 
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
@@ -417,7 +417,7 @@ runStartFunctions()
 errorDepth = loadDepth
 if not noinitfile then (
      -- the location of init.m2 is documented in the node "initialization file"
-     tryLoad ("init.m2", homeDirectory | packageSuffix | "init.m2");
+     tryLoad ("init.m2", applicationDirectory() | "init.m2");
      );
 errorDepth = loadDepth+1				    -- anticipate loadDepth being 2 later
 processCommandLineOptions 3

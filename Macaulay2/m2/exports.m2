@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+        symbol applicationDirectory,
      	symbol UpdateOnly,
         symbol currentTime,
      	symbol independentSets,
