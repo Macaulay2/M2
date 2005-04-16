@@ -49,13 +49,14 @@ baseFilename = fn -> (
 
 findFiles = method(Options => fileOptions)
 findFiles String := opts -> name -> (
-     ex := opts.Exclude;
-     if class ex =!= Set then (
-     	  if class ex =!= List then ex = {ex};
-     	  ex = set ex;
-	  opts = merge(opts, new OptionTable from {Exclude => ex}, last);
+     excludes := opts.Exclude;
+     if class excludes =!= List then (
+     	  excludes = {excludes};
+	  opts = merge(opts, new OptionTable from {Exclude => excludes}, last);
 	  );
-     if ex#?(baseFilename name) or not fileExists name then return {};
+     bn := baseFilename name;
+     if any(excludes, pattern -> match(pattern, bn)) then return {};
+     if not fileExists name then return {};
      if not isDirectory name then return {name};
      if not name#-1 === "/" then name = name | "/";
      prepend(name,flatten apply(drop(readDirectory name,2), f -> findFiles(name|f,opts)))
