@@ -101,7 +101,7 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 	       tarf := transform srcf;
 	       if tarf#-1 === "/" 
 	       then (
-		    if not isDirectory tarf then mkdir tarf 
+		    if not isDirectory tarf then makeDirectory tarf 
 		    )
 	       else (
      		    if not isRegularFile srcf 
@@ -145,7 +145,7 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 			 else (
 			      if opts.Verbose then stderr << "--unsymlinking: " << relsrcf << " -> " << tarf << endl;
 			      if not fileExists tarf then (
-				   stderr << "--  skipping: link does not exist" << endl;
+				   -- stderr << "--  skipping: link does not exist" << endl;
 				   )
 			      else if relsrcf =!= readlink tarf then (
 				   stderr << "--  skipping: unexpected file " << tarf << endl;
