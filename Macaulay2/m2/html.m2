@@ -41,10 +41,10 @@ rel := url -> (
      if isAbsolute url 
      then url
      else (
-	  --stderr << "rel : url = " << url << endl
-	  --<< "    (prefixDirectory | url) = " << (prefixDirectory | url) << endl
-	  --<< "     fileExists (prefixDirectory | url) = " << fileExists (prefixDirectory | url) << endl;
-	  if absoluteLinks and fileExists (prefixDirectory | url) then (prefixDirectory | url)
+	  -- stderr << "rel : url = " << url << endl
+	  -- << "    (prefixDirectory | url) = " << (prefixDirectory | url) << endl
+	  -- << "     fileExists (prefixDirectory | url) = " << fileExists (prefixDirectory | url) << endl;
+	  if absoluteLinks and class prefixDirectory === String and fileExists (prefixDirectory | url) then (prefixDirectory | url)
      	  else relativizeFilename(htmlDirectory, url)))
 
 htmlFilename = method(SingleArgumentDispatch => true)
