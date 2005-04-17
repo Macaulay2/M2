@@ -134,7 +134,7 @@ newPackage(String) := opts -> (title) -> (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 		    addEndFunction(() -> if isOpen db then close db))));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
-     newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
+     -- newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
      global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
@@ -283,7 +283,7 @@ use Package := pkg -> if not member(pkg,packages) then (
 forceLoadDocumentation = false
 beginDocumentation = () -> (
      if not forceLoadDocumentation and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
-	  -- stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	  stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  return end;
 	  );
      )

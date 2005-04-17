@@ -13,7 +13,6 @@ emacs html: all; $(MAKE) -C ../$@
 .PHONY: clean all install html distclean check default initialize prep always tags install-tmp
 
 LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
-EXAMPLEDATAFILES = expression sample
 
 # there is a parallel list of tutorials in overview3.m2
 TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
