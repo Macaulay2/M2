@@ -493,12 +493,10 @@ installPackage String := opts -> pkg -> (
      installPackage(reloadPackage(pkg,opts), opts))
 
 installPackage Package := opts -> pkg -> (
-     -- check first that we've read the raw documentation
-     rawDoc := pkg#"raw documentation";
-     if opts.MakeDocumentation and #rawDoc == 0 then (
-	  pkg = reloadPackage(pkg#"title",opts);
-     	  rawDoc = pkg#"raw documentation";
-	  if #rawDoc == 0 then stderr << "--warning: package seems to have no documentation" << endl;
+     if pkg =!= Macaulay2Core then (
+     	  pkg = reloadPackage(pkg#"title",opts);
+     	  rawDoc := pkg#"raw documentation";
+     	  if #rawDoc == 0 then stderr << "--warning: package seems to have no documentation" << endl;
 	  );
 
      absoluteLinks = opts.AbsoluteLinks;

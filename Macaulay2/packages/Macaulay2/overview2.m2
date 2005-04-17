@@ -1624,42 +1624,53 @@ document {
      another program.  The function ", TO "get", " can be used to obtain 
      the entire contents of a file as a single string.  We illustrate this
      here with a file whose name is ", TT "expression", ".",
-     EXAMPLE ///get "expression"///,
+     PARA,
+     "First we create the file by writing the desired text to it.",
+     EXAMPLE {
+	  "fn = temporaryFileName()",
+	  "fn << \"z^6+3*x*z^4+6*y*z^4+3*x^2*z^2+12*x*y*z^2+12*y^2*z^2+x^3+6*x^2*y+12*x*y^2+8*y^3\" << endl << close"
+	  },
+     "Now we get the contents of the file, as a single string.",
+     EXAMPLE "get fn",
      "This isn't quite what you want, because a string containing a description
      of a polynomial is not the same as a polynomial.  We may use
      ", TO "value", " to evaluate the string and produce the corresponding
      polynomial, after first setting up a polynomial ring to contain it.",
      EXAMPLE {
 	  ///R = ZZ/101[x,y,z]///,
-	  ///f = value get "expression"///,
+	  ///f = value get fn///,
 	  ///factor f///,
 	  },
      "Often a file will contain code written in the Macaulay 2 language.
-     We have a file called ", TT "sample", " with two lines of code.",
-     EXAMPLE ///<< get "sample";///,
+     Let's create such a file.",
+     EXAMPLE {
+	  "fn << \"sample = 2^100\nprint sample\n\" << close"
+	  },
+     "Now verify that it contains the desired text with ", TO "get", ".",
+     EXAMPLE ///get fn///,
      "To load and execute that code, use ", TO "load", ".",
-     EXAMPLE ///load "sample"///,
+     EXAMPLE ///load fn///,
      "The command ", TO "needs", " can be used to load a file only if
      it hasn't already been loaded.",
-     EXAMPLE ///needs "sample"///,
+     EXAMPLE ///needs fn///,
      "For debugging or display purposes, it is sometimes useful to be able 
      to simulate entering the lines of a file one by one, so they appear
      on the screen along with prompts and output lines.  We use
      ", TO "input", " for
      this.",
-     EXAMPLE ///input "sample"///,
+     EXAMPLE ///input fn///,
      "There are other ways to manipulate the contents of a file with
      multiple lines.  First, let's use ", TO "peek", " to observe the 
      extent of this string returned by ", TO "get", ".",
-     EXAMPLE ///peek get "sample"///,
+     EXAMPLE ///peek get fn///,
      "The resulting string has newlines in it; we can use ", TO "lines", "
      to break it apart into a list of strings, with one row in each string.",
-     EXAMPLE ///lines get "sample"///,
+     EXAMPLE ///lines get fn///,
      "We may use ", TO "peek", " to observe the extent of these strings.",
-     EXAMPLE ///peek lines get "sample"///,
+     EXAMPLE ///peek lines get fn///,
      "We could even use ", TO "stack", " to assemble the lines of the
      file into a net.",
-     EXAMPLE ///stack lines get "sample"///
+     EXAMPLE ///stack lines get fn///
      }
 
 document {
