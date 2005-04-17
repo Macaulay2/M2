@@ -7,4 +7,4 @@ Makefile
 config.Makefile
 config.status
 configure.scan
-tmp
+tmp*
