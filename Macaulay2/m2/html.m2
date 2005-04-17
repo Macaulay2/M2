@@ -887,6 +887,7 @@ installPackage Package := opts -> pkg -> (
      -- all done
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
+     if prefixDirectory =!= null then makePackageIndex();
      )
 
 userMacaulay2Directory := () -> (
