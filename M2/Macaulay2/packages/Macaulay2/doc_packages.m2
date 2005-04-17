@@ -108,13 +108,14 @@ document {
 	  },
      Consequences => {"the functions in the sequence are made available 
 	  to the user of the package"},
-     "Blah xxx A package can contain the code for many functions, only some 
+     "A package can contain the code for many functions, only some 
      of which should be made visible to the user. ", TT "export",
      " allows one to decided which variables are global variables. 
      For an example see ", TO "an example of a package", ".",
      PARA,
-     "TO export variables which the user can modify, see ", 
-     TO exportMutable, ".",
+     "Use ", 
+     TO exportMutable,
+     " to export variables which the user can modify.", 
      SeeAlso => {"packages", "creating packages", (debug,Package)}
      }
 
@@ -174,20 +175,37 @@ document {
 document {
      Key => (installPackage,String),
      Headline => "load and install a package and its documentation",
-     Usage => "",
+     Usage => "installPackage PACKAGENAME",
      Inputs => {
+	  "PACKAGENAME" => "the name of the package"
 	  },
      Outputs => {
 	  },
      Consequences => {
+	  {"Install the package in a local directory, so that in the future, 
+	  one may simply use load or loadPackage.  Documentation for the
+	  package is also produced, running any Macaulay2 examples that
+	  are requested in the package documentation."}
 	  },
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => "",
-     SeeAlso => {}
+     HEADER3 {"Actual activity of ", TT "installPackage"},
+     "This function first loads the package if it has not been loaded yet.  It then loads
+     the documentation for the package, and runs the examples, and then creates the 
+     html pages and/or info pages which form the documentation.  It places all of this
+     in the application directory, and finally creates symbolic links to this package.",
+     PARA,
+     "The reason for the complication is to keep each package separate, and to allow the 
+     distribution on the internet of both the PACKAGENAME.m2 form of the package and the
+     processed form of the package (a whole directory tree).",
+     PARA,
+     "The many options control how much of this activity is performed or bypassed.",
+     SeeAlso => {"packages"}
      }
 
+document {
+     Key => [installPackage,MakeInfo],
+     Headline => "compute the info pages",
+     TT "MakeInfo => true", " -- " 
+     }
 document {
 	Key => newPackage, 
      Headline => "starts the definition of a package",
