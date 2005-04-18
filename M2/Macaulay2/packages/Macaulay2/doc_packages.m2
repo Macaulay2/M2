@@ -56,9 +56,27 @@ document {
 document {
      Key => DebuggingMode,
      Headline => "whether to enter the debugger upon error",
+     Usage => "loadPackage(...,DebuggingMode=>b)",
+     Inputs => {
+	  "b" => Boolean => "default value is false"
+	  },
+     Consequences => {
+	  {"if the value ", TT "b", " is true, then the debugger is 
+	  entered if an error occurs while loading the package"}
+     },
+     EXAMPLE {
+	  ///loadPackage("FirstPackage", DebuggingMode=>true)///,
+	  ///needsPackage("FirstPackage", DebuggingMode=>true)///,
+	  ///installPackage("FirstPackage", DebuggingMode=>true)///
+	  },
+     SeeAlso => {
+	  debug,
+	  "using the debugger"
+	  },
+     PARA,     
      TT "DebuggingMode", " -- keyword for an optional argument
      which specifies whether to enter the debugger upon an error
-     while loading a file"
+     while loading a file."
      }
 
 document {
