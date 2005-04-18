@@ -13,11 +13,10 @@ document {
      Headline => "load a package",     
      Usage => "loadPackage PACKAGENAME",
      Inputs => {
-	  "PACKAGENAME" => String => "the name of the package",
-	  DebuggingMode => Boolean => "the debugging mode to use during the loading of the package"
+	  "PACKAGENAME" => String => "the name of the package"
 	  },
      Outputs => {
-	  Package => "the package just loaded.  Typically not used."
+	  Package => "the package just loaded.  This output value is typically ignored."
 	  },
      Consequences => {
 	  {"Loads the package 'PACKAGENAME' which is in the file 'PACKAGENAME.m2'"}
@@ -25,12 +24,41 @@ document {
     "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", 
     " and should contain a package named ", TT "PACKAGENAME", ".",
     PARA,
-    "For example, to load the sample package ", TT "FirstPackage", ",",
+    "For example, to load the sample package ", TT "FirstPackage", ":",
      EXAMPLE {
 	  ///loadPackage "FirstPackage"///
 	  },
-     SeeAlso => {"packages", "an example of a package", (needsPackage,String),
-	  load}
+     SeeAlso => {"packages", 
+	  "an example of a package", 
+	  (needsPackage,String),
+	  load
+	  }
+     }
+
+document {
+     Key => [loadPackage,DebuggingMode],
+     Usage => "loadPackage(...,DebuggingMode=>b)",
+     Inputs => {
+	  "b" => Boolean => "default value is false"
+	  },
+     Consequences => {
+	  {"if the value ", TT "b", " is true, then the debugger is 
+	  entered if an error occurs"}
+     },
+     EXAMPLE {
+	  ///loadPackage("Points", DebuggingMode=>true)///
+	  },
+     SeeAlso => {
+	  debug,
+	  "using the debugger"
+	  }
+     }
+document {
+     Key => DebuggingMode,
+     Headline => "whether to enter the debugger upon error",
+     TT "DebuggingMode", " -- keyword for an optional argument
+     which specifies whether to enter the debugger upon an error
+     while loading a file"
      }
 
 document {
@@ -42,8 +70,8 @@ document {
 	  },
      Outputs => {
 	  {
-	  "either the package just loaded, or ", TO null, " if the package 
-	  did not need to be loaded."}
+	  "either the ", TO Package, " just loaded, or ", TO null, " if the package 
+	  has already been loaded."}
 	  },
      Consequences => {
 	  {"Loads the package ", TT "PACKAGENAME", " in the file ", TT "PACKAGENAME.m2"}
@@ -51,12 +79,34 @@ document {
     "The file ", TT "PACKAGENAME.m2", " should be on the load ", TO "path", 
     " and should contain a package named ", TT "PACKAGENAME", ".",
     PARA,
-    "For example, to load the sample package ", TT "FirstPackage", ",",
+    "For example, to load the sample package ", TT "FirstPackage", ":",
      EXAMPLE {
 	  ///needsPackage "FirstPackage"///,
 	  ///needsPackage "FirstPackage"///	  
 	  },
-     SeeAlso => {"packages", "an example of a package", (loadPackage,String)}
+     "The second time the package was not reloaded",
+     SeeAlso => {"packages", 
+	  "an example of a package", 
+	  (loadPackage,String)
+	  }
+     }
+document {
+     Key => [needsPackage,DebuggingMode],
+     Usage => "needsPackage(...,DebuggingMode=>b)",
+     Inputs => {
+	  "b" => Boolean => "default value is false"
+	  },
+     Consequences => {
+	  {"if the value ", TT "b", " is true, then the debugger is 
+	  entered if an error occurs"}
+     },
+     EXAMPLE {
+	  ///needsPackage("Points", DebuggingMode=>true)///
+	  },
+     SeeAlso => {
+	  debug,
+	  "using the debugger"
+	  }
      }
 
 document {
@@ -101,16 +151,17 @@ document {
 document {
      Key => export,
      Headline => "package item: export functions",
-     Usage => "export(symbol1,...,symbolN)",
+     Usage => "export(symbol1,symbol2,...)",
      Inputs => {
-	  "(symbol1,...,symbolN)" => Sequence => " of symbols to be made 
-	  available to those using this package."
+	  "(symbol1,symbol2,...)" => Sequence => " of symbols."
 	  },
-     Consequences => {"the functions in the sequence are made available 
+     Consequences => {"the symbols in the sequence, which should refer
+	  to functions or other symbols defined in the package,
+	   are made available 
 	  to the user of the package"},
      "A package can contain the code for many functions, only some 
      of which should be made visible to the user. ", TT "export",
-     " allows one to decided which variables are global variables. 
+     " allows one to specify which are not private symbols or functions.
      For an example see ", TO "an example of a package", ".",
      PARA,
      "Use ", 
@@ -122,15 +173,16 @@ document {
 document {
      Key => exportMutable,
      Headline => "package item: export writable variables",
-     Usage => "exportMutable(symbol1,...,symbolN)",
+     Usage => "export(symbol1,symbol2,...)",
      Inputs => {
-	  "(symbol1,...,symbolN)" => Sequence => " of mutable
-	  symbols to be made 
-	  available to those using this package."
+	  "(symbol1,symbol2,...)" => Sequence => " of symbols."
 	  },
-     Consequences => {"the functions in the sequence are made available 
-	  to the user of the package"},
-     "This package item is needed much less frequently that ", TO export, 
+     Consequences => {"the symbols in the sequence, which should refer
+	  to variables defined in the package,
+	   are made available 
+	  to the user of the package, in such a way that they may modify their 
+	  values"},
+     "This package item is needed much less frequently than ", TO export, 
      ".  For an example, see ", TO "an example of a package",
      SeeAlso => {"packages", "creating packages", (debug,Package)}
      }
@@ -138,19 +190,24 @@ document {
 document {
      Key => beginDocumentation,
      Headline => "package item: start documentation section",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
+     Usage => "beginDocumentation()",
      Consequences => {
+	  "Initiates the documentation section of a package"
 	  },
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => "",
-     SeeAlso => {}
+     "Documentation for a package, and tests for the package, are 
+     placed after this point in a package file.  This way, documentation can
+     be loaded separately, Macaulay 2 examples in the documentation can
+     be run, and the whole documentation can be stord in a database.",
+     PARA,
+     "For an example, see ", TO "an example of a package",
+     PARA,
+     SeeAlso => {
+	  (installPackage,String),
+	  (check,Package),
+	  "writing documentation"
+          }
      }
+
 
 document {
      Key => (TEST,String),
@@ -168,8 +225,11 @@ document {
      associated to a package.",
      PARA,
      "For an example, see ", TO "an example of a package",
-     Caveat => "When creating tests, try to insure that they ",
-     SeeAlso => {Package}
+     Caveat => "When creating tests, try to insure that they run relatively quickly.",
+     SeeAlso => {
+	  beginDocumentation,
+	  "packages"
+	  }
      }
 
 document {
@@ -207,23 +267,23 @@ document {
      TT "MakeInfo => true", " -- " 
      }
 document {
-	Key => newPackage, 
+     Key => newPackage, 
      Headline => "starts the definition of a package",
-	Usage => "newPackage ( \"package name\", ... )",
- 	Inputs => {},
-	Consequences => {"a package is created"},
-	"Here is a template for a typical ", TT "newPackage", " entry in a package.",
- 	PRE ///
-	newPackage(
-		"package name",
-		Headline => "one line description",
-		Version => 1.0,
-		Date => "month  XX, 20XX",
-		Author => "author <email>",
-		HomePage => "url",
-		DebuggingMode => true,
-		InfoDirSection => ...  -- this option is not normally used
-		)
+     Usage => "newPackage ( \"package name\", ... )",
+     Inputs => {},
+     Consequences => {"a package is created"},
+     "Here is a template for a typical ", TT "newPackage", " entry in a package.",
+     PRE ///
+     newPackage(
+	  "package name",
+	  Headline => "one line description",
+	  Version => 1.0,
+	  Date => "month  XX, 20XX",
+	  Author => "author <email>",
+	  HomePage => "url",
+	  DebuggingMode => true,
+	  InfoDirSection => ...  -- this option is not normally used
+	  )
 	///,
 	SeeAlso => {"writing packages"}
   }
