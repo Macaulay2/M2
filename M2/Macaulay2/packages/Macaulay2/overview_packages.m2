@@ -4,19 +4,23 @@ document { Key => "packages",
      and others are available from various users on the internet.",
      PARA, "For more detailed information about packages, see ", 
      TO Package, ".",
-     Subnodes => {
-     "Using and loading packages",
-	  TO (needsPackage,String),
-	  TO (loadPackage,String),
-	  TO (installPackage,String),
-     "Available packages",
+     "Some packages which are distributed with Macaulay2 include",
+     UL {
 	  TO "convex hulls and polar cones",
           TO "Dmodules",
 	  TO "elimination theory",
+	  TO "PrimaryDecomposition"
+	  },
+     Subnodes => {
+     "using packages",
+	  TO (needsPackage,String),
+	  TO (loadPackage,String),
+	  TO (installPackage,String),
      "Creating new packages",
-     	  TO "creating packages",
+     	  TO "creating a package",
 	  TO "documenting a package",
-	  TO "testing a package"
+	  TO "testing a package",
+	  TO "informing others about your package"
 	  }
      }
 
@@ -48,7 +52,18 @@ document { Key => "packages",
 --	  TO "SAGBI bases",
 --	  }
 
-document { Key => "creating packages",
+document {
+     Key => "using packages",
+     
+     Subnodes => {
+	  TO (needsPackage,String),
+	  TO (loadPackage,String),
+	  TO (installPackage,String)
+	  }
+     }
+
+     
+document { Key => "creating a package",
 	"There are four parts to a Macaulay 2 package: a preamble which 
 	is initiated by the ", TO "newPackage",
 	" function, a section where one defines which variables will be 
@@ -85,6 +100,43 @@ document { Key => "creating packages",
 	  }
      }
 
+document {
+     Key => "documenting a package",
+     "Documentation for a package is in the ", TO beginDocumentation, "
+     section of a package.",
+     PARA,
+     "The easiest way to write a documentation node for yout package, 
+     a function or variable in your package, or an overview node for your
+     package is to start from one of the following templates.",
+     UL {
+	  "document template for a package",
+	  "document template for function names",
+	  "document template for function calls (includes argument types)",
+	  "document template for an overview node",
+	  "document template for optional argument to a function"
+	  },
+     "Many items use a formatting method closely related to html. See ", 
+     TO "hypertext documentation",  " for the possible types and for examples.",
+     PARA,
+     "The steps in creating documentation, which one cycles through until happy
+     with the documentation are:",
+     UL {
+	  {"write or edit documentation nodes starting from templates"},
+	  {"in Macaulay2, use ", TO (installPackage,String), " to load the
+	       documentation and run the Macaulay 2 examples in the documentation."},
+	  {"view the documentation from your browser.  The documentation for your 
+	       package should be available from the main Macaulay2 documentation page ", 
+	       TT "applicationDirectory()|index.html", "."}
+	       }
+     }
+     
+document {
+     Key => "testing a package",
+     }
+
+document {
+     Key => "informing others about your package",
+     }
 
 document {
      Key => "an example of a package",
