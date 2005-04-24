@@ -406,7 +406,7 @@ if prefixDirectory      =!= null then (
      path = join(path, {prefixDirectory | LAYOUT#"m2", prefixDirectory | LAYOUT#"datam2"});
      )
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})
-path = select(path, fileExists)
+-- path = select(path, fileExists)
 normalPrompts()
 
 if firstTime and not nosetup then (
