@@ -167,7 +167,7 @@ document {
      }
 
 document {
-     Key => export,
+     Key => {export, (export,Sequence), (export,Symbol)},
      Headline => "package item: export functions",
      Usage => "export(symbol1,symbol2,...)",
      Inputs => {
@@ -189,7 +189,7 @@ document {
      }
 
 document {
-     Key => exportMutable,
+     Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},
      Headline => "package item: export writable variables",
      Usage => "export(symbol1,symbol2,...)",
      Inputs => {

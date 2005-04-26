@@ -526,6 +526,8 @@ documentOptions := new HashTable from {
      Subnodes => true }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
+notMissing = new MutableHashTable
+
 document = method( SingleArgumentDispatch => true )
 
 document List := z -> document toSequence z
@@ -539,11 +541,13 @@ document Sequence := args -> (
 	       if opts#?key then error("option ",key," encountered twice");
 	       opts#key = arg#1));
      args = select(args, arg -> class arg =!= Option);
-     if not opts.?Key then if args#?0 then (
-	  opts.Key = args#0;
-	  args = drop(args,1);
-	  ) else error "missing Key";
-     opts.DocumentTag = tag := makeDocumentTag(opts.Key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
+     if not opts.?Key then error "missing Key";
+     key := opts.Key;
+     if class key === List then (
+	  scan(drop(key,1), k -> notMissing#k = first key);
+	  key = first key;
+	  );
+     opts.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
      currentNodeName = DocumentTag.FormattedKey tag;
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
@@ -577,7 +581,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
-	  if d === null then return "missing documentation";
+	  if d === null and not notMissing#?(DocumentTag.Key tag) then return "missing documentation";
 	  );
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
@@ -585,11 +589,15 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 commentize = s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
---   the first member fo the pair is the string to use for sorting
+--   the first member of the pair is the string to use for sorting
 --   the second member is the corresponding hypertext entry in the UL list
 optTO := i -> (
-     r := fixup TOH{i};
-     (DocumentTag.FormattedKey first r, SEQ r))
+     i = makeDocumentTag i;
+     fkey := DocumentTag.FormattedKey i;
+     key  := DocumentTag.Key i;
+     if notMissing#?key
+     then (fkey,htmlLiteral fkey)
+     else (fkey, SEQ fixup TOH{i}))
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      -- we might want a new type of TO so that in info mode this would look like this:
      --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)

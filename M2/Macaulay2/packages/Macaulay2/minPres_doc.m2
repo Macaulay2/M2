@@ -1,4 +1,5 @@
-document{(minPres,Ring),
+document{
+     Key => (minPres,Ring),
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => {
 	  TT "Q = minPres R", "-- If ", TT "S", " is a polynomial ring 
@@ -28,13 +29,15 @@ document{(minPres,Ring),
      }
 
 
-document{ [minPres,Variable],
+document{ 
+     Key => [minPres,Variable],
      Headline=> "Rename the variables in the ring given so that the minimal 
      presentation variables are named differently than those in the original 
      ring."
      }
 
-document{(minPres, Ideal),
+document{
+     Key => (minPres, Ideal),
      Headline => "compute a minimal presentation of an ideal",
      Usage => {
 	  TT "J = minPres I", "-- If ", TT "R", " is the ring of ", TT "I", 
