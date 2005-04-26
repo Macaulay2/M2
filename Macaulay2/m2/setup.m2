@@ -190,30 +190,31 @@ Thing.NoPrint = x -> (
      -- do nothing
      )
 
-isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
+isSpecial := filename -> match( "^(\\$|!)", filename )
 
 tryload := (filename,loadfun,notify) -> (
      ret := null;
-     if isAbsolutePath filename or isSpecial filename then (
+     loaded := false;
+     if class filename === String and (isAbsolutePath filename or isSpecial filename) then (
 	  if fileExists filename then (
 	       ret = loadfun filename;
 	       markLoaded(filename,filename,notify);
-	       ret)
-	  else error("file doesn't exist: \"", filename, "\""))
-     else (
-          if class path =!= List then error "expected 'path' to be a list (of strings)";
-	  loaded := false;
-          scan(
-	       if currentFileDirectory == "--startupString--/" then path else prepend(currentFileDirectory, path),
-	       dir -> (
-		    if class dir =!= String then error "member of 'path' not a string";
-		    fullfilename := dir | filename;
-		    if fileExists fullfilename then (
-		    	 ret = loadfun fullfilename;
-		    	 markLoaded(fullfilename,filename,notify);
-			 loaded = true;
-			 break)));
-	  if loaded then ret else error("file not found on path: \"", filename, "\"")))
+	       return ret;)
+	  else error("file doesn't exist: \"", filename, "\""));
+     if class path =!= List then error "expected 'path' to be a list (of strings)";
+     scan(path, dir -> if class dir =!= String then error "member of 'path' not a string");
+     if class filename === String then filename = {filename};
+     epath := if currentFileDirectory == "--startupString--/" then path else prepend(currentFileDirectory, path);
+     scan(epath, dir -> (
+		    if loaded then break;
+		    scan(filename, filename -> (
+			 fullfilename := dir | filename;
+			 if fileExists fullfilename then (
+			      ret = loadfun fullfilename;
+			      markLoaded(fullfilename,filename,notify);
+			      loaded = true;
+			      break)))));
+     if loaded then ret else error("file not found on path: \"", filename, "\""))
 
 load = (filename) -> tryload(filename,simpleLoad,notify)
 input = (filename) -> tryload(filename,simpleInput,false)

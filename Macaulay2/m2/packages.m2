@@ -37,7 +37,7 @@ loadPackage = method(
 loadPackage String := opts -> pkgtitle -> (
      filename := pkgtitle | ".m2";
      substituteOptions#pkgtitle = opts;
-     load filename;
+     load {pkgtitle|"/"|filename, filename};
      remove(substituteOptions,pkgtitle);
      if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
      value PackageDictionary#pkgtitle)
@@ -153,7 +153,6 @@ newPackage(String) := opts -> (title) -> (
 
 export = method(SingleArgumentDispatch => true)
 export Symbol := x -> export (1:x)
-export List := v -> export toSequence v
 export Sequence := v -> (
      if currentPackage === null then error "no current package";
      pd := currentPackage#"private dictionary";
@@ -179,7 +178,6 @@ export Sequence := v -> (
      v)
 exportMutable = method(SingleArgumentDispatch => true)
 exportMutable Symbol := x -> exportMutable (1:x)
-exportMutable List := v -> exportMutable toSequence v
 exportMutable Sequence := v -> (
      export v;
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
