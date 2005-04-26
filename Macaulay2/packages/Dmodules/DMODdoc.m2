@@ -90,7 +90,7 @@ document {
      }
 -----------------------------------------------
 document {
-     Key => (ExternalProduct),
+     Key => ExternalProduct,
      Headline => "external product of modules or complexes"
      }
 document {
@@ -98,17 +98,17 @@ document {
      Headline => "indicates whether TwistMap should be computed"
      }
 document {
-     Key => (TwistMap),
+     Key => TwistMap,
      Headline => "indicates whether TwistMap should be computed"
      }
 
 document {
-     Key => (twistMap),
+     Key => twistMap,
      Headline => "a key attached by ExternalProduct",
      "see ", TO "ExternalProduct"
      }
 document {
-     Key => (twistInvMap),
+     Key => twistInvMap,
      Headline => "a key attached by ExternalProduct",
      "see ", TO "ExternalProduct"
      }
@@ -124,7 +124,7 @@ document {
      }
 
 document {
-     Key => (bFunction),
+     Key => bFunction,
      UL {
 	  {TO (bFunction, Ideal,List), " - for an ideal"},
 	  {TO (bFunction, Module,List,List), " - for a module"}  
@@ -158,17 +158,17 @@ document {
 	  }
      }
 document {
-     Key => (NonGeneric),
+     Key => NonGeneric,
      Headline => "a strategy option for b-functions",
      "see ", TO "bFunction"
      }
 document {
-     Key => (TryGeneric),
+     Key => TryGeneric,
      Headline => "a strategy option for b-functions",
      "see ", TO "bFunction"
      }
 document {
-     Key => (IntRing),
+     Key => IntRing,
      Headline => "a strategy option for b-functions",
      "see ", TO "bFunction"
      }
@@ -279,18 +279,18 @@ document {
      }
 
 document {
-     Key => (ViaAnnFs),
+     Key => ViaAnnFs,
      Headline => "a strategy option for global b-functions",
      "see ", TO "globalBFunction"
      }
 document {
-     Key => (ReducedB),
+     Key => ReducedB,
      Headline => "a strategy option for global b-functions",
      "see ", TO "globalBFunction"
      }
 
 document {
-     Key =>  (globalBFunction),
+     Key =>  globalBFunction,
      Headline => "global b-function (else known as the Bernstein-Sato polynomial)",
      INSERTUSAGE {
 	  TT "globalBFunction f", " -- find the global b-function of ", TT "f"
@@ -369,7 +369,7 @@ document {
      }
 
 document {
-     Key => (globalB), 
+     Key => globalB, 
      Headline => "compute global b-function and b-operator 
           for a D-module and a polynomial",
      INSERTUSAGE {
@@ -398,17 +398,17 @@ document {
      SeeAlso => { "bFunction", "globalBFunction", "factorBFunction" }
      }  
 document {
-     Key => (Boperator),
+     Key => Boperator,
      Headline => "a key attached by globalB and Dlocalize",
      SeeAlso => { "globalB", "Dlocalize" }
      }
 document {
-     Key => (Bpolynomial),
+     Key => Bpolynomial,
      Headline => "a key attached by globalB",
      "see ", TO "globalB"
      }
 document {
-     Key => (globalBoperator),
+     Key => globalBoperator,
      Headline => "compute a b-operator of a polynomial",
      SeeAlso => {"globalB"}
      } 
@@ -558,12 +558,12 @@ document {
 	  }    	      
      } 
 document {
-     Key => (Walther),
+     Key => Walther,
      Headline => "an option for localCohom=>Strategy",
      "see ", TO "localCohom"
      } 
 document {
-     Key => (OaTa),
+     Key => OaTa,
      Headline => "an option for localCohom=>Strategy",
      "see ", TO "localCohom"
      } 
@@ -575,12 +575,12 @@ document {
      "See ", TO [localCohom,Strategy]
      }
 document {
-     Key => (OaTaWa),
+     Key => OaTaWa,
      Headline => "an option for localCohom => LocStrategy",
      SeeAlso => "localCohom"
      }
 document {
-     Key => (localCohom),
+     Key => localCohom,
      Headline => "local cohomology",
      "Local cohomology of a polynomial ring:",
      UL {
@@ -729,7 +729,7 @@ document {
      }
 
 document {
-     Key => (pruneLocalCohom),
+     Key => pruneLocalCohom,
      Headline => "prunes local cohomology modules",
      SeeAlso => {"localCohom"} 
      }
@@ -737,9 +737,11 @@ document {
      Key => [paramBpoly,GroundField],
      Headline => "characteristic for modular computation"
      }
-document {(GroundField)}
 document {
-     Key => (paramBpoly),
+     Key => GroundField
+     }
+document {
+     Key => paramBpoly,
      Headline => "compute the list of all possible Bernstein-Sato polynomials 
      for a polynomial with parametric coefficients",
      Usage => "L = paramBpoly(f,filename)", 	  
@@ -766,7 +768,7 @@ document {
      }  
 
 document {
-     Key => (makeCyclic),
+     Key => makeCyclic,
      Headline => "finds a cyclic generator of a D-module",
      Usage => "H = makeCyclic M", 
      Inputs => {
@@ -790,16 +792,19 @@ document {
      Caveat => {"The module ", EM "M", " must be holonomic."},
      SeeAlso => {"isHolonomic"}
      }  
-document {(Generator),
+document {
+     Key => Generator,
      Headline => "a key created by makeCyclic",
      "See ", TO "makeCyclic", "."
      }
-document {(AnnG),
+document {
+     Key => AnnG,
      Headline => "a key created by makeCyclic",
      "See ", TO "makeCyclic", "."
      }
 
-document {(isHolonomic),
+document {
+     Key => isHolonomic,
      Headline => "determines whether a D-module (or ideal in Weyl algebra) is holonomic"
      } 
 document {
@@ -808,7 +813,7 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => (DHom),
+     Key => DHom,
      Headline=>"D-homomorphisms between holonomic D-modules",
      INSERTUSAGE {
      TT "DHom (M, N)", " -- computes a basis of
@@ -921,19 +926,19 @@ document {
 	  }     
      }
 document {
-     Key => (Alg) }
+     Key => Alg }
 document {
-     Key => (GD),
+     Key => GD,
      Headline => "an option for PolySols=>Alg",
      SeeAlso => "PolySols" 
      }
 document {
-     Key => (Duality),
+     Key => Duality,
      Headline => "an option for PolySols=>Alg",
      SeeAlso => "PolySols" 
      }
 document {
-     Key => (PolySols),
+     Key => PolySols,
      Headline => "polynomial solutions of a holonomic system",
      INSERTUSAGE {
      TT "PolySols I", " -- computes a basis of the polynomial solutions
@@ -976,7 +981,7 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => (PolyExt),
+     Key => PolyExt,
      Headline => "dimensions of Ext groups between 
      a holonomic module and a polynomial ring",
      INSERTUSAGE {
@@ -1011,7 +1016,7 @@ document {
      }
 
 document {
-     Key => (RatSols),
+     Key => RatSols,
      Headline => "rational solutions of a holonomic system",
      INSERTUSAGE {
      TT "RatSols I", " -- computes a basis of the rational solutions
@@ -1062,7 +1067,7 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => (RatExt),
+     Key => RatExt,
      Headline => 
      "dim Ext(holonomic D-module, polynomial ring localized at the sigular locus)",
      INSERTUSAGE {
@@ -1132,7 +1137,7 @@ document {
 --     }
 
 document {
-     Key => (createDpairs),
+     Key => createDpairs,
      Headline => "sorts out the variables in Weyl algebra",
      INSERTUSAGE {
      TT "createDpairs W", " -- 
@@ -1160,18 +1165,18 @@ document {
      },
 
 document {
-     Key => (dpairInds),
+     Key => dpairInds,
      Headline => "a key attached by createDpairs",
      "see ", TO "createDpairs"
      }
 document {
-     Key => (dpairVars),
+     Key => dpairVars,
      Headline => "a key attached by createDpairs",
      "see ", TO "createDpairs"
      }
 
 document {
-     Key => (Fourier),
+     Key => Fourier,
      Headline => "Fourier transform for Weyl algebra",
      INSERTUSAGE {
      TT "Fourier L", " -- computes the Fourier transform of a ring element L",
@@ -1195,7 +1200,7 @@ document {
      },
 
 document {
-     Key => (Dtransposition),
+     Key => Dtransposition,
      Headline => "standard transposition for Weyl algebra",
      INSERTUSAGE {
      TT "Dtransposition L", " -- computes the standard transposition of a ring element L",
@@ -1228,7 +1233,7 @@ document {
      },
 
 document {
-     Key => (singLocus),
+     Key => singLocus,
      Headline => "singular locus of a D-module",
      INSERTUSAGE {
      TT "singLocus M", " -- 
@@ -1261,7 +1266,7 @@ document {
      },
 
 document {
-     Key => (charIdeal),
+     Key => charIdeal,
      Headline => "characteristic ideal of a D-module",
      INSERTUSAGE {
      TT "charIdeal M", " -- 
@@ -1303,7 +1308,7 @@ document {
      },
 
 document {
-     Key => (Drank),
+     Key => Drank,
      Headline => "rank of a D-module",
      INSERTUSAGE {
      TT "Drank M", "-- calculates the rank of a D-module M",
@@ -1339,7 +1344,7 @@ document {
      },
 
 document {
-     Key => (Ddim),
+     Key => Ddim,
      Headline => "dimension of a D-module", 
      INSERTUSAGE {
      TT "Ddim M", " -- calculate the dimension of a D-module M ",
@@ -1364,7 +1369,7 @@ document {
      },
 
 document {
-     Key => (makeWeylAlgebra),
+     Key => makeWeylAlgebra,
      Headline => "Weyl algebra corresponding to a polynomial ring",
      INSERTUSAGE {
      TT "makeWeylAlgebra R", " -- 
@@ -1388,7 +1393,7 @@ document {
      }
 
 document {
-     Key => (Ddual),
+     Key => Ddual,
      Headline => "holonomic dual of a D-module",
      INSERTUSAGE {
      TT "Ddual M", " -- 
@@ -1427,18 +1432,18 @@ document {
 	  }
      }
 document {
-     Key => (Oaku),
+     Key => Oaku,
      Headline => "an option for Dlocalize=>Strategy",
      "see ", TO "Dlocalize"
      } 
 document {
-     Key => (OTW),
+     Key => OTW,
      Headline => "an option for Dlocalize=>Strategy",
      "see ", TO "Dlocalize"
      } 
 
 document {
-     Key => (Dlocalize),
+     Key => Dlocalize,
      Headline => "localization of a D-module",
      INSERTUSAGE {
      TT "Dlocalize (M, f)", " -- 
@@ -1492,53 +1497,53 @@ document {
      SeeAlso => {"AnnFs", "Dintegration"}
      }
 document {
-     Key => (Dlocalization),
+     Key => Dlocalization,
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (DlocalizationAll),
+     Key => DlocalizationAll,
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (DlocalizeMap),
+     Key => DlocalizeMap,
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (LocModule),
+     Key => LocModule,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (GeneratorPower),
+     Key => GeneratorPower,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (LocMap),
+     Key => LocMap,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (annFS),
+     Key => annFS,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (DlocalizeAll),
+     Key => DlocalizeAll,
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (IntegrateBfunction),
+     Key => IntegrateBfunction,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (Bfunction),
+     Key => Bfunction,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
      }
 document {
-     Key => (DlocalizationMap),
+     Key => DlocalizationMap,
      "See ", TO "Dlocalize", "."
      }
 
@@ -1553,18 +1558,18 @@ document {
      }
 }
 document {
-     Key => (Schreyer),
+     Key => Schreyer,
      Headline => "strategy for computing a resolution of a D-module"
      }
 document {
-     Key => (Vhomogenize),
+     Key => Vhomogenize,
      Headline => "strategy for computing a resolution of a D-module"
      }
 
 document {
-     Key => (Dresolution),
+     Key => Dresolution,
      Headline => "resolution of a D-module",
-     INSERTUSAGE {TT "Dresolution (M)", " -- 
+     INSERTUSAGE {TT "Dresolution M", " -- 
      computes a Schreyer resolution of the D-module M",
      BR, NOINDENT, TT "Dresolution (I, w)", " -- 
      computes a Schreyer resolution of the quotient module D/I",
@@ -1614,7 +1619,7 @@ document {
      SeeAlso => {"gbw", "Drestriction"}
      }
 document {
-     Key => (Dres),
+     Key => Dres,
      Headline => "abbreviation for Dresolution",
      SeeAlso =>{"Dresolution"}
      }	
@@ -1625,7 +1630,7 @@ document {
 	  TO [Dresolution,Strategy]
 	  }
 document {
-     Key => (Drestriction),
+     Key => Drestriction,
      Headline => "restriction modules of a D-module",
      INSERTUSAGE {TT "Drestriction (M, w)", " -- 
      computes derived restriction modules of M with respect
@@ -1713,81 +1718,81 @@ document {
      SeeAlso => {"Dresolution", "Dintegration"}
      }
 document {
-     Key => (Drestrict),
+     Key => Drestrict,
      Headline => "abbreviation for Drestrict",
      SeeAlso =>{"Drestriction"}
      }	
 document {
-     Key => (DrestrictionClasses),
+     Key => DrestrictionClasses,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictClasses),
+     Key => DrestrictClasses,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictIdeal),
+     Key => DrestrictIdeal,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictAll),
+     Key => DrestrictAll,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictionComplex),
+     Key => DrestrictionComplex,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictionAll),
+     Key => DrestrictionAll,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictionIdeal),
+     Key => DrestrictionIdeal,
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (DrestrictComplex),
+     Key => DrestrictComplex,
      SeeAlso =>{"Drestriction"}
      }
 
 document {
-     Key => (HomologyModules),
+     Key => HomologyModules,
      Headline => "a key in a hashtable; an option of DExt",
      SeeAlso => {"Drestriction", "Dintegration", "DExt" }
      }
 document {
-     Key => (GenCycles),
+     Key => GenCycles,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
-     Key => (Exponents),
+     Key => Exponents,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
-     Key => (Cycles),
+     Key => Cycles,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
-     Key => (Boundaries),
+     Key => Boundaries,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
-     Key => (VResolution),
+     Key => VResolution,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 document {
-     Key => (Explicit),
+     Key => Explicit,
      Headline => "a key in the hashtable created by Drestriction/Dintegration",
      SeeAlso => {"Drestriction", "Dintegration" }
      }
 
 document {
-     Key => (IntegrateComplex),
+     Key => IntegrateComplex,
      Headline => "a key in the hashtable created by Dintegration",
      SeeAlso => {"Dintegration" }
      }
@@ -1798,7 +1803,7 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => (Dintegration),
+     Key => Dintegration,
      Headline => "integration modules of a D-module",
      INSERTUSAGE {
      TT "Dintegration (M, w)", " -- 
@@ -1885,64 +1890,64 @@ document {
      SeeAlso =>{"Drestriction"}
      }
 document {
-     Key => (Dintegrate),
+     Key => Dintegrate,
      Headline => "abbreviation for Dintegration",
      SeeAlso =>{"Dintegration"}
      }	
 document {
-     Key => (DintegrateIdeal),
+     Key => DintegrateIdeal,
      SeeAlso =>{"Dintegration"}
      }	
 document {
-     Key => (DintegrationIdeal),
+     Key => DintegrationIdeal,
      SeeAlso =>{"Dintegration"}
      }	
 document {
-     Key => (DintegrationComplex),
+     Key => DintegrationComplex,
      SeeAlso =>{"Dintegration"}
      }	
 document {
-     Key => (DintegrateClasses),
+     Key => DintegrateClasses,
      SeeAlso =>{"Dintegration"}
      }
 document {
-     Key => (DintegrateComplex),
+     Key => DintegrateComplex,
      SeeAlso =>{"Dintegration"}
      }
 document {
-     Key => (DintegrationClasses),
+     Key => DintegrationClasses,
      SeeAlso =>{"Dintegration"}
      }
 document {
-     Key => (DintegrateAll),
+     Key => DintegrateAll,
      SeeAlso =>{"Dintegration"}
      }
 document {
-     Key => (DintegrationAll),
+     Key => DintegrationAll,
      SeeAlso =>{"Dintegration"}
      }
 
 document {
      Key => [gkz,Vars] }
 document {
-     Key => (Vars) }
+     Key => Vars }
 document {
-     Key => (Local),
+     Key => Local,
      Headline => "a choice for option Vars" 
      }
 document {
-     Key => (Global),
+     Key => Global,
      Headline => "a choice for option Vars" 
      }
 document {
-     Key => (gkz),
+     Key => gkz,
      Headline => "GKZ A-hypergeometric ideal",
      INSERTUSAGE {
      TT "gkz (A,b)", " -- 
      computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A and parameter b",
      BR, NOINDENT,
-     TT "gkz (A)", " -- 
+     TT "gkz A", " -- 
      computes parametric Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A"
      },
@@ -1992,7 +1997,7 @@ document {
      }
 
 document {
-     Key => (PolyAnn),
+     Key => PolyAnn,
      Headline => "annihilator of a polynomial in Weyl algebra",
      INSERTUSAGE {
      TT "PolyAnn f", " -- 
@@ -2014,7 +2019,7 @@ document {
      }
 
 document {
-     Key => (RatAnn),
+     Key => RatAnn,
      Headline => "annihilator of a rational function in Weyl algebra",
      INSERTUSAGE {
      TT "RatAnn f", " -- 
@@ -2041,7 +2046,7 @@ document {
      SeeAlso => {"PolyAnn"}
      }
 document {
-     Key => (WeylClosure),
+     Key => WeylClosure,
      Headline => "Weyl closure of an ideal",
      INSERTUSAGE {
      TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
@@ -2088,7 +2093,7 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => (deRham),
+     Key => deRham,
      Headline => "deRham cohomology groups",
      INSERTUSAGE {
      TT "deRham f", "-- 
@@ -2119,37 +2124,37 @@ document {
      EXAMPLE {
 	"R = QQ[x,y]",
      	"f = x^2-y^3", 
-     	"deRham(f)"
+     	"deRham f"
 	},
      SeeAlso => {"Dlocalization", "Dintegration"}
      }
 document {
-     Key => (deRhamAll),
+     Key => deRhamAll,
      "see ", TO "deRham"
      }
 document {
-     Key => (TransferCycles),
+     Key => TransferCycles,
      Headline => "a key in the hashtable created by deRham",
      SeeAlso => "deRham"
      }
 document {
-     Key => (CohomologyGroups),
+     Key => CohomologyGroups,
      Headline => "a key in the hashtable created by deRham",
      SeeAlso => "deRham"
      }
 document {
-     Key => (PreCycles),
+     Key => PreCycles,
      Headline => "a key in the hashtable created by deRham",
      SeeAlso => "deRham"
      }
 document {
-     Key => (OmegaRes),
+     Key => OmegaRes,
      Headline => "a key in the hashtable created by deRham",
      SeeAlso => "deRham"
      }
 
 document {
-     Key => (diffOps),
+     Key => diffOps,
      Headline => "differential operators of specified order 
      for a quotient polynomial ring",
      INSERTUSAGE {
@@ -2190,18 +2195,18 @@ document {
      },
 
 document {
-     Key => (PolyGens),
+     Key => PolyGens,
      Headline => "a key of the hashtable generated by diffOps",
      SeeAlso => "diffOps"
      }
 document {
-     Key => (BasisElts),
+     Key => BasisElts,
      Headline => "a key of the hashtable generated by diffOps",
      SeeAlso => "diffOps"
      }
 
 document {
-     Key => (putWeylAlgebra),
+     Key => putWeylAlgebra,
      Headline => "the output of diffOps => elements of Weyl algebra",
      INSERTUSAGE {
      TT "putWeylAlgebra m", " -- 
@@ -2229,7 +2234,7 @@ document {
      }
 
 document {
-     Key => (inw),
+     Key => inw,
      Headline => "initial form/ideal w.r.t. a weight",
      INSERTUSAGE {
      TT "inw (L, w)", " -- 
@@ -2274,7 +2279,7 @@ document {
      },
 
 document {
-     Key => (gbw),
+     Key => gbw,
      Headline => "Groebner basis w.r.t. a weight",
      INSERTUSAGE {
      TT "gbw (I, w)", " -- 
@@ -2312,7 +2317,7 @@ document {
      }
 
 document {
-     Key => (pInfo),
+     Key => pInfo,
      Headline => "prints tracing info",
      "Prints tracing information according to the level set by ", 
 	TT "Dtrace", ".",
@@ -2322,51 +2327,51 @@ document {
 -- (better docs needed)
 ----------------------------------------------------------------------------
 document {
-     Key => (SparseMutableMatrix),
+     Key => SparseMutableMatrix,
      Headline => "sparse matrix"
      }
 document {
-     Key => (sparseMutableMatrix),
+     Key => sparseMutableMatrix,
      Headline => "make sparse matrix"
      }
 document {
-     Key => (newSparseMatrix),
+     Key => newSparseMatrix,
      Headline => "a way to grab sparse matrix from engine"
      }
 document {
-     Key => (reduceCompress),
+     Key => reduceCompress,
      Headline => "simplify sparse matrix"
      }
 document {
-     Key => (getEntry),
+     Key => getEntry,
      Headline => "get a sparse matrix entry"
      }
 document {
-     Key => (iden),
+     Key => iden,
      Headline => "identity sparse matrix"
      }
 document {
-     Key => (sparsemat),
+     Key => sparsemat,
      Headline => "create a sparse matrix"
      }
 document {
-     Key => (numcols),
+     Key => numcols,
      Headline => "number of columns of a sparse matrix"
      }
 document {
-     Key => (numrows),
+     Key => numrows,
      Headline => "number of rows of a sparse matrix"
      }
 document {
-     Key => (setEntry),
+     Key => setEntry,
      Headline => "set a sparse matrix entry"
      }
 document {
-     Key => (reducePivots),
+     Key => reducePivots,
      Headline => "reduce pivots in a sparse matrix"
      }
 document {
-     Key => (Dprune),
+     Key => Dprune,
      Headline => "prunes a matrix over a Weyl algebra"
      }
 document {
@@ -2378,11 +2383,11 @@ document {
      Headline => "indicates whether Grobner basis should be computed"
      }
 document {
-     Key => (optGB),
+     Key => optGB,
      Headline => "indicates whether Grobner basis should be computed"
      }
 document {
-     Key => (FourierInverse),
+     Key => FourierInverse,
      Headline => "Inverse Fourier map (D-modules)",
      " see ", TO "Fourier" 
      }
