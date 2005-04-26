@@ -6,7 +6,8 @@ newPackage("GenericInitialIdeal",
 
 export (gin, lexgin, AttemptCount, example)
 
-document {"GenericInitialIdeal",
+document {
+     Key => "GenericInitialIdeal",
      TT "GenericInitialIdeal", " is a package for computing generic initial ideals of
      ideals in a polynomial ring, that is, the monomial ideal of lead terms after a 
      random change of coordinates.  All of these routines are probabilistic: 

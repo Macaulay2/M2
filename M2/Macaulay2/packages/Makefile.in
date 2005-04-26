@@ -44,7 +44,7 @@ install ::
 		    -e "installPackage(\"$$i\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(encapdir)/\")" \
 		    -e "exit 0" ; \
 	      fi ; \
-	     ) || break ; \
+	     ) || exit 1 ; \
 	done
 
 clean::; rm -rf tmp *.installed
