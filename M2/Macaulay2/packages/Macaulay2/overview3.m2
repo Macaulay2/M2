@@ -365,45 +365,6 @@ document { Key => "frequently encountered problems",
 	  }
      }
 
-
-
-document { Key => "using packages",
-	"To use a package one must load it.",
-	EXAMPLE {
-		///loadPackage "FirstPackage"///
-		},
-	"At this point the package is mostly functional. However, to get the full functionality out of the package, one must install the package.",
-	EXAMPLE {
-		"installPackage FirstPackage"
-		},
-	"Installing the package creates the online documentation for the package and evaluates Macaulay 2 code in the documentation of the package."
-	 }
-
-
-
-document {
-     Key => "writing documentation",
-	"Documentation for Macaulay 2 is written in a hypertext markup language. It is 
-	then formatted as the documentation built in to Macaulay 2, the online 
-	", TO "HTML", " documentation, and the info pages. Much of the
-	format and structure of the documentation is automatically generated.",
-	PARA,
-        "There are two main types of documentation in Macaulay 2: basic
-	documentation of individual features, and overviews.  Essentially
-	they are documented the same way. However, there are some differences,
-	see ", TO "document", " for details.",
-	PARA,
-	"There are a few stylistic conventions which should be noted:",
-	UL {
-		{"Lowercase is used for all titles, unless a proper noun is being used."},
-		{"The name of any Macaulay 2 function, option, or variable, occurring in the documentation 
-		should be an active hyperlink. This can be accomplished with the tag", TO "TO", "."},
-		{"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."}
-		},
-  SeeAlso => document
-     }
-
-
 document {
      Key => "specifying typical values",
      "For the purpose of construction good documentation automatically, it

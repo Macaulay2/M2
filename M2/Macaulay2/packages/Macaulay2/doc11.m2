@@ -22,12 +22,12 @@ document {
      Headline => "the class of empty mark-up types used with hypertext"
      }
 
-document {
-     Key => PARA,
-     Headline => "paragraph separator",
-	Usage => "PARA x",
-     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
-     }
+--document {
+--     Key => PARA,
+--     Headline => "paragraph separator",
+--	Usage => "PARA x",
+--     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
+--     }
 
 document {
      Key => PARA1,

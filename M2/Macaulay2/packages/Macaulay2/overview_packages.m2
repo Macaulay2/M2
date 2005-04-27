@@ -52,15 +52,14 @@ document { Key => "packages",
 --	  TO "SAGBI bases",
 --	  }
 
-document {
-     Key => "using packages",
-     
-     Subnodes => {
-	  TO (needsPackage,String),
-	  TO (loadPackage,String),
-	  TO (installPackage,String)
-	  }
-     }
+--document {
+--     Key => "using packages",
+--     Subnodes => {
+--	  TO (needsPackage,String),
+--	  TO (loadPackage,String),
+--	  TO (installPackage,String)
+--	  }
+--     }
 
      
 document { Key => "creating a package",
