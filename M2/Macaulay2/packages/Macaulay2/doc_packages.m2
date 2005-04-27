@@ -9,7 +9,7 @@ document {
      }
 
 document {
-     Key => (loadPackage,String),
+     Key => {loadPackage,(loadPackage,String)},
      Headline => "load a package",     
      Usage => "loadPackage PACKAGENAME",
      Inputs => {
@@ -30,7 +30,7 @@ document {
 	  },
      SeeAlso => {"packages", 
 	  "an example of a package", 
-	  (needsPackage,String),
+	  needsPackage,
 	  load
 	  }
      }
@@ -80,7 +80,7 @@ document {
      }
 
 document {
-     Key => (needsPackage,String),
+     Key => {needsPackage,(needsPackage,String),(needsPackage,Package)},
      Headline => "load a package if not already loaded",
      Usage => "needsPackage PACKAGENAME",
      Inputs => {
@@ -105,7 +105,7 @@ document {
      "The second time the package was not reloaded",
      SeeAlso => {"packages", 
 	  "an example of a package", 
-	  (loadPackage,String)
+	  loadPackage
 	  }
      }
 document {
