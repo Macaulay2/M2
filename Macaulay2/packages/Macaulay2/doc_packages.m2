@@ -226,6 +226,14 @@ document {
           }
      }
 
+--document {
+--     Key => TEST,
+--     Headline => "commands for testing later",
+--     TT "TEST s", " -- writes the string ", TT "s", " to a new test file.  The
+--     commands in that file can be run later as a test.",
+--     PARA,
+--     "Intended for internal use only."
+--     }
 
 document {
      Key => (TEST,String),
@@ -251,8 +259,12 @@ document {
      }
 
 document {
+     Key => installPackage,
+     Headline => "load and install a package and its documentation"
+     }
+document {
      Key => (installPackage,String),
-     Headline => "load and install a package and its documentation",
+     Headline => "load and install a package and its documentation ",
      Usage => "installPackage PACKAGENAME",
      Inputs => {
 	  "PACKAGENAME" => "the name of the package"
@@ -265,16 +277,34 @@ document {
 	  package is also produced, running any Macaulay2 examples that
 	  are requested in the package documentation."}
 	  },
-     HEADER3 {"Actual activity of ", TT "installPackage"},
-     "This function first loads the package if it has not been loaded yet.  It then loads
-     the documentation for the package, and runs the examples, and then creates the 
-     html pages and/or info pages which form the documentation.  It places all of this
-     in the application directory, and finally creates symbolic links to this package.",
+     "The main action of this routine is to generate the documentation
+     of the given package and install the Macaulay2 package and documentation. ",
      PARA,
-     "The reason for the complication is to keep each package separate, and to allow the 
-     distribution on the internet of both the PACKAGENAME.m2 form of the package and the
-     processed form of the package (a whole directory tree).",
-     PARA,
+     "In order to accomplish this, several steps are performed, or
+     bypassed, depending on the optional parameters.",
+     UL {
+	  "load the package, if not already loaded",
+	  "determine which help pages have changed since last install",
+	  {"run any new or previously failed examples (or all examples,
+	       by using ", TO2("[installPackage,RemakeAllExamples]",
+	                 TT "RemakeAllExamples=>true"), ")"},
+	  {"generate the html pages of modified help pages (or all html pages, 
+	       by using ", TO2([installPackage,RemakeAllDocumentation], 
+	                 TT "RemakeAllDocumentation=>true"), ")"
+	       },
+	  {"optionally generate the info pages, by using ", 
+	       TO2([installPackage,MakeInfo], TT "MakeInfo=>true")},
+	  {"install the documentation and package in ", TT "applicationDirectory()|encap"},
+	  {"create symbolic links in ", TT "applicationDirectory()|local", " to this package"},
+	  {"place a link to this html documentation in ", TT "applicationDirectory()|index.html"}
+	  },
+
+--     HEADER3 {"Actual activity of ", TT "installPackage"},
+--     "This function first loads the package if it has not been loaded yet.  It then loads
+--     the documentation for the package, and runs the examples, and then creates the 
+--     html pages and/or info pages which form the documentation.  It places all of this
+--     in the application directory, and finally creates symbolic links to this package.",
+--     PARA,
      "The many options control how much of this activity is performed or bypassed.",
      SeeAlso => {"packages"}
      }
@@ -282,8 +312,78 @@ document {
 document {
      Key => [installPackage,MakeInfo],
      Headline => "compute the info pages",
-     TT "MakeInfo => true", " -- " 
+     Usage => "installPackage(...,MakeInfo=>b)",
+     Inputs => {
+	  "b" => Boolean => "default is false"
+	  },
+     Consequences => {
+	  {"If ", TT "b", " is true, then generate the info pages,
+	       which are help pages that can be viewed using the
+	       Unix command ", TT "info", " or viewed in emacs"}
+	  },
+     "For example, to generate and install the info pages for the package
+     GenericInitialIdeals, use",
+     PRE///installPackage("GenericInitialIdeals", MakeInfo=>true)
+     ///
      }
+--document {
+--     Key => [installPackage,RemakeAllDocumentation],
+--     Headline => "remake all of the documentation pages",
+--     Usage => "installPackage(...,RemakeAllDocumentation=>b)",
+--     Inputs => {
+--	  "b" => Boolean => "default is false"
+--	  },
+--     Consequences => {
+--	  {"If ", TT "b", " is true, then regenerate all of the
+--	       html pages for this package"}
+--	  },
+--     "The default action of ", 
+--     TO installPackage, " is to only rebuild the html pages of the
+--     documentation entries that have been changed since the last time
+--     the package was installed.  However, some changes to an entry
+--     will change the html of other pages.  
+--     For example, the ", TT "Headline", " of a documentation entry
+--     is used in other html pages that cross-reference this one.
+--     To rebuild these other pages, use this option:",
+--     PRE///installPackage(PACKAGENAME, RemakeAllDocumentation=>true)///
+--     }
+document {
+     Key => [installPackage,RemakeAllDocumentation],
+     Headline => "remake all of the documentation pages",
+     Usage => "installPackage(...,RemakeAllDocumentation=>true)",
+     Consequences => {
+	  {"regenerate all of the
+	       help pages for this package"}
+	  },
+     "The default action of ", 
+     TO installPackage, " is to only rebuild the html pages of the
+     documentation entries that have been changed since the last time
+     the package was installed.  However, some changes to an entry
+     will change the html of other pages.  
+     For example, the ", TT "Headline", " of a documentation entry
+     is used in other html pages that cross-reference this one.
+     To rebuild these other pages, use this option:",
+     PRE///installPackage(PACKAGENAME, RemakeAllDocumentation=>true)///
+     }
+
+--document {
+--     Key => [installPackage,IgnoreExampleErrors],
+--     Headline => "regenerate previously failed examples",
+--     Usage => "installPackage(...,IgnoreExampleErrors=>b)",
+--     Inputs => {
+--	  "b" => Boolean => "default is true"
+--	  },
+--     Consequences => {
+--	  {"If ", TT "b", " is false, then rerun documentation 
+--	       examples which previously had had errors."}
+--	  },
+--     "If a new version of ", EM "Macaulay 2", " is used, it may be
+--     necessary to rerun the examples in the documentation.  This is done
+--     by using for example":,
+--     PRE///installPackage("GenericInitialIdeals", IgnoreExampleErrors=>false)
+--     ///
+--     }
+
 document {
      Key => newPackage, 
      Headline => "starts the definition of a package",
@@ -307,6 +407,15 @@ document {
   }
 
 end
+-- writing documentation:
+-- (a) document command
+--    all parts of that
+-- (b) hypertext markup
+--    one for each of these
+-- (c) templates for different kinds of doc
+-- (d) stylistic conventions
+
+
 ---------------------------------
 document {
      Key => ,
