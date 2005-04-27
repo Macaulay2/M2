@@ -1,56 +1,71 @@
 document {
-     Key => "writing a documentation entry",
-     "A package should provide documentation for each of its 
-     exported symbols and functions.  The easiest way to
-     write documentation for an entry is to use one of the following examples 
+     Key => "writing documentation",
+     HEADER3 "Introduction",
+     "Documentation for user defined ", TO "packages", 
+     " and Macaulay 2 itself is written using 
+     the ", TO document, " function, using a straightforward ",
+     TO2("hypertext list format", "hypertext"), 
+     " markup language. 
+     It is then formatted via ", TO "installPackage", 
+     " as the documentation built in to Macaulay 2, 
+     the online HTML documentation, and the info pages.
+     Much of the format and structure of the documentation is 
+     automatically generated.  Each documentation entry must be 
+     part of a package, and occur 
+     after the ", TO beginDocumentation, " section of the package.",     
+     HEADER3  "Documentation templates",
+     "Each documentation entry is either an overview topic, or 
+     documentation of an individual feature, such as a symbol, a function
+     name, a function call (that is, a function name, together with
+     specific types of its arguments), an optional argument to a function, or
+     a package",
+     PARA,
+     "The easiest way to
+     write documentation for an entry is to start with one of the following examples 
      or templates, and then modify it.",
      UL {
-	  { "package header ", TO2("package documentation template", "template"),", ", 
+	  { "package header ", 
+	       TO2("package documentation template", "template"),", ", 
 	       TO2("package documentation example", "example") 
 	  },
-	  { "function name ", TO2("function name documentation template", "template"),", ", 
-	       TO2("function name documentation example", "	     example") 
+	  { "function name ", 
+	       TO2("function name documentation template", "template"),", ", 
+	       TO2("function name documentation example", "example") 
 	  },
-	  { "function call (includes classes of function arguments) ", TO2("function documentation template", "template"),", ", 
+	  { "function call (includes classes of function arguments) ", 
+	       TO2("function documentation template", "template"),", ", 
 	       TO2("function documentation example", "example") 
 	  },
-	  { "optional argument name ", TO2("optional argument name documentation template", "template"),", ", 
+	  { "optional argument name ", 
+	       TO2("optional argument name documentation template", "template"),", ", 
 	       TO2("optional argument name documentation example", "example") 
 	  },
-	  { "optional argument ", TO2("optional argument documentation template", "template"),", ", 
+	  { "optional argument ", 
+	       TO2("optional argument documentation template", "template"),", ", 
 	       TO2("optional argument documentation example", "example") 
 	  },
 	  { "overview ", TO2("overview documentation template", "template"),", ", 
 	       TO2("overview documentation example", "example") 
 	  }
      },
-     PARA,
+     HEADER3 "Generating html documentation",
      "To have Macaulay 2 generate the html pages for the documentation for your package, use ", TO installPackage , ":",
      PRE///installPackage "yourPackage"///,
      "A link to your package documentation is placed in the ", TT "index.html", " file in the directory ",
-     TO2(applicationDirectory, TT "applicationDirectory()"), "."
-   }
-document {
-     Key => "writing documentation",
-	"Documentation for Macaulay 2 is written in a hypertext markup language. It is 
-	then formatted as the documentation built in to Macaulay 2, the online 
-	", TO "HTML", " documentation, and the info pages. Much of the
-	format and structure of the documentation is automatically generated.",
-	PARA,
-        "There are two main types of documentation in Macaulay 2: basic
-	documentation of individual features, and overviews.  Essentially
-	they are documented the same way. However, there are some differences,
-	see ", TO "document", " for details.",
-	PARA,
+     TO2(applicationDirectory, TT "applicationDirectory()"), ".",
+     HEADER3 "Documentation style conventions",
 	"There are a few stylistic conventions which should be noted:",
 	UL {
 		{"Lowercase is used for all titles, unless a proper noun is being used."},
 		{"The name of any Macaulay 2 function, option, or variable, occurring in the documentation 
-		should be an active hyperlink. This can be accomplished with the tag", TO "TO", "."},
+		should be an active hyperlink. This can be accomplished with the tag ", TO "TO", "."},
 		{"If one needs to refer to the ", TT "i", "-th coefficient of some object, then use the format as given here."}
 		},
-  SeeAlso => document
+  SeeAlso => {
+       document,
+       "hypertext list format"
      }
+  }
 document {
      Key => "hypertext list format",
      "Documentation text is composed of a list of text 
@@ -64,7 +79,7 @@ document {
      UL {
 	  {TT "BR", " -- break to the next line"},
 	  {TT "HR", " -- a horizontal rule (line)"},
-	  {TT "PARA", " -- start a paragraph"},
+	  TO "PARA",
 	  },
      "Items which take a text string (or other hypertext list) as argument",
      UL {
@@ -79,9 +94,9 @@ document {
 	  },
      "Items which place hyperlinks into the documentation",
      UL {
-	  TOH TO,
-	  TOH TOH,
-	  TOH TO2
+	  TO TO,
+	  TO TOH,
+	  TO TO2
 	  },
      "Other useful hypertext elements",
      UL {
@@ -149,29 +164,6 @@ document {
 	  }
      }
 document {
-     Key => "hypertext example",
-     "The following items are used by themselves",
-     UL {
-	  {TT "BR", " -- break to the next line"},
-	  {TT "HR", " -- a horizontal rule (line)"},
-	  {TT "PARA", " -- start a paragraph"},
-	  },
-     "Items which take a phrase as argument",
-     UL {
-	  {TT "TT s", " -- makes the argument ", TT "s", " into a 
-	                typewriter like, fixed font"},
-	  {TT "EM s", " -- change the font of ", TT "s", " to
-	                emphasize it"},
-	  {TT "PRE s", " -- considers the string ", TT "s", " to be
-	                preformatted."},
-	  {TT "SUB s", " -- subscript"},
-	  {TT "SUP s", " -- superscript"}
-	  },
-     "Items which place hyperlinks into the documentation",
-     UL {
-	  }
-     }
-document {
      Key => "function name documentation template",
  	PRE ///document {
      Key => functionName,
@@ -196,7 +188,7 @@ document {
      Caveat => {"warning"},
      SeeAlso => {link}
      }///,
-     SeeAlso => {"writing a documentation entry",
+     SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
      }
@@ -225,7 +217,7 @@ document {
      Caveat => {"warning"},
      SeeAlso => {link}
      }///,
-     SeeAlso => {"writing a documentation entry",
+     SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
      }
@@ -244,7 +236,7 @@ document {
      Caveat => {"warning"},
      SeeAlso => {link}
      }///,
-     SeeAlso => {"writing a documentation entry",
+     SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
      }
@@ -270,7 +262,7 @@ document {
      Caveat => {"warning"},
      SeeAlso => {link}
      }///,
-     SeeAlso => {"writing a documentation entry",
+     SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
      }
@@ -289,7 +281,7 @@ document {
      Caveat => {"warning"},
      SeeAlso => {link}
      }///,
-     SeeAlso => {"writing a documentation entry",
+     SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
      }
@@ -312,7 +304,7 @@ document {
 	  TO functionName2 -- and so on
 	  }
      }///,
-     SeeAlso => {"writing a documentation entry",
+     SeeAlso => {"writing documentation",
 	  "hypertext list format",
 	  document}
      }
