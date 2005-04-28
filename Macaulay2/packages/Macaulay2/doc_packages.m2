@@ -3,9 +3,8 @@ document {
      Headline => "the class of all packages",
      "See ", TO "packages", " for an overview about using and writing
      packages.",
-     PARA {
-     	  "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "."
-	  }
+     PARA,
+     "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "."
      }
 
 document {
@@ -127,51 +126,35 @@ document {
 	  }
      }
 
-document {
-     Key => makePackageIndex,
-     Headline => "",
-     Usage => "makePackageIndex()",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
-     containing links to the documentation for Macaulay2 and
-     all installed packages."},
-     "This command needs to be run after installing a package via ",
-     TO installPackage, ".",
-     PARA,
-     "This command is run each time the program is started, therefore 
-     overwriting this file.  Thus, one can simply restart Macaulay2 to
-     obtain the same consequence",
-     EXAMPLE {
-	  "makePackageIndex()"
-	  },
-     SeeAlso => {"packages"}
-     }
-
-document {
-     Key => (newPackage,String),
-     Headline => "package item: preamble",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {""},
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => "",
-     SeeAlso => {}
-     }
+--document {
+--     Key => makePackageIndex,
+--     Headline => "",
+--     Usage => "makePackageIndex()",
+--     Inputs => {
+--	  },
+--     Outputs => {
+--	  },
+--     Consequences => {"Creates a file 'index.html' in your Macaulay2 directory,
+--     containing links to the documentation for Macaulay2 and
+--     all installed packages."},
+--     "This command needs to be run after installing a package via ",
+--     TO installPackage, ".",
+--     PARA,
+--     "This command is run each time the program is started, therefore 
+--     overwriting this file.  Thus, one can simply restart Macaulay2 to
+--     obtain the same consequence",
+--     EXAMPLE {
+--	  "makePackageIndex()"
+--	  },
+--     SeeAlso => {"packages"}
+--     }
 
 document {
      Key => {export, (export,Sequence), (export,Symbol)},
      Headline => "package item: export functions",
      Usage => "export(symbol1,symbol2,...)",
      Inputs => {
-	  "(symbol1,symbol2,...)" => Sequence => " of symbols."
+	  "(symbol1,symbol2,...)" => Sequence => " of symbols"
 	  },
      Consequences => {"the symbols in the sequence, which should refer
 	  to functions or other symbols defined in the package,
@@ -185,24 +168,26 @@ document {
      "Use ", 
      TO exportMutable,
      " to export variables which the user can modify.", 
-     SeeAlso => {"packages", "creating packages", debug}
+     SeeAlso => {debug}
      }
 
 document {
      Key => {exportMutable, (exportMutable,Sequence), (exportMutable,Symbol)},
      Headline => "package item: export writable variables",
-     Usage => "export(symbol1,symbol2,...)",
+     Usage => "exportMutable(symbol1,symbol2,...)",
      Inputs => {
-	  "(symbol1,symbol2,...)" => Sequence => " of symbols."
+	  "(symbol1,symbol2,...)" => Sequence => " of symbols"
 	  },
-     Consequences => {"the symbols in the sequence, which should refer
-	  to variables defined in the package,
-	   are made available 
-	  to the user of the package, in such a way that they may modify their 
-	  values"},
+     Consequences => {
+	  {"the symbols in the sequence, which should refer
+	       to variables defined in the package,
+	       are made available 
+	       to the user of the package, in such a way that their values
+	       may be modified by the user"}
+	 },
      "This package item is needed much less frequently than ", TO export, 
      ".  For an example, see ", TO "an example of a package",
-     SeeAlso => {"packages", "creating packages", debug}
+     SeeAlso => {debug}
      }
 
 document {
@@ -215,10 +200,9 @@ document {
      "Documentation for a package, and tests for the package, are 
      placed after this point in a package file.  This way, documentation can
      be loaded separately, Macaulay 2 examples in the documentation can
-     be run, and the whole documentation can be stord in a database.",
+     be run, and the whole documentation can be stored in a database.",
      PARA,
      "For an example, see ", TO "an example of a package",
-     PARA,
      SeeAlso => {
 	  installPackage,
 	  check,
@@ -235,8 +219,10 @@ document {
 	  },
      Outputs => {
 	  },
-     Consequences => {"Registers the string ", TT "s", " as a test of the
-     current package"},
+     Consequences => {
+	  {"Registers the string ", TT "s", " as a test of the
+     	       current package"},
+	},
      "This function should only occur in the documentation section 
      of a package.  Use ", TO check, " to run all of the tests
      associated to a package.",
@@ -245,7 +231,7 @@ document {
      Caveat => "When creating tests, try to insure that they run relatively quickly.",
      SeeAlso => {
 	  beginDocumentation,
-	  "packages"
+	  assert
 	  }
      }
 document {
@@ -307,27 +293,6 @@ document {
      PRE///installPackage("GenericInitialIdeals", MakeInfo=>true)
      ///
      }
---document {
---     Key => [installPackage,RemakeAllDocumentation],
---     Headline => "remake all of the documentation pages",
---     Usage => "installPackage(...,RemakeAllDocumentation=>b)",
---     Inputs => {
---	  "b" => Boolean => "default is false"
---	  },
---     Consequences => {
---	  {"If ", TT "b", " is true, then regenerate all of the
---	       html pages for this package"}
---	  },
---     "The default action of ", 
---     TO installPackage, " is to only rebuild the html pages of the
---     documentation entries that have been changed since the last time
---     the package was installed.  However, some changes to an entry
---     will change the html of other pages.  
---     For example, the ", TT "Headline", " of a documentation entry
---     is used in other html pages that cross-reference this one.
---     To rebuild these other pages, use this option:",
---     PRE///installPackage(PACKAGENAME, RemakeAllDocumentation=>true)///
---     }
 document {
      Key => [installPackage,RemakeAllDocumentation],
      Headline => "remake all of the documentation pages",
@@ -367,7 +332,7 @@ document {
 
 document {
      Key => {newPackage, (newPackage,String)}, 
-     Headline => "starts the definition of a package",
+     Headline => "package item: preamble",
      Usage => "newPackage ( \"package name\", ... )",
      Inputs => {
 	  },
@@ -384,7 +349,6 @@ document {
    )///,
 	SeeAlso => {"packages"}
   }
-
 
 end
 -- writing documentation:
