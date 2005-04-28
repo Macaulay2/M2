@@ -94,47 +94,37 @@ document { Key => "creating a package",
 	  TO "export",
 	  TO "exportMutable",
 	  TO beginDocumentation,
-	  TO (TEST,String),
-	  TO "writing documentation"
+	  TO TEST
+	  },
+     SeeAlso => {
+	  "packages",
+	  "writing documentation",
+	  "testing a package"
 	  }
      }
 
 document {
      Key => "documenting a package",
      "Documentation for a package is in the ", TO beginDocumentation, "
-     section of a package.",
-     PARA,
-     "The easiest way to write a documentation node for yout package, 
-     a function or variable in your package, or an overview node for your
-     package is to start from one of the following templates.",
-     UL {
-	  "document template for a package",
-	  "document template for function names",
-	  "document template for function calls (includes argument types)",
-	  "document template for an overview node",
-	  "document template for optional argument to a function"
-	  },
-     "Many items use a formatting method closely related to html. See ", 
-     TO "hypertext documentation",  " for the possible types and for examples.",
-     PARA,
-     "The steps in creating documentation, which one cycles through until happy
-     with the documentation are:",
-     UL {
-	  {"write or edit documentation nodes starting from templates"},
-	  {"in Macaulay2, use ", TO (installPackage,String), " to load the
-	       documentation and run the Macaulay 2 examples in the documentation."},
-	  {"view the documentation from your browser.  The documentation for your 
-	       package should be available from the main Macaulay2 documentation page ", 
-	       TT "applicationDirectory()|index.html", "."}
-	       }
+     section of a package.  See ", TO "writing documentation", "."
      }
      
 document {
      Key => "testing a package",
+     "It is important to provide tests to insure that your package
+     is functioning properly.  One provides tests using  ", TO TEST,
+     " in the ", TO beginDocumentation, " section.",
+     PARA,
+     "All of the tests provided for a package 'YourPackage' may be run by 
+     using ",
+     PRE///check YourPackage///
      }
 
 document {
      Key => "informing others about your package",
+     "We keep a list of user defined packages on the Macaulay 2 web site.
+     Contact Macaulay2@math.uiuc.edu to have your package placed on the
+     list."
      }
 
 document {

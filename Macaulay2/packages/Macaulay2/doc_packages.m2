@@ -139,7 +139,7 @@ document {
      containing links to the documentation for Macaulay2 and
      all installed packages."},
      "This command needs to be run after installing a package via ",
-     TO (installPackage,String), ".",
+     TO installPackage, ".",
      PARA,
      "This command is run each time the program is started, therefore 
      overwriting this file.  Thus, one can simply restart Macaulay2 to
@@ -185,7 +185,7 @@ document {
      "Use ", 
      TO exportMutable,
      " to export variables which the user can modify.", 
-     SeeAlso => {"packages", "creating packages", (debug,Package)}
+     SeeAlso => {"packages", "creating packages", debug}
      }
 
 document {
@@ -202,7 +202,7 @@ document {
 	  values"},
      "This package item is needed much less frequently than ", TO export, 
      ".  For an example, see ", TO "an example of a package",
-     SeeAlso => {"packages", "creating packages", (debug,Package)}
+     SeeAlso => {"packages", "creating packages", debug}
      }
 
 document {
@@ -220,34 +220,25 @@ document {
      "For an example, see ", TO "an example of a package",
      PARA,
      SeeAlso => {
-	  (installPackage,String),
-	  (check,Package),
+	  installPackage,
+	  check,
 	  "writing documentation"
           }
      }
 
---document {
---     Key => TEST,
---     Headline => "commands for testing later",
---     TT "TEST s", " -- writes the string ", TT "s", " to a new test file.  The
---     commands in that file can be run later as a test.",
---     PARA,
---     "Intended for internal use only."
---     }
-
 document {
-     Key => (TEST,String),
+     Key => {TEST, (TEST,String)},
      Headline => "package item: register a test of the package",
      Usage => "TEST s",
      Inputs => {
-	  "s" => String => ", containing Macaulay2 code"
+	  "s" => String => "containing Macaulay2 code"
 	  },
      Outputs => {
 	  },
      Consequences => {"Registers the string ", TT "s", " as a test of the
      current package"},
      "This function should only occur in the documentation section 
-     of a package.  Use ", TO (check,Package), " to run all of the tests
+     of a package.  Use ", TO check, " to run all of the tests
      associated to a package.",
      PARA,
      "For an example, see ", TO "an example of a package",
@@ -257,17 +248,12 @@ document {
 	  "packages"
 	  }
      }
-
 document {
-     Key => installPackage,
-     Headline => "load and install a package and its documentation"
-     }
-document {
-     Key => (installPackage,String),
+     Key => {installPackage,(installPackage,String),(installPackage,Package)},
      Headline => "load and install a package and its documentation ",
      Usage => "installPackage PACKAGENAME",
      Inputs => {
-	  "PACKAGENAME" => "the name of the package"
+	  "PACKAGENAME" => {"a ", TO String, ", or ", TO Package}
 	  },
      Outputs => {
 	  },
@@ -279,6 +265,10 @@ document {
 	  },
      "The main action of this routine is to generate the documentation
      of the given package and install the Macaulay2 package and documentation. ",
+     PARA,
+    "The actual file loaded is ", TT "PACKAGENAME.m2", 
+    ", which should be on the load ", TO "path", 
+    " and should contain a package named ", TT "PACKAGENAME", ".",
      PARA,
      "In order to accomplish this, several steps are performed, or
      bypassed, depending on the optional parameters.",
@@ -298,17 +288,8 @@ document {
 	  {"create symbolic links in ", TT "applicationDirectory()|local", " to this package"},
 	  {"place a link to this html documentation in ", TT "applicationDirectory()|index.html"}
 	  },
-
---     HEADER3 {"Actual activity of ", TT "installPackage"},
---     "This function first loads the package if it has not been loaded yet.  It then loads
---     the documentation for the package, and runs the examples, and then creates the 
---     html pages and/or info pages which form the documentation.  It places all of this
---     in the application directory, and finally creates symbolic links to this package.",
---     PARA,
-     "The many options control how much of this activity is performed or bypassed.",
      SeeAlso => {"packages"}
      }
-
 document {
      Key => [installPackage,MakeInfo],
      Headline => "compute the info pages",
@@ -385,26 +366,25 @@ document {
 --     }
 
 document {
-     Key => newPackage, 
+     Key => {newPackage, (newPackage,String)}, 
      Headline => "starts the definition of a package",
      Usage => "newPackage ( \"package name\", ... )",
-     Inputs => {},
+     Inputs => {
+	  },
      Consequences => {"a package is created"},
      "Here is a template for a typical ", TT "newPackage", " entry in a package.",
-     PRE ///
-     newPackage(
-	  "package name",
-	  Headline => "one line description",
-	  Version => 1.0,
-	  Date => "month  XX, 20XX",
-	  Author => "author <email>",
-	  HomePage => "url",
-	  DebuggingMode => true,
-	  InfoDirSection => ...  -- this option is not normally used
-	  )
-	///,
-	SeeAlso => {"writing packages"}
+     PRE ///newPackage(
+    "package name",
+    Headline => "one line description",
+    Version => 1.0,
+    Date => "month  XX, 20XX",
+    Author => "author <email>",
+    HomePage => "url",
+    DebuggingMode => true
+   )///,
+	SeeAlso => {"packages"}
   }
+
 
 end
 -- writing documentation:
