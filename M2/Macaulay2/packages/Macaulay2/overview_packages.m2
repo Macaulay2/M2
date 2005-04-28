@@ -4,6 +4,7 @@ document { Key => "packages",
      and others are available from various users on the internet.",
      PARA, "For more detailed information about packages, see ", 
      TO Package, ".",
+     PARA,
      "Some packages which are distributed with Macaulay2 include",
      UL {
 	  TO "convex hulls and polar cones",
@@ -12,15 +13,12 @@ document { Key => "packages",
 	  TO "PrimaryDecomposition"
 	  },
      Subnodes => {
-     "using packages",
-	  TO (needsPackage,String),
-	  TO (loadPackage,String),
-	  TO (installPackage,String),
+     "Using existing packages",
+	  TO needsPackage,
+	  TO loadPackage,
+	  TO installPackage,
      "Creating new packages",
-     	  TO "creating a package",
-	  TO "documenting a package",
-	  TO "testing a package",
-	  TO "informing others about your package"
+     	  TO "creating a package"
 	  }
      }
 
@@ -71,8 +69,7 @@ document { Key => "creating a package",
 	section containing documentation and tests for the new package.",
 	PARA,
 	"A basic template for new packages:",
-	PRE///
-	newPackage( ... )
+	PRE///newPackage( ... )
 	
 	export( ... )
 	exportMutable( ... )
@@ -80,35 +77,32 @@ document { Key => "creating a package",
 	-- Macaulay 2 code goes here
 	
 	beginDocumentation()
-	document { ... } 
-	TEST " ... "
-	///,
+	document { ... }  -- several document's and TEST's, interspersed
+	TEST " ... "///,
 	"The name of the package must be the name of the file, without the
-	'.m2' suffix.  Thus a package 'floop' will be in a file named
-	'floop.m2'.  If the package were more complex, then by convention,
-	there should be a subdirectory named 'floop', and the file
-	'floop.m2' would load these files.",
+	'.m2' suffix.  Thus a package 'PACKAGENAME' will be in a file named
+	'PACKAGENAME.m2'.  If the package were more complex, then by convention,
+	there should be a directory named 'PACKAGENAME' on the load ", TO "path", 
+	", and the file
+	'PACKAGENAME.m2' in this directory would load the necessary files.",
      Subnodes => {
 	  TO "an example of a package",
+	  "Parts of a package",
 	  TO "newPackage",
 	  TO "export",
 	  TO "exportMutable",
 	  TO beginDocumentation,
-	  TO TEST
+	  "Documenting, testing, and distributing a package",
+	  TO "writing documentation",
+	  TO "testing a package",
+	  TO "informing others about your package"
 	  },
      SeeAlso => {
-	  "packages",
-	  "writing documentation",
-	  "testing a package"
+	  document,
+	  TEST
 	  }
      }
 
-document {
-     Key => "documenting a package",
-     "Documentation for a package is in the ", TO beginDocumentation, "
-     section of a package.  See ", TO "writing documentation", "."
-     }
-     
 document {
      Key => "testing a package",
      "It is important to provide tests to insure that your package
@@ -116,7 +110,7 @@ document {
      " in the ", TO beginDocumentation, " section.",
      PARA,
      "All of the tests provided for a package 'YourPackage' may be run by 
-     using ",
+     using ", TO check,
      PRE///check YourPackage///
      }
 
@@ -176,7 +170,10 @@ TEST "firstFunction 2"
 	SeeAlso => {newPackage,
 	     export,
 	     exportMutable,
-	     "writing documentation"}
+	     beginDocumentation,
+	     document,
+	     TEST
+	     }
 	}
 
 
