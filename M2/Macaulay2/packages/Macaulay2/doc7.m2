@@ -1365,82 +1365,12 @@ document {
 	  "f"
 	  }
      }
-document {
-     Key => (symbol +, Ideal, Ideal), 
-     Headline => "sum of ideals",
-     TT "I + J", " -- the sum of two ideals."
-     }
 TEST "
 R = ZZ/101[x,y,z]
 I = ideal(x,y)
 assert( 1 == dim I )
 assert( 2 == codim I )
 "
-document {
-     Key => Ideal,
-     Headline => "the class of all ideals",
-     SeeAlso => "ideals",
-     "Common ways to make an ideal:",
-     UL {
-	  TO "ideal",
-	  TO "annihilator",
-	  TO "content",
-	  TO "fittingIdeal",
-	  TO (kernel, RingMap),
-	  },
-     "Common ways to get information about an ideal:",
-     UL {
-	  TO (codim, Ideal),
-	  TO (dim, Ideal),
-	  TO (generators, Ideal),
-	  TO (isSubset, Ideal, Ideal),
-	  },
-     "Common operations on ideals:",
-     UL {
-	  TO (symbol +,Ideal,Ideal),
-	  TO (symbol *,Ideal,Ideal),
-	  TO (symbol ==,Ideal,Ideal),
-	  TO (symbol ==,Ideal,ZZ),
-	  TO (symbol :,Ideal,Ideal),
-	  TO (symbol ^,Ideal,ZZ),
-	  TO (decompose, Ideal),
-	  TO (gb, Ideal),
-	  TO (radical, Ideal),
-	  TO "saturate",
-	  TO "top",
-	  TO (trim, Ideal),
-	  },
-     "Common ways to use an ideal:",
-     UL {
-	  TO (symbol /, Ring, Ideal),
-	  },
-     PARA,
-     "An ideal ", TT "I", " is an immutable object, so if you want to 
-     cache information about it, put it in the hash table ", TT "I.cache", ".",
-     PARA
-     }
-document {
-     Key => (symbol *,Ideal,Ideal),
-     Headline => "product of ideals",
-     Usage => "I * J",
-     Inputs => {
-	  "I" => null,
-	  "J" => {"in the same ring as ", TT "I"},
-	  },
-     Outputs => {
-	  {"the product of the two ideals ", TT "I", " and ", TT "J", ""}
-	  },
-     EXAMPLE {
-	  "R = QQ[t][a..d];",
-	  "ideal(a,t*c) * ideal(a^2,b^2)"
-	  },
-     SeeAlso => {"ideals"}
-     }
-document {
-     Key => (symbol ^,Ideal,ZZ),
-     Headline => "power of an ideal",
-     TT "I^n", " -- the n-th power of an ideal I."
-     }
 document {
      Key => (module, Ideal),
      Headline => "turn an ideal into a module",

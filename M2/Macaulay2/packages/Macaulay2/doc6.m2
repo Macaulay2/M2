@@ -1036,19 +1036,6 @@ document {
       	  "image matrix {{2,x},{1,5}} == R^2",
       	  "image matrix {{2,x},{0,5}} == R^2"
 	  }}
-document {
-     Key => (symbol ==, Ideal, ZZ),
-	  
-     Usage => "I == n",
-     Inputs => {"I" => null,"n" => "either 0, or 1."},
-     Outputs => {{"If ", TT "n==1", ", then determines whether ", TT "I", " is the unit ideal.
-     	       If ", TT "n==0", ", then determines whether ", TT "I", " is the zero ideal.  Any other value
-     	       for ", TT "n", " is an error."}},
-     EXAMPLE {
-	  "R = QQ[x];",
-      	  "ideal(x^2,x+1) == 1",
-      	  "ideal(0_R) == 0"
-	  }}
 TEST "
 R = ZZ/101[a,b,c]
 M = cokernel matrix {{a,b^2,c^3}}
