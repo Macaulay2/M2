@@ -208,36 +208,81 @@ homogenize(Vector, RingElement) := Vector => (f,v) -> (
      p := homogenize(f#0,v);
      new target p from {p})
 
-coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
-coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
-coefficients(Sequence, RingElement) := (v,m) -> coefficients(toList v,matrix{{m}})
-coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
-coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
-coefficients(List, Matrix) := (vrs,f) -> (
-     m := raw f;
-     vrs = splice vrs;
+listOfVars := method()
+listOfVars(Ring,Thing) := (R,x) -> 
+     error(expected "'Variables=>' argument to be a List, Sequence, integer, or RingElement")
+listOfVars(Ring,Nothing) := (R,x) -> toList(0 .. numgens R-1)
+listOfVars(Ring,List) := (R,x) -> (
+     vrs := splice x;
      types := unique apply(vrs,class);
      if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
-     R := first types;
-     if R =!= ZZ then vrs = index \ vrs;
+     if first types =!= ZZ then vrs = index \ vrs;
      if any(vrs,i -> i === null) then error "expected a list of variables";
-     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(vrs, m)));
-     (monoms,map(source monoms,source f,rawCoefficients(vrs,raw monoms,m))))
+     vrs
+     )
+listOfVars(Ring,Sequence) := (R,x) -> listOfVars(R,toList x)
+listOfVars(Ring,ZZ) := (R,x) -> (
+     if x < 0 or x >= numgens R then
+         error("expected an integer in the range 0 .. "|numgens R-1)
+     else {x})
+listOfVars(Ring,RingElement) := (R,x) -> (
+     if class x === R 
+     then {index x}
+     else error "expected a ring element of the same ring")
 
-monomials(Matrix) := monomials(RingElement) := (m) -> monomials(toList (0 .. numgens ring m - 1), m)
-monomials(List, RingElement) := (v,m) -> monomials(v,matrix{{m}})
-monomials(Sequence, RingElement) := (v,m) -> monomials(toList v,matrix{{m}})
-monomials(ZZ, Matrix) := monomials(ZZ, RingElement) := (v,m) -> monomials({v},m)
-monomials(Sequence, Matrix) := (vrs,f) -> monomials(toList vrs,f)
-monomials(List, Matrix) := (vrs,f) -> (
+coefficients = method(Options => {Variables => null, Monomials => null})
+coefficients(RingElement) := o -> (f) -> coefficients(matrix{{f}},o)
+coefficients(Matrix) := o -> (f) -> (
      m := raw f;
-     vrs = splice vrs;
-     types := unique apply(vrs,class);
-     if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
-     R := first types;
-     if R =!= ZZ then vrs = index \ vrs;
-     if any(vrs,i -> i === null) then error "expected a list of variables";
-     map(target f,,rawMonomials(vrs, m)))
+     vrs := listOfVars(ring f,o.Variables);
+     rawmonoms := if o.Monomials === null then
+                    rawMonomials(vrs,m)
+	          else if class o.Monomials === Matrix then
+	            raw o.Monomials
+	       else if class o.Monomials === List then raw matrix{o.Monomials}
+	       else if class o.Monomials === Sequence then raw matrix{toList o.Monomials}
+	       else error "expected 'Monomials=>' argument to be a list, sequence, or matrix";
+     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawmonoms));
+     (monoms,map(source monoms,source f,rawCoefficients(vrs,rawmonoms,m)))
+     )
+
+--coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
+--coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
+--coefficients(Sequence, RingElement) := (v,m) -> coefficients(toList v,matrix{{m}})
+--coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
+--coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
+--coefficients(List, Matrix) := (vrs,f) -> (
+--     m := raw f;
+--     vrs = splice vrs;
+--     types := unique apply(vrs,class);
+--     if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
+--     R := first types;
+--     if R =!= ZZ then vrs = index \ vrs;
+--     if any(vrs,i -> i === null) then error "expected a list of variables";
+--     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(vrs, m)));
+--     (monoms,map(source monoms,source f,rawCoefficients(vrs,raw monoms,m))))
+
+monomials = method(Options => {Variables => null})
+monomials(RingElement) := o -> (f) -> monomials(matrix{{f}},o)
+monomials(Matrix) := o -> (f) -> (
+     vrs := listOfVars(ring f,o.Variables);
+     map(target f,,rawMonomials(vrs, raw f))
+     )
+
+--monomials(Matrix) := monomials(RingElement) := (m) -> monomials(toList (0 .. numgens ring m - 1), m)
+--monomials(List, RingElement) := (v,m) -> monomials(v,matrix{{m}})
+--monomials(Sequence, RingElement) := (v,m) -> monomials(toList v,matrix{{m}})
+--monomials(ZZ, Matrix) := monomials(ZZ, RingElement) := (v,m) -> monomials({v},m)
+--monomials(Sequence, Matrix) := (vrs,f) -> monomials(toList vrs,f)
+--monomials(List, Matrix) := (vrs,f) -> (
+--     m := raw f;
+--     vrs = splice vrs;
+--     types := unique apply(vrs,class);
+--     if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
+--     R := first types;
+--     if R =!= ZZ then vrs = index \ vrs;
+--     if any(vrs,i -> i === null) then error "expected a list of variables";
+--     map(target f,,rawMonomials(vrs, m)))
 
 terms RingElement := f -> (
      (m,c) := flatten \ entries \ coefficients f;

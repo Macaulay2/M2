@@ -202,10 +202,10 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
                else options.SyzygyMatrix;
      nsyz := numgens target changemat;
      if nsyz >= numgens source minmat then nsyz = -1;
-     type := {
-	  options.SyzygyMatrix =!= null,
-          nsyz
-	  };
+     type := gbTypeCode new OptionTable from { SyzygyRows => numgens target syzmat,
+	                                       Syzygies => options.SyzygyMatrix =!= null, 
+					       ChangeMatrix => options.ChangeMatrix =!= null, 
+					       HardDegreeLimit => null };
      g := new GroebnerBasis;
      g.matrix = Bag {f};
      g.ring = ring f;

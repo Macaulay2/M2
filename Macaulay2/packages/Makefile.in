@@ -15,6 +15,7 @@ PACKAGES += GenericInitialIdeal
 PACKAGES += Markov
 PACKAGES += minimal
 PACKAGES += Points
+PACKAGES += PackageTemplate
 
 # PACKAGES += SchurRings
 ##
