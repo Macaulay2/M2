@@ -116,7 +116,7 @@
       (if M2-history (car M2-history) M2-command))))
   (switch-to-buffer 
    (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
-		(or (getenv "SHELL") "/bin/sh") ; name of program
+		"/bin/sh" ; name of program
 		nil			; starting input file
 		"-c" (concat "echo; set -x; " command)		; arguments to the program
 		)
