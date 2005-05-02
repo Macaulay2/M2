@@ -134,40 +134,6 @@ assert(min(4,5,6) === 4)
 ///
 
 document {
-     Key => sort,
-     Headline => "sort a list",
-     TT "sort v", " -- produces a sorted version of the list v.",
-     PARA,
-     "The sort function uses ", TO "<=", " to compare elements of the
-     list, which in turn calls upon ", TO "?", ".",
-     EXAMPLE {
-	  "sort {c,e,a,f,b,f}",
-	  "sort {4,2,6,3,8,2}"
-	  },
-     "Note: we have modified the sort order for strings so that symbols come
-     before alphanumeric characters, and upper and lower case characters are
-     sorted together.",
-     SeeAlso => { "rsort", "<=", "?" }
-     }
-
-document {
-     Key => rsort,
-     Headline => "sort a list in reverse order",
-     TT "rsort v", " -- produces a reverse sorted version of the list v.",
-     PARA,
-     "The rsort function uses ", TO "<=", " to compare elements of the
-     list, which in turn calls upon ", TO "?", ".",
-     EXAMPLE {
-	  "rsort {g,d,w,s,c,a,r}",
-	  "rsort {4,2,3,1}",
-	  },
-     "Note: we have modified the sort order for strings so that symbols come
-     before alphanumeric characters, and upper and lower case characters are
-     sorted together.",
-     SeeAlso => { "sort", "<=", "?" }
-     }
-
-document {
      Key => pack,
      Headline => "pack elements of a list into shorter ones",
      TT "pack(n,v)", " -- packs the elements of the list or sequence

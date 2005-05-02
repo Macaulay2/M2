@@ -35,3 +35,5 @@ load "overview_packages.m2"
 load "doc_doc.m2"
 load "overview_doc.m2"
 load "doc_ideals.m2"
+
+load "functions.m2"
