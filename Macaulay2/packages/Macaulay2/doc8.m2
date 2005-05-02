@@ -800,24 +800,6 @@ document {
      }
 
 document {
-     Key => forceGB,
-     Headline => "declare that the columns of a matrix are a Groebner basis",
-     TT "forceGB f", " -- declares that the columns of the matrix ", TT "f", "
-     constitute a Groebner basis, and returns a Groebner basis object
-     encapsulating that assertion.",
-     PARA,
-     "We should probably rename this function or incorporate it into
-     ", TO "gb", " somehow."
-     }
-
-document {
-     Key => [forceGB,ChangeMatrix],
-     Headline => "set the change of basis matrix",
-     TT "ChangeMatrix => p", " -- an optional argument for ", TO "forceGB", " which
-     which specifies that the change of basis matrix is ", TT "p", "."
-     }
-
-document {
      Key => MinimalMatrix,
      Headline => "set the matrix of minimal generators",
      TT "MinimalMatrix => g", " -- an option for ", TO "forceGB", " which
@@ -1193,46 +1175,6 @@ document {
      Headline => "sort primarily by degree",
      TT "DegreeOrder", " -- an optional argument for use with certain
      functions, used to specify sort order."
-     }
-
-document {
-     Key => [sortColumns,DegreeOrder],
-     Headline => "sort primarily by degree",
-     TT "DegreeOrder => x", " -- an optional argument for use with the function
-     ", TO "sortColumns", ".",
-     PARA,
-     "The possible values for ", TT "x", " are ", TO "Ascending", ",
-     ", TO "Descending", ", and ", TO "null", "."
-     }
-
-document {
-     Key => [sortColumns,MonomialOrder],
-     Headline => "specify Ascending or Descending sort order",
-     TT "MonomialOrder => x", " -- an optional argument for use with the function
-     ", TO "sortColumns", ".",
-     PARA,
-     "The possible values for ", TT "x", " are ", TO "Ascending", " (the default value) and
-     ", TO "Descending", "."
-     }
-
-document {
-     Key => sortColumns,
-     Headline => "sort the columns of a matrix",
-     TT "sortColumns f", " -- sorts the columns of a matrix, returning a list of integers
-     describing the resulting permutation.",
-     PARA,
-     "The sort ordering used is by degree first, and then by monomial order.  Optional
-     arguments may be given to specify whether the ordering is ascending, descending,
-     or ignored.  The default ordering is ascending.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..c];",
-      	  "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",
-      	  "s = sortColumns f",
-      	  "f_s",
-      	  "s = sortColumns(f,DegreeOrder => Descending)",
-      	  "f_s"
-	  },
      }
 
 document {
