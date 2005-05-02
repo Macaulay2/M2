@@ -552,7 +552,15 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
      if lo =!= hi and #lo > 1 then error "encountered a range of multi-degrees";
      heft := opts.Heft;
      var := opts.Variables;
-     if var === null then var = 0 .. numgens R - 1;
+     if var === null then var = 0 .. numgens R - 1
+     else if class var === List then (
+	  var = apply(var, v -> if class v === R then 
+	                           index v 
+				else if class v === ZZ 
+				then v
+				else error "expected list of ring variables or integers")
+	  )
+     else error "expected list of ring variables or integers";
      if R.?Adjust then (
 	  lo = R.Adjust lo;
 	  hi = R.Adjust hi;

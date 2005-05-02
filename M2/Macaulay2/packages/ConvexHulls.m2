@@ -2,7 +2,7 @@ newPackage(
 	"ConvexHulls",
     	Version => "1.0", 
     	Date => "January 12, 2005",
-    	Author => "Greg Smith <ggsmith@math.umast.ca>",
+    	Author => "Greg Smith <ggsmith@mast.queensu.ca>",
     	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "convex hulls and polar cones",
     	DebuggingMode => true
