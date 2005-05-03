@@ -4996,7 +4996,7 @@ rm -f conftest.err conftest.$ac_objext \
 
 echo "$as_me:$LINENO: checking whether readline library is installed" >&5
 echo $ECHO_N "checking whether readline library is installed... $ECHO_C" >&6
-LIBS="-lreadline -lhistory -lcurses $SAVELIBS"
+LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'

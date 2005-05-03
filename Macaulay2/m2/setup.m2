@@ -214,7 +214,7 @@ tryload := (filename,loadfun,notify) -> (
 			      markLoaded(fullfilename,filename,notify);
 			      loaded = true;
 			      break)))));
-     if loaded then ret else error("file not found on path: \"", filename, "\""))
+     if loaded then ret else error("file not found on path: \"", toString filename, "\""))
 
 load = (filename) -> tryload(filename,simpleLoad,notify)
 input = (filename) -> tryload(filename,simpleInput,false)
