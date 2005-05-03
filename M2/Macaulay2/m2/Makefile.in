@@ -27,14 +27,9 @@ all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
 
-DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES) @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2/Macaulay2.m2
-
-ifneq "$(DUMPDATA)" "no"
-DUMPEDM2FILES := $(DUMPEDM2FILES)
-endif
-
+DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
+DUMPEDM2DOCFILES := @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2/Macaulay2.m2
 OTHERM2FILES = sagbi.m2
-
 NONDOCM2FILES = startup.m2 setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
 loads.m2 : loads.awk loadsequence
@@ -71,13 +66,13 @@ phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
 phase1 :: ../$(DUMPDATAFILE)
-../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/M2
+../$(DUMPDATAFILE) : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2
 	rm -f ../$(DUMPDATAFILE)
 	../bin/M2 -q --stop -e 'errorDepth = 0' --dumpdata
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDM2FILES) ../bin/M2$(EXE)
+../cache/Macaulay2-made : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) ../bin/M2$(EXE)
 	touch $@
 
 ## .gdbinit
