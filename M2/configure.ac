@@ -311,7 +311,7 @@ AC_TRY_LINK(
     HAVE_LIBFAC_PG=no;AC_MSG_RESULT([no]))
 
 AC_MSG_CHECKING([whether readline library is installed])
-LIBS="-lreadline -lhistory -lcurses $SAVELIBS"
+LIBS="-lreadline -lhistory -lncurses $SAVELIBS"
 AC_LANG(C)
 AC_TRY_LINK(
     [extern char *readline(const char *);extern void add_history (const char *);],

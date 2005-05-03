@@ -1,7 +1,3 @@
-newPackage ("Macaulay2",
-     Version => version#"VERSION")
-
-beginDocumentation()
 
 -- should rewrite this to load all the m2 files there
 -- perhaps write a "pathFind" routine so we can find files such as Macaulay2 on the path.
