@@ -826,6 +826,7 @@ installPackage Package := opts -> pkg -> (
 	       fkey := DocumentTag.FormattedKey tag;
 	       fn := buildDirectory | htmlFilename tag;
 	       if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
+	       if isSecondary tag then return;
 	       stderr << "--making html page for " << tag << endl;
 	       fn
 	       << html HTML { 
