@@ -23,12 +23,21 @@ document {
       	  "pfaffians(2,M)",
       	  "pfaffians(4,M)"
 	  },
-     "Pfaffians generate the ideal of an elliptic normal curve in projective Fourspace:",
+     "The Pluecker embedding of ", TT "Gr(2,6)", " and its secant variety:",  
      EXAMPLE {
-	  "R=QQ[x_0..x_4]",
-	  "y={0,1,13,-13,-1}",
-	  "M=matrix table(5,5, (i,j)-> x_((i+j)%5)*y_((i-j)%5))",
-          "I=pfaffians(4,M)",
+	  "S = QQ[y_0..y_14];",
+	  "M = genericSkewMatrix(S,y_0,6)",
+	  "pluecker = pfaffians(4,M);",
+	  "betti res pluecker",
+	  "secantvariety = pfaffians(6,M)"
+	  },
+     "Pfaffians of a Moore matrix generate the ideal of a Heisenberg 
+     invariant elliptic normal curve in projective Fourspace:",
+     EXAMPLE {
+	  "R = QQ[x_0..x_4]",
+	  "y = {0,1,13,-13,-1}",
+	  "M = matrix table(5,5, (i,j)-> x_((i+j)%5)*y_((i-j)%5))",
+          "I = pfaffians(4,M);",
 	  "betti res I"
 	  },    
      Caveat => {"The algorithm used is a modified Gaussian reduction/Bareiss algorithm, 
