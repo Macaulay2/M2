@@ -79,7 +79,7 @@ document {
      }
 
 document {
-     Key => {needsPackage,(needsPackage,String),(needsPackage,Package)},
+     Key => {needsPackage,(needsPackage,String)},
      Headline => "load a package if not already loaded",
      Usage => "needsPackage PACKAGENAME",
      Inputs => {

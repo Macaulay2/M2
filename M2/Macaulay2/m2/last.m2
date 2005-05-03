@@ -23,7 +23,7 @@ promptWidth = () -> (
 
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
 RawMatrix.Wrap = Matrix.Wrap = RingElement.Wrap = List.Wrap = Sequence.Wrap = x -> wr("-",x)
-String.Wrap = x -> wr("",x)
+String.Wrap = x -> if height x + depth x === 1 then wr("",x) else x
 
 -- make sure this is after all global symbols are defined or erased
 

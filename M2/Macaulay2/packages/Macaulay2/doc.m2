@@ -6,6 +6,38 @@ document {
      }
 
 document {
+     Key => (length, Dictionary),
+     Headline => "length of a dictionary",
+     Usage => "n = length d",
+     Inputs => { "d" => "" },
+     Outputs => { "n" => { "the number of entries in ", TT "d" } }
+     }
+
+document {
+     Key => (length, VisibleList),
+     Headline => "length of a visible list",
+     Usage => "n = length x",
+     Inputs => { "x" => "" },
+     Outputs => { "n" => { "the number of entries in ", TT "x" } }
+     }
+
+document {
+     Key => (length, File),
+     Headline => "length of an open file",
+     Usage => "n = length f",
+     Inputs => { "f" => "" },
+     Outputs => { "n" => { "the length of the file ", TT "f", ", in bytes" } }
+     }
+
+document {
+     Key => (length, String),
+     Headline => "length of a string",
+     Usage => "n = length s",
+     Inputs => { "s" => "" },
+     Outputs => { "n" => { "the length of the string ", TT "s" } }
+     }
+
+document {
      Key => (length, GradedModule),
      Headline => "length of a graded module",
      "The length of a graded module is the difference between the largest and
@@ -226,26 +258,22 @@ document {
      Key => "recursionLimit",
      Headline => "set the limit on recursion",
      Usage => "recursionLimit = n",
-     Inputs => {
-	  "n" => ZZ => "",
-	  },
-     Consequences => {
-	  "The recursion depth limit for the interpreter is set to ", TT "n", "."
-	  },
+     Inputs => { "n" => ZZ => "" },
+     Consequences => { {"The recursion depth limit for the interpreter is set to ", TT "n", "."} },
      "Each time a function is called, the recursion depth is incremented by
      1, and each time a function returns, the recursion depth is decremented.
      This limit on recursion depth is a way to detect infinite loops."
      }
 
 document {
-     Key => toString symbol commandLine,
+     Key => "commandLine",
      Headline => "the command line arguments",
      "A constant whose value is the list of arguments passed to the interpreter,
      including argument 0, the name of the program."
      }
 
 document {
-     Key => toString symbol environment,
+     Key => "environment",
      Headline => "the environment variables",
      "A constant whose value is the list containing the
      environment strings for the process."

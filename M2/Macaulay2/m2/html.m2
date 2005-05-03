@@ -184,9 +184,11 @@ packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
      apply(
      	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
 	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
-     apply(
-	  values pkg#"raw documentation",
-	  doc -> doc.DocumentTag),
+     select(
+	  apply(
+	       values pkg#"raw documentation",
+	       doc -> doc.DocumentTag),
+	  x -> x =!= null),
      { topDocumentTag }
      )
 
@@ -662,6 +664,7 @@ installPackage Package := opts -> pkg -> (
 	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2 this makes a big
 	  -- difference.
 	  dbname := docDir | "documentation.db";
+     	  if opts.RemakeAllDocumentation and fileExists dbname then removeFile dbname;
      	  if not fileExists dbname then (
 	       stderr << "--creating empty database for processed documentation in " << dbname << endl;
 	       close openDatabaseOut dbname;
@@ -725,7 +728,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- process documentation
 	  stderr << "--processing documentation nodes..." << endl;
-	  scan(nodes, tag -> (
+	  scan(nodes, tag -> if not isSecondary tag then (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
 			 if debugLevel > 0 then stderr << "--skipping   " << tag << endl;
