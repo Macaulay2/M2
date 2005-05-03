@@ -2436,36 +2436,6 @@ TEST ///
     scan(modules, M -> assert( cover M == target presentation M ) )
 ///
 document {
-     Key => prune,
-     Headline => "minimize generators and relations"
-     }
-document {
-     Key => (prune, Matrix),
-     Usage => "prune f",
-     Inputs => {
-	  "f" => null
-	  },
-     Outputs => {
-	  { "the map corresponding to ", TT "f", " obtained by pruning its source and target modules" }
-	  },
-     SeeAlso => {(prune,Module), "presentation", "trim"}
-     }
-document {
-     Key => (prune, Module),
-     Usage => "N = prune M",
-     Inputs => {
-	  "M" => null
-	  },
-     Outputs => {
-	  "N" => { "a module isomorphic to ", TT "M", " with a minimal number of generators and relations." }
-	  },
-     "The isomorphism from ", TT "N", " to ", TT "M", " can 
-     be obtained with as ", TT "g = N.cache.pruningMap", " unless ", TT "M.cache.pruningMap", "
-     already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 
-     the inverse isomorphism with ", TT "g^-1", ".",
-     SeeAlso => { "pruningMap" }
-     }
-document {
      Key => pruningMap,
      Headline => "store the isomorphism obtained by pruning",
      TT "pruningMap", " -- the key under which is stored the isomorphism to
