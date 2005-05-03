@@ -17,7 +17,7 @@ PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)
 assert( not isGlobalSymbol "Macaulay2Core" )
 getGlobalSymbol(PackageDictionary,"Macaulay2Core")
-getGlobalSymbol(PackageDictionary,"User")
+-- getGlobalSymbol(PackageDictionary,"User")
 
 -----------
 

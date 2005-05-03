@@ -526,7 +526,10 @@ documentOptions := new HashTable from {
      Subnodes => true }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
-notMissing = new MutableHashTable
+storeRawDocumentation := (nodename,opts) -> (
+     if currentPackage#rawKey#?nodename then stderr << "warning: documentation already provided for '" << nodename << "'" << endl;
+     currentPackage#rawKey#nodename = opts;
+     )
 
 document = method( SingleArgumentDispatch => true )
 
@@ -543,19 +546,29 @@ document Sequence := args -> (
      args = select(args, arg -> class arg =!= Option);
      if not opts.?Key then error "missing Key";
      key := opts.Key;
+     rest := {};
      if class key === List then (
-	  scan(drop(key,1), k -> notMissing#k = first key);
-	  key = first key;
+	  rest = drop(key,1);
+	  opts.Key = key = first key;
 	  );
      opts.DocumentTag = tag := makeDocumentTag(key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
+     scan(rest, secondary -> (
+	       tag2 := makeDocumentTag secondary;
+	       storeRawDocumentation(DocumentTag.FormattedKey tag2,
+		    new HashTable from {
+			 PrimaryTag => tag, 
+			 symbol DocumentTag => tag2
+			 })));
+     if not opts.?Headline and class key === Sequence and key#?0 then (
+	  h := headline key#0;
+	  if h =!= null then opts.Headline = h;
+	  );
      currentNodeName = DocumentTag.FormattedKey tag;
      if reservedNodeNames#?(toLower currentNodeName) then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
-     if currentPackage#rawKey#?currentNodeName then stderr << "warning: documentation already provided for '" << currentNodeName << "'" << endl;
-     opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val));
-     currentPackage#rawKey#currentNodeName = opts;
+     storeRawDocumentation(currentNodeName, new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val)));
      currentNodeName = null;
      )
 
@@ -581,12 +594,23 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
-	  if d === null and not notMissing#?(DocumentTag.Key tag) then return "missing documentation";
+	  if d === null then return "missing documentation";
 	  );
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s)
+-----------------------------------------------------------------------------
+isSecondary = tag -> (
+     d := fetchRawDocumentation tag;
+     d =!= null and d#?PrimaryTag)
+getPrimary = tag -> (
+     while (
+     	  d := fetchRawDocumentation tag;
+     	  d =!= null and d#?PrimaryTag
+	  )
+     do tag = d#PrimaryTag;
+     tag)
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
 --   the first member of the pair is the string to use for sorting
@@ -595,9 +619,10 @@ optTO := i -> (
      i = makeDocumentTag i;
      fkey := DocumentTag.FormattedKey i;
      key  := DocumentTag.Key i;
-     if notMissing#?key
-     then (fkey,htmlLiteral fkey)
-     else (fkey, SEQ fixup TOH{i}))
+     if isSecondary i
+     then (fkey, fixup SEQ {fkey, ", see ", TOH{getPrimary i}})
+     else (fkey, fixup SEQ TOH{i})				    -- need an alternative here for secondary tags such as (export,Symbol)
+     )
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      -- we might want a new type of TO so that in info mode this would look like this:
      --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
@@ -877,10 +902,10 @@ op := s -> if operator#?s then (
 
 optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> class f === Function and (options f)#?s) -- this is slow!
 
-ret := k -> (
-     t := typicalValue k;
-     if t =!= Thing then fixup DIV {"Class of returned value: ", TO t, commentize headline t}
-     )
+--ret := k -> (
+--     t := typicalValue k;
+--     if t =!= Thing then fixup DIV {"Class of returned value: ", TO t, commentize headline t}
+--     )
 seecode := x -> (
      f := lookup x;
      n := code f;
@@ -891,7 +916,10 @@ seecode := x -> (
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> ( ret f, fmeth f )
+documentationValue(Symbol,Function) := (s,f) -> ( 
+     -- ret f, 
+     fmeth f
+     )
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
