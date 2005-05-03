@@ -1,37 +1,21 @@
---- status: TODO
---- author(s): 
+--- status: 
+--- author(s): M2fest 2005
 --- notes: 
 
 document { 
-     Key => compress,
-     Headline => "",
-     Usage => "",
+     Key => {compress, (compress,Matrix)},
+     Headline => "extract nonzero columns from a matrix",
+     Usage => "compress m",
      Inputs => {
+	  "m" => Matrix => ""
 	  },
      Outputs => {
+	  Matrix => {"the matrix consisting of nonzero columns of ", TT "m"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "m = matrix {{1,2,0,0},{0,0,1,0}}",
+	  "compress m"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"matrices"}
      }
-document { 
-     Key => (compress,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc8.m2:1253:     Key => compress,
+

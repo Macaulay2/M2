@@ -1232,13 +1232,6 @@ document {
      }
 
 document {
-     Key => compress,
-     Headline => "remove columns which are zero",
-     TT "compress m", " -- provides the matrix obtained from the matrix ", TT "m", "
-     by removing the columns which are zero."
-     }
-
-document {
      Key => newCoordinateSystem,
      Headline => "change variables",
      TT "newCoordinateSystem(S,m)", " -- takes a one-rowed matrix ", TT "m", " of
