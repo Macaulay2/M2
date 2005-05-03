@@ -4,20 +4,16 @@
 
 document { 
      Key => dim,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "compute the Krull dimension",
+     Caveat => {"To compute the dimension of a vector space, 
+	one should use ", TO rank, ".",
+	PARA,
+	"Over the integers, the computation effectively 
+	 tensors first with the rational numbers, yielding the wrong 
+	 answer in some cases."},
+     SeeAlso => {codim}
      }
+
 document { 
      Key => (dim,GaloisField),
      Headline => "",
@@ -52,38 +48,42 @@ document {
      }
 document { 
      Key => (dim,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "dim R",
+     Inputs => {"R" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Compute the Krull dimension of the given ring.",
+     PARA,
+     "A cuspidal plane curve", 
      EXAMPLE {
+	  "R = QQ[x,y,z]",
+	  "I =ideal(y^2*z-x^3)",
+	  "sing = singularLocus(R/I)",
+	  "dim sing"
+	  },
+     "The exterior algebra is artinian:",
+     EXAMPLE {
+	  "R = ZZ/101[a,b,SkewCommutative => true]",
+	  "dim R"
+	  },
+     "The Weyl algebra in 2 variables:",
+     EXAMPLE {
+          "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];",
+	  "dim R"
+	  },
+     "An example over ", TO ZZ, ":",
+     EXAMPLE {
+	  "R = ZZ[a,b]/(a*b-1)",
+	  "dim R",
+	  "S = R[x,y]",
+	  "dim S"
 	  },
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {codim}
      }
 document { 
      Key => (dim,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (dim,PolynomialRing),
      Headline => "",
      Usage => "",
      Inputs => {
