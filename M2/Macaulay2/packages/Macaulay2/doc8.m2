@@ -1,13 +1,4 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
-
-document {
-     Key => pdim,
-     Headline => "calculate the projective dimension",
-     TT "pdim M", " -- calculate the projective dimension of a module ", TT "M", ".",
-     PARA,
-     "For now, the method is to measure the length of a projective resolution."
-     }
-
 document {
      Key => (symbol /, Module, Module),
      Headline => "quotient module",
