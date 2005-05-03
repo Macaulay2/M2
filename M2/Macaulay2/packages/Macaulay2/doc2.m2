@@ -641,7 +641,7 @@ document {
      Inputs => { "x" => RR => null },
      Outputs => { { "the cosine of ", TT "x", "" } },
 	EXAMPLE {
-		"cos 1"
+		"cos 2"
 		}
 	 }
 document {
