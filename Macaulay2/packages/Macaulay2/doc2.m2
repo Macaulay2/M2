@@ -631,7 +631,7 @@ document {
      Inputs => { "x" => RR => null },
      Outputs => { { "the sine of ", TT "x", "" } },
 	EXAMPLE {
-		"sin 0.4"
+		"sin 0.3"
 		}
 	 }
 document {
