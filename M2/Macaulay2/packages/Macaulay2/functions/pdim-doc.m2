@@ -6,7 +6,7 @@ document {
      Key => {(pdim),(pdim,Module), (pdim,CoherentSheaf)},
      Headline => "calculate the projective dimension",
      Usage => "pdim M",
-     Inputs => {"M" => Module => " or a ", TO CoherentSheaf
+     Inputs => {"M" => Module => {" or a ", TO CoherentSheaf}
 	  },
      Outputs => {
 	ZZ => ""  },
