@@ -1,38 +1,26 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): Caviglia, Kummini
 --- notes: 
 
 document { 
-     Key => koszul,
-     Headline => "",
-     Usage => "",
+     Key => {koszul,(koszul,ZZ,Matrix)},
+     Headline => "a differential in a Koszul complex",
+     Usage => "g = koszul(i,f)",
      Inputs => {
-	  },
+             "i" => "",
+             "f" => {"a ", TT "1", " by ", TT "n", " matrix"},
+     },
      Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+          "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
+     },
+
      EXAMPLE {
-	  },
-     Caveat => {},
+          "R = QQ[x_1..x_4];",
+          "f = matrix{{x_1..x_4}}"
+     },
+     "To see the second differential in the Koszul complex of the matrix ", TT "f", " look at:",
+     EXAMPLE {
+     "koszul(2,f)",
+     },
      SeeAlso => {}
      }
-document { 
-     Key => (koszul,ZZ,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc7.m2:1640:     Key => koszul, Headline => "a differential in a Koszul complex" }
- -- doc7.m2:1642:     Key => (koszul,ZZ,Matrix),
