@@ -1,0 +1,70 @@
+
+ Here's what to do when rewriting a basic documentation node:
+
+ Look in M2doc/Macaualay2/functions for the command you are working on
+   and open up the file <command>-doc.m2.
+
+ Put your name on top.
+
+ If there is old documentation, then the name of the doc#.m2 file will
+   show up at the bottom of the file. If so, go find it in
+   M2doc/Macaulay2/doc#.m2 and move the code to the new file and delete 
+   the lines from the doc#.m2 file.
+
+ Go to functions.m2 and uncomment the file you are working on, so it
+   gets loaded.
+ 
+ Now edit the file you are working on:
+   If there is old documentation, put it into the new format and delete
+     the old stuff.
+   If it has a command that refers to it, try to combine them, unless 
+     they're really different and need different examples/explanation
+     for each. 
+   Remove any sections of the automatically generated file that are not
+     being used.
+   See form of compress-doc.m2, prune for examples.
+
+   Note:  ", TT " will change the font of a string to typewriter.
+    	  Don't forget to use ";" to suppress irrelevant output in examples.
+	  Separate lines of example by commas. Don't forget to use 
+            quotes around each line.
+	  Should probably have some text before each example explaining
+	    it. 
+	  There will automatically be inserted spaces before/after 
+	    examples or something like this, so don't try to add 
+	    in the node page. 
+
+
+ When done, change the status from TODO to DRAFT.
+   (After reivew, it will become "REVIEWED")
+   (When accepted, the status line will disappear.)
+
+ Then run "installPackage Macaulay2" in M2. Fix any errors that occur
+   and rerun installPackage.
+
+ Look at your local documentation to see how it looks. 
+   Note: It will not change the other pages that refer to this node.
+         To change these, need to set RemakeA11Documentation=>true
+           when run installPackage.
+
+ Finally go to shell and make sure you're in M2doc/Macaulay2. Run CVS
+   by typing:
+     cvs ci -m "some identifier here about what you did"
+   to log in your changes.
+
+ Recall: to update your local versions of things type:
+     cvs update
+
+
+
+
+
+
+
+
+
+
+
+
+
+
