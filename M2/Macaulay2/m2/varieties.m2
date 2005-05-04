@@ -315,6 +315,10 @@ sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
      (n,F,G) -> prune sheaf Ext^n(module F, module G)
      )
 
+sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)
+sheafExt(ZZ,CoherentSheaf,SheafOfRings) := Module => (n,F,O) -> sheafExt^n(F,O^1)
+sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^1)
+
 -----------------------------------------------------------------------------
 -- code donated by Greg Smith <ggsmith@math.berkeley.edu>
 
