@@ -1,5 +1,5 @@
---- status: TODO
---- author(s): 
+--- status: draft
+--- author(s): Decker, Popescu, Smith
 --- notes: 
 
 document { 
@@ -15,47 +15,15 @@ document {
      }
 
 document { 
-     Key => (dim,GaloisField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (dim,MonomialIdeal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (dim,Ring),
+     Key => {(dim,Ring),(dim,GaloisField),(dim,FractionField),(dim,QuotientRing),(dim,PolynomialRing)},
      Usage => "dim R",
      Inputs => {"R" => ""
 	  },
      Outputs => {ZZ => ""
 	  },
-     "Compute the Krull dimension of the given ring.",
+     "Computes the Krull dimension of the given ring.",
      PARA,
-     "A cuspidal plane curve", 
+     "The singular locus of a cuspidal plane curve", 
      EXAMPLE {
 	  "R = QQ[x,y,z]",
 	  "I =ideal(y^2*z-x^3)",
@@ -79,128 +47,116 @@ document {
 	  "S = R[x,y]",
 	  "dim S"
 	  },
-     Caveat => {},
-     SeeAlso => {codim}
-     }
-document { 
-     Key => (dim,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {codim, (dim,AffineVariety)}
      }
 document { 
      Key => (dim,AffineVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "dimension of the affine variety",
+     Usage => "dim V",
+     Inputs => {"V" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the dimension of the affine algebraic set ", TT "V"," as the Krull dimension
+      of its affine coordinate ring.",
      EXAMPLE {
+	  "R = ZZ/101[x,y];",
+          "point = ideal(x,y);",
+	  "line = ideal(2*x+3*y-1);",
+	  "V=Spec(R/intersect(point,line))",	  
+	  "dim V",
+	  "Z=Spec(R/(point+line))",
+	  "dim Z"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {Spec, (dim,ProjectiveVariety)}
      }
 document { 
      Key => (dim,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "dimension of the projective variety",
+     Usage => "dim V",
+     Inputs => {"V" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the dimension of the projective algebraic set from 
+      the Krull dimension of its homogeneous coordinate ring.",
      EXAMPLE {
+	  "R = ZZ/101[x_0..x_4];",
+	  "M = matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}}",
+	  "V = Proj(R/minors(2,M));",
+	  "degree V",
+	  "dim V",
+	  "dim minors(2,M)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (dim,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {Proj, (dim, AffineVariety)}
      }
 document { 
      Key => (dim,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "dim M",
+     Inputs => {"M" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the Krull dimension of the module ", TT "M",
      EXAMPLE {
+	  "R = ZZ/31991[a,b,c,d]",
+	  "I = monomialCurveIdeal(R,{1,2,3})",
+	  "M = Ext^1(I,R)",
+	  "dim M",
+	  "N = Ext^0(I,R)",
+	  "dim N"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(dim,Ring),(dim,Ideal)}
      }
 document { 
      Key => (dim,ProjectiveHilbertPolynomial),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "the degree of the Hilbert polynomial",
+     Usage => "dim P",
+     Inputs => {"P" => ""
 	  },
-     Outputs => {
+     Outputs => {"ZZ"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The command ", TO dim,  "is designed so that the result 
+     is the dimension of the projective scheme that 
+     may have been used to produce the given Hilbert polynomial.",
      EXAMPLE {
+	  "V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))",
+	  "P = hilbertPolynomial V",
+	  "dim P"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+      SeeAlso => {hilbertPolynomial, (degree,ProjectiveHilbertPolynomial), (euler,ProjectiveHilbertPolynomial)}
      }
 document { 
-     Key => (dim,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {(dim,Ideal),(dim,MonomialIdeal)},
+     Usage => "dim I",
+     Inputs => {"I" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the Krull dimension of the 
+      basering of ", TT "I", " mod", TT "I",
+      PARA,
+     "The ideal of 3x3 commuting matrices:",
      EXAMPLE {
+	  "R = ZZ/101[x_(0,0)..x_(2,2),y_(0,0)..y_(2,2)]",
+	  "M = genericMatrix(R,x_(0,0),3,3)",
+	  "N = genericMatrix(R,y_(0,0),3,3)",
+	  "I = ideal flatten(M*N-N*M);",
+	  "dim I" 
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The dimension of a Stanley-Reisner monomial ideal
+      associated to a simplicial complex.", 
+      " A hollow tetrahedron:",
+     EXAMPLE {
+	  "needsPackage \"SimplicialComplexes\"", 
+	  "D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}",
+	  "debug SimplicialComplexes",
+	  "I = monomialIdeal presentation D.facering",
+	  -- fix this to presentation faceRing(D)
+          "maxfaces D",
+          "dim D",
+	  "dim I"
+	  },
+     SeeAlso => {ideal, monomialIdeal, "SimplicialComplexes"}
      }
- -- doc10.m2:900:     Key => (codim, CoherentSheaf),
- -- doc7.m2:2357:     Key => codim,
- -- doc7.m2:2378:     Key => (codim, Module),
- -- doc7.m2:2397:     Key => dim,
- -- doc8.m2:4:     Key => pdim,
- -- doc8.m2:618:     Key => CodimensionLimit,
- -- doc8.m2:637:     Key => [gb,CodimensionLimit], 
- -- doc8.m2:926:     Key => [syz,CodimensionLimit],
- -- overview2.m2:1725:     Key => "two dimensional formatting",
- -- overviewB.m2:270:     Key => "dimension, codimension, and degree",
+
