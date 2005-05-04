@@ -796,10 +796,6 @@ document {
       	  "subtable({1,3,4},toList(2..4), m)"
 	  }}
 document {
-     Key => transpose,
-     Headline => "transpose",
-     TT "transpose m", " -- yields the transpose ", TT "n", " of the table or homomorphism ", TT "m", "."}
-document {
      Key => vector,
      Headline => "make a vector",
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",

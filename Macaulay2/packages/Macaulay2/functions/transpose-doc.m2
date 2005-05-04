@@ -1,10 +1,10 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): kummini
 --- notes: 
 
 document { 
      Key => transpose,
-     Headline => "",
+     Headline => "transpose a table or a matrix ", 
      Usage => "",
      Inputs => {
 	  },
@@ -20,19 +20,20 @@ document {
      }
 document { 
      Key => (transpose,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => " transposes a matrix",
+     Usage => "transpose f",
      Inputs => {
+		"f" => Matrix => ""
 	  },
-     Outputs => {
+     Outputs => { 
+		{"the tranpose of the matrix ", TT "f", "."}
 	  },
-     Consequences => {
-	  },     
      "description",
      EXAMPLE {
+		"S = ZZ/10007[x,y];",
+		"M = matrix{{x^3,x*y^2},{y*x^2,y^3}}",
+		"transpose M",
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 document { 
      Key => (transpose,List),
@@ -66,4 +67,3 @@ document {
      Caveat => {},
      SeeAlso => {}
      }
- -- doc6.m2:836:     Key => transpose,
