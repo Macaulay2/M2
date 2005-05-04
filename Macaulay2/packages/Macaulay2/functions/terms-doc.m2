@@ -3,35 +3,27 @@
 --- notes: 
 
 document { 
-     Key => terms,
-     Headline => "",
-     Usage => "",
+     Key => {terms,(terms,RingElement)},
+     Headline => "provide a list of terms of a polynomial",
+     Usage => "terms f",
      Inputs => {
+	  "f" => "in a polynomial ring"
 	  },
      Outputs => {
+	  {"the list of terms of ", TT "f"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The polynomial ", TT "f", " is split into its terms",
      EXAMPLE {
+	  "R = QQ[a..d];",
+	  "terms(a+d^2-1+a*b*c)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (terms,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "In the situtation where the ring is a polynomial ring over another 
+     polynomial ring, the polynomial is split using the monomials
+     of the outer ring.",
      EXAMPLE {
+	  "S = R[x,y];",
+	  "terms(a*x+b*y+c*x*y+c*x^3+1+a)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {coefficients, monomials, someTerms}
      }
- -- doc8.m2:1167:     Key => terms,
+
