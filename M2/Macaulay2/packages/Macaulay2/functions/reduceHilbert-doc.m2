@@ -4,7 +4,7 @@
 
 document { 
      Key => {reduceHilbert, (reduceHilbert,Divide)},
-     Headline => "reduce a Hilbert series",
+     Headline => "reduce a Hilbert series expression",
      Usage => "",
      Inputs => {
 	  },
