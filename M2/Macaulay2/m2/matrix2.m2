@@ -369,13 +369,14 @@ permanents = method()
 permanents(ZZ,Matrix) := Ideal => (p,M) -> (
      r:=numgens target M;
      c:=numgens source M;
+     xxX := symbol xxX;
      R1:=ZZ/2[xxX_(1,1)..xxX_(r,c)];
      M1:= transpose genericMatrix(R1,xxX_(1,1),c,r);
      D1:= minors(p,M1);
      R2:=ZZ[xxX_(1,1)..xxX_(r,c)];
      D1=substitute(D1,R2);
      F = map(ring M, R2,flatten entries M);
-     F transpose( generators (D1)) )
+     F D1)
 
 -- promote(Matrix,Ring) := (f,S) -> (
 --      error "this use of 'promote' has been replaced by '**'";
