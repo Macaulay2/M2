@@ -1481,68 +1481,6 @@ document {
      SeeAlso => {submatrix, (symbol _,Module,Array), (symbol ^,Matrix,Array)}
      }
 document {
-     Key => entries,
-     Headline => "list the entries of a matrix",
-     TT "entries f", " -- produces the matrix of the homomorphism f as a doubly
-     nested list of ring elements.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "p = matrix {{x^2,y^2},{x*y*z, x^3-y^3}}",
-      	  "entries p"
-	  },
-     }
-TEST"
-R=ZZ/101[a..f]
-p = {{a,b},{c,d},{e,f}}
-assert( entries matrix p == p )
-"
-TEST "
-R = ZZ/101[a .. r]
-assert ( genericMatrix(R,a,3,6) == genericMatrix(R,a,3,6) )
-ff = genericMatrix(R,a,3,6)
-fff = genericMatrix(R,a,3,6)
-assert( # expression ff == 3 )
-assert( ff == matrix {{a,d,g,j,m,p},{b,e,h,k,n,q},{c,f,i,l,o,r}} )
-assert( -ff == matrix {
-	  {-a,-d,-g,-j,-m,-p},
-	  {-b,-e,-h,-k,-n,-q},
-	  {-c,-f,-i,-l,-o,-r}} )
-assert( 2*ff == matrix {
-	  {2*a,2*d,2*g,2*j,2*m,2*p},
-	  {2*b,2*e,2*h,2*k,2*n,2*q},
-	  {2*c,2*f,2*i,2*l,2*o,2*r}} )
-assert( ff != 0 )
-assert( ff - ff == 0 )
-assert( transpose ff - matrix{{a,b,c},{d,e,f},{g,h,i},{j,k,l},{m,n,o},{p,q,r}} == 0 )
---assert( transpose ff == matrix{{a,b,c},{d,e,f},{g,h,i},{j,k,l},{m,n,o},{p,q,r}} ) -- mike will fix.  DRG: these are not equal: they have different degrees...
---assert( ff_0 == vector {a,b,c} )
---assert( ff_1 == vector {d,e,f} )
---assert( ff_2 == vector {g,h,i} )
-M = cokernel ff
-assert ( ff === presentation M )		  -- original map saved
-assert ( cokernel ff === M )		  -- cokernel memoized
--- gbTrace = 3
--- << \"gb ff ...\" << flush
-G = gb ff
-pM = poincare M
-MM = cokernel fff
-MM.cache.poincare = pM
--- << \"gb fff (with poincare provided) ...\" << flush
-GG = gb fff
-assert( numgens source generators G == numgens source generators GG )
-T := (ring pM)_0
-assert ( pM == 3-6*T+15*T^4-18*T^5+6*T^6 )
-assert ( gb ff === G )
-assert ( numgens source generators G == 41 )
-assert ( numgens source mingens G == 6 )
-time C = resolution M
-assert( C === resolution M )
--- betti C
-time D = resolution cokernel leadTerm generators G
--- betti D
-"
-document {
      Key => isInjective,
      Headline => "whether a map is injective",
      SeeAlso => "isSurjective"
@@ -2189,47 +2127,11 @@ document {
      and extracting the number of basis elements.",
      SeeAlso => {"hilbertSeries", "hilbertPolynomial"}
      }
-TEST ///
-R = ZZ/101[x,y]
-M = R^1/x
-T = degreesRing R
-t = T_0
-assert( hilbertSeries (M, Order => 5) == t^4+t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
-///
 document {
      Key => Order,
      Headline => "specify the order of a Hilbert series required",
      TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "
      to specify the order of the series requested."
-     }
-document {
-     Key => hilbertSeries,
-     Headline => "compute Hilbert series",
-     TT "hilbertSeries M", " -- compute the Hilbert series of the ring or
-     module ", TT "M", ".",
-     PARA,
-     "The Hilbert series is the formal power series in the variables of the
-     degrees ring whose coefficients are the dimensions of the corresponding
-     graded component.  The series is provided as an ", TO "Expression", "
-     representing a rational function with that series.",
-     PARA,
-     "If an optional integer argument labeled ", TO "Order", " is used, then
-     the power series is expanded to that order.",
-     EXAMPLE {
-	  "R = ZZ/101[x, Degrees => {2}];",
-      	  "hilbertSeries(R/x^2)",
-      	  "numerator oo",
-      	  "value oo",
-      	  "poincare (R/x^2)",
-      	  "hilbertSeries(R/x^2, Order => 12)",
-	  },
-     EXAMPLE {
-	  "R=ZZ/101[x, Degrees => {{1,1}}];",
-      	  "hilbertSeries (R/x^2)",
-	  },
-     SeeAlso => {"degreesRing", "Order"}
      }
 document {
      Key => ProjectiveHilbertPolynomial,
