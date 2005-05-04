@@ -1137,18 +1137,6 @@ assert(homogenize(f,a) == c^2)
 "
 
 document {
-     Key => terms,
-     Headline => "provide a list of terms of a polynomial",
-     TT "terms f", " -- provide a list of terms of a polynomial.",
-     PARA,
-     EXAMPLE {
-	  "R = QQ[x,y]",
-      	  "terms (x+2*y-1)^2",
-	  },
-     SeeAlso => "coefficients"
-     }
-
-document {
      Key => Ascending,
      TT "Ascending", " -- a symbol used as a value for optional
      arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
