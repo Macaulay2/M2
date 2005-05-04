@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+        symbol Undocumented,
      	symbol permanents,
      	symbol PrimaryTag,
         symbol applicationDirectory,

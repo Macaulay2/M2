@@ -728,7 +728,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- process documentation
 	  stderr << "--processing documentation nodes..." << endl;
-	  scan(nodes, tag -> if not isSecondary tag then (
+	  scan(nodes, tag -> if not isUndocumented tag then (
 		    fkey := DocumentTag.FormattedKey tag;
 		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
 			 if debugLevel > 0 then stderr << "--skipping   " << tag << endl;
