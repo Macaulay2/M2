@@ -1,26 +1,10 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L.Gold
+--- notes: working on this...
 
 document { 
-     Key => reduceHilbert,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (reduceHilbert,Divide),
-     Headline => "",
+     Key => {reduceHilbert, (reduceHilbert,Divide)},
+     Headline => "reduce a Hilbert series",
      Usage => "",
      Inputs => {
 	  },

@@ -1,6 +1,8 @@
 
  Here's what to do when rewriting a basic documentation node:
 
+  Update your files using "cvs update" before starting.
+
  Look in M2doc/Macaualay2/functions for the command you are working on
    and open up the file <command>-doc.m2.
 
@@ -22,7 +24,7 @@
      for each. 
    Remove any sections of the automatically generated file that are not
      being used.
-   See form of compress-doc.m2, prune for examples.
+   See form of compress-doc.m2 for an example.
 
    Note:  ", TT " will change the font of a string to typewriter.
     	  Don't forget to use ";" to suppress irrelevant output in examples.
@@ -34,13 +36,15 @@
 	    examples or something like this, so don't try to add 
 	    in the node page. 
 
-
  When done, change the status from TODO to DRAFT.
    (After reivew, it will become "REVIEWED")
    (When accepted, the status line will disappear.)
 
  Then run "installPackage Macaulay2" in M2. Fix any errors that occur
    and rerun installPackage.
+
+   Note: Cntrl-<up arrow> allows you to see the history of commands in
+     M2 within emacs
 
  Look at your local documentation to see how it looks. 
    Note: It will not change the other pages that refer to this node.

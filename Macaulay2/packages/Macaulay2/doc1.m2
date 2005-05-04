@@ -547,38 +547,6 @@ document {
 	  }
      }
 document {
-     Key => isHomogeneous,
-     Headline => "test for homogeneity"
-     }
-document {
-     Key => (isHomogeneous,Matrix),
-     Usage => "isHomogeneous f",
-     Inputs => {
-	  "f" => { "a map ", TT "F", " <-- ", TT "G", "" },
-	  },
-     Outputs => {
-	  {"whether the matrix ", TT "f", " is homogeneous"}
-	  },
-     "Associated with every matrix is an arbitrary integer called
-     its degree: it has nothing to do with the degrees of the entries
-     of the matrix; see ", TO (degree,Matrix), ".  The
-     matrix ", TT "f", " is called homogeneous if every entry
-     ", TT "f_(i,j)", " has degree equal to
-     ", TT "degree G_i - degree F_j + degree f", ".  Another way to
-     say it is that applying f to a homogeneous vector add
-     ", TT "degree f", " to its degree.",
-     EXAMPLE {
-	  "R = QQ[x];",
-	  "f = map(F = R^{0}, G = R^{-1}, {{x^3}}, Degree => 2)",
-	  "degree f",
-	  "degree G_0",
-	  "degree F_0",
-	  "f * G_0",
-	  "degree (f * G_0)",
-	  "isHomogeneous f"
-	  }
-     }
-document {
      Key => vars, 
      Headline => "variables"
      }
