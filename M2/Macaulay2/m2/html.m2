@@ -885,6 +885,7 @@ installPackage Package := opts -> pkg -> (
 
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
+     	  stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildDirectory << "\"" << endl;
 	  symlinkDirectory(buildDirectory, installDirectory, Verbose => debugLevel > 0)
 	  );
 
