@@ -896,10 +896,6 @@ document {
      }
 
 
-document {
-     Key => (codim, CoherentSheaf),
-     Headline => "codimension of support"
-     }
 
 document {
      Key => (rank, CoherentSheaf),
