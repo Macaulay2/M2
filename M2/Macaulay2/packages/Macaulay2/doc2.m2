@@ -787,7 +787,7 @@ a+a"///,
 	  }
      }
 
-document (
+document {
      Key => (value,Expression),
      Headline => "evaluate an expression",
      Usage => "value s",
@@ -797,7 +797,7 @@ document (
 	  "p = (expression 2)^3 * (expression 3)^2",
       	  "value p"
 	  }
-     )
+     }
 
 document {
      Key => "global",
