@@ -26,8 +26,7 @@
      being used.
    See form of compress-doc.m2 for an example.
 
-   Note:  ", TT " will change the font of a string to typewriter.
-    	  Don't forget to use ";" to suppress irrelevant output in examples.
+   Note:  Don't forget to use ";" to suppress irrelevant output in examples.
 	  Separate lines of example by commas. Don't forget to use 
             quotes around each line.
 	  Should probably have some text before each example explaining
@@ -62,8 +61,10 @@
 
 
 Some useful commands:
+...", TT "...  will change the font of the following string to typewriter
 TO "<linkname>"
 TO2(<link name>, <link text>)
+...", PARA, "...   starts a new paragraph in the text
 
 
 
