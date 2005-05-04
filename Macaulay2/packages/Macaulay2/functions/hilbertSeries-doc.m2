@@ -1,12 +1,31 @@
 --- status: DRAFT
---- author(s): L.Gold
+--- author(s): L.Gold, J.Caviglia
 --- notes: 
-
 document { 
-     Key => {hilbertSeries, (hilbertSeries,PolynomialRing), 
-	  (hilbertSeries,ProjectiveVariety), (hilbertSeries,QuotientRing),
-	  (hilbertSeries,ProjectiveHilbertPolynomial), (hilbertSeries,Module), 
-	  (hilbertSeries,Ideal), (hilbertSeries,CoherentSheaf)},
+     Key => hilbertSeries,
+     Headline => "compute the Hilbert series",
+     Outputs => {
+	  Expression => "" },
+     "The Hilbert series is the formal power series in the variables of the
+     degrees ring whose coefficients are the dimensions of the corresponding
+     graded component.  Notice that the series is provided as an ", 
+     TO "Expression", " representing a rational function with that
+     series and it is not reduced.",
+     EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+      	  "hilbertSeries(R/x^2)",
+      	  "numerator oo",
+      	  "value oo",
+      	  "poincare (R/x^2)",
+	  },
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+      	  "hilbertSeries (R/x^2)",
+	  },
+     SeeAlso => {"degreesRing", "reduceHilbert"}
+     }
+document { 
+     Key => {(hilbertSeries,PolynomialRing), (hilbertSeries,QuotientRing)},
      Headline => "compute the Hilbert series",
      Usage => "hilbertSeries M",
      Inputs => {
@@ -32,18 +51,134 @@ document {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
       	  "hilbertSeries (R/x^2)",
 	  },
-     SeeAlso => {"degreesRing", "Order", "reduceHilbert"}
+     SeeAlso => {"hilbertSeries"}
      }
 document { 
-     Key => {[hilbertSeries, Order]},
+     Key => {(hilbertSeries,ProjectiveVariety)},
+     Headline => "compute the Hilbert series",
+     Usage => "hilbertSeries M",
+     Inputs => {
+	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
+	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
+	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  },
+     Outputs => {
+	  Expression => "" },
+     "The Hilbert series is the formal power series in the variables of the
+     degrees ring whose coefficients are the dimensions of the corresponding
+     graded component.  Notice that the series is provided as an ", 
+     TO "Expression", " representing a rational function with that
+     series and it is not reduced.",
+     EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+      	  "hilbertSeries(R/x^2)",
+      	  "numerator oo",
+      	  "value oo",
+      	  "poincare (R/x^2)",
+	  },
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+      	  "hilbertSeries (R/x^2)",
+	  },
+     SeeAlso => {"hilbertSeries"}
+     }
+document { 
+     Key => {(hilbertSeries,ProjectiveHilbertPolynomial)},
+     Headline => "compute the Hilbert series",
+     Usage => "hilbertSeries M",
+     Inputs => {
+	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
+	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
+	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  },
+     Outputs => {
+	  Expression => "" },
+     "The Hilbert series is the formal power series in the variables of the
+     degrees ring whose coefficients are the dimensions of the corresponding
+     graded component.  Notice that the series is provided as an ", 
+     TO "Expression", " representing a rational function with that
+     series and it is not reduced.",
+     EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+      	  "hilbertSeries(R/x^2)",
+      	  "numerator oo",
+      	  "value oo",
+      	  "poincare (R/x^2)",
+	  },
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+      	  "hilbertSeries (R/x^2)",
+	  },
+     SeeAlso => {"hilbertSeries"}
+     }
+document { 
+     Key => {(hilbertSeries,Module), (hilbertSeries,CoherentSheaf)},
+     Headline => "compute the Hilbert series",
+     Usage => "hilbertSeries M",
+     Inputs => {
+	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
+	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
+	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  },
+     Outputs => {
+	  Expression => "" },
+     "The Hilbert series is the formal power series in the variables of the
+     degrees ring whose coefficients are the dimensions of the corresponding
+     graded component.  Notice that the series is provided as an ", 
+     TO "Expression", " representing a rational function with that
+     series and it is not reduced.",
+     EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+      	  "hilbertSeries(R/x^2)",
+      	  "numerator oo",
+      	  "value oo",
+      	  "poincare (R/x^2)",
+	  },
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+      	  "hilbertSeries (R/x^2)",
+	  },
+     SeeAlso => {"hilbertSeries"}
+     }
+document { 
+     Key => {(hilbertSeries,Ideal)},
+     Headline => "compute the Hilbert series",
+     Usage => "hilbertSeries M",
+     Inputs => {
+	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
+	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
+	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  },
+     Outputs => {
+	  Expression => "" },
+     "The Hilbert series is the formal power series in the variables of the
+     degrees ring whose coefficients are the dimensions of the corresponding
+     graded component.  Notice that the series is provided as an ", 
+     TO "Expression", " representing a rational function with that
+     series and it is not reduced.",
+     EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+      	  "hilbertSeries(R/x^2)",
+      	  "numerator oo",
+      	  "value oo",
+      	  "poincare (R/x^2)",
+	  },
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+      	  "hilbertSeries (R/x^2)",
+	  },
+     SeeAlso => {"hilbertSeries"}
+     }
+document { 
+     Key => [hilbertSeries, Order],
      Headline => "display the truncated power series expansion",
      Usage => "hilbertSeries(..., Order => n)",
      Inputs => {
-	  "n" => ZZ => " an integer"},
+	  "n" => ZZ => ""},
      "We compute the Hilbert series both without and with the optional
-     argument. In the second case the first 5 terms of the power
-     series expansion are displayed rather than expressing the series
-     as a rational function.",
+     argument. In the second case notice the first 5 terms of the
+     power series expansion are displayed rather than expressing the
+     series as a rational function.",
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "hilbertSeries(R/x^3)",
