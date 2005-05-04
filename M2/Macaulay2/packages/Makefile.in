@@ -16,6 +16,7 @@ PACKAGES += Markov
 PACKAGES += minimal
 PACKAGES += Points
 PACKAGES += PackageTemplate
+PACKAGES += SimplicialComplexes
 
 # PACKAGES += SchurRings
 ##
