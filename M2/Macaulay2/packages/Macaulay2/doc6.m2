@@ -178,27 +178,6 @@ document {
      fraction field to a normal form.  In other words, fractions
      may be equal without displaying the same numerator and denominator."}
 document {
-     Key => frac,
-     Headline => "construct a fraction field",
-     TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
-     PARA,
-     "If ", TT "R", " has no name yet, then the names for its symbols will
-     be usurped as names for the corresponding elements of ", TT "R", ".",
-     PARA,
-     EXAMPLE {
-	  "F = frac (ZZ/101[x,y])",
-      	  "1/x + 1/y + 1/2",
-	  },
-     "Results of division with ", TO "/", " will be in the fraction field, and
-     the fraction field will be created if necessary.",
-     EXAMPLE {
-	  "R = ZZ[x,y]",
-	  "x/y"
-	  },
-     PARA,
-     "The symbol ", TT "frac", " is also used as a key under which is stored 
-     the fraction field of a ring."}
-document {
      Key => ZZ,
      Headline => "the class of all integers" }
 
