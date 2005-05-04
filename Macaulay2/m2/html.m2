@@ -449,7 +449,7 @@ installPackage = method(Options => {
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
 	  Encapsulate => true,
-	  IgnoreExampleErrors => true,
+	  IgnoreExampleErrors => false,
 	  MakeDocumentation => true,
 	  MakeInfo => false,
 	  RemakeAllDocumentation => false,
