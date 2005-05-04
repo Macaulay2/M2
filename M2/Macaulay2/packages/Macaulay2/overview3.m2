@@ -180,7 +180,7 @@ document {
      the incorporation of his library ", TO "Singular-Libfac", ",
      and David Eisenbud, Wolfram Decker and Sorin Popescu for
      early support, encouragement and suggestions.  We also acknowledge an
-     intellectual debt to David Bayer, who, with Michael Stillman,
+     intellectual debt to Dave Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
      geometry and the predecessor of this program."
      }
@@ -448,7 +448,7 @@ document {
      and then came to Cornell University.  His mathematical research concerns
      computational algebraic geometry and algebraic geometry.  He started writing
      syzygy programs as an undergraduate at the University of Illinois, and from
-     1983 to 1992 with David Bayer he wrote Macaulay, a specialized computer
+     1983 to 1992 with Dave Bayer he wrote Macaulay, a specialized computer
      algebra system for algebraic geometry and the predecessor of this program."
      }
 
