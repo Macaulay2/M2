@@ -26,5 +26,5 @@ document {
 	  },
      Caveat => {""
 	  },
-     SeeAlso => {det, "matrices"}
+     SeeAlso => {det, minors, "matrices"}
      }
