@@ -1,37 +1,21 @@
 --- status: DRAFT
---- author(s): L.Gold, J.Caviglia
---- notes: 
+--- author(s): L.Gold with some help from J.Caviglia
+--- notes: still working on subnodes for each type of usage
 document { 
      Key => hilbertSeries,
      Headline => "compute the Hilbert series",
-     Outputs => {
-	  Expression => "" },
      "The Hilbert series is the formal power series in the variables of the
      degrees ring whose coefficients are the dimensions of the corresponding
-     graded component.  Notice that the series is provided as an ", 
-     TO "Expression", " representing a rational function with that
-     series and it is not reduced.",
-     EXAMPLE {
-	  "R = ZZ/101[x, Degrees => {2}];",
-      	  "hilbertSeries(R/x^2)",
-      	  "numerator oo",
-      	  "value oo",
-      	  "poincare (R/x^2)",
-	  },
-     EXAMPLE {
-	  "R=ZZ/101[x, Degrees => {{1,1}}];",
-      	  "hilbertSeries (R/x^2)",
-	  },
+     graded component.  Note that the series is provided as an ",
+     TO "Expression", ".",
      SeeAlso => {"degreesRing", "reduceHilbert"}
      }
 document { 
      Key => {(hilbertSeries,PolynomialRing), (hilbertSeries,QuotientRing)},
-     Headline => "compute the Hilbert series",
-     Usage => "hilbertSeries M",
+     Headline => "compute the Hilbert series of a ring",
+     Usage => "hilbertSeries R",
      Inputs => {
-	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
-	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
-	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  "R" => {" or a ", TO QuotientRing}
 	  },
      Outputs => {
 	  Expression => "" },
@@ -54,19 +38,17 @@ document {
      SeeAlso => {"hilbertSeries"}
      }
 document { 
-     Key => {(hilbertSeries,ProjectiveVariety)},
-     Headline => "compute the Hilbert series",
+     Key => (hilbertSeries,ProjectiveVariety),
+     Headline => "compute the Hilbert series of a projective variety",
      Usage => "hilbertSeries M",
      Inputs => {
-	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
-	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
-	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  "M" =>  ProjectiveVariety => ""
 	  },
      Outputs => {
 	  Expression => "" },
      "The Hilbert series is the formal power series in the variables of the
      degrees ring whose coefficients are the dimensions of the corresponding
-     graded component.  Notice that the series is provided as an ", 
+     graded component. Note that the series is provided as an ",
      TO "Expression", " representing a rational function with that
      series and it is not reduced.",
      EXAMPLE {
@@ -83,13 +65,11 @@ document {
      SeeAlso => {"hilbertSeries"}
      }
 document { 
-     Key => {(hilbertSeries,ProjectiveHilbertPolynomial)},
-     Headline => "compute the Hilbert series",
+     Key => (hilbertSeries,ProjectiveHilbertPolynomial),
+     Headline => "compute the Hilbert series projective Hilbert polynomial",
      Usage => "hilbertSeries M",
      Inputs => {
-	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
-	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
-	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  "M" => ProjectiveHilbertPolynomial => ""
 	  },
      Outputs => {
 	  Expression => "" },
@@ -113,12 +93,10 @@ document {
      }
 document { 
      Key => {(hilbertSeries,Module), (hilbertSeries,CoherentSheaf)},
-     Headline => "compute the Hilbert series",
+     Headline => "compute the Hilbert series of a module",
      Usage => "hilbertSeries M",
      Inputs => {
-	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
-	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
-	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  "M" => {" or a ", TO CoherentSheaf} 
 	  },
      Outputs => {
 	  Expression => "" },
@@ -141,13 +119,11 @@ document {
      SeeAlso => {"hilbertSeries"}
      }
 document { 
-     Key => {(hilbertSeries,Ideal)},
-     Headline => "compute the Hilbert series",
+     Key => (hilbertSeries,Ideal),
+     Headline => "compute the Hilbert series of an ideal",
      Usage => "hilbertSeries M",
      Inputs => {
-	  "M" => {"a ", TO PolynomialRing, " or a ", TO ProjectiveVariety, 
-	       " or a ", TO QuotientRing, " or a ", TO ProjectiveHilbertPolynomial,
-	       " or a ", TO Module, " or a ", TO Ideal, " or a ", TO CoherentSheaf} 
+	  "M" => Ideal => ""
 	  },
      Outputs => {
 	  Expression => "" },

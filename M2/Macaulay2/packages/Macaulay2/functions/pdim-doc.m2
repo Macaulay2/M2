@@ -1,12 +1,13 @@
 --- status: DRAFT
---- author(s): 
+--- author(s): L.Gold, Josephine, Jonah
 --- notes: 
 
 document { 
-     Key => {(pdim),(pdim,Module), (pdim,CoherentSheaf)},
+     Key => {pdim,(pdim,Module), (pdim,CoherentSheaf)},
      Headline => "calculate the projective dimension",
      Usage => "pdim M",
-     Inputs => {"M" => {"a ", TO Module,  " or a ", TO CoherentSheaf}
+     Inputs => {
+	  "M" => {"a ", TO Module,  " or a ", TO CoherentSheaf}
 	  },
      Outputs => {
 	ZZ => ""  },
@@ -21,10 +22,6 @@ document {
 	  "res(module I)",
 	  "pdim(module I)"
 	  },
-     Caveat => {   "For now, the method is to measure the length of a projective resolution."},
+     Caveat => { "For now, the method is to measure the length of a projective resolution."},
      SeeAlso => {}
      }
-
---   Consequences => {
---	  },
- -- doc8.m2:4:     Key => pdim,
