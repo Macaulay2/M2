@@ -104,8 +104,8 @@ document {
      Usage => "betti I",
      Inputs => { "I" => Ideal => "" },
      Outputs => { { "a diagram showing the degrees of the generators of the modules in ", TT "C" } },
-	"The output is the degrees of generators and relations of the quotient ", 
-	TT "S/I", ".", 
+	"The output is the degrees of generators and relations of the quotient of
+	the ambient ring by the ideal.", 
      EXAMPLE {
 		"S = ZZ/10007[x,y];",
 		"I = ideal(x^2,y^3);",
