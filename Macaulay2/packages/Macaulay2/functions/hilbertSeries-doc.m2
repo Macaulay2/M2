@@ -1,5 +1,5 @@
 --- status: DRAFT
---- author(s): L.Gold with some help from J.Caviglia
+--- author(s): L.Gold
 --- notes: still some problems with hilbertSeries of a proj Hilb. Poly.
 
 document { 
@@ -50,7 +50,6 @@ document {
       	  "hilbertSeries M",
       	  "numerator oo",
       	  "poincare M",
-	  "reduceHilbert o3"
 	  },
      "Recall that the variables of the power series are the variables of
      the degrees ring.",

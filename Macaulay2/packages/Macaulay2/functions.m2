@@ -21,7 +21,7 @@
 load "functions/monomials-doc.m2"
 --load "functions/symlinkDirectory-doc.m2"
 --load "functions/symlink-doc.m2"
---load "functions/reduceHilbert-doc.m2"
+load "functions/reduceHilbert-doc.m2"
 --load "functions/runEndFunctions-doc.m2"
 --load "functions/runStartFunctions-doc.m2"
 --load "functions/End-doc.m2"
