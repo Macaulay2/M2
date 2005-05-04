@@ -1,6 +1,7 @@
 --- status: DRAFT
 --- author(s): L.Gold with some help from J.Caviglia
---- notes: still working on 4 of 5 subnodes for each type of usage
+--- notes: still some problems with hilbertSeries of a proj Hilb. Poly.
+
 document { 
      Key => hilbertSeries,
      Headline => "compute the Hilbert series",
@@ -9,7 +10,7 @@ document {
      graded component.", 
      PARA, 
      "Note that the series is provided as an ", TO "Expression", ".",
-     SeeAlso => {"degreesRing", "reduceHilbert"}
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare"}
      }
 document { 
      Key => {(hilbertSeries,PolynomialRing), (hilbertSeries,QuotientRing)},
@@ -31,7 +32,6 @@ document {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
       	  "hilbertSeries R",
 	  },
-     SeeAlso => {"hilbertSeries"}
      }
 document { 
      Key => {(hilbertSeries,Module), (hilbertSeries,CoherentSheaf)},
@@ -42,21 +42,23 @@ document {
 	  },
      Outputs => {
 	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a module.",
+     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
+     module.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
-      	  "hilbertSeries(R/x^2)",
+	  "M = module ideal x^2",
+      	  "hilbertSeries M",
       	  "numerator oo",
-      	  "poincare (R/x^2)",
-	  "reduceHilbert o2"
+      	  "poincare M",
+	  "reduceHilbert o3"
 	  },
      "Recall that the variables of the power series are the variables of
      the degrees ring.",
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
-      	  "hilbertSeries (R/x^2)",
-	  },
-     SeeAlso => {"hilbertSeries", "poincare", "reduceHilbert"}
+	  "M = module ideal x^2;",
+	  "hilbertSeries M",
+	  }
      }
 document { 
      Key => (hilbertSeries,Ideal),
@@ -67,12 +69,56 @@ document {
 	  },
      Outputs => {
 	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of the
-     quotient of the ambient ring by the ideal.",
+     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of R/I, the
+     quotient of the ambient ring by the ideal. Caution: For an ideal
+     I, ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
      EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+	  "I = ideal x^2",
+      	  "hilbertSeries I",
+      	  "numerator oo",
+      	  "poincare I",
+	  "reduceHilbert o3"	  
 	  },
-     SeeAlso => {}
+     "Recall that the variables of the power series are the variables of
+     the degrees ring.",
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+	  "I = module ideal x^2;",
+	  "hilbertSeries I",
+	  },
+     Caveat => {"For an ideal I, ", TT "hilbertSeries I", " calculates
+	  the Hilbert series of R/I."
+	  }
      }
+document { 
+     Key => (hilbertSeries,ProjectiveHilbertPolynomial),
+     Headline => "compute the Hilbert series of a projective Hilbert polynomial",
+     Usage => "hilbertSeries P",
+     Inputs => {
+	  "P" => ProjectiveHilbertPolynomial => ""
+	  },
+     Outputs => {
+	  Expression => "" },
+     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
+     projective Hilbert polynomial.",
+     EXAMPLE {
+	  "P = projectiveHilbertPolynomial 3",
+      	  "hilbertSeries P",
+	  },
+--     "Computing the ", TO2(hilbertSeries, "Hilbert series"), " of a
+--     projective variety can be useful for finding the h-vector of a
+--     simplicial complex from its f-vector. For example, consider the
+--     octahedron. The f-vector is (6, 12, 8) and the h-vector is
+--     (1,3,3,1).",
+--     EXAMPLE {
+	  -- use it to make a projectiveHilbertPolynomial
+	  -- 1*P_0 + 6*P_1+12*P_2 + 8 *P_3
+	  -- then find the hilbertSeries of this
+	  -- read off the h-vector as coefficients
+     	  -- WARNING something isn't correct here
+--     }
+}
 document { 
      Key => (hilbertSeries,ProjectiveVariety),
      Headline => "compute the Hilbert series of a projective variety",
@@ -85,23 +131,9 @@ document {
      "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
      projective variety.",
      EXAMPLE {
-	  },
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertSeries,ProjectiveHilbertPolynomial),
-     Headline => "compute the Hilbert series projective Hilbert polynomial",
-     Usage => "hilbertSeries P",
-     Inputs => {
-	  "P" => ProjectiveHilbertPolynomial => ""
-	  },
-     Outputs => {
-	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
-     projective Hilbert polynomial.",
-     EXAMPLE {
-	  },
-     SeeAlso => {}
+	  "V = Proj(QQ[x,y])",
+	  "hilbertSeries V"
+	  }
      }
 document { 
      Key => [hilbertSeries, Order],
@@ -118,7 +150,6 @@ document {
       	  "hilbertSeries(R/x^3)",
 	  "hilbertSeries(R/x^3, Order =>5)",
 	  },
-     SeeAlso => {"hilbertSeries"}
      }
 TEST ///
 R = ZZ/101[x,y]
