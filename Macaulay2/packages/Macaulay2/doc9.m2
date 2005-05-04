@@ -328,47 +328,6 @@ document {
      }
 
 document {
-     Key => (standardPairs, MonomialIdeal),
-     Headline => "finds the standard pairs of a monomial ideal",
-     Usage => "standardPairs I",
-     Inputs => {
-	  "I" => {"a monomial ideal"},
-	  },
-     Outputs => {
-	  {"a list of the standard pairs of ", TT "I", ""}
-	  },
-     PARA,
-     "A standard pair of a monomial ideal ", TT "I", " is 
-     a pair ", TT {"{x", SUP "a", ",l}"}, " where ", TT "m", " is a 
-     monomial and ", TT "l", " is a subset of the variables 
-     subject to the following three conditions:",
-     UL {
-	  {TT "m", " is supported on the complement of ", TT "l", "."},
-	  {"for all monomials ", TT "n", " supported 
-	       on ", TT "l", " the monomial ", 
-	       TT "m * n", " does not belong to ", 
-	       TT "I", "."},
-	  {"for all monomials ", TT "n", " supported 
-	       on ", TT "l", " there exists ", 
-	       TT {"b", SUB "j", " >= 0"}, " such that ", 
-	       TT {"m x", SUB "j", SUP {"b", SUB "j"}, " n"}, " lies in ", 
-	       TT "I", "."}
-	  },    
-     EXAMPLE {
-	  "QQ[x,y,z,w];",
-	  "I = monomialIdeal(y^2, y*w, y*z, x*w^2)",
-	  "standardPairs I"
-	  },
-     PARA,
-     "The standard pairs are computed with algorithm 3.2.5 in
-     Groebner Deformations of Hypergeometric Differential 
-     Equations, by Mutsumi Saito, Bernd Sturmfels and Nobuki Takayama;
-     Algorithms and Computation in Mathematics, Volume 6, Springer-Verlag, 2000.",
-     PARA,
-     "Implemented by Greg Smith."
-     }
-
-document {
      Key => (monomialSubideal, Ideal),
      Headline => "find the largest monomial ideal in an ideal",
      Usage => "monomialSubideal I",
