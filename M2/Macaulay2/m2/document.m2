@@ -523,7 +523,9 @@ documentOptions := new HashTable from {
      Headline => true,
      SeeAlso => true,
      Caveat => true,
-     Subnodes => true }
+     Subnodes => true,
+     Undocumented => true
+     }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Symbol Index"}, toLower )
 
 storeRawDocumentation := (nodename,opts) -> (
@@ -531,11 +533,9 @@ storeRawDocumentation := (nodename,opts) -> (
      currentPackage#rawKey#nodename = opts;
      )
 
-document = method( SingleArgumentDispatch => true )
-
-document List := z -> document toSequence z
-document Thing := z -> document (1:z)
-document Sequence := args -> (
+document = method()
+document List := args -> (
+     args = toSequence args;
      if currentPackage === null then error "encountered 'document' command, but no package is open";
      opts := new MutableHashTable;
      scan(args, arg -> if class arg === Option then (
@@ -559,6 +559,14 @@ document Sequence := args -> (
 			 PrimaryTag => tag, 
 			 symbol DocumentTag => tag2
 			 })));
+     if opts.?Undocumented then (
+	  if class opts.Undocumented =!= List then error "expected Undocumented => a list";
+	  scan(opts.Undocumented, tag ->
+	       storeRawDocumentation(
+		    DocumentTag.FormattedKey tag,
+		    new HashTable from {
+			 symbol DocumentTag => tag,
+			 Undocumented => true})));
      if not opts.?Headline and class key === Sequence and key#?0 then (
 	  h := headline key#0;
 	  if h =!= null then opts.Headline = h;
@@ -601,6 +609,9 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
+isUndocumented = tag -> (
+     d := fetchRawDocumentation tag;
+     d =!= null and (d#?PrimaryTag or d#?Undocumented and d#Undocumented === true))
 isSecondary = tag -> (
      d := fetchRawDocumentation tag;
      d =!= null and d#?PrimaryTag)
