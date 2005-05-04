@@ -41,7 +41,7 @@
    (When accepted, the status line will disappear.)
 
  Then run "installPackage Macaulay2" in M2. Fix any errors that occur
-   and rerun installPackage.
+   and rerun installPackage. (can use the option RemakeAllDocumentation=>true)
 
    Note: Cntrl-<up arrow> allows you to see the history of commands in
      M2 within emacs
@@ -59,6 +59,11 @@
  Recall: to update your local versions of things type:
      cvs update
 
+
+
+Some useful commands:
+TO "<linkname>"
+TO2(<link name>, <link text>)
 
 
 
