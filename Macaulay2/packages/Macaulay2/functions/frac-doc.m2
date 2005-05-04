@@ -19,7 +19,6 @@ document {
 	      "f = x^2*y - y^3",
 	      "K = frac R",
 	      "f = x^2*y - y^3",
-      	  "1/x + 1/y + 1/2"
 	  },
      Usage => "frac R",
      Inputs => {
@@ -28,14 +27,34 @@ document {
      Outputs => {
 	  FractionField => {"the field of fractions of ", TT "R"}
 	  },
-	 "Another way to obtain ", TT "frac R", " is with ",
-	 TT "x", TO "/", TT "y", " where ",
-	 TT "x, y", " are elements of ", TT "R", ":",
+     "Another way to obtain ", TT "frac R", " is with ",
+     TT "x", TO "/", TT "y", " where ",
+     TT "x, y", " are elements of ", TT "R", ":",
      EXAMPLE {
 	  "a/b^2",
 	  },
+     "Fractions are reduced to the extent possible.  This is done by
+     computing the syzygies between the numerator and denominator, and
+     picking one of low degree.",
+     EXAMPLE {
+	  "f = (x-y)/(x^6-y^6)",
+      	  "(x^3 - y^3) * f"
+	  },
+     "The parts of a fraction may be extracted.",
+     EXAMPLE {
+	  "numerator f",
+      	  "denominator f",
+	  },
+     "Alternatively, the functions ", TO "lift", " and ", TO "liftable",
+     " can be used.",
+     EXAMPLE {
+	  "liftable(1/f,R)",
+      	  "liftable(f,R)",
+      	  "lift(1/f,R)"
+	  },
      "One can form resolutions and Groebner bases of ideals in polynomial
-	 rings over fraction fields, as in the following example.",
+     rings over fraction fields, as in the following example.
+     Note that computations over fraction fields can be quite slow.",
      EXAMPLE {
 	      "S = K[u,v]",
 		  "I = ideal(u^3 + v^3, u^2*v, u^4)",
@@ -43,27 +62,27 @@ document {
 		  "Ires = res I",
 		  "Ires.dd_2"
 	 },
-	 "To compute a blowup of an ideal ", TT "I", " in ", TT "R",
-	 ", compute the kernel of a map of a new polynomial ring
-	 into a fraction field of ", TT "R", ", as shown below.",
+     "To compute a blowup of an ideal ", TT "I", " in ", TT "R",
+     ", compute the kernel of a map of a new polynomial ring
+     into a fraction field of ", TT "R", ", as shown below.",
      EXAMPLE {
-		  "A = ZZ/101[a,b,c];",
-	      "f = map(K, A, {x^3/y^4, x^2/y^2, (x^2+y^2)/y^4})",
-		  "kernel f",
+	"A = ZZ/101[a,b,c];",
+	"f = map(K, A, {x^3/y^4, x^2/y^2, (x^2+y^2)/y^4})",
+	"kernel f",
 	 },
      Consequences => {
 	  },     
      "The symbol ", TT "frac", " is also used as a key under which is stored 
      the fraction field of a ring.",
      Caveat => {"The input ring should be an integral domain.",
-	 	  PARA,
-	      "Currently, for ", TT "S", " as above, one cannot define ",
-		  TT "frac S", " or fractions ", TT "u/v", 
-		  ".  One can get around that by defining ",
-		  TT "B = ZZ/101[x,y,u,v]", " and identify ",
-		  TT "frac S", " with ", TT "frac B", "."
+	PARA,
+	"Currently, for ", TT "S", " as above, one cannot define ",
+	TT "frac S", " or fractions ", TT "u/v", 
+	".  One can get around that by defining ",
+	TT "B = ZZ/101[x,y,u,v]", " and identify ",
+	TT "frac S", " with ", TT "frac B", "."
      },
-     SeeAlso => {}
+     SeeAlso => {numerator, denominator, liftable, lift}
      }
  -- doc6.m2:163:     Key => fraction,
  -- doc6.m2:181:     Key => frac,
