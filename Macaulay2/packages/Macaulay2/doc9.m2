@@ -1690,65 +1690,9 @@ document {
      regularity is the regularity of a free minimal resolution of M."
      }
 
-document {
-     Key => (betti, Matrix),
-     Headline => "display of the degrees of a map",
-     Usage => "betti f",
-     Inputs => {
-	  "f" => null
-	  },
-     Outputs => { { "a net displaying the degrees of the generators of the source and target modules of ", TT "f" } },
-     "The display ignores the degree of the map itself.",
-     PARA,
-     "For an explanation of the display, see ", TO (betti, ChainComplex), "."
-     }
 
-document {
-     Key => (betti, GroebnerBasis),
-     Headline => "display of the degrees of a groebner basis",
-     Usage => "betti G",
-     Inputs => { "G" => null },
-     Outputs => { { "a net displaying the degrees of the generators of the source and target modules of the matrix of generators of ", TT "G" } },
-     "For an explanation of the display, see ", TO (betti, ChainComplex), "."
-     }
 
-document {
-     Key => (betti, ChainComplex),
-     Headline => "display of degrees in a chain complex",
-     Usage => "betti C",
-     Inputs => { "C" => null },
-     Outputs => { { "a net displaying the degrees of the generators of the modules in ", TT "C" } },
-     "The display can be used to determine the degrees of the entries in the matrices
-     of the differentials in the chain complex, provided they are homogeneous maps
-     of degree 0.",
-     PARA,
-     "Here is a sample display.",
-     EXAMPLE {
-	  "R = ZZ/101[a..h]",
-      	  "p = genericMatrix(R,a,2,4)",
-      	  "q = generators gb p",
-      	  "C = resolution cokernel leadTerm q",
-      	  "betti C",
-	  },
-     "The top row of the display indicates the ranks of the free module ", TT "C_j", "
-     in column ", TT "j", ".  The entry below in row ", TT "i", " column ", TT "j", " gives the number of
-     basis elements of degree ", TT "i+j", ".",
-     PARA,
-     "If these numbers are needed in a program, one way to get them is
-     with ", TO "tally", ".",
-     EXAMPLE {
-	  "degrees C_2",
-      	  "t2 = tally degrees C_2",
-      	  "peek t2",
-      	  "t2_{2}",
-      	  "t2_{3}"
-	  }
-     }
 
-document {
-     Key => betti,
-     Headline => "display degrees"
-     }
 
 TEST "
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
