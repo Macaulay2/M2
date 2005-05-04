@@ -139,6 +139,21 @@ document {  Key => SimplicialComplex,
 	  (TO "support", "(m) -- the support of the monomial m, as a list of integers")
 	  }
      }
+document {
+     Key => {(dim, SimplicialComplex)},
+     Headline => "dimension of a simplicial complex",
+     Usage => "dim X",
+     Inputs => {"X" => ""
+	  },
+     Outputs => {ZZ => ""
+	  },
+     "Computes the dimension of the given simplicial complex.",
+     EXAMPLE {
+	  "D = simplicialComplex {{0,1,2},{0,2,3},{0,3,4},{0,1,4}}",
+          "dim D"
+	  },
+     SeeAlso => {(dim,MonomialIdeal)}
+     }
      
 TEST ///
 R = ZZ/101[x_0 .. x_3]

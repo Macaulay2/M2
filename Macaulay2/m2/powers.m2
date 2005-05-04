@@ -7,7 +7,7 @@
 binomial(ZZ,ZZ) := ZZ => memoize (
      (n,i) -> (
 	  if i < 0 then 0
-	  else if i === 0 then 1
+	  else if i === 0 then error "expected nonnegative integer"
      	  else if n > 0 then (
      	       if i > n then 0
      	       else n! // (i! * (n-i)!)
