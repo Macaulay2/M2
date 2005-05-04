@@ -20,7 +20,7 @@ document {
      Permanents are used in combinatorics and in probability.
      They are computationally difficult.",
      EXAMPLE {
-	  "R = QQ[a..f];",
+	  "R = ZZ[a..f];",
       	  "M = genericMatrix(R,a,2,3)",
       	  "permanents(2,M)"
 	  },
