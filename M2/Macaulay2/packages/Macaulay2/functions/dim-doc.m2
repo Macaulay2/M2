@@ -16,7 +16,7 @@ document {
 
 document { 
      Key => (dim,Ring),
-     Undocumented => {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing)},
+     --- Undocumented => {(dim,FractionField),(dim,GaloisField),(dim,PolynomialRing),(dim,QuotientRing)},
      Usage => "dim R",
      Inputs => {"R" => ""},
      Outputs => {ZZ => ""},
