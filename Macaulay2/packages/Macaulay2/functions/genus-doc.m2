@@ -4,49 +4,59 @@
 
 document { 
      Key => genus,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "arithmetic genus",
+     SeeAlso => {genera, euler}
+     }
+document { 
+     Key => {(genus,CoherentSheaf),(genus,Module)},
+     Usage => "genus F",
+     Inputs => {"F" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the arithmetic genus of the coherent sheaf ", TT "F",
+     " that is (-1)^dim-support * (chi(F) - 1)).",
      EXAMPLE {
+	  "V = Proj(QQ[x,y,z]/ideal(y^2*z-x^2*(x+z)))",
+	  "genus OO_V^1"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {genera,euler}
      }
 document { 
      Key => (genus,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "genus V",
+     Inputs => {"V" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the arithmetic genus of the projective scheme ", TT "V",
+     "A nodal plane cubic curve has arithmetic genus 1:",
      EXAMPLE {
+	  "V = Proj(QQ[a,b,c]/ideal(b^2*c-a^2*(a+c)))",
+	  "genus V"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The Fano model of a Reye type Enriques surface in projective fivespace:",
+     EXAMPLE {
+	  "R = ZZ/101[x_0..x_5];",
+	  "M = random(R^4, R^{4:-1});",
+	  "I = minors(3, M+transpose(M));",
+	  "V = Proj(R/I);",
+	  "genus V"
+	  },
+     SeeAlso => {genera,euler}
      }
 document { 
      Key => (genus,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "genus R",
+     Inputs => {"R" => ""
 	  },
-     Outputs => {
+     Outputs => {ZZ => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the arithmetic genus of the projective scheme ", TT "V",
+     " with homogeneous coordinate ring ", TT "R",
      EXAMPLE {
+	  "R = QQ[x,y,z]/ideal(y^2*z-x^3)",
+	  "genus R"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {genera,euler}
      }
