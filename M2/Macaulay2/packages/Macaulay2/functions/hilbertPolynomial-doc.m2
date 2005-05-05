@@ -1,14 +1,17 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: working on this
+--- notes:
 
 document { 
      Key => hilbertPolynomial,
      Headline => "compute the Hilbert polynomial",
-     "The Hilbert polynomial is written in the variable T",
+     "The Hilbert polynomial by default is written in terms of the
+     Hilbert polynomials of projective spaces. The Hilbert polynomial
+     of P^i is z |--> binomial(z + i, i).",
      SeeAlso => "ProjectiveHilbertPolynomial"
-     }
-document { 
+     } 
+
+document {
      Key => (hilbertPolynomial,Ring),
      Headline => "compute the Hilbert polynomial of the ring",
      Usage => "hilbertPolynomial R",
@@ -18,75 +21,11 @@ document {
      Outputs => {
 	  "the Hilbert polynomial" 
 	  },
-     EXAMPLE {
-	  }
-     }
-document { 
-     Key => {(hilbertPolynomial,Module),(hilbertPolynomial,CoherentSheaf)},
-     Headline => "compute the Hilbert polynomial of the module",
-     Usage => "hilbertPolynomial M",
-     Inputs => {
-	  },
-     Outputs => {
-	  ProjectiveHilbertPolynomial => ""
-	  },
-     Consequences => {
-	  },     
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertPolynomial,Ideal),
-     Headline => "compute the Hilbert polynomial of the quotient of
-     the ambient ring by the ideal",
-     Usage => "hilbertPolynomial I",
-     Inputs => {
-	  },
-     Outputs => {
-	  ProjectiveHilbertPolynomial => ""
-	  },
-     Consequences => {
-	  },     
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertPolynomial,ProjectiveVariety),
-     Headline => "compute the Hilbert polynomialo of the projective variety",
-     Usage => "hilbertPolynomial V",
-     Inputs => {
-	  "V" => ProjectiveVariety => ""
-	  },
-     Outputs => {
-	  ProjectiveHilbertPolynomial => ""
-	  },
-     EXAMPLE {
-	  }
-     }
-
-document { 
-     Key => [hilbertPolynomial, Projective],
-     Headline => "choose how to display the Hilbert polynomial",
-     Usage => "hilbertPolynomial(...,Projective => b",
-     Inputs => {
-	  "b" => Boolean => "either true or false"
-	  },
-     TT "Projective => true", " is an option to ", TO "hilbertPolynomial", 
-     " which specifies that the Hilbert
-     polynomial produced should be expressed in terms of the Hilbert
-     polynomials of projective spaces.  This is the default.",
-     PARA,
-     TT "Projective => false", " -- an option to ", TO "hilbertPolynomial",
-      " which specifies that the Hilbert
-     polynomial produced should be expressed as a polynomial in the
-     degree.",
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4})",
+     "We compute the Hilbert polynomial of a coordinate ring of the
+     rational quartic curve in P^3.",
+         EXAMPLE {
+	  "R = ZZ/101[a..d];",
+      	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});",
       	  "presentation S",
       	  "h = hilbertPolynomial S",
 	  },
@@ -97,12 +36,91 @@ document {
      PARA,
      "These Hilbert polynomials can serve as Hilbert functions, too.",
      EXAMPLE {
-	  "h 3",
+	  "h(3)",
       	  "basis(3,S)",
       	  "rank source basis(3,S)",
+	  }
+     }
+
+document { 
+     Key => {(hilbertPolynomial,Module),(hilbertPolynomial,CoherentSheaf)},
+     Headline => "compute the Hilbert polynomial of the module",
+     Usage => "hilbertPolynomial M",
+     Inputs => {
+	  "M" => Module => ""
 	  },
-     "Note that the Hilbert polynomial of P^i is z |--> binomial(z +
-     i, i).",
+     Outputs => {
+	  ProjectiveHilbertPolynomial => ""
+	  },
+     "We compute the Hilbert polynomial of a module.",
+     EXAMPLE {
+	  "R = QQ[a..h];",
+	  "M = coker matrix {{a,c,5},{d,b,h}}",
+	  "h = hilbertPolynomial M"
+	  },
+     }
+
+document { 
+     Key => (hilbertPolynomial,Ideal),
+     Headline => "compute the Hilbert polynomial of the quotient of
+     the ambient ring by the ideal",
+     Usage => "hilbertPolynomial I",
+     Inputs => {
+	  "I" => Ideal => ""
+	  },
+     Outputs => {
+	  ProjectiveHilbertPolynomial => ""
+	  },
+     "We compute the Hilbert polynomial of an ideal.",
+     EXAMPLE {
+	  "R = QQ[a..h];",
+	  "I = ideal(a*b, c*d, e*f);",
+	  "h = hilbertPolynomial I"
+	  },
+     }
+
+document { 
+     Key => (hilbertPolynomial,ProjectiveVariety),
+     Headline => "compute the Hilbert polynomial of the projective variety",
+     Usage => "hilbertPolynomial V",
+     Inputs => {
+	  "V" => ProjectiveVariety => ""
+	  },
+     Outputs => {
+	  ProjectiveHilbertPolynomial => ""
+	  },
+     "We compute an example of the Hilbert polynomial of a projective
+     Hilbert variety.",
+     EXAMPLE {
+	  "V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))",
+	  "h = hilbertPolynomial V"
+	  },
+     }
+
+document { 
+     Key => [hilbertPolynomial, Projective],
+     Headline => "choose how to display the Hilbert polynomial",
+     Usage => "hilbertPolynomial(...,Projective => b",
+     Inputs => {
+	  "b" => Boolean => "either true or false"
+	  },
+     TT "Projective => true", " is an option to ", TO "hilbertPolynomial", 
+     " which specifies that the Hilbert polynomial produced should be
+     expressed in terms of the Hilbert polynomials of projective
+     spaces. This is the default.",
+     PARA,
+     TT "Projective => false", " is an option to ", TO "hilbertPolynomial",
+      " which specifies that the Hilbert polynomial produced should be
+      expressed as a polynomial in the degree.",
+      PARA,
+     "We compute the Hilbert polynomial of a coordinate ring of the
+     rational quartic curve in P^3.",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+      	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});",
+      	  "hilbertPolynomial S",
+	  "hilbertPolynomial(S, Projective=>false)"
+     	  },
      SeeAlso => "ProjectiveHilbertPolynomial"
      }
 

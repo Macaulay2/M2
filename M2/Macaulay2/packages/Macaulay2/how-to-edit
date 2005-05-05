@@ -19,12 +19,15 @@
  Now edit the file you are working on:
    If there is old documentation, put it into the new format and delete
      the old stuff.
+   If there is a test in the doc#.m2 file, move it to the end of the
+     new file
    If it has a command that refers to it, try to combine them, unless 
      they're really different and need different examples/explanation
      for each. 
    Remove any sections of the automatically generated file that are not
      being used.
-   See form of compress-doc.m2 for an example.
+
+   See form of compress-doc.m2 or pdim-doc.m2 for simple examples.
 
    Note:  Don't forget to use ";" to suppress irrelevant output in examples.
 	  Separate lines of example by commas. Don't forget to use 
