@@ -21,3 +21,8 @@ isAffineRing PolynomialRing := R -> (
      isAffineRing coefficientRing R)
 
 What about local rings?
+
+(3) Cannot factor over GaloisField's;  output can be very wrong:
+
+     GF(9)[t];
+     factor(t^2-1)
