@@ -1318,14 +1318,6 @@ document {
      PARA,
      SeeAlso => "GaloisField"
      }
-
-document {
-     Key => isField, Headline => "whether something is a field",
-     "No computation is done -- the question is whether the ring was
-     explicitly constructed a field.",
-     SeeAlso => "toField"
-     }
-
 document {
      Key => toField,
      Headline => "declare that a ring is a field",

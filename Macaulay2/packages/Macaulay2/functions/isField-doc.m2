@@ -1,87 +1,28 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isField,
-     Headline => "",
-     Usage => "",
+     Key => {isField, (isField, FractionField), (isField, QuotientRing), (isField, GaloisField), 
+	  (isField, Ring)},
+     Headline => "whether something is a field",
+     Usage => "isField R",
      Inputs => {
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "R", " was explicitly constructed as a field -- no computation is done -- and ", 
+	  TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "isField QQ",
+	  "isField GF(2,3)",
+	  "isField(frac(QQ[x,y]))",
+	  "R = QQ[x]/(x^2+1)",
+	  "isField R",
+	  "F = toField R",
+	  "isField F"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {toField, FractionField, GaloisField, QuotientRing}
      }
-document { 
-     Key => (isField,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isField,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isField,GaloisField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isField,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc.m2:1422:     Key => (random, GaloisField),
- -- doc8.m2:1305:     Key => GaloisField, Headline => "the class of all Galois fields" }
- -- doc8.m2:1369:     Key => isField, Headline => "whether something is a field",
+
