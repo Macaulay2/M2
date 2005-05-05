@@ -1,53 +1,23 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isModule,
-     Headline => "",
-     Usage => "",
+     Key => {isModule, (isModule, Thing), (isModule, Module)},
+     Headline => "whether something is a module",
+     Usage => "isModule M",
      Inputs => {
+	  "M" => Thing => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "M", " is a ", TO2("Module", "module"), " and ", 
+	       TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	   "R = QQ[a..d]/(a*b*c*d);",
+	   "isModule R",
+	   "M = a^2 * R^2 + a*b * R^2",
+	   "isModule M"
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
-document { 
-     Key => (isModule,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isModule,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:916:     Key => isModule,
+

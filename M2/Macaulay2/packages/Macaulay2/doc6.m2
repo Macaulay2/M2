@@ -868,9 +868,6 @@ document {
 	  TO (exteriorPower,ZZ,Module),
 	  }}
 document {
-     Key => isModule,
-     Headline => "whether something is a module."}
-document {
      Key => isFreeModule,
      Headline => "whether something is a free module",
      Usage => "isFreeModule M",
@@ -941,23 +938,6 @@ document {
      EXAMPLE {
 	  "isQuotientModule N",
 	  "M == N"
-	  }}
-document {
-     Key => isIdeal,
-     Headline => "whether something is an ideal"}
-document {
-     Key => (isIdeal, Module),
-     Usage => "b = isIdeal(M)",
-     Inputs => {"M" => null},
-     Outputs => {"b" => {"whether ", TT "M", " is evidently an ideal."}},
-     "No computation is done.  This routine checks the given description
-     of ", TT "M", " to see if it is an ideal.",
-     EXAMPLE {
-	  "R = QQ[a..d]/(a*b*c*d);",
-	  "I = ideal(a^2,b^2) * R^1",
-	  "isIdeal I",
-	  "J = a^2 * R^2 + a*b * R^2",
-	  "isIdeal J"
 	  }}
 document {
      Key => numgens,
