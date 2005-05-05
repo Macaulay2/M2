@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {pdim,(pdim,Module), (pdim,CoherentSheaf)},
+     Key => {pdim,(pdim, Module), (pdim,CoherentSheaf)},
      Headline => "calculate the projective dimension",
      Usage => "pdim M",
      Inputs => {
