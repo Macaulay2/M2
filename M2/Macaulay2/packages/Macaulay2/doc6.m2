@@ -295,13 +295,6 @@ document {
      "Every element of a polynomial ring is also a ", TO "RingElement", ".",
      SeeAlso => "polynomial rings"}
 document {
-     Key => isUnit,
-     Headline => "whether a ring element is a unit",
-     EXAMPLE {
-	  "S = QQ[x,y]/(1-(x-1)*(y-1));",
-	  "isUnit (x^2 - 2*x + 1)"
-	  }}
-document {
      Key => exponents,
      Headline => "list the exponents in a polynomial",
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list

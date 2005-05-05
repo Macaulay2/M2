@@ -19,10 +19,11 @@ document {
 	  "isField GF(2,3)",
 	  "isField(frac(QQ[x,y]))",
 	  "R = QQ[x]/(x^2+1)",
+	  "isUnit x",
 	  "isField R",
 	  "F = toField R",
 	  "isField F"
 	  },
-     SeeAlso => {toField, FractionField, GaloisField, QuotientRing}
+     SeeAlso => {toField, FractionField, GaloisField, QuotientRing, isUnit}
      }
 
