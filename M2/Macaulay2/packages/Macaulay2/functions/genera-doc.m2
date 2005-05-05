@@ -1,110 +1,104 @@
---- status: TODO
---- author(s): 
+--- status: draft
+--- author(s): Decker, Popescu
 --- notes: 
 
 document { 
      Key => genera,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "list of the successive linear sectional arithmetic genera",
+     SeeAlso => {genus,hilbertPolynomial,euler}
      }
 document { 
      Key => (genera,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "genera R",
+     Inputs => {"R" => ""
 	  },
-     Outputs => {
+     Outputs => {List =>{"of the successive linear sectional
+     arithmetic genera of projective scheme ", TT "V"," with homogeneous coordinate
+     ring ", TT "R"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the list of succesive linear sectional arithmetic genera, 
+     where the i-th entry in the list is the arithmetic genus of the i-th
+     succesive generic hyperplane section of ", TT "V", " ", 
+     "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
      EXAMPLE {
+	  "R = ZZ/101[x_0..x_4];",
+	  "I = ideal random(R^1, R^{-2,-3});",
+	  "genera(R/I)"  
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {genus, euler}
      }
 document { 
-     Key => (genera,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {(genera,CoherentSheaf), (genera,Module)},
+     Usage => "genera M",
+     Inputs => {"M" => ""
 	  },
-     Outputs => {
+     Outputs => {List =>{"of the successive linear sectional
+     arithmetic genera of the succesive generic hyperplane restrictions 
+     of ", TT "M"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the list of succesive generic linear sectional arithmetic genera, 
+     where the i-th entry in the list is 
+     (-1)^dim-support -i  * (chi(M ** OO_lin-section) - 1)).",
      EXAMPLE {
+	  "V = Proj(ZZ/101[x_0..x_2]);",
+	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",     
+	  "genera M"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (genera,Variety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {euler}
      }
 document { 
      Key => (genera,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "genera I",
+     Inputs => {"I" => ""
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Outputs => {List =>{"of the successive linear sectional
+     arithmetic genera of ", TT "I"}
+          }, 
+     "Computes the list of succesive linear sectional arithmetic genera, 
+     where the i-th entry in the list is the arithmetic genus of the i-th
+     succesive generic hyperplane section of the zero-locus of ", TT "I", " ",  
+     "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
+     PARA,
+     "A complete intersection of type (2,3) in projective fourspace;
+     its hyperplane section is a canonical curve of genus 4:",
      EXAMPLE {
+	  "R = ZZ/101[x_0..x_4];",
+	  "I = ideal random(R^1, R^{-2,-3});",
+	  "genera I"  
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {euler, genus}
      }
+
 document { 
-     Key => (genera,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {(genera,ProjectiveVariety)},
+     Usage => "genera V",
+     Inputs => {"V" => ""
 	  },
-     Outputs => {
+     Outputs => {List => {"of the successive linear sectional
+     arithmetic genera of ", TT "V"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the list of succesive linear sectional arithmetic genera, 
+     where the i-th entry in the list is the arithmetic genus of the i-th
+     succesive generic hyperplane section of ", TT "V", " ", 
+     "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
+     PARA,
+     "A complete intersection of type (2,3) in projective fourspace;
+     its hyperplane section is a canonical curve of genus 4:",
      EXAMPLE {
+	  "R = ZZ/101[x_0..x_4];",
+	  "V = Proj(R/(ideal random(R^1, R^{-2,-3})));",
+	  "genera V"  
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {euler,genus}
      }
- -- doc1.m2:765:     Key => generators,
- -- doc1.m2:781:     Key => (generators,Module),
- -- doc4.m2:105:     Key => generatorSymbols,
- -- doc4.m2:112:     Key => generatorExpressions,
- -- doc6.m2:1063:document { Key => degrees, Headline => "degrees of generators" }
- -- doc6.m2:1140:     Key => genera,
- -- doc8.m2:461:     Key => (generators, GroebnerBasis),
- -- doc_ideals.m2:199:     Key => (generators, Ideal),
- -- overviewB.m2:210:     Key => "extracting generators of an ideal",
- -- overviewC.m2:1255:     Key => "minimal presentations and generators",
+
+TEST ///
+R = ZZ/101[a,b,c]/c^4
+assert ( genera R == {3,3} )
+assert ( euler R == {-2,4} )
+R = ZZ/101[a,b,c]/c^3
+assert ( genera R == {1,2} )
+assert ( euler R == {0,3} )
+///
+
+ 

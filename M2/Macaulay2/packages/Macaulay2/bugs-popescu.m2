@@ -22,3 +22,5 @@
 			    "nonfreelocus = sheafExt^2(FF,OO_projplane^1)"	  
 									  }
 
+5) If there is genera of an ideal there should exist also
+genus of an ideal!!!

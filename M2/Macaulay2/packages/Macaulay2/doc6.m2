@@ -1061,22 +1061,6 @@ document {
      "The i-th one in the list is the Euler characteristic of the i-th
      hyperplane section of M." }
 document {
-     Key => genera,
-     Headline => "list the sectional arithmetic genera",
-     TT "genera M", " -- provide a list of the successive sectional 
-     arithmetic genera of a module, ring, or ideal.",
-     PARA,
-     "The i-th one in the list is the arithmetic genus of the i-th
-     hyperplane section of M."}
-TEST ///
-R = ZZ/101[a,b,c]/c^4
-assert ( genera R == {3,3} )
-assert ( euler R == {-2,4} )
-R = ZZ/101[a,b,c]/c^3
-assert ( genera R == {1,2} )
-assert ( euler R == {0,3} )
-///
-document {
      Key => rank,
      Headline => "compute the rank",
      TT "rank M", " -- computes the rank of the module M.",
