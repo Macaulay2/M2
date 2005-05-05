@@ -2,6 +2,7 @@
 -- then check in the file, using (outside of M2):
 --   cvs ci -m "another bug"
 
-add 
+add
 
-isSquareFree Thing := x -> false
+isIdeal Ideal := x -> true
+isIdeal MonomialIdeal := x -> true 
