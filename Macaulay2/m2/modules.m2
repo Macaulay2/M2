@@ -287,12 +287,17 @@ euler(Module) := (M) -> (
      apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
 euler(Ring) := (R) -> euler R^1
 
-genera(Module) := (M) -> (
+genera Module := (M) -> (
      e := euler M;
      d := dim M - 1;
      apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
-genera(Ring) := (R) -> genera R^1
-genus(Ring) := R -> first genera R
+genera Ring := (R) -> genera R^1
+
+genus Module := (M) -> (
+     e := euler M;
+     d := dim M - 1;
+     (-1)^d * (e#0 - 1))
+genus Ring := (R) -> genus R^1
 
 rank Module := M -> (
      if isFreeModule M then numgens M 

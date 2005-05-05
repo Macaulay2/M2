@@ -25,8 +25,8 @@ length GradedModule := (M) -> (
 GradedModuleMap = new Type of MutableHashTable
 GradedModuleMap.synonym = "graded module map"
 
-source GradedModuleMap := f -> f.source
-target GradedModuleMap := f -> f.target
+source GradedModuleMap := GradedModule => f -> f.source
+target GradedModuleMap := GradedModule => f -> f.target
 
 net GradedModuleMap := f -> (
      d := f.degree;
@@ -47,7 +47,7 @@ net GradedModuleMap := f -> (
 GradedModuleMap _ ZZ := Matrix => (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)
      )
-GradedModule#id = (M) -> (
+GradedModule#id = GradedModuleMap => (M) -> (
      f := new GradedModuleMap;
      f.ring = M.ring;
      f.source = f.target = M;
@@ -63,19 +63,19 @@ GradedModule#id = (M) -> (
      g.ring = f.ring;
      scan(spots f, i -> g#i = -f_i);
      g)
-RingElement + GradedModuleMap := (r,f) -> (
+RingElement + GradedModuleMap := GradedModuleMap => (r,f) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) + f
      else error "expected map to have same source and target and to have degree 0")
-GradedModuleMap + RingElement := (f,r) -> (
+GradedModuleMap + RingElement := GradedModuleMap => (f,r) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) + f
      else error "expected map to have same source and target and to have degree 0")
-RingElement - GradedModuleMap := (r,f) -> (
+RingElement - GradedModuleMap := GradedModuleMap => (r,f) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) - f
      else error "expected map to have same source and target and to have degree 0")
-GradedModuleMap - RingElement := (f,r) -> (
+GradedModuleMap - RingElement := GradedModuleMap => (f,r) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) - f
      else error "expected map to have same source and target and to have degree 0")
@@ -87,7 +87,7 @@ GradedModuleMap == RingElement := (f,r) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) == f
      else error "expected map to have same source and target and to have degree 0")
-RingElement * GradedModuleMap := (r,f) -> (
+RingElement * GradedModuleMap := GradedModuleMap => (r,f) -> (
      g := new GradedModuleMap;
      g.ring = f.ring;
      g.source = f.source;
@@ -95,7 +95,7 @@ RingElement * GradedModuleMap := (r,f) -> (
      g.degree = f.degree;
      scan(spots f, i -> g#i = r * f_i);
      g)
-ZZ * GradedModuleMap := (n,f) -> (
+ZZ * GradedModuleMap := GradedModuleMap => (n,f) -> (
      g := new GradedModuleMap;
      g.ring = f.ring;
      g.source = f.source;
@@ -179,7 +179,7 @@ ZZ == GradedModuleMap := (i,f) -> f == i
 
 degree GradedModuleMap := G -> G.degree
 
-directSum GradedModule := M -> directSum(1 : M)
+directSum GradedModule := GradedModule => M -> directSum(1 : M)
 GradedModule.directSum = v -> (
      E := new GradedModule;
      rings := apply(v, ring);
