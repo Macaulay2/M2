@@ -1354,12 +1354,6 @@ document {
      of computing a Groebner basis or resolution.",
      SeeAlso => { "toField" }
      }
-
-document {
-     Key => isAffineRing, Headline => "whether something is an affine ring",
-     "An affine ring is a quotient of a polynomial ring over a field."
-     }
-
 document {
      Key => RingMap,
      Headline => "the class of all ring maps",

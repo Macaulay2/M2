@@ -1,69 +1,26 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isAffineRing,
-     Headline => "",
-     Usage => "",
+     Key => {isAffineRing, (isAffineRing,QuotientRing), (isAffineRing,PolynomialRing), (isAffineRing,Ring)},
+     Headline => "whether something is an affine ring",
+     Usage => "isAffineRing R",
      Inputs => {
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "R", " is an affine ring and ", TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "An affine ring is a quotient of a commutative ", TO2("PolynomialRing","polynomial ring"), 
+     " over a field.",
      EXAMPLE {
+	  "isAffineRing CC",
+	  "isAffineRing (ZZ[a,b,c,d])",
+	  "isAffineRing (ZZ/101[a,b,c,d])",	  
+	  "isAffineRing (ZZ/2[x,y,z]/(x^2-y*z))",
+	  "isAffineRing (QQ[x,dx, WeylAlgebra => {x => dx}])"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {coefficientRing, isField, ambient}
      }
-document { 
-     Key => (isAffineRing,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isAffineRing,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isAffineRing,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc8.m2:1413:     Key => isAffineRing, Headline => "whether something is an affine ring",
+
