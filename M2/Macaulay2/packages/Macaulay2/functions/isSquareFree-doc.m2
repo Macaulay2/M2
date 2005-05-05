@@ -4,15 +4,15 @@
 
 document { 
      Key => {isSquareFree, (isSquareFree,MonomialIdeal)},
-     Headline => "whether a monomial ideal is square free",
+     Headline => "whether something is square free monomial ideal",
      Usage => "isSquareFree I",
      Inputs => {
-	  "I" => MonomialIdeal => ""
+	  "I" => Thing => ""
 	  },
      Outputs => {
-	  {"returns ", TT "true", " if ", TT "I", " is a square free ", 
+	  {TO "true", " if ", TT "I", " is a square free ", 
 	       TO2("MonomialIdeal", "monomial ideal"), 
-	       " and ", TT "false", " otherwise"}	  
+	       " and ", TO "false", " otherwise"}	  
 	  },
      "A square free ", TO2("MonomialIdeal", "monomial ideal"), " is an ideal generated 
      by products of variables; in other words, a radical
