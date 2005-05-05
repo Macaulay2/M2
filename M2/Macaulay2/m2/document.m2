@@ -491,6 +491,7 @@ enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
      Key => identity,
+     Undocumented => identity,
      symbol DocumentTag => identity,
      Usage => val -> fixup val,
      Function => val -> fixup val,
@@ -563,9 +564,9 @@ document List := args -> (
 	  if class opts.Undocumented =!= List then error "expected Undocumented => a list";
 	  scan(opts.Undocumented, tag ->
 	       storeRawDocumentation(
-		    DocumentTag.FormattedKey tag,
+		    DocumentTag.FormattedKey makeDocumentTag tag,
 		    new HashTable from {
-			 symbol DocumentTag => tag,
+			 symbol DocumentTag => makeDocumentTag tag,
 			 Undocumented => true})));
      if not opts.?Headline and class key === Sequence and key#?0 then (
 	  h := headline key#0;
@@ -629,8 +630,8 @@ getPrimary = tag -> (
 optTO := i -> (
      i = makeDocumentTag i;
      fkey := DocumentTag.FormattedKey i;
-     key  := DocumentTag.Key i;
-     if isSecondary i
+     if not isUndocumented i then 
+     if isSecondary i 
      then (fkey, fixup SEQ {fkey, ", see ", TOH{getPrimary i}})
      else (fkey, fixup SEQ TOH{i})				    -- need an alternative here for secondary tags such as (export,Symbol)
      )
@@ -641,9 +642,9 @@ optTOCLASS := i -> (					    -- this isn't different yet, work on it!
      r := fixup TOH{i};
      (DocumentTag.FormattedKey first r, SEQ r))
 
-menu       := s -> UL (last \         optTO      \ s)
-smenu      := s -> UL (last \ sort \\ optTO      \ s)
-smenuCLASS := s -> UL (last \ sort \\ optTOCLASS \ s)
+menu       := s -> UL (last \         nonnull \\ optTO      \ s)
+smenu      := s -> UL (last \ sort \\ nonnull \\ optTO      \ s)
+smenuCLASS := s -> UL (last \ sort \\ nonnull \\ optTOCLASS \ s)
 
 vowels := set characters "aeiouAEIOU"
 indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " else "a "

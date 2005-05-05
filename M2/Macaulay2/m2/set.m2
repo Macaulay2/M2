@@ -45,6 +45,8 @@ Set * Set := Set => (x,y) -> (
      else set select(keys y, k -> x#?k)
      )
 Set - Set := Set => (x,y) -> applyPairs(x, (i,v) -> if not y#?i then (i,v))
+List - Set := List => (x,y) -> select(x, i -> not y#?i)
+Set - List := Set => (x,y) -> x - set y
 sum Set := s -> sum toList s
 product Set := s -> product toList s
 
