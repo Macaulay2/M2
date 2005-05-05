@@ -857,32 +857,6 @@ document {
 	  TO (exteriorPower,ZZ,Module),
 	  }}
 document {
-     Key => isFreeModule,
-     Headline => "whether something is a free module",
-     Usage => "isFreeModule M",
-     Inputs => {
-	  "M" => Module => ""
-	  },
-     Outputs => {
-	  Boolean => "whether the module ", TT "M", " is evidently a free module"
-	  }}
-document {
-     Key => (isFreeModule,Module),
-     Usage => "b = isFreeModule(M)",
-     Inputs => {"M" => null},
-     Outputs => {"b" => {"whether ", TT "M", " is evidently a free module."}},
-     "No computation is done, so the module may be free but we don't
-     detect it.  To try to determine whether ", TT "M", " is isomorphic to a free 
-     module, one may prune ", TT "M", " first.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-      	  "M = kernel vars R",
-      	  "isFreeModule M",
-      	  "isFreeModule prune M"
-	  },
-     SeeAlso => {(prune,Module)}}
-     
-document {
      Key => isSubmodule,
      Headline => "whether a module is evidently a submodule of a free module"}
 document {

@@ -1,54 +1,26 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isFreeModule,
-     Headline => "",
-     Usage => "",
+     Key => {isFreeModule, (isFreeModule, Thing), (isFreeModule, Module)},
+     Headline => "whether something is a free module",
+     Usage => "isFreeModule M",
      Inputs => {
+	  "M" => Thing => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "M", " is a evidently a free module and ",
+	       TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "No computation is done --- the ", TO2("Module", "module"), " ", TT "M", 
+     " may be free although this function will not detect it.  To try to determine whether ",
+     TT "M", " is isomorphic to a free module, one may ", TO "prune", " ", TT "M", " first.",
      EXAMPLE {
+	  "R = ZZ/7[x,y];",
+      	  "M = kernel vars R",
+      	  "isFreeModule M",
+      	  "isFreeModule prune M"	  
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(prune,Module)}
      }
-document { 
-     Key => (isFreeModule,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isFreeModule,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:919:     Key => isFreeModule,
- -- doc6.m2:929:     Key => (isFreeModule,Module),
