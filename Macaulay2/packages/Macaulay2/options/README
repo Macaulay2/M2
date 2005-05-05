@@ -1,3 +1,5 @@
+-- sort \\ toString \ unique \\ flatten \\ keys \ select( options \ select(value \ values Macaulay2Core.Dictionary, f -> class f === Function), x -> x =!= null )
+
 {AbsoluteLinks, Adjust, Algorithm, Associative, Author, BasisElementLimit, CallLimit, ChangeMatrix, CodimensionLimit, CompleteIntersection, Date, DebuggingMode, Degree, DegreeLimit,
       DegreeMap, DegreeOrder, DegreeRank, Degrees, Dense, DivideConquer, Email, Encapsulate, Exclude, First, FormattedKey, GBDegrees, HardDegreeLimit, Headline, Heft, Hermitian, Hilbert,
       HomePage, IgnoreExampleErrors, InfoDirSection, InstallPrefix, Inverses, LengthLimit, Limit, MakeDocumentation, MakeInfo, MakeLinks, MinimalGenerators, MinimalMatrix, MonomialOrder,
