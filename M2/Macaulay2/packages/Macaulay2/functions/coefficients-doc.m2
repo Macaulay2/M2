@@ -19,70 +19,6 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (coefficients,List,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficients,Sequence,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficients,List,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (coefficients,Sequence,RingElement),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
      Key => (coefficients,Matrix),
      Headline => "",
      Usage => "",
@@ -115,12 +51,10 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (coefficients,ZZ,Matrix),
+     Key => [coefficients,Monomials]
      Headline => "",
      Usage => "",
      Inputs => {
-	  },
-     Outputs => {
 	  },
      Consequences => {
 	  },     
@@ -131,7 +65,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (coefficients,ZZ,RingElement),
+     Key => [coefficients,Variables],
      Headline => "",
      Usage => "",
      Inputs => {
