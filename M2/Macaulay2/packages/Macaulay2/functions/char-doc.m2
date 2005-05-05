@@ -1,87 +1,86 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): kummini
 --- notes: 
 
 document { 
-     Key => char,
-     Headline => "",
-     Usage => "",
+	Key => {char, (char,Ring)},
+	--Undocumented => {(char,FractionField), (char,QuotientRing),
+	--(char,PolynomialRing)},
+     Headline => "computes the characteristic of a field or ring",
+     Usage => "char F",
      Inputs => {
+	   	"F" => Ring => ""
 	  },
      Outputs => {
+		"the characteristic of the ring"
 	  },
-     Consequences => {
-	  },     
-     "description",
+	"Example:",
      EXAMPLE {
+		"R = ZZ/10007[x,y];",
+		"char R",
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
-document { 
-     Key => (char,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (char,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (char,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (char,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc.m2:759:     Key => ascii, Headline => "ASCII character conversion" }
- -- doc2.m2:918:     Key => characters,
- -- doc3.m2:81:     Key => char,
+-- document { 
+--      Key => ,
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => ,
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => ,
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }
+-- document { 
+--      Key => ,
+--      Headline => "",
+--      Usage => "",
+--      Inputs => {
+-- 	  },
+--      Outputs => {
+-- 	  },
+--      Consequences => {
+-- 	  },     
+--      "description",
+--      EXAMPLE {
+-- 	  },
+--      Caveat => {},
+--      SeeAlso => {}
+--      }

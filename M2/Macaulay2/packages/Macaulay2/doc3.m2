@@ -77,14 +77,6 @@ document {
      "This command may interfere with ", TO "time", " or ", TO "sleep", " on some systems."
      }
 
-document {
-     Key => char,
-     Headline => "the characteristic of a field or ring",
-     TT "char F", " -- returns the characteristic of the ring ", TT "F", ".",
-     PARA,
-     "The key ", TO "char", " is used to store the characteristic
-     in F after it has been computed."
-     }
 
 document {
      Key => basictype,
