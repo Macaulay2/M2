@@ -28,7 +28,7 @@ MADEM2FILES += mpcodes.m2
 endif
 
 DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
-DUMPEDM2DOCFILES := @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2.m2
+DUMPEDM2DOCFILES := @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2/*/*.m2 @srcdir@/../packages/Macaulay2.m2
 OTHERM2FILES = sagbi.m2
 NONDOCM2FILES = startup.m2 setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
@@ -45,13 +45,14 @@ tags: @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: loadsequence Makefile.in $(NONDOCM2FILES) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
 		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 @srcdir@/../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
+		@srcdir@/../packages/*/*/*.m2 \
 		@srcdir@/README.DOC @srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
 		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes \
 		../basictests/Makefile.in ../emacs/Makefile.in ../packages/Style/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
 	@echo making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
-	  for i in $(patsubst @srcdir@/%, %, $^) ; \
+	  for i in $(patsubst @srcdir@/%, "%", $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 @srcdir@/TAGS.doc: Makefile.in @srcdir@/../packages/Macaulay2/*.m2
 	@echo making $@
