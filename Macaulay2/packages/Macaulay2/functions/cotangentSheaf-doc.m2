@@ -12,11 +12,11 @@ document {
      Usage => "cotangentSheaf X",
      Inputs => {"X" => ""
 	  },
-     Outputs => {CoherentSheaf => ""
+     Outputs => {CoherentSheaf => "the cotangent sheaf of the projective variety"
 	  },
-     "Computes the cotangent sheaf of the projective variety X.",
+     "This function computes the cotangent sheaf of the projective variety ", TT "X.",
      PARA,
-     "Verifying Gauss-Bonnet's theorem on a plane quartic curve:",
+     "As an example we verify Gauss-Bonnet's theorem on a plane quartic curve:",
      EXAMPLE {
 	  "X=Proj(QQ[x,y,z]/(x^4+y^4+z^4))",
 	  "genus(X)",
@@ -28,21 +28,24 @@ document {
 
 document { 
      Key => (cotangentSheaf,ZZ,ProjectiveVariety),
+     Headline => "exterior powers of the cotangent sheaf of a projective variety",
      Usage => "cotangentSheaf(p,X)",
      Inputs => {"p" => "", "X" => ""
 	  },
-     Outputs => {CoherentSheaf => ""
+     Outputs => {CoherentSheaf => {"the ", TT "p", "-th exterior power of
+     the cotangent sheaf"}
 	  },
-     "Computes the ", TT "p", "-th exterior power of
+     "This function computes the ", TT "p", "-th exterior power of
      the cotangent sheaf of a variety ", TT "X", ".",
      PARA,
-     "h^11 of a K3 surface (quartic in projective threespace):",
+     "As an example we compute h^11 on a K3 surface (a quartic in projective threespace):",
      EXAMPLE {
 	  "K3 = Proj(QQ[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_3^4-11*x_0*x_1*x_2*x_3))",
 	  "omega1 = cotangentSheaf(1,K3);",
 	  "HH^1(omega1)"
 	  },
-     "Hodge numbers of the Fermat quintic in projective fourspace:", 
+     PARA,
+     "As a second example we compute Hodge numbers of the Fermat quintic in projective fourspace:", 
      EXAMPLE {
 	  "FermatQuintic = Proj(QQ[x_0..x_4]/(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5))",
 	  "omega1 = cotangentSheaf(1,FermatQuintic);",
