@@ -1,102 +1,96 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT.
+--- author(s):  kummini
 --- notes: 
 
 document { 
      Key => target,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "target of a map",
+     "This command returns the target of a morphism or Groebner basis.",
+     SeeAlso => {source}
      }
 document { 
      Key => (target,ChainComplexMap),
-     Headline => "",
-     Usage => "",
+     Headline => " find the target of a map of chain complexes",
+     Usage => "target f",
      Inputs => {
+		"f" => ChainComplexMap => ""
 	  },
      Outputs => {
+		{"the target chain complex of ", TT "f"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+	"In the example below, we have a map between two modules and extend it to
+	a map between projective resolutions of the two modules. Then ", 
+	TT "target",  " gives the target of the map of chain complexes.",
      EXAMPLE {
+	  "R = ZZ[x,y,z];",
+	  "M = R^1/(x,y,z);",
+	  "N = R^1/(x^2,y^2,x*y*z,z^2);",
+	  "g = map(N,M,x*y);",
+	  "f = res g;",
+	  "target f"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+	"(That was an expensive way of resolving ", TT "N", ".)",
      }
 document { 
      Key => (target,GroebnerBasis),
-     Headline => "",
-     Usage => "",
+     Headline => "find target of a Groebner basis",
+     Usage => "target g",
      Inputs => {
+		"g" => GroebnerBasis => ""
 	  },
      Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+		"the target of the matrix given by the generators of the Groebner
+		basis"},
+     "Example:",
      EXAMPLE {
+		   "R = ZZ/10007[x,y,z];",
+		   "g = gb ideal(x^2, x*y-z^2, z^5);",
+		   "target g"
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
 document { 
      Key => (target,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => "find the target module of matrix",
+     Usage => "target f",
      Inputs => {
+		"f" => Matrix => ""
 	  },
      Outputs => {
+		{"the target module of ", TT "f"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Example:",
      EXAMPLE {
+	  "R = ZZ[x,y,z];",
+	  "M = R^1/(x,y,z);",
+	  "N = R^1/(x^2,y^2,x*y*z,z^2);",
+	  "g = map(N,M,x*y);",
+	  "target g",
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 document { 
      Key => (target,GradedModuleMap),
-     Headline => "",
-     Usage => "",
+     Headline => "find the target of a map of graded modules",
+     Usage => "target f",
      Inputs => {
+		"f" => ""
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 document { 
      Key => (target,RingMap),
-     Headline => "",
-     Usage => "",
+     Headline => "find the target ring for a map of rings",
+     Usage => "target f",
      Inputs => {
+		"f" => ""
 	  },
      Outputs => {
+		"the target ring of the map"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Example:",
      EXAMPLE {
+		"S = ZZ/10007[x, y, z];",
+		"R = ZZ/10007[t];",
+		"f = map(R,S,{t^3,t^4,t^5})",
+		"target f"
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
- -- doc1.m2:711:     Key => target,
- -- overviewB.m2:683:     Key => "basic construction, source and target of a ring map",
