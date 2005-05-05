@@ -1,54 +1,31 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isIdeal,
-     Headline => "",
-     Usage => "",
+     Key => {isIdeal, (isIdeal,Thing), (isIdeal,Module)},
+     Headline => "whether something is an ideal",
+     Usage => "isIdeal I",
      Inputs => {
+	  "I" => Thing => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "I", " is a ", TO2("Module", "module"), 
+	       " which evidently an ideal (no computation is done) and ", 
+	       TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "S = QQ[x,y,z];",
+	  "I = ideal(x^2, y^2);",
+	  "isIdeal I",
+	  "J = monomialIdeal I",
+	  "isIdeal J",	  	  
+	  "R = QQ[a..d]/(a*b*c*d);",
+	  "I = ideal(a^2,b^2) * R^1",
+	  "isIdeal I",
+	  "J = a^2 * R^2 + a*b * R^2",
+	  "isIdeal J",
+
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => (isIdeal,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isIdeal,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:991:     Key => isIdeal,
- -- doc6.m2:994:     Key => (isIdeal, Module),
