@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L.Gold
---- notes: may be something wrong with this...see bugs-lgold
+--- notes:
 
 document { 
      Key => {reduceHilbert, (reduceHilbert,Divide)},
