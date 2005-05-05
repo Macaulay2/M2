@@ -1070,7 +1070,10 @@ viewHTML = url -> (
      error "can't find firefox, open, or netscape"
      )
 
-viewHelp = key -> viewHTML if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key
+viewHelp = key -> (
+     if prefixDirectory === null then error "can't run viewHelp from build tree";
+     viewHTML if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key
+     )
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (
