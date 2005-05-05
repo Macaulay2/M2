@@ -17,6 +17,7 @@ document {
      "Computes a list of the successive sectional Euler characteristics of a coherent sheaf,
      the i-th entry on the list being the Euler characteristic of the i-th
      generic hyperplane restriction of ", TT "E",
+     PARA,
      "The Horrocks-Mumford bundle on the projective fourspace:",
      EXAMPLE {
 	  "R = QQ[x_0..x_4];",
