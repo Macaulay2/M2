@@ -662,11 +662,6 @@ document {
      TT "source h", " -- the source of a morphism ", TT "h", ".",
      }
 document {
-     Key => target,
-     Headline => "target of a map",
-     TT "target h", " -- the target of a morphism ", TT "h", " or Groebner basis.",
-     }
-document {
      Key => ambient,
      Headline => "ambient free module of a subquotient, or ambient ring",
      TT "ambient M", " -- yields the ambient free module for the module ", TT "M", ".",
