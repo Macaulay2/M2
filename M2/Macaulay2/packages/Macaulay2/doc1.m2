@@ -533,20 +533,6 @@ document {
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 document {
-     Key => isConstant,
-     Headline => "test whether something is constant"
-     }
-document {
-     Key => (isConstant, RingElement),
-     Usage => "t = isConstant f",
-     Inputs => {
-	  "f" => null,
-	  },
-     Outputs => {
-	  {"whether the polynomial ", TT "f", " is constant"}
-	  }
-     }
-document {
      Key => vars, 
      Headline => "variables"
      }
