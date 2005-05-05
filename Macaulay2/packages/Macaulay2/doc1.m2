@@ -772,12 +772,6 @@ document {
      }
      
 document {
-     Key => someTerms,
-     Headline => "select some terms of a polynomial",
-     TT "someTerms(f,i,n)", " -- select ", TT "n", " terms from the polynomial 
-     ", TT "f", ", starting with the i-th one, and return the resulting polynomial."
-     }
-document {
      Key => scanKeys,
      Headline => "apply a function to each key in a hash table or database",
      TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the

@@ -7,12 +7,12 @@ document {
      Headline => "provide a list of terms of a polynomial",
      Usage => "terms f",
      Inputs => {
-	  "f" => "in a polynomial ring"
+	  "f" => RingElement => {"in a polynomial ring ", TT "R", " with coefficient ring ", TT "A"},
 	  },
      Outputs => {
 	  {"the list of terms of ", TT "f"}
 	  },
-     "The polynomial ", TT "f", " is split into its terms",
+     "Each term is an element of the coefficient ring ", TT "A", ", multiplied with a  monomial in the variables of ", TT "R", ".",
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "terms(a+d^2-1+a*b*c)"
@@ -22,7 +22,7 @@ document {
      of the outer ring.",
      EXAMPLE {
 	  "S = R[x,y];",
-	  "terms(a*x+b*y+c*x*y+c*x^3+1+a)"
+	  "terms(a*x+b*x+c*x*y+c*x^3+1+a)"
 	  },
      SeeAlso => {coefficients, monomials, someTerms}
      }

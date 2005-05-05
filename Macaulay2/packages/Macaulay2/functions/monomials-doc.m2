@@ -59,6 +59,7 @@ monomials m -- BUG!!
 S = R[x,y,z]
 m = matrix{{(a+1)*(x+y)^2}}
 m_(0,0)
-coefficients(m, Variables => {x,y,a})
+coefficients(m, Variables => {x,y}, Monomials => matrix {{x^2, x*y, y}})
+monomials m
 coefficients m
 ///
