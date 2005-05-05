@@ -2033,6 +2033,12 @@ document {
      to specify the order of the series requested."
      }
 document {
+     Key => Projective,
+     Headline => "whether to produce a projective Hilbert polynomial",
+     TT "Projective", " -- an optional argument used with ", TO "hilbertPolynnomial", 
+     " to specify the way the Hilbert Polynomial is expressed."
+     }
+document {
      Key => ProjectiveHilbertPolynomial,
      Headline => "the class of all Hilbert polynomials",
      "For convenience, these polynomials are expressed in terms of the Hilbert 

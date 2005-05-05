@@ -75,7 +75,7 @@ document {
      Inputs => {
 	  "b" => Boolean => "either true or false"
 	  },
-     TT "Projective => true", " -- an option to ", TO "hilbertPolynomial",
+     TT "Projective => true", " is an option to ", TO "hilbertPolynomial", 
      " which specifies that the Hilbert
      polynomial produced should be expressed in terms of the Hilbert
      polynomials of projective spaces.  This is the default.",
