@@ -85,10 +85,6 @@ document {
       	  "ultimate(coefficientRing,ZZ/101[a][b])"
 	  }}
 document {
-     Key => isRing,
-     Headline => "whether something is a ring",
-     TT "isRing x", " -- determines whether x is a ring."}
-document {
      Key => baseRings,
      Headline => "store the list of base rings of a ring",
      TT "baseRings", " -- a symbol used as a key in a ring ", TT "R", " under which is
