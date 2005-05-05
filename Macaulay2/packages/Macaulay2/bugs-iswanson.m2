@@ -81,4 +81,60 @@ kernel f
 
 -- the map above gives error message
 
--------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- RevLex seems to be the same as GRevLex
+
+i1 : R = ZZ[a..d, MonomialOrder=>{RevLex}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : gens gb ideal(a^2+b*d^2,b*c + a*d)
+
+o2 = | ad3-a2c bc+ad bd2+a2 |
+
+             1       3
+o2 : Matrix R  <--- R
+
+i3 : R = ZZ[a..d, MonomialOrder=>{GRevLex}]
+
+o3 = R
+
+o3 : PolynomialRing
+
+i4 : gens gb ideal(a^2+b*d^2,b*c + a*d)
+
+o4 = | bc+ad bd2+a2 ad3-a2c |
+
+             1       3
+o4 : Matrix R  <--- R
+
+-------------------------------------------------------------------
+
+i39 : R = ZZ[a..d, MonomialOrder=>{LexSmall}];
+-- same problem for LexTiny and GrevLexTiny, GrevLexSmall
+
+i40 : a^(2^16-1)
+
+       65535
+o40 = a
+
+o40 : R
+
+i41 : a^(2^16)
+
+o41 = 1
+
+o41 : R
+
+
+Apparently you want the upper limit on LexSmall is 2^15-1 rather
+than 2^16-1, and for LexTiny to be 2^7-1 rather than the current
+2^8 - 1.
+
+----------------------------------------------------------------
+
+implement leadTerm(ZZ, ring element)
+
+---------------------------------------------------------------

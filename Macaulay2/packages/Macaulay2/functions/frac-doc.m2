@@ -5,8 +5,6 @@
 document { 
      Key => {frac, (frac,Ring), (frac,FractionField), (frac,EngineRing)},
      Headline => "construct a fraction field",
-     TT "frac R", " -- construct the fraction field of the integral domain ",
-	 TT "R", ".",
      EXAMPLE {
 	  "F = frac ZZ",
 	  "F = frac (ZZ[a,b])",
@@ -15,10 +13,10 @@ document {
 	 "the elements of the ring are treated as elements ",
 	 "of the fraction field:",
      EXAMPLE {
-	      "R = ZZ/101[x,y]",
-	      "f = x^2*y - y^3",
-	      "K = frac R",
-	      "f = x^2*y - y^3",
+	      "R = ZZ/101[x,y];",
+	      "gens gb ideal(x^2*y - y^3)",
+	      "K = frac R;",
+	      "gens gb ideal(x^2*y - y^3)",
 	  },
      Usage => "frac R",
      Inputs => {
@@ -31,11 +29,9 @@ document {
      TT "x", TO "/", TT "y", " where ",
      TT "x, y", " are elements of ", TT "R", ":",
      EXAMPLE {
-	  "a/b^2",
+	  "a*b/b^4",
 	  },
-     "Fractions are reduced to the extent possible.  This is done by
-     computing the syzygies between the numerator and denominator, and
-     picking one of low degree.",
+     "Fractions are reduced to the extent possible.",
      EXAMPLE {
 	  "f = (x-y)/(x^6-y^6)",
       	  "(x^3 - y^3) * f"
@@ -56,24 +52,22 @@ document {
      rings over fraction fields, as in the following example.
      Note that computations over fraction fields can be quite slow.",
      EXAMPLE {
-	      "S = K[u,v]",
-		  "I = ideal(u^3 + v^3, u^2*v, u^4)",
+	      "S = K[u,v];",
+		  "I = ideal(u^3 + v^3, u^2*v, u^4);",
 		  "gens gb I",
 		  "Ires = res I",
 		  "Ires.dd_2"
 	 },
-     "To compute a blowup of an ideal ", TT "I", " in ", TT "R",
-     ", compute the kernel of a map of a new polynomial ring
+     "One way to compute a blowup of an ideal ", TT "I", " in ", TT "R",
+     ", is to compute the kernel of a map of a new polynomial ring
      into a fraction field of ", TT "R", ", as shown below.",
      EXAMPLE {
 	"A = ZZ/101[a,b,c];",
-	"f = map(K, A, {x^3/y^4, x^2/y^2, (x^2+y^2)/y^4})",
+	"f = map(K, A, {x^3/y^4, x^2/y^2, (x^2+y^2)/y^4});",
 	"kernel f",
 	 },
      Consequences => {
 	  },     
-     "The symbol ", TT "frac", " is also used as a key under which is stored 
-     the fraction field of a ring.",
      Caveat => {"The input ring should be an integral domain.",
 	PARA,
 	"Currently, for ", TT "S", " as above, one cannot define ",
