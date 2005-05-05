@@ -1,37 +1,22 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isCommutative,
-     Headline => "",
-     Usage => "",
+     Key => {isCommutative,(isCommutative,Ring)},
+     Headline => "whether a ring is commutative",
+     Usage => "isCommutative R",
      Inputs => {
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  {TO "true", " if the ", TO2("Ring", "ring"), " ", TT "R", " is commutative and ", 
+	  TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "isCommutative(QQ[x,y])",
+	  "isCommutative(QQ[x,y, SkewCommutative => true])",
+	  "isCommutative(QQ[x,dx, WeylAlgebra => {x => dx}])"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {WeylAlgebra, SkewCommutative}
      }
-document { 
-     Key => (isCommutative,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:88:     Key => isCommutative,

@@ -85,10 +85,6 @@ document {
       	  "ultimate(coefficientRing,ZZ/101[a][b])"
 	  }}
 document {
-     Key => isCommutative,
-     Headline => "whether a ring is commutative",
-     TT "isCommutative R", " -- tells whether the ring R is commutative."}
-document {
      Key => isRing,
      Headline => "whether something is a ring",
      TT "isRing x", " -- determines whether x is a ring."}
