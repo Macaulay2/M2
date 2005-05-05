@@ -1,5 +1,5 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s): blasiak, kummini
 --- notes: 
 
 document { 
@@ -38,8 +38,7 @@ document {
 	  "minors(2,M)",
 	  "minors(2,M,Limit=>1)",
 	  },
-     -- Caveat => {},
-     SeeAlso => {}
+
      }
 document { 
      Key => [minors, Limit],
@@ -49,7 +48,7 @@ document {
  	  "r" => ZZ => ""
 	  },
 	"the computation stops after ", TT "r", " minors are obtained. For an
-	example, see ", TO "minors", "."
+	example, see ", TO (minors,ZZ,Matrix), "."
      }
  -- doc7.m2:1778:     Key => minors,
  -- doc7.m2:1783:     Key => (minors,ZZ,Matrix),
