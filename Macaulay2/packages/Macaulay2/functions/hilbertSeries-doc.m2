@@ -1,6 +1,6 @@
---- status: DRAFT
---- author(s): L.Gold
---- notes: still some problems with hilbertSeries of a proj Hilb. Poly.
+--- status: DRAFT author(s): L.Gold notes: still some problems with
+--- hilbertSeries of a proj Hilb. Poly., also need to adjust
+--- option:Order, look for Order as a key in old doc
 
 document { 
      Key => hilbertSeries,

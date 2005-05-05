@@ -2075,66 +2075,6 @@ scan(3, n -> scan(-3 .. 3, d -> (
 	       h := projectiveHilbertPolynomial(n,d);
 	       scan(3, i -> assert( h i === binomial(n+d+i,n) )))))
 "
-TEST "
-scan(3, n -> (
-     R = ZZ/101[x_0 .. x_n];
-     scan(-2 .. 2, d -> (
-	  M = R^{-d};
-	  h = hilbertPolynomial M;
-	  scan(d .. d + 4, e -> assert(numgens source basis(e,M) == h e))))))
-"
-TEST "
-scan(3, n -> (
-     R = ZZ/101[x_0 .. x_n];
-     scan(-2 .. 2, d -> (
-	  M = R^{-d};
-	  h = hilbertPolynomial (M, Projective => false);
-	  i = (ring h)_0;
-	  scan(d .. d + 4, e -> (
-		    r = numgens source basis(e,M);
-		    s = substitute(h, { i => e/1 });
-	       	    assert( r == s)))))))
-"
-document {
-     Key => Projective,
-     Headline => "whether to produce a projective Hilbert polynomial",
-     TT "Projective => true", " -- an option to ", TO "hilbertPolynomial", " which
-     specifies that the Hilbert polynomial produced should be expressed in terms
-     of the Hilbert polynomials of projective spaces.  This is the default.",
-     BR, NOINDENT,
-     TT "Projective => false", " -- an option to ", TO "hilbertPolynomial", " which
-     specifies that the Hilbert polynomial produced should be expressed as a 
-     polynomial in the degree.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4})",
-      	  "presentation S",
-      	  "h = hilbertPolynomial S",
-	  },
-     PARA,
-     "The rational quartic curve in P^3 is therefore 'like' 4 copies of P^1, with
-     three points missing.  One can see this by noticing that there is a deformation
-     of the rational quartic to the union of 4 lines, or 'sticks', which intersect
-     in three successive points.",
-     PARA,
-     "These Hilbert polynomials can serve as Hilbert functions, too.",
-     EXAMPLE {
-	  "h 3",
-      	  "basis(3,S)",
-      	  "rank source basis(3,S)",
-	  },
-     PARA,
-     "Note that the Hilbert polynomial of P^i is z |--> binomial(z + i, i).",
-     PARA,
-     SeeAlso => "ProjectiveHilbertPolynomial"
-     }
-document {
-     Key => hilbertPolynomial,
-     Headline => "compute Hilbert polynomial",
-     TT "hilbertPolynomial M", " -- the Hilbert polynomial of the module ", TT "M", " as
-     a polynomial in ", TT "T", "."
-     }
 document {
      Key => presentation,
      Headline => "presentation of a module or ring",
