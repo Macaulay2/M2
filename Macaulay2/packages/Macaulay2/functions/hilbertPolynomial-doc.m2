@@ -64,9 +64,9 @@ document {
 document { 
      Key => (hilbertPolynomial,CoherentSheaf),
      Headline => "compute the Hilbert polynomial of a coherent sheaf",
-     Usage => "hilbertPolynomial M",
+     Usage => "hilbertPolynomial S",
      Inputs => {
-	  "M" => ""
+	  "S" => ""
 	  },
      Outputs => {
 	  ProjectiveHilbertPolynomial => ""
@@ -74,8 +74,8 @@ document {
      "We compute the Hilbert polynomial of a coherent sheaf.",
      EXAMPLE {
 	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-	  "h = hilbertPolynomial M"
+	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
+	  "h = hilbertPolynomial S"
 	  },
      }
 
