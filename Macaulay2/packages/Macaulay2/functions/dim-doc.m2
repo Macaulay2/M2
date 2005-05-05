@@ -15,12 +15,11 @@ document {
      }
 
 document { 
-     Key => {(dim,Ring),(dim,GaloisField),(dim,FractionField),(dim,QuotientRing),(dim,PolynomialRing)},
+     Key => (dim,Ring),
+     Undocumented => {(dim,GaloisField),(dim,FractionField),(dim,QuotientRing),(dim,PolynomialRing)},
      Usage => "dim R",
-     Inputs => {"R" => ""
-	  },
-     Outputs => {ZZ => ""
-	  },
+     Inputs => {"R" => ""},
+     Outputs => {ZZ => ""},
      "Computes the Krull dimension of the given ring.",
      PARA,
      "The singular locus of a cuspidal plane curve", 
