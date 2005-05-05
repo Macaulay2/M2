@@ -2017,16 +2017,6 @@ document {
      SeeAlso => {"poincare"}
      }
 document {
-     Key => hilbertFunction,
-     Headline => "Hilbert function of a module",
-     TT "hilbertFunction(d,M)", " -- compute the dimension of the degree d
-     part of the module, ring, or ideal M",
-     PARA,
-     "At the moment, the function is computed simply by calling ", TO "basis", "
-     and extracting the number of basis elements.",
-     SeeAlso => {"hilbertSeries", "hilbertPolynomial"}
-     }
-document {
      Key => Order,
      Headline => "specify the order of a Hilbert series required",
      TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "

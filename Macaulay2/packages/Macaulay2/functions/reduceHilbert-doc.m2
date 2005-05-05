@@ -10,12 +10,15 @@ document {
 	  "H" => Divide => ""
 	  },
      Outputs => {
-	  Divide => {"the Hilbert series as a rational function with common factors removed"}
+	  Divide => {"the Hilbert series"}
 	  },
+     	  "This function reduces the rational function expression of a
+	  Hilbert series produced by the function ", TO "hilbertSeries", 
+	  "  by removing all common factors.",
           EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
 	  "I = ideal x^2;",
       	  "hilbertSeries I",
 	  "reduceHilbert o3"	  
-	  }
+     	  }
      }

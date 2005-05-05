@@ -1,181 +1,83 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes: working on this
 
 document { 
      Key => hilbertFunction,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "compute the Hilbert function",
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "hilbertSeries",
+	  "hilbertPolynomial"}
      }
+
 document { 
-     Key => (hilbertFunction,ZZ,Ideal),
-     Headline => "",
-     Usage => "",
+     Key => {(hilbertFunction,ZZ,Ring),(hilbertFunction,List,Ring)},
+     Headline => "compute the Hilbert function of a ring",
+     Usage => "hilbertFunction(d,R)",
      Inputs => {
+	  "d" => "for the degree, or a ",
+	  "R" => ""
 	  },
      Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+	  Expression => "the Hilbert function" },
+     "compute the dimension of the degree d part of the ring R",
+     PARA,
+     "At the moment, the function is computed simply by calling ", TO "basis", "
+     and extracting the number of basis elements.",
      EXAMPLE {
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
+
 document { 
-     Key => (hilbertFunction,ZZ,CoherentSheaf),
-     Headline => "",
-     Usage => "",
+     Key => {(hilbertFunction,ZZ,Module),(hilbertFunction,List,Module)},
+     Headline => "compute the Hilbert function of a module",
+     Usage => "hilbertFunction(d,M)",
      Inputs => {
 	  },
      Outputs => {
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
+
 document { 
-     Key => (hilbertFunction,ZZ,Ring),
-     Headline => "",
-     Usage => "",
+     Key => {(hilbertFunction,ZZ,Ideal),(hilbertFunction,List,Ideal)},
+     Headline => "compute the Hilbert function of an ideal",
+     Usage => "hilbertFunction(d,I)",
      Inputs => {
 	  },
      Outputs => {
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
+
 document { 
-     Key => (hilbertFunction,List,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
+     Key => {(hilbertFunction,ZZ,CoherentSheaf),(hilbertFunction,List,CoherentSheaf)},
+     Headline => "compute the Hilbert function of a coherent sheaf",
+     Usage => "hilbertFunction(d,S)",
      Inputs => {
 	  },
      Outputs => {
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
+
 document { 
-     Key => (hilbertFunction,List,Module),
-     Headline => "",
-     Usage => "",
+     Key => {(hilbertFunction,ZZ,ProjectiveVariety),(hilbertFunction,List,ProjectiveVariety)},
+     Headline => "compute the Hilbert function of a projective variety",
+     Usage => "hilbertFunction(d,V)",
      Inputs => {
 	  },
      Outputs => {
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
 	  },
-     Caveat => {},
      SeeAlso => {}
      }
-document { 
-     Key => (hilbertFunction,ZZ,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertFunction,List,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertFunction,List,CoherentSheaf),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertFunction,List,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (hilbertFunction,ZZ,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc7.m2:2202:     Key => hilbertFunction,
+
+
