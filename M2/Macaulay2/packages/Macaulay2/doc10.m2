@@ -975,23 +975,6 @@ document {
      }
 
 document {
-     Key => (cotangentSheaf, ProjectiveVariety),
-     TT "cotangentSheaf X", " -- calculate the cotangent sheaf of a variety ", TT "X", "."
-     }
-
-document {
-     Key => cotangentSheaf,
-     Headline => "cotangent sheaf of a variety"
-     }
-
-document {
-     Key => (cotangentSheaf, ZZ, ProjectiveVariety),
-     Headline => "make an exterior power of the cotangent sheaf",
-     TT "cotangentSheaf(p,X)", " -- calculate the ", TT "p", "-th exterior power of
-     the cotangent sheaf of a variety ", TT "X", "."
-     }
-
-document {
      Key => (symbol _, RingElement, ZZ),
      Usage => "f_d",
      Inputs => {
