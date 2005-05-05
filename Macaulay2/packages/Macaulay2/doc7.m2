@@ -1514,14 +1514,6 @@ document {
      Headline => "whether one thing is a quotient of another"
      }
 document {
-     Key => isQuotientRing,
-     Headline => "whether something is a quotient ring"
-     }
-TEST "
-assert( ZZ/2 === ZZ/(4,6) )
-R = ZZ/101[t]
-"
-document {
      Key => (symbol /, Ring, RingElement),
      Headline => "quotient ring",
      Usage => "S = R/f",

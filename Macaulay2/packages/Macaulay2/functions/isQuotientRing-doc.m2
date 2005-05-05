@@ -1,53 +1,32 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isQuotientRing,
-     Headline => "",
-     Usage => "",
+     Key => {isQuotientRing, (isQuotientRing,QuotientRing), (isQuotientRing,Ring)},
+     Headline => "whether something is a quotient ring",
+     Usage => "isQuotientRing R",
      Inputs => {
+	  "R" => Ring => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "R", " was explicitly constructed as a ", TO2("QuotientRing", "quotient ring"), 
+	       " and ", TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "S = ZZ/3[x,y,z];",
+	  "isQuotientRing S",
+	  "R = S/(x^2-y*z);",
+	  "isQuotientRing R",
+	  "ambient R",
+	  "symAlg = symmetricAlgebra R^2",
+	  "isQuotientRing symAlg",
+	  "sing = singularLocus R",
+	  "isQuotientRing sing"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {ambient}
      }
-document { 
-     Key => (isQuotientRing,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isQuotientRing,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc7.m2:1579:     Key => isQuotientRing,
+
+TEST "
+assert( ZZ/2 === ZZ/(4,6) )
+"
