@@ -11,7 +11,8 @@ document {
      graded component.", 
      PARA, 
      "Note that the series is provided as an ", TO "Expression", ".",
-     SeeAlso => {"degreesRing", "reduceHilbert", "poincare"}
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "hilbertPolynomial",
+	  "hilbertFunction"}
      }
 document { 
      Key => {(hilbertSeries,PolynomialRing), (hilbertSeries,QuotientRing)},
@@ -21,7 +22,7 @@ document {
 	  "R" => {" or a ", TO QuotientRing}
 	  },
      Outputs => {
-	  Expression => "" },
+	  Expression => "the Hilbert series" },
      "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a ring.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
@@ -34,16 +35,18 @@ document {
       	  "hilbertSeries R",
 	  },
      }
+
 document { 
-     Key => {(hilbertSeries,Module), (hilbertSeries,CoherentSheaf)},
+     Key => (hilbertSeries,Module),
      Headline => "compute the Hilbert series of the module",
      Usage => "hilbertSeries M",
      Inputs => {
-	  "M" => {" or a ", TO CoherentSheaf} 
+	  "M" => ""
 	  },
      Outputs => {
-	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
+	  Expression => "the Hilbert series" 
+	  },
+     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      module.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
@@ -60,6 +63,26 @@ document {
 	  "hilbertSeries M",
 	  }
      }
+
+document { 
+     Key => (hilbertSeries,CoherentSheaf),
+     Headline => "compute the Hilbert series of a coherent sheaf",
+     Usage => "hilbertSeries M",
+     Inputs => {
+	  "M" => ""
+	  },
+     Outputs => {
+	  Expression => "the Hilbert series" },
+     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
+     coherent sheaf.",
+     EXAMPLE {
+	  "V = Proj(ZZ/101[x_0..x_2]);",
+	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
+      	  "hilbertSeries M",
+      	  "numerator oo",
+	  },
+     }
+
 document { 
      Key => (hilbertSeries,Ideal),
      Headline => "compute the Hilbert series of the quotient of the ambient ring by the ideal",
@@ -68,8 +91,8 @@ document {
 	  "I" => Ideal => ""
 	  },
      Outputs => {
-	  Expression => "" },
-     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of R/I, the
+	  Expression =>  "the Hilbert series" },
+     "We compute the ", TO2  (hilbertSeries, "Hilbert series"), " of R/I, the
      quotient of the ambient ring by the ideal. Caution: For an ideal
      I, ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
      EXAMPLE {
@@ -99,14 +122,14 @@ document {
 	  "P" => ProjectiveHilbertPolynomial => ""
 	  },
      Outputs => {
-	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
+	  Expression =>  "the Hilbert series" },
+     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      projective Hilbert polynomial.",
      EXAMPLE {
 	  "P = projectiveHilbertPolynomial 3",
       	  "hilbertSeries P"
 	  },
-     "Computing the ", TO2(hilbertSeries, "Hilbert series"), " of a
+     "Computing the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      projective variety can be useful for finding the h-vector of a
      simplicial complex from its f-vector. For example, consider the
      octahedron. The ideal below is its Stanley-Reisner ideal. We can
@@ -120,6 +143,7 @@ document {
 	  "hilbertSeries P"
      }
 }
+
 document { 
      Key => (hilbertSeries,ProjectiveVariety),
      Headline => "compute the Hilbert series of a projective variety",
@@ -128,8 +152,8 @@ document {
 	  "V" =>  ProjectiveVariety => ""
 	  },
      Outputs => {
-	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a
+	  Expression =>   "the Hilbert series" },
+     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      projective variety.",
      EXAMPLE {
 	  "V = Proj(QQ[x,y])",

@@ -8,7 +8,8 @@ document {
      "The Hilbert polynomial by default is written in terms of the
      Hilbert polynomials of projective spaces. The Hilbert polynomial
      of P^i is z |--> binomial(z + i, i).",
-     SeeAlso => "ProjectiveHilbertPolynomial"
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "hilbertSeries",
+	  "hilbertFunction"}
      } 
 
 document {
@@ -19,7 +20,7 @@ document {
 	  "R" => Ring => ""
 	  },
      Outputs => {
-	  "the Hilbert polynomial" 
+	  ProjectiveHilbertPolynomial => "the Hilbert polynomial" 
 	  },
      "We compute the Hilbert polynomial of a coordinate ring of the
      rational quartic curve in P^3.",
@@ -43,7 +44,7 @@ document {
      }
 
 document { 
-     Key => {(hilbertPolynomial,Module),(hilbertPolynomial,CoherentSheaf)},
+     Key => (hilbertPolynomial,Module),
      Headline => "compute the Hilbert polynomial of the module",
      Usage => "hilbertPolynomial M",
      Inputs => {
@@ -56,6 +57,24 @@ document {
      EXAMPLE {
 	  "R = QQ[a..h];",
 	  "M = coker matrix {{a,c,5},{d,b,h}}",
+	  "h = hilbertPolynomial M"
+	  },
+     }
+
+document { 
+     Key => (hilbertPolynomial,CoherentSheaf),
+     Headline => "compute the Hilbert polynomial of a coherent sheaf",
+     Usage => "hilbertPolynomial M",
+     Inputs => {
+	  "M" => ""
+	  },
+     Outputs => {
+	  ProjectiveHilbertPolynomial => ""
+	  },
+     "We compute the Hilbert polynomial of a coherent sheaf.",
+     EXAMPLE {
+	  "V = Proj(ZZ/101[x_0..x_2]);",
+	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
 	  "h = hilbertPolynomial M"
 	  },
      }
@@ -90,7 +109,8 @@ document {
 	  ProjectiveHilbertPolynomial => ""
 	  },
      "We compute an example of the Hilbert polynomial of a projective
-     Hilbert variety.",
+     Hilbert variety. This is the same as the Hilbert polynomial of
+     its coordinate ring.",
      EXAMPLE {
 	  "V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))",
 	  "h = hilbertPolynomial V"
