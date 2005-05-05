@@ -1,5 +1,5 @@
 --- status: draft
---- author(s): 
+--- author(s): Popescu
 --- notes: 
 
 document { 
@@ -32,6 +32,7 @@ document {
 	  "betti (D=res coker N)",
 	  "Pfour = Proj(R)",
 	  "HorrocksMumford = sheaf(coker D.dd_3);",
+	  "HH^0(HorrocksMumford(1))",
 	  "HH^0(HorrocksMumford(2))",
 	  "euler(HorrocksMumford(2))"
 	  },
@@ -40,32 +41,43 @@ document {
 document { 
      Key => (euler,Ideal),
      Usage => "euler I",
-     Inputs => {
+     Inputs => {"I" => ""
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Outputs => {List =>"the successive sectional Euler 
+	  characteristics of an ideal (sheaf)."
+          },
+     "Computes a list of the successive sectional Euler 
+     characteristics of an ideal (sheaf), the i-th entry 
+     in the list being the Euler characteristic of the i-th
+     generic hyperplane restriction of ", TT "I",     
      EXAMPLE {
+	  "R = ZZ/101[a,b,c];",
+	  "I =ideal(a^3+b^3+c^3)", 
+	  "euler I"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {genera,genus}
      }
 document { 
      Key => (euler,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "euler R",
+     Inputs => {"R" => ""
 	  },
-     Outputs => {
+     Outputs => {List =>"the successive sectional Euler 
+	       characteristics of a (sheaf of) ring(s)."
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes a list of the successive sectional Euler 
+     characteristics of a ring (sheaf of), the i-th entry 
+     in the list being the Euler characteristic of the i-th
+     generic hyperplane restriction of ", TT "R",     
      EXAMPLE {
+	  "S = ZZ/101[a,b,c];",
+	  "I = ideal(a^3+b^3+c^3)", 
+	  "R = S/I",
+	  "euler(R)",
+	  "J = substitute(ideal(b,a+c),R)",
+	  "euler(R/J)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {genera,genus},
      }
+
  -- doc6.m2:1132:     Key => euler,

@@ -1000,14 +1000,6 @@ document {
      "The new free module has basis elements of degree zero.  To specify the
      degrees explicitly, see ", TO (symbol ^,Ring,List), "." }
 document {
-     Key => euler,
-     Headline => "list the sectional Euler characteristics",
-     TT "euler M", " -- provide a list of the successive sectional Euler 
-     characteristics of a module, ring, or ideal.",
-     PARA,
-     "The i-th one in the list is the Euler characteristic of the i-th
-     hyperplane section of M." }
-document {
      Key => rank,
      Headline => "compute the rank",
      TT "rank M", " -- computes the rank of the module M.",
