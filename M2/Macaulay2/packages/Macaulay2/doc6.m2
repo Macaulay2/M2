@@ -172,33 +172,6 @@ document {
 document {
      Key => ZZ,
      Headline => "the class of all integers" }
-
-
-TEST "
-assert (not isPrime 1333333)
-assert (not isPrime 3133333)
-assert (not isPrime 3313333)
-assert ( isPrime 3331333)
-assert ( isPrime 3333133)
-assert ( isPrime 3333313)
-assert ( isPrime 3333331)
-"
-document {
-     Key => isPrime,
-     Headline => "tell whether an integer is a prime",
-     TT "isPrime x", " -- tests for primality",
-     PARA,
-     NOINDENT,
-     TT "isPrime n", " -- returns ", TT "true", " if the integer ", TT "n", "
-     is probably a prime, and ", TT "false", " if ", TT "n", " is not a
-     prime.",
-     PARA,
-     "At the moment, for numbers larger than ", TT "2^31-1", " it checks for
-     divisibility by small primes, and then applies a strong pseudoprimality
-     test (Rabin-Miller) to the base 2.",
-     PARA,
-     TT "isPrime f", " -- returns ", TT "true", " if the polynomial ", TT "f", "
-     is irreducible, otherwise ", TT "false", "."}
 document {
      Key => numerator,
      Headline => "numerator of a fraction",
