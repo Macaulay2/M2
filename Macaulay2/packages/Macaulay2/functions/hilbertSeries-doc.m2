@@ -1,7 +1,8 @@
---- status: DRAFT author(s): L.Gold notes: still some problems with
---- hilbertSeries of a proj Hilb. Poly., also need to adjust
---- option:Order, look for Order as a key in old doc
+--- status: DRAFT 
+--- author(s): L.Gold
+--- note:
 
+ 
 document { 
      Key => hilbertSeries,
      Headline => "compute the Hilbert series",
@@ -68,7 +69,7 @@ document {
 	  },
      Outputs => {
 	  Expression => "" },
-     "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of R/I, the
+     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of R/I, the
      quotient of the ambient ring by the ideal. Caution: For an ideal
      I, ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
      EXAMPLE {
@@ -84,7 +85,7 @@ document {
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
 	  "I = module ideal x^2;",
-	  "hilbertSeries I",
+	  "hilbertSeries I"
 	  },
      Caveat => {"For an ideal I, ", TT "hilbertSeries I", " calculates
 	  the Hilbert series of R/I."
@@ -103,20 +104,21 @@ document {
      projective Hilbert polynomial.",
      EXAMPLE {
 	  "P = projectiveHilbertPolynomial 3",
-      	  "hilbertSeries P",
+      	  "hilbertSeries P"
 	  },
---     "Computing the ", TO2(hilbertSeries, "Hilbert series"), " of a
---     projective variety can be useful for finding the h-vector of a
---     simplicial complex from its f-vector. For example, consider the
---     octahedron. The f-vector is (6, 12, 8) and the h-vector is
---     (1,3,3,1).",
---     EXAMPLE {
-	  -- use it to make a projectiveHilbertPolynomial
-	  -- 1*P_0 + 6*P_1+12*P_2 + 8 *P_3
-	  -- then find the hilbertSeries of this
-	  -- read off the h-vector as coefficients
-     	  -- WARNING something isn't correct here
---     }
+     "Computing the ", TO2(hilbertSeries, "Hilbert series"), " of a
+     projective variety can be useful for finding the h-vector of a
+     simplicial complex from its f-vector. For example, consider the
+     octahedron. The ideal below is its Stanley-Reisner ideal. We can
+     see its f-vector (1, 6, 12, 8) in the Hilbert polynomial, and
+     then we get the h-vector (1,3,3,1) from the coefficients of the
+     Hilbert series projective Hilbert polynomial.",
+     EXAMPLE {
+     	  "R = QQ[a..h];",
+	  "I = ideal (a*b, c*d, e*f);",
+	  "P=hilbertPolynomial(I)",
+	  "hilbertSeries P"
+     }
 }
 document { 
      Key => (hilbertSeries,ProjectiveVariety),
@@ -147,9 +149,10 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "hilbertSeries(R/x^3)",
-	  "hilbertSeries(R/x^3, Order =>5)",
+	  "hilbertSeries(R/x^3, Order =>5)"
 	  },
      }
+
 TEST ///
 R = ZZ/101[x,y]
 M = R^1/x
