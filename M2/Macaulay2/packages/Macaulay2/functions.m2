@@ -1,3 +1,4 @@
+load "monomorderings.m2"
 --load "functions/currentPrompts-doc.m2"
 --load "functions/debugError-doc.m2"
 --load "functions/debuggerHook-doc.m2"
