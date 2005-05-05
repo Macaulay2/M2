@@ -736,7 +736,6 @@ export (
 	symbol isAffineRing,
 	symbol isBorel,
 	symbol isCommutative,
-	symbol isConstant,
 	symbol isDirectSum,
 	symbol isDirectory,
 	symbol isField,

@@ -201,19 +201,17 @@ tryload := (filename,loadfun,notify) -> (
 	       markLoaded(filename,filename,notify);
 	       return ret;)
 	  else error("file doesn't exist: \"", filename, "\""));
-     if class path =!= List then error "expected 'path' to be a list (of strings)";
      scan(path, dir -> if class dir =!= String then error "member of 'path' not a string");
-     if class filename === String then filename = {filename};
+     if class filename =!= String then error "expected a string";
      epath := if currentFileDirectory == "--startupString--/" then path else prepend(currentFileDirectory, path);
      scan(epath, dir -> (
 		    if loaded then break;
-		    scan(filename, filename -> (
-			 fullfilename := dir | filename;
-			 if fileExists fullfilename then (
-			      ret = loadfun fullfilename;
-			      markLoaded(fullfilename,filename,notify);
-			      loaded = true;
-			      break)))));
+		    fullfilename := dir | filename;
+		    if fileExists fullfilename then (
+			 ret = loadfun fullfilename;
+			 markLoaded(fullfilename,filename,notify);
+			 loaded = true;
+			 break)));
      if loaded then ret else error("file not found on path: \"", toString filename, "\""))
 
 load = (filename) -> tryload(filename,simpleLoad,notify)

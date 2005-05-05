@@ -38,7 +38,6 @@ loadPackage String := opts -> pkgtitle -> (
      filename := pkgtitle | ".m2";
      substituteOptions#pkgtitle = opts;
      load filename;
-     -- load {filename, pkgtitle|"/"|filename};
      remove(substituteOptions,pkgtitle);
      if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
      value PackageDictionary#pkgtitle)

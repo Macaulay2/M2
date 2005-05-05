@@ -9,7 +9,7 @@ AffineVariety.synonym = "affine variety"
 ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
 ring Variety := X -> X.ring
-genera Variety := X -> genera ring X
+
 ambient ProjectiveVariety := X -> Proj ambient ring X
 ambient     AffineVariety := X -> Spec ambient ring X
 ideal Variety := X -> ideal ring X
@@ -250,8 +250,10 @@ tangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> dual cotangentSheaf X
 dim AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1
 codim ProjectiveVariety := X -> codim ring X
+
 genera ProjectiveVariety := X -> genera ring X
 genus ProjectiveVariety := X -> genus ring X
+
 AffineVariety * AffineVariety := AffineVariety => (X,Y) -> Spec(ring X ** ring Y)
 AffineVariety ** Ring := AffineVariety => (X,R) -> Spec(ring X ** R)
 ProjectiveVariety ** Ring := ProjectiveVariety => (X,R) -> Proj(ring X ** R)
@@ -262,22 +264,40 @@ singularLocus(ProjectiveVariety) := X -> (
      A := ring f;
      Proj(A / saturate (minors(codim R, jacobian f) + ideal f)))
 
-degree CoherentSheaf := F -> degree F.module
+euler CoherentSheaf := F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     euler module F)
+genera CoherentSheaf := F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     genera module F)
+genus CoherentSheaf := F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     genus module F)
+
+degree CoherentSheaf := F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     degree F.module)
 degree ProjectiveVariety := X -> degree ring X
 
 pdim CoherentSheaf := F -> pdim module F
 
 hilbertSeries ProjectiveVariety := options -> X -> hilbertSeries(ring X,options)
-hilbertSeries CoherentSheaf := options -> F -> hilbertSeries(module F,options)
+hilbertSeries CoherentSheaf := options -> F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     hilbertSeries(module F,options))
 
 hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial(ring X, opts)
-hilbertPolynomial CoherentSheaf := options -> F -> hilbertPolynomial(F.module,options)
+hilbertPolynomial CoherentSheaf := options -> F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     hilbertPolynomial(F.module,options))
 
 hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> hilbertFunction(d,F.module)
 hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> hilbertFunction(d,ring X)
 
 dual CoherentSheaf := F -> sheaf_(F.variety) dual F.module
-betti CoherentSheaf := F -> betti F.module
+betti CoherentSheaf := F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     betti F.module)
 
 binaryPower := (W,n,times,unit,inverse) -> (
      if n === 0 then return unit();
