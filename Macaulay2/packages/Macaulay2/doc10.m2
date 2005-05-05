@@ -365,23 +365,6 @@ document {
      }
 
 document {
-     Key => top,
-     FormattedKey => "top components",				    -- to avoid it looking like "Top", the top node in an info file
-     Headline => "compute the top dimensional components",
-     TT "top I", " -- yields the intersection of top dimensional primary
-     components of the module or ideal ", TT "I", ".",
-     PARA,
-     "For an example, see also ", TO "component example", ".",
-     PARA,
-     "If ", TT "I", " is a submodule of (a quotient module) ", TT "M", ", then a possibly larger
-     submodule of ", TT "M", " is returned.  The method used is that of
-     Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
-     paper.  For a very brief description of the method used, see ", 
-     TO "top-method", ".",
-     SeeAlso => {"removeLowestDimension", "saturate", "quotient", "radical"}
-     }
-
-document {
      Key => removeLowestDimension,
      Headline => "remove components of lower dimension",
      TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",

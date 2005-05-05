@@ -1,55 +1,70 @@
---- status: TODO
---- author(s): 
+
+--- status: Draft
+--- author(s): Giulio 
 --- notes: 
 
 document { 
-     Key => top,
-     Headline => "",
-     Usage => "",
+     Key => {"top function"},
+     Headline => "compute the top dimensional component of a module or of an ideal",
+     Usage => "top M",
      Inputs => {
+	  "M" => {"an ", TO Ideal, " or a ", TO Module}
 	  },
      Outputs => {
 	  },
      Consequences => {
 	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+      
+    "The method used is that of
+    Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
+    paper.",PARA,
+    "For a brief description see: ",TO "top-method",".",
+    
+    SeeAlso => {"top Ideal", "top Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"
+    },
+    }
 document { 
      Key => (top,Ideal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "compute the top dimensional component of an ideal",
+     Usage => "top I",
+     Inputs => {"I" => ""
 	  },
      Outputs => {
+	  "I" => Ideal => {"which is the intersection of the primary components of " 
+	       ,TT "I", " having the greatest Krull dimension" }
 	  },
-     Consequences => {
-	  },     
-     "description",
+    "The method used is that of Eisenbud-Huneke-Vasconcelos. ", 
+    "For a brief description see: ",TO "top-method",".", 
+    
      EXAMPLE {
+	  "R=ZZ/32003[a..c];",
+	  "I=intersect(ideal(a,b),ideal(b,c),ideal(c,a),ideal(a^2,b^3,c^4));",
+	  "top I" 
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+     SeeAlso => {"top Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"}
+     },
+
 document { 
      Key => (top,Module),
-     Headline => "",
-     Usage => "",
+     Headline => "compute the top dimensional component of a module",
+     Usage => "top M",
      Inputs => {
+	  "M" => ""
 	  },
      Outputs => {
+	  "N" => Module => {" which is the intersection of the 
+	       primary components of ", TT "M", 
+	       " having gretest Krull dimension"} 
 	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+    "The method used is that of Eisenbud-Huneke-Vasconcelos. ", 
+    "For a brief description see: ",TO "top-method",".", 
+     
+     SeeAlso => {"top Ideal","removeLowestDimension", "saturate", "quotient", 
+	  "radical","component example"}
      }
+
+
+
  -- doc1.m2:71:     Key => topicList,
  -- doc1.m2:82:     Key => topics,
  -- doc10.m2:77:     Key => [resolution,StopBeforeComputation],
@@ -69,3 +84,7 @@ document {
  -- doc9.m2:696:     Key => nullhomotopy,
  -- overview3.m2:634:     Key => "top level loop",
  -- overview4.m2:339:     Key => "top-method",
+
+
+
+
