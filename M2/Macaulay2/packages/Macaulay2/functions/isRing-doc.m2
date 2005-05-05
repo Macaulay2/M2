@@ -1,53 +1,23 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isRing,
-     Headline => "",
-     Usage => "",
+     Key => {isRing, (isRing,Ring), (isRing, Thing)},
+     Headline => "whether something is a ring",
+     Usage => "isRing R",
      Inputs => {
+	  "R" => Thing => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "R", " is a ", TO2("Ring", "ring"), " and ", 
+	       TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "isRing QQ",
+	  "R = QQ[x,y]",
+	  "isRing(R)",
+	  "isRing(R^1)",
+	  "isRing(GF(2,3)[x,dx, WeylAlgebra => {x => dx}])"
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
-document { 
-     Key => (isRing,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isRing,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:92:     Key => isRing,
