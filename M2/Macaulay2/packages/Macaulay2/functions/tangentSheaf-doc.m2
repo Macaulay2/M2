@@ -4,36 +4,37 @@
 
 document { 
      Key => tangentSheaf,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "tangent sheaf of a projective variety",
+     SeeAlso => {cotangentSheaf, sheaf,ProjectiveVariety}
      }
 document { 
      Key => (tangentSheaf,ProjectiveVariety),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Usage => "tangentSheaf X",
+     Inputs => {"X" => ""
 	  },
-     Outputs => {
+     Outputs => {CoherentSheaf => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "Computes the tangent sheaf of the projective variety ", TT "X",
+     PARA,
+     "Tangent sheaf of the projective plane:",
      EXAMPLE {
+	  "P = Proj(QQ[a,b,c])",
+	  "TP = tangentSheaf(P)",
+	  "HH^0(TP(-1))",
+	  "HH^1(TP(-3))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "Tangent sheaf of a plane nodal and cuspidal curve:",
+     EXAMPLE {
+	  "Node = Proj(QQ[a,b,c]/ideal(b^2*c-a^2*(a+c)))",
+	  "Cusp = Proj(QQ[a,b,c]/ideal(b^2*c-a^3))",
+	  "TNode = tangentSheaf(Node)",
+	  "HH^0(TNode)",
+	  "HH^1(TNode)",
+	  "TCusp = tangentSheaf(Cusp)",
+	  "HH^0(TCusp)",
+	  "HH^1(TCusp)"
+	  --- update this once we can compute the kernel of
+	  --- a H^0(phi) for a sheaf map phi :F -> G
+	  },
+     SeeAlso => {cotangentSheaf, sheaf,ProjectiveVariety}
      }
- -- doc10.m2:982:     Key => (cotangentSheaf, ProjectiveVariety),
- -- doc10.m2:987:     Key => cotangentSheaf,
- -- doc10.m2:992:     Key => (cotangentSheaf, ZZ, ProjectiveVariety),
