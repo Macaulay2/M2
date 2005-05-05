@@ -297,36 +297,6 @@ document {
      PARA,
      "Implemented by Greg Smith."
      }
-
-document {
-     Key => (isSquareFree,MonomialIdeal),
-     Headline => "whether a monomial ideal is square free",
-     Usage => "isSquareFree I",
-     Inputs => {
-	  "I" => ""
-	  },
-     Outputs => {
-	  {"whether ", TT "I", " is a square free"}
-	  },
-     PARA {
-	  "A square free monomial ideal is an ideal generated 
-	  by products of variables; in other words, a radical
-	  monomial ideal."},
-     PARA {
-	  "Square free monomial ideals correspond both to 
-	  simplicial complexes and to unions of coordinate 
-	  subspaces."},
-     EXAMPLE {
-	  "QQ[x,y,z];",
-	  "J = monomialIdeal(x^3*y^5*z, y^5*z^4, y^3*z^5, 
-	       x*y*z^5, x^2*z^5, x^4*z^3, x^4*y^2*z^2, 
-	       x^4*y^4*z)",
-	  "isSquareFree J",
-	  "isSquareFree radical J"
-	  },
-     PARA "Implemented by Greg Smith."
-     }
-
 document {
      Key => (monomialSubideal, Ideal),
      Headline => "find the largest monomial ideal in an ideal",
