@@ -1288,12 +1288,6 @@ document {
 	  }
      }
 
-TEST "
-R=ZZ/2[t]
-assert isPrime (t^2+t+1)
-assert (not isPrime (t^2+1))
-"
-
 document {
      Key => isPrimitive, Headline => "whether an element is a primitive element of a finite field",
      TT "isPrimitive(f)", " -- Given an element ", TT "f", " in a quotient of a polynomial ring ",

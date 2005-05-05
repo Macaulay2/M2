@@ -1,54 +1,27 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isSubmodule,
-     Headline => "",
-     Usage => "",
+     Key => {isSubmodule, (isSubmodule,Thing), (isSubmodule,Module)},
+     Headline =>  "whether a module is evidently a submodule of a free module",
+     Usage => "isSubmodule M",
      Inputs => {
+	  "M" => Thing => ""
 	  },
      Outputs => {
+	  {TO "true", " if ", TT "M", " is evidently a submodule of a free module and ",
+	       TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "No computation is done -- ", TT "M", " may be a isomorphic to a submodule of a free", 
+     " module although this function will not detect it.",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R = ZZ/5[a,b,c];",
+	  "M = R^3;",
+	  "isSubmodule M",
+	  "N = ideal(a,b) * M",
+	  "isSubmodule N",
+	  "N' = ideal(a,b) * (R^1 / ideal(a^2,b^2,c^2))", 
+	  "isSubmodule N'"	  
+	  }
      }
-document { 
-     Key => (isSubmodule,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isSubmodule,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:945:     Key => isSubmodule,
- -- doc6.m2:948:     Key => (isSubmodule, Module),

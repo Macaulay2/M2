@@ -830,28 +830,6 @@ document {
 	  TO (exteriorPower,ZZ,Module),
 	  }}
 document {
-     Key => isSubmodule,
-     Headline => "whether a module is evidently a submodule of a free module"}
-document {
-     Key => (isSubmodule, Module),
-     Usage => "isSubmodule M",
-     Inputs => {
-	  "M" => "",
-	  },
-     Outputs => {
-	  {"whether ", TT "M", " is evidently a submodule of a free module."}
-	  },
-     "No computation is done, so the module may be isomorphic to a submodule
-     of a free module but we don't detect it.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b,c];",
-	  "M = R^3;",
-	  "N = ideal(a,b) * M",
-	  "isSubmodule N",
-	  "N1 = ideal(a,b) * (R^1 / ideal(a^2,b^2,c^2))",
-	  "isSubmodule N1"
-	  }}
-document {
      Key => isQuotientModule,
      Headline => "whether a module is evidently a quotient of a free module"}
 document {
