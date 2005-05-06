@@ -604,6 +604,8 @@ regularity ChainComplex := C -> (
 
 regularity Module := (M) -> regularity resolution M
 
+regularity Ideal := (I) -> 1 + regularity resolution cokernel generators I
+
 rawbetti := method()
      -- returns a hash table with pairs of the form (d,i) => n
      -- where d is the multi-degree, i is the homological degree, and 
