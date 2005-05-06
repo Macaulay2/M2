@@ -138,3 +138,23 @@ than 2^16-1, and for LexTiny to be 2^7-1 rather than the current
 implement leadTerm(ZZ, ring element)
 
 ---------------------------------------------------------------
+i66 : R = ZZ/101[x,y];
+
+i67 : K = frac R;
+
+i68 : S = K[u,v];
+
+i69 : I = ideal(y^2*u^3 + x*v^3, u^2*v, u^4);
+
+o69 : Ideal of S
+
+i70 : gens gb I
+
+o70 = | u2v u3+x/y2v3 v4 uv3 |
+
+              1       4
+o70 : Matrix S  <--- S
+
+the element u3+x/y2v3 may not be written in the clearest way
+
+----------------------------------------------------------------

@@ -352,20 +352,64 @@ document {
      }
 
 document {
-     Key => "definition of elimination orders: Eliminate"
+     Key => "definition of elimination orders: Eliminate",
+     "The option ", TT "Eliminate => n",
+     " is a shortcut for ", TT "Weights => {n:1}",
+     " The remaining variables are given weight 0.",
+     EXAMPLE {
+       "R = QQ[a..i, MonomialOrder => Eliminate 3];",
+       "R = QQ[a..i, MonomialOrder => {Eliminate 3,4,2}];",
+       "I = ideal(a^3+e, a*b, e-f, a-b, f*c, a*b+e*c, i)"
+       },
+     "In the last example, the order is block order:
+     the first four variables are in the first block, the
+     subsequent 2 variables are in the second block,
+     the remaining variables are in the third block,
+     and the weights of the variables are 1,1,1,0,..., 0.",
+     SeeAlso => {Weights, "definition of product (block) orders"},
      }
 
 document {
-     Key => "definition of product (block) orders"
+     Key => "definition of product (block) orders",
+     TT "MonomialSize => {n_1, ..., n_l}", " divides the variables of the
+     ring into ", TT "l", " blocks, the first block consisting of the first ",
+     TT "n_1", " variables, the second block consisting of the subsequent ",
+     TT "n_2", " variables, and so on.  For each block of variables,
+     we can compute the total degree of a monomial with respect to the
+     variables in that block.  This gives a length ", TT "l",
+     " vector of total degrees for each monomial.  We say
+     x^A > x^B if the total degree vector of x^A is lexicographically
+     greater than the total degree vector of x^B, or if the two
+     total degree vectors are equal and if in the first block of
+     variables where A and B differ, A > B in GRevLex order.",
+     EXAMPLE {
+	  "R = QQ[a..l, MonomialOrder => {3,3,3,3}];",
+	  "a*e^3 + a^2*c*i + a*b^2*i + b^2*e*i"
+	  },
+     "We may replace ", TT "MonomialOrder => {3,3,3,3}",
+     " with the shorter ", TT "MonomialOrder => {4:3}",
+     PARA,
+     "The default ", TT "GRevLex", " order on any block may be
+     changed to other orders, as follows.",
+     EXAMPLE {
+	     "R = QQ[a..i, MonomialOrder => {Lex =>3,3:1,3}];",
+	     "a*e^3 + a^2*c*i + a*b^2*i + b^2*e*i + d^2*f*h + d*e^2*h",
+	  },
      }
 
 document {
      Key => "definition of group lexicographic order: GroupLex",
+     TT "MonomialOrder => GroupLex => n", " inverts the first ",
+     TT "n", " variables in the polynomial ring.
+     In the following example, ", TT "a^-1", " is in the ring,
+     but ", TT "c^-1", " is not.",
      EXAMPLE {
 	  "R = QQ[a..d, MonomialOrder=> GroupLex=>2];",
 	  "a^-1",
 	  "try c^(-1) else \"failed\"",
-	  }
+	  },
+     Caveat => {"The element ", TT "a/b", " is in the fraction ring,
+        while ", TT "a*b^(-1)", " belongs to ", TT "R", "."}
      }
 
 document {

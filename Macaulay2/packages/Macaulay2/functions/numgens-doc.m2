@@ -52,7 +52,7 @@ document {
      }
 document { 
      Key => (numgens,Ideal),
-     Undocumented => {(numgens,MonomialIdeal)},
+     --Undocumented => {(numgens,MonomialIdeal)},
      Headline => "number of generators of an ideal",
      Usage => "numgens I",
      Inputs => {

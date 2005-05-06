@@ -53,7 +53,7 @@ document {
      Note that computations over fraction fields can be quite slow.",
      EXAMPLE {
 	      "S = K[u,v];",
-		  "I = ideal(u^3 + v^3, u^2*v, u^4);",
+		  "I = ideal(y^2*u^3 + x*v^3, u^2*v, u^4);",
 		  "gens gb I",
 		  "Ires = res I",
 		  "Ires.dd_2"
