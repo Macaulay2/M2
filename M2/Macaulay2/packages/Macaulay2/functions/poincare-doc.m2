@@ -64,7 +64,7 @@ document {
      "We compute the ", TO2(poincare, "Poincare polynomial"), " of a module.",
           EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
-	  "M = module ideal x^2",
+	  "M = module ideal x^2;",
       	  "poincare M",
       	  "numerator hilbertSeries M"
 	  },
@@ -91,7 +91,7 @@ document {
      "We compute the ", TO2(poincare, "Poincare polynomial"), " of an ideal.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
-	  "I = ideal x^2",
+	  "I = ideal x^2;",
       	  "poincare I",
       	  "numerator hilbertSeries I"
 	  },

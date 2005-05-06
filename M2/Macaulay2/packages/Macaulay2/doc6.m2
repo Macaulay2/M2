@@ -242,23 +242,6 @@ document {
 	  "exponents leadMonomial f"
 	  }}
 document {
-     Key => degreesRing,
-     Headline => "the ring of degrees",
-     TT "degreesRing n", " -- produce the ring in n variables whose monomials
-     are to be used to represent degrees in another ring with multi-degrees
-     of length n",
-     BR,NOINDENT,
-     TT "degreesRing R", " -- produce the ring in n variables whose
-     monomials are the degrees of elements of R.",
-     PARA,
-     "Elements of this ring are used as Poincare polynomials for modules
-     over R.",
-     PARA,
-     "Note: the monomial ordering used in the degrees ring is ", TT "RevLex", ",
-     so the polynomials in it will be displayed with the smallest exponents first,
-     because such polynomials are often used as Hilbert series.",
-     SeeAlso => { "poincare", "hilbertSeries" }}
-document {
      Key => standardForm,
      Headline => "convert to standard form",
      TT "standardForm f", " -- converts a polynomial or monomial to a
