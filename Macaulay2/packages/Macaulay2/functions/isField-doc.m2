@@ -11,8 +11,9 @@ document {
 	  "R" => Ring => ""
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "R", " was explicitly constructed as a field -- no computation is done -- and ", 
-	  TO "false", " otherwise"}
+	  Boolean => {TO "true", " if ", TT "R", 
+	       " was explicitly constructed as a field (no computation is done) and ", 
+	       TO "false", " otherwise"}
 	  },
      EXAMPLE {
 	  "isField QQ",

@@ -10,12 +10,12 @@ document {
 	  "R" => Thing => ""
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "R", " is a ", TO2("Ring", "ring"), " and ", 
+	  Boolean => {TO "true", " if ", TT "R", " is a ", TO2("Ring", "ring"), " and ", 
 	       TO "false", " otherwise"}
 	  },
      EXAMPLE {
 	  "isRing QQ",
-	  "R = QQ[x,y]",
+	  "R = QQ[x,y];",
 	  "isRing(R)",
 	  "isRing(R^1)",
 	  "isRing(GF(2,3)[x,dx, WeylAlgebra => {x => dx}])"

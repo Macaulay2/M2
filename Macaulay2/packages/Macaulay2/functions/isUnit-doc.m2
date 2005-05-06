@@ -10,7 +10,7 @@ document {
 	  "r" => RingElement => ""
 	  },
      Outputs => {
-	  {TO "true", " if the ", TO2("RingElement","ring element"), " ", TT "r", 
+	  Boolean => {TO "true", " if the ", TO2("RingElement","ring element"), " ", TT "r", 
 	       " generates an ideal containing the multiplicative identity ", TT "1", " and ", 
 	       TT "false", " otherwise" }
 	  },

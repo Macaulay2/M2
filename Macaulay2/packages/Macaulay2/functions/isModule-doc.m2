@@ -10,7 +10,7 @@ document {
 	  "M" => Thing => ""
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "M", " is a ", TO2("Module", "module"), " and ", 
+	  Boolean => {TO "true", " if ", TT "M", " is a ", TO2("Module", "module"), " and ", 
 	       TO "false", " otherwise"}
 	  },
      EXAMPLE {

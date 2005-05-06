@@ -10,17 +10,20 @@ document {
 	  "M" => Thing => ""
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "M", " is a evidently a free module and ",
-	       TO "false", " otherwise"}
+	  Boolean => {TO "true", " if the given representation of ", TT "M", 
+	       " is a free module and ", TO "false", " otherwise"}
 	  },
-     "No computation is done --- the ", TO2("Module", "module"), " ", TT "M", 
-     " may be free although this function will not detect it.  To try to determine whether ",
-     TT "M", " is isomorphic to a free module, one may ", TO "prune", " ", TT "M", " first.",
+     "This function checks if the module ", TT "M", " is equal to its ", TO "ambient", 
+     " free module by examining the matrix of ", TO2("generators Module","generators"), 
+     " and the matrix of ", TO2("relations Module","relations"), ".",
+     PARA, 
+     "To determine whether ", TT "M", " is isomorphic to a free module, use ", 
+     TO "prune", " ", TT "M", ".",
      EXAMPLE {
 	  "R = ZZ/7[x,y];",
       	  "M = kernel vars R",
       	  "isFreeModule M",
       	  "isFreeModule prune M"	  
 	  },
-     SeeAlso => {(prune,Module)}
+     SeeAlso => {ambient,(prune,Module)}
      }
