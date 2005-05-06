@@ -40,6 +40,8 @@ exportMutable (
 	)
 
 export (
+        symbol Schubert,
+	symbol Grass,
         symbol Undocumented,
      	symbol permanents,
      	symbol PrimaryTag,
