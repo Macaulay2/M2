@@ -129,15 +129,16 @@ document {
 	  TO "operations involving monomial orders",
 	  TO "packing monomials for efficiency",
       "Definitions of the specific monomial orders",
-	  TO "definition of graded reverse lexicographic order: GRevLex",
-	  TO "definition of lexicographic order: Lex",
-	  TO "definition of weight orders: Weights",
-	  TO "definition of elimination orders: Eliminate",
-	  TO "definition of group lexicographic order: GroupLex",
-	  TO "definition of group reverse lexicographic order: GroupRevLex",
+	  TO "GRevLex",
+	  TO "Lex",
+	  TO "GLex",
+	  TO "Weights",
+	  TO "Eliminate",
+	  TO "GroupLex",
+	  TO "GroupRevLex",
 	  TO "definition of product (block) orders",
-	  TO "definition of reverse lexicographic order: RevLex",
-	  TO "definition of non-commutative lexicographic order: NCLex",
+	  TO "RevLex",
+	  TO "NCLex",
       "Developers corner",
 	  TO "obtaining the monomial order of a ring"
 	  }
@@ -238,9 +239,23 @@ document {
   	  "C = QQ[a..d,MonomialOrder=>LexTiny];"
 	  }
      }
+document {
+     Key => RevLex,
+     Headline => "reverse lexicographic ordering",
+     "The reverse lexicographic order is defined by: x^A > x^B if
+     the LAST non-zero entry of the vector of integers A-B is NEGATIVE.
+     This is not a total order.",
+     EXAMPLE {
+	  "R = QQ[a..d];",
+	  "a^3 + b^2 + b*c + a*c^2 + b^2*c",
+	  },
+     "The calculations in this order are done using the Mora algorithm.",
+     SeeAlso => {GRevLex}
+     }
 
 document {
-     Key => "definition of graded reverse lexicographic order: GRevLex",
+     Key => GRevLex,
+     Headline => "graded reverse lexicographical monomial order.",
      "The graded reverse lexicographic order is defined by: x^A > x^B if either
      the degree(x^A) > degree(x^B) or degree(x^A) = degree(x^B) and
      the LAST non-zero entry of the vector of integers A-B is NEGATIVE.",
@@ -267,11 +282,12 @@ document {
 	  "try a^(2^15-1) else \"failed\"",
 	  "a^(2^7-1)"
 	  },
-     SeeAlso => {GRevLex, Weights}
+     SeeAlso => {Weights}
      }
 
 document {
-     Key => "definition of lexicographic order: Lex",
+     Key => Lex,
+     Headline => "lexicographical monomial order.",
      "The lexicographic order is defined by: x^A > x^B if the FIRST
      non-zero entry of the vector of integers A-B is POSITIVE.",
      EXAMPLE {
@@ -298,11 +314,24 @@ document {
 	  "B = QQ[a..d,MonomialOrder=>{Weights => {1,2,3,4}, LexSmall}];",
 	  "a^2 + b+ c + b*d"
 	  },
-     SeeAlso => {Lex, Weights}
+     SeeAlso => {Weights}
      }
 
 document {
-     Key => "definition of weight orders: Weights",
+     Key => GLex,
+     Headline => "graded lexicographic ordering",
+     TT "GLex", " -- a symbol used as an optional argument of
+     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
+     indicate that the monomial order is the graded lexicographic order.",
+     PARA,
+     Caveat => "If the number of degree vectors is greater than one, this
+     is currently only graded using the first degree vector.  This will 
+     eventually change."  -- MES
+     }
+
+document {
+     Key => Weights,
+     Headline => "Assigning weights to the variables",
      "Given a list L of n integers, the weight order on a polynomial ring
      in n variables is defined by: x^A > x^B if A_1 L_1 + ... + A_n L_n
      > B_1 L_1 + ... + B_n L_n.",
@@ -348,25 +377,67 @@ document {
 	  "R = QQ[a..d,MonomialOrder=>{Weights => {1,2}, Lex}];",
 	  "f = a^2 + b+ c^2 + b*d",
 	  },
-     SeeAlso => {Weights, leadTerm}
+     SeeAlso => {leadTerm}
      }
 
 document {
-     Key => "definition of elimination orders: Eliminate",
+     Key => "Eliminate",
+     Headline => "Elimination order",
      "The option ", TT "Eliminate => n",
      " is a shortcut for ", TT "Weights => {n:1}",
      " The remaining variables are given weight 0.",
+     "The monomial order is the elimination order eliminating the
+     first n variables, refined by the graded reverse lexicographic order.",
      EXAMPLE {
        "R = QQ[a..i, MonomialOrder => Eliminate 3];",
+       },
+     "This order enables intersections with the subring
+     consisting of all but the first 3 variables.
+     For this, use the command ", TO "selectInSubring", ".",
+     EXAMPLE {
+       "I = ideal(a^2, b-f, d^4, i - b);",
+       "selectInSubring(1, gens gb I)",
+       },
+     "Eliminate may be combined with block orders as well.",
+     EXAMPLE {
        "R = QQ[a..i, MonomialOrder => {Eliminate 3,4,2}];",
-       "I = ideal(a^3+e, a*b, e-f, a-b, f*c, a*b+e*c, i)"
+       "d^3 - a*e^4 + b^2*i + a*c*d*f +a*c^2*g + a*c*g"
        },
      "In the last example, the order is block order:
      the first four variables are in the first block, the
-     subsequent 2 variables are in the second block,
+     subsequent two variables are in the second block,
      the remaining variables are in the third block,
-     and the weights of the variables are 1,1,1,0,..., 0.",
-     SeeAlso => {Weights, "definition of product (block) orders"},
+     and the weights of the variables are 1,1,1,0,..., 0.
+     We illustrate the usage of ", TO "selectInSubring", ".",
+     EXAMPLE {
+         "I = ideal(a..i)",
+	 "selectInSubring(1, gens gb I);",
+	 "selectInSubring(2, gens gb I);",
+	 "selectInSubring(3, gens gb I);",
+	 },
+     Caveat => "If the number of degree vectors is greater than one, this
+     is currently only graded using the first degree vector.  This will 
+     eventually change.",
+     SeeAlso => {Weights, "definition of product (block) orders",
+     	selectInSubring}
+     }
+
+document {
+     Key => ProductOrder,
+     Headline => "product ordering",
+     TT "ProductOrder", "{n1, ..., nr} -- an optional argument of
+     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
+     indicate that the monomial order is the product of r graded reverse lex
+     orders, each with n1, n2, ..., nr variables.",
+     PARA,
+     "This syntax is left here for compatibility with previous
+     Macaulay2 versions.",
+     EXAMPLE {
+     	"R = ZZ[a..e, MonomialOrder => ProductOrder {3,2}];"
+	},
+     "The new syntax is ",
+     TT "R = ZZ[a..e, MonomialOrder => {3,2}];", ".",
+     SeeAlso => {"definition of product (block) orders"}
      }
 
 document {
@@ -395,10 +466,29 @@ document {
 	     "R = QQ[a..i, MonomialOrder => {Lex =>3,3:1,3}];",
 	     "a*e^3 + a^2*c*i + a*b^2*i + b^2*e*i + d^2*f*h + d*e^2*h",
 	  },
+     "Note: ", TT "Weights", " and ", TT "Eliminate",
+     " do not create blocks, they only assign weights to the
+     variables.",
+     SeeAlso => {Weights, Eliminate}
      }
 
 document {
-     Key => "definition of group lexicographic order: GroupLex",
+     Key => "GroupRevLex",
+     TT "MonomialOrder => GroupRevLex => n", " inverts the first ",
+     TT "n", " variables in the polynomial ring.
+     In the following example, ", TT "a^-1", " is in the ring,
+     but ", TT "c^-1", " is not.",
+     EXAMPLE {
+	  "--R = QQ[a..d, MonomialOrder=> GroupRevLex=>2];",
+	  "--a^-1",
+	  "--try c^(-1) else \"failed\"",
+	  },
+     Caveat => { "This feature has not been implemented yet."}
+     }
+
+document {
+     Key => GroupLex,
+     Headline => "defines a ring where some variables are inverted",
      TT "MonomialOrder => GroupLex => n", " inverts the first ",
      TT "n", " variables in the polynomial ring.
      In the following example, ", TT "a^-1", " is in the ring,
@@ -409,7 +499,15 @@ document {
 	  "try c^(-1) else \"failed\"",
 	  },
      Caveat => {"The element ", TT "a/b", " is in the fraction ring,
-        while ", TT "a*b^(-1)", " belongs to ", TT "R", "."}
+        while ", TT "a*b^(-1)", " belongs to ", TT "R", ".",
+	PARA,
+	"Currently, on cannot compute Groebner bases in this ring."}
+     }
+
+document {
+     Key => NCLex,
+     Headline => "Non-commutative lexicographical order.",
+     "This feature has not been implemented yet."
      }
 
 document {
@@ -659,6 +757,43 @@ chosen monomial ordering.",
      as follows: x^A > x^B "
      }
 
+document {
+     Key => MonomialOrder,
+     Headline => "monomial ordering",
+     TT "MonomialOrder", " -- an optional argument used with monoids and
+     polynomial rings to indicate a
+     monomial ordering other than the default (graded reverse lexicographic)",
+     PARA,
+     "In the most general setting, a monomial ordering is given by a list of
+     permissible elements, listed and described below.  Monomials are compared 
+     using the first element of the list.  If they are indistinguishable using this
+     first element, they are compared using the second element, and so on.  At the
+     end, if necessary, the graded reverse lexicographic order is used to compare the
+     monomials.  For examples, see below, or see ", TO "monomial orderings", ".",
+     PARA,
+     "Permissible elements:",
+     UL {
+	  (TO "GRevLex", " => n -- A graded reverse lexicographic block of variables"),
+	  (TO "GRevLexSmall", " => n -- Same, but with exponents packed two per word"),
+	  (TO "GRevLexTiny", " => n -- Same, but packed 4 per word"),
+	  (TO "Lex", " => n"),
+	  (TO "LexSmall", " => n"),
+	  (TO "LexTiny", " => n"),
+	  (TO "Weights", " => {...}"),
+	  (TO "Position", " => Up  or  Position => Down"),
+	  (TO "RevLex", " => n"),
+     	  (TO "GroupLex", " => n"),
+	  (TO "GroupRevLex", " => n")
+          },
+     PARA,
+     "Some examples of monomial orders.  Note that if only one item is in the list, 
+     we can dispense with the list.",
+     UL {
+	  (TT "MonomialOrder => {GRevLex=>2, GRevLex=>3}", " -- a product order"),
+	  (TT "MonomialOrder => {Weights=>{1,13,6,2}}", " -- a weight order"),
+	  (TT "MonomialOrder => Weights=>{1,13,6,2}", " -- same"),
+	  },
+     SeeAlso => {"monomial orderings"}}
 
 document {
      Key => "what is a Groebner basis?",
