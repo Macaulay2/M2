@@ -90,9 +90,6 @@ document {
      EXAMPLE {
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-      	  "degreesRing M",
-	  "V = Proj(ZZ/101[x_0..x_2], Degrees =>{{1,1},{1,1},{1,1}});",
-	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
       	  "degreesRing M"
 	  }
      }
