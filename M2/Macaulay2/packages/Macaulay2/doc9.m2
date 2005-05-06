@@ -648,21 +648,6 @@ document {
      }
 
 document {
-     Key => poincareN,
-     Headline => "assemble degrees into polynomial",
-     TT "poincareN C", " -- encodes information about the degrees of basis elements
-     of a free chain complex in a polynomial.",
-     PARA,
-     "The polynomial has a term S^i T_0^(d_0) ... T_(n-1)^(d_(n-1)) in it
-     for each basis element of C_i with multi-degree {d_0,...,d_(n-1)}.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "poincareN resolution cokernel vars R"
-	  },
-     }
-
-document {
      Key => (homology,ZZ,ChainComplex),
      Headline => "homology of a chain complex",
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
