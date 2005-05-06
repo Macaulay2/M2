@@ -34,9 +34,6 @@ document {
      Headline => "specify whether a ring is handled by the engine",
      TT "Engine", " -- a key for rings which yields the value ", TT "true", " if this
      ring is supported by the ", TO "engine", "."}
-document {
-     Key => ring,
-     Headline => "get the associated ring"}
 
 
 document {
