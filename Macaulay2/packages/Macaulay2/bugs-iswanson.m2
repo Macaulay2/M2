@@ -158,3 +158,9 @@ o70 : Matrix S  <--- S
 the element u3+x/y2v3 may not be written in the clearest way
 
 ----------------------------------------------------------------
+
+GroupRevLex does not seem to be installed
+Then uncomment the lines in monomorderings.m2 in the manual
+for GroupRevLex.
+
+------------------------------------------------------
