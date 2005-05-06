@@ -1,6 +1,6 @@
 -- This file written by Amelia Taylor <ataylor@stolaf.edu>
 
------ This file was last updated on March 12, 2005
+----- This file was last updated on May 5, 2005
 
 --------------------------------------------------------------
 -- This begins the code for minPres which takes both ideals and 
@@ -27,7 +27,7 @@ checkpoly := (f)->(
      	  {i,(-1)*(c^(-1)*(f-c*v))}
 	  )
      )
-    
+
 finishMap := (L,xmap) -> (
      -- 2 Arguments:  A matrix and a new mutable list.
      -- Return:       a map from the ring corresponding to 
@@ -78,7 +78,7 @@ monOrder := (Ord, l) -> (
      )   	            
 
 monOrder = (Ord, l) -> GRevLex=>#l
-     
+
 coreProgram := (I, newvar) -> (
      -- 2 Arguments:  An ideal and a variable, or null.
      -- Return:       A list consisting of an ideal, a 
@@ -166,23 +166,24 @@ minPres Ring := o -> (R) -> (
      R.minPresMap = map(S_2,R,S_4); 
      R.minPresMapInv = map(R,S_2,S_5);
      S_2)
-    
+
 ---------------------------
-minPresMap = method()
+-- minPresMap2 = method()
 
-minPresMap Ring := (R) -> (
+-- minPresMap2 Ring := (R) -> (
      --Input:   A quotient ring.
-     --Output:  A map from R to a ring isomorphic 
-     --         to R but has a minimal presentation.
-     finishMap(flatten entries presentation R, new MutableList from first entries (vars ideal presentation R)); 
-          )
+     --Output:  A map from the polynomial ring to itself 
+     --         that is the map used to form a minimal 
+     --         presentation of R.  
+--     finishMap(flatten entries presentation R, new MutableList from first entries (generators ideal presentation R))
+--          )
 
-minPresMap Ideal := (I) -> ( 
+--minPresMap2 Ideal := (I) -> ( 
      --Input:   An ideal.
      --Output:  A map from the ring of I, call it A, 
-     --         to a ring with fewer variables, say R 
-     --         such that A/I is isomorphic to R/minPres(I) 
-     --         via the output of this function.
-      I = minPres I;
-      I.cache.minPresMap
-      )
+     --         to itself, that is the map used to form a minimal 
+     --         presentation of R.  
+--     finishMap(flatten entries generators I, new MutableList from first entries (generators I))
+--     )
+
+

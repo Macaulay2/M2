@@ -371,6 +371,8 @@ jacobian Ring := Matrix => (R) -> jacobian presentation R ** R
 leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
      map(target m, source m, rawInitial(i,m.RawMatrix)))
 
+leadTerm(ZZ, RingElement) := RingElement => (i,f) -> (leadTerm(i,matrix{{f}}))_(0,0)
+
 leadTerm(Matrix) := Matrix => m -> (
      map(target m, source m, rawInitial(-1,m.RawMatrix)))
 
