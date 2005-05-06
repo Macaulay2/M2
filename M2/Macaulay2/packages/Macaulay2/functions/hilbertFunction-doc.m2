@@ -18,7 +18,7 @@ document {
 	  "R" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function of the ring" },
+	  ZZ => "the Hilbert function of the ring" },
      EXAMPLE {	
 	  "R = QQ[x,y,z, Degrees=>{{1,1},{1,1},{1,1}}];",
 	  "hilbertFunction({3,3}, R)",
@@ -47,7 +47,7 @@ document {
 	  "M" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function of the module" 
+	  ZZ => "the Hilbert function of the module" 
 	  },
      EXAMPLE {	
 	  "R = QQ[a..d, Degrees=>{{1,1},{1,1},{1,1},{1,1}}];",
@@ -79,7 +79,7 @@ document {
 	  "I" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function of the quotient of its ambient ring by the ideal"
+	  ZZ => "the Hilbert function of the quotient of its ambient ring by the ideal"
 	  },
      EXAMPLE {	
 	  "R = QQ[a..f, Degrees=>{{1,1},{1,1},{1,1},{1,1},{1,1},{1,1}}];",
@@ -116,7 +116,7 @@ document {
 	  "S" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function of the coherent sheaf" 
+	  ZZ => "the Hilbert function of the coherent sheaf" 
 	  },
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2,Degrees=>{{1,1},{1,1},{1,1}}]);",
@@ -148,7 +148,7 @@ document {
 	  "V" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function of the projective variety" 
+	  ZZ => "the Hilbert function of the projective variety" 
 	  },
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2,Degrees=>{{1,1},{1,1},{1,1}}]);",

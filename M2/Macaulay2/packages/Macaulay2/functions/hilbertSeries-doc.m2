@@ -9,7 +9,7 @@ document {
      degrees ring whose coefficients are the dimensions of the corresponding
      graded component.", 
      PARA, 
-     "Note that the series is provided as an ", TO "Expression", ".",
+     "Note that the series is provided as a type called ", TO "Divide", ".",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare",
 	  "poincareN", "hilbertPolynomial", "hilbertFunction"}
      }
@@ -21,7 +21,7 @@ document {
 	  "R" => {" or a ", TO QuotientRing}
 	  },
      Outputs => {
-	  Expression => "the Hilbert series" },
+	  Divide => "the Hilbert series" },
      "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a ring.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
@@ -43,7 +43,7 @@ document {
 	  "M" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert series" 
+	  Divide => "the Hilbert series" 
 	  },
      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      module.",
@@ -71,7 +71,7 @@ document {
 	  "M" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert series" },
+	  Divide => "the Hilbert series" },
      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      coherent sheaf.",
      EXAMPLE {
@@ -90,7 +90,7 @@ document {
 	  "I" => Ideal => ""
 	  },
      Outputs => {
-	  Expression =>  "the Hilbert series" },
+	  Divide =>  "the Hilbert series" },
      "We compute the ", TO2  (hilbertSeries, "Hilbert series"), " of R/I, the
      quotient of the ambient ring by the ideal. Caution: For an ideal
      I, ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
@@ -121,7 +121,7 @@ document {
 	  "P" => ProjectiveHilbertPolynomial => ""
 	  },
      Outputs => {
-	  Expression =>  "the Hilbert series" },
+	  Divide =>  "the Hilbert series" },
      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      projective Hilbert polynomial.",
      EXAMPLE {
@@ -151,7 +151,7 @@ document {
 	  "V" =>  ProjectiveVariety => ""
 	  },
      Outputs => {
-	  Expression =>   "the Hilbert series" },
+	  Divide =>   "the Hilbert series" },
      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      projective variety.",
      EXAMPLE {
