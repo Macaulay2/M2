@@ -10,8 +10,8 @@ document {
 	  "R" => Ring => ""
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "R", " was explicitly constructed as a ", TO2("QuotientRing", "quotient ring"), 
-	       " and ", TO "false", " otherwise"}
+	  Boolean => {TO "true", " if ", TT "R", " is a ", 
+	       TO2("QuotientRing", "quotient ring"), " and ", TO "false", " otherwise"}
 	  },
      EXAMPLE {
 	  "S = ZZ/3[x,y,z];",
@@ -19,9 +19,9 @@ document {
 	  "R = S/(x^2-y*z);",
 	  "isQuotientRing R",
 	  "ambient R",
-	  "symAlg = symmetricAlgebra R^2",
+	  "symAlg = symmetricAlgebra R^2;",
 	  "isQuotientRing symAlg",
-	  "sing = singularLocus R",
+	  "sing = singularLocus R;",
 	  "isQuotientRing sing"
 	  },
      SeeAlso => {ambient}

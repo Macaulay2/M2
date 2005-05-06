@@ -10,7 +10,7 @@ document {
 	  "R" => Ring => ""
 	  },
      Outputs => {
-	  {TO "true", " if the ", TO2("Ring", "ring"), " ", TT "R", " is commutative and ", 
+	  Boolean => {TO "true", " if the ", TO2("Ring", "ring"), " ", TT "R", " is commutative and ", 
 	  TO "false", " otherwise"}
 	  },
      EXAMPLE {

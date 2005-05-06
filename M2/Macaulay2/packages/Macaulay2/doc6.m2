@@ -830,30 +830,6 @@ document {
 	  TO (exteriorPower,ZZ,Module),
 	  }}
 document {
-     Key => isQuotientModule,
-     Headline => "whether a module is evidently a quotient of a free module"}
-document {
-     Key => (isQuotientModule, Module),
-     Usage => "b = isQuotientModule(M)",
-     Inputs => {"M" => null},
-     Outputs => {"b" => {"whether ", TT "M", " is evidently a quotient of a free module."}},
-     "No computation is done.  This routine simply detects whether the given description
-     of ", TT "M", " is such a quotient.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b,c];",
-	  "M = R^1/(a^2,b^2,c^2)",
-	  "isQuotientModule M",
-	  "f = M_{0}",
-	  "N = image f"
-	  },
-     "Recall (", TO (symbol_, Module, List), ") that ", TT "f", " is a map to the first generator of ",
-     TT "M", " so that the module ", TT "N", " is the same as ", TT "M", " but its description is now as a
-     submodule of ", TT "M", " so isQuotientModule returns false.  However, these two modules are equal:",
-     EXAMPLE {
-	  "isQuotientModule N",
-	  "M == N"
-	  }}
-document {
      Key => numgens,
      Headline => "the number of generators",
      TT "numgens X", " -- yields the number of generators used to present

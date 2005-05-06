@@ -1,54 +1,32 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isQuotientModule,
-     Headline => "",
-     Usage => "",
+     Key => {isQuotientModule, (isQuotientModule,Thing), (isQuotientModule,Module)},
+     Headline => "whether something is evidently a quotient of a free module",
+     Usage => "isQuotientModule M",
      Inputs => {
+	  "M" => Thing => ""
 	  },
      Outputs => {
+	  Boolean => {TO "true", " if the given representation of ", TT "M", " a quotient of a free module."}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "This function checks if the module ", TT "M", " is a quotient of its ", TO "ambient", 
+     " free module by examining its matrix of ", TO2("generators Module","generators"), ".",     
      EXAMPLE {
+	  "R = ZZ/101[a,b,c];",
+	  "M = R^1/(a^2,b^2,c^2)",
+	  "isQuotientModule M"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isQuotientModule,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "The image of a map from a free module to the first generator of ", TT "M", " yields an equivalent 
+     module which is ", EM "not", " presented as a quotient.",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isQuotientModule,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
+	  "f = M_{0}",
+	  "N = image f",
+	  "M == N",	  
+	  "isQuotientModule N",
 	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(symbol_, Module, List), ambient, isFreeModule}
      }
- -- doc6.m2:967:     Key => isQuotientModule,
- -- doc6.m2:970:     Key => (isQuotientModule, Module),
+

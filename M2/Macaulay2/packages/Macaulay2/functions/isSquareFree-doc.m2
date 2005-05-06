@@ -7,10 +7,10 @@ document {
      Headline => "whether something is square free monomial ideal",
      Usage => "isSquareFree I",
      Inputs => {
-	  "I" => Thing => ""
+	  "I" => MonomialIdeal => ""
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "I", " is a square free ", 
+	  Boolean => {TO "true", " if ", TT "I", " is a square free ", 
 	       TO2("MonomialIdeal", "monomial ideal"), 
 	       " and ", TO "false", " otherwise"}	  
 	  },
@@ -23,6 +23,7 @@ document {
 	       x*y*z^5, x^2*z^5, x^4*z^3, x^4*y^2*z^2, 
 	       x^4*y^4*z)",
 	  "isSquareFree J",
+	  "radical J",
 	  "isSquareFree radical J"
 	  },    
      "Square free monomial ideals correspond both to 

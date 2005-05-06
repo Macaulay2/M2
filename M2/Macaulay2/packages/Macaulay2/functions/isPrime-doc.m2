@@ -10,16 +10,14 @@ document {
 	  "f" => {TO "ZZ", " or an element in a ", TO2("PolynomialRing", "polynomial ring")}
 	  },
      Outputs => {
-	  {TO "true", " if ", TT "f", " is a prime integer or an irreducible polynomial and ",
+	  Boolean => {TO "true", " if ", TT "f", " is either a prime integer or an irreducible polynomial and ",
 	       TO "false", " otherwise"}
 	  },
      EXAMPLE {
 	  "isPrime 91",
 	  "isPrime 101",
 	  "isPrime 31991",
-	  "isPrime 32003"
-	  },
-     EXAMPLE {
+	  "isPrime 32003",
 	  "ZZ/2[t];",
 	  "isPrime(t^2+t+1)",
           "isPrime(t^2+1)"
