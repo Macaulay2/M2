@@ -1,53 +1,23 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => isPolynomialRing,
-     Headline => "",
-     Usage => "",
+     Key => {isPolynomialRing, (isPolynomialRing,Thing), (isPolynomialRing,PolynomialRing)},
+     Headline => "whether someting is a polynomial ring",
+     Usage => "isPolynomialRing R",
      Inputs => {
+	  "R" => Thing => ""
 	  },
      Outputs => {
+	  Boolean => {TO "true", " if ", TT "R", " is a ", TO2("PolynomialRing","polynomial ring"), 
+	       " and ", TO "false", " otherwise"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "isPolynomialRing CC",
+	  "isPolynomialRing(ZZ/7[x,y])",
+	  "isPolynomialRing(QQ[x,dx, WeylAlgebra => {x => dx}])",
+	  "isPolynomialRing(GF(2)[x,y, SkewCommutative => true])",
+	  "isPolynomialRing(ZZ/101[x,y,z]/(x^2-y*z))"
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
-document { 
-     Key => (isPolynomialRing,Thing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (isPolynomialRing,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc6.m2:331:     Key => isPolynomialRing,

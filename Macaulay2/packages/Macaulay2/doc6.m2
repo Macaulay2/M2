@@ -256,9 +256,6 @@ document {
      "A free commutative ordered monoid can be created with ", TO "monoid", ".",
      SeeAlso =>  {"Monoid"}}
 document {
-     Key => isPolynomialRing,
-     Headline => "whether something is a polynomial ring" }
-document {
      Key => PolynomialRing,
      Headline => "the class of all ordered monoid rings",
      "Every element of a polynomial ring is also a ", TO "RingElement", ".",
