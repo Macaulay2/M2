@@ -14,11 +14,11 @@ document {
      Headline => "compute the Hilbert function of a ring",
      Usage => "hilbertFunction(d,R)",
      Inputs => {
-	  "d" => List => {" a multidegree, or if singly graded, then just ", TO "ZZ"},
+	  "d" => List => {" a multidegree, or if R is singly graded, then may write just ", TO "ZZ"},
 	  "R" => ""
 	  },
      Outputs => {
-	  ZZ => "the Hilbert function of the ring" },
+	  ZZ => "the value of the Hilbert function of the ring" },
      EXAMPLE {	
 	  "R = QQ[x,y,z, Degrees=>{{1,1},{1,1},{1,1}}];",
 	  "hilbertFunction({3,3}, R)",
@@ -26,7 +26,7 @@ document {
   	  },	
      "In the case where the ring is singly graded, then instead of having the 
      input be a list of length 1 containing the degree, it is sufficient to
-     input an integer.",
+     write an integer.",
           EXAMPLE {	
 	  "R = QQ[x,y,z];",
 	  "hilbertFunction(3, R)",
@@ -35,7 +35,7 @@ document {
      Caveat => {
 	  "At the moment, the function is computed simply by calling ", TO "basis",
      	  " and extracting the number of basis elements."
-	  },
+	  }
      }
 
 document { 
@@ -43,11 +43,11 @@ document {
      Headline => "compute the Hilbert function of a module",
      Usage => "hilbertFunction(d,M)",
      Inputs => {
-	  "d" => List => {" a multidegree, or if singly graded, then just ", TO "ZZ"},
+	  "d" => List => {" a multidegree, or if M is singly graded, then may write just ", TO "ZZ"},
 	  "M" => ""
 	  },
      Outputs => {
-	  ZZ => "the Hilbert function of the module" 
+	  ZZ => "the value of the Hilbert function of the module" 
 	  },
      EXAMPLE {	
 	  "R = QQ[a..d, Degrees=>{{1,1},{1,1},{1,1},{1,1}}];",
@@ -57,7 +57,7 @@ document {
   	  },
      "In the case where the ring is singly graded, then instead of having the 
      input be a list of length 1 containing the degree, it is sufficient to
-     input an integer.",
+     write an integer.",
      EXAMPLE {	
 	  "R = QQ[a..d];",
 	  "M = coker matrix {{a,c,5},{1,b,d}}",
@@ -67,7 +67,7 @@ document {
      Caveat => {
 	  "At the moment, the function is computed simply by calling ", TO "basis",
      	  " and extracting the number of basis elements."
-	  },
+	  }
      }
 
 document { 
@@ -75,11 +75,11 @@ document {
      Headline => "compute the Hilbert function of the quotient of the ambient ring by an ideal",
      Usage => "hilbertFunction(d,I)",
      Inputs => {
-	  "d" => List => {" a multidegree, or if singly graded, then just ", TO "ZZ"},
+	  "d" => List => {" a multidegree, or if I is singly graded, then may write just ", TO "ZZ"},
 	  "I" => ""
 	  },
      Outputs => {
-	  ZZ => "the Hilbert function of the quotient of its ambient ring by the ideal"
+	  ZZ => "the value of the Hilbert function of the quotient of the ambient ring by the ideal"
 	  },
      EXAMPLE {	
 	  "R = QQ[a..f, Degrees=>{{1,1},{1,1},{1,1},{1,1},{1,1},{1,1}}];",
@@ -90,7 +90,7 @@ document {
   	  },	
      "In the case where the ring is singly graded, then instead of having the 
      input be a list of length 1 containing the degree, it is sufficient to
-     input an integer.",
+     write an integer.",
      EXAMPLE {	
 	  "R = QQ[a..f];",
 	  "I = ideal (a*b, c*d, e*f);",
@@ -104,7 +104,7 @@ document {
 	  PARA,	  
 	  "At the moment, the function is computed simply by calling ", TO "basis",
      	  " and extracting the number of basis elements."
-	  },
+	  }
      }
 
 document { 
@@ -112,11 +112,11 @@ document {
      Headline => "compute the Hilbert function of a coherent sheaf",
      Usage => "hilbertFunction(d,S)",
      Inputs => {
-	  "d" => List => {" a multidegree, or if singly graded, then just ", TO "ZZ"},
+	  "d" => List => {" a multidegree, or if S is singly graded, then may write just ", TO "ZZ"},
 	  "S" => ""
 	  },
      Outputs => {
-	  ZZ => "the Hilbert function of the coherent sheaf" 
+	  ZZ => "the value of the Hilbert function of the coherent sheaf" 
 	  },
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2,Degrees=>{{1,1},{1,1},{1,1}}]);",
@@ -126,7 +126,7 @@ document {
 	  },	
      "In the case where the ring is singly graded, then instead of having the 
      input be a list of length 1 containing the degree, it is sufficient to
-     input an integer.",
+     write an integer.",
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
@@ -136,7 +136,7 @@ document {
      Caveat => {
 	  "At the moment, the function is computed simply by calling ", TO "basis",
      	  " and extracting the number of basis elements."
-	  },
+	  }
      }
 
 document { 
@@ -144,11 +144,11 @@ document {
      Headline => "compute the Hilbert function of a projective variety",
      Usage => "hilbertFunction(d,V)",
      Inputs => {
-	  "d" => List => {" a multidegree, or if singly graded, then just ", TO "ZZ"},
+	  "d" => List => {" a multidegree, or if V is singly graded, then may write just ", TO "ZZ"},
 	  "V" => ""
 	  },
      Outputs => {
-	  ZZ => "the Hilbert function of the projective variety" 
+	  ZZ => "the value of the Hilbert function of the projective variety" 
 	  },
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2,Degrees=>{{1,1},{1,1},{1,1}}]);",
@@ -157,7 +157,7 @@ document {
   	  },	
      "In the case where the ring is singly graded, then instead of having the 
      input be a list of length 1 containing the degree, it is sufficient to
-     input an integer.",
+     write an integer.",
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "hilbertFunction(3, V)",
@@ -166,6 +166,6 @@ document {
      Caveat => {
 	  "At the moment, the function is computed simply by calling ", TO "basis",
      	  " and extracting the number of basis elements."
-	  },
+	  }
      }
 
