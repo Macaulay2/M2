@@ -8,15 +8,10 @@
       TotalPairs, Truncate, TypicalValue, Undo, Unmixed, UpdateOnly, UseHilbertFunction, Variable, VariableBaseName, VariableOrder, Variables, Verbose, Verify, Version, Weights, WeylAlgebra}
 
 
-i6 : f = key -> select(value \ unique values Macaulay2Core.Dictionary, f -> class f === Function and options f =!= null and (options f)#?key)
---warning: f redefined
+f = key -> select(value \ unique values Macaulay2Core.Dictionary, f -> class f === Function and options f =!= null and (options f)#?key)
+f Truncate
 
-o6 = f
-
-o6 : Function
-
-i7 : f Truncate
-
-o7 = {basis}
-
-o7 : List
+document {
+     Key => OPTIONNAME,
+     Headline => "",
+     TT "OPTIONNAME"=======

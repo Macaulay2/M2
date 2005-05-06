@@ -1,181 +1,170 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): MES
 --- notes: 
 
 document { 
      Key => numgens,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (numgens,QuotientRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
+     Headline => "the number of generators",
      SeeAlso => {}
      }
 document { 
      Key => (numgens,Module),
-     Headline => "",
-     Usage => "",
+     Headline => "number of generators of a module",
+     Usage => "numgens M",
      Inputs => {
+	  "M" => "",
 	  },
      Outputs => {
+	  ZZ => "number of generators of M"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "In Macaulay2, each module comes equipped with a matrix of 
+     generators.  It is the number of columns of this matrix 
+     which is returned.  If the module is graded, this may or 
+     may not be the number of minimal generators.",
      EXAMPLE {
+	  "R = QQ[a..d];",
+	  "M = ker vars R",
+     	  "generators M",
+	  "numgens M"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     "The number of generators of a free module is its rank.",
+     EXAMPLE {
+	  "numgens R^10"
+	  },
+     SeeAlso => {generators, trim, prune, mingens, ker,vars}
      }
 document { 
      Key => (numgens,GeneralOrderedMonoid),
-     Headline => "",
-     Usage => "",
+     Headline => "number of generators of a monoid",
+     Usage => "numgens M",
      Inputs => {
+	  "M" => ""
 	  },
      Outputs => {
+	  ZZ => "number of generators of M"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     
      EXAMPLE {
+	  "M = monoid[x_1..x_10];",
+	  "numgens M"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {monoid}
      }
 document { 
      Key => (numgens,Ideal),
-     Headline => "",
-     Usage => "",
+     Undocumented => {(numgens,MonomialIdeal)},
+     Headline => "number of generators of an ideal",
+     Usage => "numgens I",
      Inputs => {
+	  "I" => ""
 	  },
      Outputs => {
+	  ZZ => "number of generators of I"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "In Macaulay2, each ideal comes equipped with a matrix of generators.  It is the
+     number of columns of this matrix which is returned.  If the ideal is homogeneous,
+     this may or may not be the number of minimal generators.",
      EXAMPLE {
+	  "R = QQ[a..d];",
+	  "I = ideal(a^2-b*d, a^2-b*d, c^2, d^2);",
+	  "numgens I"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     PARA,
+     "In order to find a more efficient set of of generators, use ",
+     TO mingens, " or ", TO trim, ".",
+     EXAMPLE {
+	  "mingens I",
+	  "numgens trim I"
+	  },
+     SeeAlso => {mingens, trim, generators}
      }
 document { 
      Key => (numgens,CoherentSheaf),
-     Headline => "",
-     Usage => "",
+     Headline => "the number of generators of the underlying module",
+     Usage => "numgens F",
      Inputs => {
+	  "F" => ""
 	  },
      Outputs => {
+	  ZZ => {"number of generators of the underlying module ", TT "M", " of ", TT "F"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "In Macaulay2, each coherent sheaf comes equipped with a module over
+     the coordinate ring.  In the homogeneous case, this is not 
+     necessarily the number of generators of the sum of twists ", 
+     TT "H^0(F(d))", ", summed over all d, which in fact could be infinitely
+     generated.",
      EXAMPLE {
+	  "R = QQ[a..d]/(a^3+b^3+c^3+d^3)",
+	  "X = Proj R;",
+	  "T' = cotangentSheaf X",
+     	  "numgens T'",
+	  "module T'"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (numgens,MonomialIdeal),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {(module,CoherentSheaf),tangentSheaf}
      }
 document { 
      Key => (numgens,Ring),
-     Headline => "",
-     Usage => "",
+--     Undocumented => {(numgens,QuotientRing),
+--     	                (numgens,FractionField),
+--			(numgens,EngineRing),
+--			(numgens,PolynomialRing)},
+     Headline => "number of generators of a polynomial ring",
+     Usage => "numgens R",
      Inputs => {
+	  "R"
 	  },
      Outputs => {
+	  ZZ => "number of generators of R over the coefficient ring"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "If the ring ", TT "R", " is a fraction ring or a (quotient of a) polynomial ring, the number
+     returned is the number of generators of ", TT "R", " over the coefficient ring.
+     In all other cases, the number of generators is zero.",
      EXAMPLE {
+	  "numgens ZZ",
+	  "A = ZZ[a,b,c];",
+	  "numgens A",
+	  "KA = frac A",
+	  "numgens KA"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (numgens,FractionField),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "If the ring is polynomial ring over another polynomial ring, then only the 
+     outermost variables are counted.",
      EXAMPLE {
+	  "B = A[x,y];",
+	  "numgens B",
+	  "C = KA[x,y];",
+	  "numgens C",
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (numgens,EngineRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "In this case, use ", TO allGenerators, " to obtain the complete set of generators.",
      EXAMPLE {
+     	  "g = allGenerators B",
+	  "#g"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (numgens,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "Galois fields created using ", TO GF, " have zero generators, but their underlying
+     polynomial ring has one generators.",
      EXAMPLE {
+	  "K = GF(9,Variable=>a)",
+	  "numgens K",
+	  "R = ambient K",
+	  "numgens R"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {allGenerators, minPres, GF, ambient}
      }
- -- doc6.m2:1008:     Key => numgens,
+TEST ///
+numgens ZZ
+numgens RR
+numgens CC
+numgens GF(9)
+A = ZZ[a,b,c]
+numgens A
+B = A/a
+numgens B
+C = A[x,y]
+numgens C  -- 2
+#(allGenerators C)
+use A
+D = C/(x-y^2, y-b*c)
+numgens D
+minPres D -- error
+K = frac A
+numgens K
+///
