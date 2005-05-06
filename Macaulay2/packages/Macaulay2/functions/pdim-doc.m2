@@ -23,7 +23,8 @@ document {
      EXAMPLE {
 	  "R = QQ[x,y,z];",
 	  "I = ideal(x^2, x*y, y*z);",
-	  "M = res(R^1/I)",
+	  "M = R^1/I",
+	  "res M",
 	  "pdim M"},
      "Notice this is one more than the projective dimension of I as an R-module.",
      EXAMPLE{

@@ -95,7 +95,9 @@ document {
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-	  "hilbertFunction(3, S)"  	  },	
+	  "hilbertFunction(3, S)",
+	  "basis(3, module S)"
+	    	  },	
      Caveat => {
 	  "At the moment, the function is computed simply by calling ", TO "basis",
      	  " and extracting the number of basis elements."
@@ -115,7 +117,8 @@ document {
 	  },
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "hilbertFunction(3, V)"
+	  "hilbertFunction(3, V)",
+     	  "basis(3, ring V)"
   	  },	
      Caveat => {
 	  "At the moment, the function is computed simply by calling ", TO "basis",
