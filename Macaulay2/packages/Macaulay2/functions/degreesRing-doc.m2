@@ -9,7 +9,7 @@ document {
      polynomials and Hilbert series.", 
      PARA,
      "The monomial ordering used in the degrees ring is ", TT "RevLex",
-     ", so the polynomials in it will be displayed with the smallest
+     " so the polynomials in it will be displayed with the smallest
      exponents first, because such polynomials are often used as
      Hilbert series.",
      SeeAlso => {"poincare", "poincareN", "hilbertFunction",
@@ -89,6 +89,9 @@ document {
 	  },
      EXAMPLE {
 	  "V = Proj(ZZ/101[x_0..x_2]);",
+	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
+      	  "degreesRing M",
+	  "V = Proj(ZZ/101[x_0..x_2], Degrees =>{{1,1},{1,1},{1,1}});",
 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
       	  "degreesRing M"
 	  }
