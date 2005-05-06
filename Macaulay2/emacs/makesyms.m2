@@ -1,4 +1,4 @@
-symbols := unique join(values Macaulay2Core.Dictionary, {symbol Macaulay2});
+symbols := last \ sort select(join(pairs Macaulay2Core.Dictionary, pairs PackageDictionary), (nam,sym) -> not match("\\$",nam))
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)
@@ -10,7 +10,7 @@ f2 := openOut "M2-symbols"
 
 f << "(defvar M2-symbols '(" << endl
 
-scan( rsort select (symbols, isAlpha), s -> (
+scan( select (symbols, isAlpha), s -> (
 	  f << "    " << format toString s << endl;
 	  f2 << toString s << endl;
 	  ))
@@ -55,3 +55,7 @@ f << "(if (fboundp 'font-lock-add-keywords)
 f << "(provide 'M2-symbols)" << endl
 
 f << close
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
+-- End:

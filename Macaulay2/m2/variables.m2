@@ -21,7 +21,6 @@ IndexedVariable.synonym = "indexed variable"
 expression IndexedVariable := x -> new Subscript from { expression x#0, expression x#1 }
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
-vars IndexedVariable := x -> {x}
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
 
