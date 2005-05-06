@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+     	symbol hh,
         symbol Schubert,
 	symbol Grass,
         symbol Undocumented,

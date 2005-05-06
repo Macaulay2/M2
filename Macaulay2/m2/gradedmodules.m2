@@ -14,7 +14,7 @@ GradedModule == GradedModule := (C,D) -> (
 	       not C#?i and D#i == 0
 	       )))
 GradedModule _ ZZ := Module => (M,i) -> if M#?i then M#i else (ring M)^0
-net GradedModule := C -> if C.?name then C.name else (
+net GradedModule := C -> (
      s := sort spots C;
      if # s === 0 then "0"
      else (

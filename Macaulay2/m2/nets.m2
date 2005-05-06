@@ -189,7 +189,7 @@ net MutableHashTable := x -> (
      else horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
 net Type := X -> (
      if PrintNames#?X then PrintNames#X
-     else if X.?name then X.name
+     -- else if X.?name then X.name
      else if ReverseDictionary#?X then return toString ReverseDictionary#X
      else horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 

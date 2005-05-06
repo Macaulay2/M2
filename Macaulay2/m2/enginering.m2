@@ -23,7 +23,7 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
-toString EngineRing := R -> if R.?name then R.name else toString R.RawRing
+toString EngineRing := R -> if ReverseDictionary#?R then toString ReverseDictionary#R else toString R.RawRing
 
 ZZ _ EngineRing := 
 RR _ EngineRing := 
@@ -53,20 +53,14 @@ frac Ring := R -> (
            frac FractionField := identity
 coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
-       toString FractionField := F -> if F.?name then F.name else "frac(" | toString last F.baseRings | ")"
+       toString FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else "frac(" | toString last F.baseRings | ")"
         numgens FractionField := F -> numgens last F.baseRings
   allGenerators FractionField := F -> allGenerators last F.baseRings
 	isField FractionField := F -> true
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
-            net FractionField := F -> (
-		 if F.?name then F.name
-		 else net new FunctionApplication from { frac, last F.baseRings }
-		 )
-
-     expression FractionField := R -> (
-                 if R.?name then hold R.name
-		 else (expression frac) (expression last R.baseRings))
+            net FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else net new FunctionApplication from { frac, last F.baseRings }
+     expression FractionField := F -> if ReverseDictionary#?F then toString ReverseDictionary#F else (expression frac) (expression last F.baseRings)
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 

@@ -100,9 +100,9 @@ document {
      necessary, in which to store the table of correspondences between keys
      and filenames.",
      EXAMPLE {
-	  ///cacheFileName("./tmp/","algebra")///,
-	  ///cacheFileName("./tmp/","14")///,
-	  ///cacheFileName("./tmp/","14")///
+	  ///cacheFileName("/tmp/","algebra")///,
+	  ///cacheFileName("/tmp/","14")///,
+	  ///cacheFileName("/tmp/","14")///
 	  }
      }
 
@@ -126,8 +126,8 @@ document {
      necessary, in which to store the table of correspondences between keys
      and filenames.",
      EXAMPLE {
-	  ///cacheFileName("./tmp/","K-theory","motives")///,
-	  ///cacheFileName("./tmp/","K-theory")///,
+	  ///cacheFileName("/tmp/","K-theory","motives")///,
+	  ///cacheFileName("/tmp/","K-theory")///,
 	  }
      }
 

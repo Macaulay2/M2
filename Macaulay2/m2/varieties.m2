@@ -15,7 +15,7 @@ ambient     AffineVariety := X -> Spec ambient ring X
 ideal Variety := X -> ideal ring X
 Spec = method()
 
-net Variety := (X) -> if X.?name then X.name else net expression X
+net Variety := (X) -> if ReverseDictionary#?X then toString ReverseDictionary#X else net expression X
 
 expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
@@ -25,12 +25,7 @@ Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      	  }
      )
 Proj = method()
-expression ProjectiveVariety := (X) -> (
-     R := ring X;
-     if class R === QuotientRing
-     then new FunctionApplication from { variety, ideal R }
-     else new FunctionApplication from { Proj, R }
-     )
+expression ProjectiveVariety := (X) -> new FunctionApplication from { Proj, ring X }
 Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
      if not isHomogeneous R then error "expected a homgeneous ring";
      new ProjectiveVariety from {
@@ -395,6 +390,29 @@ Ext(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> Ext^n(O^1,R^1)
 -----------------------------------------------------------------------------
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
 -----------------------------------------------------------------------------
+
+hh = new ScriptedFunctor from {
+     superscript => (
+	  pq -> new ScriptedFunctor from {
+	       argument => (
+		    X -> cohomology args(pq,X)
+		    )
+	       }
+	  )
+     }
+
+cohomology(ZZ,ZZ,ProjectiveVariety) := opts -> (p,q,X) -> if X.cache.?hh and X.cache.hh#?(p,q) then X.cache.hh#(p,q) else (
+     d := dim X;
+     pqs := { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
+     (p,q) = min { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
+     h := rank HH^q cotangentSheaf(p,X);
+     if not X.cache.?hh then X.cache.hh = new MutableHashTable;
+     scan(pqs, pq -> X.cache.hh#pq = h);
+     h)
+
+euler ProjectiveVariety := X -> (
+     d := dim X;
+     sum(0 .. d, j -> hh^(j,j) X + 2 * sum(0 .. j-1, i -> (-1)^(i+j) * hh^(i,j) X)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

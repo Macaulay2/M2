@@ -103,7 +103,6 @@ texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
 tex HashTable := x -> (
      if x.?tex then x.tex 
      else if x.?texMath then concatenate("$",x.texMath,"$")
-     else if x.?name then x.name
      else tex expression x
      )
 

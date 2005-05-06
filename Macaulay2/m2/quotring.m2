@@ -32,15 +32,14 @@ pretty := relns -> (
      s)
 
 toExternalString QuotientRing := S -> toString expression S
-toString QuotientRing := S -> if S.?name then S.name else toExternalString S
+toString QuotientRing := S -> toExternalString S
 
 random QuotientRing := S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
 
 expression QuotientRing := S -> (
-     if S.?name then hold S.name
-     else new Divide from { 
+     new Divide from { 
 	  expression last S.baseRings,  
 	  expression pretty S.relations 
 	  }
