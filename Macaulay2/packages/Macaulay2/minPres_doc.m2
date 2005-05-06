@@ -28,13 +28,13 @@
 --	  }
 --    }
 
-
-document{ 
-     Key => [minPres,Variable],
-     Headline=> "Rename the variables in the ring given so that the minimal 
-     presentation variables are named differently than those in the original 
-     ring."
-     }
+--
+--document{ 
+--     Key => [minPres,Variable],
+--     Headline=> "Rename the variables in the ring given so that the minimal 
+--     presentation variables are named differently than those in the original 
+--     ring."
+--     }
 
 --document{
 --     Key => (minPres, Ideal),

@@ -1,22 +1,19 @@
 --- status: Draft
---- author(s): 
+--- author(s): M2Fest + Amelia Taylor
 --- notes: 
 
 document { 
      Key => prune,
      Headline => "minimize generators and relations",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+--     Usage => "",
+--     Inputs => {
+--	  },
+--     Outputs => {
+--	  },
+--     Consequences => {
+--	  },     
+--     Caveat => {},
+     SeeAlso => {minPres}
      }
 document { 
      Key => (prune,ChainComplex),
