@@ -1,37 +1,32 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes: working on this
 
 document { 
-     Key => poincareN,
-     Headline => "",
-     Usage => "",
+     Key => {poincareN,(poincareN,ChainComplex)},
+     Headline => "assemble degrees into polynomial",
+     Usage => "poincareN C",
      Inputs => {
+     	  "C" => ChainComplex => ""
 	  },
      Outputs => {
+	  RingElement => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "This function encodes information about the degrees of basis
+     elements of a free chain complex in a polynomial. The polynomial
+     has a term ", TT "S^i T_0^(d_0) ... T_(n-1)^(d_(n-1))", " in it
+     for each basis element of ", TT "C_i", " with multi-degree",
+     TT "{d_0,...,d_(n-1)}.",
      EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "p = poincareN resolution cokernel vars R"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => (poincareN,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     "Setting the S variable to 1 would give the Poincare polynomial
+     calculated by ",
+     TO "poincare", ".",
      EXAMPLE {
+      	  "poincare resolution cokernel vars R"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"poincare", "degreesRing", "hilbertFunction",
+	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert" }
      }
- -- doc9.m2:756:     Key => poincareN,
