@@ -470,12 +470,16 @@ net Ideal := (I) -> (
      )
 toString Ideal := (I) -> if I.cache.?name then I.cache.name else toString expression I
 
+isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
 
-genera(Ideal) := (I) -> genera ((ring I)^1/I)
-euler(Ideal) := (I) -> euler ((ring I)^1/I)
+genera Ideal := (I) -> genera ((ring I)^1/I)
+genus Ideal := (I) -> genus ((ring I)^1/I)
+
+eulers(Ideal) := (I) -> eulers((ring I)^1/I)
+euler(Ideal) := (I) -> euler((ring I)^1/I)
 
 RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)

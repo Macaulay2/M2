@@ -732,16 +732,16 @@ types Sequence := x -> (
 
 isopt := x -> class x === Option and #x === 2
 
-merget := (v,v') -> apply(v,v',(a,t) -> (
+merget := (key,v,v') -> apply(v,v',(a,t) -> (
 	  if t =!= Thing then (
 	       if isopt a then (
 		    if isopt a#1 then (
-			 if a#1#0 =!= t then error("type mismatch: ", toString a#1#0, " =!= ", toString t)
+			 if a#1#0 =!= t then error("type mismatch in documentation node ",toString key,": ", toString a#1#0, " =!= ", toString t)
 			 else a
 			 )
 		    else (
 			 if istype a#0 then (
-			      if a#0 =!= t then error("type mismatch: ", toString a#1#0, " =!= ", toString t)
+			      if a#0 =!= t then error("type mismatch in documentation node ",toString key,": ", toString a#0, " =!= ", toString t)
 			      else a
 			      )
 			 else a#0 => t => a#1			      
@@ -811,7 +811,7 @@ briefSynopsis := key -> (
 	  )
      else if #inp' =!= 0 then (
      	  if #inp =!= #inp' then error ("mismatched number of outputs", toString key);
-     	  inp = merget(inp,inp');
+     	  inp = merget(key,inp,inp');
 	  );
      if class out === SEQ then out = toList out;
      if #out === 0 then (
@@ -819,7 +819,7 @@ briefSynopsis := key -> (
 	  )
      else if #out' =!= 0 then (
      	  if #out =!= #out' then error ("mismatched number of outputs", toString key);
-     	  out = merget(out,out');
+     	  out = merget(key,out,out');
 	  );
      inp = alter \ inp;
      out = alter \ out;

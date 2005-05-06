@@ -614,6 +614,7 @@ export (
 	symbol erase,
 	symbol error,
 	symbol euler,
+	symbol eulers,
 	symbol evaluate,
 	symbol even,
 	symbol examples,

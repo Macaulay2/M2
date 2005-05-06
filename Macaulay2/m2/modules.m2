@@ -30,7 +30,10 @@ isQuotientModule Module := M -> not M.?generators
 
 isIdeal = method(TypicalValue => Boolean)
 isIdeal Thing := x -> false
-isIdeal Module := M -> isSubmodule M and rank ambient M === 1
+isIdeal Module := M -> isSubmodule M and (
+     F := ambient M;
+     rank F === 1 and all(degree F_0, i -> i === 0)
+     )
 
 numgens Module := M -> (
      if M.?generators then numgens M.generators.source
@@ -264,31 +267,16 @@ schreyerOrder Module := Matrix => (F) -> (
 schreyerOrder Matrix := Matrix => (m) -> map(target m, newModule(ring m, rawSchreyerSource raw m), m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
 
--- euler(Module) := (M) -> (
---      f := poincare M;
---      R := ring M;
---      N := numgens R - 1;
---      u := symbol u;
---      G := group [u];
---      U := u;
---      use ZZ G;
---      h := U^-N * (substitute(f,{(ring f)_0 => 1-u})) * (sum(N+1,i->U^i));
---           -- f might have negative exponents in it here!
---      c := toList apply(0 .. N, i -> h_(U^-i));
---      k := position(reverse c, j -> j != 0);
---      if k === null then k = N+1;
---      c = drop(c,-k);
---      << "sectional euler characteristics:" << endl;
---      scan(#c, i -> << " " << toString i || "" || toString c#i);
---      << endl;
---      )
-euler(Module) := (M) -> (
+euler Module := (M) -> euler hilbertPolynomial M
+euler Ring := (R) -> euler R^1
+
+eulers Module := (M) -> (
      h := hilbertPolynomial M;
      apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
-euler(Ring) := (R) -> euler R^1
+eulers Ring := (R) -> eulers R^1
 
 genera Module := (M) -> (
-     e := euler M;
+     e := eulers M;
      d := dim M - 1;
      apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
 genera Ring := (R) -> genera R^1
@@ -296,7 +284,7 @@ genera Ring := (R) -> genera R^1
 genus Module := (M) -> (
      e := euler M;
      d := dim M - 1;
-     (-1)^d * (e#0 - 1))
+     (-1)^d * (e - 1))
 genus Ring := (R) -> genus R^1
 
 rank Module := M -> (

@@ -180,9 +180,9 @@ setup(TypicalValue => Boolean,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
 	  })
 setup(TypicalValue => ZZ,
-     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,genus})
+     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,euler,genus})
 setup(TypicalValue => List,
-     {euler, genera})
+     {eulers, genera})
 
 use HashTable := x -> (
      if x.?use then x.use x; 
