@@ -684,15 +684,17 @@ title := s -> (
 type := S -> fixup (
      s := value S;
      if class s =!= Function then (
-	  DIV deepSplice { "The object ", TO S, " is ", OFCLASS class s,
-	       if parent s =!= Nothing then (
-		    f := (T -> while T =!= Thing list parent T do T = parent T) s;
-		    (
-			 if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
-			 toSequence between(" < ", f / (T -> TO T)) 
-			 )
-		    ),
-	       "."}))
+	  SEQ { SUBSECTION "For the programmer",  
+	       DIV deepSplice { "The object ", TO S, " is ", OFCLASS class s,
+		    if parent s =!= Nothing then (
+			 f := (T -> while T =!= Thing list parent T do T = parent T) s;
+			 (
+			      if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
+			      toSequence between(" < ", f / (T -> TO T)) 
+			      )
+			 ),
+		    "."}
+	       }))
 
 istype := X -> parent X =!= Nothing
 alter1 := x -> (
@@ -849,7 +851,11 @@ documentableMethods := s -> select(methods s,isDocumentableMethod)
 
 fmeth := f -> (
      b := documentableMethods f;
-     if #b > 0 then SEQ { SUBSECTION { "Ways to use ", TT toString f }, smenu b } )
+     if #b > 0 then (
+	  c := smenu b;
+	  if #c > 0 then SEQ { SUBSECTION { "Ways to use ", TT toString f }, c } 
+	  )
+     )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 briefDocumentation = method(SingleArgumentDispatch => true)
@@ -976,7 +982,7 @@ documentation Symbol := S -> (
 	  if #a > 0 then (DIV {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),
 	  if #b > 0 then (DIV {"Methods for ", toExternalString S, " :"}, smenu b),
      	  documentationValue(S,value S),
-	  type S, theExamples S, caveat S, seealso S, theMenu S ))
+	  theExamples S, caveat S, seealso S, type S, theMenu S ))
 
 documentation DocumentTag := tag -> documentation DocumentTag.Key tag
 
