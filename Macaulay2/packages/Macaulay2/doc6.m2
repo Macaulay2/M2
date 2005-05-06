@@ -37,39 +37,8 @@ document {
 document {
      Key => ring,
      Headline => "get the associated ring"}
-document {
-	Key => (ring, Matrix),
-	Headline => "get the ring of a matrix",
-	Usage => "ring f",
-	Inputs => {
-		"f" => ""
-		},
-     Outputs => {
-		{"the ring containing the entries of the matrix ", TT "f", "."}
-		}
-	}
-document {
-	Key => (ring, Ideal),
-	Headline => "get the ring of an ideal",
-	Usage => "ring I",
-	Inputs => {
-		"I" => ""
-		},
-     Outputs => {
-		{"the ring containing the ideal ", TT "I", "."}
-		}
-	}
-document {
-	Key => (ring, MonomialIdeal),
-	Headline => "get the ring of a monomial ideal",
-	Usage => "ring I",
-	Inputs => {
-		"I" => ""
-		},
-     Outputs => {
-		{"the ring containing the monomial ideal ", TT "I", "."}
-		}
-	}
+
+
 document {
      Key => coefficientRing,
      Headline => "get the coefficient ring",

@@ -824,13 +824,6 @@ document {
      }
 
 document {
-     Key => (ring, CoherentSheaf),
-     Headline => "get the coordinate ring under a sheaf",
-     TT "ring F", " -- produce the coordinate ring of the variety on which a coherent sheaf
-     ", TT "F", " is defined."
-     }
-
-document {
      Key => (module, CoherentSheaf),
      Headline => "get the module defining a coherent sheaf",
      TT "module F", " -- produce the module from which the coherent sheaf ", TT "F", " was defined.",

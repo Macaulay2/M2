@@ -346,6 +346,20 @@ document {
      }
 
 document {
+     Key => (symbol -, Set, List),
+     Headline => "set difference",
+     TT "x - y", " returns ", TT "x - set y", " -- the difference of a set x and a list y considered as a set.",
+     SeeAlso => {"Set", "List", "-"}
+     }
+
+document {
+     Key => (symbol -, List, Set),
+     Headline => "set difference",
+     TT "x - y", " returns a sublist of x containg elements which are not in y.",
+     SeeAlso => {"Set", "List", "-"}
+     }
+
+document {
      Key => (isSubset,Set,Set), TT "isSubset(X,Y)", " -- tells whether ", TT "X", " is a subset of ", TT "Y", "." }
 
 document {
