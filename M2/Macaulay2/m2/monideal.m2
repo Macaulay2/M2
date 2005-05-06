@@ -32,7 +32,7 @@ codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
 	  c - codim R)
      )
 
-toString MonomialIdeal := m -> if m.?name then m.name else "monomialIdeal " | toString generators m
+toString MonomialIdeal := m -> "monomialIdeal " | toString generators m
 
 -- net MonomialIdeal := I -> if I == 0 then "0" else "monomialIdeal " | net toSequence first entries generators I
 

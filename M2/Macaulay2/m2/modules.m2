@@ -41,7 +41,7 @@ numgens Module := M -> (
      else M.numgens
      )
 
-toString Module := M -> if M.?name then M.name else (
+toString Module := M -> (
      if M.?relations then (
 	  if M.?generators
 	  then "subquotient(" | toString M.generators | "," | toString M.relations | ")"
@@ -58,7 +58,7 @@ toString Module := M -> if M.?name then M.name else (
 	  )
      )
 
-toExternalString Module := M -> if M.?name then M.name else (
+toExternalString Module := M -> (
      if M.?relations then (
 	  if M.?generators
 	  then "subquotient(" | toExternalString M.generators | "," | toExternalString M.relations | ")"

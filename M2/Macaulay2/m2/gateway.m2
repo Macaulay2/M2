@@ -2,6 +2,7 @@
 
 ScriptedFunctor = new Type of MutableHashTable
 ScriptedFunctor.synonym = "scripted functor"
+precedence ScriptedFunctor := x -> 70
 net ScriptedFunctor := lookup(net,Type)
 toString ScriptedFunctor := lookup(toString,Type)
 
@@ -24,8 +25,9 @@ protect argument
 protect subscript
 protect superscript
 
-args := method()
+args = method()
 args(Thing,Sequence) := (i,args) -> prepend(i,args)
+args(Sequence,Thing) := (x,y) -> append(x,y)
 args(Thing,Thing) := identity
 args(Thing,Thing,Sequence) := (i,j,args) -> prepend(i,prepend(j,args))
 args(Thing,Thing,Thing) := identity
@@ -75,7 +77,6 @@ HH = new ScriptedFunctor from {
   homology(Nothing,Sequence) := 
   homology(ZZ,Sequence) := opts -> (i,X) -> homology prepend(i,X)
 cohomology(ZZ,Sequence) := opts -> (i,X) -> cohomology(prepend(i,X), opts)
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

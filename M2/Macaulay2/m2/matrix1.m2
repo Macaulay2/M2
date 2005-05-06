@@ -468,7 +468,7 @@ net Ideal := (I) -> (
      if numgens I === 0 then "0"
      else net expression I
      )
-toString Ideal := (I) -> if I.cache.?name then I.cache.name else toString expression I
+toString Ideal := (I) -> toString expression I
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
