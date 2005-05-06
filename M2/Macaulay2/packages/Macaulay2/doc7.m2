@@ -1772,48 +1772,6 @@ assert( fittingIdeal(7,M) == ideal x )
 assert( fittingIdeal(8,M) == ideal 1_R )
 assert( fittingIdeal(9,M) == ideal 1_R )
 "
-
-document {
-     Key => (genericMatrix,Ring,RingElement,ZZ,ZZ),
-     Headline => "make a generic matrix of indeterminates",
-     Usage => "genericMatrix(R,x,m,n)",
-     Inputs => {
-	  "R" => null,
-	  "x" => {"an indeterminate in the ring ", TT "R"},
-	  "m" => null,
-	  "n" => null
-	  },
-     Outputs => {
-	  {"An ", TT "m", " by ", TT "n", " matrix of indeterminates drawn from the ring ", 
-	       TT "R", ", starting with ", TT "x", "."}
-	  },
-     EXAMPLE {
-	  "R = ZZ[a..f];",
-      	  "genericMatrix(R,a,2,3)"
-	  },
-     SeeAlso => {genericSkewMatrix, genericSymmetricMatrix}
-     }
-
-document {
-     Key => (genericMatrix,Ring,ZZ,ZZ),
-     Headline => "make a generic matrix of indeterminates",
-     Usage => "genericMatrix(R,m,n)",
-     Inputs => {
-	  "R" => null,
-	  "m" => null,
-	  "n" => null
-	  },
-     Outputs => {
-	  {"An ", TT "m", " by ", TT "n", " matrix of indeterminates drawn from the ring ", 
-	       TT "R", ", starting with the first indeterminate."}
-	  },
-     EXAMPLE {
-	  "R = ZZ[a..f];",
-      	  "genericMatrix(R,2,3)"
-	  },
-     SeeAlso => {genericSkewMatrix, genericSymmetricMatrix}
-     }
-
 document {
      Key => (genericSkewMatrix,Ring,RingElement,ZZ),
      Headline => "make a generic skew symmetric matrix of indeterminates",
@@ -1896,11 +1854,6 @@ document {
       	  "genericSymmetricMatrix(R,4)"
 	  },
      SeeAlso => {genericMatrix, genericSkewMatrix}
-     }
-
-document {
-     Key => genericMatrix,
-     SeeAlso => {genericSymmetricMatrix, genericSkewMatrix}
      }
 document {
      Key => genericSkewMatrix,
