@@ -1,69 +1,45 @@
---- status: TODO
+--- status: DRAFT
 --- author(s): 
 --- notes: 
 
 document { 
-     Key => entries,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {entries,(entries,Matrix),(entries, MutableMatrix)},
+     Headline => "lists the entries of a matrix",
+     Usage => "entries M",
+     Inputs => {"M" =>  {"a ", TO Matrix, " or a ", TO MutableMatrix} 
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Outputs => { {"a doubly nested ", TO List," of the entries of M"
+	  }},
+--     Consequences => {
+--	  },     
+--     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
+	  "R = ZZ[x,y,z];",
+	  "M = matrix{{x,z,x*y},{x^2+z,y*z,1}}",
+	  "entries M",
+	  "N = mutableMatrix{{x,z,x*y},{x^2+z,y*z,1}}",
+	  "entries N"
+     },
      SeeAlso => {}
-     }
-document { 
-     Key => (entries,Matrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+}
+
 document { 
      Key => (entries,Vector),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "lists the entries of a vector",
+     Usage => "entries v",
+     Inputs => {"v" 
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
+     Outputs => { {"a ", TO List," of the coordinates of v"
+         }},
+--     Consequences => {
+--	  },     
+--     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
+	  "R = (ZZ[x,y])^3;",
+	  "v = vector {1,x,x*y};",
+	  "entries v"
+     },
      SeeAlso => {}
-     }
-document { 
-     Key => (entries,MutableMatrix),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+}
+
  -- doc7.m2:1484:     Key => entries,

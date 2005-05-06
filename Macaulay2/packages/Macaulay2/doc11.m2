@@ -825,29 +825,6 @@ document {
 	SeeAlso => (Fano,ZZ,Ideal)
 	}
 
-
-
-
-document {
-     Key => Grassmannian,
-     Headline => "find the ideal of a Grassmannian",
-     TT "Grassmannian(k,r)", " -- Grassmannian of k-planes in P^r",BR,NOINDENT,
-     TT "Grassmanian(k,r,R)", 
-     PARA,
-     "Given natural numbers k <= r, and optionally a ring ", TT "R", " with
-     at least ", TT "binomial(r+1,k+1)", " variables, the routine finds the
-     ideal of the Grassmannian of projective k-planes in P^r, using the
-     first ", TT "binomial(r+1,k+1)", " variables of ", TT "R", ".  If ", TT "R", "
-     is not given, the routine makes and uses ", TT "ZZ/31991[vars(0..binomial(r+1,k+1)-1].",
-     PARA,
-     "For example, the Grassmannian of projective lines in ", TT "P^3", ":",
-     EXAMPLE "J = Grassmannian(1,3)",
-     EXAMPLE "R = QQ[a..f];",
-     EXAMPLE "J = Grassmannian(1,3,R)",
-     Caveat => "Currently, this ideal is constructed using relations on minors
-     of a generic matrix.  It should really use the Pluecker equations."
-     }
-
 document {
      Key => code,
      Headline => "display source code",
