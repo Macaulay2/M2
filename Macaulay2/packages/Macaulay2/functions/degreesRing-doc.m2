@@ -55,42 +55,42 @@ document {
      }
 
 
-document { 
-     Key => (degreesRing,Module),
-     Headline => "the ring of degrees",
-     Usage => "degreesRing M",
-     Inputs => {
-	  "M" => Module => ""
-	  },
-     Outputs => {
-	  PolynomialRing => ""
-	  },
-     "For an R-module this function produces the ring in n variables
-     whose monomials are the degrees of elements of the ring R.",
-     EXAMPLE {
-	  "R =  ZZ [x, y];",
-     	  "M = R^3;",
-	  "degreesRing M",
-	  "S = ZZ[x,y, Degrees=>{{1,1},{1,1}}]",
-	  "M = S^3;",	  
-	  "degreesRing M"
-     	  }
-     }
-
-document { 
-     Key => (degreesRing,CoherentSheaf),
-     Headline => "the ring of degrees",
-     Usage => "degreesRing S",
-     Inputs => {
-	  "S" => CoherentSheaf => ""
-	  },
-     Outputs => {
-	  PolynomialRing => ""
-	  },
-     EXAMPLE {
-	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-      	  "degreesRing M"
-	  }
-     }
+-- document { 
+--      Key => (degreesRing,Module),
+--      Headline => "the ring of degrees",
+--      Usage => "degreesRing M",
+--      Inputs => {
+-- 	  "M" => Module => ""
+-- 	  },
+--      Outputs => {
+-- 	  PolynomialRing => ""
+-- 	  },
+--      "For an R-module this function produces the ring in n variables
+--      whose monomials are the degrees of elements of the ring R.",
+--      EXAMPLE {
+-- 	  "R =  ZZ [x, y];",
+--      	  "M = R^3;",
+-- 	  "degreesRing M",
+-- 	  "S = ZZ[x,y, Degrees=>{{1,1},{1,1}}]",
+-- 	  "M = S^3;",	  
+-- 	  "degreesRing M"
+--      	  }
+--      }
+-- 
+-- document { 
+--      Key => (degreesRing,CoherentSheaf),
+--      Headline => "the ring of degrees",
+--      Usage => "degreesRing S",
+--      Inputs => {
+-- 	  "S" => CoherentSheaf => ""
+-- 	  },
+--      Outputs => {
+-- 	  PolynomialRing => ""
+-- 	  },
+--      EXAMPLE {
+-- 	  "V = Proj(ZZ/101[x_0..x_2]);",
+-- 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
+--       	  "degreesRing M"
+-- 	  }
+--      }
 
