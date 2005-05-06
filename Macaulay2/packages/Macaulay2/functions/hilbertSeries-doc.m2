@@ -9,29 +9,35 @@ document {
      degrees ring whose coefficients are the dimensions of the corresponding
      graded component.", 
      PARA, 
-     "Note that the series is provided as a type called ", TO "Divide", ".",
+     "Note that the series is provided as a type of expression called
+     a ", TO "Divide", ".",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare",
 	  "poincareN", "hilbertPolynomial", "hilbertFunction"}
      }
+
 document { 
-     Key => {(hilbertSeries,PolynomialRing), (hilbertSeries,QuotientRing)},
+     Key => {(hilbertSeries,QuotientRing),(hilbertSeries,PolynomialRing)},
      Headline => "compute the Hilbert series of the ring",
      Usage => "hilbertSeries R",
      Inputs => {
-	  "R" => {" or a ", TO QuotientRing}
+	  "R" => {" or a ", TO PolynomialRing}
 	  },
      Outputs => {
 	  Divide => "the Hilbert series" },
      "We compute the ", TO2(hilbertSeries, "Hilbert series"), " of a ring.",
      EXAMPLE {
-	  "R = ZZ/101[x, Degrees => {2}];",
-      	  "hilbertSeries R",
+	  "R = ZZ/101[x, Degrees => {2}]/ideal(x^2);",
+      	  "s = hilbertSeries R",
+	  "numerator s",
+     	  "poincare R"
 	  },
      "Recall that the variables of the power series are the variables of
      the degrees ring.",
      EXAMPLE {
-	  "R=ZZ/101[x, Degrees => {{1,1}}];",
-      	  "hilbertSeries R",
+	  "R=ZZ/101[x, Degrees => {{1,1}}]/ideal(x^2);",
+      	  "s = hilbertSeries R",
+	  "numerator s",
+     	  "poincare R"
 	  },
      }
 
@@ -50,16 +56,18 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
 	  "M = module ideal x^2",
-      	  "hilbertSeries M",
-      	  "numerator oo",
-      	  "poincare M",
+      	  "s = hilbertSeries M",
+      	  "numerator s",
+      	  "poincare M"
 	  },
      "Recall that the variables of the power series are the variables of
      the degrees ring.",
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
 	  "M = module ideal x^2;",
-	  "hilbertSeries M",
+	  "s = hilbertSeries M",
+     	  "numerator s",
+	  "poincare M"
 	  }
      }
 
@@ -77,9 +85,9 @@ document {
      EXAMPLE {
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-      	  "hilbertSeries M",
-      	  "numerator oo",
-	  },
+      	  "s = hilbertSeries M",
+      	  "numerator s"
+	  }
      }
 
 document { 
@@ -93,21 +101,24 @@ document {
 	  Divide =>  "the Hilbert series" },
      "We compute the ", TO2  (hilbertSeries, "Hilbert series"), " of R/I, the
      quotient of the ambient ring by the ideal. Caution: For an ideal
-     I, ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
+     I, running ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
 	  "I = ideal x^2",
-      	  "hilbertSeries I",
-      	  "numerator oo",
+      	  "s = hilbertSeries I",
+      	  "numerator s",
       	  "poincare I",
-	  "reduceHilbert o3"	  
+	  "reduceHilbert s"	  
 	  },
      "Recall that the variables of the power series are the variables of
      the degrees ring.",
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
-	  "I = module ideal x^2;",
-	  "hilbertSeries I"
+	  "I = ideal x^2;",
+	  "s = hilbertSeries I",
+	  "numerator s",
+	  "poincare I",
+	  "reduceHilbert s"
 	  },
      Caveat => {"For an ideal I, ", TT "hilbertSeries I", " calculates
 	  the Hilbert series of R/I."
@@ -126,7 +137,8 @@ document {
      projective Hilbert polynomial.",
      EXAMPLE {
 	  "P = projectiveHilbertPolynomial 3",
-      	  "hilbertSeries P"
+      	  "s = hilbertSeries P",
+     	  "numerator s"
 	  },
      "Computing the ", TO2 (hilbertSeries, "Hilbert series"), " of a
      projective variety can be useful for finding the h-vector of a
@@ -139,7 +151,8 @@ document {
      	  "R = QQ[a..h];",
 	  "I = ideal (a*b, c*d, e*f);",
 	  "P=hilbertPolynomial(I)",
-	  "hilbertSeries P"
+	  "s = hilbertSeries P",
+	  "numerator s"
      }
 }
 
@@ -156,7 +169,8 @@ document {
      projective variety.",
      EXAMPLE {
 	  "V = Proj(QQ[x,y])",
-	  "hilbertSeries V"
+	  "s = hilbertSeries V",
+	  "numerator s"
 	  }
      }
 document { 
@@ -173,7 +187,7 @@ document {
 	  "R = ZZ/101[x,y];",
       	  "hilbertSeries(R/x^3)",
 	  "hilbertSeries(R/x^3, Order =>5)"
-	  },
+	  }
      }
 
 TEST ///
