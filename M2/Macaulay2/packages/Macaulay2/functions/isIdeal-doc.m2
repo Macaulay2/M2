@@ -12,11 +12,12 @@ document {
      Outputs => {
 	  Boolean => {TO "true", " if ", TT "I", " is either an ", TO2("Ideal", "ideal"), 
 	       ", a ", TO2("MonomialIdeal", "monomial ideal"), " or a ", TO2("Module", "module"), 
-	       		 " which evidently an ideal and ", TO "false", " otherwise"}
+	       " which is a submodule of a free module of rank 1 with generators in degree 0 and ", 
+	       TO "false", " otherwise"}
 	  },
      EXAMPLE {
 	  "S = QQ[x,y,z];",
-	  "I = ideal(x^2, y^2);",
+	  "I = ideal(x^2, y^2)",
 	  "isIdeal I",
 	  "J = monomialIdeal I",
 	  "isIdeal J",	  	  
@@ -27,5 +28,5 @@ document {
 	  "isIdeal J",
 
 	  },
-     SeeAlso => {}
+     SeeAlso => {(ideal, Module)}
      }
