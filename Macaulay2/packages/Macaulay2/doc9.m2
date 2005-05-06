@@ -648,40 +648,6 @@ document {
      }
 
 document {
-     Key => poincare,
-     Headline => "assemble degrees into polynomial",
-     TT "poincare C", " -- encodes information about the degrees of basis elements
-     of a free chain complex in a polynomial.",
-     BR,NOINDENT,
-     TT "poincare M", " -- the same information about the free resolution
-     of a module M.",
-     PARA,
-     "The polynomial has a term (-1)^i T_0^(d_0) ... T_(n-1)^(d_(n-1)) in it
-     for each basis element of C_i with multi-degree {d_0,...,d_(n-1)}.
-     When the multi-degree has a single component, the term is
-     (-1)^i T^(d_0).",
-     PARA,
-     "The variable ", TT "T", " is defined in a hidden local scope, so will print out
-     as ", TT "$T", " and not be directly accessible.",
-     PARA,
-     "Note: the monomial ordering used in the degrees ring is ", TT "RevLex", ",
-     so the polynomials in it will be displayed with the smallest exponents first.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x_0 .. x_3,y_0 .. y_3]",
-      	  "m = matrix table (2, 2, (i,j) -> x_(i+2*j))",
-      	  "n = matrix table (2, 2, (i,j) -> y_(i+2*j))",
-      	  "f = flatten (m*n - n*m)",
-      	  "poincare cokernel f",
-	  },
-     PARA,
-     TT "(cokernel f).cache.poincare = p", " -- inform the system that the Poincare 
-     polynomial of the cokernel of ", TT "f", " is ", TT "p", ".  This can speed the computation 
-     of a Groebner basis of ", TT "f", ".  For details, see ", TO "computing Groebner bases", ".",
-     SeeAlso => { "degreesRing" }
-     }
-
-document {
      Key => poincareN,
      Headline => "assemble degrees into polynomial",
      TT "poincareN C", " -- encodes information about the degrees of basis elements
