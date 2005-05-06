@@ -10,10 +10,9 @@ document {
 	  "I" => Thing => ""
 	  },
      Outputs => {
-	  Boolean => {"", UL {
-	       	    {TO "true", " if ", TT "I", " is a ", TO2("Module", "module"), 
-	       		 " which evidently an ideal (no computation is done) "}, 
-	       	    {TO "false", " otherwise"}}}
+	  Boolean => {TO "true", " if ", TT "I", " is either an ", TO2("Ideal", "ideal"), 
+	       ", a ", TO2("MonomialIdeal", "monomial ideal"), " or a ", TO2("Module", "module"), 
+	       		 " which evidently an ideal and ", TO "false", " otherwise"}
 	  },
      EXAMPLE {
 	  "S = QQ[x,y,z];",
