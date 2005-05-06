@@ -151,6 +151,6 @@ document {
 	  "g = N.cache.pruningMap",
 	  "g^-1"
 	  },
-     SeeAlso => {"pruningMap", (prune, Matrix), (trim, Module)}
+     SeeAlso => {(prune, Matrix), (trim, Module)}
      }
 

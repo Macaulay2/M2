@@ -2082,16 +2082,6 @@ TEST ///
     scan(modules, M -> assert( cover M == target presentation M ) )
 ///
 document {
-     Key => pruningMap,
-     Headline => "store the isomorphism obtained by pruning",
-     TT "pruningMap", " -- the key under which is stored the isomorphism to
-     a module ", TT "M", " from the module ", TT "prune M", ".",
-     PARA,
-     "This map exists only after ", TT "N = prune M", " has been executed
-     at least once, and then the map can be obtained with ", TT "N.cache.pruningMap", ".",
-     SeeAlso => "prune"
-     }
-document {
      Key => dual,
      Headline => "dual module or map",
      TT "dual M", " -- the dual.",
