@@ -1,53 +1,80 @@
---- status: TODO
+--- status: DRAFT
 --- author(s): 
---- notes: 
+--- notes: GRASSMANNIAN REWRITTEN 
 
 document { 
-     Key => Grassmannian,
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {Grass, (Grass,ZZ,ZZ)
+       	  },
+     Headline => "find the Pluecker ideal of a Grassmannian",
+     Usage => {"Grass(k,n)"},
+     Inputs => {"k" => ZZ => "","n" => ZZ => ""  
 	  },
-     Outputs => {
+     Outputs => {Ideal => "the ideal of the Grassmannian"
 	  },
-     Consequences => {
-	  },     
-     "description",
+--     Consequences => {"Creates a ring ZZ[apply(subsets(n+1,k+1), i->p_i)"
+--     },     
+     {"Given natural numbers k <= n, the routine finds the ideal 
+	    of the Grassmannian of projective k-planes in P^n, in the ring ",
+            TT "ZZ[apply(subsets(n+1,k+1), i->p_i)]", ".  "}
+     ,
+     {"For example, the Grassmannian of projective lines in ", TT "P^3", " is"},
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "I = Grass(1,3)"
+     },
+     {"The Grassmannian of projective planes in ", TT "P^4", " is"},
+     EXAMPLE{ 
+          "J = Grass(2,4)"
+     },
+ --    Caveat => {
+ --    },
+     SeeAlso => {"Schubert","pfaffians"}
      }
+
 document { 
-     Key => (Grassmannian,ZZ,ZZ),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Key => {Schubert, (Schubert,ZZ,ZZ,List)
+       	  },
+     Headline => "find the Pluecker ideal of a Schubert variety",
+     Usage => {"Schubert(k,n,sigma)"},
+     Inputs => {"k" => ZZ => "", "n" => ZZ=>"","sigma" => List =>  
+	  "a subset of 0..n of size k+1 that indexes the Schubert variety"
 	  },
-     Outputs => {
+     Outputs => {Ideal => "the ideal of the Schubert variety indexed by sigma"
 	  },
-     Consequences => {
-	  },     
-     "description",
+   --  Consequences => {
+   --  },     
+     {"Given natural numbers k <= n, the routine finds the
+     	       ideal of the Schubert variety indexed by sigma in the Grassmannian of projective 
+	       k-planes in P^n. "
+     },
+     {"For example, the Schubert variety indexed by ", TT "(1,3,4)", 
+     " in the Grassmannian of projective planes in ", TT "P^5", " is"},
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "I = Schubert(2,5,{1,3,4})",
+     },
+ --    Caveat => {
+ --    },
+     SeeAlso => {"Grass","pfaffians"}
      }
-document { 
-     Key => (Grassmannian,ZZ,ZZ,Ring),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc11.m2:832:     Key => Grassmannian,
+
+
+    
+-- doc11.m2:832:     Key => Grassmannian,
+--  Description => {TT "Grassmannian(k,r)", " -- Grassmannian of k-planes in P^r",BR,NOINDENT,
+--     TT "Grassmanian(k,r,R)", 
+--     PARA,
+--     "Given natural numbers k <= r, and optionally a ring ", TT "R", " with
+--     at least ", TT "binomial(r+1,k+1)", " variables, the routine finds the
+--    ideal of the Grassmannian of projective k-planes in P^r, using the
+--     first ", TT "binomial(r+1,k+1)", " variables of ", TT "R", ".  If ", TT "R", "
+--     is not given, the routine makes and uses ", TT "ZZ/31991[vars(0..binomial(r+1,k+1)-1].",
+--     PARA,
+--	  
+--	  }
+--    "For example, the Grassmannian of projective lines in ", TT "P^3", ":",
+--     EXAMPLE {"J = Grassmannian(1,3)",
+--              "R = QQ[a..f];",
+--              "J = Grassmannian(1,3,R)",
+--	  },
+--     Caveat => {"Currently, this ideal is constructed using relations on minors
+--     of a generic matrix.  It should really use the Pluecker equations."
+--     },
