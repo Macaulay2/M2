@@ -1378,22 +1378,6 @@ document {
      ideal ", TT "I", " in a ring ", TT "R", "."
      }
 document {
-     Key => (ideal, Ring),
-     Headline => "get the ideal used to form a quotient ring",
-     TT "ideal R", " -- for a quotient ring R=A/I, returns I"
-     }
-document {
-     Key => ideal,
-     Headline => "make an ideal",
-     "ideal v", " -- produces the ideal spanned by a list or sequence of ring
-     elements.",
-     PARA,
-     EXAMPLE {
-	  "ZZ[a..i]",
-      	  "ideal (c..h)"
-	  },
-     }
-document {
      Key => kernel,
      Headline => "kernel of a map",
      TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",
