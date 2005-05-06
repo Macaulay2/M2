@@ -1560,16 +1560,6 @@ document {
      TT "dual C", " -- the dual of a chain complex."
      }
 
-document {
-     Key => regularity,
-     Headline => "compute the regularity",
-     TT "regularity M", " -- computes the regularity of a module or chain complex C.",
-     PARA,
-     "For a free chain complex C, the regularity r is the smallest number so that 
-     each basis element of C_i has degree at most i+r.  For a module M, the
-     regularity is the regularity of a free minimal resolution of M."
-     }
-
 
 
 
