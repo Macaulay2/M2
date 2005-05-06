@@ -1,5 +1,5 @@
 --- status: TODO
---- author(s): 
+--- author(s): Amelia Taylor
 --- notes: 
 
 document { 
@@ -12,7 +12,6 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -20,33 +19,40 @@ document {
      }
 document { 
      Key => (minPresMap,Ring),
-     Headline => "",
-     Usage => "",
+     Headline => "the map used to return a minimal presentation 
+     of a ring",
+     Usage => "minPresMap R",
      Inputs => {
+	  "R" => ""
 	  },
      Outputs => {
+	  RingMap => {"the isomorphism from R to its minimal presentation."}
 	  },
      Consequences => {
 	  },     
-     "description",
      EXAMPLE {
+	  "R = ZZ/101[x,y,z,u]/ideal(x - y^2 + z - z^2, u + x*z, x^2 - u^2);"
 	  },
      Caveat => {},
      SeeAlso => {}
      }
 document { 
      Key => (minPresMap,Ideal),
-     Headline => "",
-     Usage => "",
+     Headline => "the map used to return a minimal presentation of a 
+     the quotient ring from the ideal given",
+     Usage => "minPresMap I",
      Inputs => {
+	  "I" => ""
 	  },
      Outputs => {
+	  RingMap => {"the isomorphism from R to its minimal presentation."}
 	  },
      Consequences => {
 	  },     
-     "description",
      EXAMPLE {
 	  },
      Caveat => {},
      SeeAlso => {}
      }
+
+
