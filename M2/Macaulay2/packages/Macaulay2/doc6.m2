@@ -830,16 +830,6 @@ document {
 	  TO (exteriorPower,ZZ,Module),
 	  }}
 document {
-     Key => numgens,
-     Headline => "the number of generators",
-     TT "numgens X", " -- yields the number of generators used to present
-     a module or ring.",
-     PARA,
-     "For a polynomial ring or quotient of one, this is also the number
-     of variables.  For a free module, this is the same as the rank.  For
-     a general module presented as a subquotient, it is the number of columns
-     in the matrix of generators."}
-document {
      Key => relations,
      Headline => "the defining relations",
      TT "relations M", " -- produce the relations defining a module M.",
