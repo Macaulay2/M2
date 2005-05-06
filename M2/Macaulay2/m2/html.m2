@@ -394,7 +394,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
 	  cmdname := commandLine#0;
 	  if ulimit === null then (
-	       ulimit = test "ulimit" | utest " -t 40" | utest " -m 60000"| utest " -v 60000";
+	       ulimit = test "ulimit" | utest " -t 40" | utest " -m 90000"| utest " -v 90000";
 	       if ulimit != "" then ulimit = ulimit | "; ";
 	       );
 	  cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
