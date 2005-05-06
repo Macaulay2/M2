@@ -2,7 +2,6 @@
 --- author(s): L.Gold
 --- note:
 
- 
 document { 
      Key => hilbertSeries,
      Headline => "compute the Hilbert series",
@@ -11,8 +10,8 @@ document {
      graded component.", 
      PARA, 
      "Note that the series is provided as an ", TO "Expression", ".",
-     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "hilbertPolynomial",
-	  "hilbertFunction"}
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare",
+	  "poincareN", "hilbertPolynomial", "hilbertFunction"}
      }
 document { 
      Key => {(hilbertSeries,PolynomialRing), (hilbertSeries,QuotientRing)},

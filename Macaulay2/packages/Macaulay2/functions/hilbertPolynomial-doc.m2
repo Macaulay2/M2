@@ -8,8 +8,8 @@ document {
      "The Hilbert polynomial by default is written in terms of the
      Hilbert polynomials of projective spaces. The Hilbert polynomial
      of P^i is z |--> binomial(z + i, i).",
-     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "hilbertSeries",
-	  "hilbertFunction"}
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN", 
+	  "hilbertSeries", "hilbertFunction"}
      } 
 
 document {
