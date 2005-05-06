@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes:
+--- notes: 
 
 document { 
      Key => hilbertPolynomial,
@@ -22,7 +22,7 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => "the Hilbert polynomial" 
 	  },
-     "We compute the Hilbert polynomial of a coordinate ring of the
+     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"), " of a coordinate ring of the
      rational quartic curve in P^3.",
          EXAMPLE {
 	  "R = ZZ/101[a..d];",
@@ -53,7 +53,8 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => ""
 	  },
-     "We compute the Hilbert polynomial of a module.",
+     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
+     " of a module.",
      EXAMPLE {
 	  "R = QQ[a..h];",
 	  "M = coker matrix {{a,c,5},{d,b,h}}",
@@ -71,7 +72,8 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => ""
 	  },
-     "We compute the Hilbert polynomial of a coherent sheaf.",
+     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
+     " of a coherent sheaf.",
      EXAMPLE {
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
@@ -90,12 +92,18 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => ""
 	  },
-     "We compute the Hilbert polynomial of an ideal.",
+     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
+     " of the quotient of the ambient ring by an ideal.",
      EXAMPLE {
 	  "R = QQ[a..h];",
 	  "I = ideal(a*b, c*d, e*f);",
-	  "h = hilbertPolynomial I"
+	  "hilbertPolynomial I",
+	  "hilbertPolynomial (R/I)"
 	  },
+     Caveat => {
+	  "As often is the case, calling this function on an ideal I
+	  actually computes it for R/I where R is the ring of I."
+	  }
      }
 
 document { 
@@ -108,7 +116,8 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => ""
 	  },
-     "We compute an example of the Hilbert polynomial of a projective
+     "We compute an example of the ", 
+     TO2(hilbertPolynomial, "Hilbert polynomial"), " of a projective
      Hilbert variety. This is the same as the Hilbert polynomial of
      its coordinate ring.",
      EXAMPLE {
@@ -133,8 +142,8 @@ document {
       " which specifies that the Hilbert polynomial produced should be
       expressed as a polynomial in the degree.",
       PARA,
-     "We compute the Hilbert polynomial of a coordinate ring of the
-     rational quartic curve in P^3.",
+     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"), 
+     " of a coordinate ring of the  rational quartic curve in P^3.",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
       	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});",

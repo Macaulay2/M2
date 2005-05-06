@@ -72,7 +72,7 @@ document {
 
 document { 
      Key => {(hilbertFunction,List,Ideal),(hilbertFunction,ZZ,Ideal)},
-     Headline => "compute the Hilbert function of an ideal",
+     Headline => "compute the Hilbert function of the quotient of the ambient ring by an ideal",
      Usage => "hilbertFunction(d,I)",
      Inputs => {
 	  "d" => List => {" a multidegree, or if singly graded, then just ", TO "ZZ"},
