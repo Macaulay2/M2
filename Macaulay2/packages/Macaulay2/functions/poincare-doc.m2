@@ -12,9 +12,9 @@ document {
      When the multi-degree has a single component, the term is
      (-1)^i T^(d_0).",
      PARA,
-     "Note: the monomial ordering used in the degrees ring is ", TT "RevLex", 
-    ", so the polynomials in it will be displayed with the
-     smallest exponents first.",
+     "Notice that the monomial ordering used in the degrees ring is ",
+     TT "RevLex", ", so the polynomials in it will be displayed with
+     the smallest exponents first.",
      PARA,
      --- DO SOMETHING ABOUT FOLLOWING PARAGRAPH
      TT "(cokernel f).cache.poincare = p", " -- inform the system that
@@ -22,8 +22,8 @@ document {
      ".  This can speed the computation of a Groebner basis of ",
      TT "f", ".  For details, see ", TO "computing Groebner bases",
      ".",
-     SeeAlso => {"poincareN", "degreesRing", "reduceHilbert",
-	  "hilbertFunction", "hilbertSeries", "hilbertPolynomial"}
+     SeeAlso => {"poincareN", "degreesRing", "hilbertFunction",
+	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert"}
      }
 
 document {
