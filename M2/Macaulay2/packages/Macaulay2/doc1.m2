@@ -533,46 +533,6 @@ document {
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 document {
-     Key => vars, 
-     Headline => "variables"
-     }
-document {
-     Key => (vars,Ring),
-     Headline => "row matrix of the variables",
-     Usage => "vars R",
-     Inputs => {
-	  "R" => "",
-	  },
-     Outputs => {
-	  { "the ", TT "1", " by ", TT "n", " matrix whose entries are the variables of the polynomial ring ", TT "R"}
-	  },
-     {
-	  EXAMPLE {
-      	       "R = QQ[a..e]",
-      	       "vars R",
-	       "ideal vars R",
-	       "coker vars R",
-	       "res coker vars R",
-	       }
-     	  }
-     }
-document {
-     Key => (vars,Sequence),
-     Usage => "vars(i .. j)",
-     Inputs => {
-	  "(i .. j)" => "a sequence of integers",
-	  },
-     Outputs => {
-	  { "a sequence of symbols which can be used as indeterminates in a polynomial ring, the ", TT "i", "-th one through the ", TT "j", "-th one." }
-	  },
-     "There is no limit on the size or sign of the integers ", TT "i", " 
-     and ", TT "j", ".  The symbols returned are single letters, or the letter 
-     ", TT "x", " or ", TT "X", " followed by some digits.",
-     EXAMPLE {
-	  "vars(3 .. 9, 33 .. 35, 1000 .. 1002, -100 .. -98)"
-	  }
-     }
-document {
      Key => leadCoefficient,
      Headline => "the leading coefficient",
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
