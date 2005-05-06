@@ -97,7 +97,6 @@ frac EngineRing := R -> (
 -- methods for all ring elements
 
 degreeLength Ring := R -> R.degreeLength
-degreeLength RingElement := f -> degreeLength ring f
 
 use Ring := R -> (
      if R.?ring then use R.ring;

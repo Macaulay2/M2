@@ -312,8 +312,6 @@ binaryPower := (W,n,times,unit,inverse) -> (
 
 Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
 CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety), dual)
-degreesRing CoherentSheaf := F -> degreesRing ring F
-degreeLength CoherentSheaf := F -> degreeLength ring F
 
 sheafHom = method(TypicalValue => CoherentSheaf)
 sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> prune sheaf Hom(module F, module G)
