@@ -19,16 +19,16 @@ document {
 	  "R" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function" },
-     "We compute the dimension of the degree d part of the ring R.",
-     PARA,
-     "At the moment, the function is computed simply by calling ", TO "basis", "
-     and extracting the number of basis elements.",
+	  Expression => "the Hilbert function of the ring" },
      EXAMPLE {	
 	  "R = QQ[x,y,z];",
 	  "hilbertFunction(3, R)",
      	  "basis(3,R)"   	  
-  	  }	
+  	  },	
+     Caveat => {
+	  "At the moment, the function is computed simply by calling ", TO "basis",
+     	  " and extracting the number of basis elements."
+	  },
      }
 
 document { 
@@ -40,18 +40,18 @@ document {
 	  "M" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function" 
+	  Expression => "the Hilbert function of the module" 
 	  },
-     "We compute the dimension of the degree d part of the module M.",
-     PARA,
-     "At the moment, the function is computed simply by calling ", TO "basis", "
-     and extracting the number of basis elements.",
      EXAMPLE {	
 	  "R = QQ[a..d];",
 	  "M = coker matrix {{a,c,5},{1,b,d}}",
 	  "hilbertFunction(2, M)",
      	  "basis(2,M)"   	  
-  	  }	
+  	  },
+     Caveat => {
+	  "At the moment, the function is computed simply by calling ", TO "basis",
+     	  " and extracting the number of basis elements."
+	  },
      }
 
 document { 
@@ -63,19 +63,22 @@ document {
 	  "I" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function" 
+	  Expression => "the Hilbert function of the quotient of its ambient ring by the ideal"
 	  },
-     "We compute the dimension of the degree d part of the ideal R/ I.",
-     PARA,
-     "At the moment, the function is computed simply by calling ", TO "basis", "
-     and extracting the number of basis elements.",
      EXAMPLE {	
 	  "R = QQ[a..f];",
 	  "I = ideal (a*b, c*d, e*f);",
 	  "hilbertFunction(2, I)",
 	  "S = R/I;",
 	  "basis(2,S)"   	  
-  	  }	
+  	  },	
+     Caveat => {
+	  "As often is the case, calling this function on an ideal I
+	  actually computes it for R/I where R is the ring of I.",
+	  PARA,	  
+	  "At the moment, the function is computed simply by calling ", TO "basis",
+     	  " and extracting the number of basis elements."
+	  },
      }
 
 document { 
@@ -87,18 +90,16 @@ document {
 	  "S" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function" 
+	  Expression => "the Hilbert function of the coherent sheaf" 
 	  },
-     "We compute the dimension of the degree d part of the coherent sheaf S.",
-     PARA,
-     "At the moment, the function is computed simply by calling ", TO "basis", "
-     and extracting the number of basis elements.",
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2]);",
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-	  "hilbertFunction(3, S)",
-     	  "basis(3,S)"   	  
-  	  }	
+	  "hilbertFunction(3, S)"  	  },	
+     Caveat => {
+	  "At the moment, the function is computed simply by calling ", TO "basis",
+     	  " and extracting the number of basis elements."
+	  },
      }
 
 document { 
@@ -110,16 +111,15 @@ document {
 	  "V" => ""
 	  },
      Outputs => {
-	  Expression => "the Hilbert function" 
+	  Expression => "the Hilbert function of the projective variety" 
 	  },
-     "We compute the dimension of the degree d part of the projective variety.",
-     PARA,
-     "At the moment, the function is computed simply by calling ", TO "basis", "
-     and extracting the number of basis elements.",
      EXAMPLE {	
 	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "hilbertFunction(3, V)",
-     	  "basis(3,V)"   	  
-  	  }	
+	  "hilbertFunction(3, V)"
+  	  },	
+     Caveat => {
+	  "At the moment, the function is computed simply by calling ", TO "basis",
+     	  " and extracting the number of basis elements."
+	  },
      }
 
