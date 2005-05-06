@@ -3,13 +3,19 @@
 --- notes: 
 
 document { 
-     Key => euler,
+     Key => eulers,
      Headline => "list the sectional Euler characteristics",
      SeeAlso => {genera,genus}
      }
+
+document {
+     Key => (euler,ProjectiveHilbertPolynomial),
+     "This needs to be documented."
+     }
+
 document { 
-     Key => {(euler, CoherentSheaf),(euler,ProjectiveHilbertPolynomial),(euler,Module)},
-     Usage => "euler E",
+     Key => {(eulers, CoherentSheaf),(eulers,Module)},
+     Usage => "eulers E",
      Inputs => {"E" => ""
 	  },
      Outputs => {List =>"the successive sectional Euler characteristics of a coherent sheaf, or a module."
@@ -35,13 +41,13 @@ document {
 	  "HorrocksMumford = sheaf(coker D.dd_3);",
 	  "HH^0(HorrocksMumford(1))",
 	  "HH^0(HorrocksMumford(2))",
-	  "euler(HorrocksMumford(2))"
+	  "eulers(HorrocksMumford(2))"
 	  },
      SeeAlso => {genera,genus}
      }
 document { 
-     Key => (euler,Ideal),
-     Usage => "euler I",
+     Key => (eulers,Ideal),
+     Usage => "eulers I",
      Inputs => {"I" => ""
 	  },
      Outputs => {List =>"the successive sectional Euler 
@@ -54,13 +60,13 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[a,b,c];",
 	  "I =ideal(a^3+b^3+c^3)", 
-	  "euler I"
+	  "eulers I"
 	  },
      SeeAlso => {genera,genus}
      }
 document { 
-     Key => (euler,Ring),
-     Usage => "euler R",
+     Key => (eulers,Ring),
+     Usage => "eulers R",
      Inputs => {"R" => ""
 	  },
      Outputs => {List =>"the successive sectional Euler 
@@ -74,11 +80,11 @@ document {
 	  "S = ZZ/101[a,b,c];",
 	  "I = ideal(a^3+b^3+c^3)", 
 	  "R = S/I",
-	  "euler(R)",
+	  "eulers(R)",
 	  "J = substitute(ideal(b,a+c),R)",
-	  "euler(R/J)"
+	  "eulers(R/J)"
 	  },
      SeeAlso => {genera,genus},
      }
 
- -- doc6.m2:1132:     Key => euler,
+ -- doc6.m2:1132:     Key => eulers,

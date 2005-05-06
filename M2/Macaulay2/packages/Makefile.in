@@ -22,6 +22,7 @@ PACKAGES += SimplicialComplexes
 ##
 
 REMAKE = false
+REMAKE = true
 
 install ::
 	@ for i in $(PACKAGES) ; \

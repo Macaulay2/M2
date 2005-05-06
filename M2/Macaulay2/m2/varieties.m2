@@ -264,6 +264,9 @@ singularLocus(ProjectiveVariety) := X -> (
      A := ring f;
      Proj(A / saturate (minors(codim R, jacobian f) + ideal f)))
 
+eulers CoherentSheaf := F -> (
+     if class variety F =!= ProjectiveVariety then error "expected a projective variety";
+     eulers module F)
 euler CoherentSheaf := F -> (
      if class variety F =!= ProjectiveVariety then error "expected a projective variety";
      euler module F)

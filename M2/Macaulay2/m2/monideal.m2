@@ -8,6 +8,7 @@ raw MonomialIdeal := I -> I.RawMonomialIdeal
 generators MonomialIdeal := (I) -> map(ring I, rawMonomialIdealToMatrix raw I)
 
 ideal MonomialIdeal := (I) -> ideal generators I
+isIdeal MonomialIdeal := I -> true
 
 newMonomialIdeal := (R,rawI) -> new MonomialIdeal from {
      symbol numgens => rawNumgens rawI,
