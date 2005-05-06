@@ -5,7 +5,7 @@
 document { 
      Key => minPres,
      Headline => "minimal presentation of a ring",
-     SeeAlso => {prune}
+     SeeAlso => {prune, trim}
      }
 document { 
      Key => (minPres,Ring),
@@ -32,14 +32,14 @@ document {
      set for the resulting defining ideal is then computed; this is ", 
      TT "J", " and ", TT "Q/J", "the new quotient ring is returned. If ", 
      TT "S/I", " is not graded, then an attempt is made to improve the
-      presentation of ", TT "S/I", ".",
+      presentation of ", TT "S/I", ". An example follows.",
     EXAMPLE {
 	  "R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
 	  "minPres(R)",
 	  "R.minPresMap",
 	  "R.minPresMapInv"
 	  },
-     SeeAlso => {(minPres,Ideal)}     
+     SeeAlso => {(minPres,Ideal), (trim, Ring), (trim, QuotientRing)}     
      }
 document { 
      Key => (minPres,Ideal),
@@ -77,7 +77,7 @@ document {
 	  "I.cache.minPresMap",
 	  "I.cache.minPresMapInv"
 	  },
-     SeeAlso => {(minPres,Ring)}
+     SeeAlso => {(minPres,Ring), (trim, Ideal)}
      },
 document { 
      Key => [minPres, Variable],
