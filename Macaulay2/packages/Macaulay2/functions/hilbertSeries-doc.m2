@@ -100,8 +100,9 @@ document {
      Outputs => {
 	  Divide =>  "the Hilbert series" },
      "We compute the ", TO2  (hilbertSeries, "Hilbert series"), " of R/I, the
-     quotient of the ambient ring by the ideal. Caution: For an ideal
-     I, running ", TT "hilbertSeries I ", "calculates the Hilbert series of R/I.",
+     quotient of the ambient ring by the ideal. Caution: For an ideal I, 
+     running ", TT "hilbertSeries I ", "calculates the Hilbert series
+     of R/I.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
 	  "I = ideal x^2",

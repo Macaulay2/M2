@@ -1,101 +1,96 @@
---- status: TODO
---- author(s): 
---- notes: 
+--- status: DRAFT
+--- author(s): L. Gold
+--- notes:  working on this
 
 document { 
      Key => degreesRing,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "the ring of degrees",
+     "Elements of this ring are used as variables for Poincare
+     polynomials and Hilbert series.", 
+     PARA,
+     "The monomial ordering used in the degrees ring is ", TT "RevLex",
+     ", so the polynomials in it will be displayed with the smallest
+     exponents first, because such polynomials are often used as
+     Hilbert series.",
+     SeeAlso => {"poincare", "poincareN", "hilbertFunction",
+	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert" }
      }
+
 document { 
      Key => (degreesRing,ZZ),
-     Headline => "",
-     Usage => "",
+     Headline => "the ring of degrees",
+     Usage => "degreesRing n",
      Inputs => {
+	  "n" => ZZ => ""
 	  },
      Outputs => {
+	  PolynomialRing => "in n variables"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "This function produces a ring in n variables whose monomials
+     are to be used to represent degrees in another ring with
+     multi-degrees of length n.",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "degreesRing 3"
+	  }
      }
+
 document { 
-     Key => (degreesRing,QuotientRing),
-     Headline => "",
-     Usage => "",
+     Key => {(degreesRing,QuotientRing),(degreesRing,PolynomialRing)},
+     Headline => "the ring of degrees",
+     Usage => "degreesRing R",
      Inputs => {
+	  "R" => {" or a ", TO PolynomialRing}
 	  },
      Outputs => {
+	  PolynomialRing => "in n variables"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "This function produces the ring in n variables whose monomials
+     are the degrees of elements of the given ring.",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R =  ZZ [x, y];",
+	  "degreesRing R",
+	  "S = ZZ[x,y, Degrees=>{{1,1},{1,1}}];",
+	  "degreesRing S"
+     	  }
      }
+
+
 document { 
      Key => (degreesRing,Module),
-     Headline => "",
-     Usage => "",
+     Headline => "the ring of degrees",
+     Usage => "degreesRing M",
      Inputs => {
+	  "M" => Module => ""
 	  },
      Outputs => {
+	  PolynomialRing => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "For an R-module this function produces the ring in n variables
+     whose monomials are the degrees of elements of the ring R.",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "R =  ZZ [x, y];",
+     	  "M = R^3;",
+	  "degreesRing M",
+	  "S = ZZ[x,y, Degrees=>{{1,1},{1,1}}]",
+	  "M = S^3;",	  
+	  "degreesRing M"
+     	  }
      }
-document { 
-     Key => (degreesRing,PolynomialRing),
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+
 document { 
      Key => (degreesRing,CoherentSheaf),
-     Headline => "",
-     Usage => "",
+     Headline => "the ring of degrees",
+     Usage => "degreesRing S",
      Inputs => {
+	  "S" => CoherentSheaf => ""
 	  },
      Outputs => {
+	  PolynomialRing => ""
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+	  "V = Proj(ZZ/101[x_0..x_2]);",
+	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
+      	  "degreesRing M"
+	  }
      }
- -- doc6.m2:361:     Key => degreesRing,
+

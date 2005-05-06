@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: working on this
+--- notes: 
 
 document { 
      Key => {poincareN,(poincareN,ChainComplex)},
@@ -18,7 +18,7 @@ document {
      for each basis element of ", TT "C_i", " with multi-degree",
      TT "{d_0,...,d_(n-1)}.",
      EXAMPLE {
-	  "R = ZZ/101[a..d]",
+	  "R = ZZ/101[a..d];",
       	  "p = poincareN resolution cokernel vars R"
 	  },
      "Setting the S variable to 1 would give the Poincare polynomial
