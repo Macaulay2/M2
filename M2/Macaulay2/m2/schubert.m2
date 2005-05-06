@@ -11,11 +11,13 @@ signOfPermu := P -> (
      )
      
 Grass = method(TypicalValue => Ideal);
-Grass(ZZ,ZZ):=Ideal =>(k,n)->(Schubert(k,n,toList(n-k..n-1)))
+Grass(ZZ,ZZ):=Ideal =>(k,n)->(Schubert(k,n,toList(n-k..n)))
 
 Schubert = method(TypicalValue => Ideal);
-Schubert(ZZ, ZZ, List) := Ideal => (k,n,sigma) -> 
+Schubert(ZZ, ZZ, List) := Ideal => (kk,nn,sigma) -> 
 (
+     k := kk+1;
+     n := nn+1;
      L := subsets(n,k);
      R := ZZ[apply(L, i -> p_i)];
      T := flatten table(L,L, (i,j) -> {i,j});
