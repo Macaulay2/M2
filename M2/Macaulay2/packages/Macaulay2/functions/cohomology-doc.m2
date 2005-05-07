@@ -65,7 +65,14 @@ document {
      "The package ", TO "Dmodules", " has alternative code to
      compute local cohomology (even in the non homogeneous case)",
      PARA,
-     "An example of a singular surface in projective fourspace 
+     "A very simple example:",
+     EXAMPLE {
+          "R = QQ[a,b];",
+          "HH^2 (R^{-3})",
+          "HH^2 (R^{-4})"
+           },
+     PARA,
+     "Another example, a singular surface in projective fourspace 
      (with one apparent double point):",
      EXAMPLE {
 	        "R = ZZ/101[x_0..x_4];",
