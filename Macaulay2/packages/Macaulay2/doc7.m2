@@ -1670,41 +1670,6 @@ TEST ///
     scan(modules, M -> assert( cover exteriorPower(2,M) == exteriorPower(2,cover M) ))
 ///
 document {
-     Key => symbol Bareiss,
-     "A symbol used by ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "."
-     }
-document {
-     Key => symbol Cofactor,
-     "A symbol used by ", TO "det", ", ", TO "minors", ", and ", TO "exteriorPower", "."
-     }
-scan({det,minors,exteriorPower},fn -> document { 
-	  Key => [fn,Strategy],
-	  Headline => "choose between Bareiss and Cofactor algorithms",
-	  Usage => toString fn | "(..., Strategy => x)",
-	  Inputs => {
-	       "x" => Symbol => {"either ", TO "Bareiss", " or ", TO "Cofactor", "" }
-	       },
-	  Consequences => {
-	       { "If x is ", TO "Bareiss", ", then the Bareiss fraction-free determinant algorithm is used; if
-		    x is ", TO "Cofactor", ", then cofactor expansion is used to compute determinants." }
-	       },
-	  "The base ring determines the default strategy.  If the base ring is not a quotient
-	  polynomial ring, the ", TO "Bareiss", " algorithm is used.  If the base ring is
-	  a quotient ring, and the ring has not been declared to be a field with ", TO "toField", ", then
-	  the ", TO "Cofactor", " algorithm is used.",
-	  Caveat => {"The Bareiss algorithm returns
-	       a ring element which may differ from the actual determinant by a zero divisor in the ring.  Thus, 
-	       an ", BOLD "incorrect", " answer may be computed if the ring contains zero divisors."}
-	  })
-TEST "
--- For more determinant tests, see Macaulay2/test/testdet.m2
-R = ZZ/103[a,b,c,d]
-h = matrix {{a,b},{c,d}}
-assert( det h == a * d - b * c )
-assert( minors(1,h) == image matrix {{a,b,c,d}} )
-assert( minors(2,h) == image matrix {{a * d - b * c}} )
-"
-document {
      Key => trace,
      Headline => "trace of a matrix",
      TT "trace f", " -- returns the trace of the matrix f.",
@@ -1715,28 +1680,6 @@ document {
       	  "trace p"
 	  },
      }
-document {
-     Key => det,
-     Headline => "determinant of a matrix",
-     SeeAlso => {"minors", "exteriorPower"}
-     }
-document {
-     Key => (det,Matrix),
-     Headline => "determinant of a matrix",
-     Usage => "det f",
-     Inputs => {
-	  "f" => { "a square matrix"}
-	  },
-     Outputs => {
-	  { "the determinant of ", TT "f"}
-	  },
-     EXAMPLE {
-	  "R = QQ[a..d]",
-      	  "p = matrix {{a,b},{c,d}}",
-      	  "det p"
-	  }
-     }
-     
 document {
      Key => Limit,
      Headline => "specify how many to compute",
