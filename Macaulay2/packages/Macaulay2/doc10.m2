@@ -429,15 +429,6 @@ document {
      }
 
 document {
-     Key => irreducibleCharacteristicSeries,
-     Headline => "compute the irreducible characteristic series",
-     TT "irreducibleCharacteristicSeries I", " -- computes the irreducible
-     characteristic series of the ideal ", TT "I", ".",
-     PARA,
-     "This is an internal routine used by ", TO "decompose", "."
-     }
-
-document {
      Key => topCoefficients,
      Headline => "list of top coefficients of a matrix",
      TT "topCoefficients m", " -- for a matrix ", TT "m", ", for each column, returns
