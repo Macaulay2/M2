@@ -1,4 +1,4 @@
--- Place bugs that you find in here, and
+`-- Place bugs that you find in here, and
 -- then check in the file, using (outside of M2):
 --   cvs ci -m "another bug"
 
@@ -36,6 +36,10 @@ documentation page.
 
 Also would like better example for PoincareN where there are different
 steps of the resolution which have the same degree.
+
+-------------------------------------------------------------------------
+
+Check that the saturation is being used for hilbertSeries of a ProjectiveVariety.
 
 -------------------------------------------------------------------------
 

@@ -1,13 +1,19 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: 
+--- notes: module subpage needs homog. ex
+---        caution: i is not a variable in option, show how to use
+---        show ex of eventually = HF
 
 document { 
      Key => hilbertPolynomial,
      Headline => "compute the Hilbert polynomial",
-     "The Hilbert polynomial by default is written in terms of the
-     Hilbert polynomials of projective spaces. The Hilbert polynomial
-     of P^i is z |--> binomial(z + i, i).",
+     "In a singly graded ambient ring, the ", 
+     TO2(hilbertFunction, "Hilbert function"), " eventually is
+     a polynomial called the Hilbert polynomial. By default this polynomal
+     is written in terms of the Hilbert polynomials of projective
+     spaces because it is a good form for extracting geometric
+     information from the polynomial. The Hilbert
+     polynomial of ", TT "P^i", " is ",  TT "z |--> binomial(z + i, i).",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN", 
 	  "hilbertSeries", "hilbertFunction"}
      } 
@@ -20,7 +26,7 @@ document {
 	  "R" => Ring => ""
 	  },
      Outputs => {
-	  ProjectiveHilbertPolynomial => "the Hilbert polynomial" 
+	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
 	  },
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of a coordinate ring of the rational quartic curve in ", 
@@ -29,7 +35,8 @@ document {
 	  "R = ZZ/101[a..d];",
       	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});",
       	  "presentation S",
-      	  "h = hilbertPolynomial S",
+      	  "h =  hilbertPolynomial S",
+     	  "hilbertPolynomial(S, Projective=>false)"
 	  },
      "The rational quartic curve in ", TT "P^3", " is therefore 'like'
      4 copies of ", TT "P^1", ", with three points missing.  One can
@@ -53,15 +60,17 @@ document {
 	  "M" => Module => ""
 	  },
      Outputs => {
-	  ProjectiveHilbertPolynomial => ""
+	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
 	  },
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of a module.",
      EXAMPLE {
 	  "R = QQ[a..h];",
 --	  "M = coker matrix {{a,c,5},{d,b,h}}",
---	  "h = hilbertPolynomial M"
-	  },
+--	  "h = hilbertPolynomial M",
+--     	  "hilbertPolynomial(N, Projective=>false)"
+	  	  },
+     "FIX THIS"
      }
 
 document { 
@@ -72,7 +81,7 @@ document {
 	  "S" => ""
 	  },
      Outputs => {
-	  ProjectiveHilbertPolynomial => ""
+	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
 	  },
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of a coherent sheaf.",
@@ -80,7 +89,8 @@ document {
 	  "R = ZZ/101[x_0..x_2];",
 	  "V = Proj R;",
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-	  "h = hilbertPolynomial S"
+	  "h = hilbertPolynomial S",
+     	  "hilbertPolynomial(S, Projective=>false)"
 	  },
      }
 
@@ -93,7 +103,7 @@ document {
 	  "I" => Ideal => ""
 	  },
      Outputs => {
-	  ProjectiveHilbertPolynomial => ""
+	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
 	  },
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of the quotient of the ambient ring by an ideal.",
@@ -101,7 +111,8 @@ document {
 	  "R = QQ[a..h];",
 	  "I = ideal(a*b, c*d, e*f);",
 	  "hilbertPolynomial I",
-	  "hilbertPolynomial (R/I)"
+	  "hilbertPolynomial (R/I)",
+	  "hilbertPolynomial(I, Projective=>false)"
 	  },
      Caveat => {
 	  "As is often the case, calling this function on an ideal ", 
@@ -118,7 +129,7 @@ document {
 	  "V" => ProjectiveVariety => ""
 	  },
      Outputs => {
-	  ProjectiveHilbertPolynomial => ""
+	  ProjectiveHilbertPolynomial => "unless the option Projective is false" 
 	  },
      "We compute an example of the ", 
      TO2(hilbertPolynomial, "Hilbert polynomial"), " of a projective
@@ -126,8 +137,9 @@ document {
      its coordinate ring.",
      EXAMPLE {
 	  "V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))",
-	  "h = hilbertPolynomial V"
-	  },
+	  "h = hilbertPolynomial V",
+     	  "hilbertPolynomial(V, Projective=>false)"
+	  }
      }
 
 document { 
