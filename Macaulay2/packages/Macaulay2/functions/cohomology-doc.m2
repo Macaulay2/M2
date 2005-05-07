@@ -35,19 +35,19 @@ document {
 
 document { 
      Key => (cohomology,ZZ,ChainComplexMap),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "cohomology of a chain complex map",
+     Usage => "HH^i f",
+     Inputs => {"i" => "","f" => ""
 	  },
-     Outputs => {
+     Outputs => {Matrix=>{"the ", TT "i", 
+	       "-th cohomology map induced by the chain complex map ", TT "f"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The command provides the map on the ", TT "i", "-th cohomology module
+     induced by a map ", TT "f", " of chain complexes.",
+     PARA,
      EXAMPLE {
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"cohomology", "HH"}
      }
 document { 
      Key => (cohomology,ZZ,Module),
@@ -83,7 +83,7 @@ document {
 	  },
      Caveat => {"There is no check made if the given module 
 	  is graded over the base polynomial ring"},
-     SeeAlso => {"Dmodules", }
+     SeeAlso => {"Dmodules",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf)}
      }
 document { 
      Key => (cohomology,ZZ,SumOfTwists),
@@ -147,7 +147,7 @@ document {
            },   
      Caveat => {"The computation will fail if the module is not finitely generated. Also
      the version HH^i(F(*)) is not yet implemented."},
-     SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf)}
+     SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf), (cohomology,ZZ,Module)}
      }
 document { 
      Key => (cohomology,ZZ,Sequence),
@@ -173,8 +173,17 @@ document {
 	  	  },
      Outputs => {Module => {"HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", "."}
 	  },
-     "description",
      "By definition, this is the same as computing HH_(-i) C.",
+     PARA,
+     EXAMPLE {
+           "R = ZZ/101[x,y]",
+           "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
+           "M = HH^1 C",
+           "prune M"
+            },
+     PARA,
+     "Here is another example computing simplicial cohomology
+     (for a hollow tetrahedron):",
      EXAMPLE {
 	  "needsPackage \"SimplicialComplexes\";",
           "D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}",
