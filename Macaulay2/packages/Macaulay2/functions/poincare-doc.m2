@@ -67,7 +67,7 @@ document {
 	  "R = ZZ/101[w..z];",
 	  "M = module monomialCurveIdeal(R,{1,3,4});",
       	  "poincare M",
-      	  "numerator reduceHilert hilbertSeries M"
+      	  "numerator reduceHilbert hilbertSeries M"
 	  },
      "Recall that the variables of the polynomial are the variables of
      the degrees ring.",
@@ -80,11 +80,12 @@ document {
      }
 
 document { 
-     Key => {(poincare,Ideal),(poincare,MonomialIdeal)},
+     Key => (poincare,Ideal),
+     Undocumented =>  {(poincare,MonomialIdeal)},
      Headline => "assemble degrees of the quotient of the ambient ring by an ideal into a polynomial",
      Usage => "poincare I",
      Inputs => {
-	  "I" => Ideal => {" or a ", TO "MonomialIdeal"}
+	  "I" => Ideal => ""
 	       }, 
     Outputs => {
 	  RingElement => "an element of the polynomial ring in variables corresponding to degrees ring "
