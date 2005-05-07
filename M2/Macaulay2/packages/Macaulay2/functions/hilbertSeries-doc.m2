@@ -16,11 +16,11 @@ document {
      }
 
 document { 
-     Key => {(hilbertSeries,QuotientRing),(hilbertSeries,PolynomialRing)},
+     Key => (hilbertSeries,Ring),
      Headline => "compute the Hilbert series of the ring",
      Usage => "hilbertSeries R",
      Inputs => {
-	  "R" => {" or a ", TO PolynomialRing}
+	  "R" => ""
 	  },
      Outputs => {
 	  Divide => "the Hilbert series" },
@@ -71,24 +71,24 @@ document {
 	  }
      }
 
-document { 
-     Key => (hilbertSeries,CoherentSheaf),
-     Headline => "compute the Hilbert series of a coherent sheaf",
-     Usage => "hilbertSeries M",
-     Inputs => {
-	  "M" => ""
-	  },
-     Outputs => {
-	  Divide => "the Hilbert series" },
-     "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
-     coherent sheaf.",
-     EXAMPLE {
-	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
-      	  "s = hilbertSeries M",
-      	  "numerator s"
-	  }
-     }
+-- document { 
+--      Key => (hilbertSeries,CoherentSheaf),
+--      Headline => "compute the Hilbert series of a coherent sheaf",
+--      Usage => "hilbertSeries M",
+--      Inputs => {
+-- 	  "M" => ""
+-- 	  },
+--      Outputs => {
+-- 	  Divide => "the Hilbert series" },
+--      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
+--      coherent sheaf.",
+--      EXAMPLE {
+-- 	  "V = Proj(ZZ/101[x_0..x_2]);",
+-- 	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
+--       	  "s = hilbertSeries M",
+--       	  "numerator s"
+-- 	  }
+--      }
 
 document { 
      Key => (hilbertSeries,Ideal),
@@ -121,8 +121,9 @@ document {
 	  "poincare I",
 	  "reduceHilbert s"
 	  },
-     Caveat => {"For an ideal I, ", TT "hilbertSeries I", " calculates
-	  the Hilbert series of R/I."
+     Caveat => {
+	  "As is often the case, calling this function on an ideal I
+	  actually computes it for R/I where R is the ring of I.",
 	  }
      }
 document { 

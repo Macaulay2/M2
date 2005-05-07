@@ -57,8 +57,8 @@ document {
      " of a module.",
      EXAMPLE {
 	  "R = QQ[a..h];",
-	  "M = coker matrix {{a,c,5},{d,b,h}}",
-	  "h = hilbertPolynomial M"
+--	  "M = coker matrix {{a,c,5},{d,b,h}}",
+--	  "h = hilbertPolynomial M"
 	  },
      }
 
@@ -75,7 +75,8 @@ document {
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of a coherent sheaf.",
      EXAMPLE {
-	  "V = Proj(ZZ/101[x_0..x_2]);",
+	  "R = ZZ/101[x_0..x_2];",
+	  "V = Proj R;",
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
 	  "h = hilbertPolynomial S"
 	  },
@@ -101,7 +102,7 @@ document {
 	  "hilbertPolynomial (R/I)"
 	  },
      Caveat => {
-	  "As often is the case, calling this function on an ideal I
+	  "As is often the case, calling this function on an ideal I
 	  actually computes it for R/I where R is the ring of I."
 	  }
      }

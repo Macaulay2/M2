@@ -15,13 +15,12 @@ document {
      "Notice that the monomial ordering used in the degrees ring is ",
      TT "RevLex", ", so the polynomials in it will be displayed with
      the smallest exponents first.",
-     PARA,
-     --- DO SOMETHING ABOUT FOLLOWING PARAGRAPH
-     TT "(cokernel f).cache.poincare = p", " -- inform the system that
-     the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
-     ".  This can speed the computation of a Groebner basis of ",
-     TT "f", ".  For details, see ", TO "computing Groebner bases",
-     ".",
+--      PARA,
+--      TT "(cokernel f).cache.poincare = p", " -- inform the system that
+--      the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
+--      ".  This can speed the computation of a Groebner basis of ",
+--      TT "f", ".  For details, see ", TO "computing Groebner bases",
+--      ".",
      SeeAlso => {"poincareN", "degreesRing", "hilbertFunction",
 	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert"}
      }
