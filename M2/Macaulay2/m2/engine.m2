@@ -103,6 +103,7 @@ optionFixes := hashTable {
      LexTiny => intOption,
      RevLex => intOption,
      GroupLex => intOption,
+     GroupRevLex => intOption,
      NCLex => intOption,
      GRevLex => grevOption,
      GRevLexSmall => grevOption,
