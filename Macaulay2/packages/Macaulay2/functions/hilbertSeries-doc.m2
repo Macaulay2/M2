@@ -4,6 +4,7 @@
 
 document { 
      Key => hilbertSeries,
+     Undocumented => {(hilbertSeries,CoherentSheaf)},
      Headline => "compute the Hilbert series",
      "The Hilbert series is the formal power series in the variables of the
      degrees ring whose coefficients are the dimensions of the corresponding
@@ -72,6 +73,7 @@ document {
 	  }
      }
 
+-- NOTE: listed as undocumented above.
 -- document { 
 --      Key => (hilbertSeries,CoherentSheaf),
 --      Headline => "compute the Hilbert series of a coherent sheaf",
@@ -100,10 +102,11 @@ document {
 	  },
      Outputs => {
 	  Divide =>  "the Hilbert series" },
-     "We compute the ", TO2  (hilbertSeries, "Hilbert series"), " of R/I, the
-     quotient of the ambient ring by the ideal. Caution: For an ideal I, 
-     running ", TT "hilbertSeries I ", "calculates the Hilbert series
-     of R/I.",
+     "We compute the ", TO2  (hilbertSeries, "Hilbert series"), " of ", 
+     TT "R/I", ", the quotient of the ambient ring by the
+     ideal. Caution: For an ideal ", TT "I", " running ", 
+     TT "hilbertSeries I ", "calculates the Hilbert series of ",
+     TT "R/I", ".",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",
 	  "I = ideal x^2",
@@ -123,8 +126,9 @@ document {
 	  "reduceHilbert s"
 	  },
      Caveat => {
-	  "As is often the case, calling this function on an ideal I
-	  actually computes it for R/I where R is the ring of I.",
+	  "As is often the case, calling this function on an ideal ", 
+	  TT "I", " actually computes it for ", TT "R/I", " where ", 
+	  TT "R", " is the ring of ", TT "I", ".",
 	  }
      }
 document { 

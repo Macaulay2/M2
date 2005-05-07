@@ -22,18 +22,20 @@ document {
      Outputs => {
 	  ProjectiveHilbertPolynomial => "the Hilbert polynomial" 
 	  },
-     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"), " of a coordinate ring of the
-     rational quartic curve in P^3.",
+     "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
+     " of a coordinate ring of the rational quartic curve in ", 
+     TT "P^3.",
          EXAMPLE {
 	  "R = ZZ/101[a..d];",
       	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});",
       	  "presentation S",
       	  "h = hilbertPolynomial S",
 	  },
-     "The rational quartic curve in P^3 is therefore 'like' 4 copies
-     of P^1, with three points missing.  One can see this by noticing
-     that there is a deformation of the rational quartic to the union
-     of 4 lines, or 'sticks', which intersect in three successive points.",
+     "The rational quartic curve in ", TT "P^3", " is therefore 'like'
+     4 copies of ", TT "P^1", ", with three points missing.  One can
+     see this by noticing that there is a deformation of the rational
+     quartic to the union of 4 lines, or 'sticks', which intersect in
+     three successive points.",
      PARA,
      "These Hilbert polynomials can serve as Hilbert functions, too.",
      EXAMPLE {
@@ -102,8 +104,9 @@ document {
 	  "hilbertPolynomial (R/I)"
 	  },
      Caveat => {
-	  "As is often the case, calling this function on an ideal I
-	  actually computes it for R/I where R is the ring of I."
+	  "As is often the case, calling this function on an ideal ", 
+	  TT "I", " actually computes it for ", TT "R/I", " where ", 
+	  TT "R", " is the ring of ", TT "I", "."
 	  }
      }
 
@@ -141,10 +144,11 @@ document {
      PARA,
      TT "Projective => false", " is an option to ", TO "hilbertPolynomial",
       " which specifies that the Hilbert polynomial produced should be
-      expressed as a polynomial in the degree.",
+      expressed as a polynomial in the variable ", TT "i", ".",
       PARA,
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"), 
-     " of a coordinate ring of the  rational quartic curve in P^3.",
+     " of a coordinate ring of the  rational quartic curve in ", 
+     TT "P^3.",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
       	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4});",
