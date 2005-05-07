@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L.Gold
---- notes:
+--- notes: needs good example
 
 document { 
      Key => {reduceHilbert, (reduceHilbert,Divide)},
