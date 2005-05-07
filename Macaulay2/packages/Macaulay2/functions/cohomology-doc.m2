@@ -47,7 +47,7 @@ document {
      PARA,
      EXAMPLE {
 	  },
-     SeeAlso => {"cohomology", "HH"}
+     SeeAlso => {"cohomology", "HH", "ChainComplex"}
      }
 document { 
      Key => (cohomology,ZZ,Module),
