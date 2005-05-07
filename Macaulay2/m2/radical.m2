@@ -68,7 +68,7 @@ top Module := Module => (M) -> (
     c := codim M;
     p := pdim M;  -- will compute a resolution if needed...
     while p > c do (
-	E := prune Ext^p(M,R);
+	E := minimalPresentation Ext^p(M,R);
 	if E != 0 and codim E === p then (
 	    -- improve M
 	    J := ann E;

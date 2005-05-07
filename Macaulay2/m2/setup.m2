@@ -150,7 +150,7 @@ scan(binaryOperators, op -> (
 			 if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
 			 );
 		    if hush then error line1;
-	  	    preY := centerString(width preX, opstring);
+	  	    preY := centerString(#preX, opstring);
 		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
 		    wid = wid - commentGuardWidth - width preX;
 		    hush = true;					    -- prevent error message recursion

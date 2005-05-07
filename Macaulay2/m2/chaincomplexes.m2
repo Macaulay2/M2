@@ -668,7 +668,7 @@ syzygyScheme = (C,i,v) -> (
      -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel
      -- by a minimal one.  The right way to fix it is to add an option to resolution.
      g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
-     prune cokernel (C.dd_1  * transpose g_(i-1)))
+     minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
 -----------------------------------------------------------------------------
 chainComplex GradedModule := ChainComplex => (M) -> (
      C := new ChainComplex from M;
@@ -896,18 +896,18 @@ image ChainComplexMap := ChainComplex => (f) -> (
      scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix E.dd_(k-deg)));
      C)
 
-prune ChainComplex := ChainComplex => (C) -> (
+minimalPresentation ChainComplex := ChainComplex => opts -> (C) -> (
      D := new ChainComplex;
      complete C;
      complete C.dd;
      D.ring = ring C;
-     scan(spots C, i -> D#i = prune C#i);
-     scan(spots C.dd, i -> D.dd#i = prune C.dd#i);
+     scan(spots C, i -> D#i = minimalPresentation C#i);
+     scan(spots C.dd, i -> D.dd#i = minimalPresentation C.dd#i);
      D)
 
-prune ChainComplexMap := ChainComplexMap => (f) -> (
+minimalPresentation ChainComplexMap := ChainComplexMap => opts -> (f) -> (
      complete f;
-     map(prune target f, prune source f, k -> prune f#k)
+     map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f#k)
      )
 
 -- Local Variables:

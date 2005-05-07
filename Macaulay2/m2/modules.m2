@@ -289,7 +289,7 @@ genus Ring := (R) -> genus R^1
 
 rank Module := M -> (
      if isFreeModule M then numgens M 
-     else if degreeLength ring M === 0 and isField ring M then numgens prune M
+     else if degreeLength ring M === 0 and isField ring M then numgens minimalPresentation M
      else if dim M < dim ring M then 0
      else degree M // degree ring M
      )

@@ -1,4 +1,4 @@
-symbols := last \ sort select(join(pairs Macaulay2Core.Dictionary, pairs PackageDictionary), (nam,sym) -> not match("\\$",nam))
+symbols := rsort select(join(pairs Macaulay2Core.Dictionary, pairs PackageDictionary), (nam,sym) -> not match("\\$",nam))
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)
@@ -10,9 +10,9 @@ f2 := openOut "M2-symbols"
 
 f << "(defvar M2-symbols '(" << endl
 
-scan( select (symbols, isAlpha), s -> (
-	  f << "    " << format toString s << endl;
-	  f2 << toString s << endl;
+scan( select (symbols, (nam,sym) -> isAlpha nam), (nam,sym) -> (
+	  f << "    " << format nam << endl;
+	  f2 << nam << endl;
 	  ))
 
 f2 << close
@@ -37,14 +37,14 @@ add := (face,words) -> if #words > 0 then (
      <<  " . " << face << ")" << endl
      )
 
-add( "font-lock-keyword-face", toString \ select(symbols, isKeyword and isAlpha))
-add( "font-lock-type-face", toString \ select(symbols, is Type))
-add( "font-lock-function-name-face", toString \ select(symbols, is Function))
-add( ",font-lock-constant-face", toString \ select(symbols, sym -> (
+add( "font-lock-keyword-face", first \ select(symbols, (nam,sym) -> isKeyword sym and isAlpha nam))
+add( "font-lock-type-face", first \ select(symbols, (nam,sym) -> (is Type) sym))
+add( "font-lock-function-name-face", first \ select(symbols, (nam,sym) -> (is Function) sym))
+add( ",font-lock-constant-face", first \ select(symbols, (nam,sym) -> (
 	       not (is Function) sym
 	       and not (is Type) sym
 	       and (sym === symbol null or value sym =!= null)
-	       and isAlpha sym)))
+	       and isAlpha nam)))
 f << "         (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl
 f << "         (" << format "\"[^\"]*\"" << " . (0 font-lock-string-face t))"
 f << ")))" << endl << endl

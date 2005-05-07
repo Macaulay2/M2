@@ -125,7 +125,7 @@ setup := (args, symbols) -> (
 	  )))
 
 setup((), { 
-	  entries, borel, prune, gcdCoefficients, singularLocus,
+	  entries, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
@@ -138,8 +138,9 @@ setup((), {
 	  det, presentation, use = symbol use, dismiss, degreesMonoid, submatrix,
 	  truncate, fraction
 	  })
-
 use Thing := identity
+
+minimalPresentation = method(Options=>{Variable => null})
 
 status = method (
      Options => new OptionTable from {

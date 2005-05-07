@@ -3,11 +3,11 @@
 ----- This file was last updated on May 5, 2005
 
 --------------------------------------------------------------
--- This begins the code for minPres which takes both ideals and 
+-- This begins the code for minimalPresentation which takes both ideals and 
 -- quotient rings as input.   
 
 -- checkpoly, finishmap, monOrder and coreProgram are called 
--- in the top-level program minPres.  
+-- in the top-level program minimalPresentation.  
 
 checkpoly := (f)->(
      -- 1 Argument:  A polynomial.
@@ -85,9 +85,9 @@ coreProgram := (I, newvar) -> (
      --               quotient ring, a polynomial ring, 
      --               two matrices and a list of variables.
      -- Note:         The ideal is the ideal promised by 
-     --               minPres ideal and the polynomial ring, 
+     --               minimalPresentation ideal and the polynomial ring, 
      --               the ring for this idea.  The quotient 
-     --               ring similar for minPres ring.  The 
+     --               ring similar for minimalPresentation ring.  The 
      --               matrices set up the maps.
      R := ring I;
      F := finishMap(flatten entries generators I, new MutableList from first entries (vars R)); 
@@ -128,9 +128,8 @@ coreProgram := (I, newvar) -> (
      )
 
 
-minPres = method(Options=>{Variable => null})
 
-minPres Ideal := o -> (I) -> (
+minimalPresentation Ideal := o -> (I) -> (
      --1 Argument: Any ideal in a polynomial ring.
      --Return:     An ideal J in a polynomial ring S such that 
      --            S/J is isomorphic with R/I. Maps from R to S 
@@ -149,7 +148,7 @@ minPres Ideal := o -> (I) -> (
      	  )
      )
 
-minPres Ring := o -> (R) -> (
+minimalPresentation Ring := o -> (R) -> (
      -- 1 Argument: Any quotient of a polynomial ring R.
      -- Return:     An quotient ring R' = S'/J isomorphic to 
      --             R. Maps from R to R' and R' to R are 

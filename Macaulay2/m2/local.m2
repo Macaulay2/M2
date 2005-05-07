@@ -7,7 +7,7 @@ truncatedDual := (M,e) -> (
      R := ring M;
      n := numgens R;
      ww := R^{-n};
-     M1 := prune (M / (truncate(-e+1,M)));
+     M1 := minimalPresentation (M / (truncate(-e+1,M)));
      Ext^n(M1,ww))
 
 cohomology(ZZ,Module) := Module => opts -> (i,M) -> (
@@ -21,9 +21,9 @@ cohomology(ZZ,Module) := Module => opts -> (i,M) -> (
      M = cokernel lift(presentation M,R) ** cokernel F;
      n := numgens R;
      ww := R^{-n};
-     E := prune Ext^(n-i)(M,ww);
+     E := minimalPresentation Ext^(n-i)(M,ww);
      result := if dim E <= 0 then Ext^n(E,ww) else truncatedDual(E,e);
-     prune (result ** A)
+     minimalPresentation (result ** A)
      )
 
 

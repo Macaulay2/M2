@@ -394,13 +394,13 @@ super GradedModule := GradedModule => (M) -> (
      scan(spots M, i -> E#i = super M#i);
      E)
 
-prune GradedModule := GradedModule => (M) -> (
+minimalPresentation GradedModule := GradedModule => opts -> (M) -> (
      E := new GradedModule;
      E.ring = M.ring;
-     scan(spots M, i -> E#i = prune M#i);
+     scan(spots M, i -> E#i = minimalPresentation M#i);
      E)
 
-prune GradedModuleMap := GradedModuleMap => f -> map(prune(f.target), prune(f.source), k -> prune f_k)
+minimalPresentation GradedModuleMap := GradedModuleMap => opts -> f -> map(minimalPresentation(f.target), minimalPresentation(f.source), k -> minimalPresentation f_k)
 
 complete GradedModule := (M) -> null
 rank GradedModule := (M) -> sum(spots M, i -> rank M#i)
