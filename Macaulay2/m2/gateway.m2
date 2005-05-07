@@ -25,9 +25,8 @@ protect argument
 protect subscript
 protect superscript
 
-args = method()
+args := method()
 args(Thing,Sequence) := (i,args) -> prepend(i,args)
-args(Sequence,Thing) := (x,y) -> append(x,y)
 args(Thing,Thing) := identity
 args(Thing,Thing,Sequence) := (i,j,args) -> prepend(i,prepend(j,args))
 args(Thing,Thing,Thing) := identity

@@ -393,7 +393,7 @@ hh = new ScriptedFunctor from {
      superscript => (
 	  pq -> new ScriptedFunctor from {
 	       argument => X -> (
-		    a := splice (pq,X);
+		    a := (pq,X);
 		    f := lookup_hh ( class \ a );
 		    if f === null then error "no method available";
 	       	    f a
@@ -402,7 +402,9 @@ hh = new ScriptedFunctor from {
 	  )
      }
 
-hh(ZZ,ZZ,ProjectiveVariety) := (p,q,X) -> if X.cache.?hh and X.cache.hh#?(p,q) then X.cache.hh#(p,q) else (
+hh(Sequence,ProjectiveVariety) := (pq,X) -> if X.cache.?hh and X.cache.hh#?(p,q) then X.cache.hh#(p,q) else (
+     (p,q) := pq;
+     if class p =!= ZZ or class q =!= ZZ then error "expected integer superscripts";
      d := dim X;
      pqs := { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
      (p,q) = min { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
