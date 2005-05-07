@@ -4,6 +4,7 @@
 
 document { 
      Key => hilbertFunction,
+     Undocumented => {(hilbertFunction,List,CoherentSheaf),(hilbertFunction,ZZ,CoherentSheaf)},
      Headline => "compute the Hilbert function",
      "Need description here",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN",
@@ -15,7 +16,7 @@ document {
      Headline => "compute the Hilbert function of a ring",
      Usage => "hilbertFunction(d,R)",
      Inputs => {
-	  "d" => List => {" a multidegree, or if R is singly graded, then one may write just ", TO "ZZ"},
+	  "d" => List => {" which is a multidegree, or if R is singly graded, then one may write just ", TO "ZZ"},
 	  "R" => ""
 	  },
      Outputs => {
@@ -53,6 +54,7 @@ document {
 --     	  "B = basis({2,2},M)",
 --	  "numgens source B"
   	  },
+     "NEED TO FIX THIS", PARA,
      "The last command ", TO "numgens", " ", TO "source", " counts the
      number of columns in this matrix.",
      PARA,
@@ -65,6 +67,7 @@ document {
 --	  "hilbertFunction(2, M)",
 --    	  "basis(2,M)"   	  
   	  },
+     "NEED TO FIX THIS", PARA,     
      Caveat => {
      	  "This requires a homogeneous module to compute properly, but
 	  will output something if run on a module which is not homogeneous."
@@ -100,11 +103,13 @@ document {
 	  "basis(2,S)"   	  
   	  },	
      Caveat => {
-	  "As is often the case, calling this function on an ideal I
-	  actually computes it for R/I where R is the ring of I.",
+	  "As is often the case, calling this function on an ideal ", 
+	  TT "I", " actually computes it for ", TT "R/I", " where ",
+	  TT "R" , " is the ring of ", TT "I", ".",
 	  }     
      }
 
+-- NOTE: listed as undocumented above
 --document { 
 --     Key => {(hilbertFunction,List,CoherentSheaf),(hilbertFunction,ZZ,CoherentSheaf)},
 --     Headline => "compute the Hilbert function of a coherent sheaf",

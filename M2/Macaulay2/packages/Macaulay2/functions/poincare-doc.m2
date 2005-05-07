@@ -35,7 +35,7 @@ document {
 	  "R" => Ring => ""
 	  },
      Outputs => {
-	  RingElement => "an element of the polynomial ring in variables corresponding to degrees ring "
+	  RingElement => "in the Laurent polynomial ring whose variables correspond to the degrees of the ring"
 	  },
      "We compute the ", TO2(poincare, "Poincare polynomial"), " of a ring.",
      EXAMPLE {
@@ -60,7 +60,7 @@ document {
      	  "M" => Module => ""     
 	  },
      Outputs => {
-	  RingElement => "an element of the polynomial ring in variables corresponding to degrees ring "
+	  RingElement => "in the Laurent polynomial ring whose variables correspond to the degrees of the ambient ring"
 	  },
      "We compute the ", TO2(poincare, "Poincare polynomial"), " of a module.",
           EXAMPLE {
@@ -88,7 +88,7 @@ document {
 	  "I" => Ideal => ""
 	       }, 
     Outputs => {
-	  RingElement => "an element of the polynomial ring in variables corresponding to degrees ring "
+	  RingElement => "in the Laurent polynomial ring whose variables correspond to the degrees of the ambient ring"
 	  },
      "We compute the ", TO2(poincare, "Poincare polynomial"), " of the
      quotient of the ambient ring by an ideal.",
@@ -107,8 +107,9 @@ document {
 	  "numerator reduceHilbert hilbertSeries I"
 	  },
      Caveat => {
-	  "As is often the case, calling this function on an ideal I
-	  actually computes it for R/I where R is the ring of I.",
+	  "As is often the case, calling this function on an ideal ",
+	  TT "I", " actually computes it for ", TT "R/I", " where ", 
+	  TT "R", " is the ring of ", TT "I", ".",
 	  }
      }
 
@@ -120,9 +121,11 @@ document {
      	  "C" => ChainComplex => ""
 	  },
      Outputs => {
-	  RingElement => "an element of the polynomial ring in variables corresponding to degrees ring "
+	  RingElement => "in the Laurent polynomial ring whose
+	  variables correspond to the degrees of the ambient ring"
 	  },
-     "We compute the ", TO2(poincare, "Poincare polynomial"), " of a chain complex.",
+     "We compute the ", TO2(poincare, "Poincare polynomial"), " of a
+     chain complex.",
      EXAMPLE {
      	     "R = ZZ/32003[a..h];",
 	     "C = res ideal(a*b, c*d, e*f)",
@@ -130,8 +133,5 @@ document {
 	     "poincare C"
 	  }
      }
-
- -- doc7.m2:2194:     Key => poincareComputation, -- WHAT ABOUT THIS?
-
 
 
