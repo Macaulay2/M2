@@ -67,17 +67,15 @@ indices := (M,vars) -> apply(vars, x -> (
 	  if M.index#?x then M.index#x
 	  else error "expected a variable of the ring"))
 
-degreesMonoid2 := memoize(
+degreesMonoid ZZ := memoize(
      (n) -> (
-	  T := local T;
+	  T := global T;
 	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => {}, 
 	       MonomialOrder => RevLex,
 	       Inverses=>true];
 	  Zn.name = "ZZ^" | toString n;
 	  Zn))
-
-degreesMonoid ZZ := Monoid => n -> use degreesMonoid2 n
 
 monoidDefaults = (
      new OptionTable from {

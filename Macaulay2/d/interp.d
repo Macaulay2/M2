@@ -259,6 +259,7 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       noprompt,		  -- prompt
      	       true,	       	    	  -- bol
 	       false,			  -- echo
+	       0,			  -- echoindex
 	       false,			  -- output
 	       NOFD,			  -- outfd
 	       false,			  -- outisatty

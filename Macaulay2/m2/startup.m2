@@ -418,6 +418,7 @@ errorDepth = loadDepth
 if not noinitfile then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", applicationDirectory() | "init.m2");
+     tryLoad ("init.m2", "init.m2");
      );
 errorDepth = loadDepth+1				    -- anticipate loadDepth being 2 later
 processCommandLineOptions 3

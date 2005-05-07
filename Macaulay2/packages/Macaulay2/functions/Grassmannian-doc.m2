@@ -2,6 +2,9 @@
 --- author(s): 
 --- notes: GRASSMANNIAN REWRITTEN 
 
+stderr << "--warning: Grass doesn't work yet!!!!" << endl
+end
+
 document { 
      Key => {Grass, (Grass,ZZ,ZZ)
        	  },
