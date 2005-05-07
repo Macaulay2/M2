@@ -1,4 +1,4 @@
---- status: TODO
+--- status: draft
 --- author(s): Sorin Popescu
 --- notes: 
 
@@ -53,9 +53,10 @@ document {
      Key => (cohomology,ZZ,Module),
      Headline => "local cohomology of a module",
      Usage => "HH^i(M)",
-     Inputs => {ZZ => ""
+     Inputs => {"i" => " which is non negative", 
+	       "M" => " which is graded over its base polynomial ring"
 	  },
-     Outputs => {"M" => Module =>" a graded module over its base polynomial ring"
+     Outputs => {Module =>""
 	  },
      "The command computes the local cohomology of the graded 
      module ", TT "M", " with respect to the maximal irrelevant ideal 
@@ -79,19 +80,24 @@ document {
      }
 document { 
      Key => (cohomology,ZZ,SumOfTwists),
-     Headline => "",
-     Usage => "",
+     Headline => "coherent sheaf cohomology module",
+     Usage => "HH^i(F(>=d))",
      Inputs => {
+	  "i" => "",
+          "F(>=d)" => { "notation representing the sum of the twists ", TT "F(n)", " for
+               all ", TT "n", " greater than or equal to ", TT "d", ", where ", TT "F", " is
+               a coherent sheaf on a projective variety ", TT "X", "." }
 	  },
-     Outputs => {
+     Outputs => {Module => {" M over the homogeneous coordinate ring of 
+	   the variety ", TT "X", " which agrees, at least in degrees n greater than 
+	   or equal to d, with the graded module which in degree n is the", TT "i", "-th 
+	   cohomology group of ", TT "F(n)", "."}
 	  },
-     Consequences => {
-	  },     
      "description",
      EXAMPLE {
 	  },
      Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"HH", (cohomology, ZZ, CoherentSheaf)}
      }
 document { 
      Key => (cohomology,ZZ,Sequence),
@@ -227,7 +233,7 @@ document {
      Key => {hh,(hh,Sequence,ProjectiveVariety)},
      Headline => "Hodge numbers of a smooth projective variety",
      Usage =>"hh^(p,q)(X)",
-     Inputs => {"(p,q)" => "of non negative integers","X" => ""},
+     Inputs => {"(p,q)" => Sequence => "of non negative integers","X" => ProjectiveVariety => ""},
      Outputs => {ZZ=>""},
      "The command computes the Hodge numbers h^{p,q} of the smooth
      projective variety X. They are calculated as ",
