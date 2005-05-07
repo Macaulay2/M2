@@ -32,7 +32,7 @@ Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
 	  C := resolution(M,LengthLimit=>i+1);
 	  b := C.dd;
 	  complete b;
-	  prune if b#?i then (
+	  minimalPresentation if b#?i then (
 	       if b#?(i+1) 
 	       then homology(Hom(b_(i+1),N), Hom(b_i,N))
 	       else cokernel Hom(b_i,N))
@@ -165,7 +165,7 @@ Ext(Module,Module) := Module => (M,N) -> (
     assert isHomogeneous DeltaBar;
     assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
-    prune homology(DeltaBar,DeltaBar)))
+    minimalPresentation homology(DeltaBar,DeltaBar)))
 
 Adjust					  -- just use it again
 Repair					  -- just use it again

@@ -106,7 +106,7 @@ poincare Module := M -> (
      n := degreeLength R;
      if n == 0 then error "expected nonzero degree length";
      M = cokernel presentation M;
-     -- if not isHomogeneous relations M then error "expected a homogeneous module";
+     if not isHomogeneous M then error "expected a homogeneous module";
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
      	  ZZn := degreesRing R;
 	  g := leadTerm gb presentation M;
@@ -146,7 +146,9 @@ trimm := (f,n) -> (
      sum(select(listForm f, (deg,coe) -> first deg < n), (deg,coe) -> coe * R_deg))
 
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
+hilbertSeries Ring := options -> (R) -> error "no method for computing hilbert series for this ring"
 hilbertSeries Module := options -> (M) -> (
+     if not isHomogeneous M then error "expected a homogeneous module";
      ord := options.Order;
      if ord === infinity then (
 	  if M.cache#?"exact hilbertSeries" then return M.cache#"exact hilbertSeries";
@@ -265,6 +267,7 @@ hilbertFunctionQ(ZZ,ZZ) := memoize(
      	  else substitute(hilbertFunctionQ(n), {i => i+d})))
 
 hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
+    if not isHomogeneous M then error "expected a homogeneous module";
     R := ring M;
     if degreeLength R != 1 
     then error "expected a singly graded ring";
@@ -352,9 +355,9 @@ presentation(Module) := Matrix => M -> (
 	  else relations M))
 -----------------------------------------------------------------------------  
 
-prune(Module) := Module => M -> (
+minimalPresentation(Module) := Module => opts -> M -> (
      if M.cache.?pruningMap then M
-     else if M.cache.?prune then M.cache.prune else M.cache.prune = (
+     else if M.cache.?minimalPresentation then M.cache.minimalPresentation else M.cache.minimalPresentation = (
 	  R := ring M;
 	  oR := options R;
 	  if isFreeModule M then (
@@ -376,11 +379,11 @@ prune(Module) := Module => M -> (
 	  )
      )
 
-prune(Matrix) := Matrix => (m) -> (
+minimalPresentation(Matrix) := Matrix => opts -> (m) -> (
      M := source m;
-     if not M.cache.?pruningMap then m = m * (prune M).cache.pruningMap;
+     if not M.cache.?pruningMap then m = m * (minimalPresentation M).cache.pruningMap;
      N := target m;
-     if not N.cache.?pruningMap then m = (prune N).cache.pruningMap^-1 * m;
+     if not N.cache.?pruningMap then m = (minimalPresentation N).cache.pruningMap^-1 * m;
      m)
 
 -----------------------------------------------------------------------------
@@ -469,7 +472,7 @@ Module / Vector := Module => (M,v) -> (
 --top Module := M -> (
 --     R := ring M;
 --     c := codim M; 
---     annihilator prune Ext^c(M, R))
+--     annihilator minimalPresentation Ext^c(M, R))
 --document { top,
 --     TT "top M", "produce the annihilator of Ext^c(M, R), where c
 --     is the codimension of the support of the module M."

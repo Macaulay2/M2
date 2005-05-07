@@ -23,7 +23,7 @@ Tor(ZZ, Module, Module) := Module => (i,M,N) -> (
      else if i === 0 then M ** N
      else (
 	  C := resolution(M,LengthLimit=>i+1);
-	  N = prune N;
+	  N = minimalPresentation N;
 	  b := C.dd;
 	  complete b;
 	  if b#?i then (

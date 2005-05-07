@@ -67,6 +67,8 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else degreesRing degreeLength R)
 
+degreesRing Ring := R -> error "no degreesRing for this ring"
+
 generators PolynomialRing := R -> R.generators
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
 allGenerators PolynomialRing := R -> join(generators R, apply(allGenerators coefficientRing R, a -> a * 1_R))
