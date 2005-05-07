@@ -60,7 +60,6 @@ degreesRing ZZ := PolynomialRing => memoize(
 	       Zn = degreesMonoid n;
 	       ZZn = ZZ Zn;
 	       ZZn.name = "ZZ[" | Zn.name | "]";
-     	       use ZZn;
 	       ZZn)))
 
 degreesRing PolynomialRing := PolynomialRing => R -> (

@@ -37,7 +37,11 @@ value IndexedVariable := v -> (
      t := valueTable x;
      if t#?i then t#i else v)
 
-installMethod(symbol <-, IndexedVariable, (xi,y) -> (valueTable xi#0)#(xi#1) = y)
+installMethod(symbol <-, IndexedVariable, 
+     (xi,y) -> (
+	  (valueTable xi#0)#(xi#1) = y;
+	  xi#0 <- xi#0;
+	  y))
 installAssignmentMethod(symbol "_",Symbol,Thing, (sym,i,val) -> (valueTable sym)#i=val)
 
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (

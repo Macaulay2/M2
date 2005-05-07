@@ -46,6 +46,7 @@ export file := {
 	prompt:function():string, -- function to call to get prompt string when input is required
         bol:bool,     	   	-- at the beginning of a line, and a prompt is needed
 	echo:bool,     	   	-- whether to echo characters read to corresponding output file
+	echoindex:int,	        --   inbuffer.echoindex is the next character to echo
      	-- output file stuff
      	output:bool,	        -- is output file
 	outfd:int,		-- file descriptor or -1
@@ -76,12 +77,12 @@ newbuffer():string := new string len bufsize do provide ' ';
 export dummyfile := file(nextHash(), "dummy",0, 
      false, "",
      false,NOFD,NOFD,0,
-     false,NOFD,false,        "",          0,0,false,false,noprompt,true,false,
+     false,NOFD,false,        "",          0,0,false,false,noprompt,true,false,0,
      false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1,false);
 export stdIO  := file(nextHash(),  "stdio",  0, 
      false, "",
      false, NOFD,NOFD,0,
-     true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,true,false,
+     true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,true,false,0,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
 
 init():void := (
@@ -97,7 +98,7 @@ export stdout := stdIO;
 export stderr := file(nextHash(), "stderr", 0, 
      false, "",
      false,NOFD,NOFD,0,
-     false,NOFD  ,false,          "",        0,0,false,false,noprompt,true,false,
+     false,NOFD  ,false,          "",        0,0,false,false,noprompt,true,false,0,
      true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
 export errmsg := { message:string };
 export FileCell := {file:file,next:(null or FileCell)};
@@ -148,7 +149,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  false, "",
 	  listener, so, NOFD, if listener then 0 else 1,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
-	  0, 0, false, false,noprompt, true, false,
+	  0, 0, false, false,noprompt, true, false,0,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
 	  0, 0, false, dummyNetList,0,-1,false))));
 accept(f:file,input:bool,output:bool):(file or errmsg) := (
@@ -169,7 +170,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  false, "",
 	  false, NOFD,NOFD,f.numconns,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
-	  0, 0, false, false,noprompt, true, false,
+	  0, 0, false, false,noprompt, true, false, 0,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
 	  0, 0, false, dummyNetList,0,-1,false))));
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
@@ -208,7 +209,7 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
 	  false, "",
 	  listener, NOFD,NOFD,0,
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 
-	  0, 0, false, false,noprompt, true, false,
+	  0, 0, false, false,noprompt, true, false, 0,
 	  output, if output then toChild.1 else NOFD, false, if output then newbuffer() else "",
 	  0, 0, false, dummyNetList,0,-1,false))));
 export openIn(f:file):(file or errmsg) := accept(f,true,false);
@@ -228,7 +229,7 @@ export openIn(filename:string):(file or errmsg) := (
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 	  	    false, "",
 		    false, NOFD,NOFD,0,
-		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, false,noprompt,true,false,
+		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, false,noprompt,true,false,0,
 		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0,-1,false)))));
 export openOut(filename:string):(file or errmsg) := (
      if filename === "-"
@@ -244,7 +245,7 @@ export openOut(filename:string):(file or errmsg) := (
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 	  	    false, "",
 		    false, NOFD,NOFD,0,
-		    false, NOFD, false,           "",          0, 0, false,false,noprompt,true,false,
+		    false, NOFD, false,           "",          0, 0, false,false,noprompt,true,false,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false)))));
 export openInOut(filename:string):(file or errmsg) := (
      if filename === "-"
@@ -445,6 +446,8 @@ export filbuf(o:file):int := (
      if o.inindex > 0
      then (
 	  o.insize = o.insize - o.inindex;
+	  o.echoindex = o.echoindex - o.inindex;
+	  if o.echoindex < 0 then o.echoindex = 0;
 	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
 	  o.inindex = 0;
 	  );
@@ -626,7 +629,15 @@ export getc(o:file):int := (
      else if o.bol && !o.readline then maybeprompt(o);
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
-     if o.echo then stdout << c;
+     if o.echo && o.echoindex < o.inindex then (
+	  while o.echoindex < o.insize && (
+	       e := o.inbuffer.(o.echoindex);
+	       stdout << e; 
+	       o.echoindex = o.echoindex + 1;
+     	       e != '\n'
+	       )
+	  do nothing;
+	  );
      if c == nl then (
 	  o.bol = true;
 	  if o.echo then flush(stdout);

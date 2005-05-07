@@ -254,8 +254,9 @@ projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
 	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
      	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
 
-i := symbol i
-hilbertFunctionRing := QQ[i]
+hilbertFunctionRing := QQ[global i]
+i := value global i
+global i <- global i
 
 hilbertFunctionQ := method()
 hilbertFunctionQ(ZZ) := (n) -> (

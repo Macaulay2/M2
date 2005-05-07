@@ -1,6 +1,9 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
+        symbol i,
+	symbol S,
+	symbol T,
      	symbol homeDirectory,
         symbol GF$a,
         symbol packageSuffix,

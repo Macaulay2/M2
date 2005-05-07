@@ -992,7 +992,7 @@ documentation Array := key -> (		    -- optional argument
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
      default := (options fn)#opt;
      Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
-	  DIV { BOLD "Further information", 
+	  DIV { SUBSECTION "Further information", 
 	       fixup UL {
 	       	    SEQ{ "Default value: ", if hasDocumentation default then TO {default} else TT toString default },
 	       	    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },

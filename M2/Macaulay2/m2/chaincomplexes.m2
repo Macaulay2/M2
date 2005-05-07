@@ -395,12 +395,15 @@ poincare ChainComplex := C -> (
      f)
 
 poincareN ChainComplex := (C) -> (
-     s := local S;
-     t := local T;
+     saveS := value global S;
+     s := global S;
+     saveT := value global T;
+     t := global T;
      G := monoid [s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true];
      -- this stuff has to be redone as in Poincare itself, DRG
      R := ZZ G;
-     use R;
+     global S <- saveS;
+     global T <- saveT;
      f := 0_R;
      complete C;
      scan(keys C, n -> (
