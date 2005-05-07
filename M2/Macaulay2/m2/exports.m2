@@ -900,7 +900,6 @@ export (
 	symbol pi,
 	symbol plus,
 	symbol poincare,
-	symbol poincareComputation,
 	symbol poincareN,
 	symbol pop,
 	symbol position,

@@ -17,7 +17,9 @@ PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)
 assert( not isGlobalSymbol "Macaulay2Core" )
 getGlobalSymbol(PackageDictionary,"Macaulay2Core")
---getGlobalSymbol(PackageDictionary,"User")
+
+-- references to the symbol 'User' occur before the corresponding package has been created...
+getGlobalSymbol(PackageDictionary,"User")
 
 -----------
 

@@ -158,20 +158,23 @@ methods Thing := F -> (
 usage := () -> (
      << endl
      << " -- useful debugger commands:" << endl
-     << " --     break                   leave the debugger, returning to top level" << endl
-     << " --     end                     abandon the code, enter debugger one level up" << endl
-     << " --     listLocalSymbols        display local symbols and their values" << endl
-     << " --     listUserSymbols         display user symbols and their values" << endl
-     << " --     continue                execute the code and continue" << endl
-     << " --     continue n              execute the code, stop after n microsteps" << endl
-     << " --     return                  bypass code, return 'null', and continue" << endl
-     << " --     return x                bypass code, return 'x', and continue" << endl
-     << " --     disassemble errorCode   examine the code microsteps" << endl
-     << " --     value errorCode         execute the code, returning its value" << endl
+     << "     break                  -- leave the debugger, returning to top level" << endl
+     << "     end                    -- abandon the code, enter debugger one level up" << endl
+     << "     listLocalSymbols       -- display local symbols and their values" << endl
+     << "     listUserSymbols        -- display user symbols and their values" << endl
+     << "     continue               -- execute the code and continue" << endl
+     << "     continue n             -- execute the code, stop after n microsteps" << endl
+     << "     return                 -- bypass code, return 'null', and continue" << endl
+     << "     return x               -- bypass code, return 'x', and continue" << endl
+     << "     disassemble errorCode  -- examine the code microsteps" << endl
+     << "     value errorCode        -- execute the code, returning its value" << endl
      )
 firstTime := true
 debuggerHook = () -> (
-     if firstTime then ( usage(); firstTime = false; );
+     if firstTime then ( 
+	  usage(); 
+	  -- firstTime = false; 
+	  );
      << endl << " -- code just attempted: " << code errorCode << endl
      )
 

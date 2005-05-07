@@ -178,6 +178,7 @@ globalSectionsModule := (G,bound) -> (
 LowerBound = new SelfInitializingType of BasicList
 >  InfiniteNumber := >  ZZ := LowerBound => i -> LowerBound{i+1}
 >= InfiniteNumber := >= ZZ := LowerBound => i -> LowerBound{i}
+SheafOfRings(*) := O -> O^1(*)
 CoherentSheaf(*) := F -> F(>=-infinity)
 
 SumOfTwists = new Type of HashTable
