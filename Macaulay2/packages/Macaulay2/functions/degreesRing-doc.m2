@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes:  working on this
+--- notes:  
 
 document { 
      Key => degreesRing,
@@ -24,28 +24,28 @@ document {
 	  "n" => ZZ => ""
 	  },
      Outputs => {
-	  PolynomialRing => "in n variables"
+	  PolynomialRing => "actually a Laurent polynomial ring"
 	  },
-     "This function produces a ring in n variables whose monomials
-     are to be used to represent degrees in another ring with
-     multi-degrees of length n.",
+     "This function produces a Laurent polynomial ring in n variables
+     whose monomials are to be used to represent degrees in another
+     ring with multi-degrees of length n.",
      EXAMPLE {
 	  "degreesRing 3"
 	  }
      }
 
 document { 
-     Key => {(degreesRing,QuotientRing),(degreesRing,PolynomialRing)},
+     Key => (degreesRing,Ring),
      Headline => "the ring of degrees",
      Usage => "degreesRing R",
      Inputs => {
-	  "R" => {" or a ", TO PolynomialRing}
+	  "R" => ""
 	  },
      Outputs => {
-	  PolynomialRing => "in n variables"
+	  PolynomialRing => "actually Laurent polynomial ring"
 	  },
-     "This function produces the ring in n variables whose monomials
-     are the degrees of elements of the given ring.",
+     "This function produces a Laurent polynomial ring in n variables
+     whose monomials are the degrees of elements of the given ring.",
      EXAMPLE {
 	  "R =  ZZ [x, y];",
 	  "degreesRing R",

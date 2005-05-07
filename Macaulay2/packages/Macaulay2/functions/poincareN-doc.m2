@@ -10,7 +10,7 @@ document {
      	  "C" => ChainComplex => ""
 	  },
      Outputs => {
-	  RingElement => ""
+	  RingElement => "in the Laurent polynomial ring"
 	  },
      "This function encodes information about the degrees of basis
      elements of a free chain complex in a polynomial. The polynomial
@@ -21,7 +21,7 @@ document {
 	  "R = ZZ/101[a..d];",
       	  "p = poincareN resolution cokernel vars R"
 	  },
-     "Setting the S variable to 1 would give the Poincare polynomial
+     "Setting the S variable to -1 would give the Poincare polynomial
      calculated by ",
      TO "poincare", ".",
      EXAMPLE {
