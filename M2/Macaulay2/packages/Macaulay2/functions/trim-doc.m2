@@ -1,10 +1,12 @@
 --- status: Draft
 --- author(s): Amelia Taylor
---- notes: 
+--- notes: Be sure to note that trim I and trim R^1/I do 
+---        the same thing as the minimal relations for 
+---        R^1/I are the minimal generators for I.
 
 document { 
      Key => trim,
-     Headline => "",
+     Headline => "minimize generators and relations",
      Usage => "",
      Inputs => {
 	  },
