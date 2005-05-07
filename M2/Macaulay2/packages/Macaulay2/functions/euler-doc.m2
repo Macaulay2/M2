@@ -1,16 +1,56 @@
 --- status: draft
---- author(s): Popescu
+--- author(s): Sorin Popescu
 --- notes: 
+
+
+
+document {
+     Key => euler,
+     Headline => "Euler characteristic",
+     SeeAlso => {eulers, genus}
+     }
+
+
+document {
+     Key => (euler,ProjectiveHilbertPolynomial),
+     "This needs to be documented.",
+     SeeAlso => {hilbertPolynomial,genus}
+     }
+
+document {
+     Key => (euler,ProjectiveVariety),
+     Headline => "topological Euler characteristic of a (smooth) projective variety",
+     "This needs to be documented.",
+     SeeAlso => {Proj,genus}
+     }
+
+document {
+     Key => (euler,CoherentSheaf),
+     "This needs to be documented."
+     }
+
+document {
+     Key => (euler,Module),
+     "This needs to be documented.",
+     SeeAlso => {(eulers,Module),genus}
+     }
+
+document {
+     Key => (euler,Ring),
+     "This needs to be documented.",
+     SeeAlso => {(eulers,Ring),genus}
+     }
+
+document {
+     Key => (euler,Ideal),
+     "This needs to be documented.",
+     SeeAlso => {(eulers,Ideal),genus}
+     }
 
 document { 
      Key => eulers,
      Headline => "list the sectional Euler characteristics",
-     SeeAlso => {genera,genus}
-     }
-
-document {
-     Key => (euler,ProjectiveHilbertPolynomial),
-     "This needs to be documented."
+     SeeAlso => {euler,genera,genus}
      }
 
 document { 
