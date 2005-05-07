@@ -8,10 +8,11 @@ document {
      "Elements of this ring are used as variables for Poincare
      polynomials and Hilbert series.", 
      PARA,
-     "The monomial ordering used in the degrees ring is ", TT "RevLex",
-     " so the polynomials in it will be displayed with the smallest
-     exponents first, because such polynomials are often used as
-     Hilbert series.",
+     "The degrees ring is a Laurent polynomial ring as can be seen by
+     the option ", TT "inverses => true", ". The monomial ordering
+     used in the degrees ring is ", TT "RevLex", " so the polynomials
+     in it will be displayed with the smallest exponents first,
+     because such polynomials are often used as Hilbert series.",
      SeeAlso => {"poincare", "poincareN", "hilbertFunction",
 	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert" }
      }
@@ -36,6 +37,7 @@ document {
 
 document { 
      Key => (degreesRing,Ring),
+     Undocumented => {(degreesRing, QuotientRing), (degreesRing,PolynomialRing)},
      Headline => "the ring of degrees",
      Usage => "degreesRing R",
      Inputs => {

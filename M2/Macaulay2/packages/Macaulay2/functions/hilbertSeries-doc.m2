@@ -17,6 +17,7 @@ document {
 
 document { 
      Key => (hilbertSeries,Ring),
+     Undocumented => {(hilbertSeries,QuotientRing), (hilbertSeries, PolynomialRing)},
      Headline => "compute the Hilbert series of the ring",
      Usage => "hilbertSeries R",
      Inputs => {
@@ -32,13 +33,13 @@ document {
      	  "poincare R"
 	  },
      "Recall that the variables of the power series are the variables of
-     the degrees ring.",
+     the ", TO2 (degreesRing,"degrees ring"), ".",
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}]/ideal(x^2);",
       	  "s = hilbertSeries R",
 	  "numerator s",
      	  "poincare R"
-	  },
+	  }
      }
 
 document { 
@@ -61,7 +62,7 @@ document {
       	  "poincare M"
 	  },
      "Recall that the variables of the power series are the variables of
-     the degrees ring.",
+     the ", TO2 (degreesRing,"degrees ring"), ".",
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
 	  "M = module ideal x^2;",
@@ -112,7 +113,7 @@ document {
 	  "reduceHilbert s"	  
 	  },
      "Recall that the variables of the power series are the variables of
-     the degrees ring.",
+     the ", TO2 (degreesRing,"degrees ring"), ".",
      EXAMPLE {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
 	  "I = ideal x^2;",
@@ -168,7 +169,9 @@ document {
      Outputs => {
 	  Divide =>   "the Hilbert series" },
      "We compute the ", TO2 (hilbertSeries, "Hilbert series"), " of a
-     projective variety.",
+     projective variety, that is, the Hilbert series of the
+     homogeneous coordinate ring of ", TT "V", ". The saturation of
+     the ideal may need to be computed.",
      EXAMPLE {
 	  "V = Proj(QQ[x,y])",
 	  "s = hilbertSeries V",
@@ -181,15 +184,27 @@ document {
      Usage => "hilbertSeries(..., Order => n)",
      Inputs => {
 	  "n" => ZZ => ""},
+     Consequences => {
+	  {"The output is no longer of type ", TO "Divide", ". It is a
+	  polynomial in the ", TO2 (degreesRing,"degrees ring"), "."}
+	  },
      "We compute the Hilbert series both without and with the optional
-     argument. In the second case notice the first 5 terms of the
-     power series expansion are displayed rather than expressing the
-     series as a rational function.",
+     argument. In the second case notice the terms of power series
+     expansion up to, but not including, degree 5 are displayed rather
+     than expressing the series as a rational function. The polynomial
+     expression is an element of a Laurent polynomial ring which is
+     the ", TO2 (degreesRing,"degrees ring"), " of the ambient ring.",
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "hilbertSeries(R/x^3)",
 	  "hilbertSeries(R/x^3, Order =>5)"
-	  }
+	  },
+     "If the ambient ring is multigraded, then the ",
+     TO2 (degreesRing,"degrees ring"), " has multiple variables.",
+     EXAMPLE {
+	  "R = ZZ/101[x,y, Degrees=>{{1,2},{2,3}}];",
+	  "hilbertSeries(R/x^3, Order =>5)"
+	  },     
      }
 
 TEST ///
