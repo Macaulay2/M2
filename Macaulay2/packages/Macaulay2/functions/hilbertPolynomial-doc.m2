@@ -1,7 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: module subpage needs homog. ex
----        caution: i is not a variable in option, show how to use
+--- notes: write caution: i is not a variable in option, show how to use
 ---        show ex of eventually = HF
 
 document { 
@@ -66,16 +65,15 @@ document {
      " of a module.",
      EXAMPLE {
 	  "R = QQ[a..h];",
---	  "M = coker matrix {{a,c,5},{d,b,h}}",
---	  "h = hilbertPolynomial M",
---     	  "hilbertPolynomial(N, Projective=>false)"
+	  "M = coker matrix {{a,c,d},{d,b,h}}",
+	  "h = hilbertPolynomial M",
+     	  "hilbertPolynomial(M, Projective=>false)"
 	  	  },
-     "FIX THIS"
      }
 
 document { 
      Key => (hilbertPolynomial,CoherentSheaf),
-     Headline => "compute the Hilbert polynomial of a coherent sheaf",
+     Headline => "compute the Hilbert polynomial of the coherent sheaf",
      Usage => "hilbertPolynomial S",
      Inputs => {
 	  "S" => ""
