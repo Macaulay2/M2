@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: still need to write description on main node, fix modules to be homog
+--- notes: still need to write description on main node
 
 document { 
      Key => hilbertFunction,
@@ -49,12 +49,11 @@ document {
 	  },
      EXAMPLE {	
 	  "R = QQ[a..d, Degrees=>{4:{1,1}}];",
-	  "M = coker matrix {{a,c,5},{1,b,d}}",
---	  "hilbertFunction({2,2}, M)",
---     	  "B = basis({2,2},M)",
---	  "numgens source B"
+	  "M = coker matrix {{a,c,d},{c,b,d}}",
+	  "hilbertFunction({2,2}, M)",
+     	  "B = basis({2,2},M)",
+	  "numgens source B"
   	  },
-     "NEED TO FIX THIS", PARA,
      "The last command ", TO "numgens", " ", TO "source", " counts the
      number of columns in this matrix.",
      PARA,
@@ -63,11 +62,10 @@ document {
      write an integer.",
      EXAMPLE {	
 	  "R = QQ[a..d];",
---	  "M = coker matrix {{a,c,5},{1,b,d}}",
---	  "hilbertFunction(2, M)",
---    	  "basis(2,M)"   	  
+	  "M = coker matrix {{a,c,d},{c,b,d}}",
+	  "hilbertFunction(2, M)",
+    	  "basis(2,M)"   	  
   	  },
-     "NEED TO FIX THIS", PARA,     
      Caveat => {
      	  "This requires a homogeneous module to compute properly, but
 	  will output something if run on a module which is not homogeneous."
