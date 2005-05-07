@@ -203,7 +203,7 @@ idealizer0 = (C,w) -> (
 	       newJ1 := newI1 + RtoA JR;
 	       newI := minimalPresentation(newI1);
 	       R2 := ring newI;
-	       FF := substitute(((newI1).cache.minPresMap).matrix,R2);
+	       FF := substitute(((newI1).cache.minimalPresentationMap).matrix,R2);
 	       F := map(R2,A,FF);
 	       newJ :=  F newJ1;
 	       --Making the map from S to it's integral closure.

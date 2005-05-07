@@ -168,7 +168,7 @@ fetchRawDocumentation FinalDocumentTag := tag -> (
      fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
      )
 fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary, 
-     pkg -> (
+     pkg -> if class pkg === Package then (
 	  r := fetchRawDocumentation(pkg,fkey);
 	  if r =!= null then break r))
 

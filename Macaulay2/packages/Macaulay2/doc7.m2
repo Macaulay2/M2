@@ -1848,14 +1848,6 @@ document {
 	  },
      }
 document {
-     Key => poincareComputation,
-     Headline => "store the Poincare polynomial computation",
-     TT "poincareComputation", " -- a key used in a module or monomial
-     ideal to store a computation of Poincare polynomial.",
-     PARA,
-     SeeAlso => {"poincare"}
-     }
-document {
      Key => Order,
      Headline => "specify the order of a Hilbert series required",
      TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "

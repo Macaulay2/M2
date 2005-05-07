@@ -133,8 +133,8 @@ minimalPresentation Ideal := o -> (I) -> (
      --1 Argument: Any ideal in a polynomial ring.
      --Return:     An ideal J in a polynomial ring S such that 
      --            S/J is isomorphic with R/I. Maps from R to S 
-     --            and S to R are encoded in I.cache.minPresMap
-     --            and I.cache.minPresMapInv respectively.
+     --            and S to R are encoded in I.cache.minimalPresentationMap
+     --            and I.cache.minimalPresentationMapInv respectively.
      --Method:     Generators of I that are linear and occur 
      --            only once in that generator are removed.  
      --            This top level program calls coreProgram.
@@ -142,8 +142,8 @@ minimalPresentation Ideal := o -> (I) -> (
      --            finishMap calls checkpoly.
      if I == 0 then I else (
 	  S := coreProgram(I,o.Variable);
-	  I.cache.minPresMap = map(S_1, ring I, S_3);
-     	  I.cache.minPresMapInv = map(ring I, S_1, S_5);
+	  I.cache.minimalPresentationMap = map(S_1, ring I, S_3);
+     	  I.cache.minimalPresentationMapInv = map(ring I, S_1, S_5);
 	  S_0
      	  )
      )
@@ -152,7 +152,7 @@ minimalPresentation Ring := o -> (R) -> (
      -- 1 Argument: Any quotient of a polynomial ring R.
      -- Return:     An quotient ring R' = S'/J isomorphic to 
      --             R. Maps from R to R' and R' to R are 
-     --             encoded in R.minPresMap and R.minPresMapInv
+     --             encoded in R.minimalPresentationMap and R.minimalPresentationMapInv
      --             respectively.
      --Method:      Write R as S/I, then generators of I that 
      --             are linear and occur only once in that 
@@ -162,14 +162,14 @@ minimalPresentation Ring := o -> (R) -> (
      --             finishMap calls checkpoly.
      M := presentation R;
      S := coreProgram(ideal M, o.Variable);
-     R.minPresMap = map(S_2,R,S_4); 
-     R.minPresMapInv = map(R,S_2,S_5);
+     R.minimalPresentationMap = map(S_2,R,S_4); 
+     R.minimalPresentationMapInv = map(R,S_2,S_5);
      S_2)
 
 ---------------------------
--- minPresMap2 = method()
+-- minimalPresentationMap2 = method()
 
--- minPresMap2 Ring := (R) -> (
+-- minimalPresentationMap2 Ring := (R) -> (
      --Input:   A quotient ring.
      --Output:  A map from the polynomial ring to itself 
      --         that is the map used to form a minimal 
@@ -177,7 +177,7 @@ minimalPresentation Ring := o -> (R) -> (
 --     finishMap(flatten entries presentation R, new MutableList from first entries (generators ideal presentation R))
 --          )
 
---minPresMap2 Ideal := (I) -> ( 
+--minimalPresentationMap2 Ideal := (I) -> ( 
      --Input:   An ideal.
      --Output:  A map from the ring of I, call it A, 
      --         to itself, that is the map used to form a minimal 

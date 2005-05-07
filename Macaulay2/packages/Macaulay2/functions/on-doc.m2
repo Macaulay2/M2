@@ -183,7 +183,6 @@ document {
  -- doc7.m2:1563:     Key => content,
  -- doc7.m2:1720:     Key => (symbol _,Function,Thing),
  -- doc7.m2:1748:     Key => MinorsComputation,
- -- doc7.m2:2194:     Key => poincareComputation,
  -- doc7.m2:2202:     Key => hilbertFunction,
  -- doc7.m2:2405:     Key => presentation,
  -- doc8.m2:264:     Key => "Monomial orders in free modules",

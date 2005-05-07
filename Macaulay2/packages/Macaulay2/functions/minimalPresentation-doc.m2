@@ -22,8 +22,8 @@ document {
 	  },
      Consequences => {
 	  {TT "minimalPresentation", " stores the isomorphism from ", 
-	       TT "R = S/I", " to ", TT "Q/J", " as ", TT "R.minPresMap", 
-	       " and the inverse of this map as ", TT "R.minPresMapInv"}
+	       TT "R = S/I", " to ", TT "Q/J", " as ", TT "R.minimalPresentationMap", 
+	       " and the inverse of this map as ", TT "R.minimalPresentationMapInv"}
 	  },
      "If the ring ", TT "S/I", " is graded, then the quotient ring ", 
      TT "Q/J", " is a minimal presentation 
