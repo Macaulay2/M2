@@ -9,14 +9,15 @@ document {
      TO2 (hilbertSeries, "Hilbert series"), ". It encodes information
      about the degrees of basis elements of given object. The
      polynomial has terms ",
-     TT "(-1)^i T_0^(d_0) ... T_(n-1)^(d_(n-1))", " in it
-     for each basis element of C_i with multi-degree",
+     TT "(-1)^i T_0^(d_0) ... T_(n-1)^(d_(n-1))", 
+     " in it for each basis element of ", TT "C_i", " with multi-degree",
      TT "{d_0,...,d_(n-1)}", ". When the multi-degree has a single
      component, the term is", TT "(-1)^i T^(d_0).",
      PARA,
-     "Notice that the monomial ordering used in the degrees ring is ",
-     TT "RevLex", ", so the polynomials in it will be displayed with
-     the smallest exponents first.",
+     "This polynomial is an element of the ", 
+     TO2(degreesRing, "degrees ring"), ". Notice that the monomial
+     ordering used in the degrees ring is ", TT "RevLex", ", so the
+     polynomials in it will be displayed with the smallest exponents first.",
 --      PARA,
 --      TT "(cokernel f).cache.poincare = p", " -- inform the system that
 --      the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
