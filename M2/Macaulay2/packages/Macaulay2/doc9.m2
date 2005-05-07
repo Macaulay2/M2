@@ -1449,13 +1449,6 @@ TEST ///
 	  )
      ///
 
-document {
-     Key => (cohomology,ZZ,ChainComplex),
-     Headline => "cohomology of a chain complex",
-     TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
-     PARA,
-     "By definition, this is the same as HH_(-i) C."
-     }
 
 document {
      Key => (homology,ZZ,ChainComplexMap),
@@ -1464,15 +1457,6 @@ document {
      by a map ", TT "f", " of chain complexes.",
      PARA,
      SeeAlso => {"homology", "HH"}
-     }
-
-document {
-     Key => (cohomology,ZZ,ChainComplexMap),
-     Headline => "cohomology of a chain complex map",
-     TT "HH^i f", " -- provides the map on the ", TT "i", "-th cohomology module
-     by a map ", TT "f", " of chain complexes.",
-     PARA,
-     SeeAlso => {"cohomology", "HH"}
      }
 
 document {
