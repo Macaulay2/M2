@@ -18,18 +18,21 @@ document {
      Key => (cohomology,ZZ,SheafOfRings),
      Headline => "cohomology of a sheaf of rings on a projective variety",
      Usage => "HH^d(R)",
-     Inputs => {
+     Inputs => {"i"=> ZZ=>"", "R" => SheafOfRings =>{"on a projective variety ", TT "X"}
 	  },
-     Outputs => {
+     Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "R", " as a vector space 
+	       over the coefficient field of ", TT "X"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The command computes the ", TT "i", "-th cohomology group of ", TT "R", 
+     " as a vector space over the coefficient field of ", TT "X",".", 
+     PARA,
      EXAMPLE {
+	  "Cubic = Proj(QQ[x_0..x_2]/ideal(x_0^3+x_1^3+x_2^3))",
+	  "HH^1(OO_Cubic)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
+     SeeAlso => {"coherent sheaves",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf),hh,CoherentSheaf}
+          }
+
 document { 
      Key => (cohomology,ZZ,ChainComplexMap),
      Headline => "",
@@ -96,19 +99,21 @@ document {
      }
 document { 
      Key => (cohomology,ZZ,ChainComplex),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "cohomology of a chain complex",
+     Usage => "HH^i C",
+     Inputs => {"i"=> ZZ => "", "C" => ChainComplex => ""
+	  	  },
+     Outputs => {Module => {"HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", "."}
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
      "description",
+     "By definition, this is the same as computing HH_(-i) C.",
      EXAMPLE {
+	  "needsPackage \"SimplicialComplexes\"",
+          "D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}",
+          "-- C = chainComplex D",  
+          "-- HH^2 C"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {"GradedModule", "HH"}
      }
 document { 
      Key => {(cohomology,ZZ,CoherentSheaf)},
@@ -203,7 +208,7 @@ document {
      EXAMPLE {
 	  "chiW = euler(Quintic)+2*degree(Z)" 
 	  },
-     SeeAlso => {"coherent sheaves",(cohomology, ZZ, SumOfTwists),hh,ProjectiveVariety,CoherentSheaf}
+     SeeAlso => {"coherent sheaves",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),hh,CoherentSheaf}
      }
 document { 
      Key => [cohomology, Degree],
