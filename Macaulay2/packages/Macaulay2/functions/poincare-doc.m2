@@ -5,12 +5,14 @@
 document { 
      Key => poincare,
      Headline => "assemble degrees into polynomial",
-     "The Poincare polynomial encodes information about the degrees of
-     basis elements of given object in a polynomial. The polynomial
-     has a term (-1)^i T_0^(d_0) ... T_(n-1)^(d_(n-1)) in it
-     for each basis element of C_i with multi-degree {d_0,...,d_(n-1)}.
-     When the multi-degree has a single component, the term is
-     (-1)^i T^(d_0).",
+     "The Poincare polynomial is the numerator of the ", 
+     TO2 (hilbertSeries, "Hilbert series"), ". It encodes information
+     about the degrees of basis elements of given object. The
+     polynomial has terms ",
+     TT "(-1)^i T_0^(d_0) ... T_(n-1)^(d_(n-1))", " in it
+     for each basis element of C_i with multi-degree",
+     TT "{d_0,...,d_(n-1)}", ". When the multi-degree has a single
+     component, the term is", TT "(-1)^i T^(d_0).",
      PARA,
      "Notice that the monomial ordering used in the degrees ring is ",
      TT "RevLex", ", so the polynomials in it will be displayed with
@@ -19,7 +21,7 @@ document {
 --      TT "(cokernel f).cache.poincare = p", " -- inform the system that
 --      the Poincare polynomial of the cokernel of ", TT "f", " is ", TT "p",
 --      ".  This can speed the computation of a Groebner basis of ",
---      TT "f", ".  For details, see ", TO "computing Groebner bases",
+--      TT "f", ".  For details, see ", TO "Computing Groebner bases",
 --      ".",
      SeeAlso => {"poincareN", "degreesRing", "hilbertFunction",
 	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert"}
@@ -62,10 +64,10 @@ document {
 	  },
      "We compute the ", TO2(poincare, "Poincare polynomial"), " of a module.",
           EXAMPLE {
-	  "R = ZZ/101[x, Degrees => {2}];",
-	  "M = module ideal x^2;",
+	  "R = ZZ/101[w..z];",
+	  "M = module monomialCurveIdeal(R,{1,3,4});",
       	  "poincare M",
-      	  "numerator hilbertSeries M"
+      	  "numerator reduceHilert hilbertSeries M"
 	  },
      "Recall that the variables of the polynomial are the variables of
      the degrees ring.",
@@ -73,7 +75,7 @@ document {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
 	  "M = module ideal x^2;",
 	  "poincare M",
-	  "numerator hilbertSeries M"
+	  "numerator reduceHilbert hilbertSeries M"
 	  }
      }
 
@@ -87,12 +89,13 @@ document {
     Outputs => {
 	  RingElement => "an element of the polynomial ring in variables corresponding to degrees ring "
 	  },
-     "We compute the ", TO2(poincare, "Poincare polynomial"), " of an ideal.",
+     "We compute the ", TO2(poincare, "Poincare polynomial"), " of the
+     quotient of the ambient ring by an ideal.",
      EXAMPLE {
-	  "R = ZZ/101[x, Degrees => {2}];",
-	  "I = ideal x^2;",
+	  "R = ZZ/101[w..z];",
+	  "I = monomialCurveIdeal(R,{1,3,4});",
       	  "poincare I",
-      	  "numerator hilbertSeries I"
+      	  "numerator reduceHilbert hilbertSeries I"
 	  },
      "Recall that the variables of the polynomial are the variables
      of the degrees ring.",
@@ -100,10 +103,11 @@ document {
 	  "R=ZZ/101[x, Degrees => {{1,1}}];",
 	  "I = ideal x^2;",
 	  "poincare I",
-	  "numerator hilbertSeries I"
+	  "numerator reduceHilbert hilbertSeries I"
 	  },
-     Caveat => {"For an ideal I, ", TT "poincare I", 
-	  " calculates the Poincare polynomial of R/I."
+     Caveat => {
+	  "As is often the case, calling this function on an ideal I
+	  actually computes it for R/I where R is the ring of I.",
 	  }
      }
 

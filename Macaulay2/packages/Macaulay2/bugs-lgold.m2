@@ -31,5 +31,11 @@ the documentation.
 
 -------------------------------------------------------------------------
 
+It would be nice to have a good example of reduceHilbert for the
+documentation page.
+
+Also would like better example for PoincareN where there are different
+steps of the resolution which have the same degree.
+
 -------------------------------------------------------------------------
 

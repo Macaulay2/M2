@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: 
+--- notes: needs better example
 
 document { 
      Key => {poincareN,(poincareN,ChainComplex)},
