@@ -1,5 +1,5 @@
 --- status: TODO
---- author(s): 
+--- author(s): Sorin Popescu
 --- notes: 
 
 document { 
@@ -51,19 +51,31 @@ document {
      }
 document { 
      Key => (cohomology,ZZ,Module),
-     Headline => "",
-     Usage => "",
-     Inputs => {
+     Headline => "local cohomology of a module",
+     Usage => "HH^i(M)",
+     Inputs => {ZZ => ""
 	  },
-     Outputs => {
+     Outputs => {"M" => Module =>" a graded module over its base polynomial ring"
 	  },
-     Consequences => {
-	  },     
-     "description",
+     "The command computes the local cohomology of the graded 
+     module ", TT "M", " with respect to the maximal irrelevant ideal 
+     (the ideal of variables in the base ring of ", TT "M", ").",
+     PARA,
+     "The package ", TO "Dmodules", " has alternative code to
+     compute local cohomology (even in the non homogeneous case)",
+     PARA,
+     "An example of a singular surface in projective fourspace 
+     (with one apparent double point):",
      EXAMPLE {
+	        "R = ZZ/101[x_0..x_4];",
+	        "I = ideal(x_1*x_4-x_2*x_3, x_1^2*x_3+x_1*x_2*x_0-x_2^2*x_0, x_3^3+x_3*x_4*x_0-x_4^2*x_0)",
+	        "M = R^1/module(I)",
+	        "HH^1(M)",
+	        "HH^2(M)"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     Caveat => {"There is no check made if the given module 
+	  is graded over the base polynomial ring"},
+     SeeAlso => {"Dmodules", }
      }
 document { 
      Key => (cohomology,ZZ,SumOfTwists),
@@ -108,7 +120,7 @@ document {
      "description",
      "By definition, this is the same as computing HH_(-i) C.",
      EXAMPLE {
-	  "needsPackage \"SimplicialComplexes\"",
+	  "needsPackage \"SimplicialComplexes\";",
           "D = simplicialComplex {{0,1,2},{0,1,3},{0,2,3},{1,2,3}}",
           "-- C = chainComplex D",  
           "-- HH^2 C"
@@ -210,6 +222,28 @@ document {
 	  },
      SeeAlso => {"coherent sheaves",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),hh,CoherentSheaf}
      }
+
+document {
+     Key => {hh,(hh,Sequence,ProjectiveVariety)},
+     Headline => "Hodge numbers of a smooth projective variety",
+     Usage =>"hh^(p,q)(X)",
+     Inputs => {"(p,q)" => "of non negative integers","X" => ""},
+     Outputs => {ZZ=>""},
+     "The command computes the Hodge numbers h^{p,q} of the smooth
+     projective variety X. They are calculated as ",
+     TT "HH^q(cotangentSheaf(p,X))",
+     PARA,
+     "As an example we compute h^11 of a K3 surface (Fermat quartic
+     in projective threespace:",
+     EXAMPLE {
+          "X = Proj(QQ[x_0..x_3]/ideal(x_0^4+x_1^4+x_2^4+x_3^4))",
+          "hh^(1,1)(X)"
+          },
+     Caveat => {"There is no check made if the projective variety X is smooth or not."},
+     SeeAlso => {(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,SheafOfRings),(euler,ProjectiveVariety)}
+     }
+
+
 document { 
      Key => [cohomology, Degree],
      Usage => "cohomology(d,F, Degree =>d)",
