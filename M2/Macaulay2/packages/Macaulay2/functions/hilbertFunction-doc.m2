@@ -1,6 +1,6 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: still need to write description on main node, fix module to be homog
+--- notes: still need to write description on main node, fix modules to be homog
 
 document { 
      Key => hilbertFunction,
