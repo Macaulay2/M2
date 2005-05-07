@@ -39,8 +39,8 @@ document {
     EXAMPLE {
 	  "R = ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2);",
 	  "minimalPresentation(R)",
-	  "R.minPresMap",
-	  "R.minPresMapInv"
+	  "R.mininimalPresentationMap",
+	  "R.minimalPresentationMapInv"
 	  },
      SeeAlso => {(minimalPresentation, Ideal), (trim, Ring), (trim, QuotientRing)}     
      }
@@ -58,9 +58,9 @@ document {
 	  },
      Consequences => {
      	  {TT "minimalPresentation", " stores the isomorphism  from ", TT "S/I", " to ", 
-	       TT "Q/J", " as ", TT "I.cache.minPresMap", " , where ", 
+	       TT "Q/J", " as ", TT "I.cache.minimalPresentationMap", " , where ", 
 	       TT "I", " is the input ideal and the inverse of this map 
-	       as ", TT "I.cache.minPresMapInv"}
+	       as ", TT "I.cache.minimalPresentationMapInv"}
 	  },  
       "If the ideal ", TT "I", " is homogeneous, then the ideal ", TT "J", ", 
       in a new ring ", TT "Q", " is the defining ideal 
@@ -77,8 +77,8 @@ document {
 	  "C = ZZ/101[x,y,z,u,w];",
 	  "I = ideal(x-x^2-y,z+x*y,w^2-u^2);",
 	  "minPres I",
-	  "I.cache.minPresMap",
-	  "I.cache.minPresMapInv"
+	  "I.cache.mininimalPresentationMap",
+	  "I.cache.minimalPresentationMapInv"
 	  },
      SeeAlso => {(minimalPresentation,Ring), (trim, Ideal)}
      }
