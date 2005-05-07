@@ -27,7 +27,7 @@ document {
 	  },    
      "The command computes the topological Euler characteristic of the (smooth) projective 
      variety V as an alternated sum of its Hodge numbers. The Hodge numbers can be computed 
-     directly using the command ", TO "hh",
+     directly using the command ", TO "hh", ".",
      PARA,
      "A smooth plane quartic curve has genus 3 and topological Euler characteristic -4:",  
      EXAMPLE {
