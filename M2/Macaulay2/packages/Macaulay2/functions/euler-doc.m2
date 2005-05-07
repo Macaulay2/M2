@@ -20,8 +20,29 @@ document {
 document {
      Key => (euler,ProjectiveVariety),
      Headline => "topological Euler characteristic of a (smooth) projective variety",
-     "This needs to be documented.",
-     SeeAlso => {Proj,genus}
+     Usage => "euler V",
+     Inputs => {"V" => ""
+	  },
+     Outputs => {ZZ =>"the topological Euler characteristics of the variety V"
+	  },    
+     "The command computes the topological Euler characteristic of the (smooth) projective 
+     variety V as an alternated sum of its Hodge numbers. The Hodge numbers can be computed 
+     directly using the command ", TO "hh",
+     PARA,
+     "A smooth plane quartic curve has genus 3 and topological Euler characteristic -4:",  
+     EXAMPLE {
+	  "Quartic = Proj(QQ[x_0..x_2]/ideal(x_0^4+x_1^4+x_2^4))",
+	  "euler(Quartic)"
+	  },
+     PARA,
+     "The topological Euler characteristic of a smooth quintic hypersurface in
+     projective fourspace is -200:",     
+     EXAMPLE {
+	  "Quintic = Proj(QQ[x_0..x_4]/ideal(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5-101*x_0*x_1*x_2*x_3*x_4))",
+	  "euler(Quintic)"
+	  },
+     Caveat  => {"No test is made to see if the projective variety is smooth"}, 
+     SeeAlso => {Proj,genus,hh}
      }
 
 document {
