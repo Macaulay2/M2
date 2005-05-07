@@ -18,15 +18,19 @@ document {
      has a term ", TT "S^i T_0^(d_0) ... T_(n-1)^(d_(n-1))", 
      " in it for each basis element of ", TT "C_i", 
      " with multi-degree",  TT "{d_0,...,d_(n-1)}.",
+     PARA,
      EXAMPLE {
-	  "R = ZZ/101[a..d];",
-      	  "p = poincareN resolution cokernel vars R"
+	  "R = ZZ/101[a,b,c, Degrees=>{1,1,2}];",
+	  "C = res cokernel vars R", 
+	  "betti C",
+      	  "p = poincareN C"
 	  },
      "Setting the ", TT "S", 
-     " variable to -1 would give the Poincare polynomial calculated by ", 
+     " variable to -1 gives the Poincare polynomial calculated by ", 
      TO "poincare", ".",
      EXAMPLE {
-      	  "poincare resolution cokernel vars R"
+     	  "use ring p",
+      	  "substitute(p, {S=>-1})"
 	  },
      SeeAlso => {"poincare", "degreesRing", "hilbertFunction",
 	  "hilbertSeries", "hilbertPolynomial", "reduceHilbert" }

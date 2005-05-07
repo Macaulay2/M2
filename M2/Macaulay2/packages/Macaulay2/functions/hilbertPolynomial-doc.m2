@@ -1,17 +1,16 @@
 --- status: DRAFT
 --- author(s): L. Gold
---- notes: write caution: i is not a variable in option, show how to use
----        show ex of eventually = HF
+--- notes: show ex of eventually = HF
 
 document { 
      Key => hilbertPolynomial,
      Headline => "compute the Hilbert polynomial",
      "In a singly graded ambient ring, the ", 
-     TO2(hilbertFunction, "Hilbert function"), " eventually is
-     a polynomial called the Hilbert polynomial. By default this polynomal
-     is written in terms of the Hilbert polynomials of projective
-     spaces because it is a good form for extracting geometric
-     information from the polynomial. The Hilbert
+     TO2(hilbertFunction, "Hilbert function"), 
+     " eventually is a polynomial called the Hilbert polynomial. By
+     default this polynomal is written in terms of the Hilbert
+     polynomials of projective spaces because it is a good form for
+     extracting geometric information from the polynomial. The Hilbert
      polynomial of ", TT "P^i", " is ",  TT "z |--> binomial(z + i, i).",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN", 
 	  "hilbertSeries", "hilbertFunction"}
@@ -43,11 +42,13 @@ document {
      quartic to the union of 4 lines, or 'sticks', which intersect in
      three successive points.",
      PARA,
-     "These Hilbert polynomials can serve as Hilbert functions, too.",
+     "These Hilbert polynomials can serve as ", 
+     TO2 (hilbertFunction,"Hilbert functions"), 
+     " too since the values of the Hilbert polynomial eventually are
+     the same as the Hilbert function. ",
      EXAMPLE {
-	  "h(3)",
-      	  "basis(3,S)",
-      	  "rank source basis(3,S)",
+	  "apply(5, k-> h(k))",
+	  "apply(5, k-> hilbertFunction(k,S))"
 	  }
      }
 
@@ -64,11 +65,20 @@ document {
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of a module.",
      EXAMPLE {
-	  "R = QQ[a..h];",
-	  "M = coker matrix {{a,c,d},{d,b,h}}",
+	  "R = QQ[a..d];",
+	  "M = module monomialCurveIdeal(R, {1,3,4});",
 	  "h = hilbertPolynomial M",
      	  "hilbertPolynomial(M, Projective=>false)"
 	  	  },
+     PARA,
+--     "These Hilbert polynomials can serve as ", 
+--      TO2 (hilbertFunction,"Hilbert functions"), 
+--      " too since the values of the Hilbert polynomial eventually are
+--      the same as the Hilbert function. ",
+--      EXAMPLE {
+-- 	  "apply(5, k-> h(k))",
+-- 	  "apply(5, k-> hilbertFunction(k,M))"
+-- 	  }
      }
 
 document { 
@@ -89,7 +99,7 @@ document {
 	  "S = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",
 	  "h = hilbertPolynomial S",
      	  "hilbertPolynomial(S, Projective=>false)"
-	  },
+	  }
      }
 
 document { 
@@ -106,11 +116,20 @@ document {
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"),
      " of the quotient of the ambient ring by an ideal.",
      EXAMPLE {
-	  "R = QQ[a..h];",
-	  "I = ideal(a*b, c*d, e*f);",
-	  "hilbertPolynomial I",
+	  "R = QQ[a..d];",
+	  "I = monomialCurveIdeal(R, {1,3,4});",
+	  "h = hilbertPolynomial I",
 	  "hilbertPolynomial (R/I)",
 	  "hilbertPolynomial(I, Projective=>false)"
+	  },
+     PARA,
+     "These Hilbert polynomials can serve as ", 
+     TO2 (hilbertFunction,"Hilbert functions"), 
+     " too since the values of the Hilbert polynomial eventually are
+     the same as the Hilbert function. ",
+     EXAMPLE {
+	  "apply(5, k-> h(k))",
+	  "apply(5, k-> hilbertFunction(k,I))"
 	  },
      Caveat => {
 	  "As is often the case, calling this function on an ideal ", 
@@ -134,9 +153,20 @@ document {
      Hilbert variety. This is the same as the Hilbert polynomial of
      its coordinate ring.",
      EXAMPLE {
-	  "V = Proj(QQ[x_0..x_5]/(x_0^3+x_5^3))",
+	  "R = QQ[a..d];",
+	  "I = monomialCurveIdeal(R, {1,3,4});",
+	  "V = Proj(R/I)",
 	  "h = hilbertPolynomial V",
      	  "hilbertPolynomial(V, Projective=>false)"
+	  },
+     PARA,
+     "These Hilbert polynomials can serve as ", 
+     TO2 (hilbertFunction,"Hilbert functions"), 
+     " too since the values of the Hilbert polynomial eventually are
+     the same as the Hilbert function. ",
+     EXAMPLE {
+	  "apply(5, k-> h(k))",
+	  "apply(5, k-> hilbertFunction(k,V))"
 	  }
      }
 
@@ -153,9 +183,9 @@ document {
      spaces. This is the default.",
      PARA,
      TT "Projective => false", " is an option to ", TO "hilbertPolynomial",
-      " which specifies that the Hilbert polynomial produced should be
-      expressed as a polynomial in the variable ", TT "i", ".",
-      PARA,
+     " which specifies that the Hilbert polynomial produced should be
+     expressed as a polynomial in the variable ", TT "i", ".",
+     PARA,
      "We compute the ", TO2(hilbertPolynomial, "Hilbert polynomial"), 
      " of a coordinate ring of the  rational quartic curve in ", 
      TT "P^3.",
@@ -165,6 +195,10 @@ document {
       	  "hilbertPolynomial S",
 	  "hilbertPolynomial(S, Projective=>false)"
      	  },
+     "When the option Projective is false, the variable ", 
+     TT "i", " is a local variable. The command ", 
+     TT "use ring", "will make ", TT "i", 
+     "into a global variable.",
      SeeAlso => "ProjectiveHilbertPolynomial"
      }
 

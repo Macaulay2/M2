@@ -1,4 +1,4 @@
-`-- Place bugs that you find in here, and
+-- Place bugs that you find in here, and
 -- then check in the file, using (outside of M2):
 --   cvs ci -m "another bug"
 
@@ -8,7 +8,7 @@ going on.
 
 -------------------------------------------------------------------------
 
-The main page for "poincare" says:
+The main page for "poincare" said:
 
 "(cokernel f).cache.poincare = p -- inform the system that the Poincare
 polynomial of the cokernel of f is p. This can speed the computation
@@ -31,15 +31,38 @@ the documentation.
 
 -------------------------------------------------------------------------
 
-It would be nice to have a good example of reduceHilbert for the
-documentation page.
+It would be nice to have a good example of using reduceHilbert for the
+documentation page. 
 
-Also would like better example for PoincareN where there are different
+-------------------------------------------------------------------------
+
+Check that the saturation is being used for hilbertSeries of a
+ProjectiveVariety.
+
+-------------------------------------------------------------------------
+
+Would like better example for PoincareN where there are different
 steps of the resolution which have the same degree.
 
 -------------------------------------------------------------------------
 
-Check that the saturation is being used for hilbertSeries of a ProjectiveVariety.
+It would be really nice if the coloration could not see the dashes in
+a resolution or the printout of a rational function as a comment.
 
 -------------------------------------------------------------------------
 
+There is a problem calculating the hilbertFunction in the example for
+hilbertPolynomial of a Module. At the moment the relevant code is
+commented out. When the bug gets fixed, the comments need to be removed.
+
+-------------------------------------------------------------------------
+
+Note: how to use Macaulay2 in emacs needs to be extremely prominent on
+the main Macaulay2 page.
+
+-------------------------------------------------------------------------
+
+It would be nice if the Macaulay2 mode in emacs had a quick way to
+comment out an entire region of code.
+
+-------------------------------------------------------------------------

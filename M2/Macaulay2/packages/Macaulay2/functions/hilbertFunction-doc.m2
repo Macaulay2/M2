@@ -6,7 +6,8 @@ document {
      Key => hilbertFunction,
      Undocumented => {(hilbertFunction,List,CoherentSheaf),(hilbertFunction,ZZ,CoherentSheaf)},
      Headline => "compute the Hilbert function",
-     "Need description here",
+     "The Hilbert function is a function gives the dimension of the
+     given degree piece of an object. ",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN",
 	  "hilbertSeries", "hilbertPolynomial"}
      }
