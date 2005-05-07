@@ -1,56 +1,63 @@
---- status: TODO
---- author(s): 
+--- status: Draft
+--- author(s): Gregory G. Smith
 --- notes: 
 
 document { 
-     Key => det,
-     Headline => "",
-     Usage => "",
+     Key => {det,(det,Matrix)},
+     Headline => "determinant of a matrix",     
+     Usage => "det M",
      Inputs => {
+	  "M" => {"a square ", TO2("Matrix","matrix")}
 	  },
      Outputs => {
+	  RingElement => {"which is the determinant of ", TT "M"} 
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "R = QQ[vars(0..8)]",
+	  "M = genericMatrix(R,2,2)",
+	  "det M",
+	  "N = genericMatrix(R,3,3)",
+	  "det N"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+     SeeAlso => {exteriorPower, minors, permanents, pfaffians}     
      }
-document { 
-     Key => (det,Matrix),
-     Headline => "",
-     Usage => "",
+scan({det,minors,exteriorPower}, fn -> document { 
+     Key => [fn, Strategy],
+     Headline => "choose between Bareiss and Cofactor algorithms",     
+     Usage => toString fn | "(M, Strategy => s)",     
      Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
-document { 
-     Key => [det, Strategy],
-     Headline => "",
-     Usage => "",
-     Inputs => {
+	  "M" => Matrix => "",
+	  "s" => Symbol => {"either ", TT "Bareiss", " or ", TT "Cofactor"}	  
 	  },
      Consequences => {
+	  { "If ", TT "s", " is ", TO "Bareiss", 
+	       ", then the Bareiss fraction-free determinant algorithm is used; if ",
+	       TT "s", " is ", TO "Cofactor", 
+	       ", then cofactor expansion is used to compute determinants."}
 	  },     
-     "description",
-     EXAMPLE {
+     "The ", TO2("Ring","ring"), " of ", TT "M", " determines the default strategy.  If the ring is a ", 
+     TO2("PolynomialRing","polynomial ring"), " or a field (as identified by ", TO "isField",  
+     ") then the ", TO "Bareiss", " algorithm is used.  If the ring is a ", 
+     TO2("QuotientRing", "quotient ring"), " (which has not been declared a field by ", TO "toField", 
+     "), then the ", TO "Cofactor", " algorithm is used.",
+     PARA,     
+     Caveat => {
+	  {"The ", TO "Bareiss", " algorithm returns a ring element which may differ from the actual 
+	       determinant by a zero divisor in the ring.  Thus, an ", EM "incorrect", 
+	       " answer may be computed if the ring contains zero divisors."}
 	  },
-     Caveat => {},
-     SeeAlso => {}
-     }
- -- doc12.m2:104:     Key => IndeterminateNumber,
- -- doc12.m2:111:     Key => indeterminate,
- -- doc7.m2:1925:     Key => det,
- -- doc7.m2:1930:     Key => (det,Matrix),
- -- normal_doc.m2:5:     Key => isNormal, Headline => "determine whether a reduced ring is normal" }
- -- overviewB.m2:1047:     Key => "determinants and minors",
+     SeeAlso => select({det, exteriorPower, minors}, g -> g =!= fn)
+     })
+
+end
+
+
+TEST "
+-- For more determinant tests, see Macaulay2/test/testdet.m2
+R = ZZ/103[a,b,c,d]
+h = matrix {{a,b},{c,d}}
+assert( det h == a * d - b * c )
+assert( minors(1,h) == image matrix {{a,b,c,d}} )
+assert( minors(2,h) == image matrix {{a * d - b * c}} )
+"
+

@@ -26,3 +26,9 @@ What about local rings?
 
      GF(9)[t];
      factor(t^2-1)
+
+(4) Some ideal operators over ZZ fail.  For example
+
+    ideal(12,18) == ideal(6)
+    
+(5) Should (ideal,Module) use isIdeal?
