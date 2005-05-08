@@ -41,7 +41,6 @@ document {
      Outputs => {
 		"the target of the matrix given by the generators of the Groebner
 		basis"},
-     "Example:",
      EXAMPLE {
 		   "R = ZZ/10007[x,y,z];",
 		   "g = gb ideal(x^2, x*y-z^2, z^5);",
@@ -59,7 +58,6 @@ document {
      Outputs => {
 		{"the target module of ", TT "f"}
 	  },
-     "Example:",
      EXAMPLE {
 	  "R = ZZ[x,y,z];",
 	  "M = R^1/(x,y,z);",
@@ -86,7 +84,6 @@ document {
      Outputs => {
 		"the target ring of the map"
 	  },
-     "Example:",
      EXAMPLE {
 		"S = ZZ/10007[x, y, z];",
 		"R = ZZ/10007[t];",

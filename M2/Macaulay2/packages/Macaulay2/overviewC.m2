@@ -1021,43 +1021,6 @@ chosen monomial ordering.",
      }
 
 
-document {
-     Key => "what is a Groebner basis?",
-     "A Groebner basis is a specific generating set
-     of an ideal or submodule over a polynomial ring, not usually minimal, 
-     which has extremely nice properties, from which 
-     it is reasonably easy to extract information about the ideal or submodule.",
-     "We first define and describe Groebner bases in the important special case
-     of an ideal in a polynomial ring.  We then
-     describe Groebner bases of submodules, and over more general rings.",
-     PARA,
-     TEX "Let $R = k[x_1, ..., x_n]$ be a polynomial ring, over a field k,
-     and let I \\subset R be an ideal.  A term order on R is, by definition, a total
-     order, >,  on the monomials of R, which satisfies two conditions: (1) 
-     m > 1, for every monomial m \\neq 1, and (2) the order is multiplicative:
-     m > n implies that mp > np, for all monomials m,n,p.",
-     PARA,
-     "In Macaulay 2, each ring has a multiplicative order associated with it.
-     The default is the graded reverse lexicographic order:",
-     EXAMPLE {
-	  "R = QQ[a..d,MonomialOrder=>GRevLex]",
-     	  "F = a^3 + d^2 + a*d + b*c + 1",
-	  "R = QQ[a..d,MonomialOrder=>RevLex]",
-	  "substitute(F,R)",
-	  "R = QQ[a..d,MonomialOrder=>Lex]",
-	  "substitute(F,R)",
-	  "R = QQ[a..d,Weights=>{1,1,0,0}]",
-	  "substitute(F,R)",
-	  "R = QQ[a..d,Weights=>{-1,0,0,0}]",
-	  "substitute(F,R)",
-	  "R = QQ[a..d,Weights=>{-1,-1,-1,-1}]",
-	  "substitute(F,R)",
-	  "R = QQ[a..d,MonomialOrder=>ProductOrder{1,3}]",
-	  "substitute(F,R)"},
-     "Given a term order, the lead monomial is the term whose monomial is greatest
-     in this order.",
-     EXAMPLE "leadTerm F"          
-     }
 
 document {
      Key => "finding a Groebner basis",
