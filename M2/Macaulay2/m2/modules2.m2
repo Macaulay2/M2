@@ -470,12 +470,12 @@ Module / Vector := Module => (M,v) -> (
      then error("expected ", toString v, " to be an element of ", toString M);
      M / image matrix {v})
 -----------------------------------------------------------------------------
---top Module := M -> (
+--topComponents Module := M -> (
 --     R := ring M;
 --     c := codim M; 
 --     annihilator minimalPresentation Ext^c(M, R))
---document { top,
---     TT "top M", "produce the annihilator of Ext^c(M, R), where c
+--document { topComponents,
+--     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
 --     is the codimension of the support of the module M."
 --     }
 -----------------------------------------------------------------------------

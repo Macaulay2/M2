@@ -321,7 +321,7 @@ document {
 document {
      Key => "component example",
      "The following simple example illustrates the use of 
-     ", TO "removeLowestDimension", ",", TO "top", ",", TO "radical",
+     ", TO "removeLowestDimension", ",", TO "topComponents", ",", TO "radical",
      ", and ", TO "decompose", ".",
      EXAMPLE {
 	  "R = ZZ/32003[a..d];",
@@ -329,26 +329,10 @@ document {
       	  "J = ideal(a^3,b^3,c^3-d^3)",
       	  "I = intersect(I,J)",
       	  "removeLowestDimension I",
-      	  "top I",
+      	  "topComponents I",
       	  "radical I",
       	  "decompose I"
 	  },
-     }
-
-document {
-     Key => "top-method",
-     "If M is a module in a polynomial ring R, then the implementations of 
-     ", TO "top", " and ", TO "removeLowestDimension", " are based on 
-     the following observations:",
-     UL {
-	  "codim Ext^d(M,R) >= d, for all d (if the module is non-zero)",
-	  "If P is an associated prime of M of codimension d := codim P > codim M,
-	  then codim Ext^d(M,R) = d and the annihilator of Ext^d(M,R) is contained
-	  in P",
-	  "If codim Ext^d(M,R) = d, then there really is an associated prime 
-	  of codimension d.",
-	  "If M is R/I, then top(I) = ann Ext^c(R/I,R), where c = codim I"
-	  }
      }
 
 TEST "
@@ -357,7 +341,7 @@ TEST "
     J = ideal(a^3,b^3,c^3-d^3)
     I = intersect(I,J)
     removeLowestDimension I
-    top I
+    topComponents I
     radical I
     decompose I
 "
@@ -368,14 +352,14 @@ TEST "
     J = ideal(a^3,b^3,c^3)
     I = intersect(I,J)
     time (I1 = removeLowestDimension I)
-    time top I
+    time topComponents I
     time radical I
 "
 
      
 TEST "
     -- examples of use of: radical, UnmixedRadical, 
-    -- top, removeLowestDimension
+    -- topComponents, removeLowestDimension
 
     -- example 1: a simple monomial ideal
     R = ZZ/101[a..d]
@@ -385,7 +369,7 @@ TEST "
     -- example 2: 
     R = ZZ/101[a..d]
     I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
-    time (Itop = top I)
+    time (Itop = topComponents I)
     time (I1 = removeLowestDimension I)
     time (Irad = radical I)
 "
@@ -402,12 +386,12 @@ assert(I ==
      radical(I^2, Unmixed=>true)
      )
 assert(
-     top (I^2) == I^2
+     topComponents (I^2) == I^2
      )
 S = R/(a^3, b^3)
 I = ideal(0_S)
 J = I^2
-J1 = top J
+J1 = topComponents J
 J1 == J   
 time (radical I)
 

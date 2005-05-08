@@ -11,15 +11,15 @@ o2 = ideal (b*c , b c, a*c , a*b , a c, a b)
 
 o2 : Ideal of R
 
-i3 : top I
+i3 : topComponents I
 
 o3 = ideal (b*c, a*c, a*b)
 
 o3 : Ideal of R
 
-i4 : top (R^1/I)
+i4 : topComponents (R^1/I)
 
-o4 = cokernel | 1 |  --<--------PROBLEM with -top- applyed to a module. 
+o4 = cokernel | 1 |  --<--------PROBLEM with -topComponents- applyed to a module. 
 
                             1
 o4 : R-module, quotient of R

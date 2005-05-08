@@ -130,7 +130,7 @@ setup((), {
 	  koszul, symmetricPower, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
-	  substitute, rank, complete, ambient, top, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  degree, coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens, conjugate,

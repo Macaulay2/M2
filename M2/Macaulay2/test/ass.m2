@@ -56,7 +56,7 @@ I3 = ideal(x_1, x_5)
 P = I1*I2*I3
 C = primaryDecomposition(P, Strategy=>SY)
 
-J2 = top P
+J2 = topComponents P
 L2 = P : J2
 primaryDecomposition(L2,Strategy=>SY)
 C2 = apply(C, p -> p : J2)

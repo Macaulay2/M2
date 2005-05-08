@@ -83,4 +83,4 @@ document {
  -- overview2.m2:2017:     Key => "binary methods",
  -- overview2.m2:2070:     Key => "installing methods",
  -- overview2.m2:2184:     Key => [method,Options],
- -- overview4.m2:339:     Key => "top-method",
+ -- overview4.m2:339:     Key => "top",

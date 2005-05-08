@@ -2,10 +2,26 @@
 --- author(s): Giulio 
 --- notes: 
 
+document {
+     Key => "topComponents",
+     "If M is a module in a polynomial ring R, then the implementations of 
+     ", TO "topComponents", " and ", TO "removeLowestDimension", " are based on 
+     the following observations:",
+     UL {
+	  "codim Ext^d(M,R) >= d, for all d (if the module is non-zero)",
+	  "If P is an associated prime of M of codimension d := codim P > codim M,
+	  then codim Ext^d(M,R) = d and the annihilator of Ext^d(M,R) is contained
+	  in P",
+	  "If codim Ext^d(M,R) = d, then there really is an associated prime 
+	  of codimension d.",
+	  "If M is R/I, then topComponents(I) = ann Ext^c(R/I,R), where c = codim I"
+	  }
+     }
+
 document { 
-     Key => {"top function"},
+     Key => {"topComponents"},
      Headline => "compute the top dimensional component of a module or of an ideal",
-     Usage => "top M",
+     Usage => "topComponents M",
      Inputs => {
 	  "M" => {"an ", TO Ideal, " or a ", TO Module}
 	  },
@@ -17,15 +33,15 @@ document {
     "The method used is that of
     Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
     paper.",PARA,
-    "For a brief description see: ",TO "top-method",".",
+    "For a brief description see: ",TO "topComponents",".",
     
-    SeeAlso => {"top Ideal", "top Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"
-    },
+    SeeAlso => {"topComponents Ideal", "topComponents Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"},
     }
+
 document { 
-     Key => (top,Ideal),
+     Key => (topComponents,Ideal),
      Headline => "compute the top dimensional component of an ideal",
-     Usage => "top I",
+     Usage => "topComponents I",
      Inputs => {"I" => ""
 	  },
      Outputs => {
@@ -33,20 +49,20 @@ document {
 	       ,TT "I", " having the greatest Krull dimension" }
 	  },
     "The method used is that of Eisenbud-Huneke-Vasconcelos. ", 
-    "For a brief description see: ",TO "top-method",".", 
+    "For a brief description see: ",TO "topComponents",".", 
     
      EXAMPLE {
 	  "R=ZZ/32003[a..c];",
 	  "I=intersect(ideal(a,b),ideal(b,c),ideal(c,a),ideal(a^2,b^3,c^4));",
-	  "top I" 
+	  "topComponents I" 
 	  },
-     SeeAlso => {"top Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"}
+     SeeAlso => {"topComponents Module","removeLowestDimension", "saturate", "quotient", "radical", "component example"}
      },
 
 document { 
-     Key => (top,Module),
+     Key => (topComponents,Module),
      Headline => "compute the top dimensional component of a module",
-     Usage => "top M",
+     Usage => "topComponents M",
      Inputs => {
 	  "M" => ""
 	  },
@@ -56,9 +72,9 @@ document {
 	       " having gretest Krull dimension"} 
 	  },
     "The method used is that of Eisenbud-Huneke-Vasconcelos. ", 
-    "For a brief description see: ",TO "top-method",".", 
+    "For a brief description see: ",TO "topComponents",".", 
      
-     SeeAlso => {"top Ideal","removeLowestDimension", "saturate", "quotient", 
+     SeeAlso => {"topComponents Ideal","removeLowestDimension", "saturate", "quotient", 
 	  "radical","component example"}
      }
 
@@ -67,8 +83,8 @@ document {
  -- doc1.m2:71:     Key => topicList,
  -- doc1.m2:82:     Key => topics,
  -- doc10.m2:77:     Key => [resolution,StopBeforeComputation],
- -- doc10.m2:368:     Key => top,
- -- doc10.m2:369:     FormattedKey => "top components",                                 -- to avoid it looking like "Top", the top node in an info file
+ -- doc10.m2:368:     Key => topComponents,
+ -- doc10.m2:369:     FormattedKey => "topComponents",
  -- doc10.m2:458:     Key => topCoefficients,
  -- doc8.m2:516:     Key => StopBeforeComputation,
  -- doc8.m2:523:     Key => [gb,StopBeforeComputation],
@@ -82,7 +98,7 @@ document {
  -- doc9.m2:25:     Key => [pushForward,StopWithMinimalGenerators],
  -- doc9.m2:696:     Key => nullhomotopy,
  -- overview3.m2:634:     Key => "top level loop",
- -- overview4.m2:339:     Key => "top-method",
+ -- overview4.m2:339:     Key => "topComponents",
 
 
 

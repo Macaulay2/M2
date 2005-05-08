@@ -3,8 +3,8 @@
 
 -- Copyright 1996 by Michael E. Stillman
 
--- translated: remove_low_dim --> top
---             remove_low_dim_id --> top
+-- translated: remove_low_dim --> topComponents
+--             remove_low_dim_id --> topComponents
 --             remove_lowest_dim --> removeLowestDimension
 --             radical --> radical
 --             unmixed_radical --> radical(I,Unmixed=>true)
@@ -56,12 +56,12 @@ removeLowestDimension Ideal := Ideal => (I) -> (
 -- top dimensional part ---
 ---------------------------
 
-top Ideal := Ideal => (I) -> (
+topComponents Ideal := Ideal => (I) -> (
      R := ring I;
      c := codim I;
      ann Ext^c(cokernel generators I, R))
      
-top Module := Module => (M) -> (
+topComponents Module := Module => (M) -> (
     R := ring M;
     if not isPolynomialRing R or not isAffineRing R
     then error "expected a polynomial ring";
