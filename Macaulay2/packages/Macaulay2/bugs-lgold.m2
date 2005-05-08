@@ -60,9 +60,8 @@ commented out. When the bug gets fixed, the comments need to be removed.
 Note: how to use Macaulay2 in emacs needs to be extremely prominent on
 the main Macaulay2 page.
 
--------------------------------------------------------------------------
+This description must include information on how to comment and
+uncomment an entire section of code.
 
-It would be nice if the Macaulay2 mode in emacs had a quick way to
-comment out an entire region of code.
 
 -------------------------------------------------------------------------
