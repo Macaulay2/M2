@@ -110,7 +110,8 @@ document {
 	  },
      Consequences => {
 	  },     
-	"Can take values ", Homogeneous Inhomogeneous LinearAlgebra 
+	"Can take values ", TT "Homogeneous", ", ",  TT "Inhomogeneous",  ", ", 
+	TT "LinearAlgebra", ".",
      EXAMPLE {
 	  },
      Caveat => {},
