@@ -55,7 +55,7 @@ document {
 	  TO radical,
 	  TO ass,
 	  TO primaryDecomposition,
-	  TO top,
+	  TO topComponents,
 	  TO saturate,
 	  TO quotient,
 	  TO (symbol :,Ideal,Ideal),

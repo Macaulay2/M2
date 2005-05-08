@@ -49,7 +49,7 @@ ass2 := (I,printlevel) -> (
      RI := ring I;
      polyRing := ring presentation RI;
      currentI := lift(I,polyRing);
-     topcurrentI := top currentI;
+     topcurrentI := topComponents currentI;
      while not isSubset(topcurrentI, currentI) do(
 	if printlevel >= 2 then ( 
 	     print "  beginning new ass loop");
@@ -58,7 +58,7 @@ ass2 := (I,printlevel) -> (
 		       << endl << "    " << P << endl)));
 	assasinator = append(assasinator, newcomponents);
 	  currentI = currentI:topcurrentI;
-	  topcurrentI = top currentI;
+	  topcurrentI = topComponents currentI;
 	  );
      newcomponents = flatten decompose topcurrentI;
      if printlevel >=1 then (scan(newcomponents, P -> (
@@ -192,7 +192,7 @@ EHVlocalize := (I,P,printlevel) ->(
           << P0Power << endl;
      if printlevel >= 1 then (<< endl << "Finding the top of "
 	  << I0 + P0Power << endl);
-     I1 := top (I0 + P0Power);
+     I1 := topComponents (I0 + P0Power);
      if printlevel >= 2 then(<< endl << "It equals " << endl 
 	  << I1 << endl);
      gensI1 := flatten entries mingens I1;
@@ -201,7 +201,7 @@ EHVlocalize := (I,P,printlevel) ->(
      I2 := ideal gensI1;
      if printlevel >= 1 then (<< endl << 
 	  "Finding the final top" << endl);
-     I3 := top I2;
+     I3 := topComponents I2;
      if printlevel >= 2 then (<< endl << "It equals " <<endl
 	  << I3 << endl);
      if printlevel >= 1 then (<< endl << 
@@ -271,9 +271,9 @@ primarycomponent := (localizeroutine) ->
      	  if printlevel >= 1 then (<< endl << 
 	  "primaryComponent checking power " << m << endl);
      	  if printlevel >= 2 then (<< endl << "Computing
-	       top of " << I0 << "+ the power of " << P0 << 
+	       topComponents of " << I0 << "+ the power of " << P0 << 
 	       endl);
-	  Q := top (I0 + P0^m);
+	  Q := topComponents (I0 + P0^m);
 	  if printlevel >= 2 then (<< endl << "It equals " <<
 	       Q << endl); 
      	  IIntersection := intersect(Q,ImportantColonIdeal);

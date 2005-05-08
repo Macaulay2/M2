@@ -1102,7 +1102,7 @@ eg2 = () -> (
   R = ZZ/101[a..f];
   m = matrix {{a*b*c - d*e*f, a*b*d - c*e*f, a*e*f - b*c*d}};
   C = resolution cokernel m;
-  -- top m
+  -- topComponents m
   )
 eg2()
 

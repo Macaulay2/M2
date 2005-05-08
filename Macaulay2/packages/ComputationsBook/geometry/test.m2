@@ -53,7 +53,7 @@ prettyPrint gens idealX
 X = variety idealX
 idealX == saturate idealX
 dim X
-idealXtop = top idealX
+idealXtop = topComponents idealX
 (gens idealXtop)%(gens idealX) == 0
 codim singularLocus idealX
 # decompose idealX

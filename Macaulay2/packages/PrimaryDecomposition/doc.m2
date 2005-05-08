@@ -32,7 +32,7 @@ document {
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June 2000.",
      SeeAlso => {(primaryDecomposition,Ideal), 
-     	       radical, decompose, top, 
+     	       radical, decompose, topComponents, 
 	       removeLowestDimension}
      }
 
@@ -41,7 +41,7 @@ document {
      "The strategy option value should be one of the following.",
      UL{
 	  SEQ ("1", " -- The assasinator is found using Ext modules."),
-	  SEQ ("2", " -- The assasinator is found using ", TO(top), " on a 
+	  SEQ ("2", " -- The assasinator is found using ", TO(topComponents), " on a 
 	       series of ideals.")
 	  },
      PARA,
@@ -53,8 +53,8 @@ document {
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
      HEADER3 "Strategy => 2", 
      "The associated primes are found by iterating the two steps:  take the 
-     minimal primes of", TO(top), " of the ideal, ", TT "I", ", and replace ",
-     TT "I", " by ", TT "I:(top I)", "."
+     minimal primes of", TO(topComponents), " of the ideal, ", TT "I", ", and replace ",
+     TT "I", " by ", TT "I:(topComponents I)", "."
      }
 
 document {
@@ -107,7 +107,7 @@ document {
      Caveat => "The ideal P is not checked to be prime.",
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June 2000.",
-     SeeAlso => {(primaryDecomposition,Ideal), radical, decompose, top, 
+     SeeAlso => {(primaryDecomposition,Ideal), radical, decompose, topComponents, 
 	  removeLowestDimension}
      }
 ///
@@ -170,14 +170,14 @@ document {
 	  "Q" => {"a ", TT "P", "-primary ideal of ", TT "I", "."}
 	  },
      PARA,
-     "Q is top(I + P^m), for sufficiently large m.  The criterion that Q
+     "Q is topComponents(I + P^m), for sufficiently large m.  The criterion that Q
      is primary is given in 
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
      "However, we use", TO (localize,Ideal,Ideal), ".",
      PARA,
      BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
      Last modified June, 2000.",
-     SeeAlso => {(ass,Ideal), (primaryDecomposition,Ideal), radical, decompose, top, removeLowestDimension}
+     SeeAlso => {(ass,Ideal), (primaryDecomposition,Ideal), radical, decompose, topComponents, removeLowestDimension}
      }
 
 document {
@@ -195,7 +195,7 @@ document {
       "The Increment option value should be an integer.  As explained in ",
       TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
       Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992),
-      relies on ", TT  "top(I + P^m)", " for ", TT "m", " sufficiently large.
+      relies on ", TT  "topComponents(I + P^m)", " for ", TT "m", " sufficiently large.
       The algoritm begins with ", TT "m = 1", ", and increases m by the 
       value of the ", TT "Increment", "option until ", TT "m", " is 
       sufficiently large.  The default value is 1." 
@@ -234,7 +234,7 @@ document {
      BOLD "Maintainer:", " C. Yackel cyackel@math.indiana.edu.  ",
      "Last modified June 2000.",
      SeeAlso => {(ass,Ideal), 
-	  radical, decompose, top, 
+	  radical, decompose, topComponents, 
 	  removeLowestDimension}
      }
 

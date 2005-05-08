@@ -1065,7 +1065,7 @@ export (
 	symbol toSequence,
 	symbol toString,
 	symbol toUpper,
-	symbol top,
+	symbol topComponents,
 	symbol topCoefficients,
 	symbol topLevelTexmacs,
 	symbol topicList,

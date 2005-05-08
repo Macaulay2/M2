@@ -16,7 +16,7 @@ document {
        except those of lowest dimension (and thus returns the
        ambient free module of ", TT "M", " (or unit ideal), if ", TT "M", "
        is pure dimensional).", PARA,
-       "For a very brief description of the method used, see ", TO "top-method", ".",PARA,
+       "For a very brief description of the method used, see ", TO "topComponents", ".",PARA,
        "As an example we remove the lowest dimensional component of an ideal I",
      
      EXAMPLE {
@@ -24,7 +24,7 @@ document {
 	  "I=intersect(ideal(a*b+a^2,b^2),ideal(a^2,b^2,c^2),ideal(b^3,c^3,d^3))",
 	  "removeLowestDimension I"
 	  },
-     SeeAlso => {"top", "saturate", "quotient", "radical", "decompose"}
+     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "decompose"}
      }
 
  -- doc10.m2:385:     Key => removeLowestDimension,
@@ -46,6 +46,6 @@ document {
 --     PARA,
 --     "Computes one free resolution, and some homology groups, but no
 --     projections or determinants are used.  For a very brief description
---     of the method used, see ", TO "top-method", ".",
---     SeeAlso => {"top", "saturate", "quotient", "radical", "decompose"}
+--     of the method used, see ", TO "topComponents", ".",
+--     SeeAlso => {"topComponents", "saturate", "quotient", "radical", "decompose"}
 --     }
