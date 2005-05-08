@@ -10,14 +10,15 @@ document {
 document { 
      Key => (gb,Ideal),
      Headline => "",
-     Usage => "",
+     Usage => "gb I",
      Inputs => {
+		"I" => ""
 	  },
      Outputs => {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -26,14 +27,15 @@ document {
 document { 
      Key => (gb,Matrix),
      Headline => "",
-     Usage => "",
+     Usage => "gb f",
      Inputs => {
+		"f" => ""
 	  },
      Outputs => {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -42,14 +44,15 @@ document {
 document { 
      Key => (gb,Module),
      Headline => "",
-     Usage => "",
+     Usage => "gb M",
      Inputs => {
+		"M" => ""
 	  },
      Outputs => {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -111,7 +114,7 @@ document {
      Consequences => {
 	  },     
 	"Can take values ", TT "Homogeneous", ", ",  TT "Inhomogeneous",  ", ", 
-	TT "LinearAlgebra", ".",
+	TT "LinearAlgebra", ".", "Default value is",  TT "Inhomogeneous", ".",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -141,7 +144,8 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+	  "Throws away all S-pairs of degrees beyond the limit. The computation
+	  will be re-initialized if higher degrees are required.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -155,7 +159,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -169,7 +173,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -183,7 +187,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -197,7 +201,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -211,7 +215,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -225,7 +229,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -239,7 +243,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -253,7 +257,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -267,7 +271,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
@@ -281,7 +285,7 @@ document {
 	  },
      Consequences => {
 	  },     
-     "description",
+     "See ", TO "Computing Groebner bases", " for examples.",
      EXAMPLE {
 	  },
      Caveat => {},
