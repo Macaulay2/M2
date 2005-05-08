@@ -445,7 +445,7 @@ document {
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more
      information, see ", TO "Groebner bases", " or
-     ", TO "computing Groebner bases", "."
+     ", TO "Computing Groebner bases", "."
      }
 
 document {
@@ -490,18 +490,6 @@ document {
      "The value returned is the old tracing level."
      }
      
-document {
-     Key => gb,
-     Headline => "compute a Groebner basis",
-     TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " ", TT "f", ".",
-     PARA,
-     "If the computation is interrupted, then the partially completed
-     Groebner basis is available as ", TT "f#{t,i}", ", where ", TT "t", " is true or
-     false depending on whether syzygies or the change of basis matrix are 
-     to be computed, and ", TT "i", " is the number of rows of the syzygy matrix to 
-     be retained.  The computation can be continued by repeating the 
-     ", TT "gb", " command with the same options."
-     }
 
 document {
      Key => StopBeforeComputation,
@@ -510,16 +498,6 @@ document {
      the computation to be initialized but not begun."
      }
 
-document {
-     Key => [gb,StopBeforeComputation],
-     Headline => "whether to stop the computation immediately",
-     TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
-     PARA,
-     "Tells whether not to start the computation, with the default value
-     being ", TT "false", ".  This can be useful when you want to obtain
-     the partially computed Groebner basis contained in an interrupted
-     computation."
-     }
 
 document {
      Key => DegreeLimit,
@@ -529,16 +507,6 @@ document {
      with degree n."
      }
 
-document {
-     Key => [gb,DegreeLimit], 
-     TT "DegreeLimit => n", " -- keyword for an optional argument used with
-     ", TO "gb", " which specifies that the computation should halt after 
-     dealing S-polynomials up to degree ", TT "n", ".",
-     PARA,
-     "This option is relevant only for homogeneous matrices.",
-     PARA,
-     "For an example, see ", TO "computing Groebner bases", "."
-     }
 
 document {
      Key => BasisElementLimit, 
@@ -558,27 +526,6 @@ document {
      have computed.",
      }
 
-document {
-     Key => [gb,SyzygyLimit], 
-     Headline => "stop when this number of syzygies is obtained",
-     TT "SyzygyLimit", " -- keyword for an optional argument used with
-     ", TO "gb", " which specifies that the computation should stop
-     after a certain number of syzygies have computed.",
-     PARA,
-     "This option is relevant only if ", TT "Syzygies => true", " has
-     been specified.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z,w]",
-      	  "I = ideal(x*y-z^2,y^2-w^2,w^4)",
-      	  "gb(I,SyzygyLimit => 1, Syzygies => true)",
-      	  "syz oo",
-      	  "gb(I,SyzygyLimit => 2, Syzygies => true)",
-      	  "syz oo",
-      	  "gb(I,SyzygyLimit => infinity, Syzygies => true)",
-      	  "syz oo"
-	  },
-     }
 
 document {
      Key => PairLimit,
@@ -589,21 +536,6 @@ document {
      have been reduced."
      }
 
-document {
-     Key => [gb,PairLimit], 
-     Headline => "stop when this number of pairs is handled",
-     TT "PairLimit", " -- keyword for an optional argument used with
-     ", TO "gb", " which specifies that the
-     computation should be stopped after a certain number of S-pairs
-     have been reduced.",
-     EXAMPLE {
-	  "R = QQ[x,y,z,w]",
-      	  "I = ideal(x*y-z,y^2-w-1,w^4-3)",
-      	  "gb(I, PairLimit => 1)",
-      	  "gb(I, PairLimit => 2)",
-      	  "gb(I, PairLimit => 3)"
-	  }
-     }
 
 document {
      Key => CodimensionLimit,
@@ -624,20 +556,6 @@ document {
 	  }
      }
 
-document {
-     Key => [gb,CodimensionLimit], 
-     Headline => "stop when this codimension is reached",
-     TT "CodimensionLimit => n", " -- keyword for an optional argument used with
-     ", TO "gb", " which specifies that the computation should stop when
-     the codimension of the zero set of the ideal (or submodule) generated
-     by the leading terms of the Groebner basis elements found so far reaches 
-     a certain limit.",
-     PARA,
-     "This option has not been implemented yet.",
-     PARA,
-     "Eventually the codimension of the ideal of leading terms is the
-     codimension of the original ideal."
-     }
 
 document {
      Key => StopWithMinimalGenerators,
@@ -655,23 +573,6 @@ document {
 	  }
      }
 
-document {
-     Key => [gb,StopWithMinimalGenerators], 
-     Headline => "stop when minimal generators have been determined",
-     TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
-     with ", TO "gb", ", which, if the value provided is ", TT "true", "
-     indicates that the computation should stop as
-     soon as a complete list of minimal generators for the submodule
-     or ideal has been determined, even if the entire Groebner basis
-     has not yet been determined.",
-     PARA,
-     "Currently this option is implemented by stopping the computation
-     as soon as the S-polynomials and generators of the same 
-     degree as the generator of highest degree have been processed.",
-     PARA,
-     "This option is for internal use only.  Use ", TO "mingens", "
-     instead."
-     }
 
 document {
      Key => Strategy,
@@ -680,21 +581,6 @@ document {
      to suggest a strategy for efficient computation."
      }
 
-document {
-     Key => [gb,Strategy], 
-     Headline => "specify the strategy used to compute Groebner bases",
-     TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
-     be used to specify the strategy to be used in the computation.",
-     PARA,
-     "The strategy option value ", TT "v", " should be one of the following.",
-     UL {
-	  TO "Primary",
-     	  TO "Homogeneous",
-	  TO "Inhomogeneous",
-	  TO "LongPolynomial",
-	  TO "Sort"
-	  }
-     }
 
 document {
      Key => Sort,
@@ -759,15 +645,6 @@ document {
      which concern a change of basis matrix."
      }
 
-document {
-     Key => [gb,ChangeMatrix], 
-     Headline => "whether to produce the change of basis matrix",
-     TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
-     specifies whether to compute the change of basis matrix from the basis to
-     the original generators.",
-     PARA,
-     "Intended for internal use only."
-     }
      
 document {
      Key => SyzygyRows, 

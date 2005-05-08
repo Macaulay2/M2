@@ -14,7 +14,6 @@ document {
      Outputs => {
 		"the characteristic of the ring"
 	  },
-	"Example:",
      EXAMPLE {
 		"R = ZZ/10007[x,y];",
 		"char R",

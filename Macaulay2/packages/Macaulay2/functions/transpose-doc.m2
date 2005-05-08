@@ -1,4 +1,4 @@
---- status: DRAFT
+--- status: Reviewed
 --- author(s): kummini
 --- notes: 
 
@@ -12,8 +12,8 @@ document {
 -- 	  },
 --      Consequences => {
 -- 	  },     
-	 "The function ", TT "transpose", " transposes a matrix, a map
-	 or a table.",
+	 "The function ", TT "transpose", " transposes a matrix, a map of chain
+	 complexes or a table.",
 --      EXAMPLE {
 -- 	  },
 --      Caveat => {},
@@ -24,12 +24,12 @@ document {
      Headline => " transposes a table",
      Usage => "transpose T",
      Inputs => {
-		"T" => List => " or a table"
+		"T" => List => {"which must be a ", TO "table"}
 	  },
      Outputs => { 
-		{"the tranpose of the table ", TT "T", "."}
+		{"the tranpose of the table ", TT "T", ""}
 	  },
-     "Example:",
+     "Here is an example.",
      EXAMPLE {,
 		"transpose{{a, b, c},{d, e, f}}"
 	}
@@ -44,7 +44,7 @@ document {
 	  },
      Outputs => {
 	  },
-     "Example:",
+	"Here is an example.",
      EXAMPLE {
 		"S = ZZ/10007[x,y,z];",
 		"f = matrix{{x^3,x*y^2},{y*x^2,y^3}}",
@@ -56,6 +56,11 @@ document {
 		   "degrees f",
 		   "degrees g",
 	  },
+      Caveat => {
+		    TT "transpose", " works only for maps between free modules. 
+		    Use ", TT "dual", " for more general maps."
+	 },
+      SeeAlso => {dual}
      }
 document { 
      Key => (transpose,ChainComplexMap),

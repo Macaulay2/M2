@@ -327,7 +327,7 @@ document {
 	       -- "Computational techniques",
 	       TO "Groebner bases",
 	       -- TO "first applications of Groebner bases"
-	       TO "normal forms",
+	       TO "Normal forms",
 	       TO "Hilbert functions",
 	       TO "elimination of variables",
 	       TO "syzygies",

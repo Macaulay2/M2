@@ -1,87 +1,78 @@
---- status: TODO
---- author(s): 
+--- status: DRAFT
+--- author(s):  kummini
 --- notes: 
 
 document { 
      Key => source,
-     Headline => "",
-     Usage => "",
-     Inputs => {
-	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
+     Headline => "source of a map",
+     "Gives the source of a map of rings, chain complexes or modules",
+     SeeAlso => {target}
      }
 document { 
      Key => (source,RingMap),
-     Headline => "",
-     Usage => "",
+     Headline => "find the source ring for a map of rings",
+     Usage => "source f",
      Inputs => {
+		"f" => ""
 	  },
      Outputs => {
+		"the source ring of the map"
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+		"S = ZZ/10007[x, y, z];",
+		"R = ZZ/10007[t];",
+		"f = map(R,S,{t^3,t^4,t^5})",
+		"source f"
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
 document { 
      Key => (source,ChainComplexMap),
-     Headline => "",
-     Usage => "",
+     Headline => " find the source of a map of chain complexes",
+     Usage => "source f",
      Inputs => {
+		"f" => ChainComplexMap => ""
 	  },
      Outputs => {
+		{"the source chain complex of ", TT "f"}
 	  },
-     Consequences => {
-	  },     
-     "description",
+	"In the example below, we have a map between two modules and extend it to
+	a map between projective resolutions of the two modules. Then ", 
+	TT "source",  " gives the source of the map of chain complexes.",
      EXAMPLE {
+	  "R = ZZ[x,y,z];",
+	  "M = R^1/(x,y,z);",
+	  "N = R^1/(x^2,y^2,x*y*z,z^2);",
+	  "g = map(N,M,x*y);",
+	  "f = res g;",
+	  "source f"
 	  },
-     Caveat => {},
-     SeeAlso => {}
+	"(That was an expensive way of resolving ", TT "M", ".)",
      }
+
 document { 
      Key => (source,Matrix),
-     Headline => "",
-     Usage => "",
+     Headline => "find the source module of matrix",
+     Usage => "source f",
      Inputs => {
+		"f" => Matrix => ""
 	  },
      Outputs => {
+		{"the source module of ", TT "f"}
 	  },
-     Consequences => {
-	  },     
-     "description",
      EXAMPLE {
+	  "R = ZZ[x,y,z];",
+	  "M = R^1/(x,y,z);",
+	  "N = R^1/(x^2,y^2,x*y*z,z^2);",
+	  "g = map(N,M,x*y);",
+	  "source g",
 	  },
-     Caveat => {},
-     SeeAlso => {}
      }
+
 document { 
      Key => (source,GradedModuleMap),
-     Headline => "",
-     Usage => "",
+     Headline => "find the source of a map of graded modules",
+     Usage => "source f",
      Inputs => {
+		"f" => ""
 	  },
-     Outputs => {
-	  },
-     Consequences => {
-	  },     
-     "description",
-     EXAMPLE {
-	  },
-     Caveat => {},
-     SeeAlso => {}
      }
- -- doc1.m2:706:     Key => source,
- -- overview3.m2:456:     Key => "Resources required",
- -- overviewB.m2:683:     Key => "basic construction, source and target of a ring map",

@@ -617,11 +617,6 @@ document {
      "If h is a ring element, it is interpreted as a one by one matrix."
      }
 document {
-     Key => source,
-     Headline => "source of a map",
-     TT "source h", " -- the source of a morphism ", TT "h", ".",
-     }
-document {
      Key => ambient,
      Headline => "ambient free module of a subquotient, or ambient ring",
      TT "ambient M", " -- yields the ambient free module for the module ", TT "M", ".",

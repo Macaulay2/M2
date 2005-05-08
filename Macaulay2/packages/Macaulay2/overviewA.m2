@@ -281,15 +281,6 @@ document {
      in Macaulay 2 which return or use modules, see ", TO "Module", "."
      }
 
-document {
-     Key => "Groebner bases",
-     Subnodes => {
-	  TO "what is a Groebner basis?",
-	  TO "finding a Groebner basis",
-	  TO "rings that are available for Groebner basis computations",
-	  TO "fine control of a Groebner basis computation"
-	  }
-     }
 
 document { -- this node is used as an example in the node: Key
      Key => "free resolutions, chain complexes, and homological algebra",
