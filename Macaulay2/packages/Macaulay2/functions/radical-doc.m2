@@ -18,7 +18,7 @@ document {
      Caveat => {"The current implementation requires that the
 	  characteristic of the ground field is either zero
 	  or a \"large\" prime (unless ", TT "I", " is  ", OFCLASS MonomialIdeal, ")."},
-     SeeAlso => {decompose, top, removeLowestDimension, saturate, quotient}
+     SeeAlso => {decompose, topComponents, removeLowestDimension, saturate, quotient}
      }
 
 
