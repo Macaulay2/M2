@@ -8,7 +8,7 @@ document {
      Usage => "decompose I",
      Inputs => {"I" => Ideal => ""
 	  },
-     Outputs => {List => {"whose entries are the minimal associated primes of ", TT "I."}
+     Outputs => {List => {"whose entries are the minimal associated primes of ", TT "I", " ."}
 	  },
      "This function computes the minimal associated primes
      of the ideal ", TT "I"," using characteristic sets. Geometrically, 
