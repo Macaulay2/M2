@@ -31,7 +31,7 @@ document {
 	  "I=ideal(x^2+y^2)",
 	  "decompose I"
 	  },
-     SeeAlso => {irreducibleCharacteristicSeries}
+     SeeAlso => {topComponents, removeLowestDimension, radical, irreducibleCharacteristicSeries}
      }
 
  -- doc10.m2:475:     Key => decompose,
