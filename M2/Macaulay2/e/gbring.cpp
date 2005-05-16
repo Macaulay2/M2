@@ -556,6 +556,12 @@ void GBRing::gbvector_mult_by_coeff_to(gbvector *f, ring_elem u)
     K->mult_to(f->coeff,u);
 }
 
+void GBRing::gbvector_negate_to(gbvector *f)
+{
+  for ( ; f != 0; f=f->next)
+    K->negate_to(f->coeff);
+}
+
 gbvector * GBRing::gbvector_mult_by_coeff(const gbvector *v, ring_elem u)
 {
   gbvector head;
@@ -1110,8 +1116,14 @@ void GBRing::gbvector_apply(const FreeModule *F,
 /////////////////////
 void GBRing::divide_coeff_exact_to_ZZ(gbvector * f, M2_Integer u) const
 {
+  mpz_t a;
+  mpz_init(a);
   for ( ; f != 0; f=f->next)
-    mpz_divexact(MPZ_VAL(f->coeff), MPZ_VAL(f->coeff), u);
+    {
+      mpz_divexact(a, MPZ_VAL(f->coeff), u);
+      f->coeff = globalZZ->ZZ::from_int(a);
+    }
+  mpz_clear(a);
 }
 
 void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
@@ -1165,10 +1177,8 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
 
       if (leadsign < 0)
 	{
-	  for (gbvector *h = f ; h != 0; h=h->next)
-	    mpz_neg(MPZ_VAL(h->coeff),MPZ_VAL(h->coeff));
-	  for (gbvector *hsyz = fsyz; hsyz != 0; hsyz=hsyz->next)
-	    mpz_neg(MPZ_VAL(hsyz->coeff),MPZ_VAL(hsyz->coeff));
+	  gbvector_negate_to(f);
+	  gbvector_negate_to(fsyz);
 	}
       return;
     }

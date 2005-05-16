@@ -13,7 +13,7 @@ export(eliminate, sylvesterMatrix, discriminant, resultant)
 
 getIndices = (R,v) -> unique apply(v, index)
 
-degree (RingElement, RingElement) := (f,x) -> first max degrees source first coefficients({index x},f)
+degree (RingElement, RingElement) := (f,x) -> first max degrees source first coefficients(f,Variables=>x)
 
 ------------------------------
 -- Elimination of variables --
@@ -27,6 +27,7 @@ inversePermutation = (p) -> (
      toList q)
 
 eliminate (Ideal, List) := (I,v) -> (
+     if #v === 0 then return I;
      R := ring I;
      varlist := getIndices(ring I,v);
      others := toList(set(0..numgens R-1) - set varlist);

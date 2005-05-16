@@ -39,7 +39,8 @@ flatt = (I, m) -> (
      -- Collect lead coefficients of GB
      JG = J;
      leads := leadTerm(1,gens gb J);
-     (mons,cs) = coefficients(toList(0..n-d-1),leads);
+     --(mons,cs) = coefficients(toList(0..n-d-1),leads);
+     (mons,cs) = coefficients(leads, Variables => toList(0..n-d-1));
      monsid = trim ideal select(flatten entries mons, f -> f != 1);
      monsid = substitute(monsid,R);
      --monset = set flatten entries gens monsid;
@@ -109,7 +110,63 @@ GTZ1 Ideal := (I) -> (
 	  );
      comps
      )
+
+needsPackage "Elimination"
+getMinimalPoly = method()
+getMinimalPoly(Ideal,RingElement,RingElement) := (I,u,x) -> (
+     ux := u*x;
+     elimvars := select(gens ring I, y -> ux % y != 0);
+     J := eliminate(I,elimvars);
+     error "getminpoly";
+     J_0
+     )
+
+getSeparablePart = method()
+getSeparablePart(RingElement,RingElement,RingElement) := (f,u,x) -> (
+     g := factors f;
+     product select(g, g1 -> degree(g1,x) > 0))
      
+
+radical0 = method()     
+radical0(Ideal,RingElement) := (I,u) -> (
+     -- For each variable not in u, compute the 
+     -- squarefree part (separable part)
+     v := select(gens ring I, x -> u % x != 0);
+     newelems := {};
+     time scan(v, x -> (
+	       -- there are THREE problems here!
+	       -- (a) use linear algebra
+	       -- (b) char p
+	       -- (c) f might not be the smallest eqn in var v_i.
+	       f := getMinimalPoly(I,u,x);
+	       g := getSeparablePart(f,u,x);
+	       if f != g then newelems = append(newelems,g)));
+     error "in radical0";
+     I + ideal newelems
+     )
+
+rad = method()
+rad Ideal := (I) -> (
+     -- returns the radical of I
+     R := ring I;
+     radI := ideal(1_R);
+     while I != 1 do (
+	  u := independentSets(I,Limit=>1);
+	  u = if #u === 0 then 1_R else first u;
+	  J := radical0(I,u);
+	  h := flatt(J,u);
+	  h = (intersect values h)_0;
+	  radJ := saturate(J,h);
+	  radI = intersect(radI,radJ);
+	  h = flatt(I,u);
+	  h = (intersect values h)_0;
+	  h = product factors h;
+	  error "what h is being added?";
+	  I = I + ideal(h);
+	  );
+     radI
+     )
+
 ///
 restart
 load "PrimaryDecomposition/GTZ.m2"
@@ -461,4 +518,8 @@ use ring J
 time greedySat(J,t);
 
 time C = GTZ1 I;
+
+
+
+
 ///
