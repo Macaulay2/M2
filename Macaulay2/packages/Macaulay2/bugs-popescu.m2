@@ -27,7 +27,7 @@ genus of an ideal!!!
 
 
 																											  
-6) The following code
+FIXED 6) The following code
 
           R = QQ[x_0..x_4]
           a = {1,0,0,0,0}

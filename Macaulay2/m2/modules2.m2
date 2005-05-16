@@ -143,7 +143,7 @@ geometricSeries := (x,n) -> sum(n, i -> x^i)
 
 trimm := (f,n) -> (
      R := ring f;
-     sum(select(listForm f, (deg,coe) -> first deg < n), (deg,coe) -> coe * R_deg))
+     0_R + sum(select(listForm f, (deg,coe) -> first deg < n), (deg,coe) -> coe * R_deg))
 
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
 hilbertSeries Ring := options -> (R) -> error "no method for computing hilbert series for this ring"
@@ -169,7 +169,7 @@ hilbertSeries Module := options -> (M) -> (
 	  y := flatten apply(pairs denom, (i,e) -> Power {(1 - T_i),e});
 	  M.cache#"exact hilbertSeries" = Divide{num, Product y})
      else if class ord === ZZ then (
-	  s := if num == 0 then 0_T else (
+	  s := if num == 0 or ord <= 0 then 0_T else (
 	       m := min min(listForm num / first);
 	       n := ord;
 	       N := n - m;
