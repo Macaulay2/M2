@@ -43,7 +43,7 @@ void PolynomialRing::initialize_PolynomialRing(
   denomR_ = denomR;
 
   
-  if (K == globalZZ && denomR != 0)
+  if (K == globalQQ || (K == globalZZ && denomR != 0))
     coeff_type_ = Ring::COEFF_QQ;
   else if (K == globalZZ && denomR == 0)
     coeff_type_ = Ring::COEFF_ZZ;
@@ -101,8 +101,10 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
     result = new PolyRingQuotient;
     break;
   case COEFF_QQ:
+#warning "QQ[...]/I uses PolyRingQuotient"
     qrinfo = new QRingInfo_field_QQ(R->getNumeratorRing(),elems);
-    result = new PolyQQ;
+    result = new PolyRingQuotient;
+    //    result = new PolyQQ;
     break;
   case COEFF_ZZ:
     QRingInfo_ZZ *qrinfoZZ = new QRingInfo_ZZ(R->getNumeratorRing(),elems);

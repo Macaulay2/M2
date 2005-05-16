@@ -227,6 +227,7 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
   const Monoid *M = R->getMonoid();
   gbvector head;
   gbvector *result = &head;
+  result->next = NULL;
   gbvector *t = f;
   while (t != NULL)
     {
@@ -243,9 +244,9 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
 	  result->next = t;
 	  t = t->next;
 	  result = result->next;
+	  result->next = NULL;
 	}
     }
-  result->next = NULL;
   f = head.next;
 }
 
