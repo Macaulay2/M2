@@ -1373,7 +1373,7 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
 // the pointer to the first term of f not used (possibly 0).
 // coeffR should be a coefficient ring of 'this'.
 {
-  if (f == 0) return 0;
+  if (f == 0) return coeffR->zero();
   if (coeffR == K_)
     {
       ring_elem result = f->coeff;
