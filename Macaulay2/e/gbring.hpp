@@ -278,7 +278,7 @@ public:
   void gbvector_add_to(const FreeModule *F,
 		       gbvector * &f, gbvector * &g);
 
-  void gbvector_negate_to(gbvector *f);
+  void gbvector_negate_to(gbvector *f) const;
 
   gbvector * gbvector_copy(const gbvector *f);
 

@@ -556,7 +556,7 @@ void GBRing::gbvector_mult_by_coeff_to(gbvector *f, ring_elem u)
     K->mult_to(f->coeff,u);
 }
 
-void GBRing::gbvector_negate_to(gbvector *f)
+void GBRing::gbvector_negate_to(gbvector *f) const
 {
   for ( ; f != 0; f=f->next)
     K->negate_to(f->coeff);
