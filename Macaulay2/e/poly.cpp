@@ -43,7 +43,7 @@ void PolynomialRing::initialize_PolynomialRing(
   denomR_ = denomR;
 
   
-  if (K == globalQQ || (K == globalZZ && denomR != 0))
+  if (K->is_QQ() || (K == globalZZ && denomR != 0))
     coeff_type_ = Ring::COEFF_QQ;
   else if (K == globalZZ && denomR == 0)
     coeff_type_ = Ring::COEFF_ZZ;

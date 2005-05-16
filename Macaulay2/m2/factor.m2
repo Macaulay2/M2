@@ -88,8 +88,8 @@ decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.ca
 	       CS = ideal CS;
 	       --<< "saturating " << CS << " with respect to " << iniCS << endl;
 	       -- warning: over ZZ saturate does unexpected things.
---	       scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
-	       scan(iniCS, a -> CS = saturate(CS, a));
+	       scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
+--	       scan(iniCS, a -> CS = saturate(CS, a));
 	       --<< "result is " << CS << endl;
 	       CS));
      Psi = new MutableList from Psi;
