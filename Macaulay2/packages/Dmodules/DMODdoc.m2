@@ -2327,48 +2327,8 @@ document {
 -- (better docs needed)
 ----------------------------------------------------------------------------
 document {
-     Key => SparseMutableMatrix,
-     Headline => "sparse matrix"
-     }
-document {
-     Key => sparseMutableMatrix,
-     Headline => "make sparse matrix"
-     }
-document {
-     Key => newSparseMatrix,
-     Headline => "a way to grab sparse matrix from engine"
-     }
-document {
      Key => reduceCompress,
      Headline => "simplify sparse matrix"
-     }
-document {
-     Key => getEntry,
-     Headline => "get a sparse matrix entry"
-     }
-document {
-     Key => iden,
-     Headline => "identity sparse matrix"
-     }
-document {
-     Key => sparsemat,
-     Headline => "create a sparse matrix"
-     }
-document {
-     Key => numcols,
-     Headline => "number of columns of a sparse matrix"
-     }
-document {
-     Key => numrows,
-     Headline => "number of rows of a sparse matrix"
-     }
-document {
-     Key => setEntry,
-     Headline => "set a sparse matrix entry"
-     }
-document {
-     Key => reducePivots,
-     Headline => "reduce pivots in a sparse matrix"
      }
 document {
      Key => Dprune,

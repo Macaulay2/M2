@@ -70,13 +70,13 @@ assgn(RawMutableMatrix,ZZ,ZZ,RR) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
 assgn(RawMutableMatrix,ZZ,ZZ,CC) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
 installAssignmentMethod(symbol _, MutableMatrix, Sequence, (m,rc,x) -> ((r,c) -> assgn(raw m,r,c,x)) rc)
 
-nrows = method()
-nrows(RawMutableMatrix) := (m) -> rawNumberOfRows m
-nrows(MutableMatrix) := (m) -> rawNumberOfRows raw m
+numRows = method()
+numRows(RawMutableMatrix) := (m) -> rawNumberOfRows m
+numRows(MutableMatrix) := (m) -> rawNumberOfRows raw m
 
-ncols = method()
-ncols(RawMutableMatrix) := (m) -> rawNumberOfColumns m
-ncols(MutableMatrix) := (m) -> rawNumberOfColumns raw m
+numColumns = method()
+numColumns(RawMutableMatrix) := (m) -> rawNumberOfColumns m
+numColumns(MutableMatrix) := (m) -> rawNumberOfColumns raw m
 
 rowSwap = method()
 rowSwap(RawMutableMatrix,ZZ,ZZ) := (m,i,j) -> rawMatrixRowSwap(m,i,j)
