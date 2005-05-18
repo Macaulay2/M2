@@ -17,9 +17,11 @@ export (ExternalProduct,TwistMap,twistMap,twistInvMap,projMap1,projMap2,bFunctio
 	Dintegrate,DintegrateIdeal,DintegrationIdeal,DintegrationComplex,DintegrateClasses,DintegrateComplex,
 	DintegrationClasses,DintegrateAll,DintegrationAll,gkz,Vars,Local,Global,AppellF1,PolyAnn,
 	RatAnn,WeylClosure,deRham,deRhamAll,TransferCycles,CohomologyGroups,PreCycles,OmegaRes,
-	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,SparseMutableMatrix,sparseMutableMatrix,
-	newSparseMatrix,reduceCompress,getEntry,iden,sparsemat,numcols,numrows,setEntry,reducePivots,
-	Dprune,Dprune2,optGB,FourierInverse)
+	diffOps,PolyGens,BasisElts,putWeylAlgebra,inw,gbw,pInfo,
+	Dprune,Dprune2,optGB,FourierInverse,	
+	reduceCompress
+	)
+
 
 load "Dmodules/Dloadfile.m2"
 load "Dmodules/DMODdoc.m2"

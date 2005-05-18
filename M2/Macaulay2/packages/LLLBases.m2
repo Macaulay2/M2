@@ -34,8 +34,6 @@ cflip = (m,i,j) -> columnSwap(m,i,j)
 
 cscale = (m,a,i) -> columnMult(m,i,a)
 
-numcols = m -> ncols m
-
 iden = (R,n) -> mutableIdentity(R,n)
 
 getEntry = (m,i,j) -> m_(i,j)
@@ -667,6 +665,437 @@ gcdLLL List := options -> (s) -> (
 
 beginDocumentation()
 
+
+
+--- status: TODO
+--- author(s): 
+--- notes: 
+
+document { 
+     Key => LLL,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (LLL,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (LLL,MutableMatrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [LLL, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [LLL, ChangeOfBasisMatrix],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [LLL, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [LLL, Engine],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+ -- LLLBases.m2:671:        Key => LLLBases,
+ -- LLLBases.m2:688:     Key => {isLLL, (isLLL,Matrix)},
+ -- LLLBases.m2:728:     Key => gcdLLL,
+ -- LLLBases.m2:759:        Key => kernelLLL,
+ -- LLLBases.m2:765:        Key => hermiteLLL,
+ -- LLLBases.m2:770:     Key => {LLL,(LLL,Matrix),(LLL,MutableMatrix)},
+ -- LLLBases.m2:805:     Key => [LLL, Threshold],
+--- status: TODO
+--- author(s): 
+--- notes: 
+
+document { 
+     Key => gcdLLL,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (gcdLLL,List),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (gcdLLL,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [gcdLLL, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [gcdLLL, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [gcdLLL, Strategy],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+ -- LLLBases.m2:728:     Key => gcdLLL,
+--- status: TODO
+--- author(s): 
+--- notes: 
+
+document { 
+     Key => gram,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (gram,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+--- status: TODO
+--- author(s): 
+--- notes: 
+
+document { 
+     Key => hermiteLLL,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (hermiteLLL,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [hermiteLLL, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [hermiteLLL, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [hermiteLLL, ChangeOfBasisMatrix],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+ -- LLLBases.m2:765:        Key => hermiteLLL,
+--- status: TODO
+--- author(s): 
+--- notes: 
+
+document { 
+     Key => isLLL,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (isLLL,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [isLLL, Threshold],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+ -- LLLBases.m2:688:     Key => {isLLL, (isLLL,Matrix)},
+--- status: TODO
+--- author(s): 
+--- notes: 
+
+document { 
+     Key => kernelLLL,
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => (kernelLLL,Matrix),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+document { 
+     Key => [kernelLLL, Limit],
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Consequences => {
+	  },     
+     "description",
+     EXAMPLE {
+	  },
+     Caveat => {},
+     SeeAlso => {}
+     }
+ -- LLLBases.m2:759:        Key => kernelLLL,
+
+
 document { 
 	Key => LLLBases,
 	Headline => "lattice reduction (Lenstra-Lenstra-Lovasz bases)",
@@ -816,6 +1245,8 @@ document {
      SeeAlso => {}
      }
 
+
+
 -------------------------------
 -- Tests of the LLL routines --
 -------------------------------
@@ -851,7 +1282,8 @@ TEST ///
     -- LLL(m1,Engine=>false) FAILS
 ///
 
-TEST ///
+TEST ""
+/// -- DON'T TEST YET??
      loadPackage "LLLBases";
      testLLL = (m) -> (
   	  -- Test 1:
@@ -932,8 +1364,9 @@ TEST ///
     m = matrix randomMutableMatrix(30,70,.5,5)
     time mz = kernelLLL m
     mz1 = time LLL mz
-    time mz2 = syz m;  -- Time is actually somewhat less that computing mz1.  Except that the size of the matrices
-    -- is very large.
+    time mz2 = syz m;  -- Time varies depending on m, often 
+    -- is actually somewhat less that computing mz1.  Except 
+    -- that the size of the integers is very large.
     -- time LLL mz2 -- too timeconsuming?
 
     -- This example is a lattice which was of interest to Persi Diaconis (1997)
@@ -1072,5 +1505,13 @@ TEST ///
 TEST ///
      loadPackage "LLLBases";
 
+    time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
+    time m = syz m1
+    time mz = LLL(m)
+    (gm, H) = gram mz 
+    gm = matrix gm
+    h = (transpose gm) * gm -- should be diagonal:
+    scan(numgens source h, i -> scan(numgens source h, j -> 
+	      assert(i === j or h_(i,j) == 0)))
 ///
 
