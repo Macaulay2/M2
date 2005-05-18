@@ -12,10 +12,15 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
-local haderror; local nullButton; local masterIndexButton; local tocButton; local homeButton
+local nullButton; local masterIndexButton; local tocButton; local homeButton
 local NEXT; local PREV; local UP; local CONT; local linkTable
 local nextButton; local prevButton; local upButton
 local masterIndex
+
+haderror := false
+numerrors := 0;
+errorSummary := () -> if haderror and not opts.IgnoreExampleErrors then error(toString numerrors, " error(s) occurred running example files");
+
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
@@ -415,6 +420,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 		    exit r;
 		    );
 	       haderror = true;
+	       numerrors = numerrors + 1;
 	       )))
 
 runString := (x,pkg,rundir) -> (
@@ -436,7 +442,8 @@ runString := (x,pkg,rundir) -> (
 
 check = method()
 check Package := pkg -> (
-     scan(values pkg#"test inputs", s -> runString(s,pkg,"."))
+     scan(values pkg#"test inputs", s -> runString(s,pkg,"."));
+     errorSummary();
      )
 
 setupNames := (opts,pkg) -> (
@@ -675,7 +682,8 @@ installPackage Package := opts -> pkg -> (
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  stderr << "--making example result files in " << exampleDir << endl;
-	  haderror := false;
+	  haderror = false;
+	  numerrors = 0;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 		    -- args:
 		    inf := infn fkey;
@@ -697,7 +705,7 @@ installPackage Package := opts -> pkg -> (
 			 if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 			 )
 		    ));
-	  if haderror and not opts.IgnoreExampleErrors then error "error(s) occurred running example files";
+	  errorSummary();
 
      --      -- make test output files, or else copy them from the old package directory tree
      --      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
