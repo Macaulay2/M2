@@ -387,6 +387,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
 	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
+	  return true;
 	  )
 --     else if fileExists tmpf and fileTime tmpf >= fileTime inf
 --     then (
@@ -407,6 +408,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  r := run cmd;
 	  if r == 0 then (
 	       moveFile(tmpf,outf);
+	       return true;
 	       )
 	  else (
 	       stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
@@ -421,6 +423,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 		    );
 	       haderror = true;
 	       numerrors = numerrors + 1;
+	       return false;
 	       )))
 
 runString := (x,pkg,rundir) -> (
@@ -430,14 +433,17 @@ runString := (x,pkg,rundir) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir);
-     result := if fileExists outf then get outf;
-     if result =!= null then (
+     ret := runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir);
+     result := if fileExists outf then get outf else "-- no output file found --";
+     if ret then (
 	  stderr
 	  << "--test input : " << stack lines x << endl
 	  << "--test output: " << stack lines result << endl << endl;
+	  rm \ {inf, tmpf, outf}
+	  )
+     else (
+	  rm \ {inf, outf}				    -- leave error file behind
 	  );
-     rmall();
      result)
 
 check = method()
