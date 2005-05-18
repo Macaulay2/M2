@@ -120,8 +120,6 @@ errorDepth = 0
 debug PrimaryDecomposition
 
 R = ZZ/32003[a,b,c,d,f,g,h,k,l,s,t,u,v,w,x,y,z, MonomialOrder=>GRevLexTiny]
-R = ZZ/32003[a,b,c,d,f,g,s,t,x,h,k,l,u,v,w,y,z, MonomialOrder=>{Eliminate 9, GRevLexTiny}]
-R = ZZ/32003[a,b,c,d,f,g,s,t,x,h,k,l,u,v,w,y,z, MonomialOrder=>{GRevLexTiny=>9, GRevLexTiny=>8}]
 I = ideal(
     -a*b-a*d+2*a*h,
     a*d-b*d-c*f-2*a*h+2*b*h+2*c*k,
@@ -141,6 +139,15 @@ debug PrimaryDecomposition
 time GTZ1 I;
 
 J = minPres I
+(J1,g) = saturation(J,x)
+J1
+J2 = trim(J + ideal g)
+J2 = trim substitute(J, x=>0)
+intersect(J1,J2) == J
+C1 = time primaryDecomposition(J1, Strategy=>SY);
+C2 = time primaryDecomposition(J2, Strategy=>SY);
+
+
 time decompose J -- this is much worse than 'decompose I'
 transpose gens J
 time I = trim I 
