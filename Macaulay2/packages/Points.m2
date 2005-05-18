@@ -13,8 +13,6 @@ export (
      points,
      pointsByIntersection,
      reduceColumn,
-     mutableIdentity,
-     getColumnChange,
      makeRingMaps
      )
 
@@ -255,12 +253,6 @@ reduceColumn = (M,H,c) -> (
 	  );
      true
      )
-
-mutableIdentity = method()
-mutableIdentity(Ring,ZZ) := (R,n) -> map(R,rawMutableIdentity(raw R,n,false))
-
-getColumnChange = method()
-getColumnChange(MutableMatrix) := (m) -> map(ring m, rawColumnChange raw m)
 
 beginDocumentation()
 
