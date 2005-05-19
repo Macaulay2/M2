@@ -322,12 +322,14 @@ bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
 bool SparseMutableMatrix::row_permute(int start_row, const M2_arrayint perm)
 {
 #warning "write this"
+  ERROR("not implemented yet");
   return false;
 }
 
 bool SparseMutableMatrix::column_permute(int start_col, const M2_arrayint perm)
 {
 #warning "write this"
+  ERROR("not implemented yet");
   return false;
 }
 
@@ -337,6 +339,7 @@ bool SparseMutableMatrix::set_submatrix(const M2_arrayint rows,
   // returns false iff there is an error
 {
 #warning "write this"
+  ERROR("not implemented yet");
   return false;
 }
 

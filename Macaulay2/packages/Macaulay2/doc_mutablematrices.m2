@@ -29,7 +29,6 @@ document {
 	  }
      }
 
-     
 document {
      Key => "mutable matrices",
      "To and from matrices:",
@@ -49,7 +48,7 @@ document {
      "Number of rows, columns, and the ring:",
      EXAMPLE {
 	  "numrows n",
-	  "numcolumns n",
+	  "numColumns n",
 	  "numcols n",
 	  "ring n"
 	  },
@@ -300,7 +299,7 @@ document {
      EXAMPLE {
 	  "n = map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
 	  "m = mutableMatrix n",
-	  "rowPermute(m,1,{2,0,1})"
+	  "--rowPermute(m,1,{2,0,1})"
 	  },
      Caveat => {},
      SeeAlso => {}
@@ -322,8 +321,9 @@ document {
      EXAMPLE {
 	  "n = map(ZZ^5,ZZ^6, (i,j) -> 100*i+j)",
 	  "m = mutableMatrix n",
-	  "columnPermute(m,1,{2,0,1})"
+	  "--columnPermute(m,1,{2,0,1})"
 	  },
      Caveat => {},
      SeeAlso => {}
      }
+
