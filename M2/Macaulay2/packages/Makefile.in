@@ -8,7 +8,7 @@ PACKAGES += Style
 PACKAGES += PrimaryDecomposition
 PACKAGES += CacheFileName
 PACKAGES += ConvexHulls
-PACKAGES += Dmodules
+#PACKAGES += Dmodules
 PACKAGES += Elimination
 PACKAGES += FirstPackage
 PACKAGES += GenericInitialIdeal
@@ -17,7 +17,7 @@ PACKAGES += minimal
 PACKAGES += Points
 PACKAGES += PackageTemplate
 PACKAGES += SimplicialComplexes
-PACKAGES += LLLBases
+#PACKAGES += LLLBases
 
 # PACKAGES += SchurRings
 ##
