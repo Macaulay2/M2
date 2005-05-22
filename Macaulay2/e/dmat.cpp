@@ -43,6 +43,12 @@ void DMat<CoeffRing>::resize(int new_nrows, int new_ncols)
 }
 
 template<typename CoeffRing>
+double * DMat<CoeffRing>::get_lapack_array() const
+{
+  return 0;
+}
+
+template<typename CoeffRing>
 void DMat<CoeffRing>::set_matrix(const DMat<CoeffRing> *mat0)
 {
   initialize(mat0->n_rows(), mat0->n_cols(), mat0->get_array());

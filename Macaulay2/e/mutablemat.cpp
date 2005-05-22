@@ -18,6 +18,11 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or 
   // MutableMatrixCC will be used.
 {
+  if (nrows < 0 | ncols < 0)
+    {
+      ERROR("expected non-negative number of rows or columns");
+      return 0;
+    }
   const Z_mod *KZZp = R->cast_to_Z_mod();
   if (KZZp != 0)
     {

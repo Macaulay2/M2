@@ -31,3 +31,10 @@ writing functions/remainder'-doc.m2
 
 -- 'monomials' applied to a matrix with more than one row is coming out messed up
 -- see the test in functions/monomials-doc.m2
+
+-- RR and CC stuff:
+-- (1) conjugate should work on a MutableMatrix, or Matrix
+--     same with conjugate-transpose?
+-- (2) U^-1, for U a matrix over CC, is WRONG
+-- (3) printingPrecision should be used for matrices?
+--     Actually it seems to be incorrect for real numbers in any case.

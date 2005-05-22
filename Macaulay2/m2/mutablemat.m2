@@ -179,9 +179,11 @@ eigenvectors(MutableMatrix) := o -> (A) -> (
      if ring A =!= RR and ring A =!= CC then
        error "eigenvalues requires matrices over RR or CC";
      e := if o.Hermitian 
-          then mutableZero(RR,0,0)
-          else mutableZero(CC,0,0);
-     v := mutableZero(CC,0,0);
+          then mutableZero(RR,0,0, Dense=>true)
+          else mutableZero(CC,0,0, Dense=>true);
+     v := if ring A === RR and o.Hermitian
+          then mutableZero(RR,0,0, Dense=>true)
+	  else mutableZero(CC,0,0, Dense=>true);
      rawEigenvectors(raw A,raw e,raw v,o.Hermitian);
      (e,v))
 eigenvectors(Matrix) := o -> (A) -> (
