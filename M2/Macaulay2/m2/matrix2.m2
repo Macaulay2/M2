@@ -230,6 +230,21 @@ listOfVars(Ring,RingElement) := (R,x) -> (
      then {index x}
      else error "expected a ring element of the same ring")
 
+coefficient(MonoidElement,RingElement) := (m,f) -> (
+     RM := ring f;
+     R := coefficientRing RM;
+     M := monoid RM;
+     if M =!= class m then error "expected monomial from same ring";     
+     new R from rawCoefficient(raw R, raw f, raw m))
+coefficient(RingElement,RingElement) := (m,f) -> (
+     if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";
+     m = leadMonomial m;
+     RM := ring f;
+     R := coefficientRing RM;
+     new R from rawCoefficient(raw R, raw f, raw m))
+RingElement _ MonoidElement := RingElement => (f,m) -> coefficient(m,f)
+RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
+
 coefficients = method(Options => {Variables => null, Monomials => null})
 coefficients(RingElement) := o -> (f) -> coefficients(matrix{{f}},o)
 coefficients(Matrix) := o -> (f) -> (

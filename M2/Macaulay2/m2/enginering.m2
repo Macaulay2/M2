@@ -109,32 +109,13 @@ numgens EngineRing := R -> #R.generators
 
 generators EngineRing := R -> R.generators
 
-RingElement _ RingElement := RingElement => (f,m) -> (
-     R := ring f;
-     if R =!= ring m then error "expected monomial in the same ring";
-     R _ R := (f,m) -> (
-     	  if size m === 1
-     	  and leadCoefficient m == 1
-     	  then f_(leadMonomial m)
-     	  else error("expected ", toString m, " to be a monomial")
-	  );
-     f _ m)
-
--- RingElement _ ZZ := RingElement => (f,m) -> (
---      R := ring f;
---      R _ ZZ := (f,m) -> (
---      	  if m =!= 1 then error "expected index to be 1 or a monomial";
---      	  f_(1_(monoid R))
--- 	  );
---      f _ m)
-
-RingElement _ ZZ := RingElement => (f,d) -> (
+part(ZZ,RingElement) := RingElement => (d,f) -> (
      u := select(terms f, t -> d === sum degree t);
      if #u === 0 then 0_(ring f)
      else sum u
      )
 
-RingElement _ List := RingElement => (f,d) -> (
+part(List,RingElement) := RingElement => (d,f) -> (
      if degreeLength ring f =!= #d
      then error ("degree length of ring element doesn't match specified degree");
      u := select(terms f, t -> d === degree t);

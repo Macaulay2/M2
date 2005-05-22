@@ -479,9 +479,9 @@ document {
      In the following example, ", TT "a^-1", " is in the ring,
      but ", TT "c^-1", " is not.",
      EXAMPLE {
-	  "--R = QQ[a..d, MonomialOrder=> GroupRevLex=>2];",
-	  "--a^-1",
-	  "--try c^(-1) else \"failed\"",
+	  "R = QQ[a..d, MonomialOrder=> GroupRevLex=>2];",
+	  "a^-1",
+	  "try c^(-1) else \"failed\"",
 	  },
      Caveat => { "This feature has not been implemented yet."}
      }

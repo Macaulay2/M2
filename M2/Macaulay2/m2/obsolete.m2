@@ -27,6 +27,9 @@ map(Module,Matrix) := options -> (M,f) -> error "method for 'map(Module,Matrix)'
 undocumented(Module,ZZ)
 map(Module,ZZ) := map(Module,RingElement) := options -> (M,r) -> error "method for 'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead"
 
+RingElement _ ZZ := x -> error "method for 'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead"
+RingElement _ List := x -> error "method for 'RingElement _ List' has been replaced: use 'part(d,f)' instead"
+
 undocumented(diff,RingElement)
 undocumented(diff,Matrix)
 diff(RingElement)    := f -> error "method for 'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead"
