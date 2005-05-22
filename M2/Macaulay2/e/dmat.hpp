@@ -37,7 +37,7 @@ public:
   void initialize(int nrows, int ncols, elem *array);
   void resize(int nrows, int ncols);
   elem * get_array() const { return array_; } // Used for lapack type routines
-  double *get_lapack_array() const { return 0; } // redefined by RR,CC
+  double *get_lapack_array() const; // redefined by RR,CC
 public:
   int lead_row(int col) const;
   /* returns the largest index row which has a non-zero value in column 'col'.

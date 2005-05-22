@@ -66,16 +66,23 @@ LLL MutableMatrix :=
 LLL Matrix := options -> (M) -> (
      -- First check that the base ring is ZZ
      -- Check that the threshold is in range
-     if options.Engine then (
-	  m := mutableMatrix M;
+     m := mutableMatrix M;
+     if options.ChangeOfBasisMatrix then
+          setColumnChange(m, iden(ring m, numcols m));
+     result := if options.Engine then (
 	  rawLLL(m.RawMutableMatrix, options.Threshold);
 	  matrix map(ZZ,m.RawMutableMatrix)
 	  )
      else (
-	  C := newLLLComputation(M,options.Threshold,options.ChangeOfBasisMatrix);
+	  C := newLLLComputation(m,options.Threshold);
 	  doLLL(C, options.Limit);
 	  matrix C.A
-     	  )
+     	  );
+     if options.ChangeOfBasisMatrix then
+         M.cache#{LLL,options.Threshold} = {result, matrix getColumnChange m}
+     else
+         M.cache#{LLL,options.Threshold} = result;
+     result	 
      )
 
 --LLL MutableMatrix := options -> (M) -> (
@@ -93,7 +100,7 @@ if LLLComputation === symbol LLLComputation
 then LLLComputation = new Type of MutableHashTable
 
 
-newLLLComputation = (m, threshold, hasChangeOfBasis) -> (
+newLLLComputation = (m, threshold) -> (
      -- struct {
      --   SparseMutableMatrix A;
      --   SparseMutableMatrix changeOfBasis;
@@ -106,12 +113,9 @@ newLLLComputation = (m, threshold, hasChangeOfBasis) -> (
      -- }
      result := new LLLComputation;
      result.Engine = false;
-     result.A = mutableMatrix m; -- rewrite this line!
+     result.A = m;
+     result.changeOfBasis = getColumnChange m;
      n := numcols result.A;
-     if hasChangeOfBasis then (
-         result.changeOfBasis = iden(ring m, n);
-	 setColumnChange(result.A, result.changeOfBasis);
-	 );
      setLLLthreshold(result,threshold);
      result.k = 2;
      result.kmax = 1;
@@ -132,11 +136,13 @@ doLLL = (C,count) -> (
      REDI := (k,ell) -> if abs(2*lambda#(k,ell)) > D#ell then (
 	  q := (2*lambda#(k,ell) + D#ell) // (2*D#ell);
      	  caxy(A,-q,ell-1,k-1);
+	  << "[" << k-1 << " " << -q << " " << ell-1 << "]\n";
 	  lambda#(k,ell) = lambda#(k,ell) - q*D#ell;
 	  scan(1..ell-1, i-> lambda#(k,i) = lambda#(k,i) - q*lambda#(ell,i));
 	  );
      SWAPI := (k) -> (
 	  cflip(A,k-1,k-2);
+	  << "[flip " << k-1 << " " << k-2 << "]\n";
 	  if k > 2 then (
 	       scan(1..k-2, j->(tmp := lambda#(k,j); 
 		                       lambda#(k,j) = lambda#(k-1,j); 
@@ -1091,6 +1097,11 @@ TEST ///
     
     m1 = m1 ** RR
     -- LLL(m1,Engine=>false) FAILS
+
+    time mz = LLL(m, ChangeOfBasisMatrix=>true)
+    m.cache#{LLL,3/4}#1 -- this is the change of basis matrix
+    time mz5 = LLL(m, Engine=>false, ChangeOfBasisMatrix=>true)
+    m.cache#{LLL,3/4}#1 -- this is the change of basis matrix    
 ///
 
 TEST ""

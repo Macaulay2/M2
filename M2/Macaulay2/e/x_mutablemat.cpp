@@ -26,11 +26,6 @@ MutableMatrixOrNull * IM2_MutableMatrix_make(const Ring *R,
 					    int ncols,
 					    M2_bool is_dense)
 {
-  if (nrows < 0 | ncols < 0)
-    {
-      ERROR("expected non-negative number of rows or columns");
-      return 0;
-    }
   return MutableMatrix::zero_matrix(R,nrows,ncols,is_dense);
 }
 
