@@ -3,6 +3,7 @@
 MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
 new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }
+raw MonoidElement := x -> x.RawMonomial
 
 MonoidElement == MonoidElement := (x,y) -> x === y
 
@@ -371,14 +372,6 @@ promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
 	                                         raw one,
 						 m.RawMonomial);
      promote(m,o))
-
-RingElement _ MonoidElement := RingElement => (f,m) -> (
-     RM := ring f;
-     R := coefficientRing RM;
-     M := monoid RM;
-     if M =!= class m then error "expected monomial from same ring";
-     RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, f.RawRingElement, m.RawMonomial);
-     f _ m)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

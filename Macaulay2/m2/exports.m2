@@ -43,6 +43,8 @@ exportMutable (
 	)
 
 export (
+     	symbol coefficient,
+	symbol part,
      	symbol hh,
         symbol Schubert,
 	symbol Grass,

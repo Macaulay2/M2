@@ -29,7 +29,6 @@ net RawMonomial := x -> net expression x
 degree RawMonomial := x -> error "degree of raw monomial not defined (no monoid)"
 gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 
-
 -- monomial orderings
 
 RawMonomialOrdering.name = "RawMonomialOrdering"
