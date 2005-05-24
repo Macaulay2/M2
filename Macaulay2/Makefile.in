@@ -33,7 +33,7 @@ $(cachedir):; $(INSTALL) -d "$@"
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
 ################################# html-check-links
-initialize::; $(MAKE) -C html-check-links all
+#initialize::; $(MAKE) -C html-check-links all
 distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# c
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
