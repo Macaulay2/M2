@@ -115,14 +115,21 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 			      )
 			 else (
 			      if printout then (
-				   -- result of AfterEval replaces lastvalue
+				   -- result of AfterEval replaces lastvalue unless error, in which case 'null' replaces it
 				   g := runmethod(AfterEval,lastvalue,f);
-				   when g is err:Error do ( g = update(err,"after eval",f); if stopIfError then return g; ) else nothing;
-				   lastvalue = g;
-				   -- result of BeforePrint is printed instead
+				   when g is err:Error
+				   do (
+					g = update(err,"after eval",f); 
+					if stopIfError then return g;
+					lastvalue = nullE;
+					) 
+				   else lastvalue = g;
+				   -- result of BeforePrint is printed instead unless error
+				   printvalue := nullE;
 				   g = runmethod(BeforePrint,lastvalue,f);
-				   when g is err:Error do ( g = update(err,"before print",f); if stopIfError then return g; ) else nothing;
-				   printvalue := g;
+				   when g is err:Error
+				   do ( g = update(err,"before print",f); if stopIfError then return g; )
+				   else printvalue = g;
 				   -- result of Print is ignored
 				   g = runmethod(if s.word == SemicolonW then NoPrint else Print,printvalue,f);
 				   when g is err:Error do ( g = update(err,"at print",f); if stopIfError then return g; ) else nothing;
