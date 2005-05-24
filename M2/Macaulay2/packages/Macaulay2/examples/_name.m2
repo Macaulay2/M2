@@ -1,3 +1,3 @@
 x = new MutableHashTable
-x.name = "x"
+PrintNames#x = "x"
 x

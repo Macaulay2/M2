@@ -701,25 +701,6 @@ document {
      }
 
 document {
-     Key => name,
-     Headline => "store the name of a hash table",
-     TT "name", " -- a key under which string giving the preferred name
-     of a hash table can be stored.",
-     PARA,
-     "The system takes care of storing names under this key for the
-     major algebraic types, so the user usually doesn't have to bother.",
-     EXAMPLE {
-	  ///x = new MutableHashTable///,
-	  ///x.name = "x"///,
-	  ///x///,
-	  },
-     PARA,
-     "A obsolete function called ", TO "name", " has been replaced by
-     ", TO "toExternalString", " and ", TO "toString", ".",
-     SeeAlso =>{ "describe"}
-     }
-
-document {
      Key => globalAssignFunction,
      Headline => "the standard method for the global assignment hook",
      TT "globalAssignFunction", " -- the standard function which can be used

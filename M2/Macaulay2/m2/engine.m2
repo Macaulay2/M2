@@ -2,13 +2,13 @@
 
 -- basic type
 
-RawObject.name = "RawObject"
+PrintNames#RawObject = "RawObject"
 RawObject.synonym = "raw object"
 raw RawObject := x -> error "'raw' received a raw object"
 
 -- monomials
 
-RawMonomial.name = "RawMonomial"
+PrintNames#RawMonomial = "RawMonomial"
 RawMonomial.synonym = "raw monomial"
 
 RawMonomial == RawMonomial := (x,y) -> x === y
@@ -31,7 +31,7 @@ gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 
 -- monomial orderings
 
-RawMonomialOrdering.name = "RawMonomialOrdering"
+PrintNames#RawMonomialOrdering = "RawMonomialOrdering"
 RawMonomialOrdering.synonym = "raw monomial ordering"
 
 Eliminate = new SelfInitializingType of BasicList
@@ -170,20 +170,20 @@ RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductM
 
 -- monoids
 
-RawMonoid.name = "RawMonoid"
+PrintNames#RawMonoid = "RawMonoid"
 RawMonoid.synonym = "raw monoid"
 net RawMonoid := o -> stack lines toString o
 
 -- rings
 
-RawRing.name = "RawRing"
+PrintNames#RawRing = "RawRing"
 RawRing.synonym = "raw ring"
 net RawRing := o -> stack lines toString o
 ZZ.RawRing = rawZZ()
 
 -- ring elements (polynomials)
 
-RawRingElement.name = "RawRingElement"
+PrintNames#RawRingElement = "RawRingElement"
 RawRingElement.synonym = "raw ring element"
 RawRingElement == RawRingElement := (x,y) -> x === y
 
@@ -221,12 +221,12 @@ RawRingElement ? RawRingElement := (f,g) -> comparison rawCompare(f,g)
 
 -- monomial ideals
 
-RawMonomialIdeal.name = "RawMonomialIdeal"
+PrintNames#RawMonomialIdeal = "RawMonomialIdeal"
 RawMonomialIdeal.synonym = "raw monomial ideal"
 
 -- free modules
 
-RawFreeModule.name = "RawFreeModule"
+PrintNames#RawFreeModule = "RawFreeModule"
 RawFreeModule.synonym = "raw ring"
 
 RawFreeModule ++ RawFreeModule := rawDirectSum
@@ -248,10 +248,10 @@ RawFreeModule ** RawFreeModule := rawTensor
 
 -- matrices
 
-RawMatrix.name = "RawMatrix"
+PrintNames#RawMatrix = "RawMatrix"
 RawMatrix.synonym = "raw matrix"
 
-RawMutableMatrix.name = "RawMutableMatrix"
+PrintNames#RawMutableMatrix = "RawMutableMatrix"
 RawMutableMatrix.synonym = "raw mutable matrix"
 
 extract := method()
@@ -301,7 +301,7 @@ installAssignmentMethod(symbol "_",RawMutableMatrix,Sequence, (M,ij,val) -> ((i,
 
 -- computations
 
-RawComputation.name = "RawComputation"
+PrintNames#RawComputation = "RawComputation"
 RawComputation.synonym = "raw computation"
 status RawComputation := opts -> c -> rawStatus1 c
 RawComputation_ZZ := (C,i) -> rawResolutionGetMatrix(C,i)
@@ -312,7 +312,7 @@ RawMatrix % RawComputation := (m,g) -> rawGBMatrixRemainder(g,m)
 
 -- ring maps
 
-RawRingMap.name = "RawRingMap"
+PrintNames#RawRingMap = "RawRingMap"
 RawRingMap.synonym = "raw ring map"
 
 RawRingMap == RawRingMap := (v,w) -> v === w

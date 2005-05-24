@@ -75,7 +75,7 @@ degreesMonoid ZZ := memoize(
 	       Degrees => {}, 
 	       MonomialOrder => RevLex,
 	       Inverses=>true];
-	  Zn.name = "ZZ^" | toString n;
+	  PrintNames#Zn = "ZZ^" | toString n;
 	  Zn))
 
 monoidDefaults = (
