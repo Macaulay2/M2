@@ -643,7 +643,7 @@ document {
      "We may use the command ", TO "listUserSymbols", " to obtain a list of the user's
      symbols encountered so far.",
      EXAMPLE {
-	  "ff = 20:4; hh = true; kk",
+	  "ff = 20:4; h = true; kk",
 	  "listUserSymbols"
 	  },
      "The symbols are listed in chronological order, and the type of value stored
