@@ -495,7 +495,7 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
   return first; /* MES: really do something here... */
 }
 
-struct spair_sorter : public binary_function<gbA::spair *,gbA::spair *,bool> {
+struct spair_sorter : public std::binary_function<gbA::spair *,gbA::spair *,bool> {
   int nvars;
   spair_sorter(int nv) : nvars(nv) {}
 #if 0
@@ -596,18 +596,18 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
   // Prune down the set of spairs to a 'minimal' set.  For each one, we 
   // need to add in a "gcd" combination spair as well.
 
-  vector<mpz_ptr, gc_allocator<mpz_ptr> > coeffs;
-  vector<mpz_ptr, gc_allocator<mpz_ptr> > coeffs2;
-  vector<exponents, gc_allocator<exponents> > exps;
-  vector<int, gc_allocator<int> > comps;
-  vector<int, gc_allocator<int> > positions;
+  std::vector<mpz_ptr, gc_allocator<mpz_ptr> > coeffs;
+  std::vector<mpz_ptr, gc_allocator<mpz_ptr> > coeffs2;
+  std::vector<exponents, gc_allocator<exponents> > exps;
+  std::vector<int, gc_allocator<int> > comps;
+  std::vector<int, gc_allocator<int> > positions;
   
   coeffs.reserve(gb.size());
   coeffs2.reserve(gb.size());
   exps.reserve(gb.size());
   comps.reserve(gb.size());
 
-  for (vector<spair *, gc_allocator<spair *> >::iterator i = new_set.begin(); i != new_set.end(); i++)
+  for (std::vector<spair *, gc_allocator<spair *> >::iterator i = new_set.begin(); i != new_set.end(); i++)
     {
       spair *a = *i;
       exps.push_back(a->lcm);
@@ -631,7 +631,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 
   MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
 
-  for (vector<int, gc_allocator<int> >::iterator i = positions.begin(); i != positions.end(); i++)
+  for (std::vector<int, gc_allocator<int> >::iterator i = positions.begin(); i != positions.end(); i++)
     {
       // Insert this spair, and also the corresponding gcd one.
       spair *p = new_set[*i];
@@ -1068,7 +1068,7 @@ int gbA::find_good_monomial_divisor_ZZ(
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
+  std::vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
   ealpha = degf - weightInfo_->exponents_weight(e,x);
 
 
@@ -1119,7 +1119,7 @@ int gbA::find_good_term_divisor_ZZ(
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
+  std::vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
   ealpha = degf - weightInfo_->exponents_weight(e,x);
 
   /* First search for ring divisors */
@@ -1168,7 +1168,7 @@ int gbA::find_good_divisor(exponents e,
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTable::mon_term *, gc_allocator<MonomialTable::mon_term *> > divisors;
+  std::vector<MonomialTable::mon_term *, gc_allocator<MonomialTable::mon_term *> > divisors;
   ealpha = degf - weightInfo_->exponents_weight(e,x);
 
   /* First search for ring divisors */
@@ -1679,7 +1679,7 @@ void gbA::minimalize_gb()
 {
   if (minimal_gb_valid) return;
 
-  vector<POLY, gc_allocator<POLY> > polys;
+  std::vector<POLY, gc_allocator<POLY> > polys;
   for (int i=_first_gb_element; i<gb.size(); i++)
     {
       if (gb[i]->minlevel != ELEM_NON_MIN_GB)
@@ -1732,7 +1732,7 @@ const MatrixOrNull *gbA::get_gb()
 const MatrixOrNull *gbA::get_mingens()
 {
   MatrixConstructor mat(_F,0);
-  for (vector<gbelem *, gc_allocator<gbelem *> >::iterator i = gb.begin(); i != gb.end(); i++)
+  for (std::vector<gbelem *, gc_allocator<gbelem *> >::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
   return mat.to_matrix();
@@ -1749,7 +1749,7 @@ const MatrixOrNull *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
-  for (vector<gbvector *, gc_allocator<gbvector *> >::iterator i = _syz.begin(); i != _syz.end(); i++)
+  for (std::vector<gbvector *, gc_allocator<gbvector *> >::iterator i = _syz.begin(); i != _syz.end(); i++)
     {
       mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
     }

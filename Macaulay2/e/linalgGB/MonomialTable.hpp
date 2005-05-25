@@ -129,7 +129,7 @@ public:
         // Search.  Return whether a monomial which divides 'm' is
 	// found.  If so, return the baggage.  'm' is a varpower monomial.
 
-  void find_all_divisors(exponent_vector exp, vector<tagged_monomial *,gc_allocator <tagged_monomial *> > &b) const;
+  void find_all_divisors(exponent_vector exp, std::vector<tagged_monomial *,gc_allocator <tagged_monomial *> > &b) const;
   // Search. Return a list of all elements which divide 'exp'.
   
   tagged_monomial *operator[](Index< MonomialLookupTable  > i) const;

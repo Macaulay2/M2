@@ -227,7 +227,7 @@ SPairConstructor<gb_array>::SPairConstructor(MonomialSet* H0,
 }
 
 template<typename gb_array>
-struct pre_spair_sorter : public binary_function<typename SPairConstructor<gb_array>::pre_spair *,
+struct pre_spair_sorter : public std::binary_function<typename SPairConstructor<gb_array>::pre_spair *,
 						 typename SPairConstructor<gb_array>::pre_spair *,
 						 bool>
 {
@@ -274,7 +274,7 @@ template<typename gb_array>
 int SPairConstructor<gb_array>::construct_pairs()
 {
   if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
-  typedef vector<pre_spair *,gc_allocator<pre_spair*> > spairs;
+  typedef std::vector<pre_spair *,gc_allocator<pre_spair*> > spairs;
   spairs new_set;
 
   // Loop through each element of gb, and create the pre_spair

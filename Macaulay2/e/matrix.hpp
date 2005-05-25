@@ -23,7 +23,7 @@ private:
   Matrix(const FreeModule *rows, 
 	 const FreeModule *cols,
 	 const int *degree_shift,
-	 vector<vec, gc_allocator<vec> > & entries);
+	 std::vector<vec, gc_allocator<vec> > & entries);
 
   static bool make_sparse_vecs(MatrixConstructor &mat,
 			       const FreeModule *target,

@@ -14,13 +14,9 @@
 
 // 'swap' is defined here, perhaps in namespace std
 #include <algorithm>
-using namespace std;
+//using namespace std;
 
 extern "C" char newline[];
-
-#if defined(__MWERKS__)
-#define Random RandomFoo
-#endif
 
 #include "error.h"
 #include "buffer.hpp"

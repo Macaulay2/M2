@@ -212,7 +212,7 @@ void LinAlgGB<CoefficientRing>::process_s_pair(SPairSet::spair *p)
 
 static int ncomparisons = 0;
 template <typename CoefficientRing>
-struct monomial_sorter : public binary_function<int,int,bool> {
+struct monomial_sorter : public std::binary_function<int,int,bool> {
   typedef std::vector<column_elem, 
                                gc_allocator<column_elem> >
             col_array ;
@@ -372,7 +372,7 @@ mygbelem<typename CoefficientRing::elem> *
 LinAlgGB<CoefficientRing>::make_gbelem(poly &g)
 {
   gbelem *result = new gbelem;
-  swap(result->f,g);
+  std::swap(result->f,g);
   M2Interface<CoefficientRing>::poly_set_degrees(coeffK,weights,result->f,result->deg,result->alpha);
   result->is_minimal = 1;
   result->minlevel = ELEM_MIN_GB;

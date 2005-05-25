@@ -41,11 +41,11 @@ class queue : public our_new_delete
       else
 	{
 	  ephemeral = 1;
-	  swap(head, q.head);
-	  swap(tail, q.tail);
-	  swap(head_i, q.head_i);
-	  swap(tail_i, q.tail_i);
-	  swap(len, q.len);
+	  std::swap(head, q.head);
+	  std::swap(tail, q.tail);
+	  std::swap(head_i, q.head_i);
+	  std::swap(tail_i, q.tail_i);
+	  std::swap(len, q.len);
 	}
     }
 

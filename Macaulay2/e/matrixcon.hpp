@@ -8,7 +8,7 @@
 class MatrixConstructor
 {
   const Ring *R;
-  vector<vec, gc_allocator<vec> > entries;
+  std::vector<vec, gc_allocator<vec> > entries;
   const FreeModule *rows;
   const FreeModule *cols; // If cols is given at the beginning, this is used.
   // If this is immutable, no changes are allowed, other than to replace the entire thing.

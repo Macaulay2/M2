@@ -24,7 +24,7 @@
 Matrix::Matrix(const FreeModule *rows0, 
 	       const FreeModule *cols0,
 	       const int *degree_shift0,
-	       vector<vec, gc_allocator<vec> > & entries0)
+	       std::vector<vec, gc_allocator<vec> > & entries0)
 {
   _rows = const_cast<FreeModule *>(rows0);
   _cols = const_cast<FreeModule *>(cols0);
@@ -1049,7 +1049,7 @@ MatrixOrNull *Matrix::koszul(int p) const
       for (int r=p-1; r>=0; r--)
 	{
 	  negate = !negate;
-	  swap(a[p-1], a[r]);
+	  std::swap(a[p-1], a[r]);
 	  int x = comb::encode(a, p-1);
 	  ring_elem f = elem(0, a[p-1]);
 	  if (negate)
