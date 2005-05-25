@@ -1,8 +1,6 @@
 #ifndef __montable_h
 #define __montable_h
 
-using namespace std;
-
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -38,10 +36,10 @@ public:
   /* Create a zero element table */
 
   static MonomialTable *make_minimal(int nvars, 
-				     const vector<exponents, gc_allocator<exponents> > &exps,
-				     const vector<int, gc_allocator<int> > &comps,
-				     const vector<int, gc_allocator<int> > &vals,
-				     vector<int, gc_allocator<int> > &rejects);
+				     const std::vector<exponents, gc_allocator<exponents> > &exps,
+				     const std::vector<int, gc_allocator<int> > &comps,
+				     const std::vector<int, gc_allocator<int> > &vals,
+				     std::vector<int, gc_allocator<int> > &rejects);
 
   ~MonomialTable();
 
@@ -59,7 +57,7 @@ public:
   int find_divisors(int max,
 		    exponents exp, 
 		    int comp,
-		    vector<mon_term *, gc_allocator<mon_term *> > *result = 0) const;
+		    std::vector<mon_term *, gc_allocator<mon_term *> > *result = 0) const;
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -70,10 +68,10 @@ public:
      All other fields should be considered read only */
 
   static void minimalize(int nvars,
-			 const vector<exponents, gc_allocator<exponents> > &exps, 
-			 const vector<int, gc_allocator<int> > &comps,
+			 const std::vector<exponents, gc_allocator<exponents> > &exps, 
+			 const std::vector<int, gc_allocator<int> > &comps,
 			 bool keep_duplicates, 
-			 vector<int, gc_allocator<int> > &result_positions
+			 std::vector<int, gc_allocator<int> > &result_positions
 			 );
 
   /* Need a way of looping through the elements? */
@@ -83,7 +81,7 @@ public:
 private:
   int _nvars;
   int _count;
-  vector<mon_term *, gc_allocator<mon_term *> > _head; /* One per component */
+  std::vector<mon_term *, gc_allocator<mon_term *> > _head; /* One per component */
 
   static mon_term *make_list_head();
 };

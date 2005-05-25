@@ -122,7 +122,7 @@ int MonomialTable::find_divisor(exponents exp,
 int MonomialTable::find_divisors(int max,
 				 exponents exp,
 				 int comp,
-				 vector< mon_term * , gc_allocator< mon_term * > > *result) const
+				 std::vector< mon_term * , gc_allocator< mon_term * > > *result) const
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return 0;
@@ -222,13 +222,13 @@ void MonomialTable::insert(exponents exp, int comp, int id)
  * Minimalization ***********
  ****************************/
 
-struct sorter : public binary_function<exponents,exponents,bool> {
+struct sorter : public std::binary_function<exponents,exponents,bool> {
   int nvars;
-  const vector<exponents, gc_allocator<exponents> > &exps;
-  const vector<int, gc_allocator<int> > &comps;
+  const std::vector<exponents, gc_allocator<exponents> > &exps;
+  const std::vector<int, gc_allocator<int> > &comps;
   sorter(int nvars0, 
-	 const vector<exponents, gc_allocator<exponents> > &exps0,
-	 const vector<int, gc_allocator<int> > &comps0) 
+	 const std::vector<exponents, gc_allocator<exponents> > &exps0,
+	 const std::vector<int, gc_allocator<int> > &comps0) 
     : nvars(nvars0), exps(exps0), comps(comps0) {}
   bool operator()(int x, int y) {
     exponents xx = exps[x];
@@ -243,10 +243,10 @@ struct sorter : public binary_function<exponents,exponents,bool> {
 };
 
 void MonomialTable::minimalize(int nvars, 
-			       const vector<exponents, gc_allocator<exponents> > &exps,
-			       const vector<int, gc_allocator<int> > &comps,
+			       const std::vector<exponents, gc_allocator<exponents> > &exps,
+			       const std::vector<int, gc_allocator<int> > &comps,
 			       bool keep_duplicates, 
-			       vector<int, gc_allocator<int> > &result_positions)
+			       std::vector<int, gc_allocator<int> > &result_positions)
 {
   /* Step 1: Sort an intarray into ascending order.  
      In this order, if e divides f, then e should appear
@@ -266,7 +266,7 @@ void MonomialTable::minimalize(int nvars,
 
   MonomialTable *T;
 
-  vector<int, gc_allocator<int> > positions;
+  std::vector<int, gc_allocator<int> > positions;
   positions.reserve(exps.size());
   for (unsigned int i=0; i<exps.size(); i++)
     positions.push_back(i);
@@ -277,12 +277,12 @@ void MonomialTable::minimalize(int nvars,
 
   T = MonomialTable::make(nvars);
 
-  vector<int, gc_allocator<int> >::iterator first, end;
+  std::vector<int, gc_allocator<int> >::iterator first, end;
   first = positions.begin();
   end = positions.end();
   while (first != end)
     {
-      vector<int, gc_allocator<int> >::iterator next = first+1;
+      std::vector<int, gc_allocator<int> >::iterator next = first+1;
       exponents this_exp = exps[*first];
       int comp = comps[*first];
       while (next != end)
@@ -309,14 +309,14 @@ void MonomialTable::minimalize(int nvars,
 }
 
 MonomialTable *MonomialTable::make_minimal(int nvars, 
-					   const vector<exponents, gc_allocator<exponents> > &exps,
-					   const vector<int, gc_allocator<int> > &comps,
-					   const vector<int, gc_allocator<int> > &vals,
-					   vector<int, gc_allocator<int> > &rejects)
+					   const std::vector<exponents, gc_allocator<exponents> > &exps,
+					   const std::vector<int, gc_allocator<int> > &comps,
+					   const std::vector<int, gc_allocator<int> > &vals,
+					   std::vector<int, gc_allocator<int> > &rejects)
 {
   MonomialTable *T;
 
-  vector<int, gc_allocator<int> > positions;
+  std::vector<int, gc_allocator<int> > positions;
   positions.reserve(exps.size());
   for (unsigned int i=0; i<exps.size(); i++)
     positions.push_back(i);
@@ -327,13 +327,13 @@ MonomialTable *MonomialTable::make_minimal(int nvars,
 
   T = MonomialTable::make(nvars);
 
-  vector<int, gc_allocator<int> >::iterator first, end, last_minimal;
+  std::vector<int, gc_allocator<int> >::iterator first, end, last_minimal;
   first = positions.begin();
   end = positions.end();
   last_minimal = first;
   while (first != end)
     {
-      vector<int, gc_allocator<int> >::iterator next = first+1;
+      std::vector<int, gc_allocator<int> >::iterator next = first+1;
       exponents this_exp = exps[*first];
       int comp = comps[*first];
       while (next != end)

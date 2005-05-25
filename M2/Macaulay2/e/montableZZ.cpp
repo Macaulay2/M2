@@ -99,7 +99,7 @@ int MonomialTableZZ::find_term_divisors(int max,
 					mpz_t coeff,
 					exponents exp, 
 					int comp,
-					vector<mon_term *, gc_allocator<mon_term *> > *result) const
+					std::vector<mon_term *, gc_allocator<mon_term *> > *result) const
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -226,7 +226,7 @@ int MonomialTableZZ::find_smallest_coeff_divisor(exponents exp,
 int MonomialTableZZ::find_monomial_divisors(int max,
 					  exponents exp, 
 					  int comp,
-					  vector<mon_term *, gc_allocator<mon_term *> > *result) const
+					  std::vector<mon_term *, gc_allocator<mon_term *> > *result) const
 {
   assert(comp >= 1);
   if (comp >= static_cast<int>(_head.size())) return 0;
@@ -372,15 +372,15 @@ void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)
  * Minimalization ***********
  ****************************/
 
-struct montable_sorter_ZZ : public binary_function<int,int,bool> {
+struct montable_sorter_ZZ : public std::binary_function<int,int,bool> {
   int nvars;
-  const vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs;
-  const vector<exponents, gc_allocator<exponents> > &exps;
-  const vector<int, gc_allocator<int> > &comps;
+  const std::vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs;
+  const std::vector<exponents, gc_allocator<exponents> > &exps;
+  const std::vector<int, gc_allocator<int> > &comps;
   montable_sorter_ZZ(int nvars0, 
-	 const vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs0,
-	 const vector<exponents, gc_allocator<exponents> > &exps0,
-	 const vector<int, gc_allocator<int> > &comps0) 
+	 const std::vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs0,
+	 const std::vector<exponents, gc_allocator<exponents> > &exps0,
+	 const std::vector<int, gc_allocator<int> > &comps0) 
     : nvars(nvars0), coeffs(coeffs0), exps(exps0), comps(comps0) {}
 
   bool operator()(int x, int y) {
@@ -416,10 +416,10 @@ struct montable_sorter_ZZ : public binary_function<int,int,bool> {
 };
 
 void MonomialTableZZ::find_weak_generators(int nvars, 
-				      const vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs,
-				      const vector<exponents, gc_allocator<exponents> > &exps,
-				      const vector<int, gc_allocator<int> > &comps,
-				      vector<int, gc_allocator<int> > &result_positions)
+				      const std::vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs,
+				      const std::vector<exponents, gc_allocator<exponents> > &exps,
+				      const std::vector<int, gc_allocator<int> > &comps,
+				      std::vector<int, gc_allocator<int> > &result_positions)
 {
   // Find a set of elements which generate all of them, as a submodule.
   // The indices for these are placed into result_positions.
@@ -431,7 +431,7 @@ void MonomialTableZZ::find_weak_generators(int nvars,
   // Second, loop through each one, checking whether it is in the submodule gen 
   // by the previous.
 
-  vector<int, gc_allocator<int> > positions;
+  std::vector<int, gc_allocator<int> > positions;
   positions.reserve(exps.size());
   for (unsigned int i=0; i<exps.size(); i++)
     positions.push_back(i);
@@ -448,7 +448,7 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 #endif
 
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
-  for (vector<int, gc_allocator<int> >::iterator j = positions.begin(); j != positions.end(); j++)
+  for (std::vector<int, gc_allocator<int> >::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_weak_member(coeffs[*j], exps[*j], comps[*j]))
       {
 	result_positions.push_back(*j);
@@ -459,15 +459,15 @@ void MonomialTableZZ::find_weak_generators(int nvars,
 }
 
 void MonomialTableZZ::find_strong_generators(int nvars, 
-					     const vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs,
-					     const vector<exponents, gc_allocator<exponents> > &exps,
-					     const vector<int, gc_allocator<int> > &comps,
-					     vector<int, gc_allocator<int> > &result_positions)
+					     const std::vector<mpz_ptr, gc_allocator<mpz_ptr> > &coeffs,
+					     const std::vector<exponents, gc_allocator<exponents> > &exps,
+					     const std::vector<int, gc_allocator<int> > &comps,
+					     std::vector<int, gc_allocator<int> > &result_positions)
 {
   // Find the set of terms c*exp*comp such that every other one is divisible 
   // by at least one of these.
 
-  vector<int, gc_allocator<int> > positions;
+  std::vector<int, gc_allocator<int> > positions;
   positions.reserve(exps.size());
   for (unsigned int i=0; i<exps.size(); i++)
     positions.push_back(i);
@@ -484,7 +484,7 @@ void MonomialTableZZ::find_strong_generators(int nvars,
 #endif
 
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
-  for (vector<int, gc_allocator<int> >::iterator j = positions.begin(); j != positions.end(); j++)
+  for (std::vector<int, gc_allocator<int> >::iterator j = positions.begin(); j != positions.end(); j++)
     if (!T->is_strong_member(coeffs[*j], exps[*j], comps[*j]))
       {
 	result_positions.push_back(*j);

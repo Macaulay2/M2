@@ -125,7 +125,7 @@ int MonomialLookupTable::search_expvector(exponent_vector exp, tagged_monomial *
     }
 }
 
-void MonomialLookupTable::find_all_divisors(exponent_vector exp, vector<tagged_monomial *,gc_allocator<tagged_monomial *> > &b) const
+void MonomialLookupTable::find_all_divisors(exponent_vector exp, std::vector<tagged_monomial *,gc_allocator<tagged_monomial *> > &b) const
 {
   if (mi == NULL) return;
 

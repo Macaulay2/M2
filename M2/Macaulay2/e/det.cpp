@@ -282,7 +282,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
   for (i=p0-1; i>=0; i--)
     {
 #if 1
-      swap(c[i],c[p0-1]);
+      std::swap(c[i],c[p0-1]);
 #else
       int tmp = c[i];
       c[i] = c[p0-1];

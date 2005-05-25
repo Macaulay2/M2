@@ -71,7 +71,7 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
       r[i] = r[p2-2];
       r[p2-2] = tmp;
 #else
-      swap(r[i],r[p2-2]);
+      std::swap(r[i],r[p2-2]);
 #endif
       negate = !negate;
       ring_elem g = M->elem(r[p2-2],r[p2-1]);

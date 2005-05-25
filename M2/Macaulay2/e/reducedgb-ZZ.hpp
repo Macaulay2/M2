@@ -28,9 +28,9 @@ public:
 
   virtual ~ReducedGB_ZZ();
 
-  virtual void set_gb(vector<POLY, gc_allocator<POLY> > &polys0);
+  virtual void set_gb(std::vector<POLY, gc_allocator<POLY> > &polys0);
 
-  virtual void minimalize(const vector<POLY, gc_allocator<POLY> > &polys0,
+  virtual void minimalize(const std::vector<POLY, gc_allocator<POLY> > &polys0,
 			  bool auto_reduced);
   // I have to decide: does this ADD to the existing set?
 
