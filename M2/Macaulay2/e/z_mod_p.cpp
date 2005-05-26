@@ -8,7 +8,7 @@
 #include "random.hpp"
 #include "gbring.hpp"
 
-extern ZZ *globalZZ;
+extern RingZZ *globalZZ;
 
 bool Z_mod::initialize_Z_mod(int p)
 {
@@ -263,7 +263,7 @@ ring_elem Z_mod::power(const ring_elem f, int n) const
 ring_elem Z_mod::power(const ring_elem f, mpz_t n) const
 {
   if (f == _ZERO) return _ZERO;
-  int n1 = ZZ::mod_ui(n, _P1);
+  int n1 = RingZZ::mod_ui(n, _P1);
   int m = (f * n1) % _P1;
   if (m < 0) m += _P1;
   return m;

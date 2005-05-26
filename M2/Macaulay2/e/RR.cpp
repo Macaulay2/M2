@@ -22,11 +22,11 @@
 #define RR_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 #define RR_VAL(f) ((RRELEM_VAL(f))->val)
 
-RR::~RR()
+RingRR::~RingRR()
 {
 }
 
-bool RR::initialize_RR(double epsilon) 
+bool RingRR::initialize_RR(double epsilon) 
 {
   initialize_ring(0);
 
@@ -42,68 +42,68 @@ bool RR::initialize_RR(double epsilon)
   return true;
 }
 
-RR *RR::create(double epsilon)
+RingRR *RingRR::create(double epsilon)
 {
-  RR *result = new RR;
+  RingRR *result = new RingRR;
   result->initialize_RR(epsilon);
   return result;
 }
 
 
-void RR::text_out(buffer &o) const
+void RingRR::text_out(buffer &o) const
 {
   o << "RR";
 }
 
-ring_elem RR::from_int(int n) const
+ring_elem RingRR::from_int(int n) const
 {
   double a = n;
-  return RR::from_double(a);
+  return RingRR::from_double(a);
 }
 
-RR::RRelem RR::new_elem() const
+RingRR::RRelem RingRR::new_elem() const
 {
   RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = 0.0;
   return result;
 }
-ring_elem RR::from_double(double a) const
+ring_elem RingRR::from_double(double a) const
 {
   RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = a;
   return RR_RINGELEM(result);
 }
-double RR::to_double(ring_elem a)
+double RingRR::to_double(ring_elem a)
 {
   return RR_VAL(a);
 }
 
-ring_elem RR::from_rational(mpq_ptr r) const
+ring_elem RingRR::from_rational(mpq_ptr r) const
 {
   RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = mpq_get_d(r);
   return RR_RINGELEM(result);
 }
-ring_elem RR::from_BigReal(mpf_ptr a) const
+ring_elem RingRR::from_BigReal(mpf_ptr a) const
 {
   RRelem result = reinterpret_cast<RRelem>(getmem(sizeof(RRelem_rec)));
   result->val = mpf_get_d(a);
   return RR_RINGELEM(result);
 }
 
-void RR::remove_elem(RRelem f) const
+void RingRR::remove_elem(RRelem f) const
 {
 }
 
-ring_elem RR::random() const
+ring_elem RingRR::random() const
 {
   int d = 1000000;
   long r = Random::random0(2*d);
   double a = (r*1.0)/d - 1.0;
-  return RR::from_double(a);
+  return RingRR::from_double(a);
 }
 
-int RR::compare_RR(double a, double b) const
+int RingRR::compare_RR(double a, double b) const
   // This is our notion of equality
 {
   double c = a-b;
@@ -112,7 +112,7 @@ int RR::compare_RR(double a, double b) const
   return EQ;
 }
 
-void RR::elem_text_out(buffer &o, const ring_elem ap) const
+void RingRR::elem_text_out(buffer &o, const ring_elem ap) const
 {
   double a = RR_VAL(ap);
 
@@ -136,253 +136,253 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
 }
 
 
-ring_elem RR::from_int(mpz_ptr n) const
+ring_elem RingRR::from_int(mpz_ptr n) const
 {
   double a = mpz_get_d(n);
-  return RR::from_double(a);
+  return RingRR::from_double(a);
 }
 
-bool RR::promote(const Ring *, const ring_elem, ring_elem &) const
+bool RingRR::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
 }
 
-bool RR::lift(const Ring *, const ring_elem, ring_elem &) const
+bool RingRR::lift(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
 }
 
-bool RR::is_zero_RR(double a) const
+bool RingRR::is_zero_RR(double a) const
 {
   return compare_RR(a,0.0) == EQ;
 }
 
-bool RR::is_zero(const ring_elem f) const
+bool RingRR::is_zero(const ring_elem f) const
 {
   return compare_RR(RR_VAL(f),0.0) == EQ;;
 }
 
-bool RR::is_unit(const ring_elem f) const
+bool RingRR::is_unit(const ring_elem f) const
 {
-  return !RR::is_zero(f);
+  return !RingRR::is_zero(f);
 }
 
-bool RR::is_equal(const ring_elem f, const ring_elem g) const
+bool RingRR::is_equal(const ring_elem f, const ring_elem g) const
 {
   return compare_RR(RR_VAL(f),RR_VAL(g)) == EQ;
 }
-int RR::compare(const ring_elem f, const ring_elem g) const
+int RingRR::compare(const ring_elem f, const ring_elem g) const
 {
   return compare_RR(RR_VAL(f),RR_VAL(g));
 }
-int RR::is_positive(const ring_elem f) const
+int RingRR::is_positive(const ring_elem f) const
 {
   return compare_RR(RR_VAL(f),0.0) == GT;
 }
 
-ring_elem RR::copy(const ring_elem f) const
+ring_elem RingRR::copy(const ring_elem f) const
 {
-  return RR::from_double(RR_VAL(f));
+  return RingRR::from_double(RR_VAL(f));
 }
 
-void RR::remove(ring_elem &f) const
+void RingRR::remove(ring_elem &f) const
 {
 }
 
-ring_elem RR::preferred_associate(ring_elem f) const
+ring_elem RingRR::preferred_associate(ring_elem f) const
 {
-  if (RR::is_positive(f) >= 0) return RR::from_double(1.0);
-  return RR::from_double(-1.0);
+  if (RingRR::is_positive(f) >= 0) return RingRR::from_double(1.0);
+  return RingRR::from_double(-1.0);
 }
 
-void RR::internal_negate_to(ring_elem &f) const
+void RingRR::internal_negate_to(ring_elem &f) const
 {
   RRelem a = RRELEM_VAL(f);
   a->val = - a->val;
 }
 
-void RR::internal_add_to(ring_elem &f, ring_elem &g) const
+void RingRR::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   RRelem a = RRELEM_VAL(f);
   a->val += RR_VAL(g);
   remove(g);
 }
 
-void RR::internal_subtract_to(ring_elem &f, ring_elem &g) const
+void RingRR::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   RRelem a = RRELEM_VAL(f);
   a->val -= RR_VAL(g);
   remove(g);
 }
 
-ring_elem RR::negate(const ring_elem f) const
+ring_elem RingRR::negate(const ring_elem f) const
 {
-  return RR::from_double(- RR_VAL(f));
+  return RingRR::from_double(- RR_VAL(f));
 }
 
-ring_elem RR::add(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::add(const ring_elem f, const ring_elem g) const
 {
-  return RR::from_double(RR_VAL(f) + RR_VAL(g));
+  return RingRR::from_double(RR_VAL(f) + RR_VAL(g));
 }
 
-ring_elem RR::subtract(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::subtract(const ring_elem f, const ring_elem g) const
 {
-  return RR::from_double(RR_VAL(f) - RR_VAL(g));
+  return RingRR::from_double(RR_VAL(f) - RR_VAL(g));
 }
 
-ring_elem RR::mult(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::mult(const ring_elem f, const ring_elem g) const
 {
-  return RR::from_double(RR_VAL(f) * RR_VAL(g));
+  return RingRR::from_double(RR_VAL(f) * RR_VAL(g));
 }
 
-ring_elem RR::power(const ring_elem f, int n) const
+ring_elem RingRR::power(const ring_elem f, int n) const
 {
   double a = RR_VAL(f);
   double b = 1.0;
   for (int i=0; i<n; i++)
     b *= a;
-  return RR::from_double(b);
+  return RingRR::from_double(b);
 }
-ring_elem RR::power(const ring_elem f, mpz_t n) const
+ring_elem RingRR::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!ZZ::get_si(n1, n)) 
+  if (!RingZZ::get_si(n1, n)) 
     { ERROR("exponent too large"); }
-  return RR::power(f,n1);
+  return RingRR::power(f,n1);
 }
 
-ring_elem RR::invert(const ring_elem f) const
+ring_elem RingRR::invert(const ring_elem f) const
 {
   double result = 1/RR_VAL(f);
   return from_double(result);
 }
 
-ring_elem RR::divide(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::divide(const ring_elem f, const ring_elem g) const
 {
-  return RR::from_double(RR_VAL(f) / RR_VAL(g));
+  return RingRR::from_double(RR_VAL(f) / RR_VAL(g));
 }
 
-ring_elem RR::remainder(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::remainder(const ring_elem f, const ring_elem g) const
 {
   // If g == 0.0 then rem = f
   // If g != 0.0 then rem = 0
   double b = RR_VAL(f);
-  if (RR::is_zero(g))
-    return RR::from_double(b);
+  if (RingRR::is_zero(g))
+    return RingRR::from_double(b);
   else
-    return RR::from_double(0.0);
+    return RingRR::from_double(0.0);
 }
 
-ring_elem RR::quotient(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::quotient(const ring_elem f, const ring_elem g) const
 {
   // If g == 0.0 then rem = f, return 0.
   // If g != 0.0 then rem = 0, return f/g
   double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (RR::is_zero_RR(a))
-    return RR::from_double(0.0);
+  if (RingRR::is_zero_RR(a))
+    return RingRR::from_double(0.0);
   else
-    return RR::from_double(b/a);
+    return RingRR::from_double(b/a);
 }
 
-ring_elem RR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+ring_elem RingRR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				  ring_elem &quot) const
 {
   // If g == 0.0 then rem = f, quot 0.
   // If g != 0.0 then rem = 0, quot f/g
   double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (RR::is_zero_RR(a))
+  if (RingRR::is_zero_RR(a))
     {
-      quot = RR::from_double(0.0);
-      return RR::from_double(b);
+      quot = RingRR::from_double(0.0);
+      return RingRR::from_double(b);
     }
   else
     {
-      quot = RR::from_double(b/a);
-      return RR::from_double(0.0);
+      quot = RingRR::from_double(b/a);
+      return RingRR::from_double(0.0);
     }
 }
 
 
-ring_elem RR::gcd(const ring_elem f, const ring_elem g) const
+ring_elem RingRR::gcd(const ring_elem f, const ring_elem g) const
 {
   double a1 = RR_VAL(f);
   double b1 = RR_VAL(g);
-  if (RR::is_zero_RR(b1) && RR::is_zero_RR(a1))
-    return RR::from_double(0.0);
+  if (RingRR::is_zero_RR(b1) && RingRR::is_zero_RR(a1))
+    return RingRR::from_double(0.0);
   else
-    return RR::from_double(1.0);
+    return RingRR::from_double(1.0);
 }
 
-ring_elem RR::gcd_extended(const ring_elem f, const ring_elem g, 
+ring_elem RingRR::gcd_extended(const ring_elem f, const ring_elem g, 
 			    ring_elem &u, ring_elem &v) const
 {
   double a1 = RR_VAL(f);
   double b1 = RR_VAL(g);
-  if (!RR::is_zero_RR(b1))
+  if (!RingRR::is_zero_RR(b1))
     {
-      u = RR::from_double(0.0);
-      v = RR::from_double(1/b1);
-      return RR::from_double(1.0);
+      u = RingRR::from_double(0.0);
+      v = RingRR::from_double(1/b1);
+      return RingRR::from_double(1.0);
     }
-  else if (!RR::is_zero_RR(a1))
+  else if (!RingRR::is_zero_RR(a1))
     {
-      u = RR::from_double(1/a1);
-      v = RR::from_double(0.0);
-      return RR::from_double(1.0);
+      u = RingRR::from_double(1/a1);
+      v = RingRR::from_double(0.0);
+      return RingRR::from_double(1.0);
     }
   else
     {
-      u = RR::from_double(0.0);
-      v = RR::from_double(0.0);
-      return RR::from_double(0.0);
+      u = RingRR::from_double(0.0);
+      v = RingRR::from_double(0.0);
+      return RingRR::from_double(0.0);
     }
 }
 
-void RR::syzygy(const ring_elem a, const ring_elem b,
+void RingRR::syzygy(const ring_elem a, const ring_elem b,
 	       ring_elem &x, ring_elem &y) const
 {
   double a1 = RR_VAL(a);
   double b1 = RR_VAL(b);
-  if (RR::is_zero_RR(b1))
+  if (RingRR::is_zero_RR(b1))
     {
-      x = RR::from_double(0);
-      y = RR::from_double(1);
+      x = RingRR::from_double(0);
+      y = RingRR::from_double(1);
     }
   else 
     {
-      x = RR::from_double(1);
-      y = RR::from_double(-a1/b1);
+      x = RingRR::from_double(1);
+      y = RingRR::from_double(-a1/b1);
     }
 }
 
-ring_elem RR::eval(const RingMap *map, const ring_elem f, int) const
+ring_elem RingRR::eval(const RingMap *map, const ring_elem f, int) const
 {
   return map->get_ring()->from_double(RR_VAL(f));
 }
 
-void RR::degree(const ring_elem, int *d) const
+void RingRR::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);
 }
-void RR::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
+void RingRR::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
-int RR::primary_degree(const ring_elem) const
+int RingRR::primary_degree(const ring_elem) const
 {
   return 0;
 }
 
-ring_elem RR::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
+ring_elem RingRR::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
 {
   if (deg != 0) 
     ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem RR::homogenize(const ring_elem f, int, const M2_arrayint) const
+ring_elem RingRR::homogenize(const ring_elem f, int, const M2_arrayint) const
 {
   return f;
 }

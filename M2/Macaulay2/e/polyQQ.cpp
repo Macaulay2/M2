@@ -106,7 +106,7 @@ Nterm *PolyQQ::mult_by_coeff(mpz_ptr c, Nterm *f) const
   for (Nterm *t = g; t != 0; t = t->next)
     {
       // Multiply by c
-      t->coeff = globalZZ->ZZ::mult(cr,t->coeff);
+      t->coeff = globalZZ->RingZZ::mult(cr,t->coeff);
     }
   return g;
 }

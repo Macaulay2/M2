@@ -54,10 +54,10 @@ setLLLthreshold := (result,alpha) -> (
      result.threshold = alpha;)
 
 LLLoptions := Options => {
-     Threshold => 3/4,
+     Threshold => null,
      ChangeOfBasisMatrix => false,
      Limit => infinity,
-     Engine => true
+     Strategy => 0
      }
 
 LLL = method LLLoptions
@@ -69,12 +69,16 @@ LLL Matrix := options -> (M) -> (
      m := mutableMatrix M;
      if options.ChangeOfBasisMatrix then
           setColumnChange(m, iden(ring m, numcols m));
-     result := if options.Engine then (
-	  rawLLL(m.RawMutableMatrix, options.Threshold);
+     strat := options.Strategy;
+     thresh := if options.Threshold === null 
+     then (if strat >= 3 then 99/100 else 3/4)
+     else options.Threshold;
+     result := if strat =!= 1 then (
+	  rawLLL(m.RawMutableMatrix, thresh, strat);
 	  matrix map(ZZ,m.RawMutableMatrix)
 	  )
      else (
-	  C := newLLLComputation(m,options.Threshold);
+	  C := newLLLComputation(m,thresh);
 	  doLLL(C, options.Limit);
 	  matrix C.A
      	  );
@@ -778,9 +782,9 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => [LLL, Engine],
-     Headline => "use the engine implementation",
-     Usage => "LLL(...,Engine=>b)",
+     Key => [LLL, Strategy],
+     Headline => "choose among different algorithms",
+     Usage => "LLL(...,Strategy=>n)",
      Inputs => {
 	  },
      Consequences => {

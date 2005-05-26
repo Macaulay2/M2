@@ -1121,7 +1121,7 @@ void GBRing::divide_coeff_exact_to_ZZ(gbvector * f, M2_Integer u) const
   for ( ; f != 0; f=f->next)
     {
       mpz_divexact(a, MPZ_VAL(f->coeff), u);
-      f->coeff = globalZZ->ZZ::from_int(a);
+      f->coeff = globalZZ->RingZZ::from_int(a);
     }
   mpz_clear(a);
 }

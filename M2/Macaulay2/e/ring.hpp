@@ -9,9 +9,9 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
-class ZZ;
+class RingZZ;
 class QQ;
-class RR;
+class RingRR;
 class CC;
 class RRR;
 class CCC;
@@ -122,12 +122,12 @@ public:
   ///////////////////////////////////
   // Casting up the ring hierarchy //
   ///////////////////////////////////
-  virtual const ZZ * cast_to_ZZ() const         { return 0; }
-  virtual       ZZ * cast_to_ZZ()               { return 0; }
+  virtual const RingZZ * cast_to_RingZZ() const         { return 0; }
+  virtual       RingZZ * cast_to_RingZZ()               { return 0; }
   virtual const QQ * cast_to_QQ() const         { return 0; }
   virtual       QQ * cast_to_QQ()               { return 0; }
-  virtual const RR * cast_to_RR() const         { return 0; }
-  virtual       RR * cast_to_RR()               { return 0; }
+  virtual const RingRR * cast_to_RingRR() const         { return 0; }
+  virtual       RingRR * cast_to_RingRR()               { return 0; }
   virtual const CC * cast_to_CC() const         { return 0; }
   virtual       CC * cast_to_CC()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
@@ -377,9 +377,9 @@ public:
 #define ZERO_RINGELEM (ring_elem(reinterpret_cast<Nterm *>(0)))
 
 #include "ZZ.hpp"
-extern ZZ *globalZZ;
+extern RingZZ *globalZZ;
 extern QQ *globalQQ;
-extern RR *globalRR;
+extern RingRR *globalRR;
 extern CC *globalCC;
 extern RRR *globalRRR;
 extern CCC *globalCCC;

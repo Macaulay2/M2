@@ -195,7 +195,7 @@ static coeff_type get_ring_type(const Ring *R)
      if (P == 0) return FAC_BAD_RING;
      const Ring *F = P->Ncoeffs();
      if (F->cast_to_Z_mod() != 0) return FAC_ZZp;
-     if (F->cast_to_ZZ() != 0) return FAC_ZZ;
+     if (F->cast_to_RingZZ() != 0) return FAC_ZZ;
      if (F->cast_to_QQ() != 0) return FAC_QQ;
      ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
      return FAC_BAD_RING;
@@ -212,7 +212,7 @@ static CanonicalForm convert(const RingElement &g) {
      const int n = P->n_vars();
      const Ring *F = P->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
-     const ZZ *Z0 = F->cast_to_ZZ();
+     const RingZZ *Z0 = F->cast_to_RingZZ();
      const QQ *Q = F->cast_to_QQ();
 #if 0
      const FractionField *Q = (

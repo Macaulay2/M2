@@ -7,9 +7,9 @@
 #include "QQ.hpp"
 #include "polyring.hpp"
 
-ZZ *globalZZ;
+RingZZ *globalZZ;
 QQ *globalQQ;
-RR *globalRR;
+RingRR *globalRR;
 CC *globalCC;
 RRR *globalRRR;
 CCC *globalCCC;
