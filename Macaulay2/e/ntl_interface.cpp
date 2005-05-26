@@ -53,6 +53,16 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
   return B;
 }
 
+static const int GS = xx;
+static const int Givens = xx;
+static const int FP = xx;
+static const int QP1 = xx;
+static const int QP = xx;
+static const int XP = xx;
+static const int RR = xx;
+static const int useLLL = xx;
+static const int useBKZ = xx;
+
 bool ntl_LLL(const MutableMatrix *M, long numer, long denom, int strategy)
 {
   int nrows = M->n_rows();
@@ -61,6 +71,12 @@ bool ntl_LLL(const MutableMatrix *M, long numer, long denom, int strategy)
   ZZ d;
 
   mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
+
+  switch (strategy) {
+  case 2:
+  case 3:
+  case 3+GS+
+  }
   long rk = LLL(d,*A,numer,denom);
 
   dntl_matZZ(A);
