@@ -7,7 +7,7 @@
 
 class CoefficientRingRR;
 
-class RR : public Ring
+class RingRR : public Ring
 // Elements of this ring are real numbers: 'double's
 {
   friend class CoefficientRingRR;
@@ -26,14 +26,14 @@ class RR : public Ring
 
   CoefficientRingRR *coeffR;
 protected:
-  RR() {}
-  virtual ~RR();
+  RingRR() {}
+  virtual ~RingRR();
   bool initialize_RR(double epsilon);
 public:
-  static RR * create(double epsilon);
+  static RingRR * create(double epsilon);
 
-  RR * cast_to_RR() { return this; }
-  const RR * cast_to_RR() const { return this; }
+  RingRR * cast_to_RingRR() { return this; }
+  const RingRR * cast_to_RingRR() const { return this; }
 
   CoefficientRingRR *get_CoeffRing() const { return coeffR; }
 

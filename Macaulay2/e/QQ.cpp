@@ -155,7 +155,7 @@ bool QQ::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
       M2_Rational h = MPQ_VAL(f);
       if (mask_mpq_cmp_si(h,1,1) == 0)
 	{
-	  result = globalZZ->ZZ::from_int(mpq_numref(h));
+	  result = globalZZ->RingZZ::from_int(mpq_numref(h));
 	  return true;
 	}
     }
@@ -289,7 +289,7 @@ ring_elem QQ::power(const ring_elem f, int n) const
 ring_elem QQ::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!ZZ::get_si(n1, n)) 
+  if (!RingZZ::get_si(n1, n)) 
     { 
       ERROR("exponent too large");
       return QQ::from_int(1);

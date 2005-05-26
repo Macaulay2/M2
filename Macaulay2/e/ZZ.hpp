@@ -18,7 +18,7 @@
 extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }
 extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return mpq_cmp_si(x,i,j); }
 
-class ZZ : public Ring
+class RingZZ : public Ring
 {
   int _elem_size;
   mpz_ptr _zero_elem;
@@ -29,7 +29,7 @@ class ZZ : public Ring
   ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
 
 protected:
-  virtual ~ZZ() {}
+  virtual ~RingZZ() {}
 
 public:
   typedef mpz_ptr element_type;
@@ -37,12 +37,12 @@ public:
   //////////////////////////////////////////////
   // Creation of globalZZ is done in PolyRing::make_trivial_ZZ_poly_ring
   // These two routines should not be called from elsewhere
-  ZZ() {}
+  RingZZ() {}
   bool initialize_ZZ(const PolynomialRing *deg_ring);
   //////////////////////////////////////////////
 
-  ZZ * cast_to_ZZ() { return this; }
-  const ZZ * cast_to_ZZ() const { return this; }
+  RingZZ * cast_to_RingZZ() { return this; }
+  const RingZZ * cast_to_RingZZ() const { return this; }
 
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }

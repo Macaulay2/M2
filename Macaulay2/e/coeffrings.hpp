@@ -113,7 +113,7 @@ public:
 class CoefficientRingRR : public our_new_delete
 {
 public:
-  typedef RR ring_type;
+  typedef RingRR ring_type;
   typedef double elem;
 
   CoefficientRingRR() {}
@@ -159,7 +159,7 @@ public:
 
   void from_ring_elem(const ring_elem &a, elem &result) const
   {
-    result = (reinterpret_cast<RR::RRelem>(a.poly_val))->val;
+    result = (reinterpret_cast<RingRR::RRelem>(a.poly_val))->val;
   }
 };
 

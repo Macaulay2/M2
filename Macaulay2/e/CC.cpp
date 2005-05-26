@@ -322,7 +322,7 @@ ring_elem CC::power(const ring_elem f, int n) const
 ring_elem CC::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!ZZ::get_si(n1, n)) 
+  if (!RingZZ::get_si(n1, n)) 
     { ERROR("exponent too large"); }
   return CC::power(f,n1);
 }

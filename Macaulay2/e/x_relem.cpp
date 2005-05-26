@@ -427,7 +427,7 @@ double IM2_RingElement_to_double(const RingElement *a)
 /* If the ring of a is RR, this returns the underlying representation of 'a'.
    Otherwise 0.0 is returned. */
 {
-  if (!a->get_ring()->cast_to_RR())
+  if (!a->get_ring()->cast_to_RingRR())
     {
       ERROR("expected an element of RR");
       return 0;

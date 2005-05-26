@@ -6,7 +6,7 @@
 #include "matrixcon.hpp"
 #include "newdelete.hpp"
 
-extern ZZ *globalZZ;
+extern RingZZ *globalZZ;
 
 int GaussElimComputation::complete_thru_degree() const
   // The computation is complete up through this degree.

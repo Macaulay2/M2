@@ -328,7 +328,7 @@ ring_elem RRR::power(const ring_elem f, mpz_t n) const
 {
   mpf_ptr result = new_elem();
   int n1;
-  if (!ZZ::get_si(n1, n)) 
+  if (!RingZZ::get_si(n1, n)) 
     { ERROR("exponent too large"); }
   else
     mpf_pow_ui(result, MPF_VAL(f), n1);

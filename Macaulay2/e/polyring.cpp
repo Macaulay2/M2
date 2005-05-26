@@ -52,7 +52,7 @@ void PolyRing::make_trivial_ZZ_poly_ring()
 {
   if (trivial_poly_ring != 0) return;
 
-  globalZZ = new ZZ;
+  globalZZ = new RingZZ;
   Monoid *M = Monoid::get_trivial_monoid();
   trivial_poly_ring = new PolyRing();
 
@@ -666,7 +666,7 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
   int n1;
   // In this case, the computation may only be formed in two
   // cases: (1) f is a constant, or (2) n is small enough
-  if (ZZ::get_si(n1,n))
+  if (RingZZ::get_si(n1,n))
     {
       result = power(f,n1);
     }
@@ -1954,7 +1954,7 @@ ring_elem PolyRing::get_denominator_QQ(ring_elem f) const
   mpz_init_set_si(denom,1);
 
   determine_common_denominator_QQ(f,denom);
-  ring_elem result = globalZZ->ZZ::from_int(denom);
+  ring_elem result = globalZZ->RingZZ::from_int(denom);
   mpz_clear(denom);
   return result;
 }
@@ -1973,7 +1973,7 @@ ring_elem PolyRing::vec_get_denominator_QQ(vec f) const
   
   for (vec w = f; w != 0; w = w->next)
     determine_common_denominator_QQ(w->coeff,denom);
-  ring_elem result = globalZZ->ZZ::from_int(denom);
+  ring_elem result = globalZZ->RingZZ::from_int(denom);
   mpz_clear(denom);
   return result;
 }
@@ -1987,7 +1987,7 @@ gbvector *PolyRing::translate_gbvector_from_ringelem_QQ(ring_elem coeff) const
   for (Nterm *t = coeff; t != 0; t = t->next)
     {
       // make a gbvector node.
-      ring_elem a = globalZZ->ZZ::from_int(mpq_numref(MPQ_VAL(t->coeff)));
+      ring_elem a = globalZZ->RingZZ::from_int(mpq_numref(MPQ_VAL(t->coeff)));
       gbvector *g = GR->gbvector_term(0, a, t->monom, 0);
       inresult->next = g;
       inresult = inresult->next;
@@ -2038,7 +2038,7 @@ gbvector * PolyRing::translate_gbvector_from_vec_QQ(const FreeModule *F,
 	  mpq_ptr b = MPQ_VAL(t->coeff);
 	  mpz_mul(a, MPZ_VAL(result_denominator), mpq_numref(b));
 	  mpz_divexact(a, a, mpq_denref(b));
-	  gbvector *g = GR->gbvector_term(F, globalZZ->ZZ::from_int(a), t->monom, comp);
+	  gbvector *g = GR->gbvector_term(F, globalZZ->RingZZ::from_int(a), t->monom, comp);
 	  inresult->next = g;
 	  inresult = inresult->next;
 	}

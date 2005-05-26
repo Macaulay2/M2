@@ -11,6 +11,8 @@
 #include "dmatrix.hpp"
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
+#include "ntl_interface.hpp"
+#include "QQ.hpp"
 
 typedef MutableMatrix MutableMatrixOrNull;
 
@@ -484,9 +486,16 @@ M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M)
   return FF_LUComputation::DO(M);
 }
 
-M2_bool IM2_LLL(MutableMatrix *M, const M2_Rational threshold)
+M2_bool IM2_LLL(MutableMatrix *M, const M2_Rational threshold, int strategy)
 {
-  return LLLoperations::LLL(M,threshold);
+  if (strategy == 0)
+    {
+      return LLLoperations::LLL(M,threshold);
+    }
+
+  long a = mpz_get_si(mpq_numref(threshold));
+  long b = mpz_get_si(mpq_denref(threshold));
+  return ntl_LLL(M,a,b,strategy);
 }
 
 M2_bool IM2_SmithNormalForm(MutableMatrix *M)

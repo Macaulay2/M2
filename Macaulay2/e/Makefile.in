@@ -46,7 +46,12 @@ PRE.cc   = $(COMPILE.cc) -E
 ## Source code ###
 ##################
 
+
+
 INTERFACE = \
+	ntl_debugio \
+	ntl_internal \
+	ntl_interface \
 	points \
 	dmat-LU \
 	lapack \
@@ -54,7 +59,6 @@ INTERFACE = \
 	dmatrix \
 	coeffrings \
 	Eschreyer \
-	ntl_interface \
 	gbweight \
 	qring \
 	polyQQ \

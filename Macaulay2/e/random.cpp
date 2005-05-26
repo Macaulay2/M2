@@ -11,7 +11,7 @@
 #include "relem.hpp"
 #include "gmp.h"
 
-extern ZZ *globalZZ;
+extern RingZZ *globalZZ;
 int32 RandomSeed = MASK;
 
 #define INITIALMAXINT 10

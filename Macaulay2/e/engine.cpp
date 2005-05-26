@@ -51,7 +51,7 @@ void IM2_initialize()
   PolyRing::get_trivial_poly_ring();
 
   globalQQ = QQ::create();
-  globalRR = RR::create(0.000000000000001);
+  globalRR = RingRR::create(0.000000000000001);
   globalCC = CC::create(0.000000000000001);
   globalRRR = RRR::create();
   globalCCC = CCC::create();

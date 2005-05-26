@@ -80,7 +80,7 @@ ring_elem Ring::power(const ring_elem ff, mpz_t m) const
 
   for (;;)
     {
-      if (ZZ::mod_ui(n,2) == 1)
+      if (RingZZ::mod_ui(n,2) == 1)
 	{
 	  tmp = mult(prod, base);
 	  prod = tmp;

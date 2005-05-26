@@ -2932,13 +2932,15 @@ setupfun("rawFFLU",rawFFLU);
 -----------------------------------------------------------------------------
 
 export rawLLL(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
-     when s.1 is threshold:Rational do possibleEngineError(
-	  Ccode(bool, "(M2_bool)IM2_LLL(", "(MutableMatrix *)", M, ",", "(M2_Rational)", threshold, ")"))
+     when s.1 is threshold:Rational do     
+     when s.2 is strategy:Integer do possibleEngineError(
+	  Ccode(bool, "(M2_bool)IM2_LLL(", "(MutableMatrix *)", M, ",", "(M2_Rational)", threshold, ",", toInt(strategy), ")"))
+     else WrongArg(2,"an integer")     
      else WrongArg(1,"a rational number")
      else WrongArg(0,"a mutable raw matrix")
-     else WrongNumArgs(2));
+     else WrongNumArgs(3));
 setupfun("rawLLL",rawLLL);
 
 export rawSmithNormalForm(e:Expr):Expr := (
