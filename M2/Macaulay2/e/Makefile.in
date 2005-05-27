@@ -49,6 +49,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 
 INTERFACE = \
+	mat \
 	ntl_debugio \
 	ntl_internal \
 	ntl_interface \

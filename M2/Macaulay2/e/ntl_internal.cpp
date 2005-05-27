@@ -73,7 +73,7 @@ void mat_ZZ_set_entry(mat_ZZ *A, long i, long j, mpz_t a)
   (*A)(i+1,j+1) = b;
 }
 
-void mat_ZZ_get_entry(mat_ZZ *A, long i, long j, mpz_t result)
+void mat_ZZ_get_entry(const mat_ZZ *A, long i, long j, mpz_t result)
 {
   ZZ t = (*A)(i+1,j+1);
   ntl_ZZ_to_mpz(result, t);

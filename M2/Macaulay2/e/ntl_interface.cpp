@@ -53,33 +53,93 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
   return B;
 }
 
-static const int GS = xx;
-static const int Givens = xx;
-static const int FP = xx;
-static const int QP1 = xx;
-static const int QP = xx;
-static const int XP = xx;
-static const int RR = xx;
-static const int useLLL = xx;
-static const int useBKZ = xx;
+static const int GS = 0;
+static const int Givens = 4;
+static const int useLLL = 0;
+static const int useBKZ = 8;
+static const int FP = 0;
+static const int QP1 = 16;
+static const int QP = 2*16;
+static const int XD = 3*16;
+static const int RR = 4*16;
 
-bool ntl_LLL(const MutableMatrix *M, long numer, long denom, int strategy)
+bool ntl_LLL(MutableMatrix *M, long numer, long denom, int strategy)
 {
   int nrows = M->n_rows();
   int ncols = M->n_cols();
 
   ZZ d;
+  long rk;
+  double delta = numer*1.0/denom;
 
   mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
 
   switch (strategy) {
   case 2:
-  case 3:
-  case 3+GS+
-  }
-  long rk = LLL(d,*A,numer,denom);
+    rk = LLL(d,*A,numer,denom);
+    break;
 
-  dntl_matZZ(A);
+  case 3+GS+useLLL+FP:
+    rk = LLL_FP(*A,delta);
+    break;
+  case 3+GS+useLLL+QP:
+  case 3+GS+useLLL+QP1:
+    rk = LLL_QP(*A,delta);
+    break;
+  case 3+GS+useLLL+XD:
+    rk = LLL_XD(*A,delta);
+    break;
+  case 3+GS+useLLL+RR:
+    rk = LLL_RR(*A,delta);
+    break;
+
+  case 3+GS+useBKZ+FP:
+    rk = BKZ_FP(*A,delta);
+    break;
+  case 3+GS+useBKZ+QP:
+    rk = BKZ_QP(*A,delta);
+    break;
+  case 3+GS+useBKZ+QP1:
+    rk = BKZ_QP1(*A,delta);
+    break;
+  case 3+GS+useBKZ+XD:
+    rk = BKZ_XD(*A,delta);
+    break;
+  case 3+GS+useBKZ+RR:
+    rk = BKZ_RR(*A,delta);
+    break;
+
+  case 3+Givens+useLLL+FP:
+    rk = G_LLL_FP(*A,delta);
+    break;
+  case 3+Givens+useLLL+QP:
+  case 3+Givens+useLLL+QP1:
+    rk = G_LLL_QP(*A,delta);
+    break;
+  case 3+Givens+useLLL+XD:
+    rk = G_LLL_XD(*A,delta);
+    break;
+  case 3+Givens+useLLL+RR:
+    rk = G_LLL_RR(*A,delta);
+    break;
+
+  case 3+Givens+useBKZ+FP:
+    rk = G_BKZ_FP(*A,delta);
+    break;
+  case 3+Givens+useBKZ+QP:
+    rk = G_BKZ_QP(*A,delta);
+    break;
+  case 3+Givens+useBKZ+QP1:
+    rk = G_BKZ_QP1(*A,delta);
+    break;
+  case 3+Givens+useBKZ+XD:
+    rk = G_BKZ_XD(*A,delta);
+    break;
+  case 3+Givens+useBKZ+RR:
+    rk = G_BKZ_RR(*A,delta);
+    break;
+  }
+
   /* Put this back into M */
   mpz_t a;
   mpz_init(a);
