@@ -203,6 +203,20 @@ public:
 			int special_type); // 0: general, 1:upper triangular, others?
     
   void text_out(buffer &o) const;
+
+  class iterator : public our_new_delete
+  {
+    const Matrix *M;  // all matrices are immutable
+    int col;
+    vec v;
+  public:
+    iterator(const Matrix *M0, int col0=0) : M(M0), col(col0), v(M0->elem(col0)) {}
+    void set(int newcol) { col = newcol; v = M->elem(col); }
+    void next() { v = v->next; }
+    bool valid() { return v != 0; }
+    int row() { return v->comp; }
+    ring_elem entry() { return v->coeff; }
+  };
 };
 
 #endif

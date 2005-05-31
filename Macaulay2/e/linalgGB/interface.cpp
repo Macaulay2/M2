@@ -9,7 +9,7 @@
 #include "../matrixcon.hpp"
 #include "../matrix.hpp"
 #include <vector>
-#include "../sparsemat.hpp"
+#include "../mat.hpp"
 
 template<typename CoefficientRing>
 void M2Interface<CoefficientRing>::from_M2_vec(CoefficientRing *K,
@@ -147,13 +147,14 @@ void spair_testing(MonomialSet *H,
 #endif
 
 template<typename CoefficientRing>
-MutableMatrix * M2Interface<CoefficientRing>::to_M2_MutableMatrix(  
+MutableMatrixXXX * M2Interface<CoefficientRing>::to_M2_MutableMatrix(  
     const Ring *K,
     coefficient_matrix<COEFF_TYPE> *mat)
 {
   int nrows = mat->rows.size();
   int ncols = mat->columns.size();
-  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(K,nrows,ncols);
+  //  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(K,nrows,ncols);
+  MutableMatrixXXX *result = MutableMatrixXXX::zero_matrix(K,nrows,ncols,false);
   for (int r=0; r<nrows; r++)
     {
       typename coefficient_matrix<COEFF_TYPE>::row_elem &row = mat->rows[r];

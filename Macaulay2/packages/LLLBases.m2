@@ -82,10 +82,10 @@ LLL Matrix := options -> (M) -> (
 	  doLLL(C, options.Limit);
 	  matrix C.A
      	  );
-     if options.ChangeOfBasisMatrix then
-         M.cache#{LLL,options.Threshold} = {result, matrix getColumnChange m}
-     else
-         M.cache#{LLL,options.Threshold} = result;
+--     if options.ChangeOfBasisMatrix then
+--         M.cache#{LLL,options.Threshold} = {result, matrix getColumnChange m}
+--     else
+--         M.cache#{LLL,options.Threshold} = result;
      result	 
      )
 

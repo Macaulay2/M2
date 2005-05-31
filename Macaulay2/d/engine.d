@@ -93,38 +93,38 @@ export (x:RawMatrix) + (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_add(", "(Matrix *)", x, ",(Matrix *)", y, ")" )
      );
 export (x:RawMutableMatrix) + (y:RawMutableMatrix) : RawMutableMatrixOrNull := (
-     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_add(", "(MutableMatrix *)", x, ",(MutableMatrix *)", y, ")" )
+     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_add(", "(MutableMatrixXXX *)", x, ",(MutableMatrixXXX *)", y, ")" )
      );
 -- matrix arithmetic
 export - (y:RawMatrix) : RawMatrix := (
      Ccode(RawMatrix, "(engine_RawMatrix)IM2_Matrix_negate(", "(Matrix *)", y, ")" ) 
      );
 export - (y:RawMutableMatrix) : RawMutableMatrix := (
-     Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)IM2_MutableMatrix_negate(", "(MutableMatrix *)", y, ")" ) 
+     Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)IM2_MutableMatrix_negate(", "(MutableMatrixXXX *)", y, ")" ) 
      );
 export (x:RawMatrix) - (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_subtract(", "(Matrix *)", x, ",(Matrix *)", y, ")" ) 
      );
 export (x:RawMutableMatrix) - (y:RawMutableMatrix) : RawMutableMatrixOrNull := (
-     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_subtract(", "(MutableMatrix *)", x, ",(MutableMatrix *)", y, ")" ) 
+     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_subtract(", "(MutableMatrixXXX *)", x, ",(MutableMatrixXXX *)", y, ")" ) 
      );
 export (x:RawRingElement) * (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(", "(RingElement *)", x, ",(Matrix *)", y, ",", false, ")" )
      );
 export (x:RawRingElement) * (y:RawMutableMatrix) : RawMutableMatrixOrNull := (
-     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_scalar_mult(", "(RingElement *)", x, ",(MutableMatrix *)", y, ",", false, ")" )
+     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_scalar_mult(", "(RingElement *)", x, ",(MutableMatrixXXX *)", y, ",", false, ")" )
      );
 export (x:RawMatrix) * (y:RawRingElement) : RawMatrixOrNull := RawMatrixOrNull(
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(", "(RingElement *)", y, ",(Matrix *)", x, ",", true, ")" )	-- opposite multiplication
      );
 export (x:RawMutableMatrix) * (y:RawRingElement) : RawMutableMatrixOrNull := RawMutableMatrixOrNull(
-     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_scalar_mult(", "(RingElement *)", y, ",(MutableMatrix *)", x, ",", true, ")" ) -- opposite multiplication
+     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_scalar_mult(", "(RingElement *)", y, ",(MutableMatrixXXX *)", x, ",", true, ")" ) -- opposite multiplication
      );
 export (x:RawMatrix) * (y:RawMatrix) : RawMatrixOrNull := (
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_mult(", "(Matrix *)", x, ",(Matrix *)", y, ",", true, ")" )
      );
 export (x:RawMutableMatrix) * (y:RawMutableMatrix) : RawMutableMatrixOrNull := (
-     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_mult(", "(MutableMatrix *)", x, ",(MutableMatrix *)", y, ",", true, ")" )
+     Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)IM2_MutableMatrix_mult(", "(MutableMatrixXXX *)", x, ",(MutableMatrixXXX *)", y, ",", true, ")" )
      );
 -- 
 export (x:RawMonomialIdeal) + (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (

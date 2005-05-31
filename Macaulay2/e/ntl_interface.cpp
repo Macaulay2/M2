@@ -1,18 +1,22 @@
 // Copyright 2005, Michael Stillman
 
 #include "ntl_interface.hpp"
-#include "sparsemat.hpp"
+#include "mat.hpp"
+//#include "sparsemat.hpp"
 #include <NTL/ZZ.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
 
 class mat_ZZ;
-mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
+mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrixXXX *M)
 {
   // Creates the TRANSPOSE of M
 
   // We asume or check that the ring is ZZ
-  const SparseMutableMatrix *A = M->cast_to_SparseMutableMatrix();
+
+  //  const SparseMutableMatrix *A = M->cast_to_SparseMutableMatrix();
+  const MutableMatrixXXX *A = M;
+
   int ncols = A->n_rows();
   int nrows = A->n_cols();
 
@@ -29,13 +33,13 @@ mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 
   return X;
 }
-MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
+MutableMatrixXXX *mutableMatrix_from_NTL_mat_ZZ(const mat_ZZ *A)
 {
   // AGAIN: form the TRANSPOSE of A
   int ncols = A->NumRows();
   int nrows = A->NumCols();
 
-  MutableMatrix *B = MutableMatrix::zero_matrix(globalZZ, nrows, ncols, false);
+  MutableMatrixXXX *B = MutableMatrixXXX::zero_matrix(globalZZ, nrows, ncols, false);
 
   mpz_t a;
   mpz_init(a);
@@ -63,7 +67,7 @@ static const int QP = 2*16;
 static const int XD = 3*16;
 static const int RR = 4*16;
 
-bool ntl_LLL(MutableMatrix *M, long numer, long denom, int strategy)
+bool ntl_LLL(MutableMatrixXXX *M, long numer, long denom, int strategy)
 {
   int nrows = M->n_rows();
   int ncols = M->n_cols();

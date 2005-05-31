@@ -24,9 +24,9 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
   return true;
 }
 
-bool LLLoperations::initializeLLL(const MutableMatrix *A,
+bool LLLoperations::initializeLLL(const MutableMatrixXXX *A,
 			    const M2_Rational threshold,
-			    MutableMatrix *& LLLstate)
+			    MutableMatrixXXX *& LLLstate)
 {
   // First check m: should be a matrix over globalZZ.
   if (A == 0 || A->get_ring() != globalZZ)
@@ -53,7 +53,7 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
   int n = A->n_cols();
-  LLLstate = MutableMatrix::zero_matrix(globalZZ,n,n+4,A->is_dense());
+  LLLstate = MutableMatrixXXX::zero_matrix(globalZZ,n,n+4,A->is_dense());
   if (n > 0)
     {
       LLLstate->set_entry(0,n,globalZZ->from_int(1));  // k := 2
@@ -67,40 +67,7 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
   return true;
 }
 
-bool LLLoperations::initializeLLL(const Matrix *m,
-				  const M2_Rational threshold,
-				  bool useChangeOfBasisMatrix,
-				  MutableMatrix *& A,
-				  MutableMatrix *& LLLstate)
-{
-  // First check m: should be a matrix over globalZZ.
-  if (m->get_ring() != globalZZ)
-    {
-      ERROR("LLL only defined for matrices over ZZ");
-      return false;
-    }
-
-  // Set A and A's change of basis, if useChangeOfBasisMatrix is set.
-#warning "we need to decide if sparse or dense mutable matrices should be used"
-  bool use_dense = true;
-  A = MutableMatrix::from_matrix(m,use_dense);
-  int n = m->n_cols();
-  if (useChangeOfBasisMatrix)
-    {
-      MutableMatrix *B = MutableMatrix::identity(globalZZ,n,use_dense);
-      A->setColumnChangeMatrix(B);
-    }
-
-  bool ret = initializeLLL(A,threshold,LLLstate);
-  if (!ret)
-    {
-      deleteitem(A->getColumnChangeMatrix());
-      deleteitem(A);
-    }
-  return ret;
-}
-
-bool LLLoperations::Lovasz(MutableMatrix *lambda,
+bool LLLoperations::Lovasz(MutableMatrixXXX *lambda,
 			   int k,
 			   ring_elem alphaTop,
 			   ring_elem alphaBottom)
@@ -137,8 +104,9 @@ bool LLLoperations::Lovasz(MutableMatrix *lambda,
 }
 
 void LLLoperations::REDI(int k, int ell,
-			 MutableMatrix *A,
-			 MutableMatrix *lambda)
+			 MutableMatrixXXX *A,
+			 MutableMatrixXXX *Achange, // can be NULL
+			 MutableMatrixXXX *lambda)
 {
   // set q = ...
   // negate q.
@@ -161,22 +129,25 @@ void LLLoperations::REDI(int k, int ell,
   //A->addColumnMultiple(ell,q,k);
   //lambda->addColumnMultiple(ell,q,k);
 
-  A->column_op(k,q,ell,false/*opposite mult*/); 
-  lambda->column_op(k,q,ell,false/*opposite mult*/);
+  A->column_op(k,q,ell); 
+  if (Achange) Achange->column_op(k,q,ell); 
+  lambda->column_op(k,q,ell);
 
   mpz_clear(c);
   mpz_clear(d);
 }
 
 void LLLoperations::SWAPI(int k, int kmax,
-			  MutableMatrix *A,
-			  MutableMatrix *lambda)
+			  MutableMatrixXXX *A,
+			  MutableMatrixXXX *Achange, // can be NULL
+			  MutableMatrixXXX *lambda)
 {
   int i;
   mpz_t a,b,B,C1,C2,D,D1,lam;
   ring_elem rD1,rD,rlam;
 
   A->interchange_columns(k,k-1);
+  if (Achange) Achange->interchange_columns(k,k-1);
 
   mpz_init(a);
   mpz_init(b);
@@ -262,8 +233,9 @@ void LLLoperations::SWAPI(int k, int kmax,
   mpz_clear(lam);
 }
 
-int LLLoperations::doLLL(MutableMatrix *A,
-			 MutableMatrix *LLLstate,
+int LLLoperations::doLLL(MutableMatrixXXX *A,
+			 MutableMatrixXXX *Achange,
+			 MutableMatrixXXX *LLLstate,
 			 int nsteps)
 {
   int n = A->n_cols();
@@ -345,17 +317,17 @@ int LLLoperations::doLLL(MutableMatrix *A,
 		}
 	    }
 	} // end of the k>kmax initialization
-      REDI(k,k-1,A,LLLstate);
+      REDI(k,k-1,A,Achange,LLLstate);
       if (Lovasz(LLLstate,k,alphaTop,alphaBottom))
 	{
-	  SWAPI(k,kmax,A,LLLstate);
+	  SWAPI(k,kmax,A,Achange,LLLstate);
 	  k--;
 	  if (k == 0) k = 1;
 	}
       else
 	{
 	  for (int ell=k-2; ell>=0; ell--)
-	    REDI(k,ell,A,LLLstate);
+	    REDI(k,ell,A,Achange,LLLstate);
 	  k++;
 	}
     }
@@ -369,52 +341,18 @@ int LLLoperations::doLLL(MutableMatrix *A,
   return COMP_INTERRUPTED;
 }
 
-bool LLLoperations::LLL(MutableMatrix *A, const M2_Rational threshold)
+bool LLLoperations::LLL(MutableMatrixXXX *A, const M2_Rational threshold)
 {
-  MutableMatrix *LLLstate;
+  MutableMatrixXXX *LLLstate;
+  MutableMatrixXXX *Achange = 0;
   if (!initializeLLL(A,threshold,LLLstate))
     return false;
-  int ret = doLLL(A,LLLstate);
+  int ret = doLLL(A,Achange,LLLstate);
   if (ret != COMP_DONE)
     {
       deleteitem(LLLstate);
       return false;
     }
-  return true;
-}
-
-bool LLLoperations::LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis)
-{
-  MutableMatrix *A;
-  MutableMatrix *LLLstate;
-  if (!initializeLLL(m,threshold,false,A,LLLstate))
-    return false;
-  int ret = doLLL(A,LLLstate);
-  if (ret != COMP_DONE)
-    {
-      deleteitem(A);
-      deleteitem(LLLstate);
-      return false;
-    }
-  LLLbasis = A->to_matrix();
-  return true;
-}
-
-bool LLLoperations::LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis, Matrix *&ChangeOfBasis)
-{
-  MutableMatrix *A;
-  MutableMatrix *LLLstate;
-  if (!initializeLLL(m,threshold,true,A,LLLstate))
-    return false;
-  int ret = doLLL(A,LLLstate);
-  if (ret != COMP_DONE)
-    {
-      deleteitem(A);
-      deleteitem(LLLstate);
-      return false;
-    }
-  LLLbasis = A->to_matrix();
-  ChangeOfBasis = A->getColumnChangeMatrix()->to_matrix();
   return true;
 }
 

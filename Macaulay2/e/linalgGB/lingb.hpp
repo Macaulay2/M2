@@ -136,7 +136,7 @@ public:
 			      gb_array &polys, 
 			      const FreeModule *F);
 
-  static MutableMatrix *to_M2_MutableMatrix(const Ring *K,
+  static MutableMatrixXXX *to_M2_MutableMatrix(const Ring *K,
 					    coefficient_matrix<COEFF_TYPE> *mat);
 };
 

@@ -16,7 +16,8 @@ net MutableMatrix := m -> (
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
      new MutableMatrix from {
 	  symbol Ring => R,
-	  symbol RawMutableMatrix => m
+	  symbol RawMutableMatrix => m,
+	  symbol cache => new CacheTable
 	  }
      )
 new Matrix from MutableMatrix := (typeofMatrix       ,m) -> map(ring m,rawMatrix        raw m)
@@ -46,21 +47,6 @@ MutableMatrix _ Sequence := (m,rc) -> (
      else error "internal error"
      )
 MutableMatrix == MutableMatrix := (m,n) -> raw m == raw n
-
-getRowChange = method()
-getRowChange(MutableMatrix) := (m) -> map(ring m,rawRowChange(raw m))
-
-getColumnChange = method()
-getColumnChange(MutableMatrix) := (m) -> map(ring m,rawColumnChange(raw m))
-
-setRowChange = method()
-setRowChange(MutableMatrix,MutableMatrix) := (m,r) -> rawRowChange(raw m, raw r)
-setRowChange(MutableMatrix,Matrix) := (m,r) -> rawRowChange(raw m, rawMutableMatrix raw r)
-
-setColumnChange = method()
-setColumnChange(MutableMatrix,MutableMatrix) := (m,c) -> rawColumnChange(raw m, raw c)
-setColumnChange(MutableMatrix,Matrix) := (m,c) -> rawColumnChange(raw m, rawMutableMatrix raw c)
-
 
 assgn := method()
 assgn(RawMutableMatrix,ZZ,ZZ,RingElement) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
