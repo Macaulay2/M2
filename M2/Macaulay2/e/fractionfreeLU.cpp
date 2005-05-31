@@ -7,7 +7,7 @@
 // Fraction free gaussian elimination //
 ////////////////////////////////////////
 
-FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
+FF_LUComputation::FF_LUComputation(MutableMatrixXXX *M0)
   : R(M0->get_ring()),
     M(M0),
     col_perm(0),
@@ -70,9 +70,9 @@ void FF_LUComputation::do_pivots(int lo, int hi, int pivotCol)
 	  // Need to modify column i:
 	  // col(i) := pivot*M[i] - M[pivot_row,i] * M[pivotCol]
 	  R->negate_to(a);
-	  M->scale_column(pivot,i,false/*opposite mult*/);
+	  M->scale_column(pivot,i);
 	  // M->addColumnMultiple(pivotCol,a,i);
-	  M->column_op(i,a,pivotCol,false/*opposite mult*/);
+	  M->column_op(i,a,pivotCol);
 	}	  
 
       if (need_div[i])
@@ -119,7 +119,7 @@ M2_arrayint FF_LUComputation::get_column_permutation()
   return result;
 }
 
-M2_arrayint_OrNull FF_LUComputation::DO(MutableMatrix *M)
+M2_arrayint_OrNull FF_LUComputation::DO(MutableMatrixXXX *M)
 {
   FF_LUComputation F(M);
   if (!F.calc()) return NULL;

@@ -73,7 +73,7 @@ LinAlgGB<CoefficientRing>::LinAlgGB(CoefficientRing *K,
 #include "monoms.h"
 #include "MonomialOps.hpp"
 #include "../matrix.hpp"
-#include "../mutablemat.hpp"
+#include "../mat.hpp"
 #include "../matrixcon.hpp"
 
 // Problems still to consider
@@ -690,7 +690,7 @@ template<typename CoefficientRing>
 void LinAlgGB<CoefficientRing>::show_matrix()
 {
   // Debugging routine
-  MutableMatrix *q = M2Interface<CoefficientRing>::to_M2_MutableMatrix(originalR->getCoefficients(),mat);
+  MutableMatrixXXX *q = M2Interface<CoefficientRing>::to_M2_MutableMatrix(originalR->getCoefficients(),mat);
   buffer o;
   q->text_out(o);
   emit(o.str());

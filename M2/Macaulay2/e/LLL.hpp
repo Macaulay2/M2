@@ -3,7 +3,7 @@
 #ifndef _LLL_hpp_
 #define _LLL_hpp_
 
-#include "mutablemat.hpp"
+#include "mat.hpp"
 #include "comp.hpp"
 
 #include "relem.hpp"
@@ -12,48 +12,40 @@ class LLLoperations
 {
   static bool checkThreshold(ring_elem num, ring_elem den);
 
-  static bool Lovasz(MutableMatrix *lambda,
+  static bool Lovasz(MutableMatrixXXX *lambda,
 		     int k,
 		     ring_elem alphaTop,
 		     ring_elem alphaBottom);
 
   static void REDI(int k, int ell,
-		   MutableMatrix *A,
-		   MutableMatrix *lambda);
+		   MutableMatrixXXX *A,
+		   MutableMatrixXXX *Achange, // if non-NULL, should have same ncols as A
+		   MutableMatrixXXX *lambda);
   static void SWAPI(int k, int kmax,
-		    MutableMatrix *A,
-		    MutableMatrix *lambda);
-public:
-  static bool initializeLLL(const Matrix *m,
+		    MutableMatrixXXX *A,
+		    MutableMatrixXXX *Achange, // if non-NULL, should have same ncols as A
+		    MutableMatrixXXX *lambda);
+
+  static bool initializeLLL(const MutableMatrixXXX *A,
 			    const M2_Rational threshold,
-			    bool useChangeOfBasisMatrix,
-			    MutableMatrix *& A,
-			    MutableMatrix *& LLLstate);
-  static bool initializeLLL(const MutableMatrix *A,
-			    const M2_Rational threshold,
-			    MutableMatrix *& LLLstate);
+			    MutableMatrixXXX *& LLLstate);
   // Returns false if there is an error, and sets gError.
 
-  static int doLLL(MutableMatrix *A,
-		   MutableMatrix *LLLstate,
+  static int doLLL(MutableMatrixXXX *A,
+		   MutableMatrixXXX *Achange,
+		   MutableMatrixXXX *LLLstate,
 		   int nsteps=-1);
   // Return values: COMP_DONE, COMP_DONE_STEPS, COMP_INTERRUPTED
-
-  static void setMultipliers(const MutableMatrix *A, MutableMatrix *lambda);
-  static bool isLLL(const Matrix *m, const M2_Rational threshold);
-  static bool isLLL(const MutableMatrix *A, const M2_Rational threshold);
+public:
 
   ///////////////////////////
   // packaged LLL routines //
   ///////////////////////////
   
-  // These routines return false if the computation is interrupted
-  static bool LLL(MutableMatrix *M, const M2_Rational threshold);
+  // This routine return false if the computation is interrupted
+  static bool LLL(MutableMatrixXXX *M, const M2_Rational threshold);
   // M is replaced with the LLL basis. false is returned if there was an 
   // error or an interrupt.
-
-  static bool LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis);
-  static bool LLL(const Matrix *m, const M2_Rational threshold, Matrix *&LLLbasis, Matrix * &ChangeOfBasis);
 };
 #endif
 

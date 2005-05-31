@@ -24,6 +24,14 @@
 #define CC_RE(f) ((CCELEM_VAL(f))->re)
 #define CC_NORM(f) (sqrt(CC_RE(f)*CC_RE(f) + CC_IM(f)*CC_IM(f)))
 
+extern "C" M2_CC make_M2_Complex(double re, double im)
+{
+  M2_CC z = newitem_atomic(M2_CC_struct);
+  z->re = re;
+  z->im = im;
+  return z;
+}
+
 CC::~CC()
 {
 }

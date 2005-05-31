@@ -804,7 +804,7 @@ export rawIsZero(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_zero(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_zero(", "(Matrix*)",x, ")" ))
-     is x:RawMutableMatrix do toExpr( Ccode( bool, "IM2_MutableMatrix_is_zero(", "(MutableMatrix*)",x, ")" ))
+     is x:RawMutableMatrix do toExpr( Ccode( bool, "IM2_MutableMatrix_is_zero(", "(MutableMatrixXXX*)",x, ")" ))
      else WrongArg("a raw ring element or matrix or mutable matrix")
      );
 setupfun("rawIsZero",rawIsZero);
@@ -1331,7 +1331,7 @@ export rawIsEqual(e:Expr):Expr := (
      else
      when s.0 is x:RawMutableMatrix do
      when s.1 is y:RawMutableMatrix do
-     toExpr(Ccode(bool, "IM2_MutableMatrix_is_equal((MutableMatrix *)",x,",(MutableMatrix *)",y,")"))
+     toExpr(Ccode(bool, "IM2_MutableMatrix_is_equal((MutableMatrixXXX *)",x,",(MutableMatrixXXX *)",y,")"))
      else WrongArgMutableMatrix(2)
      else WrongArg(1,"a raw matrix or mutable matrix")
      else WrongNumArgs(2));
@@ -1536,7 +1536,7 @@ export rawMatrixEntry(e:Expr):Expr := (
      if !isInt(r) then WrongArgSmallInteger(2) else
      when s.2 is c:Integer do 
      if !isInt(c) then WrongArgSmallInteger(3) else (
-	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)", "IM2_MutableMatrix_get_entry(", "(MutableMatrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
+	  toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)", "IM2_MutableMatrix_get_entry(", "(MutableMatrixXXX *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else 
@@ -1867,7 +1867,7 @@ export rawMutableMatrix(e:Expr):Expr := (
      when s.1 is preferDense:Boolean do
      Expr(Ccode(RawMutableMatrix, "(engine_RawMutableMatrix)",
 	       "IM2_MutableMatrix_copy(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       preferDense == True, ")"))
      else WrongArgBoolean(2)
      else WrongArg(1,"a raw matrix or mutable matrix")
@@ -1876,7 +1876,7 @@ export rawMutableMatrix(e:Expr):Expr := (
 setupfun("rawMutableMatrix",rawMutableMatrix);
 
 export rawMatrix(e:Expr):Expr := (
-     when e is M:RawMutableMatrix do Expr(Ccode(RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_to_matrix(", "(MutableMatrix *)", M, ")" ))
+     when e is M:RawMutableMatrix do Expr(Ccode(RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_to_matrix(", "(MutableMatrixXXX *)", M, ")" ))
      else WrongArgMutableMatrix());
 setupfun("rawMatrix",rawMatrix);
 
@@ -1935,7 +1935,7 @@ export rawSubmatrix(e:Expr):Expr := (
 	  cols := getSequenceOfSmallIntegers(s.2);
 	  toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)",
 		    "IM2_MutableMatrix_submatrix(",
-		    "(MutableMatrix *)", M, ",",
+		    "(MutableMatrixXXX *)", M, ",",
 		    "(M2_arrayint)", rows, ",",
 		    "(M2_arrayint)", cols,
 		    ")" ) ) )
@@ -1956,7 +1956,7 @@ export rawSubmatrix(e:Expr):Expr := (
 	  cols := getSequenceOfSmallIntegers(s.1);
 	  toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)",
 		    "IM2_MutableMatrix_submatrix1(",
-		    "(MutableMatrix *)", M, ",",
+		    "(MutableMatrixXXX *)", M, ",",
 		    "(M2_arrayint)", cols,
 		    ")" ) ) )
      else 
@@ -2036,7 +2036,7 @@ export rawInsertRows(e:Expr):Expr := (
      when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
      when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_insert_rows(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(position), ",",
 	       toInt(number),
 	       ")" ) )
@@ -2053,7 +2053,7 @@ export rawDeleteRows(e:Expr):Expr := (
      when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
      when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_delete_rows(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(position), ",",
 	       toInt(number),
 	       ")" ) )
@@ -2070,7 +2070,7 @@ export rawInsertColumns(e:Expr):Expr := (
      when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
      when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_insert_columns(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(position), ",",
 	       toInt(number),
 	       ")" ) )
@@ -2087,7 +2087,7 @@ export rawDeleteColumns(e:Expr):Expr := (
      when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
      when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_delete_columns(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(position), ",",
 	       toInt(number),
 	       ")" ) )
@@ -2104,7 +2104,7 @@ export rawSortColumns2(e:Expr):Expr := (
      when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
      when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_sort_columns(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(position), ",",
 	       toInt(number),
 	       ")" ) )
@@ -2121,7 +2121,7 @@ export rawPermuteRows(e:Expr):Expr := (
      when s.1 is start:Integer do if !isInt(start) then WrongArgSmallInteger(2) else
      if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_row_permute(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(start), ",",
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2),
 	       ")" ) )
@@ -2137,7 +2137,7 @@ export rawPermuteColumns(e:Expr):Expr := (
      when s.1 is start:Integer do if !isInt(start) then WrongArgSmallInteger(2) else
      if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else possibleEngineError(
 	  Ccode(bool, "IM2_MutableMatrix_column_permute(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(start), ",",
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2),
 	       ")" ) )
@@ -2158,7 +2158,7 @@ export rawMatrixColumnOperation2(e:Expr):Expr := (
      when s.6 is b2:RawRingElement do
      when s.7 is opposite:Boolean do possibleEngineError(
 	  Ccode(bool,"IM2_MutableMatrix_column_2by2(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(c1), ",",
 	       toInt(c2), ",",
 	       "(RingElement*)", a1, ",",
@@ -2189,7 +2189,7 @@ export rawMatrixRowOperation2(e:Expr):Expr := (
      when s.6 is b2:RawRingElement do
      when s.7 is opposite:Boolean do possibleEngineError(
 	  Ccode(bool,"IM2_MutableMatrix_row_2by2(",
-	       "(MutableMatrix *)", M, ",",
+	       "(MutableMatrixXXX *)", M, ",",
 	       toInt(r1), ",",
 	       toInt(r2), ",",
 	       "(RingElement*)", a1, ",",
@@ -2251,7 +2251,7 @@ setupfun("rawRemoveScalarMultiples",rawRemoveScalarMultiples);
 export rawReduceByPivots(e:Expr):Expr := (
      when e
      is m:RawMutableMatrix
-     do toExpr(Ccode(bool, "IM2_MutableMatrix_reduce_by_pivots(", "(MutableMatrix *)", m, ")" ))
+     do toExpr(Ccode(bool, "IM2_MutableMatrix_reduce_by_pivots(", "(MutableMatrixXXX *)", m, ")" ))
      else WrongArgMutableMatrix());
 setupfun("rawReduceByPivots",rawReduceByPivots);
 
@@ -2401,47 +2401,23 @@ setupfun("rawRingMapEval",rawRingMapEval);
 export rawNumberOfRows(e:Expr):Expr := (
      when e
      is M:RawMatrix do toExpr(Ccode( int, "IM2_Matrix_n_rows(", "(Matrix *)", M, ")" ))
-     is M:RawMutableMatrix do toExpr(Ccode( int, "IM2_MutableMatrix_n_rows(", "(MutableMatrix *)", M, ")" ))
+     is M:RawMutableMatrix do toExpr(Ccode( int, "IM2_MutableMatrix_n_rows(", "(MutableMatrixXXX *)", M, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawNumberOfRows",rawNumberOfRows);
 
 export rawNumberOfColumns(e:Expr):Expr := (
      when e
      is M:RawMatrix do toExpr(Ccode( int, "IM2_Matrix_n_cols(", "(Matrix *)", M, ")" ))
-     is M:RawMutableMatrix do toExpr(Ccode( int, "IM2_MutableMatrix_n_cols(", "(MutableMatrix *)", M, ")" ))
+     is M:RawMutableMatrix do toExpr(Ccode( int, "IM2_MutableMatrix_n_cols(", "(MutableMatrixXXX *)", M, ")" ))
      else WrongArg("a raw matrix"));
 setupfun("rawNumberOfColumns",rawNumberOfColumns);
-
-export rawRowChange(e:Expr):Expr := (
-     when e
-     is M:RawMutableMatrix do
-     toExpr(Ccode( RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)", "IM2_MutableMatrix_get_row_change(", "(MutableMatrix *)", M, ")" ))
-     is s:Sequence do
-     when s.0 is M:RawMutableMatrix do
-     when s.1 is rowChange:RawMutableMatrix do possibleEngineError(Ccode( bool, "IM2_MutableMatrix_set_row_change(", "(MutableMatrix *)", M, ",", "(MutableMatrix *)", rowChange, ")" ))
-     else WrongArgMutableMatrix()
-     else WrongArgMutableMatrix()
-     else WrongNumArgs(1,2));
-setupfun("rawRowChange",rawRowChange);
-
-export rawColumnChange(e:Expr):Expr := (
-     when e
-     is M:RawMutableMatrix do
-     toExpr(Ccode( RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)", "IM2_MutableMatrix_get_col_change(", "(MutableMatrix *)", M, ")" ))
-     is s:Sequence do
-     when s.0 is M:RawMutableMatrix do
-     when s.1 is colChange:RawMutableMatrix do possibleEngineError( Ccode( bool, "IM2_MutableMatrix_set_col_change(", "(MutableMatrix *)", M, ",", "(MutableMatrix *)", colChange, ")" ))
-     else WrongArgMutableMatrix()
-     else WrongArgMutableMatrix()
-     else WrongNumArgs(1,2));
-setupfun("rawColumnChange",rawColumnChange);
 
 export rawMatrixRowSwap(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
      when s.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_row_swap(", "(MutableMatrix *)", M, ",", toInt(i), ",", toInt(j), ")" ))
+	  Ccode(bool, "IM2_MutableMatrix_row_swap(", "(MutableMatrixXXX *)", M, ",", toInt(i), ",", toInt(j), ")" ))
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArgMutableMatrix(1)
@@ -2453,7 +2429,7 @@ export rawMatrixColumnSwap(e:Expr):Expr := (
      when s.0 is M:RawMutableMatrix do
      when s.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
      when s.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_column_swap(", "(MutableMatrix *)", M, ",", toInt(i), ",", toInt(j), ")" ))
+	  Ccode(bool, "IM2_MutableMatrix_column_swap(", "(MutableMatrixXXX *)", M, ",", toInt(i), ",", toInt(j), ")" ))
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArgMutableMatrix(1)
@@ -2465,7 +2441,7 @@ export rawColumnDotProduct(e:Expr):Expr := (
      when s.0 is M:RawMutableMatrix do
      when s.1 is c1:Integer do if !isInt(c1) then WrongArgSmallInteger(2) else
      when s.2 is c2:Integer do if !isInt(c2) then WrongArgSmallInteger(3) else
-     Expr(Ccode(RawRingElement, "(engine_RawRingElement)IM2_Matrix_dot_product((MutableMatrix *)", M, ",", toInt(c1), ",", toInt(c2), ")" ))
+     Expr(Ccode(RawRingElement, "(engine_RawRingElement)IM2_Matrix_dot_product((MutableMatrixXXX *)", M, ",", toInt(c1), ",", toInt(c2), ")" ))
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArgMutableMatrix(1)
@@ -2479,7 +2455,7 @@ export rawMatrixRowChange(e:Expr):Expr := (
      when s.2 is r:RawRingElement do
      when s.3 is sourceRow:Integer do if !isInt(sourceRow) then WrongArgSmallInteger(4) else 
      when s.4 is opposite:Boolean do possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_row_operation(", "(MutableMatrix *)", M, ",", toInt(targetRow), ",", "(RingElement *)", r, ",", toInt(sourceRow), ",", opposite.v, ")" ))
+	  Ccode(bool, "IM2_MutableMatrix_row_operation(", "(MutableMatrixXXX *)", M, ",", toInt(targetRow), ",", "(RingElement *)", r, ",", toInt(sourceRow), ",", opposite.v, ")" ))
      else WrongArgBoolean(5)
      else WrongArgInteger(4)
      else WrongArg(3,"a raw ring element")
@@ -2495,7 +2471,7 @@ export rawMatrixColumnChange(e:Expr):Expr := (
      when s.2 is r:RawRingElement do
      when s.3 is sourceColumn:Integer do if !isInt(sourceColumn) then WrongArgSmallInteger(4) else 
      when s.4 is opposite:Boolean do possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_column_operation(", "(MutableMatrix *)", M, ",", toInt(targetColumn), ",", "(RingElement *)", r, ",", toInt(sourceColumn), ",", opposite.v, ")" ))
+	  Ccode(bool, "IM2_MutableMatrix_column_operation(", "(MutableMatrixXXX *)", M, ",", toInt(targetColumn), ",", "(RingElement *)", r, ",", toInt(sourceColumn), ",", opposite.v, ")" ))
      else WrongArgBoolean(5)
      else WrongArgInteger(4)
      else WrongArg(3,"a raw ring element")
@@ -2510,7 +2486,7 @@ export rawMatrixRowScale(e:Expr):Expr := (
      when s.1 is r:RawRingElement do 
      when s.2 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(3) else
      when s.3 is opposite:Boolean do possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_row_scale(", "(MutableMatrix *)", M, ",", "(RingElement *)", r, ",", toInt(targetRow), ",", opposite.v, ")" ))
+	  Ccode(bool, "IM2_MutableMatrix_row_scale(", "(MutableMatrixXXX *)", M, ",", "(RingElement *)", r, ",", toInt(targetRow), ",", opposite.v, ")" ))
      else WrongArgBoolean(4)
      else WrongArgInteger(3)
      else WrongArg(2,"a raw ring element")
@@ -2524,7 +2500,7 @@ export rawMatrixColumnScale(e:Expr):Expr := (
      when s.1 is r:RawRingElement do
      when s.2 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(3) else
      when s.3 is opposite:Boolean do possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_column_scale(", "(MutableMatrix *)", M, ",", "(RingElement *)", r, ",", toInt(targetColumn), ",", opposite.v, ")" ))
+	  Ccode(bool, "IM2_MutableMatrix_column_scale(", "(MutableMatrixXXX *)", M, ",", "(RingElement *)", r, ",", toInt(targetColumn), ",", opposite.v, ")" ))
      else WrongArgBoolean(4)
      else WrongArgInteger(3)
      else WrongArg(2,"a raw ring element")
@@ -2903,7 +2879,7 @@ export rawSolve(e:Expr):Expr := (
      when s.0 is A:RawMutableMatrix do 
      when s.1 is b:RawMutableMatrix do
      when s.2 is x:RawMutableMatrix do ( 
-	  if Ccode(bool, "(M2_bool)rawSolve(", "(MutableMatrix *)", A, ",", "(MutableMatrix *)", b, ",", "(MutableMatrix *)", x, ")")
+	  if Ccode(bool, "(M2_bool)rawSolve(", "(MutableMatrixXXX *)", A, ",", "(MutableMatrixXXX *)", b, ",", "(MutableMatrixXXX *)", x, ")")
 	  then nullE
 	  else buildErrorPacket(EngineError("error calling lapack solve routine")))
      else WrongArgMutableMatrix(3)
@@ -2918,12 +2894,12 @@ setupfun("rawSolve", rawSolve);
 -----------------------------------------------------------------------------
 
 export rawLU(e:Expr):Expr := (
-     when e is A:RawMutableMatrix do toExpr(Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrix *)", A, ")"))
+     when e is A:RawMutableMatrix do toExpr(Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrixXXX *)", A, ")"))
      else WrongArgMutableMatrix());
 setupfun("rawLU", rawLU);
 
 export rawFFLU(e:Expr):Expr := (
-     when e is M:RawMutableMatrix do toExpr( Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_FF_LU(", "(MutableMatrix *)", M, ")" ) )
+     when e is M:RawMutableMatrix do toExpr( Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_FF_LU(", "(MutableMatrixXXX *)", M, ")" ) )
      else WrongArgMutableMatrix());
 setupfun("rawFFLU",rawFFLU);
 
@@ -2936,7 +2912,7 @@ export rawLLL(e:Expr):Expr := (
      when s.0 is M:RawMutableMatrix do
      when s.1 is threshold:Rational do     
      when s.2 is strategy:Integer do possibleEngineError(
-	  Ccode(bool, "(M2_bool)IM2_LLL(", "(MutableMatrix *)", M, ",", "(M2_Rational)", threshold, ",", toInt(strategy), ")"))
+	  Ccode(bool, "(M2_bool)IM2_LLL(", "(MutableMatrixXXX *)", M, ",", "(M2_Rational)", threshold, ",", toInt(strategy), ")"))
      else WrongArg(2,"an integer")     
      else WrongArg(1,"a rational number")
      else WrongArg(0,"a mutable raw matrix")
@@ -2944,12 +2920,12 @@ export rawLLL(e:Expr):Expr := (
 setupfun("rawLLL",rawLLL);
 
 export rawSmithNormalForm(e:Expr):Expr := (
-     when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_SmithNormalForm(", "(MutableMatrix *)", M, ")" ) )
+     when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_SmithNormalForm(", "(MutableMatrixXXX *)", M, ")" ) )
      else WrongArgMutableMatrix());
 setupfun("rawSmithNormalForm",rawSmithNormalForm);
 
 export rawHermiteNormalForm(e:Expr):Expr := (
-     when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_HermiteNormalForm(", "(MutableMatrix *)", M, ")" ) )
+     when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_HermiteNormalForm(", "(MutableMatrixXXX *)", M, ")" ) )
      else WrongArgMutableMatrix());
 setupfun("rawHermiteNormalForm",rawHermiteNormalForm);
 
@@ -2962,22 +2938,12 @@ M2CC(e:Expr):Expr := (
      if length(s) == 2 then
      when s.0 is re:Real do 
      when s.1 is im:Real do (
-	  Expr( Ccode(Complex, "(tokens_Complex)LP_make_M2_Complex(", re.v, ",", im.v, ")")) )
+	  Expr( Ccode(Complex, "(tokens_Complex)make_M2_Complex(", re.v, ",", im.v, ")")) )
      else WrongArg(2, "a double")
      else WrongArg(1, "a double")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("M2CC", M2CC);
-
-export rawNumberOfRowsRR(e:Expr):Expr := (
-     when e is M:RawMutableMatrix do toExpr( Ccode(int, "IM2_MutableMatrix_n_rows(", "(MutableMatrix *)", M, ")") )
-     else WrongArgMutableMatrix());
-setupfun("rawNumberOfRowsRR", rawNumberOfRowsRR);
-
-export rawNumberOfColumnsRR(e:Expr):Expr := (
-     when e is M:RawMutableMatrix do toExpr( Ccode(int, "IM2_MutableMatrix_n_cols(", "(MutableMatrix *)", M, ")") )
-     else WrongArgMutableMatrix());
-setupfun("rawNumberOfColumnsRR", rawNumberOfColumnsRR);
 
 export rawSetMatrixEntry(e:Expr):Expr := (
      when e is s:Sequence do
@@ -2987,7 +2953,7 @@ export rawSetMatrixEntry(e:Expr):Expr := (
      when s.2 is c:Integer do if !isInt(c) then WrongArgSmallInteger(3) else 
      when s.3 is x:RawRingElement do possibleEngineError( 
 	  Ccode(bool, "IM2_MutableMatrix_set_entry(", 
-	       "(MutableMatrix *)", M, ",", 
+	       "(MutableMatrixXXX *)", M, ",", 
 	       toInt(r), ",", toInt(c), ",", 
 	       "(RingElement *)", x, ")" ))
      else WrongArg(4,"a raw ring element")
@@ -3005,7 +2971,7 @@ export rawGetMatrixEntry(e:Expr):Expr := (
      when s.0 is M:RawMutableMatrix do
      when s.1 is r:Integer do if !isInt(r) then WrongArgSmallInteger(2) else
      when s.2 is c:Integer do if !isInt(c) then WrongArgSmallInteger(3) else 
-     toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_MutableMatrix_get_entry(", "(MutableMatrix *)", M, ",", toInt(r), ",", toInt(c), ")" ))
+     toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_MutableMatrix_get_entry(", "(MutableMatrixXXX *)", M, ",", toInt(r), ",", toInt(c), ")" ))
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArgMutableMatrix(1)
@@ -3023,7 +2989,7 @@ export rawSetMatrixValues(e:Expr):Expr := (
      else possibleEngineError(
 	  Ccode(bool,
 	       "IM2_MutableMatrix_set_values(",
-	       "(MutableMatrix*)", M, ",",
+	       "(MutableMatrixXXX*)", M, ",",
 	       "(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(s.1), ",", -- rows
 	       "(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(s.2), ",", -- cols
 	       "(RingElement_array*)", getSequenceOfRingElements(s.3), -- values
@@ -3046,7 +3012,7 @@ export rawGetSubmatrix(e:Expr):Expr := (
 	  cols := getSequenceOfSmallIntegers(s.2);
 	  toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)",
 		    "IM2_MutableMatrix_submatrix(",
-		    "(MutableMatrix *)", M, ",",
+		    "(MutableMatrixXXX *)", M, ",",
 		    "(M2_arrayint)", rows, ",",
 		    "(M2_arrayint)", cols,
 		    ")" ) ) )
@@ -3064,8 +3030,8 @@ export rawEigenvalues(e:Expr):Expr := (
      when s.1 is eigs:RawMutableMatrix do 
      if !isBoolean(s.2) then WrongArgBoolean(3) else possibleEngineError(
 	  Ccode(bool, "rawEigenvalues(", 
-	       "(MutableMatrix *)", M, ",", 
-	       "(MutableMatrix *)", eigs, ",",
+	       "(MutableMatrixXXX *)", M, ",", 
+	       "(MutableMatrixXXX *)", eigs, ",",
 	       toBoolean(s.2),				    -- isHermitian
 	       ")"))
      else WrongArgMutableMatrix(2)
@@ -3082,9 +3048,9 @@ export rawEigenvectors(e:Expr):Expr := (
      when s.2 is eigvecs:RawMutableMatrix do 
      if !isBoolean(s.3) then WrongArgBoolean(4) else possibleEngineError(
 	  Ccode(bool, "rawEigenvectors(", 
-	       "(MutableMatrix *)", M, ",", 
-	       "(MutableMatrix *)", eigvals, ",", 
-	       "(MutableMatrix *)", eigvecs, ",", 
+	       "(MutableMatrixXXX *)", M, ",", 
+	       "(MutableMatrixXXX *)", eigvals, ",", 
+	       "(MutableMatrixXXX *)", eigvecs, ",", 
 	       toBoolean(s.3),				    -- isHermitian
 	        ")"))
      else WrongArgMutableMatrix(3)
@@ -3103,7 +3069,7 @@ export rawSVD(e:Expr):Expr := (
      when s.3 is VT:RawMutableMatrix do 
      if isBoolean(s.4) then possibleEngineError(
 	  Ccode(bool, "rawSVD(",
-	       "(MutableMatrix *)", M, ",", "(MutableMatrix *)", Sigma, ",", "(MutableMatrix *)", U, ",", "(MutableMatrix *)", VT, ",",
+	       "(MutableMatrixXXX *)", M, ",", "(MutableMatrixXXX *)", Sigma, ",", "(MutableMatrixXXX *)", U, ",", "(MutableMatrixXXX *)", VT, ",",
 	       toBoolean(s.4),				    -- divide and conquer
 	       ")"))
      else WrongArgBoolean(5)
@@ -3123,7 +3089,7 @@ export rawLeastSquares(e:Expr):Expr := (
      when s.2 is x:RawMutableMatrix do 
      if isBoolean(s.3) then possibleEngineError(
 	  Ccode(bool, "rawLeastSquares(", 
-	       "(MutableMatrix *)", M, ",", "(MutableMatrix *)", b, ",", "(MutableMatrix *)", x, ",",
+	       "(MutableMatrixXXX *)", M, ",", "(MutableMatrixXXX *)", b, ",", "(MutableMatrixXXX *)", x, ",",
 	       toBoolean(s.3),				    -- assume full rank
 	       ")"))
      else WrongArgBoolean(4)

@@ -564,10 +564,11 @@ Matrix *Matrix::transpose() const
 
   // The efficiency of this code relies on the way of ordering
   // the sparse vectors (lead term has largest component)
+  iterator i(this);
   for (int c=0; c<n_cols(); c++)
     {
-      for (vec t = elem(c); t != 0; t=t->next)
-	mat.set_entry(c,t->comp,t->coeff);
+      for (i.set(c); i.valid(); i.next())
+	mat.set_entry(c, i.row(), i.entry());
     }
   return mat.to_matrix();
 }

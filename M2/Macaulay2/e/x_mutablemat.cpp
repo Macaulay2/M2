@@ -1,92 +1,72 @@
 // Copyright 2004 Michael E. Stillman
 
 #include "engine.h"
-#include "mutablemat.hpp"
 #include "relem.hpp"
-#include "LLL.hpp"
-#include "fractionfreeLU.hpp"
 #include "ring.hpp"
-#include "sparsemat.hpp"
-#include "coeffrings.hpp"
-#include "dmatrix.hpp"
-#include "lapack.hpp"
-#include "dmat-LU.hpp"
-#include "ntl_interface.hpp"
 #include "QQ.hpp"
 
-typedef MutableMatrix MutableMatrixOrNull;
+#include "coeffrings.hpp"
+#include "mat.hpp"
+#include "fractionfreeLU.hpp"
+#include "LLL.hpp"
 
-MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
+//#include "mutablemat.hpp"
+//#include "sparsemat.hpp"
+//#include "dmatrix.hpp"
+//#include "lapack.hpp"
+//#include "dmat-LU.hpp"
+//#include "ntl_interface.hpp"
+
+typedef MutableMatrixXXX MutableMatrixXXXOrNull;
+
+MutableMatrixXXX * IM2_MutableMatrix_identity(const Ring *R,
 						 int n,
 						 M2_bool is_dense)
 {
-  return MutableMatrix::identity(R, n, is_dense);
+  return MutableMatrixXXX::identity(R, n, is_dense);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_make(const Ring *R,
+MutableMatrixXXXOrNull * IM2_MutableMatrix_make(const Ring *R,
 					    int nrows,
 					    int ncols,
 					    M2_bool is_dense)
 {
-  return MutableMatrix::zero_matrix(R,nrows,ncols,is_dense);
+  return MutableMatrixXXX::zero_matrix(R,nrows,ncols,is_dense);
 }
 
-MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
+MutableMatrixXXX * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
 {
-  return MutableMatrix::from_matrix(M, is_dense);
+  return MutableMatrixXXX::from_matrix(M, is_dense);
 }
 
-const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
+const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrixXXX *M)
 {
   return M->to_matrix();
 }
 
-const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
+const M2_string IM2_MutableMatrix_to_string(const MutableMatrixXXX *M)
 {
   buffer o;
   M->text_out(o);
   return o.to_string();
 }
 
-unsigned long IM2_MutableMatrix_hash(const MutableMatrix *M)
+unsigned long IM2_MutableMatrix_hash(const MutableMatrixXXX *M)
 {
   return M->get_hash_value();
 }
 
-int IM2_MutableMatrix_n_rows(const MutableMatrix *M)
+int IM2_MutableMatrix_n_rows(const MutableMatrixXXX *M)
 {
   return M->n_rows();
 }
 
-int IM2_MutableMatrix_n_cols(const MutableMatrix *M)
+int IM2_MutableMatrix_n_cols(const MutableMatrixXXX *M)
 {
   return M->n_cols();
 }
 
-
-MutableMatrixOrNull * IM2_MutableMatrix_get_row_change(MutableMatrix *M)
-{
-  return M->getRowChangeMatrix();
-}
-
-MutableMatrixOrNull * IM2_MutableMatrix_get_col_change(MutableMatrix *M)
-{
-  return M->getColumnChangeMatrix();
-}
-
-M2_bool IM2_MutableMatrix_set_row_change(MutableMatrix *M,
-					 MutableMatrix *rowChange)
-{
-  return M->setRowChangeMatrix(rowChange);
-}
-
-M2_bool IM2_MutableMatrix_set_col_change(MutableMatrix *M,
-					 MutableMatrix *colChange)
-{
-  return M->setColumnChangeMatrix(colChange);
-}
-
-const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
+const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrixXXX *M, int r, int c)
 {
   if (r < 0 || r >= M->n_rows())
     {
@@ -103,7 +83,7 @@ const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, in
   return RingElement::make_raw(M->get_ring(), result);
 }
 
-M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, 
+M2_bool IM2_MutableMatrix_set_entry(MutableMatrixXXX *M, 
 					int r, 
 					int c, 
 					const RingElement *a)
@@ -129,7 +109,7 @@ M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M,
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_row_swap(MutableMatrix *M, int i, int j)
+M2_bool IM2_MutableMatrix_row_swap(MutableMatrixXXX *M, int i, int j)
   /* swap rows: row(i) <--> row(j) */
 {
   if (i < 0 || j < 0 || i >= M->n_rows() || j >= M->n_rows())
@@ -142,7 +122,7 @@ M2_bool IM2_MutableMatrix_row_swap(MutableMatrix *M, int i, int j)
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j)
+M2_bool IM2_MutableMatrix_column_swap(MutableMatrixXXX *M, int i, int j)
   /* swap columns: column(i) <--> column(j) */
 {
   if (i < 0 || j < 0 || i >= M->n_cols() || j >= M->n_cols())
@@ -155,7 +135,7 @@ M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j)
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M, 
+M2_bool IM2_MutableMatrix_row_operation(MutableMatrixXXX *M, 
 					int i,
 					const RingElement *r, 
 					int j,
@@ -174,11 +154,11 @@ M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
       return 0;
     }
 
-  M->row_op(i,r->get_value(),j, opposite_mult);
+  M->row_op(i,r->get_value(),j);
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M, 
+M2_bool IM2_MutableMatrix_column_operation(MutableMatrixXXX *M, 
 					   int i,
 					   const RingElement *r, 
 					   int j,
@@ -197,11 +177,11 @@ M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
       return 0;
     }
 
-  M->column_op(i,r->get_value(),j, opposite_mult);
+  M->column_op(i,r->get_value(),j);
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M, 
+M2_bool IM2_MutableMatrix_row_scale(MutableMatrixXXX *M, 
 				    const RingElement *r, 
 				    int i,
 				    M2_bool opposite_mult)
@@ -218,11 +198,11 @@ M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
       ERROR("row index out of range");
       return 0;
     }
-  M->scale_row(r->get_value(),i, opposite_mult);
+  M->scale_row(r->get_value(),i);
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M, 
+M2_bool IM2_MutableMatrix_column_scale(MutableMatrixXXX *M, 
     const RingElement *r, 
     int i,
     M2_bool opposite_mult)
@@ -239,25 +219,25 @@ M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M,
       ERROR("column index out of range");
       return 0;
     }
-  M->scale_column(r->get_value(),i,opposite_mult);
+  M->scale_column(r->get_value(),i);
   return 1;
 }
 
-M2_bool IM2_MutableMatrix_insert_columns(MutableMatrix *M, int i, int n_to_add)
+M2_bool IM2_MutableMatrix_insert_columns(MutableMatrixXXX *M, int i, int n_to_add)
   /* Insert n_to_add columns directly BEFORE column i. */
 {
   ERROR("not yet implemented");
   return false;
 }
 
-M2_bool IM2_MutableMatrix_insert_rows(MutableMatrix *M, int i, int n_to_add)
+M2_bool IM2_MutableMatrix_insert_rows(MutableMatrixXXX *M, int i, int n_to_add)
   /* Insert n_to_add rows directly BEFORE row i. */
 {
   ERROR("not yet implemented");
   return false;
 }
 
-M2_bool IM2_MutableMatrix_delete_columns(MutableMatrix *M, int i, int j)
+M2_bool IM2_MutableMatrix_delete_columns(MutableMatrixXXX *M, int i, int j)
   /* Delete columns i .. j from M */
 {
   ERROR("not yet implemented");
@@ -265,14 +245,14 @@ M2_bool IM2_MutableMatrix_delete_columns(MutableMatrix *M, int i, int j)
 }
 
 
-M2_bool IM2_MutableMatrix_delete_rows(MutableMatrix *M, int i, int j)
+M2_bool IM2_MutableMatrix_delete_rows(MutableMatrixXXX *M, int i, int j)
   /* Delete rows i .. j from M */
 {
   ERROR("not yet implemented");
   return false;
 }
 
-M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
+M2_bool IM2_MutableMatrix_column_2by2(MutableMatrixXXX *M,
 				      int c1, int c2, 
 				      const RingElement *a1, const RingElement *a2,
 				      const RingElement *b1, const RingElement *b2,
@@ -289,12 +269,11 @@ M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
     }
   return M->column2by2(c1,c2,
 		       a1->get_value(),a2->get_value(),
-		       b1->get_value(),b2->get_value(),
-		       opposite_mult);
+		       b1->get_value(),b2->get_value());
 }
 
 
-M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
+M2_bool IM2_MutableMatrix_row_2by2(MutableMatrixXXX *M,
 				   int r1, int r2, 
 				   const RingElement *a1, const RingElement *a2,
 				   const RingElement *b1, const RingElement *b2,
@@ -311,18 +290,17 @@ M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
     }
   return M->row2by2(r1,r2,
 		    a1->get_value(),a2->get_value(),
-		    b1->get_value(),b2->get_value(),
-		    opposite_mult);
+		    b1->get_value(),b2->get_value());
 }
 
-M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi)
+M2_bool IM2_MutableMatrix_sort_columns(MutableMatrixXXX *M, int lo, int hi)
   /* Returns false if M is not mutable, or lo, or hi are out of range */
 {
   ERROR("not re-implemented yet");
   return false;
 }
 
-M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
+M2_bool IM2_MutableMatrix_row_permute(MutableMatrixXXX *M,
 				      int start, 
 				      M2_arrayint perm)
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
@@ -346,7 +324,7 @@ M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
   return M->row_permute(start,perm);
 }
 
-M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
+M2_bool IM2_MutableMatrix_column_permute(MutableMatrixXXX *M,
 					 int start, 
 					 M2_arrayint perm)
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
@@ -371,31 +349,31 @@ M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
 }
 
 
-const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c2)
+const RingElement * IM2_Matrix_dot_product(const MutableMatrixXXX *M, int c1, int c2)
 {
   ring_elem a;
   M->dot_product(c1,c2,a);
   return RingElement::make_raw(M->get_ring(), a);
 }
 
-const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M)
+const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrixXXX *M)
 {
   return M->is_zero();
 }
 
-const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
-					 const MutableMatrix *N)
+const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrixXXX *M, 
+					 const MutableMatrixXXX *N)
 /* This checks that the entries of M,N are the same */
 {
   return M->is_equal(N);
 }
 
-MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
+MutableMatrixXXX * IM2_MutableMatrix_copy(MutableMatrixXXX *M, M2_bool prefer_dense)
 {
   return M->copy(prefer_dense);
 }
 
-M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
+M2_bool IM2_MutableMatrix_set_values(MutableMatrixXXX *M, 
 				     M2_arrayint rows,
 				     M2_arrayint cols,
 				     RingElement_array *values)
@@ -403,20 +381,20 @@ M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
   return M->set_values(rows,cols,values);
 }
 
-M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
+M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrixXXX *M)
 /* Using row and column operations, use unit pivots to reduce the matrix */
 {
-  SparseMutableMatrix *N = M->cast_to_SparseMutableMatrix();
-  if (N == 0)
-    {
-      ERROR("expected sparse mutable matrix");
-      return false;
-    }
-  N->reduce_pivots();
+  //  SparseMutableMatrix *N = M->cast_to_SparseMutableMatrix();
+  //  if (N == 0)
+  //    {
+  //      ERROR("expected sparse mutable matrix");
+  //      return false;
+  //    }
+  //  N->reduce_pivots();
   return true;
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N)
+MutableMatrixXXXOrNull * IM2_MutableMatrix_add(const MutableMatrixXXX *M, const MutableMatrixXXX *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the addition is performed.  If the targets are not equal, the target 
    of the result is set to have each degree zero.  Similarly with the
@@ -425,7 +403,7 @@ MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const Mutabl
   return M->add(N);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N)
+MutableMatrixXXXOrNull * IM2_MutableMatrix_subtract(const MutableMatrixXXX *M, const MutableMatrixXXX *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the addition is performed.  If the targets are not equal, the target 
    of the result is set to have each degree zero.  Similarly with the
@@ -434,44 +412,44 @@ MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const M
   return M->subtract(N);
 }
 
-MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M)
+MutableMatrixXXX * IM2_MutableMatrix_negate(const MutableMatrixXXX *M)
 {
   return M->negate();
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M, 
-					     const MutableMatrix *N, 
+MutableMatrixXXXOrNull * IM2_MutableMatrix_mult(const MutableMatrixXXX *M, 
+					     const MutableMatrixXXX *N, 
 					     M2_bool opposite_mult)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the multiplication is performed, and the source and target are taken from N,M
    respectively.  The degree of the result is the sum of the two degrees */
 {
-  return M->mult(N, opposite_mult);
+  return M->mult(N);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
-						    const MutableMatrix *M, 
+MutableMatrixXXXOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
+						    const MutableMatrixXXX *M, 
 						    M2_bool opposite_mult)
 {
-  return M->mult(f, opposite_mult);
+  return M->mult(f);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
+MutableMatrixXXXOrNull * IM2_MutableMatrix_submatrix(const MutableMatrixXXX *M,
 						  const M2_arrayint rows,
 						  const M2_arrayint cols)
 {
   return M->submatrix(rows,cols);
 }
 
-bool IM2_MutableMatrix_set_submatrix(MutableMatrix *M,
+bool IM2_MutableMatrix_set_submatrix(MutableMatrixXXX *M,
 				     const M2_arrayint rows,
 				     const M2_arrayint cols,
-				     const MutableMatrix *N)
+				     const MutableMatrixXXX *N)
 {
   return M->set_submatrix(rows,cols,N);
 }
 
-MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
+MutableMatrixXXXOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrixXXX *M,
 						   const M2_arrayint cols)
 {
   return M->submatrix(cols);
@@ -481,31 +459,31 @@ MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
  ** Cmputations ****************
  *******************************/
 
-M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M)
+M2_arrayint_OrNull IM2_FF_LU(MutableMatrixXXX *M)
 {
   return FF_LUComputation::DO(M);
 }
 
-M2_bool IM2_LLL(MutableMatrix *M, const M2_Rational threshold, int strategy)
+M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy)
 {
   if (strategy == 0)
     {
       return LLLoperations::LLL(M,threshold);
     }
 
-  long a = mpz_get_si(mpq_numref(threshold));
-  long b = mpz_get_si(mpq_denref(threshold));
-  return ntl_LLL(M,a,b,strategy);
+  //  long a = mpz_get_si(mpq_numref(threshold));
+  //  long b = mpz_get_si(mpq_denref(threshold));
+  //  return ntl_LLL(M,a,b,strategy);
 }
 
-M2_bool IM2_SmithNormalForm(MutableMatrix *M)
+M2_bool IM2_SmithNormalForm(MutableMatrixXXX *M)
 {
 #warning "implement smith"
   ERROR("not implemented yet");
   return 0;
 }
 
-M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
+M2_bool IM2_HermiteNormalForm(MutableMatrixXXX *M)
 {
 #warning "implement hermite"
   ERROR("not implemented yet");
@@ -519,11 +497,12 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
   /* Each of the following routines accepts honest MutableMatrix arguments,
      and returns false if there is an error.  The return values are placed into
      some of the (already existing) parameters of the routine */
-typedef DMat<CoefficientRingRR> LMatrixRR;
-typedef DMat<CoefficientRingCC> LMatrixCC;
+//typedef DMat<CoefficientRingRR> LMatrixRR;
+//typedef DMat<CoefficientRingCC> LMatrixCC;
 
-M2_arrayint_OrNull rawLU(MutableMatrix *A)
+M2_arrayint_OrNull rawLU(MutableMatrixXXX *A)
 {
+#if 0
   const Ring *R = A->get_ring();
   if (R == globalRR)
     {
@@ -556,13 +535,14 @@ M2_arrayint_OrNull rawLU(MutableMatrix *A)
 	}
       return DMatLU<CoefficientRingZZp>::LU(A2);
     }
+#endif
   ERROR("not re-implemented yet");
   return false;
 }
 
-M2_bool rawSolve(MutableMatrix *A,
-		 MutableMatrix *b,
-		 MutableMatrix *x)
+M2_bool rawSolve(MutableMatrixXXX *A,
+		 MutableMatrixXXX *b,
+		 MutableMatrixXXX *x)
 {
   /* Check: A, b, x all have the same ring, either RR or CC */
   /* Check: if all of these are dense mutable matrices, then 
@@ -570,7 +550,7 @@ M2_bool rawSolve(MutableMatrix *A,
   /* Otherwise: give error: 
      OR: make mutable matrices of the correct size, call the correct routine
      and afterwords, copy to x. */
-
+#if 0
   const Ring *R = A->get_ring();
   if (b->get_ring() != R || x->get_ring() != R)
     {
@@ -601,14 +581,16 @@ M2_bool rawSolve(MutableMatrix *A,
 	}
       return Lapack::solve(A2,b2,x2);
     }
+#endif
   ERROR("expected base ring to be RR or CC");
   return false;
 }
 
-M2_bool rawEigenvalues(MutableMatrix *A,
-		       MutableMatrix *eigenvalues,
+M2_bool rawEigenvalues(MutableMatrixXXX *A,
+		       MutableMatrixXXX *eigenvalues,
 		       M2_bool is_symm_or_hermitian)
 {
+#if 0
   const Ring *R = A->get_ring();
   if (R == globalRR)
     {
@@ -668,15 +650,17 @@ M2_bool rawEigenvalues(MutableMatrix *A,
 	  return Lapack::eigenvalues(A2,eigen2);
 	}
     }
+#endif
   ERROR("not re-implemented yet");
   return false;
 }
 
-M2_bool rawEigenvectors(MutableMatrix *A,
-			MutableMatrix *eigenvalues,
-			MutableMatrix *eigenvectors,
+M2_bool rawEigenvectors(MutableMatrixXXX *A,
+			MutableMatrixXXX *eigenvalues,
+			MutableMatrixXXX *eigenvectors,
 			M2_bool is_symm_or_hermitian)
 {
+#if 0
   const Ring *R = A->get_ring();
   if (R == globalRR)
     {
@@ -735,16 +719,18 @@ M2_bool rawEigenvectors(MutableMatrix *A,
 	  return Lapack::eigenvectors(A2,eigvals2,eigvecs2);
 	}
     }
+#endif
   ERROR("not re-implemented yet");
   return false;
 }
 
-M2_bool rawSVD(MutableMatrix *A,
-	       MutableMatrix *Sigma,
-	       MutableMatrix *U,
-	       MutableMatrix *VT,
+M2_bool rawSVD(MutableMatrixXXX *A,
+	       MutableMatrixXXX *Sigma,
+	       MutableMatrixXXX *U,
+	       MutableMatrixXXX *VT,
 	       M2_bool use_divide_and_conquer)
 {
+#if 0
   const Ring *R = A->get_ring();
   if (R == globalRR)
     {
@@ -793,17 +779,19 @@ M2_bool rawSVD(MutableMatrix *A,
 	  return Lapack::SVD(A2,Sigma2,U2,VT2);
 	}
     }
+#endif
   ERROR("not re-implemented yet");
   return false;
 }
 
-M2_bool rawLeastSquares(MutableMatrix *A, 
-			MutableMatrix *b, 
-			MutableMatrix *x, /* return value: argument modified */
+M2_bool rawLeastSquares(MutableMatrixXXX *A, 
+			MutableMatrixXXX *b, 
+			MutableMatrixXXX *x, /* return value: argument modified */
 			M2_bool assume_full_rank)
 /* Case 1: A is a dense matrix over RR.  Then so are b,x.
    Case 2: A is a dense matrix over CC.  Then so are b,x. */
 {
+#if 0
   const Ring *R = A->get_ring();
   if (R == globalRR)
     {
@@ -847,6 +835,7 @@ M2_bool rawLeastSquares(MutableMatrix *A,
 	  return Lapack::least_squares_deficient(A2,b2,x2);
 	}
     }
+#endif
   ERROR("not re-implemented yet");
   return false;
 }

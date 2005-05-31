@@ -4,14 +4,6 @@
 
 typedef DMat<CoefficientRingRR> LMatrixRR;
 
-extern "C" M2_CC LP_make_M2_Complex(double re, double im)
-{
-  M2_CC z = newitem_atomic(M2_CC_struct);
-  z->re = re;
-  z->im = im;
-  return z;
-}
-
 M2_arrayint_OrNull Lapack::LU(LMatrixRR *M)
 {
   int rows = M->n_rows();

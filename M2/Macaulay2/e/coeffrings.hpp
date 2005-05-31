@@ -227,6 +227,63 @@ public:
   }
 };
 
+class CoefficientRingR : public our_new_delete
+{
+  const Ring *R;
+public:
+  typedef Ring ring_type;
+  typedef ring_elem elem;
+
+  CoefficientRingR(const Ring *R0)
+    : R(R0)
+  {
+  }
+
+  void init_set(elem &result, elem a) const { result = a; }
+
+  void set_zero(elem &result) const { result = R->zero(); }
+
+  bool is_zero(elem result) const { return R->is_zero(result); }
+
+  void invert(elem &result, elem a) const
+  {
+    result = R->invert(a);
+  }
+
+  void subtract_multiple(elem &result, elem a, elem b);
+    // result -= a*b
+
+  void add(elem &result, elem a, elem b) const
+  {
+    result = R->add(a,b);
+  }
+
+  void subtract(elem &result, elem a, elem b) const
+  {
+    result = R->subtract(a,b);
+  }
+
+  void mult(elem &result, elem a, elem b) const
+  {
+    result = R->mult(a,b);
+  }
+
+  void divide(elem &result, elem a, elem b) const
+  {
+    result = R->divide(a,b);
+  }
+
+  void to_ring_elem(const elem a, ring_elem &result) const
+  {
+    result = a;
+  }
+
+  void from_ring_elem(const ring_elem &a, elem &result) const
+  {
+    result = a;
+  }
+};
+
 #endif
 
 // Local Variables:

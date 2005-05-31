@@ -46,18 +46,22 @@ PRE.cc   = $(COMPILE.cc) -E
 ## Source code ###
 ##################
 
+#	dmat-LU \
+#	dmatrix \
+#	points \
+#	lapack \
+#	sparsemat \
+#	mutablemat \
 
 
 INTERFACE = \
-	mat \
+	LLL \
+	fractionfreeLU \
 	ntl_debugio \
 	ntl_internal \
 	ntl_interface \
-	points \
-	dmat-LU \
-	lapack \
+	mat \
 	dmat \
-	dmatrix \
 	coeffrings \
 	Eschreyer \
 	gbweight \
@@ -86,7 +90,6 @@ INTERFACE = \
 	schorder \
 	monorder \
 	GF \
-	LLL \
 	RR \
 	ZZ \
 	QQ \
@@ -98,7 +101,6 @@ INTERFACE = \
 	comb \
 	det \
 	frac \
-	fractionfreeLU \
 	freemod \
 	gb \
 	gb_comp \
@@ -115,7 +117,6 @@ INTERFACE = \
 	monideal \
 	monoid2 \
 	monomial \
-	mutablemat \
 	ntuple \
 	polyring \
 	pfaff \
@@ -129,13 +130,10 @@ INTERFACE = \
 	skewpoly \
 	solvable \
 	spair \
-	sparsemat \
 	text_io \
 	varpower2 \
 	weylalg \
 	z_mod_p
-
-
 
 STILLTOCOMPILE = \
 	newspair \
