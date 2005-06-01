@@ -100,9 +100,6 @@ document {
 	  TO columnMult,
 	  TO "columnDivide"
 	  },
-     "It is possible to ", EM "record", " row and/or column operations
-     made to a matrix, using ", TO setRowChange, " and ", TO setColumnChange,
-     ".",
      HEADER3 "matrix arithemtic",
      "Many matrix arithmetic routines are only available for immutabie 
      matrices, not
@@ -327,3 +324,32 @@ document {
      SeeAlso => {}
      }
 
+TEST ///
+debug Macaulay2Core
+M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>false)
+rawInsertColumns(raw M,3,4)
+M
+rawDeleteColumns(raw M,8,9)
+M
+
+rawInsertRows(raw M,5,6)
+M
+rawDeleteRows(raw M,1,1)
+M
+
+M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>true)
+rawInsertColumns(raw M,3,4)
+M
+rawDeleteColumns(raw M,8,9)
+M
+
+rawInsertRows(raw M,5,6)
+M
+rawDeleteRows(raw M,1,1)
+M
+
+rawDeleteColumns(raw M,3,6)
+M
+rawDeleteRows(raw M,4,9)
+M
+///

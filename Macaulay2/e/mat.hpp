@@ -11,6 +11,9 @@
 #include "relem.hpp"
 #include <vector>
 
+#include "dmat.hpp"
+#include "smat.hpp"
+
 inline bool error_column_bound(long c, long ncols)
 {
   if (c < 0 || c >= ncols)
@@ -70,21 +73,6 @@ typedef MutableMatrixXXX MutableMatrixXXXOrNull;
 //   Each situation then needs to put in a definition:
 //    template... Mat_T<...>::solve(...) { }
 
-template<typename CoeffRing>
-class Vecs : public our_new_delete
-{
-public:
-  typedef typename CoeffRing::ring_type RingType;
-  typedef typename CoeffRing::elem elem;
-
-  struct vec : public our_new_delete
-  {
-    vec *next;
-    long comp;
-    elem coeff;
-  };
-};
-
 
 template<typename CoeffRing>
 class Mat
@@ -94,7 +82,6 @@ class Mat
 
   typedef typename CoeffRing::ring_type RingType;
   typedef typename CoeffRing::elem elem;
-  typedef typename Vecs<CoeffRing>::vec sparsevec;
 public:
   Mat() {}
 
@@ -112,7 +99,7 @@ public:
     void next() { }
     bool valid() { return false; }
     long row() { return 0; }
-    elem value() { return 0; }
+    const elem &value() { return 0; }
     void copy_elem(ring_elem &result) { M->get_CoeffRing()->to_ring_elem(value(), result); }
   };
 
@@ -132,7 +119,7 @@ public:
 
   bool get_entry(long i, long j, elem &result) const { return false; }
 
-  bool set_entry(long i, long j, elem result) const { return false; }
+  bool set_entry(long i, long j, const elem &result) const { return false; }
 
   ///////////////////////////////
   // Row and column operations //
@@ -142,28 +129,28 @@ public:
 
   void interchange_columns(long i, long j) const { }
 
-  bool scale_row(long i, elem r) { return false; }
+  bool scale_row(long i, const elem &r) { return false; }
 
-  bool scale_column(long i, elem r) { return false; }
+  bool scale_column(long i, const elem &r) { return false; }
 
-  bool divide_row(long i, elem r) { return false; }
+  bool divide_row(long i, const elem &r) { return false; }
 
-  bool divide_column(long i, elem r) { return false; }
+  bool divide_column(long i, const elem &r) { return false; }
 
-  void row_op(long i, elem b, long j) {}
+  void row_op(long i, const elem &b, long j) {}
 
-  void column_op(long i, elem b, long j) {}
+  void column_op(long i, const elem &b, long j) {}
 
   void column2by2(long c1, long c2, 
-		  elem a1, elem a2,
-		  elem b1, elem b2) {}
+		  const elem &a1, const elem &a2,
+		  const elem &b1, const elem &b2) {}
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
   void row2by2(long r1, long r2, 
-	       elem a1, elem a2,
-	       elem b1, elem b2) {}
+	       const elem &a1, const elem &a2,
+	       const elem &b1, const elem &b2) {}
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -172,19 +159,24 @@ public:
 
   bool column_permute(long start_col, const M2_arrayint perm) { return false; }
 
+  void insert_columns(long i, long n_to_add) {}
+  /* Insert n_to_add columns directly BEFORE column i. */
+
+  void insert_rows(long i, long n_to_add) {}
+  /* Insert n_to_add rows directly BEFORE row i. */
+
+  void delete_columns(long i, long j) {}
+  /* Delete columns i .. j from M */
+
+  void delete_rows(long i, long j) {}
+  /* Delete rows i .. j from M */
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
 
 
   void dot_product(long i, long j, elem &result) const { } 
-
-  // To and from vectors
-  void add_to_dense_vector(long col, long lo, long hi, elem *result);
-  // Adds this[lo,col], ..., this[hi,col]  longo result[0], ..., result[hi-lo]
-
-  void add_to_sparse_vector(long col, long lo, long hi, sparsevec *&result);
-  // Adds this[lo,col], ..., this[hi,col]  into result
 
   bool set_submatrix(long first_row,
 		     long first_col,
@@ -219,6 +211,20 @@ public:
 
 typedef Mat<CoefficientRingZZp> Mat_ZZp;
 typedef Mat<CoefficientRingRR> Mat_RR;
+
+typedef DMat<CoefficientRingZZp> DMatZZp;
+typedef DMat<CoefficientRingRR> DMatRR;
+typedef DMat<CoefficientRingCC> DMatCC;
+typedef DMat<CoefficientRingZZ_NTL> DMatZZ;
+typedef DMat<CoefficientRingR> DMatR;
+
+typedef SMat<CoefficientRingZZp> SMatZZp;
+typedef SMat<CoefficientRingRR> SMatRR;
+typedef SMat<CoefficientRingCC> SMatCC;
+typedef SMat<CoefficientRingZZ_NTL> SMatZZ;
+typedef SMat<CoefficientRingR> SMatR;
+
+
 
 class MutableMatrixXXX : public mutable_object
 {
@@ -277,6 +283,18 @@ public:
 
   virtual Mat_ZZp *get_mat_ZZp() { return 0; }
   virtual Mat_RR *get_mat_RR() { return 0; }
+
+  virtual DMatRR * get_DMatRR() { return 0; }
+  virtual DMatCC * get_DMatCC() = 0;
+  virtual DMatZZp * get_DMatZZp() = 0;
+  virtual DMatZZ * get_DMatZZ() = 0;
+  virtual DMatR * get_DMatR() = 0;
+
+  virtual SMatRR * get_SMatRR() = 0;
+  virtual SMatCC * get_SMatCC() = 0;
+  virtual SMatZZp * get_SMatZZp() = 0;
+  virtual SMatZZ * get_SMatZZ() = 0;
+  virtual SMatR * get_SMatR() = 0;
 
   ///////////////////////////////
   // Row and column operations //
@@ -344,6 +362,18 @@ public:
 
   virtual bool column_permute(long start_col, const M2_arrayint perm) = 0;
 
+  virtual bool insert_columns(long i, long n_to_add) = 0;
+  /* Insert n_to_add columns directly BEFORE column i. */
+
+  virtual bool insert_rows(long i, long n_to_add) = 0;
+  /* Insert n_to_add rows directly BEFORE row i. */
+
+  virtual bool delete_columns(long i, long j) = 0;
+  /* Delete columns i .. j from M */
+
+  virtual bool delete_rows(long i, long j) = 0;
+  /* Delete rows i .. j from M */
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
@@ -390,6 +420,8 @@ public:
   // resets x, find a basis of solutions for Ax=b
 
   virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm) = 0;
+
+  virtual bool eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const = 0;
 };
 
 ///////////////////////////////////////////////////
@@ -415,6 +447,18 @@ class MutableMat : public MutableMatrixXXX
   MutableMat(const RingType *R, long nrows, long ncols)
     : mat(R,nrows,ncols) {}
 public:
+  virtual DMatRR * get_DMatRR();
+  virtual DMatCC * get_DMatCC();
+  virtual DMatZZp * get_DMatZZp();
+  virtual DMatZZ * get_DMatZZ();
+  virtual DMatR * get_DMatR();
+
+  virtual SMatRR * get_SMatRR();
+  virtual SMatCC * get_SMatCC();
+  virtual SMatZZp * get_SMatZZp();
+  virtual SMatZZ * get_SMatZZ();
+  virtual SMatR * get_SMatR();
+
   virtual Mat_ZZp *get_mat_ZZp();
   virtual Mat_RR *get_mat_RR();
 
@@ -652,6 +696,57 @@ public:
     return mat.column_permute(start_col, perm);
   }
 
+  virtual bool insert_columns(long i, long n_to_add)
+  /* Insert n_to_add columns directly BEFORE column i. */
+  {
+    if (i < 0 || i > n_cols() || n_to_add < 0)
+      {
+	ERROR("cannot insert %l columns before column %ln",n_to_add,i);
+	return false;
+      }
+    mat.insert_columns(i, n_to_add);
+    return true;
+  }
+
+  virtual bool insert_rows(long i, long n_to_add)
+  /* Insert n_to_add rows directly BEFORE row i. */
+  {
+    if (i < 0 || i > n_rows() || n_to_add < 0)
+      {
+	ERROR("cannot insert %l rows before row %ln",n_to_add,i);
+	return false;
+      }
+    mat.insert_rows(i, n_to_add);
+    return true;
+  }
+
+  virtual bool delete_columns(long i, long j)
+  /* Delete columns i .. j from M */
+  {
+    long ncols = n_cols();
+    if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
+      {
+	ERROR("column index out of range");
+	return false;
+      }
+
+    mat.delete_columns(i, j);
+    return true;
+  }
+
+  virtual bool delete_rows(long i, long j)
+  /* Delete rows i .. j from M */
+  {
+    long nrows = n_rows();
+    if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
+      {
+	ERROR("row index out of range");
+	return false;
+      }
+    mat.delete_rows(i, j);
+    return true;
+  }
+
   virtual MutableMatrixXXX * submatrix(const M2_arrayint rows, const M2_arrayint cols) const
   {
     MutableMat *M = new MutableMat;
@@ -744,6 +839,7 @@ public:
 
   virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm);
 
+  virtual bool eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const;
 };
 
 

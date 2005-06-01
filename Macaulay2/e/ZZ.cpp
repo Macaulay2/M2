@@ -9,6 +9,8 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 
+#include "coeffrings.hpp"
+
 #if 0
 #include "gmp.h"
 #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
@@ -27,6 +29,7 @@ bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
   minus_oneV = from_int(-1);
 
   degree_ring = deg_ring;
+  coeffR = new CoefficientRingZZ_NTL(this);
   return true;
 }
 

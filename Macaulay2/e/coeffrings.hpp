@@ -107,6 +107,13 @@ public:
   {
     result = a.int_val;
   }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }
 };
 
 #include "RR.hpp"
@@ -160,6 +167,13 @@ public:
   void from_ring_elem(const ring_elem &a, elem &result) const
   {
     result = (reinterpret_cast<RingRR::RRelem>(a.poly_val))->val;
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
   }
 };
 
@@ -225,6 +239,13 @@ public:
     M2_CC b = reinterpret_cast<M2_CC>(a.poly_val);
     result = *b;
   }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }
 };
 
 class CoefficientRingR : public our_new_delete
@@ -281,6 +302,80 @@ public:
   void from_ring_elem(const ring_elem &a, elem &result) const
   {
     result = a;
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    elem tmp = a;
+    a = b;
+    b = tmp;
+  }
+};
+
+#include "ZZ.hpp"
+#include "ntl_interface.hpp"
+#include <NTL/ZZ.h>
+
+class CoefficientRingZZ_NTL : public our_new_delete
+{
+public:
+  typedef RingZZ ring_type;
+  typedef ZZ elem;
+
+  CoefficientRingZZ_NTL(const RingZZ *R0) { }
+
+  void init_set(elem &result, const elem &a) const { result = a; }
+
+  void set_zero(elem &result) const { result = 0; }
+
+  bool is_zero(const elem &result) const { return result == 0; }
+
+  void invert(elem &result, const elem &a) const
+  {
+    if (a == 1 || a == -1)
+      result = a;
+    else
+      result = 0;
+  }
+
+  void subtract_multiple(elem &result, elem a, elem b);
+    // result -= a*b
+
+  void add(elem &result, const elem &a, const elem &b) const
+  {
+    result = a+b;
+  }
+
+  void subtract(elem &result, const elem &a, const elem &b) const
+  {
+    result = a-b;
+  }
+
+  void mult(elem &result, const elem &a, const elem &b) const
+  {
+    result = a*b;
+  }
+
+  void divide(elem &result, const elem &a, const elem &b) const
+  {
+    result = a/b;
+  }
+
+  void to_ring_elem(const elem &a, ring_elem &result) const
+  {
+    mpz_ptr r = globalZZ->new_elem();
+    ntl_ZZ_to_mpz(r, a);
+    result = MPZ_RINGELEM(r);
+  }
+
+  void from_ring_elem(const ring_elem &a, elem &result) const
+  {
+    result = ntl_ZZ_from_mpz(MPZ_VAL(a));
+  }
+
+  void swap(elem &a, elem &b) const
+  {
+    ::swap(a,b);
   }
 };
 
