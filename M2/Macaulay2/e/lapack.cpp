@@ -1,8 +1,7 @@
 #include "coeffrings.hpp"
-#include "dmat.hpp"
 #include "lapack.hpp"
 
-typedef DMat<CoefficientRingRR> LMatrixRR;
+//typedef DMat<CoefficientRingRR> LMatrixRR;
 
 M2_arrayint_OrNull Lapack::LU(LMatrixRR *M)
 {

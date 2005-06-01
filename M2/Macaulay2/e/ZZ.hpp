@@ -5,6 +5,7 @@
 
 #include "ring.hpp"
 #include <gmp.h>
+class CoefficientRingZZ_NTL;
 
 #if 0
 #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
@@ -20,6 +21,8 @@ extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return 
 
 class RingZZ : public Ring
 {
+  friend class CoefficientRingZZ_NTL;
+
   int _elem_size;
   mpz_ptr _zero_elem;
 
@@ -28,6 +31,7 @@ class RingZZ : public Ring
 
   ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
 
+  CoefficientRingZZ_NTL *coeffR;
 protected:
   virtual ~RingZZ() {}
 
@@ -43,6 +47,8 @@ public:
 
   RingZZ * cast_to_RingZZ() { return this; }
   const RingZZ * cast_to_RingZZ() const { return this; }
+
+  CoefficientRingZZ_NTL * get_CoeffRing() const { return coeffR; }
 
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }

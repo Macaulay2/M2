@@ -76,6 +76,7 @@ bool ntl_LLL(MutableMatrixXXX *M, long numer, long denom, int strategy)
   long rk;
   double delta = numer*1.0/denom;
 
+  printf("ntl_interface.cpp:ntl_LLL: using strategy %d\n", strategy);
   mat_ZZ *A = mutableMatrix_to_NTL_mat_ZZ(M);
 
   switch (strategy) {

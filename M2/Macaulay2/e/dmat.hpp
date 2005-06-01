@@ -69,7 +69,7 @@ public:
 					  col(0), 
 					  begin(0),
 					  end(0) { set(0); }
-    elem value() { return *begin; }
+    const elem &value() { return *begin; }
     void next() { to_next_valid(); }
     bool valid() { return begin >= end; }
     long row() { return begin-end; }
@@ -101,7 +101,7 @@ public:
   // Returns false if (r,c) is out of range or if result is 0.  No error
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
 
-  void set_entry(long r, long c, const elem a);
+  void set_entry(long r, long c, const elem &a);
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
   void interchange_rows(long i, long j); 
@@ -110,34 +110,34 @@ public:
   void interchange_columns(long i, long j); 
   /* swap columns: column(i) <--> column(j) */
 
-  void scale_row(long i, elem r); 
+  void scale_row(long i, const elem &r); 
   /* row(i) <- r * row(i) */
 
-  void scale_column(long i, elem r); 
+  void scale_column(long i, const elem &r); 
   /* column(i) <- r * column(i) */
 
-  void divide_row(long i, elem r);
+  void divide_row(long i, const elem &r);
   /* row(i) <- row(i) / r */
 
-  void divide_column(long i, elem r);
+  void divide_column(long i, const elem &r);
   /* column(i) <- column(i) / r */
 
-  void row_op(long i, elem r, long j); 
+  void row_op(long i, const elem &r, long j); 
   /* row(i) <- row(i) + r * row(j) */
 
-  void column_op(long i, elem r, long j); 
+  void column_op(long i, const elem &r, long j); 
   /* column(i) <- column(i) + r * column(j) */
 
   void column2by2(long c1, long c2, 
-		  elem a1, elem a2,
-		  elem b1, elem b2);
+		  const elem &a1, const elem &a2,
+		  const elem &b1, const elem &b2);
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
   void row2by2(long r1, long r2, 
-	       elem a1, elem a2,
-	       elem b1, elem b2);
+	       const elem &a1, const elem &a2,
+	       const elem &b1, const elem &b2);
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -147,6 +147,18 @@ public:
   bool row_permute(long start_row, const M2_arrayint perm);
 
   bool column_permute(long start_col, const M2_arrayint perm);
+
+  void insert_columns(long i, long n_to_add);
+  /* Insert n_to_add columns directly BEFORE column i. */
+
+  void insert_rows(long i, long n_to_add);
+  /* Insert n_to_add rows directly BEFORE row i. */
+
+  void delete_columns(long i, long j);
+  /* Delete columns i .. j from M */
+
+  void delete_rows(long i, long j);
+  /* Delete rows i .. j from M */
 
   bool set_submatrix(long first_row,
 		     long first_col,

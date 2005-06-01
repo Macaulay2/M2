@@ -226,30 +226,26 @@ M2_bool IM2_MutableMatrix_column_scale(MutableMatrixXXX *M,
 M2_bool IM2_MutableMatrix_insert_columns(MutableMatrixXXX *M, int i, int n_to_add)
   /* Insert n_to_add columns directly BEFORE column i. */
 {
-  ERROR("not yet implemented");
-  return false;
+  return M->insert_columns(i, n_to_add);
 }
 
 M2_bool IM2_MutableMatrix_insert_rows(MutableMatrixXXX *M, int i, int n_to_add)
   /* Insert n_to_add rows directly BEFORE row i. */
 {
-  ERROR("not yet implemented");
-  return false;
+  return M->insert_rows(i, n_to_add);
 }
 
 M2_bool IM2_MutableMatrix_delete_columns(MutableMatrixXXX *M, int i, int j)
   /* Delete columns i .. j from M */
 {
-  ERROR("not yet implemented");
-  return false;
+  return M->delete_columns(i, j);
 }
 
 
 M2_bool IM2_MutableMatrix_delete_rows(MutableMatrixXXX *M, int i, int j)
   /* Delete rows i .. j from M */
 {
-  ERROR("not yet implemented");
-  return false;
+  return M->delete_rows(i, j);
 }
 
 M2_bool IM2_MutableMatrix_column_2by2(MutableMatrixXXX *M,
@@ -471,9 +467,9 @@ M2_bool IM2_LLL(MutableMatrixXXX *M, const M2_Rational threshold, int strategy)
       return LLLoperations::LLL(M,threshold);
     }
 
-  //  long a = mpz_get_si(mpq_numref(threshold));
-  //  long b = mpz_get_si(mpq_denref(threshold));
-  //  return ntl_LLL(M,a,b,strategy);
+  long a = mpz_get_si(mpq_numref(threshold));
+  long b = mpz_get_si(mpq_denref(threshold));
+  return ntl_LLL(M,a,b,strategy);
 }
 
 M2_bool IM2_SmithNormalForm(MutableMatrixXXX *M)
@@ -590,6 +586,7 @@ M2_bool rawEigenvalues(MutableMatrixXXX *A,
 		       MutableMatrixXXX *eigenvalues,
 		       M2_bool is_symm_or_hermitian)
 {
+  return A->eigenvalues(eigenvalues,is_symm_or_hermitian);
 #if 0
   const Ring *R = A->get_ring();
   if (R == globalRR)

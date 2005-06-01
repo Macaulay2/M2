@@ -49,12 +49,12 @@ PRE.cc   = $(COMPILE.cc) -E
 #	dmat-LU \
 #	dmatrix \
 #	points \
-#	lapack \
 #	sparsemat \
 #	mutablemat \
 
 
 INTERFACE = \
+	lapack \
 	LLL \
 	fractionfreeLU \
 	ntl_debugio \
@@ -62,6 +62,7 @@ INTERFACE = \
 	ntl_interface \
 	mat \
 	dmat \
+	smat \
 	coeffrings \
 	Eschreyer \
 	gbweight \
