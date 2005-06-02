@@ -252,6 +252,58 @@ SMatR * MutableMat<CoeffRing,MatType>::get_SMatR()
   return 0;
 }
 
+
+template<typename CoeffRing, typename MatType>
+const DMatRR * MutableMat<CoeffRing,MatType>::get_DMatRR() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const DMatCC * MutableMat<CoeffRing,MatType>::get_DMatCC() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const DMatZZp * MutableMat<CoeffRing,MatType>::get_DMatZZp() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const DMatZZ * MutableMat<CoeffRing,MatType>::get_DMatZZ() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const DMatR * MutableMat<CoeffRing,MatType>::get_DMatR() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const SMatRR * MutableMat<CoeffRing,MatType>::get_SMatRR() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const SMatCC * MutableMat<CoeffRing,MatType>::get_SMatCC() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const SMatZZp * MutableMat<CoeffRing,MatType>::get_SMatZZp() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const SMatZZ * MutableMat<CoeffRing,MatType>::get_SMatZZ() const
+{
+  return 0;
+}
+template<typename CoeffRing, typename MatType>
+const SMatR * MutableMat<CoeffRing,MatType>::get_SMatR() const
+{
+  return 0;
+}
+
 // Specializations of these
 DMatRR * MutableMat<CoefficientRingRR,DMatRR>::get_DMatRR()
 {
@@ -295,10 +347,58 @@ SMatR * MutableMat<CoefficientRingR,SMatR>::get_SMatR()
   return &mat;
 }
 
+const DMatRR * MutableMat<CoefficientRingRR,DMatRR>::get_DMatRR() const
+{
+  return &mat;
+}
+const DMatCC * MutableMat<CoefficientRingCC,DMatCC>::get_DMatCC() const
+{
+  return &mat;
+}
+const DMatZZp * MutableMat<CoefficientRingZZp,DMatZZp>::get_DMatZZp() const
+{
+  return &mat;
+}
+const DMatZZ * MutableMat<CoefficientRingZZ_NTL,DMatZZ>::get_DMatZZ() const
+{
+  return &mat;
+}
+const DMatR * MutableMat<CoefficientRingR,DMatR>::get_DMatR() const
+{
+  return &mat;
+}
+
+const SMatRR * MutableMat<CoefficientRingRR,SMatRR>::get_SMatRR() const
+{
+  return &mat;
+}
+const SMatCC * MutableMat<CoefficientRingCC,SMatCC>::get_SMatCC() const
+{
+  return &mat;
+}
+const SMatZZp * MutableMat<CoefficientRingZZp,SMatZZp>::get_SMatZZp() const
+{
+  return &mat;
+}
+const SMatZZ * MutableMat<CoefficientRingZZ_NTL,SMatZZ>::get_SMatZZ() const
+{
+  return &mat;
+}
+const SMatR * MutableMat<CoefficientRingR,SMatR>::get_SMatR() const
+{
+  return &mat;
+}
+
+///////////////////////////////////
+//// Linear algebra routines //////
+///////////////////////////////////
+
 template<typename CoeffRing, typename Mat>
-void MutableMat<CoeffRing,Mat>::solve(MutableMatrixXXX *x, MutableMatrixXXX *b)
+bool MutableMat<CoeffRing,Mat>::solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const
   // resets x, find a basis of solutions for Ax=b
 {
+  ERROR("solving linear equations is not implemented for this ring and matrix type");
+  return false;
 }
 
 template<typename CoeffRing, typename Mat>
@@ -315,6 +415,62 @@ bool MutableMat<CoeffRing,Mat>::eigenvalues(MutableMatrixXXX *eigenvals, bool is
 {
   ERROR("eigenvalues requires dense mutable matrices over RR or CC");
   return false;
+}
+
+template<typename CoeffRing, typename Mat>
+bool MutableMat<CoeffRing,Mat>::SVD(MutableMatrixXXX *Sigma,
+				    MutableMatrixXXX *U,
+				    MutableMatrixXXX *Vt,
+				    bool use_divide_and_conquer) const
+{
+  ERROR("SVD requires dense mutable matrices over RR or CC");
+  return false;
+}
+
+template<typename CoeffRing, typename Mat>
+bool MutableMat<CoeffRing,Mat>::eigenvectors(MutableMatrixXXX *eigenvals,
+					     MutableMatrixXXX *eigenvecs,
+					     bool is_symm_or_hermitian) const
+{
+  ERROR("eigenvectors requires dense mutable matrices over RR or CC");
+  return false;
+}
+
+template<typename CoeffRing, typename Mat>
+bool MutableMat<CoeffRing,Mat>::least_squares(const MutableMatrixXXX *b,
+					      MutableMatrixXXX *x,
+					      bool assume_full_rank) const
+{
+  ERROR("least squares requires dense mutable matrices over RR or CC");
+  return false;
+}
+
+bool MutableMat<CoefficientRingRR,DMatRR>::solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const
+  // resets x, find a basis of solutions for Ax=b
+{
+  const DMatRR *A2 = get_DMatRR();
+  const DMatRR *b2 = b->get_DMatRR();
+  DMatRR *x2 = x->get_DMatRR();
+  if (A2 == 0 || b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over RR");
+      return false;
+    }
+  return Lapack::solve(A2,b2,x2);
+}
+
+bool MutableMat<CoefficientRingCC,DMatCC>::solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const
+  // resets x, find a basis of solutions for Ax=b
+{
+  const DMatCC *A2 = get_DMatCC();
+  const DMatCC *b2 = b->get_DMatCC();
+  DMatCC *x2 = x->get_DMatCC();
+  if (A2 == 0 || b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over CC");
+      return false;
+    }
+  return Lapack::solve(A2,b2,x2);
 }
 
 bool MutableMat<CoefficientRingRR,DMat<CoefficientRingRR> >::eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const
@@ -339,6 +495,197 @@ bool MutableMat<CoefficientRingRR,DMat<CoefficientRingRR> >::eigenvalues(Mutable
 	  return false;
 	}
       return Lapack::eigenvalues(get_DMatRR(), eig);
+    }
+}
+
+bool MutableMat<CoefficientRingCC,DMat<CoefficientRingCC> >::eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const
+{
+  // First check that the matrix 'eigenvals' is correct type
+  if (is_symm_or_hermitian)
+    {
+      DMatRR * eig = eigenvals->get_DMatRR();
+      if (eig == 0)
+	{
+	  ERROR("requires a dense mutable matrix over RR");
+	  return false;
+	}
+      return Lapack::eigenvalues_hermitian(get_DMatCC(), eig);
+    }
+  else
+    {
+      DMatCC * eig = eigenvals->get_DMatCC();
+      if (eig == 0)
+	{
+	  ERROR("requires a dense mutable matrix over CC");
+	  return false;
+	}
+      return Lapack::eigenvalues(get_DMatCC(), eig);
+    }
+}
+
+bool MutableMat<CoefficientRingRR,DMatRR>::eigenvectors(MutableMatrixXXX *eigenvals,
+							MutableMatrixXXX *eigenvecs,
+							bool is_symm_or_hermitian) const
+{
+  const DMatRR *A2 = get_DMatRR();
+  if (is_symm_or_hermitian)
+    {
+      DMatRR *eigvals2 = eigenvals->get_DMatRR();
+      DMatRR *eigvecs2 = eigenvecs->get_DMatRR();
+      if (eigvals2 == 0 || eigvecs2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over RR");
+	  return false;
+	}
+      return Lapack::eigenvectors_symmetric(A2,eigvals2,eigvecs2);
+    }
+  else
+    {
+      DMatCC *eigvals2 = eigenvals->get_DMatCC();
+      DMatCC *eigvecs2 = eigenvecs->get_DMatCC();
+      if (eigvals2 == 0 || eigvecs2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over CC");
+	  return false;
+	}
+      return Lapack::eigenvectors(A2,eigvals2,eigvecs2);
+    }
+}
+
+bool MutableMat<CoefficientRingCC,DMatCC>::eigenvectors(MutableMatrixXXX *eigenvals,
+							MutableMatrixXXX *eigenvecs,
+							bool is_symm_or_hermitian) const
+{
+  const DMatCC *A2 = get_DMatCC();
+  if (is_symm_or_hermitian)
+    {
+      DMatRR *eigvals2 = eigenvals->get_DMatRR();
+      DMatCC *eigvecs2 = eigenvecs->get_DMatCC();
+      if (eigvals2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over RR");
+	  return false;
+	}
+      if (eigvecs2 == 0)
+	{
+	  ERROR("requires dense mutable matrix over CC");
+	  return false;
+	}
+      return Lapack::eigenvectors_hermitian(A2,eigvals2,eigvecs2);
+    }
+  else
+    {
+      DMatCC *eigvals2 = eigenvals->get_DMatCC();
+      DMatCC *eigvecs2 = eigenvecs->get_DMatCC();
+      if (eigvals2 == 0 || eigvecs2 == 0)
+	{
+	  ERROR("requires dense mutable matrices over CC");
+	  return false;
+	}
+      return Lapack::eigenvectors(A2,eigvals2,eigvecs2);
+    }
+}
+
+bool MutableMat<CoefficientRingRR,DMatRR>::SVD(MutableMatrixXXX *Sigma,
+				    MutableMatrixXXX *U,
+				    MutableMatrixXXX *VT,
+				    bool use_divide_and_conquer) const
+{
+  const DMatRR *A2 = get_DMatRR();
+  DMatRR *Sigma2 = Sigma->get_DMatRR();
+  DMatRR *U2 = U->get_DMatRR();
+  DMatRR *VT2 = VT->get_DMatRR();
+  if (A2 == 0 || Sigma2 == 0 || U2 == 0 || VT2 == 0)
+    {
+      ERROR("requires dense mutable matrices over RR");
+      return false;
+    }
+  
+  if (use_divide_and_conquer)
+    {
+      return Lapack::SVD_divide_conquer(A2,Sigma2,U2,VT2);
+    }
+  else
+    {
+      return Lapack::SVD(A2,Sigma2,U2,VT2);
+    }
+}
+
+bool MutableMat<CoefficientRingCC,DMatCC>::SVD(MutableMatrixXXX *Sigma,
+				    MutableMatrixXXX *U,
+				    MutableMatrixXXX *VT,
+				    bool use_divide_and_conquer) const
+{
+  const DMatCC *A2 = get_DMatCC();
+  DMatRR *Sigma2 = Sigma->get_DMatRR();
+  DMatCC *U2 = U->get_DMatCC();
+  DMatCC *VT2 = VT->get_DMatCC();
+  if (Sigma2 == 0)
+    {
+      ERROR("requires dense mutable matrix over RR");
+      return false;
+    }
+  if (A2 == 0 || U2 == 0 || VT2 == 0)
+    {
+      ERROR("requires dense mutable matrices over CC");
+      return false;
+    }
+  
+  if (use_divide_and_conquer)
+    {
+      return Lapack::SVD_divide_conquer(A2,Sigma2,U2,VT2);
+    }
+  else
+    {
+      return Lapack::SVD(A2,Sigma2,U2,VT2);
+    }
+}
+
+bool MutableMat<CoefficientRingRR,DMatRR>::least_squares(const MutableMatrixXXX *b,
+							 MutableMatrixXXX *x,
+							 bool assume_full_rank) const
+{
+  const DMatRR *A2 = get_DMatRR();
+  const DMatRR *b2 = b->get_DMatRR();
+  DMatRR *x2 = x->get_DMatRR();
+  
+  if (A2 == 0 || b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over RR");
+      return false;
+    }
+  
+  if (assume_full_rank)
+    {
+      return Lapack::least_squares(A2,b2,x2);
+    }
+  else
+    {
+      return Lapack::least_squares_deficient(A2,b2,x2);
+    }
+}
+
+bool MutableMat<CoefficientRingCC,DMatCC>::least_squares(const MutableMatrixXXX *b,
+							 MutableMatrixXXX *x,
+							 bool assume_full_rank) const
+{
+  const DMatCC *A2 = get_DMatCC();
+  const DMatCC *b2 = b->get_DMatCC();
+  DMatCC *x2 = x->get_DMatCC();
+  
+  if (A2 == 0 || b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over CC");
+      return false;
+    }
+  
+  if (assume_full_rank)
+    {
+      return Lapack::least_squares(A2,b2,x2);
+    }
+  else
+    {
+      return Lapack::least_squares_deficient(A2,b2,x2);
     }
 }
 

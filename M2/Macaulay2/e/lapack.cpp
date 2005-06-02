@@ -29,8 +29,8 @@ M2_arrayint_OrNull Lapack::LU(LMatrixRR *M)
   return result;
 }
 
-bool Lapack::solve(LMatrixRR *A, /* read only */
-		   LMatrixRR *b, /* read only */
+bool Lapack::solve(const LMatrixRR *A, /* read only */
+		   const LMatrixRR *b, /* read only */
 		   LMatrixRR *x) /* output value */
 {
   int size = A->n_rows();
@@ -75,7 +75,7 @@ bool Lapack::solve(LMatrixRR *A, /* read only */
   return true;
 }
 
-bool Lapack::eigenvalues(LMatrixRR *A, LMatrixCC *eigvals)
+bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
 {
   int size = A->n_rows();
   if (size != A->n_cols()) {
@@ -121,7 +121,7 @@ bool Lapack::eigenvalues(LMatrixRR *A, LMatrixCC *eigvals)
   return eigvals;
 }
 
-bool Lapack::eigenvectors(LMatrixRR *A,
+bool Lapack::eigenvectors(const LMatrixRR *A,
 			  LMatrixCC *eigvals,
 			  LMatrixCC *eigvecs)
 {
@@ -186,7 +186,7 @@ bool Lapack::eigenvectors(LMatrixRR *A,
 }
 
 
-bool Lapack::eigenvalues_symmetric(LMatrixRR *A, LMatrixRR *eigvals)
+bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
 {
   int size = A->n_rows();
   if (size != A->n_cols()) {
@@ -223,7 +223,7 @@ bool Lapack::eigenvalues_symmetric(LMatrixRR *A, LMatrixRR *eigvals)
   return true;
 }
 
-bool Lapack::eigenvectors_symmetric(LMatrixRR *A,
+bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
 				    LMatrixRR *eigvals, 
 				    LMatrixRR *eigvecs)
 {
@@ -262,7 +262,7 @@ bool Lapack::eigenvectors_symmetric(LMatrixRR *A,
   return true;
 }
 
-bool Lapack::SVD(LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
+bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
@@ -300,7 +300,7 @@ bool Lapack::SVD(LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
   return true;
 }
 
-bool Lapack::SVD_divide_conquer(LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
+bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
 {
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
@@ -339,7 +339,7 @@ bool Lapack::SVD_divide_conquer(LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LM
   return true;
 }
 
-bool Lapack::least_squares(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x)
+bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
   LMatrixRR *copyA = A->copy();
   LMatrixRR *copyb = b->copy();
@@ -401,7 +401,7 @@ bool Lapack::least_squares(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x)
   return true;
 }
 
-bool Lapack::least_squares_deficient(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x)
+bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
 {
   LMatrixRR *copyA = A->copy();
   LMatrixRR *copyb = b->copy();
@@ -493,7 +493,7 @@ M2_arrayint_OrNull Lapack::LU(LMatrixCC *M)
   return result;
 }
 
-bool Lapack::solve(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x)
+bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
   LMatrixCC *copyA = A->copy();
 
@@ -538,7 +538,7 @@ bool Lapack::solve(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x)
   return true;
 }
 
-bool Lapack::eigenvalues(LMatrixCC *A, LMatrixCC *eigvals)
+bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
 {
   int size = A->n_rows();
   if (size != A->n_cols()) {
@@ -579,7 +579,7 @@ bool Lapack::eigenvalues(LMatrixCC *A, LMatrixCC *eigvals)
   return true;
 }
 
-bool Lapack::eigenvectors(LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
+bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
 {
   int size = A->n_rows();
   if (size !=A->n_cols()) {
@@ -622,7 +622,7 @@ bool Lapack::eigenvectors(LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
   return true;
 }
 
-bool Lapack::eigenvalues_hermitian(LMatrixCC *A, LMatrixRR *eigvals)
+bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
 {
   int size = A->n_rows();
   if (size != A->n_cols()) {
@@ -660,7 +660,7 @@ bool Lapack::eigenvalues_hermitian(LMatrixCC *A, LMatrixRR *eigvals)
   return true;
 }
 
-bool Lapack::eigenvectors_hermitian(LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC *eigvecs)
+bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC *eigvecs)
 {
   int size = A->n_rows();
   if (size != A->n_cols()) {
@@ -698,7 +698,7 @@ bool Lapack::eigenvectors_hermitian(LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC 
   return true;
 }
 
-bool Lapack::SVD(LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
+bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
@@ -737,7 +737,7 @@ bool Lapack::SVD(LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
   return true;
 }
 
-bool Lapack::SVD_divide_conquer(LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
+bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
 {
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = A->n_rows();
@@ -778,7 +778,7 @@ bool Lapack::SVD_divide_conquer(LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LM
   return true;
 }
 
-bool Lapack::least_squares(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x)
+bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
   LMatrixCC *copyA = A->copy();
   LMatrixCC *copyb = b->copy();
@@ -845,7 +845,7 @@ bool Lapack::least_squares(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x)
   return true;
 }
 
-bool Lapack::least_squares_deficient(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x)
+bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
   LMatrixCC *copyA = A->copy();
   LMatrixCC *copyb = b->copy();

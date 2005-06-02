@@ -93,13 +93,14 @@ public:
   {
     const Mat<CoeffRing> *M;
     long col;
+    elem zero;
   public:
     iterator(const Mat<CoeffRing> *M0) : M(M0), col(0) {}
     void set(long col0) { col = col0; }
     void next() { }
     bool valid() { return false; }
     long row() { return 0; }
-    const elem &value() { return 0; }
+    const elem &value() { return zero; }
     void copy_elem(ring_elem &result) { M->get_CoeffRing()->to_ring_elem(value(), result); }
   };
 
@@ -284,7 +285,7 @@ public:
   virtual Mat_ZZp *get_mat_ZZp() { return 0; }
   virtual Mat_RR *get_mat_RR() { return 0; }
 
-  virtual DMatRR * get_DMatRR() { return 0; }
+  virtual DMatRR * get_DMatRR() = 0;
   virtual DMatCC * get_DMatCC() = 0;
   virtual DMatZZp * get_DMatZZp() = 0;
   virtual DMatZZ * get_DMatZZ() = 0;
@@ -295,6 +296,18 @@ public:
   virtual SMatZZp * get_SMatZZp() = 0;
   virtual SMatZZ * get_SMatZZ() = 0;
   virtual SMatR * get_SMatR() = 0;
+
+  virtual const DMatRR * get_DMatRR() const = 0;
+  virtual const DMatCC * get_DMatCC() const = 0;
+  virtual const DMatZZp * get_DMatZZp() const = 0;
+  virtual const DMatZZ * get_DMatZZ() const = 0;
+  virtual const DMatR * get_DMatR() const = 0;
+
+  virtual const SMatRR * get_SMatRR() const = 0;
+  virtual const SMatCC * get_SMatCC() const = 0;
+  virtual const SMatZZp * get_SMatZZp() const = 0;
+  virtual const SMatZZ * get_SMatZZ() const = 0;
+  virtual const SMatR * get_SMatR() const = 0;
 
   ///////////////////////////////
   // Row and column operations //
@@ -416,12 +429,25 @@ public:
   // Linear algebra /////////////
   ///////////////////////////////
   
-  virtual void solve(MutableMatrixXXX *x, MutableMatrixXXX *b) = 0;
+  virtual bool solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const = 0;
   // resets x, find a basis of solutions for Ax=b
 
   virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm) = 0;
 
   virtual bool eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const = 0;
+
+  virtual bool eigenvectors(MutableMatrixXXX *eigenvals,
+			    MutableMatrixXXX *eigenvecs,
+			    bool is_symm_or_hermitian) const = 0;
+
+  virtual bool SVD(MutableMatrixXXX *Sigma,
+		   MutableMatrixXXX *U,
+		   MutableMatrixXXX *Vt,
+		   bool use_divide_and_conquer) const = 0;
+
+  virtual bool least_squares(const MutableMatrixXXX *b,
+			     MutableMatrixXXX *x,
+			     bool assume_full_rank) const = 0;
 };
 
 ///////////////////////////////////////////////////
@@ -458,6 +484,18 @@ public:
   virtual SMatZZp * get_SMatZZp();
   virtual SMatZZ * get_SMatZZ();
   virtual SMatR * get_SMatR();
+
+  virtual const DMatRR * get_DMatRR() const;
+  virtual const DMatCC * get_DMatCC() const;
+  virtual const DMatZZp * get_DMatZZp() const;
+  virtual const DMatZZ * get_DMatZZ() const;
+  virtual const DMatR * get_DMatR() const;
+
+  virtual const SMatRR * get_SMatRR() const;
+  virtual const SMatCC * get_SMatCC() const;
+  virtual const SMatZZp * get_SMatZZp() const;
+  virtual const SMatZZ * get_SMatZZ() const;
+  virtual const SMatR * get_SMatR() const;
 
   virtual Mat_ZZp *get_mat_ZZp();
   virtual Mat_RR *get_mat_RR();
@@ -834,12 +872,26 @@ public:
   // Linear algebra /////////////
   ///////////////////////////////
   
-  virtual void solve(MutableMatrixXXX *x, MutableMatrixXXX *b);
+  virtual bool solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const;
   // resets x, find a basis of solutions for Ax=b
+  // assumes that 'this' is full rank and a square matrix
 
   virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm);
 
   virtual bool eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const;
+
+  virtual bool eigenvectors(MutableMatrixXXX *eigenvals,
+			    MutableMatrixXXX *eigenvecs,
+			    bool is_symm_or_hermitian) const;
+
+  virtual bool SVD(MutableMatrixXXX *Sigma,
+		   MutableMatrixXXX *U,
+		   MutableMatrixXXX *Vt,
+		   bool use_divide_and_conquer) const;
+
+  virtual bool least_squares(const MutableMatrixXXX *b,
+			     MutableMatrixXXX *x,
+			     bool assume_full_rank) const;
 };
 
 
