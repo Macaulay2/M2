@@ -46,7 +46,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ## Source code ###
 ##################
 
-#	dmat-LU \
+
 #	dmatrix \
 #	points \
 #	sparsemat \
@@ -54,6 +54,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 
 INTERFACE = \
+	dmat-LU \
 	lapack \
 	LLL \
 	fractionfreeLU \

@@ -278,28 +278,28 @@ class Lapack {
 
   static M2_arrayint_OrNull LU(LMatrixRR *M);
 
-  static bool solve(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x);
+  static bool solve(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
   // A and b are not modifed.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
 
-  static bool eigenvalues(LMatrixRR *A, LMatrixCC *eigenvals);
+  static bool eigenvalues(const LMatrixRR *A, LMatrixCC *eigenvals);
   // Find the eigenvalues of A.  A is not modified.
   // Result is placed into eigenvals.
 
-  static bool eigenvectors(LMatrixRR *A, LMatrixCC *eigenvals, LMatrixCC *eigenvecs);
+  static bool eigenvectors(const LMatrixRR *A, LMatrixCC *eigenvals, LMatrixCC *eigenvecs);
 
-  static bool eigenvalues_symmetric(LMatrixRR *A, LMatrixRR *eigenvals);
+  static bool eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigenvals);
 
-  static bool eigenvectors_symmetric(LMatrixRR *A, LMatrixRR *eigenvals, LMatrixRR *eigenvecs);
+  static bool eigenvectors_symmetric(const LMatrixRR *A, LMatrixRR *eigenvals, LMatrixRR *eigenvecs);
 
-  static bool SVD(LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT);
+  static bool SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT);
 
-  static bool SVD_divide_conquer(LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT);
+  static bool SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT);
 
-  static bool least_squares(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x);
+  static bool least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
 
-  static bool least_squares_deficient(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x);
+  static bool least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
 
   ////////////////////////////////
   // Input matrices are complex //
@@ -307,26 +307,26 @@ class Lapack {
 
   static M2_arrayint_OrNull LU(LMatrixCC *M);
 
-  static bool solve(LMatrixCC *A, LMatrixCC *x, LMatrixCC *b);
+  static bool solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
   // A and b are not modifed.  The result is placed into x.
   // Returns x s.t. Ax = b
   // A should be non-singular.
 
-  static bool eigenvalues(LMatrixCC *A, LMatrixCC *eigenvals);
+  static bool eigenvalues(const LMatrixCC *A, LMatrixCC *eigenvals);
 
-  static bool eigenvectors(LMatrixCC *A, LMatrixCC *eigenvals, LMatrixCC *eigenvecs);
+  static bool eigenvectors(const LMatrixCC *A, LMatrixCC *eigenvals, LMatrixCC *eigenvecs);
 
-  static bool eigenvalues_hermitian(LMatrixCC *A, LMatrixRR *eigenvals);
+  static bool eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigenvals);
 
-  static bool eigenvectors_hermitian(LMatrixCC *A, LMatrixRR *eigenvals, LMatrixCC *eigenvecs);
+  static bool eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigenvals, LMatrixCC *eigenvecs);
 
-  static bool SVD(LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT);
+  static bool SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT);
 
-  static bool SVD_divide_conquer(LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT);
+  static bool SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT);
 
-  static bool least_squares(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x);
+  static bool least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
 
-  static bool least_squares_deficient(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x);
+  static bool least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
 };
 
 #endif
