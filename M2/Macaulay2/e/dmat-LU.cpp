@@ -1,5 +1,300 @@
+#include "mat.hpp"
 #include "dmat-LU.hpp"
 
+#include "text_io.hpp"
+
+template <typename CoeffRing>
+void ddmat(const DMat<CoeffRing> *A)
+{
+  buffer o;
+  MutableMat< CoeffRing, DMat<CoeffRing> > *B = 
+    MutableMat< CoeffRing, DMat<CoeffRing> >::grab_Mat(A);
+  B->text_out(o);
+  emit(o.str());
+}
+
+template void ddmat<CoefficientRingZZp>(const DMat<CoefficientRingZZp> *A);
+
+
+#define MAT(M,i,j) (M)->get_array()[j*nrows+i]
+
+//////////////////////////////////
+// Private routines //////////////
+//////////////////////////////////
+
+template <typename CoeffRing>
+bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modified
+			    DMat<CoeffRing> *L,
+			    DMat<CoeffRing> *U,
+			    M2_arrayint perm, // modified, should be of length >= A->n_rows()
+			    int &n_pivot_rows, // how many have already been set
+			    int col
+			    )
+  // Returns true if a new pivot is found
+{
+  const CoeffRing *K = A->get_CoeffRing();
+  long nrows = A->n_rows();
+  elem sum;
+  elem a;
+  K->set_zero(a);
+
+  long p = n_pivot_rows; 
+  long q = col;
+
+
+  // Step 1. Set entries U[0..p, col]
+  for (long r=0; r<=p; r++)
+    {
+      // First grab the correct element of A: (P^-1 * A)[r,q]
+      long rx = perm->array[r];
+      K->init_set(sum,MAT(A,rx,q));
+      for (long i=0; i<r; i++)
+	{
+	  K->mult(a,MAT(L,r,i),MAT(U,i,q));
+	  K->subtract(sum,sum,a);
+	}
+      K->init_set(MAT(U,r,q),sum);
+    }
+  
+  // Step 2. Set entries L[0..n_pivot_rows-1, n_pivot_rows] WHAT entries???!!!
+  int new_pivot_row = -1;
+  if (!K->is_zero(sum)) // At this point 'sum' is MAT(U,p,q)
+    new_pivot_row = p;
+  for (int r=p+1; r<nrows; r++)
+    {
+      // First grab the correct element of A: (P^-1 * A)[r,q]
+      long rx = perm->array[r];
+      K->init_set(sum,MAT(A,rx,q));
+      for (int i=0; i<p; i++)
+	{
+	  K->mult(a,MAT(L,r,i),MAT(U,i,q));
+	  K->subtract(sum,sum,a);
+	}
+      if (new_pivot_row < 0 && !K->is_zero(sum))
+	new_pivot_row = r;
+      K->init_set(MAT(L,r,p),sum);
+    }
+
+  // Step 3. If no pivot: return
+  //         If a pivot: Choose the next pivot, set U[p,q], 
+  //           modify perm, pivotcols,n_pivot-rows
+  if (new_pivot_row < 0) return false; // Nothing else is needed: don't need to change arguments
+  if (new_pivot_row > n_pivot_rows)
+    {
+      // swap rows: new_pivot_row, p (in L, U too?)
+      for (int i=0; i<p; i++)
+	{
+	  //	  ::swap(MAT(L,xxxxx,xxxxxxxx), MAT(L,yyyyy,yyyyy));
+	}
+      swap(perm->array[n_pivot_rows], perm->array[new_pivot_row]); // WRONG...
+    }
+  n_pivot_rows++;
+
+  // Step 4. Now perform the divisions, if any
+  if (n_pivot_rows < nrows)
+    {
+      K->invert(a,MAT(U,p,q));
+      for (int i=p+1; i<nrows; i++)
+	K->mult(MAT(L,i,p),MAT(L,i,p),a);
+    }
+
+  return true;
+}
+
+template <typename CoeffRing>
+void DMatLU<CoeffRing>::solveF(const DMat<CoeffRing> *L, // m by m
+			       M2_arrayint perm, // 0..m-1
+			       const elem *b, // length m
+			       elem *y) // length m
+{
+  const CoeffRing *K = L->get_CoeffRing();
+  int nrows = L->n_rows();
+  elem a;
+  K->set_zero(a);
+
+  for (int i=0; i<nrows; i++)
+    {
+      int ix = perm->array[i];
+      K->init_set(y[i], b[ix]);
+      for (int j=0; j<i; j++)
+	{
+	  K->mult(a,MAT(L,i,j),y[j]);
+	  K->subtract(y[i],y[i],a);
+	}
+    }
+}
+
+template <typename CoeffRing>
+void DMatLU<CoeffRing>::solveB(const DMat<CoeffRing> *U, // m by n
+			       M2_arrayint pivotcols,
+			       int npivots,
+			       const elem *y, // length m
+			       elem *x) // length n
+{
+  const CoeffRing *K = U->get_CoeffRing();
+  int nrows = U->n_rows();
+  elem a;
+  K->set_zero(a);
+
+  int r = npivots; // rank of U
+  for (int i=r-1; i>=0; i--)
+    {
+      int ix = pivotcols->array[i];
+      K->init_set(x[ix], y[i]);
+      for (int j=i+1; j<r; j++)
+	{
+	  int jx = pivotcols->array[j];
+	  K->mult(a,MAT(U,i,jx),x[jx]);
+	  K->subtract(x[ix],x[ix],a);
+	}
+      K->divide(x[ix],x[ix],MAT(U,i,ix));
+    }
+}
+#undef MAT
+			       
+template <typename CoeffRing>
+void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
+				     int ncols, // columns 0..ncols-1 are considered
+				     M2_arrayint &pivotcols,
+				     int &n_pivots)
+  // This allocates space for pivotcols
+{
+  const CoeffRing *K = U->get_CoeffRing();
+  int nrows = U->n_rows();
+
+  pivotcols = makearrayint(nrows); // pivot columns 0..npivots-1
+
+  elem *loc = U->get_array();
+  int this_row = 0;
+  int this_col = 0;
+  while (this_col < ncols && this_row < nrows)
+    {
+      if (!K->is_zero(*loc))
+	{
+	  pivotcols->array[this_row++] = this_col;
+	  loc++; // to the next row
+	}
+      loc += nrows; // to the next column
+      this_col++;
+    }
+  n_pivots = this_row;
+}
+
+////////////////////////////////
+// Public routines /////////////
+////////////////////////////////
+
+template <typename CoeffRing>
+M2_arrayint DMatLU<CoeffRing>::LU(const DMat<CoeffRing> *A,
+				  DMat<CoeffRing> *&L,
+				  DMat<CoeffRing> *&U
+				  )
+{
+  int nrows = A->n_rows();
+  int ncols = A->n_cols();
+
+  // These will be set in LU1
+  M2_arrayint perm = makearrayint(nrows);
+  int npivots = 0;
+  for (int i=0; i<nrows; i++)
+    perm->array[i] = i;
+
+  for (int c=0; c<ncols; c++)
+    LU1(A,L,U,perm,npivots,c); // modifies all arguments but 'c'
+
+  return perm;
+}
+
+template <typename CoeffRing>
+int DMatLU<CoeffRing>::rank(DMat<CoeffRing> *U)
+{
+  const CoeffRing *K = U->get_CoeffRing();
+  int nrows = U->n_rows();
+  int ncols = U->n_cols();
+
+  elem *loc = U->get_array();
+  int this_row = 0;
+  for (int this_col=0; this_col<ncols; this_col++)
+    {
+      if (!K->is_zero(*loc))
+	{
+	  this_row++;
+	  loc++; // to the next row
+	}
+      loc += nrows; // to the next column
+    }
+  return this_row;
+}
+
+
+template <typename CoeffRing>
+bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
+			      const DMat<CoeffRing> *b,
+			      DMat<CoeffRing> *x) // resulting solution set
+  // returns true iff every column of b has a solution
+{
+  // Create L,U,y.  (P is created for us), make sure x has correct shape.
+  // For each column of b, solveF, then solveB 9result into same col of x
+
+  DMat<CoeffRing> *L = new DMat<CoeffRing>(A->get_ring(), A->n_rows(), A->n_rows());
+  DMat<CoeffRing> *U = new DMat<CoeffRing>(A->get_ring(), A->n_rows(), A->n_cols());
+
+  M2_arrayint P = LU(A,L,U);
+
+  ddmat(L);
+  printf("-----\n");
+  ddmat(U);
+
+  M2_arrayint pivotcols;
+  int n_pivots;
+
+  set_pivot_info(U,U->n_cols(),pivotcols,n_pivots);
+
+  x->resize(A->n_cols(), b->n_cols());
+  elem *y = newarray(elem, A->n_rows());
+  elem *bcol = b->get_array();
+  elem *xcol = x->get_array();
+  for (int i=0; i<b->n_cols(); i++)
+    {
+      solveF(L,P,bcol,y);
+      solveB(U,pivotcols,n_pivots,y,xcol);
+      xcol += x->n_rows();
+      bcol += b->n_rows();
+    }
+
+  deletearray(y);
+  return true; // What to return?
+}
+
+template <typename CoeffRing>
+void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
+				   DMat<CoeffRing> *x) // resulting kernel
+{
+  const CoeffRing *K = U->get_CoeffRing();
+  int nrows = U->n_rows();
+
+  M2_arrayint pivotcols;
+  int n_pivots;
+
+  set_pivot_info(U,U->n_cols(),pivotcols,n_pivots);
+
+  x->resize(U->n_cols(), U->n_cols() - n_pivots);
+  elem *xcol = x->get_array();
+  for (int i=0; i<x->n_cols(); i++)
+    {
+      int ix = pivotcols->array[i];
+      solveB(U,pivotcols,n_pivots,U->get_array() + nrows*ix,xcol);
+      K->from_ring_elem(U->get_ring()->minus_one(),xcol[ix]);
+      xcol += x->n_rows();
+    }
+}
+
+
+
+#if 0
+
+
+////// OLD STUFF TO BE REMOVED AFTER THIS ///////////////////////
 template <typename CoeffRing>
 void DMatLU<CoeffRing>::LU1(DMat<CoeffRing> *A, // col-th column is modified
 			    M2_arrayint perm, // modified, should be of length >= A->n_rows()
@@ -72,33 +367,6 @@ void DMatLU<CoeffRing>::LU1(DMat<CoeffRing> *A, // col-th column is modified
 #undef MAT
 }
 
-template <typename CoeffRing>
-void DMatLU<CoeffRing>::set_pivot_info(DMat<CoeffRing> *A,
-				     int ncols, // columns 0..ncols-1 are considered
-				     M2_arrayint &pivotcols,
-				     int &n_pivots)
-  // This allocates space for pivotcols
-{
-  const CoeffRing *K = A->get_CoeffRing();
-  int nrows = A->n_rows();
-
-  pivotcols = makearrayint(nrows); // pivot columns 0..npivots-1
-
-  elem *loc = A->get_array();
-  int this_row = 0;
-  int this_col = 0;
-  while (this_col < ncols)
-    {
-      if (!K->is_zero(*loc))
-	{
-	  pivotcols->array[this_row++] = this_col;
-	  loc++; // to the next row
-	}
-      loc += nrows; // to the next column
-      this_col++;
-    }
-  n_pivots = this_row;
-}
 
 template <typename CoeffRing>
 M2_arrayint DMatLU<CoeffRing>::encode_permutation(M2_arrayint permutation)
@@ -279,32 +547,15 @@ void DMatLU<CoeffRing>::kernel(DMat<CoeffRing> *LU, // in LU format
 #warning "write this"
 }
 
-template <typename CoeffRing>
-int DMatLU<CoeffRing>::rank(DMat<CoeffRing> *LU)
-{
-  const CoeffRing *K = LU->get_CoeffRing();
-  int nrows = LU->n_rows();
-  int ncols = LU->n_cols();
-
-  elem *loc = LU->get_array();
-  int this_row = 0;
-  for (int this_col=0; this_col<ncols; this_col++)
-    {
-      if (!K->is_zero(*loc))
-	{
-	  this_row++;
-	  loc++; // to the next row
-	}
-      loc += nrows; // to the next column
-    }
-  return this_row;
-}
 
 template <typename CoeffRing>
 typename CoeffRing::elem DMatLU<CoeffRing>::determinant(DMat<CoeffRing> *LU)
 {
 #warning "write this"
 }
+#endif
+
+
 
 #include "coeffrings.hpp"
 template class DMatLU<CoefficientRingRR>;

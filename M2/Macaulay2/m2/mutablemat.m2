@@ -141,7 +141,7 @@ LU MutableMatrix := (A) -> (
 
 solve = method()
 solve(MutableMatrix,MutableMatrix) := (A,b) -> (
-     x := mutableZero(ring A,0,0);
+     x := mutableZero(ring A,0,0,Dense=>true);
      rawSolve(raw A,raw b,raw x);
      x)
 solve(Matrix,Matrix) := (A,b) -> (

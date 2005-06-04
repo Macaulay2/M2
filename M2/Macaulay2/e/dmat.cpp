@@ -648,6 +648,7 @@ double *DMat<CoefficientRingCC>::get_lapack_array() const
   return reinterpret_cast<double *>(array_);
 }
 
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
