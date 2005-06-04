@@ -9,12 +9,12 @@
 #include "mat.hpp"
 #include "fractionfreeLU.hpp"
 #include "LLL.hpp"
+#include "dmat-LU.hpp"
 
 //#include "mutablemat.hpp"
 //#include "sparsemat.hpp"
 //#include "dmatrix.hpp"
 //#include "lapack.hpp"
-//#include "dmat-LU.hpp"
 //#include "ntl_interface.hpp"
 
 typedef MutableMatrixXXX MutableMatrixXXXOrNull;
@@ -534,6 +534,16 @@ M2_arrayint_OrNull rawLU(MutableMatrixXXX *A)
 #endif
   ERROR("not re-implemented yet");
   return false;
+}
+
+M2_bool rawNullspaceU(MutableMatrixXXX *U,
+		      MutableMatrixXXX *x)
+  /* U should be a matrix in LU 'U' format.
+     x is set to the matrix whose columns form a basis of Ux=0,
+     which is the same as Ax=0. if A = PLU is the LU-decomp of A.
+  */
+{
+  return U->nullspaceU(x);
 }
 
 M2_bool rawSolve(MutableMatrixXXX *A,

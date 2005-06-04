@@ -1301,6 +1301,12 @@ extern "C" {
 		   MutableMatrixXXX *b,
 		   MutableMatrixXXX *x); /* connected */
 
+  M2_bool rawNullspaceU(MutableMatrixXXX *U,
+		     MutableMatrixXXX *x); /* connected */
+  /* If U is a matrix in upper triangular echelon form (i.e.as 
+     returned by LU decomp), then x is replaced with
+     a matrix whose columns form a basis for the null space of U. */
+
   M2_arrayint_OrNull rawLU(MutableMatrixXXX *A); /* connected */
   /* Returns the permutation array: we need to be more precise which one.
      A encodes both the L and the U part, as in lapack.

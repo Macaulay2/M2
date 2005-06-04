@@ -2888,6 +2888,20 @@ export rawSolve(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawSolve", rawSolve);
 
+export rawNullspaceU(e:Expr):Expr := (
+     -- rawNullspaceU(A, x)
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is U:RawMutableMatrix do 
+     when s.1 is x:RawMutableMatrix do ( 
+	  if Ccode(bool, "(M2_bool)rawNullspaceU(", "(MutableMatrixXXX *)", U, ",", "(MutableMatrixXXX *)", x, ")")
+	  then nullE
+	  else buildErrorPacket(EngineError("error calling engine nullspace routine")))
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(2));
+setupfun("rawNullspaceU", rawNullspaceU);
+
 
 -----------------------------------------------------------------------------
 -- LU

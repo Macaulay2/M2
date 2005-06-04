@@ -43,6 +43,7 @@ exportMutable (
 	)
 
 export (
+        symbol solve,
      	symbol coefficient,
 	symbol part,
      	symbol hh,

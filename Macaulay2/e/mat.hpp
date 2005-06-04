@@ -87,6 +87,7 @@ public:
 
   Mat(const RingType *R, long nrows, long ncols) {}
 
+  Mat *copy() const { return 0; }
   void grab(Mat<CoeffRing> *M) { }  // Switches this and M.
 
   class iterator : public our_new_delete
@@ -430,7 +431,12 @@ public:
   ///////////////////////////////
   
   virtual bool solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const = 0;
-  // resets x, find a basis of solutions for Ax=b
+  // resets x, find a solution for Ax=b.  Returns false if no such solution exists
+
+  virtual bool nullspaceU(MutableMatrixXXX *x) const = 0;
+  // resets x, find a basis of solutions for Ux=0, where U is
+  // 'this', and is in upper triangular form from an LU decomp.  Returns true if 
+  // this matrix type implements this algorith,
 
   virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm) = 0;
 
@@ -517,6 +523,8 @@ public:
   {
     return new MutableMat(R,nrows,ncols);
   }
+
+  static MutableMat *grab_Mat(Mat *m);
 
   virtual iterator * begin() const { return new iterator(&mat); }
 
@@ -875,6 +883,9 @@ public:
   virtual bool solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const;
   // resets x, find a basis of solutions for Ax=b
   // assumes that 'this' is full rank and a square matrix
+
+  virtual bool nullspaceU(MutableMatrixXXX *x) const;
+  // resets x, find a basis of solutions for Ux=0, U upper triangular
 
   virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm);
 

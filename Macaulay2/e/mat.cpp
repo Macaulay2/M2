@@ -9,6 +9,7 @@
 #include "matrix.hpp"
 
 #include "lapack.hpp"
+#include "dmat-LU.hpp"
 
 MutableMatrixXXX *MutableMatrixXXX::zero_matrix(const Ring *R, 
 						long nrows, 
@@ -175,6 +176,13 @@ bool MutableMatrixXXX::set_values(M2_arrayint rows,
   return true;
 }
 
+template<typename CoeffRing, typename Mat>
+MutableMat<CoeffRing,Mat> *MutableMat<CoeffRing,Mat>::grab_Mat(Mat *m) {
+    MutableMat *result = new MutableMat;
+    Mat *copy_m = m->copy();
+    result->mat.grab(copy_m);
+    return result;
+  }
 
 template<typename CoeffRing, typename MatType>
 Mat_ZZp *MutableMat<CoeffRing,MatType>::get_mat_ZZp()
@@ -395,9 +403,16 @@ const SMatR * MutableMat<CoefficientRingR,SMatR>::get_SMatR() const
 
 template<typename CoeffRing, typename Mat>
 bool MutableMat<CoeffRing,Mat>::solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const
-  // resets x, find a basis of solutions for Ax=b
+  // resets x, find a solution of Ax=b, return false if no such exists.
 {
   ERROR("solving linear equations is not implemented for this ring and matrix type");
+  return false;
+}
+
+template<typename CoeffRing, typename Mat>
+bool MutableMat<CoeffRing,Mat>::nullspaceU(MutableMatrixXXX *x) const
+{
+  ERROR("finding the null-space is not implemented for this ring and matrix type");
   return false;
 }
 
@@ -471,6 +486,33 @@ bool MutableMat<CoefficientRingCC,DMatCC>::solve(const MutableMatrixXXX *b, Muta
       return false;
     }
   return Lapack::solve(A2,b2,x2);
+}
+
+bool MutableMat<CoefficientRingZZp,DMatZZp>::solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const
+  // resets x, find a basis of solutions for Ax=b
+{
+  const DMatZZp *A2 = get_DMatZZp();
+  const DMatZZp *b2 = b->get_DMatZZp();
+  DMatZZp *x2 = x->get_DMatZZp();
+  if (A2 == 0 || b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over ZZ/p");
+      return false;
+    }
+  return DMatLU<CoefficientRingZZp>::solve(A2,b2,x2);
+}
+
+bool MutableMat<CoefficientRingZZp,DMatZZp>::nullspaceU(MutableMatrixXXX *x) const
+{
+  const DMatZZp *A2 = get_DMatZZp();
+  DMatZZp *x2 = x->get_DMatZZp();
+  if (A2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over ZZ/p");
+      return false;
+    }
+  DMatLU<CoefficientRingZZp>::nullspaceU(A2,x2);
+  return true;
 }
 
 bool MutableMat<CoefficientRingRR,DMat<CoefficientRingRR> >::eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const
