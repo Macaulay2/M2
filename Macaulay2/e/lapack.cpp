@@ -3,22 +3,68 @@
 
 //typedef DMat<CoefficientRingRR> LMatrixRR;
 
-M2_arrayint_OrNull Lapack::LU(LMatrixRR *M)
+M2_arrayint_OrNull Lapack::LU(const LMatrixRR *A,
+			      LMatrixRR *L,
+			      LMatrixRR *U)
 {
-  int rows = M->n_rows();
-  int cols = M->n_cols();
+  int rows = A->n_rows();
+  int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = makearrayint(rows);
-  int *permutation = result->array;
+  int *perm = newarray_atomic(int, min);
+  LMatrixRR *copyA = A->copy();
 
-  dgetrf_(&rows, &cols, M->get_lapack_array(),
-	  &rows, permutation, &info);
+  L->resize(rows, rows);
+  U->resize(rows, cols);
 
-  for (int i=0; i<min; i++)
-    permutation[i]--;
+  dgetrf_(&rows, &cols, copyA->get_lapack_array(),
+	  &rows, perm, &info);
+
+  /* set the lower triangular matrix L */
+  double *vals = L->get_array();
+  int loc = 0;
+  for (int j=0; j<cols; j++) {
+    for (int i=0; i<rows; i++) {
+      if (i > j) {
+	*vals++ = copyA->get_array()[loc++];
+      } else if (i == j) {
+	*vals++ = 1;
+	loc++;
+      } else {
+	*vals++ = 0;
+	loc++;
+      }
+    }
+  }
+
+  /* set the upper triangular matrix U */
+  vals = U->get_array();
+  loc = 0;
+  for (int j=0; j<cols; j++) {
+    for (int i=0; i<rows; i++) {
+      if (i <= j) {
+	*vals++ = copyA->get_array()[loc++];
+      } else {
+	*vals++ = 0;
+	loc ++;
+      }
+    }
+  }
+
+  /* set the permutation array */
+  for (int row=1; row<=min; row++) {
+    int targ = row;
+    for (int i=1; i<=min; i++) {
+      if (i == targ)
+	targ = perm[i-1];
+      else if (perm[i-1] == targ)
+	targ = i;
+    }
+    result->array[row-1] = targ-1;
+  }
   for (int i=min; i<rows; i++)
-    permutation[i] = i;
+    result->array[i] = i;
 
   if (info < 0)       
     {
@@ -468,22 +514,73 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
 }
 
 
-M2_arrayint_OrNull Lapack::LU(LMatrixCC *M)
+M2_arrayint_OrNull Lapack::LU(const LMatrixCC *A,
+			      LMatrixCC *L,
+			      LMatrixCC *U)
 {
-  int rows = M->n_rows();
-  int cols = M->n_cols();
+  int rows = A->n_rows();
+  int cols = A->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = makearrayint(rows);
-  int *permutation = result->array;
+  int *perm = newarray_atomic(int, min);
 
-  zgetrf_(&rows, &cols, M->get_lapack_array(), 
-	  &rows, permutation, &info);
+  LMatrixCC *copyA = A->copy();
 
-  for (int i=0; i<min; i++)
-    permutation[i]--;
+  L->resize(rows, rows);
+  U->resize(rows, cols);
+
+  zgetrf_(&rows, &cols, A->get_lapack_array(), 
+	  &rows, perm, &info);
+
+  // set the lower triangular matrix L
+  double *vals = L->get_lapack_array();
+  int loc = 0;
+  for (int j=0; j<cols; j++) {
+    for (int i=0; i<rows; i++) {
+      if (i > j) {
+	vals[2*loc] = copyA->get_lapack_array()[2*loc];
+	vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
+      } else if (i == j) {
+	vals[2*loc] = 1;
+	vals[2*loc+1] = 0;
+      } else {
+	vals[2*loc] = 0;
+	vals[2*loc+1] = 0;
+      }
+      loc++;
+    }
+  }
+
+  // set the upper triangular matrix U
+  vals = U->get_lapack_array();
+  loc = 0;
+  for (int j=0; j<cols; j++) {
+    for (int i=0; i<rows; i++) {
+      if (i <= j) {
+	vals[2*loc] = copyA->get_lapack_array()[2*loc];
+	vals[2*loc+1] = copyA->get_lapack_array()[2*loc+1];
+      } else {
+	vals[2*loc] = 0;
+	vals[2*loc+1] = 0;
+      }
+      loc++;
+    }
+  }
+
+  /* set the permutation array */
+  for (int row=1; row<=min; row++) {
+    int targ = row;
+    for (int i=1; i<=min; i++) {
+      if (i == targ)
+	targ = perm[i-1];
+      else if (perm[i-1] == targ)
+	targ = i;
+    }
+    result->array[row-1] = targ-1;
+  }
   for (int i=min; i<rows; i++)
-    permutation[i] = i;
+    result->array[i] = i;
 
   if (info < 0)       
     {

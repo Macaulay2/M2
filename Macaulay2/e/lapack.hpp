@@ -276,7 +276,9 @@ class Lapack {
   typedef DMat<CoefficientRingRR> LMatrixRR;
   typedef DMat<CoefficientRingCC> LMatrixCC;
 
-  static M2_arrayint_OrNull LU(LMatrixRR *M);
+  static M2_arrayint_OrNull LU(const LMatrixRR *A,
+			       LMatrixRR *L,
+			       LMatrixRR *U);
 
   static bool solve(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
   // A and b are not modifed.  The result is placed into x.
@@ -305,7 +307,10 @@ class Lapack {
   // Input matrices are complex //
   ////////////////////////////////
 
-  static M2_arrayint_OrNull LU(LMatrixCC *M);
+  static M2_arrayint_OrNull LU(const LMatrixCC *A,
+			       LMatrixCC *L,
+			       LMatrixCC *U
+			       );
 
   static bool solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
   // A and b are not modifed.  The result is placed into x.

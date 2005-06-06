@@ -98,12 +98,12 @@ public:
       result = modulus_sub(a,b,p1);
   }
 
-  void to_ring_elem(const elem a, ring_elem &result) const
+  void to_ring_elem(ring_elem &result, const elem a) const
   {
     result.int_val = a;
   }
 
-  void from_ring_elem(const ring_elem &a, elem &result) const
+  void from_ring_elem(elem &result, const ring_elem &a) const
   {
     result = a.int_val;
   }
@@ -159,12 +159,12 @@ public:
     result = a/b;
   }
 
-  void to_ring_elem(const elem a, ring_elem &result) const
+  void to_ring_elem(ring_elem &result, const elem a) const
   {
     result = globalRR->from_double(a);
   }
 
-  void from_ring_elem(const ring_elem &a, elem &result) const
+  void from_ring_elem(elem &result, const ring_elem &a) const
   {
     result = (reinterpret_cast<RingRR::RRelem>(a.poly_val))->val;
   }
@@ -229,12 +229,12 @@ public:
     result.im /= bot;
   }
 
-  void to_ring_elem(elem a, ring_elem &result) const
+  void to_ring_elem(ring_elem &result, elem a) const
   {
     result = globalCC->from_complex(&a);
   }
 
-  void from_ring_elem(const ring_elem &a, elem &result) const
+  void from_ring_elem(elem &result, const ring_elem &a) const
   {
     M2_CC b = reinterpret_cast<M2_CC>(a.poly_val);
     result = *b;
@@ -294,12 +294,12 @@ public:
     result = R->divide(a,b);
   }
 
-  void to_ring_elem(const elem a, ring_elem &result) const
+  void to_ring_elem(ring_elem &result, const elem &a) const
   {
     result = a;
   }
 
-  void from_ring_elem(const ring_elem &a, elem &result) const
+  void from_ring_elem(elem &result, const ring_elem &a) const
   {
     result = a;
   }
@@ -361,14 +361,14 @@ public:
     result = a/b;
   }
 
-  void to_ring_elem(const elem &a, ring_elem &result) const
+  void to_ring_elem(ring_elem &result, const elem &a) const
   {
     mpz_ptr r = globalZZ->new_elem();
     ntl_ZZ_to_mpz(r, a);
     result = MPZ_RINGELEM(r);
   }
 
-  void from_ring_elem(const ring_elem &a, elem &result) const
+  void from_ring_elem(elem &result, const ring_elem &a) const
   {
     result = ntl_ZZ_from_mpz(MPZ_VAL(a));
   }

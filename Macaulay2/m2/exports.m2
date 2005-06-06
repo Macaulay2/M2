@@ -43,6 +43,7 @@ exportMutable (
 	)
 
 export (
+        symbol LU,
         symbol solve,
      	symbol coefficient,
 	symbol part,

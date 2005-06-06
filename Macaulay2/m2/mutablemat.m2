@@ -135,9 +135,10 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 LU = method()
 LU MutableMatrix := (A) -> (
      nrows := rawNumberOfRows raw A;
-     P := mutableZero(RR,nrows,nrows);
-     rawLU(raw A, raw P, raw P, raw P);
-     P)
+     L := mutableZero(ring A,0,0,Dense=>true);
+     U := mutableZero(ring A,0,0,Dense=>true);
+     p := rawLU(raw A, raw L, raw U);
+     (p, L, U))
 
 solve = method()
 solve(MutableMatrix,MutableMatrix) := (A,b) -> (
@@ -190,23 +191,6 @@ SVD Matrix := o -> A -> (
      (Sigma,U,VT) := SVD(A,o);
      (matrix Sigma,matrix U,matrix VT))
      
-     
-
-testLU = (f) -> (
-     g := mutableMatrix(f);
-     nrows := rawNumberOfRows(raw g);
-     ncols := rawNumberOfColumns(raw g);
-     P := map(RR,rawMutableIdentity(raw RR,nrows,true));
-     L := map(RR,rawMutableIdentity(raw RR,nrows,true));
-     U := map(RR,rawMutableIdentity(raw RR,nrows,true));
-     time rawLU(raw g, raw P, raw P, raw P);
-     time for i from 0 to nrows-1 do
-       for j from 0 to ncols-1 do
-          if j >= i then U_(i,j) = g_(i,j)
-	  else L_(i,j) = g_(i,j);
---     (matrix entries L, matrix entries U, matrix entries P))
-     time (new Matrix from L, new Matrix from U, new Matrix from P))
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

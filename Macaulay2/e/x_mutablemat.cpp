@@ -11,12 +11,6 @@
 #include "LLL.hpp"
 #include "dmat-LU.hpp"
 
-//#include "mutablemat.hpp"
-//#include "sparsemat.hpp"
-//#include "dmatrix.hpp"
-//#include "lapack.hpp"
-//#include "ntl_interface.hpp"
-
 typedef MutableMatrixXXX MutableMatrixXXXOrNull;
 
 MutableMatrixXXX * IM2_MutableMatrix_identity(const Ring *R,
@@ -496,44 +490,11 @@ M2_bool IM2_HermiteNormalForm(MutableMatrixXXX *M)
 //typedef DMat<CoefficientRingRR> LMatrixRR;
 //typedef DMat<CoefficientRingCC> LMatrixCC;
 
-M2_arrayint_OrNull rawLU(MutableMatrixXXX *A)
+M2_arrayint_OrNull rawLU(const MutableMatrixXXX *A,
+			 MutableMatrixXXX *L,
+			 MutableMatrixXXX *U)
 {
-#if 0
-  const Ring *R = A->get_ring();
-  if (R == globalRR)
-    {
-      LMatrixRR *A2 = A->get_DMatRR();
-      if (A2 == 0)
-	{
-	  ERROR("requires dense mutable matrix over RR");
-	  return 0;
-	}
-      return Lapack::LU(A2);
-    }
-  if (R == globalCC)
-    {
-      LMatrixCC *A2 = A->get_DMatCC();
-      if (A2 == 0)
-	{
-	  ERROR("requires dense mutable matrix over CC");
-	  return 0;
-	}
-      return Lapack::LU(A2);
-    }
-  const Z_mod *KZZp = R->cast_to_Z_mod();
-  if (KZZp != 0)
-    {
-      DMat<CoefficientRingZZp> *A2 = A->get_DMatZZp();
-      if (A2 == 0)
-	{
-	  ERROR("requires dense mutable matrix over ZZ/p");
-	  return 0;
-	}
-      return DMatLU<CoefficientRingZZp>::LU(A2);
-    }
-#endif
-  ERROR("not re-implemented yet");
-  return false;
+  return A->LU(L,U);
 }
 
 M2_bool rawNullspaceU(MutableMatrixXXX *U,
@@ -543,6 +504,12 @@ M2_bool rawNullspaceU(MutableMatrixXXX *U,
      which is the same as Ax=0. if A = PLU is the LU-decomp of A.
   */
 {
+  const Ring *R = U->get_ring();
+  if (R != x->get_ring())
+    {
+      ERROR("expected matrices with same base ring");
+      return false;
+    }
   return U->nullspaceU(x);
 }
 
@@ -556,6 +523,18 @@ M2_bool rawSolve(MutableMatrixXXX *A,
   /* Otherwise: give error: 
      OR: make mutable matrices of the correct size, call the correct routine
      and afterwords, copy to x. */
+  
+  const Ring *R = A->get_ring();
+  if (R != b->get_ring() || R != x->get_ring())
+    {
+      ERROR("expected matrices with same base ring");
+      return false;
+    }
+  if (A->n_rows() != b->n_rows())
+    {
+      ERROR("expected matrices with the same number of rows");
+      return false;
+    }
   return A->solve(b,x);
 }
 
@@ -590,58 +569,19 @@ M2_bool rawLeastSquares(MutableMatrixXXX *A,
 /* Case 1: A is a dense matrix over RR.  Then so are b,x.
    Case 2: A is a dense matrix over CC.  Then so are b,x. */
 {
+  const Ring *R = A->get_ring();
+  if (R != b->get_ring() || R != x->get_ring())
+    {
+      ERROR("expected matrices with same base ring");
+      return false;
+    }
+  if (A->n_rows() != b->n_rows())
+    {
+      ERROR("expected matrices with the same number of rows");
+      return false;
+    }
   return A->least_squares(b,x,assume_full_rank);
 }
-
-#if 0
-
-  LMatrixCCOrNull * eigenvalues(LMatrixCC *eigenvalues);
-  // returns NULL if an error occurs, else returns eigenvalues matrix,
-  // which is a complex matrix.  'eigenvalues' must be initialized first.  
-  // It does not need to have the correct size.
-
-  LMatrixCC * eigenvectors(LMatrixCC *eigenvalues, LMatrixCC *eigenvectors);
-  // returns NULL if an error occurs, else returns eigenvalues matrix,
-  // which is a complex matrix.  'eigenvalues' must be initialized first.  
-  // It does not need to have the correct size.
-
-  LMatrixRROrNull * eigenvalues_symmetric(LMatrixRR *eigenvalues);
-  // returns NULL if an error occurs, else returns eigenvalues matrix
-  // for a symmetric matrix.  'eigenvalues' needs to be initialized first.  
-  // It does not need to have the correct size.
-  // Assumes symmetric matrix by using upper triangular part only.
-
-  LMatrixRROrNull * eigenvectors_symmetric(LMatrixRR *eigenvalues, 
-					   LMatrixRR *eigenvectors); 
-  // returns NULL if an error occurs, else returns eigenvector matrix
-  // and eigenvalues of a symmetric matrix.  
-  // 'eigenvalues' and 'eigenvectors' need to be initialized first. 
-  // They do not need to have the correct size.
-  // Assumes symmetric matrix by using upper triangular part only.
-
-  LMatrixRROrNull * SVD(LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT);
-  // returns NULL if an error occurs, else returns the singular values
-  // 'Sigma' in the singular value decomposition 'A = U*Diag(Sigma)*VT'.  
-  // Note the routine returns VT, which is the transpose of V.
-
-  LMatrixRROrNull * SVD_divide_conquer(LMatrixRR *Sigma, LMatrixRR *U, 
-				 LMatrixRR *VT);
-  // better algorithm for SVD, especially for large matrices
-  // might fail on hexadecimal / decimal machines?
-
-
-  LMatrixRROrNull * least_squares(LMatrixRR *b, LMatrixRR *x);
-  // This routine assumes the matrix has full rank.
-  // return NULL if an error occurs, else returns the solutions to the
-  // linear least squares problem which minimizes |Ax-b| if A has more
-  // rows than columns and minimizes |x| satisfying Ax=b if A has more
-  // columns than rows.
-
-  LMatrixRROrNull * least_squares_deficient(LMatrixRR *b, LMatrixRR *x);
-  // This routine can handle matrices with deficient rank.  It uses SVD.
-  // return NULL if an error occurs, else returns the minimum norm
-  // solution to the linear least squares problem which minimizes |Ax-b|
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

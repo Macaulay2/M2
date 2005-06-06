@@ -35,11 +35,6 @@ class DMatLU
 	   int col
 	   );
 
-  static M2_arrayint LU(const DMat<CoeffRing> *A,
-		 DMat<CoeffRing> *&L,
-		 DMat<CoeffRing> *&U
-		 );
-
   static bool solve(const DMat<CoeffRing> *L, 
 		    const DMat<CoeffRing> *U,
 		    M2_arrayint permutation, // should be of length  L->n_rows()
@@ -64,6 +59,11 @@ class DMatLU
   static int rank(DMat<CoeffRing> *U);
 
 public:
+  static M2_arrayint LU(const DMat<CoeffRing> *A,
+		 DMat<CoeffRing> *&L,
+		 DMat<CoeffRing> *&U
+		 );
+
   static bool solve(const DMat<CoeffRing> *A,
 		    const DMat<CoeffRing> *b,
 		    DMat<CoeffRing> *x); // resulting solution set

@@ -101,7 +101,7 @@ public:
     long row() { return v->row; }
 
     void copy_elem(ring_elem &result) { 
-      M->get_CoeffRing()->to_ring_elem(value(), result);
+      M->get_CoeffRing()->to_ring_elem(result, value());
     }
   };
 
@@ -186,8 +186,8 @@ public:
   void delete_rows(long i, long j);
   /* Delete rows i .. j from M */
 
-  bool set_submatrix(long first_row,
-		     long first_col,
+  bool set_submatrix(M2_arrayint rows,
+		     M2_arrayint cols,
 		     const MutableMatrixXXX *M);
 
   SMat<CoeffRing> *submatrix(const M2_arrayint rows, const M2_arrayint cols) const;
