@@ -73,8 +73,8 @@ public:
 
   void subtract(elem &result, elem a, elem b) const
   {
-    if (a == zero) result = b;
-    else if (b == zero) result = a;
+    if (b == zero) result = a;
+    else if (a == zero) result = modulus_add(b, minus_one, p1);
     else
       {
 	int n = modulus_sub(exp_table[a], exp_table[b], p);
