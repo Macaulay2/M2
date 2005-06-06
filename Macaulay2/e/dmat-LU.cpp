@@ -41,9 +41,10 @@ bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modifi
   long p = n_pivot_rows; 
   long q = col;
 
+  ERROR("stop here");
 
-  // Step 1. Set entries U[0..p, col]
-  for (long r=0; r<=p; r++)
+  // Step 1. Set entries U[0..p-1, q]
+  for (long r=0; r<p; r++)
     {
       // First grab the correct element of A: (P^-1 * A)[r,q]
       long rx = perm->array[r];
@@ -56,11 +57,9 @@ bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modifi
       K->init_set(MAT(U,r,q),sum);
     }
   
-  // Step 2. Set entries L[0..n_pivot_rows-1, n_pivot_rows] WHAT entries???!!!
+  // Step 2. Set entries L[p..nrows-1, p]
   int new_pivot_row = -1;
-  if (!K->is_zero(sum)) // At this point 'sum' is MAT(U,p,q)
-    new_pivot_row = p;
-  for (int r=p+1; r<nrows; r++)
+  for (int r=p; r<nrows; r++)
     {
       // First grab the correct element of A: (P^-1 * A)[r,q]
       long rx = perm->array[r];
@@ -77,26 +76,24 @@ bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modifi
 
   // Step 3. If no pivot: return
   //         If a pivot: Choose the next pivot, set U[p,q], 
-  //           modify perm, pivotcols,n_pivot-rows
+  //           modify perm, pivotcols,n_pivot_rows
   if (new_pivot_row < 0) return false; // Nothing else is needed: don't need to change arguments
   if (new_pivot_row > n_pivot_rows)
     {
-      // swap rows: new_pivot_row, p (in L, U too?)
-      for (int i=0; i<p; i++)
+      // swap rows: new_pivot_row, p in L
+      for (int i=0; i<=p; i++)
 	{
-	  //	  ::swap(MAT(L,xxxxx,xxxxxxxx), MAT(L,yyyyy,yyyyy));
+	  K->swap(MAT(L,new_pivot_row,i), MAT(L,p,i));
 	}
-      swap(perm->array[n_pivot_rows], perm->array[new_pivot_row]); // WRONG...
+      swap(perm->array[p], perm->array[new_pivot_row]);
     }
+  K->init_set(MAT(U,p,q), MAT(L,p,p));
   n_pivot_rows++;
 
   // Step 4. Now perform the divisions, if any
-  if (n_pivot_rows < nrows)
-    {
-      K->invert(a,MAT(U,p,q));
-      for (int i=p+1; i<nrows; i++)
-	K->mult(MAT(L,i,p),MAT(L,i,p),a);
-    }
+  K->invert(a,MAT(L,p,p)); // We could save one division here by setting L(p,p) = 1 after this
+  for (int i=p; i<nrows; i++)
+    K->mult(MAT(L,i,p),MAT(L,i,p),a);
 
   return true;
 }
@@ -150,7 +147,6 @@ void DMatLU<CoeffRing>::solveB(const DMat<CoeffRing> *U, // m by n
       K->divide(x[ix],x[ix],MAT(U,i,ix));
     }
 }
-#undef MAT
 			       
 template <typename CoeffRing>
 void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
@@ -235,6 +231,7 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
 {
   // Create L,U,y.  (P is created for us), make sure x has correct shape.
   // For each column of b, solveF, then solveB 9result into same col of x
+  const CoeffRing *K = A->get_CoeffRing();
 
   DMat<CoeffRing> *L = new DMat<CoeffRing>(A->get_ring(), A->n_rows(), A->n_rows());
   DMat<CoeffRing> *U = new DMat<CoeffRing>(A->get_ring(), A->n_rows(), A->n_cols());
@@ -252,6 +249,8 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
 
   x->resize(A->n_cols(), b->n_cols());
   elem *y = newarray(elem, A->n_rows());
+  for (int i=0; i<A->n_rows(); i++)
+    K->set_zero(y[i]);
   elem *bcol = b->get_array();
   elem *xcol = x->get_array();
   for (int i=0; i<b->n_cols(); i++)
@@ -279,15 +278,25 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
   set_pivot_info(U,U->n_cols(),pivotcols,n_pivots);
 
   x->resize(U->n_cols(), U->n_cols() - n_pivots);
-  elem *xcol = x->get_array();
-  for (int i=0; i<x->n_cols(); i++)
+  int *nextpivotcol = pivotcols->array;
+  int *endpivotcol = nextpivotcol + pivotcols->len;
+  int thiscol = 0;
+  for (int c=0; c<U->n_cols(); c++)
     {
-      int ix = pivotcols->array[i];
-      solveB(U,pivotcols,n_pivots,U->get_array() + nrows*ix,xcol);
-      K->from_ring_elem(U->get_ring()->minus_one(),xcol[ix]);
-      xcol += x->n_rows();
+      if (nextpivotcol < endpivotcol && c == *nextpivotcol)
+	{
+	  nextpivotcol++;
+	  continue;
+	}
+      solveB(U,
+	     pivotcols,n_pivots,
+	     U->get_array() + nrows*c,
+	     x->get_array() + x->n_rows() * thiscol);
+      K->from_ring_elem(U->get_ring()->minus_one(),MAT(x,c,thiscol));
+      thiscol++;
     }
 }
+#undef MAT
 
 
 
