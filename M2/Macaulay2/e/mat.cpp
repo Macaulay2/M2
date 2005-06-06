@@ -177,7 +177,7 @@ bool MutableMatrixXXX::set_values(M2_arrayint rows,
 }
 
 template<typename CoeffRing, typename Mat>
-MutableMat<CoeffRing,Mat> *MutableMat<CoeffRing,Mat>::grab_Mat(Mat *m) {
+MutableMat<CoeffRing,Mat> *MutableMat<CoeffRing,Mat>::grab_Mat(const Mat *m) {
     MutableMat *result = new MutableMat;
     Mat *copy_m = m->copy();
     result->mat.grab(copy_m);
@@ -417,12 +417,11 @@ bool MutableMat<CoeffRing,Mat>::nullspaceU(MutableMatrixXXX *x) const
 }
 
 template<typename CoeffRing, typename Mat>
-void MutableMat<CoeffRing,Mat>::LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm)
+M2_arrayint_OrNull MutableMat<CoeffRing,Mat>::LU(MutableMatrixXXX *L,
+						 MutableMatrixXXX *U) const
 {
-}
-
-void MutableMat<CoefficientRingZZp, Mat<CoefficientRingZZp> >::LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm)
-{
+  ERROR("LU decomposition currently not implemented for this ring and matrix type");
+  return false;
 }
 
 template<typename CoeffRing, typename Mat>
@@ -458,6 +457,48 @@ bool MutableMat<CoeffRing,Mat>::least_squares(const MutableMatrixXXX *b,
 {
   ERROR("least squares requires dense mutable matrices over RR or CC");
   return false;
+}
+
+M2_arrayint_OrNull MutableMat<CoefficientRingZZp,DMatZZp>::LU(MutableMatrixXXX *L,
+							      MutableMatrixXXX *U) const
+{
+  const DMatZZp *A2 = get_DMatZZp();
+  DMatZZp *L2 = L->get_DMatZZp();
+  DMatZZp *U2 = U->get_DMatZZp();
+  if (A2 == 0 || L2 == 0 || U2 == 0)
+    {
+      ERROR("requires dense mutable matrices over ZZ/p");
+      return false;
+    }
+  return DMatLU<CoefficientRingZZp>::LU(A2,L2,U2);
+}
+
+M2_arrayint_OrNull MutableMat<CoefficientRingRR, DMatRR>::LU(MutableMatrixXXX *L,
+							     MutableMatrixXXX *U) const
+{
+  const DMatRR *A2 = get_DMatRR();
+  DMatRR *L2 = L->get_DMatRR();
+  DMatRR *U2 = U->get_DMatRR();
+  if (A2 == 0 || L2 == 0 || U2 == 0)
+    {
+      ERROR("requires dense mutable matrices over RR");
+      return false;
+    }
+  return Lapack::LU(A2,L2,U2);
+}
+
+M2_arrayint_OrNull MutableMat<CoefficientRingCC, DMatCC>::LU(MutableMatrixXXX *L,
+							     MutableMatrixXXX *U) const
+{
+  const DMatCC *A2 = get_DMatCC();
+  DMatCC *L2 = L->get_DMatCC();
+  DMatCC *U2 = U->get_DMatCC();
+  if (A2 == 0 || L2 == 0 || U2 == 0)
+    {
+      ERROR("requires dense mutable matrices over CC");
+      return false;
+    }
+  return Lapack::LU(A2,L2,U2);
 }
 
 bool MutableMat<CoefficientRingRR,DMatRR>::solve(const MutableMatrixXXX *b, MutableMatrixXXX *x) const

@@ -831,22 +831,22 @@ void SMat<CoeffRing>::delete_rows(long i, long j)
 }
 
 template<typename CoeffRing>
-bool SMat<CoeffRing>::set_submatrix(long first_row, 
-				    long first_col, 
+bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
+				    M2_arrayint cols,
 				    const MutableMatrixXXX *M)
 {
-#warning "write this one"
+#warning "write set_submatrix"
   return false;
   MutableMatrixXXX::iterator *i = M->begin();
-  long ncols = M->n_cols();
 #if 0
+  long ncols = M->n_cols();
   for (long c=0; c<ncols; c++)
     {
       for (i->set(c); i->valid(); i->next())
 	{
 	  ring_elem a;
 	  i->copy_ring_elem(a);
-	  coeffR->from_ring_elem(a, *(first + i->row()));
+	  coeffR->from_ring_elem(*(first + i->row()), a);
 	}
       first += nrows_;
     }

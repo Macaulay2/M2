@@ -41,8 +41,6 @@ bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modifi
   long p = n_pivot_rows; 
   long q = col;
 
-  ERROR("stop here");
-
   // Step 1. Set entries U[0..p-1, q]
   for (long r=0; r<p; r++)
     {
@@ -189,6 +187,9 @@ M2_arrayint DMatLU<CoeffRing>::LU(const DMat<CoeffRing> *A,
   int nrows = A->n_rows();
   int ncols = A->n_cols();
 
+  L->resize(nrows,nrows);
+  U->resize(nrows,ncols);
+
   // These will be set in LU1
   M2_arrayint perm = makearrayint(nrows);
   int npivots = 0;
@@ -237,10 +238,6 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   DMat<CoeffRing> *U = new DMat<CoeffRing>(A->get_ring(), A->n_rows(), A->n_cols());
 
   M2_arrayint P = LU(A,L,U);
-
-  ddmat(L);
-  printf("-----\n");
-  ddmat(U);
 
   M2_arrayint pivotcols;
   int n_pivots;
@@ -292,7 +289,7 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
 	     pivotcols,n_pivots,
 	     U->get_array() + nrows*c,
 	     x->get_array() + x->n_rows() * thiscol);
-      K->from_ring_elem(U->get_ring()->minus_one(),MAT(x,c,thiscol));
+      K->from_ring_elem(MAT(x,c,thiscol), U->get_ring()->minus_one());
       thiscol++;
     }
 }

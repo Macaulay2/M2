@@ -2907,10 +2907,25 @@ setupfun("rawNullspaceU", rawNullspaceU);
 -- LU
 -----------------------------------------------------------------------------
 
+--export rawLU(e:Expr):Expr := (
+--     when e is A:RawMutableMatrix do toExpr(Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrixXXX *)", A, ")"))
+--     else WrongArgMutableMatrix());
+--setupfun("rawLU", rawLU);
+
 export rawLU(e:Expr):Expr := (
-     when e is A:RawMutableMatrix do toExpr(Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrixXXX *)", A, ")"))
-     else WrongArgMutableMatrix());
+     -- rawLU(A, L, U) returns a list of integers (permutation)
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is A:RawMutableMatrix do 
+     when s.1 is L:RawMutableMatrix do
+     when s.2 is U:RawMutableMatrix do toExpr( 
+	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(const MutableMatrixXXX *)", A, ",", "(MutableMatrixXXX *)", L, ",", "(MutableMatrixXXX *)", U, ")"))
+     else WrongArgMutableMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(3));
 setupfun("rawLU", rawLU);
+
 
 export rawFFLU(e:Expr):Expr := (
      when e is M:RawMutableMatrix do toExpr( Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_FF_LU(", "(MutableMatrixXXX *)", M, ")" ) )

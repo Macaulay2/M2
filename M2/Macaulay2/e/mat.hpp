@@ -102,7 +102,7 @@ public:
     bool valid() { return false; }
     long row() { return 0; }
     const elem &value() { return zero; }
-    void copy_elem(ring_elem &result) { M->get_CoeffRing()->to_ring_elem(value(), result); }
+    void copy_elem(ring_elem &result) { M->get_CoeffRing()->to_ring_elem(result, value()); }
   };
 
   long n_rows() const { return 0; }
@@ -180,8 +180,8 @@ public:
 
   void dot_product(long i, long j, elem &result) const { } 
 
-  bool set_submatrix(long first_row,
-		     long first_col,
+  bool set_submatrix(M2_arrayint rows,
+		     M2_arrayint cols,
 		     const MutableMatrixXXX *N) { return false; }
 
   Mat<CoeffRing> * submatrix(const M2_arrayint rows, const M2_arrayint cols) const
@@ -268,12 +268,7 @@ public:
 
   void text_out(buffer &o) const;
 
-  MutableMatrixXXX *copy(bool prefer_dense) const
-  {
-    MutableMatrixXXX *result = zero_matrix(get_ring(), n_rows(), n_cols(), prefer_dense);
-    result->set_submatrix(0,0,this);
-    return result;
-  }
+  virtual MutableMatrixXXX *copy(bool prefer_dense) const = 0;
 
   bool set_values(M2_arrayint rows,
 		  M2_arrayint cols,
@@ -396,8 +391,8 @@ public:
 
   virtual MutableMatrixXXX * submatrix(const M2_arrayint cols) const = 0;
 
-  virtual bool set_submatrix(long first_row,
-			     long first_col,
+  virtual bool set_submatrix(M2_arrayint rows,
+			     M2_arrayint cols,
 			     const MutableMatrixXXX *N) = 0;
   // returns false iff there is an error
 
@@ -438,7 +433,8 @@ public:
   // 'this', and is in upper triangular form from an LU decomp.  Returns true if 
   // this matrix type implements this algorith,
 
-  virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm) = 0;
+  virtual M2_arrayint_OrNull LU(MutableMatrixXXX *L,
+				MutableMatrixXXX *U) const = 0;
 
   virtual bool eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const = 0;
 
@@ -524,7 +520,7 @@ public:
     return new MutableMat(R,nrows,ncols);
   }
 
-  static MutableMat *grab_Mat(Mat *m);
+  static MutableMat *grab_Mat(const Mat *m);
 
   virtual iterator * begin() const { return new iterator(&mat); }
 
@@ -535,6 +531,14 @@ public:
   virtual long n_cols() const { return mat.n_cols(); }
 
   virtual bool is_dense() const { return mat.is_dense(); }
+
+  virtual MutableMat *copy(bool prefer_dense) const
+  {
+    MutableMat *result = new MutableMat;
+    Mat *m = mat.copy();
+    result->mat.grab(m);
+    return result;
+  }
 
   virtual long lead_row(long col) const { return mat.lead_row(col); }
   /* returns the largest index row which has a non-zero value in column 'col'.
@@ -548,7 +552,7 @@ public:
     elem b;
     long ret = mat.lead_row(col, b);
     if (ret >= 0)
-      mat.get_CoeffRing()->to_ring_elem(b, result);
+      mat.get_CoeffRing()->to_ring_elem(result, b);
     return ret;
   }    
 
@@ -560,7 +564,7 @@ public:
       {
 	elem a;
 	bool ret = mat.get_entry(r,c,a);
-	mat.get_CoeffRing()->to_ring_elem(a,result);
+	mat.get_CoeffRing()->to_ring_elem(result,a);
 	return ret;
       }
     else
@@ -576,7 +580,7 @@ public:
     if (error_row_bound(r,n_rows())) return false;
     if (error_column_bound(c,n_cols())) return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(a,b);
+    mat.get_CoeffRing()->from_ring_elem(b,a);
     mat.set_entry(r,c,b);
     return true;
   }
@@ -614,7 +618,7 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(r,b);
+    mat.get_CoeffRing()->from_ring_elem(b,r);
     mat.scale_row(i,b);
     return true;
   }
@@ -626,7 +630,7 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(r,b);
+    mat.get_CoeffRing()->from_ring_elem(b,r);
     mat.scale_column(i,b);
     return true;
   }
@@ -638,7 +642,7 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(r,b);
+    mat.get_CoeffRing()->from_ring_elem(b,r);
     mat.divide_row(i,b);
     return true;
   }
@@ -650,7 +654,7 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(r,b);
+    mat.get_CoeffRing()->from_ring_elem(b,r);
     mat.divide_column(i,b);
     return true;
   }
@@ -663,7 +667,7 @@ public:
       return false;
     if (i == j) return true;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(r,b);
+    mat.get_CoeffRing()->from_ring_elem(b,r);
     mat.row_op(i,b,j);
     return true;
   }
@@ -676,7 +680,7 @@ public:
       return false;
     if (i == j) return true;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(r,b);
+    mat.get_CoeffRing()->from_ring_elem(b,r);
     mat.column_op(i,b,j);
     return true;
   }
@@ -693,10 +697,10 @@ public:
       return false;
     if (c1 == c2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(a1,aa1);
-    mat.get_CoeffRing()->from_ring_elem(a2,aa2);
-    mat.get_CoeffRing()->from_ring_elem(b1,bb1);
-    mat.get_CoeffRing()->from_ring_elem(b2,bb2);
+    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
+    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
+    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
+    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
     mat.column2by2(c1,c2,aa1,aa2,bb1,bb2);
     return true;
   }
@@ -713,10 +717,10 @@ public:
       return false;
     if (r1 == r2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(a1,aa1);
-    mat.get_CoeffRing()->from_ring_elem(a2,aa2);
-    mat.get_CoeffRing()->from_ring_elem(b1,bb1);
-    mat.get_CoeffRing()->from_ring_elem(b2,bb2);
+    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
+    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
+    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
+    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
     mat.row2by2(r1,r2,aa1,aa2,bb1,bb2);
     return true;
   }
@@ -728,7 +732,7 @@ public:
       return false;
     elem a;
     mat.dot_product(c1,c2,a);
-    mat.get_CoeffRing()->to_ring_elem(a,result);
+    mat.get_CoeffRing()->to_ring_elem(result,a);
     return true;
   }
 
@@ -807,12 +811,12 @@ public:
     return M;
   }
 
-  virtual bool set_submatrix(long first_row,
-			     long first_col,
+  virtual bool set_submatrix(M2_arrayint rows,
+			     M2_arrayint cols,
 			     const MutableMatrixXXX *N)
   // returns false iff there is an error
   {
-    return mat.set_submatrix(first_row,first_col,N);
+    return mat.set_submatrix(rows,cols,N);
   }
 
   ///////////////////////////////
@@ -863,7 +867,7 @@ public:
   // return f*this.  return NULL of sizes or types do not match.
   {
     elem a;
-    mat.get_CoeffRing()->from_ring_elem(f->get_value(), a);
+    mat.get_CoeffRing()->from_ring_elem(a, f->get_value());
     MutableMat *result = new MutableMat;
     result->mat.grab(mat.mult(a));
     return result;
@@ -887,7 +891,8 @@ public:
   virtual bool nullspaceU(MutableMatrixXXX *x) const;
   // resets x, find a basis of solutions for Ux=0, U upper triangular
 
-  virtual void LU(MutableMatrixXXX *L, std::vector<int, gc_allocator<int> > &perm);
+  virtual M2_arrayint_OrNull LU(MutableMatrixXXX *L,
+				MutableMatrixXXX *U) const;
 
   virtual bool eigenvalues(MutableMatrixXXX *eigenvals, bool is_symm_or_hermitian) const;
 

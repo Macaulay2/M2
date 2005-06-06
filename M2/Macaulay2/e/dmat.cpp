@@ -522,11 +522,13 @@ void DMat<CoeffRing>::delete_rows(long i, long j)
 }
 
 template<typename CoeffRing>
-bool DMat<CoeffRing>::set_submatrix(long first_row, 
-				    long first_col, 
+bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows, 
+				    M2_arrayint cols, 
 				    const MutableMatrixXXX *M)
 {
   MutableMatrixXXX::iterator *i = M->begin();
+#warning "set_submatrix"
+#if 0
   elem *first = array_ + first_row + nrows_ * first_col;
   long ncols = M->n_cols();
   for (long c=0; c<ncols; c++)
@@ -535,10 +537,11 @@ bool DMat<CoeffRing>::set_submatrix(long first_row,
 	{
 	  ring_elem a;
 	  i->copy_ring_elem(a);
-	  coeffR->from_ring_elem(a, *(first + i->row()));
+	  coeffR->from_ring_elem(*(first + i->row()), a);
 	}
       first += nrows_;
     }
+#endif
   delete i;
   return true;
 }
