@@ -35,7 +35,7 @@ flatt = (I, m) -> (
      RU := (coefficientRing R) monoid([vars2,vars1,
 	  MonomialOrder=>ProductOrder{n-d,d},
 	  MonomialSize=>16]);
-     J = substitute(I,RU);
+     J := substitute(I,RU);
      -- Collect lead coefficients of GB
      JG = J;
      leads := leadTerm(1,gens gb J);
@@ -93,6 +93,8 @@ GTZ0 Ideal := (I) -> (
 	  F := flattener(I,ms_0);
      	  (J,G) := saturation(I,F);
      	  (J, I + ideal(G))))
+
+print "hi Mike"
 
 GTZ1 = method()
 GTZ1 Ideal := (I) -> (
@@ -170,7 +172,6 @@ rad Ideal := (I) -> (
 ///
 restart
 load "PrimaryDecomposition/GTZ.m2"
-
 kk = ZZ/32003
 R = kk[x,y,z,t,u,v]
 I = ideal( 

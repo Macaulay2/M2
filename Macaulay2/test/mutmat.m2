@@ -7,13 +7,35 @@ entries m
 toString m
 net m
 m
-m_(0,2)
-setRowChange(m,id_(R^2))
-setColumnChange(m,id_(R^6))
+assert(m_(0,2) == z)
 m_(1,2) = x+y
-m == mutableMatrix f
+assert(m_(1,2) == x+y)
+assert(not (m == mutableMatrix f))
 m
 rowSwap(m,0,1)
-m
+assert (entries m == {{0, 0, x + y, x, y, z}, {x, y, z, 0, 0, 0}})
 columnSwap(m,4,3)
+assert(entries m == {{0, 0, x + y, y, x, z}, {x, y, z, 0, 0, 0}})
+
 m
+m = mutableMatrix({{0, 0, x + y, y, x, z}, {x, y, z, 0, 0, 0}}, Dense=>true)
+numcols m
+numrows m
+rowMult
+columnMult
+rowAdd
+columnAdd
+-- 2by2's?
+-- 
+rowDivide
+columnDivide
+rowPermute
+columnPermute
+
+-- what else?
+mutableIdentity
+mutableZero
+randomMutableMatrix
+
+-- linear algebra
+-- LU, solve, eigenvalues, eigenvectors, SVD, leastSquares, LLL

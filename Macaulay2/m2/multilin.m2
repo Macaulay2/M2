@@ -1,6 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
 koszul(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawKoszul(i, raw m))
+koszul(Matrix, Matrix) := Matrix => (m,n) -> map(ring m, rawKoszulMonomials(raw m, raw n))
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
 
 MinorsComputation = new SelfInitializingType of BasicList

@@ -1079,44 +1079,43 @@ static int signdivide(int n, const int *a, const int *b, int *exp)
   if (sign == 0) return 1;
   return -1;
 }
-MatrixOrNull *Matrix::koszul(int nvars0, const Matrix *r, const Matrix *c)
+MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 {
-#warning "rewrite koszul of monomials"
-  ERROR("not reimplemented yet");
-  return 0;
-#if 0
   // First check rings: r,c,'this' should be row vectors.
   // and the ring should be a polynomial ring
   const FreeModule *F = r->cols();
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   if (P == NULL) return 0;
-  const Ring *K = P->getLogicalCoefficients();
-  const Monoid *M = P->getLogicalMonoid();
+  const Ring *K = P->getCoefficients();
+  const Monoid *M = P->getMonoid();
 
   MatrixConstructor mat(F, c->cols(), 0);
 
   int nvars = M->n_vars();
   int nrows = r->n_cols();
   int ncols = c->n_cols();
+  int *a, *b; // monomials
   int *aexp = newarray(int,nvars);
   int *bexp = newarray(int,nvars);
   int *result_exp = newarray(int,nvars);
   for (int i=0; i<ncols; i++)
     {
       if (c->elem(i) == 0) continue;
-      P->lead_logical_exponents(nvars0,c->elem(i)->coeff,aexp);
+      a = P->lead_flat_monomial(c->elem(i)->coeff);
+      M->to_expvector(a, aexp);
       for (int j=0; j<nrows; j++)
 	{
 	  if (r->elem(j) == 0) continue;
-	  P->lead_logical_exponents(nvars0,r->elem(j)->coeff,bexp);
+	  b = P->lead_flat_monomial(r->elem(j)->coeff);
+	  M->to_expvector(b,bexp);
 	  int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
 	    {
 	      const int *m = M->make_one();
 	      M->from_expvector(result_exp, m);
 	      ring_elem s = (sign > 0 ? K->one() : K->minus_one());
-	      ring_elem f = P->make_logical_term(s,m);
+	      ring_elem f = P->make_flat_term(s,m);
 	      mat.set_entry(j,i,f);
 	    }
 	}
@@ -1125,7 +1124,6 @@ MatrixOrNull *Matrix::koszul(int nvars0, const Matrix *r, const Matrix *c)
   deletearray(bexp);
   deletearray(result_exp);
   return mat.to_matrix();
-#endif
 }
 
 Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)

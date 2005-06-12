@@ -587,8 +587,37 @@ DMat<CoeffRing> * DMat<CoeffRing>::submatrix(const M2_arrayint cols) const
 template <typename CoeffRing>
 bool DMat<CoeffRing>::is_equal(const MutableMatrixXXX *B) const
 {
-#warning "to be written"
-  return 0;
+  if (B->get_ring() != get_ring()) return false;
+  if (B->n_rows() != n_rows()) return false;
+  if (B->n_cols() != n_cols()) return false;
+  MutableMatrixXXX::iterator *i = B->begin();
+  iterator j(this);
+
+  for (long c=0; c<n_cols(); c++)
+    {
+      i->set(c);
+      j.set(c);
+      for (;;)
+	{
+	  if (!i->valid())
+	    {
+	      if (j.valid()) return false;
+	      break;
+	    }
+	  else if (!j.valid()) return false;
+	  // i->valid(), j.valid() are both true
+	  if (i->row() != j.row())
+	    return false;
+	  ring_elem a, b;
+	  i->copy_ring_elem(a);
+	  coeffR->to_ring_elem(b, j.value());
+	  if (!get_ring()->is_equal(a,b))
+	    return false;
+	  i->next();
+	  j.next();
+	}
+    }
+  return true;
 }
 
 template <typename CoeffRing>
@@ -597,6 +626,10 @@ DMat<CoeffRing> * DMat<CoeffRing>::add(const MutableMatrixXXX *B) const
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
+  DMat<CoeffRing> *result = copy();
+  for (long c=0; c<B->n_cols(); c++)
+    {
+    }
 #warning "to be written"
   return 0;
 }
@@ -632,8 +665,14 @@ DMat<CoeffRing> * DMat<CoeffRing>::mult(const elem &f) const
 template <typename CoeffRing>
 DMat<CoeffRing> * DMat<CoeffRing>::negate() const
 {
-#warning "to be written"
-  return 0;
+  elem zero;
+  coeffR->set_zero(zero);
+  DMat *result = copy();
+  elem *a = result->get_array();
+  elem *end = result->get_array() + n_rows() * n_cols();
+  for ( ; a < end; a++)
+    coeffR->subtract(*a, zero, *a);
+  return result;
 }
 
 template class DMat<CoefficientRingZZ_NTL>;
