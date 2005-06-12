@@ -192,7 +192,7 @@ M2_bool IM2_MutableMatrix_row_scale(MutableMatrixXXX *M,
       ERROR("row index out of range");
       return 0;
     }
-  M->scale_row(r->get_value(),i);
+  M->scale_row(i,r->get_value());
   return 1;
 }
 
@@ -213,7 +213,7 @@ M2_bool IM2_MutableMatrix_column_scale(MutableMatrixXXX *M,
       ERROR("column index out of range");
       return 0;
     }
-  M->scale_column(r->get_value(),i);
+  M->scale_column(i,r->get_value());
   return 1;
 }
 

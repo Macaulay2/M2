@@ -110,7 +110,7 @@ public:
   static MatrixOrNull *zero(const FreeModule *F, const FreeModule *G);
 
   MatrixOrNull *koszul(int p) const;
-  static MatrixOrNull *koszul(int nvars0, const Matrix *rows, const Matrix *cols);
+  static MatrixOrNull *koszul(const Matrix *rows, const Matrix *cols);
 
   MatrixOrNull *reshape(const FreeModule *G, const FreeModule *H) const;
   static MatrixOrNull *flip(const FreeModule *G, const FreeModule *H);
