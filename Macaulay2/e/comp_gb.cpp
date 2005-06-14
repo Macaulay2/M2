@@ -9,7 +9,7 @@
 #include "gbA.hpp"
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
-#include "linalgGB/lingb.hpp"
+#include "linalgGB/m2interface.hpp"
 
 GBComputation::~GBComputation()
 {

@@ -969,6 +969,12 @@ SMat<CoeffRing> * SMat<CoeffRing>::negate() const
   return 0;
 }
 
+template <typename CoeffRing>
+M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
+{
+  
+}
+
 template class SMat<CoefficientRingZZ_NTL>;
 template class SMat<CoefficientRingZZp>;
 template class SMat<CoefficientRingRR>;

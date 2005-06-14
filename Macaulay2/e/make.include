@@ -1,6 +1,6 @@
 # @configure_input@
 
-%.o : %.cpp; $(COMPILE.cc) $(OUTPUT_OPTION) $<
+%.o : %.cpp; $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast
 
 CPPFLAGS += -I../../../include
 CPPFLAGS += -I../../util

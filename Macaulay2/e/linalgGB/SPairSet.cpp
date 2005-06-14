@@ -274,7 +274,7 @@ template<typename gb_array>
 int SPairConstructor<gb_array>::construct_pairs()
 {
   if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
-  typedef std::vector<pre_spair *,gc_allocator<pre_spair*> > spairs;
+  typedef VECTOR(pre_spair *) spairs;
   spairs new_set;
 
   // Loop through each element of gb, and create the pre_spair

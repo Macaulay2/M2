@@ -43,6 +43,7 @@ exportMutable (
 	)
 
 export (
+     	symbol Faugere,
         symbol LU,
         symbol solve,
      	symbol coefficient,

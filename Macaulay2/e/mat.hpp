@@ -502,6 +502,9 @@ public:
   virtual Mat_ZZp *get_mat_ZZp();
   virtual Mat_RR *get_mat_RR();
 
+  Mat * get_Mat() { return &mat; }
+  const Mat * get_Mat() const { return &mat; }
+
   class iterator : public MutableMatrixXXX::iterator
   {
     typename Mat::iterator i;
