@@ -1,7 +1,8 @@
 // (c) 1994-2004 Michael E. Stillman
 
-#include "MonomialTable.hpp"
 #include "../text_io.hpp"
+
+#include "MonomialTable.hpp"
 #include "Monomials.hpp"
 #include "monoms.h"
 
@@ -442,9 +443,7 @@ int MonomialLookupTable::debug_check(mi_node *p, mi_node *up) const
   mi_node *q;
   // First check the node 'p' itself
   assert(p != NULL);
-#ifndef NDEBUG
   int v = p->var;
-#endif
   assert(v >= 0);
   if (up != NULL) 
     assert(v < up->var);

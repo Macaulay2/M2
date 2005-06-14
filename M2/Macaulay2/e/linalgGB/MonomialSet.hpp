@@ -1,35 +1,12 @@
 // Copyright 2004 Michael E. Stillman
 #ifndef __MonomialSet_h_
 #define __MonomialSet_h_
-#include "../newdelete.hpp"
-const int NSLAB = 4092;
+
+#include "memblock.hpp"
+
 typedef int * monomial;
 typedef int * uninterned_monomial;
 class MonomialSet;
-
-class MemoryBlock : public our_new_delete
-{
-  struct slab : public our_new_delete {
-    slab *next;
-    int block[NSLAB];
-  };
-
-  slab *first_slab;
-  slab *last_slab;
-  int *next_free; /* points into last_slab */
-  
- private:
-  slab *new_slab();
-
- public:
-  MemoryBlock();
-  ~MemoryBlock();
-
-  int * reserve(int len); // returns space for len ints
-  void intern(int len); // increments 
-
-  int n_slabs() const;
-};
 
 class MonomialSet : public our_new_delete {
   struct hash_node : public our_new_delete {

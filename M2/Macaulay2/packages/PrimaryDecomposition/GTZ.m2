@@ -94,8 +94,6 @@ GTZ0 Ideal := (I) -> (
      	  (J,G) := saturation(I,F);
      	  (J, I + ideal(G))))
 
-print "hi Mike"
-
 GTZ1 = method()
 GTZ1 Ideal := (I) -> (
      R := ring I;

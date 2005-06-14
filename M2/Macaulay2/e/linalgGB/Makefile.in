@@ -16,7 +16,7 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-CCFILES := interface MonomialOps Monomials MonomialSet MonomialTable
+CCFILES := memblock MonomialOps Monomials MonomialSet MonomialTable interface lingb
 CFILES := monoms
 LINALGGB_FILES := $(CCFILES) $(CFILES)
 # MonomialHeap 

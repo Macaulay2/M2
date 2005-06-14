@@ -1,15 +1,20 @@
+// Copyright 2005 Michael E. Stillman
+#include <vector>
 #include "../polyring.hpp"
 #include "../freemod.hpp"
-#include "Monomials.hpp"
-#include "MonomialSet.hpp"
-#include "SPairSet.hpp"
-#include "lingb.hpp"
-#include "monoms.h"
-
 #include "../matrixcon.hpp"
 #include "../matrix.hpp"
-#include <vector>
 #include "../mat.hpp"
+
+#include "interface.hpp"
+
+#include "monoms.h"
+#include "Monomials.hpp"
+#include "MonomialSet.hpp"
+#include "MonomialTable.hpp"
+
+#include "SPairSet.hpp"
+#include "lingb.hpp"
 
 template<typename CoefficientRing>
 void M2Interface<CoefficientRing>::from_M2_vec(CoefficientRing *K,
@@ -36,9 +41,7 @@ void M2Interface<CoefficientRing>::from_M2_vec(CoefficientRing *K,
       for (Nterm *t = w->coeff; t != 0; t = t->next)
 	{
 	  vp.shrink(0);
-	  COEFF_TYPE a = t->coeff;
-	  K->init_set(result.coeffs[n], a);
-	  //result.coeffs[n] = t->coeff; // COPY THIS
+	  K->from_ring_elem(result.coeffs[n], t->coeff);
 	  M->to_varpower(t->monom, vp);
 	  vp[0] = (vp[0]-1)/2;
 	  H->find_or_insert(vp.raw(), result.monoms[n]);
@@ -98,10 +101,12 @@ vec M2Interface<CoefficientRing>::to_M2_vec(CoefficientRing *K,
   intarray vp;
   int *m1 = M->make_one();
 
+  ring_elem c;
+
   for (int i=0; i<f.len; i++)
     {
       vp.shrink(0);
-      ring_elem c = f.coeffs[i];
+      K->to_ring_elem(c, f.coeffs[i]);
       monomial m = f.monoms[i];
       int *vpa = vp.alloc(2*(*m)+1);
       for (int j=0; j<2*(*m)+1; j++)
@@ -125,6 +130,96 @@ Matrix *M2Interface<CoefficientRing>::to_M2_matrix(CoefficientRing *K,
   return result.to_matrix();
 }
 
+MonomialLookupTable *make_monideal(const Matrix *M, MonomialSet &H)
+{
+  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  const Monoid *MF = P->getMonoid();
+  queue <tagged_monomial *> new_elems;
+  intarray vp;
+
+  for (int i=0; i<M->n_cols(); i++)
+    {
+      ring_elem f = M->elem(0,i);
+      Nterm *t = f; // numerator of f
+      for ( ; t != 0; t=t->next)
+	{
+	  monomial m;
+	  vp.shrink(0);
+	  MF->to_varpower(t->monom, vp);
+	  vp[0] = (vp[0]-1)/2;
+	  H.find_or_insert(vp.raw(), m);
+	  new_elems.insert(new tagged_monomial(m,0));
+	}
+    }
+
+  MonomialLookupTable *result = new MonomialLookupTable(new_elems);
+  return result;
+}
+
+#if 0
+  const PolynomialRing *R = M->get_ring()->cast_to_PolynomialRing();
+  const Monoid *MF = R->getMonoid();
+  MonomialSet H;
+
+  gb_array pols;
+
+  from_M2_matrix(M,&H,NULL,pols);
+  H.dump();
+  spair_testing(&H,pols);
+  return to_M2_matrix(pols,M->rows());
+#endif
+
+#if 0
+  intarray vp;
+  for (int i=0; i<M->n_cols(); i++)
+    {
+      ring_elem f = M->elem(0,i);
+      Nterm *t = f; // numerator of f
+      for ( ; t != 0; t=t->next)
+	{
+	  monomial m;
+	  vp.shrink(0);
+	  MF->to_varpower(t->monom, vp);
+	  vp[0] = (vp[0]-1)/2;
+	  H.find_or_insert(vp.raw(), m);
+	}
+    }
+  H.dump();
+
+  // Now make a MonomialTable
+  MonomialLookupTable *T = make_monideal(M,H);
+
+  buffer o;
+  o << "Number of elements in MonomialTable = " << T->length() << newline;
+  emit(o.str());
+#endif
+  
+#if 0
+  // Now make a MonomialHeap
+  MonomialHeap H1;
+  for (int i=0; i<M->n_cols(); i++)
+    {
+      ring_elem f = M->elem(0,i);
+      Nterm *t = f; // numerator of f
+      for ( ; t != 0; t=t->next)
+	{
+	  monomial m;
+	  vp.shrink(0);
+	  MF->to_varpower(t->monom, vp);
+	  vp[0] = (vp[0]-1)/2;
+	  H.find_or_insert(vp.raw(), m);
+	  H1.insert(vp.raw(), m);
+	}
+    }
+  H1.dump(stderr);
+#endif
+
+
 #if 0
 void spair_testing(MonomialSet *H,
 		   gb_array &polys)
@@ -146,35 +241,51 @@ void spair_testing(MonomialSet *H,
 }
 #endif
 
-template<typename CoefficientRing>
-MutableMatrixXXX * M2Interface<CoefficientRing>::to_M2_MutableMatrix(  
-    const Ring *K,
+template<typename CoeffRing>
+MutableMatrixXXX * M2Interface<CoeffRing>::to_M2_MutableMatrix(  
+    const RingType *K,
     coefficient_matrix<COEFF_TYPE> *mat)
 {
   int nrows = mat->rows.size();
   int ncols = mat->columns.size();
-  //  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(K,nrows,ncols);
-  MutableMatrixXXX *result = MutableMatrixXXX::zero_matrix(K,nrows,ncols,false);
+  MutableMat<CoeffRing, MATTYPE<CoeffRing> > *result = 
+    MutableMat<CoeffRing, MATTYPE<CoeffRing> >::zero_matrix(K,nrows,ncols);
+  MATTYPE<CoeffRing> *M = result->get_Mat();
   for (int r=0; r<nrows; r++)
     {
       typename coefficient_matrix<COEFF_TYPE>::row_elem &row = mat->rows[r];
       for (int i=0; i<row.len; i++)
 	{
-	  ring_elem a = K->copy(row.coeffs[i]);
-	  result->set_entry(r,row.comps[i],a);
+	  int c = row.comps[i];
+	  ////	  c = mat->columns[c].ord;
+	  M->set_entry(r,c,row.coeffs[i]);
 	}
     }
   return result;
 }
 
-#include "SPairSet.cpp"
-#include "linalgGB.cpp"
+template<typename CoeffRing>
+MATTYPE<CoeffRing> * M2Interface<CoeffRing>::to_M2_Mat(  
+    const RingType *K,
+    coefficient_matrix<COEFF_TYPE> *mat)
+{
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  MATTYPE<CoeffRing> *result = new MATTYPE<CoeffRing>(K,nrows,ncols);
+  for (int r=0; r<nrows; r++)
+    {
+      typename coefficient_matrix<COEFF_TYPE>::row_elem &row = mat->rows[r];
+      for (int i=0; i<row.len; i++)
+	{
+	  int c = row.comps[i];
+	  ////c = mat->columns[c].ord;
+	  result->set_entry(r,c,row.coeffs[i]);
+	}
+    }
+  return result;
+}
 
 template class M2Interface<CoefficientRingZZp>;
-template class LinAlgGB<CoefficientRingZZp>;
-template int SPairSet::find_new_pairs<>(
-   const LinAlgGB<CoefficientRingZZp>::gb_array &gb,
-   bool remove_disjoints);
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "

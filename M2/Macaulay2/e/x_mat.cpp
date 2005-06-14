@@ -489,107 +489,10 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
   return result;
 }
 
-#include "linalgGB/MonomialSet.hpp"
-#if 0
-#include "linalgGB/MonomialHeap.hpp"
-#endif
-#include "linalgGB/MonomialTable.hpp"
-#include "linalgGB/interface.hpp"
-MonomialLookupTable *make_monideal(const Matrix *M, MonomialSet &H)
-{
-  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
-  const Monoid *MF = P->getMonoid();
-  queue <tagged_monomial *> new_elems;
-  intarray vp;
-
-  for (int i=0; i<M->n_cols(); i++)
-    {
-      ring_elem f = M->elem(0,i);
-      Nterm *t = f; // numerator of f
-      for ( ; t != 0; t=t->next)
-	{
-	  monomial m;
-	  vp.shrink(0);
-	  MF->to_varpower(t->monom, vp);
-	  vp[0] = (vp[0]-1)/2;
-	  H.find_or_insert(vp.raw(), m);
-	  new_elems.insert(new tagged_monomial(m,0));
-	}
-    }
-
-  MonomialLookupTable *result = new MonomialLookupTable(new_elems);
-  return result;
-}
 
 const Matrix * rawMatrixCompress(const Matrix *M)
 {
   return M->compress();
-
-#if 0
-  const PolynomialRing *R = M->get_ring()->cast_to_PolynomialRing();
-  const Monoid *MF = R->getMonoid();
-  MonomialSet H;
-
-  gb_array pols;
-
-  from_M2_matrix(M,&H,NULL,pols);
-  H.dump();
-  spair_testing(&H,pols);
-  return to_M2_matrix(pols,M->rows());
-#endif
-
-#if 0
-  intarray vp;
-  for (int i=0; i<M->n_cols(); i++)
-    {
-      ring_elem f = M->elem(0,i);
-      Nterm *t = f; // numerator of f
-      for ( ; t != 0; t=t->next)
-	{
-	  monomial m;
-	  vp.shrink(0);
-	  MF->to_varpower(t->monom, vp);
-	  vp[0] = (vp[0]-1)/2;
-	  H.find_or_insert(vp.raw(), m);
-	}
-    }
-  H.dump();
-
-  // Now make a MonomialTable
-  MonomialLookupTable *T = make_monideal(M,H);
-
-  buffer o;
-  o << "Number of elements in MonomialTable = " << T->length() << newline;
-  emit(o.str());
-#endif
-  
-#if 0
-  // Now make a MonomialHeap
-  MonomialHeap H1;
-  for (int i=0; i<M->n_cols(); i++)
-    {
-      ring_elem f = M->elem(0,i);
-      Nterm *t = f; // numerator of f
-      for ( ; t != 0; t=t->next)
-	{
-	  monomial m;
-	  vp.shrink(0);
-	  MF->to_varpower(t->monom, vp);
-	  vp[0] = (vp[0]-1)/2;
-	  H.find_or_insert(vp.raw(), m);
-	  H1.insert(vp.raw(), m);
-	}
-    }
-  H1.dump(stderr);
-#endif
-
-  //  return M;
-  //return M->compress();
 }
 
 #include "Eschreyer.hpp"

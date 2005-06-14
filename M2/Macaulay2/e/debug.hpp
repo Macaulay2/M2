@@ -8,6 +8,8 @@ class res_poly;
 class res2_poly;
 struct resterm;
 struct res2term;
+class MutableMatrixXXX;
+class MonomialIdeal;
 
 #include "ringelem.hpp"
 
@@ -27,7 +29,11 @@ void drespoly(const res_poly *R, const resterm *f);
 
 void drespoly2(const res2_poly *R, const res2term *f);
 
+extern "C" void dmutablemat(MutableMatrixXXX *m);
 
+extern "C" void dmonideal(MonomialIdeal *m);
+
+extern "C" void dintarray(M2_arrayint a);
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

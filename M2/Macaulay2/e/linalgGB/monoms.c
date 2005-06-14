@@ -302,6 +302,19 @@ void monomial_elem_text_out(FILE *fil, uninterned_monomial m)
   }
 }
 
+int buchberger_moeller_keep(uninterned_monomial m,
+			    uninterned_monomial p,
+			    uninterned_monomial q,
+			    uninterned_monomial pq)
+     /* These should satisfy: lcm(p,q) == pq */
+     /* returns 0 if the pair (p,q) should be REMOVED */
+     /* Returns 1 iff either (a) m does not divide pq,
+	or (b) m does divide pq, and lcm(m,p) == lcm(m,q) */
+{
+#warning "buchberger-moeller still to write"
+  return 0;
+}
+
 /*
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "

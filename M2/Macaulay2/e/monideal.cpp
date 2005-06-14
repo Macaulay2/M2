@@ -425,9 +425,7 @@ int MonomialIdeal::debug_check(Nmi_node *p, Nmi_node *up) const
   Nmi_node *q;
   // First check the node 'p' itself
   assert(p != NULL);
-#ifndef NDEBUG
   int v = p->var;
-#endif
   assert(v >= 0);
   if (up != NULL) 
     assert(v < up->var);

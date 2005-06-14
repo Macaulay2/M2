@@ -8,6 +8,19 @@
 #include "mat.hpp"
 #include "monideal.hpp"
 
+void dintarray(M2_arrayint a)
+{
+  buffer o;
+  o << "[";
+  for (int i=0; i<a->len; i++)
+    {
+      if (i > 0) o << ", ";
+      o << a->array[i];
+    }
+  o << "]";
+  emit(o.str());
+}
+
 void dmatrix(const Matrix *M)
 {
   buffer o;

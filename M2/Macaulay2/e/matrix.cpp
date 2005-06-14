@@ -1095,7 +1095,7 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
   int nvars = M->n_vars();
   int nrows = r->n_cols();
   int ncols = c->n_cols();
-  int *a, *b; // monomials
+  const int *a, *b; // monomials
   int *aexp = newarray(int,nvars);
   int *bexp = newarray(int,nvars);
   int *result_exp = newarray(int,nvars);
@@ -1112,7 +1112,7 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
 	  int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
 	    {
-	      const int *m = M->make_one();
+	      int *m = M->make_one();
 	      M->from_expvector(result_exp, m);
 	      ring_elem s = (sign > 0 ? K->one() : K->minus_one());
 	      ring_elem f = P->make_flat_term(s,m);
