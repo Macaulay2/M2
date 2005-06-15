@@ -82,6 +82,8 @@ private:
   // Helper routines for LU_decompose/make_matrix
   void reorder_columns(); 
   void reorder_rows(); 
+  void reduce_row(long r, long first, long last);
+  void normalize_row(long r);
   void gauss();
 
   void LU_decompose();

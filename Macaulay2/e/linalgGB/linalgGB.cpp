@@ -298,18 +298,18 @@ void LinAlgGB<CoeffRing>::make_matrix()
   fprintf(stderr, "--matrix--%d by %d\n", 
 	  mat->rows.size(), mat->columns.size());
   show_row_info();
-  show_column_info();
+  //show_column_info();
   //  H.dump();
 
   /* Now sort the monomials */
   //  set_comparisons();
-  show_matrix();
+  //  show_matrix();
   reorder_columns();
-  show_column_info();
+  //show_column_info();
   reorder_rows();
   show_column_info();
   // DEBUGGING:
-  show_matrix();
+  //show_matrix();
 
   // change all of the components?  This depends on our LU algorithm
   //show_column_info();
@@ -404,26 +404,115 @@ void LinAlgGB<CoeffRing>::reorder_rows()
 }
 
 template<typename CoeffRing>
+void LinAlgGB<CoeffRing>::normalize_row(long r)
+{
+  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  elem a;
+  if (row.len > 0)
+    {
+      coeffK->invert(a, row.coeffs[0]);
+      for (long j=0; j<row.len; j++)
+	coeffK->mult(row.coeffs[j], row.coeffs[j], a);
+    }
+}
+
+template<typename CoeffRing>
+void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
+{
+  if (last < first) return;
+  // for each non-zero element of row r
+  //   find row s to divide by, let c be the multiplier
+  //   v -= c*(row s)
+  // Now replace the row r by the sparse form of this
+
+  //  fprintf(stdout, "reducing row %ld using %ld..%ld\nInput matrix is\n", r, first, last);
+  //show_matrix();
+  long nrows = mat->rows.size();
+  long ncols = mat->columns.size();
+
+  elem *v = newarray(elem,ncols);
+  for (long i=0; i<ncols; i++)
+    coeffK->set_zero(v[i]);
+  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  elem a;
+  for (long i=0; i<row.len; i++)
+    {
+      long c = row.comps[i];
+      long s = mat->columns[c].gb_divisor;
+      if (s >= first && s <= last)
+	{
+	  typename coefficient_matrix::row_elem &row2 = mat->rows[s];
+	  for (long t = 1; t < row2.len; t++)
+	    {
+	      coeffK->mult(a, row.coeffs[i], row2.coeffs[t]);
+	      long d = row2.comps[t];
+	      coeffK->subtract(v[d], v[d], a);
+	    }
+	}
+      else
+	coeffK->add(v[c], v[c], row.coeffs[i]);
+    }
+  // Now we need to make a sparse row again
+  long len = 0;
+  for (long i=0; i<ncols; i++)
+    if (!coeffK->is_zero(v[i])) len++;
+
+  allocate_sparse_row(row,len);
+  long next = 0;
+  for (long i=0; i<ncols; i++)
+    if (!coeffK->is_zero(v[i]))
+      {
+	row.coeffs[next] = v[i];
+	row.comps[next++] = i;
+	coeffK->set_zero(v[i]);
+      }
+  
+
+  deletearray(v);
+
+  //fprintf(stdout, "Output matrix is\n");
+  //show_matrix();
+}
+
+template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::gauss()
 {
-  // Step 1. Auto-reduce the first set of rows
+  long nrows = mat->rows.size();
 
+  // Step 1. Auto-reduce the first set of rows
+  long last_pivot_row;
+  for (last_pivot_row=0; last_pivot_row<nrows; last_pivot_row++)
+    {
+      long c = mat->rows[last_pivot_row].comps[0];
+      if (mat->columns[c].gb_divisor != last_pivot_row) break;
+    }
+  last_pivot_row--;
+  fprintf(stdout, "last pivot row = %ld\n",last_pivot_row);
+
+  for (long r = last_pivot_row; r >= 0; r--)
+    {
+      reduce_row(r,r+1,last_pivot_row);
+    }
   // Step 2. Reduce the last set of rows wrt these
+  for (long r = last_pivot_row+1; r<nrows; r++)
+    {
+      reduce_row(r, 0, r-1);
+      normalize_row(r);
+    }
 
   // Step 3. Inter-reduce those rows
+
+  // Later: maybe use solving equations method, so that we can use more 
+  // flexible solving methods...
 }
 
 template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::LU_decompose()
 {
-  // This code is experimental
-  // Step 1. Reorder rows and columns so that ??
-  // Step 2. Do upper triangular form for this matrix
-  // Step 3. Backreduce to get echelon form
+  gauss();
   
-  // Reorder rows, and columns, changing all row components too
-  //   in the end: we might not need to do this..
 
+#if 0
   // Dense LU code to make sure everything is working OK
   MATTYPE<CoeffRing> *A = M2Interface<CoeffRing>::to_M2_Mat(K,mat);
   MATTYPE<CoeffRing> *L = new MATTYPE<CoeffRing>(K,0,0);
@@ -432,6 +521,7 @@ void LinAlgGB<CoeffRing>::LU_decompose()
   new_GB_elements_dmat(U,P);
   show_gb_array(gb);
   ////// end denseLU code
+#endif
 
   // DEBUGGING:
   //  MutableMat<CoeffRing, MATTYPE<CoeffRing> > *U1 = 
@@ -610,7 +700,7 @@ void LinAlgGB<CoeffRing>::new_GB_elements()
 	  sparse_row_to_poly(mat->rows[r], g); // This grabs the row poly
 	                                       // leaving a zero poly
 	  insert_gb_element(g);
-	  S.find_new_pairs(gb, false);
+	  S.find_new_pairs(gb, true);
 	}
     }
 }
@@ -620,7 +710,7 @@ void LinAlgGB<CoeffRing>::s_pair_step()
 {
   make_matrix();
   LU_decompose();
-  //  WILL PROBABLY PUT THIS BACK --  new_GB_elements();
+  new_GB_elements();
   // reset rows and columns and other matrix aspects
   mat->rows.clear();
   mat->columns.clear();
