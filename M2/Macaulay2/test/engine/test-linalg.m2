@@ -8,8 +8,26 @@ G = gb(J, Algorithm=>LinearAlgebra)
 gens G
 
 m = basis(3,R) * random(R^35,R^3)
-time gb(m, Algorithm=>LinearAlgebra);
-time gb(ideal flatten entries m);
+G1 = gens time gb(m, Algorithm=>LinearAlgebra);
+G2 = gens time gb(ideal flatten entries m);
+transpose G1
+transpose G2
+transpose sort G1 - transpose sort G2
+
+m = basis(4,R) * random(R^70,R^3)
+G1 = gens time gb(m, Algorithm=>LinearAlgebra);
+G2 = gens time gb(ideal flatten entries m);
+transpose sort G1 - transpose sort G2
+
+m = basis(5,R) * random(R^126,R^3)
+G1 = gens time gb(m, Algorithm=>LinearAlgebra);
+G2 = gens time gb(ideal flatten entries m);
+transpose sort G1 - transpose sort G2
+
+m = basis(5,R) * random(R^126,R^4)
+G1 = gens time gb(m, Algorithm=>LinearAlgebra);
+G2 = gens time gb(ideal flatten entries m);
+transpose sort G1 - transpose sort G2
 
 load "markov.m2"
 R = markovRing(2,2,2,2)
@@ -17,7 +35,23 @@ G = makeGraph {{},{1},{2},{1,2}}
 I = markovIdeal(R, localMarkovStmts G);
 R = (coefficientRing R)[vars(0..numgens R-1)]
 I = substitute(I,vars R)
-gb(I, Algorithm=>Faugere)
+time G1 = gens gb(I, Algorithm=>Faugere);
+time G2 = gens gb(ideal flatten entries gens I);
+transpose sort G1 - transpose sort G2
+
+R = ZZ/3[x,y,u,s,t]
+I = ideal(
+    x^81,
+    y^81,
+    u^81,
+    u^5-x*y*(x-y)*(s*x-t*y))
+G1 = gens time gb(I, Algorithm=>LinearAlgebra);
+J = ideal flatten entries gens I; -- 1123 gens
+G2 = gens time gb(J); -- 1116 gens...?? which is correct??
+transpose sort G1 - transpose sort G2
+
+
+
 transpose gens oo
 I2 = markovIdeal(R, localMarkovStmts G);
 gbTrace=3
