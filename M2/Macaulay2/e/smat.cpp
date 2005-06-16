@@ -506,7 +506,7 @@ SMat<CoeffRing>::SMat(const RingType *R0, long nrows, long ncols)
   initialize(nrows,ncols,0);
 }
 
-SMat<CoefficientRingR>::SMat(const Ring *R0, long nrows, long ncols)
+template <> SMat<CoefficientRingR>::SMat(const Ring *R0, long nrows, long ncols)
   : R(R0),
     coeffR(0),
     nrows_(nrows),
