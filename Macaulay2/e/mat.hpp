@@ -237,6 +237,7 @@ public:
   class iterator : public our_new_delete
   {
   public:
+    virtual ~iterator() = 0 ;
     virtual void set(long col) = 0;
     virtual void next() = 0;
     virtual bool valid() = 0;

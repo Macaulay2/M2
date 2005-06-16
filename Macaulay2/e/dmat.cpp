@@ -15,7 +15,7 @@ DMat<CoeffRing>::DMat(const RingType *R0, long nrows, long ncols)
   initialize(nrows,ncols,0);
 }
 
-DMat<CoefficientRingR>::DMat(const Ring *R0, long nrows, long ncols)
+template <> DMat<CoefficientRingR>::DMat(const Ring *R0, long nrows, long ncols)
   : R(R0),
     coeffR(0),
     nrows_(nrows),
@@ -675,20 +675,20 @@ DMat<CoeffRing> * DMat<CoeffRing>::negate() const
   return result;
 }
 
+template <> double *DMat<CoefficientRingRR>::get_lapack_array() const
+{
+  return array_;
+}
+template <> double *DMat<CoefficientRingCC>::get_lapack_array() const
+{
+  return reinterpret_cast<double *>(array_);
+}
+
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<CoefficientRingZZp>;
 template class DMat<CoefficientRingRR>;
 template class DMat<CoefficientRingCC>;
 template class DMat<CoefficientRingR>;
-
-double *DMat<CoefficientRingRR>::get_lapack_array() const
-{
-  return array_;
-}
-double *DMat<CoefficientRingCC>::get_lapack_array() const
-{
-  return reinterpret_cast<double *>(array_);
-}
 
 
 // Local Variables:
