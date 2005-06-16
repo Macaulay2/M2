@@ -3,4 +3,4 @@ newPackage ("Macaulay2",
 
 beginDocumentation()
 
-load "Macaulay2/loads.m2"
+--load "Macaulay2/loads.m2"

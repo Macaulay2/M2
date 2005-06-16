@@ -123,6 +123,7 @@ int LinAlgGB<CoeffRing>::find_or_append_column(monomial m)
   column_elem c;
   c.monom = m;
   c.gb_divisor = -2;
+  c.head = -1;
   c.ord = 0;
   mat->columns.push_back(c);
   return next_column;
@@ -190,6 +191,7 @@ void LinAlgGB<CoeffRing>::process_column(int c)
       monomial_quotient(ce.monom, gb[which]->f.monoms[0], um);
       H.find_or_insert(um, m);
       ce.gb_divisor = mat->rows.size();
+      ce.head = ce.gb_divisor;
       load_row(m,which);
     }
   else 
@@ -206,6 +208,7 @@ void LinAlgGB<CoeffRing>::process_s_pair(SPairSet::spair *p)
     load_row(p->s.spair.first_monom, p->s.spair.first_gb_num);
     c = mat->rows[mat->rows.size()-1].comps[0];
     mat->columns[c].gb_divisor = mat->rows.size()-1;
+    mat->columns[c].head = mat->columns[c].gb_divisor;
     load_row(p->s.spair.second_monom, p->s.spair.second_gb_num);
     break;
   case SPairSet::SPAIR_GEN:
@@ -297,7 +300,7 @@ void LinAlgGB<CoeffRing>::make_matrix()
   // DEBUGGING:
   fprintf(stderr, "--matrix--%d by %d\n", 
 	  mat->rows.size(), mat->columns.size());
-  show_row_info();
+  //  show_row_info();
   //show_column_info();
   //  H.dump();
 
@@ -307,7 +310,7 @@ void LinAlgGB<CoeffRing>::make_matrix()
   reorder_columns();
   //show_column_info();
   reorder_rows();
-  show_column_info();
+  //show_column_info();
   // DEBUGGING:
   //show_matrix();
 
@@ -335,12 +338,12 @@ void LinAlgGB<CoeffRing>::reorder_columns()
   sort(column_order.begin(), 
        column_order.end(), 
        monomial_sorter<CoeffRing>(mat->columns));
-  fprintf(stderr, "ncomparisons = %d\n", ncomparisons);
+  //  fprintf(stderr, "ncomparisons = %d\n", ncomparisons);
 
-  fprintf(stdout, "column order: ");
-  for (int i=0; i<column_order.size(); i++)
-      fprintf(stdout, "%d ", column_order[i]);
-    fprintf(stdout, "\n");
+  //  fprintf(stdout, "column order: ");
+  //  for (int i=0; i<column_order.size(); i++)
+  //      fprintf(stdout, "%d ", column_order[i]);
+  //    fprintf(stdout, "\n");
 
   for (long i=0; i<column_order.size(); i++)
     {
@@ -386,14 +389,16 @@ void LinAlgGB<CoeffRing>::reorder_rows()
 
   for (long c = 0; c < ncols; c++)
     {
-      int oldrow = mat->columns[c].gb_divisor;
+      int oldrow = mat->columns[c].head;
       if (oldrow >= 0)
 	{
 	  // Move the row into place
 	  long newrow = newrows.size();
 	  newrows.push_back(mat->rows[oldrow]);
 	  rowlocs[oldrow] = newrow;
-	  mat->columns[c].gb_divisor = newrow;
+	  mat->columns[c].head = newrow;
+	  if (mat->columns[c].gb_divisor == oldrow)
+	    mat->columns[c].gb_divisor = newrow;
 	}
       
     }
@@ -413,6 +418,8 @@ void LinAlgGB<CoeffRing>::normalize_row(long r)
       coeffK->invert(a, row.coeffs[0]);
       for (long j=0; j<row.len; j++)
 	coeffK->mult(row.coeffs[j], row.coeffs[j], a);
+      long c = row.comps[0];
+      mat->columns[c].head = r;
     }
 }
 
@@ -420,6 +427,9 @@ template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
 {
   if (last < first) return;
+  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  if (row.len == 0) return;
+
   // for each non-zero element of row r
   //   find row s to divide by, let c be the multiplier
   //   v -= c*(row s)
@@ -427,30 +437,31 @@ void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
 
   //  fprintf(stdout, "reducing row %ld using %ld..%ld\nInput matrix is\n", r, first, last);
   //show_matrix();
-  long nrows = mat->rows.size();
   long ncols = mat->columns.size();
 
   elem *v = newarray(elem,ncols);
   for (long i=0; i<ncols; i++)
     coeffK->set_zero(v[i]);
-  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  for (long i=0; i<row.len; i++)
+    coeffK->init_set(v[row.comps[i]], row.coeffs[i]);
+
   elem a;
   for (long i=0; i<row.len; i++)
     {
       long c = row.comps[i];
-      long s = mat->columns[c].gb_divisor;
+      long s = mat->columns[c].head;
+      elem pivot;
+      coeffK->init_set(pivot, v[c]);
       if (s >= first && s <= last)
 	{
 	  typename coefficient_matrix::row_elem &row2 = mat->rows[s];
-	  for (long t = 1; t < row2.len; t++)
+	  for (long t = 0; t < row2.len; t++)
 	    {
-	      coeffK->mult(a, row.coeffs[i], row2.coeffs[t]);
+	      coeffK->mult(a, pivot, row2.coeffs[t]);
 	      long d = row2.comps[t];
 	      coeffK->subtract(v[d], v[d], a);
 	    }
 	}
-      else
-	coeffK->add(v[c], v[c], row.coeffs[i]);
     }
   // Now we need to make a sparse row again
   long len = 0;
@@ -477,6 +488,8 @@ void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
 template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::gauss()
 {
+  //  fprintf(stdout, "Matrix before gauss\n");
+  //show_matrix();
   long nrows = mat->rows.size();
 
   // Step 1. Auto-reduce the first set of rows
@@ -484,10 +497,10 @@ void LinAlgGB<CoeffRing>::gauss()
   for (last_pivot_row=0; last_pivot_row<nrows; last_pivot_row++)
     {
       long c = mat->rows[last_pivot_row].comps[0];
-      if (mat->columns[c].gb_divisor != last_pivot_row) break;
+      if (mat->columns[c].head != last_pivot_row) break;
     }
   last_pivot_row--;
-  fprintf(stdout, "last pivot row = %ld\n",last_pivot_row);
+  //fprintf(stdout, "last pivot row = %ld\n",last_pivot_row);
 
   for (long r = last_pivot_row; r >= 0; r--)
     {
@@ -496,14 +509,28 @@ void LinAlgGB<CoeffRing>::gauss()
   // Step 2. Reduce the last set of rows wrt these
   for (long r = last_pivot_row+1; r<nrows; r++)
     {
-      reduce_row(r, 0, r-1);
+      reduce_row(r, 0, last_pivot_row);
+      normalize_row(r);
+    }
+
+  // Step 3A. Reduce the last set of rows wrt these
+  for (long r = last_pivot_row+1; r<nrows; r++)
+    {
+      reduce_row(r, last_pivot_row+1, r-1);
       normalize_row(r);
     }
 
   // Step 3. Inter-reduce those rows
+  for (long r = nrows-1; r>=0; r--)
+    {
+      reduce_row(r, r+1, nrows-1);
+    }
 
   // Later: maybe use solving equations method, so that we can use more 
   // flexible solving methods...
+
+  //fprintf(stdout, "Matrix after gauss\n");
+  //show_matrix();
 }
 
 template<typename CoeffRing>
@@ -703,6 +730,7 @@ void LinAlgGB<CoeffRing>::new_GB_elements()
 	  S.find_new_pairs(gb, true);
 	}
     }
+  //  show_gb_array(gb);
 }
 
 template<typename CoeffRing>
