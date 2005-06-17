@@ -81,7 +81,7 @@ int monomial_compare(uninterned_monomial a, uninterned_monomial b)
     return EQ;
   return LT;
 }  
-  
+
 void monomial_lcm(uninterned_monomial m1, 
 		  uninterned_monomial m2,
 		  uninterned_monomial result)
