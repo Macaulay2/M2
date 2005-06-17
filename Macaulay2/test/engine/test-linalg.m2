@@ -29,6 +29,11 @@ G1 = gens time gb(m, Algorithm=>LinearAlgebra);
 G2 = gens time gb(ideal flatten entries m);
 transpose sort G1 - transpose sort G2
 
+m = basis(5,R) * random(R^126,R^10)
+G1 = gens time gb(m, Algorithm=>LinearAlgebra);
+G2 = gens time gb(ideal flatten entries m);
+transpose sort G1 - transpose sort G2
+
 load "markov.m2"
 R = markovRing(2,2,2,2)
 G = makeGraph {{},{1},{2},{1,2}}
@@ -50,7 +55,15 @@ J = ideal flatten entries gens I; -- 1123 gens
 G2 = gens time gb(J); -- 1116 gens...?? which is correct??
 transpose sort G1 - transpose sort G2
 
-
+G = makeGraph {{},{1},{1},{1},{2,3,4}}
+R = markovRing(2,2,2,2,2)
+F = marginMap(1,R)
+I = F markovIdeal(R, localMarkovStmts G)
+time G1 = gens gb(I, Algorithm=>Faugere); -- very bad so far
+transpose gens I
+I = ideal flatten entries gens I;
+time G2 = gens gb I;
+transpose sort G1 - transpose sort G2 == 0
 
 transpose gens oo
 I2 = markovIdeal(R, localMarkovStmts G);

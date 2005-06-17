@@ -246,38 +246,6 @@ struct monomial_sorter : public std::binary_function<int,int,bool> {
 };
 
 template<typename CoeffRing>
-void LinAlgGB<CoeffRing>::set_comparisons()
-{
-  /* Sort the monomials */
-  /* set the comparison values in the current matrix */
-  /* Should we also go thru the matrix and set the values? */
-
-  mat->column_order.reserve(mat->columns.size());
-  for (int i=0; i<mat->columns.size(); i++)
-    {
-      // Set the degree, weight
-      mat->columns[i].ord = monomial_weight(mat->columns[i].monom, weights);
-      mat->column_order.push_back(i);
-    }
-
-  ncomparisons = 0;
-  sort(mat->column_order.begin(), 
-       mat->column_order.end(), 
-       monomial_sorter<CoeffRing>(mat->columns));
-  fprintf(stderr, "ncomparisons = %d\n", ncomparisons);
-
-  //fprintf(stdout, "column order: ");
-  //for (int i=0; i<mat->column_order.size(); i++)
-  //    fprintf(stdout, "%d ", mat->column_order[i]);
-  //  fprintf(stdout, "\n");
-
-  for (int i=0; i<mat->column_order.size(); i++)
-    {
-      mat->columns[mat->column_order[i]].ord = i; // mat->column_order.size()-1-i;
-    }
-}
-
-template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::make_matrix()
 {
   /* loop through all spairs, process,
@@ -334,11 +302,12 @@ void LinAlgGB<CoeffRing>::reorder_columns()
       column_order.push_back(i);
     }
 
+  fprintf(stderr, "ncomparisons = ");
   ncomparisons = 0;
   sort(column_order.begin(), 
        column_order.end(), 
        monomial_sorter<CoeffRing>(mat->columns));
-  //  fprintf(stderr, "ncomparisons = %d\n", ncomparisons);
+  fprintf(stderr, "%d\n", ncomparisons);
 
   //  fprintf(stdout, "column order: ");
   //  for (int i=0; i<column_order.size(); i++)
@@ -563,62 +532,6 @@ void LinAlgGB<CoeffRing>::LU_decompose()
   //  dmutablemat(L1);
   //  fprintf(stdout, "\n");
 
-#if 0
-  // This is non-functional code, that we may or may not end up using
-  int ncols = mat->columns.size();
-  int nrows = mat->rows.size();
-  COEFF_TYPE *our_row = newarray(COEFF_TYPE, ncols);
-  for (int r=0; r<nrows; r++)
-    {
-      row_elem &re = mat->rows[r];
-      if (re.is_pivot) continue;
-      // We now reduce the r th row
-      // FILLIN:
-        for (int c=0; c<ncols; c++)
-	  coeffK->set_zero(our_row[c]);
-	for (int i=0; i<re.len; i++)
-	  {
-	    int thisc = re.comps[i].ord;
-	    coeffK->init_set(our_row[thisc], re.coeffs[i]);
-	  }
-      // 
-      int nterm = 0;
-      int lead_col = -1;
-      for (int c=0; c<ncols; c++)
-	if (!coeffK->is_zero(our_row[c]))
-	  {
-	    int rpivot = mat->columns[c].gb_divisor;
-	    if (rpivot >= 0)
-	      {
-		//subtract_row_multiple(our_row, rpivot);
-		row_ele &rpivot = mat->rows[rpivot];
-		for (int j=0; j<rpivot.len; j++)
-		  {
-		    int cj = mat->columns[rpivot.comps[j]].ord;
-		    coeffK->subtract_multiple(our_row[cj], pivot, 
-		  }
-	      }
-	    if (!coeffK->is_zero(our_row[c]))
-	      {
-		nterms++;
-		if (lead_col < 0)
-		  lead_col = c;
-	      }
-	  }
-      // Now copy the row back to row r, making it monic at the same time
-      // REALLOCATE ROW
-      COEFF_TYPE *a = our_row+lead_col;
-      int next = 0;
-      for (int c=lead_col; c<ncols; c++)
-	if (!coeffK->is_zero(our_row[c]))
-	  {
-	    coeffK->divide(newr.coeffs+next, our_row+c, a);
-	    newr.comps[next] = c; // WARNING: either change all rows, or keep
-	    // track of which rows are represented using sorted column order
-	    next++;
-	  }
-    }
-#endif
 }
 
 template<typename CoeffRing>
@@ -657,52 +570,6 @@ void LinAlgGB<CoeffRing>::insert_gb_element(poly &g)
   tagged_monomial *b = new tagged_monomial(result->f.monoms[0], v);
   lookup->insert(b);
   gb.push_back(result);
-}
-
-template<typename CoeffRing>
-bool LinAlgGB<CoeffRing>::dmat_row_to_poly(poly &g, MATTYPE<CoeffRing> *U, int r)
-{
-  COEFF_TYPE a;
-  long len = 0;
-  long leadcol = -1;
-  for (long i=0; i<U->n_cols(); i++)
-    if (U->get_entry(r,i,a)) // Possibly dramatically bad
-      {
-	if (len == 0)
-	  leadcol = i;
-	len++;
-      }
-
-  if (leadcol < 0) return false;
-  ////leadcol = mat->column_order[leadcol];
-  if (mat->columns[leadcol].gb_divisor >= 0)
-    return false;
-
-  allocate_poly(g, len);
-  long next = 0;
-  for (long i=0; next<len; i++)
-    if (U->get_entry(r,i,a))
-      {
-	coeffK->init_set(g.coeffs[next], a);
-	int c = i; ////mat->column_order[i];
-	g.monoms[next++] = mat->columns[c].monom;
-      }
-  return true;
-}
-
-template<typename CoeffRing>
-void LinAlgGB<CoeffRing>::new_GB_elements_dmat(
-					       MATTYPE<CoeffRing> *U, M2_arrayint P)
-{
-  for (int r=0; r<U->n_rows(); r++)
-    {
-      poly g;
-      if (dmat_row_to_poly(g, U, r))
-	{
-	  insert_gb_element(g);
-	  S.find_new_pairs(gb, true);
-	}
-    }
 }
 
 template<typename CoeffRing>

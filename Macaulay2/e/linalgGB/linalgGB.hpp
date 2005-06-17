@@ -67,11 +67,6 @@ private:
 
   void process_s_pair(SPairSet::spair *p);
 
-  void set_comparisons();
-    /* Sort the monomials */
-    /* set the comparison values in the current matrix */
-    /* Should we also go thru the matrix and set the values? */
-
   void make_matrix();
     /* loop through all spairs, process,
        then while there are any columns to process, do so,
@@ -101,9 +96,6 @@ private:
 
   void s_pair_step();
   /* make_matrix, the LU_decompose, then grab GB elements */
-
-  bool dmat_row_to_poly(poly &g, MATTYPE<CoeffRing> *U, int r);
-  void new_GB_elements_dmat(MATTYPE<CoeffRing> *U, M2_arrayint P);
 
   void show_gb_array(const gb_array &g);
   void show_row_info();
