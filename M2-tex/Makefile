@@ -1,4 +1,4 @@
-NAME := issac2002
+NAME := TEMPLATE
 
 EPS  := $(wildcard *.eps *.mps)
 EPSU := $(EPSU:.eps=.epsu)
@@ -22,7 +22,7 @@ TEX = latex
 	@if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
 	 then touch $*.out ; \
 	 else echo "running M2 on $*.m2"; \
-	   M2 -silent -x -s <$*.m2 >$*.out.tmp \
+	   M2 --silent -x --stop <$*.m2 >$*.out.tmp \
 		&& \
 	   mv $*.out.tmp $*.out && \
 	   cp $*.m2 $*.old ; \
