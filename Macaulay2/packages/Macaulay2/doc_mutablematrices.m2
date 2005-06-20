@@ -18,14 +18,15 @@ document {
      "It is possible to record these operations (except for the row and column
      divide routines), as follows.",
      EXAMPLE {
+	  -- setRowChange and getRowChange have been removed!
 	  "m = mutableMatrix{{1,2,3},{5,7,2},{12,1,0}}",
-	  "setRowChange(m, mutableIdentity(ZZ,3))",
+	  -- "setRowChange(m, mutableIdentity(ZZ,3))",
 	  "rowAdd(m,1,-5,0)",
 	  "rowAdd(m,2,-12,0)",
 	  "rowAdd(m,2,-8,1)",
 	  "rowSwap(m,1,2)",
 	  "rowAdd(m,2,3,1)",
-	  "getRowChange m"
+	  -- "getRowChange m"
 	  }
      }
 
