@@ -18,6 +18,8 @@ firstFunction ZZ := String => n -> (
 	else "D'oh!"	
 	);
 
+TEST "-1"
+
 beginDocumentation()
 document { 
 	Key => FirstPackage,
