@@ -743,10 +743,58 @@ void gbA::spair_set_insert(gbA::spair *p)
       S.heap = tmp;
     }
 }
- 
+
 gbA::spair *gbA::spair_set_next()
   /* Removes the next element of the current degree, returning NULL if none left */
 {
+  //  spair *result = S.spair_list;
+  //  if (result)
+  //    {
+  //      S.spair_list = result->next;
+  //    }
+  //  else
+  //    {
+  //      if (spair_deferred_list.next != 0)
+  //	{
+  //	  max_reduction_count *= 2;
+  //	  S.spair_list = spair_deferred_list.next;
+  //	  spair_deferred_list.next = 0;
+  //	  spair_last_deferred = &spair_deferred_list;
+  //	  result = S.spair_list;
+  //	  S.spair_list = result->next;
+  //	}
+  //      else
+  //	{
+  //	  // Now dothe same for generators
+  //
+  //	  result = S.gens_list;
+  //	  if (result)
+  //	    {
+  //	      S.gens_list = result->next;
+  //	    }
+  //	  else
+  //	    {
+  //	      if (gens_deferred_list.next != 0)
+  //		{
+  //		  max_reduction_count *= 2;
+  //		  S.gens_list = gens_deferred_list.next;
+  //		  gens_deferred_list.next = 0;
+  //		  gens_last_deferred = &gens_deferred_list;
+  //		  result = S.gens_list;
+  //		  S.gens_list = result->next;
+  //		}
+  //	      else
+  //		return 0;
+  //	    }
+  //	}
+  //    }
+
+  //  result->next = 0;
+  //  S.nelems--;
+  //  S.n_in_degree--;
+  //  S.n_computed++;
+  //  return result;
+
   spair *result;
   if (!S.this_set) return 0;
 
@@ -904,7 +952,7 @@ bool gbA::reduce(spair *p)
   /* Returns false iff we defer computing this spair. */
   /* If false is returned, this routine has grabbed the spair 'p'. */
   int tmf, wt;
-  int count = 0;
+  int count = -1;
   compute_s_pair(p); /* Changes the type, possibly */
   if (gbTrace >= 10)
     {
@@ -915,6 +963,12 @@ bool gbA::reduce(spair *p)
     }
   while (!R->gbvector_is_zero(p->f()))
     {
+      count++;
+      //if (count++ > max_reduction_count)
+      //	{
+      //	  defer_spair(p);
+      //	  return false;
+      //	}
       if (gbTrace >= 5)
 	{
 	  if ((wt = weightInfo_->gbvector_weight(p->f(), tmf)) > _this_degree)
@@ -985,7 +1039,6 @@ bool gbA::reduce(spair *p)
 	
       // replaced alpha, g.
       if (w < 0) break;
-      count++;
       if (alpha > 0)
 	{
 	  POLY h;
@@ -1041,14 +1094,12 @@ bool gbA::reduce(spair *p)
 	  return false;
 	}
     }
-#if 0
   if (gbTrace >= 4) 
     {
       buffer o;
       o << "." << count;
-      emit(o.str());
+      emit_wrapped(o.str());
     }
-#endif
   return true;
 }
 
@@ -1440,7 +1491,7 @@ void gbA::insert(POLY f, gbelem_type minlevel)
   else
     lookup->insert(g->lead, x, me);
 
-  if (gbTrace >= 4)
+  if (gbTrace >= 5)
     {
       char s[100];
       buffer o;

@@ -77,7 +77,10 @@ private:
   // Helper routines for LU_decompose/make_matrix
   void reorder_columns(); 
   void reorder_rows(); 
+  void sparse_to_dense_row(elem *v, int r);
+  void dense_to_sparse_row(int r, elem *v);
   void reduce_row(long r, long first, long last);
+  void tail_reduce_row(long r, long first, long last);
   void normalize_row(long r);
   void gauss();
 

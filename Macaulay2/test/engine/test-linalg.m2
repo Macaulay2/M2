@@ -15,23 +15,23 @@ transpose G2
 transpose sort G1 - transpose sort G2
 
 m = basis(4,R) * random(R^70,R^3)
-G1 = gens time gb(m, Algorithm=>LinearAlgebra);
-G2 = gens time gb(ideal flatten entries m);
+time G1 = gens gb(m, Algorithm=>LinearAlgebra);
+time G2 = gens gb(ideal flatten entries m);
 transpose sort G1 - transpose sort G2
 
 m = basis(5,R) * random(R^126,R^3)
-G1 = gens time gb(m, Algorithm=>LinearAlgebra);
-G2 = gens time gb(ideal flatten entries m);
+time G1 = gens gb(m, Algorithm=>LinearAlgebra);
+time G2 = gens gb(ideal flatten entries m);
 transpose sort G1 - transpose sort G2
 
 m = basis(5,R) * random(R^126,R^4)
-G1 = gens time gb(m, Algorithm=>LinearAlgebra);
-G2 = gens time gb(ideal flatten entries m);
+time G1 = gens gb(m, Algorithm=>LinearAlgebra);
+time G2 = gens gb(ideal flatten entries m);
 transpose sort G1 - transpose sort G2
 
 m = basis(5,R) * random(R^126,R^10)
-G1 = gens time gb(m, Algorithm=>LinearAlgebra);
-G2 = gens time gb(ideal flatten entries m);
+time G1 = gens gb(m, Algorithm=>LinearAlgebra);
+time G2 = gens gb(ideal flatten entries m);
 transpose sort G1 - transpose sort G2
 
 load "markov.m2"
@@ -44,7 +44,7 @@ time G1 = gens gb(I, Algorithm=>Faugere);
 time G2 = gens gb(ideal flatten entries gens I);
 transpose sort G1 - transpose sort G2
 
-R = ZZ/3[x,y,u,s,t]
+R = ZZ/3[x,y,u,s,t, MonomialOrder=>GRevLexSmall]
 I = ideal(
     x^81,
     y^81,
@@ -61,6 +61,15 @@ F = marginMap(1,R)
 I = F markovIdeal(R, localMarkovStmts G)
 time G1 = gens gb(I, Algorithm=>Faugere); -- very bad so far
 transpose gens I
+I = ideal flatten entries gens I;
+time G2 = gens gb I;
+transpose sort G1 - transpose sort G2 == 0
+
+
+G = makeGraph {{},{1},{1},{1},{2,3,4}}
+R = markovRing(2,2,2,2,2)
+I = markovIdeal(R, localMarkovStmts G)
+time G1 = gens gb(I, Algorithm=>Faugere); -- 
 I = ideal flatten entries gens I;
 time G2 = gens gb I;
 transpose sort G1 - transpose sort G2 == 0

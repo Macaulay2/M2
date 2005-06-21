@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <ctime>
 
 #include "../text_io.hpp"
 #include "../debug.hpp"
@@ -17,6 +18,10 @@
 #include "MonomialOps.hpp"
 #include "MonomialTable.hpp"
 #include "interface.hpp"
+
+static clock_t clock_sort_columns = 0;
+static clock_t clock_gauss = 0;
+static clock_t clock_make_matrix = 0;
 
 GBComputation *createLinearAlgebraGB(const Matrix *m,
 				     M2_bool collect_syz,
@@ -40,9 +45,10 @@ GBComputation *createLinearAlgebraGB(const Matrix *m,
 					   use_max_degree,
 					   max_degree,
 					   strategy);
+      return G;
     }
-
-  return G;
+  ERROR("cannot use Strategy=>LinearAlgebra or Strategy=>Faugere with this type of coefficient ring");
+  return 0;
 }
 
 template<typename CoeffRing>
@@ -295,6 +301,7 @@ void LinAlgGB<CoeffRing>::reorder_columns()
   // sort the columns
   VECTOR(long) column_order;
   column_order.reserve(ncols);
+  clock_t begin_time = clock();
   for (long i=0; i<ncols; i++)
     {
       // Set the degree, weight
@@ -307,8 +314,12 @@ void LinAlgGB<CoeffRing>::reorder_columns()
   sort(column_order.begin(), 
        column_order.end(), 
        monomial_sorter<CoeffRing>(mat->columns));
-  fprintf(stderr, "%d\n", ncomparisons);
-
+  fprintf(stderr, "%d, ", ncomparisons);
+  clock_t end_time = clock();
+  clock_sort_columns += end_time - begin_time;
+  double nsecs = end_time - begin_time;
+  nsecs /= CLOCKS_PER_SEC;
+  fprintf(stderr, " time = %f\n", nsecs);
   //  fprintf(stdout, "column order: ");
   //  for (int i=0; i<column_order.size(); i++)
   //      fprintf(stdout, "%d ", column_order[i]);
@@ -378,6 +389,37 @@ void LinAlgGB<CoeffRing>::reorder_rows()
 }
 
 template<typename CoeffRing>
+void LinAlgGB<CoeffRing>::sparse_to_dense_row(elem *v, int r)
+{
+  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  long ncols = mat->columns.size();
+  for (long i=0; i<ncols; i++)
+    coeffK->set_zero(v[i]);
+  for (long i=0; i<row.len; i++)
+    coeffK->init_set(v[row.comps[i]], row.coeffs[i]);
+}
+
+template<typename CoeffRing>
+void LinAlgGB<CoeffRing>::dense_to_sparse_row(int r, elem *v)
+{
+  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  long ncols = mat->columns.size();
+  long len = 0;
+  for (long i=0; i<ncols; i++)
+    if (!coeffK->is_zero(v[i])) len++;
+
+  allocate_sparse_row(row,len);
+  long next = 0;
+  for (long i=0; i<ncols; i++)
+    if (!coeffK->is_zero(v[i]))
+      {
+	row.coeffs[next] = v[i];
+	row.comps[next++] = i;
+	coeffK->set_zero(v[i]);
+      }
+}
+
+template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::normalize_row(long r)
 {
   typename coefficient_matrix::row_elem &row = mat->rows[r];
@@ -395,6 +437,8 @@ void LinAlgGB<CoeffRing>::normalize_row(long r)
 template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
 {
+  // Only reduces row[r], until a pivot occurs
+
   if (last < first) return;
   typename coefficient_matrix::row_elem &row = mat->rows[r];
   if (row.len == 0) return;
@@ -409,10 +453,56 @@ void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
   long ncols = mat->columns.size();
 
   elem *v = newarray(elem,ncols);
-  for (long i=0; i<ncols; i++)
-    coeffK->set_zero(v[i]);
-  for (long i=0; i<row.len; i++)
-    coeffK->init_set(v[row.comps[i]], row.coeffs[i]);
+  sparse_to_dense_row(v, r);
+
+  elem a;
+  for (long c=row.comps[0]; c<ncols; c++)
+    {
+      if (coeffK->is_zero(v[c]))
+	continue;
+      long s = mat->columns[c].head;
+      if (s < 0) break;
+      elem pivot;
+      coeffK->init_set(pivot, v[c]);
+      if (s >= first && s <= last)
+	{
+	  typename coefficient_matrix::row_elem &row2 = mat->rows[s];
+	  for (long t = 0; t < row2.len; t++)
+	    {
+	      coeffK->mult(a, pivot, row2.coeffs[t]);
+	      long d = row2.comps[t];
+	      coeffK->subtract(v[d], v[d], a);
+	    }
+	}
+    }
+  // Now we need to make a sparse row again
+  dense_to_sparse_row(r, v);
+  deletearray(v);
+}
+
+template<typename CoeffRing>
+void LinAlgGB<CoeffRing>::tail_reduce_row(long r, long first, long last)
+{
+  if (last < first) return;
+  typename coefficient_matrix::row_elem &row = mat->rows[r];
+  if (row.len == 0) return;
+
+  // for each non-zero element of row r
+  //   find row s to divide by, let c be the multiplier
+  //   v -= c*(row s)
+  // Now replace the row r by the sparse form of this
+
+  //  fprintf(stdout, "reducing row %ld using %ld..%ld\nInput matrix is\n", r, first, last);
+  //show_matrix();
+  long ncols = mat->columns.size();
+
+  elem *v = newarray(elem,ncols);
+  sparse_to_dense_row(v, r);
+
+  if (r == 1010)
+    {
+      fprintf(stdout, "r is 1010\n");
+    }
 
   elem a;
   for (long i=0; i<row.len; i++)
@@ -432,22 +522,7 @@ void LinAlgGB<CoeffRing>::reduce_row(long r, long first, long last)
 	    }
 	}
     }
-  // Now we need to make a sparse row again
-  long len = 0;
-  for (long i=0; i<ncols; i++)
-    if (!coeffK->is_zero(v[i])) len++;
-
-  allocate_sparse_row(row,len);
-  long next = 0;
-  for (long i=0; i<ncols; i++)
-    if (!coeffK->is_zero(v[i]))
-      {
-	row.coeffs[next] = v[i];
-	row.comps[next++] = i;
-	coeffK->set_zero(v[i]);
-      }
-  
-
+  dense_to_sparse_row(r,v);
   deletearray(v);
 
   //fprintf(stdout, "Output matrix is\n");
@@ -458,7 +533,7 @@ template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::gauss()
 {
   //  fprintf(stdout, "Matrix before gauss\n");
-  //show_matrix();
+  //  show_matrix();
   long nrows = mat->rows.size();
 
   // Step 1. Auto-reduce the first set of rows
@@ -473,13 +548,12 @@ void LinAlgGB<CoeffRing>::gauss()
 
   for (long r = last_pivot_row; r >= 0; r--)
     {
-      reduce_row(r,r+1,last_pivot_row);
+      tail_reduce_row(r,r+1,last_pivot_row);
     }
   // Step 2. Reduce the last set of rows wrt these
   for (long r = last_pivot_row+1; r<nrows; r++)
     {
-      reduce_row(r, 0, last_pivot_row);
-      normalize_row(r);
+      tail_reduce_row(r, 0, last_pivot_row);
     }
 
   // Step 3A. Reduce the last set of rows wrt these
@@ -492,21 +566,27 @@ void LinAlgGB<CoeffRing>::gauss()
   // Step 3. Inter-reduce those rows
   for (long r = nrows-1; r>=0; r--)
     {
-      reduce_row(r, r+1, nrows-1);
+      tail_reduce_row(r, r+1, nrows-1);
     }
 
   // Later: maybe use solving equations method, so that we can use more 
   // flexible solving methods...
 
-  //fprintf(stdout, "Matrix after gauss\n");
-  //show_matrix();
+  //  fprintf(stdout, "Matrix after gauss\n");
+  //  show_matrix();
 }
 
 template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::LU_decompose()
 {
+  clock_t begin_time = clock();
   gauss();
-  
+  clock_t end_time = clock(); 
+  clock_gauss += end_time - begin_time;
+  double nsecs = end_time - begin_time;
+  nsecs /= CLOCKS_PER_SEC;
+  fprintf(stderr, " gauss time = %f\n", nsecs);
+
 
 #if 0
   // Dense LU code to make sure everything is working OK
@@ -603,7 +683,16 @@ void LinAlgGB<CoeffRing>::new_GB_elements()
 template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::s_pair_step()
 {
+  clock_t begin_time = clock();
+
   make_matrix();
+
+  clock_t end_time = clock();
+  clock_make_matrix += end_time - begin_time;
+  double nsecs = end_time - begin_time;
+  nsecs /= CLOCKS_PER_SEC;
+  fprintf(stderr, " make matrix time = %f\n", nsecs);
+
   LU_decompose();
   new_GB_elements();
   // reset rows and columns and other matrix aspects
@@ -639,6 +728,9 @@ enum ComputationStatusCode LinAlgGB<CoeffRing>::computation_is_complete()
 template<typename CoeffRing>
 void LinAlgGB<CoeffRing>::start_computation()
 {
+  clock_sort_columns = 0;
+  clock_gauss = 0;
+  clock_make_matrix = 0;
   int npairs;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
 
@@ -667,10 +759,27 @@ void LinAlgGB<CoeffRing>::start_computation()
 	}
       fprintf(stdout, "DEGREE %d (npairs %d)\n", this_degree, npairs);
 
+      if (this_degree == 148)
+	{
+	  fprintf(stdout, "degree 148\n");
+	}
       s_pair_step();
       complete_thru_this_degree = this_degree;
     }
   set_status(is_done);
+
+  double clock_time = clock_sort_columns;
+  clock_time /= CLOCKS_PER_SEC;
+  fprintf(stderr, "total time for sorting columns: %f\n", clock_time);
+
+  clock_time = clock_make_matrix;
+  clock_time /= CLOCKS_PER_SEC;
+  fprintf(stderr, "total time for making matrix (includes sort): %f\n", clock_time);
+
+  clock_time = clock_gauss;
+  clock_time /= CLOCKS_PER_SEC;
+  fprintf(stderr, "total time for gauss: %f\n", clock_time);
+
 }
 
 template<typename CoeffRing>

@@ -72,6 +72,15 @@ private:
     spair *this_set;
     int n_computed; /* The number removed via next() */
 
+
+    ///    spair *spair_list;
+    //    spair spair_deferred_list; // list header
+    //    spair *spair_last_deferred; 
+
+    //    spair *gens_list; 
+    //    spair gens_deferred_list;  // list header
+    //    spair *gens_last_deferred; 
+
     SPairSet();
   };
   
@@ -141,6 +150,11 @@ private:
   RingElement *_hf_diff;		// The difference between hf_orig and the computed hilb fcn
   Matrix *_hilb_matrix; // non-null if Hilbert function is being used or if the codim us
     // being used as a stop condition.
+
+  // Reduction count: used to defer spairs which are likely to reduce to 0
+  //  long max_reduction_count;
+  //  spair *deferred_pairs;
+  //  void defer_spair(spair *p);
 
 private:
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
