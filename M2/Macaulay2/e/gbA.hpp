@@ -10,6 +10,9 @@
 #include "montableZZ.hpp"
 #include "reducedgb.hpp"
 
+#include "linalgGB/memblock.hpp"
+#include "linalgGB/MonomialTable.hpp"
+
 class GBWeight;
 
 class gbA : public GBComputation {
@@ -69,17 +72,16 @@ private:
     int nelems;  /* Includes the number in this_set */
     int n_in_degree; /* The number in 'this_set */
     spair *heap;
-    spair *this_set;
     int n_computed; /* The number removed via next() */
 
+    // Each of the following is initialized on each call to spair_set_prepare_next_degree
+    spair *spair_list;
+    spair spair_deferred_list; // list header
+    spair *spair_last_deferred; // points to last elem of previous list, possibly the header
 
-    ///    spair *spair_list;
-    //    spair spair_deferred_list; // list header
-    //    spair *spair_last_deferred; 
-
-    //    spair *gens_list; 
-    //    spair gens_deferred_list;  // list header
-    //    spair *gens_last_deferred; 
+    spair *gen_list; 
+    spair gen_deferred_list;  // list header
+    spair *gen_last_deferred; // points to last elem of previous list, possibly the header
 
     SPairSet();
   };
@@ -111,6 +113,9 @@ private:
   MonomialTable *lookup;
   MonomialTableZZ *lookupZZ; // Only one of these two will be non-NULL.
 
+  MemoryBlock monomial_memory; // Where we keep monomial space for 'lookups'
+  MonomialLookupTable **lookups; // one for each component
+  
   exponents EXP_; // Used in 'remainder'
 
   SPairSet S;
@@ -152,19 +157,18 @@ private:
     // being used as a stop condition.
 
   // Reduction count: used to defer spairs which are likely to reduce to 0
-  //  long max_reduction_count;
-  //  spair *deferred_pairs;
-  //  void defer_spair(spair *p);
+  long max_reduction_count;
+  void spair_set_defer(spair *&p);
 
+  // Stashing previous divisors;
+  long divisor_previous;
+  long divisor_previous_comp;
 private:
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   
   /* initialization */
   void initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat);
   spair *new_gen(int i, gbvector *f, ring_elem denom);
-
-  void lead_exponents(gbvector *f, exponents e);
-  void lead_exponents_deg(gbvector *f, exponents e, int deg);
 
   int gbelem_COMPONENT(gbelem *g) { return g->g.f->comp; }
   int spair_COMPONENT(spair *s) { 

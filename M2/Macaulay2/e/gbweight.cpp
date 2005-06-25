@@ -45,6 +45,16 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
     }
 
   EXP_ = newarray(int, nvars_);
+
+  if (use_component_degrees_)
+    {
+      Fdegs_ = newarray(long, F->rank()+1);
+      Fdegs_[0] = 0;
+      for (int j=0; j<F->rank(); j++)
+	Fdegs_[j+1] = F->primary_degree(j);
+    }
+  else
+    Fdegs_ = 0;
 }
 
 int GBWeight::exponents_weight(const int *e, int comp) const
@@ -53,7 +63,7 @@ int GBWeight::exponents_weight(const int *e, int comp) const
   for (int i=0; i<nvars_; i++)
     sum += e[i] * wts_->array[i];
   if (use_component_degrees_ && comp > 0)
-    sum += F_->primary_degree(comp-1);
+    sum += Fdegs_[comp];
   return sum;
 }
 

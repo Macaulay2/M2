@@ -20,6 +20,7 @@ class GBWeight : public our_new_delete
   GBRing *R_;
 
   int *EXP_;
+  long *Fdegs_;
 public:
   GBWeight(const FreeModule *F, M2_arrayint wts);
 

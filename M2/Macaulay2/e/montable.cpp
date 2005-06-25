@@ -133,9 +133,13 @@ int MonomialTable::find_divisors(int max,
   int nmatches = 0;
   unsigned long expmask = ~(monomial_mask(_nvars, exp));
 
+  //DEBUG long nviewed = 0;
+  //DEBUG long nmasked = 0;
+
   for (t = head->_next; t != head; t = t->_next)
     if ((expmask & t->_mask) == 0)
       {
+	//DEBUG	nviewed++;
 	bool is_div = 1;
 	for (i=0; i<_nvars; i++)
 	  if (exp[i] < t->_lead[i])
@@ -150,6 +154,9 @@ int MonomialTable::find_divisors(int max,
 	    if (max >= 0 && nmatches >= max) break;
 	  }
       }
+  //DEBUG    else
+  //DEBUG      nmasked++;
+  //DEBUG  fprintf(stderr, "nviewed %d nmasked %d nfound %d\n", nviewed, nmasked, nmatches);
   return nmatches;
 }
 

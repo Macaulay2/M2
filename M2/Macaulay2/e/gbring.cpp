@@ -471,6 +471,7 @@ int GBRing::gbvector_compare(const FreeModule *F,
 {
   int cmp;
   const SchreyerOrder *S = F->get_schreyer_order();
+  
   if (S)
     {
       if (_schreyer_encoded)

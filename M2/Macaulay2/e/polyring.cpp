@@ -1519,6 +1519,7 @@ ring_elem PolyRing::get_terms(int nvars0, const ring_elem f, int lo, int hi) con
   if (hi < 0) hi = nterms + hi;
 
   Nterm *t = f;
+  if (t == 0) return t;
   Nterm head;
   Nterm *result = &head;
 
