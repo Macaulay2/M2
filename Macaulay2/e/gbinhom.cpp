@@ -119,6 +119,28 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
     }
 }
 
+GBinhom_comp *GBinhom_comp::create(const Matrix *m,
+		  M2_bool collect_syz,
+		  int n_rows_to_keep,
+		  M2_arrayint gb_weights,
+		  int strategy,
+		  M2_bool use_max_degree_limit,
+		  int max_degree_limit)
+{
+  const PolynomialRing *P = m->get_ring()->cast_to_PolynomialRing();
+  if (P == 0 || P->getCoefficients()->is_ZZ())
+    {
+      ERROR("expected polynomial ring over a field");
+      return 0;
+    }
+  GBinhom_comp *result = new GBinhom_comp(m, 
+					  collect_syz,
+					  n_rows_to_keep,
+					  gb_weights,
+					  strategy);
+  return result;
+}
+
 GBinhom_comp::GBinhom_comp(const Matrix *m, 
 			   int csyz, 
 			   int nsyz, 
@@ -171,7 +193,7 @@ s_pair *GBinhom_comp::new_ring_pair(gb_elem *p, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_RING;
-  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp);
+  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = NULL;
@@ -188,7 +210,7 @@ s_pair *GBinhom_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_PAIR;
-  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp);
+  result->degree = M->primary_degree(lcm) + F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = q;
@@ -204,7 +226,7 @@ s_pair *GBinhom_comp::new_gen(int i, gbvector * f, ring_elem denom)
   gbvector *fsyz;
 
   if (i < n_comps_per_syz)
-    fsyz = GR->gbvector_term(Fsyz,denom,i);
+    fsyz = GR->gbvector_term(Fsyz,denom,i+1);
   else
     fsyz = GR->gbvector_zero();
 
@@ -754,33 +776,21 @@ int GBinhom_comp::s_pair_step(s_pair *p)
 
 //---- Completion testing -----------------------------
 
-int GBinhom_comp::computation_complete(int stop_gb, 
-				       int stop_syz, 
-				       int stop_pairs,
-				       int stop_subring)
+ComputationStatusCode GBinhom_comp::computation_complete() const
      // Test whether the current computation is done.
 {
-  if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  if (stop_syz > 0 && n_syz >= stop_syz) return COMP_DONE_SYZ_LIMIT;
-  if (stop_pairs > 0 && n_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
-  if (stop_subring > 0 && n_subring >= stop_subring) return COMP_DONE_SUBRING_LIMIT;
+  if (stop_.basis_element_limit > 0 && n_gb >= stop_.basis_element_limit) return COMP_DONE_GB_LIMIT;
+  if (stop_.syzygy_limit > 0 && n_syz >= stop_.syzygy_limit) return COMP_DONE_SYZ_LIMIT;
+  if (stop_.pair_limit > 0 && n_computed >= stop_.pair_limit) return COMP_DONE_PAIR_LIMIT;
+  if (stop_.subring_limit > 0 && n_subring >= stop_.subring_limit) return COMP_DONE_SUBRING_LIMIT;
   return COMP_COMPUTING;
 }
 
 //---- state machine (roughly) for the computation ----
 
-int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
+void GBinhom_comp::start_computation()
 {
-  if (stop.length() != 7) 
-    {
-      ERROR("inappropriate stop conditions for GB computation");
-      return COMP_ERROR;
-    }
-  int stop_gb = stop[0]; //ngb
-  int stop_syz = stop[1]; //nsyz
-  int stop_pairs = stop[2]; //npairs
-  int stop_subring = stop[5]; //subring limit
-  int is_done = COMP_COMPUTING;
+  ComputationStatusCode is_done = COMP_COMPUTING;
   
   for (;;)
     {
@@ -796,7 +806,7 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 	  break;
 	}
 
-      is_done = computation_complete(stop_gb, stop_syz, stop_pairs, stop_subring);
+      is_done = computation_complete();
       if (is_done != COMP_COMPUTING) break;
 
       if (error())
@@ -844,7 +854,7 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
       o << "Number of pairs computed    = " << n_computed << newline;
       emit(o.str());
     }
-  return is_done;
+  set_status(is_done);
 }
 
 //--- Reduction --------------------------
@@ -874,6 +884,60 @@ Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
   return mat_red.to_matrix();
 }
 
+const MatrixOrNull *GBinhom_comp::matrix_remainder(const Matrix *m)
+{
+  if (m->n_rows() != F->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       return 0;
+  }
+  MatrixConstructor mat_red(m->rows(), m->cols(), 0);
+  for (int i=0; i<m->n_cols(); i++)
+    {
+      ring_elem denom;
+      gbvector * f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
+      gbvector * fsyz = GR->gbvector_zero();
+
+      gb_reduce(f, fsyz);
+
+      vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
+      K->negate_to(denom);
+      mat_red.set_column(i, fv);
+    }
+  return mat_red.to_matrix();
+}
+
+void GBinhom_comp::matrix_lift(const Matrix *m,
+		 MatrixOrNull **result_remainder,
+		 MatrixOrNull **result_quotient
+		 )
+{
+  if (m->n_rows() != F->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       *result_remainder = 0;
+       *result_quotient = 0;
+       return;
+  }
+  MatrixConstructor mat_red(m->rows(), m->cols(), 0);
+  MatrixConstructor mat_lift(Fsyz, 0);
+  for (int i=0; i<m->n_cols(); i++)
+    {
+      ring_elem denom;
+      gbvector * f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
+      gbvector * fsyz = GR->gbvector_zero();
+
+      gb_reduce(f, fsyz);
+
+      vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
+      K->negate_to(denom);
+      vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
+      mat_red.set_column(i, fv);
+      mat_lift.append(fsyzv);
+    }
+  *result_quotient = mat_lift.to_matrix();
+  *result_remainder = mat_red.to_matrix();
+}
+
+
 int GBinhom_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
@@ -898,7 +962,27 @@ int GBinhom_comp::contains(const Matrix *m)
 }
 
 //--- Obtaining matrices as output -------
-Matrix *GBinhom_comp::min_gens_matrix()
+
+int GBinhom_comp::complete_thru_degree() const
+  // The computation is complete up through this degree.
+{
+#warning "not set"
+  return 0;
+}
+
+void GBinhom_comp::text_out(buffer &o)
+  /* This displays statistical information, and depends on the
+     gbTrace value */
+{
+  stats();
+}
+
+
+
+
+
+
+const MatrixOrNull *GBinhom_comp::get_mingens()
 {
   MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
@@ -907,7 +991,7 @@ Matrix *GBinhom_comp::min_gens_matrix()
   return mat.to_matrix();
 }
 
-Matrix *GBinhom_comp::initial_matrix(int n)
+const MatrixOrNull *GBinhom_comp::get_initial(int n)
 {
   MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
@@ -918,15 +1002,16 @@ Matrix *GBinhom_comp::initial_matrix(int n)
   return mat.to_matrix();
 }
 
-Matrix *GBinhom_comp::gb_matrix()
+const MatrixOrNull *GBinhom_comp::get_gb()
 {
+  fprintf(stderr, "-- done with GB -- ");
   MatrixConstructor mat(F, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     mat.append(originalR->translate_gbvector_to_vec(F,q->f));
   return mat.to_matrix();
 }
 
-Matrix *GBinhom_comp::change_matrix()
+const MatrixOrNull *GBinhom_comp::get_change()
 {
   MatrixConstructor mat(Fsyz, 0);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
@@ -934,7 +1019,7 @@ Matrix *GBinhom_comp::change_matrix()
   return mat.to_matrix();
 }
 
-Matrix *GBinhom_comp::syz_matrix()
+const MatrixOrNull *GBinhom_comp::get_syzygies()
 {
 #warning "this is not correct: this grabs the vectors, and so can't be called twice"
   return syz.to_matrix();
@@ -1037,31 +1122,6 @@ void GBinhom_comp::stats() const
     }
   emit(o.str());
 }
-
-#if 0
-void step()
-{
-  while ((p = L.remove()) != NULL)
-    {
-      calc_s_pair(p);
-      if (T.reduce(p))		// Returns 1 iff reduction of 'p' is finished
-	if (p->f != NULL)
-	  {
-	    L.update(S,p->f);
-	    S.insert(p);
-	    T.insert(p);
-	    S.remove_redundants();
-	  }
-	else if (p->fsyz != NULL)
-	  {
-	    syz.insert(p->fsyz);
-	    deleteitem(p);
-	  }
-    }
-  S.inter_reduce();		// Reduce tails
-}
-#endif
-
 
 
 // Local Variables:

@@ -43,6 +43,7 @@ exportMutable (
 	)
 
 export (
+        symbol Sugarless,
      	symbol Faugere,
         symbol LU,
         symbol solve,

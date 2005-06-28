@@ -78,8 +78,7 @@ private:
   void gb_insert(gbvector *f, gbvector *fsyz, int ismin);
   void inter_reduce(gb_elem *&gens);
 
-  int computation_complete(int stop_gb, int stop_syz, 
-			   int stop_pairs, int stop_subring);
+  ComputationStatusCode computation_complete() const;
 
   int s_pair_step(s_pair *p);
 
@@ -107,8 +106,6 @@ public:
   // reduction
   Matrix *reduce(const Matrix *m, Matrix *&lift);
 
-  virtual int contains(const Matrix *m);
-
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   Matrix *min_gens_matrix();
   Matrix *initial_matrix(int n);
@@ -123,6 +120,52 @@ public:
   void debug_pairs(buffer &o) const;
 
   void stats() const;
+
+
+  //////////////////////////
+  // Computation routines //
+  //////////////////////////
+  virtual bool stop_conditions_ok() { return true; }
+
+  static GBinhom_comp * create(const Matrix *m, 
+			       M2_bool collect_syz, 
+			       int n_rows_to_keep,
+			       M2_arrayint gb_weights,
+			       int strategy, 
+			       M2_bool use_max_degree,
+			       int max_degree);
+  
+  virtual int kind() { return 232; } // FIX THIS!!
+
+  void start_computation();
+
+  virtual const PolynomialRing *get_ring() { return originalR; }
+
+  virtual const MatrixOrNull *get_gb();
+
+  virtual const MatrixOrNull *get_mingens();
+
+  virtual const MatrixOrNull *get_change();
+
+  virtual const MatrixOrNull *get_syzygies();
+
+  virtual const MatrixOrNull *get_initial(int nparts);
+
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+
+  virtual void matrix_lift(const Matrix *m,
+			   MatrixOrNull **result_remainder,
+			   MatrixOrNull **result_quotient
+			   );
+
+  virtual int contains(const Matrix *m);
+
+  virtual void text_out(buffer &o); 
+  /* This displays statistical information, and depends on the
+     gbTrace value */
+
+  virtual int complete_thru_degree() const;
+  // The computation is complete up through this degree.
 };  
 #endif
 
